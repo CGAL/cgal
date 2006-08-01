@@ -20,7 +20,8 @@
 #ifndef CGAL_ENVELOPE_DIVIDE_AND_CONQUER_2_H
 #define CGAL_ENVELOPE_DIVIDE_AND_CONQUER_2_H
 
-#include <CGAL/Env_default_diagram_1.h>
+#include <CGAL/Arr_enums.h>
+#include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -28,8 +29,7 @@ CGAL_BEGIN_NAMESPACE
  * A class implementing the divide-and-conquer algorithm for computing the
  * lower (or upper) envelope of a set of curves.
  */
-template <class Traits_,
-          class Diagram_ = Env_default_diagram_1<Traits_> >
+template <class Traits_, class Diagram_>
 class Envelope_divide_and_conquer_2
 {
 public:
@@ -40,6 +40,8 @@ public:
   typedef typename Traits_2::Curve_2               Curve_2;
 
   typedef Diagram_                                 Envelope_diagram_1;
+
+protected:
   
   typedef Envelope_divide_and_conquer_2<Traits_2, Envelope_diagram_1>  Self;
 
@@ -49,8 +51,6 @@ public:
     UPPER
   };
 
-protected:
-
   typedef typename Envelope_diagram_1::Vertex_const_handle Vertex_const_handle;
   typedef typename Envelope_diagram_1::Vertex_handle       Vertex_handle;
   typedef typename Envelope_diagram_1::Edge_const_handle   Edge_const_handle;
@@ -59,10 +59,12 @@ protected:
   typedef std::list<X_monotone_curve_2 *>          Curve_pointer_list;
   typedef typename Curve_pointer_list::iterator    Curve_pointer_iterator;
 
+  typedef Arr_traits_adaptor_2<Traits_2>           Traits_adaptor_2;
+
   // Data members:
-  Traits_2        *traits;        // The traits object.
-  bool             own_traits;    // Whether we own the traits object.
-  Envelope_type    env_type;      // Either LOWER or UPPER.
+  Traits_adaptor_2  *traits;        // The traits object.
+  bool               own_traits;    // Whether we own the traits object.
+  Envelope_type      env_type;      // Either LOWER or UPPER.
 
   // Copy constructor and assignment operator - not supported.
   Envelope_divide_and_conquer_2 (const Self& );
@@ -77,7 +79,7 @@ public:
     own_traits(true),
     env_type(LOWER)
   {
-    traits = new Traits_2;
+    traits = new Traits_adaptor_2;
   }
 
   /*!
@@ -85,10 +87,11 @@ public:
    * \param _traits The traits object.
    */
   Envelope_divide_and_conquer_2 (const Traits_2* _traits) :
-    traits (_traits),
     own_traits(false),
     env_type(LOWER)
-  {}
+  {
+    traits = static_cast<const Traits_adaptor_2*> (_traits);
+  }
 
   /*!
    * Destructor.
@@ -103,13 +106,12 @@ public:
    * Construct the lower (or upper) envelope to the given range of curves.
    * \param begin An iterator pointing at the beginning of the curves range. 
    * \param end A past-the-end iterator for the curves range.
-   * \param type The envelope type (LOWER or UPPER).
+   * \param type The envelope type (true for lower, false of upper).
    * \param diagram Output: The minimization (or maximization) diagram.
    */
   template <class CurvesIterator>
-  void insert_curves (const CurvesIterator& begin,
-                      const CurvesIterator& end,
-                      const Envelope_type& type,
+  void insert_curves (CurvesIterator begin, CurvesIterator end,
+                      bool type,
                       Envelope_diagram_1& diagram)
   {
     // Subdivide the curves into x-monotone subcurves.
@@ -127,7 +129,7 @@ public:
 
       for (obj_it = objects.begin(); obj_it != objects.end(); ++obj_it)
       {
-        if(CGAL::assign (xcv, *obj_itr))
+        if(CGAL::assign (xcv, *obj_it))
           x_curves.push_back (xcv);
       }
     }
@@ -144,17 +146,16 @@ public:
    * x-monotone curves.
    * \param begin An iterator pointing at the beginning of the curves range. 
    * \param end A past-the-end iterator for the curves range.
-   * \param type The envelope type (LOWER or UPPER).
+   * \param type The envelope type (true for lower, false for upper).
    * \param diagram Output: The minimization (or maximization) diagram.
    */
   template <class XCurvesIterator>
-  void insert_x_monotone_curves (const XCurvesIterator& begin,
-                                 const XCurvesIterator& end,
-                                 const Envelope_type& type,
+  void insert_x_monotone_curves (XCurvesIterator begin, XCurvesIterator end,
+                                 bool type,
                                  Envelope_diagram_1& diagram)
   {
     // Set the envelope type.
-    env_type = type;
+    env_type = (type ? LOWER : UPPER);
 
     // Separate the regular curves from the vertical ones.
     typename Traits_2::Is_vertical_2  is_vertical = 
@@ -286,7 +287,7 @@ protected:
    * \return A handle for the vertex.
    */
   Vertex_handle _append_vertex (Envelope_diagram_1& diag,
-                                const Point_2& p, Edge_handle e);
+                                const Point_2& p, Edge_const_handle e);
 
   /*! \struct
    * A functor used to sort vertical segments by their x-coordinate.
@@ -301,12 +302,13 @@ protected:
       traits(_traits)
     {}
 
-    bool operator() (const M_curve_2 *mcv1, const M_curve_2 *mcv2) const
+    bool operator() (const X_monotone_curve_2& cv1,
+                     const X_monotone_curve_2& cv2) const
     {
-      /* RWRW!
-      return (traits->compare_x_2_object() (traits->construct_min_vertex_2_object()(mcv1->xcv),
-              traits->construct_min_vertex_2_object()(mcv1->xcv)) == SMALLER);
-      */
+      return (traits->compare_x_2_object() 
+              (traits->construct_min_vertex_2_object()(cv1),
+               traits->construct_min_vertex_2_object()(cv2)) == SMALLER);
+      
       return (true);
     }
   };

@@ -139,6 +139,16 @@ public:
       return;
     }
 
+    /*! Associate a range of new curves with the vertex. */
+    void add_curves (Curve_const_iterator begin, Curve_const_iterator end)
+    {
+      Curve_const_iterator  iter;
+
+      for (iter = begin; iter != end; ++iter)
+        _cvs.push_back (*iter);
+      return;
+    }
+
     /*! Set the left edge. */
     void set_left (Edge* e)
     {
@@ -383,7 +393,7 @@ public:
   }
 
   /*! Create a new vertex. */
-  Vertex* new_vertex (const Point_2& p)
+  Vertex_handle new_vertex (const Point_2& p)
   {
     Vertex     *v = vertex_alloc.allocate (1);
 
@@ -392,16 +402,16 @@ public:
   }
 
   /*! Create a new edge. */
-  Vertex* new_edge ()
+  Edge_handle new_edge ()
   {
-    Vertex     *e = edge_alloc.allocate (1);
+    Edge     *e = edge_alloc.allocate (1);
 
     edge_alloc.construct (e, Edge());
     return (e);
   }
    
   /*! Delete an existing vertex. */
-  void delete_vertex (Vertex * v)
+  void delete_vertex (Vertex_handle v)
   {
     vertex_alloc.destroy (v);
     vertex_alloc.deallocate (v, 1);
@@ -410,7 +420,7 @@ public:
   }
   
   /*! Delete an existing edge. */
-  void delete_edge (Edge * e)
+  void delete_edge (Edge_handle e)
   {
     edge_alloc.destroy (e);
     edge_alloc.deallocate (e, 1);
@@ -425,8 +435,8 @@ private:
    */
   void _free ()
   {
-    Vertex   *v = _leftmostP;
-    Edge     *e;
+    Vertex   *v;
+    Edge     *e = _leftmostP;
 
     while (e != NULL)
     {

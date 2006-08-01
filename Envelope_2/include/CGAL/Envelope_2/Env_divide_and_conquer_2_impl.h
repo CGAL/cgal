@@ -49,7 +49,7 @@ _construct_envelope_non_vertical (Curve_pointer_iterator begin,
   if (iter == end)
   {
     // Construct a singleton diagram, which matches a single curve.
-    _construct_singleton_digram (*begin, out_d);
+    _construct_singleton_diagram (*(*begin), out_d);
   }
   else
   {
@@ -112,7 +112,7 @@ _construct_singleton_diagram (const X_monotone_curve_2& cv,
     
     Vertex_handle  v = 
       out_d.new_vertex (traits->construct_max_vertex_2_object() (cv));
-    Edge_hanfle    e_right = out_d.new_edge();
+    Edge_handle    e_right = out_d.new_edge();
     
     v->add_curve (cv);
     v->set_left (out_d.leftmost());
@@ -137,7 +137,7 @@ _construct_singleton_diagram (const X_monotone_curve_2& cv,
     
     Vertex_handle  v = 
       out_d.new_vertex (traits->construct_min_vertex_2_object() (cv));
-    Edge_hanfle    e_left = out_d.new_edge();
+    Edge_handle    e_left = out_d.new_edge();
     
     v->add_curve (cv);
     v->set_left (e_left);
@@ -203,8 +203,10 @@ _merge_envelopes (const Envelope_diagram_1& d1,
                   Envelope_diagram_1& out_d)
 {
   Edge_const_handle    e1 = d1.leftmost();
+  bool                 is_leftmost1 = true;
   Vertex_const_handle  v1;
   Edge_const_handle    e2 = d2.leftmost();
+  bool                 is_leftmost2 = true;
   Vertex_const_handle  v2;
   Vertex_const_handle  next_v;
   bool                 next_exists = true;
@@ -252,7 +254,8 @@ _merge_envelopes (const Envelope_diagram_1& d1,
     if (! e1->is_empty() && ! e2->is_empty())
     {
       // Both edges are not empty, and there are curves defined on them.
-      _merge_two_intervals (e1, e2,
+      _merge_two_intervals (e1, is_leftmost1,
+                            e2, is_leftmost2,
                             next_v, next_exists,
                             (res_v == SMALLER) ? 1 : 2,
                             out_d);
@@ -262,7 +265,7 @@ _merge_envelopes (const Envelope_diagram_1& d1,
       // e1 is not empty but e2 is empty:
       _merge_single_interval (e1,
                               next_v, next_exists,
-                              (res == SMALLER),
+                              (res_v == SMALLER),
                               out_d);
     }
     else if (e1->is_empty() && ! e2->is_empty())
@@ -270,14 +273,17 @@ _merge_envelopes (const Envelope_diagram_1& d1,
       // e1 is empty and e2 is not empty:
       _merge_single_interval (e2,
                               next_v, next_exists,
-                              (res != SMALLER),
+                              (res_v != SMALLER),
                               out_d);
     }
     else
     {
       // Both edges are empty: append an empty edge to out_d:
       if (next_exists)
-        _append_vertex (out_d, next_v, e1);
+      {
+        Vertex_handle  new_v = _append_vertex (out_d, next_v->point(), e1);
+        new_v->add_curves (next_v->curves_begin(), next_v->curves_end());
+      }
     }
     
     // Proceed to the next diagram edge(s), if possible.
@@ -287,19 +293,32 @@ _merge_envelopes (const Envelope_diagram_1& d1,
       if (res_v == SMALLER)
       {
         e1 = v1->right();
+        is_leftmost1 = false;
+
         if (same_x)
+        {
           e2 = v2->right();
+          is_leftmost2 = false;
+        }
       }
       else if (res_v == LARGER)
       {
         e2 = v2->right();
+        is_leftmost2 = false;
+
         if (same_x)
+        {
           e1 = v1->right();
+          is_leftmost1 = false;
+        }
       }
       else
       {
         e1 = v1->right();
+        is_leftmost1 = false;
+                
         e2 = v2->right();
+        is_leftmost2 = false;
       }
     }
     
@@ -360,7 +379,7 @@ _merge_single_interval (Edge_const_handle e,
   {
     // The non-empty edge e is unbounded from the right, so we simply have
     // to update the rightmost edge in out_d.
-    out_d->rightmost()->add_curves (e->curves_begin(), e->curves_end());
+    out_d.rightmost()->add_curves (e->curves_begin(), e->curves_end());
     return;
   }
   
@@ -419,8 +438,8 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
     if (is_leftmost2)
     {
       // Both curves are defined at -oo: compare them there:
-      u_res = traits->compare_y_at_x_2_object() (e1->curve(), MIN_END,
-                                                 e2->curve(), MIN_END);
+      u_res = traits->compare_y_at_x_2_object() (e1->curve(), e2->curve(),
+                                                 MIN_END);
     }
     else
     {
@@ -439,10 +458,9 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
   else
   {
     // Find the rightmost of the two left endpoints and compare there.
-    const Comparison_result  res;
-    
-    res = traits->compare_xy_2_object() (e1->left()->point(),
-                                         e2->left()->point());
+    const Comparison_result  res = 
+      traits->compare_xy_2_object() (e1->left()->point(),
+                                     e2->left()->point());
     
     if (res == SMALLER)
     {
@@ -486,10 +504,10 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
     u_res = CGAL::opposite (u_res);
   
   // Use the current rightmost of the diagram as a reference point.
-  const bool         v_rm_exist = (out_d.leftmost() != out_d.rightmost());
+  bool               v_rm_exists = (out_d.leftmost() != out_d.rightmost());
   Vertex_handle      v_rm;
 
-  if (v_rm_exist)
+  if (v_rm_exists)
     v_rm = out_d.rightmost()->left();
 
   // Find the next intersection of the envelopes to the right of the current
@@ -499,12 +517,14 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
   X_monotone_curve_2                icv;
   std::pair<Point_2, unsigned int>  ipt;
   
-  traits->intersect_2_object()(cv1, cv2, std::back_inserter(objects));
+  traits->intersect_2_object() (e1->curve(), e2->curve(),
+                                std::back_inserter(objects));
   
   while (! objects.empty())
   {
     // Pop the xy-lexicographically smallest intersection object.
-    obj = objects.pop_first();
+    obj = objects.front();
+    objects.pop_front();
     
     if (CGAL::assign(ipt, obj))
     {
@@ -707,16 +727,16 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
     return;
   }
   
-  if (! v_exist)
+  if (! v_exists)
   {
     // Both edges are unbounded from the right, so we simply have
     // to update the rightmost edge in out_d.
     CGAL_assertion (u_res != EQUAL);
     
     if (u_res == SMALLER)
-      out_d->rightmost()->add_curves (e1->curves_begin(), e1->curves_end());
+      out_d.rightmost()->add_curves (e1->curves_begin(), e1->curves_end());
     else
-      out_d->rightmost()->add_curves (e2->curves_begin(), e2->curves_end());
+      out_d.rightmost()->add_curves (e2->curves_begin(), e2->curves_end());
     
     return;
   }
@@ -725,10 +745,10 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
   CGAL_assertion (u_res != EQUAL);
   
   if (u_res == SMALLER)
-  {
-    Vertex_handle        new_v;
-    
+  {    
     // The final part of the interval is taken from e1.
+    Vertex_handle        new_v;
+
     if (org_v == 1)
     {
       // In case v is also from e1, append it to the merged diagram.
@@ -739,8 +759,9 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
     {
       // If v is from e2, check if it below (or above, in case of an upper
       // envelope) cv1 to insert it.
-      res = traits->compare_y_at_x_2_object() (v->point(),
-                                               e1->curve());
+      const Comparison_result  res = 
+        traits->compare_y_at_x_2_object() (v->point(),
+                                           e1->curve());
       
       if (res == EQUAL ||
           (env_type == LOWER && res == SMALLER) ||
@@ -757,6 +778,8 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
   else
   {
     // The final part of the interval is taken from e2.
+    Vertex_handle        new_v;
+
     if (org_v == 2)
     {
       // In case v is also from e2, append it to the merged diagram.
@@ -767,8 +790,9 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
     {
       // If v is from e1, check if it below (or above, in case of an upper
       // envelope) cv2 to insert it.
-      res = traits->compare_y_at_x_2_object() (v->point(),
-                                               e2->curve());
+      const Comparison_result  res = 
+        traits->compare_y_at_x_2_object() (v->point(),
+                                           e2->curve());
       
       if (res == EQUAL ||
           (env_type == LOWER && res == SMALLER) ||
@@ -793,7 +817,7 @@ template <class Traits, class Diagram>
 typename Envelope_divide_and_conquer_2<Traits,Diagram>::Vertex_handle
 Envelope_divide_and_conquer_2<Traits,Diagram>::_append_vertex
         (Envelope_diagram_1& diag,
-         const Point_2& p, Edge_handle e)
+         const Point_2& p, Edge_const_handle e)
 {
   // Create the new vertex and the new edge.
   Vertex_handle   new_v = diag.new_vertex (p);
@@ -819,7 +843,7 @@ Envelope_divide_and_conquer_2<Traits,Diagram>::_append_vertex
   {
     // The diagram is empty: Make the new edge the leftmost.
     new_e->set_right (new_v);
-    diag->set_leftmost (new_e);
+    diag.set_leftmost (new_e);
     diag.rightmost()->set_left (new_v);      
   }
   

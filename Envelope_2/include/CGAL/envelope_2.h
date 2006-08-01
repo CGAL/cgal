@@ -31,23 +31,22 @@ CGAL_BEGIN_NAMESPACE
 
 /*!
  * Compute the lower envelope of a range of curves.
- * \param traits A traits class instance.
  * \param begin An iterator for the first curve.
  * \param end A past-the-end iterator for the curves.
  * \param diag Output: The minimization diagram.
  * \pre The value-type of the iterator is Traits::Curve_2.
  */
-template <class Traits, class InputIterator, class EnvelopeDiagram>
-void lower_envelope_2 (Traits& traits,
-                       InputIterator begin, InputIterator end,
+template <class InputIterator, class EnvelopeDiagram>
+void lower_envelope_2 (InputIterator begin, InputIterator end,
                        EnvelopeDiagram& diag)
 {
-  typedef Envelope_divide_and_conquer_2<Traits, Diagram>   Envelope_2;
+  typedef typename EnvelopeDiagram::Traits_2                       Traits_2;
+  typedef Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram> Envelope_2;
 
-  Envelope_2      env (&traits);
+  Envelope_2      env;
 
   env.insert_curves (begin, end,
-                     typename Envelope_2::LOWER,
+                     true,         // Lower envelope.
                      diag);
 
   return;
@@ -55,23 +54,22 @@ void lower_envelope_2 (Traits& traits,
 
 /*!
  * Compute the upper envelope of a range of curves.
- * \param traits A traits class instance.
  * \param begin An iterator for the first curve.
  * \param end A past-the-end iterator for the curves.
  * \param diag Output: The maximization diagram.
  * \pre The value-type of the iterator is Traits::Curve_2.
  */
 template <class Traits, class InputIterator, class EnvelopeDiagram>
-void upper_envelope_2 (Traits& traits,
-                       InputIterator begin, InputIterator end,
+void upper_envelope_2 (InputIterator begin, InputIterator end,
                        EnvelopeDiagram& diag)
 {
-  typedef Envelope_divide_and_conquer_2<Traits, Diagram>   Envelope_2;
+  typedef typename EnvelopeDiagram::Traits_2                       Traits_2;
+  typedef Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram> Envelope_2;
 
-  Envelope_2      env (&traits);
+  Envelope_2      env;
 
   env.insert_curves (begin, end,
-                     typename Envelope_2::UPPER,
+                     false,         // Upper envelope.
                      diag);
 
   return;
@@ -79,23 +77,22 @@ void upper_envelope_2 (Traits& traits,
 
 /*!
  * Compute the lower envelope of a range of x-monotone curves.
- * \param traits A traits class instance.
  * \param begin An iterator for the first x-monotone curve.
  * \param end A past-the-end iterator for the x-monotone curves.
  * \param diag Output: The minimization diagram.
  * \pre The value-type of the iterator is Traits::X_monotone_curve_2.
  */
-template <class Traits, class InputIterator, class EnvelopeDiagram>
-void lower_envelope_x_monotone_2 (Traits& traits,
-                                  InputIterator begin, InputIterator end,
+template <class InputIterator, class EnvelopeDiagram>
+void lower_envelope_x_monotone_2 (InputIterator begin, InputIterator end,
                                   EnvelopeDiagram& diag)
 {
-  typedef Envelope_divide_and_conquer_2<Traits, Diagram>   Envelope_2;
+  typedef typename EnvelopeDiagram::Traits_2                       Traits_2;
+  typedef Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram> Envelope_2;
 
-  Envelope_2      env (&traits);
+  Envelope_2      env;
 
   env.insert_x_monotone_curves (begin, end,
-                                typename Envelope_2::LOWER,
+                                true,              // Lower envelope.
                                 diag);
 
   return;
@@ -103,23 +100,22 @@ void lower_envelope_x_monotone_2 (Traits& traits,
 
 /*!
  * Compute the upper envelope of a range of x-monotone curves.
- * \param traits A traits class instance.
  * \param begin An iterator for the first x-monotone curve.
  * \param end A past-the-end iterator for the x-monotone curves.
  * \param diag Output: The maximization diagram.
  * \pre The value-type of the iterator is Traits::X_monotone_curve_2.
  */
-template <class Traits, class InputIterator, class EnvelopeDiagram>
-void upper_envelope_x_monotone_2 (Traits& traits,
-                                  InputIterator begin, InputIterator end,
+template <class InputIterator, class EnvelopeDiagram>
+void upper_envelope_x_monotone_2 (InputIterator begin, InputIterator end,
                                   EnvelopeDiagram& diag)
 {
-  typedef Envelope_divide_and_conquer_2<Traits, Diagram>   Envelope_2;
+  typedef typename EnvelopeDiagram::Traits_2                       Traits_2;
+  typedef Envelope_divide_and_conquer_2<Traits_2, EnvelopeDiagram> Envelope_2;
 
-  Envelope_2      env (&traits);
+  Envelope_2      env;
 
   env.insert_x_monotone_curves (begin, end,
-                                typename Envelope_2::UPPER,
+                                false,          // Upper envelope.
                                 diag);
 
   return;
