@@ -27,7 +27,7 @@
 #include <CGAL/Object.h>
 #include <CGAL/enum.h>
 #include <CGAL/Arr_observer.h>
-#include <CGAL/Overlay_2.h>
+#include <CGAL/Envelope_3/Env_overlay_2.h>
 #include <CGAL/Envelope_3/Envelope_element_visitor_3.h>
 #include <CGAL/Envelope_3/No_vertical_decomposition_2.h>
 #include <CGAL/Envelope_3/set_dividors.h>

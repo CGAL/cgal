@@ -82,7 +82,23 @@ public:
   {
     m_decision = dec;
   }
-  
+
+  /*! User-friendly interface: */
+  size_t number_of_surfaces () const
+  {
+    return (m_data.size());
+  }
+
+  Data_const_iterator surfaces_begin () const
+  {
+    return (m_data.begin());
+  }
+
+  Data_const_iterator surfaces_end () const
+  {
+    return (m_data.end());
+  }
+
   /*!
    * Get the number of data objects associated with the face.
    */

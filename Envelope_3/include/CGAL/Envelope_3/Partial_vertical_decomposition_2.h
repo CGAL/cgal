@@ -20,15 +20,12 @@
 #ifndef CGAL_PARTIAL_VERTICAL_DECOMPOSITION_2_H
 #define CGAL_PARTIAL_VERTICAL_DECOMPOSITION_2_H
 
-//#define CGAL_DEBUG_PARTIAL_VD
-
 #include <CGAL/Basic_sweep_line_2.h>
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
-#include <CGAL/Partial_vd_visitor.h>
-#include <CGAL/Partial_vd_meta_traits.h>
+#include <CGAL/Envelope_3/Partial_vd_visitor.h>
+#include <CGAL/Envelope_3/Partial_vd_meta_traits.h>
 #include <CGAL/Unique_hash_map.h>
-#include <CGAL/Timer.h>
 #include <vector>
 #include <iostream>
 
@@ -84,19 +81,7 @@ public:
 
   // Do a partial vertical decomposition on existing arrangement "arr"
   void operator()(Arrangement& arr)
-  {
-    #ifdef CGAL_DEBUG_PARTIAL_VD  
-      cout << "before partial vd: print edges of arr" << endl;
-      for(Halfedge_const_iterator hi = arr.halfedges_begin();
-          hi != arr.halfedges_end(); ++hi, ++hi)
-          cout << hi->curve() << endl;
-      cout << "before partial vd: print isolated vertices of arr" << endl;
-      for(Vertex_const_iterator vi = arr.vertices_begin();
-          vi != arr.vertices_end(); ++vi)
-          if (vi->is_isolated())
-            cout << vi->point() << endl;
-    #endif
-    
+  {    
     // Go over all arrangement edges.
     std::vector<X_monotone_curve_2>  xcurves_vec;
     xcurves_vec.resize(arr.number_of_edges());
@@ -131,22 +116,14 @@ public:
     Visitor     visitor (arr, std::back_inserter(vd_pairs));
     Sweep_line  sweep_line (&visitor);
 
-    sweep_timer.start();
     sweep_line.sweep(xcurves_vec.begin(),
   		               xcurves_vec.end(),
                      iso_points.begin(),
                      iso_points.end());
-    sweep_timer.stop();
 
-    add_timer.start();
     _add_vertical_edges(arr, vd_pairs);
-    add_timer.stop();
-    
-    #ifdef CGAL_DEBUG_PARTIAL_VD
-      std::cout << "finish partial vd" << std::endl;
-      print_times();
-    #endif
   }
+
 protected:
   // add the vertical edges (that were determined by the sweep) to the
   // arrangement
@@ -184,20 +161,10 @@ protected:
       {
         if (should_add_vertical_edge(arr.non_const_handle(v1), arr.non_const_handle(v2)))
         {
-          #ifdef CGAL_DEBUG_PARTIAL_VD
-            std::cout << "got vertex-vertex pair: " << v1->point()
-                      << " and " << v2->point() << std::endl;
-          #endif
-          insert_timer.start();
-          #ifdef CGAL_DEBUG_PARTIAL_VD
-            std::cout << "before insert at vertices: " << v1->point() << " , "
-                      << v2->point() << std::endl;
-          #endif
           arr.insert_at_vertices(
                arr.get_traits()->construct_vertical_2_object()(v1->point(), v2->point()),
                arr.non_const_handle(v1),
                arr.non_const_handle(v2));
-          insert_timer.stop();
         }
         continue;
       }
@@ -223,10 +190,6 @@ protected:
       if (!should_add_vertical_edge(v, orig_split_he))
         continue;
         
-      #ifdef CGAL_DEBUG_PARTIAL_VD
-        std::cout << "got vertex-halfedge pair: " << v->point()
-                  << " and " << orig_split_he->curve() << std::endl;
-      #endif      
       // split split_he and connect the split point with v
       if (map_orig_to_rightmost.is_defined(orig_split_he))
         // we should split the rightmost halfedge instead
@@ -247,10 +210,6 @@ protected:
         split_p = arr.get_traits()->vertical_ray_shoot_2
                                          (v->point(), split_he->curve());
         Base_X_monotone_curve_2 a,b;
-        #ifdef CGAL_DEBUG_PARTIAL_VD
-          std::cout << "before edge_split, curve=" << split_he->curve()
-                    << std::endl << " point= " << split_p << std::endl;
-        #endif
         arr.get_traits()->split_2_object()(split_he->curve(), split_p, a, b);
         split_he = arr.split_edge(split_he, a, b);
         // split always returns the halfedge with source =  original source
@@ -265,17 +224,10 @@ protected:
       prev_split_v = split_v;                                   
 
       // insert the vertical edge
-      insert_timer.start();
-      #ifdef CGAL_DEBUG_PARTIAL_VD
-        std::cout << "before insert at vertices: " << v->point() << " , "
-                  << split_p << std::endl;
-      #endif
       arr.insert_at_vertices(
             arr.get_traits()->construct_vertical_2_object()(v->point(), split_p),
             v,
             split_v);
-      insert_timer.stop();
-//      insert_x_monotone(arr, Base_X_monotone_curve_2(v->point(), split_p));   
     }
     vd_pairs.clear();
   }
@@ -283,25 +235,12 @@ protected:
   bool should_add_vertical_edge(Vertex_handle v1, Vertex_handle v2)
   {
     return true;
-//    return (!v1->get_is_intersection() || !v2->get_is_intersection());
   }
+
   bool should_add_vertical_edge(Vertex_handle v, Halfedge_handle he)
   {
     return true;
-//    return (!v->get_is_intersection());
   }
-  void print_times()
-  {
-      std::cout << "Partial vd times: " << std::endl;
-      std::cout << "sweep: " << sweep_timer.time() << " seconds" << std::endl;
-      std::cout << "add vertical edges: " << add_timer.time() << " seconds" << std::endl;
-      std::cout << "insert edges: " << insert_timer.time() << " seconds" << std::endl;
-  }
-
-protected:
-  mutable Timer sweep_timer;
-  mutable Timer add_timer;
-  mutable Timer insert_timer;
 
 };
 

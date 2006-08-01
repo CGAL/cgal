@@ -24,9 +24,6 @@
 #include <CGAL/Object.h>
 #include <utility>
 
-#include <iostream>
-
-
 CGAL_BEGIN_NAMESPACE
 
 template< class Traits_, class Arrangement_, class OutputIterator>
@@ -66,9 +63,6 @@ public:
   //(above_on_event is true iff 'above' subcurve is on the event
   bool after_handle_event(Event* event, SL_iterator above, bool above_on_event)
   {
-    #ifdef CGAL_DEBUG_PARTIAL_VD
-      std::cout << "in after_handle_event " << event->get_point() << std::endl;
-    #endif
     // we should never have above_on_event = true since we sweep an existing
     // arrangement
     CGAL_assertion(!above_on_event);
@@ -105,20 +99,11 @@ public:
       {
         // should change the previous pair - is sees the current event point
         // instead of the previous above curve
-        #ifdef CGAL_DEBUG_PARTIAL_VD
-          std::cout << "found a point pair: " << m_last_event->get_point()
-                    << " and " << event->get_point() << std::endl;
-        #endif
         Vertex_const_handle pvh = m_last_event->get_point().get_vertex_handle();
         if (event_should_shoot_down || m_last_should_shoot_up)
-          *m_out++ = std::make_pair(CGAL::make_object(pvh), CGAL::make_object(vh));
-        else
-        {
-          #ifdef CGAL_DEBUG_PARTIAL_VD
-            std::cout << "point pair doesn't follow partial vd rules" 
-                      << std::endl;
-          #endif
-        }
+          *m_out++ = std::make_pair(CGAL::make_object(pvh), 
+                                    CGAL::make_object(vh));
+
         previous_event_see_current = true;
       }
       else
@@ -126,23 +111,13 @@ public:
         // keep the previous pair, if existed
         if (m_last_above != NULL)
         {
-          #ifdef CGAL_DEBUG_PARTIAL_VD
-            std::cout << "found a pair: " << m_last_event->get_point()
-                      << " and " << m_last_above->get_last_curve() << std::endl;
-          #endif
           Halfedge_const_handle phe = m_last_above->get_last_curve().get_halfedge_handle();
           Vertex_const_handle pvh = m_last_event->get_point().get_vertex_handle();
           CGAL_assertion(m_arr.get_traits()->equal_2_object()(m_last_event->get_point(),
                                                             pvh->point()));
           if (m_last_should_shoot_up)
-            *m_out++ = std::make_pair(CGAL::make_object(pvh), CGAL::make_object(phe));
-          else
-          {
-            #ifdef CGAL_DEBUG_PARTIAL_VD
-              std::cout << "pair doesn't follow partial vd rules"
-                        << std::endl;
-            #endif
-          }
+            *m_out++ = std::make_pair(CGAL::make_object(pvh), 
+                                      CGAL::make_object(phe));
         }
       }
     }
@@ -182,10 +157,6 @@ public:
           // the status line
           // it is also not an endpoint, since in this case, we would have
           // previous_event_see_current = true
-          #ifdef CGAL_DEBUG_PARTIAL_VD
-            std::cout << "found a pair: " << event->get_point()
-                      << " and " << (*below)->get_last_curve() << std::endl;
-          #endif
           CGAL_assertion(m_arr.get_traits()->equal_2_object()(event->get_point(),
                                                               vh->point()));
 
@@ -199,13 +170,6 @@ public:
           Halfedge_const_handle he = (*below)->get_last_curve().get_halfedge_handle();
           if (event_should_shoot_down)
             *m_out++ = std::make_pair(CGAL::make_object(vh), CGAL::make_object(he));
-          else
-          {
-            #ifdef CGAL_DEBUG_PARTIAL_VD
-              std::cout << "pair doesn't follow partial vd rules"
-                        << std::endl;
-            #endif
-          }
         }
       }
     }

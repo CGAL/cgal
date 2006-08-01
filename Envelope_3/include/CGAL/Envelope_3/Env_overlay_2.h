@@ -21,11 +21,9 @@
 #define ENVELOPE_OVERLAY_2_H
 
 #include <CGAL/Arr_overlay.h>
-#include <CGAL/Envelope_overlay_functor.h>
+#include <CGAL/Envelope_3/Envelope_overlay_functor.h>
 
 #include <iostream>
-
-//#define CGAL_DEBUG_ENVELOPE_OVERLAY_2
 
 CGAL_BEGIN_NAMESPACE
 
@@ -56,54 +54,16 @@ public:
                   Minimization_diagram_2& md2,
                   Minimization_diagram_2& result)
   {
-    #ifdef CGAL_DEBUG_ENVELOPE_OVERLAY_2
-      cout << "In overlay: print edges of md1" << endl;
-      for(Halfedge_iterator hi = md1.halfedges_begin();
-          hi != md1.halfedges_end(); ++hi, ++hi)
-          cout << hi->curve() << endl;
-      cout << "In overlay: print isolated vertices of md1" << endl;
-      for(Vertex_iterator vi = md1.vertices_begin();
-          vi != md1.vertices_end(); ++vi)
-          if (vi->is_isolated())
-            cout << vi->point() << endl;
-      cout << "In overlay: print edges of md2" << endl;
-      for(Halfedge_iterator hi = md2.halfedges_begin();
-          hi != md2.halfedges_end(); ++hi, ++hi)
-          cout << hi->curve() << endl;
-      cout << "In overlay: print isolated vertices of md2" << endl;
-      for(Vertex_iterator vi = md2.vertices_begin();
-          vi != md2.vertices_end(); ++vi)
-          if (vi->is_isolated())
-            cout << vi->point() << endl;
-      cout << "In overlay: print faces of md1" << endl;
-      print_faces(md1);
-      cout << "In overlay: print faces of md2" << endl;
-      print_faces(md2);
-
-    #endif
-
     Overlay_functor overlay_func(md1, md2, result);
     overlay(md1, md2, result, overlay_func);
-    
-    #ifdef CGAL_DEBUG_ENVELOPE_OVERLAY_2
-      cout << endl;
-      cout << "In overlay: print faces at the end" << endl;
-      print_faces(result);
-    #endif
-
-    #ifdef CGAL_DEBUG_ENVELOPE_OVERLAY_2
-      cout << "In overlay: print vertices at the end" << endl;
-      print_vertices(result);
-
-      cout << "In overlay: print edges at the end" << endl;
-      print_edges(result);
-    #endif
-    
+        
     post_test_assertions(result);
   }
 
 
 public:
+  
+  /*
   void print_face(Face_handle fh)
   {
     std::cout << (fh->is_unbounded() ? "unbounded" : "bounded");
@@ -207,6 +167,7 @@ public:
     }
     std::cout << std::endl;
   }
+  */
 
   void post_test_assertions(Minimization_diagram_2& md)
   {
