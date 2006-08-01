@@ -22,33 +22,28 @@
  * \endlink
  */
 
-#ifndef ENVELOPE_TRIANGLES_TRAITS_3_H
-#define ENVELOPE_TRIANGLES_TRAITS_3_H
+#ifndef CGAL_ENV_TRIANGLE_TRAITS_3_H
+#define CGAL_ENV_TRIANGLE_TRAITS_3_H
 
 #include <CGAL/Handle_for.h>
 #include <CGAL/Object.h>
 #include <CGAL/enum.h>
 #include <CGAL/Bbox_3.h>
-#include <CGAL/Timer.h>
-#include <CGAL/Envelope_base.h>
 #include <CGAL/Arr_segment_traits_2.h>
+#include <CGAL/Envelope_3/Envelope_base.h>
 
 #include <vector>
-
-//#define CGAL_DEBUG_ENVELOPE_3_TRIANGLES_TRAITS
-
-//#define PRINT_TRAINGLES_INTERSECTION_STATS
 
 // this cache doesn't help much
 #define CGAL_ENV_TRIANGLES_TRAITS_CACHE_POINT_ON
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Kernel_> class Envelope_triangle_3;
+template <class Kernel_> class Env_triangle_3;
 
 // this traits class supports both triagles and segments in 3d
 template <class Kernel_>
-class Envelope_triangles_traits_3 : public Arr_segment_traits_2<Kernel_>
+class Env_triangle_traits_3 : public Arr_segment_traits_2<Kernel_>
 {
 public:
   typedef Arr_segment_traits_2<Kernel_>             Traits_2;
@@ -57,7 +52,7 @@ public:
   typedef typename Traits_2::X_monotone_curve_2     X_monotone_curve_2;
 
   typedef Kernel_                                   Kernel;
-  typedef Envelope_triangles_traits_3<Kernel>       Self;
+  typedef Env_triangle_traits_3<Kernel>             Self;
 
   typedef typename Kernel::Point_3                  Point_3;
 
@@ -132,7 +127,9 @@ public:
       vertices[1] = p2;
       vertices[2] = p3;
 
-      pl = kernel.construct_plane_3_object()(vertices[0], vertices[1], vertices[2]);
+      pl = kernel.construct_plane_3_object()(vertices[0],
+                                             vertices[1],
+                                             vertices[2]);
       Self self;
       is_vert = kernel.collinear_2_object()(self.project(vertices[0]),
                                             self.project(vertices[1]),
@@ -146,7 +143,8 @@ public:
      * \param p1 The first point.
      * \param p2 The second point.
      * \param p3 The third point.
-     * \pre The 3 endpoints are not the collinear and all lie on the given plane.
+     * \pre The 3 endpoints are not the collinear and all lie on the given
+     *      plane.
      */
     _Triangle_cached_3(const Plane_3& supp_plane,
                        const Point_3 &p1,
@@ -288,7 +286,8 @@ public:
     }
 
     /*!
-     * Check if the surface is xy-monotone (false, if it is a vertical triangle)
+     * Check if the surface is xy-monotone (false, if it is a vertical
+     * triangle)
      */
     bool is_xy_monotone() const
     {
@@ -297,9 +296,10 @@ public:
   };
 
 public:
+
   // types for EnvelopeTraits_3 concept
   //! type of xy-monotone surfaces
-  typedef Envelope_triangle_3<Kernel>               Xy_monotone_surface_3;
+  typedef Env_triangle_3<Kernel>                    Xy_monotone_surface_3;
   //! type of surfaces
   typedef Xy_monotone_surface_3                     Surface_3;
 
@@ -341,7 +341,8 @@ protected:
       {
         // Compare the pairs of IDs lexicographically.
         return (sp1.first < sp2.first ||
-                (sp1.first == sp2.first && Kernel().less_xy_2_object()(sp1.second,sp2.second)));
+                (sp1.first == sp2.first && 
+                 Kernel().less_xy_2_object()(sp1.second,sp2.second)));
       }
     };
     typedef std::map<Surface_point_pair, Point_3,
@@ -375,18 +376,11 @@ public:
     template <class OutputIterator>
     OutputIterator operator()(const Surface_3& s, OutputIterator o) const
     {
-      #ifdef CGAL_BENCH_ENVELOPE_DAC
-        parent->total_timer.start();
-      #endif
       // a non-vertical triangle is already xy-monotone
       if (!s.is_vertical())
         *o++ = s;
       else
-      {
-        #ifdef CGAL_DEBUG_ENVELOPE_3_TRIANGLES_TRAITS
-          std::cout << "vertical triangle: " << s << std::endl;
-        #endif
-        
+      {        
         // split a vertical triangle into one or two segments
         const Point_3 &a1 = s.vertex(0),
                        a2 = s.vertex(1),
@@ -422,14 +416,12 @@ public:
         }
 
       }
-      #ifdef CGAL_BENCH_ENVELOPE_DAC
-        parent->total_timer.stop();
-      #endif
       return o;
     }
   protected:
     // find the envelope point among the two points with same xy coordinates
-    const Point_3& find_envelope_point(const Point_3& p1, const Point_3& p2) const
+    const Point_3& find_envelope_point (const Point_3& p1,
+                                        const Point_3& p2) const
     {
       CGAL_precondition(p1.x() == p2.x() && p1.y() == p2.y());
       Kernel k;
@@ -446,20 +438,16 @@ public:
     // which segment(s) is(are) the envelope of this triangle
     // "plane" is the vertical plane on which the triangle lies
     template <class OutputIterator>
-    OutputIterator find_envelope_segments(const Point_3& p1, const Point_3& p2,
-                                          const Point_3& p3, const Plane_3& plane,
+    OutputIterator find_envelope_segments(const Point_3& p1,
+                                          const Point_3& p2,
+                                          const Point_3& p3,
+                                          const Plane_3& plane,
                                           OutputIterator o) const
     {
       // our vertical plane is a*x + b*y + d = 0
       FT a = plane.a(), b = plane.b();
       CGAL_precondition(plane.c() == 0);
 
-      #ifdef CGAL_DEBUG_ENVELOPE_3_TRIANGLES_TRAITS
-        std::cout << "find_envelope_segments: plane is " << plane << std::endl
-                  << "points are: " << p1 << " , " << p2 << " , " << p3
-                  << std::endl;
-      #endif
-      
       // if the plane was parallel to the yz-plane (i.e x = const),
       // then it was enough to use the y,z coordinates as in the 2-dimensional
       // case, to find whether a 2d point lies below/above/on a line
@@ -468,26 +456,29 @@ public:
       // abd comparing to 0, where pi = (xi, yi, zi), and p2 is compared to the
       // line formed by p1 and p3 (in the direction p1 -> p3)
       //
- 	    // for general vertical plane, we change (x, y) coordinates to (v, w),
+      // for general vertical plane, we change (x, y) coordinates to (v, w),
       // (keeping the z-coordinate as is)
- 	    // so the plane is parallel to the wz-plane in the new coordinates
- 	    // (i.e v = const).
- 	    //
- 	    // ( v )  =  A ( x )    where A = (  a  b )
- 	    //   w           y                  -b  a
- 	    //
- 	    // so v =  a*x + b*y
- 	    //    w = -b*x + a*y
- 	    //
- 	    // Putting the new points coordinates in equation (1) we get:
+      // so the plane is parallel to the wz-plane in the new coordinates
+      // (i.e v = const).
+      //
+      // ( v )  =  A ( x )    where A = (  a  b )
+      //   w           y                  -b  a
+      //
+      // so v =  a*x + b*y
+      //    w = -b*x + a*y
+      //
+      // Putting the new points coordinates in equation (1) we get:
       //    (2)    (w3 - w1)(z2 - z1) - (z3 - z1)(w2 - w1) =
-      //           (-b*x3 + a*y3 + b*x1 - a*y1)(z2 - z1) - (z3 - z1)(-b*x2 + a*y2 + b*x1 - a*y1)
- 	    //
+      //           (-b*x3 + a*y3 + b*x1 - a*y1)(z2 - z1) - 
+      //                                 (z3 - z1)(-b*x2 + a*y2 + b*x1 - a*y1)
+      //
       FT w1 = a*p1.y() - b*p1.x(),
          w2 = a*p2.y() - b*p2.x(),
          w3 = a*p3.y() - b*p3.x();
       
-      Sign s1 = CGAL_NTS sign((w3 - w1)*(p2.z() - p1.z()) - (p3.z() - p1.z())*(w2 - w1));
+      Sign s1 = CGAL::sign((w3 - w1)*(p2.z() - p1.z()) - 
+                           (p3.z() - p1.z())*(w2 - w1));
+
       // the points should not be collinear
       CGAL_assertion(s1 != 0);
 
@@ -495,9 +486,6 @@ public:
       // the segment
       Sign s2 = CGAL_NTS sign(w3 - w1);
       Sign s = CGAL_NTS sign(s1 * s2);
-      #ifdef CGAL_DEBUG_ENVELOPE_3_TRIANGLES_TRAITS
-        std::cout << "find_envelope_segments: sign is " << s << std::endl;
-      #endif
                   
       bool use_one_segment = true;
       if ((parent->get_envelope_type() == LOWER && s == NEGATIVE) ||
@@ -506,20 +494,10 @@ public:
 
       if (use_one_segment)
       {
-        #ifdef CGAL_DEBUG_ENVELOPE_3_TRIANGLES_TRAITS
-          std::cout << "find_envelope_segments: found one segment "
-                    << Xy_monotone_surface_3(p1, p3) << std::endl;                    
-        #endif
         *o++ = Xy_monotone_surface_3(p1, p3);
       }
       else
       {
-        #ifdef CGAL_DEBUG_ENVELOPE_3_TRIANGLES_TRAITS
-          std::cout << "find_envelope_segments: found two segments "
-                    << Xy_monotone_surface_3(p1, p2) << " and "
-                    << std::endl
-                    << Xy_monotone_surface_3(p2, p3) << std::endl;
-        #endif
         *o++ = Xy_monotone_surface_3(p1, p2);
         *o++ = Xy_monotone_surface_3(p2, p3);
       }
@@ -560,11 +538,6 @@ public:
       // a segment
       CGAL_assertion(s.is_xy_monotone());
       
-      #ifdef CGAL_BENCH_ENVELOPE_DAC
-        parent->total_timer.start();
-        parent->pboundary_timer.start();
-      #endif
-
       if (!s.is_vertical())
       {
         // the projection is a triangle
@@ -592,10 +565,6 @@ public:
                 
         *o++ = Curve_2(b1, b2);
       }
-      #ifdef CGAL_BENCH_ENVELOPE_DAC
-        parent->total_timer.stop();
-        parent->pboundary_timer.stop();
-      #endif
       return o;
     }  
   };  
@@ -637,27 +606,15 @@ public:
     {
       CGAL_assertion(s1.is_xy_monotone() && s2.is_xy_monotone());
       
-      #ifdef CGAL_BENCH_ENVELOPE_DAC
-        parent->total_timer.start();
-        parent->intersection_timer.start();
-      #endif
       Kernel k;
       if (!parent->do_intersect(s1, s2))
       {
-        #ifdef CGAL_BENCH_ENVELOPE_DAC
-          parent->total_timer.stop();
-          parent->intersection_timer.stop();
-        #endif
         return o;
       }
         
       Object inter_obj = parent->intersection(s1,s2);
       if (inter_obj.is_empty())
       {
-        #ifdef CGAL_BENCH_ENVELOPE_DAC
-          parent->total_timer.stop();
-          parent->intersection_timer.stop();
-        #endif
         return o;
       }
 
@@ -681,10 +638,6 @@ public:
         }
       }
 
-      #ifdef CGAL_BENCH_ENVELOPE_DAC
-        parent->total_timer.stop();
-        parent->intersection_timer.stop();
-      #endif
       return o;
     }  
   };  
@@ -719,24 +672,7 @@ public:
     Comparison_result operator()(const Point_2& p,
                                  const Xy_monotone_surface_3& surf1,
                                  const Xy_monotone_surface_3& surf2) const
-    {
-      #ifdef CGAL_BENCH_ENVELOPE_DAC
-        bool use_timer = true;
-        if (parent->total_timer.is_running())
-          use_timer = false;
-
-        if (use_timer)
-        {
-          parent->total_timer.start();
-          parent->compare_timer.start();
-        }
-      #endif
-      
-      #ifdef CGAL_DEBUG_ENVELOPE_3_TRIANGLES_TRAITS
-        std::cout << "traits: point= " << p << " surf1= " << surf1 
-		  << " surf2= " << surf2 << std::endl;
-      #endif
-
+    {      
       // we compute the points on the planes, and then compare their z 
       // coordinates
       const Plane_3& plane1 = surf1.plane();
@@ -747,13 +683,6 @@ public:
       if ((plane1 == plane2 || plane1 == plane2.opposite()) &&
           !surf1.is_vertical())
       {
-        #ifdef CGAL_BENCH_ENVELOPE_DAC
-          if (use_timer)
-          {
-            parent->total_timer.stop();
-            parent->compare_timer.stop();
-          }
-        #endif
         return EQUAL;
       }
 
@@ -766,8 +695,6 @@ public:
         // first try the cache:
 
         typename Surface_point_cache::iterator  cache_iter;
-//        Surface_point_pair  r1(const_cast<Xy_monotone_surface_3>(surf1), p);
-//        Surface_point_pair  pair2(const_cast<Xy_monotone_surface_3>(surf2), p);
         Surface_point_pair                      spair1(surf1, p);
         Surface_point_pair                      spair2(surf2, p);
 
@@ -776,7 +703,6 @@ public:
         {
           ip1 = (*cache_iter).second;
           ip1_found = true;
-          (parent->cache_hits)++;
         }
 
         cache_iter = parent->point_on_cache.find(spair2);
@@ -784,16 +710,12 @@ public:
         {
           ip2 = (*cache_iter).second;
           ip2_found = true;
-          (parent->cache_hits)++;
         }
       #endif
       
       Kernel k;
       if (!ip1_found || !ip2_found)
       {
-        #ifdef CGAL_BENCH_ENVELOPE_DAC
-          parent->compute_z_at_xy_timer.start();
-        #endif
         // should calculate at least one point
 
         // Compute the intersetion between the vertical line and the given 
@@ -815,24 +737,8 @@ public:
             (parent->point_on_cache)[spair2] = ip2;
           #endif
         }
-        #ifdef CGAL_BENCH_ENVELOPE_DAC
-          parent->compute_z_at_xy_timer.stop();
-        #endif
       }
-
       
-      #ifdef CGAL_BENCH_ENVELOPE_DAC
-        if (use_timer)
-        {
-          parent->total_timer.stop();
-          parent->compare_timer.stop();
-        }
-      #endif
-      
-      #ifdef CGAL_DEBUG_ENVELOPE_3_TRIANGLES_TRAITS
-        std::cout << "in compare on point, compare the points " << ip1 << " and "
-                  << ip2 << std::endl;
-      #endif
       // the answer changes when we compute lower/upper envelope
       if (parent->get_envelope_type() == LOWER)
         return k.compare_z_3_object()(ip1, ip2);
@@ -849,19 +755,7 @@ public:
     Comparison_result operator()(const X_monotone_curve_2& cv,
                                  const Xy_monotone_surface_3& surf1,
                                  const Xy_monotone_surface_3& surf2) const
-    {
-      #ifdef CGAL_BENCH_ENVELOPE_DAC
-        bool use_timer = true;
-        if (parent->total_timer.is_running())
-          use_timer = false;
-
-        if (use_timer)
-        {
-          parent->total_timer.start();
-          parent->compare_on_cv_timer.start();
-        }
-      #endif
-      
+    {      
       // first try the endpoints, if cannot be sure, use the mid point
       Comparison_result res;
       res = parent->compare_distance_to_envelope_3_object()(cv.left(), 
@@ -879,13 +773,6 @@ public:
         }
       }
       
-      #ifdef CGAL_BENCH_ENVELOPE_DAC
-        if (use_timer)
-        {
-          parent->compare_on_cv_timer.stop();
-          parent->total_timer.stop();
-        }
-      #endif
       return res;
     }
   
@@ -929,15 +816,6 @@ public:
                const Xy_monotone_surface_3& surf1,
                const Xy_monotone_surface_3& surf2) const
     {
-      #ifdef CGAL_BENCH_ENVELOPE_DAC
-        parent->total_timer.start();
-        parent->compare_side_timer.start();
-      #endif
-
-      #ifdef CGAL_DEBUG_ENVELOPE_3_TRIANGLES_TRAITS
-        std::cout << "compare left from : " << cv << std::endl;
-      #endif
-
       // a vertical surface cannot be defined in the infinitesimal region above
       // a curve
       CGAL_precondition(!surf1.is_vertical());
@@ -953,17 +831,8 @@ public:
       
       if (parent->do_overlap(surf1, surf2))
       {
-        #ifdef CGAL_BENCH_ENVELOPE_DAC
-          parent->total_timer.stop();
-          parent->compare_side_timer.stop();
-        #endif
         return EQUAL;
       }
-
-      #ifdef CGAL_DEBUG_ENVELOPE_3_TRIANGLES_TRAITS
-        std::cout << "have the case where intersect over the curve" 
-		  << std::endl;
-      #endif
 
       // now we must have 2 different non-vertical planes:
  	    // plane1: a1*x + b1*y + c1*z + d1 = 0  , c1 != 0
@@ -982,49 +851,46 @@ public:
 
       // if the line was parallel to the y-axis (i.e x = const),
       // then it was enough to compare dz/dx of both planes
- 	    // for general line, we change coordinates to (v, w), preserving
- 	    // orientation, so the line is the w-axis in the new coordinates
- 	    // (i.e v = const).
- 	    //
- 	    // ( v )  =  A ( x )    where A = (  a3  b3 )
- 	    //   w           y                  -b3  a3
- 	    //
- 	    // so v =  a3*x + b3*y
- 	    //    w = -b3*x + a3*y
- 	    // preserving orientation since detA = a3^2 +b3^2 > 0
- 	    //
- 	    // We compute the planes equations in the new coordinates
- 	    // and compare dz/dv
- 	    //
- 	    // ( x )  =  A^(-1) ( v )    where A^(-1) = ( a3  -b3 ) * detA^(-1)
- 	    //   y                w                       b3   a3
- 	    // so x = (a3*v - b3*w)*(1/detA)
- 	    //    y = (b3*v + a3*w)*(1/detA)
- 	    // plane1 ==> (a1a3 + b1b3)v + (b1a3 - a1b3)w + (c1z + d1)*detA = 0
- 	    // plane2 ==> (a2a3 + b2b3)v + (b2a3 - a2b3)w + (c2z + d2)*detA = 0
- 	    //
- 	    // dz/dv(1) = (-a1a3 - b1b3) / c1*detA
- 	    // dz/dv(2) = (-a2a3 - b2b3) / c2*detA
- 	    // since detA>0 we can omit it.
- 	    //
+      // for general line, we change coordinates to (v, w), preserving
+      // orientation, so the line is the w-axis in the new coordinates
+      // (i.e v = const).
+      //
+      // ( v )  =  A ( x )    where A = (  a3  b3 )
+      //   w           y                  -b3  a3
+      //
+      // so v =  a3*x + b3*y
+      //    w = -b3*x + a3*y
+      // preserving orientation since detA = a3^2 +b3^2 > 0
+      //
+      // We compute the planes equations in the new coordinates
+      // and compare dz/dv
+      //
+      // ( x )  =  A^(-1) ( v )    where A^(-1) = ( a3  -b3 ) * detA^(-1)
+      //   y                w                       b3   a3
+      // so x = (a3*v - b3*w)*(1/detA)
+      //    y = (b3*v + a3*w)*(1/detA)
+      // plane1 ==> (a1a3 + b1b3)v + (b1a3 - a1b3)w + (c1z + d1)*detA = 0
+      // plane2 ==> (a2a3 + b2b3)v + (b2a3 - a2b3)w + (c2z + d2)*detA = 0
+      //
+      // dz/dv(1) = (-a1a3 - b1b3) / c1*detA
+      // dz/dv(2) = (-a2a3 - b2b3) / c2*detA
+      // since detA>0 we can omit it.
+      //
       Sign s1 = CGAL_NTS sign((a2*a3+b2*b3)/c2-(a1*a3+b1*b3)/c1);
-
- 	    // We only need to make sure that w is in the correct direction
- 	    // (going from down to up)
- 	    // the original segment endpoints p1=(x1,y1) and p2=(x2,y2)
- 	    // are transformed to (v1,w1) and (v2,w2), so we need that w2 > w1
- 	    // (otherwise the result should be multiplied by -1)
-
+      
+      // We only need to make sure that w is in the correct direction
+      // (going from down to up)
+      // the original segment endpoints p1=(x1,y1) and p2=(x2,y2)
+      // are transformed to (v1,w1) and (v2,w2), so we need that w2 > w1
+      // (otherwise the result should be multiplied by -1)
+      
       const Point_2& p1 = cv.left();
       const Point_2& p2 = cv.right();
       FT x1 = p1.x(), y1 = p1.y(), x2 = p2.x(), y2 = p2.y();
 
       Sign s2 = CGAL_NTS sign(-b3*x1+a3*y1-(-b3*x2+a3*y2));
-      #ifdef CGAL_BENCH_ENVELOPE_DAC
-        parent->total_timer.stop();
-        parent->compare_side_timer.stop();
-      #endif
-      // the answer is reversed when computing upper envelope vs. lower envelope
+      // the answer is reversed when computing upper envelope vs. lower
+      // envelope
       if (parent->get_envelope_type() == LOWER)
         return Comparison_result(s1 * s2);
       else
@@ -1061,7 +927,9 @@ public:
                const Xy_monotone_surface_3& surf1,
                const Xy_monotone_surface_3& surf2) const
     {
-      Comparison_result left_res = parent->compare_distance_to_envelope_above_3_object()(cv, surf1, surf2);
+      Comparison_result left_res = 
+        parent->compare_distance_to_envelope_above_3_object()(cv,
+                                                              surf1, surf2);
       if (left_res == LARGER)
         return SMALLER;
       else if (left_res == SMALLER)
@@ -1244,13 +1112,7 @@ public:
     // as in the case of dimention 2
     if (s1.is_segment() && s2.is_segment())
     {
-      #ifdef CGAL_BENCH_ENVELOPE_DAC
-        inter_overlap_timer.start();
-      #endif
       Object res = intersection_of_segments(s1, s2);
-      #ifdef CGAL_BENCH_ENVELOPE_DAC
-        inter_overlap_timer.stop();
-      #endif
       return res;
     }
   
@@ -1266,14 +1128,8 @@ public:
     // supporting plane
     // if there is no intersection - then the triangles have no intersection 
     // between them.
-    #ifdef CGAL_BENCH_ENVELOPE_DAC
-      inter_plane_tri_timer.start();
-    #endif
     Object inter_obj = intersection(p1, s2);
       
-    #ifdef CGAL_BENCH_ENVELOPE_DAC
-      inter_plane_tri_timer.stop();
-    #endif
     if (inter_obj.is_empty())
       return Object();
 
@@ -1283,13 +1139,7 @@ public:
     Point_3 inter_point;
     if (assign_obj(inter_point, inter_obj))
     {
-      #ifdef CGAL_BENCH_ENVELOPE_DAC
-        inter_on_plane_tri_pt_timer.start();
-      #endif
       Object res = intersection_on_plane_3(p1, s1, inter_point);
-      #ifdef CGAL_BENCH_ENVELOPE_DAC
-        inter_on_plane_tri_pt_timer.stop();
-      #endif
       return res;
     }
     else
@@ -1300,13 +1150,7 @@ public:
       CGAL_assertion(assign_obj(inter_seg, inter_obj));
       assign_obj(inter_seg, inter_obj);
 
-      #ifdef CGAL_BENCH_ENVELOPE_DAC
-        inter_plane_tri_timer.start();
-      #endif
       inter_obj = intersection(p2, s1);
-      #ifdef CGAL_BENCH_ENVELOPE_DAC
-        inter_plane_tri_timer.stop();
-      #endif
 
       // if there is no intersection - then the triangles have no intersection 
       // between them.
@@ -1332,10 +1176,6 @@ public:
       	CGAL_assertion(assign_obj(inter_seg2, inter_obj));
       	assign_obj(inter_seg2, inter_obj);
 	
-        #ifdef CGAL_BENCH_ENVELOPE_DAC
-	        inter_on_plane_seg_seg_timer.start();
-        #endif
-
       	Point_3 min1 = k.construct_min_vertex_3_object()(inter_seg),
       	        max1 = k.construct_max_vertex_3_object()(inter_seg);
       	Point_3 min2 = k.construct_min_vertex_3_object()(inter_seg2),
@@ -1363,9 +1203,6 @@ public:
        	  res = make_object(Segment_3(min, max));
        	// else - empty result
 
-        #ifdef CGAL_BENCH_ENVELOPE_DAC
-          inter_on_plane_seg_seg_timer.stop();
-        #endif
        	return res;
       }
     }
@@ -1400,11 +1237,6 @@ public:
   Object intersection_of_segments(const Xy_monotone_surface_3& s1,
                                   const Xy_monotone_surface_3& s2) const
   {
-    #ifdef CGAL_DEBUG_ENVELOPE_3_TRIANGLES_TRAITS
-      std::cout << "intersecting two segments: " << s1
-                << " and " << s2 << std::endl;
-    #endif
-    
     Kernel k;
     CGAL_precondition( s1.is_xy_monotone() && s1.is_segment());
     CGAL_precondition( s2.is_xy_monotone() && s2.is_segment());
@@ -1425,9 +1257,8 @@ public:
     CGAL_precondition( s2.plane() == plane ||
                        s2.plane() == plane.opposite());
 
-  	// for simplicity, we transform the segments to the xy-plane,
-  	// compute the intersection there, and transform it back to the 3d plane.
-
+    // for simplicity, we transform the segments to the xy-plane,
+    // compute the intersection there, and transform it back to the 3d plane.
     Point_2 v1 = plane.to_2d(s1.vertex(0)),
             v2 = plane.to_2d(s1.vertex(1));
     Segment_2 seg1_t(v1, v2);
@@ -1452,9 +1283,10 @@ public:
       assign_2(inter_segment, inter_obj);
       CGAL_assertion(b);
       
-  	  return make_object(Segment_3(
-                  plane.to_3d(k.construct_vertex_2_object()(inter_segment, 0)),
-									plane.to_3d(k.construct_vertex_2_object()(inter_segment, 1))));
+      return make_object 
+        (Segment_3
+         (plane.to_3d(k.construct_vertex_2_object()(inter_segment, 0)),
+          plane.to_3d(k.construct_vertex_2_object()(inter_segment, 1))));
     }
 
   }
@@ -1474,9 +1306,12 @@ public:
       return k.intersect_3_object()(pl, static_cast<Segment_3>(tri));
       
     // first, check for all 3 vertices of tri on which side of pl they lie on
-    int points_on_plane[3]; // contains the indices of vertices that lie on pl
-    int points_on_positive[3]; // contains the indices of vertices that lie on the positive side of pl
-    int points_on_negative[3]; // contains the indices of vertices that lie on the negative side of pl
+    int points_on_plane[3];    // contains the indices of vertices that lie 
+                               // on pl
+    int points_on_positive[3]; // contains the indices of vertices that lie on
+                               // the positive side of pl
+    int points_on_negative[3]; // contains the indices of vertices that lie on
+                               // the negative side of pl
 
     int n_points_on_plane = 0;
     int n_points_on_positive = 0;
@@ -1494,7 +1329,8 @@ public:
         points_on_plane[n_points_on_plane++] = i;
     }
 
-    assert(n_points_on_plane + n_points_on_positive + n_points_on_negative == 3);
+    assert (n_points_on_plane + 
+            n_points_on_positive + n_points_on_negative == 3);
 
     // if all vertices of tri lie on the same size (positive/negative) of pl,
     // there is no intersection
@@ -1509,7 +1345,8 @@ public:
     if (n_points_on_plane == 2)
     {
       int point_idx1 = points_on_plane[0], point_idx2 = points_on_plane[1];
-      return make_object(Segment_3(tri.vertex(point_idx1),tri.vertex(point_idx2)));
+      return make_object (Segment_3(tri.vertex(point_idx1),
+                                    tri.vertex(point_idx2)));
     }
 
     // if only 1 lie on pl, should check the segment opposite to it on tri
@@ -1536,7 +1373,8 @@ public:
 
       // create the resulting segment
       // (between tri[point_on_plane_idx] and inter_point)
-      return make_object(Segment_3(tri.vertex(point_on_plane_idx), inter_point));
+      return make_object(Segment_3(tri.vertex(point_on_plane_idx), 
+                                   inter_point));
 
     }
 
@@ -1668,8 +1506,6 @@ public:
   Point_2 construct_middle_point(const X_monotone_curve_2& cv) const
   {
     Kernel k;
-//    Construct_vertex_2 construct_vertex = k.construct_vertex_2_object();
-//    return k.construct_midpoint_2_object()(construct_vertex(cv, 0), construct_vertex(cv, 1));
     return k.construct_midpoint_2_object()(cv.source(), cv.target());
   }
 
@@ -1718,144 +1554,54 @@ public:
     return (ip);
   }
 
-  Envelope_triangles_traits_3(Envelope_type t = LOWER) : type(t), cache_hits(0)
+  /*! Default constructor. */
+  Env_triangle_traits_3 () :
+    type (LOWER)
   {}
 
+  /*! Constructor with the envelope type. */
+  Env_triangle_traits_3 (Envelope_type t) : 
+    type(t)
+  {}
+
+  /*! Set the envelope type to lower. */
+  void set_lower ()
+  {
+    type = LOWER;
+  }
+
+  /*! Set the envelope type to upper. */
+  void set_upper ()
+  {
+    type = UPPER;
+  }
+
+  /*! Get the envelope type. */
   Envelope_type get_envelope_type() const
   {
     return type;
   }
-
-
   
-  virtual ~Envelope_triangles_traits_3() {}
-
-  void print_times()
-  {
-    #ifdef CGAL_BENCH_ENVELOPE_DAC
-
-      std::cout << total_timer.intervals()
-                << " number of calls to traits interface functions" << std::endl;
-      std::cout << "total time: " << total_timer.time() << " seconds"
-                << std::endl << std::endl;
-
-      std::cout << "projected boundary        #: "
-                << pboundary_timer.intervals()
-                << " total time: " << pboundary_timer.time()
-                << " average time: "
-                << pboundary_timer.time()/pboundary_timer.intervals()
-                << std::endl;
-      std::cout << "projected intersections   #: "
-                << intersection_timer.intervals()
-                << " total time: " << intersection_timer.time()
-                << " average time: "
-                << intersection_timer.time()/intersection_timer.intervals()
-                << std::endl;
-      std::cout << "compare_distance on point #: "
-                << compare_timer.intervals()
-                << " total time: " << compare_timer.time()
-                << " average time: "
-                << compare_timer.time()/compare_timer.intervals()
-                << std::endl;
-  //    std::cout << "total time spent on computing z at xy: "
-  //              << compute_z_at_xy_timer.time()
-  //              << " seconds, hits# = " << cache_hits << std::endl;
-      std::cout << "compare_distance on curve #: "
-                << compare_on_cv_timer.intervals()
-                << " total time: " << compare_on_cv_timer.time()
-                << " average time: "
-                << compare_on_cv_timer.time()/compare_on_cv_timer.intervals()
-                << std::endl;
-      std::cout << "compare_distance on side  #: "
-                << compare_side_timer.intervals()
-                << " total time: " << compare_side_timer.time()
-                << " average time: "
-                << compare_side_timer.time()/compare_side_timer.intervals()
-                << std::endl;
-      std::cout << std::endl;              
-    #endif
-    
-#ifdef PRINT_TRAINGLES_INTERSECTION_STATS
-    std::cout << "Projected intersection calculation statistics: " << std::endl
-              << "inter plane & triangle: " << inter_plane_tri_timer.time()
-              << std::endl
-              << "overlap: " << inter_overlap_timer.time() << std::endl
-              << "inter on plane triangle & point: " 
-              << inter_on_plane_tri_pt_timer.time() << std::endl
-              << "inter on plane triangle & segment: " 
-              << inter_on_plane_tri_seg_timer.time() << std::endl
-              << "inter two segments: " 
-              << inter_on_plane_seg_seg_timer.time() << std::endl;
-    std::cout << std::endl;        
-#endif      
-              
-  }
-
-  /*! reset statistics */
-  void reset()
-  {
-    #ifdef CGAL_BENCH_ENVELOPE_DAC
-      total_timer.reset();
-      intersection_timer.reset();
-      pboundary_timer.reset();
-      compare_timer.reset();
-      compute_z_at_xy_timer.reset();
-      compare_on_cv_timer.reset();
-      compare_side_timer.reset();
-
-      inter_plane_tri_timer.reset();
-      inter_overlap_timer.reset();
-      inter_on_plane_tri_pt_timer.reset();
-      inter_on_plane_tri_seg_timer.reset();
-      inter_on_plane_seg_seg_timer.reset();
-    #endif
-    
-    cache_hits = 0;
-  }
   
 protected:
   Envelope_type type;
 
 public:
-  #ifdef CGAL_BENCH_ENVELOPE_DAC
-    // measure times:
-    // measure the total time for all interface methods
-    mutable Timer total_timer;
-    // measure the total time for the intersection method
-    mutable Timer intersection_timer;
-    // measure total time for projected boundary method
-    mutable Timer pboundary_timer;
-    // measure the total time for the compare_distance_to_envelope method
-    mutable Timer compare_timer;
-    mutable Timer compute_z_at_xy_timer;
-    mutable Timer compare_on_cv_timer;
-
-    // measure the total time for the compare_distance_to_envelope_side method
-    mutable Timer compare_side_timer;
-
-    // measure intersection calculation parts, to see where is the weak part
-    mutable Timer inter_plane_tri_timer;
-    mutable Timer inter_overlap_timer;
-    mutable Timer inter_on_plane_tri_pt_timer;
-    mutable Timer inter_on_plane_tri_seg_timer;
-    mutable Timer inter_on_plane_seg_seg_timer;
-  #endif
 
   #ifdef CGAL_ENV_TRIANGLES_TRAITS_CACHE_POINT_ON
     mutable Surface_point_cache point_on_cache;
   #endif
-  mutable int     cache_hits;
 
 };
 
 
 /*!
  * \class A representation of a triangle, as used by the 
- * Envelope_triangles_traits_3 traits-class.
+ * Env_triangle_traits_3 traits-class.
  */
 template <class Kernel_>
-class Envelope_triangle_3 :
-    public Handle_for<typename Envelope_triangles_traits_3<Kernel_>::_Triangle_cached_3>
+class Env_triangle_3 :
+    public Handle_for<typename Env_triangle_traits_3<Kernel_>::_Triangle_cached_3>
 {
   typedef Kernel_                                                  Kernel;
   typedef typename Kernel::Triangle_3                              Triangle_3;
@@ -1863,7 +1609,7 @@ class Envelope_triangle_3 :
   typedef typename Kernel::Plane_3                                 Plane_3;
   typedef typename Kernel::Segment_3                               Segment_3;
 
-  typedef typename Envelope_triangles_traits_3<Kernel>::_Triangle_cached_3
+  typedef typename Env_triangle_traits_3<Kernel>::_Triangle_cached_3
                                                                    Rep_type;
 
 public:
@@ -1871,7 +1617,7 @@ public:
   /*!
    * Default constructor.
    */
-  Envelope_triangle_3() :
+  Env_triangle_3() :
     Handle_for<Rep_type>(Rep_type())
   {}
 
@@ -1879,7 +1625,7 @@ public:
    * Constructor from a "kernel" triangle.
    * \param seg The segment.
    */
-  Envelope_triangle_3(const Triangle_3& tri) :
+  Env_triangle_3(const Triangle_3& tri) :
     Handle_for<Rep_type>(Rep_type(tri))
   {}
 
@@ -1889,7 +1635,7 @@ public:
    * \param p2 The second point.
    * \param p3 The third point.
    */
-    Envelope_triangle_3(const Point_3 &p1, const Point_3 &p2,
+    Env_triangle_3(const Point_3 &p1, const Point_3 &p2,
                         const Point_3 &p3) :
       Handle_for<Rep_type>(Rep_type(p1, p2, p3))
   {}
@@ -1902,7 +1648,7 @@ public:
    * \param p3 The third point.
    * \pre All points must be on the supporting plane.
    */
-  Envelope_triangle_3(const Plane_3& pl,
+  Env_triangle_3(const Plane_3& pl,
                       const Point_3 &p1, const Point_3 &p2,
                       const Point_3 &p3) :
     Handle_for<Rep_type>(Rep_type(pl, p1, p2, p3))
@@ -1914,7 +1660,7 @@ public:
    * \param p1 The first point.
    * \param p2 The second point.
    */
-  Envelope_triangle_3(const Point_3 &p1, const Point_3 &p2) :
+  Env_triangle_3(const Point_3 &p1, const Point_3 &p2) :
       Handle_for<Rep_type>(Rep_type(p1, p2))
   {}
 
@@ -1988,15 +1734,15 @@ public:
 
 template <class Kernel>
 bool
-operator<(const Envelope_triangle_3<Kernel> &a,
-          const Envelope_triangle_3<Kernel> &b)
+operator<(const Env_triangle_3<Kernel> &a,
+          const Env_triangle_3<Kernel> &b)
 {
   return (a.id() < b.id());
 }
 template <class Kernel>
 bool
-operator==(const Envelope_triangle_3<Kernel> &a,
-           const Envelope_triangle_3<Kernel> &b)
+operator==(const Env_triangle_3<Kernel> &a,
+           const Env_triangle_3<Kernel> &b)
 {
   return (a.id() == b.id());
 }
@@ -2005,7 +1751,7 @@ operator==(const Envelope_triangle_3<Kernel> &a,
  * Exporter for the triangle class used by the traits-class.
  */
 template <class Kernel, class OutputStream>
-OutputStream& operator<< (OutputStream& os, const Envelope_triangle_3<Kernel>& tri)
+OutputStream& operator<< (OutputStream& os, const Env_triangle_3<Kernel>& tri)
 {
   os << static_cast<typename Kernel::Triangle_3>(tri);
   if (tri.is_segment())
@@ -2017,7 +1763,7 @@ OutputStream& operator<< (OutputStream& os, const Envelope_triangle_3<Kernel>& t
  * Importer for the triangle class used by the traits-class.
  */
 template <class Kernel, class InputStream>
-InputStream& operator>> (InputStream& is, Envelope_triangle_3<Kernel>& tri)
+InputStream& operator>> (InputStream& is, Env_triangle_3<Kernel>& tri)
 {
   typename Kernel::Triangle_3   kernel_tri;
   is >> kernel_tri;

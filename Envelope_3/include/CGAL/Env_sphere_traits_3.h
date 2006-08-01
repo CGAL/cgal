@@ -17,15 +17,15 @@
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
 
-#ifndef ENVELOPE_SPHERES_TRAITS_3_H
-#define ENVELOPE_SPHERES_TRAITS_3_H
+#ifndef CGAL_ENV_SPHERE_TRAITS_3_H
+#define CGAL_ENV_SPHERE_TRAITS_3_H
 
 #include <CGAL/Object.h>
 #include <CGAL/enum.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/functions_on_signs.h>
+#include <CGAL/Envelope_3/Envelope_base.h>
 
-//#define CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
 //#define CGAL_ENV_SPHERES_TRAITS_CACHE_POINT_ON
 
 CGAL_BEGIN_NAMESPACE
@@ -39,14 +39,14 @@ operator*(const Sign &s1, const Sign &s2)
   return NEGATIVE;
 }
 
-template <class Kernel_> class Envelope_sphere_3;
+template <class Kernel_> class Env_sphere_3;
  
 template <class ConicTraits_2>
-class Envelope_spheres_traits_3 : public ConicTraits_2
+class Env_sphere_traits_3 : public ConicTraits_2
 {
 public:
   typedef ConicTraits_2                             Traits_2;
-  typedef Envelope_spheres_traits_3<Traits_2>       Self;
+  typedef Env_sphere_traits_3<Traits_2>       Self;
   
   typedef typename Traits_2::Point_2                Point_2;
   typedef typename Traits_2::Curve_2                Curve_2;
@@ -68,7 +68,7 @@ public:
   typedef typename Alg_kernel::Circle_2             Alg_circle_2;
   
 //  typedef typename Rat_kernel::Sphere_3             Surface_3;
-  typedef Envelope_sphere_3<Rat_kernel>             Surface_3;
+  typedef Env_sphere_3<Rat_kernel>             Surface_3;
   
   // here we refer to the lower part of the sphere only
   typedef Surface_3                                 Xy_monotone_surface_3;
@@ -110,9 +110,7 @@ public:
     {
       // our half sphere is of same type as our full sphere since we always
       // need only the lower/upper part of each sphere
-      parent.total_timer.start();
       *o++ = s;
-      parent.total_timer.stop();
       return o;
     }
   };
@@ -141,13 +139,11 @@ public:
     OutputIterator
     operator()(const Xy_monotone_surface_3& s, OutputIterator o) const
     {
-      parent.total_timer.start();
       // the projected boundary in a circle, with a projected center,
       // and same radius
       Rat_point_2 proj_center = parent.project(s.center());
       Rat_circle_2 circ(proj_center, s.squared_radius());
       *o++ = Curve_2(circ);
-      parent.total_timer.stop();
       return o;
     }  
   };  
@@ -178,10 +174,7 @@ public:
     operator()(const Xy_monotone_surface_3& s1,
                const Xy_monotone_surface_3& s2,
                OutputIterator o) const
-    {
-      parent.total_timer.start();
-      parent.intersection_timer.start();
-      
+    {      
       Rat_point_3 p1 = s1.center();
       Rat_point_3 p2 = s2.center();
       const Rational a1 = p1.x(), b1 = p1.y(), c1 = p1.z(),
@@ -213,8 +206,6 @@ public:
             // the same center, we have no intersection
             // (we don't return overlappings as intersections)
           {
-            parent.total_timer.stop();
-            parent.intersection_timer.stop();  
             return o;
           }
 
@@ -258,9 +249,6 @@ public:
 
           if (n_ys == 0)
           {
-            parent.total_timer.stop();
-            parent.intersection_timer.stop();          
-
             return o; // no intersection
           }
 
@@ -272,8 +260,6 @@ public:
             // intersection is a point
             Point_2 inter_point(xs , ys[0]);
             *o++ = make_object(inter_point);
-            parent.total_timer.stop();
-            parent.intersection_timer.stop();
             return o;
           }
 
@@ -293,12 +279,7 @@ public:
         }
         else
         {
-          // here we have c1 == c2, b1 != b2
-          #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
-            std::cout << "intersections: the case c1 == c2, b1 != b2"
-                      << std::endl;
-          #endif
-
+          // here we have c1 == c2, b1 != b2.
           // the intersection lies on the plane
           //             -2(a1-a2)x + m
           //  (1)    y = ----------------
@@ -337,11 +318,6 @@ public:
           Rational D = 4*sqr_a_diff + 4*sqr_b_diff;
           Rational E = -8*a1*sqr_b_diff - 4*m*a_diff + 8*b1*a_diff*b_diff;
           Rational F = 4*sqr_b_diff*(sqr_a1+sqr_b1-sqr_r1) + m*m - 4*m*b1*b_diff;
-
-          #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
-            std::cout << "D = " << D << std::endl << "E = " << E << std::endl
-                      << "F = " << F << std::endl;
-          #endif
           
           Algebraic  xs[2];
           Algebraic *xs_end;
@@ -352,8 +328,6 @@ public:
 
           if (n_xs == 0)
           {
-            parent.total_timer.stop();
-            parent.intersection_timer.stop();
             return o; // no intersection
           }
           if (n_xs == 1)
@@ -361,8 +335,6 @@ public:
             // intersection is a point
             Point_2 inter_point(xs[0], (-2*a_diff*xs[0] + m)/(2*b_diff) );
             *o++ = make_object(inter_point);
-            parent.total_timer.stop();
-            parent.intersection_timer.stop();
             return o;
           }
 
@@ -376,11 +348,6 @@ public:
 
           Alg_point_2 end1(xs[0], ys[0]);
           Alg_point_2 end2(xs[1], ys[1]);
-
-          #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
-            std::cout << "the projected segment endpoints are: " << std::endl 
-                      << end1 << std::endl << end2 << std::endl;
-          #endif
                               
           // equation (1) is:
           // 2(a1-a2)x + 2(b1-b2)y - m = 0
@@ -393,11 +360,7 @@ public:
       // and the projection is (a part of) an ellipse
       else
       {
-        // here we have c1 != c2
-        #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
-          std::cout << "intersections: the case c1 != c2" << std::endl;
-        #endif
-
+        // here we have c1 != c2.
         // the intersection lies on the plane:
         //           -2(a1-a2)x -2(b1-b2)y + m
         // (*)   z = --------------------------
@@ -460,28 +423,14 @@ public:
         Rational W = 4*sqr_c_diff*(sqr_a1+sqr_b1+sqr_c1-sqr_r1) -
                  4*m*c1*c_diff + m*m;
 
-        #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
-          std::cout << "full intersection ellipse: " << R << "*x^2 + " << S <<
-            "*y^2 + " << T << "*xy + " << U << "*x + " << V << "*y + " << W <<
-            " = 0" << std::endl;
-        #endif
-
         // if the full spheres do not intersect, the equation we get has no
         // real solution, so we should check it:
         bool ellipse_is_point = false;  
         if (!parent.is_valid_conic_equation(R, S, T, U, V, W, 
                                             ellipse_is_point))
         {
-          parent.total_timer.stop();
-          parent.intersection_timer.stop();
           return o;
         }
-
-        #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
-          std::cout << "ellipse is valid " 
-                    << (ellipse_is_point ? "- ellipse is a point" : "")
-                    << std::endl;
-        #endif
         
         // we need only a part of the ellipse (as stated in (**)) so we
         // construct the cutting line, which is:
@@ -525,14 +474,8 @@ public:
           // line
       	  if (CGAL_NTS sign(la*px + lb*py +lc) != NEGATIVE)
           {
-            #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
-              std::cout << "found intersection point " << px << " , "
-                        << py << std::endl;
-            #endif
       	    *o++ = make_object(Point_2(px, py));
           }
-          parent.total_timer.stop();
-          parent.intersection_timer.stop();
           return o;
       	}
 
@@ -550,16 +493,8 @@ public:
             Curve_2 res(R, S, T, U, V, W);
             *o++ = make_object(Intersection_curve(res, TRANSVERSAL));
           }
-          parent.total_timer.stop();
-          parent.intersection_timer.stop();
           return o;
         }
-
-
-        #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
-          std::cout << "the cutting line: " << la << "*x + " << lb <<
-                       "*y + " << lc << " = 0" << std::endl;
-        #endif
 
         // find the intersection of the line
         //    la * x + lb * y + lc = 0
@@ -584,12 +519,7 @@ public:
 
           inter_xs_end = nt_traits.solve_quadratic_equation(A, B, C, inter_xs);
           n_inter_points = inter_xs_end - inter_xs;
-                  
-          #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
-            std::cout << "intersection of conic with line: " << n_inter_points
-                      << " points" << std::endl;
-          #endif
-          
+                            
           if (n_inter_points > 0)
             source = Alg_point_2(inter_xs[0],
                              -(la*inter_xs[0] + lc) / Algebraic(lb));
@@ -693,13 +623,7 @@ public:
         }
 
         if (n_inter_points < 2)
-        {
-          #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
-            std::cout << "projected intersections, n_inter_points = "
-                      << n_inter_points << std::endl;
-            std::cout << s1 << std::endl << s2 << std::endl;
-          #endif
-          
+        {          
           // we should check whether the ellipse is in the positive side of the
           // line - in which case we return the full ellipse
           // or not - in which case there is no intersection if
@@ -722,8 +646,6 @@ public:
           {
             // the full ellipse is in the positive side
             *o++ = make_object(Intersection_curve(inter_cv, TRANSVERSAL));
-            parent.total_timer.stop();
-            parent.intersection_timer.stop();
             return o;
           }
           else if (lval_sign == NEGATIVE)
@@ -732,8 +654,6 @@ public:
             // source in the case n_inter_points = 1 (which lies on the line)
             if (n_inter_points == 1)
               *o++ = make_object(Point_2(source));
-            parent.total_timer.stop();
-            parent.intersection_timer.stop();
             return o;
           }
 
@@ -752,8 +672,6 @@ public:
           else
             *o++ = make_object(Point_2(source));
 
-          parent.total_timer.stop();
-          parent.intersection_timer.stop();
           return o;          
         }
 
@@ -777,8 +695,6 @@ public:
         *o++ = make_object(Intersection_curve(res, TRANSVERSAL));  
       }
       
-      parent.total_timer.stop();
-      parent.intersection_timer.stop();
       return o;
     }  
   };  
@@ -807,47 +723,13 @@ public:
                                  const Xy_monotone_surface_3& s1,
                                  const Xy_monotone_surface_3& s2) const
     {
-      bool use_timer = true;
-      if (parent.total_timer.is_running())
-        use_timer = false;
-
-      if (use_timer)
-      {
-        parent.total_timer.start();
-        parent.compare_on_point_timer.start();
-      }
-
-      #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
-        std::cout << "compare_distance_to_envelope in point: " << p <<
-                     std::endl <<
-                     "surfaces: "  << s1 << std::endl << s2 << std::endl;
-      #endif
-
-      parent.compare_in_point2_timer.start();
       Comparison_result c2 = compare_in_point_second_method(p, s1, s2);
-      parent.compare_in_point2_timer.stop();
 
       CGAL_expensive_assertion_code(
-
-        parent.compare_in_point1_timer.start();
-        //CGAL_assertion_code(Comparison_result c1 = )
         Comparison_result c1 = compare_in_point_first_method(p, s1, s2);
-        parent.compare_in_point1_timer.stop();
-
-
-        #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
-          std::cout << "first method returned " << c1 << std::endl <<
-                       "second method returned " << c2 << std::endl;
-        #endif
       );
       CGAL_expensive_assertion(c1 == c2);
-//      CGAL_assertion(c1 == c2);
       
-      if (use_timer)
-      {
-        parent.total_timer.stop();
-        parent.compare_on_point_timer.stop();
-      }
       return c2;
     }
 
@@ -860,14 +742,10 @@ public:
                                  const Xy_monotone_surface_3& s1,
                                  const Xy_monotone_surface_3& s2) const
     {
-      parent.total_timer.start();
-      parent.compare_on_cv_timer.start();
       // we compute a middle point on cv and use the previous function
       Point_2 mid = parent.construct_middle_point(cv);
       Comparison_result res = 
                    parent.compare_distance_to_envelope_3_object()(mid, s1, s2);
-      parent.total_timer.stop();
-      parent.compare_on_cv_timer.stop();
       return res;
     }
 
@@ -883,10 +761,6 @@ public:
       Algebraic z1 = parent.compute_envelope_z_in_point(p, s1);
       // find the z coordinates of surface 2 over p
       Algebraic z2 = parent.compute_envelope_z_in_point(p, s2);
-      #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
-        std::cout << "z1= " << z1 << std::endl <<
-                     "z2= " << z2 << std::endl;
-      #endif
 
       Sign res = CGAL_NTS sign(z1 - z2);
       if (parent.get_envelope_type() == LOWER)
@@ -985,15 +859,7 @@ public:
                const Xy_monotone_surface_3& s1,
                const Xy_monotone_surface_3& s2) const
     {
-      parent.total_timer.start();
-      parent.compare_side_timer.start();
-      #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
-        std::cout << "Compare_distance_to_envelope_above_3: " << std::endl <<
-                  cv << std::endl << s1 << std::endl << s2 << std::endl;
-      #endif
       Comparison_result res = parent.compare_on_side(cv, s1, s2, false);
-      parent.total_timer.stop();
-      parent.compare_side_timer.stop();
       return res;
     }  
   };
@@ -1019,15 +885,7 @@ public:
                const Xy_monotone_surface_3& s1,
                const Xy_monotone_surface_3& s2) const
     {
-      parent.total_timer.start();
-      parent.compare_side_timer.start();
-      #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
-        std::cout << "Compare_distance_to_envelope_below_3: " << std::endl <<
-                  cv << std::endl << s1 << std::endl << s2 << std::endl;
-      #endif
       Comparison_result res = parent.compare_on_side(cv, s1, s2, true);
-      parent.total_timer.stop();
-      parent.compare_side_timer.stop();
       return res;      
     }  
   };
@@ -1087,11 +945,6 @@ public:
                                     const Xy_monotone_surface_3& s2,
                                     bool compare_on_right) const
   {
-    #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
-      std::cout << "compare_on_side: " << std::endl <<
-                cv << std::endl << s1 << std::endl << s2 << std::endl;
-    #endif
-
     // cv(x,y) : r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0
     // let p be the leftmost endpoint of cv, p=(x0, y0)
     // the tangence of cv at p is a line. on the infinitesimal region
@@ -1127,16 +980,10 @@ public:
 
     // the tangences of the spheres (in point (x0,y0,z0)):
     Algebraic z0 = compute_envelope_z_in_point(cv_point, s1);
-    #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
-      std::cout << "z0 =  " << z0 << std::endl;
-    #endif
 
     // we assume the surfaces are equal over cv:
     CGAL_expensive_precondition_code(
       Algebraic z0_2 = compute_envelope_z_in_point(cv_point, s2);
-      #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
-        std::cout << "z0_2 =  " << z0_2 << std::endl;
-      #endif
     )
     // this test can be very time consuming ...
     CGAL_expensive_precondition(CGAL_NTS compare(z0, z0_2) == EQUAL);
@@ -1166,12 +1013,6 @@ public:
                a2 = p2.x(), b2 = p2.y(), c2 = p2.z();
     Algebraic A1 = x0 - a1, B1 = y0 - b1, C1 = z0 - c1;
     Algebraic A2 = x0 - a2, B2 = y0 - b2, C2 = z0 - c2;
-    #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
-      std::cout << "plane1: " << A1 << "*x + " << B1 << "*y + " << C1
-                << "*z + D1 = 0" << std::endl;
-      std::cout << "plane2: " << A2 << "*x + " << B2 << "*y + " << C2
-                << "*z + D2 = 0" << std::endl;
-    #endif
     if (C1 != 0 && C2 != 0)
     {
       Sign sign1 = CGAL_NTS sign((A2*A3+B2*B3)/C2-(A1*A3+B1*B3)/C1);
@@ -1201,18 +1042,12 @@ public:
     else if (C1 != 0 && C2 == 0)
     {
       // sphere 2 is on the envelope (both lower & upper)
-      #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
-        std::cout << "compare_on_side: LARGER" << std::endl;
-      #endif
       return LARGER;
     }
     else if (C1 == 0 && C2 != 0)
 
     {
       // sphere 1 is on the envelope (both lower & upper)
-      #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
-        std::cout << "compare_on_side: SMALLER" << std::endl;
-      #endif
       return SMALLER;
     }
     else
@@ -1232,10 +1067,6 @@ public:
   Algebraic compute_envelope_z_in_point(const Point_2& p,
                                    const Xy_monotone_surface_3& s) const
   {
-    #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
-      std::cout << "compute z point of " << s << " in point " << p << std::endl;
-    #endif
-
     Algebraic res;
     #ifdef CGAL_ENV_SPHERES_TRAITS_CACHE_POINT_ON
       // first try the cache:
@@ -1248,7 +1079,6 @@ public:
       if (cache_iter != point_on_cache.end())
       {
         res = (*cache_iter).second;
-        cache_hits++;
         return res;
       }
     #endif
@@ -1270,11 +1100,6 @@ public:
     Algebraic A = 1,
               B = -2*c,
               C = x_diff*x_diff + y_diff*y_diff + c*c - sqr_r;
-
-    #ifdef CGAL_DEBUG_ENVELOPE_3_SPHERES_TRAITS
-      std::cout << "solve_quadratic_equation with A = " << A << " B = " << B
-                << " C = " << C << std::endl;
-    #endif
     
     Algebraic  zs[2];
     Algebraic *zs_end;
@@ -1417,110 +1242,49 @@ public:
       return cv.get_point_at_x(pt);
   }
 
-  void print_times()
+  /*! Default constructor. */
+  Env_sphere_traits_3() : type(LOWER)
+  {}
+
+  /*! Constructor with the envelope type. */
+  Env_sphere_traits_3(Envelope_type t) : type(t)
+  {}
+
+  /*! Set the envelope type to lower. */
+  void set_lower ()
   {
-    std::cout << total_timer.intervals()
-              << " number of calls to traits interface functions" << std::endl;
-    std::cout << "total time: " << total_timer.time() << " seconds"
-              << std::endl << std::endl;
-
-    std::cout << "projected intersections #: "
-              << intersection_timer.intervals()
-              << " total time: " << intersection_timer.time()
-              << " average time: " 
-              << intersection_timer.time()/intersection_timer.intervals()
-              << std::endl;
-    std::cout << "compare_distance on point #: "
-              << compare_on_point_timer.intervals()
-              << " total time: " << compare_on_point_timer.time()
-              << " average time: " 
-              << compare_on_point_timer.time()/compare_on_point_timer.intervals()
-              << std::endl;
-    std::cout << "compare_distance on curve #: "
-              << compare_on_cv_timer.intervals()
-              << " total time: " << compare_on_cv_timer.time()
-              << " average time: " 
-              << compare_on_cv_timer.time()/compare_on_cv_timer.intervals()
-              << std::endl;
-    std::cout << "compare_distance on side #: "
-              << compare_side_timer.intervals()
-              << " total time: " << compare_side_timer.time()
-              << " average time: " 
-              << compare_side_timer.time()/compare_side_timer.intervals()
-              << std::endl;
-    std::cout << std::endl;
-
-    std::cout << "compare on point first method: " 
-              << compare_in_point1_timer.time() << std::endl;
-    std::cout << "compare on point second method: " 
-              << compare_in_point2_timer.time() << std::endl;
-    #ifdef CGAL_ENV_SPHERES_TRAITS_CACHE_POINT_ON
-      std::cout << "point on cache hits: " << cache_hits << std::endl;
-    #endif
-
+    type = LOWER;
   }
 
-  Envelope_spheres_traits_3() : type(LOWER)
-  {}
-  Envelope_spheres_traits_3(Envelope_type t) : type(t)
-  {}
+  /*! Set the envelope type to upper. */
+  void set_upper ()
+  {
+    type = UPPER;
+  }
 
-  virtual ~Envelope_spheres_traits_3() {}
-
+  /*! Get the envelope type. */
   Envelope_type get_envelope_type() const
   {
     return type;
   }
 
-  void reset()
-  {
-    total_timer.reset();
-    intersection_timer.reset();
-    compare_on_point_timer.reset();
-    compare_on_cv_timer.reset();
-    compare_side_timer.reset();
-    compare_in_point1_timer.reset();
-    compare_in_point2_timer.reset();
-
-    #ifdef CGAL_ENV_SPHERES_TRAITS_CACHE_POINT_ON
-      cache_hits = 0;
-    #endif
-  }
 protected:
   Envelope_type type;
 
 public:
-  // measure times:
-  // measure the total time for all interface methods
-  mutable Timer total_timer;
-  // measure the total time for the intersection method
-  mutable Timer intersection_timer;
-
-  // measure the total time for the compare_distance_to_envelope method
-  mutable Timer compare_on_point_timer;
-  mutable Timer compare_on_cv_timer;
-
-  // measure the total time for the compare_distance_to_envelope_side method
-  mutable Timer compare_side_timer;
-
-  // for testings
-  mutable Timer compare_in_point1_timer;
-  mutable Timer compare_in_point2_timer;
 
   #ifdef CGAL_ENV_SPHERES_TRAITS_CACHE_POINT_ON
     mutable Surface_point_cache point_on_cache;
-
-    mutable int     cache_hits;
   #endif
 
 };
 
 /*!
  * \class A representation of a sphere, as used by the
- * Envelope_spheres_traits_3 traits-class.
+ * Env_sphere_traits_3 traits-class.
  */
 template <class Kernel_>
-class Envelope_sphere_3 :
+class Env_sphere_3 :
     public Handle_for<typename Kernel_::Sphere_3>
 {
   typedef Kernel_                                                  Kernel;
@@ -1535,7 +1299,7 @@ public:
   /*!
    * Default constructor.
    */
-  Envelope_sphere_3() :
+  Env_sphere_3() :
     Handle_for<Rep_type>(Rep_type())
   {}
 
@@ -1543,7 +1307,7 @@ public:
    * Constructor from a "kernel" triangle.
    * \param seg The segment.
    */
-  Envelope_sphere_3(const Sphere_3& s) :
+  Env_sphere_3(const Sphere_3& s) :
     Handle_for<Rep_type>(s)
   {}
 
@@ -1553,7 +1317,7 @@ public:
    * \param p2 The second point.
    * \param p3 The third point.
    */
-  Envelope_sphere_3(const Point_3 &c, const NT &r_sqr) :
+  Env_sphere_3(const Point_3 &c, const NT &r_sqr) :
       Handle_for<Rep_type>(Rep_type(c, r_sqr))
   {}
 
@@ -1583,15 +1347,15 @@ public:
 
 template <class Kernel>
 bool
-operator<(const Envelope_sphere_3<Kernel> &a,
-          const Envelope_sphere_3<Kernel> &b)
+operator<(const Env_sphere_3<Kernel> &a,
+          const Env_sphere_3<Kernel> &b)
 {
   return (a.id() < b.id());
 }
 template <class Kernel>
 bool
-operator==(const Envelope_sphere_3<Kernel> &a,
-           const Envelope_sphere_3<Kernel> &b)
+operator==(const Env_sphere_3<Kernel> &a,
+           const Env_sphere_3<Kernel> &b)
 {
   return (a.id() == b.id());
 }
@@ -1599,7 +1363,7 @@ operator==(const Envelope_sphere_3<Kernel> &a,
  * Exporter for the triangle class used by the traits-class.
  */
 template <class Kernel, class OutputStream>
-OutputStream& operator<< (OutputStream& os, const Envelope_sphere_3<Kernel>& s)
+OutputStream& operator<< (OutputStream& os, const Env_sphere_3<Kernel>& s)
 {
   os << static_cast<typename Kernel::Sphere_3>(s);
   return (os);
@@ -1609,7 +1373,7 @@ OutputStream& operator<< (OutputStream& os, const Envelope_sphere_3<Kernel>& s)
  * Importer for the triangle class used by the traits-class.
  */
 template <class Kernel, class InputStream>
-InputStream& operator>> (InputStream& is, Envelope_sphere_3<Kernel>& s)
+InputStream& operator>> (InputStream& is, Env_sphere_3<Kernel>& s)
 {
   typename Kernel::Sphere_3   kernel_s;
   is >> kernel_s;

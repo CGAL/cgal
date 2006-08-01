@@ -17,60 +17,101 @@
 //
 // Author(s)     : Ron Wein     <wein@post.tau.ac.il>
 
-#ifndef ENVELOPE_3_H
-#define ENVELOPE_3_H
+#ifndef CGAL_ENVELOPE_3_H
+#define CGAL_ENVELOPE_3_H
 
-#include <CGAL/Envelope_divide_and_conquer_3.h>
-#include <CGAL/Envelope_pm_dcel.h>
-#include <CGAL/Envelope_caching_traits_3.h>
-#include <CGAL/Envelope_overlay_functor.h>
-
-#include <iostream>
+#include <CGAL/Envelope_3/Envelope_divide_and_conquer_3.h>
+#include <CGAL/Envelope_3/Envelope_pm_dcel.h>
+#include <CGAL/Envelope_3/Envelope_caching_traits_3.h>
+#include <CGAL/Envelope_3/Envelope_overlay_functor.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Traits_3> class Envelope_diagram_2 :
-  public Arrangement_2<Envelope_caching_traits_3<Traits_3>,
-                       Envelope_pm_dcel<Envelope_caching_traits_3<Traits_3>,
-                                        typename Envelope_caching_traits_3<Traits_3>::Xy_monotone_surface_3> >
+/*! \class
+ * Representation of an envelope diagram (a minimization diagram or a
+ * maximization diagram).
+ */
+template <class Traits_> class Envelope_diagram_2 :
+  public Arrangement_2<Envelope_caching_traits_3<Traits_>,
+                       Envelope_pm_dcel<Envelope_caching_traits_3<Traits_>,
+                                        typename Envelope_caching_traits_3<Traits_>::Xy_monotone_surface_3> >
 {
-  public:
-  typedef Arrangement_2<Envelope_caching_traits_3<Traits_3>,
-                       Envelope_pm_dcel<Envelope_caching_traits_3<Traits_3>,
-                                        typename Envelope_caching_traits_3<Traits_3>::Xy_monotone_surface_3> > Base;
+public:
+  typedef Traits_                                        Traits_3;
 
-  Envelope_diagram_2()
+protected:
+  typedef Envelope_caching_traits_3<Traits_3>            Cache_traits_3;
+
+public:
+  typedef typename Cache_traits_3::Xy_monotone_surface_3 Xy_monotone_surface_3;
+  typedef Arrangement_2<Cache_traits_3,
+                        Envelope_pm_dcel<Cache_traits_3,
+                                         Xy_monotone_surface_3> > Base;
+
+  /*! Default constructor. */
+  Envelope_diagram_2() :
+    Base()
   {}
 
-  Envelope_diagram_2(Envelope_caching_traits_3<Traits_3>* tr): Base(tr)
+  /*! Constructor with a traits-class instance. */
+  Envelope_diagram_2 (Envelope_caching_traits_3<Traits_3>* tr) :
+    Base (tr)
   {}
 
-  ~Envelope_diagram_2()
-  {}
 };
 
-template <class InputIterator, class Traits_>
+/*!
+ * Construct the lower envelope of a given set of surfaces.
+ * \param begin An iterator for the first surface.
+ * \param end A past-the-end iterator for the surfaces in the range.
+ * \param min_diag Output: The minimization diagram.
+ * \pre The value-type of InputIterator is Traits::Surface_3.
+ */
+template <class InputIterator, class Traits>
 void lower_envelope_3 (InputIterator begin, InputIterator end,
                        Envelope_diagram_2<Traits_>& min_diagram)
 {
-  typedef Envelope_caching_traits_3<Traits_>  Traits_3;
-  typedef Envelope_divide_and_conquer_3<Traits_3, typename Envelope_diagram_2<Traits_>::Base >
-    Envelope_alg;
-  Traits_3 traits(LOWER);
-  Envelope_alg envelope_algorithm(&traits);
-  envelope_algorithm.construct_lu_envelope(begin, end, min_diagram);
+  typedef Traits                                       Traits_3;
+  typedef Envelope_caching_traits_3<Traits_3>          Cache_Traits_3;
+  typedef typename Envelope_diagram_2<Traits_3>::Base  Base_arr_2;
+  typedef Envelope_divide_and_conquer_3<Cache_traits_3,
+                                        Base_arr_2>    Envelope_algorithm;
+
+  Traits_3            *traits = min_diagram->get_traits();
+  traits->set_lower();
+
+  Envelope_algorithm   env_alg (traits);
+  env_alg.construct_lu_envelope (begin, end,
+                                 min_diagram);
+
+  return;
 }
 
+/*!
+ * Construct the upper envelope of a given set of surfaces.
+ * \param begin An iterator for the first surface.
+ * \param end A past-the-end iterator for the surfaces in the range.
+ * \param max_diag Output: The maximization diagram.
+ * \pre The value-type of InputIterator is Traits::Surface_3.
+ */
 template <class InputIterator, class Traits_>
 void upper_envelope_3 (InputIterator begin, InputIterator end,
                        Envelope_diagram_2<Traits_>& max_diagram)
 {
-  typedef Envelope_caching_traits_3<Traits_>  Traits_3;
-  typedef Envelope_divide_and_conquer_3<Traits_3, typename Envelope_diagram_2<Traits_>::Base >
-    Envelope_alg;
-  Traits_3 traits(UPPER);
-  Envelope_alg envelope_algorithm(&traits);
-  envelope_algorithm.construct_lu_envelope(begin, end, max_diagram);
+  typedef Traits                                       Traits_3;
+  typedef Envelope_caching_traits_3<Traits_3>          Cache_Traits_3;
+  typedef typename Envelope_diagram_2<Traits_3>::Base  Base_arr_2;
+  typedef Envelope_divide_and_conquer_3<Cache_traits_3,
+                                        Base_arr_2>    Envelope_algorithm;
+
+  Traits_3            *traits = max_diagram->get_traits();
+  traits->set_upper();
+
+  Envelope_algorithm   env_alg (traits);
+  env_alg.construct_lu_envelope (begin, end,
+                                 max_diagram);
+
+  return;
 }
 
 CGAL_END_NAMESPACE
