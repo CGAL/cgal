@@ -77,6 +77,7 @@ public:
   typedef typename Geom_traits::Site_2             Site_2;
   typedef std::set<Point_2>                        Point_container;
   typedef typename Point_container::iterator       Point_handle;
+  typedef typename Point_container::const_iterator const_Point_handle;
 
 private:
   typedef Segment_Delaunay_graph_storage_traits_2<Geom_traits>   Self;

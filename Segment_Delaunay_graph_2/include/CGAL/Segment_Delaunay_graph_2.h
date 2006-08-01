@@ -44,7 +44,6 @@
 #include <CGAL/Segment_Delaunay_graph_2/Constructions_C2.h>
 
 #include <CGAL/Iterator_project.h>
-#include <CGAL/Segment_Delaunay_graph_2/Simple_container_wrapper.h>
 
 
 /*
@@ -185,6 +184,8 @@ public:
   typedef typename DS::Vertex                    Vertex;
   typedef typename DS::Face                      Face;
 
+  typedef typename DS::size_type                 size_type;
+
   typedef typename DS::Vertex_circulator         Vertex_circulator;
   typedef typename DS::Edge_circulator           Edge_circulator;
   typedef typename DS::Face_circulator           Face_circulator;
@@ -197,30 +198,29 @@ public:
   typedef typename DG::Finite_vertices_iterator  Finite_vertices_iterator;
   typedef typename DG::Finite_edges_iterator     Finite_edges_iterator;
 
+  typedef typename Storage_traits::Point_container     Point_container;
+  typedef typename Storage_traits::Point_handle        Point_handle;
+  typedef typename Storage_traits::const_Point_handle  const_Point_handle;
+
 protected:
   typedef typename Geom_traits::Arrangement_type_2  AT2;
   typedef typename AT2::Arrangement_type            Arrangement_type;
 
-  typedef typename Storage_traits::Point_container  PC;
-  typedef typename Storage_traits::Point_handle     PH;
-
-
   // these containers should have point handles and should replace the
   // point container...
-  typedef boost::tuples::tuple<PH,PH,bool>       Site_rep_2;
-  //  typedef Triple<PH,PH,bool>                     Site_rep_2;
+  typedef boost::tuples::tuple<Point_handle,Point_handle,bool>  Site_rep_2;
 
   struct Site_rep_less_than {
     // less than for site reps
     bool operator()(const Site_rep_2& x, const Site_rep_2& y) const {
-      PH x1 = boost::tuples::get<0>(x);
-      PH y1 = boost::tuples::get<0>(y);
+      Point_handle x1 = boost::tuples::get<0>(x);
+      Point_handle y1 = boost::tuples::get<0>(y);
 
       if ( &(*x1) < &(*y1) ) { return true; }
       if ( &(*y1) < &(*x1) ) { return false; }
 
-      PH x2 = boost::tuples::get<1>(x);
-      PH y2 = boost::tuples::get<1>(y);
+      Point_handle x2 = boost::tuples::get<1>(x);
+      Point_handle y2 = boost::tuples::get<1>(y);
 
       return &(*x2) < &(*y2);
     }
@@ -235,17 +235,8 @@ protected:
   Project_input_to_site_2<Site_rep_2, Site_2>
   Proj_input_to_site;
 
-public:
-  typedef Simple_container_wrapper<PC>           Point_container;
-  typedef typename Point_container::iterator     Point_handle;
-
-  typedef typename DS::size_type                 size_type;
-
-protected:
   typedef CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Internal::Project_site_2<Vertex>
   Proj_site;
-
-  typedef typename Point_container::const_iterator const_Point_handle;
 
   struct Point_handle_less_than {
     // less than
@@ -810,7 +801,7 @@ protected:
     typename Input_sites_container::iterator it = isc_.find(rep);
     CGAL_assertion( it != isc_.end() );
 
-    pc_.remove(h);
+    pc_.erase(h);
     isc_.erase(it);
   }
 
@@ -837,7 +828,7 @@ protected:
 
   inline Point_handle register_input_site(const Point_2& p)
   {
-    std::pair<PH,bool> it = pc_.insert(p);
+    std::pair<Point_handle,bool> it = pc_.insert(p);
     Site_rep_2 rep(it.first, it.first, true);
     isc_.insert( rep );
     return it.first;
@@ -846,8 +837,8 @@ protected:
   inline
   Point_handle_pair register_input_site(const Point_2& p0, const Point_2& p1)
   {
-    std::pair<PH,bool> it1 = pc_.insert(p0);
-    std::pair<PH,bool> it2 = pc_.insert(p1);
+    std::pair<Point_handle,bool> it1 = pc_.insert(p0);
+    std::pair<Point_handle,bool> it2 = pc_.insert(p1);
     Site_rep_2 rep(it1.first, it2.first, false);
     isc_.insert( rep );
     return Point_handle_pair(it1.first, it2.first);
