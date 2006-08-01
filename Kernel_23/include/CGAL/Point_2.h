@@ -42,7 +42,6 @@ public:
   typedef RPoint_2 Rep;
   typedef typename R_::Cartesian_const_iterator_2 Cartesian_const_iterator;
 
-
   const Rep& rep() const
   {
     return *this;

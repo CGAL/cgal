@@ -37,6 +37,18 @@ class Point_3 : public R_::Kernel_base::Point_3
   typedef typename R_::Kernel_base::Point_3  RPoint_3;
 
 public:
+  typedef RPoint_3 Rep;
+  typedef typename R_::Cartesian_const_iterator_3 Cartesian_const_iterator;
+
+  const Rep& rep() const
+  {
+    return *this;
+  }
+
+  Rep& rep()
+  {
+    return *this;
+  }
 
   typedef          R_                       R;
 
@@ -55,6 +67,82 @@ public:
 
   Point_3(const RT& hx, const RT& hy, const RT& hz, const RT& hw)
     : RPoint_3(hx, hy, hz, hw) {}
+
+  typename Qualified_result_of<typename R::Compute_x_3, Point_3>::type
+  x() const
+  {
+    return typename R::Compute_x_3()(*this);
+  }
+
+  typename Qualified_result_of<typename R::Compute_y_3, Point_3>::type
+  y() const
+  {
+    return typename R::Compute_y_3()(*this);
+  }
+
+  typename Qualified_result_of<typename R::Compute_z_3, Point_3>::type
+  z() const
+  {
+    return typename R::Compute_z_3()(*this);
+  }
+
+  typename Qualified_result_of<typename R::Compute_hx_3, Point_3>::type
+  hx() const
+  {
+    return R().compute_hx_3_object()(*this);
+  }
+
+  typename Qualified_result_of<typename R::Compute_hy_3, Point_3>::type
+  hy() const
+  {
+    return R().compute_hy_3_object()(*this);
+  }
+
+  typename Qualified_result_of<typename R::Compute_hz_3, Point_3>::type
+  hz() const
+  {
+    return R().compute_hz_3_object()(*this);
+  }
+
+  typename Qualified_result_of<typename R::Compute_hw_3, Point_3>::type
+  hw() const
+  {
+    return R().compute_hw_3_object()(*this);
+  }
+
+  typename Qualified_result_of<typename R::Compute_x_3, Point_3>::type
+  cartesian(int i) const
+  {
+    CGAL_kernel_precondition( (i == 0) || (i == 1) || (i == 2) );
+    if (i==0) return x();
+    if (i==1) return y();
+    return z();
+  }
+
+  RT
+  homogeneous(int i) const
+  {
+    CGAL_kernel_precondition( (i >= 0) || (i <= 3) );
+    if (i==0) return hx();
+    if (i==1) return hy();
+    if (i==2) return hz();
+    return hw();
+  }
+
+  Cartesian_const_iterator cartesian_begin() const 
+  {
+    return typename R::Construct_cartesian_const_iterator_3()(*this);
+  }
+
+  Cartesian_const_iterator cartesian_end() const 
+  {
+    return typename R::Construct_cartesian_const_iterator_3()(*this,3);
+  }
+
+  int dimension() const
+  {
+      return 3;
+  }
 
   Point_3 transform(const Aff_transformation_3 &t) const
   {

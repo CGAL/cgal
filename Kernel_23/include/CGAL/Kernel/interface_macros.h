@@ -137,18 +137,38 @@ CGAL_Kernel_cons(Compute_volume_3,
 		 compute_volume_3_object)
 CGAL_Kernel_cons(Compute_x_2,
 		 compute_x_2_object)
+CGAL_Kernel_cons(Compute_x_3,
+		 compute_x_3_object)
 CGAL_Kernel_cons(Compute_y_2,
 		 compute_y_2_object)
+CGAL_Kernel_cons(Compute_y_3,
+		 compute_y_3_object)
+CGAL_Kernel_cons(Compute_z_3,
+		 compute_z_3_object)
 CGAL_Kernel_cons(Compute_dx_2,
 		 compute_dx_2_object)
+CGAL_Kernel_cons(Compute_dx_3,
+		 compute_dx_3_object)
 CGAL_Kernel_cons(Compute_dy_2,
 		 compute_dy_2_object)
+CGAL_Kernel_cons(Compute_dy_3,
+		 compute_dy_3_object)
+CGAL_Kernel_cons(Compute_dz_3,
+		 compute_dz_3_object)
 CGAL_Kernel_cons(Compute_hx_2,
 		 compute_hx_2_object)
+CGAL_Kernel_cons(Compute_hx_3,
+		 compute_hx_3_object)
 CGAL_Kernel_cons(Compute_hy_2,
 		 compute_hy_2_object)
+CGAL_Kernel_cons(Compute_hy_3,
+		 compute_hy_3_object)
+CGAL_Kernel_cons(Compute_hz_3,
+		 compute_hz_3_object)
 CGAL_Kernel_cons(Compute_hw_2,
 		 compute_hw_2_object)
+CGAL_Kernel_cons(Compute_hw_3,
+		 compute_hw_3_object)
 CGAL_Kernel_cons(Compute_x_at_y_2,
 		 compute_x_at_y_2_object)
 CGAL_Kernel_cons(Compute_y_at_x_2,

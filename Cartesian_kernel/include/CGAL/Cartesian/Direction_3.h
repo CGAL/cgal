@@ -71,7 +71,6 @@ public:
   Vector_3       to_vector() const;
   Vector_3       vector() const { return to_vector(); }
 
-  const FT & delta(int i) const;
   const FT & dx() const
   {
       return get(base).e0;
@@ -129,15 +128,6 @@ DirectionC3<R>::to_vector() const
   return Vector_3(dx(), dy(), dz());
 }
 
-template < class R >
-const typename DirectionC3<R>::FT &
-DirectionC3<R>::delta(int i) const
-{
-  CGAL_kernel_precondition( i >= 0 && i <= 2 );
-  if (i==0) return dx();
-  if (i==1) return dy();
-  return dz();
-}
 
 #ifndef CGAL_NO_OSTREAM_INSERT_DIRECTIONC3
 template < class R >

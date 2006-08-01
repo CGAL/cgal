@@ -1578,13 +1578,13 @@ namespace CommonKernelFunctors {
     Cartesian_const_iterator_3
     operator()( const Point_3& p) const
       {
-	return p.cartesian_begin();
+	return p.rep().cartesian_begin();
       }
     
     Cartesian_const_iterator_3
     operator()( const Point_3& p, int) const
     {
-      return p.cartesian_end();
+      return p.rep().cartesian_end();
     }
   };
 

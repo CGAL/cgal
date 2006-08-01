@@ -91,23 +91,7 @@ public:
   const RT & hx() const { return get(base).e0; }
   const RT & hy() const { return get(base).e1; }
   const RT & hz() const { return get(base).e2; }
-
-  const RT & delta(int i) const;
 };
-
-template <class R >
-CGAL_KERNEL_INLINE
-const typename DirectionH3<R>::RT &
-DirectionH3<R>::delta(int i) const
-{
-  switch (i)
-  {
-      case 0:  return x();
-      case 1:  return y();
-      case 2:  return z();
-      default: return delta( i%3 );
-  }
-}
 
 template <class R >
 CGAL_KERNEL_INLINE
