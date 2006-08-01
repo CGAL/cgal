@@ -55,13 +55,13 @@ public:
   Rotation_repC2(const Direction_2 &d,
                  const FT &eps_num,
                  const FT &eps_den = FT(1))
-  { // FIXME : construction
+  {
     FT sin_num;
     FT cos_num;
     FT denom;
 
-    rational_rotation_approximation(d.to_vector().x(),
-                                    d.to_vector().y(),
+    rational_rotation_approximation(d.dx(),
+                                    d.dy(),
                                     sin_num,
                                     cos_num,
                                     denom,
@@ -72,26 +72,25 @@ public:
   }
 
   Point_2      transform(const Point_2 &p) const
-  { // FIXME : construction
+  {
     return Point_2(cosinus_ * p.x() - sinus_ * p.y(),
                    sinus_ * p.x() + cosinus_ * p.y());
   }
 
   Vector_2     transform(const Vector_2 &v) const
-  { // FIXME : construction
+  {
     return Vector_2(cosinus_ * v.x() - sinus_ * v.y(),
                     sinus_ * v.x() + cosinus_ * v.y());
   }
 
   Direction_2  transform(const Direction_2 &d) const
-  { // FIXME : construction
-    Vector_2  v = d.to_vector();
-    return Direction_2(cosinus_ * v.x() - sinus_ * v.y(),
-                       sinus_ * v.x() + cosinus_ * v.y());
+  {
+    return Direction_2(cosinus_ * d.dx() - sinus_ * d.dy(),
+                       sinus_ * d.dx() + cosinus_ * d.dy());
   }
 
   Aff_transformation_2 inverse() const
-  { // FIXME : construction
+  {
     return Aff_transformation_2(ROTATION, - sinus_, cosinus_, FT(1));
   }
 
@@ -101,7 +100,7 @@ public:
   }
 
   Aff_transformation_2 compose(const Translation &t) const
-  { // FIXME : construction
+  {
     return Aff_transformation_2(cosinus_,
                                 -sinus_,
                                 t.translationvector_.x(),
@@ -111,14 +110,14 @@ public:
   }
 
   Aff_transformation_2 compose(const Rotation &t) const
-  { // FIXME : construction
+  {
     return Aff_transformation_2(ROTATION,
                                 t.sinus_*cosinus_ + t.cosinus_*sinus_,
                                 t.cosinus_*cosinus_-t.sinus_*sinus_ );
   }
 
   Aff_transformation_2 compose(const Scaling &t) const
-  { // FIXME : construction
+  {
     return Aff_transformation_2(t.scalefactor_*cosinus_,
                                 t.scalefactor_*-sinus_,
                                 t.scalefactor_*sinus_,
@@ -126,7 +125,7 @@ public:
   }
 
   Aff_transformation_2 compose(const Transformation &t) const
-  { // FIXME : construction
+  {
     return Aff_transformation_2(cosinus_*t.t11 + sinus_*t.t12,
                                 -sinus_*t.t11 + cosinus_*t.t12,
                                 t.t13,
@@ -141,7 +140,7 @@ public:
   }
 
   FT cartesian(int i, int j) const
-  { // FIXME : construction
+  {
     switch (i)
     {
     case 0: switch (j)
