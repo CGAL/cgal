@@ -459,7 +459,7 @@ Arrangement_2<Traits,Dcel>::insert_in_face_interior
 
     CGAL_precondition_msg 
       ((inf_x2 == FINITE && inf_y2 == FINITE && 
-        fict_he2 != Halfedge_handle()) ||
+        fict_he2 == Halfedge_handle()) ||
        _is_on_fictitious_edge (cv, MAX_END, inf_x2, inf_y2,
                                _halfedge (fict_he2),
                                eq_source, eq_target) &&
