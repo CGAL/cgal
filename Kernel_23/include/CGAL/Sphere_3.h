@@ -49,39 +49,111 @@ public:
 
   typedef          R_                       R;
 
-      Sphere_3() {}
+  Sphere_3() {}
 
-      Sphere_3(const RSphere_3& s)
-      : RSphere_3(s) {}
+  Sphere_3(const RSphere_3& s)
+   : RSphere_3(s) {}
 
-      Sphere_3(const Point_3& p, const FT& sq_rad,
-               const Orientation& o = COUNTERCLOCKWISE)
-       : RSphere_3(p, sq_rad, o) {}
+  Sphere_3(const Point_3& p, const FT& sq_rad,
+           const Orientation& o = COUNTERCLOCKWISE)
+   : RSphere_3(p, sq_rad, o) {}
 
-      Sphere_3(const Point_3& p, const Point_3& q,
-               const Point_3& r, const Point_3& u)
-       : RSphere_3(p, q, r, u) {}
+  Sphere_3(const Point_3& p, const Point_3& q,
+           const Point_3& r, const Point_3& u)
+   : RSphere_3(p, q, r, u) {}
 
-      Sphere_3(const Point_3& p, const Point_3& q, const Point_3& r,
-               const Orientation& o = COUNTERCLOCKWISE)
-       : RSphere_3(p, q, r, o) {}
+  Sphere_3(const Point_3& p, const Point_3& q, const Point_3& r,
+           const Orientation& o = COUNTERCLOCKWISE)
+   : RSphere_3(p, q, r, o) {}
 
-      Sphere_3(const Point_3& p, const Point_3&  q,
-               const Orientation& o = COUNTERCLOCKWISE)
-       : RSphere_3(p, q, o) {}
+  Sphere_3(const Point_3& p, const Point_3&  q,
+           const Orientation& o = COUNTERCLOCKWISE)
+   : RSphere_3(p, q, o) {}
 
-      Sphere_3(const Point_3& p, const Orientation& o = COUNTERCLOCKWISE)
-       : RSphere_3(p, o) {}
+  Sphere_3(const Point_3& p, const Orientation& o = COUNTERCLOCKWISE)
+   : RSphere_3(p, o) {}
 
-    Sphere_3 orthogonal_transform(const Aff_transformation_3 &t) const;
+  Sphere_3 orthogonal_transform(const Aff_transformation_3 &t) const;
 
-    // FIXME : why doesn't Qrt work here ?  We loose optimization !
-    //typename Qualified_result_of<typename R::Construct_center_3, Sphere_3>::type
-    Point_3
-    center() const
-    {
-      return R().construct_center_3_object()(*this);
-    }
+  // FIXME : why doesn't Qrt work here ?  We loose optimization !
+  //typename Qualified_result_of<typename R::Construct_center_3, Sphere_3>::type
+  Point_3
+  center() const
+  {
+    return R().construct_center_3_object()(*this);
+  }
+
+  FT
+  squared_radius() const
+  {
+    return R().compute_squared_radius_3_object()(*this);
+  }
+
+  // Returns a circle with opposite orientation
+  Sphere_3 opposite() const
+  {
+    return R().construct_opposite_sphere_3_object()(*this);
+  }
+
+  Orientation orientation() const
+  {
+    return R().orientation_3_object()(*this);
+  }
+
+  Bounded_side
+  bounded_side(const Point_3 &p) const
+  {
+    return R().bounded_side_3_object()(*this, p);
+  }
+  
+  Oriented_side
+  oriented_side(const Point_3 &p) const
+  {
+    return R().oriented_side_3_object()(*this, p);
+  } 
+
+  bool
+  has_on_boundary(const Point_3 &p) const
+  {
+    return R().has_on_boundary_3_object()(*this, p);
+    //return bounded_side(p) == ON_BOUNDARY;
+  }
+
+  bool
+  has_on_bounded_side(const Point_3 &p) const
+  {
+    return bounded_side(p) == ON_BOUNDED_SIDE;
+  }
+
+  bool
+  has_on_unbounded_side(const Point_3 &p) const
+  {
+    return bounded_side(p) == ON_UNBOUNDED_SIDE;
+  }
+
+  bool
+  has_on_negative_side(const Point_3 &p) const
+  {
+    if (orientation() == COUNTERCLOCKWISE)
+      return has_on_unbounded_side(p);
+    return has_on_bounded_side(p);
+  }
+
+  bool
+  has_on_positive_side(const Point_3 &p) const
+  {
+    if (orientation() == COUNTERCLOCKWISE)
+      return has_on_bounded_side(p);
+    return has_on_unbounded_side(p);
+  }
+
+  bool
+  is_degenerate() const
+  {
+    return R().is_degenerate_3_object()(*this);
+    //return CGAL_NTS is_zero(squared_radius());
+  }
+
 
 };
 

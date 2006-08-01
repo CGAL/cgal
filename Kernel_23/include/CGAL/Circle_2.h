@@ -152,6 +152,7 @@ public:
   Circle_2
   opposite() const
   {
+    //return R().construct_opposite_circle_2_object()(*this);
     return Circle_2(center(),
 		    squared_radius(),
 		    CGAL::opposite(orientation()) );

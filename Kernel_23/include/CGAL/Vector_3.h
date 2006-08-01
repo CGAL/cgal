@@ -32,6 +32,7 @@ template <class R_>
 class Vector_3 : public R_::Kernel_base::Vector_3
 {
   typedef typename R_::RT                    RT;
+  typedef typename R_::FT                    FT;
   typedef typename R_::Segment_3             Segment_3;
   typedef typename R_::Ray_3                 Ray_3;
   typedef typename R_::Line_3                Line_3;
@@ -89,6 +90,16 @@ public:
   Vector_3 transform(const Aff_transformation_3 &t) const
   {
     return t.transform(*this);
+  }
+
+  Vector_3 operator/(const RT& c) const
+  {
+   return R().construct_divided_vector_3_object()(*this,c);
+  }
+
+  Vector_3 operator/(const typename First_if_different<FT,RT>::Type & c) const
+  {
+   return R().construct_divided_vector_3_object()(*this,c);
   }
 
 };

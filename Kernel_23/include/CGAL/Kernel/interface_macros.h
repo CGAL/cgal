@@ -285,16 +285,22 @@ CGAL_Kernel_cons(Construct_scaled_vector_2,
 		 construct_scaled_vector_2_object)
 CGAL_Kernel_cons(Construct_divided_vector_2,
 		 construct_divided_vector_2_object)
+CGAL_Kernel_cons(Construct_divided_vector_3,
+		 construct_divided_vector_3_object)
 CGAL_Kernel_cons(Construct_scaled_vector_3,
 		 construct_scaled_vector_3_object)
 CGAL_Kernel_cons(Construct_second_point_2,
 		 construct_second_point_2_object)
+CGAL_Kernel_cons(Construct_second_point_3,
+		 construct_second_point_3_object)
 CGAL_Kernel_cons(Construct_segment_2,
 		 construct_segment_2_object)
-CGAL_Kernel_cons(Construct_source_2,
-		 construct_source_2_object)
 CGAL_Kernel_cons(Construct_segment_3,
 		 construct_segment_3_object)
+CGAL_Kernel_cons(Construct_source_2,
+		 construct_source_2_object)
+CGAL_Kernel_cons(Construct_source_3,
+		 construct_source_3_object)
 CGAL_Kernel_cons(Construct_sphere_3,
 		 construct_sphere_3_object)
 #ifndef CGAL_NO_DEPRECATED_CODE

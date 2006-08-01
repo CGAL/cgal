@@ -72,13 +72,13 @@ public:
     : RRay_2(typename R::Construct_ray_2()(sp, l).rep()) {}
 
 
- typename Qualified_result_of<typename R_::Construct_source_2, Ray_2, int >::type
+  typename Qualified_result_of<typename R_::Construct_source_2, Ray_2>::type
   source() const
   {
     return R().construct_source_2_object()(*this);
   }
 
- typename Qualified_result_of<typename R_::Construct_second_point_2, Ray_2, int >::type
+  typename Qualified_result_of<typename R_::Construct_second_point_2, Ray_2>::type
   second_point() const
   {
     return R().construct_second_point_2_object()(*this);
@@ -107,8 +107,6 @@ public:
   {
     return source();
   }
-
-
 
   bool is_horizontal() const
   {

@@ -76,6 +76,77 @@ public:
     // NB : Homogeneous used direction() instead of second_point().
   }
 
+/*
+  const Point_3 &   start() const;
+  const Point_3 &   source() const
+  {
+      return get(base).e0;
+  }
+
+  Direction_3 direction() const;
+  Vector_3    to_vector() const;
+  Line_3      supporting_line() const;
+  Ray_3       opposite() const;
+
+  bool        is_degenerate() const;
+  bool        collinear_has_on(const Point_3 &p) const;
+*/
+
+  Point_3 point(int i) const // TODO : use Qrt
+  {
+    return R().construct_point_on_3_object()(*this, i);
+  }
+
+  // FIXME : Use Qrt
+  //typename Qualified_result_of<typename R_::Construct_source_3, Ray_3 >::type
+  Point_3
+  source() const
+  {
+    return R().construct_source_3_object()(*this);
+  }
+
+  Point_3 second_point() const // TODO : use Qrt
+  {
+    return R().construct_second_point_3_object()(*this);
+  }
+
+  bool has_on(const Point_3 &p) const
+  {
+    return R().has_on_3_object()(*this, p);
+  }
+
+  Direction_3
+  direction() const
+  {
+    typename R::Construct_vector_3 construct_vector;
+    typename R::Construct_direction_3 construct_direction;
+    return construct_direction( construct_vector(source(), second_point()) );
+  }
+
+  Ray_3
+  opposite() const
+  {
+    return Ray_3( source(), - direction() );
+  }
+
+  Vector_3
+  to_vector() const
+  {
+    typename R::Construct_vector_3 construct_vector;
+    return construct_vector(source(), second_point());
+  }
+
+  Line_3
+  supporting_line() const
+  {
+    return R().construct_line_3_object()(source(), second_point());
+  }
+
+  bool is_degenerate() const
+  {
+    return R().is_degenerate_3_object()(*this);
+  }
+
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_RAY_3

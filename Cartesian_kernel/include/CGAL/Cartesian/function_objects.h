@@ -217,7 +217,7 @@ namespace CartesianKernelFunctors {
 
     result_type
     operator()( const Sphere_3& s, const Point_3& p) const
-    { return s.bounded_side(p); }
+    { return s.rep().bounded_side(p); }
 
     result_type
     operator()( const Tetrahedron_3& t, const Point_3& p) const
@@ -930,7 +930,7 @@ namespace CartesianKernelFunctors {
 
     result_type
     operator()( const Sphere_3& s) const
-    { return s.squared_radius(); }
+    { return s.rep().squared_radius(); }
 
     result_type
     operator()( const Point_3& p, const Point_3& q) const
@@ -2160,6 +2160,22 @@ namespace CartesianKernelFunctors {
   };
 
   template <typename K>
+  class Construct_divided_vector_3
+  {
+    typedef typename K::FT         FT;
+    typedef typename K::Vector_3   Vector_3;
+  public:
+    typedef Vector_3               result_type;
+    typedef Arity_tag< 2 >         Arity;
+
+    Vector_3
+    operator()( const Vector_3& v, const FT& c) const
+    {  
+      return Vector_3(v.x()/c, v.y()/c, v.z()/c);
+    }
+  };
+
+  template <typename K>
   class Construct_scaled_vector_3
   {
     typedef typename K::FT         FT;
@@ -2580,7 +2596,7 @@ namespace CartesianKernelFunctors {
 
     result_type
     operator()( const Ray_3& r, const Point_3& p) const
-    { return r.has_on(p); }
+    { return r.rep().has_on(p); }
 
     result_type
     operator()( const Segment_3& s, const Point_3& p) const
@@ -2873,6 +2889,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Point_3        Point_3;
     typedef typename K::Vector_3       Vector_3;
     typedef typename K::Tetrahedron_3  Tetrahedron_3;
+    typedef typename K::Sphere_3       Sphere_3;
   public:
     typedef typename K::Orientation    result_type;
     typedef Arity_tag< 4 >             Arity;
@@ -2899,6 +2916,12 @@ namespace CartesianKernelFunctors {
     operator()( const Tetrahedron_3& t) const
     { 
       return t.rep().orientation();
+    }
+
+    result_type
+    operator()(const Sphere_3& s) const
+    { 
+      return s.rep().orientation();
     }
   };
 
