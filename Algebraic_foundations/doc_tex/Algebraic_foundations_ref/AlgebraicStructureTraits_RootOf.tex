@@ -1,0 +1,33 @@
+\begin{ccRefConcept}{AlgebraicStructureTraits::RootOf}
+
+\begin{ccAdvanced}
+\ccDefinition
+
+\ccc{AdaptableUnaryFunction} provinding root of a polynomial . 
+\ccRefines 
+
+\ccc{AdaptableFunction} 
+
+\ccTypes
+\ccTypedef{typedef AlgebraicStructureTraits::AS result_type;}{}
+%\ccNestedType{Boundary} {}
+
+\ccOperations
+\ccMethod{
+template<class InputIterator>
+result_type operator() (int k, InputIterator begin, InputIterator end);}
+{returns the kth real root of the univariat polynomial defined by the iterator range, 
+ where begin referes to the constant term. \\
+ precond: The value type of the InputIterator is AlgebraicStructureTraits::AS\\ }
+%template<class InputIterator>
+%NT 	operator() (Boundary lower, Boundary upper, InputIterator begin, InputIterator end)
+
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicStructureTraits}
+
+\end{ccAdvanced}
+\end{ccRefConcept} 

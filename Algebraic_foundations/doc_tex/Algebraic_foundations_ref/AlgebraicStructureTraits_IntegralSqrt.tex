@@ -1,0 +1,37 @@
+
+
+\begin{ccRefConcept}{AlgebraicStructureTraits::IntegralSqrt}
+
+\begin{ccAdvanced}
+\ccDefinition
+
+\ccc{AdaptableBinaryFunction} provinding an integral square root. 
+
+An ring element $a$ is said to be is an square if there exists a ringe element $b$ such 
+that $a= b*b$. Since the ring represented is an integral domain, 
+$b$ is uniquely defined up to multiplication by units. 
+
+\ccRefines 
+
+\ccc{AdaptableUnaryFunction} 
+
+\ccTypes
+\ccTypedef{typedef bool result_type;}{}
+\ccTypedef{typedef AlgebraicStructureTraits::AS first_argument_type;}{}
+\ccTypedef{typedef AlgebraicStructureTraits::AS second_argument_type;}{}
+
+\ccOperations
+\ccMethod{result_type operator()(const first_argument_type&  a, 
+                                 second_argument_type& b);}
+        { return {\tt true} in case $a$ is a perfect square, i.e. $a = b*b$.\\
+          postcond: $unit\_part(b) = 1$. // $b$ is unit normal. 
+        }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicStructureTraits}
+\end{ccAdvanced}
+
+\end{ccRefConcept} 

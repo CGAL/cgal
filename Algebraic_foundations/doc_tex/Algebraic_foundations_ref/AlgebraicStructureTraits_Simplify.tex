@@ -1,0 +1,24 @@
+\begin{ccRefConcept}{AlgebraicStructureTraits::Simplify}
+
+\ccDefinition
+
+This \ccc{AdaptableUnaryFunction} may simplify a given object. 
+
+\ccRefines 
+
+\ccc{AdaptableUnaryFunction} 
+
+\ccTypes
+\ccTypedef{typedef void result_type;}{}
+\ccTypedef{typedef AlgebraicStructureTraits::AS first_argument_type;}{}
+
+\ccOperations
+\ccMethod{result_type operator()(first_argument_type& x);}{ may simplify $x$.}
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicStructureTraits}
+
+\end{ccRefConcept}

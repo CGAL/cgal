@@ -18,13 +18,10 @@ multiplication * and their compound forms +=, -=, *= are required and
 implement the respective ring operations.
 
 Moreover, \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDiv >} is a model of 
-\ccc{AlgebraicStructureTraits} providing:\\
- 
+\ccc{AlgebraicStructureTraits} providing:\\ 
 - \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDiv >::Algebraic_type} derived from \ccc{Integral_domain_without_div_tag} \\
 - \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDiv >::Simplify}  an \ccc{AdaptableUnaryFunction}\\
 - \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDiv >::Unit_part} an \ccc{AdaptableUnaryFunction}\\
-
-
 
 
 { \em \small FROM EXACUS: \\
@@ -45,7 +42,6 @@ rely in a similar fashion on a chain of user-defined conversions.
 
 \ccOperations
 
-Ring Operations:\\
 \ccFunction{IntegralDomainWithoutDiv 
             operator+(const IntegralDomainWithoutDiv &a, 
                       const IntegralDomainWithoutDiv &b);}{}
@@ -90,15 +86,17 @@ Equality comparable:
  \ccc{DefaultConstructible} \\
  \ccc{EqualityComparable}\\
  \ccc{Assignable}\\
- \ccc{FromSmallIntConstructible}\\
+ \ccc{FromSmallIntConstructible}
 
 \ccSeeAlso
-  \ccc{IntegralDomainWithoutDiv}\\
-  \ccc{IntegralDomain}\\
-  \ccc{UFDomain}\\
-  \ccc{EuclideanRing}\\
-  \ccc{Field}\\
-  \ccc{FieldWithSqrt}\\
+
+\ccRefIdfierPage{IntegralDomainWithoutDiv}\\
+\ccRefIdfierPage{IntegralDomain}\\
+\ccRefIdfierPage{UFDomain}\\
+\ccRefIdfierPage{EuclideanRing}\\
+\ccRefIdfierPage{Field}\\
+\ccRefIdfierPage{FieldWithSqrt}\\
+\ccRefIdfierPage{AlgebraicStructureTraits}\\
 
 \ccHasModels
 

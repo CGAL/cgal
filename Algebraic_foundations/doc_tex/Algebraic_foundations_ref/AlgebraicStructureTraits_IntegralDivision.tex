@@ -1,0 +1,33 @@
+\begin{ccRefConcept}{AlgebraicStructureTraits::IntegralDivision}
+
+\ccDefinition
+
+\ccc{AdaptableBinaryFunction} providing an integral divison. 
+
+Integral division (a.k.a. exact division or division without remainder) maps 
+ring elements $(x,y)$ to ring element $z$ such that $x = yz$ if such a $z$ 
+exists (i.e. if $x$ is divisible by $y$). Otherwise the effect of invoking 
+this operation is undefined. Since the ring represented is an integral domain, 
+$z$ is uniquely defined if it exists. 
+
+\ccRefines 
+
+\ccc{AdaptableUnaryFunction} 
+
+\ccTypes
+\ccTypedef{typedef AlgebraicStructureTraits::AS result_type;}{}
+\ccTypedef{typedef AlgebraicStructureTraits::AS first_argument_type;}{}
+\ccTypedef{typedef AlgebraicStructureTraits::AS second_argument_type;}{}
+
+\ccOperations
+\ccMethod{result_type operator()(
+        const first_argument_type&  x, 
+        const second_argument_type& y);}{ returns  $x/y$, this is an integral division. }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicStructureTraits}
+
+\end{ccRefConcept} 

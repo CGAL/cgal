@@ -1,18 +1,31 @@
 
-\ccRefChapter{Algebraic Concepts}
-\label{ChapterRefAlgebraicConcepts}
+\ccRefChapter{Algebraic Foundations}
+%\label{ChapterRefAlgebraicFoundations}
 
-\ccChapterAuthor{Michael Hemmer \and Who Soever}
+\ccChapterAuthor{Michael Hemmer and Who Soever}
 
+\section{todo open questions:}
+
+\begin{itemize}
+\item Is\_exact\_tag: This tag is currently provided by \ccc{AlgebraicStructurTraits}\\
+Question: moved it to a global place? 
+\item \ccc{AlgebraicStructurTraits::Sqrt} has a special definition for Integer. \\
+        A type may provide this functor even if the set of 
+        numbers it models does not contain real square roots in general. 
+        The most important example are number types modeling the integers. 
+        For them, Sqrt()(x) has to return the largest integer not exceeding 
+        the square root of x.\\
+        In EXACUS this is uesed to test an integer to be an perfect square. \\
+        Question: Should we introduce an extra functor for that?
+        see: \ccc{AlgebraicStructurTraits::Integral_sqrt}
+\end{itemize}
 
 \section{Classified Reference Pages}
 
 \subsection*{Basic Concepts}
-\ccRefConceptPage{FromSmallIntConstructible}\\
+\ccRefConceptPage{FromSmallIntConstructible}
 
 \subsection*{Concepts for Algebraic Structures}
-\ccRefConceptPage{AlgebraicStructureTraits}\\
-\\
 \ccRefConceptPage{IntegralDomainWithoutDiv}\\
 \ccRefConceptPage{IntegralDomain}\\
 \ccRefConceptPage{UFDomain}\\
@@ -20,11 +33,26 @@
 \ccRefConceptPage{Field}\\
 \ccRefConceptPage{FieldWithSqrt}\\
 
+
+\subsection*{Algebraic Structure Traits and provided Functors}
+\ccRefConceptPage{AlgebraicStructureTraits}\\
+\ccRefConceptPage{AlgebraicStructureTraits::Simplify}\\
+\ccRefConceptPage{AlgebraicStructureTraits::UnitPart}\\
+\ccRefConceptPage{AlgebraicStructureTraits::IntegralDivision}\\
+\ccRefConceptPage{AlgebraicStructureTraits::Gcd}\\
+\ccRefConceptPage{AlgebraicStructureTraits::DivMod}\\
+\ccRefConceptPage{AlgebraicStructureTraits::Div}\\
+\ccRefConceptPage{AlgebraicStructureTraits::Mod}\\
+\ccRefConceptPage{AlgebraicStructureTraits::Sqrt}\\
+\ccRefConceptPage{AlgebraicStructureTraits::IntegralSqrt}\\
+\ccRefConceptPage{AlgebraicStructureTraits::KthRoot}\\
+\ccRefConceptPage{AlgebraicStructureTraits::RootOf}\\
+
 \subsection*{Classes}
 
-\ccRefIdfierPage{Integral_domain_without_div_tag}\\
-\ccRefIdfierPage{Integral_domain_tag}\\
-\ccRefIdfierPage{Field_tag}\\
-\ccRefIdfierPage{Field_with_sqrt_tag}\\
-\ccRefIdfierPage{UFDomain_tag}\\
-\ccRefIdfierPage{Euclidean_ring_tag}\\
+\ccRefIdfierPage{CGAL::Integral_domain_without_div_tag}\\
+\ccRefIdfierPage{CGAL::Integral_domain_tag}\\
+\ccRefIdfierPage{CGAL::Field_tag}\\
+\ccRefIdfierPage{CGAL::Field_with_sqrt_tag}\\
+\ccRefIdfierPage{CGAL::UFDomain_tag}\\
+\ccRefIdfierPage{CGAL::Euclidean_ring_tag}\\

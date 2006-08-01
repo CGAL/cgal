@@ -17,14 +17,23 @@ types of ring. If an algorithm wants to rely on gcd or remainder computation, it
 it shouldn't do with a field in the first place. 
   
 \ccRefines
- \ccc{IntegralDomain}\\
+ \ccc{IntegralDomain}
+
+\ccOperations
+\ccFunction{Field operator/(const Field &a, const Field &b);}{}
+\ccGlue
+\ccMethod{Field operator/=(const Field &a);}{}
 
 \ccSeeAlso
-  \ccc{IntegralDomainWithoutDiv} 
-        $ \leftarrow $  \ccc{IntegralDomain} 
-        $ \leftarrow $  \ccc{Field} 
+
+\ccRefIdfierPage{IntegralDomainWithoutDiv}\\
+\ccRefIdfierPage{IntegralDomain}\\
+\ccRefIdfierPage{UFDomain}\\
+\ccRefIdfierPage{EuclideanRing}\\
+\ccRefIdfierPage{Field}\\
+\ccRefIdfierPage{FieldWithSqrt}\\
+\ccRefIdfierPage{AlgebraicStructureTraits}\\
 
 \ccHasModels
-
 
 \end{ccRefConcept}
