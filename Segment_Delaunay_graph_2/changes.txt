@@ -1,3 +1,6 @@
+1 August 2006:  Menelaos Karavelas
+- changed some file names to match the names of the classes they contain
+
 31 July 2006:  Menelaos Karavelas
 - renamed storage traits related file names and classes; modified test
   suite and demo according to changes

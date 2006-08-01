@@ -31,10 +31,10 @@
 #include <CGAL/Segment_Delaunay_graph_2/Are_same_segments_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Orientation_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Oriented_side_of_bisector_C2.h>
-#include <CGAL/Segment_Delaunay_graph_2/Incircle_2.h>
-#include <CGAL/Segment_Delaunay_graph_2/Finite_edge_interior_2.h>
-#include <CGAL/Segment_Delaunay_graph_2/Infinite_edge_interior_2.h>
-#include <CGAL/Segment_Delaunay_graph_2/Is_degenerate_edge_2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Vertex_conflict_C2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Finite_edge_interior_conflict_C2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Infinite_edge_interior_conflict_C2.h>
+#include <CGAL/Segment_Delaunay_graph_2/Is_degenerate_edge_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Arrangement_type_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Oriented_side_C2.h>
 
