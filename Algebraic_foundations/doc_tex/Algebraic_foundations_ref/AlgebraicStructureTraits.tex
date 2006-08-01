@@ -20,7 +20,7 @@ A model of \ccc{AlgebraicStructureTraits} is supposed to provide:\\
 \ccNestedType{AS}
         {The assosiated algebraic structure.}
 
-\ccNestedType{Algebraic_structure_tag}
+\ccNestedType{Algebraic_structure}
         { Tag indicating the algebraic structure of the assoziated type. \\
           This is one of: \\
         \begin{tabular}{ll}
@@ -34,11 +34,12 @@ A model of \ccc{AlgebraicStructureTraits} is supposed to provide:\\
         \end{tabular}        
         }
 
-\ccNestedType{Is_exact_tag}
+\ccNestedType{Is_exact}
         { Tag indicating whether AS is an exact type. \\
           This is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}. }
 
-\ccTypes
+
+\ccHeading{Functors}
 
 Functors for \ccc{IntegralDomainWithoutDiv}: \hfill\\
 \ccNestedType{Simplify}{ 

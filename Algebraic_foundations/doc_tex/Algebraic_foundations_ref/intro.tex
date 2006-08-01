@@ -18,6 +18,12 @@ Question: moved it to a global place?
         In EXACUS this is uesed to test an integer to be an perfect square. \\
         Question: Should we introduce an extra functor for that?
         see: \ccc{AlgebraicStructurTraits::Integral_sqrt}
+\item The concept \ccc{FieldWithSqrt} (also FieldWithKthRoot,FieldWithRootOf) 
+      implies that the number type is RealEmbeddable, in particular RootOf talks 
+      about the real root of an polynomial.\\
+      Question: Should FieldWithSqrt refine RealEmbeddable?  
+\item What is the return type of ToDoubleInterval?     
+
 \end{itemize}
 
 \section{Classified Reference Pages}
@@ -33,7 +39,6 @@ Question: moved it to a global place?
 \ccRefConceptPage{Field}\\
 \ccRefConceptPage{FieldWithSqrt}\\
 
-
 \subsection*{Algebraic Structure Traits and provided Functors}
 \ccRefConceptPage{AlgebraicStructureTraits}\\
 \ccRefConceptPage{AlgebraicStructureTraits::Simplify}\\
@@ -47,6 +52,16 @@ Question: moved it to a global place?
 \ccRefConceptPage{AlgebraicStructureTraits::IntegralSqrt}\\
 \ccRefConceptPage{AlgebraicStructureTraits::KthRoot}\\
 \ccRefConceptPage{AlgebraicStructureTraits::RootOf}\\
+
+\subsection{Concept RealEmbeddable}
+
+\ccRefConceptPage{RealEmbeddable}\\
+\ccRefConceptPage{RealEmbeddableTraits}\\
+\ccRefConceptPage{RealEmbeddableTraits::Abs}\\
+\ccRefConceptPage{RealEmbeddableTraits::Sign}\\
+\ccRefConceptPage{RealEmbeddableTraits::Compare}\\
+\ccRefConceptPage{RealEmbeddableTraits::ToDouble}\\
+\ccRefConceptPage{RealEmbeddableTraits::ToDoubleInterval}\\
 
 \subsection*{Classes}
 

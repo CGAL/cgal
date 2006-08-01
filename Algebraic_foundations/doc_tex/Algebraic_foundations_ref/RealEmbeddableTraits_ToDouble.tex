@@ -1,0 +1,27 @@
+\begin{ccRefConcept}{RealEmbeddableTraits::ToDouble}
+
+\ccDefinition
+
+\ccc{AdaptableUnaryFunction} computes a double approximation of a real
+embeddable number. 
+ 
+\ccRefines 
+
+\ccc{AdaptableUnaryFunction} 
+
+\ccTypes
+\ccTypedef{typedef double result_type;}{}
+\ccTypedef{typedef RealEmbeddableTraits::NT first_argument_type;}{}
+
+\ccOperations
+\ccMethod{result_type operator()(
+        const first_argument_type&  x);}
+        { computes a double approximation of a real embeddable number. }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{RealEmbeddableTraits}\\
+
+\end{ccRefConcept} 

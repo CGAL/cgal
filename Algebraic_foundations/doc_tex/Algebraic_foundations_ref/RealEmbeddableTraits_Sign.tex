@@ -1,0 +1,26 @@
+\begin{ccRefConcept}{RealEmbeddableTraits::Sign}
+
+\ccDefinition
+
+\ccc{AdaptableUnaryFunction} computes the sign of a real embeddable number. 
+ 
+\ccRefines 
+
+\ccc{AdaptableUnaryFunction} 
+
+\ccTypes
+\ccTypedef{typedef CGAL::Sign result_type;}{}
+\ccTypedef{typedef RealEmbeddableTraits::NT first_argument_type;}{}
+
+\ccOperations
+\ccMethod{result_type operator()(
+        const first_argument_type&  x);}
+        { computes the sign of $x$. }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{RealEmbeddableTraits}\\
+
+\end{ccRefConcept} 

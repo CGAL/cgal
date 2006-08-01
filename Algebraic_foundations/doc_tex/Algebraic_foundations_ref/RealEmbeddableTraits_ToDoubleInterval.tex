@@ -1,0 +1,27 @@
+\begin{ccRefConcept}{RealEmbeddableTraits::ToDoubleInterval}
+
+\ccDefinition
+
+\ccc{AdaptableUnaryFunction} computes for a given real embeddable 
+number $x$ a double interval containing $x$. 
+ 
+\ccRefines 
+
+\ccc{AdaptableUnaryFunction} 
+
+\ccTypes
+\ccTypedef{typedef CGAL::Double_interval     result_type;}{}
+\ccTypedef{typedef RealEmbeddableTraits::NT first_argument_type;}{}
+
+\ccOperations
+\ccMethod{result_type operator()(
+        const first_argument_type&  x);}
+        { computes a double interval containing $x$.}
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{RealEmbeddableTraits}\\
+
+\end{ccRefConcept} 
