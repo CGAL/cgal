@@ -87,7 +87,9 @@ public:
   typedef Lazy<typename AK::Tetrahedron_3, typename EK::Tetrahedron_3, typename EK::FT, E2A> Tetrahedron_3;
   typedef Lazy<typename AK::Sphere_3, typename EK::Sphere_3, typename EK::FT, E2A> Sphere_3;
   typedef Lazy<typename AK::Iso_cuboid_3, typename EK::Iso_cuboid_3, typename EK::FT, E2A> Iso_cuboid_3;
-  typedef Lazy<typename AK::Cartesian_const_iterator_3, typename EK::Cartesian_const_iterator_3, typename EK::FT, E2A> Cartesian_const_iterator_3;
+
+  typedef Cartesian_coordinate_iterator_3<Kernel> Cartesian_const_iterator_3;
+  //typedef Lazy<typename AK::Cartesian_const_iterator_3, typename EK::Cartesian_const_iterator_3, typename EK::FT, E2A> Cartesian_const_iterator_3;
 
   // Aff_transformation_2/3 operations are not functorized, so treat it as
   // an exterior object for now.
