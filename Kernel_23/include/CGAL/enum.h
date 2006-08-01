@@ -45,7 +45,7 @@ enum  Sign
     ON_NEGATIVE_SIDE = -1, ON_ORIENTED_BOUNDARY = 0, ON_POSITIVE_SIDE = 1,
 
     // Comparison_result constants:
-    SMALLER = -1, EQUAL = 0, LARGER = 1,
+    SMALLER = -1, EQUAL = 0, LARGER = 1
 };
 
 typedef Sign Orientation;
