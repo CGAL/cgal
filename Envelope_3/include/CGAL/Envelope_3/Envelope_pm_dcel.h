@@ -22,8 +22,8 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Arr_default_dcel.h>
-#include "CGAL/Envelope_base.h"
 #include <CGAL/Unique_hash_map.h>
+#include <CGAL/Envelope_3/Envelope_base.h>
 #include <iostream>
 #include <set>
 

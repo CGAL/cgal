@@ -17,8 +17,8 @@
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
 
-#ifndef ENVELOPE_OVERLAY_FUNCTOR_H
-#define ENVELOPE_OVERLAY_FUNCTOR_H
+#ifndef CGAL_ENVELOPE_OVERLAY_FUNCTOR_H
+#define CGAL_ENVELOPE_OVERLAY_FUNCTOR_H
 
 #include <iostream>
 
@@ -413,23 +413,12 @@ protected:
         CGAL_assertion(is_equal == calc_is_equal);
 
         // has_equal relationship is problematic in one case:
-        bool has_equal;
-/*        if (h_of_vh_and_in_face->get_has_equal_data_in_face() == true)
-          has_equal = h_of_vh_and_in_face->get_has_equal_data_in_target();
-        else
-          if (h_of_vh_and_in_face->get_has_equal_data_in_target() == false)
-            has_equal = false;
-          else if (h_of_vh_and_in_face->get_is_equal_data_in_target() == true)
-            has_equal = false;
-          else
-          {
-            CGAL_assertion_code(std::cout << "happen" << std::endl;)
-            has_equal = calc_has_equal;
-          }*/
-    		has_equal = h_of_vh_and_in_face->get_has_equal_data_in_target_and_face();
+        bool has_equal = 
+          h_of_vh_and_in_face->get_has_equal_data_in_target_and_face();
+
         CGAL_assertion(has_equal == calc_has_equal);
-    		if(has_equal != calc_has_equal)
-    			std::cout << "BUG!!!!" <<std::endl;
+        if(has_equal != calc_has_equal)
+          return;
 
     		// update halfedge-target flags
         new_h->set_is_equal_aux_data_in_target(id, is_equal);

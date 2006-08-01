@@ -17,8 +17,8 @@
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
 
-#ifndef ENVELOPE_CACHING_TRAITS_3_H
-#define ENVELOPE_CACHING_TRAITS_3_H
+#ifndef CGAL_ENVELOPE_CACHING_TRAITS_3_H
+#define CGAL_ENVELOPE_CACHING_TRAITS_3_H
 
 /*! \file
  * The caching traits class for the envelope package.
@@ -226,19 +226,6 @@ public:
     intersections_number = 0;
     inter_cache.clear();
     compare_cache.clear();
-  }
-  void print_bench() const
-  {
-    std::cout << intersections_number;
-  }
-  void print_bench_header() const
-  {
-    std::cout << "projected intersections# ";
-  }
-  void print_statistics() const
-  {
-    std::cout << "number of projected intersection found: "
-              << intersections_number << std::endl;
   }
 
 protected:

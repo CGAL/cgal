@@ -23,14 +23,14 @@
 #define CGAL_ENVELOPE_SAVE_COMPARISONS
 #define CGAL_ENVELOPE_USE_BFS_FACE_ORDER
 
-#include <CGAL/Envelope_base.h>
+#include <CGAL/Envelope_3/Envelope_base.h>
 #include <CGAL/Object.h>
 #include <CGAL/enum.h>
 #include <CGAL/Arr_observer.h>
 #include <CGAL/Overlay_2.h>
-#include <CGAL/Envelope_element_visitor_3.h>
-#include <CGAL/No_vertical_decomposition_2.h>
-#include <CGAL/set_dividors.h>
+#include <CGAL/Envelope_3/Envelope_element_visitor_3.h>
+#include <CGAL/Envelope_3/No_vertical_decomposition_2.h>
+#include <CGAL/Envelope_3/set_dividors.h>
 
 #ifdef CGAL_ENVELOPE_USE_BFS_FACE_ORDER
 #include <boost/graph/dijkstra_shortest_paths.hpp>
@@ -78,9 +78,6 @@
 // some degenerate cases in the responsibility of the geometric traits
 // 1. overlapping surfaces
 // 2. a vertical surface that contributes only edge (or edges) to the envelope
-
-//#define CGAL_DEBUG_ENVELOPE_DEQ_3
-//#define CGAL_BENCH_ENVELOPE_DAC
 
 CGAL_BEGIN_NAMESPACE
 
@@ -194,10 +191,6 @@ public:
                              Minimization_diagram_2 &result,
                              SetDividor& dividor)
   {
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "begin construct_lu_envelope" << std::endl;
-    #endif
-    
     if (begin == end)
     {
       return; // result is empty
@@ -235,10 +228,6 @@ public:
                                       Minimization_diagram_2 &result,
                                       SetDividor& dividor)
   {
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "begin construct_envelope_xy_monotone" << std::endl;
-    #endif
-
     if (begin == end)
       return; // result is empty
 
@@ -289,14 +278,7 @@ protected:
     if (begin == end)
     {
       // only one surface is in the collection. insert it the result
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "the case of one surface: ";
-      #endif
-      
       Xy_monotone_surface_3& surf = *first;
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << surf << std::endl;
-      #endif
       
       deal_with_one_surface(surf, result);
       return;      
@@ -332,20 +314,11 @@ protected:
     typename std::list<Curve_2>::iterator boundary_it = boundary_curves.begin();
     for(; boundary_it != boundary_curves.end(); ++boundary_it)
     {
-
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "got curve_2: " << *boundary_it << std::endl;
-      #endif
       insert_curve(result, *boundary_it);
     }
     // todo: should we do incremental/aggregate insert?
     //  insert(result, boundary_curves.begin(), boundary_curves.end());
     
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "inserted one surface to result" << std::endl;
-      std::cout << "number of faces in result: " << result.number_of_faces() << std::endl;
-    #endif
-
     // update the information in the faces
 
     // update the holes of the unbounded face to indicate that this surface is the envelope
@@ -468,23 +441,9 @@ public:
   {
     // overlay the 2 arrangements
    
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "before overlay" << std::endl;
-    #endif    
     overlay(result1, result2, result);
   
     CGAL_expensive_assertion_msg(is_valid(result), "after overlay result is not valid");
-
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "after overlay, print faces: " << std::endl;
-      overlay.print_faces(result);
-      std::cout << "after overlay, number of vertices: "
-                << result.number_of_vertices() << std::endl;
-      std::cout << "after overlay, number of edges: "
-                << result.number_of_edges() << std::endl;
-      std::cout << "after overlay, number of faces: "
-                << result.number_of_faces() << std::endl;
-    #endif
        
     // make sure the aux flags are correctly set by the overlay
 	  CGAL_assertion(verify_aux_flags(result));
@@ -505,9 +464,6 @@ public:
     {
       Halfedge_handle hh = hi;
       // there must be data from at least one map, because all the surfaces are continous
-//      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-//        std::cout << "set data over edge: " << hh->curve() << std::endl;
-//      #endif
       if (!get_aux_is_set(hh, 0) || !get_aux_is_set(hh, 1))
         continue;
       CGAL_assertion(get_aux_is_set(hh, 0));
@@ -612,12 +568,7 @@ public:
         faces_to_split.push_back(fh);
       }
     #endif
-    
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << " before deal with faces to split" << std::endl;
-      std::cout << "number of faces in the list = " << faces_to_split.size() << std::endl;
-    #endif
-    
+        
     deal_with_faces_to_split(faces_to_split, result);
 
 //    #ifndef CGAL_ENVELOPE_SAVE_COMPARISONS
@@ -640,9 +591,6 @@ public:
       if (vh->is_decision_set() || vh->get_is_fake())
         continue;
       // there must be data from at least one map, because all the surfaces are continous
-//      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-//        std::cout << "set data over vertex: " << vh->point() << std::endl;
-//      #endif
       CGAL_assertion(get_aux_is_set(vh, 0));
       CGAL_assertion(get_aux_is_set(vh, 1));
       CGAL_assertion(!aux_has_no_data(vh, 1) || !aux_has_no_data(vh, 0));
@@ -707,12 +655,6 @@ protected:
     Keep_face_data_observer obs(result);
     Decomposition_observer dec_obs(result, this);
     
-    
-
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "after vertical decomposition, number of faces = " << result.number_of_faces() << std::endl;
-    #endif
-
     obs.detach();
     dec_obs.detach();
   }
@@ -789,27 +731,14 @@ protected:
       if (can_remove_edge(hh))
       {
         edges.push_back(hh);
-        #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-          std::cout << "can remove " << hh->curve() << std::endl;
-        #endif
       }
     }
-
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "at the end need to remove " << edges.size() << " edges" << std::endl;
-      std::cout << "before removal: " << result.number_of_edges() << " edges" << std::endl;
-    #endif
-
 
     // this is for counting the number of extra faces
     Stats_observer count_faces(result);
     
     for(typename std::list<Halfedge_handle>::iterator ci = edges.begin(); ci != edges.end(); ++ci)
     {
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "remove_edge" << (*ci)->curve() << std::endl;
-
-      #endif
       // if the endpoints become isolated after the removal we need to remove
       // them if they have the same data as the edge
       Halfedge_handle h = *ci;
@@ -836,47 +765,31 @@ protected:
       // handle is invalid
       if (!remove_src && src->is_isolated())
       {
-        #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-          std::cout << "after remove_edge source is isolated" << src->point()
-                    << std::endl;
-        #endif
-		    // to be precise we copy from the halfedge-face and halfedge-target relations
+        // to be precise we copy from the halfedge-face and halfedge-target relations
         src->set_is_equal_aux_data_in_face(0, src_is_equal_0);
         src->set_is_equal_aux_data_in_face(1, src_is_equal_1);
         // todo: the has_equal flags should be updated also
         // make sure h_face is also src face
-		    CGAL_assertion(h_face == src->face());
-//        CGAL_assertion(src_has_equal_0 == has_equal_aux_data(0, src, h_face));
-//        CGAL_assertion(src_has_equal_1 == has_equal_aux_data(1, src, h_face));
-		    src->set_has_equal_aux_data_in_face(0, src_has_equal_0);
-		    src->set_has_equal_aux_data_in_face(1, src_has_equal_1);
+        CGAL_assertion(h_face == src->face());
+        // CGAL_assertion(src_has_equal_0 == has_equal_aux_data(0, src, h_face));
+        // CGAL_assertion(src_has_equal_1 == has_equal_aux_data(1, src, h_face));
+        src->set_has_equal_aux_data_in_face(0, src_has_equal_0);
+        src->set_has_equal_aux_data_in_face(1, src_has_equal_1);
       }
       if (!remove_trg && trg->is_isolated())
       {
-        #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-          std::cout << "after remove_edge target is isolated" << trg->point()
-                    << std::endl;
-        #endif
         trg->set_is_equal_aux_data_in_face(0, trg_is_equal_0);
         trg->set_is_equal_aux_data_in_face(1, trg_is_equal_1);
         // make sure h_face is also trg face
-        #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-          std::cout << "real value for map 1: " << has_equal_aux_data(1, trg, h_face)
-                    << "flag value: " << trg_has_equal_1 << std::endl;
-        #endif
-		    CGAL_assertion(h_face == trg->face());
-//        CGAL_assertion(trg_has_equal_0 == has_equal_aux_data(0, trg, h_face));
-//        CGAL_assertion(trg_has_equal_1 == has_equal_aux_data(1, trg, h_face));
-		    trg->set_has_equal_aux_data_in_face(0, trg_has_equal_0);
-		    trg->set_has_equal_aux_data_in_face(1, trg_has_equal_1);
+        CGAL_assertion(h_face == trg->face());
+        // CGAL_assertion(trg_has_equal_0 == has_equal_aux_data(0, trg, h_face));
+        // CGAL_assertion(trg_has_equal_1 == has_equal_aux_data(1, trg, h_face));
+        trg->set_has_equal_aux_data_in_face(0, trg_has_equal_0);
+        trg->set_has_equal_aux_data_in_face(1, trg_has_equal_1);
       }
     }
 
-    count_faces.detach();
-    
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "after removal: " << result.number_of_edges() << " edges" << std::endl;
-    #endif
+    count_faces.detach();    
   }
 
   template <class FeatureHandle>
@@ -937,12 +850,6 @@ protected:
     if (hh->get_decision() != f1->get_decision() ||
         hh->get_decision() != f2->get_decision())
     {
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "decision is not equal on edge and incident faces "
-                  << hh->source()->point() << " --> " << hh->target()->point() << std::endl
-                  << "hh: " << hh->get_decision() << " f1: " << f1->get_decision()
-                  << " f2: " << f2->get_decision() << std::endl;
-      #endif
       return false;
     }
 
@@ -982,10 +889,6 @@ protected:
     // todo (after return) - is it correct to put it in comment
     // CGAL_assertion(equal_first == (b1 && b2));
     // CGAL_assertion(equal_second == (b3 && b4));
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "decision is equal on edge and incident faces: " << decision << std::endl;
-    #endif
-
     if (decision == FIRST)
     {
       CGAL_assertion(equal_first == (b1 && b2));
@@ -1238,13 +1141,6 @@ protected:
         isolated_to_remove.push_back(vh);
     }
 
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "at the end we have " << candidates_to_remove.size()
-                << " candidate vertices to removal" << std::endl;
-      std::cout << "and " << isolated_to_remove.size()
-                << " isolated vertices to remove" << std::endl;
-    #endif
-
     typename Traits::Merge_2 curves_merge = traits->merge_2_object();
     typename Traits::Are_mergeable_2 curves_can_merge = 
                                               traits->are_mergeable_2_object();
@@ -1256,10 +1152,6 @@ protected:
     {
       Vertex_handle vh = *ci;
       CGAL_assertion(vh->degree() == 2);
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "check vertex " << vh->point() << " for removal" 
-                  << std::endl;
-      #endif
       
       // we can remove this vertex only if the data on its halfedges is the 
       // same
@@ -1280,16 +1172,6 @@ protected:
 
       X_monotone_curve_2 c;
       curves_merge(a,b,c);
-
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "before remove vertex " << vh->point() << std::endl;
-        std::cout << "original curves: " << a << std::endl << b << std::endl;
-        std::cout << "merged curve: " << c << std::endl;
-        std::cout << "he1 endpoints: " << he1->source()->point() << " and "
-                  << he1->target()->point() << std::endl;
-        std::cout << "he2 endpoints: " << he2->source()->point() << " and "
-                  << he2->target()->point() << std::endl;
-      #endif
 
       // the decisions on he1 and he2 were the same, so the decision on 
       // the edge that will be left after the merge will be ok
@@ -1323,10 +1205,6 @@ protected:
       Halfedge_handle new_edge = result.merge_edge(he1, he2 ,c);
 
       CGAL_assertion(new_edge->is_decision_set());
-
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3              
-        std::cout << "after remove vertex " << std::endl;
-      #endif
 
       CGAL_expensive_assertion_msg(result.is_valid(), 
                          "after remove vertex result is not valid");
@@ -1377,38 +1255,20 @@ protected:
   // to the decision done over this feature, and its aux sources
   void update_envelope_surfaces_by_decision(Minimization_diagram_2& result)
   {
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "update_envelope_surfaces_by_decision over vertices" 
-                << std::endl;
-    #endif
     // vertices
     Vertex_iterator vi = result.vertices_begin();
     for(; vi != result.vertices_end(); ++vi)
     {
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << vi->point() << std::endl;
-      #endif
       update_envelope_surfaces_by_decision(vi);
     }
     
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "update_envelope_surfaces_by_decision over edges" 
-                << std::endl;
-    #endif
     // edges
     Halfedge_iterator hi = result.halfedges_begin();
     for(; hi != result.halfedges_end(); ++hi)
     {
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << hi->curve() << std::endl;
-      #endif
       update_envelope_surfaces_by_decision(hi);
     }
     
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "update_envelope_surfaces_by_decision over faces" 
-                << std::endl;
-    #endif
     // faces
     Face_iterator fi = result.faces_begin();
     for(; fi != result.faces_end(); ++fi)
@@ -1583,11 +1443,7 @@ protected:
   }
 
   void update_flags(Minimization_diagram_2& result)
-  {
-    #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      std::cout << "update_flags" << std::endl;
-    #endif
-    
+  {    
     // edges
     Halfedge_iterator hi = result.halfedges_begin();
     for(; hi != result.halfedges_end(); ++hi)
@@ -1721,23 +1577,9 @@ protected:
       if (fi->is_unbounded())
         continue;
       Face_handle fh = fi;
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "print decisions for face: " << fh->get_decision() 
-                  << std::endl;
-        std::cout << "outer ccb: " << std::endl;
-      #endif
       Ccb_halfedge_circulator face_hec = fh->outer_ccb();
       Ccb_halfedge_circulator face_hec_begin = face_hec;
       do {
-        #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-          std::cout << "halfedge: " << face_hec->source()->point() 
-                    << " --> " << face_hec->target()->point() << " decision: "
-
-                    << face_hec->get_decision() << std::endl;
-          std::cout << "vertex: " << face_hec->target()->point() 
-                    << " decision: " << face_hec->target()->get_decision() 
-                    << std::endl;
-        #endif
         ++face_hec;
       } while(face_hec != face_hec_begin);
 
@@ -1745,20 +1587,8 @@ protected:
       for (; inner_iter != fh->holes_end(); ++inner_iter)
 
       {
-        #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-          std::cout << "inner ccb: " << std::endl;
-        #endif
         face_hec = face_hec_begin = (*inner_iter);
         do {
-          #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-            std::cout << "halfedge: " << face_hec->source()->point() 
-                      << " --> " << face_hec->target()->point() 
-                      << " decision: "
-                      << face_hec->get_decision() << std::endl;
-            std::cout << "vertex: " << face_hec->target()->point() 
-                      << " decision: " << face_hec->target()->get_decision() 
-                      << std::endl;
-          #endif
           ++face_hec;
         } while(face_hec != face_hec_begin);
       }
@@ -1778,10 +1608,6 @@ protected:
       if (h->get_is_fake())
 	      continue;
 
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "verify_aux_flags on edge " << h->source()->point()
-                  << " --> " << h->target()->point() << std::endl;
-      #endif
       Object h_src1 = h->get_aux_source(0);
       Object h_src2 = h->get_aux_source(1);
 
@@ -1860,9 +1686,6 @@ protected:
       {
     	// check face flags
         Vertex_handle v = vi;
-        #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-	//          std::cout << "verify_aux_flags on vertex " << v->point() << std::endl;
-        #endif
         Object v_src1 = v->get_aux_source(0);
         Object v_src2 = v->get_aux_source(1);
 
@@ -1912,10 +1735,6 @@ protected:
   	{
 	    Halfedge_handle h = hi;
       Face_handle f = h->face();
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-      //	      std::cout << "verify flags of halfedge " << h->source()->point()
-      //		              << " --> " << h->target()->point() << std::endl;
-      #endif
 	    // check halfedge-face flags
 	    all_ok = (h->is_equal_data(f->begin_data(), f->end_data()) ==
 		            h->get_is_equal_data_in_face());
@@ -1963,9 +1782,6 @@ protected:
 		    // check face flags
         Vertex_handle v = vi;
 
-        #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-	//          std::cout << "verify flags of vertex " << v->point() << std::endl;
-        #endif
         Face_handle f = v->face();
 
   	    all_ok = (v->is_equal_data(f->begin_data(), f->end_data()) ==
@@ -1996,9 +1812,6 @@ protected:
   	  if (vh->get_is_fake())
 	    	continue;
 
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "check vertex: " << vh->point() << std::endl;
-      #endif
       
       all_ok &= (vh->get_aux_is_set(0));
       CGAL_assertion_msg(all_ok, "aux source (0) not set over vertex");
@@ -2007,9 +1820,6 @@ protected:
       all_ok &= (vh->is_decision_set());
       CGAL_assertion_msg(all_ok, "decision was not set over vertex");
 
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "decision on vertex: " << vh->get_decision() << std::endl;
-      #endif
     }
     Halfedge_iterator hi = result.halfedges_begin();
     for(; hi != result.halfedges_end(); ++hi)
@@ -2024,9 +1834,6 @@ protected:
       CGAL_assertion_msg(all_ok, "aux source (1) not set over edge");
       all_ok &= (hh->is_decision_set());
       CGAL_assertion_msg(all_ok, "decision was not set over edge");
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "decision on halfedge: " << hh->get_decision() << std::endl;
-      #endif
     }
     Face_iterator fi = result.faces_begin();
     for(; fi != result.faces_end(); ++fi)
@@ -2039,9 +1846,6 @@ protected:
       CGAL_assertion_msg(all_ok, "aux source (1) not set over face");
       all_ok &= (fh->is_decision_set());
       CGAL_assertion_msg(all_ok, "decision was not set over face");
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "decision on face: " << fh->get_decision() << std::endl;
-      #endif
     }
     return all_ok;
   }
@@ -2055,9 +1859,6 @@ protected:
     for(; vi != result.vertices_end(); ++vi)
     {
       Vertex_handle vh = vi;
-//      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-//        std::cout << "check vertex: " << vh->point() << " of degree " << vh->degree() << std::endl;
-//      #endif
       
       all_ok &= (vh->get_is_set());
       CGAL_assertion_msg(all_ok, "data not set over vertex");
@@ -2071,9 +1872,6 @@ protected:
     for(; hi != result.halfedges_end(); ++hi)
     {
       Halfedge_handle hh = hi;
-//      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-//        std::cout << "check edge: " << hh.curve() << std::endl;
-//      #endif
       
       all_ok &= (hh->get_is_set());
       if (!all_ok)
@@ -2113,10 +1911,6 @@ protected:
                                   Face_handle new_f,
                                   bool is_hole)
     {
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "after split face" << std::endl;
-      #endif
-
       // update data in the new face from the original face
       if (org_f->get_aux_is_set(0))
         new_f->set_aux_source(0, org_f->get_aux_source(0));
@@ -2305,10 +2099,6 @@ protected:
                                     const X_monotone_curve_2& c1,
                                     const X_monotone_curve_2& c2)
     {
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "In Keep_edge_data_observer, split edge: " << e->curve() 
-                  << std::endl;
-      #endif
     }
 
     virtual void after_split_edge(Halfedge_handle he1, Halfedge_handle he2)
@@ -2323,9 +2113,6 @@ protected:
       new_vertex = he2->source();
 //      else
 //        new_vertex = he2->target();
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "new vertex: " << new_vertex->point() << std::endl;
-      #endif
 
       CGAL_assertion(!new_vertex->is_decision_set());
       CGAL_assertion(!new_vertex->get_aux_is_set(0));
@@ -2465,10 +2252,6 @@ protected:
 
     void discover_vertex (Vertex fh, const Graph& g)
     {
-      #ifdef CGAL_DEBUG_ENVELOPE_DEQ_3
-        std::cout << "in BFS - found a face" << std::endl;
-
-      #endif
       // first we check if we can set the decision immediately
       // if a surface of one map doesn't exist, then we set the second surface
       if (base->aux_has_no_data(fh, 0) && !base->aux_has_no_data(fh, 1))
