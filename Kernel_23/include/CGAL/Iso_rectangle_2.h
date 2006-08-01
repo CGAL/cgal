@@ -200,8 +200,9 @@ public:
 
   Iso_rectangle_2 transform(const Aff_transformation_2 &t) const
   {
-    //return Iso_rectangle_2(t.transform(min()), t.transform(max()));
-    return rep().transform(t);
+    // FIXME : We need a precondition like this!!!
+    // CGAL_kernel_precondition(t.is_axis_preserving());
+    return Iso_rectangle_2(t.transform(min()), t.transform(max()));
   }
 };
 

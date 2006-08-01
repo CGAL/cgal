@@ -36,7 +36,6 @@ class CircleC2
   typedef typename R_::RT                   RT;
   typedef typename R_::Circle_2             Circle_2;
   typedef typename R_::Point_2              Point_2;
-  typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
   typedef Triple<Point_2, FT, Orientation>         Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
@@ -75,30 +74,7 @@ public:
     return get(base).third;
   }
 
-  Circle_2 orthogonal_transform(const Aff_transformation_2 &t) const;
-
 };
-
-
-
-
-template < class R >
-CGAL_KERNEL_INLINE
-typename CircleC2<R>::Circle_2
-CircleC2<R>::orthogonal_transform
-  (const typename CircleC2<R>::Aff_transformation_2 &t) const
-{
-  typename R::Vector_2 vec(RT(1), RT(0) );   // unit vector // AF: was FT
-  vec = vec.transform(t);             // transformed
-  FT sq_scale = vec.squared_length();       // squared scaling factor
-
-  return CircleC2<R>(t.transform(center()),
-                               sq_scale * squared_radius(),
-                               t.is_even() ? orientation()
-                                           : CGAL::opposite(orientation()));
-}
-
-
 
 CGAL_END_NAMESPACE
 

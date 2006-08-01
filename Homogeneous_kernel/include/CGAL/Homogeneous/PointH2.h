@@ -39,7 +39,6 @@ class PointH2
   typedef typename R_::Vector_2             Vector_2;
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Direction_2          Direction_2;
-  typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
   typedef Threetuple<RT>                           Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
@@ -94,7 +93,6 @@ public:
 
     int     dimension() const;
 
-    Point_2 transform( const Aff_transformation_2 & t) const;
     Direction_2 direction() const;
 };
 
@@ -155,16 +153,6 @@ CGAL_KERNEL_INLINE
 typename PointH2<R>::Direction_2
 PointH2<R>::direction() const
 { return typename PointH2<R>::Direction_2(*this); }
-
-
-
-template < class R >
-inline
-typename R::Point_2
-PointH2<R>::transform(const typename PointH2<R>::Aff_transformation_2& t) const
-{ return t.transform(static_cast<const typename R::Point_2 &>(*this)); }
-
-
 
 CGAL_END_NAMESPACE
 

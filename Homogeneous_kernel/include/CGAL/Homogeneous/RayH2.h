@@ -38,7 +38,6 @@ class RayH2
     typedef typename R_::Direction_2          Direction_2;
     typedef typename R_::Line_2               Line_2;
     typedef typename R_::Vector_2             Vector_2;
-    typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
     typedef Twotuple<Point_2>                        Rep;
     typedef typename R_::template Handle<Rep>::type  Base;
@@ -80,7 +79,6 @@ public:
     bool    collinear_has_on(const Point_2& p) const;
     bool    is_degenerate() const;
 
-    RayH2<R> transform( const Aff_transformation_2 & t) const;
 };
 
 
@@ -148,15 +146,6 @@ inline
 RayH2<R>
 RayH2<R>::opposite() const
 { return RayH2<R>( start(), - direction() ); }
-
-template < class R >
-CGAL_KERNEL_INLINE
-RayH2<R>
-RayH2<R>::
-transform(const typename RayH2<R>::Aff_transformation_2 & t) const
-{
-  return RayH2<R>(t.transform(start()), t.transform(second_point()) );
-}
 
 #ifndef CGAL_NO_OSTREAM_INSERT_RAYH2
 template < class R >

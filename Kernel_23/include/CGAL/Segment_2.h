@@ -154,11 +154,10 @@ public:
     return R().construct_opposite_segment_2_object()(*this);
   }
 
-
   Segment_2
   transform(const Aff_transformation_2 &t) const
   {
-    return rep().transform(t);
+    return Segment_2(t.transform(source()), t.transform(target()));
   }
 };
 

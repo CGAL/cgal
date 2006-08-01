@@ -34,7 +34,6 @@ class Iso_rectangleH2
   typedef typename R_::FT                   FT;
   typedef typename R_::RT                   RT;
   typedef typename R_::Point_2              Point_2;
-  typedef typename R_::Aff_transformation_2 Aff_transformation_2;
   typedef typename R_::Iso_rectangle_2      Iso_rectangle_2;
 
   typedef Twotuple<Point_2>                        Rep;
@@ -56,14 +55,6 @@ public:
   const Point_2 & min() const;
   const Point_2 & max() const;
   
-  Iso_rectangle_2
-            transform(const Aff_transformation_2& t) const
-  {
-    // FIXME : We need a precondition like this!!!
-    // CGAL_kernel_precondition(t.is_axis_preserving());
-    return Iso_rectangle_2(t.transform(min()), t.transform(max()));
-  }
-
   Bounded_side bounded_side(const Point_2& p) const;
 };
 

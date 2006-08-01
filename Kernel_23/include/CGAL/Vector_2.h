@@ -39,6 +39,7 @@ class Vector_2 : public R_::Kernel_base::Vector_2
   typedef typename R_::Line_2         Line_2;
   typedef typename R_::Point_2        Point_2;
   typedef typename R_::Direction_2    Direction_2;
+  typedef typename R_::Aff_transformation_2  Aff_transformation_2;
   typedef typename R_::Kernel_base::Vector_2  RVector_2;
 
 public:
@@ -178,6 +179,11 @@ public:
   Vector_2 perpendicular(const Orientation &o) const
   {
     return R().construct_perpendicular_vector_2_object()(*this,o);
+  }
+
+  Vector_2 transform(const Aff_transformation_2 &t) const
+  {
+    return t.transform(*this);
   }
 
 };

@@ -35,6 +35,7 @@ class Triangle_2 : public R_::Kernel_base::Triangle_2
   typedef typename R_::Kernel_base::Triangle_2  RTriangle_2;
 
 public:
+
   typedef RTriangle_2 Rep;
 
   const Rep& rep() const
@@ -168,9 +169,10 @@ public:
   Triangle_2           
   transform(const Aff_transformation_2 &t) const
   {
-    return rep().transform(t);
+    return Triangle_2(t.transform(vertex(0)),
+                      t.transform(vertex(1)),
+                      t.transform(vertex(2)));
   }
-
 
 };
 

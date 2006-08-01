@@ -42,7 +42,6 @@ class VectorH2
   typedef typename R_::Line_2               Line_2;
   typedef typename R_::Direction_2          Direction_2;
   typedef typename R_::Vector_2             Vector_2;
-  typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
   typedef Threetuple<RT>                           Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
@@ -91,7 +90,6 @@ public:
 
    int     dimension() const;
    Direction_2 direction() const;
-   Vector_2 transform(const Aff_transformation_2& t ) const;
    Vector_2 perpendicular(const Orientation& o ) const;
 
   //   Vector_2 operator+(const VectorH2 &v) const;
@@ -225,13 +223,6 @@ VectorH2<R>::perpendicular(const Orientation& o) const
   else
       return typename R::Vector_2(hy(), -hx(), hw());
 }
-
-template < class R >
-inline
-typename R::Vector_2
-VectorH2<R>::
-transform(const typename VectorH2<R>::Aff_transformation_2& t) const
-{ return t.transform(*this); }
 
 
 #ifndef CGAL_NO_OSTREAM_INSERT_VECTORH2

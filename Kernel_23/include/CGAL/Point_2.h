@@ -35,6 +35,7 @@ class Point_2 : public R_::Kernel_base::Point_2
 {
   typedef typename R_::RT                    RT;
   typedef typename R_::Vector_2              Vector_2;
+  typedef typename R_::Aff_transformation_2  Aff_transformation_2;
   typedef typename R_::Kernel_base::Point_2  RPoint_2;
 
 public:
@@ -144,6 +145,11 @@ public:
   Bbox_2 bbox() const
   {
     return R().construct_bbox_2_object()(*this);
+  }
+
+  Point_2 transform(const Aff_transformation_2 &t) const
+  {
+    return t.transform(*this);
   }
 
 };

@@ -38,7 +38,6 @@ class PointC2
   typedef typename R_::FT                   FT;
   typedef typename R_::Vector_2             Vector_2;
   typedef typename R_::Point_2              Point_2;
-  typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
   typedef Twotuple<FT>	                           Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
@@ -115,11 +114,6 @@ public:
       return !(*this == p);
   }
 
-
-  Point_2 transform(const Aff_transformation_2 &t) const
-  {
-    return t.transform(static_cast<const Point_2&>(*this));
-  }
 };
 
 template <class R >

@@ -33,9 +33,12 @@ class Circle_2 : public R_::Kernel_base::Circle_2
   typedef typename R_::FT                    FT;
   typedef typename R_::Point_2               Point_2;
   typedef typename R_::Kernel_base::Circle_2  RCircle_2;
+  typedef typename R_::Aff_transformation_2  Aff_transformation_2;
 
 public:
+
   typedef RCircle_2 Rep;
+
   const Rep& rep() const
   {
     return *this;
@@ -171,7 +174,35 @@ public:
   {
     return !(*this == c);
   }
+
+  Circle_2 transform(const Aff_transformation_2 &t) const
+  {
+    return t.transform(*this);
+  }
+
+  Circle_2 orthogonal_transform(const Aff_transformation_2 &t) const;
+
+
 };
+
+template <class R_>
+Circle_2<R_>
+Circle_2<R_>::
+orthogonal_transform(const typename R_::Aff_transformation_2& t) const
+{
+  typedef typename  R_::RT  RT;
+  typedef typename  R_::FT  FT;
+  typedef typename  R_::Vector_2  Vector_2;
+
+  Vector_2 vec(RT(1), RT(0) );   // unit vector // AF: was FT
+  vec = vec.transform(t);             // transformed
+  FT sq_scale = vec.squared_length();       // squared scaling factor
+
+  return Circle_2(t.transform(center()),
+                               sq_scale * squared_radius(),
+                               t.is_even() ? orientation()
+                                           : CGAL::opposite(orientation()));
+}
 
 #ifndef CGAL_NO_OSTREAM_INSERT_CIRCLE_2
 template <class R >

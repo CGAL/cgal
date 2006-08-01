@@ -164,21 +164,17 @@ public:
     return Ray_2( source(), - direction() );
   }
 
-
   Line_2
   supporting_line() const
   {
     return R().construct_line_2_object()(source(), second_point());
   }
-  
-  
 
   bool
   operator==(const Ray_2& r) const
   {
     return R().equal_2_object()(*this, r);
   }
-
 
   bool
   operator!=(const Ray_2& r) const
@@ -189,9 +185,8 @@ public:
   Ray_2 
   transform(const Aff_transformation_2 &t) const
   {
-    return rep().transform(t);
+    return Ray_2(t.transform(source()), t.transform(second_point()));
   }
-
 
 };
 

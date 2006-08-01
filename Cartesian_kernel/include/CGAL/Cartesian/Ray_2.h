@@ -34,7 +34,6 @@ class RayC2
   typedef typename R_::FT                   FT;
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Ray_2                Ray_2;
-  typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
   typedef Twotuple<Point_2>                        Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
@@ -64,11 +63,6 @@ public:
     return get(base).e1;
   }
   
-  Ray_2 
-  transform(const Aff_transformation_2 &t) const
-  {
-    return Ray_2(t.transform(source()), t.transform(second_point()));
-  }
 };
 
 

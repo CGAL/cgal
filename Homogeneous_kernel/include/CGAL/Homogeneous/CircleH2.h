@@ -37,7 +37,6 @@ class CircleH2
     typedef typename R_::FT                   FT;
     typedef typename R_::RT                   RT;
     typedef typename R_::Point_2              Point_2;
-    typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
     typedef Triple<Point_2, FT, Orientation>         Rep;
     typedef typename R_::template Handle<Rep>::type  Base;
@@ -84,9 +83,6 @@ public:
 
     Bbox_2
     bbox() const;
-
-    CircleH2<R>
-    orthogonal_transform(const Aff_transformation_2&) const;
 
     const Point_2 &
     center() const;
@@ -260,30 +256,6 @@ CircleH2<R>::bbox() const
   Interval_nt<> maxy = y+r;
 
   return Bbox_2(minx.inf(), miny.inf(), maxx.sup(), maxy.sup());
-}
-
-template <class R>
-CGAL_KERNEL_INLINE
-CircleH2<R>
-CircleH2<R>::
-orthogonal_transform(const typename CircleH2<R>::Aff_transformation_2& t) const
-{
-  typename R::Vector_2 vec( RT(1), RT(0) );   // unit vector
-  vec = vec.transform(t);                     // transformed
-  FT  sq_scale = FT( vec*vec );               // squared scaling factor
-
-  if ( t.is_even() )
-  {
-      return CircleH2<R>(t.transform(center() ),
-                             sq_scale * squared_radius(),
-                             orientation() );
-  }
-  else
-  {
-      return CircleH2<R>(t.transform(center() ),
-                             sq_scale * squared_radius(),
-                             CGAL::opposite( orientation()) );
-  }
 }
 
 template <class R>

@@ -33,7 +33,6 @@ class SegmentC2
 {
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Segment_2            Segment_2;
-  typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
   typedef Twotuple<Point_2>                        Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
@@ -60,11 +59,6 @@ public:
   target() const
   {
       return get(base).e1;
-  }
-
-  Segment_2 transform(const Aff_transformation_2 &t) const
-  {
-    return Segment_2(t.transform(source()), t.transform(target()));
   }
 
 };

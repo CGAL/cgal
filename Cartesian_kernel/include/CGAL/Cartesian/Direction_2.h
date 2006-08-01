@@ -41,7 +41,6 @@ class DirectionC2
   typedef typename R_::Ray_2                Ray_2;
   typedef typename R_::Segment_2            Segment_2;
   typedef typename R_::Direction_2          Direction_2;
-  typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
   typedef Twotuple<FT>	                           Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
@@ -60,13 +59,6 @@ public:
   bool operator!=(const DirectionC2 &d) const;
 
   Vector_2 to_vector() const;
-
-
-  Direction_2 transform(const Aff_transformation_2 &t) const
-  {
-    return t.transform(*this);
-  }
-
 
   const RT & dx() const
   {

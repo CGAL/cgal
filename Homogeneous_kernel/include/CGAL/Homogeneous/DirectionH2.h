@@ -39,7 +39,6 @@ class DirectionH2
   typedef typename R_::Line_2               Line_2;
   typedef typename R_::Ray_2                Ray_2;
   typedef typename R_::Segment_2            Segment_2;
-  typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
   typedef Threetuple<RT>                           Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
@@ -85,7 +84,6 @@ public:
     const RT & dx() const { return get(base).e0; };
     const RT & dy() const { return get(base).e1; };
 
-    DirectionH2<R> transform(const Aff_transformation_2 &) const;
 };
 
 template <class R >
@@ -109,13 +107,6 @@ CGAL_END_NAMESPACE
 #include <CGAL/Homogeneous/predicates_on_directionsH2.h>
 
 CGAL_BEGIN_NAMESPACE
-
-template <class R >
-inline
-DirectionH2<R>
-DirectionH2<R>::
-transform(const typename DirectionH2<R>::Aff_transformation_2& t) const
-{ return t.transform(*this); }
 
 template <class R >
 CGAL_KERNEL_INLINE

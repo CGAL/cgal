@@ -36,7 +36,6 @@ class TriangleC2
   typedef typename R_::Point_2              Point_2;
   typedef typename R_::Vector_2             Vector_2;
   typedef typename R_::Triangle_2           Triangle_2;
-  typedef typename R_::Aff_transformation_2 Aff_transformation_2;
 
   typedef Threetuple<Point_2>	                   Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
@@ -68,14 +67,6 @@ public:
     return vertex(i);
   }
 
-  Triangle_2           
-  transform(const Aff_transformation_2 &t) const
-  {
-    return Triangle_2(t.transform(vertex(0)),
-		      t.transform(vertex(1)),
-		      t.transform(vertex(2)));
-  }
-  
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_TRIANGLEC2

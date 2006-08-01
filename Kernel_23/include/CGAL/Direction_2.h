@@ -35,6 +35,7 @@ class Direction_2 : public R_::Kernel_base::Direction_2
   typedef typename R_::Line_2                Line_2;
   typedef typename R_::Ray_2                 Ray_2;
   typedef typename R_::Segment_2             Segment_2;
+  typedef typename R_::Aff_transformation_2  Aff_transformation_2;
   typedef typename R_::Kernel_base::Direction_2      RDirection_2;
 
 public:
@@ -148,11 +149,15 @@ public:
     return R().equal_2_object()(*this, d);
   }
 
-
   bool
   operator!=(const Direction_2& d) const
   {
     return !(*this == d);
+  }
+
+  Direction_2 transform(const Aff_transformation_2 &t) const
+  {
+    return t.transform(*this);
   }
 
 };
