@@ -37,7 +37,6 @@ class SphereC3
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Vector_3             Vector_3;
   typedef typename R_::Sphere_3             Sphere_3;
-  typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
   typedef Triple<Point_3, FT, Orientation>         Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
@@ -117,19 +116,6 @@ public:
   Orientation orientation() const
   {
       return get(base).third;
-  }
-
-  Sphere_3 orthogonal_transform(const Aff_transformation_3 &t) const
-  {
-    // FIXME: precond: t.is_orthogonal() (*UNDEFINED*)
-    Vector_3 vec(FT(1), FT(0), FT(0));        // unit vector
-    vec = vec.transform(t);                   // transformed
-    FT sq_scale = vec.squared_length();       // squared scaling factor
-
-    return SphereC3(t.transform(center()),
-                    sq_scale * squared_radius(),
-                    t.is_even() ? orientation()
-                                : CGAL::opposite(orientation()));
   }
 
   // A circle is degenerate if its (squared) radius is null or negative
@@ -303,17 +289,6 @@ SphereC3<R>::bbox() const
 		maxx.sup(), maxy.sup(), maxz.sup());
 }
 
-/*
-template < class R >
-inline
-EllipseC3<SphereC3<R>::FT> SphereC3<R>::i
-transform(const Aff_transformationC3<SphereC3<R>::FT> &t) const
-{
-  return SphereC3<R>(t.transform(center()),
-                      squared_radius(),
-                      orientation());
-}
-*/
 
 #ifndef CGAL_NO_OSTREAM_INSERT_SPHEREC3
 template < class R >

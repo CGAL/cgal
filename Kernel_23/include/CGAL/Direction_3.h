@@ -76,6 +76,13 @@ public:
   {
     return t.transform(*this);
   }
+ 
+  Direction_3
+  operator-() const
+  {
+    return R().construct_opposite_direction_3_object()(*this);
+  } 
+  
 
 };
 

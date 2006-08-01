@@ -74,9 +74,6 @@ public:
       base = Rep(-x,-y,-z,-w);
   }
 
-  DirectionH3<R>
-        operator-() const;
-
   bool  is_degenerate() const;
 
   bool  operator==( const DirectionH3<R>& d) const;
@@ -136,12 +133,6 @@ CGAL_KERNEL_INLINE
 bool
 DirectionH3<R>::is_degenerate() const
 { return ((hx() == RT(0)) && (hy() == RT(0)) && (hz() == RT(0))); }
-
-template <class R >
-inline
-DirectionH3<R>
-DirectionH3<R>::operator-() const
-{ return DirectionH3<R>(- hx(),- hy(),- hz() ); }
 
 template <class R >
 inline

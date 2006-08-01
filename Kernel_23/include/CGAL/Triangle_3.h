@@ -30,7 +30,9 @@ template <class R_>
 class Triangle_3 : public R_::Kernel_base::Triangle_3
 {
   typedef typename R_::RT                    RT;
+  typedef typename R_::FT                    FT;
   typedef typename R_::Point_3               Point_3;
+  typedef typename R_::Plane_3               Plane_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
   typedef typename R_::Kernel_base::Triangle_3  RTriangle_3;
 public:
@@ -63,6 +65,37 @@ public:
                       t.transform(this->vertex(1)),
                       t.transform(this->vertex(2)));
   }
+
+  Plane_3 supporting_plane() const
+  {
+    return R().construct_supporting_plane_3_object()(*this);
+  }
+
+  bool has_on(const Point_3 &p) const
+  {
+    return R().has_on_3_object()(*this, p);
+  }
+
+  Point_3 vertex(int i) const // TODO : use Qrt
+  {
+    return R().construct_vertex_3_object()(*this, i);
+  }
+
+  Point_3 operator[](int i) const // TODO : use Qrt
+  {
+    return vertex(i);
+  }
+
+  bool is_degenerate() const
+  {
+    return R().is_degenerate_3_object()(*this);
+  }
+
+  FT squared_area() const // TODO : use Qrt
+  {
+    return R().compute_squared_area_3_object()(*this);
+  }
+
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_TRIANGLE_3

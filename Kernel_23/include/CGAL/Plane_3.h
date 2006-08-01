@@ -84,6 +84,11 @@ public:
   {
     return t.transform(*this);
   }
+
+  Plane_3 opposite() const
+  {
+    return R().construct_opposite_plane_3_object()(*this);
+  }
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_PLANE_3

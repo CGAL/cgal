@@ -36,7 +36,6 @@ class SphereH3
    typedef typename R_::RT                   RT;
    typedef typename R_::FT                   FT;
    typedef typename R_::Point_3              Point_3;
-   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
    typedef Triple<Point_3, FT, Orientation>         Rep;
    typedef typename R_::template Handle<Rep>::type  Base;
@@ -76,8 +75,6 @@ public:
       const FT & squared_radius() const;
 
       Orientation orientation() const;
-
-      SphereH3<R> orthogonal_transform(const Aff_transformation_3& t) const;
 
       bool is_degenerate() const;
 
@@ -252,29 +249,6 @@ SphereH3<R>::bbox() const
 
   return Bbox_3(minx.inf(), miny.inf(), minz.inf(), 
 		maxx.sup(), maxy.sup(), maxz.sup());
-}
-
-template <class R>
-SphereH3<R>
-SphereH3<R>::
-orthogonal_transform(const typename SphereH3<R>::Aff_transformation_3& t) const
-{
-  typename R::Vector_3 vec( RT(1), RT(0), RT(0) );   // unit vector
-  vec = vec.transform(t);                     // transformed
-  FT  sq_scale = FT( vec*vec );               // squared scaling factor
-
-  if ( t.is_even() )
-  {
-      return SphereH3<R>(t.transform(center() ),
-                             sq_scale * squared_radius(),
-                             orientation() );
-  }
-  else
-  {
-      return SphereH3<R>(t.transform(center() ),
-                             sq_scale * squared_radius(),
-                             CGAL::opposite( orientation()) );
-  }
 }
 
 

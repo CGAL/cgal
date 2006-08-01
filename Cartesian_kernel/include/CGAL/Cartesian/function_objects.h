@@ -2872,6 +2872,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::Point_3        Point_3;
     typedef typename K::Vector_3       Vector_3;
+    typedef typename K::Tetrahedron_3  Tetrahedron_3;
   public:
     typedef typename K::Orientation    result_type;
     typedef Arity_tag< 4 >             Arity;
@@ -2892,6 +2893,12 @@ namespace CartesianKernelFunctors {
       return orientationC3(u.x(), u.y(), u.z(),
 			   v.x(), v.y(), v.z(),
 			   w.x(), w.y(), w.z());
+    }
+
+    result_type
+    operator()( const Tetrahedron_3& t) const
+    { 
+      return t.rep().orientation();
     }
   };
 

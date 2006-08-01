@@ -72,7 +72,6 @@ public:
   bool       has_on_unbounded_side(const Point_3 &p) const;
 
   bool       is_degenerate() const;
-  FT         volume() const;
 };
 
 template < class R >
@@ -134,14 +133,6 @@ TetrahedronC3<R>::
 operator[](int i) const
 {
   return vertex(i);
-}
-
-template < class R >
-CGAL_KERNEL_MEDIUM_INLINE
-typename TetrahedronC3<R>::FT
-TetrahedronC3<R>::volume() const
-{
-    return R().compute_volume_3_object()(*this);
 }
 
 template < class R >

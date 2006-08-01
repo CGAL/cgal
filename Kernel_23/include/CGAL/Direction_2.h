@@ -135,7 +135,7 @@ public:
   Direction_2
   operator-() const
   {
-    return Direction_2(-dx(), -dy());
+    return R().construct_opposite_direction_2_object()(*this);
   } 
   
   Vector_2 vector() const

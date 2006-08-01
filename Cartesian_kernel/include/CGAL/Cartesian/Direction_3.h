@@ -71,8 +71,6 @@ public:
   Vector_3       to_vector() const;
   Vector_3       vector() const { return to_vector(); }
 
-  Direction_3    operator-() const;
-
   const FT & delta(int i) const;
   const FT & dx() const
   {
@@ -129,14 +127,6 @@ typename DirectionC3<R>::Vector_3
 DirectionC3<R>::to_vector() const
 {
   return Vector_3(dx(), dy(), dz());
-}
-
-template < class R >
-inline
-typename DirectionC3<R>::Direction_3
-DirectionC3<R>::operator-() const
-{
-  return DirectionC3<R>(-dx(), -dy(), -dz());
 }
 
 template < class R >
