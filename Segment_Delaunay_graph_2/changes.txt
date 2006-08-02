@@ -2,6 +2,7 @@
 - fixed problem created by deletion of files
 - added one more operator() in info converter; modified code to use
   this new converter
+- removed default template parameters from storage traits with info
 
 1 August 2006:  Menelaos Karavelas
 - changed some file names to match the names of the classes they contain

@@ -27,45 +27,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-//----------------------------------------------------------------------
-//----------------------------------------------------------------------
-
-template<typename Info_>
-struct Dummy_convert_info
-{
-  typedef Info_  Info;
-  typedef Info   result_type;
-
-  inline
-  Info operator()(const Info&, bool) const {
-    return Info();
-  }
-
-  inline
-  Info operator()(const Info&, const Info&, bool) const {
-    return Info();
-  }
-};
-
-template<class Info_>
-struct Dummy_merge_info
-{
-  typedef Info_  Info;
-  typedef Info   result_type;
-
-  inline
-  Info operator()(const Info&, const Info&) const {
-    return Info();
-  }
-};
-
-//----------------------------------------------------------------------
-//----------------------------------------------------------------------
-
-template<class Gt,
-	 typename Info_ = char,
-	 class Converter = Dummy_convert_info<Info_>,
-	 class Merger = Dummy_convert_info<Info_> >
+template<class Gt, typename Info_, class Converter, class Merger>
 class Segment_Delaunay_graph_storage_traits_with_info_2
   : public Segment_Delaunay_graph_storage_traits_2<Gt>
 {
