@@ -39,132 +39,14 @@ struct Type_mapper
   typedef T type; // By default, assume same type (e.g. Object).
 };
 
-template < typename K1, typename K2 >
-struct Type_mapper < typename K1::Point_2, K1, K2 >
-{
-  typedef typename K2::Point_2 type;
-};
+// Then we specialize for all kernel objects.
 
-template < typename K1, typename K2 >
-struct Type_mapper < typename K1::Vector_2, K1, K2 >
-{
-  typedef typename K2::Vector_2 type;
-};
+#define CGAL_Kernel_obj(X) \
+  template < typename K1, typename K2 > \
+  struct Type_mapper < typename K1::X, K1, K2 > \
+  { typedef typename K2::X type; };
 
-
-template < typename K1, typename K2 >
-struct Type_mapper < typename K1::Direction_2, K1, K2 >
-{
-  typedef typename K2::Direction_2 type;
-};
-
-template < typename K1, typename K2 >
-struct Type_mapper < typename K1::Segment_2, K1, K2 >
-{
-  typedef typename K2::Segment_2 type;
-};
-
-template < typename K1, typename K2 >
-struct Type_mapper < typename K1::Ray_2, K1, K2 >
-{
-  typedef typename K2::Ray_2 type;
-};
-
-
-template < typename K1, typename K2 >
-struct Type_mapper < typename K1::Line_2, K1, K2 >
-{
-  typedef typename K2::Line_2 type;
-};
-
-
-template < typename K1, typename K2 >
-struct Type_mapper < typename K1::Triangle_2, K1, K2 >
-{
-  typedef typename K2::Triangle_2 type;
-};
-
-
-template < typename K1, typename K2 >
-struct Type_mapper < typename K1::Iso_rectangle_2, K1, K2 >
-{
-  typedef typename K2::Iso_rectangle_2 type;
-};
-
-template < typename K1, typename K2 >
-struct Type_mapper < typename K1::Circle_2, K1, K2 >
-{
-  typedef typename K2::Circle_2 type;
-};
-
-// 3D
-
-template < typename K1, typename K2 >
-struct Type_mapper < typename K1::Point_3, K1, K2 >
-{
-  typedef typename K2::Point_3 type;
-};
-
-template < typename K1, typename K2 >
-struct Type_mapper < typename K1::Plane_3, K1, K2 >
-{
-  typedef typename K2::Plane_3 type;
-};
-
-template < typename K1, typename K2 >
-struct Type_mapper < typename K1::Vector_3, K1, K2 >
-{
-  typedef typename K2::Vector_3 type;
-};
-
-template < typename K1, typename K2 >
-struct Type_mapper < typename K1::Direction_3, K1, K2 >
-{
-  typedef typename K2::Direction_3 type;
-};
-
-template < typename K1, typename K2 >
-struct Type_mapper < typename K1::Segment_3, K1, K2 >
-{
-  typedef typename K2::Segment_3 type;
-};
-
-template < typename K1, typename K2 >
-struct Type_mapper < typename K1::Ray_3, K1, K2 >
-{
-  typedef typename K2::Ray_3 type;
-};
-
-template < typename K1, typename K2 >
-struct Type_mapper < typename K1::Line_3, K1, K2 >
-{
-  typedef typename K2::Line_3 type;
-};
-
-template < typename K1, typename K2 >
-struct Type_mapper < typename K1::Triangle_3, K1, K2 >
-{
-  typedef typename K2::Triangle_3 type;
-};
-
-template < typename K1, typename K2 >
-struct Type_mapper < typename K1::Tetrahedron_3, K1, K2 >
-{
-  typedef typename K2::Tetrahedron_3 type;
-};
-
-template < typename K1, typename K2 >
-struct Type_mapper < typename K1::Iso_cuboid_3, K1, K2 >
-{
-  typedef typename K2::Iso_cuboid_3 type;
-};
-
-template < typename K1, typename K2 >
-struct Type_mapper < typename K1::Sphere_3, K1, K2 >
-{
-  typedef typename K2::Sphere_3 type;
-};
-
+#include <CGAL/Kernel/interface_macros.h>
 
 CGAL_END_NAMESPACE
 

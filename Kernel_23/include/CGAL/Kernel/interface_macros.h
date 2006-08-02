@@ -26,8 +26,44 @@
 // way we share more code.
 
 // It is the responsability of the including file to correctly set the 2
-// macros CGAL_Kernel_pred and CGAL_Kernel_cons.
+// macros CGAL_Kernel_pred, CGAL_Kernel_cons and CGAL_Kernel_obj.
 // And they are #undefed at the end of this file.
+
+#ifndef CGAL_Kernel_pred
+#  define CGAL_Kernel_pred(X, Y)
+#endif
+
+#ifndef CGAL_Kernel_cons
+#  define CGAL_Kernel_cons(X, Y)
+#endif
+
+#ifndef CGAL_Kernel_obj
+#  define CGAL_Kernel_obj(X)
+#endif
+
+CGAL_Kernel_obj(Point_2)
+CGAL_Kernel_obj(Vector_2)
+CGAL_Kernel_obj(Direction_2)
+CGAL_Kernel_obj(Segment_2)
+CGAL_Kernel_obj(Ray_2)
+CGAL_Kernel_obj(Line_2)
+CGAL_Kernel_obj(Triangle_2)
+CGAL_Kernel_obj(Iso_rectangle_2)
+CGAL_Kernel_obj(Circle_2)
+
+CGAL_Kernel_obj(Point_3)
+CGAL_Kernel_obj(Plane_3)
+CGAL_Kernel_obj(Vector_3)
+CGAL_Kernel_obj(Direction_3)
+CGAL_Kernel_obj(Segment_3)
+CGAL_Kernel_obj(Ray_3)
+CGAL_Kernel_obj(Line_3)
+CGAL_Kernel_obj(Triangle_3)
+CGAL_Kernel_obj(Tetrahedron_3)
+CGAL_Kernel_obj(Iso_cuboid_3)
+CGAL_Kernel_obj(Sphere_3)
+
+
 
 CGAL_Kernel_pred(Angle_2,
 		 angle_2_object)
@@ -486,3 +522,4 @@ CGAL_Kernel_pred(Side_of_oriented_sphere_3,
 
 #undef CGAL_Kernel_pred
 #undef CGAL_Kernel_cons
+#undef CGAL_Kernel_obj
