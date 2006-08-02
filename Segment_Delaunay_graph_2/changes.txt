@@ -1,3 +1,6 @@
+2 August 2006:  Menelaos Karavelas
+- fixed problem created by deletion of files
+
 1 August 2006:  Menelaos Karavelas
 - changed some file names to match the names of the classes they contain
 - removed Point_container.h and Simple_container_wrapper.h; these

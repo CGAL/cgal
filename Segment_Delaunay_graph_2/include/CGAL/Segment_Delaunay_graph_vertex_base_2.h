@@ -25,15 +25,13 @@
 
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
 
-#include <list>
 #include <CGAL/Triangulation_ds_vertex_base_2.h>
 #include <CGAL/Segment_Delaunay_graph_storage_site_2.h>
 #include <CGAL/Segment_Delaunay_graph_simple_storage_site_2.h>
 
-#include <CGAL/Segment_Delaunay_graph_2/Simple_container_wrapper.h>
+
 
 CGAL_BEGIN_NAMESPACE
-
 
 template < class STraits, class Vb = Triangulation_ds_vertex_base_2<> >
 class Segment_Delaunay_graph_vertex_base_2
@@ -41,11 +39,7 @@ class Segment_Delaunay_graph_vertex_base_2
 {
 private:
   typedef typename Vb::Triangulation_data_structure  DS;
-
-  //  typedef std::list<typename Gt::Point_2>     PC;
-
-  //  typedef Simple_container_wrapper<PC>        Point_container;
-  typedef Vb                                  Base;
+  typedef Vb                                         Base;
 
 public:
   // TYPES
