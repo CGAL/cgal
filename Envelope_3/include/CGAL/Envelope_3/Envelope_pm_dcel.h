@@ -99,6 +99,16 @@ public:
     return (m_data.end());
   }
 
+   /*!
+   * Get the first Xy-monotone surface associated with the face.
+   * \pre number_of_surfaces() is not 0.
+   */
+  const Data& surface() const
+  {
+    CGAL_precondition (m_data.size() > 0);
+    return (m_data.front());
+  }
+
   /*!
    * Get the number of data objects associated with the face.
    */
