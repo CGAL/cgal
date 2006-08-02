@@ -20,8 +20,6 @@
 #ifndef CGAL_ENVELOPE_NUMBER_OF_SURFACES_H
 #define CGAL_ENVELOPE_NUMBER_OF_SURFACES_H
 
-#include <CGAL/Timer.h>
-
 #include <iostream>
 #include <cassert>
 #include <list>
