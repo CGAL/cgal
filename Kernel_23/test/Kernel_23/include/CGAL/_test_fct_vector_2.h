@@ -60,6 +60,12 @@ _test_fct_vector_2(const R& )
  assert( orientation(v1, v2) == CGAL::RIGHT_TURN );
  assert( orientation(v2, v1) == CGAL::LEFT_TURN );
 
+ assert( determinant(v0, v0) == 0 );
+ assert( determinant(v1, v1) == 0 );
+ assert( determinant(v1, v0) == 0 );
+ assert( determinant(v1, v2) == -30 );
+ assert( determinant(v2, v1) == 30 );
+
  assert( v1 + v2 == v3 );
  assert( v1 - v2 == v4 );
  assert( v3 - v1 == v2 );

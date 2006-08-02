@@ -1236,6 +1236,42 @@ namespace HomogeneousKernelFunctors {
   };
 
   template <typename K>
+  class Compute_determinant_2
+  {
+    typedef typename K::FT                FT;
+    typedef typename K::Vector_2          Vector_2;
+  public:
+    typedef FT               result_type;
+    typedef Arity_tag< 2 >   Arity;
+
+    result_type
+    operator()(const Vector_2& v, const Vector_2& w) const
+    {
+	return det2x2_by_formula(v.hx(), v.hy(),
+                                 w.hx(), w.hy()) / FT(v.hw() * w.hw());
+    }
+  };
+
+  template <typename K>
+  class Compute_determinant_3
+  {
+    typedef typename K::FT                FT;
+    typedef typename K::Vector_3          Vector_3;
+  public:
+    typedef FT               result_type;
+    typedef Arity_tag< 3 >   Arity;
+
+    result_type
+    operator()(const Vector_3& v, const Vector_3& w, const Vector_3& t) const
+    {
+	return det3x3_by_formula(v.hx(), v.hy(), v.hz(),
+                                 w.hx(), w.hy(), w.hz(),
+                                 t.hx(), t.hy(), t.hz())
+                              / FT(v.hw() * w.hw() * t.hw());
+    }
+  };
+
+  template <typename K>
   class Compute_scalar_product_2
   {
     typedef typename K::RT                RT;

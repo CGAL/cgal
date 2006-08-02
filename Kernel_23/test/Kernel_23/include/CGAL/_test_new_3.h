@@ -391,6 +391,10 @@ test_new_3(const R& rep)
   (void) tmp12a;
   (void) tmp12b;
 
+  typename R::Compute_determinant_3 compute_determinant_3
+        = rep.compute_determinant_3_object();
+  FT tmp12aa = compute_determinant_3(v3, v4, v5);
+
   typename R::Compute_scalar_product_3 Compute_scalar_product
         = rep.compute_scalar_product_3_object();
   FT tmp12bb = Compute_scalar_product(v3, v4);
@@ -708,7 +712,7 @@ test_new_3(const R& rep)
   use(tmp3); use(tmp3a);
   use(tmp9); use(tmp14a); use(tmp5); use(tmp6);
   use(tmp7); use(tmp71); use(sp1a); use(tmp72);
-  use(tmp12a); use(tmp12b);
+  use(tmp12a); use(tmp12aa); use(tmp12b);
   use(bb1); use(bb2); use(bb3); use(bb4); use(bb5); use(bb6); 
   use(r4); use(r5); use(l7); use(l8); use(v7); use(v8); use(v9); use(h8);
   use(cccit);

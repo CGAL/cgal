@@ -335,6 +335,16 @@ cross_product(const typename CGAL_WRAP(K)::Vector_3 &v,
 
 template < class K >
 inline
+typename K::FT
+determinant(const typename CGAL_WRAP(K)::Vector_3 &v0,
+            const typename CGAL_WRAP(K)::Vector_3 &v1,
+            const typename CGAL_WRAP(K)::Vector_3 &v2, const K &k)
+{
+  return k.compute_determinant_3_object()(v0, v1, v2);
+}
+
+template < class K >
+inline
 bool
 has_smaller_distance_to_point(const typename CGAL_WRAP(K)::Point_3 &p,
                               const typename CGAL_WRAP(K)::Point_3 &q,

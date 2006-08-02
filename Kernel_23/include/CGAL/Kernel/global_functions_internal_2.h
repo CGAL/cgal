@@ -447,6 +447,15 @@ compare_y_at_x(const typename CGAL_WRAP(K)::Line_2 &l1,
   return k.compare_y_at_x_2_object()(l1, l2, h1, h2);
 }
 
+template < class K >
+inline
+typename K::FT
+determinant(const typename CGAL_WRAP(K)::Vector_2 &v0,
+            const typename CGAL_WRAP(K)::Vector_2 &v1, const K &k)
+{
+  return k.compute_determinant_2_object()(v0, v1);
+}
+
 template <class K>
 inline
 bool

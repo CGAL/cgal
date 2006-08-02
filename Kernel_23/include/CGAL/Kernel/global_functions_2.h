@@ -445,6 +445,14 @@ compare_yx(const Point_2<K> &p, const Point_2<K> &q)
   return CGALi::compare_yx(p, q, K());
 }
 
+template < class K >
+inline
+typename K::FT
+determinant(const Vector_2<K> &v0, const Vector_2<K> &v1)
+{
+  return CGALi::determinant(v0, v1, K());
+}
+
 template <class K>
 inline
 bool

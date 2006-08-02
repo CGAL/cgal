@@ -316,6 +316,15 @@ cross_product(const Vector_3<K> &v, const Vector_3<K> &w)
 
 template < class K >
 inline
+typename K::FT
+determinant(const Vector_3<K> &v0, const Vector_3<K> &v1,
+            const Vector_3<K> &v2)
+{
+  return CGALi::determinant(v0, v1, v2, K());
+}
+
+template < class K >
+inline
 bool
 has_larger_distance_to_point(const Point_3<K> &p,
 			     const Point_3<K> &q,

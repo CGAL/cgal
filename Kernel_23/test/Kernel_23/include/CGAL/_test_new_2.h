@@ -343,15 +343,19 @@ test_new_2(const R& rep)
      tmp22a = compute_area_2(rec2);
      tmp22a = compute_area_2(p3, p4, p5);
 
+  typename R::Compute_determinant_2 compute_determinant_2
+        = rep.compute_determinant_2_object();
+  FT tmp22b = compute_determinant_2(v3, v4);
+
   typename R::Compute_scalar_product_2 Compute_scalar_product
         = rep.compute_scalar_product_2_object();
-  FT tmp22b = Compute_scalar_product(v3, v4);
+  FT tmp22c = Compute_scalar_product(v3, v4);
 
   typename R::Compute_squared_distance_2 Compute_squared_distance
         = rep.compute_squared_distance_2_object();
-  FT tmp22c = Compute_squared_distance(p1, p2);
-     tmp22c = Compute_squared_distance(p1, r2);
-     tmp22c = Compute_squared_distance(p1, t2);
+  FT tmp22d = Compute_squared_distance(p1, p2);
+     tmp22d = Compute_squared_distance(p1, r2);
+     tmp22d = Compute_squared_distance(p1, t2);
 
   typename R::Compute_squared_length_2 Compute_squared_length
         = rep.compute_squared_length_2_object();
