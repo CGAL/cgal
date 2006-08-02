@@ -35,7 +35,7 @@
 #include <vector>
 
 // this cache doesn't help much
-#define CGAL_ENV_TRIANGLES_TRAITS_CACHE_POINT_ON
+//#define CGAL_ENV_TRIANGLES_TRAITS_CACHE_POINT_ON
 
 #ifdef CGAL_ENV_TRIANGLES_TRAITS_CACHE_POINT_ON
   #include <map>
