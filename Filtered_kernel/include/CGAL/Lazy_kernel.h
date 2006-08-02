@@ -1,8 +1,5 @@
-// Copyright (c) 2005  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 2005,2006  INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -100,6 +97,8 @@ public:
 
 
     // We don't touch the predicates.
+    // FIXME TODO : better use a layer of Filtered_kernel on top of everything,
+    //              so that semi-static filters are used as well (?).
 #define CGAL_Kernel_pred(P, Pf)  \
     typedef Filtered_predicate<typename EK::P, typename AK::P, \
 	                     Exact_converter, Approx_converter> P; \
@@ -112,12 +111,12 @@ public:
     typedef typename boost::mpl::if_<boost::is_same<typename AK::C, typename AK::Intersect_with_iterators_2>, \
                                      Lazy_intersect_with_iterators<Kernel,typename AK::C, typename EK::C>, \
                                      typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Bbox_2>, \
-                                     Lazy_construction_bbox<Kernel,typename AK::C, typename EK::C>, \
-                                     typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, typename AK::FT>,\
-                                                              Lazy_construction_nt<Kernel,typename AK::C, typename EK::C>,\
-                                                              typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Object >,\
-                                                                                       Lazy_construction_object<Kernel,typename AK::C, typename EK::C>,\
-                                                                                       Lazy_construction<Kernel,typename AK::C, typename EK::C> >::type >::type > ::type > ::type C; \
+                                                              Lazy_construction_bbox<Kernel,typename AK::C, typename EK::C>, \
+                                                              typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, typename AK::FT>,\
+                                                                                       Lazy_construction_nt<Kernel,typename AK::C, typename EK::C>,\
+                                                                                       typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Object >,\
+                                                                                                                Lazy_construction_object<Kernel,typename AK::C, typename EK::C>,\
+                                                                                                                Lazy_construction<Kernel,typename AK::C, typename EK::C> >::type >::type > ::type > ::type C; \
     C Cf() const { return C(); }
 
   CGAL_Kernel_cons(Intersect_with_iterators_2,
@@ -126,13 +125,15 @@ public:
 #define CGAL_Kernel_cons(C, Cf) \
     typedef typename boost::mpl::if_<boost::is_same<typename AK::C, typename AK::Construct_cartesian_const_iterator_2>, \
                                      Lazy_cartesian_const_iterator_2<Kernel,typename AK::C, typename EK::C>, \
-                                     typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Bbox_2>, \
-                                     Lazy_construction_bbox<Kernel,typename AK::C, typename EK::C>, \
-                                     typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, typename AK::FT>,\
-                                                              Lazy_construction_nt<Kernel,typename AK::C, typename EK::C>,\
-                                                              typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Object >,\
-                                                                                       Lazy_construction_object<Kernel,typename AK::C, typename EK::C>,\
-                                                                                       Lazy_construction<Kernel,typename AK::C, typename EK::C> >::type >::type >::type > ::type C; \
+                                     typename boost::mpl::if_<boost::is_same<typename AK::C, typename AK::Construct_cartesian_const_iterator_3>, \
+                                                              Lazy_cartesian_const_iterator_3<Kernel,typename AK::C, typename EK::C>, \
+                                                              typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Bbox_2>, \
+                                                                                       Lazy_construction_bbox<Kernel,typename AK::C, typename EK::C>, \
+                                                                                       typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, typename AK::FT>,\
+                                                                                                                Lazy_construction_nt<Kernel,typename AK::C, typename EK::C>,\
+                                                                                                                typename boost::mpl::if_<boost::is_same<typename AK::C::result_type, Object >,\
+                                                                                                                                         Lazy_construction_object<Kernel,typename AK::C, typename EK::C>,\
+                                                                                                                                         Lazy_construction<Kernel,typename AK::C, typename EK::C> >::type >::type >::type > ::type > ::type C; \
     C Cf() const { return C(); }
 
 #endif //CGAL_INTERSECT_WITH_ITERATORS_2

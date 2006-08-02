@@ -1,4 +1,3 @@
-
 // Copyright (c) 2001  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
@@ -20,7 +19,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Andreas Fabri
+// Author(s)     : Andreas Fabri, Sylvain Pion
 
 #ifndef CGAL_LAZY_H
 #define CGAL_LAZY_H
@@ -37,9 +36,6 @@ CGAL_BEGIN_NAMESPACE
 template <typename AT, typename ET, typename EFT, typename E2A> class Lazy;
 
 
-
-
-
 template <typename AT, typename ET, typename EFT, typename E2A>
 inline
 const AT&
@@ -47,7 +43,6 @@ approx(const Lazy<AT,ET, EFT, E2A>& l)
 {
   return l.approx();
 }
-
 
 template <typename AT, typename ET, typename EFT, typename E2A>
 inline
@@ -57,7 +52,6 @@ approx(Lazy<AT,ET, EFT, E2A>& l)
   return l.approx();
 }
 
-
 template <typename ET>
 inline
 const Interval_nt<false>&
@@ -65,7 +59,6 @@ approx(const Lazy_exact_nt<ET>& l)
 {
   return l.approx();
 }
-
 
 inline
 const double&
@@ -196,6 +189,7 @@ print_dag(const Lazy<AT,ET,EFT,E2A>& l, std::ostream& os, int level = 0)
 
 //____________________________________________________________
 // The rep for the leaf node
+// FIXME TODO : Factorize all the Lazy_construct_rep_[0-8] !!!
 
 template <typename AT, typename ET, typename E2A> 
 class Lazy_construct_rep_0 : public Lazy_construct_rep<AT, ET, E2A>
@@ -482,6 +476,181 @@ public:
   }
 #endif
 };
+
+template <typename AC, typename EC, typename E2A, typename L1, typename L2, typename L3, typename L4, typename L5, typename L6>
+ class Lazy_construct_rep_6 : public Lazy_construct_rep<typename AC::result_type , typename EC::result_type, E2A>
+{
+  typedef typename AC::result_type AT;
+  typedef typename EC::result_type ET;
+  typedef Lazy_construct_rep<AT, ET, E2A> Base;
+
+  EC ec_;
+  L1 l1_;
+  L2 l2_;
+  L3 l3_;
+  L4 l4_;
+  L5 l5_;
+  L6 l6_;
+
+public:
+
+  void
+  update_exact()
+  {
+    this->et = new ET(ec_(CGAL::exact(l1_), CGAL::exact(l2_), CGAL::exact(l3_), CGAL::exact(l4_), CGAL::exact(l5_), CGAL::exact(l6_)));
+    this->at = E2A()(*(this->et));
+    // Prune lazy tree
+    l1_ = L1();
+    l2_ = L2();
+    l3_ = L3();
+    l4_ = L4();
+    l5_ = L5();
+    l6_ = L6();
+  }
+
+ Lazy_construct_rep_6(const AC& ac, const EC& ec, const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5, const L6& l6)
+    : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2), CGAL::approx(l3), CGAL::approx(l4), CGAL::approx(l5), CGAL::approx(l6))),
+                                    l1_(l1), l2_(l2), l3_(l3), l4_(l4), l5_(l5), l6_(l6)
+  {}
+
+#ifdef CGAL_LAZY_KERNEL_DEBUG
+  void
+  print_dag(std::ostream& os, int level) const
+  {
+    this->print_at_et(os, level);
+    
+    if(this->is_lazy()){
+      CGAL::msg(os, level, "DAG with 6 child nodes:");
+      CGAL::print_dag(l1_, os, level+1);
+      CGAL::print_dag(l2_, os, level+1);
+      CGAL::print_dag(l3_, os, level+1);
+      CGAL::print_dag(l4_, os, level+1);
+      CGAL::print_dag(l5_, os, level+1);
+      CGAL::print_dag(l6_, os, level+1);
+    }
+  }
+#endif
+};
+
+template <typename AC, typename EC, typename E2A, typename L1, typename L2, typename L3, typename L4, typename L5, typename L6, typename L7>
+ class Lazy_construct_rep_7 : public Lazy_construct_rep<typename AC::result_type , typename EC::result_type, E2A>
+{
+  typedef typename AC::result_type AT;
+  typedef typename EC::result_type ET;
+  typedef Lazy_construct_rep<AT, ET, E2A> Base;
+
+  EC ec_;
+  L1 l1_;
+  L2 l2_;
+  L3 l3_;
+  L4 l4_;
+  L5 l5_;
+  L6 l6_;
+  L7 l7_;
+
+public:
+
+  void
+  update_exact()
+  {
+    this->et = new ET(ec_(CGAL::exact(l1_), CGAL::exact(l2_), CGAL::exact(l3_), CGAL::exact(l4_), CGAL::exact(l5_), CGAL::exact(l6_), CGAL::exact(l7_)));
+    this->at = E2A()(*(this->et));
+    // Prune lazy tree
+    l1_ = L1();
+    l2_ = L2();
+    l3_ = L3();
+    l4_ = L4();
+    l5_ = L5();
+    l6_ = L6();
+    l7_ = L7();
+  }
+
+ Lazy_construct_rep_7(const AC& ac, const EC& ec, const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5, const L6& l6, const L7& l7)
+    : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2), CGAL::approx(l3), CGAL::approx(l4), CGAL::approx(l5), CGAL::approx(l6), CGAL::approx(l7))),
+                                    l1_(l1), l2_(l2), l3_(l3), l4_(l4), l5_(l5), l6_(l6), l7_(l7)
+  {}
+
+#ifdef CGAL_LAZY_KERNEL_DEBUG
+  void
+  print_dag(std::ostream& os, int level) const
+  {
+    this->print_at_et(os, level);
+    
+    if(this->is_lazy()){
+      CGAL::msg(os, level, "DAG with 7 child nodes:");
+      CGAL::print_dag(l1_, os, level+1);
+      CGAL::print_dag(l2_, os, level+1);
+      CGAL::print_dag(l3_, os, level+1);
+      CGAL::print_dag(l4_, os, level+1);
+      CGAL::print_dag(l5_, os, level+1);
+      CGAL::print_dag(l6_, os, level+1);
+      CGAL::print_dag(l7_, os, level+1);
+    }
+  }
+#endif
+};
+
+template <typename AC, typename EC, typename E2A, typename L1, typename L2, typename L3, typename L4, typename L5, typename L6, typename L7, typename L8>
+ class Lazy_construct_rep_8 : public Lazy_construct_rep<typename AC::result_type , typename EC::result_type, E2A>
+{
+  typedef typename AC::result_type AT;
+  typedef typename EC::result_type ET;
+  typedef Lazy_construct_rep<AT, ET, E2A> Base;
+
+  EC ec_;
+  L1 l1_;
+  L2 l2_;
+  L3 l3_;
+  L4 l4_;
+  L5 l5_;
+  L6 l6_;
+  L7 l7_;
+  L8 l8_;
+
+public:
+
+  void
+  update_exact()
+  {
+    this->et = new ET(ec_(CGAL::exact(l1_), CGAL::exact(l2_), CGAL::exact(l3_), CGAL::exact(l4_), CGAL::exact(l5_), CGAL::exact(l6_), CGAL::exact(l7_), CGAL::exact(l8_)));
+    this->at = E2A()(*(this->et));
+    // Prune lazy tree
+    l1_ = L1();
+    l2_ = L2();
+    l3_ = L3();
+    l4_ = L4();
+    l5_ = L5();
+    l6_ = L6();
+    l7_ = L7();
+    l8_ = L8();
+  }
+
+ Lazy_construct_rep_8(const AC& ac, const EC& ec, const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5, const L6& l6, const L7& l7, const L8& l8)
+    : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2), CGAL::approx(l3), CGAL::approx(l4), CGAL::approx(l5), CGAL::approx(l6), CGAL::approx(l7), CGAL::approx(l8))),
+                                    l1_(l1), l2_(l2), l3_(l3), l4_(l4), l5_(l5), l6_(l6), l7_(l7), l8_(l8)
+  {}
+
+#ifdef CGAL_LAZY_KERNEL_DEBUG
+  void
+  print_dag(std::ostream& os, int level) const
+  {
+    this->print_at_et(os, level);
+    
+    if(this->is_lazy()){
+      CGAL::msg(os, level, "DAG with 8 child nodes:");
+      CGAL::print_dag(l1_, os, level+1);
+      CGAL::print_dag(l2_, os, level+1);
+      CGAL::print_dag(l3_, os, level+1);
+      CGAL::print_dag(l4_, os, level+1);
+      CGAL::print_dag(l5_, os, level+1);
+      CGAL::print_dag(l6_, os, level+1);
+      CGAL::print_dag(l7_, os, level+1);
+      CGAL::print_dag(l8_, os, level+1);
+    }
+  }
+#endif
+};
+
 
 struct Approx_converter {
   template < typename T >
@@ -845,7 +1014,7 @@ struct Lazy_construction_nt {
     } catch (Interval_nt_advanced::unsafe_comparison) {
       CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
-      return new Lazy_construct_rep_0<AT,ET,To_interval<ET> >(ec(CGAL::exact(l1), exact(l2)));
+      return new Lazy_construct_rep_0<AT,ET,To_interval<ET> >(ec(CGAL::exact(l1), CGAL::exact(l2)));
     }
   }
 
@@ -859,9 +1028,38 @@ struct Lazy_construction_nt {
     } catch (Interval_nt_advanced::unsafe_comparison) {
       CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
-      return new Lazy_construct_rep_0<AT,ET,To_interval<ET> >(ec(CGAL::exact(l1), exact(l2), exact(l3)));
+      return new Lazy_construct_rep_0<AT,ET,To_interval<ET> >(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3)));
     }
   }
+
+  template <typename L1, typename L2, typename L3, typename L4>
+  result_type operator()(const L1& l1, const L2& l2, const L3& l3, const L4& l4) const
+  {
+    try {
+      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      Protect_FPU_rounding<Protection> P;
+      return new Lazy_construct_rep_4<AC, EC, To_interval<ET>, L1,L2,L3,L4>(ac, ec, l1,l2,l3,l4);
+    } catch (Interval_nt_advanced::unsafe_comparison) {
+      CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      return new Lazy_construct_rep_0<AT,ET,To_interval<ET> >(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3), CGAL::exact(l4)));
+    }
+  }
+
+  template <typename L1, typename L2, typename L3, typename L4, typename L5>
+  result_type operator()(const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5) const
+  {
+    try {
+      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      Protect_FPU_rounding<Protection> P;
+      return new Lazy_construct_rep_5<AC, EC, To_interval<ET>, L1,L2,L3,L4,L5>(ac, ec, l1,l2,l3,l4,l5);
+    } catch (Interval_nt_advanced::unsafe_comparison) {
+      CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      return new Lazy_construct_rep_0<AT,ET,To_interval<ET> >(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3), CGAL::exact(l4), CGAL::exact(l5)));
+    }
+  }
+
 };
 
 
@@ -948,7 +1146,6 @@ struct Ith {
 template <typename LK, typename AC, typename EC>
 struct Lazy_cartesian_const_iterator_2 {
 
-
   typedef typename LK::AK AK;
   typedef typename LK::EK EK;
   typedef typename LK::Cartesian_const_iterator_2 result_type;
@@ -972,6 +1169,35 @@ public:
   }
 
 };
+
+
+template <typename LK, typename AC, typename EC>
+struct Lazy_cartesian_const_iterator_3 {
+
+  typedef typename LK::AK AK;
+  typedef typename LK::EK EK;
+  typedef typename LK::Cartesian_const_iterator_3 result_type;
+  AC ac;
+  EC ec;
+
+public:
+
+  template < typename L1>
+  result_type
+  operator()(const L1& l1) const
+  {
+    return result_type(&l1);
+  }
+
+  template < typename L1>
+  result_type
+  operator()(const L1& l1, int i) const
+  {
+    return result_type(&l1,i);
+  }
+
+};
+
 
 // This is the magic functor for functors that write their result in a  reference argument
 // In a first version we assume that the references are of type Lazy<Something>,
@@ -1163,7 +1389,7 @@ struct Object_cast {
 // As the nested kernels return Objects of AK::Something and EK::Something
 // we have to unwrap them from the Object, and wrap them in a Lazy<Something>
 //
-// TODO: write operators for other than two arguments. For the current kernel we only need two for Interscet_2
+// TODO: write operators for other than two arguments. For the current kernel we only need two for Intersect_2
 
 template <typename LK, typename AC, typename EC>
 struct Lazy_construction_object {
@@ -1344,16 +1570,54 @@ public:
       return Handle(new Lazy_construct_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3), CGAL::exact(l4), CGAL::exact(l5))));
     }
   }
+
+  template <typename L1, typename L2, typename L3, typename L4, typename L5, typename L6>
+  result_type
+  operator()(const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5, const L6& l6) const
+  {
+    try {
+      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      Protect_FPU_rounding<Protection> P;
+    return Handle(new Lazy_construct_rep_6<AC, EC, E2A, L1, L2, L3, L4, L5, L6>(ac, ec, l1, l2, l3, l4, l5, l6));
+    } catch (Interval_nt_advanced::unsafe_comparison) {
+      CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      return Handle(new Lazy_construct_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3), CGAL::exact(l4), CGAL::exact(l5), CGAL::exact(l6))));
+    }
+  }
+
+  template <typename L1, typename L2, typename L3, typename L4, typename L5, typename L6, typename L7>
+  result_type
+  operator()(const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5, const L6& l6, const L7& l7) const
+  {
+    try {
+      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      Protect_FPU_rounding<Protection> P;
+    return Handle(new Lazy_construct_rep_7<AC, EC, E2A, L1, L2, L3, L4, L5, L6, L7>(ac, ec, l1, l2, l3, l4, l5, l6, l7));
+    } catch (Interval_nt_advanced::unsafe_comparison) {
+      CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      return Handle(new Lazy_construct_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3), CGAL::exact(l4), CGAL::exact(l5), CGAL::exact(l6), CGAL::exact(l7))));
+    }
+  }
+
+  template <typename L1, typename L2, typename L3, typename L4, typename L5, typename L6, typename L7, typename L8>
+  result_type
+  operator()(const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5, const L6& l6, const L7& l7, const L8& l8) const
+  {
+    try {
+      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      Protect_FPU_rounding<Protection> P;
+    return Handle(new Lazy_construct_rep_8<AC, EC, E2A, L1, L2, L3, L4, L5, L6, L7, L8>(ac, ec, l1, l2, l3, l4, l5, l6, l7, l8));
+    } catch (Interval_nt_advanced::unsafe_comparison) {
+      CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+      Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+      return Handle(new Lazy_construct_rep_0<AT,ET,E2A>(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3), CGAL::exact(l4), CGAL::exact(l5), CGAL::exact(l6), CGAL::exact(l7), CGAL::exact(l8))));
+    }
+  }
+
 };
-
-
-
-
 
 CGAL_END_NAMESPACE
 
-
 #endif // CGAL_LAZY_H
-
-
-
