@@ -59,7 +59,7 @@ void lower_envelope_2 (InputIterator begin, InputIterator end,
  * \param diag Output: The maximization diagram.
  * \pre The value-type of the iterator is Traits::Curve_2.
  */
-template <class Traits, class InputIterator, class EnvelopeDiagram>
+template <class InputIterator, class EnvelopeDiagram>
 void upper_envelope_2 (InputIterator begin, InputIterator end,
                        EnvelopeDiagram& diag)
 {
