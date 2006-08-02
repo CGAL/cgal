@@ -29,35 +29,35 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class FT>
+template <class RT>
 inline
-typename Sgn<FT>::result_type
-sign_of_determinant2x2( const FT& a00,  const FT& a01,
-                        const FT& a10,  const FT& a11)
+typename Sgn<RT>::result_type
+sign_of_determinant2x2( const RT& a00,  const RT& a01,
+                        const RT& a10,  const RT& a11)
 {
   return enum_cast<Sign>(CGAL_NTS compare( a00*a11, a10*a01));
 }
 
-template <class FT>
+template <class RT>
 inline
-typename Sgn<FT>::result_type
-sign_of_determinant3x3( const FT& a00,  const FT& a01,  const FT& a02,
-                        const FT& a10,  const FT& a11,  const FT& a12,
-                        const FT& a20,  const FT& a21,  const FT& a22)
+typename Sgn<RT>::result_type
+sign_of_determinant3x3( const RT& a00,  const RT& a01,  const RT& a02,
+                        const RT& a10,  const RT& a11,  const RT& a12,
+                        const RT& a20,  const RT& a21,  const RT& a22)
 {
   return CGAL_NTS sign(det3x3_by_formula(a00, a01, a02,
                                          a10, a11, a12,
                                          a20, a21, a22));
 }
 
-template <class FT>
+template <class RT>
 inline
-typename Sgn<FT>::result_type
+typename Sgn<RT>::result_type
 sign_of_determinant4x4(
- const FT& a00,  const FT& a01,  const FT& a02,  const FT& a03,
- const FT& a10,  const FT& a11,  const FT& a12,  const FT& a13,
- const FT& a20,  const FT& a21,  const FT& a22,  const FT& a23,
- const FT& a30,  const FT& a31,  const FT& a32,  const FT& a33)
+ const RT& a00,  const RT& a01,  const RT& a02,  const RT& a03,
+ const RT& a10,  const RT& a11,  const RT& a12,  const RT& a13,
+ const RT& a20,  const RT& a21,  const RT& a22,  const RT& a23,
+ const RT& a30,  const RT& a31,  const RT& a32,  const RT& a33)
 {
   return CGAL_NTS sign(det4x4_by_formula(a00, a01, a02, a03,
                                          a10, a11, a12, a13,
@@ -65,15 +65,15 @@ sign_of_determinant4x4(
                                          a30, a31, a32, a33));
 }
 
-template <class FT>
+template <class RT>
 CGAL_KERNEL_LARGE_INLINE
-typename Sgn<FT>::result_type
+typename Sgn<RT>::result_type
 sign_of_determinant5x5(
- const FT& a00,  const FT& a01,  const FT& a02,  const FT& a03,  const FT& a04,
- const FT& a10,  const FT& a11,  const FT& a12,  const FT& a13,  const FT& a14,
- const FT& a20,  const FT& a21,  const FT& a22,  const FT& a23,  const FT& a24,
- const FT& a30,  const FT& a31,  const FT& a32,  const FT& a33,  const FT& a34,
- const FT& a40,  const FT& a41,  const FT& a42,  const FT& a43,  const FT& a44)
+ const RT& a00,  const RT& a01,  const RT& a02,  const RT& a03,  const RT& a04,
+ const RT& a10,  const RT& a11,  const RT& a12,  const RT& a13,  const RT& a14,
+ const RT& a20,  const RT& a21,  const RT& a22,  const RT& a23,  const RT& a24,
+ const RT& a30,  const RT& a31,  const RT& a32,  const RT& a33,  const RT& a34,
+ const RT& a40,  const RT& a41,  const RT& a42,  const RT& a43,  const RT& a44)
 {
   return CGAL_NTS sign(det5x5_by_formula(a00, a01, a02, a03, a04,
                                          a10, a11, a12, a13, a14,
@@ -82,22 +82,22 @@ sign_of_determinant5x5(
                                          a40, a41, a42, a43, a44));
 }
 
-template <class FT>
+template <class RT>
 CGAL_KERNEL_LARGE_INLINE
-typename Sgn<FT>::result_type
+typename Sgn<RT>::result_type
 sign_of_determinant6x6(
- const FT& a00, const FT& a01, const FT& a02, const FT& a03, const FT& a04,
- const FT& a05,
- const FT& a10, const FT& a11, const FT& a12, const FT& a13, const FT& a14,
- const FT& a15,
- const FT& a20, const FT& a21, const FT& a22, const FT& a23, const FT& a24,
- const FT& a25,
- const FT& a30, const FT& a31, const FT& a32, const FT& a33, const FT& a34,
- const FT& a35,
- const FT& a40, const FT& a41, const FT& a42, const FT& a43, const FT& a44,
- const FT& a45,
- const FT& a50, const FT& a51, const FT& a52, const FT& a53, const FT& a54,
- const FT& a55)
+ const RT& a00, const RT& a01, const RT& a02, const RT& a03, const RT& a04,
+ const RT& a05,
+ const RT& a10, const RT& a11, const RT& a12, const RT& a13, const RT& a14,
+ const RT& a15,
+ const RT& a20, const RT& a21, const RT& a22, const RT& a23, const RT& a24,
+ const RT& a25,
+ const RT& a30, const RT& a31, const RT& a32, const RT& a33, const RT& a34,
+ const RT& a35,
+ const RT& a40, const RT& a41, const RT& a42, const RT& a43, const RT& a44,
+ const RT& a45,
+ const RT& a50, const RT& a51, const RT& a52, const RT& a53, const RT& a54,
+ const RT& a55)
 {
   return CGAL_NTS sign(det6x6_by_formula(a00, a01, a02, a03, a04, a05,
                                          a10, a11, a12, a13, a14, a15,
