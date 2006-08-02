@@ -17,8 +17,8 @@
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
 
-#ifndef CGAL_ENVELOPE_CACHING_TRAITS_3_H
-#define CGAL_ENVELOPE_CACHING_TRAITS_3_H
+#ifndef CGAL_ENV_CACHING_TRAITS_3_H
+#define CGAL_ENV_CACHING_TRAITS_3_H
 
 /*! \file
  * The caching traits class for the envelope package.
@@ -32,12 +32,12 @@ CGAL_BEGIN_NAMESPACE
  * \class A decorator for a traits class of the envelope divide-and-conquer
  * algorithm, adding a caching ability.
  */
-template <class EnvelopeTraits_3>
-class Envelope_caching_traits_3 : public EnvelopeTraits_3
+template <class EnvTraits_>
+class Env_caching_traits_3 : public EnvTraits_
 {
 public:
-  typedef EnvelopeTraits_3                               Base_traits_3;
-  typedef Envelope_caching_traits_3<Base_traits_3>       Self;
+  typedef EnvTraits_                                     Base_traits_3;
+  typedef Env_caching_traits_3<Base_traits_3>            Self;
   
   typedef typename Base_traits_3::Point_2                Point_2;
   typedef typename Base_traits_3::Curve_2                Curve_2;
@@ -66,11 +66,13 @@ protected:
 
   // caching for construct_projected_intersections traits method's result
   typedef std::map<Surface_pair,
-                   Intersections_list, Less_surface_pair>    Intersections_cache;
+                   Intersections_list,
+                   Less_surface_pair>                  Intersections_cache;
 
   // caching for compare_distance_to_envelope traits method's result
   typedef std::map<Surface_pair,
-                   Comparison_result, Less_surface_pair>     Compare_cache;
+                   Comparison_result,
+                   Less_surface_pair>                  Compare_cache;
 
 public:
 
@@ -171,20 +173,22 @@ public:
 
   protected:
     template <class Geometry>
-    Comparison_result compare_distance_to_envelope(Geometry& g,
-                                                   const Xy_monotone_surface_3& s1,
-                                                   const Xy_monotone_surface_3& s2) const
+    Comparison_result
+    compare_distance_to_envelope (Geometry& g,
+                                  const Xy_monotone_surface_3& s1,
+                                  const Xy_monotone_surface_3& s2) const
     {
       // check that s1 and s2 do not intersect
       Intersections_list                      inter_list;
-      parent.construct_projected_intersections_2_object()(s1, s2,
-                                                          std::back_inserter(inter_list));
+      parent.construct_projected_intersections_2_object()
+        (s1, s2,
+         std::back_inserter(inter_list));
       
       // if they do not intersect, we can use the cache
       if (inter_list.empty())
       {
-        // then we should check the cache of compare_distance, and only if it's empty
-        // use the traits
+        // then we should check the cache of compare_distance, and only if
+        // it is empty we use the traits
         Surface_pair                        spair(s1, s2);
 
         typename Compare_cache::iterator    comp_cache_iter;
@@ -192,7 +196,8 @@ public:
         if (comp_cache_iter == compare_cache.end())
         {
           Comparison_result res =
-              parent.Base_traits_3::compare_distance_to_envelope_3_object()(g, s1, s2);
+              parent.Base_traits_3::compare_distance_to_envelope_3_object()
+                (g, s1, s2);
           compare_cache[spair] = res;
           return res;
         }
@@ -201,7 +206,8 @@ public:
       }
       else
         // they intersect, so must use the traits
-        return parent.Base_traits_3::compare_distance_to_envelope_3_object()(g, s1, s2);
+        return (parent.Base_traits_3::compare_distance_to_envelope_3_object()
+                (g, s1, s2));
     }
   };
    
@@ -212,10 +218,19 @@ public:
     return Compare_distance_to_envelope_3(this, compare_cache);
   }
 
-  Envelope_caching_traits_3(Envelope_type t = LOWER) : Base_traits_3(t), intersections_number(0)
+  /*! Default constructor. */
+  Env_caching_traits_3 () :
+    Base_traits_3(), 
+    intersections_number(0)
   {}
 
-  virtual ~Envelope_caching_traits_3()
+  /*! Constructor with envelope type. */
+  Env_caching_traits_3 (Envelope_type t) : 
+    Base_traits_3(t),
+    intersections_number(0)
+  {}
+
+  virtual ~Env_caching_traits_3()
   {
     reset();
   }
