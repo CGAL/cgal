@@ -25,6 +25,7 @@
 #define CGAL_VECTOR_3_H
 
 #include <CGAL/Origin.h>
+#include <CGAL/Kernel/mpl.h>
 
 CGAL_BEGIN_NAMESPACE
 
