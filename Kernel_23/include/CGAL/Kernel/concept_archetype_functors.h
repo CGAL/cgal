@@ -649,6 +649,34 @@ public:
 };
 
 template <typename K>
+class Compute_determinant_2
+{
+    typedef typename K::FT                FT;
+    typedef typename K::Vector_2          Vector_2;
+public:
+    typedef FT               result_type;
+    typedef Arity_tag< 2 >   Arity;
+
+    FT
+    operator()(const Vector_2& v, const Vector_2& w) const
+    { FT val = 0; return val; }
+};
+
+template <typename K>
+class Compute_determinant_3
+{
+    typedef typename K::FT                FT;
+    typedef typename K::Vector_3          Vector_3;
+public:
+    typedef FT               result_type;
+    typedef Arity_tag< 3 >   Arity;
+
+    FT
+    operator()(const Vector_3& v, const Vector_3& w, const Vector_3& t) const
+    { FT val = 0; return val; }
+};
+
+template <typename K>
 class Compute_scalar_product_2
 {
     typedef typename K::FT                FT;

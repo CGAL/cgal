@@ -227,6 +227,16 @@ CGAL_Kernel_cons(Compute_area_3,
 		 compute_area_3_object)
 #endif
 
+#if !defined(CGAL_CA_LIMITED_INTERFACE) || defined(CGAL_CA_COMPUTE_DETERMINANT_2)
+CGAL_Kernel_cons(Compute_determinant_2,
+		 compute_determinant_2_object)
+#endif
+
+#if !defined(CGAL_CA_LIMITED_INTERFACE) || defined(CGAL_CA_COMPUTE_DETERMINANT_3)
+CGAL_Kernel_cons(Compute_determinant_3,
+		 compute_determinant_3_object)
+#endif
+
 #if !defined(CGAL_CA_LIMITED_INTERFACE) || \
      defined(CGAL_CA_COMPUTE_SCALAR_PRODUCT_2)
 CGAL_Kernel_cons(Compute_scalar_product_2,
