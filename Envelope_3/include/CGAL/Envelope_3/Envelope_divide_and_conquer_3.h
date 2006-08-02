@@ -199,7 +199,7 @@ public:
     // make the general surfaces xy-monotone
     std::list<Xy_monotone_surface_3> xy_monotones;
     for(; begin != end; ++begin)
-      traits->construct_envelope_xy_monotone_parts_3_object()
+      traits->make_xy_monotone_3_object()
                         (*begin, std::back_inserter(xy_monotones));
 
     // recursively construct the envelope of the xy-monotone parts

@@ -77,7 +77,7 @@ public:
   /// \name Overriden functors.
   //@{
 
-  class Construct_envelope_xy_monotone_parts_3
+  class Make_xy_monotone_3
   {
   private:
     Base_traits_3    *base;
@@ -85,7 +85,7 @@ public:
   public:
 
     /*! Constructor. */
-    Construct_envelope_xy_monotone_parts_3 (Base_traits_3 *_base) :
+    Make_xy_monotone_3 (Base_traits_3 *_base) :
       base (_base)
     {}
     
@@ -104,7 +104,7 @@ public:
       std::list<Base_xy_monotone_surface_3>                     xy_surfaces;
       typename std::list<Base_xy_monotone_surface_3>::iterator  xys_it;
     
-      base->construct_envelope_xy_monotone_parts_3_object()
+      base->make_xy_monotone_3_object()
         (S,
          std::back_inserter (xy_surfaces));
 
@@ -120,11 +120,11 @@ public:
     }
   };
 
-  /*! Get a Construct_envelope_xy_monotone_parts_3 functor object. */
-  Construct_envelope_xy_monotone_parts_3
-  construct_envelope_xy_monotone_parts_3_object()
+  /*! Get a Make_xy_monotone_3 functor object. */
+  Make_xy_monotone_3
+  make_xy_monotone_3_object()
   {
-    return Construct_envelope_xy_monotone_parts_3 (this);
+    return Make_xy_monotone_3 (this);
   }
 
   //@}

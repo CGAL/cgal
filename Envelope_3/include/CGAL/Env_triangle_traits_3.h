@@ -366,13 +366,13 @@ public:
    * 
    * The iterator value-type is Xy_monotone_surface_3
    */
-  class Construct_envelope_xy_monotone_parts_3
+  class Make_xy_monotone_3
   {
   protected:
     const Self *parent;
   public:
 
-    Construct_envelope_xy_monotone_parts_3(const Self* p)
+    Make_xy_monotone_3(const Self* p)
       : parent(p)
     {}
     // create xy-monotone surfaces from a general surface
@@ -509,11 +509,11 @@ public:
     }
   };
 
-  /*! Get a Construct_envelope_xy_monotone_parts_3 functor object. */
-  Construct_envelope_xy_monotone_parts_3
-  construct_envelope_xy_monotone_parts_3_object() const
+  /*! Get a Make_xy_monotone_3 functor object. */
+  Make_xy_monotone_3
+  make_xy_monotone_3_object() const
   {
-    return Construct_envelope_xy_monotone_parts_3(this);
+    return Make_xy_monotone_3(this);
   }
 
   /*!\brief
