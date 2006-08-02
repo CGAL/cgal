@@ -33,10 +33,9 @@ class Iso_rectangle_2 : public R_::Kernel_base::Iso_rectangle_2
   typedef typename R_::FT                    FT;
   typedef typename R_::Point_2               Point_2;
   typedef typename R_::Aff_transformation_2  Aff_transformation_2;
-  typedef typename R_::Kernel_base::Iso_rectangle_2  RIso_rectangle_2;
 public:
-  typedef RIso_rectangle_2 Rep;
 
+  typedef typename R_::Kernel_base::Iso_rectangle_2  Rep;
 
   const Rep& rep() const
   {
@@ -52,23 +51,23 @@ public:
 
   Iso_rectangle_2() {}
 
-  Iso_rectangle_2(const RIso_rectangle_2& r)
-    : RIso_rectangle_2(r) {}
+  Iso_rectangle_2(const Rep& r)
+    : Rep(r) {}
 
   Iso_rectangle_2(const Point_2 &p, const Point_2 &q)
-    : RIso_rectangle_2(typename R::Construct_iso_rectangle_2()(p,q).rep()) {}
+    : Rep(typename R::Construct_iso_rectangle_2()(p,q).rep()) {}
 
   Iso_rectangle_2(const Point_2 &left, const Point_2 &right,
                   const Point_2 &bottom, const Point_2 &top)
-    : RIso_rectangle_2(typename R::Construct_iso_rectangle_2()(left, right, bottom, top).rep()) {}
+    : Rep(typename R::Construct_iso_rectangle_2()(left, right, bottom, top).rep()) {}
 
   Iso_rectangle_2(const RT& min_hx, const RT& min_hy, 
                   const RT& max_hx, const RT& max_hy)
-    : RIso_rectangle_2(typename R::Construct_iso_rectangle_2()(min_hx, min_hy, max_hx, max_hy).rep()) {}
+    : Rep(typename R::Construct_iso_rectangle_2()(min_hx, min_hy, max_hx, max_hy).rep()) {}
 
   Iso_rectangle_2(const RT& min_hx, const RT& min_hy, 
                   const RT& max_hx, const RT& max_hy, const RT& hw)
-    : RIso_rectangle_2(typename R::Construct_iso_rectangle_2()(min_hx, min_hy, max_hx, max_hy, hw).rep()) {}
+    : Rep(typename R::Construct_iso_rectangle_2()(min_hx, min_hy, max_hx, max_hy, hw).rep()) {}
 
 
   typename Qualified_result_of<typename R::Construct_min_vertex_2, Iso_rectangle_2 >::type

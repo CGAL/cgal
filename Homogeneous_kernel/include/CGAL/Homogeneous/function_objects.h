@@ -2366,7 +2366,7 @@ namespace HomogeneousKernelFunctors {
 #ifndef CGAL_NO_DEPRECATED_CODE
     Direction_3
     operator()(const RT& x, const RT& y, const RT& z) const
-    { return Direction_3(x, y, z); }
+    { return Rep(x, y, z); }
 #endif // CGAL_NO_DEPRECATED_CODE
 
     Direction_3
@@ -2375,15 +2375,15 @@ namespace HomogeneousKernelFunctors {
 
     Direction_3
     operator()(const Line_3& l) const
-    { return Direction_3(l); }
+    { return Rep(l); }
 
     Direction_3
     operator()(const Ray_3& r) const
-    { return Direction_3(r); }
+    { return Rep(r); }
 
     Direction_3
     operator()(const Segment_3& s) const
-    { return Direction_3(s); }
+    { return Rep(s); }
   };
 
 
@@ -3058,6 +3058,7 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Line_3       Line_3;
     typedef typename K::Vector_3     Vector_3;
     typedef typename K::Point_3      Point_3;
+    typedef typename Vector_3::Rep   Rep;
   public:
     typedef Vector_3         result_type;
     typedef Arity_tag< 2 >   Arity;
@@ -3065,22 +3066,22 @@ namespace HomogeneousKernelFunctors {
     Vector_3
     operator()( const Point_3& p, const Point_3& q) const
     { 
-      return Vector_3(q.hx()*p.hw() - p.hx()*q.hw(),
-		      q.hy()*p.hw() - p.hy()*q.hw(),
-		      q.hz()*p.hw() - p.hz()*q.hw(),
-		      q.hw()*p.hw() );
+      return Rep(q.hx()*p.hw() - p.hx()*q.hw(),
+		 q.hy()*p.hw() - p.hy()*q.hw(),
+		 q.hz()*p.hw() - p.hz()*q.hw(),
+		 q.hw()*p.hw() );
     }
 
     Vector_3
     operator()( const Origin&, const Point_3& q) const
     { 
-      return Vector_3( q.hx(), q.hy(), q.hz(), q.hw());
+      return Rep( q.hx(), q.hy(), q.hz(), q.hw());
     }
 
     Vector_3
     operator()( const Point_3& p, const Origin& q) const
     { 
-      return Vector_3( - p.hx(), - p.hy(), - p.hz(), p.hw() );
+      return Rep( - p.hx(), - p.hy(), - p.hz(), p.hw() );
     }
 
     Vector_3
@@ -3094,7 +3095,7 @@ namespace HomogeneousKernelFunctors {
 
     Vector_3
     operator()( const Ray_3& r) const
-    { return r.to_vector(); }
+    { return r.rep().to_vector(); }
 
     Vector_3
     operator()( const Line_3& l) const
@@ -3102,16 +3103,16 @@ namespace HomogeneousKernelFunctors {
 
     Vector_3
     operator()( const Null_vector&) const
-    { return Vector_3(RT(0), RT(0), RT(0), RT(1)); }
+    { return Rep(RT(0), RT(0), RT(0), RT(1)); }
 
 // #ifndef CGAL_NO_DEPRECATED_CODE
     Vector_3
     operator()( const RT& x, const RT& y, const RT& z) const
-    { return Vector_3(x, y, z); }
+    { return Rep(x, y, z); }
 
     Vector_3
     operator()( const RT& x, const RT& y, const RT& z, const RT& w) const
-    { return Vector_3(x, y, z, w); }
+    { return Rep(x, y, z, w); }
 // #endif // CGAL_NO_DEPRECATED_CODE
   };
 

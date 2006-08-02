@@ -38,10 +38,9 @@ class Line_3 : public R_::Kernel_base::Line_3
   typedef typename R_::Vector_3              Vector_3;
   typedef typename R_::Plane_3               Plane_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
-  typedef typename R_::Kernel_base::Line_3   RLine_3;
 public:
 
-  typedef RLine_3 Rep;
+  typedef typename R_::Kernel_base::Line_3   Rep;
 
   const Rep& rep() const
   {
@@ -57,24 +56,24 @@ public:
 
   Line_3() {}
 
-  Line_3(const Point_3 & p, const Point_3 & q)
-      : RLine_3(p,q) {}
-
   // conversion impl -> interface class
-  Line_3(const RLine_3& l)
-      : RLine_3(l) {}
+  Line_3(const Rep& l)
+      : Rep(l) {}
+
+  Line_3(const Point_3 & p, const Point_3 & q)
+      : Rep(typename R::Construct_line_3()(p, q).rep()) {}
 
   Line_3(const Segment_3 & s)
-      : RLine_3( s ) {}
+      : Rep(typename R::Construct_line_3()(s).rep()) {}
 
   Line_3(const Ray_3 & r)
-      : RLine_3( r ) {}
+      : Rep(typename R::Construct_line_3()(r).rep()) {}
 
   Line_3(const Point_3 & p, const Direction_3 & d)
-      : RLine_3( p, d ) {}
+      : Rep(typename R::Construct_line_3()(p, d).rep()) {}
 
   Line_3(const Point_3 & p, const Vector_3 & v)
-      : RLine_3( p, v ) {}
+      : Rep(typename R::Construct_line_3()(p, v).rep()) {}
 
   Line_3 transform(const Aff_transformation_3 &t) const
   {
@@ -134,8 +133,8 @@ template < class R >
 std::ostream&
 operator<<(std::ostream& os, const Line_3<R>& l)
 {
-  typedef typename  R::Kernel_base::Line_3  RLine_3;
-  return os << static_cast<const RLine_3&>(l);
+  typedef typename  R::Kernel_base::Line_3  Rep;
+  return os << static_cast<const Rep&>(l);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_LINE_3
 
@@ -144,8 +143,8 @@ template < class R >
 std::istream&
 operator>>(std::istream & is, Line_3<R> & p)
 {
-  typedef typename  R::Kernel_base::Line_3  RLine_3;
-  is >> static_cast<RLine_3&>(p);
+  typedef typename  R::Kernel_base::Line_3  Rep;
+  is >> static_cast<Rep&>(p);
   return is;
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_LINE_3

@@ -32,10 +32,9 @@ class Sphere_3 : public R_::Kernel_base::Sphere_3
   typedef typename R_::FT                    FT;
   typedef typename R_::Point_3               Point_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
-  typedef typename R_::Kernel_base::Sphere_3  RSphere_3;
 public:
 
-  typedef RSphere_3 Rep;
+  typedef typename R_::Kernel_base::Sphere_3  Rep;
 
   const Rep& rep() const
   {
@@ -51,27 +50,27 @@ public:
 
   Sphere_3() {}
 
-  Sphere_3(const RSphere_3& s)
-   : RSphere_3(s) {}
+  Sphere_3(const Rep& s)
+   : Rep(s) {}
 
   Sphere_3(const Point_3& p, const FT& sq_rad,
            const Orientation& o = COUNTERCLOCKWISE)
-   : RSphere_3(p, sq_rad, o) {}
+   : Rep(typename R::Construct_sphere_3()(p, sq_rad, o).rep()) {}
 
   Sphere_3(const Point_3& p, const Point_3& q,
            const Point_3& r, const Point_3& u)
-   : RSphere_3(p, q, r, u) {}
+   : Rep(typename R::Construct_sphere_3()(p, q, r, u).rep()) {}
 
   Sphere_3(const Point_3& p, const Point_3& q, const Point_3& r,
            const Orientation& o = COUNTERCLOCKWISE)
-   : RSphere_3(p, q, r, o) {}
+   : Rep(typename R::Construct_sphere_3()(p, q, r, o).rep()) {}
 
   Sphere_3(const Point_3& p, const Point_3&  q,
            const Orientation& o = COUNTERCLOCKWISE)
-   : RSphere_3(p, q, o) {}
+   : Rep(typename R::Construct_sphere_3()(p, q, o).rep()) {}
 
   Sphere_3(const Point_3& p, const Orientation& o = COUNTERCLOCKWISE)
-   : RSphere_3(p, o) {}
+   : Rep(typename R::Construct_sphere_3()(p, o).rep()) {}
 
   Sphere_3 orthogonal_transform(const Aff_transformation_3 &t) const;
 

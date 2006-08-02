@@ -39,10 +39,9 @@ class Vector_3 : public R_::Kernel_base::Vector_3
   typedef typename R_::Point_3               Point_3;
   typedef typename R_::Direction_3           Direction_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
-  typedef typename R_::Kernel_base::Vector_3         RVector_3;
 public:
 
-  typedef RVector_3 Rep;
+  typedef typename R_::Kernel_base::Vector_3         Rep;
 
   const Rep& rep() const
   {
@@ -58,29 +57,29 @@ public:
 
   Vector_3() {}
 
+  Vector_3(const Rep& v)
+      : Rep(v) {}
+
   Vector_3(const Point_3& a, const Point_3& b)
-    : RVector_3(a, b) {}
+    : Rep(typename R::Construct_vector_3()(a, b).rep()) {}
 
   Vector_3(const Segment_3& s)
-      : RVector_3(s) {}
+    : Rep(typename R::Construct_vector_3()(s).rep()) {}
 
   Vector_3(const Ray_3& r)
-      : RVector_3(r) {}
+    : Rep(typename R::Construct_vector_3()(r).rep()) {}
 
   Vector_3(const Line_3& l)
-      : RVector_3(l) {}
-
-  Vector_3(const RVector_3& v)
-      : RVector_3(v) {}
+    : Rep(typename R::Construct_vector_3()(l).rep()) {}
 
   Vector_3(const Null_vector& v)
-      : RVector_3(v) {}
+    : Rep(typename R::Construct_vector_3()(v).rep()) {}
 
   Vector_3(const RT& x, const RT& y, const RT& z)
-    : RVector_3(x, y, z) {}
+    : Rep(typename R::Construct_vector_3()(x, y, z).rep()) {}
 
   Vector_3(const RT& x, const RT& y, const RT& z, const RT& w)
-    : RVector_3(x, y, z, w) {}
+    : Rep(typename R::Construct_vector_3()(x, y, z, w).rep()) {}
 
   Direction_3 direction() const
   {
@@ -189,6 +188,12 @@ public:
       return cartesian(i);
   }
 
+  typename Qualified_result_of<typename R::Compute_squared_length_3, Vector_3>::type
+  squared_length() const
+  {
+    return R().compute_squared_length_3_object()(*this);
+  }
+
 };
 
 #ifndef CGAL_NO_OSTREAM_INSERT_VECTOR_3
@@ -196,8 +201,8 @@ template < class R >
 std::ostream&
 operator<<(std::ostream& os, const Vector_3<R>& v)
 {
-  typedef typename  R::Kernel_base::Vector_3  RVector_3;
-  return os << static_cast<const RVector_3&>(v);
+  typedef typename  R::Kernel_base::Vector_3  Rep;
+  return os << static_cast<const Rep&>(v);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_VECTOR_3
 
@@ -206,8 +211,8 @@ template < class R >
 std::istream&
 operator>>(std::istream& is, Vector_3<R>& p)
 {
-  typedef typename  R::Kernel_base::Vector_3  RVector_3;
-  return is >> static_cast<RVector_3&>(p);
+  typedef typename  R::Kernel_base::Vector_3  Rep;
+  return is >> static_cast<Rep&>(p);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_VECTOR_3
 

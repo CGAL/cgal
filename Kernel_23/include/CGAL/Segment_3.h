@@ -36,10 +36,9 @@ class Segment_3 : public R_::Kernel_base::Segment_3
   typedef typename R_::Direction_3           Direction_3;
   typedef typename R_::Line_3                Line_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
-  typedef typename R_::Kernel_base::Segment_3  RSegment_3;
 public:
 
-  typedef RSegment_3 Rep;
+  typedef typename R_::Kernel_base::Segment_3  Rep;
 
   const Rep& rep() const
   {
@@ -55,11 +54,11 @@ public:
 
   Segment_3() {}
 
-  Segment_3(const Point_3& sp, const Point_3& ep)
-    : RSegment_3(sp,ep) {}
+  Segment_3(const Rep& s)
+      : Rep(s) {}
 
-  Segment_3(const RSegment_3& s)
-      : RSegment_3(s) {}
+  Segment_3(const Point_3& sp, const Point_3& ep)
+    : Rep(typename R::Construct_segment_3()(sp, ep).rep()) {}
 
 // FIXME TODO : Use Qrt here !
   //typename Qualified_result_of<typename R::Construct_source_3, Segment_3>::type
@@ -194,8 +193,8 @@ template < class R>
 std::ostream&
 operator<<(std::ostream& os, const Segment_3<R>& s)
 {
-  typedef typename  R::Kernel_base::Segment_3  RSegment_3;
-  return os << static_cast<const RSegment_3&>(s);
+  typedef typename  R::Kernel_base::Segment_3  Rep;
+  return os << static_cast<const Rep&>(s);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_SEGMENT_3
 
@@ -204,8 +203,8 @@ template < class R>
 std::istream&
 operator>>(std::istream& is, Segment_3<R>& s)
 {
-  typedef typename  R::Kernel_base::Segment_3  RSegment_3;
-  return is >> static_cast<RSegment_3&>(s);
+  typedef typename  R::Kernel_base::Segment_3  Rep;
+  return is >> static_cast<Rep&>(s);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_SEGMENT_3
 

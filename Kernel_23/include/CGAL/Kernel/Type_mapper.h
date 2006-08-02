@@ -1,4 +1,4 @@
-// Copyright (c) 2005  Utrecht University (The Netherlands),
+// Copyright (c) 2005, 2006  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -30,6 +30,8 @@ CGAL_BEGIN_NAMESPACE
 
 // This is a tool to obtain the K2::Point_2 from K1 and K1::Point_2.
 // Similarly for other kernel types.
+
+// TODO : add more specializations ?  Use a different mechanism ?
 
 template < typename T, typename K1, typename K2 >
 struct Type_mapper
@@ -95,7 +97,74 @@ struct Type_mapper < typename K1::Circle_2, K1, K2 >
   typedef typename K2::Circle_2 type;
 };
 
-// TODO : more specializations...
+// 3D
+
+template < typename K1, typename K2 >
+struct Type_mapper < typename K1::Point_3, K1, K2 >
+{
+  typedef typename K2::Point_3 type;
+};
+
+template < typename K1, typename K2 >
+struct Type_mapper < typename K1::Plane_3, K1, K2 >
+{
+  typedef typename K2::Plane_3 type;
+};
+
+template < typename K1, typename K2 >
+struct Type_mapper < typename K1::Vector_3, K1, K2 >
+{
+  typedef typename K2::Vector_3 type;
+};
+
+template < typename K1, typename K2 >
+struct Type_mapper < typename K1::Direction_3, K1, K2 >
+{
+  typedef typename K2::Direction_3 type;
+};
+
+template < typename K1, typename K2 >
+struct Type_mapper < typename K1::Segment_3, K1, K2 >
+{
+  typedef typename K2::Segment_3 type;
+};
+
+template < typename K1, typename K2 >
+struct Type_mapper < typename K1::Ray_3, K1, K2 >
+{
+  typedef typename K2::Ray_3 type;
+};
+
+template < typename K1, typename K2 >
+struct Type_mapper < typename K1::Line_3, K1, K2 >
+{
+  typedef typename K2::Line_3 type;
+};
+
+template < typename K1, typename K2 >
+struct Type_mapper < typename K1::Triangle_3, K1, K2 >
+{
+  typedef typename K2::Triangle_3 type;
+};
+
+template < typename K1, typename K2 >
+struct Type_mapper < typename K1::Tetrahedron_3, K1, K2 >
+{
+  typedef typename K2::Tetrahedron_3 type;
+};
+
+template < typename K1, typename K2 >
+struct Type_mapper < typename K1::Iso_cuboid_3, K1, K2 >
+{
+  typedef typename K2::Iso_cuboid_3 type;
+};
+
+template < typename K1, typename K2 >
+struct Type_mapper < typename K1::Sphere_3, K1, K2 >
+{
+  typedef typename K2::Sphere_3 type;
+};
+
 
 CGAL_END_NAMESPACE
 

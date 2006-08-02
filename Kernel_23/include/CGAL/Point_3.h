@@ -34,10 +34,10 @@ class Point_3 : public R_::Kernel_base::Point_3
   typedef typename R_::RT                    RT;
   typedef typename R_::Vector_3              Vector_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
-  typedef typename R_::Kernel_base::Point_3  RPoint_3;
 
 public:
-  typedef RPoint_3 Rep;
+
+  typedef typename R_::Kernel_base::Point_3  Rep;
   typedef typename R_::Cartesian_const_iterator_3 Cartesian_const_iterator;
 
   const Rep& rep() const
@@ -55,18 +55,21 @@ public:
   Point_3() {}
 
   Point_3(const Origin& o)
-      : RPoint_3(o) {}
+    : Rep(typename R::Construct_point_3()(o).rep())
+  {}
 
 #if 1
-  Point_3(const RPoint_3& p)
-      : RPoint_3(p) {}
+  Point_3(const Rep& p)
+      : Rep(p) {}
 #endif
 
   Point_3(const RT& x, const RT& y, const RT& z)
-    : RPoint_3(x, y, z) {}
+    : Rep(typename R::Construct_point_3()(x, y, z).rep())
+  {}
 
   Point_3(const RT& hx, const RT& hy, const RT& hz, const RT& hw)
-    : RPoint_3(hx, hy, hz, hw) {}
+    : Rep(typename R::Construct_point_3()(hx, hy, hz, hw).rep())
+  {}
 
   typename Qualified_result_of<typename R::Compute_x_3, Point_3>::type
   x() const
@@ -168,8 +171,8 @@ template < class R >
 std::ostream&
 operator<<(std::ostream& os, const Point_3<R>& p)
 {
-  typedef typename  R::Kernel_base::Point_3  RPoint_3;
-  return os << static_cast<const RPoint_3&>(p);
+  typedef typename  R::Kernel_base::Point_3  Rep;
+  return os << static_cast<const Rep&>(p);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_POINT_3
 
@@ -177,8 +180,8 @@ operator<<(std::ostream& os, const Point_3<R>& p)
 template < class R >
 std::istream& operator>>(std::istream& is, Point_3<R>& p)
 {
-  typedef typename  R::Kernel_base::Point_3  RPoint_3;
-  return is >> static_cast<RPoint_3&>(p);
+  typedef typename  R::Kernel_base::Point_3  Rep;
+  return is >> static_cast<Rep&>(p);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_POINT_3
 

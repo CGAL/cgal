@@ -38,10 +38,9 @@ class Plane_3 : public R_::Kernel_base::Plane_3
   typedef typename R_::Line_3                Line_3;
   typedef typename R_::Ray_3                 Ray_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
-  typedef typename R_::Kernel_base::Plane_3  RPlane_3;
 public:
 
-  typedef RPlane_3 Rep;
+  typedef typename R_::Kernel_base::Plane_3  Rep;
 
   const Rep& rep() const
   {
@@ -57,29 +56,29 @@ public:
 
   Plane_3() {}
 
-  Plane_3(const RPlane_3& p)
-      : RPlane_3(p) {}
+  Plane_3(const Rep& p)
+    : Rep(p) {}
 
   Plane_3(const Point_3& p, const Point_3& q, const Point_3& r)
-    : RPlane_3(p,q,r) {}
+    : Rep(typename R::Construct_plane_3()(p, q, r).rep()) {}
 
   Plane_3(const Point_3& p, const Direction_3& d)
-    : RPlane_3(p,d) {}
+    : Rep(typename R::Construct_plane_3()(p, d).rep()) {}
 
   Plane_3(const Point_3& p, const Vector_3& v)
-    : RPlane_3(p,v) {}
+    : Rep(typename R::Construct_plane_3()(p, v).rep()) {}
 
   Plane_3(const RT& a, const RT& b, const RT& c, const RT& d)
-    : RPlane_3(a,b,c,d) {}
+    : Rep(typename R::Construct_plane_3()(a, b, c, d).rep()) {}
 
   Plane_3(const Line_3& l, const Point_3& p)
-    : RPlane_3(l,p) {}
+    : Rep(typename R::Construct_plane_3()(l, p).rep()) {}
 
   Plane_3(const Segment_3& s, const Point_3& p)
-    : RPlane_3(s,p) {}
+    : Rep(typename R::Construct_plane_3()(s, p).rep()) {}
 
   Plane_3(const Ray_3& r, const Point_3& p)
-    : RPlane_3(r,p) {}
+    : Rep(typename R::Construct_plane_3()(r, p).rep()) {}
 
   Plane_3 transform(const Aff_transformation_3 &t) const
   {
@@ -163,7 +162,7 @@ public:
 
   Point_2 to_2d(const Point_3 &p) const
   {
-    return rep().to_2d(p);
+    return R().construct_projected_xy_point_2_object()(*this, p);
   }
 
   Point_3 to_3d(const Point_2 &p) const
@@ -214,8 +213,8 @@ template < class R >
 std::ostream&
 operator<<(std::ostream& os, const Plane_3<R>& p)
 {
-  typedef typename  R::Kernel_base::Plane_3  RPlane_3;
-  return os << static_cast<const RPlane_3&>(p);
+  typedef typename  R::Kernel_base::Plane_3  Rep;
+  return os << static_cast<const Rep&>(p);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_PLANE_3
 
@@ -224,8 +223,8 @@ template < class R >
 std::istream&
 operator>>(std::istream& is, Plane_3<R>& t)
 {
-  typedef typename  R::Kernel_base::Plane_3  RPlane_3;
-  return is >> static_cast<RPlane_3&>(t);
+  typedef typename  R::Kernel_base::Plane_3  Rep;
+  return is >> static_cast<Rep&>(t);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_PLANE_3
 

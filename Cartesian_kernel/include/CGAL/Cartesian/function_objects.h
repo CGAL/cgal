@@ -1876,6 +1876,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Ray_3           Ray_3;
     typedef typename K::Segment_3       Segment_3;
     typedef typename K::RT              RT;
+    typedef typename Direction_3::Rep   Rep;
   public:
     typedef Direction_3       result_type;
     typedef Arity_tag< 1 >    Arity;
@@ -1883,26 +1884,25 @@ namespace CartesianKernelFunctors {
 #ifndef CGAL_NO_DEPRECATED_CODE
     Direction_3
     operator()(const RT& x, const RT& y, const RT& z) const
-    { return Direction_3(x, y, z); }
+    { return Rep(x, y, z); }
 #endif // CGAL_NO_DEPRECATED_CODE
 
     Direction_3
     operator()(const Vector_3& v) const
-    { return Direction_3(v); }
+    { return Rep(v); }
 
     Direction_3
     operator()(const Line_3& l) const
-    { return Direction_3(l); }
+    { return Rep(l); }
 
     Direction_3
     operator()(const Ray_3& r) const
-    { return Direction_3(r); }
+    { return Rep(r); }
 
     Direction_3
     operator()(const Segment_3& s) const
-    { return Direction_3(s); }
+    { return Rep(s); }
   };
-
 
 
   template <typename K>
@@ -2035,6 +2035,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Construct_vector_3        Construct_vector_3;
     typedef typename K::Construct_direction_3     Construct_direction_3;
     typedef typename K::Construct_point_on_3      Construct_point_on_3;
+    typedef typename Line_3::Rep                  Rep;
     Construct_vector_3 cv;
     Construct_point_on_3 cp;
   public:
@@ -2049,7 +2050,7 @@ namespace CartesianKernelFunctors {
 
     Line_3
     operator()(const Point_3& p, const Point_3& q) const
-    { return Line_3(p, cv(p, q)); }
+    { return Rep(p, cv(p, q)); }
 
     Line_3
     operator()(const Point_3& p, const Direction_3& d) const
@@ -2057,15 +2058,15 @@ namespace CartesianKernelFunctors {
 
     Line_3
     operator()(const Point_3& p, const Vector_3& v) const
-    { return Line_3(p, v); }
+    { return Rep(p, v); }
 
     Line_3
     operator()(const Segment_3& s) const
-    { return Line_3(cp(s,0), cv(cp(s,0), cp(s,1))); }
+    { return Rep(cp(s,0), cv(cp(s,0), cp(s,1))); }
 
     Line_3
     operator()(const Ray_3& r) const
-    { return Line_3(cp(r,0), cv(cp(r,0), cp(r,1))); }
+    { return Rep(cp(r,0), cv(cp(r,0), cp(r,1))); }
   };
 
   template <typename K>
@@ -2554,6 +2555,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Line_3       Line_3;
     typedef typename K::Vector_3     Vector_3;
     typedef typename K::Point_3      Point_3;
+    typedef typename Vector_3::Rep   Rep;
   public:
     typedef Vector_3                 result_type;
     typedef Arity_tag< 2 >           Arity;
@@ -2561,19 +2563,19 @@ namespace CartesianKernelFunctors {
     Vector_3
     operator()( const Point_3& p, const Point_3& q) const
     { 
-      return Vector_3(q.x() - p.x(), q.y() - p.y(), q.z() - p.z());
+      return Rep(q.x() - p.x(), q.y() - p.y(), q.z() - p.z());
     }
 
     Vector_3
     operator()( const Origin&, const Point_3& q) const
     { 
-      return Vector_3(q.x(), q.y(), q.z());
+      return Rep(q.x(), q.y(), q.z());
     }
 
     Vector_3
     operator()( const Point_3& p, const Origin&) const
     { 
-      return Vector_3(- p.x(), - p.y(), - p.z());
+      return Rep(- p.x(), - p.y(), - p.z());
     }
 
     Vector_3
@@ -2586,7 +2588,7 @@ namespace CartesianKernelFunctors {
 
     Vector_3
     operator()( const Ray_3& r) const
-    { return r.to_vector(); }
+    { return r.rep().to_vector(); }
 
     Vector_3
     operator()( const Line_3& l) const
@@ -2594,16 +2596,16 @@ namespace CartesianKernelFunctors {
 
     Vector_3
     operator()( const Null_vector&) const
-    { return Vector_3(FT(0), FT(0), FT(0)); }
+    { return Rep(FT(0), FT(0), FT(0)); }
 
 // #ifndef CGAL_NO_DEPRECATED_CODE
     Vector_3
     operator()( const RT& x, const RT& y, const RT& z) const
-    { return Vector_3(x, y, z); }
+    { return Rep(x, y, z); }
 
     Vector_3
     operator()( const RT& x, const RT& y, const RT& z, const RT& w) const
-    { return Vector_3(x, y, z, w); }
+    { return Rep(x, y, z, w); }
 // #endif // CGAL_NO_DEPRECATED_CODE
   };
 

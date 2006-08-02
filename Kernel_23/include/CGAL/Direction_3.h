@@ -35,10 +35,9 @@ class Direction_3 : public R_::Kernel_base::Direction_3
   typedef typename R_::Ray_3                 Ray_3;
   typedef typename R_::Segment_3             Segment_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
-  typedef typename R_::Kernel_base::Direction_3 RDirection_3;
 public:
 
-  typedef RDirection_3 Rep;
+  typedef typename R_::Kernel_base::Direction_3 Rep;
 
   const Rep& rep() const
   {
@@ -54,23 +53,23 @@ public:
 
   Direction_3() {}
 
-  Direction_3(const RDirection_3& d)
-    : RDirection_3(d) {}
+  Direction_3(const Rep& d)
+    : Rep(d) {}
 
   Direction_3(const Vector_3& v)
-    : RDirection_3(v) {}
+    : Rep(typename R::Construct_direction_3()(v).rep()) {}
 
   Direction_3(const Line_3& l)
-    : RDirection_3(l) {}
+    : Rep(typename R::Construct_direction_3()(l).rep()) {}
 
   Direction_3(const Ray_3& r)
-    : RDirection_3(r) {}
+    : Rep(typename R::Construct_direction_3()(r).rep()) {}
 
   Direction_3(const Segment_3& s)
-    : RDirection_3(s) {}
+    : Rep(typename R::Construct_direction_3()(s).rep()) {}
 
   Direction_3(const RT& hx, const RT& hy, const RT& hz)
-    : RDirection_3(hx, hy, hz) {}
+    : Rep(typename R::Construct_direction_3()(hx, hy, hz).rep()) {}
 
   Direction_3 transform(const Aff_transformation_3 &t) const
   {
@@ -125,16 +124,16 @@ public:
 template < class R >
 std::ostream& operator<<(std::ostream& os, const Direction_3<R>& d)
 {
-  typedef typename  R::Kernel_base::Direction_3 RDirection_3;
-  return os << static_cast<const RDirection_3&>(d); }
+  typedef typename  R::Kernel_base::Direction_3 Rep;
+  return os << static_cast<const Rep&>(d); }
 #endif // CGAL_NO_OSTREAM_INSERT_DIRECTION_3
 
 #ifndef CGAL_NO_ISTREAM_EXTRACT_DIRECTION_3
 template < class R >
 std::istream& operator>>(std::istream& is, Direction_3<R>& p)
 {
-  typedef typename  R::Kernel_base::Direction_3  RDirection_3;
-  return is >> static_cast<RDirection_3&>(p); }
+  typedef typename  R::Kernel_base::Direction_3  Rep;
+  return is >> static_cast<Rep&>(p); }
 #endif // CGAL_NO_ISTREAM_EXTRACT_DIRECTION_3
 
 CGAL_END_NAMESPACE

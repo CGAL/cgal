@@ -34,10 +34,9 @@ class Triangle_3 : public R_::Kernel_base::Triangle_3
   typedef typename R_::Point_3               Point_3;
   typedef typename R_::Plane_3               Plane_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
-  typedef typename R_::Kernel_base::Triangle_3  RTriangle_3;
 public:
 
-  typedef RTriangle_3 Rep;
+  typedef typename R_::Kernel_base::Triangle_3  Rep;
 
   const Rep& rep() const
   {
@@ -53,11 +52,11 @@ public:
 
   Triangle_3() {}
 
-  Triangle_3(const RTriangle_3& t)
-      : RTriangle_3(t) {}
+  Triangle_3(const Rep& t)
+      : Rep(t) {}
 
   Triangle_3(const Point_3& p, const Point_3& q, const Point_3& r)
-    : RTriangle_3(p,q,r) {}
+    : Rep(typename R::Construct_triangle_3()(p, q, r).rep()) {}
 
   Triangle_3 transform(const Aff_transformation_3 &t) const
   {
@@ -103,8 +102,8 @@ template < class R >
 std::ostream&
 operator<<(std::ostream& os, const Triangle_3<R>& t)
 {
-  typedef typename  R::Kernel_base::Triangle_3  RTriangle_3;
-  return os << static_cast<const RTriangle_3&>(t);
+  typedef typename  R::Kernel_base::Triangle_3  Rep;
+  return os << static_cast<const Rep&>(t);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_TRIANGLE_3
 
@@ -113,8 +112,8 @@ template < class R >
 std::istream&
 operator>>(std::istream& is, Triangle_3<R>& t)
 {
-  typedef typename  R::Kernel_base::Triangle_3  RTriangle_3;
-  return is >> static_cast<RTriangle_3&>(t);
+  typedef typename  R::Kernel_base::Triangle_3  Rep;
+  return is >> static_cast<Rep&>(t);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_TRIANGLE_3
 

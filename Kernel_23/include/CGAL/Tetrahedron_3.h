@@ -31,10 +31,9 @@ class Tetrahedron_3 : public R_::Kernel_base::Tetrahedron_3
 {
   typedef typename R_::Point_3             Point_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
-  typedef typename R_::Kernel_base::Tetrahedron_3  RTetrahedron_3;
 public:
 
-  typedef RTetrahedron_3 Rep;
+  typedef typename R_::Kernel_base::Tetrahedron_3  Rep;
 
   const Rep& rep() const
   {
@@ -50,14 +49,12 @@ public:
 
   Tetrahedron_3() {}
 
-  Tetrahedron_3(const RTetrahedron_3& t)
-      : RTetrahedron_3(t) {}
+  Tetrahedron_3(const Rep& t)
+      : Rep(t) {}
 
-  Tetrahedron_3(const Point_3& p,
-                const Point_3& q,
-                const Point_3& r,
-                const Point_3& s)
-    : RTetrahedron_3(p,q,r,s) {}
+  Tetrahedron_3(const Point_3& p, const Point_3& q,
+                const Point_3& r, const Point_3& s)
+    : Rep(typename R::Construct_tetrahedron_3()(p, q, r, s).rep()) {}
 
   Tetrahedron_3 transform(const Aff_transformation_3 &t) const
   {
@@ -141,8 +138,8 @@ template < class R >
 std::ostream&
 operator<<(std::ostream& os, const Tetrahedron_3<R>& t)
 {
-  typedef typename  R::Kernel_base::Tetrahedron_3  RTetrahedron_3;
-  return os << static_cast<const RTetrahedron_3&>(t);
+  typedef typename  R::Kernel_base::Tetrahedron_3  Rep;
+  return os << static_cast<const Rep&>(t);
 }
 #endif // CGAL_NO_OSTREAM_INSERT_TETRAHEDRON_3
 
@@ -151,8 +148,8 @@ template < class R >
 std::istream&
 operator>>(std::istream& is, Tetrahedron_3<R>& t)
 {
-  typedef typename  R::Kernel_base::Tetrahedron_3  RTetrahedron_3;
-  return is >> static_cast<RTetrahedron_3&>(t);
+  typedef typename  R::Kernel_base::Tetrahedron_3  Rep;
+  return is >> static_cast<Rep&>(t);
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_TETRAHEDRON_3
 
