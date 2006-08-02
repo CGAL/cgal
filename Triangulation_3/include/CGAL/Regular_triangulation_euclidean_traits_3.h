@@ -53,7 +53,7 @@ public:
 			     const Weighted_point_3 & s,
 			     const Weighted_point_3 & t) const
     {
-      return power_test(p,q,r,s,t);
+      return power_test_3(p,q,r,s,t);
     }
 
   Oriented_side operator() ( const Weighted_point_3 & p,
@@ -61,20 +61,20 @@ public:
 			     const Weighted_point_3 & r,
 			     const Weighted_point_3 & s) const
     {
-      return power_test(p,q,r,s);
+      return power_test_3(p,q,r,s);
     }
 
   Oriented_side operator() ( const Weighted_point_3 & p,
 			     const Weighted_point_3 & q,
 			     const Weighted_point_3 & r) const
     {
-      return power_test(p,q,r);
+      return power_test_3(p,q,r);
     }
 
   Oriented_side operator() ( const Weighted_point_3 & p,
 			     const Weighted_point_3 & q) const
     {
-      return power_test(p,q);
+      return power_test_3(p,q);
     }
 };
 
@@ -119,9 +119,9 @@ public:
     K traits;
     typename K::Orientation_3  orientation = traits.orientation_3_object();
     Orientation o = orientation(p,q,r,s);
-    Oriented_side os = power_test(p,q,r,s,t);
+    Oriented_side os = power_test_3(p,q,r,s,t);
     CGAL_triangulation_assertion( o != COPLANAR);
-    // the minus sign below is due to the fact that power_test
+    // the minus sign below is due to the fact that power_test_3
     // return in fact minus the 5x5 determinant of lifted (p,q,r,s.t)
     return Sign( (-1) * o * os);
   }
@@ -464,7 +464,7 @@ class Regular_triangulation_euclidean_traits_3
 template < class pt, class Weight >
 inline
 Oriented_side
-power_test(const Weighted_point<pt, Weight> &p,
+power_test_3(const Weighted_point<pt, Weight> &p,
            const Weighted_point<pt, Weight> &q,
            const Weighted_point<pt, Weight> &r,
            const Weighted_point<pt, Weight> &s,
@@ -482,7 +482,7 @@ power_test(const Weighted_point<pt, Weight> &p,
 template < class pt, class Weight >
 inline
 Oriented_side
-power_test(const Weighted_point<pt, Weight> &p,
+power_test_3(const Weighted_point<pt, Weight> &p,
            const Weighted_point<pt, Weight> &q,
            const Weighted_point<pt, Weight> &r,
            const Weighted_point<pt, Weight> &t,
@@ -498,7 +498,7 @@ power_test(const Weighted_point<pt, Weight> &p,
 template < class pt, class Weight >
 inline
 Oriented_side
-power_test(const Weighted_point<pt, Weight> &p,
+power_test_3(const Weighted_point<pt, Weight> &p,
            const Weighted_point<pt, Weight> &q,
            const Weighted_point<pt, Weight> &t,
 	   Cartesian_tag)
@@ -512,7 +512,7 @@ power_test(const Weighted_point<pt, Weight> &p,
 template < class pt, class Weight >
 inline
 Oriented_side
-power_test(const Weighted_point<pt, Weight> &p,
+power_test_3(const Weighted_point<pt, Weight> &p,
            const Weighted_point<pt, Weight> &q,
 	   Cartesian_tag)
 {
@@ -542,7 +542,7 @@ compare_power_distance_3 (const pt &p,
 template < class pt, class Weight >
 inline
 Oriented_side
-power_test(const Weighted_point<pt, Weight> &p,
+power_test_3(const Weighted_point<pt, Weight> &p,
            const Weighted_point<pt, Weight> &q,
            const Weighted_point<pt, Weight> &r,
            const Weighted_point<pt, Weight> &s,
@@ -563,7 +563,7 @@ power_test(const Weighted_point<pt, Weight> &p,
 template < class pt, class Weight >
 inline
 Oriented_side
-power_test(const Weighted_point<pt, Weight> &p,
+power_test_3(const Weighted_point<pt, Weight> &p,
            const Weighted_point<pt, Weight> &q,
            const Weighted_point<pt, Weight> &r,
            const Weighted_point<pt, Weight> &t,
@@ -579,7 +579,7 @@ power_test(const Weighted_point<pt, Weight> &p,
 template < class pt, class Weight >
 inline
 Oriented_side
-power_test(const Weighted_point<pt, Weight> &p,
+power_test_3(const Weighted_point<pt, Weight> &p,
            const Weighted_point<pt, Weight> &q,
            const Weighted_point<pt, Weight> &t,
 	   Homogeneous_tag)
@@ -593,7 +593,7 @@ power_test(const Weighted_point<pt, Weight> &p,
 template < class pt, class Weight >
 inline
 Oriented_side
-power_test(const Weighted_point<pt, Weight> &p,
+power_test_3(const Weighted_point<pt, Weight> &p,
            const Weighted_point<pt, Weight> &q,
 	   Homogeneous_tag)
 {
@@ -621,47 +621,47 @@ compare_power_distance_3 (const Point &p,
 template < class pt, class Weight >
 inline
 Oriented_side
-power_test(const Weighted_point<pt,Weight> &p,
+power_test_3(const Weighted_point<pt,Weight> &p,
 	   const Weighted_point<pt,Weight> &q,
 	   const Weighted_point<pt,Weight> &r,
 	   const Weighted_point<pt,Weight> &s,
 	   const Weighted_point<pt,Weight> &t)
 {
   typedef typename pt::R::Rep_tag Tag;
-  return power_test(p,q,r,s,t, Tag());
+  return power_test_3(p,q,r,s,t, Tag());
 }
 
 template < class pt, class Weight >
 inline
 Oriented_side
-power_test(const Weighted_point<pt,Weight> &p,
+power_test_3(const Weighted_point<pt,Weight> &p,
 	   const Weighted_point<pt,Weight> &q,
 	   const Weighted_point<pt,Weight> &r,
 	   const Weighted_point<pt,Weight> &t)
 {
   typedef typename pt::R::Rep_tag Tag;
-  return power_test(p,q,r,t, Tag());
+  return power_test_3(p,q,r,t, Tag());
 }
 
 template < class pt, class Weight >
 inline
 Oriented_side
-power_test(const Weighted_point<pt,Weight> &p,
+power_test_3(const Weighted_point<pt,Weight> &p,
 	   const Weighted_point<pt,Weight> &q,
 	   const Weighted_point<pt,Weight> &t)
 {
   typedef typename pt::R::Rep_tag Tag;
-  return power_test(p,q,t, Tag());
+  return power_test_3(p,q,t, Tag());
 }
 
 template < class pt, class Weight >
 inline
 Oriented_side
-power_test(const Weighted_point<pt,Weight> &p,
+power_test_3(const Weighted_point<pt,Weight> &p,
 	   const Weighted_point<pt,Weight> &q)
 {
   typedef typename pt::R::Rep_tag Tag;
-  return power_test(p,q, Tag());
+  return power_test_3(p,q, Tag());
 }
 
 template < class Point, class Weight >

@@ -1,3 +1,7 @@
+2 August 2006 Sylvain Pion
+- Rename power_test() to power_test_3() to avoid clash with 2D.
+  (they were almost not documented)
+
 12 July 2006 Laurent Rineau
 - fixed operators << and >> for triangulations, if the stream is in binary
   mode
@@ -6,6 +10,8 @@
   prefere not to fix that code.
 
 Note: binary i/o operators are tested in Mesh_3
+
+=============================== CGAL 3.2 ============================
 
 14 March 2006 Joachim Reichel
 - Added/fixed CGAL_MAKEFILE= line in makefiles
