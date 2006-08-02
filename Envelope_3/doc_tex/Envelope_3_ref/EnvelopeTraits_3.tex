@@ -34,12 +34,16 @@ projection of 3D objects onto the $xy$-plane.
 \ccThree{Compare_y_at_x_2}{}{\hspace*{14cm}}
 \ccThreeToTwo
 
-\ccNestedType{Construct_envelope_xy_monotone_parts_3}
+\ccNestedType{Make_xy_monotone_3}
 {provides the operator (templated by the \ccc{OutputIterator} type)~:
  \begin{itemize}
- \item \ccc{OutputIterator operator() (Surface_3 S, OutputIterator oi)} \\
+ \item \ccc{OutputIterator operator() (Surface_3 S, bool is_lower,
+                                       OutputIterator oi)} \\
  which subdivides the given surface \ccc{S} into $xy$-monotone parts
- and inserts them into the output iterator. 
+ and inserts them into the output iterator. The value of
+ \ccc{is_lower} indicates whether we compute the lower or the upper
+ envelope, so that $xy$-monotone surfaces that are irrelevant to the
+ lower-envelope (resp. upper-envelope) computation may be discarded.
  The value-type of \ccc{OutputIterator} is \ccc{Xy_monotone_surface_3}.
  The operator returns a past-the-end iterator for the output sequence.
  \end{itemize}}
@@ -66,74 +70,73 @@ projection of 3D objects onto the $xy$-plane.
  and inserts them into the output iterator.
  The value-type of \ccc{OutputIterator} is \ccc{CGAL::Object}, where
  each \ccc{Object} either wraps a \ccc{pair<Curve_2,Multiplicity>}
- instance, which represents an intersection curve with its
+ instance, which represents a projected intersection curve with its
  multiplicity (in case the multiplicity is undefined or not known, it
  should be set to $0$) or an \ccc{Point_2} instance, representing the
- projected image of a degenerate intersection.
+ projected image of a degenerate intersection (the projection of an
+ isolated intersection point, or of a vertical intersection curve).
  The operator returns a past-the-end iterator for the output sequence.
  \end{itemize}}
 
-\ccNestedType{Compare_distance_to_envelope_3}
+\ccNestedType{Compare_z_at_xy_3}
 {provides the operators~:
  \begin{itemize}
  \item \ccc{Comparison_result operator() (Point_2 p,
                                           Xy_monotone_surface_3 s1,
                                           Xy_monotone_surface_3 s2)}\\
- which compares the distance of the two $xy$-monotone surfaces two
- the envelope at the $xy$-coordinates of the point \ccc{p}, with the
- precondition that both surfaces are defined over \ccc{p}.
- (Note that if we compute the lower envelope, this is the comparison
- result of $s_1(p)$ and $s_2(p)$, and the opposite result if we compute
- the upper envelope.)
+ which determines the relative $z$-order of the two given $xy$-monotone
+ surfaces at the $xy$-coordinates of the point \ccc{p}, with the
+ precondition that both surfaces are defined over \ccc{p}. Namely, it
+ returns the comparison result of $s_1(p)$ and $s_2(p)$.
 %
  \item \ccc{Comparison_result operator() (X_monotone_curve_2 c,
                                           Xy_monotone_surface_3 s1,
                                           Xy_monotone_surface_3 s2)}\\
- which compares the distance of the two $xy$-monotone surfaces two
- the envelope over an $x$-monotone curve $c$. $c$ is a portion of the
- projection of an intersection curve in $\reals^3$, with the 
- precondition that both surfaces are defined over \ccc{c} and their
- relative $z$-order remains the same for all points on this curve.
+ which determines the relative $z$-order of the two given $xy$-monotone
+ surfaces over the interior of a given $x$-monotone curve $c$, with the
+ precondition that $c$ is fully contained in the $xy$-definition range
+ of both $s_1$ and $s_2$, and that the surfaces do not intersect over
+ $c$. The functor should therefore return the comparison result of
+ $s_1(p')$ and $s_2(p')$ for some point $p'$ in the interior of $c$.
  \end{itemize}}
 
-\ccNestedType{Compare_distance_to_envelope_above_3}
+\ccNestedType{Compare_z_at_xy_above_3}
 {provides the operator~:
  \begin{itemize}
  \item \ccc{Comparison_result operator() (X_monotone_curve_2 c,
                                           Xy_monotone_surface_3 s1,
                                           Xy_monotone_surface_3 s2)}\\
- which compares the distance of the two $xy$-monotone surfaces two
- the envelope immediately above their projected intersection curve
- $c$ (a point $p$ is {\em above} an $x$-monotone curve $c$ if it is in
- the $x$-range of $c$, and lies to its left when the curve is
- traversed from its $xy$-lexicographically smaller endpoint to the
- its larger endpoint). We have the precondition that both surfaces are
+ which determines the relative $z$-order of the two given $xy$-monotone
+ surfaces immediately above their projected intersection curve
+ $c$ (a planar point $p$ is {\em above} an $x$-monotone curve $c$ if it
+ is in the $x$-range of $c$, and lies to its left when the curve is
+ traversed from its $xy$-lexicographically smaller endpoint to its
+ larger endpoint). We have the precondition that both surfaces are
  defined ``above'' $c$, and their relative $z$-order is the same for
  some small enough neighborhood of points above $c$.
  \end{itemize}}
 
-\ccNestedType{Compare_distance_to_envelope_below_3}
+\ccNestedType{Compare_z_at_xy_below_3}
 {provides the operator~:
  \begin{itemize}
  \item \ccc{Comparison_result operator() (X_monotone_curve_2 c,
                                           Xy_monotone_surface_3 s1,
                                           Xy_monotone_surface_3 s2)}\\
- which compares the distance of the two $xy$-monotone surfaces two
- the envelope immediately below their projected intersection curve
- $c$ (a point $p$ is {\em below} an $x$-monotone curve $c$ if it is in
- the $x$-range of $c$, and lies to its right when the curve is
- traversed from its $xy$-lexicographically smaller endpoint to the
- its larger endpoint). We have the precondition that both surfaces are
+ which determines the relative $z$-order of the two given $xy$-monotone
+ surfaces immediately below their projected intersection curve
+ $c$ (a planar point $p$ is {\em below} an $x$-monotone curve $c$ if it
+ is in the $x$-range of $c$, and lies to its right when the curve is
+ traversed from its $xy$-lexicographically smaller endpoint to its
+ larger endpoint). We have the precondition that both surfaces are
  defined ``below'' $c$, and their relative $z$-order is the same for
  some small enough neighborhood of points below $c$.
  \end{itemize}}
-
 
 \ccCreation
 \ccCreationVariable{traits}
 % =========================
 
-\ccThree{Construct_envelope_xy_monotone_parts_3~~~}{}{\hspace*{7cm}}
+\ccThree{EnvelopeTraits_3~~~}{}{\hspace*{8cm}}
 \ccThreeToTwo
 
 \ccConstructor{EnvelopeTraits_3();}{default constructor.}
@@ -143,18 +146,13 @@ projection of 3D objects onto the $xy$-plane.
 \ccGlue
 \ccMethod{EnvelopeTraits_3 operator=(other);}{assignment operator.}
 
-\ccMethod{void set_lower ();}
-{sets \ccVar{} such that it computes predicates for lower-envelope
- computations.}
-\ccGlue
-\ccMethod{void set_upper ();}
-{sets \ccVar{} such that it computes predicates for upper-envelope
- computations.}
-
 \ccHeading{Accessing Functor Objects}
 %====================================
 
-\ccMethod{Construct_envelope_xy_monotone_parts_3 construct_envelope_xy_monotone_parts_3_object();}
+\ccThree{Construct_projected_boundary_curves_2~~~}{}{\hspace*{7cm}}
+\ccThreeToTwo
+
+\ccMethod{Make_xy_monotone_3 make_xy_monotone_3_object();}
 {}
 \ccGlue
 \ccMethod{Construct_projected_boundary_curves_2 construct_projected_boundary_curves_2_object();}
@@ -163,19 +161,20 @@ projection of 3D objects onto the $xy$-plane.
 \ccMethod{Construct_projected_intersections_2 construct_projected_intersections_2_object();}
 {}
 \ccGlue
-\ccMethod{Compare_distance_to_envelope_3 compare_distance_to_envelope_3_object();}
+\ccMethod{Compare_z_at_xy_3 compare_z_at_xy_3_object();}
 {}
 \ccGlue
-\ccMethod{Compare_distance_to_envelope_above_3 compare_distance_to_envelope_above_3_object();}
+\ccMethod{Compare_z_at_xy_above_3 compare_z_at_xy_above_3_object();}
 {}
 \ccGlue
-\ccMethod{Compare_distance_to_envelope_below_3 compare_distance_to_envelope_below_3_object();}
+\ccMethod{Compare_z_at_xy_below_3 compare_z_at_xy_below_3_object();}
 {}
 
 \ccHasModels
 %===========
 \ccc{CGAL::Envelope_triangle_traits_3<Kernel>}\\
-\ccc{CGAL::Envelope_sphere_traits_3<ConicTraits>}
+\ccc{CGAL::Envelope_sphere_traits_3<ConicTraits>}\\
+\ccc{CGAL::Env_surface_data_traits_2<Traits,XyData,SData,Cnv>}
 
 \end{ccRefConcept}
 

@@ -1,10 +1,10 @@
 %!PS-Adobe-2.0 EPSF-2.0
-%%Title: ex_triangles.fig
+%%Title: compare_over_curve.fig
 %%Creator: fig2dev Version 3.2 Patchlevel 5-alpha5
-%%CreationDate: Wed Aug  2 12:21:10 2006
+%%CreationDate: Wed Aug  2 12:03:15 2006
 %%For: wein@cgal (Ron Wein,,09-576985,)
-%%BoundingBox: 0 0 291 257
-%Magnification: 1.0000
+%%BoundingBox: 0 0 174 94
+%Magnification: 0.4700
 %%EndComments
 /$F2psDict 200 dict def
 $F2psDict begin
@@ -45,8 +45,8 @@ $F2psDict /mtrx matrix put
 
 end
 save
-newpath 0 257 moveto 0 0 lineto 291 0 lineto 291 257 lineto closepath clip newpath
--112.6 411.8 translate
+newpath 0 94 moveto 0 0 lineto 174 0 lineto 174 94 lineto closepath clip newpath
+-92.9 180.2 translate
 1 -1 scale
 
 /cp {closepath} bind def
@@ -86,39 +86,90 @@ newpath 0 257 moveto 0 0 lineto 291 0 lineto 291 257 lineto closepath clip newpa
 $F2psBegin
 10 setmiterlimit
 0 slj 0 slc
- 0.06299 0.06299 sc
+ 0.02961 0.02961 sc
 %
 % Fig objects follow
 %
 % 
+% here starts figure with depth 60
+% Polyline
+0 slj
+0 slc
+0.000 slw
+n 5310 4725 m 6075 3600 l 5400 4950 l 5355 4815 l
+ cp gs col7 0.50 shd ef gr 
+% Polyline
+n 5136 4522 m 6071 3604 l 5311 4724 l 5251 4644 l 5198 4570 l 5151 4524 l
+
+ cp gs col7 0.60 shd ef gr 
+% Polyline
+n 3604 4957 m 3624 4864 l 3678 4764 l 3751 4657 l 3811 4570 l 3924 4470 l
+ 4044 4390 l 4184 4324 l 4338 4290 l 4504 4270 l 4664 4284 l
+ 4811 4324 l
+ cp gs col7 0.25 shd ef gr 
+% Polyline
+n 4251 4304 m 4458 4270 l 4681 4273 l 6084 3590 l
+ cp gs col7 0.90 shd ef gr 
+% Polyline
+n 6084 3597 m 5144 4524 l 5084 4484 l 5044 4444 l 4991 4404 l 4915 4374 l
+
+ cp gs col7 0.70 shd ef gr 
+% Polyline
+n 4660 4281 m 6093 3593 l 4931 4378 l 4846 4330 l 4753 4299 l
+ cp gs col7 0.80 shd ef gr 
+% here ends figure;
+% 
+% here starts figure with depth 55
+% Arc
+15.000 slw
+0 slc
+n 4500.0 5212.5 937.5 -163.7398 -16.2602 arc
+gs col0 s gr
+
+% Polyline
+0 slj
+n 3600 4950 m
+ 4815 4320 l gs col0 s gr 
+% Polyline
+n 4095 4365 m 6075 3600 l
+ 5400 4950 l gs col0 s gr 
+% here ends figure;
+% 
 % here starts figure with depth 50
-/Times-Roman ff 285.75 scf sf
-2565 4275 m
-gs 1 -1 sc (A) col0 sh gr
-/Times-Roman ff 285.75 scf sf
-5265 4230 m
-gs 1 -1 sc (B) col0 sh gr
+% Polyline
+1 slj
+0 slc
+15.000 slw
+n 3915 4500 m 5130 4500 l 4005 5310 l
+ 3915 4500 l  cp gs col11 1.00 shd ef gr gs col0 s gr 
+% Polyline
+0 slj
+7.500 slw
+n 8010 3511 m 7468 4500 l 8551 4493 l
+ cp gs col7 0.75 shd ef gr gs col0 s gr 
+% Polyline
+n 7747 4503 m 8280 4495 l 8010 5021 l
+ cp gs col11 1.00 shd ef gr gs col0 s gr 
+% Polyline
+n 3150 2925 m 9000 2925 l 9000 6075 l 3150 6075 l
+ cp gs col0 s gr 
+% Polyline
+n 6300 4230 m 6975 4230 l 6975 4095 l 7245 4365 l 6975 4635 l 6975 4500 l
+ 6300 4500 l
+ cp gs col29 1.00 shd ef gr gs col0 s gr 
+/Times-Roman ff 190.50 scf sf
+6435 4410 m
+gs 1 -1 sc (project) col0 sh gr
 % here ends figure;
 % 
 % here starts figure with depth 40
 % Polyline
 0 slj
 0 slc
-7.500 slw
-n 4083 3712 m 4083 4832 l 3503 3412 l
- cp gs col1 1.00 shd ef gr gs col0 s gr 
-% Polyline
-n 4425 5667 m 4085 4827 l 4455 3917 l 6055 4767 l
- cp gs col1 1.00 shd ef gr gs col0 s gr 
-% Polyline
-n 4079 3712 m 4079 4832 l 4659 3412 l
- cp gs col4 1.00 shd ef gr gs col0 s gr 
-% Polyline
-n 3737 5667 m 4077 4827 l 3707 3917 l 2107 4767 l
- cp gs col4 1.00 shd ef gr gs col0 s gr 
-% Polyline
-n 1800 6525 m 6390 6525 l 6390 2475 l 1800 2475 l
- cp gs col0 s gr 
+45.000 slw
+ [22] 0 sd
+n 7740 4500 m
+ 8280 4500 l gs col4 s gr  [] 0 sd
 % here ends figure;
 $F2psEnd
 rs

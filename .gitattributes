@@ -438,6 +438,12 @@ Developers_manual/doc_tex/Developers_manual/fig/use_real.eps -text svneol=unset#
 Developers_manual/doc_tex/Developers_manual/fig/use_real.gif -text svneol=unset#image/gif
 Developers_manual/doc_tex/Developers_manual/fig/use_real.pdf -text svneol=unset#application/pdf
 Envelope_2/examples/Envelope_2/ex_envelope_segments.cpp -text
+Envelope_3/doc_tex/Envelope_3/fig/compare_over_curve.fig -text svneol=unset#application/octet-stream
+Envelope_3/doc_tex/Envelope_3/fig/compare_over_curve.pstex -text svneol=unset#application/postscript
+Envelope_3/doc_tex/Envelope_3/fig/compare_over_curve.pstex_t -text svneol=unset#application/postscript
+Envelope_3/doc_tex/Envelope_3/fig/compare_over_point.fig -text svneol=unset#application/octet-stream
+Envelope_3/doc_tex/Envelope_3/fig/compare_over_point.pstex -text svneol=unset#application/postscript
+Envelope_3/doc_tex/Envelope_3/fig/compare_over_point.pstex_t -text svneol=unset#application/postscript
 Envelope_3/doc_tex/Envelope_3/fig/ex_tri_le.eps -text svneol=unset#application/postscript
 Envelope_3/doc_tex/Envelope_3/fig/ex_tri_le.fig -text svneol=unset#application/octet-stream
 Envelope_3/doc_tex/Envelope_3/fig/ex_tri_ue.eps -text svneol=unset#application/postscript
