@@ -273,8 +273,12 @@ CGAL_Kernel_cons(Construct_opposite_vector_2,
 		 construct_opposite_vector_2_object)
 CGAL_Kernel_cons(Construct_difference_of_vectors_2,
 		 construct_difference_of_vectors_2_object)
+CGAL_Kernel_cons(Construct_difference_of_vectors_3,
+		 construct_difference_of_vectors_3_object)
 CGAL_Kernel_cons(Construct_sum_of_vectors_2,
 		 construct_sum_of_vectors_2_object)
+CGAL_Kernel_cons(Construct_sum_of_vectors_3,
+		 construct_sum_of_vectors_3_object)
 CGAL_Kernel_cons(Construct_opposite_vector_3,
 		 construct_opposite_vector_3_object)
 CGAL_Kernel_cons(Construct_orthogonal_vector_3,

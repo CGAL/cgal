@@ -2287,6 +2287,25 @@ namespace HomogeneousKernelFunctors {
   };
 
   template <typename K>
+  class Construct_difference_of_vectors_3
+  {
+    typedef typename K::Vector_3  Vector_3; 
+  public:
+    typedef Vector_3         result_type;
+    typedef Arity_tag< 2 >   Arity;
+
+    Vector_3
+    operator()(const Vector_3& v, const Vector_3& w) const
+    {
+      return Vector_3( v.hx()*w.hw() - w.hx()*v.hw(),
+                       v.hy()*w.hw() - w.hy()*v.hw(),
+                       v.hz()*w.hw() - w.hz()*v.hw(),
+                       v.hw()*w.hw() );
+    }
+  };
+
+
+  template <typename K>
   class Construct_direction_2
   {
     typedef typename K::Direction_2     Direction_2;
@@ -2381,6 +2400,24 @@ namespace HomogeneousKernelFunctors {
     {
       return Vector_2(v.hx()*w.hw() + w.hx()*v.hw(),
                       v.hy()*w.hw() + w.hy()*v.hw(),
+                      v.hw()*w.hw());
+    }
+  };
+
+  template <typename K>
+  class Construct_sum_of_vectors_3
+  {
+    typedef typename K::Vector_3  Vector_3; 
+  public:
+    typedef Vector_3         result_type;
+    typedef Arity_tag< 2 >   Arity;
+
+    Vector_3
+    operator()(const Vector_3& v, const Vector_3& w) const
+    {
+      return Vector_3(v.hx()*w.hw() + w.hx()*v.hw(),
+                      v.hy()*w.hw() + w.hy()*v.hw(),
+                      v.hz()*w.hw() + w.hz()*v.hw(),
                       v.hw()*w.hw());
     }
   };

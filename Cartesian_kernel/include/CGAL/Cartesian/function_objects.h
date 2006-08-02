@@ -2133,6 +2133,19 @@ namespace CartesianKernelFunctors {
   };
 
   template <typename K>
+  class Construct_difference_of_vectors_3
+  {
+    typedef typename K::Vector_3    Vector_3;
+  public:
+    typedef Vector_3                result_type;
+    typedef Arity_tag< 2 >          Arity;
+
+    Vector_3
+    operator()( const Vector_3& v, const Vector_3& w) const
+    { return Vector_3(v.x()-w.x(), v.y()-w.y(), v.z()-w.z()); }
+  };
+
+  template <typename K>
   class Construct_sum_of_vectors_2
   {
     typedef typename K::Vector_2    Vector_2;
@@ -2143,6 +2156,19 @@ namespace CartesianKernelFunctors {
     Vector_2
     operator()( const Vector_2& v, const Vector_2& w) const
     { return Vector_2(v.x()+w.x(), v.y()+w.y()); }
+  };
+
+  template <typename K>
+  class Construct_sum_of_vectors_3
+  {
+    typedef typename K::Vector_3    Vector_3;
+  public:
+    typedef Vector_3                result_type;
+    typedef Arity_tag< 2 >          Arity;
+
+    Vector_3
+    operator()( const Vector_3& v, const Vector_3& w) const
+    { return Vector_3(v.x()+w.x(), v.y()+w.y(), v.z()+w.z()); }
   };
 
   template <typename K>

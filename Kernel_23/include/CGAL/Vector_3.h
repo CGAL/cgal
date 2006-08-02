@@ -92,6 +92,21 @@ public:
     return t.transform(*this);
   }
 
+  Vector_3 operator-() const
+  {
+    return R().construct_opposite_vector_3_object()(*this);
+  }
+
+  Vector_3 operator-(const Vector_3& v) const
+  {
+    return R().construct_difference_of_vectors_3_object()(*this,v);
+  }
+
+  Vector_3 operator+(const Vector_3& v) const
+  {
+    return R().construct_sum_of_vectors_3_object()(*this,v);
+  }
+
   Vector_3 operator/(const RT& c) const
   {
    return R().construct_divided_vector_3_object()(*this,c);
@@ -100,6 +115,78 @@ public:
   Vector_3 operator/(const typename First_if_different<FT,RT>::Type & c) const
   {
    return R().construct_divided_vector_3_object()(*this,c);
+  }
+
+  typename Qualified_result_of<typename R::Compute_x_3, Vector_3>::type
+  x() const
+  {
+    return R().compute_x_3_object()(*this);
+  }
+
+  typename Qualified_result_of<typename R::Compute_y_3, Vector_3>::type
+  y() const
+  {
+    return R().compute_y_3_object()(*this);
+  }
+
+  typename Qualified_result_of<typename R::Compute_z_3, Vector_3>::type
+  z() const
+  {
+    return R().compute_z_3_object()(*this);
+  }
+
+  typename Qualified_result_of<typename R::Compute_hx_3, Vector_3>::type
+  hx() const
+  {
+    return R().compute_hx_3_object()(*this);
+  }
+
+  typename Qualified_result_of<typename R::Compute_hy_3, Vector_3>::type
+  hy() const
+  {
+    return R().compute_hy_3_object()(*this);
+  }
+
+  typename Qualified_result_of<typename R::Compute_hz_3, Vector_3>::type
+  hz() const
+  {
+    return R().compute_hz_3_object()(*this);
+  }
+
+  typename Qualified_result_of<typename R::Compute_hw_3, Vector_3>::type
+  hw() const
+  {
+    return R().compute_hw_3_object()(*this);
+  }
+
+  typename Qualified_result_of<typename R::Compute_x_3, Vector_3>::type
+  cartesian(int i) const
+  {
+    CGAL_kernel_precondition( (i == 0) || (i == 1) || (i == 2) );
+    if (i==0) return x();
+    if (i==1) return y();
+    return z();
+  }
+
+  typename Qualified_result_of<typename R::Compute_hw_3, Vector_3>::type
+  homogeneous(int i) const
+  {
+    CGAL_kernel_precondition( (i >= 0) || (i <= 3) );
+    if (i==0) return hx();
+    if (i==1) return hy();
+    if (i==2) return hz();
+    return hw();
+  }
+
+  int dimension() const
+  {
+      return 3;
+  }
+
+  typename Qualified_result_of<typename R::Compute_x_3, Vector_3>::type
+  operator[](int i) const
+  {
+      return cartesian(i);
   }
 
 };
