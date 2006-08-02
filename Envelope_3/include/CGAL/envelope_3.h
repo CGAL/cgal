@@ -22,7 +22,6 @@
 
 #include <CGAL/Envelope_3/Envelope_divide_and_conquer_3.h>
 #include <CGAL/Envelope_3/Envelope_pm_dcel.h>
-#include <CGAL/Envelope_3/Envelope_caching_traits_3.h>
 #include <CGAL/Envelope_3/Envelope_overlay_functor.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -32,26 +31,21 @@ CGAL_BEGIN_NAMESPACE
  * maximization diagram).
  */
 template <class Traits_> class Envelope_diagram_2 :
-  public Arrangement_2<Envelope_caching_traits_3<Traits_>,
-                       Envelope_pm_dcel<Envelope_caching_traits_3<Traits_>,
-                                        typename Envelope_caching_traits_3<Traits_>::Xy_monotone_surface_3> >
+  public Arrangement_2<Traits_,
+                       Envelope_pm_dcel<Traits_,
+                                        typename Traits_::Xy_monotone_surface_3> >
 {
 public:
   typedef Traits_                                       Traits_3;
+  typedef typename Traits_3::Xy_monotone_surface_3      Xy_monotone_surface_3;
 
 protected:
-  typedef Envelope_caching_traits_3<Traits_3>           Cache_traits_3;
-
-public:
-  typedef typename Cache_traits_3::Xy_monotone_surface_3 Xy_monotone_surface_3;
-
-protected:
-  typedef Envelope_pm_dcel<Cache_traits_3,
+  typedef Envelope_pm_dcel<Traits_3,
                            Xy_monotone_surface_3>       Env_dcel;
 
 public:
   typedef Envelope_diagram_2<Traits_3>                  Self;
-  typedef Arrangement_2<Cache_traits_3, Env_dcel>       Base;
+  typedef Arrangement_2<Traits_3, Env_dcel>             Base;
   typedef typename Env_dcel::Dcel_data_const_iterator   Surface_const_iterator;
 
   /*! Default constructor. */
@@ -60,7 +54,7 @@ public:
   {}
 
   /*! Constructor with a traits-class instance. */
-  Envelope_diagram_2 (Envelope_caching_traits_3<Traits_3>* tr) :
+  Envelope_diagram_2 (Traits_3* tr) :
     Base (tr)
   {}
 
@@ -78,12 +72,11 @@ void lower_envelope_3 (InputIterator begin, InputIterator end,
                        Envelope_diagram_2<Traits>& min_diagram)
 {
   typedef Traits                                       Traits_3;
-  typedef Envelope_caching_traits_3<Traits_3>          Cache_traits_3;
   typedef typename Envelope_diagram_2<Traits_3>::Base  Base_arr_2;
-  typedef Envelope_divide_and_conquer_3<Cache_traits_3,
+  typedef Envelope_divide_and_conquer_3<Traits_3,
                                         Base_arr_2>    Envelope_algorithm;
 
-  Cache_traits_3      *traits = min_diagram.get_traits();
+  Traits_3      *traits = min_diagram.get_traits();
   traits->set_lower();
 
   Envelope_algorithm   env_alg (traits);
@@ -105,12 +98,11 @@ void upper_envelope_3 (InputIterator begin, InputIterator end,
                        Envelope_diagram_2<Traits>& max_diagram)
 {
   typedef Traits                                       Traits_3;
-  typedef Envelope_caching_traits_3<Traits_3>          Cache_traits_3;
   typedef typename Envelope_diagram_2<Traits_3>::Base  Base_arr_2;
-  typedef Envelope_divide_and_conquer_3<Cache_traits_3,
+  typedef Envelope_divide_and_conquer_3<Traits_3,
                                         Base_arr_2>    Envelope_algorithm;
 
-  Cache_traits_3      *traits = max_diagram.get_traits();
+  Traits_3      *traits = max_diagram.get_traits();
   traits->set_upper();
 
   Envelope_algorithm   env_alg (traits);
