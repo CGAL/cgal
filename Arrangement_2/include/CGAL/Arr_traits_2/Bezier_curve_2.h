@@ -294,9 +294,11 @@ public:
   /*!
    * Get a unique polynomial ID (based on the actual representation pointer).
    */
-  unsigned int id () const
+  size_t id () const
   {
-    return (reinterpret_cast<unsigned int> (this->ptr()));
+    const void  *p = reinterpret_cast<const void*> (this->ptr());
+    
+    return (reinterpret_cast<size_t> (p));
   }
 
   /*!

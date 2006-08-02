@@ -54,7 +54,7 @@ public:
                                Nt_traits>         Self;
 
   // Type definition for the intersection-point mapping.
-  typedef unsigned int                            Curve_id;
+  typedef size_t                                  Curve_id;
   typedef std::pair<Curve_id, Curve_id>           Curve_pair;
   typedef std::pair<Point_2, unsigned int>        Intersection_point_2;
   typedef std::list<Intersection_point_2>         Intersection_list;
