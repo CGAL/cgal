@@ -63,3 +63,45 @@ them and then applying some post-processing on the resulting diagram.
 The post-processing stage is non-trivial and invloves the projection
 of intersection curves onto the $xy$-plane --- 
 see~\cite{Michals_thesis} for more details.
+
+\section{The Envelope-Triats Concept}
+%====================================
+
+\section{Examples}
+%=================
+
+\begin{figure}[t]
+\begin{ccTexOnly}
+  \begin{center}
+  \begin{tabular}{ccc}
+    \epsfig{figure=Envelope_3/fig/ex_triangles.eps,height=1.8in,silent=} &
+    \epsfig{figure=Envelope_3/fig/ex_tri_le.eps,height=1.8in,silent=} &
+    \epsfig{figure=Envelope_3/fig/ex_tri_ue.eps,height=1.8in,silent=} \\
+    {\small (a)} & {\small (b)} & {\small (c)}
+  \end{tabular}
+  \end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+  <p><center>
+  <img src="./fig/ex_triangles.gif" border=0 alt="ex_triangles">
+  </center>
+\end{ccHtmlOnly}
+\caption{(a)~Two triangles in $\reals^3$, as given in
+\ccc{ex_envelope_triangles.cpp}. (b)~Their lower envelope.
+(c)~Their upper envelope.\label{env3_fig:ex_tri}}
+\end{figure}
+
+The following example shows how to use the envelope-triats class
+for 3D triangles and how to traverse the envelope diagram. It
+constructs the lower and upper envelopes of the two triangles,
+as depicted in Figure~\ref{env3_fig:ex_tri}(a) and prints the
+triangles that induce each face in the output diagrams:
+
+\ccIncludeExampleCode{../examples/Envelope_3/ex_envelope_triangles.cpp}
+
+The next example demonstrates how to instantiate and use the
+envelope-traits class for spheres. It reads a set of spheres
+from an input file and constructs their lower envelope:
+
+\ccIncludeExampleCode{../examples/Envelope_3/ex_envelope_spheres.cpp}
+
