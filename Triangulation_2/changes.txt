@@ -1,3 +1,7 @@
+2 august 2006 MY
+- rename global function  power_test into power_test_2
+ to avoid clash with Triangulation_3
+
 12 july 2006 Laurent Rineau
 - fix i/o operators of Weighted_point, in binary mode.
 

@@ -228,7 +228,7 @@ public:
 template < class Bare_point, class Weight >
 inline
 Oriented_side
-power_test(const Weighted_point<Bare_point, Weight> &p,
+power_test_2(const Weighted_point<Bare_point, Weight> &p,
            const Weighted_point<Bare_point, Weight> &q,
            const Weighted_point<Bare_point, Weight> &r,
            const Weighted_point<Bare_point, Weight> &t,
@@ -244,7 +244,7 @@ power_test(const Weighted_point<Bare_point, Weight> &p,
 template < class Bare_point, class Weight >
 inline
 Oriented_side
-power_test(const Weighted_point<Bare_point, Weight> &p,
+power_test_2(const Weighted_point<Bare_point, Weight> &p,
            const Weighted_point<Bare_point, Weight> &q,
            const Weighted_point<Bare_point, Weight> &r,
            const Weighted_point<Bare_point, Weight> &t,
@@ -260,22 +260,22 @@ power_test(const Weighted_point<Bare_point, Weight> &p,
 template < class Bare_point, class Weight >
 inline
 Oriented_side
-power_test(const Weighted_point<Bare_point, Weight> &p,
+power_test_2(const Weighted_point<Bare_point, Weight> &p,
            const Weighted_point<Bare_point, Weight> &q,
            const Weighted_point<Bare_point, Weight> &r,
            const Weighted_point<Bare_point, Weight> &t)
 {
   typedef typename Bare_point::R::Rep_tag Tag;
-  return power_test(p, q, r, t, Tag());
+  return power_test_2(p, q, r, t, Tag());
 }
   
 template < class Bare_point, class Weight >
 inline
 Oriented_side
-power_test(const Weighted_point<Bare_point, Weight> &p,
-           const Weighted_point<Bare_point, Weight> &q,
-           const Weighted_point<Bare_point, Weight> &t,
-	   Cartesian_tag )
+power_test_2(const Weighted_point<Bare_point, Weight> &p,
+	     const Weighted_point<Bare_point, Weight> &q,
+	     const Weighted_point<Bare_point, Weight> &t,
+	     Cartesian_tag )
 {
     typedef typename Bare_point::R::FT  FT;
     return power_testC2(p.x(), p.y(), FT(p.weight()),
@@ -287,10 +287,10 @@ power_test(const Weighted_point<Bare_point, Weight> &p,
 template < class Bare_point, class Weight >
 inline
 Oriented_side
-power_test(const Weighted_point<Bare_point, Weight> &p,
-           const Weighted_point<Bare_point, Weight> &q,
-           const Weighted_point<Bare_point, Weight> &t,
-	   Homogeneous_tag )
+power_test_2(const Weighted_point<Bare_point, Weight> &p,
+	     const Weighted_point<Bare_point, Weight> &q,
+	     const Weighted_point<Bare_point, Weight> &t,
+	     Homogeneous_tag )
 {
    typedef typename Bare_point::R::RT  RT;
     return power_testH2(p.hx(), p.hy(), p.hw(), RT(p.weight()),
@@ -301,19 +301,19 @@ power_test(const Weighted_point<Bare_point, Weight> &p,
 template < class Bare_point, class Weight >
 inline
 Oriented_side
-power_test(const Weighted_point<Bare_point, Weight> &p,
-           const Weighted_point<Bare_point, Weight> &q,
-           const Weighted_point<Bare_point, Weight> &t)
+power_test_2(const Weighted_point<Bare_point, Weight> &p,
+	     const Weighted_point<Bare_point, Weight> &q,
+	     const Weighted_point<Bare_point, Weight> &t)
 {
   typedef typename Bare_point::R::Rep_tag Tag;
-  return power_test(p, q, t, Tag());
+  return power_test_2(p, q, t, Tag());
 }
 
 template < class Bare_point, class Weight >
 inline
 Oriented_side
-power_test(const Weighted_point<Bare_point, Weight> &p,
-           const Weighted_point<Bare_point, Weight> &t)
+power_test_2(const Weighted_point<Bare_point, Weight> &p,
+	     const Weighted_point<Bare_point, Weight> &t)
 {
   typedef typename Bare_point::R::RT  RT;
   Comparison_result r = Compare<RT>()(p.weight(), t.weight());
@@ -338,7 +338,7 @@ public:
 			     const Weighted_point_2 & s) const
     {
       //CGAL_triangulation_precondition( ! collinear(p, q, r) );
-      return CGAL::power_test(p,q,r,s);
+      return CGAL::power_test_2(p,q,r,s);
     }
 
   Oriented_side operator() ( const Weighted_point_2 & p,
@@ -347,14 +347,14 @@ public:
     {
       //CGAL_triangulation_precondition( collinear(p, q, r) );
       //CGAL_triangulation_precondition( p.point() != q.point() );
-      return CGAL::power_test(p,q,r);
+      return CGAL::power_test_2(p,q,r);
     }  
 
   Oriented_side operator() ( const Weighted_point_2 & p,
 			     const Weighted_point_2 & r) const
     {
       //CGAL_triangulation_precondition( p.point() == r.point() );
-      return CGAL::power_test(p,r);
+      return CGAL::power_test_2(p,r);
     }
 };
 
