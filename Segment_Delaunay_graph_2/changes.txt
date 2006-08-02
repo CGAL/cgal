@@ -1,5 +1,7 @@
 2 August 2006:  Menelaos Karavelas
 - fixed problem created by deletion of files
+- added one more operator() in info converter; modified code to use
+  this new converter
 
 1 August 2006:  Menelaos Karavelas
 - changed some file names to match the names of the classes they contain

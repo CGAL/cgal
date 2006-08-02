@@ -37,6 +37,11 @@ struct Dummy_convert_info
   typedef Info   result_type;
 
   inline
+  Info operator()(const Info&, bool) const {
+    return Info();
+  }
+
+  inline
   Info operator()(const Info&, const Info&, bool) const {
     return Info();
   }

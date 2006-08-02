@@ -88,18 +88,25 @@ operator<<(std::ostream& os, const Info_set<Info_item>& info)
   return os;
 }
 
-
-// functor that defines how to convert info when a segment site
-// is split into two sub-segments
+// functor that defines how to convert color info when:
+// 1. constructing the storage site of an endpoint of a segment
+// 2. a segment site is split into two sub-segments
 template<class Info_item_t>
 struct Info_set_convert_info
 {
-  typedef Info_item_t           Info_item;
-  typedef Info_set<Info_item>   result_type;
+  typedef Info_item_t                  Info_item;
+  typedef const Info_set<Info_item>&   result_type;
 
   inline
-  Info_set<Info_item> operator()(const Info_set<Info_item>& info0,
-				 const Info_set<Info_item>& info1, bool) const
+  result_type operator()(const Info_set<Info_item>& info0, bool) const
+  {
+    // just return the info of the supporting segment
+    return info0;
+  }
+
+  inline
+  result_type operator()(const Info_set<Info_item>& info0,
+			 const Info_set<Info_item>& info1, bool) const
   {
     // just return the info of the supporting segment
     return info0;

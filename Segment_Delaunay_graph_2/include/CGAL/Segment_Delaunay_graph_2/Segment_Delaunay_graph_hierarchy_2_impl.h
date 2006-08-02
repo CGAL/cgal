@@ -325,7 +325,7 @@ insert_segment(const Point_2& p0, const Point_2& p1,
 
   if ( is_degenerate_segment(t) ) {
     Storage_site_2 ss_src = ss.source_site();
-    copy_info(ss_src, ss);
+    convert_info(ss_src, ss, true);
     return insert_point(p0, ss_src, level);
   }
 
@@ -333,12 +333,16 @@ insert_segment(const Point_2& p0, const Point_2& p1,
   Vertex_handle vertices1[sdg_hierarchy_2__maxlevel];
 
   Storage_site_2 ss_src = ss.source_site();
-  copy_info(ss_src, ss);
+  convert_info(ss_src, ss, true);
+#if 1
+  insert_point(p0, ss_src, level, vertices0);
+#else
   std::pair<bool,int> res = insert_point(p0, ss_src, level, vertices0);
   if ( res.first ) { level = res.second; }
+#endif
 
   Storage_site_2 ss_trg = ss.target_site();
-  copy_info(ss_trg, ss);
+  convert_info(ss_trg, ss, false);
   insert_point(p1, ss_trg, level, vertices1);
 
   CGAL_assertion( vertices0[0] != Vertex_handle() );

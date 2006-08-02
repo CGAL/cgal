@@ -662,14 +662,14 @@ insert_segment(const Storage_site_2& ss, const Site_2& t, Vertex_handle vnear)
 
   if ( is_degenerate_segment(t) ) {
     Storage_site_2 ss_src = ss.source_site();
-    copy_info(ss_src, ss);
+    convert_info(ss_src, ss, true);
     return insert_point(ss_src, t.source(), vnear);
   }
 
   Storage_site_2 ss_src = ss.source_site();
-  copy_info(ss_src, ss);
+  convert_info(ss_src, ss, true);
   Storage_site_2 ss_trg = ss.target_site();
-  copy_info(ss_trg, ss);
+  convert_info(ss_trg, ss, false);
 
   Vertex_handle v0 = insert_point( ss_src, t.source(), vnear );
   CGAL_assertion( is_valid() );

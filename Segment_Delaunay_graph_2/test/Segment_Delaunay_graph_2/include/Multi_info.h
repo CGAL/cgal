@@ -71,6 +71,12 @@ struct Multi_info_convert_info
   typedef Multi_info<Info>   result_type;
 
   inline
+  Multi_info<Info> operator()(const Multi_info<Info>& minfo0, bool) const
+  {
+    return minfo0;
+  }
+
+  inline
   Multi_info<Info> operator()(const Multi_info<Info>& minfo0,
 			      const Multi_info<Info>& minfo1, bool) const
   {

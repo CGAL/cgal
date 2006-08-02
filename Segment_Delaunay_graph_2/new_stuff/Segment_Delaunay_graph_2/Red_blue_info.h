@@ -32,6 +32,11 @@ struct Red_blue_convert_info
   typedef Info       result_type;
 
   inline
+  Info operator()(const Info& info0, bool) const {
+    return info0;
+  }
+
+  inline
   Info operator()(const Info& info0, const Info& info1, bool) const {
     return info0;
   }

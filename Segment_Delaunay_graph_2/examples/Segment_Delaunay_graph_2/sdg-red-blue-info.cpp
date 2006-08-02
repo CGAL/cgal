@@ -31,15 +31,22 @@ operator<<(std::ostream& os, const Red_blue& rb)
   return os;
 }
 
-// functor that defines how to convert color info when a segment site
-// is split into two sub-segments
+// functor that defines how to convert color info when:
+// 1. constructing the storage site of an endpoint of a segment
+// 2. a segment site is split into two sub-segments
 struct Red_blue_convert_info
 {
-  typedef Red_blue   Info;
-  typedef Info       result_type;
+  typedef Red_blue      Info;
+  typedef const Info&   result_type;
 
   inline
-  Info operator()(const Info& info0, const Info& info1, bool) const {
+  const Info& operator()(const Info& info0, bool) const {
+    // just return the info of the supporting segment
+    return info0;
+  }
+
+  inline
+  const Info& operator()(const Info& info0, const Info& info1, bool) const {
     // just return the info of the supporting segment
     return info0;
   }

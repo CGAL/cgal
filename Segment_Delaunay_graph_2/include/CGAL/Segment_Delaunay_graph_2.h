@@ -613,22 +613,31 @@ public:
 
 protected:
   template<class SSite>
-  inline void copy_info1(SSite& ss_trg, const SSite& ss_src, int,
-			 typename SSite::Has_info_tag const* = 0) const
+  inline void convert_info1(SSite& ss_trg, const SSite& ss_src,
+			    bool is_src, int,
+			    typename SSite::Has_info_tag const* = 0) const
   {
-    //    std::cerr << "copying info..." << std::flush;
-    ss_trg.set_info(ss_src.info());
+    //    std::cerr << "converting info..." << std::flush;
+    typename Storage_traits::Convert_info convert = st_.convert_info_object();
+
+    ss_trg.set_info( convert(ss_src.info(), is_src) );
     //    std::cerr << " done!" << std::endl;
   }
 
   template<class SSite>
-  inline void copy_info1(SSite& ss_trg, const SSite& ss_src, char) const
+  inline void convert_info1(SSite& ss_trg,
+			    const SSite& ss_src, bool, char) const
   {
   }
 
-  void copy_info(Storage_site_2& ss_trg,
-		 const Storage_site_2& ss_src) const {
-    copy_info1(ss_trg, ss_src, 0);
+  void convert_info(Storage_site_2& ss_trg,
+		    const Storage_site_2& ss_src, bool is_src) const {
+    CGAL_precondition( ss_src.is_segment() && ss_trg.is_point() );
+    CGAL_precondition( ss_src.is_input() && ss_trg.is_input() );
+    CGAL_assertion( (is_src && same_points(ss_src.source_site(), ss_trg)) ||
+		    (!is_src && same_points(ss_src.target_site(), ss_trg))
+		    );
+    convert_info1(ss_trg, ss_src, is_src, 0);
   }
 
   template<class SSite>
@@ -639,9 +648,8 @@ protected:
     Storage_site_2 ss_v = v->storage_site();
 
     typename Storage_traits::Merge_info merge = st_.merge_info_object();
-    typename Storage_traits::Info merged_info = merge(ss_v.info(), ss.info());
 
-    ss_v.set_info(merged_info);
+    ss_v.set_info( merge(ss_v.info(), ss.info()) );
     v->set_site(ss_v);
     //    std::cerr << " done!" << std::endl;
   }
@@ -654,7 +662,6 @@ protected:
   // merges the info of the storage site of the vertex handle with the
   // info of the given site; the vertex_handle contains the storage
   // site with the new info
-  // Precondition: the two sites must be indentical
   inline void merge_info(Vertex_handle v, const Storage_site_2& ss)  {
     CGAL_precondition( (v->storage_site().is_segment() &&
 			ss.is_segment() &&
