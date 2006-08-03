@@ -178,10 +178,10 @@ struct Filtered_sphere_line_intersection: public Sphere_line_intersection<K> {
     std::pair<double,double> i=CGAL::to_interval(cc);
     if (P::line().to_vector()[C]>0) {
       ub_=i.second;
-      lb_=CGAL::to_interval(P::sphere().center()[C] - std::max(P::sphere().squared_radius(), typename P::NT(1))).first;
+      lb_=CGAL::to_interval(P::sphere().center()[C] - (std::max)(P::sphere().squared_radius(), typename P::NT(1))).first;
     } else {
       lb_=i.first;
-      ub_=CGAL::to_interval(P::sphere().center()[C] + std::max(P::sphere().squared_radius(), typename P::NT(1))).second;
+      ub_=CGAL::to_interval(P::sphere().center()[C] + (std::max)(P::sphere().squared_radius(), typename P::NT(1))).second;
     }
   }
 
@@ -428,8 +428,8 @@ namespace std{
     typedef numeric_limits<double> P;
     typedef Filtered_sphere_line_intersection<K,C> T;
     static const bool is_specialized = true;
-    static T min() throw() {return T(P::min());}
-    static T max() throw() {return T(P::max());}
+    static T min BOOST_PREVENT_MACRO_SUBSTITUTION () throw() {return T((P::min)());}
+    static T max BOOST_PREVENT_MACRO_SUBSTITUTION () throw() {return T((P::max)());}
     static const bool has_infinity=true;
     static T infinity() throw() {return T::infinity_rep();}
   };

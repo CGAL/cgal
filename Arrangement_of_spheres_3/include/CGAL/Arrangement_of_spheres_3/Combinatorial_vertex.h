@@ -35,8 +35,8 @@ public:
 
     CGAL_postcondition(is_valid());
     //CGAL_precondition(a_.is_rule() || b_.is_rule());
-    //a_= std::min(a,b);
-    //b_=std::max(a,b);
+    //a_= (std::min)(a,b);
+    //b_= (std::max)(a,b);
   }
  
 
