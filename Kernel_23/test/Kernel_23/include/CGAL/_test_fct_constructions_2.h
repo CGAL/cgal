@@ -48,6 +48,8 @@ _test_fct_constructions_2(const R&)
   assert( CGAL::midpoint( pnw, pse) == p);
 
   // circumcenter
+  assert( CGAL::circumcenter( pne, pne ) == pne);
+  assert( CGAL::circumcenter( pne, pse ) == CGAL::midpoint(pne, pse) );
   assert( CGAL::circumcenter( pne, pse, pnw) == p);
   assert( CGAL::circumcenter( psw, pse, pnw) == p);
   assert( CGAL::circumcenter( Triangle(pne, pse, pnw)) == p);

@@ -68,6 +68,8 @@ _test_fct_constructions_3(const R&)
   assert( CGAL::circumcenter( Tetrahedron(p101, p001, p010, p100) ) == p);
   assert( CGAL::circumcenter( Tetrahedron(p001, p000, p110, p100) ) == p);
 
+  assert( CGAL::circumcenter( p2, p2 ) == p2);
+  assert( CGAL::circumcenter( p2, p3 ) == CGAL::midpoint(p2, p3) );
   assert( CGAL::circumcenter( p2, p3, p4 ) == p);
   assert( CGAL::circumcenter( Triangle(p2, p3, p4) ) == p);
 

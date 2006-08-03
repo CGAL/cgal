@@ -2,6 +2,13 @@
 
 \ccFunction{Point_2<Kernel>
 circumcenter( const Point_2<Kernel>& p,
+              const Point_2<Kernel>& q);}
+ {compute the center of the smallest circle passing through the points $p$ and
+  $q$.  Note: this is the same as \ccc{CGAL::midpoint(p, q)} but is provided
+  for homogeneity. }
+
+\ccFunction{Point_2<Kernel>
+circumcenter( const Point_2<Kernel>& p,
               const Point_2<Kernel>& q,
               const Point_2<Kernel>& r);}
  {compute the center of the circle passing through the points $p$, $q$, and $r$.
@@ -11,6 +18,14 @@ circumcenter( const Point_2<Kernel>& p,
 circumcenter( const Triangle_2<Kernel>& t);}
  {compute the center of the circle passing through the vertices of $t$.
   \ccPrecond $t$ is not degenerate.}
+
+
+\ccFunction{Point_3<Kernel>
+circumcenter( const Point_3<Kernel>& p,
+              const Point_3<Kernel>& q);}
+ {compute the center of the smallest sphere passing through the points $p$ and
+  $q$.  Note: this is the same as \ccc{CGAL::midpoint(p, q)} but is provided
+  for homogeneity. }
 
 \ccFunction{Point_3<Kernel>
 circumcenter( const Point_3<Kernel>& p,

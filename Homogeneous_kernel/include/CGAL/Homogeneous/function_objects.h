@@ -2124,6 +2124,13 @@ namespace HomogeneousKernelFunctors {
     typedef Arity_tag< 3 >   Arity;
 
     Point_2
+    operator()(const Point_2& p, const Point_2& q) const
+    {
+      typename K::Construct_midpoint_2 construct_midpoint_2;
+      return construct_midpoint_2(p, q);
+    }
+
+    Point_2
     operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
     {
       typedef typename K::RT RT;
@@ -2198,6 +2205,13 @@ namespace HomogeneousKernelFunctors {
   public:
     typedef Point_3          result_type;
     typedef Arity_tag< 4 >   Arity;
+
+    Point_3
+    operator()(const Point_3& p, const Point_3& q) const
+    {
+      typename K::Construct_midpoint_3 construct_midpoint_3;
+      return construct_midpoint_3(p, q);
+    }
 
     Point_3
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const

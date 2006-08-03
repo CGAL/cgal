@@ -319,6 +319,7 @@ test_new_3(const R& rep)
         = rep.construct_circumcenter_3_object();
           tmp4 = construct_circumcenter(p2,p3,p4,p5);
           tmp4 = construct_circumcenter(p2,p3,p4);
+          tmp4 = construct_circumcenter(p2,p3);
           tmp4 = construct_circumcenter(th2);
           tmp4 = construct_circumcenter(t2);
 

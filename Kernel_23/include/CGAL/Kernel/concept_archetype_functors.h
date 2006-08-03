@@ -1032,6 +1032,10 @@ public:
     typedef Arity_tag< 3 >   Arity;
 
     Point_2
+    operator()(const Point_2&, const Point_2&) const
+    { return Point_2(); }
+
+    Point_2
     operator()(const Point_2&, const Point_2&, const Point_2&) const
     { return Point_2(); }
 
@@ -1049,6 +1053,10 @@ class Construct_circumcenter_3
 public:
     typedef Point_3          result_type;
     typedef Arity_tag< 4 >   Arity;
+
+    Point_3
+    operator()(const Point_3&, const Point_3&) const
+    { return Point_3(); }
 
     Point_3
     operator()(const Point_3&, const Point_3&, const Point_3&) const

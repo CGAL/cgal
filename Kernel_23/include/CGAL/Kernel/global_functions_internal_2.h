@@ -128,6 +128,15 @@ template < class K >
 inline
 typename K::Point_2
 circumcenter(const typename CGAL_WRAP(K)::Point_2 &p,
+             const typename CGAL_WRAP(K)::Point_2 &q, const K& k)
+{
+  return k.construct_circumcenter_2_object()(p, q);
+}
+
+template < class K >
+inline
+typename K::Point_2
+circumcenter(const typename CGAL_WRAP(K)::Point_2 &p,
              const typename CGAL_WRAP(K)::Point_2 &q,
              const typename CGAL_WRAP(K)::Point_2 &r, const K& k)
 {

@@ -121,6 +121,25 @@ template < class K >
 inline
 typename K::Point_3
 circumcenter(const typename CGAL_WRAP(K)::Point_3 &p,
+             const typename CGAL_WRAP(K)::Point_3 &q, const K &k)
+{
+  return k.construct_circumcenter_3_object()(p, q);
+}
+
+template < class K >
+inline
+typename K::Point_3
+circumcenter(const typename CGAL_WRAP(K)::Point_3 &p,
+             const typename CGAL_WRAP(K)::Point_3 &q,
+             const typename CGAL_WRAP(K)::Point_3 &r, const K &k)
+{
+  return k.construct_circumcenter_3_object()(p, q, r);
+}
+
+template < class K >
+inline
+typename K::Point_3
+circumcenter(const typename CGAL_WRAP(K)::Point_3 &p,
              const typename CGAL_WRAP(K)::Point_3 &q,
              const typename CGAL_WRAP(K)::Point_3 &r,
              const typename CGAL_WRAP(K)::Point_3 &s, const K &k)
@@ -134,16 +153,6 @@ typename K::Point_3
 circumcenter(const typename CGAL_WRAP(K)::Tetrahedron_3 &t, const K& k)
 {
   return k.construct_circumcenter_3_object()(t);
-}
-
-template < class K >
-inline
-typename K::Point_3
-circumcenter(const typename CGAL_WRAP(K)::Point_3 &p,
-             const typename CGAL_WRAP(K)::Point_3 &q,
-             const typename CGAL_WRAP(K)::Point_3 &r, const K &k)
-{
-  return k.construct_circumcenter_3_object()(p, q, r);
 }
 
 template < class K >

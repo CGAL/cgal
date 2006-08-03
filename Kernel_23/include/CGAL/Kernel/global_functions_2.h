@@ -136,6 +136,15 @@ template < class K >
 inline
 typename K::Point_2
 circumcenter(const Point_2<K> &p,
+             const Point_2<K> &q)
+{
+  return CGALi::circumcenter(p, q, K());
+}
+
+template < class K >
+inline
+typename K::Point_2
+circumcenter(const Point_2<K> &p,
              const Point_2<K> &q,
              const Point_2<K> &r)
 {

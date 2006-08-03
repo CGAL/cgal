@@ -131,6 +131,25 @@ centroid(const Triangle_3<K> &t)
 template < class K >
 inline
 typename K::Point_3
+circumcenter(const Point_3<K> &p,
+             const Point_3<K> &q)
+{
+  return CGALi::circumcenter(p, q, K());
+}
+
+template < class K >
+inline
+typename K::Point_3
+circumcenter(const Point_3<K> &p,
+             const Point_3<K> &q,
+             const Point_3<K> &r)
+{
+  return CGALi::circumcenter(p, q, r, K());
+}
+
+template < class K >
+inline
+typename K::Point_3
 circumcenter(const Point_3<K> &p, const Point_3<K> &q,
              const Point_3<K> &r, const Point_3<K> &s)
 {
@@ -143,16 +162,6 @@ typename K::Point_3
 circumcenter(const Tetrahedron_3<K> &t)
 {
   return CGALi::circumcenter(t, K());
-}
-
-template < class K >
-inline
-typename K::Point_3
-circumcenter(const Point_3<K> &p,
-             const Point_3<K> &q,
-             const Point_3<K> &r)
-{
-  return CGALi::circumcenter(p, q, r, K());
 }
 
 template < class K >
