@@ -10,7 +10,7 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Regular_triangulation_euclidean_traits_3<K>   Traits;
+typedef CGAL::Mixed_complex_traits_3<K>                     Traits;
 typedef CGAL::Skin_surface_3<Traits>                        Skin_surface_3;
 typedef Skin_surface_3::RT                                  RT;
 typedef Skin_surface_3::Weighted_point                      Weighted_point;

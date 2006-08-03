@@ -26,43 +26,32 @@
 CGAL_BEGIN_NAMESPACE 
 
 /// NGHK: Is the converter needed or do we just use the Cartesian_converter
-template <class Triangulation_3, class HalfedgeDS, class Converter_ >
+template <class SkinSurface_3,
+	  class Vertex_iterator, 
+	  class Cell_iterator,
+	  class HalfedgeDS>
 class Marching_tetrahedra_traits_skin_surface_3 {
 public:
-  typedef Triangulation_3                              Triangulation;
   typedef HalfedgeDS                                   Halfedge_DS;
-  typedef Converter_                                   Converter;
-
-  typedef typename Triangulation_3::Cell_handle        Cell_handle;
-  
 
   typedef typename HalfedgeDS::Traits::Point_3         HDS_point;
   typedef typename HDS_point::R::RT                    HDS_RT;
 
-  Marching_tetrahedra_traits_skin_surface_3() {
-  }
+  Marching_tetrahedra_traits_skin_surface_3(const SkinSurface_3 &ss_3) 
+    : ss_3(ss_3) {}
 
   // These two functions are required by the marching tetrahedra algorithm
-  Sign sign(Cell_handle const ch, int i) const {
-    return ch->vertex(i)->sign();
+  Sign sign(const Cell_iterator ch, int i) const {
+    return ss_3.sign(ch->vertex(i));
   }
-  HDS_point intersection(Cell_handle const ch, int i, int j) const {
+  HDS_point intersection(Cell_iterator const ch, int i, int j) const {
     // Precondition: ch is not an infinite cell: their surface is not set
-    HDS_point p1 = converter(static_cast<Triang_point>(ch->vertex(i)->point()));
-    HDS_point p2 = converter(static_cast<Triang_point>(ch->vertex(j)->point()));
-    return ch->surf->to_surface(p1, p2);
+    HDS_point p;
+    ss_3.intersect(ch->vertex(i), ch->vertex(j), p);
+    return p;
   }
 
-private:
-  typedef typename Triangulation::Geom_traits::Point_3 Triang_point;
-  
-  // Additional functions, not belonging to the traits concept:
-  template <class Point>
-  HDS_RT value(const Cell_handle &ch, const Point &p) const {
-    return ch->surf->value(converter(p));
-  }
-
-  Converter converter;
+  const SkinSurface_3 &ss_3;
 };
 
 CGAL_END_NAMESPACE 

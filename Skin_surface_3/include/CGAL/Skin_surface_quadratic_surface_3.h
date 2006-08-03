@@ -30,11 +30,77 @@ public:
   typedef typename K::Point_3             Point;
   typedef typename K::Vector_3            Vector;
   typedef typename K::Segment_3           Segment;
+  typedef Weighted_point<Point,RT>        Weighted_point;
 
+  Skin_surface_quadratic_surface_3()
+    : p(0,0,0), c(0) 
+  {
+    for (int i=0; i<6; i++) Q[i] = 0;
+  }
   Skin_surface_quadratic_surface_3(RT Qinput[], Point p, RT c)
     : p(p), c(c) 
   {
     for (int i=0; i<6; i++) Q[i] = Qinput[i];
+  }
+  Skin_surface_quadratic_surface_3(Weighted_point wp0, RT s)
+    : p(wp0.point()), c(-wp0.weight()) 
+  {
+    Q[1] = Q[3] = Q[4] = 0;
+    Q[0] = Q[2] = Q[5] = 1/s;
+  }
+  Skin_surface_quadratic_surface_3(Weighted_point wp0, 
+				   Weighted_point wp1, 
+				   RT s)
+  {
+    Regular_triangulation_euclidean_traits_3<K> reg_traits;
+    p = reg_traits.construct_weighted_circumcenter_3_object()(wp0,wp1);
+    c = reg_traits.compute_squared_radius_smallest_orthogonal_sphere_3_object()(wp0,wp1);
+    Vector t = wp0-wp1;
+
+    RT den = t*t*s*(1-s);
+    Q[0] = (-  t.x()*t.x()/den + 1/s);
+    
+    Q[1] = (-2*t.y()*t.x()/den);
+    Q[2] = (-  t.y()*t.y()/den + 1/s);
+    
+    Q[3] = (-2*t.z()*t.x()/den);
+    Q[4] = (-2*t.z()*t.y()/den);
+    Q[5] = (-  t.z()*t.z()/den + 1/s);
+
+  }
+  Skin_surface_quadratic_surface_3(Weighted_point wp0, 
+				   Weighted_point wp1, 
+				   Weighted_point wp2, 
+				   RT s)
+  {
+    Regular_triangulation_euclidean_traits_3<K> reg_traits;
+    p = reg_traits.construct_weighted_circumcenter_3_object()(wp0,wp1,wp2);
+    c = reg_traits.compute_squared_radius_smallest_orthogonal_sphere_3_object()(wp0,wp1,wp2);
+    
+    Vector t = K().construct_orthogonal_vector_3_object()(wp0,wp1,wp2);
+
+    RT den = t*t*s*(1-s);
+    Q[0] = -(-  t.x()*t.x()/den + 1/(1-s));
+    
+    Q[1] = -(-2*t.y()*t.x()/den);
+    Q[2] = -(-  t.y()*t.y()/den + 1/(1-s));
+    
+    Q[3] = -(-2*t.z()*t.x()/den);
+    Q[4] = -(-2*t.z()*t.y()/den);
+    Q[5] = -(-  t.z()*t.z()/den + 1/(1-s));
+
+  }
+  Skin_surface_quadratic_surface_3(Weighted_point wp0, 
+				   Weighted_point wp1, 
+				   Weighted_point wp2, 
+				   Weighted_point wp3, 
+				   RT s)
+  {
+    Regular_triangulation_euclidean_traits_3<K> reg_traits;
+    p = reg_traits.construct_weighted_circumcenter_3_object()(wp0,wp1,wp2,wp3);
+    c = reg_traits.compute_squared_radius_smallest_orthogonal_sphere_3_object()(wp0,wp1,wp2,wp3);
+    Q[1] = Q[3] = Q[4] = 0;
+    Q[0] = Q[2] = Q[5] = -1/(1-s);
   }
 
   template <class Input_point>

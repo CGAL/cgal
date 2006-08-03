@@ -21,6 +21,7 @@
 #define CGAL_MIXED_COMPLEX_TRAITS_3_H
 
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
+#include <CGAL/predicates/predicates_for_mixed_complex_3.h>
 
 CGAL_BEGIN_NAMESPACE 
 
@@ -105,16 +106,17 @@ private:
 };
 
 template <class K_>
-class Mixed_complex_traits_3
+class Mixed_complex_traits_base_3 
+  : public Regular_triangulation_euclidean_traits_3<K_>
 {
 public:
-  typedef K_                            K;
-  typedef Mixed_complex_traits_3<K>     Self;
+  typedef K_                                  K;
+  typedef Mixed_complex_traits_base_3<K>      Self;
 
-  typedef typename K::FT                FT;
-  typedef typename K::Point_3           Bare_point;
-  typedef Weighted_point<Bare_point,FT> Weighted_point;
-  typedef Weighted_point                Weighted_point_3;
+  typedef typename K::FT                      FT;
+  typedef typename K::Point_3                 Bare_point;
+  typedef Weighted_point<Bare_point,FT>       Weighted_point;
+  typedef Weighted_point                      Weighted_point_3;
 
   typedef Side_of_mixed_cell_3<Self>          Side_of_mixed_cell_3;
   typedef Construct_weighted_circumcenter_3<Self> 
@@ -122,26 +124,72 @@ public:
   typedef Construct_anchor_point_3<Self>      Construct_anchor_point_3;
   
  
-  Mixed_complex_traits_3(FT s) : s(s) {
+  
+  Mixed_complex_traits_base_3() : s(-1) {
+  }
+  Mixed_complex_traits_base_3(FT s) : s(s) {
+  }
+  void set_shrink(FT s_) { 
+    s = s_; 
+  }
+  FT get_shrink() const {
+    return s;
   }
 
+  
   Side_of_mixed_cell_3 
-  side_of_mixed_cell_3_object() const 
-  { return Side_of_mixed_cell_3(s); }
+  side_of_mixed_cell_3_object() const { 
+    CGAL_assertion((s>0) && (s<1));
+    return Side_of_mixed_cell_3(get_shrink()); }
 
-  Construct_weighted_circumcenter_3
-  construct_weighted_circumcenter_3_object() const
-  { return Construct_weighted_circumcenter_3(); }
+//   Construct_weighted_circumcenter_3
+//   construct_weighted_circumcenter_3_object() const
+//   { return Construct_weighted_circumcenter_3(); }
 
   Construct_anchor_point_3
   construct_anchor_point_3_object() const
-  { return Construct_anchor_point_3(s); }
+  { return Construct_anchor_point_3(get_shrink()); }
 
 private:
   FT s;
 };
 
+// We need to introduce a "traits_base_3" class in order to get the
+// specialization for Exact_predicates_inexact_constructions_kernel to work,
+// otherwise there is a cycle in the derivation.
+// Similar to Regular_triangulation_euclidean_traits_3
+template < class K >
+class Mixed_complex_traits_3
+  : public Mixed_complex_traits_base_3<K>
+{
+  typedef Mixed_complex_traits_base_3<K> Base;
+public:
+  Mixed_complex_traits_3() {}
+  Mixed_complex_traits_3(typename Base::FT s) : Base(s) {}
+};
 
 CGAL_END_NAMESPACE
 
+// Partial specialization for Exact_predicates_inexact_constructions_kernel.
+#include <CGAL/Mixed_complex_filtered_traits_3.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+
+CGAL_BEGIN_NAMESPACE
+
+template <>
+class Mixed_complex_traits_3
+          <Exact_predicates_inexact_constructions_kernel>
+  : public Mixed_complex_filtered_traits_3
+          <Exact_predicates_inexact_constructions_kernel>
+{
+  typedef Mixed_complex_filtered_traits_3
+    <Exact_predicates_inexact_constructions_kernel> Base;
+public:
+  Mixed_complex_traits_3() {}
+  Mixed_complex_traits_3(Base::FT s) : Base(s) {}
+};
+
+
+CGAL_END_NAMESPACE
 #endif // CGAL_MIXED_COMPLEX_TRAITS_3_H

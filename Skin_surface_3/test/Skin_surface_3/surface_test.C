@@ -8,8 +8,8 @@
 #include <list>
 #include <fstream>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Regular_triangulation_euclidean_traits_3<K>   Traits;
+typedef CGAL::Exact_predicates_exact_constructions_kernel   K;
+typedef CGAL::Mixed_complex_traits_3<K>                     Traits;
 typedef CGAL::Skin_surface_3<Traits>                        Skin_surface_3;
 typedef Skin_surface_3::RT                                  RT;
 typedef Skin_surface_3::Weighted_point                      Weighted_point;
@@ -34,8 +34,9 @@ int main(int argc, char *argv[]) {
     std::ifstream in(argv[0]);
 
     std::list<Weighted_point> l;
-    Weighted_point wp;
-    while (in >> wp) l.push_front(wp);
+    double x,y,z,w;
+    while (in >> x >> y >> z >> w) 
+      l.push_front(Weighted_point(Bare_point(x,y,z),w));
     
     Skin_surface_3 skin_surface(l.begin(), l.end(), shrink);
 
@@ -55,8 +56,7 @@ int main(int argc, char *argv[]) {
 	   cell != cells.end(); cell++) {
 	if (!tmc.is_infinite(*cell)) {
 	  Quadratic_surface::RT val2 = (*cell)->surf->value(vit->point());
- 	  CGAL_assertion((val - val2)*(val - val2) <
-			 Quadratic_surface::RT(1e-12));
+ 	  CGAL_assertion(val == val2);
 	}
       }
     }

@@ -219,13 +219,13 @@ public:
   
   P_point to_surface(P_vertex_handle vh) 
   {
-    SS_cell_handle ch = Base::skin.locate(p2t_converter(vh->point()));
+    SS_cell_handle ch = Base::skin.explicit_locate(p2t_converter(vh->point()));
     return to_surface_along_transversal_segment(vh->point(),ch);
   }
   
   P_vector normal(P_vertex_handle vh) 
   {
-    SS_cell_handle ch = Base::skin.locate(p2t_converter(vh->point()));
+    SS_cell_handle ch = Base::skin.explicit_locate(p2t_converter(vh->point()));
     return ch->surf->gradient(vh->point());
   }
 };

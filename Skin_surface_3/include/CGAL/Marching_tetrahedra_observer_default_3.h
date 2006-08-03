@@ -22,13 +22,14 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Triangulation_3, class Polyhedron_3>
+template <class Vertex_iterator, 
+	  class Cell_iterator,
+	  class Polyhedron_3>
 class Marching_tetrahedra_observer_default_3 {
 public:
-  typedef Triangulation_3                     Triangulation;
   typedef Polyhedron_3                        Polyhedron;
   
-  typedef typename Triangulation::Cell_handle Triangulation_cell_handle;
+  typedef Cell_iterator                       T_Cell_iterator;
   typedef typename Polyhedron::Vertex_handle  Polyhedron_vertex_handle; 
   typedef typename Polyhedron::Facet_handle   Polyhedron_facet_handle; 
 
@@ -40,12 +41,12 @@ public:
   }
 
   void after_vertex_insertion(
-    Triangulation_cell_handle ch,  int i, int j,
+    T_Cell_iterator ch,  int i, int j,
     Polyhedron_vertex_handle vh) {
   }
   
   void after_facet_insertion(
-    Triangulation_cell_handle ch,
+    T_Cell_iterator ch,
     Polyhedron_facet_handle fh) {
   }
 

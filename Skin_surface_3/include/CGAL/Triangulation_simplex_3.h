@@ -24,11 +24,18 @@ CGAL_BEGIN_NAMESPACE
 
 template < class Triangulation_3 >
 class Triangulation_simplex_3 {
-  typedef Triangulation_3             T;
-  typedef typename T::Vertex_handle Vertex_handle;
-  typedef typename T::Edge          Edge;
-  typedef typename T::Facet         Facet;
-  typedef typename T::Cell_handle Cell_handle;
+  typedef Triangulation_3              T;
+  typedef typename T::Vertex_handle    Vertex_handle;
+  typedef typename T::Edge             Edge;
+  typedef typename T::Facet            Facet;
+  typedef typename T::Cell_handle      Cell_handle;
+
+  typedef typename T::Facet_circulator Facet_circulator;
+  typedef typename T::Cell_circulator  Cell_circulator;
+
+  typedef typename T::Edge_iterator    Edge_iterator;
+  typedef typename T::Facet_iterator   Facet_iterator;
+
 public:
   Triangulation_simplex_3() : ref(-1), ch() { }
 	
@@ -37,12 +44,12 @@ public:
     ref = (ch->index(v) << 2); /* dim == 0 */
     CGAL_assertion (ch != Cell_handle());
   }
-  Triangulation_simplex_3(Edge e) {
+  Triangulation_simplex_3(const Edge &e) {
     ch = e.first;
     ref = (((e.third<< 2) + e.second) << 2) + 1; /* dim */
     CGAL_assertion (ch != Cell_handle());
   }
-  Triangulation_simplex_3(Facet f) {
+  Triangulation_simplex_3(const Facet &f) {
     ch = f.first;
     ref = (f.second << 2) + 2; /* dim */
     CGAL_assertion (ch != Cell_handle());
@@ -52,6 +59,26 @@ public:
     ref = 3; /* dim */
     CGAL_assertion (ch != Cell_handle());
   }
+
+  Triangulation_simplex_3(Facet_circulator fcir) {
+    ch = (*fcir).first;
+    ref = ((*fcir).second << 2) + 2; /* dim */
+    CGAL_assertion (ch != Cell_handle());
+  }
+//   Triangulation_simplex_3(Cell_circulator ccir) {
+//     ch = &*ccir;
+//   }
+  Triangulation_simplex_3(Edge_iterator eit) {
+    ch = (*eit).first;
+    ref = ((((*eit).third<< 2) + (*eit).second) << 2) + 1; /* dim */
+    CGAL_assertion (ch != Cell_handle());
+  }
+  Triangulation_simplex_3(Facet_iterator fit) {
+    ch = (*fit).first;
+    ref = ((*fit).second << 2) + 2; /* dim */
+    CGAL_assertion (ch != Cell_handle());
+  }
+
 
   operator Vertex_handle () const
   {
@@ -204,35 +231,25 @@ operator<< (std::ostream& os, const Triangulation_simplex_3<Triangulation> &s)
   switch (s.dimension()) {
     case 0:
       vh = s;
-      os << &*vh << std::endl
-	 << "pt: " << vh->point();
+      os << &*vh;
       break;
     case 1:
       e = s;
       os << &*(e.first->vertex(e.second)) << " "
-	 << &*(e.first->vertex(e.third)) << std::endl
-	 << "pt: " << (e.first->vertex(e.second))->point() << std::endl
-	 << "pt: " << (e.first->vertex(e.third))->point();
+	 << &*(e.first->vertex(e.third));
       break;
     case 2:
       f = s;
       os << &*(f.first->vertex((f.second+1)&3)) << " "
 	 << &*(f.first->vertex((f.second+2)&3)) << " "
-	 << &*(f.first->vertex((f.second+3)&3)) << std::endl
-	 << "pt: " << (f.first->vertex((f.second+1)&3))->point() << std::endl
-	 << "pt: " << (f.first->vertex((f.second+2)&3))->point() << std::endl
-	 << "pt: " << (f.first->vertex((f.second+3)&3))->point();
+	 << &*(f.first->vertex((f.second+3)&3));
       break;
     case 3:
       ch = s;
       os << &*(ch->vertex(0)) << " "
 	 << &*(ch->vertex(1)) << " "
 	 << &*(ch->vertex(2)) << " "
-	 << &*(ch->vertex(3)) << std::endl
-	 << "pt: " << ch->vertex(0)->point() << std::endl
-	 << "pt: " << ch->vertex(1)->point() << std::endl
-	 << "pt: " << ch->vertex(2)->point() << std::endl
-	 << "pt: " << ch->vertex(3)->point();
+	 << &*(ch->vertex(3));
       break;
   }
   return os;
