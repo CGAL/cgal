@@ -14,21 +14,16 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
+           -Iinclude \
            -I../../include \
-           -I../../../Configuration/include \
-           -I../../../Homogeneous_kernel/include \
-           -I../../../Cartesian_kernel/include \
            -I../../../Number_types/include \
-           -I../../../Distance_2/include \
-           -I../../../Intersections_2/include \
-           -I../../../Intersections_3/include \
            -I../../../Filtered_kernel/include \
-           -I../../../Kernel_d/include \
+           -I../../../Cartesian_kernel/include \
+           -I../../../Homogeneous_kernel/include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
-           -Iinclude \
-           $(LONG_NAME_PROBLEM_CXXFLAGS)
+           $(LONG_NAME_PROBLEM_CXXFLAGS) # -g # -DCGAL_CHECK_EXPENSIVE
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -54,6 +49,7 @@ all:            \
                 Filtered_homogeneous$(EXE_EXT) \
                 Homogeneous$(EXE_EXT) \
                 Kernel_checker$(EXE_EXT) \
+                Lazy_kernel$(EXE_EXT) \
                 Simple_cartesian$(EXE_EXT) \
                 Simple_homogeneous$(EXE_EXT) \
                 test_kernel_archetype_2$(EXE_EXT) \
@@ -78,6 +74,9 @@ Homogeneous$(EXE_EXT): Homogeneous$(OBJ_EXT)
 Kernel_checker$(EXE_EXT): Kernel_checker$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Kernel_checker Kernel_checker$(OBJ_EXT) $(LDFLAGS)
 
+Lazy_kernel$(EXE_EXT): Lazy_kernel$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Lazy_kernel Lazy_kernel$(OBJ_EXT) $(LDFLAGS)
+
 Simple_cartesian$(EXE_EXT): Simple_cartesian$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Simple_cartesian Simple_cartesian$(OBJ_EXT) $(LDFLAGS)
 
@@ -100,6 +99,7 @@ clean: \
                    Filtered_homogeneous.clean \
                    Homogeneous.clean \
                    Kernel_checker.clean \
+                   Lazy_kernel.clean \
                    Simple_cartesian.clean \
                    Simple_homogeneous.clean \
                    test_kernel_archetype_2.clean \
@@ -111,5 +111,9 @@ clean: \
 #---------------------------------------------------------------------#
 
 .C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
+
+
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
