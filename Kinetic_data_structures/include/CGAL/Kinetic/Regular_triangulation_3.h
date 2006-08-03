@@ -433,7 +433,7 @@ protected:
       }
 
       std::sort(kneighborsp.begin(), kneighborsp.end());
-      for (unsigned int i=0; i< std::max(neighborsp.size(), kneighborsp.size()); ++i) {
+      for (unsigned int i=0; i< (std::max)(neighborsp.size(), kneighborsp.size()); ++i) {
 	Point_key nr;
 	if (i < neighborsp.size()) nr= neighborsp[i];
 	Point_key nk;

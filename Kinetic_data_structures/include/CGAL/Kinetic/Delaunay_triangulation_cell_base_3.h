@@ -93,7 +93,7 @@ class Delaunay_triangulation_cell_base_3: public Cell_base
             CGAL_precondition(i!= j);
 //if (i <j) std::swap(i,j);
             unsigned int sum= i+j;
-            if (std::max(i,j) != 3) --sum;
+            if ((std::max)(i,j) != 3) --sum;
             CGAL_assertion( sum <6);
             return sum;
         }

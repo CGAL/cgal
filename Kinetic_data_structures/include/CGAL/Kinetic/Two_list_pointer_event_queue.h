@@ -182,7 +182,7 @@ struct Two_list_event_queue_item_allocator
     ::operator delete(static_cast<void*>(p));
   }
   size_type max_size() const throw() {
-    return std::numeric_limits<size_type>::max()/sizeof(dummy_value_type);
+    return (std::numeric_limits<size_type>::max)()/sizeof(dummy_value_type);
   }
   template <class TT>
   void construct(pointer p, const TT &) {
@@ -318,7 +318,7 @@ public:
     //if (end_time != std::numeric_limits<Priority>::infinity()){
     set_end_priority(end_time);
       /*} else {
-      NT end=std::numeric_limits<int>::max();
+      NT end=(std::numeric_limits<int>::max)();
       std::cerr << "WARNING Infinity is being rounded down to " << end << std::endl;
       set_end_priority(end);
       }*/

@@ -571,8 +571,8 @@ public:
       CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, "DELAUNAY ERROR not flipping unflippable edge" << std::endl);
       //make this better
       double ub=to_interval(traits_.simulator_handle()->next_event_time()).second;
-      ub= std::max(ub+.0000001, 
-		   nextafter(ub, std::numeric_limits<double>::max()));
+      ub= (std::max)(ub+.0000001, 
+		     nextafter(ub, (std::numeric_limits<double>::max)()));
       Time t=ub;
       //cert.pop_failure_time();
       Event_key k =traits_.simulator_handle()->new_event(t, O2_event(cert, e, this));
