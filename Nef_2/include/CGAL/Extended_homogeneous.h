@@ -179,8 +179,8 @@ on the extended geometric objects.}*/
     while ( start != end ) {
       Point_2 p = *start++;
       if ( is_standard(p) ) {
-        R = CGAL_NTS max(CGAL_NTS abs(p.hx()[0])/p.hw()[0], 
-                         CGAL_NTS abs(p.hy()[0])/p.hw()[0]);
+        R = (CGAL::max)(CGAL_NTS abs(p.hx()[0])/p.hw()[0], 
+			CGAL_NTS abs(p.hy()[0])/p.hw()[0]);
       } else {
         RT rx = CGAL_NTS abs(p.hx()), ry = CGAL_NTS abs(p.hy());
         mx = ( rx.degree()>0 ? rx[1] : Standard_RT(0) ); nx = rx[0];
@@ -189,7 +189,7 @@ on the extended geometric objects.}*/
         else if ( mx < my ) R = CGAL_NTS abs((nx-ny)/(my-mx));
         else /* mx == my */ R = CGAL_NTS abs(nx-ny)/(2*p.hw()[0]);
       }
-      R0 = CGAL_NTS max(R+1,R0);
+      R0 = (CGAL::max)(R+1,R0);
     }
   }
 

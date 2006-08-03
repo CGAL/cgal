@@ -419,14 +419,14 @@ public:
     while ( start != end ) {
       Point_2 p = *start++;
       if ( is_standard(p) ) {
-	R = CGAL_NTS max(CGAL_NTS abs(p.x()[0]), CGAL_NTS abs(p.y()[0]));
+	R = (CGAL::max)(CGAL_NTS abs(p.x()[0]), CGAL_NTS abs(p.y()[0]));
       } else {
 	RT rx = CGAL_NTS abs(p.x()), ry = CGAL_NTS abs(p.y());
 	if ( rx[1] > ry[1] )      R = CGAL_NTS abs(ry[0]-rx[0])/(rx[1]-ry[1]);
 	else if ( rx[1] < ry[1] ) R = CGAL_NTS abs(rx[0]-ry[0])/(ry[1]-rx[1]);
 	else /* rx[1] == ry[1] */ R = CGAL_NTS abs(rx[0]-ry[0])/2;
       }
-      R0 = CGAL_NTS max(R+1,R0);
+      R0 = (CGAL::max)(R+1,R0);
     }
   }
   

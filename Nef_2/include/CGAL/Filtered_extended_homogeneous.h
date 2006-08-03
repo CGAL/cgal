@@ -1253,15 +1253,15 @@ void determine_frame_radius(Forward_iterator start, Forward_iterator end,
   while ( start != end ) {
     Point_2 p = *start;
     if ( is_standard(p) ) {
-      R = CGAL_NTS max(CGAL_NTS abs(p.mx())/p.hw(), 
-                       CGAL_NTS abs(p.my())/p.hw());
+      R = (CGAL::max)(CGAL_NTS abs(p.mx())/p.hw(), 
+		      CGAL_NTS abs(p.my())/p.hw());
     } else {
       RT rx = CGAL_NTS abs(p.hx()), ry = CGAL_NTS abs(p.hy());
       if ( rx[1] > ry[1] )      R = CGAL_NTS abs(ry[0]-rx[0])/(rx[1]-ry[1]);
       else if ( rx[1] < ry[1] ) R = CGAL_NTS abs(rx[0]-ry[0])/(ry[1]-rx[1]);
       else /* rx[1] == ry[1] */ R = CGAL_NTS abs(rx[0]-ry[0])/(2*p.hw());
     }
-    R0 = CGAL_NTS max(R+1,R0); ++start;
+    R0 = (CGAL::max)(R+1,R0); ++start;
   }
 }
 
