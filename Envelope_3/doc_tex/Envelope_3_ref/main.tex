@@ -1,10 +1,14 @@
-\RCSdef{\EnvelopeSpcRefRev}{$Revision$}
-\RCSdefDate{\EnvelopeSpcRefDate}{$Date$}
-\clearpage
-\ccRefChapter{Envelopes of Surfaces in 3D}
-\label{chapterEnvelope3Ref}
+\begingroup
 
-\ccChapterAuthor{Michal Meyerovitch and Ron Wein}
+\lcTex{%
+  \newlength{\EnvelopeRefWidthExtra}\setlength{\EnvelopeRefWidthExtra}{1.1cm}
+  \newlength{\EnvelopeRefWidthLineReal}\setlength{\EnvelopeRefWidthLineReal}{\linewidth}
+  \addtolength{\EnvelopeRefWidthLineReal}{-\EnvelopeRefWidthExtra}
+  \newlength{\EnvelopeRefMinipageSpace}\setlength{\EnvelopeRefMinipageSpace}{0.2cm}
+
+  \newlength{\EnvelopeRefWidthLeft}
+  \newlength{\EnvelopeRefWidthRight}
+}
 
 \newcommand{\reals}{\mathbb{R}}
 
@@ -17,3 +21,4 @@
 \input{Envelope_3_ref/Env_surface_data_traits}
 \input{Envelope_3_ref/Envelope_diagram}
 
+\endgroup
