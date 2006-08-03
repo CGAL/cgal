@@ -1151,6 +1151,10 @@ public:
     typedef Arity_tag< 2 >    Arity;
 
     Iso_cuboid_3
+    operator()(const Point_3&, const Point_3&, int) const
+    { return Iso_cuboid_3(); }
+
+    Iso_cuboid_3
     operator()(const Point_3&, const Point_3&) const
     { return Iso_cuboid_3(); }
 
@@ -1169,6 +1173,10 @@ class Construct_iso_rectangle_2
 public:
     typedef Iso_rectangle_2   result_type;
     typedef Arity_tag< 2 >    Arity;
+
+    Iso_rectangle_2
+    operator()(const Point_2&, const Point_2&, int) const
+    { return Iso_rectangle_2(); }
 
     Iso_rectangle_2
     operator()(const Point_2&, const Point_2&) const

@@ -54,8 +54,11 @@ public:
   Iso_rectangle_2(const Rep& r)
     : Rep(r) {}
 
+  Iso_rectangle_2(const Point_2 &p, const Point_2 &q, int)
+    : Rep(typename R::Construct_iso_rectangle_2()(p, q, 0).rep()) {}
+
   Iso_rectangle_2(const Point_2 &p, const Point_2 &q)
-    : Rep(typename R::Construct_iso_rectangle_2()(p,q).rep()) {}
+    : Rep(typename R::Construct_iso_rectangle_2()(p, q).rep()) {}
 
   Iso_rectangle_2(const Point_2 &left, const Point_2 &right,
                   const Point_2 &bottom, const Point_2 &top)

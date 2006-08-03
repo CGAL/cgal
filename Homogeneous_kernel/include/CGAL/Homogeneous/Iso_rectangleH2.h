@@ -17,10 +17,10 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 #ifndef CGAL_ISO_RECTANGLEH2_H
 #define CGAL_ISO_RECTANGLEH2_H
 
@@ -48,13 +48,16 @@ public:
 
   Iso_rectangleH2() {}
 
-  Iso_rectangleH2(const Point_2& p, const Point_2& q)
-    : base(p,q)
-  {}
+  Iso_rectangleH2(const Point_2& p, const Point_2& q, int)
+    : base(p, q)
+  {
+    CGAL_kernel_assertion(p.x()<=q.x());
+    CGAL_kernel_assertion(p.y()<=q.y());
+  }
 
   const Point_2 & min() const;
   const Point_2 & max() const;
-  
+
   Bounded_side bounded_side(const Point_2& p) const;
 };
 

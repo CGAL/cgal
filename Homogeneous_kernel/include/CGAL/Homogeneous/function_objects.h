@@ -2521,6 +2521,14 @@ namespace HomogeneousKernelFunctors {
     typedef Arity_tag< 2 >    Arity;
 
     Iso_rectangle_2
+    operator()(const Point_2& p, const Point_2& q, int) const
+    {
+      CGAL_kernel_assertion(p.x()<=q.x());
+      CGAL_kernel_assertion(p.y()<=q.y());
+      return Rep(p, q, 0);
+    }
+
+    Iso_rectangle_2
     operator()(const Point_2& p, const Point_2& q) const
     {
       bool px_g_qx = ( p.hx()*q.hw() > q.hx()*p.hw() );
@@ -2530,7 +2538,7 @@ namespace HomogeneousKernelFunctors {
       {
           if ( px_g_qx && py_g_qy )
           {
-              return Rep(q, p);
+              return Rep(q, p, 0);
           }
           else
           {
@@ -2538,17 +2546,17 @@ namespace HomogeneousKernelFunctors {
              {
                  return Rep(
                  Point_2(q.hx()*p.hw(), p.hy()*q.hw(), q.hw()*p.hw() ),
-                 Point_2(p.hx()*q.hw(), q.hy()*p.hw(), q.hw()*p.hw() ));
+                 Point_2(p.hx()*q.hw(), q.hy()*p.hw(), q.hw()*p.hw() ), 0);
              }
              if ( py_g_qy )
              {
                  return Rep(
                  Point_2(p.hx()*q.hw(), q.hy()*p.hw(), q.hw()*p.hw() ),
-                 Point_2(q.hx()*p.hw(), p.hy()*q.hw(), q.hw()*p.hw() ));
+                 Point_2(q.hx()*p.hw(), p.hy()*q.hw(), q.hw()*p.hw() ), 0);
              }
           }
       }
-      return Rep(p, q);
+      return Rep(p, q, 0);
     }
 
     Iso_rectangle_2
@@ -2564,7 +2572,7 @@ namespace HomogeneousKernelFunctors {
 			   left.hw()   * bottom.hw()),
 		   Point_2(right.hx()  * top.hw(),
 			   top.hy()    * right.hw(),
-			   right.hw()  * top.hw()));
+			   right.hw()  * top.hw()), 0);
     }
 
     Iso_rectangle_2
@@ -2574,7 +2582,7 @@ namespace HomogeneousKernelFunctors {
       CGAL_kernel_precondition(min_hx <= max_hx);
       CGAL_kernel_precondition(min_hy <= max_hy);
       return Rep(Point_2(min_hx, min_hy),
-		 Point_2(max_hx, max_hy));
+		 Point_2(max_hx, max_hy), 0);
     }
 
     Iso_rectangle_2
@@ -2582,7 +2590,7 @@ namespace HomogeneousKernelFunctors {
 	       const RT& max_hx, const RT& max_hy, const RT& hw) const
     {
 	return Rep(Point_2(min_hx, min_hy, hw),
-		   Point_2(max_hx, max_hy, hw));
+		   Point_2(max_hx, max_hy, hw), 0);
     }
   };
 

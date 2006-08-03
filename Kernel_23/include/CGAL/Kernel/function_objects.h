@@ -709,6 +709,10 @@ namespace CommonKernelFunctors {
     typedef Arity_tag< 2 >    Arity;
 
     Iso_cuboid_3
+    operator()(const Point_3& p, const Point_3& q, int) const
+    { return Rep(p, q, 0); }
+
+    Iso_cuboid_3
     operator()(const Point_3& p, const Point_3& q) const
     { return Rep(p, q); }
 

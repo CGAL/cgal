@@ -46,10 +46,14 @@ public:
 
   Iso_rectangleC2() {}
 
-  Iso_rectangleC2(const Point_2 &p, const Point_2 &q)
-    : base(p,q)
-  {}
+  // Iso_rectangleC2(const Point_2 &p, const Point_2 &q)
+  //  : base(p, q) {}
 
+  Iso_rectangleC2(const Point_2 &p, const Point_2 &q, int)
+    : base(p, q)
+  {
+    CGAL_kernel_assertion(p<=q);
+  }
 
   const Point_2 & min() const
   {

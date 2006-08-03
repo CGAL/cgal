@@ -61,6 +61,7 @@ _test_cls_iso_cuboid_3(const R& )
  CGAL::Point_3<R> p13(n4, n1, n3 );       // ( 4, 1, 3)
 
  CGAL::Iso_cuboid_3<R> r1( p1, p3);
+ CGAL::Iso_cuboid_3<R> r1_( p1, p3, 0);
  CGAL::Iso_cuboid_3<R> r2( p3, p1);
  CGAL::Iso_cuboid_3<R> r3( p2, p5);
  CGAL::Iso_cuboid_3<R> r4( p5, p2);

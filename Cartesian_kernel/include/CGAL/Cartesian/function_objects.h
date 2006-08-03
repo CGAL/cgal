@@ -1953,6 +1953,14 @@ namespace CartesianKernelFunctors {
     typedef Arity_tag< 2 >               Arity;
 
     Iso_rectangle_2
+    operator()(const Point_2& p, const Point_2& q, int) const
+    {
+      CGAL_kernel_assertion(p.x()<=q.x());
+      CGAL_kernel_assertion(p.y()<=q.y());
+      return Rep(p, q, 0);
+    }
+
+    Iso_rectangle_2
     operator()(const Point_2& p, const Point_2& q) const
     {
       FT minx, maxx, miny, maxy;
@@ -1962,7 +1970,7 @@ namespace CartesianKernelFunctors {
       else               { miny = q.y(); maxy = p.y(); }
 
       return Rep(Point_2(minx, miny),
-	         Point_2(maxx, maxy));
+	         Point_2(maxx, maxy), 0);
     }
 
     Iso_rectangle_2
@@ -1974,7 +1982,7 @@ namespace CartesianKernelFunctors {
       CGAL_kernel_assertion(!less_x(right, left));
       CGAL_kernel_assertion(!less_y(top, bottom));
       return Rep(Point_2(left.x(), bottom.y()),
-		 Point_2(right.x(), top.y()));
+		 Point_2(right.x(), top.y()), 0);
     }
 
     Iso_rectangle_2
@@ -1984,7 +1992,7 @@ namespace CartesianKernelFunctors {
       CGAL_kernel_precondition(min_hx <= max_hx);
       CGAL_kernel_precondition(min_hy <= max_hy);
       return Rep(Point_2(min_hx, min_hy),
-		 Point_2(max_hx, max_hy));
+		 Point_2(max_hx, max_hy), 0);
     }
 
     Iso_rectangle_2
@@ -1993,9 +2001,9 @@ namespace CartesianKernelFunctors {
     {
       if (hw == 1)
 	return Rep(Point_2(min_hx, min_hy),
-		   Point_2(max_hx, max_hy));
+		   Point_2(max_hx, max_hy), 0);
       return Rep(Point_2(min_hx/hw, min_hy/hw),
-		 Point_2(max_hx/hw, max_hy/hw));
+		 Point_2(max_hx/hw, max_hy/hw), 0);
     }
   };
 

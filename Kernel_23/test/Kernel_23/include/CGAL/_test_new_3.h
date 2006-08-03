@@ -213,7 +213,8 @@ test_new_3(const R& rep)
   typename R::Construct_iso_cuboid_3 construct_iso_cuboid
         = rep.construct_iso_cuboid_3_object();
   Iso_cuboid_3 iso1 = construct_iso_cuboid(p3,p6);
-  Iso_cuboid_3 iso2 = construct_iso_cuboid(p3,p3,p6,p6,p4,p4);
+               iso1 = construct_iso_cuboid(p2,p3,0);
+               iso1 = construct_iso_cuboid(p3,p3,p6,p6,p4,p4);
 
   typename R::Construct_object_3 construct_object
         = rep.construct_object_3_object();
@@ -708,7 +709,7 @@ test_new_3(const R& rep)
   use(l6); use(d4); use(d5); use(d6); use(d7); use(r1);
   use(h1); use(h4); use(h5); use(h6); 
   use(sp4); use(sp5); use(sp6); use(sp7); use(sp8);
-  use(t1); use(th1); use(iso2); 
+  use(t1); use(th1);
   use(tmp3); use(tmp3a);
   use(tmp9); use(tmp14a); use(tmp5); use(tmp6);
   use(tmp7); use(tmp71); use(sp1a); use(tmp72);

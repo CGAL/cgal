@@ -157,7 +157,7 @@ public:
     operator()(const typename K1::Iso_rectangle_2 &a) const
     {
 	return k.construct_iso_rectangle_2_object()(operator()(a.min()),
-		                                    operator()(a.max()));
+		                                    operator()(a.max()), 0);
     }
 
 
@@ -239,7 +239,7 @@ public:
     operator()(const typename K1::Iso_cuboid_3 &a) const
     {
 	return k.construct_iso_cuboid_3_object()(operator()(a.min()),
-		                                 operator()(a.max()));
+		                                 operator()(a.max()), 0);
     }
 
 private:

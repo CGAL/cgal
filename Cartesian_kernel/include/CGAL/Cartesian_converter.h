@@ -247,7 +247,7 @@ public:
     operator()(const typename K1::Iso_rectangle_2 &a) const
     {
         typedef typename K2::Iso_rectangle_2  Iso_rectangle_2;
-	return Iso_rectangle_2(operator()(a.min()), operator()(a.max()));
+	return Iso_rectangle_2(operator()(a.min()), operator()(a.max()), 0);
     }
 
 
@@ -332,7 +332,7 @@ public:
     operator()(const typename K1::Iso_cuboid_3 &a) const
     {
         typedef typename K2::Iso_cuboid_3 Iso_cuboid_3;
-	return Iso_cuboid_3(operator()(a.min()), operator()(a.max()));
+	return Iso_cuboid_3(operator()(a.min()), operator()(a.max()), 0);
     }
 
     std::pair<typename K2::Point_2, typename K2::Point_2>

@@ -174,7 +174,8 @@ test_new_2(const R& rep)
   typename R::Construct_iso_rectangle_2 construct_iso_rectangle
         = rep.construct_iso_rectangle_2_object();
   Iso_rectangle_2 rec2 = construct_iso_rectangle(p4,p5);
-  Iso_rectangle_2 rec3 = construct_iso_rectangle(p4,p4,p5,p5);
+                  rec2 = construct_iso_rectangle(p2,p3,0);
+                  rec2 = construct_iso_rectangle(p4,p4,p5,p5);
 
   typename R::Construct_object_2 construct_object 
         = rep.construct_object_2_object();
@@ -600,11 +601,10 @@ test_new_2(const R& rep)
   use(d4); use(d5);
   use(c4); use(c11);
   use(r4); use(l7); use(r5); use(v7); use(v8); use(v9);
-  use(rec3);
   use(tmp9); use(tmp10); use(tmp11); use(tmp12); use(tmp12a);
   use(tmp14); use(tmp14a); use(tmp15); use(tmp16);
   use(tmp16); use(tmp17); use(tmp19); use(tmp19a); use(tmp22a);
-  use(tmp22b); use(tmp23);
+  use(tmp22b); use(tmp22c); use(tmp23);
 
   use(tmp58);
   use(tmp57); use(tmp56); use(tmp55); use(tmp54); use(tmp53b); use(tmp53a);
