@@ -348,7 +348,7 @@ protected:
   unsigned long recursive_depth() const
   {
     if (!operator!() && !ptr()->visited())
-      return 1+ std::max(left().recursive_depth(),right().recursive_depth());
+      return 1+ (std::max)(left().recursive_depth(),right().recursive_depth());
     else
       return 0;
   }
