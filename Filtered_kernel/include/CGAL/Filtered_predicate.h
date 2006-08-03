@@ -94,7 +94,7 @@ public:
   {
     try
     {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1));
       if (! is_indeterminate(res))
@@ -116,7 +116,7 @@ public:
   {
     try
     {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1), c2a(a2));
       if (! is_indeterminate(res))
@@ -138,7 +138,7 @@ public:
   {
     try
     {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3));
       if (! is_indeterminate(res))
@@ -160,7 +160,7 @@ public:
   {
     try
     {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4));
       if (! is_indeterminate(res))
@@ -183,7 +183,7 @@ public:
   {
     try
     {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5));
       if (! is_indeterminate(res))
@@ -206,7 +206,7 @@ public:
   {
     try
     {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6));
       if (! is_indeterminate(res))
@@ -230,7 +230,7 @@ public:
   {
     try
     {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4),
                     c2a(a5), c2a(a6), c2a(a7));
@@ -255,7 +255,7 @@ public:
   {
     try
     {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(__PRETTY_FUNCTION__));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(__PRETTY_FUNCTION__));
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4),
                     c2a(a5), c2a(a6), c2a(a7), c2a(a8) );
@@ -282,7 +282,7 @@ public:
   {
     try
     {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(__PRETTY_FUNCTION__));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(__PRETTY_FUNCTION__));
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4),
                     c2a(a5), c2a(a6), c2a(a7), c2a(a8), c2a(a9) );
@@ -309,7 +309,7 @@ public:
   {
     try
     {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(__PRETTY_FUNCTION__));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(__PRETTY_FUNCTION__));
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4),
                     c2a(a5), c2a(a6), c2a(a7), c2a(a8), c2a(a9), c2a(a10) );
@@ -336,7 +336,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
 {
     try
     {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1));
       if (! is_indeterminate(res))
@@ -356,7 +356,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
 {
     try
     {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1), c2a(a2));
       if (! is_indeterminate(res))
@@ -376,7 +376,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
 {
     try
     {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3));
       if (! is_indeterminate(res))
@@ -396,7 +396,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
 {
     try
     {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4));
       if (! is_indeterminate(res))
@@ -417,7 +417,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
 {
     try
     {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5));
       if (! is_indeterminate(res))
@@ -438,7 +438,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
 {
     try
     {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6));
       if (! is_indeterminate(res))
@@ -460,7 +460,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
 {
     try
     {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6),
                     c2a(a7));
@@ -483,7 +483,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
 {
     try
     {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6),
                     c2a(a7), c2a(a8));
@@ -508,7 +508,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
 {
     try
     {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6),
                     c2a(a7), c2a(a8), c2a(a9));
@@ -533,7 +533,7 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
 {
     try
     {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6),
                     c2a(a7), c2a(a8), c2a(a9), c2a(a10));
