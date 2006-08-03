@@ -79,8 +79,8 @@ public:
    * \return A past-the-end iterator for the sub-polygons.
    */
   template <class OutputIterator>
-  OutputIterator operation() (const Polygon_2& pgn,
-                              OutputIterator oi) const
+  OutputIterator operator() (const Polygon_2& pgn,
+                             OutputIterator oi) const
   {
     std::list<Traits_polygon_2>                           pgns;
     typename std::list<Traits_polygon_2>::const_iterator  pgn_it;
