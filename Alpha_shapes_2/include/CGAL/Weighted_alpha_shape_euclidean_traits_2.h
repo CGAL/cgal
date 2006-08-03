@@ -21,7 +21,6 @@
 #ifndef CGAL_WEIGHTED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_H
 #define CGAL_WEIGHTED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_H
 
-#include <boost/config.hpp>
 
 #include <CGAL/basic.h>
 #include <CGAL/squared_distance_2.h>
