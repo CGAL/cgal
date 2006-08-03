@@ -8,9 +8,8 @@
 
 \ccRefPageBegin
 
-\begin{ccRefClass}{Optimal_convex_decomposition<Kernel,Container>}
+\begin{ccRefClass}{Optimal_convex_decomposition_2<Kernel,Container>}
 \label{mink_ref:opt_decomp}
-
 
 \ccDefinition
 %============
@@ -25,10 +24,13 @@ The \ccc{Polygon_2} type defined by the class is simply
 \ccc{Polygon_2<Kernel,Container>}. The \ccc{Container} parameter
 is by default \ccc{std::vector<typename Kernel::Point_2>}.
 
-\ccInclude{CGAL/Polygon_convex_decomposition.h}
+\ccInclude{CGAL/Polygon_convex_decomposition_2.h}
 
 \ccIsModel
-  \ccc{PolygonConvexDecomposition}
+  \ccc{PolygonConvexDecomposition_2}
+
+\ccSeeAlso
+\ccc{CGAL::optimal_convex_partition_2}\lcTex{(\ccRefPage{CGAL::optimal_convex_partition_2})}
 
 \end{ccRefClass}
 

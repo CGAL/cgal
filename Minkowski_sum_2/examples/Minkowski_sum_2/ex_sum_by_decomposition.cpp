@@ -4,7 +4,7 @@
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/minkowski_sum_2.h>
-#include <CGAL/Small_side_angle_bisector_decomposition.h>
+#include <CGAL/Small_side_angle_bisector_decomposition_2.h>
 #include <iostream>
 #include <fstream>
 
@@ -33,7 +33,7 @@ int main ()
   in_file.close();
 
   // Compute the Minkowski sum using the decomposition approach.
-  CGAL::Small_side_angle_bisector_decomposition<Kernel>  ssab_decomp;
+  CGAL::Small_side_angle_bisector_decomposition_2<Kernel>  ssab_decomp;
 
   Polygon_with_holes_2  sum = minkowski_sum_2 (P, Q, ssab_decomp);
 

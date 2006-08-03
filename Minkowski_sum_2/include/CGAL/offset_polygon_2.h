@@ -38,10 +38,10 @@ CGAL_BEGIN_NAMESPACE
  */
 template <class ConicTraits, class Container>
 typename Gps_traits_2<ConicTraits>::Polygon_with_holes_2
-offset_polygon_2 (const ConicTraits& ,
-                  const Polygon_2<typename ConicTraits::Rat_kernel,
+offset_polygon_2 (const Polygon_2<typename ConicTraits::Rat_kernel,
                                   Container>& pgn,
-                  const typename ConicTraits::Rat_kernel::FT& r)
+                  const typename ConicTraits::Rat_kernel::FT& r,
+                  const ConicTraits& )
 {
   typedef Exact_offset_base_2<ConicTraits, Container>        Base;
   typedef Offset_by_convolution_2<Base>                      Exact_offset_2;
@@ -73,11 +73,11 @@ offset_polygon_2 (const ConicTraits& ,
  */
 template <class ConicTraits, class Container, class DecompositionStrategy>
 typename Gps_traits_2<ConicTraits>::Polygon_with_holes_2
-offset_polygon_2 (const ConicTraits& ,
-                  const Polygon_2<typename ConicTraits::Rat_kernel,
+offset_polygon_2 (const Polygon_2<typename ConicTraits::Rat_kernel,
                                   Container>& pgn,
                   const typename ConicTraits::Rat_kernel::FT& r,
-                  const DecompositionStrategy& decomp)
+                  const DecompositionStrategy& decomp,
+                  const ConicTraits& )
 {
   typedef Exact_offset_base_2<ConicTraits, Container>        Base;
   typedef Offset_by_decomposition_2<Base, DecompositionStrategy>

@@ -134,8 +134,8 @@ public:
     Polygons_list           sub_pgns1;
     Polygons_list           sub_pgns2;
 
-    decomp_strat.decompose (pgn1, std::back_inserter(sub_pgns1));
-    decomp_strat.decompose (pgn2, std::back_inserter(sub_pgns2));
+    decomp_strat (pgn1, std::back_inserter(sub_pgns1));
+    decomp_strat (pgn2, std::back_inserter(sub_pgns2));
 
     // Compute the sub-sums of all pairs of sub-polygons.
     Polygons_iterator       end1 = sub_pgns1.end();

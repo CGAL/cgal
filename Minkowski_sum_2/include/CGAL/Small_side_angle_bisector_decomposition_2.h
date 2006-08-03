@@ -18,8 +18,8 @@
 // Author(s)     : Ron Wein   <wein@post.tau.ac.il>
 //                 (based on an old version by Eyal Flato)
 
-#ifndef CGAL_SMALL_SIDE_ANGLE_BISECTOR_DECOMPOSITION_H
-#define CGAL_SMALL_SIDE_ANGLE_BISECTOR_DECOMPOSITION_H
+#ifndef CGAL_SMALL_SIDE_ANGLE_BISECTOR_DECOMPOSITION_2_H
+#define CGAL_SMALL_SIDE_ANGLE_BISECTOR_DECOMPOSITION_2_H
 
 #include <CGAL/Polygon_2.h>
 #include <vector>
@@ -33,7 +33,7 @@ CGAL_BEGIN_NAMESPACE
  */
 template <class Kernel_, 
           class Container_ = std::vector<typename Kernel_::Point_2> >
-class Small_side_angle_bisector_decomposition
+class Small_side_angle_bisector_decomposition_2
 {
 public:
 
@@ -120,7 +120,7 @@ private:
 public:
 
   /*! Default constructor. */
-  Small_side_angle_bisector_decomposition ()
+  Small_side_angle_bisector_decomposition_2 ()
   {
     // Obtain kernel functors.
     Kernel                ker;
@@ -141,8 +141,8 @@ public:
    * \return A past-the-end iterator for the sub-polygons.
    */
   template <class OutputIterator>
-  OutputIterator decompose (const Polygon_2& pgn,
-                            OutputIterator oi) const
+  OutputIterator operator() (const Polygon_2& pgn,
+                             OutputIterator oi) const
   {
     // Construct a point-info vector that represents the input polygon.
     Point_vector_2   vec;

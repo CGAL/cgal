@@ -169,7 +169,7 @@ In the following program we compute the Minkowski sum of two polygons
 that are read from an input file. In this case, the sum is not simple
 and contains four holes, as illustrated in Figure~\ref{mink_fig:sum_holes}.
 Note that this example uses the predefined \cgal\ kernel with exact
-constructions. In general, instantiating polygons with this kernel yield
+constructions. In general, instantiating polygons with this kernel yields
 the fastest running times for Minkowski-sum computations.
 
 \ccIncludeExampleCode{../examples/Minkowski_sum_2/ex_sum_with_holes.cpp}
@@ -181,12 +181,12 @@ the fastest running times for Minkowski-sum computations.
 In order to compute Minkowski sums using the decomposition method, it is
 possible to call the function \ccc{minkowski_sum_2 (P, Q, decomp)}, where
 \ccc{decomp} is an instance of a class that models the concept
-\ccc{PolygonConvexDecomposition}, namely it should provide a method named
+\ccc{PolygonConvexDecomposition_2}, namely it should provide a method named
 \ccc{decompose()} that receives a planar polygons and returns a range
 of convex polygons that represents its convex decomposition.
 
-The Minkowski-sum package includes for models of the concept
-\ccc{PolygonConvexDecomposition}. The first three are classes that wrap
+The Minkowski-sum package includes four models of the concept
+\ccc{PolygonConvexDecomposition_2}. The first three are classes that wrap
 the decomposition functions included in the Planar Polygon Partitioning
 package, while the fourth is an implementation of a decomposition algorithm
 introduced in~\cite{cgal:afh-pdecm-02}. The convex decompositions that it
@@ -285,7 +285,7 @@ $n$ disconnected \emph{offset edges}. Each pair of adjacent offset
 edges, induced by $p_{i-1} p_i$ and $p_i p_{i+1}$, are connected
 by a circular arc of radius $r$, whose supporting circle is
 centered at $p_i$. The angle that defines such a circular arc
-equals $180^{\circ} - \angle p_{i-1} p_i p_{i+1}$; see
+equals $180^{\circ} - \angle (p_{i-1}, p_i, p_{i+1})$; see
 Figure~\ref{mink_fig:pgn_offset}(a) for an illustration. The running
 time of this simple process is of course linear with respect to
 the size of the polygon.
@@ -302,7 +302,7 @@ that the convolution curve is comprised of a single cycle.} which can be
 constructed by applying the process described in the previous
 paragraph. The only difference is that a circular arc induced by a
 reflex vertex $p_i$ is defined by an angle $540^{\circ} - \angle
-p_{i-1} p_i p_{i+1}$; see Figure~\ref{fig:pgn_offset}(c) for an
+(p_{i-1}, p_i, p_{i+1})$; see Figure~\ref{fig:pgn_offset}(c) for an
 illustration. We finally compute the winding numbers of the faces of the
 arrangement induced by the convolution cycle to obtain the offset
 polygon.
@@ -326,19 +326,19 @@ of the polygon vertices. The equation of this circle is $(x - x_i)^2 +
 \item
 Each line segment is supported by a line parallel to one of the polygon
 edges $p_i p_{i+1}$, which lies at distance $r$ from this edge. If we 
-denote the supporting line of $p_i p_{i+1}$ by $Ax + By + C = 0$, where
-$A, B, C \in {\mathbb Q}$, then the offset edge is supported by the line
-$Ax + By + (C + \ell\cdot r) = 0$, where $\ell$ is the length of the edge
+denote the supporting line of $p_i p_{i+1}$ by $ax + by + c = 0$, where
+$a, b, c \in {\mathbb Q}$, then the offset edge is supported by the line
+$ax + by + (c + \ell\cdot r) = 0$, where $\ell$ is the length of the edge
 $p_i p_{i+1}$ and is in general \emph{not} a rational number. The line segments
 that comprise the offset boundaries therefore cannot be represented as segments
 of lines with rational coefficients.
 %
 We mention that the locus of all points that lie at distance $r$ from the
-line $Ax + By + C = 0$ is given by:
-\[ \frac{(Ax + By + C)^2}{A^2 + B^2} = r^2 \ .\]
+line $ax + by + c = 0$ is given by:
+\[ \frac{(ax + by + c)^2}{a^2 + b^2} = r^2 \ .\]
 Thus, the linear offset edges are segments of curves of an algebraic curve
 of degree 2 (a conic curve) with rational coefficients. This curve is
-actually a pair of the parallel lines $Ax + By + (C \pm \ell\cdot r) = 0$.
+actually a pair of the parallel lines $ax + by + (c \pm \ell\cdot r) = 0$.
 In Section~\ref{mink_ssec:exact_offset} we use this representation to
 construct the offset polygon in an exact manner using the traits class for
 conic arcs.

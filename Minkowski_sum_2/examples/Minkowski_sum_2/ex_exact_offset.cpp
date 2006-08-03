@@ -59,7 +59,7 @@ int main ()
   CGAL::Timer                  timer;
 
   timer.start();
-  offset = offset_polygon_2 (traits, P, radius);
+  offset = offset_polygon_2 (P, radius, traits);
   timer.stop();
 
   std::cout << "The offset polygon has "

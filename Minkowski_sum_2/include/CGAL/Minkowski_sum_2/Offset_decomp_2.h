@@ -101,7 +101,7 @@ public:
     Polygons_list           sub_pgns;
     Polygons_iterator       iter;
 
-    decomp_strat.decompose (pgn, std::back_inserter(sub_pgns));
+    decomp_strat (pgn, std::back_inserter(sub_pgns));
 
     // Compute the offset of each polygon separately.
     Curves_list                     boundary_curves;
