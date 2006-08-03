@@ -35,8 +35,8 @@ inline MP_Float inexact_sqrt( MP_Float const& n )
   double d = CGAL::to_double(n);
   
   if ( !CGAL_NTS is_finite(d) )
-    d = CGAL_NTS sign(n) == NEGATIVE ? - std::numeric_limits<double>::max() 
-                                     :   std::numeric_limits<double>::max() ;
+    d = CGAL_NTS sign(n) == NEGATIVE ? - (std::numeric_limits<double>::max)() 
+                                     :   (std::numeric_limits<double>::max)() ;
        
   return MP_Float( CGAL_NTS sqrt(d) ) ;
 }
