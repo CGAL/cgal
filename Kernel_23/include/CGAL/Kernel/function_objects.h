@@ -17,7 +17,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Stefan Schirra, Sylvain Pion
 
@@ -44,9 +44,9 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Point_2     Point_2;
     typedef typename K::Collinear_2 Collinear_2;
-    typedef typename K::Collinear_are_ordered_along_line_2 
+    typedef typename K::Collinear_are_ordered_along_line_2
     Collinear_are_ordered_along_line_2;
-  
+
     Collinear_2 c;
     Collinear_are_ordered_along_line_2 cao;
   public:
@@ -54,7 +54,7 @@ namespace CommonKernelFunctors {
     typedef Arity_tag< 3 >          Arity;
 
     Are_ordered_along_line_2() {}
-    Are_ordered_along_line_2(const Collinear_2& c_, 
+    Are_ordered_along_line_2(const Collinear_2& c_,
 			     const Collinear_are_ordered_along_line_2& cao_)
       : c(c_), cao(cao_)
     {}
@@ -69,9 +69,9 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Point_3     Point_3;
     typedef typename K::Collinear_3 Collinear_3;
-    typedef typename K::Collinear_are_ordered_along_line_3 
+    typedef typename K::Collinear_are_ordered_along_line_3
     Collinear_are_ordered_along_line_3;
-  
+
     Collinear_3 c;
     Collinear_are_ordered_along_line_3 cao;
   public:
@@ -79,7 +79,7 @@ namespace CommonKernelFunctors {
     typedef Arity_tag< 3 >          Arity;
 
     Are_ordered_along_line_3() {}
-    Are_ordered_along_line_3(const Collinear_3& c_, 
+    Are_ordered_along_line_3(const Collinear_3& c_,
 			     const Collinear_are_ordered_along_line_3& cao_)
       : c(c_), cao(cao_)
     {}
@@ -94,9 +94,9 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Point_2     Point_2;
     typedef typename K::Collinear_2 Collinear_2;
-    typedef typename K::Collinear_are_strictly_ordered_along_line_2 
+    typedef typename K::Collinear_are_strictly_ordered_along_line_2
     Collinear_are_strictly_ordered_along_line_2;
-  
+
     Collinear_2 c;
     Collinear_are_strictly_ordered_along_line_2 cao;
   public:
@@ -105,7 +105,7 @@ namespace CommonKernelFunctors {
 
     Are_strictly_ordered_along_line_2() {}
     Are_strictly_ordered_along_line_2(
-				      const Collinear_2& c_, 
+				      const Collinear_2& c_,
 				      const Collinear_are_strictly_ordered_along_line_2& cao_)
       : c(c_), cao(cao_)
     {}
@@ -120,9 +120,9 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Point_3     Point_3;
     typedef typename K::Collinear_3 Collinear_3;
-    typedef typename K::Collinear_are_strictly_ordered_along_line_3 
+    typedef typename K::Collinear_are_strictly_ordered_along_line_3
     Collinear_are_strictly_ordered_along_line_3;
-  
+
     Collinear_3 c;
     Collinear_are_strictly_ordered_along_line_3 cao;
   public:
@@ -131,7 +131,7 @@ namespace CommonKernelFunctors {
 
     Are_strictly_ordered_along_line_3() {}
     Are_strictly_ordered_along_line_3(
-				      const Collinear_3& c_, 
+				      const Collinear_3& c_,
 				      const Collinear_are_strictly_ordered_along_line_3& cao_)
       : c(c_), cao(cao_)
     {}
@@ -146,7 +146,8 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Object_2  Object_2;
   public:
-    typedef typename K::Bool_type result_type;
+    //typedef typename K::Bool_type result_type;
+    typedef bool                  result_type;
     typedef Arity_tag< 2 >        Arity;
 
     template <class T>
@@ -160,7 +161,8 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Object_3        Object_3;
   public:
-    typedef typename K::Bool_type       result_type;
+    //typedef typename K::Bool_type       result_type;
+    typedef bool                        result_type;
     typedef Arity_tag< 2 >              Arity;
 
     template <class T>
@@ -657,22 +659,22 @@ namespace CommonKernelFunctors {
 
     Circle_2
     operator()( const Point_2& p, const Point_2& q, const Point_2& r) const
-    { 
+    {
       typename K::Orientation_2 orientation;
       typename K::Compute_squared_distance_2 squared_distance;
       typename K::Construct_circumcenter_2 circumcenter;
       Orientation orient = orientation(p, q, r);
       CGAL_kernel_precondition( orient != COLLINEAR);
-      
+
       Point_2 center = circumcenter(p, q, r);
-      
+
       return Rep(center, squared_distance(p, center), orient);
     }
-    
+
     Circle_2
     operator()( const Point_2& p, const Point_2& q,
 	        Orientation orientation = COUNTERCLOCKWISE) const
-    { 
+    {
       CGAL_kernel_precondition( orientation != COLLINEAR);
 
       typename K::Compute_squared_distance_2 squared_distance;
@@ -687,9 +689,9 @@ namespace CommonKernelFunctors {
     Circle_2
     operator()( const Point_2& center,
 	        Orientation orientation = COUNTERCLOCKWISE) const
-    { 
+    {
       CGAL_kernel_precondition( orientation != COLLINEAR );
-      
+
       return Rep(center, FT(0), orientation);
     }
   };
@@ -718,7 +720,7 @@ namespace CommonKernelFunctors {
 
     Iso_cuboid_3
     operator()(const RT& min_hx, const RT& min_hy, const RT& min_hz,
-               const RT& max_hx, const RT& max_hy, const RT& max_hz, 
+               const RT& max_hx, const RT& max_hy, const RT& max_hz,
                const RT& hw) const
     { return Rep(min_hx, min_hy, min_hz, max_hx, max_hy, max_hz, hw); }
 
@@ -1543,7 +1545,7 @@ namespace CommonKernelFunctors {
     Bbox_3
     operator()( const Segment_3& s) const
     { return s.bbox(); }
-    
+
     Bbox_3
     operator()( const Triangle_3& t) const
     { return t.bbox(); }
@@ -1567,7 +1569,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Point_2          Point_2;
     typedef typename K::Cartesian_const_iterator_2
     Cartesian_const_iterator_2;
-    
+
   public:
     typedef Cartesian_const_iterator_2 result_type;
     typedef Arity_tag< 1 >   Arity;
@@ -1577,7 +1579,7 @@ namespace CommonKernelFunctors {
       {
 	return p.rep().cartesian_begin();
       }
-    
+
     Cartesian_const_iterator_2
     operator()( const Point_2& p, int) const
     {
@@ -1591,7 +1593,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Point_3          Point_3;
     typedef typename K::Cartesian_const_iterator_3
     Cartesian_const_iterator_3;
-    
+
   public:
     typedef Cartesian_const_iterator_3 result_type;
     typedef Arity_tag< 1 >   Arity;
@@ -1601,7 +1603,7 @@ namespace CommonKernelFunctors {
       {
 	return p.rep().cartesian_begin();
       }
-    
+
     Cartesian_const_iterator_3
     operator()( const Point_3& p, int) const
     {
@@ -1625,7 +1627,7 @@ namespace CommonKernelFunctors {
     result_type
     operator()( const Point_3& p, const Point_3& q,
 	        const Point_3& r, const Point_3& s) const
-    { 
+    {
       return o(p, q, r, s) == COPLANAR;
     }
   };
@@ -1698,37 +1700,37 @@ namespace CommonKernelFunctors {
     operator()(const Point_2 &p, const Point_2 &q) const
     {
       return p.rep() == q.rep();
-    }  
+    }
 
     result_type
     operator()(const Vector_2 &v1, const Vector_2 &v2) const
     {
       return v1.rep() == v2.rep();
-    }  
+    }
 
     result_type
     operator()(const Vector_2 &v, const Null_vector &n) const
     {
       return v.rep() == n;
-    }  
+    }
 
     result_type
     operator()(const Direction_2 &d1, const Direction_2 &d2) const
     {
       return d1.rep() == d2.rep();
-    }  
+    }
 
     result_type
     operator()(const Segment_2 &s1, const Segment_2 &s2) const
     {
       return s1.source() == s2.source() && s1.target() == s2.target();
-    } 
+    }
 
     result_type
     operator()(const Line_2 &l1, const Line_2 &l2) const
     {
       return l1.rep() == l2.rep();
-    } 
+    }
 
     result_type
     operator()(const Ray_2& r1, const Ray_2& r2) const
@@ -1751,7 +1753,7 @@ namespace CommonKernelFunctors {
       for(i=0; i<3; i++)
 	if ( t1.vertex(0) == t2.vertex(i) )
 	  break;
-      
+
       return (i<3) && t1.vertex(1) == t2.vertex(i+1)
                    && t1.vertex(2) == t2.vertex(i+2);
     }
@@ -1799,67 +1801,67 @@ namespace CommonKernelFunctors {
     operator()(const Plane_3 &v1, const Plane_3 &v2) const
     {
       return v1.rep() == v2.rep();
-    }  
+    }
 
     result_type
     operator()(const Iso_cuboid_3 &v1, const Iso_cuboid_3 &v2) const
     {
       return v1.rep() == v2.rep();
-    }  
+    }
 
     result_type
     operator()(const Sphere_3 &v1, const Sphere_3 &v2) const
     {
       return v1.rep() == v2.rep();
-    }  
+    }
 
     result_type
     operator()(const Tetrahedron_3 &v1, const Tetrahedron_3 &v2) const
     {
       return v1.rep() == v2.rep();
-    }  
+    }
 
     result_type
     operator()(const Triangle_3 &v1, const Triangle_3 &v2) const
     {
       return v1.rep() == v2.rep();
-    }  
+    }
 
     result_type
     operator()(const Ray_3 &v1, const Ray_3 &v2) const
     {
       return v1.rep() == v2.rep();
-    }  
+    }
 
     result_type
     operator()(const Line_3 &v1, const Line_3 &v2) const
     {
       return v1.rep() == v2.rep();
-    }  
+    }
 
     result_type
     operator()(const Direction_3 &v1, const Direction_3 &v2) const
     {
       return v1.rep() == v2.rep();
-    }  
+    }
 
     result_type
     operator()(const Segment_3 &v1, const Segment_3 &v2) const
     {
       return v1.rep() == v2.rep();
-    }  
+    }
 
     result_type
     operator()(const Vector_3 &v1, const Vector_3 &v2) const
     {
       return v1.rep() == v2.rep();
-    }  
+    }
 
     result_type
     operator()(const Vector_3 &v, const Null_vector &n) const
     {
       return v.rep() == n;
-    }  
+    }
   };
 
   template <typename K>
@@ -2076,8 +2078,8 @@ namespace CommonKernelFunctors {
 
     result_type
     operator()( const Iso_rectangle_2& r, const Point_2& p) const
-    { 
-      return K().bounded_side_2_object()(r,p)== ON_UNBOUNDED_SIDE; 
+    {
+      return K().bounded_side_2_object()(r,p)== ON_UNBOUNDED_SIDE;
     }
   };
 
@@ -2308,7 +2310,7 @@ namespace CommonKernelFunctors {
 
     Left_turn_2() {}
     Left_turn_2(const Orientation_2& o_) : o(o_) {}
-  
+
     result_type
     operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
     { return o(p, q, r) == LEFT_TURN; }
@@ -2319,7 +2321,7 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Point_2        Point_2;
     typedef typename K::Orientation_2  Orientation_2;
-    typedef typename K::Collinear_are_ordered_along_line_2 
+    typedef typename K::Collinear_are_ordered_along_line_2
     Collinear_are_ordered_along_line_2;
     Orientation_2 o;
     Collinear_are_ordered_along_line_2 co;
@@ -2328,8 +2330,8 @@ namespace CommonKernelFunctors {
     typedef Arity_tag< 3 >             Arity;
 
     Less_rotate_ccw_2() {}
-    Less_rotate_ccw_2(const Orientation_2& o_, 
-		      const Collinear_are_ordered_along_line_2& co_) 
+    Less_rotate_ccw_2(const Orientation_2& o_,
+		      const Collinear_are_ordered_along_line_2& co_)
       : o(o_), co(co_)
     {}
 
