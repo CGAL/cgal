@@ -22,6 +22,7 @@
 
 #include <CGAL/Arr_enums.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
+#include <vector>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -56,8 +57,8 @@ protected:
   typedef typename Envelope_diagram_1::Edge_const_handle   Edge_const_handle;
   typedef typename Envelope_diagram_1::Edge_handle         Edge_handle;
 
-  typedef std::list<X_monotone_curve_2 *>          Curve_pointer_list;
-  typedef typename Curve_pointer_list::iterator    Curve_pointer_iterator;
+  typedef std::vector<X_monotone_curve_2 *>        Curve_pointer_vector;
+  typedef typename Curve_pointer_vector::iterator  Curve_pointer_iterator;
 
   typedef Arr_traits_adaptor_2<Traits_2>           Traits_adaptor_2;
 
@@ -161,25 +162,25 @@ public:
     typename Traits_2::Is_vertical_2  is_vertical = 
                                               traits->is_vertical_2_object();
 
-    Curve_pointer_list    reg_list;
-    Curve_pointer_list    vert_list;
+    Curve_pointer_vector  reg_vec;
+    Curve_pointer_vector  vert_vec;
     XCurvesIterator       iter;
 
     for (iter = begin; iter != end; ++iter)
     {
       if (is_vertical (*iter))
-        vert_list.push_back (&(*iter));
+        vert_vec.push_back (&(*iter));
       else
-        reg_list.push_back (&(*iter));
+        reg_vec.push_back (&(*iter));
     }
 
     // Construct the envelope for the non-vertical curves.
-    _construct_envelope_non_vertical (reg_list.begin(), reg_list.end(),
+    _construct_envelope_non_vertical (reg_vec.begin(), reg_vec.end(),
                                       diagram);
 
     // Merge the vertical segments.
-    if (vert_list.size() > 0)
-      _merge_vertical_segments (vert_list,
+    if (vert_vec.size() > 0)
+      _merge_vertical_segments (vert_vec,
                                 diagram);
 
     return;
@@ -292,36 +293,49 @@ protected:
   /*! \struct
    * A functor used to sort vertical segments by their x-coordinate.
    */
-  class Vertical_strict_weak_ordering
+  class Less_vertical_segment
   {
   private:    
-    const Traits_2         *traits;
+
+    typename Traits_2::Compare_x_2             comp_x;
+    typename Traits_2::Construct_min_vertex_2  min_vertex;
 
   public:
-    Vertical_strict_weak_ordering (const Traits_2 *_traits) :
-      traits(_traits)
-    {}
 
-    bool operator() (const X_monotone_curve_2& cv1,
-                     const X_monotone_curve_2& cv2) const
+    Less_vertical_segment (const Traits_2 *traits)
     {
-      return (traits->compare_x_2_object() 
-              (traits->construct_min_vertex_2_object()(cv1),
-               traits->construct_min_vertex_2_object()(cv2)) == SMALLER);
-      
-      return (true);
+      comp_x = traits->compare_x_2_object();
+      min_vertex = traits->construct_min_vertex_2_object();
+    }
+
+    bool operator() (const X_monotone_curve_2 *cv1,
+                     const X_monotone_curve_2 *cv2) const
+    {
+      return (comp_x (min_vertex (*cv1),
+                      min_vertex (*cv2)) == SMALLER);
     }
   };
 
   /*!
    * Merge the vertical segments into the lower/upper envelope given as a
    * minimization (or maximization) diagram.
-   * \param vert_list The list of vertical segments.
+   * \param vert_vec The list of vertical segments.
    * \param out_d The input minimization (or maximization) diagram.
    *             The function merges the vertical segments into this diagram.
    */
-  void _merge_vertical_segments (Curve_pointer_list& vert_list,
+  void _merge_vertical_segments (Curve_pointer_vector& vert_vec,
                                  Envelope_diagram_1& out_d);
+
+  /*!
+   * Split a given diagram edge by inserting a vertex in its interior.
+   * \param diag The diagram.
+   * \param p The point that the new vertex is associated with.
+   * \param e The edge to split.
+   * \return A handle for the vertex.
+   */
+  Vertex_handle _split_edge (Envelope_diagram_1& diag,
+                             const Point_2& p, Edge_handle e);
+
 };
 
 CGAL_END_NAMESPACE

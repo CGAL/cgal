@@ -875,234 +875,206 @@ Envelope_divide_and_conquer_2<Traits,Diagram>::_append_vertex
 //
 template <class Traits, class Diagram>
 void Envelope_divide_and_conquer_2<Traits,Diagram>::
-_merge_vertical_segments (Curve_pointer_list& vert_list,
+_merge_vertical_segments (Curve_pointer_vector& vert_vec,
                           Envelope_diagram_1& out_d)
 {
-    /* RWRW!
-    // Sort the vertical segments by their increasing x-coordinate.
-    Vertical_strict_weak_ordering vert_order(traits);
+  // Sort the vertical segments by their increasing x-coordinate.
+  Less_vertical_segment  les_vert (traits);
 
-    // RWRW: Perform bubble-sort, as the following does not compile under Windows:
-    // vert_list.sort (vert_order);
-    typename Curve_pointer_list::iterator  i_iter, j_iter;
+  std::sort (vert_vec.begin(), vert_vec.end(), les_vert);
 
-    for (i_iter = vert_list.begin(); i_iter != vert_list.end(); i_iter++)
+  // Proceed on the diagram and on the sorted sequence of vertical segments
+  // and merge them into the diagram.
+  typename Traits_adaptor_2::Compare_x_2             comp_x =
+                                      traits->compare_x_2_object();
+  typename Traits_adaptor_2::Compare_xy_2            comp_xy =
+                                      traits->compare_xy_2_object();
+  typename Traits_adaptor_2::Compare_y_at_x_2        comp_y_at_x =
+                                      traits->compare_y_at_x_2_object();
+  typename Traits_adaptor_2::Construct_min_vertex_2  min_vertex =
+                                      traits->construct_min_vertex_2_object();
+  typename Traits_adaptor_2::Construct_max_vertex_2  max_vertex =
+                                      traits->construct_max_vertex_2_object();
+
+  Edge_handle             e = out_d.leftmost();
+  Vertex_handle           v;
+  Curve_pointer_iterator  iter = vert_vec.begin();
+  Curve_pointer_iterator  next;
+  Comparison_result       res;
+  bool                    in_e_range;
+  bool                    on_v;
+  Point_2                 p;
+
+  while (iter != vert_vec.end())
+  {
+    // Check if the current vertical segment is on the x-range of the current
+    // edge.
+    if (e != out_d.rightmost())
     {
-      j_iter = i_iter;
-      j_iter++;
-      for (; j_iter != vert_list.end(); j_iter++)
+      // The current edge is not the rightmost one: we compare the x-coordinate
+      // of the vertical segment to its right vertex.
+      v = e->right();
+
+      res = comp_x (min_vertex (**iter), v->point());
+      in_e_range = (res != LARGER);
+      on_v = (res == EQUAL);
+    }
+    else
+    {
+      // This is the rightmost edge, so the vertical segment must lie on its
+      // x-range.
+      in_e_range = true;
+      on_v = false;
+    }
+    
+    // If the current vertical segment is not in the x-range of the current
+    // edge, we proceed to the next edge.
+    if (! in_e_range)
+    {
+      e = v->right();
+      continue;
+    }
+
+    // Go over all vertical segments that share the same x-coordinate and
+    // find the one(s) with the smallest endpoint (or largest endpoint, if
+    // we construct an upper envelope). 
+    std::list<X_monotone_curve_2>    env_cvs;
+
+    env_cvs.push_back (**iter);
+    next = iter;
+    ++next;
+    while (next != vert_vec.end() &&
+           comp_x (min_vertex (**iter), min_vertex (**next)) == EQUAL)
+    {
+      if (env_type == LOWER)
       {
-        if (! vert_order (*i_iter, *j_iter))
+        // Compare the lower endpoints of both curves.
+        res = comp_xy (min_vertex (env_cvs.front()), min_vertex (**next));
+
+        // Update the list of vertical segments with minimal endpoints as
+        // necessary.
+        if (res == EQUAL)
         {
-          // Swap the pointers.
-          const M_curve_2 *temp = *i_iter;
-          *i_iter = *j_iter;
-          *j_iter = temp;
+          env_cvs.push_back (**next);
+        }
+        if (res == LARGER)
+        {
+          env_cvs.clear();
+          env_cvs.push_back (**next);
+        }
+      }
+      else
+      {
+        // Compare the upper endpoints of both curves.
+        res = comp_xy (max_vertex (env_cvs.front()), max_vertex (**next));
+
+        // Update the list of vertical segments with maximal endpoints as
+        // necessary.
+        if (res == EQUAL)
+        {
+          env_cvs.push_back (**next);
+        }
+        if (res == SMALLER)
+        {
+          env_cvs.clear();
+          env_cvs.push_back (**next);
+        }
+      }
+
+      ++next;
+    }
+
+    // Compare the endpoint to the diagram feature.
+    if (env_type == LOWER)
+      p = min_vertex (env_cvs.front());
+    else
+      p = max_vertex (env_cvs.front());
+
+    if (on_v)
+    {
+      // Compare p to the current vertex.
+      res = comp_xy (p, v->point());
+
+      if (res == EQUAL)
+      {
+        // Add curves to the current vertex.
+        v->add_curves (env_cvs.begin(), env_cvs.end());
+      }
+      else if ((env_type == LOWER && res == SMALLER) ||
+               (env_type == UPPER && res == LARGER))
+      {
+        // Replace the list of curves associated with the vertex.
+        v->clear_curves();
+        v->add_curves (env_cvs.begin(), env_cvs.end());
+      }
+    }
+    else
+    {
+      // p lies in the interior of the current edge.
+      Vertex_handle   new_v;
+
+      if (e->is_empty())
+      {
+        // Split the empty edge and associate the new vertex with the
+        // vertical segments.
+        new_v = _split_edge (out_d, p, e);
+        new_v->add_curves (env_cvs.begin(), env_cvs.end());
+      }
+      else
+      {
+        // Compare p with the current curve.
+        res = comp_y_at_x (p, e->curve());
+        
+        if ((env_type == LOWER && res != LARGER) ||
+            (env_type == UPPER && res != SMALLER))
+        {
+          new_v = _split_edge (out_d, p, e);
+          new_v->add_curves (env_cvs.begin(), env_cvs.end());
+
+          if (res == EQUAL)
+            new_v->add_curve (e->curve());
         }
       }
     }
 
-    // Go over all vertical segments that are to the left of the leftmost
-    // vertex of the diagram.
-    Curve_pointer_iterator    iter = vert_list.begin();
-    M_diagram_vertex_1 *u = NULL;
-    M_diagram_vertex_1 *v = out_d.leftmostP;
-    Comparison_result  res;
-    Point_2            q;
-
-    while (v != NULL)
-    {
-      while (iter != vert_list.end() &&
-             traits->compare_x_2_object() (traits->construct_min_vertex_2_object()((*iter)->xcv),
-                                v->p) == SMALLER)
-      {
-        // Get the lower (or the upper) point of the vertical segment.
-        res = traits->compare_xy_2_object() (traits->construct_min_vertex_2_object()((*iter)->xcv),
-          traits->construct_max_vertex_2_object()((*iter)->xcv));
-
-        if ((env_type == LOWER && res == SMALLER) ||
-          (env_type == UPPER && res == LARGER))
-          q = traits->construct_min_vertex_2_object()((*iter)->xcv);
-        else
-          q = traits->construct_max_vertex_2_object()((*iter)->xcv);
-
-        // Act according to the previous vertex u.
-        if (u == NULL)
-        {
-          // The vertical segment is to the left of the leftmost diagram
-          // vertex.
-          M_diagram_vertex_1 *new_v1 = vert_alloc.Allocate();
-          M_diagram_vertex_1 *new_v2 = vert_alloc.Allocate();
-          M_diagram_edge_1   *new_e = edge_alloc.Allocate();
-          M_diagram_edge_1   *empty_e = edge_alloc.Allocate();
-
-          new_v1->p = q;
-          new_v2->p = q;
-
-          new_v1->leftP = NULL;
-          new_v1->rightP = new_e;
-
-          new_e->mcvP = *iter;
-          new_e->leftP = new_v1;
-          new_e->rightP = new_v2;
-
-          new_v2->leftP = new_e;
-          new_v2->rightP = empty_e;
-
-          empty_e->mcvP = NULL;
-          empty_e->leftP = new_v2;
-          empty_e->rightP = out_d.leftmostP;
-
-          out_d.leftmostP->leftP = empty_e;
-          out_d.leftmostP = new_v1;
-
-          // Update the pointer to diagram vertex immediately to the left of v.
-          u = new_v2;
-        }
-        else if (traits->compare_x_2_object() (q, u->p) == EQUAL)
-        {
-          // The vertical segment has the same x-coordinate as u.
-          res = traits->compare_xy_2_object() (q, u->p);
-
-          // Insert a new curve only if it is below (or above, in case of an
-          // upper envelope) u->p.
-          if ((env_type == LOWER && res == SMALLER) ||
-            (env_type == UPPER && res == LARGER))
-          {
-            M_diagram_edge_1   *new_e = edge_alloc.Allocate();
-            M_diagram_vertex_1 *new_v = vert_alloc.Allocate();
-
-            new_v->p = q;
-
-            new_e->mcvP = *iter;
-            new_e->leftP = u;
-            new_e->rightP = new_v;
-
-            new_v->leftP = new_e;
-            new_v->rightP = u->rightP;
-
-            u->rightP->leftP = new_v;
-            u->p = q;
-            u->rightP = new_e;
-
-            // Update the pointer to diagram vertex immediately to the 
-            // left of v.
-            u = new_v;
-          }
-        }
-        else
-        {
-          // The vertical segment is placed in between u and v.
-          bool                     add_q = false;
-          const X_monotone_curve_2 *cvP = _curve_to_left(v);
-
-          if (cvP == NULL)
-          {
-            // The edge between u and v is empty:
-            add_q = true;
-          }
-          else
-          {
-            // Check whether q lies below (or above, in case of an upper
-            // envelope) the curves of the edge to the left of u.
-            res = traits->compare_y_at_x_2_object() (q, *cvP);
-
-            add_q = (res == EQUAL) ||
-                    (env_type == LOWER && res == SMALLER) ||
-                    (env_type == UPPER && res == LARGER);
-          }
-
-          if (add_q)
-          {
-            // Cut the edge to the left of v and insert the vertical segment.
-            M_diagram_vertex_1 *new_v1 = vert_alloc.Allocate();
-            M_diagram_vertex_1 *new_v2 = vert_alloc.Allocate();
-            M_diagram_edge_1   *new_e = edge_alloc.Allocate();
-            M_diagram_edge_1   *dup_e = edge_alloc.Allocate();
-
-            new_v1->p = q;
-            new_v2->p = q;
-            *dup_e = *(v->leftP);
-
-            new_v1->leftP = v->leftP;
-            new_v1->rightP = new_e;
-
-            new_e->mcvP = *iter;
-            new_e->leftP = new_v1;
-            new_e->rightP = new_v2;
-
-            new_v2->leftP = new_e;
-            new_v2->rightP = dup_e;
-
-            dup_e->leftP = new_v2;
-            dup_e->rightP = v;
-
-            v->leftP->rightP = new_v1;
-            v->leftP = dup_e;
-
-            // Update the pointer to diagram vertex immediately to the 
-            // left of v.
-            u = new_v2;
-          }
-        }
-
-        // Move to the next vertical segment.
-        iter++;
-      }
-
-      // Move to the next diagram vertex.
-      u = v;
-      if (v->rightP != NULL)
-        v = v->rightP->rightP;
-      else
-        v = NULL;
-    }
-
-    // Deal with all segments located to the right of the diagram.
-    while (iter != vert_list.end())
-    {
-      // Get the lower (or the upper) point of the vertical segment.
-      res = traits->compare_xy_2_object() (traits->construct_min_vertex_2_object()((*iter)->xcv),
-        traits->construct_max_vertex_2_object()((*iter)->xcv));
-
-      if ((env_type == LOWER && res == SMALLER) ||
-        (env_type == UPPER && res == LARGER))
-        q = traits->construct_min_vertex_2_object()((*iter)->xcv);
-      else
-        q = traits->construct_max_vertex_2_object()((*iter)->xcv);
-
-      // The vertical segment is to the right of the rightmost diagram vertex.
-      M_diagram_vertex_1 *new_v1 = vert_alloc.Allocate();
-      M_diagram_vertex_1 *new_v2 = vert_alloc.Allocate();
-      M_diagram_edge_1   *new_e = edge_alloc.Allocate();
-      M_diagram_edge_1   *empty_e = edge_alloc.Allocate();
-
-      new_v1->p = q;
-      new_v2->p = q;
-
-      empty_e->mcvP = NULL;
-      empty_e->leftP = out_d.rightmostP;
-      empty_e->rightP = new_v1;
-
-      new_v1->leftP = empty_e;
-      new_v1->rightP = new_e;
-
-      new_e->mcvP = *iter;
-      new_e->leftP = new_v1;
-      new_e->rightP = new_v2;
-
-      new_v2->leftP = new_e;
-      new_v2->rightP = NULL;
-
-      out_d.rightmostP->rightP = empty_e;
-      out_d.rightmostP = new_v2;
-
-      // Move to the next vertical segment.
-      iter++;
-    }
-    */
+    // Proceed to the next vertical segment with larger x-coordinate.
+    iter = next;
+  }
 
   return;
+}
+
+// ---------------------------------------------------------------------------
+// Split a given diagram edge by inserting a vertex in its interior.
+//
+template <class Traits, class Diagram>
+typename Envelope_divide_and_conquer_2<Traits,Diagram>::Vertex_handle
+Envelope_divide_and_conquer_2<Traits,Diagram>::_split_edge
+    (Envelope_diagram_1& diag,
+     const Point_2& p, Edge_handle e)
+{
+  // Create the new vertex and the new edge.
+  Vertex_handle   new_v = diag.new_vertex (p);
+  Edge_handle     new_e = diag.new_edge();
+  
+  // Duplicate the curves container associated with e.
+  if (! e->is_empty())
+    new_e->add_curves (e->curves_begin(), e->curves_end());
+  
+  // Connect the new vertex between e and new_e.
+  new_v->set_left (e);
+  new_v->set_right (new_e);
+  
+  new_e->set_left (new_v);
+  if (e != diag.rightmost())
+    new_e->set_right (e->right());
+  else
+    diag.set_rightmost (new_e);
+
+  e->set_right (new_v);
+
+  // Return the new vertex.
+  return (new_v);
 }
 
 CGAL_END_NAMESPACE
