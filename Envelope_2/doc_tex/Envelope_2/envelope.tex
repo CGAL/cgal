@@ -1,0 +1,79 @@
+
+A continuous curve $C$ in $\reals^2$ is called {\em $x$-monotone} if
+every vertical line intersects it at a single point at most. For
+example, the circle $x^2 + y^2 = 1$ is {\em not} $xy$-monotone as the
+vertical line $x = 0$ intersects it at $(0, -1)$ and at $(0, 1)$;
+however, it is possible to split the circle into an upper part and a
+lower part, such that both these parts are $x$-monotone.
+
+An $x$-monotone curve can be represented as a univariate function
+$y = C(x)$, defined over some continuous range $R_C \subseteq \reals$.
+Given a set $\calC = \{ C_1, C_2, \ldots, C_n \}$ of $x$-monotone
+curves, their {\em lower envelope} is defined as the point-wise minimum of
+all curves. Namely, the lower envelope of the set $\calC$ can be
+defined as the following function:
+\begin{eqnarray*}
+\calL_{\calC} (x) = \min_{1 \leq k \leq n}{\overline{C}_k (x)} \ ,
+\end{eqnarray*}
+where we define $\overline{C}_k(x) = C_k(x)$ for $x \in R_{C_k}$,
+and $\overline{C}_k(x) = \infty$ otherwise.
+
+Similarly, the {\em upper envelope} of $\calC$ is the point-wise maximum of
+the $x$-monotone curves in the set:
+\begin{eqnarray*}
+\calU_{\calC} (x) = \max_{1 \leq k \leq n}{\underline{C}_k (x)} \ ,
+\end{eqnarray*}
+where in this case $\underline{C}_k(x) = -\infty$ for $x \nin R_{C_k}$.
+
+Given a set of $x$-monotone curves $\calC$, the {\em minimization
+diagram} of $\calC$ is a subdivision of the $x$-axis into cells,
+such that the identity of the curves that induce the lower envelope
+over a specific cell of the subdivision (an edge or a vertex) is the
+same. In non-degenerate situation, an edge --- which represents a
+continuous interval on the $x$-axis --- is induced by a single
+curve (or by no curves at all, if there are no $x$-monotone curves
+defined over the interval), and a vertex is induced by a single curve
+and corresponds to one of its endpoints, or by two curves and
+corresponds to their intersection point.
+The {\em maximization diagram} is symmetrically defined for upper envelopes.
+In the rest of this chapter, we refer to both these diagrams as
+{\em envelope diagrams}.
+
+Lower and upper envelopes can be efficiently computed using a
+divide-and-conquer approach. First note that the envelope diagram for
+a single $x$-monotone curve $C_k$ is trivial to compute: we project
+the boundary of its range of definition $R_{C_k}$ onto the $x$-axis
+and label the features it induces accordingly. Given a set
+$\hat{\calC}$ of (non necessarily $x$-monotone) curves in $\reals^2$,
+we start by subdividing each curve into a finite number of weakly
+$x$-monotone curves\footnote{To handle degenerate inputs, we consider
+vertical segments as {\em weakly} $x$-monotone.}, obtaining the set
+$\calC$. We continue by splitting the set into two disjoint subsets
+$\calC_1$ and $\calC_2$, and we compute their envelope diagrams
+recursively. We finally have to merge the diagrams, and we do this in
+linear time by traversing both diagrams in parallel.
+
+\begin{figure}[t]
+\begin{ccTexOnly}
+  \begin{center}
+    \epsfig{figure=Envelope_2/fig/min_diag.eps,width=5in,silent=}
+  \end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+  <p><center>
+  <img src="./fig/min_diag.gif" border=0 alt="The minimization diagram">
+  </center>
+\end{ccHtmlOnly}
+\caption{The lower envelope of eight line segments, labeled
+$A, \ldots, H$. The minimization diagram is shown at the bottom, where
+each diagram vertex points to the point associated with it, and the
+labels of the segment that induce a diagram edge are displayed below
+this edge. Note that there exists one edge that represents an overlap
+and there are also a few edges that represent empty
+intervals.\label{env2_fig:min_diag}}
+\end{figure}
+
+\section{Examples}
+%=================
+
+\ccIncludeExampleCode{../examples/Envelope_2/ex_envelope_segments.cpp}

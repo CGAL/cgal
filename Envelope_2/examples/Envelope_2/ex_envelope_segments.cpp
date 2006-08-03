@@ -35,7 +35,7 @@ int main ()
   segments.push_back (Labeled_segment_2 (Segment_2 (Point_2 (4, 2),
                                                     Point_2 (6, 4)), 'D'));
   segments.push_back (Labeled_segment_2 (Segment_2 (Point_2 (8, 3),
-                                                    Point_2 (8, 5)), 'E'));
+                                                    Point_2 (8, 6)), 'E'));
   segments.push_back (Labeled_segment_2 (Segment_2 (Point_2 (9, 2),
                                                     Point_2 (12, 4)), 'F'));
   segments.push_back (Labeled_segment_2 (Segment_2 (Point_2 (10, 2),
