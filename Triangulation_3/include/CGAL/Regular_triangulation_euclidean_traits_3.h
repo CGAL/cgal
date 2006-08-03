@@ -387,6 +387,7 @@ class Regular_triangulation_euclidean_traits_base_3
   : public K
 {
 public:
+  typedef K                                          Kernel;
   typedef typename K::FT                             FT;
   typedef typename K::Point_3                        Bare_point;
   typedef CGAL::Weighted_point<Bare_point, Weight>   Weighted_point;
@@ -689,7 +690,10 @@ class Regular_triangulation_euclidean_traits_3
           <Exact_predicates_inexact_constructions_kernel, T>
   : public Regular_triangulation_filtered_traits_3
           <Exact_predicates_inexact_constructions_kernel>
-{};
+{
+public:
+  typedef Exact_predicates_inexact_constructions_kernel  Kernel;
+};
 
 CGAL_END_NAMESPACE
 

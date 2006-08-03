@@ -363,6 +363,7 @@ class Regular_triangulation_euclidean_traits_base_2
   : public R
 {
 public:
+  typedef K                                     Kernel;
   typedef R                                     Rep;
   typedef W                                     Weight;
   typedef R                                     Traits;
@@ -428,7 +429,10 @@ class Regular_triangulation_euclidean_traits_2
          <Exact_predicates_inexact_constructions_kernel>
   : public Regular_triangulation_filtered_traits_2
          <Exact_predicates_inexact_constructions_kernel>
-{};
+{
+public:
+  typedef Exact_predicates_inexact_constructions_kernel   Kernel;
+};
 
 CGAL_END_NAMESPACE
 

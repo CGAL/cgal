@@ -71,6 +71,8 @@ class Regular_triangulation_filtered_traits_3
 
 public:
 
+  typedef K               Kernel;
+
   typedef Filtered_predicate<
             typename Exact_traits::Power_test_3,
             typename Filtering_traits::Power_test_3,
