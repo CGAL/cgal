@@ -1,4 +1,4 @@
-include $(ROOT)/include/make/comdef.mak
+make/comdef.mak
 
 TARGET_GIFS = compare_over_curve.gif
 TARGET_GIFS+= compare_over_point.gif
@@ -26,7 +26,7 @@ endef
 	gs -dSAFER -dCompatibilityLevel=1.2 -q -sDEVICE=bbox -dNOPAUSE -dBATCH $<
 
 %.gif : %.dvi
-	dvips -x 2000 -y 2000 -D4000 -P cmz $< -o
+	dvips -x 1000 -y 1000 -D4000 -P cmz $< -o
 	$(toeps) > $(basename $@).eps2
 	convert -interlace Line -transparent White $(basename $@).eps2 $@;
 
@@ -72,8 +72,6 @@ pdf :
 
 LDIRT = tmp.pstex_t tmp.dvi tmp.aux tmp.log $(TARGET_PDFS:.pdf=.eps2) $(TARGET_PDFS:.pdf=.ps)
 
-# fan_grids.gif: fan_grids.eps
-#	convert -resize 137x137% -interlace Line -transparent White $< $@
-# 
-# Europe.gif: Europe.eps
+# ex_triangles.eps.gif: fan_grids.eps
 #	convert -resize 140x140% -interlace Line -transparent White $< $@
+ 
