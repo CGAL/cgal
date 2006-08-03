@@ -20,7 +20,6 @@
 #if ! (CGAL_SORTED_MATRIX_SEARCH_H)
 #define CGAL_SORTED_MATRIX_SEARCH_H 1
 
-#include <boost/config.hpp>
 
 #include <CGAL/basic.h>
 #include <CGAL/Optimisation/assertions.h>

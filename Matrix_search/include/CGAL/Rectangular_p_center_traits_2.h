@@ -21,7 +21,6 @@
 #define CGAL_RECTANGULAR_P_CENTER_TRAITS_2_H 1
 
 
-#include <boost/config.hpp>
 
 #include <CGAL/Point_2.h>
 #include <CGAL/Iso_rectangle_2.h>
