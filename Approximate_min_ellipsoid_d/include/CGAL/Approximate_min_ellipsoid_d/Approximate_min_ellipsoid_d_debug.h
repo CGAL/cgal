@@ -649,21 +649,21 @@ namespace CGAL {
 	const double tmp2 = ((u*(u*b-2.0*v*h)+v*v*a)/tmp1-4.0*mu)/tmp1;
 	const double hw   = 0.5*std::sqrt(b*tmp2),  vw = 0.5*std::sqrt(a*tmp2);
 	const double hoff = -0.5*(u*b-v*h)/tmp1, voff = 0.5*(u*h-v*a)/tmp1;
-	adjust_bounding_box(std::min(hw+hoff,-hw+hoff),
-			    std::min(vw+voff,-vw+voff));
-	adjust_bounding_box(std::max(hw+hoff,-hw+hoff),
-			    std::max(vw+voff,-vw+voff));
+	adjust_bounding_box((std::min)(hw+hoff,-hw+hoff),
+			    (std::min)(vw+voff,-vw+voff));
+	adjust_bounding_box((std::max)(hw+hoff,-hw+hoff),
+			    (std::max)(vw+voff,-vw+voff));
 
 	#if 0
 	// draw bounding box:
-	body << "newpath " << std::min(hw+hoff,-hw+hoff) << " "
-	     << std::min(vw+voff,-vw+voff) << " moveto "
-	     << std::max(hw+hoff,-hw+hoff) << " " 
-	     << std::min(vw+voff,-vw+voff) << " lineto "
-	     << std::max(hw+hoff,-hw+hoff) << " "
-	     << std::max(vw+voff,-vw+voff) << " lineto "
-	     << std::min(hw+hoff,-hw+hoff)  << " "
-	     << std::max(vw+voff,-vw+voff) << " lineto closepath stroke\n";
+	body << "newpath " << (std::min)(hw+hoff,-hw+hoff) << " "
+	     << (std::min)(vw+voff,-vw+voff) << " moveto "
+	     << (std::max)(hw+hoff,-hw+hoff) << " " 
+	     << (std::min)(vw+voff,-vw+voff) << " lineto "
+	     << (std::max)(hw+hoff,-hw+hoff) << " "
+	     << (std::max)(vw+voff,-vw+voff) << " lineto "
+	     << (std::min)(hw+hoff,-hw+hoff)  << " "
+	     << (std::max)(vw+voff,-vw+voff) << " lineto closepath stroke\n";
 	#endif
 
 	// begin drawing:
@@ -697,10 +697,10 @@ namespace CGAL {
       // Make sure the bounding box is large enough to contain the point (x,y).
       {
 	if (adjust_bb) {
-	  bb[0] = std::min(x,bb[0]);
-	  bb[2] = std::max(x,bb[2]);
-	  bb[1] = std::min(y,bb[1]);
-	  bb[3] = std::max(y,bb[3]);
+	  bb[0] = (std::min)(x,bb[0]);
+	  bb[2] = (std::max)(x,bb[2]);
+	  bb[1] = (std::min)(y,bb[1]);
+	  bb[3] = (std::max)(y,bb[3]);
 	}
       }
       
