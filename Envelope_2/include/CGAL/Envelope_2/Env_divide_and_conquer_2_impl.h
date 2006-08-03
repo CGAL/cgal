@@ -77,6 +77,27 @@ _construct_envelope_non_vertical (Curve_pointer_iterator begin,
                                       d2);
 
     _merge_envelopes (d1, d2, out_d);
+
+    // Print the minimization diagram.
+    /* RWRW:
+    Edge_const_handle    e = out_d.leftmost();
+    Vertex_const_handle  v;
+
+    std::cout << "The diagram: ";
+    while (e != out_d.rightmost())
+    {
+      if (! e->is_empty())
+        std::cout << e->curve() << "  ";
+      else
+        std::cout << "[empty]" << "  ";
+
+      v = e->right();
+      std::cout << "(" << v->point() << ")  ";
+      
+      e = v->right();
+    }
+    std::cout << "[empty]" << std::endl;
+    */
   }
   
   return;
@@ -441,12 +462,30 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
   if (env_type == UPPER)
     u_res = CGAL::opposite (u_res);
   
-  // Use the current rightmost of the diagram as a reference point.
-  bool               v_rm_exists = (out_d.leftmost() != out_d.rightmost());
-  Vertex_handle      v_rm;
+  // Use the current rightmost of the two left vertices as a reference point.
+  bool                 v_rm_exists = true;
+  Vertex_const_handle  v_rm;
 
-  if (v_rm_exists)
-    v_rm = out_d.rightmost()->left();
+  if (is_leftmost1)
+  {
+    if (is_leftmost2)
+      v_rm_exists = false;
+    else
+      v_rm = e2->left();
+  }
+  else
+  {
+    if (is_leftmost2)
+      v_rm = e1->left();
+    else
+    {
+      if ((traits->compare_xy_2_object() (e1->left()->point(),
+                                          e2->left()->point()) == LARGER))
+        v_rm = e1->left();
+      else
+        v_rm = e2->left();
+    }
+  }
 
   // Find the next intersection of the envelopes to the right of the current
   // rightmost point in the merged diagram.
@@ -710,8 +749,20 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
   }
   
   // Check if we need to insert v into the diagram.
+  if (pu_exists)
+  {
+    // Update the relative position of the two curves, which is their
+    // order immediately to the right of their last observed intersection
+    // point pu.
+    u_res = traits->compare_y_at_x_right_2_object() (e1->curve(),
+                                                     e2->curve(),
+                                                     pu);
+    
+    if (env_type == UPPER)
+      u_res = CGAL::opposite (u_res);
+  }
   CGAL_assertion (u_res != EQUAL);
-  
+
   if (u_res == SMALLER)
   {    
     // The final part of the interval is taken from e1.
