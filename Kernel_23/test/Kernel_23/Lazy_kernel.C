@@ -66,7 +66,6 @@ main()
   std::cout << std::endl;
   test_new_3( Cls() );
 
-#if 0
   std::cout << "Testing new parts with Lazy_kernel<Cartesian<Quotient<Precise_integer>>> :";
   std::cout << std::endl;
   _test_orientation_and_bounded_side( Cls() );
@@ -81,7 +80,6 @@ main()
   std::cout << "Testing 3d-2d with Lazy_kernel<Cartesian<Quotient<Precise_integer>>> :";
   std::cout << std::endl;
   _test_mf_plane_3_to_2d( Cls() );
-#endif
   
   std::cout << "All tests done" << std::endl;
   return 0;
