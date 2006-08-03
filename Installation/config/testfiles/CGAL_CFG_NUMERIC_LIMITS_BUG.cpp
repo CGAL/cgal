@@ -45,6 +45,8 @@ int main()
   bool b = true;
   b = b && !is_finite(inf);
 
+  (void) nan; // stop warning
+
   if (!b)
     return -1;
   return 0;
