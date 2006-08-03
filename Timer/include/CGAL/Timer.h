@@ -25,8 +25,6 @@
 #ifndef CGAL_TIMER_H
 #define CGAL_TIMER_H 1
 
-#include <boost/config.hpp>
-
 #include <CGAL/basic.h>
 
 CGAL_BEGIN_NAMESPACE
