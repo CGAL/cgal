@@ -678,21 +678,19 @@ compare_power_distance_3 (const Point &p,
 
 CGAL_END_NAMESPACE
 
-// Partial specialization for Exact_predicates_inexact_constructions_kernel.
+// Partial specialization for Filtered_kernel<CK>.
 
 #include <CGAL/Regular_triangulation_filtered_traits_3.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Filtered_kernel.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template < typename T >
-class Regular_triangulation_euclidean_traits_3
-          <Exact_predicates_inexact_constructions_kernel, T>
-  : public Regular_triangulation_filtered_traits_3
-          <Exact_predicates_inexact_constructions_kernel>
+template < typename CK, typename T >
+class Regular_triangulation_euclidean_traits_3 < Filtered_kernel<CK>, T>
+  : public Regular_triangulation_filtered_traits_3 < Filtered_kernel<CK> >
 {
 public:
-  typedef Exact_predicates_inexact_constructions_kernel  Kernel;
+  typedef Filtered_kernel<CK>  Kernel;
 };
 
 CGAL_END_NAMESPACE

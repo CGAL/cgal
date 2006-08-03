@@ -363,7 +363,7 @@ class Regular_triangulation_euclidean_traits_base_2
   : public R
 {
 public:
-  typedef K                                     Kernel;
+  typedef R                                     Kernel;
   typedef R                                     Rep;
   typedef W                                     Weight;
   typedef R                                     Traits;
@@ -417,21 +417,19 @@ class Regular_triangulation_euclidean_traits_2
 
 CGAL_END_NAMESPACE
 
-// Now specialize for Exact_predicates_ienxact_constructions_kernel, to get
+// Now specialize for Filtered_kernel<CK>, to get
 // the filtered traits automatically.
 #include <CGAL/Regular_triangulation_filtered_traits_2.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Filtered_kernel.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template <>
-class Regular_triangulation_euclidean_traits_2
-         <Exact_predicates_inexact_constructions_kernel>
-  : public Regular_triangulation_filtered_traits_2
-         <Exact_predicates_inexact_constructions_kernel>
+template < typename CK >
+class Regular_triangulation_euclidean_traits_2 < Filtered_kernel<CK> >
+  : public Regular_triangulation_filtered_traits_2 < Filtered_kernel<CK> >
 {
 public:
-  typedef Exact_predicates_inexact_constructions_kernel   Kernel;
+  typedef Filtered_kernel<CK>   Kernel;
 };
 
 CGAL_END_NAMESPACE
