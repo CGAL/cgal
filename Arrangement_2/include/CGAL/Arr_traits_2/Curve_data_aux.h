@@ -28,6 +28,18 @@
 CGAL_BEGIN_NAMESPACE
 
 /*!
+ * \struct A simple merge functor.
+ */
+template <class TYPE>
+struct _Default_merge_func
+{
+  const TYPE& operator() (const TYPE& obj1, const TYPE& obj2)
+  {
+    return (obj1);
+  }
+};
+
+/*!
  * \struct A simple convertor from one type to another.
  */
 template <class TYPE_FROM, class TYPE_TO>

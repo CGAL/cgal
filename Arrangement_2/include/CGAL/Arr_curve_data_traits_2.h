@@ -41,7 +41,8 @@ CGAL_BEGIN_NAMESPACE
  * the overlapping subcurve is obtained from the merge functor.
  * All other functors are inherited from the base ordinary traits class.
  */
-template <class Traits_, class XMonotoneCurveData_, class Merge_,
+template <class Traits_, class XMonotoneCurveData_, 
+          class Merge_ = _Default_merge_func<XMonotoneCurveData_>,
           class CurveData_ = XMonotoneCurveData_,
           class Convert_ = _Default_convert_func<CurveData_,
                                                  XMonotoneCurveData_> >
