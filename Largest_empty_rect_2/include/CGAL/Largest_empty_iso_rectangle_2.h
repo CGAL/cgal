@@ -1353,10 +1353,10 @@ Largest_empty_iso_rectangle_2<T>::Largest_empty_iso_rectangle_2(
      y_sorted(Less_yx(traits())),
      less_xy_point(traits()),
      less_yx_point(traits()),
-     bl_p(b.min()),
-     tr_p(b.max())
+     bl_p((b.min)()),
+     tr_p((b.max)())
 {
-  init(b.min(), b.max());
+  init((b.min)(), (b.max)());
 }
 
 // ctor
