@@ -127,8 +127,8 @@ Ray_2_Iso_rectangle_2_pair(
         typename K::Iso_rectangle_2 const *iso)
 {
     _known = false;
-    _isomin = iso->min();
-    _isomax = iso->max();
+    _isomin = (iso->min)();
+    _isomax = (iso->max)();
     _ref_point = ray->source();
     _dir = ray->direction().to_vector();
     _min = (typename K::FT)(0);

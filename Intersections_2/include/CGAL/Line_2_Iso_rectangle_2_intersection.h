@@ -92,8 +92,8 @@ Line_2_Iso_rectangle_2_pair(typename K::Line_2 const *line,
   : _known(false),
     _ref_point(line->point()),
     _dir(line->direction().to_vector()),
-    _isomin(iso->min()),
-    _isomax(iso->max())
+    _isomin((iso->min)()),
+    _isomax((iso->max)())
 {}
 
 

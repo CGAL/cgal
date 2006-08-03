@@ -44,10 +44,10 @@ intersection(
     typename K::Construct_point_2 construct_point_2;
     typename K::Construct_object_2 construct_object;
     typename K::Construct_iso_rectangle_2 construct_iso_rectangle_2;
-    const typename K::Point_2 &min1 = irect1.min();
-    const typename K::Point_2 &min2 = irect2.min();
-    const typename K::Point_2 &max1 = irect1.max();
-    const typename K::Point_2 &max2 = irect2.max();
+    const typename K::Point_2 &min1 = (irect1.min)();
+    const typename K::Point_2 &min2 = (irect2.min)();
+    const typename K::Point_2 &max1 = (irect1.max)();
+    const typename K::Point_2 &max2 = (irect2.max)();
     typename K::FT minx, miny, maxx, maxy;
     typename K::Point_2 newmin;
     typename K::Point_2 newmax;
