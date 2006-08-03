@@ -29,6 +29,13 @@ the user.
              opposite vertices $p$ and $q$. Note that the object is 
              brought in the canonical form.}
 
+\ccConstructor{Iso_cuboid_3(const Point_3<Kernel> &p, 
+                            const Point_3<Kernel> &q, int);}
+            {introduces an iso-oriented cuboid \ccVar\ with diagonal
+             opposite vertices $p$ and $q$.  The \ccc{int} argument value
+             is only used to distinguish the two overloaded functions.
+             \ccPrecond{$p.x()<=q.x()$, $p.y()<=q.y()$ and $p.z()<=q.z()$.}}
+
 \ccConstructor{Iso_cuboid_3(const Point_3<Kernel> &left, 
                             const Point_3<Kernel> &right,
                             const Point_3<Kernel> &bottom,

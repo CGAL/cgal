@@ -30,6 +30,15 @@ the user.
              opposite vertices $p$ and $q$. Note that the object is 
              brought in the canonical form.}
 
+\ccConstructor{Iso_rectangle_2(const Point_2<Kernel> &p, 
+                               const Point_2<Kernel> &q,
+                               int);}
+            {introduces an iso-oriented rectangle \ccVar\ with diagonal
+             opposite vertices $p$ and $q$.  The \ccc{int} argument value
+             is only used to distinguish the two overloaded functions.
+             \ccPrecond{$p.x()<=q.x()$ and $p.y()<=q.y()$.}}
+
+
 \ccConstructor{Iso_rectangle_2(const Point_2<Kernel> &left, 
                                const Point_2<Kernel> &right,
                                const Point_2<Kernel> &bottom,
