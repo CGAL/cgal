@@ -36,7 +36,7 @@ public:
       FT d1 = p0p1*p0p1,
 	d2 = p0p2*p0p2,
 	d3 = p0p3*p0p3;
-      m_d = CGAL::sqrt( std::max( std::max(d1,d2), d3) );
+      m_d = CGAL::sqrt( (std::max)( (std::max)(d1,d2), d3) );
     }
   FT& d() {return m_d;}
   const FT d() const {return m_d;}
