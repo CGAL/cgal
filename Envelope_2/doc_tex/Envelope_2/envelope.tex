@@ -54,6 +54,10 @@ $\calC_1$ and $\calC_2$, and we compute their envelope diagrams
 recursively. We finally have to merge the diagrams, and we do this in
 linear time by traversing both diagrams in parallel.
 
+\section{The Envelope Diagram}
+\label{env2_sec:env_diag}
+%=============================
+
 \begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
@@ -66,7 +70,8 @@ linear time by traversing both diagrams in parallel.
   </center>
 \end{ccHtmlOnly}
 \caption{The lower envelope of eight line segments, labeled
-$A, \ldots, H$. The minimization diagram is shown at the bottom, where
+$A, \ldots, H$\,, as constructed in \ccc{ex_envelope_segments.cpp}.
+The minimization diagram is shown at the bottom, where
 each diagram vertex points to the point associated with it, and the
 labels of the segment that induce a diagram edge are displayed below
 this edge. Note that there exists one edge that represents an overlap
@@ -77,4 +82,56 @@ intervals.\label{env2_fig:min_diag}}
 \section{Examples}
 %=================
 
+The following example demonstrates how to compute and traverse the
+minimization diagram of line segments, ase illustrated in
+Figure~\ref{env2_fig:min_diag}. We use the curve-data traits
+parameterized by the \ccc{Arr_segment_traits_2} class in order to
+attach a label (a \ccc{char} in this case) to each input segment.
+We use these labels when we print the minimization diagram:
+
 \ccIncludeExampleCode{../examples/Envelope_2/ex_envelope_segments.cpp}
+
+The next example shows how to construct the envelope of unbounded
+curves. In this case we use the \ccc{Arr_linear_traits_2} class to
+compute the lower envelope of a set of lines. We read a set of
+points $\calP = p_1, \ldots, p_n$ from an input file, and compute the
+corresponding dual lines $\calP^{*} = p^{*}_1, \ldots, p^{*}_n$, where
+the line $p^{*}$ dual to a point $p = (p_x, p_y)$ is given by
+$y = p_x*x - p_y$. We then compute the convex hull of the point-set
+$\calP$, using the fact that the lines that form the
+lower envelope of $\calP^{*}$ are dual to the points along the
+{\em upper} part of $\calP$'s convex hull, and the lines that form the
+upper envelope of $\calP^{*}$ are dual to the points along the
+{\em lower} part of the convex hull; see,
+e.g.,~\cite[Section~11.4]{bkos-cgaa-00} for more details.
+Note that the leftmost edge of the minimization diagram is associated
+with the same line as the rightmost edge of the maximization diagram,
+and vic-versa. We can therefore skip the rightmost edges of both
+diagrams:
+
+\ccIncludeExampleCode{../examples/Envelope_2/ex_convex_hull.cpp}
+
+\begin{figure}[t]
+\begin{ccTexOnly}
+  \begin{center}
+    \epsfig{figure=Envelope_2/fig/ex_circle.eps,silent=}
+  \end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+  <p><center>
+  <img src="./fig/ex_circle.gif" border=0 alt="Envelopes of circles">
+  </center>
+\end{ccHtmlOnly}
+\caption{A set of four circles, as constructed in
+\ccc{ex_envelope_circles.cpp}. The lower envelope and the upper
+envelope are shown using thick dashed lines.\label{env2_fig:ex_circ}}
+\end{figure}
+
+We conclude by an example of envelopes of non-linear curves. 
+We use the \ccc{Arr_circle_segment_traits_2} class to construct the
+lower and the upper envelopes of a set of four circles, as depicted
+in Figure~\ref{env2_fig:ex_circ}. Note that unlike the two previous
+examples, here our curves are not $x$-monotone, so we use the functions
+that compute envelopes of arbitrary curves:
+
+\ccIncludeExampleCode{../examples/Envelope_2/ex_envelope_circles.cpp}

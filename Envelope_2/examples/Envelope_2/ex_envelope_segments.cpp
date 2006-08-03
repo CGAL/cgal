@@ -4,7 +4,7 @@
 #include <CGAL/Gmpq.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Arr_consolidated_curve_data_traits_2.h>
+#include <CGAL/Arr_curve_data_traits_2.h>
 #include <CGAL/Env_default_diagram_1.h>
 #include <CGAL/envelope_2.h>
 
@@ -15,8 +15,8 @@ typedef CGAL::Gmpq                                      Number_type;
 typedef CGAL::Cartesian<Number_type>                    Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>              Segment_traits_2;
 typedef Segment_traits_2::X_monotone_curve_2            Segment_2;
-typedef CGAL::Arr_consolidated_curve_data_traits_2
-                   <Segment_traits_2, char>             Traits_2;
+typedef CGAL::Arr_curve_data_traits_2<Segment_traits_2, 
+                                      char>             Traits_2; 
 typedef Traits_2::Point_2                               Point_2;
 typedef Traits_2::X_monotone_curve_2                    Labeled_segment_2;
 typedef CGAL::Env_default_diagram_1<Traits_2>           Diagram_1;
@@ -60,16 +60,16 @@ int main ()
     if (! e->is_empty())
     {
       for (cit = e->curves_begin(); cit != e->curves_end(); ++cit)
-        std::cout << ' ' << cit->data().front();
+        std::cout << ' ' << cit->data();
     }
     else
-      std::cout << "[empty]";
+      std::cout << " [empty]";
     std::cout << std::endl;
 
     v = e->right();
     std::cout << "Vertex (" << v->point() << "):";
     for (cit = v->curves_begin(); cit != v->curves_end(); ++cit)
-      std::cout << ' ' << cit->data().front();
+      std::cout << ' ' << cit->data();
     std::cout << std::endl;
 
     e = v->right();
