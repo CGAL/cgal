@@ -75,13 +75,8 @@ void lower_envelope_3 (InputIterator begin, InputIterator end,
   typedef typename Envelope_diagram_2<Traits_3>::Base  Base_arr_2;
   typedef Envelope_divide_and_conquer_3<Traits_3,
                                         Base_arr_2>    Envelope_algorithm;
-
-  Traits_3      *traits = min_diagram.get_traits();
-  traits->set_lower();
-
-  Envelope_algorithm   env_alg (traits);
-  env_alg.construct_lu_envelope (begin, end,
-                                 min_diagram);
+  Envelope_algorithm   env_alg (min_diagram.get_traits(), LOWER);
+  env_alg.construct_lu_envelope (begin, end, min_diagram);
 
   return;
 }
@@ -102,12 +97,8 @@ void upper_envelope_3 (InputIterator begin, InputIterator end,
   typedef Envelope_divide_and_conquer_3<Traits_3,
                                         Base_arr_2>    Envelope_algorithm;
 
-  Traits_3      *traits = max_diagram.get_traits();
-  traits->set_upper();
-
-  Envelope_algorithm   env_alg (traits);
-  env_alg.construct_lu_envelope (begin, end,
-                                 max_diagram);
+  Envelope_algorithm   env_alg (max_diagram.get_traits(), UPPER);
+  env_alg.construct_lu_envelope (begin, end, max_diagram);
 
   return;
 }

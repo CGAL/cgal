@@ -98,15 +98,14 @@ public:
      * \return The past-the-end iterator.
      */
     template<class OutputIterator>
-    OutputIterator operator() (const Surface_3& S, OutputIterator oi)
+    OutputIterator operator() (const Surface_3& S, bool is_lower, OutputIterator oi)
     {
       // Make the original surface xy-monotone.
       std::list<Base_xy_monotone_surface_3>                     xy_surfaces;
       typename std::list<Base_xy_monotone_surface_3>::iterator  xys_it;
     
       base->make_xy_monotone_3_object()
-        (S,
-         std::back_inserter (xy_surfaces));
+        (S, is_lower, std::back_inserter (xy_surfaces));
 
       // Attach the data to each of the resulting xy-monotone surfaces.
       for (xys_it = xy_surfaces.begin(); xys_it != xy_surfaces.end(); ++xys_it)

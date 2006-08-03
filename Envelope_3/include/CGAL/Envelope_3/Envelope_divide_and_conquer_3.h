@@ -142,7 +142,7 @@ protected:
 
 public:
   // c'tor
-  Envelope_divide_and_conquer_3()
+  Envelope_divide_and_conquer_3(Envelope_type type = LOWER)
   {    
     // Allocate the traits.
     traits = new Traits;                                                     
@@ -150,17 +150,21 @@ public:
     own_traits = true;
 
     // Allocate the Envelope resolver with our traits
-    resolver = new Envelope_resolver(traits);
+    resolver = new Envelope_resolver(traits, type);
+
+    m_is_lower = ((type == LOWER) ? true : false);
   }
 
-  Envelope_divide_and_conquer_3(Traits* tr)
+  Envelope_divide_and_conquer_3(Traits* tr, Envelope_type type = LOWER)
   {
     // Set the traits.
     traits = tr;
     own_traits = false;
 
     // Allocate the Envelope resolver with our traits
-    resolver = new Envelope_resolver(traits);
+    resolver = new Envelope_resolver(traits, type);
+
+    m_is_lower = ((type == LOWER) ? true : false);
   }
   
   // virtual destructor.
@@ -200,7 +204,7 @@ public:
     std::list<Xy_monotone_surface_3> xy_monotones;
     for(; begin != end; ++begin)
       traits->make_xy_monotone_3_object()
-                        (*begin, std::back_inserter(xy_monotones));
+                        (*begin, m_is_lower, std::back_inserter(xy_monotones));
 
     // recursively construct the envelope of the xy-monotone parts
     construct_lu_envelope_xy_monotones(xy_monotones.begin(), 
@@ -2280,6 +2284,7 @@ protected:
   Traits                    *traits;
   // Should we evetually free the traits object
   bool                      own_traits; 
+  bool                      m_is_lower;
 };
 
 CGAL_END_NAMESPACE

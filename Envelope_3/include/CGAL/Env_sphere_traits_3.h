@@ -97,19 +97,22 @@ public:
 
   {
   protected:
-    const Self& parent;
+    Self& parent;
   public:
-    Make_xy_monotone_3(const Self* p)
+    Make_xy_monotone_3(Self* p)
       : parent(*p)
     {}
 
     // create xy-monotone surfaces from a general surface
     // return a past-the-end iterator
     template <class OutputIterator>
-    OutputIterator operator()(const Surface_3& s, OutputIterator o) const
+    OutputIterator operator()(const Surface_3& s,
+                              bool is_lower,
+                              OutputIterator o) 
     {
       // our half sphere is of same type as our full sphere since we always
       // need only the lower/upper part of each sphere
+      parent.m_is_lower = is_lower;
       *o++ = s;
       return o;
     }
@@ -117,7 +120,7 @@ public:
 
   /*! Get a Make_xy_monotone_3 functor object. */
   Make_xy_monotone_3
-  make_xy_monotone_3_object() const
+  make_xy_monotone_3_object() 
   {
     return Make_xy_monotone_3(this);
   }
@@ -437,7 +440,7 @@ public:
         //    equation (*) <= min(c1,c2)    -- for lower envelope
         //    equation (*) >= max(c1,c2)    -- for upper envelope
         Rational z_plane;
-        if (parent.get_envelope_type() == LOWER)
+        if (parent.m_is_lower)
           z_plane = ((c1 < c2) ? c1 : c2);
         else
           z_plane = ((c1 > c2) ? c1 : c2);
@@ -454,7 +457,7 @@ public:
 
         // for upper envelope, we should multiply the line equation by -1
         int envelope_coef = 1;
-        if (parent.get_envelope_type() == UPPER)
+        if (!parent.m_is_lower)
           envelope_coef = -1;
         
         Sign sign_c_diff = CGAL_NTS sign(c_diff);
@@ -706,12 +709,12 @@ public:
     return Construct_projected_intersections_2(this);
   }
    
-  class Compare_distance_to_envelope_3
+  class Compare_z_at_xy_3
   {
   protected:
     const Self& parent;
   public:
-    Compare_distance_to_envelope_3(const Self* p)
+    Compare_z_at_xy_3(const Self* p)
       : parent(*p)
     {}
 
@@ -745,7 +748,7 @@ public:
       // we compute a middle point on cv and use the previous function
       Point_2 mid = parent.construct_middle_point(cv);
       Comparison_result res = 
-                   parent.compare_distance_to_envelope_3_object()(mid, s1, s2);
+                   parent.compare_z_at_xy_3_object()(mid, s1, s2);
       return res;
     }
 
@@ -763,7 +766,7 @@ public:
       Algebraic z2 = parent.compute_envelope_z_in_point(p, s2);
 
       Sign res = CGAL_NTS sign(z1 - z2);
-      if (parent.get_envelope_type() == LOWER)
+      if (parent.m_is_lower)
         return Comparison_result(res);
       else
         return Comparison_result(-res);
@@ -810,7 +813,13 @@ public:
       Sign res;
       // sign_a_plus_b_x_sqrt_e_plus_c_x_sqrt_f is a CGAL method which
       // computes the sign of quantity: a + b * sqrt(e) + c * sqrt(f)
-      if (parent.get_envelope_type() == LOWER)
+
+      res = CGAL::sign_a_plus_b_x_sqrt_e_plus_c_x_sqrt_f(Algebraic(c_diff),
+                                                           Algebraic(-1),
+                                                           Algebraic(1),
+                                                           A1,
+                                                           A2);
+      /*if (parent.get_envelope_type() == LOWER)
         res = CGAL::sign_a_plus_b_x_sqrt_e_plus_c_x_sqrt_f(Algebraic(c_diff),
                                                            Algebraic(-1),
                                                            Algebraic(1),
@@ -821,7 +830,7 @@ public:
                                                            Algebraic(1),
                                                            Algebraic(-1),
                                                            A1,
-                                                           A2);
+                                                           A2);*/
       
 //      if (parent.get_envelope_type() == LOWER)
 //        res = CGAL_NTS sign(c1 - CGAL::sqrt(A1) - c2 + CGAL::sqrt(A2));
@@ -831,19 +840,19 @@ public:
     }  
   };
    
-  /*! Get a Compare_distance_to_envelope_3 functor object. */
-  Compare_distance_to_envelope_3
-  compare_distance_to_envelope_3_object() const
+  /*! Get a Compare_z_at_xy_3 functor object. */
+  Compare_z_at_xy_3
+  compare_z_at_xy_3_object() const
   {
-    return Compare_distance_to_envelope_3(this);
+    return Compare_z_at_xy_3(this);
   }
 
-  class Compare_distance_to_envelope_above_3
+  class Compare_z_at_xy_above_3
   {
   protected:
     const Self& parent;
   public:
-    Compare_distance_to_envelope_above_3(const Self* p)
+    Compare_z_at_xy_above_3(const Self* p)
       : parent(*p)
     {}
 
@@ -864,19 +873,19 @@ public:
     }  
   };
 
-  /*! Get a Compare_distance_to_envelope_above_3 functor object. */
-  Compare_distance_to_envelope_above_3
-  compare_distance_to_envelope_above_3_object() const
+  /*! Get a Compare_z_at_xy_above_3 functor object. */
+  Compare_z_at_xy_above_3
+  compare_z_at_xy_above_3_object() const
   {
-    return Compare_distance_to_envelope_above_3(this);
+    return Compare_z_at_xy_above_3(this);
   }
 
-  class Compare_distance_to_envelope_below_3
+  class Compare_z_at_xy_below_3
   {
   protected:
     const Self& parent;
   public:
-    Compare_distance_to_envelope_below_3(const Self* p)
+    Compare_z_at_xy_below_3(const Self* p)
       : parent(*p)
     {}
 
@@ -890,11 +899,11 @@ public:
     }  
   };
 
-  /*! Get a Compare_distance_to_envelope_below_3 functor object. */
-  Compare_distance_to_envelope_below_3
-  compare_distance_to_envelope_below_3_object() const
+  /*! Get a Compare_z_at_xy_below_3 functor object. */
+  Compare_z_at_xy_below_3
+  compare_z_at_xy_below_3_object() const
   {
-    return Compare_distance_to_envelope_below_3(this);
+    return Compare_z_at_xy_below_3(this);
   }
 
   /***************************************************************************/
@@ -1117,7 +1126,7 @@ public:
     CGAL_assertion(n_zs == 2);
 
     Comparison_result comp = CGAL_NTS compare(zs[0], zs[1]);
-    if (get_envelope_type() == LOWER)
+    if (m_is_lower)
       res = ((comp == SMALLER) ? zs[0] : zs[1]);
     else
       res = ((comp == LARGER) ? zs[0] : zs[1]);
@@ -1243,33 +1252,11 @@ public:
   }
 
   /*! Default constructor. */
-  Env_sphere_traits_3() : type(LOWER)
+  Env_sphere_traits_3()
   {}
-
-  /*! Constructor with the envelope type. */
-  Env_sphere_traits_3(Envelope_type t) : type(t)
-  {}
-
-  /*! Set the envelope type to lower. */
-  void set_lower ()
-  {
-    type = LOWER;
-  }
-
-  /*! Set the envelope type to upper. */
-  void set_upper ()
-  {
-    type = UPPER;
-  }
-
-  /*! Get the envelope type. */
-  Envelope_type get_envelope_type() const
-  {
-    return type;
-  }
 
 protected:
-  Envelope_type type;
+  bool m_is_lower;
 
 public:
 

@@ -138,13 +138,13 @@ public:
                                                intersections_number);
   }
    
-  class Compare_distance_to_envelope_3
+  class Compare_z_at_xy_3
   {
   protected:
     const Self& parent;
     Compare_cache& compare_cache;
   public:
-    Compare_distance_to_envelope_3(const Self* p, Compare_cache& comp_cache)
+    Compare_z_at_xy_3(const Self* p, Compare_cache& comp_cache)
       : parent(*p), compare_cache(comp_cache)
     {}
 
@@ -156,7 +156,7 @@ public:
                                  const Xy_monotone_surface_3& s1,
                                  const Xy_monotone_surface_3& s2) const
     {
-      return compare_distance_to_envelope(p,s1,s2);
+      return cmp_z_at_xy(p,s1,s2);
     }
 
     // check which of the surfaces is closer to the envelope at the xy
@@ -168,15 +168,15 @@ public:
                                  const Xy_monotone_surface_3& s1,
                                  const Xy_monotone_surface_3& s2) const
     {
-      return compare_distance_to_envelope(cv,s1,s2);
+      return cmp_z_at_xy(cv,s1,s2);
     }
 
   protected:
     template <class Geometry>
     Comparison_result
-    compare_distance_to_envelope (Geometry& g,
-                                  const Xy_monotone_surface_3& s1,
-                                  const Xy_monotone_surface_3& s2) const
+    cmp_z_at_xy (Geometry& g,
+                 const Xy_monotone_surface_3& s1,
+                 const Xy_monotone_surface_3& s2) const
     {
       // check that s1 and s2 do not intersect
       Intersections_list                      inter_list;
@@ -211,11 +211,11 @@ public:
     }
   };
    
-  /*! Get a Compare_distance_to_envelope_3 functor object. */
-  Compare_distance_to_envelope_3
-  compare_distance_to_envelope_3_object() const
+  /*! Get a Compare_z_at_xy_3 functor object. */
+  Compare_z_at_xy_3
+  compare_z_at_xy_3_object() const
   {
-    return Compare_distance_to_envelope_3(this, compare_cache);
+    return Compare_z_at_xy_3(this, compare_cache);
   }
 
   /*! Default constructor. */

@@ -30,6 +30,7 @@
 #include <CGAL/Arrangement_2/Arr_inc_insertion_zone_visitor.h>
 #include <CGAL/Envelope_3/Arrangement_2_incremental_insert.h>
 #include <CGAL/utility.h>
+#include <CGAL/functions_on_enums.h> 
 
 #include <vector>
 #include <algorithm>
@@ -129,18 +130,20 @@ protected:
   
 public:
   // c'tor
-  Envelope_element_visitor_3()
+  Envelope_element_visitor_3(Envelope_type t = LOWER)
   {
     // Allocate the traits.
     traits = new Traits;
     own_traits = true;
+    type  = t;
   }
 
-  Envelope_element_visitor_3(Traits* tr)
+  Envelope_element_visitor_3(Traits* tr, Envelope_type t = LOWER)
   {
     // Set the traits.
     traits = tr;
     own_traits = false;
+    type  = t;
   }
 
   // virtual destructor.
@@ -855,11 +858,18 @@ protected:
 
       // a face is always to the left of its halfedge
       if ((*he)->direction() == SMALLER)
-        res = traits->compare_distance_to_envelope_above_3_object()
-                                                   (cv,surf1,surf2);
+      {
+        res = traits->compare_z_at_xy_above_3_object()(cv,surf1,surf2);
+        if(type == UPPER)
+          res = CGAL::opposite(res);
+      }
       else
-        res = traits->compare_distance_to_envelope_below_3_object()
-                                                   (cv,surf1,surf2);
+      {
+        res = traits->compare_z_at_xy_below_3_object()(cv,surf1,surf2);
+        if(type == UPPER)
+          res = CGAL::opposite(res);
+
+      }
     }
     return res;
   }
@@ -904,7 +914,8 @@ protected:
                                                  Xy_monotone_surface_3& s1,
                                                  Xy_monotone_surface_3& s2)
   {
-    return traits->compare_distance_to_envelope_3_object()(g, s1, s2);   
+    Comparison_result res = traits->compare_z_at_xy_3_object()(g, s1, s2);
+    return ((type == LOWER) ? res : CGAL::opposite(res));
   }
 
   // helper method to get the surfaces we need to work on
@@ -2852,6 +2863,7 @@ protected:
 
   Traits             *traits;
   bool                own_traits; // Should we eventually free the traits object.
+  Envelope_type       type; // the type of envelope (LOWER or UPPER)
 };
 
 CGAL_END_NAMESPACE

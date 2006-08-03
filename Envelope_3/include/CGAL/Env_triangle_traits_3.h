@@ -378,8 +378,12 @@ public:
     // create xy-monotone surfaces from a general surface
     // return a past-the-end iterator
     template <class OutputIterator>
-    OutputIterator operator()(const Surface_3& s, OutputIterator o) const
+    OutputIterator operator()(const Surface_3& s,
+                              bool is_lower,
+                              OutputIterator o) 
     {
+      m_is_lower = is_lower;
+
       // a non-vertical triangle is already xy-monotone
       if (!s.is_vertical())
         *o++ = s;
@@ -431,8 +435,8 @@ public:
       Kernel k;
       Comparison_result cr = k.compare_z_3_object()(p1, p2);
       CGAL_assertion(cr != EQUAL);
-      if ((parent->get_envelope_type() == LOWER && cr == SMALLER) ||
-          (parent->get_envelope_type() == UPPER && cr == LARGER))
+      if ((m_is_lower && cr == SMALLER) ||
+          (!m_is_lower && cr == LARGER))
         return p1;
       else
         return p2;      
@@ -492,8 +496,8 @@ public:
       Sign s = CGAL_NTS sign(s1 * s2);
                   
       bool use_one_segment = true;
-      if ((parent->get_envelope_type() == LOWER && s == NEGATIVE) ||
-          (parent->get_envelope_type() == UPPER && s == POSITIVE))
+      if ((m_is_lower  && s == NEGATIVE) ||
+          (!m_is_lower && s == POSITIVE))
         use_one_segment = false;
 
       if (use_one_segment)
@@ -507,6 +511,8 @@ public:
       }
       return o;
     }
+
+    bool m_is_lower;
   };
 
   /*! Get a Make_xy_monotone_3 functor object. */
@@ -657,14 +663,14 @@ public:
    * Check if the surface s1 is closer/equally distanced/farther 
    * from the envelope with respect to s2 at the xy-coordinates of p/c.
    */
-  class Compare_distance_to_envelope_3
+  class Compare_z_at_xy_3
   {
   protected:
     const Self *parent;
 
   public:
 
-    Compare_distance_to_envelope_3(const Self* p)
+    Compare_z_at_xy_3(const Self* p)
       : parent(p)
     {}
 
@@ -743,11 +749,12 @@ public:
         }
       }
       
-      // the answer changes when we compute lower/upper envelope
-      if (parent->get_envelope_type() == LOWER)
-        return k.compare_z_3_object()(ip1, ip2);
-      else
-        return k.compare_z_3_object()(ip2, ip1);
+      return k.compare_z_3_object()(ip1, ip2);
+      //// the answer changes when we compute lower/upper envelope
+      //if (parent->get_envelope_type() == LOWER)
+      //  return k.compare_z_3_object()(ip1, ip2);
+      //else
+      //  return k.compare_z_3_object()(ip2, ip1);
     }
 
     // check which of the surfaces is closer to the envelope at the xy 
@@ -762,18 +769,15 @@ public:
     {      
       // first try the endpoints, if cannot be sure, use the mid point
       Comparison_result res;
-      res = parent->compare_distance_to_envelope_3_object()(cv.left(), 
-                                                            surf1, surf2);
+      res = parent->compare_z_at_xy_3_object()(cv.left(), surf1, surf2);
 
       if (res == EQUAL)
       {
-        res = parent->compare_distance_to_envelope_3_object()(cv.right(), 
-                                                              surf1, surf2);
+        res = parent->compare_z_at_xy_3_object()(cv.right(), surf1, surf2);
         if (res == EQUAL)
         {
           Point_2 mid = parent->construct_middle_point(cv);
-          res = parent->compare_distance_to_envelope_3_object()(mid, 
-                                                                surf1, surf2);
+          res = parent->compare_z_at_xy_3_object()(mid, surf1, surf2);
         }
       }
       
@@ -782,11 +786,11 @@ public:
   
   };
    
-  /*! Get a Compare_distance_to_envelope_3 functor object. */
-  Compare_distance_to_envelope_3 
-  compare_distance_to_envelope_3_object() const
+  /*! Get a Compare_z_at_xy_3 functor object. */
+  Compare_z_at_xy_3 
+  compare_z_at_xy_3_object() const
   {
-    return Compare_distance_to_envelope_3(this);
+    return Compare_z_at_xy_3(this);
   }
 
   /*!\brief 
@@ -794,14 +798,14 @@ public:
    * from the envelope with
    * respect to s2 immediately above the curve c. 
    */
-  class Compare_distance_to_envelope_above_3
+  class Compare_z_at_xy_above_3
   {
   protected:
     const Self *parent;
 
   public:
 
-    Compare_distance_to_envelope_above_3(const Self* p)
+    Compare_z_at_xy_above_3(const Self* p)
       : parent(p)
     {}
     
@@ -825,11 +829,11 @@ public:
       CGAL_precondition(!surf1.is_vertical());
       CGAL_precondition(!surf2.is_vertical());
 
-      CGAL_precondition(parent->compare_distance_to_envelope_3_object()
+      CGAL_precondition(parent->compare_z_at_xy_3_object()
                               (cv, surf1, surf2) == EQUAL);
-      CGAL_precondition(parent->compare_distance_to_envelope_3_object()
+      CGAL_precondition(parent->compare_z_at_xy_3_object()
                               (cv.source(), surf1, surf2) == EQUAL);
-      CGAL_precondition(parent->compare_distance_to_envelope_3_object()
+      CGAL_precondition(parent->compare_z_at_xy_3_object()
                               (cv.target(), surf1, surf2) == EQUAL);
 
       
@@ -893,21 +897,22 @@ public:
       FT x1 = p1.x(), y1 = p1.y(), x2 = p2.x(), y2 = p2.y();
 
       Sign s2 = CGAL_NTS sign(-b3*x1+a3*y1-(-b3*x2+a3*y2));
+      return (Comparison_result(s1 * s2));
       // the answer is reversed when computing upper envelope vs. lower
       // envelope
-      if (parent->get_envelope_type() == LOWER)
+      /*if (parent->get_envelope_type() == LOWER)
         return Comparison_result(s1 * s2);
       else
-        return Comparison_result(s1 * s2 * -1);      
+        return Comparison_result(s1 * s2 * -1);     */ 
     }  
   };
 
 
-  /*! Get a Compare_distance_to_envelope_above_3 functor object. */
-  Compare_distance_to_envelope_above_3
-  compare_distance_to_envelope_above_3_object() const
+  /*! Get a Compare_z_at_xy_above_3 functor object. */
+  Compare_z_at_xy_above_3
+  compare_z_at_xy_above_3_object() const
   {
-    return Compare_distance_to_envelope_above_3(this);
+    return Compare_z_at_xy_above_3(this);
   }
 
   /*!\brief 
@@ -915,14 +920,14 @@ public:
    * from the envelope with
    * respect to s2 immediately below the curve c. 
    */
-  class Compare_distance_to_envelope_below_3
+  class Compare_z_at_xy_below_3
   {
   protected:
     const Self *parent;
 
   public:
 
-    Compare_distance_to_envelope_below_3(const Self* p)
+    Compare_z_at_xy_below_3(const Self* p)
       : parent(p)
     {}
     
@@ -932,22 +937,23 @@ public:
                const Xy_monotone_surface_3& surf2) const
     {
       Comparison_result left_res = 
-        parent->compare_distance_to_envelope_above_3_object()(cv,
-                                                              surf1, surf2);
-      if (left_res == LARGER)
+        parent->compare_z_at_xy_above_3_object()(cv, surf1, surf2);
+      return CGAL::opposite(left_res);
+
+      /*if (left_res == LARGER)
         return SMALLER;
       else if (left_res == SMALLER)
         return LARGER;
       else
-        return EQUAL;
+        return EQUAL;*/
     }  
   };
 
-  /*! Get a Compare_distance_to_envelope_below_3 functor object. */
-  Compare_distance_to_envelope_below_3
-  compare_distance_to_envelope_below_3_object() const
+  /*! Get a Compare_z_at_xy_below_3 functor object. */
+  Compare_z_at_xy_below_3
+  compare_z_at_xy_below_3_object() const
   {
-    return Compare_distance_to_envelope_below_3(this);
+    return Compare_z_at_xy_below_3(this);
   }
 
   /***************************************************************************/
@@ -1558,38 +1564,7 @@ public:
     return (ip);
   }
 
-  /*! Default constructor. */
-  Env_triangle_traits_3 () :
-    type (LOWER)
-  {}
-
-  /*! Constructor with the envelope type. */
-  Env_triangle_traits_3 (Envelope_type t) : 
-    type(t)
-  {}
-
-  /*! Set the envelope type to lower. */
-  void set_lower ()
-  {
-    type = LOWER;
-  }
-
-  /*! Set the envelope type to upper. */
-  void set_upper ()
-  {
-    type = UPPER;
-  }
-
-  /*! Get the envelope type. */
-  Envelope_type get_envelope_type() const
-  {
-    return type;
-  }
-  
-  
-protected:
-  Envelope_type type;
-
+ 
 public:
 
   #ifdef CGAL_ENV_TRIANGLES_TRAITS_CACHE_POINT_ON
