@@ -80,7 +80,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
         }
 
         // compute maxradius[m]:
-        maxradius[m] = std::max(maxradius[m-1],t.radius(*b[m]));
+        maxradius[m] = (std::max)(maxradius[m-1],t.radius(*b[m]));
 
         // calculate delta[m], eps[m] and phi[m] (by definition):
         const FT t1 = t.radius(*b[0]) - t.radius(*b[m]),
