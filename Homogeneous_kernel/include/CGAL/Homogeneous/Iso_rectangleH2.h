@@ -51,8 +51,9 @@ public:
   Iso_rectangleH2(const Point_2& p, const Point_2& q, int)
     : base(p, q)
   {
-    CGAL_kernel_assertion(p.x()<=q.x());
-    CGAL_kernel_assertion(p.y()<=q.y());
+    // I have to remove the assertions, because of Homogeneous_converter.
+    // CGAL_kernel_assertion(p.x()<=q.x());
+    // CGAL_kernel_assertion(p.y()<=q.y());
   }
 
   const Point_2 & min() const;

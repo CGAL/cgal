@@ -1955,8 +1955,9 @@ namespace CartesianKernelFunctors {
     Iso_rectangle_2
     operator()(const Point_2& p, const Point_2& q, int) const
     {
-      CGAL_kernel_assertion(p.x()<=q.x());
-      CGAL_kernel_assertion(p.y()<=q.y());
+      // I have to remove the assertions, because of Cartesian_converter.
+      // CGAL_kernel_assertion(p.x()<=q.x());
+      // CGAL_kernel_assertion(p.y()<=q.y());
       return Rep(p, q, 0);
     }
 

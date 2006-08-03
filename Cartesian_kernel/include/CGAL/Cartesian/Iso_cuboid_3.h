@@ -52,9 +52,10 @@ public:
   Iso_cuboidC3(const Point_3 &p, const Point_3 &q, int)
     : base(p, q)
   {
-    CGAL_kernel_assertion(p.x()<=q.x());
-    CGAL_kernel_assertion(p.y()<=q.y());
-    CGAL_kernel_assertion(p.z()<=q.z());
+    // I have to remove the assertions, because of Cartesian_converter.
+    // CGAL_kernel_assertion(p.x()<=q.x());
+    // CGAL_kernel_assertion(p.y()<=q.y());
+    // CGAL_kernel_assertion(p.z()<=q.z());
   }
 
   Iso_cuboidC3(const Point_3 &p, const Point_3 &q)
