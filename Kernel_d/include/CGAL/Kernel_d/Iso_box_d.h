@@ -255,6 +255,7 @@ namespace CGAL {
   template < typename Kernel_ > 
   struct Iso_box_d : public Handle_for< Kernel_d::Iso_box_d_rep<Kernel_> > 
   { 
+    BOOST_USING_STD_MAX();
     typedef Kernel_                   Kernel;
     typedef Kernel_                   R;
     
@@ -365,9 +366,9 @@ public:
 
     FT max_coord(int i) const { return ptr()->upper[i]; }
 
-    const Point_d& min() const { return ptr()->lower; }
+    const Point_d& min BOOST_PREVENT_MACRO_SUBSTITUTION () const { return ptr()->lower; }
 
-    const Point_d& max() const { return ptr()->upper; }
+    const Point_d& max BOOST_PREVENT_MACRO_SUBSTITUTION () const { return ptr()->upper; }
 
     FT volume() const { return volume(Rep_tag()); }
     
@@ -388,7 +389,7 @@ inline bool
 operator==(const Iso_box_d<Kernel>& b1, Iso_box_d<Kernel>& b2)
 {
   CGAL_precondition(b1.dimension() == b2.dimension());
-  return b1.min() == b2.min() && b1.max() == b2.max();
+  return (b1.min)() == (b2.min)() && (b1.max)() == (b2.max)();
 }
 
 template < typename Kernel >

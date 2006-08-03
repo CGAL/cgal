@@ -440,8 +440,8 @@ Segment_d_Segment_d_pair<R>::intersection_type()
               _s2.point(0),_s2.point(1),_ip,l1,l2);
 
   if (res == Int_obj_type::LINE)   
-  { Point_d p1 = _s1.min(), p2 = _s1.max();
-    Point_d q1 = _s2.min(), q2 = _s2.max();
+  { Point_d p1 = (_s1.min)(), p2 = (_s1.max)();
+    Point_d q1 = (_s2.min)(), q2 = (_s2.max)();
     Point_d s,t;
     // now order the for points along the line
     typename R::Position_on_line_d pos;

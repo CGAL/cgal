@@ -38,7 +38,10 @@ template <class R> std::ostream& operator<<
 /*{\Manpage {Segment_d}{R}{Segments in d-space}{s}}*/
 
 template <class p_R>
-class Segment_d : public Handle_for< Pair_d<p_R> > { 
+class Segment_d : public Handle_for< Pair_d<p_R> > {
+
+  BOOST_USING_STD_MAX();
+  
   typedef Pair_d<p_R>      Pair;
   typedef Handle_for<Pair> Base;
   typedef Segment_d<p_R>   Self;
@@ -110,14 +113,14 @@ Point_d<R>  point(int i) const { return vertex(i); }
 Point_d<R>  operator[](int i) const { return vertex(i); }
 /*{\Marrop returns |vertex(i)|.}*/
 
-Point_d<R> min() const 
+Point_d<R> min BOOST_PREVENT_MACRO_SUBSTITUTION () const 
 /*{\Mop returns the lexicographically smaller vertex.}*/
 { typename R::Compare_lexicographically_d cmp; 
   if (cmp(source(),target()) == CGAL::SMALLER) return source();
   else return target();
 }
 
-Point_d<R> max() const 
+Point_d<R> max BOOST_PREVENT_MACRO_SUBSTITUTION () const 
 /*{\Mop returns the lexicographically larger vertex.}*/
 { typename R::Compare_lexicographically_d cmp; 
   if (cmp(source(),target()) == SMALLER) return target();
