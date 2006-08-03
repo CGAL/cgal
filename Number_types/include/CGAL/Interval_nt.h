@@ -64,7 +64,7 @@ public:
   typedef Tag_false   Has_exact_division;
   typedef Tag_false   Has_exact_sqrt;
 
-  typedef std::exception                            unsafe_comparison;
+  typedef Uncertain<bool>::Uncertain_conversion_exception  unsafe_comparison;
   typedef Checked_protect_FPU_rounding<Protected>   Internal_protector;
   typedef Protect_FPU_rounding<!Protected>          Protector;
 

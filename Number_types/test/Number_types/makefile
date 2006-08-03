@@ -16,6 +16,7 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = \
            -Iinclude \
            -I../../include \
+           -I../../../Filtered_kernel/include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \

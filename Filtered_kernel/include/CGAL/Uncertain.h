@@ -65,6 +65,18 @@ namespace CGALi {
 } // namespace CGALi
 
 
+// Exception type for the automatic conversion.
+class Uncertain_conversion_exception
+  : std::range_error
+{
+public:
+  Uncertain_conversion_exception(const std::string &s)
+    : std::range_error(s) {}
+
+  ~Uncertain_conversion_exception() throw() {}
+};
+
+
 // Encodes an interval [min;max] of values of type T.
 // The primary template is supposed to work for enums and bool.
 
@@ -76,6 +88,8 @@ class Uncertain
   static unsigned failures;   // Number of conversion failures.
 
 public:
+
+  typedef CGAL::Uncertain_conversion_exception  Uncertain_conversion_exception;
 
   typedef T  value_type;
 
@@ -101,7 +115,8 @@ public:
       return _i;
     //++failures;
     ++Uncertain<bool>::number_of_failures();  // reasonnable ?
-    throw std::range_error("undecidable conversion of Uncertain<T>");
+    throw Uncertain_conversion_exception(
+                        "undecidable conversion of CGAL::Uncertain<T>");
   }
 
   static unsigned & number_of_failures() { return failures; }
