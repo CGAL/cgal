@@ -17,7 +17,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Stefan Schirra
 
@@ -78,12 +78,12 @@ public:
   FT    operator[](int i) const;
 
 
-  Cartesian_const_iterator cartesian_begin() const 
+  Cartesian_const_iterator cartesian_begin() const
   {
     return Cartesian_const_iterator(static_cast<const Point_3*>(this), 0);
   }
 
-  Cartesian_const_iterator cartesian_end() const 
+  Cartesian_const_iterator cartesian_end() const
   {
     return Cartesian_const_iterator(static_cast<const Point_3*>(this), 3);
   }
@@ -203,53 +203,6 @@ inline
 bool
 PointH3<R>::operator!=( const PointH3<R> & p) const
 { return !(*this == p); }
-
-#ifndef CGAL_NO_OSTREAM_INSERT_POINTH3
-template < class R >
-std::ostream &operator<<(std::ostream &os, const PointH3<R> &p)
-{
-    switch(os.iword(IO::mode)) {
-    case IO::ASCII :
-        return os << p.hx() << ' ' << p.hy() << ' ' << p.hz() << ' ' << p.hw();
-    case IO::BINARY :
-        write(os, p.hx());
-        write(os, p.hy());
-        write(os, p.hz());
-        write(os, p.hw());
-        return os;
-    default:
-        return os << "PointH3(" << p.hx() << ", "
-                                << p.hy() << ", "
-                                << p.hz() << ", "
-                                << p.hw() << ')';
-    }
-}
-#endif // CGAL_NO_OSTREAM_INSERT_POINTH3
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_POINTH3
-template < class R >
-std::istream &operator>>(std::istream &is, PointH3<R> &p)
-{
-  typename R::RT hx, hy, hz, hw;
-  switch(is.iword(IO::mode)) {
-  case IO::ASCII :
-        is >> hx >> hy >> hz >> hw;
-        break;
-  case IO::BINARY :
-        read(is, hx);
-        read(is, hy);
-        read(is, hz);
-        read(is, hw);
-        break;
-  default:
-        std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
-        break;
-  }
-  p = PointH3<R>(hx, hy, hz, hw);
-  return is;
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_POINTH3
 
 
 template < class R >

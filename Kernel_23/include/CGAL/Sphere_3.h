@@ -153,7 +153,6 @@ public:
     //return CGAL_NTS is_zero(squared_radius());
   }
 
-
 };
 
 template <class R_>

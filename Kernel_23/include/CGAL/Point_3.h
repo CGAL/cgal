@@ -25,6 +25,7 @@
 #define CGAL_POINT_3_H
 
 #include <CGAL/Origin.h>
+#include <CGAL/representation_tags.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -166,22 +167,115 @@ bool
 operator!=(const Origin& o, const Point_3<R>& p)
 { return p != o; }
 
-#if 0 //ndef CGAL_NO_OSTREAM_INSERT_POINT_3
+
+#ifndef CGAL_NO_OSTREAM_INSERT_POINT_3
+
+template <class R >
+std::ostream&
+insert(std::ostream& os, const Point_3<R>& p,const Cartesian_tag&) 
+{
+    switch(os.iword(IO::mode)) {
+    case IO::ASCII :
+        return os << p.x() << ' ' << p.y() << ' ' << p.z();
+    case IO::BINARY :
+        write(os, p.x());
+        write(os, p.y());
+        write(os, p.z());
+        return os;
+    default:
+        return os << "PointC3(" << p.x() << ", " << p.y()
+                                         << ", " << p.z() << ')';
+    }
+}
+
+template <class R >
+std::ostream&
+insert(std::ostream& os, const Point_3<R>& p,const Homogeneous_tag&)
+{
+  switch(os.iword(IO::mode))
+  {
+    case IO::ASCII :
+        return os << p.hx() << ' ' << p.hy() << ' ' << p.hz() << ' ' << p.hw();
+    case IO::BINARY :
+        write(os, p.hx());
+        write(os, p.hy());
+        write(os, p.hz());
+        write(os, p.hw());
+        return os;
+    default:
+        return os << "PointH3(" << p.hx() << ", "
+                                << p.hy() << ", "
+                                << p.hz() << ", "
+                                << p.hw() << ')';
+  }
+}
+
 template < class R >
 std::ostream&
 operator<<(std::ostream& os, const Point_3<R>& p)
 {
-  typedef typename  R::Kernel_base::Point_3  Rep;
-  return os << static_cast<const Rep&>(p);
+  return insert(os, p, typename R::Kernel_tag() );
 }
+
 #endif // CGAL_NO_OSTREAM_INSERT_POINT_3
 
-#if 0 //ndef CGAL_NO_ISTREAM_EXTRACT_POINT_3
-template < class R >
-std::istream& operator>>(std::istream& is, Point_3<R>& p)
+#ifndef CGAL_NO_ISTREAM_EXTRACT_POINT_3
+
+template <class R >
+std::istream&
+extract(std::istream& is, Point_3<R>& p, const Cartesian_tag&) 
 {
-  typedef typename  R::Kernel_base::Point_3  Rep;
-  return is >> static_cast<Rep&>(p);
+    typename R::FT x, y, z;
+    switch(is.iword(IO::mode)) {
+    case IO::ASCII :
+        is >> x >> y >> z;
+        break;
+    case IO::BINARY :
+        read(is, x);
+        read(is, y);
+        read(is, z);
+        break;
+    default:
+        std::cerr << "" << std::endl;
+        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        break;
+    }
+    if (is)
+	p = Point_3<R>(x, y, z);
+    return is;
+}
+
+
+template <class R >
+std::istream&
+extract(std::istream& is, Point_3<R>& p, const Homogeneous_tag&) 
+{
+  typename R::RT hx, hy, hz, hw;
+  switch(is.iword(IO::mode))
+  {
+    case IO::ASCII :
+        is >> hx >> hy >> hz >> hw;
+        break;
+    case IO::BINARY :
+        read(is, hx);
+        read(is, hy);
+        read(is, hz);
+        read(is, hw);
+        break;
+    default:
+        std::cerr << "" << std::endl;
+        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        break;
+  }
+  p = Point_3<R>(hx, hy, hz, hw);
+  return is;
+}
+
+template < class R >
+std::istream&
+operator>>(std::istream& is, Point_3<R>& p)
+{
+  return extract(is, p, typename R::Kernel_tag() );
 }
 #endif // CGAL_NO_ISTREAM_EXTRACT_POINT_3
 

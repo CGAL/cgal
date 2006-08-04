@@ -17,7 +17,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Stefan Schirra
 
@@ -53,7 +53,7 @@ public:
 
     PointH2() {}
 
-    PointH2(const Origin &)  
+    PointH2(const Origin &)
        : base (RT(0), RT(0), RT(1)) {}
 
     PointH2(const RT& hx, const RT& hy )
@@ -81,12 +81,12 @@ public:
     FT      operator[](int i)  const;
     const RT & homogeneous(int i) const;
 
-    Cartesian_const_iterator cartesian_begin() const 
+    Cartesian_const_iterator cartesian_begin() const
     {
       return Cartesian_const_iterator(static_cast<const Point_2*>(this), 0);
     }
 
-    Cartesian_const_iterator cartesian_end() const 
+    Cartesian_const_iterator cartesian_end() const
     {
       return Cartesian_const_iterator(static_cast<const Point_2*>(this), 2);
     }
@@ -101,7 +101,7 @@ CGAL_KERNEL_INLINE
 bool
 PointH2<R>::operator==( const PointH2<R>& p) const
 { // FIXME : Predicate
-  return (  (hx() * p.hw() == p.hx() * hw() ) 
+  return (  (hx() * p.hw() == p.hx() * hw() )
           &&(hy() * p.hw() == p.hy() * hw() ) );
 }
 
