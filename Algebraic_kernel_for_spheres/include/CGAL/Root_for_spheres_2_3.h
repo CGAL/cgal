@@ -71,13 +71,13 @@ class Root_for_spheres_2_3 {
 
   // On fait l'evaluation de (x,y,z) pour le plan 
   // aX + bY + cZ + d, donne
-  Root_of_2 evaluate(const Polynomial_1_3 &p) const {
+  const Root_of_2 evaluate(const Polynomial_1_3 &p) const {
     return (p.a() * x()) + (p.b() * y()) + (p.c() * z()) + p.d();
   }
 
   // On fait l'evaluation de (x,y,z) pour le plan 
   // (X-a)^2 + (Y-b)^2 + (Z-c)^2 - r_sq, donne
-  Root_of_2 evaluate(const Polynomial_for_spheres_2_3 &p) const {
+  const Root_of_2 evaluate(const Polynomial_for_spheres_2_3 &p) const {
     return square(x() - p.a()) +
            square(y() - p.b()) +
            square(z() - p.c()) -
