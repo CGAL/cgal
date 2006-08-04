@@ -61,7 +61,7 @@ public:
   // types for dual:
   typedef typename Gt::Line_3        Line;
   typedef typename Gt::Ray_3         Ray;
-  typedef typename Gt::Plane_3       Plane;
+  //typedef typename Gt::Plane_3       Plane;
   typedef typename Gt::Object_3      Object;
 
   typedef typename Tr_Base::Cell_handle   Cell_handle;
@@ -142,15 +142,10 @@ protected:
   }
 
   Line
-  construct_perpendicular_line(const Plane &pl, const Point &p) const
+  construct_equi_distant_line(const Point &p1, const Point &p2,
+                              const Point &p3) const
   {
-      return geom_traits().construct_perpendicular_line_3_object()(pl, p);
-  }
-
-  Plane
-  construct_plane(const Point &p, const Point &q, const Point &r) const
-  {
-      return geom_traits().construct_plane_3_object()(p, q, r);
+      return geom_traits().construct_equi_distant_line_3_object()(p1, p2, p3);
   }
 
   Ray
@@ -386,8 +381,11 @@ public:
   Point dual(Cell_handle c) const;
 
   Object dual(const Facet & f) const
-    { return dual( f.first, f.second ); }
+  { return dual( f.first, f.second ); }
+
   Object dual(Cell_handle c, int i) const;
+
+  Line dual_support(Cell_handle c, int i) const;
 
   bool is_valid(bool verbose = false, int level = 0) const;
 
@@ -1433,10 +1431,32 @@ dual(Cell_handle c, int i) const
   const Point& q = n->vertex(ind[1])->point();
   const Point& r = n->vertex(ind[2])->point();
 
-  Line l = construct_perpendicular_line( construct_plane(p,q,r),
-					 construct_circumcenter(p,q,r) );
+  Line l = construct_equi_distant_line( p, q, r );
   return construct_object(construct_ray( dual(n), l));
 }
+
+
+
+template < class Gt, class Tds >
+typename Delaunay_triangulation_3<Gt,Tds>::Line
+Delaunay_triangulation_3<Gt,Tds>::
+dual_support(Cell_handle c, int i) const
+{
+  CGAL_triangulation_precondition(dimension()>=2);
+  CGAL_triangulation_precondition( ! is_infinite(c,i) );
+
+  if ( dimension() == 2 ) {
+    CGAL_triangulation_precondition( i == 3 );
+    return construct_equi_distant_line( c->vertex(0)->point(),
+		                        c->vertex(1)->point(),
+					c->vertex(2)->point() );
+  }
+
+  return construct_equi_distant_line( c->vertex((i+1)&3)->point(),
+		                      c->vertex((i+2)&3)->point(),
+				      c->vertex((i+3)&3)->point() );
+}
+
 
 template < class Gt, class Tds >
 bool

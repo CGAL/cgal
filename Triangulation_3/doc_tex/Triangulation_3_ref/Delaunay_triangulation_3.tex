@@ -308,6 +308,10 @@ in dimension 2: a point.
 \ccMethod{Object dual(Cell_handle c, int i) const;}
 {same as the previous method for facet \ccc{(c,i)}.}
 
+\ccMethod{Line dual_support(Cell_handle c, int i) const;}
+{returns the line supporting the dual of the facet.
+\ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$ and \ccc{f} is not infinite.}}
+
 \ccMethod{template <class Stream> Stream & draw_dual(Stream & os);}
 {Sends the set of duals to all the facets of \ccVar\ into \ccc{os}.}
 
