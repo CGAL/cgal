@@ -1,4 +1,3 @@
-
 // Copyright (c) 1999  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
@@ -17,6 +16,7 @@
 // 
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
+//                 Sylvain Pion
 
 // cell of a triangulation of any dimension <=3
 
@@ -67,6 +67,16 @@ public:
   Point_iterator hidden_points_begin() const { return hidden_points_end(); }
   Point_iterator hidden_points_end() const { return NULL; }
   void hide_point (const Point &p) const { }
+
+  typename Geom_traits::Point_3
+  circumcenter(const Geom_traits& gt = Geom_traits()) const
+  {
+      return gt.construct_circumcenter_3_object()(this->vertex(0)->point(),
+                                                  this->vertex(1)->point(),
+                                                  this->vertex(2)->point(),
+                                                  this->vertex(3)->point());
+  }
+
 };
 
 // The following should be useless.

@@ -15,17 +15,26 @@
 
 \ccDefinition
 
-The cell base required by the geometric triangulations does not store any
+The cell base required by the basic triangulation does not need to store any
 geometric information, so only the requirements of the triangulation data
-structure apply.  However, we provide this concept for symmetry with the
-vertex case.
+structure apply.
+
+However, for the Delaunay triangulation, the ability to store the circumcenter
+is provided (for optimization reasons), hence an additional requirement only
+in this case, and only when the dual functions are called.
 
 \ccRefines \ccc{TriangulationDSCellBase_3}
+
+\ccMethod{const DelaunayTriangulationTraits_3::Point_3& circumcenter(
+  const DelaunayTriangulationTraits_3&gt = DelaunayTriangulationTraits_3()) const;}
+{Returns the circumcenter.}
+
 
 \ccHasModels
 
 \ccc{CGAL::Triangulation_cell_base_3}\\
 \ccc{CGAL::Triangulation_cell_base_with_info_3}
+\ccc{CGAL::Triangulation_cell_base_with_circumcenter_3}
 
 \ccSeeAlso
 

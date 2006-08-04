@@ -134,13 +134,6 @@ protected:
       return geom_traits().construct_circumcenter_3_object()(p, q, r);
   }
 
-  Point
-  construct_circumcenter(const Point &p, const Point &q,
-	                 const Point &r, const Point &s) const
-  {
-      return geom_traits().construct_circumcenter_3_object()(p, q, r, s);
-  }
-
   Line
   construct_equi_distant_line(const Point &p1, const Point &p2,
                               const Point &p3) const
@@ -1388,10 +1381,7 @@ dual(Cell_handle c) const
 {
   CGAL_triangulation_precondition(dimension()==3);
   CGAL_triangulation_precondition( ! is_infinite(c) );
-  return construct_circumcenter( c->vertex(0)->point(),
-				 c->vertex(1)->point(),
-				 c->vertex(2)->point(),
-				 c->vertex(3)->point() );
+  return c->circumcenter(geom_traits());
 }
 
 

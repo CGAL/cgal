@@ -1,0 +1,61 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_cell_base_with_circumcenter_3.tex
+% +------------------------------------------------------------------------+
+% | 29.3.2000   Sylvain Pion
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTriangulationcellbaseRev}{$Id$}
+\RCSdefDate{\RCSTriangulationcellbaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangulation_cell_base_with_circumcenter_3<DelaunayTriangulationTraits_3, TriangulationCellBase_3>}
+
+\ccDefinition
+
+The class \ccc{Triangulation_cell_base_with_circumcenter_3} is a model of the
+concept \ccc{TriangulationCellBase_3}, the base cell of a 3D-triangulation.
+It provides an easy way to cache the computation of the circumcenter of
+tetrahedra.
+Note that input/output operators discard this additional information.
+
+All functions modifying the vertices of the cell, invalidate the cached
+circumcenter.
+
+\ccInclude{CGAL/Triangulation_cell_base_with_circumcenter_3.h}
+
+\ccParameters
+
+The first template argument is the geometric traits class
+\ccc{DelaunayTriangulationTraits_3}.
+
+The second template argument is a cell base class from which
+\ccc{Triangulation_cell_base_with_circumcenter_3} derives.
+It has the default value \ccc{Triangulation_cell_base_3<DelaunayTriangulationTraits_3>}.
+
+\ccIsModel \ccc{TriangulationCellBase_3}
+
+\ccInheritsFrom \ccc{TriangulationCellBase_3}
+
+%\ccTypes
+%\ccTypedef{typedef Info Info;}{}
+
+\ccCreationVariable{v}
+
+\ccAccessFunctions
+\ccThree{const Info&}{Facetxxxxxxxx}{}
+\ccTagFullDeclarations
+
+\ccMethod{const DelaunayTriangulationTraits_3::Point_3& circumcenter(
+  const DelaunayTriangulationTraits_3&gt = DelaunayTriangulationTraits_3()) const;}
+{Computes the circumcenter of the tetrahedron, or retrieve it if already
+computed.}
+
+\ccSeeAlso
+
+\ccc{CGAL::Triangulation_cell_base_3}\\
+\ccc{CGAL::Triangulation_cell_base_with_info_3}
+
+\end{ccRefClass}

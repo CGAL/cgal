@@ -33,6 +33,12 @@ The second template argument is a combinatorial cell base class from which
 \ccc{Triangulation_cell_base_3} derives.
 It has the default value \ccc{Triangulation_ds_cell_base_3<>}.
 
+Note that this model does not store the circumcenter, but computes it
+every time the circumcenter function is called.  See
+\ccc{CGAL::Triangulation_cell_base_with_circumcenter_3} for a way to cache the
+circumcenter computation.
+
+
 \ccIsModel \ccc{TriangulationCellBase_3}
 
 \ccInheritsFrom \ccc{TriangulationDSCellBase_3}
@@ -41,6 +47,7 @@ It has the default value \ccc{Triangulation_ds_cell_base_3<>}.
 
 \ccc{CGAL::Triangulation_ds_cell_base_3}\\
 \ccc{CGAL::Triangulation_cell_base_with_info_3}\\
+\ccc{CGAL::Triangulation_cell_base_with_circumcenter_3}\\
 \ccc{CGAL::Triangulation_vertex_base_3}
 
 \end{ccRefClass}
