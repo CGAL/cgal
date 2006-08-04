@@ -36,9 +36,9 @@ CGAL_BEGIN_NAMESPACE
     typedef RT_                                        RT;
     typedef typename Root_of_traits< RT >::RootOf_1    FT;
             
-    typedef Polynomials_for_line_3<RT>             Polynomials_for_line_3;
-    typedef Polynomial_for_spheres_2_3<RT>         Polynomial_for_spheres_2_3;
-    typedef Polynomial_1_3<RT>                     Polynomial_1_3;
+    typedef Polynomials_for_line_3<FT>             Polynomials_for_line_3;
+    typedef Polynomial_for_spheres_2_3<FT>         Polynomial_for_spheres_2_3;
+    typedef Polynomial_1_3<FT>                     Polynomial_1_3;
     // problem RT / FT ?
 
     typedef typename Root_of_traits< RT >::RootOf_2  Root_of_2;
