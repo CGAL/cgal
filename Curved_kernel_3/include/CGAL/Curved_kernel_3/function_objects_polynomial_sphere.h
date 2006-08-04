@@ -443,6 +443,8 @@ template < class SK >
     typedef typename SK::Plane_3 Plane_3;
     typedef typename SK::Sphere_3 Sphere_3;
     typedef typename SK::Circle_3 Circle_3;
+    typedef typename SK::Vector_3    Vector_3;
+    typedef typename SK::Direction_3 Direction_3;
     typedef typename SK::Kernel_base::Circle_3  RCircle_3;
     typedef typename Circle_3::Rep              Rep;
 
@@ -464,6 +466,14 @@ template < class SK >
     result_type
     operator() (const Point_3& p, const FT& sr, const Plane_3& plane)
     { return Rep(p,sr,plane); }
+
+    result_type
+    operator() (const Point_3& p, const FT& sr, const Vector_3& v)
+    { return Rep(p,sr,v); }
+
+    result_type
+    operator() (const Point_3& p, const FT& sr, const Direction_3& d)
+    { return Rep(p,sr,d); }
 
     result_type
     operator() (const Sphere_3& s1, const Sphere_3& s2)
