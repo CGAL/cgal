@@ -115,6 +115,14 @@ _test_cls_line_3(const R& )
  assert( l4.has_on(p5) );
  assert( CGAL::Line_3<R>(p1,p1).is_degenerate() );
 
+ {
+  CGAL::Point_3<R> p(0, 0, 0);
+  CGAL::Point_3<R> q(2, 0, 0);
+  CGAL::Point_3<R> r(0, 2, 0);
+  CGAL::Line_3<R> l(CGAL::Point_3<R>(1, 1, 0), CGAL::Vector_3<R>(0, 0, 1));
+  assert( l == CGAL::equi_distant_line(p, q, r) );
+ }
+
  std::cout << "done" << std::endl;
  return true;
 }

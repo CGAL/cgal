@@ -139,7 +139,6 @@ test_new_3(const R& rep)
   // remaining constructions tested below, after the 
   // corresponding types have been introduced
 
-
   typename R::Construct_segment_3 construct_segment
         = rep.construct_segment_3_object();
   Segment_3 s1;
@@ -293,9 +292,13 @@ test_new_3(const R& rep)
         = rep.construct_perpendicular_plane_3_object();
   Plane_3 tmp3 = construct_perpendicular_plane(l2,p2);
 
+  typename R::Construct_equi_distant_line_3 construct_equi_distant_line
+        = rep.construct_equi_distant_line_3_object();
+  Line_3 tmp3a = construct_equi_distant_line(p1, p2, p3);
+
   typename R::Construct_perpendicular_line_3 construct_perpendicular_line
         = rep.construct_perpendicular_line_3_object();
-  Line_3 tmp3a = construct_perpendicular_line(h2,p5);
+         tmp3a = construct_perpendicular_line(h2,p5);
 
   typename R::Construct_orthogonal_vector_3 construct_orthogonal_vector
         = rep.construct_orthogonal_vector_3_object();

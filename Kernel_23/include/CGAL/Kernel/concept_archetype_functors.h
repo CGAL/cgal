@@ -1150,6 +1150,20 @@ public:
 };
 
 template <typename K>
+class Construct_equi_distant_line_3
+{
+    typedef typename K::Line_3          Line_3;
+    typedef typename K::Point_3         Point_3;
+public:
+    typedef Line_3       result_type;
+    typedef Arity_tag< 3 >    Arity;
+
+    Line_3
+    operator()(const Point_3&, const Point_3&, const Point_3&) const
+    { return Line_3(); }
+};
+
+template <typename K>
 class Construct_iso_cuboid_3
 {
     typedef typename K::Point_3       Point_3;

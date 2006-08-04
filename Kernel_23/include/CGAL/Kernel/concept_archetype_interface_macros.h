@@ -375,6 +375,12 @@ CGAL_Kernel_cons(Construct_direction_3,
 #endif
 
 #if !defined(CGAL_CA_LIMITED_INTERFACE) || \
+    defined(CGAL_CA_CONSTRUCT_EQUI_DISTANT_LINE_3)
+CGAL_Kernel_cons(Construct_equi_distant_line_3,
+		 construct_equi_distant_line_3_object)
+#endif
+
+#if !defined(CGAL_CA_LIMITED_INTERFACE) || \
     defined(CGAL_CA_CONSTRUCT_ISO_CUBOID_3)
 CGAL_Kernel_cons(Construct_iso_cuboid_3,
 		 construct_iso_cuboid_3_object)

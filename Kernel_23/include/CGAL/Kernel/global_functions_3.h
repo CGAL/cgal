@@ -334,6 +334,14 @@ determinant(const Vector_3<K> &v0, const Vector_3<K> &v1,
 
 template < class K >
 inline
+typename K::Line_3
+equi_distant_line(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
+{
+  return CGALi::equi_distant_line(p, q, r, K());
+}
+
+template < class K >
+inline
 bool
 has_larger_distance_to_point(const Point_3<K> &p,
 			     const Point_3<K> &q,

@@ -707,6 +707,30 @@ namespace CommonKernelFunctors {
 
 
   template <typename K>
+  class Construct_equi_distant_line_3
+  {
+    typedef typename K::FT          FT;
+    typedef typename K::Point_3     Point_3;
+    typedef typename K::Vector_3    Vector_3;
+    typedef typename K::Line_3      Line_3;
+    typedef typename Line_3::Rep    Rep;
+  public:
+    typedef Line_3           result_type;
+    typedef Arity_tag< 3 >   Arity;
+
+    Line_3
+    operator()( const Point_3& p, const Point_3& q, const Point_3& r) const
+    {
+      CGAL_kernel_precondition(! collinear(p, q, r));
+      Point_3 c = circumcenter(p, q, r);
+      Vector_3 v = cross_product(p-q, p-r);
+      return Rep(c, v);
+    }
+
+  };
+
+
+  template <typename K>
   class Construct_iso_cuboid_3
   {
     typedef typename K::RT            RT;
