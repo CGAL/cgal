@@ -66,7 +66,7 @@ public:
   typedef Weighted_converter_3< 
     Cartesian_converter < typename Regular_traits::Bare_point::R, 
 			  typename Quadr_surface::K > >            R2S_converter;
-  Triangulated_mixed_complex_observer_3(Surface_RT shrink) : 
+  Triangulated_mixed_complex_observer_3(FT shrink) : 
     shrink(shrink) {
   }
 
@@ -159,7 +159,7 @@ public:
     //ch->simp = s;
   }
 
-  Surface_RT shrink;
+  FT shrink;
   Rt_Simplex prev_s;
   Quadr_surface *surf;
 

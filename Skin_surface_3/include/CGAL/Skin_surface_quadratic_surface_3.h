@@ -38,7 +38,7 @@ public:
     for (int i=0; i<6; i++) Q[i] = 0;
   }
   Skin_surface_quadratic_surface_3(RT Qinput[], Point p, RT c)
-    : p(p), c(c) 
+    : p(p), c(c)
   {
     for (int i=0; i<6; i++) Q[i] = Qinput[i];
   }

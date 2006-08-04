@@ -35,7 +35,7 @@ class Skin_surface_sqrt3
   typedef Polyhedron_3                                        Polyhedron;
   typedef SkinSurface_3                                       Skin_surface_3;
   // Projects points to the skin surface:
-  typedef SubdivisionPolicy_3                                         Subdivision_policy;
+  typedef SubdivisionPolicy_3                                 Subdivision_policy;
 //   typedef typename Subdivision_policy::Triangulation           Triangulation;
   
   typedef typename Polyhedron::Traits                         Kernel;

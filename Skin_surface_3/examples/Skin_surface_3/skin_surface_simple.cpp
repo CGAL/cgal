@@ -21,9 +21,16 @@ int main(int argc, char *argv[]) {
   std::list<Weighted_point> l;
   RT                        shrinkfactor = 0.5;
 
-  l.push_front(Weighted_point(Bare_point(0,0,0), 1));
-  l.push_front(Weighted_point(Bare_point(0,1,0), 2));
-  l.push_front(Weighted_point(Bare_point(0,0,2), 1));
+  l.push_front(Weighted_point(Bare_point(0,-1,-2), 1.01));
+  l.push_front(Weighted_point(Bare_point(0,-1, 2), 1.01));
+  l.push_front(Weighted_point(Bare_point(0, 1, 0), 1.01));
+
+  l.push_front(Weighted_point(Bare_point(0, 100, 0), 1));
+  l.push_front(Weighted_point(Bare_point(0,-100, 0), 1));
+  l.push_front(Weighted_point(Bare_point( 100, 0, 0), 1));
+  l.push_front(Weighted_point(Bare_point(-100, 0, 0), 1));
+  l.push_front(Weighted_point(Bare_point(0, 0, 100), 1));
+  l.push_front(Weighted_point(Bare_point(0, 0,-100), 1));
 
   Skin_surface_3 skin_surface(l.begin(), l.end(), shrinkfactor);
 

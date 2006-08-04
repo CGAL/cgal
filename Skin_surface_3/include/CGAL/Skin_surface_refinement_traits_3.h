@@ -52,123 +52,23 @@ public:
   typedef typename SS_vertex_map::iterator    SS_vertex_map_it;
 
   Skin_surface_subdivision_policy_base_3(Skin_surface const& skin)
-    : skin(skin), t2p_converter(), p2t_converter()
+    : ss_3(skin), t2p_converter(), p2t_converter()
   {
     
   }
     
-  virtual P_point to_surface(P_vertex_handle vh) = 0;
+  P_point to_surface(P_vertex_handle vh) {
+    P_point result = vh->point();
+    ss_3.intersect_with_transversal_segment(result);
+    return result;
+  }
 
-  virtual P_vector normal(P_vertex_handle vh) = 0;
+  P_vector normal(P_vertex_handle vh) {
+    return ss_3.normal(vh->point());
+  }
 
-  virtual ~Skin_surface_subdivision_policy_base_3() {}
 protected:
-  P_point to_surface_along_transversal_segment(
-    P_point const &p, SS_cell_handle ch) {
-      
-    P_segment transversal_segment = get_transversal_segment(ch,p);
-      
-    return ch->surf->to_surface(
-      transversal_segment.start(), transversal_segment.end());
-  }
-private:
-  P_segment get_transversal_segment(
-    SS_cell_handle ch, P_point const &p) {
-    // Compute signs on vertices and sort them:
-    int nIn = 0;
-    int sortedV[4];
-    for (int i=0; i<4; i++) {
-      if (is_inside(ch,i)) {
-        sortedV[nIn] = i; nIn++;
-      } else {
-        sortedV[3-i+nIn] = i;
-      }
-    }
-    // Make g++-4.1.1 happy
-    P_point begin_point = P_point(); 
-    P_point end_point = P_point(); 
-    Object obj;
-    if (nIn==1) {
-      begin_point = t2p_converter(ch->vertex(sortedV[0])->point());
-      obj = CGAL::intersection(
-        P_plane(
-          t2p_converter(ch->vertex(sortedV[1])->point()),
-          t2p_converter(ch->vertex(sortedV[2])->point()),
-          t2p_converter(ch->vertex(sortedV[3])->point())),
-        P_line(begin_point, p));
-      if ( !assign(end_point, obj) ) {
-        CGAL_assertion_msg(false,"intersection: no intersection.");
-      }
-    } else if (nIn==2) {
-      obj = CGAL::intersection(
-        P_plane(
-          t2p_converter(ch->vertex(sortedV[2])->point()),
-          t2p_converter(ch->vertex(sortedV[3])->point()),
-          p),
-        P_line(
-          t2p_converter(ch->vertex(sortedV[0])->point()),
-          t2p_converter(ch->vertex(sortedV[1])->point())));
-      if ( !assign(begin_point, obj) ) {
-        CGAL_assertion_msg(false,"intersection: no intersection.");
-      }
-      obj = CGAL::intersection(
-        P_plane(
-          t2p_converter(ch->vertex(sortedV[0])->point()),
-          t2p_converter(ch->vertex(sortedV[1])->point()),
-          p),
-        P_line(
-          t2p_converter(ch->vertex(sortedV[2])->point()),
-          t2p_converter(ch->vertex(sortedV[3])->point())));
-      if ( !assign(end_point, obj) ) {
-        CGAL_assertion_msg(false,"intersection: no intersection.");
-      }
-    } else if (nIn==3) {
-      end_point = t2p_converter(ch->vertex(sortedV[3])->point());
-      obj = CGAL::intersection(
-        P_plane(
-          t2p_converter(ch->vertex(sortedV[0])->point()),
-          t2p_converter(ch->vertex(sortedV[1])->point()),
-          t2p_converter(ch->vertex(sortedV[2])->point())),
-        P_line(end_point, p));
-      if ( !assign(begin_point, obj) ) {
-        CGAL_assertion_msg(false,"intersection: no intersection.");
-      }
-    } else {
-      CGAL_assertion(false);
-    }
-    return P_segment(begin_point, end_point);
-  }
-  
-  P_point 
-  intersection(P_plane const &plane, P_line const &line) {
-    P_point p;
-
-    Object result = CGALi::intersection(plane, line);
-    if ( !CGAL::assign(p, result) )
-      CGAL_assertion_msg(false,"intersection: no intersection.");
-    return p;
-  }
-
-  Sign sign(SS_cell_handle ch, int i) {
-    return ch->vertex(i)->sign();
-  }  
-  bool is_inside(SS_cell_handle ch, int i) {
-    //return (sign(ch,i) == POSITIVE);
-    SS_vertex_map_it it = triang_vertex_signs.find(ch->vertex(i));
-    
-    if (it == triang_vertex_signs.end()) {
-      bool side = (sign(ch,i) == POSITIVE);
-      triang_vertex_signs[ch->vertex(i)] = side;
-      CGAL_assertion(triang_vertex_signs[ch->vertex(i)] == side);
-      return side;
-    } else {
-      return it->second;
-    }
-  }
-
-  
-protected:
-  Skin_surface const &skin;
+  Skin_surface const &ss_3;
   SS_vertex_map triang_vertex_signs;
   T2P_converter t2p_converter;
   P2T_converter p2t_converter;

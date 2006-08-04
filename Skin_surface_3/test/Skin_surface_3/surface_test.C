@@ -22,6 +22,8 @@ typedef Skin_surface_3::Triangulated_mixed_complex  Triangulated_mixed_complex;
 typedef Triangulated_mixed_complex::Vertex_handle   Tmc_Vertex_handle;
 typedef Triangulated_mixed_complex::Finite_vertices_iterator 
                                                     Tmc_Finite_vertices_iterator;
+typedef Triangulated_mixed_complex::Finite_cells_iterator 
+                                                    Tmc_Finite_cells_iterator;
 
 #include <fstream>
 
@@ -40,8 +42,10 @@ int main(int argc, char *argv[]) {
     
     Skin_surface_3 skin_surface(l.begin(), l.end(), shrink);
 
-    const Skin_surface_3::Triangulated_mixed_complex &tmc = 
-      skin_surface.triangulated_mixed_complex();
+    Skin_surface_3::Triangulated_mixed_complex tmc;
+    triangulate_mixed_complex_3(skin_surface.get_regular_triangulation(), 
+				skin_surface.get_shrink_factor(), 
+				tmc, false);
 
     for (Tmc_Finite_vertices_iterator vit = tmc.finite_vertices_begin();
 	 vit != tmc.finite_vertices_end(); vit++) {
@@ -60,7 +64,21 @@ int main(int argc, char *argv[]) {
 	}
       }
     }
+
+    for (Tmc_Finite_cells_iterator cit = tmc.finite_cells_begin();
+	 cit != tmc.finite_cells_end(); cit++) {
+      Bare_point baryc = (cit->vertex(0)->point() + 
+			  (cit->vertex(1)->point()-cit->vertex(0)->point())/4
+			  +
+			  (cit->vertex(2)->point()-cit->vertex(0)->point())/4
+			  +
+			  (cit->vertex(3)->point()-cit->vertex(0)->point())/4);
+      Quadratic_surface::RT val1 = cit->surf->value(baryc);
+      Quadratic_surface::RT val2 = skin_surface.value(baryc);
+      CGAL_assertion(val1==val2);
+    }
   }
+
 
   return 0;
 }

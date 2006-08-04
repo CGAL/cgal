@@ -68,10 +68,6 @@ public:
     : Cb(v0, v1, v2, v3) {
   }
 
-//   template <class Input_point>
-//   Sign sign(const Input_point &p) const {
-//     return surf->sign(p);
-//   }
   Quadratic_surface *surf;
   Simplex simp;
 };
@@ -123,7 +119,7 @@ public:
   typedef Triangulation_simplex_3<Regular>               Simplex;
 
   // defining the triangulated mixed complex:
-  typedef Exact_predicates_inexact_constructions_kernel    TMC_traits;
+  typedef Exact_predicates_exact_constructions_kernel    TMC_traits;
   typedef Skin_surface_quadratic_surface_3<TMC_traits>   Quadratic_surface;
 
   typedef Triangulation_3<
@@ -135,6 +131,7 @@ public:
   typedef Combinatorial_mixed_complex_triangulator_3<Regular>  CMCT;
   typedef typename CMCT::Vertex_handle                    CMCT_Vertex_handle;
   typedef typename CMCT::Vertex_iterator                  CMCT_Vertex_iterator;
+  typedef typename CMCT::Cell                             CMCT_Cell;
   typedef typename CMCT::Cell_iterator                    CMCT_Cell_iterator;
 
 
@@ -179,26 +176,26 @@ public:
     }
     
     // Construct the triangulated mixed complex:
-    triangulate_mixed_complex_3(regular, gt.get_shrink(), _tmc, verbose);
+    //triangulate_mixed_complex_3(regular, gt.get_shrink(), _tmc, verbose);
     
-    CGAL_assertion(_tmc.is_valid());
-    if (verbose) {
-      std::cerr << "Triangulated mixed complex ready" << std::endl;
-      std::cerr << "Vertices: " << _tmc.number_of_vertices() << std::endl;
-      std::cerr << "Cells:    " << _tmc.number_of_cells() << std::endl;
-    }
+    // CGAL_assertion(_tmc.is_valid());
+//     if (verbose) {
+//       std::cerr << "Triangulated mixed complex ready" << std::endl;
+//       std::cerr << "Vertices: " << _tmc.number_of_vertices() << std::endl;
+//       std::cerr << "Cells:    " << _tmc.number_of_cells() << std::endl;
+//     }
 
     mc_triangulator = new CMCT(regular, verbose);
   }
-  const Triangulated_mixed_complex &triangulated_mixed_complex() const {
-    return _tmc;
-  }
+//   const Triangulated_mixed_complex &triangulated_mixed_complex() const {
+//     return _tmc;
+//   }
   
-  TMC_Cell_handle explicit_locate(const TMC_Point &p) const{
-    last_ch = _tmc.locate(p, last_ch);
-    return last_ch;
-  }
-  Simplex locate(const Bare_point &p) const{
+//   TMC_Cell_handle explicit_locate(const TMC_Point &p) const{
+//     last_ch = _tmc.locate(p, last_ch);
+//     return last_ch;
+//   }
+  Simplex locate_mixed(const Bare_point &p) const{
     Cell_handle ch = regular.locate(p);
     Simplex s;
     if (regular.is_infinite(ch->vertex(0))) { s = ch->vertex(1); }
@@ -207,7 +204,8 @@ public:
 //     Vertex_handle vh = regular.nearest_power_vertex(p);
 //     Simplex s = locate_mixed(p, Simplex(vh));
     
-    CGAL_assertion(test_locate(p, s));
+    CGAL_assertion(is_infinite_mixed_cell(s) ||
+		   (locate_tet(p, s) != CMCT_Cell()));
     return s;
   }
   bool is_infinite_mixed_cell(const Simplex &s) const {
@@ -251,14 +249,11 @@ public:
     CGAL_assertion(false);
     return false;
   }
-  bool test_locate(const Bare_point &p, const Simplex &s) const {
-    if (is_infinite_mixed_cell(s)) return true;
-
+  CMCT_Cell locate_tet(const Bare_point &p, const Simplex &s) const {
     Mixed_complex_traits_3<Exact_predicates_exact_constructions_kernel> 
       traits(gt.get_shrink());
     
-    typedef typename CMCT::Cell Cmct_Cell;
-    std::vector<Cmct_Cell> cells;
+    std::vector<CMCT_Cell> cells;
 
     switch (s.dimension()) {
     case 0:
@@ -298,13 +293,14 @@ public:
 
     bool found = false;
 
-    for (typename std::vector<Cmct_Cell>::iterator it = cells.begin();
+    for (typename std::vector<CMCT_Cell>::iterator it = cells.begin();
 	 ((!found)&&(it != cells.end())); it++) {
-      found |= (mc_triangulator->bounded_side(p, *it, traits) != 
-		ON_UNBOUNDED_SIDE);
+      if (mc_triangulator->bounded_side(p, *it, traits) != ON_UNBOUNDED_SIDE) {
+	return *it;
+      }
     }
 
-    return found;
+    return CMCT_Cell();
   }
   Simplex locate_mixed(const Bare_point &p, const Simplex &start) const;
 
@@ -323,6 +319,26 @@ public:
   typename Point::R::RT
   value(const Simplex &sim, const Point &p) const {
     return construct_surface(sim, typename Point::R()).value(p);
+  }
+  template< class Point >
+  typename Point::R::RT
+  value(const Point &p) const {
+    Simplex sim = locate_mixed(p);
+    return value(sim,p);
+  }
+  template< class Point >
+  typename Point::R::Vector_3
+  normal(const Point &p) const {
+    typedef typename Point::R K;
+    Cartesian_converter<K, typename Geometric_traits::Bare_point::R> converter;
+    
+    return construct_surface(locate_mixed(converter(p)),
+			     typename Point::R()).gradient(p);
+  }
+  template< class Point >
+  typename Point::R::Vector_3
+  normal(const Simplex &sim, const Point &p) const {
+    return construct_surface(sim, typename Point::R()).normal(p);
   }
 
   template < class Point >
@@ -362,9 +378,104 @@ public:
       else { p2 = p; }
       sq_dist *= .25;
     }
+//     while ((s1 != s2) && (sq_dist > 1e-18)) {
+//       p = midpoint(p1, p2);
+//       sp = locate_mixed(converter(p), sp);
+
+//       if (sign(sp, p) == NEGATIVE) { p1 = p; s1 = sp; }
+//       else { p2 = p; s2 = sp; }
+
+//       sq_dist *= .25;
+//     }
+//     while (sq_dist > 1e-18) {
+//       p = midpoint(p1, p2);
+//       if (sign(s1, p) == NEGATIVE) { p1 = p; }
+//       else { p2 = p; }
+//       sq_dist *= .25;
+//     }
     p = midpoint(p1, p2);
   }
-  
+
+  template <class Point>
+  void intersect_with_transversal_segment(Point &p) const {
+    typedef typename Point::R        Traits;
+    typedef typename Traits::Plane_3 Plane;
+    typedef typename Traits::Line_3  Line;
+    Mixed_complex_traits_3<Traits> point_traits;
+    Cartesian_converter<Traits, 
+                        typename Geometric_traits::Bare_point::R> converter;
+
+    Simplex sim = locate_mixed(converter(p));
+    CMCT_Cell tet = locate_tet(p, sim);
+    
+    // get transversal segment:
+    Point p1, p2;
+
+    // Compute signs on vertices and sort them:
+    int nIn = 0;
+    int sortedV[4];
+    for (int i=0; i<4; i++) {
+      if (sign(tet.vertex(i))==POSITIVE) {
+        sortedV[nIn] = i; nIn++;
+      } else {
+        sortedV[3-i+nIn] = i;
+      }
+    }
+    
+    Object obj;
+    if (nIn==1) {
+      p1 = mc_triangulator->location(tet.vertex(sortedV[0]), point_traits);
+      obj = CGAL::intersection(
+        Plane
+	(mc_triangulator->location(tet.vertex(sortedV[1]), point_traits),
+	 mc_triangulator->location(tet.vertex(sortedV[2]), point_traits),
+	 mc_triangulator->location(tet.vertex(sortedV[3]), point_traits)),
+        Line(p1, p));
+      if ( !assign(p2, obj) ) {
+        CGAL_assertion_msg(false,"intersection: no intersection.");
+      }
+    } else if (nIn==2) {
+      obj = CGAL::intersection(
+        Plane
+	(mc_triangulator->location(tet.vertex(sortedV[2]), point_traits),
+	 mc_triangulator->location(tet.vertex(sortedV[3]), point_traits),
+          p),
+        Line(
+          mc_triangulator->location(tet.vertex(sortedV[0]), point_traits),
+	  mc_triangulator->location(tet.vertex(sortedV[1]), point_traits)));
+      if ( !assign(p1, obj) ) {
+        CGAL_assertion_msg(false,"intersection: no intersection.");
+      }
+      obj = CGAL::intersection(
+       Plane
+	(mc_triangulator->location(tet.vertex(sortedV[0]), point_traits),
+	 mc_triangulator->location(tet.vertex(sortedV[1]), point_traits),
+          p),
+        Line(
+          mc_triangulator->location(tet.vertex(sortedV[2]), point_traits),
+	  mc_triangulator->location(tet.vertex(sortedV[3]), point_traits)));
+      if ( !assign(p2, obj) ) {
+        CGAL_assertion_msg(false,"intersection: no intersection.");
+      }
+    } else if (nIn==3) {
+      p2 = mc_triangulator->location(tet.vertex(sortedV[3]), point_traits);
+      obj = CGAL::intersection(
+        Plane(
+          mc_triangulator->location(tet.vertex(sortedV[0]), point_traits),
+          mc_triangulator->location(tet.vertex(sortedV[1]), point_traits),
+          mc_triangulator->location(tet.vertex(sortedV[2]), point_traits)),
+        Line(p2, p));
+      if ( !assign(p1, obj) ) {
+        CGAL_assertion_msg(false,"intersection: no intersection.");
+      }
+    } else {
+      CGAL_assertion(false);
+    }
+
+    // Find the intersection:
+    intersect(p1, p2, sim, sim, p);
+  }
+
   template< class Traits >
   Skin_surface_quadratic_surface_3<Traits> 
   construct_surface(const Simplex &sim, const Traits &traits) const {
@@ -408,7 +519,7 @@ public:
 	Weighted_point p1 = conv(ch->vertex(1)->point());
 	Weighted_point p2 = conv(ch->vertex(2)->point());
 	Weighted_point p3 = conv(ch->vertex(3)->point());
-	return Quadratic_surface(p0,p1,p2, gt.get_shrink());
+	return Quadratic_surface(p0,p1,p2,p3, gt.get_shrink());
 	break;
       }
     default: 
@@ -437,20 +548,26 @@ public:
   RT squared_error_bound() const {
     return .01;
   }
-  Sign operator()(const Bare_point &p) const {
-     Cartesian_converter<typename Bare_point::R, TMC_traits > converter;
-     TMC_Point p_tmc = converter(p);
-     TMC_Cell_handle ch = locate(p_tmc);
-     if (_tmc.is_infinite(ch)) {
-       // Infinite cells do not have a pointer to a surface
-       return NEGATIVE;
-     }
-     return ch->surf->sign(p_tmc);
-  }
-  typename Mesher_Gt::FT 
+//   Sign sign(const Bare_point &p) const {
+//      Cartesian_converter<typename Bare_point::R, TMC_traits > converter;
+//      TMC_Point p_tmc = converter(p);
+//      TMC_Cell_handle ch = locate_mixed(p_tmc);
+//      if (_tmc.is_infinite(ch)) {
+//        // Infinite cells do not have a pointer to a surface
+//        return NEGATIVE;
+//      }
+//      return ch->surf->sign(p_tmc);
+//   }
+  typename Mesher_Gt::RT 
   get_density(const typename Mesher_Gt::Point_3 &p) const {
     // NGHK: Make adaptive
     return 1;
+  }
+  const Regular &get_regular_triangulation() const {
+    return regular;
+  }
+  RT get_shrink_factor() const {
+    return gt.get_shrink();
   }
 
 private:
@@ -461,12 +578,12 @@ private:
 
   Regular regular;
   Gt gt;
-  Triangulated_mixed_complex _tmc;
+//   Triangulated_mixed_complex _tmc;
   bool verbose;
   Sphere_3 _bounding_sphere;
   mutable Random rng;
 
-  // We want to construct this object later:
+  // We want to construct this object later (the pointer):
   CMCT *mc_triangulator;
 };
 
@@ -592,8 +709,6 @@ locate_mixed(const Bare_point &p, const Simplex &start) const {
     side_tester = gt.side_of_mixed_cell_3_object();
   
  try_next_cell:
-//   std::cout << "  DIM: " << s.dimension() << " " << s << std::endl; 
-//   std::cout << "  tst: " << test_locate(p, s) << std::endl; 
 
   switch (s.dimension()) {
   case 0:

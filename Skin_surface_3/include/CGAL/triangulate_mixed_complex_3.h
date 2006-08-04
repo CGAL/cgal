@@ -20,13 +20,12 @@
 #ifndef CGAL_TRIANGULATE_MIXED_COMPLEX_3
 #define CGAL_TRIANGULATE_MIXED_COMPLEX_3
 
-// #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Compute_anchor_3.h>
 
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Triangulated_mixed_complex_observer_3.h>
 #include <CGAL/Triangulation_incremental_builder_3.h>
-// NGHK: move this one to SkinSurfaceTraits
+
 #include <CGAL/Mixed_complex_traits_3.h>
 
 #include <CGAL/iterator.h>
@@ -39,6 +38,8 @@ public:
   typedef CMCT_Cell<CMCT>                   Self;
   typedef typename CMCT::Vertex_handle Vertex_handle;
 
+  CMCT_Cell() {
+  }
   CMCT_Cell(Vertex_handle vs[]) {
     for (int i=0; i<4; i++) _vs[i] = vs[i];
   }
@@ -66,6 +67,7 @@ public:
 	    (_vs[2] == other._vs[2]) &&
 	    (_vs[3] == other._vs[3]));
   }
+  bool operator!=(const Self &other) const { return !operator==(other); }
 private:
   Vertex_handle _vs[4];
 };
@@ -299,6 +301,7 @@ public:
 
   typedef std::set<Vertex>                           Vertex_container;
   typedef typename Vertex_container::iterator        Vertex_container_it;
+  typedef Vertex_container_it                        Vertex_iterator;  
   
   typedef std::map<Vertex_handle, Vertex_handle>     Symb_vertex_map;
   typedef typename Symb_vertex_map::const_iterator   Symb_vertex_map_const_it;
@@ -316,44 +319,44 @@ public:
   //typedef Filter_iterator<Symb_vertex_map_const_it, Is_no_vertex> Vertex_iterator;
   
 
-  class Vertex_iterator {
-    typedef Self Combinatorial_mixed_complex_triangulator_3;
-  public:
-    // types of an iterator:
-    typedef std::forward_iterator_tag iterator_category;
-    typedef Vertex                    value_type;
-    typedef std::ptrdiff_t            difference_type;
-    typedef value_type*               pointer;
-    typedef value_type&               reference;
+//   class Vertex_iterator {
+//     typedef Self Combinatorial_mixed_complex_triangulator_3;
+//   public:
+//     // types of an iterator:
+//     typedef std::forward_iterator_tag iterator_category;
+//     typedef Vertex                    value_type;
+//     typedef std::ptrdiff_t            difference_type;
+//     typedef value_type*               pointer;
+//     typedef value_type&               reference;
 
-    Vertex_iterator(Symb_vertex_map_const_it it, Symb_vertex_map_const_it end) :
-      it(it), end(end) {}
-    Vertex_iterator(Symb_vertex_map_const_it end) :
-      it(end), end(end) {}
+//     Vertex_iterator(Symb_vertex_map_const_it it, Symb_vertex_map_const_it end) :
+//       it(it), end(end) {}
+//     Vertex_iterator(Symb_vertex_map_const_it end) :
+//       it(end), end(end) {}
     
-    Vertex_iterator& operator++() {
-      do { ++it; } while (it != end && (it->first != it->second));
-      return *this;
-    }
+//     Vertex_iterator& operator++() {
+//       do { ++it; } while (it != end && (it->first != it->second));
+//       return *this;
+//     }
     
-    Vertex_iterator operator++(int) {
-      Vertex_iterator tmp(*this);
-      ++(*this);
-      return tmp;
-    }
+//     Vertex_iterator operator++(int) {
+//       Vertex_iterator tmp(*this);
+//       ++(*this);
+//       return tmp;
+//     }
     
-    reference operator*() const { return (it->first);  }
-    pointer operator->() const  { return (it->first); }
+//     reference operator*() const { return (it->first);  }
+//     pointer operator->() const  { return (it->first); }
 
-    bool operator==(const Vertex_iterator other) {
-      return (other.it == it);
-    }
-    bool operator!=(const Vertex_iterator other) {
-      return !(other.it == it);
-    }
-  private:
-    Symb_vertex_map_const_it it, end;
-  };
+//     bool operator==(const Vertex_iterator other) {
+//       return (other.it == it);
+//     }
+//     bool operator!=(const Vertex_iterator other) {
+//       return !(other.it == it);
+//     }
+//   private:
+//     Symb_vertex_map_const_it it, end;
+//   };
 
 public:
   Combinatorial_mixed_complex_triangulator_3(Regular const &regular,
@@ -369,13 +372,10 @@ public:
   void construct_vertices(OutputIteratorVertices vertices);
 
   Vertex_iterator vertices_begin() {
-    if (anchors.empty()) return vertices_end();
-
-    return Vertex_iterator(anchors.begin(), 
-			   anchors.end());
+    return vertices.begin();
   }
   Vertex_iterator vertices_end() {
-    return Vertex_iterator(anchors.end());
+    return vertices.end();
   }
 
   Cell_iterator cells_begin() {
@@ -551,7 +551,6 @@ private:
   Compute_anchor compute_anchor_obj;
 
   Anchor_map             anchor_del2, anchor_vor2;
-  Symb_vertex_map        anchors;
   Vertex_container       vertices;
 };
 
@@ -702,7 +701,6 @@ construct_vertices()
   Rt_Edge e;
   Rt_Cell_handle c1, c2;
   Rt_Simplex sDel, sVor;
-  Vertex_handle vh;
 
   if (verbose) std::cout << "construct_anchors" << std::endl;
   construct_anchors();
@@ -714,65 +712,46 @@ construct_vertices()
     sVor = get_anchor_vor(Rt_Simplex(cit));
     for (int i=0; i<4; i++) {
       sDel = get_anchor_del(Rt_Simplex(cit->vertex(i)));
-      if (vertices.find(Symb_anchor(sDel,sVor)) == vertices.end()) {
-	vh = add_vertex(Symb_anchor(sDel,sVor));
-	anchors[vh] = vh;
-	CGAL_assertion(vh == get_vertex(sDel, sVor));
-      }
+      add_vertex(Symb_anchor(sDel,sVor));
     }
   }
-
+  
   if (verbose) std::cout << "8 ";
   // anchor dimDel=1, dimVor=3
-  for (cit=regular.finite_cells_begin(); cit!=regular.finite_cells_end(); cit++) {
+  for (cit = regular.finite_cells_begin(); 
+       cit != regular.finite_cells_end(); cit++) {
     sVor = get_anchor_vor(Rt_Simplex(cit));
     for (int i=0; i<3; i++) {
       for (int j=i+1; j<4; j++) {
 	sDel = get_anchor_del(Rt_Simplex(Rt_Edge(cit,i,j)));
-	if (vertices.find(Symb_anchor(sDel,sVor)) == vertices.end()) {
-	  vh = add_vertex(Symb_anchor(sDel,sVor));
-	  anchors[vh] = vh;
-	  assert(vh == get_vertex(sDel, sVor));
-	}
+	add_vertex(Symb_anchor(sDel,sVor));
       }
     }
   }
-
+  
   if (verbose) std::cout << "7 ";
   // anchor dimDel=2, dimVor=3 and dimDel=0, dimVor=2
-  for (fit=regular.finite_facets_begin(); fit!=regular.finite_facets_end(); fit++) {
+  for (fit = regular.finite_facets_begin(); 
+       fit != regular.finite_facets_end(); fit++) {
     // anchor dimDel=2, dimVor=3
     c1 = fit->first;
     c2 = c1->neighbor(fit->second);
-
+    
     sDel = get_anchor_del(*fit);
     if (!regular.is_infinite(c1)) {
       sVor = get_anchor_vor(c1);
-      if (vertices.find(Symb_anchor(sDel,sVor)) == vertices.end()) {
-	vh = add_vertex(Symb_anchor(sDel,sVor));
-	anchors[vh] = vh;
-	assert(vh == get_vertex(sDel, sVor));
-      }
+      add_vertex(Symb_anchor(sDel,sVor));
     }
+    
     if (!regular.is_infinite(c2)) {
       sVor = get_anchor_vor(c2);
-      if (vertices.find(Symb_anchor(sDel,sVor)) == vertices.end()) {
-	vh = add_vertex(Symb_anchor(sDel,sVor));
-	anchors[vh] = vh;
-	assert(vh == get_vertex(sDel, sVor));
-      }
+      add_vertex(Symb_anchor(sDel,sVor));
     }
     // anchor dimDel=0, dimVor=2
     sVor = get_anchor_vor(*fit);
     for (int i=1; i<4; i++) {
       sDel = get_anchor_del(Rt_Simplex(c1->vertex((fit->second+i)&3)));
-      if (vertices.find(Symb_anchor(sDel,sVor)) == vertices.end()) {
-	vh = add_vertex(Symb_anchor(sDel,sVor));
-	anchors[vh] = vh;
-	assert(vh == get_vertex(sDel, sVor));
-      } else {
-        vh = get_vertex(sDel, sVor);
-      }
+      add_vertex(Symb_anchor(sDel,sVor));
     }
   }
 	
@@ -780,100 +759,75 @@ construct_vertices()
   // anchor dimDel=0, dimVor=1
   for (eit=regular.finite_edges_begin(); eit!=regular.finite_edges_end(); eit++) {
     sVor = get_anchor_vor(*eit);
-
     v1 = eit->first->vertex(eit->second);
     v2 = eit->first->vertex(eit->third);
     sDel = get_anchor_del(v1);
-    if (vertices.find(Symb_anchor(sDel,sVor)) == vertices.end()) {
-      vh = add_vertex(Symb_anchor(sDel,sVor));
-      anchors[vh] = vh;
-      assert(vh == get_vertex(sDel, sVor));
-    }
+    add_vertex(Symb_anchor(sDel,sVor));
 			
     sDel = get_anchor_del(v2);
-    if (vertices.find(Symb_anchor(sDel,sVor)) == vertices.end()) {
-      vh = add_vertex(Symb_anchor(sDel,sVor));
-      anchors[vh] = vh;
-      assert(vh == get_vertex(sDel, sVor));
-    }
+    add_vertex(Symb_anchor(sDel,sVor));
   }
 	
   if (verbose) std::cout << "5 ";
   // anchor dimDel=3, dimVor=3
-  for (cit=regular.finite_cells_begin(); cit!=regular.finite_cells_end(); cit++) {
+  for (cit=regular.finite_cells_begin(); 
+       cit!=regular.finite_cells_end(); cit++) {
     sDel = get_anchor_del(Rt_Simplex(cit));
     sVor = get_anchor_vor(Rt_Simplex(cit));
-    if (vertices.find(Symb_anchor(sDel,sVor)) == vertices.end()) {
-      vh = add_vertex(Symb_anchor(sDel,sVor));
-      anchors[vh] = vh;
-      assert(vh == get_vertex(sDel, sVor));
-    }
+    add_vertex(Symb_anchor(sDel,sVor));
   }
 
 
   if (verbose) std::cout << "4 ";
   // anchor dimDel=0, dimVor=0
-  for (vit=regular.finite_vertices_begin(); vit!=regular.finite_vertices_end(); vit++) {
+  for (vit=regular.finite_vertices_begin(); 
+       vit!=regular.finite_vertices_end(); vit++) {
     sDel = get_anchor_del(Rt_Simplex(vit));
     sVor = get_anchor_vor(Rt_Simplex(vit));
-    if (vertices.find(Symb_anchor(sDel,sVor)) == vertices.end()) {
-      vh = add_vertex(Symb_anchor(sDel,sVor));
-      anchors[vh] = vh;
-      assert(vh == get_vertex(sDel, sVor));
-    }
+    add_vertex(Symb_anchor(sDel,sVor));
   }
 	
   if (verbose) std::cout << "3 ";
   // anchor dimDel=1, dimVor=2
-  for (fit=regular.finite_facets_begin(); fit!=regular.finite_facets_end(); fit++) {
+  for (fit = regular.finite_facets_begin(); 
+       fit != regular.finite_facets_end(); fit++) {
     c1 = fit->first;
     c2 = c1->neighbor(fit->second);
 
     sVor = get_anchor_vor(Rt_Simplex(*fit));
     for (int i=1; i<3; i++) {
       for (int j=i+1; j<4; j++) {
-        e.first = c1;
-        e.second = (fit->second+i)&3;
-        e.third = (fit->second+j)&3;
-        sDel = get_anchor_del(Rt_Simplex(e));
-	if (vertices.find(Symb_anchor(sDel,sVor)) == vertices.end()) {
-	  vh = add_vertex(Symb_anchor(sDel,sVor));
-	  anchors[vh] = vh;
-	  assert(vh == get_vertex(sDel, sVor));
-	}
+	e.first = c1;
+	e.second = (fit->second+i)&3;
+	e.third = (fit->second+j)&3;
+	sDel = get_anchor_del(Rt_Simplex(e));
+	add_vertex(Symb_anchor(sDel,sVor));
       }
     }
   }
 	
   if (verbose) std::cout << "2 ";
   // anchor dimDel=2, dimVor=2
-  for (fit=regular.finite_facets_begin(); fit!=regular.finite_facets_end(); fit++) {
+  for (fit=regular.finite_facets_begin(); 
+       fit!=regular.finite_facets_end(); fit++) {
     c1 = fit->first;
     c2 = c1->neighbor(fit->second);
 
     sVor = get_anchor_vor(Rt_Simplex(*fit));
     sDel = get_anchor_del(Rt_Simplex(*fit));
-    if (vertices.find(Symb_anchor(sDel,sVor)) == vertices.end()) {
-      vh = add_vertex(Symb_anchor(sDel,sVor));
-      anchors[vh] = vh;
-      assert(vh == get_vertex(sDel, sVor));
-    }
+    add_vertex(Symb_anchor(sDel,sVor));
   }
 	
   if (verbose) std::cout << "1" << std::endl;
   // anchor dimDel=1, dimVor=1
-  for (eit=regular.finite_edges_begin(); eit!=regular.finite_edges_end(); eit++) {
+  for (eit=regular.finite_edges_begin(); 
+       eit!=regular.finite_edges_end(); eit++) {
     v1 = eit->first->vertex(eit->second);
     v2 = eit->first->vertex(eit->third);
 
     sVor = get_anchor_vor(Rt_Simplex(*eit));
     sDel = get_anchor_del(Rt_Simplex(*eit));
-
-    if (vertices.find(Symb_anchor(sDel,sVor)) == vertices.end()) {
-      vh = add_vertex(Symb_anchor(sDel,sVor));
-      anchors[vh] = vh;
-      assert(vh == get_vertex(sDel, sVor));
-    }
+    add_vertex(Symb_anchor(sDel,sVor));
   }
 }
 
@@ -882,12 +836,11 @@ template <class MixedComplexTraits_3>
   template <class OutputIteratorVertices>
 void
 Combinatorial_mixed_complex_triangulator_3<MixedComplexTraits_3>::
-construct_vertices(OutputIteratorVertices vertices)
+construct_vertices(OutputIteratorVertices out)
 {
-  for (typename Symb_vertex_map::iterator it = anchors.begin();
-       it != anchors.end(); it++) {
-    CGAL_assertion(it->first == it->second);
-    if (it->first == it->second) *vertices++ = (*it).first;
+  for (Vertex_iterator it = vertices.begin();
+       it != vertices.end(); it++) {
+    if (it->first == it->second) *out++ = *it;
   }
 }
 
@@ -926,8 +879,8 @@ construct_0_cell(Rt_Vertex_handle rt_vh, OutputIteratorCells cells) const
 	  
 	for (int j=1; j<4; j++) {
 	  if (j!=i) {
-	    sVor_e = get_anchor_vor(
-				    Rt_Simplex(Rt_Edge(*adj_cell,index,(index+j)&3)));
+	    sVor_e = 
+	      get_anchor_vor(Rt_Simplex(Rt_Edge(*adj_cell,index,(index+j)&3)));
 	    vh[1] = get_vertex(sDel_v,sVor_e);
 	    if ((vh[0] != vh[1]) && (vh[1] != vh[2]) && (vh[2] != vh[3])) {
 	      CGAL_assertion(sVor_v != sVor_e);
@@ -1144,8 +1097,10 @@ Vertex_handle
 Combinatorial_mixed_complex_triangulator_3<MixedComplexTraits_3>::
 add_vertex (Symb_anchor anchor)
 {
-  // NGHK:: is this allright?
-  return &*(vertices.insert(anchor).first);
+  Vertex_iterator vit = vertices.find(anchor);
+  if (vit == vertices.end()) 
+    return &*(vertices.insert(anchor).first);
+  return &*vit;
 }
 
 // Gets a vertex from the simplicial complex based on the anchors
@@ -1228,22 +1183,22 @@ triangulate_mixed_complex_3(MixedComplexTraits_3 &rt,
 
   { // Vertices
     if (verbose) std::cout << "Construct vertices" << std::endl;
-    std::list<Cmct_Vertex_handle> vertices;
+//     std::list<const Cmct_Vertex_handle> vertices;
     //std::list<Cmct_Vertex_iterator> v2;
-    mc_triangulator.construct_vertices(std::back_inserter(vertices));
-    { // NGHK: DEBUG CODE
-      Cmct_Vertex_iterator vit = mc_triangulator.vertices_begin();
-      CGAL_assertion((int)std::distance(mc_triangulator.vertices_begin(), 
-					mc_triangulator.vertices_end())==
-		     (int)vertices.size());
-    }
-    for (typename std::list<Cmct_Vertex_handle>::iterator 
-	   vit = vertices.begin();
-	 vit != vertices.end(); vit++) {
+    //mc_triangulator.construct_vertices(std::back_inserter(vertices));
+//     { // NGHK: DEBUG CODE
+//       Cmct_Vertex_iterator vit = mc_triangulator.vertices_begin();
+//       CGAL_assertion((int)std::distance(mc_triangulator.vertices_begin(), 
+// 					mc_triangulator.vertices_end())==
+// 		     (int)vertices.size());
+//     }
+    for (Cmct_Vertex_iterator vit = mc_triangulator.vertices_begin();
+	 vit != mc_triangulator.vertices_end(); vit++) {
       Out_Vertex_handle vh = triangulation_incr_builder.add_vertex();
       vh->point() = mc_triangulator.location(*vit, Mc_traits(shrink_factor));
-      vertex_map[*vit] = vh;
-      observer.after_vertex_insertion((*vit)->first, (*vit)->second, vh);
+      Cmct_Vertex_handle cmct_vh = &*vit;
+      vertex_map[cmct_vh] = vh;
+      observer.after_vertex_insertion((*vit).first, (*vit).second, vh);
     }
   }
 
