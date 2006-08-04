@@ -12,11 +12,13 @@ CFLAGS=${PROFOPT}
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
-#GSL_DIR=/usr/local/gsl
 LAPACK_INCDIRS = -I$(LAPACK_DIR)/SRC -I$(LAPACK_DIR)
 
+#note line -I../../../Jet_fitting_3/include needed since 
+#jet_fitting_3 not in the release yet
 CXXFLAGS = \
            -I../../include \
+           -I../../../Jet_fitting_3/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
 	   $(LAPACK_INCDIRS) \
@@ -25,7 +27,6 @@ CXXFLAGS = \
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
-#GSL_LIBS=-L${GSL_DIR}/lib -lgsl -lgslcblas -lm
 F2CDIR  = $(LAPACK_DIR)/F2CLIBS
 LAPACK_LDLIBS  = $(LAPACK_DIR)/lapack_LINUX.a \
           $(LAPACK_DIR)/blas_LINUX.a $(LAPACK_DIR)/tmglib_LINUX.a \
@@ -48,17 +49,11 @@ all:            \
 
 BLIND_OBJS=options.o PolyhedralSurf.o blind.o
 blind: $(BLIND_OBJS)
-	$(CGAL_CXX) $(LIBPATH) -o blind.exe $(BLIND_OBJS) \
+	$(CGAL_CXX) $(LIBPATH) -o blind $(BLIND_OBJS) \
 	$(LDFLAGS) 
 
-
-rmexe:
-	rm *.exe
-
 clean: \
-        blind.clean  options.clean PolyhedralSurf.clean \
-	rmexe
-
+        blind.clean  options.clean PolyhedralSurf.clean 
 
 depend: 
 	makedepend *.[Ch]
@@ -72,13 +67,129 @@ depend:
 
 # DO NOT DELETE
 
-blind.o: ../../include/CGAL/Ridges.h
+blind.o: /usr/include/boost/property_map.hpp /usr/include/boost/config.hpp
+blind.o: /usr/include/boost/config/user.hpp
+blind.o: /usr/include/boost/config/select_compiler_config.hpp
+blind.o: /usr/include/boost/config/compiler/gcc.hpp
+blind.o: /usr/include/boost/config/select_stdlib_config.hpp
+blind.o: /usr/include/boost/config/select_platform_config.hpp
+blind.o: /usr/include/boost/config/suffix.hpp /usr/include/limits.h
+blind.o: /usr/include/features.h /usr/include/sys/cdefs.h
+blind.o: /usr/include/gnu/stubs.h /usr/include/bits/posix1_lim.h
+blind.o: /usr/include/bits/local_lim.h /usr/include/linux/limits.h
+blind.o: /usr/include/bits/posix2_lim.h
+blind.o: /usr/include/boost/pending/cstddef.hpp
+blind.o: /usr/include/boost/detail/iterator.hpp /usr/include/boost/config.hpp
+blind.o: /usr/include/boost/concept_check.hpp /usr/include/boost/iterator.hpp
+blind.o: /usr/include/boost/type_traits/conversion_traits.hpp
+blind.o: /usr/include/boost/type_traits/is_convertible.hpp
+blind.o: /usr/include/boost/type_traits/detail/yes_no_type.hpp
+blind.o: /usr/include/boost/type_traits/config.hpp
+blind.o: /usr/include/boost/type_traits/is_array.hpp
+blind.o: /usr/include/boost/type_traits/detail/bool_trait_def.hpp
+blind.o: /usr/include/boost/type_traits/detail/template_arity_spec.hpp
+blind.o: /usr/include/boost/mpl/int.hpp /usr/include/boost/mpl/int_fwd.hpp
+blind.o: /usr/include/boost/mpl/aux_/adl_barrier.hpp
+blind.o: /usr/include/boost/mpl/aux_/config/adl.hpp
+blind.o: /usr/include/boost/mpl/aux_/config/msvc.hpp
+blind.o: /usr/include/boost/mpl/aux_/config/intel.hpp
+blind.o: /usr/include/boost/mpl/aux_/config/gcc.hpp
+blind.o: /usr/include/boost/mpl/aux_/config/workaround.hpp
+blind.o: /usr/include/boost/detail/workaround.hpp
+blind.o: /usr/include/boost/mpl/aux_/nttp_decl.hpp
+blind.o: /usr/include/boost/mpl/aux_/config/nttp.hpp
+blind.o: /usr/include/boost/preprocessor/cat.hpp
+blind.o: /usr/include/boost/preprocessor/config/config.hpp
+blind.o: /usr/include/boost/mpl/aux_/integral_wrapper.hpp
+blind.o: /usr/include/boost/mpl/integral_c_tag.hpp
+blind.o: /usr/include/boost/mpl/aux_/config/static_constant.hpp
+blind.o: /usr/include/boost/mpl/aux_/static_cast.hpp
+blind.o: /usr/include/boost/mpl/aux_/template_arity_fwd.hpp
+blind.o: /usr/include/boost/mpl/aux_/preprocessor/params.hpp
+blind.o: /usr/include/boost/mpl/aux_/config/preprocessor.hpp
+blind.o: /usr/include/boost/preprocessor/comma_if.hpp
+blind.o: /usr/include/boost/preprocessor/punctuation/comma_if.hpp
+blind.o: /usr/include/boost/preprocessor/control/if.hpp
+blind.o: /usr/include/boost/preprocessor/control/iif.hpp
+blind.o: /usr/include/boost/preprocessor/logical/bool.hpp
+blind.o: /usr/include/boost/preprocessor/facilities/empty.hpp
+blind.o: /usr/include/boost/preprocessor/punctuation/comma.hpp
+blind.o: /usr/include/boost/preprocessor/repeat.hpp
+blind.o: /usr/include/boost/preprocessor/repetition/repeat.hpp
+blind.o: /usr/include/boost/preprocessor/debug/error.hpp
+blind.o: /usr/include/boost/preprocessor/detail/auto_rec.hpp
+blind.o: /usr/include/boost/preprocessor/tuple/eat.hpp
+blind.o: /usr/include/boost/preprocessor/inc.hpp
+blind.o: /usr/include/boost/preprocessor/arithmetic/inc.hpp
+blind.o: /usr/include/boost/mpl/aux_/config/lambda.hpp
+blind.o: /usr/include/boost/mpl/aux_/config/ttp.hpp
+blind.o: /usr/include/boost/mpl/aux_/config/ctps.hpp
+blind.o: /usr/include/boost/mpl/aux_/config/overload_resolution.hpp
+blind.o: /usr/include/boost/type_traits/integral_constant.hpp
+blind.o: /usr/include/boost/mpl/bool.hpp /usr/include/boost/mpl/bool_fwd.hpp
+blind.o: /usr/include/boost/mpl/integral_c.hpp
+blind.o: /usr/include/boost/mpl/integral_c_fwd.hpp
+blind.o: /usr/include/boost/mpl/aux_/lambda_support.hpp
+blind.o: /usr/include/boost/type_traits/detail/bool_trait_undef.hpp
+blind.o: /usr/include/boost/type_traits/add_reference.hpp
+blind.o: /usr/include/boost/type_traits/is_reference.hpp
+blind.o: /usr/include/boost/type_traits/detail/type_trait_def.hpp
+blind.o: /usr/include/boost/type_traits/detail/type_trait_undef.hpp
+blind.o: /usr/include/boost/type_traits/ice.hpp
+blind.o: /usr/include/boost/type_traits/detail/ice_or.hpp
+blind.o: /usr/include/boost/type_traits/detail/ice_and.hpp
+blind.o: /usr/include/boost/type_traits/detail/ice_not.hpp
+blind.o: /usr/include/boost/type_traits/detail/ice_eq.hpp
+blind.o: /usr/include/boost/type_traits/is_arithmetic.hpp
+blind.o: /usr/include/boost/type_traits/is_integral.hpp
+blind.o: /usr/include/boost/type_traits/is_float.hpp
+blind.o: /usr/include/boost/type_traits/is_abstract.hpp
+blind.o: /usr/include/boost/static_assert.hpp
+blind.o: /usr/include/boost/type_traits/is_class.hpp
+blind.o: /usr/include/boost/type_traits/is_union.hpp
+blind.o: /usr/include/boost/type_traits/remove_cv.hpp
+blind.o: /usr/include/boost/type_traits/broken_compiler_spec.hpp
+blind.o: /usr/include/boost/type_traits/detail/cv_traits_impl.hpp
+blind.o: /usr/include/boost/type_traits/intrinsics.hpp
+blind.o: /usr/include/boost/mpl/identity.hpp
+blind.o: /usr/include/boost/mpl/aux_/na_spec.hpp
+blind.o: /usr/include/boost/mpl/lambda_fwd.hpp
+blind.o: /usr/include/boost/mpl/void_fwd.hpp
+blind.o: /usr/include/boost/mpl/aux_/na.hpp
+blind.o: /usr/include/boost/mpl/aux_/na_fwd.hpp
+blind.o: /usr/include/boost/mpl/aux_/lambda_arity_param.hpp
+blind.o: /usr/include/boost/mpl/aux_/arity.hpp
+blind.o: /usr/include/boost/mpl/aux_/config/dtp.hpp
+blind.o: /usr/include/boost/mpl/aux_/preprocessor/enum.hpp
+blind.o: /usr/include/boost/mpl/aux_/preprocessor/def_params_tail.hpp
+blind.o: /usr/include/boost/mpl/limits/arity.hpp
+blind.o: /usr/include/boost/preprocessor/logical/and.hpp
+blind.o: /usr/include/boost/preprocessor/logical/bitand.hpp
+blind.o: /usr/include/boost/preprocessor/identity.hpp
+blind.o: /usr/include/boost/preprocessor/facilities/identity.hpp
+blind.o: /usr/include/boost/preprocessor/empty.hpp
+blind.o: /usr/include/boost/preprocessor/arithmetic/add.hpp
+blind.o: /usr/include/boost/preprocessor/arithmetic/dec.hpp
+blind.o: /usr/include/boost/preprocessor/control/while.hpp
+blind.o: /usr/include/boost/preprocessor/list/fold_left.hpp
+blind.o: /usr/include/boost/preprocessor/list/detail/fold_left.hpp
+blind.o: /usr/include/boost/preprocessor/control/expr_iif.hpp
+blind.o: /usr/include/boost/preprocessor/list/adt.hpp
+blind.o: /usr/include/boost/preprocessor/detail/is_binary.hpp
+blind.o: /usr/include/boost/preprocessor/detail/check.hpp
+blind.o: /usr/include/boost/preprocessor/logical/compl.hpp
+blind.o: /usr/include/boost/preprocessor/list/fold_right.hpp
+blind.o: /usr/include/boost/preprocessor/list/detail/fold_right.hpp
+blind.o: /usr/include/boost/preprocessor/list/reverse.hpp
+blind.o: /usr/include/boost/preprocessor/control/detail/while.hpp
+blind.o: /usr/include/boost/preprocessor/tuple/elem.hpp
+blind.o: /usr/include/boost/preprocessor/arithmetic/sub.hpp
+blind.o: /usr/include/boost/mpl/aux_/config/eti.hpp
+blind.o: /usr/include/boost/concept_archetype.hpp
 blind.o: ../../../Jet_fitting_3/include/CGAL/Monge_via_jet_fitting.h
-blind.o: ../../../Jet_fitting_3/include/CGAL/jet_fitting_3_assertions.h
-blind.o: /usr/include/math.h /usr/include/features.h /usr/include/sys/cdefs.h
-blind.o: /usr/include/gnu/stubs.h /usr/include/bits/huge_val.h
+blind.o: /usr/include/math.h /usr/include/bits/huge_val.h
 blind.o: /usr/include/bits/mathdef.h /usr/include/bits/mathcalls.h
-blind.o: ../../../Jet_fitting_3/examples/Jet_fitting_3/LinAlg_lapack.h
+blind.o: ../../../Jet_fitting_3/include/CGAL/Lapack/Linear_algebra_lapack.h
 blind.o: /usr/include/stdlib.h /usr/include/sys/types.h
 blind.o: /usr/include/bits/types.h /usr/include/bits/wordsize.h
 blind.o: /usr/include/bits/typesizes.h /usr/include/time.h
@@ -91,60 +202,6 @@ blind.o: /usr/include/stdio.h /usr/include/libio.h /usr/include/_G_config.h
 blind.o: /usr/include/wchar.h /usr/include/bits/wchar.h /usr/include/gconv.h
 blind.o: /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h
 blind.o: PolyhedralSurf_operations.h PolyhedralSurf_rings.h options.h
-GSL.o: /usr/include/gsl/gsl_linalg.h /usr/include/gsl/gsl_mode.h
-GSL.o: /usr/include/gsl/gsl_permutation.h /usr/include/stdlib.h
-GSL.o: /usr/include/features.h /usr/include/sys/cdefs.h
-GSL.o: /usr/include/gnu/stubs.h /usr/include/sys/types.h
-GSL.o: /usr/include/bits/types.h /usr/include/bits/wordsize.h
-GSL.o: /usr/include/bits/typesizes.h /usr/include/time.h
-GSL.o: /usr/include/endian.h /usr/include/bits/endian.h
-GSL.o: /usr/include/sys/select.h /usr/include/bits/select.h
-GSL.o: /usr/include/bits/sigset.h /usr/include/bits/time.h
-GSL.o: /usr/include/sys/sysmacros.h /usr/include/bits/pthreadtypes.h
-GSL.o: /usr/include/bits/sched.h /usr/include/alloca.h
-GSL.o: /usr/include/gsl/gsl_types.h /usr/include/gsl/gsl_errno.h
-GSL.o: /usr/include/stdio.h /usr/include/libio.h /usr/include/_G_config.h
-GSL.o: /usr/include/wchar.h /usr/include/bits/wchar.h /usr/include/gconv.h
-GSL.o: /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h
-GSL.o: /usr/include/errno.h /usr/include/bits/errno.h
-GSL.o: /usr/include/linux/errno.h /usr/include/asm/errno.h
-GSL.o: /usr/include/asm-i386/errno.h /usr/include/gsl/gsl_check_range.h
-GSL.o: /usr/include/gsl/gsl_vector.h
-GSL.o: /usr/include/gsl/gsl_vector_complex_long_double.h
-GSL.o: /usr/include/gsl/gsl_complex.h
-GSL.o: /usr/include/gsl/gsl_vector_long_double.h
-GSL.o: /usr/include/gsl/gsl_block_long_double.h
-GSL.o: /usr/include/gsl/gsl_vector_complex.h
-GSL.o: /usr/include/gsl/gsl_block_complex_long_double.h
-GSL.o: /usr/include/gsl/gsl_vector_complex_double.h
-GSL.o: /usr/include/gsl/gsl_vector_double.h
-GSL.o: /usr/include/gsl/gsl_block_double.h
-GSL.o: /usr/include/gsl/gsl_block_complex_double.h
-GSL.o: /usr/include/gsl/gsl_vector_complex_float.h
-GSL.o: /usr/include/gsl/gsl_vector_float.h /usr/include/gsl/gsl_block_float.h
-GSL.o: /usr/include/gsl/gsl_block_complex_float.h
-GSL.o: /usr/include/gsl/gsl_vector_ulong.h /usr/include/gsl/gsl_block_ulong.h
-GSL.o: /usr/include/gsl/gsl_vector_long.h /usr/include/gsl/gsl_block_long.h
-GSL.o: /usr/include/gsl/gsl_vector_uint.h /usr/include/gsl/gsl_block_uint.h
-GSL.o: /usr/include/gsl/gsl_vector_int.h /usr/include/gsl/gsl_block_int.h
-GSL.o: /usr/include/gsl/gsl_vector_ushort.h
-GSL.o: /usr/include/gsl/gsl_block_ushort.h
-GSL.o: /usr/include/gsl/gsl_vector_short.h /usr/include/gsl/gsl_block_short.h
-GSL.o: /usr/include/gsl/gsl_vector_uchar.h /usr/include/gsl/gsl_block_uchar.h
-GSL.o: /usr/include/gsl/gsl_vector_char.h /usr/include/gsl/gsl_block_char.h
-GSL.o: /usr/include/gsl/gsl_matrix.h
-GSL.o: /usr/include/gsl/gsl_matrix_complex_long_double.h
-GSL.o: /usr/include/gsl/gsl_matrix_complex_double.h
-GSL.o: /usr/include/gsl/gsl_matrix_complex_float.h
-GSL.o: /usr/include/gsl/gsl_matrix_long_double.h
-GSL.o: /usr/include/gsl/gsl_matrix_double.h
-GSL.o: /usr/include/gsl/gsl_matrix_float.h
-GSL.o: /usr/include/gsl/gsl_matrix_ulong.h /usr/include/gsl/gsl_matrix_long.h
-GSL.o: /usr/include/gsl/gsl_matrix_uint.h /usr/include/gsl/gsl_matrix_int.h
-GSL.o: /usr/include/gsl/gsl_matrix_ushort.h
-GSL.o: /usr/include/gsl/gsl_matrix_short.h
-GSL.o: /usr/include/gsl/gsl_matrix_uchar.h /usr/include/gsl/gsl_matrix_char.h
-GSL.o: /usr/include/gsl/gsl_eigen.h
 options.o: /usr/include/ctype.h /usr/include/features.h
 options.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
 options.o: /usr/include/bits/types.h /usr/include/bits/wordsize.h

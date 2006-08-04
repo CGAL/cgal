@@ -1,7 +1,6 @@
-
-Program blind.exe
+Program blind
 -----------------
-takes an filename.off file as input,
+takes a filename.off file as input,
 it computes a jet fitting to set the monge data at each vertex 
 computes the ridge lines
 
@@ -25,28 +24,29 @@ Usage is : blind  with options
  
 Note : if the nb of collected points is less than the required min number of 
    points to make the approxiamtion possible (which is constrained by the deg)
-   then the vertex is skipped.
+   then the program exits.
 
  
+
  
 
 
- ./blind.exe -f data/ellipe0.003.off -d4 -m4 -a3 -t4
-./blind.exe -f data/poly2x^2+y^2-0.062500.off -d4 -m4 -a0 -t4
- ./blind.exe -f data/poly2x^2+y^2-0.062500.off -d4 -m4 -p20 -t4
+ ./blind -f data/ellipe0.003.off -d4 -m4 -a3 -t4
+./blind -f data/poly2x^2+y^2-0.062500.off -d4 -m4 -a0 -t4
+ ./blind -f data/poly2x^2+y^2-0.062500.off -d4 -m4 -p20 -t4
 
- ./blind.exe -f data/ellipsoid_u_0.02.off -d4 -m3 -a3 -u2 -t4  ok 4 wedge umbilics
+ ./blind -f data/ellipsoid_u_0.02.off -d4 -m3 -a3 -u2 -t4  ok 4 wedge umbilics
 
 visu with:
 
-introspect-qt.exe ../../examples/Ridges_3/data/poly2x^2+y^2-0.062500.off ../../examples/Ridges_3/data_poly2x^2+y^2-0.062500.off.4ogl.txt
+introspect-qt ../../examples/Ridges_3/data/poly2x^2+y^2-0.062500.off ../../examples/Ridges_3/data_poly2x^2+y^2-0.062500.off.4ogl.txt
 
 
 sur ellipsoid plus precise:
-./blind.exe -f data/ellipsoid_u_0.02 -d4 -m4 -a3 -t4
-../../demo/Ridges_3/introspect-qt.exe data/ellipsoid_u_0.02.off data_ellipsoid_u_0.02.4ogl.txt
+./blind -f data/ellipsoid_u_0.02 -d4 -m4 -a3 -t4
+../../demo/Ridges_3/introspect-qt data/ellipsoid_u_0.02.off data_ellipsoid_u_0.02.4ogl.txt
 si dans demo dir:
-introspect-qt.exe ../../examples/Ridges_3/data/ellipsoid_u_0.02 ../../examples/Ridges_3/data_ellipsoid_u_0.02.4ogl.txt
+introspect-qt ../../examples/Ridges_3/data/ellipsoid_u_0.02 ../../examples/Ridges_3/data_ellipsoid_u_0.02.4ogl.txt
 
 
 

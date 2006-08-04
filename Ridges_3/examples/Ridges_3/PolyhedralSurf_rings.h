@@ -3,6 +3,9 @@
 
 using namespace std;
 
+//---------------------------------------------------------------------------
+//T_PolyhedralSurf_rings
+//---------------------------------------------------------------------------
 template < class TPoly > class T_PolyhedralSurf_rings
 {
 protected:
@@ -12,38 +15,49 @@ protected:
   typedef typename TPoly::Facet Facet;
   typedef typename TPoly::Halfedge_around_vertex_circulator  Halfedge_around_vertex_circulator;
   typedef typename TPoly::Vertex_iterator Vertex_iterator;
+  typedef std::map<Vertex*, int> Vertex2int_map_type;
+  Vertex2int_map_type ring_index_map;
   
- //vertex indices are initialised to -1
-  static void reset_ring_indices(std::vector < Vertex * >&vces);
+  //vertex indices are initialised to -1
+  void reset_ring_indices(std::vector < Vertex * >&vces);
 
   //i >= 1; from a start vertex on the current i-1 ring, push non-visited neighbors
   //of start in the nextRing and set indices to i. Also add these vertices in all.
-  static void push_neighbours_of(Vertex * start, int ith,
+  void push_neighbours_of(Vertex * start, int ith,
 			  std::vector < Vertex * >&nextRing,
 			  std::vector < Vertex * >&all);
 
   //i >= 1, from a currentRing i-1, collect all neighbors, set indices
   //to i and store them in nextRing and all.
-  static void collect_ith_ring(int ith,
+  void collect_ith_ring(int ith,
 			std::vector < Vertex * >&currentRing,
 			std::vector < Vertex * >&nextRing,
 			std::vector < Vertex * >&all);
-  
+ 
  public:  
+  T_PolyhedralSurf_rings(TPoly& P);
+  
   //collect i>=1 rings : all neighbours up to the ith ring,
-  static void
-    collect_i_rings(Vertex* v, 
-		    int ring_i, 
-		    std::vector < Vertex * >& all);
+  void collect_i_rings(Vertex* v, 
+		       int ring_i, 
+		       std::vector < Vertex * >& all);
 
   //collect enough rings (at least 1), to get at least min_nb of neighbors
-  static void
-    collect_enough_rings(Vertex* v,
-			 unsigned int min_nb,
-			 std::vector < Vertex * >& all);
+  void collect_enough_rings(Vertex* v,
+			    unsigned int min_nb,
+			    std::vector < Vertex * >& all);
 };
 
 ////IMPLEMENTATION/////////////////////////////////////////////////////////////////////
+
+template < class TPoly >
+T_PolyhedralSurf_rings <TPoly>::
+T_PolyhedralSurf_rings(TPoly& P)
+{
+  //init the ring_index_map
+  Vertex_iterator itb = P.vertices_begin(), ite = P.vertices_end();
+  for(;itb!=ite;itb++) ring_index_map[&*itb] = -1; 
+}
 
 template < class TPoly >
 void T_PolyhedralSurf_rings <TPoly>::
@@ -58,9 +72,9 @@ push_neighbours_of(Vertex * start, int ith,
  CGAL_For_all(hedgeb, hedgee)
   {
     v = &*(hedgeb->opposite()->vertex());
-    if (v->getRingIndex() != -1)  continue;//if visited: next
+    if (ring_index_map[v] != -1)  continue;//if visited: next
     
-    v->setRingIndex(ith);
+    ring_index_map[v] = ith;
     nextRing.push_back(v);
     all.push_back(v);
   }
@@ -84,7 +98,7 @@ reset_ring_indices(std::vector < Vertex * >&vces)
 {
   typename std::vector < Vertex * >::iterator 
     itb = vces.begin(), ite = vces.end();
-  CGAL_For_all(itb, ite)  (*itb)->resetRingIndex();
+  CGAL_For_all(itb, ite)  ring_index_map[*itb] = -1;
 }
  
 template <class TPoly>
@@ -99,7 +113,7 @@ collect_i_rings(Vertex* v,
   //initialize
   p_current_ring = &current_ring;
   p_next_ring = &next_ring;
-  v->setRingIndex(0);
+  ring_index_map[v] = 0;
   current_ring.push_back(v);
   all.push_back(v);
 
@@ -126,7 +140,7 @@ collect_enough_rings(Vertex* v,
   //initialize
   p_current_ring = &current_ring;
   p_next_ring = &next_ring;
-  v->setRingIndex(0);
+  ring_index_map[v] = 0;
   current_ring.push_back(v);
   all.push_back(v);
 

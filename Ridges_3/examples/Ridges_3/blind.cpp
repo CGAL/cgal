@@ -7,44 +7,76 @@
 #include <cstdlib>
 #include <vector>
 #include <list>
+#include <boost/property_map.hpp>
 
-#include "../../include/CGAL/Ridges.h" 
-//#include "../../include/CGAL/Umbilic.h" 
+#include <CGAL/Ridges.h> 
+#include <CGAL/Umbilic.h>
+// #include <CGAL/Monge_via_jet_fitting.h> //does not work since not in the release yet
+// #include <CGAL/Lapack/Linear_algebra_lapack.h>
 #include "../../../Jet_fitting_3/include/CGAL/Monge_via_jet_fitting.h" 
-#include "../../../Jet_fitting_3/examples/Jet_fitting_3/LinAlg_lapack.h" 
+#include "../../../Jet_fitting_3/include/CGAL/Lapack/Linear_algebra_lapack.h" 
  
+//this is a enriched Polyhedron with facets' normal
 #include "PolyhedralSurf.h"
 #include "PolyhedralSurf_rings.h"
 #include "options.h"//parsing command line
 
-//Kernel of the PolyhedralSurf
-typedef double                DFT;
-typedef CGAL::Cartesian<DFT>  Data_Kernel;
-typedef Data_Kernel::Point_3  DPoint;
-typedef Data_Kernel::Vector_3 DVector;
-typedef PolyhedralSurf::Vertex Vertex;
+typedef double                          FT;
+typedef CGAL::Cartesian<FT>             Kernel;
+typedef Kernel::Point_3                 Point_3;
+typedef Kernel::Vector_3                Vector_3;
+typedef PolyhedralSurf::Vertex          Vertex;
+typedef PolyhedralSurf::Vertex_handle   Vertex_handle;
 typedef PolyhedralSurf::Vertex_iterator Vertex_iterator;
-typedef PolyhedralSurf::Vertex Vertex;
 
 typedef T_PolyhedralSurf_rings<PolyhedralSurf> Poly_rings;
-//Kernel for local computations
-typedef double                LFT;
-typedef CGAL::Cartesian<LFT>  Local_Kernel;
-typedef CGAL::Monge_via_jet_fitting<Data_Kernel, Local_Kernel, Lapack> My_Monge_via_jet_fitting;
-typedef CGAL::Monge_rep<Data_Kernel> My_Monge_rep;
-typedef CGAL::Monge_info<Local_Kernel> My_Monge_info;
+typedef CGAL::Monge_via_jet_fitting<Kernel>    Monge_via_jet_fitting;
+typedef Monge_via_jet_fitting::Monge_form      Monge_form;
+typedef Monge_via_jet_fitting::Monge_form_condition_numbers Monge_form_condition_numbers;
       
+//Property maps
+//Vertex property map, with std::map
+struct Vertex_cmp{
+  bool operator()(Vertex_handle a,  Vertex_handle b) const{
+    return &*a < &*b;
+  }
+};
+typedef std::map<Vertex_handle, FT, Vertex_cmp> Vertex2FT_map_type;
+typedef boost::associative_property_map< Vertex2FT_map_type > Vertex2FT_PM_type;
+typedef std::map<Vertex_handle, Vector_3, Vertex_cmp> Vertex2Vector_map_type;
+typedef boost::associative_property_map< Vertex2Vector_map_type > Vertex2Vector_PM_type;
+
+typedef CGAL::Differential_quantities< Vertex2FT_PM_type, 
+				       Vertex2Vector_PM_type> Differential_quantities;
+
 //RIDGES
 typedef CGAL::Ridge_line<PolyhedralSurf> Ridge_line;
 typedef CGAL::Ridge_approximation < PolyhedralSurf,
-  back_insert_iterator< std::vector<Ridge_line*> > > Ridge_approximation;
-extern CGAL::Ridge_type  NONE, BLUE_RIDGE, RED_RIDGE, CREST, BE, BH, BC, RE, RH, RC;
+				    back_insert_iterator< std::vector<Ridge_line*> >,
+				    Vertex2FT_PM_type, 
+				    Vertex2Vector_PM_type > Ridge_approximation;
+extern CGAL::Ridge_type  NONE, BLUE_RIDGE, RED_RIDGE, CREST, 
+  BLUE_ELLIPTIC_RIDGE, BLUE_HYPERBOLIC_RIDGE, BLUE_CREST, 
+  RED_ELLIPTIC_RIDGE, RED_HYPERBOLIC_RIDGE, RED_CREST;
 
 //UMBILICS
 typedef CGAL::Umbilic<PolyhedralSurf> Umbilic;
 typedef CGAL::Umbilic_approximation < PolyhedralSurf,
-  back_insert_iterator< std::vector<Umbilic*> > > Umbilic_approximation;
+				      back_insert_iterator< std::vector<Umbilic*> >, 
+				      Vertex2FT_PM_type, 
+				      Vertex2Vector_PM_type > Umbilic_approximation;
 extern CGAL::Umbilic_type NON_GENERIC, WEDGE, TRISECTOR;
+
+//create property maps, to be moved in main?
+Vertex2FT_map_type vertex2k1_map, vertex2k2_map, 
+  vertex2b0_map, vertex2b3_map, 
+  vertex2P1_map, vertex2P2_map;
+Vertex2Vector_map_type vertex2d1_map, vertex2d2_map;
+
+Vertex2FT_PM_type vertex2k1_pm(vertex2k1_map), vertex2k2_pm(vertex2k2_map), 
+  vertex2b0_pm(vertex2b0_map), vertex2b3_pm(vertex2b3_map), 
+  vertex2P1_pm(vertex2P1_map), vertex2P2_pm(vertex2P2_map);
+Vertex2Vector_PM_type vertex2d1_pm(vertex2d1_map), vertex2d2_pm(vertex2d2_map);
 
 
 //Syntax requirred by Options
@@ -72,25 +104,29 @@ double umb_size = 1;
 bool verbose = false;
 unsigned int min_nb_points = (d_fitting + 1) * (d_fitting + 2) / 2;
 
-//gather points around the vertex v using rings on the
-//polyhedralsurf. the collection of points resorts to 3 alternatives:
-// 1. the exact number of points to be used
-// 2. the exact number of rings to be used
-// 3. nothing is specified
+/* gather points around the vertex v using rings on the
+   polyhedralsurf. the collection of points resorts to 3 alternatives:
+   1. the exact number of points to be used
+   2. the exact number of rings to be used
+   3. nothing is specified
+*/
 void gather_fitting_points(Vertex* v, 
-			   std::vector<DPoint> &in_points)
-			   //Vertex_PM_type& vpm)
+			   std::vector<Point_3> &in_points,
+			   PolyhedralSurf& P)
 {
   //container to collect vertices of v on the PolyhedralSurf
   std::vector<Vertex*> gathered; 
   //initialize
   in_points.clear();  
+
+  //create a Poly_rings object
+  Poly_rings poly_rings(P);
   
   //OPTION -p nb_points_to_use, with nb_points_to_use != 0. Collect
   //enough rings and discard some points of the last collected ring to
   //get the exact "nb_points_to_use" 
   if ( nb_points_to_use != 0 ) {
-    Poly_rings::collect_enough_rings(v, nb_points_to_use, gathered);//, vpm);
+    poly_rings.collect_enough_rings(v, nb_points_to_use, gathered);//, vpm);
     if ( gathered.size() > nb_points_to_use ) gathered.resize(nb_points_to_use);
   }
   else { // nb_points_to_use=0, this is the default and the option -p is not considered;
@@ -98,8 +134,8 @@ void gather_fitting_points(Vertex* v,
     // enough rings to get the min_nb_points required for the fitting
     // else collect the nb_rings required
     if ( nb_rings == 0 ) 
-      Poly_rings::collect_enough_rings(v, min_nb_points, gathered);//, vpm);
-    else Poly_rings::collect_i_rings(v, nb_rings, gathered);//, vpm);
+      poly_rings.collect_enough_rings(v, min_nb_points, gathered);//, vpm);
+    else poly_rings.collect_i_rings(v, nb_rings, gathered);//, vpm);
   }
      
   //store the gathered points
@@ -108,173 +144,71 @@ void gather_fitting_points(Vertex* v,
   CGAL_For_all(itb,ite) in_points.push_back((*itb)->point());
 }
 
-
-
-// //gather points around the vertex v using rings on the polyhedralsurf
-// //for the fitting
-// void gather_fitting_points( Vertex* v, 
-// 			    std::vector<DPoint> &in_points)
-// {
-//   //container to collect vertices of v on the PolyhedralSurf
-//   std::vector<Vertex*> current_ring, next_ring, gathered; 
-//   std::vector<Vertex*> *p_current_ring, *p_next_ring;
-
-//   //initialize
-//   unsigned int nbp = 0, //current nb of collected points
-//     ith = 0;	//i-th ring index
-//   current_ring.clear();
-//   next_ring.clear();
-//   p_current_ring = &current_ring;
-//   p_next_ring = &next_ring;
-//   gathered.clear();
-//   in_points.clear();  
-  
-//   //DO NOT FORGET TO UNTAG AT THE END!
-//   v->setRingIndex(ith);
-//   //collect 0th ring : the vertex v!
-//   gathered.push_back(v);
-//   nbp = 1;
-//   //collect 1-ring
-//   ith = 1;
-//   nbp = Poly_rings::push_neighbours_of(v, ith, current_ring, gathered);
-//   //collect more neighbors depending on options...
- 
-//     //OPTION -p nb, with nb != 0
-//     //for approximation/interpolation with a fixed nb of points, collect
-//     // enough rings and discard some points of the last collected ring 
-//     // to get the exact "nb_points_to_use"
-//   if ( nb_points_to_use != 0 ) {
-//     while( gathered.size() < nb_points_to_use ) {
-//       ith++;
-//       //using tags
-//       nbp += Poly_rings::
-// 	collect_ith_ring_neighbours(ith, *p_current_ring,
-// 				    *p_next_ring, gathered);
-//       //next round must be launched from p_nextRing...
-//       p_current_ring->clear();
-//       std::swap(p_current_ring, p_next_ring);
-//     }
-//     //clean up
-//     Poly_rings::reset_ring_indices(gathered);
-//     //discard non-required collected points of the last ring
-//     gathered.resize(nb_points_to_use, NULL);
-//     assert(gathered.size() == nb_points_to_use );
-//   }
-//   else{
-//     //OPTION -a nb, with nb = 0
-//     //  select the mini nb of rings needed to make approx possible
-//     if (nb_rings == 0) {
-//       while ( gathered.size() < min_nb_points ) {
-// 	ith++;
-// 	nbp += Poly_rings::
-// 	  collect_ith_ring_neighbours(ith, *p_current_ring,
-// 				      *p_next_ring, gathered);
-// 	//next round must be launched from p_nextRing...
-// 	p_current_ring->clear();
-// 	std::swap(p_current_ring, p_next_ring);
-//       }
-//     }
-//     //OPTION -a nb, with nb = 1, nothing to do! we have already
-//     //      collected the 1 ring
-//     //OPTION -a nb, with nb > 1
-//     //for approximation with a fixed nb of rings, collect
-//     //      neighbors up to the "nb_rings"th ring
-//     if (nb_rings > 1)
-//       while (ith < nb_rings) {
-// 	ith++;
-// 	nbp += Poly_rings::
-// 	  collect_ith_ring_neighbours(ith, *p_current_ring,
-// 				      *p_next_ring, gathered);
-// 	//next round must be launched from p_nextRing...
-// 	p_current_ring->clear();
-// 	std::swap(p_current_ring, p_next_ring);
-//       }
-   
-//     //clean up
-//     Poly_rings::reset_ring_indices(gathered);
-//   } //END ELSE
-
-//   //store the gathered points
-//   std::vector<Vertex*>::iterator itb = gathered.begin(),
-//     ite = gathered.end();
-//   CGAL_For_all(itb,ite) in_points.push_back((*itb)->point());
-// }
-
-
+/* Use the jet_fitting package and the class Poly_rings to compute
+   diff quantities.
+*/
 void compute_differential_quantities(PolyhedralSurf& P)
 {
   //container for approximation points
-  std::vector<DPoint> in_points;
- 
-//debug 
-//  int count=0;
+  std::vector<Point_3> in_points;
  
   //MAIN LOOP
   Vertex_iterator vitb = P.vertices_begin(), vite = P.vertices_end();
   for (; vitb != vite; vitb++) {
     //initialize
-    Vertex* v = &(*vitb);
+    Vertex* v = &(*vitb);//should be removed
     in_points.clear();  
-    My_Monge_rep monge_rep;
-    My_Monge_info monge_info;
+    Monge_form monge_form;
+    Monge_form_condition_numbers monge_form_condition_numbers;
       
-    //gather points arourd the vertex using rings
-    gather_fitting_points( v, in_points);
+    //gather points around the vertex using rings
+    gather_fitting_points(v, in_points, P);
 
     //exit if the nb of points is too small 
     if ( in_points.size() < min_nb_points )
-      {std::cerr << "nb of points is to small" << std::endl; exit(0);}
+      {std::cerr << "Too few points to perform the fitting" << std::endl; exit(0);}
 
     //For Ridges we need at least 3rd order info
     assert( d_monge >= 3);
     // run the main fct : perform the fitting
-    My_Monge_via_jet_fitting do_it(in_points.begin(), in_points.end(),
-				   d_fitting, d_monge, 
-				   monge_rep, monge_info);
+    Monge_via_jet_fitting do_it(in_points.begin(), in_points.end(),
+				d_fitting, d_monge, 
+				monge_form, monge_form_condition_numbers);
     
     //switch min-max ppal curv/dir wrt the mesh orientation
-    const DVector normal_mesh = P.computeFacetsAverageUnitNormal(v);
-    monge_rep.comply_wrt_given_normal(normal_mesh);
+    const Vector_3 normal_mesh = P.computeFacetsAverageUnitNormal(v);
+    monge_form.comply_wrt_given_normal(normal_mesh);
        
-    //    Store monge data needed for ridge computations in v
-    v->d1() = monge_rep.d1();
-    v->d2() = monge_rep.d2();
-    v->k1() = monge_rep.coefficients()[0];
-    v->k2() = monge_rep.coefficients()[1];
-    v->b0() = monge_rep.coefficients()[2];
-    v->b3() = monge_rep.coefficients()[5];
+    //    Store monge data needed for ridge computations in v in property maps
+    vertex2d1_pm[v] = monge_form.d1();
+    vertex2d2_pm[v] = monge_form.d2();
+    vertex2k1_pm[v] = monge_form.coefficients()[0];
+    vertex2k2_pm[v] = monge_form.coefficients()[1];
+    vertex2b0_pm[v] = monge_form.coefficients()[2];
+    vertex2b3_pm[v] = monge_form.coefficients()[5];
     if ( d_monge >= 4) {
       //= 3*b1^2+(k1-k2)(c0-3k1^3)
-      v->P1() =
-	3*monge_rep.coefficients()[3]*monge_rep.coefficients()[3]
-	+(v->k1()-v->k2())
-	*(monge_rep.coefficients()[6]-3*v->k1()*v->k1()*v->k1()) ; 
+      vertex2P1_pm[v] =
+	3*monge_form.coefficients()[3]*monge_form.coefficients()[3]
+	+(monge_form.coefficients()[0]-monge_form.coefficients()[1])
+	*(monge_form.coefficients()[6]
+	  -3*monge_form.coefficients()[0]*monge_form.coefficients()[0]
+	  *monge_form.coefficients()[0]); 
       //= 3*b2^2+(k2-k1)(c4-3k2^3)
-      v->P2() = 
-	3*monge_rep.coefficients()[4]*monge_rep.coefficients()[4]
-	+(-v->k1()+v->k2())
-	*(monge_rep.coefficients()[10]-3*v->k2()*v->k2()*v->k2()) ; 
+      vertex2P2_pm[v] = 
+	3*monge_form.coefficients()[4]*monge_form.coefficients()[4]
+	+(-monge_form.coefficients()[0]+monge_form.coefficients()[1])
+	*(monge_form.coefficients()[10]
+	  -3*monge_form.coefficients()[1]*monge_form.coefficients()[1]
+	  *monge_form.coefficients()[1]); 
     }
-
-// //debug 
-//     count++;
-//     std::cout << std::endl << "vertex " << count << std::endl;
-//     monge_rep.dump_verbose(std::cout);
- 
-    
-
   } //END FOR LOOP
 }
 
 
 int main(int argc, char *argv[])
 {  
-  char *if_name = NULL, //input file name
-    *w_if_name = NULL;  //as above, but / replaced by _
-  char* res4openGL_fname;
-  char* verbose_fname;
-  std::ofstream *out_4ogl = NULL, *out_verbose = NULL;
-
+  std::string if_name, of_name;// of_name same as if_name with '/' -> '_'
   int optchar;
   char *optarg;
   Options opts(*argv, optv);
@@ -306,108 +240,104 @@ int main(int argc, char *argv[])
   min_nb_points = (d_fitting + 1) * (d_fitting + 2) / 2;
 
   //prepare output file names
-  assert(if_name != NULL);
-  w_if_name = new char[strlen(if_name)+1];
-  strcpy(w_if_name, if_name);
-  for(unsigned int i=0; i<strlen(w_if_name); i++) 
-    if (w_if_name[i] == '/') w_if_name[i]='_';
-  cerr << if_name << '\n';  
-  cerr << w_if_name << '\n';  
+  assert(!if_name.empty());
+  of_name = if_name;
+  for(unsigned int i=0; i<of_name.size(); i++) 
+    if (of_name[i] == '/') of_name[i]='_';
+  std::ostringstream str_4ogl;
+  str_4ogl << "data/"
+	   << of_name << "RIDGES"
+	   << "-d" << d_fitting
+	   << "-m" << d_monge
+	   << "-t" << tag_order
+	   << "-a" << nb_rings
+	   << "-p" << nb_points_to_use
+	   << ".4ogl.txt";
+  std::cout << str_4ogl.str() << std::endl ;
+  std::ofstream out_4ogl(str_4ogl.str().c_str() , std::ios::out);
 
-  res4openGL_fname = new char[strlen(w_if_name) + 10];// append .4ogl.txt
-  sprintf(res4openGL_fname, "%s.4ogl.txt", w_if_name);
-  out_4ogl = new std::ofstream(res4openGL_fname, std::ios::out);
-  assert(out_4ogl!=NULL);
   //if verbose only...
-  if(verbose){
-    verbose_fname  = new char[strlen(w_if_name) + 10];// append .verb.txt
-    sprintf(verbose_fname, "%s.verb.txt", w_if_name);
-    out_verbose = new std::ofstream( verbose_fname, std::ios::out);
-    assert(out_verbose != NULL);
-    CGAL::set_pretty_mode(*out_verbose);
-  }
-
+  std::ostringstream str_verb;
+  str_verb << "data/"
+	   << of_name << "RIDGES"
+	   << "-d" << d_fitting
+	   << "-m" << d_monge
+	   << "-t" << tag_order
+	   << "-a" << nb_rings
+	   << "-p" << nb_points_to_use
+	   << ".verb.txt";
+  std::cout << str_verb.str() << std::endl ;
+  std::ofstream out_verb(str_verb.str().c_str() , std::ios::out);
+  
   //load the model from <mesh.off>
   PolyhedralSurf P;
-  std::ifstream stream(if_name);
+  std::ifstream stream(if_name.c_str());
   stream >> P;
   fprintf(stderr, "loadMesh %d Ves %d Facets\n",
 	  P.size_of_vertices(), P.size_of_facets());
   if(verbose) 
-    (*out_verbose) << "Polysurf with " << P.size_of_vertices()
-		   << " vertices and " << P.size_of_facets()
-		   << " facets. " << std::endl;
+    out_verb << "Polysurf with " << P.size_of_vertices()
+	     << " vertices and " << P.size_of_facets()
+	     << " facets. " << std::endl;
   
   //exit if not enough points in the model
   if (min_nb_points > P.size_of_vertices())  
     {std::cerr << "not enough points in the model" << std::endl;   exit(0);}
-  //initialize Polyhedral data : length of edges, normal of facets and
-  //monge data
-  P.compute_edges_length();
+
+  //initialize Polyhedral data : normal of facets
   P.compute_facets_normals();
-  compute_differential_quantities( P);
-    
-  ///////////////////////////////////////////
-  //RIDGES!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  ///////////////////////////////////////////
-  //recall:
-//   typedef CGAL::Ridge_approximation < PolyhedralSurf,
-//    back_insert_iterator< std::vector<Ridge_line*> > > Ridge_approximation;
-
-  Ridge_approximation ridge_approximation;
+  
+  //initialize the diff quantities property maps
+  compute_differential_quantities(P);
+  
+  //---------------------------------------------------------------------------
+  //Ridges
+  //--------------------------------------------------------------------------
+  //  Differential_quantities diff_q;
+  Ridge_approximation ridge_approximation(P, 
+					  vertex2k1_pm, vertex2k2_pm,
+					  vertex2b0_pm, vertex2b3_pm,
+					  vertex2P1_pm, vertex2P2_pm,
+					  vertex2d1_pm, vertex2d2_pm);
   std::vector<Ridge_line*> ridge_lines;
-
   back_insert_iterator<std::vector<Ridge_line*> > ii(ridge_lines);
-
+  
+  //Find BLUE_RIDGE, RED_RIDGE, CREST or all ridges
+  //   ridge_approximation.compute_ridges(P, CGAL::BLUE_RIDGE, ii, tag_order);  
+  //   ridge_approximation.compute_ridges(P, CGAL::RED_RIDGE, ii, tag_order);  
+  ridge_approximation.compute_ridges(P, CGAL::CREST, ii, tag_order);  
   //  ridge_approximation.compute_all_ridges(P, ii, tag_order);  
 
-  //Find BLUE_RIDGE, RED_RIDGE or CREST ridges 
-//   ridge_approximation.compute_ridges(P, CGAL::BLUE_RIDGE, ii, tag_order);  
-//   ridge_approximation.compute_ridges(P, CGAL::RED_RIDGE, ii, tag_order);  
-      ridge_approximation.compute_ridges(P, CGAL::CREST, ii, tag_order);  
- 
 
   std::vector<Ridge_line*>::iterator iter_lines = ridge_lines.begin(), 
     iter_end = ridge_lines.end();
   //OpenGL output
-  for (;iter_lines!=iter_end;iter_lines++)
+  for (;iter_lines!=iter_end;iter_lines++) (*iter_lines)->dump_4ogl(out_4ogl);
+    
+  //verbose txt output 
+  if (verbose) 
+    for (iter_lines = ridge_lines.begin();iter_lines!=iter_end;iter_lines++) 
+      out_verb << **iter_lines; 
+
+  //---------------------------------------------------------------------------
+  // UMBILICS
+  //--------------------------------------------------------------------------
+  Umbilic_approximation umbilic_approximation(P, 
+					      vertex2k1_pm, vertex2k2_pm,
+					      vertex2d1_pm, vertex2d2_pm);
+  std::vector<Umbilic*> umbilics;
+  back_insert_iterator<std::vector<Umbilic*> > umb_it(umbilics);
+  umbilic_approximation.compute(P, umb_it, umb_size);
+
+  std::vector<Umbilic*>::iterator iter_umb = umbilics.begin(), 
+    iter_umb_end = umbilics.end();
+  // output
+  std::cout << "nb of umbilics " << umbilics.size() << std::endl;
+  for (;iter_umb!=iter_umb_end;iter_umb++)
     {
-         (*iter_lines)->dump_4ogl(*out_4ogl);
-      //  (*iter_lines)->dump_4ogl(std::cout);
+      std::cout << "umbilic type " << (*iter_umb)->umb_type << std::endl;
     }
-    
-  //  //verbose txt output 
-  //       if (verbose){     
-  // 	(*out_verbose) 	 << std::endl ;
-  //       } //END IF 
-  
-
-
-//   //UMBOLICS
-//   Umbilic_approximation umbilic_approximation;
-//   std::vector<Umbilic*> umbilics;
-//   back_insert_iterator<std::vector<Umbilic*> > umb_it(umbilics);
-//   umbilic_approximation.compute(P, umb_it, umb_size);
-//   std::vector<Umbilic*>::iterator iter_umb = umbilics.begin(), 
-//     iter_umb_end = umbilics.end();
-//   // output
-//   std::cout << "nb of umbilics " << umbilics.size() << std::endl;
-//   for (;iter_umb!=iter_umb_end;iter_umb++)
-//     {
-//       std::cout << "umbilic type " << (*iter_umb)->umb_type << std::endl;
-//     }
-  
-  
-    
-  //cleanup filenames
-  delete res4openGL_fname; 
-  out_4ogl->close(); 
-  delete out_4ogl;
-  if(verbose) {
-    delete verbose_fname;
-    out_verbose->close(); 
-    delete out_verbose;
-  }
+ 
   return 1;
 }
  
