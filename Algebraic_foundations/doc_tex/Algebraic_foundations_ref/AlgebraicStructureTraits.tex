@@ -3,8 +3,8 @@
 
 \ccDefinition
 
-A model of \ccc{AlgebraicStructureTraits} refelcts the algebraic structure
-of an assosiated type AS. 
+A model of \ccc{AlgebraicStructureTraits} reflects the algebraic structure
+of an associated type AS. 
 
 
 Depending on the concepts that AS fulfills, it contains various functors and 
@@ -15,16 +15,17 @@ algebraic operations within that structure.
 
 \ccTypes
 
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxxxxxxxxxxxxxxxxxxxxxx}{}
 A model of \ccc{AlgebraicStructureTraits} is supposed to provide:\\
 
 \ccNestedType{AS}
-        {The assosiated algebraic structure.}
+        {The associated algebraic structure.}
 
 \ccNestedType{Algebraic_structure}
-        { Tag indicating the algebraic structure of the assoziated type. \\
+        { Tag indicating the algebraic structure of the associated type. \\
           This is one of: \\
         \begin{tabular}{ll}
-          - \ccc{Null_type}& AS fullfills no algebraic concept\\
+          - \ccc{Null_type}& AS fulfills no algebraic concept\\
           - \ccc{Integral_domain_without_div_tag}& AS is model of \ccc{IntegralDomainWithoutDiv}\\     
           - \ccc{Integral_domain_tag}& AS is model of \ccc{IntegralDomain}\\     
           - \ccc{UFDomain_tag}& AS is model of \ccc{UFDomain}\\     
@@ -58,7 +59,7 @@ this is not \ccc{CGAL::Null_type}.
 
 
 Functors for \ccc{IntegralDomain}: \hfill\\
-\ccNestedType{Integral_divsion}{ 
+\ccNestedType{Integral_division}{ 
 This is either \ccc{CGAL::Null_type} or a model of 
 \ccc{AlgebraicStructureTraits::IntegralDivision}. 
 In case \ccc{AS} is a model of \ccc{IntegralDomain} 

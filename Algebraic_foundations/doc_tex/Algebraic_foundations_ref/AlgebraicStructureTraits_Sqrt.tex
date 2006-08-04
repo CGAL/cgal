@@ -2,26 +2,24 @@
 
 \ccDefinition
 
-\ccc{AdaptableUnaryFunction} provinding the square root. 
+\ccc{AdaptableUnaryFunction} providing the square root. 
 
 \ccRefines 
 
 \ccc{AdaptableUnaryFunction} 
 
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
 \ccTypes
-\ccTypedef{typedef AlgebraicStructureTraits::AS result_type;}{}
+\ccTypedef{typedef AlgebraicStructureTraits::AS result_type;}{}\ccGlue
 \ccTypedef{typedef AlgebraicStructureTraits::AS first_argument_type;}{}
 
 \ccOperations
 \ccMethod{result_type operator()(
         const first_argument_type&  x);}{ returns  $\sqrt(x)$.\\
-        
         {\tt
 
-        NOTE: \\
-        There are models that provide an exact sqrt i.e. CORE::Expr\\
-        There are models that provide an inexact sqrt i.e. double  \\
-        
+        NOTE: There are models that provide an exact sqrt i.e. CORE::Expr
+        There are models that provide an inexact sqrt i.e. double \\
 
         BUT FROM EXACUS: \\
         A number type NT(here AS) may provide this functor even if the set of 
@@ -29,10 +27,7 @@
         models does not contain real square roots in general. 
         The most important example are number types modeling the integers. 
         For them, Sqrt()(x) has to return the largest integer not exceeding 
-        the square root of x.\\
-          
-            
-        }       
+        the square root of x.\\}       
 
         }
 

@@ -10,10 +10,12 @@ with remainder.
 \ccc{AdaptableFunction} 
 
 \ccTypes
-\ccTypedef{typedef AlgebraicStructureTraits::AS result_type;}{}
-\ccTypedef{typedef AlgebraicStructureTraits::AS first_argument_type;}{}
-\ccTypedef{typedef AlgebraicStructureTraits::AS second_argument_type;}{}
-\ccTypedef{typedef AlgebraicStructureTraits::AS third_argument_type;}{}
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccTypedef{typedef AlgebraicStructureTraits::AS result_type;}{}\ccGlue
+\ccTypedef{typedef AlgebraicStructureTraits::AS first_argument_type;}{}\ccGlue
+\ccTypedef{typedef AlgebraicStructureTraits::AS second_argument_type;}{}\ccGlue
+\ccTypedef{typedef AlgebraicStructureTraits::AS third_argument_type;}{}\ccGlue
 \ccTypedef{typedef AlgebraicStructureTraits::AS fourth_argument_type;}{}
 
 \ccOperations
@@ -21,9 +23,9 @@ with remainder.
         const first_argument_type&  x, 
         const second_argument_type& y,
         third_argument_type& q,
-        fourth_argument_type& r,
-        );}{ computes the quotient $q$ and remainder $r$, such that $x = q*y + r$ 
-             and $r$ minimal with respect to the euclidean norm on AS. }
+        fourth_argument_type& r);}{ 
+        computes the quotient $q$ and remainder $r$, such that $x = q*y + r$ 
+        and $r$ minimal with respect to the Euclidean norm on AS. }
 
 %\ccHasModels
 

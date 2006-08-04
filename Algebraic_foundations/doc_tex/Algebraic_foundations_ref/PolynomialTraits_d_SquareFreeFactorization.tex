@@ -1,0 +1,63 @@
+\begin{ccRefConcept}{PolynomialTraits_d::SquareFreeFactorization}
+
+\ccDefinition
+
+This \ccc{AdaptableFunctor} computes a square-free factorization 
+of a \ccc{PolynomialTraits_d::Polynomial_d}. 
+
+A polynomial $p$ is factored into square-free and pairwise coprime non-constant
+factors $g_i$ with multiplicities $m_i$ and a constant factor $a$, such that 
+$p = a  \cdot  g_1m_1  \cdot  ...  \cdot  g_nm_n$.
+
+The provided operators return the number $n$, the factors $g_i$ and 
+multiplicities $m_i$ are written through the respective output iterators,
+$a$ is a constant factor of type    \ccc{PolynomialTraits_d::Innermost_coefficient}      
+          
+\ccRefines 
+
+\ccTypes
+
+\ccOperations
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccMethod{template<class OutputIterator_1, class OutputIterator_2>
+int operator()(PolynomialTraits_d::Polynomial_d  p,
+               OutputIterator_1 it_1,
+               OutputIterator_2 it_2,
+               PolynomialTraits_d::Innermost_coefficient& a);}{computes square-free 
+          factorization of $p$.\\
+          precond: \ccc{OutputIterator_1} must allow the value type 
+          \ccc{PolynomialTraits_d:.Polynomial_d}. \\    
+          precond: \ccc{OutputIterator_2} must allow the value type int.}
+
+% This is the original documentation, but the manual tools are not able to handle this part: 
+
+%\ccMethod{template<class OutputIterator_1, class OutputIterator_2>
+%          int 
+%          operator()(PolynomialTraits_d::Polynomial_d           p, 
+%                     OutputIterator_1                           it_1, 
+%                     OutputIterator_2                           it_2,     
+%                     PolynomialTraits_d::Innermost_coefficient& a);}
+%         { factor the polynomial $p$ by multiplicities.
+%           That means: factor it into square-free and pairwise coprime non-constant factors $g_i$ 
+%           with multiplicities $m_i$ such that $p = a  \cdot  g_1m_1  \cdot  ...  \cdot  g_nm_n$.
+% 
+%          This is known as square-free factorization in the literature. 
+%          The number n is returned. The factors $g_i$ and multiplicities $m_i$ are written through 
+%          the respective output iterators.\\
+%          
+%          precond: \ccc{OutputIterator_1} must allow the value type \ccc{PolynomialTraits_d:.Polynomial_d}. \\
+%          precond: \ccc{OutputIterator_1} must allow the value type int.
+%         }
+
+
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+\ccRefIdfierPage{PolynomialTraits_d::SquareFreeFactorizationUtcf}\\
+
+\end{ccRefConcept}

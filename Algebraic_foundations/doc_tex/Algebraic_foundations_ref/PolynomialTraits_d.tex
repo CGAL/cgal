@@ -1,0 +1,112 @@
+\begin{ccRefConcept}{PolynomialTraits_d}
+
+\ccDefinition
+A model of \ccc{PolynomialTraits_d} is associated to an type 
+\ccc{Polynomial_d}, representing a multivariate polynomial. 
+The number of variables is denoted as the dimension of the polynomial,
+it is arbitrary but fixed for a certain model of this concept.  
+
+Note: That this concept does not exclude univariate polynomial. 
+
+
+\ccc{PolynomialTraits_d} provides two different views on the 
+multivariate polynomial. 
+
+\begin{itemize}
+\item A recursive view, that sees the polynomial as an element of 
+$R[x_1,\dots,x_{d-1}][x_d]$. In this view, the polynomial is handled as
+an univariate polynomial over the ring $R[x_1,\dots,x_{d-1}]$. 
+\item A symmetric view, which is symmetric with respect to all variables,
+seeing the polynomials as element of $R[x_1,\dots,x_d]$.
+\end{itemize}
+
+
+The default view is the recursive view, therefore all functors are 
+designed such that there default version performs the operation 
+with respect to this view. 
+
+\ccRefines
+
+\ccConstants
+ 
+\ccVariable{const int d;}{The dimension and the number of variables respectively.}
+
+\ccTypes
+
+\ccNestedType{Polynomial_d}{ Type representing $R[x_1,\dots,x_{d}]$.}\ccGlue
+\ccNestedType{Coefficient }{ Type representing $R[x_1,\dots,x_{d-1}]$.}\ccGlue
+\ccNestedType{Innermost_coefficient}{ Type representing the base ring $R$.}
+
+\ccHeading{Functors}
+
+\ccSetTwoColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}
+\ccNestedType{Construct}{ A model of \ccc{PolynomialTraits_d::Construct}}
+
+%Properties
+\ccNestedType{Degree}{ A model of \ccc{PolynomialTraits_d::Degree}}\ccGlue
+\ccNestedType{Total_degree}{ A model of \ccc{PolynomialTraits_d::TotalDegree}}\ccGlue
+\ccNestedType{Leading_coefficient}{ A model of \ccc{PolynomialTraits_d::LeadingCoefficient}}\ccGlue
+
+\ccNestedType{Univariate_content}{ 
+        In case \ccc{PolynomialTraits_d::Coefficient} is {\bf not} a model of 
+        \ccc{UFDomain}, this is \ccc{CGAL::Null_type}, otherwise this is 
+        a model of \ccc{PolynomialTraits_d::UnivariateContent}}\ccGlue
+\begin{ccAdvanced}
+\ccNestedType{Multivariate_content}{ 
+        In case \ccc{PolynomialTraits_d::Innermost_coefficient} is {\bf not} 
+        a model of \ccc{UFDomain}, this is \ccc{CGAL::Null_type}, 
+        otherwise this is a model of 
+        \ccc{PolynomialTraits_d::MultivariateContent}}\ccGlue
+\end{ccAdvanced}
+
+%Manipulation
+\ccNestedType{Shift}{ A model of \ccc{PolynomialTraits_d::Shift}}\ccGlue
+\ccNestedType{Negate}{ A model of \ccc{PolynomialTraits_d::Negate}}\ccGlue
+\ccNestedType{Invert}{ A model of \ccc{PolynomialTraits_d::Invert}}\ccGlue
+
+\ccNestedType{Translate}{ A model of \ccc{PolynomialTraits_d::Translate}}\ccGlue
+\ccNestedType{Translate_homogeneous}{ A model of \ccc{PolynomialTraits_d::TranslateHomogeneous}}\ccGlue
+
+\ccNestedType{Scale}{ A model of \ccc{PolynomialTraits_d::Scale}}\ccGlue
+\ccNestedType{Scale_homogeneous}{ A model of \ccc{PolynomialTraits_d::ScaleHomogeneous}}\ccGlue
+\begin{ccAdvanced}
+//\ccNestedType{Scale_up}{ A model of \ccc{PolynomialTraits_d::ScaleUp, return $p(a*x)$}}\ccGlue
+//\ccNestedType{Scale_down}{ A model of \ccc{PolynomialTraits_d::ScaleDown, return $b^{degree}*p(x/b)$}}\ccGlue
+\end{ccAdvanced}
+
+%unary operations
+\ccNestedType{Differentiate}{ A model of \ccc{PolynomialTraits_d::Differentiate}}\ccGlue
+\ccNestedType{Make_square_free}{ A model of \ccc{PolynomialTraits_d::MakeSquareFree}}\ccGlue
+
+\ccNestedType{Square_free_factorization}{ In case \ccc{PolynomialTraits::Polynomial_d} 
+        is not a model of \ccc{UFDomain}, this is of type \ccc{CGAL::Null_type},
+        otherwise this is a model of \ccc{PolynomialTraits_d::SquareFreeFactorization}}\ccGlue
+
+
+%pseudo division
+\ccNestedType{Pseudo_division          }{ A model of \ccc{PolynomialTraits_d::Pseudo_division}}\ccGlue
+\ccNestedType{Pseudo_division_remainder}{ A model of \ccc{PolynomialTraits_d::Pseudo_division_remainder}}\ccGlue
+\ccNestedType{Pseudo_division_quotient }{ A model of \ccc{PolynomialTraits_d::Pseudo_division_quotient}}\ccGlue
+
+%utcf
+\ccNestedType{Gcd_utcf}{ A model of \ccc{PolynomialTraits_d::GcdUtcf}}\ccGlue
+\ccNestedType{Division_utcf}{ A model of \ccc{PolynomialTraits_d::DivisionUtcf}}\ccGlue
+\ccNestedType{Content_utcf}{ A model of \ccc{PolynomialTraits_d::ContentUtcf}}\ccGlue
+\ccNestedType{Square_free_factorization_utcf}{ A model of \ccc{PolynomialTraits_d::SquareFreeFactorizationUtcf}}\ccGlue
+
+
+%resultant
+\ccNestedType{Resultant}{ A model of \ccc{PolynomialTraits_d::Resultant}}\ccGlue
+
+
+%Evaluation
+\ccNestedType{Evaluate}{ A model of \ccc{PolynomialTraits_d::Evaluate}}\ccGlue
+\ccNestedType{Evaluate_homogeneous}{ A model of \ccc{PolynomialTraits_d::EvaluateHomogeneous}}\ccGlue
+\ccNestedType{Sign_at}{ A model of \ccc{PolynomialTraits_d::SignAt}}\ccGlue
+
+\ccSeeAlso 
+
+\ccRefIdfierPage{AlgebraicStructureTraits}\\
+\ccRefIdfierPage{Polynomial_d}\\
+
+\end{ccRefConcept}

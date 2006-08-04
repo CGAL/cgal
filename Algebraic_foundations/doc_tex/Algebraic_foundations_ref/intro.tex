@@ -6,18 +6,18 @@
 
 \section{todo open questions:}
 
-\begin{itemize}
-\item Is\_exact\_tag: This tag is currently provided by \ccc{AlgebraicStructurTraits}\\
+\begin{itemize} 
+\item Is\_exact\_tag: This tag is currently provided by \ccc{AlgebraicStructureTraits}\\
 Question: moved it to a global place? 
-\item \ccc{AlgebraicStructurTraits::Sqrt} has a special definition for Integer. \\
+\item \ccc{AlgebraicStructureTraits::Sqrt} has a special definition for Integer. \\
         A type may provide this functor even if the set of 
         numbers it models does not contain real square roots in general. 
         The most important example are number types modeling the integers. 
         For them, Sqrt()(x) has to return the largest integer not exceeding 
         the square root of x.\\
-        In EXACUS this is uesed to test an integer to be an perfect square. \\
+        In EXACUS this is used to test an integer to be an perfect square. \\
         Question: Should we introduce an extra functor for that?
-        see: \ccc{AlgebraicStructurTraits::Integral_sqrt}
+        see: \ccc{AlgebraicStructureTraits::Integral_sqrt}
 \item The concept \ccc{FieldWithSqrt} (also FieldWithKthRoot,FieldWithRootOf) 
       implies that the number type is RealEmbeddable, in particular RootOf talks 
       about the real root of an polynomial.\\
@@ -31,15 +31,17 @@ Question: moved it to a global place?
 \subsection*{Basic Concepts}
 \ccRefConceptPage{FromSmallIntConstructible}
 
-\subsection*{Concepts for Algebraic Structures}
+\subsection*{ Algebraic Structure Hierarchy}
+
+\subsubsection*{ Algebraic Structure Concept}
 \ccRefConceptPage{IntegralDomainWithoutDiv}\\
 \ccRefConceptPage{IntegralDomain}\\
 \ccRefConceptPage{UFDomain}\\
 \ccRefConceptPage{EuclideanRing}\\
 \ccRefConceptPage{Field}\\
-\ccRefConceptPage{FieldWithSqrt}\\
+\ccRefConceptPage{FieldWithSqrt}
 
-\subsection*{Algebraic Structure Traits and provided Functors}
+\subsubsection*{Algebraic Structure Traits}
 \ccRefConceptPage{AlgebraicStructureTraits}\\
 \ccRefConceptPage{AlgebraicStructureTraits::Simplify}\\
 \ccRefConceptPage{AlgebraicStructureTraits::UnitPart}\\
@@ -51,9 +53,19 @@ Question: moved it to a global place?
 \ccRefConceptPage{AlgebraicStructureTraits::Sqrt}\\
 \ccRefConceptPage{AlgebraicStructureTraits::IntegralSqrt}\\
 \ccRefConceptPage{AlgebraicStructureTraits::KthRoot}\\
-\ccRefConceptPage{AlgebraicStructureTraits::RootOf}\\
+\ccRefConceptPage{AlgebraicStructureTraits::RootOf}
 
-\subsection{Concept RealEmbeddable}
+\subsubsection*{Related Tags}
+
+\ccRefIdfierPage{CGAL::Integral_domain_without_div_tag}\\
+\ccRefIdfierPage{CGAL::Integral_domain_tag}\\
+\ccRefIdfierPage{CGAL::Field_tag}\\
+\ccRefIdfierPage{CGAL::Field_with_sqrt_tag}\\
+\ccRefIdfierPage{CGAL::UFDomain_tag}\\
+\ccRefIdfierPage{CGAL::Euclidean_ring_tag}
+
+
+\subsection*{Concept RealEmbeddable}
 
 \ccRefConceptPage{RealEmbeddable}\\
 \ccRefConceptPage{RealEmbeddableTraits}\\
@@ -61,13 +73,11 @@ Question: moved it to a global place?
 \ccRefConceptPage{RealEmbeddableTraits::Sign}\\
 \ccRefConceptPage{RealEmbeddableTraits::Compare}\\
 \ccRefConceptPage{RealEmbeddableTraits::ToDouble}\\
-\ccRefConceptPage{RealEmbeddableTraits::ToDoubleInterval}\\
+\ccRefConceptPage{RealEmbeddableTraits::ToDoubleInterval}
 
-\subsection*{Classes}
+\subsection*{Polynomials} 
+{\em to be regrouped}
 
-\ccRefIdfierPage{CGAL::Integral_domain_without_div_tag}\\
-\ccRefIdfierPage{CGAL::Integral_domain_tag}\\
-\ccRefIdfierPage{CGAL::Field_tag}\\
-\ccRefIdfierPage{CGAL::Field_with_sqrt_tag}\\
-\ccRefIdfierPage{CGAL::UFDomain_tag}\\
-\ccRefIdfierPage{CGAL::Euclidean_ring_tag}\\
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+{\em and a lot of functors}
