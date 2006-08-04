@@ -1,0 +1,120 @@
+// Copyright (c) 2005  INRIA Sophia-Antipolis (France) 
+// All rights reserved.
+//
+// Authors : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
+//           Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
+//           Julien Hazebrouck
+//           Damien Leroy
+// 
+// Partially supported by the IST Programme of the EU as a Shared-cost
+// RTD (FET Open) Project under Contract No  IST-2000-26473 
+// (ECG - Effective Computational Geometry for Curves and Surfaces) 
+// and a STREP (FET Open) Project under Contract No  IST-006413 
+// (ACS -- Algorithms for Complex Shapes)
+
+#ifndef CGAL_CIRCLE_3_H
+#define CGAL_CIRCLE_3_H
+
+namespace CGAL {
+  template <class SK> 
+    class Circle_3
+    : public SK::Kernel_base::Circle_3
+  {
+    
+    typedef typename SK::RT                    RT;
+    typedef typename SK::FT                    FT;
+    typedef typename SK::Point_3               Point_3;
+    typedef typename SK::Plane_3               Plane_3;
+    typedef typename SK::Sphere_3              Sphere_3;
+    typedef typename SK::Kernel_base::Circle_3 RCircle_3; 
+   
+  
+  public:
+    typedef  RCircle_3 Rep;
+    typedef  SK   R; 
+    
+    const Rep& rep() const
+      {
+	return *this;
+      }
+    
+    Rep& rep()
+      {
+	return *this;
+      }
+    
+    Circle_3()
+      : RCircle_3(typename R::Construct_circle_3()())
+      {}
+
+    Circle_3(const Point_3& c, const FT& sr, const Plane_3& p)
+      : RCircle_3(typename R::Construct_circle_3()(c,sr,p))
+      {}
+
+    Circle_3(const Sphere_3& s1, const Sphere_3& s2)
+      : RCircle_3(typename R::Construct_circle_3()(s1,s2))
+      {}
+
+    Circle_3(const Sphere_3& s, const Plane_3& p)
+      : RCircle_3(typename R::Construct_circle_3()(s,p))
+      {}
+
+    Circle_3(const Plane_3& p, const Sphere_3& s)
+      : RCircle_3(typename R::Construct_circle_3()(p,s))
+      {}
+
+    Circle_3(const RCircle_3& r)
+      : RCircle_3(r)
+      {}
+
+    typename Qualified_result_of
+    <typename R::Construct_diametral_sphere_3, Circle_3>::type
+    //const Sphere_3 &
+    diametral_sphere() const
+    {
+      return typename R::Construct_diametral_sphere_3()(*this);
+    }
+
+    const Point_3 & center() const
+    {
+      return typename R::Construct_diametral_sphere_3()(*this).center();
+    }
+
+    const FT & squared_radius() const
+    {
+      return typename R::Construct_diametral_sphere_3()(*this).squared_radius();
+    }
+
+    typename Qualified_result_of
+    <typename R::Construct_supporting_plane_3, Circle_3>::type
+    //const Plane_3 &
+    supporting_plane() const
+    {
+      return typename R::Construct_supporting_plane_3()(*this);
+    }
+
+  };
+
+template < typename SK >
+inline
+bool
+operator==(const Circle_3<SK> &p,
+           const Circle_3<SK> &q)
+{
+  return SK().equal_3_object()(p, q);
+}
+
+template < typename SK >
+inline
+bool
+operator!=(const Circle_3<SK> &p,
+           const Circle_3<SK> &q)
+{
+  return ! (p == q);
+}
+
+
+
+}
+
+#endif
