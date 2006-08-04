@@ -110,11 +110,11 @@ class Mixed_complex_traits_base_3
   : public Regular_triangulation_euclidean_traits_3<K_>
 {
 public:
-  typedef K_                                  K;
-  typedef Mixed_complex_traits_base_3<K>      Self;
+  typedef K_                                  Kernel;
+  typedef Mixed_complex_traits_base_3<Kernel> Self;
 
-  typedef typename K::FT                      FT;
-  typedef typename K::Point_3                 Bare_point;
+  typedef typename Kernel::FT                 FT;
+  typedef typename Kernel::Point_3            Bare_point;
   typedef Weighted_point<Bare_point,FT>       Weighted_point;
   typedef Weighted_point                      Weighted_point_3;
 
@@ -142,10 +142,6 @@ public:
     CGAL_assertion((s>0) && (s<1));
     return Side_of_mixed_cell_3(get_shrink()); }
 
-//   Construct_weighted_circumcenter_3
-//   construct_weighted_circumcenter_3_object() const
-//   { return Construct_weighted_circumcenter_3(); }
-
   Construct_anchor_point_3
   construct_anchor_point_3_object() const
   { return Construct_anchor_point_3(get_shrink()); }
@@ -170,24 +166,24 @@ public:
 
 CGAL_END_NAMESPACE
 
-// Partial specialization for Exact_predicates_inexact_constructions_kernel.
+// Now specialize for Filtered_kernel<CK>, to get
+// the filtered traits automatically.
 #include <CGAL/Mixed_complex_filtered_traits_3.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Filtered_kernel.h>
 
 
 CGAL_BEGIN_NAMESPACE
 
-template <>
-class Mixed_complex_traits_3
-          <Exact_predicates_inexact_constructions_kernel>
-  : public Mixed_complex_filtered_traits_3
-          <Exact_predicates_inexact_constructions_kernel>
+template < typename CK >
+class Mixed_complex_traits_3 < Filtered_kernel<CK> >
+  : public Mixed_complex_filtered_traits_3 < Filtered_kernel<CK> >
 {
-  typedef Mixed_complex_filtered_traits_3
-    <Exact_predicates_inexact_constructions_kernel> Base;
+  typedef Mixed_complex_filtered_traits_3< Filtered_kernel<CK> > Base;
 public:
+  typedef Filtered_kernel<CK>                                    Kernel;
+
   Mixed_complex_traits_3() {}
-  Mixed_complex_traits_3(Base::FT s) : Base(s) {}
+  Mixed_complex_traits_3(typename Base::FT s) : Base(s) {}
 };
 
 

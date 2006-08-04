@@ -123,7 +123,7 @@ public:
   typedef Triangulation_simplex_3<Regular>               Simplex;
 
   // defining the triangulated mixed complex:
-  typedef Exact_predicates_exact_constructions_kernel    TMC_traits;
+  typedef Exact_predicates_inexact_constructions_kernel    TMC_traits;
   typedef Skin_surface_quadratic_surface_3<TMC_traits>   Quadratic_surface;
 
   typedef Triangulation_3<
@@ -362,7 +362,6 @@ public:
       else { p2 = p; }
       sq_dist *= .25;
     }
-    std::cout << std::endl;
     p = midpoint(p1, p2);
   }
   

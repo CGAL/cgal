@@ -49,40 +49,16 @@ public:
             Weighted_converter_3<C2E>,
             Weighted_converter_3<C2F> >  Side_of_mixed_cell_3;
 
-  typedef Filtered_predicate<
-            typename Exact_traits::Construct_weighted_circumcenter_3,
-            typename Filtering_traits::Construct_weighted_circumcenter_3,
-            Weighted_converter_3<C2E>,
-            Weighted_converter_3<C2F> >  Construct_weighted_circumcenter_3;
-
-  typedef Filtered_predicate<
-            typename Exact_traits::Construct_anchor_point_3,
-            typename Filtering_traits::Construct_anchor_point_3,
-            Weighted_converter_3<C2E>,
-            Weighted_converter_3<C2F> >  Construct_anchor_point_3;
-
- 
   Mixed_complex_filtered_traits_3() {}
   Mixed_complex_filtered_traits_3(typename Base::FT s) : Base(s) {}
 
+  // Only make the predicates filtered, not the constructions:
   Side_of_mixed_cell_3 
   side_of_mixed_cell_3_object() const 
   { 
-//     std::cout << "L" << __LINE__ << "(" << __FILE__ <<") "
-// 	      << "FILTERED_SIDE_OF_MIXED_CELL_3_OBJECT "
-// 	      << Base::get_shrink() << std::endl;
     return Side_of_mixed_cell_3(Base::get_shrink()); 
   }
 
-//   Construct_weighted_circumcenter_3
-//   construct_weighted_circumcenter_3_object() const
-//   { return Construct_weighted_circumcenter_3(); }
-
-  Construct_anchor_point_3
-  construct_anchor_point_3_object() const
-  {
-    return Construct_anchor_point_3(Base::get_shrink()); 
-  }
 };
 
 CGAL_END_NAMESPACE
