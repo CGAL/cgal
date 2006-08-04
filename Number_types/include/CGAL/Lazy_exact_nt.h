@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2005  Utrecht University (The Netherlands),
+// Copyright (c) 1999-2006  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -35,6 +35,7 @@
 #include <CGAL/NT_converter.h>
 #include <CGAL/Binary_operator_result.h>
 #include <CGAL/Lazy_exact_nt_fwd.h>
+#include <CGAL/Profile_counter.h>
 
 #include <boost/operators.hpp>
 
