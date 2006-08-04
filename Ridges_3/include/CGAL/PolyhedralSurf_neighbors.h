@@ -6,9 +6,11 @@
 
 CGAL_BEGIN_NAMESPACE
 
-//Element of the priority queue. A gate is a halfedge and a number
-//giving the max distance from v to the vertices of the triangle
-//incident to the halfedge.
+//---------------------------------------------------------------------------
+//T_Gate : element of the priority queue. A gate is a halfedge and a
+//number giving the max distance from v to the vertices of the
+//triangle incident to the halfedge.
+//---------------------------------------------------------------------------
 template < class TPoly > class T_Gate
 {  
 public:
@@ -44,8 +46,10 @@ public:
   Halfedge_handle he() {return m_he;}
 };
 
+//---------------------------------------------------------------------------
 // functor for priority queue
 // order so than the top element is the smallest in the queue
+//---------------------------------------------------------------------------
 template<class g>
 struct compare_gates 
 {       
@@ -56,8 +60,11 @@ struct compare_gates
         }
 };
 
-//MAIN class for computation, it uses the class Gate and the functor
-//compare_gates for the definition of a priority queue
+//---------------------------------------------------------------------------
+//T_PolyhedralSurf_neighbors : MAIN class for computation, it uses the
+//class Gate and the functor compare_gates for the definition of a
+//priority queue
+//---------------------------------------------------------------------------
 template < class TPoly > class T_PolyhedralSurf_neighbors
 {
 public:
@@ -68,31 +75,53 @@ public:
   typedef typename TPoly::Halfedge_handle Halfedge_handle;
   typedef typename TPoly::Halfedge_around_vertex_circulator
   Halfedge_around_vertex_circulator;
+  typedef typename TPoly::Vertex_iterator Vertex_iterator;
   typedef T_Gate<TPoly> Gate;
 
 public:
-  // vertex_neigh stores the vertex v and its 1Ring neighbors 
-  // contour stores halfedges, oriented CW, following the 1Ring disk border
-  // OneRingSize is the max distance from v to its OneRing neighbors
-  static  void compute_one_ring(Vertex_handle v,
+  T_PolyhedralSurf_neighbors(TPoly& P);
+  // vertex_neigh stores the vertex v and its 1Ring neighbors contour
+  // stores halfedges, oriented CW, following the 1Ring disk border
+  // OneRingSize is the max distance from v to its OneRing
+  // neighbors. (the tag is_visited is not mofified)
+  void compute_one_ring(Vertex_handle v,
 			       std::vector<Vertex_handle> &vertex_neigh,
 			       std::list<Halfedge_handle> &contour,
 			       FT &OneRingSize);
   // call compute_one_ring and expand the contour (circle of halfedges
   // CW), vertex_neigh are vertices on and inside the contour (there
-  // ring index is set to 1, but reset at the end), size is such that
-  // gates with distance less than size*OneRingSize are processed
-  static  void compute_neighbors(Vertex_handle v,
+  // tag is_visited is set to true, but reset to false at the end),
+  // size is such that gates with distance less than size*OneRingSize
+  // are processed
+  void compute_neighbors(Vertex_handle v,
 				 std::vector<Vertex_handle> &vertex_neigh,
 				 std::list<Halfedge_handle> &contour,
 				 FT size); 
-  //vertex indices are initialised to -1
-  static void reset_ring_indices(std::vector<Vertex_handle> &vces);
+  //vertex tags is_visited are set to false
+  void reset_is_visited_map(std::vector<Vertex_handle> &vces);
 
+ protected:
+  //tag to visit vertices
+  struct Vertex_cmp{//comparison is wrt vertex addresses
+    bool operator()(Vertex_handle a,  Vertex_handle b) const{
+      return &*a < &*b;
+    }
+  };
+  typedef std::map<Vertex_handle, bool, Vertex_cmp> Vertex2bool_map_type;
+  Vertex2bool_map_type is_visited_map;
 };
 
 //////////////IMPLEMENTATION//////////////////////////
 //////////////////////////////////////////////////////
+template < class TPoly >
+T_PolyhedralSurf_neighbors < TPoly >::
+T_PolyhedralSurf_neighbors(TPoly& P)
+{
+  //init the is_visited_map
+  Vertex_iterator itb = P.vertices_begin(), ite = P.vertices_end();
+  for(;itb!=ite;itb++) is_visited_map[itb] = false; 
+}
+
 template < class TPoly >
 void T_PolyhedralSurf_neighbors < TPoly >::
 compute_one_ring(Vertex_handle v,
@@ -151,13 +180,11 @@ compute_neighbors(Vertex_handle v,
   FT OneRingSize;
   compute_one_ring(v, vertex_neigh, contour, OneRingSize);
   FT d_max = OneRingSize*size;
-  std::priority_queue< Gate, 
-                      std::vector< Gate >,
-                      compare_gates< Gate > > GatePQ;
+  std::priority_queue< Gate, std::vector< Gate >, compare_gates< Gate > > GatePQ;
   // tag neighbors 
   typename std::vector<Vertex_handle>::iterator itbv = vertex_neigh.begin(),
     itev = vertex_neigh.end();
-  for (; itbv != itev; itbv++) (*itbv)->setRingIndex(1);
+  for (; itbv != itev; itbv++) is_visited_map.find(*itbv)->second = true;
 
   // init GatePQ
   typename std::list<Halfedge_handle>::iterator itb = contour.begin(),
@@ -243,10 +270,10 @@ compute_neighbors(Vertex_handle v,
 	continue;
       }
    v1 = he->next()->vertex();
-   if ( v1->getRingIndex() == -1 )
+   if ( !is_visited_map.find(v1)->second )
      {  // case 1
        //vertex
-       v1->setRingIndex(1);
+       is_visited_map.find(v1)->second = true;
        vertex_neigh.push_back(v1);
        //contour
        he1 = he->prev()->opposite();
@@ -275,16 +302,16 @@ compute_neighbors(Vertex_handle v,
 /*     } */
 /* //debug */
 
-  reset_ring_indices(vertex_neigh);
+  reset_is_visited_map(vertex_neigh);
 }
 
 template < class TPoly >
 void T_PolyhedralSurf_neighbors < TPoly >::
-reset_ring_indices(std::vector<Vertex_handle> &vces)
+reset_is_visited_map(std::vector<Vertex_handle> &vces)
 {
   typename std::vector<Vertex_handle>::iterator 
     itb = vces.begin(), ite = vces.end();
-  for (;itb != ite; itb++) (*itb)->resetRingIndex();
+  for (;itb != ite; itb++) is_visited_map[*itb] = false;
 }
 
 CGAL_END_NAMESPACE
