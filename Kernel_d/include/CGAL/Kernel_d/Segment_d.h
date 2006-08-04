@@ -39,8 +39,6 @@ template <class R> std::ostream& operator<<
 
 template <class p_R>
 class Segment_d : public Handle_for< Pair_d<p_R> > {
-
-  BOOST_USING_STD_MAX();
   
   typedef Pair_d<p_R>      Pair;
   typedef Handle_for<Pair> Base;

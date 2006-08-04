@@ -255,7 +255,6 @@ namespace CGAL {
   template < typename Kernel_ > 
   struct Iso_box_d : public Handle_for< Kernel_d::Iso_box_d_rep<Kernel_> > 
   { 
-    BOOST_USING_STD_MAX();
     typedef Kernel_                   Kernel;
     typedef Kernel_                   R;
     
