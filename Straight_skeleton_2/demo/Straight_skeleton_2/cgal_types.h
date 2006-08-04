@@ -28,12 +28,37 @@
 #include <boost/shared_ptr.hpp>
 #include <vector>
 
+#if USE_BIG_FLOAT
+
+#include <CORE/BigFloat.h>
+
+namespace CGAL
+{
+
+template<> struct Number_type_traits<CORE::BigFloat>
+{
+  typedef Tag_false Has_exact_ring_operations;
+  typedef Tag_false Has_exact_division;
+  typedef Tag_false Has_exact_sqrt;
+
+  typedef Tag_true Has_gcd;
+  typedef Tag_true Has_division;
+  typedef Tag_true Has_sqrt;
+};
+
+CORE::BigFloat sqrt( CORE::BigFloat const& n ) { return CORE::sqrt(n); }
+
+}
+
+#endif
+
 namespace demo
 {
 
 //typedef CGAL::Simple_cartesian<double> K ;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 //typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt K;
+//typedef CGAL::Simple_cartesian<CORE::BigFloat> K ;
 
 typedef CGAL::Polygon_2<K>            CGAL_Polygon ;
 

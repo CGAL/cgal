@@ -26,6 +26,76 @@
 //
 CGAL_BEGIN_NAMESPACE
 
+namespace CGAL_SS_i
+{
+
+//
+// This record encapsulates the defining contour halfedges for a node (both contour and skeleton)
+//
+template<class Handle_>
+struct Triedge
+{
+  typedef Handle_ Handle ;
+  
+  typedef Triedge<Handle> Self ;
+  
+  Triedge() {}
+
+  // Contour nodes (input polygon vertices) have just 2 defining contour edges    
+  Triedge ( Handle aE0, Handle aE1 )
+  {
+    mE[0] = aE0 ;
+    mE[1] = aE1 ;
+  }              
+  
+  // Skeleton nodes (offset polygon vertices) have 3 defining contour edges    
+  Triedge ( Handle aE0, Handle aE1 , Handle aE2 )
+  {
+    mE[0] = aE0 ;
+    mE[1] = aE1 ;
+    mE[2] = aE2 ;
+  }              
+  
+  Handle e( unsigned idx ) const { CGAL_assertion(idx<3); return mE[idx]; }
+  
+  Handle e0() const { return e(0); }
+  Handle e1() const { return e(1); }
+  Handle e2() const { return e(2); }
+  
+  bool is_valid() const { return e0() != e1() && e1() != e2() ; }
+  
+  // returns 1 if aE is one of the halfedges stored in this triedge, 0 otherwise.
+  int contains ( Handle aE ) const
+  {
+    return aE == e0() || aE == e1() || aE == e2() ? 1 : 0 ;
+  }
+
+  // Returns the number of common halfedges in the two triedges x and y
+  static int CountInCommon( Self const& x, Self const& y )
+  {
+    return x.contains(y.e0()) + x.contains(y.e1()) + x.contains(y.e2()) ; 
+  }
+  
+  // Returns true if the triedges store the same 3 halfedges (in any order)
+  friend bool operator == ( Self const& x, Self const& y ) { return CountInCommon(x,y) == 3 ; }
+  
+  friend bool operator != ( Self const& x, Self const& y ) { return !(x==y) ; }
+  
+  friend Self operator & ( Self const& x, Self const& y )
+  {
+    return Self(x.e0(), x.e1(), ( x.e0() == y.e0() || x.e1() == y.e0() ) ? y.e1() : y.e0() ) ;
+  }
+  
+  friend std::ostream& operator<< ( std::ostream& ss, Self const& t )
+  {
+    return ss << "{E" << t.e0()->id() << ",E" << t.e1()->id() << ",E" << t.e2()->id() << "}" ;
+  }
+  
+  Handle mE[3];
+} ;
+
+} // namespace CGAL_SS_i
+
 enum Trisegment_collinearity
 { 
     TRISEGMENT_COLLINEARITY_NONE

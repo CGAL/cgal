@@ -118,10 +118,11 @@ private :
 
   typedef typename Traits::Kernel K ;
   
-  typedef typename Traits::FT           FT ;
-  typedef typename Traits::Point_2      Point_2 ;
-  typedef typename Traits::Segment_2    Segment_2 ;
-  typedef typename Traits::Trisegment_2 Trisegment_2 ;
+  typedef typename Traits::FT                  FT ;
+  typedef typename Traits::Point_2             Point_2 ;
+  typedef typename Traits::Segment_2           Segment_2 ;
+  typedef typename Traits::Trisegment_2        Trisegment_2 ;
+  typedef typename Traits::Seeded_trisegment_2 Seeded_trisegment_2 ;
   
   typedef typename SSkel::Vertex   Vertex ;
   typedef typename SSkel::Halfedge Halfedge ;
@@ -147,7 +148,8 @@ private :
   
   typedef typename SSkel::size_type size_type ;
 
-  typedef CGAL_SS_i::Triedge             <SSkel>        Triedge ;
+  typedef CGAL_SS_i::Triedge<Halfedge_handle> Triedge ;
+  
   typedef CGAL_SS_i::Event_2             <SSkel,Traits> Event ;
   typedef CGAL_SS_i::Edge_event_2        <SSkel,Traits> EdgeEvent ;
   typedef CGAL_SS_i::Split_event_2       <SSkel,Traits> SplitEvent ;
@@ -265,17 +267,17 @@ private :
       , mSplitEvents(aComparer)
     {}
 
-    Vertex_handle mVertex ;
-    bool          mIsReflex ;
-    bool          mIsDegenerate ;
-    bool          mIsProcessed ;
-    bool          mIsExcluded ;
-    int           mPrevInLAV ;
-    int           mNextInLAV ;
-    bool          mNextSplitEventInMainPQ;
-    PQ            mSplitEvents ;
-    Triedge       mTriedge ; 
-    Trisegment_2  mTrisegment ; // Skeleton nodes cache the trisegment that defines the originating event
+    Vertex_handle        mVertex ;
+    bool                 mIsReflex ;
+    bool                 mIsDegenerate ;
+    bool                 mIsProcessed ;
+    bool                 mIsExcluded ;
+    int                  mPrevInLAV ;
+    int                  mNextInLAV ;
+    bool                 mNextSplitEventInMainPQ;
+    PQ                   mSplitEvents ;
+    Triedge              mTriedge ; 
+    Seeded_trisegment_2  mSTrisegment ; // Skeleton nodes cache the seeded trisegment that defines the originating event
   } ;
   
   typedef boost::intrusive_ptr<Vertex_data> Vertex_data_ptr ;
@@ -320,14 +322,14 @@ private :
   }
 
   // Contour nodes do not have a trisegment because they don't come from an event
-  inline Trisegment_2 const& GetSkeletonNodeTrisegment ( Vertex_handle aV ) const
+  inline Seeded_trisegment_2 const& GetSeededTrisegment ( Vertex_handle aV ) const
   {
-    return GetVertexData(aV).mTrisegment ;
+    return GetVertexData(aV).mSTrisegment ;
   }
   
-  inline void SetSkeletonNodeTrisegment ( Vertex_handle aV, Trisegment_2 const& aTrisegment )
+  inline void SetSeededTrisegment ( Vertex_handle aV, Seeded_trisegment_2 const& aSTrisegment )
   {
-    GetVertexData(aV).mTrisegment = aTrisegment ;
+    GetVertexData(aV).mSTrisegment = aSTrisegment ;
   }
   
   inline Segment_2 CreateSegment ( Halfedge_const_handle aH ) const
@@ -337,73 +339,30 @@ private :
     return K().construct_segment_2_object()(s,t);
   }
 
-  // If aSeed is a skeleton node returns the segment corresponding to the defining contour edge
-  // which is not in aTriedge
-  //
-  Halfedge_handle GetSeedThirdEdge( Vertex_const_handle aSeed, Triedge aTriedge ) const
+  Trisegment_2 CreateTrisegment ( Triedge const& aTriedge ) const
   {
-    Halfedge_handle rR ;
-    
-    if ( handle_assigned(aSeed) && aSeed->is_skeleton() )
-    {
-      Triedge const& lSeedTriedge = GetTriedge(aSeed) ;
-      
-      CGAL_assertion( Triedge::CountInCommon(aTriedge,lSeedTriedge) == 2 ) ;
-      
-      unsigned idx = 0 ;
-      if ( aTriedge.contains(lSeedTriedge.e(idx) ) )
-      {
-        ++idx ;
-        if ( aTriedge.contains(lSeedTriedge.e(idx) ) )
-        {
-          ++idx ;
-          CGAL_assertion( !aTriedge.contains(lSeedTriedge.e(idx)) ) ;
-        }
-      }
-      
-      rR = lSeedTriedge.e(idx);
-    }
-    
-    return rR ; 
-
-  }
-                                                        
-  Trisegment_2 CreateTrisegment ( Triedge const&      aTriedge
-                                , Vertex_const_handle aLSeed
-                                , Vertex_const_handle aRSeed
-                                ) const
-  {
-    CGAL_STSKEL_BUILDER_TRACE(4,"Creating trisegment for " << aTriedge ) ;
-    
-    Halfedge_handle lLSeedTEdge = GetSeedThirdEdge(aLSeed,aTriedge);
-    Halfedge_handle lRSeedTEdge = GetSeedThirdEdge(aRSeed,aTriedge);
-    
-    boost::optional<Segment_2> lLSeedOS, lRSeedOS ;
-    
-    if ( handle_assigned(lLSeedTEdge) )
-    {
-      CGAL_STSKEL_BUILDER_TRACE(4,"Event LSeed is skeleton node N" << aLSeed->id() << ". 3rd edge: E" << lLSeedTEdge->id() ) ;
-      lLSeedOS = boost::optional<Segment_2>(CreateSegment(lLSeedTEdge)) ;      
-    }
-      
-    if ( handle_assigned(lRSeedTEdge) )
-    {
-      CGAL_STSKEL_BUILDER_TRACE(4,"Event RSeed is skeleton node N" << aRSeed->id() << ". 3rd edge: E" << lRSeedTEdge->id() ) ;
-      lRSeedOS = boost::optional<Segment_2>(CreateSegment(lRSeedTEdge)) ;      
-    }
-      
     boost::optional<Trisegment_2> r = Construct_ss_trisegment_2(mTraits)(CreateSegment(aTriedge.e0())
                                                                         ,CreateSegment(aTriedge.e1())
                                                                         ,CreateSegment(aTriedge.e2())
-                                                                        ,lLSeedOS
-                                                                        ,lRSeedOS
                                                                         );
+                                                                        
+    CGAL_STSKEL_BUILDER_TRACE(4,"Trisegment for " << aTriedge << "=" << ( !!r ? Trisegment_2() : *r ) ) ;
+    
     if ( !r )
       throw_error("Unable to determine edges collinearity");
-    else
-      CGAL_STSKEL_BUILDER_TRACE(4,"Trisegment: " << *r ) ;
       
     return *r ;  
+  }
+  
+  Seeded_trisegment_2 CreateSeededTrisegment ( Triedge const& aTriedge
+                                             , Vertex_handle  aLSeed
+                                             , Vertex_handle  aRSeed
+                                             ) const
+  {
+    return Construct_ss_seeded_trisegment_2(mTraits)(CreateTrisegment(aTriedge)
+                                                    ,handle_assigned(aLSeed) ? GetSeededTrisegment(aLSeed).event() : Trisegment_2::null()
+                                                    ,handle_assigned(aRSeed) ? GetSeededTrisegment(aRSeed).event() : Trisegment_2::null()
+                                                    );
   }
   
   Vertex_handle GetPrevInLAV ( Vertex_handle aV )
@@ -501,7 +460,7 @@ private :
 
 
 
-  bool ExistEvent ( Trisegment_2 const& aS )
+  bool ExistEvent ( Seeded_trisegment_2 const& aS )
   {
     return Do_ss_event_exist_2(mTraits)(aS);
   }  
@@ -509,8 +468,8 @@ private :
   bool IsOppositeEdgeFacingTheSplitSeed( Vertex_handle aSeed, Halfedge_handle aOpposite ) const
   {
     if ( aSeed->is_skeleton() )
-         return Is_edge_facing_ss_node_2(mTraits)( GetSkeletonNodeTrisegment(aSeed), CreateSegment(aOpposite) ) ;
-    else return Is_edge_facing_ss_node_2(mTraits)( aSeed->point()                  , CreateSegment(aOpposite) ) ;
+         return Is_edge_facing_ss_node_2(mTraits)( GetSeededTrisegment(aSeed), CreateSegment(aOpposite) ) ;
+    else return Is_edge_facing_ss_node_2(mTraits)( aSeed->point()            , CreateSegment(aOpposite) ) ;
   }
   
   bool IsSplitEventInsideOffsetZone( EventPtr const& aSplit
@@ -519,19 +478,19 @@ private :
                                    , Vertex_handle   aOppRSeed
                                    ) const
   {
-    return Is_ss_event_inside_offset_zone_2(mTraits)( aSplit->trisegment()
-                                                    , CreateTrisegment(aOppTriedge, aOppLSeed, aOppRSeed )
+    return Is_ss_event_inside_offset_zone_2(mTraits)( aSplit->strisegment()
+                                                    , CreateSeededTrisegment(aOppTriedge, aOppLSeed, aOppRSeed )
                                                     ) ;
   }
 
-  Comparison_result CompareEvents ( Trisegment_2 const& aA, Trisegment_2 const& aB ) const
+  Comparison_result CompareEvents ( Seeded_trisegment_2 const& aA, Seeded_trisegment_2 const& aB ) const
   {
     return Compare_ss_event_times_2(mTraits)(aA,aB) ;
   }
 
   Comparison_result CompareEvents ( EventPtr const& aA, EventPtr const& aB ) const
   {
-    return aA->triedge() != aB->triedge() ? CompareEvents( aA->trisegment(), aB->trisegment() ) : EQUAL ;
+    return aA->triedge() != aB->triedge() ? CompareEvents( aA->strisegment(), aB->strisegment() ) : EQUAL ;
   }
 
   Comparison_result CompareEventsDistanceToSeed ( Vertex_handle   aSeed
@@ -542,29 +501,29 @@ private :
     if ( aA->triedge() != aB->triedge() )
     {
       if ( aSeed->is_skeleton() )
-           return Compare_ss_event_distance_to_seed_2(mTraits)( GetSkeletonNodeTrisegment(aSeed), aA->trisegment(), aB->trisegment() ) ;
-      else return Compare_ss_event_distance_to_seed_2(mTraits)( aSeed->point()                  , aA->trisegment(), aB->trisegment() ) ;
+           return Compare_ss_event_distance_to_seed_2(mTraits)( GetSeededTrisegment(aSeed), aA->strisegment(), aB->strisegment() ) ;
+      else return Compare_ss_event_distance_to_seed_2(mTraits)( aSeed->point()            , aA->strisegment(), aB->strisegment() ) ;
     }
     else return EQUAL ;
   }
   
-  bool AreEventsSimultaneous( Trisegment_2 const& x, Trisegment_2 const& y ) const
+  bool AreEventsSimultaneous( Seeded_trisegment_2 const& x, Seeded_trisegment_2 const& y ) const
   {
     return Are_ss_events_simultaneous_2(mTraits)(x,y) ;
   }
   
   bool AreSkeletonNodesCoincident( Vertex_handle aX, Vertex_handle aY ) const
   {
-    return AreEventsSimultaneous( GetSkeletonNodeTrisegment(aX),  GetSkeletonNodeTrisegment(aY) ) ;
+    return AreEventsSimultaneous( GetSeededTrisegment(aX),  GetSeededTrisegment(aY) ) ;
   }
  
-  bool IsNewEventInThePast( Trisegment_2 const& aTrisegment, Vertex_handle aSeedNode ) const
+  bool IsNewEventInThePast( Seeded_trisegment_2 const& aTrisegment, Vertex_handle aSeedNode ) const
   {
-    return aSeedNode->is_skeleton() ? CompareEvents( aTrisegment, GetSkeletonNodeTrisegment(aSeedNode) ) == SMALLER 
+    return aSeedNode->is_skeleton() ? CompareEvents( aTrisegment, GetSeededTrisegment(aSeedNode) ) == SMALLER 
                                     : false  ;
   }
 
-  boost::tuple<FT,Point_2> ConstructEventTimeAndPoint( Trisegment_2 const& aS ) const
+  boost::tuple<FT,Point_2> ConstructEventTimeAndPoint( Seeded_trisegment_2 const& aS ) const
   {
     boost::optional< boost::tuple<FT,Point_2> > r = Construct_ss_event_time_and_point_2(mTraits)(aS);
     if ( !r )
@@ -576,7 +535,7 @@ private :
   {
     FT      lTime ;
     Point_2 lP ;
-    boost::tie(lTime,lP) = ConstructEventTimeAndPoint(aE.trisegment());
+    boost::tie(lTime,lP) = ConstructEventTimeAndPoint(aE.strisegment());
     
     aE.SetTimeAndPoint(lTime,lP);
   }
@@ -592,9 +551,9 @@ private :
 
   bool AreBisectorsCoincident ( Halfedge_const_handle aA, Halfedge_const_handle aB ) const ;
 
-  bool IsInverseSplitEventCoincident( Vertex_handle const& aReflexOppN 
-                                    , Triedge const&       aEventTriedge
-                                    , Trisegment_2 const&  aEventTrisegment
+  bool IsInverseSplitEventCoincident( Vertex_handle const&       aReflexOppN 
+                                    , Triedge const&             aEventTriedge
+                                    , Seeded_trisegment_2 const& aEventTrisegment
                                     ) ;
                                     
   EventPtr IsPseudoSplitEvent( EventPtr const& aEvent, Vertex_handle aOppN ) ;

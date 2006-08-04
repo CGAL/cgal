@@ -31,14 +31,14 @@ struct Compare_offset_against_event_time_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
 
-  typedef typename Base::FT            FT ;
-  typedef typename Base::Segment_2    Segment_2 ;
-  typedef typename Base::Trisegment_2 Trisegment_2 ;
+  typedef typename Base::FT                  FT ;
+  typedef typename Base::Segment_2           Segment_2 ;
+  typedef typename Base::Seeded_trisegment_2 Seeded_trisegment_2 ;
 
   typedef Uncertain<Comparison_result> result_type ;
   typedef Arity_tag<2>                 Arity ;
 
-  Uncertain<Comparison_result> operator() ( FT aT, Trisegment_2 const& aE ) const
+  Uncertain<Comparison_result> operator() ( FT aT, Seeded_trisegment_2 const& aE ) const
   {
     return compare_offset_against_isec_timeC2(aT,aE) ;
   }
@@ -50,25 +50,24 @@ struct Construct_offset_point_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
 
-  typedef typename Base::FT        FT ;
-  typedef typename Base::Point_2   Point_2 ;
-  typedef typename Base::Segment_2 Segment_2 ;
+  typedef typename Base::FT                  FT ;
+  typedef typename Base::Point_2             Point_2 ;
+  typedef typename Base::Segment_2           Segment_2 ;
+  typedef typename Base::Seeded_trisegment_2 Seeded_trisegment_2 ;
 
-  typedef boost::optional<Segment_2> Optional_segment_2 ;
-  
-  typedef boost::optional< Point_2 > result_type ;
+  typedef boost::optional<Point_2> result_type ;
   
   typedef Arity_tag<3> Arity ;
 
-  result_type operator() ( FT                 const& aT
-                         , Segment_2          const& aE0
-                         , Segment_2          const& aE1 
-                         , Optional_segment_2 const& aE01
+  result_type operator() ( FT                  const& aT
+                         , Segment_2           const& aE0
+                         , Segment_2           const& aE1 
+                         , Seeded_trisegment_2 const& aNode
                          ) const
   {
     bool ok = false ;
     
-    result_type p = construct_offset_pointC2(aT,aE0,aE1,aE01);
+    result_type p = construct_offset_pointC2(aT,aE0,aE1,aNode);
     if ( p )
       ok = is_point_calculation_accurate(aT,*p,aE0,aE1);
       
@@ -108,6 +107,7 @@ struct Polygon_offset_builder_traits_2_functors
   typedef CGAL_SS_i::Compare_offset_against_event_time_2<K> Compare_offset_against_event_time_2 ;
   typedef CGAL_SS_i::Construct_offset_point_2           <K> Construct_offset_point_2 ;
   typedef CGAL_SS_i::Construct_ss_trisegment_2          <K> Construct_ss_trisegment_2 ;
+  typedef CGAL_SS_i::Construct_ss_seeded_trisegment_2   <K> Construct_ss_seeded_trisegment_2 ;
 } ;
 
 template<class K>
@@ -119,7 +119,8 @@ struct Polygon_offset_builder_traits_2_base
   typedef typename K::Point_2   Point_2 ;
   typedef typename K::Segment_2 Segment_2 ;
   
-  typedef CGAL_SS_i::Trisegment_2<K> Trisegment_2 ;
+  typedef CGAL_SS_i::Trisegment_2<K>        Trisegment_2 ;
+  typedef CGAL_SS_i::Seeded_trisegment_2<K> Seeded_trisegment_2 ;
 
   template<class F> F get( F const* = 0 ) const { return F(); }
 } ;
@@ -136,8 +137,9 @@ public:
   typedef Unfiltered_predicate_adaptor<typename Unfiltering::Compare_offset_against_event_time_2>
     Compare_offset_against_event_time_2 ;
 
-  typedef typename Unfiltering::Construct_offset_point_2  Construct_offset_point_2 ;
-  typedef typename Unfiltering::Construct_ss_trisegment_2 Construct_ss_trisegment_2 ;
+  typedef typename Unfiltering::Construct_offset_point_2         Construct_offset_point_2 ;
+  typedef typename Unfiltering::Construct_ss_trisegment_2        Construct_ss_trisegment_2 ;
+  typedef typename Unfiltering::Construct_ss_seeded_trisegment_2 Construct_ss_seeded_trisegment_2 ;
 
 } ;
 
@@ -191,6 +193,8 @@ public:
                                                         , C2C
                                                         >
                                                         Construct_ss_trisegment_2 ;
+                                                        
+  typedef typename Unfiltering::Construct_ss_seeded_trisegment_2 Construct_ss_seeded_trisegment_2 ;
                                                         
 } ;
 

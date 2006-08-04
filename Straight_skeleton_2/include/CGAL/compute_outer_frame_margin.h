@@ -36,10 +36,11 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
                                                                   , Traits const&        aTraits
                                                                   )
 {
-  typedef typename Traits::Kernel    Kernel ;
-  typedef typename Traits::FT        FT ;
-  typedef typename Traits::Point_2   Point_2 ;
-  typedef typename Traits::Segment_2 Segment_2 ;
+  typedef typename Traits::Kernel              Kernel ;
+  typedef typename Traits::FT                  FT ;
+  typedef typename Traits::Point_2             Point_2 ;
+  typedef typename Traits::Segment_2           Segment_2 ;
+  typedef typename Traits::Seeded_trisegment_2 Seeded_trisegment_2 ;
   
   Kernel kernel ;
   
@@ -56,6 +57,8 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
   
   bool lOverflow = false ;
 
+  Seeded_trisegment_2 nullst = Construct_ss_seeded_trisegment_2(aTraits)();
+  
   for ( ForwardPointIterator lCurr = aBegin ; lCurr < aEnd ; ++ lCurr )
   {
     ForwardPointIterator lPrev = ( lCurr == aBegin ? lLast  : CGAL::predecessor(lCurr) ) ;
@@ -66,7 +69,7 @@ boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPoint
       Segment_2 lLEdge = construct_segment(*lPrev,*lCurr);
       Segment_2 lREdge = construct_segment(*lCurr,*lNext);
       
-      OptionalPoint_2 lP = Construct_offset_point_2(aTraits)(aOffset,lLEdge,lREdge, boost::optional<Segment_2>());
+      OptionalPoint_2 lP = Construct_offset_point_2(aTraits)(aOffset,lLEdge,lREdge,nullst);
      
       if ( !lP )
       {

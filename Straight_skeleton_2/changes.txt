@@ -1,3 +1,10 @@
+4 August 2006 Fernando Cacciola
+- Fixed bug in seed tracking
+
+31 July 2006 Fernando Cacciola
+- Seed tracking added for correct handling of degenerate vertices
+  (seed tracking refers to a 1 level history of the colliding edges which can be accessed when processing some non-initial event)
+
 15 July 2006 Fernando Cacciola
 - Visitor added to allow users to monitor the algorithm progress
 

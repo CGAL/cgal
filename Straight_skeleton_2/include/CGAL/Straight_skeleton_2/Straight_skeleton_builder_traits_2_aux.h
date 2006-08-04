@@ -19,6 +19,7 @@
 #define CGAL_STRAIGHT_SKELETON_BUILDER_TRAITS_2_AUX_H 1
 
 #include <CGAL/tags.h>
+#include <CGAL/Handle.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/certified_numeric_predicates.h>
 #include <CGAL/Quotient.h>
@@ -37,6 +38,7 @@
 #  include<sstream>
 #  include<iomanip>
 bool sEnableTraitsTrace = false ;
+#  define CGAL_STSKEL_TRAITS_ENABLE_TRACE sEnableTraitsTrace = true ;
 #  define CGAL_STSKEL_TRAITS_ENABLE_TRACE_IF(cond) if ((cond)) sEnableTraitsTrace = true ;
 #  define CGAL_STSKEL_TRAITS_DISABLE_TRACE sEnableTraitsTrace = false;
 #  define CGAL_STSKEL_TRAITS_TRACE(m) \
@@ -48,8 +50,9 @@ bool sEnableTraitsTrace = false ;
        Straight_skeleton_traits_external_trace(s); \
      }
 #else
+#  define CGAL_STSKEL_TRAITS_ENABLE_TRACE
 #  define CGAL_STSKEL_TRAITS_ENABLE_TRACE_IF(cond)
-#  define CGAL_STSKEL_TRAITS_DISALBE_TRACE
+#  define CGAL_STSKEL_TRAITS_DISABLE_TRACE
 #  define CGAL_STSKEL_TRAITS_TRACE(m)
 #endif
 
@@ -206,7 +209,8 @@ public:
 
 //
 // This number type is provided because unlike Quotient<> is allows you to create it
-// with a zero denominator.
+// with a zero denominator. Of course you can't evaluate it in that case, but is convenient because it allows client code
+// to handle the "error" itself, which in this context is useful.
 //
 template<class NT>
 class Rational
@@ -230,119 +234,98 @@ class Rational
 // A straight skeleton event is the simultaneous coallision of 3 offseted oriented straight line segments
 // e0*,e1*,e2* [e* denotes an _offseted_ edge].
 //
-// If the event is a an edge-event, the e0*->e1*->e2* must be consecutive right before the event so that
+// This record stores the segments corresponding to the INPUT edges (e0,e1,e2) whose offsets intersect
+// at the event along with their collinearity.
+//
+// If the event is a an edge-event, then e0*->e1*->e2* must be consecutive right before the event so that
 // after the event e0* and e2* become consecutive. Thus, there are _offset_ vertices (e0*,e1*) and (e1*,e2*) 
 // in the offset polygon which not neccesarily exist in the original polygon.
 //
 // If the event is a split-event, e0*->e1* must be consecutive right before the event so that after the event
-// e0->right(e2) and left(e2)->e1 become consecutive. Thus, there is an offset vertex (e0*,e1*) in the
+// e0*->right(e2*) and left(e2*)->e1* become consecutive. Thus, there is an offset vertex (e0*,e1*) in the
 // offset polygon which not neccesarily exist in the original polygon.
 // 
-// This record stores the segments corresponding to the INPUT edges (e0,e1,e2) whose offsets intersect
-// at the event.
-//
-// The actual calculations for most computations depend on the collinearity of the input edges.
-// Such collineariy is stored in this record to avoid determining it all the time in each computation.
-
-// The offset vertices (e0*,e1*) and (e1*,e2*) are called the left and right seeds.
+// The offset vertices (e0*,e1*) and (e1*,e2*) are called the left and right seeds for the event.
 // A seed is a contour node if the vertex is already present in the input polygon, otherwise is a skeleton node.
-// If a seed is a skeleton node,can be an input, is produced by an event so it is itself defined as a trisegment.
-// The seed of a seed is neccesarily a contour node so the structure IS NOT recursive.
+// If a seed is a skeleton node is produced by an event so it is itself defined as a trisegment.
 //
-// If the seed is a skeleton node, an additional edge and collinearity is (optionally) stored in the nested record "Seed"
+// A default constructed trisegment is formally defined a null trisegment.
 //
-// 
 template<class K>
 class Trisegment_2
 {
   public:
 
     typedef typename K::Segment_2 Segment_2 ;
-
-    struct Seed
-    {
-      Seed ( Segment_2 const& aE, Trisegment_collinearity aCollinearity )
-        :
-        mE(aE), mCollinearity(aCollinearity)
-      {}
-        
-      Segment_2               mE ;
-      Trisegment_collinearity mCollinearity ;
-    } ;
-    typedef boost::optional<Seed> Optional_seed ;
     
   public:
 
-    Trisegment_2() {}
+    Trisegment_2() : mRep(0) {}
       
     Trisegment_2( Segment_2 const&        aE0
                 , Segment_2 const&        aE1
                 , Segment_2 const&        aE2
                 , Trisegment_collinearity aCollinearity 
-                , Optional_seed const&    aLSeed
-                , Optional_seed const&    aRSeed
                 ) 
       :
-      mRep( new Rep(aE0,aE1,aE2,aCollinearity,aLSeed,aRSeed) )
+      mRep( new Rep(aE0,aE1,aE2,aCollinearity) )
     {}
 
-    Trisegment_collinearity collinearity() const { return mRep->mCollinearity ; }
+    static Trisegment_2 null() { return Trisegment_2() ; }
+    
+    Trisegment_collinearity collinearity() const { return rep().mCollinearity ; }
 
-    Segment_2 const& e( unsigned idx ) const { CGAL_assertion(idx<3) ; return mRep->mE[idx] ; }
+    Segment_2 const& e( unsigned idx ) const { CGAL_precondition(idx<3) ; return rep().mE[idx] ; }
     
     Segment_2 const& e0() const { return e(0) ; }
     Segment_2 const& e1() const { return e(1) ; }
     Segment_2 const& e2() const { return e(2) ; }
 
-    Segment_2 const& collinear_edge_a  () const { return e(mRep->mCSIdx[0]) ; }
-    Segment_2 const& collinear_edge_b  () const { return e(mRep->mCSIdx[1]) ; }
-    Segment_2 const& non_collinear_edge() const { return e(mRep->mCSIdx[2]) ; }
-    
-    Optional_seed const& seed ( unsigned idx ) const { CGAL_assertion(idx<2) ; return mRep->mSeed[idx] ; }
-    
-    bool is_seed_a_skeleton_node( unsigned idx ) const { return !!seed(idx) ; }
-    
-    Trisegment_2 construct_seed_trisegment( unsigned idx ) const
+    // If 2 out of the 3 edges are collinear they can be reclassified as 1 collinear edge (any of the 2) and 1 non-collinear.
+    // These methods returns the edges according to that classification.
+    // PRECONDITION: Exactly 2 out of 3 edges are collinear
+    Segment_2 const& collinear_edge    () const { return e(rep().mCSIdx) ; }
+    Segment_2 const& non_collinear_edge() const { return e(rep().mNCSIdx) ; }
+
+    enum SEED_ID { LEFT, RIGHT, UNKNOWN } ;
+        
+    // Indicates which of the seeds is collinear for a normal collinearity case.
+    // PRECONDITION: The collinearity is normal.
+    SEED_ID degenerate_seed_id() const
     {
-      CGAL_assertion( is_seed_a_skeleton_node(idx) ) ;
-      
-      Optional_seed null ;
-      return Trisegment_2(e(idx),seed(idx)->mE,e(idx+1),seed(idx)->mCollinearity,null,null);
+      Trisegment_collinearity c = collinearity();
+        
+      return c == TRISEGMENT_COLLINEARITY_01 ? LEFT : c == TRISEGMENT_COLLINEARITY_12 ? RIGHT : UNKNOWN  ; 
     }
-    
-    friend std::ostream& operator << ( std::ostream& os, Optional_seed const& aOSeed )
-    {
-      if ( aOSeed )
-      {
-        return os << " |[(" 
-                  << aOSeed->mE.source().x() << "," << aOSeed->mE.source().y() 
-                  << ")->(" 
-                  << aOSeed->mE.target().x() << "," << aOSeed->mE.target().y()
-                  << ")] "
-                  << trisegment_collinearity_to_string(aOSeed->mCollinearity) 
-                  << "|";
-      }
-      else return os << " |*|";
-    }
+
+    // A default constructed trisegment is formally null.
+    // Null trisegments are used to represent seeds which are contour vertices instead of skeleton nodes
+    // (hence are not defined by a trisegment at all)
+    bool is_null() const { return !mRep ; }
     
     friend std::ostream& operator << ( std::ostream& os, Trisegment_2<K> const& aTrisegment )
     {
-      return os << "{[(" 
-                << aTrisegment.e0().source().x() << "," << aTrisegment.e0().source().y() 
-                << ")->(" 
-                << aTrisegment.e0().target().x() << "," << aTrisegment.e0().target().y()
-                << ")] [(" 
-                << aTrisegment.e1().source().x() << "," << aTrisegment.e1().source().y() 
-                << ")->(" 
-                << aTrisegment.e1().target().x() << "," << aTrisegment.e1().target().y()
-                << ")] [(" 
-                << aTrisegment.e2().source().x() << "," << aTrisegment.e2().source().y() 
-                << ")->(" 
-                << aTrisegment.e2().target().x() << "," << aTrisegment.e2().target().y()
-                << ")]} " 
-                << trisegment_collinearity_to_string(aTrisegment.collinearity()) 
-                << aTrisegment.seed(0)
-                << aTrisegment.seed(1);
+      if ( aTrisegment.is_null() )
+      {
+        return os << "{null}" << endl ;
+      }  
+      else
+      {
+        return os << "{[(" 
+                  << aTrisegment.e0().source().x() << "," << aTrisegment.e0().source().y() 
+                  << ")->(" 
+                  << aTrisegment.e0().target().x() << "," << aTrisegment.e0().target().y()
+                  << ")] [(" 
+                  << aTrisegment.e1().source().x() << "," << aTrisegment.e1().source().y() 
+                  << ")->(" 
+                  << aTrisegment.e1().target().x() << "," << aTrisegment.e1().target().y()
+                  << ")] [(" 
+                  << aTrisegment.e2().source().x() << "," << aTrisegment.e2().source().y() 
+                  << ")->(" 
+                  << aTrisegment.e2().target().x() << "," << aTrisegment.e2().target().y()
+                  << ")]} " 
+                  << trisegment_collinearity_to_string(aTrisegment.collinearity()) ;
+      }
     }
 
   private:
@@ -353,40 +336,94 @@ class Trisegment_2
           , Segment_2 const&        aE1
           , Segment_2 const&        aE2
           , Trisegment_collinearity aCollinearity 
-          , Optional_seed const&    aLSeed
-          , Optional_seed const&    aRSeed
           ) 
       {
         mCollinearity = aCollinearity ;
-        mE[0]         = aE0 ;
-        mE[1]         = aE1 ;
-        mE[2]         = aE2 ;
-        mSeed[0]      = aLSeed ;
-        mSeed[1]      = aRSeed ;
+        
+        mE[0] = aE0 ;
+        mE[1] = aE1 ;
+        mE[2] = aE2 ;
         
         switch ( mCollinearity )
         {
           case TRISEGMENT_COLLINEARITY_01:
-            mCSIdx[0]=0; mCSIdx[1]=1; mCSIdx[2]=2; break ;
+            mCSIdx=0; mNCSIdx=2; break ;
             
           case TRISEGMENT_COLLINEARITY_12:
-            mCSIdx[0]=1; mCSIdx[1]=2; mCSIdx[2]=0; break ;
+            mCSIdx=1; mNCSIdx=0; break ;
             
           case TRISEGMENT_COLLINEARITY_02:
-            mCSIdx[0]=0; mCSIdx[1]=2; mCSIdx[2]=1; break ;
+            mCSIdx=0; mNCSIdx=1; break ;
             
-          default:
-            mCSIdx[0]=0; mCSIdx[1]=1; mCSIdx[2]=2; break ;
+          case TRISEGMENT_COLLINEARITY_ALL:
+            mCSIdx=-1; mNCSIdx=-1; break ;
+            
+          case TRISEGMENT_COLLINEARITY_NONE:
+            mCSIdx=-1; mNCSIdx=-1; break ;
         }
       }
           
       Segment_2               mE[3];
       Trisegment_collinearity mCollinearity ;
-      unsigned                mCSIdx[3] ;
-      Optional_seed           mSeed[2] ;
+      unsigned                mCSIdx, mNCSIdx ;
     } ;
     
+    Rep const& rep() const { CGAL_assertion(mRep) ; return *mRep ; }
+    Rep&       rep()       { CGAL_assertion(mRep) ; return *mRep ; }
+    
     boost::intrusive_ptr<Rep> mRep ;
+} ;
+
+//
+// This record stores the trisegment that defines a given event along with the 2 trisegments that defines
+// the left and right seed vertices.
+// If a seed vertex is a contour vertex instead of a skeleton node, it is given as a null trisegment.
+// 
+// A default constructed seeded trisegment is formally null.
+//
+template<class K>
+class Seeded_trisegment_2
+{
+  public :
+  
+    typedef Trisegment_2<K> Trisegment_2 ;
+
+    Seeded_trisegment_2() {}
+      
+    Seeded_trisegment_2 ( Trisegment_2 const& event )
+      :
+       mEvent(event)
+      ,mLSeed()
+      ,mRSeed()                    
+    {}
+    
+    Seeded_trisegment_2 ( Trisegment_2 const& event
+                        , Trisegment_2 const& lseed
+                        , Trisegment_2 const& rseed
+                        )
+      :
+       mEvent(event)
+      ,mLSeed(lseed)
+      ,mRSeed(rseed)                    
+    {}
+    
+    Trisegment_2 const& event() const { return mEvent ; } 
+    Trisegment_2 const& lseed() const { return mLSeed ; }
+    Trisegment_2 const& rseed() const { return mRSeed ; }
+  
+    friend std::ostream& operator << ( std::ostream& os, Seeded_trisegment_2<K> const& st )
+    {
+      return os << st.event()
+                << "\n  LSeed=" << st.lseed()
+                << "\n  RSeed=" << st.rseed() ;
+                
+    }
+    
+  private :
+  
+    Trisegment_2 mEvent ;
+    Trisegment_2 mLSeed ;
+    Trisegment_2 mRSeed ;
 } ;
 
 template<class K>
@@ -396,7 +433,8 @@ struct Functor_base_2
   typedef typename K::Point_2   Point_2 ;
   typedef typename K::Segment_2 Segment_2 ;
   
-  typedef Trisegment_2<K> Trisegment_2 ;
+  typedef Trisegment_2       <K> Trisegment_2 ;
+  typedef Seeded_trisegment_2<K> Seeded_trisegment_2 ;
 };
 
 template<class Converter>
@@ -417,8 +455,8 @@ struct SS_converter : Converter
   typedef Trisegment_2<Source_kernel> Source_trisegment_2 ;
   typedef Trisegment_2<Target_kernel> Target_trisegment_2 ;
 
-  typedef typename Source_trisegment_2::Seed  Source_trisegment_2_seed ;
-  typedef typename Target_trisegment_2::Seed  Target_trisegment_2_seed ;
+  typedef Seeded_trisegment_2<Source_kernel> Source_seeded_trisegment_2 ;
+  typedef Seeded_trisegment_2<Target_kernel> Target_seeded_trisegment_2 ;
   
   typedef boost::tuple<Source_FT,Source_point_2> Source_time_and_point_2 ;
   typedef boost::tuple<Target_FT,Target_point_2> Target_time_and_point_2 ;
@@ -435,9 +473,6 @@ struct SS_converter : Converter
   typedef boost::optional<Source_trisegment_2> Source_opt_trisegment_2 ;
   typedef boost::optional<Target_trisegment_2> Target_opt_trisegment_2 ;
   
-  typedef boost::optional<Source_trisegment_2_seed>  Source_trisegment_opt_seed_2 ;
-  typedef boost::optional<Target_trisegment_2_seed>  Target_trisegment_opt_seed_2 ;
-  
   Target_FT        cvtn(Source_FT const& n) const  { return this->Converter::operator()(n); }
 
   Target_point_2   cvtp(Source_point_2 const& p) const  { return this->Converter::operator()(p); }
@@ -452,27 +487,20 @@ struct SS_converter : Converter
     return Target_time_and_point_2(cvtn(t),cvtp(p));
   }
   
-  Target_trisegment_2_seed cvtseed( Source_trisegment_2_seed const& seed ) const
+  Target_trisegment_2 cvt_tri( Source_trisegment_2 const& t) const
   {
-    return  ;
-  }  
-  
-  Target_trisegment_opt_seed_2 cvtseed( Source_trisegment_opt_seed_2 const& oseed ) const
-  {
-    if ( oseed )
-         return Target_trisegment_opt_seed_2( Target_trisegment_2_seed( cvts(oseed->mE), oseed->mCollinearity ) ) ;
-    else return Target_trisegment_opt_seed_2();
+    return t.is_null() ? Target_trisegment_2::null()
+                       : Target_trisegment_2(cvts(t.e0())
+                                            ,cvts(t.e1())
+                                            ,cvts(t.e2())
+                                            ,t.collinearity()
+                                            ) ;
+    
   }
   
-  Target_trisegment_2 cvttri( Source_trisegment_2 const& t) const
+  Target_seeded_trisegment_2 cvt_seeded_tri( Source_seeded_trisegment_2 const& st ) const
   {
-    return Target_trisegment_2(cvts(t.e0())
-                              ,cvts(t.e1())
-                              ,cvts(t.e2())
-                              ,t.collinearity()
-                              ,cvtseed(t.seed(0))
-                              ,cvtseed(t.seed(1))
-                              ) ;
+    return Target_seeded_trisegment_2(cvt_tri(st.event()),cvt_tri(st.lseed()),cvt_tri(st.rseed())) ;
     
   }
   
@@ -483,17 +511,21 @@ struct SS_converter : Converter
   Target_point_2   operator()( Source_point_2 const& p) const { return cvtp(p) ; }
 
   Target_segment_2 operator()( Source_segment_2 const& s) const { return cvts(s); }
-
   
   Target_trisegment_2 operator()( Source_trisegment_2 const& t) const
   {
-    return cvttri(t);
+    return cvt_tri(t);
+  }
+  
+  Target_seeded_trisegment_2 operator()( Source_seeded_trisegment_2 const& st) const
+  {
+    return cvt_seeded_tri(st);
   }
   
   Target_opt_trisegment_2 operator()( Source_opt_trisegment_2 const& t) const
   {
     if ( t )
-         return Target_opt_trisegment_2(cvttri(*t)) ;
+         return Target_opt_trisegment_2(cvt_tri(*t)) ;
     else return Target_opt_trisegment_2();
     
   }
@@ -523,8 +555,6 @@ struct SS_converter : Converter
     else return Target_opt_time_and_point_2();
   }
   
-  //boost::none_t operator() ( boost::none_t none ) const { return none ; } 
-   
 };
 
 } // namespace CGAL_SS_i

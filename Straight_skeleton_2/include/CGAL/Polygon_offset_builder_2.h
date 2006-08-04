@@ -24,6 +24,8 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/optional/optional.hpp>
 
+#include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
+
 #include <CGAL/Polygon_offset_builder_traits_2.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -56,10 +58,11 @@ private:
 
   typedef std::vector<Halfedge_const_handle> Halfedge_vector ;
 
-  typedef typename Traits::Segment_2    Segment_2 ;
-  typedef typename Traits::Trisegment_2 Trisegment_2 ;
+  typedef typename Traits::Segment_2           Segment_2 ;
+  typedef typename Traits::Trisegment_2        Trisegment_2 ;
+  typedef typename Traits::Seeded_trisegment_2 Seeded_trisegment_2 ;
 
-  typedef CGAL_SS_i::Triedge<Ss> Triedge ;
+  typedef CGAL_SS_i::Triedge<Halfedge_const_handle> Triedge ;
     
   bool handled_assigned( Halfedge_const_handle aH ) const
   {
@@ -87,7 +90,7 @@ private:
     return K().construct_segment_2_object()(s,t);
   }
 
-  Segment_2 GetSkeletonNodeThirdSegment( Vertex_const_handle aSeed, Halfedge_const_handle aEA, Halfedge_const_handle aEB ) const
+  Triedge GetTriedge( Vertex_const_handle aSeed ) const
   {
     typedef typename Ss::Vertex Vertex ;
     typedef typename Vertex::Defining_contour_halfedges_const_circulator circ ;
@@ -95,41 +98,63 @@ private:
     circ cb = aSeed->defining_contour_halfedges_begin() ;
     circ c = cb ;
 
-    Halfedge_const_handle lEC ;
+    Halfedge_const_handle lE[3] ;
+    
+    int d = 0 ;
     
     do
     {
-      Halfedge_const_handle h = *c;
-      
-      if ( h != aEA && h != aEB )
-      {
-        lEC = h ;
-        break ;
-      }
-      ++ c ;
+      lE[d++] = *c++;
     }
-    while( c != cb ) ;
+    while( d < 3 && c != cb ) ;
 
-    CGAL_postcondition( handle_assigned(lEC) ) ;
-         
-    return CreateSegment(lEC);
+    Triedge rTriedge(lE[0],lE[1],lE[2]);
+    
+    CGAL_postcondition(rTriedge.is_valid());
+    
+    return rTriedge ;
   }
   
   Trisegment_2 CreateTrisegment ( Halfedge_const_handle aE0
                                 , Halfedge_const_handle aE1
                                 , Halfedge_const_handle aE2
-                                , Vertex_const_handle   aLSeed
-                                , Vertex_const_handle   aRSeed
                                 ) const
   {
-    boost::optional<Segment_2> lS01, lS12 ;
-    
-    if ( handle_assigned(aLSeed) && aLSeed->is_skeleton() )
-      lS01 = CGAL_SS_i::cgal_make_optional(GetSkeletonNodeThirdSegment(aLSeed,aE0,aE1)) ;  
-    if ( handle_assigned(aRSeed) && aRSeed->is_skeleton() )
-      lS12 = CGAL_SS_i::cgal_make_optional(GetSkeletonNodeThirdSegment(aRSeed,aE1,aE2)) ;  
-      
-    return *Construct_ss_trisegment_2(mTraits)(CreateSegment(aE0),CreateSegment(aE1),CreateSegment(aE2),lS01,lS12);
+    return *Construct_ss_trisegment_2(mTraits)(CreateSegment(aE0),CreateSegment(aE1),CreateSegment(aE2));
+  }
+  
+  Trisegment_2 CreateTrisegment ( Triedge const& aTriedge ) const
+  {
+    return *Construct_ss_trisegment_2(mTraits)(CreateSegment(aTriedge.e0()),CreateSegment(aTriedge.e1()),CreateSegment(aTriedge.e2()));
+  }
+  
+  Trisegment_2 CreateTrisegment ( Vertex_const_handle aSeed ) const
+  {
+    return aSeed->is_skeleton() ? CreateTrisegment(GetTriedge(aSeed)) : Trisegment_2::null() ;
+  }
+  
+  Seeded_trisegment_2 CreateSeededTrisegment ( Halfedge_const_handle aE0
+                                             , Halfedge_const_handle aE1
+                                             , Halfedge_const_handle aE2
+                                             , Vertex_const_handle   aLSeed
+                                             , Vertex_const_handle   aRSeed
+                                             ) const
+  {
+    return Construct_ss_seeded_trisegment_2(mTraits)(CreateTrisegment(aE0,aE1,aE1)
+                                                    ,CreateTrisegment(aLSeed)
+                                                    ,CreateTrisegment(aRSeed)
+                                                    );
+  }
+  
+  Seeded_trisegment_2 CreateSeededTrisegment ( Vertex_const_handle   aNode
+                                             , Vertex_const_handle   aLSeed
+                                             , Vertex_const_handle   aRSeed
+                                             ) const
+  {
+    return Construct_ss_seeded_trisegment_2(mTraits)(CreateTrisegment(aNode)
+                                                    ,CreateTrisegment(aLSeed)
+                                                    ,CreateTrisegment(aRSeed)
+                                                    );
   }
   
   Comparison_result Compare_offset_against_event_time( FT aT, Halfedge_const_handle aBisector, Halfedge_const_handle aNextBisector ) const
@@ -148,7 +173,7 @@ private:
     Vertex_const_handle lLSeed = aBisector->opposite()->vertex();
     Vertex_const_handle lRSeed = aBisector->vertex();
     
-    return Compare_offset_against_event_time_2(mTraits)(aT,CreateTrisegment(lBorderA,lBorderB,lBorderC,lLSeed,lRSeed));
+    return Compare_offset_against_event_time_2(mTraits)(aT,CreateSeededTrisegment(lBorderA,lBorderB,lBorderC,lLSeed,lRSeed));
   }
 
   boost::optional<Point_2> Construct_offset_point( FT aT, Halfedge_const_handle aBisector ) const
@@ -159,14 +184,23 @@ private:
 
     Halfedge_const_handle lBorderA = aBisector->defining_contour_edge();
     Halfedge_const_handle lBorderB = aBisector->opposite()->defining_contour_edge();
-    Vertex_const_handle   lSeed    = aBisector->opposite()->vertex();
-
-    boost::optional<Segment_2> lSAB ;
     
-    if ( lSeed->is_skeleton() )
-      lSAB = CGAL_SS_i::cgal_make_optional(GetSkeletonNodeThirdSegment(lSeed,lBorderA,lBorderB)) ;  
-      
-    return Construct_offset_point_2(mTraits)(aT,CreateSegment(lBorderA),CreateSegment(lBorderB),lSAB);
+    Seeded_trisegment_2 lSrcEvent ;
+    
+    Vertex_const_handle lNode = aBisector->opposite()->vertex();
+    
+    if ( lNode->is_skeleton() )
+    {
+      Vertex_const_handle lLSeed = aBisector->prev()->opposite()->vertex();
+      Vertex_const_handle lRSeed = aBisector->opposite()->next()->vertex();
+      lSrcEvent = CreateSeededTrisegment(lNode,lLSeed,lRSeed);
+    }
+
+    return Construct_offset_point_2(mTraits)(aT
+                                            ,CreateSegment(lBorderA)
+                                            ,CreateSegment(lBorderB)
+                                            ,lSrcEvent
+                                            );
   }
 
   void ResetVisitedBisectorsMap();

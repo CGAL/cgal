@@ -543,6 +543,10 @@ void draw_point( Point const& v, CGAL::Color c )
     mainwin->draw_point(v,c);  
 }
 
+void wait_on_user() 
+{
+}
+
 }
 
 int

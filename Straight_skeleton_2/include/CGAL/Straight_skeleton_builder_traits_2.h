@@ -33,24 +33,42 @@ struct Construct_ss_trisegment_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
   
-  typedef typename Base::FT           FT ;
   typedef typename Base::Segment_2    Segment_2 ;
   typedef typename Base::Trisegment_2 Trisegment_2 ;
   
-  typedef boost::optional<Segment_2> Optional_segment_2 ;
+  typedef optional<Trisegment_2> result_type ;
   
-  typedef boost::optional<Trisegment_2> result_type ;
-  
-  typedef Arity_tag<5>  Arity ;
+  typedef Arity_tag<3> Arity ;
 
-  result_type operator() ( Segment_2 const&          aS0
-                         , Segment_2 const&          aS1
-                         , Segment_2 const&          aS2 
-                         , Optional_segment_2 const& aS01
-                         , Optional_segment_2 const& aS12
-                         ) const
+  result_type operator() () const { return cgal_make_optional( Trisegment_2::null() ) ; }
+  
+  result_type operator() ( Segment_2 const& aS0, Segment_2 const& aS1, Segment_2 const& aS2 ) const
   {
-    return construct_trisegment(aS0,aS1,aS2,aS01,aS12);
+    Trisegment_2 t = construct_trisegment(aS0,aS1,aS2);
+    return cgal_make_optional(!t.is_null(),t);
+  }
+};
+
+template<class K>
+struct Construct_ss_seeded_trisegment_2 : Functor_base_2<K>
+{
+  typedef Functor_base_2<K> Base ;
+  
+  typedef typename Base::Trisegment_2        Trisegment_2 ;
+  typedef typename Base::Seeded_trisegment_2 Seeded_trisegment_2 ;
+  
+  typedef Seeded_trisegment_2 result_type ;
+  
+  typedef Arity_tag<3> Arity ;
+
+  result_type operator() () const
+  {
+    return Seeded_trisegment_2();
+  }
+  
+  result_type operator() ( Trisegment_2 const& aEvent, Trisegment_2 const& aLSeed, Trisegment_2 const& aRSeed ) const
+  {
+    return Seeded_trisegment_2(aEvent,aLSeed,aRSeed);
   }
 };
 
@@ -59,12 +77,12 @@ struct Do_ss_event_exist_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
 
-  typedef typename Base::Trisegment_2 Trisegment_2 ;
+  typedef typename Base::Seeded_trisegment_2 Seeded_trisegment_2 ;
 
   typedef Uncertain<bool> result_type ;
   typedef Arity_tag<1>    Arity ;
 
-  Uncertain<bool> operator() ( Trisegment_2 const& aSTrisegment ) const
+  Uncertain<bool> operator() ( Seeded_trisegment_2 const& aSTrisegment ) const
   {
     Uncertain<bool> rResult = exist_offset_lines_isec2(aSTrisegment) ;
 
@@ -79,9 +97,9 @@ struct Is_edge_facing_ss_node_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
 
-  typedef typename Base::Point_2      Point_2 ;
-  typedef typename Base::Segment_2    Segment_2 ;
-  typedef typename Base::Trisegment_2 Trisegment_2 ;
+  typedef typename Base::Point_2             Point_2 ;
+  typedef typename Base::Segment_2           Segment_2 ;
+  typedef typename Base::Seeded_trisegment_2 Seeded_trisegment_2 ;
 
   typedef Uncertain<bool> result_type ;
   typedef Arity_tag<2>    Arity ;
@@ -91,7 +109,7 @@ struct Is_edge_facing_ss_node_2 : Functor_base_2<K>
     return is_edge_facing_pointC2(cgal_make_optional(aContourNode),aEdge) ;
   }
 
-  Uncertain<bool> operator() ( Trisegment_2 const& aSkeletonNode, Segment_2 const& aEdge ) const
+  Uncertain<bool> operator() ( Seeded_trisegment_2 const& aSkeletonNode, Segment_2 const& aEdge ) const
   {
     return is_edge_facing_offset_lines_isecC2(aSkeletonNode,aEdge) ;
   }
@@ -102,23 +120,23 @@ struct Compare_ss_event_distance_to_seed_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
 
-  typedef typename Base::Point_2      Point_2 ;
-  typedef typename Base::Trisegment_2 Trisegment_2 ;
+  typedef typename Base::Point_2             Point_2 ;
+  typedef typename Base::Seeded_trisegment_2 Seeded_trisegment_2 ;
 
   typedef Uncertain<Comparison_result> result_type ;
   typedef Arity_tag<3>                 Arity ;
 
-  Uncertain<Comparison_result> operator() ( Point_2      const& aP
-                                          , Trisegment_2 const& aL
-                                          , Trisegment_2 const& aR
+  Uncertain<Comparison_result> operator() ( Point_2             const& aP
+                                          , Seeded_trisegment_2 const& aL
+                                          , Seeded_trisegment_2 const& aR
                                           ) const
   {
     return compare_offset_lines_isec_dist_to_pointC2(cgal_make_optional(aP),aL,aR) ;
   }
 
-  Uncertain<Comparison_result> operator() ( Trisegment_2 const& aS
-                                          , Trisegment_2 const& aL
-                                          , Trisegment_2 const& aR
+  Uncertain<Comparison_result> operator() ( Seeded_trisegment_2 const& aS
+                                          , Seeded_trisegment_2 const& aL
+                                          , Seeded_trisegment_2 const& aR
                                           ) const
   {
     return compare_offset_lines_isec_dist_to_pointC2(aS,aL,aR) ;
@@ -131,12 +149,12 @@ struct Compare_ss_event_times_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
 
-  typedef typename Base::Trisegment_2 Trisegment_2 ;
+  typedef typename Base::Seeded_trisegment_2 Seeded_trisegment_2 ;
 
   typedef Uncertain<Comparison_result> result_type ;
   typedef Arity_tag<2>                 Arity ;
 
-  Uncertain<Comparison_result> operator() ( Trisegment_2 const& aL, Trisegment_2 const& aR ) const
+  Uncertain<Comparison_result> operator() ( Seeded_trisegment_2 const& aL, Seeded_trisegment_2 const& aR ) const
   {
     Uncertain<Comparison_result> rResult = compare_offset_lines_isec_timesC2(aL,aR) ;
 
@@ -151,12 +169,12 @@ struct Is_ss_event_inside_offset_zone_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
 
-  typedef typename Base::Trisegment_2 Trisegment_2 ;
+  typedef typename Base::Seeded_trisegment_2 Seeded_trisegment_2 ;
 
   typedef Uncertain<bool> result_type ;
   typedef Arity_tag<2>    Arity ;
 
-  Uncertain<bool> operator() ( Trisegment_2 const& aE, Trisegment_2 const& aZ ) const
+  Uncertain<bool> operator() ( Seeded_trisegment_2 const& aE, Seeded_trisegment_2 const& aZ ) const
   {
     Uncertain<bool> rResult = is_offset_lines_isec_inside_offset_zoneC2(aE,aZ) ;
 
@@ -171,12 +189,12 @@ struct Are_ss_events_simultaneous_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
 
-  typedef typename Base::Trisegment_2 Trisegment_2 ;
+  typedef typename Base::Seeded_trisegment_2 Seeded_trisegment_2 ;
 
   typedef Uncertain<bool> result_type ;
   typedef Arity_tag<2>    Arity ;
 
-  Uncertain<bool> operator() ( Trisegment_2 const& aA, Trisegment_2 const& aB ) const
+  Uncertain<bool> operator() ( Seeded_trisegment_2 const& aA, Seeded_trisegment_2 const& aB ) const
   {
     Uncertain<bool> rResult = are_events_simultaneousC2(aA,aB);
 
@@ -231,10 +249,10 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
 
-  typedef typename Base::FT           FT ;
-  typedef typename Base::Point_2      Point_2 ;
-  typedef typename Base::Segment_2    Segment_2 ;
-  typedef typename Base::Trisegment_2 Trisegment_2 ;
+  typedef typename Base::FT                  FT ;
+  typedef typename Base::Point_2             Point_2 ;
+  typedef typename Base::Segment_2           Segment_2 ;
+  typedef typename Base::Seeded_trisegment_2 Seeded_trisegment_2 ;
 
   typedef boost::tuple<FT,Point_2> rtype ;
   
@@ -242,40 +260,38 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
   
   typedef Arity_tag<1>  Arity ;
 
-  result_type operator() ( Trisegment_2 const& trisegment ) const
+  result_type operator() ( Seeded_trisegment_2 const& st ) const
   {
     bool lOK = false ;
     
     FT      t(0) ;
     Point_2 i = ORIGIN ;
 
-    CGAL_assertion(trisegment.collinearity() != TRISEGMENT_COLLINEARITY_ALL) ;
-
-    optional< Rational<FT> > ot = compute_offset_lines_isec_timeC2(trisegment);
+    optional< Rational<FT> > ot = compute_offset_lines_isec_timeC2(st);
 
     if ( !!ot && certainly( CGAL_NTS certified_is_not_zero(ot->d()) ) )
     {
       t = ot->n() / ot->d();
       
-      optional<Point_2> oi = construct_offset_lines_isecC2(trisegment);
+      optional<Point_2> oi = construct_offset_lines_isecC2(st);
       if ( oi )
       {
         i = *oi ;
-        lOK = is_point_calculation_accurate(t,i,trisegment);
+        lOK = is_point_calculation_accurate(t,i,st);
       } 
     }
     
-    CGAL_STSKEL_ASSERT_CONSTRUCTION_RESULT(lOK,K,"Construct_ss_event_time_and_point_2",trisegment);
+    CGAL_STSKEL_ASSERT_CONSTRUCTION_RESULT(lOK,K,"Construct_ss_event_time_and_point_2",st);
 
 
     return cgal_make_optional(lOK,boost::make_tuple(t,i)) ;
   }
     
-  bool is_point_calculation_accurate( double t, Point_2 const& p, Trisegment_2 const& trisegment ) const 
+  bool is_point_calculation_accurate( double t, Point_2 const& p, Seeded_trisegment_2 const& st ) const 
   {
-    Segment_2 const& e0 = trisegment.e0() ; 
-    Segment_2 const& e1 = trisegment.e1() ;
-    Segment_2 const& e2 = trisegment.e2() ;
+    Segment_2 const& e0 = st.event().e0() ; 
+    Segment_2 const& e1 = st.event().e1() ;
+    Segment_2 const& e2 = st.event().e2() ;
     
     Point_2 const& e0s = e0.source();
     Point_2 const& e0t = e0.target();
@@ -302,7 +318,7 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
   }
 
   template<class NT>  
-  bool is_point_calculation_accurate( NT const& t, Point_2 const& p, Trisegment_2 const& trisegment ) const 
+  bool is_point_calculation_accurate( NT const& t, Point_2 const& p, Seeded_trisegment_2 const& st ) const 
   {
     return true ;
   }
@@ -324,6 +340,7 @@ struct Straight_skeleton_builder_traits_2_functors
   typedef CGAL_SS_i::Are_ss_edges_collinear_2           <K> Are_ss_edges_collinear_2 ;
   typedef CGAL_SS_i::Construct_ss_event_time_and_point_2<K> Construct_ss_event_time_and_point_2 ;
   typedef CGAL_SS_i::Construct_ss_trisegment_2          <K> Construct_ss_trisegment_2 ;
+  typedef CGAL_SS_i::Construct_ss_seeded_trisegment_2   <K> Construct_ss_seeded_trisegment_2 ;
 } ;
 
 template<class K>
@@ -335,7 +352,8 @@ struct Straight_skeleton_builder_traits_2_base
   typedef typename K::Point_2   Point_2 ;
   typedef typename K::Segment_2 Segment_2 ;
   
-  typedef CGAL_SS_i::Trisegment_2<K> Trisegment_2 ;
+  typedef CGAL_SS_i::Trisegment_2       <K> Trisegment_2        ;
+  typedef CGAL_SS_i::Seeded_trisegment_2<K> Seeded_trisegment_2 ;
 
   template<class F> F get( F const* = 0 ) const { return F(); }
   
@@ -377,6 +395,7 @@ public:
 
   typedef typename Unfiltering::Construct_ss_event_time_and_point_2 Construct_ss_event_time_and_point_2 ;
   typedef typename Unfiltering::Construct_ss_trisegment_2           Construct_ss_trisegment_2 ;
+  typedef typename Unfiltering::Construct_ss_seeded_trisegment_2    Construct_ss_seeded_trisegment_2 ;
 } ;
 
 template<class K>
@@ -479,6 +498,7 @@ public:
                                                         >
                                                         Construct_ss_trisegment_2 ;
   
+  typedef typename Unfiltering::Construct_ss_seeded_trisegment_2 Construct_ss_seeded_trisegment_2 ;
 } ;
 
 template<class K>
@@ -497,6 +517,7 @@ CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Are_ss_edges_parallel_2);
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Are_ss_edges_collinear_2);
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Construct_ss_event_time_and_point_2);
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Construct_ss_trisegment_2);
+CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Construct_ss_seeded_trisegment_2);
 
 CGAL_END_NAMESPACE
 

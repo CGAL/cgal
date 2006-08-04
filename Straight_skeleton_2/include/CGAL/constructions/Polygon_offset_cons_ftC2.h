@@ -35,23 +35,19 @@ namespace CGAL_SS_i
 // POSTCONDITION: In case of overflow an empty optional is returned.
 //
 template<class K>
-optional< Point_2<K> > construct_offset_pointC2 ( typename K::FT const&           t
-                                                , Segment_2<K> const&             e0
-                                                , Segment_2<K> const&             e1
-                                                , optional< Segment_2<K> > const& e01    
+optional< Point_2<K> > construct_offset_pointC2 ( typename K::FT const&         t
+                                                , Segment_2<K> const&           e0
+                                                , Segment_2<K> const&           e1
+                                                , Seeded_trisegment_2<K> const& st
                                                 )
 {
   typedef typename K::FT FT ;
   
-  typedef Point_2<K>      Point_2 ;
-  typedef Line_2<K>       Line_2 ;
-  typedef Segment_2<K>    Segment_2 ;
-  typedef Trisegment_2<K> Trisegment_2 ;
+  typedef Point_2<K>  Point_2 ;
+  typedef Line_2<K>   Line_2 ;
           
-  typedef optional<Point_2>      Optional_point_2 ;
-  typedef optional<Line_2>       Optional_line_2 ;
-  typedef optional<Segment_2>    Optional_segment_2 ;
-  typedef optional<Trisegment_2> Optional_trisegment_2 ;
+  typedef optional<Point_2> Optional_point_2 ;
+  typedef optional<Line_2>  Optional_line_2 ;
   
   FT x(0.0),y(0.0) ;
 
@@ -78,18 +74,7 @@ optional< Point_2<K> > construct_offset_pointC2 ( typename K::FT const&         
       }
       else
       {
-        Optional_point_2 q ;
-        
-        if ( e01 )
-        {
-          Optional_segment_2 null ;
-          Optional_trisegment_2 tri = construct_trisegment(e0,*e01,e1,null,null)  ;
-          if ( tri )
-            q = construct_offset_lines_isecC2(*tri);
-        }
-        else 
-          q = cgal_make_optional(e0.target());
-        
+        Optional_point_2 q = st.event().is_null() ? cgal_make_optional(e1.source()) : construct_offset_lines_isecC2(st);
         if ( q )
         {
           x = q->x() + l0->a() * t  ;

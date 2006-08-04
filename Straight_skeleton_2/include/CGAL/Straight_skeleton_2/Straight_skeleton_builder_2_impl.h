@@ -88,21 +88,21 @@ Straight_skeleton_builder_2<Gt,SS,V>::FindEdgeEvent( Vertex_handle aLNode, Verte
   
   if ( lTriedge.is_valid() )
   {
-    Trisegment_2 lTrisegment = CreateTrisegment(lTriedge,aLNode,aRNode);
+    Seeded_trisegment_2 lSTrisegment = CreateSeededTrisegment(lTriedge,aLNode,aRNode);
     
-    if ( ExistEvent(lTrisegment) )
+    if ( ExistEvent(lSTrisegment) )
     {
       bool lAccepted = true ;
 
-      if ( IsNewEventInThePast(lTrisegment,aLNode) )
+      if ( IsNewEventInThePast(lSTrisegment,aLNode) )
         lAccepted = false ;
 
-      if ( IsNewEventInThePast(lTrisegment,aRNode) )
+      if ( IsNewEventInThePast(lSTrisegment,aRNode) )
         lAccepted = false ;
 
       if ( lAccepted )
       {
-        rResult = EventPtr( new EdgeEvent( lTriedge, lTrisegment, aLNode, aRNode ) ) ;
+        rResult = EventPtr( new EdgeEvent( lTriedge, lSTrisegment, aLNode, aRNode ) ) ;
 
         mVisitor.on_edge_event_created(aLNode, aRNode) ;
         
@@ -114,9 +114,9 @@ Straight_skeleton_builder_2<Gt,SS,V>::FindEdgeEvent( Vertex_handle aLNode, Verte
 }
 
 template<class Gt, class SS, class V>
-bool Straight_skeleton_builder_2<Gt,SS,V>::IsInverseSplitEventCoincident( Vertex_handle const& aReflexOppN 
-                                                                        , Triedge const&       aEventTriedge
-                                                                        , Trisegment_2 const&  aEventTrisegment
+bool Straight_skeleton_builder_2<Gt,SS,V>::IsInverseSplitEventCoincident( Vertex_handle const&        aReflexOppN 
+                                                                        , Triedge const&              aEventTriedge
+                                                                        , Seeded_trisegment_2 const&  aEventSTrisegment
                                                                         )
 {
   Triedge lOppTriedge = GetTriedge(aReflexOppN);
@@ -126,11 +126,17 @@ bool Straight_skeleton_builder_2<Gt,SS,V>::IsInverseSplitEventCoincident( Vertex
   
   Vertex_handle null ;
   
-  Trisegment_2 lOppLTrisegment = CreateTrisegment(lOppLTriedge,aReflexOppN,null);
-  Trisegment_2 lOppRTrisegment = CreateTrisegment(lOppRTriedge,aReflexOppN,null);
+  Seeded_trisegment_2 lOppLSTrisegment = CreateSeededTrisegment(lOppLTriedge,aReflexOppN,null);
+  Seeded_trisegment_2 lOppRSTrisegment = CreateSeededTrisegment(lOppRTriedge,aReflexOppN,null);
 
-  return (  ( ExistEvent(lOppLTrisegment) && AreEventsSimultaneous(aEventTrisegment,lOppLTrisegment) )
-         || ( ExistEvent(lOppRTrisegment) && AreEventsSimultaneous(aEventTrisegment,lOppRTrisegment) )
+  return (  (  lOppLSTrisegment.event().collinearity() != TRISEGMENT_COLLINEARITY_02 
+            && ExistEvent(lOppLSTrisegment) 
+            && AreEventsSimultaneous(aEventSTrisegment,lOppLSTrisegment) 
+            )
+         || (  lOppRSTrisegment.event().collinearity() != TRISEGMENT_COLLINEARITY_02 
+            && ExistEvent(lOppRSTrisegment) 
+            && AreEventsSimultaneous(aEventSTrisegment,lOppRSTrisegment) 
+            )
          ) ;
 }
 
@@ -143,19 +149,19 @@ Straight_skeleton_builder_2<Gt,SS,V>::IsPseudoSplitEvent( EventPtr const& aEvent
 
   SplitEvent& lEvent = dynamic_cast<SplitEvent&>(*aEvent) ;
   
-  Triedge       lEventTriedge    = lEvent.triedge();
-  Trisegment_2  lEventTrisegment = lEvent.trisegment();
-  Vertex_handle lSeedN           = lEvent.seed0();
+  Triedge              lEventTriedge     = lEvent.triedge();
+  Seeded_trisegment_2  lEventSTrisegment = lEvent.strisegment();
+  Vertex_handle        lSeedN            = lEvent.seed0();
   
   Vertex_handle lOppPrevN = GetPrevInLAV(aOppN) ;       
   
-  if ( IsReflex(lOppPrevN) && IsInverseSplitEventCoincident(lOppPrevN,lEventTriedge,lEventTrisegment) )
+  if ( IsReflex(lOppPrevN) && IsInverseSplitEventCoincident(lOppPrevN,lEventTriedge,lEventSTrisegment) )
   {
     lIsPseudoSplitEvent = true ;
     lCoupleIsPrev       = true ;
     CGAL_STSKEL_BUILDER_TRACE(1,"Pseudo-split-event found against N" << lOppPrevN->id() ) ;
   }
-  else if ( IsReflex(aOppN) && IsInverseSplitEventCoincident(aOppN,lEventTriedge,lEventTrisegment) )
+  else if ( IsReflex(aOppN) && IsInverseSplitEventCoincident(aOppN,lEventTriedge,lEventSTrisegment) )
   {
     lIsPseudoSplitEvent = true ;
     lCoupleIsPrev       = false ;
@@ -168,13 +174,13 @@ Straight_skeleton_builder_2<Gt,SS,V>::IsPseudoSplitEvent( EventPtr const& aEvent
   {
     if ( lCoupleIsPrev )
     {
-      rPseudoSplitEvent = EventPtr( new PseudoSplitEvent(lEventTriedge,lEventTrisegment,lOppPrevN,lSeedN) ) ;
+      rPseudoSplitEvent = EventPtr( new PseudoSplitEvent(lEventTriedge,lEventSTrisegment,lOppPrevN,lSeedN) ) ;
 
       mVisitor.on_pseudo_split_event_created(lOppPrevN,lSeedN) ;
     }
     else
     {
-      rPseudoSplitEvent = EventPtr( new PseudoSplitEvent(lEventTriedge, lEventTrisegment, lSeedN, aOppN) ) ;  
+      rPseudoSplitEvent = EventPtr( new PseudoSplitEvent(lEventTriedge, lEventSTrisegment, lSeedN, aOppN) ) ;  
 
       mVisitor.on_pseudo_split_event_created(lSeedN,aOppN) ;
     }
@@ -201,13 +207,13 @@ void Straight_skeleton_builder_2<Gt,SS,V>::CollectSplitEvent( Vertex_handle aNod
   {
     Vertex_handle null ;
     
-    Trisegment_2 lTrisegment = CreateTrisegment(aTriedge,aNode,null);
+    Seeded_trisegment_2 lSTrisegment = CreateSeededTrisegment(aTriedge,aNode,null);
     
-    if ( ExistEvent(lTrisegment) )
+    if ( lSTrisegment.event().collinearity() != TRISEGMENT_COLLINEARITY_02 && ExistEvent(lSTrisegment) )
     {
-      if ( !IsNewEventInThePast(lTrisegment,aNode) )
+      if ( !IsNewEventInThePast(lSTrisegment,aNode) )
       {
-        EventPtr lEvent = EventPtr( new SplitEvent (aTriedge,lTrisegment,aNode) ) ;
+        EventPtr lEvent = EventPtr( new SplitEvent (aTriedge,lSTrisegment,aNode) ) ;
         
         mVisitor.on_split_event_created(aNode) ;
  
@@ -555,7 +561,7 @@ Straight_skeleton_builder_2<Gt,SS,V>::ConstructEdgeEventNode( EdgeEvent& aEvent 
   mSLAV.push_back(lNewNode);
 
   InitVertexData(lNewNode);
-  SetSkeletonNodeTrisegment(lNewNode,aEvent.trisegment());
+  SetSeededTrisegment(lNewNode,aEvent.strisegment());
   
   Halfedge_handle lLOBisector = lLSeed->primary_bisector();
   Halfedge_handle lROBisector = lRSeed->primary_bisector();
@@ -687,8 +693,8 @@ Straight_skeleton_builder_2<Gt,SS,V>::ConstructSplitEventNodes( SplitEvent& aEve
   
   InitVertexData(lNodeA);
   InitVertexData(lNodeB);
-  SetSkeletonNodeTrisegment(lNodeA,aEvent.trisegment());
-  SetSkeletonNodeTrisegment(lNodeB,aEvent.trisegment());
+  SetSeededTrisegment(lNodeA,aEvent.strisegment());
+  SetSeededTrisegment(lNodeB,aEvent.strisegment());
 
   Vertex_handle lSeed = aEvent.seed0() ;
 
@@ -756,8 +762,8 @@ Straight_skeleton_builder_2<Gt,SS,V>::ConstructPseudoSplitEventNodes( PseudoSpli
 
   InitVertexData(lNewNodeA);
   InitVertexData(lNewNodeB);
-  SetSkeletonNodeTrisegment(lNewNodeA,aEvent.trisegment());
-  SetSkeletonNodeTrisegment(lNewNodeB,aEvent.trisegment());
+  SetSeededTrisegment(lNewNodeA,aEvent.strisegment());
+  SetSeededTrisegment(lNewNodeB,aEvent.strisegment());
   
   Halfedge_handle lLOBisector = lLSeed->primary_bisector();
   Halfedge_handle lROBisector = lRSeed->primary_bisector();
@@ -1114,8 +1120,10 @@ void Straight_skeleton_builder_2<Gt,SS,V>::HandlePseudoSplitEvent( EventPtr aEve
   SetupPseudoSplitEventNode(lNewNode_L,lNewNode_L_DefiningBorderA,lNewNode_L_DefiningBorderB) ;
   SetupPseudoSplitEventNode(lNewNode_R,lNewNode_R_DefiningBorderA,lNewNode_R_DefiningBorderB) ;
 
+  
   UpdatePQ(lNewNode_L);
   UpdatePQ(lNewNode_R);
+  
 
   mVisitor.on_pseudo_split_event_processed(lLSeed,lRSeed,lNewNode_L,lNewNode_R) ;
 }

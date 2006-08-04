@@ -37,6 +37,7 @@ typedef boost::shared_ptr<SSkel> SSkelPtr ;
 
 extern void draw_point  ( Point const& v, CGAL::Color c ) ;
 extern void draw_segment( Point const& s, Point const& t, CGAL::Color c ) ;
+extern void wait_on_user() ;
 
 struct Visitor
 {
@@ -140,6 +141,7 @@ struct Visitor
     if ( node->is_contour() )
     {
       ++ mVertexCount1 ;
+      wait_on_user();
       //printf("\rPropagation: %d/%d (%d%%)",mVertexCount1,mTotalVertices,(mVertexCount1*100/mTotalVertices));  
     }
   }

@@ -79,8 +79,7 @@ Uncertain<bool> are_edges_orderly_collinearC2( Segment_2<K> const& e0, Segment_2
             );
 }
 
-// Returns true IFF segments e0,e1 do not share the same supporting line but are parallel, or share the
-// supporting line but are not orderly collinear (that is, one doesn't follow the other)
+// Returns true IFF the supporting lines for segments e0,e1 are parallel (or the same)
 template<class K>
 inline
 Uncertain<bool> are_edges_parallelC2( Segment_2<K> const& e0, Segment_2<K> const& e1 )
@@ -152,11 +151,17 @@ Uncertain<Trisegment_collinearity> certified_trisegment_collinearity ( Segment_2
 // returns true if there exist some positive offset distance 't' for which the
 // leftward-offsets of their supporting lines intersect at a single point.
 //
-// NOTE: This function allows e0 and e1 to be collinear if they are equally oriented,
-// or parallel if they have opposite orientation. This allows the algorithm to handle degenerate vertices 
-// (formed by 3 collinear consecutive points) and mutually collapsing edge events.
+// NOTE: This function can handle the case of collinear and/or parallel segments.
+//
+// If two segments are collinear but equally oriented (that is, they share a degenerate vertex) the event exists and
+// is well defined, In that case, the degenerate vertex can be even a contour vertex or a skeleton node. If it is a skeleton
+// node, it is properly defined by the event trisegment that corresponds to the node.
+// A Seeded_trisegment stores not only the "current event" trisegment but also the trisegments for the left/right seed vertices.
+// Those seeds are used to determine the actual position of the degenerate vertex in case of collinear edges (since that point is
+// not given by the collinear edges alone)
+//
 template<class K>
-Uncertain<bool> exist_offset_lines_isec2 ( Trisegment_2<K> const& event )
+Uncertain<bool> exist_offset_lines_isec2 ( Seeded_trisegment_2<K> const& st )
 {
   typedef typename K::FT FT ;
   
@@ -165,11 +170,11 @@ Uncertain<bool> exist_offset_lines_isec2 ( Trisegment_2<K> const& event )
   
   Uncertain<bool> rResult = Uncertain<bool>::indeterminate();
 
-  if ( event.collinearity() != TRISEGMENT_COLLINEARITY_ALL ) 
+  if ( st.event().collinearity() != TRISEGMENT_COLLINEARITY_ALL ) 
   {
-    CGAL_STSKEL_TRAITS_TRACE( ( event.collinearity() == TRISEGMENT_COLLINEARITY_NONE ? " normal edges" : " collinear edges" ) ) ;
+    CGAL_STSKEL_TRAITS_TRACE( ( st.event().collinearity() == TRISEGMENT_COLLINEARITY_NONE ? " normal edges" : " collinear edges" ) ) ;
 
-    Optional_rational t = compute_offset_lines_isec_timeC2(event) ;
+    Optional_rational t = compute_offset_lines_isec_timeC2(st) ;
     if ( t )
     {
       Uncertain<bool> d_is_zero = CGAL_NTS certified_is_zero(t->d()) ;
@@ -207,7 +212,9 @@ Uncertain<bool> exist_offset_lines_isec2 ( Trisegment_2<K> const& event )
 // That is, indicates which offset triple intersects first (closer to the source lines)
 // PRECONDITION: There exist distances mt and nt for which each offset triple intersect at a single point.
 template<class K>
-Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( Trisegment_2<K> const& m, Trisegment_2<K> const& n )
+Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( Seeded_trisegment_2<K> const& m
+                                                               , Seeded_trisegment_2<K> const& n 
+                                                               )
 {
   typedef typename K::FT FT ;
   
@@ -219,9 +226,6 @@ Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( Trisegment_2<K>
   
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 
-  CGAL_assertion ( m.collinearity() != TRISEGMENT_COLLINEARITY_ALL ) ;
-  CGAL_assertion ( n.collinearity() != TRISEGMENT_COLLINEARITY_ALL ) ;
-  
   Optional_rational mt_ = compute_offset_lines_isec_timeC2(m);
   Optional_rational nt_ = compute_offset_lines_isec_timeC2(n);
   
@@ -248,8 +252,8 @@ Uncertain<Comparison_result> compare_offset_lines_isec_timesC2 ( Trisegment_2<K>
 template<class K>
 Uncertain<Comparison_result>
 compare_offset_lines_isec_dist_to_pointC2 ( optional< Point_2<K> > const& p
-                                          , Trisegment_2<K>        const& m
-                                          , Trisegment_2<K>        const& n 
+                                          , Seeded_trisegment_2<K> const& m
+                                          , Seeded_trisegment_2<K> const& n 
                                           )
 {
   typedef typename K::FT FT ;
@@ -264,9 +268,6 @@ compare_offset_lines_isec_dist_to_pointC2 ( optional< Point_2<K> > const& p
   
   if ( p )
   {
-    CGAL_assertion ( m.collinearity() != TRISEGMENT_COLLINEARITY_ALL ) ;
-    CGAL_assertion ( n.collinearity() != TRISEGMENT_COLLINEARITY_ALL ) ;
-    
     optional<FT> dm = compute_offset_lines_isec_dist_to_pointC2(p,m);
     optional<FT> dn = compute_offset_lines_isec_dist_to_pointC2(p,n);
 
@@ -284,18 +285,12 @@ compare_offset_lines_isec_dist_to_pointC2 ( optional< Point_2<K> > const& p
 // PRECONDITION: There exist single points at which the offsets at 'st', 'mt' and 'nt' intersect.
 template<class K>
 Uncertain<Comparison_result>
-compare_offset_lines_isec_dist_to_pointC2 ( Trisegment_2<K> const& s
-                                          , Trisegment_2<K> const& m
-                                          , Trisegment_2<K> const& n
+compare_offset_lines_isec_dist_to_pointC2 ( Seeded_trisegment_2<K> const& s
+                                          , Seeded_trisegment_2<K> const& m
+                                          , Seeded_trisegment_2<K> const& n
                                           )
 {
-  Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
-
-  CGAL_assertion ( s.collinearity() != TRISEGMENT_COLLINEARITY_ALL ) ;
-    
-  rResult = compare_offset_lines_isec_dist_to_pointC2(construct_offset_lines_isecC2(s),m,n);
-  
-  return rResult ;
+  return compare_offset_lines_isec_dist_to_pointC2(construct_offset_lines_isecC2(s),m,n);
 }
 
 // Returns true if the point aP is on the positive side of the line supporting the edge
@@ -319,9 +314,9 @@ Uncertain<bool> is_edge_facing_pointC2 ( optional< Point_2<K> > const& aP, Segme
 // at some distance intersects in a point (x,y), returns true if (x,y) is on the positive side of the line supporting aEdge
 //
 template<class K>
-inline Uncertain<bool> is_edge_facing_offset_lines_isecC2 ( Trisegment_2<K> const& event, Segment_2<K> const& aEdge )
+inline Uncertain<bool> is_edge_facing_offset_lines_isecC2 ( Seeded_trisegment_2<K> const& st, Segment_2<K> const& aEdge )
 {
-  return is_edge_facing_pointC2(construct_offset_lines_isecC2(event),aEdge);
+  return is_edge_facing_pointC2(construct_offset_lines_isecC2(st),aEdge);
 }
 
 
@@ -337,7 +332,7 @@ inline Uncertain<bool> is_edge_facing_offset_lines_isecC2 ( Trisegment_2<K> cons
 // This predicate tells whether a split event, at (x,y), against z1, is effectively splitting the segment Z1'
 // instead of hitting the supporting offseted line z1' but outside the segment.
 //   
-// Events are defined in term of intersecting offset _lines_, not segments, thus if the event involves z1' 
+// Events are defined in terms of intersecting offset _lines_, not segments, thus if the event involves z1' 
 // (that is, z1 is one of (e0,e1,e2)) then a neccesary condition for the event to actually exist is
 // that the point of coallision hits a segment of z1' as bounded by the vertices shared with z0' and z2',
 // and not just the line z1'. 
@@ -350,44 +345,44 @@ inline Uncertain<bool> is_edge_facing_offset_lines_isecC2 ( Trisegment_2<K> cons
 //
 // During the shrinking process, edges can anihiliate one another; that is, collide not in a single point
 // but along a line segment (reach a common supporting line simultaneously).
-// This is possible if and only if the edges are parallel but not collinear.
+// This is possible if and only if the edges are parallel.
 // Exactly at the time when such an anhiliation event ocurrs, the two initially parallel edges become connected
-// in the offset polygon and form a degenerate alley or anntenna. Right after that the degenerate edges
-// collapse and dissapears from the offset polygon and the rest of the process continues normally 
-// (or not if this is the very last event).
-// Since Z0'->Z1'->Z2' are 3 edges _known_ to be connected at the time of the event defined by (e0,e1,e2), 
-// it might very well happen that z0 or z2 (or both) are parallel to z1. If that happens they never share 
-// a vertex except when they collapse in a common line, which is only an instant in the sense that 
-// right after that both edges dissappears from the wavefront.
-// If z0 and/or z2 are parallel but not collinear to z1 they are connected in the offset polygons only when
-// they collapsed into each other and in that instant Z1' is not (cannot) split by any opposite edge, thus,
-// if z0 and/or z2 are parallel but not collinear to z2 the offset zone is "degenerate" and no split event is inside.
+// and collinear in the offset polygon (form a degenerate alley or anntenna).
+// The offset zone can be "degenerate" in the sense that Z0',Z1' or Z2' can be parallel and even collinear.
+// 
+// Right _after_ an anhiliation event the degenerate edges collapse and dissapears from the offset polygon
+// so no _subsequent_ event can involve such edges, but at the exact time of the anhilition various events
+// can still involve the collapsed edges. Thus, a degnerate offset zone doesn't imply a split event cannot ocurr there.
 //
 // PRECONDITIONS:
 //   There exist a single point at which the offset lines for e0,e1,e2 at 't' intersect.
 //   'z1' must be one of (e0,e1,e2); that is, (x,y) must be exactly over the offseted z1' at time 't'.
 //
 template<class K>
-Uncertain<bool> is_offset_lines_isec_inside_offset_zoneC2 ( Trisegment_2<K> const& event, Trisegment_2<K> const& zone )
+Uncertain<bool> is_offset_lines_isec_inside_offset_zoneC2 ( Seeded_trisegment_2<K> const& st
+                                                          , Seeded_trisegment_2<K> const& zone 
+                                                          )
 {
   typedef typename K::FT FT ;
   
   typedef Point_2<K> Point_2 ;
   typedef Line_2<K>  Line_2 ;
   
+  typedef Trisegment_2<K> Trisegment_2 ;
+  
   typedef optional<Point_2> Optional_point_2 ;
   typedef optional<Line_2>  Optional_line_2 ;
   
   Uncertain<bool> r = Uncertain<bool>::indeterminate();
 
-  CGAL_assertion ( event.collinearity() != TRISEGMENT_COLLINEARITY_ALL ) ;
+  CGAL_assertion ( st.event().collinearity() != TRISEGMENT_COLLINEARITY_ALL ) ;
   
-  Optional_line_2 zl = compute_normalized_line_ceoffC2(zone.e0()) ;
-  Optional_line_2 zc = compute_normalized_line_ceoffC2(zone.e1()) ;
-  Optional_line_2 zr = compute_normalized_line_ceoffC2(zone.e2()) ;
+  Optional_line_2 zl = compute_normalized_line_ceoffC2(zone.event().e0()) ;
+  Optional_line_2 zc = compute_normalized_line_ceoffC2(zone.event().e1()) ;
+  Optional_line_2 zr = compute_normalized_line_ceoffC2(zone.event().e2()) ;
 
   // Construct intersection point (x,y)
-  Optional_point_2 i = construct_offset_lines_isecC2(event);
+  Optional_point_2 i = construct_offset_lines_isecC2(st);
   
   if ( zl && zc && zr && i ) // all properly computed
   {
@@ -414,7 +409,7 @@ Uncertain<bool> is_offset_lines_isec_inside_offset_zoneC2 ( Trisegment_2<K> cons
     // If L is case (1) then "i" is inside ZC1 and not ZC0 if the signed distance to zc is smaller than to zl
     // If L is case (2) then "i" is inside ZC1 and not ZC0 if the signed distance to zc is larger  than to zl
     // If L is case (3) then "i" is inside ZC1 if its to the right of a line perpendicular to zc passing through L*
-    // where L* is a pseudo-vertex between collinear edges (the oriented midpoint between them)
+    // where L* is an offset-vertex between collinear edges
      
     // (likewise for R)
     
@@ -434,12 +429,13 @@ Uncertain<bool> is_offset_lines_isec_inside_offset_zoneC2 ( Trisegment_2<K> cons
       {
         CGAL_STSKEL_TRAITS_TRACE("\ncorrect side of zc." ) ;
 
-        Uncertain<bool> lc_degenerate = are_edges_parallelC2(zone.e0(),zone.e1()); 
-        Uncertain<bool> cr_degenerate = are_edges_parallelC2(zone.e1(),zone.e2()); 
+        Uncertain<bool> lc_degenerate = are_edges_parallelC2(zone.event().e0(),zone.event().e1()); 
+        Uncertain<bool> cr_degenerate = are_edges_parallelC2(zone.event().e1(),zone.event().e2()); 
 
         if ( ! CGAL_NTS is_indeterminate(lc_degenerate) && ! CGAL_NTS is_indeterminate(cr_degenerate) )
         {
-          Uncertain<bool> lok, rok ;
+          Uncertain<bool> lok = Uncertain<bool>::indeterminate() ;
+          Uncertain<bool> rok = Uncertain<bool>::indeterminate() ;
           
           if ( !lc_degenerate )
           {
@@ -460,7 +456,6 @@ Uncertain<bool> is_offset_lines_isec_inside_offset_zoneC2 ( Trisegment_2<K> cons
                                   : CGAL_NTS certified_is_larger_or_equal (sdl,sdc) 
                       ) ;
               }
-
             }
             else
             {
@@ -469,16 +464,40 @@ Uncertain<bool> is_offset_lines_isec_inside_offset_zoneC2 ( Trisegment_2<K> cons
           }
           else
           {
-            CGAL_STSKEL_TRAITS_TRACE("\nl:(zl,zc) is DEGENERATE") ;
-            Optional_point_2 l = compute_seed_pointC2(zone,0);
+// std::cout << "Left zone vertex (zl,zc) is DEGENERATE." << std::endl ;
+// std::cout << "  zl=" << zone.e0() << std::endl ;
+// std::cout << "  zc=" << zone.e1() << std::endl ;
+          CGAL_STSKEL_TRAITS_TRACE("\nl:(zl,zc) is DEGENERATE") ;
+            Optional_point_2 l = compute_seed_pointC2(zone, Trisegment_2::LEFT);
             if ( l )
             {
+//std::cout << "  l=(" << l->x() << "," << l->y() << ")" << std::endl ;
+//std::cout << "  i=(" << i->x() << "," << i->y() << ")" << std::endl ;
               FT na, nb, nc ;
               perpendicular_through_pointC2(zc->a(),zc->b(),l->x(),l->y(),na, nb, nc);
-              lok = certified_side_of_oriented_lineC2(na,nb,nc,i->x(),i->y()) != make_uncertain(POSITIVE);
+              Uncertain<Sign> side = certified_side_of_oriented_lineC2(na,nb,nc,i->x(),i->y()) ;
+              if ( !is_indeterminate(side) )
+              {
+//std::cout << "  Side of i=" << ((Sign)(side))<< std::endl ;              
+                switch ( side )
+                {
+                  case POSITIVE : lok = make_uncertain(false) ; break ;
+                  case NEGATIVE : lok = make_uncertain(true)  ; break ;
+                  case ZERO     :     
+                    lok = certified_side_of_oriented_lineC2(na,nb,nc
+                                                           ,zone.event().e0().source().x()
+                                                           ,zone.event().e0().source().y()
+                                                           ) == make_uncertain(POSITIVE) ;
+                    break ;
+                }
+//std::cout << "  Left vertex ok=" << (is_indeterminate(lok) ? "<don't know>" : ( (bool)lok ? "yes": "false") ) << std::endl ;
+              }
+//              else std::cout << " Unable to determine side of i" << std::endl ;              
             }
             else
             {
+//std::cout << "  Unable to construct offset vertex" << std::endl ;
+
               CGAL_STSKEL_TRAITS_TRACE("\nOverflow detected." ) ;
             }
           }
@@ -510,16 +529,39 @@ Uncertain<bool> is_offset_lines_isec_inside_offset_zoneC2 ( Trisegment_2<K> cons
           }
           else
           {
+ //std::cout << "Right zone vertex (zc,zr) is DEGENERATE." << std::endl ;
+ //std::cout << "  zc=" << zone.e1() << std::endl ;
+ //std::cout << "  zr=" << zone.e2() << std::endl ;
             CGAL_STSKEL_TRAITS_TRACE("\nr:(zc,zr) is DEGENERATE") ;
-            Optional_point_2 r = compute_seed_pointC2(zone,1);
+            Optional_point_2 r = compute_seed_pointC2(zone,Trisegment_2::RIGHT);
             if ( r )
             {
+//std::cout << "  r=(" << r->x() << "," << r->y() << ")" << std::endl ;
+//std::cout << "  i=(" << i->x() << "," << i->y() << ")" << std::endl ;
               FT na, nb, nc ;
               perpendicular_through_pointC2(zc->a(),zc->b(),r->x(),r->y(),na, nb, nc);
-              rok = certified_side_of_oriented_lineC2(na,nb,nc,i->x(),i->y()) != make_uncertain(NEGATIVE);
+              Uncertain<Sign> side = certified_side_of_oriented_lineC2(na,nb,nc,i->x(),i->y()) ;
+              if ( !is_indeterminate(side) )
+              {
+//std::cout << "  Side of i=" << ((Sign)(side))<< std::endl ;              
+                switch ( side )
+                {
+                  case NEGATIVE : rok = make_uncertain(false); break ;
+                  case POSITIVE : rok = make_uncertain(true) ; break ;
+                  case ZERO     : 
+                    rok = certified_side_of_oriented_lineC2(na,nb,nc
+                                                           ,zone.event().e2().target().x()
+                                                           ,zone.event().e2().target().y()
+                                                           )== make_uncertain(NEGATIVE);
+                    break ;
+                }
+//std::cout << "  Right vertex ok=" << (is_indeterminate(rok) ? "<don't know>" : ( (bool)rok ? "yes": "false") ) << std::endl ;
+              }
+//              else std::cout << " Unable to determine side of i" << std::endl ;              
             }
             else
             {
+//std::cout << "  Unable to construct offset vertex" << std::endl ;
               CGAL_STSKEL_TRAITS_TRACE("\nOverflow detected." ) ;
             }
           }
@@ -561,7 +603,7 @@ Uncertain<bool> is_offset_lines_isec_inside_offset_zoneC2 ( Trisegment_2<K> cons
 //   There exist single points at which the offset lines for 'l' and 'r' at 'tl', 'tr' intersect.
 //
 template<class K>
-Uncertain<bool> are_events_simultaneousC2 ( Trisegment_2<K> const& l, Trisegment_2<K> const& r )
+Uncertain<bool> are_events_simultaneousC2 ( Seeded_trisegment_2<K> const& l, Seeded_trisegment_2<K> const& r )
 {
   typedef typename K::FT FT ;
   
@@ -578,9 +620,6 @@ Uncertain<bool> are_events_simultaneousC2 ( Trisegment_2<K> const& l, Trisegment
   
   Uncertain<bool> rResult = Uncertain<bool>::indeterminate();
 
-  CGAL_assertion ( l.collinearity() != TRISEGMENT_COLLINEARITY_ALL ) ;
-  CGAL_assertion ( r.collinearity() != TRISEGMENT_COLLINEARITY_ALL ) ;
-  
   Optional_rational lt_ = compute_offset_lines_isec_timeC2(l);
   Optional_rational rt_ = compute_offset_lines_isec_timeC2(r);
   
