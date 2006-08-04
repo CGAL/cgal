@@ -686,11 +686,13 @@ template <typename ET1, typename ET2>
 bool
 operator<(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
 {
+  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
   if (a.identical(b))
     return false;
   Uncertain<bool> res = a.approx() < b.approx();
   if (is_singleton(res))
     return res;
+  CGAL_PROFILER(std::string("failures to : ") + std::string(CGAL_PRETTY_FUNCTION));
   return a.exact() < b.exact();
 }
 
@@ -698,11 +700,13 @@ template <typename ET1, typename ET2>
 bool
 operator==(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
 {
+  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
   if (a.identical(b))
     return true;
   Uncertain<bool> res = a.approx() == b.approx();
   if (is_singleton(res))
     return res;
+  CGAL_PROFILER(std::string("failures to : ") + std::string(CGAL_PRETTY_FUNCTION));
   return a.exact() == b.exact();
 }
 
@@ -747,9 +751,11 @@ template <typename ET>
 bool
 operator<(const Lazy_exact_nt<ET>& a, int b)
 {
+  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
   Uncertain<bool> res = a.approx() < b;
   if (is_singleton(res))
     return res;
+  CGAL_PROFILER(std::string("failures to : ") + std::string(CGAL_PRETTY_FUNCTION));
   return a.exact() < b;
 }
 
@@ -757,9 +763,11 @@ template <typename ET>
 bool
 operator>(const Lazy_exact_nt<ET>& a, int b)
 {
+  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
   Uncertain<bool> res = b < a.approx();
   if (is_singleton(res))
     return res;
+  CGAL_PROFILER(std::string("failures to : ") + std::string(CGAL_PRETTY_FUNCTION));
   return b < a.exact();
 }
 
@@ -767,9 +775,11 @@ template <typename ET>
 bool
 operator==(const Lazy_exact_nt<ET>& a, int b)
 {
+  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
   Uncertain<bool> res = b == a.approx();
   if (is_singleton(res))
     return res;
+  CGAL_PROFILER(std::string("failures to : ") + std::string(CGAL_PRETTY_FUNCTION));
   return b == a.exact();
 }
 
@@ -819,6 +829,8 @@ template <typename ET>
 double
 to_double(const Lazy_exact_nt<ET> & a)
 {
+    CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+
     const Interval_nt<false>& app = a.approx();
     if (app.sup() == app.inf())
 	return app.sup();
@@ -828,6 +840,8 @@ to_double(const Lazy_exact_nt<ET> & a)
 	    < Lazy_exact_nt<ET>::get_relative_precision_of_to_double()
 	      * std::max(std::fabs(app.inf()), std::fabs(app.sup())) )
         return CGAL::to_double(app);
+
+    CGAL_PROFILER(std::string("failures to : ") + std::string(CGAL_PRETTY_FUNCTION));
 
     // Otherwise we trigger exact computation first,
     // which will refine the approximation.
@@ -848,9 +862,11 @@ inline
 Sign
 sign(const Lazy_exact_nt<ET> & a)
 {
+  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
   Uncertain<Sign> res = sign(a.approx());
   if (is_singleton(res))
     return res;
+  CGAL_PROFILER(std::string("failures to : ") + std::string(CGAL_PRETTY_FUNCTION));
   return CGAL_NTS sign(a.exact());
 }
 
@@ -859,11 +875,13 @@ inline
 Comparison_result
 compare(const Lazy_exact_nt<ET1> & a, const Lazy_exact_nt<ET2> & b)
 {
+  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
   if (a.identical(b))
     return EQUAL;
   Uncertain<Comparison_result> res = compare(a.approx(), b.approx());
   if (is_singleton(res))
     return res;
+  CGAL_PROFILER(std::string("failures to : ") + std::string(CGAL_PRETTY_FUNCTION));
   return CGAL_NTS compare(a.exact(), b.exact());
 }
 
