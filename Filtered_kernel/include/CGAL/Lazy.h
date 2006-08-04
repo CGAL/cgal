@@ -959,7 +959,7 @@ struct Lazy_construction_bbox {
   result_type operator()(const L1& l1) const
   {
     try {
-       CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+       CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       return ac(CGAL::approx(l1));
     } catch (Interval_nt_advanced::unsafe_comparison) {
@@ -988,7 +988,7 @@ struct Lazy_construction_nt {
   result_type operator()(const L1& l1) const
   {
     try {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       return new Lazy_construct_rep_1<AC, EC, To_interval<ET>, L1>(ac, ec, l1);
     } catch (Interval_nt_advanced::unsafe_comparison) {
@@ -1002,7 +1002,7 @@ struct Lazy_construction_nt {
   result_type operator()(const L1& l1, const L2& l2) const
   {
     try {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       return new Lazy_construct_rep_2<AC, EC, To_interval<ET>, L1,L2>(ac, ec, l1,l2);
     } catch (Interval_nt_advanced::unsafe_comparison) {
@@ -1016,7 +1016,7 @@ struct Lazy_construction_nt {
   result_type operator()(const L1& l1, const L2& l2, const L3& l3) const
   {
     try {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       return new Lazy_construct_rep_3<AC, EC, To_interval<ET>, L1,L2,L3>(ac, ec, l1,l2,l3);
     } catch (Interval_nt_advanced::unsafe_comparison) {
@@ -1030,7 +1030,7 @@ struct Lazy_construction_nt {
   result_type operator()(const L1& l1, const L2& l2, const L3& l3, const L4& l4) const
   {
     try {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       return new Lazy_construct_rep_4<AC, EC, To_interval<ET>, L1,L2,L3,L4>(ac, ec, l1,l2,l3,l4);
     } catch (Interval_nt_advanced::unsafe_comparison) {
@@ -1044,7 +1044,7 @@ struct Lazy_construction_nt {
   result_type operator()(const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5) const
   {
     try {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       return new Lazy_construct_rep_5<AC, EC, To_interval<ET>, L1,L2,L3,L4,L5>(ac, ec, l1,l2,l3,l4,l5);
     } catch (Interval_nt_advanced::unsafe_comparison) {
@@ -1203,7 +1203,7 @@ public:
   operator()(const L1& l1, const L2& l2, R1& r1) const
   {
     try {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       // we suppose that R1 is a Lazy<Something>
       r1 = R1(new Lazy_construct_rep_2_1<AC, EC, E2A, L1, L2, R1>(ac, ec, l1, l2));
@@ -1264,7 +1264,7 @@ public:
   operator()(const L1& l1, const L2& l2, R1& r1, R2& r2) const
   {
     try {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       typedef Lazy<std::pair<typename R1::AT, typename R2::AT> , std::pair<typename R1::ET, typename R2::ET> , EFT, E2A> Lazy_pair;
       Lazy_pair lv(new Lazy_construct_rep_2_2<AC, EC, E2A, L1, L2, R1, R2>(ac, ec, l1, l2));
@@ -1309,7 +1309,7 @@ public:
   operator()(const L1& l1, const L2& l2, OutputIterator it) const
   {
     try {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Lazy_vector lv(new Lazy_construct_rep_with_vector_2<AC, EC, E2A, L1, L2>(ac, ec, l1, l2));
       // lv.approx() is a std::vector<Object([AK::Point_2,AK::Segment_2])>
@@ -1399,7 +1399,7 @@ public:
   operator()(const L1& l1) const
   {
     try {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Lazy_object lo(new Lazy_construct_rep_1<AC, EC, E2A, L1>(ac, ec, l1));
 
@@ -1433,7 +1433,7 @@ public:
   operator()(const L1& l1, const L2& l2) const
   {
     try {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       Lazy_object lo(new Lazy_construct_rep_2<AC, EC, E2A, L1, L2>(ac, ec, l1, l2));
 
@@ -1498,7 +1498,7 @@ public:
   operator()(const L1& l1) const
   {
     try {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       return  Handle(new Lazy_construct_rep_1<AC, EC, E2A, L1>(ac, ec, l1));
     } catch (Interval_nt_advanced::unsafe_comparison) {
@@ -1513,7 +1513,7 @@ public:
   operator()(const L1& l1, const L2& l2) const
   {
     try {
-       CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+       CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       return Handle(new Lazy_construct_rep_2<AC, EC, E2A, L1, L2>(ac, ec, l1, l2));
     } catch (Interval_nt_advanced::unsafe_comparison) {
@@ -1529,7 +1529,7 @@ public:
   operator()(const L1& l1, const L2& l2, const L3& l3) const
   {
     try {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       return Handle(new Lazy_construct_rep_3<AC, EC, E2A, L1, L2, L3>(ac, ec, l1, l2, l3));
     } catch (Interval_nt_advanced::unsafe_comparison) {
@@ -1544,7 +1544,7 @@ public:
   operator()(const L1& l1, const L2& l2, const L3& l3, const L4& l4) const
   {
     try {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
     return Handle(new Lazy_construct_rep_4<AC, EC, E2A, L1, L2, L3, L4>(ac, ec, l1, l2, l3, l4));
     } catch (Interval_nt_advanced::unsafe_comparison) {
@@ -1559,7 +1559,7 @@ public:
   operator()(const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5) const
   {
     try {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
     return Handle(new Lazy_construct_rep_5<AC, EC, E2A, L1, L2, L3, L4, L5>(ac, ec, l1, l2, l3, l4, l5));
     } catch (Interval_nt_advanced::unsafe_comparison) {
@@ -1574,7 +1574,7 @@ public:
   operator()(const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5, const L6& l6) const
   {
     try {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
     return Handle(new Lazy_construct_rep_6<AC, EC, E2A, L1, L2, L3, L4, L5, L6>(ac, ec, l1, l2, l3, l4, l5, l6));
     } catch (Interval_nt_advanced::unsafe_comparison) {
@@ -1589,7 +1589,7 @@ public:
   operator()(const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5, const L6& l6, const L7& l7) const
   {
     try {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
     return Handle(new Lazy_construct_rep_7<AC, EC, E2A, L1, L2, L3, L4, L5, L6, L7>(ac, ec, l1, l2, l3, l4, l5, l6, l7));
     } catch (Interval_nt_advanced::unsafe_comparison) {
@@ -1604,7 +1604,7 @@ public:
   operator()(const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5, const L6& l6, const L7& l7, const L8& l8) const
   {
     try {
-      CGAL_PROFILER(std::string("calls to : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
     return Handle(new Lazy_construct_rep_8<AC, EC, E2A, L1, L2, L3, L4, L5, L6, L7, L8>(ac, ec, l1, l2, l3, l4, l5, l6, l7, l8));
     } catch (Interval_nt_advanced::unsafe_comparison) {
