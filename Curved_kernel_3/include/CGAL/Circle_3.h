@@ -26,6 +26,8 @@ namespace CGAL {
     typedef typename SK::Point_3               Point_3;
     typedef typename SK::Plane_3               Plane_3;
     typedef typename SK::Sphere_3              Sphere_3;
+    typedef typename SK::Vector_3              Vector_3;
+    typedef typename SK::Direction_3           Direction_3;
     typedef typename SK::Kernel_base::Circle_3 RCircle_3; 
    
   
@@ -49,6 +51,14 @@ namespace CGAL {
 
     Circle_3(const Point_3& c, const FT& sr, const Plane_3& p)
       : RCircle_3(typename R::Construct_circle_3()(c,sr,p))
+      {}
+
+    Circle_3(const Point_3& c, const FT& sr, const Direction_3& d) 
+      : RCircle_3(typename R::Construct_circle_3()(c,sr,d))
+      {}
+
+    Circle_3(const Point_3& c, const FT& sr, const Vector_3& v) 
+      : RCircle_3(typename R::Construct_circle_3()(c,sr,v))
       {}
 
     Circle_3(const Sphere_3& s1, const Sphere_3& s2)
