@@ -24,6 +24,8 @@ namespace CGAL {
       typedef typename SK::Plane_3      Plane_3;
       typedef typename SK::Sphere_3     Sphere_3;
       typedef typename SK::Point_3      Point_3;
+      typedef typename SK::Vector_3     Vector_3;
+      typedef typename SK::Direction_3  Direction_3;
       typedef typename SK::FT           FT;
 
     private:
@@ -38,6 +40,24 @@ namespace CGAL {
       Circle_3(const Circle_3 &c) 
       {
         base = Rep(c.diametral_sphere(), c.supporting_plane());
+      }
+
+      Circle_3(const Point_3& center, const FT& squared_r, const Direction_3& d) 
+      {
+        // It is not allowed non-positive radius 
+        // Should we keep this pre-condition?
+        CGAL_kernel_assertion(squared_r > 0);
+        base = Rep(Sphere_3(center,squared_r), 
+                   plane_from_point_direction(center, d));
+      }
+
+      Circle_3(const Point_3& center, const FT& squared_r, const Vector_3& normal) 
+      {
+        // It is not allowed non-positive radius 
+        // Should we keep this pre-condition?
+        CGAL_kernel_assertion(squared_r > 0);
+        base = Rep(Sphere_3(center,squared_r), 
+                   plane_from_point_direction(center, normal.direction()));
       }
 
       Circle_3(const Point_3& center, const FT& squared_r, const Plane_3& p)
