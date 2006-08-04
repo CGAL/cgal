@@ -44,7 +44,23 @@ namespace AlgebraicSphereFunctors {
        const Equation_Circle & e2,
        OutputIterator res) const
       { return AlgebraicSphereFunctors::solve<AK> ( e1, e2, res); }
-    
+
+    template < class OutputIterator >
+      OutputIterator
+      operator()
+      (const Equation_Circle & e1,
+       const Polynomials_for_line_3 & e2,
+       OutputIterator res) const
+      { return AlgebraicSphereFunctors::solve<AK> ( e1, e2, res); }
+
+    template < class OutputIterator >
+      OutputIterator
+      operator()
+      (const Polynomials_for_line_3 & e1,
+       const Equation_Circle & e2,
+       OutputIterator res) const
+      { return AlgebraicSphereFunctors::solve<AK> ( e1, e2, res); }
+
     template < class OutputIterator >
       OutputIterator
       operator()
@@ -60,6 +76,22 @@ namespace AlgebraicSphereFunctors {
        const Equation_Circle & e2,
        OutputIterator res) const
       { return AlgebraicSphereFunctors::solve<AK> (e1, e2, res); }
+
+    template < class OutputIterator >
+      OutputIterator
+      operator()
+      (const Equation_Circle & e1,
+       const Polynomial_for_spheres_2_3 & e2,
+       OutputIterator res) const
+      { return AlgebraicSphereFunctors::solve<AK> ( e1, e2, res); }
+
+    template < class OutputIterator >
+      OutputIterator
+      operator()
+      (const Polynomial_for_spheres_2_3 & e1,
+       const Equation_Circle & e2,
+       OutputIterator res) const
+      { return AlgebraicSphereFunctors::solve<AK> ( e1, e2, res); }
 
     template < class OutputIterator >
       OutputIterator
