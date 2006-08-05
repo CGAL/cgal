@@ -882,6 +882,267 @@ void _test_intersection_construct(SK sk) {
 }
 
 template <class SK>
+void _test_bbox(const typename SK::Circular_arc_point_3 &p)
+{
+  typedef typename SK::FT                               FT;
+  typedef typename SK::Construct_bbox_3                 Construct_bbox_3;
+  typedef CGAL::Bbox_3                                  Bbox_3;
+  Construct_bbox_3 theConstruct_bbox_3 = SK().construct_bbox_3_object();
+  Bbox_3 b = theConstruct_bbox_3(p);
+  assert(FT(b.xmin()) <= p.x());
+  assert(p.x() <= FT(b.xmax()));
+  assert(FT(b.ymin()) <= p.y());
+  assert(p.y() <= FT(b.ymax()));
+  assert(FT(b.zmin()) <= p.z());
+  assert(p.z() <= FT(b.zmax()));
+}
+
+// FOR THE TEST_BBOX OF A CIRCLE WE ASSUME THAT THE BOUNDING BOX
+// IS ONLY 1/1.000.000 BIGGER THEN THE SHORTEST BOUNDING BOX POSSIBLE
+// MAYBE IT IS A STRONG ASSUMPTIO FOR ALL CASES
+
+template <class SK>
+void _test_bbox(const typename SK::Circle_3 &c)
+{
+  typedef typename SK::RT                               RT;
+  typedef typename SK::FT                               FT;
+  typedef typename SK::Root_of_2                        Root_of_2;
+  typedef typename SK::Circular_arc_point_3             Circular_arc_point_3;
+  typedef typename SK::Point_3                          Point_3;
+  typedef typename SK::Line_3                           Line_3;
+  typedef typename SK::Plane_3                          Plane_3;
+  typedef typename SK::Sphere_3                         Sphere_3;
+  typedef typename SK::Circle_3                         Circle_3;
+  typedef typename SK::Algebraic_kernel                 AK;
+  typedef typename SK::Get_equation                     Get_equation;
+  typedef typename SK::Equal_3                          Equal_3;
+  typedef typename SK::Has_on_3                         Has_on_3;
+  typedef typename SK::Construct_bbox_3                 Construct_bbox_3;
+  typedef typename SK::Intersect_3                      Intersect_3;
+  typedef typename SK::Construct_circle_3               Construct_circle_3;
+  typedef typename SK::Construct_sphere_3               Construct_sphere_3;
+  typedef typename SK::Construct_plane_3                Construct_plane_3;
+  typedef typename SK::Construct_line_3                 Construct_line_3;
+  typedef typename SK::Polynomials_for_circle_3         Polynomials_for_circle_3;
+  typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
+  typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
+  typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
+  typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
+  typedef CGAL::Bbox_3                                  Bbox_3;
+
+  Has_on_3 theHas_on_3 = SK().has_on_3_object();
+  Equal_3 theEqual_3 = SK().equal_3_object();
+  Intersect_3 theIntersect_3 = SK().intersect_3_object();
+  Get_equation theGet_equation = SK().get_equation_object();
+  Construct_circle_3 theConstruct_circle_3 = SK().construct_circle_3_object();
+  Construct_sphere_3 theConstruct_sphere_3 = SK().construct_sphere_3_object();
+  Construct_plane_3 theConstruct_plane_3 = SK().construct_plane_3_object();
+  Construct_line_3 theConstruct_line_3 = SK().construct_line_3_object();
+  Construct_bbox_3 theConstruct_bbox_3 = SK().construct_bbox_3_object();
+
+  Bbox_3 b = theConstruct_bbox_3(c);
+  const FT x1 = FT(b.xmin());
+  const FT x2 = FT(b.xmax());
+  const FT y1 = FT(b.ymin());
+  const FT y2 = FT(b.ymax());
+  const FT z1 = FT(b.zmin());
+  const FT z2 = FT(b.zmax());
+
+  assert(x1 <= x2);
+  assert(y1 <= y2);
+  assert(z1 <= z2);
+
+  if(b.xmin() != b.xmax()) { 
+    Plane_3 pt_xneg_min = theConstruct_plane_3(Polynomial_1_3(1,0,0,-(x1-FT(1,100000)) ));
+    Plane_3 pt_xneg_max = theConstruct_plane_3(Polynomial_1_3(1,0,0,-(x1+FT(1,100000)) ));
+    Plane_3 pt_xpos_min = theConstruct_plane_3(Polynomial_1_3(1,0,0,-(x2-FT(1,100000)) ));
+    Plane_3 pt_xpos_max = theConstruct_plane_3(Polynomial_1_3(1,0,0,-(x2+FT(1,100000)) ));
+  
+    std::vector< CGAL::Object > intersection_test_x_1;
+    std::vector< CGAL::Object > intersection_test_x_2;
+    std::vector< CGAL::Object > intersection_test_x_3;
+    std::vector< CGAL::Object > intersection_test_x_4;
+    theIntersect_3(c, pt_xneg_min, std::back_inserter(intersection_test_x_1));
+    theIntersect_3(c, pt_xneg_max, std::back_inserter(intersection_test_x_2));
+    theIntersect_3(c, pt_xpos_min, std::back_inserter(intersection_test_x_3));
+    theIntersect_3(c, pt_xpos_max, std::back_inserter(intersection_test_x_4));
+
+    assert(intersection_test_x_1.size() == 0);
+    assert(intersection_test_x_2.size() > 0);
+    assert(intersection_test_x_3.size() > 0);
+    assert(intersection_test_x_4.size() == 0);
+  }
+
+  if(b.ymin() != b.ymax()) { 
+    Plane_3 pt_yneg_min = theConstruct_plane_3(Polynomial_1_3(0,1,0,-(y1-FT(1,100000)) ));
+    Plane_3 pt_yneg_max = theConstruct_plane_3(Polynomial_1_3(0,1,0,-(y1+FT(1,100000)) ));
+    Plane_3 pt_ypos_min = theConstruct_plane_3(Polynomial_1_3(0,1,0,-(y2-FT(1,100000)) ));
+    Plane_3 pt_ypos_max = theConstruct_plane_3(Polynomial_1_3(0,1,0,-(y2+FT(1,100000)) ));
+  
+    std::vector< CGAL::Object > intersection_test_y_1;
+    std::vector< CGAL::Object > intersection_test_y_2;
+    std::vector< CGAL::Object > intersection_test_y_3;
+    std::vector< CGAL::Object > intersection_test_y_4;
+    theIntersect_3(c, pt_yneg_min, std::back_inserter(intersection_test_y_1));
+    theIntersect_3(c, pt_yneg_max, std::back_inserter(intersection_test_y_2));
+    theIntersect_3(c, pt_ypos_min, std::back_inserter(intersection_test_y_3));
+    theIntersect_3(c, pt_ypos_max, std::back_inserter(intersection_test_y_4));
+
+    assert(intersection_test_y_1.size() == 0);
+    assert(intersection_test_y_2.size() > 0);
+    assert(intersection_test_y_3.size() > 0);
+    assert(intersection_test_y_4.size() == 0);
+  }
+
+  if(b.zmin() != b.zmax()) { 
+    Plane_3 pt_zneg_min = theConstruct_plane_3(Polynomial_1_3(0,0,1,-(z1-FT(1,100000)) ));
+    Plane_3 pt_zneg_max = theConstruct_plane_3(Polynomial_1_3(0,0,1,-(z1+FT(1,100000)) ));
+    Plane_3 pt_zpos_min = theConstruct_plane_3(Polynomial_1_3(0,0,1,-(z2-FT(1,100000)) ));
+    Plane_3 pt_zpos_max = theConstruct_plane_3(Polynomial_1_3(0,0,1,-(z2+FT(1,100000)) ));
+  
+    std::vector< CGAL::Object > intersection_test_z_1;
+    std::vector< CGAL::Object > intersection_test_z_2;
+    std::vector< CGAL::Object > intersection_test_z_3;
+    std::vector< CGAL::Object > intersection_test_z_4;
+    theIntersect_3(c, pt_zneg_min, std::back_inserter(intersection_test_z_1));
+    theIntersect_3(c, pt_zneg_max, std::back_inserter(intersection_test_z_2));
+    theIntersect_3(c, pt_zpos_min, std::back_inserter(intersection_test_z_3));
+    theIntersect_3(c, pt_zpos_max, std::back_inserter(intersection_test_z_4));
+
+    assert(intersection_test_z_1.size() == 0);
+    assert(intersection_test_z_2.size() > 0);
+    assert(intersection_test_z_3.size() > 0);
+    assert(intersection_test_z_4.size() == 0);
+  }
+
+}
+
+template <class SK>
+void _test_bounding_box_construct(SK sk)
+{
+  typedef typename SK::RT                               RT;
+  typedef typename SK::FT                               FT;
+  typedef typename SK::Root_of_2                        Root_of_2;
+  typedef typename SK::Circular_arc_point_3             Circular_arc_point_3;
+  typedef typename SK::Point_3                          Point_3;
+  typedef typename SK::Line_3                           Line_3;
+  typedef typename SK::Plane_3                          Plane_3;
+  typedef typename SK::Sphere_3                         Sphere_3;
+  typedef typename SK::Circle_3                         Circle_3;
+  typedef typename SK::Algebraic_kernel                 AK;
+  typedef typename SK::Get_equation                     Get_equation;
+  typedef typename SK::Equal_3                          Equal_3;
+  typedef typename SK::Has_on_3                         Has_on_3;
+  typedef typename SK::Construct_bbox_3                 Construct_bbox_3;
+  typedef typename SK::Intersect_3                      Intersect_3;
+  typedef typename SK::Construct_circle_3               Construct_circle_3;
+  typedef typename SK::Construct_sphere_3               Construct_sphere_3;
+  typedef typename SK::Construct_plane_3                Construct_plane_3;
+  typedef typename SK::Construct_line_3                 Construct_line_3;
+  typedef typename SK::Polynomials_for_circle_3         Polynomials_for_circle_3;
+  typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
+  typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
+  typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
+  typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
+  typedef CGAL::Bbox_3                                  Bbox_3;
+
+  Has_on_3 theHas_on_3 = sk.has_on_3_object();
+  Equal_3 theEqual_3 = sk.equal_3_object();
+  Intersect_3 theIntersect_3 = sk.intersect_3_object();
+  Get_equation theGet_equation = sk.get_equation_object();
+  Construct_circle_3 theConstruct_circle_3 = sk.construct_circle_3_object();
+  Construct_sphere_3 theConstruct_sphere_3 = sk.construct_sphere_3_object();
+  Construct_plane_3 theConstruct_plane_3 = sk.construct_plane_3_object();
+  Construct_line_3 theConstruct_line_3 = sk.construct_line_3_object();
+  Construct_bbox_3 theConstruct_bbox_3 = sk.construct_bbox_3_object();
+
+  std::cout << "Testing the bbox of Circular_arc_point_3..." << std::endl;
+  Polynomial_for_spheres_2_3 es1 = Polynomial_for_spheres_2_3(0,0,0,1);
+  Polynomial_for_spheres_2_3 es2 = Polynomial_for_spheres_2_3(1,0,0,1);
+  Polynomial_for_spheres_2_3 es3 = Polynomial_for_spheres_2_3(2,0,0,1);
+  for(int va=-5;va<6;va++) {
+    const FT a = -FT(va,10);
+    const FT b = 1;
+    const FT c = 0;
+    const FT d = 0;
+    Polynomial_1_3 pol = Polynomial_1_3(a,b,c,d);
+    Circle_3 c1 = theConstruct_circle_3(std::make_pair(es1, pol));
+    Circle_3 c2 = theConstruct_circle_3(std::make_pair(es2, pol));
+
+    std::vector< CGAL::Object > intersection_2;
+    theIntersect_3(c1, c2, std::back_inserter(intersection_2));
+    std::pair<Circular_arc_point_3, unsigned> cap1, cap2;
+    assign(cap1,intersection_2[0]);
+    assign(cap2,intersection_2[1]);
+    _test_bbox<SK>(cap1.first);
+    _test_bbox<SK>(cap2.first);
+
+    for(int vb=-5;vb<6;vb++) {
+      const FT al = 1;
+      const FT bl = 0;
+      const FT cl = -FT(vb,10);
+      const FT dl = 0;
+      Polynomial_1_3 pol2 = Polynomial_1_3(al,bl,cl,dl);
+      Circle_3 c4 = theConstruct_circle_3(std::make_pair(es1, pol2));
+      std::vector< CGAL::Object > intersection_4;
+      theIntersect_3(c1, c4, std::back_inserter(intersection_4));
+      assign(cap1,intersection_4[0]);
+      assign(cap2,intersection_4[1]);
+      _test_bbox<SK>(cap1.first);
+      _test_bbox<SK>(cap2.first);
+    }
+
+    const FT a_c = FT(va,10);
+    const FT b_c = 1;
+    const FT c_c = 0;
+    const FT d_c = -FT(va,10);
+    Polynomial_1_3 pol2 = Polynomial_1_3(a_c,b_c,c_c,d_c);
+    Circle_3 c5 = theConstruct_circle_3(std::make_pair(es2, pol2));
+    std::vector< CGAL::Object > intersection_5;
+    theIntersect_3(c1, c5, std::back_inserter(intersection_5));
+    assign(cap1,intersection_5[0]);
+    assign(cap2,intersection_5[1]);
+    _test_bbox<SK>(cap1.first);
+    _test_bbox<SK>(cap2.first);
+  }
+
+  std::cout << "Testing the bbox of Circle_3..." << std::endl;
+
+  Sphere_3 s = theConstruct_sphere_3(Polynomial_for_spheres_2_3(0,0,0,1));
+  Sphere_3 s_t10 = theConstruct_sphere_3(Polynomial_for_spheres_2_3(10,10,10,1));
+  for(int vx=-3;vx<4;vx++) {
+    for(int vy=-3;vy<4;vy++) {
+      for(int vz=-3;vz<4;vz++) {
+        for(int vr=1;vr<6;vr++) {
+          const FT x = FT(vx);
+          const FT y = FT(vy);
+          const FT z = FT(vz);
+          const FT r = FT(vr,2);
+          Sphere_3 sl_1 = theConstruct_sphere_3(
+            Polynomial_for_spheres_2_3(x,y,z,r*r));
+          Sphere_3 sl_2 = theConstruct_sphere_3(
+            Polynomial_for_spheres_2_3(x+10,y+10,z+10,r*r));
+          int d2 = (vx*vx + vy*vy + vz*vz);
+          std::vector< CGAL::Object > intersection_1;
+          std::vector< CGAL::Object > intersection_2;
+          theIntersect_3(s, sl_1, std::back_inserter(intersection_1));
+          theIntersect_3(s_t10, sl_2, std::back_inserter(intersection_2));
+          // No intersection
+          if((d2 > (r+1)*(r+1)) || (d2 < (r-1)*(r-1))) continue; 
+          if(x == 0 && y == 0 && z == 0 && r == 1) continue;
+          if((d2 == (r+1)*(r+1)) || (d2 == (r-1)*(r-1))) continue; 
+          Circle_3 circle1, circle2;
+          assign(circle1, intersection_1[0]);
+          assign(circle2, intersection_2[0]);
+          _test_bbox<SK>(circle1);
+          _test_bbox<SK>(circle2);
+        }
+      }
+    }
+  }
+}
+
+template <class SK>
 void _test_spherical_kernel_construct(SK sk)
 {
   std::cout << "TESTING CONSTRUCTIONS" << std::endl;
@@ -891,5 +1152,6 @@ void _test_spherical_kernel_construct(SK sk)
   _test_line_construct(sk);
   _test_circle_construct(sk);
   _test_intersection_construct(sk);
+  _test_bounding_box_construct(sk);
   std::cout << "All tests on construction are OK." << std::endl;
 }
