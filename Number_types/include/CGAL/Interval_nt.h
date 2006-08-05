@@ -68,7 +68,11 @@ public:
   typedef Checked_protect_FPU_rounding<Protected>   Internal_protector;
   typedef Protect_FPU_rounding<!Protected>          Protector;
 
-  Interval_nt() {}
+  Interval_nt()
+#ifndef CGAL_NO_ASSERTIONS
+    : _inf(1), _sup(0)  // to early and deterministically detect use of uninitialized
+#endif
+  {}
 
   Interval_nt(int i)
     : _inf(i), _sup(i) {}
