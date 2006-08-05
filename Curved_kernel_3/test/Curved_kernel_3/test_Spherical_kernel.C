@@ -17,8 +17,6 @@ int main()
   typedef CGAL::Spherical_kernel_3<Linear_k1,Algebraic_k1>    SK1;
   SK1 sk1;
   _test_spherical_kernel_predicates(sk1);
-  // The predicate Equal is used and also test here
-  // because it can be done well with the constructors test
   _test_spherical_kernel_construct(sk1); 
   return 0;
 }
