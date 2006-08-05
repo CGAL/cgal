@@ -209,7 +209,7 @@ public:
 	  
   const Root_for_spheres_2_3 & coordinates() const { return get(base); }
 
-  const CGAL::Bbox_3 bbox() {
+  const CGAL::Bbox_3 bbox() const {
     return get(base).bbox();
   }
 
