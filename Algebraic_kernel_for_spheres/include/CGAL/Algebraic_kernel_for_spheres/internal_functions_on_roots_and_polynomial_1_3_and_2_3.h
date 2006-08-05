@@ -21,21 +21,21 @@ namespace CGAL {
   template < class AK >
   inline 
   Sign sign_at( const typename AK::Polynomial_for_spheres_2_3 & equation,
-		  const typename AK::Root_for_spheres_2_3 r){
+		  const typename AK::Root_for_spheres_2_3 &r){
     return sign(r.evaluate(equation));
   }
 
   template < class AK >
   inline 
   Sign sign_at(const typename AK::Polynomial_1_3 & equation,
-		const typename AK::Root_for_spheres_2_3 r){
+		const typename AK::Root_for_spheres_2_3 &r){
     return sign(r.evaluate(equation));
   }
 
   template < class AK >
   inline 
   bool contains(const typename AK::Polynomials_for_line_3 & equation,
-		const typename AK::Root_for_spheres_2_3 r){
+		const typename AK::Root_for_spheres_2_3 &r){
     return r.is_on_line(equation); 
   }
 
@@ -98,17 +98,17 @@ namespace CGAL {
   bool intersect(const typename AK::Polynomial_for_spheres_2_3 & s1, 
                  const typename AK::Polynomial_for_spheres_2_3 & s2) {
     typedef typename AK::Polynomial_1_3 Polynomial_1_3;
-    typedef typename AK::RT RT;
+    typedef typename AK::FT FT;
     typedef typename AK::Root_of_2 Root_of_2;
     
-    const RT dx = s2.a() - s1.a();
-    const RT dy = s2.b() - s1.b();
-    const RT dz = s2.c() - s1.c();
-    const RT d2 = CGAL::square(dx) +
+    const FT dx = s2.a() - s1.a();
+    const FT dy = s2.b() - s1.b();
+    const FT dz = s2.c() - s1.c();
+    const FT d2 = CGAL::square(dx) +
                   CGAL::square(dy) +
                   CGAL::square(dz);
-    const RT sq_r1r2 = s1.r_sq()*s2.r_sq();
-    const RT sq_r1_p_sq_r2 = s1.r_sq() + s2.r_sq();
+    const FT sq_r1r2 = s1.r_sq()*s2.r_sq();
+    const FT sq_r1_p_sq_r2 = s1.r_sq() + s2.r_sq();
   
     Root_of_2 left_1 = make_root_of_2(d2,-2,sq_r1r2);
     if(left_1 > sq_r1_p_sq_r2) return false;
@@ -410,6 +410,26 @@ namespace CGAL {
   inline 
   OutputIterator
     solve( const std::pair<typename AK::Polynomial_for_spheres_2_3, typename AK::Polynomial_1_3 > & e1,
+	 const typename AK::Polynomial_for_spheres_2_3 & e2,
+	 OutputIterator res )
+  {
+    return solve<AK>(e1.first, e2, e1.second,res);
+  }
+
+  template < class AK, class OutputIterator >
+  inline 
+  OutputIterator
+    solve(const typename AK::Polynomial_for_spheres_2_3 & e1, 
+          const std::pair<typename AK::Polynomial_for_spheres_2_3, typename AK::Polynomial_1_3 > & e2,
+	  OutputIterator res )
+  {
+    return solve<AK>(e2,e1);
+  }
+
+  template < class AK, class OutputIterator >
+  inline 
+  OutputIterator
+    solve( const std::pair<typename AK::Polynomial_for_spheres_2_3, typename AK::Polynomial_1_3 > & e1,
 	 const std::pair<typename AK::Polynomial_for_spheres_2_3, typename AK::Polynomial_1_3 > & e2,
 	 OutputIterator res )
   {
@@ -477,6 +497,70 @@ namespace CGAL {
     return res;
   }
 
+template < class AK, class OutputIterator >
+  inline 
+  OutputIterator
+    solve( const std::pair<typename AK::Polynomial_for_spheres_2_3, typename AK::Polynomial_1_3 > & e1,
+	   const typename AK::Polynomials_for_line_3 & l,
+	   OutputIterator res )
+  {
+    typedef typename AK::RT RT;
+    typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3;
+    typedef typename AK::Polynomial_for_spheres_2_3 Polynomial_for_spheres_2_3;
+    typedef typename AK::Polynomial_1_3 Polynomial_1_3;
+    typedef typename AK::Polynomials_for_line_3 Polynomials_for_line_3;
+    const Polynomial_for_spheres_2_3 &s1 = e1.first;
+    const Polynomial_1_3 &p1 = e1.second;
+
+    // Let say that the 2 pairs of equation must be a circle or a point at least
+    // ASK: What about removing this pre-condition since it is an Algebraic Kernel?
+    CGAL_kernel_precondition((intersect<AK>(p1,s1)));
+    CGAL_kernel_precondition(!(l.degenerated()));
+
+    if(p1.empty_space()) return res;
+    if(p1.undefined()) {
+      return solve<AK>(s1, l, res);
+    }
+
+    typedef std::vector< std::pair<Root_for_spheres_2_3, size_t> > solutions_container;
+    solutions_container solutions;
+    solve<AK>(s1, l, std::back_inserter(solutions));
+    if(solutions.size() == 0) return res;
+    if(solutions.size() == 1) {
+      if(sign_at<AK>(p1, solutions[0].first) == ZERO) {
+        *res++ = solutions[0]; 
+      } return res;
+    }
+
+    // number of solution = 2, we need to set the correct multiplicity
+    bool k1 = (sign_at<AK>(p1, solutions[0].first) == ZERO),
+         k2 = (sign_at<AK>(p1, solutions[1].first) == ZERO);
+    if(k1 && k2) {
+      *res++ = solutions[0];
+      *res++ = solutions[1];
+      return res;
+    }
+    if(k1) {
+      solutions[0].second = 2u;
+      *res++ = solutions[0];
+      return res;
+    }
+    if(k2) {
+      solutions[1].second = 2u;
+      *res++ = solutions[1];
+      return res;
+    }
+    return res;
+  }
+
+  template < class AK, class OutputIterator >
+  inline 
+  OutputIterator
+    solve( const typename AK::Polynomials_for_line_3 & l,
+	   const std::pair<typename AK::Polynomial_for_spheres_2_3, typename AK::Polynomial_1_3 > & e1,
+	   OutputIterator res ) {
+    return solve<AK>(e1, l, res);
+  }
 
   } // namespace AlgebraicSphereFunctors
 } // namespace CGAL
