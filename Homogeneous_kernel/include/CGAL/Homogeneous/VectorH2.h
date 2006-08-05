@@ -224,55 +224,6 @@ VectorH2<R>::perpendicular(const Orientation& o) const
       return typename R::Vector_2(hy(), -hx(), hw());
 }
 
-
-#ifndef CGAL_NO_OSTREAM_INSERT_VECTORH2
-template < class R >
-std::ostream &
-operator<<(std::ostream &os, const VectorH2<R> &p)
-{
-  switch(os.iword(IO::mode))
-  {
-    case IO::ASCII :
-        return os << p.hx() << ' ' << p.hy() << ' ' << p.hw();
-    case IO::BINARY :
-        write(os, p.hx());
-        write(os, p.hy());
-        write(os, p.hw());
-        return os;
-    default:
-        return os << "VectorH2(" << p.hx() << ", "
-                                 << p.hy() << ", "
-                                 << p.hw() << ')';
-  }
-}
-#endif // CGAL_NO_OSTREAM_INSERT_VECTORH2
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_VECTORH2
-template < class R >
-std::istream &
-operator>>(std::istream &is, VectorH2<R> &p)
-{
-  typename R::RT hx, hy, hw;
-  switch(is.iword(IO::mode))
-  {
-    case IO::ASCII :
-        is >> hx >> hy >> hw;
-        break;
-    case IO::BINARY :
-        read(is, hx);
-        read(is, hy);
-        read(is, hw);
-        break;
-    default:
-        std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
-        break;
-  }
-  p = VectorH2<R>(hx, hy, hw);
-  return is;
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_VECTORH2
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_HOMOGENEOUS_VECTOR_2_h
