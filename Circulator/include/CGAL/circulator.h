@@ -1043,7 +1043,7 @@ public:
     Circulator_from_iterator(
         const Circulator_from_iterator<II,A1,A2,A3>& ii)
     : m_begin( ii.begin()), m_end( ii.end()),
-        current(ii.current_iterator()), empty(ii.empty) {}
+        current(ii.current_iterator()), empty(ii == NULL) {}
 
 //
 // OPERATIONS
