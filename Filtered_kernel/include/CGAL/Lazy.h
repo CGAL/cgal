@@ -202,23 +202,16 @@ public:
   }
 
   Lazy_construct_rep_0()
-    : Lazy_construct_rep<AT,ET, E2A>()
-  {}
+    : Lazy_construct_rep<AT,ET, E2A>() {}
 
   Lazy_construct_rep_0(const AT& a, const ET& e)
-    : Lazy_construct_rep<AT,ET,E2A>(a, e)
-  {}
+    : Lazy_construct_rep<AT,ET,E2A>(a, e) {}
 
   Lazy_construct_rep_0(const AT& a, void*)
-    : Lazy_construct_rep<AT,ET,E2A>(a)
-  {}
+    : Lazy_construct_rep<AT,ET,E2A>(a) {}
 
   Lazy_construct_rep_0(const ET& e)
-    : Lazy_construct_rep<AT,ET,E2A>(AT(), e)
-  {
-    E2A e2a;
-    this->at = e2a(e);
-  }
+    : Lazy_construct_rep<AT,ET,E2A>(E2A()(e), e) {}
 
   void
   print_dag(std::ostream& os, int level) const
@@ -237,7 +230,7 @@ class Lazy_construct_rep_1 : public Lazy_construct_rep<typename AC::result_type,
   typedef typename EC::result_type ET;
   typedef Lazy_construct_rep<AT, ET, E2A> Base;
 
-  EC ec_;
+  EC ec_; // FIXME : do not bloat memory with the empty constructions objects
   L1 l1_;
 
 public:
