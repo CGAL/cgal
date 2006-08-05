@@ -69,38 +69,6 @@ public:
 
 };
 
-#ifndef CGAL_NO_OSTREAM_INSERT_TRIANGLEC2
-template < class R >
-std::ostream &
-operator<<(std::ostream &os, const TriangleC2<R> &t)
-{
-    switch(os.iword(IO::mode)) {
-    case IO::ASCII :
-        return os << t[0] << ' ' << t[1] << ' ' << t[2];
-    case IO::BINARY :
-        return os << t[0] << t[1]  << t[2];
-    default:
-        return os<< "TriangleC2(" << t[0] << ", " 
-		 << t[1] << ", " << t[2] <<")";
-    }
-}
-#endif // CGAL_NO_OSTREAM_INSERT_TRIANGLEC2
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_TRIANGLEC2
-template < class R >
-std::istream &
-operator>>(std::istream &is, TriangleC2<R> &t)
-{
-    typename R::Point_2 p, q, r;
-
-    is >> p >> q >> r;
-
-    if (is)
-	t = TriangleC2<R>(p, q, r);
-    return is;
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_TRIANGLEC2
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_TRIANGLE_2_H
