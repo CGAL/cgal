@@ -127,7 +127,7 @@ class Root_for_spheres_2_3 {
         ix=to_interval(ox),
         iy=to_interval(oy),
         iz=to_interval(oz);
-      return CGAL::Bbox_2(ix.inf(),iy.inf(),iz.inf(),
+      return CGAL::Bbox_3(ix.inf(),iy.inf(),iz.inf(),
 	                ix.sup(),iy.sup(),iz.sup());
     }
 
