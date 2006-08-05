@@ -114,52 +114,6 @@ typename DirectionH2<R>::Vector_2
 DirectionH2<R>::to_vector() const
 { return Vector_2(dx(), dy()); }
 
-
-#ifndef CGAL_NO_OSTREAM_INSERT_DIRECTIONH2
-template < class R >
-std::ostream &
-operator<<(std::ostream &os, const DirectionH2<R> &p)
-{
-  switch(os.iword(IO::mode))
-  {
-    case IO::ASCII :
-        return os << p.dx() << ' ' << p.dy();
-    case IO::BINARY :
-        write(os, p.dx());
-        write(os, p.dy());
-        return os;
-    default:
-        return os << "DirectionH2(" << p.dx() << ", "
-                                    << p.dy() << ')';
-  }
-}
-#endif // CGAL_NO_OSTREAM_INSERT_DIRECTIONH2
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_DIRECTIONH2
-template < class R >
-std::istream &
-operator>>(std::istream &is, DirectionH2<R> &p)
-{
-  typename R::RT x, y;
-  switch(is.iword(IO::mode))
-  {
-    case IO::ASCII :
-        is >> x >> y;
-        break;
-    case IO::BINARY :
-        read(is, x);
-        read(is, y);
-        break;
-    default:
-        std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
-        break;
-  }
-  p = DirectionH2<R>(x, y);
-  return is;
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_DIRECTIONH2
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_HOMOGENEOUS_DIRECTION_2_H
