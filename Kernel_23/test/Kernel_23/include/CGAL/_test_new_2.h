@@ -106,7 +106,7 @@ test_new_2(const R& rep)
 
   typename R::Construct_direction_2 construct_direction
         = rep.construct_direction_2_object();
-  Direction_2 d1;
+  Direction_2 d1;  d1 = Direction_2(4,1);
   Direction_2 d2 = construct_direction(v3);
 #ifndef CGAL_NO_DEPRECATED_CODE
   Direction_2 d3 = construct_direction(1,4);
@@ -118,7 +118,7 @@ test_new_2(const R& rep)
 
   typename R::Construct_segment_2 construct_segment
         = rep.construct_segment_2_object();
-  Segment_2 s1;
+  Segment_2 s1;  s1 = Segment_2(p3, p5);
   Segment_2 s2 = construct_segment(p2,p3);
   Segment_2 s3 = construct_segment(p2,p5);
   Segment_2 s4 = construct_segment(p3,p2);
@@ -132,7 +132,7 @@ test_new_2(const R& rep)
 
   typename R::Construct_line_2 construct_line
         = rep.construct_line_2_object();
-  Line_2 l1;
+  Line_2 l1;  l1 = Line_2(1,2,3);
 #ifndef CGAL_NO_DEPRECATED_CODE
   Line_2 l2 = construct_line(1,1,1);
 #else
