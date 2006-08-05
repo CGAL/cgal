@@ -41,6 +41,7 @@
   CGAL_Spherical_Kernel_cons(Compute_circular_y_3, compute_circular_y_3_object)
   CGAL_Spherical_Kernel_cons(Compute_circular_z_3, compute_circular_z_3_object)
   CGAL_Spherical_Kernel_cons(Intersect_3, intersect_3_object)
+  CGAL_Spherical_Kernel_cons(Construct_bbox_3, construct_bbox_3_object)
 
   CGAL_Spherical_Kernel_pred(Compare_x_3,  compare_x_3_object)
   CGAL_Spherical_Kernel_pred(Compare_y_3,  compare_y_3_object)
