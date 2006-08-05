@@ -177,17 +177,21 @@ public:
   typename Qualified_result_of<typename R::Compute_circular_x_3,Circular_arc_point_3>::type
   //const Root_of_2 &
   x() const
-    { return typename R::Compute_circular_x_3()(*this);}
+  { return typename R::Compute_circular_x_3()(*this);}
 
   typename Qualified_result_of<typename R::Compute_circular_y_3,Circular_arc_point_3>::type
   //const Root_of_2 &
   y() const
-    { return typename R::Compute_circular_y_3()(*this);}
+  { return typename R::Compute_circular_y_3()(*this);}
 
   typename Qualified_result_of<typename R::Compute_circular_z_3,Circular_arc_point_3>::type
   //const Root_of_2 &
   z() const
-    { return typename R::Compute_circular_z_3()(*this);}
+  { return typename R::Compute_circular_z_3()(*this);}
+
+  Bbox_3 bbox() const
+  { return typename R::Construct_bbox_3()(*this); }
+
 };
 
   template < class SK >
