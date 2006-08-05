@@ -175,6 +175,146 @@ orthogonal_transform(const typename Sphere_3<R_>::Aff_transformation_3& t) const
                                 : CGAL::opposite(this->orientation()));
 }
 
+
+#ifndef CGAL_NO_OSTREAM_INSERT_SPHERE_3
+
+template <class R >
+std::ostream&
+insert(std::ostream& os, const Sphere_3<R>& c,const Cartesian_tag&) 
+{
+    switch(os.iword(IO::mode)) {
+    case IO::ASCII :
+        os << c.center() << ' ' << c.squared_radius() << ' '
+           << static_cast<int>(c.orientation());
+        break;
+    case IO::BINARY :
+        os << c.center();
+        write(os, c.squared_radius());
+        write(os, static_cast<int>(c.orientation()));
+        break;
+    default:
+        os << "SphereC3(" << c.center() <<  ", " << c.squared_radius();
+        switch (c.orientation()) {
+        case CLOCKWISE:
+            os << ", clockwise)";
+            break;
+        case COUNTERCLOCKWISE:
+            os << ", counterclockwise)";
+            break;
+        default:
+            os << ", collinear)";
+            break;
+        }
+        break;
+    }
+    return os;
+}
+
+template <class R >
+std::ostream&
+insert(std::ostream& os, const Sphere_3<R>& c, const Homogeneous_tag&)
+{
+    switch(os.iword(IO::mode)) {
+    case IO::ASCII :
+        os << c.center() << ' ' << c.squared_radius() << ' '
+           << static_cast<int>(c.orientation());
+        break;
+    case IO::BINARY :
+        os << c.center();
+        write(os, c.squared_radius());
+        write(os, static_cast<int>(c.orientation()));
+        break;
+    default:
+        os << "SphereH3(" << c.center() <<  ", " << c.squared_radius();
+        switch (c.orientation()) {
+        case CLOCKWISE:
+            os << ", clockwise)";
+            break;
+        case COUNTERCLOCKWISE:
+            os << ", counterclockwise)";
+            break;
+        default:
+            os << ", collinear)";
+            break;
+        }
+        break;
+    }
+    return os;
+}
+
+template < class R >
+std::ostream&
+operator<<(std::ostream& os, const Sphere_3<R>& c)
+{
+  return insert(os, c, typename R::Kernel_tag() );
+}
+
+#endif // CGAL_NO_OSTREAM_INSERT_SPHERE_3
+
+#ifndef CGAL_NO_ISTREAM_EXTRACT_SPHERE_3
+
+template <class R >
+std::istream&
+extract(std::istream& is, Sphere_3<R>& c, const Cartesian_tag&) 
+{
+    typename R::Point_3 center;
+    typename R::FT squared_radius;
+    int o;
+    switch(is.iword(IO::mode)) {
+    case IO::ASCII :
+        is >> center >> squared_radius >> o;
+        break;
+    case IO::BINARY :
+        is >> center;
+        read(is, squared_radius);
+        is >> o;
+        break;
+    default:
+        std::cerr << "" << std::endl;
+        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        break;
+    }
+    if (is)
+        c = Sphere_3<R>(center, squared_radius, static_cast<Orientation>(o));
+    return is;
+}
+
+
+template <class R >
+std::istream&
+extract(std::istream& is, Sphere_3<R>& c, const Homogeneous_tag&) 
+{
+    typename R::Point_3 center;
+    typename R::FT squared_radius;
+    int o;
+    switch(is.iword(IO::mode)) {
+    case IO::ASCII :
+        is >> center >> squared_radius >> o;
+        break;
+    case IO::BINARY :
+        is >> center;
+        read(is, squared_radius);
+        is >> o;
+        break;
+    default:
+        std::cerr << "" << std::endl;
+        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        break;
+    }
+    if (is)
+        c = Sphere_3<R>(center, squared_radius, static_cast<Orientation>(o));
+    return is;
+}
+
+template < class R >
+std::istream&
+operator>>(std::istream& is, Sphere_3<R>& c)
+{
+  return extract(is, c, typename R::Kernel_tag() );
+}
+
+#endif // CGAL_NO_ISTREAM_EXTRACT_SPHERE_3
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_SPHERE_3_H
