@@ -234,8 +234,10 @@ namespace AlgebraicSphereFunctors {
   template < class AK >
   class X_critical_points
   {
+    typedef typename AK::Root_of_2                  Root_of_2;
     typedef typename AK::Root_for_spheres_2_3       Root_for_spheres_2_3;
     typedef typename AK::Polynomial_for_spheres_2_3 Polynomial_for_spheres_2_3;
+    typedef typename AK::Polynomial_1_3             Polynomial_1_3;
 
   public:
     typedef void         result_type;
@@ -251,13 +253,26 @@ namespace AlgebraicSphereFunctors {
     operator()(const Polynomial_for_spheres_2_3 & c, 
 	       OutputIterator res) const
     { return AlgebraicSphereFunctors::x_critical_points<AK>(c,res); }
+
+    Root_of_2
+    operator()(const std::pair< Polynomial_for_spheres_2_3, Polynomial_1_3 > & c, 
+	       bool i) const
+    { return AlgebraicSphereFunctors::x_critical_point<AK>(c,i); }
+
+    template <class OutputIterator>
+    OutputIterator
+    operator()(const std::pair< Polynomial_for_spheres_2_3, Polynomial_1_3 > & c, 
+	       OutputIterator res) const
+    { return AlgebraicSphereFunctors::x_critical_points<AK>(c,res); }
   };
 
   template < class AK >
   class Y_critical_points
   {
+    typedef typename AK::Root_of_2                  Root_of_2;
     typedef typename AK::Root_for_spheres_2_3       Root_for_spheres_2_3;
     typedef typename AK::Polynomial_for_spheres_2_3 Polynomial_for_spheres_2_3;
+    typedef typename AK::Polynomial_1_3             Polynomial_1_3;
 
   public:
     typedef void         result_type;
@@ -273,13 +288,26 @@ namespace AlgebraicSphereFunctors {
     operator()(const Polynomial_for_spheres_2_3 & c, 
 	       OutputIterator res) const
     { return AlgebraicSphereFunctors::y_critical_points<AK>(c,res); }
+
+    Root_of_2
+    operator()(const std::pair< Polynomial_for_spheres_2_3, Polynomial_1_3 > & c, 
+	       bool i) const
+    { return AlgebraicSphereFunctors::y_critical_point<AK>(c,i); }
+
+    template <class OutputIterator>
+    OutputIterator
+    operator()(const std::pair< Polynomial_for_spheres_2_3, Polynomial_1_3 > & c, 
+	       OutputIterator res) const
+    { return AlgebraicSphereFunctors::y_critical_points<AK>(c,res); }
   };
 
   template < class AK >
   class Z_critical_points
   {
+    typedef typename AK::Root_of_2                  Root_of_2;
     typedef typename AK::Root_for_spheres_2_3       Root_for_spheres_2_3;
     typedef typename AK::Polynomial_for_spheres_2_3 Polynomial_for_spheres_2_3;
+    typedef typename AK::Polynomial_1_3             Polynomial_1_3;
 
   public:
     typedef void         result_type;
@@ -295,6 +323,18 @@ namespace AlgebraicSphereFunctors {
     operator()(const Polynomial_for_spheres_2_3 & c, 
 	       OutputIterator res) const
     { return AlgebraicSphereFunctors::z_critical_points<AK>(c,res); }
+
+    Root_of_2
+    operator()(const std::pair< Polynomial_for_spheres_2_3, Polynomial_1_3 > & c, 
+	       bool i) const
+    { return AlgebraicSphereFunctors::z_critical_point<AK>(c,i); }
+
+    template <class OutputIterator>
+    OutputIterator
+    operator()(const std::pair< Polynomial_for_spheres_2_3, Polynomial_1_3 > & c, 
+	       OutputIterator res) const
+    { return AlgebraicSphereFunctors::z_critical_points<AK>(c,res); }
+
   };
   
   template <typename RT>
