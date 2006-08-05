@@ -222,24 +222,105 @@ operator!=(const Null_vector &n, const Vector_2<R> &v)
 }
 
 
-
-#ifndef CGAL_NO_OSTREAM_INSERT_VECTOR_2
-template < class R >
-std::ostream &
-operator<<(std::ostream &os, const Vector_2<R> &v)
+template <class R >
+std::ostream&
+insert(std::ostream& os, const Vector_2<R>& v, const Cartesian_tag&) 
 {
-  return os << v.rep();
+    switch(os.iword(IO::mode)) {
+    case IO::ASCII :
+        return os << v.x() << ' ' << v.y();
+    case IO::BINARY :
+        write(os, v.x());
+        write(os, v.y());
+        return os;
+    default:
+        return os << "VectorC2(" << v.x() << ", " << v.y() << ')';
+    }
 }
-#endif // CGAL_NO_OSTREAM_INSERT_VECTOR_2
 
-#ifndef CGAL_NO_ISTREAM_EXTRACT_VECTOR_2
-template < class R >
-std::istream &
-operator>>(std::istream &is, Vector_2<R>& v)
+template <class R >
+std::ostream&
+insert(std::ostream& os, const Vector_2<R>& v, const Homogeneous_tag&)
 {
-  return is >> v.rep();
+  switch(os.iword(IO::mode))
+  {
+    case IO::ASCII :
+        return os << v.hx() << ' ' << v.hy() << ' ' << v.hw();
+    case IO::BINARY :
+        write(os, v.hx());
+        write(os, v.hy());
+        write(os, v.hw());
+        return os;
+    default:
+        return os << "VectorH2(" << v.hx() << ", "
+                                 << v.hy() << ", "
+                                 << v.hw() << ')';
+  }
 }
-#endif // CGAL_NO_ISTREAM_EXTRACT_VECTOR_2
+
+template < class R >
+std::ostream&
+operator<<(std::ostream& os, const Vector_2<R>& v)
+{
+  return insert(os, v, typename R::Kernel_tag() );
+}
+
+
+
+template <class R >
+std::istream&
+extract(std::istream& is, Vector_2<R>& v, const Cartesian_tag&) 
+{
+    typename R::FT x, y;
+    switch(is.iword(IO::mode)) {
+    case IO::ASCII :
+        is >> x >> y;
+        break;
+    case IO::BINARY :
+        read(is, x);
+        read(is, y);
+        break;
+    default:
+        std::cerr << "" << std::endl;
+        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        break;
+    }
+    if (is)
+        v = Vector_2<R>(x, y);
+    return is;
+}
+
+
+template <class R >
+std::istream&
+extract(std::istream& is, Vector_2<R>& v, const Homogeneous_tag&) 
+{
+  typename R::RT hx, hy, hw;
+  switch(is.iword(IO::mode))
+  {
+    case IO::ASCII :
+        is >> hx >> hy >> hw;
+        break;
+    case IO::BINARY :
+        read(is, hx);
+        read(is, hy);
+        read(is, hw);
+        break;
+    default:
+        std::cerr << "" << std::endl;
+        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        break;
+  }
+  v = Vector_2<R>(hx, hy, hw);
+  return is;
+}
+
+template < class R >
+std::istream&
+operator>>(std::istream& is, Vector_2<R>& v)
+{
+  return extract(is, v, typename R::Kernel_tag() );
+}
 
 CGAL_END_NAMESPACE
 
