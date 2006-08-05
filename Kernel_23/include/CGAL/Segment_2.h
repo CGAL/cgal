@@ -271,24 +271,32 @@ Segment_2<R_>::bbox() const
 }
 
 
-
-#ifndef CGAL_NO_OSTREAM_INSERT_SEGMENT_2
-template < class R>
+template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Segment_2<R> &s)
 {
-  return os << s.rep();
+    switch(os.iword(IO::mode)) {
+    case IO::ASCII :
+        return os << s.source() << ' ' << s.target();
+    case IO::BINARY :
+        return os << s.source() << s.target();
+    default:
+        return os << "Segment_2(" << s.source() <<  ", " << s.target() << ")";
+    }
 }
-#endif // CGAL_NO_OSTREAM_INSERT_SEGMENT_2
 
-#ifndef CGAL_NO_ISTREAM_EXTRACT_SEGMENT_2
-template < class R>
+template < class R >
 std::istream &
 operator>>(std::istream &is, Segment_2<R> &s)
 {
-  return is >> s.rep();
+    typename R::Point_2 p, q;
+
+    is >> p >> q;
+
+    if (is)
+        s = Segment_2<R>(p, q);
+    return is;
 }
-#endif // CGAL_NO_ISTREAM_EXTRACT_SEGMENT_2
 
 CGAL_END_NAMESPACE
 

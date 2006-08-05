@@ -63,42 +63,6 @@ public:
 
 };
 
-#ifndef CGAL_NO_OSTREAM_INSERT_SEGMENTC2
-template < class R >
-std::ostream &
-operator<<(std::ostream &os, const SegmentC2<R> &s)
-{
-    switch(os.iword(IO::mode)) {
-    case IO::ASCII :
-        return os << s.source() << ' ' << s.target();
-    case IO::BINARY :
-        return os << s.source() << s.target();
-    default:
-        return os << "SegmentC2(" << s.source() <<  ", " << s.target() << ")";
-    }
-}
-#endif // CGAL_NO_OSTREAM_INSERT_SEGMENTC2
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_SEGMENTC2
-template < class R >
-std::istream &
-operator>>(std::istream &is, SegmentC2<R> &s)
-{
-    typename R::Point_2 p, q;
-
-    is >> p >> q;
-
-    if (is)
-	s = SegmentC2<R>(p, q);
-    return is;
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_SEGMENTC2
-
-
-
-
-
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_SEGMENT_2_H
