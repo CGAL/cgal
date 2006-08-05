@@ -224,22 +224,24 @@ public:
 //____________________________________________________________
 
 template <typename AC, typename EC, typename E2A, typename L1>
-class Lazy_construct_rep_1 : public Lazy_construct_rep<typename AC::result_type, typename EC::result_type, E2A>
+class Lazy_construct_rep_1
+  : public Lazy_construct_rep<typename AC::result_type, typename EC::result_type, E2A>
+  , private EC
 {
   typedef typename AC::result_type AT;
   typedef typename EC::result_type ET;
   typedef Lazy_construct_rep<AT, ET, E2A> Base;
 
-  EC ec_; // FIXME : do not bloat memory with the empty constructions objects
   L1 l1_;
+
+  const EC& ec() const { return *this; }
 
 public:
 
   void
   update_exact()
   {
-    this->et = new ET(ec_(CGAL::exact(l1_)));
-    E2A()(*(this->et));
+    this->et = new ET(ec()(CGAL::exact(l1_)));
     this->at = E2A()(*(this->et));
     // Prune lazy tree
     l1_ = L1();
@@ -247,7 +249,7 @@ public:
 
 
   Lazy_construct_rep_1(const AC& ac, const EC& ec, const L1& l1)
-    : Lazy_construct_rep<AT,ET, E2A>(ac(CGAL::approx(l1))), ec_(ec), l1_(l1)
+    : Lazy_construct_rep<AT,ET, E2A>(ac(CGAL::approx(l1))), EC(ec), l1_(l1)
   {}
 
 
@@ -270,28 +272,30 @@ public:
 //____________________________________________________________
 
 template <typename AC, typename EC, typename E2A, typename L1, typename L2>
-class Lazy_construct_rep_2 : public Lazy_construct_rep<typename AC::result_type , typename EC::result_type, E2A>
+class Lazy_construct_rep_2
+  : public Lazy_construct_rep<typename AC::result_type , typename EC::result_type, E2A>
+  , private EC
 {
   typedef typename AC::result_type AT;
   typedef typename EC::result_type ET;
   typedef Lazy_construct_rep<AT, ET, E2A> Base;
 
-  EC ec_;
   L1 l1_;
   L2 l2_;
+
+  const EC& ec() const { return *this; }
 
 public:
 
   void
   update_exact()
   {
-    this->et = new ET(ec_(CGAL::exact(l1_), CGAL::exact(l2_)));
+    this->et = new ET(ec()(CGAL::exact(l1_), CGAL::exact(l2_)));
     this->at = E2A()(*(this->et));
     // Prune lazy tree
     l1_ = L1();
     l2_ = L2();
   }
-
 
   Lazy_construct_rep_2(const AC& ac, const EC& ec, const L1& l1, const L2& l2)
     : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2))), l1_(l1), l2_(l2)
@@ -312,34 +316,35 @@ public:
 };
 
 
-
 //____________________________________________________________
 
 template <typename AC, typename EC, typename E2A, typename L1, typename L2, typename L3>
-class Lazy_construct_rep_3 : public Lazy_construct_rep<typename AC::result_type , typename EC::result_type, E2A>
+class Lazy_construct_rep_3
+  : public Lazy_construct_rep<typename AC::result_type, typename EC::result_type, E2A>
+  , private EC
 {
   typedef typename AC::result_type AT;
   typedef typename EC::result_type ET;
   typedef Lazy_construct_rep<AT, ET, E2A> Base;
 
-  EC ec_;
   L1 l1_;
   L2 l2_;
   L3 l3_;
+
+  const EC& ec() const { return *this; }
 
 public:
 
   void
   update_exact()
   {
-    this->et = new ET(ec_(CGAL::exact(l1_), CGAL::exact(l2_), CGAL::exact(l3_)));
+    this->et = new ET(ec()(CGAL::exact(l1_), CGAL::exact(l2_), CGAL::exact(l3_)));
     this->at = E2A()(*(this->et));
     // Prune lazy tree
     l1_ = L1();
     l2_ = L2();
     l3_ = L3();
   }
-
 
   Lazy_construct_rep_3(const AC& ac, const EC& ec, const L1& l1, const L2& l2, const L3& l3)
     : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2), CGAL::approx(l3))), l1_(l1), l2_(l2), l3_(l3)
@@ -364,24 +369,27 @@ public:
 //____________________________________________________________
 
 template <typename AC, typename EC, typename E2A, typename L1, typename L2, typename L3, typename L4>
-class Lazy_construct_rep_4 : public Lazy_construct_rep<typename AC::result_type , typename EC::result_type, E2A>
+class Lazy_construct_rep_4
+  : public Lazy_construct_rep<typename AC::result_type , typename EC::result_type, E2A>
+  , private EC
 {
   typedef typename AC::result_type AT;
   typedef typename EC::result_type ET;
   typedef Lazy_construct_rep<AT, ET, E2A> Base;
 
-  EC ec_;
   L1 l1_;
   L2 l2_;
   L3 l3_;
   L4 l4_;
+
+  const EC& ec() const { return *this; }
 
 public:
 
   void
   update_exact()
   {
-    this->et = new ET(ec_(CGAL::exact(l1_), CGAL::exact(l2_), CGAL::exact(l3_), CGAL::exact(l4_)));
+    this->et = new ET(ec()(CGAL::exact(l1_), CGAL::exact(l2_), CGAL::exact(l3_), CGAL::exact(l4_)));
     this->at = E2A()(*(this->et));
     // Prune lazy tree
     l1_ = L1();
@@ -390,11 +398,10 @@ public:
     l4_ = L4();
   }
 
-
   Lazy_construct_rep_4(const AC& ac, const EC& ec, const L1& l1, const L2& l2, const L3& l3, const L4& l4)
-   : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2), CGAL::approx(l3), CGAL::approx(l4))), l1_(l1), l2_(l2), l3_(l3), l4_(l4)
+   : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2), CGAL::approx(l3), CGAL::approx(l4))),
+                                   l1_(l1), l2_(l2), l3_(l3), l4_(l4)
   {}
-
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
   void
@@ -417,25 +424,28 @@ public:
 
 
 template <typename AC, typename EC, typename E2A, typename L1, typename L2, typename L3, typename L4, typename L5>
- class Lazy_construct_rep_5 : public Lazy_construct_rep<typename AC::result_type , typename EC::result_type, E2A>
+class Lazy_construct_rep_5
+  : public Lazy_construct_rep<typename AC::result_type , typename EC::result_type, E2A>
+  , private EC
 {
   typedef typename AC::result_type AT;
   typedef typename EC::result_type ET;
   typedef Lazy_construct_rep<AT, ET, E2A> Base;
 
-  EC ec_;
   L1 l1_;
   L2 l2_;
   L3 l3_;
   L4 l4_;
   L5 l5_;
 
+  const EC& ec() const { return *this; }
+
 public:
 
   void
   update_exact()
   {
-    this->et = new ET(ec_(CGAL::exact(l1_), CGAL::exact(l2_), CGAL::exact(l3_), CGAL::exact(l4_), CGAL::exact(l5_)));
+    this->et = new ET(ec()(CGAL::exact(l1_), CGAL::exact(l2_), CGAL::exact(l3_), CGAL::exact(l4_), CGAL::exact(l5_)));
     this->at = E2A()(*(this->et));
     // Prune lazy tree
     l1_ = L1();
@@ -446,7 +456,8 @@ public:
   }
 
  Lazy_construct_rep_5(const AC& ac, const EC& ec, const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5)
-    : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2), CGAL::approx(l3), CGAL::approx(l4), CGAL::approx(l5))), l1_(l1), l2_(l2), l3_(l3), l4_(l4), l5_(l5)
+    : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2), CGAL::approx(l3), CGAL::approx(l4), CGAL::approx(l5))),
+                                    l1_(l1), l2_(l2), l3_(l3), l4_(l4), l5_(l5)
   {}
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
@@ -468,13 +479,14 @@ public:
 };
 
 template <typename AC, typename EC, typename E2A, typename L1, typename L2, typename L3, typename L4, typename L5, typename L6>
- class Lazy_construct_rep_6 : public Lazy_construct_rep<typename AC::result_type , typename EC::result_type, E2A>
+class Lazy_construct_rep_6
+  : public Lazy_construct_rep<typename AC::result_type , typename EC::result_type, E2A>
+  , private EC
 {
   typedef typename AC::result_type AT;
   typedef typename EC::result_type ET;
   typedef Lazy_construct_rep<AT, ET, E2A> Base;
 
-  EC ec_;
   L1 l1_;
   L2 l2_;
   L3 l3_;
@@ -482,12 +494,14 @@ template <typename AC, typename EC, typename E2A, typename L1, typename L2, type
   L5 l5_;
   L6 l6_;
 
+  const EC& ec() const { return *this; }
+
 public:
 
   void
   update_exact()
   {
-    this->et = new ET(ec_(CGAL::exact(l1_), CGAL::exact(l2_), CGAL::exact(l3_), CGAL::exact(l4_), CGAL::exact(l5_), CGAL::exact(l6_)));
+    this->et = new ET(ec()(CGAL::exact(l1_), CGAL::exact(l2_), CGAL::exact(l3_), CGAL::exact(l4_), CGAL::exact(l5_), CGAL::exact(l6_)));
     this->at = E2A()(*(this->et));
     // Prune lazy tree
     l1_ = L1();
@@ -523,13 +537,14 @@ public:
 };
 
 template <typename AC, typename EC, typename E2A, typename L1, typename L2, typename L3, typename L4, typename L5, typename L6, typename L7>
- class Lazy_construct_rep_7 : public Lazy_construct_rep<typename AC::result_type , typename EC::result_type, E2A>
+class Lazy_construct_rep_7
+  : public Lazy_construct_rep<typename AC::result_type , typename EC::result_type, E2A>
+  , private EC
 {
   typedef typename AC::result_type AT;
   typedef typename EC::result_type ET;
   typedef Lazy_construct_rep<AT, ET, E2A> Base;
 
-  EC ec_;
   L1 l1_;
   L2 l2_;
   L3 l3_;
@@ -538,12 +553,14 @@ template <typename AC, typename EC, typename E2A, typename L1, typename L2, type
   L6 l6_;
   L7 l7_;
 
+  const EC& ec() const { return *this; }
+
 public:
 
   void
   update_exact()
   {
-    this->et = new ET(ec_(CGAL::exact(l1_), CGAL::exact(l2_), CGAL::exact(l3_), CGAL::exact(l4_), CGAL::exact(l5_), CGAL::exact(l6_), CGAL::exact(l7_)));
+    this->et = new ET(ec()(CGAL::exact(l1_), CGAL::exact(l2_), CGAL::exact(l3_), CGAL::exact(l4_), CGAL::exact(l5_), CGAL::exact(l6_), CGAL::exact(l7_)));
     this->at = E2A()(*(this->et));
     // Prune lazy tree
     l1_ = L1();
@@ -581,13 +598,14 @@ public:
 };
 
 template <typename AC, typename EC, typename E2A, typename L1, typename L2, typename L3, typename L4, typename L5, typename L6, typename L7, typename L8>
- class Lazy_construct_rep_8 : public Lazy_construct_rep<typename AC::result_type , typename EC::result_type, E2A>
+class Lazy_construct_rep_8
+  : public Lazy_construct_rep<typename AC::result_type, typename EC::result_type, E2A>
+  , private EC
 {
   typedef typename AC::result_type AT;
   typedef typename EC::result_type ET;
   typedef Lazy_construct_rep<AT, ET, E2A> Base;
 
-  EC ec_;
   L1 l1_;
   L2 l2_;
   L3 l3_;
@@ -597,12 +615,14 @@ template <typename AC, typename EC, typename E2A, typename L1, typename L2, type
   L7 l7_;
   L8 l8_;
 
+  const EC& ec() const { return *this; }
+
 public:
 
   void
   update_exact()
   {
-    this->et = new ET(ec_(CGAL::exact(l1_), CGAL::exact(l2_), CGAL::exact(l3_), CGAL::exact(l4_), CGAL::exact(l5_), CGAL::exact(l6_), CGAL::exact(l7_), CGAL::exact(l8_)));
+    this->et = new ET(ec()(CGAL::exact(l1_), CGAL::exact(l2_), CGAL::exact(l3_), CGAL::exact(l4_), CGAL::exact(l5_), CGAL::exact(l6_), CGAL::exact(l7_), CGAL::exact(l8_)));
     this->at = E2A()(*(this->et));
     // Prune lazy tree
     l1_ = L1();
@@ -670,31 +690,34 @@ struct Exact_converter {
 
 
 template <typename AC, typename EC, typename E2A, typename L1>
-class Lazy_construct_rep_with_vector_1 : public Lazy_construct_rep<std::vector<Object> , std::vector<Object>, E2A>
+class Lazy_construct_rep_with_vector_1
+  : public Lazy_construct_rep<std::vector<Object> , std::vector<Object>, E2A>
+  , private EC
 {
   typedef std::vector<Object> AT;
   typedef std::vector<Object> ET;
   typedef Lazy_construct_rep<AT, ET, E2A> Base;
 
-  EC ec_;
   L1 l1_;
+
+  const EC& ec() const { return *this; }
 
 public:
 
   void
   update_exact()
   {
+// TODO : This looks really unfinished...
    std::vector<Object> vec;
     this->et = new ET();
     //this->et->reserve(this->at.size());
-    ec_(CGAL::exact(l1_), std::back_inserter(*(this->et)));
+    ec()(CGAL::exact(l1_), std::back_inserter(*(this->et)));
     if(this->et==NULL)
     E2A()(*(this->et));
     this->at = E2A()(*(this->et));
     // Prune lazy tree
     l1_ = L1();
   }
-
 
   Lazy_construct_rep_with_vector_1(const AC& ac, const EC& ec, const L1& l1)
     : l1_(l1)
@@ -718,19 +741,19 @@ public:
 };
 
 
-
-
 template <typename AC, typename EC, typename E2A, typename L1, typename L2>
 class Lazy_construct_rep_with_vector_2
-   : public Lazy_construct_rep<std::vector<Object> , std::vector<Object>, E2A>
+  : public Lazy_construct_rep<std::vector<Object> , std::vector<Object>, E2A>
+  , private EC
 {
   typedef std::vector<Object> AT;
   typedef std::vector<Object> ET;
   typedef Lazy_construct_rep<AT, ET, E2A> Base;
 
-  EC ec_;
   L1 l1_;
   L2 l2_;
+
+  const EC& ec() const { return *this; }
 
 public:
 
@@ -739,13 +762,12 @@ public:
   {
     this->et = new ET();
     this->et->reserve(this->at.size());
-    ec_(CGAL::exact(l1_), CGAL::exact(l2_), std::back_inserter(*(this->et)));
+    ec()(CGAL::exact(l1_), CGAL::exact(l2_), std::back_inserter(*(this->et)));
     this->at = E2A()(*(this->et));
     // Prune lazy tree
     l1_ = L1();
     l2_ = L2();
   }
-
 
   Lazy_construct_rep_with_vector_2(const AC& ac, const EC& ec, const L1& l1, const L2& l2)
     : l1_(l1), l2_(l2)
@@ -769,38 +791,38 @@ public:
 };
 
 
-
-
 template <typename AC, typename EC, typename E2A, typename L1, typename L2, typename R1>
-class Lazy_construct_rep_2_1 : public Lazy_construct_rep<typename R1::AT , typename R1::ET, E2A>
+class Lazy_construct_rep_2_1
+  : public Lazy_construct_rep<typename R1::AT , typename R1::ET, E2A>
+  , private EC
 {
   typedef typename R1::AT AT;
   typedef typename R1::ET ET;
   typedef Lazy_construct_rep<AT, ET, E2A> Base;
 
-  EC ec_;
   L1 l1_;
   L2 l2_;
+
+  const EC& ec() const { return *this; }
+
 public:
 
   void
   update_exact()
   {
     this->et = new ET();
-    ec_(CGAL::exact(l1_), CGAL::exact(l2_), *(this->et));
+    ec()(CGAL::exact(l1_), CGAL::exact(l2_), *(this->et));
     this->at = E2A()(*(this->et));
     // Prune lazy tree
     l1_ = L1();
     l2_ = L2();
   }
 
-
   Lazy_construct_rep_2_1(const AC& ac, const EC& ec, const L1& l1, const L2& l2)
     : Lazy_construct_rep<AT,ET,E2A>(), l1_(l1), l2_(l2)
   {
     ac(CGAL::approx(l1), CGAL::approx(l2), this->at);
   }
-
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
   void
@@ -821,30 +843,32 @@ public:
 //____________________________________________________________________________________
 // The following rep class stores two non-const reference parameters of type R1 and R2
 
-
 template <typename AC, typename EC, typename E2A, typename L1, typename L2, typename R1, typename R2>
-class Lazy_construct_rep_2_2 : public Lazy_construct_rep<std::pair<typename R1::AT,typename R2::AT> , std::pair<typename R1::ET, typename R2::ET>, E2A>
+class Lazy_construct_rep_2_2
+  : public Lazy_construct_rep<std::pair<typename R1::AT,typename R2::AT> , std::pair<typename R1::ET, typename R2::ET>, E2A>
+  , private EC
 {
   typedef std::pair<typename R1::AT, typename R2::AT> AT;
   typedef std::pair<typename R1::ET, typename R2::ET> ET;
   typedef Lazy_construct_rep<AT, ET, E2A> Base;
 
-  EC ec_;
   L1 l1_;
   L2 l2_;
+
+  const EC& ec() const { return *this; }
+
 public:
 
   void
   update_exact()
   {
     this->et = new ET();
-    ec_(CGAL::exact(l1_), CGAL::exact(l2_), this->et->first, this->et->second );
+    ec()(CGAL::exact(l1_), CGAL::exact(l2_), this->et->first, this->et->second );
     this->at = E2A()(*(this->et));
     // Prune lazy tree
     l1_ = L1();
     l2_ = L2();
   }
-
 
   Lazy_construct_rep_2_2(const AC& ac, const EC& ec, const L1& l1, const L2& l2)
     : Lazy_construct_rep<AT,ET,E2A>(), l1_(l1), l2_(l2)
@@ -866,7 +890,6 @@ public:
   }
 #endif
 };
-
 
 
 //____________________________________________________________
@@ -940,19 +963,21 @@ private:
 // The magic functor for Construct_bbox_[2,3], as there is no Lazy<Bbox>
 
 template <typename LK, typename AC, typename EC>
-struct Lazy_construction_bbox {
-  static const bool Protection  = true;
+struct Lazy_construction_bbox
+{
+  static const bool Protection = true;
   typedef typename LK::AK AK;
   typedef typename LK::EK EK;
   typedef typename AC::result_type result_type;
 
   AC ac;
   EC ec;
+
   template <typename L1>
   result_type operator()(const L1& l1) const
   {
     try {
-       CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       return ac(CGAL::approx(l1));
     } catch (Interval_nt_advanced::unsafe_comparison) {
@@ -966,7 +991,7 @@ struct Lazy_construction_bbox {
 template <typename LK, typename AC, typename EC>
 struct Lazy_construction_nt {
 
-  static const bool Protection  = true;
+  static const bool Protection = true;
 
   typedef typename LK::AK AK;
   typedef typename LK::EK EK;
@@ -977,6 +1002,7 @@ struct Lazy_construction_nt {
 
   AC ac;
   EC ec;
+
   template <typename L1>
   result_type operator()(const L1& l1) const
   {
@@ -1046,7 +1072,6 @@ struct Lazy_construction_nt {
       return new Lazy_construct_rep_0<AT,ET,To_interval<ET> >(ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3), CGAL::exact(l4), CGAL::exact(l5)));
     }
   }
-
 };
 
 
@@ -1119,14 +1144,13 @@ struct Ith {
 };
 
 
-
-
 template <typename LK, typename AC, typename EC>
-struct Lazy_cartesian_const_iterator_2 {
-
+struct Lazy_cartesian_const_iterator_2
+{
   typedef typename LK::AK AK;
   typedef typename LK::EK EK;
   typedef typename LK::Cartesian_const_iterator_2 result_type;
+
   AC ac;
   EC ec;
 
@@ -1150,11 +1174,12 @@ public:
 
 
 template <typename LK, typename AC, typename EC>
-struct Lazy_cartesian_const_iterator_3 {
-
+struct Lazy_cartesian_const_iterator_3
+{
   typedef typename LK::AK AK;
   typedef typename LK::EK EK;
   typedef typename LK::Cartesian_const_iterator_3 result_type;
+
   AC ac;
   EC ec;
 
@@ -1180,12 +1205,13 @@ public:
 // This is the magic functor for functors that write their result in a  reference argument
 // In a first version we assume that the references are of type Lazy<Something>,
 // and that the result type is void
-//
 
 template <typename LK, typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
-struct Lazy_functor_2_1 {
-  static const bool Protection  = true;
+struct Lazy_functor_2_1
+{
+  static const bool Protection = true;
   typedef void result_type;
+
   AC ac;
   EC ec;
 
@@ -1212,7 +1238,8 @@ public:
 
 
 template <typename T>
- struct First {
+struct First
+{
    typedef typename T::first_type result_type;
 
    const typename T::first_type&
@@ -1222,31 +1249,34 @@ template <typename T>
    }
  };
 
- template <typename T>
- struct Second {
-   typedef typename T::second_type result_type;
+template <typename T>
+struct Second
+{
+  typedef typename T::second_type result_type;
 
-   const typename T::second_type&
-   operator()(const T& p) const
-   {
-     return p.second;
-   }
- };
+  const typename T::second_type&
+  operator()(const T& p) const
+  {
+    return p.second;
+  }
+};
 
 // This is the magic functor for functors that write their result in a reference argument
 // In a first version we assume that the references are of type Lazy<Something>,
 // and that the result type is void
-//
 
 //template <typename LK, typename AK, typename EK, typename AC, typename EC, typename EFT, typename E2A>
 template <typename LK, typename AC, typename EC>
-struct Lazy_functor_2_2 {
-  static const bool Protection  = true;
+struct Lazy_functor_2_2
+{
+  static const bool Protection = true;
+
   typedef void result_type;
   typedef typename LK::AK AK;
   typedef typename LK::EK EK;
   typedef typename EK::FT EFT;
   typedef typename LK::E2A E2A;
+
   AC ac;
   EC ec;
 
@@ -1276,12 +1306,11 @@ public:
 };
 
 
-
 // This is the magic functor for functors that write their result as Objects into an output iterator
 
 template <typename LK, typename AC, typename EC>
-struct Lazy_intersect_with_iterators {
-
+struct Lazy_intersect_with_iterators
+{
   static const bool Protection = true;
   typedef typename LK::AK AK;
   typedef typename LK::EK EK;
@@ -1290,6 +1319,7 @@ struct Lazy_intersect_with_iterators {
   typedef void result_type;
   typedef Lazy<Object, Object, EFT, E2A> Lazy_object;
   typedef Lazy<std::vector<Object>, std::vector<Object>, EFT, E2A> Lazy_vector;
+
   AC ac;
   EC ec;
 
@@ -1351,9 +1381,9 @@ public:
 };
 
 
-
 template <typename T>
-struct Object_cast {
+struct Object_cast
+{
   typedef T result_type;
 
   const T&
@@ -1370,9 +1400,10 @@ struct Object_cast {
 // TODO: write operators for other than two arguments. For the current kernel we only need two for Intersect_2
 
 template <typename LK, typename AC, typename EC>
-struct Lazy_construction_object {
-
+struct Lazy_construction_object
+{
   static const bool Protection = true;
+
   typedef typename LK::AK AK;
   typedef typename LK::EK EK;
   typedef typename EK::FT EFT;
@@ -1382,6 +1413,7 @@ struct Lazy_construction_object {
   typedef Object result_type;
 
   typedef Lazy<Object, Object, EFT, E2A> Lazy_object;
+
   AC ac;
   EC ec;
 
@@ -1419,7 +1451,6 @@ public:
     }
     return Object();
   }
-
 
   template <typename L1, typename L2>
   result_type
@@ -1462,9 +1493,9 @@ public:
 // The magic functor that has Lazy<Something> as result type
 
 template <typename LK, typename AC, typename EC>
-struct Lazy_construction {
-
-  static const bool Protection  = true;
+struct Lazy_construction
+{
+  static const bool Protection = true;
 
   typedef typename LK::AK AK;
   typedef typename LK::EK EK;
@@ -1516,7 +1547,6 @@ public:
     }
   }
 
-
   template <typename L1, typename L2, typename L3>
   result_type
   operator()(const L1& l1, const L2& l2, const L3& l3) const
@@ -1539,7 +1569,7 @@ public:
     try {
       CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
-    return Handle(new Lazy_construct_rep_4<AC, EC, E2A, L1, L2, L3, L4>(ac, ec, l1, l2, l3, l4));
+      return Handle(new Lazy_construct_rep_4<AC, EC, E2A, L1, L2, L3, L4>(ac, ec, l1, l2, l3, l4));
     } catch (Interval_nt_advanced::unsafe_comparison) {
       CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
@@ -1554,7 +1584,7 @@ public:
     try {
       CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
-    return Handle(new Lazy_construct_rep_5<AC, EC, E2A, L1, L2, L3, L4, L5>(ac, ec, l1, l2, l3, l4, l5));
+      return Handle(new Lazy_construct_rep_5<AC, EC, E2A, L1, L2, L3, L4, L5>(ac, ec, l1, l2, l3, l4, l5));
     } catch (Interval_nt_advanced::unsafe_comparison) {
       CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
@@ -1569,7 +1599,7 @@ public:
     try {
       CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
-    return Handle(new Lazy_construct_rep_6<AC, EC, E2A, L1, L2, L3, L4, L5, L6>(ac, ec, l1, l2, l3, l4, l5, l6));
+      return Handle(new Lazy_construct_rep_6<AC, EC, E2A, L1, L2, L3, L4, L5, L6>(ac, ec, l1, l2, l3, l4, l5, l6));
     } catch (Interval_nt_advanced::unsafe_comparison) {
       CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
@@ -1584,7 +1614,7 @@ public:
     try {
       CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
-    return Handle(new Lazy_construct_rep_7<AC, EC, E2A, L1, L2, L3, L4, L5, L6, L7>(ac, ec, l1, l2, l3, l4, l5, l6, l7));
+      return Handle(new Lazy_construct_rep_7<AC, EC, E2A, L1, L2, L3, L4, L5, L6, L7>(ac, ec, l1, l2, l3, l4, l5, l6, l7));
     } catch (Interval_nt_advanced::unsafe_comparison) {
       CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
@@ -1599,7 +1629,7 @@ public:
     try {
       CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
-    return Handle(new Lazy_construct_rep_8<AC, EC, E2A, L1, L2, L3, L4, L5, L6, L7, L8>(ac, ec, l1, l2, l3, l4, l5, l6, l7, l8));
+      return Handle(new Lazy_construct_rep_8<AC, EC, E2A, L1, L2, L3, L4, L5, L6, L7, L8>(ac, ec, l1, l2, l3, l4, l5, l6, l7, l8));
     } catch (Interval_nt_advanced::unsafe_comparison) {
       CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
