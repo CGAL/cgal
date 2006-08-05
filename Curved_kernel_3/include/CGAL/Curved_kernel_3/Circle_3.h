@@ -99,20 +99,51 @@ namespace CGAL {
          *this = circle.rep();
       }
 
-      const Plane_3& supporting_plane () const {
+      const Plane_3& supporting_plane() const {
         return get(base).second;
       }
 
-      const Point_3& center () const {
+      const Point_3& center() const {
         return get(base).first.center();
       }
 
-      const FT& squared_radius () const {
+      const FT& squared_radius() const {
         return get(base).first.squared_radius();
       }
 
       const Sphere_3& diametral_sphere() const {
         return get(base).first;
+      }
+
+      // this bbox function
+      // can be optimize by doing different cases
+      // for each variable = 0 (cases with is_zero)
+      const CGAL::Bbox_3 bbox() const {
+        typedef CGAL::Interval_nt<false> Interval;
+        CGAL::Interval_nt<false>::Protector ip;
+        const Plane_3 &plane = supporting_plane();
+        const Point_3 &p = center();
+        const FT &sq_r = squared_radius();
+        const Interval a = CGAL::to_interval(plane.a());
+        const Interval b = CGAL::to_interval(plane.b());
+        const Interval c = CGAL::to_interval(plane.c());
+        const Interval x = CGAL::to_interval(p.x());
+        const Interval y = CGAL::to_interval(p.y());
+        const Interval z = CGAL::to_interval(p.z());
+        const Interval r2 = CGAL::to_interval(sq_r);
+        const Interval r = CGAL::sqrt(r2); // maybe we can work with r2
+                                           // in order to save this operation
+                                           // but if the coefficients are to high
+                                           // the multiplication would lead to inf results
+        const Interval a2 = CGAL::square(a);
+        const Interval b2 = CGAL::square(b);
+        const Interval c2 = CGAL::square(c);
+        const Interval sqr_sum = a2 + b2 + c2;
+        const Interval mx = r * CGAL::sqrt((sqr_sum - a2)/sqr_sum);
+        const Interval my = r * CGAL::sqrt((sqr_sum - b2)/sqr_sum);
+        const Interval mz = r * CGAL::sqrt((sqr_sum - c2)/sqr_sum);
+        return CGAL::Bbox_3((x-mx).inf(),(y-my).inf(), (z-mz).inf(),
+                            (x+mx).sup(),(y+my).sup(), (z+mz).sup());
       }
 
       bool operator==(const Circle_3 &) const;
