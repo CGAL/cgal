@@ -750,6 +750,129 @@ void _test_sign_at(AK ak)
   assert(theSigh_at(theConstruct_1_3(1, 2, 3, 6),
 		    Root_for_spheres_2_3(0,0,0)) != CGAL::ZERO);
 }
+template <class AK>
+void _test_critical_points_circle( const std::pair<
+      typename AK::Polynomial_for_spheres_2_3,
+      typename AK::Polynomial_1_3> &c) {
+  typedef typename AK::FT FT;
+  typedef typename AK::Root_of_2 Root_of_2;
+  typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3;
+  typename AK::Construct_polynomial_for_spheres_2_3 theConstruct_2_3 =
+    AK().construct_polynomial_for_spheres_2_3_object();
+  typename AK::X_critical_points theX_critical_points =
+    AK().x_critical_points_object();
+  typename AK::Y_critical_points theY_critical_points =
+    AK().y_critical_points_object();
+  typename AK::Z_critical_points theZ_critical_points =
+    AK().z_critical_points_object();
+  typename AK::Solve theSolve = AK().solve_object();
+  typedef typename AK::Polynomial_for_spheres_2_3
+      Polynomial_for_spheres_2_3;
+  typedef typename AK::Polynomial_1_3
+      Polynomial_1_3;
+  typedef std::pair<
+      Polynomial_for_spheres_2_3,
+      Polynomial_1_3>       Equation_Circle;
+
+  /*Root_of_2 rx_min = theX_critical_points(c,true);*/
+  CGAL::Interval_nt<> ix_min = CGAL::to_interval(theX_critical_points(c,true));
+  CGAL::Interval_nt<> ix_max = CGAL::to_interval(theX_critical_points(c,false));
+  CGAL::Interval_nt<> iy_min = CGAL::to_interval(theY_critical_points(c,true));
+  CGAL::Interval_nt<> iy_max = CGAL::to_interval(theY_critical_points(c,false));
+  CGAL::Interval_nt<> iz_min = CGAL::to_interval(theZ_critical_points(c,true));
+  CGAL::Interval_nt<> iz_max = CGAL::to_interval(theZ_critical_points(c,false));
+
+  if(ix_min.inf() != ix_max.sup()) {
+
+    FT x1_min = FT(ix_min.inf());
+    FT x1_max = FT(ix_min.sup());
+    FT x2_min = FT(ix_max.inf());
+    FT x2_max = FT(ix_max.sup());
+
+    if(x1_min != x1_max) {
+      Polynomial_1_3 pt_xneg_min = Polynomial_1_3(1,0,0,-(x1_min));
+      Polynomial_1_3 pt_xneg_max = Polynomial_1_3(1,0,0,-(x1_max));
+      std::vector< std::pair<Root_for_spheres_2_3, size_t> > intersection_test_x_1;
+      std::vector< std::pair<Root_for_spheres_2_3, size_t> > intersection_test_x_2;
+      theSolve(c, pt_xneg_min, std::back_inserter(intersection_test_x_1));
+      theSolve(c, pt_xneg_max, std::back_inserter(intersection_test_x_2));
+      assert(intersection_test_x_1.size() == 0);
+      assert(intersection_test_x_2.size() > 0);
+    }
+
+    if(x2_min != x2_max) {
+      Polynomial_1_3 pt_xpos_min = Polynomial_1_3(1,0,0,-(x2_min));
+      Polynomial_1_3 pt_xpos_max = Polynomial_1_3(1,0,0,-(x2_max));
+      std::vector< std::pair<Root_for_spheres_2_3, size_t> > intersection_test_x_1;
+      std::vector< std::pair<Root_for_spheres_2_3, size_t> > intersection_test_x_2;
+      theSolve(c, pt_xpos_min, std::back_inserter(intersection_test_x_1));
+      theSolve(c, pt_xpos_max, std::back_inserter(intersection_test_x_2));
+      assert(intersection_test_x_1.size() > 0);
+      assert(intersection_test_x_2.size() == 0);
+    }
+  }
+
+  if(iy_min.inf() != iy_max.sup()) {
+
+    FT y1_min = FT(iy_min.inf());
+    FT y1_max = FT(iy_min.sup());
+    FT y2_min = FT(iy_max.inf());
+    FT y2_max = FT(iy_max.sup());
+
+    if(y1_min != y1_max) {
+      Polynomial_1_3 pt_yneg_min = Polynomial_1_3(0,1,0,-(y1_min));
+      Polynomial_1_3 pt_yneg_max = Polynomial_1_3(0,1,0,-(y1_max));
+      std::vector< std::pair<Root_for_spheres_2_3, size_t> > intersection_test_y_1;
+      std::vector< std::pair<Root_for_spheres_2_3, size_t> > intersection_test_y_2;
+      theSolve(c, pt_yneg_min, std::back_inserter(intersection_test_y_1));
+      theSolve(c, pt_yneg_max, std::back_inserter(intersection_test_y_2));
+      assert(intersection_test_y_1.size() == 0);
+      assert(intersection_test_y_2.size() > 0);
+    }
+
+    if(y2_min != y2_max) {
+      Polynomial_1_3 pt_ypos_min = Polynomial_1_3(0,1,0,-(y2_min));
+      Polynomial_1_3 pt_ypos_max = Polynomial_1_3(0,1,0,-(y2_max));
+      std::vector< std::pair<Root_for_spheres_2_3, size_t> > intersection_test_y_1;
+      std::vector< std::pair<Root_for_spheres_2_3, size_t> > intersection_test_y_2;
+      theSolve(c, pt_ypos_min, std::back_inserter(intersection_test_y_1));
+      theSolve(c, pt_ypos_max, std::back_inserter(intersection_test_y_2));
+      assert(intersection_test_y_1.size() > 0);
+      assert(intersection_test_y_2.size() == 0);
+    }
+  }
+
+  if(iz_min.inf() != iz_max.sup()) {
+
+    FT z1_min = FT(iz_min.inf());
+    FT z1_max = FT(iz_min.sup());
+    FT z2_min = FT(iz_max.inf());
+    FT z2_max = FT(iz_max.sup());
+
+    if(z1_min != z1_max) {
+      Polynomial_1_3 pt_zneg_min = Polynomial_1_3(0,0,1,-(z1_min));
+      Polynomial_1_3 pt_zneg_max = Polynomial_1_3(0,0,1,-(z1_max));
+      std::vector< std::pair<Root_for_spheres_2_3, size_t> > intersection_test_z_1;
+      std::vector< std::pair<Root_for_spheres_2_3, size_t> > intersection_test_z_2;
+      theSolve(c, pt_zneg_min, std::back_inserter(intersection_test_z_1));
+      theSolve(c, pt_zneg_max, std::back_inserter(intersection_test_z_2));
+      assert(intersection_test_z_1.size() == 0);
+      assert(intersection_test_z_2.size() > 0);
+    }
+
+    if(z2_min != z2_max) {
+      Polynomial_1_3 pt_zpos_min = Polynomial_1_3(0,0,1,-(z2_min));
+      Polynomial_1_3 pt_zpos_max = Polynomial_1_3(0,0,1,-(z2_max));
+      std::vector< std::pair<Root_for_spheres_2_3, size_t> > intersection_test_z_1;
+      std::vector< std::pair<Root_for_spheres_2_3, size_t> > intersection_test_z_2;
+      theSolve(c, pt_zpos_min, std::back_inserter(intersection_test_z_1));
+      theSolve(c, pt_zpos_max, std::back_inserter(intersection_test_z_2));
+      assert(intersection_test_z_1.size() > 0);
+      assert(intersection_test_z_2.size() == 0);
+    }
+
+  }
+}
 
 template <class AK>
 void _test_critical_points(AK ak)
@@ -789,6 +912,24 @@ void _test_critical_points(AK ak)
 	   == Root_for_spheres_2_3(x, y, z - r));
     assert(theZ_critical_points(theConstruct_2_3(x,y,z,r*r),false)
 	   == Root_for_spheres_2_3(x, y, z + r));
+  }
+
+  typedef typename AK::Polynomial_for_spheres_2_3
+      Polynomial_for_spheres_2_3;
+  typedef typename AK::Polynomial_1_3
+      Polynomial_1_3;
+  typedef std::pair<
+      Polynomial_for_spheres_2_3,
+      Polynomial_1_3>       Equation_Circle;
+
+  for(int i = 0; i < 200; i++){
+    int a = theRandom.get_int(-3,3);
+    int b = theRandom.get_int(-3,3);
+    int c = theRandom.get_int(-3,3);
+    if(a == 0 && b == 0 && c == 0) continue;
+    Equation_Circle ec = std::make_pair(Polynomial_for_spheres_2_3(0,0,0,1),
+                                       Polynomial_1_3(a,b,c,0));
+    _test_critical_points_circle<AK>(ec);
   }
   
 }
