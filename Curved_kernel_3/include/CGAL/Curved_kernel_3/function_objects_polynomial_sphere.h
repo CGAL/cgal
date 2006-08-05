@@ -767,6 +767,32 @@ template < class SK >
 
   };
 
+template <class SK>
+  class Construct_bbox_3
+    : public SK::Linear_kernel::Construct_bbox_2
+  {
+    typedef typename SK::Circular_arc_point_3      Circular_arc_point_3;
+    typedef typename SK::Circle_3                  Circle_3;
+
+  public:
+
+    typedef CGAL::Bbox_3 result_type;
+    typedef Arity_tag<1> Arity;
+
+    using SK::Linear_kernel::Construct_bbox_2::operator();
+
+    result_type operator() (const Circular_arc_point_3 & c) const
+    {
+      return c.rep().bbox();
+    }
+
+    result_type operator() (const Circle_3 & c) const
+    {
+      return c.rep().bbox();
+    }
+
+  };
+
 } // namespace SphericalFunctors
 } // namespace CGAL
 
