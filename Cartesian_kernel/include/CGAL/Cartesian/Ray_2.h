@@ -65,45 +65,6 @@ public:
   
 };
 
-
-#ifndef CGAL_NO_OSTREAM_INSERT_RAYC2
-template < class R >
-std::ostream &
-operator<<(std::ostream &os, const RayC2<R> &r)
-{
-    switch(os.iword(IO::mode)) {
-    case IO::ASCII :
-        return os << r.source() << ' ' << r.second_point();
-    case IO::BINARY :
-        return os << r.source() << r.second_point();
-    default:
-        return os << "RayC2(" << r.source() <<  ", " << r.second_point() << ")";
-    }
-}
-#endif // CGAL_NO_OSTREAM_INSERT_RAYC2
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_RAYC2
-template < class R >
-std::istream &
-operator>>(std::istream &is, RayC2<R> &r)
-{
-    typename R::Point_2 p, q;
-
-    is >> p >> q;
-
-    if (is)
-	r = RayC2<R>(p, q);
-    return is;
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_RAYC2
-
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_RAY_2_H
-
-
-
-
-
-

@@ -147,35 +147,6 @@ RayH2<R>
 RayH2<R>::opposite() const
 { return RayH2<R>( start(), - direction() ); }
 
-#ifndef CGAL_NO_OSTREAM_INSERT_RAYH2
-template < class R >
-std::ostream &
-operator<<(std::ostream &os, const RayH2<R> &r)
-{
-  switch(os.iword(IO::mode))
-  {
-    case IO::ASCII :
-        return os << r.source() << ' ' << r.second_point();
-    case IO::BINARY :
-        return os << r.source() << r.second_point();
-    default:
-       return os << "RayC2(" << r.source() <<  ", " << r.second_point() << ")";
-  }
-}
-#endif // CGAL_NO_OSTREAM_INSERT_RAYH2
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_RAYH2
-template < class R >
-std::istream &
-operator>>(std::istream &is, RayH2<R> &r)
-{
-  typename R::Point_2 p, q;
-  is >> p >> q;
-  r = RayH2<R>(p, q);
-  return is;
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_RAYH2
-
 template < class R >
 CGAL_KERNEL_INLINE
 bool

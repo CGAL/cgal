@@ -188,25 +188,73 @@ public:
 
 };
 
-#ifndef CGAL_NO_OSTREAM_INSERT_RAY_2
-template < class R >
-std::ostream &
-operator<<(std::ostream &os, const Ray_2<R> &r)
+
+template <class R >
+std::ostream&
+insert(std::ostream& os, const Ray_2<R>& r, const Cartesian_tag&) 
 {
-  return os << r.rep();
+    switch(os.iword(IO::mode)) {
+    case IO::ASCII :
+        return os << r.source() << ' ' << r.second_point();
+    case IO::BINARY :
+        return os << r.source() << r.second_point();
+    default:
+        return os << "RayC2(" << r.source() <<  ", " << r.second_point() << ")";
+    }
 }
-#endif // CGAL_NO_OSTREAM_INSERT_RAY_2
 
-#ifndef CGAL_NO_ISTREAM_EXTRACT_RAY_2
-template < class R >
-std::istream &
-operator>>(std::istream &is, Ray_2<R> &r)
+template <class R >
+std::ostream&
+insert(std::ostream& os, const Ray_2<R>& r, const Homogeneous_tag&)
 {
-  return is >> r.rep();
+  switch(os.iword(IO::mode))
+  {
+    case IO::ASCII :
+        return os << r.source() << ' ' << r.second_point();
+    case IO::BINARY :
+        return os << r.source() << r.second_point();
+    default:
+       return os << "RayH2(" << r.source() <<  ", " << r.second_point() << ")";
+  }
 }
-#endif // CGAL_NO_ISTREAM_EXTRACT_RAY_2
+
+template < class R >
+std::ostream&
+operator<<(std::ostream& os, const Ray_2<R>& r)
+{
+  return insert(os, r, typename R::Kernel_tag() );
+}
 
 
+template <class R >
+std::istream&
+extract(std::istream& is, Ray_2<R>& r, const Cartesian_tag&) 
+{
+    typename R::Point_2 p, q;
+    is >> p >> q;
+    if (is)
+        r = Ray_2<R>(p, q);
+    return is;
+}
+
+
+template <class R >
+std::istream&
+extract(std::istream& is, Ray_2<R>& r, const Homogeneous_tag&) 
+{
+  typename R::Point_2 p, q;
+  is >> p >> q;
+  if (is)
+    r = Ray_2<R>(p, q);
+  return is;
+}
+
+template < class R >
+std::istream&
+operator>>(std::istream& is, Ray_2<R>& r)
+{
+  return extract(is, r, typename R::Kernel_tag() );
+}
 
 CGAL_END_NAMESPACE
 
