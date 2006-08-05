@@ -103,6 +103,9 @@ namespace CGAL {
       return typename R::Construct_supporting_plane_3()(*this);
     }
 
+    Bbox_3 bbox() const
+    { return typename R::Construct_bbox_3()(*this); }
+
   };
 
 template < typename SK >
