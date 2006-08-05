@@ -1337,31 +1337,18 @@ public:
       Lazy_vector lv(new Lazy_construct_rep_with_vector_2<AC, EC, E2A, L1, L2>(ac, ec, l1, l2));
       // lv.approx() is a std::vector<Object([AK::Point_2,AK::Segment_2])>
       // that is, when we get here we have constructed all approximate results
-      for(unsigned int i = 0; i < lv.approx().size(); i++){
-	if(object_cast<typename AK::Point_2>(& (lv.approx()[i]))){
-	  *it = make_object(typename LK::Point_2(new Lazy_construct_rep_1<Ith<typename AK::Point_2>, Ith<typename EK::Point_2>, E2A, Lazy_vector>(Ith<typename AK::Point_2>(i), Ith<typename EK::Point_2>(i), lv)));
-	  ++it;
-	} else if(object_cast<typename AK::Segment_2>(& (lv.approx()[i]))){
-	  *it = make_object(typename LK::Segment_2(new Lazy_construct_rep_1<Ith<typename AK::Segment_2>, Ith<typename EK::Segment_2>, E2A, Lazy_vector>(Ith<typename AK::Segment_2>(i), Ith<typename EK::Segment_2>(i), lv)));
-	  ++it;
-	} else if(object_cast<typename AK::Ray_2>(& (lv.approx()[i]))){
-	  *it = make_object(typename LK::Ray_2(new Lazy_construct_rep_1<Ith<typename AK::Ray_2>, Ith<typename EK::Ray_2>, E2A, Lazy_vector>(Ith<typename AK::Ray_2>(i), Ith<typename EK::Ray_2>(i), lv)));
-	  ++it;
-	} else if(object_cast<typename AK::Line_2>(& (lv.approx()[i]))){
-	  *it = make_object(typename LK::Line_2(new Lazy_construct_rep_1<Ith<typename AK::Line_2>, Ith<typename EK::Line_2>, E2A, Lazy_vector>(Ith<typename AK::Line_2>(i), Ith<typename EK::Line_2>(i), lv)));
-	  ++it;
-	} else if(object_cast<typename AK::Triangle_2>(& (lv.approx()[i]))){
-	  *it = make_object(typename LK::Triangle_2(new Lazy_construct_rep_1<Ith<typename AK::Triangle_2>, Ith<typename EK::Triangle_2>, E2A, Lazy_vector>(Ith<typename AK::Triangle_2>(i), Ith<typename EK::Triangle_2>(i), lv)));
-	  ++it;
-	} else if(object_cast<typename AK::Iso_rectangle_2>(& (lv.approx()[i]))){
-	  *it = make_object(typename LK::Iso_rectangle_2(new Lazy_construct_rep_1<Ith<typename AK::Iso_rectangle_2>, Ith<typename EK::Iso_rectangle_2>, E2A, Lazy_vector>(Ith<typename AK::Iso_rectangle_2>(i), Ith<typename EK::Iso_rectangle_2>(i), lv)));
-	  ++it;
-	} else if(object_cast<typename AK::Circle_2>(& (lv.approx()[i]))){
-	  *it = make_object(typename LK::Circle_2(new Lazy_construct_rep_1<Ith<typename AK::Circle_2>, Ith<typename EK::Circle_2>, E2A, Lazy_vector>(Ith<typename AK::Circle_2>(i), Ith<typename EK::Circle_2>(i), lv)));
-	  ++it;
-	} else{
-	  std::cerr << "we need  more casts" << std::endl;
+      for (unsigned int i = 0; i < lv.approx().size(); i++) {
+// FIXME : I'm not sure how this work...
+#define CGAL_Kernel_obj(X) if (object_cast<typename AK::X>(& (lv.approx()[i]))) { \
+	  *it++ = make_object(typename LK::X(new Lazy_construct_rep_1<Ith<typename AK::X>, \
+                                                                      Ith<typename EK::X>, E2A, Lazy_vector> \
+                                                 (Ith<typename AK::X>(i), Ith<typename EK::X>(i), lv))); \
+          continue; \
 	}
+
+#include <CGAL/Kernel/interface_macros.h>
+
+        std::cerr << "we need  more casts" << std::endl;
       }
 
     } catch (Interval_nt_advanced::unsafe_comparison) {
@@ -1537,7 +1524,7 @@ public:
   operator()(const L1& l1, const L2& l2) const
   {
     try {
-       CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
       return Handle(new Lazy_construct_rep_2<AC, EC, E2A, L1, L2>(ac, ec, l1, l2));
     } catch (Interval_nt_advanced::unsafe_comparison) {
