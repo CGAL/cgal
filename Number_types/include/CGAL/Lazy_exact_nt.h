@@ -17,7 +17,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -89,7 +89,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#ifdef CGAL_LAZY_KERNEL_DEBUG 
+#ifdef CGAL_LAZY_KERNEL_DEBUG
 template <class T>
 void
 print_at(std::ostream& os, const T& at)
@@ -116,7 +116,7 @@ void
 print_at(std::ostream& os, const std::pair<T1,T2> & at)
 {
   os << "[ " << at.first << " | " << at.second << " ]" << std::endl ;
-} 
+}
 
 
 template <class ET>
@@ -186,11 +186,11 @@ struct Lazy_construct_rep : public Rep
       : at(), et(NULL) {}
 
   Lazy_construct_rep (const AT& a)
-      : at(a), et(NULL) 
+      : at(a), et(NULL)
   {}
 
   Lazy_construct_rep (const AT& a, const ET& e)
-      : at(a), et(new ET(e)) 
+      : at(a), et(new ET(e))
   {}
 
 private:
@@ -213,7 +213,7 @@ public:
       update_exact();
     return *et;
   }
-  
+
   ET & exact()
   {
     if (et==NULL)
@@ -265,7 +265,7 @@ struct Lazy_exact_rep : public Lazy_construct_rep<Interval_nt<false>,
   {
     this->print_at_et(os, level);
   }
-#endif  
+#endif
 
 private:
   Lazy_exact_rep (const Lazy_exact_rep&) { std::abort(); } // cannot be copied.
@@ -741,6 +741,7 @@ inline
 Lazy_exact_nt<ET>
 operator%(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
 {
+  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
   CGAL_precondition(b != 0);
   return Lazy_exact_nt<ET>(a) %= b;
 }
@@ -796,6 +797,7 @@ template <typename ET1, typename ET2>
 Lazy_exact_nt< typename Binary_operator_result<ET1, ET2>::type >
 operator+(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
 {
+  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
   return new Lazy_exact_Add<typename Binary_operator_result<ET1, ET2>::type,
                             ET1, ET2>(a, b);
 }
@@ -804,6 +806,7 @@ template <typename ET1, typename ET2>
 Lazy_exact_nt< typename Binary_operator_result<ET1, ET2>::type >
 operator-(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
 {
+  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
   return new Lazy_exact_Sub<typename Binary_operator_result<ET1, ET2>::type,
                             ET1, ET2>(a, b);
 }
@@ -812,6 +815,7 @@ template <typename ET1, typename ET2>
 Lazy_exact_nt< typename Binary_operator_result<ET1, ET2>::type >
 operator*(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
 {
+  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
   return new Lazy_exact_Mul<typename Binary_operator_result<ET1, ET2>::type,
                             ET1, ET2>(a, b);
 }
@@ -820,6 +824,7 @@ template <typename ET1, typename ET2>
 Lazy_exact_nt< typename Binary_operator_result<ET1, ET2>::type >
 operator/(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
 {
+  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
   CGAL_precondition(b != 0);
   return new Lazy_exact_Div<typename Binary_operator_result<ET1, ET2>::type,
                             ET1, ET2>(a, b);
@@ -855,7 +860,8 @@ inline
 std::pair<double,double>
 to_interval(const Lazy_exact_nt<ET> & a)
 {
-    return a.approx().pair();
+  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+  return a.approx().pair();
 }
 
 template <typename ET>
@@ -890,19 +896,26 @@ template <typename ET>
 inline
 Lazy_exact_nt<ET>
 abs(const Lazy_exact_nt<ET> & a)
-{ return new Lazy_exact_Abs<ET>(a); }
+{
+  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+  return new Lazy_exact_Abs<ET>(a);
+}
 
 template <typename ET>
 inline
 Lazy_exact_nt<ET>
 square(const Lazy_exact_nt<ET> & a)
-{ return new Lazy_exact_Square<ET>(a); }
+{
+  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+  return new Lazy_exact_Square<ET>(a);
+}
 
 template <typename ET>
 inline
 Lazy_exact_nt<ET>
 sqrt(const Lazy_exact_nt<ET> & a)
 {
+  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
   CGAL_precondition(a >= 0);
   return new Lazy_exact_Sqrt<ET>(a);
 }
@@ -911,19 +924,26 @@ template <typename ET>
 inline
 Lazy_exact_nt<ET>
 min(const Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
-{ return new Lazy_exact_Min<ET>(a, b); }
+{
+  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+  return new Lazy_exact_Min<ET>(a, b);
+}
 
 template <typename ET>
 inline
 Lazy_exact_nt<ET>
 max(const Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
-{ return new Lazy_exact_Max<ET>(a, b); }
+{
+  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+  return new Lazy_exact_Max<ET>(a, b);
+}
 
 // gcd kills filtering.
 template <typename ET>
 Lazy_exact_nt<ET>
 gcd(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
 {
+  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
   return Lazy_exact_nt<ET>(CGAL_NTS gcd(a.exact(), b.exact()));
 }
 
@@ -938,7 +958,8 @@ operator>> (std::istream & is, Lazy_exact_nt<ET> & a)
 {
   ET e;
   is >> e;
-  a = e;
+  if (is)
+    a = e;
   return is;
 }
 
