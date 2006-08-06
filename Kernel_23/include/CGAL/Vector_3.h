@@ -26,6 +26,7 @@
 
 #include <CGAL/Origin.h>
 #include <CGAL/Kernel/mpl.h>
+#include <CGAL/representation_tags.h>
 
 CGAL_BEGIN_NAMESPACE
 
