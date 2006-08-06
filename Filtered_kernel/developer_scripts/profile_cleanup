@@ -1,0 +1,29 @@
+#!/bin/sh
+#
+# Copyright 2006  INRIA Sophia-Antipolis, France.
+# All rights reserved.
+#
+# Author : Sylvain Pion
+#
+#
+# This script simplifies the output of CGAL::Profile_counter.
+# It may need to be adapted to specific needs, currently it is
+# supposed to work well for Lazy_kernel.
+
+cat $@ | sed -e 's/CGAL:://g' \
+             -e 's/typename Type_mapper<typename AC::result_type, typename LK::AK, LK>::type Lazy_construction<LK, AC, EC>::operator()//g' \
+             -e 's/Simple_cartesian<Interval_nt_advanced>/IK/g' \
+             -e 's/Cartesian<Gmpq>/EK/g' \
+             -e 's/Lazy_kernel<EK, IK, Cartesian_converter<EK, IK, To_interval<Gmpq> > >/LK/g' \
+             -e 's/CommonKernelFunctors:://g' \
+             -e 's/CartesianKernelFunctors:://g' \
+             -e 's/typename Filtered_predicate<EP, AP, C2E, C2A, Protection>::result_type Filtered_predicate<EP, AP, C2E, C2A, Protection>::operator()//g' \
+             -e 's/ const //g' \
+             -e 's/, AP.*]/]/g' \
+             -e 's/, EC.*]/]/g' \
+             -e 's/const //g' \
+             -e 's/&//g' \
+             -e 's/typename //g' \
+             -e 's/with //g' \
+       | grep Profile_counter \
+       | sort -t":" -k2

@@ -492,6 +492,7 @@ Envelope_3/doc_tex/Envelope_3/fig/ex_triangles.fig -text svneol=unset#applicatio
 Envelope_3/doc_tex/Envelope_3/fig/ex_triangles.gif -text svneol=unset#image/gif
 Envelope_3/doc_tex/Envelope_3/fig/ex_triangles.pdf -text svneol=unset#application/pdf
 Envelope_3/examples/Envelope_3/spheres.dat -text
+Filtered_kernel/developer_scripts/profile_cleanup -text
 Generator/demo/Generator/help/index.html svneol=native#text/html
 Generator/doc_tex/Generator/Segment_generator_prog1.gif -text svneol=unset#image/gif
 Generator/doc_tex/Generator/Segment_generator_prog1.pdf -text svneol=unset#application/pdf
