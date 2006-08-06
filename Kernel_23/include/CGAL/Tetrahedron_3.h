@@ -133,25 +133,35 @@ public:
 
 };
 
-#ifndef CGAL_NO_OSTREAM_INSERT_TETRAHEDRON_3
-template < class R >
-std::ostream&
-operator<<(std::ostream& os, const Tetrahedron_3<R>& t)
-{
-  typedef typename  R::Kernel_base::Tetrahedron_3  Rep;
-  return os << static_cast<const Rep&>(t);
-}
-#endif // CGAL_NO_OSTREAM_INSERT_TETRAHEDRON_3
 
-#ifndef CGAL_NO_ISTREAM_EXTRACT_TETRAHEDRON_3
 template < class R >
-std::istream&
-operator>>(std::istream& is, Tetrahedron_3<R>& t)
+std::ostream &
+operator<<(std::ostream &os, const Tetrahedron_3<R> &t)
 {
-  typedef typename  R::Kernel_base::Tetrahedron_3  Rep;
-  return is >> static_cast<Rep&>(t);
+    switch(os.iword(IO::mode)) {
+    case IO::ASCII :
+        return os << t[0] << ' ' << t[1] << ' ' << t[2] << ' ' << t[3];
+    case IO::BINARY :
+        return os << t[0]  << t[1]  << t[2] << t[3];
+    default:
+        os << "Tetrahedron_3(" << t[0] <<  ", " << t[1] <<   ", " << t[2];
+        os <<  ", " << t[3] << ")";
+        return os;
+    }
 }
-#endif // CGAL_NO_ISTREAM_EXTRACT_TETRAHEDRON_3
+
+template < class R >
+std::istream &
+operator>>(std::istream &is, Tetrahedron_3<R> &t)
+{
+    typename R::Point_3 p, q, r, s;
+
+    is >> p >> q >> r >> s;
+
+    if (is)
+        t = Tetrahedron_3<R>(p, q, r, s);
+    return is;
+}
 
 CGAL_END_NAMESPACE
 

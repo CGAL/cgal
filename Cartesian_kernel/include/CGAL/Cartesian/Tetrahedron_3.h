@@ -229,39 +229,6 @@ TetrahedronC3<R>::bbox() const
        + construct_bbox_3(vertex(2)) + construct_bbox_3(vertex(3));
 }
 
-#ifndef CGAL_NO_OSTREAM_INSERT_TETRAHEDRONC3
-template < class R >
-std::ostream &
-operator<<(std::ostream &os, const TetrahedronC3<R> &t)
-{
-    switch(os.iword(IO::mode)) {
-    case IO::ASCII :
-        return os << t[0] << ' ' << t[1] << ' ' << t[2] << ' ' << t[3];
-    case IO::BINARY :
-        return os << t[0]  << t[1]  << t[2] << t[3];
-    default:
-        os << "TetrahedronC3(" << t[0] <<  ", " << t[1] <<   ", " << t[2];
-        os <<  ", " << t[3] << ")";
-        return os;
-    }
-}
-#endif // CGAL_NO_OSTREAM_INSERT_TETRAHEDRONC3
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_TETRAHEDRONC3
-template < class R >
-std::istream &
-operator>>(std::istream &is, TetrahedronC3<R> &t)
-{
-    typename R::Point_3 p, q, r, s;
-
-    is >> p >> q >> r >> s;
-
-    if (is)
-	t = TetrahedronC3<R>(p, q, r, s);
-    return is;
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_TETRAHEDRONC3
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_TETRAHEDRON_3_H
