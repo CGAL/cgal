@@ -61,7 +61,7 @@ clean:    \
 # extensive_parameterization_test:
 
 Mesh_cutter$(OBJ_EXT) :
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $(EXAMPLES)/Mesh_cutter.C
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $(EXAMPLES)/Mesh_cutter.cpp
 
 extensive_parameterization_test_objs = 	\
           Mesh_cutter$(OBJ_EXT) \

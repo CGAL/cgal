@@ -145,7 +145,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\examples\Surface_mesh_parameterization\Mesh_cutter.C">
+				RelativePath="..\..\examples\Surface_mesh_parameterization\Mesh_cutter.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
