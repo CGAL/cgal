@@ -147,38 +147,9 @@ template < class R >
 inline
 bool
 LineC3<R>::is_degenerate() const
-{ // FIXME : predicate
+{
   return to_vector() == NULL_VECTOR;
 }
-
-#ifndef CGAL_CARTESIAN_NO_OSTREAM_INSERT_LINEC3
-template < class R >
-std::ostream &
-operator<<(std::ostream &os, const LineC3<R> &l)
-{
-    switch(os.iword(IO::mode)) {
-    case IO::ASCII :
-        return os << l.point(0) << ' ' << l.point(1);
-    case IO::BINARY :
-        return os << l.point(0) <<  l.point(1);
-    default:
-        return  os << "LineC3(" << l.point(0) << ", " << l.point(1) << ")";
-    }
-}
-#endif // CGAL_CARTESIAN_NO_OSTREAM_INSERT_LINEC3
-
-#ifndef CGAL_CARTESIAN_NO_ISTREAM_EXTRACT_LINEC3
-template < class R >
-std::istream &
-operator>>(std::istream &is, LineC3<R> &l)
-{
-    typename R::Point_3 p, q;
-    is >> p >> q;
-    if (is)
-	l = LineC3<R>(p, q);
-    return is;
-}
-#endif // CGAL_CARTESIAN_NO_ISTREAM_EXTRACT_LINEC3
 
 CGAL_END_NAMESPACE
 

@@ -128,26 +128,30 @@ public:
   
 };
 
-#ifndef CGAL_NO_OSTREAM_INSERT_LINE_3
 template < class R >
-std::ostream&
-operator<<(std::ostream& os, const Line_3<R>& l)
+std::ostream &
+operator<<(std::ostream &os, const Line_3<R> &l)
 {
-  typedef typename  R::Kernel_base::Line_3  Rep;
-  return os << static_cast<const Rep&>(l);
+    switch(os.iword(IO::mode)) {
+    case IO::ASCII :
+        return os << l.point(0) << ' ' << l.point(1);
+    case IO::BINARY :
+        return os << l.point(0) <<  l.point(1);
+    default:
+        return  os << "Line_3(" << l.point(0) << ", " << l.point(1) << ")";
+    }
 }
-#endif // CGAL_NO_OSTREAM_INSERT_LINE_3
 
-#ifndef CGAL_NO_ISTREAM_EXTRACT_LINE_3
 template < class R >
-std::istream&
-operator>>(std::istream & is, Line_3<R> & p)
+std::istream &
+operator>>(std::istream &is, Line_3<R> &l)
 {
-  typedef typename  R::Kernel_base::Line_3  Rep;
-  is >> static_cast<Rep&>(p);
-  return is;
+    typename R::Point_3 p, q;
+    is >> p >> q;
+    if (is)
+        l = Line_3<R>(p, q);
+    return is;
 }
-#endif // CGAL_NO_ISTREAM_EXTRACT_LINE_3
 
 CGAL_END_NAMESPACE
 
