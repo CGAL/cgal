@@ -1,8 +1,5 @@
-// Copyright (c) 2001  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 2005,2006  INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -35,14 +32,16 @@ CGAL_BEGIN_NAMESPACE
 
 struct Profile_counter
 {
-  Profile_counter(const std::string & ss)
-	: i(0), s(ss) {}
+    Profile_counter(const std::string & ss)
+      : i(0), s(ss) {}
 
     void operator++() { ++i; }
 
     ~Profile_counter()
     {
-	std::cerr << "[CGAL::Profile_counter] " << s << " = " << i << std::endl;
+        std::cerr << "[CGAL::Profile_counter] ";
+        std::cerr.width(10);
+        std::cerr << i << " " << s << std::endl;
     }
 
 private:
