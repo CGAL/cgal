@@ -28,5 +28,9 @@ cat $@ | sed -e 's/CGAL:://g' \
              -e 's/Lazy_exact_nt<EC::result_type> Lazy_construction_nt<LK, AC, EC>::operator()//g' \
              -e 's/Lazy_exact_nt<Binary_operator_result<T1, T2>::type> //g' \
              -e 's/Object Lazy_construction_object<LK, AC, EC>::operator()//g' \
+             -e 's/, LK = LK//g' \
+             -e 's/<LK >//g' \
+             -e 's/<EK >//g' \
+             -e 's/<IK >//g' \
        | grep Profile_counter \
        | sort -t":" -k2
