@@ -342,35 +342,6 @@ Iso_cuboidC3<R>::bbox() const
   return construct_bbox_3(min()) + construct_bbox_3(max());
 }
 
-#ifndef CGAL_NO_OSTREAM_INSERT_ISO_CUBOIDC3
-template < class R >
-std::ostream &
-operator<<(std::ostream& os, const Iso_cuboidC3<R>& r)
-{
-  switch(os.iword(IO::mode)) {
-  case IO::ASCII :
-    return os << r.min() << ' ' << r.max();
-  case IO::BINARY :
-    return os << r.min() << r.max();
-  default:
-    return os << "Iso_cuboidC3(" << r.min() << ", " << r.max() << ")";
-  }
-}
-#endif // CGAL_NO_OSTREAM_INSERT_ISO_CUBOIDC3
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_ISO_CUBOIDC3
-template < class R >
-std::istream &
-operator>>(std::istream& is, Iso_cuboidC3<R>& r)
-{
-  typename R::Point_3 p, q;
-  is >> p >> q;
-  if (is)
-      r = Iso_cuboidC3<R>(p, q);
-  return is;
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_ISO_CUBOIDC3
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_ISO_CUBOID_3_H

@@ -211,25 +211,31 @@ public:
 
 };
 
-#ifndef CGAL_NO_OSTREAM_INSERT_ISO_CUBOID_3
+
 template < class R >
-std::ostream&
+std::ostream &
 operator<<(std::ostream& os, const Iso_cuboid_3<R>& r)
 {
-  typedef typename  R::Kernel_base::Iso_cuboid_3  Rep;
-  return  os << (const Rep& )r; }
-#endif // CGAL_NO_OSTREAM_INSERT_ISO_CUBOID_3
+  switch(os.iword(IO::mode)) {
+  case IO::ASCII :
+    return os << r.min() << ' ' << r.max();
+  case IO::BINARY :
+    return os << r.min() << r.max();
+  default:
+    return os << "Iso_cuboid_3(" << r.min() << ", " << r.max() << ")";
+  }
+}
 
-#ifndef CGAL_NO_ISTREAM_EXTRACT_ISO_CUBOID_3
 template < class R >
-std::istream&
+std::istream &
 operator>>(std::istream& is, Iso_cuboid_3<R>& r)
 {
-  typedef typename  R::Kernel_base::Iso_cuboid_3  Rep;
-  is >> (Rep& )r;
+  typename R::Point_3 p, q;
+  is >> p >> q;
+  if (is)
+      r = Iso_cuboid_3<R>(p, q);
   return is;
 }
-#endif // CGAL_NO_ISTREAM_EXTRACT_ISO_CUBOID_3
 
 CGAL_END_NAMESPACE
 
