@@ -58,6 +58,16 @@ linear time by traversing both diagrams in parallel.
 \label{env2_sec:env_diag}
 %=============================
 
+The package basically contains two sets of free functions:
+\ccc{lower_envelope_x_monotone_2 (begin, end, diag)} (similarly
+ \ccc{upper_envelope_x_monotone_2()}) accepts a range of $x$-monotone
+curves and computes the envelope diagram; 
+\ccc{lower_envelope_2 (begin, end, diag)} (similarly
+\ccc{upper_envelope_2()}) accepts a range of {\em arbitrary} (not
+necessarily $x$-monotone) curves and computes the envelope diagram.
+In this section we explain more on the structure of the envelope
+diagram these functions output.
+
 \begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
@@ -78,6 +88,51 @@ this edge. Note that there exists one edge that represents an overlap
 and there are also a few edges that represent empty
 intervals.\label{env2_fig:min_diag}}
 \end{figure}
+
+A minimization diagram or a maximization diagram is represented by
+a model of the concept \ccc{EnvelopeDiagram_1}. This concept defines
+the structure of the subdivision of the $x$-axis into $0$-dimensional
+cells called {\em vertices}, and $1$-dimensional cells called {\em edges}.
+The important property of this subdivision is that the identity of
+the curves that induce the lower envelope (or the upper envelope)
+over each cell is fixed.
+
+Figure~\ref{env2_fig:min_diag} shows the lower envelope of a set of
+eight line segments, and sketches the structure of their minimization
+diagram. Each diagram vertex $v$ is associated with a point $p_v$ on
+the envelope, which corresponds to either a curve endpoint
+or to an intersection point of two curves (or more). The vertex is
+therefore associated with a set of $x$-monotone curves that induce the
+envelope over $p_v$. Each vertex is incident to two edges, one lying
+to its left and the other to its right.
+
+An edge in the envelope diagram represent a continuous portion of the
+$x$-axis, and is associated with a set of $x$-monotone curves that
+induce the envelope over this interval. Note that this set may be
+empty if no $x$-monotone curves are defined over this interval. In
+degenerate situations where curves overlap, there may be more than
+a single curve that induces the envelope over the interval the edge
+represents. Almost all diagram edges are bounded by two vertices, one
+to the edge left and the other to its right. The diagram also contains
+two unbounded edges, a {\em leftmost} edge, representing an interval
+that starts at $-\infty$, and a {\em rightmost} edge, representing an
+interval that ends at $\infty$. (In the example depicted in 
+Figure~\ref{env2_fig:min_diag} we have only bounded curves, so the
+leftmost and rightmost edges represent empty intervals. This is not
+the case when we deal, for example, with envelopes of sets of lines.)
+Note that a diagram may contain no vertices at all, in which case it
+comprises a single edge.
+
+Any model of the \ccRefName\ concept must define a geometric
+traits class, which in turn defines the \ccc{Point_2} and 
+\ccc{X_monotone_curve_2} types defined with the diagram features.
+The geometric traits class must be a model of the 
+\ccc{ArrangementXMonotoneTraits_2} concept in case we compute
+envelopes of $x$-monotone curves. If we are interested in handling
+arbitrary (not necessarily $x$-monotone) curves, the traits class
+must be a model of the refined \ccc{ArrangementTraits_2} concept.
+In the latter case, the traits class also defines a \ccc{Curve_2}
+type.
 
 \section{Examples}
 %=================

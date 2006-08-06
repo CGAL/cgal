@@ -1,0 +1,29 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Env_default_diagram.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Envelope_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Env_default_diagram_1<Traits>}
+
+\ccDefinition
+%============
+
+The default envelope-diagram class used by to represent the lower or the
+upper envelope of a set of curves. It is is parameterized by a traits class,
+which is a model of the \ccc{ArrangementXMontoneTraits_2} concept, in case
+we handle only $x$-monotone curves, or of the refined \ccc{ArrangementTraits_2}
+concept in case we hanlde arbitrary planar curves.
+
+\ccInclude{CGAL/Env_default_diagram_1.h}
+
+\ccIsModel
+    \ccc{EnvelopeDiagram_1}
+
+\end{ccRefClass}
+
+\ccRefPageEnd

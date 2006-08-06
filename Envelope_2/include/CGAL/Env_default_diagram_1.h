@@ -242,13 +242,6 @@ public:
       return (_rightP);
     }
 
-    /*! Set the point. */
-    void set_point (const Point_2& p)
-    {
-      _p = p;
-      return;
-    }
-
     /*! Clear the list of curves. */
     void clear_curves ()
     {
