@@ -225,37 +225,6 @@ collinear_has_on(const typename SegmentC3<R>::Point_3 &p) const
   return collinear_are_ordered_along_line(source(), p, target());
 }
 
-#ifndef CGAL_NO_OSTREAM_INSERT_SEGMENTC3
-template < class R >
-std::ostream &
-operator<<(std::ostream &os, const SegmentC3<R> &s)
-{
-    switch(os.iword(IO::mode)) {
-    case IO::ASCII :
-        return os << s.source() << ' ' << s.target();
-    case IO::BINARY :
-        return os << s.source() << s.target();
-    default:
-        return os << "SegmentC3(" << s.source() <<  ", " << s.target() << ")";
-    }
-}
-#endif // CGAL_NO_OSTREAM_INSERT_SEGMENTC3
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_SEGMENTC3
-template < class R >
-std::istream &
-operator>>(std::istream &is, SegmentC3<R> &s)
-{
-    typename R::Point_3 p, q;
-
-    is >> p >> q;
-
-    if (is)
-	s = SegmentC3<R>(p, q);
-    return is;
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_SEGMENTC3
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_SEGMENT_3_H

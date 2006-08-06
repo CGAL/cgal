@@ -188,25 +188,32 @@ Segment_3<R_>::vertex(int i) const
 }
 
 
-#ifndef CGAL_NO_OSTREAM_INSERT_SEGMENT_3
-template < class R>
-std::ostream&
-operator<<(std::ostream& os, const Segment_3<R>& s)
+template < class R >
+std::ostream &
+operator<<(std::ostream &os, const Segment_3<R> &s)
 {
-  typedef typename  R::Kernel_base::Segment_3  Rep;
-  return os << static_cast<const Rep&>(s);
+    switch(os.iword(IO::mode)) {
+    case IO::ASCII :
+        return os << s.source() << ' ' << s.target();
+    case IO::BINARY :
+        return os << s.source() << s.target();
+    default:
+        return os << "Segment_3(" << s.source() <<  ", " << s.target() << ")";
+    }
 }
-#endif // CGAL_NO_OSTREAM_INSERT_SEGMENT_3
 
-#ifndef CGAL_NO_ISTREAM_EXTRACT_SEGMENT_3
-template < class R>
-std::istream&
-operator>>(std::istream& is, Segment_3<R>& s)
+template < class R >
+std::istream &
+operator>>(std::istream &is, Segment_3<R> &s)
 {
-  typedef typename  R::Kernel_base::Segment_3  Rep;
-  return is >> static_cast<Rep&>(s);
+    typename R::Point_3 p, q;
+
+    is >> p >> q;
+
+    if (is)
+        s = Segment_3<R>(p, q);
+    return is;
 }
-#endif // CGAL_NO_ISTREAM_EXTRACT_SEGMENT_3
 
 CGAL_END_NAMESPACE
 
