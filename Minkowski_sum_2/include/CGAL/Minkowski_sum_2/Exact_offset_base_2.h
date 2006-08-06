@@ -115,6 +115,9 @@ protected:
 
     // Traverse the polygon vertices and edges and construct the arcs that
     // constitute the single convolution cycle.
+    Alg_kernel                    alg_ker;
+    typename Alg_kernel::Equal_2  f_equal = alg_ker.equal_2_object();
+
     Nt_traits       nt_traits;
     const Rational  sqr_r = CGAL::square (r);
     const Algebraic alg_r = nt_traits.convert (r);
@@ -126,7 +129,6 @@ protected:
     Alg_point_2     op1, op2;            // The edge points of the offset edge.
     Alg_point_2     first_op;            // The first offset point.
     Algebraic       a, b, c;
-
 
     unsigned int                    curve_index = 0;
     Traits_2                        traits;
@@ -187,28 +189,31 @@ protected:
       }
       else
       {
-        // Connect op2 (from the previous iteration) and op1 with a circular
-        // arc, whose supporting circle is (x1, x2) with radius r.
-        arc = Curve_2 (Rat_circle_2 (*curr, sqr_r),
-                       CGAL::COUNTERCLOCKWISE,
-                       op2, op1);
-
-        // Subdivide the arc into x-monotone subarcs and append them to the
-        // convolution cycle.
-        xobjs.clear();
-        f_make_x_monotone (arc, std::back_inserter(xobjs));
-
-        for (xobj_it = xobjs.begin(); xobj_it != xobjs.end(); ++xobj_it)
+        if (! f_equal (op2, op1))
         {
-          assign_success = CGAL::assign (xarc, *xobj_it);
-          CGAL_assertion (assign_success);
+          // Connect op2 (from the previous iteration) and op1 with a circular
+          // arc, whose supporting circle is (x1, x2) with radius r.
+          arc = Curve_2 (Rat_circle_2 (*curr, sqr_r),
+                         CGAL::COUNTERCLOCKWISE,
+                         op2, op1);
+          
+          // Subdivide the arc into x-monotone subarcs and append them to the
+          // convolution cycle.
+          xobjs.clear();
+          f_make_x_monotone (arc, std::back_inserter(xobjs));
+          
+          for (xobj_it = xobjs.begin(); xobj_it != xobjs.end(); ++xobj_it)
+          {
+            assign_success = CGAL::assign (xarc, *xobj_it);
+            CGAL_assertion (assign_success);
 
-          *oi = Labeled_curve_2 (xarc,
-                                 X_curve_label (xarc.is_directed_right(),
-                                                cycle_id,
-                                                curve_index));
-          ++oi;
-          curve_index++;
+            *oi = Labeled_curve_2 (xarc,
+                                   X_curve_label (xarc.is_directed_right(),
+                                                  cycle_id,
+                                                  curve_index));
+            ++oi;
+            curve_index++;
+          }
         }
       }
 
@@ -240,35 +245,38 @@ protected:
     
     } while (curr != first);
 
-    // Close the convolution cycle by creating the final circular arc,
-    // centered at the first vertex.
-    arc = Curve_2 (Rat_circle_2 (*first, sqr_r),
-                   CGAL::COUNTERCLOCKWISE,
-                   op2, first_op);
-
-    // Subdivide the arc into x-monotone subarcs and append them to the
-    // convolution cycle.
-    bool           is_last;
-
-    xobjs.clear();
-    f_make_x_monotone (arc, std::back_inserter(xobjs));
-
-    xobj_it = xobjs.begin();
-    while (xobj_it != xobjs.end())
+    if (! f_equal (op2, first_op))
     {
-      assign_success = CGAL::assign (xarc, *xobj_it);
-      CGAL_assertion (assign_success);
+      // Close the convolution cycle by creating the final circular arc,
+      // centered at the first vertex.
+      arc = Curve_2 (Rat_circle_2 (*first, sqr_r),
+                     CGAL::COUNTERCLOCKWISE,
+                     op2, first_op);
       
-      ++xobj_it;
-      is_last = (xobj_it == xobjs.end());
-
-      *oi = Labeled_curve_2 (xarc,
-                             X_curve_label (xarc.is_directed_right(),
-                                            cycle_id,
-                                            curve_index,
-                                            is_last));
-      ++oi;
-      curve_index++;
+      // Subdivide the arc into x-monotone subarcs and append them to the
+      // convolution cycle.
+      bool           is_last;
+      
+      xobjs.clear();
+      f_make_x_monotone (arc, std::back_inserter(xobjs));
+      
+      xobj_it = xobjs.begin();
+      while (xobj_it != xobjs.end())
+      {
+        assign_success = CGAL::assign (xarc, *xobj_it);
+        CGAL_assertion (assign_success);
+        
+        ++xobj_it;
+        is_last = (xobj_it == xobjs.end());
+        
+        *oi = Labeled_curve_2 (xarc,
+                               X_curve_label (xarc.is_directed_right(),
+                                              cycle_id,
+                                              curve_index,
+                                              is_last));
+        ++oi;
+        curve_index++;
+      }
     }
 
     return (oi);

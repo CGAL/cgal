@@ -95,10 +95,9 @@ public:
     do
     {
       out_bound.push_back (circ->source()->point());
-      ++circ;
+      --circ;
       
     } while (circ != first);
-    
     ++hole_it;
 
     // Locate the holes in the union: Go over all arrangement faces.
@@ -116,10 +115,10 @@ public:
         do
         {
           pgn_hole.push_back (circ->source()->point());
-          ++circ;
+          --circ;
           
         } while (circ != first);
-        
+
         // Insert it to the containers of holes in the Minkowski sum.
         *holes = pgn_hole;
         ++holes;
