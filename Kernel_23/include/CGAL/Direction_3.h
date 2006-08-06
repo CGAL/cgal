@@ -116,25 +116,112 @@ public:
     if (i==1) return dy();
     return dz();
   }
-  
 
 };
 
-#ifndef CGAL_NO_OSTREAM_INSERT_DIRECTION_3
-template < class R >
-std::ostream& operator<<(std::ostream& os, const Direction_3<R>& d)
-{
-  typedef typename  R::Kernel_base::Direction_3 Rep;
-  return os << static_cast<const Rep&>(d); }
-#endif // CGAL_NO_OSTREAM_INSERT_DIRECTION_3
 
-#ifndef CGAL_NO_ISTREAM_EXTRACT_DIRECTION_3
-template < class R >
-std::istream& operator>>(std::istream& is, Direction_3<R>& p)
+template <class R >
+std::ostream&
+insert(std::ostream& os, const Direction_3<R>& d, const Cartesian_tag&) 
 {
-  typedef typename  R::Kernel_base::Direction_3  Rep;
-  return is >> static_cast<Rep&>(p); }
-#endif // CGAL_NO_ISTREAM_EXTRACT_DIRECTION_3
+  typename R::Vector_3 v = d.to_vector();
+  switch(os.iword(IO::mode)) {
+    case IO::ASCII :
+      return os << v.x() << ' ' << v.y()  << ' ' << v.z();
+    case IO::BINARY :
+      write(os, v.x());
+      write(os, v.y());
+      write(os, v.z());
+      return os;
+    default:
+      os << "DirectionC3(" << v.x() << ", " << v.y() << ", " << v.z() << ")";
+      return os;
+  }
+}
+
+template <class R >
+std::ostream&
+insert(std::ostream& os, const Direction_3<R>& d, const Homogeneous_tag&)
+{
+  switch(os.iword(IO::mode))
+  {
+    case IO::ASCII :
+        return os << d.dx() << ' ' << d.dy() << ' ' << d.dz();
+    case IO::BINARY :
+        write(os, d.dx());
+        write(os, d.dy());
+        write(os, d.dz());
+        return os;
+    default:
+        return os << "DirectionH3(" << d.dx() << ", "
+                                    << d.dy() << ", "
+                                    << d.dz() << ')';
+  }
+}
+
+template < class R >
+std::ostream&
+operator<<(std::ostream& os, const Direction_3<R>& d)
+{
+  return insert(os, d, typename R::Kernel_tag() );
+}
+
+
+template <class R >
+std::istream&
+extract(std::istream& is, Direction_3<R>& d, const Cartesian_tag&) 
+{
+  typename R::FT x, y, z;
+  switch(is.iword(IO::mode)) {
+    case IO::ASCII :
+      is >> x >> y >> z;
+      break;
+    case IO::BINARY :
+      read(is, x);
+      read(is, y);
+      read(is, z);
+      break;
+    default:
+      std::cerr << "" << std::endl;
+      std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+      break;
+  }
+  if (is)
+      d = Direction_3<R>(x, y, z);
+  return is;
+}
+
+template <class R >
+std::istream&
+extract(std::istream& is, Direction_3<R>& d, const Homogeneous_tag&) 
+{
+  typename R::RT x, y, z;
+  switch(is.iword(IO::mode))
+  {
+    case IO::ASCII :
+        is >> x >> y >> z;
+        break;
+    case IO::BINARY :
+        read(is, x);
+        read(is, y);
+        read(is, z);
+        break;
+    default:
+        std::cerr << "" << std::endl;
+        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        break;
+  }
+  if (is)
+    d = Direction_3<R>(x, y, z);
+  return is;
+}
+
+template < class R >
+std::istream&
+operator>>(std::istream& is, Direction_3<R>& d)
+{
+  return extract(is, d, typename R::Kernel_tag() );
+}
 
 CGAL_END_NAMESPACE
 
