@@ -135,34 +135,6 @@ RayH3<R>::opposite() const
 { return RayH3<R>( start(), - direction() ); }
 
 
-#ifndef CGAL_NO_OSTREAM_INSERT_RAYH3
-template < class R >
-std::ostream &operator<<(std::ostream &os, const RayH3<R> &r)
-{
-  switch(os.iword(IO::mode))
-  {
-      case IO::ASCII :
-          return os << r.start() << ' ' << r.direction();
-      case IO::BINARY :
-          return os<< r.start() << r.direction();
-      default:
-          return os << "RayH3(" << r.start() <<  ", " << r.direction() << ")";
-  }
-}
-#endif // CGAL_NO_OSTREAM_INSERT_RAYH3
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_RAYH3
-template < class R  >
-std::istream &operator>>(std::istream &is, RayH3<R> &r)
-{
-  typename R::Point_3 p;
-  typename R::Direction_3 d;
-  is >> p >> d;
-  r = RayH3<R>(p, d);
-  return is;
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_RAYH3
-
 template < class R >
 CGAL_KERNEL_INLINE
 bool

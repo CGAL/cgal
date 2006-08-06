@@ -148,25 +148,76 @@ public:
 
 };
 
-#ifndef CGAL_NO_OSTREAM_INSERT_RAY_3
+
+template <class R >
+std::ostream&
+insert(std::ostream& os, const Ray_3<R>& r, const Cartesian_tag&) 
+{
+    switch(os.iword(IO::mode)) {
+    case IO::ASCII :
+        return os << r.start() << ' ' << r.direction();
+    case IO::BINARY :
+        return os<< r.start() << r.direction();
+    default:
+        return os << "RayC3(" << r.start() <<  ", " << r.direction() << ")";
+    }
+}
+
+template <class R >
+std::ostream&
+insert(std::ostream& os, const Ray_3<R>& r, const Homogeneous_tag&)
+{
+  switch(os.iword(IO::mode))
+  {
+      case IO::ASCII :
+          return os << r.start() << ' ' << r.direction();
+      case IO::BINARY :
+          return os<< r.start() << r.direction();
+      default:
+          return os << "RayH3(" << r.start() <<  ", " << r.direction() << ")";
+  }
+}
+
 template < class R >
 std::ostream&
 operator<<(std::ostream& os, const Ray_3<R>& r)
 {
-  typedef typename  R::Kernel_base::Ray_3  Rep;
-  return os << static_cast<const Rep&>(r);
+  return insert(os, r, typename R::Kernel_tag() );
 }
-#endif // CGAL_NO_OSTREAM_INSERT_RAY_3
 
-#ifndef CGAL_NO_ISTREAM_EXTRACT_RAY_3
+
+template <class R >
+std::istream&
+extract(std::istream& is, Ray_3<R>& r, const Cartesian_tag&) 
+{
+    typename R::Point_3 p;
+    typename R::Direction_3 d;
+
+    is >> p >> d;
+
+    if (is)
+        r = Ray_3<R>(p, d);
+    return is;
+}
+
+template <class R >
+std::istream&
+extract(std::istream& is, Ray_3<R>& r, const Homogeneous_tag&) 
+{
+  typename R::Point_3 p;
+  typename R::Direction_3 d;
+  is >> p >> d;
+  if (is)
+    r = Ray_3<R>(p, d);
+  return is;
+}
+
 template < class R >
 std::istream&
 operator>>(std::istream& is, Ray_3<R>& r)
 {
-  typedef typename  R::Kernel_base::Ray_3  Rep;
-  return is >> static_cast<Rep&>(r);
+  return extract(is, r, typename R::Kernel_tag() );
 }
-#endif // CGAL_NO_ISTREAM_EXTRACT_RAY_3
 
 CGAL_END_NAMESPACE
 

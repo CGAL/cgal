@@ -195,38 +195,6 @@ collinear_has_on(const typename RayC3<R>::Point_3 &p) const
   return true; // p == source()
 }
 
-#ifndef CGAL_NO_OSTREAM_INSERT_RAYC3
-template < class R >
-std::ostream &
-operator<<(std::ostream &os, const RayC3<R> &r)
-{
-    switch(os.iword(IO::mode)) {
-    case IO::ASCII :
-        return os << r.start() << ' ' << r.direction();
-    case IO::BINARY :
-        return os<< r.start() << r.direction();
-    default:
-        return os << "RayC3(" << r.start() <<  ", " << r.direction() << ")";
-    }
-}
-#endif // CGAL_NO_OSTREAM_INSERT_RAYC3
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_RAYC3
-template < class R >
-std::istream &
-operator>>(std::istream &is, RayC3<R> &r)
-{
-    typename R::Point_3 p;
-    typename R::Direction_3 d;
-
-    is >> p >> d;
-
-    if (is)
-	r = RayC3<R>(p, d);
-    return is;
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_RAYC3
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_RAY_3_H
