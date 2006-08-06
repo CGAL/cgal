@@ -152,38 +152,6 @@ TriangleC3<R>::is_degenerate() const
   return collinear(vertex(0),vertex(1),vertex(2));
 }
 
-#ifndef CGAL_NO_OSTREAM_INSERT_TRIANGLEC3
-template < class R >
-std::ostream &
-operator<<(std::ostream &os, const TriangleC3<R> &t)
-{
-    switch(os.iword(IO::mode)) {
-    case IO::ASCII :
-        return os << t[0] << ' ' << t[1] << ' ' << t[2];
-    case IO::BINARY :
-        return os << t[0]  << t[1]  << t[2];
-    default:
-        os << "TriangleC3(" << t[0] <<  ", " << t[1] <<   ", " << t[2] <<")";
-        return os;
-    }
-}
-#endif // CGAL_NO_OSTREAM_INSERT_TRIANGLEC3
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_TRIANGLEC3
-template < class R >
-std::istream &
-operator>>(std::istream &is, TriangleC3<R> &t)
-{
-    typename R::Point_3 p, q, r;
-
-    is >> p >> q >> r;
-
-    if (is)
-	t = TriangleC3<R>(p, q, r);
-    return is;
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_TRIANGLEC3
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_TRIANGLE_3_H

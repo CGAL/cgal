@@ -97,25 +97,34 @@ public:
 
 };
 
-#ifndef CGAL_NO_OSTREAM_INSERT_TRIANGLE_3
-template < class R >
-std::ostream&
-operator<<(std::ostream& os, const Triangle_3<R>& t)
-{
-  typedef typename  R::Kernel_base::Triangle_3  Rep;
-  return os << static_cast<const Rep&>(t);
-}
-#endif // CGAL_NO_OSTREAM_INSERT_TRIANGLE_3
 
-#ifndef CGAL_NO_ISTREAM_EXTRACT_TRIANGLE_3
 template < class R >
-std::istream&
-operator>>(std::istream& is, Triangle_3<R>& t)
+std::ostream &
+operator<<(std::ostream &os, const Triangle_3<R> &t)
 {
-  typedef typename  R::Kernel_base::Triangle_3  Rep;
-  return is >> static_cast<Rep&>(t);
+    switch(os.iword(IO::mode)) {
+    case IO::ASCII :
+        return os << t[0] << ' ' << t[1] << ' ' << t[2];
+    case IO::BINARY :
+        return os << t[0]  << t[1]  << t[2];
+    default:
+        os << "Triangle_3(" << t[0] <<  ", " << t[1] <<   ", " << t[2] <<")";
+        return os;
+    }
 }
-#endif // CGAL_NO_ISTREAM_EXTRACT_TRIANGLE_3
+
+template < class R >
+std::istream &
+operator>>(std::istream &is, Triangle_3<R> &t)
+{
+    typename R::Point_3 p, q, r;
+
+    is >> p >> q >> r;
+
+    if (is)
+        t = Triangle_3<R>(p, q, r);
+    return is;
+}
 
 CGAL_END_NAMESPACE
 
