@@ -220,56 +220,6 @@ VectorH3<R>::operator/(const typename VectorH3<R>::FT& f) const
 { return typename R::Vector_3(hx()*f.denominator(), hy()*f.denominator(),
 		              hz()*f.denominator(), hw()*f.numerator() ); }
 
-
-#ifndef CGAL_NO_OSTREAM_INSERT_VECTORH3
-template < class R >
-std::ostream& operator<<(std::ostream& os, const VectorH3<R>& v)
-{
-  switch(os.iword(IO::mode))
-  {
-    case IO::ASCII :
-        return os << v.hx() << ' ' << v.hy() << ' ' << v.hz() << ' ' << v.hw();
-    case IO::BINARY :
-        write(os, v.hx());
-        write(os, v.hy());
-        write(os, v.hz());
-        write(os, v.hw());
-        return os;
-    default:
-        return os << "VectorH3(" << v.hx() << ", "
-                                 << v.hy() << ", "
-                                 << v.hz() << ", "
-                                 << v.hw() << ')';
-  }
-}
-#endif // CGAL_NO_OSTREAM_INSERT_VECTORH3
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_VECTORH3
-template < class R >
-std::istream& operator>>(std::istream& is, VectorH3<R>& v)
-{
-  typename R::RT hx, hy, hz, hw;
-  switch(is.iword(IO::mode))
-  {
-    case IO::ASCII :
-        is >> hx >> hy >> hz >> hw;
-        break;
-    case IO::BINARY :
-        read(is, hx);
-        read(is, hy);
-        read(is, hz);
-        read(is, hw);
-        break;
-    default:
-        std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
-        break;
-  }
-  v = VectorH3<R>(hx, hy, hz, hw);
-  return is;
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_VECTORH3
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_HOMOGENEOUS_VECTOR_3_H

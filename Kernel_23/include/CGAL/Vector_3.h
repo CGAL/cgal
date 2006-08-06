@@ -197,25 +197,111 @@ public:
 
 };
 
-#ifndef CGAL_NO_OSTREAM_INSERT_VECTOR_3
+
+template <class R >
+std::ostream&
+insert(std::ostream& os, const Vector_3<R>& v, const Cartesian_tag&) 
+{
+  switch(os.iword(IO::mode)) {
+    case IO::ASCII :
+      return os << v.x() << ' ' << v.y()  << ' ' << v.z();
+    case IO::BINARY :
+      write(os, v.x());
+      write(os, v.y());
+      write(os, v.z());
+      return os;
+    default:
+      os << "VectorC3(" << v.x() << ", " << v.y() <<  ", " << v.z() << ")";
+      return os;
+  }
+}
+
+template <class R >
+std::ostream&
+insert(std::ostream& os, const Vector_3<R>& v, const Homogeneous_tag&)
+{
+  switch(os.iword(IO::mode))
+  {
+    case IO::ASCII :
+        return os << v.hx() << ' ' << v.hy() << ' ' << v.hz() << ' ' << v.hw();
+    case IO::BINARY :
+        write(os, v.hx());
+        write(os, v.hy());
+        write(os, v.hz());
+        write(os, v.hw());
+        return os;
+    default:
+        return os << "VectorH3(" << v.hx() << ", "
+                                 << v.hy() << ", "
+                                 << v.hz() << ", "
+                                 << v.hw() << ')';
+  }
+}
+
 template < class R >
 std::ostream&
 operator<<(std::ostream& os, const Vector_3<R>& v)
 {
-  typedef typename  R::Kernel_base::Vector_3  Rep;
-  return os << static_cast<const Rep&>(v);
+  return insert(os, v, typename R::Kernel_tag() );
 }
-#endif // CGAL_NO_OSTREAM_INSERT_VECTOR_3
 
-#ifndef CGAL_NO_ISTREAM_EXTRACT_VECTOR_3
+
+template <class R >
+std::istream&
+extract(std::istream& is, Vector_3<R>& v, const Cartesian_tag&) 
+{
+  typename R::FT x, y, z;
+  switch(is.iword(IO::mode)) {
+    case IO::ASCII :
+      is >> x >> y >> z;
+      break;
+    case IO::BINARY :
+      read(is, x);
+      read(is, y);
+      read(is, z);
+      break;
+    default:
+      std::cerr << "" << std::endl;
+      std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+      break;
+  }
+  if (is)
+      v = Vector_3<R>(x, y, z);
+  return is;
+}
+
+template <class R >
+std::istream&
+extract(std::istream& is, Vector_3<R>& v, const Homogeneous_tag&) 
+{
+  typename R::RT hx, hy, hz, hw;
+  switch(is.iword(IO::mode))
+  {
+    case IO::ASCII :
+        is >> hx >> hy >> hz >> hw;
+        break;
+    case IO::BINARY :
+        read(is, hx);
+        read(is, hy);
+        read(is, hz);
+        read(is, hw);
+        break;
+    default:
+        std::cerr << "" << std::endl;
+        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        break;
+  }
+  if (is)
+    v = Vector_3<R>(hx, hy, hz, hw);
+  return is;
+}
+
 template < class R >
 std::istream&
-operator>>(std::istream& is, Vector_3<R>& p)
+operator>>(std::istream& is, Vector_3<R>& v)
 {
-  typedef typename  R::Kernel_base::Vector_3  Rep;
-  return is >> static_cast<Rep&>(p);
+  return extract(is, v, typename R::Kernel_tag() );
 }
-#endif // CGAL_NO_ISTREAM_EXTRACT_VECTOR_3
 
 CGAL_END_NAMESPACE
 

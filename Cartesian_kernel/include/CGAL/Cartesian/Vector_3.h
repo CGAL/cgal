@@ -249,52 +249,6 @@ VectorC3<R>::direction() const
   return Direction_3(*this);
 }
 
-#ifndef CGAL_CARTESIAN_NO_OSTREAM_INSERT_VECTORC3
-template < class R >
-std::ostream &
-operator<<(std::ostream &os, const VectorC3<R> &v)
-{
-  switch(os.iword(IO::mode)) {
-    case IO::ASCII :
-      return os << v.x() << ' ' << v.y()  << ' ' << v.z();
-    case IO::BINARY :
-      write(os, v.x());
-      write(os, v.y());
-      write(os, v.z());
-      return os;
-    default:
-      os << "VectorC3(" << v.x() << ", " << v.y() <<  ", " << v.z() << ")";
-      return os;
-  }
-}
-#endif // CGAL_CARTESIAN_NO_OSTREAM_INSERT_VECTORC3
-
-#ifndef CGAL_CARTESIAN_NO_ISTREAM_EXTRACT_VECTORC3
-template < class R >
-std::istream &
-operator>>(std::istream &is, VectorC3<R> &p)
-{
-  typename R::FT x, y, z;
-  switch(is.iword(IO::mode)) {
-    case IO::ASCII :
-      is >> x >> y >> z;
-      break;
-    case IO::BINARY :
-      read(is, x);
-      read(is, y);
-      read(is, z);
-      break;
-    default:
-      std::cerr << "" << std::endl;
-      std::cerr << "Stream must be in ascii or binary mode" << std::endl;
-      break;
-  }
-  if (is)
-      p = VectorC3<R>(x, y, z);
-  return is;
-}
-#endif // CGAL_CARTESIAN_NO_ISTREAM_EXTRACT_VECTORC3
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_VECTOR_3_H
