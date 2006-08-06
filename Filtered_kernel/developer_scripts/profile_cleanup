@@ -19,11 +19,14 @@ cat $@ | sed -e 's/CGAL:://g' \
              -e 's/CartesianKernelFunctors:://g' \
              -e 's/typename Filtered_predicate<EP, AP, C2E, C2A, Protection>::result_type Filtered_predicate<EP, AP, C2E, C2A, Protection>::operator()//g' \
              -e 's/ const //g' \
-             -e 's/, AP.*]/]/g' \
-             -e 's/, EC.*]/]/g' \
+             -e 's/, AP =.*]/]/g' \
+             -e 's/, EC =.*]/]/g' \
              -e 's/const //g' \
              -e 's/&//g' \
              -e 's/typename //g' \
              -e 's/with //g' \
+             -e 's/Lazy_exact_nt<EC::result_type> Lazy_construction_nt<LK, AC, EC>::operator()//g' \
+             -e 's/Lazy_exact_nt<Binary_operator_result<T1, T2>::type> //g' \
+             -e 's/Object Lazy_construction_object<LK, AC, EC>::operator()//g' \
        | grep Profile_counter \
        | sort -t":" -k2
