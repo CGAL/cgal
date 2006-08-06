@@ -283,55 +283,6 @@ is_degenerate() const
          CGAL_NTS is_zero(c());
 }
 
-#ifndef CGAL_NO_OSTREAM_INSERT_PLANEC3
-template < class R >
-std::ostream &
-operator<<(std::ostream &os, const PlaneC3<R> &p)
-{
-    switch(os.iword(IO::mode)) {
-    case IO::ASCII :
-        return os << p.a() << ' ' << p.b() <<  ' ' << p.c() << ' ' << p.d();
-    case IO::BINARY :
-        write(os, p.a());
-        write(os, p.b());
-        write(os, p.c());
-        write(os, p.d());
-        return os;
-        default:
-            os << "PlaneC3(" << p.a() <<  ", " << p.b() <<   ", ";
-            os << p.c() << ", " << p.d() <<")";
-            return os;
-    }
-}
-#endif // CGAL_NO_OSTREAM_INSERT_PLANEC3
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_PLANEC3
-template < class R >
-std::istream &
-operator>>(std::istream &is, PlaneC3<R> &p)
-{
-    typename R::FT a, b, c, d;
-    switch(is.iword(IO::mode)) {
-    case IO::ASCII :
-        is >> a >> b >> c >> d;
-        break;
-    case IO::BINARY :
-        read(is, a);
-        read(is, b);
-        read(is, c);
-        read(is, d);
-        break;
-    default:
-        std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
-        break;
-    }
-    if (is)
-	p = PlaneC3<R>(a, b, c, d);
-    return is;
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_PLANEC3
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CARTESIAN_PLANE_3_H

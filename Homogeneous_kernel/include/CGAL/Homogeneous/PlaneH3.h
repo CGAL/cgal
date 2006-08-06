@@ -382,52 +382,6 @@ typename PlaneH3<R>::Vector_3
 PlaneH3<R>::orthogonal_vector() const
 { return Vector_3(a(), b(), c() ); }
 
-#ifndef CGAL_NO_OSTREAM_INSERT_PLANE3
-template < class R >
-std::ostream &operator<<(std::ostream &os, const PlaneH3<R> &p)
-{
-    switch(os.iword(IO::mode)) {
-    case IO::ASCII :
-        return os << p.a() << ' ' << p.b() <<  ' ' << p.c() << ' ' << p.d();
-    case IO::BINARY :
-        write(os, p.a());
-        write(os, p.b());
-        write(os, p.c());
-        write(os, p.d());
-        return os;
-        default:
-            os << "PlaneC3(" << p.a() <<  ", " << p.b() <<   ", ";
-            os << p.c() << ", " << p.d() <<")";
-            return os;
-    }
-}
-#endif // CGAL_NO_OSTREAM_INSERT_PLANE3
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_PLANE3
-template < class R  >
-std::istream &operator>>(std::istream &is, PlaneH3<R> &p)
-{
-    typename R::RT a, b, c, d;
-    switch(is.iword(IO::mode)) {
-    case IO::ASCII :
-        is >> a >> b >> c >> d;
-        break;
-    case IO::BINARY :
-        read(is, a);
-        read(is, b);
-        read(is, c);
-        read(is, d);
-        break;
-    default:
-        std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
-        break;
-    }
-    p = PlaneH3<R>(a, b, c, d);
-    return is;
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_PLANE3
-
 template < class R >
 bool
 PlaneH3<R>::is_degenerate() const

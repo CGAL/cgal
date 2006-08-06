@@ -208,25 +208,51 @@ public:
 
 };
 
-#ifndef CGAL_NO_OSTREAM_INSERT_PLANE_3
-template < class R >
-std::ostream&
-operator<<(std::ostream& os, const Plane_3<R>& p)
-{
-  typedef typename  R::Kernel_base::Plane_3  Rep;
-  return os << static_cast<const Rep&>(p);
-}
-#endif // CGAL_NO_OSTREAM_INSERT_PLANE_3
 
-#ifndef CGAL_NO_ISTREAM_EXTRACT_PLANE_3
 template < class R >
-std::istream&
-operator>>(std::istream& is, Plane_3<R>& t)
+std::ostream &
+operator<<(std::ostream &os, const Plane_3<R> &p)
 {
-  typedef typename  R::Kernel_base::Plane_3  Rep;
-  return is >> static_cast<Rep&>(t);
+    switch(os.iword(IO::mode)) {
+    case IO::ASCII :
+        return os << p.a() << ' ' << p.b() <<  ' ' << p.c() << ' ' << p.d();
+    case IO::BINARY :
+        write(os, p.a());
+        write(os, p.b());
+        write(os, p.c());
+        write(os, p.d());
+        return os;
+        default:
+            os << "Plane_3(" << p.a() <<  ", " << p.b() <<   ", ";
+            os << p.c() << ", " << p.d() <<")";
+            return os;
+    }
 }
-#endif // CGAL_NO_ISTREAM_EXTRACT_PLANE_3
+
+template < class R >
+std::istream &
+operator>>(std::istream &is, Plane_3<R> &p)
+{
+    typename R::RT a, b, c, d;
+    switch(is.iword(IO::mode)) {
+    case IO::ASCII :
+        is >> a >> b >> c >> d;
+        break;
+    case IO::BINARY :
+        read(is, a);
+        read(is, b);
+        read(is, c);
+        read(is, d);
+        break;
+    default:
+        std::cerr << "" << std::endl;
+        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        break;
+    }
+    if (is)
+        p = Plane_3<R>(a, b, c, d);
+    return is;
+}
 
 CGAL_END_NAMESPACE
 
