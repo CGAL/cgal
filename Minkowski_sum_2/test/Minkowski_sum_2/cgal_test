@@ -120,7 +120,7 @@ offset_tests()
     echo   "   ERROR:    not executed   test_approx_offset" >> $ERRORFILE
   else
     run_offset_test test_approx_offset data/rooms_part1.dat 3/1 -sohg
-    run_offset_test test_approx_offset data/wheels_part1.dat 100000/1 -sohg
+    run_offset_test test_approx_offset data/comb_part1.dat 1/1 -so
   fi
 
   clean_tests
