@@ -17,10 +17,10 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 #ifndef CGAL_DIRECTION_2_H
 #define CGAL_DIRECTION_2_H
 
@@ -75,11 +75,11 @@ public:
 
   bool
   counterclockwise_in_between(const Direction_2 &d1,
-			      const Direction_2 &d2) const 
+			      const Direction_2 &d2) const
   {
     return R().counterclockwise_in_between_2_object()(*this, d1, d2);
   }
-  
+
   Direction_2 perpendicular(const Orientation &o) const
   {
     return R().construct_perpendicular_direction_2_object()(*this,o);
@@ -103,7 +103,7 @@ public:
     CGAL_kernel_precondition( ( i == 0 ) || ( i == 1 ) );
     return (i==0) ? dx() : dy();
   }
-  
+
   bool
   operator<(const Direction_2 &d) const
   {
@@ -123,25 +123,30 @@ public:
   {
     return R().compare_angle_with_x_axis_2_object()(*this, d) != SMALLER;
   }
-  
+
 
   bool
   operator<=(const Direction_2 &d) const
   {
     return R().compare_angle_with_x_axis_2_object()(*this, d) != LARGER;
   }
-  
+
   Direction_2
   operator-() const
   {
     return R().construct_opposite_direction_2_object()(*this);
-  } 
-  
+  }
+
   Vector_2 vector() const
   {
-  return R().construct_vector_2_object()(*this);
+    return R().construct_vector_2_object()(*this);
   }
-  
+
+  Vector_2 to_vector() const
+  {
+    return this->vector();
+  }
+
   bool
   operator==(const Direction_2& d) const
   {
@@ -165,7 +170,7 @@ public:
 
 template <class R >
 std::ostream&
-insert(std::ostream& os, const Direction_2<R>& d, const Cartesian_tag&) 
+insert(std::ostream& os, const Direction_2<R>& d, const Cartesian_tag&)
 {
     typename R::Vector_2 v = d.to_vector();
     switch(os.iword(IO::mode)) {
@@ -208,7 +213,7 @@ operator<<(std::ostream& os, const Direction_2<R>& d)
 
 template <class R >
 std::istream&
-extract(std::istream& is, Direction_2<R>& d, const Cartesian_tag&) 
+extract(std::istream& is, Direction_2<R>& d, const Cartesian_tag&)
 {
     typename R::FT x, y;
     switch(is.iword(IO::mode)) {
@@ -231,7 +236,7 @@ extract(std::istream& is, Direction_2<R>& d, const Cartesian_tag&)
 
 template <class R >
 std::istream&
-extract(std::istream& is, Direction_2<R>& d, const Homogeneous_tag&) 
+extract(std::istream& is, Direction_2<R>& d, const Homogeneous_tag&)
 {
   typename R::RT x, y;
   switch(is.iword(IO::mode))

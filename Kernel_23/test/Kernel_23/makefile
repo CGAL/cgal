@@ -23,7 +23,7 @@ CXXFLAGS = \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
-           $(LONG_NAME_PROBLEM_CXXFLAGS) # -g # -DCGAL_CHECK_EXPENSIVE
+           $(LONG_NAME_PROBLEM_CXXFLAGS) -g
 
 #---------------------------------------------------------------------#
 #                    linker flags

@@ -96,33 +96,6 @@ bounded_side(const typename Iso_rectangleH2<R>::Point_2& p) const
   return ON_BOUNDED_SIDE;
 }
 
-#ifndef CGAL_NO_OSTREAM_INSERT_ISO_RECTANGLEH2
-template < class R >
-std::ostream& operator<<(std::ostream& os, const Iso_rectangleH2<R>& r)
-{
-  switch(os.iword(IO::mode))
-  {
-    case IO::ASCII :
-        return os << r.min() << ' ' << r.max();
-    case IO::BINARY :
-        return os << r.min() << r.max();
-    default:
-        return os << "Iso_rectangleH2(" << r.min() << ", " << r.max() << ")";
-  }
-}
-#endif // CGAL_NO_OSTREAM_INSERT_ISO_RECTANGLEH2
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_ISO_RECTANGLEH2
-template < class R >
-std::istream& operator>>(std::istream& is, Iso_rectangleH2<R>& r)
-{
-  typename R::Point_2 p, q;
-  is >> p >> q;
-  r = Iso_rectangleH2<R>(p, q);
-  return is;
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_ISO_RECTANGLEH2
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_ISO_RECTANGLEH2_H

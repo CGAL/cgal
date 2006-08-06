@@ -17,7 +17,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Stefan Schirra
 
@@ -109,7 +109,7 @@ public:
   oriented_side(const Point_3 &p) const
   {
     return R().oriented_side_3_object()(*this, p);
-  } 
+  }
 
   bool
   has_on_boundary(const Point_3 &p) const
@@ -176,11 +176,9 @@ orthogonal_transform(const typename Sphere_3<R_>::Aff_transformation_3& t) const
 }
 
 
-#ifndef CGAL_NO_OSTREAM_INSERT_SPHERE_3
-
 template <class R >
 std::ostream&
-insert(std::ostream& os, const Sphere_3<R>& c,const Cartesian_tag&) 
+insert(std::ostream& os, const Sphere_3<R>& c,const Cartesian_tag&)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -249,13 +247,10 @@ operator<<(std::ostream& os, const Sphere_3<R>& c)
   return insert(os, c, typename R::Kernel_tag() );
 }
 
-#endif // CGAL_NO_OSTREAM_INSERT_SPHERE_3
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_SPHERE_3
 
 template <class R >
 std::istream&
-extract(std::istream& is, Sphere_3<R>& c, const Cartesian_tag&) 
+extract(std::istream& is, Sphere_3<R>& c, const Cartesian_tag&)
 {
     typename R::Point_3 center;
     typename R::FT squared_radius;
@@ -282,7 +277,7 @@ extract(std::istream& is, Sphere_3<R>& c, const Cartesian_tag&)
 
 template <class R >
 std::istream&
-extract(std::istream& is, Sphere_3<R>& c, const Homogeneous_tag&) 
+extract(std::istream& is, Sphere_3<R>& c, const Homogeneous_tag&)
 {
     typename R::Point_3 center;
     typename R::FT squared_radius;
@@ -312,8 +307,6 @@ operator>>(std::istream& is, Sphere_3<R>& c)
 {
   return extract(is, c, typename R::Kernel_tag() );
 }
-
-#endif // CGAL_NO_ISTREAM_EXTRACT_SPHERE_3
 
 CGAL_END_NAMESPACE
 

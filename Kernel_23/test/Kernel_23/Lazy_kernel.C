@@ -14,10 +14,10 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Sylvain Pion
- 
+
 
 #include <CGAL/Lazy_kernel.h>
 #include <CGAL/Cartesian.h>
@@ -40,7 +40,7 @@
 #include "CGAL/_test_fct_coplanar_3.h"
 #include "CGAL/_test_cls_iso_cuboid_3.h"
 #include "CGAL/_test_angle.h"
- 
+
 #include "CGAL/_test_mf_plane_3_to_2d.h"
 
 int
@@ -48,6 +48,9 @@ main()
 {
   typedef   CGAL::Cartesian<CGAL::Quotient<Precise_integer> >     EK;
   typedef   CGAL::Lazy_kernel<EK>     Cls;
+
+  std::cout << "Testing IO with Lazy_kernel<Cartesian<Quotient<Precise_integer>>> :" << std::endl;
+  _test_io( Cls() );
 
   std::cout << "Testing 2d with Lazy_kernel<Cartesian<Quotient<Precise_integer>>> :";
   std::cout << std::endl;
@@ -80,7 +83,7 @@ main()
   std::cout << "Testing 3d-2d with Lazy_kernel<Cartesian<Quotient<Precise_integer>>> :";
   std::cout << std::endl;
   _test_mf_plane_3_to_2d( Cls() );
-  
+
   std::cout << "All tests done" << std::endl;
   return 0;
 }

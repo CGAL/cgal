@@ -17,10 +17,10 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Andreas Fabri
- 
+
 #ifndef CGAL_BBOX_3_H
 #define CGAL_BBOX_3_H
 
@@ -107,7 +107,7 @@ do_overlap(const Bbox_3& bb1, const Bbox_3& bb2)
     return true;
 }
 
-#ifndef CGAL_NO_OSTREAM_INSERT_BBOX_3
+
 inline
 std::ostream&
 operator<<(std::ostream &os, const Bbox_3& b)
@@ -115,7 +115,7 @@ operator<<(std::ostream &os, const Bbox_3& b)
   switch(os.iword(IO::mode))
   {
     case IO::ASCII :
-        return os << b.xmin() << ' ' << b.ymin() << ' ' << b.zmin() 
+        return os << b.xmin() << ' ' << b.ymin() << ' ' << b.zmin()
 		  << ' ' << b.xmax() << ' ' << b.ymax() << ' ' << b.zmax();
     case IO::BINARY :
         write(os, b.xmin());
@@ -135,9 +135,7 @@ operator<<(std::ostream &os, const Bbox_3& b)
         return os;
   }
 }
-#endif // CGAL_NO_OSTREAM_INSERT_BBOX_3
 
-#ifndef CGAL_NO_ISTREAM_EXTRACT_BBOX_3
 inline
 std::istream&
 operator>>(std::istream &is, Bbox_3& b)
@@ -158,11 +156,10 @@ operator>>(std::istream &is, Bbox_3& b)
         read(is, zmax);
         break;
   }
-  b = Bbox_3(xmin, ymin, zmin, xmax, ymax, zmax);
+  if (is)
+    b = Bbox_3(xmin, ymin, zmin, xmax, ymax, zmax);
   return is;
 }
-
-#endif // CGAL_NO_ISTREAM_EXTRACT_BBOX_3
 
 CGAL_END_NAMESPACE
 

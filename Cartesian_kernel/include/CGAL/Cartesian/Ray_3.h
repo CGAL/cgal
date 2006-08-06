@@ -64,7 +64,6 @@ public:
   bool        operator==(const RayC3 &r) const;
   bool        operator!=(const RayC3 &r) const;
 
-  const Point_3 &   start() const;
   const Point_3 &   source() const
   {
       return get(base).e0;
@@ -101,14 +100,6 @@ bool
 RayC3<R>::operator!=(const RayC3<R> &r) const
 {
   return !(*this == r);
-}
-
-template < class R >
-inline
-const typename RayC3<R>::Point_3 &
-RayC3<R>::start() const
-{
-  return source();
 }
 
 template < class R >

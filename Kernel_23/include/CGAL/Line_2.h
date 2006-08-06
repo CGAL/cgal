@@ -17,7 +17,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -93,7 +93,7 @@ public:
     return R().compute_c_2_object()(*this);
   }
 
-  Line_2          
+  Line_2
   transform(const Aff_transformation_2 &t) const
   {
     return Line_2(t.transform(point(0)),
@@ -123,19 +123,19 @@ public:
   {
     return R().construct_perpendicular_line_2_object()(*this,p);
   }
-  
+
   Point_2
   projection(const Point_2& p) const
   {
     return R().construct_projected_point_2_object()(*this,p);
   }
-  
+
   bool
   is_horizontal() const
   {
     return R().is_horizontal_2_object()(*this);
   }
-  
+
   bool
   is_vertical() const
   {
@@ -150,7 +150,7 @@ public:
   oriented_side(const Point_2 &p) const
   {
     return R().oriented_side_2_object()(*this,p);
-  }  
+  }
 
   bool
   has_on_boundary(const Point_2 &p) const
@@ -170,10 +170,10 @@ public:
     return oriented_side(p) == ON_NEGATIVE_SIDE;
   }
 
-  bool 
-  has_on(const Point_2 &p) const 
-  { 
-    return has_on_boundary(p); 
+  bool
+  has_on(const Point_2 &p) const
+  {
+    return has_on_boundary(p);
   }
 
   FT
@@ -190,13 +190,13 @@ public:
 
   Point_2
   point() const
-  { 
+  {
     return R().construct_point_2_object()(*this);
   }
 
   Point_2
   point(int i) const
-  { 
+  {
     return R().construct_point_2_object()(*this,i);
   }
 
@@ -214,10 +214,10 @@ public:
 
 };
 
-#ifndef CGAL_NO_OSTREAM_INSERT_LINE_2
+
 template <class R >
 std::ostream&
-insert(std::ostream& os, const Line_2<R>& l) 
+insert(std::ostream& os, const Line_2<R>& l)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -228,11 +228,10 @@ insert(std::ostream& os, const Line_2<R>& l)
         write(os, l.c());
         return os;
     default:
-        return os << "Line_2(" << l.a() 
+        return os << "Line_2(" << l.a()
 		  << ", " << l.b() << ", " << l.c() <<')';
     }
 }
-
 
 template < class R >
 std::ostream &
@@ -240,13 +239,11 @@ operator<<(std::ostream &os, const Line_2<R> &l)
 {
   return insert(os, l);
 }
-#endif // CGAL_NO_OSTREAM_INSERT_LINE_2
 
-#ifndef CGAL_NO_ISTREAM_EXTRACT_LINE_2
 
 template <class R >
 std::istream&
-extract(std::istream& is, Line_2<R>& l) 
+extract(std::istream& is, Line_2<R>& l)
 {
     typename R::RT a, b, c;
     switch(is.iword(IO::mode)) {
@@ -275,7 +272,6 @@ operator>>(std::istream &is, Line_2<R> &l)
 {
   return extract(is, l);
 }
-#endif // CGAL_NO_ISTREAM_EXTRACT_LINE_2
 
 CGAL_END_NAMESPACE
 

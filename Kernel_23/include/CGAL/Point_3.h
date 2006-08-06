@@ -17,7 +17,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra
 
@@ -133,12 +133,12 @@ public:
     return hw();
   }
 
-  Cartesian_const_iterator cartesian_begin() const 
+  Cartesian_const_iterator cartesian_begin() const
   {
     return typename R::Construct_cartesian_const_iterator_3()(*this);
   }
 
-  Cartesian_const_iterator cartesian_end() const 
+  Cartesian_const_iterator cartesian_end() const
   {
     return typename R::Construct_cartesian_const_iterator_3()(*this,3);
   }
@@ -168,11 +168,9 @@ operator!=(const Origin& o, const Point_3<R>& p)
 { return p != o; }
 
 
-#ifndef CGAL_NO_OSTREAM_INSERT_POINT_3
-
 template <class R >
 std::ostream&
-insert(std::ostream& os, const Point_3<R>& p,const Cartesian_tag&) 
+insert(std::ostream& os, const Point_3<R>& p,const Cartesian_tag&)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -217,13 +215,10 @@ operator<<(std::ostream& os, const Point_3<R>& p)
   return insert(os, p, typename R::Kernel_tag() );
 }
 
-#endif // CGAL_NO_OSTREAM_INSERT_POINT_3
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_POINT_3
 
 template <class R >
 std::istream&
-extract(std::istream& is, Point_3<R>& p, const Cartesian_tag&) 
+extract(std::istream& is, Point_3<R>& p, const Cartesian_tag&)
 {
     typename R::FT x, y, z;
     switch(is.iword(IO::mode)) {
@@ -248,7 +243,7 @@ extract(std::istream& is, Point_3<R>& p, const Cartesian_tag&)
 
 template <class R >
 std::istream&
-extract(std::istream& is, Point_3<R>& p, const Homogeneous_tag&) 
+extract(std::istream& is, Point_3<R>& p, const Homogeneous_tag&)
 {
   typename R::RT hx, hy, hz, hw;
   switch(is.iword(IO::mode))
@@ -267,7 +262,8 @@ extract(std::istream& is, Point_3<R>& p, const Homogeneous_tag&)
         std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;
   }
-  p = Point_3<R>(hx, hy, hz, hw);
+  if (is)
+    p = Point_3<R>(hx, hy, hz, hw);
   return is;
 }
 
@@ -277,7 +273,6 @@ operator>>(std::istream& is, Point_3<R>& p)
 {
   return extract(is, p, typename R::Kernel_tag() );
 }
-#endif // CGAL_NO_ISTREAM_EXTRACT_POINT_3
 
 CGAL_END_NAMESPACE
 

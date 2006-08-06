@@ -17,10 +17,9 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Andreas Fabri
- 
 
 #ifndef CGAL_BBOX_2_H
 #define CGAL_BBOX_2_H
@@ -141,7 +140,6 @@ do_overlap(const Bbox_2 &bb1, const Bbox_2 &bb2)
     return true;
 }
 
-#ifndef CGAL_NO_OSTREAM_INSERT_BBOX_2
 inline
 std::ostream&
 operator<<(std::ostream &os, const Bbox_2 &b)
@@ -164,9 +162,7 @@ operator<<(std::ostream &os, const Bbox_2 &b)
     }
     return os;
 }
-#endif // CGAL_NO_OSTREAM_INSERT_BBOX_2
 
-#ifndef CGAL_NO_ISTREAM_EXTRACT_BBOX_2
 inline
 std::istream&
 operator>>(std::istream &is, Bbox_2 &b)
@@ -184,10 +180,10 @@ operator>>(std::istream &is, Bbox_2 &b)
         read(is, ymax);
         break;
     }
-    b = Bbox_2(xmin, ymin, xmax, ymax);
+    if (is)
+      b = Bbox_2(xmin, ymin, xmax, ymax);
     return is;
 }
-#endif // CGAL_NO_ISTREAM_EXTRACT_BBOX_2
 
 CGAL_END_NAMESPACE
 

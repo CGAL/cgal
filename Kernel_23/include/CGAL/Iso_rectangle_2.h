@@ -17,7 +17,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -64,11 +64,11 @@ public:
                   const Point_2 &bottom, const Point_2 &top)
     : Rep(typename R::Construct_iso_rectangle_2()(left, right, bottom, top).rep()) {}
 
-  Iso_rectangle_2(const RT& min_hx, const RT& min_hy, 
+  Iso_rectangle_2(const RT& min_hx, const RT& min_hy,
                   const RT& max_hx, const RT& max_hy)
     : Rep(typename R::Construct_iso_rectangle_2()(min_hx, min_hy, max_hx, max_hy).rep()) {}
 
-  Iso_rectangle_2(const RT& min_hx, const RT& min_hy, 
+  Iso_rectangle_2(const RT& min_hx, const RT& min_hy,
                   const RT& max_hx, const RT& max_hy, const RT& hw)
     : Rep(typename R::Construct_iso_rectangle_2()(min_hx, min_hy, max_hx, max_hy, hw).rep()) {}
 
@@ -122,7 +122,7 @@ public:
     return R().compute_xmax_2_object()(*this);
   }
 
-  typename Qualified_result_of<typename R::Compute_ymin_2, Iso_rectangle_2 >::type 
+  typename Qualified_result_of<typename R::Compute_ymin_2, Iso_rectangle_2 >::type
   ymin() const
   {
     return R().compute_ymin_2_object()(*this);
@@ -196,7 +196,7 @@ public:
 
   Bbox_2
   bbox() const
-  { 
+  {
     return R().construct_bbox_2_object()(*this);
   }
 
@@ -208,7 +208,7 @@ public:
   }
 };
 
-#ifndef CGAL_NO_OSTREAM_INSERT_ISO_RECTANGLE_2
+
 template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Iso_rectangle_2<R> &r)
@@ -222,22 +222,19 @@ operator<<(std::ostream &os, const Iso_rectangle_2<R> &r)
     return os << "Iso_rectangle_2(" << r.min() << ", " << r.max() << ")";
   }
 }
-#endif // CGAL_NO_OSTREAM_INSERT_ISO_RECTANGLE_2
 
-#ifndef CGAL_NO_ISTREAM_EXTRACT_ISO_RECTANGLE_2
 template < class R >
 std::istream &
 operator>>(std::istream &is, Iso_rectangle_2<R> &r)
 {
   typename R::Point_2 p, q;
-  
+
   is >> p >> q;
-  
+
   if (is)
     r = Iso_rectangle_2<R>(p, q);
   return is;
 }
-#endif // CGAL_NO_ISTREAM_EXTRACT_ISO_RECTANGLE_2
 
 CGAL_END_NAMESPACE
 

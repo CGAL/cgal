@@ -17,11 +17,11 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Sven Schoenherr
 //                 Stefan Schirra
- 
+
 
 #ifndef CGAL_CIRCLEH2_H
 #define CGAL_CIRCLEH2_H
@@ -273,63 +273,6 @@ inline
 bool
 CircleH2<R>::operator!=(const CircleH2<R>& c) const
 { return !(*this == c); }
-
-#ifndef CGAL_NO_OSTREAM_INSERT_CIRCLEH2
-template < class R >
-std::ostream &operator<<(std::ostream &os, const CircleH2<R> &c)
-{
-  switch(os.iword(IO::mode))
-  {
-    case IO::ASCII :
-        os << c.center() << ' ' << c.squared_radius() << ' '
-           << static_cast<int>(c.orientation());
-        break;
-    case IO::BINARY :
-        os << c.center();
-        write(os, c.squared_radius());
-        write(os, static_cast<int>(c.orientation()));
-        break;
-    default:
-        os << "CircleH2(" << c.center() <<  ", " << c.squared_radius() ;
-        if (c.orientation() == CLOCKWISE) {
-            os << ", clockwise)";
-        } else if (c.orientation() == COUNTERCLOCKWISE) {
-            os << ", counterclockwise)";
-        } else {
-            os << ", collinear)";
-        }
-        break;
-  }
-  return os;
-}
-#endif // CGAL_NO_OSTREAM_INSERT_CIRCLEH2
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_CIRCLEH2
-template < class R >
-std::istream& operator>>(std::istream &is, CircleH2<R> &c)
-{
-  typename R::Point_2 center;
-  typename R::FT squared_radius;
-  int o;
-  switch(is.iword(IO::mode))
-  {
-    case IO::ASCII :
-        is >> center >> squared_radius >> o;
-        break;
-    case IO::BINARY :
-        is >> center;
-        read(is, squared_radius);
-        is >> o;
-        break;
-    default:
-        std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
-        break;
-  }
-  c = CircleH2<R>(center, squared_radius, static_cast<Orientation>(o));
-  return is;
-}
-#endif // CGAL_NO_ISTREAM_EXTRACT_CIRCLEH2
 
 CGAL_END_NAMESPACE
 

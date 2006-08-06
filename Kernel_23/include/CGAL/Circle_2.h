@@ -17,7 +17,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Andreas Fabri
 //                 Sven Schoenherr
@@ -102,12 +102,12 @@ public:
   {
     return R().bounded_side_2_object()(*this, p);
   }
-  
+
   Oriented_side
   oriented_side(const Point_2 &p) const
   {
     return R().oriented_side_2_object()(*this, p);
-  } 
+  }
 
   bool
   has_on_boundary(const Point_2 &p) const
@@ -166,7 +166,7 @@ public:
 
   bool
   operator==(const Circle_2 &c) const
-  { 
+  {
     return R().equal_2_object()(*this, c);
   }
 
@@ -205,7 +205,7 @@ orthogonal_transform(const typename R_::Aff_transformation_2& t) const
                                            : CGAL::opposite(orientation()));
 }
 
-#ifndef CGAL_NO_OSTREAM_INSERT_CIRCLE_2
+
 template <class R >
 std::ostream&
 insert(std::ostream& os, const Circle_2<R>& c)
@@ -221,7 +221,7 @@ insert(std::ostream& os, const Circle_2<R>& c)
         write(os, static_cast<int>(c.orientation()));
         break;
     default:
-        os << "CircleC2(" << c.center() <<  ", " << c.squared_radius() ;
+        os << "Circle_2(" << c.center() <<  ", " << c.squared_radius() ;
         switch (c.orientation()) {
         case CLOCKWISE:
             os << ", clockwise)";
@@ -245,13 +245,10 @@ operator<<(std::ostream &os, const Circle_2<R> &c)
   return insert(os, c);
 }
 
-#endif // CGAL_NO_OSTREAM_INSERT_CIRCLE_2
-
-#ifndef CGAL_NO_ISTREAM_EXTRACT_CIRCLE_2
 
 template <class R >
 std::istream&
-extract(std::istream& is, Circle_2<R>& c) 
+extract(std::istream& is, Circle_2<R>& c)
 {
     typename R::Point_2 center;
     typename R::FT squared_radius;
@@ -271,13 +268,9 @@ extract(std::istream& is, Circle_2<R>& c)
         break;
     }
     if (is)
-	c = Circle_2<R>(center, squared_radius,
-		                  static_cast<Orientation>(o));
+	c = Circle_2<R>(center, squared_radius, static_cast<Orientation>(o));
     return is;
 }
-
-
-
 
 template < class R >
 std::istream &
@@ -285,7 +278,6 @@ operator>>(std::istream &is, Circle_2<R> &c)
 {
   return extract(is,c);
 }
-#endif // CGAL_NO_ISTREAM_EXTRACT_CIRCLE_2
 
 CGAL_END_NAMESPACE
 

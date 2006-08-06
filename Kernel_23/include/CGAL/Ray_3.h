@@ -17,10 +17,10 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra
- 
+
 #ifndef CGAL_RAY_3_H
 #define CGAL_RAY_3_H
 
@@ -109,6 +109,12 @@ public:
     return R().construct_second_point_3_object()(*this);
   }
 
+  Point_3 // FIXME : Use Qrt
+  start() const
+  {
+    return source();
+  }
+
   bool has_on(const Point_3 &p) const
   {
     return R().has_on_3_object()(*this, p);
@@ -151,7 +157,7 @@ public:
 
 template <class R >
 std::ostream&
-insert(std::ostream& os, const Ray_3<R>& r, const Cartesian_tag&) 
+insert(std::ostream& os, const Ray_3<R>& r, const Cartesian_tag&)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -188,7 +194,7 @@ operator<<(std::ostream& os, const Ray_3<R>& r)
 
 template <class R >
 std::istream&
-extract(std::istream& is, Ray_3<R>& r, const Cartesian_tag&) 
+extract(std::istream& is, Ray_3<R>& r, const Cartesian_tag&)
 {
     typename R::Point_3 p;
     typename R::Direction_3 d;
@@ -202,7 +208,7 @@ extract(std::istream& is, Ray_3<R>& r, const Cartesian_tag&)
 
 template <class R >
 std::istream&
-extract(std::istream& is, Ray_3<R>& r, const Homogeneous_tag&) 
+extract(std::istream& is, Ray_3<R>& r, const Homogeneous_tag&)
 {
   typename R::Point_3 p;
   typename R::Direction_3 d;
