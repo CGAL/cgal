@@ -315,6 +315,72 @@ void _test_circle_construct(SK sk) {
 }
 
 template <class SK>
+void _test_line_arc_construct(SK sk) {
+  typedef typename SK::RT                               RT;
+  typedef typename SK::FT                               FT;
+  typedef typename SK::Root_of_2                        Root_of_2;
+  typedef typename SK::Circular_arc_point_3             Circular_arc_point_3;
+  typedef typename SK::Point_3                          Point_3;
+  typedef typename SK::Line_3                           Line_3;
+  typedef typename SK::Line_arc_3                       Line_arc_3;
+  typedef typename SK::Algebraic_kernel                 AK;
+  typedef typename SK::Get_equation                     Get_equation;
+  typedef typename SK::Equal_3                          Equal_3;
+  typedef typename SK::Construct_line_3                 Construct_line_3;
+  typedef typename SK::Construct_line_arc_3             Construct_line_arc_3;
+  typedef typename SK::Construct_circular_arc_point_3   Construct_circular_arc_point_3;
+  typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
+  typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
+  typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
+  typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
+
+  Get_equation theGet_equation = sk.get_equation_object();
+  Construct_line_3 theConstruct_line_3 = sk.construct_line_3_object();
+  Construct_line_arc_3 theConstruct_line_arc_3 = sk.construct_line_arc_3_object();
+  Construct_circular_arc_point_3 theConstruct_circular_arc_point_3 = 
+    sk.construct_circular_arc_point_3_object();
+  Equal_3 theEqual_3 = sk.equal_3_object();
+
+  CGAL::Random generatorOfgenerator;
+  int random_seed = generatorOfgenerator.get_int(0, 123456);
+  CGAL::Random theRandom(random_seed);
+  int random_max = 127;
+  int random_min = -127; 
+
+  std::cout << "Testing Construct_line_arc_3..." << std::endl;
+  for(int i=0; i<100; i++) {
+    int a,b,c,d,e,f;
+    do {
+      a = theRandom.get_int(random_min,random_max);
+      b = theRandom.get_int(random_min,random_max);
+      c = theRandom.get_int(random_min,random_max);
+      d = theRandom.get_int(random_min,random_max);
+      e = theRandom.get_int(random_min,random_max);
+      f = theRandom.get_int(random_min,random_max);
+    } while((a == d) && (b == e) && (c == f));
+    Point_3 pb = Point_3(d,e,f);
+    Point_3 pa = Point_3(a,b,c);
+    Polynomials_for_line_3 p = theGet_equation(Line_3(pa,pb));
+    Line_3 line = theConstruct_line_3(p);
+    Circular_arc_point_3 cpa = theConstruct_circular_arc_point_3(pa);
+    Circular_arc_point_3 cpb = theConstruct_circular_arc_point_3(pb);
+    Line_arc_3 line_arc[6];
+    line_arc[0] = theConstruct_line_arc_3(line, pa, pb);
+    line_arc[1] = theConstruct_line_arc_3(line, pb, pa);
+    line_arc[2] = theConstruct_line_arc_3(line, cpb, cpa);
+    line_arc[3] = theConstruct_line_arc_3(line, cpa, cpb);
+    line_arc[4] = theConstruct_line_arc_3(line, cpb, pa);
+    line_arc[5] = theConstruct_line_arc_3(line, pa, cpb);
+    for(int t1=0;t1<6;t1++) {
+      for(int t2=0;t2<6;t2++) {
+        assert(theEqual_3(line_arc[t1],line_arc[t2]));
+      }
+    }
+  }
+
+}
+
+template <class SK>
 void _test_intersection_construct(SK sk) {
   typedef typename SK::RT                               RT;
   typedef typename SK::FT                               FT;
@@ -1029,6 +1095,7 @@ void _test_bounding_box_construct(SK sk)
   typedef typename SK::Plane_3                          Plane_3;
   typedef typename SK::Sphere_3                         Sphere_3;
   typedef typename SK::Circle_3                         Circle_3;
+  typedef typename SK::Line_arc_3                       Line_arc_3;
   typedef typename SK::Algebraic_kernel                 AK;
   typedef typename SK::Get_equation                     Get_equation;
   typedef typename SK::Equal_3                          Equal_3;
@@ -1039,6 +1106,7 @@ void _test_bounding_box_construct(SK sk)
   typedef typename SK::Construct_sphere_3               Construct_sphere_3;
   typedef typename SK::Construct_plane_3                Construct_plane_3;
   typedef typename SK::Construct_line_3                 Construct_line_3;
+  typedef typename SK::Construct_line_arc_3             Construct_line_arc_3;
   typedef typename SK::Polynomials_for_circle_3         Polynomials_for_circle_3;
   typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
   typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
@@ -1054,6 +1122,7 @@ void _test_bounding_box_construct(SK sk)
   Construct_sphere_3 theConstruct_sphere_3 = sk.construct_sphere_3_object();
   Construct_plane_3 theConstruct_plane_3 = sk.construct_plane_3_object();
   Construct_line_3 theConstruct_line_3 = sk.construct_line_3_object();
+  Construct_line_arc_3 theConstruct_line_arc_3 = sk.construct_line_arc_3_object();
   Construct_bbox_3 theConstruct_bbox_3 = sk.construct_bbox_3_object();
 
   std::cout << "Testing the bbox of Circular_arc_point_3..." << std::endl;
@@ -1140,6 +1209,114 @@ void _test_bounding_box_construct(SK sk)
       }
     }
   }
+
+  std::cout << "Testing the bbox of Line_arc_3..." << std::endl;
+  for(int vx=0;vx<6;vx++) {
+    for(int vy=0;vy<6;vy++) {
+      for(int vz=0;vz<6;vz++) { 
+        if(vx == 0 && vy == 0 && vz == 0) continue;
+        const FT a = FT(vx);
+        const FT b = FT(vy);
+        const FT c = FT(vz);
+        Line_3 l = theConstruct_line_3(Point_3(0,0,0), Point_3(a,b,c));
+        for(int t1=-2;t1<3;t1++) {
+          Point_3 source = Point_3(a*t1,b*t1,c*t1);
+          for(int t2=t1+1;t2<5;t2++) {
+            Point_3 target = Point_3(a*t2,b*t2,c*t2);
+            Line_arc_3 la = theConstruct_line_arc_3(l,source,target);
+            Bbox_3 b = theConstruct_bbox_3(la);
+            if(vx != 0) {
+              assert(FT(b.xmin()) > (t1-1)*vx);
+              assert(FT(b.xmin()) <= t1*vx);
+              assert(FT(b.xmax()) >= t2*vx);
+              assert(FT(b.xmax()) < (t2+1)*vx);
+            }
+            if(vy != 0) {
+              assert(FT(b.ymin()) > (t1-1)*vy);
+              assert(FT(b.ymin()) <= t1*vy);
+              assert(FT(b.ymax()) >= t2*vy);
+              assert(FT(b.ymax()) < (t2+1)*vy);
+            }
+            if(vz != 0) {
+              assert(FT(b.zmin()) > (t1-1)*vz);
+              assert(FT(b.zmin()) <= t1*vz);
+              assert(FT(b.zmax()) >= t2*vz);
+              assert(FT(b.zmax()) < (t2+1)*vz);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+template <class SK>
+void _test_split_construct(SK sk) {
+  typedef typename SK::RT                               RT;
+  typedef typename SK::FT                               FT;
+  typedef typename SK::Root_of_2                        Root_of_2;
+  typedef typename SK::Circular_arc_point_3             Circular_arc_point_3;
+  typedef typename SK::Point_3                          Point_3;
+  typedef typename SK::Line_3                           Line_3;
+  typedef typename SK::Plane_3                          Plane_3;
+  typedef typename SK::Sphere_3                         Sphere_3;
+  typedef typename SK::Circle_3                         Circle_3;
+  typedef typename SK::Line_arc_3                       Line_arc_3;
+  typedef typename SK::Algebraic_kernel                 AK;
+  typedef typename SK::Get_equation                     Get_equation;
+  typedef typename SK::Equal_3                          Equal_3;
+  typedef typename SK::Has_on_3                         Has_on_3;
+  typedef typename SK::Split_3                          Split_3;
+  typedef typename SK::Intersect_3                      Intersect_3;
+  typedef typename SK::Construct_circle_3               Construct_circle_3;
+  typedef typename SK::Construct_sphere_3               Construct_sphere_3;
+  typedef typename SK::Construct_plane_3                Construct_plane_3;
+  typedef typename SK::Construct_line_3                 Construct_line_3;
+  typedef typename SK::Construct_line_arc_3             Construct_line_arc_3;
+  typedef typename SK::Polynomials_for_circle_3         Polynomials_for_circle_3;
+  typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
+  typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
+  typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
+  typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
+
+  Has_on_3 theHas_on_3 = sk.has_on_3_object();
+  Equal_3 theEqual_3 = sk.equal_3_object();
+  Split_3 theSplit_3 = sk.split_3_object();
+  Intersect_3 theIntersect_3 = sk.intersect_3_object();
+  Get_equation theGet_equation = sk.get_equation_object();
+  Construct_circle_3 theConstruct_circle_3 = sk.construct_circle_3_object();
+  Construct_sphere_3 theConstruct_sphere_3 = sk.construct_sphere_3_object();
+  Construct_plane_3 theConstruct_plane_3 = sk.construct_plane_3_object();
+  Construct_line_3 theConstruct_line_3 = sk.construct_line_3_object();
+  Construct_line_arc_3 theConstruct_line_arc_3 = sk.construct_line_arc_3_object();
+
+  std::cout << "Testing Split a Line_arc_3..." << std::endl;
+  for(int vx=0;vx<3;vx++) {
+    for(int vy=0;vy<3;vy++) {
+      for(int vz=0;vz<3;vz++) { 
+        if(vx == 0 && vy == 0 && vz == 0) continue;
+        const FT a = FT(vx);
+        const FT b = FT(vy);
+        const FT c = FT(vz);
+        Line_3 l = theConstruct_line_3(Point_3(0,0,0), Point_3(a,b,c));
+        for(int t1=-2;t1<3;t1++) {
+          Point_3 source = Point_3(a*t1,b*t1,c*t1);
+          for(int t2=t1+1;t2<5;t2++) {
+            Point_3 target = Point_3(a*t2,b*t2,c*t2);
+            Line_arc_3 la = theConstruct_line_arc_3(l,source,target);
+            const FT tm = FT(t1+t2)/2;
+            Point_3 mdl = Point_3(a*tm,b*tm,c*tm);
+            Line_arc_3 l1, l2;
+            theSplit_3(la, mdl, l1, l2);
+            assert(theEqual_3(l1.source(), la.source()));
+            assert(theEqual_3(l1.target(), mdl));
+            assert(theEqual_3(l2.source(), mdl));
+            assert(theEqual_3(l2.target(), la.target()));
+          }
+        }
+      }
+    }
+  }
 }
 
 template <class SK>
@@ -1151,7 +1328,9 @@ void _test_spherical_kernel_construct(SK sk)
   _test_plane_construct(sk);
   _test_line_construct(sk);
   _test_circle_construct(sk);
+  _test_line_arc_construct(sk);
   _test_intersection_construct(sk);
+  _test_split_construct(sk);
   _test_bounding_box_construct(sk);
   std::cout << "All tests on construction are OK." << std::endl;
 }
