@@ -38,7 +38,7 @@ to \ccc{std::cerr} together with the string.}
 %%  XXX TODO : There does not seem to be a \ccMacro => ask Andreas M.
 %%             - CGAL_PROFILE and CGAL_PROFILER need to end up in the index.
 %%             - rename CGAL_PROFILER to CGAL_PROFILE_COUNTER ?
-\ccMacro{#define CGAL_PROFILER(MSG)}
+\ccc{\#define CGAL_PROFILER(MSG)}
 {If \ccc{CGAL_PROFILE} is not defined, then \ccc{CGAL_PROFILER} is defined
 to an empty statement.  Otherwise, it is defined to \ccc{static
 CGAL::Profile_counter tmp(MSG); ++tmp;}.}
@@ -48,7 +48,7 @@ CGAL::Profile_counter tmp(MSG); ++tmp;}.}
 will print at exit:
 
 \begin{ccExampleCode}
-[CGAL::Profile_counter] # of executions of the main for-loop = 10
+[CGAL::Profile_counter]     10 iterations of the for-loop
 \end{ccExampleCode}
 
 \end{ccRefClass}

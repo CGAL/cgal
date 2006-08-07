@@ -8,7 +8,7 @@ int main()
 {
   for (int i=0; i<10; ++i)
   {
-    CGAL_PROFILER("# of executions of the main for-loop");
+    CGAL_PROFILER("iterations of the for-loop");
   }
   return 0;
 }
