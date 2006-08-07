@@ -22,7 +22,8 @@
 #define CGAL_LAZY_KERNEL_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Filtered_predicate.h>
+//#include <CGAL/Filtered_predicate.h>
+#include <CGAL/Filtered_kernel.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Interval_nt.h>
@@ -38,11 +39,20 @@ CGAL_BEGIN_NAMESPACE
 // the Generic base simplies applies the generic magic functor stupidly.
 // then the real base fixes up a few special cases.
 template < typename EK_, typename AK_, typename E2A_, typename Kernel >
-class Lazy_kernel_generic_base {
+class Lazy_kernel_generic_base
+  // : public Filtered_kernel_base<EK_>
+    // TODO : Static_filters_base too ?  Check performance
+{
 public:
   typedef AK_   AK;
   typedef EK_   EK;
   typedef E2A_  E2A;
+
+  // 3 synonyms identical to Filtered_kernel (TODO : cleanup !)
+  typedef AK_   FK;
+  //typedef E2A_  C2F;
+  typedef Approx_converter<Kernel, AK>   C2F;
+  typedef Exact_converter<Kernel, EK>    C2E;
 
   template < typename Kernel2 >
   struct Base { typedef Lazy_kernel_generic_base<EK, AK, E2A, Kernel2>  Type; };
@@ -82,8 +92,7 @@ public:
   // FIXME TODO : better use a layer of Filtered_kernel on top of everything,
   //              so that semi-static filters are used as well (?).
 #define CGAL_Kernel_pred(P, Pf)  \
-    typedef Filtered_predicate<typename EK::P, typename AK::P, \
-	                     Exact_converter, Approx_converter> P; \
+    typedef Filtered_predicate<typename EK::P, typename AK::P, C2E, C2F> P; \
     P Pf() const { return P(); }
 
 
@@ -176,6 +185,9 @@ public:
   typedef Lazy_cartesian_const_iterator_2<Kernel, typename AK::Construct_cartesian_const_iterator_2, typename EK::Construct_cartesian_const_iterator_2>   Construct_cartesian_const_iterator_2;
   typedef Lazy_cartesian_const_iterator_3<Kernel, typename AK::Construct_cartesian_const_iterator_3, typename EK::Construct_cartesian_const_iterator_3>   Construct_cartesian_const_iterator_3;
 
+  // typedef void Compute_z_3; // to detect where .z() is called
+  // typedef void Construct_point_3; // to detect where the ctor is called
+
   Assign_2
   assign_2_object() const
   { return Assign_2(); }
@@ -215,7 +227,8 @@ struct Lazy_kernel_without_type_equality
 
 template <class EK, class AK = Simple_cartesian<Interval_nt_advanced>,
                     class E2A = Cartesian_converter<EK, AK,
-                                To_interval<typename EK::RT> > >
+                                To_interval<typename EK::RT> >
+                                /*Approx_converter<EK, AK>*/ >
 struct Lazy_kernel
   : public Type_equality_wrapper< 
              Lazy_kernel_base< EK, AK, E2A, Lazy_kernel<EK, AK, E2A> >,

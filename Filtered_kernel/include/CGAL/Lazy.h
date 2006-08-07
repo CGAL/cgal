@@ -662,7 +662,13 @@ public:
 };
 
 
-struct Approx_converter {
+template < typename K1, typename K2 >
+struct Approx_converter
+{
+  typedef K1         Source_kernel;
+  typedef K2         Target_kernel;
+  //typedef Converter  Number_type_converter;
+
   template < typename T >
   const typename T::AT&
   operator()(const T&t) const
@@ -671,10 +677,15 @@ struct Approx_converter {
   const Null_vector&
   operator()(const Null_vector& n) const
   { return n; }
-
 };
 
-struct Exact_converter {
+template < typename K1, typename K2 >
+struct Exact_converter
+{
+  typedef K1         Source_kernel;
+  typedef K2         Target_kernel;
+  //typedef Converter  Number_type_converter;
+
   template < typename T >
   const typename T::ET&
   operator()(const T&t) const
