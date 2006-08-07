@@ -283,7 +283,7 @@ public:
     operator()(const typename K1::Line_3 &a) const
     {
         typedef typename K2::Line_3  Line_3;
-	return Line_3(operator()(a.point()), operator()(a.direction()));
+	return Line_3(operator()(a.point()), operator()(a.to_vector()));
     }
 
     typename K2::Ray_3
