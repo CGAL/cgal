@@ -31,13 +31,14 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < typename A, typename B >
+// The additionnal int parameter is to obtain different types.
+template < typename A, typename B, int = 0 >
 struct First_if_different {
   typedef A Type;
 };
 
-template < typename A >
-struct First_if_different<A, A> {
+template < typename A, int i >
+struct First_if_different<A, A, i> {
   struct Type{};
 };
 
