@@ -37,15 +37,16 @@ intersection(const typename CGAL_WRAP(K)::Plane_3  &plane,
     typedef typename K::Point_3 Point_3;
     typedef typename K::Direction_3 Direction_3;
     typedef typename K::RT RT;
+
     const Point_3 &line_pt = line.point();
     const Direction_3 &line_dir = line.direction();
-    RT num,  den;
-    num = plane.a()*line_pt.hx() + plane.b()*line_pt.hy()
-          + plane.c()*line_pt.hz() + wmult((K*)0, plane.d(), line_pt.hw());
-    den = plane.a()*line_dir.dx() + plane.b()*line_dir.dy()
-          + plane.c()*line_dir.dz();
-    if (den == RT(0)) {
-        if (num == RT(0)) {
+
+    RT num = plane.a()*line_pt.hx() + plane.b()*line_pt.hy()
+           + plane.c()*line_pt.hz() + wmult((K*)0, plane.d(), line_pt.hw());
+    RT den = plane.a()*line_dir.dx() + plane.b()*line_dir.dy()
+           + plane.c()*line_dir.dz();
+    if (den == 0) {
+        if (num == 0) {
             // all line
             return make_object(line);
         } else {
@@ -89,43 +90,39 @@ intersection(const typename CGAL_WRAP(K)::Plane_3 &plane1,
     const RT &q = plane2.b();
     const RT &r = plane2.c();
     const RT &s = plane2.d();
-    const RT zero = RT(0);
-    RT det;
-    Point_3 is_pt;
-    Direction_3 is_dir;
 
-    det = a*q-p*b;
-    if (det != zero) {
-        is_pt = Point_3(b*s-d*q, p*d-a*s, zero, det);
-        is_dir = Direction_3(b*r-c*q, p*c-a*r, det);
+    RT det = a*q-p*b;
+    if (det != 0) {
+        Point_3 is_pt = Point_3(b*s-d*q, p*d-a*s, 0, det);
+        Direction_3 is_dir = Direction_3(b*r-c*q, p*c-a*r, det);
         return make_object(Line_3(is_pt, is_dir));
     }
     det = a*r-p*c;
-    if (det != zero) {
-        is_pt = Point_3(c*s-d*r, zero, p*d-a*s, det);
-        is_dir = Direction_3(c*q-b*r, det, p*b-a*q);
+    if (det != 0) {
+        Point_3 is_pt = Point_3(c*s-d*r, 0, p*d-a*s, det);
+        Direction_3 is_dir = Direction_3(c*q-b*r, det, p*b-a*q);
         return make_object(Line_3(is_pt, is_dir));
     }
     det = b*r-c*q;
-    if (det != zero) {
-        is_pt = Point_3(zero, c*s-d*r, d*q-b*s, det);
-        is_dir = Direction_3(det, c*p-a*r, a*q-b*p);
+    if (det != 0) {
+        Point_3 is_pt = Point_3(0, c*s-d*r, d*q-b*s, det);
+        Direction_3 is_dir = Direction_3(det, c*p-a*r, a*q-b*p);
         return make_object(Line_3(is_pt, is_dir));
     }
 // degenerate case
-    if (a!=zero || p!=zero) {
+    if (a!=0 || p!=0) {
         if (a*s == p*d)
             return make_object(plane1);
         else
             return Object();
     }
-    if (b!=zero || q!=zero) {
+    if (b!=0 || q!=0) {
         if (b*s == q*d)
             return make_object(plane1);
         else
             return Object();
     }
-    if (c!=zero || r!=zero) {
+    if (c!=0 || r!=0) {
         if (c*s == r*d)
             return make_object(plane1);
         else
@@ -169,14 +166,14 @@ do_intersect(const typename CGAL_WRAP(K)::Plane_3 &plane,
     typedef typename K::RT RT;
     const Point_3 &line_pt = line.point();
     const Direction_3 &line_dir = line.direction();
-    RT num,  den;
-    den = plane.a()*line_dir.dx() + plane.b()*line_dir.dy()
-        + plane.c()*line_dir.dz();
-    if (den !=  RT(0))
+
+    RT den = plane.a()*line_dir.dx() + plane.b()*line_dir.dy()
+           + plane.c()*line_dir.dz();
+    if (den != 0)
         return true;
-    num = plane.a()*line_pt.hx() + plane.b()*line_pt.hy()
-        + plane.c()*line_pt.hz() + wmult((K*)0, plane.d(), line_pt.hw());
-    if (num == RT(0)) {
+    RT num = plane.a()*line_pt.hx() + plane.b()*line_pt.hy()
+           + plane.c()*line_pt.hz() + wmult((K*)0, plane.d(), line_pt.hw());
+    if (num == 0) {
         // all line
         return true;
     } else {
@@ -266,9 +263,10 @@ intersection(const typename CGAL_WRAP(K)::Plane_3 &plane,
     typedef typename K::Point_3 Point_3;
     const Point_3 &source = seg.source();
     const Point_3 &target = seg.target();
-    Oriented_side source_side,target_side;
-    source_side = plane.oriented_side(source);
-    target_side = plane.oriented_side(target);
+
+    Oriented_side source_side = plane.oriented_side(source);
+    Oriented_side target_side = plane.oriented_side(target);
+
     switch (source_side) {
     case ON_ORIENTED_BOUNDARY:
         if (target_side == ON_ORIENTED_BOUNDARY)
@@ -319,9 +317,10 @@ do_intersect(const typename CGAL_WRAP(K)::Plane_3  &plane,
     typedef typename K::Point_3 Point_3;
     const Point_3 &source = seg.source();
     const Point_3 &target = seg.target();
-    Oriented_side source_side,target_side;
-    source_side = plane.oriented_side(source);
-    target_side = plane.oriented_side(target);
+
+    Oriented_side source_side = plane.oriented_side(source);
+    Oriented_side target_side = plane.oriented_side(target);
+
     if ( source_side == target_side
        && target_side != ON_ORIENTED_BOUNDARY) {
         return false;
@@ -459,7 +458,7 @@ intersection(const typename CGAL_WRAP(K)::Line_3 &line,
     Point_3 const & _iso_min=box.min();
     Point_3 const & _iso_max=box.max();
     for (int i=0; i< _ref_point.dimension(); i++) {
-        if (_dir.homogeneous(i) == RT(0)) {
+        if (_dir.homogeneous(i) == 0) {
             if (_ref_point.cartesian(i) < _iso_min.cartesian(i)) {
                 return Object();
             }
@@ -468,7 +467,7 @@ intersection(const typename CGAL_WRAP(K)::Line_3 &line,
             }
         } else {
             FT newmin, newmax;
-            if (_dir.homogeneous(i) > RT(0)) {
+            if (_dir.homogeneous(i) > 0) {
                 newmin = (_iso_min.cartesian(i) - _ref_point.cartesian(i)) /
                     _dir.cartesian(i);
                 newmax = (_iso_max.cartesian(i) - _ref_point.cartesian(i)) /
@@ -527,14 +526,14 @@ intersection(const typename CGAL_WRAP(K)::Ray_3 &ray,
     typedef typename K::RT RT;
     typedef typename K::FT FT;
     bool all_values = true;
-    FT _min= FT(0), _max;
+    FT _min = 0, _max;
     Point_3 const & _ref_point=ray.source();
     Vector_3 const & _dir=ray.direction().vector();
     Point_3 const & _iso_min=box.min();
     Point_3 const & _iso_max=box.max();
-    int i;
-    for (i=0; i< _ref_point.dimension(); i++) {
-        if (_dir.homogeneous(i) == RT(0)) {
+
+    for (int i=0; i< _ref_point.dimension(); i++) {
+        if (_dir.homogeneous(i) == 0) {
             if (_ref_point.cartesian(i) < _iso_min.cartesian(i)) {
                 return Object();
             }
@@ -543,7 +542,7 @@ intersection(const typename CGAL_WRAP(K)::Ray_3 &ray,
             }
         } else {
             FT newmin, newmax;
-            if (_dir.homogeneous(i) > RT(0)) {
+            if (_dir.homogeneous(i) > 0) {
                 newmin = (_iso_min.cartesian(i) - _ref_point.cartesian(i)) /
                     _dir.cartesian(i);
                 newmax = (_iso_max.cartesian(i) - _ref_point.cartesian(i)) /
@@ -598,7 +597,7 @@ intersection(const typename CGAL_WRAP(K)::Segment_3 &seg,
     typedef typename K::Segment_3 Segment_3;
     typedef typename K::RT RT;
     typedef typename K::FT FT;
-    FT _min= FT(0), _max;
+    FT _min = 0, _max;
 
     Point_3 const & _ref_point=seg.source();
     Vector_3 const & _dir=seg.direction().vector();
@@ -610,9 +609,9 @@ intersection(const typename CGAL_WRAP(K)::Segment_3 &seg,
             : (CGAL_NTS abs(_dir.y()) > CGAL_NTS abs(_dir.z()) ? 1 : 2);
     _max = (seg.target().cartesian(main_dir)-_ref_point.cartesian(main_dir)) /
             _dir.cartesian(main_dir);
-    int i;
-    for (i=0; i< _ref_point.dimension(); i++) {
-        if (_dir.homogeneous(i) == RT(0)) {
+
+    for (int i=0; i< _ref_point.dimension(); i++) {
+        if (_dir.homogeneous(i) == 0) {
             if (_ref_point.cartesian(i) < _iso_min.cartesian(i)) {
                 return Object();
             }
@@ -621,7 +620,7 @@ intersection(const typename CGAL_WRAP(K)::Segment_3 &seg,
             }
         } else {
             FT newmin, newmax;
-            if (_dir.homogeneous(i) > RT(0)) {
+            if (_dir.homogeneous(i) > 0) {
                 newmin = (_iso_min.cartesian(i) - _ref_point.cartesian(i)) /
                     _dir.cartesian(i);
                 newmax = (_iso_max.cartesian(i) - _ref_point.cartesian(i)) /
