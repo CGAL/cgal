@@ -719,7 +719,7 @@ public:
   update_exact()
   {
 // TODO : This looks really unfinished...
-   std::vector<Object> vec;
+    std::vector<Object> vec;
     this->et = new ET();
     //this->et->reserve(this->at.size());
     ec()(CGAL::exact(l1_), std::back_inserter(*(this->et)));
@@ -926,10 +926,19 @@ public :
     return *this;
   }
 
-  Lazy()
+private:
+
+  struct dummy_zero_tag{};
+
+  Lazy(dummy_zero_tag)
   {
     PTR = new Lazy_construct_rep_0<AT,ET, E2A>();
   }
+
+public:
+
+  Lazy()
+    : Handle(zero()) {}
 
   Lazy (Self_rep *r)
   {
@@ -939,16 +948,13 @@ public :
   const AT& approx() const
   { return ptr()->approx(); }
 
-
-  const ET&  exact() const
+  const ET& exact() const
   { return ptr()->exact(); }
 
-
-   AT& approx()
+  AT& approx()
   { return ptr()->approx(); }
 
-
-  ET&  exact()
+  ET& exact()
   { return ptr()->exact(); }
 
   int depth() const
@@ -961,8 +967,16 @@ public :
     ptr()->print_dag(os, level);
   }
 
-
 private:
+
+  // We have a static variable for optimizing the default constructor,
+  // which is in particular heavily used for pruning DAGs.
+  static const Self & zero()
+  {
+    static const Self z = Lazy(dummy_zero_tag());
+    return z;
+  }
+
   Self_rep * ptr() const { return (Self_rep*) PTR; }
 
 };
