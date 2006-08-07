@@ -42,7 +42,7 @@ intersection(const typename CGAL_WRAP(K)::Plane_3  &plane,
     const Direction_3 &line_dir = line.direction();
 
     RT num = plane.a()*line_pt.hx() + plane.b()*line_pt.hy()
-           + plane.c()*line_pt.hz() + wmult((K*)0, plane.d(), line_pt.hw());
+           + plane.c()*line_pt.hz() + wmult_hw((K*)0, plane.d(), line_pt);
     RT den = plane.a()*line_dir.dx() + plane.b()*line_dir.dy()
            + plane.c()*line_dir.dz();
     if (den == 0) {
@@ -58,7 +58,7 @@ intersection(const typename CGAL_WRAP(K)::Plane_3  &plane,
         den*line_pt.hx()-num*line_dir.dx(),
         den*line_pt.hy()-num*line_dir.dy(),
         den*line_pt.hz()-num*line_dir.dz(),
-        wmult((K*)0, den, line_pt.hw())));
+        wmult_hw((K*)0, den, line_pt)));
 }
 
 template <class K>
@@ -172,7 +172,7 @@ do_intersect(const typename CGAL_WRAP(K)::Plane_3 &plane,
     if (den != 0)
         return true;
     RT num = plane.a()*line_pt.hx() + plane.b()*line_pt.hy()
-           + plane.c()*line_pt.hz() + wmult((K*)0, plane.d(), line_pt.hw());
+           + plane.c()*line_pt.hz() + wmult_hw((K*)0, plane.d(), line_pt);
     if (num == 0) {
         // all line
         return true;
@@ -695,36 +695,36 @@ intersection(
     } else {
         newmin = Point_3(
             min_idx[0] == 0
-                ? wmult((K*)0, min_points[0].hx(), min_points[1].hw())
-                : wmult((K*)0, min_points[1].hx(), min_points[0].hw())
+                ? wmult_hw((K*)0, min_points[0].hx(), min_points[1])
+                : wmult_hw((K*)0, min_points[1].hx(), min_points[0])
             ,
             min_idx[1] == 0
-                ? wmult((K*)0, min_points[0].hy(), min_points[1].hw())
-                : wmult((K*)0, min_points[1].hy(), min_points[0].hw())
+                ? wmult_hw((K*)0, min_points[0].hy(), min_points[1])
+                : wmult_hw((K*)0, min_points[1].hy(), min_points[0])
             ,
             min_idx[2] == 0
-                ? wmult((K*)0, min_points[0].hz(), min_points[1].hw())
-                : wmult((K*)0, min_points[1].hz(), min_points[0].hw())
+                ? wmult_hw((K*)0, min_points[0].hz(), min_points[1])
+                : wmult_hw((K*)0, min_points[1].hz(), min_points[0])
             ,
-            wmult((K*)0, min_points[0].hw(), min_points[1].hw()) );
+            wmult_hw((K*)0, min_points[0].hw(), min_points[1]) );
     }
     if (max_idx[0] == max_idx[1] && max_idx[0] == max_idx[2]) {
         newmax = max_points[max_idx[0]];
     } else {
         newmax = Point_3(
             max_idx[0] == 0
-                ? wmult((K*)0, max_points[0].hx(), max_points[1].hw())
-                : wmult((K*)0, max_points[1].hx(), max_points[0].hw())
+                ? wmult_hw((K*)0, max_points[0].hx(), max_points[1])
+                : wmult_hw((K*)0, max_points[1].hx(), max_points[0])
             ,
             max_idx[1] == 0
-                ? wmult((K*)0, max_points[0].hy(), max_points[1].hw())
-                : wmult((K*)0, max_points[1].hy(), max_points[0].hw())
+                ? wmult_hw((K*)0, max_points[0].hy(), max_points[1])
+                : wmult_hw((K*)0, max_points[1].hy(), max_points[0])
             ,
             max_idx[2] == 0
-                ? wmult((K*)0, max_points[0].hz(), max_points[1].hw())
-                : wmult((K*)0, max_points[1].hz(), max_points[0].hw())
+                ? wmult_hw((K*)0, max_points[0].hz(), max_points[1])
+                : wmult_hw((K*)0, max_points[1].hz(), max_points[0])
             ,
-            wmult((K*)0, max_points[0].hw(), max_points[1].hw()) );
+            wmult_hw((K*)0, max_points[0].hw(), max_points[1]) );
     }
     Object result = make_object(Iso_cuboid_3(newmin, newmax));
     return result;

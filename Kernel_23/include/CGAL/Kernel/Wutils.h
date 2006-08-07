@@ -84,6 +84,56 @@ struct wmult_functor
   : public wmult_tag<typename K::Rep_tag> {};
 
 
+template < typename Rep_Tag > struct wmult_hw_tag;
+
+template <>
+struct wmult_hw_tag<Cartesian_tag>
+{
+  template < typename RT, typename T >
+  const RT & operator()(const RT &a, const T &) const
+  { return a; }
+
+  template < typename RT, typename T >
+  const RT & operator()(const RT &a, const RT &, const T &) const
+  { return a; }
+
+  template < typename RT, typename T >
+  const RT & operator()(const RT &a, const RT &, const RT &, const T &) const
+  { return a; }
+
+  template < typename RT, typename T >
+  const RT & operator()(const RT &a, const RT &, const RT &, const RT &,
+                        const T &) const
+  { return a; }
+};
+
+template <>
+struct wmult_hw_tag<Homogeneous_tag>
+{
+  template < typename RT, typename T >
+  RT operator()(const RT &a, const T &t) const
+  { return a*t.hw(); }
+
+  template < typename RT, typename T >
+  RT operator()(const RT &a, const RT &w1, const T &t) const
+  { return a*w1*t.hw(); }
+
+  template < typename RT, typename T >
+  RT operator()(const RT &a, const RT &w1, const RT &w2, const T &t) const
+  { return a*w1*w2*t.hw(); }
+
+  template < typename RT, typename T >
+  RT operator()(const RT &a, const RT &w1, const RT &w2, const RT &w3,
+                const T &t) const
+  { return a*w1*w2*w3*t.hw(); }
+};
+
+
+template < typename K >
+struct wmult_hw_functor
+  : public wmult_hw_tag<typename K::Rep_tag> {};
+
+
 template < typename Rep_Tag > struct wcross_tag_2;
 
 template <>
@@ -164,6 +214,52 @@ struct wcross_functor_3
   : public wcross_tag_3<typename K::Rep_tag> {};
 
 } // end namespace CGALi
+
+
+// wmult_hw() is like wmult(), except it calls .hw() on its last argument.
+// This way, we can completely avoid creating FT(1) for Cartesian.
+
+template < typename K, typename T >
+inline
+typename K::RT
+wmult_hw(K*, const typename K::RT &a,
+             const T &t)
+{
+    return CGALi::wmult_hw_functor<K>()(a, t);
+}
+
+template < typename K, typename T >
+inline
+typename K::RT
+wmult_hw(K*, const typename K::RT &a,
+             const typename K::RT &w1,
+             const T &t)
+{
+    return CGALi::wmult_hw_functor<K>()(a, w1, t);
+}
+
+template < typename K, typename T >
+inline
+typename K::RT
+wmult_hw(K*, const typename K::RT &a,
+             const typename K::RT &w1,
+             const typename K::RT &w2,
+             const T &t)
+{
+    return CGALi::wmult_hw_functor<K>()(a, w1, w2, t);
+}
+
+template < typename K, typename T >
+inline
+typename K::RT
+wmult_hw(K*, const typename K::RT &a,
+             const typename K::RT &w1,
+             const typename K::RT &w2,
+             const typename K::RT &w3,
+             const T &t)
+{
+    return CGALi::wmult_hw_functor<K>()(a, w1, w2, w3, t);
+}
 
 
 template < typename K >
