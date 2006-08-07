@@ -317,10 +317,17 @@ typedef unsigned long FPU_CW_t;
 #define CGAL_FE_UPWARD      FE_UPWARD 
 #define CGAL_FE_DOWNWARD    FE_DOWNWARD 
 
-#elif defined ( _MSC_VER ) 
+#elif defined ( _MSC_VER )
+#if ( _MSC_VER < 1400)
 #define CGAL_IA_SETFPCW(CW) _controlfp (CW, _MCW_RC )
 #define CGAL_IA_GETFPCW(CW) CW = _controlfp (0, 0 ) &  _MCW_RC
 typedef unsigned short FPU_CW_t;
+#else 
+#define CGAL_IA_SETFPCW(CW) unsigned int dummy; _controlfp_s (&dummy, CW, _MCW_RC )
+#define CGAL_IA_GETFPCW(CW)_controlfp_s (&CW, 0, 0 ); CW  &=  _MCW_RC
+typedef unsigned int FPU_CW_t;
+#endif 
+
 #define CGAL_FE_TONEAREST    _RC_NEAR
 #define CGAL_FE_TOWARDZERO   _RC_CHOP
 #define CGAL_FE_UPWARD       _RC_UP
