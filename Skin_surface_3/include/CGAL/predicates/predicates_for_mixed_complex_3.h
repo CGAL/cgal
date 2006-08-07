@@ -43,9 +43,9 @@ side_of_mixed_cellC3(const FT &p1x, const FT &p1y, const FT &p1z, const FT &p1w,
 			  x,y,z);
   dx = p1x - p2x;  dy = p1y - p2y;  dz = p1z - p2z;
 
-  return CGAL_NTS sign((s*p1x+(1-s)*x-xx)*(dx) +
-		       (s*p1y+(1-s)*y-xy)*(dy) +
-		       (s*p1z+(1-s)*z-xz)*(dz));
+  return CGAL_NTS sign(((1-s)*p1x+s*x-xx)*(dx) +
+		       ((1-s)*p1y+s*y-xy)*(dy) +
+		       ((1-s)*p1z+s*z-xz)*(dz));
 }
 
 template < class FT>
@@ -76,9 +76,9 @@ side_of_mixed_cellC3(const FT &p1x, const FT &p1y, const FT &p1z, const FT &p1w,
 			  p3x, p3y, p3z, p3w,
 			  qx,qy,qz);
 
-  return CGAL_NTS sign((s*p1x+(1-s)*qx-xx)*nx +
-		       (s*p1y+(1-s)*qy-xy)*ny +
-		       (s*p1z+(1-s)*qz-xz)*nz);
+  return CGAL_NTS sign(((1-s)*p1x+s*qx-xx)*nx +
+		       ((1-s)*p1y+s*qy-xy)*ny +
+		       ((1-s)*p1z+s*qz-xz)*nz);
 }
 
 template < class FT>
@@ -114,9 +114,9 @@ side_of_mixed_cellC3(const FT &p1x, const FT &p1y, const FT &p1z, const FT &p1w,
   // Second term is the actual sign of test.
   return 
     CGAL_NTS sign(nx*(p1x-p4x) + ny*(p1y-p4y) + nz*(p1z-p4z)) *
-    CGAL_NTS sign((s*p1x+(1-s)*qx-xx)*nx +
-		  (s*p1y+(1-s)*qy-xy)*ny +
-		  (s*p1z+(1-s)*qz-xz)*nz);
+    CGAL_NTS sign(((1-s)*p1x+s*qx-xx)*nx +
+		  ((1-s)*p1y+s*qy-xy)*ny +
+		  ((1-s)*p1z+s*qz-xz)*nz);
 }
 
 CGAL_END_NAMESPACE

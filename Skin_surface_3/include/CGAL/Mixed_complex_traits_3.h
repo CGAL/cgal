@@ -95,10 +95,9 @@ public:
   
   result_type operator()(const Bare_point &p_del,
 			 const Bare_point &p_vor) const {
-    FT t = 1-s;
-    return Bare_point(s*p_del.x() + t*p_vor.x(),
-		      s*p_del.y() + t*p_vor.y(),
-		      s*p_del.z() + t*p_vor.z());
+    return Bare_point((1-s)*p_del.x() + s*p_vor.x(),
+		      (1-s)*p_del.y() + s*p_vor.y(),
+		      (1-s)*p_del.z() + s*p_vor.z());
   }
   
 private:

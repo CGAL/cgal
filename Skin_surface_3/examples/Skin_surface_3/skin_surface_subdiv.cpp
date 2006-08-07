@@ -24,21 +24,27 @@ int main(int argc, char *argv[]) {
   std::list<Weighted_point> l;
   RT                        shrinkfactor = 0.5;
 
-  l.push_front(Weighted_point(Bare_point(0,-1,-2), 1));
-  l.push_front(Weighted_point(Bare_point(0,-1, 2), 1));
-  l.push_front(Weighted_point(Bare_point(0, 1, 0), 1));
+  l.push_front(Weighted_point(Bare_point( 1,-1,-1), 1.25));
+  l.push_front(Weighted_point(Bare_point( 1, 1, 1), 1.25));
+  l.push_front(Weighted_point(Bare_point(-1, 1,-1), 1.25));
 
   Skin_surface_3 skin_surface(l.begin(), l.end(), shrinkfactor);
 
   Polyhedron p;
   CGAL::mesh_skin_surface_3(skin_surface, p);
+
+  {
+    std::ofstream out("mesh.off");
+    write_polyhedron_with_normals(p, skin_surface, out);
+  }
   
   CGAL::subdivide_skin_surface_mesh_3(p, skin_surface);
 
 
-  // NGHK: remove later
-  std::ofstream out("mesh.off");
-  write_polyhedron_with_normals(p, skin_surface, out);
+  { // NGHK: remove later
+    std::ofstream out("subdiv.off");
+    write_polyhedron_with_normals(p, skin_surface, out);
+  }
 
   return 0;
 }

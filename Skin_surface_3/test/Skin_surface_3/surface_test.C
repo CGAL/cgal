@@ -27,21 +27,22 @@ typedef Triangulated_mixed_complex::Finite_cells_iterator
 
 #include <fstream>
 
-int main(int argc, char *argv[]) {
-  double shrink = .5;
-  std::list<Weighted_point> l;
-
-  while (argc>1) {
-    argc--; argv++;
-    std::ifstream in(argv[0]);
-
+class Test_file {
+public:
+  Test_file(double shrink) : s(shrink) {
+  }
+  void operator()(char * filename) {
+    std::cout << s << " " << filename << std::endl;
+    
+    std::ifstream in(filename);
+    
     std::list<Weighted_point> l;
     double x,y,z,w;
     while (in >> x >> y >> z >> w) 
       l.push_front(Weighted_point(Bare_point(x,y,z),w));
     
-    Skin_surface_3 skin_surface(l.begin(), l.end(), shrink);
-
+    Skin_surface_3 skin_surface(l.begin(), l.end(), s);
+    
     Skin_surface_3::Triangulated_mixed_complex tmc;
     triangulate_mixed_complex_3(skin_surface.get_regular_triangulation(), 
 				skin_surface.get_shrink_factor(), 
@@ -77,8 +78,29 @@ int main(int argc, char *argv[]) {
       Quadratic_surface::RT val2 = skin_surface.value(baryc);
       CGAL_assertion(val1==val2);
     }
-  }
 
+  }
+private:
+  double s;
+};
+
+int main(int argc, char *argv[]) {
+  std::vector<char *> filenames;
+   filenames.push_back("data/degenerate.cin");
+   filenames.push_back("data/test1.cin");
+   filenames.push_back("data/test2.cin");
+   filenames.push_back("data/test3.cin");
+   filenames.push_back("data/test4.cin");
+   filenames.push_back("data/test5.cin");
+   filenames.push_back("data/test6.cin");
+   filenames.push_back("data/test7.cin");
+   filenames.push_back("data/test8.cin");
+   filenames.push_back("data/test9.cin");
+   filenames.push_back("data/test10.cin");
+   filenames.push_back("data/test11.cin");
+  
+  std::for_each(filenames.begin(), filenames.end(), Test_file(.85));
+  std::for_each(filenames.begin(), filenames.end(), Test_file(.5));
 
   return 0;
 }

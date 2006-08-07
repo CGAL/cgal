@@ -317,14 +317,14 @@ public:
   }
   template< class Point >
   typename Point::R::RT
-  value(const Simplex &sim, const Point &p) const {
-    return construct_surface(sim, typename Point::R()).value(p);
-  }
-  template< class Point >
-  typename Point::R::RT
   value(const Point &p) const {
     Simplex sim = locate_mixed(p);
     return value(sim,p);
+  }
+  template< class Point >
+  typename Point::R::RT
+  value(const Simplex &sim, const Point &p) const {
+    return construct_surface(sim, typename Point::R()).value(p);
   }
   template< class Point >
   typename Point::R::Vector_3
@@ -401,7 +401,7 @@ public:
     typedef typename Point::R        Traits;
     typedef typename Traits::Plane_3 Plane;
     typedef typename Traits::Line_3  Line;
-    Mixed_complex_traits_3<Traits> point_traits;
+    Mixed_complex_traits_3<Traits> point_traits(gt.get_shrink());
     Cartesian_converter<Traits, 
                         typename Geometric_traits::Bare_point::R> converter;
 
@@ -421,7 +421,7 @@ public:
         sortedV[3-i+nIn] = i;
       }
     }
-    
+
     Object obj;
     if (nIn==1) {
       p1 = mc_triangulator->location(tet.vertex(sortedV[0]), point_traits);
@@ -472,6 +472,10 @@ public:
       CGAL_assertion(false);
     }
 
+    std::cerr << "SKEL 2 1" << std::endl
+	      << "  " << p1 << std::endl
+	      << "  " << p2 << std::endl
+	      << "  2 0 1" << std::endl;
     // Find the intersection:
     intersect(p1, p2, sim, sim, p);
   }
@@ -522,11 +526,8 @@ public:
 	return Quadratic_surface(p0,p1,p2,p3, gt.get_shrink());
 	break;
       }
-    default: 
-      {
-	CGAL_assertion(false);
-      }
     }
+    CGAL_assertion(false);
     return Quadratic_surface();
   }
 

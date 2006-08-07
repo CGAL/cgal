@@ -1,3 +1,5 @@
+#define CGAL_PROFILE
+
 // examples/Skin_surface_3/skin_surface_simple.C
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Skin_surface_3.h>
@@ -21,16 +23,9 @@ int main(int argc, char *argv[]) {
   std::list<Weighted_point> l;
   RT                        shrinkfactor = 0.5;
 
-  l.push_front(Weighted_point(Bare_point(0,-1,-2), 1.01));
-  l.push_front(Weighted_point(Bare_point(0,-1, 2), 1.01));
-  l.push_front(Weighted_point(Bare_point(0, 1, 0), 1.01));
-
-  l.push_front(Weighted_point(Bare_point(0, 100, 0), 1));
-  l.push_front(Weighted_point(Bare_point(0,-100, 0), 1));
-  l.push_front(Weighted_point(Bare_point( 100, 0, 0), 1));
-  l.push_front(Weighted_point(Bare_point(-100, 0, 0), 1));
-  l.push_front(Weighted_point(Bare_point(0, 0, 100), 1));
-  l.push_front(Weighted_point(Bare_point(0, 0,-100), 1));
+  l.push_front(Weighted_point(Bare_point( 1,-1,-1), 1.25));
+  l.push_front(Weighted_point(Bare_point( 1, 1, 1), 1.25));
+  l.push_front(Weighted_point(Bare_point(-1, 1,-1), 1.25));
 
   Skin_surface_3 skin_surface(l.begin(), l.end(), shrinkfactor);
 

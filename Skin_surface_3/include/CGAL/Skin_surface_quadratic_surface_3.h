@@ -33,74 +33,83 @@ public:
   typedef Weighted_point<Point,RT>        Weighted_point;
 
   Skin_surface_quadratic_surface_3()
-    : p(0,0,0), c(0) 
+    : dim(-1), p(0,0,0), c(0) 
   {
     for (int i=0; i<6; i++) Q[i] = 0;
   }
-  Skin_surface_quadratic_surface_3(RT Qinput[], Point p, RT c)
-    : p(p), c(c)
+  Skin_surface_quadratic_surface_3(RT Qinput[], Point p, RT c, int d)
+    : dim(10+d), p(p), c(c)
   {
     for (int i=0; i<6; i++) Q[i] = Qinput[i];
   }
+  int dim;
   Skin_surface_quadratic_surface_3(Weighted_point wp0, RT s)
-    : p(wp0.point()), c(-wp0.weight()) 
+    : dim(0), p(wp0.point()), c(-s*(1-s)*wp0.weight()) 
   {
+    CGAL_PROFILER(std::string("Constructor : ") + 
+		  std::string(CGAL_PRETTY_FUNCTION));
     Q[1] = Q[3] = Q[4] = 0;
-    Q[0] = Q[2] = Q[5] = 1/s;
+    Q[0] = Q[2] = Q[5] = (1-s);
   }
   Skin_surface_quadratic_surface_3(Weighted_point wp0, 
 				   Weighted_point wp1, 
-				   RT s)
+				   RT s) : dim(1)
   {
+    CGAL_PROFILER(std::string("Constructor : ") + 
+		  std::string(CGAL_PRETTY_FUNCTION));
     Regular_triangulation_euclidean_traits_3<K> reg_traits;
     p = reg_traits.construct_weighted_circumcenter_3_object()(wp0,wp1);
-    c = reg_traits.compute_squared_radius_smallest_orthogonal_sphere_3_object()(wp0,wp1);
+    c = s*(1-s)*reg_traits.compute_squared_radius_smallest_orthogonal_sphere_3_object()(wp0,wp1);
     Vector t = wp0-wp1;
 
-    RT den = t*t*s*(1-s);
-    Q[0] = (-  t.x()*t.x()/den + 1/s);
+    RT den = t*t;
+    Q[0] = (-  t.x()*t.x()/den + (1-s));
     
     Q[1] = (-2*t.y()*t.x()/den);
-    Q[2] = (-  t.y()*t.y()/den + 1/s);
+    Q[2] = (-  t.y()*t.y()/den + (1-s));
     
     Q[3] = (-2*t.z()*t.x()/den);
     Q[4] = (-2*t.z()*t.y()/den);
-    Q[5] = (-  t.z()*t.z()/den + 1/s);
+    Q[5] = (-  t.z()*t.z()/den + (1-s));
 
   }
   Skin_surface_quadratic_surface_3(Weighted_point wp0, 
 				   Weighted_point wp1, 
 				   Weighted_point wp2, 
-				   RT s)
+				   RT s) : dim(2)
   {
+    CGAL_PROFILER(std::string("Constructor : ") + 
+		  std::string(CGAL_PRETTY_FUNCTION));
     Regular_triangulation_euclidean_traits_3<K> reg_traits;
     p = reg_traits.construct_weighted_circumcenter_3_object()(wp0,wp1,wp2);
-    c = reg_traits.compute_squared_radius_smallest_orthogonal_sphere_3_object()(wp0,wp1,wp2);
+    c = s*(1-s)*reg_traits.compute_squared_radius_smallest_orthogonal_sphere_3_object()(wp0,wp1,wp2);
     
     Vector t = K().construct_orthogonal_vector_3_object()(wp0,wp1,wp2);
 
-    RT den = t*t*s*(1-s);
-    Q[0] = -(-  t.x()*t.x()/den + 1/(1-s));
+    RT den = t*t;
+    Q[0] = -(-  t.x()*t.x()/den + s);
     
     Q[1] = -(-2*t.y()*t.x()/den);
-    Q[2] = -(-  t.y()*t.y()/den + 1/(1-s));
+    Q[2] = -(-  t.y()*t.y()/den + s);
     
     Q[3] = -(-2*t.z()*t.x()/den);
     Q[4] = -(-2*t.z()*t.y()/den);
-    Q[5] = -(-  t.z()*t.z()/den + 1/(1-s));
+    Q[5] = -(-  t.z()*t.z()/den + s);
 
   }
   Skin_surface_quadratic_surface_3(Weighted_point wp0, 
 				   Weighted_point wp1, 
 				   Weighted_point wp2, 
 				   Weighted_point wp3, 
-				   RT s)
+				   RT s) : dim(3)
   {
+    CGAL_PROFILER(std::string("Constructor : ") + 
+		  std::string(CGAL_PRETTY_FUNCTION));
     Regular_triangulation_euclidean_traits_3<K> reg_traits;
     p = reg_traits.construct_weighted_circumcenter_3_object()(wp0,wp1,wp2,wp3);
-    c = reg_traits.compute_squared_radius_smallest_orthogonal_sphere_3_object()(wp0,wp1,wp2,wp3);
+    c = s*(1-s)*reg_traits.compute_squared_radius_smallest_orthogonal_sphere_3_object()(wp0,wp1,wp2,wp3);
     Q[1] = Q[3] = Q[4] = 0;
-    Q[0] = Q[2] = Q[5] = -1/(1-s);
+    Q[0] = Q[2] = Q[5] = -s;
   }
 
   template <class Input_point>
