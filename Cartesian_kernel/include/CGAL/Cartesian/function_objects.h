@@ -251,23 +251,14 @@ namespace CartesianKernelFunctors {
   class Collinear_are_ordered_along_line_2
   {
     typedef typename K::Point_2         Point_2;
-#ifdef CGAL_kernel_exactness_preconditions
-    typedef typename K::Collinear_2 Collinear_2;
-    Collinear_2 c;
-#endif // CGAL_kernel_exactness_preconditions
   public:
     typedef typename K::Bool_type       result_type;
     typedef Arity_tag< 3 >              Arity;
 
-#ifdef CGAL_kernel_exactness_preconditions
-    Collinear_are_ordered_along_line_2() {}
-    Collinear_are_ordered_along_line_2(const Collinear_2& c_) : c(c_) {}
-#endif // CGAL_kernel_exactness_preconditions
-
     result_type
     operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
     {
-      CGAL_kernel_exactness_precondition( c(p, q, r) );
+      CGAL_kernel_exactness_precondition( collinear(p, q, r) );
       return collinear_are_ordered_along_lineC2
 	(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
     }
@@ -277,23 +268,14 @@ namespace CartesianKernelFunctors {
   class Collinear_are_ordered_along_line_3
   {
     typedef typename K::Point_3         Point_3;
-#ifdef CGAL_kernel_exactness_preconditions
-    typedef typename K::Collinear_3 Collinear_3;
-    Collinear_3 c;
-#endif // CGAL_kernel_exactness_preconditions
   public:
     typedef typename K::Bool_type       result_type;
     typedef Arity_tag< 3 >              Arity;
 
-#ifdef CGAL_kernel_exactness_preconditions
-    Collinear_are_ordered_along_line_3() {}
-    Collinear_are_ordered_along_line_3(const Collinear_3& c_) : c(c_) {}
-#endif // CGAL_kernel_exactness_preconditions
-
     result_type
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
     {
-      CGAL_kernel_exactness_precondition( c(p, q, r) );
+      CGAL_kernel_exactness_precondition( collinear(p, q, r) );
       return collinear_are_ordered_along_lineC3(p.x(), p.y(), p.z(),
 						q.x(), q.y(), q.z(),
 						r.x(), r.y(), r.z());
@@ -304,24 +286,14 @@ namespace CartesianKernelFunctors {
   class Collinear_are_strictly_ordered_along_line_2
   {
     typedef typename K::Point_2         Point_2;
-#ifdef CGAL_kernel_exactness_preconditions
-    typedef typename K::Collinear_2 Collinear_2;
-    Collinear_2 c;
-#endif // CGAL_kernel_exactness_preconditions
   public:
     typedef typename K::Bool_type       result_type;
     typedef Arity_tag< 3 >              Arity;
 
-#ifdef CGAL_kernel_exactness_preconditions
-    Collinear_are_strictly_ordered_along_line_2() {}
-    Collinear_are_strictly_ordered_along_line_2(const Collinear_2& c_) : c(c_)
-    {}
-#endif // CGAL_kernel_exactness_preconditions
-
     result_type
     operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
     {
-      CGAL_kernel_exactness_precondition( c(p, q, r) );
+      CGAL_kernel_exactness_precondition( collinear(p, q, r) );
       return collinear_are_strictly_ordered_along_lineC2
 	(p.x(), p.y(), q.x(), q.y(), r.x(), r.y());
     }
@@ -331,24 +303,14 @@ namespace CartesianKernelFunctors {
   class Collinear_are_strictly_ordered_along_line_3
   {
     typedef typename K::Point_3         Point_3;
-#ifdef CGAL_kernel_exactness_preconditions
-    typedef typename K::Collinear_3 Collinear_3;
-    Collinear_3 c;
-#endif // CGAL_kernel_exactness_preconditions
   public:
     typedef typename K::Bool_type       result_type;
     typedef Arity_tag< 3 >              Arity;
 
-#ifdef CGAL_kernel_exactness_preconditions
-    Collinear_are_strictly_ordered_along_line_3() {}
-    Collinear_are_strictly_ordered_along_line_3(const Collinear_3& c_) : c(c_)
-    {}
-#endif // CGAL_kernel_exactness_preconditions
-
     result_type
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
     {
-      CGAL_kernel_exactness_precondition( c(p, q, r) );
+      CGAL_kernel_exactness_precondition( collinear(p, q, r) );
       return collinear_are_strictly_ordered_along_lineC3(p.x(), p.y(), p.z(),
 							 q.x(), q.y(), q.z(),
 							 r.x(), r.y(), r.z());
@@ -361,43 +323,26 @@ namespace CartesianKernelFunctors {
     typedef typename K::Point_2               Point_2;
     typedef typename K::Ray_2                 Ray_2;
     typedef typename K::Segment_2             Segment_2;
-    typedef typename K::Construct_point_on_2  Construct_point_on_2;
-    typedef typename K::Compare_x_2           Compare_x_2;
-    typedef typename K::Compare_y_2           Compare_y_2;
-    typedef typename K::Collinear_are_ordered_along_line_2
-    Collinear_are_ordered_along_line_2;
-    Construct_point_on_2 cp;
-    Compare_x_2 cx;
-    Compare_y_2 cy;
-    Collinear_are_ordered_along_line_2 co;
   public:
     typedef typename K::Bool_type             result_type;
     typedef Arity_tag< 2 >                    Arity;
 
-    Collinear_has_on_2() {}
-    Collinear_has_on_2(const Construct_point_on_2& cp_,
-		       const Compare_x_2& cx_,
-		       const Compare_y_2& cy_,
-		       const Collinear_are_ordered_along_line_2& co_)
-      : cp(cp_), cx(cx_), cy(cy_), co(co_)
-    {}
-
     result_type
     operator()( const Ray_2& r, const Point_2& p) const
     {
-      Point_2 source = cp(r,0);
-      Point_2 second = cp(r,1);
-      switch(cx(source, second)) {
+      const Point_2 & source = r.source();
+      const Point_2 & second = r.second_point();
+      switch(compare_x(source, second)) {
       case SMALLER:
-        return cx(source, p) != LARGER;
+        return compare_x(source, p) != LARGER;
       case LARGER:
-        return cx(p, source) != LARGER;
+        return compare_x(p, source) != LARGER;
       default:
-        switch(cy(source, second)){
+        switch(compare_y(source, second)){
         case SMALLER:
-	  return cy(source, p) != LARGER;
+	  return compare_y(source, p) != LARGER;
         case LARGER:
-	  return cy(p, source) != LARGER;
+	  return compare_y(p, source) != LARGER;
         default:
 	  return true; // p == source
         }
@@ -407,7 +352,7 @@ namespace CartesianKernelFunctors {
     result_type
     operator()( const Segment_2& s, const Point_2& p) const
     {
-      return co(cp(s,0), p, cp(s,1));
+      return collinear_are_ordered_along_line(s.source(), p, s.target());
     }
   };
 
@@ -2215,29 +2160,18 @@ namespace CartesianKernelFunctors {
     typedef typename K::Ray_3                     Ray_3;
     typedef typename K::Line_3                    Line_3;
     typedef typename K::Vector_3                  Vector_3;
-    typedef typename K::Construct_vector_3        Construct_vector_3;
-    typedef typename K::Construct_direction_3     Construct_direction_3;
-    typedef typename K::Construct_point_on_3      Construct_point_on_3;
     typedef typename Line_3::Rep                  Rep;
-    Construct_vector_3 cv;
-    Construct_point_on_3 cp;
   public:
     typedef Line_3            result_type;
     typedef Arity_tag< 2 >    Arity;
 
-    Construct_line_3() {}
-    Construct_line_3(const Construct_vector_3& cv_,
-		     const Construct_point_on_3& cp_)
-      : cv(cv_), cp(cp_)
-    {}
-
     Line_3
     operator()(const Point_3& p, const Point_3& q) const
-    { return Rep(p, cv(p, q)); }
+    { return Rep(p, Vector_3(p, q)); }
 
     Line_3
     operator()(const Point_3& p, const Direction_3& d) const
-    { return operator()(p, cv(d.dx(), d.dy(), d.dz())); }
+    { return operator()(p, Vector_3(d.dx(), d.dy(), d.dz())); }
 
     Line_3
     operator()(const Point_3& p, const Vector_3& v) const
@@ -2245,11 +2179,11 @@ namespace CartesianKernelFunctors {
 
     Line_3
     operator()(const Segment_3& s) const
-    { return Rep(cp(s,0), cv(cp(s,0), cp(s,1))); }
+    { return Rep(s.source(), Vector_3(s.source(), s.target())); }
 
     Line_3
     operator()(const Ray_3& r) const
-    { return Rep(cp(r,0), cv(cp(r,0), cp(r,1))); }
+    { return Rep(r.source(), Vector_3(r.source(), r.second_point())); }
   };
 
   template <typename K>
