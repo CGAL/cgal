@@ -32,5 +32,6 @@ cat $@ | sed -e 's/CGAL:://g' \
              -e 's/<LK >//g' \
              -e 's/<EK >//g' \
              -e 's/<IK >//g' \
+             -e 's/ (.*)//g' \
        | grep Profile_counter \
        | sort -t":" -k2
