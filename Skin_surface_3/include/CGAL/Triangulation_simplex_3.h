@@ -24,7 +24,9 @@ CGAL_BEGIN_NAMESPACE
 
 template < class Triangulation_3 >
 class Triangulation_simplex_3 {
+public:
   typedef Triangulation_3              T;
+  typedef Triangulation_simplex_3<T>   Self;
   typedef typename T::Vertex_handle    Vertex_handle;
   typedef typename T::Edge             Edge;
   typedef typename T::Facet            Facet;
@@ -36,7 +38,11 @@ class Triangulation_simplex_3 {
   typedef typename T::Edge_iterator    Edge_iterator;
   typedef typename T::Facet_iterator   Facet_iterator;
 
-public:
+  typedef typename T::Finite_vertices_iterator Finite_vertices_iterator;
+  typedef typename T::Finite_edges_iterator    Finite_edges_iterator;
+  typedef typename T::Finite_facets_iterator   Finite_facets_iterator;
+  typedef typename T::Finite_cells_iterator    Finite_cells_iterator;
+
   Triangulation_simplex_3() : ref(-1), ch() { }
 	
   Triangulation_simplex_3(Vertex_handle v) {
@@ -79,6 +85,36 @@ public:
     CGAL_assertion (ch != Cell_handle());
   }
 
+  Self &operator=(const Vertex_handle &vh) {
+    ch = vh->cell();
+    ref = (ch->index(vh) << 2); /* dim == 0 */
+    CGAL_assertion (ch != Cell_handle());
+    return (*this);
+  }
+  Self &operator=(const Finite_vertices_iterator &vh) {
+    ch = vh->cell();
+    ref = (ch->index(vh) << 2); /* dim == 0 */
+    CGAL_assertion (ch != Cell_handle());
+    return (*this);
+  }
+  Self &operator=(const Finite_edges_iterator &eit) {
+    ch = (*eit).first;
+    ref = ((((*eit).third<< 2) + (*eit).second) << 2) + 1; /* dim */
+    CGAL_assertion (ch != Cell_handle()); 
+    return (*this);
+  }
+  Self &operator=(const Finite_facets_iterator &fit) {
+    ch = (*fit).first;
+    ref = ((*fit).second << 2) + 2; /* dim */
+    CGAL_assertion (ch != Cell_handle());
+    return (*this);
+  }
+  Self &operator=(const Finite_cells_iterator &cit) {
+    ch = cit;
+    ref = 3; /* dim */
+    CGAL_assertion (ch != Cell_handle());
+    return (*this);
+  }
 
   operator Vertex_handle () const
   {

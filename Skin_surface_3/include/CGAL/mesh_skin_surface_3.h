@@ -33,8 +33,8 @@ template <class SkinSurface_3, class Polyhedron>
 void mesh_skin_surface_3(SkinSurface_3 const &skin_surface, 
 			 Polyhedron &p)
 {
-  typedef typename SkinSurface_3::Triangulated_mixed_complex 
-    Triangulated_mixed_complex;
+//   typedef typename SkinSurface_3::Triangulated_mixed_complex 
+//     Triangulated_mixed_complex;
   typedef Marching_tetrahedra_traits_skin_surface_3<
     SkinSurface_3,
     typename SkinSurface_3::CMCT_Vertex_iterator,

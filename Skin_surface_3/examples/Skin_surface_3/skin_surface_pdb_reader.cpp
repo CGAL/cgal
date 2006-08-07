@@ -11,7 +11,7 @@
 #include "skin_surface_writer.h"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
-typedef CGAL::Regular_triangulation_euclidean_traits_3<K>     Traits;
+typedef CGAL::Mixed_complex_traits_3<K>                       Traits;
 typedef CGAL::Skin_surface_3<Traits>                          Skin_surface_3;
 typedef Skin_surface_3::RT                                    RT;
 typedef Skin_surface_3::Weighted_point                        Weighted_point;
@@ -29,20 +29,17 @@ int main(int argc, char *argv[]) {
   extract_balls_from_pdb(argv[1], K(), std::back_inserter(l));
 
   // Construct skin surface:
-  Skin_surface_3 skin_surface(l.begin(), l.end(), shrinkfactor, true,
-			      Traits(), true);
+  Skin_surface_3 skin_surface(l.begin(), l.end(), shrinkfactor);
 
   // Extract mesh from the skin surface:
   Polyhedron p;
   CGAL::mesh_skin_surface_3(skin_surface, p);
 
-  //  CGAL::subdivide_skin_surface_mesh_3(p, skin_surface, 1);
-  //  std::cout << "Subdivided Skin_surface_3" << std::endl;
+  // Subdivide skin surface
+  // CGAL::subdivide_skin_surface_mesh_3(p, skin_surface, 1);
 
   std::ofstream out("mesh.off");
   write_polyhedron_with_normals(p, skin_surface, out);
-  // write without normals:
-  //out << p; 
 
   return 0;
 }

@@ -41,59 +41,59 @@
 
 CGAL_BEGIN_NAMESPACE 
 
-template < class GT, 
-           class SkinSurface_3, 
-	   class Cb = Triangulation_cell_base_3<GT> >
-class Triangulated_mixed_complex_cell_3 : public Cb
-{
-public:
-  typedef typename Cb::Triangulation_data_structure            Triangulation_data_structure;
-  typedef typename Triangulation_data_structure::Vertex_handle Vertex_handle;
-  typedef typename Triangulation_data_structure::Cell_handle   Cell_handle;
+// template < class GT, 
+//            class SkinSurface_3, 
+// 	   class Cb = Triangulation_cell_base_3<GT> >
+// class Triangulated_mixed_complex_cell_3 : public Cb
+// {
+// public:
+//   typedef typename Cb::Triangulation_data_structure            Triangulation_data_structure;
+//   typedef typename Triangulation_data_structure::Vertex_handle Vertex_handle;
+//   typedef typename Triangulation_data_structure::Cell_handle   Cell_handle;
 
-  typedef typename SkinSurface_3::Quadratic_surface           Quadratic_surface;
-  typedef typename SkinSurface_3::Simplex                     Simplex;
+//   typedef typename SkinSurface_3::Quadratic_surface           Quadratic_surface;
+//   typedef typename SkinSurface_3::Simplex                     Simplex;
 	
-  template < class TDS2 >
-  struct Rebind_TDS {
-    typedef typename Cb::template Rebind_TDS<TDS2>::Other  Cb2;
-    typedef Triangulated_mixed_complex_cell_3<GT, SkinSurface_3, Cb2>
-                                                           Other;
-  };
+//   template < class TDS2 >
+//   struct Rebind_TDS {
+//     typedef typename Cb::template Rebind_TDS<TDS2>::Other  Cb2;
+//     typedef Triangulated_mixed_complex_cell_3<GT, SkinSurface_3, Cb2>
+//                                                            Other;
+//   };
 
-  Triangulated_mixed_complex_cell_3() : Cb() {
-  }
-  Triangulated_mixed_complex_cell_3(Vertex_handle v0, Vertex_handle v1,
-				    Vertex_handle v2, Vertex_handle v3)
-    : Cb(v0, v1, v2, v3) {
-  }
+//   Triangulated_mixed_complex_cell_3() : Cb() {
+//   }
+//   Triangulated_mixed_complex_cell_3(Vertex_handle v0, Vertex_handle v1,
+// 				    Vertex_handle v2, Vertex_handle v3)
+//     : Cb(v0, v1, v2, v3) {
+//   }
 
-  Quadratic_surface *surf;
-  Simplex simp;
-};
+//   Quadratic_surface *surf;
+//   Simplex simp;
+// };
 
-template < class GT, 
-	   class Vb = Triangulation_vertex_base_3<GT> >
-class Triangulated_mixed_complex_vertex_3 : public Vb
-{
-public:
-  typedef typename Vb::Point           Point;
-  typedef typename Vb::Cell_handle     Cell_handle;
+// template < class GT, 
+// 	   class Vb = Triangulation_vertex_base_3<GT> >
+// class Triangulated_mixed_complex_vertex_3 : public Vb
+// {
+// public:
+//   typedef typename Vb::Point           Point;
+//   typedef typename Vb::Cell_handle     Cell_handle;
 
-  template < class TDS2 >
-  struct Rebind_TDS {
-    typedef typename Vb::template Rebind_TDS<TDS2>::Other  Vb2;
-    typedef Triangulated_mixed_complex_vertex_3<GT, Vb2>   Other;
-  };
+//   template < class TDS2 >
+//   struct Rebind_TDS {
+//     typedef typename Vb::template Rebind_TDS<TDS2>::Other  Vb2;
+//     typedef Triangulated_mixed_complex_vertex_3<GT, Vb2>   Other;
+//   };
 
-  Triangulated_mixed_complex_vertex_3() {}
-  Triangulated_mixed_complex_vertex_3(const Point&p)                : Vb(p) {}
-  Triangulated_mixed_complex_vertex_3(const Point&p, Cell_handle c) : Vb(p, c) {}
+//   Triangulated_mixed_complex_vertex_3() {}
+//   Triangulated_mixed_complex_vertex_3(const Point&p)                : Vb(p) {}
+//   Triangulated_mixed_complex_vertex_3(const Point&p, Cell_handle c) : Vb(p, c) {}
 
-  Sign sign() const {
-    return Vb::cell()->surf->sign(Vb::point());
-  }
-};
+//   Sign sign() const {
+//     return Vb::cell()->surf->sign(Vb::point());
+//   }
+// };
 
 template <class SkinSurfaceTraits_3> 
 class Skin_surface_3 {
@@ -110,6 +110,9 @@ private:
   
   typedef Regular_triangulation_3<Gt>     Regular;
 
+  typedef Exact_predicates_inexact_constructions_kernel     Filtered_kernel;
+  typedef Skin_surface_quadratic_surface_3<Filtered_kernel> 
+                                                 Filtered_quadratic_surface;
 public:
   typedef typename Regular::Vertex_handle                Vertex_handle;
   typedef typename Regular::Edge                         Edge;
@@ -118,16 +121,21 @@ public:
   typedef typename Regular::Cell_handle                  Cell_handle;
   typedef Triangulation_simplex_3<Regular>               Simplex;
 
-  // defining the triangulated mixed complex:
-  typedef Exact_predicates_exact_constructions_kernel    TMC_traits;
-  typedef Skin_surface_quadratic_surface_3<TMC_traits>   Quadratic_surface;
+  typedef typename Regular::Finite_vertices_iterator     Finite_vertices_iterator;
+  typedef typename Regular::Finite_edges_iterator        Finite_edges_iterator;
+  typedef typename Regular::Finite_facets_iterator       Finite_facets_iterator;
+  typedef typename Regular::Finite_cells_iterator        Finite_cells_iterator;
 
-  typedef Triangulation_3<
-    TMC_traits,
-    Triangulation_data_structure_3
-    < Triangulated_mixed_complex_vertex_3<TMC_traits>,
-      Triangulated_mixed_complex_cell_3<TMC_traits,Self> > 
-  >                                      Triangulated_mixed_complex;
+//   // defining the triangulated mixed complex:
+//   typedef Exact_predicates_exact_constructions_kernel    TMC_traits;
+//   typedef Skin_surface_quadratic_surface_3<TMC_traits>   Quadratic_surface;
+
+//   typedef Triangulation_3<
+//     TMC_traits,
+//     Triangulation_data_structure_3
+//     < Triangulated_mixed_complex_vertex_3<TMC_traits>,
+//       Triangulated_mixed_complex_cell_3<TMC_traits,Self> > 
+//   >                                      Triangulated_mixed_complex;
   typedef Combinatorial_mixed_complex_triangulator_3<Regular>  CMCT;
   typedef typename CMCT::Vertex_handle                    CMCT_Vertex_handle;
   typedef typename CMCT::Vertex_iterator                  CMCT_Vertex_iterator;
@@ -135,17 +143,17 @@ public:
   typedef typename CMCT::Cell_iterator                    CMCT_Cell_iterator;
 
 
-  typedef typename Triangulated_mixed_complex::Vertex_handle TMC_Vertex_handle;
-  typedef typename Triangulated_mixed_complex::Cell_handle   TMC_Cell_handle;
-  typedef typename Triangulated_mixed_complex::Vertex_iterator TMC_Vertex_iterator;
-  typedef typename Triangulated_mixed_complex::Cell_iterator   TMC_Cell_iterator;
+//   typedef typename Triangulated_mixed_complex::Vertex_handle TMC_Vertex_handle;
+//   typedef typename Triangulated_mixed_complex::Cell_handle   TMC_Cell_handle;
+//   typedef typename Triangulated_mixed_complex::Vertex_iterator TMC_Vertex_iterator;
+//   typedef typename Triangulated_mixed_complex::Cell_iterator   TMC_Cell_iterator;
 
   // NGHK: added for the (Delaunay) surface mesher, document
   typedef Exact_predicates_inexact_constructions_kernel  Mesher_Gt;
   typedef Skin_surface_mesher_oracle_3<Mesher_Gt,Self> Surface_mesher_traits_3;
 
 private:
-  typedef typename TMC_traits::Point_3                       TMC_Point;
+  //typedef typename TMC_traits::Point_3                       TMC_Point;
   
 public:
   template < class WP_iterator >
@@ -186,6 +194,38 @@ public:
 //     }
 
     mc_triangulator = new CMCT(regular, verbose);
+
+//     {
+//       Simplex s;
+//       for (Finite_vertices_iterator vit = regular.finite_vertices_begin();
+// 	   vit == regular.finite_vertices_end(); vit++) {
+// 	s= vit;
+// 	filtered_quadr_surfaces[s] =
+// 	  construct_surface(s, 
+// 			    Exact_predicates_inexact_constructions_kernel());
+//       }
+//       for (Finite_edges_iterator eit = regular.finite_edges_begin();
+// 	   eit == regular.finite_edges_end(); eit++) {
+// 	s= eit;
+// 	filtered_quadr_surfaces[s] =
+// 	  construct_surface(s, 
+// 			    Exact_predicates_inexact_constructions_kernel());
+//       }
+//       for (Finite_facets_iterator fit = regular.finite_facets_begin();
+// 	   fit == regular.finite_facets_end(); fit++) {
+// 	s= fit;
+// 	filtered_quadr_surfaces[s] =
+// 	  construct_surface(s, 
+// 			    Exact_predicates_inexact_constructions_kernel());
+//       }
+//       for (Finite_cells_iterator cit = regular.finite_cells_begin();
+// 	   cit == regular.finite_cells_end(); cit++) {
+// 	s= cit;
+// 	filtered_quadr_surfaces[s] =
+// 	  construct_surface(s, 
+// 			    Exact_predicates_inexact_constructions_kernel());
+//       }
+//     }
   }
 //   const Triangulated_mixed_complex &triangulated_mixed_complex() const {
 //     return _tmc;
@@ -313,7 +353,22 @@ public:
   }
   template< class Point >
   Sign sign(const Simplex &sim, const Point &p) const {
-    return construct_surface(sim, typename Point::R()).sign(p);
+    try
+    {
+      CGAL_PROFILER(std::string("NGHK: calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+      Protect_FPU_rounding<true> P;
+      Sign result = construct_surface
+      (sim, 
+       Exact_predicates_inexact_constructions_kernel()).sign(p);
+      if (! is_indeterminate(result))
+        return result;
+    }
+    catch (Interval_nt_advanced::unsafe_comparison) {}
+    CGAL_PROFILER(std::string("NGHK: failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+    Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
+    return construct_surface
+      (sim, 
+       Exact_predicates_exact_constructions_kernel()).sign(p);
   }
   template< class Point >
   typename Point::R::RT
@@ -371,28 +426,22 @@ public:
     // Use value to make the computation robust (endpoints near the surface)
     if (value(s1, p1) > value(s2, p2)) std::swap(p1, p2);
     Simplex sp = s1;
-    while (sq_dist > 1e-18) {
+
+    while ((s1 != s2) && (sq_dist > 1e-18)) {
       p = midpoint(p1, p2);
       sp = locate_mixed(converter(p), sp);
-      if (sign(sp, p) == NEGATIVE) { p1 = p; }
+
+      if (sign(sp, p) == NEGATIVE) { p1 = p; s1 = sp; }
+      else { p2 = p; s2 = sp; }
+
+      sq_dist *= .25;
+    }
+    while (sq_dist > 1e-18) {
+      p = midpoint(p1, p2);
+      if (sign(s1, p) == NEGATIVE) { p1 = p; }
       else { p2 = p; }
       sq_dist *= .25;
     }
-//     while ((s1 != s2) && (sq_dist > 1e-18)) {
-//       p = midpoint(p1, p2);
-//       sp = locate_mixed(converter(p), sp);
-
-//       if (sign(sp, p) == NEGATIVE) { p1 = p; s1 = sp; }
-//       else { p2 = p; s2 = sp; }
-
-//       sq_dist *= .25;
-//     }
-//     while (sq_dist > 1e-18) {
-//       p = midpoint(p1, p2);
-//       if (sign(s1, p) == NEGATIVE) { p1 = p; }
-//       else { p2 = p; }
-//       sq_dist *= .25;
-//     }
     p = midpoint(p1, p2);
   }
 
@@ -472,10 +521,6 @@ public:
       CGAL_assertion(false);
     }
 
-    std::cerr << "SKEL 2 1" << std::endl
-	      << "  " << p1 << std::endl
-	      << "  " << p2 << std::endl
-	      << "  2 0 1" << std::endl;
     // Find the intersection:
     intersect(p1, p2, sim, sim, p);
   }
@@ -573,7 +618,7 @@ public:
 
 private:
   // Used to optimize the point location in TMC:
-  mutable TMC_Cell_handle last_ch;
+//   mutable TMC_Cell_handle last_ch;
 
   void construct_bounding_box(Regular &regular);
 
@@ -586,6 +631,7 @@ private:
 
   // We want to construct this object later (the pointer):
   CMCT *mc_triangulator;
+//   std::map<Simplex, Filtered_quadratic_surface> filtered_quadr_surfaces;
 };
 
 template <class SkinSurfaceTraits_3> 
