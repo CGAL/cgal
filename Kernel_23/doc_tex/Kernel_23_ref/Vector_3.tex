@@ -37,8 +37,17 @@ instead of a vector initialized with zeros.
 \ccConstructor{Vector_3(const Null_vector &NULL_VECTOR);}
             {introduces a null vector \ccVar.}
 
-\ccConstructor{Vector_3(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::FT &hz, const Kernel::RT &hw = RT(1));}
+\ccConstructor{Vector_3(int x, int y, int z);}
+            {introduces a vector \ccVar\ initialized to $(x, y, z)$.}
+
+\ccConstructor{Vector_3(double x, double y, double z);}
+            {introduces a vector \ccVar\ initialized to $(x, y, z)$.}
+
+\ccConstructor{Vector_3(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hz, const Kernel::RT &hw = RT(1));}
             {introduces a vector \ccVar\ initialized to $(hx/hw, hy/hw, hz/hw)$.}
+
+\ccConstructor{Vector_3(const Kernel::FT &x, const Kernel::FT &y, const Kernel::FT &z);}
+            {introduces a vector \ccVar\ initialized to $(x, y, z)$.}
 
 
 \ccOperations

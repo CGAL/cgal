@@ -51,6 +51,9 @@ _test_cls_point_3(const R& )
 
  std::cout << '.';
 
+ assert( p3 == CGAL::Point_3<R>(FT(n1), FT(n2), FT(n3)) );
+ assert( p3 == CGAL::Point_3<R>(-35, 50, -20) );
+
  assert( p4 == p5 );
  assert( p5 == p6 );
  assert( p4 == p6 );

@@ -43,6 +43,8 @@ class PointH2
   typedef Threetuple<RT>                           Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
+  typedef Rational_traits<FT>  Rat_traits;
+
   Base base;
 
 public:
@@ -56,8 +58,19 @@ public:
     PointH2(const Origin &)
        : base (RT(0), RT(0), RT(1)) {}
 
+    PointH2(int x, int y)
+      : base(x, y, RT(1)) {}
+
     PointH2(const RT& hx, const RT& hy )
       : base (hx, hy, RT(1)) {}
+
+    PointH2(const FT& x, const FT& y)
+      : base(Rat_traits().numerator(x) * Rat_traits().denominator(y),
+             Rat_traits().numerator(y) * Rat_traits().denominator(x),
+             Rat_traits().denominator(x) * Rat_traits().denominator(y))
+    {
+      CGAL_kernel_assertion(hw() > 0);
+    }
 
     PointH2(const RT& hx, const RT& hy, const RT& hw)
     {

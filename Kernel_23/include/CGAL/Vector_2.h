@@ -73,12 +73,26 @@ public:
 
   Vector_2(const Null_vector &v) : RVector_2(typename R::Construct_vector_2()(v).rep()) {}
 
+  Vector_2(int x, int y)
+    : RVector_2(typename R::Construct_vector_2()(x,y).rep())
+  {}
+
+  Vector_2(const typename First_if_different<double,RT>::Type& x,
+           const typename First_if_different<double,RT>::Type& y)
+    : Rep(typename R::Construct_vector_2()(x, y).rep())
+  {}
+
   Vector_2(const RT &x, const RT &y)
     : RVector_2(typename R::Construct_vector_2()(x,y).rep())
   {}
 
   Vector_2(const RT &x, const RT &y, const RT &w)
     : RVector_2(typename R::Construct_vector_2()(x,y,w).rep())
+  {}
+
+  Vector_2(const typename First_if_different<FT,RT,1>::Type& x,
+           const typename First_if_different<FT,RT,1>::Type& y)
+    : Rep(typename R::Construct_vector_2()(x, y).rep())
   {}
 
 

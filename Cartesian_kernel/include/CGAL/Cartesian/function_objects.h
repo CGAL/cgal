@@ -2015,6 +2015,69 @@ namespace CartesianKernelFunctors {
     { return Rep(s); }
   };
 
+  template <typename K>
+  class Construct_equi_distant_line_3
+  {
+    typedef typename K::FT          FT;
+    typedef typename K::Point_3     Point_3;
+    typedef typename K::Vector_3    Vector_3;
+    typedef typename K::Line_3      Line_3;
+    typedef typename Line_3::Rep    Rep;
+  public:
+    typedef Line_3           result_type;
+    typedef Arity_tag< 3 >   Arity;
+
+    Line_3
+    operator()( const Point_3& p, const Point_3& q, const Point_3& s) const
+    {
+      CGAL_kernel_precondition(! collinear(p, q, s));
+
+      // Translate s to origin to simplify the expression.
+      FT psx = p.x()-s.x();
+      FT psy = p.y()-s.y();
+      FT psz = p.z()-s.z();
+      FT ps2 = CGAL_NTS square(psx) + CGAL_NTS square(psy) + CGAL_NTS square(psz);
+      FT qsx = q.x()-s.x();
+      FT qsy = q.y()-s.y();
+      FT qsz = q.z()-s.z();
+      FT qs2 = CGAL_NTS square(qsx) + CGAL_NTS square(qsy) + CGAL_NTS square(qsz);
+      FT rsx = psy*qsz-psz*qsy;
+      FT rsy = psz*qsx-psx*qsz;
+      FT rsz = psx*qsy-psy*qsx;
+
+      // The following determinants can be developped and simplified.
+      //
+      // FT num_x = det3x3_by_formula(psy,psz,ps2,
+      //                              qsy,qsz,qs2,
+      //                              rsy,rsz,0);
+      // FT num_y = det3x3_by_formula(psx,psz,ps2,
+      //                              qsx,qsz,qs2,
+      //                              rsx,rsz,0);
+      // FT num_z = det3x3_by_formula(psx,psy,ps2,
+      //                              qsx,qsy,qs2,
+      //                              rsx,rsy,0);
+
+      FT num_x = ps2 * det2x2_by_formula(qsy,qsz,rsy,rsz)
+	       - qs2 * det2x2_by_formula(psy,psz,rsy,rsz);
+      FT num_y = ps2 * det2x2_by_formula(qsx,qsz,rsx,rsz)
+	       - qs2 * det2x2_by_formula(psx,psz,rsx,rsz);
+      FT num_z = ps2 * det2x2_by_formula(qsx,qsy,rsx,rsy)
+	       - qs2 * det2x2_by_formula(psx,psy,rsx,rsy);
+
+      FT den   = det3x3_by_formula(psx,psy,psz,
+                                   qsx,qsy,qsz,
+                                   rsx,rsy,rsz);
+
+      CGAL_kernel_assertion( den != 0 );
+      FT inv = 1 / (2 * den);
+
+      FT x = s.x() + num_x*inv;
+      FT y = s.y() - num_y*inv;
+      FT z = s.z() + num_z*inv;
+      return Rep(Point_3(x, y, z), Vector_3(rsx, rsy, rsz));
+    }
+
+  };
 
   template <typename K>
   class Construct_iso_rectangle_2
@@ -2438,6 +2501,35 @@ namespace CartesianKernelFunctors {
       return construct_point_2(x,y);
     }
   };
+
+  template <typename K>
+  class Construct_point_3
+  {
+    typedef typename K::RT         RT;
+    typedef typename K::Point_3    Point_3;
+    typedef typename Point_3::Rep  Rep;
+  public:
+    typedef Point_3          result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    Point_3
+    operator()(Origin o) const
+    { return Rep(o); }
+
+
+    // Reactivated, as some functors in Cartesian/function_objects.h
+    // need it for constructions
+    //#ifndef CGAL_NO_DEPRECATED_CODE
+    Point_3
+    operator()(const RT& x, const RT& y, const RT& z) const
+    { return Rep(x, y, z); }
+
+    Point_3
+    operator()(const RT& x, const RT& y, const RT& z, const RT& w) const
+    { return Rep(x, y, z, w); }
+    //#endif // CGAL_NO_DEPRECATED_CODE
+  };
+
 
   template <typename K>
   class Construct_projected_point_2

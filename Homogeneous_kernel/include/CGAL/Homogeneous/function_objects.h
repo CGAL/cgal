@@ -39,6 +39,7 @@ namespace HomogeneousKernelFunctors {
   using CartesianKernelFunctors::Compute_squared_area_3;
   using CartesianKernelFunctors::Collinear_3;
   using CartesianKernelFunctors::Construct_line_3;
+  using CartesianKernelFunctors::Construct_equi_distant_line_3;
 
   template <typename K>
   class Angle_2
@@ -2845,6 +2846,7 @@ namespace HomogeneousKernelFunctors {
   class Construct_point_2
   {
     typedef typename K::RT         RT;
+    typedef typename K::FT         FT;
     typedef typename K::Point_2    Point_2;
     typedef typename K::Vector_2   Vector_2;
     typedef typename K::Line_2     Line_2;
@@ -2858,7 +2860,15 @@ namespace HomogeneousKernelFunctors {
     { return Rep(o); }
 
     Point_2
+    operator()(int x, int y) const
+    { return Rep(x, y); }
+
+    Point_2
     operator()(const RT& x, const RT& y) const
+    { return Rep(x, y); }
+
+    Point_2
+    operator()(const FT& x, const FT& y) const
     { return Rep(x, y); }
 
     Point_2
@@ -2886,6 +2896,44 @@ namespace HomogeneousKernelFunctors {
                  (p, K().construct_scaled_vector_2_object()(v, RT(i)));
     }
   };
+
+  template <typename K>
+  class Construct_point_3
+  {
+    typedef typename K::RT         RT;
+    typedef typename K::FT         FT;
+    typedef typename K::Point_3    Point_3;
+    typedef typename Point_3::Rep  Rep;
+  public:
+    typedef Point_3          result_type;
+    typedef Arity_tag< 1 >   Arity;
+
+    Point_3
+    operator()(Origin o) const
+    { return Rep(o); }
+
+
+    // Reactivated, as some functors in Cartesian/function_objects.h
+    // need it for constructions
+    //#ifndef CGAL_NO_DEPRECATED_CODE
+    Point_3
+    operator()(int x, int y, int z) const
+    { return Rep(x, y, z); }
+
+    Point_3
+    operator()(const RT& x, const RT& y, const RT& z) const
+    { return Rep(x, y, z); }
+
+    Point_3
+    operator()(const FT& x, const FT& y, const FT& z) const
+    { return Rep(x, y, z); }
+
+    Point_3
+    operator()(const RT& x, const RT& y, const RT& z, const RT& w) const
+    { return Rep(x, y, z, w); }
+    //#endif // CGAL_NO_DEPRECATED_CODE
+  };
+
 
   template <typename K>
   class Construct_projected_point_2
@@ -3098,7 +3146,15 @@ namespace HomogeneousKernelFunctors {
     { return Rep(RT(0), RT(0), RT(1)); }
 
     Vector_2
+    operator()( int x, int y) const
+    { return Rep(x, y); }
+
+    Vector_2
     operator()( const RT& x, const RT& y) const
+    { return Rep(x, y); }
+
+    Vector_2
+    operator()( const FT& x, const FT& y) const
     { return Rep(x, y); }
 
     Vector_2
@@ -3166,7 +3222,15 @@ namespace HomogeneousKernelFunctors {
 
 // #ifndef CGAL_NO_DEPRECATED_CODE
     Vector_3
+    operator()( int x, int y, int z) const
+    { return Rep(x, y, z); }
+
+    Vector_3
     operator()( const RT& x, const RT& y, const RT& z) const
+    { return Rep(x, y, z); }
+
+    Vector_3
+    operator()( const FT& x, const FT& y, const FT& z) const
     { return Rep(x, y, z); }
 
     Vector_3

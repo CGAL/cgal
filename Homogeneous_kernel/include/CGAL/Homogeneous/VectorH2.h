@@ -46,6 +46,8 @@ class VectorH2
   typedef Threetuple<RT>                           Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
+  typedef Rational_traits<FT>               Rat_traits;
+
   Base base;
 
 public:
@@ -54,9 +56,20 @@ public:
   typedef R_                                    R;
 
    VectorH2() {}
+
+   VectorH2(int x, int y)
+      : base(x, y, RT(1)) {}
   
    VectorH2(const RT& x, const RT& y)
       : base (x, y, RT(1)) {}
+
+   VectorH2(const FT& x, const FT& y)
+      : base(Rat_traits().numerator(x) * Rat_traits().denominator(y),
+             Rat_traits().numerator(y) * Rat_traits().denominator(x),
+             Rat_traits().denominator(x) * Rat_traits().denominator(y))
+   {
+     CGAL_kernel_assertion(hw() > 0);
+   }
 
    VectorH2(const RT& x, const RT& y, const RT& w )
    {

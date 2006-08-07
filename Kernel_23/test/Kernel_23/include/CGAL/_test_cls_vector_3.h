@@ -51,6 +51,9 @@ _test_cls_vector_3(const R& )
 
  std::cout << '.';
 
+ assert( v3 == CGAL::Vector_3<R>(FT(n1), FT(n2), FT(n3)) );
+ assert( v3 == CGAL::Vector_3<R>(12, -4, 6) );
+
  assert( v4 == v5 );
  assert( v5 == v6 );
  assert( v4 == v6 );

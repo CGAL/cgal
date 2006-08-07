@@ -33,6 +33,7 @@ template <class R_>
 class Point_3 : public R_::Kernel_base::Point_3
 {
   typedef typename R_::RT                    RT;
+  typedef typename R_::FT                    FT;
   typedef typename R_::Vector_3              Vector_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
 
@@ -64,7 +65,23 @@ public:
       : Rep(p) {}
 #endif
 
+  Point_3(int x, int y, int z)
+    : Rep(typename R::Construct_point_3()(x, y, z).rep())
+  {}
+
   Point_3(const RT& x, const RT& y, const RT& z)
+    : Rep(typename R::Construct_point_3()(x, y, z).rep())
+  {}
+
+  Point_3(const typename First_if_different<double,RT>::Type& x,
+          const typename First_if_different<double,RT>::Type& y,
+          const typename First_if_different<double,RT>::Type& z)
+    : Rep(typename R::Construct_point_3()(x, y, z).rep())
+  {}
+
+  Point_3(const typename First_if_different<FT,RT,1>::Type& x,
+          const typename First_if_different<FT,RT,1>::Type& y,
+          const typename First_if_different<FT,RT,1>::Type& z)
     : Rep(typename R::Construct_point_3()(x, y, z).rep())
   {}
 

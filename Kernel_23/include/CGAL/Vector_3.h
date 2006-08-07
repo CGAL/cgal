@@ -41,6 +41,7 @@ class Vector_3 : public R_::Kernel_base::Vector_3
   typedef typename R_::Point_3               Point_3;
   typedef typename R_::Direction_3           Direction_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
+
 public:
 
   typedef typename R_::Kernel_base::Vector_3         Rep;
@@ -77,8 +78,23 @@ public:
   Vector_3(const Null_vector& v)
     : Rep(typename R::Construct_vector_3()(v).rep()) {}
 
+  Vector_3(int x, int y, int z)
+    : Rep(typename R::Construct_vector_3()(x, y, z).rep()) {}
+
+  Vector_3(const typename First_if_different<double,RT>::Type& x,
+           const typename First_if_different<double,RT>::Type& y,
+           const typename First_if_different<double,RT>::Type& z)
+    : Rep(typename R::Construct_vector_3()(x, y, z).rep())
+  {}
+
   Vector_3(const RT& x, const RT& y, const RT& z)
     : Rep(typename R::Construct_vector_3()(x, y, z).rep()) {}
+
+  Vector_3(const typename First_if_different<FT,RT,1>::Type& x,
+           const typename First_if_different<FT,RT,1>::Type& y,
+           const typename First_if_different<FT,RT,1>::Type& z)
+    : Rep(typename R::Construct_vector_3()(x, y, z).rep())
+  {}
 
   Vector_3(const RT& x, const RT& y, const RT& z, const RT& w)
     : Rep(typename R::Construct_vector_3()(x, y, z, w).rep()) {}

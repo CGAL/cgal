@@ -34,6 +34,7 @@ template <class R_>
 class Point_2 : public R_::Kernel_base::Point_2
 {
   typedef typename R_::RT                    RT;
+  typedef typename R_::FT                    FT;
   typedef typename R_::Vector_2              Vector_2;
   typedef typename R_::Aff_transformation_2  Aff_transformation_2;
   typedef typename R_::Kernel_base::Point_2  RPoint_2;
@@ -66,8 +67,22 @@ public:
   {}
 #endif
 
+  Point_2(int x, int y)
+    : Rep(typename R::Construct_point_2()(x, y).rep())
+  {}
+
   Point_2(const RT& x, const RT& y)
     : RPoint_2(typename R::Construct_point_2()(x, y).rep())
+  {}
+
+  Point_2(const typename First_if_different<double,RT>::Type& x,
+          const typename First_if_different<double,RT>::Type& y)
+    : Rep(typename R::Construct_point_2()(x, y).rep())
+  {}
+
+  Point_2(const typename First_if_different<FT,RT,1>::Type& x,
+          const typename First_if_different<FT,RT,1>::Type& y)
+    : Rep(typename R::Construct_point_2()(x, y).rep())
   {}
 
   Point_2(const RT& hx, const RT& hy, const RT& hw)

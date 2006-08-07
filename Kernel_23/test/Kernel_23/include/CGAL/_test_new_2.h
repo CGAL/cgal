@@ -81,6 +81,9 @@ test_new_2(const R& rep)
   Point_2 p2 = construct_point(ORIGIN);
 #ifndef CGAL_NO_DEPRECATED_CODE
   Point_2 p3 = construct_point(1,1);
+  Point_2 p3bis = construct_point(RT(1),RT(1));
+  Point_2 p3ter = construct_point(FT(1),FT(1));
+  use(p3bis); use(p3ter);
   Point_2 p4 = construct_point(1,2,2);
   Point_2 p5 = construct_point(3,4,5);
   Point_2 p6 = construct_point(3,4,6);
@@ -97,6 +100,9 @@ test_new_2(const R& rep)
   Vector_2 v2 = construct_vector(NULL_VECTOR);
 #ifndef CGAL_NO_DEPRECATED_CODE
   Vector_2 v3 = construct_vector(1,3);
+  Vector_2 v3bis = construct_vector(RT(1),RT(3));
+  Vector_2 v3ter = construct_vector(FT(1),FT(3));
+  use(v3bis); use(v3ter);
   Vector_2 v4 = construct_vector(1,2,3);
 #else
   Vector_2 v3 (1,3);

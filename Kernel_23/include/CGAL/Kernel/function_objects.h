@@ -705,31 +705,6 @@ namespace CommonKernelFunctors {
     }
   };
 
-
-  template <typename K>
-  class Construct_equi_distant_line_3
-  {
-    typedef typename K::FT          FT;
-    typedef typename K::Point_3     Point_3;
-    typedef typename K::Vector_3    Vector_3;
-    typedef typename K::Line_3      Line_3;
-    typedef typename Line_3::Rep    Rep;
-  public:
-    typedef Line_3           result_type;
-    typedef Arity_tag< 3 >   Arity;
-
-    Line_3
-    operator()( const Point_3& p, const Point_3& q, const Point_3& r) const
-    {
-      CGAL_kernel_precondition(! collinear(p, q, r));
-      Point_3 c = circumcenter(p, q, r);
-      Vector_3 v = cross_product(p-q, p-r);
-      return Rep(c, v);
-    }
-
-  };
-
-
   template <typename K>
   class Construct_iso_cuboid_3
   {
@@ -1160,35 +1135,6 @@ namespace CommonKernelFunctors {
     Point_3
     operator()( const Plane_3& p) const
     { return p.rep().point(); }
-  };
-
-
-  template <typename K>
-  class Construct_point_3
-  {
-    typedef typename K::RT         RT;
-    typedef typename K::Point_3    Point_3;
-    typedef typename Point_3::Rep  Rep;
-  public:
-    typedef Point_3          result_type;
-    typedef Arity_tag< 1 >   Arity;
-
-    Point_3
-    operator()(Origin o) const
-    { return Rep(o); }
-
-
-    // Reactivated, as some functors in Cartesian/function_objects.h
-    // need it for constructions
-    //#ifndef CGAL_NO_DEPRECATED_CODE
-    Point_3
-    operator()(const RT& x, const RT& y, const RT& z) const
-    { return Rep(x, y, z); }
-
-    Point_3
-    operator()(const RT& x, const RT& y, const RT& z, const RT& w) const
-    { return Rep(x, y, z, w); }
-    //#endif // CGAL_NO_DEPRECATED_CODE
   };
 
   template <typename K>
