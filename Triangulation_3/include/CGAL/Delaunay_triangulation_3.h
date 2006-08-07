@@ -135,10 +135,10 @@ protected:
   }
 
   Line
-  construct_equi_distant_line(const Point &p1, const Point &p2,
-                              const Point &p3) const
+  construct_equidistant_line(const Point &p1, const Point &p2,
+                             const Point &p3) const
   {
-      return geom_traits().construct_equi_distant_line_3_object()(p1, p2, p3);
+      return geom_traits().construct_equidistant_line_3_object()(p1, p2, p3);
   }
 
   Ray
@@ -1421,7 +1421,7 @@ dual(Cell_handle c, int i) const
   const Point& q = n->vertex(ind[1])->point();
   const Point& r = n->vertex(ind[2])->point();
 
-  Line l = construct_equi_distant_line( p, q, r );
+  Line l = construct_equidistant_line( p, q, r );
   return construct_object(construct_ray( dual(n), l));
 }
 
@@ -1437,14 +1437,14 @@ dual_support(Cell_handle c, int i) const
 
   if ( dimension() == 2 ) {
     CGAL_triangulation_precondition( i == 3 );
-    return construct_equi_distant_line( c->vertex(0)->point(),
-		                        c->vertex(1)->point(),
-					c->vertex(2)->point() );
+    return construct_equidistant_line( c->vertex(0)->point(),
+		                       c->vertex(1)->point(),
+			               c->vertex(2)->point() );
   }
 
-  return construct_equi_distant_line( c->vertex((i+1)&3)->point(),
-		                      c->vertex((i+2)&3)->point(),
-				      c->vertex((i+3)&3)->point() );
+  return construct_equidistant_line( c->vertex((i+1)&3)->point(),
+		                     c->vertex((i+2)&3)->point(),
+				     c->vertex((i+3)&3)->point() );
 }
 
 
