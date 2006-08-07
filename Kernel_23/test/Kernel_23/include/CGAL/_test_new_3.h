@@ -298,9 +298,9 @@ test_new_3(const R& rep)
         = rep.construct_perpendicular_plane_3_object();
   Plane_3 tmp3 = construct_perpendicular_plane(l2,p2);
 
-  typename R::Construct_equi_distant_line_3 construct_equi_distant_line
-        = rep.construct_equi_distant_line_3_object();
-  Line_3 tmp3a = construct_equi_distant_line(p1, p2, p3);
+  typename R::Construct_equidistant_line_3 construct_equidistant_line
+        = rep.construct_equidistant_line_3_object();
+  Line_3 tmp3a = construct_equidistant_line(p1, p2, p3);
 
   typename R::Construct_perpendicular_line_3 construct_perpendicular_line
         = rep.construct_perpendicular_line_3_object();

@@ -39,7 +39,7 @@ namespace HomogeneousKernelFunctors {
   using CartesianKernelFunctors::Compute_squared_area_3;
   using CartesianKernelFunctors::Collinear_3;
   using CartesianKernelFunctors::Construct_line_3;
-  using CartesianKernelFunctors::Construct_equi_distant_line_3;
+  using CartesianKernelFunctors::Construct_equidistant_line_3;
 
   template <typename K>
   class Angle_2

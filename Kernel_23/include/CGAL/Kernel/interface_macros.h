@@ -259,8 +259,8 @@ CGAL_Kernel_cons(Construct_direction_2,
 		 construct_direction_2_object)
 CGAL_Kernel_cons(Construct_direction_3,
 		 construct_direction_3_object)
-CGAL_Kernel_cons(Construct_equi_distant_line_3,
-		 construct_equi_distant_line_3_object)
+CGAL_Kernel_cons(Construct_equidistant_line_3,
+		 construct_equidistant_line_3_object)
 CGAL_Kernel_cons(Construct_iso_cuboid_3,
 		 construct_iso_cuboid_3_object)
 CGAL_Kernel_cons(Construct_iso_rectangle_2,

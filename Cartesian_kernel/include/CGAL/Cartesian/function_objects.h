@@ -2016,7 +2016,7 @@ namespace CartesianKernelFunctors {
   };
 
   template <typename K>
-  class Construct_equi_distant_line_3
+  class Construct_equidistant_line_3
   {
     typedef typename K::FT          FT;
     typedef typename K::Point_3     Point_3;

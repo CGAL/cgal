@@ -375,9 +375,9 @@ CGAL_Kernel_cons(Construct_direction_3,
 #endif
 
 #if !defined(CGAL_CA_LIMITED_INTERFACE) || \
-    defined(CGAL_CA_CONSTRUCT_EQUI_DISTANT_LINE_3)
-CGAL_Kernel_cons(Construct_equi_distant_line_3,
-		 construct_equi_distant_line_3_object)
+    defined(CGAL_CA_CONSTRUCT_EQUIDISTANT_LINE_3)
+CGAL_Kernel_cons(Construct_equidistant_line_3,
+		 construct_equidistant_line_3_object)
 #endif
 
 #if !defined(CGAL_CA_LIMITED_INTERFACE) || \

@@ -355,11 +355,11 @@ determinant(const typename CGAL_WRAP(K)::Vector_3 &v0,
 template < class K >
 inline
 typename K::Line_3
-equi_distant_line(const typename CGAL_WRAP(K)::Point_3 &p,
-                  const typename CGAL_WRAP(K)::Point_3 &q,
-                  const typename CGAL_WRAP(K)::Point_3 &r, const K& k)
+equidistant_line(const typename CGAL_WRAP(K)::Point_3 &p,
+                 const typename CGAL_WRAP(K)::Point_3 &q,
+                 const typename CGAL_WRAP(K)::Point_3 &r, const K& k)
 {
-  return k.construct_equi_distant_line_3_object()(p, q, r);
+  return k.construct_equidistant_line_3_object()(p, q, r);
 }
 
 template < class K >

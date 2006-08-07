@@ -1150,7 +1150,7 @@ public:
 };
 
 template <typename K>
-class Construct_equi_distant_line_3
+class Construct_equidistant_line_3
 {
     typedef typename K::Line_3          Line_3;
     typedef typename K::Point_3         Point_3;
