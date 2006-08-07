@@ -31,10 +31,6 @@ public:
   typedef Polyhedron_3                            Polyhedron;
   typedef SkinSurface_3                           Skin_surface;
   typedef typename Polyhedron::Traits             P_traits;
-  typedef typename Skin_surface::TMC_traits       SS_traits;
-
-  typedef Cartesian_converter<SS_traits, P_traits> T2P_converter;
-  typedef Cartesian_converter<P_traits, SS_traits> P2T_converter;
 
   typedef typename Polyhedron::Vertex_handle      P_vertex_handle;
 
@@ -45,14 +41,8 @@ public:
   typedef typename P_traits::Vector_3    P_vector;
   typedef typename P_traits::Plane_3     P_plane;
 
-  typedef typename Skin_surface::TMC_Cell_handle   SS_cell_handle;
-  typedef typename Skin_surface::TMC_Vertex_handle SS_vertex_handle;
-
-  typedef std::map<SS_vertex_handle,bool>     SS_vertex_map;
-  typedef typename SS_vertex_map::iterator    SS_vertex_map_it;
-
   Skin_surface_subdivision_policy_base_3(Skin_surface const& skin)
-    : ss_3(skin), t2p_converter(), p2t_converter()
+    : ss_3(skin)
   {
     
   }
@@ -69,9 +59,6 @@ public:
 
 protected:
   Skin_surface const &ss_3;
-  SS_vertex_map triang_vertex_signs;
-  T2P_converter t2p_converter;
-  P2T_converter p2t_converter;
 };
 
 template <class Polyhedron_3,

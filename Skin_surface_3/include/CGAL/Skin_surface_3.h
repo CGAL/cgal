@@ -244,8 +244,8 @@ public:
 //     Vertex_handle vh = regular.nearest_power_vertex(p);
 //     Simplex s = locate_mixed(p, Simplex(vh));
     
-    CGAL_assertion(is_infinite_mixed_cell(s) ||
-		   (locate_tet(p, s) != CMCT_Cell()));
+//     CGAL_assertion(is_infinite_mixed_cell(s) ||
+// 		   (locate_tet(p, s) != CMCT_Cell()));
     return s;
   }
   bool is_infinite_mixed_cell(const Simplex &s) const {

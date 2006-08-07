@@ -554,6 +554,60 @@ private:
   Vertex_container       vertices;
 };
 
+
+
+template < class GT, 
+           class QuadraticSurface_3,
+	   class Cb = Triangulation_cell_base_3<GT> >
+class Triangulated_mixed_complex_cell_3 : public Cb
+{
+public:
+  typedef typename Cb::Triangulation_data_structure            Triangulation_data_structure;
+  typedef typename Triangulation_data_structure::Vertex_handle Vertex_handle;
+  typedef typename Triangulation_data_structure::Cell_handle   Cell_handle;
+
+  typedef QuadraticSurface_3                         Quadratic_surface;
+	
+  template < class TDS2 >
+  struct Rebind_TDS {
+    typedef typename Cb::template Rebind_TDS<TDS2>::Other  Cb2;
+    typedef Triangulated_mixed_complex_cell_3<GT, QuadraticSurface_3, Cb2>
+                                                           Other;
+  };
+
+  Triangulated_mixed_complex_cell_3() : Cb() {
+  }
+  Triangulated_mixed_complex_cell_3(Vertex_handle v0, Vertex_handle v1,
+				    Vertex_handle v2, Vertex_handle v3)
+    : Cb(v0, v1, v2, v3) {
+  }
+
+  Quadratic_surface *surf;
+};
+
+template < class GT, 
+	   class Vb = Triangulation_vertex_base_3<GT> >
+class Triangulated_mixed_complex_vertex_3 : public Vb
+{
+public:
+  typedef typename Vb::Point           Point;
+  typedef typename Vb::Cell_handle     Cell_handle;
+
+  template < class TDS2 >
+  struct Rebind_TDS {
+    typedef typename Vb::template Rebind_TDS<TDS2>::Other  Vb2;
+    typedef Triangulated_mixed_complex_vertex_3<GT, Vb2>   Other;
+  };
+
+  Triangulated_mixed_complex_vertex_3() {}
+  Triangulated_mixed_complex_vertex_3(const Point&p)                : Vb(p) {}
+  Triangulated_mixed_complex_vertex_3(const Point&p, Cell_handle c) : Vb(p, c) {}
+
+  Sign sign() const {
+    return Vb::cell()->surf->sign(Vb::point());
+  }
+};
+
 template <class MixedComplexTraits_3>
 void
 Combinatorial_mixed_complex_triangulator_3<MixedComplexTraits_3>::

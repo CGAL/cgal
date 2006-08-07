@@ -8,17 +8,26 @@
 #include <list>
 #include <fstream>
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel   K;
-typedef CGAL::Mixed_complex_traits_3<K>                     Traits;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Inexact_K;
+typedef CGAL::Mixed_complex_traits_3<Inexact_K>             Traits;
 typedef CGAL::Skin_surface_3<Traits>                        Skin_surface_3;
 typedef Skin_surface_3::RT                                  RT;
 typedef Skin_surface_3::Weighted_point                      Weighted_point;
 typedef Weighted_point::Point                               Bare_point;
 typedef CGAL::Polyhedron_3<Traits>                          Polyhedron;
-typedef Skin_surface_3::Quadratic_surface                   Quadratic_surface;
+typedef CGAL::Exact_predicates_exact_constructions_kernel   Exact_K;
+typedef CGAL::Skin_surface_quadratic_surface_3<Exact_K>     Quadratic_surface;
 
+CGAL::Cartesian_converter<Exact_K,Inexact_K> e2i_converter;
+CGAL::Cartesian_converter<Inexact_K,Exact_K> i2e_converter;
 
-typedef Skin_surface_3::Triangulated_mixed_complex  Triangulated_mixed_complex;
+typedef CGAL::Triangulation_3<
+     Exact_K,
+     CGAL::Triangulation_data_structure_3
+     < CGAL::Triangulated_mixed_complex_vertex_3<Exact_K>,
+       CGAL::Triangulated_mixed_complex_cell_3<Exact_K,Quadratic_surface> > 
+   >                                      Triangulated_mixed_complex;
+//typedef Skin_surface_3::Triangulated_mixed_complex  Triangulated_mixed_complex;
 typedef Triangulated_mixed_complex::Vertex_handle   Tmc_Vertex_handle;
 typedef Triangulated_mixed_complex::Finite_vertices_iterator 
                                                     Tmc_Finite_vertices_iterator;
@@ -43,7 +52,7 @@ public:
     
     Skin_surface_3 skin_surface(l.begin(), l.end(), s);
     
-    Skin_surface_3::Triangulated_mixed_complex tmc;
+    Triangulated_mixed_complex tmc;
     triangulate_mixed_complex_3(skin_surface.get_regular_triangulation(), 
 				skin_surface.get_shrink_factor(), 
 				tmc, false);
@@ -68,15 +77,18 @@ public:
 
     for (Tmc_Finite_cells_iterator cit = tmc.finite_cells_begin();
 	 cit != tmc.finite_cells_end(); cit++) {
-      Bare_point baryc = (cit->vertex(0)->point() + 
-			  (cit->vertex(1)->point()-cit->vertex(0)->point())/4
-			  +
-			  (cit->vertex(2)->point()-cit->vertex(0)->point())/4
-			  +
-			  (cit->vertex(3)->point()-cit->vertex(0)->point())/4);
-      Quadratic_surface::RT val1 = cit->surf->value(baryc);
-      Quadratic_surface::RT val2 = skin_surface.value(baryc);
-      CGAL_assertion(val1==val2);
+      Bare_point baryc = 
+	e2i_converter(cit->vertex(0)->point() + 
+		      (cit->vertex(1)->point()-cit->vertex(0)->point())/4 +
+		      (cit->vertex(2)->point()-cit->vertex(0)->point())/4 +
+		      (cit->vertex(3)->point()-cit->vertex(0)->point())/4);
+      if (tmc.tetrahedron(cit).has_on_bounded_side(i2e_converter(baryc))) {
+	Quadratic_surface::RT val1 = cit->surf->value(i2e_converter(baryc));
+	Quadratic_surface::RT val2 = skin_surface.value(i2e_converter(baryc));
+	CGAL_assertion(val1==val2);
+      } else {
+	std::cout << "Barycenter on unbounded side, due to rounding errors\n";
+      }
     }
 
   }
