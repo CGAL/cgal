@@ -375,10 +375,11 @@ public:
     Simplex sim = locate_mixed(p);
     return value(sim,p);
   }
-  template< class Point >
-  typename Point::R::RT
-  value(const Simplex &sim, const Point &p) const {
-    return construct_surface(sim, typename Point::R()).value(p);
+
+  RT
+  value(const Simplex &sim, const Bare_point &p) const {
+    return 
+      construct_surface(sim, typename Geometric_traits::Kernel()).value(p);
   }
   template< class Point >
   typename Point::R::Vector_3

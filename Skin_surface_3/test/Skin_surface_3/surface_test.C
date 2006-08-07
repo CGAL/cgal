@@ -11,6 +11,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Inexact_K;
 typedef CGAL::Mixed_complex_traits_3<Inexact_K>             Traits;
 typedef CGAL::Skin_surface_3<Traits>                        Skin_surface_3;
+typedef Skin_surface_3::Simplex                             Simplex;
 typedef Skin_surface_3::RT                                  RT;
 typedef Skin_surface_3::Weighted_point                      Weighted_point;
 typedef Weighted_point::Point                               Bare_point;
@@ -84,7 +85,10 @@ public:
 		      (cit->vertex(3)->point()-cit->vertex(0)->point())/4);
       if (tmc.tetrahedron(cit).has_on_bounded_side(i2e_converter(baryc))) {
 	Quadratic_surface::RT val1 = cit->surf->value(i2e_converter(baryc));
-	Quadratic_surface::RT val2 = skin_surface.value(baryc);
+	Simplex s = skin_surface.locate_mixed(baryc);
+	Quadratic_surface::RT val2 = 
+	  skin_surface.construct_surface(s, Exact_K()).value(i2e_converter(baryc));
+	//	std::cout << val1 << " " << val2 << " " << val2-val1 << std::endl;
 	CGAL_assertion(val1==val2);
       } else {
 	std::cout << "Barycenter on unbounded side, due to rounding errors\n";
