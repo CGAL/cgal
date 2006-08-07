@@ -51,11 +51,16 @@ void _test_circle_equal(SK sk) {
   typedef typename SK::Plane_3                          Plane_3;
   typedef typename SK::Circle_3                         Circle_3;
   typedef typename SK::Sphere_3                         Sphere_3;
+  typedef typename SK::Line_3                           Line_3;
+  typedef typename SK::Line_arc_3                       Line_arc_3;
   typedef typename SK::Algebraic_kernel                 AK;
   typedef typename SK::Get_equation                     Get_equation;
   typedef typename SK::Equal_3                          Equal_3;
   typedef typename SK::Construct_circle_3               Construct_circle_3;
   typedef typename SK::Construct_sphere_3               Construct_sphere_3;
+  typedef typename SK::Construct_line_3                 Construct_line_3;
+  typedef typename SK::Construct_line_arc_3             Construct_line_arc_3;
+  typedef typename SK::Construct_circular_arc_point_3   Construct_circular_arc_point_3;
   typedef typename SK::Polynomials_for_circle_3         Polynomials_for_circle_3;
   typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
   typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
@@ -66,6 +71,10 @@ void _test_circle_equal(SK sk) {
   Get_equation theGet_equation = sk.get_equation_object();
   Construct_circle_3 theConstruct_circle_3 = sk.construct_circle_3_object();
   Construct_sphere_3 theConstruct_sphere_3 = sk.construct_sphere_3_object();
+  Construct_line_arc_3 theConstruct_line_arc_3 = sk.construct_line_arc_3_object();
+  Construct_line_3 theConstruct_line_3 = sk.construct_line_3_object();
+  Construct_circular_arc_point_3 theConstruct_circular_arc_point_3 = 
+    sk.construct_circular_arc_point_3_object();
 
   CGAL::Random generatorOfgenerator;
   int random_seed = generatorOfgenerator.get_int(0, 123456);
@@ -114,6 +123,81 @@ void _test_circle_equal(SK sk) {
     assert(theEqual_3(circle,circle2));
     assert(theEqual_3(circle,circle3));
   }
+}
+
+template <class SK>
+void _test_line_arc_equal(SK sk) {
+  typedef typename SK::RT                               RT;
+  typedef typename SK::FT                               FT;
+  typedef typename SK::Root_of_2                        Root_of_2;
+  typedef typename SK::Circular_arc_point_3             Circular_arc_point_3;
+  typedef typename SK::Point_3                          Point_3;
+  typedef typename SK::Plane_3                          Plane_3;
+  typedef typename SK::Circle_3                         Circle_3;
+  typedef typename SK::Sphere_3                         Sphere_3;
+  typedef typename SK::Line_3                           Line_3;
+  typedef typename SK::Line_arc_3                       Line_arc_3;
+  typedef typename SK::Algebraic_kernel                 AK;
+  typedef typename SK::Get_equation                     Get_equation;
+  typedef typename SK::Equal_3                          Equal_3;
+  typedef typename SK::Construct_circle_3               Construct_circle_3;
+  typedef typename SK::Construct_sphere_3               Construct_sphere_3;
+  typedef typename SK::Construct_line_3                 Construct_line_3;
+  typedef typename SK::Construct_plane_3                Construct_plane_3;
+  typedef typename SK::Construct_line_arc_3             Construct_line_arc_3;
+  typedef typename SK::Construct_circular_arc_point_3   Construct_circular_arc_point_3;
+  typedef typename SK::Polynomials_for_circle_3         Polynomials_for_circle_3;
+  typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
+  typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
+  typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
+  typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
+
+  Equal_3 theEqual_3 = sk.equal_3_object();
+  Get_equation theGet_equation = sk.get_equation_object();
+  Construct_circle_3 theConstruct_circle_3 = sk.construct_circle_3_object();
+  Construct_sphere_3 theConstruct_sphere_3 = sk.construct_sphere_3_object();
+  Construct_line_arc_3 theConstruct_line_arc_3 = sk.construct_line_arc_3_object();
+  Construct_line_3 theConstruct_line_3 = sk.construct_line_3_object();
+  Construct_plane_3 theConstruct_plane_3 = sk.construct_plane_3_object();
+  Construct_circular_arc_point_3 theConstruct_circular_arc_point_3 = 
+    sk.construct_circular_arc_point_3_object();
+
+  CGAL::Random generatorOfgenerator;
+  int random_seed = generatorOfgenerator.get_int(0, 123456);
+  CGAL::Random theRandom(random_seed);
+  int random_max = 127;
+  int random_min = -127; 
+
+  std::cout << "Testing Equal for Line_arc_3..." << std::endl;
+  for(int i=0; i<100; i++) {
+    int a,b,c,d,e,f;
+    do {
+      a = theRandom.get_int(random_min,random_max);
+      b = theRandom.get_int(random_min,random_max);
+      c = theRandom.get_int(random_min,random_max);
+      d = theRandom.get_int(random_min,random_max);
+      e = theRandom.get_int(random_min,random_max);
+      f = theRandom.get_int(random_min,random_max);
+    } while((a == d) && (b == e) && (c == f));
+    Point_3 pb = Point_3(d,e,f);
+    Point_3 pa = Point_3(a,b,c);
+    Polynomials_for_line_3 p = theGet_equation(Line_3(pa,pb));
+    Line_3 line = theConstruct_line_3(p);
+    Circular_arc_point_3 cpa = theConstruct_circular_arc_point_3(pa);
+    Circular_arc_point_3 cpb = theConstruct_circular_arc_point_3(pb);
+    Line_arc_3 line_arc[6];
+    line_arc[0] = theConstruct_line_arc_3(line, pa, pb);
+    line_arc[1] = theConstruct_line_arc_3(line, pb, pa);
+    line_arc[2] = theConstruct_line_arc_3(line, cpb, cpa);
+    line_arc[3] = theConstruct_line_arc_3(line, cpa, cpb);
+    line_arc[4] = theConstruct_line_arc_3(line, cpb, pa);
+    line_arc[5] = theConstruct_line_arc_3(line, pa, cpb);
+    for(int t1=0;t1<6;t1++) {
+      for(int t2=0;t2<6;t2++) {
+        assert(theEqual_3(line_arc[t1],line_arc[t2]));
+      }
+    }
+  }
 
 }
 
@@ -128,11 +212,13 @@ void _test_has_on_predicate(SK sk) {
   typedef typename SK::Sphere_3                         Sphere_3;
   typedef typename SK::Circle_3                         Circle_3;
   typedef typename SK::Line_3                           Line_3;
+  typedef typename SK::Line_arc_3                       Line_arc_3;
   typedef typename SK::Algebraic_kernel                 AK;
   typedef typename SK::Construct_circle_3               Construct_circle_3;
   typedef typename SK::Construct_sphere_3               Construct_sphere_3;
   typedef typename SK::Construct_plane_3                Construct_plane_3;
   typedef typename SK::Construct_line_3                 Construct_line_3;
+  typedef typename SK::Construct_line_arc_3             Construct_line_arc_3;
   typedef typename SK::Has_on_3                         Has_on_3;
   typedef typename SK::Polynomials_for_circle_3         Polynomials_for_circle_3;
   typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
@@ -144,6 +230,7 @@ void _test_has_on_predicate(SK sk) {
   Construct_sphere_3 theConstruct_sphere_3 = sk.construct_sphere_3_object();
   Construct_plane_3 theConstruct_plane_3 = sk.construct_plane_3_object();
   Construct_line_3 theConstruct_line_3 = sk.construct_line_3_object();
+  Construct_line_arc_3 theConstruct_line_arc_3 = sk.construct_line_arc_3_object();
   Has_on_3 theHas_on_3 = sk.has_on_3_object();
 
   Sphere_3 s_1 = theConstruct_sphere_3(Polynomial_for_spheres_2_3(0,0,0,1));
@@ -261,6 +348,139 @@ void _test_has_on_predicate(SK sk) {
   assert(!theHas_on_3(p_3,c_1));
   assert(theHas_on_3(p_4,c_1));
 
+  std::cout << "Testing has_on(Line_arc,Circular_arc_point)..." << std::endl;
+  for(int vx=0;vx<3;vx++) {
+    for(int vy=0;vy<3;vy++) {
+      for(int vz=0;vz<3;vz++) { 
+        if(vx == 0 && vy == 0 && vz == 0) continue;
+        const FT a = FT(vx);
+        const FT b = FT(vy);
+        const FT c = FT(vz);
+        Line_3 l = theConstruct_line_3(Point_3(0,0,0), Point_3(a,b,c));
+        for(int t1=-2;t1<3;t1++) {
+          Point_3 source = Point_3(a*t1,b*t1,c*t1);
+          for(int t2=t1+1;t2<3;t2++) {
+            if(t1 == t2) continue;
+            Point_3 target = Point_3(a*t2,b*t2,c*t2);
+            Line_arc_3 la = theConstruct_line_arc_3(l,source,target);
+            for(int t3 = (t1-1); t3 <= (t2+1); t3++) {
+              Point_3 pp = Point_3(a*t3,b*t3,c*t3);
+              if((t3 < t1) || (t3 > t2)) {
+                assert(!theHas_on_3(la,pp));
+              } else {
+                assert(theHas_on_3(la,pp));
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  std::cout << "Testing has_on(Line,Line_arc)..." << std::endl;
+  for(int vx=0;vx<3;vx++) {
+    for(int vy=0;vy<3;vy++) {
+      for(int vz=0;vz<3;vz++) { 
+        if(vx == 0 && vy == 0 && vz == 0) continue;
+        const FT a = FT(vx);
+        const FT b = FT(vy);
+        const FT c = FT(vz);
+        Line_3 l = theConstruct_line_3(Point_3(0,0,0), Point_3(a,b,c));
+        for(int t1=-2;t1<3;t1++) {
+          Point_3 source = Point_3(a*t1,b*t1,c*t1);
+          for(int t2=t1+1;t2<3;t2++) {
+            Point_3 target = Point_3(a*t2,b*t2,c*t2);
+            Line_arc_3 la = theConstruct_line_arc_3(l,source,target);
+            for(int t3 = (t1-1); t3 <= (t2+1); t3++) {
+              Point_3 pp = Point_3(a*t3,b*t3,c*t3);
+              theHas_on_3(l,la);
+            }
+          }
+        }
+      }
+    }
+  }
+
+ // both tests depends on other has_on or functions already tested
+ std::cout << "Testing has_on(Plane, Line_arc)..." << std::endl;
+
+}
+
+template <class SK>
+void _test_do_overlap_predicate(SK sk) {
+  typedef typename SK::RT                               RT;
+  typedef typename SK::FT                               FT;
+  typedef typename SK::Root_of_2                        Root_of_2;
+  typedef typename SK::Circular_arc_point_3             Circular_arc_point_3;
+  typedef typename SK::Point_3                          Point_3;
+  typedef typename SK::Plane_3                          Plane_3;
+  typedef typename SK::Sphere_3                         Sphere_3;
+  typedef typename SK::Circle_3                         Circle_3;
+  typedef typename SK::Line_3                           Line_3;
+  typedef typename SK::Line_arc_3                       Line_arc_3;
+  typedef typename SK::Algebraic_kernel                 AK;
+  typedef typename SK::Construct_circle_3               Construct_circle_3;
+  typedef typename SK::Construct_sphere_3               Construct_sphere_3;
+  typedef typename SK::Construct_plane_3                Construct_plane_3;
+  typedef typename SK::Construct_line_3                 Construct_line_3;
+  typedef typename SK::Construct_line_arc_3             Construct_line_arc_3;
+  typedef typename SK::Has_on_3                         Has_on_3;
+  typedef typename SK::Do_overlap_3                     Do_overlap_3;
+  typedef typename SK::Polynomials_for_circle_3         Polynomials_for_circle_3;
+  typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
+  typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
+  typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
+  typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
+
+  Construct_circle_3 theConstruct_circle_3 = sk.construct_circle_3_object();
+  Construct_sphere_3 theConstruct_sphere_3 = sk.construct_sphere_3_object();
+  Construct_plane_3 theConstruct_plane_3 = sk.construct_plane_3_object();
+  Construct_line_3 theConstruct_line_3 = sk.construct_line_3_object();
+  Construct_line_arc_3 theConstruct_line_arc_3 = sk.construct_line_arc_3_object();
+  Has_on_3 theHas_on_3 = sk.has_on_3_object();
+  Do_overlap_3 theDo_overlap_3 = sk.do_overlap_3_object();
+
+  std::cout << "Testing do_overlap(Line_arc, Line_arc)..." << std::endl;
+  for(int vx=0;vx<2;vx++) {
+    for(int vy=0;vy<2;vy++) {
+      for(int vz=0;vz<2;vz++) { 
+        if(vx == 0 && vy == 0 && vz == 0) continue;
+        const FT a = FT(vx);
+        const FT b = FT(vy);
+        const FT c = FT(vz);
+        Line_3 l = theConstruct_line_3(Point_3(0,0,0), Point_3(a,b,c));
+        for(int t1=-1;t1<2;t1++) {
+          Point_3 source = Point_3(a*t1,b*t1,c*t1);
+          for(int t2=t1+1;t2<3;t2++) {
+            Point_3 target = Point_3(a*t2,b*t2,c*t2);
+            Line_arc_3 la = theConstruct_line_arc_3(l,source,target);
+            for(int t3=-1;t3<2;t3++) {
+              Point_3 sourcel = Point_3(a*t3,b*t3,c*t3);
+              for(int t4=t3+1;t4<3;t4++) {
+                Point_3 targetl = Point_3(a*t4,b*t4,c*t4);
+                Line_arc_3 lb = theConstruct_line_arc_3(l,sourcel,targetl);
+                if((t1 == t3) || (t2 == t3)) {
+                  assert(theDo_overlap_3(la,lb));
+                } else if((t1 == t4) || (t2 == t4)) {
+                  assert(theDo_overlap_3(la,lb));
+                } else if((t1 < t3) && (t3 < t2 )) {
+                  assert(theDo_overlap_3(la,lb));
+                } else if((t3 < t1) && (t1 < t4)) {
+                  assert(theDo_overlap_3(la,lb));
+                } else {
+                  assert(!theDo_overlap_3(la,lb));
+                } 
+              }
+            } 
+          }
+        }
+      }
+    }
+  }
+
+ // both tests depends on other has_on or functions already tested
+ std::cout << "Testing has_on(Plane, Line_arc)..." << std::endl;
+
 }
 
 template <class SK>
@@ -269,6 +489,8 @@ void _test_spherical_kernel_predicates(SK sk)
   std::cout << "TESTING PREDICATES" << std::endl;
   _test_circular_arc_point_equal(sk);
   _test_circle_equal(sk);
+  _test_line_arc_equal(sk);
   _test_has_on_predicate(sk);
+  _test_do_overlap_predicate(sk);
   std::cout << "All tests on predicates are OK." << std::endl;
 }
