@@ -362,11 +362,10 @@ public:
       CGAL_SL_DEBUG(PrintStatusLine(););
     
       //BZBZ
-      if(reinterpret_cast<Event*>((*currentOne)->get_left_event()) ==
-          this->m_currentEvent ||
-          reinterpret_cast<Event*>((*prevOne)->get_left_event()) ==
-          this->m_currentEvent ) 
-          _intersect(*prevOne, *currentOne);
+      // if the two curves were neighbours before, we dont need to intersect them again
+      if(!this->m_currentEvent->are_left_neighbours(static_cast<Subcurve*>(*currentOne),
+                                                    static_cast<Subcurve*>(*prevOne)))
+        _intersect(*prevOne, *currentOne);
       prevOne = currentOne;
       ++currentOne;
     }        
@@ -438,7 +437,7 @@ public:
   void _handle_overlap(Event* event, Subcurve* curve, EventCurveIter iter, bool overlap_exist);
   
   /*! Compute intersections between the two given curves. */ 
-  void _intersect(Subcurve *c1, Subcurve *c2, bool after_remove = false);
+  void _intersect(Subcurve *c1, Subcurve *c2);
 
   /*! Remove a curve from the status line. */
   void _remove_curve_from_status_line (Subcurve *leftCurve,
@@ -519,8 +518,7 @@ _remove_curve_from_status_line(Subcurve *leftCurve, bool remove_for_good)
     
     // intersect *next with  *prev 
     _intersect(static_cast<Subcurve*>(*prev),
-               static_cast<Subcurve*>(*next),
-               true);
+               static_cast<Subcurve*>(*next));
   }
   this->m_statusLine.erase(sliter);
   CGAL_PRINT("remove_curve_from_status_line Done\n";)
@@ -548,7 +546,7 @@ void Sweep_line_2<Traits_,
                   CurveWrap,
                   SweepEvent,
                   Allocator>::
- _intersect(Subcurve *c1, Subcurve *c2, bool after_remove)
+ _intersect(Subcurve *c1, Subcurve *c2)
 {
   CGAL_PRINT("Looking for intersection between:\n\t";)
   CGAL_SL_DEBUG(c1->Print();)
@@ -604,22 +602,20 @@ void Sweep_line_2<Traits_,
   }  
 
   const std::pair<Point_2,unsigned int>  *xp_point;
-
-  if (after_remove)
+  if(vi != vi_end)
   {
-    for( ; vi != vi_end ; ++vi)
+    xp_point = object_cast<std::pair<Point_2,unsigned int> > (&(*vi));
+    if(xp_point != NULL)
     {
-      xp_point = object_cast<std::pair<Point_2,unsigned int> > (&(*vi));
-      CGAL_assertion (xp_point != NULL);
-
       if (this->m_traits->compare_xy_2_object()
           (this->m_currentEvent->get_point(),
-           xp_point->first) ==  SMALLER)
+           xp_point->first) !=  SMALLER)
       {
-        break;
+        ++vi;
       }
     }
   }
+   
 
   for( ; vi != vi_end ; ++vi)
   {

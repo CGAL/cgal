@@ -546,6 +546,36 @@ public:
     return true;
   }
 
+  bool are_left_neighbours(SubCurve* c1, SubCurve* c2)
+  {
+    SubCurveIter left_iter = m_leftCurves.begin();
+    for( ; left_iter != m_leftCurves.end(); ++left_iter)
+    {
+      if(*left_iter == c1)
+      {
+        SubCurveIter temp = left_iter;
+        ++temp;
+        if(temp!=m_leftCurves.end())
+        {
+          return (*temp == c2);
+        }
+        return false;
+      }
+
+      if(*left_iter == c2)
+      {
+        SubCurveIter temp = left_iter;
+        ++temp;
+        if(temp!=m_leftCurves.end())
+        {
+          return (*temp == c1);
+        }
+        return false;
+      }
+    }
+    
+    return false;
+  }
 
  
   
