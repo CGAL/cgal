@@ -95,12 +95,12 @@ CGAL_BEGIN_NAMESPACE
 //   }
 // };
 
-template <class SkinSurfaceTraits_3> 
+template <class MixedComplexTraits_3> 
 class Skin_surface_3 {
-  typedef SkinSurfaceTraits_3             Gt;
+  typedef MixedComplexTraits_3             Gt;
   typedef Skin_surface_3<Gt>              Self;
 public:
-  typedef SkinSurfaceTraits_3             Geometric_traits;
+  typedef MixedComplexTraits_3             Geometric_traits;
   typedef typename Gt::Weighted_point     Weighted_point;
   typedef typename Weighted_point::Weight RT;
   // NGHK:: added for the Delaunay mesher
@@ -370,9 +370,8 @@ public:
       (sim, 
        Exact_predicates_exact_constructions_kernel()).sign(p);
   }
-  template< class Point >
-  typename Point::R::RT
-  value(const Point &p) const {
+  RT
+  value(const Bare_point &p) const {
     Simplex sim = locate_mixed(p);
     return value(sim,p);
   }
@@ -634,9 +633,9 @@ private:
 //   std::map<Simplex, Filtered_quadratic_surface> filtered_quadr_surfaces;
 };
 
-template <class SkinSurfaceTraits_3> 
+template <class MixedComplexTraits_3> 
 void 
-Skin_surface_3<SkinSurfaceTraits_3>::
+Skin_surface_3<MixedComplexTraits_3>::
 construct_bounding_box(Regular &regular) 
 {
   typedef typename Regular::Finite_vertices_iterator Finite_vertices_iterator;
@@ -681,27 +680,27 @@ construct_bounding_box(Regular &regular)
   }
 }
 
-// template <class InputIterator, class Polyhedron_3, class SkinSurfaceTraits_3>
+// template <class InputIterator, class Polyhedron_3, class MixedComplexTraits_3>
 // void skin_surface_3(InputIterator first, InputIterator last,
-//   Polyhedron_3 &polyhedron, const SkinSurfaceTraits_3 &skin_surface_traits,
+//   Polyhedron_3 &polyhedron, const MixedComplexTraits_3 &skin_surface_traits,
 //   bool verbose = false) {
 //   if (first == last) {
 //     return;
 //   }
 
 //   // Types
-//   typedef SkinSurfaceTraits_3                              Skin_surface_traits;
+//   typedef MixedComplexTraits_3                              Skin_surface_traits;
 //   typedef typename Skin_surface_traits::Regular_traits     Regular_traits;
 //   typedef typename Regular_traits::Bare_point              Reg_point;
 //   typedef typename Regular_traits::Weighted_point          Reg_weighted_point;
 
 //   typedef Regular_triangulation_3<Regular_traits> Regular;
-//   typedef Triangulated_mixed_complex_3<SkinSurfaceTraits_3>
+//   typedef Triangulated_mixed_complex_3<MixedComplexTraits_3>
 //                                                   Triangulated_mixed_complex;
 //   typedef Marching_tetrahedra_traits_skin_surface_3<
 //     Triangulated_mixed_complex,
 //     Polyhedron_3,
-//     typename SkinSurfaceTraits_3::T2P_converter>  Marching_tetrahedra_traits;
+//     typename MixedComplexTraits_3::T2P_converter>  Marching_tetrahedra_traits;
 //   typedef Marching_tetrahedra_observer_default_3<
 //     Triangulated_mixed_complex, Polyhedron_3>     Marching_tetrahedra_observer;
     
@@ -740,9 +739,9 @@ construct_bounding_box(Regular &regular)
   
 // }
 
-template <class SkinSurfaceTraits_3> 
-typename Skin_surface_3<SkinSurfaceTraits_3>::Simplex 
-Skin_surface_3<SkinSurfaceTraits_3>::
+template <class MixedComplexTraits_3> 
+typename Skin_surface_3<MixedComplexTraits_3>::Simplex 
+Skin_surface_3<MixedComplexTraits_3>::
 locate_mixed(const Bare_point &p, const Simplex &start) const {
   // random walk, start with vh:
   Simplex /*prev,*/ s = start;
