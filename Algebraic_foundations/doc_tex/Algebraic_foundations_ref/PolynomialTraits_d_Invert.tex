@@ -19,8 +19,8 @@ This \ccc{AdaptableFunctor} inverts (reverse) a
          { return $x^{degree}\cdotp(1/x)$, with respect to the outermost variable. }
 \ccMethod{result_type operator()(first_argument_type  p,
                                  second_argument_type i);}
-         { return $x^{degree}\cdotp(1/x)$, with respect to variable $x_i$. \\
-           precond: $0<i<=d$ 
+         { return $x^{degree}\cdotp(1/x)$, with respect to variable $x_i$.
+           \ccPrecond $0<i \leq d$
          }
 
 %\ccHasModels

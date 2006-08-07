@@ -19,8 +19,8 @@ This \ccc{AdaptableFunctor} differentiates a
          { return $p'$, with respect to the outermost variable. }
 \ccMethod{result_type operator()(first_argument_type  p,
                                  second_argument_type i);}
-         { return $p'$, with respect to variable $x_i$. \\
-           precond: $0<i<=d$ 
+         { return $p'$, with respect to variable $x_i$. 
+           \ccPrecond $0<i \leq d$ 
          }
 
 %\ccHasModels

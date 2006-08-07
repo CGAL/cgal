@@ -22,8 +22,8 @@ This \ccc{AdaptableFunctor} scale a
 \ccMethod{result_type operator()(first_argument_type  p,
                                  second_argument_type c,
                                  third_argument_type i));}
-         { return $p(c\cdot x)$, with respect to variable $x_i$. \\
-           precond: $0<i<=d$ 
+         { return $p(c\cdot x)$, with respect to variable $x_i$.
+           \ccPrecond $0<i \leq d$
          }
 
 %\ccHasModels

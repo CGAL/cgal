@@ -26,9 +26,9 @@ int operator()(PolynomialTraits_d::PolynomialTraits_d  p,
                OutputIterator_1 it_1,
                OutputIterator_2 it_2);}{computes square-free 
           factorization of $p$ up to a constant factor.\\
-          precond: \ccc{OutputIterator_1} must allow the value type 
-          \ccc{PolynomialTraits_d::Polynomial_d}. \\    
-          precond: \ccc{OutputIterator_2} must allow the value type int.}
+          \ccPrecond \ccc{OutputIterator_1} must allow the value type 
+          \ccc{PolynomialTraits_d::Polynomial_d}.    
+          \ccPrecond \ccc{OutputIterator_2} must allow the value type int.}
 
 % This is the original documentation, but the manual tools are not able to handle this part: 
 
@@ -46,8 +46,8 @@ int operator()(PolynomialTraits_d::PolynomialTraits_d  p,
 %          The number n is returned. The factors $g_i$ and multiplicities $m_i$ are written through 
 %          the respective output iterators.\\
 %          
-%          precond: \ccc{OutputIterator_1} must allow the value type \ccc{PolynomialTraits_d:.Polynomial_d}. \\
-%          precond: \ccc{OutputIterator_1} must allow the value type int.
+%          \ccPrecond \ccc{OutputIterator_1} must allow the value type \ccc{PolynomialTraits_d:.Polynomial_d}. \\
+%          \ccPrecond \ccc{OutputIterator_1} must allow the value type int.
 %         }
 
 

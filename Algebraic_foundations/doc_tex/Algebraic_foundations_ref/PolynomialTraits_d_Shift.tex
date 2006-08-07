@@ -18,14 +18,14 @@ some power of a variable.
 \ccOperations
 \ccMethod{result_type operator()(first_argument_type  p,
                                  second_argument_type e);}
-         { return $p * x_d^e$ \\
-          precond: $0<=e$     }
+         { return $p * x_d^e$
+          \ccPrecond $0 \leq e$     }
 \ccMethod{result_type operator()(first_argument_type  p,
                                  second_argument_type e,
                                  third_argument_type  i);}
-         { return $p * x_i^e$ \\
-          precond: $0<=e$     \\
-          precond: $0<i<=d$
+         { return $p * x_i^e$
+          \ccPrecond $0 \leq e$   
+          \ccPrecond $0 < i \leq d$
          }
 
 %\ccHasModels

@@ -20,15 +20,15 @@
 template<class InputIterator>
 result_type operator() (int k, InputIterator begin, InputIterator end);}
 {returns the k-th real root of the univariate polynomial, which is defined by the iterator range, 
- where begin refers to the constant term. \\
- precond: The value type of the InputIterator is AlgebraicStructureTraits::AS\\ }
+ where begin refers to the constant term. 
+ \ccPrecond The value type of the InputIterator is AlgebraicStructureTraits::AS\\ }
 
 \ccMethod{
 template<class InputIterator>
 result_type operator()(const AS& lower, const AS& upper, 
            InputIterator begin,  InputIterator end);}{returns the only real root within the interval [lower,upper] of the univariate polynomial, 
-which is defined by the iterator range, where begin refers to the constant term.\\
-precond: The value type of the InputIterator is AlgebraicStructureTraits::AS\\ 
+which is defined by the iterator range, where begin refers to the constant term.
+\ccPrecond The value type of the InputIterator is AlgebraicStructureTraits::AS\\ 
 }
 
 %\ccHasModels

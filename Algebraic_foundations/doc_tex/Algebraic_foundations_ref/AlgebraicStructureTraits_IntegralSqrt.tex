@@ -25,8 +25,8 @@ $b$ is uniquely defined up to multiplication by units.
 \ccOperations
 \ccMethod{result_type operator()(const first_argument_type&  a, 
                                  second_argument_type& b);}
-        { return {\tt true} in case $a$ is a perfect square, i.e. $a = b*b$.\\
-          postcond: $unit\_part(b) = 1$. // $b$ is unit normal. 
+        { return {\tt true} in case $a$ is a perfect square, i.e. $a = b*b$.
+          \ccPostcond: $unit\_part(b) = 1$. // $b$ is unit normal. 
         }
 
 %\ccHasModels

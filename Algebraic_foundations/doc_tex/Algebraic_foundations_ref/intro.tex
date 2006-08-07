@@ -23,7 +23,16 @@ Question: moved it to a global place?
       about the real root of an polynomial.\\
       Question: Should FieldWithSqrt refine RealEmbeddable?  
 \item What is the return type of ToDoubleInterval?     
-
+\item \ccc{PolynomialTraits_d::Evaluate}: take \ccc{Innermost_coefficient} as argument type only.
+      this relates CoercionTraits (not documented yet) 
+\item Do we need a SignAt for multivariate polynomials?
+\item Some of the functors in PolynomialTraits can be implemented using some more basic ones. 
+      On the other hand, the way they should be implemented may depend on  the way the polynomial is 
+      represented, to the cost of the other functors. 
+      I therefore decided to put them into the PolynomialTraits. 
+      On the other hand one could decide to provide a very basic PolynomialTraits 
+      (just constructor, access to coefficients, and properties (degree)) and call the current 
+      PolynomialTraits a PolynomialToolBox. But I don't think that this is going to be very efficient. 
 \end{itemize}
 
 \section{Classified Reference Pages}

@@ -19,12 +19,12 @@ of a \ccc{PolynomialTraits_d::Polynomial_d}.
 \ccMethod{result_type operator()(first_argument_type p);}
          {Computes the leading coefficient of $p$ with respect to the outermost variable $x_d$. }
 \ccMethod{result_type operator()(first_argument_type p, int i);}
-         {Computes the leading coefficient of $p$ with respect to variable $x_i$. \\
-          precond: $0<i<=d$
+         {Computes the leading coefficient of $p$ with respect to variable $x_i$.
+         \ccPrecond $0<i \leq d$        
          }
 
 %\ccHasModels
-
+ 
 \ccSeeAlso
 
 \ccRefIdfierPage{Polynomial_d}\\
