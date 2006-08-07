@@ -54,7 +54,7 @@ int main() {
   // Added by Daniel Russel
   std::cout << "Testing IO" << std::endl;
   {
-    char *buf="12345678";
+    const char *buf="12345678";
     Gmpz z;
     std::istringstream iss(buf);
     iss >> z;
@@ -63,7 +63,7 @@ int main() {
     assert(z== Gmpz(12345678));
   }
   {
-    char *buf="-65758345";
+    const char *buf="-65758345";
     Gmpz z;
     std::istringstream iss(buf);
     iss >> z;
@@ -72,7 +72,7 @@ int main() {
     assert(z== Gmpz(-65758345));
   }
   {
-    char *buf="  -  65758345";
+    const char *buf="  -  65758345";
     Gmpz z;
     std::istringstream iss(buf);
     iss >> z;
@@ -81,7 +81,7 @@ int main() {
     assert(z== Gmpz(-65758345));
   }
   {
-    char *buf="12345678a";
+    const char *buf="12345678a";
     Gmpz z;
     std::istringstream iss(buf);
     char c;
@@ -93,7 +93,7 @@ int main() {
   }
 
   {
-    char *buf="asadf";
+    const char *buf="asadf";
     Gmpz z(12);
     std::istringstream iss(buf);
     iss >> z;
@@ -103,7 +103,7 @@ int main() {
   }
 
   {
-    char *buf="-asadf";
+    const char *buf="-asadf";
     Gmpz z(12);
     std::istringstream iss(buf);
     iss >> z;
@@ -112,7 +112,7 @@ int main() {
     assert(z== Gmpz(12));
   }
   {
-    char *buf="";
+    const char *buf="";
     Gmpz z(12);
     std::istringstream iss(buf);
     iss >> z;
@@ -121,7 +121,7 @@ int main() {
     assert(z== Gmpz(12));
   }
   {
-    char *buf="100/1";
+    const char *buf="100/1";
     Gmpq iot;
     std::istringstream iss(buf);
     iss >> iot;
