@@ -37,11 +37,6 @@ namespace CGAL {
     public:
       Circle_3() {}
 
-      Circle_3(const Circle_3 &c) 
-      {
-        base = Rep(c.diametral_sphere(), c.supporting_plane());
-      }
-
       Circle_3(const Point_3& center, const FT& squared_r, const Direction_3& d) 
       {
         // It is not allowed non-positive radius 
