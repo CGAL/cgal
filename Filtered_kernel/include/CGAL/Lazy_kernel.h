@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Sylvain Pion
 
@@ -112,7 +112,7 @@ public:
 
   CGAL_Kernel_cons(Intersect_with_iterators_2,
 		   intersect_with_iterators_2_object)
-#else 
+#else
 #define CGAL_Kernel_cons(C, Cf) \
     typedef typename boost::mpl::if_< boost::is_same<typename AK::C::result_type, typename AK::FT>,\
                                       Lazy_construction_nt<Kernel,typename AK::C, typename EK::C>,\
@@ -157,7 +157,7 @@ public:
 
   CGAL_Kernel_cons(Intersect_with_iterators_2,
 		   intersect_with_iterators_2_object)
-#else 
+#else
 #define CGAL_Kernel_cons(C, Cf) \
     typedef typename boost::mpl::if_<boost::is_same<typename AK::C, typename AK::Construct_cartesian_const_iterator_2>, \
                                      Lazy_cartesian_const_iterator_2<Kernel,typename AK::C, typename EK::C>, \
@@ -230,7 +230,7 @@ template <class EK, class AK = Simple_cartesian<Interval_nt_advanced>,
                                 To_interval<typename EK::RT> >
                                 /*Approx_converter<EK, AK>*/ >
 struct Lazy_kernel
-  : public Type_equality_wrapper< 
+  : public Type_equality_wrapper<
              Lazy_kernel_base< EK, AK, E2A, Lazy_kernel<EK, AK, E2A> >,
              Lazy_kernel<EK, AK, E2A> >
 {};
