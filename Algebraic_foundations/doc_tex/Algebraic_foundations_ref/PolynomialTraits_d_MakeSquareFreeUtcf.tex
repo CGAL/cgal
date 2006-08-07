@@ -1,0 +1,39 @@
+\begin{ccRefConcept}{PolynomialTraits_d::MakeSquareFreeUtcf}
+\ccDefinition
+
+This \ccc{AdaptableFunctor} comptues the square-free part of 
+a polynomial of type \ccc{PolynomialTraits_d::Polynomial_d}.  
+
+A polynomial $p$ can be  factored into square-free and pairwise coprime 
+non-constant factors $g_i$ with multiplicities $m_i$ and a constant factor $a$, 
+such that $p = a  \cdot  g_1m_1  \cdot  ...  \cdot  g_nm_n$.
+
+This functor computes  $g_1  \cdot  ...  \cdot  g_n$. 
+
+\ccRefines 
+\ccc{AdaptableFunctor}
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   first_argument_type;}{}
+
+\ccOperations
+\ccMethod{result_type operator()(first_argument_type  p);}
+         { return the square-free part of $p$. 
+          \ccPostcond $multivriat_content(result) = 1$
+         }
+
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+\ccRefIdfierPage{PolynomialTraits_d::MakeSquareFree}\\
+\ccRefIdfierPage{PolynomialTraits_d::SquareFreeFactorization}\\
+\ccRefIdfierPage{PolynomialTraits_d::SquareFreeFactorizationUtcf}\\
+
+\end{ccRefConcept}
