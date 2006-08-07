@@ -21,6 +21,9 @@
 #include <CGAL/Curved_kernel_3/Circle_3.h>
 #include <CGAL/Circle_3.h>
 
+#include <CGAL/Curved_kernel_3/Line_arc_3.h>
+#include <CGAL/Line_arc_3.h>
+
 #include <CGAL/Curved_kernel_3/function_objects_polynomial_sphere.h>
 
 #include <CGAL/Curved_kernel_3/get_equation_object_on_curved_kernel_3.h>
@@ -36,6 +39,7 @@ namespace CGAL {
       {
 	typedef CGALi::Circular_arc_point_3<SphericalKernel>  Circular_arc_point_3;
         typedef CGALi::Circle_3<SphericalKernel>  Circle_3;
+        typedef CGALi::Line_arc_3<SphericalKernel>  Line_arc_3;
 
         // The mecanism that allows to specify reference-counting or not.
         template < typename T >
