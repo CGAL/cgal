@@ -261,8 +261,10 @@ parameterization methods define only two constraints: the pinned vertices.
 
 \subsection{Discrete Authalic Parameterization Example}
 
-\ccc{Authalic_parameterization.C} computes a Discrete Authalic parameterization
-over a \ccc{CGAL::Polyhedron_3<Traits>} mesh. Specifying a specific surface parameterization instead of the default one means using the second parameter of \ccc{CGAL::parameterize()}. The differences with the first example \ccc{Simple_parameterization.C} are:
+\ccc{Authalic_parameterization.cpp} computes a Discrete Authalic parameterization
+over a \ccc{CGAL::Polyhedron_3<Traits>} mesh. Specifying a specific surface parameterization 
+instead of the default one means using the second parameter of \ccc{CGAL::parameterize()}. The 
+differences with the first example \ccc{Simple_parameterization.cpp} are:
 
 \begin{ccExampleCode}
 
@@ -286,11 +288,12 @@ Parameterizer::Error_code err = CGAL::parameterize(mesh_adaptor, Parameterizer()
 
 \subsection{Square Border Arc Length Parameterization Example}
 
-\ccc{Square_border_parameterization.C} computes a Floater mean value coordinates
+\ccc{Square_border_parameterization.cpp} computes a Floater mean value coordinates
 parameterization with a square border arc length parameterization.
 Specifying a specific border parameterization
 instead of the default one means using the second parameter of
-\ccc{CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}. The differences with the first example \ccc{Simple_parameterization.C} are:
+\ccc{CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}. 
+The differences with the first example \ccc{Simple_parameterization.cpp} are:
 
 \begin{ccExampleCode}
 

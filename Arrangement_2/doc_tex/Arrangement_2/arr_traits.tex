@@ -196,7 +196,7 @@ which contains $104$ line segments that form four ``fan-like'' grids and
 induce a dense arrangement, as illustrated in
 Figure~\ref{arr_fig:predef_kernels}(a):
 
-\ccIncludeExampleCode{../examples/Arrangement_2/ex_predefined_kernel.cpp}
+\ccIncludeExampleCode{Arrangement_2/ex_predefined_kernel.cpp}
 
 The arrangement package also offers a simpler alternative
 segment-traits class. The traits class
@@ -233,7 +233,7 @@ located in the examples folder, which contains more than $3000$ line segments
 with floating-point coordinates that form the map of Europe, as depicted in
 Figure~\ref{arr_fig:predef_kernels}(b):
 
-\ccIncludeExampleCode{../examples/Arrangement_2/ex_predefined_kernel_non_intersecting.cpp}
+\ccIncludeExampleCode{Arrangement_2/ex_predefined_kernel_non_intersecting.cpp}
 
 The \ccc{Arr_linear_traits_2<Kernel>} class used for demonstrating the
 construction of arrangements of unbounded curves is capable of handling
@@ -306,7 +306,7 @@ vertices. The arrangement vertices are either the extreme points of
 each $x$-monotone polyline or the intersection points between two
 polylines:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/ex_polylines.cpp}
+\ccIncludeExampleCode{Arrangement_2/ex_polylines.cpp}
 
 \subsection{A Traits Class for Circular Arcs and Line Segments\label{arr_ssec:tr_circ_seg}}
 %--------------------------------------------------------------
@@ -368,7 +368,7 @@ of maximal degree is searched for. The geometric mapping of this
 vertex is the point $(4,3)$, as all three circles intersect at this point
 and the associated vertex has six incident edges:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/ex_circles.cpp}
+\ccIncludeExampleCode{Arrangement_2/ex_circles.cpp}
 
 The \ccc{Curve_2} type nested in \ccc{Arr_circle_segment_traits_2} can be
 used to represent circles, circular arcs, or line segments. Curve objects
@@ -396,7 +396,7 @@ methods for circular arcs and line segments. Note the usage of the constructor
 of \ccc{CoordNT (alpha, beta, gamma)}, which creates a degree-$2$ algebraic
 number whose value is $\alpha + \beta\sqrt{\gamma}$.
 
-\ccIncludeExampleCode{../examples/Arrangement_2/ex_circular_arcs.cpp}
+\ccIncludeExampleCode{Arrangement_2/ex_circular_arcs.cpp}
 
 It is also possible to construct $x$-monotone curve objects, which represent
 $x$-monotone circular arcs or line segments, using similar constructors.
@@ -543,7 +543,7 @@ instead, an {\em invalid} arc is created. We can verify the validity
 of an arc by using the \ccc{is_valid()} method. Needless to say, inserting
 invalid arcs into an arrangement is not allowed.
 
-\ccIncludeExampleCode{../examples/Arrangement_2/ex_conics.cpp}
+\ccIncludeExampleCode{Arrangement_2/ex_conics.cpp}
 
 The last example in this section demonstrates how the conic-traits
 class can handle intersection points with multiplicity. The
@@ -557,7 +557,7 @@ tangent at $(0,0)$ and the same curvature $1$). In addition, they
 have another intersection point at $(\frac{1}{2},\frac{1}{2})$ of
 multiplicity $1$:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/ex_conic_multiplicities.cpp}
+\ccIncludeExampleCode{Arrangement_2/ex_conic_multiplicities.cpp}
 
 \subsection{A Traits Class for Arcs of Rational Functions\label{arr_ssec:tr_ratfunc}}
 %---------------------------------------------------------
@@ -624,7 +624,7 @@ arrangement of rational arcs depicted in
 Figure~\ref{arr_fig:ex_16}. Note the usage of the two
 constructors, for polynomial arcs and for rational arcs:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/ex_rational_functions.cpp}
+\ccIncludeExampleCode{Arrangement_2/ex_rational_functions.cpp}
 
 \begin{figure}[t]
 \begin{ccTexOnly}
@@ -651,7 +651,7 @@ $y = \pm\frac{1}{x}$ and $y = \pm\frac{1}{2x}$ never intersect, although
 they have common vertical and horizontal asymptotes, so very ``thin''
 unbounded faces are created between them:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/ex_unbounded_rational_functions.cpp}
+\ccIncludeExampleCode{Arrangement_2/ex_unbounded_rational_functions.cpp}
 
 \subsection{Traits-Class Decorators\label{arr_ssec:meta_tr}}
 %-----------------------------------
@@ -761,7 +761,7 @@ edges mapped to both blue and red segments. Thus, they correspond
 to red--blue intersection points. We also locate the edge that
 corresponds to overlaps between red and blue line segments:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/ex_consolidated_curve_data.cpp}
+\ccIncludeExampleCode{Arrangement_2/ex_consolidated_curve_data.cpp}
 
 \begin{figure}[t]
 \begin{ccTexOnly}
@@ -786,7 +786,7 @@ polylines. Also notice how we replace the curve associated with
 the edges that correspond to overlapping polylines with 
 geometrically equivalent curves, but with a different data fields:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/ex_generic_curve_data.cpp}
+\ccIncludeExampleCode{Arrangement_2/ex_generic_curve_data.cpp}
 
 The third example we give in this section is based on \ccc{ex_dual_lines.cpp}
 given in Section~\ref{arr_ssec:unb_global}. It constructs the arrangement
@@ -802,4 +802,4 @@ incident line contributes exactly $2$ edges). Note that in this case the
 dual line cannot overlap, so we use a dummy merge functor to instantiate
 the curve-data traits:
 
-\ccIncludeExampleCode{../examples/Arrangement_2/ex_dual_with_data.cpp}
+\ccIncludeExampleCode{Arrangement_2/ex_dual_with_data.cpp}

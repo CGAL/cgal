@@ -27,8 +27,8 @@ in the input mesh is taken as default border, all other borders being considered
 This package does not provide any algorithm to transform an arbitrary mesh
 into a topological disk, the user being responsible
 for generating such a cut graph. Nevertheless, we provide in
-\ccc{polyhedron_ex_parameterization.C} a simple cutting algorithm for
-the sake of completeness.
+\ccc{polyhedron_ex_parameterization.cpp} 
+a simple cutting algorithm for the sake of completeness.
 
 
 \subsection{Applying a Cut}
@@ -60,12 +60,12 @@ Note that this class is a decorator which adds {\em on the fly}
 the necessary fields to unmodified \cgal\ data structures (using STL
 maps). For better performances, it is recommended to use \cgal\ data
 structures enriched with the proper fields. See \ccc{Polyhedron_ex}
-class in \ccc{polyhedron_ex_parameterization.C} example.
+class in \ccc{polyhedron_ex_parameterization.cpp} example.
 
 
 \subsection{Cutting a Mesh Example}
 
-\ccc{Mesh_cutting_parameterization.C} \emph{virtually} cuts a
+\ccc{Mesh_cutting_parameterization.cpp} \emph{virtually} cuts a
 \ccc{CGAL::Polyhedron_3<Traits>} mesh
 to make it a topological disk, then applies the default parameterization:
 

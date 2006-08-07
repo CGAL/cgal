@@ -62,13 +62,13 @@ the lion vase is free of self intersections. The algorithm is fast,
 see the table below, though not sufficient for interactive use.
 Nevertheless, a final quality check is possible for quite large meshes.
 
-See the full program in \path|examples/intersection.C|, we discuss a
+See the full program in \path|examples/intersection.cpp|, we discuss a
 shortened version here that detects self intersections among a
 triangle soup, i.e., we ignore the extra handling for the mesh and the
 incidences that are no intersections.
 
 \begin{lstlisting}
-// file: examples/Box_intersection_d/triangle_self_intersect.C
+// file: examples/Box_intersection_d/triangle_self_intersect.cpp
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/intersections.h>
 #include <CGAL/point_generators_3.h>
@@ -181,7 +181,7 @@ sensitive algorithm. It is worst-case linear time (expected time over
 the randomized order of the input points), but depends on a
 heuristic to be really fast.
 
-See the full program in \path|examples/mini_ball.C|, we discuss some
+See the full program in \path|examples/mini_ball.cpp|, we discuss some
 aspects of it here. When running the program with the \CodeFmt{double}
 number type, we choose the kernel:
 
@@ -327,7 +327,7 @@ void width( const Polyhedron& P) {
 }
 \end{lstlisting}
 
-See the full program in \path|examples/convex_hull.C| .
+See the full program in \path|examples/convex_hull.cpp| .
 
 
 % \begin{tabular}{l|l}

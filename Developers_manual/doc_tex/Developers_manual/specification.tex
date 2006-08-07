@@ -165,7 +165,7 @@ describe the details:
          \texttt{latex\_to\_html} will be enriched with the paths for
          example and demo programs, such that they can be referenced
          starting from their package subdirectory name, e.g.,
-         \verb|\ccIncludeExampleCode{Polyhedron/simple.C}|.
+         \verb|\ccIncludeExampleCode{Polyhedron/simple.cpp}|.
    \item The {\tt .tex} files for the users' manual%
          \ccIndexSubitem{users' manual}{directory} should be placed in a
          directory \verb|doc_tex/|$<${\em Package}$>$\verb|/|%
@@ -1488,9 +1488,9 @@ directories are searched when the manuals are created with the
 for more details.)
 For example, you would use the following command
 \begin{verbatim}
-   \ccIncludeExampleCode{Polygon/PolygonDemo.C}
+   \ccIncludeExampleCode{Polygon/PolygonDemo.cpp}
 \end{verbatim}
-to include the source file \nonlinkedpath|CGAL_ROOT/demo/Polygon/PolygonDemo.C|.
+to include the source file \nonlinkedpath|CGAL_ROOT/demo/Polygon/PolygonDemo.cpp|.
 Obviously, you could have problems if you have an example program and a demo
 program with the same name in the same package, so try to avoid this.
 \end{description}

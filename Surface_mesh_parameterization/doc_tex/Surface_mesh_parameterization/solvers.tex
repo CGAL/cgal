@@ -49,12 +49,13 @@ of the \ccc{SparseLinearAlgebraTraits_d} concept:
 
 \subsection{{\sc Taucs} Solver Example}
 
-\ccc{Taucs_parameterization.C} computes the default parameterization
-method (Floater mean value coordinates with a circular border), but
-specifically instantiates the {\sc Taucs} solver.
-Specifying a specific solver
+\ccc{examples/Surface_mesh_parameterization/Taucs_parameterization.cpp} computes the
+default parameterization method (Floater mean value coordinates with a circular border),
+but specifically instantiates the {\sc Taucs} solver. Specifying a specific solver
 instead of the default one (OpenNL) means using the third parameter of
-\ccc{CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}. The differences with the first example \ccc{Simple_parameterization.C} are:
+\ccc{CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3,
+BorderParameterizer_3, SparseLinearAlgebraTraits_d>}.  The differences with the first
+example \ccc{examples/Surface_mesh_parameterization/Simple_parameterization.cpp} are:
 
 \begin{ccExampleCode}
 

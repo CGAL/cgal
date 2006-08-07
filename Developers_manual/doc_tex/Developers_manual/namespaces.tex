@@ -127,7 +127,7 @@ you can add matching function(s) with the same name in the using namespace;
 most likely, this will be the global scope.
 Here is an example:
 
-\ccIncludeExampleCode{Developers_manual/kl.C}
+\ccIncludeExampleCode{Developers_manual/kl.cpp}
 
 While \verb+gcc+ doesn't have problems with correctly compiling the program
 above, the MipsPro compiler on {\sc IRIX} (up till version 7.30) does not
@@ -135,14 +135,14 @@ implement Koenig lookup, so it fails:
 
 {\small
 \begin{verbatim}
-bash-2.03$ CC -64 kl.C  
-cc-1387 CC: ERROR File = kl.C, Line = 19
+bash-2.03$ CC -64 kl.cpp  
+cc-1387 CC: ERROR File = kl.cpp, Line = 19
   No suitable conversion function from "A::Cls" to "int" exists.
 
     foo( c );
          ^
 
-1 error detected in the compilation of "kl.C".
+1 error detected in the compilation of "kl.cpp".
 \end{verbatim}
 
 }
@@ -169,7 +169,7 @@ The name is searched for in the
 scope of the point of instantiation and the scope of the
 point of definition. Here is a small example:
 
-\ccIncludeExampleCode{Developers_manual/poi.C}
+\ccIncludeExampleCode{Developers_manual/poi.cpp}
 
 There is a ambiguity, because both the scope enclosing the point of 
 instantiation and the scope enclosing the point of definition contain
@@ -178,8 +178,8 @@ complains about this ambiguity:
 
 {\small
 \begin{verbatim}
-bash-2.03$ CC -64 poi.C 
-cc-1282 CC: ERROR File = poi.C, Line = 11
+bash-2.03$ CC -64 poi.cpp 
+cc-1282 CC: ERROR File = poi.cpp, Line = 11
   More than one instance of overloaded function "mix" matches the argument list.
 
             Function symbol function template "B::mix(const T &, const T &)"
@@ -192,7 +192,7 @@ cc-1282 CC: ERROR File = poi.C, Line = 11
           detected during instantiation of
                     "const double &A::use(const double &, const double &)" 
 
-1 error detected in the compilation of "poi.C".
+1 error detected in the compilation of "poi.cpp".
 \end{verbatim}
 }
 There wouldn't be any problems, if \verb+B::use_use()+ would be a template

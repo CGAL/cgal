@@ -93,15 +93,15 @@ Here is a simple example:\\
      return 0;
    }
 \end{verbatim}
-First you have to compile the example program \texttt{test.C} with the special 
+First you have to compile the example program \texttt{test.cpp} with the special 
 options. Then you have to execute it, and, after this, \texttt{gcov} can be 
 used.
 \begin{verbatim}
-   g++ -fprofile-arcs -ftest-coverage -o test test.C
+   g++ -fprofile-arcs -ftest-coverage -o test test.cpp
    test
-   gcov test.C  
+   gcov test.cpp  
 \end{verbatim}
-\texttt{gcov} will create a file \texttt{test.C.gcov} containing output 
+\texttt{gcov} will create a file \texttt{test.cpp.gcov} containing output 
 from \texttt{gcov}:
 \begin{verbatim}
                 #include<iostream>
@@ -191,7 +191,7 @@ ways:
          contains input files for the test programs.
    \item[{\tt *.cin} files]
         \index{test\ suite!input!from {\tt cin}}
-         If a test program \texttt{program.C} requires input from standard 
+         If a test program \texttt{program.cpp} requires input from standard 
          input (\ie, {\tt cin}), you should put a file called 
          \texttt{program.cin} in the test directory. 
          The test suite will then execute the program using the command
@@ -205,7 +205,7 @@ ways:
         {\tt cgal\_test} script; see Section~\ref{sec:create_cgal_test}.
 
         \index{cgal_test script@{\tt cgal\_test} script}
-         However, if a test program \texttt{program.C} absolutely requires 
+         However, if a test program \texttt{program.cpp} absolutely requires 
          command-line parameters, you should do the following. Use
          \texttt{create\_cgal\_test} to create the script \texttt{cgal\_test}.
          This file contains an entry of the form 
@@ -337,7 +337,7 @@ the execution was successful (\ie, the program returned the value 0).
 \index{ProgramOutput files@{\tt ProgramOutput} files}
 
 This file contains the console output from the test program
-\texttt{<program.C>} run on platform \texttt{<platform>}.
+\texttt{<program.cpp>} run on platform \texttt{<platform>}.
 
 \item \verb|<testdir>/CompilerOutput_<platform>|
 \index{CompilerOutput files@{\tt CompilerOutput} files}
