@@ -48,6 +48,56 @@ namespace CGAL {
       return p1.rep() == p2.rep();
     }
 
+    // At the moment we dont need those functions
+    // But in the future maybe (some make_x_monotone? etc..)
+    template <class SK>
+    typename SK::Root_of_2
+    x_extremal_point(const typename SK::Circle_3 & c, bool i)
+    {
+      typedef typename SK::Algebraic_kernel   AK;
+      return AK().x_critical_points_object()(typename SK::Get_equation()(c),i);
+    }
+
+    template <class SK,class OutputIterator>
+    OutputIterator
+    x_extremal_points(const typename SK::Circle_3 & c, OutputIterator res)
+    {
+      typedef typename SK::Algebraic_kernel   AK;
+      return AK().x_critical_points_object()(typename SK::Get_equation()(c),res);
+    }
+
+    template <class SK>
+    typename SK::Root_of_2
+    y_extremal_point(const typename SK::Circle_3 & c, bool i)
+    {
+      typedef typename SK::Algebraic_kernel   AK;
+      return AK().y_critical_points_object()(typename SK::Get_equation()(c),i);
+    }
+
+    template <class SK,class OutputIterator>
+    OutputIterator
+    y_extremal_points(const typename SK::Circle_3 & c, OutputIterator res)
+    {
+      typedef typename SK::Algebraic_kernel   AK;
+      return AK().y_critical_points_object()(typename SK::Get_equation()(c),res);
+    }
+
+    template <class SK>
+    typename SK::Root_of_2
+    z_extremal_point(const typename SK::Circle_3 & c, bool i)
+    {
+      typedef typename SK::Algebraic_kernel   AK;
+      return AK().z_critical_points_object()(typename SK::Get_equation()(c),i);
+    }
+
+    template <class SK,class OutputIterator>
+    OutputIterator
+    z_extremal_points(const typename SK::Circle_3 & c, OutputIterator res)
+    {
+      typedef typename SK::Algebraic_kernel   AK;
+      return AK().z_critical_points_object()(typename SK::Get_equation()(c),res);
+    }
+
   }//SphericalFunctors
 }//CGAL
 

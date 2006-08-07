@@ -21,7 +21,9 @@
 #include <CGAL/Curved_kernel_3/internal_functions_on_line_3.h>
 #include <CGAL/Curved_kernel_3/internal_functions_on_plane_3.h>
 #include <CGAL/Curved_kernel_3/internal_functions_on_circle_3.h>
+#include <CGAL/Curved_kernel_3/internal_functions_on_line_arc_3.h>
 #include <CGAL/Curved_kernel_3/internal_function_has_on_spherical_kernel.h>
+#include <CGAL/Curved_kernel_3/internal_function_compare_spherical_kernel.h>
 #include <CGAL/Object.h>
 
 
@@ -238,6 +240,7 @@ template < class SK >
   {
     typedef typename SK::Circular_arc_point_3     Circular_arc_point_3;
     typedef typename SK::Circle_3                 Circle_3;
+    typedef typename SK::Line_arc_3               Line_arc_3;
   public:
     typedef bool result_type;
     typedef Arity_tag<2>             Arity;
@@ -254,6 +257,12 @@ template < class SK >
     operator() (const Circular_arc_point_3 &c0,
                 const Circular_arc_point_3 &c1) const
     { return equal<SK>(c0, c1); }
+
+    // Our Line_arc_3 dont have orientation
+    result_type
+    operator() (const Line_arc_3 &l0,
+                const Line_arc_3 &l1) const
+    { return equal<SK>(l0, l1); }
 
   };
 
@@ -525,12 +534,201 @@ template <class SK>
   };
 
 template < class SK >
-  class Has_on_3
+  class Construct_line_arc_3
+  {
+
+    typedef typename SK::Line_3                    Line_3;
+    typedef typename SK::Point_3                   Point_3;
+    typedef typename SK::Segment_3                 Segment_3;
+    typedef typename SK::Sphere_3                  Sphere_3;
+    typedef typename SK::Plane_3                   Plane_3;
+    typedef typename SK::Circular_arc_point_3      Circular_arc_point_3;
+    typedef typename SK::Line_arc_3                Line_arc_3;
+    typedef typename SK::Kernel_base::Line_arc_3   RLine_arc_3;
+    typedef typename Line_arc_3::Rep               Rep;
+
+  public:
+    typedef Line_arc_3   result_type;
+    typedef Arity_tag<3> Arity; // It is not true that each constructor has
+                                // 3 operands, maybe we should remove this
+    
+    result_type
+    operator()(void) const
+    { return Rep(); }
+
+    result_type
+    operator()(const Line_3 &l,
+	       const Circular_arc_point_3 &s,
+	       const Circular_arc_point_3 &t) const
+    { return Rep(l,s,t); }
+
+    result_type
+    operator()(const Line_3 &l,
+	       const Point_3 &s,
+	       const Circular_arc_point_3 &t) const
+    { return Rep(l,s,t); }
+
+    result_type
+    operator()(const Line_3 &l,
+	       const Circular_arc_point_3 &s,
+	       const Point_3 &t) const
+    { return Rep(l,s,t); }
+
+    result_type
+    operator()(const Line_3 &l,
+	       const Point_3 &s,
+	       const Point_3 &t) const
+    { return Rep(l,s,t); }
+
+    result_type
+    operator()(const Segment_3 &s) const
+    { return Rep(s); }
+
+    result_type
+    operator()(const Line_3 &l,
+               const Sphere_3 &s,
+               bool less_xyz_first = true) const
+    { return Rep(l,s,less_xyz_first); }
+
+    result_type
+    operator()(const Sphere_3 &s,
+               const Line_3 &l,
+               bool less_xyz_first = true) const
+    { return Rep(l,s,less_xyz_first); }
+
+    result_type
+    operator()(const Line_3 &l, 
+               const Sphere_3 &s1, bool less_xyz_s1,
+               const Sphere_3 &s2, bool less_xyz_s2) const
+    { return Rep(l,s1,less_xyz_s1,
+                   s2,less_xyz_s2); }
+
+    result_type
+    operator()(const Sphere_3 &s1, bool less_xyz_s1,
+               const Sphere_3 &s2, bool less_xyz_s2,
+               const Line_3 &l) const
+    { return Rep(l,s1,less_xyz_s1,
+                   s2,less_xyz_s2); }
+
+    result_type
+    operator()(const Line_3 &l,
+	       const Plane_3 &p1,
+	       const Plane_3 &p2) const
+    { return Rep(l,p1,p2); }
+
+    result_type
+    operator()(const Plane_3 &p1,
+	       const Plane_3 &p2,
+               const Line_3 &l) const
+    { return Rep(l,p1,p2); }
+
+  };
+
+
+template <class SK>
+  class Construct_circular_min_vertex_3 : Has_qrt
+  {
+    typedef typename SK::Line_arc_3                Line_arc_3;
+    typedef typename SK::Circular_arc_point_3      Circular_arc_point_3;
+
+  public:
+
+    typedef Circular_arc_point_3 result_type;
+    typedef const result_type &  qualified_result_type;
+    typedef Arity_tag<1>         Arity;
+
+    qualified_result_type operator() (const Line_arc_3 & a) const
+    {
+      return (a.rep().lower_xyz_extremity());
+    }
+
+  };
+
+template <class SK>
+  class Construct_circular_max_vertex_3 : Has_qrt
+  {
+    typedef typename SK::Line_arc_3                Line_arc_3;
+    typedef typename SK::Circular_arc_point_3      Circular_arc_point_3;
+
+  public:
+
+    typedef Circular_arc_point_3 result_type;
+    typedef const result_type &  qualified_result_type;
+    typedef Arity_tag<1>         Arity;
+
+    qualified_result_type operator() (const Line_arc_3 & a) const
+    {
+      return (a.rep().higher_xyz_extremity());
+    }
+
+  };
+
+template <class SK>
+  class Construct_circular_source_vertex_3 : Has_qrt
+  {
+    typedef typename SK::Line_arc_3                Line_arc_3;
+    typedef typename SK::Circular_arc_point_3      Circular_arc_point_3;
+
+  public:
+
+    typedef Circular_arc_point_3 result_type;
+    typedef const result_type &  qualified_result_type;
+    typedef Arity_tag<1>         Arity;
+
+    qualified_result_type operator() (const Line_arc_3 & a) const
+    {
+      return (a.rep().source());
+    }
+
+  };
+
+template <class SK>
+  class Construct_circular_target_vertex_3 : Has_qrt
+  {
+    typedef typename SK::Line_arc_3                Line_arc_3;
+    typedef typename SK::Circular_arc_point_3      Circular_arc_point_3;
+
+  public:
+
+    typedef Circular_arc_point_3 result_type;
+    typedef const result_type &  qualified_result_type;
+    typedef Arity_tag<1>         Arity;
+
+    qualified_result_type operator() (const Line_arc_3 & a) const
+    {
+      return (a.rep().target());
+    }
+
+  };
+
+template <class SK>
+  class Construct_supporting_line_3 : Has_qrt
+  {
+    typedef typename SK::Line_arc_3                Line_arc_3;
+    typedef typename SK::Line_3                    Line_3;
+
+  public:
+
+    typedef Line_3 result_type;
+    typedef const result_type &  qualified_result_type;
+    typedef Arity_tag<1>         Arity;
+
+    qualified_result_type operator() (const Line_arc_3 & a) const
+    {
+      return (a.rep().supporting_line());
+    }
+
+  };
+
+template < class SK >
+  class Has_on_3 
+    : public SK::Linear_kernel::Has_on_3
   {
     typedef typename SK::Point_3                 Point_3;
     typedef typename SK::Sphere_3                Sphere_3;
     typedef typename SK::Plane_3                 Plane_3;
     typedef typename SK::Line_3                  Line_3;
+    typedef typename SK::Line_arc_3              Line_arc_3;
     typedef typename SK::Circular_arc_point_3    Circular_arc_point_3;
     typedef typename SK::Circle_3                Circle_3;
     
@@ -539,6 +737,10 @@ template < class SK >
     typedef bool result_type;
     typedef Arity_tag<2>             Arity;
     
+    using SK::Linear_kernel::Has_on_3::operator();
+
+    // Some of the has_on here have better to be moved to the Linear_Kernel
+
     result_type
     operator()(const Sphere_3 &a, const Point_3 &p) const
     { return has_on<SK>(a, p); }
@@ -640,6 +842,54 @@ template < class SK >
 
     result_type
     operator()(const Sphere_3 &a, const Line_3 &p) const
+    { return false; }
+
+    result_type
+    operator()(const Line_arc_3 &a, const Circular_arc_point_3 &p) const
+    { return has_on<SK>(a, p); }
+
+    result_type
+    operator()(const Circular_arc_point_3 &a, const Line_arc_3 &p) const
+    { return false; }
+
+    result_type
+    operator()(const Line_arc_3 &a, const Point_3 &p) const
+    { return has_on<SK>(a, p); }
+
+    result_type
+    operator()(const Point_3 &a, const Line_arc_3 &p) const
+    { return false; }
+
+    result_type
+    operator()(const Plane_3 &p, const Line_arc_3 &a) const
+    { return has_on<SK>(p, a); }
+
+    result_type
+    operator()(const Line_arc_3 &p, const Plane_3 &a) const
+    { return false; }
+
+    result_type
+    operator()(const Sphere_3 &a, const Line_arc_3 &p) const
+    { return false; }
+
+    result_type
+    operator()(const Line_arc_3 &a, const Sphere_3 &p) const
+    { return false; }
+
+    result_type
+    operator()(const Circle_3 &a, const Line_arc_3 &p) const
+    { return false; }
+
+    result_type
+    operator()(const Line_arc_3 &a, const Circle_3 &p) const
+    { return false; }
+
+    result_type
+    operator()(const Line_3 &a, const Line_arc_3 &p) const
+    { return has_on<SK>(a, p); }
+
+    result_type
+    operator()(const Line_arc_3 &a, const Line_3 &p) const
     { return false; }
 
   };
@@ -767,12 +1017,50 @@ template < class SK >
 
   };
 
+// If 2 line_arc have the same supporting line
+// if they intersect only at a point
+// even in this case we consider that the 2 line_arc overlap
+template < class SK >
+  class Do_overlap_3
+  {
+    typedef typename SK::Line_arc_3     Line_arc_3;
+
+  public:
+    typedef bool         result_type;
+    typedef Arity_tag<2> Arity;
+
+    result_type
+    operator() (const Line_arc_3 &l1, const Line_arc_3 &l2) const
+    { return do_overlap<SK>(l1, l2); }
+
+  };
+
+  template < class SK >
+  class Split_3
+  {
+    typedef typename SK::Circular_arc_point_3    Circular_arc_point_3;
+    typedef typename SK::Line_arc_3              Line_arc_3;
+
+  public:
+
+    typedef void         result_type;
+    typedef Arity_tag<4> Arity;
+
+    result_type
+    operator()(const Line_arc_3 &l, 
+	       const Circular_arc_point_3 &p,
+	       Line_arc_3 &ca1, Line_arc_3 &ca2) const
+    { return split<SK>(l, p, ca1, ca2); }
+
+  };
+
 template <class SK>
   class Construct_bbox_3
     : public SK::Linear_kernel::Construct_bbox_2
   {
     typedef typename SK::Circular_arc_point_3      Circular_arc_point_3;
     typedef typename SK::Circle_3                  Circle_3;
+    typedef typename SK::Line_arc_3                Line_arc_3;
 
   public:
 
@@ -789,6 +1077,11 @@ template <class SK>
     result_type operator() (const Circle_3 & c) const
     {
       return c.rep().bbox();
+    }
+
+    result_type operator() (const Line_arc_3 & l) const
+    {
+      return l.rep().bbox();
     }
 
   };

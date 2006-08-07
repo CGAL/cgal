@@ -135,6 +135,56 @@ namespace CGAL {
       return non_oriented_equal<SK>(a,p.supporting_plane());
     }
 
+    template <class SK>
+    inline
+    bool
+    has_on(const typename SK::Line_arc_3 &l, 
+           const typename SK::Circular_arc_point_3 &p,
+           const bool has_on_supporting_line = false)
+    { 
+      if(!has_on_supporting_line) {
+        if(!has_on<SK>(l.supporting_line(), p)) {
+          return false;
+        }
+      }
+      return SK().compare_xyz_3_object()(l.lower_xyz_extremity(),p) <= ZERO &&
+             SK().compare_xyz_3_object()(p,l.higher_xyz_extremity()) <= ZERO;
+    }
+
+    template <class SK>
+    inline
+    bool
+    has_on(const typename SK::Line_arc_3 &l, 
+           const typename SK::Point_3 &p,
+           const bool has_on_supporting_line = false)
+    { 
+      if(!has_on_supporting_line) {
+        if(!has_on<SK>(l.supporting_line(), p)) {
+          return false;
+        }
+      }           
+      return SK().compare_xyz_3_object()(l.lower_xyz_extremity(),p) <= ZERO &&
+             SK().compare_xyz_3_object()(p,l.higher_xyz_extremity()) <= ZERO;
+    }
+
+    template <class SK>
+    inline
+    bool
+    has_on(const typename SK::Plane_3 &p,
+           const typename SK::Line_arc_3 &l)
+    { 
+      return SK().has_on_3_object()(p, l.supporting_line());
+    }
+
+    template <class SK>
+    inline
+    bool
+    has_on(const typename SK::Line_3 &l,
+           const typename SK::Line_arc_3 &la)
+    { 
+      return non_oriented_equal<SK>(l, la.supporting_line());
+    }
+
   }//SphericalFunctors
 }//CGAL
 
