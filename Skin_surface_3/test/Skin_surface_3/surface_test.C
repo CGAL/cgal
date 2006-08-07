@@ -84,7 +84,7 @@ public:
 		      (cit->vertex(3)->point()-cit->vertex(0)->point())/4);
       if (tmc.tetrahedron(cit).has_on_bounded_side(i2e_converter(baryc))) {
 	Quadratic_surface::RT val1 = cit->surf->value(i2e_converter(baryc));
-	Quadratic_surface::RT val2 = skin_surface.value(i2e_converter(baryc));
+	Quadratic_surface::RT val2 = skin_surface.value(baryc);
 	CGAL_assertion(val1==val2);
       } else {
 	std::cout << "Barycenter on unbounded side, due to rounding errors\n";
