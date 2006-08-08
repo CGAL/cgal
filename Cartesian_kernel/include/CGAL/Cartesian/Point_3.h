@@ -28,6 +28,7 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_3.h>
+#include <CGAL/constant.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -102,14 +103,14 @@ public:
   {
       return z();
   }
-  FT hw() const
+  const FT & hw() const
   {
-      return FT(1);
+      return constant<FT, 1>();
   }
 
   const FT & cartesian(int i) const;
   const FT & operator[](int i) const;
-  FT homogeneous(int i) const;
+  const FT & homogeneous(int i) const;
 
   Cartesian_const_iterator cartesian_begin() const 
   {
@@ -154,12 +155,12 @@ PointC3<R>::operator[](int i) const
 
 template < class R >
 inline
-typename PointC3<R>::FT
+const typename PointC3<R>::FT &
 PointC3<R>::homogeneous(int i) const
 {
   CGAL_kernel_precondition(i>=0 && i<=3);
   if (i<3) return cartesian(i);
-  return FT(1);
+  return hw();
 }
 
 template < class R >

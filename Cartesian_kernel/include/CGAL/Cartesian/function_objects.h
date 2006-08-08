@@ -1324,7 +1324,7 @@ namespace CartesianKernelFunctors {
   };
 
   template <typename K>
-  class Compute_hw_3
+  class Compute_hw_3 : public Has_qrt
   {
     typedef typename K::FT             FT;
     typedef typename K::Point_3        Point_3;
@@ -1334,13 +1334,13 @@ namespace CartesianKernelFunctors {
     typedef FT               result_type;
     typedef Arity_tag< 1 >   Arity;
 
-    result_type
+    const result_type &
     operator()(const Point_3& p) const
     {
       return p.rep().hw();
     }
 
-    result_type
+    const result_type &
     operator()(const Vector_3& v) const
     {
       return v.rep().hw();

@@ -101,14 +101,14 @@ public:
   {
       return z();
   }
-  FT hw() const
+  const FT & hw() const
   {
-      return FT(1);
+      return constant<FT, 1>();
   }
 
   const FT & cartesian(int i) const;
   const FT & operator[](int i) const;
-  FT homogeneous(int i) const;
+  const FT & homogeneous(int i) const;
 
   int dimension() const
   {
@@ -192,10 +192,10 @@ VectorC3<R>::operator[](int i) const
 }
 
 template < class R >
-typename VectorC3<R>::FT
+const typename VectorC3<R>::FT &
 VectorC3<R>::homogeneous(int i) const
 {
-  if (i==3) return FT(1);
+  if (i==3) return hw();
   return cartesian(i);
 }
 

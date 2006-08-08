@@ -26,6 +26,7 @@
 
 #include <CGAL/Origin.h>
 #include <CGAL/Twotuple.h>
+#include <CGAL/constant.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -44,8 +45,6 @@ class VectorC2
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
-
-  static FT one;
 
 public:
   typedef R_                                     R;
@@ -82,13 +81,10 @@ public:
   }
   const FT& hw() const
   {
-    return one;
+    return constant<FT, 1>();
   }
 
 };
-
-template <class R >
-typename R::FT VectorC2<R>::one = 1;
 
 template < class R >
 CGAL_KERNEL_INLINE

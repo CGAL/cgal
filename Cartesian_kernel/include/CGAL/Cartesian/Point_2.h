@@ -28,6 +28,7 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Twotuple.h>
 #include <CGAL/Handle_for.h>
+#include <CGAL/constant.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -44,9 +45,8 @@ class PointC2
 
   Base base;
 
-  static FT one;
-
 public:
+
   typedef const FT* Cartesian_const_iterator;
   
   typedef R_                                     R;
@@ -87,7 +87,7 @@ public:
   }
   const FT& hw() const
   {
-      return one;
+      return constant<FT, 1>();
   }
 
 
@@ -115,12 +115,6 @@ public:
   }
 
 };
-
-template <class R >
-typename R::FT PointC2<R>::one = 1;
-
-
-
 
 CGAL_END_NAMESPACE
 
