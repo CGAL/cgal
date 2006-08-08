@@ -478,9 +478,6 @@ void _test_do_overlap_predicate(SK sk) {
     }
   }
 
- // both tests depends on other has_on or functions already tested
- std::cout << "Testing has_on(Plane, Line_arc)..." << std::endl;
-
 }
 
 template <class SK>
