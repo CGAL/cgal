@@ -16,7 +16,6 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = \
            -Iinclude \
            -I../../include \
-           -I../../../Filtered_kernel/include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
@@ -41,6 +40,7 @@ LDFLAGS = \
 
 all:            \
                 bench_interval$(EXE_EXT) \
+                constant$(EXE_EXT) \
                 doubletst$(EXE_EXT) \
                 floattst$(EXE_EXT) \
                 Gmpq$(EXE_EXT) \
@@ -62,6 +62,9 @@ all:            \
 
 bench_interval$(EXE_EXT): bench_interval$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)bench_interval bench_interval$(OBJ_EXT) $(LDFLAGS)
+
+constant$(EXE_EXT): constant$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)constant constant$(OBJ_EXT) $(LDFLAGS)
 
 doubletst$(EXE_EXT): doubletst$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)doubletst doubletst$(OBJ_EXT) $(LDFLAGS)
@@ -119,6 +122,7 @@ utilities$(EXE_EXT): utilities$(OBJ_EXT)
 
 clean: \
                    bench_interval.clean \
+                   constant.clean \
                    doubletst.clean \
                    floattst.clean \
                    Gmpq.clean \
