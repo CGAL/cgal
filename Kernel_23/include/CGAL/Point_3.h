@@ -65,23 +65,8 @@ public:
       : Rep(p) {}
 #endif
 
-  Point_3(int x, int y, int z)
-    : Rep(typename R::Construct_point_3()(x, y, z).rep())
-  {}
-
-  Point_3(const RT& x, const RT& y, const RT& z)
-    : Rep(typename R::Construct_point_3()(x, y, z).rep())
-  {}
-
-  Point_3(const typename First_if_different<double,RT>::Type& x,
-          const typename First_if_different<double,RT>::Type& y,
-          const typename First_if_different<double,RT>::Type& z)
-    : Rep(typename R::Construct_point_3()(x, y, z).rep())
-  {}
-
-  Point_3(const typename First_if_different<FT,RT,1>::Type& x,
-          const typename First_if_different<FT,RT,1>::Type& y,
-          const typename First_if_different<FT,RT,1>::Type& z)
+  template < typename T1, typename T2, typename T3 >
+  Point_3(const T1& x, const T2& y, const T3& z)
     : Rep(typename R::Construct_point_3()(x, y, z).rep())
   {}
 

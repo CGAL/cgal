@@ -78,23 +78,9 @@ public:
   Vector_3(const Null_vector& v)
     : Rep(typename R::Construct_vector_3()(v).rep()) {}
 
-  Vector_3(int x, int y, int z)
+  template < typename T1, typename T2, typename T3 >
+  Vector_3(const T1 &x, const T2 &y, const T3 &z)
     : Rep(typename R::Construct_vector_3()(x, y, z).rep()) {}
-
-  Vector_3(const typename First_if_different<double,RT>::Type& x,
-           const typename First_if_different<double,RT>::Type& y,
-           const typename First_if_different<double,RT>::Type& z)
-    : Rep(typename R::Construct_vector_3()(x, y, z).rep())
-  {}
-
-  Vector_3(const RT& x, const RT& y, const RT& z)
-    : Rep(typename R::Construct_vector_3()(x, y, z).rep()) {}
-
-  Vector_3(const typename First_if_different<FT,RT,1>::Type& x,
-           const typename First_if_different<FT,RT,1>::Type& y,
-           const typename First_if_different<FT,RT,1>::Type& z)
-    : Rep(typename R::Construct_vector_3()(x, y, z).rep())
-  {}
 
   Vector_3(const RT& x, const RT& y, const RT& z, const RT& w)
     : Rep(typename R::Construct_vector_3()(x, y, z, w).rep()) {}

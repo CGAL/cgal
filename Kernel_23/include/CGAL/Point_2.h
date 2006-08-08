@@ -67,21 +67,8 @@ public:
   {}
 #endif
 
-  Point_2(int x, int y)
-    : Rep(typename R::Construct_point_2()(x, y).rep())
-  {}
-
-  Point_2(const RT& x, const RT& y)
-    : RPoint_2(typename R::Construct_point_2()(x, y).rep())
-  {}
-
-  Point_2(const typename First_if_different<double,RT>::Type& x,
-          const typename First_if_different<double,RT>::Type& y)
-    : Rep(typename R::Construct_point_2()(x, y).rep())
-  {}
-
-  Point_2(const typename First_if_different<FT,RT,1>::Type& x,
-          const typename First_if_different<FT,RT,1>::Type& y)
+  template < typename T1, typename T2 >
+  Point_2(const T1 &x, const T2 &y)
     : Rep(typename R::Construct_point_2()(x, y).rep())
   {}
 

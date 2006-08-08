@@ -17,7 +17,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra
 
@@ -73,26 +73,13 @@ public:
 
   Vector_2(const Null_vector &v) : RVector_2(typename R::Construct_vector_2()(v).rep()) {}
 
-  Vector_2(int x, int y)
-    : RVector_2(typename R::Construct_vector_2()(x,y).rep())
-  {}
-
-  Vector_2(const typename First_if_different<double,RT>::Type& x,
-           const typename First_if_different<double,RT>::Type& y)
-    : Rep(typename R::Construct_vector_2()(x, y).rep())
-  {}
-
-  Vector_2(const RT &x, const RT &y)
+  template < typename T1, typename T2 >
+  Vector_2(const T1 &x, const T2 &y)
     : RVector_2(typename R::Construct_vector_2()(x,y).rep())
   {}
 
   Vector_2(const RT &x, const RT &y, const RT &w)
     : RVector_2(typename R::Construct_vector_2()(x,y,w).rep())
-  {}
-
-  Vector_2(const typename First_if_different<FT,RT,1>::Type& x,
-           const typename First_if_different<FT,RT,1>::Type& y)
-    : Rep(typename R::Construct_vector_2()(x, y).rep())
   {}
 
 
@@ -102,14 +89,12 @@ public:
     return R().compute_x_2_object()(*this);
   }
 
-  
   typename Qualified_result_of<typename R::Compute_y_2,Vector_2>::type
   y() const
   {
     return R().compute_y_2_object()(*this);
   }
 
-  
   typename Qualified_result_of<typename R::Compute_y_2,Vector_2>::type
   cartesian(int i) const
   {
@@ -129,7 +114,7 @@ public:
     return R().compute_hx_2_object()(*this);
   }
 
-  
+
   typename Qualified_result_of<typename R::Compute_hy_2,Vector_2>::type
   hy() const
   {
@@ -238,7 +223,7 @@ operator!=(const Null_vector &n, const Vector_2<R> &v)
 
 template <class R >
 std::ostream&
-insert(std::ostream& os, const Vector_2<R>& v, const Cartesian_tag&) 
+insert(std::ostream& os, const Vector_2<R>& v, const Cartesian_tag&)
 {
     switch(os.iword(IO::mode)) {
     case IO::ASCII :
@@ -283,7 +268,7 @@ operator<<(std::ostream& os, const Vector_2<R>& v)
 
 template <class R >
 std::istream&
-extract(std::istream& is, Vector_2<R>& v, const Cartesian_tag&) 
+extract(std::istream& is, Vector_2<R>& v, const Cartesian_tag&)
 {
     typename R::FT x, y;
     switch(is.iword(IO::mode)) {
@@ -307,7 +292,7 @@ extract(std::istream& is, Vector_2<R>& v, const Cartesian_tag&)
 
 template <class R >
 std::istream&
-extract(std::istream& is, Vector_2<R>& v, const Homogeneous_tag&) 
+extract(std::istream& is, Vector_2<R>& v, const Homogeneous_tag&)
 {
   typename R::RT hx, hy, hw;
   switch(is.iword(IO::mode))
