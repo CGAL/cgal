@@ -388,6 +388,7 @@ void _test_intersection_construct(SK sk) {
   typedef typename SK::Circular_arc_point_3             Circular_arc_point_3;
   typedef typename SK::Point_3                          Point_3;
   typedef typename SK::Line_3                           Line_3;
+  typedef typename SK::Line_arc_3                       Line_arc_3;
   typedef typename SK::Plane_3                          Plane_3;
   typedef typename SK::Sphere_3                         Sphere_3;
   typedef typename SK::Circle_3                         Circle_3;
@@ -400,6 +401,7 @@ void _test_intersection_construct(SK sk) {
   typedef typename SK::Construct_sphere_3               Construct_sphere_3;
   typedef typename SK::Construct_plane_3                Construct_plane_3;
   typedef typename SK::Construct_line_3                 Construct_line_3;
+  typedef typename SK::Construct_line_arc_3             Construct_line_arc_3;
   typedef typename SK::Polynomials_for_circle_3         Polynomials_for_circle_3;
   typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
   typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
@@ -414,6 +416,7 @@ void _test_intersection_construct(SK sk) {
   Construct_sphere_3 theConstruct_sphere_3 = sk.construct_sphere_3_object();
   Construct_plane_3 theConstruct_plane_3 = sk.construct_plane_3_object();
   Construct_line_3 theConstruct_line_3 = sk.construct_line_3_object();
+  Construct_line_arc_3 theConstruct_line_arc_3 = sk.construct_line_arc_3_object();
 
   std::cout << "Testing intersection(Sphere,Sphere)..." << std::endl;
   Sphere_3 s = theConstruct_sphere_3(Polynomial_for_spheres_2_3(0,0,0,1));
@@ -799,7 +802,7 @@ void _test_intersection_construct(SK sk) {
   std::cout << "Testing intersection(Circle,Plane)..." << std::endl;
   // both tests above are equivalent respectively to 
   // intersection(Sphere,Sphere,Plane) and
-  // intersection(Plane,Plane,Sphere)*/
+  // intersection(Plane,Plane,Sphere)
 
   std::cout << "Testing intersection(Circle,Circle)..." << std::endl;
   Polynomial_for_spheres_2_3 es1 = Polynomial_for_spheres_2_3(0,0,0,1);
@@ -941,10 +944,185 @@ void _test_intersection_construct(SK sk) {
           assert(theHas_on_3(c2,the_pair4.first));
           assert(theHas_on_3(l2,the_pair4.first));
         }
-
       }
     }
   }
+
+  std::cout << "Testing intersection(Line_arc, Line_arc)..." << std::endl;
+  // Testing the case where it overlaps, or do not intersect
+  for(int vx=0;vx<2;vx++) {
+    for(int vy=0;vy<2;vy++) {
+      for(int vz=0;vz<2;vz++) { 
+        if(vx == 0 && vy == 0 && vz == 0) continue;
+        const FT a = FT(vx);
+        const FT b = FT(vy);
+        const FT c = FT(vz);
+        Line_3 l = theConstruct_line_3(Point_3(0,0,0), Point_3(a,b,c));
+        for(int t1=-1;t1<2;t1++) {
+          Point_3 source = Point_3(a*t1,b*t1,c*t1);
+          for(int t2=t1+1;t2<3;t2++) {
+            Point_3 target = Point_3(a*t2,b*t2,c*t2);
+            Line_arc_3 la = theConstruct_line_arc_3(l,source,target);
+            for(int t3=-1;t3<2;t3++) {
+              Point_3 sourcel = Point_3(a*t3,b*t3,c*t3);
+              for(int t4=t3+1;t4<3;t4++) {
+                Point_3 targetl = Point_3(a*t4,b*t4,c*t4);
+                Line_arc_3 lb = theConstruct_line_arc_3(l,sourcel,targetl);
+                std::vector< CGAL::Object > intersection_1;
+                theIntersect_3(la, lb, std::back_inserter(intersection_1));
+                if(t1 == t3) {
+                  Line_arc_3 line_a;
+                  assert(intersection_1.size() == 1);
+                  assert(assign(line_a, intersection_1[0]));
+                  if(t2 <= t4) {
+                    assert(theEqual_3(line_a, la));
+                  } else {
+                    assert(theEqual_3(line_a, lb));
+                  } 
+                } else if(t2 == t4) {
+                  Line_arc_3 line_a;
+                  assert(intersection_1.size() == 1);
+                  assert(assign(line_a, intersection_1[0]));
+                  if(t1 > t3) {
+                    assert(theEqual_3(line_a, la));
+                  } else {
+                    assert(theEqual_3(line_a, lb));
+                  }
+                }
+                else if((t1 == t4) || (t2 == t3)) {
+                  std::pair<Circular_arc_point_3, unsigned> pair;
+                  assert(intersection_1.size() == 1);
+                  assert(assign(pair, intersection_1[0]));
+                  if(t2 == t3) assert(theEqual_3(pair.first,target)); 
+                  if(t1 == t4) assert(theEqual_3(pair.first,source));
+                } else if((t1 < t3) && (t3 < t2 )) {
+                  Line_arc_3 line_a;
+                  assert(intersection_1.size() == 1);
+                  assert(assign(line_a, intersection_1[0]));
+                  if(t2 < t4) { 
+                    Line_arc_3 line_b;
+                    line_b = theConstruct_line_arc_3(l,sourcel,target);
+                    assert(theEqual_3(line_a, line_b));
+                  } else {
+                    assert(theEqual_3(line_a, lb));
+                  } 
+                } else if((t3 < t1) && (t1 < t4)) {
+                  Line_arc_3 line_a;
+                  assert(intersection_1.size() == 1);
+                  assert(assign(line_a, intersection_1[0]));
+                  if(t4 < t2) {
+                    Line_arc_3 line_b;
+                    line_b = theConstruct_line_arc_3(l,source,targetl);
+                    assert(theEqual_3(line_a, line_b));
+                  } else {
+                      assert(theEqual_3(line_a, la));
+                  }
+                } else {
+                  assert(intersection_1.size() == 0);
+                } 
+              }
+            } 
+          }
+        }
+      }
+    }
+  }
+  // testing for intersections of Line Arcs without the same line support
+  for(int u1=-1;u1<=1;u1++) {
+    for(int v1=-1;v1<=1;v1++) {
+      Point_3 p1 = Point_3(3*u1 + 2*v1,
+                           u1 + v1 + 3,
+                           5 + 2*u1 + v1);
+      for(int u2=-1;u2<=1;u2++) {
+        for(int v2=-1;v2<=1;v2++) {
+          Point_3 p2 = Point_3(3*u2 + 2*v2,
+                                 u2 + v2 + 3,
+                               5 + 2*u2 + v2);
+          if(theEqual_3(p1,p2)) continue;
+          for(int u3=-1;u3<=1;u3++) {
+            for(int v3=-1;v3<=1;v3++) {
+              Point_3 p3 = Point_3(3*u3 + 2*v3,
+                                   u3 + v3 + 3,
+                                   5 + 2*u3 + v3);
+              if(theEqual_3(p1,p3) || 
+                 theEqual_3(p2,p3)) continue;
+              for(int u4=-1;u4<=1;u4++) {
+                for(int v4=-1;v4<=1;v4++) {
+                  Point_3 p4 = Point_3(3*u4 + 2*v4,
+                                       u4 + v4 + 3,
+                                       5 + 2*u4 + v4);
+                  if(theEqual_3(p1,p4) || 
+                     theEqual_3(p2,p4) ||
+                     theEqual_3(p3,p4)) continue;
+                  Line_3 line[6];
+                  line[0] = Line_3(p1, p2);
+                  line[1] = Line_3(p1, p3);
+                  line[2] = Line_3(p1, p4);
+                  line[3] = Line_3(p2, p3);
+                  line[4] = Line_3(p2, p4);
+                  line[5] = Line_3(p3, p4);
+                  bool n_equal = true;
+                  for(int i=0; i<6; i++) {
+                    for(int j=i+1;j<6;j++) { 
+                      n_equal = (n_equal && (!theEqual_3(line[i],line[j])));
+                      if(!n_equal) break;
+                    }
+                    if(!n_equal) break;
+                  }
+                  if(!n_equal) continue;
+                  Line_arc_3 l[6];
+                  l[0] = theConstruct_line_arc_3(line[0],p1,p2);
+                  l[1] = theConstruct_line_arc_3(line[1],p1,p3);
+                  l[2] = theConstruct_line_arc_3(line[2],p1,p4);
+                  l[3] = theConstruct_line_arc_3(line[3],p2,p3);
+                  l[4] = theConstruct_line_arc_3(line[4],p2,p4);
+                  l[5] = theConstruct_line_arc_3(line[5],p3,p4);
+                  int n_of_diagonals = 0;
+                  for(int i=0;i<6;i++) {
+                    int n_of_intersection = 0;
+                    for(int j=0;j<6;j++) {
+                      if(i == j) continue;
+                      std::vector< CGAL::Object > intersection_1;
+                      theIntersect_3(l[i], l[j], std::back_inserter(intersection_1));
+                      assert((intersection_1.size() == 0) || 
+                             (intersection_1.size() == 1));
+                      if(intersection_1.size() == 1) {
+                        n_of_intersection++;
+                        std::pair<Circular_arc_point_3, unsigned> pair;
+                        assert(assign(pair, intersection_1[0]));
+                        assert(theHas_on_3(l[i],pair.first));
+                        assert(theHas_on_3(l[j],pair.first));
+                        int n_of_edges = 2;
+                        for(int k=0; k<6; k++) {
+                          if(k == i) continue;
+                          if(k == j) continue;
+                          if(theHas_on_3(l[k],pair.first)) n_of_edges++;
+                        }
+                        assert((n_of_edges == 2) || (n_of_edges == 3));
+                      } 
+                    }
+                    assert((n_of_intersection == 4) ||
+                           (n_of_intersection == 5));
+                    if(n_of_intersection == 5) n_of_diagonals++;
+                  }
+                  // Non-Convex || Convex Polygon
+                  assert((n_of_diagonals == 0) || (n_of_diagonals == 2)); 
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  std::cout << "Testing intersection(Line_arc,Line)..." << std::endl;
+  std::cout << "Testing intersection(Line_arc,Sphere)..." << std::endl;
+  std::cout << "Testing intersection(Line_arc,Plane)..." << std::endl;
+  std::cout << "Testing intersection(Line_arc,Circle)..." << std::endl;
+  // all those tests above are equivalent to
+  // an intersection of line with a has_on (already tested)
+
 }
 
 template <class SK>
