@@ -5,7 +5,7 @@
 #                    include platform specific settings
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
-CGAL_MAKEFILE = c:/cgal/CGAL-3.2-I-384/make/makefile_i686_CYGWINNT-5.1_CL.EXE-1310
+#CGAL_MAKEFILE = c:/cgal/CGAL-3.2-I-384/make/makefile_i686_CYGWINNT-5.1_CL.EXE-1310
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
@@ -16,6 +16,7 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = \
            -I../../include \
 	   -I../../../Triangulation_3/include \
+	   -I../../../Kernel_23/include \
 	   $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
