@@ -363,7 +363,7 @@ simplify_quotient(MP_Float & numerator, MP_Float & denominator)
 #endif
 }
 
-inline void simplify_root_of_2(MP_Float &a, MP_Float &b, MP_Float&c) {
+inline void simplify_root_of_2(MP_Float &/*a*/, MP_Float &/*b*/, MP_Float&/*c*/) {
 #if 0
   if(CGAL::is_zero(a)) {
   	simplify_quotient(b,c); return;
