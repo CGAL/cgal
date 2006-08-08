@@ -721,7 +721,7 @@ public:
      * Check if an end of a given x-monotone curve is infinite at x.
      * \param cv The curve.
      * \param ind MIN_END if we refer to cv's minimal end,
-     *            MIN_END if we refer to its maximal end.
+     *            MAX_END if we refer to its maximal end.
      * \return MINUS_INFINITY if the curve end lies at x = -oo;
      *         FINITE if the curve end has a finite x-coordinate;
      *         PLUS_INFINITY if the curve end lies at x = +oo.
@@ -749,7 +749,7 @@ public:
      * Check if an end of a given x-monotone curve is infinite at y.
      * \param cv The curve.
      * \param ind MIN_END if we refer to cv's minimal end,
-     *            MIN_END if we refer to its maximal end.
+     *            MAX_END if we refer to its maximal end.
      * \return MINUS_INFINITY if the curve end lies at y = -oo;
      *         FINITE if the curve end has a finite y-coordinate;
      *         PLUS_INFINITY if the curve end lies at y = +oo.
