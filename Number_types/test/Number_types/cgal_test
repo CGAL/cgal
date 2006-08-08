@@ -72,6 +72,7 @@ if [ $# -ne 0 ] ; then
   done
 else
   compile_and_run bench_interval
+  compile_and_run constant
   compile_and_run doubletst
   compile_and_run floattst
   compile_and_run Gmpq
