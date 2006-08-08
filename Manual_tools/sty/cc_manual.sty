@@ -688,8 +688,15 @@ Reference~Manual}%
 ]
 |endgroup
 
-% Format exernal file:  #1  the file name.
-\newcommand{\ccIncludeExampleCode}[1]{\ccIncludeVerbatim{#1}}
+% Format external file:  #1  the file name.
+% additional to \ccIncludeVerbatim, (license) headers in files are stripped
+% and a filename is printed below the example code.
+\newcommand{\ccIncludeExampleCode}[1]{%
+\ccIncludeVerbatim{#1.noheader}
+\begin{alltt}
+\textbf{File: }\input{#1.filename}
+\end{alltt}
+}
 
 % +--------------------------------------------------------------------------
 % | A handy macro to define macros for RCS entries in a TeX file
