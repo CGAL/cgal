@@ -845,16 +845,18 @@ template < class SK >
     { return false; }
 
     result_type
-    operator()(const Line_arc_3 &a, const Circular_arc_point_3 &p) const
-    { return has_on<SK>(a, p); }
+    operator()(const Line_arc_3 &a, const Circular_arc_point_3 &p,
+               const bool already_know_point_on_line = false) const
+    { return has_on<SK>(a, p, already_know_point_on_line); }
 
     result_type
     operator()(const Circular_arc_point_3 &a, const Line_arc_3 &p) const
     { return false; }
 
     result_type
-    operator()(const Line_arc_3 &a, const Point_3 &p) const
-    { return has_on<SK>(a, p); }
+    operator()(const Line_arc_3 &a, const Point_3 &p,
+               const bool already_know_point_on_line = false) const
+    { return has_on<SK>(a, p, already_know_point_on_line); }
 
     result_type
     operator()(const Point_3 &a, const Line_arc_3 &p) const
@@ -901,6 +903,7 @@ template < class SK >
   
     typedef typename SK::Sphere_3                 Sphere_3;
     typedef typename SK::Line_3                   Line_3;
+    typedef typename SK::Line_arc_3               Line_arc_3;
     typedef typename SK::Plane_3                  Plane_3;
     typedef typename SK::Circle_3                 Circle_3;
     
@@ -909,6 +912,7 @@ template < class SK >
     typedef void result_type;   
     //typedef Arity_tag<2> Arity; // The Arity can be 2 and 3
                                   // Is there some solution for this problem??
+    typedef typename SK::Object_3 Object_3;
     
     using SK::Linear_kernel::Intersect_3::operator();
 
@@ -1014,6 +1018,72 @@ template < class SK >
     operator()(const Line_3 & l, const Circle_3 & c,
 	       OutputIterator res) const
       { return intersect_3<SK> (c,l,res); }
+
+    // INTERSECTION LINE-LINE
+    // obs: This intersection should be moved to the Linear Kernel
+    // we need it
+    // For instance I won't put on the Algebraic Kernel for Spheres
+    // this function, I will solve locally
+    // I wont build tests for them, by the way I build tests for 
+    // intersect_3(Line_arc, Line_arc) which should do
+    // this intersection also dont take care with orientation
+    Object_3
+    operator()(const Line_3 & l1, const Line_3 & l2) const
+      { return intersect_3<SK> (l1,l2); }
+
+    // INTERSECTIONS WITH LINE_ARC
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Line_arc_3 & l1, const Line_arc_3 & l2, 
+	       OutputIterator res) const
+      { return intersect_3<SK> (l1,l2,res); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Line_3 & l, const Line_arc_3 & la) const
+      { return intersect_3<SK> (l,la); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Line_arc_3 & la, const Line_3 & l) const
+      { return intersect_3<SK> (l,la); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Circle_3 & c, const Line_arc_3 & l, 
+	       OutputIterator res) const
+      { return intersect_3<SK> (c,l,res); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Line_arc_3 & l, const Circle_3 & c,
+	       OutputIterator res) const
+      { return intersect_3<SK> (c,l,res); }
+
+    
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Sphere_3 & s, const Line_arc_3 & l, 
+	       OutputIterator res) const
+      { return intersect_3<SK> (s,l,res); }
+    
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Line_arc_3 & l,const Sphere_3 & s, 
+	       OutputIterator res) const
+      { return intersect_3<SK> (s,l,res); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Plane_3 & s, const Line_arc_3 & l, 
+	       OutputIterator res) const
+      { return intersect_3<SK> (s,l,res); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Line_arc_3 & l,const Plane_3 & s, 
+	       OutputIterator res) const
+      { return intersect_3<SK> (s,l,res); }
 
   };
 
