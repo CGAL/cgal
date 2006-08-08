@@ -55,10 +55,6 @@ typedef CGAL::Ridge_approximation < PolyhedralSurf,
 				    back_insert_iterator< std::vector<Ridge_line*> >,
 				    Vertex2FT_PM_type, 
 				    Vertex2Vector_PM_type > Ridge_approximation;
-extern CGAL::Ridge_type  NONE, BLUE_RIDGE, RED_RIDGE, CREST, 
-  BLUE_ELLIPTIC_RIDGE, BLUE_HYPERBOLIC_RIDGE, BLUE_CREST, 
-  RED_ELLIPTIC_RIDGE, RED_HYPERBOLIC_RIDGE, RED_CREST;
-
 //UMBILICS
 typedef CGAL::Umbilic<PolyhedralSurf> Umbilic;
 typedef CGAL::Umbilic_approximation < PolyhedralSurf,
@@ -112,15 +108,12 @@ unsigned int min_nb_points = (d_fitting + 1) * (d_fitting + 2) / 2;
 */
 void gather_fitting_points(Vertex* v, 
 			   std::vector<Point_3> &in_points,
-			   PolyhedralSurf& P)
+			   Poly_rings& poly_rings)
 {
   //container to collect vertices of v on the PolyhedralSurf
   std::vector<Vertex*> gathered; 
   //initialize
   in_points.clear();  
-
-  //create a Poly_rings object
-  Poly_rings poly_rings(P);
   
   //OPTION -p nb_points_to_use, with nb_points_to_use != 0. Collect
   //enough rings and discard some points of the last collected ring to
@@ -147,7 +140,7 @@ void gather_fitting_points(Vertex* v,
 /* Use the jet_fitting package and the class Poly_rings to compute
    diff quantities.
 */
-void compute_differential_quantities(PolyhedralSurf& P)
+void compute_differential_quantities(PolyhedralSurf& P, Poly_rings& poly_rings)
 {
   //container for approximation points
   std::vector<Point_3> in_points;
@@ -156,13 +149,13 @@ void compute_differential_quantities(PolyhedralSurf& P)
   Vertex_iterator vitb = P.vertices_begin(), vite = P.vertices_end();
   for (; vitb != vite; vitb++) {
     //initialize
-    Vertex* v = &(*vitb);//should be removed
+    Vertex* v = &(*vitb);
     in_points.clear();  
     Monge_form monge_form;
     Monge_form_condition_numbers monge_form_condition_numbers;
       
     //gather points around the vertex using rings
-    gather_fitting_points(v, in_points, P);
+    gather_fitting_points(v, in_points, poly_rings);
 
     //exit if the nb of points is too small 
     if ( in_points.size() < min_nb_points )
@@ -179,7 +172,7 @@ void compute_differential_quantities(PolyhedralSurf& P)
     const Vector_3 normal_mesh = P.computeFacetsAverageUnitNormal(v);
     monge_form.comply_wrt_given_normal(normal_mesh);
        
-    //    Store monge data needed for ridge computations in v in property maps
+    //Store monge data needed for ridge computations in property maps
     vertex2d1_pm[v] = monge_form.d1();
     vertex2d2_pm[v] = monge_form.d2();
     vertex2k1_pm[v] = monge_form.coefficients()[0];
@@ -287,9 +280,15 @@ int main(int argc, char *argv[])
   //initialize Polyhedral data : normal of facets
   P.compute_facets_normals();
   
+  //create a Poly_rings object
+  Poly_rings poly_rings(P);
+
+  std::cout << "Compute differential quantities via jet fitting..." << std::endl;
   //initialize the diff quantities property maps
-  compute_differential_quantities(P);
+  compute_differential_quantities(P, poly_rings);
   
+  
+  std::cout << "Compute ridges..." << std::endl;
   //---------------------------------------------------------------------------
   //Ridges
   //--------------------------------------------------------------------------
@@ -305,8 +304,8 @@ int main(int argc, char *argv[])
   //Find BLUE_RIDGE, RED_RIDGE, CREST or all ridges
   //   ridge_approximation.compute_ridges(P, CGAL::BLUE_RIDGE, ii, tag_order);  
   //   ridge_approximation.compute_ridges(P, CGAL::RED_RIDGE, ii, tag_order);  
-  ridge_approximation.compute_ridges(P, CGAL::CREST, ii, tag_order);  
-  //  ridge_approximation.compute_all_ridges(P, ii, tag_order);  
+  //  ridge_approximation.compute_ridges(P, CGAL::CREST, ii, tag_order);  
+    ridge_approximation.compute_all_ridges(P, ii, tag_order);  
 
 
   std::vector<Ridge_line*>::iterator iter_lines = ridge_lines.begin(), 
@@ -322,21 +321,21 @@ int main(int argc, char *argv[])
   //---------------------------------------------------------------------------
   // UMBILICS
   //--------------------------------------------------------------------------
-  Umbilic_approximation umbilic_approximation(P, 
-					      vertex2k1_pm, vertex2k2_pm,
-					      vertex2d1_pm, vertex2d2_pm);
-  std::vector<Umbilic*> umbilics;
-  back_insert_iterator<std::vector<Umbilic*> > umb_it(umbilics);
-  umbilic_approximation.compute(P, umb_it, umb_size);
+//   Umbilic_approximation umbilic_approximation(P, 
+// 					      vertex2k1_pm, vertex2k2_pm,
+// 					      vertex2d1_pm, vertex2d2_pm);
+//   std::vector<Umbilic*> umbilics;
+//   back_insert_iterator<std::vector<Umbilic*> > umb_it(umbilics);
+//   umbilic_approximation.compute(P, umb_it, umb_size);
 
-  std::vector<Umbilic*>::iterator iter_umb = umbilics.begin(), 
-    iter_umb_end = umbilics.end();
-  // output
-  std::cout << "nb of umbilics " << umbilics.size() << std::endl;
-  for (;iter_umb!=iter_umb_end;iter_umb++)
-    {
-      std::cout << "umbilic type " << (*iter_umb)->umb_type << std::endl;
-    }
+//   std::vector<Umbilic*>::iterator iter_umb = umbilics.begin(), 
+//     iter_umb_end = umbilics.end();
+//   // output
+//   std::cout << "nb of umbilics " << umbilics.size() << std::endl;
+//   for (;iter_umb!=iter_umb_end;iter_umb++)
+//     {
+//       std::cout << "umbilic type " << (*iter_umb)->umb_type << std::endl;
+//     }
  
   return 1;
 }
