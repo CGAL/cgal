@@ -81,12 +81,11 @@ bool seg_seg_do_intersect_crossing(
 	const typename K::Point_2 &p3, const typename K::Point_2 &p4,
 	const K& k)
 {
-  typename K::Orientation_2 orientation;
-    switch (orientation(p1,p2,p3)) {
+    switch (k.orientation_2_object()(p1,p2,p3)) {
     case LEFT_TURN:
-      return ! (orientation(p3,p4,p2) == RIGHT_TURN); //   right_turn(p3,p4,p2);
+      return ! (k.orientation_2_object()(p3,p4,p2) == RIGHT_TURN); //   right_turn(p3,p4,p2);
     case RIGHT_TURN:
-        return ! (orientation(p3,p4,p2) == LEFT_TURN); //left_turn(p3,p4,p2);
+        return ! (k.orientation_2_object()(p3,p4,p2) == LEFT_TURN); //left_turn(p3,p4,p2);
     case COLLINEAR:
         return true;
     }
@@ -101,12 +100,11 @@ bool seg_seg_do_intersect_contained(
 	const typename K::Point_2 &p3, const typename K::Point_2 &p4,
 	const K& k)
 {
-  typename K::Orientation_2 orientation;
-    switch (orientation(p1,p2,p3)) {
+    switch (k.orientation_2_object()(p1,p2,p3)) {
     case LEFT_TURN:
-      return ! (orientation(p1,p2,p4) == LEFT_TURN); // left_turn(p1,p2,p4);
+      return ! (k.orientation_2_object()(p1,p2,p4) == LEFT_TURN); // left_turn(p1,p2,p4);
     case RIGHT_TURN:
-        return ! (orientation(p1,p2,p4) == RIGHT_TURN); // right_turn(p1,p2,p4);
+        return ! (k.orientation_2_object()(p1,p2,p4) == RIGHT_TURN); // right_turn(p1,p2,p4);
     case COLLINEAR:
         return true;
     }
