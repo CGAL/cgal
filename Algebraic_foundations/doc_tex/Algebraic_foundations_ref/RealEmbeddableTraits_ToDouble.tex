@@ -13,11 +13,10 @@ embeddable number.
 
 \ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
 \ccTypedef{typedef double result_type;}{}\ccGlue
-\ccTypedef{typedef RealEmbeddableTraits::NT first_argument_type;}{}
+\ccTypedef{typedef RealEmbeddableTraits::NT argument_type;}{}
 
 \ccOperations
-\ccMethod{result_type operator()(
-        const first_argument_type&  x);}
+\ccMethod{result_type operator()(const argument_type&  x);}
         { computes a double approximation of a real embeddable number. }
 
 %\ccHasModels

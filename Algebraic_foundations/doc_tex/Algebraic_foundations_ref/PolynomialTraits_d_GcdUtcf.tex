@@ -2,16 +2,17 @@
 
 \ccDefinition
 
-This \ccc{AdaptableFunctor} computes the $gcd$  {\em up to a constant factor (utcf)} 
-of two polynomials of type \ccc{PolynomialTraits_d::Polynomial_d}. 
+This \ccc{AdaptableBinaryFunction} computes the $gcd$  
+{\em up to a constant factor (utcf)} of two polynomials of type 
+\ccc{PolynomialTraits_d::Polynomial_d}. 
 
 In case the base ring $R$, \ccc{PolynomialTraits_d::Innermost_coefficient}, 
-is not a \ccc{UFDomain} or not a \ccc{Field} the polynomial ring $R[x_1,\dots,x_d]$ 
-,\ccc{PolynomialTraits_d::Polynomial_d}, may not 
-possess greatest common divisor. However, since the $R$ is an integral domain one can 
-consider its quotient field $Q(R)$ for which gcds of polynomials exist. 
-A $gcd\_utcf(f,g)$ is a denominator-free constant multiple of 
-$gcd(f,g)$ in $Q(R)[x_1,\dots,x_d]$. 
+is not a \ccc{UFDomain} or not a \ccc{Field} the polynomial ring 
+$R[x_1,\dots,x_d]$ ,\ccc{PolynomialTraits_d::Polynomial_d}, may not 
+possess greatest common divisor. However, since the $R$ is an integral 
+domain one can consider its quotient field $Q(R)$ for which gcds of 
+polynomials exist. A $gcd\_utcf(f,g)$ is a denominator-free 
+constant multiple of $gcd(f,g)$ in $Q(R)[x_1,\dots,x_d]$. 
 
 {\bf Note:} It may not be a divisor of $f$ and $g$ in $R[x_1,\dots,x_d]$.
 
