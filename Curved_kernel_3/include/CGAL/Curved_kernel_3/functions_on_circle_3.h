@@ -30,7 +30,7 @@ namespace CGAL {
   // At the moment we dont need those functions
   // But in the future maybe (some make_x_monotone? etc..)
   template <class SK>
-  typename SK::Root_of_2
+  typename SK::Circular_arc_point_3
   x_extremal_point(const Circle_3<SK> & c, bool i)
   {
     return SphericalFunctors::x_extremal_point<SK>(c,i);
@@ -44,7 +44,7 @@ namespace CGAL {
   }
 
   template <class SK>
-  typename SK::Root_of_2
+  typename SK::Circular_arc_point_3
   y_extremal_point(const Circle_3<SK> & c, bool i)
   {
     return SphericalFunctors::y_extremal_point<SK>(c,i);
@@ -58,7 +58,7 @@ namespace CGAL {
   }
 
   template <class SK>
-  typename SK::Root_of_2
+  typename SK::Circular_arc_point_3
   z_extremal_point(const Circle_3<SK> & c, bool i)
   {
     return SphericalFunctors::z_extremal_point<SK>(c,i);
