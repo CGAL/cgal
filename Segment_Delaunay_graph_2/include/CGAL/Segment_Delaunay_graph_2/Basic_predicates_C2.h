@@ -331,7 +331,11 @@ public:
       CGAL::sign(l.a() * p.hx() + l.b() * p.hy() + l.c() * p.hw());
     Sign s_hw = CGAL::sign(p.hw());
 
-    Sign s = Sign(s1 * s_hw);
+#ifdef CGAL_CFG_NO_OPERATOR_TIMES_FOR_SIGN
+    Sign s = CGAL::Sign(s1 * s_hw);
+#else
+    Sign s = s1 * s_hw;
+#endif
 
     if ( s == ZERO ) { return ON_ORIENTED_BOUNDARY; }
     return ( s == POSITIVE ) ? ON_POSITIVE_SIDE : ON_NEGATIVE_SIDE;

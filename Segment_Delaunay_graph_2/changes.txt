@@ -1,3 +1,9 @@
+9 August 2006:  Menelaos Karavelas
+- added config.h file which defines the macro
+  CGAL_CFG_NO_OPERATOR_TIMES_FOR_SIGN; this macro is used for
+  compatibility with CGAL 3.2.1
+- added compatibility of svn head with CGAL 3.2.1
+
 2 August 2006:  Menelaos Karavelas
 - fixed problem created by deletion of files
 - added one more operator() in info converter; modified code to use
