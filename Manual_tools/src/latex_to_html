@@ -348,6 +348,16 @@ anchor_filter() {
     cc_anchor_filter cc_anchor_rules $1
 }
 
+create_stage_3_rules_helper() {
+  subdir=$1
+  sibling=$2
+  if [[ -d $sibling && "$sibling" != "$subdir" ]]; then
+      vout -n " "$sibling
+      \cat $sibling/cc_anchor_rules.stage_[12]  | sed "s/REPLACE_WITH_CURRENT_PATH/..\/REPLACE_WITH_CURRENT_PATH${sibling}\//g" >> $subdir/cc_anchor_rules.stage_3
+  fi
+}
+
+
 #---------------------------------------------------------------------#
 # convert <filename>
 #     - LaTeX to HTML conversion for <filename>
@@ -423,6 +433,7 @@ convert() {
         \touch ${dir}/cc_anchor_rules.stage_2  # necessary to make stage_3 work
         if [ "$dir" != "." ]; then
             cd $dir
+            touch cc_anchor_rules.stage_0
             \cat cc_anchor_rules.stage_1 | sed "s/REPLACE_WITH_CURRENT_PATH/REPLACE_WITH_CURRENT_PATH${dir}\//g" | grep -v -E -e "^local" >> ../cc_anchor_rules.stage_2
             \cat cc_anchor_rules.stage_1 | grep -E -e "^local" | sed 's/^local//' > cc_anchor_rules.stage_0
             \cat cc_anchor_rules.stage_1 | grep -v -E -e "^local" > cc_anchor_rules.stage_1.tmp
@@ -448,18 +459,42 @@ convert() {
     \cp cc_anchor_rules.stage_1  cc_anchor_rules.stage_3
     for dir in ${AllSubDirs} ; do
         vout "    processing in '$dir'"
-        vout -n "      -->"
         cd $dir
+
+        # this hack solves the following problem:
+        # (quote from bugtracker)
+        # The hyperlinks from INTERIOR/SINGULAR/REGULAR/EXTERIOR on the page
+        # http://www.cgal.org/Manual/3.2/doc_html/cgal_manual/Alpha_shapes_3/Chapter_main.html#Section_25.1
+        # point back to cgal_manual/Alpha_shapes_2_ref instead of Alpha_shapes_3_ref as they should.
+        for subdir in * ; do
+            if [[ -d $subdir && "$subdir" == "${subdir%_ref}" ]]; then
+                vout -n "    --> $subdir : "
+                sibling=${subdir}_ref
+                create_stage_3_rules_helper $subdir $sibling
+                vout ""
+            fi
+        done
+
+        for subdir in *_ref ; do
+            if [ -d $subdir ]; then
+                vout -n "    --> $subdir : "
+                sibling=${subdir%_ref}
+                if [ -d $sibling ]; then
+                    create_stage_3_rules_helper $subdir $sibling
+                    vout ""
+                fi
+            fi
+        done
+
         for subdir in * ; do
             if [ -d $subdir ]; then
-                vout -n " "$subdir" "
+                vout -n "    --> $subdir : "
+
                 for sibling in * ; do
-                    if [[ -d $sibling && "$sibling" != "$subdir" ]]; then
-                        vout -n " sibling "$sibling
-                        \cat $sibling/cc_anchor_rules.stage_[12]  | sed "s/REPLACE_WITH_CURRENT_PATH/..\/REPLACE_WITH_CURRENT_PATH${sibling}\//g" >> $subdir/cc_anchor_rules.stage_3
-                    fi
+                  create_stage_3_rules_helper $subdir $sibling
                 done
                 \cat cc_anchor_rules.stage_3  | sed "s/REPLACE_WITH_CURRENT_PATH/..\/REPLACE_WITH_CURRENT_PATH/g" >> $subdir/cc_anchor_rules.stage_3
+                vout ""
             fi
         done
         cd ${TmpDir}
