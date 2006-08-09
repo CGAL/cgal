@@ -168,7 +168,7 @@ void _test_line_arc_equal(SK sk) {
   int random_max = 127;
   int random_min = -127; 
 
-  std::cout << "Testing Equal for Line_arc_3..." << std::endl;
+  std::cout << "Testing Equal_3 for Line_arc_3..." << std::endl;
   for(int i=0; i<100; i++) {
     int a,b,c,d,e,f;
     do {
