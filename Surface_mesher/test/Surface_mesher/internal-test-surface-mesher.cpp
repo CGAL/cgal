@@ -1,17 +1,15 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Implicit_surface_3.h>
 
-struct Kernel : public CGAL::Exact_predicates_inexact_constructions_kernel {};
-typedef CGAL::Surface_mesh_vertex_base_3<Kernel> Vb;
-typedef CGAL::Surface_mesh_cell_base_3<Kernel> Cb;
-typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
-typedef CGAL::Delaunay_triangulation_3<Kernel, Tds> Tr;
+typedef CGAL::Surface_mesh_default_triangulation_3 Tr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr> C2t3;
-typedef Kernel::Sphere_3 Sphere_3;
+
+typedef Tr::Geom_traits Gt;
+typedef Gt::Sphere_3 Sphere_3;
 
 typedef double (*Function)(double, double, double);
-typedef CGAL::Implicit_surface_3<Kernel, Function> Surface_3;
+typedef CGAL::Implicit_surface_3<Gt, Function> Surface_3;
 typedef CGAL::Surface_mesh_traits_generator_3<Surface_3>::type SMTraits;
 
 typedef CGAL::Surface_mesh_default_criteria_3<Tr> Criteria;

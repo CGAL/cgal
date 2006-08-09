@@ -392,13 +392,11 @@ Surface_mesher/include/CGAL/Mesh_3
 Surface_mesher/test/Surface_mesher/*.exe
 Surface_mesher/test/Surface_mesher/.*.deps
 Surface_mesher/test/Surface_mesher/combined_spheres
-Surface_mesher/test/Surface_mesher/depends
 Surface_mesher/test/Surface_mesher/implicit_surface_mesher_test
 Surface_mesher/test/Surface_mesher/internal-test-surface-mesher
 Surface_mesher/test/Surface_mesher/my_makefile
 Surface_mesher/test/Surface_mesher/test_c2t3_iterators
 Surface_mesher/test/Surface_mesher/test_robust_circumcenter
-Surface_mesher/test/Surface_mesher/test_sphere_oracle
 Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.aux
 Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.bbl
 Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.blg
