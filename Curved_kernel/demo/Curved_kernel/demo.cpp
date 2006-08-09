@@ -34,11 +34,6 @@ int main() {
 #include <CGAL/point_generators_2.h>
 
 #include <CGAL/MP_Float.h>
-#include <CGAL/Gmpq.h>
-
-#ifdef CGAL_USE_CORE
-#include <CGAL/CORE_Expr.h>
-#endif
 
 #include <CGAL/Algebraic_kernel_2_2.h>
 
@@ -78,13 +73,7 @@ int main() {
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
 
-// Note that we use Core, as the visualization of circular arcs
-// is buggy due to a problem with CGAL::to_double
-#ifdef CGAL_USE_CORE
-typedef CORE::Expr                                          NT;
-#else
-typedef CGAL::Gmpq                                          NT;
-#endif
+typedef CGAL::Quotient<CGAL::MP_Float> NT;
 
 typedef CGAL::Cartesian<NT>                                 Linear_k;
 
