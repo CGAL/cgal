@@ -19,7 +19,8 @@
 #include <CGAL/Random.h>
 
 
-typedef CGAL::Gmpq                                          NT;
+//typedef CGAL::Gmpq                                          NT;
+typedef CGAL::Quotient<CGAL::MP_Float>                  NT;
 typedef CGAL::Cartesian<NT>                                 Linear_k;
 
 typedef CGAL::Algebraic_kernel_for_circles_2_2<NT>          Algebraic_k;
