@@ -149,9 +149,8 @@ namespace CGAL {
     return res;
   }
 
-  // ONLY the x is given (Root_of_2), because the other coordinates may be Root_of_4
   template <class AK>
-  typename AK::Root_of_2
+  typename AK::Root_for_spheres_2_3
   x_critical_point( const std::pair<typename AK::Polynomial_for_spheres_2_3, 
                                      typename AK::Polynomial_1_3 > &c, bool i)
   {
@@ -168,15 +167,22 @@ namespace CGAL {
     CGAL_kernel_precondition((intersect<AK>(p,s)));
     CGAL_kernel_precondition(sign(p.a() * s.a() + p.b() * s.b() + 
                                   p.c() * s.c() + p.d()) == ZERO);
+    CGAL_kernel_precondition(!(is_zero(p.b()) && is_zero(p.c())));
 
     const FT sqbc = CGAL::square(p.b()) + CGAL::square(p.c());
     const FT sq_sum = sqbc + CGAL::square(p.a());
     const FT delta = (sqbc * s.r_sq())/sq_sum;
 
-    return make_root_of_2(s.a(),i?-1:1,delta);
+    const FT cy = (p.a()*p.b())/sqbc;
+    const FT cz = (p.a()*p.c())/sqbc;
+
+    const Root_of_2 x = make_root_of_2(s.a(),i?-1:1,delta);
+    const Root_of_2 y = make_root_of_2(s.b(),i?(cy):(-cy),delta);
+    const Root_of_2 z = make_root_of_2(s.c(),i?(cz):(-cz),delta);
+
+    return Root_for_spheres_2_3(x,y,z);
   }
 
-  // ONLY the x is given (Root_of_2), because the other coordinates may be Root_of_4
   template <class AK, class OutputIterator>
   OutputIterator
   x_critical_points( const std::pair<typename AK::Polynomial_for_spheres_2_3, 
@@ -196,19 +202,29 @@ namespace CGAL {
     CGAL_kernel_precondition((intersect<AK>(p,s)));
     CGAL_kernel_precondition(sign(p.a() * s.a() + p.b() * s.b() + 
                                   p.c() * s.c() + p.d()) == ZERO);
+    CGAL_kernel_precondition(!(is_zero(p.b()) && is_zero(p.c())));
 
     const FT sqbc = CGAL::square(p.b()) + CGAL::square(p.c());
     const FT sq_sum = sqbc + CGAL::square(p.a());
     const FT delta = (sqbc * s.r_sq())/sq_sum;
-    
-    *res++ =  make_root_of_2(s.a(),-1,delta);
-    *res++ =  make_root_of_2(s.a(),1,delta);
+
+    const FT cy = (p.a()*p.b())/sqbc;
+    const FT cz = (p.a()*p.c())/sqbc;
+
+    const Root_of_2 x1 = make_root_of_2(s.a(),-1,delta);
+    const Root_of_2 y1 = make_root_of_2(s.b(),cy,delta);
+    const Root_of_2 z1 = make_root_of_2(s.c(),cz,delta);
+    const Root_of_2 x2 = make_root_of_2(s.a(),1,delta);
+    const Root_of_2 y2 = make_root_of_2(s.b(),-cy,delta);
+    const Root_of_2 z2 = make_root_of_2(s.c(),-cz,delta);
+
+    *res++ =  Root_for_spheres_2_3(x1,y1,z1);
+    *res++ =  Root_for_spheres_2_3(x2,y2,z2);
     return res;
   }
 
-  // ONLY the y is given (Root_of_2), because the other coordinates may be Root_of_4
   template <class AK>
-  typename AK::Root_of_2
+  typename AK::Root_for_spheres_2_3
   y_critical_point( const std::pair<typename AK::Polynomial_for_spheres_2_3, 
                                      typename AK::Polynomial_1_3 > &c, bool i)
   {
@@ -225,15 +241,28 @@ namespace CGAL {
     CGAL_kernel_precondition((intersect<AK>(p,s)));
     CGAL_kernel_precondition(sign(p.a() * s.a() + p.b() * s.b() + 
                                   p.c() * s.c() + p.d()) == ZERO);
+    CGAL_kernel_precondition(!(is_zero(p.a()) && is_zero(p.c())));
 
     const FT sqac = CGAL::square(p.a()) + CGAL::square(p.c());
     const FT sq_sum = sqac + CGAL::square(p.b());
     const FT delta = (sqac * s.r_sq())/sq_sum;
 
-    return make_root_of_2(s.b(),i?-1:1,delta);
+    const FT cx = (p.a()*p.b())/sqac;
+    const FT cz = (p.c()*p.b())/sqac;
+
+    if(!is_positive(cx)) {
+      const Root_of_2 x = make_root_of_2(s.a(),i?(cx):(-cx),delta);
+      const Root_of_2 y = make_root_of_2(s.b(),i?-1:1,delta);
+      const Root_of_2 z = make_root_of_2(s.c(),i?(cz):(-cz),delta);
+      return Root_for_spheres_2_3(x,y,z);
+    } else {
+      const Root_of_2 x = make_root_of_2(s.a(),i?(-cx):(cx),delta);
+      const Root_of_2 y = make_root_of_2(s.b(),i?1:-1,delta);
+      const Root_of_2 z = make_root_of_2(s.c(),i?(-cz):(cz),delta);
+      return Root_for_spheres_2_3(x,y,z);
+    } 
   }
 
-  // ONLY the y is given (Root_of_2), because the other coordinates may be Root_of_4
   template <class AK, class OutputIterator>
   OutputIterator
   y_critical_points( const std::pair<typename AK::Polynomial_for_spheres_2_3, 
@@ -253,19 +282,34 @@ namespace CGAL {
     CGAL_kernel_precondition((intersect<AK>(p,s)));
     CGAL_kernel_precondition(sign(p.a() * s.a() + p.b() * s.b() + 
                                   p.c() * s.c() + p.d()) == ZERO);
+    CGAL_kernel_precondition(!(is_zero(p.a()) && is_zero(p.c())));
 
     const FT sqac = CGAL::square(p.a()) + CGAL::square(p.c());
     const FT sq_sum = sqac + CGAL::square(p.b());
     const FT delta = (sqac * s.r_sq())/sq_sum;
-    
-    *res++ =  make_root_of_2(s.b(),-1,delta);
-    *res++ =  make_root_of_2(s.b(),1,delta);
+
+    const FT cx = (p.a()*p.b())/sqac;
+    const FT cz = (p.c()*p.b())/sqac;
+
+    const Root_of_2 x1 = make_root_of_2(s.a(),cx,delta);
+    const Root_of_2 y1 = make_root_of_2(s.b(),-1,delta);
+    const Root_of_2 z1 = make_root_of_2(s.c(),cz,delta);
+    const Root_of_2 x2 = make_root_of_2(s.a(),-cx,delta);
+    const Root_of_2 y2 = make_root_of_2(s.b(),1,delta);
+    const Root_of_2 z2 = make_root_of_2(s.c(),-cz,delta);
+
+    if(!is_positive(cx)) {
+      *res++ =  Root_for_spheres_2_3(x1,y1,z1);
+      *res++ =  Root_for_spheres_2_3(x2,y2,z2);
+    } else {
+      *res++ =  Root_for_spheres_2_3(x2,y2,z2);
+      *res++ =  Root_for_spheres_2_3(x1,y1,z1);
+    } 
     return res;
   }
 
-  // ONLY the z is given (Root_of_2), because the other coordinates may be Root_of_4
   template <class AK>
-  typename AK::Root_of_2
+  typename AK::Root_for_spheres_2_3
   z_critical_point( const std::pair<typename AK::Polynomial_for_spheres_2_3, 
                                      typename AK::Polynomial_1_3 > &c, bool i)
   {
@@ -282,15 +326,40 @@ namespace CGAL {
     CGAL_kernel_precondition((intersect<AK>(p,s)));
     CGAL_kernel_precondition(sign(p.a() * s.a() + p.b() * s.b() + 
                                   p.c() * s.c() + p.d()) == ZERO);
+    CGAL_kernel_precondition(!(is_zero(p.a()) && is_zero(p.b())));
 
     const FT sqab = CGAL::square(p.a()) + CGAL::square(p.b());
     const FT sq_sum = sqab + CGAL::square(p.c());
     const FT delta = (sqab * s.r_sq())/sq_sum;
 
-    return make_root_of_2(s.c(),i?-1:1,delta);
+    const FT cx = (p.a()*p.c())/sqab;
+    const FT cy = (p.c()*p.b())/sqab;
+
+    if(is_negative(cx)) {
+      const Root_of_2 x = make_root_of_2(s.a(),i?(cx):(-cx),delta);
+      const Root_of_2 y = make_root_of_2(s.b(),i?(cy):(-cy),delta);
+      const Root_of_2 z = make_root_of_2(s.c(),i?-1:1,delta);
+      return Root_for_spheres_2_3(x,y,z);
+    } else if(is_zero(cx)) {
+      if(!is_positive(cy)) {
+        const Root_of_2 x = s.a();
+        const Root_of_2 y = make_root_of_2(s.b(),i?(cy):(-cy),delta);
+        const Root_of_2 z = make_root_of_2(s.c(),i?-1:1,delta);
+        return Root_for_spheres_2_3(x,y,z);
+      } else {
+        const Root_of_2 x = s.a();
+        const Root_of_2 y = make_root_of_2(s.b(),i?(-cy):(cy),delta);
+        const Root_of_2 z = make_root_of_2(s.c(),i?1:-1,delta);
+        return Root_for_spheres_2_3(x,y,z);
+      }
+    } else {
+      const Root_of_2 x = make_root_of_2(s.a(),i?(-cx):(cx),delta);
+      const Root_of_2 y = make_root_of_2(s.b(),i?(-cy):(cy),delta);
+      const Root_of_2 z = make_root_of_2(s.c(),i?1:-1,delta);
+      return Root_for_spheres_2_3(x,y,z);
+    } 
   }
 
-  // ONLY the z is given (Root_of_2), because the other coordinates may be Root_of_4
   template <class AK, class OutputIterator>
   OutputIterator
   z_critical_points( const std::pair<typename AK::Polynomial_for_spheres_2_3, 
@@ -310,13 +379,52 @@ namespace CGAL {
     CGAL_kernel_precondition((intersect<AK>(p,s)));
     CGAL_kernel_precondition(sign(p.a() * s.a() + p.b() * s.b() + 
                                   p.c() * s.c() + p.d()) == ZERO);
+    CGAL_kernel_precondition(!(is_zero(p.a()) && is_zero(p.b())));
 
     const FT sqab = CGAL::square(p.a()) + CGAL::square(p.b());
     const FT sq_sum = sqab + CGAL::square(p.c());
     const FT delta = (sqab * s.r_sq())/sq_sum;
-    
-    *res++ =  make_root_of_2(s.c(),-1,delta);
-    *res++ =  make_root_of_2(s.c(),1,delta);
+
+    const FT cx = (p.a()*p.c())/sqab;
+    const FT cy = (p.c()*p.b())/sqab;
+
+    if(is_negative(cx)) {
+      const Root_of_2 x1 = make_root_of_2(s.a(),(cx),delta);
+      const Root_of_2 y1 = make_root_of_2(s.b(),(cy),delta);
+      const Root_of_2 z1 = make_root_of_2(s.c(),-1,delta);
+      const Root_of_2 x2 = make_root_of_2(s.a(),(-cx),delta);
+      const Root_of_2 y2 = make_root_of_2(s.b(),(-cy),delta);
+      const Root_of_2 z2 = make_root_of_2(s.c(),1,delta);
+      *res++ = Root_for_spheres_2_3(x1,y1,z1);
+      *res++ = Root_for_spheres_2_3(x2,y2,z2);
+    } else if(is_zero(cx)) {
+      if(!is_positive(cy)) {
+        const Root_of_2 x1 = s.a();
+        const Root_of_2 y1 = make_root_of_2(s.b(),(cy),delta);
+        const Root_of_2 z1 = make_root_of_2(s.c(),-1,delta);
+        const Root_of_2 y2 = make_root_of_2(s.b(),(-cy),delta);
+        const Root_of_2 z2 = make_root_of_2(s.c(),1,delta);
+        *res++ = Root_for_spheres_2_3(x1,y1,z1);
+        *res++ = Root_for_spheres_2_3(x1,y2,z2);
+      } else {
+        const Root_of_2 x1 = s.a();
+        const Root_of_2 y1 = make_root_of_2(s.b(),(-cy),delta);
+        const Root_of_2 z1 = make_root_of_2(s.c(),1,delta);
+        const Root_of_2 y2 = make_root_of_2(s.b(),(cy),delta);
+        const Root_of_2 z2 = make_root_of_2(s.c(),-1,delta);
+        *res++ = Root_for_spheres_2_3(x1,y1,z1);
+        *res++ = Root_for_spheres_2_3(x1,y2,z2);
+      }
+    } else {
+      const Root_of_2 x1 = make_root_of_2(s.a(),(-cx),delta);
+      const Root_of_2 y1 = make_root_of_2(s.b(),(-cy),delta);
+      const Root_of_2 z1 = make_root_of_2(s.c(),1,delta);
+      const Root_of_2 x2 = make_root_of_2(s.a(),(cx),delta);
+      const Root_of_2 y2 = make_root_of_2(s.b(),(cy),delta);
+      const Root_of_2 z2 = make_root_of_2(s.c(),-1,delta);
+      *res++ = Root_for_spheres_2_3(x1,y1,z1);
+      *res++ = Root_for_spheres_2_3(x2,y2,z2);
+    }
     return res;
   }
 
