@@ -98,11 +98,11 @@ namespace CGAL {
         return get(base).second;
       }
 
-      const Point_3& center() const {
+      Point_3 center() const {
         return get(base).first.center();
       }
 
-      const FT& squared_radius() const {
+      FT squared_radius() const {
         return get(base).first.squared_radius();
       }
 
