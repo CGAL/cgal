@@ -74,7 +74,7 @@ int main() {
 
 #include <CGAL/IO/Dxf_variant_reader.h>
 
-typedef CGAL::Gmpq                                          NT; 
+typedef CGAL::Quotient<CGAL::MP_Float>                      NT;  
 
 typedef CGAL::Cartesian<NT>                                 Linear_k;
 
