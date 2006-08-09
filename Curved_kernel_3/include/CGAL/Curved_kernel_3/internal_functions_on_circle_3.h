@@ -48,10 +48,8 @@ namespace CGAL {
       return p1.rep() == p2.rep();
     }
 
-    // At the moment we dont need those functions
-    // But in the future maybe (some make_x_monotone? etc..)
     template <class SK>
-    typename SK::Root_of_2
+    typename SK::Circular_arc_point_3
     x_extremal_point(const typename SK::Circle_3 & c, bool i)
     {
       typedef typename SK::Algebraic_kernel   AK;
@@ -67,7 +65,7 @@ namespace CGAL {
     }
 
     template <class SK>
-    typename SK::Root_of_2
+    typename SK::Circular_arc_point_3
     y_extremal_point(const typename SK::Circle_3 & c, bool i)
     {
       typedef typename SK::Algebraic_kernel   AK;
@@ -83,7 +81,7 @@ namespace CGAL {
     }
 
     template <class SK>
-    typename SK::Root_of_2
+    typename SK::Circular_arc_point_3
     z_extremal_point(const typename SK::Circle_3 & c, bool i)
     {
       typedef typename SK::Algebraic_kernel   AK;
