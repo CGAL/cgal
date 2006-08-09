@@ -30,23 +30,32 @@
 #include <CGAL/Algebraic_kernel_2_2.h>
 #include <CGAL/Circular_kernel.h>
 
+/*
+TODO: CORRECT THE MAKE_ROOT_OF_2 of GMPq GMPz
 #ifdef CGAL_USE_GMP
 #  include <CGAL/Gmpq.h>
 #else
+*/
 #  include <CGAL/MP_Float.h>
 #  include <CGAL/Quotient.h>
+/*
 #endif
+*/
 
+// maybe it is better to change to the bbox filtered one
 #include <CGAL/Lazy_curved_kernel.h>
 
 CGAL_BEGIN_NAMESPACE
 
+/*
 #ifdef CGAL_USE_GMP
   typedef CGAL::Gmpq                                           NT1;
 #else
+*/
   typedef CGAL::Quotient<CGAL::MP_Float>                       NT1;
+/*
 #endif
-
+*/
   typedef CGAL::Cartesian<NT1>                                 Linear_k1;
   typedef CGAL::Algebraic_kernel_for_circles_2_2<NT1>          Algebraic_k1;
   typedef CGAL::Circular_kernel_2<Linear_k1,Algebraic_k1>      CK1;
