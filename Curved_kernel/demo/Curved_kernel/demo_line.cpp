@@ -76,7 +76,7 @@ int main() {
 #include <CGAL/Arr_naive_point_location.h>
 
 
-typedef CGAL::Gmpq                                          NT;
+typedef CGAL::Quotient<CGAL::MP_Float>                      NT; 
 
 typedef CGAL::Cartesian<NT>                                 Linear_k;
 
