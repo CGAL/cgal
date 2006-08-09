@@ -773,16 +773,25 @@ void _test_critical_points_circle( const std::pair<
   typedef std::pair<
       Polynomial_for_spheres_2_3,
       Polynomial_1_3>       Equation_Circle;
+  typename AK::Sign_at theSigh_at =
+    AK().sign_at_object();
 
-  /*Root_of_2 rx_min = theX_critical_points(c,true);*/
-  CGAL::Interval_nt<> ix_min = CGAL::to_interval(theX_critical_points(c,true));
-  CGAL::Interval_nt<> ix_max = CGAL::to_interval(theX_critical_points(c,false));
-  CGAL::Interval_nt<> iy_min = CGAL::to_interval(theY_critical_points(c,true));
-  CGAL::Interval_nt<> iy_max = CGAL::to_interval(theY_critical_points(c,false));
-  CGAL::Interval_nt<> iz_min = CGAL::to_interval(theZ_critical_points(c,true));
-  CGAL::Interval_nt<> iz_max = CGAL::to_interval(theZ_critical_points(c,false));
+  Root_for_spheres_2_3 rx_min, rx_max,
+                       ry_min, ry_max,
+                       rz_min, rz_max;
 
-  if(ix_min.inf() != ix_max.sup()) {
+  // X
+  if(!(is_zero(c.second.b()) && is_zero(c.second.c()))) {
+    rx_min = theX_critical_points(c,true);
+    rx_max = theX_critical_points(c,false);
+
+    assert(theSigh_at(c.first, rx_min) == CGAL::ZERO);
+    assert(theSigh_at(c.second, rx_min) == CGAL::ZERO);
+    assert(theSigh_at(c.first, rx_max) == CGAL::ZERO);
+    assert(theSigh_at(c.second, rx_max) == CGAL::ZERO);
+
+    CGAL::Interval_nt<> ix_min = CGAL::to_interval(rx_min.x());
+    CGAL::Interval_nt<> ix_max = CGAL::to_interval(rx_max.x());
 
     FT x1_min = FT(ix_min.inf());
     FT x1_max = FT(ix_min.sup());
@@ -811,8 +820,23 @@ void _test_critical_points_circle( const std::pair<
       assert(intersection_test_x_2.size() == 0);
     }
   }
+ 
+  // Y
+  if(!(is_zero(c.second.a()) && is_zero(c.second.c()))) {
+    ry_min = theY_critical_points(c,true);
+    ry_max = theY_critical_points(c,false);
+ 
+    assert(theSigh_at(c.first, ry_min) == CGAL::ZERO);
+    assert(theSigh_at(c.second, ry_min) == CGAL::ZERO);
+    assert(theSigh_at(c.first, ry_max) == CGAL::ZERO);
+    assert(theSigh_at(c.second, ry_max) == CGAL::ZERO);
 
-  if(iy_min.inf() != iy_max.sup()) {
+    CGAL::Interval_nt<> iy_min = CGAL::to_interval(ry_min.y());
+    CGAL::Interval_nt<> iy_max = CGAL::to_interval(ry_max.y());
+
+    if(iy_min.inf() > iy_max.sup()) {
+      std::swap(iy_min, iy_max);
+    }
 
     FT y1_min = FT(iy_min.inf());
     FT y1_max = FT(iy_min.sup());
@@ -842,7 +866,22 @@ void _test_critical_points_circle( const std::pair<
     }
   }
 
-  if(iz_min.inf() != iz_max.sup()) {
+  // Z
+  if(!(is_zero(c.second.a()) && is_zero(c.second.b()))) {
+    rz_min = theZ_critical_points(c,true);
+    rz_max = theZ_critical_points(c,false);
+  
+    assert(theSigh_at(c.first, rz_min) == CGAL::ZERO);
+    assert(theSigh_at(c.second, rz_min) == CGAL::ZERO);
+    assert(theSigh_at(c.first, rz_max) == CGAL::ZERO);
+    assert(theSigh_at(c.second, rz_max) == CGAL::ZERO);
+
+    CGAL::Interval_nt<> iz_min = CGAL::to_interval(rz_min.z());
+    CGAL::Interval_nt<> iz_max = CGAL::to_interval(rz_max.z());
+
+    if(iz_min.inf() > iz_max.sup()) {
+      std::swap(iz_min, iz_max);
+    }
 
     FT z1_min = FT(iz_min.inf());
     FT z1_max = FT(iz_min.sup());
@@ -870,7 +909,6 @@ void _test_critical_points_circle( const std::pair<
       assert(intersection_test_z_1.size() > 0);
       assert(intersection_test_z_2.size() == 0);
     }
-
   }
 }
 
