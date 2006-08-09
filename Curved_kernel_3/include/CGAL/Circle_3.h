@@ -85,12 +85,12 @@ namespace CGAL {
       return typename R::Construct_diametral_sphere_3()(*this);
     }
 
-    const Point_3 & center() const
+    Point_3 center() const
     {
       return typename R::Construct_diametral_sphere_3()(*this).center();
     }
 
-    const FT & squared_radius() const
+    FT squared_radius() const
     {
       return typename R::Construct_diametral_sphere_3()(*this).squared_radius();
     }
