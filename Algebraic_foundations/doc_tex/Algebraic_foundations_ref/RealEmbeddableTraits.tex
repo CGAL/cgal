@@ -2,24 +2,24 @@
 
 \ccDefinition
 
-A model of \ccc{RealEmbeddableTraits} is associated to a number type NT and 
+A model of \ccc{RealEmbeddableTraits} is associated to a number type \ccc{Real_embeddable} and 
 reflects the properties of this type with respect to the concept 
 RealEmbeddable.
 
 Whether a type is a model of RealEmbeddable or not is indicated by the 
 Is\_real\_embeddable\_tag. 
 
-In case NT is a model of RealEmbeddable the provided functors are not 
+In case \ccc{Real_embeddable} is a model of RealEmbeddable the provided functors are not 
 \ccc{CGAL::Null_type}. 
 
 \ccTypes
 
 A model of \ccc{RealEmbeddableTraits} is supposed to provide:\\
 
-\ccNestedType{NT}{The associated number type.}
+\ccNestedType{Real_embeddable}{The associated number type.}
 
 \ccNestedType{Is_real_embeddable}
-        { Tag indicating whether NT is real embeddable. \\
+        { Tag indicating whether \ccc{Real_embeddable} is real embeddable. \\
           This is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}. }
 
 \ccHeading{Functors}
@@ -27,14 +27,14 @@ A model of \ccc{RealEmbeddableTraits} is supposed to provide:\\
 \ccNestedType{Abs}{ 
 This is either \ccc{CGAL::Null_type} or a model of 
 \ccc{RealEmbeddableTraits::Abs} 
-%In case \ccc{NT} is a model of \ccc{RealEmbeddable} 
+%In case \ccc{Real_embeddable} is a model of \ccc{RealEmbeddable} 
 %this is not \ccc{CGAL::Null_type}.
 }
 
 \ccNestedType{Sign}{ 
 This is either \ccc{CGAL::Null_type} or a model of 
 \ccc{RealEmbeddableTraits::Sign} 
-%In case \ccc{NT} is a model of \ccc{RealEmbeddable} 
+%In case \ccc{Real_embeddable} is a model of \ccc{RealEmbeddable} 
 %this is not \ccc{CGAL::Null_type}.
 }
 
@@ -42,7 +42,7 @@ This is either \ccc{CGAL::Null_type} or a model of
 \ccNestedType{Compare}{ 
 This is either \ccc{CGAL::Null_type} or a model of 
 \ccc{RealEmbeddableTraits::Compare} 
-%In case \ccc{NT} is a model of \ccc{RealEmbeddable} 
+%In case \ccc{Real_embeddable} is a model of \ccc{RealEmbeddable} 
 %this is not \ccc{CGAL::Null_type}.
 }
 
@@ -50,7 +50,7 @@ This is either \ccc{CGAL::Null_type} or a model of
 \ccNestedType{To_double}{ 
 This is either \ccc{CGAL::Null_type} or a model of 
 \ccc{RealEmbeddableTraits::ToDouble} 
-%In case \ccc{NT} is a model of \ccc{RealEmbeddable} 
+%In case \ccc{Real_embeddable} is a model of \ccc{RealEmbeddable} 
 %this is not \ccc{CGAL::Null_type}.
 }
 
@@ -58,7 +58,7 @@ This is either \ccc{CGAL::Null_type} or a model of
 \ccNestedType{To_double_interval}{ 
 This is either \ccc{CGAL::Null_type} or a model of 
 \ccc{RealEmbeddableTraits::ToDoubleInterval} 
-%In case \ccc{NT} is a model of \ccc{RealEmbeddable} 
+%In case \ccc{Real_embeddable} is a model of \ccc{RealEmbeddable} 
 %this is not \ccc{CGAL::Null_type}.
 }
 

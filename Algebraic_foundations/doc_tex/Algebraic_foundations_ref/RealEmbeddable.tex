@@ -15,29 +15,6 @@ comparison. It follows that the ring represented by such a number type
 is a subring of the real numbers and hence has characteristic zero 
 ( see http://mathworld.wolfram.com/CharacteristicField.html ).
 
-
-\ignore{
-In addition to the comparison operators, the template class 
-NiX::NT_traits<NT> provides three adaptable functors for number types 
-NT that are a model of RealComparable.
-
-    * NiX::NT_traits::Abs ()(x) is an AdaptableUnaryFunction that accepts 
-a number x and computes its absolute value.
-
-    * NiX::NT_traits::Sign ()(x) is an AdaptableUnaryFunction that accepts
- a number x and computes its three-valued sign.
-
-    * NiX::NT_traits::Compare ()(x,y) is an AdaptableBinaryFunction that
- accepts two numbers x and y and computes a three-valued comparison result.
-
-    * NiX::NT_traits::To_double ()(x) is an AdaptableUnaryFunction that 
-accepts a number x and computes a double approximation of x.
-
-    * NiX::NT_traits::To_Interval ()(x) is an AdaptableUnaryFunction that 
-accepts a number x and computes a double Interval approximation of x. It 
-is guaranteed that x is contained in the interval. 
-}
-
 \ccRefines
 \ccc{LessThanComparable}
 
