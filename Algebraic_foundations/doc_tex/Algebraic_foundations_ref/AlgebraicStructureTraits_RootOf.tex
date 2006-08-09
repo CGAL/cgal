@@ -11,29 +11,30 @@
 
 \ccTypes
 
-\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
-\ccTypedef{typedef AlgebraicStructureTraits::AS result_type;}{}
-%\ccTypedef{typedef AlgebraicStructureTraits::AS AS;}{}
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccTypedef{typedef AlgebraicStructureTraits::Algebraic_structure result_type;}{}
+%\ccTypedef{typedef AlgebraicStructureTraits::Algebraic_structure AS;}{}
 
 \ccOperations
+\ccSetThreeColumns{xxxxxxxxxx}{xxxxx}{}
 \ccMethod{
 template<class InputIterator>
 result_type operator() (int k, InputIterator begin, InputIterator end);}
         {returns the k-th real root of the univariate polynomial, 
         which is defined by the iterator range, 
         where begin refers to the constant term. 
-        \ccPrecond The value type of the InputIterator is AlgebraicStructureTraits::AS\\ }
+        \ccPrecond The value type of the InputIterator is \ccc{AlgebraicStructureTraits::Algebraic_structure}\\ }
 
 \ccMethod{
 template<class InputIterator>
-result_type operator()(const AS& lower, 
-                       const AS& upper, 
+result_type operator()(const Algebraic_structure& lower, 
+                       const Algebraic_structure& upper, 
                        InputIterator begin,  
                        InputIterator end);}
         {returns the only real root within the interval [lower,upper] 
         of the univariate polynomial, which is defined by the iterator 
         range, where begin refers to the constant term. 
-        \ccPrecond The value type of the InputIterator is AlgebraicStructureTraits::AS\\ 
+        \ccPrecond The value type of the InputIterator is \ccc{AlgebraicStructureTraits::Algebraic_structure}\\ 
 }
 
 %\ccHasModels

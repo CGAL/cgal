@@ -8,12 +8,13 @@
 
 \ccc{AdaptableUnaryFunction} 
 
-\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
 \ccTypes
-\ccTypedef{typedef AlgebraicStructureTraits::AS result_type;}{}\ccGlue
-\ccTypedef{typedef AlgebraicStructureTraits::AS argument_type;}{}
+\ccTypedef{typedef AlgebraicStructureTraits::Algebraic_structure result_type;}{}\ccGlue
+\ccTypedef{typedef AlgebraicStructureTraits::Algebraic_structure argument_type;}{}
 
 \ccOperations
+\ccSetThreeColumns{xxxxxxxxxx}{xxxxx}{}
 \ccMethod{result_type operator()(
         const argument_type&  x);}{ returns  $\sqrt(x)$.\\
         {\tt
@@ -22,7 +23,7 @@
         There are models that provide an inexact sqrt i.e. double \\
 
         BUT FROM EXACUS: \\
-        A number type NT(here AS) may provide this functor even if the set of 
+        A number type may provide this functor even if the set of 
         numbers it 
         models does not contain real square roots in general. 
         The most important example are number types modeling the integers. 
