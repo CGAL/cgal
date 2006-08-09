@@ -101,6 +101,7 @@ public:
   typedef Edge_iterator                        All_edges_iterator;
   typedef Vertex_iterator                      All_vertices_iterator;
 
+  typedef typename Tds::Simplex                Simplex;
 private:
   // This class is used to generate the Finite_*_iterators.
   class Infinite_tester

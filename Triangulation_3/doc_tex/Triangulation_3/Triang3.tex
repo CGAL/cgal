@@ -533,6 +533,15 @@ as the following example shows.
 
 \ccIncludeExampleCode{Triangulation_3/example_adding_handles.cpp}
 
+\subsection{The Simplex class}
+\label{Triangulation3-sec-simplex}
+The triangulation defines a \ccc{Simplex} class that represents a
+simplex (vertex, edge, facet or cell). This example demonstrates how
+simplices can be stored in a set.
+
+\ccIncludeExampleCode{Triangulation_3/example_simplex.cpp}
+
+
 \subsection{Use of the Delaunay hierarchy}
 
 \ccIncludeExampleCode{Triangulation_3/example_hierarchy.cpp}
@@ -591,6 +600,9 @@ Delaunay hierarchy.
 In 2005, Christophe Delage implemented the vertex removal function for
 regular triangulations, which allowed to release this functionality in
 CGAL 3.2.
+
+In 2006, Nico Kruithof wrote the \ccc{Triangulations_simplex_3} class
+that can store simplices of any dimension.
 
 The authors also wish to thank Jean-Daniel Boissonnat for helpful
 discussions \cite{bdty-tcgal-00}.

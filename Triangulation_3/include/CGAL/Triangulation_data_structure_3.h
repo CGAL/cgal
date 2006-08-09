@@ -48,6 +48,7 @@
 
 #include <CGAL/Triangulation_ds_cell_base_3.h>
 #include <CGAL/Triangulation_ds_vertex_base_3.h>
+#include <CGAL/Triangulation_simplex_3.h>
 
 #include <CGAL/Triangulation_ds_iterators_3.h>
 #include <CGAL/Triangulation_ds_circulators_3.h>
@@ -178,6 +179,8 @@ public:
 #endif
   typedef std::pair<Cell_handle, int>              Facet;
   typedef Triple<Cell_handle, int, int>            Edge;
+
+  typedef Triangulation_simplex_3<Tds>             Simplex;
 
 public:
   Triangulation_data_structure_3() 
