@@ -77,6 +77,9 @@ public:
   typedef EK_   EK;
   typedef E2A_  E2A;
 
+  typedef Approx_converter<Kernel, AK>   C2F;
+  typedef Exact_converter<Kernel, EK>    C2E;
+
 #if 0
   typedef typename EK::Algebraic_kernel Al_EK;
   typedef typename AK::Algebraic_kernel Al_AK;
@@ -144,7 +147,7 @@ public:
 
     // We don't touch the predicates.
 #define CGAL_Curved_Kernel_pred(P, Pf)  \
-    typedef Filtered_predicate< typename EK::P, typename AK::P,Exact_converter, Approx_converter> P; \
+    typedef Filtered_predicate< typename EK::P, typename AK::P, C2E, C2F> P; \
     P Pf() const { return P(); }
 
 
