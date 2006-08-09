@@ -10,14 +10,13 @@
 
 \ccTypes
 \ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
-\ccTypedef{typedef CGAL::Compare result_type;}{}\ccGlue
+\ccTypedef{typedef CGAL::Comparison_result result_type;}{}\ccGlue
 \ccTypedef{typedef RealEmbeddableTraits::Real_embeddable  first_argument_type;}{}\ccGlue
 \ccTypedef{typedef RealEmbeddableTraits::Real_embeddable second_argument_type;}{}
 
 \ccOperations
-\ccMethod{result_type operator()(
-        const  first_argument_type&  x,
-        const second_argument_type&  y,    );}
+\ccMethod{result_type operator()(const  first_argument_type&  x,
+                                 const second_argument_type&  y);}
         { compares $x$ with respect to $y$. }
 
 %\ccHasModels
