@@ -254,7 +254,7 @@ namespace AlgebraicSphereFunctors {
 	       OutputIterator res) const
     { return AlgebraicSphereFunctors::x_critical_points<AK>(c,res); }
 
-    Root_of_2
+    Root_for_spheres_2_3
     operator()(const std::pair< Polynomial_for_spheres_2_3, Polynomial_1_3 > & c, 
 	       bool i) const
     { return AlgebraicSphereFunctors::x_critical_point<AK>(c,i); }
@@ -289,7 +289,7 @@ namespace AlgebraicSphereFunctors {
 	       OutputIterator res) const
     { return AlgebraicSphereFunctors::y_critical_points<AK>(c,res); }
 
-    Root_of_2
+    Root_for_spheres_2_3
     operator()(const std::pair< Polynomial_for_spheres_2_3, Polynomial_1_3 > & c, 
 	       bool i) const
     { return AlgebraicSphereFunctors::y_critical_point<AK>(c,i); }
@@ -324,7 +324,7 @@ namespace AlgebraicSphereFunctors {
 	       OutputIterator res) const
     { return AlgebraicSphereFunctors::z_critical_points<AK>(c,res); }
 
-    Root_of_2
+    Root_for_spheres_2_3
     operator()(const std::pair< Polynomial_for_spheres_2_3, Polynomial_1_3 > & c, 
 	       bool i) const
     { return AlgebraicSphereFunctors::z_critical_point<AK>(c,i); }
