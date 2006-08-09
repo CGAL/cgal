@@ -24,7 +24,7 @@ namespace CGAL {
     has_on(const typename SK::Sphere_3 &a, 
            const typename SK::Point_3 &p)
     { 
-      return a.has_on_boundary(p);
+      return a.rep().has_on_boundary(p);
     }
 
     template <class SK>
@@ -45,7 +45,7 @@ namespace CGAL {
     has_on(const typename SK::Plane_3 &a, 
            const typename SK::Point_3 &p)
     { 
-      return a.has_on(p);
+      return a.rep().has_on(p);
     }
 
     template <class SK>
@@ -66,7 +66,7 @@ namespace CGAL {
     has_on(const typename SK::Line_3 &a,
            const typename SK::Point_3 &p)
     { 
-      return a.has_on(p);
+      return a.rep().has_on(p);
     }
 
     template <class SK>
@@ -123,7 +123,7 @@ namespace CGAL {
     has_on(const typename SK::Plane_3 &a, 
            const typename SK::Line_3 &p)
     { 
-      return a.has_on(p);
+      return a.rep().has_on(p);
     }
 
     template <class SK>
