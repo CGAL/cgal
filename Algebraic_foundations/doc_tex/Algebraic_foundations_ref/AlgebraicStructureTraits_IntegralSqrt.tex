@@ -7,9 +7,9 @@
 
 \ccc{AdaptableBinaryFunction} providing an integral square root. 
 
-An ring element $a$ is said to be is an square if there exists a ring element $b$ such 
-that $a= b*b$. Since the ring represented is an integral domain, 
-$b$ is uniquely defined up to multiplication by units. 
+An ring element $x$ is said to be is an square if there exists a ring element $y$ such 
+that $x= y*y$. Since the ring represented is an integral domain, 
+$y$ is uniquely defined up to multiplication by units. 
 
 \ccRefines 
 
@@ -23,10 +23,10 @@ $b$ is uniquely defined up to multiplication by units.
 \ccTypedef{typedef AlgebraicStructureTraits::Algebraic_structure second_argument_type;}{}
 
 \ccOperations
-\ccMethod{result_type operator()(const first_argument_type&  a, 
-                                 second_argument_type& b);}
-        { return {\tt true} in case $a$ is a perfect square, i.e. $a = b*b$.
-          \ccPostcond: $unit\_part(b) = 1$. // $b$ is unit normal. 
+\ccMethod{result_type operator()(const first_argument_type&  x, 
+                                 second_argument_type& y);}
+        { return {\tt true} in case $x$ is a perfect square, i.e. $x = y*y$.
+          \ccPostcond: $unit\_part(y) = 1$. // $y$ is unit normal. 
         }
 
 %\ccHasModels
