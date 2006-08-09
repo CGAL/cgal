@@ -3,19 +3,18 @@
 \ccDefinition
 
 A model \ccc{Polynomial_d} possesses a traits class 
-\ccc{CGAL::Polynomial_traits_d<Polynomial_d>}, 
-which is a model of \ccc{PolynomialTraits_d}. 
-An \ccc{Polynomial_d} represents a multivariate polynomial over some basic ring $R$, this type is denoted as the innermost coefficient type and is 
-accessible through the traits class 
+\ccc{CGAL::Polynomial_traits_d<Polynomial_d>}, which is a model of 
+\ccc{PolynomialTraits_d}. An \ccc{Polynomial_d} represents a multivariate 
+polynomial over some basic ring $R$, this type is denoted as the innermost 
+coefficient type and is accessible through the traits class 
 \ccc{CGAL::Polynomial_traits_d<Polynomial_d>::Innermost_coefficient}.
 
 \ccRefines
 
 \ccc{Polynomial_d} and \ccc{Innermost_coefficient} are at least a 
 model of \ccc{IntegralDomainWithoutDiv}. \\
-Moreover, the algebraic structure of 
-\ccc{Polynomial} depends on the algebraic structure of 
-\ccc{Innermost_coefficient}:
+Moreover, the algebraic structure of \ccc{Polynomial} depends on the 
+algebraic structure of \ccc{Innermost_coefficient}:
 
 \begin{tabular}{|l|l|}
 \hline
@@ -30,9 +29,8 @@ Moreover, the algebraic structure of
 \end{tabular}
 
 
-Note:The concept \ccc{Polynomial_1} refines 
-     \ccc{EuclideanRing} in case \ccc{Innermost_coefficient} is a 
-     \ccc{Field}. 
+Note:The concept \ccc{Polynomial_1} refines \ccc{EuclideanRing} in case 
+\ccc{Innermost_coefficient} is a \ccc{Field}. 
 
 \ccSeeAlso 
 
