@@ -1,3 +1,7 @@
+
+resoudre le probleme Lazy_CK avec GMP (constructions Gmpz(Gmpq) 
+evidemment non trouvees...)
+
 tracker les vestiges de l'ancienne representation des points (pointeurs
 vers cercles)
 
