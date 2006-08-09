@@ -24,7 +24,7 @@
 
 
 // typedef CGAL::MP_Float                                          NT;
-typedef CGAL::Gmpq                                          NT;
+typedef CGAL::Quotient<CGAL::MP_Float>                  NT;
 // typedef CGAL::Lazy_exact_nt<CGAL::Gmpq>                     NT;
 // typedef CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> >    NT;
 // typedef CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::Gmpz> >    NT;
