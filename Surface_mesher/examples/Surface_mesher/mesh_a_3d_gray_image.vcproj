@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="3d_image_surface_mesher"
+	Name="mesh_a_3d_gray_image"
 	ProjectGUID="{7E47FDD3-2BE2-4190-B391-03778A146F31}"
 	Keyword="ManagedCProj">
 	<Platforms>
@@ -35,7 +35,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="cgal.lib zdll.lib"
-				OutputFile="$(OutDir)/3d_image_surface_mesher.exe"
+				OutputFile="$(OutDir)/mesh_a_3d_gray_image.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;..\..\lib\msvc7&quot;"
 				GenerateDebugInformation="TRUE"/>
@@ -84,7 +84,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="cgal.lib zdll.lib"
-				OutputFile="$(OutDir)/3d_image_surface_mesher.exe"
+				OutputFile="$(OutDir)/mesh_a_3d_gray_image.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;..\..\lib\msvc7&quot;"
 				GenerateDebugInformation="TRUE"/>
@@ -117,7 +117,7 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm">
 			<File
-				RelativePath="3d_image_surface_mesher.cpp">
+				RelativePath="mesh_a_3d_gray_image.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool

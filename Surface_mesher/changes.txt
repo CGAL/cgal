@@ -1,3 +1,7 @@
+9 August 2006 Laurent Rineau
+- documentation of Surface_mesh_default_triangulation_3
+- big cleaning of examples/Surface_mesher/
+
 28 July 2006 Laurent Rineau
 - fix last patch: the vertex iterator class needs a little more sugar
 (thanks to Mariette how spotted this out).

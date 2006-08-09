@@ -48,23 +48,20 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-implicit_OBJECTS = implicit_functions$(OBJ_EXT)
-
-TARGETS = 3d_image_surface_mesher$(EXE_EXT) \
-          implicit_surface_mesher$(EXE_EXT)
+TARGETS = mesh_a_3d_gray_image$(EXE_EXT) \
+          mesh_an_implicit_function$(EXE_EXT)
 
 all: $(TARGETS)
 
-3d_image_surface_mesher$(EXE_EXT): 3d_image_surface_mesher$(OBJ_EXT) $(IMAGEIO_OBJECTS)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)3d_image_surface_mesher 3d_image_surface_mesher$(OBJ_EXT) $(IMAGEIO_OBJECTS) $(LDFLAGS)
+mesh_a_3d_gray_image$(EXE_EXT): mesh_a_3d_gray_image$(OBJ_EXT) $(IMAGEIO_OBJECTS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)mesh_a_3d_gray_image mesh_a_3d_gray_image$(OBJ_EXT) $(IMAGEIO_OBJECTS) $(LDFLAGS)
 
-implicit_surface_mesher$(EXE_EXT): $(implicit_OBJECTS) implicit_surface_mesher$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)implicit_surface_mesher implicit_surface_mesher$(OBJ_EXT) $(LDFLAGS)
+mesh_an_implicit_function$(EXE_EXT): mesh_an_implicit_function$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)mesh_an_implicit_function mesh_an_implicit_function$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-                   3d_image_surface_mesher.clean \
-                   implicit_functions.clean \
-                   implicit_surface_mesher.clean \
+                   mesh_a_3d_gray_image.clean \
+                   mesh_an_implicit_function.clean \
 		   imageio-clean
 
 

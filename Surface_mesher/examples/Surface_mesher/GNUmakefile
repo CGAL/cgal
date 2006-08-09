@@ -2,6 +2,7 @@ include makefile
 
 run-targets: $(TARGETS)
 	for t in $(TARGETS); do \
+	  echo ./$$t; \
 	  ./$$t; \
 	done
 

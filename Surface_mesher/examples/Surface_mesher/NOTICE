@@ -1,7 +1,0 @@
-surface_mesher.C and surfaces_union.C are not submitted to internal releases.
-Actually, they are broken, AFAIK.
-
-inputs/ is not submitted, too.
-
--- 
-Laurent Rineau (updated 2006/06/12)

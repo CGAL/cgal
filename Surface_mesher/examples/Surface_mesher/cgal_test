@@ -71,7 +71,7 @@ if [ $# -ne 0 ] ; then
     compile_and_run $file
   done
 else
-  compile_and_run 3d_image_surface_mesher
-  compile_and_run implicit_surface_mesher
+  compile_and_run mesh_a_3d_gray_image
+  compile_and_run mesh_an_implicit_function
 fi
 
