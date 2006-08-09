@@ -78,7 +78,7 @@ int main() {
 #include <CGAL/Arr_naive_point_location.h>
 #include <CGAL/IO/Dxf_variant_reader.h>
 
-typedef CGAL::Gmpq                                          NT; 
+typedef CGAL::Quotient<CGAL::MP_Float>                       NT; 
 //typedef CGAL::Quotient<CGAL::MP_Float> NT;
 //typedef CGAL::Lazy_exact_nt<CGAL::Gmpq>  NT;
 
