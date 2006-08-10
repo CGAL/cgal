@@ -7,6 +7,8 @@
    - merge parameters.* with the Mesh_3 version,
    - use <CGAL/Surface_mesh_default_triangulation_3.h>
    - new polyhedron_remesher.cpp
+- use Robust_circumcenter_traits_3<K> by default, in
+  Surface_mesh_default_triangulation_3
 
 9 August 2006 Laurent Rineau
 - documentation of Surface_mesh_default_triangulation_3
