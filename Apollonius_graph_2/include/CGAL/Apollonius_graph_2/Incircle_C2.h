@@ -36,12 +36,12 @@ CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 //--------------------------------------------------------------------
 
 template< class K >
-class Sign_of_distance_from_bitangent_line
+class Sign_of_distance_from_bitangent_line_2
 {
 public:
-  typedef Bitangent_line<K>                 Bitangent_line;
+  typedef Bitangent_line_2<K>               Bitangent_line;
   typedef typename K::Site_2                Site_2;
-  typedef Inverted_weighted_point<K>        Inverted_weighted_point;
+  typedef Inverted_weighted_point_2<K>      Inverted_weighted_point;
   typedef typename K::FT                    FT;
   typedef typename K::Sign                  Sign;
 
@@ -79,13 +79,13 @@ public:
 
 
 template< class K >
-class Sign_of_distance_from_CCW_circle
+class Sign_of_distance_from_CCW_circle_2
 {
 public:
-  typedef Bitangent_line<K>           Bitangent_line;
-  typedef Inverted_weighted_point<K>  Inverted_weighted_point;
-  typedef typename K::FT              FT;
-  typedef typename K::Sign            Sign;
+  typedef Bitangent_line_2<K>            Bitangent_line;
+  typedef Inverted_weighted_point_2<K>   Inverted_weighted_point;
+  typedef typename K::FT                 FT;
+  typedef typename K::Sign               Sign;
 
 public:
   inline Sign
@@ -138,21 +138,21 @@ public:
 
   typedef typename K::Point_2               Point_2;
   typedef typename K::Site_2                Site_2;
-  typedef Weighted_point_inverter<K>        Weighted_point_inverter;
-  typedef Inverted_weighted_point<K>        Inverted_weighted_point;
-  typedef Bitangent_line<K>                 Bitangent_line;
-  typedef Voronoi_radius<K>                 Voronoi_radius;
+  typedef Weighted_point_inverter_2<K>      Weighted_point_inverter;
+  typedef Inverted_weighted_point_2<K>      Inverted_weighted_point;
+  typedef Bitangent_line_2<K>               Bitangent_line;
+  typedef Voronoi_radius_2<K>               Voronoi_radius;
   typedef typename K::FT                    FT;
   typedef typename K::Orientation           Orientation;
   typedef typename K::Sign                  Sign;
   typedef typename K::Bounded_side          Bounded_side;
 
-  typedef Bounded_side_of_CCW_circle<K>     Bounded_side_of_CCW_circle;
+  typedef Bounded_side_of_CCW_circle_2<K>   Bounded_side_of_CCW_circle;
 
-  typedef Sign_of_distance_from_bitangent_line<K>
+  typedef Sign_of_distance_from_bitangent_line_2<K>
                                      Sign_of_distance_from_bitangent_line;
 
-  typedef Sign_of_distance_from_CCW_circle<K>
+  typedef Sign_of_distance_from_CCW_circle_2<K>
                                          Sign_of_distance_from_CCW_circle;
 
 private:

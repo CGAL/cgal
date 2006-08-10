@@ -34,18 +34,18 @@ CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 //--------------------------------------------------------------------
 
 template< class K >
-class Bounded_side_of_CCW_circular_arc
+class Bounded_side_of_CCW_circular_arc_2
 {
 public:
-  typedef Weighted_point_inverter<K>    Weighted_point_inverter;
-  typedef Inverted_weighted_point<K>    Inverted_weighted_point;
-  typedef Voronoi_radius<K>             Voronoi_radius;
-  typedef Voronoi_circle<K>             Voronoi_circle;
-  typedef Bitangent_line<K>             Bitangent_line;
-  typedef typename K::FT                FT;
-  typedef typename K::Bounded_side      Bounded_side;
-  typedef typename K::Orientation       Orientation;
-  typedef typename K::Sign              Sign;
+  typedef Weighted_point_inverter_2<K>    Weighted_point_inverter;
+  typedef Inverted_weighted_point_2<K>    Inverted_weighted_point;
+  typedef Voronoi_radius_2<K>             Voronoi_radius;
+  typedef Voronoi_circle_2<K>             Voronoi_circle;
+  typedef Bitangent_line_2<K>             Bitangent_line;
+  typedef typename K::FT                  FT;
+  typedef typename K::Bounded_side        Bounded_side;
+  typedef typename K::Orientation         Orientation;
+  typedef typename K::Sign                Sign;
 
 public:  
   template< class Method_tag >
@@ -241,17 +241,17 @@ template < class K, class MTag >
 class Infinite_edge_interior_conflict_2
 {
 public:
-  typedef K                              Kernel;
-  typedef MTag                           Method_tag;
+  typedef K                                Kernel;
+  typedef MTag                             Method_tag;
 
-  typedef typename K::Site_2             Site_2;
-  typedef Weighted_point_inverter<K>     Weighted_point_inverter;
-  typedef Inverted_weighted_point<K>     Inverted_weighted_point;
-  typedef Voronoi_radius<K>              Voronoi_radius;
-  typedef Voronoi_circle<K>              Voronoi_circle;
-  typedef Bitangent_line<K>              Bitangent_line;
-  typedef typename K::FT                 FT;
-  typedef typename K::Bounded_side       Bounded_side;
+  typedef typename K::Site_2               Site_2;
+  typedef Weighted_point_inverter_2<K>     Weighted_point_inverter;
+  typedef Inverted_weighted_point_2<K>     Inverted_weighted_point;
+  typedef Voronoi_radius_2<K>              Voronoi_radius;
+  typedef Voronoi_circle_2<K>              Voronoi_circle;
+  typedef Bitangent_line_2<K>              Bitangent_line;
+  typedef typename K::FT                   FT;
+  typedef typename K::Bounded_side         Bounded_side;
 
   //  typedef CGAL::Bounded_side_of_CCW_circle<K>  Bounded_side_of_CCW_circle;
   //  typedef CGAL::Sign_of_distance_from_bitangent_line<K>
@@ -260,7 +260,7 @@ public:
   //                                         Sign_of_distance_from_CCW_circle;
   //  typedef CGAL::Order_on_finite_bisector<K>      Order_on_finite_bisector;
 
-  typedef Bounded_side_of_CCW_circular_arc<K>
+  typedef Bounded_side_of_CCW_circular_arc_2<K>
                                          Bounded_side_of_CCW_circular_arc;
 
 public:

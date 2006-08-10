@@ -29,7 +29,7 @@ CGAL_BEGIN_NAMESPACE
 CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 
 template< class K >
-class Inverted_weighted_point
+class Inverted_weighted_point_2
   : public K::Site_2
 {
 public:
@@ -38,7 +38,7 @@ public:
 private:
   FT   _p;
 public:
-  Inverted_weighted_point(const K_Site_2& wp, const FT& p)
+  Inverted_weighted_point_2(const K_Site_2& wp, const FT& p)
     : K_Site_2(wp), _p(p) {}
 
   inline FT p() const { return _p; }
@@ -46,17 +46,17 @@ public:
 
 
 template< class K >
-class Weighted_point_inverter
+class Weighted_point_inverter_2
 {
 public:
   typedef typename K::Point_2               Point_2;
   typedef typename K::Site_2                Site_2;
-  typedef Inverted_weighted_point<K>        Inverted_weighted_point;
+  typedef Inverted_weighted_point_2<K>      Inverted_weighted_point;
   typedef typename K::FT                    FT;
 private:
   Site_2 _pole;
 public:
-  Weighted_point_inverter(const Site_2& pole)
+  Weighted_point_inverter_2(const Site_2& pole)
     : _pole(pole) {}
 
   Inverted_weighted_point operator()(const Site_2& wp)
@@ -76,7 +76,7 @@ public:
 
 
 template< class K >
-class Voronoi_radius
+class Voronoi_radius_2
 {
   // this class stores the coefficients for the tritangent circle
   // radius equation. In particular we have:
@@ -84,21 +84,21 @@ class Voronoi_radius
   // x here represents the inverse of the radius
 public:
   typedef typename K::FT                  FT;
-  typedef Inverted_weighted_point<K>      Inverted_weighted_point;
+  typedef Inverted_weighted_point_2<K>    Inverted_weighted_point;
 
 private:
   FT _a, _b, _c;
   FT _c2, _delta;
   FT _dxp, _dyp, _dwp;
 
-  Voronoi_radius(FT a, FT b, FT c, FT c2, FT delta,
-		 FT dxp, FT dyp, FT dwp)
+  Voronoi_radius_2(FT a, FT b, FT c, FT c2, FT delta,
+		   FT dxp, FT dyp, FT dwp)
     : _a(a), _b(b), _c(c), _c2(c2), _delta(delta), _dxp(dxp),
       _dyp(dyp), _dwp(dwp) {}
 
 public:
-  Voronoi_radius(const Inverted_weighted_point& u1,
-		 const Inverted_weighted_point& u2)
+  Voronoi_radius_2(const Inverted_weighted_point& u1,
+		   const Inverted_weighted_point& u2)
     {
       FT dxp = det2x2_by_formula(u1.x(), u1.p(), u2.x(), u2.p());
       FT dyp = det2x2_by_formula(u1.y(), u1.p(), u2.y(), u2.p());
@@ -132,15 +132,15 @@ public:
 
   inline bool is_first_root() const { return CGAL::is_negative(_c2); }
 
-  Voronoi_radius get_symmetric()
+  Voronoi_radius_2 get_symmetric()
     {
-      return Voronoi_radius(_a, _b, _c, -_c2, _delta, -_dxp, -_dyp, -_dwp);
+      return Voronoi_radius_2(_a, _b, _c, -_c2, _delta, -_dxp, -_dyp, -_dwp);
     }
 };
 
 
 template< class K >
-class Bitangent_line
+class Bitangent_line_2
 {
   // this class computes and stores the data for the left bitangent
   // line of the weighted points p1, p2 oriented from p1 to p2
@@ -149,7 +149,7 @@ class Bitangent_line
 public:
   typedef typename K::Point_2               Point_2;
   typedef typename K::Site_2                Site_2;
-  typedef Inverted_weighted_point<K>        Inverted_weighted_point;
+  typedef Inverted_weighted_point_2<K>      Inverted_weighted_point;
   typedef typename K::FT                    FT;
 protected:
   FT _a1, _a2;
@@ -160,8 +160,8 @@ protected:
   FT _dw;
   FT _dxw, _dyw;
 
-  Bitangent_line(FT a1, FT a2, FT b1, FT b2, FT c1, FT c2,
-		 FT delta, FT d, FT dw, FT dxw, FT dyw)
+  Bitangent_line_2(FT a1, FT a2, FT b1, FT b2, FT c1, FT c2,
+		   FT delta, FT d, FT dw, FT dxw, FT dyw)
     : _a1(a1), _a2(a2), _b1(b1), _b2(b2), _c1(c1), _c2(c2),
       _delta(delta), _d(d), _dw(dw),_dxw(dxw), _dyw(dyw) {}
 
@@ -188,7 +188,7 @@ protected:
     }
 
 public:
-  Bitangent_line(const Site_2& p1, const Site_2& p2)
+  Bitangent_line_2(const Site_2& p1, const Site_2& p2)
     {
       FT dx = p1.x() - p2.x();
       FT dy = p1.y() - p2.y();
@@ -201,8 +201,8 @@ public:
     }
 
 
-  Bitangent_line(const Inverted_weighted_point& u1,
-		 const Inverted_weighted_point& u2)
+  Bitangent_line_2(const Inverted_weighted_point& u1,
+		   const Inverted_weighted_point& u2)
     {
       FT dxp = det2x2_by_formula(u1.x(), u1.p(), u2.x(), u2.p());
       FT dyp = det2x2_by_formula(u1.y(), u1.p(), u2.y(), u2.p());
@@ -214,38 +214,38 @@ public:
       store(dxp, dyp, dwp, dxy, dxw, dyw);
     }
 
-  Bitangent_line get_symmetric() const
+  Bitangent_line_2 get_symmetric() const
     {
       return
-	Bitangent_line(_a1, -_a2, _b1, -_b2, _c1, -_c2, _delta, _d,
-		       -_dw, -_dxw, -_dyw);
+	Bitangent_line_2(_a1, -_a2, _b1, -_b2, _c1, -_c2, _delta, _d,
+			 -_dw, -_dxw, -_dyw);
     }
 
-  Bitangent_line get_rot90() const
+  Bitangent_line_2 get_rot90() const
     {
       return
-	Bitangent_line(-_b1, -_b2, _a1, _a2, _c1, _c2, _delta, _d,
-		       _dw, -_dyw, _dxw);
+	Bitangent_line_2(-_b1, -_b2, _a1, _a2, _c1, _c2, _delta, _d,
+			 _dw, -_dyw, _dxw);
     }
 
-  Bitangent_line perpendicular(const Point_2& p) const
+  Bitangent_line_2 perpendicular(const Point_2& p) const
     {
       // THIS DOES NOT KEEP TRACK OF THE ADDITIONALLY STORED
       // QUANTITIES; THIS IS INEVITABLE IN ANY CASE SINCE GIVEN p WE
       // CANNOT ANY LONGER HOPE TO KEEP TRACK OF THOSE
-      Bitangent_line rotated = get_rot90();
+      Bitangent_line_2 rotated = get_rot90();
       rotated._c1 = _b1 * p.x() - _a1 * p.y();
       rotated._c2 = _b2 * p.x() - _a2 * p.y();
 
       return rotated;
     }
 
-  Bitangent_line perpendicular(const Inverted_weighted_point& u) const
+  Bitangent_line_2 perpendicular(const Inverted_weighted_point& u) const
     {
       // THIS DOES NOT KEEP TRACK OF THE ADDITIONALLY STORED
       // QUANTITIES; THIS IS INEVITABLE IN ANY CASE SINCE GIVEN p WE
       // CANNOT ANY LONGER HOPE TO KEEP TRACK OF THOSE
-      Bitangent_line rotated = get_rot90();
+      Bitangent_line_2 rotated = get_rot90();
       rotated._c1 = (_b1 * u.x() - _a1 * u.y()) * u.p();
       rotated._c2 = (_b2 * u.x() - _a2 * u.y()) * u.p();
 
@@ -270,12 +270,12 @@ public:
 
 
 template< class K >
-class Voronoi_circle : public Bitangent_line<K>
+class Voronoi_circle_2 : public Bitangent_line_2<K>
 {
 public:
-  typedef Inverted_weighted_point<K>       Inverted_weighted_point;
-  typedef Bitangent_line<K>                Bitangent_line;
-  typedef Voronoi_radius<K>                Voronoi_radius;
+  typedef Inverted_weighted_point_2<K>     Inverted_weighted_point;
+  typedef Bitangent_line_2<K>              Bitangent_line;
+  typedef Voronoi_radius_2<K>              Voronoi_radius;
   typedef typename Bitangent_line::FT      FT;
 
 protected:
@@ -289,14 +289,14 @@ protected:
     }
 
 public:
-  Voronoi_circle(const Voronoi_radius& vr)
+  Voronoi_circle_2(const Voronoi_radius& vr)
     : Bitangent_line(FT(0), FT(0), FT(0), FT(0), vr.b(), vr.c2(),
 		     vr.delta(), vr.d(), FT(0), FT(0), FT(0)), _gamma(vr.c())
     {
       store(vr.dxp(), vr.dyp(), vr.dwp());
     }
 
-  Voronoi_circle(const Bitangent_line& bl)
+  Voronoi_circle_2(const Bitangent_line& bl)
     : Bitangent_line(bl.a1(), bl.a2(), bl.b1(), bl.b2(), bl.c1(), bl.c2(),
 		     bl.delta(), bl.d(), bl.dw(), bl.dxw(), bl.dyw())
     {

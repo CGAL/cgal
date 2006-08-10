@@ -36,7 +36,7 @@ template < class K, class Method_tag >
 class Conflict_2
 {
 public:
-  typedef Inverted_weighted_point<K>    Inverted_weighted_point;
+  typedef Inverted_weighted_point_2<K>  Inverted_weighted_point;
   typedef typename K::RT                RT;	
   typedef typename K::Sign              Sign;
   typedef Sign                          result_type;

@@ -36,11 +36,11 @@ CGAL_APOLLONIUS_GRAPH_2_BEGIN_NAMESPACE
 //--------------------------------------------------------------------
 
 template< class K >
-class Orientation_wrt_symmetry_axis
+class Orientation_wrt_symmetry_axis_2
 {
 public:
   typedef typename K::Point_2        Point_2;
-  typedef Voronoi_circle<K>          Voronoi_circle;
+  typedef Voronoi_circle_2<K>        Voronoi_circle;
   typedef typename K::FT             FT;
   typedef typename K::Orientation    Orientation;
 
@@ -72,10 +72,10 @@ public:
 //--------------------------------------------------------------------
 
 template< class K >
-class Compare_Voronoi_radii
+class Compare_Voronoi_radii_2
 {
 public:
-  typedef Voronoi_circle<K>                 Voronoi_circle;
+  typedef Voronoi_circle_2<K>               Voronoi_circle;
   typedef typename K::FT                    FT;
   typedef typename K::Sign                  Sign;
   typedef typename K::Comparison_result     Comparison_result;
@@ -247,18 +247,18 @@ public:
 //--------------------------------------------------------------------
 
 template< class K >
-class Order_on_finite_bisector
+class Order_on_finite_bisector_2
 {
 public:
-  typedef Voronoi_circle<K>                 Voronoi_circle;
+  typedef Voronoi_circle_2<K>               Voronoi_circle;
   typedef typename K::Site_2                Site_2;
   typedef typename K::FT                    FT;
   typedef typename K::Comparison_result     Comparison_result;
   typedef typename K::Orientation           Orientation;
 
-  typedef Compare_Voronoi_radii<K>          Compare_Voronoi_radii;
+  typedef Compare_Voronoi_radii_2<K>        Compare_Voronoi_radii;
 
-  typedef Orientation_wrt_symmetry_axis<K>
+  typedef Orientation_wrt_symmetry_axis_2<K>
                                     Orientation_wrt_symmetry_axis;
   
 public:
@@ -315,23 +315,23 @@ class Finite_edge_interior_conflict
 {
 public:
   typedef typename K::Site_2                Site_2;
-  typedef Weighted_point_inverter<K>        Weighted_point_inverter;
-  typedef Inverted_weighted_point<K>        Inverted_weighted_point;
-  typedef Voronoi_radius<K>                 Voronoi_radius;
-  typedef Voronoi_circle<K>                 Voronoi_circle;
-  typedef Bitangent_line<K>                 Bitangent_line;
+  typedef Weighted_point_inverter_2<K>      Weighted_point_inverter;
+  typedef Inverted_weighted_point_2<K>      Inverted_weighted_point;
+  typedef Voronoi_radius_2<K>               Voronoi_radius;
+  typedef Voronoi_circle_2<K>               Voronoi_circle;
+  typedef Bitangent_line_2<K>               Bitangent_line;
   typedef typename K::FT                    FT;
   typedef typename K::Sign                  Sign;
   typedef typename K::Bounded_side          Bounded_side;
   typedef typename K::Comparison_result     Comparison_result;
 
-  typedef Bounded_side_of_CCW_circle<K>     Bounded_side_of_CCW_circle;
-  typedef Order_on_finite_bisector<K>       Order_on_finite_bisector;
+  typedef Bounded_side_of_CCW_circle_2<K>   Bounded_side_of_CCW_circle;
+  typedef Order_on_finite_bisector_2<K>     Order_on_finite_bisector;
 
-  typedef Sign_of_distance_from_bitangent_line<K>
+  typedef Sign_of_distance_from_bitangent_line_2<K>
                                      Sign_of_distance_from_bitangent_line;
 
-  typedef Sign_of_distance_from_CCW_circle<K>
+  typedef Sign_of_distance_from_CCW_circle_2<K>
                                          Sign_of_distance_from_CCW_circle;
 
 public:
@@ -444,23 +444,23 @@ class Finite_edge_interior_conflict_degenerated
 {
 public:
   typedef typename K::Site_2                Site_2;
-  typedef Weighted_point_inverter<K>        Weighted_point_inverter;
-  typedef Inverted_weighted_point<K>        Inverted_weighted_point;
-  typedef Voronoi_radius<K>                 Voronoi_radius;
-  typedef Voronoi_circle<K>                 Voronoi_circle;
-  typedef Bitangent_line<K>                 Bitangent_line;
+  typedef Weighted_point_inverter_2<K>      Weighted_point_inverter;
+  typedef Inverted_weighted_point_2<K>      Inverted_weighted_point;
+  typedef Voronoi_radius_2<K>               Voronoi_radius;
+  typedef Voronoi_circle_2<K>               Voronoi_circle;
+  typedef Bitangent_line_2<K>               Bitangent_line;
   typedef typename K::FT                    FT;
   typedef typename K::Sign                  Sign;
   typedef typename K::Comparison_result     Comparison_result;
   typedef typename K::Bounded_side          Bounded_side;
 
-  typedef Bounded_side_of_CCW_circle<K>     Bounded_side_of_CCW_circle;
-  typedef Order_on_finite_bisector<K>       Order_on_finite_bisector;
+  typedef Bounded_side_of_CCW_circle_2<K>   Bounded_side_of_CCW_circle;
+  typedef Order_on_finite_bisector_2<K>     Order_on_finite_bisector;
 
-  typedef Sign_of_distance_from_bitangent_line<K>
+  typedef Sign_of_distance_from_bitangent_line_2<K>
                                      Sign_of_distance_from_bitangent_line;
 
-  typedef Sign_of_distance_from_CCW_circle<K>
+  typedef Sign_of_distance_from_CCW_circle_2<K>
                                          Sign_of_distance_from_CCW_circle;
 public:
   template<class Method_tag>

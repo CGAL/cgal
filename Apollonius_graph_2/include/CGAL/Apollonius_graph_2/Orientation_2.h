@@ -47,10 +47,10 @@ public:
   typedef Site_2                   argument_type;
 
 private:
-  typedef Weighted_point_inverter<K>     Weighted_point_inverter;
-  typedef Inverted_weighted_point<K>     Inverted_weighted_point;
-  typedef Voronoi_circle<K>              Voronoi_circle;
-  typedef Bitangent_line<K>              Bitangent_line;
+  typedef Weighted_point_inverter_2<K>   Weighted_point_inverter;
+  typedef Inverted_weighted_point_2<K>   Inverted_weighted_point;
+  typedef Voronoi_circle_2<K>            Voronoi_circle;
+  typedef Bitangent_line_2<K>            Bitangent_line;
   typedef typename Bitangent_line::FT    FT;
 
 private:

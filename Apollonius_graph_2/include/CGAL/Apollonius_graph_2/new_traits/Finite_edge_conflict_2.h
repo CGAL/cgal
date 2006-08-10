@@ -36,13 +36,15 @@ template < class K, class Method_tag >
 class Finite_edge_interior_conflict_new_2
   : public Edge_conflict_2<K, Method_tag>
 {
+private:
+  typedef Edge_conflict_2<K,Method_tag>    Base;
 public:
-    typedef Inverted_weighted_point<K>    Inverted_weighted_point;
-    typedef Weighted_point_inverter<K>    Weighted_point_inverter;
-    typedef typename K::Site_2            Site_2;
-    typedef typename K::Point_2           Point_2;
-    typedef bool                          result_type;
-    struct Arity {};
+  typedef typename Base::Inverted_weighted_point   Inverted_weighted_point;
+  typedef Weighted_point_inverter_2<K>             Weighted_point_inverter;
+  typedef typename K::Site_2                       Site_2;
+  typedef typename K::Point_2                      Point_2;
+  typedef bool                                     result_type;
+  struct Arity {};
 
     inline
     bool operator()(const Site_2& p1, const Site_2& p2, 

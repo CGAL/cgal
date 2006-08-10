@@ -1,3 +1,7 @@
+10 August 2006:  Menelaos Karavelas
+- fixes to please VC++ (could not accept within classes typedefs of
+  the form:  typedef MyClass<T>  MyClass;)
+
 25 July 2006:  Menelaos Karavelas
 - fixes to please g++ 3.3.2 @ SunOS platform
 

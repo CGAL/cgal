@@ -36,7 +36,7 @@ template< class K >
 class Sign_of_Voronoi_radius
 {
 public:
-  typedef Voronoi_radius<K>     Voronoi_radius;
+  typedef Voronoi_radius_2<K>   Voronoi_radius;
   typedef typename K::FT        FT;
   typedef typename K::Sign      Sign;
 
@@ -74,13 +74,13 @@ public:
 };
 
 template< class K >
-class Bounded_side_of_CCW_circle
+class Bounded_side_of_CCW_circle_2
 {
 private:
   Sign_of_Voronoi_radius<K> test;
 
 public:
-  typedef Voronoi_radius<K>         Voronoi_radius;
+  typedef Voronoi_radius_2<K>       Voronoi_radius;
   typedef typename K::Bounded_side  Bounded_dide;
 
 public:

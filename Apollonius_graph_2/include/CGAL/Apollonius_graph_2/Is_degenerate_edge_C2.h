@@ -44,17 +44,17 @@ public:
   typedef MTag                              Method_tag;
 
   typedef typename K::Site_2                Site_2;
-  typedef Weighted_point_inverter<K>        Weighted_point_inverter;
-  typedef Inverted_weighted_point<K>        Inverted_weighted_point;
-  typedef Bitangent_line<K>                 Bitangent_line;
-  typedef Voronoi_circle<K>                 Voronoi_circle;
+  typedef Weighted_point_inverter_2<K>      Weighted_point_inverter;
+  typedef Inverted_weighted_point_2<K>      Inverted_weighted_point;
+  typedef Bitangent_line_2<K>               Bitangent_line;
+  typedef Voronoi_circle_2<K>               Voronoi_circle;
   typedef typename K::FT                    FT;
   typedef typename K::Sign                  Sign;
   typedef typename K::Comparison_result     Comparison_result;
 
-  typedef Order_on_finite_bisector<K>       Order_on_finite_bisector;
+  typedef Order_on_finite_bisector_2<K>     Order_on_finite_bisector;
 
-  typedef Sign_of_distance_from_CCW_circle<K>
+  typedef Sign_of_distance_from_CCW_circle_2<K>
                                           Sign_of_distance_from_CCW_circle;
 
 public:
