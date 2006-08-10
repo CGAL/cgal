@@ -1,3 +1,8 @@
+10 August 2006 Laurent Rineau
+- added a public member function
+    Bbox bbox() const;
+  to Polyhedral_surface_3<>.
+
 9 August 2006 Laurent Rineau
 - documentation of Surface_mesh_default_triangulation_3
 - big cleaning of examples/Surface_mesher/

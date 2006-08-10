@@ -48,11 +48,18 @@ public:
 
   typedef Surface_mesher::Polyhedral_oracle<Self> Surface_mesher_traits_3;
 
+  typedef typename Subfacets_octree::Bbox Bbox;
+
   Polyhedral_surface_3(std::istream& input_file)
     : subfacets_octree(), input_points()
   {
     subfacets_octree.input(input_file,
                            std::back_inserter(input_points));
+  }
+
+  Bbox bbox() const
+  {
+    return subfacets_octree.bbox();
   }
 
 public:
