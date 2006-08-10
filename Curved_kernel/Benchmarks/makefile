@@ -46,13 +46,18 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
+                benchmark_CK2$(EXE_EXT)\
                 benchmarks_arrangement$(EXE_EXT) 
 
 benchmarks_arrangement$(EXE_EXT): benchmarks_arrangement$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)benchmarks_arrangement benchmarks_arrangement$(OBJ_EXT) $(LDFLAGS)
 
+benchmark_CK2$(EXE_EXT): benchmark_CK2$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)benchmark_CK2 benchmark_CK2$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
-                   benchmarks_arrangement.clean 
+                   benchmarks_arrangement.clean\
+                   benchmark_CK2.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
