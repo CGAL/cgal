@@ -323,9 +323,9 @@ Surface_mesh_parameterization/test/Surface_mesh_parameterization/release
 Surface_mesher/.*.deps
 Surface_mesher/demo/Surface_mesher/*.exe
 Surface_mesher/demo/Surface_mesher/.*.deps
-Surface_mesher/demo/Surface_mesher/depends
 Surface_mesher/demo/Surface_mesher/implicit_surface_mesher
 Surface_mesher/demo/Surface_mesher/my_makefile
+Surface_mesher/demo/Surface_mesher/polyhedron_remesher
 Surface_mesher/doc_html
 Surface_mesher/doc_pdf
 Surface_mesher/doc_ps
