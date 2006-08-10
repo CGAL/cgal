@@ -28,7 +28,11 @@
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Nef_polyhedron_S2.h>
 #include <CGAL/IO/Nef_polyhedron_S2_OGLUT_stream.h>
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/param_handler.h>
+#else
+#include <LEDA/system/param_handler.h>
+#endif
 #include <CGAL/Nef_S2/SM_items.h>
 
 typedef leda_integer NT;

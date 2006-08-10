@@ -28,9 +28,15 @@
 #include <CGAL/basic.h>
 #include <CGAL/enum.h>
 #include <CGAL/LEDA_basic.h>
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/rat_point.h>
 #include <LEDA/rat_segment.h>
 #include <LEDA/rat_line.h>
+#else
+#include <LEDA/geo/rat_point.h>
+#include <LEDA/geo/rat_segment.h>
+#include <LEDA/geo/rat_line.h>
+#endif
 
 CGAL_BEGIN_NAMESPACE
 

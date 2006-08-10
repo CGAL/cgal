@@ -26,8 +26,13 @@
 #include <CGAL/IO/Convex_hull_d_window_stream.h>
 #include <iostream>
 
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/random_source.h>
 #include <LEDA/d3_window.h>
+#else
+#include <LEDA/core/random_source.h>
+#include <LEDA/graphics/d3_window.h>
+#endif
 
 typedef leda_integer RT;
 

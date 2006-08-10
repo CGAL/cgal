@@ -28,7 +28,11 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/IO/Color.h>
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/window.h>
+#else
+#include <LEDA/graphics/window.h>
+#endif
 #include <CGAL/IO/cgal_logo.h>
 
 CGAL_BEGIN_NAMESPACE

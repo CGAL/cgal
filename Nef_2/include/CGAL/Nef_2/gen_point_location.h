@@ -22,7 +22,11 @@
 #define GEN_POINT_LOCATION_H
 
 #include <CGAL/LEDA_basic.h>
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/pp_dictionary.h>
+#else
+#include <LEDA/core/pp_dictionary.h>
+#endif
 #include <sstream>
 #include <string>
 #include <list>

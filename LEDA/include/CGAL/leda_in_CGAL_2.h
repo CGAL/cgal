@@ -28,9 +28,15 @@
 #include <CGAL/basic.h>
 #include <CGAL/enum.h>
 #include <CGAL/LEDA_basic.h>
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/point.h>
 #include <LEDA/segment.h>
 #include <LEDA/line.h>
+#else
+#include <LEDA/geo/point.h>
+#include <LEDA/geo/segment.h>
+#include <LEDA/geo/line.h>
+#endif
 
 CGAL_BEGIN_NAMESPACE
 

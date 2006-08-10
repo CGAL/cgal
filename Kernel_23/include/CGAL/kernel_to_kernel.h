@@ -27,7 +27,11 @@
 #ifdef CGAL_USE_LEDA
 #include <CGAL/LEDA_basic.h>
 #include <CGAL/leda_integer.h>
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/rat_point.h>
+#else
+#include <LEDA/geo/rat_point.h>
+#endif
 #endif
 
 CGAL_BEGIN_NAMESPACE

@@ -52,12 +52,20 @@ inline CGAL::TestrepH to_nt(int d)
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Integer.h>
 
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/REDEFINE_NAMES.h>
+#else
+#include <LEDA/internal/REDEFINE_NAMES.h>
+#endif
 inline integer to_nt(int d)
 {
     return integer(d);
 }
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/UNDEFINE_NAMES.h>
+#else
+#include <LEDA/internal/UNDEFINE_NAMES.h>
+#endif
 #endif
 
 struct randomint {

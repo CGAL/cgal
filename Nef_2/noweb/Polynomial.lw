@@ -1584,9 +1584,15 @@ int main()
 #include <CGAL/basic.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/Quotient.h>
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/string.h>
 #include <LEDA/d_array.h>
 #include <LEDA/stream.h>
+#else
+#include <LEDA/core/string.h>
+#include <LEDA/core/d_array.h>
+#include <LEDA/system/stream.h>
+#endif
 #define POLYNOMIAL_EXPLICIT_OUTPUT
 
 #ifndef CARTESIAN
@@ -1902,7 +1908,11 @@ sub specialize_members {
 
 <<specialization-test.C>>=
 #include <CGAL/basic.h>
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/integer.h>
+#else
+#include <LEDA/numbers/integer.h>
+#endif
 
 // SPECIALIZE_CLASS(T,int) START
 template <typename T> class A;

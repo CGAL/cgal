@@ -2469,7 +2469,11 @@ LEDA-spezifischen Klassen:%"
 #ifndef GEN_POINT_LOCATION_H
 #define GEN_POINT_LOCATION_H
 
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/pp_dictionary.h>
+#else
+#include <LEDA/core/pp_dictionary.h>
+#endif
 #include <strstream>
 #include <string>
 #include <list>

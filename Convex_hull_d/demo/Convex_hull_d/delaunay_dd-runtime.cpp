@@ -26,7 +26,11 @@
 #include <CGAL/random_selection.h>
 #include <iostream>
 
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/misc.h>
+#else
+#include <LEDA/system/misc.h>
+#endif
 #include <CGAL/leda_integer.h>
 typedef leda_integer RT;
 

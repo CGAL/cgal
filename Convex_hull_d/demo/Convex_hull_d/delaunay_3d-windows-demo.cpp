@@ -25,7 +25,11 @@
 #include <CGAL/leda_integer.h>
 #include <CGAL/Delaunay_d.h>
 #include <CGAL/IO/Delaunay_d_window_stream.h>
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/d3_window.h>
+#else
+#include <LEDA/graphics/d3_window.h>
+#endif
 #include <iostream>
 
 typedef leda_integer RT;

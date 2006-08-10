@@ -26,10 +26,17 @@
 
 #include <CGAL/LEDA_basic.h>
 #include <CGAL/IO/Window_stream.h>
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/graph.h>
 #include <LEDA/node_map.h>
 #include <LEDA/node_map2.h>
 #include <LEDA/d3_point.h>
+#else
+#include <LEDA/graph/graph.h>
+#include <LEDA/graph/node_map.h>
+#include <LEDA/graph/node_map2.h>
+#include <LEDA/geo/d3_point.h>
+#endif
 
 
 CGAL_BEGIN_NAMESPACE

@@ -364,6 +364,7 @@ static const char* sweepversion = "STL segment overlay sweep";
 #endif // CGAL_SEGMENT_OVERLAY_TRAITS_H
 
 <<leda segment overlay model>>=
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/tuple.h>
 #include <LEDA/slist.h>
 #include <LEDA/list.h>
@@ -371,6 +372,15 @@ static const char* sweepversion = "STL segment overlay sweep";
 #include <LEDA/map2.h>
 #include <LEDA/sortseq.h>
 #include <LEDA/p_queue.h>
+#else
+#include <LEDA/core/tuple.h>
+#include <LEDA/core/slist.h>
+#include <LEDA/core/list.h>
+#include <LEDA/core/map.h>
+#include <LEDA/core/map2.h>
+#include <LEDA/core/sortseq.h>
+#include <LEDA/core/p_queue.h>
+#endif
 #include <utility>
 #include <strstream>
 
@@ -1459,9 +1469,15 @@ nodes.
 #ifndef LEDA_OVERLAY_TRAITS_H
 #define LEDA_OVERLAY_TRAITS_H
 
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/rat_kernel.h>
 #include <LEDA/graph.h>
 #include <LEDA/slist.h>
+#else
+#include <LEDA/geo/rat_kernel.h>
+#include <LEDA/graph/graph.h>
+#include <LEDA/core/slist.h>
+#endif
 
 template <typename T>
 ostream& operator<<(ostream& os, const leda_slist<T>& s)
@@ -1650,7 +1666,11 @@ in the appendix (Section \ref{GenericSweepVisualization}).
 #ifndef LEDA_OVERLAY_VISUALIZATION_H
 #define LEDA_OVERLAY_VISUALIZATION_H
 
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/rat_window.h>
+#else
+#include <LEDA/graphics/rat_window.h>
+#endif
 
 template <class GENSWEEPTRAITS>
 class leda_visualization {
@@ -1735,12 +1755,21 @@ VDEVICE& device() { return W; }
 
 @ \subsection{Testing the generic LEDA sweep}
 <<leda_segment_overlay-test.c>>=
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/rat_window.h>
+#else
+#include <LEDA/graphics/rat_window.h>
+#endif
 #include "Segment_overlay_traits.h"
 #include "leda_overlay_traits.h"
 #include "leda_overlay_visualization.h"
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/stream.h>
 #include <LEDA/param_handler.h>
+#else
+#include <LEDA/system/stream.h>
+#include <LEDA/system/param_handler.h>
+#endif
 
 using namespace CGAL;
 
@@ -1821,9 +1850,15 @@ square. The runtimes are in seconds on an Ultra 2 200 MHz.
 #define INCLUDEBOTH // to allow comparison
 #include "Segment_overlay_traits.h"
 #include "leda_overlay_traits.h"
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/param_handler.h>
 #include <LEDA/random_rat_point.h>
 #include <LEDA/plane_alg.h>
+#else
+#include <LEDA/system/param_handler.h>
+#include <LEDA/geo/random_rat_point.h>
+#include <LEDA/geo/plane_alg.h>
+#endif
 
 typedef leda_list<leda_rat_segment>::iterator Seg_iterator;
 typedef CGAL::leda_seg_overlay_traits< Seg_iterator,
@@ -2242,10 +2277,17 @@ int main(int argc, char** argv)
 #include "Segment_overlay_traits.h"
 #include "leda_overlay_traits.h"
 #include "leda_overlay_visualization.h"
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/stream.h>
 #include <LEDA/rat_window.h>
 #include <LEDA/param_handler.h>
 #include <LEDA/random_rat_point.h>
+#else
+#include <LEDA/system/stream.h>
+#include <LEDA/graphics/rat_window.h>
+#include <LEDA/system/param_handler.h>
+#include <LEDA/geo/random_rat_point.h>
+#endif
 
 typedef leda_list<leda_rat_segment>::iterator Seg_iterator;
 typedef CGAL::Segment_overlay_traits< Seg_iterator,

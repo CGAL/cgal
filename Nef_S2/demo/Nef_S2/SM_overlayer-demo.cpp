@@ -23,7 +23,11 @@
 #include <CGAL/copy_n.h>
 #include <CGAL/random_selection.h>
 #include <CGAL/point_generators_3.h>
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/param_handler.h>
+#else
+#include <LEDA/system/param_handler.h>
+#endif
 #include <CGAL/Nef_polyhedron_S2.h>
 #include <CGAL/Nef_S2/SM_io_parser.h>
 

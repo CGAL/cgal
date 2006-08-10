@@ -21,9 +21,15 @@
 #define NEF_POLYHEDRON_2_PS_STREAM_H
 
 #include <CGAL/Nef_polyhedron_2.h>
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/gen_polygon.h>
 #include <LEDA/ps_file.h>
 #include <LEDA/color.h>
+#else
+#include <LEDA/geo/gen_polygon.h>
+#include <LEDA/graphics/ps_file.h>
+#include <LEDA/graphics/color.h>
+#endif
 
 CGAL_BEGIN_NAMESPACE
 static int frame_default = 100;

@@ -2227,8 +2227,13 @@ drawing window.
 #include <CGAL/basic.h>
 #ifdef CGAL_USE_LEDA
 #include "xpms/nef.xpm"
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/pixmaps/button32/eye.xpm>
 #include <LEDA/pixmaps/button32/draw.xpm>
+#else
+#include <LEDA/graphics/pixmaps/button32/eye.xpm>
+#include <LEDA/graphics/pixmaps/button32/draw.xpm>
+#endif
 #include <CGAL/leda_integer.h>
 #include <CGAL/Extended_homogeneous.h>
 #include <CGAL/Filtered_extended_homogeneous.h>
@@ -2371,12 +2376,21 @@ operations |main_panel|, |op_panel|. We store a history of polyhedra:
 |ML| stores the names displayed, |MH| maps the names to the existing
 objects. |N_display| stores the current object drawn in |W|.
 <<a small interactive polyhedron editor>>=
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/panel.h>
 #include <LEDA/list.h>
 #include <LEDA/d_array.h>
 #include <LEDA/file_panel.h>
 #include <LEDA/file.h>
 #include <LEDA/stream.h>
+#else
+#include <LEDA/graphics/panel.h>
+#include <LEDA/core/list.h>
+#include <LEDA/core/d_array.h>
+#include <LEDA/graphics/file_panel.h>
+#include <LEDA/system/file.h>
+#include <LEDA/system/stream.h>
+#endif
 
 static leda_panel      main_panel;
 static leda_panel      op_panel;
@@ -3034,10 +3048,17 @@ SUN Ultra-Enterprise-10000 with an 333 MHz UltraSPARC processors.
 #include <CGAL/IO/Window_stream.h>
 
 #include <CGAL/IO/Nef_polyhedron_2_Window_stream.h>
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/misc.h>
 #include <LEDA/rat_gen_polygon.h>
 #include <LEDA/rat_window.h>
 #include <LEDA/param_handler.h>
+#else
+#include <LEDA/system/misc.h>
+#include <LEDA/geo/rat_gen_polygon.h>
+#include <LEDA/graphics/rat_window.h>
+#include <LEDA/system/param_handler.h>
+#endif
 
 template <>
 struct ring_or_field<leda_integer> {
@@ -3441,7 +3462,11 @@ assert(n1.explorer().number_of_faces()==n2.explorer().number_of_faces());
 #include <CGAL/Filtered_extended_homogeneous.h>
 #include <CGAL/Nef_polyhedron_2.h>
 #include <CGAL/IO/Nef_polyhedron_2_PS_stream.h>
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/stream.h>
+#else
+#include <LEDA/system/stream.h>
+#endif
 
 template <>
 struct ring_or_field<leda_integer> {

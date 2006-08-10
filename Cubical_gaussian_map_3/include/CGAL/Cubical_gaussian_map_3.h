@@ -46,7 +46,11 @@
 #include <CGAL/Polygon_2_algorithms.h>
 
 #if defined(CGAL_USE_LEDA)
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/rational.h>
+#else
+#include <LEDA/numbers/rational.h>
+#endif
 #endif
 
 #include <string>

@@ -29,12 +29,13 @@
 #define CGAL_NEF_DEBUG 17
 #include <CGAL/Nef_2/debug.h>
 #include <CGAL/Nef_2/geninfo.h>
+
 #ifdef CGAL_USE_LEDA
-#include <LEDA/basic.h>
-#if __LEDA__ > 410 && __LEDA__ < 441
-#define CGAL_USING_PPL
-#include <CGAL/Nef_2/PM_persistent_PL.h>
-#endif
+#include <CGAL/LEDA_basic.h> 
+# if __LEDA__ > 410 && __LEDA__ < 441
+#  define CGAL_USING_PPL
+#  include <CGAL/Nef_2/PM_persistent_PL.h>
+# endif
 #endif
 
 CGAL_BEGIN_NAMESPACE

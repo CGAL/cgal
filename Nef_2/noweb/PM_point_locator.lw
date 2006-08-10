@@ -1421,11 +1421,16 @@ class |PM_point_locator|.
 of LEDA starting version 4.2.
 <<Conditional persistent point location inclusion>>=
 #ifdef CGAL_USE_LEDA
-#include <LEDA/basic.h>
-#if __LEDA__ > 410
-#define CGAL_USING_PPL
-#include <CGAL/Nef_2/PM_persistent_PL.h>
-#endif
+# if CGAL_LEDA_VERSION < 500
+#  include <LEDA/basic.h>
+# else
+#  include <LEDA/system/basic.h>
+# endif
+ 
+# if __LEDA__ > 410 && __LEDA__ < 441
+#  define CGAL_USING_PPL
+#  include <CGAL/Nef_2/PM_persistent_PL.h>
+# endif
 #endif
 @ \end{ignoreindiss}%
 The point location framework is added to the point location class only

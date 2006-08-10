@@ -19,8 +19,16 @@
 #endif
 
 #if TESTR == 5
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/REDEFINE_NAMES.h>
+#else
+#include <LEDA/internal/REDEFINE_NAMES.h>
+#endif
     typedef integer testnt;
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/UNDEFINE_NAMES.h>
+#else
+#include <LEDA/internal/UNDEFINE_NAMES.h>
+#endif
     typedef CGAL::Homogeneous<testnt> TestR;
 #endif

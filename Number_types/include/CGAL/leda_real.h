@@ -31,7 +31,11 @@
 #include <utility>
 
 #include <CGAL/LEDA_basic.h>
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/real.h>
+#else
+#include <LEDA/numbers/real.h>
+#endif
 
 CGAL_BEGIN_NAMESPACE
 

@@ -25,7 +25,11 @@
 #include <CGAL/LEDA_basic.h>
 #include <CGAL/user_classes.h>
 #include <CGAL/basic_classes.h>
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/rat_point.h>
+#else
+#include <LEDA/geo/rat_point.h>
+#endif
 #include <CGAL/Homogeneous.h>
 
 #define CGAL_REP_CLASS_DEFINED

@@ -29,7 +29,11 @@ CGAL_BEGIN_NAMESPACE
 class window;
 CGAL_END_NAMESPACE
 #else
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/window.h>
+#else
+#include <LEDA/graphics/window.h>
+#endif
 class leda_window;
 #endif
 

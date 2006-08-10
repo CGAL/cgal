@@ -26,8 +26,13 @@
 #include <CGAL/copy_n.h>
 #include <CGAL/random_selection.h>
 #include <CGAL/point_generators_3.h>
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/param_handler.h>
 #include <LEDA/random.h>
+#else
+#include <LEDA/system/param_handler.h>
+#include <LEDA/core/random.h>
+#endif
 // #include <CGAL/Nef_S2/leda_sphere_map.h>
 #include <CGAL/Nef_S2/Sphere_geometry_OGL.h>
 

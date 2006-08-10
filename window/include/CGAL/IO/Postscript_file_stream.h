@@ -27,10 +27,16 @@
 
 #include <CGAL/LEDA_basic.h>
 #include <CGAL/IO/Color.h>
+
 #ifdef LEDA_PS_FILE_H
-# error Internal CGAL error: <LEDA/ps_file.h> should not have been included yet
-#else
-# include <LEDA/basic.h>
+# if CGAL_LEDA_VERSION < 500
+#  error Internal CGAL error: <LEDA/ps_file.h> should not have been included yet
+# else
+#  error Internal CGAL error: <LEDA/graphics/ps_file.h> should not have been included yet
+# endif
+#endif
+
+#if (CGAL_LEDA_VERSION < 500)
 # include <LEDA/list.h>
 # include <LEDA/string.h>
 # include <LEDA/stream.h>
@@ -39,19 +45,43 @@
 # include <LEDA/line.h>
 # include <LEDA/circle.h>
 # include <LEDA/polygon.h>
-# if (__LEDA__ >= 400)
-#  include <LEDA/rectangle.h>
-# endif // 400
 # include <LEDA/color.h>
 # include <LEDA/window.h>
-# if (__LEDA__ >= 400)
-#  include <LEDA/rat_window.h>
-#  include <LEDA/geo_graph.h>
-# endif // 400
-# define private protected
+#else
+# include <LEDA/core/list.h>
+# include <LEDA/core/string.h>
+# include <LEDA/system/stream.h>
+# include <LEDA/geo/point.h>
+# include <LEDA/geo/segment.h>
+# include <LEDA/geo/line.h>
+# include <LEDA/geo/circle.h>
+# include <LEDA/geo/polygon.h>
+# include <LEDA/graphics/color.h>
+# include <LEDA/graphics/window.h>
+#endif
+
+
+
+#if (CGAL_LEDA_VERSION >= 400)
+ #if (CGAL_LEDA_VERSION < 500)
+  #include <LEDA/rectangle.h>
+  #include <LEDA/rat_window.h>
+  #include <LEDA/geo_graph.h>
+ #else
+  #include <LEDA/geo/rectangle.h>
+  #include <LEDA/graphics/rat_window.h>
+  #include <LEDA/graphics/geo_graph.h>
+ #endif
+#endif // 400
+
+#define private protected
+#if CGAL_LEDA_VERSION < 500
 # include <LEDA/ps_file.h>
-# undef private
-#endif // LEDA_PS_FILE_H
+#else
+# include <LEDA/graphics/ps_file.h>
+#endif
+#undef private
+
 #include <CGAL/IO/cgal_logo.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -161,57 +191,6 @@ operator<<(Postscript_file_stream& w, const Point_2<R>& p)
   return w;
 }
 
-template< class R >
-Postscript_file_stream&
-operator>>(Postscript_file_stream& w, Point_2<R>& p)
-{
-  typedef typename R::RT RT;
-  leda_point l_p;
-  leda_drawing_mode save = w.set_mode(leda_xor_mode);
-  if (w >> l_p)
-  {
-      double x = l_p.xcoord();
-      double y = l_p.ycoord();
-      w << l_p;
-      w.set_mode( save);
-      w.draw_point(x,y);
-
-      p = Point_2<R>( RT(x), RT(y));
-  }
-  else
-  {
-      w.set_mode( save);
-  }
-  return w;
-}
-
-template< class R >
-Postscript_file_stream&
-read(Postscript_file_stream& w, Point_2<R>& p)
-{
-  typedef typename R::RT RT;
-  leda_point l_p;
-  if (w >> l_p)
-  {
-      double x = l_p.xcoord();
-      double y = l_p.ycoord();
-      p = Point_2<R>( RT(x), RT(y));
-  }
-  return w;
-}
-
-template <class R>
-void
-read_mouse_plus(Postscript_file_stream& w, Point_2<R>& p, int& button)
-{
-  typedef typename R::RT RT;
-  double x, y;
-  button = w.read_mouse(x,y);
-  w.draw_point(x,y);
-
-  p = Point_2<R>(RT(x), RT(y));
-}
-
 #endif // CGAL_POSTSCRIPT_FILE_STREAM_POINT_2
 #endif // CGAL_POINT_2_H
 
@@ -230,48 +209,6 @@ operator<<(Postscript_file_stream& w, const Segment_2<R>& s)
   return w;
 }
 
-template< class R >
-Postscript_file_stream&
-operator>>(Postscript_file_stream& w, Segment_2<R>& s)
-{
-  typedef  typename R::RT  RT;
-  leda_segment l_s;
-  leda_drawing_mode save = w.set_mode(leda_xor_mode);
-  if ( w.read( l_s))
-  {
-      double x1 = l_s.xcoord1();
-      double y1 = l_s.ycoord1();
-      double x2 = l_s.xcoord2();
-      double y2 = l_s.ycoord2();
-      w.set_mode( save);
-      w.draw_segment(x1,y1, x2, y2);
-      s = Segment_2<R>(Point_2<R>( RT(x1), RT(y1)),
-                            Point_2<R>( RT(x2), RT(y2)));
-  }
-  else
-  {
-      w.set_mode( save);
-  }
-  return w;
-}
-
-template< class R >
-Postscript_file_stream&
-read(Postscript_file_stream& w, Segment_2<R>& s)
-{
-  typedef  typename R::RT  RT;
-  leda_segment l_s;
-  if ( w.read( l_s))
-  {
-      double x1 = l_s.xcoord1();
-      double y1 = l_s.ycoord1();
-      double x2 = l_s.xcoord2();
-      double y2 = l_s.ycoord2();
-      s = Segment_2<R>(Point_2<R>( RT(x1), RT(y1)),
-                            Point_2<R>( RT(x2), RT(y2)));
-  }
-  return w;
-}
 #endif // CGAL_POSTSCRIPT_FILE_STREAM_SEGMENT_2
 #endif // CGAL_SEGMENT_2_H
 
@@ -291,48 +228,6 @@ operator<<(Postscript_file_stream& w, const Line_2<R>& l)
   return w;
 }
 
-template< class R >
-Postscript_file_stream&
-operator>>(Postscript_file_stream& w, Line_2<R>& l)
-{
-  typedef  typename R::RT  RT;
-  leda_segment l_s;
-  leda_drawing_mode save = w.set_mode(leda_xor_mode);
-  if ( w.read( l_s))
-  {
-      double x1 = l_s.xcoord1();
-      double y1 = l_s.ycoord1();
-      double x2 = l_s.xcoord2();
-      double y2 = l_s.ycoord2();
-      w.set_mode( save);
-      w.draw_line(x1,y1, x2, y2);
-      l = Line_2<R>(Point_2<R>( RT(x1), RT(y1)),
-                         Point_2<R>( RT(x2), RT(y2)));
-  }
-  else
-  {
-      w.set_mode( save);
-  }
-  return w;
-}
-
-template< class R >
-Postscript_file_stream&
-read(Postscript_file_stream& w, Line_2<R>& l)
-{
-  typedef  typename R::RT  RT;
-  leda_segment l_s;
-  if ( w.read( l_s))
-  {
-      double x1 = l_s.xcoord1();
-      double y1 = l_s.ycoord1();
-      double x2 = l_s.xcoord2();
-      double y2 = l_s.ycoord2();
-      l = Line_2<R>(Point_2<R>( RT(x1), RT(y1)),
-                         Point_2<R>( RT(x2), RT(y2)));
-  }
-  return w;
-}
 #endif // CGAL_POSTSCRIPT_FILE_STREAM_LINE_2
 #endif //CGAL_LINE_2_H
 
@@ -352,48 +247,6 @@ operator<<(Postscript_file_stream& w, const Ray_2<R>& r)
   return w;
 }
 
-template< class R >
-Postscript_file_stream&
-operator>>(Postscript_file_stream& w, Ray_2<R>& r)
-{
-  typedef  typename R::RT  RT;
-  leda_segment l_s;
-  leda_drawing_mode save = w.set_mode(leda_xor_mode);
-  if ( w.read( l_s))
-  {
-      double x1 = l_s.xcoord1();
-      double y1 = l_s.ycoord1();
-      double x2 = l_s.xcoord2();
-      double y2 = l_s.ycoord2();
-      w.set_mode( save);
-      r = Ray_2<R>(Point_2<R>( RT(x1), RT(y1)),
-                        Point_2<R>( RT(x2), RT(y2)));
-      w << r;
-  }
-  else
-  {
-      w.set_mode( save);
-  }
-  return w;
-}
-
-template< class R >
-Postscript_file_stream&
-read(Postscript_file_stream& w, Ray_2<R>& r)
-{
-  typedef  typename R::RT  RT;
-  leda_segment l_s;
-  if ( w.read( l_s))
-  {
-      double x1 = l_s.xcoord1();
-      double y1 = l_s.ycoord1();
-      double x2 = l_s.xcoord2();
-      double y2 = l_s.ycoord2();
-      r = Ray_2<R>(Point_2<R>( RT(x1), RT(y1)),
-                        Point_2<R>( RT(x2), RT(y2)));
-  }
-  return w;
-}
 #endif // CGAL_POSTSCRIPT_FILE_STREAM_RAY_2
 #endif //CGAL_RAY_2_H
 
@@ -416,143 +269,6 @@ operator<<(Postscript_file_stream& w, const Triangle_2<R>& t)
   return w;
 }
 
-template< class R >
-Postscript_file_stream&
-operator>>(Postscript_file_stream& w, Triangle_2<R>& t)
-{
-  typedef typename R::RT   RT;
-  double x,y;
-  int key = 0;
-#if ( __LEDA__ < 362 )
-  w.state = 1;
-#else
-  w.set_state( 1);
-#endif // __LEDA__ < ...
-  leda_point first, second, third, p;
-  leda_drawing_mode save = w.set_mode(leda_xor_mode);
-  if ( !( w >> first)) { w.set_mode( save); return w; }
-  int save_but[8];
-  w.std_buttons(save_but);
-  key = w.read_mouse_seg( first.xcoord(), first.ycoord(), x, y);
-  if ( key == MOUSE_BUTTON(3))
-  {
-      w.set_buttons( save_but);
-      w.set_mode( save);
-#if ( __LEDA__ < 362 )
-      w.state = 0;
-#else
-      w.set_state( 0);
-#endif // __LEDA__ < ...
-      return w;
-  }
-  else
-  {
-      w << leda_segment( first.xcoord(), first.ycoord(), x, y);
-      second = leda_point( x, y);
-  }
-  key = w.read_mouse_seg( second.xcoord(), second.ycoord(), x, y);
-  if ( key == MOUSE_BUTTON(3))
-  {
-      w << leda_segment( first, second );
-      w.set_buttons( save_but);
-      w.set_mode( save);
-#if ( __LEDA__ < 362 )
-      w.state = 0;
-#else
-      w.set_state( 0);
-#endif // __LEDA__ < ...
-      return w;
-  }
-  else
-  {
-      w << leda_segment( second.xcoord(), second.ycoord(), x, y);
-      third = leda_point( x, y);
-  }
-  w << leda_segment( first, second );
-  w << leda_segment( second, third );
-  double x0 = first.xcoord();
-  double y0 = first.ycoord();
-  double x1 = second.xcoord();
-  double y1 = second.ycoord();
-  double x2 = third.xcoord();
-  double y2 = third.ycoord();
-  w.set_mode( save);
-  w.draw_segment(x0,y0, x1, y1);
-  w.draw_segment(x1,y1, x2, y2);
-  w.draw_segment(x2,y2, x0, y0);
-
-  t = Triangle_2<R>(Point_2<R>( RT(x0), RT(y0)),
-                         Point_2<R>( RT(x1), RT(y1)),
-                         Point_2<R>( RT(x2), RT(y2)));
-  return w;
-}
-
-template< class R >
-Postscript_file_stream&
-read(Postscript_file_stream& w, Triangle_2<R>& t)
-{
-  typedef typename R::RT   RT;
-  double x,y;
-  int key = 0;
-#if ( __LEDA__ < 362 )
-  w.state = 1;
-#else
-  w.set_state( 1);
-#endif // __LEDA__ < ...
-  leda_point first, second, third, p;
-  leda_drawing_mode save = w.set_mode(leda_xor_mode);
-  if ( !( w >> first)) { w.set_mode( save); return w; }
-  int save_but[8];
-  w.std_buttons(save_but);
-  key = w.read_mouse_seg( first.xcoord(), first.ycoord(), x, y);
-  if ( key == MOUSE_BUTTON(3))
-  {
-      w.set_buttons( save_but);
-      w.set_mode( save);
-#if ( __LEDA__ < 362 )
-      w.state = 0;
-#else
-      w.set_state( 0);
-#endif // __LEDA__ < ...
-      return w;
-  }
-  else
-  {
-      w << leda_segment( first.xcoord(), first.ycoord(), x, y);
-      second = leda_point( x, y);
-  }
-  key = w.read_mouse_seg( second.xcoord(), second.ycoord(), x, y);
-  if ( key == MOUSE_BUTTON(3))
-  {
-      w << leda_segment( first, second );
-      w.set_buttons( save_but);
-      w.set_mode( save);
-#if ( __LEDA__ < 362 )
-      w.state = 0;
-#else
-      w.set_state( 0);
-#endif // __LEDA__ < ...
-      return w;
-  }
-  else
-  {
-      w << leda_segment( second.xcoord(), second.ycoord(), x, y);
-      third = leda_point( x, y);
-  }
-  w << leda_segment( first, second );
-  w << leda_segment( second, third );
-  double x0 = first.xcoord();
-  double y0 = first.ycoord();
-  double x1 = second.xcoord();
-  double y1 = second.ycoord();
-  double x2 = third.xcoord();
-  double y2 = third.ycoord();
-  w.set_mode( save);
-  t = Triangle_2<R>(Point_2<R>( RT(x0), RT(y0)),
-                         Point_2<R>( RT(x1), RT(y1)),
-                         Point_2<R>( RT(x2), RT(y2)));
-  return w;
-}
 #endif // CGAL_POSTSCRIPT_FILE_STREAM_TRIANGLE_2
 #endif // CGAL_TRIANGLE_2_H
 
@@ -570,88 +286,6 @@ operator<<(Postscript_file_stream& w, const Circle_2<R>& c)
   return w;
 }
 
-template< class R >
-Postscript_file_stream&
-operator>>(Postscript_file_stream& w, Circle_2<R>& c)
-{
-  typedef  typename R::RT  RT;
-  double x,y;
-  int key = 0;
-#if ( __LEDA__ < 362 )
-  w.state = 1;
-#else
-  w.set_state( 1);
-#endif // __LEDA__ < ...
-  leda_point p;
-  leda_drawing_mode save = w.set_mode(leda_xor_mode);
-  if ( !( w.read( p))) { w.set_mode( save); return w; }
-  double cx = p.xcoord();
-  double cy = p.ycoord();
-  Point_2<R> center = Point_2<R>( RT(cx), RT(cy));
-  int save_but[8];
-  w.std_buttons(save_but);
-  key = w.read_mouse_circle(cx, cy, x, y);
-  if ( key == MOUSE_BUTTON(3))
-  {
-      w.set_buttons( save_but);
-      w.set_mode( save);
-#if ( __LEDA__ < 362 )
-      w.state = 0;
-#else
-      w.set_state( 0);
-#endif // __LEDA__ < ...
-      return w;
-  }
-  double dx = x - cx;
-  double dy = y - cy;
-  double sqr = dx*dx+dy*dy;
-  w.set_mode( save);
-  w.set_buttons( save_but);
-  w.draw_circle(cx, cy , sqrt(sqr));
-  c = Circle_2<R>(center, RT(sqr));
-  return w;
-}
-
-template< class R >
-Postscript_file_stream&
-read(Postscript_file_stream& w, Circle_2<R>& c)
-{
-  typedef  typename R::RT  RT;
-  double x,y;
-  int key = 0;
-#if ( __LEDA__ < 362 )
-  w.state = 1;
-#else
-  w.set_state( 1);
-#endif // __LEDA__ < ...
-  leda_point p;
-  leda_drawing_mode save = w.set_mode(leda_xor_mode);
-  if ( !( w.read( p))) { w.set_mode( save); return w; }
-  double cx = p.xcoord();
-  double cy = p.ycoord();
-  Point_2<R> center = Point_2<R>( RT(cx), RT(cy));
-  int save_but[8];
-  w.std_buttons(save_but);
-  key = w.read_mouse_circle(cx, cy, x, y);
-  if ( key == MOUSE_BUTTON(3))
-  {
-      w.set_buttons( save_but);
-      w.set_mode( save);
-#if ( __LEDA__ < 362 )
-      w.state = 0;
-#else
-      w.set_state( 0);
-#endif // __LEDA__ < ...
-      return w;
-  }
-  double dx = x - cx;
-  double dy = y - cy;
-  double sqr = dx*dx+dy*dy;
-  w.set_mode( save);
-  w.set_buttons( save_but);
-  c = Circle_2<R>(center, RT(sqr));
-  return w;
-}
 #endif // CGAL_POSTSCRIPT_FILE_STREAM_CIRCLE_2
 #endif // CGAL_CIRCLE_2_H
 
@@ -673,80 +307,6 @@ operator<<(Postscript_file_stream& w, const Iso_rectangle_2<R>& r)
   return w;
 }
 
-template< class R >
-Postscript_file_stream&
-operator>>(Postscript_file_stream& w, Iso_rectangle_2<R>& r)
-{
-  typedef typename R::RT    RT;
-  double x,y;
-  int key = 0;
-#if ( __LEDA__ < 362 )
-  w.state = 1;
-#else
-  w.set_state( 1);
-#endif // __LEDA__ < ...
-  leda_point first, second;
-  leda_drawing_mode save = w.set_mode(leda_xor_mode);
-  if ( !( w.read( first))) { w.set_mode( save); return w; }
-  int save_but[8];
-  w.std_buttons(save_but);
-  key = w.read_mouse_rect( first.xcoord(), first.ycoord(), x, y);
-  if ( key == MOUSE_BUTTON(3))
-  {
-      w.set_buttons( save_but);
-      w.set_mode( save);
-#if ( __LEDA__ < 362 )
-      w.state = 0;
-#else
-      w.set_state( 0);
-#endif // __LEDA__ < ...
-      return w;
-  }
-  r = Iso_rectangle_2<R>(Point_2<R>( RT(first.xcoord()),
-                                               RT(first.ycoord())),
-                              Point_2<R>( RT(x), RT(y)));
-  w.set_mode( save);
-  w.draw_rectangle( first.xcoord(), first.ycoord(), x, y);
-  w.set_buttons( save_but);
-  return w;
-}
-
-template< class R >
-Postscript_file_stream&
-read(Postscript_file_stream& w, Iso_rectangle_2<R>& r)
-{
-  typedef typename R::RT    RT;
-  double x,y;
-  int key = 0;
-#if ( __LEDA__ < 362 )
-  w.state = 1;
-#else
-  w.set_state( 1);
-#endif // __LEDA__ < ...
-  leda_point first, second;
-  leda_drawing_mode save = w.set_mode(leda_xor_mode);
-  if ( !( w.read( first))) { w.set_mode( save); return w; }
-  int save_but[8];
-  w.std_buttons(save_but);
-  key = w.read_mouse_rect( first.xcoord(), first.ycoord(), x, y);
-  if ( key == MOUSE_BUTTON(3))
-  {
-      w.set_buttons( save_but);
-      w.set_mode( save);
-#if ( __LEDA__ < 362 )
-      w.state = 0;
-#else
-      w.set_state( 0);
-#endif // __LEDA__ < ...
-      return w;
-  }
-  r = Iso_rectangle_2<R>(Point_2<R>( RT(first.xcoord()),
-                                               RT(first.ycoord())),
-                              Point_2<R>( RT(x), RT(y)));
-  w.set_mode( save);
-  w.set_buttons( save_but);
-  return w;
-}
 #endif // CGAL_POSTSCRIPT_FILE_STREAM_ISO_RECTANGLE_2
 #endif // CGAL_ISO_RECTANGLE_2_H
 

@@ -26,6 +26,7 @@
 
 #if defined(CGAL_USE_LEDA)
 #include <CGAL/LEDA_basic.h>
+#if CGAL_LEDA_VERSION < 500
 #include <LEDA/tuple.h>
 #include <LEDA/slist.h>
 #include <LEDA/list.h>
@@ -33,6 +34,15 @@
 #include <LEDA/map2.h>
 #include <LEDA/sortseq.h>
 #include <LEDA/p_queue.h>
+#else
+#include <LEDA/core/tuple.h>
+#include <LEDA/core/slist.h>
+#include <LEDA/core/list.h>
+#include <LEDA/core/map.h>
+#include <LEDA/core/map2.h>
+#include <LEDA/core/sortseq.h>
+#include <LEDA/core/p_queue.h>
+#endif
 #include <utility>
 #include <sstream>
 

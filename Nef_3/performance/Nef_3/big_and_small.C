@@ -36,7 +36,7 @@ typedef CGAL::Extended_homogeneous<RT> Kernel;
 #endif
 
 #ifdef CGAL_NEF3_USE_LEDA_RATIONAL
-#include <LEDA/leda_rational.h>
+#include <CGAL/leda_rational.h>
 typedef leda_rational NT;
 #endif
 
