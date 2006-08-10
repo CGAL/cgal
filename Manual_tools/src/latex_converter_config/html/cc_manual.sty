@@ -250,10 +250,12 @@
 % Format exernal file:  #1  the file name.
 %\newcommand{\ccIncludeExampleCode}[1]{\ccIncludeVerbatim{#1}}
 \newcommand{\ccIncludeExampleCode}[1]{%
+\begin{alltt}%
+\textbf{File: }\lcRawHtml{<a href="}\lciOutputUppath\lcRawHtml{../../}\input{#1.filename}\lcRawHtml{">}%
+\input{#1.filename}%
+\lcRawHtml{</a>}%
+\end{alltt}%
 \ccIncludeVerbatim{#1.noheader}
-\begin{alltt}
-\textbf{File: }\input{#1.filename}
-\end{alltt}
 }
 
 % +--------------------------------------------------------------------------
