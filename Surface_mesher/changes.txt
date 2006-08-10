@@ -2,6 +2,7 @@
 - added a public member function
     Bbox bbox() const;
   to Polyhedral_surface_3<>.
+- make make_surface_mesh() take the surface by reference, to avoid copies.
 
 9 August 2006 Laurent Rineau
 - documentation of Surface_mesh_default_triangulation_3

@@ -126,7 +126,7 @@ template <typename C2T3,
 	  typename Criteria,
 	  typename Tag>
 void make_surface_mesh(C2T3& c2t3,
-                       Surface surface,
+                       Surface& surface,
                        Criteria criteria,
                        Tag tag,
                        int initial_number_of_points = 20)  // TODO: document
@@ -143,7 +143,7 @@ template <typename C2T3,
           typename Criteria,
           typename Tag>
 void make_surface_mesh(C2T3& c2t3,
-                       typename SurfaceMeshTraits_3::Surface_3 surface,
+                       typename SurfaceMeshTraits_3::Surface_3& surface,
 		       SurfaceMeshTraits_3 surface_mesh_traits,
                        Criteria criteria,
                        Tag,
