@@ -1,11 +1,8 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-// #include <CGAL/Simple_cartesian.h>
-
-#include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Surface_mesh_default_triangulation_3.h>
+#include <CGAL/Complex_2_in_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
-#include <CGAL/Implicit_surface_3.h>
-
 #include <CGAL/Gray_level_image_3.h>
+#include <CGAL/Implicit_surface_3.h>
 
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
 
@@ -18,23 +15,18 @@
 
 /////////////// Types /////////////// 
 
-struct Kernel : public CGAL::Exact_predicates_inexact_constructions_kernel {};
-
-// struct Kernel :public CGAL::Filtered_kernel<CGAL::Simple_cartesian<double> > {};
-
-typedef Kernel::Point_3 Point_3;
-typedef Kernel::Sphere_3 Sphere_3;
-typedef Kernel::FT FT;
-
-typedef CGAL::Surface_mesh_vertex_base_3<Kernel> Vb;
-typedef CGAL::Surface_mesh_cell_base_3<Kernel> Cb;
-typedef CGAL::Triangulation_data_structure_3<Vb, Cb> Tds;
-typedef CGAL::Delaunay_triangulation_3<Kernel, Tds> Tr;
+typedef CGAL::Surface_mesh_default_triangulation_3 Tr;
 typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr> C2t3;
+
+typedef Tr::Geom_traits Gt;
+
+typedef Gt::Point_3 Point_3;
+typedef Gt::Sphere_3 Sphere_3;
+typedef Gt::FT FT;
 
 typedef CGAL::Implicit_function_wrapper<FT, Point_3> Implicit_function_wrapper;
 
-typedef CGAL::Implicit_surface_3<Kernel, Implicit_function_wrapper> Surface;
+typedef CGAL::Implicit_surface_3<Gt, Implicit_function_wrapper> Surface;
 
 typedef CGAL::Gray_level_image_3<FT, Point_3> Gray_image;
 

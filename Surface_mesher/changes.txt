@@ -3,6 +3,10 @@
     Bbox bbox() const;
   to Polyhedral_surface_3<>.
 - make make_surface_mesh() take the surface by reference, to avoid copies.
+- in demo/Surface_mesher:
+   - merge parameters.* with the Mesh_3 version,
+   - use <CGAL/Surface_mesh_default_triangulation_3.h>
+   - new polyhedron_remesher.cpp
 
 9 August 2006 Laurent Rineau
 - documentation of Surface_mesh_default_triangulation_3
