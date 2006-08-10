@@ -99,11 +99,11 @@ namespace CGAL {
       }
 
       Point_3 center() const {
-        return get(base).first.center();
+        return diametral_sphere().center();
       }
 
       FT squared_radius() const {
-        return get(base).first.squared_radius();
+        return diametral_sphere().squared_radius();
       }
 
       const Sphere_3& diametral_sphere() const {
@@ -117,8 +117,9 @@ namespace CGAL {
         typedef CGAL::Interval_nt<false> Interval;
         CGAL::Interval_nt<false>::Protector ip;
         const Plane_3 &plane = supporting_plane();
-        const Point_3 &p = center();
-        const FT &sq_r = squared_radius();
+        const Sphere_3 &s = diametral_sphere();
+        const Point_3 &p = s.center();
+        const FT &sq_r = s.squared_radius();
         const Interval a = CGAL::to_interval(plane.a());
         const Interval b = CGAL::to_interval(plane.b());
         const Interval c = CGAL::to_interval(plane.c());

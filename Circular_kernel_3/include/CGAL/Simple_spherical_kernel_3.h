@@ -12,8 +12,8 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 
-#ifndef CGAL_SPHERICAL_KERNEL_3_H
-#define CGAL_SPHERICAL_KERNEL_3_H
+#ifndef CGAL_SIMPLE_SPHERICAL_KERNEL_3_H
+#define CGAL_SIMPLE_SPHERICAL_KERNEL_3_H
 
 #include <CGAL/Circular_kernel_3/Circular_arc_point_3.h>
 #include <CGAL/Circular_arc_point_3.h>
@@ -23,6 +23,9 @@
 
 #include <CGAL/Circular_kernel_3/Line_arc_3.h>
 #include <CGAL/Line_arc_3.h>
+
+#include <CGAL/Circular_kernel_3/Circular_arc_3.h>
+#include <CGAL/Circular_arc_3.h>
 
 #include <CGAL/Circular_kernel_3/function_objects_polynomial_sphere.h>
 
@@ -40,6 +43,7 @@ namespace CGAL {
 	typedef CGALi::Circular_arc_point_3<SphericalKernel>  Circular_arc_point_3;
         typedef CGALi::Circle_3<SphericalKernel>  Circle_3;
         typedef CGALi::Line_arc_3<SphericalKernel>  Line_arc_3;
+        typedef CGALi::Circular_arc_3<SphericalKernel>  Circular_arc_3;
 
         // The mecanism that allows to specify reference-counting or not.
         template < typename T >
@@ -92,4 +96,4 @@ namespace CGAL {
 
 } // namespace CGAL
 
-#endif // CGAL_SPHERICAL_KERNEL_3_H
+#endif // CGAL_SIMPLE_SPHERICAL_KERNEL_3_H

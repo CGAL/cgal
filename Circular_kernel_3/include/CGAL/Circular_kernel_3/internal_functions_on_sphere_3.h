@@ -148,6 +148,19 @@ namespace CGAL {
              (l1.higher_xyz_extremity() == l2.higher_xyz_extremity());
     }
 
+    template< class SK>
+    bool
+    non_oriented_equal( const typename SK::Circular_arc_3 &c1,
+                        const typename SK::Circular_arc_3 &c2)
+    {
+      if(!non_oriented_equal<SK>(c1.supporting_circle(),
+                                 c2.supporting_circle())) return false;
+      if(c1.rep().is_full() && c2.rep().is_full())
+        return true;
+      return (c1.source() == c2.source()) &&
+             (c1.target() == c2.target());
+    }
+
     template < class SK>
     inline
     typename SK::Plane_3
@@ -522,6 +535,54 @@ namespace CGAL {
     template <class SK,class OutputIterator>
     OutputIterator
     z_extremal_points(const typename SK::Sphere_3 & c, OutputIterator res)
+    {
+      typedef typename SK::Algebraic_kernel   AK;
+      return AK().z_critical_points_object()(typename SK::Get_equation()(c),res);
+    }
+
+    template <class SK>
+    typename SK::Circular_arc_point_3
+    x_extremal_point(const typename SK::Circle_3 & c, bool i)
+    {
+      typedef typename SK::Algebraic_kernel   AK;
+      return AK().x_critical_points_object()(typename SK::Get_equation()(c),i);
+    }
+
+    template <class SK,class OutputIterator>
+    OutputIterator
+    x_extremal_points(const typename SK::Circle_3 & c, OutputIterator res)
+    {
+      typedef typename SK::Algebraic_kernel   AK;
+      return AK().x_critical_points_object()(typename SK::Get_equation()(c),res);
+    }
+
+    template <class SK>
+    typename SK::Circular_arc_point_3
+    y_extremal_point(const typename SK::Circle_3 & c, bool i)
+    {
+      typedef typename SK::Algebraic_kernel   AK;
+      return AK().y_critical_points_object()(typename SK::Get_equation()(c),i);
+    }
+
+    template <class SK,class OutputIterator>
+    OutputIterator
+    y_extremal_points(const typename SK::Circle_3 & c, OutputIterator res)
+    {
+      typedef typename SK::Algebraic_kernel   AK;
+      return AK().y_critical_points_object()(typename SK::Get_equation()(c),res);
+    }
+
+    template <class SK>
+    typename SK::Circular_arc_point_3
+    z_extremal_point(const typename SK::Circle_3 & c, bool i)
+    {
+      typedef typename SK::Algebraic_kernel   AK;
+      return AK().z_critical_points_object()(typename SK::Get_equation()(c),i);
+    }
+
+    template <class SK,class OutputIterator>
+    OutputIterator
+    z_extremal_points(const typename SK::Circle_3 & c, OutputIterator res)
     {
       typedef typename SK::Algebraic_kernel   AK;
       return AK().z_critical_points_object()(typename SK::Get_equation()(c),res);

@@ -1,0 +1,235 @@
+// Copyright (c) 2005  INRIA Sophia-Antipolis (France) 
+// All rights reserved.
+//
+// Authors : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
+//           Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
+//           Julien Hazebrouck
+//           Damien Leroy
+// 
+// Partially supported by the IST Programme of the EU as a Shared-cost
+// RTD (FET Open) Project under Contract No  IST-2000-26473 
+// (ECG - Effective Computational Geometry for Curves and Surfaces) 
+// and a STREP (FET Open) Project under Contract No  IST-006413 
+// (ACS -- Algorithms for Complex Shapes)
+
+#ifndef CGAL_SPHERICAL_KERNEL_CIRCULAR_ARC_3_H
+#define CGAL_SPHERICAL_KERNEL_CIRCULAR_ARC_3_H
+
+#include<CGAL/utility.h>
+
+namespace CGAL {
+  namespace CGALi{
+    template <class SK> class Circular_arc_3 {
+
+      typedef typename SK::Plane_3              Plane_3;
+      typedef typename SK::Circle_3             Circle_3;
+      typedef typename SK::Sphere_3             Sphere_3;
+      typedef typename SK::Point_3              Point_3;
+      typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
+      typedef typename SK::Line_3               Line_3;
+      typedef typename SK::FT                   FT;
+
+    private:
+      typedef Triple<Circle_3, Circular_arc_point_3, 
+                               Circular_arc_point_3> Rep;
+      typedef typename SK::template Handle<Rep>::type Base;
+
+      Base base;
+      mutable unsigned char _full;
+
+    public:
+      Circular_arc_3()
+      : _full(0)
+      {}
+
+      Circular_arc_3(const Circle_3 &c, 
+                     const Circular_arc_point_3 &s,
+                     const Circular_arc_point_3 &t) 
+      : _full(0)
+      {
+        // l must pass through s and t, and s != t
+        CGAL_kernel_precondition(SK().has_on_3_object()(c,s));
+        CGAL_kernel_precondition(SK().has_on_3_object()(c,t));
+        CGAL_kernel_precondition(s != t);
+        base = Rep(c,s,t);
+      }
+
+      Circular_arc_3(const Circle_3 &c, 
+                     const Point_3 &s,
+                     const Circular_arc_point_3 &t) 
+      : _full(0)
+      {
+        // l must pass through s and t, and s != t
+        CGAL_kernel_precondition(SK().has_on_3_object()(c,s));
+        CGAL_kernel_precondition(SK().has_on_3_object()(c,t));
+        CGAL_kernel_precondition(Circular_arc_point_3(s) != t);
+        base = Rep(c,s,t);
+      }
+
+      Circular_arc_3(const Circle_3 &c, 
+                     const Circular_arc_point_3 &s,
+                     const Point_3 &t) 
+      : _full(0)
+      {
+        // l must pass through s and t, and s != t
+        CGAL_kernel_precondition(SK().has_on_3_object()(c,s));
+        CGAL_kernel_precondition(SK().has_on_3_object()(c,t));
+        CGAL_kernel_precondition(s != Circular_arc_point_3(t));
+        base = Rep(c,s,t);
+      }
+
+      Circular_arc_3(const Circle_3 &c, 
+                     const Point_3 &s,
+                     const Point_3 &t) 
+      : _full(0)
+      {
+        // l must pass through s and t, and s != t
+        CGAL_kernel_precondition(SK().has_on_3_object()(c,s));
+        CGAL_kernel_precondition(SK().has_on_3_object()(c,t));
+        CGAL_kernel_precondition(Circular_arc_point_3(s) != 
+                                 Circular_arc_point_3(t));
+        base = Rep(c,s,t);
+      }
+
+      Circular_arc_3(const Circle_3 &c)
+      : _full(1)
+      {
+        const Plane_3 &p = c.supporting_plane();
+        if(is_zero(p.b()) && is_zero(p.c())) {
+          const Circular_arc_point_3 v = 
+	    SphericalFunctors::y_extremal_point<SK>(c,true);
+          base = Rep(c,v,v);
+        } else {
+          const Circular_arc_point_3 v = 
+	    SphericalFunctors::x_extremal_point<SK>(c,true);
+          base = Rep(c,v,v);
+        }
+      }
+
+      /*
+      Those constructors will be done later
+      when the concept of the orientation will be perfect
+
+      Circular_arc_3(const Circle_3 &c, 
+                     const Sphere_3 &s,
+                     bool less_xyz_first = true) 
+      {
+      }
+
+      Circular_arc_3(const Circle_3 &c, 
+                     const Plane_3 &s,
+                     bool less_xyz_first = true) 
+      {
+      }
+      */
+
+      Circular_arc_3(const Circle_3 &c, 
+                     const Sphere_3 &s1, bool less_xyz_s1,
+                     const Sphere_3 &s2, bool less_xyz_s2) 
+      {
+         std::vector<Object> sols1, sols2;
+         // The spheres must not include the circle
+         CGAL_kernel_precondition(!SK().has_on_3_object()(s1,c));
+         CGAL_kernel_precondition(!SK().has_on_3_object()(s2,c));
+         SK().intersect_3_object()(c, s1, std::back_inserter(sols1));
+         SK().intersect_3_object()(c, s2, std::back_inserter(sols2));
+         std::pair<typename SK::Circular_arc_point_3, unsigned> pair1, pair2;
+         // l must intersect s1 and s2
+         CGAL_kernel_precondition(sols1.size() > 0);
+         CGAL_kernel_precondition(sols2.size() > 0);
+         assign(pair1,sols1[(sols1.size()==1)?(0):(less_xyz_s1?0:1)]);
+         assign(pair2,sols2[(sols2.size()==1)?(0):(less_xyz_s2?0:1)]);
+         // the source and target must be different
+         CGAL_kernel_precondition(pair1.first != pair2.first);
+         *this = Circular_arc_3(c, pair1.first, pair2.first);
+      }
+
+      Circular_arc_3(const Circle_3 &c, 
+                     const Plane_3 &p1, bool less_xyz_p1,
+                     const Plane_3 &p2, bool less_xyz_p2) 
+      {
+         std::vector<Object> sols1, sols2;
+         // The planes must not include the circle
+         CGAL_kernel_precondition(!SK().has_on_3_object()(p1,c));
+         CGAL_kernel_precondition(!SK().has_on_3_object()(p2,c));
+         SK().intersect_3_object()(c, p1, std::back_inserter(sols1));
+         SK().intersect_3_object()(c, p2, std::back_inserter(sols2));
+         std::pair<typename SK::Circular_arc_point_3, unsigned> pair1, pair2;
+         // l must intersect s1 and s2
+         CGAL_kernel_precondition(sols1.size() > 0);
+         CGAL_kernel_precondition(sols2.size() > 0);
+         assign(pair1,sols1[(sols1.size()==1)?(0):(less_xyz_p1?0:1)]);
+         assign(pair2,sols2[(sols2.size()==1)?(0):(less_xyz_p2?0:1)]);
+         // the source and target must be different
+         CGAL_kernel_precondition(pair1.first != pair2.first);
+         *this = Circular_arc_3(c, pair1.first, pair2.first);
+      }
+
+      const Circle_3& supporting_circle() const 
+      {
+        return get(base).first;
+      }
+
+      const Circular_arc_point_3& source() const 
+      {
+        return get(base).second;
+      }
+
+      const Circular_arc_point_3& target() const 
+      {
+        return get(base).third;
+      }
+
+      Plane_3 supporting_plane() const {
+        return supporting_circle().supporting_plane();
+      }
+
+      Point_3 center() const {
+        return supporting_circle().center();
+      }
+
+      FT squared_radius() const {
+        return supporting_circle().squared_radius();
+      }
+
+      Sphere_3 diametral_sphere() const {
+        return supporting_circle().diametral_sphere();
+      }
+
+      const bool is_full() const {
+        return _full;
+      }
+
+      // It is of course possible to increase the precision
+      // maybe it will be done after
+      const CGAL::Bbox_3 bbox() const {
+        return supporting_circle().bbox();
+      }
+
+      bool operator==(const Circular_arc_3 &) const;
+      bool operator!=(const Circular_arc_3 &) const;
+
+    };
+
+    template < class SK >
+    CGAL_KERNEL_INLINE
+    bool
+    Circular_arc_3<SK>::operator==(const Circular_arc_3<SK> &t) const
+    {
+      if (CGAL::identical(base, t.base))
+        return true;
+      return CGAL::SphericalFunctors::non_oriented_equal<SK>(*this, t);
+    }
+
+    template < class SK >
+    CGAL_KERNEL_INLINE
+    bool
+    Circular_arc_3<SK>::operator!=(const Circular_arc_3<SK> &t) const
+    {
+      return !(*this == t);
+    }
+
+  }
+}
+
+#endif
