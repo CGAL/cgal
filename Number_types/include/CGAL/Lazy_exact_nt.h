@@ -544,6 +544,9 @@ public :
   Lazy_exact_nt (const CGAL_int(ET) & i)
   { PTR = new Lazy_exact_Int_Cst<ET>(i); }
 
+  Lazy_exact_nt (unsigned i)
+  { PTR = new Lazy_exact_Cst<ET>(i); }
+
   Lazy_exact_nt (const CGAL_double(ET) & d)
   { PTR = new Lazy_exact_Cst<ET>(d); }
 

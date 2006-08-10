@@ -128,6 +128,7 @@ int main ()
   // NT b(a);
   // NT c = b;
   NT d (1.0);
+  NT zzz = 1u;
   NT e = d + d;
   NT z = CGAL::my_min(e,d);
   (void) d; (void) e; (void) z; // Shut up warnings.
