@@ -599,6 +599,13 @@ test_new_3(const R& rep)
   typename R::Is_degenerate_3 is_degenerate
         = rep.is_degenerate_3_object();
   bool tmp32 = is_degenerate(l2);
+       tmp32 = is_degenerate(iso1);
+       tmp32 = is_degenerate(h2);
+       tmp32 = is_degenerate(r2);
+       tmp32 = is_degenerate(s2);
+       tmp32 = is_degenerate(sp2);
+       tmp32 = is_degenerate(t2);
+       tmp32 = is_degenerate(th2);
   (void) tmp32;
 
 

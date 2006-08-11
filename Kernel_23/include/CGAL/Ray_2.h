@@ -120,7 +120,7 @@ public:
 
   bool is_degenerate() const
   {
-    return source() == second_point();
+    return R().is_degenerate_2_object()(*this);
   }
 
   Direction_2

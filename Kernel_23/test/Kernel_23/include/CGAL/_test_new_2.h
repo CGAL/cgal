@@ -524,6 +524,11 @@ test_new_2(const R& rep)
   typename R::Is_degenerate_2 is_degenerate
         = rep.is_degenerate_2_object();
   bool tmp45 = is_degenerate(l2);
+       tmp45 = is_degenerate(r2);
+       tmp45 = is_degenerate(s2);
+       tmp45 = is_degenerate(t2);
+       tmp45 = is_degenerate(c2);
+       tmp45 = is_degenerate(rec2);
 
 
   typename R::Has_on_2 has_on
