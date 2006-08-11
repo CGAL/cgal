@@ -119,9 +119,9 @@ public:
   typedef Weighted_point                      Weighted_point_3;
 
   typedef Side_of_mixed_cell_3<Self>          Side_of_mixed_cell_3;
-  typedef Construct_weighted_circumcenter_3<Self> 
+  typedef CGAL::Construct_weighted_circumcenter_3<Self> 
                                               Construct_weighted_circumcenter_3;
-  typedef Construct_anchor_point_3<Self>      Construct_anchor_point_3;
+  typedef CGAL::Construct_anchor_point_3<Self> Construct_anchor_point_3;
   
  
   
