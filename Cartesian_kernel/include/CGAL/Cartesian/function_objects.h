@@ -1889,16 +1889,16 @@ namespace CartesianKernelFunctors {
     typedef Direction_2                 result_type;
     typedef Arity_tag< 1 >              Arity;
 
-    Direction_2
+    Rep // Direction_2
     operator()(const RT& x, const RT& y) const
     { return Rep(x, y); }
 
-    Direction_2
+    Rep // Direction_2
     operator()(const Vector_2& v) const
     {
       return Rep(v.x(),v.y()); }
 
-    Direction_2
+    Rep // Direction_2
     operator()(const Line_2& l) const
     { return Rep(l.b(), -l.a()); }
 
@@ -1916,7 +1916,7 @@ namespace CartesianKernelFunctors {
       return construct_direction( s.source(), s.target());
     }
 
-    Direction_2
+    Rep // Direction_2
     operator()(const Point_2& p, const Point_2& q) const
     {
       return Rep(q.x() - p.x(), q.y() - p.y());
@@ -1938,24 +1938,24 @@ namespace CartesianKernelFunctors {
     typedef Arity_tag< 1 >    Arity;
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-    Direction_3
+    Rep // Direction_3
     operator()(const RT& x, const RT& y, const RT& z) const
     { return Rep(x, y, z); }
 #endif // CGAL_NO_DEPRECATED_CODE
 
-    Direction_3
+    Rep // Direction_3
     operator()(const Vector_3& v) const
     { return Rep(v); }
 
-    Direction_3
+    Rep // Direction_3
     operator()(const Line_3& l) const
     { return Rep(l); }
 
-    Direction_3
+    Rep // Direction_3
     operator()(const Ray_3& r) const
     { return Rep(r); }
 
-    Direction_3
+    Rep // Direction_3
     operator()(const Segment_3& s) const
     { return Rep(s); }
   };
@@ -2037,7 +2037,7 @@ namespace CartesianKernelFunctors {
     typedef Iso_rectangle_2              result_type;
     typedef Arity_tag< 2 >               Arity;
 
-    Iso_rectangle_2
+    Rep // Iso_rectangle_2
     operator()(const Point_2& p, const Point_2& q, int) const
     {
       // I have to remove the assertions, because of Cartesian_converter.
@@ -2046,7 +2046,7 @@ namespace CartesianKernelFunctors {
       return Rep(p, q, 0);
     }
 
-    Iso_rectangle_2
+    Rep // Iso_rectangle_2
     operator()(const Point_2& p, const Point_2& q) const
     {
       FT minx, maxx, miny, maxy;
@@ -2059,7 +2059,7 @@ namespace CartesianKernelFunctors {
 	         Point_2(maxx, maxy), 0);
     }
 
-    Iso_rectangle_2
+    Rep // Iso_rectangle_2
     operator()(const Point_2 &left,   const Point_2 &right,
                const Point_2 &bottom, const Point_2 &top) const
     {
@@ -2071,7 +2071,7 @@ namespace CartesianKernelFunctors {
 		 Point_2(right.x(), top.y()), 0);
     }
 
-    Iso_rectangle_2
+    Rep // Iso_rectangle_2
     operator()(const RT& min_hx, const RT& min_hy,
 	       const RT& max_hx, const RT& max_hy) const
     {
@@ -2081,7 +2081,7 @@ namespace CartesianKernelFunctors {
 		 Point_2(max_hx, max_hy), 0);
     }
 
-    Iso_rectangle_2
+    Rep // Iso_rectangle_2
     operator()(const RT& min_hx, const RT& min_hy,
 	       const RT& max_hx, const RT& max_hy, const RT& hw) const
     {
@@ -2114,11 +2114,11 @@ namespace CartesianKernelFunctors {
     Construct_line_2() {}
     Construct_line_2(const Construct_point_on_2& c_) : c(c_) {}
 
-    Line_2
+    Rep // Line_2
     operator()(const RT& a, const RT& b, const RT& cc) const
     { return Rep(a, b, cc); }
 
-    Line_2
+    Rep // Line_2
     operator()(const Point_2& p, const Point_2& q) const
     {
       FT a, b, cc;
@@ -2126,7 +2126,7 @@ namespace CartesianKernelFunctors {
       return Rep(a, b, cc);
     }
 
-    Line_2
+    Rep // Line_2
     operator()(const Point_2& p, const Direction_2& d) const
     {
       FT a, b, cc;
@@ -2134,7 +2134,7 @@ namespace CartesianKernelFunctors {
       return Rep(a, b, cc);
     }
 
-    Line_2
+    Rep // Line_2
     operator()(const Point_2& p, const Vector_2& v) const
     {
       FT a, b, cc;
@@ -2142,11 +2142,11 @@ namespace CartesianKernelFunctors {
       return Rep(a, b, cc);
     }
 
-    Line_2
+    Rep // Line_2
     operator()(const Segment_2& s) const
     { return this->operator()(c(s, 0), c(s, 1)); }
 
-    Line_2
+    Rep // Line_2
     operator()(const Ray_2& r) const
     { return this->operator()(c(r, 0), c(r, 1)); }
   };
@@ -2165,23 +2165,23 @@ namespace CartesianKernelFunctors {
     typedef Line_3            result_type;
     typedef Arity_tag< 2 >    Arity;
 
-    Line_3
+    Rep // Line_3
     operator()(const Point_3& p, const Point_3& q) const
     { return Rep(p, Vector_3(p, q)); }
 
-    Line_3
+    Rep // Line_3
     operator()(const Point_3& p, const Direction_3& d) const
     { return operator()(p, Vector_3(d.dx(), d.dy(), d.dz())); }
 
-    Line_3
+    Rep // Line_3
     operator()(const Point_3& p, const Vector_3& v) const
     { return Rep(p, v); }
 
-    Line_3
+    Rep // Line_3
     operator()(const Segment_3& s) const
     { return Rep(s.source(), Vector_3(s.source(), s.target())); }
 
-    Line_3
+    Rep // Line_3
     operator()(const Ray_3& r) const
     { return Rep(r.source(), Vector_3(r.source(), r.second_point())); }
   };
@@ -2405,15 +2405,15 @@ namespace CartesianKernelFunctors {
     typedef Point_2                result_type;
     typedef Arity_tag< 1 >         Arity;
 
-    Point_2
+    Rep // Point_2
     operator()(Origin o) const
     { return Rep(o); }
 
-    Point_2
+    Rep // Point_2
     operator()(const RT& x, const RT& y) const
     { return Rep(x, y); }
 
-    Point_2
+    Rep // Point_2
     operator()(const RT& x, const RT& y, const RT& w) const
     { return Rep(x, y, w); }
 
@@ -2450,18 +2450,13 @@ namespace CartesianKernelFunctors {
     operator()(Origin o) const
     { return Rep(o); }
 
-
-    // Reactivated, as some functors in Cartesian/function_objects.h
-    // need it for constructions
-    //#ifndef CGAL_NO_DEPRECATED_CODE
-    Point_3
+    Rep // Point_3
     operator()(const RT& x, const RT& y, const RT& z) const
     { return Rep(x, y, z); }
 
-    Point_3
+    Rep // Point_3
     operator()(const RT& x, const RT& y, const RT& z, const RT& w) const
     { return Rep(x, y, z, w); }
-    //#endif // CGAL_NO_DEPRECATED_CODE
   };
 
 
@@ -2648,20 +2643,20 @@ namespace CartesianKernelFunctors {
     typedef Vector_2                 result_type;
     typedef Arity_tag< 2 >           Arity;
 
-    Vector_2
+    Rep // Vector_2
     operator()( const Point_2& p, const Point_2& q) const
     { return Rep(q.x() - p.x(), q.y() - p.y()); }
 
-    Vector_2
+    Rep // Vector_2
     operator()( const Origin&, const Point_2& q) const
     { return Rep(q.x(), q.y()); }
 
-    Vector_2
+    Rep // Vector_2
     operator()( const Point_2& p, const Origin& ) const
 
     { return Rep(-p.x(), -p.y()); }
 
-    Vector_2
+    Rep // Vector_2
     operator()( const Direction_2& d ) const
     { return Rep(d.dx(), d.dy()); }
 
@@ -2673,19 +2668,19 @@ namespace CartesianKernelFunctors {
     operator()( const Ray_2& r) const
     { return r.to_vector(); }
 
-    Vector_2
+    Rep // Vector_2
     operator()( const Line_2& l) const
-    { return Vector_2(l.b(), -l.a()); }
+    { return Rep(l.b(), -l.a()); }
 
-    Vector_2
+    Rep // Vector_2
     operator()( Null_vector) const
     { return Rep(FT(0), FT(0)); }
 
-    Vector_2
+    Rep // Vector_2
     operator()( const RT& x, const RT& y) const
     { return Rep(x, y); }
 
-    Vector_2
+    Rep // Vector_2
     operator()( const RT& x, const RT& y, const RT& w) const
     { return Rep(x, y, w); }
   };
@@ -2706,53 +2701,51 @@ namespace CartesianKernelFunctors {
     typedef Vector_3                 result_type;
     typedef Arity_tag< 2 >           Arity;
 
-    Vector_3
+    Rep // Vector_3
     operator()( const Point_3& p, const Point_3& q) const
     {
       return Rep(q.x() - p.x(), q.y() - p.y(), q.z() - p.z());
     }
 
-    Vector_3
+    Rep // Vector_3
     operator()( const Origin&, const Point_3& q) const
     {
       return Rep(q.x(), q.y(), q.z());
     }
 
-    Vector_3
+    Rep // Vector_3
     operator()( const Point_3& p, const Origin&) const
     {
       return Rep(- p.x(), - p.y(), - p.z());
     }
 
-    Vector_3
+    Rep // Vector_3
     operator()( const Direction_3& d) const
     { return d.rep().to_vector(); }
 
-    Vector_3
+    Rep // Vector_3
     operator()( const Segment_3& s) const
     { return s.rep().to_vector(); }
 
-    Vector_3
+    Rep // Vector_3
     operator()( const Ray_3& r) const
     { return r.rep().to_vector(); }
 
-    Vector_3
+    Rep // Vector_3
     operator()( const Line_3& l) const
     { return l.rep().to_vector(); }
 
-    Vector_3
+    Rep // Vector_3
     operator()( const Null_vector&) const
     { return Rep(FT(0), FT(0), FT(0)); }
 
-// #ifndef CGAL_NO_DEPRECATED_CODE
-    Vector_3
+    Rep // Vector_3
     operator()( const RT& x, const RT& y, const RT& z) const
     { return Rep(x, y, z); }
 
-    Vector_3
+    Rep // Vector_3
     operator()( const RT& x, const RT& y, const RT& z, const RT& w) const
     { return Rep(x, y, z, w); }
-// #endif // CGAL_NO_DEPRECATED_CODE
   };
 
   template <typename K>
