@@ -97,22 +97,22 @@ CGAL_BEGIN_NAMESPACE
 
 template <class MixedComplexTraits_3> 
 class Skin_surface_3 {
-  typedef MixedComplexTraits_3             Gt;
+  typedef MixedComplexTraits_3            Gt;
   typedef Skin_surface_3<Gt>              Self;
 public:
-  typedef MixedComplexTraits_3             Geometric_traits;
+  typedef MixedComplexTraits_3            Geometric_traits;
   typedef typename Gt::Weighted_point     Weighted_point;
   typedef typename Weighted_point::Weight RT;
   // NGHK:: added for the Delaunay mesher
-  typedef typename Gt::Sphere_3           Sphere_3;
-private:
+  typedef typename Gt::Sphere_3           Sphere;
   typedef typename Weighted_point::Point  Bare_point;
+  typedef typename Gt::Vector_3           Vector;
   
   typedef Regular_triangulation_3<Gt>     Regular;
 
   typedef Exact_predicates_inexact_constructions_kernel     Filtered_kernel;
   typedef Skin_surface_quadratic_surface_3<Filtered_kernel> 
-                                                 Filtered_quadratic_surface;
+                                                         Quadratic_surface;
 public:
   typedef typename Regular::Vertex_handle                Vertex_handle;
   typedef typename Regular::Edge                         Edge;
@@ -349,10 +349,11 @@ public:
     Mixed_complex_traits_3<K> traits(gt.get_shrink());
     
     typename K::Point_3 p = mc_triangulator->location(vh, traits);
-    return sign(vh->first, p);
+
+    return construct_surface(vh->first, K()).sign(p);
+    
   }
-  template< class Point >
-  Sign sign(const Simplex &sim, const Point &p) const {
+  Sign sign(const Simplex &sim, const Bare_point &p) const {
     try
     {
       CGAL_PROFILER(std::string("NGHK: calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
@@ -381,43 +382,29 @@ public:
     return 
       construct_surface(sim, typename Geometric_traits::Kernel()).value(p);
   }
-  template< class Point >
-  typename Point::R::Vector_3
-  normal(const Point &p) const {
-    typedef typename Point::R K;
-    Cartesian_converter<K, typename Geometric_traits::Bare_point::R> converter;
-    
-    return construct_surface(locate_mixed(converter(p)),
-			     typename Point::R()).gradient(p);
+  Vector
+  normal(const Bare_point &p) const {
+    return construct_surface(locate_mixed(p)).gradient(p);
   }
-  template< class Point >
-  typename Point::R::Vector_3
-  normal(const Simplex &sim, const Point &p) const {
-    return construct_surface(sim, typename Point::R()).normal(p);
+  Vector
+  normal(const Simplex &sim, const Bare_point &p) const {
+    return construct_surface(sim).normal(p);
   }
 
-  template < class Point >
   void intersect(const CMCT_Vertex_handle vh1,
 		 const CMCT_Vertex_handle vh2,
-		 Point &p) const {
-    typedef typename Point::R            K;
-    typedef Mixed_complex_traits_3<K>    Traits;
-
-    Cartesian_converter<K, typename Geometric_traits::Bare_point::R> converter;
-    Traits traits(gt.get_shrink());
-      
-    Point p1 = mc_triangulator->location(vh1, traits);
-    Point p2 = mc_triangulator->location(vh2, traits);
-    Simplex s1 = locate_mixed(converter(p1), vh1->first);
-    Simplex s2 = locate_mixed(converter(p2), vh2->first);
+		 Bare_point &p) const {
+    Bare_point p1 = mc_triangulator->location(vh1, gt);
+    Bare_point p2 = mc_triangulator->location(vh2, gt);
+    Simplex s1 = vh1->first;
+    Simplex s2 = vh2->first;
     intersect(p1,p2, s1,s2, p);
   }
 
-  template < class Point >
-  void intersect(Point &p1, Point &p2, 
+  void intersect(Bare_point &p1, Bare_point &p2, 
 		 Simplex &s1, Simplex &s2,
-		 Point &p) const {
-    typedef typename Point::R  Traits;
+		 Bare_point &p) const {
+    typedef typename Bare_point::R  Traits;
     typedef typename Traits::RT RT;
     Cartesian_converter<Traits, 
                         typename Geometric_traits::Bare_point::R> converter;
@@ -525,6 +512,10 @@ public:
     intersect(p1, p2, sim, sim, p);
   }
 
+  Quadratic_surface
+  construct_surface(const Simplex &sim) const {
+    return construct_surface(sim, typename Geometric_traits::Kernel());
+  }
   template< class Traits >
   Skin_surface_quadratic_surface_3<Traits> 
   construct_surface(const Simplex &sim, const Traits &traits) const {
@@ -588,7 +579,7 @@ public:
   
 
   // NGHK: added for the (Delaunay) surface mesher, document
-  Sphere_3 bounding_sphere() const {
+  Sphere bounding_sphere() const {
     return _bounding_sphere;
   }
   RT squared_error_bound() const {
@@ -626,12 +617,12 @@ private:
   Gt gt;
 //   Triangulated_mixed_complex _tmc;
   bool verbose;
-  Sphere_3 _bounding_sphere;
+  Sphere _bounding_sphere;
   mutable Random rng;
 
   // We want to construct this object later (the pointer):
   CMCT *mc_triangulator;
-//   std::map<Simplex, Filtered_quadratic_surface> filtered_quadr_surfaces;
+//   std::map<Simplex, Quadratic_surface> filtered_quadr_surfaces;
 };
 
 template <class MixedComplexTraits_3> 
@@ -677,7 +668,7 @@ construct_bounding_box(Regular &regular)
       Bare_point(mid.x(),mid.y(),bbox.zmin()-(dx+dy+dr)/gt.get_shrink()),-1));
 
     // Set the bounding sphere for the Delaunay mesher
-    _bounding_sphere = Sphere_3(mid, dr*dr+1);
+    _bounding_sphere = Sphere(mid, dr*dr+1);
   }
 }
 

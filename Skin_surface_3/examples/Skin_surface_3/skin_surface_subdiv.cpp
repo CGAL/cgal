@@ -7,11 +7,6 @@
 #include <CGAL/subdivide_skin_surface_mesh_3.h>
 #include <list>
 
-
-// NGHK: remove later
-#include <fstream>
-#include "skin_surface_writer.h"
-
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Mixed_complex_traits_3<K>                     Traits;
 typedef CGAL::Skin_surface_3<Traits>                        Skin_surface_3;
@@ -33,18 +28,7 @@ int main(int argc, char *argv[]) {
   Polyhedron p;
   CGAL::mesh_skin_surface_3(skin_surface, p);
 
-  {
-    std::ofstream out("mesh.off");
-    write_polyhedron_with_normals(p, skin_surface, out);
-  }
-  
   CGAL::subdivide_skin_surface_mesh_3(p, skin_surface);
-
-
-  { // NGHK: remove later
-    std::ofstream out("subdiv.off");
-    write_polyhedron_with_normals(p, skin_surface, out);
-  }
 
   return 0;
 }

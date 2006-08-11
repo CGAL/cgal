@@ -37,6 +37,8 @@ public:
   typedef typename HalfedgeDS::Traits::Point_3         HDS_point;
   typedef typename HDS_point::R::RT                    HDS_RT;
 
+  typedef typename SkinSurface_3::Bare_point           Skin_point;
+
   Marching_tetrahedra_traits_skin_surface_3(const SkinSurface_3 &ss_3) 
     : ss_3(ss_3) {}
 
@@ -46,9 +48,11 @@ public:
   }
   HDS_point intersection(Cell_iterator const ch, int i, int j) const {
     // Precondition: ch is not an infinite cell: their surface is not set
-    HDS_point p;
+    Skin_point p;
     ss_3.intersect(ch->vertex(i), ch->vertex(j), p);
-    return p;
+    
+    return 
+      Cartesian_converter<typename Skin_point::R, typename HDS_point::R>()(p);
   }
 
   const SkinSurface_3 &ss_3;
