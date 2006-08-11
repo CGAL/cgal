@@ -52,6 +52,12 @@ void warning_fail( const char*, const char*, int, const char*);
 // assertions
 // ----------
 
+#ifdef CGAL_NDEBUG
+#  define CGAL_NO_ASSERTIONS
+#  define CGAL_NO_PRECONDITIONS
+#  define CGAL_NO_POSTCONDITIONS
+#  define CGAL_NO_WARNINGS
+#endif
 
 #if defined(CGAL_KERNEL_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
   || defined(NDEBUG)
