@@ -298,12 +298,15 @@ void _test_has_on_predicate(SK sk) {
   typedef typename SK::Circle_3                         Circle_3;
   typedef typename SK::Line_3                           Line_3;
   typedef typename SK::Line_arc_3                       Line_arc_3;
+  typedef typename SK::Circular_arc_3                   Circular_arc_3;
   typedef typename SK::Algebraic_kernel                 AK;
   typedef typename SK::Construct_circle_3               Construct_circle_3;
   typedef typename SK::Construct_sphere_3               Construct_sphere_3;
   typedef typename SK::Construct_plane_3                Construct_plane_3;
   typedef typename SK::Construct_line_3                 Construct_line_3;
   typedef typename SK::Construct_line_arc_3             Construct_line_arc_3;
+  typedef typename SK::Construct_circular_arc_3         Construct_circular_arc_3;
+  typedef typename SK::Construct_circular_arc_point_3         Construct_circular_arc_point_3;
   typedef typename SK::Has_on_3                         Has_on_3;
   typedef typename SK::Polynomials_for_circle_3         Polynomials_for_circle_3;
   typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
@@ -316,6 +319,8 @@ void _test_has_on_predicate(SK sk) {
   Construct_plane_3 theConstruct_plane_3 = sk.construct_plane_3_object();
   Construct_line_3 theConstruct_line_3 = sk.construct_line_3_object();
   Construct_line_arc_3 theConstruct_line_arc_3 = sk.construct_line_arc_3_object();
+  Construct_circular_arc_3 theConstruct_circular_arc_3 = sk.construct_circular_arc_3_object();
+  Construct_circular_arc_point_3 theConstruct_circular_arc_point_3 = sk.construct_circular_arc_point_3_object();
   Has_on_3 theHas_on_3 = sk.has_on_3_object();
 
   Sphere_3 s_1 = theConstruct_sphere_3(Polynomial_for_spheres_2_3(0,0,0,1));
@@ -486,9 +491,86 @@ void _test_has_on_predicate(SK sk) {
     }
   }
 
- // both tests depends on other has_on or functions already tested
- std::cout << "Testing has_on(Plane, Line_arc)..." << std::endl;
+  // both tests depends on other has_on or functions already tested
+  std::cout << "Testing has_on(Plane, Line_arc)..." << std::endl;
 
+  std::cout << "Testing has_on(Circular_arc, Circular_arc_point)..." << std::endl;
+
+  // That cover all the cases, since the orientation is setted by default to be the
+  // clockwise orientation for a well defined normal vector (read the comments on 
+  // include/CGAL/Circular_kernel_3/Circular_arc_3.h)
+  Root_for_spheres_2_3 rt[8];
+
+  rt[0] = Root_for_spheres_2_3(0,1,0);
+  rt[1] = Root_for_spheres_2_3(Root_of_2(0,-FT(1,2),2), Root_of_2(0,FT(1,2),2),0);
+  rt[2] = Root_for_spheres_2_3(-1,0,0);
+  rt[3] = Root_for_spheres_2_3(Root_of_2(0,-FT(1,2),2), Root_of_2(0,-FT(1,2),2),0);
+  rt[4] = Root_for_spheres_2_3(0,-1,0);
+  rt[5] = Root_for_spheres_2_3(Root_of_2(0,FT(1,2),2), Root_of_2(0,-FT(1,2),2),0);
+  rt[6] = Root_for_spheres_2_3(1,0,0);
+  rt[7] = Root_for_spheres_2_3(Root_of_2(0,FT(1,2),2), Root_of_2(0,FT(1,2),2),0);
+
+  Circular_arc_point_3 cp[8]; 
+  for(int i=0; i<8; i++) {
+    cp[i] = theConstruct_circular_arc_point_3(rt[i]);
+  }
+
+  const Polynomials_for_circle_3 pcc_test = 
+      std::make_pair(Polynomial_for_spheres_2_3(0,0,0,1),
+                     Polynomial_1_3(0,0,1,0));
+  Circle_3 cc = theConstruct_circle_3(pcc_test);
+  for(int i=0; i<8; i++) {
+    for(int j=i+1; j<8; j++) {
+      Circular_arc_3 ca = theConstruct_circular_arc_3(cc,cp[i],cp[j]);
+      for(int t=0;t<8;t++) {
+        if((i <= t) && (t <= j)) {
+          assert(theHas_on_3(ca,cp[t]));
+        }
+        else {
+          assert(!theHas_on_3(ca,cp[t]));
+        }
+      }
+    }
+  }
+
+  Root_for_spheres_2_3 rt2[8];
+  rt2[0] = Root_for_spheres_2_3(0,Root_of_2(0,FT(1,2),2),Root_of_2(0,FT(1,2),2));
+  rt2[1] = Root_for_spheres_2_3(0,0,1);
+  rt2[2] = Root_for_spheres_2_3(0,Root_of_2(0,-FT(1,2),2),Root_of_2(0,FT(1,2),2));
+  rt2[3] = Root_for_spheres_2_3(0,-1,0);
+  rt2[4] = Root_for_spheres_2_3(0,Root_of_2(0,-FT(1,2),2),Root_of_2(0,-FT(1,2),2));
+  rt2[5] = Root_for_spheres_2_3(0,0,-1);
+  rt2[6] = Root_for_spheres_2_3(0,Root_of_2(0,FT(1,2),2),Root_of_2(0,-FT(1,2),2));
+  rt2[7] = Root_for_spheres_2_3(0,1,0);
+
+  for(int i=0; i<8; i++) {
+    cp[i] = theConstruct_circular_arc_point_3(rt2[i]);
+  }
+
+  const Polynomials_for_circle_3 pcc_test2 = 
+      std::make_pair(Polynomial_for_spheres_2_3(0,0,0,1),
+                     Polynomial_1_3(1,0,0,0));
+  Circle_3 cc2 = theConstruct_circle_3(pcc_test2);
+
+  for(int i=0; i<8; i++) {
+    for(int j=i+1; j<8; j++) {
+      Circular_arc_3 ca = theConstruct_circular_arc_3(cc2,cp[i],cp[j]);
+      for(int t=0;t<8;t++) {
+        if((i <= t) && (t <= j)) {
+          assert(theHas_on_3(ca,cp[t]));
+        }
+        else {
+          assert(!theHas_on_3(ca,cp[t]));
+        }
+      }
+    }
+  }
+
+  // Those has_on are already tested before (it is practically the same as the elementar type, say Circle_3)
+  std::cout << "Testing has_on(Sphere, Circular_arc)..." << std::endl;
+  std::cout << "Testing has_on(Plane, Circular_arc)..." << std::endl;
+  std::cout << "Testing has_on(Circle, Circular_arc)..." << std::endl;
+  std::cout << "Testing has_on(Circular_arc, Circle)..." << std::endl;
 }
 
 template <class SK>
