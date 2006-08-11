@@ -185,6 +185,102 @@ namespace CGAL {
       return non_oriented_equal<SK>(l, la.supporting_line());
     }
 
+    // TO DO
+    template <class SK>
+    inline
+    bool
+    has_on(const typename SK::Circular_arc_3 &a, 
+           const typename SK::Point_3 &p,
+           const bool has_on_supporting_circle = false)
+    { 
+      if(!has_on_supporting_circle) {
+        if(!has_on<SK>(a.supporting_circle(),p)) 
+          return false;
+      }
+      if(a.rep().is_full()) return true;
+      const Sign s_x_t = a.sign_cross_product();
+      const Sign s_x_p = 
+        compute_sign_of_cross_product<SK>(a.source(),p,a.center());
+      const Sign p_x_t = 
+        compute_sign_of_cross_product<SK>(p,a.target(),a.center());
+      if(s_x_t == ZERO) return (s_x_p != NEGATIVE);
+      if(a.source() == p) return true;
+      if(p == a.target()) return true;
+      if(s_x_t == POSITIVE) {
+        if(s_x_p == POSITIVE) return p_x_t == POSITIVE;
+        else return false;
+      } else {
+        if(s_x_p == NEGATIVE) return p_x_t == POSITIVE;
+        else return true;
+      }
+    }
+
+    template <class SK>
+    inline
+    bool
+    has_on(const typename SK::Circular_arc_3 &a, 
+           const typename SK::Circular_arc_point_3 &p,
+           const bool has_on_supporting_circle = false)
+    {
+      if(!has_on_supporting_circle) {
+        if(!has_on<SK>(a.supporting_circle(),p)) 
+          return false;
+      }
+      if(a.rep().is_full()) return true;
+      const Sign s_x_t = a.sign_cross_product();
+      const Sign s_x_p = 
+        compute_sign_of_cross_product<SK>(a.source(),p,a.center());
+      const Sign p_x_t = 
+        compute_sign_of_cross_product<SK>(p,a.target(),a.center());
+      if(s_x_t == ZERO) return (s_x_p != NEGATIVE);
+      if(a.source() == p) return true;
+      if(p == a.target()) return true;
+      if(s_x_t == POSITIVE) {
+        if(s_x_p == POSITIVE) return p_x_t == POSITIVE;
+        else return false;
+      } else {
+        if(s_x_p == NEGATIVE) return p_x_t == POSITIVE;
+        else return true;
+      }
+    }
+
+    template <class SK>
+    inline
+    bool
+    has_on(const typename SK::Sphere_3 &a, 
+           const typename SK::Circular_arc_3 &p)
+    { 
+      return has_on<SK>(a,p.supporting_circle());
+    }
+
+    template <class SK>
+    inline
+    bool
+    has_on(const typename SK::Plane_3 &a, 
+           const typename SK::Circular_arc_3 &p)
+    { 
+      return has_on<SK>(a,p.supporting_circle());
+    }
+
+    template <class SK>
+    inline
+    bool
+    has_on(const typename SK::Circle_3 &c, 
+           const typename SK::Circular_arc_3 &ca)
+    { 
+      return non_oriented_equal<SK>(c,ca.supporting_circle());
+    }
+
+    template <class SK>
+    inline
+    bool
+    has_on(const typename SK::Circular_arc_3 &ca,
+           const typename SK::Circle_3 &c)
+    { 
+       if(!non_oriented_equal<SK>(c,ca.supporting_circle())) return false;
+       return ca.rep().is_full();
+    }
+
   }//SphericalFunctors
 }//CGAL
 
