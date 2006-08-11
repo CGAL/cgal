@@ -1975,7 +1975,16 @@ fi
 
 # Prepare example and demo directories (i.e., strip license headers)
 
-find . ../demo/ ../examples -name "*.cpp" -or -name "*.h" | while read f ; do
+EXAMPLECODEDIRECTORIES=""
+if [ -d ../demo ] ; then
+  EXAMPLECODEDIRECTORIES="../demo"
+fi
+
+if [ -d ../examples ] ; then
+  EXAMPLECODEDIRECTORIES="$EXAMPLECODEDIRECTORIES ../examples"
+fi
+
+find $EXAMPLECODEDIRECTORIES -name "*.cpp" -or -name "*.h" | while read f ; do
   echo $f | sed 's/[\.][\.][\/]//' > $f.filename
   cat $f | perl -e 'while(<>) { if( $_ !~ /(^\/\/)|(^\s*$)/ ) { print; last; } } while(<>) { print; }' > $f.noheader
 done
@@ -2031,7 +2040,7 @@ fi
 
 
 # cleanup again
-find . ../demo/ ../examples -name "*.cpp" -or -name "*.h" | while read f ; do
+find $EXAMPLECODEDIRECTORIES -name "*.cpp" -or -name "*.h" | while read f ; do
   rm -f $f.filename $f.noheader
 done
 
