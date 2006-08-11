@@ -20,10 +20,12 @@
 // 
 //
 // Author(s)     : Andreas Fabri
- 
 
 #ifndef CGAL_TRIANGLE_2_H
 #define CGAL_TRIANGLE_2_H
+
+#include <boost/static_assert.hpp>
+#include <boost/type_traits.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -33,6 +35,9 @@ class Triangle_2 : public R_::Kernel_base::Triangle_2
   typedef typename R_::Point_2          Point_2;
   typedef typename R_::Aff_transformation_2 Aff_transformation_2;
   typedef typename R_::Kernel_base::Triangle_2  RTriangle_2;
+
+  typedef Triangle_2                            Self;
+  BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Triangle_2>::value));
 
 public:
 

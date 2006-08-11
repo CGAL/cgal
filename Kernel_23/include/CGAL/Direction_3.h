@@ -24,6 +24,9 @@
 #ifndef CGAL_DIRECTION_3_H
 #define CGAL_DIRECTION_3_H
 
+#include <boost/static_assert.hpp>
+#include <boost/type_traits.hpp>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
@@ -35,6 +38,10 @@ class Direction_3 : public R_::Kernel_base::Direction_3
   typedef typename R_::Ray_3                 Ray_3;
   typedef typename R_::Segment_3             Segment_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
+
+  typedef Direction_3                        Self;
+  BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Direction_3>::value));
+
 public:
 
   typedef typename R_::Kernel_base::Direction_3 Rep;

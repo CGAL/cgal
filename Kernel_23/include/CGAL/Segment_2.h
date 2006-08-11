@@ -24,6 +24,9 @@
 #ifndef CGAL_SEGMENT_2_H
 #define CGAL_SEGMENT_2_H
 
+#include <boost/static_assert.hpp>
+#include <boost/type_traits.hpp>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
@@ -37,6 +40,9 @@ class Segment_2 : public R_::Kernel_base::Segment_2
   typedef typename R_::Line_2                 Line_2;
   typedef typename R_::Aff_transformation_2   Aff_transformation_2;
   typedef typename R_::Kernel_base::Segment_2 RSegment_2;
+
+  typedef Segment_2                           Self;
+  BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Segment_2>::value));
 
 public:
 

@@ -25,6 +25,9 @@
 #ifndef CGAL_CIRCLE_2_H
 #define CGAL_CIRCLE_2_H
 
+#include <boost/static_assert.hpp>
+#include <boost/type_traits.hpp>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
@@ -34,6 +37,9 @@ class Circle_2 : public R_::Kernel_base::Circle_2
   typedef typename R_::Point_2               Point_2;
   typedef typename R_::Kernel_base::Circle_2  RCircle_2;
   typedef typename R_::Aff_transformation_2  Aff_transformation_2;
+
+  typedef Circle_2                           Self;
+  BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Circle_2>::value));
 
 public:
 

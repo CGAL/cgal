@@ -26,6 +26,8 @@
 
 #include <CGAL/Origin.h>
 #include <CGAL/Kernel/mpl.h>
+#include <boost/static_assert.hpp>
+#include <boost/type_traits.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -41,6 +43,9 @@ class Vector_2 : public R_::Kernel_base::Vector_2
   typedef typename R_::Direction_2    Direction_2;
   typedef typename R_::Aff_transformation_2  Aff_transformation_2;
   typedef typename R_::Kernel_base::Vector_2  RVector_2;
+
+  typedef Vector_2                    Self;
+  BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Vector_2>::value));
 
 public:
 

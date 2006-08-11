@@ -24,6 +24,9 @@
 #ifndef CGAL_TETRAHEDRON_3_H
 #define CGAL_TETRAHEDRON_3_H
 
+#include <boost/static_assert.hpp>
+#include <boost/type_traits.hpp>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
@@ -31,6 +34,10 @@ class Tetrahedron_3 : public R_::Kernel_base::Tetrahedron_3
 {
   typedef typename R_::Point_3             Point_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
+
+  typedef Tetrahedron_3                      Self;
+  BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Tetrahedron_3>::value));
+
 public:
 
   typedef typename R_::Kernel_base::Tetrahedron_3  Rep;

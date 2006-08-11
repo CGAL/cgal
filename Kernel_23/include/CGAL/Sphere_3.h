@@ -24,6 +24,9 @@
 #ifndef CGAL_SPHERE_3_H
 #define CGAL_SPHERE_3_H
 
+#include <boost/static_assert.hpp>
+#include <boost/type_traits.hpp>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
@@ -32,6 +35,10 @@ class Sphere_3 : public R_::Kernel_base::Sphere_3
   typedef typename R_::FT                    FT;
   typedef typename R_::Point_3               Point_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
+
+  typedef Sphere_3                           Self;
+  BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Sphere_3>::value));
+
 public:
 
   typedef typename R_::Kernel_base::Sphere_3  Rep;

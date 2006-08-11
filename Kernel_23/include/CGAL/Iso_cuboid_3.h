@@ -24,6 +24,9 @@
 #ifndef CGAL_ISO_CUBOID_3_H
 #define CGAL_ISO_CUBOID_3_H
 
+#include <boost/static_assert.hpp>
+#include <boost/type_traits.hpp>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class R_>
@@ -31,6 +34,10 @@ class Iso_cuboid_3 : public R_::Kernel_base::Iso_cuboid_3
 {
   typedef typename R_::RT                 RT;
   typedef typename R_::Point_3            Point_3;
+
+  typedef Iso_cuboid_3                    Self;
+  BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Iso_cuboid_3>::value));
+
 public:
 
   typedef typename R_::Kernel_base::Iso_cuboid_3  Rep;
