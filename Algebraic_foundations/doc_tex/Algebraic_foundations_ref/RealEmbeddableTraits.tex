@@ -2,15 +2,15 @@
 
 \ccDefinition
 
-A model of \ccc{RealEmbeddableTraits} is associated to a number type \ccc{Real_embeddable} and 
-reflects the properties of this type with respect to the concept 
-RealEmbeddable.
+A model of \ccc{RealEmbeddableTraits} is associated to a number type 
+\ccc{Real_embeddable} and reflects the properties of this type with respect 
+to the concept RealEmbeddable.
 
 Whether a type is a model of RealEmbeddable or not is indicated by the 
 Is\_real\_embeddable\_tag. 
 
-In case \ccc{Real_embeddable} is a model of RealEmbeddable the provided functors are not 
-\ccc{CGAL::Null_type}. 
+In case \ccc{Real_embeddable} is a model of RealEmbeddable the provided 
+functors are not \ccc{CGAL::Null_functor}. 
 
 \ccTypes
 
@@ -25,42 +25,50 @@ A model of \ccc{RealEmbeddableTraits} is supposed to provide:\\
 \ccHeading{Functors}
 
 \ccNestedType{Abs}{ 
-This is either \ccc{CGAL::Null_type} or a model of 
+This is either \ccc{CGAL::Null_functor} or a model of 
 \ccc{RealEmbeddableTraits::Abs} 
 %In case \ccc{Real_embeddable} is a model of \ccc{RealEmbeddable} 
-%this is not \ccc{CGAL::Null_type}.
+%this is not \ccc{CGAL::Null_functor}.
 }
 
 \ccNestedType{Sign}{ 
-This is either \ccc{CGAL::Null_type} or a model of 
+This is either \ccc{CGAL::Null_functor} or a model of 
 \ccc{RealEmbeddableTraits::Sign} 
 %In case \ccc{Real_embeddable} is a model of \ccc{RealEmbeddable} 
-%this is not \ccc{CGAL::Null_type}.
+%this is not \ccc{CGAL::Null_functor}.
 }
 
 
 \ccNestedType{Compare}{ 
-This is either \ccc{CGAL::Null_type} or a model of 
+This is either \ccc{CGAL::Null_functor} or a model of 
 \ccc{RealEmbeddableTraits::Compare} 
 %In case \ccc{Real_embeddable} is a model of \ccc{RealEmbeddable} 
-%this is not \ccc{CGAL::Null_type}.
+%this is not \ccc{CGAL::Null_functor}.
 }
 
 
 \ccNestedType{To_double}{ 
-This is either \ccc{CGAL::Null_type} or a model of 
+This is either \ccc{CGAL::Null_functor} or a model of 
 \ccc{RealEmbeddableTraits::ToDouble} 
 %In case \ccc{Real_embeddable} is a model of \ccc{RealEmbeddable} 
-%this is not \ccc{CGAL::Null_type}.
+%this is not \ccc{CGAL::Null_functor}.
 }
 
+\ccNestedType{To_interval}{ 
+This is either \ccc{CGAL::Null_functor} or a model of 
+\ccc{RealEmbeddableTraits::ToInterval} 
+%In case \ccc{Real_embeddable} is a model of \ccc{RealEmbeddable} 
+%this is not \ccc{CGAL::Null_functor}.
+}
 
+\begin{ccAdvanced}
 \ccNestedType{To_double_interval}{ 
-This is either \ccc{CGAL::Null_type} or a model of 
+This is either \ccc{CGAL::Null_functor} or a model of 
 \ccc{RealEmbeddableTraits::ToDoubleInterval} 
 %In case \ccc{Real_embeddable} is a model of \ccc{RealEmbeddable} 
-%this is not \ccc{CGAL::Null_type}.
+%this is not \ccc{CGAL::Null_functor}.
 }
+\end{ccAdvanced}
 
 %\ccHasModels
 

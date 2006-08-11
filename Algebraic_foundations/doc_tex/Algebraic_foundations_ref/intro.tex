@@ -22,13 +22,26 @@ Question: moved it to a global place?
       implies that the number type is RealEmbeddable, in particular RootOf talks 
       about the real root of an polynomial.\\
       Question: Should FieldWithSqrt refine RealEmbeddable?  
-\item What is the return type of ToDoubleInterval?     
+\item ToInterval vs ToDoubleInterval The old cgal function \ccc{CGAL::to_interval}
+       returns a
+      std::pair<double>, we decided to keep the name and interface, since it is not 
+      clear yet what is going to happen with the current \ccc{CGAL::Interval_nt}, 
+      since there is also boost::interval supporting more than just double as 
+      boundary type.\\
+      We therefore decided not to use the name ToDoubleInterval in order to keep 
+      this name free for more general interval types. \\
+      e.g. ToRationalInterval ToBigFloatInterval. 
 \end{itemize}
 
 \section{Classified Reference Pages}
 
-\subsection*{Basic Concepts}
-\ccRefConceptPage{FromSmallIntConstructible}
+\subsection*{Basics}
+\subsubsection*{Basic Concepts}
+\ccRefConceptPage{FromSmallIntConstructible}\\
+\subsection*{Basic Classes}
+\ccRefConceptPage{CGAL::Null_tag}\\
+\ccRefConceptPage{CGAL::Null_functor}\\
+
 
 \subsection*{ Algebraic Structure Hierarchy}
 
