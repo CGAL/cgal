@@ -15,7 +15,8 @@
 #ifndef CGAL_SPHERICAL_KERNEL_CIRCULAR_ARC_3_H
 #define CGAL_SPHERICAL_KERNEL_CIRCULAR_ARC_3_H
 
-#include<CGAL/utility.h>
+#include <CGAL/utility.h>
+#include <CGAL/Circular_kernel_3/internal_functions_on_circular_arc_3.h>
 
 namespace CGAL {
   namespace CGALi{
@@ -36,12 +37,22 @@ namespace CGAL {
 
       Base base;
       mutable unsigned char _full;
+      // It is the sign of the cross product 
+      // of the vector (Center -> S) x (Center -> T)
+      // it saves execution time for the has_on functor
+      Sign _sign_cross_product;
 
     public:
+
       Circular_arc_3()
-      : _full(0)
       {}
 
+      // The arc of circle goes from s to t in counterclockwise orientation
+      // in relation to the normal vector N of the supporting plane
+      // such that 
+      // if N.x != 0 then N.x > 0
+      // else if N.y != 0 -> N.y > 0
+      // else N.z > 0
       Circular_arc_3(const Circle_3 &c, 
                      const Circular_arc_point_3 &s,
                      const Circular_arc_point_3 &t) 
@@ -52,6 +63,13 @@ namespace CGAL {
         CGAL_kernel_precondition(SK().has_on_3_object()(c,t));
         CGAL_kernel_precondition(s != t);
         base = Rep(c,s,t);
+        // we can optimize the computations of the sign (for the has_on functor), 
+        // by computing the vector s-c and t-s, in order to use them directly on 
+        // another compute_sign_of_cross_product function
+        // we can save time computing the substractions
+        // the problem is: more memory space is needed
+        _sign_cross_product =
+          CGAL::SphericalFunctors::compute_sign_of_cross_product<SK>(s,t,c.center());
       }
 
       Circular_arc_3(const Circle_3 &c, 
@@ -64,6 +82,8 @@ namespace CGAL {
         CGAL_kernel_precondition(SK().has_on_3_object()(c,t));
         CGAL_kernel_precondition(Circular_arc_point_3(s) != t);
         base = Rep(c,s,t);
+        _sign_cross_product = 
+          CGAL::SphericalFunctors::compute_sign_of_cross_product<SK>(s,t,c.center());
       }
 
       Circular_arc_3(const Circle_3 &c, 
@@ -76,6 +96,8 @@ namespace CGAL {
         CGAL_kernel_precondition(SK().has_on_3_object()(c,t));
         CGAL_kernel_precondition(s != Circular_arc_point_3(t));
         base = Rep(c,s,t);
+        _sign_cross_product = 
+          CGAL::SphericalFunctors::compute_sign_of_cross_product<SK>(s,t,c.center());
       }
 
       Circular_arc_3(const Circle_3 &c, 
@@ -89,8 +111,12 @@ namespace CGAL {
         CGAL_kernel_precondition(Circular_arc_point_3(s) != 
                                  Circular_arc_point_3(t));
         base = Rep(c,s,t);
+        _sign_cross_product = 
+          CGAL::SphericalFunctors::compute_sign_of_cross_product<SK>(s,t,c.center());
       }
 
+      // This is the only case we want that s == t
+      // that makes the is_full() correct and complete
       Circular_arc_3(const Circle_3 &c)
       : _full(1)
       {
@@ -104,24 +130,10 @@ namespace CGAL {
 	    SphericalFunctors::x_extremal_point<SK>(c,true);
           base = Rep(c,v,v);
         }
+        /* don't matter
+        _sign_cross_product = 0;
+        */
       }
-
-      /*
-      Those constructors will be done later
-      when the concept of the orientation will be perfect
-
-      Circular_arc_3(const Circle_3 &c, 
-                     const Sphere_3 &s,
-                     bool less_xyz_first = true) 
-      {
-      }
-
-      Circular_arc_3(const Circle_3 &c, 
-                     const Plane_3 &s,
-                     bool less_xyz_first = true) 
-      {
-      }
-      */
 
       Circular_arc_3(const Circle_3 &c, 
                      const Sphere_3 &s1, bool less_xyz_s1,
@@ -198,6 +210,10 @@ namespace CGAL {
 
       const bool is_full() const {
         return _full;
+      }
+
+      const Sign sign_cross_product() const {
+        return _sign_cross_product;
       }
 
       // It is of course possible to increase the precision
