@@ -62,22 +62,22 @@ public:
     : Rep(r) {}
 
   Iso_rectangle_2(const Point_2 &p, const Point_2 &q, int)
-    : Rep(typename R::Construct_iso_rectangle_2()(p, q, 0).rep()) {}
+    : Rep(typename R::Construct_iso_rectangle_2()(p, q, 0)) {}
 
   Iso_rectangle_2(const Point_2 &p, const Point_2 &q)
-    : Rep(typename R::Construct_iso_rectangle_2()(p, q).rep()) {}
+    : Rep(typename R::Construct_iso_rectangle_2()(p, q)) {}
 
   Iso_rectangle_2(const Point_2 &left, const Point_2 &right,
                   const Point_2 &bottom, const Point_2 &top)
-    : Rep(typename R::Construct_iso_rectangle_2()(left, right, bottom, top).rep()) {}
+    : Rep(typename R::Construct_iso_rectangle_2()(left, right, bottom, top)) {}
 
   Iso_rectangle_2(const RT& min_hx, const RT& min_hy,
                   const RT& max_hx, const RT& max_hy)
-    : Rep(typename R::Construct_iso_rectangle_2()(min_hx, min_hy, max_hx, max_hy).rep()) {}
+    : Rep(typename R::Construct_iso_rectangle_2()(min_hx, min_hy, max_hx, max_hy)) {}
 
   Iso_rectangle_2(const RT& min_hx, const RT& min_hy,
                   const RT& max_hx, const RT& max_hy, const RT& hw)
-    : Rep(typename R::Construct_iso_rectangle_2()(min_hx, min_hy, max_hx, max_hy, hw).rep()) {}
+    : Rep(typename R::Construct_iso_rectangle_2()(min_hx, min_hy, max_hx, max_hy, hw)) {}
 
 
   typename Qualified_result_of<typename R::Construct_min_vertex_2, Iso_rectangle_2 >::type

@@ -64,26 +64,26 @@ public:
 
   Circle_2(const Point_2 &center, const FT &squared_radius,
 	   const Orientation &orientation)
-    : RCircle_2(typename R::Construct_circle_2()(center, squared_radius, orientation).rep()) {}
+    : RCircle_2(typename R::Construct_circle_2()(center, squared_radius, orientation)) {}
 
   Circle_2(const Point_2 &center, const FT &squared_radius)
-    : RCircle_2(typename R::Construct_circle_2()(center, squared_radius, COUNTERCLOCKWISE).rep()) {}
+    : RCircle_2(typename R::Construct_circle_2()(center, squared_radius, COUNTERCLOCKWISE)) {}
 
   Circle_2(const Point_2 &p, const Point_2 &q, const Point_2 &r)
-    : RCircle_2(typename R::Construct_circle_2()(p,q,r).rep()) {}
+    : RCircle_2(typename R::Construct_circle_2()(p,q,r)) {}
 
   Circle_2(const Point_2 & p, const Point_2 & q,
 	   const Orientation &orientation)
-    : RCircle_2(typename R::Construct_circle_2()(p,q,orientation).rep()) {}
+    : RCircle_2(typename R::Construct_circle_2()(p,q,orientation)) {}
 
   Circle_2(const Point_2 & p, const Point_2 & q)
-    : RCircle_2(typename R::Construct_circle_2()(p,q,COUNTERCLOCKWISE).rep()) {}
+    : RCircle_2(typename R::Construct_circle_2()(p,q,COUNTERCLOCKWISE)) {}
 
   Circle_2(const Point_2 & center, const Orientation& orientation)
-    : RCircle_2(typename R::Construct_circle_2()(center,FT(0),orientation).rep()) {}
+    : RCircle_2(typename R::Construct_circle_2()(center,FT(0),orientation)) {}
 
   Circle_2(const Point_2 & center)
-    : RCircle_2(typename R::Construct_circle_2()(center,FT(0),COUNTERCLOCKWISE).rep()) {}
+    : RCircle_2(typename R::Construct_circle_2()(center,FT(0),COUNTERCLOCKWISE)) {}
 
   typename Qualified_result_of<typename R::Construct_center_2,Circle_2>::type
   center() const

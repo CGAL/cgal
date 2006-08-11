@@ -62,22 +62,22 @@ public:
 
   Sphere_3(const Point_3& p, const FT& sq_rad,
            const Orientation& o = COUNTERCLOCKWISE)
-   : Rep(typename R::Construct_sphere_3()(p, sq_rad, o).rep()) {}
+   : Rep(typename R::Construct_sphere_3()(p, sq_rad, o)) {}
 
   Sphere_3(const Point_3& p, const Point_3& q,
            const Point_3& r, const Point_3& u)
-   : Rep(typename R::Construct_sphere_3()(p, q, r, u).rep()) {}
+   : Rep(typename R::Construct_sphere_3()(p, q, r, u)) {}
 
   Sphere_3(const Point_3& p, const Point_3& q, const Point_3& r,
            const Orientation& o = COUNTERCLOCKWISE)
-   : Rep(typename R::Construct_sphere_3()(p, q, r, o).rep()) {}
+   : Rep(typename R::Construct_sphere_3()(p, q, r, o)) {}
 
   Sphere_3(const Point_3& p, const Point_3&  q,
            const Orientation& o = COUNTERCLOCKWISE)
-   : Rep(typename R::Construct_sphere_3()(p, q, o).rep()) {}
+   : Rep(typename R::Construct_sphere_3()(p, q, o)) {}
 
   Sphere_3(const Point_3& p, const Orientation& o = COUNTERCLOCKWISE)
-   : Rep(typename R::Construct_sphere_3()(p, o).rep()) {}
+   : Rep(typename R::Construct_sphere_3()(p, o)) {}
 
   Sphere_3 orthogonal_transform(const Aff_transformation_3 &t) const;
 

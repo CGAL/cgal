@@ -63,7 +63,7 @@ public:
       : Rep(t) {}
 
   Triangle_3(const Point_3& p, const Point_3& q, const Point_3& r)
-    : Rep(typename R::Construct_triangle_3()(p, q, r).rep()) {}
+    : Rep(typename R::Construct_triangle_3()(p, q, r)) {}
 
   Triangle_3 transform(const Aff_transformation_3 &t) const
   {

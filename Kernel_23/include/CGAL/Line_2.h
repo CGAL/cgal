@@ -63,25 +63,25 @@ public:
   Line_2() {}
 
   Line_2(const Point_2 &p, const Point_2 &q)
-    : RLine_2(typename R::Construct_line_2()(p,q).rep()) {}
+    : RLine_2(typename R::Construct_line_2()(p,q)) {}
 
   Line_2(const RT &a, const RT &b, const RT &c)
-    : RLine_2(typename R::Construct_line_2()(a,b,c).rep()) {}
+    : RLine_2(typename R::Construct_line_2()(a,b,c)) {}
 
   Line_2(const RLine_2& l)  // conversion impl -> interface class
     : RLine_2(l) {}
 
   Line_2(const Segment_2& s)
-    : RLine_2(typename R::Construct_line_2()(s).rep()) {}
+    : RLine_2(typename R::Construct_line_2()(s)) {}
 
   Line_2(const Ray_2& r)
-    : RLine_2(typename R::Construct_line_2()(r).rep()) {}
+    : RLine_2(typename R::Construct_line_2()(r)) {}
 
   Line_2(const Point_2 &p, const Direction_2 &d)
-    : RLine_2(typename R::Construct_line_2()(p,d).rep()) {}
+    : RLine_2(typename R::Construct_line_2()(p,d)) {}
 
   Line_2(const Point_2 &p, const Vector_2 &v)
-    : RLine_2(typename R::Construct_line_2()(p,v).rep()) {}
+    : RLine_2(typename R::Construct_line_2()(p,v)) {}
 
 
   RT a() const

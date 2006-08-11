@@ -63,7 +63,7 @@ public:
   Segment_2() {}
 
   Segment_2(const Point_2 &sp, const Point_2 &ep)
-    :  RSegment_2(typename R::Construct_segment_2()(sp,ep).rep()) {}
+    :  RSegment_2(typename R::Construct_segment_2()(sp,ep)) {}
 
   // conversion from implementation class object to interface class object
   Segment_2(const RSegment_2& s)

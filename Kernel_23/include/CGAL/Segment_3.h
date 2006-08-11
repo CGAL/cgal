@@ -65,7 +65,7 @@ public:
       : Rep(s) {}
 
   Segment_3(const Point_3& sp, const Point_3& ep)
-    : Rep(typename R::Construct_segment_3()(sp, ep).rep()) {}
+    : Rep(typename R::Construct_segment_3()(sp, ep)) {}
 
 // FIXME TODO : Use Qrt here !
   //typename Qualified_result_of<typename R::Construct_source_3, Segment_3>::type

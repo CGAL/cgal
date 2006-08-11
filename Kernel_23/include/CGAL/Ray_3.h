@@ -64,16 +64,16 @@ public:
     : Rep(r) {}
 
   Ray_3(const Point_3& sp, const Point_3& secondp)
-    : Rep(typename R::Construct_ray_3()(sp, secondp).rep()) {}
+    : Rep(typename R::Construct_ray_3()(sp, secondp)) {}
 
   Ray_3(const Point_3& sp, const Vector_3& v)
-    : Rep(typename R::Construct_ray_3()(sp, v).rep()) {}
+    : Rep(typename R::Construct_ray_3()(sp, v)) {}
 
   Ray_3(const Point_3& sp, const Direction_3& d)
-    : Rep(typename R::Construct_ray_3()(sp, d).rep()) {}
+    : Rep(typename R::Construct_ray_3()(sp, d)) {}
 
   Ray_3(const Point_3& sp, const Line_3& l)
-    : Rep(typename R::Construct_ray_3()(sp, l).rep()) {}
+    : Rep(typename R::Construct_ray_3()(sp, l)) {}
 
   Ray_3 transform(const Aff_transformation_3 &t) const
   {

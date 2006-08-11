@@ -68,19 +68,19 @@ public:
       : Rep(l) {}
 
   Line_3(const Point_3 & p, const Point_3 & q)
-      : Rep(typename R::Construct_line_3()(p, q).rep()) {}
+      : Rep(typename R::Construct_line_3()(p, q)) {}
 
   Line_3(const Segment_3 & s)
-      : Rep(typename R::Construct_line_3()(s).rep()) {}
+      : Rep(typename R::Construct_line_3()(s)) {}
 
   Line_3(const Ray_3 & r)
-      : Rep(typename R::Construct_line_3()(r).rep()) {}
+      : Rep(typename R::Construct_line_3()(r)) {}
 
   Line_3(const Point_3 & p, const Direction_3 & d)
-      : Rep(typename R::Construct_line_3()(p, d).rep()) {}
+      : Rep(typename R::Construct_line_3()(p, d)) {}
 
   Line_3(const Point_3 & p, const Vector_3 & v)
-      : Rep(typename R::Construct_line_3()(p, v).rep()) {}
+      : Rep(typename R::Construct_line_3()(p, v)) {}
 
   Line_3 transform(const Aff_transformation_3 &t) const
   {

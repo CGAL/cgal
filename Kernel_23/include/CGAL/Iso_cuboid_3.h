@@ -60,27 +60,27 @@ public:
       : Rep(r) {}
 
   Iso_cuboid_3(const Point_3& p, const Point_3& q)
-   : Rep(typename R::Construct_iso_cuboid_3()(p,q).rep()) {}
+   : Rep(typename R::Construct_iso_cuboid_3()(p,q)) {}
 
   Iso_cuboid_3(const Point_3& p, const Point_3& q, int)
-   : Rep(typename R::Construct_iso_cuboid_3()(p, q, 0).rep()) {}
+   : Rep(typename R::Construct_iso_cuboid_3()(p, q, 0)) {}
 
   Iso_cuboid_3(const Point_3 &left,   const Point_3 &right,
                const Point_3 &bottom, const Point_3 &top,
                const Point_3 &far_,   const Point_3 &close)
    : Rep(typename R::Construct_iso_cuboid_3()(left, right, bottom,
-                                                    top, far_, close).rep()) {}
+                                                    top, far_, close)) {}
 
   Iso_cuboid_3(const RT& min_hx, const RT& min_hy, const RT& min_hz,
                const RT& max_hx, const RT& max_hy, const RT& max_hz, 
                const RT& hw)
    : Rep(typename R::Construct_iso_cuboid_3()(min_hx, min_hy, min_hz,
-				     max_hx, max_hy, max_hz, hw).rep()) {}
+				     max_hx, max_hy, max_hz, hw)) {}
 
   Iso_cuboid_3(const RT& min_hx, const RT& min_hy, const RT& min_hz,
                const RT& max_hx, const RT& max_hy, const RT& max_hz)
    : Rep(typename R::Construct_iso_cuboid_3()(min_hx, min_hy, min_hz,
-					     max_hx, max_hy, max_hz).rep()) {}
+					     max_hx, max_hy, max_hz)) {}
 
 // TODO FIXME : why is Qrt not working here ? 
 // TODO       : the Cartesian and Homogeneous functors should be split here

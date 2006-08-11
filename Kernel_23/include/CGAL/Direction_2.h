@@ -65,19 +65,19 @@ public:
     : RDirection_2(d) {}
 
   Direction_2(const Vector_2& v)
-    : RDirection_2(typename R::Construct_direction_2()(v).rep()) {}
+    : RDirection_2(typename R::Construct_direction_2()(v)) {}
 
   Direction_2(const Line_2& l)
-    : RDirection_2(typename R::Construct_direction_2()(l).rep()) {}
+    : RDirection_2(typename R::Construct_direction_2()(l)) {}
 
   Direction_2(const Ray_2& r)
-    : RDirection_2(typename R::Construct_direction_2()(r).rep()) {}
+    : RDirection_2(typename R::Construct_direction_2()(r)) {}
 
   Direction_2(const Segment_2& s)
-    : RDirection_2(typename R::Construct_direction_2()(s).rep()) {}
+    : RDirection_2(typename R::Construct_direction_2()(s)) {}
 
   Direction_2(const RT &x, const RT &y)
-    :  RDirection_2(typename R::Construct_direction_2()(x,y).rep()) {}
+    :  RDirection_2(typename R::Construct_direction_2()(x,y)) {}
 
   bool
   counterclockwise_in_between(const Direction_2 &d1,

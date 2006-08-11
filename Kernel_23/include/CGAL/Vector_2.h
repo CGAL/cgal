@@ -66,25 +66,25 @@ public:
   Vector_2() {}
 
   Vector_2(const Point_2& a, const Point_2& b)
-      : RVector_2(typename R::Construct_vector_2()(a, b).rep()) {}
+      : RVector_2(typename R::Construct_vector_2()(a, b)) {}
 
   Vector_2(const RVector_2& v) : RVector_2(v) {}
 
-  Vector_2(const Segment_2 &s) : RVector_2(typename R::Construct_vector_2()(s).rep()) {}
+  Vector_2(const Segment_2 &s) : RVector_2(typename R::Construct_vector_2()(s)) {}
 
-  Vector_2(const Ray_2 &r) : RVector_2(typename R::Construct_vector_2()(r).rep()) {}
+  Vector_2(const Ray_2 &r) : RVector_2(typename R::Construct_vector_2()(r)) {}
 
-  Vector_2(const Line_2 &l) : RVector_2(typename R::Construct_vector_2()(l).rep()) {}
+  Vector_2(const Line_2 &l) : RVector_2(typename R::Construct_vector_2()(l)) {}
 
-  Vector_2(const Null_vector &v) : RVector_2(typename R::Construct_vector_2()(v).rep()) {}
+  Vector_2(const Null_vector &v) : RVector_2(typename R::Construct_vector_2()(v)) {}
 
   template < typename T1, typename T2 >
   Vector_2(const T1 &x, const T2 &y)
-    : RVector_2(typename R::Construct_vector_2()(x,y).rep())
+    : RVector_2(typename R::Construct_vector_2()(x,y))
   {}
 
   Vector_2(const RT &x, const RT &y, const RT &w)
-    : RVector_2(typename R::Construct_vector_2()(x,y,w).rep())
+    : RVector_2(typename R::Construct_vector_2()(x,y,w))
   {}
 
 

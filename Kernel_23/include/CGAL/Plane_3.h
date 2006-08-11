@@ -67,25 +67,25 @@ public:
     : Rep(p) {}
 
   Plane_3(const Point_3& p, const Point_3& q, const Point_3& r)
-    : Rep(typename R::Construct_plane_3()(p, q, r).rep()) {}
+    : Rep(typename R::Construct_plane_3()(p, q, r)) {}
 
   Plane_3(const Point_3& p, const Direction_3& d)
-    : Rep(typename R::Construct_plane_3()(p, d).rep()) {}
+    : Rep(typename R::Construct_plane_3()(p, d)) {}
 
   Plane_3(const Point_3& p, const Vector_3& v)
-    : Rep(typename R::Construct_plane_3()(p, v).rep()) {}
+    : Rep(typename R::Construct_plane_3()(p, v)) {}
 
   Plane_3(const RT& a, const RT& b, const RT& c, const RT& d)
-    : Rep(typename R::Construct_plane_3()(a, b, c, d).rep()) {}
+    : Rep(typename R::Construct_plane_3()(a, b, c, d)) {}
 
   Plane_3(const Line_3& l, const Point_3& p)
-    : Rep(typename R::Construct_plane_3()(l, p).rep()) {}
+    : Rep(typename R::Construct_plane_3()(l, p)) {}
 
   Plane_3(const Segment_3& s, const Point_3& p)
-    : Rep(typename R::Construct_plane_3()(s, p).rep()) {}
+    : Rep(typename R::Construct_plane_3()(s, p)) {}
 
   Plane_3(const Ray_3& r, const Point_3& p)
-    : Rep(typename R::Construct_plane_3()(r, p).rep()) {}
+    : Rep(typename R::Construct_plane_3()(r, p)) {}
 
   Plane_3 transform(const Aff_transformation_3 &t) const
   {

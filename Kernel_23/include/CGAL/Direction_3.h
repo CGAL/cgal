@@ -64,19 +64,19 @@ public:
     : Rep(d) {}
 
   Direction_3(const Vector_3& v)
-    : Rep(typename R::Construct_direction_3()(v).rep()) {}
+    : Rep(typename R::Construct_direction_3()(v)) {}
 
   Direction_3(const Line_3& l)
-    : Rep(typename R::Construct_direction_3()(l).rep()) {}
+    : Rep(typename R::Construct_direction_3()(l)) {}
 
   Direction_3(const Ray_3& r)
-    : Rep(typename R::Construct_direction_3()(r).rep()) {}
+    : Rep(typename R::Construct_direction_3()(r)) {}
 
   Direction_3(const Segment_3& s)
-    : Rep(typename R::Construct_direction_3()(s).rep()) {}
+    : Rep(typename R::Construct_direction_3()(s)) {}
 
   Direction_3(const RT& hx, const RT& hy, const RT& hz)
-    : Rep(typename R::Construct_direction_3()(hx, hy, hz).rep()) {}
+    : Rep(typename R::Construct_direction_3()(hx, hy, hz)) {}
 
   Direction_3 transform(const Aff_transformation_3 &t) const
   {

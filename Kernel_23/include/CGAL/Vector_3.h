@@ -69,26 +69,26 @@ public:
       : Rep(v) {}
 
   Vector_3(const Point_3& a, const Point_3& b)
-    : Rep(typename R::Construct_vector_3()(a, b).rep()) {}
+    : Rep(typename R::Construct_vector_3()(a, b)) {}
 
   Vector_3(const Segment_3& s)
-    : Rep(typename R::Construct_vector_3()(s).rep()) {}
+    : Rep(typename R::Construct_vector_3()(s)) {}
 
   Vector_3(const Ray_3& r)
-    : Rep(typename R::Construct_vector_3()(r).rep()) {}
+    : Rep(typename R::Construct_vector_3()(r)) {}
 
   Vector_3(const Line_3& l)
-    : Rep(typename R::Construct_vector_3()(l).rep()) {}
+    : Rep(typename R::Construct_vector_3()(l)) {}
 
   Vector_3(const Null_vector& v)
-    : Rep(typename R::Construct_vector_3()(v).rep()) {}
+    : Rep(typename R::Construct_vector_3()(v)) {}
 
   template < typename T1, typename T2, typename T3 >
   Vector_3(const T1 &x, const T2 &y, const T3 &z)
-    : Rep(typename R::Construct_vector_3()(x, y, z).rep()) {}
+    : Rep(typename R::Construct_vector_3()(x, y, z)) {}
 
   Vector_3(const RT& x, const RT& y, const RT& z, const RT& w)
-    : Rep(typename R::Construct_vector_3()(x, y, z, w).rep()) {}
+    : Rep(typename R::Construct_vector_3()(x, y, z, w)) {}
 
   Direction_3 direction() const
   {

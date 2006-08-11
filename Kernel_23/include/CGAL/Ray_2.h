@@ -67,16 +67,16 @@ public:
     : RRay_2(r) {}
 
   Ray_2(const Point_2 &sp, const Point_2 &secondp)
-    : RRay_2(typename R::Construct_ray_2()(sp, secondp).rep()) {}
+    : RRay_2(typename R::Construct_ray_2()(sp, secondp)) {}
 
   Ray_2(const Point_2 &sp, const Direction_2 &d)
-    : RRay_2(typename R::Construct_ray_2()(sp, d).rep()) {}
+    : RRay_2(typename R::Construct_ray_2()(sp, d)) {}
 
   Ray_2(const Point_2 &sp, const Vector_2 &v)
-    : RRay_2(typename R::Construct_ray_2()(sp, v).rep()) {}
+    : RRay_2(typename R::Construct_ray_2()(sp, v)) {}
 
   Ray_2(const Point_2 &sp, const Line_2 &l)
-    : RRay_2(typename R::Construct_ray_2()(sp, l).rep()) {}
+    : RRay_2(typename R::Construct_ray_2()(sp, l)) {}
 
 
   typename Qualified_result_of<typename R_::Construct_source_2, Ray_2>::type

@@ -62,7 +62,7 @@ public:
       : RTriangle_2(t) {}
 
   Triangle_2(const Point_2 &p, const Point_2 &q, const Point_2 &r)
-      : RTriangle_2(typename R::Construct_triangle_2()(p,q,r).rep()) {}
+      : RTriangle_2(typename R::Construct_triangle_2()(p,q,r)) {}
 
   FT
   area() const
