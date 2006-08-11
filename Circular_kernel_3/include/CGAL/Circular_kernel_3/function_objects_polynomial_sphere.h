@@ -861,6 +861,7 @@ template < class SK >
     typedef typename SK::Line_3                  Line_3;
     typedef typename SK::Line_arc_3              Line_arc_3;
     typedef typename SK::Circular_arc_point_3    Circular_arc_point_3;
+    typedef typename SK::Circular_arc_3          Circular_arc_3;
     typedef typename SK::Circle_3                Circle_3;
     
 
@@ -1024,6 +1025,48 @@ template < class SK >
     result_type
     operator()(const Line_arc_3 &a, const Line_3 &p) const
     { return false; }
+
+    result_type
+    operator()(const Circular_arc_3 &a, const Point_3 &p,
+               const bool has_on_supporting_circle = false) const
+    { return has_on<SK>(a, p, has_on_supporting_circle); }
+
+    result_type
+    operator()(const Point_3 &p, const Circular_arc_3 &a) const
+    { return false; }
+
+    result_type
+    operator()(const Circular_arc_3 &a, const Circular_arc_point_3 &p,
+               const bool has_on_supporting_circle = false) const
+    { return has_on<SK>(a, p, has_on_supporting_circle); }
+
+    result_type
+    operator()(const Circular_arc_point_3 &p, const Circular_arc_3 &a) const
+    { return false; }
+
+    result_type
+    operator()(const Sphere_3 &a, const Circular_arc_3 &p) const
+    { return has_on<SK>(a, p); }
+
+    result_type
+    operator()(const Circular_arc_3 &p, const Sphere_3 &a) const
+    { return false; }
+
+    result_type
+    operator()(const Plane_3 &a, const Circular_arc_3 &p) const
+    { return has_on<SK>(a, p); }
+
+    result_type
+    operator()(const Circular_arc_3 &p, const Plane_3 &a) const
+    { return false; }
+
+    result_type
+    operator()(const Circle_3 &a, const Circular_arc_3 &p) const
+    { return has_on<SK>(a, p); }
+
+    result_type
+    operator()(const Circular_arc_3 &p, const Circle_3 &a) const
+    { return has_on<SK>(p, a); }
 
   };
 
