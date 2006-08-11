@@ -62,7 +62,12 @@ public:
   {
     return get(base).e1;
   }
-  
+
+  bool is_degenerate() const
+  {
+    return source() == second_point();
+  }
+
 };
 
 CGAL_END_NAMESPACE
