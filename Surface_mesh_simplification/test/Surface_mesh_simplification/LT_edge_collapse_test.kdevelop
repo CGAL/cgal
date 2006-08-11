@@ -16,7 +16,7 @@
       <mainprogram>LT_edge_collapse_test</mainprogram>
       <directoryradio>build</directoryradio>
       <customdirectory>/</customdirectory>
-      <programargs>1000 data/ horse.5000</programargs>
+      <programargs>0 data/ open0</programargs>
       <terminal>false</terminal>
       <autocompile>true</autocompile>
       <envvars/>
@@ -28,7 +28,7 @@
       <dontact>false</dontact>
       <makebin/>
       <defaulttarget/>
-      <makeoptions>CGAL_MAKEFILE=/home/fcacciola/Programming/CGAL/make/makefile_i686_Linux-2.6_g++-4.0.2 DEBUGGING=yes</makeoptions>
+      <makeoptions>CGAL_MAKEFILE=/home/fcacciola/Programming/CGAL/make/makefile_i686_Linux-2.6_g++-4.0.2</makeoptions>
       <selectedenvironment>default</selectedenvironment>
       <environments>
         <default>
@@ -44,7 +44,7 @@
   <kdevdebugger>
     <general>
       <dbgshell/>
-      <programargs>1000 data/ horse.5000</programargs>
+      <programargs>10 data/ head</programargs>
       <gdbpath/>
       <configGdbScript/>
       <runShellScript/>

@@ -89,9 +89,17 @@ struct Collapse_triangulation_edge
                   , DS&                    aDS 
                   ) const
   {
-    aDS.join_facet (pt);
-    aDS.join_facet (qb);
+    CGAL_precondition( pt->vertex()->vertex_degree() >= 3 || qb->vertex()->vertex_degree() >= 3 ) ;
+  
+    if ( pt->vertex()->vertex_degree() >= 3 )
+      aDS.join_facet (pt);
+    
+    if ( qb->vertex()->vertex_degree() >= 3 )
+      aDS.join_facet (qb);
+    
     aDS.join_vertex(pq);
+    
+    CGAL_expensive_postcondition(aDS.is_valid());
   }
   
 } ;

@@ -24,7 +24,7 @@
 #include <fstream>
 #include <boost/tokenizer.hpp>
 
-//#define CGAL_CHECK_EXPENSIVE
+#define CGAL_CHECK_EXPENSIVE
 
 #include <CGAL/Real_timer.h>
 #include <CGAL/Simple_cartesian.h>
@@ -36,9 +36,9 @@
 #include <CGAL/Constrained_triangulation_2.h>
 
 //#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE 4
-//#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE 0
+#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE 1
 
-#define STATS
+//#define STATS
 //#define AUDIT
 
 void Surface_simplification_external_trace( std::string s )
@@ -441,6 +441,8 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
        << "Line: " << line << endl;
   if ( msg != 0)
     cerr << "Explanation:" << msg << endl;
+    
+  throw std::logic_error(what);  
 }
 
 using namespace CGAL::Triangulated_surface_mesh::Simplification ;
@@ -473,108 +475,115 @@ bool Test ( int aStop, string name )
     
     scan_OFF(off_is,lP,true);
     
-    cout << (lP.size_of_halfedges()/2) << " edges..." << endl ;
-  
-    cout << setprecision(19) ;
-  
-    int lVertexID = 0 ;
-    for ( Polyhedron::Vertex_iterator vi = lP.vertices_begin(); vi != lP.vertices_end() ; ++ vi )
-      vi->ID = lVertexID ++ ;    
-    
-    int lHalfedgeID = 0 ;
-    for ( Polyhedron::Halfedge_iterator hi = lP.halfedges_begin(); hi != lP.halfedges_end() ; ++ hi )
-      hi->ID = lHalfedgeID++ ;    
-    
-    int lFacetID = 0 ;
-    for ( Polyhedron::Facet_iterator fi = lP.facets_begin(); fi != lP.facets_end() ; ++ fi )
-      fi->ID = lFacetID ++ ;    
-
-#ifdef AUDIT
-    sAuditData .clear();
-    sAuditReport.clear();
-    ParseAudit(audit_name);
-    cout << "Audit data loaded." << endl ;
-#endif
-    
-#ifdef TEST_LT
-    typedef LindstromTurk_collapse_data<Polyhedron> Collapse_data ;
-    
-    Set_LindstromTurk_collapse_data<Collapse_data> Set_collapse_data ;
-    LindstromTurk_cost             <Collapse_data> Get_cost ;
-    LindstromTurk_vertex_placement <Collapse_data> Get_vertex_point ;
-#else
-    typedef Minimal_collapse_data<Polyhedron> Collapse_data ;
-    
-    Set_minimal_collapse_data <Collapse_data> Set_collapse_data ;
-    Edge_length_cost          <Collapse_data> Get_cost ;
-    Midpoint_vertex_placement <Collapse_data> Get_vertex_point ;
-#endif
-    
-    Count_stop_condition           <Collapse_data> Should_stop(aStop);
-        
-    Collapse_data::Params lParams;
-    
-    Visitor lVisitor ;
-
-    Real_timer t ; t.start();    
-    int r = vertex_pair_collapse(lP,Set_collapse_data,&lParams,Get_cost,Get_vertex_point,Should_stop,&lVisitor);
-    t.stop();
-            
-    ofstream off_out(result_name.c_str(),ios::trunc);
-    off_out << lP ;
-    
-    cout << "\nFinished...\n"
-         << "Ellapsed time: " << t.time() << " seconds.\n" 
-         << r << " edges removed.\n"
-         << endl
-         << lP.size_of_vertices() << " final vertices.\n"
-         << (lP.size_of_halfedges()/2) << " final edges.\n"
-         << lP.size_of_facets() << " final triangles.\n" 
-         << ( lP.is_valid() ? " valid\n" : " INVALID!!\n" ) ;
-
-#ifdef STATS
-    cout << "\n------------STATS--------------\n"
-         << sProcessed        << " edges processed.\n"
-         << sCollapsed        << " edges collapsed.\n" 
-         << sNonCollapsable   << " non-collapsable edges.\n"
-         << sCostUncomputable << " non-computable edges.\n"
-         << sFixed            << " fixed edges.\n"
-         << sRemoved          << " edges removed.\n" 
-         << (sRemoved/3)      << " vertices removed." ;
-#endif
-
-#ifdef AUDIT
-    unsigned lMatches = 0 ;
-                  
-    cout << "Audit report:\n" ;
-    for ( Audit_report_map::const_iterator ri = sAuditReport.begin() ; ri != sAuditReport.end() ; ++ ri )
+    if ( lP.is_valid() )
     {
-      Audit_report_ptr lReport = ri->second ;
-      
-      if ( lReport->AuditData )
-      {
-        if ( lReport->NewVertexMatched )
-          ++ lMatches ;
-           
-        cout << "Collapsed Halfedge " << lReport->HalfedgeID << endl 
-             << "  Cost: Actual=" << to_string(lReport->Cost) << ", Expected=" << to_string(lReport->AuditData->Cost)
-                                  << ". " << matched_alpha(lReport->CostMatched) << endl
-             << "  New vertex point: Actual=" << to_string(lReport->NewVertexPoint) << ", Expected=" 
-                                              << to_string(lReport->AuditData->NewVertexPoint) 
-                                              << ". " << matched_alpha(lReport->NewVertexMatched)
-             << endl ;
-      }
-      else
-      {
-        cout << "No audit data for Halfedge " << lReport->HalfedgeID << endl ;
-          ++ lMatches ;
-      }  
-    }
+      cout << (lP.size_of_halfedges()/2) << " edges..." << endl ;
     
-    rSucceeded = ( lMatches == sAuditReport.size() ) ;
-#else
-    rSucceeded = true ;
-#endif
+      cout << setprecision(19) ;
+    
+      int lVertexID = 0 ;
+      for ( Polyhedron::Vertex_iterator vi = lP.vertices_begin(); vi != lP.vertices_end() ; ++ vi )
+        vi->ID = lVertexID ++ ;    
+      
+      int lHalfedgeID = 0 ;
+      for ( Polyhedron::Halfedge_iterator hi = lP.halfedges_begin(); hi != lP.halfedges_end() ; ++ hi )
+        hi->ID = lHalfedgeID++ ;    
+      
+      int lFacetID = 0 ;
+      for ( Polyhedron::Facet_iterator fi = lP.facets_begin(); fi != lP.facets_end() ; ++ fi )
+        fi->ID = lFacetID ++ ;    
+  
+  #ifdef AUDIT
+      sAuditData .clear();
+      sAuditReport.clear();
+      ParseAudit(audit_name);
+      cout << "Audit data loaded." << endl ;
+  #endif
+      
+  #ifdef TEST_LT
+      typedef LindstromTurk_collapse_data<Polyhedron> Collapse_data ;
+      
+      Set_LindstromTurk_collapse_data<Collapse_data> Set_collapse_data ;
+      LindstromTurk_cost             <Collapse_data> Get_cost ;
+      LindstromTurk_vertex_placement <Collapse_data> Get_vertex_point ;
+  #else
+      typedef Minimal_collapse_data<Polyhedron> Collapse_data ;
+      
+      Set_minimal_collapse_data <Collapse_data> Set_collapse_data ;
+      Edge_length_cost          <Collapse_data> Get_cost ;
+      Midpoint_vertex_placement <Collapse_data> Get_vertex_point ;
+  #endif
+      
+      Count_stop_condition           <Collapse_data> Should_stop(aStop);
+          
+      Collapse_data::Params lParams;
+      
+      Visitor lVisitor ;
+  
+      Real_timer t ; t.start();    
+      int r = vertex_pair_collapse(lP,Set_collapse_data,&lParams,Get_cost,Get_vertex_point,Should_stop,&lVisitor);
+      t.stop();
+              
+      ofstream off_out(result_name.c_str(),ios::trunc);
+      off_out << lP ;
+      
+      cout << "\nFinished...\n"
+           << "Ellapsed time: " << t.time() << " seconds.\n" 
+           << r << " edges removed.\n"
+           << endl
+           << lP.size_of_vertices() << " final vertices.\n"
+           << (lP.size_of_halfedges()/2) << " final edges.\n"
+           << lP.size_of_facets() << " final triangles.\n" 
+           << ( lP.is_valid() ? " valid\n" : " INVALID!!\n" ) ;
+  
+  #ifdef STATS
+      cout << "\n------------STATS--------------\n"
+           << sProcessed        << " edges processed.\n"
+           << sCollapsed        << " edges collapsed.\n" 
+           << sNonCollapsable   << " non-collapsable edges.\n"
+           << sCostUncomputable << " non-computable edges.\n"
+           << sFixed            << " fixed edges.\n"
+           << sRemoved          << " edges removed.\n" 
+           << (sRemoved/3)      << " vertices removed." ;
+  #endif
+  
+  #ifdef AUDIT
+      unsigned lMatches = 0 ;
+                    
+      cout << "Audit report:\n" ;
+      for ( Audit_report_map::const_iterator ri = sAuditReport.begin() ; ri != sAuditReport.end() ; ++ ri )
+      {
+        Audit_report_ptr lReport = ri->second ;
+        
+        if ( lReport->AuditData )
+        {
+          if ( lReport->NewVertexMatched )
+            ++ lMatches ;
+             
+          cout << "Collapsed Halfedge " << lReport->HalfedgeID << endl 
+               << "  Cost: Actual=" << to_string(lReport->Cost) << ", Expected=" << to_string(lReport->AuditData->Cost)
+                                    << ". " << matched_alpha(lReport->CostMatched) << endl
+               << "  New vertex point: Actual=" << to_string(lReport->NewVertexPoint) << ", Expected=" 
+                                                << to_string(lReport->AuditData->NewVertexPoint) 
+                                                << ". " << matched_alpha(lReport->NewVertexMatched)
+               << endl ;
+        }
+        else
+        {
+          cout << "No audit data for Halfedge " << lReport->HalfedgeID << endl ;
+            ++ lMatches ;
+        }  
+      }
+      
+      rSucceeded = ( lMatches == sAuditReport.size() ) ;
+  #else
+      rSucceeded = true ;
+  #endif
+    }
+    else
+    {
+      cerr << "Invalid surface: " << name << endl ;
+    }
 
   }
   else

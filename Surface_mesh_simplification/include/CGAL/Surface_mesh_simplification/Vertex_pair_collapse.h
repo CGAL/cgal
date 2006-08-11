@@ -339,6 +339,7 @@ private:
   std::size_t mInitialPairCount ;
   std::size_t mCurrentPairCount ; 
 
+  CGAL_TSMS_DEBUG_CODE ( unsigned mStep ; )
 } ;
 
 } } // namespace Triangulated_surface_mesh::Simplification

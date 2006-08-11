@@ -47,6 +47,7 @@ VertexPairCollapse<M,D,C,V,S,I>::VertexPairCollapse( TSM&                       
 {
   CGAL_TSMS_TRACE(0,"VertexPairCollapse of TSM with " << num_undirected_edges(aSurface) << " edges" );
   
+  CGAL_TSMS_DEBUG_CODE ( mStep = 0 ; )
 }
 
 template<class M,class D,class C,class V,class S, class I>
@@ -153,7 +154,7 @@ void VertexPairCollapse<M,D,C,V,S,I>::Collect()
     if ( Visitor )
       Visitor->OnCollected(mSurface,s,t,is_s_fixed,is_t_fixed,edge,lPairPtr->cost(),Get_new_vertex_point(lPairPtr->data()));
     
-    CGAL_TSMS_TRACE(3,*lPairPtr);
+    CGAL_TSMS_TRACE(2,*lPairPtr);
     
     ++ lPairPtr ;
   }
@@ -174,21 +175,12 @@ void VertexPairCollapse<M,D,C,V,S,I>::Loop()
   vertex_pair_ptr lPair ;
   while ( (lPair = pop_from_PQ()) != 0 )
   {
-  
     CGAL_TSMS_TRACE(3,"Poped " << *lPair ) ;
     
     bool lIsCollapsable = false ;
     
     if ( lPair->cost() != none ) 
     {
-      if ( num_vertices(mSurface) <= 4 )
-      {
-        if ( Visitor )
-          Visitor->OnThetrahedronReached(mSurface);
-        CGAL_TSMS_TRACE(0,"Thetrahedron reached.");
-        break ;
-      }
-      
       if ( Should_stop(*lPair->cost(),lPair->data(),mInitialPairCount,mCurrentPairCount) )
       {
         if ( Visitor )
@@ -233,55 +225,82 @@ void VertexPairCollapse<M,D,C,V,S,I>::Loop()
 // Some edges are NOT collapsable: doing so would break the topological consistency of the mesh.
 // This function returns true if a edge 'p->q' can be collapsed.
 //
+// An edge p->q can be collapsed iff it satisfies the "link condition"
+// (as described in the "Mesh Optimization" article of Hoppe et al (1993))
+//
+// The link conidition is as follows: for every vertex 'k' adjacent to both 'p and 'q', "p,k,q" is a facet of the mesh.
+//
 template<class M,class D,class C,class V,class S, class I>
 bool VertexPairCollapse<M,D,C,V,S,I>::Is_collapsable( vertex_descriptor const& p, vertex_descriptor const& q, edge_descriptor const& p_q )
 {
-  if ( is_undirected_edge_a_border(p_q) )
-    return false ;
-    
-  out_edge_iterator eb1, ee1 ; 
-  out_edge_iterator eb2, ee2 ; 
+  bool rR = true ;
 
-  edge_descriptor q_p = opposite_edge(p_q,mSurface);
-  
-  vertex_descriptor t = target(next_edge_cw (q_p,mSurface),mSurface);
-  vertex_descriptor b = target(next_edge_ccw(q_p,mSurface),mSurface);
-  
-  for ( tie(eb1,ee1) = out_edges(p,mSurface) ; eb1 != ee1 ; ++ eb1 )
-  {
-    edge_descriptor p_x = *eb1 ;
+std::cout << "testing collapsabilty of p_q=V" << p->ID << "->V" << q->ID << std::endl ;
+std::cout << "is p_q border:" << is_border(p_q) << std::endl ;
+std::cout << "is q_q border:" << is_border(opposite_edge(p_q,mSurface)) << std::endl ;
     
-    if ( p_x != p_q )
-    {
-      vertex_descriptor x = target(p_x,mSurface);
-      
-      for ( tie(eb2,ee2) = out_edges(x,mSurface) ; eb2 != ee2 ; ++ eb2 )
-      {
-        edge_descriptor x_y = *eb2 ;
-        
-        if ( target(x_y,mSurface) == q )
-        {
-          if ( x != t && x != b )
-          {
-            CGAL_TSMS_TRACE(0, "Link condition for E" << p_q->id() << " V" << p->id() << "->V" << q->id() << " failed."
-                           << "\n  Non-face triangle found: V" << p->id() << "->V" << x->id() << "->V" << q->id()
-                           << "\n  (top face: V" << p->id() << "->V" << t->id() << "->V" << q->id() << ")"
-                           << "\n  (bottom face: V" << p->id() << "->V" << b->id() << "->V" << q->id() << ")"
-                           );
-            return false ;
-          }  
-        }
-      }  
-    }
-  }    
+  std::size_t min =  is_undirected_edge_a_border(p_q) ? 3 : 4 ;
+  if ( num_vertices(mSurface) > min )
+  {
+    out_edge_iterator eb1, ee1 ; 
+    out_edge_iterator eb2, ee2 ; 
   
-  return true ;
+    edge_descriptor q_p = opposite_edge(p_q,mSurface);
+    
+    vertex_descriptor t = target(next_edge(p_q,mSurface),mSurface);
+    vertex_descriptor b = target(next_edge(q_p,mSurface),mSurface);
+  
+std::cout << "  t=V" << t->ID << std::endl ;
+std::cout << "  b=V" << b->ID << std::endl ;
+
+    // The following loop checks the link condition for p_q.
+    // Specifically, that every vertex 'k' adjacent to both 'p and 'q' is a face of the mesh.
+    // 
+    for ( tie(eb1,ee1) = out_edges(p,mSurface) ; rR && eb1 != ee1 ; ++ eb1 )
+    {
+      edge_descriptor p_k = *eb1 ;
+      
+      if ( p_k != p_q )
+      {
+        vertex_descriptor k = target(p_k,mSurface);
+        
+        for ( tie(eb2,ee2) = out_edges(k,mSurface) ; rR && eb2 != ee2 ; ++ eb2 )
+        {
+          edge_descriptor k_l = *eb2 ;
+  
+          if ( target(k_l,mSurface) == q )
+          {
+std::cout << "  k=V" << k->ID << std::endl ;
+            // At this point we know p-q-k are connected and we need to determine if this triangle is a face of the mesh.
+            //
+            // Since the mesh is known to be triangular there are at most two faces sharing the edge p-q.
+            //
+            // If p->q is NOT a border edge, the top face is p->q->t where t is target(next(p->q))
+            // If q->p is NOT a border edge, the bottom face is q->p->b where b is target(next(q->p))
+            //
+            // If k is either t or b then p-q-k *might* be a face of the mesh. It won't be if k==t but p->q is border
+            // or k==b but q->b is a border (because in that case even though there exists triangles p->q->t (or q->p->b)
+            // they are holes, not faces)
+            // 
+            bool is_face =   ( t == k && !is_border(p_q) )
+                          || ( b == k && !is_border(q_p) ) ;
+                          
+            if ( !is_face )
+              rR = false ;
+          }
+        }  
+      }
+    }   
+  }
+  else rR = false ;
+     
+  return rR ;
 }
 
 template<class M,class D,class C,class V,class S, class I>
 void VertexPairCollapse<M,D,C,V,S,I>::Collapse( vertex_pair_ptr aPair )
 {
-  CGAL_TSMS_TRACE(1,"Collapsig " << *aPair ) ;
+  CGAL_TSMS_TRACE(1,"S" << mStep << ". Collapsig " << *aPair ) ;
   
   vertex_descriptor lP = aPair->p();
   vertex_descriptor lQ = aPair->q();
@@ -302,9 +321,10 @@ void VertexPairCollapse<M,D,C,V,S,I>::Collapse( vertex_pair_ptr aPair )
     
     edge_descriptor lEdgeQP = opposite_edge(lEdgePQ,mSurface);
     
-    edge_descriptor lEdgePT = next_edge_ccw(lEdgePQ,mSurface);
+    //edge_descriptor lEdgePT = next_edge_ccw(lEdgePQ,mSurface);
+    edge_descriptor lEdgePT = opposite_edge(prev_edge(lEdgePQ,mSurface),mSurface);
     
-    edge_descriptor lEdgeQB = next_edge_ccw(lEdgeQP,mSurface);
+    edge_descriptor lEdgeQB = opposite_edge(prev_edge(lEdgeQP,mSurface),mSurface);
     
     CGAL_TSMS_TRACE(3,"EdgePQ E" << lEdgePQ->ID 
                      << "(V" <<  lEdgePQ->vertex()->ID << "->V" << lEdgePQ->opposite()->vertex()->ID 
@@ -334,10 +354,10 @@ void VertexPairCollapse<M,D,C,V,S,I>::Collapse( vertex_pair_ptr aPair )
       remove_from_PQ(lPairQB) ;
     }
     
-    CGAL_TSMS_TRACE(2,"Removing from surface V" << lP->ID 
-                   << " E" << lEdgePQ->ID
-                   << " E" << lEdgePT->ID
-                   << " E" << lEdgeQB->ID
+    CGAL_TSMS_TRACE(1,"Removing from surface V" << lP->ID 
+                   << " E" << lEdgePQ->ID << "(PQ=V" << lP->ID << "->V" << lQ->ID << ")"
+                   << " E" << lEdgePT->ID << "(PT=V" << lP->ID << "->V" << target(lEdgePT,mSurface)->ID << ")"
+                   << " E" << lEdgeQB->ID << "(QB=V" << lQ->ID << "->V" << target(lEdgeQB,mSurface)->ID << ")"
                    );
 
     if ( Visitor )
@@ -363,6 +383,8 @@ void VertexPairCollapse<M,D,C,V,S,I>::Collapse( vertex_pair_ptr aPair )
   {
     CGAL_TSMS_TRACE(0,"Unable to calculate new vertex point. Pair " << aPair << " discarded without being removed" ) ;
   }
+  
+  CGAL_TSMS_DEBUG_CODE ( ++mStep ; )
 }
 
 template<class M,class D,class C,class V,class S, class I>
