@@ -30,11 +30,14 @@ namespace CGAL {
     inline
     bool
     do_overlap(const typename SK::Line_arc_3 &l1,
-               const typename SK::Line_arc_3 &l2)
+               const typename SK::Line_arc_3 &l2,
+               const bool known_equal_supporting_line = false)
     { 
-      if (!non_oriented_equal<SK>(l1.supporting_line(),
-                                  l2.supporting_line())) 
-        return false;
+      if(!known_equal_supporting_line) {
+        if (!non_oriented_equal<SK>(l1.supporting_line(),
+                                    l2.supporting_line())) 
+          return false;
+      }
 
       return SK().compare_xyz_3_object()(l1.higher_xyz_extremity(), 
                              l2.lower_xyz_extremity()) >= 0
@@ -50,6 +53,7 @@ namespace CGAL {
 	  typename SK::Line_arc_3 &l2)
     {
       typedef typename SK::Line_arc_3  Line_arc_3;
+      // The point must be on the line arc
       CGAL_kernel_precondition(SK().has_on_3_object()(l, p));
       // It doesn't make sense to split an arc on an extremity
       CGAL_kernel_precondition(l.source() != p);
