@@ -15,6 +15,8 @@
 #ifndef CGAL_SPHERICAL_KERNEL_PREDICATES_ON_CIRCULAR_ARC_3_H
 #define CGAL_SPHERICAL_KERNEL_PREDICATES_ON_CIRCULAR_ARC_3_H
 
+#include <CGAL/Circular_kernel_3/internal_function_has_on_spherical_kernel.h>
+
 namespace CGAL {
   namespace SphericalFunctors {
 
@@ -26,68 +28,46 @@ namespace CGAL {
       return c1.rep() == c2.rep();
     }
 
-    template< class SK>
+    template <class SK>
     inline
-    Sign
-    compute_sign_of_cross_product(const typename SK::Root_of_2 &x1, 
-                                  const typename SK::Root_of_2 &y1,
-                                  const typename SK::Root_of_2 &z1,
-                                  const typename SK::Root_of_2 &x2, 
-                                  const typename SK::Root_of_2 &y2,
-                                  const typename SK::Root_of_2 &z2) {
-      typedef typename SK::Root_of_2 Root_of_2;
-      const Root_of_2 cx = y1 * z2 - z1 * y2;
-      const Root_of_2 cy = z1 * x2 - x1 * z2;
-      const Root_of_2 cz = x1 * y2 - y1 * x2;
-      if(!is_zero(cx)) return sign(cx);
-      if(!is_zero(cy)) return sign(cy);
-      return sign(cz);
+    bool
+    do_overlap(const typename SK::Circular_arc_3 &c1,
+               const typename SK::Circular_arc_3 &c2,
+               const bool known_equal_supporting_circle = false)
+    { 
+      if(!known_equal_supporting_circle) {
+        if(!non_oriented_equal<SK>(c1.supporting_circle(), 
+                                   c2.supporting_circle()))
+          return false;
+      }
+      if(c1.rep().is_full()) return true;
+      if(c2.rep().is_full()) return true;
+      if((SK().has_on_3_object()(c1,c2.target(),true)) || 
+         (SK().has_on_3_object()(c1,c2.source(),true))) return true;
+      return SK().has_on_3_object()(c2,c1.source(),true);
     }
 
-    template< class SK>
-    inline
-    Sign
-    compute_sign_of_cross_product(const typename SK::FT &x1, 
-                                  const typename SK::FT &y1,
-                                  const typename SK::FT &z1,
-                                  const typename SK::FT &x2, 
-                                  const typename SK::FT &y2,
-                                  const typename SK::FT &z2) {
-      typedef typename SK::FT FT;
-      const FT cx = y1 * z2 - z1 * y2;
-      const FT cy = z1 * x2 - x1 * z2;
-      const FT cz = x1 * y2 - y1 * x2;
-      if(!is_zero(cx)) return sign(cx);
-      if(!is_zero(cy)) return sign(cy);
-      return sign(cz);
-    }
-
-    template< class SK>
-    inline
-    Sign
-    compute_sign_of_cross_product(const typename SK::Circular_arc_point_3 &p1, 
-                                  const typename SK::Circular_arc_point_3 &p2,
-                                  const typename SK::Point_3 &c) {
-      return compute_sign_of_cross_product<SK>(p1.x()-c.x(),
-                                               p1.y()-c.y(),
-                                               p1.z()-c.z(),
-                                               p2.x()-c.x(),
-                                               p2.y()-c.y(),
-                                               p2.z()-c.z());
-    }
-
-    template< class SK>
-    inline
-    Sign
-    compute_sign_of_cross_product(const typename SK::Point_3 &p1, 
-                                  const typename SK::Point_3 &p2,
-                                  const typename SK::Point_3 &c) {
-      return compute_sign_of_cross_product<SK>(p1.x()-c.x(),
-                                               p1.y()-c.y(),
-                                               p1.z()-c.z(),
-                                               p2.x()-c.x(),
-                                               p2.y()-c.y(),
-                                               p2.z()-c.z());
+    template < class SK >
+    void
+    split(const typename SK::Circular_arc_3 &c,
+	  const typename SK::Circular_arc_point_3 &p,
+	  typename SK::Circular_arc_3 &c1,
+	  typename SK::Circular_arc_3 &c2)
+    {
+      // The point must be on the circular arc 
+      CGAL_kernel_precondition(SK().has_on_3_object()(c, p));
+      typedef typename SK::Circular_arc_3  Circular_arc_3;
+      // It doesn't make sense to split an arc on an extremity
+      CGAL_kernel_precondition(c.source() != p);
+      CGAL_kernel_precondition(c.target() != p);
+      const Circular_arc_3 &rc1 = 
+        Circular_arc_3(c.supporting_circle(), c.source(), p);
+      const Circular_arc_3 &rc2 = 
+        Circular_arc_3(c.supporting_circle(), p, c.target());
+      if ( SK().compare_xyz_3_object()(rc1.source(), rc2.source()) != 
+           SMALLER) {
+        c1 = rc2; c2 = rc1;
+      } else { c1 = rc1; c2 = rc2; }
     }
 
   }//SphericalFunctors
