@@ -1,18 +1,19 @@
 %!PS-Adobe-2.0
-%%Creator: dvips(k) 5.92b Copyright 2002 Radical Eye Software
+%%Creator: dvips(k) 5.95a Copyright 2005 Radical Eye Software
 %%Title: ex_unb1.dvi
 %%Pages: 1
 %%PageOrder: Ascend
-%%BoundingBox: 226 365 575 664
-%%HiResBoundingBox: 226.143270 365.295307 574.699122 663.659110
+%%BoundingBox: 149 567 324 717
+%%HiResBoundingBox: 149.017355 567.733623 323.251654 716.878173
 
 %%DocumentFonts: rtxmi Times-Italic Times-Roman
+%%DocumentPaperSizes: a4
 %%EndComments
 %DVIPSWebPage: (www.radicaleye.com)
-%DVIPSCommandLine: dvips -x 2000 -y 2000 -D4000 -P cmz ex_unb1.dvi -o
-%DVIPSParameters: dpi=4000, compressed
-%DVIPSSource:  TeX output 2006.06.28:1625
-%%BeginProcSet: texc.pro
+%DVIPSCommandLine: dvips -P cmz ex_unb1.dvi -o
+%DVIPSParameters: dpi=600
+%DVIPSSource:  TeX output 2006.08.13:0146
+%%BeginProcSet: tex.pro 0 0
 %!
 /TeXDict 300 dict def TeXDict begin/N{def}def/B{bind def}N/S{exch}N/X{S
 N}B/A{dup}B/TR{translate}N/isls false N/vsize 11 72 mul N/hsize 8.5 72
@@ -31,22 +32,10 @@ df-tail}B/dfs{div/sf X/fntrx[sf 0 0 sf neg 0 0]N df-tail}B/E{pop nn A
 definefont setfont}B/Cw{Cd A length 5 sub get}B/Ch{Cd A length 4 sub get
 }B/Cx{128 Cd A length 3 sub get sub}B/Cy{Cd A length 2 sub get 127 sub}
 B/Cdx{Cd A length 1 sub get}B/Ci{Cd A type/stringtype ne{ctr get/ctr ctr
-1 add N}if}B/id 0 N/rw 0 N/rc 0 N/gp 0 N/cp 0 N/G 0 N/CharBuilder{save 3
-1 roll S A/base get 2 index get S/BitMaps get S get/Cd X pop/ctr 0 N Cdx
-0 Cx Cy Ch sub Cx Cw add Cy setcachedevice Cw Ch true[1 0 0 -1 -.1 Cx
-sub Cy .1 sub]/id Ci N/rw Cw 7 add 8 idiv string N/rc 0 N/gp 0 N/cp 0 N{
-rc 0 ne{rc 1 sub/rc X rw}{G}ifelse}imagemask restore}B/G{{id gp get/gp
-gp 1 add N A 18 mod S 18 idiv pl S get exec}loop}B/adv{cp add/cp X}B
-/chg{rw cp id gp 4 index getinterval putinterval A gp add/gp X adv}B/nd{
-/cp 0 N rw exit}B/lsh{rw cp 2 copy get A 0 eq{pop 1}{A 255 eq{pop 254}{
-A A add 255 and S 1 and or}ifelse}ifelse put 1 adv}B/rsh{rw cp 2 copy
-get A 0 eq{pop 128}{A 255 eq{pop 127}{A 2 idiv S 128 and or}ifelse}
-ifelse put 1 adv}B/clr{rw cp 2 index string putinterval adv}B/set{rw cp
-fillstr 0 4 index getinterval putinterval adv}B/fillstr 18 string 0 1 17
-{2 copy 255 put pop}for N/pl[{adv 1 chg}{adv 1 chg nd}{1 add chg}{1 add
-chg nd}{adv lsh}{adv lsh nd}{adv rsh}{adv rsh nd}{1 add adv}{/rc X nd}{
-1 add set}{1 add clr}{adv 2 chg}{adv 2 chg nd}{pop nd}]A{bind pop}
-forall N/D{/cc X A type/stringtype ne{]}if nn/base get cc ctr put nn
+1 add N}if}B/CharBuilder{save 3 1 roll S A/base get 2 index get S
+/BitMaps get S get/Cd X pop/ctr 0 N Cdx 0 Cx Cy Ch sub Cx Cw add Cy
+setcachedevice Cw Ch true[1 0 0 -1 -.1 Cx sub Cy .1 sub]{Ci}imagemask
+restore}B/D{/cc X A type/stringtype ne{]}if nn/base get cc ctr put nn
 /BitMaps get S ctr S sf 1 ne{A A length 1 sub A 2 index S get sf div put
 }if put/ctr ctr 1 add N}B/I{cc 1 add D}B/bop{userdict/bop-hook known{
 bop-hook}if/SI save N @rigin 0 0 moveto/V matrix currentmatrix A 1 get A
@@ -70,10 +59,10 @@ p -2 w}B/o{p -1 w}B/q{p 1 w}B/r{p 2 w}B/s{p 3 w}B/t{p 4 w}B/x{0 S
 rmoveto}B/y{3 2 roll p a}B/bos{/SS save N}B/eos{SS restore}B end
 
 %%EndProcSet
-%%BeginProcSet: pstricks.pro
+%%BeginProcSet: pstricks.pro 0 0
 %!
 % PostScript prologue for pstricks.tex.
-% Version 97 patch 3, 98/06/01
+% Version 97 patch 4, 04/05/10
 % For distribution, see pstricks.tex.
 %
 /tx@Dict 200 dict def tx@Dict begin
@@ -99,11 +88,24 @@ def
 /pathforall load stopped { pop pop pop pop } if z } def
 /STP { .996264 dup scale } def
 /STV { SDict begin normalscale end STP  } def
-/DashLine { dup 0 gt { /a .5 def PathLength exch div } { pop /a 1 def
-PathLength } ifelse /b ED /x ED /y ED /z y x add def b a .5 sub 2 mul y
-mul sub z Div round z mul a .5 sub 2 mul y mul add b exch Div dup y mul
-/y ED x mul /x ED x 0 gt y 0 gt and { [ y x ] 1 a sub y mul } { [ 1 0 ]
-0 } ifelse setdash stroke } def
+%
+%%-------------- DG begin patch 15 ---------------%%
+%/DashLine { dup 0 gt { /a .5 def PathLength exch div } { pop /a 1 def
+%PathLength } ifelse /b ED /x ED /y ED /z y x add def b a .5 sub 2 mul y
+%mul sub z Div round z mul a .5 sub 2 mul y mul add b exch Div dup y mul
+%/y ED x mul /x ED x 0 gt y 0 gt and { [ y x ] 1 a sub y mul } { [ 1 0 ]
+%0 } ifelse setdash stroke } def
+/DashLine {
+  dup 0 gt { /a .5 def PathLength exch div } { pop /a 1 def PathLength } ifelse
+  /b ED /x1 ED /y1 ED /x ED /y ED 
+  /z y x add y1 add x1 add def
+  /Coef b a .5 sub 2 mul y mul sub z Div round 
+  z mul a .5 sub 2 mul y mul add b exch Div def 
+  /y y Coef mul def /x x Coef mul def /y1 y1 Coef mul def /x1 x1 Coef mul def
+  x1 0 gt y1 0 gt x 0 gt y 0 gt and { [ y x y1 x1 ] 1 a sub y mul}
+  { [ 1 0] 0 } ifelse setdash stroke
+} def
+%%-------------- DG end patch 15 ---------------%%
 /DotLine { /b PathLength def /a ED /z ED /y CLW def /z y z add def a 0 gt
 { /b b a div def } { a 0 eq { /b b y sub def } { a -3 eq { /b b y add
 def } if } ifelse } ifelse [ 0 b b z Div round Div dup 0 le { pop 1 } if
@@ -198,7 +200,7 @@ def
 /NAC { x2 y2 x y curveto CC x1 y1 } def
 /EAC { x2 y2 x y ArrowB curveto pop pop } def
 /OpenCurve { NArray n 3 lt { n { pop pop } repeat } { BOC /n n 3 sub def
-n { NC } repeat EOC } ifelse } def
+    n { NC } repeat EOC } ifelse } def
 /AltCurve { { false NArray n 2 mul 2 roll [ n 2 mul 3 sub 1 roll ] aload
 /Points ED n 2 mul -2 roll } { false NArray } ifelse n 4 lt { n { pop
 pop } repeat } { BAC /n n 4 sub def n { NAC } repeat EAC } ifelse } def
@@ -298,7 +300,7 @@ end
 % END pstricks.pro
 
 %%EndProcSet
-%%BeginProcSet: pst-dots.pro
+%%BeginProcSet: pst-dots.pro 0 0
 %!PS-Adobe-2.0
 %%Title: Dot Font for PSTricks
 %%Creator: Timothy Van Zandt <tvz@Princeton.EDU>
@@ -433,7 +435,7 @@ end
 %END pst-dots.pro
 
 %%EndProcSet
-%%BeginProcSet: pst-node.pro
+%%BeginProcSet: pst-node.pro 0 0
 %!
 % PostScript prologue for pst-node.tex.
 % Version 97 patch 1, 97/05/09.
@@ -646,17 +648,25 @@ end
 % END pst-node.pro
 
 %%EndProcSet
-%%BeginProcSet: 8r.enc
-% File  8r.enc as of 2002-03-12 for PSNFSS 9
+%%BeginProcSet: 8r.enc 0 0
+% File 8r.enc  TeX Base 1 Encoding  Revision 2.0  2002-10-30
 %
-% This is the encoding vector for Type1 and TrueType fonts to be used
-% with TeX.  This file is part of the PSNFSS bundle, version 9
+% @@psencodingfile@{
+%   author    = "S. Rahtz, P. MacKay, Alan Jeffrey, B. Horn, K. Berry,
+%                W. Schmidt, P. Lehman",
+%   version   = "2.0",
+%   date      = "30 October 2002",
+%   filename  = "8r.enc",
+%   email     = "tex-fonts@@tug.org",
+%   docstring = "This is the encoding vector for Type1 and TrueType
+%                fonts to be used with TeX.  This file is part of the
+%                PSNFSS bundle, version 9"
+% @}
 % 
-% Authors: S. Rahtz, P. MacKay, Alan Jeffrey, B. Horn, K. Berry, W. Schmidt
-%
-% Idea is to have all the characters normally included in Type 1 fonts
+% The idea is to have all the characters normally included in Type 1 fonts
 % available for typesetting. This is effectively the characters in Adobe
-% Standard Encoding + ISO Latin 1 + extra characters from Lucida + Euro.
+% Standard encoding, ISO Latin 1, Windows ANSI including the euro symbol,
+% MacRoman, and some extra characters from Lucida.
 % 
 % Character code assignments were made as follows:
 % 
@@ -674,77 +684,95 @@ end
 % (3) Y&Y Lucida Bright includes some extra text characters; in the
 % hopes that other PostScript fonts, perhaps created for public
 % consumption, will include them, they are included starting at 0x12.
+% These are /dotlessj /ff /ffi /ffl.
 % 
-% (4) Remaining positions left undefined are for use in (hopefully)
-% upward-compatible revisions, if someday more characters are generally
-% available.
-% 
-% (5) hyphen appears twice for compatibility with both ASCII and Windows.
+% (4) hyphen appears twice for compatibility with both ASCII and Windows.
 %
-% (6) /Euro is assigned to 128, as in Windows ANSI
-% 
+% (5) /Euro was assigned to 128, as in Windows ANSI
+%
+% (6) Missing characters from MacRoman encoding incorporated as follows:
+%
+%     PostScript      MacRoman        TeXBase1
+%     --------------  --------------  --------------
+%     /notequal       173             0x16
+%     /infinity       176             0x17
+%     /lessequal      178             0x18
+%     /greaterequal   179             0x19
+%     /partialdiff    182             0x1A
+%     /summation      183             0x1B
+%     /product        184             0x1C
+%     /pi             185             0x1D
+%     /integral       186             0x81
+%     /Omega          189             0x8D
+%     /radical        195             0x8E
+%     /approxequal    197             0x8F
+%     /Delta          198             0x9D
+%     /lozenge        215             0x9E
+%
 /TeXBase1Encoding [
-% 0x00 (encoded characters from Adobe Standard not in Windows 3.1)
-  /.notdef /dotaccent /fi /fl
-  /fraction /hungarumlaut /Lslash /lslash
-  /ogonek /ring /.notdef
-  /breve /minus /.notdef 
-% These are the only two remaining unencoded characters, so may as
-% well include them.
-  /Zcaron /zcaron 
+% 0x00
+ /.notdef /dotaccent /fi /fl
+ /fraction /hungarumlaut /Lslash /lslash
+ /ogonek /ring /.notdef /breve
+ /minus /.notdef /Zcaron /zcaron
 % 0x10
- /caron /dotlessi 
-% (unusual TeX characters available in, e.g., Lucida Bright)
- /dotlessj /ff /ffi /ffl 
- /.notdef /.notdef /.notdef /.notdef
- /.notdef /.notdef /.notdef /.notdef
- % very contentious; it's so painful not having quoteleft and quoteright
- % at 96 and 145 that we move the things normally found there down to here.
- /grave /quotesingle 
-% 0x20 (ASCII begins)
+ /caron /dotlessi /dotlessj /ff
+ /ffi /ffl /notequal /infinity
+ /lessequal /greaterequal /partialdiff /summation
+ /product /pi /grave /quotesingle
+% 0x20
  /space /exclam /quotedbl /numbersign
  /dollar /percent /ampersand /quoteright
- /parenleft /parenright /asterisk /plus /comma /hyphen /period /slash
+ /parenleft /parenright /asterisk /plus
+ /comma /hyphen /period /slash
 % 0x30
- /zero /one /two /three /four /five /six /seven
- /eight /nine /colon /semicolon /less /equal /greater /question
+ /zero /one /two /three
+ /four /five /six /seven
+ /eight /nine /colon /semicolon
+ /less /equal /greater /question
 % 0x40
- /at /A /B /C /D /E /F /G /H /I /J /K /L /M /N /O
+ /at /A /B /C
+ /D /E /F /G
+ /H /I /J /K
+ /L /M /N /O
 % 0x50
- /P /Q /R /S /T /U /V /W
- /X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore
+ /P /Q /R /S
+ /T /U /V /W
+ /X /Y /Z /bracketleft
+ /backslash /bracketright /asciicircum /underscore
 % 0x60
- /quoteleft /a /b /c /d /e /f /g /h /i /j /k /l /m /n /o
+ /quoteleft /a /b /c
+ /d /e /f /g
+ /h /i /j /k
+ /l /m /n /o
 % 0x70
- /p /q /r /s /t /u /v /w
- /x /y /z /braceleft /bar /braceright /asciitilde
- /.notdef % rubout; ASCII ends
+ /p /q /r /s
+ /t /u /v /w
+ /x /y /z /braceleft
+ /bar /braceright /asciitilde /.notdef
 % 0x80
- /Euro /.notdef /quotesinglbase /florin
+ /Euro /integral /quotesinglbase /florin
  /quotedblbase /ellipsis /dagger /daggerdbl
  /circumflex /perthousand /Scaron /guilsinglleft
- /OE /.notdef /.notdef /.notdef
+ /OE /Omega /radical /approxequal
 % 0x90
  /.notdef /.notdef /.notdef /quotedblleft
  /quotedblright /bullet /endash /emdash
  /tilde /trademark /scaron /guilsinglright
- /oe /.notdef /.notdef /Ydieresis
+ /oe /Delta /lozenge /Ydieresis
 % 0xA0
- /.notdef % nobreakspace
- /exclamdown /cent /sterling
+ /.notdef /exclamdown /cent /sterling
  /currency /yen /brokenbar /section
  /dieresis /copyright /ordfeminine /guillemotleft
- /logicalnot
- /hyphen % Y&Y (also at 45); Windows' softhyphen
- /registered
- /macron
+ /logicalnot /hyphen /registered /macron
 % 0xD0
  /degree /plusminus /twosuperior /threesuperior
  /acute /mu /paragraph /periodcentered
  /cedilla /onesuperior /ordmasculine /guillemotright
  /onequarter /onehalf /threequarters /questiondown
 % 0xC0
- /Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla
+ /Agrave /Aacute /Acircumflex /Atilde
+ /Adieresis /Aring /AE /Ccedilla
  /Egrave /Eacute /Ecircumflex /Edieresis
  /Igrave /Iacute /Icircumflex /Idieresis
 % 0xD0
@@ -764,8 +792,9 @@ end
  /udieresis /yacute /thorn /ydieresis
 ] def
 
+
 %%EndProcSet
-%%BeginProcSet: texps.pro
+%%BeginProcSet: texps.pro 0 0
 %!
 TeXDict begin/rf{findfont dup length 1 add dict begin{1 index/FID ne 2
 index/UniqueID ne and{def}{pop pop}ifelse}forall[1 index 0 6 -1 roll
@@ -782,7 +811,7 @@ forall Encoding{]exch pop}{cleartomark}ifelse}if/Encoding exch def}def
 end
 
 %%EndProcSet
-%%BeginProcSet: special.pro
+%%BeginProcSet: special.pro 0 0
 %!
 TeXDict begin/SDict 200 dict N SDict begin/@SpecialDefaults{/hs 612 N
 /vs 792 N/ho 0 N/vo 0 N/hsc 1 N/vsc 1 N/ang 0 N/CLIP 0 N/rwiSeen false N
@@ -841,7 +870,7 @@ matrix currentmatrix N TR xrad yrad scale 0 0 1 startangle endangle arc
 savematrix setmatrix}N end
 
 %%EndProcSet
-%%BeginProcSet: color.pro
+%%BeginProcSet: color.pro 0 0
 %!
 TeXDict begin/setcmykcolor where{pop}{/setcmykcolor{dup 10 eq{pop
 setrgbcolor}{1 sub 4 1 roll 3{3 index add neg dup 0 lt{pop 0}if 3 1 roll
@@ -890,21 +919,26 @@ setcmykcolor}DC/Gray{0 0 0 0.50 setcmykcolor}DC/Black{0 0 0 1
 setcmykcolor}DC/White{0 0 0 0 setcmykcolor}DC end
 
 %%EndProcSet
-TeXDict begin 39158280 55380996 2000.5 4000 4000 (ex_unb1.dvi)
-@start /Fa 137[442 118[{ TeXBase1Encoding ReEncodeFont }1
-996.513 /Times-Italic rf /Fc 201[426 426 426 426 426
-426 49[{ TeXBase1Encoding ReEncodeFont }6 852.569 /Times-Roman
-rf /Fd 156[541 99[{ TeXBase1Encoding ReEncodeFont }1
-1217.96 /Times-Italic rf end
+TeXDict begin 39139632 55387786 1000 600 600 (ex_unb1.dvi)
+@start /Fa 137[33 118[{TeXBase1Encoding ReEncodeFont}1
+74.7198 /Times-Italic rf /Fc 201[32 32 32 32 32 32 49[{
+TeXBase1Encoding ReEncodeFont}6 63.9267 /Times-Roman
+rf /Fd 156[41 99[{TeXBase1Encoding ReEncodeFont}1 91.3242
+/Times-Italic rf end
 %%EndProlog
 %%BeginSetup
-%%Feature: *Resolution 4000dpi
+%%Feature: *Resolution 600dpi
 TeXDict begin
 %%PaperSize: A4
  end
 %%EndSetup
 %%Page: 1 1
-TeXDict begin 1 0 bop Black Black 8526 22512 a @beginspecial
+TeXDict begin 1 0 bop 0 TeXcolorgray Black 0 TeXcolorgray
+1 TeXcolorgray 0 TeXcolorgray 1 TeXcolorgray 0 TeXcolorgray
+0 TeXcolorgray 0 TeXcolorgray 1 TeXcolorgray 0 TeXcolorgray
+0 TeXcolorgray 0 TeXcolorgray 0 TeXcolorgray 0 TeXcolorgray
+0 TeXcolorgray 0 TeXcolorgray 0.25 TeXcolorgray 0 TeXcolorgray
+0.5 TeXcolorgray 0 TeXcolorgray 639 1688 a @beginspecial
 0 @llx 0 @lly 175 @urx 150 @ury 1750 @rwi @setspecial
 %%BeginDocument: ex_unb1.pstex
 %!PS-Adobe-2.0 EPSF-2.0
@@ -912,8 +946,8 @@ TeXDict begin 1 0 bop Black Black 8526 22512 a @beginspecial
 %%Creator: fig2dev Version 3.2 Patchlevel 5-alpha5
 %%CreationDate: Sun Jun 18 10:46:39 2006
 %%For: wein@lap-halperin2 (Ron Wein,M-18,+972-3-6406114,+972-9-9580491)
-%%BoundingBox: 226 365 575 664
-%%HiResBoundingBox: 226.143270 365.295307 574.699122 663.659110
+%%BoundingBox: 149 567 324 717
+%%HiResBoundingBox: 149.017355 567.733623 323.251654 716.878173
 
 %Magnification: 0.5900
 %%EndComments
@@ -1056,14 +1090,15 @@ showpage
 %EOF
 
 %%EndDocument
- @endspecial 0 0 1 TeXcolorrgb 9877 16699 a Fd(c)10418
-16882 y Fc(1)p Black 0 0 1 TeXcolorrgb 11735 8706 a Fd(c)12276
-8889 y Fc(2)p Black 0 0 1 TeXcolorrgb 22517 19302 a Fd(c)23058
-19485 y Fc(5)p Black 0 0 1 TeXcolorrgb 18613 8706 a Fd(c)19154
-8889 y Fc(6)p Black 0 0 1 TeXcolorrgb 13780 20603 a Fd(c)14321
-20786 y Fc(4)p Black 0 0 1 TeXcolorrgb 24376 10379 a
-Fd(c)24917 10562 y Fc(3)p Black 0 0 0 TeXcolorrgb 18427
-16514 a Fa(v)p Black Black Black eop end
+ @endspecial 0 0 1 TeXcolorrgb 741 1252 a Fd(c)782 1266
+y Fc(1)p 0 TeXcolorgray 0 0 1 TeXcolorrgb 880 653 a Fd(c)921
+667 y Fc(2)p 0 TeXcolorgray 0 0 1 TeXcolorrgb 1688 1447
+a Fd(c)1729 1461 y Fc(5)p 0 TeXcolorgray 0 0 1 TeXcolorrgb
+1396 653 a Fd(c)1437 667 y Fc(6)p 0 TeXcolorgray 0 0 1
+TeXcolorrgb 1033 1545 a Fd(c)1074 1559 y Fc(4)p 0 TeXcolorgray
+0 0 1 TeXcolorrgb 1828 778 a Fd(c)1869 792 y Fc(3)p 0
+TeXcolorgray 0 0 0 TeXcolorrgb 1382 1238 a Fa(v)p 0 TeXcolorgray
+0 TeXcolorgray 0 TeXcolorgray eop end
 %%Trailer
 
 userdict /end-hook known{end-hook}if

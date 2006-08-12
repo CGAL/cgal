@@ -5,7 +5,7 @@ So far we have contstructed and manipulated only arrangements of
 line segments, namely of bounded curves. Such arrangements always
 have one unbounded face that contains all other arrangement features.
 In this section we explain how to construct arrangements of unbounded
-curves, being lines and rays in this context.
+curves, such as lines and rays.
 
 \begin{figure}[t]
 \begin{ccTexOnly}
@@ -30,23 +30,23 @@ $v_{\rm tr}$ represent the four corners of the imaginary bounding
 rectangle..\label{arr_fig:unb_dcel}}
 \end{figure}
 
-Given a set $\calC$ of unbounded curves, a simple approach
-for representing the arrangement induced by $\calC$ would be
-to clip the unbounded curves using an axis-parallel rectangle that
-contains all finite curve endpoints and intersection points among
-curves in $\calC$. This process results in a set $\calC$ of bounded
-curves (line segments if $\calC$ contains lines and rays), and it is
+Given a set $\calC$ of unbounded curves, a simple approach for
+representing the arrangement induced by $\calC$ would be to clip the
+unbounded curves using an axis-parallel rectangle that contains all
+finite curve endpoints and intersection points between curves in
+$\calC$. This process would result in a set $\calC$ of bounded curves
+(line segments if $\calC$ contains lines and rays), and it would be
 straightforward to compute the arrangement induced by this set.
 However, we would like to operate directly on the unbounded curves
-without having to preprocess them. We therefore use an implicit
+without having to preprocess them. Therefore, we use an implicit
 bounding rectangle embedded in the \dcel\ structure.
 Figure~\ref{arr_fig:unb_dcel} shows the arrangement of four lines
-that subdivide the plane into eight unbounded faces and two
-bounded ones. Notice that in this case the unbounded face have outer
-boundaries, and the halfedges along these outer CCBs are drawn as
-arrows. The bounding rectangle is drawn in a dashed line. The
-vertices $v_1, \ldots, v_8$, which represent unbounded ends of
-the foure lines and lie on the bounding rectangle, actually exist at
+that subdivide the plane into eight unbounded faces and two bounded
+ones. Notice that in this case the unbounded faces have outer
+boundaries, and the halfedges along these outer CCBs are drawn as 
+arrows. The bounding rectangle is drawn with a dashed line. The
+vertices $v_1,v_2,\ldots,v_8$, which represent the unbounded ends of 
+the four lines, and lie on the bounding rectangle, actually exist at
 infinity, and the halfedges connecting them are \emph{fictitious}, and
 represent portions of the bounding rectangle. Note that the outer CCBs
 of the unbounded faces contain fictitious halfedges. The twins of these
@@ -55,21 +55,21 @@ the entire imaginary rectangle, which forms a single hole in a face
 $\tilde{f}$. We say that $\tilde{f}$ is \emph{fictitious} as it does not
 corresponds to a real two-dimensional cell of the arrangement.
 
-Also observe that we have four extra vertices at infinity that are do
-not lie on any curve; they are denoted  $v_{\rm bl}, v_{\rm tl},
+Observe that we have four extra vertices at infinity that do not lie
+on any curve; they are denoted as $v_{\rm bl}, v_{\rm tl}, 
 v_{\rm br}$ and $v_{\rm tr}$, and represent the bottom-left, top-left,
 bottom-right and top-right corners of the bounding rectangle,
-respectively. By introducing these four fictitious vertices we can
-label each of the fictitious edges as lying on the top, the bottom,
-the left or the right edge of the imaginary bounding rectangle.
+respectively. Introducing these four fictitious vertices, enables us
+to label each of the fictitious edges as lying on the top, the bottom,
+the left, or the right edge of the imaginary bounding rectangle.
 These fictitious edges exists even when the arrangement is empty: in
 this case they are connected with four pair of fictitious halfedges,
 that define a fictitous face lying inside the imaginary bounding
 rectangle and to a single unbounded face.
 
-To summarize, there are four types of arrangement vertices, which
-differ from one another by their location on the imaginary bounding
-rectangle:
+Summarizing the above, there are four types of arrangement vertices,
+which differ from one another by their location on the imaginary
+bounding rectangle:
 \begin{enumerate}
 \item
 A ``normal'' vertex, associated with a point in $\real^2$ whose
@@ -93,9 +93,9 @@ vertex of the right edge).
 \item
 A vertex that represent the unbounded end of a vertical line or of a
 curve with a vertical asymptote (finite $x$-coordinate and an
-unbounded $y$-coordinate). Such a vertex always lies one of the
+unbounded $y$-coordinate). Such a vertex always lies on one of the
 horizontal edges of the bounding rectangle (either the bottom one if
-$y = -\infty$, or the top one if $y = \infty$). The vertices $v_4$
+$y = -\infty$, or the top one if $y = \infty$). The vertices $v_4$ 
 and $v_5$ in Figure~\ref{arr_fig:unb_dcel} are of this type.
 \item
 The fictitious vertices that represent the four corners of the
@@ -113,8 +113,8 @@ incident to any true vertex at infinity.
 \subsection{Basic Manipulation and Traversal Methods\label{arr_ssec:unb_basic}}
 %--------------------------------------------
 
-The nested types defined in the \ccc{Arrangement_2} class also
-support the following methods, in addition to the ones listed in
+The nested types defined in the \ccc{Arrangement_2} class support the
+following methods, in addition to the ones listed in
 Section~\ref{arr_ssec:traverse}:
 \begin{itemize}
 \item
@@ -143,16 +143,17 @@ comprise only fictitious halfedge in case the arrangement contains
 only bounded curves).
 \end{itemize}
 
-It is important to observe that the \ccc{arr.number_of_vertices()}
-does not count the vertices at infinity. To find out this number
-we call \ccc{arr.number_of_vertices_at_infinity()}. Similarly,
-\ccc{arr.number_of_edges()} does not count the fictitious edges
-(which is always \ccc{arr.number_of_vertices_at_infinity() + 4}) and
-\ccc{arr.number_of_faces()} does not count the fictitious face.
-The vertex, halfedge, edge and face iterators defined by the
-\ccc{Arrangement_2} class only go over true features of the
-arrangement --- namely vertices at infinity and fictitious halfedges
-and faces are skipped. We mention that the
+Observe that the \ccc{arr.number_of_vertices()} does not count the
+number of vertices at infinity. Call
+\ccc{arr.number_of_vertices_at_infinity()}, to obtain this number.
+Similarly, \ccc{arr.number_of_edges()} does not count the number of
+fictitious edges, (which is always
+\ccc{arr.number_of_vertices_at_infinity() + 4}), and
+\ccc{arr.number_of_faces()} does not count the number of fictitious
+faces. The vertex, halfedge, edge, and face iterators defined by the
+\ccc{Arrangement_2} class only iterate over true features of the
+arrangement. Namely, vertices at infinity and fictitious halfedges
+and faces are ignored. On the other hand, the
 \ccc{Ccb_halfedge_circulator} of the outer boundary of an unbounded
 face or the \ccc{Halfegde_around_vertex_circulator} of a vertex at
 infinity do traverse fictitious halfegdes.
@@ -173,23 +174,23 @@ infinity do traverse fictitious halfegdes.
 in \ccc{ex_unbounded_non_intersecting.cpp}.\label{arr_fig:ex_unb1}}
 \end{figure}
 
-The following example demonstrates the usage of the insertion function
-for pairwise interior-disjoint unbounded curves. In this case
+The following example demonstrates the use of the insertion function
+for pairwise interior-disjoint unbounded curves. In this example
 we use the traits class \ccc{Arr_linear_traits_2<Kernel>} to
 instantiate the \ccc{Arrangement_2} template. This traits class is
 capable of representing line segments as well as unbounded linear
 curves (namely lines and rays). Observe that objects of the
 \ccc{X_monotone_curve_2} type defined by this traits class are
-constructible from \ccc{Line_2}, \ccc{Ray_2} and \ccc{Segment_2}
+constructible from \ccc{Line_2}, \ccc{Ray_2}, and \ccc{Segment_2}
 objects, as defined in the kernel.
 
-The first three curves are inserted using the specialized insertion
+The first three curves are inserted using the special insertion
 functions for $x$-monotone curves whose location in the arrangement
 is known. Notice that inserting an unbounded curve in the interior
 of an unbounded face, or from an existing vertex that represents the
 bounded end of the curve, may cause an unbounded face to split (this
 is never the case when inserting a bounded curve --- compare with
-Section~\ref{arr_sssec:mf_insert_cv}). Three additional rays are then
+Section~\ref{arr_sssec:mf_insert_cv}). Then, three additional rays are 
 inserted incrementally, using the insertion function for $x$-monotone
 curves whose interior is disjoint from all arrangement features.
 Finally, the program prints the size of the arrangement (compare to
@@ -210,22 +211,27 @@ point has finite coordinates.\footnote{Currently, all point-location
 strategies except the trapezoidal RIC point-location strategy is
 capable of handling arrangements of unbounded curves.} 
 
-In the following example we show how to use the aggregated insertion
-function to construct an arrangement of a set of lines. In this
-case we read a set of input points from a file (by default we use
-\ccc{points.dat}, which contains $100$ points randomly selected
-on the grid $[-10000,10000]\times[-10000,10000]$) and determine
-whether this set contains at least three collinear points. We solve
-this problem by constructing the arrangements of dual lines, where
-the line $p^{*}$ dual to the point $p = (p_x, p_y)$ is given by
-the equation $y = p_x*x - p_y$, and check whether three (or more)
-of the dual lines intersect at a common point by looking for an
-arrangement vertex whose degree is greater than $4$. 
+In the following example we show how an arrangement of unbounded lines
+is utilized to solve the following problem: Given a set of points, does
+the set contain at least three collinear points? In this example a set
+of input points is read from a file. The file  \ccc{points.dat} is
+used by default. It contains definitions of $100$ points randomly
+selected on the grid $[-10000,10000]\times[-10000,10000]$. We
+construct an arrangement of the dual lines, where the line $p^{*}$
+dual to the point $p = (p_x, p_y)$ is given by the equation
+$y = p_x*x - p_y$, and check whether three (or more) of the dual lines
+intersect at a common point, by searching for a (dual) vertex, whose
+degree is greater than $4$. If such a vertex exists, then there are at
+least three dual lines that intersect at a common point, which implies
+that there are at least three collinear points.
 
 \ccIncludeExampleCode{Arrangement_2/ex_dual_lines.cpp}
 
-Note that in the \ccc{points.dat} there are no three collinear points.
-However, we finally test the algorithm by inserting a line dual to the
-midpoint of two randomly selected points into the arrangement and
-check that we have created a vertex whose degree is greater than $4$.
+Note that there are no three collinear points among the points defined
+in the input file \ccc{points.dat}. In the second part of the example
+the existance of collinearity is forced and verified as follows. A line
+dual to the midpoint of two randomly selected points is introduced,
+and inserted into the arrangement. This operation is followed by a
+test that verifies that a vertex of degree greater than $4$
+exists. This implied that collinearity indeed exists as explained above.
 
