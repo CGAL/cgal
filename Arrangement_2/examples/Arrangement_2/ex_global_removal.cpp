@@ -20,7 +20,7 @@ typedef CGAL::Arr_naive_point_location<Arrangement_2> Naive_pl;
 
 int main ()
 {
-  // Create an arrangement of four line segments forming an H-shape.
+  // Create an arrangement of four line segments forming an H-shape:
   Arrangement_2   arr;
   Naive_pl        pl (arr);
 
@@ -37,16 +37,13 @@ int main ()
   std::cout << "The initial arrangement:" << std::endl;
   print_arrangement (arr);
 
-  // Remove the horizontal edge e1 from the arrangement using the member
-  // function remove_edge(), then remove its end vertices.
+  // Remove the horizontal edge from the arrangement, and its end vertices:
   Vertex_handle   v1 = e1->source(), v2 = e1->target();
-
   arr.remove_edge (e1);
   remove_vertex (arr, v1);
   remove_vertex (arr, v2);
 
-  // Remove the second horizontal edge e2 from the arrangement using the
-  // free remove_edge() function.
+  // Remove the second horizontal edge e2 from the arrangement:
   remove_edge (arr, e2);
 
   std::cout << "The final arrangement:" << std::endl;
