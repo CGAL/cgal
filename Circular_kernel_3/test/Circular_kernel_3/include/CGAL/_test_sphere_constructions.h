@@ -1,7 +1,5 @@
 #include <CGAL/Random.h>
 
-//#define typename 
-
 template <class SK>
 void _test_circular_arc_point_construct(SK sk) {
   typedef typename SK::RT                               RT;
@@ -1538,12 +1536,15 @@ void _test_split_construct(SK sk) {
   typedef typename SK::Sphere_3                         Sphere_3;
   typedef typename SK::Circle_3                         Circle_3;
   typedef typename SK::Line_arc_3                       Line_arc_3;
+  typedef typename SK::Circular_arc_3                   Circular_arc_3;
   typedef typename SK::Algebraic_kernel                 AK;
   typedef typename SK::Get_equation                     Get_equation;
   typedef typename SK::Equal_3                          Equal_3;
   typedef typename SK::Has_on_3                         Has_on_3;
   typedef typename SK::Split_3                          Split_3;
   typedef typename SK::Intersect_3                      Intersect_3;
+  typedef typename SK::Construct_circular_arc_3         Construct_circular_arc_3;
+  typedef typename SK::Construct_circular_arc_point_3   Construct_circular_arc_point_3;
   typedef typename SK::Construct_circle_3               Construct_circle_3;
   typedef typename SK::Construct_sphere_3               Construct_sphere_3;
   typedef typename SK::Construct_plane_3                Construct_plane_3;
@@ -1565,6 +1566,8 @@ void _test_split_construct(SK sk) {
   Construct_plane_3 theConstruct_plane_3 = sk.construct_plane_3_object();
   Construct_line_3 theConstruct_line_3 = sk.construct_line_3_object();
   Construct_line_arc_3 theConstruct_line_arc_3 = sk.construct_line_arc_3_object();
+  Construct_circular_arc_3 theConstruct_circular_arc_3 = sk.construct_circular_arc_3_object();
+  Construct_circular_arc_point_3 theConstruct_circular_arc_point_3 = sk.construct_circular_arc_point_3_object();
 
   std::cout << "Testing Split a Line_arc_3..." << std::endl;
   for(int vx=0;vx<3;vx++) {
@@ -1588,6 +1591,52 @@ void _test_split_construct(SK sk) {
             assert(theEqual_3(l1.target(), mdl));
             assert(theEqual_3(l2.source(), mdl));
             assert(theEqual_3(l2.target(), la.target()));
+          }
+        }
+      }
+    }
+  }
+
+  std::cout << "Testing Split a Circular_arc_3..." << std::endl;
+  Root_for_spheres_2_3 rt[8];
+
+  rt[0] = Root_for_spheres_2_3(0,1,0);
+  rt[1] = Root_for_spheres_2_3(Root_of_2(0,-FT(1,2),2), Root_of_2(0,FT(1,2),2),0);
+  rt[2] = Root_for_spheres_2_3(-1,0,0);
+  rt[3] = Root_for_spheres_2_3(Root_of_2(0,-FT(1,2),2), Root_of_2(0,-FT(1,2),2),0);
+  rt[4] = Root_for_spheres_2_3(0,-1,0);
+  rt[5] = Root_for_spheres_2_3(Root_of_2(0,FT(1,2),2), Root_of_2(0,-FT(1,2),2),0);
+  rt[6] = Root_for_spheres_2_3(1,0,0);
+  rt[7] = Root_for_spheres_2_3(Root_of_2(0,FT(1,2),2), Root_of_2(0,FT(1,2),2),0);
+
+  Circular_arc_point_3 cp[8]; 
+  for(int i=0; i<8; i++) {
+    cp[i] = theConstruct_circular_arc_point_3(rt[i]);
+  }
+
+  const Polynomials_for_circle_3 pcc_test = 
+      std::make_pair(Polynomial_for_spheres_2_3(0,0,0,1),
+                     Polynomial_1_3(0,0,1,0));
+  Circle_3 cc = theConstruct_circle_3(pcc_test);
+  for(int i=0; i<8; i++) {
+    for(int j=0; j<8; j++) {
+      if(i == j) continue;
+      Circular_arc_3 ca = theConstruct_circular_arc_3(cc,cp[i],cp[j]);
+      for(int t=0;t<8;t++) {
+        if(i == t || j == t) continue;
+        if(simulate_has_on(i,j,t)) {
+          Circular_arc_3 c1, c2;
+          theSplit_3(ca, cp[t], c1, c2);
+          if(SK().compare_xyz_3_object()(ca.source(), cp[t]) == CGAL::NEGATIVE) {
+            assert(theEqual_3(c1.source(), ca.source()));
+            assert(theEqual_3(c1.target(), cp[t]));
+            assert(theEqual_3(c2.source(), cp[t]));
+            assert(theEqual_3(c2.target(), ca.target()));
+          } else {
+            assert(theEqual_3(c1.source(), cp[t]));
+            assert(theEqual_3(c1.target(), ca.target()));
+            assert(theEqual_3(c2.source(), ca.source()));
+            assert(theEqual_3(c2.target(), cp[t]));
           }
         }
       }
