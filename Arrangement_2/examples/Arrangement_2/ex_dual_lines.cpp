@@ -26,9 +26,8 @@ int main (int argc, char **argv)
   // Open the input file.
   std::ifstream     in_file (filename);
 
-  if (! in_file.is_open())
-  {
-    std::cerr << "Failed to open " << filename << " ..." << std::endl;
+  if (! in_file.is_open()) {
+    std::cerr << "Failed to open " << filename << "!" << std::endl;
     return (1);
   }
 
@@ -39,16 +38,14 @@ int main (int argc, char **argv)
   // <x_2> <y_2>                         // point #2.
   //   :      :       :      :
   // <x_n> <y_n>                         // point #n.
-  int                            n;
+  unsigned int                   n, k;
   int                            px, py;
   std::vector<Point_2>           points;
   std::list<X_monotone_curve_2>  dual_lines;
-  int                            k;
 
   in_file >> n;
   points.resize (n);
-  for (k = 0; k < n; k++)
-  {
+  for (k = 0; k < n; k++) {
     in_file >> px >> py;
     points[k] = Point_2 (px, py);
 
@@ -69,8 +66,8 @@ int main (int argc, char **argv)
             << "V = " << arr.number_of_vertices()
             << " (+ " << arr.number_of_vertices_at_infinity()
             << " at infinity)"
-	    << ",  E = " << arr.number_of_edges() 
-	    << ",  F = " << arr.number_of_faces()
+            << ",  E = " << arr.number_of_edges() 
+            << ",  F = " << arr.number_of_faces()
             << " (" << arr.number_of_unbounded_faces()
             << " unbounded)" << std::endl;
 
@@ -78,10 +75,8 @@ int main (int argc, char **argv)
   Arrangement_2::Vertex_const_iterator   vit;
   bool                                   found_collinear = false;
 
-  for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
-  {
-    if (vit->degree() > 4)
-    {
+  for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
+    if (vit->degree() > 4) {
       found_collinear = true;
       break;
     }
@@ -107,10 +102,8 @@ int main (int argc, char **argv)
 
   // Make sure that we now have three collinear points.
   found_collinear = false;
-  for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
-  {
-    if (vit->degree() > 4)
-    {
+  for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
+    if (vit->degree() > 4) {
       found_collinear = true;
       break;
     }
