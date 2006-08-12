@@ -1268,14 +1268,21 @@ template < class SK >
   class Do_overlap_3
   {
     typedef typename SK::Line_arc_3     Line_arc_3;
+    typedef typename SK::Circular_arc_3 Circular_arc_3;
 
   public:
     typedef bool         result_type;
     typedef Arity_tag<2> Arity;
 
     result_type
-    operator() (const Line_arc_3 &l1, const Line_arc_3 &l2) const
-    { return do_overlap<SK>(l1, l2); }
+    operator() (const Line_arc_3 &l1, const Line_arc_3 &l2,
+                const bool known_equal_supporting_line = false) const
+    { return do_overlap<SK>(l1, l2, known_equal_supporting_line); }
+
+    result_type
+    operator() (const Circular_arc_3 &c1, const Circular_arc_3 &c2,
+                const bool known_equal_supporting_circle = false) const
+    { return do_overlap<SK>(c1, c2, known_equal_supporting_circle); }
 
   };
 
@@ -1284,6 +1291,7 @@ template < class SK >
   {
     typedef typename SK::Circular_arc_point_3    Circular_arc_point_3;
     typedef typename SK::Line_arc_3              Line_arc_3;
+    typedef typename SK::Circular_arc_3          Circular_arc_3;
 
   public:
 
@@ -1295,6 +1303,12 @@ template < class SK >
 	       const Circular_arc_point_3 &p,
 	       Line_arc_3 &ca1, Line_arc_3 &ca2) const
     { return split<SK>(l, p, ca1, ca2); }
+
+    result_type
+    operator()(const Circular_arc_3 &c, 
+	       const Circular_arc_point_3 &p,
+	       Circular_arc_3 &ca1, Circular_arc_3 &ca2) const
+    { return split<SK>(c, p, ca1, ca2); }
 
   };
 
