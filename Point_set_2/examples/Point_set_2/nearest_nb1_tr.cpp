@@ -1,10 +1,10 @@
 // file: examples/Point_set_2/nearest_nb1_tr.C
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <list>
 #include <CGAL/Point_set_2.h>
 
-typedef CGAL::Cartesian<double>     K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Point_set_2<K>::Edge_iterator  Edge_iterator;
 typedef CGAL::Point_set_2<K>::Vertex_handle  Vertex_handle;

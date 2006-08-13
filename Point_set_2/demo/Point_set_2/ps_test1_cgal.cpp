@@ -25,15 +25,12 @@ int main(){
 }
 #else
 
-//#include <CGAL/Cartesian.h>
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <list>
 #include <CGAL/Point_set_2.h>
 #include <CGAL/IO/Window_stream.h>
 
-//typedef CGAL::Cartesian<double>          K;
-typedef CGAL::Simple_cartesian<double>    K;
-
+typedef CGAL::Exact_predicates_inexact_constructions_kernel    K;
 
 typedef CGAL::Point_set_2<K>::Edge_iterator  Edge_iterator;
 typedef CGAL::Point_set_2<K>::Vertex_handle  Vertex_handle;

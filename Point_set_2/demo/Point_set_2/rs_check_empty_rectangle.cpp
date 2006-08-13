@@ -25,14 +25,13 @@ int main(){
 }
 #else
 
-//#include <CGAL/Cartesian.h>
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/IO/Window_stream.h>
 #include <CGAL/range_search_delaunay_2.h>
 #include <list>
 
-typedef double                                             coord_type;
-typedef CGAL::Simple_cartesian<coord_type>                 Gt;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel  Gt;
+typedef Gt::FT                                             coord_type;
 typedef CGAL::Delaunay_triangulation_2<Gt>                 Delaunay;
 typedef CGAL::Delaunay_triangulation_2<Gt>::Edge_iterator  Edge_iterator;
 typedef CGAL::Delaunay_triangulation_2<Gt>::Vertex_handle  Vertex_handle;

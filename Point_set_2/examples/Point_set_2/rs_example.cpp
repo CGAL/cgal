@@ -1,10 +1,10 @@
 // file: examples/Point_set_2/rs_example.C
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <list>
 #include <CGAL/Point_set_2.h>
 
-typedef CGAL::Cartesian<double>     K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel  K;
 
 typedef CGAL::Point_set_2<K>::Vertex_handle  Vertex_handle;
 typedef CGAL::Point_2<K>                         Point;
