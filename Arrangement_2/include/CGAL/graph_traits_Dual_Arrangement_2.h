@@ -610,7 +610,7 @@ std::pair<
                                                                edge_iterator,
   typename graph_traits<CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> > >::
                                                                edge_iterator>
-edge (const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& darr)
+edges (const CGAL::Dual<CGAL::Arrangement_2<Traits_, Dcel_> >& darr)
 {
   return (std::make_pair (darr.edges_begin(),
                           darr.edges_end()));

@@ -449,7 +449,7 @@ std::pair<typename graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >::
                                                                edge_iterator,
           typename graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >::
                                                                edge_iterator>
-edge (const CGAL::Arrangement_2<Traits_, Dcel_>& arr)
+edges (const CGAL::Arrangement_2<Traits_, Dcel_>& arr)
 {
   graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >  gt_arr (arr);
 
