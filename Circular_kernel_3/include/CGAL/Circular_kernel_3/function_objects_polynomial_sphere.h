@@ -1078,6 +1078,7 @@ template < class SK >
     typedef typename SK::Sphere_3                 Sphere_3;
     typedef typename SK::Line_3                   Line_3;
     typedef typename SK::Line_arc_3               Line_arc_3;
+    typedef typename SK::Circular_arc_3           Circular_arc_3;
     typedef typename SK::Plane_3                  Plane_3;
     typedef typename SK::Circle_3                 Circle_3;
     
@@ -1205,7 +1206,6 @@ template < class SK >
     operator()(const Line_3 & l1, const Line_3 & l2) const
       { return intersect_3<SK> (l1,l2); }
 
-    // INTERSECTIONS WITH LINE_ARC
     template < class OutputIterator >
     OutputIterator
     operator()(const Line_arc_3 & l1, const Line_arc_3 & l2, 
@@ -1234,7 +1234,6 @@ template < class SK >
 	       OutputIterator res) const
       { return intersect_3<SK> (c,l,res); }
 
-    
     template < class OutputIterator >
     OutputIterator
     operator()(const Sphere_3 & s, const Line_arc_3 & l, 
@@ -1258,6 +1257,70 @@ template < class SK >
     operator()(const Line_arc_3 & l,const Plane_3 & s, 
 	       OutputIterator res) const
       { return intersect_3<SK> (s,l,res); }
+
+        template < class OutputIterator >
+    OutputIterator
+    operator()(const Circular_arc_3 & c1, const Circular_arc_3 & c2, 
+	       OutputIterator res) const
+      { return intersect_3<SK> (c1,c2,res); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Line_3 & l, const Circular_arc_3 & ca) const
+      { return intersect_3<SK> (l,ca); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Circular_arc_3 & ca, const Line_3 & l) const
+      { return intersect_3<SK> (l,ca); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Circle_3 & c, const Circular_arc_3 & ca, 
+	       OutputIterator res) const
+      { return intersect_3<SK> (c,ca,res); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Circular_arc_3 & ca, const Circle_3 & c,
+	       OutputIterator res) const
+      { return intersect_3<SK> (c,ca,res); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Sphere_3 & s, const Circular_arc_3 & ca, 
+	       OutputIterator res) const
+      { return intersect_3<SK> (s,ca,res); }
+    
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Circular_arc_3 & ca,const Sphere_3 & s, 
+	       OutputIterator res) const
+      { return intersect_3<SK> (s,ca,res); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Plane_3 & p, const Circular_arc_3 & ca, 
+	       OutputIterator res) const
+      { return intersect_3<SK> (p,ca,res); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Circular_arc_3 & ca, const Plane_3 & p, 
+	       OutputIterator res) const
+      { return intersect_3<SK> (p,ca,res); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Circular_arc_3 & ca, const Line_arc_3 & la, 
+	       OutputIterator res) const
+      { return intersect_3<SK> (ca,la,res); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Line_arc_3 & la, const Circular_arc_3 & ca,
+	       OutputIterator res) const
+      { return intersect_3<SK> (ca,la,res); }
 
   };
 
