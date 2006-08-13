@@ -13,17 +13,32 @@ curves, their {\em lower envelope} is defined as the point-wise minimum of
 all curves. Namely, the lower envelope of the set $\calC$ can be
 defined as the following function:
 \begin{eqnarray*}
-\calL_{\calC} (x) = \min_{1 \leq k \leq n}{\overline{C}_k (x)} \ ,
+\calL_{\calC} (x) = \min_{1 \leq k \leq n}{
+\begin{ccTexOnly}\overline{C}\end{ccTexOnly}
+\begin{ccHtmlOnly}<span style="text-decoration:overline">C</span>\end{ccHtmlOnly}
+_k (x)} \ ,
 \end{eqnarray*}
-where we define $\overline{C}_k(x) = C_k(x)$ for $x \in R_{C_k}$,
-and $\overline{C}_k(x) = \infty$ otherwise.
+where we define $
+\begin{ccTexOnly}\overline{C}\end{ccTexOnly}
+\begin{ccHtmlOnly}<span style="text-decoration:overline">C</span>\end{ccHtmlOnly}
+_k(x) = C_k(x)$ for $x \in R_{C_k}$,
+and $
+\begin{ccTexOnly}\overline{C}\end{ccTexOnly}
+\begin{ccHtmlOnly}<span style="text-decoration:overline">C</span>\end{ccHtmlOnly}
+_k(x) = \infty$ otherwise.
 
 Similarly, the {\em upper envelope} of $\calC$ is the point-wise maximum of
 the $x$-monotone curves in the set:
 \begin{eqnarray*}
-\calU_{\calC} (x) = \max_{1 \leq k \leq n}{\underline{C}_k (x)} \ ,
+\calU_{\calC} (x) = \max_{1 \leq k \leq n}{
+\begin{ccTexOnly}\underline{C}\end{ccTexOnly}
+\begin{ccHtmlOnly}<span style="text-decoration:underline">C</span>\end{ccHtmlOnly}
+_k (x)} \ ,
 \end{eqnarray*}
-where in this case $\underline{C}_k(x) = -\infty$ for $x 
+where in this case $
+\begin{ccTexOnly}\underline{C}\end{ccTexOnly}
+\begin{ccHtmlOnly}<span style="text-decoration:underline">C</span>\end{ccHtmlOnly}
+_k(x) = -\infty$ for $x 
 \not\in R_{C_k}$.
 
 Given a set of $x$-monotone curves $\calC$, the {\em minimization
@@ -71,7 +86,7 @@ diagram these functions output.
 \begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
-    \epsfig{figure=Envelope_2/fig/min_diag.eps,width=5in,silent=}
+    \includegraphics[width=5in]{Envelope_2/fig/min_diag}
   \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
@@ -169,7 +184,7 @@ diagrams:
 \begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
-    \epsfig{figure=Envelope_2/fig/ex_circle.eps,silent=}
+    \includegraphics{Envelope_2/fig/ex_circle}
   \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
