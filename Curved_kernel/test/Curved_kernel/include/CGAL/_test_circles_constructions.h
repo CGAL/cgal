@@ -243,6 +243,19 @@ void _test_circle_construct(CK ck)
 	 && circ_arc_overlap_upper_part.is_x_monotone()
 	 && circ_arc_overlap_lower_part.is_x_monotone()
 	 );
+
+  std::cout << "Intersection : same circular arc" << std::endl;
+  std::vector< CGAL::Object > 
+    vector_for_intersection_the_same_arc;
+  theConstruct_intersect_2(circ_arc_overlap_1, 
+ 			   circ_arc_overlap_1,
+ 			   std::back_inserter(vector_for_intersection_the_same_arc));
+  assert(vector_for_intersection_the_same_arc.size() == 1);
+  Circular_arc_2 res_same;
+  assert(assign(res_same, vector_for_intersection_the_same_arc[0]));
+  assert(res_same.source() == circ_arc_overlap_1.source());
+  assert(res_same.target() == circ_arc_overlap_1.target());
+
   std::cout << "Intersection : overlap on a circular arc" << std::endl;
   Circular_arc_2 circ_arc_in_overlap;
   Circular_arc_2 circ_arc_in_overlap_2;
@@ -283,7 +296,7 @@ void _test_circle_construct(CK ck)
   
   assert(the_pair.first.x() * 
 	 (center_circ_intersection_2_1_x + circ_intersection_2_1_r * sqrt2) >= 0);
-//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
   assert(square(the_pair.first.x() - RT(center_circ_intersection_2_1_x))
 	 == (circ_intersection_2_1_r * circ_intersection_2_1_r / typename CK::RT(2)));
   std::cout << "y = " << the_pair.first.y() << " the result must be = " <<
