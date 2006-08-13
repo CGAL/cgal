@@ -481,6 +481,7 @@ void _test_intersection_construct(SK sk) {
   typedef typename SK::Point_3                          Point_3;
   typedef typename SK::Line_3                           Line_3;
   typedef typename SK::Line_arc_3                       Line_arc_3;
+  typedef typename SK::Circular_arc_3                   Circular_arc_3;
   typedef typename SK::Plane_3                          Plane_3;
   typedef typename SK::Sphere_3                         Sphere_3;
   typedef typename SK::Circle_3                         Circle_3;
@@ -494,6 +495,8 @@ void _test_intersection_construct(SK sk) {
   typedef typename SK::Construct_plane_3                Construct_plane_3;
   typedef typename SK::Construct_line_3                 Construct_line_3;
   typedef typename SK::Construct_line_arc_3             Construct_line_arc_3;
+  typedef typename SK::Construct_circular_arc_3         Construct_circular_arc_3;
+  typedef typename SK::Construct_circular_arc_point_3   Construct_circular_arc_point_3;
   typedef typename SK::Polynomials_for_circle_3         Polynomials_for_circle_3;
   typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
   typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
@@ -509,6 +512,8 @@ void _test_intersection_construct(SK sk) {
   Construct_plane_3 theConstruct_plane_3 = sk.construct_plane_3_object();
   Construct_line_3 theConstruct_line_3 = sk.construct_line_3_object();
   Construct_line_arc_3 theConstruct_line_arc_3 = sk.construct_line_arc_3_object();
+  Construct_circular_arc_3 theConstruct_circular_arc_3 = sk.construct_circular_arc_3_object();
+  Construct_circular_arc_point_3 theConstruct_circular_arc_point_3 = sk.construct_circular_arc_point_3_object();
 
   std::cout << "Testing intersection(Sphere,Sphere)..." << std::endl;
   Sphere_3 s = theConstruct_sphere_3(Polynomial_for_spheres_2_3(0,0,0,1));
@@ -1214,6 +1219,174 @@ void _test_intersection_construct(SK sk) {
   std::cout << "Testing intersection(Line_arc,Circle)..." << std::endl;
   // all those tests above are equivalent to
   // an intersection of line with a has_on (already tested)
+
+   std::cout << "Testing intersection(Circular_arc, Circular_arc)..." << std::endl;
+  // Testing the case where it overlaps, or do not intersect
+  Root_for_spheres_2_3 rt[8];
+
+  rt[0] = Root_for_spheres_2_3(0,1,0);
+  rt[1] = Root_for_spheres_2_3(Root_of_2(0,-FT(1,2),2), Root_of_2(0,FT(1,2),2),0);
+  rt[2] = Root_for_spheres_2_3(-1,0,0);
+  rt[3] = Root_for_spheres_2_3(Root_of_2(0,-FT(1,2),2), Root_of_2(0,-FT(1,2),2),0);
+  rt[4] = Root_for_spheres_2_3(0,-1,0);
+  rt[5] = Root_for_spheres_2_3(Root_of_2(0,FT(1,2),2), Root_of_2(0,-FT(1,2),2),0);
+  rt[6] = Root_for_spheres_2_3(1,0,0);
+  rt[7] = Root_for_spheres_2_3(Root_of_2(0,FT(1,2),2), Root_of_2(0,FT(1,2),2),0);
+
+  Circular_arc_point_3 cp[8]; 
+  for(int i=0; i<8; i++) {
+    cp[i] = theConstruct_circular_arc_point_3(rt[i]);
+  }
+
+  const Polynomials_for_circle_3 pcc_test = 
+      std::make_pair(Polynomial_for_spheres_2_3(0,0,0,1),
+                     Polynomial_1_3(0,0,1,0));
+  Circle_3 cc = theConstruct_circle_3(pcc_test);
+  for(int i=0; i<8; i++) {
+    for(int j=0; j<8; j++) {
+      if(i == j) continue;
+      Circular_arc_3 ca = theConstruct_circular_arc_3(cc,cp[i],cp[j]);
+      for(int t1=0;t1<8;t1++) {
+        for(int t2=0;t2<8;t2++) {
+          if(t1 == t2) continue;
+          Circular_arc_3 cb = theConstruct_circular_arc_3(cc,cp[t1],cp[t2]);
+          std::vector< CGAL::Object > intersection_1;
+          theIntersect_3(ca, cb, std::back_inserter(intersection_1));
+          Circular_arc_3 cres, cres2;
+          std::pair< Circular_arc_point_3, unsigned > cp1, cp2;
+          if(t1 == i) {
+            if(t2 == j) {
+              assert(intersection_1.size() == 1);
+              assert(assign(cres,intersection_1[0]));
+              assert(theEqual_3(ca,cres));
+            } else if(simulate_has_on(i,j,t2)) {
+              assert(intersection_1.size() == 1);
+              assert(assign(cres,intersection_1[0]));
+              assert(theEqual_3(cb, cres));
+            } else {
+              assert(intersection_1.size() == 1);
+              assert(assign(cres,intersection_1[0]));
+              assert(theEqual_3(ca, cres));
+            } 
+          } else if(t2 == j) {
+            if(simulate_has_on(i,j,t1)) {
+              assert(intersection_1.size() == 1);
+              assert(assign(cres,intersection_1[0]));
+              assert(theEqual_3(cb, cres));
+            } else {
+              assert(intersection_1.size() == 1);
+              assert(assign(cres,intersection_1[0]));
+              assert(theEqual_3(ca, cres));
+            }
+          } else if(t1 == j) {
+            if(t2 == i) {
+              assert(intersection_1.size() == 2);
+              assert(assign(cp1,intersection_1[0]));
+              assert(assign(cp2,intersection_1[1]));
+              assert(theEqual_3(cp1.first, cp[i]) || 
+                     theEqual_3(cp1.first, cp[j]));
+              assert(theEqual_3(cp2.first, cp[i]) || 
+                     theEqual_3(cp2.first, cp[j]));
+              assert(!theEqual_3(cp1.first, cp2.first));
+            } else if(simulate_has_on(t1,i,t2)) {
+              assert(intersection_1.size() == 1);
+              assert(assign(cp1,intersection_1[0]));
+              assert(theEqual_3(cp1.first, cp[t1]));
+            } else {
+              assert(intersection_1.size() == 2);
+              if(assign(cp1,intersection_1[0]) && assign(cres,intersection_1[1]));
+              else if(assign(cres,intersection_1[0]) && assign(cp1,intersection_1[1]));
+              else assert(false);
+              Circular_arc_3 conf = theConstruct_circular_arc_3(cc,cp[i],cp[t2]);
+              assert(theEqual_3(conf, cres));
+              assert(theEqual_3(cp1.first, cp[t1]));
+            } 
+          } else if(t2 == i) {
+            if(t1 == j) {
+              assert(intersection_1.size() == 2);
+              assert(assign(cp1,intersection_1[0]));
+              assert(assign(cp2,intersection_1[1]));
+              assert(theEqual_3(cp1.first, cp[i]) || 
+                     theEqual_3(cp1.first, cp[j]));
+              assert(theEqual_3(cp2.first, cp[i]) || 
+                     theEqual_3(cp2.first, cp[j]));
+              assert(!theEqual_3(cp1.first, cp2.first));
+            } else if(simulate_has_on(j,i,t1)) {
+              assert(intersection_1.size() == 1);
+              assert(assign(cp1,intersection_1[0]));
+              assert(theEqual_3(cp1.first, cp[i]));
+            } else {
+              assert(intersection_1.size() == 2);
+              if(assign(cp1,intersection_1[0]) && assign(cres,intersection_1[1]));
+              else if(assign(cres,intersection_1[0]) && assign(cp1,intersection_1[1]));
+              else assert(false);
+              Circular_arc_3 conf = theConstruct_circular_arc_3(cc,cp[t1],cp[j]);
+              assert(theEqual_3(conf, cres));
+              assert(theEqual_3(cp1.first, cp[i]));
+            }
+          } else if(simulate_has_on(i,j,t1)) {
+            if(simulate_has_on(t1,j,t2)) {
+              assert(intersection_1.size() == 1);
+              assert(assign(cres,intersection_1[0]));
+              assert(theEqual_3(cb, cres));
+            } else if(simulate_has_on(t2,j,i)) {
+              assert(intersection_1.size() == 1);
+              assert(assign(cres,intersection_1[0]));
+              Circular_arc_3 conf = theConstruct_circular_arc_3(cc,cp[t1],cp[j]);
+              assert(theEqual_3(cres, conf));
+            } else {
+              assert(intersection_1.size() == 2);
+              assert(assign(cres,intersection_1[0]));
+              assert(assign(cres2,intersection_1[1]));
+              Circular_arc_3 conf1 = theConstruct_circular_arc_3(cc,cp[t1],cp[j]);
+              Circular_arc_3 conf2 = theConstruct_circular_arc_3(cc,cp[i],cp[t2]);
+              assert((theEqual_3(cres, conf1) && theEqual_3(cres2, conf2)) ||
+                     (theEqual_3(cres2, conf1) && theEqual_3(cres, conf2)));
+            }
+          } else if(simulate_has_on(i,j,t2)) {
+            if(simulate_has_on(i,t2,t1)) {
+              assert(intersection_1.size() == 1);
+              assert(assign(cres,intersection_1[0]));
+              assert(theEqual_3(cb, cres));
+            } else if(simulate_has_on(j,i,t1)) {
+              assert(intersection_1.size() == 1);
+              assert(assign(cres,intersection_1[0]));
+              Circular_arc_3 conf = theConstruct_circular_arc_3(cc,cp[i],cp[t2]);
+              assert(theEqual_3(cres, conf));
+            } else {
+              // This case sould never happen, because it already happen before
+              assert(intersection_1.size() == 2);
+              assert(assign(cres,intersection_1[0]));
+              assert(assign(cres2,intersection_1[1]));
+              Circular_arc_3 conf1 = theConstruct_circular_arc_3(cc,cp[t1],cp[j]);
+              Circular_arc_3 conf2 = theConstruct_circular_arc_3(cc,cp[i],cp[t2]);
+              assert((theEqual_3(cres, conf1) && theEqual_3(cres2, conf2)) ||
+                     (theEqual_3(cres2, conf1) && theEqual_3(cres, conf2)));
+            }
+          } else if(simulate_has_on(t1,t2,i)) {
+            // the case whether (i,j) contains (t1,t2) is handled before
+            assert(intersection_1.size() == 1);
+            assert(assign(cres,intersection_1[0]));
+            assert(theEqual_3(ca, cres));
+          } else {
+            assert(intersection_1.size() == 0);
+          }
+        }
+      }
+    }
+  }
+
+  // The case whether the supporting circle is not the same is
+  // the intersection_3(Circle_3, Circle_3) + has_on_3(Circle_3. Circule_arc_3)
+  // already tested
+
+  std::cout << "Testing intersection(Circular_arc,Line)..." << std::endl;
+  std::cout << "Testing intersection(Circular_arc,Sphere)..." << std::endl;
+  std::cout << "Testing intersection(Circular_arc,Plane)..." << std::endl;
+  std::cout << "Testing intersection(Circular_arc,Circle)..." << std::endl;
+  std::cout << "Testing intersection(Circular_arc,Line_arc)..." << std::endl;
+  // all those tests above are equivalent to
+  // an intersection of circle with a has_on (already tested)
 
 }
 
