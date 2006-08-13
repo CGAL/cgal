@@ -537,7 +537,9 @@ namespace CircularFunctors {
           bool t1_in_a2 = has_on<CK>(a2,a1.target(),true);
           bool s1_in_a2 = has_on<CK>(a2,a1.source(),true);
           if(t1_in_a2 && s1_in_a2) {
-            if(CircularFunctors::compare_xy<CK>(a1.source(), a2.source()) < 0) {
+            const Comparison_result comp = 
+              CircularFunctors::compare_xy<CK>(a1.source(), a2.source());
+            if(comp < 0) {
               if(a1.source() == a2.target()) {
                 *res++ = make_object(std::make_pair(a1.source(),1u));
               } else {
@@ -552,7 +554,7 @@ namespace CircularFunctors {
 	        Circular_arc_2(a1.supporting_circle(),a2.source(),a1.target());
 	        *res++ = make_object(arc);
               }
-            } else {
+            } else if (comp > 0) {
               if(a2.source() == a1.target()) {
                 *res++ = make_object(std::make_pair(a2.source(),1u));
               } else {
@@ -567,7 +569,9 @@ namespace CircularFunctors {
 	        Circular_arc_2(a1.supporting_circle(),a1.source(),a2.target());
 	        *res++ = make_object(arc);
               } 
-            } //return res;
+            } else {
+              *res++ = make_object(a1);
+            } 
           } else {
             *res++ = make_object(a2);
           //return res;
