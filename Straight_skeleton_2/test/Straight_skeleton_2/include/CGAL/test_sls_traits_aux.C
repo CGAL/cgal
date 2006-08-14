@@ -41,17 +41,17 @@ void report( int idx, bool ok, std::string const& info = std::string("") )
   }
 }
 
-Sorted_triedge create_sorted_triedge( Traits const&  aTraits, triple const& aTriple )
+Seeded_trisegment create_seeded_trisegment( Traits const&  aTraits, triple const& aTriple )
 {
-  Triedge const& lTriedge = aTriple.triedge();
-  CGAL::Triedge_collinearity lColl = CGAL::Get_ss_triedge_collinearity_2(aTraits)(lTriedge);
-  return CGAL::Construct_ss_sorted_triedge_2(aTraits)(lTriedge,lColl);
+  Trisegment const& lTrisegment = aTriple.trisegment();
+  Trisegment lseed, rseed ;
+  return CGAL::Construct_ss_seeded_trisegment_2(aTraits)(lTrisegment,lseed,rseed);
 }
 
 
 bool exist_event( Traits const&  aTraits, triple const& aTriple )
 {
-  return CGAL::Do_ss_event_exist_2(aTraits)(create_sorted_triedge(aTraits,aTriple));
+  return CGAL::Do_ss_event_exist_2(aTraits)(create_seeded_trisegment(aTraits,aTriple));
 }
 
 template<class Traits, class triple>
@@ -66,7 +66,7 @@ void test_exist_event( int            i
 
 CGAL::Comparison_result compare_events(Traits const& aTraits, triple const& aTripleA, triple const& aTripleB )
 {
-  return CGAL::Compare_ss_event_times_2(aTraits)(create_sorted_triedge(aTraits,aTripleA),create_sorted_triedge(aTraits,aTripleB));
+  return CGAL::Compare_ss_event_times_2(aTraits)(create_seeded_trisegment(aTraits,aTripleA),create_seeded_trisegment(aTraits,aTripleB));
 }
 
 template<class Traits, class triple>
@@ -91,7 +91,7 @@ CGAL::Comparison_result compare_sdist_to_seed(Traits  const& aTraits
                                              ,triple const& aTripleB
                                              )
 {
-  return CGAL::Compare_ss_event_distance_to_seed_2(aTraits)(aP,create_sorted_triedge(aTraits,aTripleA),create_sorted_triedge(aTraits,aTripleB));
+  return CGAL::Compare_ss_event_distance_to_seed_2(aTraits)(aP,create_seeded_trisegment(aTraits,aTripleA),create_seeded_trisegment(aTraits,aTripleB));
 }
 
 template<class Traits, class triple>
@@ -101,9 +101,9 @@ CGAL::Comparison_result compare_sdist_to_seed(Traits  const& aTraits
                                              ,triple const& aTripleC
                                              )
 {
-  return CGAL::Compare_ss_event_distance_to_seed_2(aTraits)(create_sorted_triedge(aTraits,aTripleA)
-                                                           ,create_sorted_triedge(aTraits,aTripleB)
-                                                           ,create_sorted_triedge(aTraits,aTripleC)
+  return CGAL::Compare_ss_event_distance_to_seed_2(aTraits)(create_seeded_trisegment(aTraits,aTripleA)
+                                                           ,create_seeded_trisegment(aTraits,aTripleB)
+                                                           ,create_seeded_trisegment(aTraits,aTripleC)
                                                            );
 }
 
@@ -151,7 +151,7 @@ void test_compare_sdist_to_seed( int                     i
 
 bool is_inside_offset_zone( Traits const&  aTraits, triple const& aTripleA, triple const& aTripleB )
 {
-  return CGAL::Is_ss_event_inside_offset_zone_2(aTraits)(create_sorted_triedge(aTraits,aTripleA),create_sorted_triedge(aTraits,aTripleB));
+  return CGAL::Is_ss_event_inside_offset_zone_2(aTraits)(create_seeded_trisegment(aTraits,aTripleA),create_seeded_trisegment(aTraits,aTripleB));
 }
 
 template<class Traits, class triple>

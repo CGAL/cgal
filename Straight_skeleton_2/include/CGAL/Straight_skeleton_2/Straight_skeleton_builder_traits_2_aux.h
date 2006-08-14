@@ -29,6 +29,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <boost/tuple/tuple.hpp>
+#include <boost/intrusive_ptr.hpp>
 #include <boost/optional/optional.hpp>
 #include <boost/none.hpp>
 
@@ -307,7 +308,7 @@ class Trisegment_2
     {
       if ( aTrisegment.is_null() )
       {
-        return os << "{null}" << endl ;
+        return os << "{null}" ;
       }  
       else
       {

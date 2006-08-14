@@ -39,8 +39,8 @@ typedef K::Segment_2 Segment ;
 
 typedef CGAL::Straight_skeleton_builder_traits_2<K> Traits ;
 
-typedef Traits::Triedge_2        Triedge ;
-typedef Traits::Sorted_triedge_2 Sorted_triedge ;
+typedef Traits::Trisegment_2        Trisegment ;
+typedef Traits::Seeded_trisegment_2 Seeded_trisegment ;
 
 Traits sTraits ;
 
@@ -99,12 +99,12 @@ struct triple
 
   int idx( char const* d, int i ) { return d[i] - 'a' ; }
 
-  Triedge triedge() const
+  Trisegment trisegment() const
   {
-    return Triedge( Segment( Point(mP[0].x(),mP[0].y()),  Point(mP[1].x(),mP[1].y()))
-                  , Segment( Point(mP[2].x(),mP[2].y()),  Point(mP[3].x(),mP[3].y()))
-                  , Segment( Point(mP[4].x(),mP[4].y()),  Point(mP[5].x(),mP[5].y()))
-                  );
+    return *CGAL::Construct_ss_trisegment_2(sTraits)( Segment( Point(mP[0].x(),mP[0].y()),  Point(mP[1].x(),mP[1].y()))
+                                                    , Segment( Point(mP[2].x(),mP[2].y()),  Point(mP[3].x(),mP[3].y()))
+                                                    , Segment( Point(mP[4].x(),mP[4].y()),  Point(mP[5].x(),mP[5].y()))
+                                                    );
   }
 
   friend std::ostream& operator<<( std::ostream& os, Point const& aP )
@@ -132,7 +132,7 @@ void test_exist_event()
 //    f g h i j
 //    a b c d e
 
-  const int c = 11 ;
+  const int c = 10 ;
 
   const triple triples[c] = { triple("fabg")
                             , triple("fbci")
@@ -142,7 +142,6 @@ void test_exist_event()
                             , triple("abci")
                             , triple("abcg")
                             , triple("afgl")
-                            , triple("aght")
                             , triple("agc","qr")
                             , triple("acga")
                             } ;
@@ -155,7 +154,6 @@ void test_exist_event()
                            ,true
                            ,true
                            ,true
-                           ,false
                            ,false
 
                            ,true
