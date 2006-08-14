@@ -168,7 +168,7 @@ remote_command()
 	eval $2
     else
       printf "** Logging into host ${1} **\n"
-      ${RSH} ${1} "${MYSHELL} \"${2}\""
+      ${RSH} ${1} ${MYSHELL} \"${2}\"
     fi
 }
 
@@ -232,24 +232,28 @@ test_script()
         else
 	  MAKE_OPTS="-j ${NUMBER_OF_PROCESSORS}"
         fi
-        remote_command ${1} \
-                "CGAL_MAKEFILE=${CGAL_MAKE_DIR}/makefile_${2};
-		CGAL_TESTER=${CGAL_TESTER};
-		CGAL_TESTER_NAME='${CGAL_TESTER_NAME}';
-		CGAL_TESTER_ADDRESS='${CGAL_TESTER_ADDRESS}';
-                export CGAL_MAKEFILE;
-		export CGAL_TESTER CGAL_TESTER_NAME CGAL_TESTER_ADDRESS;
-		rm -rf ${LOCAL_TEST_DIR};
-		cp -r ${CGAL_TEST_DIR} ${LOCAL_TEST_DIR};
-		cd ${LOCAL_TEST_DIR};
-                nice ${NICE_OPTIONS} make ${MAKE_OPTS};
-		echo 'COLLECTING RESULTS';
-		./collect_cgal_testresults;
-		echo 'COPYING RESULTS';
-		cp results_${CGAL_TESTER}_${2}.tar.gz results_${CGAL_TESTER}_${2}.txt ${CGAL_TEST_DIR};
-		echo 'REMOVING LOCAL_TEST_DIR';
-		cd ..;
-		rm -rf ${LOCAL_TEST_DIR} " >> ${ACTUAL_LOGFILE}.${1} 2>&1
+        
+       cat  > ${TEST_DIR_ROOT}/localtestscript.${1} <<EOF
+CGAL_MAKEFILE=${CGAL_MAKE_DIR}/makefile_${2};
+CGAL_TESTER=${CGAL_TESTER};
+CGAL_TESTER_NAME='${CGAL_TESTER_NAME}';
+CGAL_TESTER_ADDRESS='${CGAL_TESTER_ADDRESS}';
+export CGAL_MAKEFILE;
+export CGAL_TESTER CGAL_TESTER_NAME CGAL_TESTER_ADDRESS;
+rm -rf ${LOCAL_TEST_DIR};
+cp -r ${CGAL_TEST_DIR} ${LOCAL_TEST_DIR};
+cd ${LOCAL_TEST_DIR};
+nice ${NICE_OPTIONS} make ${MAKE_OPTS};
+echo 'COLLECTING RESULTS';
+./collect_cgal_testresults;
+echo 'COPYING RESULTS';
+cp results_${CGAL_TESTER}_${2}.tar.gz results_${CGAL_TESTER}_${2}.txt ${CGAL_TEST_DIR};
+echo 'REMOVING LOCAL_TEST_DIR';
+cd ..;
+rm -rf ${LOCAL_TEST_DIR}
+EOF
+        chmod ugo+x ${TEST_DIR_ROOT}/localtestscript.${1}
+        remote_command ${1}  "${TEST_DIR_ROOT}/localtestscript.${1}" >> ${ACTUAL_LOGFILE}.${1} 2>&1
 	log_done ${ACTUAL_LOGFILE}.${1}
     #PLATFORM=`basename $CGAL_MAKEFILE | sed -e "s/makefile_//g"`
 	#
