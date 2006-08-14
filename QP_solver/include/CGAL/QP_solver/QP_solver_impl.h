@@ -1845,8 +1845,8 @@ leave_variable( )
         leave_variable_slack_upd_w_r(Is_in_standard_form());
 
 	// leave slack variable [ out: i ]
-	in_B  [ i         ] = -1; 
-	in_B  [ B_S.back()] = k;
+	in_B  [ B_S.back()] = k;      // former last var moves to position k
+	in_B  [ i         ] = -1;     // i gets deleted
 	   B_S[ k] = B_S.back(); B_S.pop_back();
 	   S_B[ k] = S_B.back(); S_B.pop_back();
 
