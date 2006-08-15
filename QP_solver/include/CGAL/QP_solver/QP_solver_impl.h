@@ -2151,6 +2151,21 @@ z_replace_variable_slack_by_original( )
     z_replace_variable_slack_by_original_upd_w_r(Is_in_standard_form());
     
     int  k = in_B[ i];
+    if (minus_c_B.size() <= B_O.size()) {  // Note: minus_c_B and the
+					   // containers resized in this
+					   // if-block are only enlarged
+					   // and never made smaller
+					   // (while B_O always has the
+					   // correct size). We check here
+					   // whether we need to enlarge
+					   // them.
+	 minus_c_B.push_back(et0);
+	     q_x_O.push_back(et0);
+	   tmp_x  .push_back(et0);
+	   tmp_x_2.push_back(et0);
+	  two_D_Bj.push_back(et0);
+	     x_B_O.push_back(et0);
+    }
 
     // enter original variable [ in: j ]
 

@@ -459,14 +459,17 @@ class QP_basis_inverse {
 	ForwardIterator           y_it;
         unsigned int            col, k = l+(++b);
     
-        // allocate new row, if necessary
-        if ( k <= M.size()) {
-            row_it = M[ k-1].begin();
-        } else {
-            row_it = M.insert( M.end(), Row( k, et0))->begin();
-            x_x.push_back( et0);
-	        tmp_x.push_back( et0);
-        }
+//      // allocate new row, if necessary
+//      // BG: replaced this by the ensure_physical_row construct below
+//      if ( k <= M.size()) {
+//           row_it = M[ k-1].begin();
+//      } else {
+//           row_it = M.insert( M.end(), Row( k, et0))->begin();
+//           x_x.push_back( et0);
+// 	     tmp_x.push_back( et0);
+//      }
+	ensure_physical_row(k-1);
+	row_it = M[ k-1].begin();
     
         // store entries in new row
         for (   col = 0,                              y_it = y_l_it;
@@ -784,9 +787,9 @@ class QP_basis_inverse {
 	    
             CGAL_qpe_postcondition(M[row].size()==row+1);
 	    CGAL_qpe_debug {
-                if ( vout.verbose()) {
+	      if ( vout.verbose()) {
                     vout << "physical row " << (row) << " appended in Q\n";
-		}
+	      }
             }
 	}
     }
@@ -814,7 +817,7 @@ class QP_basis_inverse {
         unsigned int  row, count, k = l+b;
         ET            sum;
     
-        // compute  P v_l + Q^T v_x
+        // compute  P v_l + Q^T v_x	
         for (   row = 0,   matrix_it = M.begin();
                 row < s;
               ++row,                                                ++y_l_it) {

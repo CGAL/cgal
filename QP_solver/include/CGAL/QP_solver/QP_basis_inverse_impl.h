@@ -268,7 +268,6 @@ z_replace_slack_by_original(ForwardIterator y_l_it,
 			                ForwardIterator u_x_it, const ET& hat_kappa,
 		                    const ET& hat_nu)
 {
-
     // assert QP case and phaseII
     CGAL_qpe_precondition(is_QP && is_phaseII);
     
@@ -299,6 +298,7 @@ z_replace_slack_by_original(ForwardIterator y_l_it,
     unsigned int               count;
     
     // insert new row and column at the end of block P
+    CGAL_qpe_assertion(M.size()>=s+1);
     if (M[s].size()==0) {
 	// row has to be filled first
         M[s].insert(M[s].end(), s+1, et0);

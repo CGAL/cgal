@@ -1497,6 +1497,7 @@ QP_solver/test/QP_solver/test_solver_data/derivatives/QPTEST_free.mps -text
 QP_solver/test/QP_solver/test_solver_data/derivatives/QPTEST_shifted.mps -text
 QP_solver/test/QP_solver/test_solver_data/derivatives/ZECEVIC2_free.mps -text
 QP_solver/test/QP_solver/test_solver_data/derivatives/ZECEVIC2_shifted.mps -text
+QP_solver/test/QP_solver/test_solver_data/masters/cgal/PRIMALC1.mps -text
 QP_solver/test/QP_solver/test_solver_data/masters/cgal/QPTEST.mps -text
 QP_solver/test/QP_solver/test_solver_data/masters/cgal/ZECEVIC2.mps -text
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.eps -text svneol=unset#application/postscript
