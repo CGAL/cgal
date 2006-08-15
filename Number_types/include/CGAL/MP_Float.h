@@ -491,34 +491,77 @@ operator>> (std::istream & is, MP_Float &b);
 // TODO : needs function "bool divides(n, d)" for validity checking, and maybe other things.
 // TODO : needs function div(), with remainder.
 
+namespace CGALi {
+
 inline // Move it to libCGAL once it's stable.
 MP_Float
-exact_division(MP_Float n, MP_Float d)
+exact_division_internal(MP_Float n, MP_Float d, bool & divides)
 {
   CGAL_assertion(d != 0);
 
+  typedef MP_Float::exponent_type  exponent_type;
   // Rescale them to have to_double() values with reasonnable exponents.
-  MP_Float::exponent_type scale_n = n.find_scale();
-  MP_Float::exponent_type scale_d = d.find_scale();
+  exponent_type scale_n = n.find_scale();
+  exponent_type scale_d = d.find_scale();
   n.rescale(scale_n);
   d.rescale(scale_d);
+
+  // A simple criteria for detecting when the division is not exact
+  // is that if it is exact, then the result must have smaller or
+  // equal bit length than "n".
+  // Which we approximate with size() and a confortable margin.
+  exponent_type max_size_if_exact = n.size() + d.size() + 200;
 
   // School division algorithm.
   MP_Float res = to_double(n) / to_double(d);
   MP_Float remainder = n - res * d;
   while ( remainder != 0 )
   {
+    // We also have to rescale here, since remainder can diminish towards 0.
+    exponent_type scale_rem = remainder.find_scale();
+    remainder.rescale(scale_rem);
+    res.rescale(scale_rem);
+    scale_n += scale_rem;
+
+    // A double approximation of the quotient
+    // (imagine school division with base ~2^53).
     double approx = to_double(remainder) / to_double(d);
     CGAL_assertion(approx != 0);
     approx = (approx + (4*approx)) - (4*approx); // chop-off the last bit.
     res += approx;
     remainder -= approx * d;
-    // TODO : add detection when the division is not exact (abort).
+    if (res.size() > max_size_if_exact)
+    {
+      divides = false;
+      return MP_Float();
+    }
   }
 
+  divides = true;
   // Scale back the result.
   res.rescale(scale_d - scale_n);
   return res;
+}
+
+} // namespace CGALi
+
+inline // Move it to libCGAL once it's stable.
+MP_Float
+exact_division(const MP_Float & n, const MP_Float & d)
+{
+  bool exact_div;
+  MP_Float res = CGALi::exact_division_internal(n, d, exact_div);
+  CGAL_assertion_msg(exact_div, "exact_division() called with operands which do not divide");
+  return res;
+}
+
+inline // Move it to libCGAL once it's stable.
+bool
+divides(const MP_Float & n, const MP_Float & d)
+{
+  bool exact_div;
+  CGALi::exact_division_internal(n, d, exact_div);
+  return exact_div;
 }
 
 CGAL_END_NAMESPACE

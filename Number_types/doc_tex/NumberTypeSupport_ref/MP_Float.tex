@@ -61,9 +61,12 @@ or \ccc{SqrtFieldNumberType} if \ccc{CGAL_MP_FLOAT_ALLOW_INEXACT} is set.
 \ccFunction{std::istream& operator>>(std::istream& in, MP_Float& m);}
 {reads a \ccc{double} from \ccc{in}, then converts it to an \ccc{MP_Float}.}
 
+\ccFunction{bool divides(const MP_Float &a, const MP_Float &b);}
+{returns true iff \ccc{b} divides \ccc{b}.}
+
 \ccFunction{MP_Float exact_division(const MP_Float &a, const MP_Float &b);}
 {computes the result of the division of \ccc{a} by \ccc{b}.
-\ccPrecond{\ccc{b} exactly divides \ccc{a}}.}
+\ccPrecond{divides(a, b)}.}
 
 \ccFunction{MP_Float approximate_division(const MP_Float &a, const MP_Float &b);}
 {computes an approximation of the division by converting the operands to

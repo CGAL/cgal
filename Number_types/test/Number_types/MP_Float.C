@@ -2,6 +2,7 @@
 // Sylvain Pion.
 
 #include <CGAL/basic.h>
+#include <CGAL/exceptions.h>
 #include <iostream>
 #include <cassert>
 #include <cstdlib>
@@ -21,6 +22,8 @@ void test_exact_division()
 
   // Let's pick 2 random values, multiply them, divide and check.
 
+  MPF tmp = exact_division(MPF(0), MPF(1));
+
   for (int i = 0; i < 100000; ++i) {
     MPF d = CGAL::default_random.get_double();
     MPF n = CGAL::default_random.get_double();
@@ -35,6 +38,10 @@ void test_exact_division()
     if ((i%3) < 1) n *= CGAL::default_random.get_double();
     if ((i%3) < 2) n *= CGAL::default_random.get_double();
 
+    // Try to change the signs
+    if ((i%7)  == 0) d = -d;
+    if ((i%11) == 0) n = -n;
+
     // Scale both numerator and denominator to test overflow/underflow
     // situations.
     d.rescale(107 * ((i%19) - 10));
@@ -46,9 +53,14 @@ void test_exact_division()
     //std::cout << "n = " << n << std::endl;
     assert( exact_division(nd, n) == d);
     assert( exact_division(nd, d) == n);
+    assert( divides(nd, n) );
+    assert( divides(nd, d) );
   }
-  // std::cout << "should loop..." << std::endl;
-  // MPF loop = exact_division(MPF(1), MPF(3));
+  
+  assert( ! divides(MPF(1), MPF(3)) );
+  assert( ! divides(MPF(2), MPF(7)) );
+  // test if we're lucky :)
+  assert( ! divides(MPF(CGAL::default_random.get_double()), MPF(CGAL::default_random.get_double())) );
 }
 
 void test_equality(int i)
