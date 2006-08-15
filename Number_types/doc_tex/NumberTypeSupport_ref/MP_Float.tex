@@ -14,9 +14,12 @@ the construction from \ccc{float}, \ccc{double} and \ccc{long double}.
 
 Division and square root are not enabled by default since \cgal\ release 3.2,
 since they are computed approximately.  We suggest that you use
-rationals like \ccc{Quotient<MP_Float>} when you need exact divisions.
+rationals like \ccc{Quotient<MP_Float>} when you need exact (rational)
+divisions.
 To enable division and square root, you have to define the preprocessor
 macro \ccc{CGAL_MP_FLOAT_ALLOW_INEXACT}.
+
+An exact (integral) division is also provided.
 
 Note on the implementation : although the mantissa length is basically only
 limited by the available memory, the exponent is currently represented by a
@@ -57,6 +60,10 @@ or \ccc{SqrtFieldNumberType} if \ccc{CGAL_MP_FLOAT_ALLOW_INEXACT} is set.
 
 \ccFunction{std::istream& operator>>(std::istream& in, MP_Float& m);}
 {reads a \ccc{double} from \ccc{in}, then converts it to an \ccc{MP_Float}.}
+
+\ccFunction{MP_Float exact_division(const MP_Float &a, const MP_Float &b);}
+{computes the result of the division of \ccc{a} by \ccc{b}.
+\ccPrecond{\ccc{b} exactly divides \ccc{a}}.}
 
 \ccFunction{MP_Float approximate_division(const MP_Float &a, const MP_Float &b);}
 {computes an approximation of the division by converting the operands to
