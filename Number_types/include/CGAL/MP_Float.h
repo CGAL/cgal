@@ -257,6 +257,25 @@ public:
     return res;
   }
 
+  std::size_t size() const
+  {
+    return v.size();
+  }
+
+  // Returns a scaling factor (in limbs) which would be good to extract to get
+  // a value with an exponent close to 0.
+  exponent_type find_scale() const
+  {
+    return exp + v.size();
+  }
+
+  // Rescale the value by some factor (in limbs).  (substract the exponent)
+  void rescale(exponent_type scale)
+  {
+    if (v.size() != 0)
+      exp -= scale;
+  }
+
   V v;
   exponent_type exp;
 };
@@ -468,6 +487,39 @@ print (std::ostream & os, const MP_Float &b);
 
 std::istream &
 operator>> (std::istream & is, MP_Float &b);
+
+// TODO : needs function "bool divides(n, d)" for validity checking, and maybe other things.
+// TODO : needs function div(), with remainder.
+
+inline // Move it to libCGAL once it's stable.
+MP_Float
+exact_division(MP_Float n, MP_Float d)
+{
+  CGAL_assertion(d != 0);
+
+  // Rescale them to have to_double() values with reasonnable exponents.
+  MP_Float::exponent_type scale_n = n.find_scale();
+  MP_Float::exponent_type scale_d = d.find_scale();
+  n.rescale(scale_n);
+  d.rescale(scale_d);
+
+  // School division algorithm.
+  MP_Float res = to_double(n) / to_double(d);
+  MP_Float remainder = n - res * d;
+  while ( remainder != 0 )
+  {
+    double approx = to_double(remainder) / to_double(d);
+    CGAL_assertion(approx != 0);
+    approx = (approx + (4*approx)) - (4*approx); // chop-off the last bit.
+    res += approx;
+    remainder -= approx * d;
+    // TODO : add detection when the division is not exact (abort).
+  }
+
+  // Scale back the result.
+  res.rescale(scale_d - scale_n);
+  return res;
+}
 
 CGAL_END_NAMESPACE
 

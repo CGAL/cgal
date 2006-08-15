@@ -15,6 +15,42 @@
 typedef CGAL::MP_Float       MPF;
 typedef CGAL::Quotient<MPF>  QMPF;
 
+void test_exact_division()
+{
+  std::cout << "Testing exact_division()" << std::endl;
+
+  // Let's pick 2 random values, multiply them, divide and check.
+
+  for (int i = 0; i < 100000; ++i) {
+    MPF d = CGAL::default_random.get_double();
+    MPF n = CGAL::default_random.get_double();
+
+    // We test with up to 5 chunks for the denominator.
+    if ((i%5) < 1) d *= CGAL::default_random.get_double();
+    if ((i%5) < 2) d *= CGAL::default_random.get_double();
+    if ((i%5) < 3) d *= CGAL::default_random.get_double();
+    if ((i%5) < 4) d *= CGAL::default_random.get_double();
+
+    // We test with up to 3 chunks for the numerator.
+    if ((i%3) < 1) n *= CGAL::default_random.get_double();
+    if ((i%3) < 2) n *= CGAL::default_random.get_double();
+
+    // Scale both numerator and denominator to test overflow/underflow
+    // situations.
+    d.rescale(107 * ((i%19) - 10));
+    n.rescale(102 * ((i%33) - 16));
+
+    MPF nd = d * n;
+    assert(nd == n * d);
+    //std::cout << "d = " << d << std::endl;
+    //std::cout << "n = " << n << std::endl;
+    assert( exact_division(nd, n) == d);
+    assert( exact_division(nd, d) == n);
+  }
+  // std::cout << "should loop..." << std::endl;
+  // MPF loop = exact_division(MPF(1), MPF(3));
+}
+
 void test_equality(int i)
 {
   assert(MPF(i) == MPF(i));
@@ -305,6 +341,8 @@ int main(int argc, char **argv)
   CGAL::Gmpq q = mdt.to_rational<CGAL::Gmpq>();
   assert(q == CGAL::Gmpq(dt));
 #endif // CGAL_USE_GMP
+
+  test_exact_division();
 
   return 0;
 }
