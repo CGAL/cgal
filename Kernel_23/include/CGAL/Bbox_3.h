@@ -85,12 +85,12 @@ inline
 Bbox_3
 Bbox_3::operator+(const Bbox_3& b) const
 {
-  return Bbox_3(std::min(xmin(), b.xmin()),
-                std::min(ymin(), b.ymin()),
-                std::min(zmin(), b.zmin()),
-                std::max(xmax(), b.xmax()),
-                std::max(ymax(), b.ymax()),
-                std::max(zmax(), b.zmax()));
+  return Bbox_3((std::min)(xmin(), b.xmin()),
+                (std::min)(ymin(), b.ymin()),
+                (std::min)(zmin(), b.zmin()),
+                (std::max)(xmax(), b.xmax()),
+                (std::max)(ymax(), b.ymax()),
+                (std::max)(zmax(), b.zmax()));
 }
 
 inline
