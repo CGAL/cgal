@@ -52,15 +52,18 @@ whole \cgal\ library:
 \begin{itemize}
   \item \ccStyle{CGAL_NO_PRECONDITIONS},
   \item \ccStyle{CGAL_NO_POSTCONDITIONS},
-  \item \ccStyle{CGAL_NO_ASSERTIONS} and
-  \item \ccStyle{CGAL_NO_WARNINGS}.
+  \item \ccStyle{CGAL_NO_ASSERTIONS},
+  \item \ccStyle{CGAL_NO_WARNINGS} and
+  \item \ccStyle{CGAL_NDEBUG}.
 \end{itemize}
 
 Moreover, the standard macro \ccStyle{NDEBUG}, which controls the behavior of
-the \ccc{std::assert} function, also affects all checks in \cgal.  This way,
+the standard \ccc{assert} macro, also affects all checks in \cgal.  This way,
 adding \ccStyle{-DNDEBUG} to your compilation flags removes absolutely all
-checks, including standard ones using \ccc{std::assert}.  This is the default
-recommended setup for performing timing benchmarks for example.
+checks, including standard ones using \ccc{assert}.  This is the default
+recommended setup for performing timing benchmarks for example.  In addition,
+the macro \ccStyle{CGAL_NDEBUG} also disables all checks in \cgal\ but does
+not affect the standard \ccc{assert} macro.
 
 Not all checks are on by default.
 All four types of checks can be marked as expensive or exactness checks
