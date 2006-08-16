@@ -29,6 +29,7 @@
 #include <CGAL/representation_tags.h>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
+#include <CGAL/Kernel/Return_base_tag.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -69,26 +70,26 @@ public:
       : Rep(v) {}
 
   Vector_3(const Point_3& a, const Point_3& b)
-    : Rep(typename R::Construct_vector_3()(a, b)) {}
+    : Rep(typename R::Construct_vector_3()(Return_base_tag(), a, b)) {}
 
   Vector_3(const Segment_3& s)
-    : Rep(typename R::Construct_vector_3()(s)) {}
+    : Rep(typename R::Construct_vector_3()(Return_base_tag(), s)) {}
 
   Vector_3(const Ray_3& r)
-    : Rep(typename R::Construct_vector_3()(r)) {}
+    : Rep(typename R::Construct_vector_3()(Return_base_tag(), r)) {}
 
   Vector_3(const Line_3& l)
-    : Rep(typename R::Construct_vector_3()(l)) {}
+    : Rep(typename R::Construct_vector_3()(Return_base_tag(), l)) {}
 
   Vector_3(const Null_vector& v)
-    : Rep(typename R::Construct_vector_3()(v)) {}
+    : Rep(typename R::Construct_vector_3()(Return_base_tag(), v)) {}
 
   template < typename T1, typename T2, typename T3 >
   Vector_3(const T1 &x, const T2 &y, const T3 &z)
-    : Rep(typename R::Construct_vector_3()(x, y, z)) {}
+    : Rep(typename R::Construct_vector_3()(Return_base_tag(), x, y, z)) {}
 
   Vector_3(const RT& x, const RT& y, const RT& z, const RT& w)
-    : Rep(typename R::Construct_vector_3()(x, y, z, w)) {}
+    : Rep(typename R::Construct_vector_3()(Return_base_tag(), x, y, z, w)) {}
 
   Direction_3 direction() const
   {

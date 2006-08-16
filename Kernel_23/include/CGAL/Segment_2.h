@@ -26,6 +26,7 @@
 
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
+#include <CGAL/Kernel/Return_base_tag.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -62,12 +63,12 @@ public:
 
   Segment_2() {}
 
-  Segment_2(const Point_2 &sp, const Point_2 &ep)
-    :  RSegment_2(typename R::Construct_segment_2()(sp,ep)) {}
-
   // conversion from implementation class object to interface class object
   Segment_2(const RSegment_2& s)
     : RSegment_2(s) {}
+
+  Segment_2(const Point_2 &sp, const Point_2 &ep)
+    :  RSegment_2(typename R::Construct_segment_2()(Return_base_tag(), sp,ep)) {}
 
   typename Qualified_result_of<typename R::Construct_source_2, Segment_2>::type
   source() const

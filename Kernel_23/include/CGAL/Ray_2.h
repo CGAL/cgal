@@ -26,6 +26,7 @@
 
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
+#include <CGAL/Kernel/Return_base_tag.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -67,16 +68,16 @@ public:
     : RRay_2(r) {}
 
   Ray_2(const Point_2 &sp, const Point_2 &secondp)
-    : RRay_2(typename R::Construct_ray_2()(sp, secondp)) {}
+    : RRay_2(typename R::Construct_ray_2()(Return_base_tag(), sp, secondp)) {}
 
   Ray_2(const Point_2 &sp, const Direction_2 &d)
-    : RRay_2(typename R::Construct_ray_2()(sp, d)) {}
+    : RRay_2(typename R::Construct_ray_2()(Return_base_tag(), sp, d)) {}
 
   Ray_2(const Point_2 &sp, const Vector_2 &v)
-    : RRay_2(typename R::Construct_ray_2()(sp, v)) {}
+    : RRay_2(typename R::Construct_ray_2()(Return_base_tag(), sp, v)) {}
 
   Ray_2(const Point_2 &sp, const Line_2 &l)
-    : RRay_2(typename R::Construct_ray_2()(sp, l)) {}
+    : RRay_2(typename R::Construct_ray_2()(Return_base_tag(), sp, l)) {}
 
 
   typename Qualified_result_of<typename R_::Construct_source_2, Ray_2>::type

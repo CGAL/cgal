@@ -26,6 +26,7 @@
 
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
+#include <CGAL/Kernel/Return_base_tag.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -65,7 +66,7 @@ public:
       : Rep(s) {}
 
   Segment_3(const Point_3& sp, const Point_3& ep)
-    : Rep(typename R::Construct_segment_3()(sp, ep)) {}
+    : Rep(typename R::Construct_segment_3()(Return_base_tag(), sp, ep)) {}
 
 // FIXME TODO : Use Qrt here !
   //typename Qualified_result_of<typename R::Construct_source_3, Segment_3>::type

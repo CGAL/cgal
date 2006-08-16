@@ -28,6 +28,7 @@
 #include <CGAL/representation_tags.h>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
+#include <CGAL/Kernel/Return_base_tag.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -62,21 +63,19 @@ public:
   Point_3() {}
 
   Point_3(const Origin& o)
-    : Rep(typename R::Construct_point_3()(o))
+    : Rep(typename R::Construct_point_3()(Return_base_tag(), o))
   {}
 
-#if 1
   Point_3(const Rep& p)
       : Rep(p) {}
-#endif
 
   template < typename T1, typename T2, typename T3 >
   Point_3(const T1& x, const T2& y, const T3& z)
-    : Rep(typename R::Construct_point_3()(x, y, z))
+    : Rep(typename R::Construct_point_3()(Return_base_tag(), x, y, z))
   {}
 
   Point_3(const RT& hx, const RT& hy, const RT& hz, const RT& hw)
-    : Rep(typename R::Construct_point_3()(hx, hy, hz, hw))
+    : Rep(typename R::Construct_point_3()(Return_base_tag(), hx, hy, hz, hw))
   {}
 
   typename Qualified_result_of<typename R::Compute_x_3, Point_3>::type

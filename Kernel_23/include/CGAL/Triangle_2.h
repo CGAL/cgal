@@ -26,6 +26,7 @@
 
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
+#include <CGAL/Kernel/Return_base_tag.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -62,7 +63,7 @@ public:
       : RTriangle_2(t) {}
 
   Triangle_2(const Point_2 &p, const Point_2 &q, const Point_2 &r)
-      : RTriangle_2(typename R::Construct_triangle_2()(p,q,r)) {}
+      : RTriangle_2(typename R::Construct_triangle_2()(Return_base_tag(), p,q,r)) {}
 
   FT
   area() const

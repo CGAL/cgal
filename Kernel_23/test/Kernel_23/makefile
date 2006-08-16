@@ -16,6 +16,7 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = \
            -Iinclude \
            -I../../include \
+           -I../../../Installation/include \
            -I../../../Number_types/include \
            -I../../../Filtered_kernel/include \
            -I../../../Cartesian_kernel/include \
@@ -23,7 +24,7 @@ CXXFLAGS = \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
-           $(LONG_NAME_PROBLEM_CXXFLAGS) -g
+           $(LONG_NAME_PROBLEM_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    linker flags

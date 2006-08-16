@@ -28,6 +28,7 @@
 #include <CGAL/Kernel/mpl.h>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
+#include <CGAL/Kernel/Return_base_tag.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -65,27 +66,30 @@ public:
 
   Vector_2() {}
 
+  Vector_2(const RVector_2& v)
+      : RVector_2(v) {}
+
   Vector_2(const Point_2& a, const Point_2& b)
-      : RVector_2(typename R::Construct_vector_2()(a, b)) {}
+      : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), a, b)) {}
 
-  Vector_2(const RVector_2& v) : RVector_2(v) {}
+  Vector_2(const Segment_2 &s)
+      : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), s)) {}
 
-  Vector_2(const Segment_2 &s) : RVector_2(typename R::Construct_vector_2()(s)) {}
+  Vector_2(const Ray_2 &r)
+      : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), r)) {}
 
-  Vector_2(const Ray_2 &r) : RVector_2(typename R::Construct_vector_2()(r)) {}
+  Vector_2(const Line_2 &l)
+      : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), l)) {}
 
-  Vector_2(const Line_2 &l) : RVector_2(typename R::Construct_vector_2()(l)) {}
-
-  Vector_2(const Null_vector &v) : RVector_2(typename R::Construct_vector_2()(v)) {}
+  Vector_2(const Null_vector &v)
+      : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), v)) {}
 
   template < typename T1, typename T2 >
   Vector_2(const T1 &x, const T2 &y)
-    : RVector_2(typename R::Construct_vector_2()(x,y))
-  {}
+      : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), x,y)) {}
 
   Vector_2(const RT &x, const RT &y, const RT &w)
-    : RVector_2(typename R::Construct_vector_2()(x,y,w))
-  {}
+      : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), x,y,w)) {}
 
 
   typename Qualified_result_of<typename R::Compute_x_2,Vector_2>::type

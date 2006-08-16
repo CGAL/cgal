@@ -26,6 +26,7 @@
 
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
+#include <CGAL/Kernel/Return_base_tag.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -48,6 +49,7 @@ class Line_2 : public R_::Kernel_base::Line_2
 public:
 
   typedef RLine_2 Rep;
+
   const Rep& rep() const
   {
     return *this;
@@ -62,28 +64,29 @@ public:
 
   Line_2() {}
 
-  Line_2(const Point_2 &p, const Point_2 &q)
-    : RLine_2(typename R::Construct_line_2()(p,q)) {}
-
-  Line_2(const RT &a, const RT &b, const RT &c)
-    : RLine_2(typename R::Construct_line_2()(a,b,c)) {}
-
   Line_2(const RLine_2& l)  // conversion impl -> interface class
     : RLine_2(l) {}
 
+  Line_2(const Point_2 &p, const Point_2 &q)
+    : RLine_2(typename R::Construct_line_2()(Return_base_tag(), p,q)) {}
+
+  Line_2(const RT &a, const RT &b, const RT &c)
+    : RLine_2(typename R::Construct_line_2()(Return_base_tag(), a,b,c)) {}
+
   Line_2(const Segment_2& s)
-    : RLine_2(typename R::Construct_line_2()(s)) {}
+    : RLine_2(typename R::Construct_line_2()(Return_base_tag(), s)) {}
 
   Line_2(const Ray_2& r)
-    : RLine_2(typename R::Construct_line_2()(r)) {}
+    : RLine_2(typename R::Construct_line_2()(Return_base_tag(), r)) {}
 
   Line_2(const Point_2 &p, const Direction_2 &d)
-    : RLine_2(typename R::Construct_line_2()(p,d)) {}
+    : RLine_2(typename R::Construct_line_2()(Return_base_tag(), p,d)) {}
 
   Line_2(const Point_2 &p, const Vector_2 &v)
-    : RLine_2(typename R::Construct_line_2()(p,v)) {}
+    : RLine_2(typename R::Construct_line_2()(Return_base_tag(), p,v)) {}
 
 
+  // FIXME : Use Qrt<> here.
   RT a() const
   {
     return R().compute_a_2_object()(*this);

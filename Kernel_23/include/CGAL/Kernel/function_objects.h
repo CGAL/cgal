@@ -1114,32 +1114,61 @@ namespace CommonKernelFunctors {
     typedef Arity_tag< 2 >   Arity;
 
     Rep // Plane_3
-    operator()(const RT& a, const RT& b, const RT& c, const RT& d) const
+    operator()(Return_base_tag, const RT& a, const RT& b, const RT& c, const RT& d) const
     { return Rep(a, b, c, d); }
 
     Rep // Plane_3
-    operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+    operator()(Return_base_tag, const Point_3& p, const Point_3& q, const Point_3& r) const
     { return Rep(p, q, r); }
 
     Rep // Plane_3
-    operator()(const Point_3& p, const Direction_3& d) const
+    operator()(Return_base_tag, const Point_3& p, const Direction_3& d) const
     { return Rep(p, d); }
 
     Rep // Plane_3
-    operator()(const Point_3& p, const Vector_3& v) const
+    operator()(Return_base_tag, const Point_3& p, const Vector_3& v) const
     { return Rep(p, v); }
 
     Rep // Plane_3
-    operator()(const Line_3& l, const Point_3& p) const
+    operator()(Return_base_tag, const Line_3& l, const Point_3& p) const
     { return Rep(l, p); }
 
     Rep // Plane_3
-    operator()(const Ray_3& r, const Point_3& p) const
+    operator()(Return_base_tag, const Ray_3& r, const Point_3& p) const
     { return Rep(r, p); }
 
     Rep // Plane_3
-    operator()(const Segment_3& s, const Point_3& p) const
+    operator()(Return_base_tag, const Segment_3& s, const Point_3& p) const
     { return Rep(s, p); }
+
+
+    Plane_3
+    operator()(const RT& a, const RT& b, const RT& c, const RT& d) const
+    { return this->operator()(Return_base_tag(), a, b, c, d); }
+
+    Plane_3
+    operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
+    { return this->operator()(Return_base_tag(), p, q, r); }
+
+    Plane_3
+    operator()(const Point_3& p, const Direction_3& d) const
+    { return this->operator()(Return_base_tag(), p, d); }
+
+    Plane_3
+    operator()(const Point_3& p, const Vector_3& v) const
+    { return this->operator()(Return_base_tag(), p, v); }
+
+    Plane_3
+    operator()(const Line_3& l, const Point_3& p) const
+    { return this->operator()(Return_base_tag(), l, p); }
+
+    Plane_3
+    operator()(const Ray_3& r, const Point_3& p) const
+    { return this->operator()(Return_base_tag(), r, p); }
+
+    Plane_3
+    operator()(const Segment_3& s, const Point_3& p) const
+    { return this->operator()(Return_base_tag(), s, p); }
   };
 
   template <typename K>
@@ -1224,20 +1253,37 @@ namespace CommonKernelFunctors {
     typedef Arity_tag< 2 >   Arity;
 
     Rep // Ray_2
-    operator()(const Point_2& p, const Point_2& q) const
+    operator()(Return_base_tag, const Point_2& p, const Point_2& q) const
     {  return Rep(p, q); }
 
     Rep // Ray_2
-    operator()(const Point_2& p, const Vector_2& v) const
+    operator()(Return_base_tag, const Point_2& p, const Vector_2& v) const
     {  return Rep(p, K().construct_translated_point_2_object()(p,  v)); }
 
     Rep // Ray_2
-    operator()(const Point_2& p, const Direction_2& d) const
+    operator()(Return_base_tag, const Point_2& p, const Direction_2& d) const
     {  return Rep(p, K().construct_translated_point_2_object()(p, d.to_vector())); }
 
     Rep // Ray_2
-    operator()(const Point_2& p, const Line_2& l) const
+    operator()(Return_base_tag, const Point_2& p, const Line_2& l) const
     {  return Rep(p, K().construct_translated_point_2_object()(p, l.to_vector())); }
+
+
+    Ray_2
+    operator()(const Point_2& p, const Point_2& q) const
+    { return this->operator()(Return_base_tag(), p, q); }
+
+    Ray_2
+    operator()(const Point_2& p, const Vector_2& v) const
+    { return this->operator()(Return_base_tag(), p, v); }
+
+    Ray_2
+    operator()(const Point_2& p, const Direction_2& d) const
+    { return this->operator()(Return_base_tag(), p, d); }
+
+    Ray_2
+    operator()(const Point_2& p, const Line_2& l) const
+    { return this->operator()(Return_base_tag(), p, l); }
   };
 
   template <typename K>
@@ -1254,20 +1300,37 @@ namespace CommonKernelFunctors {
     typedef Arity_tag< 2 >   Arity;
 
     Rep // Ray_3
-    operator()(const Point_3& p, const Point_3& q) const
+    operator()(Return_base_tag, const Point_3& p, const Point_3& q) const
     {  return Rep(p, q); }
 
     Rep // Ray_3
-    operator()(const Point_3& p, const Vector_3& v) const
+    operator()(Return_base_tag, const Point_3& p, const Vector_3& v) const
     {  return Rep(p, v); }
 
     Rep // Ray_3
-    operator()(const Point_3& p, const Direction_3& d) const
+    operator()(Return_base_tag, const Point_3& p, const Direction_3& d) const
     {  return Rep(p, d); }
 
     Rep // Ray_3
-    operator()(const Point_3& p, const Line_3& l) const
+    operator()(Return_base_tag, const Point_3& p, const Line_3& l) const
     {  return Rep(p, l); }
+
+
+    Ray_3
+    operator()(const Point_3& p, const Point_3& q) const
+    { return this->operator()(Return_base_tag(), p, q); }
+
+    Ray_3
+    operator()(const Point_3& p, const Vector_3& v) const
+    { return this->operator()(Return_base_tag(), p, v); }
+
+    Ray_3
+    operator()(const Point_3& p, const Direction_3& d) const
+    { return this->operator()(Return_base_tag(), p, d); }
+
+    Ray_3
+    operator()(const Point_3& p, const Line_3& l) const
+    { return this->operator()(Return_base_tag(), p, l); }
   };
 
   template <typename K>
@@ -1281,8 +1344,12 @@ namespace CommonKernelFunctors {
     typedef Arity_tag< 2 >   Arity;
 
     Rep // Segment_2
-    operator()( const Point_2& p, const Point_2& q) const
+    operator()(Return_base_tag, const Point_2& p, const Point_2& q) const
     {  return Rep(p, q); }
+
+    Segment_2
+    operator()( const Point_2& p, const Point_2& q) const
+    { return this->operator()(Return_base_tag(), p, q); }
   };
 
   template <typename K>
@@ -1296,8 +1363,12 @@ namespace CommonKernelFunctors {
     typedef Arity_tag< 2 >   Arity;
 
     Rep // Segment_3
-    operator()( const Point_3& p, const Point_3& q) const
+    operator()(Return_base_tag, const Point_3& p, const Point_3& q) const
     {  return Rep(p, q); }
+
+    Segment_3
+    operator()( const Point_3& p, const Point_3& q) const
+    { return this->operator()(Return_base_tag(), p, q); }
   };
 
 
@@ -1410,29 +1481,55 @@ namespace CommonKernelFunctors {
     typedef Arity_tag< 4 >         Arity;
 
     Rep // Sphere_3
-    operator()( const Point_3& center, const FT& squared_radius,
+    operator()(Return_base_tag, const Point_3& center, const FT& squared_radius,
 	        Orientation orientation = COUNTERCLOCKWISE) const
     {  return Rep(center, squared_radius, orientation); }
 
     Rep // Sphere_3
-    operator()( const Point_3& p, const Point_3& q,
+    operator()(Return_base_tag, const Point_3& p, const Point_3& q,
 	        const Point_3& r, const Point_3& s) const
     {  return Rep(p, q, r, s); }
 
     Rep // Sphere_3
-    operator()( const Point_3& p, const Point_3& q, const Point_3& r,
+    operator()(Return_base_tag, const Point_3& p, const Point_3& q, const Point_3& r,
 	        Orientation orientation = COUNTERCLOCKWISE) const
     {  return Rep(p, q, r, orientation); }
 
     Rep // Sphere_3
-    operator()( const Point_3& p, const Point_3& q,
+    operator()(Return_base_tag, const Point_3& p, const Point_3& q,
 	        Orientation orientation = COUNTERCLOCKWISE) const
     {  return Rep(p, q, orientation); }
 
     Rep // Sphere_3
-    operator()( const Point_3& center,
+    operator()(Return_base_tag, const Point_3& center,
 	        Orientation orientation = COUNTERCLOCKWISE) const
     {  return Rep(center, orientation); }
+
+
+    Sphere_3
+    operator()( const Point_3& center, const FT& squared_radius,
+	        Orientation orientation = COUNTERCLOCKWISE) const
+    { return this->operator()(Return_base_tag(), center, squared_radius, orientation); }
+
+    Sphere_3
+    operator()( const Point_3& p, const Point_3& q,
+	        const Point_3& r, const Point_3& s) const
+    { return this->operator()(Return_base_tag(), p, q, r, s); }
+
+    Sphere_3
+    operator()( const Point_3& p, const Point_3& q, const Point_3& r,
+	        Orientation orientation = COUNTERCLOCKWISE) const
+    { return this->operator()(Return_base_tag(), p, q, r); }
+
+    Sphere_3
+    operator()( const Point_3& p, const Point_3& q,
+	        Orientation orientation = COUNTERCLOCKWISE) const
+    { return this->operator()(Return_base_tag(), p, q, orientation); }
+
+    Sphere_3
+    operator()( const Point_3& center,
+	        Orientation orientation = COUNTERCLOCKWISE) const
+    { return this->operator()(Return_base_tag(), center, orientation); }
   };
 
 #ifndef CGAL_NO_DEPRECATED_CODE
@@ -1500,9 +1597,14 @@ namespace CommonKernelFunctors {
     typedef Arity_tag< 4 >   Arity;
 
     Rep // Tetrahedron_3
-    operator()( const Point_3& p, const Point_3& q,
+    operator()(Return_base_tag, const Point_3& p, const Point_3& q,
 	        const Point_3& r, const Point_3& s) const
     { return Rep(p, q, r, s); }
+
+    Tetrahedron_3
+    operator()( const Point_3& p, const Point_3& q,
+	        const Point_3& r, const Point_3& s) const
+    { return this->operator()(Return_base_tag(), p, q, r, s); }
   };
 
   template <typename K>
@@ -1516,8 +1618,12 @@ namespace CommonKernelFunctors {
     typedef Arity_tag< 3 >   Arity;
 
     Rep // Triangle_2
-    operator()( const Point_2& p, const Point_2& q, const Point_2& r) const
+    operator()(Return_base_tag, const Point_2& p, const Point_2& q, const Point_2& r) const
     { return Rep(p, q, r); }
+
+    Triangle_2
+    operator()( const Point_2& p, const Point_2& q, const Point_2& r) const
+    { return this->operator()(Return_base_tag(), p, q, r); }
   };
 
   template <typename K>
@@ -1531,8 +1637,12 @@ namespace CommonKernelFunctors {
     typedef Arity_tag< 3 >   Arity;
 
     Rep // Triangle_3
-    operator()( const Point_3& p, const Point_3& q, const Point_3& r) const
+    operator()(Return_base_tag, const Point_3& p, const Point_3& q, const Point_3& r) const
     { return Rep(p, q, r); }
+
+    Triangle_3
+    operator()( const Point_3& p, const Point_3& q, const Point_3& r) const
+    { return this->operator()(Return_base_tag(), p, q, r); }
   };
 
 

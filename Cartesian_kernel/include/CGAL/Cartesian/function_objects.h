@@ -2198,11 +2198,11 @@ namespace CartesianKernelFunctors {
     Construct_line_2(const Construct_point_on_2& c_) : c(c_) {}
 
     Rep // Line_2
-    operator()(const RT& a, const RT& b, const RT& cc) const
+    operator()(Return_base_tag, const RT& a, const RT& b, const RT& cc) const
     { return Rep(a, b, cc); }
 
     Rep // Line_2
-    operator()(const Point_2& p, const Point_2& q) const
+    operator()(Return_base_tag, const Point_2& p, const Point_2& q) const
     {
       FT a, b, cc;
       line_from_pointsC2(p.x(), p.y(), q.x(), q.y(), a, b, cc);
@@ -2210,7 +2210,7 @@ namespace CartesianKernelFunctors {
     }
 
     Rep // Line_2
-    operator()(const Point_2& p, const Direction_2& d) const
+    operator()(Return_base_tag, const Point_2& p, const Direction_2& d) const
     {
       FT a, b, cc;
       line_from_point_directionC2(p.x(), p.y(), d.dx(), d.dy(), a, b, cc);
@@ -2218,7 +2218,7 @@ namespace CartesianKernelFunctors {
     }
 
     Rep // Line_2
-    operator()(const Point_2& p, const Vector_2& v) const
+    operator()(Return_base_tag, const Point_2& p, const Vector_2& v) const
     {
       FT a, b, cc;
       line_from_point_directionC2(p.x(), p.y(), v.x(), v.y(), a, b, cc);
@@ -2226,12 +2226,37 @@ namespace CartesianKernelFunctors {
     }
 
     Rep // Line_2
-    operator()(const Segment_2& s) const
-    { return this->operator()(c(s, 0), c(s, 1)); }
+    operator()(Return_base_tag, const Segment_2& s) const
+    { return this->operator()(Return_base_tag(), c(s, 0), c(s, 1)); }
 
     Rep // Line_2
+    operator()(Return_base_tag, const Ray_2& r) const
+    { return this->operator()(Return_base_tag(), c(r, 0), c(r, 1)); }
+
+
+    Line_2
+    operator()(const RT& a, const RT& b, const RT& cc) const
+    { return this->operator()(Return_base_tag(), a, b, cc); }
+
+    Line_2
+    operator()(const Point_2& p, const Point_2& q) const
+    { return this->operator()(Return_base_tag(), p, q); }
+
+    Line_2
+    operator()(const Point_2& p, const Direction_2& d) const
+    { return this->operator()(Return_base_tag(), p, d); }
+
+    Line_2
+    operator()(const Point_2& p, const Vector_2& v) const
+    { return this->operator()(Return_base_tag(), p, v); }
+
+    Line_2
+    operator()(const Segment_2& s) const
+    { return this->operator()(Return_base_tag(), s); }
+
+    Line_2
     operator()(const Ray_2& r) const
-    { return this->operator()(c(r, 0), c(r, 1)); }
+    { return this->operator()(Return_base_tag(), r); }
   };
 
   template <typename K>
@@ -2249,24 +2274,45 @@ namespace CartesianKernelFunctors {
     typedef Arity_tag< 2 >    Arity;
 
     Rep // Line_3
-    operator()(const Point_3& p, const Point_3& q) const
+    operator()(Return_base_tag, const Point_3& p, const Point_3& q) const
     { return Rep(p, Vector_3(p, q)); }
 
     Rep // Line_3
-    operator()(const Point_3& p, const Direction_3& d) const
-    { return operator()(p, Vector_3(d.dx(), d.dy(), d.dz())); }
+    operator()(Return_base_tag, const Point_3& p, const Direction_3& d) const
+    { return operator()(Return_base_tag(), p, Vector_3(d.dx(), d.dy(), d.dz())); }
 
     Rep // Line_3
-    operator()(const Point_3& p, const Vector_3& v) const
+    operator()(Return_base_tag, const Point_3& p, const Vector_3& v) const
     { return Rep(p, v); }
 
     Rep // Line_3
-    operator()(const Segment_3& s) const
+    operator()(Return_base_tag, const Segment_3& s) const
     { return Rep(s.source(), Vector_3(s.source(), s.target())); }
 
     Rep // Line_3
-    operator()(const Ray_3& r) const
+    operator()(Return_base_tag, const Ray_3& r) const
     { return Rep(r.source(), Vector_3(r.source(), r.second_point())); }
+
+
+    Line_3
+    operator()(const Point_3& p, const Point_3& q) const
+    { return this->operator()(Return_base_tag(), p, q); }
+
+    Line_3
+    operator()(const Point_3& p, const Direction_3& d) const
+    { return this->operator()(Return_base_tag(), p, d); }
+
+    Line_3
+    operator()(const Point_3& p, const Vector_3& v) const
+    { return this->operator()(Return_base_tag(), p, v); }
+
+    Line_3
+    operator()(const Segment_3& s) const
+    { return this->operator()(Return_base_tag(), s); }
+
+    Line_3
+    operator()(const Ray_3& r) const
+    { return this->operator()(Return_base_tag(), r); }
   };
 
   template <typename K>
@@ -2489,15 +2535,15 @@ namespace CartesianKernelFunctors {
     typedef Arity_tag< 1 >         Arity;
 
     Rep // Point_2
-    operator()(Origin o) const
+    operator()(Return_base_tag, Origin o) const
     { return Rep(o); }
 
     Rep // Point_2
-    operator()(const RT& x, const RT& y) const
+    operator()(Return_base_tag, const RT& x, const RT& y) const
     { return Rep(x, y); }
 
     Rep // Point_2
-    operator()(const RT& x, const RT& y, const RT& w) const
+    operator()(Return_base_tag, const RT& x, const RT& y, const RT& w) const
     { return Rep(x, y, w); }
 
     Point_2
@@ -2517,6 +2563,19 @@ namespace CartesianKernelFunctors {
       line_get_pointC2(l.a(), l.b(), l.c(), i, x, y);
       return construct_point_2(x,y);
     }
+
+
+    Point_2
+    operator()(Origin o) const
+    { return this->operator()(Return_base_tag(), o); }
+
+    Point_2
+    operator()(const RT& x, const RT& y) const
+    { return this->operator()(Return_base_tag(), x, y); }
+
+    Point_2
+    operator()(const RT& x, const RT& y, const RT& w) const
+    { return this->operator()(Return_base_tag(), x, y, w); }
   };
 
   template <typename K>
@@ -2529,17 +2588,30 @@ namespace CartesianKernelFunctors {
     typedef Point_3          result_type;
     typedef Arity_tag< 1 >   Arity;
 
-    Point_3
-    operator()(Origin o) const
+    Rep // Point_3
+    operator()(Return_base_tag, Origin o) const
     { return Rep(o); }
 
     Rep // Point_3
-    operator()(const RT& x, const RT& y, const RT& z) const
+    operator()(Return_base_tag, const RT& x, const RT& y, const RT& z) const
     { return Rep(x, y, z); }
 
     Rep // Point_3
-    operator()(const RT& x, const RT& y, const RT& z, const RT& w) const
+    operator()(Return_base_tag, const RT& x, const RT& y, const RT& z, const RT& w) const
     { return Rep(x, y, z, w); }
+
+
+    Point_3
+    operator()(Origin o) const
+    { return this->operator()(Return_base_tag(), o); }
+
+    Point_3
+    operator()(const RT& x, const RT& y, const RT& z) const
+    { return this->operator()(Return_base_tag(), x, y, z); }
+
+    Point_3
+    operator()(const RT& x, const RT& y, const RT& z, const RT& w) const
+    { return this->operator()(Return_base_tag(), x, y, z, w); }
   };
 
 
@@ -2727,45 +2799,86 @@ namespace CartesianKernelFunctors {
     typedef Arity_tag< 2 >           Arity;
 
     Rep // Vector_2
-    operator()( const Point_2& p, const Point_2& q) const
+    operator()(Return_base_tag, const Point_2& p, const Point_2& q) const
     { return Rep(q.x() - p.x(), q.y() - p.y()); }
 
     Rep // Vector_2
-    operator()( const Origin&, const Point_2& q) const
+    operator()(Return_base_tag, const Origin&, const Point_2& q) const
     { return Rep(q.x(), q.y()); }
 
     Rep // Vector_2
-    operator()( const Point_2& p, const Origin& ) const
-
+    operator()(Return_base_tag, const Point_2& p, const Origin& ) const
     { return Rep(-p.x(), -p.y()); }
 
     Rep // Vector_2
-    operator()( const Direction_2& d ) const
+    operator()(Return_base_tag, const Direction_2& d ) const
     { return Rep(d.dx(), d.dy()); }
 
     Vector_2
-    operator()( const Segment_2& s) const
+    operator()(Return_base_tag, const Segment_2& s) const
     { return s.to_vector(); }
 
     Vector_2
-    operator()( const Ray_2& r) const
+    operator()(Return_base_tag, const Ray_2& r) const
     { return r.to_vector(); }
 
     Rep // Vector_2
-    operator()( const Line_2& l) const
+    operator()(Return_base_tag, const Line_2& l) const
     { return Rep(l.b(), -l.a()); }
 
     Rep // Vector_2
-    operator()( Null_vector) const
+    operator()(Return_base_tag, Null_vector) const
     { return Rep(FT(0), FT(0)); }
 
     Rep // Vector_2
-    operator()( const RT& x, const RT& y) const
+    operator()(Return_base_tag, const RT& x, const RT& y) const
     { return Rep(x, y); }
 
     Rep // Vector_2
-    operator()( const RT& x, const RT& y, const RT& w) const
+    operator()(Return_base_tag, const RT& x, const RT& y, const RT& w) const
     { return Rep(x, y, w); }
+
+
+
+    Vector_2
+    operator()( const Point_2& p, const Point_2& q) const
+    { return this->operator()(Return_base_tag(), p, q); }
+
+    Vector_2
+    operator()( const Origin& o, const Point_2& q) const
+    { return this->operator()(Return_base_tag(), o, q); }
+
+    Vector_2
+    operator()( const Point_2& p, const Origin& o) const
+    { return this->operator()(Return_base_tag(), p, o); }
+
+    Vector_2
+    operator()( const Direction_2& d ) const
+    { return this->operator()(Return_base_tag(), d); }
+
+    Vector_2
+    operator()( const Segment_2& s) const
+    { return this->operator()(Return_base_tag(), s); }
+
+    Vector_2
+    operator()( const Ray_2& r) const
+    { return this->operator()(Return_base_tag(), r); }
+
+    Vector_2
+    operator()( const Line_2& l) const
+    { return this->operator()(Return_base_tag(), l); }
+
+    Vector_2
+    operator()( Null_vector n) const
+    { return this->operator()(Return_base_tag(), n); }
+
+    Vector_2
+    operator()( const RT& x, const RT& y) const
+    { return this->operator()(Return_base_tag(), x, y); }
+
+    Vector_2
+    operator()( const RT& x, const RT& y, const RT& w) const
+    { return this->operator()(Return_base_tag(), x, y, w); }
   };
 
   template <typename K>
@@ -2785,50 +2898,95 @@ namespace CartesianKernelFunctors {
     typedef Arity_tag< 2 >           Arity;
 
     Rep // Vector_3
-    operator()( const Point_3& p, const Point_3& q) const
+    operator()(Return_base_tag, const Point_3& p, const Point_3& q) const
     {
       return Rep(q.x() - p.x(), q.y() - p.y(), q.z() - p.z());
     }
 
     Rep // Vector_3
-    operator()( const Origin&, const Point_3& q) const
+    operator()(Return_base_tag, const Origin&, const Point_3& q) const
     {
       return Rep(q.x(), q.y(), q.z());
     }
 
     Rep // Vector_3
-    operator()( const Point_3& p, const Origin&) const
+    operator()(Return_base_tag, const Point_3& p, const Origin&) const
     {
       return Rep(- p.x(), - p.y(), - p.z());
     }
 
     Rep // Vector_3
-    operator()( const Direction_3& d) const
+    operator()(Return_base_tag, const Direction_3& d) const
     { return d.rep().to_vector(); }
 
     Rep // Vector_3
-    operator()( const Segment_3& s) const
+    operator()(Return_base_tag, const Segment_3& s) const
     { return s.rep().to_vector(); }
 
     Rep // Vector_3
-    operator()( const Ray_3& r) const
+    operator()(Return_base_tag, const Ray_3& r) const
     { return r.rep().to_vector(); }
 
     Rep // Vector_3
-    operator()( const Line_3& l) const
+    operator()(Return_base_tag, const Line_3& l) const
     { return l.rep().to_vector(); }
 
     Rep // Vector_3
-    operator()( const Null_vector&) const
+    operator()(Return_base_tag, const Null_vector&) const
     { return Rep(FT(0), FT(0), FT(0)); }
 
     Rep // Vector_3
-    operator()( const RT& x, const RT& y, const RT& z) const
+    operator()(Return_base_tag, const RT& x, const RT& y, const RT& z) const
     { return Rep(x, y, z); }
 
     Rep // Vector_3
-    operator()( const RT& x, const RT& y, const RT& z, const RT& w) const
+    operator()(Return_base_tag, const RT& x, const RT& y, const RT& z, const RT& w) const
     { return Rep(x, y, z, w); }
+
+
+    Vector_3
+    operator()( const Point_3& p, const Point_3& q) const
+    { return this->operator()(Return_base_tag(), p, q); }
+
+    Vector_3
+    operator()( const Origin& o, const Point_3& q) const
+    { return this->operator()(Return_base_tag(), o, q); }
+
+    Vector_3
+    operator()( const Point_3& p, const Origin& q) const
+    { return this->operator()(Return_base_tag(), p, q); }
+
+    Vector_3
+    operator()( const Direction_3& d) const
+    { return this->operator()(Return_base_tag(), d); }
+
+    Vector_3
+    operator()( const Segment_3& s) const
+    { return this->operator()(Return_base_tag(), s); }
+
+    Vector_3
+    operator()( const Ray_3& r) const
+    { return this->operator()(Return_base_tag(), r); }
+
+    Vector_3
+    operator()( const Line_3& l) const
+    { return this->operator()(Return_base_tag(), l); }
+
+    Vector_3
+    operator()( const Null_vector& n) const
+    { return this->operator()(Return_base_tag(), n); }
+
+    Vector_3
+    operator()( int x, int y, int z) const
+    { return this->operator()(Return_base_tag(), x, y, z); }
+
+    Vector_3
+    operator()( const RT& x, const RT& y, const RT& z) const
+    { return this->operator()(Return_base_tag(), x, y, z); }
+
+    Vector_3
+    operator()( const RT& x, const RT& y, const RT& z, const RT& w) const
+    { return this->operator()(Return_base_tag(), x, y, z, w); }
   };
 
   template <typename K>

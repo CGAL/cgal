@@ -28,6 +28,7 @@
 #include <CGAL/Bbox_2.h>
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
+#include <CGAL/Kernel/Return_base_tag.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -62,22 +63,20 @@ public:
   Point_2() {}
 
   Point_2(const Origin& o)
-    : RPoint_2(typename R::Construct_point_2()(o))
+    : RPoint_2(typename R::Construct_point_2()(Return_base_tag(), o))
   {}
 
-#if 1 // still needed by Min_ellipse_2...
   Point_2(const RPoint_2& p)
     : RPoint_2(p)
   {}
-#endif
 
   template < typename T1, typename T2 >
   Point_2(const T1 &x, const T2 &y)
-    : Rep(typename R::Construct_point_2()(x, y))
+    : Rep(typename R::Construct_point_2()(Return_base_tag(), x, y))
   {}
 
   Point_2(const RT& hx, const RT& hy, const RT& hw)
-    : RPoint_2(typename R::Construct_point_2()(hx, hy, hw))
+    : RPoint_2(typename R::Construct_point_2()(Return_base_tag(), hx, hy, hw))
   {}
 
   typename Qualified_result_of<typename R::Compute_x_2,Point_2>::type

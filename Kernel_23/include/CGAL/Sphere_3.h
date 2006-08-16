@@ -26,6 +26,7 @@
 
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
+#include <CGAL/Kernel/Return_base_tag.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -62,22 +63,22 @@ public:
 
   Sphere_3(const Point_3& p, const FT& sq_rad,
            const Orientation& o = COUNTERCLOCKWISE)
-   : Rep(typename R::Construct_sphere_3()(p, sq_rad, o)) {}
+   : Rep(typename R::Construct_sphere_3()(Return_base_tag(), p, sq_rad, o)) {}
 
   Sphere_3(const Point_3& p, const Point_3& q,
            const Point_3& r, const Point_3& u)
-   : Rep(typename R::Construct_sphere_3()(p, q, r, u)) {}
+   : Rep(typename R::Construct_sphere_3()(Return_base_tag(), p, q, r, u)) {}
 
   Sphere_3(const Point_3& p, const Point_3& q, const Point_3& r,
            const Orientation& o = COUNTERCLOCKWISE)
-   : Rep(typename R::Construct_sphere_3()(p, q, r, o)) {}
+   : Rep(typename R::Construct_sphere_3()(Return_base_tag(), p, q, r, o)) {}
 
   Sphere_3(const Point_3& p, const Point_3&  q,
            const Orientation& o = COUNTERCLOCKWISE)
-   : Rep(typename R::Construct_sphere_3()(p, q, o)) {}
+   : Rep(typename R::Construct_sphere_3()(Return_base_tag(), p, q, o)) {}
 
   Sphere_3(const Point_3& p, const Orientation& o = COUNTERCLOCKWISE)
-   : Rep(typename R::Construct_sphere_3()(p, o)) {}
+   : Rep(typename R::Construct_sphere_3()(Return_base_tag(), p, o)) {}
 
   Sphere_3 orthogonal_transform(const Aff_transformation_3 &t) const;
 
