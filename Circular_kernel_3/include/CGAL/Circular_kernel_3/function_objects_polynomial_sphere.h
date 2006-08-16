@@ -1347,6 +1347,14 @@ template < class SK >
                 const bool known_equal_supporting_circle = false) const
     { return do_overlap<SK>(c1, c2, known_equal_supporting_circle); }
 
+    result_type
+    operator() (const Circular_arc_3 &c, const Line_arc_3 &l) const
+    { return false; }
+
+    result_type
+    operator() (const Line_arc_3 &l, const Circular_arc_3 &c) const
+    { return false; }
+
   };
 
   template < class SK >
@@ -1377,9 +1385,10 @@ template < class SK >
 
 template <class SK>
   class Construct_bbox_3
-    : public SK::Linear_kernel::Construct_bbox_2
+    : public SK::Linear_kernel::Construct_bbox_3
   {
     typedef typename SK::Circular_arc_point_3      Circular_arc_point_3;
+    typedef typename SK::Circular_arc_3            Circular_arc_3;
     typedef typename SK::Circle_3                  Circle_3;
     typedef typename SK::Line_arc_3                Line_arc_3;
 
@@ -1388,7 +1397,7 @@ template <class SK>
     typedef CGAL::Bbox_3 result_type;
     typedef Arity_tag<1> Arity;
 
-    using SK::Linear_kernel::Construct_bbox_2::operator();
+    using SK::Linear_kernel::Construct_bbox_3::operator();
 
     result_type operator() (const Circular_arc_point_3 & c) const
     {
@@ -1403,6 +1412,11 @@ template <class SK>
     result_type operator() (const Line_arc_3 & l) const
     {
       return l.rep().bbox();
+    }
+
+    result_type operator() (const Circular_arc_3 & c) const
+    {
+      return c.rep().bbox();
     }
 
   };
