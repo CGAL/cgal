@@ -118,7 +118,7 @@ operator+=( const File_header_extended_OFF& header) {
     m_terrain              = m_terrain && header.m_terrain;
     m_normalized_to_sphere = m_normalized_to_sphere &&
                              header.m_normalized_to_sphere;
-    m_radius               = std::max(m_radius, header.m_radius);
+    m_radius               = (std::max)(m_radius, header.m_radius);
     m_rounded              = m_rounded && header.m_rounded;
     m_rounded_bits         = (std::max)( m_rounded_bits,
                                        header.m_rounded_bits);
