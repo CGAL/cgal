@@ -81,13 +81,13 @@ public:
 
 
   typename Qualified_result_of<typename R::Construct_min_vertex_2, Iso_rectangle_2 >::type
-  min() const
+  min BOOST_PREVENT_MACRO_SUBSTITUTION () const
   {
     return R().construct_min_vertex_2_object()(*this);
   }
 
   typename Qualified_result_of<typename R::Construct_max_vertex_2, Iso_rectangle_2 >::type
-  max() const
+  max BOOST_PREVENT_MACRO_SUBSTITUTION () const
   {
     return R().construct_max_vertex_2_object()(*this);
   }
@@ -211,7 +211,8 @@ public:
   {
     // FIXME : We need a precondition like this!!!
     // CGAL_kernel_precondition(t.is_axis_preserving());
-    return Iso_rectangle_2(t.transform(min()), t.transform(max()));
+    return Iso_rectangle_2(t.transform(min  BOOST_PREVENT_MACRO_SUBSTITUTION ()), 
+			   t.transform(max  BOOST_PREVENT_MACRO_SUBSTITUTION ()));
   }
 };
 
@@ -222,11 +223,11 @@ operator<<(std::ostream &os, const Iso_rectangle_2<R> &r)
 {
   switch(os.iword(IO::mode)) {
   case IO::ASCII :
-    return os << r.min() << ' ' << r.max();
+    return os << (r.min)() << ' ' << (r.max)();
   case IO::BINARY :
-    return os << r.min() << r.max();
+    return os << (r.min)() << (r.max)();
   default:
-    return os << "Iso_rectangle_2(" << r.min() << ", " << r.max() << ")";
+    return os << "Iso_rectangle_2(" << (r.min)() << ", " << (r.max)() << ")";
   }
 }
 

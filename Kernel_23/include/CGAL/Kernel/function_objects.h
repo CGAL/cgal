@@ -447,7 +447,7 @@ namespace CommonKernelFunctors {
     Cartesian_coordinate_type
     operator()(const Iso_rectangle_2& r) const
     {
-      return r.min().x();
+      return (r.min)().x();
     }
   };
 
@@ -466,7 +466,7 @@ namespace CommonKernelFunctors {
     Cartesian_coordinate_type
     operator()(const Iso_cuboid_3& r) const
     {
-      return r.min().x();
+      return (r.min)().x();
     }
   };
 
@@ -485,7 +485,7 @@ namespace CommonKernelFunctors {
     Cartesian_coordinate_type
     operator()(const Iso_rectangle_2& r) const
     {
-      return r.max().x();
+      return (r.max)().x();
     }
   };
 
@@ -504,7 +504,7 @@ namespace CommonKernelFunctors {
     Cartesian_coordinate_type
     operator()(const Iso_cuboid_3& r) const
     {
-      return r.max().x();
+      return (r.max)().x();
     }
   };
 
@@ -523,7 +523,7 @@ namespace CommonKernelFunctors {
     Cartesian_coordinate_type
     operator()(const Iso_rectangle_2& r) const
     {
-      return r.min().y();
+      return (r.min)().y();
     }
   };
 
@@ -542,7 +542,7 @@ namespace CommonKernelFunctors {
     Cartesian_coordinate_type
     operator()(const Iso_cuboid_3& r) const
     {
-      return r.min().y();
+      return (r.min)().y();
     }
   };
 
@@ -561,7 +561,7 @@ namespace CommonKernelFunctors {
     Cartesian_coordinate_type
     operator()(const Iso_rectangle_2& r) const
     {
-      return r.max().y();
+      return (r.max)().y();
     }
   };
 
@@ -580,7 +580,7 @@ namespace CommonKernelFunctors {
     Cartesian_coordinate_type
     operator()(const Iso_cuboid_3& r) const
     {
-      return r.max().y();
+      return (r.max)().y();
     }
   };
 
@@ -599,7 +599,7 @@ namespace CommonKernelFunctors {
     Cartesian_coordinate_type
     operator()(const Iso_cuboid_3& r) const
     {
-      return r.min().z();
+      return (r.min)().z();
     }
   };
 
@@ -618,7 +618,7 @@ namespace CommonKernelFunctors {
     Cartesian_coordinate_type
     operator()(const Iso_cuboid_3& r) const
     {
-      return r.max().z();
+      return (r.max)().z();
     }
   };
 
@@ -755,11 +755,11 @@ namespace CommonKernelFunctors {
 
     const Point_2&
     operator()(const Iso_rectangle_2& r) const
-    { return r.rep().max(); }
+    { return (r.rep().max)(); }
 
     const Point_2&
     operator()(const Segment_2& s) const
-    { return s.max(); }
+    { return (s.max)(); }
   };
 
 
@@ -775,11 +775,11 @@ namespace CommonKernelFunctors {
 
     const Point_2&
     operator()(const Iso_rectangle_2& r) const
-    { return r.rep().min(); }
+    { return (r.rep().min)(); }
 
     const Point_2&
     operator()(const Segment_2& s) const
-    { return s.min(); }
+    { return (s.min)(); }
   };
 
 
@@ -796,11 +796,11 @@ namespace CommonKernelFunctors {
 
     Point_3
     operator()(const Iso_cuboid_3& r) const
-    { return r.rep().max(); }
+    { return (r.rep().max)(); }
 
     const Point_3&
     operator()(const Segment_3& s) const
-    { return s.rep().max(); }
+    { return (s.rep().max)(); }
   };
 
   template <typename K>
@@ -815,11 +815,11 @@ namespace CommonKernelFunctors {
 
     Point_3
     operator()(const Iso_cuboid_3& r) const
-    { return r.rep().min(); }
+    { return (r.rep().min)(); }
 
     const Point_3&
     operator()(const Segment_3& s) const
-    { return s.rep().min(); }
+    { return (s.rep().min)(); }
   };
 
 
@@ -1744,7 +1744,7 @@ namespace CommonKernelFunctors {
     result_type
     operator()(const Iso_rectangle_2& i1, const Iso_rectangle_2& i2) const
     {
-      return (i1.min() == i2.min()) && (i1.max() == i2.max());
+      return ((i1.min)() == (i2.min)()) && ((i1.max)() == (i2.max)());
     }
   };
 

@@ -53,8 +53,8 @@ public:
   inline double     xmax() const;
   inline double     ymax() const;
 
-  inline double     max(int i) const;
-  inline double     min(int i) const;
+  inline double     max BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
+  inline double     min BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
 
   inline Bbox_2     operator+(const Bbox_2 &b) const;
 
@@ -102,7 +102,7 @@ Bbox_2::dimension() const
 
 inline
 double
-Bbox_2::min(int i) const
+Bbox_2::min BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const
 {
   CGAL_kernel_precondition( (i == 0 ) || ( i == 1 ) );
   if(i == 0) { return xmin(); }
@@ -111,7 +111,7 @@ Bbox_2::min(int i) const
 
 inline
 double
-Bbox_2::max(int i) const
+Bbox_2::max BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const
 {
   CGAL_kernel_precondition( (i == 0 ) || ( i == 1 ) );
   if(i == 0) { return xmax(); }

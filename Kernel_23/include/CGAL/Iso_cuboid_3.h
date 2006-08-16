@@ -88,14 +88,14 @@ public:
 //              (or is the Homogeneous optimization simply not worth it ?)
   //typename Qualified_result_of<typename R::Construct_min_vertex_3, Iso_cuboid_3 >::type
   Point_3
-  min() const
+  min BOOST_PREVENT_MACRO_SUBSTITUTION () const
   {
     return R().construct_min_vertex_3_object()(*this);
   }
 
   //typename Qualified_result_of<typename R::Construct_max_vertex_3, Iso_cuboid_3 >::type
   Point_3
-  max() const
+  max BOOST_PREVENT_MACRO_SUBSTITUTION () const
   {
     return R().construct_max_vertex_3_object()(*this);
   }
@@ -225,11 +225,11 @@ operator<<(std::ostream& os, const Iso_cuboid_3<R>& r)
 {
   switch(os.iword(IO::mode)) {
   case IO::ASCII :
-    return os << r.min() << ' ' << r.max();
+    return os << (r.min)() << ' ' << (r.max)();
   case IO::BINARY :
-    return os << r.min() << r.max();
+    return os << (r.min)() << (r.max)();
   default:
-    return os << "Iso_cuboid_3(" << r.min() << ", " << r.max() << ")";
+    return os << "Iso_cuboid_3(" << (r.min)() << ", " << (r.max)() << ")";
   }
 }
 

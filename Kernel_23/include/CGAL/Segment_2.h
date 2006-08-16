@@ -95,10 +95,10 @@ public:
 
   
   typename Qualified_result_of<typename R::Construct_min_vertex_2, Segment_2>::type
-  min() const;
+  min BOOST_PREVENT_MACRO_SUBSTITUTION () const;
 
   typename Qualified_result_of<typename R::Construct_max_vertex_2, Segment_2>::type
-  max() const;
+  max BOOST_PREVENT_MACRO_SUBSTITUTION () const;
 
   typename Qualified_result_of<typename R::Construct_vertex_2, Segment_2, int>::type
   vertex(int i) const;
@@ -170,7 +170,7 @@ public:
 template < class R_ >
 CGAL_KERNEL_INLINE
 typename Qualified_result_of<typename R_::Construct_min_vertex_2, Segment_2<R_> >::type
-Segment_2<R_>::min() const
+Segment_2<R_>::min BOOST_PREVENT_MACRO_SUBSTITUTION () const
 {
   typename R_::Less_xy_2 less_xy; 
   return less_xy(source(),target()) ? source() : target();
@@ -179,7 +179,7 @@ Segment_2<R_>::min() const
 template < class R_ >
 CGAL_KERNEL_INLINE
 typename Qualified_result_of<typename R_::Construct_max_vertex_2, Segment_2<R_> >::type
-Segment_2<R_>::max() const
+Segment_2<R_>::max BOOST_PREVENT_MACRO_SUBSTITUTION () const
 {
   typename R_::Less_xy_2 less_xy; 
   return less_xy(source(),target()) ? target() : source();
