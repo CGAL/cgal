@@ -81,7 +81,7 @@ extern "C" {
 #else
 #  include <limits>
 #  define CGAL_IA_MIN_DOUBLE std::numeric_limits<double>::denorm_min()
-#  define CGAL_IA_MAX_DOUBLE std::numeric_limits<double>::max()
+#  define CGAL_IA_MAX_DOUBLE (std::numeric_limits<double>::max)()
 #endif
 
 

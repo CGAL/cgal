@@ -113,7 +113,7 @@ struct Min :public Binary_function< NT, NT, NT > {
   Min() {}
   Min(const Compare& c_) : c(c_) {}
   NT operator()( const NT& x, const NT& y) const
-  { return min( x, y, c); }
+  { return min BOOST_PREVENT_MACRO_SUBSTITUTION ( x, y, c); }
 protected:
   Compare c;
 };
@@ -123,7 +123,7 @@ struct Max :public Binary_function< NT, NT, NT > {
   Max() {}
   Max(const Compare& c_) : c(c_) {}
   NT operator()( const NT& x, const NT& y) const
-  { return max( x, y, c); }
+  { return max BOOST_PREVENT_MACRO_SUBSTITUTION ( x, y, c); }
 protected:
   Compare c;
 };

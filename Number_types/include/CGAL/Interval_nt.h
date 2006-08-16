@@ -498,7 +498,7 @@ operator* (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
     double tmp2 = CGAL_IA_MUL( a.sup(), -b.inf());
     double tmp3 = CGAL_IA_MUL( a.inf(),  b.inf());
     double tmp4 = CGAL_IA_MUL( a.sup(),  b.sup());
-    return IA(-std::max(tmp1,tmp2), std::max(tmp3,tmp4));
+    return IA(-(std::max)(tmp1,tmp2), (std::max)(tmp3,tmp4));
   }
 }
 
@@ -625,7 +625,8 @@ sqrt (const Interval_nt<Protected> & d)
 template <bool Protected>
 inline
 Interval_nt<Protected>
-min (const Interval_nt<Protected> & d, const Interval_nt<Protected> & e)
+min  BOOST_PREVENT_MACRO_SUBSTITUTION (const Interval_nt<Protected> & d,
+				       const Interval_nt<Protected> & e)
 {
   return Interval_nt<Protected>((std::min)(d.inf(), e.inf()),
 		                (std::min)(d.sup(), e.sup()));
@@ -634,7 +635,8 @@ min (const Interval_nt<Protected> & d, const Interval_nt<Protected> & e)
 template <bool Protected>
 inline
 Interval_nt<Protected>
-max (const Interval_nt<Protected> & d, const Interval_nt<Protected> & e)
+max BOOST_PREVENT_MACRO_SUBSTITUTION (const Interval_nt<Protected> & d, 
+				      const Interval_nt<Protected> & e)
 {
   return Interval_nt<Protected>((std::max)(d.inf(), e.inf()),
 		                (std::max)(d.sup(), e.sup()));
@@ -652,8 +654,8 @@ square (const Interval_nt<Protected> & d)
   if (d.sup()<=0.0)
       return Interval_nt<Protected>(-CGAL_IA_MUL(d.sup(), -d.sup()),
 	     	                     CGAL_IA_MUL(d.inf(), d.inf()));
-  return Interval_nt<Protected>(0.0, CGAL_IA_SQUARE(std::max(-d.inf(),
-							     d.sup())));
+  return Interval_nt<Protected>(0.0, CGAL_IA_SQUARE((std::max)(-d.inf(),
+							       d.sup())));
 }
 
 template <bool Protected>
@@ -663,7 +665,7 @@ abs (const Interval_nt<Protected> & d)
 {
   if (d.inf() >= 0.0) return d;
   if (d.sup() <= 0.0) return -d;
-  return Interval_nt<Protected>(0.0, std::max(-d.inf(), d.sup()));
+  return Interval_nt<Protected>(0.0, (std::max)(-d.inf(), d.sup()));
 }
 
 template <bool Protected>

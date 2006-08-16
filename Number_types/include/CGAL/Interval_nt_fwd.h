@@ -50,11 +50,11 @@ Interval_nt<Protected> sqrt (const Interval_nt<Protected> &);
 
 template <bool Protected>
 Interval_nt<Protected>
-min (const Interval_nt<Protected> &, const Interval_nt<Protected> &);
+min BOOST_PREVENT_MACRO_SUBSTITUTION (const Interval_nt<Protected> &, const Interval_nt<Protected> &);
 
 template <bool Protected>
 Interval_nt<Protected>
-max (const Interval_nt<Protected> &, const Interval_nt<Protected> &);
+max  BOOST_PREVENT_MACRO_SUBSTITUTION (const Interval_nt<Protected> &, const Interval_nt<Protected> &);
 
 template <bool Protected>
 Interval_nt<Protected> square (const Interval_nt<Protected> &);
