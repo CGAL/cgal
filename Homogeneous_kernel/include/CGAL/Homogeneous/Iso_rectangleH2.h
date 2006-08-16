@@ -56,8 +56,8 @@ public:
     // CGAL_kernel_assertion(p.y()<=q.y());
   }
 
-  const Point_2 & min() const;
-  const Point_2 & max() const;
+  const Point_2 & min BOOST_PREVENT_MACRO_SUBSTITUTION () const;
+  const Point_2 & max BOOST_PREVENT_MACRO_SUBSTITUTION () const;
 
   Bounded_side bounded_side(const Point_2& p) const;
 };
@@ -67,13 +67,13 @@ public:
 template < class R >
 inline
 const typename Iso_rectangleH2<R>::Point_2 &
-Iso_rectangleH2<R>::min() const
+Iso_rectangleH2<R>::min BOOST_PREVENT_MACRO_SUBSTITUTION () const
 { return get(base).e0; }
 
 template < class R >
 inline
 const typename Iso_rectangleH2<R>::Point_2 &
-Iso_rectangleH2<R>::max() const
+Iso_rectangleH2<R>::max BOOST_PREVENT_MACRO_SUBSTITUTION () const
 { return get(base).e1; }
 
 template < class R >
@@ -82,8 +82,8 @@ Bounded_side
 Iso_rectangleH2<R>::
 bounded_side(const typename Iso_rectangleH2<R>::Point_2& p) const
 {
-  Oriented_side wrt_min = _where_wrt_L_wedge(min(),p);
-  Oriented_side wrt_max = _where_wrt_L_wedge(p,max());
+  Oriented_side wrt_min = _where_wrt_L_wedge((this->min)(),p);
+  Oriented_side wrt_max = _where_wrt_L_wedge(p,(this->max)());
   if (( wrt_min == ON_NEGATIVE_SIDE )||( wrt_max == ON_NEGATIVE_SIDE))
   {
       return ON_UNBOUNDED_SIDE;

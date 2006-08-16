@@ -1095,10 +1095,10 @@ namespace HomogeneousKernelFunctors {
       FT s2tx = s2.target().x();
       FT s2ty = s2.target().y();
 
-      CGAL_kernel_precondition(px >= CGAL_NTS min(s1sx, s1tx) &&
-	                       px <= CGAL_NTS max(s1sx, s1tx));
-      CGAL_kernel_precondition(px >= CGAL_NTS min(s2sx, s2tx) &&
-	                       px <= CGAL_NTS max(s2sx, s2tx));
+      CGAL_kernel_precondition(px >= (CGAL::min)(s1sx, s1tx) &&
+	                       px <= (CGAL::max)(s1sx, s1tx));
+      CGAL_kernel_precondition(px >= (CGAL::min)(s2sx, s2tx) &&
+	                       px <= (CGAL::max)(s2sx, s2tx));
 
       if (s1sx != s1tx && s2sx != s2tx) {
 	FT s1stx = s1sx-s1tx;
@@ -1897,7 +1897,7 @@ namespace HomogeneousKernelFunctors {
     operator()( const Iso_rectangle_2& r) const
     {
       typename K::Construct_bbox_2 construct_bbox_2;
-      return construct_bbox_2(r.min()) + construct_bbox_2(r.max());
+      return construct_bbox_2((r.min)()) + construct_bbox_2((r.max)());
     }
 
     Bbox_2
@@ -3262,15 +3262,15 @@ namespace HomogeneousKernelFunctors {
     operator()( const Iso_rectangle_2& r, int i) const
     {
       switch (i%4) {
-      case 0: return r.min();
+      case 0: return (r.min)();
       case 1:
-	return Point_2( r.max().hx()*r.min().hw(),
-                           r.min().hy()*r.max().hw(),
-                           r.min().hw()*r.max().hw() );
+	return Point_2( (r.max)().hx()*(r.min)().hw(),
+                           (r.min)().hy()*(r.max)().hw(),
+                           (r.min)().hw()*(r.max)().hw() );
       case 2: return r.max();
-      default: return Point_2( r.min().hx()*r.max().hw(),
-                           r.max().hy()*r.min().hw(),
-                           r.min().hw()*r.max().hw() );
+      default: return Point_2( (r.min)().hx()*(r.max)().hw(),
+                           (r.max)().hy()*(r.min)().hw(),
+                           (r.min)().hw()*(r.max)().hw() );
       }
     }
   };

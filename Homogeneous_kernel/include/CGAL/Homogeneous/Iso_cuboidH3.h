@@ -70,8 +70,8 @@ public:
   bool      operator==(const Iso_cuboidH3<R>& s) const;
   bool      operator!=(const Iso_cuboidH3<R>& s) const;
 
-  const Point_3 & min() const;
-  const Point_3 & max() const;
+  const Point_3 & min BOOST_PREVENT_MACRO_SUBSTITUTION () const;
+  const Point_3 & max BOOST_PREVENT_MACRO_SUBSTITUTION () const;
   Point_3  vertex(int i) const;
   Point_3  operator[](int i) const;
 
@@ -197,7 +197,7 @@ CGAL_KERNEL_INLINE
 bool
 Iso_cuboidH3<R>::
 operator==(const Iso_cuboidH3<R>& r) const
-{ return  (min() == r.min()) && (max() == r.max()); }
+{ return  ((this->min)() == (r.min)()) && ((this->max)() == (r.max)()); }
 
 template < class R >
 inline
@@ -209,50 +209,50 @@ operator!=(const Iso_cuboidH3<R>& r) const
 template < class R >
 inline
 const typename Iso_cuboidH3<R>::Point_3 &
-Iso_cuboidH3<R>::min() const
+Iso_cuboidH3<R>::min BOOST_PREVENT_MACRO_SUBSTITUTION () const
 { return get(base).e0; }
 
 template < class R >
 inline
 const typename Iso_cuboidH3<R>::Point_3 &
-Iso_cuboidH3<R>::max() const
+Iso_cuboidH3<R>::max BOOST_PREVENT_MACRO_SUBSTITUTION () const
 { return get(base).e1; }
 
 template < class R >
 inline
 typename Iso_cuboidH3<R>::FT
 Iso_cuboidH3<R>::xmin() const
-{ return  FT( min().hx() ) / FT( min().hw() ); }
+{ return  FT( (this->min)().hx() ) / FT( (this->min)().hw() ); }
 
 template < class R >
 inline
 typename Iso_cuboidH3<R>::FT
 Iso_cuboidH3<R>::ymin() const
-{ return  FT( min().hy() ) / FT( min().hw() ); }
+{ return  FT( (this->min)().hy() ) / FT( (this->min)().hw() ); }
 
 template < class R >
 inline
 typename Iso_cuboidH3<R>::FT
 Iso_cuboidH3<R>::zmin() const
-{ return  FT( min().hz() ) / FT( min().hw() ); }
+{ return  FT( (this->min)().hz() ) / FT( (this->min)().hw() ); }
 
 template < class R >
 inline
 typename Iso_cuboidH3<R>::FT
 Iso_cuboidH3<R>::xmax() const
-{ return  FT( max().hx() ) / FT( max().hw() ); }
+{ return  FT( (this->max)().hx() ) / FT( (this->max)().hw() ); }
 
 template < class R >
 inline
 typename Iso_cuboidH3<R>::FT
 Iso_cuboidH3<R>::ymax() const
-{ return  FT( max().hy() ) / FT( max().hw() ); }
+{ return  FT( (this->max)().hy() ) / FT( (this->max)().hw() ); }
 
 template < class R >
 inline
 typename Iso_cuboidH3<R>::FT
 Iso_cuboidH3<R>::zmax() const
-{ return  FT( max().hz() ) / FT( max().hw() ); }
+{ return  FT( (this->max)().hz() ) / FT( (this->max)().hw() ); }
 
 template < class R >
 inline
@@ -293,20 +293,20 @@ Iso_cuboidH3<R>::vertex(int i) const
 {
   switch (i%8)
   {
-    case 0: return min();
-    case 1: return Point_3( max().hx(), min().hy(),
-		                   min().hz(), min().hw() );
-    case 2: return Point_3( max().hx(), max().hy(),
-		                   min().hz(), min().hw() );
-    case 3: return Point_3( min().hx(), max().hy(),
-		                   min().hz(), min().hw() );
-    case 4: return Point_3( min().hx(), max().hy(),
-		                   max().hz(), min().hw() );
-    case 5: return Point_3( min().hx(), min().hy(),
-		                   max().hz(), min().hw() );
-    case 6: return Point_3( max().hx(), min().hy(),
-		                   max().hz(), min().hw() );
-    default: /*case 7:*/ return max();
+    case 0: return (this->min)();
+    case 1: return Point_3( (this->max)().hx(), (this->min)().hy(),
+		                   (this->min)().hz(), (this->min)().hw() );
+    case 2: return Point_3( (this->max)().hx(), (this->max)().hy(),
+		                   (this->min)().hz(), (this->min)().hw() );
+    case 3: return Point_3( (this->min)().hx(), (this->max)().hy(),
+		                   (this->min)().hz(), (this->min)().hw() );
+    case 4: return Point_3( (this->min)().hx(), (this->max)().hy(),
+		                   (this->max)().hz(), (this->min)().hw() );
+    case 5: return Point_3( (this->min)().hx(), (this->min)().hy(),
+		                   (this->max)().hz(), (this->min)().hw() );
+    case 6: return Point_3( (this->max)().hx(), (this->min)().hy(),
+		                   (this->max)().hz(), (this->min)().hw() );
+    default: /*case 7:*/ return (this->max)();
   }
 }
 
@@ -322,19 +322,19 @@ Bounded_side
 Iso_cuboidH3<R>::
 bounded_side(const typename Iso_cuboidH3<R>::Point_3& p) const
 {
-  if (    (p.hx()*min().hw() < min().hx()*p.hw() )
-        ||(p.hy()*min().hw() < min().hy()*p.hw() )
-        ||(p.hz()*min().hw() < min().hz()*p.hw() )
-        ||(p.hx()*max().hw() > max().hx()*p.hw() )
-        ||(p.hy()*max().hw() > max().hy()*p.hw() )
-        ||(p.hz()*max().hw() > max().hz()*p.hw() )  )
+  if (    (p.hx()*(this->min)().hw() < (this->min)().hx()*p.hw() )
+        ||(p.hy()*(this->min)().hw() < (this->min)().hy()*p.hw() )
+        ||(p.hz()*(this->min)().hw() < (this->min)().hz()*p.hw() )
+        ||(p.hx()*(this->max)().hw() > (this->max)().hx()*p.hw() )
+        ||(p.hy()*(this->max)().hw() > (this->max)().hy()*p.hw() )
+        ||(p.hz()*(this->max)().hw() > (this->max)().hz()*p.hw() )  )
   { return ON_UNBOUNDED_SIDE; }
-  if (    (p.hx()*min().hw() == min().hx()*p.hw() )
-        ||(p.hy()*min().hw() == min().hy()*p.hw() )
-        ||(p.hz()*min().hw() == min().hz()*p.hw() )
-        ||(p.hx()*max().hw() == max().hx()*p.hw() )
-        ||(p.hy()*max().hw() == max().hy()*p.hw() )
-        ||(p.hz()*max().hw() == max().hz()*p.hw() )  )
+  if (    (p.hx()*(this->min)().hw() == (this->min)().hx()*p.hw() )
+        ||(p.hy()*(this->min)().hw() == (this->min)().hy()*p.hw() )
+        ||(p.hz()*(this->min)().hw() == (this->min)().hz()*p.hw() )
+        ||(p.hx()*(this->max)().hw() == (this->max)().hx()*p.hw() )
+        ||(p.hy()*(this->max)().hw() == (this->max)().hy()*p.hw() )
+        ||(p.hz()*(this->max)().hw() == (this->max)().hz()*p.hw() )  )
   { return ON_BOUNDARY; }
   else
   { return ON_BOUNDED_SIDE; }
@@ -366,8 +366,8 @@ bool
 Iso_cuboidH3<R>::
 has_on_unbounded_side(const typename Iso_cuboidH3<R>::Point_3& p) const
 {
-  return (   ( lexicographically_xyz_smaller(p,min() ))
-           ||( lexicographically_xyz_smaller(max(),p ))  );
+  return (   ( lexicographically_xyz_smaller(p,(this->min)() ))
+           ||( lexicographically_xyz_smaller((this->max)(),p ))  );
 }
 
 template < class R >
@@ -375,16 +375,16 @@ CGAL_KERNEL_INLINE
 bool
 Iso_cuboidH3<R>::is_degenerate() const
 {
-  return (  ( min().hx() == max().hx() )
-         || ( min().hy() == max().hy() )
-         || ( min().hz() == max().hz() ) );
+  return (  ( (this->min)().hx() == (this->max)().hx() )
+         || ( (this->min)().hy() == (this->max)().hy() )
+         || ( (this->min)().hz() == (this->max)().hz() ) );
 }
 
 template < class R >
 inline
 Bbox_3
 Iso_cuboidH3<R>::bbox() const
-{ return  min().bbox() + max().bbox(); }
+{ return  (this->min)().bbox() + (this->max)().bbox(); }
 
 template < class R >
 CGAL_KERNEL_INLINE
@@ -392,8 +392,8 @@ Iso_cuboidH3<R>
 Iso_cuboidH3<R>::
 transform(const typename Iso_cuboidH3<R>::Aff_transformation_3&t) const
 {
-  return Iso_cuboidH3<R>(t.transform(min() ),
-                             t.transform(max() ) );
+  return Iso_cuboidH3<R>(t.transform((this->min)() ),
+                             t.transform((this->max)() ) );
 }
 
 CGAL_END_NAMESPACE
