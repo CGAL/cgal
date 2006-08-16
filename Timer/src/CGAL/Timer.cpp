@@ -123,7 +123,7 @@ double Timer::precision() const {
     return prec;
 }
 
-double Timer::max() const { 
+double Timer::max BOOST_PREVENT_MACRO_SUBSTITUTION () const { 
     // Depends on the operating system.
 #ifdef CGAL__GETRUSAGE
     return DBL_MAX;
