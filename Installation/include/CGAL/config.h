@@ -107,11 +107,17 @@ namespace CGAL {
 
 // Big endian or little endian machine.
 // ====================================
-#ifdef CGAL_CFG_NO_BIG_ENDIAN
+
+#include <boost/limits.hpp> // provides endianness macros
+
+#ifdef BOOST_BIG_ENDIAN
+#  define CGAL_BIG_ENDIAN
+#elif defined BOOST_LITTLE_ENDIAN
 #  define CGAL_LITTLE_ENDIAN
 #else
-#  define CGAL_BIG_ENDIAN
+#  error "Unknown endianness"
 #endif
+
 
 #ifndef CGAL_USE_LEDA
 #  define CGAL_USE_CGAL_WINDOW
