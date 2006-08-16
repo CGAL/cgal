@@ -26,6 +26,7 @@
 
 #include <CGAL/Kernel/function_objects.h>
 #include <CGAL/Cartesian/function_objects.h>
+#include <CGAL/Kernel/Return_base_tag.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -2372,31 +2373,58 @@ namespace HomogeneousKernelFunctors {
     typedef Direction_2       result_type;
     typedef Arity_tag< 1 >    Arity;
 
+    Rep // Direction_2
+    operator()(Return_base_tag, const RT& x, const RT& y) const
+    { return Rep(x, y); }
+
+    Rep // Direction_2
+    operator()(Return_base_tag, const Vector_2& v) const
+    { return Rep(v.hx(),v.hy()); }
+
+    Rep // Direction_2
+    operator()(Return_base_tag, const Line_2& l) const
+    { return Rep(l.b(), -l.a()); }
+
+    Rep // Direction_2
+    operator()(Return_base_tag, const Ray_2& r) const
+    { return this->operator()(Return_base_tag(), r.source(), r.second_point()); }
+
+    Rep // Direction_2
+    operator()(Return_base_tag, const Segment_2& s) const
+    { return this->operator()(Return_base_tag(), s.source(), s.target()); }
+
+    Rep // Direction_2
+    operator()(Return_base_tag, const Point_2& q, const Point_2& p) const
+    {
+      return Rep( p.hx()*q.hw() - q.hx()*p.hw(),
+		  p.hy()*q.hw() - q.hy()*p.hw() );
+    }
+
+
     Direction_2
     operator()(const RT& x, const RT& y) const
-    { return Rep(x, y); }
+    { return this->operator()(Return_base_tag(), x, y); }
 
     Direction_2
     operator()(const Vector_2& v) const
-    { return Rep(v.hx(),v.hy()); }
+    { return this->operator()(Return_base_tag(), v); }
 
     Direction_2
     operator()(const Line_2& l) const
-    { return Rep(l.b(), -l.a()); }
+    { return this->operator()(Return_base_tag(), l); }
 
     Direction_2
     operator()(const Ray_2& r) const
-    { return K().construct_direction_2_object()(r.source(), r.second_point()); }
+    { return this->operator()(Return_base_tag(), r); }
 
     Direction_2
     operator()(const Segment_2& s) const
-    { return K().construct_direction_2_object()(s.source(), s.target()); }
+    { return this->operator()(Return_base_tag(), s); }
 
     Direction_2
     operator()(const Point_2& q, const Point_2& p) const
     {
-      return Rep( p.hx()*q.hw() - q.hx()*p.hw(),
-		  p.hy()*q.hw() - q.hy()*p.hw() );
+      return this->operator()(Return_base_tag(), p, q);
     }
   };
 
@@ -2414,27 +2442,46 @@ namespace HomogeneousKernelFunctors {
     typedef Direction_3       result_type;
     typedef Arity_tag< 1 >    Arity;
 
-#ifndef CGAL_NO_DEPRECATED_CODE
+    Rep // Direction_3
+    operator()(Return_base_tag, const RT& x, const RT& y, const RT& z) const
+    { return Rep(x, y, z); }
+
+    Rep // Direction_3
+    operator()(Return_base_tag, const Vector_3& v) const
+    { return Rep(v.hx(), v.hy(), v.hz()); }
+
+    Rep // Direction_3
+    operator()(Return_base_tag, const Line_3& l) const
+    { return Rep(l); }
+
+    Rep // Direction_3
+    operator()(Return_base_tag, const Ray_3& r) const
+    { return Rep(r); }
+
+    Rep // Direction_3
+    operator()(Return_base_tag, const Segment_3& s) const
+    { return Rep(s); }
+
+
     Direction_3
     operator()(const RT& x, const RT& y, const RT& z) const
-    { return Rep(x, y, z); }
-#endif // CGAL_NO_DEPRECATED_CODE
+    { return this->operator()(Return_base_tag(), x, y, z); }
 
     Direction_3
     operator()(const Vector_3& v) const
-    { return Rep(v.hx(), v.hy(), v.hz()); }
+    { return this->operator()(Return_base_tag(), v); }
 
     Direction_3
     operator()(const Line_3& l) const
-    { return Rep(l); }
+    { return this->operator()(Return_base_tag(), l); }
 
     Direction_3
     operator()(const Ray_3& r) const
-    { return Rep(r); }
+    { return this->operator()(Return_base_tag(), r); }
 
     Direction_3
     operator()(const Segment_3& s) const
-    { return Rep(s); }
+    { return this->operator()(Return_base_tag(), s); }
   };
 
 
@@ -2535,8 +2582,8 @@ namespace HomogeneousKernelFunctors {
     typedef Iso_rectangle_2   result_type;
     typedef Arity_tag< 2 >    Arity;
 
-    Iso_rectangle_2
-    operator()(const Point_2& p, const Point_2& q, int) const
+    Rep // Iso_rectangle_2
+    operator()(Return_base_tag, const Point_2& p, const Point_2& q, int) const
     {
       // I have to remove the assertions, because of Cartesian_converter.
       // CGAL_kernel_assertion(p.x()<=q.x());
@@ -2544,8 +2591,8 @@ namespace HomogeneousKernelFunctors {
       return Rep(p, q, 0);
     }
 
-    Iso_rectangle_2
-    operator()(const Point_2& p, const Point_2& q) const
+    Rep // Iso_rectangle_2
+    operator()(Return_base_tag, const Point_2& p, const Point_2& q) const
     {
       bool px_g_qx = ( p.hx()*q.hw() > q.hx()*p.hw() );
       bool py_g_qy = ( p.hy()*q.hw() > q.hy()*p.hw() );
@@ -2575,8 +2622,8 @@ namespace HomogeneousKernelFunctors {
       return Rep(p, q, 0);
     }
 
-    Iso_rectangle_2
-    operator()(const Point_2 &left,   const Point_2 &right,
+    Rep // Iso_rectangle_2
+    operator()(Return_base_tag, const Point_2 &left,   const Point_2 &right,
                const Point_2 &bottom, const Point_2 &top) const
     {
         CGAL_kernel_assertion_code(typename K::Less_x_2 less_x;)
@@ -2591,8 +2638,8 @@ namespace HomogeneousKernelFunctors {
 			   right.hw()  * top.hw()), 0);
     }
 
-    Iso_rectangle_2
-    operator()(const RT& min_hx, const RT& min_hy,
+    Rep // Iso_rectangle_2
+    operator()(Return_base_tag, const RT& min_hx, const RT& min_hy,
 	       const RT& max_hx, const RT& max_hy) const
     {
       CGAL_kernel_precondition(min_hx <= max_hx);
@@ -2601,12 +2648,46 @@ namespace HomogeneousKernelFunctors {
 		 Point_2(max_hx, max_hy), 0);
     }
 
-    Iso_rectangle_2
-    operator()(const RT& min_hx, const RT& min_hy,
+    Rep // Iso_rectangle_2
+    operator()(Return_base_tag, const RT& min_hx, const RT& min_hy,
 	       const RT& max_hx, const RT& max_hy, const RT& hw) const
     {
 	return Rep(Point_2(min_hx, min_hy, hw),
 		   Point_2(max_hx, max_hy, hw), 0);
+    }
+
+
+    Iso_rectangle_2
+    operator()(const Point_2& p, const Point_2& q, int i) const
+    {
+      return this->operator()(Return_base_tag(), p, q, i);
+    }
+
+    Iso_rectangle_2
+    operator()(const Point_2& p, const Point_2& q) const
+    {
+      return this->operator()(Return_base_tag(), p, q);
+    }
+
+    Iso_rectangle_2
+    operator()(const Point_2 &left,   const Point_2 &right,
+               const Point_2 &bottom, const Point_2 &top) const
+    {
+      return this->operator()(Return_base_tag(), left, right, bottom, top);
+    }
+
+    Iso_rectangle_2
+    operator()(const RT& min_hx, const RT& min_hy,
+	       const RT& max_hx, const RT& max_hy) const
+    {
+      return this->operator()(Return_base_tag(), min_hx, min_hy, max_hx, max_hy);
+    }
+
+    Iso_rectangle_2
+    operator()(const RT& min_hx, const RT& min_hy,
+	       const RT& max_hx, const RT& max_hy, const RT& hw) const
+    {
+      return this->operator()(Return_base_tag(), min_hx, min_hy, max_hx, max_hy, hw);
     }
   };
 

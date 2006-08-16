@@ -34,6 +34,7 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/intersection_2.h>
 #include <CGAL/intersection_3.h>
+#include <CGAL/Kernel/Return_base_tag.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -662,12 +663,14 @@ namespace CommonKernelFunctors {
     typedef Arity_tag< 3 >   Arity;
 
     Rep // Circle_2
-    operator()( const Point_2& center, const FT& squared_radius,
+    operator()( Return_base_tag,
+                const Point_2& center, const FT& squared_radius,
 	        Orientation orientation = COUNTERCLOCKWISE) const
     { return Rep(center, squared_radius, orientation); }
 
     Rep // Circle_2
-    operator()( const Point_2& p, const Point_2& q, const Point_2& r) const
+    operator()( Return_base_tag,
+                const Point_2& p, const Point_2& q, const Point_2& r) const
     {
       typename K::Orientation_2 orientation;
       typename K::Compute_squared_distance_2 squared_distance;
@@ -681,7 +684,8 @@ namespace CommonKernelFunctors {
     }
 
     Rep // Circle_2
-    operator()( const Point_2& p, const Point_2& q,
+    operator()( Return_base_tag,
+                const Point_2& p, const Point_2& q,
 	        Orientation orientation = COUNTERCLOCKWISE) const
     {
       CGAL_kernel_precondition( orientation != COLLINEAR);
@@ -696,12 +700,41 @@ namespace CommonKernelFunctors {
     }
 
     Rep // Circle_2
-    operator()( const Point_2& center,
+    operator()( Return_base_tag, const Point_2& center,
 	        Orientation orientation = COUNTERCLOCKWISE) const
     {
       CGAL_kernel_precondition( orientation != COLLINEAR );
 
       return Rep(center, FT(0), orientation);
+    }
+
+
+    Circle_2
+    operator()( const Point_2& center, const FT& squared_radius,
+	        Orientation orientation = COUNTERCLOCKWISE) const
+    {
+      return this->operator()(Return_base_tag(),
+                              center, squared_radius, orientation);
+    }
+
+    Circle_2
+    operator()( const Point_2& p, const Point_2& q, const Point_2& r) const
+    {
+      return this->operator()(Return_base_tag(), p, q, r);
+    }
+
+    Circle_2
+    operator()( const Point_2& p, const Point_2& q,
+	        Orientation orientation = COUNTERCLOCKWISE) const
+    {
+      return this->operator()(Return_base_tag(), p, q, orientation);
+    }
+
+    Circle_2
+    operator()( const Point_2& center,
+	        Orientation orientation = COUNTERCLOCKWISE) const
+    {
+      return this->operator()(Return_base_tag(), center, orientation);
     }
   };
 
@@ -717,30 +750,55 @@ namespace CommonKernelFunctors {
     typedef Arity_tag< 2 >    Arity;
 
     Rep // Iso_cuboid_3
-    operator()(const Point_3& p, const Point_3& q, int) const
+    operator()(Return_base_tag, const Point_3& p, const Point_3& q, int) const
     { return Rep(p, q, 0); }
 
     Rep // Iso_cuboid_3
-    operator()(const Point_3& p, const Point_3& q) const
+    operator()(Return_base_tag, const Point_3& p, const Point_3& q) const
     { return Rep(p, q); }
 
     Rep // Iso_cuboid_3
-    operator()(const Point_3 &left,   const Point_3 &right,
+    operator()(Return_base_tag, const Point_3 &left,   const Point_3 &right,
                const Point_3 &bottom, const Point_3 &top,
                const Point_3 &far_,   const Point_3 &close) const
     { return Rep(left, right, bottom, top, far_, close); }
 
     Rep // Iso_cuboid_3
-    operator()(const RT& min_hx, const RT& min_hy, const RT& min_hz,
+    operator()(Return_base_tag, const RT& min_hx, const RT& min_hy, const RT& min_hz,
                const RT& max_hx, const RT& max_hy, const RT& max_hz,
                const RT& hw) const
     { return Rep(min_hx, min_hy, min_hz, max_hx, max_hy, max_hz, hw); }
 
     Rep // Iso_cuboid_3
-    operator()(const RT& min_hx, const RT& min_hy, const RT& min_hz,
+    operator()(Return_base_tag, const RT& min_hx, const RT& min_hy, const RT& min_hz,
                const RT& max_hx, const RT& max_hy, const RT& max_hz) const
     { return Rep(min_hx, min_hy, min_hz, max_hx, max_hy, max_hz); }
 
+
+    Iso_cuboid_3
+    operator()(const Point_3& p, const Point_3& q, int) const
+    { return this->operator()(Return_base_tag(), p, q, 0); }
+
+    Iso_cuboid_3
+    operator()(const Point_3& p, const Point_3& q) const
+    { return this->operator()(Return_base_tag(), p, q); }
+
+    Iso_cuboid_3
+    operator()(const Point_3 &left,   const Point_3 &right,
+               const Point_3 &bottom, const Point_3 &top,
+               const Point_3 &far_,   const Point_3 &close) const
+    { return this->operator()(Return_base_tag(), left, right, bottom, top, far_, close); }
+
+    Iso_cuboid_3
+    operator()(const RT& min_hx, const RT& min_hy, const RT& min_hz,
+               const RT& max_hx, const RT& max_hy, const RT& max_hz,
+               const RT& hw) const
+    { return this->operator()(Return_base_tag(), min_hx, min_hy, min_hz, max_hx, max_hy, max_hz, hw); }
+
+    Iso_cuboid_3
+    operator()(const RT& min_hx, const RT& min_hy, const RT& min_hz,
+               const RT& max_hx, const RT& max_hy, const RT& max_hz) const
+    { return this->operator()(Return_base_tag(), min_hx, min_hy, min_hz, max_hx, max_hy, max_hz); }
   };
 
   template <typename K>

@@ -27,6 +27,7 @@
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Kernel/Type_mapper.h>
 #include <CGAL/Profile_counter.h>
+#include <CGAL/Kernel/Return_base_tag.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -55,6 +56,13 @@ const Interval_nt<false>&
 approx(const Lazy_exact_nt<ET>& l)
 {
   return l.approx();
+}
+
+inline
+const Return_base_tag &
+approx(const Return_base_tag& d)
+{
+  return d;
 }
 
 inline
@@ -97,6 +105,13 @@ const Null_vector&
 exact(const Null_vector& nv)
 {
   return nv;
+}
+
+inline
+const Return_base_tag &
+exact(const Return_base_tag& d)
+{
+  return d;
 }
 
 inline

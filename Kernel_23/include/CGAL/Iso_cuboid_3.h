@@ -26,6 +26,7 @@
 
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
+#include <CGAL/Kernel/Return_base_tag.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -60,26 +61,26 @@ public:
       : Rep(r) {}
 
   Iso_cuboid_3(const Point_3& p, const Point_3& q)
-   : Rep(typename R::Construct_iso_cuboid_3()(p,q)) {}
+   : Rep(typename R::Construct_iso_cuboid_3()(Return_base_tag(), p,q)) {}
 
   Iso_cuboid_3(const Point_3& p, const Point_3& q, int)
-   : Rep(typename R::Construct_iso_cuboid_3()(p, q, 0)) {}
+   : Rep(typename R::Construct_iso_cuboid_3()(Return_base_tag(), p, q, 0)) {}
 
   Iso_cuboid_3(const Point_3 &left,   const Point_3 &right,
                const Point_3 &bottom, const Point_3 &top,
                const Point_3 &far_,   const Point_3 &close)
-   : Rep(typename R::Construct_iso_cuboid_3()(left, right, bottom,
+   : Rep(typename R::Construct_iso_cuboid_3()(Return_base_tag(), left, right, bottom,
                                                     top, far_, close)) {}
 
   Iso_cuboid_3(const RT& min_hx, const RT& min_hy, const RT& min_hz,
                const RT& max_hx, const RT& max_hy, const RT& max_hz, 
                const RT& hw)
-   : Rep(typename R::Construct_iso_cuboid_3()(min_hx, min_hy, min_hz,
+   : Rep(typename R::Construct_iso_cuboid_3()(Return_base_tag(), min_hx, min_hy, min_hz,
 				     max_hx, max_hy, max_hz, hw)) {}
 
   Iso_cuboid_3(const RT& min_hx, const RT& min_hy, const RT& min_hz,
                const RT& max_hx, const RT& max_hy, const RT& max_hz)
-   : Rep(typename R::Construct_iso_cuboid_3()(min_hx, min_hy, min_hz,
+   : Rep(typename R::Construct_iso_cuboid_3()(Return_base_tag(), min_hx, min_hy, min_hz,
 					     max_hx, max_hy, max_hz)) {}
 
 // TODO FIXME : why is Qrt not working here ? 

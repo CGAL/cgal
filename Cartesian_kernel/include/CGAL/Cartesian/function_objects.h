@@ -1890,36 +1890,66 @@ namespace CartesianKernelFunctors {
     typedef Arity_tag< 1 >              Arity;
 
     Rep // Direction_2
-    operator()(const RT& x, const RT& y) const
+    operator()(Return_base_tag, const RT& x, const RT& y) const
     { return Rep(x, y); }
 
     Rep // Direction_2
-    operator()(const Vector_2& v) const
+    operator()(Return_base_tag, const Vector_2& v) const
     {
       return Rep(v.x(),v.y()); }
 
     Rep // Direction_2
-    operator()(const Line_2& l) const
+    operator()(Return_base_tag, const Line_2& l) const
     { return Rep(l.b(), -l.a()); }
+
+    Rep // Direction_2
+    operator()(Return_base_tag, const Point_2& p, const Point_2& q) const
+    {
+      return Rep(q.x() - p.x(), q.y() - p.y());
+    }
+
+    Rep // Direction_2
+    operator()(Return_base_tag, const Ray_2& r) const
+    {
+      return this->operator()(Return_base_tag(), r.source(), r.second_point());
+    }
+
+    Rep // Direction_2
+    operator()(Return_base_tag, const Segment_2& s) const
+    {
+      return this->operator()(Return_base_tag(), s.source(), s.target());
+    }
+
+
+    Direction_2
+    operator()(const RT& x, const RT& y) const
+    { return this->operator()(Return_base_tag(), x, y); }
+
+    Direction_2
+    operator()(const Vector_2& v) const
+    {
+      return this->operator()(Return_base_tag(), v); }
+
+    Direction_2
+    operator()(const Line_2& l) const
+    { return this->operator()(Return_base_tag(), l); }
+
+    Direction_2
+    operator()(const Point_2& p, const Point_2& q) const
+    {
+      return this->operator()(Return_base_tag(), p, q);
+    }
 
     Direction_2
     operator()(const Ray_2& r) const
     {
-      typename K::Construct_direction_2 construct_direction;
-      return construct_direction(r.source(), r.second_point());
+      return this->operator()(Return_base_tag(), r);
     }
 
     Direction_2
     operator()(const Segment_2& s) const
     {
-      typename K::Construct_direction_2 construct_direction;
-      return construct_direction( s.source(), s.target());
-    }
-
-    Rep // Direction_2
-    operator()(const Point_2& p, const Point_2& q) const
-    {
-      return Rep(q.x() - p.x(), q.y() - p.y());
+      return this->operator()(Return_base_tag(), s);
     }
   };
 
@@ -1937,27 +1967,46 @@ namespace CartesianKernelFunctors {
     typedef Direction_3       result_type;
     typedef Arity_tag< 1 >    Arity;
 
-#ifndef CGAL_NO_DEPRECATED_CODE
     Rep // Direction_3
-    operator()(const RT& x, const RT& y, const RT& z) const
+    operator()(Return_base_tag, const RT& x, const RT& y, const RT& z) const
     { return Rep(x, y, z); }
-#endif // CGAL_NO_DEPRECATED_CODE
 
     Rep // Direction_3
-    operator()(const Vector_3& v) const
+    operator()(Return_base_tag, const Vector_3& v) const
     { return Rep(v); }
 
     Rep // Direction_3
-    operator()(const Line_3& l) const
+    operator()(Return_base_tag, const Line_3& l) const
     { return Rep(l); }
 
     Rep // Direction_3
-    operator()(const Ray_3& r) const
+    operator()(Return_base_tag, const Ray_3& r) const
     { return Rep(r); }
 
     Rep // Direction_3
-    operator()(const Segment_3& s) const
+    operator()(Return_base_tag, const Segment_3& s) const
     { return Rep(s); }
+
+
+    Direction_3
+    operator()(const RT& x, const RT& y, const RT& z) const
+    { return this->operator()(Return_base_tag(), x, y, z); }
+
+    Direction_3
+    operator()(const Vector_3& v) const
+    { return this->operator()(Return_base_tag(), v); }
+
+    Direction_3
+    operator()(const Line_3& l) const
+    { return this->operator()(Return_base_tag(), l); }
+
+    Direction_3
+    operator()(const Ray_3& r) const
+    { return this->operator()(Return_base_tag(), r); }
+
+    Direction_3
+    operator()(const Segment_3& s) const
+    { return this->operator()(Return_base_tag(), s); }
   };
 
   template <typename K>
@@ -2038,7 +2087,7 @@ namespace CartesianKernelFunctors {
     typedef Arity_tag< 2 >               Arity;
 
     Rep // Iso_rectangle_2
-    operator()(const Point_2& p, const Point_2& q, int) const
+    operator()(Return_base_tag, const Point_2& p, const Point_2& q, int) const
     {
       // I have to remove the assertions, because of Cartesian_converter.
       // CGAL_kernel_assertion(p.x()<=q.x());
@@ -2047,7 +2096,7 @@ namespace CartesianKernelFunctors {
     }
 
     Rep // Iso_rectangle_2
-    operator()(const Point_2& p, const Point_2& q) const
+    operator()(Return_base_tag, const Point_2& p, const Point_2& q) const
     {
       FT minx, maxx, miny, maxy;
       if (p.x() < q.x()) { minx = p.x(); maxx = q.x(); }
@@ -2060,7 +2109,7 @@ namespace CartesianKernelFunctors {
     }
 
     Rep // Iso_rectangle_2
-    operator()(const Point_2 &left,   const Point_2 &right,
+    operator()(Return_base_tag, const Point_2 &left,   const Point_2 &right,
                const Point_2 &bottom, const Point_2 &top) const
     {
       CGAL_kernel_assertion_code(typename K::Less_x_2 less_x;)
@@ -2072,7 +2121,7 @@ namespace CartesianKernelFunctors {
     }
 
     Rep // Iso_rectangle_2
-    operator()(const RT& min_hx, const RT& min_hy,
+    operator()(Return_base_tag, const RT& min_hx, const RT& min_hy,
 	       const RT& max_hx, const RT& max_hy) const
     {
       CGAL_kernel_precondition(min_hx <= max_hx);
@@ -2082,7 +2131,7 @@ namespace CartesianKernelFunctors {
     }
 
     Rep // Iso_rectangle_2
-    operator()(const RT& min_hx, const RT& min_hy,
+    operator()(Return_base_tag, const RT& min_hx, const RT& min_hy,
 	       const RT& max_hx, const RT& max_hy, const RT& hw) const
     {
       if (hw == 1)
@@ -2090,6 +2139,40 @@ namespace CartesianKernelFunctors {
 		   Point_2(max_hx, max_hy), 0);
       return Rep(Point_2(min_hx/hw, min_hy/hw),
 		 Point_2(max_hx/hw, max_hy/hw), 0);
+    }
+
+
+    Iso_rectangle_2
+    operator()(const Point_2& p, const Point_2& q, int i) const
+    {
+      return this->operator()(Return_base_tag(), p, q, i);
+    }
+
+    Iso_rectangle_2
+    operator()(const Point_2& p, const Point_2& q) const
+    {
+      return this->operator()(Return_base_tag(), p, q);
+    }
+
+    Iso_rectangle_2
+    operator()(const Point_2 &left,   const Point_2 &right,
+               const Point_2 &bottom, const Point_2 &top) const
+    {
+      return this->operator()(Return_base_tag(), left, right, bottom, top);
+    }
+
+    Iso_rectangle_2
+    operator()(const RT& min_hx, const RT& min_hy,
+	       const RT& max_hx, const RT& max_hy) const
+    {
+      return this->operator()(Return_base_tag(), min_hx, min_hy, max_hx, max_hy);
+    }
+
+    Iso_rectangle_2
+    operator()(const RT& min_hx, const RT& min_hy,
+	       const RT& max_hx, const RT& max_hy, const RT& hw) const
+    {
+      return this->operator()(Return_base_tag(), min_hx, min_hy, max_hx, max_hy, hw);
     }
   };
 

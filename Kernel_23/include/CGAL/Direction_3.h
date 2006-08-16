@@ -26,6 +26,7 @@
 
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
+#include <CGAL/Kernel/Return_base_tag.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -64,19 +65,19 @@ public:
     : Rep(d) {}
 
   Direction_3(const Vector_3& v)
-    : Rep(typename R::Construct_direction_3()(v)) {}
+    : Rep(typename R::Construct_direction_3()(Return_base_tag(), v)) {}
 
   Direction_3(const Line_3& l)
-    : Rep(typename R::Construct_direction_3()(l)) {}
+    : Rep(typename R::Construct_direction_3()(Return_base_tag(), l)) {}
 
   Direction_3(const Ray_3& r)
-    : Rep(typename R::Construct_direction_3()(r)) {}
+    : Rep(typename R::Construct_direction_3()(Return_base_tag(), r)) {}
 
   Direction_3(const Segment_3& s)
-    : Rep(typename R::Construct_direction_3()(s)) {}
+    : Rep(typename R::Construct_direction_3()(Return_base_tag(), s)) {}
 
   Direction_3(const RT& hx, const RT& hy, const RT& hz)
-    : Rep(typename R::Construct_direction_3()(hx, hy, hz)) {}
+    : Rep(typename R::Construct_direction_3()(Return_base_tag(), hx, hy, hz)) {}
 
   Direction_3 transform(const Aff_transformation_3 &t) const
   {

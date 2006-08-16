@@ -26,6 +26,7 @@
 
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
+#include <CGAL/Kernel/Return_base_tag.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -65,19 +66,19 @@ public:
     : RDirection_2(d) {}
 
   Direction_2(const Vector_2& v)
-    : RDirection_2(typename R::Construct_direction_2()(v)) {}
+    : RDirection_2(typename R::Construct_direction_2()(Return_base_tag(), v)) {}
 
   Direction_2(const Line_2& l)
-    : RDirection_2(typename R::Construct_direction_2()(l)) {}
+    : RDirection_2(typename R::Construct_direction_2()(Return_base_tag(), l)) {}
 
   Direction_2(const Ray_2& r)
-    : RDirection_2(typename R::Construct_direction_2()(r)) {}
+    : RDirection_2(typename R::Construct_direction_2()(Return_base_tag(), r)) {}
 
   Direction_2(const Segment_2& s)
-    : RDirection_2(typename R::Construct_direction_2()(s)) {}
+    : RDirection_2(typename R::Construct_direction_2()(Return_base_tag(), s)) {}
 
   Direction_2(const RT &x, const RT &y)
-    :  RDirection_2(typename R::Construct_direction_2()(x,y)) {}
+    :  RDirection_2(typename R::Construct_direction_2()(Return_base_tag(), x,y)) {}
 
   bool
   counterclockwise_in_between(const Direction_2 &d1,
