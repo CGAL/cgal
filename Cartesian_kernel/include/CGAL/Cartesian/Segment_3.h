@@ -69,8 +69,8 @@ public:
   const Point_3 &   start() const;
   const Point_3 &   end() const;
 
-  const Point_3 &   min() const;
-  const Point_3 &   max() const;
+  const Point_3 &   min BOOST_PREVENT_MACRO_SUBSTITUTION () const;
+  const Point_3 &   max BOOST_PREVENT_MACRO_SUBSTITUTION () const;
   const Point_3 &   vertex(int i) const;
   const Point_3 &   point(int i) const;
   const Point_3 &   operator[](int i) const;
@@ -119,7 +119,7 @@ SegmentC3<R>::end() const
 template < class R >
 inline
 const typename SegmentC3<R>::Point_3 &
-SegmentC3<R>::min() const
+SegmentC3<R>::min BOOST_PREVENT_MACRO_SUBSTITUTION () const
 {
   return lexicographically_xyz_smaller(source(),target()) ? source()
                                                           : target();
@@ -128,7 +128,7 @@ SegmentC3<R>::min() const
 template < class R >
 inline
 const typename SegmentC3<R>::Point_3 &
-SegmentC3<R>::max() const
+SegmentC3<R>::max BOOST_PREVENT_MACRO_SUBSTITUTION () const
 {
   return lexicographically_xyz_smaller(source(),target()) ? target()
                                                           : source();

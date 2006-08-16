@@ -108,11 +108,11 @@ public:
   bool operator==(const Iso_cuboidC3& s) const;
   bool operator!=(const Iso_cuboidC3& s) const;
 
-  const Point_3 & min() const
+  const Point_3 & min BOOST_PREVENT_MACRO_SUBSTITUTION () const
   {
       return get(base).e0;
   }
-  const Point_3 & max() const
+  const Point_3 & max BOOST_PREVENT_MACRO_SUBSTITUTION () const
   {
       return get(base).e1;
   }
@@ -121,7 +121,7 @@ public:
 
   Iso_cuboid_3 transform(const Aff_transformation_3 &t) const
   {
-    return Iso_cuboidC3(t.transform(min()), t.transform(max()));
+    return Iso_cuboidC3(t.transform((this->min)()), t.transform((this->max)()));
   }
 
   Bounded_side bounded_side(const Point_3& p) const;
@@ -150,7 +150,7 @@ Iso_cuboidC3<R>::operator==(const Iso_cuboidC3<R>& r) const
 { // FIXME : predicate
   if (CGAL::identical(base, r.base))
       return true;
-  return min() == r.min() && max() == r.max();
+  return (this->min)() == (r.min)() && (this->max)() == (r.max)();
 }
 
 template < class R >
@@ -166,7 +166,7 @@ inline
 const typename Iso_cuboidC3<R>::FT &
 Iso_cuboidC3<R>::xmin() const
 {
-  return min().x();
+  return (this->min)().x();
 }
 
 template < class R >
@@ -174,7 +174,7 @@ inline
 const typename Iso_cuboidC3<R>::FT &
 Iso_cuboidC3<R>::ymin() const
 {
-  return min().y();
+  return (this->min)().y();
 }
 
 template < class R >
@@ -182,7 +182,7 @@ inline
 const typename Iso_cuboidC3<R>::FT &
 Iso_cuboidC3<R>::zmin() const
 {
-  return min().z();
+  return (this->min)().z();
 }
 
 template < class R >
@@ -190,7 +190,7 @@ inline
 const typename Iso_cuboidC3<R>::FT &
 Iso_cuboidC3<R>::xmax() const
 {
-  return max().x();
+  return (this->max)().x();
 }
 
 template < class R >
@@ -198,7 +198,7 @@ inline
 const typename Iso_cuboidC3<R>::FT &
 Iso_cuboidC3<R>::ymax() const
 {
-  return max().y();
+  return (this->max)().y();
 }
 
 template < class R >
@@ -206,7 +206,7 @@ inline
 const typename Iso_cuboidC3<R>::FT &
 Iso_cuboidC3<R>::zmax() const
 {
-  return max().z();
+  return (this->max)().z();
 }
 
 template < class R >
@@ -245,15 +245,15 @@ Iso_cuboidC3<R>::vertex(int i) const
   Construct_point_3 construct_point_3;
   switch (i%8)
   {
-    case 0: return min();
-    case 1: return construct_point_3(max().hx(), min().hy(), min().hz());
-    case 2: return construct_point_3(max().hx(), max().hy(), min().hz());
-    case 3: return construct_point_3(min().hx(), max().hy(), min().hz());
-    case 4: return construct_point_3(min().hx(), max().hy(), max().hz());
-    case 5: return construct_point_3(min().hx(), min().hy(), max().hz());
-    case 6: return construct_point_3(max().hx(), min().hy(), max().hz());
+    case 0: return (this->min)();
+    case 1: return construct_point_3((this->max)().hx(), (this->min)().hy(), (this->min)().hz());
+    case 2: return construct_point_3((this->max)().hx(), (this->max)().hy(), (this->min)().hz());
+    case 3: return construct_point_3((this->min)().hx(), (this->max)().hy(), (this->min)().hz());
+    case 4: return construct_point_3((this->min)().hx(), (this->max)().hy(), (this->max)().hz());
+    case 5: return construct_point_3((this->min)().hx(), (this->min)().hy(), (this->max)().hz());
+    case 6: return construct_point_3((this->max)().hx(), (this->min)().hy(), (this->max)().hz());
     default: // case 7:
-        return max();
+        return (this->max)();
   }
 }
 
@@ -279,9 +279,9 @@ Bounded_side
 Iso_cuboidC3<R>::
 bounded_side(const typename Iso_cuboidC3<R>::Point_3& p) const
 {
-  if (strict_dominance(p, min()) && strict_dominance(max(), p) )
+  if (strict_dominance(p, (this->min)()) && strict_dominance((this->max)(), p) )
     return ON_BOUNDED_SIDE;
-  if (dominance(p, min()) && dominance(max(), p))
+  if (dominance(p, (this->min)()) && dominance((this->max)(), p))
     return ON_BOUNDARY;
   return ON_UNBOUNDED_SIDE;
 }
@@ -328,9 +328,9 @@ CGAL_KERNEL_INLINE
 bool
 Iso_cuboidC3<R>::is_degenerate() const
 { // FIXME : predicate
-  return min().hx() == max().hx()
-      || min().hy() == max().hy()
-      || min().hz() == max().hz();
+  return (this->min)().hx() == (this->max)().hx()
+      || (this->min)().hy() == (this->max)().hy()
+      || (this->min)().hz() == (this->max)().hz();
 }
 
 template < class R >
@@ -339,7 +339,7 @@ Bbox_3
 Iso_cuboidC3<R>::bbox() const
 {
   typename R::Construct_bbox_3 construct_bbox_3;
-  return construct_bbox_3(min()) + construct_bbox_3(max());
+  return construct_bbox_3((this->min)()) + construct_bbox_3((this->max)());
 }
 
 CGAL_END_NAMESPACE

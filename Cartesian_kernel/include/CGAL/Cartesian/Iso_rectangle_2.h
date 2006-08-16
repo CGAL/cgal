@@ -56,11 +56,11 @@ public:
     // CGAL_kernel_assertion(p<=q);
   }
 
-  const Point_2 & min() const
+  const Point_2 & min BOOST_PREVENT_MACRO_SUBSTITUTION () const
   {
       return get(base).e0;
   }
-  const Point_2 & max() const
+  const Point_2 & max BOOST_PREVENT_MACRO_SUBSTITUTION () const
   {
       return get(base).e1;
   }

@@ -1361,7 +1361,7 @@ namespace CartesianKernelFunctors {
     const result_type &
     operator()(const Iso_rectangle_2& r) const
     {
-      return r.min().x();
+      return (r.min)().x();
     }
   };
 
@@ -1378,7 +1378,7 @@ namespace CartesianKernelFunctors {
     const result_type &
     operator()(const Iso_rectangle_2& r) const
     {
-      return r.max().x();
+      return (r.max)().x();
     }
   };
 
@@ -1395,7 +1395,7 @@ namespace CartesianKernelFunctors {
     const result_type &
     operator()(const Iso_rectangle_2& r) const
     {
-      return r.min().y();
+      return (r.min)().y();
     }
   };
 
@@ -1412,7 +1412,7 @@ namespace CartesianKernelFunctors {
     const result_type &
     operator()(const Iso_rectangle_2& r) const
     {
-      return r.max().y();
+      return (r.max)().y();
     }
   };
 
@@ -1498,7 +1498,7 @@ namespace CartesianKernelFunctors {
     operator()( const Iso_rectangle_2& r) const
     {
       typename K::Construct_bbox_2 construct_bbox_2;
-      return construct_bbox_2(r.min()) + construct_bbox_2(r.max());
+      return construct_bbox_2((r.min)()) + construct_bbox_2((r.max)());
     }
 
     result_type
@@ -2771,9 +2771,9 @@ namespace CartesianKernelFunctors {
     operator()( const Iso_rectangle_2& r, int i) const
     {
       switch (i%4) {
-      case 0: return r.min();
+      case 0: return (r.min)();
       case 1: return Point_2(r.xmax(), r.ymin());
-      case 2: return r.max();
+      case 2: return (r.max)();
       default: return Point_2(r.xmin(), r.ymax());
       }
     }

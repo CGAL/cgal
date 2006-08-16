@@ -201,16 +201,16 @@ compare_y_at_xC2(const FT &px, const FT &py,
     // compares the y-coordinates of p and the vertical projection of p on s.
     // Precondition : p is in the x-range of s.
 
-    CGAL_kernel_precondition(px >= min(ssx, stx) && px <= max(ssx, stx));
+    CGAL_kernel_precondition(px >= (CGAL::min)(ssx, stx) && px <= (CGAL::max)(ssx, stx));
 
     if (ssx < stx)
 	return enum_cast<Comparison_result>(orientationC2(px, py, ssx, ssy, stx, sty));
     else if (ssx > stx)
 	return enum_cast<Comparison_result>(orientationC2(px, py, stx, sty, ssx, ssy));
     else {
-	if (py < min(sty, ssy))
+	if (py < (CGAL::min)(sty, ssy))
 	    return SMALLER;
-	if (py > max(sty, ssy))
+	if (py > (CGAL::max)(sty, ssy))
 	    return LARGER;
 	return EQUAL;
     }
@@ -231,8 +231,8 @@ compare_y_at_x_segment_C2(const FT &px,
     //   - if the segments intersect, return EQUAL
     //   - if not, return the obvious SMALLER/LARGER.
 
-    CGAL_kernel_precondition(px >= min(s1sx, s1tx) && px <= max(s1sx, s1tx));
-    CGAL_kernel_precondition(px >= min(s2sx, s2tx) && px <= max(s2sx, s2tx));
+    CGAL_kernel_precondition(px >= (CGAL::min)(s1sx, s1tx) && px <= (CGAL::max)(s1sx, s1tx));
+    CGAL_kernel_precondition(px >= (CGAL::min)(s2sx, s2tx) && px <= (CGAL::max)(s2sx, s2tx));
 
     if (s1sx != s1tx && s2sx != s2tx) {
 	FT s1stx = s1sx-s1tx;
