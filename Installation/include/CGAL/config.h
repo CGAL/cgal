@@ -108,14 +108,21 @@ namespace CGAL {
 // Big endian or little endian machine.
 // ====================================
 
-#include <boost/limits.hpp> // provides endianness macros
-
-#ifdef BOOST_BIG_ENDIAN
+// We used to have a config program for this, but it
+// is much more convenient to use the preprocessor.
+#if defined(__sparc) || defined(__sparc__) \
+   || defined(_POWER) || defined(__powerpc__) \
+   || defined(__ppc__) || defined(__hppa) \
+   || defined(_MIPSEB) || defined(_POWER) \
+   || defined(__s390__)
 #  define CGAL_BIG_ENDIAN
-#elif defined BOOST_LITTLE_ENDIAN
+#elif defined(__i386__) || defined(__alpha__) \
+   || defined(__ia64) || defined(__ia64__) \
+   || defined(_M_IX86) || defined(_M_IA64) \
+   || defined(_M_ALPHA)
 #  define CGAL_LITTLE_ENDIAN
 #else
-#  error "Unknown endianness"
+#  error Unknown endianness
 #endif
 
 
