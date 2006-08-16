@@ -111,9 +111,9 @@ public:
     Point_d operator()(const Iso_box_d&  b, int i)
     {
       if(i == 0){
-	return b.min();
+	return (b.min)();
       }
-      return b.max();
+      return (b.max)();
     }
   };
   
@@ -132,7 +132,7 @@ public:
 
     Point_d operator()(const Iso_box_d&  b)
     {
-      return b.min();
+      return (b.min)();
     }
   };
   typedef Construct_min_vertex<Self> Construct_min_vertex_d;
@@ -155,7 +155,7 @@ public:
 
     Point_d operator()(const Iso_box_d&  b)
     {
-      return b.max();
+      return (b.max)();
     }
   };
   typedef Construct_max_vertex<Self> Construct_max_vertex_d;
