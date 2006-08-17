@@ -35,15 +35,12 @@ template<typename IT_,
 QP_MPS_instance<IT_,ET_,
 		Use_sparse_representation_for_D_,
 		Use_sparse_representation_for_A_>::
-QP_MPS_instance(std::istream& in,
-		bool use_CPLEX_convention,
-		bool compute_rank,
+QP_MPS_instance(std::istream& in,bool use_CPLEX_convention,
 		int verbosity)
   : verbosity_(verbosity), from(in),
     is_format_okay_(false),
     is_linear_(true),
     use_CPLEX_convention(use_CPLEX_convention),
-    compute_rank(compute_rank),
     is_symmetric_cached(false),
     has_equalities_only_and_full_rank_cached(false),
     is_in_standard_form_cached(false),
@@ -175,7 +172,6 @@ bool QP_MPS_instance<IT_,ET_,
 		Use_sparse_representation_for_D_,
 		Use_sparse_representation_for_A_>::has_equalities_only_and_full_rank()
 {
-  CGAL_qpe_precondition(compute_rank);
   if (!is_format_okay_)
     return false;
 
@@ -659,11 +655,8 @@ std::ostream& operator<<(std::ostream& o,
     << (qp.is_linear()? yes : no) << endl
     << "             in standard form: "
     << (qp.is_in_standard_form()? yes : no) << endl
-    << "equalities only and full rank: "
-    << (qp.compute_rank? 
-	(qp.has_equalities_only_and_full_rank()? yes : no) : 
-	"not checked"
-	) << endl;
+    << "equalities only and full rank: not checked" << endl;
+  //<< (qp.has_equalities_only_and_full_rank()? yes : no) << endl;
   if (!qp.is_linear())
     o << "           symmetric D matrix: "
       << (qp.is_symmetric()? yes : no) << endl

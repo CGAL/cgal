@@ -46,7 +46,7 @@ int main(const int argNr,const char **args) {
   typedef CGAL::Gmpq IT;
   typedef CGAL::Gmpq ET;
   typedef CGAL::QP_MPS_instance<IT,ET> QP;
-  QP qp(std::cin,true,false,verbosity);
+  QP qp(std::cin,true,verbosity);
 
   // check for format errors in MPS file:
   if (!qp.is_valid()) {
