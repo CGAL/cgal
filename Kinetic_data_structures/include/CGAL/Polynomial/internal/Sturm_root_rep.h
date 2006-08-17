@@ -1036,8 +1036,8 @@ namespace std
           typedef numeric_limits<typename CGAL_POLYNOMIAL_NS::internal::Sturm_root_rep<S,I>::NT > P;
     typedef CGAL_POLYNOMIAL_NS::internal::Sturm_root_rep<S,I> T;
     static const bool is_specialized = true;
-    static T min() throw() {return T(P::min());}
-    static T max() throw() {return T(P::max());}
+    static T min BOOST_PREVENT_MACRO_SUBSTITUTION () throw() {return T((P::min)());}
+    static T max BOOST_PREVENT_MACRO_SUBSTITUTION () throw() {return T((P::max)());}
     /*static const int digits =0;
       static const int digits10 =0;
       static const bool is_signed = true;

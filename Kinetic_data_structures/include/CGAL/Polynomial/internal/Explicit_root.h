@@ -256,8 +256,8 @@ namespace std
     typedef numeric_limits<Tr> P;
     typedef CGAL_POLYNOMIAL_NS::internal::Explicit_root<Tr> T;
     static const bool is_specialized = true;
-    static T min() throw() {return T(P::min());}
-    static T max() throw() {return T(P::max());}
+    static T min BOOST_PREVENT_MACRO_SUBSTITUTION () throw() {return T((P::min)());}
+    static T max BOOST_PREVENT_MACRO_SUBSTITUTION () throw() {return T((P::max)());}
     static const bool has_infinity=true;
     static T infinity() throw() {return T::infinity_rep();}
   };

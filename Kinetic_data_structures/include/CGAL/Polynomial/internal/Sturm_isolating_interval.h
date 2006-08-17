@@ -277,7 +277,7 @@ public:
   //\todo to exact interval somehow
 
   This operator||(const This &o) {
-    return This(std::min(lb(), o.lb()), std::max(ub(), o.ub()));
+    return This((std::min)(lb(), o.lb()), (std::max)(ub(), o.ub()));
   }
 #endif
 

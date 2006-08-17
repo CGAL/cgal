@@ -694,7 +694,7 @@ protected:
   static double double_inf_rep() {
     if (std::numeric_limits<double>::has_infinity) {
       return (std::numeric_limits<double>::infinity());
-    } else return (std::numeric_limits<double>::max());
+    } else return ((std::numeric_limits<double>::max)());
   }
 
   Sign lower_sign() const
@@ -833,8 +833,8 @@ namespace std
   public:
     typedef CGAL_POLYNOMIAL_NS::internal::Simple_interval_root<Tr> T;
     static const bool is_specialized = true;
-    static T min() throw () {return -T::infinity();}
-    static T max() throw () {return T::infinity();}
+    static T min BOOST_PREVENT_MACRO_SUBSTITUTION () throw () {return -T::infinity();}
+    static T max BOOST_PREVENT_MACRO_SUBSTITUTION () throw () {return T::infinity();}
     static const int digits =0;
     static const int digits10 =0;
     static const bool is_signed = true;
