@@ -923,7 +923,8 @@ sqrt(const Lazy_exact_nt<ET> & a)
 template <typename ET>
 inline
 Lazy_exact_nt<ET>
-min(const Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
+min BOOST_PREVENT_MACRO_SUBSTITUTION (const Lazy_exact_nt<ET> & a,
+				      const Lazy_exact_nt<ET> & b)
 {
   CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
   return new Lazy_exact_Min<ET>(a, b);
@@ -932,7 +933,8 @@ min(const Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
 template <typename ET>
 inline
 Lazy_exact_nt<ET>
-max(const Lazy_exact_nt<ET> & a, const Lazy_exact_nt<ET> & b)
+max BOOST_PREVENT_MACRO_SUBSTITUTION (const Lazy_exact_nt<ET> & a,
+				      const Lazy_exact_nt<ET> & b)
 {
   CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
   return new Lazy_exact_Max<ET>(a, b);

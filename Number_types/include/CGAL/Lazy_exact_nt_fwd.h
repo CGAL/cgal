@@ -52,10 +52,12 @@ template <typename ET>
 Lazy_exact_nt<ET> sqrt(const Lazy_exact_nt<ET> &);
 
 template <typename ET>
-Lazy_exact_nt<ET> min(const Lazy_exact_nt<ET> &, const Lazy_exact_nt<ET> &);
+Lazy_exact_nt<ET> min BOOST_PREVENT_MACRO_SUBSTITUTION (const Lazy_exact_nt<ET> &,
+							const Lazy_exact_nt<ET> &);
 
 template <typename ET>
-Lazy_exact_nt<ET> max(const Lazy_exact_nt<ET> &, const Lazy_exact_nt<ET> &);
+Lazy_exact_nt<ET> max BOOST_PREVENT_MACRO_SUBSTITUTION (const Lazy_exact_nt<ET> &,
+							const Lazy_exact_nt<ET> &);
 
 template <typename ET>
 bool is_finite(const Lazy_exact_nt<ET> &);
