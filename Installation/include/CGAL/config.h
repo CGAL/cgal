@@ -123,6 +123,7 @@ namespace CGAL {
    || defined(__s390__)
 #  define CGAL_BIG_ENDIAN
 #elif defined(__i386__) || defined(__alpha__) \
+   || defined(__x86_64) || defined(__x86_64__) \
    || defined(__ia64) || defined(__ia64__) \
    || defined(_M_IX86) || defined(_M_IA64) \
    || defined(_M_ALPHA)
