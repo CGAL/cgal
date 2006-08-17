@@ -36,9 +36,9 @@
 #include <CGAL/Constrained_triangulation_2.h>
 
 //#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE 4
-#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE 1
+//#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE 4
 
-//#define STATS
+#define STATS
 //#define AUDIT
 
 void Surface_simplification_external_trace( std::string s )

@@ -27,79 +27,141 @@ namespace Triangulated_surface_mesh { namespace Simplification
 //
 // collapse_triangulation_edge euler operator (topological operation only).
 //
-// This operator removes from a triangulation 'aDS' 2 facets, 1 vertex and 3 edges, as follows:
+// This operator collapses the edge p-q replacing it with one single vertex connected to the link of p-q.
 //
-// Consider 2 vertices 'p', 'q', 't' and 'b', such that the edge 'p-q' is shared by two facets
-// 'p-q-t' and 'q-p-b', called top and bottom facets resp. (their orientation is unimportant)
+// The net effect of the operator is equivalent to removing one of the vertices and re-triangulating the resulting hole.
 //
-// Consider additional vertices 'l' and 'r' such that 
-// 'p-t-l' and 'q-r-t' are the other 2 facets adjacent to the top facet, called the top-left and top-right facets, resp.,
-// and 
-// 'l-b-p' and 'b-r-q' are the other 2 facets adjacent to the bottom facet, called the bottom-left and bottom-right facets, resp.
+// The actual collapse operation only removes up to 2 faces, 3 edges and 1 vertex, as follows.
 //
-// In such a triangulated path there is a cycle of vertices around 'p' and 'q' called the "link" of the edge 'p-q'.
-// In the minimal case, the link is the unordered cycle of vertices: l-b-r-t. It could also be that 'l' and 'r' are really a
-// sequence of vertices instead of just 1 vertex.
-// As the link has at least 4 vertices there are at least 6 facets inside the link: 
-//   bottom-left  (l-b-p)
-//   bottom       (q-p-b)
-//   bottom-right (q-b-r)
-//   top-right    (q-r-t) 
-//   top          (p-q-t)
-//   top-left     (l-p-t)
-// (the vertices are enumerated in an arbiraty order as that is unimportant here)
+// The top face, p-q-t, to the left of p->q, if any, is removed.
+// The bottom face, q-p-b, to the left of q->p (right of p->q), if any, is removed.
+//
+// If there is a top-left face, that is, if the edge p->t is NOT a border edge, the top face is removed by joining it
+// with the top-left face (this creates a 4 sided face: p-q-t-l).
+// If p->t IS a border edge then the top face is simply erased.
+//
+// If there is a bottom-right face, that is, if the edge q->b is NOT a border edge, the bottom face is removed by joining it
+// with the bottom-right face (this creates a 4 sided face: q-p-b-r)
+// If q->b IS a border edge then the bottom face is simply erased.
+//
+// If there is a top face edge p->t is removed. 
+// If there is a bottom face edge q->b is removed. 
 // 
-// The operator is passed 3 DIRECTED edges: 'p-q', 'p-t' and 'q-b' as proceeds with the following 3 steps:
+// One of the vertices (p or q) is removed. 
+// If there is no top-left face so the top face is directly erased AND there is no bottom face,
+// that face erasure automatically removes vertex p. Likewise, if there is no bottom-right face 
+// so the bottom face is directly erased AND there is no top face, that erasure automatically 
+// removes vertex q.
+// Directly erasing the top/bottom faces when the opposite face exists does not removes any vertex
+// automatically, in which case vertex p is removed by joining p->q
 //
-// (1) Merges the top facet with the top-left facet keeping the top-left facet; that is,
-//     removes the top-facet 'q-p-t', the edge 'p-t' and 
-//     redefines the top-left facet to be 'l-p-q-t' instead of 'l-p-t'.
+// NOTES:
 //
-// (2) Merges the bottom facet with the bottom-right facet keeping the bottom-right facet; that is,
-//     removes the botton-facet 'q-p-t', the edge 'q-b' and 
-//     redefines the bottom-right facet to be 'r-q-p-b' instead of 'r-q-b'.
+// This operator can only be called by collapsable edges (which satisfy the link condition), hence,
+// there must exist at least the top face or a bottom face, and, if there is no top-left face there is a top-right face
+// and likewise, if there is no bottom-right face there is a bottom-left face. (IOW vertices t/b must have degree >=3
+// unless the top/bottom faces do not exists)
 //
-// (3) Joins the vertices 'p' and 'q' keeping the vertex 'q'; that is
-//     removes the edge 'p-q' and the vertex 'p' redefining the top-left facet to be 'l-q-t' instead of 'l-p-q-t'
-//     and the bottom-right facet to be 'r-q-b' instead of 'r-q-p-b'
+// The operator doesn't join the top face with the top-left face and the bottom-face with the bottom-left face
+// (or both to the right) because if the top-left and bottom-left (or both right) faces are themselve adjacent,
+// the first joint would introduce a degree 2 vertex.
+// That is why the operator alternates left and right to join the top and bottom faces.
 //
-// The net result is a valid triangulation but the intermediate results from steps 1 and 2 are not as the top-left
-// and bottom-right facets are temporarily 4-sided until 'p' and 'q' is joint.
+// PARAMETERS:
+//  pq : the edge to collapse
+//  pt : the edge shared between the top face and the top-left face (if any). If there is no top face this parameter is a null handle.
+//  qb : the edge shared between the bottom face and the bottom-right face. If there is no bottom face this parameter is a null handle.
 //
-// The operator merges the bottom facets with the bottom-right facet instead of the bottom-left facet becasue in the
-// minimal link case (that is, just 'l-b-r-t'), the top-left and bottom-left facets are adjacent, so merging one of 
-// them prevents the other to be merged becuase doing so would introduce degree-2 vertex (which is illegal in most DS)
-//
-// The operator is required to erase from the aDS the following: vertex 'p', edges 'pq', 'pt' and 'qb', and
-// facets 'pqt' and 'qpb'. It is also required NOT to erase anything else.
-// 
-// The code in this primary template simply forwards the operations to the DS. 
-// Thus, the DS must support the join_facet(edge) and join_vertex(edge) operations. If not, an specialization is required.
+// RETURN VALUE: A handle to the vertex that IS NOT removed.
 //
 template<class DS_>
 struct Collapse_triangulation_edge
 {
   typedef DS_ DS ;
   
-  typedef typename boost::graph_traits<DS>::edge_descriptor edge_descriptor ;
+  typedef typename boost::graph_traits<DS>::edge_descriptor   edge_descriptor ;
+  typedef typename boost::graph_traits<DS>::vertex_descriptor vertex_descriptor ;
   
-  void operator() ( edge_descriptor const& pq
-                  , edge_descriptor const& pt
-                  , edge_descriptor const& qb
-                  , DS&                    aDS 
-                  ) const
+  vertex_descriptor operator() ( edge_descriptor const& pq
+                               , edge_descriptor const& pt
+                               , edge_descriptor const& qb
+                               , DS&                    aDS 
+                               ) const
   {
-    CGAL_precondition( pt->vertex()->vertex_degree() >= 3 || qb->vertex()->vertex_degree() >= 3 ) ;
-  
-    if ( pt->vertex()->vertex_degree() >= 3 )
-      aDS.join_facet (pt);
+    edge_descriptor null ;
     
-    if ( qb->vertex()->vertex_degree() >= 3 )
-      aDS.join_facet (qb);
+    bool lTopFaceExists         = pt != null ;
+    bool lBottomFaceExists      = qb != null ;
+    bool lTopLeftFaceExists     = lTopFaceExists    && !pt->is_border() ;
+    bool lBottomRightFaceExists = lBottomFaceExists && !qb->is_border() ;
     
-    aDS.join_vertex(pq);
+    CGAL_precondition( !lTopFaceExists    || (lTopFaceExists    && ( pt->vertex()->vertex_degree() > 2 ) ) ) ;
+    CGAL_precondition( !lBottomFaceExists || (lBottomFaceExists && ( qb->vertex()->vertex_degree() > 2 ) ) ) ;
+    
+    vertex_descriptor q = pq->vertex();
+    vertex_descriptor p = pq->opposite()->vertex();
+    
+    CGAL_TSMS_TRACE(3, "Collapsing p-q E" << pq->ID << " (V" << p->ID << "->V" << q->ID << ")" ) ;
+    
+    bool lP_Erased = false, lQ_Erased = false ;
+    
+    if ( lTopFaceExists )
+    { 
+      CGAL_precondition( !pt->opposite()->is_border() ) ; // p-q-t is a face of the mesh
+      if ( lTopLeftFaceExists )
+      {
+        CGAL_TSMS_TRACE(3, "Removing p-t E" << pt->ID << " (V" << p->ID << "->V" << pt->vertex()->ID << ") by joining top-left face" ) ;
+        
+        aDS.join_facet (pt);
+      }
+      else
+      {
+        CGAL_TSMS_TRACE(3, "Removing p-t E" << pt->ID << " (V" << p->ID << "->V" << pt->vertex()->ID << ") by erasing top face" ) ;
+        
+        aDS.erase_facet(pt->opposite());
+        
+        if ( !lBottomFaceExists )
+        {
+          CGAL_TSMS_TRACE(3, "Bottom face doesn't exist so vertex P already removed" ) ;
+          lP_Erased = true ;
+        }  
+      } 
+    }
+    
+    if ( lBottomFaceExists )
+    {   
+      CGAL_precondition( !qb->opposite()->is_border() ) ; // p-q-b is a face of the mesh
+      if ( lBottomRightFaceExists )
+      {
+        CGAL_TSMS_TRACE(3, "Removing q-b E" << qb->ID << " (V" << q->ID << "->V" << qb->vertex()->ID << ") by joining bottom-right face" ) ;
+        aDS.join_facet (qb);
+      }
+      else
+      {
+        CGAL_TSMS_TRACE(3, "Removing q-b E" << qb->ID << " (V" << q->ID << "->V" << qb->vertex()->ID << ") by erasing bottom face" ) ;
+        
+        aDS.erase_facet(qb->opposite());
+        
+        if ( !lTopFaceExists )
+        {
+          CGAL_TSMS_TRACE(3, "Top face doesn't exist so vertex Q already removed" ) ;
+          lQ_Erased = true ;
+        }  
+      }
+    }
+
+    CGAL_assertion( !lP_Erased || !lQ_Erased ) ;
+    
+    if ( !lP_Erased && !lQ_Erased )
+    {
+      CGAL_TSMS_TRACE(3, "Removing vertex P by joining pQ" ) ;
+      aDS.join_vertex(pq);
+      lP_Erased = true ;
+    }    
     
     CGAL_expensive_postcondition(aDS.is_valid());
+    
+    return lP_Erased ? q : p ;
   }
   
 } ;

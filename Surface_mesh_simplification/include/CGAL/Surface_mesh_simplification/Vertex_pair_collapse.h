@@ -242,7 +242,7 @@ private:
   void Loop();
   bool Is_collapsable( vertex_descriptor const& p, vertex_descriptor const& q, edge_descriptor const& p_q ) ;
   void Collapse( vertex_pair_ptr aPair ) ;
-  void Update_neighbors( vertex_pair_ptr aCollapsingPair ) ;
+  void Update_neighbors( vertex_descriptor aRemovedV, vertex_descriptor aKeptV, bool aIsKeptVFixed ) ;
   
   vertex_pair_ptr get_pair ( edge_descriptor const& e ) 
   {
@@ -304,10 +304,16 @@ private:
     return get(is_vertex_fixed,mSurface,v) ;
   }
   
+  bool is_border ( vertex_descriptor const& v ) const
+  {
+    vertex_is_border_t is_border_vertex_property ;
+    return get(is_border_vertex_property,mSurface,v) ;
+  }    
+  
   bool is_border ( edge_descriptor const& edge ) const
   {
-    edge_is_border_t is_border_property ;
-    return get(is_border_property,mSurface,edge) ;
+    edge_is_border_t is_border_edge_property ;
+    return get(is_border_edge_property,mSurface,edge) ;
   }    
   
   bool is_undirected_edge_a_border ( edge_descriptor const& edge ) const

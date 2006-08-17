@@ -18,7 +18,8 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROM_TURK_CORE_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROM_TURK_CORE_H 1
 
-#include <CGAL/Simple_cartesian.h>
+#include <vector>
+
 #include <CGAL/Surface_mesh_simplification/TSMS_common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/LindstromTurk_collapse_data.h>
 
@@ -48,6 +49,10 @@ public:
   typedef typename Collapse_data::edge_descriptor   edge_descriptor ;
   typedef typename Collapse_data::Params            Params ;
      
+  typedef boost::graph_traits<TSM> GraphTraits ;
+  
+  typedef typename GraphTraits::in_edge_iterator in_edge_iterator ;
+  
   typedef typename Surface_geometric_traits<TSM>::Kernel Kernel ;
   
   typedef typename Kernel::Point_3  Point ;
@@ -88,23 +93,16 @@ private :
   
   typedef std::vector<Triangle>          Triangles ;
   typedef std::vector<vertex_descriptor> Link ;
-
-  struct Boundary
+  typedef std::vector<edge_descriptor>   edge_descriptor_vector ;
+  
+  struct BoundaryEdge
   {
-    Boundary ( Vector const& op_
-             , Vector const& opN_
-             , Vector const& pq_
-             , Vector const& pqN_
-             , Vector const& qr_
-             , Vector const& qrN_
-             )
-      :
-      op(op_), opN(opN_), pq(pq_), pqN(pqN_), qr(qr_), qrN(qrN_)
-    {}
-      
-    Vector op, opN, pq, pqN, qr, qrN  ;
+    BoundaryEdge ( Point s_, Point t_, Vector const& v_, Vector const& n_ ) : s(s_), t(t_), v(v_), n(n_) {}
+
+    Point  s, t ;      
+    Vector v, n ;
   } ;
-  typedef optional<Boundary> OptionalBoundary ;
+  typedef std::vector<BoundaryEdge> BoundaryEdges ;
   
   class Constrians
   {
@@ -129,12 +127,12 @@ private :
   
 private :
     
-  void Add_boundary_preservation_constrians( Boundary const& aBdry ) ;
+  void Add_boundary_preservation_constrians( BoundaryEdges const& aBdry ) ;
   void Add_volume_preservation_constrians( Triangles const& aTriangles );
-  void Add_boundary_and_volume_optimization_constrians( OptionalBoundary const& aBdry, Triangles const& aTriangles ) ;
+  void Add_boundary_and_volume_optimization_constrians( BoundaryEdges const& aBdry, Triangles const& aTriangles ) ;
   void Add_shape_optimization_constrians( Link const& aLink ) ;
 
-  FT Compute_boundary_cost( Vector const& v, Boundary const&  aBdry ) ;
+  FT Compute_boundary_cost( Vector const& v, BoundaryEdges const& aBdry ) ;
   FT Compute_volume_cost  ( Vector const& v, Triangles const& aTriangles ) ;
   FT Compute_shape_cost   ( Point const& p, Link const& aLink ) ;
 
@@ -195,8 +193,14 @@ private :
                        
   void Extract_triangles_and_link( Triangles& rTriangles, Link& rLink );
   
-  OptionalBoundary Extract_boundary() ;
+  void Extract_boundary_edge ( edge_descriptor edge, BoundaryEdges& rBdry ) ;
+  void Extract_boundary_edges( vertex_descriptor const& v
+                             , edge_descriptor_vector&  rCollected
+                             , BoundaryEdges&           rBdry
+                             ) ;
+  void Extract_boundary_edges( BoundaryEdges& rBdry ) ;
 
+  
 private:    
 
   Params const&            mParams ; 

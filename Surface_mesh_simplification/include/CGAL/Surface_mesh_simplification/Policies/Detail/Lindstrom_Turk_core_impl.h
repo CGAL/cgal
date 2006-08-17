@@ -20,19 +20,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-struct G
-{
-  ~G()
-  {
-    std::cout << "PFixed=" << PFixed << " QFixed=" << QFixed << " Boundary=" << Boundary << std::endl ;
-  }
-  
-  int PFixed ;
-  int QFixed ;
-  int Boundary ;
-} ;
-G g ;
-
 //
 // Implementation of the strategy from:
 //
@@ -94,11 +81,9 @@ void LindstromTurkCore<CD>::compute( Collapse_data& rData  )
     CGAL_TSMS_LT_TRACE(3,"Link: " << s );
 #endif
     
-    // If the collapsing edge is a boundary edge, the "local boundary" is cached in a Boundary object.    
-    OptionalBoundary lBdry ;
+    BoundaryEdges lBdry ;
     
-    if ( is_undirected_edge_a_border(mP_Q) )
-      lBdry = Extract_boundary();
+    Extract_boundary_edges(lBdry);
       
     Point const& lP = get_point(mP) ;
     Point const& lQ = get_point(mQ) ;
@@ -138,8 +123,8 @@ void LindstromTurkCore<CD>::compute( Collapse_data& rData  )
       //
       // A constrian (Ai,bi) must be alpha-compatible with the previously added constrians (see Paper); if it's not, is discarded.
       //
-      if ( lBdry)
-        Add_boundary_preservation_constrians(*lBdry);
+      if ( lBdry.size() > 0 )
+        Add_boundary_preservation_constrians(lBdry);
       
       if ( mConstrians.n < 3 )
         Add_volume_preservation_constrians(lTriangles);
@@ -181,13 +166,9 @@ void LindstromTurkCore<CD>::compute( Collapse_data& rData  )
       
       CGAL_TSMS_LT_TRACE(1,"Squared edge length: " << lSquaredLength ) ;
       
-      FT lBdryCost = 0;
-      if ( lBdry )
-        lBdryCost = Compute_boundary_cost(*lOptionalV,*lBdry);
-      
-      FT lVolumeCost = Compute_volume_cost(*lOptionalV,lTriangles);
-      
-      FT lShapeCost = Compute_shape_cost(*lOptionalP,lLink);
+      FT lBdryCost   = Compute_boundary_cost(*lOptionalV,lBdry);
+      FT lVolumeCost = Compute_volume_cost  (*lOptionalV,lTriangles);
+      FT lShapeCost  = Compute_shape_cost   (*lOptionalP,lLink);
       
       FT lTotalCost =   mParams.VolumeWeight   * lVolumeCost
                       + mParams.BoundaryWeight * lBdryCost   * lSquaredLength
@@ -201,6 +182,7 @@ void LindstromTurkCore<CD>::compute( Collapse_data& rData  )
                         << "\nBoundary cost: " << lBdryCost 
                         << "\nVolume cost: " << lVolumeCost 
                         << "\nShape cost: " << lShapeCost 
+                        << "\nTOTAL COST: " << lTotalCost 
                         );
     }
     
@@ -212,52 +194,58 @@ void LindstromTurkCore<CD>::compute( Collapse_data& rData  )
   rData = Collapse_data(mP,mQ,mIsPFixed,mIsQFixed,mP_Q,mSurface,lOptionalCost,lOptionalP) ;
 }
 
+
 //
 // Caches the "local boundary", that is, the sequence of 3 border edges: o->p, p->q, q->e 
 //
 template<class CD>
-typename LindstromTurkCore<CD>::OptionalBoundary LindstromTurkCore<CD>::Extract_boundary()
+void LindstromTurkCore<CD>::Extract_boundary_edge( edge_descriptor edge, BoundaryEdges& rBdry )
 {
-  // Since p_q is a boundary edge, one of the previous edges (ccw or cw) is the previous boundary edge
-  // Likewise, one of the next edges (ccw or cw) is the next boundary edge.
-  edge_descriptor p_pt = next_edge_ccw(mP_Q,mSurface);
-  edge_descriptor p_pb = next_edge_cw (mP_Q,mSurface);
-  edge_descriptor q_qt = next_edge_cw (mQ_P,mSurface);
-  edge_descriptor q_qb = next_edge_ccw(mQ_P,mSurface);
+  edge_descriptor face_edge = is_border(edge) ? opposite_edge(edge,mSurface) : edge ;
+      
+  vertex_descriptor sv = source(face_edge,mSurface);
+  vertex_descriptor tv = target(face_edge,mSurface);
   
-  edge_descriptor border_1 = mP_Q;
-  edge_descriptor border_0 = is_undirected_edge_a_border(p_pt) ? p_pt : p_pb ;
-  edge_descriptor border_2 = is_undirected_edge_a_border(q_qt) ? q_qt : q_qb ;
+  Point const& sp = get_point(sv);
+  Point const& tp = get_point(tv);
   
-  CGAL_assertion(is_undirected_edge_a_border(border_0));
-  CGAL_assertion(is_undirected_edge_a_border(border_2));
+  Vector v = tp - sp ;
+  Vector n = Point_cross_product(tp,sp) ;
+  
+  CGAL_TSMS_LT_TRACE(3,"Boundary edge. S:" << xyz_to_string(sp) << " T:" << xyz_to_string(tp)
+                    << " V:" << xyz_to_string(v) << " N:" << xyz_to_string(n) 
+                    ) ;
+  
+  rBdry.push_back( BoundaryEdge(sp,tp,v,n) ) ;
+        
+}
 
-  // opposite(border0)->border1->border2 is the local boundary
-  
-  vertex_descriptor ov = target(border_0,mSurface);
-  vertex_descriptor rv = target(border_2,mSurface);
-  
-  // o->p->q->r is the local boundary
-  
-  Point const& o = get_point(ov);
-  Point const& p = get_point(mP);
-  Point const& q = get_point(mQ);
-  Point const& r = get_point(rv);
-  
-  //
-  // The "Boundary" object caches the boundary as displacement vectors since the code uses that.
-  //
-  
-  Vector op  = p - o ;
-  Vector opN = Point_cross_product(p,o);
-  
-  Vector pq  = q - p ;
-  Vector pqN = Point_cross_product(q,p);
-  
-  Vector qr  = r - q ;
-  Vector qrN = Point_cross_product(r,q);
-  
-  return OptionalBoundary(Boundary(op,opN,pq,pqN,qr,qrN)) ;
+template<class CD>
+void LindstromTurkCore<CD>::Extract_boundary_edges( vertex_descriptor const& v
+                                                  , edge_descriptor_vector&  rCollected
+                                                  , BoundaryEdges&           rBdry
+                                                  )
+{
+  in_edge_iterator eb, ee ; 
+  for ( tie(eb,ee) = in_edges(v,mSurface) ; eb != ee ; ++ eb )
+  {
+    edge_descriptor edge = *eb ;
+    
+    if ( is_undirected_edge_a_border(edge) && std::find(rCollected.begin(),rCollected.end(),edge) == rCollected.end() )
+    {
+      Extract_boundary_edge(edge,rBdry);
+      rCollected.push_back(edge);
+      rCollected.push_back(opposite_edge(edge,mSurface));
+    }  
+  }
+}
+
+template<class CD>
+void LindstromTurkCore<CD>::Extract_boundary_edges( BoundaryEdges& rBdry )
+{
+  edge_descriptor_vector lCollected ;
+  Extract_boundary_edges(mP,lCollected,rBdry);
+  Extract_boundary_edges(mQ,lCollected,rBdry);
 }
 
 //
@@ -269,8 +257,6 @@ typename LindstromTurkCore<CD>::Triangle LindstromTurkCore<CD>::Get_triangle( ve
                                                                             , vertex_descriptor const& v2 
                                                                             )
 {
-  CGAL_TSMS_LT_TRACE(3,"Extracting triangle v" << v0->ID << "->v" << v1->ID << "->v" << v2->ID );
-  
   Point const& p0 = get_point(v0);
   Point const& p1 = get_point(v1);
   Point const& p2 = get_point(v2);
@@ -281,6 +267,10 @@ typename LindstromTurkCore<CD>::Triangle LindstromTurkCore<CD>::Get_triangle( ve
   Vector lNormalV = cross_product(v01,v02);
   
   FT lNormalL = Point_cross_product(p0,p1) * (p2-ORIGIN);
+  
+  CGAL_TSMS_LT_TRACE(3,"Extracting triangle v" << v0->ID << "->v" << v1->ID << "->v" << v2->ID 
+                    << " N:" << xyz_to_string(lNormalV) << " L:" << lNormalL
+                    );
   
   return Triangle(lNormalV,lNormalL);
 }                              
@@ -360,7 +350,11 @@ void LindstromTurkCore<CD>::Extract_triangles_and_link( Triangles& rTriangles, L
   
   e02 = next_edge_ccw(mQ_P,mSurface);
   
-  v1 = target(e02,mSurface); // This was added to the link while circulating around mP
+  v1 = target(e02,mSurface); 
+  
+  // This could have been added to the link while circulating around mP
+  if ( v1 != mP && std::find(rLink.begin(),rLink.end(),v1) == rLink.end() )
+    rLink.push_back(v1) ;
   
   e02 = next_edge_ccw(e02,mSurface);
   
@@ -369,7 +363,7 @@ void LindstromTurkCore<CD>::Extract_triangles_and_link( Triangles& rTriangles, L
     vertex_descriptor v2 = target(e02,mSurface);
 
     // Any of the vertices found around mP can be reached again around mQ, but we can't duplicate them here.
-    if ( std::find(rLink.begin(),rLink.end(),v2) == rLink.end() )
+    if ( v2 != mP && std::find(rLink.begin(),rLink.end(),v2) == rLink.end() )
       rLink.push_back(v2) ;
     
     Extract_triangle(v0,v1,v2,e02,rTriangles);
@@ -383,18 +377,28 @@ void LindstromTurkCore<CD>::Extract_triangles_and_link( Triangles& rTriangles, L
 }
 
 template<class CD>
-void LindstromTurkCore<CD>::Add_boundary_preservation_constrians( Boundary const& aBdry )
+void LindstromTurkCore<CD>::Add_boundary_preservation_constrians( BoundaryEdges const& aBdry )
 {
-  CGAL_TSMS_LT_TRACE(2,"Adding boundary preservation constrians. ");
   
-  Vector e1 = aBdry.op  + aBdry.pq  + aBdry.qr ;
-  Vector e3 = aBdry.opN + aBdry.pqN + aBdry.qrN ;
-
-  Matrix H = LT_product(e1);
+  if ( aBdry.size() > 0 )
+  {
+    Vector e1 = NULL_VECTOR ; 
+    Vector e2 = NULL_VECTOR ;
+    
+    for ( typename BoundaryEdges::const_iterator it = aBdry.begin() ; it != aBdry.end() ; ++ it )
+    {
+      e1 = e1 + it->v ;
+      e2 = e2 + it->n ;
+    }     
   
-  Vector c = cross_product(e1,e3);
-  
-  mConstrians.Add_from_gradient(H,c);
+    CGAL_TSMS_LT_TRACE(2,"Adding boundary preservation constrians. SumV=" << xyz_to_string(e1) << " SumN=" << xyz_to_string(e2) );
+    
+    Matrix H = LT_product(e1);
+    
+    Vector c = cross_product(e1,e2);
+    
+    mConstrians.Add_from_gradient(H,c);
+  }
 }
 
 template<class CD>
@@ -407,19 +411,16 @@ void LindstromTurkCore<CD>::Add_volume_preservation_constrians( Triangles const&
   
   for( typename Triangles::const_iterator it = aTriangles.begin(), eit = aTriangles.end() ; it != eit ; ++it )
   {
-    CGAL_TSMS_LT_TRACE(2,"V:" << xyz_to_string(it->NormalV) << ", L:" << it->NormalL);
-    
     lSumV = lSumV + it->NormalV ;
     lSumL = lSumL + it->NormalL ;  
   }   
-  
   
   mConstrians.Add_if_alpha_compatible(lSumV,lSumL);   
 
 }
 
 template<class CD>
-void LindstromTurkCore<CD>::Add_boundary_and_volume_optimization_constrians( OptionalBoundary const& aBdry, Triangles const& aTriangles )
+void LindstromTurkCore<CD>::Add_boundary_and_volume_optimization_constrians( BoundaryEdges const& aBdry, Triangles const& aTriangles )
 {
   CGAL_TSMS_LT_TRACE(2,"Adding boundary and volume optimization constrians. ");
   
@@ -438,26 +439,40 @@ void LindstromTurkCore<CD>::Add_boundary_and_volume_optimization_constrians( Opt
     c = c - ( lTri.NormalL * lTri.NormalV ) ;
   }   
   
+  CGAL_TSMS_LT_TRACE(3,"Hv:" << matrix_to_string(H) << "\n cv:" << xyz_to_string(c) ) ;
   
-  if ( aBdry )
+  
+  if ( aBdry.size() > 0 )
   {
     //
     // Boundary optimization
     //
-    Matrix Hb = LT_product(aBdry->op) + LT_product(aBdry->pq) + LT_product(aBdry->qr) ;
+    Matrix Hb = NULL_MATRIX ;
+    Vector cb = NULL_VECTOR ;
     
-    Vector cb =  cross_product(aBdry->op,aBdry->opN) + cross_product(aBdry->pq,aBdry->pqN) + cross_product(aBdry->qr,aBdry->qrN);
+    for ( typename BoundaryEdges::const_iterator it = aBdry.begin() ; it != aBdry.end() ; ++ it )
+    {
+      Matrix H = LT_product(it->v);
+      Vector c = cross_product(it->v,it->n);
+      
+      Hb += H ;
+      cb = cb + c ;
+    }     
+    
+    CGAL_TSMS_LT_TRACE(3,"Hb:" << matrix_to_string(Hb) << "\n cb:" << xyz_to_string(cb) ) ;
     
     //
     // Weighted average
     //
-    FT lBoundaryWeight = ( FT(9) * mParams.BoundaryWeight * squared_distance ( get_point(mP), get_point(mQ) ) ) / FT(10) ;
+    FT lScaledBoundaryWeight = FT(9) * mParams.BoundaryWeight * squared_distance ( get_point(mP), get_point(mQ) )  ;
     
     H *= mParams.VolumeWeight ;
     c = c * mParams.VolumeWeight ;
     
-    H += lBoundaryWeight * Hb ;
-    c = c + ( lBoundaryWeight * cb ) ;
+    H += lScaledBoundaryWeight * Hb ;
+    c = c + ( lScaledBoundaryWeight * cb ) ;
+    
+    CGAL_TSMS_LT_TRACE(3,"VolW=" << mParams.VolumeWeight << " BdryW=" << mParams.BoundaryWeight << " ScaledBdryW=" << lScaledBoundaryWeight ) ;
     
   }
   
@@ -467,8 +482,6 @@ void LindstromTurkCore<CD>::Add_boundary_and_volume_optimization_constrians( Opt
 template<class CD>
 void LindstromTurkCore<CD>::Add_shape_optimization_constrians( Link const& aLink )
 {
-  CGAL_TSMS_LT_TRACE(2,"Add shape optimization constrians. ");
-  
   FT s(aLink.size());
   
   Matrix H (s,0,0
@@ -481,15 +494,23 @@ void LindstromTurkCore<CD>::Add_shape_optimization_constrians( Link const& aLink
   for( typename Link::const_iterator it = aLink.begin(), eit = aLink.end() ; it != eit ; ++it )
     c = c + (ORIGIN - get_point(*it)) ;  
            
+  CGAL_TSMS_LT_TRACE(2,"Adding shape optimization constrians: Shape vector: " << xyz_to_string(c) );
+  
   mConstrians.Add_from_gradient(H,c);
 }
 
 template<class CD>
 typename LindstromTurkCore<CD>::FT
-LindstromTurkCore<CD>::Compute_boundary_cost( Vector const& v, Boundary const& aBdry )
+LindstromTurkCore<CD>::Compute_boundary_cost( Vector const& v, BoundaryEdges const& aBdry )
 {
   FT rCost(0);
-  return rCost ;
+  for ( typename BoundaryEdges::const_iterator it = aBdry.begin() ; it != aBdry.end() ; ++ it )
+  {
+    Vector u = (it->t - ORIGIN ) - v ;
+    Vector c = cross_product(it->v,u);
+    rCost += c*c;  
+  }     
+  return rCost / FT(4) ;
 }
 
 template<class CD>
@@ -632,11 +653,10 @@ void LindstromTurkCore<CD>::Constrians::Add_if_alpha_compatible( Vector const& A
           break ;
       }
       ++ n ;
+      
+      CGAL_TSMS_LT_TRACE(1,"Constrains.A:" << matrix_to_string(A) << "\nConstrains.b:" << xyz_to_string(b) ) ;
     }
   }
-  
-  CGAL_TSMS_LT_TRACE(1,"Constrains.A:" << matrix_to_string(A) << "\nConstrains.b:" << xyz_to_string(b) ) ;
-  
 }
 
 template<class V>

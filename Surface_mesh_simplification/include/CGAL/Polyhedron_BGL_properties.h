@@ -76,6 +76,39 @@ public:
 };
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+class Polyhedron_vertex_is_border_map : public put_get_helper<bool, Polyhedron_vertex_is_border_map<Gt, I, HDS, A> >
+{
+private:
+
+  typedef CGAL::Polyhedron_3<Gt,I,HDS,A> Polyhedron ;
+  
+public:
+
+  typedef readable_property_map_tag                                  category;
+  typedef bool                                                       value_type;
+  typedef bool                                                       reference;
+  typedef typename graph_traits<Polyhedron const>::vertex_descriptor key_type;
+
+  Polyhedron_vertex_is_border_map( Polyhedron const& p_) {}
+
+  reference operator[](key_type const& v) const 
+  {
+    typedef typename Polyhedron::Halfedge_around_vertex_const_circulator Halfedge_around_vertex_const_circulator ;
+    Halfedge_around_vertex_const_circulator cb = v->vertex_begin();
+    Halfedge_around_vertex_const_circulator c = cb ;
+    do
+    {
+      if ( c->is_border() || c->opposite()->is_border() )
+        return true ;
+      ++ c ;
+    }
+    while ( c != cb ) ;
+    
+    return false ;
+  }
+};
+
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 class Polyhedron_vertex_point_map : public put_get_helper< typename Gt::Point_3&, Polyhedron_vertex_point_map<Gt, I, HDS, A> >
 {
 private:
@@ -125,8 +158,9 @@ public:
   }
 };
 
-struct edge_is_border_t {} ;
-struct vertex_point_t   {} ;
+struct edge_is_border_t   {} ;
+struct vertex_is_border_t {} ;
+struct vertex_point_t     {} ;
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 inline 
@@ -141,6 +175,14 @@ inline
 Polyhedron_edge_is_border_map<Gt,I,HDS,A> get(edge_is_border_t, CGAL::Polyhedron_3<Gt,I,HDS,A> const& p) 
 {
   Polyhedron_edge_is_border_map<Gt,I,HDS,A> m(p);
+  return m;
+}
+
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+inline 
+Polyhedron_vertex_is_border_map<Gt,I,HDS,A> get(vertex_is_border_t, CGAL::Polyhedron_3<Gt,I,HDS,A> const& p) 
+{
+  Polyhedron_vertex_is_border_map<Gt,I,HDS,A> m(p);
   return m;
 }
 
@@ -182,6 +224,17 @@ struct Polyhedron_property_map<edge_is_border_t>
   {
     typedef Polyhedron_edge_is_border_map<Gt,I,HDS,A> type;
     typedef Polyhedron_edge_is_border_map<Gt,I,HDS,A> const_type;
+  };
+};
+
+template <>
+struct Polyhedron_property_map<vertex_is_border_t> 
+{
+  template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+  struct bind_ 
+  {
+    typedef Polyhedron_vertex_is_border_map<Gt,I,HDS,A> type;
+    typedef Polyhedron_vertex_is_border_map<Gt,I,HDS,A> const_type;
   };
 };
 

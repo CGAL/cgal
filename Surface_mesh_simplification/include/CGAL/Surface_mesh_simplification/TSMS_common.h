@@ -50,6 +50,7 @@ using boost::in_edges ;
 using boost::source ;
 using boost::target ;
 using boost::edge_is_border_t ;
+using boost::vertex_is_border_t ;
 using boost::vertex_point_t ;
 using boost::cgal_tsms_is_vertex_fixed_t ;
 using boost::cgal_tsms_edge_cached_pointer_t ;
@@ -146,14 +147,16 @@ CGAL_END_NAMESPACE
 #endif
 
 #ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE
-#  define CGAL_TSMS_LT_TRACE(l,m) if ( l <= CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE ) CGAL_TSMS_TRACE_IMPL(m)
+#  define CGAL_TSMS_LT_TRACE(l,m) if ( (l) <= CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE ) CGAL_TSMS_TRACE_IMPL(m)
 #else
 #  define CGAL_TSMS_LT_TRACE(l,m)
 #endif
 
 #ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE
-#  define CGAL_TSMS_TRACE(l,m) if ( l <= CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE ) CGAL_TSMS_TRACE_IMPL(m)
+#  define CGAL_TSMS_TRACE_IF(c,l,m) if ( (c) && ( (l) <= CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE) ) CGAL_TSMS_TRACE_IMPL(m)
+#  define CGAL_TSMS_TRACE(l,m)      if ( (l) <= CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE ) CGAL_TSMS_TRACE_IMPL(m)
 #else
+#  define CGAL_TSMS_TRACE_IF(c,l,m)
 #  define CGAL_TSMS_TRACE(l,m)
 #endif
 
