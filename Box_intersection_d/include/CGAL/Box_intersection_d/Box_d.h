@@ -82,13 +82,13 @@ public:
     void extend(NT p[N]) {
         for( int dim = 0; dim < N; ++dim ) {
             lo[dim] = (std::min)( lo[dim], p[dim] );
-            hi[dim] = ((std::max))( hi[dim], p[dim] );
+            hi[dim] = (std::max)( hi[dim], p[dim] );
         }
     }
     void extend(std::pair<NT,NT> p[N]) {
         for( int dim = 0; dim < N; ++dim ) {
             lo[dim] = (std::min)( lo[dim], p[dim].first );
-            hi[dim] = ((std::max))( hi[dim], p[dim].second );
+            hi[dim] = (std::max)( hi[dim], p[dim].second );
         }
     }
     static int dimension() { return N; }
