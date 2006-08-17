@@ -138,11 +138,11 @@ public:
 	}
 
       double min_sq_length = CGAL::to_double(distance(p, q));
-      min_sq_length = CGAL::min(min_sq_length, to_double(distance(p, r)));
-      min_sq_length = CGAL::min(min_sq_length, to_double(distance(p, s)));
-      min_sq_length = CGAL::min(min_sq_length, to_double(distance(q, r)));
-      min_sq_length = CGAL::min(min_sq_length, to_double(distance(q, s)));
-      min_sq_length = CGAL::min(min_sq_length, to_double(distance(r, s)));
+      min_sq_length = (CGAL::min)(min_sq_length, to_double(distance(p, r)));
+      min_sq_length = (CGAL::min)(min_sq_length, to_double(distance(p, s)));
+      min_sq_length = (CGAL::min)(min_sq_length, to_double(distance(q, r)));
+      min_sq_length = (CGAL::min)(min_sq_length, to_double(distance(q, s)));
+      min_sq_length = (CGAL::min)(min_sq_length, to_double(distance(r, s)));
 
       qual.first = size / min_sq_length;
 
