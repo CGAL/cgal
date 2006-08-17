@@ -633,10 +633,10 @@ template< class R >
 CGAL::window&
 operator<<(CGAL::window& w, const Iso_rectangle_2<R>& r)
 {
-  double xmin = CGAL::to_double(r.min().x()),
-         ymin = CGAL::to_double(r.min().y()),
-         xmax = CGAL::to_double(r.max().x()),
-         ymax = CGAL::to_double(r.max().y());
+  double xmin = CGAL::to_double((r.min()).x()),
+         ymin = CGAL::to_double((r.min()).y()),
+         xmax = CGAL::to_double((r.max()).x()),
+         ymax = CGAL::to_double((r.max()).y());
 
   CGAL::color cl = w.get_fill_color();
   

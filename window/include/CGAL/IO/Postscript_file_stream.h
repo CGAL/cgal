@@ -296,10 +296,10 @@ template< class R >
 Postscript_file_stream&
 operator<<(Postscript_file_stream& w, const Iso_rectangle_2<R>& r)
 {
-  double xmin = CGAL::to_double(r.min().x()),
-         ymin = CGAL::to_double(r.min().y()),
-         xmax = CGAL::to_double(r.max().x()),
-         ymax = CGAL::to_double(r.max().y());
+  double xmin = CGAL::to_double((r.min()).x()),
+         ymin = CGAL::to_double((r.min()).y()),
+         xmax = CGAL::to_double((r.max()).x()),
+         ymax = CGAL::to_double((r.max()).y());
   w.draw_segment(xmin, ymin, xmax, ymin);
   w.draw_segment(xmax, ymin, xmax, ymax);
   w.draw_segment(xmax, ymax, xmin, ymax);
