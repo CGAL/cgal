@@ -86,6 +86,7 @@ clean: \
                    skin_surface_with_surface_mesher.clean \
                    NGHK_skin_surface_simple.clean \
                    NGHK_skin_surface_subdiv.clean
+	rm -f $(OBJ)
 
 #---------------------------------------------------------------------#
 #                    suffix rules

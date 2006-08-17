@@ -1,5 +1,3 @@
-#define CGAL_PROFILE
-
 // examples/Skin_surface_3/skin_surface_simple.C
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Skin_surface_3.h>

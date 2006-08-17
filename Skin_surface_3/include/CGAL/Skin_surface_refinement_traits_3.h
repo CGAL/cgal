@@ -48,13 +48,24 @@ public:
   }
     
   P_point to_surface(P_vertex_handle vh) {
-    P_point result = vh->point();
+    typename Skin_surface::Bare_point result =
+      Cartesian_converter<P_traits, 
+      typename Skin_surface::Geometric_traits::Kernel>()(vh->point());
     ss_3.intersect_with_transversal_segment(result);
-    return result;
+    return 
+      Cartesian_converter
+      <typename Skin_surface::Geometric_traits::Kernel, P_traits>()( result );
   }
 
   P_vector normal(P_vertex_handle vh) {
-    return ss_3.normal(vh->point());
+    // Convert to and from the skin surface kernel
+    return 
+      Cartesian_converter
+      <typename Skin_surface::Geometric_traits::Kernel, 
+       P_traits>()( ss_3.normal
+		    (Cartesian_converter<P_traits, 
+		     typename Skin_surface::Geometric_traits::Kernel>()
+		     (vh->point())));
   }
 
 protected:

@@ -36,17 +36,19 @@ template < class CMCT >
 class CMCT_Cell {
 public:
   typedef CMCT_Cell<CMCT>                   Self;
-  typedef typename CMCT::Vertex_handle Vertex_handle;
+  typedef typename CMCT::Vertex_handle      Vertex_handle;
+  typedef typename CMCT::Rt_Simplex            Rt_Simplex;
 
   CMCT_Cell() {
   }
-  CMCT_Cell(Vertex_handle vs[]) {
+  CMCT_Cell(Vertex_handle vs[], Rt_Simplex &sim) : sim_(sim) {
     for (int i=0; i<4; i++) _vs[i] = vs[i];
   }
   CMCT_Cell(const Vertex_handle &vh0,
-       const Vertex_handle &vh1, 
-       const Vertex_handle &vh2, 
-       const Vertex_handle &vh3) 
+	    const Vertex_handle &vh1, 
+	    const Vertex_handle &vh2, 
+	    const Vertex_handle &vh3, 
+	    Rt_Simplex &sim) : sim_(sim) 
   {
     _vs[0] = vh0;
     _vs[1] = vh1;
@@ -61,6 +63,9 @@ public:
     CGAL_assertion((0 <= i) && (i<4));
     return _vs[i];
   }
+  const Rt_Simplex &mixed_cell() const {
+    return sim_;
+  }
   bool operator==(const Self &other) const {
     return ((_vs[0] == other._vs[0]) &&
 	    (_vs[1] == other._vs[1]) &&
@@ -70,6 +75,7 @@ public:
   bool operator!=(const Self &other) const { return !operator==(other); }
 private:
   Vertex_handle _vs[4];
+  Rt_Simplex sim_;
 };
 
 template < class CMCT >
@@ -501,6 +507,7 @@ private:
   template <class OutputIteratorCells>
   void add_cell(Vertex_handle vh[], 
 		int orient, 
+		Rt_Simplex &simplex,
 		OutputIteratorCells cells) const;
 	
   Vertex_handle get_vertex(Rt_Simplex &sDel, Rt_Simplex &sVor) const;
@@ -941,7 +948,8 @@ construct_0_cell(Rt_Vertex_handle rt_vh, OutputIteratorCells cells) const
 	      CGAL_assertion(sVor_e != sVor_f);
 	      CGAL_assertion(sVor_f != sVor_c);
 	      
-	      add_cell(vh,(index + (j==(i%3+1)? 1:0))&1, cells);
+	      add_cell(vh,(index + (j==(i%3+1)? 1:0))&1, 
+		       simplex, cells);
 	    }
 	  }
 	}
@@ -998,15 +1006,15 @@ construct_1_cell(const Rt_Edge &e,
 		  orient = (index1 + (fi==1))&1;
 		}
 		// vh: dimension are (01,11,12,13)
-		add_cell(vh,orient,cells);
+		add_cell(vh,orient,mixed_cell_simplex,cells);
 									
 		vh[1] = get_vertex(sDel_v, sVor_f);
 		// vh: dimension are (01,02,12,13)
-		add_cell(vh,1-orient,cells);
+		add_cell(vh,1-orient,mixed_cell_simplex,cells);
 									
 		vh[2] = get_vertex(sDel_v, sVor_c);
 		// vh: dimension are (01,02,03,13)
-		add_cell(vh,orient,cells);
+		add_cell(vh,orient,mixed_cell_simplex,cells);
 	      }
 	    }
 	  }
@@ -1071,13 +1079,13 @@ construct_2_cell(const Rt_Facet &f,
 		  orient = (index1 + (((4+index0-fi)&3)==1))&1;
 		}
 
-		add_cell(vh,orient,cells);
+		add_cell(vh,orient,simplex,cells);
 									
 		vh[2] = get_vertex(sDel_e, sVor_c);
-		add_cell(vh,1-orient,cells);
+		add_cell(vh,1-orient,simplex,cells);
 									
 		vh[1] = get_vertex(sDel_v, sVor_c);
-		add_cell(vh,orient,cells);
+		add_cell(vh,orient,simplex,cells);
 	      } 
 	    }
 	  }
@@ -1135,7 +1143,7 @@ construct_3_cell(Rt_Cell_handle rt_ch,
 	      } else {
 		orient = (index1 + (vi==3))&1;
 	      }
-	      add_cell(vh, orient, cells);
+	      add_cell(vh, orient, simplex, cells);
 	    }
 	  }
 	}
@@ -1181,7 +1189,9 @@ template <class MixedComplexTraits_3>
 template <class OutputIteratorCells>
 void
 Combinatorial_mixed_complex_triangulator_3<MixedComplexTraits_3>::
-add_cell(Vertex_handle vh[], int orient, OutputIteratorCells cells) const {
+add_cell(Vertex_handle vh[], int orient, 
+	 Rt_Simplex &simplex,
+	 OutputIteratorCells cells) const {
   assert((orient==0) || (orient==1));
   assert(*vh[0] != Vertex()); assert(*vh[1] != Vertex());
   assert(*vh[2] != Vertex()); assert(*vh[3] != Vertex());
@@ -1189,9 +1199,9 @@ add_cell(Vertex_handle vh[], int orient, OutputIteratorCells cells) const {
   assert(*vh[1] != *vh[2]); assert(*vh[1] != *vh[3]); assert(*vh[2] != *vh[3]);
 
   if (orient) {
-    *cells++ = Cell(vh[0], vh[1], vh[2], vh[3]);
+    *cells++ = Cell(vh[0], vh[1], vh[2], vh[3], simplex);
   } else {
-    *cells++ = Cell(vh[0], vh[1], vh[3], vh[2]);
+    *cells++ = Cell(vh[0], vh[1], vh[3], vh[2], simplex);
   }
 }
 

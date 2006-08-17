@@ -353,19 +353,29 @@ public:
     return construct_surface(vh->first, K()).sign(p);
     
   }
+  // Trivial caching: check wether the surface is the same as the previous:
+  mutable Skin_surface_quadratic_surface_3<
+    Simple_cartesian<Interval_nt_advanced> > previous_sign_surface;
+  mutable Simplex                            previous_sign_simplex;
   Sign sign(const Simplex &sim, const Bare_point &p) const {
+    if (previous_sign_simplex != sim) {
+      previous_sign_simplex = sim;
+      previous_sign_surface = 
+	construct_surface(sim, 
+			  Simple_cartesian<Interval_nt_advanced>());
+    }
     try
     {
-      CGAL_PROFILER(std::string("NGHK: calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+      CGAL_PROFILER(std::string("NGHK: calls to    : ") + 
+		    std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<true> P;
-      Sign result = construct_surface
-      (sim, 
-       Exact_predicates_inexact_constructions_kernel()).sign(p);
+      Sign result = previous_sign_surface.sign(p);
       if (! is_indeterminate(result))
         return result;
     }
     catch (Interval_nt_advanced::unsafe_comparison) {}
-    CGAL_PROFILER(std::string("NGHK: failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+    CGAL_PROFILER(std::string("NGHK: failures of : ") + 
+		  std::string(CGAL_PRETTY_FUNCTION));
     Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
     return construct_surface
       (sim, 
@@ -400,6 +410,15 @@ public:
     Simplex s2 = vh2->first;
     intersect(p1,p2, s1,s2, p);
   }
+  void intersect(const CMCT_Vertex_handle vh1,
+		 const CMCT_Vertex_handle vh2,
+		 const Simplex &s,
+		 Bare_point &p) const {
+    Bare_point p1 = mc_triangulator->location(vh1, gt);
+    Bare_point p2 = mc_triangulator->location(vh2, gt);
+    Simplex sp = s;
+    intersect(p1,p2, sp,sp, p);
+  }
 
   void intersect(Bare_point &p1, Bare_point &p2, 
 		 Simplex &s1, Simplex &s2,
@@ -432,20 +451,15 @@ public:
     p = midpoint(p1, p2);
   }
 
-  template <class Point>
-  void intersect_with_transversal_segment(Point &p) const {
-    typedef typename Point::R        Traits;
-    typedef typename Traits::Plane_3 Plane;
-    typedef typename Traits::Line_3  Line;
-    Mixed_complex_traits_3<Traits> point_traits(gt.get_shrink());
-    Cartesian_converter<Traits, 
-                        typename Geometric_traits::Bare_point::R> converter;
+  void intersect_with_transversal_segment(Bare_point &p) const {
+    typedef typename Geometric_traits::Kernel::Plane_3 Plane;
+    typedef typename Geometric_traits::Kernel::Line_3  Line;
 
-    Simplex sim = locate_mixed(converter(p));
+    Simplex sim = locate_mixed(p);
     CMCT_Cell tet = locate_tet(p, sim);
     
     // get transversal segment:
-    Point p1, p2;
+    Bare_point p1, p2;
 
     // Compute signs on vertices and sort them:
     int nIn = 0;
@@ -460,12 +474,12 @@ public:
 
     Object obj;
     if (nIn==1) {
-      p1 = mc_triangulator->location(tet.vertex(sortedV[0]), point_traits);
+      p1 = mc_triangulator->location(tet.vertex(sortedV[0]), gt);
       obj = CGAL::intersection(
         Plane
-	(mc_triangulator->location(tet.vertex(sortedV[1]), point_traits),
-	 mc_triangulator->location(tet.vertex(sortedV[2]), point_traits),
-	 mc_triangulator->location(tet.vertex(sortedV[3]), point_traits)),
+	(mc_triangulator->location(tet.vertex(sortedV[1]), gt),
+	 mc_triangulator->location(tet.vertex(sortedV[2]), gt),
+	 mc_triangulator->location(tet.vertex(sortedV[3]), gt)),
         Line(p1, p));
       if ( !assign(p2, obj) ) {
         CGAL_assertion_msg(false,"intersection: no intersection.");
@@ -473,33 +487,33 @@ public:
     } else if (nIn==2) {
       obj = CGAL::intersection(
         Plane
-	(mc_triangulator->location(tet.vertex(sortedV[2]), point_traits),
-	 mc_triangulator->location(tet.vertex(sortedV[3]), point_traits),
+	(mc_triangulator->location(tet.vertex(sortedV[2]), gt),
+	 mc_triangulator->location(tet.vertex(sortedV[3]), gt),
           p),
         Line(
-          mc_triangulator->location(tet.vertex(sortedV[0]), point_traits),
-	  mc_triangulator->location(tet.vertex(sortedV[1]), point_traits)));
+          mc_triangulator->location(tet.vertex(sortedV[0]), gt),
+	  mc_triangulator->location(tet.vertex(sortedV[1]), gt)));
       if ( !assign(p1, obj) ) {
         CGAL_assertion_msg(false,"intersection: no intersection.");
       }
       obj = CGAL::intersection(
        Plane
-	(mc_triangulator->location(tet.vertex(sortedV[0]), point_traits),
-	 mc_triangulator->location(tet.vertex(sortedV[1]), point_traits),
+	(mc_triangulator->location(tet.vertex(sortedV[0]), gt),
+	 mc_triangulator->location(tet.vertex(sortedV[1]), gt),
           p),
         Line(
-          mc_triangulator->location(tet.vertex(sortedV[2]), point_traits),
-	  mc_triangulator->location(tet.vertex(sortedV[3]), point_traits)));
+          mc_triangulator->location(tet.vertex(sortedV[2]), gt),
+	  mc_triangulator->location(tet.vertex(sortedV[3]), gt)));
       if ( !assign(p2, obj) ) {
         CGAL_assertion_msg(false,"intersection: no intersection.");
       }
     } else if (nIn==3) {
-      p2 = mc_triangulator->location(tet.vertex(sortedV[3]), point_traits);
+      p2 = mc_triangulator->location(tet.vertex(sortedV[3]), gt);
       obj = CGAL::intersection(
         Plane(
-          mc_triangulator->location(tet.vertex(sortedV[0]), point_traits),
-          mc_triangulator->location(tet.vertex(sortedV[1]), point_traits),
-          mc_triangulator->location(tet.vertex(sortedV[2]), point_traits)),
+          mc_triangulator->location(tet.vertex(sortedV[0]), gt),
+          mc_triangulator->location(tet.vertex(sortedV[1]), gt),
+          mc_triangulator->location(tet.vertex(sortedV[2]), gt)),
         Line(p2, p));
       if ( !assign(p1, obj) ) {
         CGAL_assertion_msg(false,"intersection: no intersection.");
