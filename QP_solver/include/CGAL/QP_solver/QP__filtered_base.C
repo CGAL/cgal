@@ -32,8 +32,8 @@ void  QP__filtered_base<Rep_,NT_,ET2NT_>::
 set( )
 {
     // reserve memory for NT versions of current solution
-    //int  l = std::min( this->solver().number_of_variables(),
-    //		       this->solver().number_of_constraints());
+    //int  l = (std::min)( this->solver().number_of_variables(),
+    //		           this->solver().number_of_constraints());
     int l = this->solver().get_l();
     lambda_NT.resize( l, nt0);
     set( l, Is_linear());
