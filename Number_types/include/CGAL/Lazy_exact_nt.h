@@ -364,7 +364,7 @@ struct Lazy_exact_binary : public Lazy_exact_rep<ET>
 		     const Lazy_exact_nt<ET1> &a, const Lazy_exact_nt<ET2> &b)
       : Lazy_exact_rep<ET>(i), op1(a), op2(b) {}
 
-  int depth() const { return std::max(op1.depth(), op2.depth()) + 1; }
+  int depth() const { return (std::max)(op1.depth(), op2.depth()) + 1; }
   void prune_dag()
   {
     op1 = Lazy_exact_nt<ET1>::zero();
@@ -482,11 +482,11 @@ template <typename ET>
 struct Lazy_exact_Min : public Lazy_exact_binary<ET>
 {
   Lazy_exact_Min (const Lazy_exact_nt<ET> &a, const Lazy_exact_nt<ET> &b)
-    : Lazy_exact_binary<ET>(min(a.approx(), b.approx()), a, b) {}
+    : Lazy_exact_binary<ET>((CGAL::min)(a.approx(), b.approx()), a, b) {}
 
   void update_exact()
   {
-    this->et = new ET(min(this->op1.exact(), this->op2.exact()));
+    this->et = new ET((CGAL::min)(this->op1.exact(), this->op2.exact()));
     if (!this->approx().is_point()) this->approx() = CGAL::to_interval(*(this->et));
     this->prune_dag();
   }
@@ -497,11 +497,11 @@ template <typename ET>
 struct Lazy_exact_Max : public Lazy_exact_binary<ET>
 {
   Lazy_exact_Max (const Lazy_exact_nt<ET> &a, const Lazy_exact_nt<ET> &b)
-    : Lazy_exact_binary<ET>(max(a.approx(), b.approx()), a, b) {}
+    : Lazy_exact_binary<ET>((CGAL::max)(a.approx(), b.approx()), a, b) {}
 
   void update_exact()
   {
-    this->et = new ET(max(this->op1.exact(), this->op2.exact()));
+    this->et = new ET((CGAL::max)(this->op1.exact(), this->op2.exact()));
     if (!this->approx().is_point()) this->approx() = CGAL::to_interval(*(this->et));
     this->prune_dag();
   }
@@ -844,7 +844,7 @@ to_double(const Lazy_exact_nt<ET> & a)
     // If it's precise enough, then OK.
     if ((app.sup() - app.inf())
 	    < Lazy_exact_nt<ET>::get_relative_precision_of_to_double()
-	      * std::max(std::fabs(app.inf()), std::fabs(app.sup())) )
+	      * (std::max)(std::fabs(app.inf()), std::fabs(app.sup())) )
         return CGAL::to_double(app);
 
     CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
