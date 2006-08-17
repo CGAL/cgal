@@ -486,13 +486,26 @@ bool QP_MPS_instance<IT_,ET_,
     // remember bound:
     const std::string bound = t;
 
-    // find bound identifier:
-    t = token();
-    if (bound_id.size() == 0) // first time we see a bound identifier?
-      bound_id = t;
-    else if (t != bound_id) {
-      warn1("ignoring all bounds for bound vector '%'",t);
-      warn1("(only bounds for bound vector '%' are accepted)",bound_id);
+    // find bound label; there may be several, but we only process
+    // the bounds having the first bound label that occurs. This 
+    // label may be empty, though
+    t = token(); // bound label or variable name (case of empty bound label) 
+    if (bound_id.size() == 0) { // first time we see a bound label / variable?
+      const Index_map::const_iterator var_name = var_names.find(t);
+      if (var_name != var_names.end()) { // is the token a variable?
+	bound_id = " ";    // there is no bound label
+	put_token_back(t); // the variable name is processed below
+      } else
+	bound_id = t; // we found a bound label
+    } else {
+      // now we already know the bound label
+      if (bound_id == " ") // empty bound label? 
+	put_token_back(t); // the variable name is processed below
+      else 
+	if (t != bound_id) {
+	  warn1("ignoring all bounds for bound label '%'",t);
+	  warn1("(only bounds for bound label '%' are accepted)",bound_id);
+	}
     }
 
     // find variable name;

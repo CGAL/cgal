@@ -1,3 +1,5 @@
+* This has no bound identifiers to certify that the MPS solver
+* can read this
 * Derivatives: none
 NAME          PRIMALC1
 ROWS
@@ -1172,21 +1174,21 @@ RHS
     RHS       R------8  0.336956e+07
     RHS       R------9  0.439696e+06
 BOUNDS
- FR BOUNDS    C------3
- FR BOUNDS    C------6
- FR BOUNDS    C-----13
- FR BOUNDS    C-----28
- FR BOUNDS    C-----32
- FR BOUNDS    C-----69
- FR BOUNDS    C----155
- FR BOUNDS    C----156
- FR BOUNDS    C----158
- FR BOUNDS    C----160
- FR BOUNDS    C----162
- FR BOUNDS    C----182
- FR BOUNDS    C----186
- FR BOUNDS    C----203
- FR BOUNDS    C----214
+ FR           C------3
+ FR           C------6
+ FR           C-----13
+ FR           C-----28
+ FR           C-----32
+ FR           C-----69
+ FR           C----155
+ FR           C----156
+ FR           C----158
+ FR           C----160
+ FR           C----162
+ FR           C----182
+ FR           C----186
+ FR           C----203
+ FR           C----214
 QUADOBJ
     C------2  C------2  0.100000e+01
     C------3  C------3  0.100000e+01
