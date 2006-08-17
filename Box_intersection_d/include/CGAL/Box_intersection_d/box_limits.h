@@ -35,14 +35,14 @@ struct box_limits {};
 
 template<>
 struct box_limits<int> {
-    static int inf() { return std::numeric_limits<int>::min(); }
-    static int sup() { return std::numeric_limits<int>::max(); }
+    static int inf() { return (std::numeric_limits<int>::min)(); }
+    static int sup() { return (std::numeric_limits<int>::max)(); }
 };
 
 template<>
 struct box_limits<unsigned int> {
     static int inf() { return 0; }
-    static int sup() { return std::numeric_limits<unsigned int>::max(); }
+    static int sup() { return (std::numeric_limits<unsigned int>::max)(); }
 };
 
 template<>
