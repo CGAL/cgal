@@ -204,8 +204,8 @@ template<size_t _Nw, class _WordT>
 _Base_bitset<_Nw, _WordT>::_Base_bitset(unsigned long __val)
 {
   _M_do_reset();
-  const size_t __n = min(sizeof(unsigned long)*CHAR_BIT,
-                         __BITS_PER_WORDT(_WordT)*_Nw);
+  const size_t __n = (std::min)(sizeof(unsigned long)*CHAR_BIT,
+				__BITS_PER_WORDT(_WordT)*_Nw);
   for(size_t __i = 0; __i < __n; ++__i, __val >>= 1)
     if ( __val & 0x1 )
       _M_getword(__i) |= _S_maskbit(__i);
