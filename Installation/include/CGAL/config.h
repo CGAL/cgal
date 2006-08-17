@@ -26,6 +26,12 @@
 #ifndef CGAL_CONFIG_H
 #define CGAL_CONFIG_H
 
+
+// AF: Temporary thing to mimic users including this file which defines min max macros
+#ifdef _MSC_VER
+#include <windows.h>
+#endif
+
 #include <CGAL/version.h>
 
 //----------------------------------------------------------------------//
@@ -162,7 +168,8 @@ namespace CGAL {
 //-------------------------------------------------------------------//
 
 #ifdef _MSC_VER
-#  define NOMINMAX 1
+// AF: Temporary thing to mimic users including this file which defines min max macros
+//#  define NOMINMAX 1
 #endif
 
 //-------------------------------------------------------------------//
