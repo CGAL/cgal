@@ -354,7 +354,7 @@ bool process(const std::string& filename,
   if (!in)
     bailout1("could not open file '%'",filename);
   typedef CGAL::QP_MPS_instance<IT,ET> QP_instance;
-  QP_instance qp(in,true,verbosity);
+  QP_instance qp(in,true,true,verbosity);
   in.close();
 
   // check whether we should compute the rank of the coefficient

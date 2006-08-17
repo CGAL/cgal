@@ -117,6 +117,9 @@ private:
   bool is_format_okay_;
   bool is_linear_;
   const bool use_CPLEX_convention;
+public:  // hack to allow access to operator<< 
+  const bool compute_rank;
+private:
   Vector b_, c_;              // vectors b and c
   Matrix A_, D_;              // matrices A and D
   std::string D_section;      // name of the section from which D was read
@@ -319,7 +322,9 @@ public: // methods:
   // and you set the upper bound of a variable to exactly zero and do
   // not specify a lower bound then the lower bound will be set to
   // -infinity.
-  QP_MPS_instance(std::istream& in,bool use_CPLEX_convention=true,
+  QP_MPS_instance(std::istream& in,
+		  bool use_CPLEX_convention=true,
+		  bool compute_rank=true,
 		  int verbosity=0);
 
   // Returns true if and only if the instance has been properly
