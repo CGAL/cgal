@@ -240,7 +240,7 @@ public:
   { 
     if (!XS.empty()) { 
       // event is set at end of loop and in init
-      event = XS.min();
+      event = (XS.min)();
       p_sweep = XS.key(event);
       return true;
     }
