@@ -28,6 +28,8 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Threetuple.h>
 #include <CGAL/Kernel/Cartesian_coordinate_iterator_2.h>
+#include <boost/utility/enable_if.hpp>
+#include <boost/type_traits.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -58,11 +60,11 @@ public:
     PointH2(const Origin &)
        : base (RT(0), RT(0), RT(1)) {}
 
-    PointH2(int x, int y)
+    template < typename Tx, typename Ty >
+    PointH2(const Tx & x, const Ty & y,
+            typename boost::enable_if_c<boost::is_convertible<Tx, RT>::value &&
+                                        boost::is_convertible<Ty, RT>::value >::type* dummy = 0)
       : base(x, y, RT(1)) {}
-
-    PointH2(const RT& hx, const RT& hy )
-      : base (hx, hy, RT(1)) {}
 
     PointH2(const FT& x, const FT& y)
       : base(Rat_traits().numerator(x) * Rat_traits().denominator(y),

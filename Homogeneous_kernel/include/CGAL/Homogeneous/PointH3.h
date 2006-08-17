@@ -57,10 +57,11 @@ public:
   PointH3(const Origin &)
     : base (RT(0), RT(0), RT(0), RT(1)) { }
 
-  PointH3(int x, int y, int z)
-    : base(x, y, z, RT(1)) {}
-
-  PointH3(const RT& x, const RT& y, const RT& z)
+  template < typename Tx, typename Ty, typename Tz >
+  PointH3(const Tx & x, const Ty & y, const Tz & z,
+          typename boost::enable_if_c<boost::is_convertible<Tx, RT>::value &&
+                                      boost::is_convertible<Ty, RT>::value &&
+                                      boost::is_convertible<Tz, RT>::value >::type* dummy = 0)
     : base(x, y, z, RT(1)) {}
 
   PointH3(const FT& x, const FT& y, const FT& z)

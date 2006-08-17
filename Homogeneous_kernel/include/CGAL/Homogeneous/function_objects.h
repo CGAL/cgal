@@ -2965,16 +2965,9 @@ namespace HomogeneousKernelFunctors {
     operator()(Return_base_tag, Origin o) const
     { return Rep(o); }
 
+    template < typename Tx, typename Ty >
     Rep // Point_2
-    operator()(Return_base_tag, int x, int y) const
-    { return Rep(x, y); }
-
-    Rep // Point_2
-    operator()(Return_base_tag, const RT& x, const RT& y) const
-    { return Rep(x, y); }
-
-    Rep // Point_2
-    operator()(Return_base_tag, const FT& x, const FT& y) const
+    operator()(Return_base_tag, const Tx & x, const Ty & y) const
     { return Rep(x, y); }
 
     Rep // Point_2
@@ -3007,16 +3000,9 @@ namespace HomogeneousKernelFunctors {
     operator()(Origin o) const
     { return this->operator()(Return_base_tag(), o); }
 
+    template < typename Tx, typename Ty >
     Point_2
-    operator()(int x, int y) const
-    { return this->operator()(Return_base_tag(), x, y); }
-
-    Point_2
-    operator()(const RT& x, const RT& y) const
-    { return this->operator()(Return_base_tag(), x, y); }
-
-    Point_2
-    operator()(const FT& x, const FT& y) const
+    operator()(const Tx & x, const Ty & y) const
     { return this->operator()(Return_base_tag(), x, y); }
 
     Point_2
@@ -3039,12 +3025,9 @@ namespace HomogeneousKernelFunctors {
     operator()(Return_base_tag, Origin o) const
     { return Rep(o); }
 
+    template < typename Tx, typename Ty, typename Tz >
     Rep // Point_3
-    operator()(Return_base_tag, int x, int y, int z) const
-    { return Rep(x, y, z); }
-
-    Rep // Point_3
-    operator()(Return_base_tag, const RT& x, const RT& y, const RT& z) const
+    operator()(Return_base_tag, const Tx& x, const Ty& y, const Tz& z) const
     { return Rep(x, y, z); }
 
     Rep // Point_3
@@ -3060,12 +3043,9 @@ namespace HomogeneousKernelFunctors {
     operator()(Origin o) const
     { return this->operator()(Return_base_tag(), o); }
 
+    template < typename Tx, typename Ty, typename Tz >
     Point_3
-    operator()(int x, int y, int z) const
-    { return this->operator()(Return_base_tag(), x, y, z); }
-
-    Point_3
-    operator()(const RT& x, const RT& y, const RT& z) const
+    operator()(const Tx& x, const Ty& y, const Tz& z) const
     { return this->operator()(Return_base_tag(), x, y, z); }
 
     Point_3
