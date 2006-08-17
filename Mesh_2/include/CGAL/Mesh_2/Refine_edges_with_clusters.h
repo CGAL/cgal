@@ -225,7 +225,7 @@ private:
     b = squared_distance(pc, pa);
     c = squared_distance(pa, pb);
 
-    return (min(a, min(b, c)));
+    return ((CGAL::min)(a, (CGAL::min)(b, c)));
   }
 
   Point split_cluster_point(Vertex_handle va, Vertex_handle vb, Cluster& c)

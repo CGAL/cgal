@@ -119,9 +119,9 @@ struct Triangulation_mesher_level_traits_3 :
           vertices.begin();
         vit != vertices.end();
         ++vit)
-      sq_insertion_radius = CGAL::min(sq_insertion_radius, 
-                                   CGAL::squared_distance(v->point(),
-                                                          (*vit)->point()) );
+      sq_insertion_radius = (CGAL::min)(sq_insertion_radius, 
+					CGAL::squared_distance(v->point(),
+							       (*vit)->point()) );
     std::cerr << "insertion radius: " << CGAL::sqrt(sq_insertion_radius);
 #ifdef CGAL_MESH_3_DIRTY_DEBUG_SPHERES
       std::cerr << " \t\tdistance: " 
