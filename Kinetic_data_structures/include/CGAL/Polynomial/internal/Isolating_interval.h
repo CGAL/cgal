@@ -453,13 +453,13 @@ public:
   double approximate_width() const
   {
     CGAL_Polynomial_assertion(lb() <= ub());
-    return std::max(to_double(ub()) - to_double(lb()), 0.0);
+    return (std::max)(to_double(ub()) - to_double(lb()), 0.0);
   }
 
   double approximate_relative_width() const
   {
     CGAL_Polynomial_assertion(lb() <= ub());
-    return approximate_width()/std::max(to_double(abs(ub())), to_double(abs(lb())));
+    return approximate_width()/(std::max)(to_double(abs(ub())), to_double(abs(lb())));
   }
 
   bool contains(const This &o) {
@@ -529,14 +529,14 @@ public:
 
   //! find the min interval containing both.
   /*This operator||(const This &o){
-    return This(std::min(lb(), o.lb()), std::max(ub(), o.ub()));
+    return This((std::min)(lb(), o.lb()), (std::max)(ub(), o.ub()));
     }*/
 
   //! Union
   This operator||(const This &o) const
   {
     CGAL_Polynomial_assertion(lb() <= ub());
-    return This(std::min(lb(), o.lb()), std::max(ub(), o.ub()));
+    return This((std::min)(lb(), o.lb()), (std::max)(ub(), o.ub()));
   }
 
   NT middle() const
@@ -570,7 +570,7 @@ protected:
     if (std::numeric_limits<NT>::has_infinity){
     return std::numeric_limits<NT>::infinity();
     } else if (std::numeric_limits<NT>::is_bounded){
-    return std::numeric_limits<NT>::max();
+    return (std::numeric_limits<NT>::max)();
     } else {
     return NT(1000000000);
     }
