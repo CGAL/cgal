@@ -169,15 +169,16 @@ public:
     return midpoint(pp0,pp1);
   }
 private:
-  template <class Input_point>
-  Vector compute_gradient(Input_point const &x) {
-    typedef Cartesian_converter<typename Input_point::R, K> Converter;
+  //template <class Input_point>
+  Vector compute_gradient(Point const &x) {
     
-    Vector v = Converter()(x) - p;
+    RT vx = x.x() - p.x();
+    RT vy = x.y() - p.y();
+    RT vz = x.z() - p.z();
 
-    return Vector(2*Q[0]*v.x() + Q[1]*v.y() + Q[3]*v.z(),
-		  Q[1]*v.x() + 2*Q[2]*v.y() + Q[4]*v.z(),
-		  Q[3]*v.x() + Q[4]*v.y() + 2*Q[5]*v.z());
+    return Vector(2*Q[0]*vx + Q[1]*vy + Q[3]*vz,
+		  Q[1]*vx + 2*Q[2]*vy + Q[4]*vz,
+		  Q[3]*vx + Q[4]*vy + 2*Q[5]*vz);
   }
 	
   RT Q[6]; 

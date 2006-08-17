@@ -235,19 +235,19 @@ public:
 //     last_ch = _tmc.locate(p, last_ch);
 //     return last_ch;
 //   }
-  Simplex locate_mixed(const Bare_point &p) const{
-    Cell_handle ch = regular.locate(p);
-    Simplex s;
-    if (regular.is_infinite(ch->vertex(0))) { s = ch->vertex(1); }
-    else { s = ch->vertex(0); }
-    s = locate_mixed(p, Simplex(s));
-//     Vertex_handle vh = regular.nearest_power_vertex(p);
-//     Simplex s = locate_mixed(p, Simplex(vh));
+//   Simplex locate_mixed(const Bare_point &p) const{
+//     Cell_handle ch = regular.locate(p);
+//     Simplex s;
+//     if (regular.is_infinite(ch->vertex(0))) { s = ch->vertex(1); }
+//     else { s = ch->vertex(0); }
+//     s = locate_mixed(p, Simplex(s));
+// //     Vertex_handle vh = regular.nearest_power_vertex(p);
+// //     Simplex s = locate_mixed(p, Simplex(vh));
     
-//     CGAL_assertion(is_infinite_mixed_cell(s) ||
-// 		   (locate_tet(p, s) != CMCT_Cell()));
-    return s;
-  }
+// //     CGAL_assertion(is_infinite_mixed_cell(s) ||
+// // 		   (locate_tet(p, s) != CMCT_Cell()));
+//     return s;
+//   }
   bool is_infinite_mixed_cell(const Simplex &s) const {
     switch (s.dimension()) {
     case 0:
@@ -342,8 +342,10 @@ public:
 
     return CMCT_Cell();
   }
-  Simplex locate_mixed(const Bare_point &p, const Simplex &start) const;
+  Simplex locate_mixed(const Bare_point &p, 
+		       const Simplex &start = Simplex()) const;
 
+  // exact computation of the sign on a vertex of the TMC
   Sign sign(const CMCT_Vertex_handle vh) const {
     typedef Exact_predicates_exact_constructions_kernel K;
     Mixed_complex_traits_3<K> traits(gt.get_shrink());
@@ -351,13 +353,16 @@ public:
     typename K::Point_3 p = mc_triangulator->location(vh, traits);
 
     return construct_surface(vh->first, K()).sign(p);
-    
   }
+  Sign sign(const Bare_point &p, const Simplex &start = Simplex()) const {
+    return get_sign(locate_mixed(p,start), p);
+  }
+
   // Trivial caching: check wether the surface is the same as the previous:
   mutable Skin_surface_quadratic_surface_3<
     Simple_cartesian<Interval_nt_advanced> > previous_sign_surface;
   mutable Simplex                            previous_sign_simplex;
-  Sign sign(const Simplex &sim, const Bare_point &p) const {
+  Sign get_sign(const Simplex &sim, const Bare_point &p) const {
     if (previous_sign_simplex != sim) {
       previous_sign_simplex = sim;
       previous_sign_surface = 
@@ -393,14 +398,37 @@ public:
       construct_surface(sim, typename Geometric_traits::Kernel()).value(p);
   }
   Vector
-  normal(const Bare_point &p) const {
-    return construct_surface(locate_mixed(p)).gradient(p);
+  normal(const Bare_point &p, const Simplex &start = Simplex()) const {
+    return get_normal(locate_mixed(p,start), p);
   }
   Vector
-  normal(const Simplex &sim, const Bare_point &p) const {
-    return construct_surface(sim).normal(p);
+  get_normal(const Simplex &mc, const Bare_point &p) const {
+    return construct_surface(mc).gradient(p);
   }
 
+  // Move the point in the direction of the gradient
+  void to_surface(Bare_point &p,
+		  const Simplex &start = Simplex()) const {
+    Bare_point p1 = p;
+    Simplex s1 = locate_mixed(p,start);
+    Sign sign1 = get_sign(s1, p1);
+
+    Vector n = get_normal(s1,p);
+    if (sign1 == POSITIVE) n = -n;
+    n = .5*n;
+
+    int k=1;
+    Bare_point p2 = p+k*n;
+    Simplex s2 = locate_mixed(p2, s1);
+    while (get_sign(s2,p2) == sign1) {
+      k++;
+      p1 = p2;
+      s1 = s2;
+      p2 = p+k*n;
+      s2 = locate_mixed(p2, s2);
+    }
+    intersect(p1,p2, s1,s2, p);
+  }
   void intersect(const CMCT_Vertex_handle vh1,
 		 const CMCT_Vertex_handle vh2,
 		 Bare_point &p) const {
@@ -433,29 +461,34 @@ public:
     if (value(s1, p1) > value(s2, p2)) std::swap(p1, p2);
     Simplex sp = s1;
 
-    while ((s1 != s2) && (sq_dist > 1e-18)) {
+    while ((s1 != s2) && (sq_dist > 1e-8)) {
       p = midpoint(p1, p2);
       sp = locate_mixed(converter(p), sp);
 
-      if (sign(sp, p) == NEGATIVE) { p1 = p; s1 = sp; }
+      if (get_sign(sp, p) == NEGATIVE) { p1 = p; s1 = sp; }
       else { p2 = p; s2 = sp; }
 
       sq_dist *= .25;
     }
-    while (sq_dist > 1e-18) {
+    while (sq_dist > 1e-8) {
       p = midpoint(p1, p2);
-      if (sign(s1, p) == NEGATIVE) { p1 = p; }
+      if (get_sign(s1, p) == NEGATIVE) { p1 = p; }
       else { p2 = p; }
       sq_dist *= .25;
     }
+
     p = midpoint(p1, p2);
   }
 
-  void intersect_with_transversal_segment(Bare_point &p) const {
+  void intersect_with_transversal_segment
+  (Bare_point &p,
+   const Simplex &start = Simplex()) const 
+  {
+
     typedef typename Geometric_traits::Kernel::Plane_3 Plane;
     typedef typename Geometric_traits::Kernel::Line_3  Line;
 
-    Simplex sim = locate_mixed(p);
+    Simplex sim = locate_mixed(p, start);
     CMCT_Cell tet = locate_tet(p, sim);
     
     // get transversal segment:
@@ -749,8 +782,16 @@ template <class MixedComplexTraits_3>
 typename Skin_surface_3<MixedComplexTraits_3>::Simplex 
 Skin_surface_3<MixedComplexTraits_3>::
 locate_mixed(const Bare_point &p, const Simplex &start) const {
+  Simplex /*prev,*/ s;
+  if (start == Simplex()) {
+    Cell_handle ch = regular.locate(p);
+    if (regular.is_infinite(ch->vertex(0))) { s = ch->vertex(1); }
+    else { s = ch->vertex(0); }
+  } else {
+    s = start;
+  }
+  CGAL_assertion(s != Simplex());
   // random walk, start with vh:
-  Simplex /*prev,*/ s = start;
   CGAL_assertion(regular.dimension() == 3);
 
   // For storing a simplex
@@ -759,9 +800,10 @@ locate_mixed(const Bare_point &p, const Simplex &start) const {
   // Traits class object:
   typename Gt::Side_of_mixed_cell_3 
     side_tester = gt.side_of_mixed_cell_3_object();
-  
+//   std::cout << "[";
  try_next_cell:
 
+//   std::cout << s.dimension();
   switch (s.dimension()) {
   case 0:
     {
@@ -916,6 +958,8 @@ locate_mixed(const Bare_point &p, const Simplex &start) const {
       CGAL_assertion(false);
     }
   }
+//   std::cout << "]";
+
   return s;
 }
 

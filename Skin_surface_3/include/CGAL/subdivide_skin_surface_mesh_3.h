@@ -58,7 +58,7 @@ class Skin_surface_sqrt3
   typedef typename Kernel::FT                                 FT;
 
 public:
-  Skin_surface_sqrt3(Polyhedron &P, SkinSurface_3 &skin, Subdivision_policy *policy) 
+  Skin_surface_sqrt3(Polyhedron &P, SkinSurface_3 &skin, const Subdivision_policy &policy) 
     : P(P), ss(skin), policy(policy) {}
 
   //*********************************************
@@ -116,7 +116,7 @@ private:
     v = ++last_v; // First new vertex
     last_v = P.vertices_end();
     do {
-      v->point() = policy->to_surface(v);
+      v->point() = policy.to_surface(v);
     } while (++v != last_v);
 
     CGAL_postcondition( P.is_valid());
@@ -138,7 +138,7 @@ private:
 
   Polyhedron &P;
   SkinSurface_3 &ss;
-  Subdivision_policy *policy;
+  const Subdivision_policy &policy;
 };
 
 template <class Polyhedron_3,
@@ -152,8 +152,11 @@ void subdivide_skin_surface_mesh_3(
   typedef Skin_surface_sqrt3<Polyhedron_3, SkinSurface_3, Subdivision_policy>   
     Subdivider;
 
-  Subdivision_policy *policy = get_subdivision_policy(p, skin);
-  Subdivider subdivider(p, skin, policy);
+  typedef Skin_surface_subdivision_policy_base_3<Polyhedron_3, SkinSurface_3>
+    Policy;
+  
+  Policy *policy = get_subdivision_policy(p, skin);
+  Subdivider subdivider(p, skin, *policy);
   subdivider.subdivide(nSubdiv);
 }
 

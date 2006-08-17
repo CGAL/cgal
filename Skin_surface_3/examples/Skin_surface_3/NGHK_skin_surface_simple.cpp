@@ -34,12 +34,15 @@ int main(int argc, char *argv[]) {
   std::ifstream in(argv[1]);
   while (in >> wp) l.push_back(wp);
 
-  Skin_surface_3 skin_surface(l.begin(), l.end(), shrinkfactor);
+  Skin_surface_3 skin_surface(l.begin(), l.end(), shrinkfactor, false);
 
   Polyhedron p;
+
+  std::cout << "Meshing ..." << std::endl;
   CGAL::mesh_skin_surface_3(skin_surface, p);
 
-//   CGAL::subdivide_skin_surface_mesh_3(p, skin_surface,1);
+  std::cout << "Subdividing ..." << std::endl;
+  CGAL::subdivide_skin_surface_mesh_3(p, skin_surface,1);
 
   std::cout << "Is closed: " << (p.is_closed() ? "Yes" : "No") << std::endl;
 

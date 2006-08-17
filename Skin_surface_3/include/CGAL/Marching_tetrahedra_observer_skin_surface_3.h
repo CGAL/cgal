@@ -51,7 +51,7 @@ public:
   void after_facet_insertion(
     T_Cell_iterator ch,
     Polyhedron_facet_handle fh) {
-    fh->triang_ch = ch;
+    fh->sim = ch->mixed_cell();
   }
 
 };
