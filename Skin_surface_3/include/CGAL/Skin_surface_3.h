@@ -414,10 +414,9 @@ public:
     Sign sign1 = get_sign(s1, p1);
 
     Vector n = get_normal(s1,p);
-    if (sign1 == POSITIVE) n = -n;
-    n = .5*n;
+    if (sign1 == POSITIVE) n = -value(s1,p)*n;
 
-    int k=1;
+    int k=2;
     Bare_point p2 = p+k*n;
     Simplex s2 = locate_mixed(p2, s1);
     while (get_sign(s2,p2) == sign1) {

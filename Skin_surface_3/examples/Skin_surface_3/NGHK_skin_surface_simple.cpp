@@ -19,7 +19,8 @@ typedef Skin_surface_3::Weighted_point                      Weighted_point;
 typedef Weighted_point::Point                               Bare_point;
 typedef CGAL::Polyhedron_3<
   CGAL::Simple_cartesian<double>,
-  CGAL::Skin_surface_polyhedral_items_3<Skin_surface_3> >   Polyhedron;
+  CGAL::Skin_surface_polyhedral_items_3<Skin_surface_3> 
+  >   Polyhedron;
 
 int main(int argc, char *argv[]) {
   if (argc < 2) {
