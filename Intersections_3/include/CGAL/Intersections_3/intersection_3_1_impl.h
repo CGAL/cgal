@@ -455,8 +455,8 @@ intersection(const typename CGAL_WRAP(K)::Line_3 &line,
     FT _min = 0, _max = 0; // initialization to stop compiler warning
     Point_3 const & _ref_point=line.point();
     Vector_3 const & _dir=line.direction().vector();
-    Point_3 const & _iso_min=box.min();
-    Point_3 const & _iso_max=box.max();
+    Point_3 const & _iso_min=(box.min)();
+    Point_3 const & _iso_max=(box.max)();
     for (int i=0; i< _ref_point.dimension(); i++) {
         if (_dir.homogeneous(i) == 0) {
             if (_ref_point.cartesian(i) < _iso_min.cartesian(i)) {
@@ -529,8 +529,8 @@ intersection(const typename CGAL_WRAP(K)::Ray_3 &ray,
     FT _min = 0, _max;
     Point_3 const & _ref_point=ray.source();
     Vector_3 const & _dir=ray.direction().vector();
-    Point_3 const & _iso_min=box.min();
-    Point_3 const & _iso_max=box.max();
+    Point_3 const & _iso_min=(box.min)();
+    Point_3 const & _iso_max=(box.max)();
 
     for (int i=0; i< _ref_point.dimension(); i++) {
         if (_dir.homogeneous(i) == 0) {
@@ -601,8 +601,8 @@ intersection(const typename CGAL_WRAP(K)::Segment_3 &seg,
 
     Point_3 const & _ref_point=seg.source();
     Vector_3 const & _dir=seg.direction().vector();
-    Point_3 const & _iso_min=box.min();
-    Point_3 const & _iso_max=box.max();
+    Point_3 const & _iso_min=(box.min)();
+    Point_3 const & _iso_max=(box.max)();
     int main_dir =
         (CGAL_NTS abs(_dir.x()) > CGAL_NTS abs(_dir.y()) )
             ? (CGAL_NTS abs(_dir.x()) > CGAL_NTS abs(_dir.z()) ? 0 : 2)
@@ -670,10 +670,10 @@ intersection(
 
     Point_3 min_points[2];
     Point_3 max_points[2];
-    min_points[0] = icub1.min();
-    min_points[1] = icub2.min();
-    max_points[0] = icub1.max();
-    max_points[1] = icub2.max();
+    min_points[0] = (icub1.min)();
+    min_points[1] = (icub2.min)();
+    max_points[0] = (icub1.max)();
+    max_points[1] = (icub2.max)();
     typedef typename K::FT FT;
     const int DIM = 3;
     int min_idx[DIM];
