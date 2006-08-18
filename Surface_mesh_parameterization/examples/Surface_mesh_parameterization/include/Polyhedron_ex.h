@@ -313,22 +313,22 @@ public:
     }
 
     // compute bounding interval
-    double min(int coord)
+    double min BOOST_PREVENT_MACRO_SUBSTITUTION (int coord)
     {
         CGAL_assertion(size_of_vertices() > 0);
         Vertex_iterator pVertex = vertices_begin();
         double min = pVertex->point()[coord];
         for(;pVertex != vertices_end();pVertex++)
-            min = std::min(min,pVertex->point()[coord]);
+            min = (std::min)(min,pVertex->point()[coord]);
         return min;
     }
-    double max(int coord)
+    double max BOOST_PREVENT_MACRO_SUBSTITUTION (int coord)
     {
         CGAL_assertion(size_of_vertices() > 0);
         Vertex_iterator pVertex = vertices_begin();
         double max = pVertex->point()[coord];
         for(;pVertex != vertices_end();pVertex++)
-            max = std::max(max,pVertex->point()[coord]);
+            max = (std::max)(max,pVertex->point()[coord]);
         return max;
     }
     Vertex_handle vertex_min(int coord,
@@ -343,7 +343,7 @@ public:
             double value = pVertex->point()[coord];
             if(value < min)
             {
-                min = std::min(min,value);
+                min = (std::min)(min,value);
                 pBest = pVertex;
             }
         }
@@ -361,7 +361,7 @@ public:
             double value = pVertex->point()[coord];
             if(value > max)
             {
-                max = std::max(max,value);
+                max = (std::max)(max,value);
                 pBest = pVertex;
             }
         }
@@ -414,14 +414,14 @@ public:
             double y1 = scale * pHalfedge->prev()->v();
             double x2 = scale * pHalfedge->u();
             double y2 = scale * pHalfedge->v();
-            xmin = std::min(xmin,x1);
-            xmin = std::min(xmin,x2);
-            xmax = std::max(xmax,x1);
-            xmax = std::max(xmax,x2);
-            ymax = std::max(ymax,y1);
-            ymax = std::max(ymax,y2);
-            ymin = std::min(ymin,y1);
-            ymin = std::min(ymin,y2);
+            xmin = (std::min)(xmin,x1);
+            xmin = (std::min)(xmin,x2);
+            xmax = (std::max)(xmax,x1);
+            xmax = (std::max)(xmax,x2);
+            ymax = (std::max)(ymax,y1);
+            ymax = (std::max)(ymax,y2);
+            ymin = (std::min)(ymin,y1);
+            ymin = (std::min)(ymin,y2);
         }
 
         out << "%!PS-Adobe-2.0 EPSF-2.0" << std::endl;
@@ -571,12 +571,12 @@ public:
         double xdiff = xmax-xmin;
         double ydiff = ymax-ymin;
         double zdiff = zmax-zmin;
-        if (xdiff >= std::max(ydiff,zdiff))
+        if (xdiff >= (std::max)(ydiff,zdiff))
         {
             pVertexMin = pVertex_xMin;
             pVertexMax = pVertex_xMax;
         }
-        else if (ydiff >= std::max(xdiff,zdiff))
+        else if (ydiff >= (std::max)(xdiff,zdiff))
         {
             pVertexMin = pVertex_yMin;
             pVertexMax = pVertex_yMax;
