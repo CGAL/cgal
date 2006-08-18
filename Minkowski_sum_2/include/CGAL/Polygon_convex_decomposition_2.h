@@ -39,7 +39,7 @@ class Optimal_convex_decomposition_2 :
 public:
 
   typedef Kernel_                                  Kernel;
-  typedef Polygon_2<Kernel, Container_>            Polygon_2;
+  typedef CGAL::Polygon_2<Kernel, Container_>      Polygon_2;
   typedef typename Kernel::Point_2                 Point_2;
 
 };
@@ -58,7 +58,7 @@ class Hertel_Mehlhorn_convex_decomposition_2 :
 public:
 
   typedef Kernel_                                  Kernel;
-  typedef Polygon_2<Kernel, Container_>            Polygon_2;
+  typedef CGAL::Polygon_2<Kernel, Container_>      Polygon_2;
   typedef typename Kernel::Point_2                 Point_2;
 
 };
@@ -77,7 +77,7 @@ class Greene_convex_decomposition_2 :
 public:
 
   typedef Kernel_                                  Kernel;
-  typedef Polygon_2<Kernel, Container_>            Polygon_2;
+  typedef CGAL::Polygon_2<Kernel, Container_>      Polygon_2;
   typedef typename Kernel::Point_2                 Point_2;
 
 };
