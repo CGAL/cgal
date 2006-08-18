@@ -176,7 +176,7 @@ private slots:
     } else if(CGAL::assign(ir, obj)){
       // Searching an exact range
       // using default value 0.0 for epsilon fuzziness paramater
-      Fuzzy_box exact_range(ir.min(), ir.max());
+      Fuzzy_box exact_range((ir.min)(), (ir.max)());
 
       typedef CGAL::Kd_tree<Traits> Tree;
       std::list<Point_2> l, res;
