@@ -887,7 +887,7 @@ public:
   double compute_double(double acc = 1e-10) const
   {
           if (idx < 0) {
-                        double inf=std::numeric_limits<double>::has_infinity? std::numeric_limits<double>::infinity() : std::numeric_limits<double>::max();
+                        double inf=std::numeric_limits<double>::has_infinity? std::numeric_limits<double>::infinity() : (std::numeric_limits<double>::max)();
     if ( idx == -1 ){
                 return inf;
     } else return -inf;

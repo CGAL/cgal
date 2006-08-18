@@ -28,7 +28,7 @@ template <class T>
 T infinity_or_max()
 {
     if (std::numeric_limits<T>::has_infinity) return std::numeric_limits<T>::infinity();
-    else return std::numeric_limits<T>::max();
+    else return (std::numeric_limits<T>::max)();
 }
 
 
@@ -36,7 +36,7 @@ template <class T>
 T infinity_or_max(T)
 {
     if (std::numeric_limits<T>::has_infinity) return std::numeric_limits<T>::infinity();
-    else return std::numeric_limits<T>::max();
+    else return (std::numeric_limits<T>::max)();
 }
 
 

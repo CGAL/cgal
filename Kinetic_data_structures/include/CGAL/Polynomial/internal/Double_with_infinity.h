@@ -27,7 +27,7 @@ CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
  template <bool S, bool Q>
   struct Double_with_infinity_default {
-    static double value(){return std::numeric_limits<double>::max();};
+    static double value(){return (std::numeric_limits<double>::max)();};
   };
   template<bool O>
   struct Double_with_infinity_default<true,O> {
@@ -76,7 +76,7 @@ namespace std {
   public:
     static const bool is_specialized = true;
     static const bool has_infinity=true;
-    static double infinity() throw() {return std::numeric_limits<double>::max();}
+    static double infinity() throw() {return (std::numeric_limits<double>::max)();}
   };
 };
 
