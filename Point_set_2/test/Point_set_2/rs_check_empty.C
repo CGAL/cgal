@@ -11,7 +11,7 @@ typedef CGAL::Delaunay_triangulation_2<Gt>::Vertex_handle  Vertex_handle;
 typedef Gt::Point_2   Point;
 typedef Gt::Circle_2  Circle;
 typedef Gt::Triangle_2  Triangle;
-typedef Gt::Iso_rectangle_2  Rectangle;
+typedef Gt::Iso_rectangle_2  Rectangle_2;
 
 Delaunay PS;
 
@@ -34,9 +34,9 @@ public:
 class check_empty_rectangle {
 public:
   bool    result;
-  Rectangle r;
+  Rectangle_2 r;
   
-  check_empty_rectangle(Rectangle ract) : result(false), r(ract) { }
+  check_empty_rectangle(Rectangle_2 ract) : result(false), r(ract) { }
   
   bool get_result() const  { return result; }
   void set_result(bool nr) { result=nr; }
@@ -152,8 +152,8 @@ int main()
   else std::cout << "triangle was empty !\n";   
   
   // rectangle check
-  Rectangle r1(-290.021, -175.022, -125.037, -35.0356);       
-  Rectangle r2(-48.3774, 136.614, -23.3799, 251.603);   
+  Rectangle_2 r1(-290.021, -175.022, -125.037, -35.0356);       
+  Rectangle_2 r2(-48.3774, 136.614, -23.3799, 251.603);   
 
   check_empty_rectangle rchecker1(r1);
   CGAL::range_search(PS,r1.vertex(0),r1.vertex(1),r1.vertex(2),r1.vertex(3),std::back_inserter(LV),rchecker1,true);
