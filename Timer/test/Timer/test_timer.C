@@ -17,7 +17,7 @@ double test_timer() {
     CGAL_assertion( t.intervals() == 1);
     CGAL_assertion( t.precision() >= 0.0);
     std::cout << "precision()            : " << t.precision() << "\n"; 
-    CGAL_assertion( t.max() > 0.0);
+    CGAL_assertion( (t.max)() > 0.0);
 
     T s;
     s.start();
