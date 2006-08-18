@@ -17,31 +17,31 @@
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
-#ifndef CGAL_MIXED_COMPLEX_FILTERED_TRAITS_3_H
-#define CGAL_MIXED_COMPLEX_FILTERED_TRAITS_3_H
+#ifndef CGAL_SKIN_SURFACE_FILTERED_TRAITS_3_H
+#define CGAL_SKIN_SURFACE_FILTERED_TRAITS_3_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Mixed_complex_traits_3.h>
+#include <CGAL/Skin_surface_traits_3.h>
 #include <CGAL/Regular_triangulation_filtered_traits_3.h>
 #include <CGAL/Filtered_predicate.h>
 
 CGAL_BEGIN_NAMESPACE 
 
 template <class K>
-class Mixed_complex_filtered_traits_3
-  : public Mixed_complex_traits_base_3<K>
+class Skin_surface_filtered_traits_3
+  : public Skin_surface_traits_base_3<K>
 {
   // Exact traits is based on the exact kernel.
-  typedef Mixed_complex_traits_3<typename K::EK>
+  typedef Skin_surface_traits_3<typename K::EK>
                                                    Exact_traits;
   // Filtering traits is based on the filtering kernel.
-  typedef Mixed_complex_traits_3<typename K::FK>
+  typedef Skin_surface_traits_3<typename K::FK>
                                                    Filtering_traits;
 
   typedef typename K::C2E C2E;
   typedef typename K::C2F C2F;
 
-  typedef Mixed_complex_traits_base_3<K>           Base;
+  typedef Skin_surface_traits_base_3<K>           Base;
 public:
   typedef Filtered_predicate<
             typename Exact_traits::Side_of_mixed_cell_3,
@@ -49,8 +49,8 @@ public:
             Weighted_converter_3<C2E>,
             Weighted_converter_3<C2F> >  Side_of_mixed_cell_3;
 
-  Mixed_complex_filtered_traits_3() {}
-  Mixed_complex_filtered_traits_3(typename Base::FT s) : Base(s) {}
+  Skin_surface_filtered_traits_3() {}
+  Skin_surface_filtered_traits_3(typename Base::FT s) : Base(s) {}
 
   // Only make the predicates filtered, not the constructions:
   Side_of_mixed_cell_3 
@@ -62,4 +62,4 @@ public:
 };
 
 CGAL_END_NAMESPACE
-#endif // CGAL_MIXED_COMPLEX_FILTERED_TRAITS_3_H
+#endif // CGAL_SKIN_SURFACE_FILTERED_TRAITS_3_H

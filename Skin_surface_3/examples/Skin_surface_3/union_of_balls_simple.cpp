@@ -6,7 +6,7 @@
 #include <list>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Mixed_complex_traits_3<K>                     Traits;
+typedef CGAL::Skin_surface_traits_3<K>                      Traits;
 typedef CGAL::Union_of_balls_3<Traits>                      Union_of_balls_3;
 typedef Union_of_balls_3::RT                                RT;
 typedef Union_of_balls_3::Weighted_point                    Weighted_point;

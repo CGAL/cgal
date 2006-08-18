@@ -9,7 +9,7 @@
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Inexact_K;
-typedef CGAL::Mixed_complex_traits_3<Inexact_K>             Traits;
+typedef CGAL::Skin_surface_traits_3<Inexact_K>             Traits;
 typedef CGAL::Skin_surface_3<Traits>                        Skin_surface_3;
 typedef Skin_surface_3::Simplex                             Simplex;
 typedef Skin_surface_3::RT                                  RT;

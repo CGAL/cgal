@@ -17,8 +17,8 @@
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
-#ifndef CGAL_MIXED_COMPLEX_TRAITS_3_H
-#define CGAL_MIXED_COMPLEX_TRAITS_3_H
+#ifndef CGAL_SKIN_SURFACE_TRAITS_3_H
+#define CGAL_SKIN_SURFACE_TRAITS_3_H
 
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/predicates/predicates_for_mixed_complex_3.h>
@@ -105,13 +105,13 @@ private:
 };
 
 template <class K_>
-class Mixed_complex_traits_base_3 
+class Skin_surface_traits_base_3 
   : public Regular_triangulation_euclidean_traits_3<K_>
 {
   typedef Regular_triangulation_euclidean_traits_3<K_> Base;
 public:
   typedef K_                                  Kernel;
-  typedef Mixed_complex_traits_base_3<Kernel> Self;
+  typedef Skin_surface_traits_base_3<Kernel> Self;
 
   typedef typename Kernel::FT                 FT;
   typedef typename Kernel::Point_3            Bare_point;
@@ -125,9 +125,9 @@ public:
   
  
   
-  Mixed_complex_traits_base_3() : s(-1) {
+  Skin_surface_traits_base_3() : s(-1) {
   }
-  Mixed_complex_traits_base_3(FT s) : s(s) {
+  Skin_surface_traits_base_3(FT s) : s(s) {
   }
   void set_shrink(FT s_) { 
     s = s_; 
@@ -155,37 +155,37 @@ private:
 // otherwise there is a cycle in the derivation.
 // Similar to Regular_triangulation_euclidean_traits_3
 template < class K >
-class Mixed_complex_traits_3
-  : public Mixed_complex_traits_base_3<K>
+class Skin_surface_traits_3
+  : public Skin_surface_traits_base_3<K>
 {
-  typedef Mixed_complex_traits_base_3<K> Base;
+  typedef Skin_surface_traits_base_3<K> Base;
 public:
-  Mixed_complex_traits_3() {}
-  Mixed_complex_traits_3(typename Base::FT s) : Base(s) {}
+  Skin_surface_traits_3() {}
+  Skin_surface_traits_3(typename Base::FT s) : Base(s) {}
 };
 
 CGAL_END_NAMESPACE
 
 // Now specialize for Filtered_kernel<CK>, to get
 // the filtered traits automatically.
-#include <CGAL/Mixed_complex_filtered_traits_3.h>
+#include <CGAL/Skin_surface_filtered_traits_3.h>
 #include <CGAL/Filtered_kernel.h>
 
 
 CGAL_BEGIN_NAMESPACE
 
 template < typename CK >
-class Mixed_complex_traits_3 < Filtered_kernel<CK> >
-  : public Mixed_complex_filtered_traits_3 < Filtered_kernel<CK> >
+class Skin_surface_traits_3 < Filtered_kernel<CK> >
+  : public Skin_surface_filtered_traits_3 < Filtered_kernel<CK> >
 {
-  typedef Mixed_complex_filtered_traits_3< Filtered_kernel<CK> > Base;
+  typedef Skin_surface_filtered_traits_3< Filtered_kernel<CK> > Base;
 public:
   typedef Filtered_kernel<CK>                                    Kernel;
 
-  Mixed_complex_traits_3() {}
-  Mixed_complex_traits_3(typename Base::FT s) : Base(s) {}
+  Skin_surface_traits_3() {}
+  Skin_surface_traits_3(typename Base::FT s) : Base(s) {}
 };
 
 
 CGAL_END_NAMESPACE
-#endif // CGAL_MIXED_COMPLEX_TRAITS_3_H
+#endif // CGAL_SKIN_SURFACE_TRAITS_3_H

@@ -26,7 +26,7 @@
 #include <CGAL/Triangulated_mixed_complex_observer_3.h>
 #include <CGAL/Triangulation_incremental_builder_3.h>
 
-#include <CGAL/Mixed_complex_traits_3.h>
+#include <CGAL/Skin_surface_traits_3.h>
 
 #include <CGAL/iterator.h>
 
@@ -1232,7 +1232,7 @@ triangulate_mixed_complex_3(MixedComplexTraits_3 &rt,
 
   typedef Triangulation_incremental_builder_3<OutputTriangulation_3>
     Triangulation_incremental_builder;
-  typedef Mixed_complex_traits_3<typename OutputTriangulation_3::Geom_traits>
+  typedef Skin_surface_traits_3<typename OutputTriangulation_3::Geom_traits>
     Mc_traits;
 
   typedef typename OutputTriangulation_3::Vertex_handle Out_Vertex_handle;
