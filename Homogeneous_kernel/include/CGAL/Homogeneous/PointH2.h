@@ -62,8 +62,8 @@ public:
 
     template < typename Tx, typename Ty >
     PointH2(const Tx & x, const Ty & y,
-            typename boost::enable_if_c<boost::is_convertible<Tx, RT>::value &&
-                                        boost::is_convertible<Ty, RT>::value >::type* dummy = 0)
+            typename boost::enable_if_c<CGAL_AND((boost::is_convertible<Tx, RT>::value),
+                                                 (boost::is_convertible<Ty, RT>::value)) >::type* dummy = 0)
       : base(x, y, RT(1)) {}
 
     PointH2(const FT& x, const FT& y)

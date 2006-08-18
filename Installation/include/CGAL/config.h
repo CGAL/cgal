@@ -92,6 +92,23 @@ namespace CGAL {
 #endif
 
 
+#ifdef CGAL_CFG_BOOL_IN_TEMPLATE_BUG
+namespace CGAL {
+  namespace CGALi {
+    template < bool b1, bool b2 >
+    struct and_c { static const bool value = b1 && b2; };
+    template < bool b1, bool b2, bool b3 >
+    struct and_c_3 { static const bool value = b1 && b2 && b3; };
+  }
+}
+#  define CGAL_AND(a, b)  CGAL::CGALi::and_c<a, b>::value
+#  define CGAL_AND_3(a, b, c)  CGAL::CGALi::and_c_3<a, b, c>::value
+#else
+#  define CGAL_AND(a, b)  a && b
+#  define CGAL_AND_3(a, b, c)  a && b && c
+#endif
+
+
 #ifndef CGAL_CFG_TYPENAME_BEFORE_DEFAULT_ARGUMENT_BUG
 #  define CGAL_TYPENAME_DEFAULT_ARG typename
 #else
