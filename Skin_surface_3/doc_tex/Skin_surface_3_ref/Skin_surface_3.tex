@@ -10,7 +10,7 @@
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
-\begin{ccRefClass}{Skin_surface_3<RegularTriangulationTraits_3>}
+\begin{ccRefClass}{Skin_surface_3<SkinSurfaceTraits_3>}
   \ccDefinition
 
   The \ccRefName\ is the main class in the
@@ -20,10 +20,10 @@
 % The class also defines an interface to the surface mesher as it is a
 % model of the concept \ccc{Surface_3}.
 
-  The type \ccc{RegularTriangulationTraits_3} is required to be a model of the
-  concept \ccc{RegularTriangulationTraits_3}, which means that it provides the
+  The type \ccc{SkinSurfaceTraits_3} is required to be a model of the
+  concept \ccc{SkinSurfaceTraits_3}, which means that it provides 
   predicates to construct a regular triangulation of the weighted
-  points.
+  points and for point location in the mixed complex.
   
   \ccInclude{CGAL/Skin_surface_3.h}
 
@@ -41,11 +41,11 @@
   \ccThree{typedef Skin_surface_3::Weighted_point<Point_3,FT>asdf}{x}{}
   \ccThreeToTwo
 
-  \ccTypedef{typedef RegularTriangulationTraits_3 Geometric_traits;}{}
+  \ccTypedef{typedef SkinSurfaceTraits_3 Geometric_traits;}{}
   \ccGlue
   \ccTypedef{typedef Geometric_traits::Weighted_point Weighted_point;}{}
   \ccGlue
-  % The following two are not defined in the RegularTriangulationTraits
+  % The following two are not defined in the SkinSurfaceTraits
   \ccTypedef{typedef Weighted_point::Point Bare_point;}{} 
   \ccGlue
   \ccTypedef{typedef Weighted_point::Weight RT;}{}
