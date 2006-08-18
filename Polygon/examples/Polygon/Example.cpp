@@ -12,7 +12,7 @@
 
 typedef CGAL::Cartesian<double> K;
 typedef CGAL::Point_2<K> Point;
-typedef CGAL::Polygon_2<K, std::list<Point> > Polygon;
+typedef CGAL::Polygon_2<K, std::list<Point> > Polygon_2;
 typedef CGAL::Polygon_2<K, std::list<Point> >::Vertex_iterator VertexIterator;
 typedef CGAL::Polygon_2<K, std::list<Point> >::Edge_const_iterator EdgeIterator;
 
@@ -23,7 +23,7 @@ typedef CGAL::Polygon_2<K, std::list<Point> >::Edge_const_iterator EdgeIterator;
 int main()
 {
   // create a polygon and put some points in it
-  Polygon p;
+  Polygon_2 p;
   p.push_back(Point(0,0));
   p.push_back(Point(4,0));
   p.push_back(Point(4,4));
