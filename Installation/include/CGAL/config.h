@@ -32,6 +32,9 @@
 #include <windows.h>
 #endif
 
+// The following header file defines among other things  BOOST_PREVENT_MACRO_SUBSTITUTION 
+#include <boost/config.hpp>
+
 #include <CGAL/version.h>
 
 //----------------------------------------------------------------------//
