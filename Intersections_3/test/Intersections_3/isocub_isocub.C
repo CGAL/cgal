@@ -39,9 +39,9 @@ void one_pair(rect_t const & irect1, rect_t const & irect2)
     CGAL::Object result = CGAL::intersection(irect1, irect2);
     if (CGAL::assign(irect, result)) {
 	std::cout << "Intersection.\n";
-	print(irect.min());
+	print((irect.min)());
 	std::cout << ' ';
-	print(irect.max());
+	print((irect.max)());
 	std::cout << '\n';
     }
     if (!CGAL::assign(irect, result)) {
