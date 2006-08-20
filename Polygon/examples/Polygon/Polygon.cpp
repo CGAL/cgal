@@ -6,14 +6,14 @@
 
 typedef CGAL::Cartesian<double> K;
 typedef K::Point_2 Point;
-typedef CGAL::Polygon_2<K> Polygon;
+typedef CGAL::Polygon_2<K> Polygon_2;
 using std::cout; using std::endl;
 
 
 int main()
 {
   Point points[] = { Point(0,0), Point(5.1,0), Point(1,1), Point(0.5,6)};
-  Polygon pgn(points, points+4);
+  Polygon_2 pgn(points, points+4);
 
   // check if the polygon is simple.
   cout << "The polygon is " << 
