@@ -341,12 +341,12 @@ namespace CGAL {
 	
 	// check it:
 	const FT exact(i == j? 1 : 0);
-	max_error = std::max(max_error,std::abs(v-exact));
+	max_error = (std::max)(max_error,std::abs(v-exact));
       }
 
     // update statistics:
     #ifdef CGAL_APPEL_STATS_MODE
-    max_error_m_all = std::max(max_error,max_error_m_all);
+    max_error_m_all = (std::max)(max_error,max_error_m_all);
     max_error_m = max_error;
     #endif
     CGAL_APPEL_LOG("appel","  The represenation error in m is: " <<
@@ -473,7 +473,7 @@ namespace CGAL {
     // find max p_i^T M(x)^{-1} p_i:
     ET max(0);
     for (int i=0; i<n; ++i)
-      max = std::max(max, excess<ET>(tco.cartesian_begin(*P[i])));
+      max = (std::max)(max, excess<ET>(tco.cartesian_begin(*P[i])));
 
     // compute (using exact arithmetic) epsilon via (*):
     typedef CGAL::Quotient<ET> QET;
