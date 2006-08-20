@@ -3487,7 +3487,7 @@ namespace HomogeneousKernelFunctors {
 	return Point_2( (r.max)().hx()*(r.min)().hw(),
                            (r.min)().hy()*(r.max)().hw(),
                            (r.min)().hw()*(r.max)().hw() );
-      case 2: return r.max();
+      case 2: return (r.max)();
       default: return Point_2( (r.min)().hx()*(r.max)().hw(),
                            (r.max)().hy()*(r.min)().hw(),
                            (r.min)().hw()*(r.max)().hw() );
