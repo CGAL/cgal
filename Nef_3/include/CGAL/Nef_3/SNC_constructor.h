@@ -67,18 +67,18 @@ struct Frame_point_lt {
 template <typename T>
 struct circle_lt {
   
-  int max;
+  int m_max;
   typedef typename T::Point_3                   Point_3;
   typedef typename T::RT                        RT;
 
-  circle_lt(int m) :max(m) {};
+  circle_lt(int m) :m_max(m) {};
   bool operator()(const Point_3& p1, const Point_3& p2) const { 
         
     const Quotient<RT> zero(RT(0));
     Quotient<RT> x[2];
     Quotient<RT> y[2];
 
-    switch(max) {
+    switch(m_max) {
     case 0:
       x[0] = p1.y(); 
       y[0] = p1.z();
