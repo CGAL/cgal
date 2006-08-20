@@ -29,7 +29,7 @@ int main()
   CGAL_TEST_START;
   
   { PRT(Integer,Integer);
-    typedef Integer NT; typedef Polynomial<Integer> RP;
+    typedef Integer NT; typedef Nef::Polynomial<Integer> RP;
       RP::NT seq[4] = { 0, 1, 2, 0 };
       RP p1, p2(NT(1)), p3(NT(1),NT(1)), p4(5,2), p5(-2,5), p6(4,1), 
          p7(3,0), p8(std::make_pair(&seq[0], &seq[4]));
@@ -114,7 +114,7 @@ int main()
       CGAL::is_valid(p6);
   }
   { PRT(int,Integer);
-    typedef int NT; typedef Polynomial<Integer> RP;
+    typedef int NT; typedef Nef::Polynomial<Integer> RP;
       RP::NT seq[4] = { 0, 1, 2, 0 };
       RP p1, p2(NT(1)), p3(NT(1),NT(1)), p4(5,2), p5(-2,5), p6(4,1), 
          p7(3,0), p8(std::make_pair(&seq[0],&seq[4]));
@@ -203,7 +203,7 @@ int main()
   }
   
   { PRT(double,Integer);
-    typedef double NT; typedef Polynomial<Integer> RP;
+    typedef double NT; typedef Nef::Polynomial<Integer> RP;
       RP::NT seq[4] = { 0, 1, 2, 0 };
       RP p1, p2(NT(1)), p3(NT(1),NT(1)), p4(5,2), p5(-2,5), p6(4,1), 
          p7(3,0), p8(std::make_pair(&seq[0],&seq[4]));
@@ -293,7 +293,7 @@ int main()
   }
   
   { PRT(int,int);
-    typedef int NT; typedef Polynomial<int> RP;
+    typedef int NT; typedef Nef::Polynomial<int> RP;
       RP::NT seq[4] = { 0, 1, 2, 0 };
       RP p1, p2(NT(1)), p3(NT(1),NT(1)), p4(5,2), p5(-2,5), p6(4,1), 
          p7(3,0), p8(std::make_pair(&seq[0],&seq[4]));
@@ -382,7 +382,7 @@ int main()
   }
   
   { PRT(double,int);
-    typedef double NT; typedef Polynomial<int> RP;
+    typedef double NT; typedef Nef::Polynomial<int> RP;
       RP::NT seq[4] = { 0, 1, 2, 0 };
       RP p1, p2(NT(1)), p3(NT(1),NT(1)), p4(5,2), p5(-2,5), p6(4,1), 
          p7(3,0), p8(std::make_pair(&seq[0],&seq[4]));
