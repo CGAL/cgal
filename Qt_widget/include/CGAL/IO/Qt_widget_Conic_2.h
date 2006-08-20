@@ -33,7 +33,7 @@ Qt_widget&
 operator << ( Qt_widget& ws, const CGAL::Conic_2<R>& c)
 {
   // pixel dimensions of window
-  int dim = std::max( ws.width(), ws.height());
+  int dim = (std::max)( ws.width(), ws.height());
   // length of a pixel in window-coordinates
   double pixel_x = (ws.x_max() - ws.x_min())/dim;
   double pixel_y = (ws.y_max() - ws.y_min())/dim;
