@@ -477,9 +477,9 @@ namespace OGL {
     void draw() const
     { 
       if (!is_initialized()) const_cast<Polyhedron&>(*this).init();
-      double l = std::max( std::max( bbox().xmax() - bbox().xmin(),
-                                     bbox().ymax() - bbox().ymin()),
-                           bbox().zmax() - bbox().zmin());
+      double l = (std::max)( (std::max)( bbox().xmax() - bbox().xmin(),
+					 bbox().ymax() - bbox().ymin()),
+			     bbox().zmax() - bbox().zmin());
       if ( l < 1) // make sure that a single point doesn't screw up here
           l = 1;
       glScaled( 4.0/l, 4.0/l, 4.0/l);
