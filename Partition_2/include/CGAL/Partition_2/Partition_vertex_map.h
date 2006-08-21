@@ -197,9 +197,10 @@ public:
 #ifdef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
     cw_indirect_edge_info_compare = 
       CW_indirect_edge_info_compare<Vertex_iterator,Traits>(vertex_it);
-    sort(&Self::compare);
+    this->sort(&Self::compare);
 #else
-    sort(CW_indirect_edge_info_compare<Vertex_iterator,Traits>(vertex_it));
+    this->sort
+      (CW_indirect_edge_info_compare<Vertex_iterator,Traits>(vertex_it));
 #endif
        }
 
@@ -421,7 +422,7 @@ public:
        // find the map iterator corresponding to the next vertex 
        prev_v_it  = (*m_it).first;
        v_it = next_v_it;
-       m_it = find(v_it);
+       m_it = this->find(v_it);
        
        while (v_it != first_v_it && m_it != this->end())
        {
@@ -459,7 +460,7 @@ public:
           }
           prev_v_it  = v_it;
           v_it = next_v_it;
-          m_it = find(v_it);
+          m_it = this->find(v_it);
           CGAL_assertion (m_it == this->end() || (*m_it).first == v_it);
        }
 #ifdef CGAL_PARTITION_CHECK_DEBUG
