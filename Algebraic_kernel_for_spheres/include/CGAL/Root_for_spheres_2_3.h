@@ -49,7 +49,7 @@ class Root_for_spheres_2_3 {
   {
     // This assertion sont work if Root_of_2 is 
     // Interval_nt (and dont have is_rational, gamma, etc..)
-    CGAL_assertion(
+    /*CGAL_assertion(
                 ((r1.is_rational() && r2.is_rational()) ||
                  (r1.is_rational() && r3.is_rational()) ||
                  (r2.is_rational() && r3.is_rational()) ||
@@ -57,7 +57,7 @@ class Root_for_spheres_2_3 {
                  ((r2.is_rational()) && (r1.gamma() == r3.gamma())) ||
                  ((r3.is_rational()) && (r1.gamma() == r2.gamma())) ||
                  ((r1.gamma() == r2.gamma()) && (r2.gamma() == r3.gamma())))
-    );
+    );*/
   }
 
   const Root_of_2& x() const 
@@ -108,12 +108,22 @@ class Root_for_spheres_2_3 {
 
   CGAL::Bbox_3 bbox() const
   {
-  	// Note: This is a more efficient version
-  	// but it won't work (in the future) 
-  	// with some Lazy_Curved_kernel_3
-  	// because is_rational(), gamma(), etc.. is not defined
-  	// for Interval_nt<false> data type
-  	
+    const Root_of_2 &ox = x();
+    const Root_of_2 &oy = y();
+    const Root_of_2 &oz = z();
+
+    CGAL::Interval_nt<> 
+        ix=to_interval(ox),
+        iy=to_interval(oy),
+        iz=to_interval(oz);
+      return CGAL::Bbox_3(ix.inf(),iy.inf(),iz.inf(),
+	                ix.sup(),iy.sup(),iz.sup());
+    /* 
+    // Note: This is a more efficient version
+    // but it won't work (in the future) 
+    // with some Lazy_Curved_kernel_3
+    // because is_rational(), gamma(), etc.. is not defined
+    // for Interval_nt<false> data type	
     const Root_of_2 &ox = x();
     const Root_of_2 &oy = y();
     const Root_of_2 &oz = z();
@@ -186,6 +196,7 @@ class Root_for_spheres_2_3 {
     const CGAL::Interval_nt<true> iz = alpha3 + beta3 * sqrtg; 
     return CGAL::Bbox_3(ix.inf(),iy.inf(),iz.inf(),
 	                ix.sup(),iy.sup(),iz.sup());
+    */
   }
 
 };
