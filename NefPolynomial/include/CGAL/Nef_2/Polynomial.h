@@ -1995,6 +1995,13 @@ Polynomial<NT> Polynomial<NT>::gcd(
 
 } // namespace Nef
 
+
+using Nef::to_double;
+using Nef::sign;
+using Nef::is_finite;
+using Nef::is_valid;
+using Nef::gcd;
+
 CGAL_END_NAMESPACE
 
 
