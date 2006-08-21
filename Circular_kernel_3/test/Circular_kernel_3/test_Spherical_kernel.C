@@ -5,6 +5,7 @@
 #include <CGAL/Quotient.h>
 #include <CGAL/_test_sphere_predicates.h>
 #include <CGAL/_test_sphere_constructions.h>
+#include <CGAL/_test_sphere_compute.h>
 #include <CGAL/Polynomials_1_3.h>
 #include <CGAL/Polynomials_2_3.h>
 #include <CGAL/Polynomials_for_line_3.h>
@@ -18,5 +19,6 @@ int main()
   SK1 sk1;
   _test_spherical_kernel_predicates(sk1);
   _test_spherical_kernel_construct(sk1); 
+  _test_spherical_kernel_compute(sk1);
   return 0;
 }
