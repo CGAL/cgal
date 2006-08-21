@@ -1876,7 +1876,7 @@ Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/parameterize
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/parameterizers_class_hierarchy.png -text svneol=unset#image/png
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/uniform.eps -text svneol=unset#application/postscript
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/uniform.png -text svneol=unset#image/png
-Surface_mesh_parameterization/examples/Surface_mesh_parameterization/data/check_16_2048.bmp -text svneol=unset#image/bmp
+Surface_mesh_parameterization/examples/Surface_mesh_parameterization/data/check_64x64.bmp -text
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/data/holes.off -text svneol=unset#application/octet-stream
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/data/mannequin-devil.off -text svneol=unset#application/octet-stream
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/data/mask_cone.off -text svneol=unset#application/octet-stream
