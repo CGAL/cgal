@@ -2,7 +2,7 @@
 \section{Introduction}
 \label{mink_sec:intro}
 % ====================
-
+ 
 Given two sets $A,B \in \mathbb{R}^d$, their \emph{Minkowski sum},
 denoted by $A \oplus B$, is the set $\left\{ a + b ~|~ a \in
 A, b \in B \right\}$. Minkowski sum are used in many applications,
@@ -59,7 +59,7 @@ approaches:
 \item[Decomposition:]
 We decompose $P$ and $Q$ into convex sub-polygons, namely we obtain two
 sets of convex polygons $P_1, \ldots, P_k$ and $Q_1, \ldots, Q_\ell$ such
-that $\bigcup_{i = 1}{k}{P_i} = P$ and $\bigcup_{i = j}{\ell}{Q_j} = Q$.
+that $\bigcup_{i = 1}^{k}{P_i} = P$ and $\bigcup_{i = j}^{\ell}{Q_j} = Q$.
 We then calculate the pairwise sums $S_{ij} = P_i \oplus Q_j$ using the
 simple procedure described above, and compute the union $P \oplus Q =
 \bigcup_{ij}{S_{ij}}$.
@@ -78,16 +78,16 @@ boundaries. The {\em convolution} of these two polygons~\cite{grs-kfcg-83},
 denoted $P * Q$, is a collection of line segments of the form
 $[p_i + q_j, p_{i+1} + q_j]$,\footnote{Throughout this chapter, we increment
 or decrement an index of a vertex modulo the size of the polygon.}
-where the vector ${\mathbf p_i p_{i+1}}$
-lies between ${\mathbf q_{j-1} q_j}$ and ${\mathbf q_j
-q_{j+1}}$,\footnote{We say that a vector ${\mathbf v}$ lies between
+where the vector ${\mathbf{p_i p_{i+1}}}$
+lies between ${\mathbf{q_{j-1} q_j}}$ and ${\mathbf{q_j
+q_{j+1}}}$,\footnote{We say that a vector ${\mathbf v}$ lies between
 two vectors ${\mathbf u}$ and ${\mathbf w}$ if we reach ${\mathbf v}$ strictly
 before reaching ${\mathbf w}$ if we move all three vectors to the origin
 and rotate ${\mathbf u}$ counterclockwise. Note that this also covers
 the case where ${\mathbf u}$ has the same direction as ${\mathbf v}$.} and
 --- symmetrically --- of segments of the form $[p_i + q_j, p_i + q_{j+1}]$,
-where the vector ${\mathbf q_j q_{j+1}}$ lies between
-${\mathbf p_{i-1} p_i}$ and ${\mathbf p_i p_{i+1}}$.
+where the vector ${\mathbf{q_j q_{j+1}}}$ lies between
+${\mathbf{p_{i-1} p_i}}$ and ${\mathbf{p_i p_{i+1}}}$.
 
 The segments of the convolution form a number of closed (not
 necessarily simple) polygonal curves called \emph{convolution
@@ -387,7 +387,7 @@ $p_1 p_2$ by a vector whose length is $r$ that form an angle $\phi$ with the
 $x$-axis. We select two points $o'_1$ and $o'_2$ with rational coordinates
 on the two circles centered at $p_1$ and $p_2$, respectively. These points
 are selected such that if we denote the angle that the vector 
-${\mathbf p_j o_j}$
+${\mathbf{p_j o_j}}$
 forms with the $x$-axis by $\phi'_j$ (for $j = 1, 2$), we have
 $\phi'_1 < \phi < \phi'_2$.
 %
