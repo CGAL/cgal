@@ -398,6 +398,26 @@ Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.eps -text svneol=un
 Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.gif -text svneol=unset#image/gif
 Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.pdf -text svneol=unset#application/pdf
 Box_intersection_d/test/Box_intersection_d/benchmark.plot -text svneol=native#application/postscript
+Circular_kernel_3/demo/Circular_kernel_3/demo_circle -text
+Circular_kernel_3/demo/Circular_kernel_3/images/arrow_01_down.xpm -text
+Circular_kernel_3/demo/Circular_kernel_3/images/arrow_01_left.xpm -text
+Circular_kernel_3/demo/Circular_kernel_3/images/arrow_01_right.xpm -text
+Circular_kernel_3/demo/Circular_kernel_3/images/arrow_01_up.xpm -text
+Circular_kernel_3/demo/Circular_kernel_3/images/button_axis.gif -text
+Circular_kernel_3/demo/Circular_kernel_3/images/button_light.gif -text
+Circular_kernel_3/demo/Circular_kernel_3/images/button_line.gif -text
+Circular_kernel_3/demo/Circular_kernel_3/images/button_pivot.gif -text
+Circular_kernel_3/demo/Circular_kernel_3/images/button_solid.gif -text
+Circular_kernel_3/demo/Circular_kernel_3/images/button_solid.xpm -text
+Circular_kernel_3/demo/Circular_kernel_3/images/button_texture.gif -text
+Circular_kernel_3/demo/Circular_kernel_3/images/button_wire.gif -text
+Circular_kernel_3/demo/Circular_kernel_3/images/button_wire.xpm -text
+Circular_kernel_3/demo/Circular_kernel_3/images/d_solid_b.gif -text
+Circular_kernel_3/demo/Circular_kernel_3/images/d_solid_b.xpm -text
+Circular_kernel_3/demo/Circular_kernel_3/images/d_wire_b.gif -text
+Circular_kernel_3/demo/Circular_kernel_3/images/d_wire_b.xpm -text
+Circular_kernel_3/demo/Circular_kernel_3/images/zoom_in.xpm -text
+Circular_kernel_3/demo/Circular_kernel_3/images/zoom_out.xpm -text
 Circular_kernel_3/examples/Circular_kernel_3/example_Circular_kernel_3 -text
 Convex_hull_2/demo/Convex_hull_2/help/index.html svneol=native#text/html
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.eps -text svneol=unset#application/postscript

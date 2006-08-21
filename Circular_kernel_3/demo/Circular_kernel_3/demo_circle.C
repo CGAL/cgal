@@ -1,0 +1,27 @@
+
+#include "demo_circle.moc"
+
+int main (int argc, char** argv) {
+	QApplication app(argc, argv);
+	MyWindow *windows = new MyWindow(1100, 1100);
+
+	Sphere_3 laSphere(Point_3(0.,0.,0.), 1.5*1.5);
+	Plane_3 plan;
+	plan = Plane_3(Point_3(1., -1.,  1.), Point_3(1.,  1.,  0.), Point_3(1., -1., -1.));
+	windows->add_cercle(Circle_3(laSphere, plan), 100);
+	plan = Plane_3(Point_3(-1., 1.2,  1.), Point_3( 1., 1.2, -1.), Point_3( 1., 1.2,  1.));
+	windows->add_cercle(Circle_3(laSphere, plan), 100);
+	plan = Plane_3(Point_3(-1., -1.,  1.), Point_3( 1., -1.,  1.), Point_3( 1., -1., -1.));
+	windows->add_cercle(Circle_3(laSphere, plan), 100);
+	plan = Plane_3(Point_3(-1.,  1.,  0.), Point_3( 1., -1.,  1.), Point_3( 1., -1., -1.));
+	windows->add_cercle(Circle_3(laSphere, plan), 100);
+	plan = Plane_3(Point_3(-1., -1.,  1.), Point_3(-1., -1.,  0.), Point_3(-1.,  1., -1.));
+	windows->add_cercle(Circle_3(laSphere, plan), 100);
+	plan = Plane_3(Point_3( 1.,  0.,  0.), Point_3(-1.,  1.,  0.), Point_3(-1., -1.,  0.));
+	windows->add_cercle(Circle_3(laSphere, plan), 100);
+	
+	app.setMainWidget(windows);
+	windows->show();
+	return app.exec();
+}
+
