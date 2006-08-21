@@ -51,6 +51,11 @@
   CGAL_Spherical_Kernel_cons(Intersect_3, intersect_3_object)
   CGAL_Spherical_Kernel_cons(Construct_bbox_3, construct_bbox_3_object)
   CGAL_Spherical_Kernel_cons(Split_3, split_3_object)
+  CGAL_Spherical_Kernel_cons(Compute_area_divided_by_pi, compute_area_divided_by_pi_object)
+  CGAL_Spherical_Kernel_cons(Compute_squared_length_divided_by_pi_square, compute_squared_length_divided_by_pi_square_object)
+  CGAL_Spherical_Kernel_cons(Compute_approximate_area, compute_approximate_area_object)
+  CGAL_Spherical_Kernel_cons(Compute_approximate_squared_length, compute_approximate_squared_length_object)
+  CGAL_Spherical_Kernel_cons(Compute_approximate_angle, compute_approximate_angle_object)
 
   CGAL_Spherical_Kernel_pred(Compare_x_3, compare_x_3_object)
   CGAL_Spherical_Kernel_pred(Compare_y_3, compare_y_3_object)
