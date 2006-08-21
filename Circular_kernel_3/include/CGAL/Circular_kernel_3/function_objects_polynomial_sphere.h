@@ -1421,6 +1421,101 @@ template <class SK>
 
   };
 
+template <class SK>
+  class Compute_area_divided_by_pi
+  {
+    typedef typename SK::Circle_3                  Circle_3;
+    typedef typename SK::FT                        FT;
+
+  public:
+
+    typedef const FT result_type;
+    typedef Arity_tag<1> Arity;
+
+    result_type operator() (const Circle_3 & c) const
+    {
+      return c.rep().area_divided_by_pi();
+    }
+
+  };
+
+template <class SK>
+  class Compute_squared_length_divided_by_pi_square
+  {
+    typedef typename SK::Circle_3                  Circle_3;
+    typedef typename SK::FT                        FT;
+
+  public:
+
+    typedef const FT result_type;
+    typedef Arity_tag<1> Arity;
+
+    result_type operator() (const Circle_3 & c) const
+    {
+      return c.rep().squared_length_divided_by_pi_square();
+    }
+
+  };
+
+template <class SK>
+  class Compute_approximate_area
+  {
+    typedef typename SK::Circle_3                  Circle_3;
+    typedef typename SK::FT                        FT;
+
+  public:
+
+    typedef const double result_type;
+    typedef Arity_tag<1> Arity;
+
+    result_type operator() (const Circle_3 & c) const
+    {
+      return c.rep().approximate_area();
+    }
+
+  };
+
+template <class SK>
+  class Compute_approximate_squared_length
+  {
+    typedef typename SK::Circle_3                  Circle_3;
+    typedef typename SK::Circular_arc_3            Circular_arc_3;
+    typedef typename SK::FT                        FT;
+
+  public:
+
+    typedef const double result_type;
+    typedef Arity_tag<1> Arity;
+
+    result_type operator() (const Circle_3 & c) const
+    {
+      return c.rep().approximate_squared_length();
+    }
+
+    result_type operator() (const Circular_arc_3 & c) const
+    {
+      return c.rep().approximate_squared_length();
+    }
+
+  };
+
+template <class SK>
+  class Compute_approximate_angle
+  {
+    typedef typename SK::Circular_arc_3            Circular_arc_3;
+
+  public:
+
+    typedef const double result_type;
+    typedef Arity_tag<1> Arity;
+
+    result_type operator() (const Circular_arc_3 & c) const
+    {
+      return c.rep().approximate_angle();
+    }
+
+  };
+
 } // namespace SphericalFunctors
 } // namespace CGAL
 
