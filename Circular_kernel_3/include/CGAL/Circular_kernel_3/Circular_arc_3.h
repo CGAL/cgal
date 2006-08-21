@@ -17,6 +17,7 @@
 
 #include <CGAL/utility.h>
 #include <CGAL/Circular_kernel_3/internal_functions_on_circular_arc_3.h>
+#include <CGAL/Exact_circular_kernel.h>
 
 namespace CGAL {
   namespace CGALi{
@@ -53,6 +54,8 @@ namespace CGAL {
       // if N.x != 0 then N.x > 0
       // else if N.y != 0 -> N.y > 0
       // else N.z > 0
+      // Interesting thing is that if _sign_cross_product is negative
+      // the arc is the bigger one (angle > pi)
       Circular_arc_3(const Circle_3 &c, 
                      const Circular_arc_point_3 &s,
                      const Circular_arc_point_3 &t) 
@@ -216,6 +219,31 @@ namespace CGAL {
         return _sign_cross_product;
       }
 
+      static double pi;
+
+      const double approximate_angle() const {
+        if(is_full()) return 2.0*pi;
+        const double x1 = to_double(source().x());
+        const double y1 = to_double(source().y());
+        const double z1 = to_double(source().z());
+        const double x2 = to_double(target().x());
+        const double y2 = to_double(target().y());
+        const double z2 = to_double(target().z());
+        const double dx = x2-x1;
+        const double dy = y2-y1;
+        const double dz = z2-z1;
+        const double d_sq = dx*dx + dy*dy + dz*dz;
+        const double r_sq = to_double(squared_radius());
+        const double ap_ang = 2.0 * std::asin(0.5 * std::sqrt(d_sq / r_sq));
+        if(sign_cross_product() == NEGATIVE) return 2.0 * pi - ap_ang;
+        else return ap_ang;
+      }
+
+      const double approximate_squared_length() const {
+        const double ang = approximate_angle();
+        return ang * ang * to_double(squared_radius());
+      }
+
       // It is of course possible to increase the precision
       // maybe it will be done after
       const CGAL::Bbox_3 bbox() const {
@@ -228,12 +256,15 @@ namespace CGAL {
     };
 
     template < class SK >
+    double Circular_arc_3<SK>::pi = (std::acos(-1));
+
+    template < class SK >
     CGAL_KERNEL_INLINE
     bool
     Circular_arc_3<SK>::operator==(const Circular_arc_3<SK> &t) const
     {
       if (CGAL::identical(base, t.base))
-        return true;
+        return true;		
       return CGAL::SphericalFunctors::non_oriented_equal<SK>(*this, t);
     }
 
