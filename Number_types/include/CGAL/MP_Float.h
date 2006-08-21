@@ -496,6 +496,10 @@ exact_division_internal(MP_Float n, MP_Float d, bool & divides)
 {
   CGAL_assertion(d != 0);
 
+  // This is necessary for avoiding the excess precision of the x86 FPU
+  // in the truncating code below.
+  Protect_FPU_rounding<true> p(CGAL_FE_TONEAREST);
+
   typedef MP_Float::exponent_type  exponent_type;
   // Rescale them to have to_double() values with reasonnable exponents.
   exponent_type scale_n = n.find_scale();

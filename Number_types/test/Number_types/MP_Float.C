@@ -24,7 +24,7 @@ void test_exact_division()
 
   MPF tmp = exact_division(MPF(0), MPF(1));
 
-  for (int i = 0; i < 1000000; ++i) {
+  for (int i = 0; i < 100000; ++i) {
     MPF d = CGAL::default_random.get_double();
     MPF n = CGAL::default_random.get_double();
 
