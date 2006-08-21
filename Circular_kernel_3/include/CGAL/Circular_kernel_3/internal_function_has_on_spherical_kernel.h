@@ -36,7 +36,7 @@ namespace CGAL {
       typedef typename SK::AK AK;
       typedef typename SK::Polynomial_for_spheres_2_3 Equation;
       Equation equation = get_equation<SK>(a);
-      return (AK().sign_at_object()(equation,p.coordinates()) == ZERO);
+      return (AK().sign_at_object()(equation,p.rep().coordinates()) == ZERO);
     }
 
     template <class SK>
@@ -57,7 +57,7 @@ namespace CGAL {
       typedef typename SK::AK AK;
       typedef typename SK::Polynomial_1_3 Equation;
       Equation equation = get_equation<SK>(a);
-      return (AK().sign_at_object()(equation,p.coordinates()) == ZERO);
+      return (AK().sign_at_object()(equation,p.rep().coordinates()) == ZERO);
     }
 
     template <class SK>
@@ -78,7 +78,7 @@ namespace CGAL {
       typedef typename SK::AK AK;
       typedef typename SK::Polynomials_for_line_3 Equation;
       Equation equation = get_equation<SK>(a);
-      return p.coordinates().is_on_line(equation);
+      return p.rep().coordinates().is_on_line(equation);
     }
 
     template <class SK>
