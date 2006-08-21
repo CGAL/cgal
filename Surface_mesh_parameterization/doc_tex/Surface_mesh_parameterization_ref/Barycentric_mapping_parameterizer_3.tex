@@ -23,11 +23,11 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-The class \ccc{Barycentric_mapping_parameterizer_3} implements Tutte Barycentric Mapping algorithm \cite{t-hdg-63}. This algorithm is also called {\em Tutte Uniform Weights} by other authors.
+The class \ccc{Barycentric_mapping_parameterizer_3} implements Tutte Barycentric Mapping algorithm [Tut63]. This algorithm is also called {\em Tutte Uniform Weights} by other authors.
 
 One-to-one mapping is guaranteed if the surface's border is mapped to a convex polygon.
 
-This class is a Strategy \cite{cgal:ghjv-dpero-95} called by the main parameterization algorithm \ccc{Fixed_border_parameterizer_3::parameterize}(). \ccc{Barycentric_mapping_parameterizer_3}:\begin{itemize}
+This class is a Strategy [GHJV95] called by the main parameterization algorithm \ccc{Fixed_border_parameterizer_3::parameterize}(). \ccc{Barycentric_mapping_parameterizer_3}:\begin{itemize}
 \item provides default \ccc{BorderParameterizer_3} and \ccc{SparseLinearAlgebraTraits_d} template parameters that make sense.\item implements \ccc{compute_w_ij}() to compute \ccc{w_ij} = (i,j) coefficient of matrix A for j neighbor vertex of i based on Tutte Barycentric Mapping method.\item implements an optimized version of \ccc{is_one_to_one_mapping}().\end{itemize}
 
 %END-AUTO(\ccDefinition)
@@ -50,7 +50,7 @@ Model of the \ccc{ParameterizerTraits_3} concept.
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccHeading{Design Pattern})
 
-\ccc{Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, ...>} class is a Strategy \cite{cgal:ghjv-dpero-95}: it implements a strategy of surface parameterization for models of \ccc{ParameterizationMesh_3}.
+\ccc{Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, ...>} class is a Strategy [GHJV95]: it implements a strategy of surface parameterization for models of \ccc{ParameterizationMesh_3}.
 
 %END-AUTO(\ccHeading{Design Pattern})
 

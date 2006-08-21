@@ -27,7 +27,7 @@ The class \ccc{Fixed_border_parameterizer_3} is the base class of fixed border p
 
 One-to-one mapping is guaranteed if surface's border is mapped onto a convex polygon.
 
-This class is a pure virtual class, thus cannot be instantiated. Anyway, it implements most of the parameterization algorithm parameterize(). Subclasses are Strategies \cite{cgal:ghjv-dpero-95} that modify the behavior of this algorithm:\begin{itemize}
+This class is a pure virtual class, thus cannot be instantiated. Anyway, it implements most of the parameterization algorithm parameterize(). Subclasses are Strategies [GHJV95] that modify the behavior of this algorithm:\begin{itemize}
 \item They provide \ccc{BorderParameterizer_3} and \ccc{SparseLinearAlgebraTraits_d} template parameters that make sense.\item They implement \ccc{compute_w_ij}() to compute \ccc{w_ij} = (i, j) coefficient of matrix A for j neighbor vertex of i.\item They may implement an optimized version of \ccc{is_one_to_one_mapping}().\end{itemize}
 
 
@@ -54,7 +54,7 @@ Model of the \ccc{ParameterizerTraits_3} concept (although you cannot instantiat
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccHeading{Design Pattern})
 
-\ccc{Fixed_border_parameterizer_3<ParameterizationMesh_3, ...>} class is a Strategy \cite{cgal:ghjv-dpero-95}: it implements (part of) a strategy of surface parameterization for models of \ccc{ParameterizationMesh_3}.
+\ccc{Fixed_border_parameterizer_3<ParameterizationMesh_3, ...>} class is a Strategy [GHJV95]: it implements (part of) a strategy of surface parameterization for models of \ccc{ParameterizationMesh_3}.
 
 %END-AUTO(\ccHeading{Design Pattern})
 
