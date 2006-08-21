@@ -26,7 +26,7 @@
 #include <CGAL/Root_of_2_fwd.h>
 #include <CGAL/Root_of_traits.h>
 #include <CGAL/NT_converter.h>
-#include <CGAL/Gmpq.h>
+#include <CGAL/Kernel/mpl.h>
 
 #include <CGAL/enum.h>
 #include <CGAL/tags.h>
