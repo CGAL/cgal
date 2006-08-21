@@ -25,12 +25,12 @@ struct Util {
       int boxNum, dim;
     
       std::fscanf(infile, "%d %d\n", &numBoxes, &numDim);
-      std::vector< int > min( numDim ), max( numDim );
+      std::vector< int > minc( numDim ), maxc( numDim );
       /* Read boxes */
       for(boxNum = 0; boxNum < numBoxes; boxNum++) {
           for(dim = 0; dim < numDim; dim++)
-              std::fscanf( infile, "[%d, %d) ", &min[dim], &max[dim] );
-          boxes.push_back( Box( &min[0], &max[0] ) );
+              std::fscanf( infile, "[%d, %d) ", &minc[dim], &maxc[dim] );
+          boxes.push_back( Box( &minc[0], &maxc[0] ) );
           std::fscanf(infile, "\n");
       }
     }
