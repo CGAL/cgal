@@ -50,7 +50,7 @@ class Simple_interval_root
     POS_INF, NEG_INF,
     EVEN_CONST, CONST, UNINITIALIZED} Type;*/
 
-  typedef enum Fields {UP=1, EVEN=2, INF=4, CONST=8}
+  typedef enum Fields {UP=1, EVEN=2, INF=4, CONST_VAL=8}
     Type_fields;
   typedef unsigned char Type;
   typedef typename Traits::Function Polynomial;
@@ -65,7 +65,7 @@ public:
   /*template <class RNT>
     Simple_interval_root(const RNT &nt): ii_(nt){
     bool is_this_used;
-    set_type(CONST);
+    set_type(CONST_VAL);
     audit();
     compute_approximation();
     }*/
@@ -82,7 +82,7 @@ public:
       }
     }
     else {
-      set_type(CONST);
+      set_type(CONST_VAL);
       ii_= Interval(nt);
     }
     audit();
@@ -96,8 +96,8 @@ public:
 
   //! represent a rational root
   Simple_interval_root(const NT &nt, bool is_odd, Traits k): ii_(nt),  kernel_(k) {
-    if (is_odd) set_type(CONST);
-    else set_type(CONST | EVEN);
+    if (is_odd) set_type(CONST_VAL);
+    else set_type(CONST_VAL | EVEN);
     audit();
     compute_approximation();
   }
@@ -105,8 +105,8 @@ public:
   //! Represent a rational root, another way. This needs to be public since  intervals can be opaque
   Simple_interval_root(const Interval &nt, bool is_odd=true, Traits k= Traits()): ii_(nt),
 										  kernel_(k) {
-    if (is_odd) set_type(CONST);
-    else set_type(CONST | EVEN);
+    if (is_odd) set_type(CONST_VAL);
+    else set_type(CONST_VAL | EVEN);
     compute_approximation();
     audit();
   }
@@ -297,7 +297,7 @@ public:
   //! Return true if the root is known to be a rational number
   bool is_rational() const
   {
-    return type_&CONST;
+    return type_&CONST_VAL;
   }
   NT to_rational() const
   {
@@ -397,7 +397,7 @@ protected:
   void set_is_rational(const Interval &i) const
   {
     set_interval(i);
-    set_type(CONST);
+    set_type(CONST_VAL);
     function_=Polynomial();
   }
 
@@ -532,7 +532,7 @@ protected:
     }
   }
 
-  //! Compare where this has type CONST
+  //! Compare where this has type CONST_VAL
   Comparison_result compare_with_rational(const This &o) const
   {
     //std::cout << "Comparing " << *this << " and " << o << std::endl;
@@ -721,15 +721,15 @@ protected:
     return NEG_INF;
     case NEG_INF:
     return POS_INF;
-    case CONST:
-    return CONST;
+    case CONST_VAL:
+    return CONST_VAL;
     case EVEN_UP:
     return EVEN_DOWN;
     case EVEN_DOWN:
     return EVEN_UP;
     default:
     Polynomial_assertion(0);
-    return CONST;
+    return CONST_VAL;
     }
     }*/
 
