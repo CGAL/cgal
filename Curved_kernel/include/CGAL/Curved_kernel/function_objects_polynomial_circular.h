@@ -1059,11 +1059,62 @@ template < class CK >
 
   };
 
+  template <class CK>
+  class Bounded_side_2
+    : public CK::Linear_kernel::Bounded_side_2
+  {
+    typedef typename CK::Circle_2              Circle_2;
+    typedef typename CK::Circular_arc_point_2  Circular_arc_point_2;
 
+  public:
+    typedef typename CK::Linear_kernel::Bounded_side    result_type;
+    typedef Arity_tag< 2 >              Arity;
 
+    using CK::Linear_kernel::Bounded_side_2::operator();
 
+    result_type
+    operator()(const Circle_2& c, const Circular_arc_point_2& p) const
+    { return bounded_side<CK>(c,p); }
 
+  };
 
+  template <class CK>
+  class Has_on_bounded_side_2
+    : public CK::Linear_kernel::Has_on_bounded_side_2
+  {
+    typedef typename CK::Circle_2              Circle_2;
+    typedef typename CK::Circular_arc_point_2  Circular_arc_point_2;
+
+  public:
+    typedef bool result_type;
+    typedef Arity_tag< 2 >               Arity;
+
+    using CK::Linear_kernel::Has_on_bounded_side_2::operator();
+
+    result_type
+    operator()(const Circle_2& c, const Circular_arc_point_2& p) const
+    { return CK().bounded_side_2_object()(c,p) == ON_BOUNDED_SIDE; }
+
+  };
+
+  template <class CK>
+  class Has_on_unbounded_side_2
+    : public CK::Linear_kernel::Has_on_unbounded_side_2
+  {
+    typedef typename CK::Circle_2              Circle_2;
+    typedef typename CK::Circular_arc_point_2  Circular_arc_point_2;
+
+  public:
+    typedef bool result_type;
+    typedef Arity_tag< 2 >               Arity;
+
+    using CK::Linear_kernel::Has_on_unbounded_side_2::operator();
+
+    result_type
+    operator()(const Circle_2& c, const Circular_arc_point_2& p) const
+    { return CK().bounded_side_2_object()(c,p) == ON_UNBOUNDED_SIDE; }
+
+  };
 
 } // namespace CircularFunctors
 } // namespace CGAL
