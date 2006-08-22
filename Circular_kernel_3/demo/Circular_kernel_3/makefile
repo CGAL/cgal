@@ -14,11 +14,9 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-           -I/user/pmachado/home/CGAL_I/include \
            -I../../include\
-           -I../../../Algebraic_kernel_for_spheres/include \
-	   -I/user/pmachado/home/freeglut-2.4.0/include \
-	   -Winline \
+	       -I/user/pmachado/home/freeglut-2.4.0/include \
+	       -Winline \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
 
