@@ -101,13 +101,13 @@ protected:
   
   static std::allocator<Segment_tree_node_t> alloc;
   
-  C_Interface interface;
+  C_Interface m_interface;
   bool is_built;
 
 
   bool is_less_equal(const Key& x, const Key&  y) const
   {
-    return (!interface.comp(y,x));
+    return (!m_interface.comp(y,x));
   }   
   
   static link_type left(link_type x) { 
@@ -133,9 +133,9 @@ protected:
   // returns true, if the object lies inside of win
   bool is_inside( C_Window const &win,  C_Data const& object) const
   {
-    if(is_less_equal(interface.get_left_win(win), interface.get_left(object)) 
-       && is_less_equal(interface.get_right(object),
-			interface.get_right_win(win)))
+    if(is_less_equal(m_interface.get_left_win(win), m_interface.get_left(object)) 
+       && is_less_equal(m_interface.get_right(object),
+			m_interface.get_right_win(win)))
     {
       return sublayer_tree->is_inside(win,object);
     }
@@ -148,15 +148,15 @@ protected:
 
   void insert_segment(link_type v,  C_Data& element)
   {
-    if ((is_less_equal(interface.get_left(element), v->left_key) && 
-	 is_less_equal(v->right_key, interface.get_right(element)))
+    if ((is_less_equal(m_interface.get_left(element), v->left_key) && 
+	 is_less_equal(v->right_key, m_interface.get_right(element)))
 	|| left(v)==TREE_BASE_NULL)
       v->objects.push_back( element);
     else
      {
-       if (!is_less_equal((*left(v)).right_key, interface.get_left(element)))
+       if (!is_less_equal((*left(v)).right_key, m_interface.get_left(element)))
 	 insert_segment(left(v), element);
-       if (!is_less_equal(interface.get_right(element), (*right(v)).left_key))
+       if (!is_less_equal(m_interface.get_right(element), (*right(v)).left_key))
 	 insert_segment(right(v), element);
      }	
    }
@@ -301,8 +301,8 @@ protected:
 		     A result,
 		     link_type v)
    {
-     if(is_less_equal(interface.get_right_win(win), v->left_key) 
-	|| is_less_equal(v->right_key,interface.get_left_win(win)))
+     if(is_less_equal(m_interface.get_right_win(win), v->left_key) 
+	|| is_less_equal(v->right_key,m_interface.get_left_win(win)))
        return result;
      if (v->sublayer!=0 && (!v->sublayer->is_anchor())) //(tree_base_type *)
      {
@@ -315,12 +315,12 @@ protected:
        typename std::list<  C_Data>::iterator tmp = tmp_result.begin();
        while(tmp!=tmp_result.end())
        {
-	 if(is_less_equal(interface.get_left(*tmp), 
-			  interface.get_left_win(win)))
+	 if(is_less_equal(m_interface.get_left(*tmp), 
+			  m_interface.get_left_win(win)))
 	 {
-	   if(is_less_equal(interface.get_right_win(win), 
-			    interface.get_right(*tmp)))
-	     if(is_less_equal(v->left_key, interface.get_left_win(win)))
+	   if(is_less_equal(m_interface.get_right_win(win), 
+			    m_interface.get_right(*tmp)))
+	     if(is_less_equal(v->left_key, m_interface.get_left_win(win)))
 	       *result++=(*tmp);
 	 }
 	 tmp++;
@@ -333,12 +333,12 @@ protected:
 	 typename std::list< C_Data>::iterator j=v->objects.begin();
 	 while (j!= v->objects.end())
 	 {
-	   if(is_less_equal(interface.get_left(*j), 
-			    interface.get_left_win(win)))
+	   if(is_less_equal(m_interface.get_left(*j), 
+			    m_interface.get_left_win(win)))
 	   {
-	     if(is_less_equal(interface.get_right_win(win), 
-			      interface.get_right(*j)))
-	       if(is_less_equal(v->left_key, interface.get_left_win(win)))
+	     if(is_less_equal(m_interface.get_right_win(win), 
+			      m_interface.get_right(*j)))
+	       if(is_less_equal(v->left_key, m_interface.get_left_win(win)))
 		 *result++=(*j);
 	   }
 	   j++;
@@ -361,8 +361,8 @@ protected:
 		  A result,
 		  const link_type& v) // af: was not const
    {
-     if(is_less_equal(interface.get_right_win(win), v->left_key) || 
-	is_less_equal(v->right_key,interface.get_left_win(win)))
+     if(is_less_equal(m_interface.get_right_win(win), v->left_key) || 
+	is_less_equal(v->right_key,m_interface.get_left_win(win)))
        return result;
      if (v->sublayer!=0 && (!v->sublayer->is_anchor())) //(tree_base_type *)
      {
@@ -375,16 +375,16 @@ protected:
        typename std::list< C_Data>::iterator tmp = tmp_result.begin();
        while(tmp!=tmp_result.end())
        {
-	 if(interface.comp(interface.get_left(*tmp), 
-			   interface.get_left_win(win)))
+	 if(m_interface.comp(m_interface.get_left(*tmp), 
+			   m_interface.get_left_win(win)))
 	 {
-	   if(is_less_equal(v->left_key, interface.get_left_win(win))){
+	   if(is_less_equal(v->left_key, m_interface.get_left_win(win))){
 	     *result++=(*tmp);
 	   }
 	 }
 	 else
 	 {
-	   if(is_less_equal(v->left_key,interface.get_left(*tmp))){
+	   if(is_less_equal(v->left_key,m_interface.get_left(*tmp))){
 	     *result++=(*tmp);
 	   }
 	 }
@@ -398,15 +398,15 @@ protected:
 	 typename std::list< C_Data>::iterator j=v->objects.begin();
 	 while (j!= v->objects.end())
 	 {
-	   if(interface.comp(interface.get_left(*j), interface.get_left_win(win)))
+	   if(m_interface.comp(m_interface.get_left(*j), m_interface.get_left_win(win)))
 	   {
-	     if(is_less_equal(v->left_key, interface.get_left_win(win)))
+	     if(is_less_equal(v->left_key, m_interface.get_left_win(win)))
 	     {
 	       *result++=(*j);
 	     }
 	   }
 	   else
-	     if(is_less_equal(v->left_key,interface.get_left(*j)))
+	     if(is_less_equal(v->left_key,m_interface.get_left(*j)))
 	     {
 	       *result++=(*j);
 	     }
@@ -445,14 +445,14 @@ protected:
       link_type parent_of_v = parent(v);
       while (j!= v->objects.end())
       {
-	if(!is_less_equal(interface.get_left(*j), v->left_key))
+	if(!is_less_equal(m_interface.get_left(*j), v->left_key))
 	  return false;
-	if(!is_less_equal( v->right_key, interface.get_right(*j)))
+	if(!is_less_equal( v->right_key, m_interface.get_right(*j)))
 	  return false;
 	if (parent_of_v != root())
-	  if((is_less_equal(interface.get_left(*j), parent_of_v->left_key))&& 
+	  if((is_less_equal(m_interface.get_left(*j), parent_of_v->left_key))&& 
 	     (is_less_equal( parent_of_v->right_key, 
-			     interface.get_right(*j))))
+			     m_interface.get_right(*j))))
 	    return false;
 	j++;
       }
@@ -525,16 +525,16 @@ public:
     std::vector<Key> keys(2* std::distance(first, last));
     while(count!=last)
     {
-      if (interface.comp(interface.get_left(*count),
-			 interface.get_right(*count)))
+      if (m_interface.comp(m_interface.get_left(*count),
+			 m_interface.get_right(*count)))
       { 
-	keys[n++]=interface.get_left(*count);
-	keys[n++]=interface.get_right(*count);
+	keys[n++]=m_interface.get_left(*count);
+	keys[n++]=m_interface.get_right(*count);
       }
       else
       {
-	CGAL_Tree_warning_msg(interface.comp(interface.get_left(*count),
-					     interface.get_right(*count)), 
+	CGAL_Tree_warning_msg(m_interface.comp(m_interface.get_left(*count),
+					     m_interface.get_right(*count)), 
 				  "invalid segment ignored");
       }
       count++;
@@ -545,15 +545,15 @@ public:
       is_built = false;
       return true;
     }
-    std::sort(keys.begin(), keys.end(), interface.comp);
+    std::sort(keys.begin(), keys.end(), m_interface.comp);
     std::vector<Key> keys2(2*n + 1);
     int m=0;
     int num=1;
     keys2[0]=keys[0];
     for(m=1;m<n;m++)
     {
-      if(interface.comp(keys[m],keys2[num-1])|| 
-	 interface.comp(keys2[num-1],keys[m]))
+      if(m_interface.comp(keys[m],keys2[num-1])|| 
+	 m_interface.comp(keys2[num-1],keys[m]))
       {
 	keys2[num++]=keys[m];
       }
@@ -578,8 +578,8 @@ public:
     link_type r = root();
     do
     {
-      if (interface.comp(interface.get_left(*current),
-			 interface.get_right(*current)))
+      if (m_interface.comp(m_interface.get_left(*current),
+			 m_interface.get_right(*current)))
 	insert_segment(r, *current);
     }while(++current!=last);
 
@@ -624,11 +624,11 @@ public:
   inline A window_query_impl( C_Window const &win, 
 			     A result,typename tbt::lbit * =0)
   {
-    if(is_less_equal(interface.get_right_win(win), 
-		     interface.get_left_win(win)))
+    if(is_less_equal(m_interface.get_right_win(win), 
+		     m_interface.get_left_win(win)))
     { 
-      CGAL_Tree_warning_msg(interface.comp(interface.get_right_win(win), 
-					       interface.get_left_win(win)),
+      CGAL_Tree_warning_msg(m_interface.comp(m_interface.get_right_win(win), 
+					       m_interface.get_left_win(win)),
 				"invalid window -- query ignored");
       return result;
     }
@@ -677,11 +677,11 @@ public:
   A enclosing_query_impl( C_Window const &win, 
 			  A result, typename tbt::lbit * =0)
   {
-    if(is_less_equal(interface.get_right_win(win), 
-		     interface.get_left_win(win)))
+    if(is_less_equal(m_interface.get_right_win(win), 
+		     m_interface.get_left_win(win)))
     { 
-      CGAL_Tree_warning_msg(interface.comp(interface.get_right_win(win), 
-					       interface.get_left_win(win)),
+      CGAL_Tree_warning_msg(m_interface.comp(m_interface.get_right_win(win), 
+					       m_interface.get_left_win(win)),
 				"invalid window -- query ignored");
       return result;
     }
