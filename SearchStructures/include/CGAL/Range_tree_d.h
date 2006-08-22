@@ -99,7 +99,7 @@ class Range_tree_d: public Tree_base< C_Data,  C_Window>
 protected:
   //  typedef Range_tree_d< C_Data,  C_Window,  C_Interface> rT_d;
   Tree_base<C_Data, C_Window> *sublayer_tree;
-  C_Interface interface;
+  C_Interface m_interface;
   int is_built;
 
  
@@ -136,7 +136,7 @@ protected:
 
   bool is_less_equal(const Key&  x, const Key&  y) const
   {
-    return (!interface.comp(y,x));
+    return (!m_interface.comp(y,x));
   }  
   
   // this tree is not a recursion anchor
@@ -145,10 +145,10 @@ protected:
   // returns true, if the object lies inside of win
   bool is_inside( C_Window const &win,  C_Data const& object) const
   {
-    if(is_less_equal(interface.get_left(win), interface.get_key(object)) 
-       && interface.comp(interface.get_key(object),interface.get_right(win)))
+    if(is_less_equal(m_interface.get_left(win), m_interface.get_key(object)) 
+       && m_interface.comp(m_interface.get_key(object),m_interface.get_right(win)))
    //half open
-//       && is_less_equal(interface.get_key(object),interface.get_right(win)))
+//       && is_less_equal(m_interface.get_key(object),m_interface.get_right(win)))
    //closed interval
     {
       return sublayer_tree->is_inside(win,object);
@@ -172,7 +172,7 @@ protected:
 
     while(current!=last)
     {
-      if (interface.comp(interface.get_key(*current),interface.get_key(*prev)))
+      if (m_interface.comp(m_interface.get_key(*current),m_interface.get_key(*prev)))
 	startpoints.push_back(current);
       prev = current++;
     }
@@ -190,7 +190,7 @@ protected:
 	  current_last = last;
 	tmp_startpoints.push_back(current_first);
 	std::inplace_merge(current_first, current_middle, current_last, 
-		      interface.key_comp);
+		      m_interface.key_comp);
       }
       if(startpoints.size()>0)
       {
@@ -223,13 +223,13 @@ protected:
       sublevel_first = current;
 
       link_type  vleft = new Range_tree_node2( 0, 0,
-                                  (*current), interface.get_key(*current) ); 
+                                  (*current), m_interface.get_key(*current) ); 
       //CGAL_NIL CGAL_NIL first two arguments
       CGAL_Tree_assertion( vleft != 0);
 
       ++current;
       link_type  vright = new Range_tree_node2( 0,0,
-                                  (*current), interface.get_key(*current) ); 
+                                  (*current), m_interface.get_key(*current) ); 
       //CGAL_NIL CGAL_NIL first two arguments
       CGAL_Tree_assertion( vright != 0);
       current++;
@@ -261,7 +261,7 @@ protected:
       {
 	sublevel_first = current;
 	link_type vright = new Range_tree_node2( 0, 0,
-	                           (*current), interface.get_key(*current) );
+	                           (*current), m_interface.get_key(*current) );
 	//CGAL_NIL CGAL_NIL first two arguments
         CGAL_Tree_assertion( vright != 0); //CGAL_NIL
 	current++;
@@ -318,11 +318,11 @@ protected:
 
     while(v->left_link!=0)
     {
-//      if(interface.comp(interface.get_right(key), v->key))
-      if(is_less_equal(interface.get_right(key), v->key))
+//      if(m_interface.comp(m_interface.get_right(key), v->key))
+      if(is_less_equal(m_interface.get_right(key), v->key))
 	v = left(v);
       else 
-	if(interface.comp(v->key, interface.get_left(key)))
+	if(m_interface.comp(v->key, m_interface.get_left(key)))
 	  v = right(v);
 	else
 	  break;
@@ -361,8 +361,8 @@ protected:
 	return false;
       if(!is_valid(right(v), leftmost_child_r, rightmost_child_r))
 	return false;
-      if(interface.comp(v->key, rightmost_child_l->key) || 
-	 interface.comp(rightmost_child_l->key, v->key))
+      if(m_interface.comp(v->key, rightmost_child_l->key) || 
+	 m_interface.comp(rightmost_child_l->key, v->key))
 	return false;
       rightmost_child = rightmost_child_r;
       leftmost_child = leftmost_child_l;
@@ -503,7 +503,7 @@ public:
   inline  
   X window_query_impl( C_Window const &win, X result)
   {
-    if(is_less_equal(interface.get_right(win), interface.get_left(win)))
+    if(is_less_equal(m_interface.get_right(win), m_interface.get_left(win)))
        return result;
     if(root()==0)
       return result;
@@ -519,7 +519,7 @@ public:
 
       while(left(v)!=0)
       {
-	if(is_less_equal(interface.get_left(win),v->key))
+	if(is_less_equal(m_interface.get_left(win),v->key))
 	{
 	  link_type w = right(v);
 	  if(left(w)!=0)
@@ -543,8 +543,8 @@ public:
       v = right(split_node);
       while(right(v)!=0)
       {
-//	if(is_less_equal(v->key, interface.get_right(win))) closed interval
-	if(interface.comp(v->key, interface.get_right(win))) 
+//	if(is_less_equal(v->key, m_interface.get_right(win))) closed interval
+	if(m_interface.comp(v->key, m_interface.get_right(win))) 
 	  //half open interval
 	{
 	  if(left(left(v))!=0)
