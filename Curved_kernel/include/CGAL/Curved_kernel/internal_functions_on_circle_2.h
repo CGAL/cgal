@@ -103,6 +103,20 @@ namespace CircularFunctors {
            (c1.center() == c2.center());
   }
 
+  template < class CK >
+  inline
+  typename CK::Linear_kernel::Bounded_side
+  bounded_side(const typename CK::Circle_2 &c,
+               const typename CK::Circular_arc_point_2 &p) {
+    typedef typename CK::AK AK;
+    typedef typename CK::Polynomial_for_circles_2_2 Equation;
+    Equation equation = get_equation<CK>(c);
+    Sign sign = AK().sign_at_object()(equation,p.rep().coordinates());
+    if(sign == NEGATIVE) return ON_BOUNDED_SIDE;
+    else if(sign == POSITIVE) return ON_UNBOUNDED_SIDE;
+    else return ON_BOUNDARY;
+  }
+
   template< class CK, class OutputIterator>
   OutputIterator
   intersect_2( const typename CK::Circle_2 & c1,
