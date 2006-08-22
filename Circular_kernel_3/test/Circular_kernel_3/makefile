@@ -14,14 +14,13 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
+           -g \
            -I../../include\
            -I../../../Algebraic_kernel_for_spheres/include \
            -Iinclude\
-           -g \
-	   $(TESTSUITE_CXXFLAGS) \
+	       $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
-           -Iinclude \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
            # -I../../../synaps \
 
