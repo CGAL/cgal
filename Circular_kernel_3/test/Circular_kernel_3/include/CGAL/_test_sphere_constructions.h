@@ -1908,7 +1908,6 @@ void _test_construct_radical_plane(SK sk) {
       }
     }
   }
-
 }
 
 template <class SK>
