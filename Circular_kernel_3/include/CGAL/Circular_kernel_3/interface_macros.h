@@ -48,6 +48,7 @@
   CGAL_Spherical_Kernel_cons(Construct_circular_target_vertex_3, construct_circular_target_vertex_3_object)
   CGAL_Spherical_Kernel_cons(Construct_supporting_line_3, construct_supporting_line_3_object)
   CGAL_Spherical_Kernel_cons(Construct_supporting_circle_3, construct_supporting_circle_3_object)
+  CGAL_Spherical_Kernel_cons(Construct_radical_plane_3, construct_radical_plane_3_object)
   CGAL_Spherical_Kernel_cons(Intersect_3, intersect_3_object)
   CGAL_Spherical_Kernel_cons(Construct_bbox_3, construct_bbox_3_object)
   CGAL_Spherical_Kernel_cons(Split_3, split_3_object)
