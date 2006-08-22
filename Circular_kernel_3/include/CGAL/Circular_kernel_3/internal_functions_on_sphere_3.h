@@ -76,6 +76,35 @@ namespace CGAL {
 
     template < class SK >
     inline
+    typename SK::Linear_kernel::Bounded_side
+    bounded_side(const typename SK::Sphere_3 &s,
+                 const typename SK::Circular_arc_point_3 &p) {
+      typedef typename SK::AK AK;
+      typedef typename SK::Polynomial_for_spheres_2_3 Equation;
+      Equation equation = get_equation<SK>(s);
+      Sign sign = AK().sign_at_object()(equation,p.rep().coordinates());
+      if(sign == NEGATIVE) return ON_BOUNDED_SIDE;
+      else if(sign == POSITIVE) return ON_UNBOUNDED_SIDE;
+      else return ON_BOUNDARY;
+    }
+
+    template < class SK >
+    inline
+    typename SK::Linear_kernel::Bounded_side
+    bounded_side(const typename SK::Circle_3 &c,
+                 const typename SK::Circular_arc_point_3 &p) {
+      typedef typename SK::AK AK;
+      typedef typename SK::Polynomial_for_spheres_2_3 Equation;
+      CGAL_kernel_assertion(SK().has_on_3_object()(c.supporting_plane(),p));
+      Equation equation = get_equation<SK>(c.diametral_sphere());
+      Sign sign = AK().sign_at_object()(equation,p.rep().coordinates());
+      if(sign == NEGATIVE) return ON_BOUNDED_SIDE;
+      else if(sign == POSITIVE) return ON_UNBOUNDED_SIDE;
+      else return ON_BOUNDARY;
+    }
+
+    template < class SK >
+    inline
     bool
     non_oriented_equal(const typename SK::Sphere_3 & s1, 
                        const typename SK::Sphere_3 & s2) {
