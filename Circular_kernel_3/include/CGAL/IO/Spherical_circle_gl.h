@@ -28,7 +28,7 @@
 #define VECTOR_LENGTH(v)          sqrt((v.x()*v.x())+(v.y()*v.y())+(v.z()*v.z()))
 
 /**
- * Fonction dessinant le contour du patch de sphere passe en parametre avec la precision voulue.
+ * Fonction dessinant le contour du cercle 3D passe en parametre avec la precision voulue.
  */
 template <class SK>
 void dessiner_spherical_circle (const typename SK::Circle_3& circle, int precision) {
