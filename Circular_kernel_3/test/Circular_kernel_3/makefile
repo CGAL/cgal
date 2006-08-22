@@ -16,7 +16,6 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = \
            -g \
            -I../../include\
-           -I../../../Algebraic_kernel_for_spheres/include \
            -Iinclude\
 	       $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
