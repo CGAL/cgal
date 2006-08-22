@@ -1818,6 +1818,100 @@ void _test_split_construct(SK sk) {
 }
 
 template <class SK>
+void _test_construct_radical_plane(SK sk) {
+  typedef typename SK::RT                               RT;
+  typedef typename SK::FT                               FT;
+  typedef typename SK::Root_of_2                        Root_of_2;
+  typedef typename SK::Circular_arc_point_3             Circular_arc_point_3;
+  typedef typename SK::Point_3                          Point_3;
+  typedef typename SK::Line_3                           Line_3;
+  typedef typename SK::Plane_3                          Plane_3;
+  typedef typename SK::Sphere_3                         Sphere_3;
+  typedef typename SK::Circle_3                         Circle_3;
+  typedef typename SK::Line_arc_3                       Line_arc_3;
+  typedef typename SK::Circular_arc_3                   Circular_arc_3;
+  typedef typename SK::Algebraic_kernel                 AK;
+  typedef typename SK::Get_equation                     Get_equation;
+  typedef typename SK::Equal_3                          Equal_3;
+  typedef typename SK::Has_on_3                         Has_on_3;
+  typedef typename SK::Split_3                          Split_3;
+  typedef typename SK::Intersect_3                      Intersect_3;
+  typedef typename SK::Construct_circular_arc_3         Construct_circular_arc_3;
+  typedef typename SK::Construct_circular_arc_point_3   Construct_circular_arc_point_3;
+  typedef typename SK::Construct_circle_3               Construct_circle_3;
+  typedef typename SK::Construct_sphere_3               Construct_sphere_3;
+  typedef typename SK::Construct_plane_3                Construct_plane_3;
+  typedef typename SK::Construct_line_3                 Construct_line_3;
+  typedef typename SK::Construct_line_arc_3             Construct_line_arc_3;
+  typedef typename SK::Construct_radical_plane_3        Construct_radical_plane_3;
+  typedef typename SK::Polynomials_for_circle_3         Polynomials_for_circle_3;
+  typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
+  typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
+  typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
+  typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
+
+  Has_on_3 theHas_on_3 = sk.has_on_3_object();
+  Equal_3 theEqual_3 = sk.equal_3_object();
+  Split_3 theSplit_3 = sk.split_3_object();
+  Intersect_3 theIntersect_3 = sk.intersect_3_object();
+  Get_equation theGet_equation = sk.get_equation_object();
+  Construct_circle_3 theConstruct_circle_3 = sk.construct_circle_3_object();
+  Construct_sphere_3 theConstruct_sphere_3 = sk.construct_sphere_3_object();
+  Construct_plane_3 theConstruct_plane_3 = sk.construct_plane_3_object();
+  Construct_line_3 theConstruct_line_3 = sk.construct_line_3_object();
+  Construct_line_arc_3 theConstruct_line_arc_3 = sk.construct_line_arc_3_object();
+  Construct_circular_arc_3 theConstruct_circular_arc_3 = sk.construct_circular_arc_3_object();
+  Construct_circular_arc_point_3 theConstruct_circular_arc_point_3 = sk.construct_circular_arc_point_3_object();
+  Construct_radical_plane_3 theConstruct_radical_plane_3 = sk.construct_radical_plane_3_object();
+
+  std::cout << "Testing radical_plane(Sphere,Sphere)..." << std::endl;
+  Sphere_3 s = theConstruct_sphere_3(Polynomial_for_spheres_2_3(0,0,0,1));
+  for(int vx=-3;vx<4;vx++) {
+    for(int vy=-3;vy<4;vy++) {
+      for(int vz=-3;vz<4;vz++) {
+        for(int vr=1;vr<6;vr++) {
+          const FT x = FT(vx);
+          const FT y = FT(vy);
+          const FT z = FT(vz);
+          const FT r = FT(vr,2);
+          if(x == 0 && y == 0 && z == 0) continue;
+          Sphere_3 sl_1 = theConstruct_sphere_3(
+            Polynomial_for_spheres_2_3(x,y,z,r*r));
+          int d2 = (vx*vx + vy*vy + vz*vz);
+          std::vector< CGAL::Object > intersection_1;
+          theIntersect_3(s, sl_1, std::back_inserter(intersection_1));
+          Plane_3 p = theConstruct_radical_plane_3(s, sl_1);
+          // No intersection
+          if((d2 > (r+1)*(r+1)) || (d2 < (r-1)*(r-1))) {
+            assert(intersection_1.size() == 0);
+            std::vector< CGAL::Object > intersection_21, intersection_22;
+            theIntersect_3(p, sl_1, std::back_inserter(intersection_21));
+            theIntersect_3(p, s, std::back_inserter(intersection_22));
+            assert(intersection_21.size() == 0);
+            assert(intersection_22.size() == 0);
+          } 
+          // Tangent, 1 Intersection
+          else if((d2 == (r+1)*(r+1)) || (d2 == (r-1)*(r-1))) {
+            assert(intersection_1.size() == 1);
+            std::pair<Circular_arc_point_3, unsigned > the_pair1;
+            assert(assign(the_pair1, intersection_1[0]));
+            assert(theHas_on_3(p,the_pair1.first));
+          }
+          // 1 Intersection Circle
+          else {
+            assert(intersection_1.size() == 1);
+            Circle_3 circle1;
+            assert(assign(circle1, intersection_1[0]));
+            assert(theHas_on_3(p,circle1));
+          }
+        }
+      }
+    }
+  }
+
+}
+
+template <class SK>
 void _test_spherical_kernel_construct(SK sk)
 {
   std::cout << "TESTING CONSTRUCTIONS" << std::endl;
@@ -1831,5 +1925,6 @@ void _test_spherical_kernel_construct(SK sk)
   _test_intersection_construct(sk);
   _test_split_construct(sk);
   _test_bounding_box_construct(sk);
+  _test_construct_radical_plane(sk);
   std::cout << "All tests on construction are OK." << std::endl;
 }
