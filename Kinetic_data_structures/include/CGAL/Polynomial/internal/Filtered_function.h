@@ -104,7 +104,7 @@ public:
   bool operator==(const This &o) const
   {
     if (ptr_ == o.ptr_) return true;      // want pointer comparison
-    for (int i=std::max(interval_function().degree(), o.interval_function().degree()); i>=0; --i) {
+    for (int i=(std::max)(interval_function().degree(), o.interval_function().degree()); i>=0; --i) {
       if (!interval_function()[i].do_overlap(o.interval_function()[i])) return false;
     }
     if (exact_function().degree() != o.exact_function().degree()) return false;

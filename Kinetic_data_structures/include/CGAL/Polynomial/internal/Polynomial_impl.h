@@ -178,7 +178,7 @@ public:
     else if (o.is_zero()) { return This(*this); }
     else {
       This ret;
-      unsigned int new_deg = std::max(o.degree(), degree());
+      unsigned int new_deg = (std::max)(o.degree(), degree());
       ret.coefs_.resize(new_deg + 1);
       for (unsigned int i = 0; i <= new_deg; ++i) {
 	ret.coefs_[i] = operator[](i) + o[i];
@@ -196,7 +196,7 @@ public:
     else if (o.is_zero()) { return This(*this); }
     else {
       This ret;
-      unsigned int new_deg = std::max(o.degree(), degree());
+      unsigned int new_deg = (std::max)(o.degree(), degree());
       ret.coefs_.resize( new_deg + 1 );
       for (unsigned int i = 0; i <= new_deg; ++i) {
 	ret.coefs_[i] = operator[](i) - o[i];
@@ -310,7 +310,7 @@ public:
   bool operator==(const This &o) const
   {
     if (degree() != o.degree()) return false;
-    int max_size = std::max(o.coefs_.size(), coefs_.size());
+    int max_size = (std::max)(o.coefs_.size(), coefs_.size());
     for (int i = 0; i < max_size; ++i) {
       if (o[i] != operator[](i)) return false;
     }
