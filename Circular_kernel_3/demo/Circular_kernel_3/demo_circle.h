@@ -1,3 +1,5 @@
+// THE AUTHOR OF THIS DEMO IS DAMIEN JULIEN
+
 #include <qgl.h>
 #include <CGAL/IO/Qt_widget_OpenGL.h>
 #include <CGAL/IO/Qt_widget.h>
@@ -167,9 +169,9 @@ class MyWindow : public QMainWindow {
 			this->rz = 0.f;
 
 			this->resize(w, h);
-			wGL = new MyGLDrawer(this, "ProjetDamienJulien");
+			wGL = new MyGLDrawer(this, "Demo Circle 3D");
 			this->setCentralWidget(wGL);
-			this->setCaption("ProjetDamienJulien");
+			this->setCaption("Demo Circle 3D");
 			//File Menu
 			QPopupMenu* file = new QPopupMenu(this);
 			file->insertItem("&Quit", qApp, SLOT(closeAllWindows()),'');
