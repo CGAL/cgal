@@ -47,17 +47,17 @@ namespace SphericalFunctors {
     result_type
     operator() (const Circular_arc_point_3 &p0,
                 const Circular_arc_point_3 &p1) const
-    { return compare_x<SK>(p0, p1);}
+    { return compare_x<SK>(p0, p1); }
 
     result_type
     operator() (const Circular_arc_point_3 &p0,
                 const Point_3 &p1) const
-    { return compare_x<SK>(p0, p1);}
+    { return compare_x<SK>(p0, p1); }
 
     result_type
     operator() (const Point_3 &p0,
                 const Circular_arc_point_3 &p1) const
-    { return compare_x<SK>(p0, p1);}
+    { return compare_x<SK>(p0, p1); }
 
   };
 
@@ -77,17 +77,17 @@ namespace SphericalFunctors {
     result_type
     operator() (const Circular_arc_point_3 &p0,
                 const Circular_arc_point_3 &p1) const
-    { return compare_y<SK>(p0, p1);}
+    { return compare_y<SK>(p0, p1); }
 
     result_type
     operator() (const Circular_arc_point_3 &p0,
                 const Point_3 &p1) const
-    { return compare_y<SK>(p0, p1);}
+    { return compare_y<SK>(p0, p1); }
 
     result_type
     operator() (const Point_3 &p0,
                 const Circular_arc_point_3 &p1) const
-    { return compare_y<SK>(p0, p1);}
+    { return compare_y<SK>(p0, p1); }
 
   };
 
@@ -107,17 +107,17 @@ namespace SphericalFunctors {
     result_type
     operator() (const Circular_arc_point_3 &p0,
                 const Circular_arc_point_3 &p1) const
-    { return compare_z<SK>(p0, p1);}
+    { return compare_z<SK>(p0, p1); }
 
     result_type
     operator() (const Circular_arc_point_3 &p0,
                 const Point_3 &p1) const
-    { return compare_z<SK>(p0, p1);}
+    { return compare_z<SK>(p0, p1); }
 
     result_type
     operator() (const Point_3 &p0,
                 const Circular_arc_point_3 &p1) const
-    { return compare_z<SK>(p0, p1);}
+    { return compare_z<SK>(p0, p1); }
 
   };
 
@@ -137,21 +137,21 @@ namespace SphericalFunctors {
     result_type
     operator() (const Circular_arc_point_3 &p0,
                 const Circular_arc_point_3 &p1) const
-    { return compare_xy<SK>(p0, p1);}
+    { return compare_xy<SK>(p0, p1); }
 
     result_type
     operator() (const Circular_arc_point_3 &p0,
                 const Point_3 &p1) const
-    { return compare_xy<SK>(p0, p1);}
+    { return compare_xy<SK>(p0, p1); }
 
     result_type
     operator() (const Point_3 &p0,
                 const Circular_arc_point_3 &p1) const
-    { return compare_xy<SK>(p0, p1);}
+    { return compare_xy<SK>(p0, p1); }
 
   };
 
-template < class SK >
+  template < class SK >
   class Compare_xyz_3
     : public SK::Linear_kernel::Compare_xyz_3
   {
@@ -167,21 +167,21 @@ template < class SK >
     result_type
     operator() (const Circular_arc_point_3 &p0,
                 const Circular_arc_point_3 &p1) const
-    { return compare_xyz<SK>(p0, p1);}
+    { return compare_xyz<SK>(p0, p1); }
 
     result_type
     operator() (const Circular_arc_point_3 &p0,
                 const Point_3 &p1) const
-    { return compare_xyz<SK>(p0, p1);}
+    { return compare_xyz<SK>(p0, p1); }
 
     result_type
     operator() (const Point_3 &p0,
                 const Circular_arc_point_3 &p1) const
-    { return compare_xyz<SK>(p0, p1);}
+    { return compare_xyz<SK>(p0, p1); }
 
   };
 
- template <class SK>
+  template <class SK>
   class Compute_circular_x_3: Has_qrt
   {
     typedef typename SK::Circular_arc_point_3   Circular_arc_point_3;
@@ -194,12 +194,10 @@ template < class SK >
     typedef Arity_tag<1>             Arity;
 
     qualified_result_type operator() (const Circular_arc_point_3 & a) const
-    {
-      return (a.rep().x());
-    }
+    { return (a.rep().x()); }
   };
 
-template <class SK>
+  template <class SK>
   class Compute_circular_y_3: Has_qrt
   {
     typedef typename SK::Circular_arc_point_3   Circular_arc_point_3;
@@ -212,12 +210,10 @@ template <class SK>
     typedef Arity_tag<1>             Arity;
 
     qualified_result_type operator() (const Circular_arc_point_3 & a) const
-    {
-      return (a.rep().y());
-    }
+    { return (a.rep().y()); }
   };
 
-template <class SK>
+  template <class SK>
   class Compute_circular_z_3: Has_qrt
   {
     typedef typename SK::Circular_arc_point_3   Circular_arc_point_3;
@@ -230,12 +226,10 @@ template <class SK>
     typedef Arity_tag<1>             Arity;
 
     qualified_result_type operator() (const Circular_arc_point_3 & a) const
-    {
-      return (a.rep().z());
-    }
+    { return (a.rep().z()); }
   };
 
-template < class SK >
+  template < class SK >
   class Equal_3
     : public SK::Linear_kernel::Equal_3
   {
@@ -275,7 +269,7 @@ template < class SK >
 
   };
 
-template < class SK >
+  template < class SK >
   class Construct_circular_arc_point_3
   {
     typedef typename SK::Point_3                            Point_3;
@@ -400,7 +394,7 @@ template < class SK >
 
   };
 
-template < class SK >
+  template < class SK >
   class Construct_sphere_3 : public  SK::Linear_kernel::Construct_sphere_3
   {
   public:
@@ -412,12 +406,10 @@ template < class SK >
 
     result_type
     operator() ( const typename SK::Polynomial_for_spheres_2_3 &eq )
-    {
-      return construct_sphere_3<SK>(eq);
-    }
+    { return construct_sphere_3<SK>(eq); }
   };
 
-template < class SK >
+  template < class SK >
   class Construct_plane_3 : public  SK::Linear_kernel::Construct_plane_3
   {
   public:
@@ -429,12 +421,10 @@ template < class SK >
 
     result_type
     operator() ( const typename SK::Polynomial_1_3 &eq )
-    {
-      return construct_plane_3<SK>(eq);
-    }
+    { return construct_plane_3<SK>(eq); }
   };
 
-template < class SK >
+  template < class SK >
   class Construct_line_3 : public  SK::Linear_kernel::Construct_line_3
   {
   public:
@@ -446,12 +436,10 @@ template < class SK >
 
     result_type
     operator() ( const typename SK::Polynomials_for_line_3 &eq )
-    {
-      return construct_line_3<SK>(eq);
-    }
+    { return construct_line_3<SK>(eq); }
   };
 
-template < class SK >
+  template < class SK >
   class Construct_circle_3
   {
   public:
@@ -506,7 +494,7 @@ template < class SK >
     { return Rep(p,s); }
   };
 
-template <class SK>
+  template <class SK>
   class Construct_supporting_plane_3//: Has_qrt
   {
     typedef typename SK::Plane_3        Plane_3;
@@ -520,17 +508,13 @@ template <class SK>
     typedef Arity_tag<1>   Arity;
     
     qualified_result_type operator() (const Circle_3 & c) const
-    {
-      return c.rep().supporting_plane();
-    }
+    { return c.rep().supporting_plane(); }
 
     result_type operator() (const Circular_arc_3 & c) const
-    {
-      return c.rep().supporting_plane();
-    }
+    { return c.rep().supporting_plane(); }
   };
 
-template <class SK>
+  template <class SK>
   class Construct_diametral_sphere_3//: Has_qrt
   {
     typedef typename SK::Sphere_3       Sphere_3;
@@ -544,18 +528,14 @@ template <class SK>
     typedef Arity_tag<1>    Arity;
     
     qualified_result_type operator() (const Circle_3 & c) const
-    {
-      return c.rep().diametral_sphere();
-    }
+    { return c.rep().diametral_sphere(); }
 
     result_type operator() (const Circular_arc_3 & c) const
-    {
-      return c.rep().diametral_sphere();
-    }
+    { return c.rep().diametral_sphere(); }
 
   };
 
-template < class SK >
+  template < class SK >
   class Construct_line_arc_3
   {
 
@@ -646,7 +626,7 @@ template < class SK >
 
   };
 
-template < class SK >
+  template < class SK >
   class Construct_circular_arc_3
   {
 
@@ -725,7 +705,7 @@ template < class SK >
 
   };
 
-template <class SK>
+  template <class SK>
   class Construct_circular_min_vertex_3 : Has_qrt
   {
     typedef typename SK::Line_arc_3                Line_arc_3;
@@ -738,13 +718,11 @@ template <class SK>
     typedef Arity_tag<1>         Arity;
 
     qualified_result_type operator() (const Line_arc_3 & a) const
-    {
-      return (a.rep().lower_xyz_extremity());
-    }
+    { return (a.rep().lower_xyz_extremity()); }
 
   };
 
-template <class SK>
+  template <class SK>
   class Construct_circular_max_vertex_3 : Has_qrt
   {
     typedef typename SK::Line_arc_3                Line_arc_3;
@@ -757,13 +735,11 @@ template <class SK>
     typedef Arity_tag<1>         Arity;
 
     qualified_result_type operator() (const Line_arc_3 & a) const
-    {
-      return (a.rep().higher_xyz_extremity());
-    }
+    { return (a.rep().higher_xyz_extremity()); }
 
   };
 
-template <class SK>
+  template <class SK>
   class Construct_circular_source_vertex_3 : Has_qrt
   {
     typedef typename SK::Line_arc_3                Line_arc_3;
@@ -777,18 +753,14 @@ template <class SK>
     typedef Arity_tag<1>         Arity;
 
     qualified_result_type operator() (const Line_arc_3 & a) const
-    {
-      return (a.rep().source());
-    }
+    { return (a.rep().source()); }
 
     qualified_result_type operator() (const Circular_arc_3 & a) const
-    {
-      return (a.rep().source());
-    }
+    { return (a.rep().source()); }
 
   };
 
-template <class SK>
+  template <class SK>
   class Construct_circular_target_vertex_3 : Has_qrt
   {
     typedef typename SK::Line_arc_3                Line_arc_3;
@@ -802,18 +774,14 @@ template <class SK>
     typedef Arity_tag<1>         Arity;
 
     qualified_result_type operator() (const Line_arc_3 & a) const
-    {
-      return (a.rep().target());
-    }
+    { return (a.rep().target()); }
 
     qualified_result_type operator() (const Circular_arc_3 & a) const
-    {
-      return (a.rep().target());
-    }
+    { return (a.rep().target()); }
 
   };
 
-template <class SK>
+  template <class SK>
   class Construct_supporting_line_3 : Has_qrt
   {
     typedef typename SK::Line_arc_3                Line_arc_3;
@@ -826,13 +794,11 @@ template <class SK>
     typedef Arity_tag<1>         Arity;
 
     qualified_result_type operator() (const Line_arc_3 & a) const
-    {
-      return (a.rep().supporting_line());
-    }
+    { return (a.rep().supporting_line()); }
 
   };
 
-template <class SK>
+  template <class SK>
   class Construct_supporting_circle_3 : Has_qrt
   {
     typedef typename SK::Circular_arc_3            Circular_arc_3;
@@ -845,13 +811,11 @@ template <class SK>
     typedef Arity_tag<1>         Arity;
 
     qualified_result_type operator() (const Circular_arc_3 & a) const
-    {
-      return (a.rep().supporting_circle());
-    }
+    { return (a.rep().supporting_circle()); }
 
   };
 
-template < class SK >
+  template < class SK >
   class Has_on_3 
     : public SK::Linear_kernel::Has_on_3
   {
@@ -883,9 +847,7 @@ template < class SK >
 
     result_type
     operator()(const Sphere_3 &a, const Circular_arc_point_3 &p) const
-    { 
-      return has_on<SK>(a, p); 
-    }
+    { return has_on<SK>(a, p); }
 
     result_type
     operator()(const Circular_arc_point_3 &p, const Sphere_3 &a) const
@@ -1070,7 +1032,7 @@ template < class SK >
 
   };
 
-template < class SK >
+  template < class SK >
   class Intersect_3
     : public SK::Linear_kernel::Intersect_3
   {
@@ -1095,104 +1057,103 @@ template < class SK >
     OutputIterator
     operator()(const Sphere_3 & s1, const Sphere_3 & s2, 
 	       OutputIterator res) const
-      { return intersect_3<SK> (s1,s2,res); }
+    { return intersect_3<SK> (s1,s2,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Plane_3 & p, const Sphere_3 & s, 
 	       OutputIterator res) const
-      { return intersect_3<SK> (p,s,res); }
+    { return intersect_3<SK> (p,s,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Sphere_3 & s, const Plane_3 & p, 
 	       OutputIterator res) const
-      { return intersect_3<SK> (p,s,res); }
+    { return intersect_3<SK> (p,s,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Sphere_3 & s, const Line_3 & l, 
 	       OutputIterator res) const
-      { return intersect_3<SK> (s,l,res); }
+    { return intersect_3<SK> (s,l,res); }
     
      template < class OutputIterator >
     OutputIterator
       operator()(const Line_3 & l,const Sphere_3 & s, 
 	       OutputIterator res) const
-      { return intersect_3<SK> (s,l,res); }
+    { return intersect_3<SK> (s,l,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Sphere_3 & s1, const Sphere_3 & s2, 
 	       const Sphere_3 & s3, OutputIterator res) const
-      { return intersect_3<SK> (s1,s2,s3,res); }
+    { return intersect_3<SK> (s1,s2,s3,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Sphere_3 & s1, const Sphere_3 & s2, 
 	       const Plane_3 & p, OutputIterator res) const
-      { return intersect_3<SK> (p,s1,s2,res); }
+    { return intersect_3<SK> (p,s1,s2,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Plane_3 & p, const Sphere_3 & s1,  
 	       const Sphere_3 & s2, OutputIterator res) const
-      { return intersect_3<SK> (p,s1,s2,res); }
+    { return intersect_3<SK> (p,s1,s2,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Plane_3 & p1, const Plane_3 & p2,  
 	       const Sphere_3 & s, OutputIterator res) const
-      { return intersect_3<SK> (p1,p2,s,res); }
+    { return intersect_3<SK> (p1,p2,s,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Sphere_3 & s, const Plane_3 & p1, 
 	       const Plane_3 & p2, OutputIterator res) const
-      { return intersect_3<SK> (p1,p2,s,res); }
+    { return intersect_3<SK> (p1,p2,s,res); }
 
-    // INTERSECTIONS WITH CIRCLE
     template < class OutputIterator >
     OutputIterator
     operator()(const Circle_3 & c, const Plane_3 & p, 
 	       OutputIterator res) const
-      { return intersect_3<SK> (c,p,res); }
+    { return intersect_3<SK> (c,p,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Plane_3 & p, const Circle_3 & c, 
 	       OutputIterator res) const
-      { return intersect_3<SK> (c,p,res); }
+    { return intersect_3<SK> (c,p,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Circle_3 & c, const Sphere_3 & s, 
 	       OutputIterator res) const
-      { return intersect_3<SK> (c,s,res); }
+    { return intersect_3<SK> (c,s,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Sphere_3 & s, const Circle_3 & c, 
 	       OutputIterator res) const
-      { return intersect_3<SK> (c,s,res); }
+    { return intersect_3<SK> (c,s,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Circle_3 & c1, const Circle_3 & c2, 
 	       OutputIterator res) const
-      { return intersect_3<SK> (c1,c2,res); }
+    { return intersect_3<SK> (c1,c2,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Circle_3 & c, const Line_3 & l, 
 	       OutputIterator res) const
-      { return intersect_3<SK> (c,l,res); }
+    { return intersect_3<SK> (c,l,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Line_3 & l, const Circle_3 & c,
 	       OutputIterator res) const
-      { return intersect_3<SK> (c,l,res); }
+    { return intersect_3<SK> (c,l,res); }
 
     // INTERSECTION LINE-LINE
     // obs: This intersection should be moved to the Linear Kernel
@@ -1204,130 +1165,130 @@ template < class SK >
     // this intersection also dont take care with orientation
     Object_3
     operator()(const Line_3 & l1, const Line_3 & l2) const
-      { return intersect_3<SK> (l1,l2); }
+    { return intersect_3<SK> (l1,l2); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Line_arc_3 & l1, const Line_arc_3 & l2, 
 	       OutputIterator res) const
-      { return intersect_3<SK> (l1,l2,res); }
+    { return intersect_3<SK> (l1,l2,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Line_3 & l, const Line_arc_3 & la) const
-      { return intersect_3<SK> (l,la); }
+    { return intersect_3<SK> (l,la); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Line_arc_3 & la, const Line_3 & l) const
-      { return intersect_3<SK> (l,la); }
+    { return intersect_3<SK> (l,la); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Circle_3 & c, const Line_arc_3 & l, 
 	       OutputIterator res) const
-      { return intersect_3<SK> (c,l,res); }
+    { return intersect_3<SK> (c,l,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Line_arc_3 & l, const Circle_3 & c,
 	       OutputIterator res) const
-      { return intersect_3<SK> (c,l,res); }
+    { return intersect_3<SK> (c,l,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Sphere_3 & s, const Line_arc_3 & l, 
 	       OutputIterator res) const
-      { return intersect_3<SK> (s,l,res); }
+    { return intersect_3<SK> (s,l,res); }
     
     template < class OutputIterator >
     OutputIterator
     operator()(const Line_arc_3 & l,const Sphere_3 & s, 
 	       OutputIterator res) const
-      { return intersect_3<SK> (s,l,res); }
+    { return intersect_3<SK> (s,l,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Plane_3 & s, const Line_arc_3 & l, 
 	       OutputIterator res) const
-      { return intersect_3<SK> (s,l,res); }
+    { return intersect_3<SK> (s,l,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Line_arc_3 & l,const Plane_3 & s, 
 	       OutputIterator res) const
-      { return intersect_3<SK> (s,l,res); }
+    { return intersect_3<SK> (s,l,res); }
 
-        template < class OutputIterator >
+    template < class OutputIterator >
     OutputIterator
     operator()(const Circular_arc_3 & c1, const Circular_arc_3 & c2, 
 	       OutputIterator res) const
-      { return intersect_3<SK> (c1,c2,res); }
+    { return intersect_3<SK> (c1,c2,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Line_3 & l, const Circular_arc_3 & ca) const
-      { return intersect_3<SK> (l,ca); }
+    { return intersect_3<SK> (l,ca); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Circular_arc_3 & ca, const Line_3 & l) const
-      { return intersect_3<SK> (l,ca); }
+    { return intersect_3<SK> (l,ca); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Circle_3 & c, const Circular_arc_3 & ca, 
 	       OutputIterator res) const
-      { return intersect_3<SK> (c,ca,res); }
+    { return intersect_3<SK> (c,ca,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Circular_arc_3 & ca, const Circle_3 & c,
 	       OutputIterator res) const
-      { return intersect_3<SK> (c,ca,res); }
+    { return intersect_3<SK> (c,ca,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Sphere_3 & s, const Circular_arc_3 & ca, 
 	       OutputIterator res) const
-      { return intersect_3<SK> (s,ca,res); }
+    { return intersect_3<SK> (s,ca,res); }
     
     template < class OutputIterator >
     OutputIterator
     operator()(const Circular_arc_3 & ca,const Sphere_3 & s, 
 	       OutputIterator res) const
-      { return intersect_3<SK> (s,ca,res); }
+    { return intersect_3<SK> (s,ca,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Plane_3 & p, const Circular_arc_3 & ca, 
 	       OutputIterator res) const
-      { return intersect_3<SK> (p,ca,res); }
+    { return intersect_3<SK> (p,ca,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Circular_arc_3 & ca, const Plane_3 & p, 
 	       OutputIterator res) const
-      { return intersect_3<SK> (p,ca,res); }
+    { return intersect_3<SK> (p,ca,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Circular_arc_3 & ca, const Line_arc_3 & la, 
 	       OutputIterator res) const
-      { return intersect_3<SK> (ca,la,res); }
+    { return intersect_3<SK> (ca,la,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Line_arc_3 & la, const Circular_arc_3 & ca,
 	       OutputIterator res) const
-      { return intersect_3<SK> (ca,la,res); }
+    { return intersect_3<SK> (ca,la,res); }
 
   };
 
 // If 2 line_arc have the same supporting line
 // if they intersect only at a point
 // even in this case we consider that the 2 line_arc overlap
-template < class SK >
+  template < class SK >
   class Do_overlap_3
   {
     typedef typename SK::Line_arc_3     Line_arc_3;
@@ -1383,7 +1344,7 @@ template < class SK >
 
   };
 
-template <class SK>
+  template <class SK>
   class Construct_bbox_3
     : public SK::Linear_kernel::Construct_bbox_3
   {
@@ -1400,28 +1361,20 @@ template <class SK>
     using SK::Linear_kernel::Construct_bbox_3::operator();
 
     result_type operator() (const Circular_arc_point_3 & c) const
-    {
-      return c.rep().bbox();
-    }
+    { return c.rep().bbox(); }
 
     result_type operator() (const Circle_3 & c) const
-    {
-      return c.rep().bbox();
-    }
+    { return c.rep().bbox(); }
 
     result_type operator() (const Line_arc_3 & l) const
-    {
-      return l.rep().bbox();
-    }
+    { return l.rep().bbox(); }
 
     result_type operator() (const Circular_arc_3 & c) const
-    {
-      return c.rep().bbox();
-    }
+    { return c.rep().bbox(); }
 
   };
 
-template <class SK>
+  template <class SK>
   class Compute_area_divided_by_pi
   {
     typedef typename SK::Circle_3                  Circle_3;
@@ -1433,13 +1386,11 @@ template <class SK>
     typedef Arity_tag<1> Arity;
 
     result_type operator() (const Circle_3 & c) const
-    {
-      return c.rep().area_divided_by_pi();
-    }
+    { return c.rep().area_divided_by_pi(); }
 
   };
 
-template <class SK>
+  template <class SK>
   class Compute_squared_length_divided_by_pi_square
   {
     typedef typename SK::Circle_3                  Circle_3;
@@ -1451,13 +1402,11 @@ template <class SK>
     typedef Arity_tag<1> Arity;
 
     result_type operator() (const Circle_3 & c) const
-    {
-      return c.rep().squared_length_divided_by_pi_square();
-    }
+    { return c.rep().squared_length_divided_by_pi_square(); }
 
   };
 
-template <class SK>
+  template <class SK>
   class Compute_approximate_area
   {
     typedef typename SK::Circle_3                  Circle_3;
@@ -1469,13 +1418,11 @@ template <class SK>
     typedef Arity_tag<1> Arity;
 
     result_type operator() (const Circle_3 & c) const
-    {
-      return c.rep().approximate_area();
-    }
+    { return c.rep().approximate_area(); }
 
   };
 
-template <class SK>
+  template <class SK>
   class Compute_approximate_squared_length
   {
     typedef typename SK::Circle_3                  Circle_3;
@@ -1488,18 +1435,14 @@ template <class SK>
     typedef Arity_tag<1> Arity;
 
     result_type operator() (const Circle_3 & c) const
-    {
-      return c.rep().approximate_squared_length();
-    }
+    { return c.rep().approximate_squared_length(); }
 
     result_type operator() (const Circular_arc_3 & c) const
-    {
-      return c.rep().approximate_squared_length();
-    }
+    { return c.rep().approximate_squared_length(); }
 
   };
 
-template <class SK>
+  template <class SK>
   class Compute_approximate_angle
   {
     typedef typename SK::Circular_arc_3            Circular_arc_3;
@@ -1510,9 +1453,7 @@ template <class SK>
     typedef Arity_tag<1> Arity;
 
     result_type operator() (const Circular_arc_3 & c) const
-    {
-      return c.rep().approximate_angle();
-    }
+    { return c.rep().approximate_angle(); }
 
   };
 
