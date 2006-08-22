@@ -42,7 +42,7 @@ PolygonPtr load_polygon( string file )
     int ccb_count ;
     in >> ccb_count ; // Unused. Only the outer contour is used in this test.
 
-    rPoly = PolygonPtr( new Polygon() );
+    rPoly = PolygonPtr( new Polygon_2() );
 
     int v_count ;
     in >> v_count ;
@@ -59,7 +59,7 @@ PolygonPtr load_polygon( string file )
       CGAL::Orientation orientation = area > 0 ? CGAL::COUNTERCLOCKWISE : area < 0 ? CGAL::CLOCKWISE : CGAL::COLLINEAR ;
         
       if ( orientation != CGAL::CLOCKWISE )
-        rPoly = PolygonPtr( new Polygon(rPoly->rbegin(),rPoly->rend()) )  ;
+        rPoly = PolygonPtr( new Polygon_2(rPoly->rbegin(),rPoly->rend()) )  ;
     }
     else
       rPoly = PolygonPtr();     

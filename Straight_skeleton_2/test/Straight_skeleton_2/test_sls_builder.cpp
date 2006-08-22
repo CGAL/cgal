@@ -66,7 +66,7 @@ RegionPtr load_region( string file )
 
     for ( int i = 0 ; i < ccb_count ; ++ i )
     {
-      PolygonPtr lPoly( new Polygon() );
+      PolygonPtr lPoly( new Polygon_2() );
       
       int v_count ;
       in >> v_count ;
@@ -86,7 +86,7 @@ RegionPtr load_region( string file )
         
         if ( orientation == expected )
              rRegion->push_back(lPoly);
-        else rRegion->push_back( PolygonPtr( new Polygon(lPoly->rbegin(),lPoly->rend()) ) ) ;
+        else rRegion->push_back( PolygonPtr( new Polygon_2(lPoly->rbegin(),lPoly->rend()) ) ) ;
       }
       else cerr << "Degenerate polygon in file " << file << endl ;
     }

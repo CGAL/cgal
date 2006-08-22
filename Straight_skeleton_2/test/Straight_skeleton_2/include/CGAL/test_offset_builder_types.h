@@ -36,8 +36,8 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef K::Point_2                    Point;
 typedef CGAL::Aff_transformation_2<K> Transformation;
-typedef std::vector<Point>            Polygon;
-typedef boost::shared_ptr<Polygon>    PolygonPtr;
+typedef std::vector<Point>            Polygon_2;
+typedef boost::shared_ptr<Polygon_2>  PolygonPtr;
 typedef CGAL::Segment_2<K>            Segment;
 typedef std::vector<PolygonPtr>       Region ;
 typedef boost::shared_ptr<Region>     RegionPtr ;
@@ -48,8 +48,8 @@ typedef CGAL::Straight_skeleton_2<K>                            Sls;
 typedef CGAL::Straight_skeleton_builder_traits_2<K>             SlsBuilderTraits;
 typedef CGAL::Straight_skeleton_builder_2<SlsBuilderTraits,Sls> SlsBuilder;
 
-typedef CGAL::Polygon_offset_builder_traits_2<K>                        OffsetBuilderTraits;
-typedef CGAL::Polygon_offset_builder_2<Sls,OffsetBuilderTraits,Polygon> OffsetBuilder;
+typedef CGAL::Polygon_offset_builder_traits_2<K>                          OffsetBuilderTraits;
+typedef CGAL::Polygon_offset_builder_2<Sls,OffsetBuilderTraits,Polygon_2> OffsetBuilder;
 
 typedef Sls::Halfedge_iterator     Halfedge_iterator;
 typedef Sls::Vertex_handle         Vertex_handle;
