@@ -170,6 +170,8 @@ namespace CGAL {
       typedef typename SK::Plane_3 Plane_3;
       typedef typename SK::Point_3 Point_3;
       typedef typename SK::FT FT;
+      // Concentric Spheres don't have radical plane
+      CGAL_kernel_precondition (s1.center() != s2.center());
       const FT a = 2*(s2.center().x() - s1.center().x());
       const FT b = 2*(s2.center().y() - s1.center().y());
       const FT c = 2*(s2.center().z() - s1.center().z());
@@ -198,6 +200,9 @@ namespace CGAL {
       typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
       typedef typename SK::Root_for_spheres_2_3 Root_for_spheres_2_3;
       typedef typename SK::FT FT;
+
+      CGAL_kernel_precondition(!p.rep().is_degenerate());
+      CGAL_kernel_precondition(!s.rep().is_degenerate());
 
       const FT d2 = CGAL::square(p.a()*s.center().x() + 
                                  p.b()*s.center().y() + 
@@ -259,6 +264,8 @@ namespace CGAL {
     { 
       typedef typename SK::Plane_3 Plane_3;
       typedef typename SK::Sphere_3 Sphere_3;
+      CGAL_kernel_precondition(!s1.rep().is_degenerate());
+      CGAL_kernel_precondition(!s2.rep().is_degenerate());
       if(non_oriented_equal<SK>(s1,s2)) {
         *res++ = make_object(s1);
         return res;
@@ -279,6 +286,8 @@ namespace CGAL {
       typedef typename SK::Polynomials_for_line_3      Equation_line; 
       typedef typename SK::Root_for_spheres_2_3        Root_for_spheres_2_3;
       typedef typename SK::Circular_arc_point_3        Circular_arc_point_3;
+      CGAL_kernel_precondition(!s.rep().is_degenerate());
+      CGAL_kernel_precondition(!l.rep().is_degenerate());
       Equation_sphere e1 = get_equation<SK>(s);
       Equation_line e2 = get_equation<SK>(l);
       typedef std::vector< std::pair < Root_for_spheres_2_3, unsigned > > 
@@ -306,6 +315,9 @@ namespace CGAL {
        typedef typename SK::Circle_3  Circle_3;
        typedef typename SK::AK  AK;
        typedef std::vector< Object > solutions_container;
+       CGAL_kernel_precondition(!s1.rep().is_degenerate());
+       CGAL_kernel_precondition(!s2.rep().is_degenerate());
+       CGAL_kernel_precondition(!s3.rep().is_degenerate());
        if(non_oriented_equal<SK>(s1,s2) && non_oriented_equal<SK>(s2,s3)) {
          *res++ = make_object(s1);
          return res;
@@ -365,6 +377,9 @@ namespace CGAL {
       typedef typename SK::Polynomial_1_3  Equation_plane;
       typedef typename SK::Plane_3  Plane_3;
       typedef typename SK::AK  AK;
+      CGAL_kernel_precondition(!p.rep().is_degenerate());
+      CGAL_kernel_precondition(!s1.rep().is_degenerate());
+      CGAL_kernel_precondition(!s2.rep().is_degenerate());
       if(non_oriented_equal<SK>(s1,s2)) {
          return intersect_3<SK>(p,s1,res);
       }
@@ -399,6 +414,9 @@ namespace CGAL {
       typedef typename SK::Polynomial_for_spheres_2_3  Equation_sphere;
       typedef typename SK::Polynomial_1_3  Equation_plane;
       typedef typename SK::AK  AK;
+      CGAL_kernel_precondition(!p1.rep().is_degenerate());
+      CGAL_kernel_precondition(!p2.rep().is_degenerate());
+      CGAL_kernel_precondition(!s.rep().is_degenerate());
       if(non_oriented_equal<SK>(p1,p2)) {
          return intersect_3<SK>(p1,s,res);
       }
@@ -476,6 +494,7 @@ namespace CGAL {
       typedef typename SK::Polynomials_for_line_3    Equation_line;
       typedef typename SK::Circle_3  Circle_3;
       typedef typename SK::AK  AK;
+      CGAL_kernel_precondition(!l.rep().is_degenerate());
       Equation_circle e1 = get_equation<SK>(c);
       Equation_line e2 = get_equation<SK>(l);
       typedef std::vector< std::pair < Root_for_spheres_2_3, unsigned > > 
