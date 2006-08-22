@@ -1457,6 +1457,22 @@ namespace SphericalFunctors {
 
   };
 
+  // Maybe this one should be on the Linear Kernel
+  template <class SK> 
+  class Construct_radical_plane_3
+  {
+    typedef typename SK::Plane_3            Plane_3;
+    typedef typename SK::Sphere_3           Sphere_3;
+
+  public:
+
+    typedef Plane_3 result_type;
+    typedef Arity_tag<1> Arity;
+
+    result_type operator() (const Sphere_3 & s1, const Sphere_3 & s2) const
+    { return radical_plane<SK>(s1, s2); }
+  };
+
 } // namespace SphericalFunctors
 } // namespace CGAL
 
