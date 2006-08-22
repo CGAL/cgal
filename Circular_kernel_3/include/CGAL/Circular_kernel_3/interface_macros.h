@@ -65,6 +65,9 @@
   CGAL_Spherical_Kernel_pred(Compare_xyz_3, compare_xyz_3_object)
   CGAL_Spherical_Kernel_pred(Equal_3, equal_3_object)
   CGAL_Spherical_Kernel_pred(Has_on_3, has_on_3_object)
+  CGAL_Spherical_Kernel_pred(Has_on_bounded_side_3, has_on_bounded_side_3_object)
+  CGAL_Spherical_Kernel_pred(Has_on_unbounded_side_3, has_on_unbounded_side_3_object)
+  CGAL_Spherical_Kernel_pred(Bounded_side_3, bounded_side_3_object)
   CGAL_Spherical_Kernel_pred(Do_overlap_3, do_overlap_3_object)
 
 #undef CGAL_Spherical_Kernel_pred
