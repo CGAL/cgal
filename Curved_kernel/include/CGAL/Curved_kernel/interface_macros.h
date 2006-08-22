@@ -85,6 +85,11 @@
   is_vertical_2_object) 
   CGAL_Curved_Kernel_pred(Has_on_2,
   has_on_2_object)
+  
+  CGAL_Curved_Kernel_pred(Has_on_bounded_side_2, has_on_bounded_side_2_object)
+  CGAL_Curved_Kernel_pred(Has_on_unbounded_side_2, has_on_unbounded_side_2_object)
+  CGAL_Curved_Kernel_pred(Bounded_side_2, bounded_side_2_object)
+  
   CGAL_Curved_Kernel_cons(Construct_supporting_circle_2,
   construct_supporting_circle_2_object)
   CGAL_Curved_Kernel_cons(Construct_supporting_line_2,
