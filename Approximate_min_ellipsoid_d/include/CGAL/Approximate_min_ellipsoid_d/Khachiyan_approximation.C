@@ -471,7 +471,7 @@ namespace CGAL {
       return eps_exact;
 
     // find max p_i^T M(x)^{-1} p_i:
-    ET max(0);
+    ET max = 0;
     for (int i=0; i<n; ++i)
       max = (std::max)(max, excess<ET>(tco.cartesian_begin(*P[i])));
 
