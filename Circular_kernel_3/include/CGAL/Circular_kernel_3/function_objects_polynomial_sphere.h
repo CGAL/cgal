@@ -1473,6 +1473,87 @@ namespace SphericalFunctors {
     { return radical_plane<SK>(s1, s2); }
   };
 
+  template <class SK>
+  class Bounded_side_3
+    : public SK::Linear_kernel::Bounded_side_3
+  {
+    typedef typename SK::Sphere_3              Sphere_3;
+    typedef typename SK::Circle_3              Circle_3;
+    typedef typename SK::Circular_arc_point_3  Circular_arc_point_3;
+    typedef typename SK::Point_3               Point_3;
+
+  public:
+    typedef typename SK::Linear_kernel::Bounded_side    result_type;
+    typedef Arity_tag< 2 >              Arity;
+
+    using SK::Linear_kernel::Bounded_side_3::operator();
+
+    result_type
+    operator()( const Sphere_3& s, const Circular_arc_point_3& p) const
+    { return bounded_side<SK>(s,p); }
+
+    result_type
+    operator()( const Circle_3& c, const Circular_arc_point_3& p) const
+    { return bounded_side<SK>(c,p); }
+
+    // We can maybe optimize it doing the operator() for point_3 too
+
+  };
+
+  template <class SK>
+  class Has_on_bounded_side_3
+    : public SK::Linear_kernel::Has_on_bounded_side_3
+  {
+    typedef typename SK::Sphere_3              Sphere_3;
+    typedef typename SK::Circle_3              Circle_3;
+    typedef typename SK::Circular_arc_point_3  Circular_arc_point_3;
+    typedef typename SK::Point_3               Point_3;
+
+  public:
+    typedef bool result_type;
+    typedef Arity_tag< 2 >               Arity;
+
+    using SK::Linear_kernel::Has_on_bounded_side_3::operator();
+
+    result_type
+    operator()( const Sphere_3& s, const Circular_arc_point_3& p) const
+    { return SK().bounded_side_3_object()(s,p) == ON_BOUNDED_SIDE; }
+
+    result_type
+    operator()( const Circle_3& c, const Circular_arc_point_3& p) const
+    { return SK().bounded_side_3_object()(c,p) == ON_BOUNDED_SIDE; }
+
+    // We can maybe optimize it doing the operator() for point_3 too
+
+  };
+
+  template <class SK>
+  class Has_on_unbounded_side_3
+    : public SK::Linear_kernel::Has_on_unbounded_side_3
+  {
+    typedef typename SK::Sphere_3              Sphere_3;
+    typedef typename SK::Circle_3              Circle_3;
+    typedef typename SK::Circular_arc_point_3  Circular_arc_point_3;
+    typedef typename SK::Point_3               Point_3;
+
+  public:
+    typedef bool result_type;
+    typedef Arity_tag< 2 >               Arity;
+
+    using SK::Linear_kernel::Has_on_unbounded_side_3::operator();
+
+    result_type
+    operator()( const Sphere_3& s, const Circular_arc_point_3& p) const
+    { return SK().bounded_side_3_object()(s,p) == ON_UNBOUNDED_SIDE; }
+
+    result_type
+    operator()( const Circle_3& c, const Circular_arc_point_3& p) const
+    { return SK().bounded_side_3_object()(c,p) == ON_UNBOUNDED_SIDE; }
+
+    // We can maybe optimize it doing the operator() for point_3 too
+
+  };
+
 } // namespace SphericalFunctors
 } // namespace CGAL
 
