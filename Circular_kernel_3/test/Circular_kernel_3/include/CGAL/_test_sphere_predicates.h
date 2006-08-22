@@ -711,6 +711,61 @@ void _test_do_overlap_predicate(SK sk) {
 }
 
 template <class SK>
+void _test_bounded_side(SK sk) {
+  typedef typename SK::RT                               RT;
+  typedef typename SK::FT                               FT;
+  typedef typename SK::Root_of_2                        Root_of_2;
+  typedef typename SK::Circular_arc_point_3             Circular_arc_point_3;
+  typedef typename SK::Point_3                          Point_3;
+  typedef typename SK::Sphere_3                         Sphere_3;
+  typedef typename SK::Algebraic_kernel                 AK;
+  typedef typename SK::Get_equation                     Get_equation;
+  typedef typename SK::Construct_sphere_3               Construct_sphere_3;
+  typedef typename SK::Construct_circular_arc_point_3   Construct_circular_arc_point_3;
+  typedef typename SK::Bounded_side_3                   Bounded_side_3;
+  typedef typename AK::Polynomial_for_spheres_2_3       Polynomial_for_spheres_2_3;
+  typedef typename AK::Polynomial_1_3                   Polynomial_1_3;
+  typedef typename AK::Polynomials_for_line_3           Polynomials_for_line_3;
+  typedef typename AK::Root_for_spheres_2_3             Root_for_spheres_2_3;
+
+  Get_equation theGet_equation = sk.get_equation_object();
+  Construct_sphere_3 theConstruct_sphere_3 = sk.construct_sphere_3_object();
+  Construct_circular_arc_point_3 theConstruct_circular_arc_point_3 =
+    sk.construct_circular_arc_point_3_object();
+  Bounded_side_3 theBounded_side_3 = sk.bounded_side_3_object();
+
+  std::cout << "Testing bounded_side(Sphere, Circular_arc_point)..." << std::endl;
+  Polynomial_for_spheres_2_3 p = theGet_equation(Sphere_3(Point_3(0,0,0),25));
+  Sphere_3 s = theConstruct_sphere_3(p);
+  for(int x=-5; x<6; x++) {
+    for(int y=-5; y<6; y++) {
+      for(int z=-5; z<6; z++) {
+        Circular_arc_point_3 cp = theConstruct_circular_arc_point_3(x,y,z);
+        CGAL::Bounded_side b = theBounded_side_3(s,cp);
+        if((x*x + y*y + z*z) < 25) {
+          assert(b == CGAL::ON_BOUNDED_SIDE);
+        } else if((x*x + y*y + z*z) > 25) {
+          assert(b == CGAL::ON_UNBOUNDED_SIDE);
+        } else assert(b == CGAL::ON_BOUNDARY);
+      }
+    }
+  }
+
+  // we dont need to test bounded_side(Circle, Circular_arc_point) because
+  // bounded_side(Circle, Circular_arc_point) = bounded_side(Sphere, Circular_arc_point) +
+  //         has_on_3(supporting_plane, circular_arc_point) which has already been tested
+  std::cout << "Testing bounded_side(Circle, Circular_arc_point)..." << std::endl;
+
+  // Those predicates do not need to be tested because it is an instance of
+  // bounded_side(Sphere, Circular_arc_point) and bounded_side(Circle, Circular_arc_point)
+  // which have already been tested
+  std::cout << "Testing has_on_bounded_side(Sphere, Circular_arc_point)..." << std::endl;
+  std::cout << "Testing has_on_bounded_side(Circle, Circular_arc_point)..." << std::endl;
+  std::cout << "Testing has_on_unbounded_side(Sphere, Circular_arc_point)..." << std::endl;
+  std::cout << "Testing has_on_unbounded_side(Circle, Circular_arc_point)..." << std::endl;
+}
+
+template <class SK>
 void _test_spherical_kernel_predicates(SK sk)
 {
   std::cout << "TESTING PREDICATES" << std::endl;
@@ -720,5 +775,6 @@ void _test_spherical_kernel_predicates(SK sk)
   _test_circular_arc_equal(sk);
   _test_has_on_predicate(sk);
   _test_do_overlap_predicate(sk);
+  _test_bounded_side(sk);
   std::cout << "All tests on predicates are OK." << std::endl;
 }
