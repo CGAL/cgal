@@ -1,0 +1,3 @@
+To compile this demo you need to have an OpenGL library, like:
+freeglut-2.4.0
+You have to set the option -I{your OpenGL folder}/freeglut-2.4.0/include
