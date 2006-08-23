@@ -1,13 +1,9 @@
-// Copyright (c) 2000-2004  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 2005-2006  INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; version 2.1 of the License.
-// See the file LICENSE.LGPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -15,11 +11,20 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source: /CVSROOT/CGAL/Packages/Circular_kernel/include/CGAL/Circular_kernel/interface_macros.h,v $
-// $Revision$ $Date$
-// $Name:  $
+// Partially supported by the IST Programme of the EU as a Shared-cost
+// RTD (FET Open) Project under Contract No  IST-2000-26473 
+// (ECG - Effective Computational Geometry for Curves and Surfaces) 
+// and a STREP (FET Open) Project under Contract No  IST-006413 
+// (ACS -- Algorithms for Complex Shapes)
 //
-// Author(s)     : Herve Bronnimann, Sylvain Pion, Susan Hert
+// $URL: $
+// $Id: $
+//
+// Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
+//             Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
+//             Pedro Machado    <tashimir@gmail.com>
+//             Julien Hazebrouck
+//             Damien Leroy
 
 // This file is intentionally not protected against re-inclusion.
 // It's aimed at being included from within a kernel traits class, this
