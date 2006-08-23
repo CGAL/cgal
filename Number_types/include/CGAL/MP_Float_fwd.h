@@ -22,6 +22,7 @@
 #define CGAL_MP_FLOAT_FWD_H
 
 #include <CGAL/Quotient_fwd.h>
+#include <CGAL/Root_of_2_fwd.h>
 
 // Forward declarations
 
@@ -39,6 +40,7 @@ bool is_finite(const MP_Float &);
 bool is_valid(const MP_Float &);
 
 double to_double(const Quotient<MP_Float>&);
+double to_double(const Root_of_2<MP_Float> &x);
 std::pair<double,double> to_interval(const Quotient<MP_Float>&);
 
 CGAL_END_NAMESPACE
