@@ -1,4 +1,5 @@
 Algebraic_kernel
+Algebraic_kernel_for_spheres
 Alpha_shapes_2
 Alpha_shapes_3
 Apollonius_graph_2
@@ -7,6 +8,7 @@ Arrangement_2
 Boolean_set_operations_2
 Box_intersection_d
 Cartesian_kernel
+Circular_kernel_3
 Circulator
 Conic_2
 Convex_hull_2
