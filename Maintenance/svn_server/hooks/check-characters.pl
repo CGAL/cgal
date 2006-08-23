@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-###############################################################################
+# ====================================================================
 # check-characters.pl
 # Laurent Saboret, INRIA, 2006
 #
@@ -43,7 +43,7 @@
 # Turn on debug by adding a -debug option as the first option in the list.
 #
 # Note: this script was created from Collab Net check-case-insensitive.pl
-###############################################################################
+# ====================================================================
 
 use strict;
 require 5.004; # This is when locale support was added.
@@ -51,7 +51,6 @@ use Encode;
 $ENV{'LANG'} = 'en_US.UTF-8';
 $ENV{'LC_CTYPE'} = 'en_US.UTF-8';
 binmode STDERR, ":utf8";
-
 
 # Please check the path to svnlook is correct...
 my $svnlook;
@@ -64,8 +63,8 @@ if ($^O eq 'MSWin32') {
 # Shift off any debug options.
 my $debug = 0;
 while (@ARGV and $ARGV[0] =~ /^-d(ebug)?$/) {
-    $debug++;
-    shift;
+  $debug++;
+  shift;
 }
 
 # Usage
@@ -100,7 +99,7 @@ my $txn = shift;
 my $flag = '--transaction';
 $flag = shift if @ARGV;
 
-# List of added files/folders.
+# Each added path put here.
 my @added;
 
 # Command being executed.
@@ -116,32 +115,31 @@ print STDERR "$cmd\n" if ($debug);
 open(SVNLOOK, '-|:utf8', $cmd)
     or die("$0: cannot open '$cmd' pipe for reading: $!\n");
 while (<SVNLOOK>) {
-    chomp;
-    if (/^A\s+(\S.*)/) {
-        push @added, $1;
-    }
+  chomp;
+  if (/^A\s+(\S.*)/) {
+    push @added, $1;
+  }
 }
 close SVNLOOK;
 
 # Trace
 if ($debug) {
-    print STDERR "Added " . ($#added + 1) . " item(s):\n";
-    foreach my $itm (@added) {
-        print STDERR " $itm\n";
-    }
+  print STDERR "Added " . ($#added + 1) . " item(s):\n";
+  foreach my $itm (@added) {
+    print STDERR " $itm\n";
+  }
 }
 
 # Stop if no added files
 unless (@added) {
-    print STDERR "No files added\n" if ($debug);
-    # No added files so no problem.
-    exit(0);
+  print STDERR "No files added\n" if ($debug);
+  # No added files so no problem.
+  exit(0);
 }
 
 # Check each added file
 my $failmsg;
-foreach my $newfile (@added)
-{
+foreach my $newfile (@added) {
     # Get basename
     $newfile =~ s/\/$//;                      # Remove trailing slash from folders
     $newfile =~ s/.*\///;                     # Remove path
@@ -197,7 +195,7 @@ foreach my $newfile (@added)
     }
 }
 if (defined($failmsg)) {
-    print STDERR "\nInvalid file name found:\n" . $failmsg . "\n";
+    print STDERR "\nInvalid file name(s) found:\n" . $failmsg . "\n";
     exit 1;
 }
 

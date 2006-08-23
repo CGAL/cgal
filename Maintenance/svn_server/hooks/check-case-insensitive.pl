@@ -1,4 +1,5 @@
 #!/usr/bin/perl -w
+
 # ====================================================================
 # Copyright (c) 2000-2004 Collab Net.  All rights reserved.
 #
@@ -90,11 +91,12 @@ if ($debug > 1) { # LS 08/2006: compare to 1 to match comments
   }
 }
 
-# Fetch the command line arguments.
+# Usage
 unless (@ARGV > 1) {
   die "usage: $0 [-d [-d [-d]]] repos txn [--revision]\n";
 }
 
+# Fetch the command line arguments.
 my $repos = shift;
 $repos =~ s/\/$//; # LS 08/2006: remove trailing slash
 my $txn = shift;
@@ -150,6 +152,7 @@ while (<SVNLOOK>) {
 }
 close SVNLOOK;
 
+# Trace
 if ($debug) {
   print STDERR "Added " . ($#added + 1) . " item(s):\n";
   foreach my $itm (@added) {
@@ -237,8 +240,8 @@ foreach my $newfile (@removed) {
   delete($tree{$lcnewfile});
 }
 
+# Check each added file
 my $failmsg;
-
 my %newtree;
 foreach my $newfile (@added) {
   $newfile =~ s/\/$//; # LS 06/2006: Remove trailing slash to compare file and folders
@@ -253,7 +256,7 @@ foreach my $newfile (@added) {
   $newtree{$lcnewfile} = $newfile;
 }
 if (defined($failmsg)) {
-  print STDERR "\nFile name case conflict found:\n" . $failmsg . "\n";
+  print STDERR "\nFile name case conflict(s) found:\n" . $failmsg . "\n";
   exit 1;
 }
 
