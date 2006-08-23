@@ -446,54 +446,85 @@ print (std::ostream & os, const MP_Float &b);
 std::istream &
 operator>> (std::istream & is, MP_Float &b);
 
-// TODO : needs function "bool divides(n, d)" for validity checking, and maybe other things.
 // TODO : needs function div(), with remainder.
 
 namespace CGALi {
 
 inline // Move it to libCGAL once it's stable.
 MP_Float
-exact_division_internal(MP_Float n, MP_Float d, bool & divides)
+exact_division_internal(MP_Float remainder, MP_Float d, bool & divides)
 {
-  CGAL_assertion(d != 0);
-
-  // This is necessary for avoiding the excess precision of the x86 FPU
-  // in the truncating code below.
-  Protect_FPU_rounding<true> p(CGAL_FE_TONEAREST);
-
   typedef MP_Float::exponent_type  exponent_type;
-  // Rescale them to have to_double() values with reasonnable exponents.
-  exponent_type scale_n = n.find_scale();
-  exponent_type scale_d = d.find_scale();
-  n.rescale(scale_n);
-  d.rescale(scale_d);
+
+  CGAL_precondition(d != 0);
 
   // A simple criteria for detecting when the division is not exact
   // is that if it is exact, then the result must have smaller or
   // equal bit length than "n".
   // Which we approximate with size() and a confortable margin.
-  exponent_type max_size_if_exact = n.size() + d.size() + 200;
+  exponent_type max_size_if_exact = remainder.size() - d.size() + 3;
+
+  // Rescale them to have to_double() values with reasonnable exponents.
+  exponent_type scale_d = d.find_scale();
+  d.rescale(scale_d);
+  const double dd = to_double(d);
+
+  MP_Float res = 0;
+  exponent_type scale_remainder = 0;
 
   // School division algorithm.
-  MP_Float res = to_double(n) / to_double(d);
-  MP_Float remainder = n - res * d;
+
   while ( remainder != 0 )
   {
-    // We also have to rescale here, since remainder can diminish towards 0.
-    exponent_type scale_rem = remainder.find_scale();
-    remainder.rescale(scale_rem);
-    res.rescale(scale_rem);
-    scale_n += scale_rem;
+    // We have to rescale, since remainder can diminish towards 0.
+    exponent_type tmp_scale = remainder.find_scale();
+    remainder.rescale(tmp_scale);
+    res.rescale(tmp_scale);
+    scale_remainder += tmp_scale;
 
-    // A double approximation of the quotient
+    // Compute a double approximation of the quotient
     // (imagine school division with base ~2^53).
-    double approx = to_double(remainder) / to_double(d);
+    double approx = to_double(remainder) / dd;
     CGAL_assertion(approx != 0);
-    approx = (approx + (4*approx)) - (4*approx); // chop-off the last bit.
     res += approx;
     remainder -= approx * d;
+
+    if (remainder == 0)
+      break;
+
+    // Then we need to fix it up by checking if neighboring double values
+    // are closer to the exact result.
+    // There should not be too many iterations, because approx is only a few ulps
+    // away from the optimal.
+    // If we don't do the fixup, then spurious bits can be introduced, which
+    // will require an unbounded amount of additional iterations to be eliminated.
+
+    // The direction towards which we need to try to move from "approx".
+    double direction = (sign(remainder) == sign(dd))
+                     ?  std::numeric_limits<double>::infinity()
+                     : -std::numeric_limits<double>::infinity();
+
+    while (true)
+    {
+      const double approx2 = nextafter(approx, direction);
+      const double delta = approx2 - approx;
+      MP_Float new_remainder = remainder - delta * d;
+      if (abs(new_remainder) < abs(remainder)) {
+        remainder = new_remainder;
+        res += delta;
+        approx = approx2;
+      }
+      else {
+        break;
+      }
+    }
+
+// TODO : The real condition, which could be used for non-exact-division
+// should probably be that |remainder| < |d| (powers of 2 left aside).
+// This should work for GCD (guarantee termination).
     if (res.size() > max_size_if_exact)
     {
+std::cout << "non-exact div : " << std::endl;
       divides = false;
       return MP_Float();
     }
@@ -501,7 +532,7 @@ exact_division_internal(MP_Float n, MP_Float d, bool & divides)
 
   divides = true;
   // Scale back the result.
-  res.rescale(scale_d - scale_n);
+  res.rescale(scale_d - scale_remainder);
   return res;
 }
 
