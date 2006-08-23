@@ -20,11 +20,11 @@
 // $URL: $
 // $Id: $
 //
-// Authors : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
-//           Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
-//           Pedro Machado    <tashimir@gmail.com>
-//           Julien Hazebrouck
-//           Damien Leroy
+// Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
+//             Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
+//             Pedro Machado    <tashimir@gmail.com>
+//             Julien Hazebrouck
+//             Damien Leroy
 
 #ifndef CGAL_SPHERICAL_KERNEL_TYPE_EQUALITY_WRAPPER_H
 #define CGAL_SPHERICAL_KERNEL_TYPE_EQUALITY_WRAPPER_H
