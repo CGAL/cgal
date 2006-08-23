@@ -21,12 +21,13 @@
 #ifndef CGAL_KINETIC_DELAUNAY_TRIANGULATION_2_RE_WATCHER_BASE_H
 #define CGAL_KINETIC_DELAUNAY_TRIANGULATION_2_RE_WATCHER_BASE_H
 #include <CGAL/Kinetic/basic.h>
+#include <CGAL/Kinetic/Delaunay_triangulation_visitor_base_2.h>
 #include <set>
 
 CGAL_KINETIC_BEGIN_NAMESPACE
 
 template <class Triangulation>
-struct Delaunay_triangulation_recent_edges_visitor_2
+struct Delaunay_triangulation_recent_edges_visitor_2: public Delaunay_triangulation_visitor_base_2
 {
   typedef typename Triangulation::Edge Edge;
   typedef typename Triangulation::Vertex_handle VH;

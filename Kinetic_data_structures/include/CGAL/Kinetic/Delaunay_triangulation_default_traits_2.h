@@ -67,6 +67,8 @@ public:
   }
  
 
+  void point_changed(Point_key){}
+
   typedef std::pair<Time, Certificate_data> Certificate_pair;
 
   Certificate_pair certificate_failure_time(Edge e) {

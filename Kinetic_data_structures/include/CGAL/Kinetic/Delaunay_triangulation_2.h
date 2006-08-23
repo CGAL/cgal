@@ -37,7 +37,7 @@
 
 CGAL_KINETIC_BEGIN_NAMESPACE
 
-#define CGAL_DELAUNAY_2_DEBUG(x) 
+#define CGAL_DELAUNAY_2_DEBUG(x) x
 
 template <class KDel>
 struct Delaunay_edge_failure_event: public Event_base<KDel*> {
@@ -254,21 +254,39 @@ public:
       //unsigned int num_certs= num_certificates_;
       // this is important that it be before update
       batching_=false;
-      std::sort(batched_certs_.begin(), batched_certs_.end(), Compare_edges());
-      //std::cout << "Batch has " << batched_certs_.size() << " non-unique edges to compute." << std::endl;
-      batched_certs_.erase(std::unique(batched_certs_.begin(), 
-				     batched_certs_.end()), batched_certs_.end());
-      //std::cout << "Batch has " << batched_certs_.size() << " edges to compute." << std::endl;
+
       for (unsigned int i=0; i< batched_certs_.size(); ++i){
-	/*Point_key s=TDS_helper::origin(batched_certs_[i])->point();
+	Point_key s=TDS_helper::origin(batched_certs_[i])->point();
 	Point_key t=TDS_helper::destination(batched_certs_[i])->point();
 	
-	std::cout << std::min(s,t) << "--" << std::max(s,t) << std::endl;*/
+	std::cout << std::min(s,t) << "--" << std::max(s,t) << std::endl;
+	//update_edge(batched_certs_[i]);
+      }
+
+      std::sort(batched_certs_.begin(), batched_certs_.end(), Compare_edges());
+      /*std::cout << "Batch has " << batched_certs_.size() << " non-unique edges to compute." << std::endl;*/
+      batched_certs_.erase(std::unique(batched_certs_.begin(), 
+				       batched_certs_.end()), 
+			   batched_certs_.end());
+      //std::cout << "Batch has " << batched_certs_.size() << " edges to compute." << std::endl;
+      for (unsigned int i=0; i< batched_certs_.size(); ++i){
+	Point_key s=TDS_helper::origin(batched_certs_[i])->point();
+	Point_key t=TDS_helper::destination(batched_certs_[i])->point();
+	
+	std::cout << std::min(s,t) << "--" << std::max(s,t) << std::endl;
+	//update_edge(batched_certs_[i]);
+      }
+      for (unsigned int i=0; i< batched_certs_.size(); ++i){
+	//Point_key s=TDS_helper::origin(batched_certs_[i])->point();
+	//Point_key t=TDS_helper::destination(batched_certs_[i])->point();
+	
+	//std::cout << std::min(s,t) << "--" << std::max(s,t) << std::endl;
 	update_edge(batched_certs_[i]);
       }
       
       batched_certs_.clear();
-     
+      /*CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, 
+       *traits_.simulator_handle() << std::endl;);*/
       //int dnum= num_certificates_-num_certs;
       //std::cout << "Edit had " << dnum << " certificate computations" << std::endl;
 
@@ -439,6 +457,8 @@ public:
 	  }
 	}
       } 
+      CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, 
+		       *traits_.simulator_handle() << std::endl;);
       has_certificates_=tf;
     }
   }
@@ -498,7 +518,7 @@ public:
     //std::cout << "Object changed " << k << std::endl;
 
     //new_edges_.clear();
-
+    traits_.point_changed(k);
     if (del_.dimension() != 2) {
       CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME,"Triangulation is still 1D.\n");
       return;
@@ -652,37 +672,60 @@ public:
     int mirror_index = face->mirror_index(index);
     Face_handle mirror_face = face->neighbor(index);
 
-    if (del_.is_edge(TDS_helper::third_vertex(e), TDS_helper::mirror_vertex(e))) {
+
+    Face_handle bef;
+    int bei;
+    if (del_.is_edge(TDS_helper::third_vertex(e), TDS_helper::mirror_vertex(e),
+		     bef, bei)) {
       // we have a numeric error, lets try to rebuild the neighboring certificates
-      CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, "DELAUNAY ERROR not flipping unflippable edge" << std::endl);
+      CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME,
+		       "DELAUNAY ERROR not flipping unflippable edge" << std::endl);
+      CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, 
+		       *traits_.simulator_handle() << std::endl;);
       //make this better
-      double ub=to_interval(traits_.simulator_handle()->next_event_time()).second;
-      ub= (std::max)(ub+.0000001, 
-		     nextafter(ub, (std::numeric_limits<double>::max)()));
-      Time t=ub;
-      //cert.pop_failure_time();
-      Event_key k =traits_.simulator_handle()->new_event(t, Event(cert, e, this));
-      TDS_helper::set_undirected_edge_label(e, k);
-      return e;
+      //double ub=to_interval(traits_.simulator_handle()->next_event_time()).second;
+      Edge bad_edge(bef, bei);
+      Event_key bek= TDS_helper::get_undirected_edge_label(bad_edge);
+      
+      if (bek == traits_.simulator_handle()->null_event()) {
+	CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME,
+			 "Dropping the event." << std::endl);
+	TDS_helper::set_undirected_edge_label(e, Event_key());
+	return e;
+      } else {
+
+	double ub = CGAL::to_interval(traits_.simulator_handle()->event_time(bek)).second;
+	
+	ub= (std::max)(ub+.0000001, 
+		       nextafter(ub, (std::numeric_limits<double>::max)()));
+	Time t(ub);
+	CGAL_precondition(CGAL::compare(t, traits_.simulator_handle()->next_event_time()) == CGAL::LARGER);
+	Event_key k =traits_.simulator_handle()->new_event(t, Event(cert, e, this));
+	TDS_helper::set_undirected_edge_label(e, k);
+	return e;
+      }
     }
+
+
+    TDS_helper::set_undirected_edge_label(e, Event_key());
 
     for (unsigned int i=0; i<3; ++i) {
       Edge e0(face, i);
-      if (e0.second != index && TDS_helper::get_undirected_edge_label(e0) != Event_key()) {
+      if (TDS_helper::get_undirected_edge_label(e0) != Event_key()) {
 	delete_certificate(e0);
       }
 
       face->vertex(i)->set_neighbors_is_changed(true);
       
       Edge e1(mirror_face, i);
-      if (e1.second != mirror_index  && TDS_helper::get_undirected_edge_label(e1) != Event_key()) {
+      if (TDS_helper::get_undirected_edge_label(e1) != Event_key()) {
 	delete_certificate(e1);
       }
 
       mirror_face->vertex(i)->set_neighbors_is_changed(true);
     }
 
-    TDS_helper::set_undirected_edge_label(e, Event_key());
+   
     watcher_.before_flip(e);
     del_.tds().flip(face,index);
 
@@ -691,24 +734,34 @@ public:
     index= face->index(mirror_face);
 
     Edge flipped_edge(face,index);
+    Edge mirror_flipped_edge= TDS_helper::mirror_edge(flipped_edge);
     //CGAL_postcondition(del_.is_face(face));
-    {
+ 
+
+    mirror_index = face->mirror_index(index);
+    mirror_face = face->neighbor(index);
+
+    /*for (unsigned int i=0; i<3; ++i) {
+      Edge e0(face, i);
+      update_edge(e0);
+      Edge e1(mirror_face, i);
+      update_edge(e1);
+      }*/
+    TDS_helper::set_undirected_edge_label(flipped_edge, traits_.simulator_handle()->null_event());
+
+    update_edge(Edge(flipped_edge.first, (flipped_edge.second+1)%3));
+    update_edge(Edge(flipped_edge.first, (flipped_edge.second+2)%3));
+    update_edge(Edge(mirror_flipped_edge.first, (mirror_flipped_edge.second+1)%3));
+    update_edge(Edge(mirror_flipped_edge.first, (mirror_flipped_edge.second+2)%3));
+
+
+
+   {
       std::pair<Time, Certificate_data> sp= traits_.certificate_failure_time(e,cert);
       Event_key k =traits_.simulator_handle()->new_event(sp.first,
 							 Event(sp.second, flipped_edge, this));
       TDS_helper::set_undirected_edge_label(flipped_edge, k);
     }
-
-    mirror_index = face->mirror_index(index);
-    mirror_face = face->neighbor(index);
-
-    for (unsigned int i=0; i<3; ++i) {
-      Edge e0(face, i);
-      update_edge(e0);
-      Edge e1(mirror_face, i);
-      update_edge(e1);
-    }
-
     //write(std::cout);
     //new_edges_.clear();
     //new_edges_.insert(flipped_edge);
@@ -769,7 +822,8 @@ protected:
     } else {
       int deg= vh->degree();
       if (deg ==3 && vh->neighbors() != 3) {
-	CGAL_DELAUNAY_2_DEBUG(std::cout << "Degree 3 for " << vh->point() << std::endl);
+	CGAL_DELAUNAY_2_DEBUG(std::cout << "Degree 3 for " 
+			      << vh->point() << std::endl);
 	vh->set_neighbors(deg);
 	typename Triangulation::Edge_circulator ec= del_.incident_edges(vh);
 	do {
@@ -779,7 +833,8 @@ protected:
 	  ++ec;
 	} while (ec != del_.incident_edges(vh));
       } else if (vh->neighbors()==3 && deg != 3) {
-	CGAL_DELAUNAY_2_DEBUG(std::cout << "Degree 4 for " << vh->point() << std::endl);
+	CGAL_DELAUNAY_2_DEBUG(std::cout << "Degree 4 for " 
+			      << vh->point() << std::endl);
 	vh->set_neighbors(deg);
 	typename Triangulation::Edge_circulator ec= del_.incident_edges(vh);
 	do {
@@ -815,11 +870,9 @@ protected:
 
  
   void update_edge(const Edge &e) {
-  
-
-
     if (batching_) {
-      batched_certs_.push_back(e);
+      delete_certificate(e);
+      batched_certs_.push_back(canonicalize(e));
     } else {
       CGAL_DELAUNAY_2_DEBUG(std::cout << "Updating edge " 
 			    << TDS_helper::origin(e)->point() << " " 
@@ -836,6 +889,8 @@ protected:
       
       if (TDS_helper::get_undirected_edge_label(e) != Event_key()) {
 	CGAL_DELAUNAY_2_DEBUG(std::cout << "Already has event " << std::endl);
+	// can't do this since I create all edges around vertex of degree 4 at once
+	// CGAL_assertion(0);
       } else if (ov->neighbors() ==3 
 		 || dv->neighbors() ==3) {
 	CGAL_DELAUNAY_2_DEBUG(std::cout << "One end has 3 " << std::endl);
@@ -865,6 +920,14 @@ protected:
     TDS_helper::set_undirected_edge_label(e, Event_key());
   }
 
+
+  Edge canonicalize(Edge e) const {
+    if (e.first->neighbor(e.second) < e.first) {
+      return TDS_helper::mirror_edge(e);
+    } else {
+      return e;
+    }
+  }
 };
 
 template <class Sim, class Del, class W, class T>

@@ -55,6 +55,15 @@ struct Delaunay_triangulation_visitor_base_2
     void after_flip(E) {
 
     }
+
+  template <class P>
+  bool filter_certificate(P a, P b, P c) const {
+    return true;
+  }
+  template <class P>
+  bool filter_certificate(P a, P b, P c, P d) const {
+    return true;
+  }
 };
 
 CGAL_KINETIC_END_NAMESPACE
