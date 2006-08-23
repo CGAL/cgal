@@ -16,7 +16,7 @@
       <mainprogram>LT_edge_collapse_test</mainprogram>
       <directoryradio>build</directoryradio>
       <customdirectory>/</customdirectory>
-      <programargs>0 data/ open0</programargs>
+      <programargs/>
       <terminal>false</terminal>
       <autocompile>true</autocompile>
       <envvars/>
@@ -32,7 +32,7 @@
       <selectedenvironment>default</selectedenvironment>
       <environments>
         <default>
-          <envvar value="-O2" name="EXTRA_FLAGS" />
+          <envvar value="-g" name="EXTRA_FLAGS" />
         </default>
       </environments>
     </make>

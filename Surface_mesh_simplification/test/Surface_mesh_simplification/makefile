@@ -28,7 +28,7 @@ LIBPATH = \
 
 LDFLAGS = \
           $(TESTSUITE_LDFLAGS) \
-          $(CGAL_LDFLAGS)
+          $(CGAL_LDFLAGS) 
 
 #---------------------------------------------------------------------#
 #                    target entries

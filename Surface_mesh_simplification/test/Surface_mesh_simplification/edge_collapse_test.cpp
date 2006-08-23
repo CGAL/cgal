@@ -23,6 +23,7 @@
 #include <iostream>
 #include <fstream>
 #include <boost/tokenizer.hpp>
+#include <boost/lexical_cast.hpp>
 
 #define CGAL_CHECK_EXPENSIVE
 
@@ -452,21 +453,13 @@ char const* matched_alpha ( bool matched )
   return matched ? "matched" : "UNMATCHED" ; 
 }
 
-bool Test ( int aStop, string name )
+bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string name )
 {
   bool rSucceeded = false ;
   
-  string off_name    = name+string(".off");
+  string off_name    = name ;
   string audit_name  = name+string(".audit");
   string result_name = name+string(".out.off");
-  
-  cout << "Testing simplification of surface " << off_name << " using "
-#ifdef TEST_LT
-       << " LindstromTurk method."
-#else
-       << " Squared-length/mid-point method."
-#endif  
-       << endl ;
   
   ifstream off_is(off_name.c_str());
   if ( off_is )
@@ -477,114 +470,148 @@ bool Test ( int aStop, string name )
     
     if ( lP.is_valid() )
     {
-      cout << (lP.size_of_halfedges()/2) << " edges..." << endl ;
-    
-      cout << setprecision(19) ;
-    
-      int lVertexID = 0 ;
-      for ( Polyhedron::Vertex_iterator vi = lP.vertices_begin(); vi != lP.vertices_end() ; ++ vi )
-        vi->ID = lVertexID ++ ;    
-      
-      int lHalfedgeID = 0 ;
-      for ( Polyhedron::Halfedge_iterator hi = lP.halfedges_begin(); hi != lP.halfedges_end() ; ++ hi )
-        hi->ID = lHalfedgeID++ ;    
-      
-      int lFacetID = 0 ;
-      for ( Polyhedron::Facet_iterator fi = lP.facets_begin(); fi != lP.facets_end() ; ++ fi )
-        fi->ID = lFacetID ++ ;    
-  
-  #ifdef AUDIT
-      sAuditData .clear();
-      sAuditReport.clear();
-      ParseAudit(audit_name);
-      cout << "Audit data loaded." << endl ;
-  #endif
-      
-  #ifdef TEST_LT
-      typedef LindstromTurk_collapse_data<Polyhedron> Collapse_data ;
-      
-      Set_LindstromTurk_collapse_data<Collapse_data> Set_collapse_data ;
-      LindstromTurk_cost             <Collapse_data> Get_cost ;
-      LindstromTurk_vertex_placement <Collapse_data> Get_vertex_point ;
-  #else
-      typedef Minimal_collapse_data<Polyhedron> Collapse_data ;
-      
-      Set_minimal_collapse_data <Collapse_data> Set_collapse_data ;
-      Edge_length_cost          <Collapse_data> Get_cost ;
-      Midpoint_vertex_placement <Collapse_data> Get_vertex_point ;
-  #endif
-      
-      Count_stop_condition           <Collapse_data> Should_stop(aStop);
-          
-      Collapse_data::Params lParams;
-      
-      Visitor lVisitor ;
-  
-      Real_timer t ; t.start();    
-      int r = vertex_pair_collapse(lP,Set_collapse_data,&lParams,Get_cost,Get_vertex_point,Should_stop,&lVisitor);
-      t.stop();
-              
-      ofstream off_out(result_name.c_str(),ios::trunc);
-      off_out << lP ;
-      
-      cout << "\nFinished...\n"
-           << "Ellapsed time: " << t.time() << " seconds.\n" 
-           << r << " edges removed.\n"
-           << endl
-           << lP.size_of_vertices() << " final vertices.\n"
-           << (lP.size_of_halfedges()/2) << " final edges.\n"
-           << lP.size_of_facets() << " final triangles.\n" 
-           << ( lP.is_valid() ? " valid\n" : " INVALID!!\n" ) ;
-  
-  #ifdef STATS
-      cout << "\n------------STATS--------------\n"
-           << sProcessed        << " edges processed.\n"
-           << sCollapsed        << " edges collapsed.\n" 
-           << sNonCollapsable   << " non-collapsable edges.\n"
-           << sCostUncomputable << " non-computable edges.\n"
-           << sFixed            << " fixed edges.\n"
-           << sRemoved          << " edges removed.\n" 
-           << (sRemoved/3)      << " vertices removed." ;
-  #endif
-  
-  #ifdef AUDIT
-      unsigned lMatches = 0 ;
-                    
-      cout << "Audit report:\n" ;
-      for ( Audit_report_map::const_iterator ri = sAuditReport.begin() ; ri != sAuditReport.end() ; ++ ri )
+      if ( lP.is_pure_triangle() )
       {
-        Audit_report_ptr lReport = ri->second ;
-        
-        if ( lReport->AuditData )
+        if ( !aJustPrintSurfaceData )
         {
-          if ( lReport->NewVertexMatched )
-            ++ lMatches ;
-             
-          cout << "Collapsed Halfedge " << lReport->HalfedgeID << endl 
-               << "  Cost: Actual=" << to_string(lReport->Cost) << ", Expected=" << to_string(lReport->AuditData->Cost)
-                                    << ". " << matched_alpha(lReport->CostMatched) << endl
-               << "  New vertex point: Actual=" << to_string(lReport->NewVertexPoint) << ", Expected=" 
-                                                << to_string(lReport->AuditData->NewVertexPoint) 
-                                                << ". " << matched_alpha(lReport->NewVertexMatched)
+          cout << "Testing simplification of surface " << off_name << " using "
+#ifdef TEST_LT
+               << " LindstromTurk method."
+#else
+               << " Squared-length/mid-point method."
+#endif  
                << endl ;
-        }
+             
+          cout << lP.size_of_facets() << " triangles." << endl 
+               << (lP.size_of_halfedges()/2) << " edges." << endl 
+               << lP.size_of_vertices() << " vertices." << endl 
+               << (lP.is_closed() ? "Closed." : "Open." ) << endl ;
+               
+          cout << setprecision(19) ;
+        
+          int lVertexID = 0 ;
+          for ( Polyhedron::Vertex_iterator vi = lP.vertices_begin(); vi != lP.vertices_end() ; ++ vi )
+            vi->ID = lVertexID ++ ;    
+          
+          int lHalfedgeID = 0 ;
+          for ( Polyhedron::Halfedge_iterator hi = lP.halfedges_begin(); hi != lP.halfedges_end() ; ++ hi )
+            hi->ID = lHalfedgeID++ ;    
+          
+          int lFacetID = 0 ;
+          for ( Polyhedron::Facet_iterator fi = lP.facets_begin(); fi != lP.facets_end() ; ++ fi )
+            fi->ID = lFacetID ++ ;    
+      
+      #ifdef AUDIT
+          sAuditData .clear();
+          sAuditReport.clear();
+          ParseAudit(audit_name);
+          cout << "Audit data loaded." << endl ;
+      #endif
+          
+      #ifdef TEST_LT
+          typedef LindstromTurk_collapse_data<Polyhedron> Collapse_data ;
+          
+          Set_LindstromTurk_collapse_data<Collapse_data> Set_collapse_data ;
+          LindstromTurk_cost             <Collapse_data> Get_cost ;
+          LindstromTurk_vertex_placement <Collapse_data> Get_vertex_point ;
+      #else
+          typedef Minimal_collapse_data<Polyhedron> Collapse_data ;
+          
+          Set_minimal_collapse_data <Collapse_data> Set_collapse_data ;
+          Edge_length_cost          <Collapse_data> Get_cost ;
+          Midpoint_vertex_placement <Collapse_data> Get_vertex_point ;
+      #endif
+
+          int lFinalEdgesCount ;
+          if ( aStopA != -1 )
+               lFinalEdgesCount = aStopA ;
+          else lFinalEdgesCount = lP.size_of_halfedges() * aStopR / 200 ;
+                    
+          Count_stop_condition<Collapse_data> Should_stop(lFinalEdgesCount);
+              
+          Collapse_data::Params lParams;
+          
+          Visitor lVisitor ;
+      
+          Real_timer t ; t.start();    
+          int r = vertex_pair_collapse(lP,Set_collapse_data,&lParams,Get_cost,Get_vertex_point,Should_stop,&lVisitor);
+          t.stop();
+                  
+          ofstream off_out(result_name.c_str(),ios::trunc);
+          off_out << lP ;
+          
+          cout << "\nFinished...\n"
+               << "Ellapsed time: " << t.time() << " seconds.\n" 
+               << r << " edges removed.\n"
+               << endl
+               << lP.size_of_vertices() << " final vertices.\n"
+               << (lP.size_of_halfedges()/2) << " final edges.\n"
+               << lP.size_of_facets() << " final triangles.\n" 
+               << ( lP.is_valid() ? " valid\n" : " INVALID!!\n" ) ;
+      
+      #ifdef STATS
+          cout << "\n------------STATS--------------\n"
+               << sProcessed        << " edges processed.\n"
+               << sCollapsed        << " edges collapsed.\n" 
+               << sNonCollapsable   << " non-collapsable edges.\n"
+               << sCostUncomputable << " non-computable edges.\n"
+               << sFixed            << " fixed edges.\n"
+               << sRemoved          << " edges removed.\n" 
+               << (sRemoved/3)      << " vertices removed." ;
+      #endif
+      
+      #ifdef AUDIT
+          unsigned lMatches = 0 ;
+                        
+          cout << "Audit report:\n" ;
+          for ( Audit_report_map::const_iterator ri = sAuditReport.begin() ; ri != sAuditReport.end() ; ++ ri )
+          {
+            Audit_report_ptr lReport = ri->second ;
+            
+            if ( lReport->AuditData )
+            {
+              if ( lReport->NewVertexMatched )
+                ++ lMatches ;
+                 
+              cout << "Collapsed Halfedge " << lReport->HalfedgeID << endl 
+                   << "  Cost: Actual=" << to_string(lReport->Cost) << ", Expected=" << to_string(lReport->AuditData->Cost)
+                                        << ". " << matched_alpha(lReport->CostMatched) << endl
+                   << "  New vertex point: Actual=" << to_string(lReport->NewVertexPoint) << ", Expected=" 
+                                                    << to_string(lReport->AuditData->NewVertexPoint) 
+                                                    << ". " << matched_alpha(lReport->NewVertexMatched)
+                   << endl ;
+            }
+            else
+            {
+              cout << "No audit data for Halfedge " << lReport->HalfedgeID << endl ;
+                ++ lMatches ;
+            }  
+          }
+          
+          rSucceeded = ( lMatches == sAuditReport.size() ) ;
+      #else
+          rSucceeded = true ;
+      #endif
+        }   
         else
         {
-          cout << "No audit data for Halfedge " << lReport->HalfedgeID << endl ;
-            ++ lMatches ;
+          cout << off_name << ": " << lP.size_of_facets() << " triangles, " 
+               << (lP.size_of_halfedges()/2) << " edges, "
+               << lP.size_of_vertices() << " vertices, "
+               << (lP.is_closed() ? "Closed." : "Open." ) << endl ;
+               
+          rSucceeded = true ;
         }  
       }
-      
-      rSucceeded = ( lMatches == sAuditReport.size() ) ;
-  #else
-      rSucceeded = true ;
-  #endif
+      else
+      {
+        cerr << "Surfaces is not triangulated (has faces with more than 3 sides): " << name << endl ;
+      }
     }
     else
     {
       cerr << "Invalid surface: " << name << endl ;
     }
-
   }
   else
   {
@@ -594,41 +621,108 @@ bool Test ( int aStop, string name )
   return rSucceeded ;
 }
 
+bool sPrintUsage = false ;
+
+void add_case( string aCase, vector<string>& rCases )
+{
+  if ( aCase.find(".") == string::npos )
+    aCase += ".off" ;
+  
+  if ( aCase.find(".off") != string::npos )
+  {
+    rCases.push_back(aCase);
+  }
+  else 
+  {
+    sPrintUsage = true ;  
+    cerr << "Invalid input file. Only .off files are supported: " << aCase << endl ;
+  }    
+}
+
 int main( int argc, char** argv ) 
 {
   set_error_handler  (error_handler);
   set_warning_handler(error_handler);
   
-  if ( argc > 3 )
+  bool   lJustPrintSurfaceData = false ;
+  int    lStopA = -1 ;
+  int    lStopR = 20 ;
+  string lFolder =""; 
+  vector<string> lCases ;
+        
+  for ( int i = 1 ; i < argc ; ++i )
   {
-    vector<string> cases ;
-  
-    int lStop = atoi(argv[1]);
-    
-    string lFolder(argv[2]);
-    
-    for ( int i = 3 ; i < argc ; ++i )
-      cases.push_back( string(argv[i]) ) ;
-      
-    unsigned lOK = 0 ;
-    for ( vector<string>::const_iterator it = cases.begin(); it != cases.end() ; ++ it )
+    string opt(argv[i]);
+    if ( opt[0] == '-' )
     {
-      if ( Test( lStop, lFolder + *it) )
-        ++ lOK ;
-    }  
-    
-    cout << endl
-         << lOK                   << " cases succedded." << endl
-         << (cases.size() - lOK ) << " cases failed." << endl ;
-          
-    return lOK == cases.size() ? 0 : 1 ;
+      switch(opt[1])
+      {
+        case 'd' : lFolder = opt.substr(2); break ;
+        case 'a' : lStopA = lexical_cast<int>(opt.substr(2)); break;
+        case 'r' : lStopR = lexical_cast<int>(opt.substr(2)); break;
+        case 'n' : lJustPrintSurfaceData = true ; break ;
+        
+        default: 
+          cerr << "Invalid option: " << opt << endl ;
+          sPrintUsage = true ; 
+      }
+    }
   }
-  else
+  
+  for ( int i = 1 ; i < argc ; ++i )
   {
-    cout << "USAGE: LT_edge_collapse_test final_edge_count folder file0 file1 file2 ..." << endl ;
+    string opt(argv[i]);
+    if ( opt[0] == '@' )
+    {
+      string rspname = opt.substr(1) ;
+      ifstream rsp(rspname.c_str());
+      if ( rsp )
+      {
+        string line ;
+        while ( getline(rsp,line) )
+          add_case(lFolder+line,lCases);
+      }
+      else
+      {
+        cerr << "Cannot open response file: " << rspname << endl ;
+        sPrintUsage = true ; 
+      }
+    }
+    else if ( opt[0] != '-' )
+    {
+      add_case(lFolder+opt,lCases);
+    }
+  }
+   
+  if ( lCases.size() == 0 )
+    sPrintUsage = true ;
+    
+  if ( sPrintUsage )
+  {
+    cout << "collapse_edge_test <options> file0 file1 ... fileN" << endl 
+         << "  options: " << endl
+         << "    -d folder                    Specifies the folder where the files are located. " << endl 
+         << "    -a absolute_max_edge_count   Sets the final number of edges as absolute number." << endl
+         << "    -r relative_max_edge_count   Sets the final number of edges as a percentage." << endl
+         << "    -n                           Do not simplify but simply report data of surfaces." << endl ;
     
     return 1 ;
   } 
+  else
+  {
+    unsigned lOK = 0 ;
+    for ( vector<string>::const_iterator it = lCases.begin(); it != lCases.end() ; ++ it )
+    {
+     if ( Test( lStopA, lStopR, lJustPrintSurfaceData, *it) )
+       ++ lOK ;
+    }  
+      
+    cout << endl
+         << lOK                    << " cases succedded." << endl
+         << (lCases.size() - lOK ) << " cases failed." << endl ;
+            
+    return lOK == lCases.size() ? 0 : 1 ;
+  }
 }
 
 // EOF //

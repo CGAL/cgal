@@ -544,61 +544,6 @@ LindstromTurkCore<CD>::Compute_shape_cost( Point const& p, Link const& aLink )
   return rCost ;
 }
 
-/*
-template<class CD>
-void LindstromTurkCore<CD>::Constrians::Add_if_alpha_compatible( Vector const& Ai, FT const& bi )
-{
-  double slai = to_double(Ai*Ai) ;
-  if ( slai > 0.0 )
-  {
-    bool lAddIt = true ;
-    
-    if ( n == 1 )
-    {
-      FT d01 = A.r0() * Ai  ;
-      
-      double sla0 = to_double(A.r0() * A.r0()) ;
-      double sd01 = to_double(d01 * d01) ;
-      
-      if ( sd01 > ( sla0 * slai * squared_cos_alpha() ) )
-        lAddIt = false ;
-    }
-    else if ( n == 2 )
-    {
-      Vector N = cross_product(A.r0(),A.r1());
-      
-      FT dc012 = N * Ai ;
-      
-      double slc01  = to_double(N * N) ;
-      double sdc012 = to_double(dc012 * dc012);       
-      
-      if ( sdc012 <= slc01 * slai * squared_sin_alpha() )
-        lAddIt = false ;
-    }
-    
-    if ( lAddIt )
-    {
-      switch ( n )
-      {
-        case 0 :
-          A.r0() = Ai ;
-          b = Vector(bi,b.y(),b.z());
-          break ;
-        case 1 :
-          A.r1() = Ai ;
-          b = Vector(b.x(),bi,b.z());
-          break ;
-        case 2 :
-          A.r2() = Ai ;
-          b = Vector(b.x(),b.y(),bi);
-          break ;
-      }
-      ++ n ;
-    }
-  }
-}
-*/
-
 template<class CD>
 void LindstromTurkCore<CD>::Constrians::Add_if_alpha_compatible( Vector const& Ai, FT const& bi )
 {
@@ -710,8 +655,10 @@ void LindstromTurkCore<CD>::Constrians::Add_from_gradient ( Matrix const& H, Vec
           case 1: Q0 = Vector(0              ,- A0.z()/A0.y(),1              ); break;
           case 2: Q0 = Vector(1              ,0              ,- A0.x()/A0.z()); break;
 
-           default : Q0 = NULL_VECTOR ; // This should never happen ;
+           default : Q0 = NULL_VECTOR ; // This should never happen!
         }
+        
+        CGAL_assertion( Q0 != NULL_VECTOR ) ;
         
         Vector Q1 = cross_product(A0,Q0);
     
