@@ -26,7 +26,6 @@
 //             Julien Hazebrouck
 //             Damien Leroy
 
-
 #ifndef CGAL_CIRCULAR_ARC_POINT_3_H
 #define CGAL_CIRCULAR_ARC_POINT_3_H
 namespace CGAL {
