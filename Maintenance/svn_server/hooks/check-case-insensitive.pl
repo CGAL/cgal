@@ -19,16 +19,20 @@ require 5.004; # This is when locale support was added.
 # This 'use encoding' and setting the LANG environment variable has the
 # desired effect of handling the comparison of extended characters and
 # preventing a commit.
-#use encoding "utf8";           # Display incorrectly filenames with diacritic characters
-                                # in error message on InriaGForge.
-$ENV{'LANG'} = 'en_US.UTF-8';   # 'en_GB.UTF-8' breaks svnlook on InriaGForge.
+#use encoding "utf8"; # LS 06/2006: commented out because it displays incorrectly
+                      #             filenames with diacritic characters on InriaGForge
+$ENV{'LANG'} = 'en_US.UTF-8'; # LS 06/2006: 'en_GB.UTF-8' breaks svnlook on InriaGForge
 
-# Please check the path to svnlook is correct...
+# Please check the path to svn and svnlook is correct...
+# LS 08/2006: request also path to svn.
 my $svnlook;
+my $svn;
 if ($^O eq 'MSWin32') {
   $svnlook = '"c:\Program Files\subversion\bin\svnlook.exe"';
+  $svn     = '"c:\Program Files\subversion\bin\svn.exe"';
 } else {
   $svnlook = '/usr/bin/svnlook';
+  $svn     = '/usr/bin/svn';
 }
 
 # This script can be called from a pre-commit hook on either Windows or a Unix
@@ -54,7 +58,7 @@ if ($^O eq 'MSWin32') {
 #  echo Error found in commit 1>&2
 #  exit 1
 #
-# You may need to change the setting of $svnlook to the path to the
+# You may need to change the setting of $svn and $svnlook to the path to the
 # executable on your system.
 #
 # Turn on debug by adding up to three -debug options as the first options in
@@ -76,7 +80,7 @@ while (@ARGV and $ARGV[0] =~ /^-d(ebug)?$/) {
 
 # If there is too much debug output to STDERR subversion doesn't like it, so,
 # if a lot of output is expected send it to a file instead.
-if ($debug > 0) {
+if ($debug > 1) { # LS 08/2006: compare to 1 to match comments
   if ($^O eq 'MSWin32') {
     open(STDERR, ">c:/svnlog.txt")
       or die "$0: cannot open 'c:/svnlog.txt' for writing: $!\n";
@@ -92,6 +96,7 @@ unless (@ARGV > 1) {
 }
 
 my $repos = shift;
+$repos =~ s/\/$//; # LS 08/2006: remove trailing slash
 my $txn = shift;
 
 # Jeremy Bettis <jeremy@deadbeef.com> wrote the $flag code and has this to
@@ -105,16 +110,19 @@ my $txn = shift;
 # svnlook youngest path
 # (it tells me that HEAD is 987 or whatever)
 # check-case-insensitive.pl -debug path 987 -r
-# and then the check-case-insensitive.pl passes -r to svnlook instead of
+# and then the check-case-insensitive.pl passes -r to svn/svnlook instead of
 # --transaction.
-#
-# Of course when it gets down to # Get the file tree at the previous revision,
-# then it doesn't work, but most of my problems were found before that point.
 my $flag = '--transaction';
 $flag = shift if @ARGV;
 
 # Each added path put here.
 my @added;
+
+# LS 08/2006: Each removed path put here.
+my @removed;
+
+# LS 08/2006: Each modified directory put here.
+my @modified_dirs;
 
 # The file tree as a hash, index lower cased name, value actual name.
 my %tree;
@@ -123,7 +131,8 @@ my %tree;
 my $cmd;
 
 print STDERR "LANG=", $ENV{'LANG'}, "\n" if ($debug and defined($ENV{'LANG'}));
-# Get a list of added files.
+
+# Get lists of added and removed files.
 local *SVNLOOK;
 $cmd = "$svnlook changed \"$repos\" $flag $txn";
 print STDERR "$cmd\n" if ($debug);
@@ -134,12 +143,21 @@ while (<SVNLOOK>) {
   if (/^A\s+(\S.*)/) {
     push @added, $1;
   }
+  # LS 08/2006: Get also the list of removed files.
+  elsif (/^D\s+(\S.*)/) {
+    push @removed, $1;
+  }
 }
 close SVNLOOK;
 
 if ($debug) {
-  print STDERR "Added " . ($#added + 1) . " items:\n";
+  print STDERR "Added " . ($#added + 1) . " item(s):\n";
   foreach my $itm (@added) {
+    print STDERR " $itm\n";
+  }
+
+  print STDERR "Removed " . ($#removed + 1) . " item(s):\n";
+  foreach my $itm (@removed) {
     print STDERR " $itm\n";
   }
 }
@@ -150,101 +168,87 @@ unless (@added) {
   exit(0);
 }
 
-# Get the shortest directory name which has changed, this will be the path
-# into the repository to use to get the history.
+# LS 08/2006: Get the list of *all* modified directories.
 $cmd = "$svnlook dirs-changed \"$repos\" $flag $txn";
 print STDERR "$cmd\n" if ($debug);
 open(SVNLOOK, $openstr, $cmd)
   or die("$0: cannot open '$cmd' pipe for reading: $!\n");
-my $shortest=999999;
-my $changed;
 while (<SVNLOOK>) {
   chomp;
   print STDERR "  ", $_, "\n" if ($debug > 2);
-  if (length($_) < $shortest) {
-    $changed = $_;
-    $shortest = length($_);
-  }
-}
-close SVNLOOK;
-# There isn't a leading slash on $changed but there is a trailing one.  When
-# it is the root of the repository the / is a pain, so always remove the
-# trailing slash and put it back in where needed.
-$changed =~ s/\/$//;
-
-# Use the history of $changed path to find the revision of the previous commit.
-$cmd = "$svnlook history \"$repos\" \"$changed/\"";
-print STDERR "$cmd\n" if ($debug);
-open(SVNLOOK, $openstr, $cmd)
-  or die("$0: cannot open '$cmd' pipe for reading: $!\n");
-my $lastrev;
-while (<SVNLOOK>) {
-  chomp;
-  if (/(\d+)/) {
-    $lastrev = $1;
-    last;
-  }
+  # There isn't a leading slash on $changed but there is a trailing one.  When
+  # it is the root of the repository the / is a pain, so always remove the
+  # trailing slash and put it back in where needed.
+  $_ =~ s/\/$//;
+  push @modified_dirs, $_;
 }
 close SVNLOOK;
 
-# Get the file tree at the previous revision and turn the output into
+# LS 08/2006: We will check transations against HEAD and revisions against the previous commit.
+my $lastrev = "";
+unless ($flag eq '--transaction') {
+    $lastrev = "--revision " . ($txn-1);
+}
+
+# Get the modified directories' content at the previous revision and turn the output into
 # complete paths for each file.
-my @path;
-$cmd = "$svnlook tree \"$repos\" \"$changed/\" --revision $lastrev";
-print STDERR "$cmd\n" if ($debug);
-open(SVNLOOK, $openstr, $cmd)
-  or die("$0: cannot open '$cmd' pipe for reading: $!\n");
-while (<SVNLOOK>) {
-  chomp;
-  print STDERR "tree: '", $_, "'\n" if ($debug > 2);
-  next if (/^\/{1,2}$/); # Ignore the root node.  Two /'s at root of the repos.
-  if (/^(\s+)(.*)\/$/) { # Is a directory.
-    $#path = length($1)-2; # Number of spaces at start of line is nest level.
-    push @path, $2;
-    my $name = join('/', @path) . '/';
-    my $index;
-    if ($changed eq '') {
-      $index = $name;
-    } else {
-      $index = $changed . '/' . $name;
+# LS 08/2006: large rewrite with 'svn ls' instead of 'svnlook tree' (which is too slow)
+local *SVN;
+foreach my $changed (@modified_dirs) {
+  $cmd = "$svn ls \"file://$repos/$changed\" $lastrev";
+  print STDERR "$cmd\n" if ($debug);
+  open(SVN, $openstr, $cmd)
+    or die("$0: cannot open '$cmd' pipe for reading: $!\n");
+  while (<SVN>) {
+    chomp;
+    if (/^(.*)\/$/) { # Is a directory.
+      my $name = $1 . '/';
+      my $index;
+      if ($changed eq '') {
+        $index = $name;
+      } else {
+        $index = $changed . '/' . $name;
+      }
+      $index =~ s/\/$//; # LS 06/2006: Remove trailing slash to compare file and folders
+      $index = lc($index);
+      $tree{$index} = $name; # Index the hash with case folded name.
+      print STDERR "\$tree{$index}=$name (dir)\n" if ($debug > 1);
+    } else {  # This is a real file name, not a directory.
+      my $name = $_;
+      my $index;
+      if ($changed eq '') {
+        $index = $name;
+      } else {
+        $index = $changed . '/' . $name;
+      }
+      $index = lc($index);
+      $tree{$index} = $name; # Index the hash with case folded name.
+      print STDERR "\$tree{$index}=$name\n" if ($debug > 1);
     }
-    $index =~ s/\/$//; # Remove trailing slash to compare file and folders
-    $tree{lc($index)} = $name; # Index the hash with case folded name.
-    print STDERR "\$tree{lc($index)}=$name (dir)\n" if ($debug > 1);
-  } elsif (/^(\s+)(.*)$/) {  # This is a real file name, not a directory.
-    $#path = length($1)-2; # Number of spaces at start of line is nest level.
-    my $name;
-    if ($#path eq -1) {
-      $name = $2;
-    } else {
-      $name = join('/', @path) . '/' . $2;
-    }
-    my $index;
-    if ($changed eq '') {
-      $index = $name;
-    } else {
-      $index = $changed . '/' . $name;
-    }
-    $tree{lc($index)} = $name; # Index the hash with case folded name.
-    print STDERR "\$tree{lc($index)}=$name\n" if ($debug > 1);
   }
+  close SVN;
 }
-close SVNLOOK;
+
+# LS 08/2006: remove deleted paths from %tree
+foreach my $newfile (@removed) {
+  $newfile =~ s/\/$//;
+  my $lcnewfile = lc($newfile);
+  print STDERR "Delete \$tree{$lcnewfile}\n" if ($debug > 1);
+  delete($tree{$lcnewfile});
+}
 
 my $failmsg;
 
 my %newtree;
 foreach my $newfile (@added) {
-  $newfile =~ s/\/$//; # Remove trailing slash to compare file and folders
-  print STDERR "Checking \$tree{lc($newfile)}\n" if ($debug > 1);
-  # Without the following line it gets the lc() wrong.
-  my $junk = "x$newfile";
+  $newfile =~ s/\/$//; # LS 06/2006: Remove trailing slash to compare file and folders
   my $lcnewfile = lc($newfile);
+  print STDERR "Checking \$tree{$lcnewfile}\n" if ($debug > 1);
   if (exists($tree{$lcnewfile})) {
-    $failmsg .= "\n  $newfile already exists as " . $tree{lc($newfile)};
+    $failmsg .= "\n  $newfile already exists as " . $tree{$lcnewfile};
   }
   elsif (exists($newtree{$lcnewfile})) {
-    $failmsg .= "\n  $newfile also added as " . $newtree{lc($newfile)};
+    $failmsg .= "\n  $newfile also added as " . $newtree{$lcnewfile};
   }
   $newtree{$lcnewfile} = $newfile;
 }
