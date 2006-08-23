@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2006  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2005-2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -11,16 +11,18 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-// Author(s)     : Monique Teillaud, Sylvain Pion
-
 // Partially supported by the IST Programme of the EU as a Shared-cost
 // RTD (FET Open) Project under Contract No  IST-2000-26473 
 // (ECG - Effective Computational Geometry for Curves and Surfaces) 
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
+//
+// $URL: $
+// $Id: $
+//
+// Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
+//             Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
+//             Pedro Machado    <tashimir@gmail.com>
 
 #ifndef CGAL_SPHERICAL_KERNEL_FUNCTIONS_ON_SPHERE_3_H
 #define CGAL_SPHERICAL_KERNEL_FUNCTIONS_ON_SPHERE_3_H
