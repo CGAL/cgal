@@ -4,7 +4,6 @@
 #include <utility>
 #include <list>
 #include <map>
-#include <boost/property_map.hpp>
 
 #include <CGAL/basic.h>
 #include <CGAL/Min_sphere_d.h>
@@ -22,7 +21,10 @@ enum Ridge_type {NONE=0, BLUE_RIDGE, RED_RIDGE, CREST,
 //---------------------------------------------------------------------------
 //Ridge_line : a connected sequence of edges of a Poly crossed by a
 //ridge (with a barycentric coordinate to compute the crossing point),
-//with type and weigths.
+//with a Ridge_type and weigths : strength and sharpness. Note
+//sharpness is only available (more precisely only meaningful : for
+//Tag_3 it keeps its initial value 0) is the Ridge_approximation has
+//been computed with the Tag_order Tag_4.
 //--------------------------------------------------------------------------
 template < class Poly > class Ridge_line
 {
@@ -33,15 +35,6 @@ public:
   typedef typename Poly::Halfedge_handle            Halfedge_handle;
   typedef std::pair< Halfedge_handle, FT>           ridge_he;
 
-protected:
-  //one of BLUE_ELLIPTIC_RIDGE, BLUE_HYPERBOLIC_RIDGE, BLUE_CREST,
-  //RED_ELLIPTIC_RIDGE, RED_HYPERBOLIC_RIDGE or RED_CREST
-  Ridge_type m_line_type;  
-  std::list<ridge_he> m_line;
-  FT m_strength;
-  FT m_sharpness;
-
-public:
   const Ridge_type line_type() const {return m_line_type;}
   Ridge_type& line_type() {return m_line_type;}
 
@@ -57,11 +50,22 @@ public:
   //constructor
   Ridge_line();
   
-  /* The output is :
-     line_type, strength, sharpness, list of points of the polyline.
+  /* The output is : line_type, strength, sharpness, list of points of
+     the polyline. An insert operator << is also available.
    */
-  void dump_4ogl(std::ostream& out_stream) ;
+  void dump_4ogl(std::ostream& out_stream) const ;
   void dump_verbose(std::ostream& out_stream) const ;
+
+protected:
+  //one of BLUE_ELLIPTIC_RIDGE, BLUE_HYPERBOLIC_RIDGE, BLUE_CREST,
+  //RED_ELLIPTIC_RIDGE, RED_HYPERBOLIC_RIDGE or RED_CREST
+  Ridge_type m_line_type;  
+  std::list<ridge_he> m_line;
+  FT m_strength;// = integral of ppal curvature along the line
+  FT m_sharpness;// = (integral of second derivative of curvature
+		 // along the line) divided by the size of the model
+		 // (which is the radius of the smallest enclosing
+		 // ball)
 };
 
 //--------------------------------------------------------------------------
@@ -76,13 +80,13 @@ Ridge_line() : m_strength(0.), m_sharpness(0.)  {}
 
 template < class Poly >
 void Ridge_line<Poly>::
-dump_4ogl(std::ostream& out_stream)
+dump_4ogl(std::ostream& out_stream) const
 {
   out_stream << line_type() << " "
 	     << strength() << " "
 	     << sharpness() << " ";
 
-  typename std::list<ridge_he >::iterator
+  typename std::list<ridge_he >::const_iterator
     iter = line()->begin(), 
     ite =  line()->end();
   for (;iter!=ite;iter++){
@@ -130,7 +134,7 @@ operator<<(std::ostream& out_stream, const Ridge_line<Poly>& ridge_line)
 //---------------------------------------------------------------------------
 //Differential_quantities
 //--------------------------------------------------------------------------
-template < class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap>
+template <class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap>
   class Differential_quantities {
  public :
   Vertex2FTPropertyMap  vertex2k1_pm, vertex2k2_pm,
@@ -144,7 +148,6 @@ template < class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap>
 //---------------------------------------------------------------------------
 //Ridge_approximation
 //--------------------------------------------------------------------------
-
 template < class Poly, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
   class Ridge_approximation
 {
@@ -161,30 +164,27 @@ template < class Poly, class OutputIt, class Vertex2FTPropertyMap, class Vertex2
 
   //are ridges tagged as elliptic or hyperbolic using 3rd or 4th order
   //differential quantitities?
-  //tag_3 is not working or badly, to be removed or improved?
+  //with tag_3 P1 and P2 are not used and the sharpness is not defined.
   enum Tag_order {Tag_3 = 3, Tag_4 = 4};
   
- public:
   Ridge_approximation(Poly &P,
 		      Vertex2FTPropertyMap vertex2k1_pm, Vertex2FTPropertyMap vertex2k2_pm,
 		      Vertex2FTPropertyMap vertex2b0_pm, Vertex2FTPropertyMap vertex2b3_pm,
 		      Vertex2FTPropertyMap vertex2P1_pm, Vertex2FTPropertyMap vertex2P2_pm,
 		      Vertex2VectorPropertyMap vertex2d1_pm, Vertex2VectorPropertyMap vertex2d2_pm);
-  OutputIt compute_all_ridges(Poly &P, OutputIt it, Tag_order ord = Tag_3);
+  OutputIt compute_all_ridges(OutputIt it, Tag_order ord = Tag_3);
   
-  //Find BLUE_RIDGE, RED_RIDGE or CREST ridges 
-  //iterate on P facets, find a non-visited, regular, 2Xing triangle,
-  //follow non-visited, regular, 2Xing triangles in both sens to create
-  //a Ridge line.
-  //Each time an edge is added the strength of the current line is updated
-  // + length(ridge segment in the facet)*|k|
-  void compute_ridges(Poly &P, 
-		      Ridge_type r_type, 
+  //Find BLUE_RIDGE, RED_RIDGE or CREST ridges iterate on P facets,
+  //find a non-visited, regular (i.e. if there is a coherent
+  //orientation of ppal dir at the facet vertices), 2Xing triangle,
+  //follow non-visited, regular, 2Xing triangles in both sens to
+  //create a Ridge line.  Each time an edge is added the strength and
+  //sharpness(if Tag_4) are updated.
+  void compute_ridges(Ridge_type r_type, 
 		      OutputIt ridge_lines_it,
 		      Tag_order ord = Tag_3);
-  // void compute_umbilics(Poly &P	);//container, class for umbilics?
 
-protected:
+ protected:
   Poly* P;
   FT model_size;//radius of the smallest enclosing sphere of the Poly
 		//used to make the sharpness scale independant and iso indep
@@ -209,7 +209,7 @@ protected:
 			      Halfedge_handle& he1, 
 			      Halfedge_handle& he2,
 			      Ridge_type r_type,
-			      Tag_order ord = Tag_3);
+			      Tag_order ord);
   
   //is an edge crossed by a BLUE/RED ridge? (color is BLUE_RIDGE or
   //RED_RIDGE ).  As we only test edges of regular triangles, the ppal
@@ -224,7 +224,7 @@ protected:
 		    bool& is_crossed, 
 		    Ridge_type color);
  
-  //for the computation with tag_order = 3
+  //for the computation with tag_order == 3 only
   //for a ridge segment [r1,r2] in a triangle (v1,v2,v3), let r = r2 -
   //r1 and normalize, the projection of a point p on the line (r1,r2)
   //is pp=r1+tr, with t=(p-r1)*r then the vector v starting at p is
@@ -243,16 +243,19 @@ protected:
 			       Vector_3 r1, Vector_3 r2, 
 			       Ridge_type color);
 
-   //a ridge line begins with a segment in a triangle
+  //a ridge line begins with a segment in a triangle given by the 2 he
+  //crossed
   void init_ridge_line(Ridge_line* ridge_line, 
 		       Halfedge_handle h1, Halfedge_handle h2, 
-		       Ridge_type r_type);
-
+		       Ridge_type r_type,
+		       Tag_order ord);
   //When the line is extended with a he, the bary coord of the
   //crossing point is computed, the pair (he,coord) is added and the
   //weigths are updated 
-  void addback(Ridge_line* ridge_line, Halfedge_handle he, Ridge_type r_type);
-  void addfront(Ridge_line* ridge_line, Halfedge_handle he, Ridge_type r_type);
+  void addback(Ridge_line* ridge_line, Halfedge_handle he, 
+	       Ridge_type r_type, Tag_order ord);
+  void addfront(Ridge_line* ridge_line, Halfedge_handle he,
+		Ridge_type r_type, Tag_order ord);
 
   //compute the barycentric coordinate of the xing point (blue or red)
   //for he: p->q  coord is st xing_point = coord*p + (1-coord)*q
@@ -273,38 +276,42 @@ Ridge_approximation(Poly &P,
 : P(&P), k1(vertex2k1_pm), k2(vertex2k2_pm), b0(vertex2b0_pm), b3(vertex2b3_pm), 
   P1(vertex2P1_pm), P2(vertex2P2_pm), d1(vertex2d1_pm), d2(vertex2d2_pm)
 {
+  //init the is_visited_map and check that the mesh is a triangular one.
+  Facet_iterator itb = P.facets_begin(), ite = P.facets_end();
+  for(;itb!=ite;itb++) {
+    is_visited_map[itb] = false;
+    CGAL_precondition( itb->is_triangle() );
+  }
+
   CGAL::Min_sphere_d<CGAL::Optimisation_d_traits_3<typename Poly::Traits> > 
     min_sphere(P.points_begin(), P.points_end());
   model_size = min_sphere.squared_radius();
   //maybe better to use CGAL::Min_sphere_of_spheres_d ?? but need to create spheres?
-
-  //init the is_visited_map
-  Facet_iterator itb = P.facets_begin(), ite = P.facets_end();
-  for(;itb!=ite;itb++) is_visited_map[itb] = false; 
 }
 
 
 
 template < class Poly, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
 OutputIt Ridge_approximation<Poly, OutputIt, Vertex2FTPropertyMap, Vertex2VectorPropertyMap>::
-compute_all_ridges(Poly &P, OutputIt it, Tag_order ord)
+compute_all_ridges(OutputIt it, Tag_order ord)
 {
-  compute_ridges(P, BLUE_RIDGE, it, ord);
-  compute_ridges(P, RED_RIDGE, it, ord);
-  compute_ridges(P, CREST, it, ord);
+  compute_ridges(BLUE_RIDGE, it, ord);
+  compute_ridges(RED_RIDGE, it, ord);
+  compute_ridges(CREST, it, ord);
   return it;
 }
 
 template < class Poly, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
   void Ridge_approximation<Poly, OutputIt, Vertex2FTPropertyMap, Vertex2VectorPropertyMap>::
-compute_ridges(Poly &P, Ridge_type r_type,
-	       OutputIt ridge_lines_it, Tag_order ord)
+compute_ridges(Ridge_type r_type, OutputIt ridge_lines_it, Tag_order ord)
 {
-  //set all facets non visited
-  Facet_iterator itb = P.facets_begin(), ite = P.facets_end();
+  CGAL_precondition( (r_type == BLUE_RIDGE) || (r_type == RED_RIDGE) || (r_type == CREST) );
+
+  //reinit the is_visited_map
+  Facet_iterator itb = P->facets_begin(), ite = P->facets_end();
   for(;itb!=ite;itb++) is_visited_map[itb] = false;
- 
-  itb = P.facets_begin();
+  
+  itb = P->facets_begin();
   for(;itb!=ite;itb++)
     {
       Facet_handle f = itb;
@@ -321,7 +328,7 @@ compute_ridges(Poly &P, Ridge_type r_type,
       
       //a ridge_line is begining and stored
       Ridge_line* cur_ridge_line = new Ridge_line();
-      init_ridge_line(cur_ridge_line, h1, h2, cur_ridge_type);
+      init_ridge_line(cur_ridge_line, h1, h2, cur_ridge_type, ord);
       *ridge_lines_it++ = cur_ridge_line;
     
       //next triangle adjacent to h1 (push_front)
@@ -337,7 +344,7 @@ compute_ridges(Poly &P, Ridge_type r_type,
 	      is_visited_map.find(f)->second = true;
 	      if (curhe->opposite() == curhe1) curhe = curhe2;
 	      else curhe = curhe1;//curhe stays at the ridge extremity
-	      addfront(cur_ridge_line, curhe, cur_ridge_type);
+	      addfront(cur_ridge_line, curhe, cur_ridge_type, ord);
 	      if ( !(curhe->is_border_edge()) ) f =
 						  curhe->opposite()->facet();
 	      else break;
@@ -361,7 +368,7 @@ compute_ridges(Poly &P, Ridge_type r_type,
 	      is_visited_map.find(f)->second = true;
 	      if (curhe->opposite() == curhe1) curhe = curhe2;
 	      else curhe = curhe1;
-	      addback(cur_ridge_line, curhe, cur_ridge_type);
+	      addback(cur_ridge_line, curhe, cur_ridge_type, ord);
 	      if ( !(curhe->is_border_edge()) ) f =
 						  curhe->opposite()->facet();
 	      else break;
@@ -438,9 +445,9 @@ facet_ridge_type(Facet_handle f, Halfedge_handle& he1, Halfedge_handle&
       he2 = h3;
     }
   //check there is no other case (just on edge crossed)
-  assert ( !( (h1_is_crossed && !h2_is_crossed && !h3_is_crossed)
-	      || (!h1_is_crossed && h2_is_crossed && !h3_is_crossed)
-	      || (!h1_is_crossed && h2_is_crossed && !h3_is_crossed)) );
+  CGAL_postcondition ( !( (h1_is_crossed && !h2_is_crossed && !h3_is_crossed)
+			  || (!h1_is_crossed && h2_is_crossed && !h3_is_crossed)
+			  || (!h1_is_crossed && h2_is_crossed && !h3_is_crossed)) );
 
   //There is a ridge segment in the triangle, determine its type
   Vertex_handle v_p1 = he1->opposite()->vertex(), v_q1 = he1->vertex(),
@@ -493,7 +500,7 @@ facet_ridge_type(Facet_handle f, Halfedge_handle& he1, Halfedge_handle&
       if ( sign_P2 < 0 ) return RED_ELLIPTIC_RIDGE; else return RED_HYPERBOLIC_RIDGE;
     } 
   }
-  assert(0);//should return before!
+  CGAL_postcondition ( "should return before!" == 0);//should return before!
 }
 
 template < class Poly, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
@@ -546,9 +553,9 @@ template < class Poly, class OutputIt, class Vertex2FTPropertyMap, class Vertex2
   }
   if ( r != CGAL::NULL_VECTOR ) r = r/CGAL::sqrt(r*r);
   FT sign1, sign2, sign3;
-  sign1 = (r1 - (v1->point()-ORIGIN) + (((v1->point()-ORIGIN)-r1)*r)*r )*dv1;
-  sign2 = (r1 - (v2->point()-ORIGIN) + (((v2->point()-ORIGIN)-r1)*r)*r )*dv2;
-  sign3 = (r1 - (v3->point()-ORIGIN) + (((v3->point()-ORIGIN)-r1)*r)*r )*dv3;
+  sign1 = bv1*(r1 - (v1->point()-ORIGIN) + (((v1->point()-ORIGIN)-r1)*r)*r )*dv1;
+  sign2 = bv2*(r1 - (v2->point()-ORIGIN) + (((v2->point()-ORIGIN)-r1)*r)*r )*dv2;
+  sign3 = bv3*(r1 - (v3->point()-ORIGIN) + (((v3->point()-ORIGIN)-r1)*r)*r )*dv3;
   
   int compt = 0;
   if ( sign1 > 0 ) compt++; else if (sign1 < 0) compt--;
@@ -563,16 +570,18 @@ template < class Poly, class OutputIt, class Vertex2FTPropertyMap, class Vertex2
   void Ridge_approximation<Poly, OutputIt, Vertex2FTPropertyMap, Vertex2VectorPropertyMap>::
 init_ridge_line(Ridge_line* ridge_line, 
 		       Halfedge_handle h1, Halfedge_handle h2, 
-		       Ridge_type r_type)
+		       Ridge_type r_type,
+		       Tag_order ord)
 {
   ridge_line->line_type() = r_type;
   ridge_line->line()->push_back(ridge_he(h1, bary_coord(h1,r_type)));
-  addback(ridge_line, h2, r_type);
+  addback(ridge_line, h2, r_type, ord);
 }
 
 template < class Poly, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
   void Ridge_approximation<Poly, OutputIt, Vertex2FTPropertyMap, Vertex2VectorPropertyMap>::
-addback(Ridge_line* ridge_line, Halfedge_handle he, Ridge_type r_type)
+addback(Ridge_line* ridge_line, Halfedge_handle he,
+	Ridge_type r_type, Tag_order ord)
 {
   Halfedge_handle he_cur = ( --(ridge_line->line()->end()) )->first;
   FT coord_cur = ( --(ridge_line->line()->end()) )->second;//bary_coord(he_cur);
@@ -583,7 +592,7 @@ addback(Ridge_line* ridge_line, Halfedge_handle he, Ridge_type r_type)
     ((v_p_cur->point()-ORIGIN)*coord_cur + (v_q_cur->point()-ORIGIN)*(1-coord_cur));
 
   FT k1x, k2x; //abs value of the ppal curvatures at the Xing point on he.
-  FT k_second; // abs value of the second derivative of the curvature
+  FT k_second = 0; // abs value of the second derivative of the curvature
                // along the line of curvature
   k1x = CGAL::abs(k1[v_p]) * coord + CGAL::abs(k1[v_q]) * (1-coord) ;   
   k2x = CGAL::abs(k2[v_p]) * coord + CGAL::abs(k2[v_q]) * (1-coord) ;   
@@ -592,15 +601,19 @@ addback(Ridge_line* ridge_line, Halfedge_handle he, Ridge_type r_type)
        || (ridge_line->line_type() == BLUE_HYPERBOLIC_RIDGE) 
        || (ridge_line->line_type() == BLUE_CREST) ) {
     ridge_line->strength() += k1x * CGAL::sqrt(segment * segment); 
-    k_second =CGAL::abs(( CGAL::abs(P1[v_p]) * coord + CGAL::abs(P1[v_q]) * (1-coord) )/(k1x-k2x));
-    ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * model_size; 
+    if (ord == Tag_4) { 
+      if (k1x != k2x) 
+	k_second =CGAL::abs(( CGAL::abs(P1[v_p]) * coord + CGAL::abs(P1[v_q]) * (1-coord) )/(k1x-k2x));
+      ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * model_size; }
   }
   if ( (ridge_line->line_type() == RED_ELLIPTIC_RIDGE) 
        || (ridge_line->line_type() == RED_HYPERBOLIC_RIDGE) 
        || (ridge_line->line_type() == RED_CREST) ) {
    ridge_line->strength() += k2x * CGAL::sqrt(segment * segment); 
-   k_second =CGAL::abs(( CGAL::abs(P2[v_p]) * coord + CGAL::abs(P2[v_q]) * (1-coord) )/(k1x-k2x));
-   ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * model_size; 
+   if (ord == Tag_4) {
+     if (k1x != k2x) 
+       k_second =CGAL::abs(( CGAL::abs(P2[v_p]) * coord + CGAL::abs(P2[v_q]) * (1-coord) )/(k1x-k2x));
+     ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * model_size; }
    } 
   ridge_line->line()->push_back( ridge_he(he, coord));
 }
@@ -609,7 +622,8 @@ addback(Ridge_line* ridge_line, Halfedge_handle he, Ridge_type r_type)
 
 template < class Poly, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
   void Ridge_approximation<Poly, OutputIt, Vertex2FTPropertyMap, Vertex2VectorPropertyMap>::
-addfront(Ridge_line* ridge_line, Halfedge_handle he, Ridge_type r_type)
+addfront(Ridge_line* ridge_line, Halfedge_handle he, 
+	 Ridge_type r_type, Tag_order ord)
 {
   Halfedge_handle he_cur = ( ridge_line->line()->begin() )->first;
   FT coord_cur = ( ridge_line->line()->begin() )->second;
@@ -629,15 +643,19 @@ addfront(Ridge_line* ridge_line, Halfedge_handle he, Ridge_type r_type)
        || (ridge_line->line_type() == BLUE_HYPERBOLIC_RIDGE) 
        || (ridge_line->line_type() == BLUE_CREST) ) {
     ridge_line->strength() += k1x * CGAL::sqrt(segment * segment); 
-    k_second =CGAL::abs(( CGAL::abs(P1[v_p]) * coord + CGAL::abs(P1[v_q]) * (1-coord) )/(k1x-k2x));
-    ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * model_size; 
+   if (ord == Tag_4) {
+     if (k1x != k2x) 
+       k_second =CGAL::abs(( CGAL::abs(P1[v_p]) * coord + CGAL::abs(P1[v_q]) * (1-coord) )/(k1x-k2x));
+     ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * model_size; }
   }
   if ( (ridge_line->line_type() == RED_ELLIPTIC_RIDGE) 
        || (ridge_line->line_type() == RED_HYPERBOLIC_RIDGE) 
        || (ridge_line->line_type() == RED_CREST) ) {
    ridge_line->strength() += k2x * CGAL::sqrt(segment * segment); 
-   k_second =CGAL::abs(( CGAL::abs(P2[v_p]) * coord + CGAL::abs(P2[v_q]) * (1-coord) )/(k1x-k2x));
-   ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * model_size; 
+   if (ord == Tag_4) {
+     if (k1x != k2x) 
+       k_second =CGAL::abs(( CGAL::abs(P2[v_p]) * coord + CGAL::abs(P2[v_q]) * (1-coord) )/(k1x-k2x));
+     ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * model_size; }
    } 
   ridge_line->line()->push_front( ridge_he(he, coord));
 }
@@ -660,6 +678,7 @@ bary_coord(Halfedge_handle he, Ridge_type r_type)
     b_p = b3[he->opposite()->vertex()];
     b_q = b3[he->vertex()];    
   }
+  //denominator cannot be 0 since there is no crossing when both extremalities are 0
   return CGAL::abs(b_q) / ( CGAL::abs(b_q) + CGAL::abs(b_p) );
 }
   

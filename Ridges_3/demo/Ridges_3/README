@@ -12,3 +12,5 @@ it displays an OpenGL view of both the mesh and the ridge lines
 
 
 ./introspect-qt.exe ../../examples/Ridges_3/data/poly2x^2+y^2-0.062500.off ../../examples/Ridges_3/data_poly2x^2+y^2-0.062500.off.4ogl.txt
+
+

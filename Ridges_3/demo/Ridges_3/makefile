@@ -75,7 +75,5 @@ depend:
 
 # DO NOT DELETE
 
-SketchSample.o: SketchSample.h visu_poly.h enriched_polyhedron.h
 SketchSample.o: visu_poly.h enriched_polyhedron.h
-visu.o: SketchSample.h visu_poly.h enriched_polyhedron.h
 visu_poly.o: enriched_polyhedron.h

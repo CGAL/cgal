@@ -20,8 +20,9 @@
 
 
 Mesh m_mesh;
-
 DS ridge_data;
+double strength_threshold = 0;
+double sharpness_threshold = 0;
 
 void clean_DS(DS& L)
 {
@@ -57,7 +58,7 @@ read_line(std::ifstream& stream_res, int& ridge_type,
 	      >> strength
 	      >> sharpness;
       //debug
-      std::cout <<ridge_type << " ";
+      //  std::cout << strength << " ";
 
       while ( issline.good() ) {
         Point p;//there are at least 2 points in a line
@@ -91,7 +92,15 @@ void load_data_from_file(DS& l, const char* file_res)
 
 void load_geom(int argc, char* argv[])
 {	
-  assert(argc==3);
+  if (argc != 5)
+    { std::cout << "Usage : prog + " << std::endl
+		<< " file.off " << std::endl
+		<< " file....4ogl.txt" << std::endl
+		<< " strength_threshold "<< std::endl
+		<< " sharpness_threshold " << std::endl;
+      exit(0);
+    }
+
   const char* file_off = argv[1];
   const char* file_res = argv[2];
  
@@ -107,6 +116,9 @@ void load_geom(int argc, char* argv[])
   ridge_data.clear();
   load_data_from_file(ridge_data, file_res);
 
+  //init thresholds
+  strength_threshold = atof(argv[3]);
+  sharpness_threshold = atof(argv[4]);
 }
 
 
@@ -137,42 +149,43 @@ int main(int argc, char** argv) {
 
   main.show();
 
-  //debug  visu with a jvx file
-  std::cout << ridge_data.size() << std::endl;
-  DS_iterator iter_lines = ridge_data.begin(), iter_end = ridge_data.end();
+
+//   //debug  visu with a jvx file
+//   std::cout << ridge_data.size() << std::endl;
+//   DS_iterator iter_lines = ridge_data.begin(), iter_end = ridge_data.end();
   
-  std::ofstream out_jvx("debug.jvx");
-  CGAL::Javaview_writer<std::ofstream> jvw(out_jvx);
-  jvw.set_title("ridges");
-  jvw.write_header();
+//   std::ofstream out_jvx("debug.jvx");
+//   CGAL::Javaview_writer<std::ofstream> jvw(out_jvx);
+//   jvw.set_title("ridges");
+//   jvw.write_header();
 
-//   //first the polysurf
-//   jvw.set_geometry_name("polysurf");
-//   jvw.begin_geometry();
-//   polyhedron_javaview_writer(jvw, P);
-//   jvw.end_geometry();
+// //   //first the polysurf
+// //   jvw.set_geometry_name("polysurf");
+// //   jvw.begin_geometry();
+// //   polyhedron_javaview_writer(jvw, P);
+// //   jvw.end_geometry();
 
-  int compt = 0;
+//   int compt = 0;
  
-  for (;iter_lines!=iter_end;iter_lines++) {
-    compt++;
-    // create the name of the ridge
-    std::ostringstream str;
-    str << "ridge " << compt;
-    jvw.set_geometry_name(str.str());
+//   for (;iter_lines!=iter_end;iter_lines++) {
+//     compt++;
+//     // create the name of the ridge
+//     std::ostringstream str;
+//     str << "ridge " << compt;
+//     jvw.set_geometry_name(str.str());
 
-    //color
-    if ((*iter_lines)->ridge_type ==BC) jvw.set_color(CGAL::BLUE);
-    else jvw.set_color(CGAL::RED);
+//     //color
+//     if ((*iter_lines)->ridge_type == CGAL::BLUE_CREST) jvw.set_color(CGAL::BLUE);
+//     else jvw.set_color(CGAL::RED);
 
-    //lines
-    jvw.begin_geometry();
-    polyline_javaview_writer(jvw, (*iter_lines)->ridge_points.begin(),
-			     (*iter_lines)->ridge_points.end());
-    jvw.end_geometry();
-  }
+//     //lines
+//     jvw.begin_geometry();
+//     polyline_javaview_writer(jvw, (*iter_lines)->ridge_points.begin(),
+// 			     (*iter_lines)->ridge_points.end());
+//     jvw.end_geometry();
+//   }
     
-  jvw.write_footer();
+//   jvw.write_footer();
 
 
 

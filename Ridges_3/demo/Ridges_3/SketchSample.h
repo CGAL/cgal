@@ -7,11 +7,16 @@
 #include "Sketcher.h"
 #include <iostream>
 
+#include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Ridges.h>
 //marc
 #include "visu_poly.h"
 #include "enriched_polyhedron.h" 
 
-enum Ridge_type {NONE=0, BLUE_RIDGE, RED_RIDGE, CREST, BE, BH, BC, RE, RH, RC};
+/* extern CGAL::Ridge_type  NONE, BLUE_RIDGE, RED_RIDGE, CREST,  */
+/*   BLUE_ELLIPTIC_RIDGE, BLUE_HYPERBOLIC_RIDGE, BLUE_CREST,  */
+/*   RED_ELLIPTIC_RIDGE, RED_HYPERBOLIC_RIDGE, RED_CREST; */
 
 //Data structure for one line of the input file .4ogl.txt
 struct data_line{

@@ -28,7 +28,8 @@ Note : if the nb of collected points is less than the required min number of
 
  
 
- 
+ blind -f data/models/aim@shape/brain.off -d4 -m4 -a3 -t4
+
 
 
  ./blind -f data/ellipe0.003.off -d4 -m4 -a3 -t4
@@ -39,6 +40,8 @@ Note : if the nb of collected points is less than the required min number of
 
 visu with:
 
+ridge_introspect-qt data/models/mailleurNew/surfaces/off/blend_c.00005.off data/data_models_mailleurNew_surfaces_off_blend_c.00005.offRIDGES-d4-m4-t3-a3-p0.4ogl.txt
+*
 introspect-qt ../../examples/Ridges_3/data/poly2x^2+y^2-0.062500.off ../../examples/Ridges_3/data_poly2x^2+y^2-0.062500.off.4ogl.txt
 
 

@@ -1,3 +1,4 @@
+
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 
@@ -11,6 +12,7 @@
 
 #include <CGAL/Ridges.h> 
 #include <CGAL/Umbilic.h>
+
 // #include <CGAL/Monge_via_jet_fitting.h> //does not work since not in the release yet
 // #include <CGAL/Lapack/Linear_algebra_lapack.h>
 #include "../../../Jet_fitting_3/include/CGAL/Monge_via_jet_fitting.h" 
@@ -159,7 +161,7 @@ void compute_differential_quantities(PolyhedralSurf& P, Poly_rings& poly_rings)
 
     //exit if the nb of points is too small 
     if ( in_points.size() < min_nb_points )
-      {std::cerr << "Too few points to perform the fitting" << std::endl; exit(0);}
+      {std::cerr << "Too few points to perform the fitting" << std::endl; exit(1);}
 
     //For Ridges we need at least 3rd order info
     assert( d_monge >= 3);
@@ -302,10 +304,10 @@ int main(int argc, char *argv[])
   back_insert_iterator<std::vector<Ridge_line*> > ii(ridge_lines);
   
   //Find BLUE_RIDGE, RED_RIDGE, CREST or all ridges
-  //   ridge_approximation.compute_ridges(P, CGAL::BLUE_RIDGE, ii, tag_order);  
-  //   ridge_approximation.compute_ridges(P, CGAL::RED_RIDGE, ii, tag_order);  
-  //  ridge_approximation.compute_ridges(P, CGAL::CREST, ii, tag_order);  
-    ridge_approximation.compute_all_ridges(P, ii, tag_order);  
+  //   ridge_approximation.compute_ridges(CGAL::BLUE_RIDGE, ii, tag_order);  
+  //   ridge_approximation.compute_ridges(CGAL::RED_RIDGE, ii, tag_order);  
+  //ridge_approximation.compute_ridges(CGAL::CREST, ii, tag_order);  
+     ridge_approximation.compute_all_ridges(ii, tag_order);  
 
 
   std::vector<Ridge_line*>::iterator iter_lines = ridge_lines.begin(), 
@@ -321,21 +323,18 @@ int main(int argc, char *argv[])
   //---------------------------------------------------------------------------
   // UMBILICS
   //--------------------------------------------------------------------------
-//   Umbilic_approximation umbilic_approximation(P, 
-// 					      vertex2k1_pm, vertex2k2_pm,
-// 					      vertex2d1_pm, vertex2d2_pm);
-//   std::vector<Umbilic*> umbilics;
-//   back_insert_iterator<std::vector<Umbilic*> > umb_it(umbilics);
-//   umbilic_approximation.compute(P, umb_it, umb_size);
+  Umbilic_approximation umbilic_approximation(P, 
+					      vertex2k1_pm, vertex2k2_pm,
+					      vertex2d1_pm, vertex2d2_pm);
+  std::vector<Umbilic*> umbilics;
+  back_insert_iterator<std::vector<Umbilic*> > umb_it(umbilics);
+  umbilic_approximation.compute(umb_it, umb_size);
 
-//   std::vector<Umbilic*>::iterator iter_umb = umbilics.begin(), 
-//     iter_umb_end = umbilics.end();
-//   // output
-//   std::cout << "nb of umbilics " << umbilics.size() << std::endl;
-//   for (;iter_umb!=iter_umb_end;iter_umb++)
-//     {
-//       std::cout << "umbilic type " << (*iter_umb)->umb_type << std::endl;
-//     }
+  std::vector<Umbilic*>::iterator iter_umb = umbilics.begin(), 
+    iter_umb_end = umbilics.end();
+  // output
+  std::cout << "nb of umbilics " << umbilics.size() << std::endl;
+  for (;iter_umb!=iter_umb_end;iter_umb++) std::cout << **iter_umb;
  
   return 1;
 }

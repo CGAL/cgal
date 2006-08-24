@@ -7,7 +7,7 @@
 # Choose the right include file from the <cgalroot>/make directory.
 include $(CGAL_MAKEFILE)
 
-PROFOPT= -g 
+PROFOPT=  -O3 #-g 
 CFLAGS=${PROFOPT} 
 #---------------------------------------------------------------------#
 #                    compiler flags
@@ -21,8 +21,7 @@ CXXFLAGS = \
            -I../../../Jet_fitting_3/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
-	   $(LAPACK_INCDIRS) \
-           ${CFLAGS} 
+	   $(LAPACK_INCDIRS) 
 
 #---------------------------------------------------------------------#
 #                    linker flags

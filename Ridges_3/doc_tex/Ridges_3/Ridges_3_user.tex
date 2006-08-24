@@ -1,49 +1,57 @@
+
+\newtheorem{definition}{Definition.}
+
+
 This chapter describes the \cgal's package for the extraction of
-ridges on meshes.  Given a smooth surface, a ridge is a curve along
-which one of the principal curvatures has an extremum along its
-curvature line. Ridges are curves of {\em extremal} curvature and
+ridges and umbilics on meshes.  Given a smooth surface, a ridge is a
+curve along which one of the principal curvatures has an extremum
+along its curvature line. An umbilic is a point at which both
+principal curvatures are equal. Umbilics are special points on the
+ridge lines. Ridges are curves of {\em extremal} curvature and
 therefore encode important informations used in segmentation,
 registration, matching and surface analysis.  Based on the results of
-the article \cite{rr}, we propose several algorithms to identify and
-extract different parts of this singular ridge curve and some of its
-singularites on a surface given as a mesh.
+the article
+\cite{rr}, we propose several algorithms to identify and extract
+different parts of this singular ridge curve as well as umbilics on a
+surface given as a triangular mesh.
 
 
 \subsection{Overview}
 %%%%%%%%%%%%%%%%%%%%%%
 
-2 main versions
+2 main independent classes
 
 \begin{itemize}
 \item
-non-topologically oriented: we output several lists of ridges which
-are polylines, each list associated to a type: crest min/max,
-ellip/hyper, red/blue.
-
-each line has a weight enabling interactive filtering for the visu
-
+\ccc{Umbilic_approximation}
 \item
-topologically oriented : we output a list of umbilics and some lists
-of ridges outside umbilic patches, turning points?
+\ccc{Ridge_approximation}
 \end{itemize}
 
+And two ``container'' classes.
 
 %%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 \label{sec:intro}
 %%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Ridges of a smooth surface}
+\subsection{Ridges and umbilics of a smooth surface}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 A comprehensive description of ridges can be found in
-\cite{ip-nss-71,hgyg-ttdpf-99,ip-gd-01}, and in the sequel, we just
+\cite{hgyg-ttdpf-99,ip-gd-01}, and in the sequel, we just
 introduce the basic notions so as to explain our algorithms.
 Consider a smooth embedded surface, and denote $k_1$ and $k_2$ the
 principal curvatures, with $k_1\geq k_2$. Umbilics are the points
 where $k_1=k_2$.  For any non umbilical point, the corresponding
 principal directions of curvature are well defined, and we denote them
-$d_1$ and $d_2$. In local coordinates, we denote $\langle , \rangle$
+$d_1$ and $d_2$. 
+%%
+Anything related to the maximal (minimal) curvature is qualified blue
+(red), for example we shall speak of the blue curvature for $k_1$ or
+the red direction for $d_2$.
+%%
+In local coordinates, we denote $\langle , \rangle$
 the inner product induced by the ambient Euclidean space, and $dk_1$,
 $dk_2$ the gradients of the principal curvatures. Ridges, illustrated
 on Figs \ref{pict:ellipsoid_ridges} and \ref{fig:ridges_ellipsoid},
@@ -69,71 +77,67 @@ dk_2,d_2 \rangle$ vanishes, i.e. $b_3=0$.
 %\rangle$, and we call these functions the {\em extremality
 %coefficients}. 
 %%
-Notice that, as the principal curvatures are not differentiable at
-umbilics, the extremality coefficients are not defined at such
-points. In addition, the sign of the extremality coefficients is not
-defined since the principal directions can be oriented by two opposite
-unit vectors. Apart from umbilics, special points on ridges are {\em
-purple} points, which correspond to intersections between red and a
-blue ridges. The previous characterization of ridges involves
-third-order differential properties. Using fourth-order differential
-quantities, a ridge point can further be qualified as {\em elliptic}
-if it corresponds to a maximum of $k_1$ or a minimum of $k_2$, or {\em
-hyperbolic} otherwise. Ridges of a given color change from elliptic to
-hyperbolic at special points called {\em turning} points.
+The previous characterization of ridges involves third-order
+differential properties. Using fourth-order differential quantities, a
+ridge point can further be qualified as {\em elliptic} if it
+corresponds to a maximum of $k_1$ or a minimum of $k_2$, or {\em
+hyperbolic} otherwise. Hence we end with four types of ridges, namely
+: \ccc{BLUE_ELLIPTIC_RIDGE}, \ccc{BLUE_HYPERBOLIC_RIDGE}, \ccc{RED_ELLIPTIC_RIDGE},
+\ccc{RED_HYPERBOLIC_RIDGE}.
+In addition, a subset of elliptic ridges, called the crest lines,
+which can be seen as the visually most salient curves on a surface are
+also of interest. A crest line is an elliptic ridge which is a maximum
+of $\max(|k_1|,|k_2|)$. Hence we provide two additional ridge types :
+\ccc{BLUE_CREST} and \ccc{RED_CREST}.
 
-The calculation of ridges poses difficult problems, which are of three
-kinds.
+Weigths are associated to each line
+\begin{itemize}
+\item
+the {\bf strength} which is the integral of the curvature along the
+line.
+\item
+the {\bf sharpness} which is the integral of the absolute value of
+the second derivative of the curvature along the ridge.
+\end{itemize}
 
-\paragraph{Topological difficulties.}
-Ridges of a smooth surface form a singular curve on the surface, with
-self-intersections at umbilics (more precisely at so-called 3-ridges
-umbilics), and purple points. Moreover, ridges have complex
-interactions with curvature lines at turning points. From the
-application standpoint, reporting ridges of a surface faithfully
-requires reporting umbilics, purple points and turning points.
+%\begin{minipage}[c]{.45\linewidth}
 
-\paragraph{Numerical difficulties.}
-As pointed out above, ridges are characterized and qualified through
-third and fourth order derivatives of the surface.  Estimating them
-depends on the particular type of surface processed ---implicitly
-defined, parameterized, discretized by a mesh--- and is numerically a
-difficult task.
-
-\paragraph{Orientation difficulties.}
-Since coefficients $b_0$ and $b_3$ depend on a given orientation of
-the principal directions, their sign is not well defined.
-Practically, tracking the sign change of functions whose sign depends
-on the particular orientation of the frame in which they are expressed
-poses a problem. In particular, tracking a zero-crossing of $b_0$ or
-$b_3$ from sign changes along a curve segment on the surface imposes
-to find a coherent orientation of the principal frame at the
-endpoints. Given two principal directions at these endpoints, one way
-to find a local orientation consists of choosing two vectors so that
-they make an acute angle, whence the name {\em Acute Rule}.
-%%
-
-\begin{minipage}[c]{.45\linewidth}
-\begin{figure}[H] 
+\begin{figure}[!ht] 
+\begin{ccTexOnly}
 \centerline{ 
 \includegraphics[height=5cm]{Ridges_3/ellipsoid_ridges_mesh}}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<CENTER> <img border=0 src="./ellipsoid_ridges_mesh.jpg" width=400>
+</CENTER>
+\end{ccHtmlOnly}
+
 \caption{Umbilics, ridges, and principal blue foliation on the
 ellipsoid (10k points)}
 \label{pict:ellipsoid_ridges} 
 \end{figure} 
-\end{minipage}
+%\end{minipage}
 %%
 \hfill
 %%
-\begin{minipage}[c]{.45\linewidth}
+%\begin{minipage}[c]{.45\linewidth}
 \begin{figure}[H] 
+\begin{ccTexOnly}
 \centerline{ 
 \includegraphics[height=5cm]{Ridges_3/ellipsoid_ridges}}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<CENTER> <img border=0 src="./ellipsoid_ridges.jpg" width=400>
+</CENTER>
+\end{ccHtmlOnly}
+
 \caption{Schematic view of the umbilics and the ridges. Max of $k_1$:
 blue; Min of $k_1$: green; Min of $k_2$: red; Max of $k_2$: yellow}
 \label{fig:ridges_ellipsoid}
 \end{figure} 
-\end{minipage}
+%\end{minipage}
 
 
 
@@ -141,17 +145,43 @@ blue; Min of $k_1$: green; Min of $k_2$: red; Max of $k_2$: yellow}
 \section{Software Design}
 %%%%%%%%%%%%%%%%%%%%%%%
 
+usage of pm, triangular meshes.
 
 \subsection{Options and interface specifications}
 %%%%%%%%%%%%%%%%%%%%%
+ridges: approx and container class
+
+ridges compute with para type and tag
+
+Umbilics : approx and container, 
+
+umbilic compute with para 
+size
 
 \subsection{Template parameters}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+On a des concepts: Vertex2FTPropertyMap et Vertex2VectorPropertyMap
+qui sont specialisent le concept de Propety Map de boost, avec
+\ccc{key_type CGAL::Polyhedron_3::Vertex_handle} et de \ccc{value_type
+CGAL::Polyhedron_3::Traits::FT ou Vector_3 }. On a donc les fct get,
+put, []; preciser LvaluePropertyMap ? Utilisation stockage
+d'information scalaire ou vectorielle pour les vertex d'un polyhedron,
+peut-etre dans le vertex lui-meme ou externe avec une std::map par
+exemple. 
+
+Poly est un concept qui a pour model \ccc{CGAL::Polyhedron_3} (faut-il
+detaille les requirements?) TriangularPolyhedralSurface?
+
+OutputIt est un concept de stl Output Iterator avec \ccc{value_type
+CGAL::Ridge_line*} .\\
+ou Outputit est un Output Iterator de la stl sur des Umbilic*
+
+
 \subsection{Output}
 %%%%%%%%%%%%%%%%%%%%
 
-
+Classes \ccc{Umbilic} and \ccc{Ridge_line}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Examples} 

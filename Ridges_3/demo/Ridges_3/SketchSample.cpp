@@ -6,6 +6,9 @@
 
 #include "SketchSample.h"
 
+extern double strength_threshold;
+extern double sharpness_threshold;
+
 SketchSample::SketchSample(Mesh* mesh, DS* ridge_data) {
   highlight = false;
   p_mesh = mesh;
@@ -19,8 +22,8 @@ void SketchSample::buildDisplayList(GLuint surf) {
   glNewList(surf, GL_COMPILE);
   
   glEnable(GL_LIGHTING);
-  //  glShadeModel(GL_SMOOTH);
-  glShadeModel(GL_FLAT);
+  glShadeModel(GL_SMOOTH);
+  //glShadeModel(GL_FLAT);
   //mesh glMaterialfv is def in the mesh with offset to see the lines z_buffered
   p_mesh->gl_draw_facets(true);
 
@@ -29,8 +32,11 @@ void SketchSample::buildDisplayList(GLuint surf) {
   glColor3d(1., 1., 0.);
 
   for (DS_iterator it=p_ridge_data->begin();it!=p_ridge_data->end();it++)
-    draw_one_ridge(*it);
-
+    {
+      if ( (*it)->strength >= strength_threshold && 
+	   (*it)->sharpness >= sharpness_threshold )
+	draw_one_ridge(*it);
+     }
   glEnable(GL_LIGHTING);
 
   //additional objects that may be displayed
@@ -42,6 +48,26 @@ void SketchSample::buildDisplayList(GLuint surf) {
  
   glEndList();
 }
+
+void SketchSample::draw_one_ridge(data_line* line)
+{
+  if (line->ridge_type == CGAL::BLUE_ELLIPTIC_RIDGE)   glColor3f(0.,0.,1.);
+  if (line->ridge_type == CGAL::BLUE_HYPERBOLIC_RIDGE) glColor3f(0.,1.,0.);
+  if (line->ridge_type == CGAL::BLUE_CREST)            glColor3f(0.,0.,1.);
+  if (line->ridge_type == CGAL::RED_ELLIPTIC_RIDGE)    glColor3f(1.,0.,0.);
+  if (line->ridge_type == CGAL::RED_HYPERBOLIC_RIDGE)  glColor3f(1.,1.,0.);
+  if (line->ridge_type == CGAL::RED_CREST)             glColor3f(1.,0.,0.);
+  
+  std::vector<Point>::iterator iter = line->ridge_points.begin(), 
+    ite = line->ridge_points.end();
+
+  glLineWidth(3 );
+  glBegin(GL_LINE_STRIP);
+  for (;iter!=ite;iter++)  glVertex3d(iter->x(), iter->y(), iter->z()); 
+  glEnd();	
+}
+
+
 
 void SketchSample::buildPicking(GLuint pickSurf) {
   int red, green, blue;
@@ -99,20 +125,3 @@ const double* SketchSample::rcoord() {
 }
 
 
-void SketchSample::draw_one_ridge(data_line* line)
-{
-  if (line->ridge_type == BE) glColor3f(0.,0.,1.);
-  if (line->ridge_type == BH) glColor3f(0.,1.,0.);
-  if (line->ridge_type == BC) glColor3f(0.,0.,1.);
-  if (line->ridge_type == RE) glColor3f(1.,0.,0.);
-  if (line->ridge_type == RH) glColor3f(1.,1.,0.);
-  if (line->ridge_type == RC) glColor3f(1.,0.,0.);
-  
-  std::vector<Point>::iterator iter = line->ridge_points.begin(), 
-    ite = line->ridge_points.end();
-
-  glLineWidth(3 );
-  glBegin(GL_LINE_STRIP);
-  for (;iter!=ite;iter++)  glVertex3d(iter->x(), iter->y(), iter->z()); 
-  glEnd();	
-}
