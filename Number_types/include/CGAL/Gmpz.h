@@ -352,14 +352,7 @@ exact_division(const Gmpz &z1, const Gmpz &z2)
 {
   Gmpz Res;
   mpz_divexact(Res.mpz(), z1.mpz(), z2.mpz());
-#ifdef CGAL_CHECK_POSTCONDITIONS
-  mpz_t prod;
-  mpz_init(prod);
-  mpz_mul(prod, Res.mpz(), z2.mpz());
-  CGAL_postcondition_msg(mpz_cmp(prod, z1.mpz()) == 0,
-                         "exact_division failed\n");
-  mpz_clear( prod);
-#endif // CGAL_CHECK_POSTCONDITIONS
+  CGAL_postcondition_msg(Res * z1 == z2, "exact_division failed\n");
   return Res;
 }
 
