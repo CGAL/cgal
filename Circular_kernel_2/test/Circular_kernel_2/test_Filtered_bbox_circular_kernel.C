@@ -1,9 +1,9 @@
 #include <CGAL/Cartesian.h>
-#include <CGAL/Circular_kernel.h>
+#include <CGAL/Circular_kernel_2.h>
 #include <CGAL/Algebraic_kernel_2_2.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/Filtered_interval_circular_kernel.h>
+#include <CGAL/Filtered_bbox_circular_kernel_2.h>
 #include <CGAL/intersections.h>
 #include <iostream>
 
@@ -12,7 +12,7 @@ typedef CGAL::Quotient<RT> NT1;
 typedef CGAL::Cartesian<NT1> Linear_k1;
 typedef CGAL::Algebraic_kernel_for_circles_2_2<NT1> Algebraic_k1;
 typedef CGAL::Circular_kernel_2<Linear_k1, Algebraic_k1> CircularKernel;
-typedef CGAL::Filtered_interval_circular_kernel<CircularKernel> CK;
+typedef CGAL::Filtered_bbox_circular_kernel_2<CircularKernel> CK;
 
   CK ck;
 

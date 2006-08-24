@@ -1,16 +1,15 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Point_2.h>
-#include <CGAL/Circular_kernel.h>
+#include <CGAL/Circular_kernel_2.h>
 #include <CGAL/Arr_circular_line_arc_traits.h>
 #include <CGAL/Algebraic_kernel_2_2.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
-//#include <CGAL/Gmpq.h>
-#include <CGAL/Curved_kernel/function_objects_polynomial_circular.h>
-#include <CGAL/Curved_kernel/Circular_arc_2.h>
-#include <CGAL/Curved_kernel/Line_arc_2.h>
+#include <CGAL/Circular_kernel_2/function_objects_polynomial_circular.h>
+#include <CGAL/Circular_kernel_2/Circular_arc_2.h>
+#include <CGAL/Circular_kernel_2/Line_arc_2.h>
 
-#include <CGAL/Lazy_curved_kernel.h>
+#include <CGAL/Lazy_circular_kernel_2.h>
 #include <CGAL/Random.h>
 
 template <class CK>
@@ -1067,7 +1066,7 @@ int main()
   typedef CGAL::Cartesian<NT2>                               Linear_k2;
   typedef CGAL::Algebraic_kernel_for_circles_2_2<NT2>        Algebraic_k2;
   typedef CGAL::Circular_kernel_2<Linear_k2,Algebraic_k2>    CK2;
-  typedef CGAL::Lazy_curved_kernel<CK1,CK2>                  Circular_kernel;
+  typedef CGAL::Lazy_circular_kernel_2<CK1,CK2>              Circular_kernel;
   Circular_kernel ck;
 
   

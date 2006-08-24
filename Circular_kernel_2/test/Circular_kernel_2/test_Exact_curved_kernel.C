@@ -1,5 +1,5 @@
 #include <CGAL/basic.h>
-#include <CGAL/Exact_circular_kernel.h>
+#include <CGAL/Exact_circular_kernel_2.h>
 #include <CGAL/intersections.h>
 #include <iostream>
 
