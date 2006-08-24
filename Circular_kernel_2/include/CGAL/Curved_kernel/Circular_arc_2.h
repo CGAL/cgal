@@ -29,14 +29,14 @@
 #define CGAL_USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL
 #endif
 
-#ifndef CGAL_CURVED_KERNEL_CIRCULAR_ARC_2_H
-#define CGAL_CURVED_KERNEL_CIRCULAR_ARC_2_H
+#ifndef CGAL_CIRCULAR_KERNEL_CIRCULAR_ARC_2_H
+#define CGAL_CIRCULAR_KERNEL_CIRCULAR_ARC_2_H
 
 #include <CGAL/global_functions_on_circular_arcs_2.h>
-#include <CGAL/Curved_kernel/internal_functions_on_circular_arc_2.h> // temporarily
+#include <CGAL/Circular_kernel_2/internal_functions_on_circular_arc_2.h> // temporarily
 
 #ifdef CGAL_USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL
-#include <CGAL/Curved_kernel/intersection_line_2_circle_2_map.h>
+#include <CGAL/Circular_kernel_2/intersection_line_2_circle_2_map.h>
 #endif
 
 #include <CGAL/intersections.h>
@@ -286,9 +286,9 @@ namespace CGALi {
 #endif
 
       // We cannot enable these preconditions for now, since the 
-      // Lazy_curved_kernel
+      // Lazy_circular_kernel_2
       // calls it on the Interval kernel without try/catch protection
-      // through the Curved_kernel_converter.
+      // through the Circular_kernel_converter.
       // CGAL_kernel_exactness_precondition(CK().has_on_2_object()(support, source));
       // CGAL_kernel_exactness_precondition(CK().has_on_2_object()(support, target));
     }
@@ -723,4 +723,4 @@ public:
 } // namespace CGAL
 
 #undef CGAL_USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL
-#endif // CGAL_CURVED_KERNEL_CIRCULAR_ARC_2_H
+#endif // CGAL_CIRCULAR_KERNEL_CIRCULAR_ARC_2_H

@@ -22,8 +22,8 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 
-#ifndef CGAL_CURVED_KERNEL_CIRCULAR_ARC_POINT_2_H
-#define CGAL_CURVED_KERNEL_CIRCULAR_ARC_POINT_2_H
+#ifndef CGAL_CIRCULAR_KERNEL_CIRCULAR_ARC_POINT_2_H
+#define CGAL_CIRCULAR_KERNEL_CIRCULAR_ARC_POINT_2_H
 
 #include <iostream>
 #include <cassert>
@@ -92,4 +92,4 @@ namespace CGALi {
 } // namespace CGALi
 } // namespace CGAL
 
-#endif // CGAL_CURVED_KERNEL_CIRCULAR_ARC_ENDPOINT_2_H
+#endif // CGAL_CIRCULAR_KERNEL_CIRCULAR_ARC_POINT_2_H

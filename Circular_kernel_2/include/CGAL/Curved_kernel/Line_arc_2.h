@@ -22,18 +22,18 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 
-#ifndef CGAL_CURVED_KERNEL_LINE_ARC_2_H
-#define CGAL_CURVED_KERNEL_LINE_ARC_2_H
+#ifndef CGAL_CIRCULAR_KERNEL_LINE_ARC_2_H
+#define CGAL_CIRCULAR_KERNEL_LINE_ARC_2_H
 
 #include <CGAL/global_functions_on_line_2.h>
 #include <CGAL/global_functions_on_circle_2.h>
 #include <CGAL/global_functions_on_line_arcs_2.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Algebraic_kernel/internal_functions_on_roots_and_polynomial_1_2_and_2_2.h>
-#include <CGAL/Curved_kernel/internal_functions_on_line_2.h>
-#include <CGAL/Curved_kernel/internal_functions_on_line_arc_2.h>
+#include <CGAL/Circular_kernel_2/internal_functions_on_line_2.h>
+#include <CGAL/Circular_kernel_2/internal_functions_on_line_arc_2.h>
 #include <CGAL/Bbox_2.h>
-#include <CGAL/Curved_kernel/Circular_arc_2.h>
+#include <CGAL/Circular_kernel_2/Circular_arc_2.h>
 
 namespace CGAL {
 namespace CGALi {
@@ -294,4 +294,4 @@ namespace CGALi {
  } // namespace CGALi
 } // namespace CGAL
 
-#endif // CGAL_CURVED_KERNEL_LINE_ARC_2_H
+#endif // CGAL_CIRCULAR_KERNEL_LINE_ARC_2_H

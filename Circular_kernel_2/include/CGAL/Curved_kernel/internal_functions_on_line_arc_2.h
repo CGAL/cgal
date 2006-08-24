@@ -22,11 +22,11 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 
-#ifndef CGAL_CURVED_KERNEL_PREDICATES_ON_LINE_ARC_2_H
-#define CGAL_CURVED_KERNEL_PREDICATES_ON_LINE_ARC_2_H
+#ifndef CGAL_CIRCULAR_KERNEL_PREDICATES_ON_LINE_ARC_2_H
+#define CGAL_CIRCULAR_KERNEL_PREDICATES_ON_LINE_ARC_2_H
 
-#include <CGAL/Curved_kernel/internal_functions_on_line_2.h>
-#include <CGAL/Curved_kernel/internal_functions_on_circular_arc_2.h>
+#include <CGAL/Circular_kernel_2/internal_functions_on_line_2.h>
+#include <CGAL/Circular_kernel_2/internal_functions_on_circular_arc_2.h>
 
 namespace CGAL {
 namespace CircularFunctors {
@@ -515,4 +515,4 @@ namespace CircularFunctors {
 } // namespace CircularFunctors 
 } // namespace CGAL
 
-#endif // CGAL_CURVED_KERNEL_PREDICATES_ON_LINE_ARC_2_H
+#endif // CGAL_CIRCULAR_KERNEL_PREDICATES_ON_LINE_ARC_2_H

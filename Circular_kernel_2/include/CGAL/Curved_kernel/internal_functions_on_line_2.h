@@ -22,8 +22,8 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 
-#ifndef CGAL_CURVED_KERNEL_FUNCTIONS_ON_LINE_2_H
-#define CGAL_CURVED_KERNEL_FUNCTIONS_ON_LINE_2_H
+#ifndef CGAL_CIRCULAR_KERNEL_FUNCTIONS_ON_LINE_2_H
+#define CGAL_CIRCULAR_KERNEL_FUNCTIONS_ON_LINE_2_H
 
 namespace CGAL {
 namespace LinearFunctors {
@@ -60,6 +60,7 @@ namespace LinearFunctors {
   inline bool
   non_oriented_equal(const typename CK::Line_2 & a1,
 	             const typename CK::Line_2 & a2) {
+    if(identical(a1,a2)) return true;
     const typename CK::RT &a1c = a1.a(); 
     const typename CK::RT &b1c = a1.b();
     const typename CK::RT &c1c = a1.c();
@@ -106,4 +107,4 @@ namespace LinearFunctors {
 
 } // namespace LinearFunctors
 } // namespace CGAL
-#endif // CGAL_CURVED_KERNEL_FUNCTIONS_ON_LINE_2_H
+#endif // CGAL_CIRCULAR_KERNEL_FUNCTIONS_ON_LINE_2_H

@@ -22,11 +22,11 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 
-#ifndef CGAL_CURVED_KERNEL_FUNCTION_OBJECTS_POLYNOMIAL_CIRCULAR_H
-#define CGAL_CURVED_KERNEL_FUNCTION_OBJECTS_POLYNOMIAL_CIRCULAR_H
+#ifndef CGAL_CIRCULAR_KERNEL_FUNCTION_OBJECTS_POLYNOMIAL_CIRCULAR_H
+#define CGAL_CIRCULAR_KERNEL_FUNCTION_OBJECTS_POLYNOMIAL_CIRCULAR_H
 
-#include <CGAL/Curved_kernel/internal_functions_on_circular_arc_2.h>
-#include <CGAL/Curved_kernel/internal_functions_on_line_arc_2.h>
+#include <CGAL/Circular_kernel_2/internal_functions_on_circular_arc_2.h>
+#include <CGAL/Circular_kernel_2/internal_functions_on_line_arc_2.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Object.h>
 
@@ -1119,4 +1119,4 @@ template < class CK >
 } // namespace CircularFunctors
 } // namespace CGAL
 
-#endif // CGAL_CURVED_KERNEL_FUNCTION_OBJECTS_POLYNOMIAL_CIRCULAR_H
+#endif // CGAL_CIRCULAR_KERNEL_FUNCTION_OBJECTS_POLYNOMIAL_CIRCULAR_H

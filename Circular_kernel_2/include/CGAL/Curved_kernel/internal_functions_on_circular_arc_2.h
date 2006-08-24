@@ -22,12 +22,12 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 
-#ifndef CGAL_CURVED_KERNEL_PREDICATES_ON_CIRCULAR_ARC_2_H
-#define CGAL_CURVED_KERNEL_PREDICATES_ON_CIRCULAR_ARC_2_H
+#ifndef CGAL_CIRCULAR_KERNEL_PREDICATES_ON_CIRCULAR_ARC_2_H
+#define CGAL_CIRCULAR_KERNEL_PREDICATES_ON_CIRCULAR_ARC_2_H
 
-#include <CGAL/Curved_kernel/internal_functions_on_circle_2.h>
+#include <CGAL/Circular_kernel_2/internal_functions_on_circle_2.h>
 #include <CGAL/Interval_nt.h>
-#include <CGAL/Curved_kernel/Circular_arc_2.h>
+#include <CGAL/Circular_kernel_2/Circular_arc_2.h>
 
 namespace CGAL {
 namespace CircularFunctors {
@@ -1691,4 +1691,4 @@ advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
 } // namespace CircularFunctors 
 } // namespace CGAL
 
-#endif // CGAL_CURVED_KERNEL_PREDICATES_ON_CIRCULAR_ARC_2_H
+#endif // CGAL_CIRCULAR_KERNEL_PREDICATES_ON_CIRCULAR_ARC_2_H
