@@ -207,7 +207,7 @@ nextafter(double d1, double d2)
 #ifdef CGAL_CFG_NO_NEXTAFTER
   return _nextafter(d1, d2); // works at least for VC++-7.1
 #else
-  return std::nextafter(d1,d2);
+  return ::nextafter(d1,d2);
 #endif
 }
 
