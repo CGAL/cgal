@@ -27,7 +27,7 @@
 #define CGAL_EXACT_CIRCULAR_2_KERNEL_H
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Algebraic_kernel_for_circles.h>
+#include <CGAL/Algebraic_kernel_2_2.h>
 #include <CGAL/Circular_kernel_2.h>
 
 /*
