@@ -402,10 +402,10 @@ Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.eps -text svneol=un
 Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.gif -text svneol=unset#image/gif
 Box_intersection_d/doc_tex/Box_intersection_d/fig/box_inters.pdf -text svneol=unset#application/pdf
 Box_intersection_d/test/Box_intersection_d/benchmark.plot -text svneol=native#application/postscript
-Circular_kernel_2/Curved_kernel/Benchmarks/parser/Report.pdf -text svneol=unset#application/pdf
-Circular_kernel_2/Curved_kernel/Benchmarks/readme.doc -text svneol=unset#application/msword
-Circular_kernel_2/Curved_kernel/Benchmarks/readme.pdf -text svneol=unset#application/pdf
-Circular_kernel_2/Curved_kernel/Benchmarks/readme.sxw -text
+Circular_kernel_2/Benchmarks/parser/Report.pdf -text svneol=unset#application/pdf
+Circular_kernel_2/Benchmarks/readme.doc -text svneol=unset#application/msword
+Circular_kernel_2/Benchmarks/readme.pdf -text svneol=unset#application/pdf
+Circular_kernel_2/Benchmarks/readme.sxw -text
 Circular_kernel_2/Curved_kernel/demo/Curved_kernel/help/get_arc.jpeg -text svneol=unset#image/jpeg
 Circular_kernel_2/Curved_kernel/demo/Curved_kernel/help/index.html svneol=native#text/html
 Circular_kernel_2/Curved_kernel/demo/Curved_kernel/help/planar_map_icon.jpeg -text svneol=unset#image/jpeg
