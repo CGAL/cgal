@@ -1,4 +1,5 @@
-NAME          QP_example
+* Description: from the benchmarks at http://www.doc.ic.ac.uk/~im/
+NAME          QP example
 ROWS
  N  obj
  G  r1
