@@ -70,26 +70,17 @@ int main() {
 #include <CGAL/Circular_arc_traits.h>
 #include <CGAL/Circular_arc_traits_tracer.h>
 
-// #include <CGAL/Pm_default_dcel.h>
-// #include <CGAL/Planar_map_2.h>
-// #include <CGAL/Pm_with_intersections.h>
-
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
 
-//typedef CGAL::MP_Float                                          NT;
 typedef SYNAPS::QQ NT;
 typedef SYNAPS::ZZ RT;
 
-//typedef CGAL::Gmpq                                          NT;
-// typedef CGAL::Lazy_exact_nt<CGAL::Gmpq>                     NT;
-// typedef CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> >    NT;
-// typedef CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::Gmpz> >    NT;
 typedef CGAL::Cartesian<NT>                                 Linear_k;
 
 typedef SYNAPS::Algebraic_kernel_2<RT>                      Algebraic_k;
-typedef CGAL::Curved_kernel<Linear_k,Algebraic_k>           Curved_k;
-// typedef CGAL::Curved_kernel<Linear_k>                        Curved_k;
+typedef CGAL::Circular_kernel_2<Linear_k,Algebraic_k>       Curved_k;
+
 
 typedef Curved_k::Circular_arc_2                            Arc;
 typedef std::vector<Arc>                                    ArcContainer;
