@@ -450,27 +450,62 @@ operator>> (std::istream & is, MP_Float &b);
 
 namespace CGALi {
 
+// This compares the absolute values of the odd-mantissa.
+// (take the mantissas, get rid of all powers of 2, compare
+// the absolute values)
+inline
+Sign
+compare_bitlength(const MP_Float &a, const MP_Float &b)
+{
+  if (a.is_zero())
+    return b.is_zero() ? EQUAL : SMALLER;
+  if (b.is_zero())
+    return LARGER;
+
+  MP_Float aa = abs(a);
+  MP_Float bb = abs(b);
+
+  if (aa.size() > bb.size()) return LARGER;
+  if (aa.size() < bb.size()) return SMALLER;
+
+  // multiply by 2 till last bit is 1.
+  while ((aa.v[0]) & 1 == 0) // last bit is zero
+    aa = aa + aa;
+
+  while ((bb.v[0]) & 1 == 0) // last bit is zero
+    bb = bb + bb;
+
+  // sizes might have changed
+  if (aa.size() > bb.size()) return LARGER;
+  if (aa.size() < bb.size()) return SMALLER;
+
+  for (int i = aa.size(); i >= 0; --i)
+  {
+    if (aa.v[i] > bb.v[i]) return LARGER;
+    if (aa.v[i] < bb.v[i]) return SMALLER;
+  }
+  return EQUAL;
+}
+
 inline // Move it to libCGAL once it's stable.
-MP_Float
-exact_division_internal(MP_Float remainder, MP_Float d, bool & divides)
+std::pair<MP_Float, MP_Float> // <quotient, remainder>
+division(const MP_Float & n, const MP_Float & d)
 {
   typedef MP_Float::exponent_type  exponent_type;
 
-  CGAL_precondition(d != 0);
+  MP_Float remainder = n, divisor = d;
 
-  // A simple criteria for detecting when the division is not exact
-  // is that if it is exact, then the result must have smaller or
-  // equal bit length than "n".
-  // Which we approximate with size() and a confortable margin.
-  exponent_type max_size_if_exact = remainder.size() - d.size() + 3;
+  CGAL_precondition(divisor != 0);
 
-  // Rescale them to have to_double() values with reasonnable exponents.
-  exponent_type scale_d = d.find_scale();
-  d.rescale(scale_d);
-  const double dd = to_double(d);
+  // Rescale d to have a to_double() value with reasonnable exponent.
+  exponent_type scale_d = divisor.find_scale();
+  divisor.rescale(scale_d);
+  const double dd = to_double(divisor);
 
   MP_Float res = 0;
   exponent_type scale_remainder = 0;
+
+  bool first_time_smaller_than_divisor = true;
 
   // School division algorithm.
 
@@ -487,7 +522,7 @@ exact_division_internal(MP_Float remainder, MP_Float d, bool & divides)
     double approx = to_double(remainder) / dd;
     CGAL_assertion(approx != 0);
     res += approx;
-    remainder -= approx * d;
+    remainder -= approx * divisor;
 
     if (remainder == 0)
       break;
@@ -508,7 +543,7 @@ exact_division_internal(MP_Float remainder, MP_Float d, bool & divides)
     {
       const double approx2 = nextafter(approx, direction);
       const double delta = approx2 - approx;
-      MP_Float new_remainder = remainder - delta * d;
+      MP_Float new_remainder = remainder - delta * divisor;
       if (abs(new_remainder) < abs(remainder)) {
         remainder = new_remainder;
         res += delta;
@@ -519,21 +554,28 @@ exact_division_internal(MP_Float remainder, MP_Float d, bool & divides)
       }
     }
 
-// TODO : The real condition, which could be used for non-exact-division
-// should probably be that |remainder| < |d| (powers of 2 left aside).
-// This should work for GCD (guarantee termination).
-    if (res.size() > max_size_if_exact)
+    if (remainder == 0)
+      break;
+
+    // Test condition for non-exact division (with remainder).
+    if (compare_bitlength(remainder, d) == SMALLER)
     {
-std::cout << "non-exact div : " << std::endl;
-      divides = false;
-      return MP_Float();
+      if (! first_time_smaller_than_divisor)
+      {
+        // Scale back.
+        res.rescale(scale_d - scale_remainder);
+        remainder.rescale(- scale_remainder);
+        CGAL_postcondition(res * d  + remainder == n);
+        return std::make_pair(res, remainder);
+      }
+      first_time_smaller_than_divisor = false;
     }
   }
 
-  divides = true;
   // Scale back the result.
   res.rescale(scale_d - scale_remainder);
-  return res;
+  CGAL_postcondition(res * d == n);
+  return std::make_pair(res, MP_Float(0));
 }
 
 } // namespace CGALi
@@ -542,19 +584,17 @@ inline // Move it to libCGAL once it's stable.
 MP_Float
 exact_division(const MP_Float & n, const MP_Float & d)
 {
-  bool exact_div;
-  MP_Float res = CGALi::exact_division_internal(n, d, exact_div);
-  CGAL_assertion_msg(exact_div, "exact_division() called with operands which do not divide");
-  return res;
+  std::pair<MP_Float, MP_Float> res = CGALi::division(n, d);
+  CGAL_assertion_msg(res.second == 0,
+                  "exact_division() called with operands which do not divide");
+  return res.first;
 }
 
 inline // Move it to libCGAL once it's stable.
 bool
 divides(const MP_Float & n, const MP_Float & d)
 {
-  bool exact_div;
-  CGALi::exact_division_internal(n, d, exact_div);
-  return exact_div;
+  return CGALi::division(n, d).second == 0;
 }
 
 CGAL_END_NAMESPACE
