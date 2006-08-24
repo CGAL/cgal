@@ -14,9 +14,9 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-           -I../../../Number_types/include \
            -I../../include \
-	   $(CGAL_CXXFLAGS) \
+           -I../../../Algebraic_kernel/include \
+           $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
            -fmessage-length=0
 
