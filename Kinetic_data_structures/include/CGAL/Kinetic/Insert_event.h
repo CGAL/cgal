@@ -22,13 +22,14 @@
 #define CGAL_KINETIC_INSERT_EVENT_H_
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Kinetic/internal/To_static.h>
+#include <CGAL/Kinetic/Event_base.h>
 
 CGAL_KINETIC_BEGIN_NAMESPACE;
 
 //! An event to insert a single object into a MovingObjectTable
 
 template <class MOT>
-class Insert_event
+class Insert_event: public Event_base<int*>
 {
   typedef typename MOT::Handle Pointer;
   typedef typename MOT::Data Object;
@@ -43,9 +44,10 @@ public:
   }
   void* kds() const {return NULL;}
 
-  void write(std::ostream &out) const
+  std::ostream& write(std::ostream &out) const
   {
     out << " I" << obj_ ;
+    return out;
   }
 protected:
   Pointer mot_;

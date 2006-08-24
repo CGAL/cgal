@@ -1,5 +1,6 @@
 #define CGAL_CHECK_EXPENSIVE
 
+
 #include <CGAL/basic.h>
 
 #ifdef CGAL_USE_QT
@@ -30,7 +31,7 @@ int run(int argc, char *argv[], int n, int d, int seed, std::string file) {
   typedef CGAL::Kinetic::Delaunay_triangulation_2<Traits, Visitor, Del> KDel;
   typedef CGAL::Kinetic::Qt_widget_2<typename Traits::Simulator> Qt_gui;
   typedef CGAL::Kinetic::Qt_moving_points_2<Traits, Qt_gui> Qt_mps;
-  typedef CGAL::Kinetic::Qt_triangulation_2<KDel, Qt_gui, Qt_mps> Qt_triangulation;
+  typedef CGAL::Kinetic::Qt_triangulation_2<KDel, typename Traits::Instantaneous_kernel, Qt_gui> Qt_triangulation;
   typedef CGAL::Kinetic::Enclosing_box_2<Traits> Box;
 
   CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_SOME);
@@ -42,7 +43,7 @@ int run(int argc, char *argv[], int n, int d, int seed, std::string file) {
   typename Qt_gui::Handle qtsim= new Qt_gui(argc, argv, tr.simulator_handle());
 
   typename Qt_mps::Handle qtmps= new Qt_mps(qtsim, tr);
-  typename Qt_triangulation::Handle qtdel= new Qt_triangulation(kdel, qtsim, qtmps);
+  typename Qt_triangulation::Handle qtdel= new Qt_triangulation(kdel, tr.instantaneous_kernel_object(), qtsim);
  
 
   if (file.empty()) {
@@ -125,10 +126,10 @@ int main(int argc, char *argv[])
   }
 #endif
   
-  if (exact) {
+  if (true) {
     return run<CGAL::Kinetic::Exact_simulation_traits_2>(argc, argv, n,d,seed, file);
   } else {
-    return run<CGAL::Kinetic::Inexact_simulation_traits_2>(argc, argv, n,d,seed, file);
+    //return run<CGAL::Kinetic::Inexact_simulation_traits_2>(argc, argv, n,d,seed, file);
   }
 };
 #else

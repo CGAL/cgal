@@ -99,6 +99,8 @@ Returns true if the current time is a rational number and there are no events at
 
 \ccMethod{Event_key null_event() const;}{This method returns an \ccc{Event_key} which is guaranteed never to be assigned to any real event.}
 
+\ccMethod{bool empty() const;}{Return true if there are no more events.}
+
 \ccMethod{void delete_event(const Event_key k);}{Remove the event referenced by \ccc{k} from the event queue.}
 
 \ccMethod{template <class Ev> typename

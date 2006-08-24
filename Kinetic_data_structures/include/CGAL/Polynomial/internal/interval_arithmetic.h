@@ -91,7 +91,7 @@ std::pair<double,double> to_interval(double d){
   return CGAL::to_interval(d);
   }*/
 
-#define CGAL_POLYNOMIAL_TO_INTERVAL(nt) CGAL::to_interval(nt)
+//#define CGAL_POLYNOMIAL_TO_INTERVAL(nt) CGAL::to_interval(nt)
 /*template <class NT>
 std::pair<double, double> to_interval(const NT &nt){
   //bool to_interval_general;

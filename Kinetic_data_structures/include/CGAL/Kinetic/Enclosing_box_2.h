@@ -24,11 +24,12 @@
 #include <CGAL/Kinetic/Ref_counted.h>
 #include <CGAL/Kinetic/Active_objects_listener_helper.h>
 #include <CGAL/Kinetic/Simulator_kds_listener.h>
+#include <CGAL/Kinetic/Event_base.h>
 
 CGAL_KINETIC_BEGIN_NAMESPACE
 
 template <class EB2>
-class Enclosing_box_bounce_event_2
+class Enclosing_box_bounce_event_2: public Event_base<EB2*>
 {
 public:
   Enclosing_box_bounce_event_2(){}
@@ -44,9 +45,10 @@ public:
   void process() {
     eb_->bounce(k_, t_, s_);
   }
-  void write(std::ostream &out) const
+  std::ostream& write(std::ostream &out) const
   {
     out << "Bounce " << k_ << " off " << s_;
+    return out;
   }
   EB2* eb_;
   typename EB2::Point_key k_;

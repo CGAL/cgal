@@ -18,8 +18,8 @@
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
-#ifndef CGAL_POLYNOMIAL_INTERNAL_POLYNOMIAL_CORE_H_
-#define CGAL_POLYNOMIAL_INTERNAL_POLYNOMIAL_CORE_H_
+#ifndef CGAL_FIXED_POLYNOMIAL_INTERNAL_POLYNOMIAL_CORE_H_
+#define CGAL_FIXED_POLYNOMIAL_INTERNAL_POLYNOMIAL_CORE_H_
 
 #include <CGAL/Polynomial/basic.h>
 #include <vector>
@@ -36,12 +36,12 @@
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
-template <class This, class NT_t>
-class Polynomial_impl;
+template <class This, class NT_t, int D>
+class Fixed_polynomial_impl;
 
-template < class T, class NT, class C, class Tr>
+template < class T, class NT, class C, class Tr, int D>
 inline std::ostream &operator<<(std::basic_ostream<C,Tr> &out,
-				const Polynomial_impl<T, NT> &poly);
+				const Fixed_polynomial_impl<T, NT, D> &poly);
 
 //! A basic polynomial class
 /*!  This handles everything having to do with polynomials which is to
@@ -62,13 +62,12 @@ inline std::ostream &operator<<(std::basic_ostream<C,Tr> &out,
 
 //! todo: check resize and doubles
 
-template <class This, class NT_t>
-class Polynomial_impl
+template <class This, class NT_t, int D>
+class Fixed_polynomial_impl
 {
-  typedef std::vector<NT_t>                  Coefficients;
 public:
   typedef NT_t                             NT;
-  typedef typename Coefficients::const_iterator  iterator;
+  typedef const NT*  iterator;
   typedef NT                               result_type;
   typedef NT                               argument_type;
 
@@ -77,24 +76,33 @@ public:
   //================
 
   //! Default
-  Polynomial_impl() {}
+  Fixed_polynomial_impl() {
+    for (unsigned int i=0; i<= D; ++i){
+      coefs_[i]=0;
+    }
+  }
 
   //! Make a constant polynomial
-  Polynomial_impl(const NT& c) {
-    coefs_.push_back(c);
+  Fixed_polynomial_impl(const NT& c) {
+    for (unsigned int i=1; i<= D; ++i){
+      coefs_[i]=0;
+    }
+    coefs_[0]=c;
+    //if (c != 0) degree_==0;
+    //else degree_=-1;
   }
 
   //! Get coefficients from a vector
         
-#ifndef CGAL_CFG_MISSING_TEMPLATE_VECTOR_CONSTRUCTORS_BUG
+
   template <class Iterator>
-  Polynomial_impl(Iterator first, Iterator beyond): coefs_(first, beyond) {}
-#else
-  template <class Iterator>
-  Polynomial_impl(Iterator first, Iterator beyond) {
-    std::copy(first, beyond, std::back_inserter(coefs_));
+  Fixed_polynomial_impl(Iterator first, Iterator beyond) {
+    std::copy(first, beyond, coefs_);
+    for (unsigned int i=std::distance(first, beyond); i<= D; ++i){
+      coefs_[i]=0;
+    }
   }
-#endif
+
 
   //========================
   // ACCESS TO COEFFICIENTS
@@ -106,7 +114,7 @@ public:
   */
   const NT& operator[](unsigned int i) const
   {
-    CGAL_assertion( i < coefs_.size());
+    CGAL_assertion( i <= D);
     //if (i < coefs_.size()) {
       return coefs_[i];
       /*}
@@ -121,12 +129,12 @@ public:
 
   iterator begin() const
   {
-    return coefs_.begin();
+    return coefs_;
   }
 
   iterator end() const
   {
-    return coefs_.end();
+    return coefs_+std::min(degree(), 0);
   }
 
   //=========
@@ -136,7 +144,10 @@ public:
   //! For the more mathematical inclined (as opposed to size());
   int degree() const
   {
-    return static_cast<int>(coefs_.size()) - 1;
+    for (int i=D; i>= 0; --i){
+      if (coefs_[i] != 0) return i;
+    }
+    return -1;
   }
 
   //=============
@@ -154,7 +165,7 @@ public:
   bool is_zero() const
   {
     CGAL_Polynomial_assertion( coefs_.empty() == (coefs_.size()==0) );
-    return coefs_.empty();
+    return degree()==-1;
   }
 
   //=======================
@@ -165,8 +176,7 @@ public:
   This operator-() const
   {
     This ret;
-    ret.coefs_.resize( coefs_.size() );
-    for (unsigned int i=0; i < coefs_.size(); ++i) {
+    for (unsigned int i=0; i <= D; ++i) {
       ret.coefs_[i] = -coefs_[i];
     }
     return ret;
@@ -175,84 +185,48 @@ public:
   //! polynomial addition
   This operator+(const This &o) const
   {
-    if (is_zero()) { return o; }
-    else if (o.is_zero()) { return This(*this); }
-    else {
-      This ret;
-      unsigned int new_deg = (std::max)(o.degree(), degree());
-      ret.coefs_.resize(new_deg + 1);
-      unsigned int md= std::min(degree(), o.degree());
-      for (unsigned int i = 0; i <= md; ++i) {
-	ret.coefs_[i] = operator[](i) + o[i];
-      }
-      for (int i=md+1; i <= degree(); ++i){
-	ret.coefs_[i]= operator[](i);
-      }
-      for (int i=md+1; i <= o.degree(); ++i){
-	ret.coefs_[i]= o[i];
-      }
-      CGAL_EXCESSIVE(std::cout << *this << " - " << o << " + " << ret << std::endl);
-      ret.finalize();
-      return ret;
+    This ret;
+    for (unsigned int i=0; i<= D; ++i){
+      ret.coefs_[i]= coefs_[i]+ o.coefs_[i];
     }
+    return ret;
   }
 
   //! polynomial subtraction
   This operator-(const This &o) const
   {
-    if (is_zero()) { return -o; }
-    else if (o.is_zero()) { return This(*this); }
-    else {
-      This ret;
-      unsigned int new_deg = (std::max)(o.degree(), degree());
-      ret.coefs_.resize( new_deg + 1 );
-      unsigned int md= std::min(degree(), o.degree());
-      for (unsigned int i = 0; i <= md; ++i) {
-	ret.coefs_[i] = operator[](i) - o[i];
-      }
-      for (int i=md+1; i <= degree(); ++i){
-	ret.coefs_[i]= operator[](i);
-      }
-      for (int i=md+1; i <= o.degree(); ++i){
-	ret.coefs_[i]= -o[i];
-      }
-      CGAL_EXCESSIVE(std::cout << *this << " - " << o << " = " << ret << std::endl);
-      ret.finalize();
-      return ret;
+    This ret;
+    for (unsigned int i=0; i<= D; ++i){
+      ret.coefs_[i]= coefs_[i]-o.coefs_[i];
     }
+    //ret.finalize();
+    return ret;
   }
 
   //! polynomial multiplication
   This operator*(const This &o) const
   {
-    if (is_zero()) return This(NT(0));
-    else if (o.is_zero()) return o;
+    CGAL_precondition(degree() + o.degree() <= D);
     This ret;
-    ret.coefs_.resize( degree() + o.degree() + 1 );
-    // the following for-loop makes sure that the values on ret.coefs_
-    // are properly initialized with zero.
-    for (int i = 0; i <= degree() + o.degree(); ++i) {
-      ret.coefs_[i] = NT(0);
-    }
-    for (unsigned int i = 0; i < coefs_.size(); ++i) {
-      for (unsigned int j = 0; j < o.coefs_.size(); ++j) {
-	NT prev = ret.coefs_[i+j];
+
+    for (unsigned int i = 0; i <= D; ++i) {
+      for (unsigned int j = 0; j <= D-i; ++j) {
+	NT prev = ret[i+j];
 	NT result = prev + operator[](i) * o[j];
 	ret.coefs_[i+j] = result;
       }
     }
-    CGAL_EXCESSIVE(std::cout << *this << " * " << o << " = " << ret << std::endl);
+    //ret.finalize();
+    //CGAL_EXCESSIVE(std::cout << *this << " * " << o << " = " << ret << std::endl);
     return ret;
   }
 
   //! add a scalar
   This operator+(const NT& a) const
   {
-    if ( is_zero() ) { return This(a); }
-
     This res(*this);
     res.coefs_[0] += a;
-    CGAL_EXCESSIVE(std::cout << *this << " + " << a << " = " << res << std::endl);
+    //CGAL_EXCESSIVE(std::cout << *this << " + " << a << " = " << res << std::endl);
     return res;
   }
 
@@ -265,12 +239,8 @@ public:
   //! multiply with scalar
   This operator*(const NT& a) const
   {
-    if ( is_zero() || sign(a)==ZERO ) { return This(); }
-
     This res;
-    unsigned int deg = degree();
-    res.coefs_.resize(deg + 1);
-    for (unsigned int i = 0; i <= deg; i++) {
+    for (unsigned int i = 0; i <= D; i++) {
       res.coefs_[i] = coefs_[i] * a;
     }
     return res;
@@ -324,9 +294,7 @@ public:
   //! check if the coefficients are equal
   bool operator==(const This &o) const
   {
-    if (degree() != o.degree()) return false;
-    int max_size = (std::max)(o.coefs_.size(), coefs_.size());
-    for (int i = 0; i < max_size; ++i) {
+    for (int i = 0; i <=D; ++i) {
       if (o[i] != operator[](i)) return false;
     }
     return true;
@@ -381,9 +349,9 @@ public:
       else {
 	pow=0;
       }
-
-      if (coefs_.size() <=pow) {
-	coefs_.resize(pow+1);
+      if (pow > D) {
+	in.setstate(std::ios_base::failbit);
+	return;
       }
 
       if (!pos) coef=-coef;
@@ -417,11 +385,11 @@ public:
     s.flags(out.flags());
     s.imbue(out.getloc());
     s.precision(12);
-    if (coefs_.size()==0) {
+    if (degree()==0) {
       s << "0";
     }
     else {
-      for (unsigned int i=0; i< coefs_.size(); ++i) {
+      for (unsigned int i=0; i<= D; ++i) {
 	if (i==0) {
 	  if (coefs_[i] != 0) s << coefs_[i];
 	}
@@ -454,7 +422,7 @@ public:
 
 protected:
 
-  std::size_t size() const {return coefs_.size();}
+  //std::size_t size() const {return coefs_.size();}
 
   static const NT & zero_coef() {
     static NT z(0);
@@ -463,21 +431,21 @@ protected:
 
 
   //! The actual coefficients
-  Coefficients coefs_;
+  NT coefs_[D+1];
 };
 
-template < class T, class NT,  class C, class Tr>
+template < class T, class NT,  class C, class Tr, int D>
 inline std::ostream &operator<<(std::basic_ostream<C, Tr> &out,
-				const Polynomial_impl<T, NT> &poly)
+				const Fixed_polynomial_impl<T, NT, D> &poly)
 {
   poly.write(out);
   return out;
 }
 
 
-template < class T, class NT, class C, class Tr>
+template < class T, class NT, class C, class Tr, int D>
 inline std::istream &operator>>(std::basic_istream<C, Tr> &in,
-				Polynomial_impl<T, NT> &poly)
+				Fixed_polynomial_impl<T, NT, D> &poly)
 {
   poly.read(in);
   return in;
@@ -485,46 +453,45 @@ inline std::istream &operator>>(std::basic_istream<C, Tr> &in,
 
 
 //! multiply by a constant
-template <class T, class NT>
-inline T operator*(const NT &a, const Polynomial_impl<T, NT> &poly)
+template <class T, class NT, int D>
+inline T operator*(const NT &a, const Fixed_polynomial_impl<T, NT, D> &poly)
 {
   return (poly * a);
 }
 
 
 //! add to a constant
-template <class T, class NT>
-inline T operator+(const NT &a, const Polynomial_impl<T, NT> &poly)
+template <class T, class NT, int D>
+inline T operator+(const NT &a, const Fixed_polynomial_impl<T, NT, D> &poly)
 {
   return (poly + a);
 }
 
 
 //! add to a constant
-template < class T, class NT>
-inline T  operator+(int a, const Polynomial_impl<T, NT> &poly)
+template < class T, class NT, int D>
+inline T  operator+(int a, const Fixed_polynomial_impl<T, NT, D> &poly)
 {
   return (poly + NT(a));
 }
 
 
 //! subtract from a constant
-template <class T, class NT>
-inline T operator-(const NT &a, const Polynomial_impl<T, NT> &poly)
+template <class T, class NT, int D>
+inline T operator-(const NT &a, const Fixed_polynomial_impl<T, NT, D> &poly)
 {
   return -(poly - a);
 }
 
 
 //! subtract from a constant
-template <class T, class NT>
-inline T operator-(int a, const Polynomial_impl<T, NT> &poly)
+template <class T, class NT, int D>
+inline T operator-(int a, const Fixed_polynomial_impl<T, NT, D> &poly)
 {
   return -(poly - NT(a));
 }
 
 
-#undef CGAL_EXCESSIVE
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
 #endif

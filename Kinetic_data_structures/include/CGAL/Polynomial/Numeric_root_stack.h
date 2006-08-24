@@ -25,6 +25,9 @@
 #include <CGAL/Polynomial/Polynomial.h>
 #include <CGAL/Polynomial/internal/Double_with_infinity.h>
 #include <iterator>
+#ifdef CGAL_USE_GSL
+#include <CGAL/Polynomial/internal/GSL_numeric_solver.h>
+#endif
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
@@ -42,7 +45,15 @@ CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
 
 CGAL_POLYNOMIAL_BEGIN_NAMESPACE
 
-template <class Solver_traits, class Numeric_solver=internal::Turkowski_numeric_solver>
+#ifdef CGAL_USE_GSL
+#define CGAL_DEFAULT_NUMERIC_SOLVER CGAL::POLYNOMIAL::internal::GSL_numeric_solver
+#define CGAL_DEFAULT_CLEANED_NUMERIC_SOLVER CGAL::POLYNOMIAL::internal::GSL_cleaned_numeric_solver
+#else
+#define CGAL_DEFAULT_NUMERIC_SOLVER CGAL::POLYNOMIAL::internal::Turkowski_numeric_solver
+#define CGAL_DEFAULT_CLEANED_NUMERIC_SOLVER CGAL::POLYNOMIAL::internal::Turkowski_cleaned_numeric_solver
+#endif
+
+template <class Solver_traits, class Numeric_solver=CGAL_DEFAULT_NUMERIC_SOLVER >
 class Numeric_root_stack
 {
 public:

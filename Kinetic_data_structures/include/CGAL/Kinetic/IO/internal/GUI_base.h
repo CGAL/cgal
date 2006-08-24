@@ -84,7 +84,7 @@ public:
 	pause();
       }
     } else if ((mode==RUNNING_TO_EVENT || mode==RUNNING_THROUGH_EVENT)
-	       && sim_->next_event_time()== sim_->end_time()) {
+	       && sim_->empty()) {
       std::cout << "No more events.\n";
       return;
     }
@@ -217,12 +217,12 @@ protected:
     double nt= ct + step_length_kds_time();
     //Parent::set_current_time(typename Parent::Time(nt));
     TT t(nt);
-    if (t < sim_->current_time()) {
+    if (CGAL::compare(t, sim_->current_time()) == CGAL::SMALLER) {
       std::cerr << "Time failed to advance due to roundoff. This is bad.\n";
       return sim_->current_time();
     }
     //std::cout << "Time is " << t << std::endl;
-    if (t > max_time) return max_time;
+    if (CGAL::compare(t, max_time) == CGAL::LARGER) return max_time;
     else return t;
   }
 
@@ -246,7 +246,11 @@ protected:
       {
 	TT nt= compute_next_timestep();
 	sim_->set_current_time(nt);
-	if (sim_->current_time() == sim_->end_time()) ret= false;
+	if (sim_->current_time() == sim_->end_time()) {
+	  std::cout << "Simulation reached end of time. "
+		    << "Press \"step over\" to process the next final event (if any)." << std::endl;
+	  ret= false;
+	}
 	else ret= true;
 	break;
       }

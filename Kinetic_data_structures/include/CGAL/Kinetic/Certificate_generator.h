@@ -28,6 +28,7 @@ struct Certificate_generator: public Generator {
   typedef typename KK_t::Certificate result_type;
   typedef typename KK_t::Function_kernel::Root Time;
   Certificate_generator(typename KK_t::Function_kernel fk): fk_(fk){}
+  Certificate_generator(){}
   
 
   template <class A, class B, class C, class D, class E>

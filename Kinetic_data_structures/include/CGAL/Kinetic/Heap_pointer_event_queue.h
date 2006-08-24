@@ -37,13 +37,26 @@ CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
 template <class Priority>
 class Heap_pointer_event_queue_item: public Ref_counted<Heap_pointer_event_queue_item<Priority> >
 {
+  typedef Ref_counted<Heap_pointer_event_queue_item<Priority> > P;
 public:
+
+  /* struct Key: public typename P::Handle {
+    Key(){}
+    Key(Item_handle h): P::Handle(h){}
+    bool is_valid() const {
+      return this->get() != NULL;
+    }
+    };*/
+  typedef typename P::Handle Key;
+
   Heap_pointer_event_queue_item():bin_(-1), time_(infinity_or_max<Priority>(Priority(0))){}
   Heap_pointer_event_queue_item(int bin, const Priority &t): bin_(bin), time_(t){}
 
   virtual void write(std::ostream &out) const =0;
   const Priority& time() const {return time_;};
   virtual void process() =0;
+  virtual void *kds() const =0;
+  virtual CGAL::Comparison_result compare_concurrent(Key a, Key b) const =0;
   void set_bin(int bin) const { bin_=bin;}
   int bin() const {return bin_;};
   virtual ~Heap_pointer_event_queue_item(){}
@@ -68,9 +81,15 @@ inline std::ostream& operator<<(std::ostream &out, const Heap_pointer_event_queu
 template <class Priority>
 class Heap_pointer_event_queue_dummy_item: public Heap_pointer_event_queue_item<Priority>
 {
+  typedef Heap_pointer_event_queue_item<Priority> P;
 public:
-  Heap_pointer_event_queue_dummy_item(): Heap_pointer_event_queue_item<Priority>(-2, internal::infinity_or_max(Priority())){}
+  Heap_pointer_event_queue_dummy_item(): P(-2, internal::infinity_or_max(Priority())){}
   virtual void process() {
+  }
+  virtual void *kds() const {return NULL;}
+  virtual CGAL::Comparison_result compare_concurrent(typename P::Key a, 
+						     typename P::Key b) const {
+    return CGAL::compare(a,b);
   }
   virtual void write(std::ostream &out) const
   {
@@ -89,6 +108,7 @@ public:
 template <class Priority, class Event>
 class Heap_pointer_event_queue_item_rep: public internal::Heap_pointer_event_queue_item<Priority>
 {
+  typedef internal::Heap_pointer_event_queue_item<Priority> P;
 public:
   //typedef CGAL::Ref_counted_pointer<Heap_pointer_event_queue_item_rep<Priority, Event> > Pointer;
   //typedef CGAL::Ref_counted_pointer<const Heap_pointer_event_queue_item_rep<Priority, Event> > Const_pointer;
@@ -99,9 +119,16 @@ public:
   virtual void process() {
     event_.process();
   }
+  virtual void *kds() const {return event_.kds();}
+  virtual CGAL::Comparison_result compare_concurrent(typename P::Key a, 
+						     typename P::Key b) const {
+    return event_.compare_concurrent(a,b);
+  }
   virtual void write(std::ostream &out) const
   {
-    out << event_;
+    out << "(";
+    event_.write(out);
+    out << ")";
   }
   // Access the actual event
   /*
@@ -156,7 +183,24 @@ public:
     Compare(){}
     bool operator()(Item_handle i0, Item_handle i1) const
     {
-      return i0->time() < i1->time();
+      CGAL::Comparison_result cr= CGAL::compare(i0->time(), i1->time());
+      if (cr == CGAL::SMALLER) return true;
+      else if (cr == CGAL::LARGER) return false; 
+      else {
+	cr= CGAL::compare(i0->kds(), i1->kds());
+	if (cr == CGAL::SMALLER) return true;
+	else if (cr == CGAL::LARGER) return false;
+	else {
+	  cr= i0->compare_concurrent(Key(i0), Key(i1));
+	  if (cr == CGAL::SMALLER) return true;
+	  else if (cr == CGAL::LARGER) return false;
+	  else {
+	    //CGAL_assertion(0);
+	    return false;
+	  }
+	}
+	
+      }
     }
   };
 
@@ -167,13 +211,7 @@ public:
   /*!
     It uses a prettified version of the ref counted pointer.
   */
-  struct Key: public Item_handle {
-    Key(){}
-    Key(Item_handle h): Item_handle(h){}
-    bool is_valid() const {
-      return this->get() != NULL;
-    }
-  };
+  typedef typename Item::Key Key;
   /*struct Key: public Item_handle {
     Key(){};
     Key(Item*i): Item_handle(i){}
@@ -195,13 +233,18 @@ public:
     return end_;
   }
 
+  void set_interval(const Priority &, const Priority &e)
+  {
+    end_=e;
+  }
+
   //! insert value_type into the queue and return a reference to it
   /*!
     The reference can be used to update or erase it.
   */
   template <class E>
   Key insert(const Priority &t, const E & e) {
-    if (t <= end_) {
+    if (CGAL::compare(t, end_) != CGAL::LARGER) {
       Item_handle k= new internal::Heap_pointer_event_queue_item_rep<Priority, E>(t, e, queue_.size());
       queue_.push_back(k);
       bubble_up(queue_.size()-1);
@@ -313,6 +356,9 @@ public:
     // ref counted pointers are nice.
     queue_.clear();
   }
+
+
+
   //! Remove the next event from the queue and process it.
   /*!
     Processing means that the process() method of the event object is called.
@@ -321,7 +367,7 @@ public:
     CGAL_precondition(!empty());
     //if (queue_.front()->time() < end_priority()) {
     //CGAL_precondition_code(Item_handle k= queue_.front());
-    CGAL_KINETIC_LOG(LOG_LOTS, "Processing " << queue_.front() << std::endl);
+    CGAL_KINETIC_LOG(LOG_SOME, "Processing " << queue_.front() << std::endl);
     Item_handle ih= queue_.front();
     pop_front();
     //std::pop_heap(queue_.begin(), queue_.end());
@@ -356,7 +402,7 @@ public:
   {
     //std::cout << "Not writing queue.\n";
     //return true;
-#if 1
+#if 0
     std::vector<Item_handle> bins;
 
     for (unsigned int i=0; i< queue_.size(); ++i) {
@@ -367,15 +413,14 @@ public:
 
     typename std::vector<Item_handle>::const_iterator curi= bins.begin(), endi= bins.end();
 #else
-    std::sort(queue_.begin(), queue_.end(), compare_);
-
     typename std::vector<Item_handle>::const_iterator curi= queue_.begin(), endi= queue_.end();
 #endif
     for (; curi != endi; ++curi) {
       Priority t=(*curi)->time();
       // HACK HACK because CGAL::to_double(t) won't compile with gcc 3.4
-      double d= to_double(t);           //CGAL::to_double(t);
-      out << "<" << d << ": ";
+      std::pair<double,double> d= CGAL::to_interval(t);
+      //CGAL::to_double(t);
+      out << "<" << d.first << "..." << d.second << ": ";
       (*curi)->write(out);
       out << ">\n";
     }
@@ -388,6 +433,15 @@ public:
       }
     }
 #endif
+
+    /*if (!final_events.empty()) {
+      out << "Finally: \n";
+      for (unsigned int i=0; i< final_events_.size(); ++i){
+	final_events_[i]->write(out) << std::endl;
+      }
+      }*/
+
+    
     //out << std::endl;
     return false;
   }
@@ -401,7 +455,7 @@ protected:
   //! Stores the priorities and data and a refersence back to the _queue
   std::vector<Item_handle> queue_;
   Compare compare_;
-  std::vector<Item_handle> final_events_;
+  //std::vector<Item_handle> final_events_;
   Key null_event_;
   Priority end_;
 

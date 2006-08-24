@@ -1,17 +1,16 @@
 #define CGAL_CHECK_EXPENSIVE
-//#define CGAL_CHECK_EXACTNESS
+#define CGAL_CHECK_EXACTNESS
 
 #include <CGAL/basic.h>
 
 #ifdef CGAL_USE_QT
 
+#include <CGAL/Updatable_Delaunay_triangulation_2.h>
+
 #include <CGAL/Kinetic/IO/Qt_moving_points_2.h>
 #include <CGAL/Kinetic/IO/Qt_triangulation_2.h>
 #include <CGAL/Kinetic/IO/Qt_widget_2.h>
 #include <CGAL/Random.h>
-
-#include <CGAL/Updatable_Delaunay_triangulation_2.h>
-
 
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
 #include <boost/program_options.hpp>
@@ -26,7 +25,7 @@ int main(int argc, char *argv[]) {
   int seed=std::time(NULL);
   bool print_help=false;
   bool exact=false;
-  std::string ifile, ffile;
+  std::string ifile="data/before002", ffile="data/after002";
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
   boost::program_options::options_description desc("Allowed options");
   desc.add_options()
@@ -48,6 +47,9 @@ int main(int argc, char *argv[]) {
     std::cout << desc << "\n";
     return EXIT_FAILURE;
   }
+  //#else
+  //ifile="data/before002";
+  //ffile="data/after002";
 #endif
   
   //if (exact) {

@@ -25,6 +25,7 @@
 
 #include <CGAL/Kinetic/internal/Triangulation_helper_3.h>
 #include <CGAL/Kinetic/internal/triangulation_helpers_3.h>
+#include <CGAL/Kinetic/Event_base.h>
 //#include <CGAL/Kinetic/internal/Delaunay_cache_3.h>
 
 // STL
@@ -39,12 +40,12 @@
 CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
 
 template <class KD, class Root_stack>
-class Delaunay_event_base_3
+class Delaunay_event_base_3: public Event_base<KD*>
 {
+  typedef Event_base<KD*> P;
 public:
   Delaunay_event_base_3(const Root_stack &s,
-			KD *kdel):s_(s),
-				  kdel_(kdel) {
+			KD *kdel):P(kdel), s_(s){
   }
   //! Default constructor
   /*!  This really should not be used, but I need it for the
@@ -61,21 +62,24 @@ public:
   {
     return s_;
   }
-  void write(std::ostream &out) const
+  std::ostream& write(std::ostream &out) const
   {
     out << "Delaunay_event";
+    return out;
+  }
+  KD* kdel() {
+    return P::kds();
   }
 protected:
   const Root_stack s_;
-  KD *kdel_;
 };
 
-template <class K, class R>
+/*template <class K, class R>
 std::ostream& operator<<(std::ostream &out, const Delaunay_event_base_3<K, R> &e)
 {
   e.write(out);
   return out;
-}
+  }*/
 
 
 template <class KD, class Root_stack, class Edge>
@@ -92,14 +96,14 @@ public:
 #endif
   }
   void process() {
-    P::kdel_->flip(e_);
+    P::kdel()->flip(e_);
   }
 
   static typename KD::Point_key edge_point(const Edge &e, int i) {
     return vertex_of_edge(e, i)->point();
   }
 
-  void write(std::ostream &out) const
+  std::ostream& write(std::ostream &out) const
   {
     out << "Flip ";
     internal::write_edge(e_, out);
@@ -108,6 +112,7 @@ public:
     CGAL_postcondition(o_== vertex_of_edge(e_,static_cast<int>(0))->point());
     CGAL_postcondition(d_== vertex_of_edge(e_,1)->point());
 #endif
+    return out;
   }
   const Root_stack& root_stack() const
   {
@@ -120,12 +125,12 @@ protected:
 #endif
 };
 
-template <class B, class C, class D>
+/*template <class B, class C, class D>
 std::ostream& operator<<(std::ostream &out, const Delaunay_3_edge_flip_event<B, C, D> &e)
 {
   e.write(out);
   return out;
-}
+  }*/
 
 
 template <class KD, class Root_stack, class Facet>
@@ -143,9 +148,9 @@ public:
 #endif
   }
   void process() {
-    P::kdel_->flip(e_);
+    P::kdel()->flip(e_);
   }
-  void write(std::ostream &out) const
+  std::ostream& write(std::ostream &out) const
   {
     out << "Flip ";
     write_facet(e_, out);
@@ -155,6 +160,7 @@ public:
     CGAL_postcondition(b_== vertex_of_facet(e_,1)->point());
     CGAL_postcondition(c_== vertex_of_facet(e_,2)->point());
 #endif
+    return out;
   }
 protected:
   const Facet e_;
@@ -163,12 +169,12 @@ protected:
 #endif
 };
 
-template <class T, class C, class D>
+/*template <class T, class C, class D>
 std::ostream& operator<<(std::ostream &out, const Delaunay_3_facet_flip_event<T, C, D> &e)
 {
   e.write(out);
   return out;
-}
+  }*/
 
 
 template <class TraitsT, class Visitor, bool LAZY>

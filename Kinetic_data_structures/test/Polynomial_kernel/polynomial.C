@@ -4,6 +4,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Polynomial/Polynomial.h>
+#include <CGAL/Polynomial/Fixed_polynomial.h>
 #include <CGAL/Polynomial/internal/Rational/Rational_traits_base.h>
 
 #include <CGAL/Polynomial/internal/Filtered_rational/Filtered_rational_traits.h>
@@ -249,6 +250,15 @@ int main(int argc, char* argv[])
     CORE_kernel tr;
     test_polynomial(tr);
   }
-
+  std::cout <<"\n\n\n\n\n";
+  {
+    std::cout << "Testing fixed poly.\n";
+    typedef CGAL::POLYNOMIAL::Default_field_nt NT;
+    typedef CGAL_POLYNOMIAL_NS::Fixed_polynomial<NT, 30> Poly;
+    typedef CGAL_POLYNOMIAL_NS::internal::Rational_traits_base<Poly>
+      Rational_traits;
+    Rational_traits tr;
+    test_polynomial(tr);
+  }
   return 0;
 }

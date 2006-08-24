@@ -38,13 +38,13 @@ scheduling events which will in turn pass them to the
   degeneracy.}
 
 
-\ccMethod{CGAL::Comparison_result perturb_concurrent(Key a, Key b) const;}{The two events \ccc{a} and \ccc{b} occur at the same time (\ccc{this} has key \ccc{a}). This method returns a \ccc{CGAL::Comparison_result} which is used to order the two equal events. If \ccc{CGAL::EQUAL} is returned then \ccc{merge} will be called.}
+\ccMethod{CGAL::Comparison_result compare_concurrent(Key a, Key b) const;}{The two events \ccc{a} and \ccc{b} occur at the same time (\ccc{this} has key \ccc{a}). This method returns a \ccc{CGAL::Comparison_result} which is used to order the two equal events. If \ccc{CGAL::EQUAL} is returned then \ccc{merge} will be called.}
 
 \ccMethod{bool merge_concurrent(Key a, Key b);}{ The two events \ccc{a} and \ccc{b} occur at the same time (\ccc{this} has key \ccc{a}) and cannot be perturbed to be unequal. This event  allows the KDS to merge event \ccc{b} with \ccc{a}. If it returns \ccc{true} then \ccc{b} is dropped from the event queue.}
 
-%\ccMethod{void degenerate_events(Event_key this_event, Event_key other_event);}{This event and the event referenced by \ccc{k} belong to the same KDS and occur simultaneously. This function call gives the KDS a chance to handle } 
+\ccMethod{std::ostream& write(std::ostream&) const;}{Write the event to a stream.}
 
-\ccGlobalFunction{std::ostream& operator<<(std::ostream&, Event);}{Write a text description of the event to a standard stream.}
+%\ccMethod{void degenerate_events(Event_key this_event, Event_key other_event);}{This event and the event referenced by \ccc{k} belong to the same KDS and occur simultaneously. This function call gives the KDS a chance to handle } 
 
 \ccHasModels
 

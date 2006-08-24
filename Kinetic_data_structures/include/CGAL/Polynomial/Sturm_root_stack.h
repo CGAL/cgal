@@ -1224,11 +1224,11 @@ class Sturm_root_stack
         template<class Stream>
             Stream& write(Stream& os) const
         {
-            for (unsigned int i = 0; i < sseq.size(); i++) {
+	  /*for (unsigned int i = 0; i < sseq.size(); i++) {
                 os << sseq[i] << std::endl;
-            }
+		}*/
 
-            typename Interval_container::iterator ivl_it;
+	  /*typename Interval_container::iterator ivl_it;
             typename std::list<uint_pair>::iterator nr_it;
             for (ivl_it = i_list.begin(), nr_it = s_variations.begin();
             ivl_it != i_list.end(); ++ivl_it, ++nr_it) {
@@ -1237,7 +1237,10 @@ class Sturm_root_stack
                 int nr = nr_it->first - nr_it->second;
                 os << ", " << nr << "} ";
             }
-            os << std::endl;
+            os << std::endl;*/
+	  os << sseq[0] << "->" ;
+	  os << top();
+	  
             return os;
         }
 

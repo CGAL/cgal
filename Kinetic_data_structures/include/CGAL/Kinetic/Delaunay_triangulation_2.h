@@ -37,7 +37,7 @@
 
 CGAL_KINETIC_BEGIN_NAMESPACE
 
-#define CGAL_DELAUNAY_2_DEBUG(x) x
+#define CGAL_DELAUNAY_2_DEBUG(x)
 
 template <class KDel>
 struct Delaunay_edge_failure_event: public Event_base<KDel*> {
@@ -255,27 +255,13 @@ public:
       // this is important that it be before update
       batching_=false;
 
-      for (unsigned int i=0; i< batched_certs_.size(); ++i){
-	Point_key s=TDS_helper::origin(batched_certs_[i])->point();
-	Point_key t=TDS_helper::destination(batched_certs_[i])->point();
-	
-	std::cout << std::min(s,t) << "--" << std::max(s,t) << std::endl;
-	//update_edge(batched_certs_[i]);
-      }
-
       std::sort(batched_certs_.begin(), batched_certs_.end(), Compare_edges());
       /*std::cout << "Batch has " << batched_certs_.size() << " non-unique edges to compute." << std::endl;*/
       batched_certs_.erase(std::unique(batched_certs_.begin(), 
 				       batched_certs_.end()), 
 			   batched_certs_.end());
       //std::cout << "Batch has " << batched_certs_.size() << " edges to compute." << std::endl;
-      for (unsigned int i=0; i< batched_certs_.size(); ++i){
-	Point_key s=TDS_helper::origin(batched_certs_[i])->point();
-	Point_key t=TDS_helper::destination(batched_certs_[i])->point();
-	
-	std::cout << std::min(s,t) << "--" << std::max(s,t) << std::endl;
-	//update_edge(batched_certs_[i]);
-      }
+      
       for (unsigned int i=0; i< batched_certs_.size(); ++i){
 	//Point_key s=TDS_helper::origin(batched_certs_[i])->point();
 	//Point_key t=TDS_helper::destination(batched_certs_[i])->point();
@@ -481,7 +467,7 @@ public:
 	  for (unsigned int j=0; j<3; ++j) {
 	    Edge e(fc, j);
 	  Event_key k= TDS_helper::get_undirected_edge_label(e);
-	  if (k.is_valid()) {
+	  if (k == Event_key()) {
 	    delete_certificate(e);
 	  }
 	  fc->vertex(j)->set_neighbors_is_changed(true);
@@ -660,8 +646,11 @@ public:
   Edge flip(const Edge &e, Certificate_data cert) {
     ++num_events_;
     CGAL_precondition(!batching_);
-    CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, "DELAUNAY Flipping edge " << TDS_helper::origin(e)->point()
-		     << TDS_helper::destination(e)->point() << std::endl);
+    CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, "\n\n\n\n\n\nDELAUNAY Flipping edge "
+		     << TDS_helper::origin(e)->point()
+		     << TDS_helper::destination(e)->point() 
+		     << " to get " << TDS_helper::third_vertex(e)->point()
+		     << ", " << TDS_helper::mirror_vertex(e)->point()<< std::endl);
     //CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_NONE, TDS_helper::destination(e)->point() << std::endl);
     //CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, " at "  << traits_.simulator()->current_time() << std::endl);
 
@@ -757,7 +746,7 @@ public:
 
 
    {
-      std::pair<Time, Certificate_data> sp= traits_.certificate_failure_time(e,cert);
+      std::pair<Time, Certificate_data> sp= traits_.certificate_failure_time(flipped_edge,cert);
       Event_key k =traits_.simulator_handle()->new_event(sp.first,
 							 Event(sp.second, flipped_edge, this));
       TDS_helper::set_undirected_edge_label(flipped_edge, k);
@@ -863,7 +852,7 @@ protected:
 	 vh->set_neighbors(deg);
       }
 
-      CGAL_DELAUNAY_2_DEBUG( std::cout << "Vertex " << vh->point() << " has " << vh->neighbors() << std::endl);
+      //CGAL_DELAUNAY_2_DEBUG( std::cout << "Vertex " << vh->point() << " has " << vh->neighbors() << std::endl);
     }
   }
 
@@ -895,7 +884,7 @@ protected:
 		 || dv->neighbors() ==3) {
 	CGAL_DELAUNAY_2_DEBUG(std::cout << "One end has 3 " << std::endl);
       } else {
-	CGAL_DELAUNAY_2_DEBUG(std::cout << "New certificate" << std::endl);
+	//CGAL_DELAUNAY_2_DEBUG(std::cout << "New certificate" << std::endl);
 	new_certificate(e);
       }
     }
@@ -903,8 +892,8 @@ protected:
 
 
   void new_certificate(Edge e) {
-   CGAL_precondition(TDS_helper::get_undirected_edge_label(e) == Event_key());
-    CGAL_DELAUNAY_2_DEBUG(std::cout << "Making certificate for " << TDS_helper::origin(e)->point() << " " 
+    CGAL_precondition(TDS_helper::get_undirected_edge_label(e) == Event_key());
+    CGAL_DELAUNAY_2_DEBUG(std::cout << "\nMaking certificate for " << TDS_helper::origin(e)->point() << " " 
 			  << TDS_helper::destination(e)->point() 
 			  << " which would make " << TDS_helper::mirror_vertex(e)->point() << " " 
 			  << TDS_helper::third_vertex(e)->point()

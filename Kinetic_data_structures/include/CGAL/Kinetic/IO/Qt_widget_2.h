@@ -109,14 +109,13 @@ public:
     I am not sure that I need this method.
     \todo check if these methods are needed.
   */
-  const typename Simulator::Const_handle& simulator() const
+  const typename Simulator::Const_handle simulator_handle() const
   {
-    bool let_me_know_if_this_is_used;
     return base_->simulator();
   }
 
   //! Access a reference counted pointer to the simulator.
-  typename Simulator::Handle& simulator() {
+  typename Simulator::Handle simulator_handle() {
     return base_->simulator();
   }
   //! Return true if the current image of the scene is valid.

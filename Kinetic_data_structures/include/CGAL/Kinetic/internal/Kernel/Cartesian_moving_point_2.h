@@ -96,6 +96,11 @@ public:
     return Coordinate(0);
   }
 
+  const Coordinate &operator[](int i) const {
+    if (i==0) return x();
+    else return y();
+  }
+
   bool operator==(const This &o) const
   {
     return x()==o.x() && y()==o.y();
@@ -110,6 +115,12 @@ public:
   {
     return x()>o.x() || (x()==o.x() && y() > o.y());
   }
+
+
+  bool is_constant() const {
+    return x().degree()<1 && y().degree() <1;
+  }
+
 
 #if 0
   //! Returns the value at time t.

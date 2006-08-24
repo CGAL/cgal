@@ -24,11 +24,9 @@
 
 CGAL_KINETIC_BEGIN_NAMESPACE;
 
-template <class Traits_t>
-struct Handle_degeneracy_function_kernel: public Traits_t
-{
 
-  class Root_stack
+template <class Traits_t>
+  class HDRS
   {
   private:
     typedef typename Traits_t::Root_stack Wrapped_solver;
@@ -41,13 +39,14 @@ struct Handle_degeneracy_function_kernel: public Traits_t
     /*!
 
     */
-    Root_stack(const Function &uf, const Root& lb,
-	       const Root& ub, const Traits_t& k): solver_(k.root_stack_object(uf, lb, ub)),
-						   iem_(k.is_even_multiplicity_object(uf)) {
+    HDRS(const Function &uf, const Root& lb,
+	 const Root& ub, const Traits_t& k): solver_(k.root_stack_object(uf, lb, ub)),
+					     iem_(k.is_even_multiplicity_object(uf)) {
       CGAL_expensive_precondition(solver_.top() > lb);
       CGAL::POLYNOMIAL::Sign sn= k.sign_between_roots_object(lb, solver_.top())(uf);
       if (sn == CGAL::NEGATIVE) {
-	std::cout << "Degeneracy for " << uf << " at " << lb << std::endl;
+	std::cout << "Degeneracy for " << uf << " between " << lb 
+		  << " and " << solver_.top() << std::endl;
 	extra_root_=lb;
 	has_extra_=true;
       }
@@ -57,7 +56,7 @@ struct Handle_degeneracy_function_kernel: public Traits_t
       one_even_=false;
     }
 
-    Root_stack(){}
+    HDRS(){}
 
     //! Drop even roots
     const Root& top() const
@@ -87,6 +86,12 @@ struct Handle_degeneracy_function_kernel: public Traits_t
     double estimate() const {
       return solver_.estimate();
     }
+
+    std::ostream &write(std::ostream& out) const {
+      out << solver_;
+      return out;
+    }
+
   protected:
     Wrapped_solver solver_;
     Root extra_root_;
@@ -95,12 +100,23 @@ struct Handle_degeneracy_function_kernel: public Traits_t
     typename Traits::Is_even_multiplicity iem_;
   };
 
+template <class Traits_t>
+struct Handle_degeneracy_function_kernel: public Traits_t
+{
+
+  typedef HDRS<Traits_t> Root_stack;
+
   Root_stack root_stack_object(const typename Traits_t::Function &f,
 			       const typename Traits_t::Root &lb,
 			       const typename Traits_t::Root &ub) const {
     return Root_stack(f, lb, ub, *this);
   }
 };
+
+template <class T>
+std::ostream &operator<<(std::ostream &out, const HDRS<T> &k) {
+  return k.write(out);
+}
 
 CGAL_KINETIC_END_NAMESPACE;
 #endif

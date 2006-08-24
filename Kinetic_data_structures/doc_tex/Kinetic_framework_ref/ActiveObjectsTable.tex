@@ -49,7 +49,7 @@ allow you to iterate through the objects in the set \ccc{Foo}.
 
 \ccNestedType{Key_iterator}{An iterator through all the valid keys in the table.}
 
-\ccNestedType{Changed_iterator}{An iterator through all the objects which have been changed in the last editing session.}
+\ccNestedType{Changed_iterator}{An iterator through all the objects which have been changed in the last editing session. The iterator iterates through the objects in lexicographical order.}
 
 \ccNestedType{Inserted_iterator}{An iterator through all the objects which were added in the last editing session.}
 
@@ -92,6 +92,17 @@ allow you to iterate through the objects in the set \ccc{Foo}.
    of how the editing modes are used.  }
 
 \ccMethod{void clear();}{Remove all objects from the table and free all storage.}
+
+\ccMethod{void is_set(Key) const;}{Returns true if the object has been
+  set in the currently notified editing session. Note that this method
+  can only be saftely called when processing an \ccc{IS_EDITING}
+  notification.}
+
+\ccMethod{void is_new(Key) const;}{Returns true if the object has been
+  set in the currently notified editing session.}
+
+\ccMethod{void clear(Key) const;}{Returns true if the object has been
+  set in the currently notified editing session.}
 
 \ccHasModels
 

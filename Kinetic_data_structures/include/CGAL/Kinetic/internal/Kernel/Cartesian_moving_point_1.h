@@ -69,6 +69,10 @@ public:
     return _coord;
   }
 
+  bool is_constant() const {
+    return _coord.degree()<1;
+  }
+  
   template <class SK>
   struct Static_traits
   {

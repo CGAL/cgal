@@ -64,9 +64,7 @@ public:
     }
   }
   bool is_output(Level l) {
-    if (level_== CGAL::Kinetic::LOG_NONE && l != level_) return false;
-    else if (level_==CGAL::Kinetic::LOG_SOME && l== CGAL::Kinetic::LOG_SOME) return true;
-    else return true;
+    return l <= level();
   }
   Target target() const
   {

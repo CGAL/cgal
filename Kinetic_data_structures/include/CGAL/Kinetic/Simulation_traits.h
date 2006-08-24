@@ -22,6 +22,14 @@
 #define CGAL_KINETIC_SIMULATION_TRAITS_H
 #include <CGAL/Kinetic/basic.h>
 
+#include <CGAL/Polynomial/Sturm_root_stack.h>
+#include <CGAL/Polynomial/Sturm_root_stack_traits.h>
+#include <CGAL/Polynomial/Kernel.h>
+#include <CGAL/Polynomial/Numeric_root_stack.h>
+#include <CGAL/Polynomial/Root_stack_default_traits.h>
+#include <CGAL/Polynomial/Upper_bound_root_stack.h>
+#include <CGAL/Polynomial/Upper_bound_root_stack_Descartes_traits.h>
+
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 //#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -34,13 +42,7 @@
 #include <CGAL/Kinetic/Handle_degeneracy_function_kernel.h>
 #include <CGAL/Kinetic/Default_simulator.h>
 #include <CGAL/Kinetic/Two_list_pointer_event_queue.h>
-#include <CGAL/Polynomial/Sturm_root_stack.h>
-#include <CGAL/Polynomial/Sturm_root_stack_traits.h>
-#include <CGAL/Polynomial/Kernel.h>
-#include <CGAL/Polynomial/Numeric_root_stack.h>
-#include <CGAL/Polynomial/Root_stack_default_traits.h>
-#include <CGAL/Polynomial/Upper_bound_root_stack.h>
-#include <CGAL/Polynomial/Upper_bound_root_stack_Descartes_traits.h>
+
 //#include <CGAL/Polynomial/CORE_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 //#include <CGAL/Kinetic/Heap_pointer_event_queue.h>
@@ -71,8 +73,8 @@ public:
 
   Simulator* simulator_handle(){ return sp_.get();}
   const Simulator* simulator_handle() const { return sp_.get();}
-  Static_kernel& static_kernel_object(){return k_;}
-  Kinetic_kernel& kinetic_kernel_object(){return kk_;}
+  const Static_kernel& static_kernel_object(){return k_;}
+  const Kinetic_kernel& kinetic_kernel_object(){return kk_;}
 
   const Static_kernel& static_kernel_object() const {return k_;}
   const Kinetic_kernel& kinetic_kernel_object() const {return kk_;}
@@ -101,7 +103,8 @@ struct Suggested_exact_simulation_traits_types
   typedef Static_kernel::FT NT;
   typedef CGAL::POLYNOMIAL::CORE_kernel Function_kernel;*/
 
-  struct Simulator_function_kernel: public CGAL::Kinetic::Handle_degeneracy_function_kernel<Function_kernel> {};
+  //struct Simulator_function_kernel: public CGAL::Kinetic::Handle_degeneracy_function_kernel<Function_kernel> {};
+  typedef CGAL::Kinetic::Handle_degeneracy_function_kernel<Function_kernel>  Simulator_function_kernel;
   typedef CGAL::Kinetic::Cartesian_kinetic_kernel<Simulator_function_kernel> Kinetic_kernel;
   typedef  Simulator_function_kernel::Root Time;
   typedef CGAL::Kinetic::Two_list_pointer_event_queue<Function_kernel> Queue_base;

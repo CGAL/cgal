@@ -100,6 +100,8 @@ CGAL_POLYNOMIAL_END_NAMESPACE
 
 #define CGAL_POLYNOMIAL_TO_DOUBLE(d) CGAL::to_double(d)
 
+#define CGAL_POLYNOMIAL_TO_INTERVAL(d) CGAL::to_interval(d)
+
 #else
 /*
   When no CGAL is present

@@ -47,7 +47,7 @@ public:
   }
 
   void process() {
-    P::kdel_->pop(vh_);
+    P::kdel()->pop(vh_);
   }
 
   VH vertex() const
@@ -55,9 +55,10 @@ public:
     return vh_;
   }
 
-  void write(std::ostream &out) const
+  std::ostream& write(std::ostream &out) const
   {
     out << "Pop " << vh_->point();
+    return out;
   }
 
   /*virtual bool is_of_type(int tp) const {
@@ -73,12 +74,12 @@ protected:
   const VH vh_;
 };
 
-template <class K, class S, class VH>
+/*template <class K, class S, class VH>
 std::ostream& operator<<(std::ostream &out, const Regular_3_pop_event<K,S,VH> &e)
 {
   e.write(out);
   return out;
-}
+  }*/
 
 
 template <class KD, class Root_stack, class K, class Cell>
@@ -95,9 +96,10 @@ public:
 
   Regular_3_non_vertex_event(){}
 
-  void write(std::ostream &out) const
+  std::ostream& write(std::ostream &out) const
   {
     out << "Nothing " << P::vh_->point();
+    return out;
   }
 
   /* virtual bool is_of_type(int tp) const {
@@ -131,12 +133,13 @@ public:
   }
 
   void process() {
-    P::kdel_->move(P::k_, P::cell_, dir_);
+    P::kdel()->move(P::k_, P::cell_, dir_);
   }
 
-  void write(std::ostream &out) const
+  std::ostream& write(std::ostream &out) const
   {
     out << "Move " << P::point();
+    return out;
   }
 
   /*virtual bool is_of_type(int tp) const {
@@ -152,12 +155,12 @@ protected:
   int dir_;
 };
 
-template <class K,  class S, class KK, class C>
+/*template <class K,  class S, class KK, class C>
 std::ostream& operator<<(std::ostream &out, const Regular_3_move_event<K,S,KK,C> &e)
 {
   e.write(out);
   return out;
-}
+  }*/
 
 
 template <class KD, class Root_stack, class K, class Cell>
@@ -173,12 +176,13 @@ public:
   }
 
   void process() {
-    P::kdel_->push(P::k_, P::cell_);
+    P::kdel()->push(P::k_, P::cell_);
   }
 
-  void write(std::ostream &out) const
+  std::ostream& write(std::ostream &out) const
   {
     out << "Push " << P::point();
+    return out;
   }
   /*virtual bool is_of_type(int tp) const {
     return (tp &type())!=0 || P::is_of_type(tp);
@@ -190,12 +194,12 @@ public:
   virtual ~Regular_3_push_event(){};
 };
 
-template <class K, class S, class KK, class C>
+/*template <class K, class S, class KK, class C>
 std::ostream& operator<<(std::ostream &out, const Regular_3_push_event<K,S,KK,C> &e)
 {
   e.write(out);
   return out;
-}
+  }*/
 
 
 template <class Traits>

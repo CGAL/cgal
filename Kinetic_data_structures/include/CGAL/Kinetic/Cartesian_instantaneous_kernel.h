@@ -30,11 +30,11 @@
 #include <CGAL/Kinetic/internal/To_static.h>
 //#include <CGAL/Kinetic/Cartesian_static_converter.h>
 
-#define CGAL_MSA(Pred, pred, d) typedef Instantaneous_adaptor<typename Static_kernel::Pred##_##d, This, Point_2> Pred##_##d; \
+#define CGAL_MSA(Pred, pred, d) typedef Instantaneous_adaptor<typename Static_kernel::Pred##_##d, Current_coordinates, Point_2> Pred##_##d; \
   Pred##_##d pred##_##d##_object() const				\
   {									\
     typename Static_kernel::Pred##_##d sp= rep_->static_kernel().pred##_##d##_object();	\
-    return Pred##_##d(*this, sp);					\
+    return Pred##_##d(current_coordinates_object(), sp);		\
   }
 
 #define CGAL_TSO(name) typedef typename Static_kernel::name name
@@ -167,12 +167,20 @@ public:
   */
   typedef typename Object_table::Key Point_3;
 
-  //! Compute the static object correspinding to a particular kinetic object.
-  const typename Rep::Converter::result_type &
-  static_object(const typename MPT::Key &k) const
-  {
-    return rep_->static_object(k);
+  struct Current_coordinates {
+    Current_coordinates(typename Rep::Handle rep): rep_(rep){}
+    typedef typename Rep::Converter::result_type result_type;
+    typedef typename Object_table::Key argument_type;
+    const result_type  & operator()(argument_type k) const {
+      return rep_->static_object(k);
+    }
+    typename Rep::Handle rep_;
+  };
+
+  Current_coordinates current_coordinates_object() const {
+    return Current_coordinates(rep_);
   }
+
 
   typedef Instantaneous_adaptor<std::less<RT>, This, Point_1> Less_x_1;
   Less_x_1 less_x_1_object() const

@@ -3,9 +3,9 @@
 
 #include <CGAL/Kinetic/basic.h>
 
+#include <CGAL/Kinetic/Exact_simulation_traits_2.h>
 #include <CGAL/Kinetic/Delaunay_triangulation_2.h>
 #include <CGAL/Kinetic/Delaunay_triangulation_event_log_visitor_2.h>
-#include <CGAL/Kinetic/Exact_simulation_traits_2.h>
 #include <algorithm>
 #include <iterator>
 

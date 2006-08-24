@@ -974,8 +974,10 @@ public:
     else {
       os << "{" << ivl << ", " << idx << "}";
     }
-    Self copy = *this;
-    os << " = " << copy.compute_double();
+    if (idx != -2 && idx != -1) {
+      Self copy = *this;
+      os << " = " << copy.compute_double();
+    }
     return os;
   }
 

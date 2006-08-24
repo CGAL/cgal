@@ -41,6 +41,69 @@
 
 CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
 
+
+template <class Item>
+struct Two_list_pointer_event_queue_key: public Item::Handle
+{
+  typedef Two_list_pointer_event_queue_key<Item> This;
+  typedef typename Item::Handle P;
+  Two_list_pointer_event_queue_key(){};
+  Two_list_pointer_event_queue_key(Item  *p): Item::Handle(p){};
+
+  std::ostream& write(std::ostream &out) {
+    if (Item::Handle::get()) {
+      out << "(" << Item::Handle::get() << ": " << *Item::Handle::get() << ")";
+    }
+    else {
+      out << "null";
+    }
+    return out;
+  }
+  /*operator bool() const
+    {
+    return Item::Handle::get() != NULL;
+    }*/
+  bool is_valid() const {
+    return  Item::Handle::get() != NULL;
+  }
+  /*bool operator!() const
+    {
+    return Item::Handle::operator!();
+    }*/
+  bool operator==(const This &o) const
+  {
+    return Item::Handle::get() == o.get();
+  }
+  bool operator!=(const This &o) const
+  {
+    return Item::Handle::get() != o.get();
+  }
+  //using P::operator<;
+  bool operator<(const This& o) const
+  {
+    return P::get() < o.get();
+  }
+
+  Item* pointer() {
+    return Item::Handle::get();
+  }
+  const Item* pointer() const
+  {
+    return Item::Handle::get();
+  }
+  //using P::operator>;
+};
+
+template  <class I>
+std::ostream &operator<<(std::ostream &out, Two_list_pointer_event_queue_key<I> k)
+{
+  k.write(out);
+  return out;
+}
+
+
+
+
 // The interface for an item stored in the ::Pointer_event_queue
 template <class Priority>
 class Two_list_event_queue_item:
@@ -55,6 +118,7 @@ class Two_list_event_queue_item:
     bool do_not_copy;
   }
 public:
+  typedef Two_list_pointer_event_queue_key<This> Key;
   Two_list_event_queue_item(): time_(-666){ /*++two_list_remaining;*/}
   Two_list_event_queue_item(const Priority &t): time_(t){/*++two_list_remaining;*/}
   virtual ~Two_list_event_queue_item(){/*--two_list_remaining;*/}
@@ -71,21 +135,25 @@ public:
     front_list_=lt;
   }
 
-  virtual void write(std::ostream &out) const =0;
-  virtual void process() =0;
+  bool operator<(const This &o) const {
+    CGAL::Comparison_result c= CGAL::compare(time(), o.time());
+    if (c != CGAL::EQUAL) return c== CGAL::SMALLER;
+    else {
+      CGAL::Comparison_result c= CGAL::compare(kds(), o.kds());
+      if (c != CGAL::EQUAL) return c==CGAL::SMALLER;
+      else {
+	CGAL::Comparison_result c= compare_concurrent(Key((This*) this),Key((This*) &o));
+	return c==CGAL::SMALLER;
+      }
+    }
+  }
 
-  bool operator<(const This &o) const
-  {
-    return time() < o.time();
-  }
-  bool operator>(const This &o) const
-  {
-    return time() > o.time();
-  }
-  bool operator==(const This &o) const
-  {
-    return time() == o.time();
-  }
+  virtual std::ostream& write(std::ostream &out) const =0;
+  virtual void process() =0;
+  virtual CGAL::Comparison_result compare_concurrent(Key a, Key b) const=0;
+  virtual bool merge_concurrent(Key a, Key b)=0;
+  virtual void *kds() const{return NULL;}
+
 private:
   Priority time_;
   List front_list_;
@@ -106,7 +174,7 @@ inline std::ostream& operator<<(std::ostream &out, const Two_list_event_queue_it
 template <class Priority>
 class Two_list_event_queue_dummy_item: public Two_list_event_queue_item<Priority>
 {
-
+  typedef Two_list_event_queue_item<Priority> P;
 public:
   Two_list_event_queue_dummy_item(){}
   Two_list_event_queue_dummy_item(const Two_list_event_queue_dummy_item &):
@@ -115,9 +183,14 @@ public:
     std::cerr << "Trying to process a NULL event.\n";
     CGAL_assertion(0);
   }
-  virtual void write(std::ostream &out) const
+  virtual CGAL::Comparison_result compare_concurrent(typename P::Key a, typename P::Key b) const{return CGAL::EQUAL;}
+  virtual bool merge_concurrent(typename P::Key a, typename P::Key b){
+    return false;
+  }
+  virtual std::ostream& write(std::ostream &out) const
   {
     out << "Never";
+    return out;
   }
   virtual ~Two_list_event_queue_dummy_item(){}
 };
@@ -135,29 +208,37 @@ class Two_list_event_queue_item_rep: public internal::Two_list_event_queue_item<
   typedef  Two_list_event_queue_item<Priority> P;
 public:
   Two_list_event_queue_item_rep(): internal::Two_list_event_queue_item<Priority>(){}
-  Two_list_event_queue_item_rep(const Priority &t, const Event &e): Two_list_event_queue_item<Priority>(t),
-								    event_(e){}
+  Two_list_event_queue_item_rep(const Priority &t, const Event &e): 
+    Two_list_event_queue_item<Priority>(t),
+    event_(e){}
 
-  virtual void write(std::ostream &out) const
+  virtual std::ostream& write(std::ostream &out) const
   {
-    out << event_ << " at " << P::time();
+    event_.write(out);
+    out << " at " << P::time();
+    return out;
   }
   virtual void process() {
     event_.process();
   }
+  virtual CGAL::Comparison_result compare_concurrent(typename P::Key a, typename P::Key b) const{
+    return event_.compare_concurrent(a,b);
+  }
+  virtual bool merge_concurrent(typename P::Key a, typename P::Key b){
+    return event_.merge_concurrent(a,b);;
+  }
+  virtual void *kds() const{return event_.kds();}
+
   // Access the actual event
   const Event &event() const
   {
     return event_;
   }
-  void set_event(const Event &e) {
-    event_=e;
-  }
+  
   virtual ~Two_list_event_queue_item_rep(){}
 
 protected:
-  // what the fuck? Why do I need this (gcc 3.4.1)
-  /*mutable*/ Event event_;
+  Event event_;
 };
 
 template <class T>
@@ -197,66 +278,7 @@ CGAL_KINETIC_END_INTERNAL_NAMESPACE
 
 CGAL_KINETIC_BEGIN_NAMESPACE
 
-template <class FK>
-class Two_list_pointer_event_queue;
 
-template <class Item, class FK>
-struct Two_list_pointer_event_queue_key: private Item::Handle
-{
-  typedef Two_list_pointer_event_queue_key<Item, FK> This;
-  typedef typename Item::Handle P;
-  Two_list_pointer_event_queue_key(){};
-  Two_list_pointer_event_queue_key(Item  *p): Item::Handle(p){};
-  friend class Two_list_pointer_event_queue<FK>;
-  void write(std::ostream &out) {
-    if (Item::Handle::get()) {
-      out << *Item::Handle::get();
-    }
-    else {
-      out << "null";
-    }
-  }
-  /*operator bool() const
-  {
-    return Item::Handle::get() != NULL;
-    }*/
-  bool is_valid() const {
-    return  Item::Handle::get() != NULL;
-  }
-  /*bool operator!() const
-  {
-    return Item::Handle::operator!();
-    }*/
-  bool operator==(const This &o) const
-  {
-    return Item::Handle::get() == o.get();
-  }
-  bool operator!=(const This &o) const
-  {
-    return Item::Handle::get() != o.get();
-  }
-  //using P::operator<;
-  bool operator<(const This& o) const
-  {
-    return P::get() < o.get();
-  }
-
-  Item* pointer() {
-    return Item::Handle::get();
-  }
-  const Item* pointer() const
-  {
-    return Item::Handle::get();
-  }
-  //using P::operator>;
-};
-
-template  <class I, class FK>
-std::ostream &operator<<(std::ostream &out, Two_list_pointer_event_queue_key<I, FK> k)
-{
-  k.write(out);
-  return out;
-}
 
 
 //! The priority queue for holding many different types of events.
@@ -271,53 +293,44 @@ std::ostream &operator<<(std::ostream &out, Two_list_pointer_event_queue_key<I, 
   have to worry about them being processed (and deleted or not). I am
   not sure which is better.
 */
-template <class FK>
+template <class FK, unsigned int TARGET=8>
 class Two_list_pointer_event_queue
 {
   typedef typename FK::Root PriorityT;
   typedef typename FK::NT NT;
-  typedef Two_list_pointer_event_queue<FK> This;
+  typedef Two_list_pointer_event_queue<FK, TARGET> This;
   typedef typename internal::Two_list_event_queue_item<PriorityT> Item;
 
   typedef typename CGAL::In_place_list<Item, false,
 				       internal::Two_list_event_queue_item_allocator<PriorityT> > Queue;
   typedef typename Queue::iterator Iterator;
 
-  //static const unsigned int max_front_size=20;
 
-  /*template <class T>
-    bool almost_inf(const T&) const {
-    return false;
-    }
 
-    bool almost_inf(double d) const {
-    return d > 2.65598e+307;
-    }*/
 
 public:
   typedef PriorityT Priority;
 
-  typedef Two_list_pointer_event_queue_key<Item, FK> Key;
+  typedef internal::Two_list_pointer_event_queue_key<Item> Key;
 
-  /*  struct Key: public Item::Handle {
-      Key(){};
-      Key(Item*i): Item::Handle(i){}
-      Key(typename Item::Handle ih): Item::Handle(ih){}
-      static Key null() {
-      return Key();
-      }
-      };*/
+
+
 
   //! Construct it with a suggested size of sz.
-  Two_list_pointer_event_queue(Priority start_time, Priority end_time, FK fk, int =0): tii_(fk.to_isolating_interval_object()),
-										       ub_(tii_(start_time).first),
-										       step_(1),
-										       all_in_front_(false){
+  Two_list_pointer_event_queue(Priority start_time, Priority end_time, FK fk, int =0): tii_(fk.to_isolating_interval_object()){
+  
+    initialize(start_time, end_time);
+    /*=======
+      Two_list_pointer_event_queue(Priority start_time, Priority end_time, FK fk, int =0): tii_(fk.to_isolating_interval_object()),
+      ub_(tii_(start_time).first),
+      step_(1),
+      all_in_front_(false){*/
+
     //std::cout << "UB is " << ub_ << std::endl;
     //null_event_= 
     //if (end_time != std::numeric_limits<Priority>::infinity()){
-    set_end_priority(end_time);
-      /*} else {
+    //set_end_priority(end_time);
+    /*} else {
       NT end=(std::numeric_limits<int>::max)();
       std::cerr << "WARNING Infinity is being rounded down to " << end << std::endl;
       set_end_priority(end);
@@ -332,33 +345,28 @@ public:
   template <class E>
   Key insert(const Priority &t, const E & e) {
     CGAL_expensive_precondition(audit());
-    //CGAL_precondition(t != std::numeric_limits<Priority>::infinity());
-    //CGAL_precondition(t != internal::infinity_or_max<Priority>());
+ 
 
     Item *ni = make_event(t, e);
 
     //CGAL_exactness_assertion(t >= lbs_);
     //lb_=(std::min)(t, lb_);
     
-    //++queue_insertions__;
 
 
     if (leq_ub(t)) {
       ni->set_in_list(Item::FRONT);
       typename Queue::iterator iit=std::upper_bound(front_.begin(), front_.end(), *ni);
-      /*if (iit == front_.begin()){
-	step_= ub_- to_interval(t).first;
-	}*/
+   
       front_.insert(iit, *ni);
       CGAL_expensive_assertion(audit());
       if (front_.size() > 2*max_front_size()) {
 	shrink_front();
       }
       //++queue_front_insertions__;
-    }
-    else if (front_.empty()) {
+    }  else if (front_.empty()) {
       CGAL_assertion(back_.empty());
-      if (t < end_priority()) {
+      if (CGAL::compare(t, end_priority()) == CGAL::SMALLER) {
 	//++queue_front_insertions__;
 	front_.push_back(*ni);
 	ub_= NT(to_interval(tii_(t).second).second);
@@ -402,6 +410,13 @@ public:
   void erase(const Key &item) {
     //std::cout << "Erase event " << item.pointer() << std::endl;
     if (item== end_key()) return;
+#ifndef NDEBUG
+    if (!is_in_queue(item)) {
+      std::cerr << "Eraseing event not in queue ";
+      item->write(std::cerr);
+      std::cerr << std::endl;
+    }
+#endif
     CGAL_expensive_precondition(is_in_queue(item));
     CGAL_expensive_precondition(audit());
     Item *i=item.get();
@@ -480,7 +495,7 @@ public:
   }
 
   //! Access the time of a particular event
-  Priority priority(const Key &item) const
+  const Priority& priority(const Key &item) const
   {
     return item->time();
   }
@@ -507,11 +522,11 @@ public:
       if (front_.empty() && !back_.empty()) grow_front();
       i->process();
 
-      if (!front_.empty() && i->time() == front_.front().time()) {
+      /*if (!front_.empty() && i->time() == front_.front().time()) {
 	CGAL_KINETIC_LOG(LOG_SOME, "Degeneracy at time "
-			 << i->time() << " the events are: "
-			 << *i << " and " << front_.front() << std::endl);
-      }
+	<< i->time() << " the events are: "
+	<< *i << " and " << front_.front() << std::endl);
+	}*/
 
       unmake_event(i);
     }
@@ -531,13 +546,14 @@ public:
   {
     for (typename Queue::const_iterator it = front_.begin(); it != front_.end(); ++it) {
       //out << "[";
-      it->write(out);
+     
+      out << "(" << &*it << ": " << *it << ")";
       //out << "] ";
       out << std::endl;
     }
     out << "--" << std::endl;
     for (typename Queue::const_iterator it = back_.begin(); it != back_.end(); ++it) {
-      it->write(out);
+      out << "(" << &*it << ": " << *it << ")";
       out << std::endl;
     }
     out << std::endl;
@@ -557,40 +573,39 @@ public:
     return end_time_;
   }
 
-  void set_end_priority(const Priority &o) {
-    CGAL_precondition(empty());
-    //CGAL_precondition(o!= std::numeric_limits<Priority>::infinity());
-    end_time_=o;
-    /*if (end_time_== std::numeric_limits<Priority>::infinity()) {
-      end_split_=(std::numeric_limits<int>::max)();
-    } else {
-      end_split_= tii_(o).second;
-      }*/
+
+  void set_interval(const Priority &start_time, const Priority &end_time) {
+    initialize(start_time, end_time);
+  }
+  
+  void clear() {
+    front_.clear();
+    back_.clear();
+    all_in_front_=false;
   }
 
-	void clear() {
-		front_.clear();
-		back_.clear();
-		all_in_front_=false;
-	}
-
 protected:
-
+  void initialize(const Priority &start_time, const Priority &end_time) {
+    ub_=tii_(start_time).first;
+    step_=1;
+    all_in_front_= false;
+    end_time_=end_time;
+  }
   bool leq_ub(const Priority &t) const {
     if (all_in_front_) return true;
-    else return (t <= ub_);
+    else return (CGAL::compare(t, Priority(ub_)) != CGAL::LARGER);
   }
 
   /*bool at_end(const NT &nt) const {
     CGAL_precondition(nt <= end_priority());
     if (end_time_== std::numeric_limits<Priority>::infinity()){
-      return false;
+    return false;
     } else {
-      return Priority(nt) == end_priority();
+    return Priority(nt) == end_priority();
     }
-  }
+    }
 
-  bool at_end(const Priority &nt) const {
+    bool at_end(const Priority &nt) const {
     CGAL_precondition(nt <= end_priority());
     return nt == end_priority();
     }*/
@@ -623,7 +638,7 @@ protected:
 #ifndef NDEBUG
     for (unsigned int i=0; i< inf_.size(); ++i) {
       Priority t= inf_[i]->time();
-      CGAL_assertion(t > end_priority());
+      CGAL_assertion(CGAL::compare(t, end_priority())== CGAL::LARGER);
       CGAL_assertion(inf_[i]->in_list() == Item::INF);
     }
 #endif
@@ -634,7 +649,7 @@ protected:
 	Priority tc= it->time();
 	Priority tp= boost::prior(it)->time();
 #ifndef NDEBUG
-	if (tc < tp) {
+	if (CGAL::compare(tc, tp) == CGAL::SMALLER) {
 	  std::cout << "ERROR: Out of order " << tc << std::endl << tp << std::endl << std::endl;
 	  CGAL::Kinetic::internal::fail__= true;
 	}
@@ -672,232 +687,238 @@ protected:
     Iterator it= source.begin();
     while (it != source.end()) {
       // assert(it->time() >= a);
-      if ((binf && !(it->time() > end_priority())) || (!binf && it->time() <= b)) {
-	Item *i= &*it;
-	Iterator t= boost::next(it);
-	source.erase(it);
-	it=t;
-	target.push_back(*i);
-	++count;
-      }
-      else {
-	++it;
+      if (binf && 
+	   CGAL::compare(it->time(), end_priority()) != CGAL::LARGER
+	  || !binf && CGAL::compare(it->time(), Priority(b)) != CGAL::LARGER) {
+	    Item *i= &*it;
+	    Iterator t= boost::next(it);
+	    source.erase(it);
+	    it=t;
+	    target.push_back(*i);
+	    ++count;
+	  }
+	  else {
+	    ++it;
+	  }
+	  }
+      CGAL_assertion(sz==source.size() + target.size());
+      return count;
+    }
+
+    /*NT step() const{
+      return (std::max)(ub_-lb_, NT(1));
+      }*/
+
+    NT av(NT a, NT b) const
+    {
+      return .5*(a+b);
+    }
+
+    template <class It>
+      void set_front(It b, It e, typename Item::List val) {
+      for (; b!= e; ++b) {
+	b->set_in_list(val);
       }
     }
-    CGAL_assertion(sz==source.size() + target.size());
-    return count;
-  }
-
-  /*NT step() const{
-    return (std::max)(ub_-lb_, NT(1));
-    }*/
-
-  NT av(NT a, NT b) const
-  {
-    return .5*(a+b);
-  }
-
-  template <class It>
-  void set_front(It b, It e, typename Item::List val) {
-    for (; b!= e; ++b) {
-      b->set_in_list(val);
-    }
-  }
-  template <class C, class It>
-  void make_inf(C &c, It b, It e) {
-    for (It cit = b; cit != e; ++cit) {
-      CGAL_assertion(cit->time() > end_priority());
-      //std::cout << "Dropping inf event " << &*cit << std::endl;
+    template <class C, class It>
+      void make_inf(C &c, It b, It e) {
+      for (It cit = b; cit != e; ++cit) {
+	CGAL_assertion(CGAL::compare(cit->time(), end_priority()) == CGAL::LARGER);
+	//std::cout << "Dropping inf event " << &*cit << std::endl;
 #ifndef NDEBUG
-      inf_.push_back(&*cit);
+	inf_.push_back(&*cit);
 #endif
-      cit->set_in_list(Item::INF);
-      It p= boost::prior(cit);
-      c.erase(cit);
-      unmake_event(&*cit);
-      cit=p;
-    }
-    //c.erase(b, e);
-  }
-
-  void grow_front(Queue &cand, int recursive_count=0) {
-    const bool dprint=false;
-    CGAL_assertion(front_.empty());
-    CGAL_assertion(!cand.empty());
-    CGAL_assertion(!all_in_front_);
-    CGAL_assertion(step_ != 0);
-    if (dprint) std::cout << "Growing front from " << ub_ << " with step " 
-			  << step_ << "(" << recursive_count << ") ";
-
-    //CGAL_assertion(ub_<end_split());
-    ub_+= step_;
-    //CGAL_assertion(!too_big(ub_));
-
-    if ( end_priority() < ub_) {
-      all_in_front_=true;
-      //ub_=end_split();
-    }
-
-    unsigned int num= select(cand, front_, ub_, all_in_front_);
-    if (all_in_front_) {
-      make_inf(cand, cand.begin(), cand.end());
-    } else if (front_.empty()) {
-      if (recursive_count > 10) {
-	// do something
-	std::cerr << "Too many recursions " << std::endl;
-	all_in_front_=true;
-	ub_=-1;
-	/*unsigned int num=*/ select(cand, front_, ub_, all_in_front_);
-	make_inf(cand, cand.begin(), cand.end());
-	//grow_front(cand, recursive_count+1);
-      } else {
-	if (dprint) std::cout << "undershot." << std::endl;
-	NT nstep = step_*2;
-	CGAL_assertion(nstep > step_);
-	step_=nstep;
-	CGAL_assertion(step_!=0);
-	grow_front(cand, recursive_count+1);
+	cit->set_in_list(Item::INF);
+	It p= boost::prior(cit);
+	c.erase(cit);
+	unmake_event(&*cit);
+	cit=p;
       }
-    } else {
-      //      unsigned int ncand= cand.size();
-      back_.splice(back_.begin(), cand);
-      if (num >  max_front_size()) {
+      //c.erase(b, e);
+    }
+
+    void grow_front(Queue &cand, int recursive_count=0) {
+      const bool dprint=false;
+      CGAL_assertion(front_.empty());
+      CGAL_assertion(!cand.empty());
+      CGAL_assertion(!all_in_front_);
+      CGAL_assertion(step_ != 0);
+      if (dprint) std::cout << "Growing front from " << ub_ << " with step " 
+			    << step_ << "(" << recursive_count << ") ";
+
+      //CGAL_assertion(ub_<end_split());
+      ub_+= step_;
+      //CGAL_assertion(!too_big(ub_));
+
+      if ( CGAL::compare(end_priority(), Priority(ub_)) == CGAL::SMALLER) {
+	all_in_front_=true;
+	//ub_=end_split();
+      }
+
+      unsigned int num= select(cand, front_, ub_, all_in_front_);
+      if (all_in_front_) {
+	make_inf(cand, cand.begin(), cand.end());
+      } else if (front_.empty()) {
 	if (recursive_count > 10) {
-	  //std::cerr << "Gave up on isolating front. Let with size " << front_.size() << " ub=" << ub_ << "step=" << step_ <<  "\n";
-	  return;
-	}
-	else {
-	  NT nstep= step_*NT(.75+.25*max_front_size()/static_cast<double>(num));
-	  //else nstep = step_*.6;
-	  CGAL_assertion(nstep >0);
-	  cand.swap(front_);
-	  //ub_=lb_;
-	  ub_-=step_;
-	  CGAL_assertion(!all_in_front_);
-	  if (dprint) std::cout << "...overshot" << std::endl;
-	  CGAL_assertion(nstep < step_);
+	  // do something
+	  std::cerr << "Too many recursions " << std::endl;
+	  all_in_front_=true;
+	  ub_=-1;
+	  /*unsigned int num=*/ select(cand, front_, ub_, all_in_front_);
+	  make_inf(cand, cand.begin(), cand.end());
+	  //grow_front(cand, recursive_count+1);
+	} else {
+	  if (dprint) std::cout << "undershot." << std::endl;
+	  NT nstep = step_*2;
+	  CGAL_assertion(nstep > step_);
 	  step_=nstep;
 	  CGAL_assertion(step_!=0);
 	  grow_front(cand, recursive_count+1);
 	}
+      } else {
+	//      unsigned int ncand= cand.size();
+	back_.splice(back_.begin(), cand);
+	if (num >  max_front_size()) {
+	  if (recursive_count > 10) {
+	    //std::cerr << "Gave up on isolating front. Let with size " << front_.size() << " ub=" << ub_ << "step=" << step_ <<  "\n";
+	    return;
+	  }
+	  else {
+	    NT nstep= step_*NT(.75+.25*max_front_size()/static_cast<double>(num));
+	    //else nstep = step_*.6;
+	    CGAL_assertion(nstep >0);
+	    cand.swap(front_);
+	    //ub_=lb_;
+	    ub_-=step_;
+	    CGAL_assertion(!all_in_front_);
+	    if (dprint) std::cout << "...overshot" << std::endl;
+	    CGAL_assertion(nstep < step_);
+	    step_=nstep;
+	    CGAL_assertion(step_!=0);
+	    grow_front(cand, recursive_count+1);
+	  }
+	}
+	else {
+	  if (dprint) std::cout << std::endl;
+	}
       }
-      else {
-	if (dprint) std::cout << std::endl;
-      }
-    }
-    CGAL_postcondition(cand.empty());
-  }
-
-  void grow_front() {
-    //++growth__;
-    //std::cout << "Growing front from " << ub_ << std::endl;
-    //assert(is_valid());
-    CGAL_precondition(!back_.empty());
-    CGAL_precondition(front_.empty());
-    CGAL_assertion_code(unsigned int sz= front_.size()+back_.size()+ inf_.size());
-    Queue cand;
-    cand.splice(cand.begin(), back_);
-    grow_front(cand);
-    set_front(front_.begin(), front_.end(), Item::FRONT);
-    front_.sort();
-
-    CGAL_assertion(sz==front_.size()+back_.size() + inf_.size());
-    CGAL_assertion(audit());
-    //std::cout << "to " << ub_ << std::endl;
-  }
-
-  void shrink_front() {
-    //++shrink__;
-    //std::cout << "Shrinking front from " << ub_ << std::endl;
-    typename Queue::iterator it=front_.begin();
-    unsigned int mf= max_front_size();
-    for (unsigned int i=0; i < mf; ++i) {
-      ++it;
+      CGAL_postcondition(cand.empty());
     }
 
-    NT split =  NT(to_interval(tii_(it->time()).second).second);
-    if (end_priority() < it->time()  || end_priority() < split) {
-      all_in_front_=true;
-      set_front(back_.begin(), back_.end(), Item::FRONT);
-      front_.splice(front_.end(), back_);
+    void grow_front() {
+      //++growth__;
+      //std::cout << "Growing front from " << ub_ << std::endl;
+      //assert(is_valid());
+      CGAL_precondition(!back_.empty());
+      CGAL_precondition(front_.empty());
+      CGAL_assertion_code(unsigned int sz= front_.size()+back_.size()+ inf_.size());
+      Queue cand;
+      cand.splice(cand.begin(), back_);
+      grow_front(cand);
+      set_front(front_.begin(), front_.end(), Item::FRONT);
+      front_.sort();
 
-      while (it != front_.end()) {
-	if (it->time() > end_priority()) break;
+      // hmmmm, now I should make a second pass to merge. Ick.
+
+      CGAL_assertion(sz==front_.size()+back_.size() + inf_.size());
+      CGAL_assertion(audit());
+      //std::cout << "to " << ub_ << std::endl;
+    }
+
+    void shrink_front() {
+      //++shrink__;
+      //std::cout << "Shrinking front from " << ub_ << std::endl;
+      typename Queue::iterator it=front_.begin();
+      unsigned int mf= max_front_size();
+      for (unsigned int i=0; i < mf; ++i) {
+	++it;
       }
-      set_front(it, front_.end(), Item::INF);
-      std::vector<Item*> temp;
-      for (typename Queue::iterator c= it; c != front_.end(); ++c) {
-	temp.push_back(&*c);
+
+      NT split =  NT(to_interval(tii_(it->time()).second).second);
+      if (CGAL::compare(end_priority(), it->time())==CGAL::SMALLER
+	  || CGAL::compare(end_priority(), Priority(split))==CGAL::SMALLER) {
+	all_in_front_=true;
+	set_front(back_.begin(), back_.end(), Item::FRONT);
+	front_.splice(front_.end(), back_);
+
+	while (it != front_.end()) {
+	  if (CGAL::compare(it->time(), end_priority())==CGAL::LARGER) break;
+	}
+	set_front(it, front_.end(), Item::INF);
+	std::vector<Item*> temp;
+	for (typename Queue::iterator c= it; c != front_.end(); ++c) {
+	  temp.push_back(&*c);
 #ifndef NDEBUG
-	inf_.push_back(&*c);
+	  inf_.push_back(&*c);
 #endif
-	//std::cout << "Dropping inf event " << &*c << std::endl;
-      }
-      front_.erase(it, front_.end());
+	  //std::cout << "Dropping inf event " << &*c << std::endl;
+	}
+	front_.erase(it, front_.end());
 
    
     
-      for (unsigned int i=0; i< temp.size(); ++i) {
-	unmake_event(temp[i]);
-      }
-    } else {
-      while (it->time() <= split && it != front_.end()) ++it;
+	for (unsigned int i=0; i< temp.size(); ++i) {
+	  unmake_event(temp[i]);
+	}
+      } else {
+	while (CGAL::compare(it->time(), Priority(split)) != CGAL::LARGER
+	       && it != front_.end()) ++it;
       
-      if (it != front_.end()) {
+	if (it != front_.end()) {
 	
-	set_front(it, front_.end(), Item::BACK);
-	back_.splice(back_.begin(), front_, it, front_.end());
-	NT oub=ub_;
+	  set_front(it, front_.end(), Item::BACK);
+	  back_.splice(back_.begin(), front_, it, front_.end());
+	  NT oub=ub_;
 	
-	ub_ = NT(split);
-	//CGAL_assertion(!too_big(ub_));
-	//CGAL_assertion(ub_ <= end_split());
-	step_= oub-ub_;
-	CGAL_assertion(!all_in_front_);
-	CGAL_postcondition_code(if (step_<0) std::cerr << step_ << std::endl;);
-	CGAL_postcondition_code(if (step_<0) std::cerr << ub_ << std::endl;);
-	CGAL_postcondition_code(if (step_<0) std::cerr << oub << std::endl;);
-	CGAL_postcondition_code(if (step_<0) std::cerr << front_.back().time() << std::endl;);
-	CGAL_postcondition_code(if (step_==0) for (typename Queue::const_iterator it=front_.begin(); it != front_.end(); ++it) std::cout << *it << std::endl);
-	CGAL_postcondition(step_>=0);
+	  ub_ = NT(split);
+	  //CGAL_assertion(!too_big(ub_));
+	  //CGAL_assertion(ub_ <= end_split());
+	  step_= oub-ub_;
+	  CGAL_assertion(!all_in_front_);
+	  CGAL_postcondition_code(if (step_<0) std::cerr << step_ << std::endl;);
+	  CGAL_postcondition_code(if (step_<0) std::cerr << ub_ << std::endl;);
+	  CGAL_postcondition_code(if (step_<0) std::cerr << oub << std::endl;);
+	  CGAL_postcondition_code(if (step_<0) std::cerr << front_.back().time() << std::endl;);
+	  CGAL_postcondition_code(if (step_==0) for (typename Queue::const_iterator it=front_.begin(); it != front_.end(); ++it) std::cout << *it << std::endl);
+	  CGAL_postcondition(step_>=0);
+	}
       }
     }
-  }
 
-  /*NT end_split() const
-  {
-    return end_split_;
-    }*/
+    /*NT end_split() const
+      {
+      return end_split_;
+      }*/
 
-  /*const Priority& end_time() const
-  {
-    return end_time_;
-    }*/
+    /*const Priority& end_time() const
+      {
+      return end_time_;
+      }*/
 
-  unsigned int max_front_size() const
-  {
-    return 8U;
-    //return (std::max)(4U, static_cast<unsigned int>(std::sqrt(static_cast<double>(front_.size()+back_.size()))));
-  }
+    unsigned int max_front_size() const
+    {
+      return TARGET;
+      //return (std::max)(4U, static_cast<unsigned int>(std::sqrt(static_cast<double>(front_.size()+back_.size()))));
+    }
 
-  typename FK::To_isolating_interval tii_;
-  Queue front_, back_;
+    typename FK::To_isolating_interval tii_;
+    Queue front_, back_;
 #ifndef NDEBUG
-  std::vector<Key> inf_;
+    std::vector<Key> inf_;
 #endif
-  NT ub_, step_;
-  bool all_in_front_;
-  Priority end_time_;
-  //NT end_split_;
-};
+    NT ub_, step_;
+    bool all_in_front_;
+    Priority end_time_;
+    //NT end_split_;
+  };
 
-template <class D>
-std::ostream &operator<<(std::ostream &out, const Two_list_pointer_event_queue<D> &q)
+    template <class D, unsigned int T>
+    std::ostream &operator<<(std::ostream &out, const Two_list_pointer_event_queue<D, T> &q)
 {
   q.write(out);
   return out;
 }
 
 
-CGAL_KINETIC_END_NAMESPACE
+  CGAL_KINETIC_END_NAMESPACE
 #endif

@@ -51,12 +51,20 @@ public:
   double lower_bound() const {
     return estimate_;
   }
+
+  std::ostream &write(std::ostream &out) const {
+    out << rs_;
+    return out;
+  }
 private:
   typename Function_kernel_t::Root_stack rs_;
   double estimate_;
 };
 
-
+template <class FK>
+inline std::ostream& operator<<(std::ostream& out, const Certificate<FK> &c) {
+  return c.write(out);
+}
 
 CGAL_KINETIC_END_INTERNAL_NAMESPACE
 

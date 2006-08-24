@@ -72,6 +72,18 @@ public:
   //! A 3d lifted Point
   // typedef CGALi::Cartesian_moving_lifted_point_3<Motion_function> Moving_lifted_point_3;
 
+
+  struct Is_constant {
+    template <class T>
+    bool operator()(const T&t) const {
+      return t.is_constant();
+    }
+  };
+
+  Is_constant is_constant_object() const {
+    return Is_constant();
+  }
+
   //! 2D orientation
   /*!
     Takes 3 Point_2.

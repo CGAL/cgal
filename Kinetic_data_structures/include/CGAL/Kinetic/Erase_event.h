@@ -21,6 +21,7 @@
 #ifndef CGAL_KINETIC_MOVING_OBJECT_ERASER_H_
 #define CGAL_KINETIC_MOVING_OBJECT_ERASER_H_
 #include <CGAL/Kinetic/basic.h>
+#include <CGAL/Kinetic/Event_base.h>
 
 CGAL_KINETIC_BEGIN_NAMESPACE;
 
@@ -29,7 +30,7 @@ CGAL_KINETIC_BEGIN_NAMESPACE;
   Note that this class has not been used.
 */
 template <class MOT>
-class Erase_event
+class Erase_event: public Event_base<int*>
 {
   typedef typename MOT::Handle Handle;
   typedef typename MOT::Key Key;
@@ -43,9 +44,10 @@ public:
   }
 
   void* kds() const {return NULL;}
-  void write(std::ostream &out) const
+  std::ostream& write(std::ostream &out) const
   {
     out << "E" << k_;
+    return out;
   }
 protected:
   Handle mot_;

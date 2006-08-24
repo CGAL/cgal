@@ -32,7 +32,7 @@ struct Derivitive_filter_function_kernel: public Traits
   typedef typename Traits::Function Function;
   
   typedef CGAL::POLYNOMIAL::Numeric_root_stack<Traits,
-					       CGAL::POLYNOMIAL::internal::Turkowski_cleaned_numeric_solver> Root_stack;
+					       CGAL_DEFAULT_CLEANED_NUMERIC_SOLVER> Root_stack;
   /*class Root_stack: public CGAL_POLYNOMIAL_NS::internal::Numeric_root_stack_core<Traits, true> {
     typedef CGAL_POLYNOMIAL_NS::internal::Numeric_root_stack_core<Traits, true> Parent;
     public:
