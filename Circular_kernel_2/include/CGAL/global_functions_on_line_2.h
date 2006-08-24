@@ -22,8 +22,8 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 
-#ifndef CGAL_CURVED_KERNEL_GLOBAL_FUNCTIONS_ON_LINE_2_H
-#define CGAL_CURVED_KERNEL_GLOBAL_FUNCTIONS_ON_LINE_2_H
+#ifndef CGAL_CIRCULAR_KERNEL_GLOBAL_FUNCTIONS_ON_LINE_2_H
+#define CGAL_CIRCULAR_KERNEL_GLOBAL_FUNCTIONS_ON_LINE_2_H
 
 namespace CGAL {
 
@@ -55,4 +55,4 @@ intersect_2( const typename CK::Line_2 & l,
 
 
 } // namespace CGAL
-#endif // CGAL_CURVED_KERNEL_GLOBAL_FUNCTIONS_ON_LINE_2_H
+#endif // CGAL_CIRCULAR_KERNEL_GLOBAL_FUNCTIONS_ON_LINE_2_H

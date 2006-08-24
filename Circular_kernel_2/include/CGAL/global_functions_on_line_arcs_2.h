@@ -22,8 +22,8 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 
-#ifndef CGAL_GLOBAL_FUNCTIONS_ON_LINE_ARCS_2_H
-#define CGAL_GLOBAL_FUNCTIONS_ON_LINE_ARCS_2_H
+#ifndef CGAL_CIRCULAR_KERNEL_GLOBAL_FUNCTIONS_ON_LINE_ARCS_2_H
+#define CGAL_CIRCULAR_KERNEL_GLOBAL_FUNCTIONS_ON_LINE_ARCS_2_H
 
 // global functions
 
@@ -104,4 +104,4 @@ make_x_monotone(const Line_arc_2<CK> &A, OutputIterator it)
 
 } // namespace CGAL
 
-#endif // CGAL_GLOBAL_FUNCTIONS_ON_LINE_ARCS_2_H
+#endif // CGAL_CIRCULAR_KERNEL_GLOBAL_FUNCTIONS_ON_LINE_ARCS_2_H
