@@ -1774,7 +1774,6 @@ replace_variable( Tag_false)
     bool  enter_original = ( (j < qp_n) || (j >= (int)( qp_n+slack_A.size())));
     bool  leave_original = ( (i < qp_n) || (i >= (int)( qp_n+slack_A.size())));
 
-
     // update basis & basis inverse
     if ( leave_original) {
 	if ( enter_original) {                              // orig  <--> orig
@@ -1796,7 +1795,9 @@ replace_variable( Tag_false)
 	    // but has been removed  
 	    art_s_i = -2;
 	    art_A.pop_back();
+	    CGAL_qpe_assertion(in_B[in_B.size()-1] == -1); // really removed?
 	    in_B.pop_back();
+	    // BG: shouldn't the pricing strategy be notfied also here?
 	} else {
 	    strategyP->leaving_basis( i);
 	}

@@ -126,10 +126,9 @@ set(int n, int m,
   
   // reserve memory for slack and artificial part of `A':
   if (has_ineq) {
-    const unsigned int art_size = std::count(qp_r, qp_r+qp_m, Rep::EQUAL);
-                            // Note: art_size is the number of equalities.
-    slack_A.reserve(qp_m - art_size);
-    art_A.reserve  (       art_size);
+    const unsigned int eq = std::count(qp_r, qp_r+qp_m, Rep::EQUAL);
+    slack_A.reserve(qp_m - eq);
+    art_A.reserve  (       eq);
     art_s.insert(art_s.end(), qp_m, A_entry(0));
   } else
     art_A.reserve( qp_m);
@@ -524,7 +523,8 @@ set_up_auxiliary_problem()
 {
   ET            b_max(et0);
   const C_entry c1(1);
-  int           i_max = -1;
+  int           i_max = -1; // i_max-th inequality is the most infeasible one
+  int           i_max_absolute = -1; // absolute index of most infeasible ineq
 
   for (int i = 0; i < qp_m; ++i) {
     // Note: For nonstandard form problems, our initial solution is not the
@@ -541,10 +541,11 @@ set_up_auxiliary_problem()
 
 	// add special artificial ('< -0') in case the inequality is
 	// infeasible for our starting point (which is the origin):
-	if (rhs < et0) { 
+	if (rhs < et0) {
 	  art_s[i] = -c1;
 	  if (-rhs > b_max) {
 	    i_max = slack_A.size();
+	    i_max_absolute = i;
 	    b_max = -rhs;
 	  }
 	}
@@ -559,6 +560,7 @@ set_up_auxiliary_problem()
 	  art_s[i] = c1;
 	  if (rhs > b_max) {
 	    i_max = slack_A.size();
+	    i_max_absolute = i;
 	    b_max = rhs;
 	  }
 	}
@@ -591,10 +593,11 @@ set_up_auxiliary_problem()
   // Note: the real work is done in init_basis() below.
   if (i_max >= 0) {
     art_s_i = i_max;                           // Note: the actual
-					       // initialization of art_s_i
+    art_basic = i_max_absolute;                // initialization of art_s_i
 					       // will be done in init_basis()
 					       // below. We misuse art_s_i to
-					       // remember i_max.
+					       // remember i_max and art_basic
+                                               // to remember i_max_absolute
   } else {                                     // no special art col needed
     art_s_i = -1;
     art_s.clear();
@@ -656,6 +659,7 @@ void QP_solver<Rep_>::
 init_basis()
 {
   int s_i = -1;
+  int s_i_absolute = -1;
   const int s = slack_A.size();
   
   // has special artificial column?
@@ -668,12 +672,21 @@ init_basis()
     // namely a +-1 for the most infeasible row (see (C1) above).
 
     // add "fake" column to art_A:
-    s_i = art_s_i;                    // index of most infeasible row, see (C1)
+    s_i = art_s_i;               // s_i-th ineq. is most infeasible, see (C1)
+    s_i_absolute = art_basic;    // absolute index of most infeasible ineq
     art_s_i = qp_n+s+art_A.size();    // number of special artificial var
-    art_A.push_back(std::make_pair(s_i, !slack_A[s_i].second)); // todo kf: I
-								// do not
-								// understand
-								// this
+    // BG: By construction of art_s_i (= i_max) in set_up_auxiliary_problem(),
+    // s_i conforms with the indexing of slack_A, and the sign of the +-1
+    // entry is just the negative of the corresponding slackie; this explains
+    // the second parameter of make_pair. But the index passed as the
+    // first parameter must refer to the ABSOLUTE index of the most 
+    // infeasible row. Putting s_i here is therefore a mistake unless
+    // we only have equality constraints
+
+    // art_A.push_back(std::make_pair(s_i, !slack_A[s_i].second)); 
+    CGAL_qpe_precondition(s_i_absolute >= 0);
+    CGAL_qpe_precondition(s_i_absolute == slack_A[s_i].first);
+    art_A.push_back(std::make_pair(s_i_absolute, !slack_A[s_i].second));
   }
   
   // initialize indices of basic variables:
@@ -702,6 +715,8 @@ init_basis()
   
   // initialize basis inverse (explain: 'art_s' not needed here (todo kf: don't
   // understand this note)):
+  // BG: as we only look at the basic constraints, the fake column in art_A
+  // will do as nicely as the actual column arts_s
   inv_M_B.init(art_A.size(), art_A.begin());
 }
 
@@ -714,8 +729,8 @@ init_basis__slack_variables( int, Tag_true)
 
 template < class Rep_ >                                        // has ineq.
 void QP_solver<Rep_>::
-init_basis__slack_variables(int s_i, Tag_false)  // Note: s_i is the index of
-						 // the most infeasible row,
+init_basis__slack_variables(int s_i, Tag_false)  // Note: s_i-th inequality is
+						 // the most infeasible one,
 						 // see (C1).
 {
   const int s = slack_A.size();
@@ -727,8 +742,10 @@ init_basis__slack_variables(int s_i, Tag_false)  // Note: s_i is the index of
   // all slack variables are basic, except the slack variable corresponding to
   // special artificial variable (which is nonbasic): (todo kf: I do not
   // understand this)
-  for (int i = 0; i < s; ++i)
-    if (i != s_i) {
+  // BG: the s_i-th inequality is the most infeasible one, and the i-th
+  // inequality corresponds to the slackie of index qp_n + i
+  for (int i = 0; i < s; ++i) // go through all inequalities
+    if (i != s_i) {           
       in_B.push_back(B_S.size());
       B_S .push_back(i+qp_n);     
     } else
@@ -750,8 +767,8 @@ init_basis__constraints( int, Tag_true)
 
 template < class Rep_ >                                        // has ineq.
 void QP_solver<Rep_>::
-init_basis__constraints(int s_i, Tag_false)  // Note: s_i is the index of the
-					     // most infeasible row, see (C1).
+init_basis__constraints(int s_i, Tag_false)  // Note: s_i-th inequality is the
+					     // most infeasible one, see (C1).
 {
   int i, j;
 
@@ -763,19 +780,21 @@ init_basis__constraints(int s_i, Tag_false)  // Note: s_i is the index of the
   
   // store constraints' indices:
   in_C.insert(in_C.end(), qp_m, -1);
-  if (s_i >= 0) s_i = slack_A[s_i].first;
+  if (s_i >= 0) s_i = slack_A[s_i].first;    // now s_i is absolute index
+                                             // of most infeasible row
   for (i = 0, j = 0; i < qp_m; ++i)
-    if (qp_r[i] == Rep::EQUAL) {             // equal. constraints are basic
+    if (qp_r[i] == Rep::EQUAL) {             // equal. constraint basic
       C.push_back(i);
       in_C[i] = j;
       ++j;
-    } else                                   // ineq. constrai. are nonbasic
-      if (i != s_i)
+    } else {                                  // ineq. constraint nonbasic
+      if (i != s_i)                           // unless it's most infeasible 
 	S_B.push_back(i);
-  if (s_i >= 0) {                            // special ineq. con. is basic
-                                             // todo kf: do not really underst.
-    C.push_back(s_i);
-    in_C[s_i] = j;
+    }
+    // now handle most infeasible inequality if any
+  if (s_i >= 0) {
+      C.push_back(s_i);
+      in_C[s_i] = j;
   }
 }
 
@@ -846,6 +865,7 @@ init_solution()
   // latter restricted to basic variables B_O:
   if (!minus_c_B.empty()) minus_c_B.clear();
   minus_c_B.insert(minus_c_B.end(), l, -et1);   // todo: what is minus_c_B?
+  CGAL_qpe_precondition(l >= (int)art_A.size());
   if (art_s_i > 0)
     minus_c_B[art_A.size()-1] *= ET(qp_n+qp_m); // Note: the idea here is to
 						// give more weight to the
@@ -908,6 +928,7 @@ init_additional_data_members()
 {
   // todo kf: do we really have to insert et0, or would it suffice to just
   // resize() in the following statements?
+  // BG: no clue, but it's at least safe that way
 
   if (!A_Cj.empty()) A_Cj.clear();
   A_Cj.insert(A_Cj.end(), l, et0);

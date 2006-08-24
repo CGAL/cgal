@@ -1522,9 +1522,15 @@ QP_solver/test/QP_solver/test_solver_data/derivatives/QPTEST_free.mps -text
 QP_solver/test/QP_solver/test_solver_data/derivatives/QPTEST_shifted.mps -text
 QP_solver/test/QP_solver/test_solver_data/derivatives/ZECEVIC2_free.mps -text
 QP_solver/test/QP_solver/test_solver_data/derivatives/ZECEVIC2_shifted.mps -text
+QP_solver/test/QP_solver/test_solver_data/derivatives/b_float_free.mps -text
+QP_solver/test/QP_solver/test_solver_data/derivatives/b_float_shifted.mps -text
+QP_solver/test/QP_solver/test_solver_data/derivatives/b_free.mps -text
+QP_solver/test/QP_solver/test_solver_data/derivatives/b_shifted.mps -text
 QP_solver/test/QP_solver/test_solver_data/masters/cgal/PRIMALC1.mps -text
 QP_solver/test/QP_solver/test_solver_data/masters/cgal/QPTEST.mps -text
 QP_solver/test/QP_solver/test_solver_data/masters/cgal/ZECEVIC2.mps -text
+QP_solver/test/QP_solver/test_solver_data/masters/cgal/b.mps -text
+QP_solver/test/QP_solver/test_solver_data/masters/cgal/b_float.mps -text
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.eps -text svneol=unset#application/postscript
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.gif -text svneol=unset#image/gif
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.pdf -text svneol=unset#application/pdf

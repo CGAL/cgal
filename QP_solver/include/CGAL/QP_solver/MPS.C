@@ -28,6 +28,154 @@
 
 CGAL_BEGIN_NAMESPACE
 
+// for parsing numbers
+template<typename IT_,
+	 typename ET_,
+	 typename Use_sparse_representation_for_D_,
+	 typename Use_sparse_representation_for_A_>
+bool QP_MPS_instance<IT_,ET_,
+		Use_sparse_representation_for_D_,
+		Use_sparse_representation_for_A_>::number(CGAL::Gmpq& entry) {
+    // accept rational or floating-point format
+    std::string s = token() + " "; // routines below can't deal with EOF 
+    std::istringstream from1(s), from2(s);
+    return 
+      number_from_quotient (entry, from1) || 
+      number_from_float (entry, from2);
+  }
+
+template<typename IT_,
+	 typename ET_,
+	 typename Use_sparse_representation_for_D_,
+	 typename Use_sparse_representation_for_A_>
+bool QP_MPS_instance<IT_,ET_,
+		Use_sparse_representation_for_D_,
+		     Use_sparse_representation_for_A_>::number_from_quotient(CGAL::Gmpq& entry, std::istringstream& from) {
+    // reads rational in the form p/q
+    //whitespace();
+    CGAL::Gmpz p,q;
+    char ch;
+    from >> p;
+    if (!from.good()) {
+      return false;
+    }
+    from >> ch;
+    if (ch != '/') {
+      return false;
+    } 
+    from >> q;
+    if (!from.good()) {
+      return false;
+    }
+    entry = CGAL::Gmpq(p,q);
+    return true;
+  }
+
+template<typename IT_,
+	 typename ET_,
+	 typename Use_sparse_representation_for_D_,
+	 typename Use_sparse_representation_for_A_>
+bool QP_MPS_instance<IT_,ET_,
+		Use_sparse_representation_for_D_,
+		Use_sparse_representation_for_A_>::number_from_float(CGAL::Gmpq& entry, std::istringstream& from) {
+    // reads rationals from a decimal floating-point string; 
+    // e.g. "0.1" will be parsed as 1/10
+    //whitespace();
+    char c;
+
+    // sign -> plus_sign
+    bool plus_sign = true;
+    from.get(c);
+    if ((c == '+') || (c == '-'))
+      plus_sign = (c == '+');
+    else
+      from.putback(c);
+    if (!from.good()) return false;
+
+    // digit-sequence before decimal point -> n
+    CGAL::Gmpz n;
+    bool digits = false; // are there digits before OR after decimal point?
+    from.get(c);
+    if (c != '.') {
+      if (!isdigit(c)) return false;
+      from.putback(c);
+      from >> n;
+      digits = true;
+    } else {
+      from.putback(c);
+      n = 0;
+    }
+    if (!from.good()) return false;
+    
+    // decimal point
+    bool decimal_point;
+    from.get(c);
+    if (c == '.') {
+      decimal_point = true;
+    } else {
+      from.putback(c);
+      decimal_point = false;
+    }
+    if (!from.good()) return false;  // possible decimal point is eaten
+
+    // digit-sequence after decimal point; update n with every digit
+    // found and remember according power-of-ten shift in denominator
+    CGAL::Gmpz d = (plus_sign? 1 : -1);
+    if (decimal_point) {
+      from.get(c);
+      if (!isdigit(c)) {
+	from.putback(c);
+      } else {
+	digits = true;
+	do {
+	  d *= 10;
+	  n = n*10 + (c-'0');
+	  from.get(c);
+	} while (isdigit(c));
+	from.putback(c);
+      }
+    }
+    if (!from.good()) return false; 
+    
+    // exponent part -> e
+    int e = 0;
+    from.get(c);
+    if (isspace(c)) {
+      from.putback(c);  // number parsed, no exponent
+    } else {
+      if (c == 'e' || c == 'E') {
+	from >> e;      // read exponent
+	if (!from.good()) return false;
+      }
+      from.get(c);
+      if (isspace(c)) {
+	from.putback(c);  // number parsed, no literal identifier
+      } else {
+	if ( c != 'f' && c != 'F' && c != 'l' && c != 'L') {
+	  return false;    // invalid literal symbol
+	} 
+      }
+    }
+    if (!from.good()) return false;
+
+    // now build the rational number
+    if (!digits) return false; 
+    // handle e
+    if (e > 0) {
+      while (e > 0) {
+	e -= 1;
+	n *= 10;
+      }
+    } else {
+      while (e < 0) {
+	e += 1;
+	d *= 10;
+      }
+    }
+    entry = CGAL::Gmpq(n,d);
+    return true;
+  }
+
 template<typename IT_,
 	 typename ET_,
 	 typename Use_sparse_representation_for_D_,
@@ -306,6 +454,7 @@ bool QP_MPS_instance<IT_,ET_,
 	if (row_names.find(t) != row_names.end())
 	  return err1("duplicate row name '%' in section ROWS",t);
 	row_names.insert(String_int_pair(t,index));
+	row_by_index.push_back(t);
 	b_.push_back(IT(0));
       }
       break;
@@ -337,9 +486,11 @@ bool QP_MPS_instance<IT_,ET_,
   while (t != "RHS") {
     // find variable name:
     unsigned int var_index;
+    std::string col_name;
     const Index_map::const_iterator var_name = var_names.find(t);
     if (var_name == var_names.end()) { // new variable?
       var_index = var_names.size();
+      col_name = t;
       var_names.insert(String_int_pair(t,var_index));
       var_by_index.push_back(t);
       A_.push_back(Vector(row_names.size(),IT(0)));
@@ -348,8 +499,10 @@ bool QP_MPS_instance<IT_,ET_,
       l_.push_back(IT(0));  // ...namely zero
       fu_.push_back(false); // default upper bound is infinite
       u_.push_back(IT());   // (dummy value) 
-    } else // variable that is already known?
+    } else { // variable that is already known?
       var_index = var_name->second;
+      col_name = var_name->first;
+    }
     //std::cout << "var is " << t << std::endl;
       
     bool doItAgain = true;
@@ -361,7 +514,7 @@ bool QP_MPS_instance<IT_,ET_,
       // read number:
       IT val;
       if (!number(val))
-	return err1("number expected after row identifier '%' in this COLUMNS record",t);
+	return err2("number expected after row identifier '%' in '%' COLUMNS record",t,col_name);
       //std::cout << "val is " << val << std::endl;
 
       // store number:
@@ -658,8 +811,8 @@ std::ostream& operator<<(std::ostream& o,
     << "equalities only and full rank: not checked" << endl;
   //<< (qp.has_equalities_only_and_full_rank()? yes : no) << endl;
   if (!qp.is_linear())
-    o << "           symmetric D matrix: "
-      << (qp.is_symmetric()? yes : no) << endl
+    o << "           symmetric D matrix: not checked" << endl
+   //  << (qp.is_symmetic()? yes : no) << endl
       << "      D matrix storage format: "
       << qp.D_format_type() << endl;
 
@@ -872,16 +1025,19 @@ void write_MPS(std::ostream& out,
   // output COLUMNS section:
   out << "COLUMNS\n";
   for (int i=0; i<n; ++i) {
-    out << "  x" << i << "  obj  " << c[i] << "\n";
-    for (int j=0; j<m; ++j) {
-      out << "  x" << i << "  c" << j << "  " << A[i][j] << "\n";
+    if (!CGAL_NTS is_zero (c[i]))
+      out << "  x" << i << "  obj  " << c[i] << "\n";
+    for (int j=0; j<m; ++j) { 
+      if (!CGAL_NTS is_zero (A[i][j]))
+	out << "  x" << i << "  c" << j << "  " << A[i][j] << "\n";
     }
   }
 
   // output RHS section:
   out << "RHS\n";
-  for (int i=0; i<m; ++i) 
-    out << "  rhs c" << i << "  " << b[i] << "\n";
+  for (int i=0; i<m; ++i)  
+    if (!CGAL_NTS is_zero (b[i]))
+      out << "  rhs c" << i << "  " << b[i] << "\n";
 
   // output BOUNDS section:
   out << "BOUNDS\n";

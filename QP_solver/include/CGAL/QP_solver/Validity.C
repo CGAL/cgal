@@ -104,7 +104,8 @@ bool QP_solver<Rep_>::is_solution_feasible_for_auxiliary_problem()
   Value_const_iterator v_it = x_B_O.begin();
   for (Index_const_iterator i_it = B_O.begin();
        i_it != B_O.end();
-       ++i_it, ++v_it)
+       ++i_it, ++v_it) {
+    CGAL_qpe_assertion(B_O[in_B[*i_it]] == *i_it);
     if (*i_it < qp_n) {                 // original variable?
       if (has_finite_lower_bound(*i_it) && (*v_it < lower_bound(*i_it) * d) ||
 	  has_finite_upper_bound(*i_it) && (*v_it > upper_bound(*i_it) * d))
@@ -112,8 +113,9 @@ bool QP_solver<Rep_>::is_solution_feasible_for_auxiliary_problem()
     } else                              // artificial variable?
       if (*v_it < et0)
         return false;
+  }
   
-  // check nonegativity of slack variables:
+  // check nonegativity of slack variables (the basic ones suffice):
   for (Value_const_iterator v_it = x_B_S.begin(); v_it != x_B_S.end(); ++v_it)
     if (*v_it < et0)
       return false;
@@ -132,7 +134,7 @@ bool QP_solver<Rep_>::is_solution_feasible_for_auxiliary_problem()
   // -e_i, a_spec is the special artificial column (which only
   // contains zeros, ones, or minus ones), and A_s contains a column
   // (e_i or -e_i) for every slack variable.  Observe in the code
-  // below that the right-hand size is multiplied by d because we
+  // below that the right-hand side is multiplied by d because we
   // maintain the denominator of the solution (which is d) separately.
 
   // compute left-hand side of (C1) (up to slackies and nonbasics):
@@ -140,7 +142,7 @@ bool QP_solver<Rep_>::is_solution_feasible_for_auxiliary_problem()
   Value_const_iterator x_it = x_B_O.begin();
   for (Index_const_iterator i_it = B_O.begin();
        i_it != B_O.end();
-       ++i_it, ++x_it)                    // iterate over all nonzero vars
+       ++i_it, ++x_it)                    // iterate over all basic vars
     if (*i_it < qp_n)                     // ordinary original variable?
       for (int i=0; i<qp_m; ++i)
 	lhs_col[i] += (*x_it) * qp_A[*i_it][i];
@@ -153,11 +155,11 @@ bool QP_solver<Rep_>::is_solution_feasible_for_auxiliary_problem()
 	  lhs_col[i] += (*x_it) * art_s[i];
 
   // compute left-hand side of (C1) (part for nonbasics):
-  for (int i=0; i<qp_n; ++i)
-    if (!is_basic(i)) {
-      const ET var = nonbasic_original_variable_value(i) * d;
-      for (int j=0; j<qp_m; ++j)
-	lhs_col[j] += var * qp_A[i][j];
+  for (int j=0; j<qp_n; ++j)
+    if (!is_basic(j)) {
+      const ET var = nonbasic_original_variable_value(j) * d;
+      for (int i=0; i<qp_m; ++i)
+	lhs_col[i] += var * qp_A[j][i];
     }
 
   // compute left-hand side of (C1) (part for slackies):
@@ -165,6 +167,7 @@ bool QP_solver<Rep_>::is_solution_feasible_for_auxiliary_problem()
   for (Index_const_iterator i_it = B_S.begin();
        i_it != B_S.end();
        ++i_it, ++x_it) {
+    CGAL_qpe_assertion(B_S[in_B[*i_it]] == *i_it);
     const int k = *i_it - qp_n;
     lhs_col[slack_A[k].first] += (slack_A[ k].second ? -et1 : et1) * (*x_it);
   }
@@ -301,8 +304,10 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
   // the basis (and thus art_s_i == -2) then number_of_working_variables()
   // does not count it.
   const int no_of_wo_vars = this->number_of_working_variables();
-  vout5 << "number_of_working_variables: " << no_of_wo_vars << std::endl
-	<< "art_s_i: " << art_s_i << std::endl << std::endl;
+  CGAL_qpe_debug {
+    vout5 << "number_of_working_variables: " << no_of_wo_vars << std::endl
+	  << "art_s_i: " << art_s_i << std::endl << std::endl;
+  }
   
   // collect solution vector of auxiliary problem:
   // todo: this calls for a nicer method to query the solution ...
@@ -316,9 +321,9 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
        i_it != B_S.end(); ++i_it, ++v_it)
     x_aux[*i_it] = *v_it;
   if (!check_tag(Is_in_standard_form()))
-    for (int i=0; i<qp_n; ++i)
-      if (!is_basic(i))
-	x_aux[i] = nonbasic_original_variable_value(i) * d;
+    for (int j=0; j<qp_n; ++j)
+      if (!is_basic(j))
+	x_aux[j] = nonbasic_original_variable_value(j) * d;
   
   // Note: lambda[i] <= 0 for qp_r[i] == "GREATER_EQUAL"
   // todo: (ask frans) what does the above note mean here?
@@ -326,7 +331,9 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
   v_it = lambda.begin();
   for (Index_const_iterator i_it = C.begin();
        i_it != C.end(); ++i_it, ++v_it)
-    lambda_aux[*i_it] = *v_it;
+    {
+      lambda_aux[*i_it] = *v_it;
+    }
 
   // output for debugging:
   CGAL_qpe_debug {
@@ -377,7 +384,9 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
   }
 
   // check (C2'):
-  for (int col = 0; col < no_of_wo_vars; ++col)
+  for (int col = 0; col < no_of_wo_vars; ++col) {
+    // actually, basic variables should have tau == 0
+    CGAL_qpe_assertion(!is_basic(col) ||  tau_aux[col] == 0);
     if (!is_artificial(col) || x_aux[col] != et0) { // is it a slack or
 						    // original variable, or a
 						    // nonzero aritificial?
@@ -388,6 +397,7 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
 	  u_bnd == x_aux[col] && l_bnd < u_bnd && tau_aux[col] > et0)
 	return false;
     }
+  }
 
   return true;
 }

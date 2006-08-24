@@ -1105,9 +1105,7 @@ update_1( )
 
     // update basis & basis inverse
     update_1( Is_linear());
-    CGAL_qpe_debug {
-        check_basis_inverse();
-    }
+    CGAL_qpe_assertion(check_basis_inverse());
     
     // check the updated vectors r_C and r_S_B
     CGAL_expensive_assertion(check_r_C(Is_in_standard_form()));
@@ -1281,7 +1279,9 @@ replace_variable_original_original( )
     in_B  [ j] = k;
        B_O[ k] = j;
 
-    minus_c_B[ k] = ( is_phaseI ? ( j < qp_n ? et0 : -aux_c[j]) : -ET( qp_c[ j]));
+    minus_c_B[ k] = 
+      ( is_phaseI ? 
+	( j < qp_n ? et0 : -aux_c[j-qp_n-slack_A.size()]) : -ET( qp_c[ j]));
 
     if ( is_phaseI) {
 	if ( j >= qp_n) ++art_basic;
@@ -1489,7 +1489,8 @@ replace_variable_original_slack( )
     // enter original variable [ in: j ]
 
     minus_c_B[ B_O.size()]
-	= ( is_phaseI ? ( j < qp_n ? et0 : -aux_c[j]) : -ET( qp_c[ j]));
+      = ( is_phaseI ? 
+	  ( j < qp_n ? et0 : -aux_c[j-qp_n-slack_A.size()]) : -ET( qp_c[ j]));
     
 
     in_B  [ j] = B_O.size();
@@ -1667,7 +1668,7 @@ void
 QP_solver<Rep_>::
 enter_variable( )
 {
-
+  CGAL_qpe_precondition (is_phaseII);
     CGAL_qpe_debug {
 	vout2 << "--> nonbasic (" << variable_type( j) << ") variable "
 	      << j << " enters basis" << std::endl << std::endl;
@@ -1688,6 +1689,7 @@ enter_variable( )
 					      // correct size). We check here
 					      // whether we need to enlarge
 					      // them.
+	  CGAL_qpe_precondition(minus_c_B.size() == B_O.size());
 	    minus_c_B.push_back(et0);
 	        q_x_O.push_back(et0);
 	      tmp_x  .push_back(et0);
@@ -2159,6 +2161,7 @@ z_replace_variable_slack_by_original( )
 					   // correct size). We check here
 					   // whether we need to enlarge
 					   // them.
+      CGAL_qpe_precondition(minus_c_B.size() == B_O.size());
 	 minus_c_B.push_back(et0);
 	     q_x_O.push_back(et0);
 	   tmp_x  .push_back(et0);
@@ -2750,14 +2753,16 @@ check_basis_inverse( Tag_true)
     Value_iterator  q_it;
 
     
-
+    // BG: is this a real check?? How does the special artifical
+    // variable come in, e.g.? OK: it comes in through
+    // ratio_test_init__A_Cj
     for ( col = 0; col < cols; ++col, ++i_it) {
 	ratio_test_init__A_Cj( tmp_l.begin(), *i_it,
 			       Has_equalities_only_and_full_rank());
 	inv_M_B.multiply_x( tmp_l.begin(), q_x_O.begin());
 
 	CGAL_qpe_debug {
-	    if ( vout4.verbose()) {
+       	    if ( vout4.verbose()) {
 		std::copy( tmp_l.begin(), tmp_l.begin()+rows,
 			   std::ostream_iterator<ET>( vout4.out(), " "));
 		vout4.out() << " ||  ";
@@ -2808,18 +2813,15 @@ check_basis_inverse( Tag_false)
 		      art_A[ *i_it - qp_n].first != (int)row ? et0 :// artific.
 		      ( art_A[ *i_it - qp_n].second ? -et1 : et1));
 	}
-//	if ( art_s_i > 0) {              // special artificial variable?
-//	    if (in_B.size()==art_s_i+1) {
-//	   	// the special artificial variable has never been
-//		// removed from the basis, consider it
-//		tmp_x[ in_B[ art_s_i]] = art_s[ row];
-//	    } else {
-//	    	CGAL_qpe_assertion (in_B.size()==art_s_i);
-//	    }
-//	}
-        // the above code might get useful later, for now we just
-	// assume that no articial variable is basic anymore (note
-	// that this code is only executed in phase II)
+// 	if ( art_s_i >= 0) {              // special artificial variable?
+// 	  CGAL_qpe_assertion ((int)in_B.size() == art_s_i+1);  
+// 	  // the special artificial variable has never been
+// 	  // removed from the basis, consider it
+// 	  tmp_x[ in_B[ art_s_i]] = art_s[ row];
+// 	} 
+// BG: currently, this check only runs in phase II, where we have no
+// articficials
+	CGAL_qpe_assertion (art_s_i < 0);
 	
 	inv_M_B.multiply( tmp_l.begin(), tmp_x.begin(),
 			  q_lambda.begin(), q_x_O.begin());

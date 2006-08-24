@@ -136,7 +136,8 @@ private:
   std::string obj;      // name of the objective "constraint"
   Index_map row_names;
   Index_map var_names;
-  std::vector<std::string> var_by_index; // name of i-the variable
+  std::vector<std::string> var_by_index; // name of i-th column  
+  std::vector<std::string> row_by_index; // name of i-th row
 
   // variables used in token() (see below):
   bool use_put_back_token;
@@ -272,32 +273,20 @@ private: // parsing routines:
     put_back_token = token;
   }
     
+
+  // here is the general template, and the C-file contains
+  // implementations of a specialization for Qmpq
   template<typename NumberType>
   bool number(NumberType& entry) {
     whitespace();
     from >> entry;
     return from.good();
   }
+  
+  bool number(CGAL::Gmpq& entry); // calls the following two:
+  bool number_from_quotient(CGAL::Gmpq& entry, std::istringstream& from);
+  bool number_from_float(CGAL::Gmpq& entry, std::istringstream& from);
 
-  bool number(CGAL::Gmpq& entry) {
-    whitespace();
-    CGAL::Gmpz p,q;
-    char ch;
-    from >> p;
-    if (!from.good()) {
-      return false;
-    }
-    from >> ch;
-    if (ch != '/') {
-      return false;
-    } 
-    from >> q;
-    if (!from.good()) {
-      return false;
-    }
-    entry = CGAL::Gmpq(p,q);
-    return true;
-  }
 
   bool name_section();
   bool rows_section();

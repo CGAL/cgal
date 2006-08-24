@@ -70,6 +70,24 @@ int main(const int argNr,const char **args) {
   if (qp.is_linear() && !check_tag(Is_linear()))
     qp.make_zero_D();
 
+//   CGAL::write_MPS(cout, 
+// 		  " ", 
+// 		  qp.comment(), 
+// 		  "write_MPS",
+// 		  qp.problem_name(), 
+// 		  qp.number_of_variables(), 
+// 		  qp.number_of_constraints(),
+// 		  qp.A(), 
+// 		  qp.b(), 
+// 		  qp.c(), 
+// 		  qp.D(),
+// 		  qp.fu(), 
+// 		  qp.fl(), 
+// 		  qp.u(), 
+// 		  qp.l(),
+// 		  qp.row_types());
+//   std::exit(1);
+
   typedef CGAL::QP_solver_MPS_traits_d<QP,
     Is_linear,
     Is_symmetric,
@@ -105,16 +123,16 @@ int main(const int argNr,const char **args) {
       CGAL::to_double(solver.solution_denominator()) <<
       endl;     
      
-    cout << "Variable values:" << endl;
-    Solver::Variable_value_iterator it 
-      = solver.variables_value_begin() ;
-    Solver::Variable_numerator_iterator it_n
-      = solver.variables_numerator_begin();
-    ET denom = solver.variables_common_denominator();
-    for (unsigned int i=0; i < qp.number_of_variables(); ++it, ++it_n, ++i)
-      cout << "  " << qp.name_of_variable(i) << " = "
-	   << *it << " ~ " << CGAL::to_double(*it_n)/CGAL::to_double(denom)
-           << endl;
+//    cout << "Variable values:" << endl;
+//     Solver::Variable_value_iterator it 
+//       = solver.variables_value_begin() ;
+//     Solver::Variable_numerator_iterator it_n
+//       = solver.variables_numerator_begin();
+//     ET denom = solver.variables_common_denominator();
+//     for (unsigned int i=0; i < qp.number_of_variables(); ++it, ++it_n, ++i)
+//       cout << "  " << qp.name_of_variable(i) << " = "
+// 	   << *it << " ~ " << CGAL::to_double(*it_n)/CGAL::to_double(denom)
+//            << endl;
     return 0;
   }
   if  (solver.status() == Solver::INFEASIBLE)
