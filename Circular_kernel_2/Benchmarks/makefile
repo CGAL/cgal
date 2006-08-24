@@ -26,6 +26,7 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = \
 	   -DNDEBUG \
 	   -O2  \
+	   -I../include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
