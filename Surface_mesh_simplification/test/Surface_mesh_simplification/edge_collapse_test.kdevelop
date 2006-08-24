@@ -13,7 +13,7 @@
   </general>
   <kdevcustomproject>
     <run>
-      <mainprogram>LT_edge_collapse_test</mainprogram>
+      <mainprogram>edge_collapse_test</mainprogram>
       <directoryradio>build</directoryradio>
       <customdirectory>/</customdirectory>
       <programargs></programargs>
@@ -44,7 +44,7 @@
   <kdevdebugger>
     <general>
       <dbgshell></dbgshell>
-      <programargs>10 data/ head</programargs>
+      <programargs>-m1 data/hexagon</programargs>
       <gdbpath></gdbpath>
       <configGdbScript></configGdbScript>
       <runShellScript></runShellScript>

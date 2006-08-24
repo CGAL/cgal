@@ -43,7 +43,7 @@ template<class TSM_
         ,class Params_ 
         ,class SetCollapseData_
         ,class GetCost_
-        ,class GetNewVertexPoint_
+        ,class GetPlacement_
         ,class ShouldStop_
         ,class VisitorT_
         >
@@ -51,13 +51,13 @@ class EdgeCollapse
 {
 public:
 
-  typedef TSM_               TSM ;
-  typedef Params_            Params ;
-  typedef SetCollapseData_   SetCollapseData ;
-  typedef GetCost_           GetCost ;
-  typedef GetNewVertexPoint_ GetNewVertexPoint ;
-  typedef ShouldStop_        ShouldStop ;
-  typedef VisitorT_          VisitorT ;
+  typedef TSM_             TSM ;
+  typedef Params_          Params ;
+  typedef SetCollapseData_ SetCollapseData ;
+  typedef GetCost_         GetCost ;
+  typedef GetPlacement_    GetPlacement ;
+  typedef ShouldStop_      ShouldStop ;
+  typedef VisitorT_        VisitorT ;
   
   typedef EdgeCollapse Self ;
   
@@ -79,10 +79,8 @@ public:
   
   typedef typename UndirectedGraphTraits::edge_iterator undirected_edge_iterator ;
 
-  typedef typename GetCost          ::result_type Optional_cost_type ;
-  typedef typename GetNewVertexPoint::result_type Optional_vertex_point_type ;
-  
-  typedef typename SetCollapseData::Params        ParamsToSetCollapseData ;
+  typedef typename GetCost     ::result_type Optional_cost_type ;
+  typedef typename GetPlacement::result_type Optional_placement_type ;
   
   typedef typename SetCollapseData::Collapse_data Collapse_data ;
     
@@ -149,13 +147,13 @@ public:
   
 public:
 
-  EdgeCollapse( TSM&                     aSurface
-              , Params const*            aParams // Can be NULL
-              , SetCollapseData const&   aSetCollapseData
-              , GetCost const&           aGetCost
-              , GetNewVertexPoint const& aGetVertexPoint
-              , ShouldStop const&        aShouldStop 
-              , VisitorT*                aVisitor
+  EdgeCollapse( TSM&                   aSurface
+              , Params const*          aParams // Can be NULL
+              , SetCollapseData const& aSetCollapseData
+              , GetCost const&         aGetCost
+              , GetPlacement const&    aGetPlacement
+              , ShouldStop const&      aShouldStop 
+              , VisitorT*              aVisitor
               ) ;
   
   int run() ;
@@ -228,14 +226,14 @@ private:
   
   std::string vertex_to_string( const_vertex_descriptor const& v ) const
   {
-    Point_3 p = get_point(v);
-    return boost::str( boost::format("[V%1%:%2%]") % v % xyz_to_string(p) ) ;
+    Point_3 const& p = get_point(v);
+    return boost::str( boost::format("[V%1%:%2%]") % v->ID % xyz_to_string(p) ) ;
   }
     
   std::string edge_to_string ( const_edge_descriptor const& aEdge ) const
   {
     const_vertex_descriptor p,q ; tie(p,q) = get_vertices(aEdge);
-    return boost::str( boost::format("{E%1% %2%->%3%}") % aEdge % vertex_to_string(p) % vertex_to_string(q) ) ;
+    return boost::str( boost::format("{E%1% %2%->%3%}") % aEdge->ID % vertex_to_string(p) % vertex_to_string(q) ) ;
   }
   
   Optional_cost_type get_cost ( edge_descriptor const& aEdge ) const
@@ -245,11 +243,11 @@ private:
     return Get_cost(aEdge,mSurface,lData->data(),mParams);
   }
   
-  Optional_vertex_point_type get_new_vertex_point( edge_descriptor const& aEdge ) const
+  Optional_placement_type get_placement( edge_descriptor const& aEdge ) const
   {
     Edge_data_ptr lData = get_data(aEdge);
     CGAL_assertion(lData);
-    return Get_new_vertex_point(aEdge,mSurface,lData->data(),mParams);
+    return Get_placement(aEdge,mSurface,lData->data(),mParams);
   }
   
   Comparison_result compare_cost( edge_descriptor const& aEdgeA, edge_descriptor const& aEdgeB ) const
@@ -297,11 +295,11 @@ private:
   TSM&          mSurface ;
   Params const* mParams ; // Can be NULL
 
-  SetCollapseData   const&  Set_collapse_data;   
-  GetCost           const&  Get_cost ;
-  GetNewVertexPoint const&  Get_new_vertex_point ;
-  ShouldStop        const&  Should_stop ;
-  VisitorT*                 Visitor ;
+  SetCollapseData const&  Set_collapse_data;   
+  GetCost         const&  Get_cost ;
+  GetPlacement    const&  Get_placement ;
+  ShouldStop      const&  Should_stop ;
+  VisitorT*               Visitor ;
   
 private:
 

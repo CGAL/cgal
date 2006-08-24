@@ -130,7 +130,7 @@ typename LindstromTurkCore<TSM>::result_type LindstromTurkCore<TSM>::compute()
       
       lOptionalV = mConstrians.b * lAi ;
       
-      CGAL_TSMS_LT_TRACE(1,"New vertex point: " << xyz_to_string(*lOptionalP) );
+      CGAL_TSMS_LT_TRACE(1,"New vertex point: " << xyz_to_string(*lOptionalV) );
     }
     else
       CGAL_TSMS_LT_TRACE(1,"Can't solve optimization, singular system.");
@@ -138,33 +138,33 @@ typename LindstromTurkCore<TSM>::result_type LindstromTurkCore<TSM>::compute()
   else
     CGAL_TSMS_LT_TRACE(1,"Can't solve optimization, not enough alpha-compatible constrians.");
   
-  if ( mComputeCost && lOptionalV )
+  if ( lOptionalV )
   {
-    //
-    // lP is the optimized new vertex position. Now we compute the collapsing cost:
-    //
     lOptionalP = Optional_point( ORIGIN + (*lOptionalV) );
     
-    FT lSquaredLength = squared_distance(lP,lQ);
-    
-    CGAL_TSMS_LT_TRACE(1,"Squared edge length: " << lSquaredLength ) ;
-    
-    FT lBdryCost   = Compute_boundary_cost(*lOptionalV,lBdry);
-    FT lVolumeCost = Compute_volume_cost  (*lOptionalV,lTriangles);
-    FT lShapeCost  = Compute_shape_cost   (*lOptionalP,lLink);
-    
-    FT lTotalCost =   FT(mParams.VolumeWeight)   * lVolumeCost
-                    + FT(mParams.BoundaryWeight) * lBdryCost   * lSquaredLength
-                    + FT(mParams.ShapeWeight)    * lShapeCost  * lSquaredLength * lSquaredLength ;
-    
-    lOptionalCost = Optional_FT(lTotalCost);
-    
-    CGAL_TSMS_LT_TRACE(1,"\nSquared edge length: " << lSquaredLength 
-                      << "\nBoundary cost: " << lBdryCost 
-                      << "\nVolume cost: " << lVolumeCost 
-                      << "\nShape cost: " << lShapeCost 
-                      << "\nTOTAL COST: " << lTotalCost 
-                      );
+    if ( mComputeCost )
+    {
+      FT lSquaredLength = squared_distance(lP,lQ);
+      
+      CGAL_TSMS_LT_TRACE(1,"Squared edge length: " << lSquaredLength ) ;
+      
+      FT lBdryCost   = Compute_boundary_cost(*lOptionalV,lBdry);
+      FT lVolumeCost = Compute_volume_cost  (*lOptionalV,lTriangles);
+      FT lShapeCost  = Compute_shape_cost   (*lOptionalP,lLink);
+      
+      FT lTotalCost =   FT(mParams.VolumeWeight)   * lVolumeCost
+                      + FT(mParams.BoundaryWeight) * lBdryCost   * lSquaredLength
+                      + FT(mParams.ShapeWeight)    * lShapeCost  * lSquaredLength * lSquaredLength ;
+      
+      lOptionalCost = Optional_FT(lTotalCost);
+      
+      CGAL_TSMS_LT_TRACE(1,"\nSquared edge length: " << lSquaredLength 
+                        << "\nBoundary cost: " << lBdryCost 
+                        << "\nVolume cost: " << lVolumeCost 
+                        << "\nShape cost: " << lShapeCost 
+                        << "\nTOTAL COST: " << lTotalCost 
+                        );
+    }
   }
     
   return make_tuple(lOptionalCost,lOptionalP);

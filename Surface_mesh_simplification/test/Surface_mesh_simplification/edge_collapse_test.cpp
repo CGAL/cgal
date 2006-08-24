@@ -39,7 +39,8 @@
 //#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE 4
 //#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE 4
 
-#define STATS
+#define TRACK_STATS
+#define SHOW_STATS
 //#define AUDIT
 
 void Surface_simplification_external_trace( std::string s )
@@ -334,7 +335,7 @@ void register_collected_edge( Vertex_handle    const& p
 } 
 #endif
 
-#ifdef STATS
+#ifdef TRACK_STATS
 int sInitial ;
 int sCollected ;
 int sProcessed ;
@@ -350,14 +351,14 @@ struct Visitor
 {
   void OnStarted( Polyhedron& aSurface ) 
   {
-#ifdef STATS
+#ifdef TRACK_STATS
     sInitial = aSurface.size_of_halfedges() / 2 ;
 #endif
   } 
   
   void OnFinished ( Polyhedron& aSurface ) 
   {
-#ifdef STATS
+#ifdef TRACK_STATS
     cerr << "\n";
 #endif
   } 
@@ -373,7 +374,7 @@ struct Visitor
     register_collected_edge(aEdge,aCost,aNewVertexPoint); 
 #endif
 
-#ifdef STATS
+#ifdef TRACK_STATS
     ++sCollected ;
     cerr << "\rEdges collected: " << sCollected;
     if ( aIsFixed )
@@ -387,7 +388,7 @@ struct Visitor
                   ,Vertex_handle const&   aVertex
                   )
   {
-#ifdef STATS
+#ifdef TRACK_STATS
     if ( sProcessed == 0 )
       cerr << "\n";  
     ++ sProcessed ;
@@ -480,12 +481,18 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
       {
         if ( !aJustPrintSurfaceData )
         {
+          int lFinalEdgesCount ;
+          if ( aStopA != -1 )
+               lFinalEdgesCount = aStopA ;
+          else lFinalEdgesCount = lP.size_of_halfedges() * aStopR / 200 ;
+          
           cout << "Testing simplification of surface " << off_name << " using " << method_to_string(aMethod) << "method."  << endl ;
              
           cout << lP.size_of_facets() << " triangles." << endl 
                << (lP.size_of_halfedges()/2) << " edges." << endl 
                << lP.size_of_vertices() << " vertices." << endl 
-               << (lP.is_closed() ? "Closed." : "Open." ) << endl ;
+               << (lP.is_closed() ? "Closed." : "Open." ) << endl 
+               << "Final edge count: " << lFinalEdgesCount << endl ;
                
           cout << setprecision(19) ;
         
@@ -518,10 +525,6 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
           LT_uncached_placement get_LT_uncached_placement;
           LT_cached_placement   get_LT_cached_placement;
 
-          int lFinalEdgesCount ;
-          if ( aStopA != -1 )
-               lFinalEdgesCount = aStopA ;
-          else lFinalEdgesCount = lP.size_of_halfedges() * aStopR / 200 ;
                     
           Count_stop_condition<Polyhedron> should_stop(lFinalEdgesCount);
               
@@ -559,8 +562,8 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
                << lP.size_of_facets() << " final triangles.\n" 
                << ( lP.is_valid() ? " valid\n" : " INVALID!!\n" ) ;
       
-      #ifdef STATS
-          cout << "\n------------STATS--------------\n"
+#ifdef SHOW_STATS
+          cout << "\n"
                << sProcessed        << " edges processed.\n"
                << sCollapsed        << " edges collapsed.\n" 
                << sNonCollapsable   << " non-collapsable edges.\n"
@@ -568,9 +571,9 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
                << sFixed            << " fixed edges.\n"
                << sRemoved          << " edges removed.\n" 
                << (sRemoved/3)      << " vertices removed." ;
-      #endif
+#endif
       
-      #ifdef AUDIT
+#ifdef AUDIT
           unsigned lMatches = 0 ;
                         
           cout << "Audit report:\n" ;
@@ -599,9 +602,9 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
           }
           
           rSucceeded = ( lMatches == sAuditReport.size() ) ;
-      #else
+#else
           rSucceeded = true ;
-      #endif
+#endif
         }   
         else
         {
@@ -657,7 +660,7 @@ int main( int argc, char** argv )
   bool   lJustPrintSurfaceData = false ;
   int    lStopA = -1 ;
   int    lStopR = 20 ;
-  Method lMethod = LT_cached ;
+  Method lMethod = Midpoint ;
   string lFolder =""; 
   vector<string> lCases ;
         
@@ -713,7 +716,7 @@ int main( int argc, char** argv )
   {
     cout << "collapse_edge_test <options> file0 file1 ... fileN" << endl 
          << "  options: " << endl
-         << "    -m method                    method: 0=midpoint 1=LindstromTurk (cached) 2=LindstromTurk (uncached)" << endl 
+         << "    -m method                    method: 0=midpoint[default] 1=LindstromTurk (cached) 2=LindstromTurk (uncached)" << endl 
          << "    -d folder                    Specifies the folder where the files are located. " << endl 
          << "    -a absolute_max_edge_count   Sets the final number of edges as absolute number." << endl
          << "    -r relative_max_edge_count   Sets the final number of edges as a percentage." << endl

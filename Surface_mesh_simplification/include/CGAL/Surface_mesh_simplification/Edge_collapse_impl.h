@@ -24,23 +24,23 @@ namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_
 {
 
 template<class M,class P,class D,class C,class V,class S, class I>
-EdgeCollapse<M,P,D,C,V,S,I>::EdgeCollapse( TSM&                     aSurface
-                                         , Params const*            aParams
-                                         , SetCollapseData const&   aSet_collapse_data
-                                         , GetCost const&           aGet_cost
-                                         , GetNewVertexPoint const& aGet_new_vertex_point
-                                         , ShouldStop const&        aShould_stop
-                                         , VisitorT*                aVisitor 
+EdgeCollapse<M,P,D,C,V,S,I>::EdgeCollapse( TSM&                   aSurface
+                                         , Params const*          aParams
+                                         , SetCollapseData const& aSet_collapse_data
+                                         , GetCost const&         aGet_cost
+                                         , GetPlacement const&    aGet_placement
+                                         , ShouldStop const&      aShould_stop
+                                         , VisitorT*              aVisitor 
                                          )
   : 
    mSurface (aSurface)
   ,mParams(aParams)
    
-  ,Set_collapse_data   (aSet_collapse_data)
-  ,Get_cost            (aGet_cost)
-  ,Get_new_vertex_point(aGet_new_vertex_point)
-  ,Should_stop         (aShould_stop) 
-  ,Visitor             (aVisitor)
+  ,Set_collapse_data(aSet_collapse_data)
+  ,Get_cost         (aGet_cost)
+  ,Get_placement    (aGet_placement)
+  ,Should_stop      (aShould_stop) 
+  ,Visitor          (aVisitor)
   
   ,mPQ( Compare_cost(this) )
   
@@ -93,8 +93,6 @@ void EdgeCollapse<M,P,D,C,V,S,I>::Collect()
   
   Equal_3 equal_points = Kernel().equal_3_object();
     
-  CGAL_TSMS_DEBUG_CODE( size_type lID = 0 ; ) 
-  
   std::size_t lSize = num_undirected_edges(mSurface) ;
   
   mInitialEdgeCount = mCurrentEdgeCount = lSize;
@@ -304,10 +302,10 @@ typename EdgeCollapse<M,P,D,C,V,S,I>::vertex_descriptor EdgeCollapse<M,P,D,C,V,S
     
   // The external function Get_new_vertex_point() is allowed to return an absent point if there is no way to place the vertex
   // satisfying its constrians. In that case the vertex-pair is simply not removed.
-  Optional_vertex_point_type lNewVertexPoint = get_new_vertex_point(aEdgePQ);
-  if ( lNewVertexPoint )
+  Optional_placement_type lPlacement = get_placement(aEdgePQ);
+  if ( lPlacement )
   {
-    CGAL_TSMS_TRACE(2,"New vertex point: " << xyz_to_string(*lNewVertexPoint) ) ;
+    CGAL_TSMS_TRACE(2,"New vertex point: " << xyz_to_string(*lPlacement) ) ;
 
     -- mCurrentEdgeCount ;
         
@@ -387,7 +385,7 @@ typename EdgeCollapse<M,P,D,C,V,S,I>::vertex_descriptor EdgeCollapse<M,P,D,C,V,S
     
     // Reset the point of placement of the kept vertex.
     vertex_point_t vertex_point ;
-    put(vertex_point,mSurface,rResult,*lNewVertexPoint) ;
+    put(vertex_point,mSurface,rResult,*lPlacement) ;
 
     Update_neighbors(rResult) ;
   }

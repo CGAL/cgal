@@ -200,14 +200,14 @@ private :
   
 private:    
 
-  Params const&            mParams ; 
-  edge_descriptor const&   mP_Q ;
-  TSM&                     mSurface ;
-  bool                     mComputeCost ;
+  Params const&          mParams ; 
+  edge_descriptor const& mP_Q ;
+  TSM&                   mSurface ;
+  bool                   mComputeCost ;
   
-  vertex_descriptor const& mP ;
-  vertex_descriptor const& mQ ;
-  edge_descriptor const&   mQ_P ;
+  vertex_descriptor mP ;
+  vertex_descriptor mQ ;
+  edge_descriptor   mQ_P ;
 
 private:    
 
