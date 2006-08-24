@@ -1,0 +1,194 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Alpha_shapes_2</title>
+  </head>
+
+  <body>
+    <P align="center"><FONT size="5">How to use the<p>"CGAL::PMWX using
+Curved_kernel"<p>Demo</FONT></P>
+    <br>
+This demo illustrates the Planar Map With Intersection class of CGAL,
+applied to the circular arcs provided by Curved_kernel.
+<p>
+You can input circular arcs easily using the mouse, and they will be
+immediately inserted into the current PMWX.  The first click is the center
+of the supporting circle, the second will select the radius, then you have
+to enter two rays delimiting the arc.  Pressing the 'c' key while entering
+the second ray will take the opposite arc (the yellow part).
+<p>
+There are two large entities handled in this demo : the arcs container, which
+stores the arcs you have entered, and the current PMWX, which is the Planar Map
+With Intersections of the arcs stored in the arcs container.
+<p>
+<IMG SRC="help/sweeper.jpeg" HEIGHT=30>
+It is possible to call the sweep algorithm (i.e. rebuild the current PMWX
+using the so-called agreggate method) by clicking on the sweeper icon.  Note
+that you won't (shouldn't :) see any change on the screen.
+<p>
+<IMG SRC="help/trash.jpeg" HEIGHT=30>
+To erase the current PMWX as well as the content of the arcs container,
+just click on the trash.
+<p>
+By default, both the content of the arcs container (in blue) and the current
+PMWX (in green and red) are displayed.
+<p>
+<IMG SRC="help/planar_map_icon.jpeg" HEIGHT=30>
+This button toggles the display of the PMWX (it is still computed even when it
+is now displayed).
+<p>
+<IMG SRC="help/get_arc.jpeg" HEIGHT=30>
+This button toggles the display of the arcs container.
+<p>
+
+    <br>
+    Plus the Usual Functionality of a Qt_widget demo:
+    <UL>
+      <LI><A href="#new">Reset application</A></LI>
+      <LI><A href="#new_window">Creating a new window</A></LI>
+      <LI><A href="#print">Print</A></LI>
+      <LI><A href="#close_window">Close the current window</A></LI>
+      <LI><A href="#quit">Quit the application</A></LI>      
+    </UL><br>
+<!--
+    Editing
+    <UL>      
+      <LI><A href="#gen_tr">Generate Delaunay triangulation</A></LI>
+      <LI><A href="#insert_vertex">Insert a new vertex</A></LI>
+    </UL>
+    Persistance
+    <UL>
+      <LI><A href="#save_triangulation">Save the current triangulation</A></LI>
+      <LI><A href="#load_triangulation">Load an existing triangulation</A></LI>
+    </UL>
+-->
+    <P align="left"><STRONG><FONT size="5"></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT size="5"></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT size="5"></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT size="5"></FONT></STRONG>&nbsp;</P>
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"><A name="new">
+	  </A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG>
+	<FONT color="#3300cc" size="3">Reset application</FONT></STRONG></P>
+    Press Ctrl+N combination keys or go to File menu and choose "New". 
+    The triangulation will be erased, the window's viewport will be set 
+    to default. (-1, 1, -1, 1)
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="new_window"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	</FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG>
+	<FONT color="#3300cc" size="3">Create a new window</FONT></STRONG></P>
+    Press Ctrl+W combination keys or go to File menu and choose "New Window". 
+    A new window will appear, modifying the viewport to make the 
+    triangulation fit in the new window.
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="print"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	</FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG>
+	<FONT color="#3300cc" size="3">Print</FONT></STRONG></P>
+    Press Ctrl+P combination keys or go to File menu and choose "Print". 
+    The visible area on the screen will be outputed to the print device 
+    of your choice.
+
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="close_window"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	</FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG>
+	<FONT color="#3300cc" size="3">Close the current window</FONT>
+      </STRONG></P>
+    Press Ctrl+X combination keys or go to File menu and choose "Close". 
+    You may do it for any window other than the initial one, this operation 
+    will close only the one you have choosen. If you do this for the initial 
+    parent window, it will close the others too.
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="quit"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	</FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG>
+	<FONT color="#3300cc" size="3">Quit the application</FONT></STRONG></P>
+    Press Ctrl+Q combination keys or go to File menu and choose "Quit". 
+    When you quit the application, all the windows you have created will 
+    be destroyed.
+
+
+<!--
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="gen_tr"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	</FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG>
+	<FONT color="#3300cc" size="3">Generate Delaunay triangulation</FONT>
+      </STRONG></P>
+    To generate a Delaunay triangulation, go to Edit menu and choose 
+    "Generate Triangulation" button, or press Ctrl+G combination keys. 
+    Each time you generate the triangulation, the old one will be erased.
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="insert_vertex"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	</FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG>
+	<FONT color="#3300cc" size="3">Insert a new vertex</FONT></STRONG></P>
+    <IMG SRC="help/input_point_layer.gif"></IMG>
+    Left click on the "Input point" layer. Be sure there is no layer 
+    activated in standard toolbar that eat events. To be sure, press the 
+    arrow button situated on the standard toolbar. Left Click anywhere on the 
+    application's drawing area (the black rectangle) to insert the vertex. 
+    The vertex is inserted in the triangulation. To see the conflict zone 
+    keep the left mouse button pressed. The vertex is inserted when you 
+    release the button.<br>
+    <table border=0><tr><td><IMG SRC="help/conflict_zone.gif" HEIGHT=70></IMG>
+	</td><td><IMG SRC="help/conflict_zone_after.gif" HEIGHT=70></IMG></td>
+      </tr></table>
+    To insert more than one vertex, keep clicking on the rectangle without 
+    deactivating the "Input point" layer. To deactivate this layer, just 
+    press the arrow button situated on the same toolbar.
+
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="save_triangulation"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG>
+	<FONT color="#3300cc" size="3">Save the current triangulation</FONT>
+      </STRONG></P>
+    Press Ctrl+S combination keys or go to File menu, then choose 
+    "Save Triangulation". A save file dialog will appear, the default name 
+    given is "triangulation.cgal". You may change the name then press "Save" 
+    or hit "Enter" key. To cancel the save process just press Esc key.<br>
+    <FONT SIZE=3 COLOR="#0000FF"> The triangulation saved does not contain 
+      the visible area.</FONT>
+
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="load_triangulation"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG>
+	<FONT color="#3300cc" size="3">Load an existing triangulation</FONT>
+      </STRONG></P>
+    Press Ctrl+L combination keys or go to File menu and choose "Load 
+    Triangulation". A load file dialog will appear, having a filter that 
+    displays only the files with "cgal" extension. Choose a file then press 
+    "Open" button or hit "Enter" key.<br>
+    <FONT SIZE=3 COLOR="#0000FF"> The triangulation saved does not contain 
+      the visible area. The application will change the current visible area 
+      to fit the bounding box of the triangualtion.</FONT>
+  <P align="left"><STRONG><FONT size="5"></FONT></STRONG>&nbsp;</P>
+  <P align="left"><STRONG><FONT size="5"></FONT></STRONG>&nbsp;</P>
+-->
+
+<br>
+<hr>
+  </body>
+</html>
