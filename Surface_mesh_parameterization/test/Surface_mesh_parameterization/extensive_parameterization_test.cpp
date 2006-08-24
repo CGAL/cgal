@@ -1,4 +1,4 @@
-// extensive_parameterization_test.C
+// extensive_parameterization_test.cpp
 
 
 // ----------------------------------------------------------------------------

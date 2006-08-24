@@ -1,4 +1,4 @@
-// Complete_parameterization_example.C
+// Complete_parameterization_example.cpp
 
 #include <CGAL/basic.h> // include basic.h before testing #defines
 

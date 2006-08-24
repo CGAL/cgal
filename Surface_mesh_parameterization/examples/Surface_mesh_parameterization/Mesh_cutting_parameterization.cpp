@@ -1,4 +1,4 @@
-// Mesh_cutting_parameterization.C
+// Mesh_cutting_parameterization.cpp
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>

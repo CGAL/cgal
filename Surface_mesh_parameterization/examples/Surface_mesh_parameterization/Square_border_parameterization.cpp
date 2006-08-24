@@ -1,4 +1,4 @@
-// Square_border_parameterization.C
+// Square_border_parameterization.cpp
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>

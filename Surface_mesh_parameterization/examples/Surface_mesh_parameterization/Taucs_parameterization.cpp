@@ -1,4 +1,4 @@
-// Taucs_parameterization.C
+// Taucs_parameterization.cpp
 
 #include <CGAL/basic.h> // include basic.h before testing #defines
 

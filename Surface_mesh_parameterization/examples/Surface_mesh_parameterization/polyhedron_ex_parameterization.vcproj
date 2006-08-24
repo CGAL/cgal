@@ -145,7 +145,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\options.C">
+				RelativePath=".\options.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
@@ -160,7 +160,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\polyhedron_ex_parameterization.C">
+				RelativePath=".\polyhedron_ex_parameterization.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool

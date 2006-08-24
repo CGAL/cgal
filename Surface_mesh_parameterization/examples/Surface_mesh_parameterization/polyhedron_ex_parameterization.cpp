@@ -1,4 +1,4 @@
-// polyhedron_ex_parameterization.C
+// polyhedron_ex_parameterization.cpp
 
 
 // ----------------------------------------------------------------------------

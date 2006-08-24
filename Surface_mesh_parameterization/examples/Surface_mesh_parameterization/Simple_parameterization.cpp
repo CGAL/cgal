@@ -1,4 +1,4 @@
-// Simple_parameterization.C
+// Simple_parameterization.cpp
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
