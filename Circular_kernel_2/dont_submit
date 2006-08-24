@@ -2,6 +2,3 @@ GNUmakefile
 demo_elias.C
 bench
 Benchmarks
-test_Filtered_bbox_hexagon_Lazy_curved_kernel.C
-test_Filtered_hexagon_kernel.C
-example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular.C
