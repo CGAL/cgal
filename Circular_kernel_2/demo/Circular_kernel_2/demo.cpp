@@ -66,7 +66,7 @@ int main() {
 
 #include <CGAL/intersections.h>
 
-#include <CGAL/Circular_kernel.h>
+#include <CGAL/Circular_kernel_2.h>
 #include <CGAL/Arr_circular_arc_traits.h>
 #include <CGAL/Arr_circular_arc_traits_tracer.h>
 

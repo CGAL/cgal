@@ -65,19 +65,13 @@ int main() {
 #include "trash.xpm"
 #include "get_arc.xpm"
 
-//#include <CGAL/intersections.h>
-
-#include <CGAL/Circular_kernel.h>
-
+#include <CGAL/Circular_kernel_2.h>
 #include <CGAL/Arr_circular_line_arc_traits.h>
 #include <CGAL/Arr_circular_arc_traits_tracer.h>
-
 #include <CGAL/IO/Dxf_variant_reader.h>
 
 typedef CGAL::Quotient<CGAL::MP_Float>                      NT;  
-
 typedef CGAL::Cartesian<NT>                                 Linear_k;
-
 typedef CGAL::Algebraic_kernel_for_circles_2_2<NT>          Algebraic_k;
 typedef CGAL::Circular_kernel_2<Linear_k,Algebraic_k>       Circular_k;
 

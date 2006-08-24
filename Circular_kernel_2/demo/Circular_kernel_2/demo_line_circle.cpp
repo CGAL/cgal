@@ -32,12 +32,8 @@ int main() {
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>
-
 #include <CGAL/MP_Float.h>
-#include <CGAL/Gmpq.h>
-
 #include <CGAL/Algebraic_kernel_2_2.h>
-
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_help_window.h>
@@ -70,7 +66,7 @@ int main() {
 
 #include <CGAL/intersections.h>
 
-#include <CGAL/Circular_kernel.h>
+#include <CGAL/Circular_kernel_2.h>
 #include <CGAL/Arr_circular_line_arc_traits.h>
 #include <CGAL/Arr_circular_arc_traits_tracer.h>
 
