@@ -1,23 +1,16 @@
 #include <CGAL/basic.h>
 #include <utility>
-//#include <fstream>
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>
-
 #include <CGAL/MP_Float.h>
-
 #include <CGAL/Algebraic_kernel_2_2.h>
-#include <CGAL/Lazy_curved_kernel.h>
+#include <CGAL/Lazy_circular_kernel_2.h>
 #include <CGAL/intersections.h>
-
-#include <CGAL/Circular_kernel.h>
+#include <CGAL/Circular_kernel_2.h>
 #include <CGAL/Arr_line_arc_traits.h>
-
 #include <CGAL/Timer.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
-
 #include <CGAL/Random.h>
 
 
@@ -26,18 +19,13 @@ typedef CGAL::Cartesian<NT1>                                 Linear_k1;
 typedef CGAL::Algebraic_kernel_for_circles_2_2<NT1>          Algebraic_k1;
 typedef CGAL::Circular_kernel_2<Linear_k1, Algebraic_k1>     CK1_;
 
-//typedef CGAL::Interval_nt<>                                  NT2;
 typedef CGAL::Interval_nt_advanced                           NT2;
 typedef CGAL::Cartesian<NT2>                                 Linear_k2;
 typedef CGAL::Algebraic_kernel_for_circles_2_2<NT2>          Algebraic_k2;
 typedef CGAL::Circular_kernel_2<Linear_k2,Algebraic_k2>      CK2_;
 
+typedef CGAL::Lazy_circular_kernel_2<CK1_,CK2_>              Circular_k;
 
-typedef CGAL::Lazy_curved_kernel<CK1_,CK2_>                  Circular_k;
-
-
-
-//typedef Circular_k::Circular_arc_2                          Arc;
 typedef Circular_k::Line_arc_2                                Arc;
 typedef std::vector<Arc>                                    ArcContainer;
 

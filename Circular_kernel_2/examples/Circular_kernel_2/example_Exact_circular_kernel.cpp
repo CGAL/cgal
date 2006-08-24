@@ -1,12 +1,9 @@
-#include <CGAL/basic.h>
 
+#include <CGAL/basic.h>
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_2.h>
-
-#include <CGAL/Exact_circular_kernel.h>
-
+#include <CGAL/Exact_circular_kernel_2.h>
 #include <CGAL/Arr_circular_line_arc_traits.h>
-
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
 

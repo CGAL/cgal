@@ -3,26 +3,18 @@
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>
-
 #include <CGAL/MP_Float.h>
 #include <CGAL/Gmpq.h>
-
 #include <CGAL/Algebraic_kernel_2_2.h>
-
 #include <CGAL/intersections.h>
-
-#include <CGAL/Circular_kernel.h>
+#include <CGAL/Circular_kernel_2.h>
 #include <CGAL/Arr_line_arc_traits.h>
-
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
-
 #include <CGAL/Random.h>
 
-
-typedef CGAL::Quotient<CGAL::MP_Float>                  NT;
+typedef CGAL::Quotient<CGAL::MP_Float>                      NT;
 typedef CGAL::Cartesian<NT>                                 Linear_k;
-
 typedef CGAL::Algebraic_kernel_for_circles_2_2<NT>          Algebraic_k;
 typedef CGAL::Circular_kernel_2<Linear_k,Algebraic_k>       Circular_k;
 

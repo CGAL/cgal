@@ -7,7 +7,6 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
-CGAL_MAKEFILE = /user/teillaud/home/CGAL/install/CGAL-I/make/makefile_i686_Linux-2.6_g++-3.4.4
 #makefile_i686_Linux-2.6_g++33-3.3.4
 #makefile_i686_Linux-2.6_g++-3.4.4
 include $(CGAL_MAKEFILE)
@@ -41,7 +40,6 @@ all:            \
 	example_arrangement_random_circles$(EXE_EXT) \
 	example_arrangement_random_circles_segments$(EXE_EXT) \
 	example_Exact_circular_kernel$(EXE_EXT) \
-        example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular$(EXE_EXT) \
         example_Circular_kernel_arrangement$(EXE_EXT) \
         example_Circular_kernel_arrangement_Line_arc$(EXE_EXT) \
         example_Circular_kernel_arrangement_Line_Circular$(EXE_EXT) \
@@ -57,9 +55,6 @@ example_arrangement_random_circles_segments$(EXE_EXT): example_arrangement_rando
 
 example_Exact_circular_kernel$(EXE_EXT): example_Exact_circular_kernel$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_Exact_circular_kernel example_Exact_circular_kernel$(OBJ_EXT) $(LDFLAGS)
-
-example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular$(EXE_EXT): example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular$(OBJ_EXT) $(LDFLAGS)
 
 example_Circular_kernel_arrangement$(EXE_EXT): example_Circular_kernel_arrangement$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_Circular_kernel_arrangement example_Circular_kernel_arrangement$(OBJ_EXT) $(LDFLAGS)
@@ -83,7 +78,6 @@ clean: \
 	example_arrangement_random_circles.clean \
         example_arrangement_random_circles_segments.clean \
 	example_Exact_circular_kernel.clean \
-	example_Bbox_Hexagon_Lazy_Circular_kernel_arrangement_Line_Circular.clean \
         example_Circular_kernel_arrangement.clean \
         example_Circular_kernel_arrangement_Line_arc.clean \
         example_Circular_kernel_arrangement_Line_Circular.clean \
