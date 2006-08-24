@@ -1909,8 +1909,8 @@ Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Ed
 Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_params.h -text
 Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_and_length.h -text
 Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Polyhedron_edge_cached_pointer_map.h -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/Midpoint_edge_collapse_test.cpp -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/edge_collapse_test.cpp -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/edge_collapse_test.kdevelop -text
 Surface_mesher/demo/Surface_mesher/windows/Mesh.suo -text
 Surface_mesher/demo/Surface_mesher/windows/res/Mesh.ico -text svneol=unset#image/x-icon
 Surface_mesher/demo/Surface_mesher/windows/res/MeshDoc.ico -text svneol=unset#image/x-icon
