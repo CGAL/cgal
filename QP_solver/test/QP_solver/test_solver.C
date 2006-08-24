@@ -437,7 +437,7 @@ bool process(const std::string& filename,
   CGAL::QP_pricing_strategy<Traits> *s = create_strategy<Traits>(options);
   CGAL::QP_solver<Traits> solver(qp.number_of_variables(),
 				 qp.number_of_constraints(),
-				 qp.A(),qp.b(),qp.c(),qp.D(),
+				 qp.A(),qp.b(),qp.c(), qp.c_0(), qp.D(),
 				 qp.row_types(),
 				 qp.fl(),qp.l(),qp.fu(),qp.u(),
 				 s,verbosity);

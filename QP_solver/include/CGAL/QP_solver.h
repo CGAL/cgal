@@ -308,6 +308,7 @@ public:
     A_iterator               qp_A;      // constraint matrix
     B_iterator               qp_b;      // right-hand-side vector
     C_iterator               qp_c;      // objective vector
+    C_entry                  qp_c0;     // constant term in objective function
     D_iterator               qp_D;      // objective matrix
     Row_type_iterator        qp_r;      // row-types of constraints
     FL_iterator              qp_fl;     // lower bound finiteness vector
@@ -476,14 +477,16 @@ public:
     // -------------------------
     // creation
     QP_solver(int n, int m,
-	      A_iterator A, B_iterator b, C_iterator c, D_iterator D,
+	      A_iterator A, B_iterator b, C_iterator c, C_entry c_0,
+	      D_iterator D,
 	      Row_type_iterator r =
 	        Const_oneset_iterator<Row_type>( Rep::EQUAL),
 	      Pricing_strategy *strategy = static_cast<Pricing_strategy *>(0),
 	      int verbosity = 0 );
 	        
     QP_solver(int n, int m,
-          A_iterator A, B_iterator b, C_iterator c, D_iterator D,
+          A_iterator A, B_iterator b, C_iterator c, C_entry c_0,
+	  D_iterator D,
           Row_type_iterator r,
           FL_iterator fl, L_iterator lb, FU_iterator fu, U_iterator ub,
 	  Pricing_strategy *strategy = static_cast<Pricing_strategy *>(0),
@@ -499,7 +502,8 @@ public:
  private:
     // set-up of QP
     void  set( int n, int m,
-	       A_iterator A, B_iterator b, C_iterator c, D_iterator D,
+	       A_iterator A, B_iterator b, C_iterator c, C_entry c_0,
+	       D_iterator D,
 	       Row_type_iterator r =
 	         Const_oneset_iterator<Row_type>( Rep::EQUAL));
 	         
@@ -548,6 +552,8 @@ public:
     
     C_iterator  c_begin( ) const { return qp_c;      }
     C_iterator  c_end  ( ) const { return qp_c+qp_n; }
+
+    C_entry     c_0    ( ) const { return qp_c0;}
     
     D_iterator  d_begin( ) const { return qp_D;      }
     D_iterator  d_end  ( ) const { return qp_D+qp_n; }
@@ -574,19 +580,6 @@ public:
 
     // access to original variables
     int  number_of_original_variables( ) const { return qp_n; }
-
-
-// bg: below are the new versions that only iterate over the
-// original variables of the problem
-//     Variable_numerator_iterator
-//     variables_numerator_begin( ) const
-//         { return Variable_numerator_iterator( in_B.begin(),
-//                    Value_by_basic_index( x_B_O.begin(), qp_n, x_B_S.begin()));}
-    
-//     Variable_numerator_iterator
-//     variables_numerator_end  ( ) const
-//         { return Variable_numerator_iterator( in_B.end(),
-//                    Value_by_basic_index( x_B_O.begin(), qp_n, x_B_S.begin()));}
     
     Variable_numerator_iterator
     variables_numerator_begin( ) const

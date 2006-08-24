@@ -8,24 +8,25 @@
 
 
 // This example program solves the quadratic program 
-//    minimize    x^T D x + c^T x
+//    minimize    x^T D x + c^T x + c0
 //    subject to  A x <rel> b
 //                L <= x <= u
 // where <rel> stands for a vector of relations from {<=, ==, >=}
 //
 // In the concrete example below, we have the following data:
-//     D      c     A      b    L     U
+//     D      c     A      b    L     U             c0
 // ---------------------------------------------------------------------
-//     1 0    0 3   1 2    1    0 0   infinity 1
+//     1 0    0 3   1 2    1    0 0   infinity 1     1
 //     0 0
 //
-// In other words, we minimize x^2 + 3y subject to x + 2y = 1
+// In other words, we minimize x^2 + 3y + 1 subject to x + 2y = 1
 // and x >= 0, 0 <= y <= 1. Let's see what this gives: if we
 // substitute x with 1 - 2y in the objective function, we get
 // 4y^2 - y + 1. The derivative is 8y-1, so this is minimzed
 // for y = 1/8. This value (as well as x = 1 - 2(1/8) = 3/4)
 // are within the bounds, so the solution should be x = 3/4
-// and y = 1/8. 
+// and y = 1/8. The objective function value should be
+// 9/16 + 3/8 + 1 = 31/16 
 
 #include <CGAL/Gmpz.h>
 #include <CGAL/QP_solver.h>
@@ -77,7 +78,7 @@ int main() {
 
   // now call the solver; the first two arguments are
   // the number of variables and the number of constraints (rows of A) 
-  Solver solver(2, 1, cols_of_A, b, c, rows_of_D, rt, fl, l, fu, u);
+  Solver solver(2, 1, cols_of_A, b, c, 1, rows_of_D, rt, fl, l, fu, u);
 
   if (solver.status() == Solver::OPTIMAL) { // we know that, don't we?
     std::cout << "Optimal feasible solution x: ";

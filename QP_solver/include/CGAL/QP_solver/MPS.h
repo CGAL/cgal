@@ -117,6 +117,7 @@ private:
   bool is_format_okay_;
   bool is_linear_;
   const bool use_CPLEX_convention;
+  IT c0;                      // constant term in objective function
   Vector b_, c_;              // vectors b and c
   Matrix A_, D_;              // matrices A and D
   std::string D_section;      // name of the section from which D was read
@@ -135,6 +136,7 @@ private:
   std::string comment_; // first comment in the file, if any
   std::string obj;      // name of the objective "constraint"
   Index_map row_names;
+  Index_map duplicated_row_names; // to handle RANGES section
   Index_map var_names;
   std::vector<std::string> var_by_index; // name of i-th column  
   std::vector<std::string> row_by_index; // name of i-th row
@@ -292,6 +294,7 @@ private: // parsing routines:
   bool rows_section();
   bool columns_section();
   bool rhs_section();
+  bool ranges_section();
   bool bounds_section();
   bool qmatrix_section();
 
@@ -347,7 +350,7 @@ public: // methods:
   unsigned int number_of_constraints()
   {
     CGAL_qpe_assertion(is_valid());
-    return row_names.size();
+    return b_.size(); // row_names doesn't work as RANGES may duplicate rows
   }
 
   // Returns the problem's name (as specified in the MPS-file).
@@ -447,6 +450,15 @@ public: // methods:
   {
     CGAL_qpe_assertion(is_valid());
     return c_.begin();
+  }
+
+  // Returns the constant term of the objective function (as
+  // needs to be passed to the constructor of class QP_solver).
+  // Precondition: is_valid()
+  IT c_0()
+  {
+    CGAL_qpe_assertion(is_valid());
+    return c0;
   }
 
   // Returns an iterator over the matrix D (as needs to be

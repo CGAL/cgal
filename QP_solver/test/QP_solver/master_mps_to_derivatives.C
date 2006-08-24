@@ -128,7 +128,7 @@ void create_shifted_instance(CGAL::QP_MPS_instance<IT, ET>& qp,
 		    tuple_add<IT>()),
 		  make_transform_iterator(
 		    make_zip_iterator(make_tuple(qp.c(),mvTD.begin())),
-		    tuple_add<IT>()),
+		    tuple_add<IT>()), qp.c_0(),
 		  qp.D(), qp.fu(), qp.fl(),
 		  make_transform_iterator(
 		    make_zip_iterator(make_tuple(qp.u(),v.begin())),
@@ -216,7 +216,7 @@ void create_free_instance(CGAL::QP_MPS_instance<IT, ET>& qp,
 		  n, m+nr_of_rows_added,
 		  Vector_iterator(A.begin(),Beginner()),
 		  b.begin(),
-		  qp.c(),
+		  qp.c(), qp.c_0(),
 		  qp.D(),
 		  CGAL::Const_oneset_iterator<bool>(false), // fu
 		  CGAL::Const_oneset_iterator<bool>(false), // fl

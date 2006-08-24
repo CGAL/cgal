@@ -211,12 +211,8 @@ QP_MPS_instance(std::istream& in,bool use_CPLEX_convention,
     return;
 
   // check for (optional) RANGES section:
-  const std::string t = token();
-  if (t == "RANGES") {
-    err("RANGES section is not supported");
-    return;
-  } else
-    put_token_back(t);
+   if (!ranges_section())
+    return; 
 
   // read optional BOUNDS section:
   if (!bounds_section())
@@ -415,7 +411,25 @@ bool QP_MPS_instance<IT_,ET_,
   const std::string t = token();
   if (t != "NAME")
     return err("expected 'NAME'");
-  name = token();
+  // NAME: everything found until line break; whitespaces are allowed
+  char c;
+  std::string token;
+  std::string whitespaces;
+  if (whitespace()) 
+    // line break eaten, name is empty
+    return true;
+  do {
+    from.get(c);
+    if (c == '\r' || c == '\n') return true;
+    if (isspace(c)) 
+      whitespaces.push_back(c); // save whitespace
+    else {
+      // new actual character found: previous whitespaces belong to name
+      name += whitespaces;
+      whitespaces.clear();
+      name.push_back(c);
+    }
+  } while (true);
   return true;
 }
 
@@ -503,19 +517,16 @@ bool QP_MPS_instance<IT_,ET_,
       var_index = var_name->second;
       col_name = var_name->first;
     }
-    //std::cout << "var is " << t << std::endl;
       
     bool doItAgain = true;
     for (int i=0; doItAgain; ++i) {
       // read row identifier:
       t = token();
-      //std::cout << "row is " << t << std::endl;
 
       // read number:
       IT val;
       if (!number(val))
 	return err2("number expected after row identifier '%' in '%' COLUMNS record",t,col_name);
-      //std::cout << "val is " << val << std::endl;
 
       // store number:
       if (t == obj) { // objective row?
@@ -558,34 +569,42 @@ bool QP_MPS_instance<IT_,ET_,
 	 t != "ENDATA") {
     // read rhs identifier and if it is different from the one
     // from the previous iteration, ignore the whole row:
-    bool ignore;
+    bool ignore = false;
+    std::string ignored;
     if (rhs_id.size() == 0) { // first time we enter the loop?
       rhs_id = t;
-      ignore = false;
-    } else // rhs_id already set?
-      ignore =  t != rhs_id;
+    } else {                  // rhs_id already set
+      if (t != rhs_id) { 
+	ignore = true;        // ignore other rhs identifiers
+	ignored = t;
+      }
+    }
 
     bool doItAgain = true;
     for (int i=0; doItAgain; ++i) {
-      // read variable identifier:
+      // read row identifier:
       t = token();
-      //std::cout << "var is " << t << std::endl;
 
       // read number:
       IT val;
       if (!number(val))
 	return err1("number expected after '%' in this RHS record",t);
-      //std::cout << "val is " << val << std::endl;
 
       // store number:
       const Index_map::const_iterator row_name = row_names.find(t);
-      if (row_name == row_names.end())
-	return err1("unknown row identifier '%' in section RHS",t);
-      if (!ignore)
-	b_[row_name->second] = val;
-      else {
-	// todo: output warning that this particular rhs was ignored?
-	//warn("
+      if (row_name == row_names.end()) {
+	// no corresponding constraint; is it the constant term?
+	if (t == obj) 
+	  c0 = -val;
+	else 
+	  return err1("unknown row identifier '%' in section RHS",t);
+      } else {
+	// we have an actual constraint
+	if (!ignore) {
+	  b_[row_name->second] = val;
+	} else {
+	  warn1("rhs with identifier '%' ignored", ignored);
+	}
       }
 
       // determine if we need to read another number:
@@ -599,6 +618,118 @@ bool QP_MPS_instance<IT_,ET_,
 
   return true;
 }
+
+template<typename IT_,
+	 typename ET_,
+	 typename Use_sparse_representation_for_D_,
+	 typename Use_sparse_representation_for_A_>
+bool QP_MPS_instance<IT_,ET_,
+		Use_sparse_representation_for_D_,
+		Use_sparse_representation_for_A_>::ranges_section()
+{
+  std::string t = token();
+  if (t != "RANGES") { // (Note: RANGES section is optional.)
+    put_token_back(t);
+    return true;
+  }
+
+  t = token();
+  std::string range_id;
+  while ((t != "BOUNDS" && t != "QMATRIX" && 
+	  t != "DMATRIX" && t != "QUADOBJ" && t != "ENDATA")) {
+    // read rhs identifier and if it is different from the one
+    // from the previous iteration, ignore the whole row:
+    bool ignore = false;
+    std::string ignored;
+    if (range_id.size() == 0) { // first time we enter the loop?
+      range_id = t;
+    } else {                    // range_id already set
+      if (t != range_id) { 
+	ignore = true;          // ignore other range identifiers
+	ignored = t;
+      }
+    }
+    bool doItAgain = true;
+    for (int i=0; doItAgain; ++i) {
+      // read row identifier:
+      t = token();
+
+      // read number:
+      IT val;
+      if (!number(val))
+	return err1("number expected after '%' in this RANGES record",t);
+
+      // duplicate the constraint, depending on sign of val and type
+      // of constraint
+      const Index_map::const_iterator row_name = row_names.find(t);
+      if (row_name == row_names.end()) {
+	  return err1("unknown row identifier '%' in section RANGES",t);
+      } else {
+	if (!ignore) {
+	  int index = row_name->second;
+	  Row_type type = row_types_[index];
+	  // duplicate the row, unless it has already been duplicated
+	  const Index_map::const_iterator duplicated_row_name = 
+	    duplicated_row_names.find(t);
+	  if (duplicated_row_name != duplicated_row_names.end())
+	    return err1("duplicate row identifier '%' in section RANGES",t);
+	  duplicated_row_names.insert(*row_name);
+	  for (unsigned int j=0; j<var_names.size(); ++j) {
+	    A_[j].push_back(A_[j][index]);
+	  }
+	  // determine rhs for this new row. Here are the rules:
+	  // if r is the ranges value and b is the old right-hand 
+	  // side, then we have h <= constraint <= u according to
+	  // this table:
+	  //
+	  // row type       sign of r       h          u
+	  // ----------------------------------------------
+          // G            + or -         b        b + |r|
+          // L            + or -       b - |r|      b
+          // E              +            b        b + |r|
+          // E              -          b - |r|      b
+	  
+	  switch (type) {
+	  case GREATER_EQUAL: // introduce "<= b+|r|" 
+	    row_types_.push_back(LESS_EQUAL);
+	    b_.push_back(b_[index] + CGAL::abs(val));
+	    break;
+	  case LESS_EQUAL:   // introduce ">=  b-|r|" 
+	    row_types_.push_back(GREATER_EQUAL);
+	    b_.push_back(b_[index] - CGAL::abs(val));
+	    break;
+	  case EQUAL:   
+	    if (CGAL_NTS is_positive (val)) {
+	      // introduce "<= b+|r|"
+	      row_types_.push_back(LESS_EQUAL);
+	    } else {
+	      // introduce ">=  b-|r|"  
+	      row_types_.push_back(GREATER_EQUAL);  
+	    }
+	    b_.push_back(b_[index] + val);
+	    break;
+	  default:
+	    CGAL_qpe_assertion(false);
+	  }  
+	} else {
+	  warn1("range with identifier '%' ignored", ignored);
+	}
+      }
+
+      // determine if we need to read another number:
+      doItAgain = i==0 && !whitespace();
+    }
+      
+    // read next token:
+    t = token();
+  }
+  put_token_back(t);
+
+  return true;   
+
+}
+	 
+
 
 template<typename IT_,
 	 typename ET_,
@@ -968,6 +1099,7 @@ namespace QP_MPS_detail {
 template<typename A_iterator,
 	 typename B_iterator,
 	 typename C_iterator,
+	 typename C_entry,
 	 typename D_iterator,
 	 typename FU_iterator,
 	 typename FL_iterator,
@@ -986,6 +1118,7 @@ void write_MPS(std::ostream& out,
 	       A_iterator A,
 	       B_iterator b,
 	       C_iterator c,
+	       C_entry c_0,
 	       D_iterator D,
 	       FU_iterator fu,
 	       FL_iterator fl,
@@ -1035,6 +1168,8 @@ void write_MPS(std::ostream& out,
 
   // output RHS section:
   out << "RHS\n";
+  if (!CGAL_NTS is_zero (c_0))
+    out << "  rhs obj   -" << c_0 << "\n";
   for (int i=0; i<m; ++i)  
     if (!CGAL_NTS is_zero (b[i]))
       out << "  rhs c" << i << "  " << b[i] << "\n";

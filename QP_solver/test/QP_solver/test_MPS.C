@@ -82,8 +82,8 @@ int main(const int argNr,const char **args) {
 
   typedef CGAL::QP_solver<Traits> Solver;
   Solver solver(qp.number_of_variables(),
-                                 qp.number_of_constraints(),
-                                 qp.A(),qp.b(),qp.c(),
+                qp.number_of_constraints(),
+		qp.A(),qp.b(),qp.c(), qp.c_0(),
                                  qp.D(),
                                  qp.row_types(),
                                  qp.fl(),qp.l(),qp.fu(),qp.u(),

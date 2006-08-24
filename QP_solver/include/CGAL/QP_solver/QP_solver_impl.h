@@ -152,7 +152,8 @@ solution_numerator( ) const
 	s +=  ET(qp_c[j]) * *j_it;
       z += d * s;
     }
-    return z;
+    // finally, add the constant term
+    return z += ET(qp_c0) * d * d;
 }
 
 // pivot step
@@ -2969,6 +2970,7 @@ print_program( )
     }
     std::copy( qp_c, qp_c+qp_n,
 	       std::ostream_iterator<C_entry>( vout4.out(), " "));
+    vout4.out() << "(+ " << qp_c0 << ") ";
     vout4.out() << std::endl;
     vout4.out() << std::endl;
 

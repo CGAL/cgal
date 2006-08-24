@@ -66,6 +66,7 @@ public: // types:
   typedef Vector_iterator   A_iterator;
   typedef Entry_iterator    B_iterator;
   typedef Entry_iterator    C_iterator;
+  typedef ANT               C_entry;
   typedef Vector_iterator   D_iterator;
   typedef CGAL::Const_oneset_iterator< CGAL::Const_oneset_iterator<ANT> >
                             Zero_D_iterator;
@@ -93,6 +94,7 @@ private: // members:
   // data:
   Matrix A_, D_;
   Vector b_, c_;
+  ANT c0;
   F_vector fl_, fu_;
   Vector l_, u_;
   Row_type_vector row_type_;
@@ -119,6 +121,7 @@ public:
     u_.resize(n, default_u);
     b_.resize(m);
     c_.resize(n);
+    c0 = any_zero;
     row_type_.resize(m);
 
     if (!read_CONSTRAINTS())
@@ -182,6 +185,12 @@ public: // access:
   {
     CGAL_qpe_assertion(good());
     return c_.begin();
+  } 
+
+  ANT c_0()
+  {
+    CGAL_qpe_assertion(good());
+    return c0;
   }
 
   D_iterator D()
@@ -611,7 +620,7 @@ int main(int argnr, char **argv)
   // write MPS-file to standard out:
   CGAL::write_MPS(std::cout, number_type, desc, "data2mps", name,
 		  data.number_of_variables(), data.number_of_constraints(),
-		  data.A(), data.b(), data.c(), data.D(), data.fu(),
+		  data.A(), data.b(), data.c(), data.c_0(),data.D(), data.fu(),
 		  data.fl(), data.u(), data.l(), data.row_types());
 
   return 0;

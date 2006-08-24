@@ -29,7 +29,8 @@ CGAL_BEGIN_NAMESPACE
 template < class Rep_ >
 QP_solver<Rep_>::
 QP_solver(int n, int m,
-	  A_iterator A, B_iterator b, C_iterator c, D_iterator D,
+	  A_iterator A, B_iterator b, C_iterator c, C_entry c_0,
+	  D_iterator D,
 	  Row_type_iterator r,
 	  Pricing_strategy *strategy, int verbosity)
   : et0(0), et1(1), et2(2),
@@ -51,7 +52,7 @@ QP_solver(int n, int m,
 {
   set_verbosity(verbosity); 
   set_pricing_strategy(strategy);
-  set(n,m,A,b,c,D,r);
+  set(n,m,A,b,c,c_0,D,r);
   init();
   solve();
 }
@@ -60,7 +61,8 @@ QP_solver(int n, int m,
 template < class Rep_ >
 QP_solver<Rep_>::
 QP_solver(int n, int m,
-	  A_iterator A, B_iterator b, C_iterator c, D_iterator D,
+	  A_iterator A, B_iterator b, C_iterator c, C_entry c_0,
+	  D_iterator D,
 	  Row_type_iterator r,
 	  FL_iterator fl, L_iterator lb, FU_iterator fu, U_iterator ub,
 	  Pricing_strategy *strategy, int verbosity)
@@ -82,7 +84,7 @@ QP_solver(int n, int m,
   // Note: we first set the bounds and then call set() because set()
   // accesses qp_fl, qp_l, etc.
   set_explicit_bounds(fl, lb, fu, ub);
-  set(n,m,A,b,c,D,r);
+  set(n,m,A,b,c,c_0,D,r);
 
   // initialize and solve immediately:
   init();
@@ -96,6 +98,7 @@ set(int n, int m,
     typename QP_solver<Rep_>::A_iterator A_it,
     typename QP_solver<Rep_>::B_iterator b_it,
     typename QP_solver<Rep_>::C_iterator c_it,
+    typename QP_solver<Rep_>::C_entry    c_0,
     typename QP_solver<Rep_>::D_iterator D_it,
     typename QP_solver<Rep_>::Row_type_iterator Row_type_it)
 {
@@ -105,7 +108,7 @@ set(int n, int m,
 
   // store QP
   qp_n = n; qp_m = m;
-  qp_A = A_it; qp_b = b_it; qp_c = c_it; qp_D = D_it;
+  qp_A = A_it; qp_b = b_it; qp_c = c_it; qp_c0 = c_0; qp_D = D_it;
   qp_r = Row_type_it;
   
   // store original variable indices (hack needed to allow

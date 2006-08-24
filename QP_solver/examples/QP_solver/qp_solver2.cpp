@@ -8,15 +8,15 @@
 
 
 // This example program solves the quadratic program 
-//    minimize    x^T D x + c^T x
+//    minimize    x^T D x + c^T x + c0
 //    subject to  A x <rel> b
 //                L <= x <= u
 // where <rel> stands for a vector of relations from {<=, ==, >=}
 //
 // In the concrete example below, we have the following data:
-//     D          c         A          b      L         U
+//     D          c         A          b      L         U          c0
 // -----------------------------------------------------------------------
-//     1.0 0.0    0.0 3.0   0.5 1.0    0.5    0.0 0.0   infinity, infinity
+//     1.0 0.0    0.0 3.0   0.5 1.0    0.5    0.0 0.0   inf, inf    1
 //     0.0 0.0    
 //
 // In other words, we minimize x^2 + 3y subject to x/2 + y >= 1/2
@@ -27,7 +27,8 @@
 // 4y^2 - y + 1. The derivative is 8y-1, so this is minimzed
 // for y = 1/8. This value (as well as x = 1 - 2(1/8) = 3/4)
 // are within the bounds, so the solution should be x = 3/4
-// and y = 1/8. 
+// and y = 1/8. The objective function value should be
+// 9/16 + 3/8 + 1 = 31/16 
 
 // for some reason, almost no other include order works...
 #include <CGAL/QP_solver/gmp_double.h>
@@ -80,7 +81,7 @@ int main() {
   // the number of variables and the number of constraints (rows of A) 
   // the final 0's are for the bounds; since we are in standard form,
   // the solver will never access them
-  Solver solver(2, 1, cols_of_A, b, c, rows_of_D, rt, 0, 0, 0, 0);
+  Solver solver(2, 1, cols_of_A, b, c, 1.0, rows_of_D, rt, 0, 0, 0, 0);
 
   if (solver.status() == Solver::OPTIMAL) { // we know that, don't we?
     std::cout << "Optimal feasible solution x: ";

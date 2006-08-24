@@ -183,7 +183,7 @@ template < class Rep_ >
 bool QP_solver<Rep_>::is_value_correct()
 {
   // checks whether solution_numerator() returns the right value
-  // by computing x^T D x + x^T c from scratch; we use the numerators
+  // by computing x^T D x + x^T c + c0 from scratch; we use the numerators
   // of the variables, so x^T D x carries a factor of d^2, while x^T c
   // carries a factor of d (must be compensated for); solution_numerator() 
   // carries a factor of d^2
@@ -202,11 +202,12 @@ bool QP_solver<Rep_>::is_value_correct()
          s += ET(qp_D[i][j]) * *j_it; // D_ij x_j
     } 
     // now s = D_i x
-    s += d * qp_c[i];                 // add d * c_i
+    s += d * ET(qp_c[i]);                 // add d * c_i
     // now s = D_i x + d c_i
     z += s * *i_it;                   // add x_i (D_i x + d c_i)
   }
-  return z == solution_numerator();
+  // handle constant term
+  return (z + d * d * ET(qp_c0)) == solution_numerator();
 }
 
 template < class Rep_ >
