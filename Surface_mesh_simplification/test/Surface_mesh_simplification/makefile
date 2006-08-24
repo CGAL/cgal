@@ -35,19 +35,12 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all:            \
-                Midpoint_edge_collapse_test \
-                LT_edge_collapse_test
+all:            edge_collapse_test 
 
-Midpoint_edge_collapse_test$(EXE_EXT): Midpoint_edge_collapse_test$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Midpoint_edge_collapse_test Midpoint_edge_collapse_test$(OBJ_EXT) $(LDFLAGS)
-        
-LT_edge_collapse_test$(EXE_EXT): LT_edge_collapse_test$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)LT_edge_collapse_test LT_edge_collapse_test$(OBJ_EXT) $(LDFLAGS)
+edge_collapse_test$(EXE_EXT): edge_collapse_test$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)edge_collapse_test edge_collapse_test$(OBJ_EXT) $(LDFLAGS)
 
-clean: \
-                   Midpoint_edge_collapse_test.clean \
-                   LT_edge_collapse_test.clean 
+clean:          edge_collapse_test.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules

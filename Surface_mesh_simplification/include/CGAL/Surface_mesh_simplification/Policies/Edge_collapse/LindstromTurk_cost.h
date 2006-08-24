@@ -19,7 +19,7 @@
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_COST_H 1
 
 #include <CGAL/Surface_mesh_simplification/TSMS_common.h>
-#include <CGAL/Surface_mesh_simplification/Policies/LindstromTurk_collapse_data.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Functor_base.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -27,9 +27,9 @@ namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_
 {
 
 template<class Collapse_data_>
-class LindstromTurk_cost : protected Cost_functor_base< Collapse_data_, LindstromTurk_cost<Collapse_data_> >
+class LindstromTurk_cost : public Cost_functor_base< Collapse_data_,LindstromTurk_params>
 {
-  typedef Cost_functor_base<Collapse_data_, LindstromTurk_cost<Collapse_data_> > Base ;
+  typedef Cost_functor_base<Collapse_data_,LindstromTurk_params> Base ;
   
 public:
     
@@ -37,21 +37,21 @@ public:
   
   typedef typename Collapse_data::TSM TSM ;
   
-  typedef typename grah_traits<TSM>::vertex_descriptor vertex_descriptor ;
-  typedef typename grah_traits<TSM>::edge_descriptor   edge_descriptor ;
+  typedef typename boost::graph_traits<TSM>::vertex_descriptor vertex_descriptor ;
+  typedef typename boost::graph_traits<TSM>::edge_descriptor   edge_descriptor ;
   
+  typedef typename Surface_geometric_traits<TSM>::FT      FT ;
   typedef typename Surface_geometric_traits<TSM>::Point_3 Point_3 ;
   
   typedef typename Base::result_type result_type ;
-  
-  typedef LindstromTurk_params Params ;
+  typedef typename Base::Params      Params ;
     
   typedef optional<FT>      Optional_cost_type ;
   typedef optional<Point_3> Optional_placement_type ;
   
 public:
 
-  result_type compute_cost( edge_descriptor const& aEdge, TSM const& aSurface, Params const* aParams ) const
+  virtual result_type compute_cost( edge_descriptor const& aEdge, TSM& aSurface, Params const* aParams ) const
   {
     CGAL_assertion(aParams);
     CGAL_assertion( handle_assigned(aEdge) );

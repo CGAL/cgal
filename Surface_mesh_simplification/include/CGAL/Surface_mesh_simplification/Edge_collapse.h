@@ -33,13 +33,14 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace Triangulated_surface_mesh { namespace Simplification 
+namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse
 {
 
 //
 // Implementation of the vertex-pair collapse triangulated surface mesh simplification algorithm
 //
 template<class TSM_
+        ,class Params_ 
         ,class SetCollapseData_
         ,class GetCost_
         ,class GetNewVertexPoint_
@@ -51,6 +52,7 @@ class EdgeCollapse
 public:
 
   typedef TSM_               TSM ;
+  typedef Params_            Params ;
   typedef SetCollapseData_   SetCollapseData ;
   typedef GetCost_           GetCost ;
   typedef GetNewVertexPoint_ GetNewVertexPoint ;
@@ -100,7 +102,7 @@ public:
   {
     Compare_cost( Self const* aAlgorithm ) : mAlgorithm(aAlgorithm) {}
     
-    Comparison_result operator() ( Edge_data_ptr a, Edge_data_ptr b ) const
+    Comparison_result operator() ( edge_descriptor a, edge_descriptor b ) const
     {
       return mAlgorithm->compare_cost(a,b);
     }
@@ -121,8 +123,8 @@ public:
   
     Edge_data() : mPQHandle() {}
     
-    Collapse_data const& aData() const { return mData ; }
-    Collapse_data &      aData()       { return mData ; }
+    Collapse_data const& data() const { return mData ; }
+    Collapse_data &      data()       { return mData ; }
     
     pq_handle PQ_handle() const { return mPQHandle ;}
     
@@ -147,13 +149,13 @@ public:
   
 public:
 
-  EdgeCollapse( TSM&                           aSurface
-              , SetCollapseData const&         aSetCollapseData
-              , ParamsToSetCollapseData const* aSetCollapseDataParams // Can be NULL
-              , GetCost const&                 aGetCost
-              , GetNewVertexPoint const&       aGetVertexPoint
-              , ShouldStop const&              aShouldStop 
-              , VisitorT*                      aVisitor
+  EdgeCollapse( TSM&                     aSurface
+              , Params const*            aParams // Can be NULL
+              , SetCollapseData const&   aSetCollapseData
+              , GetCost const&           aGetCost
+              , GetNewVertexPoint const& aGetVertexPoint
+              , ShouldStop const&        aShouldStop 
+              , VisitorT*                aVisitor
               ) ;
   
   int run() ;
@@ -195,7 +197,7 @@ private:
     return is_border(aEdge) || is_border(opposite_edge(aEdge,mSurface)) ;
   }    
   
-  Edge_data_ptr get_data ( edge_descriptor const& aEdge )
+  Edge_data_ptr get_data ( edge_descriptor const& aEdge ) const
   {
     cgal_tsms_edge_cached_pointer_t edge_cached_pointer ;
     return static_cast<Edge_data_ptr>(get(edge_cached_pointer,mSurface,aEdge)) ;
@@ -236,16 +238,18 @@ private:
     return boost::str( boost::format("{E%1% %2%->%3%}") % aEdge % vertex_to_string(p) % vertex_to_string(q) ) ;
   }
   
-  Optional_cost_type get_cost ( const_edge_descriptor const& aEdge ) const
+  Optional_cost_type get_cost ( edge_descriptor const& aEdge ) const
   {
     Edge_data_ptr lData = get_data(aEdge);
-    return Get_cost(aEdge,mSurface,lData);
+    CGAL_assertion(lData);
+    return Get_cost(aEdge,mSurface,lData->data(),mParams);
   }
   
-  Optional_vertex_point_type get_new_vertex_point( const_edge_descriptor const& aEdge ) const
+  Optional_vertex_point_type get_new_vertex_point( edge_descriptor const& aEdge ) const
   {
     Edge_data_ptr lData = get_data(aEdge);
-    return Get_new_vertex_point(aEdge,mSurface,lData);
+    CGAL_assertion(lData);
+    return Get_new_vertex_point(aEdge,mSurface,lData->data(),mParams);
   }
   
   Comparison_result compare_cost( edge_descriptor const& aEdgeA, edge_descriptor const& aEdgeB ) const
@@ -276,7 +280,7 @@ private:
     aData->reset_PQ_handle();
   }   
   
-  edge_descritor pop_from_PQ() 
+  edge_descriptor pop_from_PQ() 
   {
     edge_descriptor rEdge ;
     if ( !mPQ.empty() )
@@ -285,13 +289,13 @@ private:
       mPQ.pop();
       get_data(rEdge)->reset_PQ_handle();
     }
-    return rR ;
+    return rEdge ;
   }
     
 private:
 
-  TSM& mSurface ;
-  ParamsToSetCollapseData const* mParamsToSetCollapseData ; // Can be NULL
+  TSM&          mSurface ;
+  Params const* mParams ; // Can be NULL
 
   SetCollapseData   const&  Set_collapse_data;   
   GetCost           const&  Get_cost ;
@@ -313,7 +317,7 @@ private:
   CGAL_TSMS_DEBUG_CODE ( unsigned mStep ; )
 } ;
 
-} } // namespace Triangulated_surface_mesh::Simplification
+} } } // namespace Triangulated_surface_mesh::Simplification::edge_collapse
 
 CGAL_END_NAMESPACE
 

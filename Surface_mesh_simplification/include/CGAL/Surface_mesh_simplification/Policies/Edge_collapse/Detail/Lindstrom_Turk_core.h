@@ -42,9 +42,7 @@ class LindstromTurkCore
 {
 public:
     
-  typedef typename TSM_TSM ;
-  
-  typedef Collapse_data_ Collapse_data ;
+  typedef TSM_ TSM ;
   
   typedef boost::graph_traits<TSM> GraphTraits ;
   
@@ -223,7 +221,7 @@ private:
 
 CGAL_END_NAMESPACE
 
-#include <CGAL/Surface_mesh_simplification/Policies/Detail/Lindstrom_Turk_core_impl.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Detail/Lindstrom_Turk_core_impl.h>
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_DETAIL_LINDSTROM_TURK_CORE_H //
 // EOF //

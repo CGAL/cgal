@@ -22,7 +22,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace Triangulated_surface_mesh { namespace Simplification 
+namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse
 {
 
 //
@@ -59,28 +59,26 @@ namespace Triangulated_surface_mesh { namespace Simplification
 //   This global function returns the number of edges or -1 if there was an error 
 //   (like the surface not being a valid triangulated surface mesh)
 //       
-template<class TSM,class SetCollapseData,class ParamsToSetCollapseData,class GetCost,class GetNewVertexPoint,class ShouldStop, class Visitor>
-int edge_collapse ( TSM&                           aSurface
-                  , SetCollapseData const&         aGet_collapse_data
-                  , ParamsToSetCollapseData const* aParamsToSetCollapseData // Can be NULL
-                  , GetCost         const&         aGet_cost 
-                  , GetNewVertexPoint const&       aGet_new_vertex_point
-                  , ShouldStop      const&         aShould_stop
-                  , Visitor*                       aVisitor = 0
-                  , bool                           aIncludeNonEdgePairs = false
+template<class TSM,class Params,class SetCollapseData,class GetCost,class GetNewVertexPoint,class ShouldStop, class Visitor>
+int edge_collapse ( TSM&                     aSurface
+                  , Params const*            aParams // Can be NULL
+                  , SetCollapseData const&   aSet_collapse_data
+                  , GetCost         const&   aGet_cost 
+                  , GetNewVertexPoint const& aGet_new_vertex_point
+                  , ShouldStop      const&   aShould_stop
+                  , Visitor*                 aVisitor = 0
                   ) 
 {
   if ( is_valid_triangulated_surface_mesh(aSurface) )
   {
-    typedef EdgeCollapse<TSM,SetCollapseData,GetCost,GetNewVertexPoint,ShouldStop,Visitor> Algorithm ;
+    typedef EdgeCollapse<TSM,Params,SetCollapseData,GetCost,GetNewVertexPoint,ShouldStop,Visitor> Algorithm ;
     Algorithm algorithm(aSurface
-                       ,aGet_collapse_data
-                       ,aParamsToSetCollapseData
+                       ,aParams
+                       ,aSet_collapse_data
                        ,aGet_cost
                        ,aGet_new_vertex_point
                        ,aShould_stop
                        ,aVisitor
-                       ,aIncludeNonEdgePairs
                        ) ;
     return algorithm.run();
   }
@@ -88,7 +86,7 @@ int edge_collapse ( TSM&                           aSurface
 }                          
 
 
-} } // namespace Triangulated_surface_mesh::Simplification
+} } } // namespace Triangulated_surface_mesh::Simplification::Edge_collapse
 
 
 CGAL_END_NAMESPACE

@@ -43,8 +43,8 @@ public:
 
   typedef TSM_ TSM ;
   
-  typedef typename grah_traits<TSM>::edge_descriptor edge_descriptor ;
-  typedef typename grah_traits<TSM>::edges_size_type size_type ;
+  typedef typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor ;
+  typedef typename boost::graph_traits<TSM>::edges_size_type size_type ;
   
   typedef typename Surface_geometric_traits<TSM>::FT FT ;
   

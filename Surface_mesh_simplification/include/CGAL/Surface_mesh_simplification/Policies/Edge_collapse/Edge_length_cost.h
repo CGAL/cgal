@@ -30,9 +30,9 @@ namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_
 // Edge-length cost: the squared length of the collapsing edge
 //
 template<class Collapse_data_>
-class Edge_length_cost : protected Cost_functor_base< Collapse_data_, Edge_length_cost<Collapse_data_> >
+class Edge_length_cost : public Cost_functor_base< Collapse_data_,void>
 {
-  typedef Cost_functor_base<Collapse_data_, Edge_length_cost<Collapse_data_> > Base ;
+  typedef Cost_functor_base<Collapse_data_,void> Base ;
   
 public:
     
@@ -40,18 +40,17 @@ public:
   
   typedef typename Collapse_data::TSM TSM ;
   
-  typedef typename grah_traits<TSM>::vertex_descriptor vertex_descriptor ;
-  typedef typename grah_traits<TSM>::edge_descriptor   edge_descriptor ;
+  typedef typename boost::graph_traits<TSM>::vertex_descriptor vertex_descriptor ;
+  typedef typename boost::graph_traits<TSM>::edge_descriptor   edge_descriptor ;
   
   typedef typename Surface_geometric_traits<TSM>::Point_3 Point_3 ;
   
   typedef typename Base::result_type result_type ;
-  
-  typedef void Params ;
+  typedef typename Base::Params      Params ;
     
 public:
 
-  result_type compute_cost( edge_descriptor const& aEdge, TSM const& aSurface, Params const* ) const
+  virtual result_type compute_cost( edge_descriptor const& aEdge, TSM& aSurface, Params const* ) const
   {
     vertex_descriptor vs,vt ; tie(vs,vt) = this->get_vertices(aEdge,aSurface);
     

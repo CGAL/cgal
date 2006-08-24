@@ -25,33 +25,30 @@ CGAL_BEGIN_NAMESPACE
 namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse
 {
 
-
-template<class Collapse_data_, class Base_>
-class Functor_base : protected Base_
+template<class TSM_>
+class Functor_base 
 {
 public:
     
-  typedef Collapse_data_ Collapse_data ;
+  typedef TSM_ TSM ;
   
-  typedef typename Collapse_data::TSM TSM ;
-  
-  typedef typename grah_traits<TSM>::vertex_descriptor vertex_descriptor ;
-  typedef typename grah_traits<TSM>::edge_descriptor   edge_descriptor ;
+  typedef typename boost::graph_traits<TSM>::vertex_descriptor vertex_descriptor ;
+  typedef typename boost::graph_traits<TSM>::edge_descriptor   edge_descriptor ;
   
   typedef typename Surface_geometric_traits<TSM>::Point_3 Point_3 ;
   typedef typename Surface_geometric_traits<TSM>::FT      FT ;
   
 protected :
 
-  typedef Base_ Base ;
-      
-  Point_3 const& get_point ( vertex_descriptor const& v, TSM const& aSurface ) const
+  virtual ~Functor_base() {}
+  
+  Point_3 const& get_point ( vertex_descriptor const& v, TSM& aSurface ) const
   {
     vertex_point_t vertex_point ;
     return get(vertex_point,aSurface,v) ;
   }
   
-  tuple<vertex_descriptor,vertex_descriptor> get_vertices ( edge_descriptor const& aEdge, TSM const& aSurface ) const
+  tuple<vertex_descriptor,vertex_descriptor> get_vertices ( edge_descriptor const& aEdge, TSM& aSurface ) const
   {
     vertex_descriptor p = source(aEdge,aSurface);
     vertex_descriptor q = target(aEdge,aSurface);
@@ -59,31 +56,29 @@ protected :
   }
 };
 
-template<class Collapse_data_, class Base_>
-class Cost_functor_base : protected Functor_base<Collapse_data_,Base_>
+template<class Collapse_data_, class Params_>
+class Cost_functor_base : public Functor_base< typename Collapse_data_::TSM >
 {
-  typedef Functor_base<Collapse_data,Base_> Base ;
-  
-  typedef typename Base::Base Base_base ;
-  
-  typedef typename Collapse_data::Has_cached_cost  Has_cached_cost ;
   
 public:
     
   typedef Collapse_data_ Collapse_data ;
+  typedef Params_        Params ;
   
-  typedef typename Base::TSM             TSM ;
+  typedef typename Collapse_data::TSM             TSM ;
+  typedef typename Collapse_data::Has_cached_cost Has_cached_cost ;
+  
+  typedef Functor_base<TSM> Base ;
+  
   typedef typename Base::edge_descriptor edge_descriptor ;
   typedef typename Base::FT              FT ;
   
   typedef optional<FT> result_type ;
 
-  typedef typename Base_base::Params Params ;
-    
 public :
     
   result_type operator()( edge_descriptor const& aEdge
-                        , TSM const&             aSurface
+                        , TSM&                   aSurface
                         , Collapse_data const&   aData
                         , Params const*          aParams
                         ) const
@@ -94,7 +89,7 @@ public :
 private :
     
   result_type get_cost( edge_descriptor const& //aEdge
-                      , TSM const&             //aSurface
+                      , TSM&                   //aSurface
                       , Collapse_data const&   aData
                       , Params const*          //aParams
                       , Tag_true
@@ -104,41 +99,47 @@ private :
   }
   
   result_type get_cost( edge_descriptor const& aEdge
-                      , TSM const&             aSurface
+                      , TSM&                   aSurface
                       , Collapse_data const&   //aData
                       , Params const*          aParams
                       , Tag_false 
                       ) const
   {
-    return this->compute_cost(aEdge,aSurface,aParams);
+    return compute_cost(aEdge,aSurface,aParams);
   }
+  
+protected :
+
+  virtual result_type compute_cost( edge_descriptor const& aEdge
+                                  , TSM&                   aSurface
+                                  , Params const*          aParams
+                                  ) const = 0 ;
+                      
 };
 
-template<class Collapse_data_, class Base_>
-class Placement_functor_base : protected Functor_base<Collapse_data_,Base_>
+template<class Collapse_data_, class Params_>
+class Placement_functor_base : public Functor_base<typename Collapse_data_::TSM>
 {
-  typedef Functor_base<Collapse_data,Base_> Base ;
-  
-  typedef typename Base::Base Base_base ;
-  
-  typedef typename Collapse_data::Has_cached_placement Has_cached_placement ;
   
 public:
     
   typedef Collapse_data_ Collapse_data ;
+  typedef Params_        Params ;
   
-  typedef typename Base::TSM             TSM ;
+  typedef typename Collapse_data::TSM                  TSM ;
+  typedef typename Collapse_data::Has_cached_placement Has_cached_placement ;
+  
+  typedef Functor_base<TSM> Base ;
+  
   typedef typename Base::edge_descriptor edge_descriptor ;
   typedef typename Base::Point_3         Point_3 ;
   
   typedef optional<Point_3> result_type ;
-    
-  typedef typename Base_base::Params Params ;
   
 public :
     
   result_type operator()( edge_descriptor const& aEdge
-                        , TSM const&             aSurface
+                        , TSM&                   aSurface
                         , Collapse_data const&   aData
                         , Params const*          aParams
                         ) const
@@ -149,7 +150,7 @@ public :
 private :
     
   result_type get_placement( edge_descriptor const& //aEdge
-                           , TSM const&             //aSurface
+                           , TSM&                   //aSurface
                            , Collapse_data const&   aData
                            , Params const*          //aParams
                            , Tag_true
@@ -159,14 +160,21 @@ private :
   }
   
   result_type get_placement( edge_descriptor const& aEdge
-                           , TSM const&             aSurface
+                           , TSM&                   aSurface
                            , Collapse_data const&   //aData
                            , Params const*          aParams
                            , Tag_false 
                            ) const
   {
-    return this->compute_placement(aEdge,aSurface,aParams);
+    return compute_placement(aEdge,aSurface,aParams);
   }
+  
+protected :
+
+  virtual result_type compute_placement( edge_descriptor const& aEdge
+                                       , TSM&                   aSurface
+                                       , Params const*          aParams
+                                       ) const = 0 ;
 };
 
 } } } // namespace Triangulated_surface_mesh::Simplification::Edge_collapse

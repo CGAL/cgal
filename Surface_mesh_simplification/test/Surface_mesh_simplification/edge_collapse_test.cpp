@@ -55,12 +55,8 @@ int exit_code = 0 ;
 #include <CGAL/Surface_mesh_simplification/Polyhedron_is_vertex_fixed_map.h>
 #include <CGAL/Surface_mesh_simplification/Polyhedron_edge_cached_pointer_map.h>
 
-#ifdef TEST_LT
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk.h>
-#else
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_and_length.h>
-#endif
-
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_pred.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_pred.h>
 
@@ -267,9 +263,9 @@ void ParseAuditLine( string s )
 }
 
 
-void ParseAudit ( string name )
+void ParseAudit ( string aName )
 {
-  ifstream is(name.c_str());
+  ifstream is(aName.c_str());
   if ( is )
   {
     while ( is )
@@ -280,7 +276,7 @@ void ParseAudit ( string name )
         ParseAuditLine(line);
     }
   }
-  else cerr << "Warning: Audit file " << name << " doesn't exist." << endl ;
+  else cerr << "Warning: Audit file " << aName << " doesn't exist." << endl ;
 }
 
 string to_string( optional<double> const& c )
@@ -395,7 +391,7 @@ struct Visitor
     if ( sProcessed == 0 )
       cerr << "\n";  
     ++ sProcessed ;
-    else if ( aVertex == Vertex_handle() )
+    if ( aVertex == Vertex_handle() )
     {
       if ( !aCost )
            ++ sCostUncomputable ;
@@ -425,20 +421,51 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
   throw std::logic_error(what);  
 }
 
-using namespace CGAL::Triangulated_surface_mesh::Simplification ;
+using namespace CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse ;
 
 char const* matched_alpha ( bool matched )
 {
   return matched ? "matched" : "UNMATCHED" ; 
 }
 
-bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string name )
+enum Method { Midpoint, LT_cached, LT_uncached } ;
+
+char const* method_to_string( Method aMethod )
+{
+  switch(aMethod)
+  {
+    case Midpoint:  return "midpoint" ; break ;
+    case LT_cached: return "LindstromTurk (cached)" ; break ;
+    case LT_uncached: return "LindstromTurk (uncached)" ; break ;
+  }
+  
+  return "<unknown>" ;
+}
+
+typedef Set_empty_collapse_data             <Polyhedron> P_set_empty_collapse_data ;
+typedef Set_full_collapse_data_LindstromTurk<Polyhedron> P_set_full_collapse_data_LT ;
+
+typedef Empty_collapse_data<Polyhedron> P_empty_collapse_data ;
+typedef Full_collapse_data<Polyhedron>  P_full_collapse_data ;
+
+typedef LindstromTurk_params LT_params ;
+typedef char                 Dummy_params ;
+
+typedef Edge_length_cost<P_empty_collapse_data>   MP_cost ;
+typedef LindstromTurk_cost<P_empty_collapse_data> LT_uncached_cost ; 
+typedef LindstromTurk_cost<P_full_collapse_data>  LT_cached_cost ;
+          
+typedef Midpoint_placement     <P_empty_collapse_data> MP_placement ;
+typedef LindstromTurk_placement<P_empty_collapse_data> LT_uncached_placement ;
+typedef LindstromTurk_placement<P_full_collapse_data>  LT_cached_placement ;
+
+bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Method aMethod )
 {
   bool rSucceeded = false ;
   
-  string off_name    = name ;
-  string audit_name  = name+string(".audit");
-  string result_name = name+string(".out.off");
+  string off_name    = aName ;
+  string audit_name  = aName+string(".audit");
+  string result_name = aName+string(".out.off");
   
   ifstream off_is(off_name.c_str());
   if ( off_is )
@@ -453,13 +480,7 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string name )
       {
         if ( !aJustPrintSurfaceData )
         {
-          cout << "Testing simplification of surface " << off_name << " using "
-#ifdef TEST_LT
-               << " LindstromTurk method."
-#else
-               << " Squared-length/mid-point method."
-#endif  
-               << endl ;
+          cout << "Testing simplification of surface " << off_name << " using " << method_to_string(aMethod) << "method."  << endl ;
              
           cout << lP.size_of_facets() << " triangles." << endl 
                << (lP.size_of_halfedges()/2) << " edges." << endl 
@@ -480,46 +501,50 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string name )
           for ( Polyhedron::Facet_iterator fi = lP.facets_begin(); fi != lP.facets_end() ; ++ fi )
             fi->ID = lFacetID ++ ;    
       
-      #ifdef AUDIT
+#ifdef AUDIT
           sAuditData .clear();
           sAuditReport.clear();
           ParseAudit(audit_name);
           cout << "Audit data loaded." << endl ;
-      #endif
+#endif
+          P_set_empty_collapse_data   set_empty_collapse_data ;
+          P_set_full_collapse_data_LT set_full_collapse_data_LT ;
           
-      #ifdef TEST_LT
-          typedef Set_full_collapse_data_LindstromTurk<Polyhedron> Set_collapse_data ;
+          MP_cost          get_MP_cost;
+          LT_uncached_cost get_LT_uncached_cost;
+          LT_cached_cost   get_LT_cached_cost;
           
-          typedef Set_collapse_data::Params Params ;
-          
-          typedef Set_collapse_data::Collapse_data Collapse_data ;
-          
-          LindstromTurk_cost     <Collapse_data> Get_cost ;
-          LindstromTurk_placement<Collapse_data> Get_vertex_point ;
-      #else
-          typedef Set_empty_collapse_data<Polyhedron> Set_collapse_data ;
-          
-          typedef Set_collapse_data::Params Params ;
-          
-          typedef Set_collapse_data::Collapse_data Collapse_data ;
-          
-          Edge_length_cost  <Collapse_data> Get_cost ;
-          Midpoint_placement<Collapse_data> Get_vertex_point ;
-      #endif
+          MP_placement          get_MP_placement;
+          LT_uncached_placement get_LT_uncached_placement;
+          LT_cached_placement   get_LT_cached_placement;
 
           int lFinalEdgesCount ;
           if ( aStopA != -1 )
                lFinalEdgesCount = aStopA ;
           else lFinalEdgesCount = lP.size_of_halfedges() * aStopR / 200 ;
                     
-          Count_stop_condition<Polyhedron> Should_stop(lFinalEdgesCount);
+          Count_stop_condition<Polyhedron> should_stop(lFinalEdgesCount);
               
-          Params lParams;
+          Dummy_params lDummy_params;
+          LT_params    lLT_params ; 
           
           Visitor lVisitor ;
       
+          int r = -1 ;
+          
           Real_timer t ; t.start();    
-          int r = edge_collapse(lP,Set_collapse_data,&lParams,Get_cost,Get_vertex_point,Should_stop,&lVisitor);
+          switch( aMethod )
+          {
+            case Midpoint:  
+              r = edge_collapse(lP,&lDummy_params,set_empty_collapse_data,get_MP_cost,get_MP_placement,should_stop,&lVisitor);
+              break ;
+            case LT_cached: 
+              r = edge_collapse(lP,&lLT_params,set_full_collapse_data_LT,get_LT_cached_cost,get_LT_cached_placement,should_stop,&lVisitor);
+              break ;
+            case LT_uncached:
+              r = edge_collapse(lP,&lLT_params,set_empty_collapse_data,get_LT_uncached_cost,get_LT_uncached_placement,should_stop,&lVisitor);
+              break ;
+          }
           t.stop();
                   
           ofstream off_out(result_name.c_str(),ios::trunc);
@@ -590,17 +615,17 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string name )
       }
       else
       {
-        cerr << "Surfaces is not triangulated (has faces with more than 3 sides): " << name << endl ;
+        cerr << "Surfaces is not triangulated (has faces with more than 3 sides): " << aName << endl ;
       }
     }
     else
     {
-      cerr << "Invalid surface: " << name << endl ;
+      cerr << "Invalid surface: " << aName << endl ;
     }
   }
   else
   {
-    cerr << "Unable to open test file " << name << endl ;
+    cerr << "Unable to open test file " << aName << endl ;
   }              
   
   return rSucceeded ;
@@ -632,6 +657,7 @@ int main( int argc, char** argv )
   bool   lJustPrintSurfaceData = false ;
   int    lStopA = -1 ;
   int    lStopR = 20 ;
+  Method lMethod = LT_cached ;
   string lFolder =""; 
   vector<string> lCases ;
         
@@ -646,6 +672,7 @@ int main( int argc, char** argv )
         case 'a' : lStopA = lexical_cast<int>(opt.substr(2)); break;
         case 'r' : lStopR = lexical_cast<int>(opt.substr(2)); break;
         case 'n' : lJustPrintSurfaceData = true ; break ;
+        case 'm' : lMethod = (Method)lexical_cast<int>(opt.substr(2)); break ;
         
         default: 
           cerr << "Invalid option: " << opt << endl ;
@@ -686,6 +713,7 @@ int main( int argc, char** argv )
   {
     cout << "collapse_edge_test <options> file0 file1 ... fileN" << endl 
          << "  options: " << endl
+         << "    -m method                    method: 0=midpoint 1=LindstromTurk (cached) 2=LindstromTurk (uncached)" << endl 
          << "    -d folder                    Specifies the folder where the files are located. " << endl 
          << "    -a absolute_max_edge_count   Sets the final number of edges as absolute number." << endl
          << "    -r relative_max_edge_count   Sets the final number of edges as a percentage." << endl
@@ -698,7 +726,7 @@ int main( int argc, char** argv )
     unsigned lOK = 0 ;
     for ( vector<string>::const_iterator it = lCases.begin(); it != lCases.end() ; ++ it )
     {
-     if ( Test( lStopA, lStopR, lJustPrintSurfaceData, *it) )
+     if ( Test( lStopA, lStopR, lJustPrintSurfaceData, *it, lMethod) )
        ++ lOK ;
     }  
       

@@ -18,24 +18,21 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_PARAMS_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_PARAMS_H
 
-#include <CGAL/Surface_mesh_simplification/TSMS_common.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Minimal_collapse_data.h>
-
 CGAL_BEGIN_NAMESPACE
 
 namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse 
 {
 
-struct LinstromTurk_params
+struct LindstromTurk_params
 {
-  LinstromTurk_params()
+  LindstromTurk_params()
     :
     VolumeWeight  (0.5)
    ,BoundaryWeight(0.5)
    ,ShapeWeight   (0)
   {}
   
-  LinstromTurk_params( double aVolumeWeight, double aBoundaryWeight, double aShapeWeight )
+  LindstromTurk_params( double aVolumeWeight, double aBoundaryWeight, double aShapeWeight )
     :
     VolumeWeight  (aVolumeWeight)
    ,BoundaryWeight(aBoundaryWeight)

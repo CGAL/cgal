@@ -19,6 +19,7 @@
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_MIDPOINT_PLACEMENT_H 1
 
 #include <CGAL/Surface_mesh_simplification/TSMS_common.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Functor_base.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -29,9 +30,9 @@ namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_
 // Midpoint vertex placement
 //
 template<class Collapse_data_>
-class Midpoint_placement : protected Placement_functor_base< Collapse_data_, Midpoint_placement<Collapse_data_> >
+class Midpoint_placement : public Placement_functor_base< Collapse_data_,void>
 {
-  typedef Placement_functor_base<Collapse_data_, Midpoint_placement<Collapse_data_> > Base ;
+  typedef Placement_functor_base<Collapse_data_,void> Base ;
   
 public:
     
@@ -39,18 +40,17 @@ public:
   
   typedef typename Collapse_data::TSM TSM ;
   
-  typedef typename grah_traits<TSM>::vertex_descriptor vertex_descriptor ;
-  typedef typename grah_traits<TSM>::edge_descriptor   edge_descriptor ;
+  typedef typename boost::graph_traits<TSM>::vertex_descriptor vertex_descriptor ;
+  typedef typename boost::graph_traits<TSM>::edge_descriptor   edge_descriptor ;
   
   typedef typename Surface_geometric_traits<TSM>::Point_3 Point_3 ;
   
   typedef typename Base::result_type result_type ;
-  
-  typedef void Params ;
+  typedef typename Base::Params      Params ;
     
 public:
 
-  result_type compute_placement( edge_descriptor const& aEdge, TSM const& aSurface, Params const* ) const
+  virtual result_type compute_placement( edge_descriptor const& aEdge, TSM& aSurface, Params const* ) const
   {
     vertex_descriptor vs,vt ; tie(vs,vt) = this->get_vertices(aEdge,aSurface);
     

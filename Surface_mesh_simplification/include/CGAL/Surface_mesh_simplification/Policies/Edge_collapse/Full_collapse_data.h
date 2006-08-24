@@ -45,7 +45,7 @@ public:
   
 public :
 
-  Ful_collapse_data() {}
+  Full_collapse_data() {}
 
   Optional_cost_type      cost     () const { return mCost ; }
   Optional_placement_type placement() const { return mPlacement ;  }

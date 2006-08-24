@@ -167,7 +167,7 @@ typename LindstromTurkCore<TSM>::result_type LindstromTurkCore<TSM>::compute()
                       );
   }
     
-  return result_type(lOptionalCost,lOptionalV);
+  return make_tuple(lOptionalCost,lOptionalP);
 }
 
 
