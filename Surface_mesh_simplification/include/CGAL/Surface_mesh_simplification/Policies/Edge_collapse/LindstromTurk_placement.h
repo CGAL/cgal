@@ -44,12 +44,24 @@ public:
   
   typedef typename Base::result_type result_type ;
   
-  typedef void Params ;
+  typedef LindstromTurk_params Params ;
+    
+  typedef optional<FT>      Optional_cost_type ;
+  typedef optional<Point_3> Optional_placement_type ;
     
 public:
 
   result_type compute_placement( edge_descriptor const& aEdge, TSM const& aSurface, Params const* ) const
   {
+    CGAL_assertion(aParams);
+    CGAL_assertion( handle_assigned(aEdge) );
+    
+    LindstromTurkCore<TSM> core(*aParams,aEdge,aSurface,false);
+
+    Optional_cost_type lCost ;
+    Optional_placement_type lPlacement ;
+    tie(lCost,lPlacement) = core.compute();
+    return lPlacement ;
   }
 };
 

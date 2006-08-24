@@ -21,7 +21,7 @@
 #include <vector>
 
 #include <CGAL/Surface_mesh_simplification/TSMS_common.h>
-#include <CGAL/Surface_mesh_simplification/Policies/LindstromTurk_collapse_data.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_params.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -72,8 +72,8 @@ public:
   
   LindstromTurkCore( Params const&          aParams
                    , edge_descriptor const& aP_Q
-                   , edge_descriptor const& aQ_P
                    , TSM&                   aSurface 
+                   , bool                   aComputeCost
                    ) ;
     
   result_type compute() ;
@@ -203,13 +203,13 @@ private :
 private:    
 
   Params const&            mParams ; 
+  edge_descriptor const&   mP_Q ;
+  TSM&                     mSurface ;
+  bool                     mComputeCost ;
+  
   vertex_descriptor const& mP ;
   vertex_descriptor const& mQ ;
-  bool                     mIsPFixed ;
-  bool                     mIsQFixed ;
-  edge_descriptor const&   mP_Q ;
   edge_descriptor const&   mQ_P ;
-  TSM&                     mSurface ;
 
 private:    
 
