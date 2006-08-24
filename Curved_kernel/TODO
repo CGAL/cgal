@@ -2,15 +2,21 @@
 resoudre le probleme Lazy_CK avec GMP (constructions Gmpz(Gmpq) 
 evidemment non trouvees...)
 
+voir make_x_monotone pour que ca retourne des arcs 
+(necessite bricolage de la traits car Arr_2 demande des Object)
+
 tracker les vestiges de l'ancienne representation des points (pointeurs
 vers cercles)
 
 utiliser partout ou c'est possible le constructeur de arc_point(Point_2)
 
-echecs de filtres un peu partout
+echecs de filtres 
 
-equal
-faire unoriented equal ? dans kernel aussi ? 
+--> a transferer dans linear kernel ? 
+	- unoriented equal (pb general orientation dans noyau cgal...)
+	- intersection de deux Line_3 
+	- radical plane
+	- calculs de longueurs et surfaces
 
 mettre fonctions globales 
 - systematiquement dans code (il y en a qqs unes)
@@ -18,16 +24,13 @@ mettre fonctions globales
 - tester
 
 How can we avoid to call global functions of CK in internal code? 
-These calls look rather dirty to me. 
-I (MT) tried to remove them but could not: if these calls are replaced 
+These calls look rather dirty to me (MT). 
+I tried to remove them but could not: if these calls are replaced 
 by calls of internal functions, then CK::Polynomials must be accessed,
 but they are undefined in Lazy_kernel...
 
 interface intersect avec 2 outputIt types
 rajouter cas line_2 qui a ete oublie
-
-arcs non monotones
-- do_overlap utilisant has_on(...,has_on_supporting_circle)
 
 enlever messages de debug
 regarder traits-tracer (seg fault)
@@ -35,4 +38,3 @@ regarder traits-tracer (seg fault)
 construct intersection for *arcs* should use solve or solve in range
 
 add "using..." in all functors that derive from another
-
