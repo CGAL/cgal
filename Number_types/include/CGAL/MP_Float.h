@@ -373,7 +373,17 @@ simplify_quotient(MP_Float & numerator, MP_Float & denominator)
   numerator.exp -= denominator.exp 
                     + (MP_Float::exponent_type) denominator.v.size();
   denominator.exp = - (MP_Float::exponent_type) denominator.v.size();
+#elif 1
+  numerator.exp -= denominator.exp;
+  denominator.exp = 0;
 #else
+  if (numerator != 0 && denominator != 0) {
+    numerator.exp -= denominator.exp;
+    denominator.exp = 0;
+    const MP_Float g = gcd(numerator, denominator);
+    numerator = exact_division(numerator, g);
+    denominator = exact_division(denominator, g);
+  }
   numerator.exp -= denominator.exp;
   denominator.exp = 0;
 #endif
@@ -466,21 +476,21 @@ compare_bitlength(const MP_Float &a, const MP_Float &b)
   MP_Float aa = abs(a);
   MP_Float bb = abs(b);
 
-  if (aa.size() > bb.size()) return LARGER;
-  if (aa.size() < bb.size()) return SMALLER;
+  if (aa.size() > (bb.size() + 2)) return LARGER;
+  if (bb.size() > (aa.size() + 2)) return SMALLER;
 
   // multiply by 2 till last bit is 1.
-  while ((aa.v[0]) & 1 == 0) // last bit is zero
+  while (((aa.v[0]) & 1) == 0) // last bit is zero
     aa = aa + aa;
 
-  while ((bb.v[0]) & 1 == 0) // last bit is zero
+  while (((bb.v[0]) & 1) == 0) // last bit is zero
     bb = bb + bb;
 
   // sizes might have changed
   if (aa.size() > bb.size()) return LARGER;
   if (aa.size() < bb.size()) return SMALLER;
 
-  for (int i = aa.size(); i >= 0; --i)
+  for (int i = aa.size()-1; i >= 0; --i)
   {
     if (aa.v[i] > bb.v[i]) return LARGER;
     if (aa.v[i] < bb.v[i]) return SMALLER;
@@ -559,7 +569,7 @@ division(const MP_Float & n, const MP_Float & d)
       break;
 
     // Test condition for non-exact division (with remainder).
-    if (compare_bitlength(remainder, d) == SMALLER)
+    if (compare_bitlength(remainder, divisor) == SMALLER)
     {
       if (! first_time_smaller_than_divisor)
       {

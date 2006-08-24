@@ -43,6 +43,10 @@ double to_double(const Quotient<MP_Float>&);
 double to_double(const Root_of_2<MP_Float> &x);
 std::pair<double,double> to_interval(const Quotient<MP_Float>&);
 
+MP_Float exact_division(const MP_Float & n, const MP_Float & d);
+MP_Float div(const MP_Float& n1, const MP_Float& n2);
+MP_Float gcd( const MP_Float& a, const MP_Float& b);
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_MP_FLOAT_FWD_H
