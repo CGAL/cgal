@@ -43,65 +43,7 @@ public:
   
 public :
 
-  Minimal_collapse_data()
-    :
-     mP       ()
-    ,mQ       ()
-    ,mIsPFixed(false)
-    ,mIsQFixed(false)
-    ,mEdge    ()
-    ,mSurface (0)                             
-  {}
-  
-  Minimal_collapse_data ( vertex_descriptor const& aP 
-                        , vertex_descriptor const& aQ
-                        , bool                     aIsPFixed
-                        , bool                     aIsQFixed
-                        , edge_descriptor   const& aEdge 
-                        , TSM&                     aSurface 
-                        )
-    :
-     mP       (aP)
-    ,mQ       (aQ)
-    ,mIsPFixed(aIsPFixed)
-    ,mIsQFixed(aIsQFixed)
-    ,mEdge    (aEdge)
-    ,mSurface (addressof(aSurface))                             
-  {} 
-
-  void set( vertex_descriptor const& aP 
-          , vertex_descriptor const& aQ
-          , bool                     aIsPFixed
-          , bool                     aIsQFixed
-          , edge_descriptor   const& aEdge 
-          , TSM&                     aSurface 
-          )
-  {
-    mP        = aP ;
-    mQ        = aQ ;
-    mIsPFixed = aIsPFixed ;
-    mIsQFixed = aIsQFixed ;
-    mEdge     = aEdge ;
-    mSurface  = addressof(aSurface);
-  } 
-  
-  vertex_descriptor const& p()       const { return mP ; }
-  vertex_descriptor const& q()       const { return mQ ; }
-  edge_descriptor const&   edge()    const { return mEdge ; }
-  TSM&                     surface() const { return *mSurface ; }
-  
-  bool is_p_fixed   () const { return mIsPFixed ; }
-  bool is_q_fixed   () const { return mIsQFixed ; }
-  bool is_edge_fixed() const { return mIsPFixed && mIsQFixed ; }
-  
-protected:
-
-  vertex_descriptor mP ;
-  vertex_descriptor mQ ;
-  bool              mIsPFixed ;
-  bool              mIsQFixed ;
-  edge_descriptor   mEdge ;
-  TSM*              mSurface ;
+  Minimal_collapse_data() {}
   
 };    
 

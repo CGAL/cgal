@@ -41,18 +41,7 @@ public:
    
 public :
 
-  void operator() ( Collapse_data&           aData
-                  , vertex_descriptor const& aP 
-                  , vertex_descriptor const& aQ
-                  , bool                     aIsPFixed
-                  , bool                     aIsQFixed
-                  , edge_descriptor   const& aEdge 
-                  , TSM                    & aSurface 
-                  , Params            const* 
-                  ) const
-  {
-    aData.set(aP,aQ,aIsPFixed,aIsQFixed,aEdge,aSurface);
-  }                         
+  void operator() ( Collapse_data&, edge_descriptor const&, TSM&, Params const* ) const {}                         
   
 };    
 

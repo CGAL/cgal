@@ -46,6 +46,7 @@ public:
   
   typedef typename Collapse_data::TSM               TSM ;
   typedef typename Collapse_data::vertex_descriptor vertex_descriptor ;
+  typedef typename Collapse_data::edge_descriptor   edge_descriptor ;
   typedef typename Collapse_data::Point_3           Point_3 ;
   typedef typename Collapse_data::FT                FT ;
     
@@ -53,7 +54,7 @@ public:
 
   typedef optional<FT> result_type;
     
-  result_type operator()( Collapse_data const& data ) const
+  result_type operator()( edge_descriptor const& edge, TSM const& aSurface, Collapse_data const& data ) const
   {
     if ( !data.is_edge_fixed() )
     {
@@ -65,11 +66,21 @@ public:
     else return result_type();
   }
   
-  Point_3 const& get_point ( vertex_descriptor const& v, TSM& aSurface ) const
+  result_type compute_cost( edge_descriptor const& edge, TSM const& aSurface, Collapse_data const& data ) const
+  {
+    Point_3 const& p = get_point(data.p(),data.surface());
+    Point_3 const& q = get_point(data.q(),data.surface());
+      
+    return result_type(squared_distance(p,q));
+  }
+  
+  Point_3 const& get_point ( vertex_descriptor const& v, TSM const& aSurface ) const
   {
     vertex_point_t vertex_point ;
     return get(vertex_point,aSurface,v) ;
   }
+  
+  
 
 };
 

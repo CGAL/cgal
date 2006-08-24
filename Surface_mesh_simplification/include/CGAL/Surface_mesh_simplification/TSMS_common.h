@@ -120,6 +120,7 @@ inline std::string optional_to_string( boost::optional<T> const& o )
   else return std::string("NONE");  
 }
 
+
 CGAL_END_NAMESPACE
 
 #if   defined(CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE)    \

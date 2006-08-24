@@ -51,7 +51,7 @@ void Surface_simplification_external_trace( std::string s )
 
 int exit_code = 0 ;
 
-#include <CGAL/Surface_mesh_simplification_vertex_pair_collapse.h>
+#include <CGAL/Surface_mesh_simplification_edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Count_stop_pred.h>
 #include <CGAL/Surface_mesh_simplification/Polyhedron_is_vertex_fixed_map.h>
 #include <CGAL/Surface_mesh_simplification/Polyhedron_edge_cached_pointer_map.h>
@@ -363,74 +363,54 @@ struct Visitor
   void OnFinished ( Polyhedron& aSurface ) 
   {
 #ifdef STATS
-    printf("\n");
+    cerr << "\n";
 #endif
   } 
   
-  void OnThetrahedronReached ( Polyhedron& aSurface ) {} 
   void OnStopConditionReached( Polyhedron& aSurface ) {} 
   
-  void OnCollected( Polyhedron&            aSurface
-                  , Vertex_handle const&   aP
-                  , Vertex_handle const&   aQ
-                  , bool                   aIsPFixed
-                  , bool                   aIsQFixed
-                  , Halfedge_handle const& aEdge
-                  , optional<double>       aCost
-                  , optional<Point>        aNewVertexPoint
+  void OnCollected( Halfedge_handle const& aEdge
+                  , bool                   aIsFixed
+                  , Polyhedron&            aSurface
                   )
   {
 #ifdef AUDIT  
-    register_collected_edge(aP,aQ,aEdge,aCost,aNewVertexPoint); 
+    register_collected_edge(aEdge,aCost,aNewVertexPoint); 
 #endif
+
 #ifdef STATS
     ++sCollected ;
-    printf("\rEdges collected %d",sCollected);
+    cerr << "\rEdges collected: " << sCollected;
+    if ( aIsFixed )
+      ++ sFixed ;
 #endif
  }                
   
-  void OnProcessed( Polyhedron&            aSurface
-                  , Vertex_handle const&   aP
-                  , Vertex_handle const&   aQ
-                  , bool                   aIsPFixed
-                  , bool                   aIsQFixed
-                  , Halfedge_handle const& aEdge
-                  , optional<double>       aCost
-                  , optional<Point>        aNewVertexPoint
-                  , bool                   aIsCollapsable
+  void OnProcessed(Halfedge_handle const& aEdge
+                  ,Polyhedron&            aSurface
+                  ,optional<double>       aCost
+                  ,Vertex_handle const&   aVertex
                   )
   {
 #ifdef STATS
     if ( sProcessed == 0 )
-      printf("\n");  
+      cerr << "\n";  
     ++ sProcessed ;
-    if ( aIsPFixed && aIsQFixed )
-      ++ sFixed ;
-    else if ( !aIsCollapsable )
+    else if ( aVertex == Vertex_handle() )
     {
       if ( !aCost )
            ++ sCostUncomputable ;
       else ++ sNonCollapsable ;
     }
     else 
+    {
       ++ sCollapsed;
+      sRemoved += 3 ;
+      cerr << "\r" << ((int)(100.0*((double)sRemoved/(double)sInitial))) << "%" ;
+    }
 #endif  
- 
   }                
   
-  void OnCollapsed( Polyhedron&            aSurface
-                  , Vertex_handle const&   aP
-                  , Halfedge_handle const& aPQ
-                  , Halfedge_handle const& aPT
-                  , Halfedge_handle const& aQB
-                  )
-  {
-#ifdef STATS
-    sRemoved += 3 ;
-    printf("\r%d%%",((int)(100.0*((double)sRemoved/(double)sInitial))));
-#endif  
-  }                
- 
 } ;
 
 // This is here only to allow a breakpoint to be placed so I can trace back the problem.
@@ -534,7 +514,7 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string name )
           Visitor lVisitor ;
       
           Real_timer t ; t.start();    
-          int r = vertex_pair_collapse(lP,Set_collapse_data,&lParams,Get_cost,Get_vertex_point,Should_stop,&lVisitor);
+          int r = edge_collapse(lP,Set_collapse_data,&lParams,Get_cost,Get_vertex_point,Should_stop,&lVisitor);
           t.stop();
                   
           ofstream off_out(result_name.c_str(),ios::trunc);
