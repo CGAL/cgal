@@ -9,11 +9,10 @@
 #include <CGAL/Gmpq.h>
 #include <CGAL/Algebraic_kernel_2_2.h>
 #include <CGAL/intersections.h>
-#include <CGAL/Circular_kernel.h>
+#include <CGAL/Circular_kernel_2.h>
 #include <CGAL/Arr_circular_arc_traits.h>
-#include <CGAL/Lazy_curved_kernel.h>
-#include <CGAL/Filtered_hexagon_curved_kernel.h> 
-#include <CGAL/Filtered_bbox_curved_kernel.h>
+#include <CGAL/Lazy_circular_kernel_2.h>
+#include <CGAL/Filtered_bbox_circular_kernel_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
 #include <CGAL/Arr_circular_line_arc_traits.h>
@@ -24,7 +23,7 @@
 #include <fstream>
 #include <iomanip>
 
-// CURVED KERNEL TYPEDEFS
+// CIRCULAR KERNEL TYPEDEFS
 typedef CGAL::MP_Float RT;
 typedef CGAL::Quotient<RT> NT1;
 typedef CGAL::Cartesian<NT1> Linear_k1;
@@ -45,7 +44,7 @@ typedef CGAL::Interval_nt_advanced NT3;
 typedef CGAL::Cartesian<NT3> Linear_k3;
 typedef CGAL::Algebraic_kernel_for_circles_2_2<NT3> Algebraic_k3;
 typedef CGAL::Circular_kernel_2 <Linear_k3,Algebraic_k3> CK3_;
-typedef CGAL::Lazy_curved_kernel<CircularKernel,CK3_> LazyCurvedK;
+typedef CGAL::Lazy_circular_kernel_2<CircularKernel,CK3_> LazyCurvedK;
 typedef CGAL::Arr_circular_arc_traits<LazyCurvedK> LazyCurvedK_CA_Traits;
 typedef LazyCurvedK::Circular_arc_2 LazyArc;
 typedef std::vector<LazyArc> LazyArcContainer;
@@ -57,7 +56,7 @@ typedef CGAL::Arr_circular_line_arc_traits<LazyCurvedK,
          Line_arc_3,Circular_arc_3> LazyCurvedK_Variant_Traits;
 
 // BBOX TYPEDEFS
-typedef CGAL::Filtered_bbox_curved_kernel<CircularKernel>
+typedef CGAL::Filtered_bbox_circular_kernel_2<CircularKernel>
   BBCircularKernel ;
 typedef CGAL::Arr_circular_arc_traits<BBCircularKernel>
   BBCircularKernel_CA_Traits;
@@ -227,7 +226,7 @@ int main(int argc, char* argv[]){
       if(i == 3) do_main<CircularKernel,CircularK_Variant_Traits, CircularKVarArcContainer>(dxf_filename[j]);
       if((i >= 4) || (i <= 0)) std::cout << "INVALID PARAMETERS" << std::endl;
     } else {
-      int k;
+      int k = -1;
       if(j == 9) k = 0; 
       if(j == ('a'-'0')) k = 1;
       if(j == ('b'-'0')) k = 2;
