@@ -102,17 +102,24 @@ With the built-in integer types overflow might occur.
 \cgal\ provides several number types that are that can be used for 
 exact computation.  These include the \ccc{Quotient} class that can
 be used to create, for example, a number type that behaves like a rational
-number.  When used in conjunction with the number type \ccc{MP_Float} that
-is able to represent multi-precision floating point values, you achieve
-an exact rational number representation.
+number when parameterized with a number type which can represent integers.
+
+The number type \ccc{MP_Float} is able to represent multi-precision floating
+point values, a generalization of integers scaled by a (potentially negative)
+power of 2.  It allows to deal with ring operations over floating-point values
+with requiring rational numbers.  By plugging it in \ccc{Quotient}, one obtains
+rational numbers.  Note that \ccc{MP_Float} may not be as efficient as the
+integer types provided by \ccc{GMP} or \ccc{LEDA}, but it has the advantage
+to make more parts of \cgal\ independent on these external libraries for
+handling robustness issues.
 
 The templated number type \ccc{Lazy_exact_nt<NT>} is able to represent any
 number that \ccc{NT} is able to represent, but because it first tries to use an
-approximate value to perform computations it can be faster than the provided
-number type \ccc{NT}.  \cgal\ also provides a fixed-precision number type,
+approximate value to perform computations it can be faster than \ccc{NT}.
 
 A number type for doing interval arithmetic, \ccc{Interval_nt}, is provided.
-This number type helps in doing filtering of predicates.
+This number type helps in doing arithmetic filtering in many places such
+as \ccc{Filtered_predicate}.
 
 \ccc{CGAL::Root_of_2} is a number type that allows to represent algebraic
 numbers of degree up to~2 over a \ccc{RingNumberType}.  A generic function

@@ -37,6 +37,7 @@
 // The main algorithms are :
 // - Addition/Subtraction
 // - Multiplication
+// - Integral division div(), exact_division(), gcd(), operator%().
 // - Comparison
 // - to_double() / to_interval()
 // - Construction from a double.
@@ -49,8 +50,6 @@
 // - Division, sqrt... : different options :
 //   - nothing
 //   - convert to double, take approximation, compute over double, reconstruct
-//   - exact division as separate function (for Bareiss...)
-//   - returns the quotient of the division, forgetting the rest.
 
 CGAL_BEGIN_NAMESPACE
 
@@ -62,6 +61,7 @@ MP_Float operator*(const MP_Float &a, const MP_Float &b);
 #ifdef CGAL_MP_FLOAT_ALLOW_INEXACT
 MP_Float operator/(const MP_Float &a, const MP_Float &b);
 #endif
+MP_Float operator%(const MP_Float &a, const MP_Float &b);
 
 Comparison_result
 compare (const MP_Float & a, const MP_Float & b);
@@ -191,6 +191,7 @@ public:
 #ifdef CGAL_MP_FLOAT_ALLOW_INEXACT
   MP_Float& operator/=(const MP_Float &a) { return *this = *this / a; }
 #endif
+  MP_Float& operator%=(const MP_Float &a) { return *this = *this % a; }
 
   exponent_type max_exp() const
   {
@@ -595,6 +596,37 @@ bool
 divides(const MP_Float & n, const MP_Float & d)
 {
   return CGALi::division(n, d).second == 0;
+}
+
+inline
+MP_Float
+operator%(const MP_Float& n1, const MP_Float& n2)
+{
+  return CGALi::division(n1, n2).second;
+}
+
+inline
+MP_Float
+div(const MP_Float& n1, const MP_Float& n2)
+{
+  return CGALi::division(n1, n2).first;
+}
+
+inline
+MP_Float
+gcd( const MP_Float& a, const MP_Float& b)
+{
+  CGAL_precondition( a != 0 );
+  CGAL_precondition( b != 0 );
+  MP_Float x = a, y = b;
+  while (true) {
+    x = x % y;
+    if (x == 0) {
+      CGAL_postcondition(divides(a, y) && divides(b, y));
+      return y;
+    }
+    swap(x, y);
+  }
 }
 
 CGAL_END_NAMESPACE

@@ -8,18 +8,17 @@
 
 \ccDefinition
 An object of the class \ccc{MP_Float} is able to represent a floating point
-value with arbitrary precision.  This number type has the property that
+value with arbitrary precision, that is numbers of the form $m2^e$ where
+$m$ and $e$ are integers.  This number type has the property that
 additions, subtractions and multiplications are computed exactly, as well as
 the construction from \ccc{float}, \ccc{double} and \ccc{long double}.
+It also provides integral divisions related operations.
 
-Division and square root are not enabled by default since \cgal\ release 3.2,
-since they are computed approximately.  We suggest that you use
-rationals like \ccc{Quotient<MP_Float>} when you need exact (rational)
-divisions.
-To enable division and square root, you have to define the preprocessor
-macro \ccc{CGAL_MP_FLOAT_ALLOW_INEXACT}.
-
-An exact (integral) division is also provided.
+Square root and (field) division are not enabled by default since
+\cgal\ release 3.2, since they are computed approximately.  We suggest that you
+use rationals like \ccc{Quotient<MP_Float>} when you need exact (rational)
+divisions.  To enable division and square root, you have to define the
+preprocessor macro \ccc{CGAL_MP_FLOAT_ALLOW_INEXACT}.
 
 Note on the implementation : although the mantissa length is basically only
 limited by the available memory, the exponent is currently represented by a
@@ -29,8 +28,7 @@ plan to also have a multiprecision exponent to fix this issue.
 \ccInclude{CGAL/MP_Float.h}
 
 \ccIsModel
-\ccc{RingNumberType}
-or \ccc{SqrtFieldNumberType} if \ccc{CGAL_MP_FLOAT_ALLOW_INEXACT} is set.
+\ccc{EuclideanRingNumberType}
 
 \ccCreation
 \ccCreationVariable{m}
@@ -62,16 +60,33 @@ or \ccc{SqrtFieldNumberType} if \ccc{CGAL_MP_FLOAT_ALLOW_INEXACT} is set.
 {reads a \ccc{double} from \ccc{in}, then converts it to an \ccc{MP_Float}.}
 
 \ccFunction{bool divides(const MP_Float &a, const MP_Float &b);}
-{returns true iff \ccc{b} divides \ccc{b}.}
+{returns true iff \ccc{b} divides \ccc{a}.}
 
 \ccFunction{MP_Float exact_division(const MP_Float &a, const MP_Float &b);}
 {computes the result of the division of \ccc{a} by \ccc{b}.
 \ccPrecond{divides(a, b)}.}
 
+\ccFunction{MP_Float div(const MP_Float &a, const MP_Float &b);}
+{returns the result of the integral division of \ccc{a} by \ccc{b}.
+For \ccc{MP_Float}, this is not uniquely defined, but this function
+guarantees that the remainder has a smaller bitlength than \ccc{b}
+(considering the bitlength of the odd mantissa).}
+
+\ccFunction{MP_Float operator%(const MP_Float &a, const MP_Float &b);}
+{returns the remainder of the integral division of \ccc{a} by \ccc{b}.
+For \ccc{MP_Float}, this is not uniquely defined, but this function
+guarantees that the remainder has a smaller bitlength than \ccc{b}
+(considering the bitlength of the odd mantissa).}
+
+\ccFunction{MP_Float gcd(const MP_Float &a, const MP_Float &b);}
+{returns the greatest common divisor of \ccc{a} and \ccc{b}.
+For \ccc{MP_Float}, this is defined up to a power of 2.}
+\ccPrecond{\ccc{a} and \ccc{b} are non zero.}}
+
 \ccFunction{MP_Float approximate_division(const MP_Float &a, const MP_Float &b);}
-{computes an approximation of the division by converting the operands to
-\ccc{double}, performing the division on \ccc{double}, and converting back to
-\ccc{MP_Float}.}
+{computes an approximation of the (field) division by converting the operands
+to \ccc{double}, performing the division on \ccc{double}, and converting back
+to \ccc{MP_Float}.}
 
 \ccFunction{MP_Float approximate_sqrt(const MP_Float &a);}
 {computes an approximation of the square root by converting the operand to
