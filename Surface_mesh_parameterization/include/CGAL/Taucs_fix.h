@@ -25,11 +25,19 @@
 #ifndef CGAL_INCLUDED_TAUCS_H
     #define CGAL_INCLUDED_TAUCS_H
 
-    // GCC 3.x does not compile if we include <complex.h> within "extern C {}"
-    // and complains that this header is deprecated
+    // GCC 3.x does not compile if we include complex.h within "extern C {}"
+    // and complains that this header is deprecated.
     #if defined(__GNUC__)
         #undef __DEPRECATED
         #include <complex.h>
+    #endif
+
+    // taucs.h will define min/max macros if it's not already done (e.g. by Windows.h).
+    #ifndef min
+        #define CGAL_TAUCS_DEFINES_MIN
+    #endif
+    #ifndef max
+        #define CGAL_TAUCS_DEFINES_MAX
     #endif
 
     // TAUCS is a C library
@@ -37,10 +45,14 @@
         #include <taucs.h>
     }
 
-    // Avoid error with std::min() and std::max()
-    #undef min
-    #undef max
-
+    // Undefine Taucs' min/max macros to avoid an error 
+    // with std::min()/std::max() calls in standard C++ headers.
+    #ifdef CGAL_TAUCS_DEFINES_MIN
+        #undef min
+    #endif
+    #ifdef CGAL_TAUCS_DEFINES_MAX
+        #undef max
+    #endif
 #endif
 
 #ifdef OSTYPE_linux
