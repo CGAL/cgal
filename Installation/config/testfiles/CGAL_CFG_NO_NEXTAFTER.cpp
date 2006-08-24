@@ -1,4 +1,4 @@
-// Copyright (c) 1997  Utrecht University (The Netherlands),
+// Copyright (c) 2006  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -19,7 +19,7 @@
 // $Id$
 // 
 //
-// Author(s)     : various
+// Author(s)     : Andreas Fabri
 
 // CGAL_CFG_NO_NEXTAFTER.C
 // ---------------------------------------------------------------------
@@ -36,5 +36,6 @@
 int main()
 {
   double d = nextafter(0,0);
+  (void) d;
   return 0;
 }
