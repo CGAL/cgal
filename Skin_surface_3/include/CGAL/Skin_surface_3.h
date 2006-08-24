@@ -578,7 +578,7 @@ template <class MixedComplexTraits_3>
 typename Skin_surface_3<MixedComplexTraits_3>::Simplex 
 Skin_surface_3<MixedComplexTraits_3>::
 locate_mixed(const Bare_point &p, const Simplex &start) const {
-  Simplex /*prev,*/ s;
+  Simplex prev, s;
   if (start == Simplex()) {
     Cell_handle ch = regular.locate(p);
     if (regular.is_infinite(ch->vertex(0))) { s = ch->vertex(1); }
@@ -613,15 +613,14 @@ locate_mixed(const Bare_point &p, const Simplex &start) const {
 
       for (int i=0; i<nrNbs; i++, index = (index+1)%nrNbs) {
 	if (!regular.is_infinite(nbs[index])) {
-	  //if (prev != Simplex(nbs[index])) {
+	  if (prev != Simplex(nbs[index])) {
 	    if (side_tester(vh->point(), nbs[index]->point(), p) == POSITIVE) {
-	      //prev = s;
-	      bool b = regular.is_edge(vh, nbs[index], ch, i1, i2);
-	      CGAL_assertion(b);
+	      prev = s;
+	      regular.is_edge(vh, nbs[index], ch, i1, i2);
 	      s = Edge(ch,i1,i2);
 	      goto try_next_cell;
 	    }
-	    //}
+	    }
 	}
       }
       break;
@@ -644,38 +643,38 @@ locate_mixed(const Bare_point &p, const Simplex &start) const {
 	if (index < nrFacets) {
 	  // Check incident facets:
 	  if (!regular.is_infinite(*fcir)) {
-	    //if (prev != Simplex(fcir)) {
+	    if (prev != Simplex(fcir)) {
 	      i1 = (*fcir).first->index(vh1);
 	      i2 = (*fcir).first->index(vh2);
 	      Vertex_handle vh3 = (*fcir).first->vertex(6-(*fcir).second-i1-i2);
 
 	      if (side_tester(vh1->point(), vh2->point(), vh3->point(),
 			      p) == POSITIVE) {
-		//prev = s;
+		prev = s;
 		s = fcir;
 		goto try_next_cell;
 	      }
-	      //}
+	      }
 	  }
 	  fcir++;
 	} else {
 	  // Check incident vertices:
 	  if (index==nrFacets) {
-	    //if (prev != Simplex(vh1)) {
+	    if (prev != Simplex(vh1)) {
 	      if (side_tester(vh1->point(), vh2->point(), p) == NEGATIVE) {
-		//prev = s;
+		prev = s;
 		s = vh1;
 		goto try_next_cell;
 	      }
-	      //}
+	      }
 	  } else {
-	    //if (prev != Simplex(vh2)) {
+	    if (prev != Simplex(vh2)) {
 	      if (side_tester(vh2->point(), vh1->point(), p) == NEGATIVE) {
-		//prev = s;
+		prev = s;
 		s = vh2;
 		goto try_next_cell;
 	      }
-	      //}
+	      }
 	  }
 	}
       }
@@ -697,16 +696,16 @@ locate_mixed(const Bare_point &p, const Simplex &start) const {
 	  }
 	  CGAL_assertion(!regular.has_vertex(f, ch->vertex(i1)));
 	  if (!regular.is_infinite(ch->vertex(i1))) {
-	    //if (prev != Simplex(ch)) {
+	    if (prev != Simplex(ch)) {
 	      if (side_tester(ch->vertex((i1+1)&3)->point(),
 			      ch->vertex((i1+2)&3)->point(),
 			      ch->vertex((i1+3)&3)->point(),
 			      ch->vertex(i1)->point(), p) == POSITIVE) {
-		//prev = s;
+		prev = s;
 		s = ch;
 		goto try_next_cell;
 	      }
-	      //}
+	      }
 	  }
 	} else {
 	  // Check incident edges (index = 0,1,2)
@@ -719,14 +718,14 @@ locate_mixed(const Bare_point &p, const Simplex &start) const {
 	  Vertex_handle vh2 = f.first->vertex(i2);
 	  Vertex_handle vh3 = f.first->vertex(i3);
 	  
-	  //if (prev != Simplex(Edge(f.first,i1,i2))) {
+	  if (prev != Simplex(Edge(f.first,i1,i2))) {
 	    if (side_tester(vh1->point(), vh2->point(), vh3->point(), 
 			    p) == NEGATIVE) {
-	      //prev = s;
+	      prev = s;
 	      s = Edge(f.first,i1,i2);
 	      goto try_next_cell;
 	    }
-	    //}
+	    }
 	}
       }
       break;
@@ -736,16 +735,16 @@ locate_mixed(const Bare_point &p, const Simplex &start) const {
       Cell_handle ch = s;
       int index = rng.get_int(0,4); 
       for (int i=0; i<4; i++, index = (index+1)&3) {
-	//if (prev != Simplex(Facet(ch, index))) {
+	if (prev != Simplex(Facet(ch, index))) {
 	  if (side_tester(ch->vertex((index+1)&3)->point(),
 			  ch->vertex((index+2)&3)->point(),
 			  ch->vertex((index+3)&3)->point(),
 			  ch->vertex(index)->point(), p) == NEGATIVE) {
-	    //prev = s;
+	    prev = s;
 	    s = Facet(ch, index);
 	    goto try_next_cell;
 	  }
-	  //}
+	  }
       }
       break;
     }

@@ -1,4 +1,5 @@
-//#define CGAL_PROFILE
+#define CGAL_PROFILE
+#define CGAL_NO_ASSERTIONS
 
 // examples/Skin_surface_3/skin_surface_simple.C
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -41,9 +42,6 @@ int main(int argc, char *argv[]) {
 
   std::cout << "Meshing ..." << std::endl;
   CGAL::mesh_skin_surface_3(skin_surface, p);
-
-  std::cout << "Subdividing ..." << std::endl;
-  CGAL::subdivide_skin_surface_mesh_3(p, skin_surface,1);
 
   std::cout << "Is closed: " << (p.is_closed() ? "Yes" : "No") << std::endl;
 
