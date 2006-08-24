@@ -185,9 +185,6 @@ operator!=(const Line_arc_2<CircularKernel> &p,
     return is;
   }
 
-
-
-
 } // namespace CGAL
 
 #endif // CGAL_LINE_ARC_2_H
