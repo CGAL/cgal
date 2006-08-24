@@ -411,7 +411,6 @@ Circular_kernel_2/demo/Curved_kernel/help/index.html svneol=native#text/html
 Circular_kernel_2/demo/Curved_kernel/help/planar_map_icon.jpeg -text svneol=unset#image/jpeg
 Circular_kernel_2/demo/Curved_kernel/help/sweeper.jpeg -text svneol=unset#image/jpeg
 Circular_kernel_2/demo/Curved_kernel/help/trash.jpeg -text svneol=unset#image/jpeg
-Circular_kernel_2/examples/Circular_kernel_2/example_arrangement_random_circles_segments -text
 Circular_kernel_2/test/Circular_kernel_2/test_Lazy_Line_arc -text
 Circular_kernel_2/test/Circular_kernel_2/test_Line_arc -text
 Circular_kernel_3/demo/Circular_kernel_3/demo_circle -text
