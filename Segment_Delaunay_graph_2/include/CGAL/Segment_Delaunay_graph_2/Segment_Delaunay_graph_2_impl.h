@@ -1315,7 +1315,7 @@ minimize_degree(const Vertex_handle& v)
 template<class Gt, class ST, class DS, class LTag>
 void
 Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
-equalize_degrees(const Vertex_handle& v, Self& small,
+equalize_degrees(const Vertex_handle& v, Self& sdg_small,
 		 std::map<Vertex_handle,Vertex_handle>& vmap,
 		 List& l) const
 {
@@ -1379,8 +1379,8 @@ equalize_degrees(const Vertex_handle& v, Self& small,
 
       std::cerr << "size of l: " << l.size() << std::endl;
 
-      Edge e_small_new = small.flip(e_small);
-      Edge e_small_new_sym = small.sym_edge(e_small_new);
+      Edge e_small_new = sdg_small.flip(e_small);
+      Edge e_small_new_sym = sdg_small.sym_edge(e_small_new);
       Face_handle f1 = e_small_new.first;
       Face_handle f2 = e_small_new_sym.first;
 
@@ -1394,11 +1394,11 @@ equalize_degrees(const Vertex_handle& v, Self& small,
       Edge to_list1(f1, cw(e_small_new.second));
       Edge to_list2(f2, ccw(e_small_new_sym.second));
 
-      e_small = small.sym_edge(to_list1);
+      e_small = sdg_small.sym_edge(to_list1);
 
       l.insert_after(e_small_prev, e_small);
       std::cerr << "size of l: " << l.size() << std::endl;
-      l.insert_after(e_small, small.sym_edge(to_list2));
+      l.insert_after(e_small, sdg_small.sym_edge(to_list2));
       std::cerr << "size of l: " << l.size() << std::endl;
     } else {
       e_small = l.next(e_small);

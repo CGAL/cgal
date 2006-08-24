@@ -1,3 +1,8 @@
+24 August 2006:  Menelaos Karavelas
+- in Segment_Delaunay_graph_2_impl.h renamed variable small to
+  sdg_small; created conflict with a macro defined when including
+  windows.h
+
 10 August 2006:  Menelaos Karavelas
 - this is the version to be sent to Pulsic.com; added this note so that
   I can retrieve the revision number of the package sent.
