@@ -10,46 +10,46 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
+// $URL:$
 // $Id$
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_SET_MINIMAL_COLLAPSE_DATA_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_SET_MINIMAL_COLLAPSE_DATA_H
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_SET_EMPTY_COLLAPSE_DATA_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_SET_EMPTY_COLLAPSE_DATA_H
 
 #include <CGAL/Surface_mesh_simplification/TSMS_common.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Minimal_collapse_data.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Empty_collapse_data.h>
 
 CGAL_BEGIN_NAMESPACE
 
-namespace Triangulated_surface_mesh { namespace Simplification 
+namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse
 {
 
-template<class Collapse_data_>    
-class Set_minimal_collapse_data
+template<class TSM>    
+class Set_empty_collapse_data
 {
 public:
 
-  typedef Collapse_data_ Collapse_data ;
+  typedef TSM_ TSM ;
+
+  typedef typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor ;
   
-  typedef typename Collapse_data::TSM               TSM ;
-  typedef typename Collapse_data::vertex_descriptor vertex_descriptor ;
-  typedef typename Collapse_data::edge_descriptor   edge_descriptor ;
+  typedef Empty_collapse_data<TSM> Collapse_data ;
+
+  void Params ;
   
-  typedef void Params ; 
-   
 public :
 
   void operator() ( Collapse_data&, edge_descriptor const&, TSM&, Params const* ) const {}                         
   
 };    
 
-} } // namespace Triangulated_surface_mesh::Simplification
+} } } // namespace Triangulated_surface_mesh::Simplification::Edge_collapse
 
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_SET_MINIMAL_COLLAPSE_DATA_H
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_SET_EMPTY_COLLAPSE_DATA_H
 // EOF //
  

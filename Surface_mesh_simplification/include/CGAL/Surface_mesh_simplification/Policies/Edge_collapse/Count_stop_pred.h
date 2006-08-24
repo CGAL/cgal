@@ -15,14 +15,14 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_COUNT_STOP_PRED_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_COUNT_STOP_PRED_H 1
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_COUNT_STOP_PRED_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_COUNT_STOP_PRED_H 1
 
 #include <CGAL/Surface_mesh_simplification/TSMS_common.h>
 
 CGAL_BEGIN_NAMESPACE
 
-namespace Triangulated_surface_mesh { namespace Simplification 
+namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse
 {
 
 //*******************************************************************************************************************
@@ -36,24 +36,26 @@ namespace Triangulated_surface_mesh { namespace Simplification
 // 
 // Stops when the number of edges left falls below a given number.
 //
-template<class Collapse_data_>    
+template<class TSM_>    
 class Count_stop_condition
 {
 public:
 
-  typedef Collapse_data_ Collapse_data ;
+  typedef TSM_ TSM ;
   
-  typedef typename Collapse_data::FT        FT ;
-  typedef typename Collapse_data::size_type size_type ;
+  typedef typename grah_traits<TSM>::edge_descriptor edge_descriptor ;
+  typedef typename grah_traits<TSM>::edges_size_type size_type ;
+  
+  typedef typename Surface_geometric_traits<TSM>::FT FT ;
 
 public :
   
   Count_stop_condition( size_type aThres ) : mThres(aThres) {}
   
-  bool operator()( FT const&            // aCurrentCost
-                 , Collapse_data const& //aData
-                 , size_type            aInitialCount
-                 , size_type            aCurrentCount
+  bool operator()( FT const&              // aCurrentCost
+                 , edge_descriptor const& //aEdge
+                 , size_type              aInitialCount
+                 , size_type              aCurrentCount
                  ) const 
   {
     return aCurrentCount < mThres ;
@@ -64,10 +66,10 @@ private:
   size_type mThres ;
 };    
 
-} } // namespace Triangulated_surface_mesh::Simplification
+} } } // namespace Triangulated_surface_mesh::Simplification::Edge_collapse
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_COUNT_STOP_PRED_H //
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_COUNT_STOP_PRED_H //
 // EOF //
  

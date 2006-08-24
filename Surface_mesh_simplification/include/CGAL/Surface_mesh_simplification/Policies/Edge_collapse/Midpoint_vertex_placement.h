@@ -15,72 +15,54 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_MIDPOINT_VERTEX_PLACEMENT_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_MIDPOINT_VERTEX_PLACEMENT_H 1
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_MIDPOINT_VERTEX_PLACEMENT_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_MIDPOINT_VERTEX_PLACEMENT_H 1
 
 #include <CGAL/Surface_mesh_simplification/TSMS_common.h>
 
 CGAL_BEGIN_NAMESPACE
 
-namespace Triangulated_surface_mesh { namespace Simplification 
+namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse
 {
 
-
-//*******************************************************************************************************************
-//                                -= new vertex placement functor =-
 //
-// Constructs the point of location of the new vertex that replaces a collapsing vertex-pair.
-// The functor can return an empty optional if the point cannot be placed in a way that satisfies the deeesired constriants.
-//
-//*******************************************************************************************************************
-
-//
-// Mid-point placement
+// Edge-length cost: the squared length of the collapsing edge
 //
 template<class Collapse_data_>
-class Midpoint_vertex_placement
+class Midpoint_placement : protected Placement_functor_base< Collapse_data_, Midpoint_placement<Collapse_data_> >
 {
+  typedef Cost_functor_base<Collapse_data_, Midpoint_placement<Collapse_data_> > Base ;
+  
 public:
     
   typedef Collapse_data_ Collapse_data ;
+  
+  typedef typename Collapse_data::TSM TSM ;
+  
+  typedef typename grah_traits<TSM>::vertex_descriptor vertex_descriptor ;
+  typedef typename grah_traits<TSM>::edge_descriptor   edge_descriptor ;
+  
+  typedef typename Surface_geometric_traits<TSM>::Point_3 Point_3 ;
+  
+  typedef typename Base::result_type result_type ;
     
-  typedef typename Collapse_data::TSM               TSM ;
-  typedef typename Collapse_data::vertex_descriptor vertex_descriptor ;
-  typedef typename Collapse_data::Point_3           Point_3 ;
-  
-  typedef optional<Point_3> result_type ;
-  
 public:
+
+  result_type compute_placement( edge_descriptor const& aEdge, TSM const& aSurface ) const
+  {
+    vertex_descriptor vs,vt ; tie(vs,vt) = this->get_vertices(aEdge,aSurface);
     
-  result_type operator()( Collapse_data const& data ) const
-  {
-    if ( !data.is_edge_fixed() )
-    {
-      Point_3 const& p = get_point(data.p(),data.surface());
-      Point_3 const& q = get_point(data.q(),data.surface());
+    Point_3 const& ps = this->get_point(vs,aSurface);
+    Point_3 const& pt = this->get_point(vt,aSurface);
       
-      if ( data.is_p_fixed() )
-        return result_type(p) ;
-      else if ( data.is_q_fixed() )
-        return result_type(q); 
-      else 
-        return result_type(midpoint(p,q));
-    }
-    else return result_type();
-  }
-  
-  Point_3 const& get_point ( vertex_descriptor const& v, TSM& aSurface ) const
-  {
-    vertex_point_t vertex_point ;
-    return get(vertex_point,aSurface,v) ;
+    return result_type(midpoint(ps,pt));
   }
 };
 
-
-} } // namespace Triangulated_surface_mesh::Simplification
+} } } // namespace Triangulated_surface_mesh::Simplification::Edge_collapse
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_MIDPOINT_VERTEX_PLACEMENT_H //
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_MIDPOINT_VERTEX_PLACEMENT_H //
 // EOF //
  

@@ -52,18 +52,17 @@ void Surface_simplification_external_trace( std::string s )
 int exit_code = 0 ;
 
 #include <CGAL/Surface_mesh_simplification_edge_collapse.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Count_stop_pred.h>
 #include <CGAL/Surface_mesh_simplification/Polyhedron_is_vertex_fixed_map.h>
 #include <CGAL/Surface_mesh_simplification/Polyhedron_edge_cached_pointer_map.h>
 
 #ifdef TEST_LT
-#include <CGAL/Surface_mesh_simplification/Policies/LindstromTurk.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk.h>
 #else
-#include <CGAL/Surface_mesh_simplification/Policies/Minimal_collapse_data.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Set_minimal_collapse_data.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_length_cost.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Midpoint_vertex_placement.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_and_length.h>
 #endif
+
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_pred.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_pred.h>
 
 using namespace std ;
 using namespace boost ;
@@ -495,11 +494,12 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string name )
           LindstromTurk_cost             <Collapse_data> Get_cost ;
           LindstromTurk_vertex_placement <Collapse_data> Get_vertex_point ;
       #else
-          typedef Minimal_collapse_data<Polyhedron> Collapse_data ;
+          typedef Set_empty_collapse_data<Polyhedron> Set_collapse_data ;
           
-          Set_minimal_collapse_data <Collapse_data> Set_collapse_data ;
-          Edge_length_cost          <Collapse_data> Get_cost ;
-          Midpoint_vertex_placement <Collapse_data> Get_vertex_point ;
+          typedef Set_collapse_data::Collapse_data Collapse_data ;
+          
+          Edge_length_cost  <Collapse_data> Get_cost ;
+          Midpoint_placement<Collapse_data> Get_vertex_point ;
       #endif
 
           int lFinalEdgesCount ;
@@ -507,9 +507,9 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string name )
                lFinalEdgesCount = aStopA ;
           else lFinalEdgesCount = lP.size_of_halfedges() * aStopR / 200 ;
                     
-          Count_stop_condition<Collapse_data> Should_stop(lFinalEdgesCount);
+          Count_stop_condition<Polyhedron> Should_stop(lFinalEdgesCount);
               
-          Collapse_data::Params lParams;
+          Set_collapse_data::Params lParams;
           
           Visitor lVisitor ;
       
