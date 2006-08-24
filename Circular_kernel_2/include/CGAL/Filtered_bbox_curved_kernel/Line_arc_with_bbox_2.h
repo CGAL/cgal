@@ -27,7 +27,7 @@
 
 #include <vector>
 #include <CGAL/Bbox_2.h>
-#include <CGAL/Filtered_bbox_curved_kernel/Circular_arc_endpoint_with_bbox_2.h>
+#include <CGAL/Filtered_bbox_circular_kernel_2/Circular_arc_endpoint_with_bbox_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
