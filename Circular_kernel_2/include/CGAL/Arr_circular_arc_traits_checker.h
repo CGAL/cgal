@@ -22,8 +22,8 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 
-#ifndef CGAL_CURVED_KERNEL_CIRCULAR_ARC_TRAITS_CHECKER_H
-#define CGAL_CURVED_KERNEL_CIRCULAR_ARC_TRAITS_CHECKER_H
+#ifndef CGAL_CIRCULAR_KERNEL_CIRCULAR_ARC_TRAITS_CHECKER_H
+#define CGAL_CIRCULAR_KERNEL_CIRCULAR_ARC_TRAITS_CHECKER_H
 
 // TODO :
 // - Similar to Pm_checker_traits, but it doesn't require conversion
@@ -467,4 +467,4 @@ public:
 
 } // namespace CGAL
 
-#endif // CGAL_CURVED_KERNEL_CIRCULAR_ARC_TRAITS_CHECKER_H
+#endif // CGAL_CIRCULAR_KERNEL_CIRCULAR_ARC_TRAITS_CHECKER_H

@@ -22,8 +22,8 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 
-#ifndef CGAL_VARIANT_TRAITS_H
-#define CGAL_VARIANT_TRAITS_H
+#ifndef CGAL_CIRCULAR_KERNEL_VARIANT_TRAITS_H
+#define CGAL_CIRCULAR_KERNEL_VARIANT_TRAITS_H
 
 #include <CGAL/basic.h>
 #include <cassert>
@@ -542,4 +542,4 @@ namespace CGAL {
 
 } // namespace CGAL
 
-#endif // CGAL_VARIANT_TRAITS_H
+#endif // CGAL_CIRCULAR_KERNEL_VARIANT_TRAITS_H
