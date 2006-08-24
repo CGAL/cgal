@@ -199,6 +199,18 @@ abs(const double& d)
 { return CGAL_CLIB_STD::fabs(d); }
 #endif
 
+
+inline
+double
+nextafter(double d1, double d2)
+{
+#ifdef CGAL_CFG_NO_NEXTAFTER
+  return _nextafter(d1, d2); // works at least for VC++-7.1
+#else
+  std::nextafter(d1,d2);
+#endif
+}
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_DOUBLE_H
