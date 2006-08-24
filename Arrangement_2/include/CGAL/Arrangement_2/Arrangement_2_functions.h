@@ -4324,6 +4324,9 @@ void Arrangement_2<Traits,Dcel>::_remove_vertex_at_infinity (DVertex* v)
   // Delete the redundant halfedge pair.
   dcel.delete_edge (he3);
 
+  //decrement the counter of vertices at infinity.
+  --n_inf_verts;
+
   // Notify the observers that the edge has been merge.
   _notify_after_merge_fictitious_edge (Halfedge_handle (he1));
 
