@@ -63,7 +63,7 @@ template < typename EK_, typename AK_, typename E2A_, typename Kernel >
 class Lazy_circular_kernel_base
 //  : public EK::template Base<Kernel>::Type
 #if 1
-  : public Lazy_circular_kernel_base< EK_, AK_, E2A_,
+  : public Lazy_kernel_base< EK_, AK_, E2A_,
                              Lazy_kernel<EK_, AK_, E2A_> >
 #endif
 {
