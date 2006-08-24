@@ -77,22 +77,26 @@ public:
   typedef typename Base::FT              FT ;
   
   typedef optional<FT> result_type ;
+
+  typedef typename Base_base::Params Params ;
     
 public :
     
   result_type operator()( edge_descriptor const& aEdge
                         , TSM const&             aSurface
                         , Collapse_data const&   aData
+                        , Params const*          aParams
                         ) const
   {
-    return get_cost(aEdge,aSurface,aData,Has_cached_cost());
+    return get_cost(aEdge,aSurface,aData,aParams,Has_cached_cost());
   }
   
 private :
     
-  result_type get_cost( edge_descriptor const& aEdge
-                      , TSM const&             aSurface
+  result_type get_cost( edge_descriptor const& //aEdge
+                      , TSM const&             //aSurface
                       , Collapse_data const&   aData
+                      , Params const*          //aParams
                       , Tag_true
                       ) const
   {
@@ -101,11 +105,12 @@ private :
   
   result_type get_cost( edge_descriptor const& aEdge
                       , TSM const&             aSurface
-                      , Collapse_data const&   aData
+                      , Collapse_data const&   //aData
+                      , Params const*          aParams
                       , Tag_false 
                       ) const
   {
-    return this->compute_cost(aEdge,aSurface);
+    return this->compute_cost(aEdge,aSurface,aParams);
   }
 };
 
@@ -126,24 +131,27 @@ public:
   typedef typename Base::edge_descriptor edge_descriptor ;
   typedef typename Base::Point_3         Point_3 ;
   
-  
   typedef optional<Point_3> result_type ;
     
+  typedef typename Base_base::Params Params ;
+  
 public :
     
   result_type operator()( edge_descriptor const& aEdge
                         , TSM const&             aSurface
                         , Collapse_data const&   aData
+                        , Params const*          aParams
                         ) const
   {
-    return get_placement(aEdge,aSurface,aData,Has_cached_placement());
+    return get_placement(aEdge,aSurface,aData,aParams,Has_cached_placement());
   }
   
 private :
     
-  result_type get_placement( edge_descriptor const& aEdge
-                           , TSM const&             aSurface
+  result_type get_placement( edge_descriptor const& //aEdge
+                           , TSM const&             //aSurface
                            , Collapse_data const&   aData
+                           , Params const*          //aParams
                            , Tag_true
                            ) const
   {
@@ -152,11 +160,12 @@ private :
   
   result_type get_placement( edge_descriptor const& aEdge
                            , TSM const&             aSurface
-                           , Collapse_data const&   aData
+                           , Collapse_data const&   //aData
+                           , Params const*          aParams
                            , Tag_false 
                            ) const
   {
-    return this->compute_placement(aEdge,aSurface);
+    return this->compute_placement(aEdge,aSurface,aParams);
   }
 };
 

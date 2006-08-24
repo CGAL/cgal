@@ -46,10 +46,12 @@ public:
   typedef typename Surface_geometric_traits<TSM>::Point_3 Point_3 ;
   
   typedef typename Base::result_type result_type ;
+  
+  typedef void Params ;
     
 public:
 
-  result_type compute_cost( edge_descriptor const& aEdge, TSM const& aSurface ) const
+  result_type compute_cost( edge_descriptor const& aEdge, TSM const& aSurface, Params const* ) const
   {
     vertex_descriptor vs,vt ; tie(vs,vt) = this->get_vertices(aEdge,aSurface);
     

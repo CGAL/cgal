@@ -15,8 +15,8 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROM_TURK_CORE_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROM_TURK_CORE_H 1
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_DETAIL_LINDSTROM_TURK_CORE_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_DETAIL_LINDSTROM_TURK_CORE_H 1
 
 #include <vector>
 
@@ -34,24 +34,25 @@ CGAL_BEGIN_NAMESPACE
 //  Peter Lindstrom, Greg Turk
 //
 
-namespace Triangulated_surface_mesh { namespace Simplification 
+namespace Triangulated_surface_mesh { namespace Simplification  { namespace Edge_collapse
 {
 
-template<class Collapse_data_>
+template<class TSM_>
 class LindstromTurkCore
 {
 public:
     
+  typedef typename TSM_TSM ;
+  
   typedef Collapse_data_ Collapse_data ;
   
-  typedef typename Collapse_data::TSM               TSM ;
-  typedef typename Collapse_data::vertex_descriptor vertex_descriptor ;
-  typedef typename Collapse_data::edge_descriptor   edge_descriptor ;
-  typedef typename Collapse_data::Params            Params ;
-     
   typedef boost::graph_traits<TSM> GraphTraits ;
   
-  typedef typename GraphTraits::in_edge_iterator in_edge_iterator ;
+  typedef typename GraphTraits::vertex_descriptor vertex_descriptor ;
+  typedef typename GraphTraits::edge_descriptor   edge_descriptor ;
+  typedef typename GraphTraits::in_edge_iterator  in_edge_iterator ;
+  
+  typedef LindstromTurk_params Params ;
   
   typedef typename Surface_geometric_traits<TSM>::Kernel Kernel ;
   
@@ -64,20 +65,18 @@ public:
   typedef optional<Vector> Optional_vector ;
   
   typedef MatrixC33<Kernel> Matrix ;
+  
+  typedef tuple<Optional_FT,Optional_point> result_type ;
     
 public:
   
-  LindstromTurkCore( Params const&            aParams
-                   , vertex_descriptor const& aP
-                   , vertex_descriptor const& aQ
-                   , bool                     aIsPFixed
-                   , bool                     aIsQFixed
-                   , edge_descriptor const&   aP_Q
-                   , edge_descriptor const&   aQ_P
-                   , TSM&                     aSurface 
+  LindstromTurkCore( Params const&          aParams
+                   , edge_descriptor const& aP_Q
+                   , edge_descriptor const& aQ_P
+                   , TSM&                   aSurface 
                    ) ;
     
-  void compute( Collapse_data& aData ) ;
+  result_type compute() ;
   
 private :
 
@@ -220,12 +219,12 @@ private:
   
 };
 
-} } // namespace Triangulated_surface_mesh::Simplification
+} } } // namespace Triangulated_surface_mesh::Simplification::Edge_collapse
 
 CGAL_END_NAMESPACE
 
 #include <CGAL/Surface_mesh_simplification/Policies/Detail/Lindstrom_Turk_core_impl.h>
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROM_TURK_CORE_H //
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_DETAIL_LINDSTROM_TURK_CORE_H //
 // EOF //
  

@@ -488,13 +488,18 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string name )
       #endif
           
       #ifdef TEST_LT
-          typedef LindstromTurk_collapse_data<Polyhedron> Collapse_data ;
+          typedef Set_full_collapse_data_LindstromTurk<Polyhedron> Set_collapse_data ;
           
-          Set_LindstromTurk_collapse_data<Collapse_data> Set_collapse_data ;
-          LindstromTurk_cost             <Collapse_data> Get_cost ;
-          LindstromTurk_vertex_placement <Collapse_data> Get_vertex_point ;
+          typedef Set_collapse_data::Params Params ;
+          
+          typedef Set_collapse_data::Collapse_data Collapse_data ;
+          
+          LindstromTurk_cost     <Collapse_data> Get_cost ;
+          LindstromTurk_placement<Collapse_data> Get_vertex_point ;
       #else
           typedef Set_empty_collapse_data<Polyhedron> Set_collapse_data ;
+          
+          typedef Set_collapse_data::Params Params ;
           
           typedef Set_collapse_data::Collapse_data Collapse_data ;
           
@@ -509,7 +514,7 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string name )
                     
           Count_stop_condition<Polyhedron> Should_stop(lFinalEdgesCount);
               
-          Set_collapse_data::Params lParams;
+          Params lParams;
           
           Visitor lVisitor ;
       

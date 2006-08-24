@@ -15,8 +15,8 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_MIDPOINT_VERTEX_PLACEMENT_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_MIDPOINT_VERTEX_PLACEMENT_H 1
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_MIDPOINT_PLACEMENT_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_MIDPOINT_PLACEMENT_H 1
 
 #include <CGAL/Surface_mesh_simplification/TSMS_common.h>
 
@@ -26,12 +26,12 @@ namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_
 {
 
 //
-// Edge-length cost: the squared length of the collapsing edge
+// Midpoint vertex placement
 //
 template<class Collapse_data_>
 class Midpoint_placement : protected Placement_functor_base< Collapse_data_, Midpoint_placement<Collapse_data_> >
 {
-  typedef Cost_functor_base<Collapse_data_, Midpoint_placement<Collapse_data_> > Base ;
+  typedef Placement_functor_base<Collapse_data_, Midpoint_placement<Collapse_data_> > Base ;
   
 public:
     
@@ -45,10 +45,12 @@ public:
   typedef typename Surface_geometric_traits<TSM>::Point_3 Point_3 ;
   
   typedef typename Base::result_type result_type ;
+  
+  typedef void Params ;
     
 public:
 
-  result_type compute_placement( edge_descriptor const& aEdge, TSM const& aSurface ) const
+  result_type compute_placement( edge_descriptor const& aEdge, TSM const& aSurface, Params const* ) const
   {
     vertex_descriptor vs,vt ; tie(vs,vt) = this->get_vertices(aEdge,aSurface);
     
@@ -63,6 +65,6 @@ public:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_MIDPOINT_VERTEX_PLACEMENT_H //
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_MIDPOINT_PLACEMENT_H //
 // EOF //
  

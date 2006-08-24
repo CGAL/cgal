@@ -15,38 +15,60 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROMTURK_COST_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROMTURK_COST_H 1
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_COST_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_COST_H 1
 
 #include <CGAL/Surface_mesh_simplification/TSMS_common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/LindstromTurk_collapse_data.h>
 
 CGAL_BEGIN_NAMESPACE
 
-namespace Triangulated_surface_mesh { namespace Simplification 
+namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse  
 {
 
-template<class Collapse_data_>    
-class LindstromTurk_cost
+template<class Collapse_data_>
+class LindstromTurk_cost : protected Cost_functor_base< Collapse_data_, LindstromTurk_cost<Collapse_data_> >
 {
+  typedef Cost_functor_base<Collapse_data_, LindstromTurk_cost<Collapse_data_> > Base ;
+  
 public:
     
   typedef Collapse_data_ Collapse_data ;
   
-  typedef typename Collapse_data::Optional_FT result_type ;
+  typedef typename Collapse_data::TSM TSM ;
+  
+  typedef typename grah_traits<TSM>::vertex_descriptor vertex_descriptor ;
+  typedef typename grah_traits<TSM>::edge_descriptor   edge_descriptor ;
+  
+  typedef typename Surface_geometric_traits<TSM>::Point_3 Point_3 ;
+  
+  typedef typename Base::result_type result_type ;
+  
+  typedef LindstromTurk_params Params ;
     
+  typedef optional<FT>      Optional_cost_type ;
+  typedef optional<Point_3> Optional_placement_type ;
+  
 public:
 
-    result_type operator()( Collapse_data const& data ) const
-    {
-      return data.cost();
-    }
+  result_type compute_cost( edge_descriptor const& aEdge, TSM const& aSurface, Params const* aParams ) const
+  {
+    CGAL_assertion(aParams);
+    CGAL_assertion( handle_assigned(aEdge) );
+    
+    LindstromTurkCore<TSM> core(*aParams,aEdge,aSurface,true);
+
+    Optional_cost_type lCost ;
+    Optional_placement_type lPlacement ;
+    tie(lCost,lPlacement) = core.compute();
+    return lCost ;
+  }
 };
 
-} } // namespace Triangulated_surface_mesh::Simplification
+} } } // namespace Triangulated_surface_mesh::Simplification::Edge_collapse
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROMTURK_COST_H //
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_COST_H //
 // EOF //
  

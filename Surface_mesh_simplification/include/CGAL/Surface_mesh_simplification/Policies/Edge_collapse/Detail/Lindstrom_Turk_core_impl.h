@@ -15,8 +15,8 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROM_TURK_CORE_IMPL_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROM_TURK_CORE_IMPL_H 1
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_DETAIL_LINDSTROM_TURK_CORE_IMPL_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_DETAIL_LINDSTROM_TURK_CORE_IMPL_H 1
 
 CGAL_BEGIN_NAMESPACE
 
@@ -27,7 +27,7 @@ CGAL_BEGIN_NAMESPACE
 //  Peter Lindstrom, Greg Turk
 //
 
-namespace Triangulated_surface_mesh { namespace Simplification 
+namespace Triangulated_surface_mesh { namespace Simplification{ namespace Edge_collapse  
 {
 
 template<class CD>
@@ -690,11 +690,11 @@ void LindstromTurkCore<CD>::Constrians::Add_from_gradient ( Matrix const& H, Vec
   }
 }
 
-} } // namespace Triangulated_surface_mesh::Simplification
+} } } // namespace Triangulated_surface_mesh::Simplification::Edge_collapse
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROMTURK_CORE_IMPL_H //
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_DETAIL_LINDSTROMTURK_CORE_IMPL_H //
 // EOF //
  
 

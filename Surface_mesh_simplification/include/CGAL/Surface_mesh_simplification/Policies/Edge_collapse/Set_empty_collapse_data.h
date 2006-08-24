@@ -10,7 +10,7 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:$
+// $URL$
 // $Id$
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
@@ -26,7 +26,7 @@ CGAL_BEGIN_NAMESPACE
 namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse
 {
 
-template<class TSM>    
+template<class TSM_>    
 class Set_empty_collapse_data
 {
 public:
@@ -36,8 +36,8 @@ public:
   typedef typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor ;
   
   typedef Empty_collapse_data<TSM> Collapse_data ;
-
-  void Params ;
+  
+  typedef void Params ;
   
 public :
 
