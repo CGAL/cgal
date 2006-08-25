@@ -613,6 +613,36 @@ public:
   }
  
 protected:
+  template <class Conflict_test,
+            class OutputIteratorBoundaryFacets,
+            class OutputIteratorCells,
+            class OutputIteratorInternalFacets>
+  Triple<OutputIteratorBoundaryFacets,
+         OutputIteratorCells,
+         OutputIteratorInternalFacets>
+  find_conflicts_2(Cell_handle c, const Conflict_test &tester,
+	           Triple<OutputIteratorBoundaryFacets,
+                          OutputIteratorCells,
+		          OutputIteratorInternalFacets> it) const {
+    bool FIND_CONFLICTS_2_DEPRECATED_USE_FIND_CONFLICTS;
+    return find_conflicts(c,tester,it);
+  }
+
+  template <class Conflict_test,
+            class OutputIteratorBoundaryFacets,
+            class OutputIteratorCells,
+            class OutputIteratorInternalFacets>
+  Triple<OutputIteratorBoundaryFacets,
+         OutputIteratorCells,
+         OutputIteratorInternalFacets>
+  find_conflicts_3(Cell_handle c, const Conflict_test &tester,
+	           Triple<OutputIteratorBoundaryFacets,
+                          OutputIteratorCells,
+		          OutputIteratorInternalFacets> it) const {
+    bool FIND_CONFLICTS_3_DEPRECATED_USE_FIND_CONFLICTS;
+    return find_conflicts(c,tester,it);
+  }
+
   // - c is the current cell, which must be in conflict.
   // - tester is the function object that tests if a cell is in conflict.
   //
@@ -627,18 +657,18 @@ protected:
   Triple<OutputIteratorBoundaryFacets,
          OutputIteratorCells,
          OutputIteratorInternalFacets>
-  find_conflicts_2(Cell_handle c, const Conflict_test &tester,
+  find_conflicts(Cell_handle c, const Conflict_test &tester,
 	           Triple<OutputIteratorBoundaryFacets,
                           OutputIteratorCells,
 		          OutputIteratorInternalFacets> it) const
   {
-    CGAL_triangulation_precondition( dimension()==2 );
+    CGAL_triangulation_precondition( dimension()>=2 );
     CGAL_triangulation_precondition( tester(c) );
 
     c->set_in_conflict_flag(1);
     *it.second++ = c;
 
-    for (int i=0; i<3; ++i) {
+    for (int i=0; i<dimension()+1; ++i) {
       Cell_handle test = c->neighbor(i);
       if (test->get_in_conflict_flag() == 1) {
 	  if (c < test)
@@ -649,47 +679,7 @@ protected:
 	  if (tester(test)) {
 	      if (c < test)
 		  *it.third++ = Facet(c, i); // Internal facet.
-              it = find_conflicts_2(test, tester, it);
-	      continue;
-	  }
-	  test->set_in_conflict_flag(2); // test is on the boundary.
-      }
-      *it.first++ = Facet(c, i);
-    }
-    return it;
-  }
-
-  // Note: the code duplication between _2 and _3 should be avoided one day.
-  template <class Conflict_test,
-            class OutputIteratorBoundaryFacets,
-            class OutputIteratorCells,
-            class OutputIteratorInternalFacets>
-  Triple<OutputIteratorBoundaryFacets,
-         OutputIteratorCells,
-         OutputIteratorInternalFacets>
-  find_conflicts_3(Cell_handle c, const Conflict_test &tester,
-	           Triple<OutputIteratorBoundaryFacets,
-                          OutputIteratorCells,
-		          OutputIteratorInternalFacets> it) const
-  {
-    CGAL_triangulation_precondition( dimension()==3 );
-    CGAL_triangulation_precondition( tester(c) );
-
-    c->set_in_conflict_flag(1);
-    *it.second++ = c;
-
-    for (int i=0; i<4; ++i) {
-      Cell_handle test = c->neighbor(i);
-      if (test->get_in_conflict_flag() == 1) { // test was already in conflict.
-	  if (c < test)
-	      *it.third++ = Facet(c, i); // Internal facet.
-          continue;
-      }
-      if (test->get_in_conflict_flag() == 0) {
-	  if (tester(test)) {
-	      if (c < test)
-		  *it.third++ = Facet(c, i); // Internal facet.
-              it = find_conflicts_3(test, tester, it);
+              it = find_conflicts(test, tester, it);
 	      continue;
 	  }
 	  test->set_in_conflict_flag(2); // test is on the boundary.
@@ -703,9 +693,9 @@ protected:
   // conflict, then calls _tds._insert_in_hole().
   template < class Conflict_test >
   Vertex_handle
-  insert_conflict_2(Cell_handle c, const Conflict_test &tester)
+  insert_conflict(Cell_handle c, const Conflict_test &tester)
   {
-    CGAL_triangulation_precondition( dimension() == 2 );
+    CGAL_triangulation_precondition( dimension() >= 2 );
     CGAL_triangulation_precondition( c != Cell_handle() );
     CGAL_triangulation_precondition( tester(c) );
 
@@ -715,35 +705,10 @@ protected:
     Facet facet;
 
     // Find the cells in conflict
-    find_conflicts_2(c, tester, make_triple(Oneset_iterator<Facet>(facet),
-		                            std::back_inserter(cells),
-				            Emptyset_iterator()));
-
-    // Create the new cells and delete the old.
-    return _tds._insert_in_hole(cells.begin(), cells.end(),
-	                        facet.first, facet.second);
-  }
-
-  // This one takes a function object to recursively determine the cells in
-  // conflict, then calls _tds._insert_in_hole().
-  template < class Conflict_test >
-  Vertex_handle
-  insert_conflict_3(Cell_handle c, const Conflict_test &tester)
-  {
-    CGAL_triangulation_precondition( dimension() == 3 );
-    CGAL_triangulation_precondition( c != Cell_handle() );
-    CGAL_triangulation_precondition( tester(c) );
-
-    std::vector<Cell_handle> cells;
-    cells.reserve(32);
-
-    Facet facet;
-
-    // Find the cells in conflict
-    find_conflicts_3(c, tester, make_triple(Oneset_iterator<Facet>(facet),
-		                            std::back_inserter(cells),
-				            Emptyset_iterator()));
-
+    find_conflicts(c, tester, make_triple(Oneset_iterator<Facet>(facet),
+					  std::back_inserter(cells),
+					  Emptyset_iterator()));
+    
     // Create the new cells and delete the old.
     return _tds._insert_in_hole(cells.begin(), cells.end(),
 	                        facet.first, facet.second);
@@ -2485,14 +2450,14 @@ insert_outside_convex_hull(const Point & p, Cell_handle c)
   case 2:
     {
       Conflict_tester_outside_convex_hull_2 tester(p, this);
-      Vertex_handle v = insert_conflict_2(c, tester);
+      Vertex_handle v = insert_conflict(c, tester);
       v->set_point(p);
       return v;
     }
   default: // case 3:
     {
       Conflict_tester_outside_convex_hull_3 tester(p, this);
-      Vertex_handle v = insert_conflict_3(c, tester);
+      Vertex_handle v = insert_conflict(c, tester);
       v->set_point(p);
       return v;
     }

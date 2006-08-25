@@ -164,17 +164,17 @@ public:
 
       if (dimension() == 2) {
           Conflict_tester_for_find_conflicts_2 tester(p, this);
-	  ifit = find_conflicts_2(c, tester,
-                                  make_triple(std::back_inserter(facets),
-		                              std::back_inserter(cells),
-                                              ifit)).third;
+	  ifit = Tr_Base::find_conflicts(c, tester,
+					 make_triple(std::back_inserter(facets),
+						     std::back_inserter(cells),
+						     ifit)).third;
       }
       else {
           Conflict_tester_for_find_conflicts_3 tester(p, this);
-	  ifit = find_conflicts_3(c, tester,
-                                  make_triple(std::back_inserter(facets),
-		                              std::back_inserter(cells),
-                                              ifit)).third;
+	  ifit = Tr_Base::find_conflicts(c, tester,
+					 make_triple(std::back_inserter(facets),
+						     std::back_inserter(cells),
+						     ifit)).third;
       }
 
       // Reset the conflict flag on the boundary.
@@ -1161,18 +1161,20 @@ replace_vertex:
         {
             cells.reserve(32);
             Conflict_tester_2 tester (p, this, vertices);
-            find_conflicts_2 (c, tester, make_triple(Oneset_iterator<Facet>(facet),
-                                                     std::back_inserter(cells),
-                                                     Emptyset_iterator()));
+            Tr_Base::find_conflicts
+	      (c, tester, make_triple(Oneset_iterator<Facet>(facet),
+				      std::back_inserter(cells),
+				      Emptyset_iterator()));
             break;
         }
         case 3:
         {
             cells.reserve(32);
             Conflict_tester_3 tester (p, this, vertices);
-            find_conflicts_3 (c, tester, make_triple(Oneset_iterator<Facet>(facet),
-                                                     std::back_inserter(cells),
-                                                     Emptyset_iterator()));
+            Tr_Base::find_conflicts
+	      (c, tester, make_triple(Oneset_iterator<Facet>(facet),
+				      std::back_inserter(cells),
+				      Emptyset_iterator()));
             break;
         }
         default:
