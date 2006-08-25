@@ -1,14 +1,14 @@
-\begin{ccRefConcept}{AlgebraicKernel_2_2} 
+\begin{ccRefConcept}{AlgebraicKernelForCircles_2_2} 
 
 \ccDefinition
 
-The \ccc{AlgebraicKernel_2_2} concept is meant to provide the
+The \ccc{AlgebraicKernelForCircles_2_2} concept is meant to provide the
 curved kernel with all the algebraic functionalities required for the
 manipulation of circular arcs. 
 
 \ccTypes
 
-A model of \ccc{AlgebraicKernel_2_2} is supposed to provide
+A model of \ccc{AlgebraicKernelForCircles_2_2} is supposed to provide
 
 \ccNestedType{RT}{A model of \ccc{RingNumberType}. }%In addition, the
 %class \ccc{Root_of_traits_2<RT>} must be defined and provide a nested
@@ -20,54 +20,54 @@ A model of \ccc{AlgebraicKernel_2_2} is supposed to provide
 \footnote{concept template...?} 
 
 \ccNestedType{Polynomial_1_2}{A model of 
-\ccc{AlgebraicKernel_2_2::Polynomial_1_2}, for bivariate polynomials of degree up
+\ccc{AlgebraicKernelForCircles_2_2::Polynomial_1_2}, for bivariate polynomials of degree up
 to~1.}
 \ccGlue
 \ccNestedType{Polynomial_for_circles_2_2}{A model of
-\ccc{AlgebraicKernel_2_2::PolynomialForCircles_2_2}, for bivariate polynomials 
+\ccc{AlgebraicKernelForCircles_2_2::PolynomialForCircles_2_2}, for bivariate polynomials 
 of degree up to~2 that can store equations of circles.} 
 
 \ccNestedType{Root_of_2}{A model of 
-\ccc{AlgebraicKernel_2_2::RootOf_2}, for algebraic numbers 
+\ccc{AlgebraicKernelForCircles_2_2::RootOf_2}, for algebraic numbers 
 of degree up to~2.} 
 \ccGlue
 \ccNestedType{Root_for_circles_2_2}{A model of 
-\ccc{AlgebraicKernel_2_2::RootForCircles_2_2}, for
+\ccc{AlgebraicKernelForCircles_2_2::RootForCircles_2_2}, for
 solutions of systems of two models of 
-\ccc{AlgebraicKernel_2_2::PolynomialForCircles_2_2}.} 
+\ccc{AlgebraicKernelForCircles_2_2::PolynomialForCircles_2_2}.} 
 
 \ccNestedType{Construct_polynomial_1_2}{A model of
-\ccc{AlgebraicKernel_2_2::ConstructPolynomial_1_2}.}
+\ccc{AlgebraicKernelForCircles_2_2::ConstructPolynomial_1_2}.}
  \ccGlue
 \ccNestedType{Construct_polynomial_for_circles_2_2}{A model of
-\ccc{AlgebraicKernel_2_2::ConstructPolynomialForCircles_2_2}.}
+\ccc{AlgebraicKernelForCircles_2_2::ConstructPolynomialForCircles_2_2}.}
 
-\ccNestedType{Solve}{A model of the concept \ccc{AlgebraicKernel_2_2::Solve}.}
+\ccNestedType{Solve}{A model of the concept \ccc{AlgebraicKernelForCircles_2_2::Solve}.}
 
-\ccNestedType{Sign_at}{A model of the concept \ccc{AlgebraicKernel_2_2::SignAt}.}
+\ccNestedType{Sign_at}{A model of the concept \ccc{AlgebraicKernelForCircles_2_2::SignAt}.}
 
 \footnote{no \_2 (or \_2\_2) for functors ????????? problem of compatibility 
 with CK and the current kernel. On the other hand, allows to have only
 one functor for several types of arguments}
 
 \ccNestedType{X_critical_points}{A model of the concept 
-\ccc{AlgebraicKernel_2_2::XCriticalPoints}.}
+\ccc{AlgebraicKernelForCircles_2_2::XCriticalPoints}.}
 \ccGlue
 \ccNestedType{Y_critical_points}{A model of the concept 
-\ccc{AlgebraicKernel_2_2::YCriticalPoints}.}
+\ccc{AlgebraicKernelForCircles_2_2::YCriticalPoints}.}
 
 \ccNestedType{Compare_x}{A model of the concept 
-\ccc{AlgebraicKernel_2_2::CompareX}.}
+\ccc{AlgebraicKernelForCircles_2_2::CompareX}.}
 \ccGlue
 \ccNestedType{Compare_y}{A model of the concept 
-\ccc{AlgebraicKernel_2_2::CompareY}.}
+\ccc{AlgebraicKernelForCircles_2_2::CompareY}.}
 \ccGlue
 \ccNestedType{Compare_xy}{A model of the concept 
-\ccc{AlgebraicKernel_2_2::CompareXY}.}
+\ccc{AlgebraicKernelForCircles_2_2::CompareXY}.}
 
 \ccHasModels
 
-\ccc{Algebraic_kernel_2_2}
+\ccc{Algebraic_kernel_for_circles_2_2}
 
 \ccSeeAlso
 
