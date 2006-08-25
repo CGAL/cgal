@@ -14,19 +14,19 @@
 
 #include <CGAL/MP_Float.h>
 
-#include <CGAL/Algebraic_kernel_2_2.h>
+#include <CGAL/Algebraic_kernel_for_circles_2_2.h>
 
 #include <CGAL/intersections.h>
 
-#include <CGAL/Circular_kernel.h>
+#include <CGAL/Circular_kernel_2.h>
 #include <CGAL/Circular_arc_traits.h>
 #include <CGAL/Circular_arc_traits_tracer.h>
 
-#include <CGAL/Lazy_curved_kernel.h>
+#include <CGAL/Lazy_circular_kernel_2.h>
 
-#include <CGAL/Filtered_hexagon_curved_kernel.h>
+#include <CGAL/Filtered_hexagon_circular_kernel_2.h>
 
-#include <CGAL/Filtered_bbox_curved_kernel.h>
+#include <CGAL/Filtered_bbox_circular_kernel_2.h>
 
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
@@ -106,7 +106,7 @@ for(i=1;i<6;i++){
   typedef CGAL::Circular_kernel_2 <Linear_k3,Algebraic_k3>          CK3_;
   
 
-  typedef CGAL::Lazy_curved_kernel<CK2_,CK3_>                  LazyCurvedK;
+  typedef CGAL::Lazy_circular_kernel_2<CK2_,CK3_>                  LazyCurvedK;
   
 
  
@@ -128,7 +128,7 @@ for(i=1;i<6;i++){
   -------------------------------------------------------------------------------------------------------------------------*/
   #ifdef CIRCULAR_KERNEL_2_FILTERED_HEXAGON  
 
-  typedef CGAL::Filtered_hexagon_curved_kernel<CircularKernel>        CircularKernelHexagon;
+  typedef CGAL::Filtered_hexagon_circular_kernel_2<CircularKernel>        CircularKernelHexagon;
 
   typedef CircularKernelHexagon::Circular_arc_2                                                   Circular_arc_4;
   typedef CircularKernelHexagon::Line_arc_2                                                       Line_arc_4;
@@ -168,7 +168,7 @@ bench.Compute_no_dxf<LazyKernelHexagon,HxLazyVariantTraits,HxLazyVarContainer>()
   -------------------------------------------------------------------------------------------------------------------------*/  
  #ifdef CIRCULAR_KERNEL_2_FILTERED_BBOX      
 
-       typedef CGAL::Filtered_bbox_curved_kernel<CircularKernel>           BBCircularKernel ;
+  typedef CGAL::Filtered_bbox_circular_kernel_2<CircularKernel>           BBCircularKernel ;
  
   typedef BBCircularKernel::Circular_arc_2                                        Circular_arc_6;
   typedef BBCircularKernel::Line_arc_2                                            Line_arc_6;
