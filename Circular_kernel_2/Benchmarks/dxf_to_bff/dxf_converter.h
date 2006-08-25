@@ -8,13 +8,13 @@
 #include <boost/variant.hpp>
 #include <CGAL/intersections.h>
 #include <CGAL/MP_Float.h>
-#include <CGAL/Circular_kernel.h>
+#include <CGAL/Circular_kernel_2.h>
 
 #include <CGAL/point_generators_2.h>
 
 #include <CGAL/MP_Float.h>
 #include <CGAL/Gmpq.h>
-#include <CGAL/Algebraic_kernel_2_2.h>
+#include <CGAL/Algebraic_kernel_for_circles_2_2.h>
 
 using namespace std;
 class Dxf_converter {
@@ -30,8 +30,8 @@ class Dxf_converter {
 typedef CGAL::Gmpq						NT1;
 //    typedef CGAL::Quotient<NT1>                       NT1;
   typedef CGAL::Cartesian<NT1>                                 Linear_k1;
-  typedef CGAL::Algebraic_kernel_2_2<NT1>                      Algebraic_k1;
-  typedef CGAL::Circular_kernel<Linear_k1, Algebraic_k1>         CK;
+  typedef CGAL::Algebraic_kernel_for_circles_2_2<NT1>                      Algebraic_k1;
+  typedef CGAL::Circular_kernel_2<Linear_k1, Algebraic_k1>         CK;
  typedef  CK::Circular_arc_point_2 Circular_arc_point_2;
   typedef  CK::Line_2  Line_2;
   typedef CK::Point_2 Point_2;
