@@ -558,6 +558,7 @@ bool QP_MPS_instance<IT_,ET_,
 		Use_sparse_representation_for_D_,
 		Use_sparse_representation_for_A_>::rhs_section()
 {
+  c0 = IT(0);  // no constant term yet
   std::string t = token();
   if (t != "RHS")
     return err1("expected 'RHS' but found '%'",t);
