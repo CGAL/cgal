@@ -2,3 +2,6 @@ GNUmakefile
 demo_elias.C
 bench
 Benchmarks
+include/CGAL/Filtered_hexagon_circular_kernel_2.h
+include/CGAL/Filtered_hexagon_circular_kernel_2/
+
