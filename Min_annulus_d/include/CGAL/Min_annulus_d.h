@@ -499,7 +499,7 @@ private:
 	strategy = pricing_strategy(NT());
 	solver = new Solver(2*points.size(), d+2,
 			    A_it( a_matrix.begin()), b_vector.begin(),
-			    c_vector.begin(), D_it(dummy),
+			    c_vector.begin(), NT( 0), D_it(dummy),
 			    Row_it(LP_rep::EQUAL),
 			    strategy);
     
