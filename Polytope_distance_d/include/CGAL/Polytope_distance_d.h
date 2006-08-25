@@ -459,13 +459,14 @@ private:
         typedef  typename QP_rep::A_iterator A_it;
         typedef  typename QP_rep::B_iterator B_it;
         typedef  typename QP_rep::C_iterator C_it;
+	typedef  typename C_it::value_type   C_entry;
         typedef  typename QP_rep::D_iterator D_it; 
 	typedef  typename QP_rep::Row_type_iterator Row_it;
 
 	strategy = pricing_strategy(NT());
 	solver = new Solver(number_of_points(), 2,
 			    A_it( a_matrix.begin()), B_it( 1), C_it( 0),
-			    D_it( signed_pts_it, row_of_d),
+			    C_entry( 0), D_it( signed_pts_it, row_of_d),
 			    Row_it(QP_rep::EQUAL), strategy);
 
         // compute support and realizing points
