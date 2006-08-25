@@ -22,12 +22,12 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 
-#ifndef CGAL_ALGEBRAIC_KERNEL_FUNCTION_OBJECTS_ON_ROOTS_AND_POLYNOMIALS_2_H
-#define CGAL_ALGEBRAIC_KERNEL_FUNCTION_OBJECTS_ON_ROOTS_AND_POLYNOMIALS_2_H
+#ifndef CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_FUNCTION_OBJECTS_ON_ROOTS_AND_POLYNOMIALS_2_H
+#define CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_FUNCTION_OBJECTS_ON_ROOTS_AND_POLYNOMIALS_2_H
 
-#include <CGAL/Algebraic_kernel/internal_functions_on_roots_and_polynomials_2_2.h>
-#include <CGAL/Algebraic_kernel/internal_functions_on_roots_and_polynomial_1_2_and_2_2.h>
-#include <CGAL/Algebraic_kernel/internal_functions_comparison_root_for_circles_2_2.h>
+#include <CGAL/Algebraic_kernel_for_circles/internal_functions_on_roots_and_polynomials_2_2.h>
+#include <CGAL/Algebraic_kernel_for_circles/internal_functions_on_roots_and_polynomial_1_2_and_2_2.h>
+#include <CGAL/Algebraic_kernel_for_circles/internal_functions_comparison_root_for_circles_2_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -232,4 +232,4 @@ namespace AlgebraicFunctors {
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_ALGEBRAIC_KERNEL_FUNCTION_OBJECTS_ON_ROOTS_AND_POLYNOMIALS_2_H
+#endif // CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_FUNCTION_OBJECTS_ON_ROOTS_AND_POLYNOMIALS_2_H

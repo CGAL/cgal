@@ -22,8 +22,8 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 
-#ifndef CGAL_ROOT_FOR_CIRCLES_2_2_H
-#define CGAL_ROOT_FOR_CIRCLES_2_2_H
+#ifndef CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_ROOT_FOR_CIRCLES_2_2_H
+#define CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_ROOT_FOR_CIRCLES_2_2_H
 
 #include <iostream>
 #include <CGAL/Bbox_2.h>
@@ -132,4 +132,4 @@ operator>>(std::istream & is, Root_for_circles_2_2<RT> &r)
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_ROOT_FOR_CIRCLES_2_2_H
+#endif // CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_ROOT_FOR_CIRCLES_2_2_H

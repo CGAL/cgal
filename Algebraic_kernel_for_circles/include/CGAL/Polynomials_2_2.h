@@ -22,8 +22,8 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 
-#ifndef CGAL_ALGEBRAIC_KERNEL_POLYNOMIALS_2_2_H
-#define CGAL_ALGEBRAIC_KERNEL_POLYNOMIALS_2_2_H
+#ifndef CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_POLYNOMIALS_2_2_H
+#define CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_POLYNOMIALS_2_2_H
 
 //////////// FIXME - pb RT (cas general Polynomial_2_2) ou FT (ici)
 
@@ -72,4 +72,4 @@ operator == ( const Polynomial_for_circles_2_2<FT> & p1,
 
 CGAL_END_NAMESPACE
 
-#endif //CGAL_ALGEBRAIC_KERNEL_POLYNOMIALS_2_2_H
+#endif //CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_POLYNOMIALS_2_2_H
