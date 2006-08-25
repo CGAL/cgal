@@ -450,7 +450,7 @@ private:
     strategy = pricing_strategy(NT());
     solver = new Solver(points.size(), 1,
 			A_it( const_one),
-			const_one, c_vector.begin(),
+			const_one, c_vector.begin(), NT(0),
 			D_it( points.begin(),
 			      QP_rep_row_of_d< NT,
 			      Point,
