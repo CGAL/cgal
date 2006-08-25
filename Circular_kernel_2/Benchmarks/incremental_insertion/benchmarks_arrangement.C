@@ -5,19 +5,19 @@
 
 #include <CGAL/MP_Float.h>
 
-#include <CGAL/Algebraic_kernel_2_2.h>
+#include <CGAL/Algebraic_kernel_for_circles_2_2.h>
 
 #include <CGAL/intersections.h>
 
-#include <CGAL/Circular_kernel.h>
+#include <CGAL/Circular_kernel_2.h>
 #include <CGAL/Circular_arc_traits.h>
 #include <CGAL/Circular_arc_traits_tracer.h>
 
-#include <CGAL/Lazy_curved_kernel.h>
+#include <CGAL/Lazy_circular_kernel_2.h>
 
-#include <CGAL/Filtered_hexagon_curved_kernel.h>
+#include <CGAL/Filtered_hexagon_circular_kernel_2.h>
 
-#include <CGAL/Filtered_bbox_curved_kernel.h>
+#include <CGAL/Filtered_bbox_circular_kernel_2.h>
 
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
@@ -140,8 +140,8 @@ Bench bench(Htmlfilename,Texfilename,Dxffilename[i],true);
 
   typedef CGAL::Quotient<CGAL::MP_Float>                       NT1;
   typedef CGAL::Cartesian<NT1>                                 Linear_k1;
-  typedef CGAL::Algebraic_kernel_2_2<NT1>                      Algebraic_k1;
-  typedef CGAL::Curved_kernel<Linear_k1, Algebraic_k1>         CircularKernel;
+  typedef CGAL::Algebraic_kernel_for_circles_2_2<NT1>          Algebraic_k1;
+  typedef CGAL::Circular_kernel_2<Linear_k1, Algebraic_k1>     CircularKernel;
 /*
   #ifndef CGAL_CURVED_KERNEL_DEBUG
    typedef CGAL::Circular_arc_traits<CircularKernel>                   CircularK_CA_Traits;
@@ -176,8 +176,8 @@ Bench bench(Htmlfilename,Texfilename,Dxffilename[i],true);
   
   typedef CGAL::Quotient<CGAL::MP_Float>                       NT2;
   typedef CGAL::Cartesian<NT2>                                 Linear_k2;
-  typedef CGAL::Algebraic_kernel_2_2<NT2>                      Algebraic_k2;
-  typedef CGAL::Curved_kernel<Linear_k2, Algebraic_k2>         CK2_;
+  typedef CGAL::Algebraic_kernel_for_circles_2_2<NT2>          Algebraic_k2;
+  typedef CGAL::Circular_kernel_2<Linear_k2, Algebraic_k2>     CK2_;
   
   //typedef CGAL::Interval_nt<>                                  NT2;
   typedef CGAL::Interval_nt_advanced                          NT3;
@@ -186,7 +186,7 @@ Bench bench(Htmlfilename,Texfilename,Dxffilename[i],true);
   typedef CGAL::Curved_kernel<Linear_k3,Algebraic_k3>          CK3_;
   
 
-  typedef CGAL::Lazy_curved_kernel<CK2_,CK3_>                  LazyCurvedK;
+  typedef CGAL::Lazy_circular_kernel_2<CK2_,CK3_>                  LazyCurvedK;
   
 //    #ifndef CGAL_CURVED_KERNEL_DEBUG
 //   typedef CGAL::Circular_arc_traits<LazyCurvedK>                  LazyCurvedK_CA_Traits;
