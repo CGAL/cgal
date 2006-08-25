@@ -19,38 +19,37 @@
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_MIDPOINT_PLACEMENT_H 1
 
 #include <CGAL/Surface_mesh_simplification/TSMS_common.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Functor_base.h>
 
 CGAL_BEGIN_NAMESPACE
 
 namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse
 {
 
-//
-// Midpoint vertex placement
-//
-template<class Collapse_data_>
-class Midpoint_placement : public Placement_functor_base< Collapse_data_,void>
+template<class TSM_, class Collapse_data_>
+class Midpoint_placement
 {
-  typedef Placement_functor_base<Collapse_data_,void> Base ;
-  
 public:
     
+  typedef TSM_           TSM ;
   typedef Collapse_data_ Collapse_data ;
   
-  typedef typename Collapse_data::TSM TSM ;
+  typedef void Params ;
   
-  typedef typename boost::graph_traits<TSM>::vertex_descriptor vertex_descriptor ;
   typedef typename boost::graph_traits<TSM>::edge_descriptor   edge_descriptor ;
+  typedef typename boost::graph_traits<TSM>::vertex_descriptor vertex_descriptor ;
   
   typedef typename Surface_geometric_traits<TSM>::Point_3 Point_3 ;
+  typedef typename Surface_geometric_traits<TSM>::FT      FT ;
   
-  typedef typename Base::result_type result_type ;
-  typedef typename Base::Params      Params ;
+  typedef optional<FT> result_type ;
     
 public:
 
-  virtual result_type compute_placement( edge_descriptor const& aEdge, TSM& aSurface, Params const* ) const
+  result_type operator()( edge_descriptor const& aEdge
+                        , TSM&                   aSurface
+                        , Collapse_data const&   aData
+                        , Params const*          aParams
+                        ) const
   {
     vertex_descriptor vs,vt ; tie(vs,vt) = this->get_vertices(aEdge,aSurface);
     
@@ -58,6 +57,21 @@ public:
     Point_3 const& pt = this->get_point(vt,aSurface);
       
     return result_type(midpoint(ps,pt));
+  }
+  
+private:
+
+  Point_3 const& get_point ( vertex_descriptor const& v, TSM& aSurface ) const
+  {
+    vertex_point_t vertex_point ;
+    return get(vertex_point,aSurface,v) ;
+  }
+  
+  tuple<vertex_descriptor,vertex_descriptor> get_vertices ( edge_descriptor const& aEdge, TSM& aSurface ) const
+  {
+    vertex_descriptor p = source(aEdge,aSurface);
+    vertex_descriptor q = target(aEdge,aSurface);
+    return make_tuple(p,q);
   }
 };
 

@@ -25,21 +25,7 @@ CGAL_BEGIN_NAMESPACE
 namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse
 {
 
-template<class TSM_>    
-class Empty_collapse_data
-{
-public:
-
-  typedef TSM_ TSM ;
-  
-  typedef Tag_false Has_cached_cost ;
-  typedef Tag_false Has_cached_placement ;
-    
-public :
-
-  Empty_collapse_data() {}
-  
-};    
+struct Empty_collapse_data {};    
 
 } } } // namespace Triangulated_surface_mesh::Simplification::Edge_collapse
 

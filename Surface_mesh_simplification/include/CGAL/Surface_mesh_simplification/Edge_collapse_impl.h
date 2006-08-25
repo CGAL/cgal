@@ -42,10 +42,10 @@ EdgeCollapse<M,P,D,C,V,S,I>::EdgeCollapse( TSM&                   aSurface
   ,Should_stop      (aShould_stop) 
   ,Visitor          (aVisitor)
   
-  ,mPQ( Compare_cost(this) )
-  
 {
-  CGAL_TSMS_TRACE(0,"EdgeCollapse of TSM with " << num_undirected_edges(aSurface) << " edges" );
+  mPQ.reset( new PQ (num_edges(aSurface), Compare_cost(this) ) ) ;
+  
+  CGAL_TSMS_TRACE(0,"EdgeCollapse of TSM with " << num_undirected_edges(aSurface) << " edges" ); 
   
   CGAL_TSMS_DEBUG_CODE ( mStep = 0 ; )
   
@@ -147,45 +147,48 @@ void EdgeCollapse<M,P,D,C,V,S,I>::Loop()
   //
   // Pops and processes each edge from the PQ
   //
-  edge_descriptor lEdge ;
-  while ( handle_assigned(lEdge = pop_from_PQ()) )
+  optional<edge_descriptor> lEdge ;
+  while ( (lEdge = pop_from_PQ()) )
   {
-    CGAL_TSMS_TRACE(3,"Poped " << edge_to_string(lEdge) ) ;
+    CGAL_TSMS_TRACE(3,"Poped " << edge_to_string(*lEdge) ) ;
     
+    if ( Visitor )
+      Visitor->OnStep(*lEdge,mSurface,mInitialEdgeCount,mCurrentEdgeCount);
+      
     vertex_descriptor lVertex ;
     
-    Optional_cost_type lCost = get_cost(lEdge);
+    Optional_cost_type lCost = get_cost(*lEdge);
     
     if ( lCost != none ) 
     {
-      if ( Should_stop(*lCost,lEdge,mInitialEdgeCount,mCurrentEdgeCount) )
+      if ( Should_stop(*lCost,*lEdge,mInitialEdgeCount,mCurrentEdgeCount) )
       {
         if ( Visitor )
           Visitor->OnStopConditionReached(mSurface);
           
         CGAL_TSMS_TRACE(0,"Stop condition reached with InitialEdgeCount=" << mInitialEdgeCount
                        << " CurrentEdgeCount=" << mCurrentEdgeCount
-                       << " Current Edge: " << edge_to_string(lEdge)
+                       << " Current Edge: " << edge_to_string(*lEdge)
                        );
         break ;
       }
         
-      if ( Is_collapsable(lEdge) )
+      if ( Is_collapsable(*lEdge) )
       {
-        lVertex= Collapse(lEdge);
+        lVertex= Collapse(*lEdge);
       }
       else
       {
-        CGAL_TSMS_TRACE(1,edge_to_string(lEdge) << " NOT Collapsable"  );
+        CGAL_TSMS_TRACE(1,edge_to_string(*lEdge) << " NOT Collapsable"  );
       }  
     }
     else
     {
-      CGAL_TSMS_TRACE(1,edge_to_string(lEdge) << " uncomputable cost."  );
+      CGAL_TSMS_TRACE(1,edge_to_string(*lEdge) << " uncomputable cost."  );
     }
     
     if ( Visitor )
-      Visitor->OnProcessed(lEdge,mSurface,lCost,lVertex);
+      Visitor->OnProcessed(*lEdge,mSurface,lCost,lVertex);
   }
 }
 
@@ -368,6 +371,7 @@ typename EdgeCollapse<M,P,D,C,V,S,I>::vertex_descriptor EdgeCollapse<M,P,D,C,V,S
     CGAL_TSMS_TRACE_IF(handle_assigned(lEdgePT),1,"  P-T: E" << lEdgePT->ID << "(V" << lP->ID << "->V" << target(lEdgePT,mSurface)->ID << ")" ) ;
     CGAL_TSMS_TRACE_IF(handle_assigned(lEdgeQB),1,"  Q-B: E" << lEdgeQB->ID << "(V" << lQ->ID << "->V" << target(lEdgeQB,mSurface)->ID << ")" ) ;
     
+      
     // Perform the actuall collapse.
     // This is an external function.
     // It's REQUIRED to remove ONLY 1 vertex (P or Q) and edges PQ,PT and QB (PT and QB are removed if they are not null).
@@ -406,7 +410,7 @@ void EdgeCollapse<M,P,D,C,V,S,I>::Update_neighbors( vertex_descriptor const& aKe
 
   //
   // (A) Collect all edges to update its cost: all those around each vertex adjacent to the vertex kept
-  //
+//   //
   
   typedef std::vector<edge_descriptor> edges ;
   
@@ -428,40 +432,6 @@ void EdgeCollapse<M,P,D,C,V,S,I>::Update_neighbors( vertex_descriptor const& aKe
       
       Edge_data_ptr lData2 = get_data(lEdge2);
 
-      /*
-      vertex_descriptor p,q ;       
-      Edge_data_ptr lPair = get_data(edge2);
-      
-      if ( lPair->p() == aRemovedV )
-      {
-        CGAL_TSMS_TRACE(4,"Replacing lPair->p() with V" << aKeptV->id() << "(Q)" ) ;
-        
-        CGAL_assertion( aKeptV != lPair->q() ) ;
-        
-        lPair->data().set(aKeptV
-                         ,lPair->q()
-                         ,aIsKeptVFixed 
-                         ,lPair->is_q_fixed()
-                         ,source(edge2,mSurface) == aKeptV ? edge2 : opposite_edge(edge2,mSurface)
-                         ,mSurface
-                         );
-      }
-      else if ( lPair->q() == aRemovedV )
-      {
-        CGAL_TSMS_TRACE(4,"Replacing lPair->q() with V" << aKeptV->id() << " (Q)" ) ;
-        
-        CGAL_assertion( aKeptV != lPair->p() ) ;
-        
-        lPair->data().set(lPair->p()
-                         ,aKeptV
-                         ,lPair->is_p_fixed()
-                         ,aIsKeptVFixed 
-                         ,target(edge2,mSurface) == aKeptV ? edge2 : opposite_edge(edge2,mSurface)
-                         ,mSurface
-                         );
-      }
-      */
-      
       CGAL_TSMS_TRACE(4,"Inedge around V" << lAdj_k->ID << edge_to_string(lEdge2) ) ;
     
       // Only those edges still in the PQ are updated.

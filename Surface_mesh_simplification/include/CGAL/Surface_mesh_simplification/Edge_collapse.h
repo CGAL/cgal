@@ -23,13 +23,12 @@
 
 #include <boost/config.hpp>
 #include <boost/shared_ptr.hpp>
-#include <boost/scoped_array.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <boost/iterator_adaptors.hpp>
 #include <boost/graph/adjacency_list.hpp>
 
 #include <CGAL/Surface_mesh_simplification/TSMS_common.h>
 #include <CGAL/Surface_mesh_simplification/Collapse_operator.h>
-#include <CGAL/Modifiable_priority_queue.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -98,6 +97,8 @@ public:
   
   struct Compare_cost
   {
+    Compare_cost() : mAlgorithm(0) {}
+    
     Compare_cost( Self const* aAlgorithm ) : mAlgorithm(aAlgorithm) {}
     
     Comparison_result operator() ( edge_descriptor a, edge_descriptor b ) const
@@ -109,8 +110,7 @@ public:
   } ;
   
   typedef Modifiable_priority_queue<edge_descriptor,Compare_cost> PQ ;
-  
-  typedef typename PQ::iterator pq_handle ;
+  typedef typename PQ::handle pq_handle ;
   
   // An Edge_data is associated with EVERY edge in the mesh (collapsable or not).
   // It relates the edge with the PQ handle needed to update the priority queue
@@ -261,33 +261,29 @@ private:
   void insert_in_PQ( edge_descriptor const& aEdge, Edge_data_ptr aData ) 
   {
     CGAL_precondition(!aData->is_in_PQ());
-    pq_handle h = mPQ.push(aEdge); 
+    pq_handle h = mPQ->push(aEdge); 
     aData->set_PQ_handle(h);
   }
   
   void update_in_PQ( Edge_data_ptr aData )
   {
     CGAL_precondition(aData->is_in_PQ());
-    aData->set_PQ_handle( mPQ.update(aData->PQ_handle()) ) ; 
+    aData->set_PQ_handle(mPQ->update(aData->PQ_handle())) ; 
   }   
   
   void remove_from_PQ( Edge_data_ptr aData )
   {
     CGAL_precondition(aData->is_in_PQ());
-    mPQ.erase(aData->PQ_handle());
+    mPQ->erase(aData->PQ_handle());
     aData->reset_PQ_handle();
   }   
   
-  edge_descriptor pop_from_PQ() 
+  optional<edge_descriptor> pop_from_PQ() 
   {
-    edge_descriptor rEdge ;
-    if ( !mPQ.empty() )
-    {
-      rEdge = mPQ.top(); 
-      mPQ.pop();
-      get_data(rEdge)->reset_PQ_handle();
-    }
-    return rEdge ;
+    optional<edge_descriptor> rEdge = mPQ->extract_top();
+    if ( rEdge )
+      get_data(*rEdge)->reset_PQ_handle();
+    return rEdge ;  
   }
     
 private:
@@ -307,8 +303,8 @@ private:
 
   Edge_data_array mEdgeDataArray ;
   
-  PQ  mPQ ;
-  
+  boost::scoped_ptr<PQ> mPQ ;
+    
   std::size_t mInitialEdgeCount ;
   std::size_t mCurrentEdgeCount ; 
 

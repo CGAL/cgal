@@ -10,8 +10,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
+// $URL: svn+ssh://fcacciola@scm.gforge.inria.fr/svn/cgal/trunk/Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_set_collapse_data.h $
+// $Id: LindstromTurk_set_collapse_data.h 33680 2006-08-24 15:22:37Z fcacciola $
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
@@ -19,7 +19,7 @@
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_SET_COLLAPSE_DATA_H 1
 
 #include <CGAL/Surface_mesh_simplification/TSMS_common.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Full_collapse_data.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Partial_collapse_data.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_params.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Detail/Lindstrom_Turk_core.h>
 
@@ -30,7 +30,7 @@ namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_
 {
 
 template<class TSM_>    
-class Set_full_collapse_data_LindstromTurk
+class Set_partial_collapse_data_LindstromTurk
 {
 public:
 
@@ -38,13 +38,12 @@ public:
 
   typedef LindstromTurk_params Params ;
   
-  typedef typename boost::graph_traits<TSM>::vertex_descriptor vertex_descriptor ;
-  typedef typename boost::graph_traits<TSM>::edge_descriptor   edge_descriptor ;
+  typedef typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor ;
+  
+  typedef Partial_collapse_data<TSM> Collapse_data ;
   
   typedef typename Surface_geometric_traits<TSM>::FT      FT ;
   typedef typename Surface_geometric_traits<TSM>::Point_3 Point_3 ;
-  
-  typedef Full_collapse_data<TSM> Collapse_data ;
   
   typedef optional<FT>      Optional_cost_type ;
   typedef optional<Point_3> Optional_placement_type ;
@@ -61,7 +60,7 @@ public :
     Optional_cost_type lCost ;
     Optional_placement_type lPlacement ;
     tie(lCost,lPlacement) = core.compute();
-    rData.set(lCost,lPlacement);
+    rData.set(lCost);
   }                         
   
 };    

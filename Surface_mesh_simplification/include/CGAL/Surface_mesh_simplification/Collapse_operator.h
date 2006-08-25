@@ -159,8 +159,6 @@ struct Collapse_triangulation_edge
       lP_Erased = true ;
     }    
     
-    CGAL_expensive_postcondition(aDS.is_valid());
-    
     return lP_Erased ? q : p ;
   }
   

@@ -10,64 +10,55 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
+// $URL: svn+ssh://fcacciola@scm.gforge.inria.fr/svn/cgal/trunk/Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Edge_length_cost.h $
+// $Id: Edge_length_cost.h 32188 2006-07-03 17:19:46Z fcacciola $
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_COST_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_COST_H 1
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_FUNCTOR_BASE_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_FUNCTOR_BASE_H
 
 #include <CGAL/Surface_mesh_simplification/TSMS_common.h>
 
 CGAL_BEGIN_NAMESPACE
 
-namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse  
+namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse
 {
 
 template<class TSM_>
-class LindstromTurk_cost
+class Cached_cost 
 {
+  
 public:
-    
+  
   typedef TSM_ TSM ;
   
-  typedef typename boost::graph_traits<TSM>::vertex_descriptor vertex_descriptor ;
-  typedef typename boost::graph_traits<TSM>::edge_descriptor   edge_descriptor ;
+  typedef void Params ;
   
-  typedef typename Surface_geometric_traits<TSM>::FT      FT ;
-  typedef typename Surface_geometric_traits<TSM>::Point_3 Point_3 ;
+  typedef typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor ;
   
-  typedef LindstromTurk_params Params ;
-    
+  typedef typename Surface_geometric_traits<TSM>::FT FT ;
+  
   typedef optional<FT> result_type ;
-  
-public:
 
-  template<class Collapse_data>
+public :
+
+  template<class Collapse_data>    
   result_type operator()( edge_descriptor const& aEdge
                         , TSM&                   aSurface
                         , Collapse_data const&   aData
                         , Params const*          aParams
                         ) const
   {
-    CGAL_assertion(aParams);
-    CGAL_assertion( handle_assigned(aEdge) );
-    
-    LindstromTurkCore<TSM> core(*aParams,aEdge,aSurface,true);
-
-    optional<FT> lCost ;
-    optional<Point_3> lPlacement ;
-    tie(lCost,lPlacement) = core.compute();
-    return lCost ;
+    return aData.cost();
   }
-  
 };
 
 } } } // namespace Triangulated_surface_mesh::Simplification::Edge_collapse
 
+
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_COST_H //
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_FUNCTOR_BASE_H
 // EOF //
  

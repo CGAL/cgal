@@ -27,8 +27,10 @@
 #include <boost/none.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/format.hpp>
+#include <boost/scoped_array.hpp>
 
 #include <CGAL/Cartesian/MatrixC33.h>
+#include <CGAL/Modifiable_priority_queue.h>
 
 namespace boost
 {

@@ -39,8 +39,8 @@
 //#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE 4
 //#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE 4
 
-#define TRACK_STATS
-#define SHOW_STATS
+#define PROGRESS
+//#define STATS
 //#define AUDIT
 
 void Surface_simplification_external_trace( std::string s )
@@ -60,6 +60,7 @@ int exit_code = 0 ;
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_and_length.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_pred.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_pred.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Set_empty_collapse_data.h>
 
 using namespace std ;
 using namespace boost ;
@@ -335,31 +336,28 @@ void register_collected_edge( Vertex_handle    const& p
 } 
 #endif
 
-#ifdef TRACK_STATS
-int sInitial ;
+#ifdef STATS
 int sCollected ;
 int sProcessed ;
 int sCollapsed ;
 int sNonCollapsable ;
 int sCostUncomputable ;
 int sFixed ;
-int sRemoved ;
 #endif
 
 
 struct Visitor
 {
+  Visitor ( size_t aRequested ) : mRequested(aRequested), mCollected(0) {}
+  
   void OnStarted( Polyhedron& aSurface ) 
   {
-#ifdef TRACK_STATS
-    sInitial = aSurface.size_of_halfedges() / 2 ;
-#endif
   } 
   
   void OnFinished ( Polyhedron& aSurface ) 
   {
-#ifdef TRACK_STATS
-    cerr << "\n";
+#ifdef PROGRESS
+    cerr << "\n" << flush ;
 #endif
   } 
   
@@ -370,16 +368,16 @@ struct Visitor
                   , Polyhedron&            aSurface
                   )
   {
-#ifdef AUDIT  
-    register_collected_edge(aEdge,aCost,aNewVertexPoint); 
-#endif
-
-#ifdef TRACK_STATS
+#ifdef STATS
     ++sCollected ;
-    cerr << "\rEdges collected: " << sCollected;
     if ( aIsFixed )
       ++ sFixed ;
 #endif
+
+#ifdef PROGRESS
+    ++ mCollected ;
+    cerr << "\rEdges collected: " << mCollected << flush ;
+#endif    
  }                
   
   void OnProcessed(Halfedge_handle const& aEdge
@@ -388,9 +386,11 @@ struct Visitor
                   ,Vertex_handle const&   aVertex
                   )
   {
-#ifdef TRACK_STATS
-    if ( sProcessed == 0 )
-      cerr << "\n";  
+#ifdef AUDIT  
+    register_collected_edge(aEdge,aCost,aVertex); 
+#endif
+
+#ifdef STATS
     ++ sProcessed ;
     if ( aVertex == Vertex_handle() )
     {
@@ -401,12 +401,27 @@ struct Visitor
     else 
     {
       ++ sCollapsed;
-      sRemoved += 3 ;
-      cerr << "\r" << ((int)(100.0*((double)sRemoved/(double)sInitial))) << "%" ;
     }
 #endif  
   }                
   
+  void OnStep(Halfedge_handle const& aEdge, Polyhedron& aSurface, size_t aInitial, size_t aCurrent)
+  {
+#ifdef PROGRESS
+    if ( aCurrent == aInitial )
+      cerr << "\n" << flush ;
+        
+    if ( mRequested < aInitial )
+    {
+      double n = aInitial - aCurrent ;  
+      double d = aInitial - mRequested ; 
+      cerr << "\r" << aCurrent << " " << ((int)(100.0*(n/d))) << "%" << flush ;
+    }  
+#endif  
+  }                
+  
+  size_t mRequested ;
+  size_t mCollected ;
 } ;
 
 // This is here only to allow a breakpoint to be placed so I can trace back the problem.
@@ -419,7 +434,7 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
   if ( msg != 0)
     cerr << "Explanation:" << msg << endl;
     
-  throw std::logic_error(what);  
+  throw std::logic_error("");  
 }
 
 using namespace CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse ;
@@ -429,38 +444,57 @@ char const* matched_alpha ( bool matched )
   return matched ? "matched" : "UNMATCHED" ; 
 }
 
-enum Method { Midpoint, LT_cached, LT_uncached } ;
+enum Method { LT, MP } ;
+enum Cached { Empty, Partial, Full } ;
 
 char const* method_to_string( Method aMethod )
 {
   switch(aMethod)
   {
-    case Midpoint:  return "midpoint" ; break ;
-    case LT_cached: return "LindstromTurk (cached)" ; break ;
-    case LT_uncached: return "LindstromTurk (uncached)" ; break ;
+    case LT: return "LindstromTurk" ; break ;
+    case MP: return "Midpoint" ; break ;
   }
   
   return "<unknown>" ;
 }
 
-typedef Set_empty_collapse_data             <Polyhedron> P_set_empty_collapse_data ;
-typedef Set_full_collapse_data_LindstromTurk<Polyhedron> P_set_full_collapse_data_LT ;
-
-typedef Empty_collapse_data<Polyhedron> P_empty_collapse_data ;
-typedef Full_collapse_data<Polyhedron>  P_full_collapse_data ;
+char const* cache_to_string( Cache aCache )
+{
+  switch(aMethod)
+  {
+    case Empty   : return "Empty cache" ; break ;
+    case Partial : return "Partial cache" ; break ;
+    case Full    : return "Full cache" ; break ;
+  }
+  
+  return "<unknown>" ;
+}
 
 typedef LindstromTurk_params LT_params ;
 typedef char                 Dummy_params ;
 
-typedef Edge_length_cost<P_empty_collapse_data>   MP_cost ;
-typedef LindstromTurk_cost<P_empty_collapse_data> LT_uncached_cost ; 
-typedef LindstromTurk_cost<P_full_collapse_data>  LT_cached_cost ;
-          
-typedef Midpoint_placement     <P_empty_collapse_data> MP_placement ;
-typedef LindstromTurk_placement<P_empty_collapse_data> LT_uncached_placement ;
-typedef LindstromTurk_placement<P_full_collapse_data>  LT_cached_placement ;
+typedef Empty_collapse_data  <Polyhedron>  P_empty_collapse_data ;
+typedef Partial_collapse_data<Polyhedron>  P_partial_collapse_data ;
+typedef Full_collapse_data   <Polyhedron>  P_full_collapse_data ;
 
-bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Method aMethod )
+typedef Cached_cost       <Polyhedron>  P_cached_cost ;
+typedef Edge_length_cost  <Polyhedron>  P_MP_cost ;
+typedef LindstromTurk_cost<Polyhedron>  P_LT_cost ; 
+          
+typedef Cached_placement<Polyhedron>        P_Cached_placement ;
+typedef Midpoint_placement<Polyhedron>      P_MP_placement ;
+typedef LindstromTurk_placement<Polyhedron> P_LT_placement ;
+
+typedef Set_empty_collapse_data<Polyhedron>  P_set_empty_collapse_data ;
+
+typedef Set_partial_collapse_data<Polyhedron,P_MP_cost>     P_set_partial_collapse_data_MP ;
+typedef Set_partial_collapse_data_LindstromTurk<Polyhedron> P_set_partial_collapse_data_LT ;
+
+typedef Set_full_collapse_data<Polyhedron,P_MP_cost,P_MP_placement> P_set_full_collapse_data_MP ;
+typedef Set_full_collapse_data_LindstromTurk<Polyhedron>            P_set_full_collapse_data_LT ;
+
+
+bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Method aMethod, Cache aCache )
 {
   bool rSucceeded = false ;
   
@@ -481,18 +515,17 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
       {
         if ( !aJustPrintSurfaceData )
         {
-          int lFinalEdgesCount ;
+          size_t lRequestedEdgeCount ;
           if ( aStopA != -1 )
-               lFinalEdgesCount = aStopA ;
-          else lFinalEdgesCount = lP.size_of_halfedges() * aStopR / 200 ;
-          
+               lRequestedEdgeCount = aStopA ;
+          else lRequestedEdgeCount = lP.size_of_halfedges() * aStopR / 200 ;
+    
           cout << "Testing simplification of surface " << off_name << " using " << method_to_string(aMethod) << "method."  << endl ;
-             
           cout << lP.size_of_facets() << " triangles." << endl 
                << (lP.size_of_halfedges()/2) << " edges." << endl 
                << lP.size_of_vertices() << " vertices." << endl 
                << (lP.is_closed() ? "Closed." : "Open." ) << endl 
-               << "Final edge count: " << lFinalEdgesCount << endl ;
+               << "Requested edge count: " << lRequestedEdgeCount << endl ;
                
           cout << setprecision(19) ;
         
@@ -514,42 +547,125 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
           ParseAudit(audit_name);
           cout << "Audit data loaded." << endl ;
 #endif
-          P_set_empty_collapse_data   set_empty_collapse_data ;
+
+          P_cached_cost get_cached_cost ;          
+          P_MP_cost     get_MP_cost;
+          P_LT_cost     get_LT_cost;
+          
+          P_cached_placement get_cached_placement ;          
+          P_MP_placement     get_MP_placement;
+          P_LT_placement     get_LT_placement;
+                    
+          P_set_empty_collapse_data      set_empty_collapse_data ;
+          
+          P_set_partial_collapse_data_MP set_partial_collapse_data_MP(get_MP_cost) ;
+          P_set_partial_collapse_data_LT set_partial_collapse_data_LT ;
+          
+          P_set_full_collapse_data_MP set_full_collapse_data_MP(get_MP_cost,get_MP_placement) ;
           P_set_full_collapse_data_LT set_full_collapse_data_LT ;
           
-          MP_cost          get_MP_cost;
-          LT_uncached_cost get_LT_uncached_cost;
-          LT_cached_cost   get_LT_cached_cost;
-          
-          MP_placement          get_MP_placement;
-          LT_uncached_placement get_LT_uncached_placement;
-          LT_cached_placement   get_LT_cached_placement;
-
-                    
-          Count_stop_condition<Polyhedron> should_stop(lFinalEdgesCount);
+          Count_stop_condition<Polyhedron> should_stop(lRequestedEdgeCount);
               
           Dummy_params lDummy_params;
           LT_params    lLT_params ; 
           
-          Visitor lVisitor ;
+          Visitor lVisitor(lRequestedEdgeCount) ;
       
           int r = -1 ;
           
           Real_timer t ; t.start();    
           switch( aMethod )
           {
-            case Midpoint:  
-              r = edge_collapse(lP,&lDummy_params,set_empty_collapse_data,get_MP_cost,get_MP_placement,should_stop,&lVisitor);
+            case MP:  
+            
+              switch ( aCache )
+              {
+                case Empty :
+                
+                  r = edge_collapse(lP
+                                   ,&lDummy_params
+                                   ,set_empty_collapse_data
+                                   ,get_MP_cost
+                                   ,get_MP_placement
+                                   ,should_stop
+                                   ,&lVisitor
+                                   );
+                  break ;                 
+                                   
+                case Partial :
+                
+                  r = edge_collapse(lP
+                                   ,&lDummy_params
+                                   ,set_partial_collapse_data_MP
+                                   ,get_cached_cost
+                                   ,get_MP_placement
+                                   ,should_stop
+                                   ,&lVisitor
+                                   );
+                  break ;                  
+                  
+                case Full :
+                
+                  r = edge_collapse(lP
+                                   ,&lDummy_params
+                                   ,set_full_collapse_data_MP
+                                   ,get_cached_cost
+                                   ,get_cached_placement
+                                   ,should_stop
+                                   ,&lVisitor
+                                   );
+                  break ;                  
+                                   
+              }
+              
               break ;
-            case LT_cached: 
-              r = edge_collapse(lP,&lLT_params,set_full_collapse_data_LT,get_LT_cached_cost,get_LT_cached_placement,should_stop,&lVisitor);
-              break ;
-            case LT_uncached:
-              r = edge_collapse(lP,&lLT_params,set_empty_collapse_data,get_LT_uncached_cost,get_LT_uncached_placement,should_stop,&lVisitor);
+              
+            case LT: 
+            
+              switch ( aCache )
+              {
+                case Empty :
+                
+                  r = edge_collapse(lP
+                                   ,&lDummy_params
+                                   ,set_empty_collapse_data
+                                   ,get_LT_cost
+                                   ,get_LT_placement
+                                   ,should_stop
+                                   ,&lVisitor
+                                   );
+                  break ;                 
+                                   
+                case Partial :
+                
+                  r = edge_collapse(lP
+                                   ,&lDummy_params
+                                   ,set_partial_collapse_data_LT
+                                   ,get_cached_cost
+                                   ,get_LT_placement
+                                   ,should_stop
+                                   ,&lVisitor
+                                   );
+                  break ;                  
+                  
+                case Full :
+                
+                  r = edge_collapse(lP
+                                   ,&lDummy_params
+                                   ,set_full_collapse_data_LT
+                                   ,get_cached_cost
+                                   ,get_cached_placement
+                                   ,should_stop
+                                   ,&lVisitor
+                                   );
+                  break ;                  
+                                   
+              }
+              
               break ;
           }
           t.stop();
-                  
+          
           ofstream off_out(result_name.c_str(),ios::trunc);
           off_out << lP ;
           
@@ -562,15 +678,13 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
                << lP.size_of_facets() << " final triangles.\n" 
                << ( lP.is_valid() ? " valid\n" : " INVALID!!\n" ) ;
       
-#ifdef SHOW_STATS
+#ifdef STATS
           cout << "\n"
                << sProcessed        << " edges processed.\n"
                << sCollapsed        << " edges collapsed.\n" 
                << sNonCollapsable   << " non-collapsable edges.\n"
                << sCostUncomputable << " non-computable edges.\n"
-               << sFixed            << " fixed edges.\n"
-               << sRemoved          << " edges removed.\n" 
-               << (sRemoved/3)      << " vertices removed." ;
+               << sFixed            << " fixed edges.\n" ;
 #endif
       
 #ifdef AUDIT
@@ -660,7 +774,7 @@ int main( int argc, char** argv )
   bool   lJustPrintSurfaceData = false ;
   int    lStopA = -1 ;
   int    lStopR = 20 ;
-  Method lMethod = Midpoint ;
+  Method lMethod = LT_cached ;
   string lFolder =""; 
   vector<string> lCases ;
         
@@ -716,10 +830,10 @@ int main( int argc, char** argv )
   {
     cout << "collapse_edge_test <options> file0 file1 ... fileN" << endl 
          << "  options: " << endl
-         << "    -m method                    method: 0=midpoint[default] 1=LindstromTurk (cached) 2=LindstromTurk (uncached)" << endl 
-         << "    -d folder                    Specifies the folder where the files are located. " << endl 
-         << "    -a absolute_max_edge_count   Sets the final number of edges as absolute number." << endl
-         << "    -r relative_max_edge_count   Sets the final number of edges as a percentage." << endl
+         << "    -m method                       method: 0=LindstromTurk_cached[default] 1=Midpoint_cached" << endl 
+         << "    -d folder                       Specifies the folder where the files are located. " << endl 
+         << "    -a absolute_max_edge_count      Sets the final number of edges as absolute number." << endl
+         << "    -r relative_max_edge_count      Sets the final number of edges as a percentage." << endl
          << "    -n                           Do not simplify but simply report data of surfaces." << endl ;
     
     return 1 ;

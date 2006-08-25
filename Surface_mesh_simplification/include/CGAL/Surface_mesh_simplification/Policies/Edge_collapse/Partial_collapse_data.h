@@ -26,39 +26,31 @@ namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_
 {
 
 template<class TSM_>    
-class Full_collapse_data
+class Partial_collapse_data
 {
 public:
 
   typedef TSM_ TSM ;
-  
-  typedef typename Surface_geometric_traits<TSM>::Point_3 Point_3 ;
-  typedef typename Surface_geometric_traits<TSM>::FT      FT ;
 
-  typedef optional<FT>      Optional_cost_type ;
-  typedef optional<Point_3> Optional_placement_type ;
+  typedef typename Surface_geometric_traits<TSM>::FT FT ;
+
+  typedef optional<FT> Optional_cost_type ;
   
 public :
 
-  Full_collapse_data() {}
+  Partial_collapse_data() {}
 
-  Full_collapse_data( Optional_cost_type aCost, Optional_placement_type aPlacement )
+  Partial_collapse_data( Optional_cost_type aCost )
    :
     mCost     (aCost) 
-   ,mPlacement(aPlacement) 
   {}
   
-  Optional_cost_type      cost     () const { return mCost      ; }
-  Optional_placement_type placement() const { return mPlacement ; }
+  Optional_cost_type cost() const { return mCost ; }
   
 private :
 
-  Optional_cost_type      mCost ;
-  Optional_placement_type mPlacement ;  
+  Optional_cost_type mCost ;
 };    
-
-} } } // namespace Triangulated_surface_mesh::Simplification::Edge_collapse
-
 
 CGAL_END_NAMESPACE
 
