@@ -25,16 +25,15 @@
 
 #include <cstdlib>
 
-#include <CGAL/QP_solver/gmp_double.h>
+#include <CGAL/Gmpq.h>
+#include <CGAL/Gmpz.h>
+#include <CGAL/MP_Float.h>
 #include <CGAL/QP_solver.h>
 #include <CGAL/QP_solver/QP_full_exact_pricing.h>
 #include <CGAL/QP_solver/QP_exact_bland_pricing.h>
 #include <CGAL/QP_solver/QP_partial_exact_pricing.h>
 #include <CGAL/QP_solver/QP_full_filtered_pricing.h>
 #include <CGAL/QP_solver/QP_partial_filtered_pricing.h>
-#include <CGAL/QP_solver/Double.h>
-#include <CGAL/Gmpq.h>
-#include <CGAL/Gmpz.h>
 
 #include <CGAL/QP_solver/MPS.h> // should to into QP_solver.h (?)
 
@@ -83,7 +82,7 @@ struct NT_selector<CGAL::Gmpq> {
 };
 
 template<>
-struct NT_selector<CGAL::Double> {
+struct NT_selector<CGAL::MP_Float> {
   typedef double NT;
 };
 
@@ -478,7 +477,7 @@ bool processType(const std::string& filename,
   if (!processOnlyOneValue || value==Double_type)
     if (!process<Is_linear,Is_symmetric,
 	Has_equalities_only_and_full_rank,Is_in_standard_form,
-	double,CGAL::Double>(filename,options))
+	double,CGAL::MP_Float>(filename,options))
       success = false;
 #endif
 #ifdef QP_RATIONAL

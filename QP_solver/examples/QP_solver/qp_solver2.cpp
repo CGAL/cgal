@@ -31,9 +31,7 @@
 // 9/16 + 3/8 + 1 = 31/16 
 
 // for some reason, almost no other include order works...
-#include <CGAL/QP_solver/gmp_double.h>
-#include <CGAL/Gmpz.h>
-#include <CGAL/QP_solver/Double.h>
+#include <CGAL/MP_Float.h>
 #include <CGAL/QP_solver.h>
 
 // here we declare the types of the various QP entries
@@ -42,7 +40,7 @@ struct Traits {
   typedef Row_type *Row_type_iterator; // iterator for the constraint type
 
   // the exact internal type (input type must be convertible to this)
-  typedef CGAL::Double ET;  // experimental type, not officially in CGAL yet!!
+  typedef CGAL::MP_Float ET;
 
   // the input type is double, and the problem comes via arrays 
   typedef double **A_iterator;  // for the columns of A

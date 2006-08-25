@@ -26,6 +26,7 @@
 // includes
 #include <gmp.h>
 #include <iostream>
+#include <CGAL/QP_solver/assertions.h>
 
 namespace GMP {
 
@@ -77,7 +78,7 @@ class Integer {
     Integer&  operator -= ( const Integer&);
     Integer&  operator *= ( const Integer&);
     Integer&  operator /= ( const Integer&);
-
+ 
     // shift operations
     Integer  operator << ( unsigned long) const;
     Integer  operator >> ( unsigned long) const;
@@ -103,6 +104,7 @@ class Integer {
 
     // friends
     friend  std::ostream&  operator << ( std::ostream&, const Integer&);
+    friend  Integer exact_division(const Integer& z1, const Integer& z2);
 };
 
 // ============================================================================
@@ -466,6 +468,14 @@ operator << ( std::ostream& out, const Integer& integer)
     return out;
 }
 
+// exact division
+Integer exact_division(const Integer& z1, const Integer& z2)
+{  
+  Integer Res;
+  mpz_divexact(Res.value, z1.value, z2.value);
+  CGAL_qpe_postcondition_msg(Res * z1 == z2, "exact_division failed\n");
+  return Res; 
+}
 
 } // namespace GMP
 

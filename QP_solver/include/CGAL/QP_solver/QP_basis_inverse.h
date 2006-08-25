@@ -1132,7 +1132,7 @@ update_entry( ET& entry, const ET& d_new, const ET& y, const ET& d_old) const
 {
     entry *= d_new;
     entry += y;
-    entry /= d_old;
+    entry = CGAL::exact_division(entry, d_old);
 }
 
 CGAL_END_NAMESPACE

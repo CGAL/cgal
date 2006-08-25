@@ -75,7 +75,7 @@ class Double {
     Double&  operator -= ( const Double&);
     Double&  operator *= ( const Double&);
     Double&  operator /= ( const Double&);
-
+ 
     // shift operations
     Double  operator << ( unsigned long) const;
     Double  operator >> ( unsigned long) const;
@@ -96,12 +96,15 @@ class Double {
 
     // normalization
     bool  is_normal( ) const;
-    void  normalize( );
+    void  normalize( ) const;
 
   private:
     // data members
-    Mantissa  m;
-    Exponent  e;
+    mutable Mantissa  m;
+    mutable Exponent  e;
+
+  public:
+    friend Double exact_division(const Double& z1, const Double& z2);
 };
 
 // ============================================================================
@@ -125,7 +128,7 @@ is_normal( ) const
 inline
 void
 Double::
-normalize( )
+normalize( ) const
 {
     if ( m == 0)
 	e = 0;
@@ -476,6 +479,19 @@ to_double(const Double &d)
     return d.to_double();
 }
 
+// // special treatment of quotients
+// BG: doesn't work for some number type traits reasons -> clean up
+// gmp_double/Double.h
+// inline
+// double
+// to_double(const CGAL::Quotient<Double> &q)
+// {
+//   return std::ldexp( 
+//      CGAL::Quotient<GMP::Integer>(
+//        q.numerator().mantissa(), q.denominator().mantissa()).to_double(),
+//        q.numerator().exponent()-q.denominator().exponent());
+// }
+
 // access functions to the internal representation
 // -----------------------------------------------
 
@@ -510,6 +526,18 @@ operator << ( std::ostream& out, const Double& d)
     return out;
 }
 
+
+// exact division
+Double exact_division(const Double& z1, const Double& z2)
+{
+    // only correct if division result is representable
+    // as a Double and both operands are normalized
+    if ( ! z1.is_normal()) z1.normalize();
+    if ( ! z2.is_normal()) z2.normalize();
+    Double::Mantissa mantissa = GMP::exact_division(z1.m, z2.m);
+    Double::Exponent exponent = z1.e - z2.e;
+    return Double(mantissa, exponent);
+}
 
 } // namespace GMP
 

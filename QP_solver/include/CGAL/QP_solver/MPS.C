@@ -23,6 +23,10 @@
 #include <iomanip>
 #include <fstream>
 
+#include <CGAL/Gmpz.h>
+#include <CGAL/Gmpq.h>
+#include <CGAL/MP_Float.h>
+
 #include <CGAL/QP_solver/QP_partial_filtered_pricing.h>
 #include <CGAL/QP_solver/QP_partial_exact_pricing.h>
 
@@ -892,7 +896,7 @@ bool QP_MPS_instance<IT_,ET_,
 
     // divide by two if approriate:
     if (divide_by_two)
-      val /= 2;
+      halve (val);
 
     // mark problem as nonlinear if value is nonzero:
     if (!CGAL::is_zero(val))
@@ -1082,7 +1086,7 @@ namespace QP_MPS_detail {
   
   template<>
   struct IT_to_ET<double> {
-    typedef Double ET;
+    typedef MP_Float ET;
   };
   
   template<>

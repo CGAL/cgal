@@ -22,10 +22,10 @@
 
 #ifndef CGAL_QP_SOLVER_MPS_H
 #define CGAL_QP_SOLVER_MPS_H
-
 #include <istream>
 #include <vector>
 #include <CGAL/iterator.h>
+#include <CGAL/Gmpz.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -275,6 +275,17 @@ private: // parsing routines:
     put_back_token = token;
   }
     
+  // here is a general template for halving a number; we must
+  // have a specialization for Gmpz that performs exact division
+  // (and therefore fails if the result is incorrect)
+  template<typename NumberType>
+  void halve(NumberType& entry) {
+    entry /= 2;
+  }
+
+  void halve(CGAL::Gmpz& entry) {
+    entry = CGAL::exact_division(entry,2);    
+  }
 
   // here is the general template, and the C-file contains
   // implementations of a specialization for Qmpq
