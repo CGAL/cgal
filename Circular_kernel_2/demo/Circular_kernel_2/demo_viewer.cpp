@@ -36,7 +36,7 @@ int main() {
 #include <CGAL/MP_Float.h>
 #include <CGAL/Gmpq.h>
 
-#include <CGAL/Algebraic_kernel_2_2.h>
+#include <CGAL/Algebraic_kernel_for_circles_2_2.h>
 
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
