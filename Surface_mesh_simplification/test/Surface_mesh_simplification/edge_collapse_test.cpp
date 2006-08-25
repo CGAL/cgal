@@ -445,7 +445,7 @@ char const* matched_alpha ( bool matched )
 }
 
 enum Method { LT, MP } ;
-enum Cached { Empty, Partial, Full } ;
+enum Cache  { Empty, Partial, Full } ;
 
 char const* method_to_string( Method aMethod )
 {
@@ -460,11 +460,11 @@ char const* method_to_string( Method aMethod )
 
 char const* cache_to_string( Cache aCache )
 {
-  switch(aMethod)
+  switch(aCache)
   {
-    case Empty   : return "Empty cache" ; break ;
-    case Partial : return "Partial cache" ; break ;
-    case Full    : return "Full cache" ; break ;
+    case Empty   : return "Empty" ; break ;
+    case Partial : return "Partial" ; break ;
+    case Full    : return "Full" ; break ;
   }
   
   return "<unknown>" ;
@@ -473,7 +473,6 @@ char const* cache_to_string( Cache aCache )
 typedef LindstromTurk_params LT_params ;
 typedef char                 Dummy_params ;
 
-typedef Empty_collapse_data  <Polyhedron>  P_empty_collapse_data ;
 typedef Partial_collapse_data<Polyhedron>  P_partial_collapse_data ;
 typedef Full_collapse_data   <Polyhedron>  P_full_collapse_data ;
 
@@ -481,7 +480,7 @@ typedef Cached_cost       <Polyhedron>  P_cached_cost ;
 typedef Edge_length_cost  <Polyhedron>  P_MP_cost ;
 typedef LindstromTurk_cost<Polyhedron>  P_LT_cost ; 
           
-typedef Cached_placement<Polyhedron>        P_Cached_placement ;
+typedef Cached_placement<Polyhedron>        P_cached_placement ;
 typedef Midpoint_placement<Polyhedron>      P_MP_placement ;
 typedef LindstromTurk_placement<Polyhedron> P_LT_placement ;
 
@@ -520,7 +519,10 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
                lRequestedEdgeCount = aStopA ;
           else lRequestedEdgeCount = lP.size_of_halfedges() * aStopR / 200 ;
     
-          cout << "Testing simplification of surface " << off_name << " using " << method_to_string(aMethod) << "method."  << endl ;
+          cout << "Testing simplification of surface " << off_name 
+               << " using " << method_to_string(aMethod) << " method" 
+               << " with "   << cache_to_string(aCache) << " cache."  << endl ;
+               
           cout << lP.size_of_facets() << " triangles." << endl 
                << (lP.size_of_halfedges()/2) << " edges." << endl 
                << lP.size_of_vertices() << " vertices." << endl 
@@ -627,7 +629,7 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
                 case Empty :
                 
                   r = edge_collapse(lP
-                                   ,&lDummy_params
+                                   ,&lLT_params
                                    ,set_empty_collapse_data
                                    ,get_LT_cost
                                    ,get_LT_placement
@@ -639,7 +641,7 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
                 case Partial :
                 
                   r = edge_collapse(lP
-                                   ,&lDummy_params
+                                   ,&lLT_params
                                    ,set_partial_collapse_data_LT
                                    ,get_cached_cost
                                    ,get_LT_placement
@@ -651,7 +653,7 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
                 case Full :
                 
                   r = edge_collapse(lP
-                                   ,&lDummy_params
+                                   ,&lLT_params
                                    ,set_full_collapse_data_LT
                                    ,get_cached_cost
                                    ,get_cached_placement
@@ -774,7 +776,8 @@ int main( int argc, char** argv )
   bool   lJustPrintSurfaceData = false ;
   int    lStopA = -1 ;
   int    lStopR = 20 ;
-  Method lMethod = LT_cached ;
+  Method lMethod = LT ;
+  Cache  lCache  = Full ;
   string lFolder =""; 
   vector<string> lCases ;
         
@@ -790,6 +793,7 @@ int main( int argc, char** argv )
         case 'r' : lStopR = lexical_cast<int>(opt.substr(2)); break;
         case 'n' : lJustPrintSurfaceData = true ; break ;
         case 'm' : lMethod = (Method)lexical_cast<int>(opt.substr(2)); break ;
+        case 'c' : lCache  = (Cache)lexical_cast<int>(opt.substr(2)); break ;
         
         default: 
           cerr << "Invalid option: " << opt << endl ;
@@ -830,7 +834,8 @@ int main( int argc, char** argv )
   {
     cout << "collapse_edge_test <options> file0 file1 ... fileN" << endl 
          << "  options: " << endl
-         << "    -m method                       method: 0=LindstromTurk_cached[default] 1=Midpoint_cached" << endl 
+         << "    -m method                       method: 0=LindstromTurk[default] 1=Midpoint" << endl 
+         << "    -c data_cache_level             level: 0=Empty 1=Only cost cached 2=Both cost and placement cached[default]" << endl
          << "    -d folder                       Specifies the folder where the files are located. " << endl 
          << "    -a absolute_max_edge_count      Sets the final number of edges as absolute number." << endl
          << "    -r relative_max_edge_count      Sets the final number of edges as a percentage." << endl
@@ -843,7 +848,7 @@ int main( int argc, char** argv )
     unsigned lOK = 0 ;
     for ( vector<string>::const_iterator it = lCases.begin(); it != lCases.end() ; ++ it )
     {
-     if ( Test( lStopA, lStopR, lJustPrintSurfaceData, *it, lMethod) )
+     if ( Test( lStopA, lStopR, lJustPrintSurfaceData, *it, lMethod, lCache) )
        ++ lOK ;
     }  
       

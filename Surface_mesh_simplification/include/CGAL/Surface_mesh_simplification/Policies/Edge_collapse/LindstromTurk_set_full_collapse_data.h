@@ -15,8 +15,8 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_SET_COLLAPSE_DATA_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_SET_COLLAPSE_DATA_H 1
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_SET_FULL_COLLAPSE_DATA_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_SET_FULL_COLLAPSE_DATA_H 1
 
 #include <CGAL/Surface_mesh_simplification/TSMS_common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Full_collapse_data.h>
@@ -61,7 +61,7 @@ public :
     Optional_cost_type lCost ;
     Optional_placement_type lPlacement ;
     tie(lCost,lPlacement) = core.compute();
-    rData.set(lCost,lPlacement);
+    rData = Collapse_data(lCost,lPlacement);
   }                         
   
 };    
@@ -70,6 +70,6 @@ public :
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_SET_COLLAPSE_DATA_H //
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_SET_FULL_COLLAPSE_DATA_H //
 // EOF //
  

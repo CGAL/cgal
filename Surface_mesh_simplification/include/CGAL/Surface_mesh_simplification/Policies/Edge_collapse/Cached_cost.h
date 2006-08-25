@@ -15,8 +15,8 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_FUNCTOR_BASE_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_FUNCTOR_BASE_H
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_CACHED_COST_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_CACHED_COST_H
 
 #include <CGAL/Surface_mesh_simplification/TSMS_common.h>
 
@@ -33,8 +33,6 @@ public:
   
   typedef TSM_ TSM ;
   
-  typedef void Params ;
-  
   typedef typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor ;
   
   typedef typename Surface_geometric_traits<TSM>::FT FT ;
@@ -43,7 +41,7 @@ public:
 
 public :
 
-  template<class Collapse_data>    
+  template<class Collapse_data, class Params>    
   result_type operator()( edge_descriptor const& aEdge
                         , TSM&                   aSurface
                         , Collapse_data const&   aData
@@ -59,6 +57,6 @@ public :
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_FUNCTOR_BASE_H
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_CACHED_COST_H
 // EOF //
  

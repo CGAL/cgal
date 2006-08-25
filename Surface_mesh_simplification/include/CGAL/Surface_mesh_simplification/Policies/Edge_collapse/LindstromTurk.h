@@ -15,14 +15,18 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROMTURK_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROMTURK_H 1
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_H 1
 
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_params.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_set_collapse_data.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Set_empty_collapse_data.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Cached_cost.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Cached_placement.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_set_full_collapse_data.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_set_partial_collapse_data.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_cost.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_placement.h>
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_LINDSTROMTURK_H //
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_H //
 // EOF //
  

@@ -39,7 +39,9 @@ public:
   typedef typename Surface_geometric_traits<TSM>::Point_3 Point_3 ;
   
   typedef LindstromTurk_params Params ;
-    
+
+  typedef optional<Point_3> result_type ;
+      
 public:
 
   template<class Collapse_data>

@@ -35,8 +35,6 @@ public:
     
   typedef TSM_ TSM ;
   
-  typedef void Params ;
-  
   typedef typename boost::graph_traits<TSM>::edge_descriptor   edge_descriptor ;
   typedef typename boost::graph_traits<TSM>::vertex_descriptor vertex_descriptor ;
   
@@ -47,7 +45,7 @@ public:
     
 public:
 
-  template<class Collapse_data>
+  template<class Collapse_data, class Params>
   result_type operator()( edge_descriptor const& aEdge
                         , TSM&                   aSurface
                         , Collapse_data const&   aData

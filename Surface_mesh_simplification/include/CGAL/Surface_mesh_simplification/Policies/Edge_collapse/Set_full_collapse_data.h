@@ -36,8 +36,6 @@ public:
   typedef GetCost_      GetCost ;
   typedef GetPlacement_ GetPlacement ;
   
-  typedef typename GetCost::Params Params ;
-  
   typedef typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor ;
   
   typedef Full_collapse_data<TSM> Collapse_data ;
@@ -49,6 +47,7 @@ public :
 
   Set_full_collapse_data ( GetCost const& aGetCost, GetPlacement const& aGetPlacement ) : get_cost(aGetCost), get_placement(aGetPlacement) {}
     
+  template<class Params>
   void operator() ( Collapse_data& rData, edge_descriptor const& aEdge, TSM& aSurface, Params const* aParams ) const 
   {
     CGAL_assertion(aParams);
@@ -57,7 +56,7 @@ public :
     Optional_cost_type      lCost      = get_cost     (aEdge,aSurface,rData,aParams);
     Optional_placement_type lPlacement = get_placement(aEdge,aSurface,rData,aParams);
     
-    rData.set(lCost,lPlacement);
+    rData = Collapse_data(lCost,lPlacement);
   }                         
   
   GetCost      get_cost ;

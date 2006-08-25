@@ -25,15 +25,12 @@ CGAL_BEGIN_NAMESPACE
 namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse
 {
 
-template<class TSM_, class Collapse_data_>
+template<class TSM_>
 class Midpoint_placement
 {
 public:
     
-  typedef TSM_           TSM ;
-  typedef Collapse_data_ Collapse_data ;
-  
-  typedef void Params ;
+  typedef TSM_ TSM ;
   
   typedef typename boost::graph_traits<TSM>::edge_descriptor   edge_descriptor ;
   typedef typename boost::graph_traits<TSM>::vertex_descriptor vertex_descriptor ;
@@ -41,10 +38,11 @@ public:
   typedef typename Surface_geometric_traits<TSM>::Point_3 Point_3 ;
   typedef typename Surface_geometric_traits<TSM>::FT      FT ;
   
-  typedef optional<FT> result_type ;
+  typedef optional<Point_3> result_type ;
     
 public:
 
+  template<class Collapse_data, class Params>
   result_type operator()( edge_descriptor const& aEdge
                         , TSM&                   aSurface
                         , Collapse_data const&   aData

@@ -35,12 +35,11 @@ public:
 
   typedef typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor ;
   
-  typedef Empty_collapse_data<TSM> Collapse_data ;
-  
-  typedef void Params ;
+  typedef Empty_collapse_data Collapse_data ;
   
 public :
 
+  template<class Params>
   void operator() ( Collapse_data&, edge_descriptor const&, TSM&, Params const* ) const {}                         
   
 };    

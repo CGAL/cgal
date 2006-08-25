@@ -42,7 +42,7 @@ public :
 
   Full_collapse_data() {}
 
-  Full_collapse_data( Optional_cost_type aCost, Optional_placement_type aPlacement )
+  Full_collapse_data( Optional_cost_type const& aCost, Optional_placement_type const& aPlacement )
    :
     mCost     (aCost) 
    ,mPlacement(aPlacement) 
