@@ -8,6 +8,7 @@ Arrangement_2
 Boolean_set_operations_2
 Box_intersection_d
 Cartesian_kernel
+Circular_kernel_2
 Circular_kernel_3
 Circulator
 Conic_2
@@ -15,7 +16,6 @@ Convex_hull_2
 Convex_hull_3
 Convex_hull_d
 Core
-Curved_kernel
 Developers_manual
 Distance_2
 Distance_3
