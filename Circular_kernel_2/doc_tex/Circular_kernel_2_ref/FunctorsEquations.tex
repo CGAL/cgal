@@ -1,0 +1,20 @@
+\begin{ccRefFunctionObjectConcept}{CircularKernel::GetEquation}
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMethod{CircularKernel::Polynomial_1_2
+    operator()(const CircularKernel::Line_2 & c);}
+{Returns the equation of the line.}
+
+\ccMethod{CircularKernel::Polynomial_for_circles_2_2
+    operator()(const CircularKernel::Circle_2 & c);}
+{Returns the equation of the circle.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CircularKernel::ConstructLine_2}\\
+\ccRefIdfierPage{CircularKernel::ConstructCircle_2}
+\end{ccRefFunctionObjectConcept}
+

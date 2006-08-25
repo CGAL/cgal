@@ -1,0 +1,152 @@
+\begin{ccRefFunctionObjectConcept}{CircularKernel::HasOn_2}
+
+\ccDefinition
+
+To test whether a point lies on a curve.
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{bool operator()
+	(const CircularKernel::Line_2 & l, 
+	const CircularKernel::Circular_arc_point_2 &p);}
+{For a line.}
+
+\ccMemberFunction{bool operator()
+	(const CircularKernel::Circle_2 & c, 
+	const CircularKernel::Circular_arc_point_2 &p);}
+{For a circle.}
+
+\ccMemberFunction{bool operator()
+	(const CircularKernel::Line_arc_2 & l, 
+	const CircularKernel::Circular_arc_point_2 &p);}
+{For a line arc.}
+
+\ccMemberFunction{bool operator()
+	(const CircularKernel::Circular_arc_2 & c, 
+	const CircularKernel::Circular_arc_point_2 &p);}
+{For a circular arc.}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::DoOverlap_2}
+
+\ccDefinition
+
+Testing whether the interiors of two curves overlap. Two circular arcs
+can overlap on one point if they have the same supporting circle.
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{bool operator()
+	(const CircularKernel::Line_arc_2 & l0,
+	const CircularKernel::Line_arc_2 & l1);}
+{For two line arcs.}
+
+\ccMemberFunction{bool operator()
+	(const CircularKernel::Circular_arc_2 & a0,
+	const CircularKernel::Circular_arc_2 & a1);}
+{For two circular arcs.}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::InXRange_2}
+
+\ccDefinition
+
+To test whether a point lies in the vertical range of a curve.
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{bool operator()
+	(const CircularKernel::Line_arc_2 & l,
+	const CircularKernel::Circular_arc_point_2 & p);}
+{For a line arc.}
+
+\ccMemberFunction{bool operator()
+	(const CircularKernel::Circular_arc_2 & c,
+	const CircularKernel::Circular_arc_point_2 & p);}
+{For a circular arc. \ccPrecond{$c$ is $x$-monotone.}}
+
+\end{ccRefFunctionObjectConcept}
+%\begin{ccRefFunctionObjectConcept}{CircularKernel::InYRange_2}
+
+%\ccDefinition
+
+%To test whether a point lies in the horizontal range of a curve.
+
+%\ccCreationVariable{fo}
+
+%An object \ccVar\ of this type must provide:
+
+%\ccMemberFunction{bool operator()
+%	(const CircularKernel::Line_arc_2 & l,
+%	const CircularKernel::Circular_arc_point_2 & p);}
+%{For a line arc.}
+
+%\ccMemberFunction{bool operator()
+%	(const CircularKernel::Circular_arc_2 & c,
+%	const CircularKernel::Circular_arc_point_2 & p);}
+%{For a circular arc. \ccPrecond{$c$ is $y$-monotone.}}
+
+%\ccHasModels
+
+%\ccc{Circular_kernel_2::In_y_range_2;}
+
+%\ccSeeAlso
+
+%\ccRefIdfierPage{CGAL::in_y_range}
+
+%\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::IsVertical_2}
+
+\ccCreationVariable{fo}
+
+\ccRefines
+
+\ccc{Kernel::IsVertical_2}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{bool operator()
+	(const CircularKernel::Line_arc_2 & l);}
+{For a line arc.}
+
+\ccMemberFunction{bool operator()
+	(const CircularKernel::Circular_arc_2 & c);}
+{For a circular arc,  always returns \ccc{false}.}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::IsXMonotone_2}
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{bool operator()
+	(const CircularKernel::Circular_arc_2 & c);}
+{Tests whether the arc is $x$-monotone.}
+
+\ccMemberFunction{bool operator()
+	(const CircularKernel::Line_arc_2 & l);}
+{For a line arc, always returns \ccc{true}.}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::IsYMonotone_2}
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{bool operator()
+	(const CircularKernel::Circular_arc_2 & c);}
+{Tests whether the arc is $y$-monotone.}
+
+\ccMemberFunction{bool operator()
+	(const CircularKernel::Line_arc_2 & l);}
+{For a line arc, always returns \ccc{true}.}
+
+\end{ccRefFunctionObjectConcept}

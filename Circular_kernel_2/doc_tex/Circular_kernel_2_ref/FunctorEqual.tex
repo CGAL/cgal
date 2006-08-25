@@ -1,0 +1,41 @@
+\begin{ccRefFunctionObjectConcept}{CircularKernel::Equal_2}
+
+\ccDefinition
+
+Testing equality between objects.
+
+\ccRefines
+
+\ccc{Kernel::Equal_2}
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide in addition:
+
+\ccMemberFunction{bool operator()
+	(const CircularKernel::Circular_arc_point_2 &p0,
+         const CircularKernel::Circular_arc_point_2 &p1);}
+{For two points.}
+
+\ccMemberFunction{bool operator()
+	(const CircularKernel::Circular_arc_2 &a0,
+         const CircularKernel::Circular_arc_2 &a1);}
+{For two arcs.}
+
+\ccMemberFunction{bool operator()
+	(const CircularKernel::Line_arc_2 &a0,
+         const CircularKernel::Line_arc_2 &a1);}
+{For two segments.}
+
+For the sake of completeness, the 
+\ccc{operator()} must also be defined for a \ccc{Line_arc_2} and a
+\ccc{Circular_arc_2} as arguments (in any order), and it always 
+returns \ccc{false}.
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CircularKernel::CompareX_2}\\
+\ccRefIdfierPage{CircularKernel::CompareY_2}\\
+\ccRefIdfierPage{CircularKernel::CompareXY_2}
+
+\end{ccRefFunctionObjectConcept}

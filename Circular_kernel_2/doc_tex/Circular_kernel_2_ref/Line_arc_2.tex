@@ -1,0 +1,61 @@
+\begin{ccRefClass}{Line_arc_2<CircularKernel>}
+
+\ccInclude{CGAL/Line_arc_2.h}
+
+\ccIsModel
+
+\ccc{CircularKernel::LineArc2}
+
+\ccCreation
+\ccCreationVariable{la}
+
+\ccThree{Circular_arc_point_2}{ca.is_x_monotone()}{}
+\ccThreeToTwo
+
+\ccConstructor{Line_arc_2(const CircularKernel::Line_2 &l,
+		const CircularKernel::Circular_arc_point_2 &p1,
+		const CircularKernel::Circular_arc_point_2 &p2)}
+{Construct the line segment supported by \ccc{l}, whose source 
+is \ccc{p1} and whose target is \ccc{p2}.
+\ccPrecond{\ccc{p1} and \ccc{p2} lie on \ccc{l}.}}
+
+\ccConstructor{Line_arc_2(const CircularKernel::Line_2 &l,
+		const CircularKernel::Point_2 &p1,
+		const CircularKernel::Point_2 &p2)}
+{Same.}
+
+\ccConstructor{Line_arc_2(const CircularKernel::Segment_2 &s)}
+{}
+
+\ccAccessFunctions
+
+\ccThree{CircularKernel::Circular_arc_point_2}{ca.is_x_monotone()}{}
+\ccThreeToTwo
+
+\ccMethod{CircularKernel::Line_2 supporting_line();}{}
+
+\ccMethod{CircularKernel::Circular_arc_point_2 source();}{}
+\ccGlue
+\ccMethod{CircularKernel::Circular_arc_point_2 target();}{}
+
+\ccMethod{CircularKernel::Circular_arc_point_2 left();}{}
+\ccGlue
+\ccMethod{CircularKernel::Circular_arc_point_2 right();}{}
+
+\ccQueryFunctions
+
+\ccMethod{bool is_vertical();}{}
+
+\ccHeading{I/O}
+
+\ccFunction{istream& operator>> (std::istream& is, Line_arc_2 & ca);}{}
+\ccGlue
+\ccFunction{ostream& operator<< (std::ostream& os, const Line_arc_2 & ca);}{}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Circular_arc_point_2<CircularKernel>}\\
+\ccRefIdfierPage{CGAL::Circular_arc_2<CircularKernel>}
+
+\end{ccRefClass}
+
