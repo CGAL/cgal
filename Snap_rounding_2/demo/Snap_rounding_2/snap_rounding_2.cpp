@@ -60,12 +60,12 @@ Number_type prec;
 #include <qtimer.h>
 
 
-Number_type min BOOST_PREVENT_MACRO_SUBSTITUTION (const Number_type & p, const Number_type & q, Number_type & r)
+Number_type min3(const Number_type & p, const Number_type & q, Number_type & r)
 {
   return(p > q ? (CGAL::min)(q,r) : (CGAL::min)(p,r));
 }
 
-Number_type max BOOST_PREVENT_MACRO_SUBSTITUTION (const Number_type & p,const Number_type & q,
+Number_type max3(const Number_type & p,const Number_type & q,
                 const Number_type & r)
 {
   return(p > q ? (CGAL::max)(p,r) : (CGAL::max)(q,r));
@@ -79,16 +79,16 @@ void get_extreme_points(std::list<Segment_2> &seg_list,
 {
   std::list<Segment_2>::iterator iter = seg_list.begin();
 
-  min_x = (min)(iter->source().x(),iter->target().x());
-  max_x = (max)(iter->source().x(),iter->target().x());
-  min_y = (min)(iter->source().y(),iter->target().y());
-  max_y = (max)(iter->source().y(),iter->target().y());
+  min_x = min3(iter->source().x(),iter->target().x());
+  max_x = max3(iter->source().x(),iter->target().x());
+  min_y = min3(iter->source().y(),iter->target().y());
+  max_y = max3(iter->source().y(),iter->target().y());
    
   for(++iter;iter != seg_list.end();++iter) {
-    min_x = (min)(iter->source().x(),iter->target().x(),min_x);
-    max_x = (max)(iter->source().x(),iter->target().x(),max_x);
-    min_y = (min)(iter->source().y(),iter->target().y(),min_y);
-    max_y = (max)(iter->source().y(),iter->target().y(),max_y);
+    min_x = min3(iter->source().x(),iter->target().x(),min_x);
+    max_x = max3(iter->source().x(),iter->target().x(),max_x);
+    min_y = min3(iter->source().y(),iter->target().y(),min_y);
+    max_y = max3(iter->source().y(),iter->target().y(),max_y);
   }
 }
 
