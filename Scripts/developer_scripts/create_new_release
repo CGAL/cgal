@@ -63,7 +63,7 @@ VERSION_FILE="version_number"
 # Where to put the resulting tarball and where to send the announce.
 HTML_DIR="/u/bombyx/geometrica/CGAL/Members/Releases"
 URL="http://cgal.inria.fr/CGAL/Members/Releases"
-MAILTO="cgal-develop-l@postino.mpi-sb.mpg.de"
+MAILTO="cgal-develop@lists-sop.inria.fr"
 
 # SVN repository
 SVNCGAL="svn+ssh://scm.gforge.inria.fr/svn/cgal"
@@ -131,12 +131,12 @@ echo "${release_name}.tar.gz" > "${HTML_DIR}/LATEST"
 
 # Send mail and tag
 if [ "$DO_IT" ]; then
-    mail -s "[automatic] ${release_name} is released" ${MAILTO} <<EOF
-
-You can fetch it at :
-${URL}/${release_name}.tar.gz
-
-EOF
+#    mail -s "[automatic] ${release_name} is released" ${MAILTO} <<EOF
+#
+#You can fetch it at :
+#${URL}/${release_name}.tar.gz
+#
+#EOF
 
     # Now we tag.
     echo "Tagging ${SOURCES_DIR} with $release_name" >> ${LOGFILE} 2>&1
