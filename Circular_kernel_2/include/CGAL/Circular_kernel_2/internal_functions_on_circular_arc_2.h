@@ -60,6 +60,9 @@ namespace CircularFunctors {
   compare_xy(const typename CK::Circular_arc_point_2 &p0,
              const typename CK::Circular_arc_point_2 &p1)
   {
+    if(p0.equal_ref(p1)){
+      return EQUAL;
+    }
     typedef typename CK::Algebraic_kernel   AK;
     return AK().compare_xy_object()(p0.coordinates(), p1.coordinates());
   }
@@ -142,7 +145,10 @@ namespace CircularFunctors {
   {
     //CGAL_kernel_precondition (A1.is_x_monotone());
     //CGAL_kernel_precondition (CircularFunctors::point_in_x_range<CK>(A1, p)); 
-    
+
+    if((p.equal_ref(A1.source())) || (p.equal_ref(A1.target()))){
+      return EQUAL;
+    }
     // Compare the ordinate of p with the ordinate of the center.
     Comparison_result sgn =
       CGAL::compare(p.y(), A1.supporting_circle().center().y());
@@ -363,6 +369,10 @@ namespace CircularFunctors {
 	 const typename CK::Circular_arc_point_2 &p,
          const bool has_on_supporting_circle = false)
   {
+    if( (p.equal_ref(a.source())) || (p.equal_ref(a.source()))) {
+      return true;
+    }
+
     if(!has_on_supporting_circle) {
       if ( ! CircularFunctors::has_on<CK>(a.supporting_circle(),p) ) 
         return false;
