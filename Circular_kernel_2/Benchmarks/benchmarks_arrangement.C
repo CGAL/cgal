@@ -13,19 +13,19 @@
 
 #include <CGAL/MP_Float.h>
 
-#include <CGAL/Algebraic_kernel_2_2.h>
+#include <CGAL/Algebraic_kernel_for_circles_2_2.h>
 
 #include <CGAL/intersections.h>
 
-#include <CGAL/Circular_kernel.h>
+#include <CGAL/Circular_kernel_2.h>
 #include <CGAL/Arr_circular_arc_traits.h>
 //#include <CGAL/Circular_arc_traits_tracer.h>
 
-#include <CGAL/Lazy_curved_kernel.h>
+#include <CGAL/Lazy_circular_kernel_2.h>
 
-#include <CGAL/Filtered_hexagon_curved_kernel.h>
+#include <CGAL/Filtered_hexagon_circular_kernel_2.h>
 
-#include <CGAL/Filtered_bbox_curved_kernel.h>
+#include <CGAL/Filtered_bbox_circular_kernel_2.h>
 
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
@@ -188,8 +188,7 @@ bench.Compute_no_dxf<CircularKernel,CircularK_Variant_Traits,CircularKVarArcCont
   -------------------------------------------------------------------------------------------------------------------------*/
   #ifdef LAZY_CURVED_KERNEL_2
 
-//  typedef CGAL::Quotient<CGAL::MP_Float>                       NT2;
-  typedef CGAL::Gmpq                       NT2;
+  typedef CGAL::Quotient<CGAL::MP_Float>                       NT2;
   typedef CGAL::Cartesian<NT2>                                 Linear_k2;
   typedef CGAL::Algebraic_kernel_for_circles_2_2<NT2>                      Algebraic_k2;
   typedef CGAL::Circular_kernel_2 <Linear_k2, Algebraic_k2>         CK2_;
@@ -201,7 +200,7 @@ bench.Compute_no_dxf<CircularKernel,CircularK_Variant_Traits,CircularKVarArcCont
   typedef CGAL::Circular_kernel_2 <Linear_k3,Algebraic_k3>          CK3_;
   
 
-  typedef CGAL::Lazy_curved_kernel<CK2_,CK3_>                  LazyCurvedK;
+  typedef CGAL::Lazy_circular_kernel_2<CK2_,CK3_>                  LazyCurvedK;
   
 //   #ifndef CGAL_CURVED_KERNEL_DEBUG
   typedef CGAL::Arr_circular_arc_traits<LazyCurvedK> LazyCurvedK_CA_Traits;
@@ -237,7 +236,7 @@ bench.Compute_no_dxf<CircularKernel,CircularK_Variant_Traits,CircularKVarArcCont
   -------------------------------------------------------------------------------------------------------------------------*/
   #ifdef CIRCULAR_KERNEL_2_FILTERED_HEXAGON  
 
-  typedef CGAL::Filtered_hexagon_curved_kernel<CircularKernel>        CircularKernelHexagon;
+  typedef CGAL::Filtered_hexagon_circular_kernel_2<CircularKernel>        CircularKernelHexagon;
  
 //   #ifndef CGAL_CURVED_KERNEL_DEBUG
   typedef CGAL::Arr_circular_arc_traits<CircularKernelHexagon>                 CircularKernHex_CA_Traits;
@@ -273,7 +272,7 @@ bench.Compute_no_dxf<CircularKernel,CircularK_Variant_Traits,CircularKVarArcCont
  #ifdef LAZY_CURVED_KERNEL_2_FILTERED_HEXAGON 
 
 
-  typedef CGAL::Filtered_hexagon_curved_kernel<LazyCurvedK>  LazyKernelHexagon;	
+  typedef CGAL::Filtered_hexagon_circular_kernel_2<LazyCurvedK>  LazyKernelHexagon;	
    
 //   #ifndef CGAL_CURVED_KERNEL_DEBUG
   typedef CGAL::Arr_circular_arc_traits<LazyKernelHexagon>                  LazyKernelHexagon_CA_Traits;
@@ -306,7 +305,7 @@ bench.Compute_no_dxf<LazyKernelHexagon,HxLazyVariantTraits,HxLazyVarContainer>()
   -------------------------------------------------------------------------------------------------------------------------*/  
  #ifdef CIRCULAR_KERNEL_2_FILTERED_BBOX   
 
-  typedef CGAL::Filtered_bbox_curved_kernel<CircularKernel>           BBCircularKernel ;
+  typedef CGAL::Filtered_bbox_circular_kernel_2<CircularKernel>           BBCircularKernel ;
  
 //    #ifndef CGAL_CURVED_KERNEL_DEBUG
   typedef CGAL::Arr_circular_arc_traits<BBCircularKernel>                  BBCircularKernel_CA_Traits;
@@ -338,7 +337,7 @@ bench.Compute_no_dxf<LazyKernelHexagon,HxLazyVariantTraits,HxLazyVarContainer>()
  -------------------------------------------------------------------------------------------------------------------------*/
  #ifdef LAZY_CURVED_KERNEL_2_FILTERED_BBOX  
 
-   typedef CGAL::Filtered_bbox_curved_kernel<LazyCurvedK>              BBLazyCurvedK; 
+   typedef CGAL::Filtered_bbox_circular_kernel_2<LazyCurvedK>              BBLazyCurvedK; 
   
 //    #ifndef CGAL_CURVED_KERNEL_DEBUG
   typedef CGAL::Arr_circular_arc_traits<BBLazyCurvedK>                  BBLazyCurvedK_CA_Traits;
