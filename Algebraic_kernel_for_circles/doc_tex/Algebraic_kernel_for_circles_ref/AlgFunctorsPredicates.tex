@@ -1,4 +1,4 @@
-\begin{ccRefConcept}{AlgebraicKernelForCircles_2_2::CompareX}
+\begin{ccRefConcept}{AlgebraicKernelForCircles::CompareX}
 
 \ccDefinition
 
@@ -8,8 +8,8 @@ A model \ccVar\ of this type must provide:
 
 \ccMethod{template < class OutputIterator >
     CGAL::Comparison_result
-    operator()(const AlgebraicKernelForCircles_2_2::RootForCircles_2_2 & r1,
-	     const AlgebraicKernelForCircles_2_2::RootForCircles_2_2 & r2);}
+    operator()(const AlgebraicKernelForCircles::RootForCircles_2_2 & r1,
+	     const AlgebraicKernelForCircles::RootForCircles_2_2 & r2);}
 {Compares the \ccc{x} variables of two \ccc{RootForCircles_2_2}.}
 
 \ccHasModels
@@ -21,7 +21,7 @@ A model \ccVar\ of this type must provide:
 \ccRefIdfierPage{CGAL::compare_x}
 
 \end{ccRefConcept}
-\begin{ccRefConcept}{AlgebraicKernelForCircles_2_2::CompareY}
+\begin{ccRefConcept}{AlgebraicKernelForCircles::CompareY}
 
 \ccDefinition
 
@@ -31,8 +31,8 @@ A model \ccVar\ of this type must provide:
 
 \ccMethod{template < class OutputIterator >
     CGAL::Comparison_result
-    operator()(const AlgebraicKernelForCircles_2_2::RootForCircles_2_2 & r1,
-	     const AlgebraicKernelForCircles_2_2::RootForCircles_2_2 & r2);}
+    operator()(const AlgebraicKernelForCircles::RootForCircles_2_2 & r1,
+	     const AlgebraicKernelForCircles::RootForCircles_2_2 & r2);}
 {Compares the \ccc{y} variables of two \ccc{RootForCircles_2_2}.}
 
 \ccHasModels
@@ -44,7 +44,7 @@ A model \ccVar\ of this type must provide:
 \ccRefIdfierPage{CGAL::compare_y}
 
 \end{ccRefConcept}
-\begin{ccRefConcept}{AlgebraicKernelForCircles_2_2::CompareXY}
+\begin{ccRefConcept}{AlgebraicKernelForCircles::CompareXY}
 
 \ccDefinition
 
@@ -54,8 +54,8 @@ A model \ccVar\ of this type must provide:
 
 \ccMethod{template < class OutputIterator >
     CGAL::Comparison_result
-    operator()(const AlgebraicKernelForCircles_2_2::RootForCircles_2_2 & r1,
-	     const AlgebraicKernelForCircles_2_2::RootForCircles_2_2 & r2);}
+    operator()(const AlgebraicKernelForCircles::RootForCircles_2_2 & r1,
+	     const AlgebraicKernelForCircles::RootForCircles_2_2 & r2);}
 {Compares two \ccc{RootForCircles_2_2} lexicographically.}
 
 \ccHasModels
@@ -68,7 +68,7 @@ A model \ccVar\ of this type must provide:
 
 \end{ccRefConcept}
 
-\begin{ccRefConcept}{AlgebraicKernelForCircles_2_2::SignAt}
+\begin{ccRefConcept}{AlgebraicKernelForCircles::SignAt}
 
 \ccDefinition
 
@@ -78,14 +78,14 @@ A model \ccVar\ of this type must provide:
 
 \ccMethod{template < class OutputIterator >
     CGAL::Sign
-    operator()(const AlgebraicKernelForCircles_2_2::Polynomial_1_2 & p,
-	     const AlgebraicKernelForCircles_2_2::RootForCircles_2_2 & r);}
+    operator()(const AlgebraicKernelForCircles::Polynomial_1_2 & p,
+	     const AlgebraicKernelForCircles::RootForCircles_2_2 & r);}
 {Computes the sign of polynomial \ccc{p} evaluated at a root \ccc{r}.}
 
 \ccMethod{template < class OutputIterator >
     CGAL::Sign
-    operator()(const AlgebraicKernelForCircles_2_2::PolynomialForCircles_2_2 & p,
-	     const AlgebraicKernelForCircles_2_2::RootForCircles_2_2 & r);}
+    operator()(const AlgebraicKernelForCircles::PolynomialForCircles_2_2 & p,
+	     const AlgebraicKernelForCircles::RootForCircles_2_2 & r);}
 {Same as previous.}
 
 \ccHasModels
