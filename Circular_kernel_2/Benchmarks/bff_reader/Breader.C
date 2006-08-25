@@ -6,19 +6,19 @@
 
 #include <CGAL/MP_Float.h>
 
-#include <CGAL/Algebraic_kernel_2_2.h>
+#include <CGAL/Algebraic_kernel_for_circles_2_2.h>
 
 #include <CGAL/intersections.h>
 
-#include <CGAL/Circular_kernel.h>
+#include <CGAL/Circular_kernel_2.h>
 #include <CGAL/Circular_arc_traits.h>
 #include <CGAL/Circular_arc_traits_tracer.h>
 
-#include <CGAL/Lazy_curved_kernel.h>
+#include <CGAL/Lazy_circular_kernel_2.h>
 
-#include <CGAL/Filtered_hexagon_curved_kernel.h>
+#include <CGAL/Filtered_hexagon_circular_kernel_2.h>
 
-#include <CGAL/Filtered_bbox_curved_kernel.h>
+#include <CGAL/Filtered_bbox_circular_kernel_2.h>
 
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
@@ -188,8 +188,8 @@ int main( int argc, char* argv[] ) {
 
   typedef CGAL::Quotient<CGAL::MP_Float>                       NT1;
   typedef CGAL::Cartesian<NT1>                                 Linear_k1;
-  typedef CGAL::Algebraic_kernel_2_2<NT1>                      Algebraic_k1;
-  typedef CGAL::Circular_kernel<Linear_k1, Algebraic_k1>         CK;
+  typedef CGAL::Algebraic_kernel_for_circles_2_2<NT1>                      Algebraic_k1;
+  typedef CGAL::Circular_kernel_2<Linear_k1, Algebraic_k1>         CK;
   typedef CK::Circular_arc_2                                  Circular_arc_2;
   typedef CK::Line_arc_2                                      Line_arc_2;
   typedef CGAL::Variant_traits<CK,Line_arc_2,Circular_arc_2>  CircularK_Variant_Traits;
