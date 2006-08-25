@@ -4,7 +4,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/MP_Float.h>
-#include <CGAL/Algebraic_kernel_2_2.h>
+#include <CGAL/Algebraic_kernel_for_circles_2_2.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Circular_kernel_2.h>
 #include <CGAL/Arr_circular_line_arc_traits.h>
