@@ -235,6 +235,13 @@ Gmpq::operator/=(const Gmpq &z)
     return *this;
 }
 
+// exact division (simply maps to operator/)
+inline
+Gmpq
+exact_division(const Gmpq &z1, const Gmpq &z2)
+{
+  return z1/z2;
+}
 
 inline
 double
