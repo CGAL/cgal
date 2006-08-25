@@ -1,3 +1,6 @@
+25 August 2006:  Menelaos Karavelas
+- more name changes for variables called "small"
+
 24 August 2006:  Menelaos Karavelas
 - in Segment_Delaunay_graph_2_impl.h renamed variable small to
   sdg_small; created conflict with a macro defined when including

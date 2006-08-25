@@ -1315,7 +1315,7 @@ minimize_degree(const Vertex_handle& v)
 template<class Gt, class ST, class DS, class LTag>
 void
 Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
-equalize_degrees(const Vertex_handle& v, Self& sdg_small,
+equalize_degrees(const Vertex_handle& v, Self& small_d,
 		 std::map<Vertex_handle,Vertex_handle>& vmap,
 		 List& l) const
 {
@@ -1379,8 +1379,8 @@ equalize_degrees(const Vertex_handle& v, Self& sdg_small,
 
       std::cerr << "size of l: " << l.size() << std::endl;
 
-      Edge e_small_new = sdg_small.flip(e_small);
-      Edge e_small_new_sym = sdg_small.sym_edge(e_small_new);
+      Edge e_small_new = small_d.flip(e_small);
+      Edge e_small_new_sym = small_d.sym_edge(e_small_new);
       Face_handle f1 = e_small_new.first;
       Face_handle f2 = e_small_new_sym.first;
 
@@ -1394,11 +1394,11 @@ equalize_degrees(const Vertex_handle& v, Self& sdg_small,
       Edge to_list1(f1, cw(e_small_new.second));
       Edge to_list2(f2, ccw(e_small_new_sym.second));
 
-      e_small = sdg_small.sym_edge(to_list1);
+      e_small = small_d.sym_edge(to_list1);
 
       l.insert_after(e_small_prev, e_small);
       std::cerr << "size of l: " << l.size() << std::endl;
-      l.insert_after(e_small, sdg_small.sym_edge(to_list2));
+      l.insert_after(e_small, small_d.sym_edge(to_list2));
       std::cerr << "size of l: " << l.size() << std::endl;
     } else {
       e_small = l.next(e_small);
@@ -1586,7 +1586,7 @@ count_faces(const List& l) const
 template<class Gt, class ST, class DS, class LTag>
 void
 Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
-fill_hole(const Self& small, const Vertex_handle& v, const List& l,
+fill_hole(const Self& small_d, const Vertex_handle& v, const List& l,
 	  std::map<Vertex_handle,Vertex_handle>& vmap)
 {
 #if 0
@@ -1651,7 +1651,7 @@ fill_hole(const Self& small, const Vertex_handle& v, const List& l,
   std::map<Face_handle,Face_handle> fmap;
   std::vector<Face_handle> f_small, f_large;
 
-  small.get_faces(l, std::back_inserter(f_small));
+  small_d.get_faces(l, std::back_inserter(f_small));
   for (unsigned int i = 0; i < f_small.size(); i++) {
     Face_handle f = this->_tds.create_face();
     fmap[ f_small[i] ] = f;
@@ -1697,7 +1697,7 @@ fill_hole(const Self& small, const Vertex_handle& v, const List& l,
       } else {
 	// otherwise it is one of the old faces outside the conflict
 	// region; we have to use the edge map in this case
-	Edge e_small_sym = small.sym_edge(ff_small, i);
+	Edge e_small_sym = small_d.sym_edge(ff_small, i);
 	CGAL_assertion(emap.find(e_small_sym) != emap.end());
 
 	Edge e_large = emap[e_small_sym];
@@ -1769,7 +1769,7 @@ remove_third(const Vertex_handle& v)
 template<class Gt, class ST, class DS, class LTag>
 void
 Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
-compute_small_diagram(const Vertex_handle& v, Self& small) const
+compute_small_diagram(const Vertex_handle& v, Self& small_d) const
 {
   Vertex_circulator vc_start = incident_vertices(v);
   Vertex_circulator vc = vc_start;
@@ -1779,14 +1779,14 @@ compute_small_diagram(const Vertex_handle& v, Self& small) const
     if ( !is_infinite(vc) ) {
       Site_2 t = vc->site();
       if ( t.is_input() ) {
-	small.insert(t);
+	small_d.insert(t);
       } else if ( t.is_point() ) {
-	small.insert(t.supporting_site(0));
-	/*Vertex_handle vnear =*/ small.insert(t.supporting_site(1));
+	small_d.insert(t.supporting_site(0));
+	/*Vertex_handle vnear =*/ small_d.insert(t.supporting_site(1));
 	//	vh_small = sdg_small.nearest_neighbor(t, vnear);
       } else {
 	CGAL_assertion( t.is_segment() );
-	/*Vertex_handle vnear =*/ small.insert(t.supporting_site());
+	/*Vertex_handle vnear =*/ small_d.insert(t.supporting_site());
 	//	vh_small = sdg_small.nearest_neighbor(t, vnear);
       }
       //      CGAL_assertion( vh_small != Vertex_handle() );
@@ -1802,7 +1802,7 @@ compute_small_diagram(const Vertex_handle& v, Self& small) const
 template<class Gt, class ST, class DS, class LTag>
 void
 Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
-compute_vertex_map(const Vertex_handle& v, const Self& small,
+compute_vertex_map(const Vertex_handle& v, const Self& small_d,
 		   std::map<Vertex_handle,Vertex_handle>& vmap) const
 {
   Vertex_circulator vc_start = incident_vertices(v);
@@ -1812,7 +1812,7 @@ compute_vertex_map(const Vertex_handle& v, const Self& small,
   do {
     vh_large = Vertex_handle(vc);
     if ( is_infinite(vh_large) ) {
-      vh_small = small.infinite_vertex();
+      vh_small = small_d.infinite_vertex();
       vmap[vh_small] = vh_large;
     } else { 
 #if !defined(CGAL_NO_ASSERTIONS) && !defined(NDEBUG)
@@ -1821,37 +1821,37 @@ compute_vertex_map(const Vertex_handle& v, const Self& small,
       Site_2 t = vc->site();
       if ( t.is_input() ) {
 	if ( t.is_segment() ) {
-	  Vertex_handle vv = small.nearest_neighbor( t.source() );
-	  Vertex_circulator vvc_start = small.incident_vertices(vv);
+	  Vertex_handle vv = small_d.nearest_neighbor( t.source() );
+	  Vertex_circulator vvc_start = small_d.incident_vertices(vv);
 	  Vertex_circulator vvc = vvc_start;
 	  do {
-	    if ( small.same_segments(t, vvc) ) {
+	    if ( small_d.same_segments(t, vvc) ) {
 	      vh_small = vvc;
 	      break;
 	    }
 	  } while ( ++vvc != vvc_start );
-	  CGAL_assertion( small.same_segments(t, vh_small) );
+	  CGAL_assertion( small_d.same_segments(t, vh_small) );
 	} else {
 	  CGAL_assertion( t.is_point() );
-	  vh_small = small.nearest_neighbor( t.point() );
-	  CGAL_assertion( small.same_points(t, vh_small->site()) );
+	  vh_small = small_d.nearest_neighbor( t.point() );
+	  CGAL_assertion( small_d.same_points(t, vh_small->site()) );
 	}
       } else if ( t.is_segment() ) {
 	Vertex_handle vv =
-	  small.nearest_neighbor( t.source_site(), Vertex_handle() );
-	Vertex_circulator vvc_start = small.incident_vertices(vv);
+	  small_d.nearest_neighbor( t.source_site(), Vertex_handle() );
+	Vertex_circulator vvc_start = small_d.incident_vertices(vv);
 	Vertex_circulator vvc = vvc_start;
 	do {
-	  if ( small.same_segments(t, vvc) ) {
+	  if ( small_d.same_segments(t, vvc) ) {
 	    vh_small = vvc;
 	    break;
 	  }
 	} while ( ++vvc != vvc_start );
-	CGAL_assertion( small.same_segments(t, vh_small) );
+	CGAL_assertion( small_d.same_segments(t, vh_small) );
       } else {
 	CGAL_assertion( t.is_point() );
-	vh_small = small.nearest_neighbor( t, Vertex_handle() );
-	CGAL_assertion( small.same_points(t, vh_small->site()) );
+	vh_small = small_d.nearest_neighbor( t, Vertex_handle() );
+	CGAL_assertion( small_d.same_points(t, vh_small->site()) );
       }
       CGAL_assertion( vh_small != Vertex_handle() );
       vmap[vh_small] = vh_large;

@@ -729,7 +729,7 @@ protected:
   void minimize_degree(const Vertex_handle& v);
 
   // this method does not really do the job as intended, i.e., for removal
-  void equalize_degrees(const Vertex_handle& v, Self& small,
+  void equalize_degrees(const Vertex_handle& v, Self& small_d,
 			std::map<Vertex_handle,Vertex_handle>& vmap,
 			List& l) const;
 
@@ -784,15 +784,15 @@ protected:
 
   size_type count_faces(const List& l) const;
 
-  void fill_hole(const Self& small, const Vertex_handle& v, const List& l,
+  void fill_hole(const Self& small_d, const Vertex_handle& v, const List& l,
 		 std::map<Vertex_handle,Vertex_handle>& vmap);
 
   bool remove_first(const Vertex_handle& v);
   bool remove_second(const Vertex_handle& v);
   bool remove_third(const Vertex_handle& v);
 
-  void compute_small_diagram(const Vertex_handle& v, Self& small) const;
-  void compute_vertex_map(const Vertex_handle& v, const Self& small,
+  void compute_small_diagram(const Vertex_handle& v, Self& small_d) const;
+  void compute_vertex_map(const Vertex_handle& v, const Self& small_d,
 			  std::map<Vertex_handle,Vertex_handle>& vmap) const;
   void remove_degree_d_vertex(const Vertex_handle& v);
 
