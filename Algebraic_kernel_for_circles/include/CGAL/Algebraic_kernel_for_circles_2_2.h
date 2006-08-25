@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
+// $URL:svn+ssh://pmachado@scm.gforge.inria.fr/svn/cgal/trunk/Algebraic_kernel_for_circles/include/CGAL/Algebraic_kernel_for_circles_2_2.h $
+// $Id:Algebraic_kernel_for_circles_2_2.h 33723 2006-08-25 08:36:44 +0000 (Fri, 25 Aug 2006) pmachado $
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion
 
@@ -30,10 +30,7 @@
 #include <CGAL/Polynomials_1_2.h>
 #include <CGAL/Root_for_circles_2_2.h>
 
-#include <CGAL/Algebraic_kernel/function_objects_on_roots_and_polynomials_2_2.h>
-// #include <CGAL/global_functions_on_roots_and_polynomials_2_2.h>
-// #include <CGAL/global_functions_on_roots_and_polynomial_1_2_and_2_2.h>
-// #include <CGAL/global_functions_on_root_for_circle_2_2.h>
+#include <CGAL/Algebraic_kernel_for_circles/function_objects_on_roots_and_polynomials_2_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
