@@ -31,7 +31,6 @@
 
 #include <CGAL/utility.h>
 #include <CGAL/Circular_kernel_3/internal_functions_on_circular_arc_3.h>
-#include <CGAL/Exact_circular_kernel.h>
 
 namespace CGAL {
   namespace CGALi{
