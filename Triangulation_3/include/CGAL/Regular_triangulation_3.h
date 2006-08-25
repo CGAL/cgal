@@ -1115,8 +1115,9 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
     // was discarded and its Vertex_handle was returned, we keep this semantic.
     // We need the special case lt == VERTEX because we don't know how the
     // power_test will be perturbed in dimension > 0.
-    if (lt == Tr_Base::VERTEX && power_test (c->vertex(li)->point(), p) == 0)
-        goto replace_vertex;
+    if (lt == Tr_Base::VERTEX && power_test (c->vertex(li)->point(), p) == 0) {
+      return c->vertex(li);
+    }
 
     // If the new point is not in conflict with its cell, it is hidden.
     if (! in_conflict (p, c)) {
@@ -1125,7 +1126,6 @@ insert(const Weighted_point & p, Locate_type lt, Cell_handle c, int li, int)
     }
 
     if (dimension() == 0) {
-replace_vertex:
         v = c->vertex(li);
         c->hide_point(v->point());
         v->set_point(p); 

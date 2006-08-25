@@ -111,7 +111,7 @@ struct less_xyzw
     }
 };
 
-typedef std::multiset<Weighted_point,less_xyzw> point_set;
+typedef std::set<Weighted_point,less_xyzw> point_set;
 typedef point_set::iterator set_iterator;
 
 // Base class for a weighted point generator.
@@ -248,8 +248,9 @@ void insert (Cls &T, point_set &points, int number)
 // Checks that each point of T that is removed exists in points.
 void remove (Cls &T, point_set &points, int number)
 {
-    for (int i = 1; i <= number; ++i)
+    for (int i = 1; !points.empty(); ++i)
     {
+        number--;
         assert (T.number_of_vertices() != 0);
         Vertex_handle v = T.finite_vertices_begin();
         set_iterator pos = points.find (v->point());
@@ -260,6 +261,7 @@ void remove (Cls &T, point_set &points, int number)
     }
     std::cout << std::endl;
     
+    assert (number >= 0);
     assert (T.number_of_vertices() == 0);
     assert (T.is_valid());
     assert (points.empty());
@@ -300,7 +302,7 @@ bool test_case (std::istream &is)
     } while (++pi != pend);
     assert (T.is_valid());
     
-    for (int i = 0; i < number; ++i) {
+    for (int i = 0; !points.empty(); ++i) {
         assert (T.number_of_vertices() != 0);
         Vertex_handle v = T.finite_vertices_begin();
         set_iterator pos = points.find (v->point());
