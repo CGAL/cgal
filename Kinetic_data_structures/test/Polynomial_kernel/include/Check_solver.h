@@ -372,15 +372,15 @@ public:
     Rt inf= std::numeric_limits<Rt>::infinity();
     Rt minf= -std::numeric_limits<Rt>::infinity();
     Rt big(100000);
-    Rt small(-1000000);
+    Rt small_rt(-1000000);
     Rt z(0);
     CGAL_assertion(big < inf);
     CGAL_assertion(big > minf);
-    CGAL_assertion(small < big);
-    CGAL_assertion(z > small);
+    CGAL_assertion(small_rt < big);
+    CGAL_assertion(z > small_rt);
     CGAL_assertion(-big < big);
-    CGAL_assertion(small < inf);
-    CGAL_assertion(small > minf);
+    CGAL_assertion(small_rt < inf);
+    CGAL_assertion(small_rt > minf);
     CGAL_assertion(z > minf);
     CGAL_assertion(z < inf);
   }

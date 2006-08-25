@@ -181,7 +181,7 @@ public:
       This ret;
       unsigned int new_deg = (std::max)(o.degree(), degree());
       ret.coefs_.resize(new_deg + 1);
-      unsigned int md= std::min(degree(), o.degree());
+      unsigned int md= (std::min)(degree(), o.degree());
       for (unsigned int i = 0; i <= md; ++i) {
 	ret.coefs_[i] = operator[](i) + o[i];
       }
@@ -206,7 +206,7 @@ public:
       This ret;
       unsigned int new_deg = (std::max)(o.degree(), degree());
       ret.coefs_.resize( new_deg + 1 );
-      unsigned int md= std::min(degree(), o.degree());
+      unsigned int md= (std::min)(degree(), o.degree());
       for (unsigned int i = 0; i <= md; ++i) {
 	ret.coefs_[i] = operator[](i) - o[i];
       }

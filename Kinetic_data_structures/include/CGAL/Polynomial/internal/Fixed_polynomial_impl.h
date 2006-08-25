@@ -134,7 +134,7 @@ public:
 
   iterator end() const
   {
-    return coefs_+std::min(degree(), 0);
+    return coefs_+(std::min)(degree(), 0);
   }
 
   //=========
