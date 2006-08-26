@@ -20,7 +20,7 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLYHEDRON_EDGE_CACHED_POINTER_MAP_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLYHEDRON_EDGE_CACHED_POINTER_MAP_H
 
-#include <CGAL/Polyhedron_BGL_properties.h>
+#include <CGAL/boost/graph/Polyhedron_BGL_properties.h>
 #include <CGAL/Surface_mesh_simplification/TSMS_common.h>
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
@@ -37,7 +37,6 @@ CGAL_END_NAMESPACE
 
 namespace boost
 {
-
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 class Polyhedron_edge_cached_pointer_map : public put_get_helper<void*&, Polyhedron_edge_cached_pointer_map<Gt, I, HDS, A> >

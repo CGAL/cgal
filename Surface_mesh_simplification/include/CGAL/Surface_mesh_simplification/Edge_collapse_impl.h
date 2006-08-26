@@ -66,8 +66,12 @@ int EdgeCollapse<M,P,D,C,V,S,I>::run()
   if ( Visitor )
     Visitor->OnStarted(mSurface);
    
+  Real_timer t ; t.start();
+    
   // First collect all candidate edges in a PQ
   Collect(); 
+  
+  t.stop(); std::cerr << "Collect time: " << t.time() << std::endl ;
   
   // Then proceed to collapse each edge in turn
   Loop();
@@ -347,7 +351,7 @@ typename EdgeCollapse<M,P,D,C,V,S,I>::vertex_descriptor EdgeCollapse<M,P,D,C,V,S
       if ( lDataPT->is_in_PQ() )
       {
         CGAL_TSMS_TRACE(2,"Removing E" << lEdgePT->ID << " from PQ" ) ;
-        remove_from_PQ(lDataPT) ;
+        remove_from_PQ(lEdgePT,lDataPT) ;
         -- mCurrentEdgeCount ;
       }
     }
@@ -362,7 +366,7 @@ typename EdgeCollapse<M,P,D,C,V,S,I>::vertex_descriptor EdgeCollapse<M,P,D,C,V,S
       if ( lDataQB->is_in_PQ() )
       {
         CGAL_TSMS_TRACE(2,"Removing E" << lEdgeQB->ID << " from PQ") ;
-        remove_from_PQ(lDataQB) ;
+        remove_from_PQ(lEdgeQB,lDataQB) ;
         -- mCurrentEdgeCount ;
       }
     }
@@ -455,7 +459,7 @@ void EdgeCollapse<M,P,D,C,V,S,I>::Update_neighbors( vertex_descriptor const& aKe
     
     CGAL_TSMS_TRACE(3, edge_to_string(lEdge) << " updated in the PQ") ;
     
-    update_in_PQ(lData);
+    update_in_PQ(lEdge,lData);
   }
     
 }

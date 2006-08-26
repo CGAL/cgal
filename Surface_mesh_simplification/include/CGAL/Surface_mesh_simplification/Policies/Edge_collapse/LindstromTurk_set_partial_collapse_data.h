@@ -50,6 +50,11 @@ public:
 
 public :
 
+  mutable int c ;  
+  mutable int p ;
+
+  Set_partial_collapse_data_LindstromTurk() : c(0), p(0) {}
+    
   void operator() ( Collapse_data& rData, edge_descriptor const& aEdge, TSM& aSurface, Params const* aParams ) const 
   {
     CGAL_assertion(aParams);
@@ -61,7 +66,10 @@ public :
     Optional_placement_type lPlacement ;
     tie(lCost,lPlacement) = core.compute();
     rData = Collapse_data(lCost);
-  }                         
+    
+    ++ c ;
+    ++ p ;
+}                         
   
 };    
 

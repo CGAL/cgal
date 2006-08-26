@@ -42,7 +42,9 @@ public:
 
 public :
 
-  Set_partial_collapse_data ( GetCost const& aGetCost ) : get_cost(aGetCost) {}
+  mutable int c ;
+  
+  Set_partial_collapse_data ( GetCost const& aGetCost ) : get_cost(aGetCost) { c = 0 ;}
 
   template<class Params>    
   void operator() ( Collapse_data& rData, edge_descriptor const& aEdge, TSM& aSurface, Params const* aParams ) const 
@@ -53,6 +55,8 @@ public :
     Optional_cost_type lCost = get_cost(aEdge,aSurface,rData,aParams);
     
     rData = Collapse_data(lCost);
+    
+    ++ c ;
   }                         
   
   GetCost get_cost ;

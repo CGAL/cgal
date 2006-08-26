@@ -45,6 +45,9 @@ public:
     
 public:
 
+  mutable int c ; Edge_length_cost() : c(0) {}
+  
+  
   template<class Collapse_data, class Params>
   result_type operator()( edge_descriptor const& aEdge
                         , TSM&                   aSurface
@@ -57,6 +60,8 @@ public:
     Point_3 const& ps = this->get_point(vs,aSurface);
     Point_3 const& pt = this->get_point(vt,aSurface);
       
+    ++ c ;
+    
     return result_type(squared_distance(ps,pt));
   }
   

@@ -20,7 +20,7 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLYHEDRON_IS_VERTEX_FIXED_MAP_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLYHEDRON_IS_VERTEX_FIXED_MAP_H
 
-#include <CGAL/Polyhedron_BGL_properties.h>
+#include <CGAL/boost/graph/Polyhedron_BGL_properties.h>
 #include <CGAL/Surface_mesh_simplification/TSMS_common.h>
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM

@@ -101,7 +101,7 @@ public:
     
     Compare_cost( Self const* aAlgorithm ) : mAlgorithm(aAlgorithm) {}
     
-    Comparison_result operator() ( edge_descriptor a, edge_descriptor b ) const
+    bool operator() ( edge_descriptor a, edge_descriptor b ) const
     {
       return mAlgorithm->compare_cost(a,b);
     }
@@ -109,7 +109,9 @@ public:
     Self const* mAlgorithm ;
   } ;
   
-  typedef Modifiable_priority_queue<edge_descriptor,Compare_cost> PQ ;
+  typedef typename property_map<TSM,edge_index_t>::type edge_index_property_map ;
+   
+  typedef Modifiable_priority_queue<edge_descriptor,Compare_cost,edge_index_property_map> PQ ;
   typedef typename PQ::handle pq_handle ;
   
   // An Edge_data is associated with EVERY edge in the mesh (collapsable or not).
@@ -126,15 +128,11 @@ public:
     
     pq_handle PQ_handle() const { return mPQHandle ;}
     
-    bool is_in_PQ() const { return mPQHandle != null_PQ_handle() ; }
+    bool is_in_PQ() const { return !PQ::is_null(mPQHandle) ; }
     
     void set_PQ_handle( pq_handle h ) { mPQHandle = h ; }
     
-    void reset_PQ_handle() { mPQHandle = null_PQ_handle() ; }
-    
-  private:
-    
-    static pq_handle null_PQ_handle() { pq_handle h ; return h ; }
+    void reset_PQ_handle() { mPQHandle = PQ::null_handle() ; }
     
   private:  
     
@@ -165,6 +163,12 @@ private:
   bool Is_collapsable( edge_descriptor const& aEdge ) ;
   vertex_descriptor Collapse( edge_descriptor const& aEdge ) ;
   void Update_neighbors( vertex_descriptor const& aKeptV ) ;
+  
+  size_type edge_id ( const_edge_descriptor const& aEdge ) const
+  {
+    edge_index_t edge_index ;
+    return get(edge_index,const_cast<TSM const&>(mSurface),aEdge) ;
+  }
   
   Point_3 const& get_point ( const_vertex_descriptor const& v ) const
   {
@@ -250,12 +254,12 @@ private:
     return Get_placement(aEdge,mSurface,lData->data(),mParams);
   }
   
-  Comparison_result compare_cost( edge_descriptor const& aEdgeA, edge_descriptor const& aEdgeB ) const
+  bool compare_cost( edge_descriptor const& aEdgeA, edge_descriptor const& aEdgeB ) const
   {
     // NOTE: A cost is an optional<> value.
     // Absent optionals are ordered first; that is, "none < T" and "T > none" for any defined T != none.
     // In consequence, edges with undefined costs will be promoted to the top of the priority queue and poped out first.
-    return CGAL::compare(get_cost(aEdgeA),get_cost(aEdgeB));
+    return get_cost(aEdgeA) < get_cost(aEdgeB);
   }
   
   void insert_in_PQ( edge_descriptor const& aEdge, Edge_data_ptr aData ) 
@@ -265,17 +269,16 @@ private:
     aData->set_PQ_handle(h);
   }
   
-  void update_in_PQ( Edge_data_ptr aData )
+  void update_in_PQ( edge_descriptor const& aEdge, Edge_data_ptr aData )
   {
     CGAL_precondition(aData->is_in_PQ());
-    aData->set_PQ_handle(mPQ->update(aData->PQ_handle())) ; 
+    aData->set_PQ_handle(mPQ->update(aEdge,aData->PQ_handle())) ; 
   }   
   
-  void remove_from_PQ( Edge_data_ptr aData )
+  void remove_from_PQ( edge_descriptor const& aEdge, Edge_data_ptr aData )
   {
     CGAL_precondition(aData->is_in_PQ());
-    mPQ->erase(aData->PQ_handle());
-    aData->reset_PQ_handle();
+    aData->set_PQ_handle(mPQ->erase(aEdge,aData->PQ_handle()));
   }   
   
   optional<edge_descriptor> pop_from_PQ() 

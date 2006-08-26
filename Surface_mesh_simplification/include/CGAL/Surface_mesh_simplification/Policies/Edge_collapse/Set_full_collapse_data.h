@@ -45,7 +45,10 @@ public:
 
 public :
 
-  Set_full_collapse_data ( GetCost const& aGetCost, GetPlacement const& aGetPlacement ) : get_cost(aGetCost), get_placement(aGetPlacement) {}
+  mutable int c, p ;
+  
+  Set_full_collapse_data ( GetCost const& aGetCost, GetPlacement const& aGetPlacement ) : get_cost(aGetCost), get_placement(aGetPlacement) 
+  { c = p = 0 ; }
     
   template<class Params>
   void operator() ( Collapse_data& rData, edge_descriptor const& aEdge, TSM& aSurface, Params const* aParams ) const 
@@ -56,6 +59,8 @@ public :
     Optional_cost_type      lCost      = get_cost     (aEdge,aSurface,rData,aParams);
     Optional_placement_type lPlacement = get_placement(aEdge,aSurface,rData,aParams);
     
+    ++ c;
+    ++ p ;
     rData = Collapse_data(lCost,lPlacement);
   }                         
   

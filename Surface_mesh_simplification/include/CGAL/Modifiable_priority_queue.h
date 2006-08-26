@@ -20,77 +20,38 @@
 
 #include <boost/relaxed_heap.hpp>
 
-
 CGAL_BEGIN_NAMESPACE
 
-
-template <class Type_ 
-         ,class Compare_ = CGAL::Compare<Type_>
-         ,class Allocator_ = CGAL_ALLOCATOR(int)
+template <class IndexedType_ 
+         ,class Compare_ = std::less<IndexedType_>
+         ,class ID_      = boost::identity_property_map
          >
 class Modifiable_priority_queue
 {
-  
-  template<class T, class Compare>
-  struct Less_from_compare
-  {
-    Less_from_compare( Compare const& c ) : mComp(c) {}
-    
-    bool operator() ( T const& a, T const& b ) const
-    {
-      return mComp(a,b) == SMALLER ;
-    }
-    
-    Compare mComp ;
-  } ;
-  
-  template<class T>
-  struct Id_map : public boost::put_get_helper<std::size_t, Id_map<T> >
-  {
-    typedef boost::readable_property_map_tag category;
-    typedef std::size_t                      value_type;
-    typedef std::size_t                      reference;
-    typedef T                                key_type;
-  
-    Id_map() {}
-  
-    reference operator[](key_type const& e) const 
-    {
-      return e->ID ;
-    }
-  };
-  
 public:
 
-  
-  typedef boost::relaxed_heap<Type_,Less_from_compare<Type_,Compare_>,Id_map<Type_> > Heap ;
-  
   typedef Modifiable_priority_queue Self;
   
-  typedef Compare_ Compare;
+  typedef IndexedType_ IndexedType ;
+  typedef Compare_     Compare;
+  typedef ID_          ID ;
   
-  typedef typename Heap::value_type      value_type;
-  typedef typename Heap::size_type       size_type;
+  typedef boost::relaxed_heap<IndexedType,Compare,ID> Heap ;
   
-  struct handle 
-  {
-    handle() {}
-    handle ( value_type const& v_ ) : v(v_) {} 
-    
-    friend bool operator == ( handle const& x, handle const& y ) { return x.v == y.v ; }
-    friend bool operator != ( handle const& x, handle const& y ) { return !(x==y); }
-    value_type v ; 
-  } ;
+  typedef typename Heap::value_type value_type;
+  typedef typename Heap::size_type  size_type;
+  
+  typedef bool handle ;
   
 public:
 
-  Modifiable_priority_queue( size_type n, Compare const& c ) : mHeap(n, Less_from_compare<Type_,Compare_>(c) ) {}
+  Modifiable_priority_queue( size_type largest_ID, Compare const& c ) : mHeap(largetID,c) {}
   
-  handle push ( value_type const& v ) { mHeap.push(v) ; return handle(v) ; }
+  handle push ( value_type const& v ) { mHeap.push(v) ; return handle(true) ; }
   
-  handle update ( handle h ) { mHeap.update(h.v); return h ; }
+  handle update ( value_type const& v, handle h ) { mHeap.update(v); return h ; }
   
-  void erase ( handle h ) { mHeap.remove(h.v); }
+  handle erase ( value_type const& v, handle h ) { mHeap.remove(v); return handle(false) ; }
 
   value_type top() const { return mHeap.top() ; }
   
@@ -100,8 +61,6 @@ public:
   
   size_type size() const { return mHeap.size() ; }
 
-  //void set_compare ( Compare const& c ) { mHeap.key_comp() = c ; }
-  
   boost::optional<value_type> extract_top()
   {
     boost::optional<value_type> r ;
@@ -113,6 +72,10 @@ public:
     }  
     return r ;
   }
+  
+  static handle null_handle() { return handle(false); }
+  
+  static bool is_null ( handle h ) { return h == null_handle() ; }
   
 private:
 

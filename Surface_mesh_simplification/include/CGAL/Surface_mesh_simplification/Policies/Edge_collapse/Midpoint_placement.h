@@ -42,6 +42,8 @@ public:
     
 public:
 
+  mutable int p ; Midpoint_placement() : p(0) {}
+  
   template<class Collapse_data, class Params>
   result_type operator()( edge_descriptor const& aEdge
                         , TSM&                   aSurface
@@ -53,7 +55,9 @@ public:
     
     Point_3 const& ps = this->get_point(vs,aSurface);
     Point_3 const& pt = this->get_point(vt,aSurface);
-      
+  
+    ++ p ;
+        
     return result_type(midpoint(ps,pt));
   }
   

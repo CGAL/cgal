@@ -52,6 +52,7 @@ using boost::in_edges ;
 using boost::source ;
 using boost::target ;
 using boost::edge_is_border_t ;
+using boost::edge_index_t ;
 using boost::vertex_is_border_t ;
 using boost::vertex_point_t ;
 using boost::cgal_tsms_is_vertex_fixed_t ;

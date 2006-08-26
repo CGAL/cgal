@@ -29,10 +29,6 @@
 
 #include <CGAL/Real_timer.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polyhedron_BGL.h>
-#include <CGAL/Polyhedron_extended_BGL.h>
-#include <CGAL/Polyhedron_BGL_properties.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Constrained_triangulation_2.h>
 
@@ -52,10 +48,8 @@ void Surface_simplification_external_trace( std::string s )
 
 int exit_code = 0 ;
 
-#include <CGAL/Surface_mesh_simplification_edge_collapse.h>
-#include <CGAL/Surface_mesh_simplification/Polyhedron_is_vertex_fixed_map.h>
-#include <CGAL/Surface_mesh_simplification/Polyhedron_edge_cached_pointer_map.h>
-
+#include <CGAL/Surface_mesh_simplification/Polyhedron.h>
+#include <CGAL/Surface_mesh_simplification/Edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_and_length.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_pred.h>
@@ -607,7 +601,7 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
                   break ;                  
                   
                 case Full :
-                
+
                   r = edge_collapse(lP
                                    ,&lDummy_params
                                    ,set_full_collapse_data_MP
@@ -667,6 +661,17 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
               break ;
           }
           t.stop();
+          
+cerr << "LT full c=" << set_full_collapse_data_LT.c << endl ;
+cerr << "LT full p=" << set_full_collapse_data_LT.p << endl ;
+cerr << "LT partial c=" << set_partial_collapse_data_LT.c << endl ;
+cerr << "LT c=" << get_LT_cost.c << endl ;
+cerr << "LT p=" << get_LT_placement.p << endl ;
+cerr << "MP full c=" << set_full_collapse_data_MP.c << endl ;
+cerr << "MP full p=" << set_full_collapse_data_MP.p << endl ;
+cerr << "MP partial c=" << set_partial_collapse_data_MP.c << endl ;
+cerr << "MP c=" << get_MP_cost.c << endl ;
+cerr << "MP p=" << get_MP_placement.p << endl ;
           
           ofstream off_out(result_name.c_str(),ios::trunc);
           off_out << lP ;
