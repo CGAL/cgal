@@ -17,11 +17,11 @@
 //
 // Author(s) : Fernando Caccciola <fernando.cacciola@gmail.com>
 
-#ifndef CGAL_POLYHEDRON_EXTENDED_BGL_H
-#define CGAL_POLYHEDRON_EXTENDED_BGL_H
+#ifndef CGAL_BOOST_GRAPH_POLYHEDRON_EXTENDED_BGL_H
+#define CGAL_BOOST_GRAPH_POLYHEDRON_EXTENDED_BGL_H
 
 #include <CGAL/HalfedgeDS_items_decorator.h>
-#include <CGAL/Polyhedron_BGL.h>
+#include <CGAL/boost/graph/Polyhedron_BGL.h>
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
 #  define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS
@@ -211,4 +211,4 @@ CGAL_END_NAMESPACE
 
 #undef CGAL_HDS_
 
-#endif // CGAL_POLYHEDRON_EXTENDED_BGL_H
+#endif // CGAL_BOOST_GRAPH_POLYHEDRON_EXTENDED_BGL_H

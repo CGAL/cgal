@@ -17,10 +17,10 @@
 //
 // Author(s): Andreas Fabri <andreas.fabri@geometryfactory.com>, Fernando Cacciola <fernando.cacciola@gmail.com>
 
-#ifndef CGAL_POLYHEDRON_BGL_H
-#define CGAL_POLYHEDRON_BGL_H
+#ifndef CGAL_BOOST_GRAPH_POLYHEDRON_BGL_H
+#define CGAL_BOOST_GRAPH_POLYHEDRON_BGL_H
 
-#include <CGAL/HalfedgeDS_BGL_aux.h>
+#include <CGAL/boost/graph/HalfedgeDS_BGL_aux.h>
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
 #  define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS
@@ -216,4 +216,4 @@ out_edges( typename graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::vertex_descr
 
 #undef CGAL_HDS_
 
-#endif // CGAL_POLYHEDRON_BGL_H
+#endif // CGAL_BOOST_GRAPH_POLYHEDRON_BGL_H

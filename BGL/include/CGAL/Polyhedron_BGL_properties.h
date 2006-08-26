@@ -17,16 +17,23 @@
 //
 // Author(s): Andreas Fabri <andreas.fabri@geometryfactory.com>, Fernando Cacciola <fernando.cacciola@gmail.com>
 
-#ifndef CGAL_POLYHEDRON_BGL_PROPERTIES_H
-#define CGAL_POLYHEDRON_BGL_PROPERTIES_H
+#ifndef CGAL_BOOST_GRAPH_POLYHEDRON_BGL_PROPERTIES_H
+#define CGAL_BOOST_GRAPH_POLYHEDRON_BGL_PROPERTIES_H
 
-#include <CGAL/Polyhedron_BGL.h>
+#include <CGAL/boost/graph/Polyhedron_BGL.h>
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
 #  define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS
 #else
 #  define CGAL_HDS_PARAM_ class HDS
 #endif
+
+CGAL_BEGIN_NAMESPACE
+
+template<class Polyhedron> struct External_polyhedron_access_vertex_ID ;
+template<class Polyhedron> struct External_polyhedron_access_edge_ID ;
+
+CGAL_END_NAMESPACE
 
 namespace boost
 {
@@ -301,4 +308,4 @@ struct vertex_property_type<CGAL::Polyhedron_3<Gt,I,HDS,A> >
 
 #undef CGAL_HDS_PARAM_
 
-#endif // CGAL_POLYHEDRON_BGL_PROPERTIES_H
+#endif // CGAL_BOOST_GRAPH_POLYHEDRON_BGL_PROPERTIES_H
