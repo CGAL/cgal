@@ -331,10 +331,10 @@ Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/data/random_ray_shoot.sph
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/data/simple.spheres -text svneol=unset#application/octet-stream
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/data/two.spheres -text svneol=unset#application/octet-stream
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/the_plan -text
-BGL/include/CGAL/HalfedgeDS_BGL_aux.h -text
-BGL/include/CGAL/Polyhedron_BGL.h -text
-BGL/include/CGAL/Polyhedron_BGL_properties.h -text
-BGL/include/CGAL/Polyhedron_extended_BGL.h -text
+BGL/include/CGAL/boost/graph/HalfedgeDS_BGL_aux.h -text
+BGL/include/CGAL/boost/graph/Polyhedron_BGL.h -text
+BGL/include/CGAL/boost/graph/Polyhedron_BGL_properties.h -text
+BGL/include/CGAL/boost/graph/Polyhedron_extended_BGL.h -text
 Benchmark/doc_tex/Benchmark/Conics_14_1.arr -text
 Benchmark/doc_tex/Benchmark/fig/Conics_14_1.eps -text svneol=unset#application/postscript
 Benchmark/doc_tex/Benchmark/fig/Conics_14_1.png -text svneol=unset#image/png
