@@ -18,7 +18,7 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_CACHED_COST_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_CACHED_COST_H
 
-#include <CGAL/Surface_mesh_simplification/TSMS_common.h>
+#include <CGAL/Surface_mesh_simplification/Detail/TSMS_common.h>
 
 CGAL_BEGIN_NAMESPACE
 

@@ -15,8 +15,8 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_I_EDGE_COLLAPSE_IMPL_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_I_EDGE_COLLAPSE_IMPL_H
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_EDGE_COLLAPSE_IMPL_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_EDGE_COLLAPSE_IMPL_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -43,7 +43,7 @@ EdgeCollapse<M,P,D,C,V,S,I>::EdgeCollapse( TSM&                   aSurface
   ,Visitor          (aVisitor)
   
 {
-  mPQ.reset( new PQ (num_edges(aSurface), Compare_cost(this) ) ) ;
+  mPQ.reset( new PQ (num_edges(aSurface), Compare_cost(this), edge_index_property_map(mSurface) ) ) ;
   
   CGAL_TSMS_TRACE(0,"EdgeCollapse of TSM with " << num_undirected_edges(aSurface) << " edges" ); 
   
@@ -469,6 +469,6 @@ void EdgeCollapse<M,P,D,C,V,S,I>::Update_neighbors( vertex_descriptor const& aKe
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_I_EDGE_COLLAPSE_IMPL_H //
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_EDGE_COLLAPSE_IMPL_H //
 // EOF //
  

@@ -18,7 +18,7 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_SET_FULL_COLLAPSE_DATA_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_SET_FULL_COLLAPSE_DATA_H 1
 
-#include <CGAL/Surface_mesh_simplification/TSMS_common.h>
+#include <CGAL/Surface_mesh_simplification/Detail/TSMS_common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Full_collapse_data.h>
 
 

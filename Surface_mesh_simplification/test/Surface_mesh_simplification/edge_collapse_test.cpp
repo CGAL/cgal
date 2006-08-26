@@ -1,4 +1,4 @@
-// // Copyright (c) 2002  Max Planck Institut fuer Informatik (Germany).
+// Copyright (c) 2002  Max Planck Institut fuer Informatik (Germany).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -29,7 +29,6 @@
 
 #include <CGAL/Real_timer.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Constrained_triangulation_2.h>
 
 //#define CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE 4
@@ -55,6 +54,8 @@ int exit_code = 0 ;
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_pred.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_pred.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Set_empty_collapse_data.h>
+
+#include <CGAL/IO/Polyhedron_iostream.h>
 
 using namespace std ;
 using namespace boost ;
@@ -124,17 +125,18 @@ struct My_items : public Polyhedron_items_3
 
 typedef Polyhedron_3<Kernel,My_items> Polyhedron; 
 
-typedef Polyhedron::Vertex                                   Vertex;
-typedef Polyhedron::Vertex_iterator                          Vertex_iterator;
-typedef Polyhedron::Vertex_handle                            Vertex_handle;
-typedef Polyhedron::Vertex_const_handle                      Vertex_const_handle;
-typedef Polyhedron::Halfedge_handle                          Halfedge_handle;
-typedef Polyhedron::Halfedge_const_handle                    Halfedge_const_handle;
-typedef Polyhedron::Edge_iterator                            Edge_iterator;
-typedef Polyhedron::Facet_iterator                           Facet_iterator;
-typedef Polyhedron::Halfedge_around_vertex_const_circulator  HV_circulator;
-typedef Polyhedron::Halfedge_around_facet_circulator         HF_circulator;
-
+typedef Polyhedron::Vertex                                  Vertex;
+typedef Polyhedron::Vertex_iterator                         Vertex_iterator;
+typedef Polyhedron::Vertex_handle                           Vertex_handle;
+typedef Polyhedron::Vertex_const_handle                     Vertex_const_handle;
+typedef Polyhedron::Halfedge_handle                         Halfedge_handle;
+typedef Polyhedron::Halfedge_const_handle                   Halfedge_const_handle;
+typedef Polyhedron::Edge_iterator                           Edge_iterator;
+typedef Polyhedron::Facet_iterator                          Facet_iterator;
+typedef Polyhedron::Halfedge_around_vertex_const_circulator HV_circulator;
+typedef Polyhedron::Halfedge_around_facet_circulator        HF_circulator;
+typedef Polyhedron::size_type                               size_type ;
+ 
 CGAL_BEGIN_NAMESPACE
 
 template<>
@@ -147,6 +149,12 @@ template<>
 struct External_polyhedron_access_edge_cached_pointer<Polyhedron>
 {
   void*& operator() ( Polyhedron&, Halfedge_handle he ) const { return he->cached_pointer; }
+}  ;
+
+template<>
+struct External_polyhedron_access_edge_index<Polyhedron>
+{
+  size_type operator() ( Polyhedron const&, Halfedge_const_handle he ) const { return he->id() ; }
 }  ;
 
 CGAL_END_NAMESPACE  

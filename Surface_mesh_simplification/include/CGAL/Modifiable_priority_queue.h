@@ -45,7 +45,7 @@ public:
   
 public:
 
-  Modifiable_priority_queue( size_type largest_ID, Compare const& c ) : mHeap(largetID,c) {}
+  Modifiable_priority_queue( size_type largest_ID, Compare const& c, ID const& id ) : mHeap(largest_ID,c,id) {}
   
   handle push ( value_type const& v ) { mHeap.push(v) ; return handle(true) ; }
   

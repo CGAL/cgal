@@ -15,8 +15,8 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_I_EDGE_COLLAPSE_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_I_EDGE_COLLAPSE_H 1
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_EDGE_COLLAPSE_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_EDGE_COLLAPSE_H 1
 
 #include <vector>
 #include <set>
@@ -27,7 +27,7 @@
 #include <boost/iterator_adaptors.hpp>
 #include <boost/graph/adjacency_list.hpp>
 
-#include <CGAL/Surface_mesh_simplification/TSMS_common.h>
+#include <CGAL/Surface_mesh_simplification/Detail/TSMS_common.h>
 #include <CGAL/Surface_mesh_simplification/Collapse_operator.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -109,7 +109,7 @@ public:
     Self const* mAlgorithm ;
   } ;
   
-  typedef typename property_map<TSM,edge_index_t>::type edge_index_property_map ;
+  typedef typename boost::property_map<TSM,edge_index_t>::type edge_index_property_map ;
    
   typedef Modifiable_priority_queue<edge_descriptor,Compare_cost,edge_index_property_map> PQ ;
   typedef typename PQ::handle pq_handle ;
@@ -318,7 +318,7 @@ private:
 
 CGAL_END_NAMESPACE
 
-#include <CGAL/Surface_mesh_simplification/Edge_collapse_impl.h>
+#include <CGAL/Surface_mesh_simplification/Detail/Edge_collapse_impl.h>
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_I_EDGE_COLLAPSE_H //
 // EOF //

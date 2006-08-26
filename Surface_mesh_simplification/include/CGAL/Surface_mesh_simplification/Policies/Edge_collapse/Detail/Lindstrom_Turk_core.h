@@ -20,7 +20,7 @@
 
 #include <vector>
 
-#include <CGAL/Surface_mesh_simplification/TSMS_common.h>
+#include <CGAL/Surface_mesh_simplification/Detail/TSMS_common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_params.h>
 
 CGAL_BEGIN_NAMESPACE

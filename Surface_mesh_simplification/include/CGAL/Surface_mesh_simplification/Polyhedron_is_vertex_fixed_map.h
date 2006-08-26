@@ -21,7 +21,7 @@
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLYHEDRON_IS_VERTEX_FIXED_MAP_H
 
 #include <CGAL/boost/graph/Polyhedron_BGL_properties.h>
-#include <CGAL/Surface_mesh_simplification/TSMS_common.h>
+#include <CGAL/Surface_mesh_simplification/Detail/TSMS_common.h>
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
 #  define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS
