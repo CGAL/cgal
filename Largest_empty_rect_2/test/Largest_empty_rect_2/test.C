@@ -89,10 +89,10 @@ int main(int argc,char *argv[])
   // output
   ler = empty_rectangle1.get_largest_empty_iso_rectangle();
 
-  std::cout << "test first set   (" << ler.min().x()
-	    << "," << ler.min().y() 
-            << "),(" << ler.max().x() 
-            << "," << ler.max().y() << ")\n";
+  std::cout << "test first set   (" << (ler.min)().x()
+	    << "," << (ler.min)().y() 
+            << "),(" << (ler.max)().x() 
+            << "," << (ler.max)().y() << ")\n";
 
   // test another ctor
   Largest_empty_rect empty_rectangle2(Point(x1, y1), Point(x2, y2));
@@ -103,20 +103,20 @@ int main(int argc,char *argv[])
   // output
   ler = empty_rectangle2.get_largest_empty_iso_rectangle();
 
-  std::cout << "test operator = (" << ler.min().x()
-	    << "," << ler.min().y() 
-            << "),(" << ler.max().x() 
-            << "," << ler.max().y() << ")\n";
+  std::cout << "test operator = (" << (ler.min)().x()
+	    << "," << (ler.min)().y() 
+            << "),(" << (ler.max)().x() 
+            << "," << (ler.max)().y() << ")\n";
 
   // test cctor
   Largest_empty_rect empty_rectangle3(empty_rectangle1);
   // output
   ler = empty_rectangle3.get_largest_empty_iso_rectangle();
 
-  std::cout << "test cctor      (" << ler.min().x()
-	    << "," << ler.min().y() 
-            << "),(" << ler.max().x() 
-            << "," << ler.max().y() << ")\n";
+  std::cout << "test cctor      (" << (ler.min)().x()
+	    << "," << (ler.min)().y() 
+            << "),(" << (ler.max)().x() 
+            << "," << (ler.max)().y() << ")\n";
 
   // test list insertion
   Largest_empty_rect empty_rectangle4(Point(x1, y1), Point(x2, y2));
@@ -127,10 +127,10 @@ int main(int argc,char *argv[])
   std::cout << "  number of successfully inserted points is " << n << std::endl;
   ler = empty_rectangle4.get_largest_empty_iso_rectangle();
 
-  std::cout << "  LER is  (" << ler.min().x()
-	    << "," << ler.min().y() 
-            << "),(" << ler.max().x() 
-            << "," << ler.max().y() << ")\n";
+  std::cout << "  LER is  (" << (ler.min)().x()
+	    << "," << (ler.min)().y() 
+            << "),(" << (ler.max)().x() 
+            << "," << (ler.max)().y() << ")\n";
 
   // test default bbox
   Largest_empty_rect empty_rectangle5;
@@ -141,10 +141,10 @@ int main(int argc,char *argv[])
   // output
   ler = empty_rectangle5.get_largest_empty_iso_rectangle();
 
-  std::cout << "test default ctor    (" << ler.min().x()
-	    << "," << ler.min().y() 
-            << "),(" << ler.max().x() 
-            << "," << ler.max().y() << ")\n";
+  std::cout << "test default ctor    (" << (ler.min)().x()
+	    << "," << (ler.min)().y() 
+            << "),(" << (ler.max)().x() 
+            << "," << (ler.max)().y() << ")\n";
 
   // test removals
   Point p(x,y);
@@ -153,10 +153,10 @@ int main(int argc,char *argv[])
   // output
   ler = empty_rectangle1.get_largest_empty_iso_rectangle();
 
-  std::cout << "test after removal   (" << ler.min().x()
-	    << "," << ler.min().y() 
-            << "),(" << ler.max().x() 
-            << "," << ler.max().y() << ")\n";
+  std::cout << "test after removal   (" << (ler.min)().x()
+	    << "," << (ler.min)().y() 
+            << "),(" << (ler.max)().x() 
+            << "," << (ler.max)().y() << ")\n";
 
 
   // test clear
@@ -168,10 +168,10 @@ int main(int argc,char *argv[])
   // output
   ler = empty_rectangle1.get_largest_empty_iso_rectangle();
 
-  std::cout << "test after clear (" << ler.min().x()
-	    << "," << ler.min().y() 
-            << "),(" << ler.max().x() 
-            << "," << ler.max().y() << ")\n";
+  std::cout << "test after clear (" << (ler.min)().x()
+	    << "," << (ler.min)().y() 
+            << "),(" << (ler.max)().x() 
+            << "," << (ler.max)().y() << ")\n";
 
   bo = empty_rectangle1.insert(p);
   std::cout << "test unsuccessful insertion " << bo << std::endl;
@@ -179,10 +179,10 @@ int main(int argc,char *argv[])
   // test bbox
   Iso_rectangle_2 bb = empty_rectangle1.get_bounding_box();
 
-  std::cout << "test bounding box (" << bb.min().x()
-	    << "," << bb.min().y() 
-            << "),(" << bb.max().x() 
-            << "," << bb.max().y() << ")\n";
+  std::cout << "test bounding box (" << (bb.min)().x()
+	    << "," << (bb.min)().y() 
+            << "),(" << (bb.max)().x() 
+            << "," << (bb.max)().y() << ")\n";
 
   // test quadruple
   CGAL::Quadruple<Largest_empty_rect::Point_2,
