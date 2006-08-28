@@ -48,9 +48,9 @@ void Surface_simplification_external_trace( std::string s )
 int exit_code = 0 ;
 
 #include <CGAL/Surface_mesh_simplification/Polyhedron.h>
-#include <CGAL/Surface_mesh_simplification/Polyhedron_is_vertex_fixed_map.h>
-#include <CGAL/Surface_mesh_simplification/Polyhedron_edge_cached_pointer_map.h>
-#include <CGAL/Surface_mesh_simplification/Polyhedron_edge_index_map.h>
+#include <CGAL/Surface_mesh_simplification/Vertex_is_fixed_map.h>
+#include <CGAL/Surface_mesh_simplification/Edge_cached_pointer_map.h>
+#include <CGAL/Surface_mesh_simplification/Edge_index_map.h>
 #include <CGAL/Surface_mesh_simplification/Edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_and_length.h>
@@ -556,6 +556,8 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
               
           Dummy_params lDummy_params;
           LT_params    lLT_params ; 
+
+          Edge_index_map<Polyhedron> P_Edge_index_map ;
           
           Visitor lVisitor(lRequestedEdgeCount) ;
       
