@@ -32,13 +32,6 @@
 #include <CGAL/Cartesian/MatrixC33.h>
 #include <CGAL/Modifiable_priority_queue.h>
 
-namespace boost
-{
-
-struct cgal_tsms_is_vertex_fixed_t     {} ;
-struct cgal_tsms_edge_cached_pointer_t {} ;
-}
-
 CGAL_BEGIN_NAMESPACE
 
 namespace Triangulated_surface_mesh { namespace Simplification 
@@ -55,8 +48,6 @@ using boost::edge_is_border_t ;
 using boost::edge_index_t ;
 using boost::vertex_is_border_t ;
 using boost::vertex_point_t ;
-using boost::cgal_tsms_is_vertex_fixed_t ;
-using boost::cgal_tsms_edge_cached_pointer_t ;
 
 using boost::shared_ptr ;
 using boost::optional ;

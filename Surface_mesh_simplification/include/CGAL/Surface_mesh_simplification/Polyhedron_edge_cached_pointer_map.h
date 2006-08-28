@@ -29,14 +29,10 @@
 #  define CGAL_HDS_PARAM_ class HDS
 #endif
 
-CGAL_BEGIN_NAMESPACE
-
-template<class Polyhedron> struct External_polyhedron_access_edge_cached_pointer ;
-
-CGAL_END_NAMESPACE
-
 namespace boost
 {
+
+struct edge_cached_pointer_t {} ;
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 class Polyhedron_edge_cached_pointer_map : public put_get_helper<void*&, Polyhedron_edge_cached_pointer_map<Gt, I, HDS, A> >
@@ -52,28 +48,19 @@ public:
   typedef void*& reference;
   typedef typename graph_traits<Polyhedron>::edge_descriptor  key_type;
 
-  Polyhedron_edge_cached_pointer_map( Polyhedron& p_) : p( addressof(p_) ) 
-  {}
-
-  reference operator[](key_type const& e) const 
-  {
-    CGAL::External_polyhedron_access_edge_cached_pointer<Polyhedron> f ;
-    return f(*p,e);
-  }
-  
-  Polyhedron* p ;
+  reference operator[](key_type const& e) const { return e->cached_pointer() ; }
 };
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 inline Polyhedron_edge_cached_pointer_map<Gt, I, HDS, A>
-get(cgal_tsms_edge_cached_pointer_t, CGAL::Polyhedron_3<Gt,I,HDS,A>& p) 
+get(edge_cached_pointer_t, CGAL::Polyhedron_3<Gt,I,HDS,A>& p) 
 {
   Polyhedron_edge_cached_pointer_map<Gt, I, HDS, A> m(p);
   return m;
 }
 
 template <>
-struct Polyhedron_property_map<cgal_tsms_edge_cached_pointer_t> 
+struct Polyhedron_property_map<edge_cached_pointer_t> 
 {
   template<class Gt, class I, CGAL_HDS_PARAM_, class A>
   struct bind_ {

@@ -48,6 +48,9 @@ void Surface_simplification_external_trace( std::string s )
 int exit_code = 0 ;
 
 #include <CGAL/Surface_mesh_simplification/Polyhedron.h>
+#include <CGAL/Surface_mesh_simplification/Polyhedron_is_vertex_fixed_map.h>
+#include <CGAL/Surface_mesh_simplification/Polyhedron_edge_cached_pointer_map.h>
+#include <CGAL/Surface_mesh_simplification/Polyhedron_edge_index_map.h>
 #include <CGAL/Surface_mesh_simplification/Edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_and_length.h>
@@ -74,6 +77,8 @@ struct My_vertex : public HalfedgeDS_vertex_base<Refs,Tag_true,Point>
   My_vertex( Point p ) : Base(p), ID(-1), IsFixed(false) {}
 
   int id() const { return ID ; }
+  
+  bool is_fixed() const { return IsFixed ; }
     
   int  ID; 
   bool IsFixed ;
@@ -88,7 +93,9 @@ struct My_halfedge : public HalfedgeDS_halfedge_base<Refs>
   {}
  
   int id() const { return ID ; }
-  
+
+  void* cached_point() { return cached_pointer ; }
+    
   int ID; 
   
   void* cached_pointer ;
@@ -136,29 +143,6 @@ typedef Polyhedron::Facet_iterator                          Facet_iterator;
 typedef Polyhedron::Halfedge_around_vertex_const_circulator HV_circulator;
 typedef Polyhedron::Halfedge_around_facet_circulator        HF_circulator;
 typedef Polyhedron::size_type                               size_type ;
- 
-CGAL_BEGIN_NAMESPACE
-
-template<>
-struct External_polyhedron_get_is_vertex_fixed<Polyhedron>
-{
-  bool operator() ( Polyhedron const&, Vertex_const_handle v ) const { return v->IsFixed; }
-}  ;
-
-template<>
-struct External_polyhedron_access_edge_cached_pointer<Polyhedron>
-{
-  void*& operator() ( Polyhedron&, Halfedge_handle he ) const { return he->cached_pointer; }
-}  ;
-
-template<>
-struct External_polyhedron_access_edge_index<Polyhedron>
-{
-  size_type operator() ( Polyhedron const&, Halfedge_const_handle he ) const { return he->id() ; }
-}  ;
-
-CGAL_END_NAMESPACE  
-
 
 #ifdef AUDIT
 

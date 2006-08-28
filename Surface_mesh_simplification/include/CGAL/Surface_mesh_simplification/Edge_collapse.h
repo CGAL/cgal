@@ -35,18 +35,17 @@ namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_
 //   Intrinsically fixed edges are those which, if removed, would result in a topologically incosistent mesh.
 //   (the algorithm automatically detects intrinsically fixed edges).
 //   Explicitely fixed edges appear when the two vertices incident on the edge have been marked by the user as fixed,
-//   via a property map.
+//   via the "VertexIsFixedMap" property map.
 //
 //   For each non-fixed edge in the mesh, a "collapse data" record is constructed by calling the user-supplied function
-//   "SetCollapseData", passing the edge and the specified parameters object (ParamsToSetCollapseData).
-//   The edge is then associated with its collapse data via a property map.
+//   "SetCollapseData".
+//   The edge is then associated with its collapse data via the "EdgeCachedPtrMap" property map.
 //
-//   The user-supplied function "GetCost" is called, for each non-fixed edge, passing its associated collapse data.
+//   The user-supplied function "GetCost" is called, for each non-fixed edge.
 //   This function returns a value which defines the collapsing cost of the edge. Edges with a lower cost are collapsed first.
 //     
-//   When a non-fixed edge is selected for removal, a user-supplied function "GetNewVertexPoint" is called, 
-//   passing its associated collapse data.
-//   This function returns a Point_3 which defines the coordinates of the single vertex that "replaces" the collapsed edge.
+//   When a non-fixed edge is selected for removal, a user-supplied function "GetNewVertexPoint" is called.
+//   This function returns a Point_3 which defines the coordinates of the single vertex that replaces the collapsed edge.
 // 
 //   The simplification continues until there are no more non-fixed edges to collapse or the user-defined function "ShouldStop"
 //   returns true.
@@ -56,33 +55,60 @@ namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_
 //         satisfies the constriants required by method used in these functions.
 //         Consequently, not all non-fixed edges are neccessarily removed.
 //
-//   This global function returns the number of edges or -1 if there was an error 
-//   (like the surface not being a valid triangulated surface mesh)
-//       
-template<class TSM,class Params,class SetCollapseData,class GetCost,class GetNewVertexPoint,class ShouldStop, class Visitor>
+//   This global function returns the number of edges collapsed.
+//
+//   The property map "EdgeIdxMap" is needed by the algorithm implementation.
+//
+template<class TSM
+        ,class Params
+        ,class SetCollapseData
+        ,class GetCost
+        ,class GetNewVertexPoint
+        ,class ShouldStop
+        ,class EdgeIdxMap
+        ,class EdgeCachedPtrMap
+        ,class VertexIsFixedMap
+        ,class Visitor
+        >
 int edge_collapse ( TSM&                     aSurface
-                  , Params const*            aParams // Can be NULL
-                  , SetCollapseData const&   aSet_collapse_data
-                  , GetCost         const&   aGet_cost 
+                  , Params            const* aParams // Can be NULL
+                  , SetCollapseData   const& aSet_collapse_data
+                  , GetCost           const& aGet_cost 
                   , GetNewVertexPoint const& aGet_new_vertex_point
-                  , ShouldStop      const&   aShould_stop
+                  , ShouldStop        const& aShould_stop
+                  , EdgeIdxMap        const& aEdge_idx_map 
+                  , EdgeCachedPtrMap  const& aEdge_cached_ptr_map
+                  , VertexIsFixedMap  const& aVertex_is_fixed_map
                   , Visitor*                 aVisitor = 0
                   ) 
 {
-  if ( is_valid_triangulated_surface_mesh(aSurface) )
-  {
-    typedef EdgeCollapse<TSM,Params,SetCollapseData,GetCost,GetNewVertexPoint,ShouldStop,Visitor> Algorithm ;
-    Algorithm algorithm(aSurface
-                       ,aParams
-                       ,aSet_collapse_data
-                       ,aGet_cost
-                       ,aGet_new_vertex_point
-                       ,aShould_stop
-                       ,aVisitor
-                       ) ;
-    return algorithm.run();
-  }
-  else return -1 ;
+  typedef EdgeCollapse<TSM
+                      ,Params
+                      ,SetCollapseData
+                      ,GetCost
+                      ,GetNewVertexPoint
+                      ,ShouldStop
+                      ,EdgeIdxMap
+                      ,EdgeCachedPtrMap
+                      ,VertexIsFixedMap
+                      ,Visitor
+                      >
+                      Algorithm 
+                      ;
+                      
+  Algorithm algorithm(aSurface
+                     ,aParams
+                     ,aSet_collapse_data
+                     ,aGet_cost
+                     ,aGet_new_vertex_point
+                     ,aShould_stop
+                     ,aEdge_idx_map 
+                     ,aEdge_cached_ptr_map
+                     ,aVertex_is_fixed_map
+                     ,aVisitor
+                     ) ;
+                     
+  return algorithm.run();
 }                          
 
 

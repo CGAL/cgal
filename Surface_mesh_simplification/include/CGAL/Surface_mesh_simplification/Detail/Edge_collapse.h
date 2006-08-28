@@ -44,19 +44,25 @@ template<class TSM_
         ,class GetCost_
         ,class GetPlacement_
         ,class ShouldStop_
+        ,class EdgeIdxMap_
+        ,class EdgeCachedPtrMap_
+        ,class VertexIsFixedMap_
         ,class VisitorT_
         >
 class EdgeCollapse
 {
 public:
 
-  typedef TSM_             TSM ;
-  typedef Params_          Params ;
-  typedef SetCollapseData_ SetCollapseData ;
-  typedef GetCost_         GetCost ;
-  typedef GetPlacement_    GetPlacement ;
-  typedef ShouldStop_      ShouldStop ;
-  typedef VisitorT_        VisitorT ;
+  typedef TSM_              TSM ;
+  typedef Params_           Params ;
+  typedef SetCollapseData_  SetCollapseData ;
+  typedef GetCost_          GetCost ;
+  typedef GetPlacement_     GetPlacement ;
+  typedef ShouldStop_       ShouldStop ;
+  typedef EdgeIdxMap_       EdgeIdxMap ;
+  typedef EdgeCachedPtrMap_ EdgeCachedPtrMap ;
+  typedef VertexIsFixedMap_ VertexIsFixedMap ;
+  typedef VisitorT_         VisitorT ;
   
   typedef EdgeCollapse Self ;
   
@@ -109,9 +115,21 @@ public:
     Self const* mAlgorithm ;
   } ;
   
-  typedef typename boost::property_map<TSM,edge_index_t>::type edge_index_property_map ;
-   
-  typedef Modifiable_priority_queue<edge_descriptor,Compare_cost,edge_index_property_map> PQ ;
+  struct Compare_id
+  {
+    Compare_id() : mAlgorithm(0) {}
+    
+    Compare_id( Self const* aAlgorithm ) : mAlgorithm(aAlgorithm) {}
+    
+    bool operator() ( edge_descriptor a, edge_descriptor b ) const
+    {
+      return mAlgorithm->compare_id(a,b);
+    }
+    
+    Self const* mAlgorithm ;
+  } ;
+  
+  typedef Modifiable_priority_queue<edge_descriptor,Compare_cost,EdgeIdxMap> PQ ;
   typedef typename PQ::handle pq_handle ;
   
   // An Edge_data is associated with EVERY edge in the mesh (collapsable or not).
@@ -145,13 +163,16 @@ public:
   
 public:
 
-  EdgeCollapse( TSM&                   aSurface
-              , Params const*          aParams // Can be NULL
-              , SetCollapseData const& aSetCollapseData
-              , GetCost const&         aGetCost
-              , GetPlacement const&    aGetPlacement
-              , ShouldStop const&      aShouldStop 
-              , VisitorT*              aVisitor
+  EdgeCollapse( TSM&                    aSurface
+              , Params           const* aParams // Can be NULL
+              , SetCollapseData  const& aSetCollapseData
+              , GetCost          const& aGetCost
+              , GetPlacement     const& aGetPlacement
+              , ShouldStop       const& aShouldStop 
+              , EdgeIdxMap       const& aEdge_idx_map 
+              , EdgeCachedPtrMap const& aEdge_cached_ptr_map 
+              , VertexIsFixedMap const& aVertex_is_fixed_map 
+              , VisitorT*               aVisitor
               ) ;
   
   int run() ;
@@ -164,22 +185,14 @@ private:
   vertex_descriptor Collapse( edge_descriptor const& aEdge ) ;
   void Update_neighbors( vertex_descriptor const& aKeptV ) ;
   
-  size_type edge_id ( const_edge_descriptor const& aEdge ) const
-  {
-    edge_index_t edge_index ;
-    return get(edge_index,const_cast<TSM const&>(mSurface),aEdge) ;
-  }
+  size_type get_id ( const_edge_descriptor const& aEdge ) const { return get(Edge_idx_map,aEdge) ; }
+  
+  bool is_vertex_fixed ( const_vertex_descriptor const& v ) const { return get(Vertex_is_fixed_map,v) ; }
   
   Point_3 const& get_point ( const_vertex_descriptor const& v ) const
   {
     vertex_point_t vertex_point ;
     return get(vertex_point,const_cast<TSM const&>(mSurface),v) ;
-  }
-  
-  bool is_vertex_fixed ( const_vertex_descriptor const& v ) const
-  {
-    cgal_tsms_is_vertex_fixed_t is_vertex_fixed ;
-    return get(is_vertex_fixed,mSurface,v) ;
   }
   
   bool is_border ( const_vertex_descriptor const& v ) const 
@@ -199,17 +212,12 @@ private:
     return is_border(aEdge) || is_border(opposite_edge(aEdge,mSurface)) ;
   }    
   
-  Edge_data_ptr get_data ( edge_descriptor const& aEdge ) const
-  {
-    cgal_tsms_edge_cached_pointer_t edge_cached_pointer ;
-    return static_cast<Edge_data_ptr>(get(edge_cached_pointer,mSurface,aEdge)) ;
-  }
+  Edge_data_ptr get_data ( edge_descriptor const& aEdge ) const { return static_cast<Edge_data_ptr>(get(Edge_cached_ptr_map,aEdge)) ; }
   
   void set_data ( edge_descriptor const& aEdge, Edge_data_ptr aData )
   {
-    cgal_tsms_edge_cached_pointer_t edge_cached_pointer ;
-    put(edge_cached_pointer,mSurface,aEdge,aData) ;
-    put(edge_cached_pointer,mSurface,opposite_edge(aEdge,mSurface),aData) ;
+    put(Edge_cached_ptr_map,aEdge,aData) ;
+    put(Edge_cached_ptr_map,opposite_edge(aEdge,mSurface),aData) ;
   }
   
   tuple<const_vertex_descriptor,const_vertex_descriptor> get_vertices( const_edge_descriptor const& aEdge ) const
@@ -262,6 +270,11 @@ private:
     return get_cost(aEdgeA) < get_cost(aEdgeB);
   }
   
+  bool compare_id( edge_descriptor const& aEdgeA, edge_descriptor const& aEdgeB ) const
+  {
+    return get_id(aEdgeA) < get_id(aEdgeB);
+  }
+  
   void insert_in_PQ( edge_descriptor const& aEdge, Edge_data_ptr aData ) 
   {
     CGAL_precondition(!aData->is_in_PQ());
@@ -288,16 +301,33 @@ private:
       get_data(*rEdge)->reset_PQ_handle();
     return rEdge ;  
   }
-    
+   
+  // Makes sure the largets edge ID is <= number of surface eges. 
+  bool check_max_id()
+  {
+    size_type max = 0 ;
+    edge_iterator eb, ee ;
+    for ( tie(eb,ee) = edges(mSurface); eb!=ee; ++eb )
+    {
+      size_type id = get_id(*eb);
+      if ( id > max )
+        max = id ;
+    }
+    return max <= num_edges(mSurface);    
+  }
+  
 private:
 
   TSM&          mSurface ;
   Params const* mParams ; // Can be NULL
 
-  SetCollapseData const&  Set_collapse_data;   
-  GetCost         const&  Get_cost ;
-  GetPlacement    const&  Get_placement ;
-  ShouldStop      const&  Should_stop ;
+  SetCollapseData  const& Set_collapse_data;   
+  GetCost          const& Get_cost ;
+  GetPlacement     const& Get_placement ;
+  ShouldStop       const& Should_stop ;
+  EdgeIdxMap       const& Edge_idx_map ;
+  EdgeCachedPtrMap const& Edge_cached_ptr_map ;
+  VertexIsFixedMap const& Vertex_is_fixed_map ;
   VisitorT*               Visitor ;
   
 private:

@@ -29,15 +29,10 @@
 #  define CGAL_HDS_PARAM_ class HDS
 #endif
 
-CGAL_BEGIN_NAMESPACE
-
-template<class Polyhedron> struct External_polyhedron_get_is_vertex_fixed ;
-
-CGAL_END_NAMESPACE
-
 namespace boost
 {
 
+struct vertex_is_fixed_t {} ;
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 class Polyhedron_is_vertex_fixed_map : public put_get_helper<bool, Polyhedron_is_vertex_fixed_map<Gt, I, HDS, A> >
@@ -53,28 +48,19 @@ public:
   typedef bool reference;
   typedef typename graph_traits<Polyhedron const>::vertex_descriptor  key_type;
 
-  Polyhedron_is_vertex_fixed_map( Polyhedron const& p_) : p( addressof(p_) ) 
-  {}
-
-  reference operator[](key_type const& e) const 
-  {
-    CGAL::External_polyhedron_get_is_vertex_fixed<Polyhedron> f ;
-    return f(*p,e);
-  }
-  
-  Polyhedron const* p ;
+  reference operator[](key_type const& e) const { e->is_fixed() ; }
 };
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 inline Polyhedron_is_vertex_fixed_map<Gt, I, HDS, A>
-get(cgal_tsms_is_vertex_fixed_t, const CGAL::Polyhedron_3<Gt,I,HDS,A>& p) 
+get(vertex_is_fixed_t, const CGAL::Polyhedron_3<Gt,I,HDS,A>& p) 
 {
   Polyhedron_is_vertex_fixed_map<Gt, I, HDS, A> m(p);
   return m;
 }
 
 template <>
-struct Polyhedron_property_map<cgal_tsms_is_vertex_fixed_t> 
+struct Polyhedron_property_map<vertex_is_fixed_t> 
 {
   template<class Gt, class I, CGAL_HDS_PARAM_, class A>
   struct bind_ {
