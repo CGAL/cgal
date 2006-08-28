@@ -167,7 +167,7 @@ inline double IA_force_to_double(double x)
 #endif
 
 // std::sqrt(double) on VC++ and CygWin is buggy when not optimizing.
-#ifdef _MSC_VER
+#if defined ( _MSC_VER ) && ! defined ( _WIN64 )
 inline double IA_bug_sqrt(double d)
 {
   _asm
