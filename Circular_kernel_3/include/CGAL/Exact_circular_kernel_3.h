@@ -28,7 +28,7 @@
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
-#include <CGAL/Circular_kernel_3.h>
+#include <CGAL/Spherical_kernel_3.h>
 
 /*
 TODO: CORRECT THE MAKE_ROOT_OF_2 of GMPq GMPz
