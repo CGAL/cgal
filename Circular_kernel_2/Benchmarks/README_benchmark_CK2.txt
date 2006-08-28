@@ -5,10 +5,12 @@ where alpha:
 1: means to bench the BBox(CK) with Vartraits
 2: means to bench the Lazy(CK) with Vartraits
 3: means to bench the CK with Vartraits
-4: means to bench the BBox(CK) with Circulartraits 
-5: means to bench the Lazy(CK) with Circulartraits
-6: means to bench the CK(CK) with Circulartraits
-(le 1 est interne)
+4: means to bench the Bbox(Lazy(CK)) with Vartraits
+5: means to bench the BBox(CK) with Circulartraits 
+6: means to bench the Lazy(CK) with Circulartraits
+7: means to bench the CK(CK) with Circulartraits
+8: means to bench the Bbox(Lazy(CK)) Circulartraits
+(le 0 est interne)
 
 beta:
 0: Compute the arrangement of DXF/51.dxf with the kernel ${alpha}
@@ -67,7 +69,7 @@ Only the time needed to compute it. (it is useful to benchmark a lot of cases an
 
 ATTENTION:
 1) dont use ./example a b
-with 4 <= a <= 6  and 0 <= b <= 8, we cannot use the Circulartraits to handle the files
+with 5 <= a <= 8  and 0 <= b <= 8, we cannot use the Circulartraits to handle the files
 2) The files have to be put on a folder name DXF where the program is located
 
 Compile with -DCGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES if you want to benchmark with
