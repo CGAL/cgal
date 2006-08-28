@@ -145,10 +145,11 @@ namespace CircularFunctors {
   {
     //CGAL_kernel_precondition (A1.is_x_monotone());
     //CGAL_kernel_precondition (CircularFunctors::point_in_x_range<CK>(A1, p)); 
-
+    
     if((p.equal_ref(A1.source())) || (p.equal_ref(A1.target()))){
       return EQUAL;
     }
+    
     // Compare the ordinate of p with the ordinate of the center.
     Comparison_result sgn =
       CGAL::compare(p.y(), A1.supporting_circle().center().y());
@@ -636,10 +637,13 @@ namespace CircularFunctors {
           const std::pair<typename CK::Circular_arc_point_2, unsigned> 
             *result = CGAL::object_cast
               <std::pair<typename CK::Circular_arc_point_2, unsigned> > (&(*it));
-          if (has_on<CK>(a1,result->first,true) && 
-              has_on<CK>(a2,result->first,true)) {
-            *res++ = *it;
-          }
+	  Bbox_2 rb = result->first.bbox();
+	  if(do_overlap(a1.bbox(), rb) && do_overlap(a2.bbox(),rb)){
+	    if (has_on<CK>(a1,result->first,true) && 
+		has_on<CK>(a2,result->first,true)) {
+	      *res++ = *it;
+	    }
+	  }
         }
       //return res;
       }
