@@ -12,7 +12,7 @@ struct Kernel : public CGAL::Cartesian<FT> {};
 
 typedef Kernel::Point_2                           Point;
 typedef std::vector<int>                          Index_cont;
-typedef CGAL::Polygon_2<Kernel>                   Polygon;
+typedef CGAL::Polygon_2<Kernel>                   Polygon_2;
 typedef CGAL::Random_points_in_square_2<Point>    Generator;
 
 int main() {
@@ -21,12 +21,12 @@ int main() {
   int k = 5;
 
   // generate random convex polygon:
-  Polygon p;
+  Polygon_2 p;
   CGAL::random_convex_set_2(n, std::back_inserter(p), Generator(1));
   std::cout << "Generated Polygon:\n" << p << std::endl;
 
   // compute maximum area incribed k-gon of p:
-  Polygon k_gon;
+  Polygon_2 k_gon;
   CGAL::maximum_area_inscribed_k_gon_2(
     p.vertices_begin(), p.vertices_end(), k, std::back_inserter(k_gon));
   std::cout << "Maximum area " << k << "-gon:\n"

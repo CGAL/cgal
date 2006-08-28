@@ -13,14 +13,14 @@ struct Kernel : public CGAL::Cartesian<FT> {};
 
 typedef Kernel::Point_2                           Point;
 typedef std::vector<int>                          Index_cont;
-typedef CGAL::Polygon_2<Kernel>                   Polygon;
+typedef CGAL::Polygon_2<Kernel>                   Polygon_2;
 typedef CGAL::Random_points_in_square_2<Point>    Generator;
 typedef CGAL::Ostream_iterator<int,std::ostream>  Oiterator;
 
 int main()
 {
   // generate random convex polygon:
-  Polygon p;
+  Polygon_2 p;
   CGAL::random_convex_set_2(10, std::back_inserter(p), Generator(1));
 
   // compute all furthest neighbors:
