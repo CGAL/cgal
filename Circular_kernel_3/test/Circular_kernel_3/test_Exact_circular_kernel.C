@@ -29,7 +29,7 @@
 #include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/Exact_circular_kernel_3.h>
+#include <CGAL/Exact_spherical_kernel_3.h>
 #include <CGAL/_test_sphere_predicates.h>
 #include <CGAL/_test_sphere_constructions.h>
 #include <CGAL/_test_sphere_compute.h>
@@ -39,7 +39,7 @@
 
 int main()
 { 
-  CGAL::Exact_circular_kernel_3  sk1;
+  CGAL::Exact_spherical_kernel_3  sk1;
   _test_spherical_kernel_predicates(sk1);
   _test_spherical_kernel_construct(sk1); 
   _test_spherical_kernel_compute(sk1);
