@@ -75,6 +75,26 @@ typedef std::vector<BBCircVarArc>
 typedef CGAL::Arr_circular_line_arc_traits<BBCircularKernel,
   Line_arc_6,Circular_arc_6>  BBCircVariantTraits; 
 
+// BBOX(LAZY)
+typedef CGAL::Filtered_bbox_circular_kernel_2<LazyCurvedK>
+  BBLazyKernel ;
+typedef CGAL::Arr_circular_arc_traits<BBLazyKernel>
+  BBLazyKernel_CA_Traits;
+typedef BBLazyKernel::Circular_arc_2
+  BBLazyKernelArc;
+typedef std::vector<BBLazyKernelArc>
+  BBLazyKernelArcContainer;
+typedef BBLazyKernel::Circular_arc_2 
+  Circular_arc_lazybb;
+typedef BBLazyKernel::Line_arc_2
+  Line_arc_lazybb;
+typedef boost::variant<Circular_arc_lazybb,Line_arc_lazybb >
+  BBLazyVarArc;
+typedef std::vector<BBLazyVarArc>
+  BBLazyVarContainer; 
+typedef CGAL::Arr_circular_line_arc_traits<BBLazyKernel,
+  Line_arc_lazybb,Circular_arc_lazybb>  BBLazyVariantTraits;
+
 template <class CK,class Traits,class ArcContainer>
 void do_main(char *s) {
 
@@ -224,7 +244,8 @@ int main(int argc, char* argv[]){
       if(i == 1) do_main<BBCircularKernel,BBCircVariantTraits, BBCircVarContainer>(dxf_filename[j]); 
       if(i == 2) do_main<LazyCurvedK,LazyCurvedK_Variant_Traits, LazyVarContainer>(dxf_filename[j]);
       if(i == 3) do_main<CircularKernel,CircularK_Variant_Traits, CircularKVarArcContainer>(dxf_filename[j]);
-      if((i >= 4) || (i <= 0)) std::cout << "INVALID PARAMETERS" << std::endl;
+      if(i == 4) do_main<BBLazyKernel,BBLazyVariantTraits, BBLazyVarContainer>(dxf_filename[j]);
+      if((i >= 5) || (i <= 0)) std::cout << "INVALID PARAMETERS" << std::endl;
     } else {
       int k = -1;
       if(j == 9) k = 0; 
@@ -235,9 +256,11 @@ int main(int argc, char* argv[]){
       if(i == 1) do_main<BBCircularKernel,BBCircVariantTraits, BBCircVarContainer>(k); 
       if(i == 2) do_main<LazyCurvedK,LazyCurvedK_Variant_Traits, LazyVarContainer>(k);
       if(i == 3) do_main<CircularKernel,CircularK_Variant_Traits, CircularKVarArcContainer>(k);
-      if(i == 4) do_main<BBCircularKernel,BBCircularKernel_CA_Traits, BBCircularKernelArcContainer>(k); 
-      if(i == 5) do_main<LazyCurvedK,LazyCurvedK_CA_Traits, LazyArcContainer>(k);
-      if(i == 6) do_main<CircularKernel,CircularK_CA_Traits, CircularKArcContainer>(k);
+      if(i == 4) do_main<BBLazyKernel,BBLazyVariantTraits, BBLazyVarContainer>(k);
+      if(i == 5) do_main<BBCircularKernel,BBCircularKernel_CA_Traits, BBCircularKernelArcContainer>(k); 
+      if(i == 6) do_main<LazyCurvedK,LazyCurvedK_CA_Traits, LazyArcContainer>(k);
+      if(i == 7) do_main<CircularKernel,CircularK_CA_Traits, CircularKArcContainer>(k);
+      if(i == 8) do_main<BBLazyKernel,BBLazyKernel_CA_Traits, BBLazyKernelArcContainer>(k); 
     } 
   } else std::cout << "INVALID PARAMETERS" << std::endl;
 
