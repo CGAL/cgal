@@ -48,9 +48,9 @@ void Surface_simplification_external_trace( std::string s )
 int exit_code = 0 ;
 
 #include <CGAL/Surface_mesh_simplification/Polyhedron.h>
-#include <CGAL/Surface_mesh_simplification/Vertex_is_fixed_map.h>
-#include <CGAL/Surface_mesh_simplification/Edge_cached_pointer_map.h>
-#include <CGAL/Surface_mesh_simplification/Edge_index_map.h>
+#include <CGAL/Surface_mesh_simplification/Vertex_stored_is_fixed_map.h>
+#include <CGAL/Surface_mesh_simplification/Edge_stored_extra_pointer_map.h>
+#include <CGAL/Surface_mesh_simplification/Edge_stored_index_map.h>
 #include <CGAL/Surface_mesh_simplification/Edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_and_length.h>
@@ -89,16 +89,17 @@ struct My_halfedge : public HalfedgeDS_halfedge_base<Refs>
 { 
   My_halfedge() 
    : 
-     ID(-1) 
+    ID(-1) 
+   , extra_pointer(0)
   {}
  
   int id() const { return ID ; }
 
-  void* cached_point() { return cached_pointer ; }
+  void* extra_pointer() { return extra_pointer ; }
     
   int ID; 
   
-  void* cached_pointer ;
+  void* extra_pointer ;
 };
 
 template <class Refs, class Traits>
