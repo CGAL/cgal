@@ -60,7 +60,7 @@ public:
   typedef GetPlacement_     GetPlacement ;
   typedef ShouldStop_       ShouldStop ;
   typedef EdgeIdxMap_       EdgeIdxMap ;
-  typedef EdgeCachedPtrMap_ EdgeCachedPtrMap ;
+  typedef EdgeCachedPtrMap_ EdgeExtraPtrMap ;
   typedef VertexIsFixedMap_ VertexIsFixedMap ;
   typedef VisitorT_         VisitorT ;
   
@@ -170,7 +170,7 @@ public:
               , GetPlacement     const& aGetPlacement
               , ShouldStop       const& aShouldStop 
               , EdgeIdxMap       const& aEdge_idx_map 
-              , EdgeCachedPtrMap const& aEdge_cached_ptr_map 
+              , EdgeExtraPtrMap const& aEdge_extra_ptr_map 
               , VertexIsFixedMap const& aVertex_is_fixed_map 
               , VisitorT*               aVisitor
               ) ;
@@ -212,12 +212,12 @@ private:
     return is_border(aEdge) || is_border(opposite_edge(aEdge,mSurface)) ;
   }    
   
-  Edge_data_ptr get_data ( edge_descriptor const& aEdge ) const { return static_cast<Edge_data_ptr>(get(Edge_cached_ptr_map,aEdge)) ; }
+  Edge_data_ptr get_data ( edge_descriptor const& aEdge ) const { return static_cast<Edge_data_ptr>(get(Edge_extra_ptr_map,aEdge)) ; }
   
   void set_data ( edge_descriptor const& aEdge, Edge_data_ptr aData )
   {
-    put(Edge_cached_ptr_map,aEdge,aData) ;
-    put(Edge_cached_ptr_map,opposite_edge(aEdge,mSurface),aData) ;
+    put(Edge_extra_ptr_map,aEdge,aData) ;
+    put(Edge_extra_ptr_map,opposite_edge(aEdge,mSurface),aData) ;
   }
   
   tuple<const_vertex_descriptor,const_vertex_descriptor> get_vertices( const_edge_descriptor const& aEdge ) const
@@ -326,7 +326,7 @@ private:
   GetPlacement     const& Get_placement ;
   ShouldStop       const& Should_stop ;
   EdgeIdxMap       const& Edge_idx_map ;
-  EdgeCachedPtrMap const& Edge_cached_ptr_map ;
+  EdgeExtraPtrMap  const& Edge_extra_ptr_map ;
   VertexIsFixedMap const& Vertex_is_fixed_map ;
   VisitorT*               Visitor ;
   

@@ -39,7 +39,7 @@ namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_
 //
 //   For each non-fixed edge in the mesh, a "collapse data" record is constructed by calling the user-supplied function
 //   "SetCollapseData".
-//   The edge is then associated with its collapse data via the "EdgeCachedPtrMap" property map.
+//   The edge is then associated with its collapse data via the "EdgeExtraPtrMap" property map.
 //
 //   The user-supplied function "GetCost" is called, for each non-fixed edge.
 //   This function returns a value which defines the collapsing cost of the edge. Edges with a lower cost are collapsed first.
@@ -66,7 +66,7 @@ template<class TSM
         ,class GetNewVertexPoint
         ,class ShouldStop
         ,class EdgeIdxMap
-        ,class EdgeCachedPtrMap
+        ,class EdgeExtraPtrMap
         ,class VertexIsFixedMap
         ,class Visitor
         >
@@ -77,7 +77,7 @@ int edge_collapse ( TSM&                     aSurface
                   , GetNewVertexPoint const& aGet_new_vertex_point
                   , ShouldStop        const& aShould_stop
                   , EdgeIdxMap        const& aEdge_idx_map 
-                  , EdgeCachedPtrMap  const& aEdge_cached_ptr_map
+                  , EdgeExtraPtrMap   const& aEdge_extra_ptr_map
                   , VertexIsFixedMap  const& aVertex_is_fixed_map
                   , Visitor*                 aVisitor = 0
                   ) 
@@ -89,7 +89,7 @@ int edge_collapse ( TSM&                     aSurface
                       ,GetNewVertexPoint
                       ,ShouldStop
                       ,EdgeIdxMap
-                      ,EdgeCachedPtrMap
+                      ,EdgeExtraPtrMap
                       ,VertexIsFixedMap
                       ,Visitor
                       >
@@ -103,7 +103,7 @@ int edge_collapse ( TSM&                     aSurface
                      ,aGet_new_vertex_point
                      ,aShould_stop
                      ,aEdge_idx_map 
-                     ,aEdge_cached_ptr_map
+                     ,aEdge_extra_ptr_map
                      ,aVertex_is_fixed_map
                      ,aVisitor
                      ) ;

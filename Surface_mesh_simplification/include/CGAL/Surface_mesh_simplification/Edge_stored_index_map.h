@@ -23,7 +23,7 @@
 namespace boost
 {
 
-template<class Graph>
+template<class Graph_>
 class Edge_stored_index_map : public put_get_helper< typename Graph_::size_type, Edge_stored_index_map<Graph_> >
 {
 private:
@@ -32,7 +32,7 @@ private:
 
 public:
 
-  typedef typename G::size_type size_type ;
+  typedef typename Graph::size_type size_type ;
   
   typedef readable_property_map_tag                           category;
   typedef size_type                                           value_type;

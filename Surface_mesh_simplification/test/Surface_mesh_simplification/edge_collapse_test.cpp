@@ -73,15 +73,15 @@ struct My_vertex : public HalfedgeDS_vertex_base<Refs,Tag_true,Point>
 {
   typedef HalfedgeDS_vertex_base<Refs,Tag_true,Point> Base ;
  
-  My_vertex() : ID(-1), IsFixed(false) {} 
-  My_vertex( Point p ) : Base(p), ID(-1), IsFixed(false) {}
+  My_vertex() : mID(-1), mIsFixed(false) {} 
+  My_vertex( Point p ) : Base(p), mID(-1), mIsFixed(false) {}
 
-  int id() const { return ID ; }
+  int id() const { return mID ; }
   
-  bool is_fixed() const { return IsFixed ; }
+  bool is_fixed() const { return mIsFixed ; }
     
-  int  ID; 
-  bool IsFixed ;
+  int  mID; 
+  bool mIsFixed ;
 } ;
 
 template <class Refs, class Traits>
@@ -89,17 +89,16 @@ struct My_halfedge : public HalfedgeDS_halfedge_base<Refs>
 { 
   My_halfedge() 
    : 
-    ID(-1) 
-   , extra_pointer(0)
+     mID(-1) 
+   , mExtraPointer(0)
   {}
  
-  int id() const { return ID ; }
+  int id() const { return mID ; }
 
-  void* extra_pointer() { return extra_pointer ; }
+  void*& extra_pointer() { return mExtraPointer ; }
     
-  int ID; 
-  
-  void* extra_pointer ;
+  int   mID; 
+  void* mExtraPointer ;
 };
 
 template <class Refs, class Traits>
@@ -107,12 +106,12 @@ struct My_face : public HalfedgeDS_face_base<Refs,Tag_true,typename Traits::Plan
 {
   typedef HalfedgeDS_face_base<Refs,Tag_true,typename Traits::Plane_3> Base ;
   
-  My_face() : ID(-1) {}
-  My_face( typename Traits::Plane_3 plane ) : Base(plane) {}
+  My_face() : mID(-1) {}
+  My_face( typename Traits::Plane_3 plane ) : Base(plane), mID(-1) {}
   
-  int id() const { return ID ; }
+  int id() const { return mID ; }
   
-  int ID; 
+  int mID; 
 };
 
 struct My_items : public Polyhedron_items_3 
@@ -520,15 +519,15 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
         
           int lVertexID = 0 ;
           for ( Polyhedron::Vertex_iterator vi = lP.vertices_begin(); vi != lP.vertices_end() ; ++ vi )
-            vi->ID = lVertexID ++ ;    
+            vi->mID = lVertexID ++ ;    
           
           int lHalfedgeID = 0 ;
           for ( Polyhedron::Halfedge_iterator hi = lP.halfedges_begin(); hi != lP.halfedges_end() ; ++ hi )
-            hi->ID = lHalfedgeID++ ;    
+            hi->mID = lHalfedgeID++ ;    
           
           int lFacetID = 0 ;
           for ( Polyhedron::Facet_iterator fi = lP.facets_begin(); fi != lP.facets_end() ; ++ fi )
-            fi->ID = lFacetID ++ ;    
+            fi->mID = lFacetID ++ ;    
       
 #ifdef AUDIT
           sAuditData .clear();
@@ -558,7 +557,9 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
           Dummy_params lDummy_params;
           LT_params    lLT_params ; 
 
-          Edge_index_map<Polyhedron> P_Edge_index_map ;
+          Edge_stored_index_map        <Polyhedron> edge_index_map ;
+          Edge_stored_extra_pointer_map<Polyhedron> edge_extra_pointer_map ;
+          Vertex_stored_is_fixed_map   <Polyhedron> vertex_is_fixed_map ;
           
           Visitor lVisitor(lRequestedEdgeCount) ;
       
@@ -579,6 +580,9 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
                                    ,get_MP_cost
                                    ,get_MP_placement
                                    ,should_stop
+                                   ,edge_index_map 
+                                   ,edge_extra_pointer_map 
+                                   ,vertex_is_fixed_map 
                                    ,&lVisitor
                                    );
                   break ;                 
@@ -591,6 +595,9 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
                                    ,get_cached_cost
                                    ,get_MP_placement
                                    ,should_stop
+                                   ,edge_index_map 
+                                   ,edge_extra_pointer_map 
+                                   ,vertex_is_fixed_map 
                                    ,&lVisitor
                                    );
                   break ;                  
@@ -603,6 +610,9 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
                                    ,get_cached_cost
                                    ,get_cached_placement
                                    ,should_stop
+                                   ,edge_index_map 
+                                   ,edge_extra_pointer_map 
+                                   ,vertex_is_fixed_map 
                                    ,&lVisitor
                                    );
                   break ;                  
@@ -623,6 +633,9 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
                                    ,get_LT_cost
                                    ,get_LT_placement
                                    ,should_stop
+                                   ,edge_index_map 
+                                   ,edge_extra_pointer_map 
+                                   ,vertex_is_fixed_map 
                                    ,&lVisitor
                                    );
                   break ;                 
@@ -635,6 +648,9 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
                                    ,get_cached_cost
                                    ,get_LT_placement
                                    ,should_stop
+                                   ,edge_index_map 
+                                   ,edge_extra_pointer_map 
+                                   ,vertex_is_fixed_map 
                                    ,&lVisitor
                                    );
                   break ;                  
@@ -647,6 +663,9 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
                                    ,get_cached_cost
                                    ,get_cached_placement
                                    ,should_stop
+                                   ,edge_index_map 
+                                   ,edge_extra_pointer_map 
+                                   ,vertex_is_fixed_map 
                                    ,&lVisitor
                                    );
                   break ;                  

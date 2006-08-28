@@ -37,7 +37,7 @@ public:
   typedef bool                                                  reference;
   typedef typename graph_traits<Graph const>::vertex_descriptor key_type;
 
-  reference operator[](key_type const& v) const { v->is_fixed() ; }
+  reference operator[](key_type const& v) const { return v->is_fixed() ; }
 };
 
         
