@@ -1,5 +1,5 @@
-#ifndef CGAL_EXACT_CIRCULAR_3_KERNEL_H
-#define CGAL_EXACT_CIRCULAR_3_KERNEL_H
+#ifndef CGAL_EXACT_SPHERICAL_3_KERNEL_H
+#define CGAL_EXACT_SPHERICAL_3_KERNEL_H
 
 // Copyright (c) 2005-2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
@@ -55,8 +55,8 @@ CGAL_BEGIN_NAMESPACE
 */
   typedef CGAL::Cartesian<NT1>                                 Linear_k1;
   typedef CGAL::Algebraic_kernel_for_spheres_2_3<NT1>          Algebraic_k1;
-  typedef CGAL::Spherical_kernel_3<Linear_k1,Algebraic_k1>     Exact_circular_kernel_3;
+  typedef CGAL::Spherical_kernel_3<Linear_k1,Algebraic_k1>     Exact_spherical_kernel_3;
 
 CGAL_END_NAMESPACE
 
-#endif /*CGAL_EXACT_CIRCULAR_3_KERNEL_H*/
+#endif /*CGAL_EXACT_SPHERICAL_3_KERNEL_H*/
