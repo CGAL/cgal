@@ -38,7 +38,7 @@ struct Kernel : public CGAL::Cartesian<FT> {};
 
 typedef Kernel::Point_2                           Point;
 typedef std::vector<int>                          Index_cont;
-typedef CGAL::Polygon_2<Kernel>                   Polygon;
+typedef CGAL::Polygon_2<Kernel>                   Polygon_2;
 typedef CGAL::Random_points_in_square_2<Point>    Generator;
 
 #include <CGAL/squared_distance_2.h>
@@ -68,7 +68,7 @@ int main()
   for (int i = 0; i < 5; ++i) {
     int n = size[i];
     // generate random convex polygon:
-    Polygon p;
+    Polygon_2 p;
     CGAL::random_convex_set_2(n, std::back_inserter(p), Generator(1));
     // compute all furthest neighbors:
     Index_cont neighbors;
@@ -88,7 +88,7 @@ int main()
   // try also once with a random-acccess iterator:
   int n = 222;
   // generate random convex polygon:
-  Polygon p;
+  Polygon_2 p;
   CGAL::random_convex_set_2(n, std::back_inserter(p), Generator(1));
   Index_cont neighbors(n);
   CGAL::all_furthest_neighbors_2(p.vertices_begin(), p.vertices_end(),
