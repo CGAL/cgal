@@ -67,7 +67,7 @@ Only the time needed to compute it. (it is useful to benchmark a lot of cases an
 
 ATTENTION:
 1) dont use ./example a b
-with 0 > a > 3 and 0 < b < 9, we cannot use the Circulartraits to handle the files
+with 4 <= a <= 6  and 0 <= b <= 8, we cannot use the Circulartraits to handle the files
 2) The files have to be put on a folder name DXF where the program is located
 
 Compile with -DCGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES if you want to benchmark with
