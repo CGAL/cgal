@@ -55,7 +55,7 @@ CGAL_BEGIN_NAMESPACE
 */
   typedef CGAL::Cartesian<NT1>                                 Linear_k1;
   typedef CGAL::Algebraic_kernel_for_spheres_2_3<NT1>          Algebraic_k1;
-  typedef CGAL::Spherical_kernel_3<Linear_k1,Algebraic_k1>      Exact_circular_kernel_3;
+  typedef CGAL::Spherical_kernel_3<Linear_k1,Algebraic_k1>     Exact_circular_kernel_3;
 
 CGAL_END_NAMESPACE
 
