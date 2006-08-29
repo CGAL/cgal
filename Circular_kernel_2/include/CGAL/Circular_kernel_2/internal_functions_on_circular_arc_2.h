@@ -636,14 +636,11 @@ namespace CircularFunctors {
 	 it != solutions.end(); ++it) {
           const std::pair<typename CK::Circular_arc_point_2, unsigned> 
             *result = CGAL::object_cast
-              <std::pair<typename CK::Circular_arc_point_2, unsigned> > (&(*it));
-	  Bbox_2 rb = result->first.bbox();
-	  if(do_overlap(a1.bbox(), rb) && do_overlap(a2.bbox(),rb)){
-	    if (has_on<CK>(a1,result->first,true) && 
-		has_on<CK>(a2,result->first,true)) {
-	      *res++ = *it;
-	    }
-	  }
+              <std::pair<typename CK::Circular_arc_point_2, unsigned> > (&(*it));          
+	  if (has_on<CK>(a1,result->first,true) && 
+              has_on<CK>(a2,result->first,true)) {
+            *res++ = *it;
+          }
         }
       //return res;
       }
