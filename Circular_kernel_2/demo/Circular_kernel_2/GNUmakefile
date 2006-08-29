@@ -15,11 +15,10 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            -I../../include \
-#           -I../../../Algebraic_kernel/include \
            -Iinclude \
 	   $(CGAL_CXXFLAGS) \
-           $(LONG_NAME_PROBLEM_CXXFLAGS) \
-           -fmessage-length=0
+           $(LONG_NAME_PROBLEM_CXXFLAGS) #\
+#           -fmessage-length=0
 
 #---------------------------------------------------------------------#
 #                    linker flags
