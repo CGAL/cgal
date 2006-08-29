@@ -81,8 +81,8 @@ void get_extreme_points(std::list<Segment_2> &seg_list,
 
   min_x = (CGAL::min)(iter->source().x(),iter->target().x());
   max_x = (CGAL::max)(iter->source().x(),iter->target().x());
-  min_y = (CGAL:min)(iter->source().y(),iter->target().y());
-  max_y = (CGAL:max)(iter->source().y(),iter->target().y());
+  min_y = (CGAL::min)(iter->source().y(),iter->target().y());
+  max_y = (CGAL::max)(iter->source().y(),iter->target().y());
    
   for(++iter;iter != seg_list.end();++iter) {
     min_x = min3(iter->source().x(),iter->target().x(),min_x);
