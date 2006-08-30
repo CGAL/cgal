@@ -65,8 +65,8 @@ namespace CircularFunctors {
       A1.supporting_line(),A2.supporting_line())) 
       return false;
 
-    return CircularFunctors::compare_xy<CK>(A1.right(), A2.left()) > 0
-        && CircularFunctors::compare_xy<CK>(A1.left(), A2.right()) < 0;
+    return CircularFunctors::compare_xy<CK>(A1.right(), A2.left()) >= 0
+        && CircularFunctors::compare_xy<CK>(A1.left(), A2.right()) <= 0; 
   }
 
 
