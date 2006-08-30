@@ -32,7 +32,6 @@
 namespace boost
 {
 
-template<class T> struct undirected_graph_traits ;
 //
 // Const versions
 //
@@ -40,11 +39,6 @@ template<class T> struct undirected_graph_traits ;
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 struct graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const > 
   : CGAL::HDS_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const>
-{};
-
-template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-struct undirected_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const > 
-  : CGAL::HDS_undirected_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const>
 {};
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
@@ -149,10 +143,6 @@ struct graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >
    : CGAL::HDS_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >
 {};
 
-template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-struct undirected_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> > 
-  : CGAL::HDS_undirected_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >
-{};
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 typename graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::vertex_descriptor

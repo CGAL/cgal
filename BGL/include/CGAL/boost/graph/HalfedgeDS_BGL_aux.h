@@ -212,9 +212,9 @@ public:
 
 template < class HDS >
 class HDS_all_halfedges_iterator 
-  : public HDS_all_edges_iterator_base<HDS,typename HDS::Halfdge_iterator,typename HDS::Halfedge_handle>
+  : public HDS_all_edges_iterator_base<HDS,typename HDS::Halfedge_iterator,typename HDS::Halfedge_handle>
 {
-  typedef HDS_all_edges_iterator_base<HDS,typename HDS::Halfdge_iterator,typename HDS::Halfedge_handle> Base ;
+  typedef HDS_all_edges_iterator_base<HDS,typename HDS::Halfedge_iterator,typename HDS::Halfedge_handle> Base ;
   
 public:
 

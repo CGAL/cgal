@@ -22,6 +22,7 @@
 
 #include <CGAL/HalfedgeDS_items_decorator.h>
 #include <CGAL/boost/graph/Polyhedron_BGL.h>
+#include <CGAL/boost/graph/Extended_BGL.h>
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
 #  define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS
@@ -41,14 +42,19 @@ num_undirected_edges(const Polyhedron_3<Gt,I,HDS,A>& p)
 //
 // Const versions
 // 
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+struct undirected_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const > 
+  : CGAL::HDS_undirected_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const>
+{};
+
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-inline std::pair<typename boost::undirected_graph_traits< Polyhedron_3<Gt,I,HDS,A> const>::edge_iterator
-                ,typename boost::undirected_graph_traits< Polyhedron_3<Gt,I,HDS,A> const>::edge_iterator 
+inline std::pair<typename undirected_graph_traits< Polyhedron_3<Gt,I,HDS,A> const>::edge_iterator
+                ,typename undirected_graph_traits< Polyhedron_3<Gt,I,HDS,A> const>::edge_iterator 
                 >  
 undirected_edges( Polyhedron_3<Gt,I,HDS,A> const& p )
 {
-  typedef typename boost::undirected_graph_traits< Polyhedron_3<Gt,I,HDS,A> const>::edge_iterator Iter;
+  typedef typename undirected_graph_traits< Polyhedron_3<Gt,I,HDS,A> const>::edge_iterator Iter;
   return std::make_pair( Iter(p.edges_begin()), Iter(p.edges_end()) );
 }
 
@@ -124,12 +130,17 @@ in_edge( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> const>::vertex_d
 // 
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-inline std::pair<typename boost::undirected_graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edge_iterator
-                ,typename boost::undirected_graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edge_iterator 
+struct undirected_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> > 
+  : CGAL::HDS_undirected_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >
+{};
+
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+inline std::pair<typename undirected_graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edge_iterator
+                ,typename undirected_graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edge_iterator 
                 >  
 undirected_edges( Polyhedron_3<Gt,I,HDS,A>& p )
 {
-  typedef typename boost::undirected_graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edge_iterator Iter;
+  typedef typename undirected_graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edge_iterator Iter;
   return std::make_pair( Iter(p.edges_begin()), Iter(p.edges_end()) );
 }
 

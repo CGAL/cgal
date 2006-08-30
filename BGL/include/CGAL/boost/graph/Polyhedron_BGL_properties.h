@@ -30,16 +30,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<class Polyhedron> struct External_polyhedron_access_vertex_ID ;
-template<class Polyhedron> struct External_polyhedron_access_edge_ID ;
-
-CGAL_END_NAMESPACE
-
-namespace boost
-{
-
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-class Polyhedron_edge_weight_map : public put_get_helper<double, Polyhedron_edge_weight_map<Gt, I, HDS, A> >
+class Polyhedron_edge_weight_map : public boost::put_get_helper<double, Polyhedron_edge_weight_map<Gt, I, HDS, A> >
 {
 private:
 
@@ -47,10 +39,10 @@ private:
   
 public:
 
-  typedef readable_property_map_tag                                category;
-  typedef double                                                   value_type;
-  typedef double                                                   reference;
-  typedef typename graph_traits<Polyhedron const>::edge_descriptor key_type;
+  typedef boost::readable_property_map_tag                                category;
+  typedef double                                                          value_type;
+  typedef double                                                          reference;
+  typedef typename boost::graph_traits<Polyhedron const>::edge_descriptor key_type;
 
   Polyhedron_edge_weight_map( Polyhedron const& p_) {}
 
@@ -61,7 +53,7 @@ public:
 };
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-class Polyhedron_edge_is_border_map : public put_get_helper<bool, Polyhedron_edge_is_border_map<Gt, I, HDS, A> >
+class Polyhedron_edge_is_border_map : public boost::put_get_helper<bool, Polyhedron_edge_is_border_map<Gt, I, HDS, A> >
 {
 private:
 
@@ -69,10 +61,10 @@ private:
   
 public:
 
-  typedef readable_property_map_tag                                category;
-  typedef bool                                                     value_type;
-  typedef bool                                                     reference;
-  typedef typename graph_traits<Polyhedron const>::edge_descriptor key_type;
+  typedef boost::readable_property_map_tag                                category;
+  typedef bool                                                            value_type;
+  typedef bool                                                            reference;
+  typedef typename boost::graph_traits<Polyhedron const>::edge_descriptor key_type;
 
   Polyhedron_edge_is_border_map( Polyhedron const& p_) {}
 
@@ -83,7 +75,7 @@ public:
 };
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-class Polyhedron_vertex_is_border_map : public put_get_helper<bool, Polyhedron_vertex_is_border_map<Gt, I, HDS, A> >
+class Polyhedron_vertex_is_border_map : public boost::put_get_helper<bool, Polyhedron_vertex_is_border_map<Gt, I, HDS, A> >
 {
 private:
 
@@ -91,10 +83,10 @@ private:
   
 public:
 
-  typedef readable_property_map_tag                                  category;
-  typedef bool                                                       value_type;
-  typedef bool                                                       reference;
-  typedef typename graph_traits<Polyhedron const>::vertex_descriptor key_type;
+  typedef boost::readable_property_map_tag                                  category;
+  typedef bool                                                              value_type;
+  typedef bool                                                              reference;
+  typedef typename boost::graph_traits<Polyhedron const>::vertex_descriptor key_type;
 
   Polyhedron_vertex_is_border_map( Polyhedron const& p_) {}
 
@@ -116,7 +108,7 @@ public:
 };
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-class Polyhedron_vertex_point_map : public put_get_helper< typename Gt::Point_3&, Polyhedron_vertex_point_map<Gt, I, HDS, A> >
+class Polyhedron_vertex_point_map : public boost::put_get_helper< typename Gt::Point_3&, Polyhedron_vertex_point_map<Gt, I, HDS, A> >
 {
 private:
 
@@ -126,10 +118,10 @@ public:
 
   typedef typename Gt::Point_3 Point_3 ;
   
-  typedef lvalue_property_map_tag                              category;
-  typedef Point_3                                              value_type;
-  typedef Point_3&                                             reference;
-  typedef typename graph_traits<Polyhedron>::vertex_descriptor key_type;
+  typedef boost::lvalue_property_map_tag                              category;
+  typedef Point_3                                                     value_type;
+  typedef Point_3&                                                    reference;
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor key_type;
 
   Polyhedron_vertex_point_map( Polyhedron& p_) {}
 
@@ -140,9 +132,9 @@ public:
 };
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-class Polyhedron_vertex_point_const_map : public put_get_helper< typename Gt::Point_3 const&
-                                                               , Polyhedron_vertex_point_const_map<Gt, I, HDS, A> 
-                                                               >
+class Polyhedron_vertex_point_const_map : public boost::put_get_helper< typename Gt::Point_3 const&
+                                                                      , Polyhedron_vertex_point_const_map<Gt, I, HDS, A> 
+                                                                      >
 {
 private:
 
@@ -152,10 +144,10 @@ public:
 
   typedef typename Gt::Point_3 Point_3 ;
   
-  typedef readable_property_map_tag                                  category;
-  typedef Point_3                                                    value_type;
-  typedef Point_3 const&                                             reference;
-  typedef typename graph_traits<Polyhedron const>::vertex_descriptor key_type;
+  typedef boost::readable_property_map_tag                                  category;
+  typedef Point_3                                                           value_type;
+  typedef Point_3 const&                                                    reference;
+  typedef typename boost::graph_traits<Polyhedron const>::vertex_descriptor key_type;
 
   Polyhedron_vertex_point_const_map( Polyhedron const& p_) {}
 
@@ -169,51 +161,11 @@ struct edge_is_border_t   {} ;
 struct vertex_is_border_t {} ;
 struct vertex_point_t     {} ;
 
-template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-inline 
-Polyhedron_edge_weight_map<Gt,I,HDS,A> get(edge_weight_t, CGAL::Polyhedron_3<Gt,I,HDS,A> const& p) 
-{
-  Polyhedron_edge_weight_map<Gt,I,HDS,A> m(p);
-  return m;
-}
-
-template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-inline 
-Polyhedron_edge_is_border_map<Gt,I,HDS,A> get(edge_is_border_t, CGAL::Polyhedron_3<Gt,I,HDS,A> const& p) 
-{
-  Polyhedron_edge_is_border_map<Gt,I,HDS,A> m(p);
-  return m;
-}
-
-template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-inline 
-Polyhedron_vertex_is_border_map<Gt,I,HDS,A> get(vertex_is_border_t, CGAL::Polyhedron_3<Gt,I,HDS,A> const& p) 
-{
-  Polyhedron_vertex_is_border_map<Gt,I,HDS,A> m(p);
-  return m;
-}
-
-template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-inline
-Polyhedron_vertex_point_map<Gt,I,HDS,A> get(vertex_point_t, CGAL::Polyhedron_3<Gt,I,HDS,A>& p) 
-{
-  Polyhedron_vertex_point_map<Gt,I,HDS,A> m(p);
-  return m;
-}
-
-template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-inline
-Polyhedron_vertex_point_const_map<Gt,I,HDS,A> get(vertex_point_t, CGAL::Polyhedron_3<Gt,I,HDS,A> const& p) 
-{
-  Polyhedron_vertex_point_const_map<Gt,I,HDS,A> m(p);
-  return m;
-}
-
 template <class Tag>
 struct Polyhedron_property_map {};
 
 template <>
-struct Polyhedron_property_map<edge_weight_t> 
+struct Polyhedron_property_map<boost::edge_weight_t> 
 {
   template<class Gt, class I, CGAL_HDS_PARAM_, class A>
   struct bind_ 
@@ -256,11 +208,56 @@ struct Polyhedron_property_map<vertex_point_t>
   };
 };
 
-// g++ 'enumeral_type' in template unification not implemented workaround
+CGAL_END_NAMESPACE
+
+namespace boost
+{
+
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+inline 
+CGAL::Polyhedron_edge_weight_map<Gt,I,HDS,A> get( edge_weight_t, CGAL::Polyhedron_3<Gt,I,HDS,A> const& p) 
+{
+  CGAL::Polyhedron_edge_weight_map<Gt,I,HDS,A> m(p);
+  return m;
+}
+
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+inline 
+CGAL::Polyhedron_edge_is_border_map<Gt,I,HDS,A> get( CGAL::edge_is_border_t, CGAL::Polyhedron_3<Gt,I,HDS,A> const& p) 
+{
+  CGAL::Polyhedron_edge_is_border_map<Gt,I,HDS,A> m(p);
+  return m;
+}
+
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+inline 
+CGAL::Polyhedron_vertex_is_border_map<Gt,I,HDS,A> get(CGAL::vertex_is_border_t, CGAL::Polyhedron_3<Gt,I,HDS,A> const& p) 
+{
+  CGAL::Polyhedron_vertex_is_border_map<Gt,I,HDS,A> m(p);
+  return m;
+}
+
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+inline
+CGAL::Polyhedron_vertex_point_map<Gt,I,HDS,A> get(CGAL::vertex_point_t, CGAL::Polyhedron_3<Gt,I,HDS,A>& p) 
+{
+  CGAL::Polyhedron_vertex_point_map<Gt,I,HDS,A> m(p);
+  return m;
+}
+
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+inline
+CGAL::Polyhedron_vertex_point_const_map<Gt,I,HDS,A> get(CGAL::vertex_point_t, CGAL::Polyhedron_3<Gt,I,HDS,A> const& p) 
+{
+  CGAL::Polyhedron_vertex_point_const_map<Gt,I,HDS,A> m(p);
+  return m;
+}
+
+
 template<class Gt, class I, CGAL_HDS_PARAM_, class A, class Tag>
 struct property_map<CGAL::Polyhedron_3<Gt,I,HDS,A>, Tag> 
 {
-  typedef typename Polyhedron_property_map<Tag>::template bind_<Gt,I,HDS,A> map_gen;
+  typedef typename CGAL::Polyhedron_property_map<Tag>::template bind_<Gt,I,HDS,A> map_gen;
   typedef typename map_gen::type       type;
   typedef typename map_gen::const_type const_type;
 };
@@ -301,7 +298,7 @@ struct edge_property_type<CGAL::Polyhedron_3<Gt,I,HDS,A> >
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 struct vertex_property_type<CGAL::Polyhedron_3<Gt,I,HDS,A> > 
 {
-  typedef vertex_point_t type;
+  typedef CGAL::vertex_point_t type;
 };
         
 } // namespace boost
