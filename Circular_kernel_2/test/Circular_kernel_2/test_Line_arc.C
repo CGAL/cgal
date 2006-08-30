@@ -259,7 +259,7 @@ void _test_Line_arc(CK ck)
    assert(theDo_overlap_2(line_arc_horizontal, line_arc_horizontal));
    assert(theDo_overlap_2(line_arc_horizontal, line_arc_horizontal2));
    assert(!theDo_overlap_2(line_arc_horizontal, line_arc_vertical));
-  
+
 }
 
 
