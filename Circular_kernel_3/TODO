@@ -1,5 +1,11 @@
-filtered bbox kernel
+filtered bbox kernel (voir TODO CK2)
 Exact_circular_kernel_3
+Lazy
 tests for those
 
 manual
+
+intersection arcs/triangle
+
+spherical patch 'triangle'
+(NB: package Curved_kernel dans branch/cannot_wait...)
