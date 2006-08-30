@@ -1,17 +1,17 @@
 manual filtered bbox kernel
 
+echecs de filtres 
+
+rajouter orientation de 2 circular_arc_point (possible avec nouveaux Ro2)
+attention aux docs des concepts
+
 resoudre le probleme Lazy_CK avec GMP (constructions Gmpz(Gmpq) 
 evidemment non trouvees...)
 
 voir make_x_monotone pour que ca retourne des arcs 
 (necessite bricolage de la traits car Arr_2 demande des Object)
 
-tracker les vestiges de l'ancienne representation des points (pointeurs
-vers cercles)
-
-utiliser partout ou c'est possible le constructeur de arc_point(Point_2)
-
-echecs de filtres 
+interface intersect avec plusieurs outputIt types (types de retour differents)
 
 --> a transferer dans linear kernel ? 
 	- unoriented equal (pb general orientation dans noyau cgal...)
@@ -30,12 +30,21 @@ I tried to remove them but could not: if these calls are replaced
 by calls of internal functions, then CK::Polynomials must be accessed,
 but they are undefined in Lazy_kernel...
 
-interface intersect avec 2 outputIt types
-rajouter cas line_2 qui a ete oublie
-
-enlever messages de debug
-regarder traits-tracer (seg fault)
+intersect : rajouter cas line_2 qui a ete oublie (?)
 
 construct intersection for *arcs* should use solve or solve in range
 
+----------- done (?)
+tracker les vestiges de l'ancienne representation des points (pointeurs
+vers cercles)
+
+utiliser partout ou c'est possible le constructeur de arc_point(Point_2)
+
+enlever messages de debug
+
 add "using..." in all functors that derive from another
+
+----------- not relevant any more (traits tracer abandoned)
+
+regarder traits-tracer (seg fault)
+
