@@ -57,38 +57,33 @@ namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_
 //
 //   This global function returns the number of edges collapsed.
 //
-//   The property map "EdgeIdxMap" is needed by the algorithm implementation.
-//
 template<class TSM
         ,class Params
         ,class SetCollapseData
         ,class GetCost
-        ,class GetNewVertexPoint
+        ,class GetPlacement
         ,class ShouldStop
-        ,class EdgeIdxMap
         ,class EdgeExtraPtrMap
         ,class VertexIsFixedMap
         ,class Visitor
         >
-int edge_collapse ( TSM&                     aSurface
-                  , Params            const* aParams // Can be NULL
-                  , SetCollapseData   const& aSet_collapse_data
-                  , GetCost           const& aGet_cost 
-                  , GetNewVertexPoint const& aGet_new_vertex_point
-                  , ShouldStop        const& aShould_stop
-                  , EdgeIdxMap        const& aEdge_idx_map 
-                  , EdgeExtraPtrMap   const& aEdge_extra_ptr_map
-                  , VertexIsFixedMap  const& aVertex_is_fixed_map
-                  , Visitor*                 aVisitor = 0
+int edge_collapse ( TSM&                    aSurface
+                  , Params           const* aParams // Can be NULL
+                  , SetCollapseData  const& aSet_collapse_data
+                  , GetCost          const& aGet_cost 
+                  , GetPlacement     const& aGet_placement
+                  , ShouldStop       const& aShould_stop
+                  , EdgeExtraPtrMap  const& aEdge_extra_ptr_map
+                  , VertexIsFixedMap const& aVertex_is_fixed_map
+                  , Visitor*                aVisitor = ((void*)(0))
                   ) 
 {
   typedef EdgeCollapse<TSM
                       ,Params
                       ,SetCollapseData
                       ,GetCost
-                      ,GetNewVertexPoint
+                      ,GetPlacement
                       ,ShouldStop
-                      ,EdgeIdxMap
                       ,EdgeExtraPtrMap
                       ,VertexIsFixedMap
                       ,Visitor
@@ -100,9 +95,8 @@ int edge_collapse ( TSM&                     aSurface
                      ,aParams
                      ,aSet_collapse_data
                      ,aGet_cost
-                     ,aGet_new_vertex_point
+                     ,aGet_placement
                      ,aShould_stop
-                     ,aEdge_idx_map 
                      ,aEdge_extra_ptr_map
                      ,aVertex_is_fixed_map
                      ,aVisitor
@@ -111,6 +105,58 @@ int edge_collapse ( TSM&                     aSurface
   return algorithm.run();
 }                          
 
+
+struct Dummy_visitor
+{
+  template<class TSM>
+  void OnStarted( TSM& ) {} 
+  
+  template<class TSM>
+  void OnFinished ( TSM& ) {} 
+  
+  template<class TSM>
+  void OnStopConditionReached( TSM& ) {} 
+  
+  template<class Edge, class TSM>
+  void OnCollected( Edge const&, bool, TSM& ) {}                
+  
+  template<class Edge, class TSM, class Vertex>
+  void OnProcessed(Edge const&, TSM&, boost::optional<double>, Vertex const& ) {}                
+  
+  template<class Edge, class TSM>
+  void OnStep(Edge const&, TSM&, std::size_t, std::size_t) {}
+} ;
+
+template<class TSM
+        ,class Params
+        ,class SetCollapseData
+        ,class GetCost
+        ,class GetPlacement
+        ,class ShouldStop
+        ,class EdgeExtraPtrMap
+        ,class VertexIsFixedMap
+        >
+int edge_collapse ( TSM&                    aSurface
+                  , Params           const* aParams // Can be NULL
+                  , SetCollapseData  const& aSet_collapse_data
+                  , GetCost          const& aGet_cost 
+                  , GetPlacement     const& aGet_placement
+                  , ShouldStop       const& aShould_stop
+                  , EdgeExtraPtrMap  const& aEdge_extra_ptr_map
+                  , VertexIsFixedMap const& aVertex_is_fixed_map
+                  ) 
+{
+  return edge_collapse(aSurface 
+                      ,aParams
+                      ,aSet_collapse_data
+                      ,aGet_cost
+                      ,aGet_placement
+                      ,aShould_stop
+                      ,aEdge_extra_ptr_map
+                      ,aVertex_is_fixed_map
+                      ,((Dummy_visitor*)0)
+                      );
+}                          
 
 } } } // namespace Triangulated_surface_mesh::Simplification::Edge_collapse
 

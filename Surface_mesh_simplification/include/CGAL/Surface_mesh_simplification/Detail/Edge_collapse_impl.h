@@ -23,18 +23,17 @@ CGAL_BEGIN_NAMESPACE
 namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse 
 {
 
-template<class M,class P,class D,class C,class V,class S, class I, class X, class F, class R>
-EdgeCollapse<M,P,D,C,V,S,I,X,F,R>::EdgeCollapse( TSM&                    aSurface
-                                               , Params           const* aParams
-                                               , SetCollapseData  const& aSet_collapse_data
-                                               , GetCost          const& aGet_cost
-                                               , GetPlacement     const& aGet_placement
-                                               , ShouldStop       const& aShould_stop
-                                               , EdgeIdxMap       const& aEdge_idx_map 
-                                               , EdgeExtraPtrMap  const& aEdge_extra_ptr_map 
-                                               , VertexIsFixedMap const& aVertex_is_fixed_map 
-                                               , VisitorT*               aVisitor 
-                                               )
+template<class M,class P,class D,class C,class V,class S, class X, class F, class R>
+EdgeCollapse<M,P,D,C,V,S,X,F,R>::EdgeCollapse( TSM&                    aSurface
+                                             , Params           const* aParams
+                                             , SetCollapseData  const& aSet_collapse_data
+                                             , GetCost          const& aGet_cost
+                                             , GetPlacement     const& aGet_placement
+                                             , ShouldStop       const& aShould_stop
+                                             , EdgeExtraPtrMap  const& aEdge_extra_ptr_map 
+                                             , VertexIsFixedMap const& aVertex_is_fixed_map 
+                                             , VisitorT*               aVisitor 
+                                             )
   : 
    mSurface (aSurface)
   ,mParams(aParams)
@@ -43,17 +42,12 @@ EdgeCollapse<M,P,D,C,V,S,I,X,F,R>::EdgeCollapse( TSM&                    aSurfac
   ,Get_cost           (aGet_cost)
   ,Get_placement      (aGet_placement)
   ,Should_stop        (aShould_stop) 
-  ,Edge_idx_map       (Edge_idx_map)
   ,Edge_extra_ptr_map (Edge_extra_ptr_map)
   ,Vertex_is_fixed_map(Vertex_is_fixed_map)
   ,Visitor            (aVisitor)
   
 {
   CGAL_expensive_precondition( is_valid_triangulated_surface_mesh(mSurface) );
-  
-  CGAL_expensive_precondition( check_max_id() );
-
-  mPQ.reset( new PQ (num_edges(aSurface), Compare_cost(this), Edge_idx_map) ) ;
   
   CGAL_TSMS_TRACE(0,"EdgeCollapse of TSM with " << num_undirected_edges(aSurface) << " edges" ); 
   
@@ -70,8 +64,8 @@ EdgeCollapse<M,P,D,C,V,S,I,X,F,R>::EdgeCollapse( TSM&                    aSurfac
 #endif
 }
 
-template<class M,class P,class D,class C,class V,class S, class I, class X, class F, class R>
-int EdgeCollapse<M,P,D,C,V,S,I,X,F,R>::run()
+template<class M,class P,class D,class C,class V,class S, class X, class F, class R>
+int EdgeCollapse<M,P,D,C,V,S,X,F,R>::run()
 {
   if ( Visitor )
     Visitor->OnStarted(mSurface);
@@ -94,32 +88,38 @@ int EdgeCollapse<M,P,D,C,V,S,I,X,F,R>::run()
   return r ;
 }
 
-template<class M,class P,class D,class C,class V,class S, class I, class X, class F, class R>
-void EdgeCollapse<M,P,D,C,V,S,I,X,F,R>::Collect()
+template<class M,class P,class D,class C,class V,class S, class X, class F, class R>
+void EdgeCollapse<M,P,D,C,V,S,X,F,R>::Collect()
 {
   CGAL_TSMS_TRACE(0,"Collecting edges...");
 
   //
-  // Loop over all the edges in the surface putting them in the PQ
+  // Loop over all the _undirected_ edges in the surface putting them in the PQ
   //
   
   Equal_3 equal_points = Kernel().equal_3_object();
     
-  std::size_t lSize = num_undirected_edges(mSurface) ;
+  size_type lSize = num_undirected_edges(mSurface) ;
   
   mInitialEdgeCount = mCurrentEdgeCount = lSize;
   
   mEdgeDataArray.reset( new Edge_data[lSize] ) ;
   
+  mPQ.reset( new PQ (lSize, Compare_cost(this), ID_map(this) ) ) ;
+  
   Edge_data_ptr lData = mEdgeDataArray.get();
   
   Edge_data_ptr lData_End = lData + lSize ;
+  
+  size_type lID = 0 ;
   
   undirected_edge_iterator eb, ee ;
   for ( tie(eb,ee) = undirected_edges(mSurface); eb!=ee; ++eb )
   {
     CGAL_assertion( lData < lData_End ) ;
-    
+  
+    lData->id() = lID ++ ;
+      
     edge_descriptor lEdge = *eb ;
     
     vertex_descriptor p,q ;
@@ -151,8 +151,8 @@ void EdgeCollapse<M,P,D,C,V,S,I,X,F,R>::Collect()
   CGAL_TSMS_TRACE(0,"Initial edge count: " << mInitialEdgeCount ) ;
 }
 
-template<class M,class P,class D,class C,class V,class S, class I, class X, class F, class R>
-void EdgeCollapse<M,P,D,C,V,S,I,X,F,R>::Loop()
+template<class M,class P,class D,class C,class V,class S, class X, class F, class R>
+void EdgeCollapse<M,P,D,C,V,S,X,F,R>::Loop()
 {
   CGAL_TSMS_TRACE(0,"Collapsing edges...") ;
 
@@ -212,8 +212,8 @@ void EdgeCollapse<M,P,D,C,V,S,I,X,F,R>::Loop()
 //
 // The link conidition is as follows: for every vertex 'k' adjacent to both 'p and 'q', "p,k,q" is a facet of the mesh.
 //
-template<class M,class P,class D,class C,class V,class S, class I, class X, class F, class R>
-bool EdgeCollapse<M,P,D,C,V,S,I,X,F,R>::Is_collapsable( edge_descriptor const& aEdgePQ )
+template<class M,class P,class D,class C,class V,class S, class X, class F, class R>
+bool EdgeCollapse<M,P,D,C,V,S,X,F,R>::Is_collapsable( edge_descriptor const& aEdgePQ )
 {
   bool rR = true ;
 
@@ -276,6 +276,7 @@ bool EdgeCollapse<M,P,D,C,V,S,I,X,F,R>::Is_collapsable( edge_descriptor const& a
             {
               CGAL_TSMS_TRACE(3,"  k=V" << k->ID << " IS NOT in a face with p-q. NON-COLLAPSABLE edge." ) ;
               rR = false ;
+              break ;
             }  
             else 
             {
@@ -304,8 +305,8 @@ bool EdgeCollapse<M,P,D,C,V,S,I,X,F,R>::Is_collapsable( edge_descriptor const& a
   return rR ;
 }
 
-template<class M,class P,class D,class C,class V,class S, class I, class X, class F, class R>
-typename EdgeCollapse<M,P,D,C,V,S,I,X,F,R>::vertex_descriptor EdgeCollapse<M,P,D,C,V,S,I,X,F,R>::Collapse( edge_descriptor const& aEdgePQ )
+template<class M,class P,class D,class C,class V,class S, class X, class F, class R>
+typename EdgeCollapse<M,P,D,C,V,S,X,F,R>::vertex_descriptor EdgeCollapse<M,P,D,C,V,S,X,F,R>::Collapse( edge_descriptor const& aEdgePQ )
 {
   CGAL_TSMS_TRACE(1,"S" << mStep << ". Collapsig " << edge_to_string(aEdgePQ) ) ;
   
@@ -354,12 +355,20 @@ typename EdgeCollapse<M,P,D,C,V,S,I,X,F,R>::vertex_descriptor EdgeCollapse<M,P,D
                      << "(V" <<  lEdgePT->vertex()->ID << "->V" << lEdgePT->opposite()->vertex()->ID 
                      << ") EdgeTP E" << lEdgePT->opposite()->ID 
                      ) ;
-      Edge_data_ptr lDataPT = get_data(lEdgePT) ;
+                     
+      edge_descriptor lUndirectedEdgePT = lEdgePT ;               
+      Edge_data_ptr lDataPT = get_data(lUndirectedEdgePT) ;
+      if ( !lDataPT )
+      {
+        lUndirectedEdgePT = opposite_edge(lUndirectedEdgePT,mSurface);
+        lDataPT = get_data(lUndirectedEdgePT);
+        CGAL_assertion(lDataPT);
+      }
       
       if ( lDataPT->is_in_PQ() )
       {
-        CGAL_TSMS_TRACE(2,"Removing E" << lEdgePT->ID << " from PQ" ) ;
-        remove_from_PQ(lEdgePT,lDataPT) ;
+        CGAL_TSMS_TRACE(2,"Removing E" << lUndirectedEdgePT->ID << " from PQ" ) ;
+        remove_from_PQ(lUndirectedEdgePT,lDataPT) ;
         -- mCurrentEdgeCount ;
       }
     }
@@ -370,11 +379,20 @@ typename EdgeCollapse<M,P,D,C,V,S,I,X,F,R>::vertex_descriptor EdgeCollapse<M,P,D
                      << "(V" <<  lEdgeQB->vertex()->ID << "->V" << lEdgeQB->opposite()->vertex()->ID 
                      << ") EdgeBQ E" << lEdgeQB->opposite()->ID 
                      ) ;
-      Edge_data_ptr lDataQB = get_data(lEdgeQB) ;
+                     
+      edge_descriptor lUndirectedEdgeQB = lEdgeQB ;
+                     
+      Edge_data_ptr lDataQB = get_data(lUndirectedEdgeQB) ;
+      if ( !lDataQB )
+      {
+        lUndirectedEdgeQB = opposite_edge(lUndirectedEdgeQB,mSurface);
+        lDataQB = get_data(lUndirectedEdgeQB);
+        CGAL_assertion(lDataQB);
+      }
       if ( lDataQB->is_in_PQ() )
       {
-        CGAL_TSMS_TRACE(2,"Removing E" << lEdgeQB->ID << " from PQ") ;
-        remove_from_PQ(lEdgeQB,lDataQB) ;
+        CGAL_TSMS_TRACE(2,"Removing E" << lUndirectedEdgeQB->ID << " from PQ") ;
+        remove_from_PQ(lUndirectedEdgeQB,lDataQB) ;
         -- mCurrentEdgeCount ;
       }
     }
@@ -415,18 +433,18 @@ typename EdgeCollapse<M,P,D,C,V,S,I,X,F,R>::vertex_descriptor EdgeCollapse<M,P,D
   return rResult ;
 }
 
-template<class M,class P,class D,class C,class V,class S, class I, class X, class F, class R>
-void EdgeCollapse<M,P,D,C,V,S,I,X,F,R>::Update_neighbors( vertex_descriptor const& aKeptV )
+template<class M,class P,class D,class C,class V,class S, class X, class F, class R>
+void EdgeCollapse<M,P,D,C,V,S,X,F,R>::Update_neighbors( vertex_descriptor const& aKeptV )
 {
   CGAL_TSMS_TRACE(3,"Updating cost of neighboring edges..." ) ;
 
   //
   // (A) Collect all edges to update its cost: all those around each vertex adjacent to the vertex kept
-//   //
+  //  
   
-  typedef std::vector<edge_descriptor> edges ;
+  typedef std::set<edge_descriptor,Compare_id> edges ;
   
-  edges lToUpdate ;
+  edges lToUpdate(Compare_id(this)) ;
   
   // (A.1) Loop around all vertices adjacent to the vertex kept
   in_edge_iterator eb1, ee1 ; 
@@ -443,13 +461,18 @@ void EdgeCollapse<M,P,D,C,V,S,I,X,F,R>::Update_neighbors( vertex_descriptor cons
       edge_descriptor lEdge2 = *eb2 ;
       
       Edge_data_ptr lData2 = get_data(lEdge2);
+      if ( !lData2 )
+      {
+        lEdge2 = opposite_edge(lEdge2,mSurface);
+        lData2 = get_data(lEdge2);
+        CGAL_assertion(lData2);
+      }
 
       CGAL_TSMS_TRACE(4,"Inedge around V" << lAdj_k->ID << edge_to_string(lEdge2) ) ;
     
-      // Only those edges still in the PQ are updated.
-      // The mark is used because in the way we loop here the same edge is found many times.
-      if ( lData2->is_in_PQ() && std::find(lToUpdate.begin(),lToUpdate.end(),lEdge2) == lToUpdate.end() )
-        lToUpdate.push_back(lEdge2) ;
+      // Only those edges still in the PQ _and_ not already collected are updated.
+      if ( lData2->is_in_PQ() && lToUpdate.find(lEdge2) == lToUpdate.end() )
+        lToUpdate.insert(lEdge2) ;
     } 
   }  
   
@@ -462,6 +485,8 @@ void EdgeCollapse<M,P,D,C,V,S,I,X,F,R>::Update_neighbors( vertex_descriptor cons
     edge_descriptor lEdge = *it;
     
     Edge_data_ptr lData = get_data(lEdge);
+    
+    CGAL_assertion(lData);
 
     Set_collapse_data(lData->data(),lEdge,mSurface,mParams) ;
     

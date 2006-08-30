@@ -1,3 +1,4 @@
+#if 0
 // Copyright (c) 2006 Geometry Factory (France).
 // All rights reserved.
 //
@@ -20,11 +21,13 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_EDGE_STORED_INDEX_MAP_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_EDGE_STORED_INDEX_MAP_H
 
-namespace boost
-{
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/properties.hpp>
+
+CGAL_BEGIN_NAMESPACE
 
 template<class Graph_>
-class Edge_stored_index_map : public put_get_helper< typename Graph_::size_type, Edge_stored_index_map<Graph_> >
+class Edge_stored_index_map : public boost::put_get_helper< typename Graph_::size_type, Edge_stored_index_map<Graph_> >
 {
 private:
 
@@ -34,14 +37,15 @@ public:
 
   typedef typename Graph::size_type size_type ;
   
-  typedef readable_property_map_tag                           category;
-  typedef size_type                                           value_type;
-  typedef size_type                                           reference;
-  typedef typename graph_traits<Graph const>::edge_descriptor key_type;
+  typedef boost::readable_property_map_tag                           category;
+  typedef size_type                                                  value_type;
+  typedef size_type                                                  reference;
+  typedef typename boost::graph_traits<Graph const>::edge_descriptor key_type;
 
   reference operator[](key_type const& e) const { return e->id(); }
 };
 
-} // namespace boost
+CGAL_END_NAMESPACE
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_EDGE_STORED_INDEX_MAP_H
+#endif

@@ -28,9 +28,12 @@
 #include <boost/tuple/tuple.hpp>
 #include <boost/format.hpp>
 #include <boost/scoped_array.hpp>
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/properties.hpp>
 
 #include <CGAL/Cartesian/MatrixC33.h>
 #include <CGAL/Modifiable_priority_queue.h>
+#include <CGAL/boost/graph/Extended_BGL.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -44,10 +47,6 @@ using boost::out_edges ;
 using boost::in_edges ;
 using boost::source ;
 using boost::target ;
-using boost::edge_is_border_t ;
-using boost::edge_index_t ;
-using boost::vertex_is_border_t ;
-using boost::vertex_point_t ;
 
 using boost::shared_ptr ;
 using boost::optional ;

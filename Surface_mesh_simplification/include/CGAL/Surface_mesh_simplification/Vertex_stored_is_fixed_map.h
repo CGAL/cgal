@@ -20,11 +20,13 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_STORED_IS_VERTEX_FIXED_MAP_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_STORED_IS_VERTEX_FIXED_MAP_H
 
-namespace boost
-{
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/properties.hpp>
+
+CGAL_BEGIN_NAMESPACE
 
 template<class Graph_>
-class Vertex_stored_is_fixed_map : public put_get_helper<bool, Vertex_stored_is_fixed_map<Graph_> >
+class Vertex_stored_is_fixed_map : public boost::put_get_helper<bool, Vertex_stored_is_fixed_map<Graph_> >
 {
 private:
 
@@ -32,15 +34,15 @@ private:
   
 public:
 
-  typedef readable_property_map_tag                             category;
-  typedef bool                                                  value_type;
-  typedef bool                                                  reference;
-  typedef typename graph_traits<Graph const>::vertex_descriptor key_type;
+  typedef boost::readable_property_map_tag                             category;
+  typedef bool                                                         value_type;
+  typedef bool                                                         reference;
+  typedef typename boost::graph_traits<Graph const>::vertex_descriptor key_type;
 
   reference operator[](key_type const& v) const { return v->is_fixed() ; }
 };
 
         
-} // namespace boost
+CGAL_END_NAMESPACE
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_STORED_IS_VERTEX_FIXED_MAP_H

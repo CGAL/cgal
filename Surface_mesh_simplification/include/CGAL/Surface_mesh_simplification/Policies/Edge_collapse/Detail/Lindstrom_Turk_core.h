@@ -149,7 +149,6 @@ private :
     return get(vertex_point_property,mSurface,v) ;
   }
   
-  
   static Vector Point_cross_product ( Point const& a, Point const& b ) 
   {
     return cross_product(a-ORIGIN,b-ORIGIN); 

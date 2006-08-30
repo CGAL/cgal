@@ -50,7 +50,6 @@ int exit_code = 0 ;
 #include <CGAL/Surface_mesh_simplification/Polyhedron.h>
 #include <CGAL/Surface_mesh_simplification/Vertex_stored_is_fixed_map.h>
 #include <CGAL/Surface_mesh_simplification/Edge_stored_extra_pointer_map.h>
-#include <CGAL/Surface_mesh_simplification/Edge_stored_index_map.h>
 #include <CGAL/Surface_mesh_simplification/Edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_and_length.h>
@@ -557,7 +556,6 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
           Dummy_params lDummy_params;
           LT_params    lLT_params ; 
 
-          Edge_stored_index_map        <Polyhedron> edge_index_map ;
           Edge_stored_extra_pointer_map<Polyhedron> edge_extra_pointer_map ;
           Vertex_stored_is_fixed_map   <Polyhedron> vertex_is_fixed_map ;
           
@@ -580,7 +578,6 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
                                    ,get_MP_cost
                                    ,get_MP_placement
                                    ,should_stop
-                                   ,edge_index_map 
                                    ,edge_extra_pointer_map 
                                    ,vertex_is_fixed_map 
                                    ,&lVisitor
@@ -595,7 +592,6 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
                                    ,get_cached_cost
                                    ,get_MP_placement
                                    ,should_stop
-                                   ,edge_index_map 
                                    ,edge_extra_pointer_map 
                                    ,vertex_is_fixed_map 
                                    ,&lVisitor
@@ -610,7 +606,6 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
                                    ,get_cached_cost
                                    ,get_cached_placement
                                    ,should_stop
-                                   ,edge_index_map 
                                    ,edge_extra_pointer_map 
                                    ,vertex_is_fixed_map 
                                    ,&lVisitor
@@ -633,7 +628,6 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
                                    ,get_LT_cost
                                    ,get_LT_placement
                                    ,should_stop
-                                   ,edge_index_map 
                                    ,edge_extra_pointer_map 
                                    ,vertex_is_fixed_map 
                                    ,&lVisitor
@@ -648,7 +642,6 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
                                    ,get_cached_cost
                                    ,get_LT_placement
                                    ,should_stop
-                                   ,edge_index_map 
                                    ,edge_extra_pointer_map 
                                    ,vertex_is_fixed_map 
                                    ,&lVisitor
@@ -663,7 +656,6 @@ bool Test ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Me
                                    ,get_cached_cost
                                    ,get_cached_placement
                                    ,should_stop
-                                   ,edge_index_map 
                                    ,edge_extra_pointer_map 
                                    ,vertex_is_fixed_map 
                                    ,&lVisitor

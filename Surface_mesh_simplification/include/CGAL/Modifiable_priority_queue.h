@@ -51,7 +51,7 @@ public:
   
   handle update ( value_type const& v, handle h ) { mHeap.update(v); return h ; }
   
-  handle erase ( value_type const& v, handle h ) { mHeap.remove(v); return handle(false) ; }
+  handle erase ( value_type const& v, handle h ) { mHeap.remove(v); return null_handle() ; }
 
   value_type top() const { return mHeap.top() ; }
   
@@ -74,8 +74,6 @@ public:
   }
   
   static handle null_handle() { return handle(false); }
-  
-  static bool is_null ( handle h ) { return h == null_handle() ; }
   
 private:
 

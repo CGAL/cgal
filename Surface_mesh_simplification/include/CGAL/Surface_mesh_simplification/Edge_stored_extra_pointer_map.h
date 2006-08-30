@@ -20,11 +20,13 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_EDGE_STORED_EXTRA_POINTER_MAP_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_EDGE_STORED_EXTRA_POINTER_MAP_H
 
-namespace boost
-{
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/properties.hpp>
+
+CGAL_BEGIN_NAMESPACE
 
 template<class Graph_>
-class Edge_stored_extra_pointer_map : public put_get_helper<void*&, Edge_stored_extra_pointer_map<Graph_> >
+class Edge_stored_extra_pointer_map : public boost::put_get_helper<void*&, Edge_stored_extra_pointer_map<Graph_> >
 {
 private:
 
@@ -32,14 +34,14 @@ private:
   
 public:
 
-  typedef lvalue_property_map_tag                       category;
-  typedef void*                                         value_type;
-  typedef void*&                                        reference;
-  typedef typename graph_traits<Graph>::edge_descriptor key_type;
+  typedef boost::lvalue_property_map_tag                       category;
+  typedef void*                                                value_type;
+  typedef void*&                                               reference;
+  typedef typename boost::graph_traits<Graph>::edge_descriptor key_type;
 
   reference operator[](key_type const& e) const { return e->extra_pointer() ; }
 };
 
-} // namespace boost
+CGAL_END_NAMESPACE
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_EDGE_STORED_EXTRA_POINTER_MAP_H

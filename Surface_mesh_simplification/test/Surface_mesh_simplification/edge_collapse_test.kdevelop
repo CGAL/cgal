@@ -44,7 +44,7 @@
   <kdevdebugger>
     <general>
       <dbgshell/>
-      <programargs>-m1 data/hexagon</programargs>
+      <programargs>data/head</programargs>
       <gdbpath/>
       <configGdbScript/>
       <runShellScript/>
