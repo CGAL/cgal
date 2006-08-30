@@ -1,11 +1,11 @@
 \section{Arrangements of Unbounded Curves\label{arr_sec:unbounded}}
 %========================================
 
-So far we have contstructed and manipulated only arrangements of
-line segments, namely of bounded curves. Such arrangements always
-have one unbounded face that contains all other arrangement features.
-In this section we explain how to construct arrangements of unbounded
-curves, such as lines and rays.
+Previous chapters dealt only with arrangements of line segments,
+namely of bounded curves. Such arrangements always have one unbounded
+face that contains all other arrangement features. In this section
+explains how to construct arrangements of unbounded curves, such as
+lines and rays.
 
 \begin{figure}[t]
 \begin{ccTexOnly}
@@ -52,20 +52,20 @@ represent portions of the bounding rectangle. Note that the outer CCBs
 of the unbounded faces contain fictitious halfedges. The twins of these
 halfedges form together one connected component that corresponds to
 the entire imaginary rectangle, which forms a single hole in a face
-$\tilde{f}$. We say that $\tilde{f}$ is \emph{fictitious} as it does not
-corresponds to a real two-dimensional cell of the arrangement.
+$\tilde{f}$. We say that $\tilde{f}$ is \emph{fictitious}, as it does
+not corresponds to a real two-dimensional cell of the arrangement.
 
-Observe that we have four extra vertices at infinity that do not lie
+Observe that there are four extra vertices at infinity that do not lie
 on any curve; they are denoted as $v_{\rm bl}, v_{\rm tl}, 
-v_{\rm br}$ and $v_{\rm tr}$, and represent the bottom-left, top-left,
-bottom-right and top-right corners of the bounding rectangle,
-respectively. Introducing these four fictitious vertices, enables us
-to label each of the fictitious edges as lying on the top, the bottom,
-the left, or the right edge of the imaginary bounding rectangle.
-These fictitious edges exists even when the arrangement is empty: in
-this case they are connected with four pair of fictitious halfedges,
-that define a fictitous face lying inside the imaginary bounding
-rectangle and to a single unbounded face.
+v_{\rm br}$, and $v_{\rm tr}$, and represent the bottom-left, top-left,
+bottom-right, and top-right corners of the bounding rectangle,
+respectively. Similarly, there are fictitious halfedges that lie on
+the top, the bottom, the left, or the right edge of the imaginary
+bounding rectangle. When the arrangement is empty, there are exactly
+four pairs of fictitious halfedges, that divide the plane into two
+faces, namely a fictitous face lying outside of the imaginary bounding
+rectangle and a single unbounded face bounded by the imaginary
+bounding rectangle. 
 
 Summarizing the above, there are four types of arrangement vertices,
 which differ from one another by their location on the imaginary
@@ -123,7 +123,7 @@ The \ccc{Vertex} class provides three-valued predicates
 return \ccc{FINITE} if the vertex has a finite $x$-coordinate (or
 $y$-coordinate) and \ccc{MINUS_INFINITY} or \ccc{PLUS_INFINITY} if
 the vertex lies at infinity. The Boolean predicate
-\ccc{is_at_inifnity()} is also supported, where we can access the
+\ccc{is_at_infinity()} is also supported, where we can access the
 point associated with a vertex only if it is not a vertex at infinity
 (recall that a vertex at infinity is not associated with a
 \ccc{Point_2} object).
