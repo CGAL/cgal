@@ -218,7 +218,7 @@ private:
   
   Edge_data_ptr get_data ( edge_descriptor const& aEdge ) const { return static_cast<Edge_data_ptr>(get(Edge_extra_ptr_map,aEdge)) ; }
   
-  void set_data ( edge_descriptor const& aEdge, Edge_data_ptr aData ) { put(Edge_extra_ptr_map,aEdge,aData) ; }
+  void set_data ( edge_descriptor const& aEdge, Edge_data_ptr aData ) { put(Edge_extra_ptr_map,aEdge,static_cast<void*>(aData)) ; }
 
   size_type get_id ( edge_descriptor const& aEdge ) const
   {

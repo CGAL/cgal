@@ -1905,8 +1905,7 @@ Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/cube.off -
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/high_genus.off -text svneol=unset#application/octet-stream
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/knot2.off -text svneol=unset#application/octet-stream
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/oni.off -text svneol=unset#application/octet-stream
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Edge_stored_extra_pointer_map.h -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Edge_stored_index_map.h -text
+Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Edge_extra_pointer_map_stored.h -text
 Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Cached_cost.h -text
 Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Cached_placement.h -text
 Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Full_collapse_data.h -text

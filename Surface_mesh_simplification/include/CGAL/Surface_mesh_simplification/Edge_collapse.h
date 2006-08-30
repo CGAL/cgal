@@ -19,6 +19,7 @@
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_EDGE_COLLAPSE_H 1
 
 #include <CGAL/Surface_mesh_simplification/Detail/Edge_collapse.h>
+#include <CGAL/Surface_mesh_simplification/Vertex_is_fixed_map_always_false.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -143,7 +144,7 @@ int edge_collapse ( TSM&                    aSurface
                   , GetPlacement     const& aGet_placement
                   , ShouldStop       const& aShould_stop
                   , EdgeExtraPtrMap  const& aEdge_extra_ptr_map
-                  , VertexIsFixedMap const& aVertex_is_fixed_map
+                  , VertexIsFixedMap const& aVertex_is_fixed_map = Vertex_is_fixed_map_always_false<TSM>()
                   ) 
 {
   return edge_collapse(aSurface 
@@ -154,6 +155,35 @@ int edge_collapse ( TSM&                    aSurface
                       ,aShould_stop
                       ,aEdge_extra_ptr_map
                       ,aVertex_is_fixed_map
+                      ,((Dummy_visitor*)0)
+                      );
+}                          
+
+template<class TSM
+        ,class Params
+        ,class SetCollapseData
+        ,class GetCost
+        ,class GetPlacement
+        ,class ShouldStop
+        ,class EdgeExtraPtrMap
+        >
+int edge_collapse ( TSM&                    aSurface
+                  , Params           const* aParams // Can be NULL
+                  , SetCollapseData  const& aSet_collapse_data
+                  , GetCost          const& aGet_cost 
+                  , GetPlacement     const& aGet_placement
+                  , ShouldStop       const& aShould_stop
+                  , EdgeExtraPtrMap  const& aEdge_extra_ptr_map
+                  ) 
+{
+  return edge_collapse(aSurface 
+                      ,aParams
+                      ,aSet_collapse_data
+                      ,aGet_cost
+                      ,aGet_placement
+                      ,aShould_stop
+                      ,aEdge_extra_ptr_map
+                      ,Vertex_is_fixed_map_always_false<TSM>()
                       ,((Dummy_visitor*)0)
                       );
 }                          

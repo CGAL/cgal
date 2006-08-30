@@ -42,8 +42,8 @@ EdgeCollapse<M,P,D,C,V,S,X,F,R>::EdgeCollapse( TSM&                    aSurface
   ,Get_cost           (aGet_cost)
   ,Get_placement      (aGet_placement)
   ,Should_stop        (aShould_stop) 
-  ,Edge_extra_ptr_map (Edge_extra_ptr_map)
-  ,Vertex_is_fixed_map(Vertex_is_fixed_map)
+  ,Edge_extra_ptr_map (aEdge_extra_ptr_map)
+  ,Vertex_is_fixed_map(aVertex_is_fixed_map)
   ,Visitor            (aVisitor)
   
 {
@@ -129,7 +129,7 @@ void EdgeCollapse<M,P,D,C,V,S,X,F,R>::Collect()
  
     if ( p == q || equal_points( get_point(p), get_point(q)) )
       lIsFixed = true ;
-      
+  
     // For simplicity, ALL edges, fixed or not, are associated with an edge data.
     set_data(lEdge,lData);
     

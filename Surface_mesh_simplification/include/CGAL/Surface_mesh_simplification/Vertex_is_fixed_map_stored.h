@@ -17,8 +17,8 @@
 //
 // Author(s): Fernando Cacciola <fernando.cacciola@gmail.com>
 
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_STORED_IS_VERTEX_FIXED_MAP_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_STORED_IS_VERTEX_FIXED_MAP_H
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_IS_VERTEX_FIXED_MAP_STORED_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_IS_VERTEX_FIXED_MAP_STORED_H
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
@@ -26,7 +26,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template<class Graph_>
-class Vertex_stored_is_fixed_map : public boost::put_get_helper<bool, Vertex_stored_is_fixed_map<Graph_> >
+class Vertex_is_fixed_map_stored : public boost::put_get_helper<bool, Vertex_is_fixed_map_stored<Graph_> >
 {
 private:
 
@@ -45,4 +45,4 @@ public:
         
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_STORED_IS_VERTEX_FIXED_MAP_H
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_IS_VERTEX_FIXED_MAP_STORED_H

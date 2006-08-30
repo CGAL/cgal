@@ -11,14 +11,14 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://fcacciola@scm.gforge.inria.fr/svn/cgal/trunk/Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Edge_stored_extra_pointer_map.h $
-// $Id: Edge_stored_extra_pointer_map.h 32048 2006-06-23 13:59:36Z lsaboret $
+// $URL: svn+ssh://fcacciola@scm.gforge.inria.fr/svn/cgal/trunk/Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Edge_extra_pointer_map_stored.h $
+// $Id: Edge_extra_pointer_map_stored.h 32048 2006-06-23 13:59:36Z lsaboret $
 // 
 //
 // Author(s): Fernando Cacciola <fernando.cacciola@gmail.com>
 
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_EDGE_STORED_EXTRA_POINTER_MAP_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_EDGE_STORED_EXTRA_POINTER_MAP_H
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_EDGE_EXTRA_POINTER_MAP_STORED_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_EDGE_EXTRA_POINTER_MAP_STORED_H
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
@@ -26,7 +26,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template<class Graph_>
-class Edge_stored_extra_pointer_map : public boost::put_get_helper<void*&, Edge_stored_extra_pointer_map<Graph_> >
+class Edge_extra_pointer_map_stored : public boost::put_get_helper<void*&, Edge_extra_pointer_map_stored<Graph_> >
 {
 private:
 
@@ -44,4 +44,4 @@ public:
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_EDGE_STORED_EXTRA_POINTER_MAP_H
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_EDGE_EXTRA_POINTER_MAP_STORED_H
