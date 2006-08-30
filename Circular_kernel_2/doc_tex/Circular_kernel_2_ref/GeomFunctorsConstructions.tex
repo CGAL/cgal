@@ -50,8 +50,11 @@ assigned to
 \begin{itemize}
 \item {} \ccc{std::pair<CircularKernel::Circular_arc_point_2, unsigned>},
 where the unsigned integer is the multiplicity of the corresponding
-intersection point between \ccc{obj_1} and \ccc{obj_2} or
-\item {} \ccc{CircularKernel::Circular_arc_2} in case of an overlap.
+intersection point between \ccc{obj_1} and \ccc{obj_2},
+\item {} \ccc{CircularKernel::Circular_arc_2} in case of an overlap of 
+two circular arcs or
+\item {} \ccc{CircularKernel::Line_arc_2} in case of an overlap of two 
+line segments. 
 \end{itemize} 
 
 %\ccMemberFunction{template < class OutputIterator >
