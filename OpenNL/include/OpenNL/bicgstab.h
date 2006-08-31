@@ -173,7 +173,7 @@ private:
     // Test if a floating point number is (close to) 0.0
     static inline bool IsZero(CoeffType a)
     {
-        return (std::fabs(a) < 10.0 * std::numeric_limits<CoeffType>::min());
+        return (std::fabs(a) < 10.0 * (std::numeric_limits<CoeffType>::min)());
     }
 
 private:
