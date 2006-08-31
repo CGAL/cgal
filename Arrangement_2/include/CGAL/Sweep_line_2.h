@@ -548,14 +548,17 @@ void Sweep_line_2<Traits_,
                   Allocator>::
  _intersect(Subcurve *c1, Subcurve *c2)
 {
-  CGAL_PRINT("Looking for intersection between:\n\t";)
-  CGAL_SL_DEBUG(c1->Print();)
-  CGAL_PRINT("\t";)
-  CGAL_SL_DEBUG(c2->Print();)
-  CGAL_PRINT("\n";)
+  CGAL_PRINT("Looking for intersection between:\n\t";);
+  CGAL_SL_DEBUG(c1->Print(););
+  CGAL_PRINT("\t";);
+  CGAL_SL_DEBUG(c2->Print(););
+  CGAL_PRINT("\n";);
 
   CGAL_assertion(c1 != c2);
-  
+ 
+  if(this->m_currentEvent->is_plus_infinite_in_x())
+    return;
+
   // look up for (c1,c2) in the table and insert if doesnt exist
   CurvesPair curves_pair(c1,c2);
   if(! (m_curves_pair_set.insert(curves_pair)).second )
@@ -605,7 +608,7 @@ void Sweep_line_2<Traits_,
   if(vi != vi_end)
   {
     xp_point = object_cast<std::pair<Point_2,unsigned int> > (&(*vi));
-    if(xp_point != NULL)
+    if(xp_point != NULL && this->m_currentEvent->is_finite())
     {
       if (this->m_traits->compare_xy_2_object()
           (this->m_currentEvent->get_point(),
