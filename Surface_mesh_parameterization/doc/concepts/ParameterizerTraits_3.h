@@ -39,7 +39,7 @@ public:
     ERROR_INVALID_BORDER,           ///< Error: parameterization requires a convex border
     ERROR_CANNOT_SOLVE_LINEAR_SYSTEM,///< Error: cannot solve linear system
     ERROR_NO_1_TO_1_MAPPING,        ///< Error: parameterization does not ensure a one-to-one mapping
-    ERROR_NOT_ENOUGH_MEMORY,        ///< Error: not enough memory
+    ERROR_OUT_OF_MEMORY,            ///< Error: not enough memory
     ERROR_WRONG_PARAMETER           ///< Error: a method received an unexpected parameter
     };
 
