@@ -39,24 +39,28 @@ public:
   typedef Partial_collapse_data<TSM> Collapse_data ;
   
   typedef typename Collapse_data::Optional_cost_type Optional_cost_type ;
+  
+  typedef typename GetCost::Params CostParams ;
+  typedef void                     PlacementParams ;
 
 public :
 
-  mutable int c ;
-  
-  Set_partial_collapse_data ( GetCost const& aGetCost ) : get_cost(aGetCost) { c = 0 ;}
+  Set_partial_collapse_data ( GetCost const& aGetCost ) : get_cost(aGetCost) {}
 
-  template<class Params>    
-  void operator() ( Collapse_data& rData, edge_descriptor const& aEdge, TSM& aSurface, Params const* aParams ) const 
+  void operator() ( Collapse_data&          rData
+                  , edge_descriptor const&  aEdge
+                  , TSM&                    aSurface
+                  , CostParams const*       aCostParams 
+                  , PlacementParams const* 
+                  ) const 
   {
-    CGAL_assertion(aParams);
+    CGAL_assertion(aCostParams);
     CGAL_assertion( handle_assigned(aEdge) );
 
-    Optional_cost_type lCost = get_cost(aEdge,aSurface,rData,aParams);
+    Optional_cost_type lCost = get_cost(aEdge,aSurface,rData,aCostParams);
     
     rData = Collapse_data(lCost);
     
-    ++ c ;
   }                         
   
   GetCost get_cost ;

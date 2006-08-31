@@ -44,9 +44,8 @@ public:
       
 public:
 
-  mutable int p ;
 
-  LindstromTurk_placement() : p(0) {}
+  LindstromTurk_placement() {}
   
   template<class Collapse_data>
   result_type operator()( edge_descriptor const& aEdge
@@ -64,7 +63,6 @@ public:
     optional<Point_3> lPlacement ;
     tie(lCost,lPlacement) = core.compute();
     
-    ++ p ;
     return lPlacement ;
   }
 };

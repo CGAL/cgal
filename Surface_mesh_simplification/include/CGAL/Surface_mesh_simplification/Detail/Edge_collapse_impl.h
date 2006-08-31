@@ -23,27 +23,28 @@ CGAL_BEGIN_NAMESPACE
 namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse 
 {
 
-template<class M,class P,class D,class C,class V,class S, class X, class F, class R>
-EdgeCollapse<M,P,D,C,V,S,X,F,R>::EdgeCollapse( TSM&                    aSurface
-                                             , Params           const* aParams
-                                             , SetCollapseData  const& aSet_collapse_data
-                                             , GetCost          const& aGet_cost
-                                             , GetPlacement     const& aGet_placement
-                                             , ShouldStop       const& aShould_stop
-                                             , EdgeExtraPtrMap  const& aEdge_extra_ptr_map 
-                                             , VertexIsFixedMap const& aVertex_is_fixed_map 
-                                             , VisitorT*               aVisitor 
-                                             )
+template<class M,class S,class X, class F,class D,class CF,class PF,class CP, class PP,class V>
+EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::EdgeCollapse( TSM&                    aSurface
+                                                   , ShouldStop       const& aShould_stop
+                                                   , EdgeExtraPtrMap  const& aEdge_extra_ptr_map 
+                                                   , VertexIsFixedMap const& aVertex_is_fixed_map 
+                                                   , SetCollapseData  const& aSet_collapse_data
+                                                   , GetCost          const& aGet_cost
+                                                   , GetPlacement     const& aGet_placement
+                                                   , CostParams       const* aCostParams
+                                                   , PlacementParams  const* aPlacementParams
+                                                   , VisitorT*               aVisitor 
+                                                   )
   : 
-   mSurface (aSurface)
-  ,mParams(aParams)
-   
-  ,Set_collapse_data  (aSet_collapse_data)
-  ,Get_cost           (aGet_cost)
-  ,Get_placement      (aGet_placement)
+   mSurface           (aSurface)
   ,Should_stop        (aShould_stop) 
   ,Edge_extra_ptr_map (aEdge_extra_ptr_map)
   ,Vertex_is_fixed_map(aVertex_is_fixed_map)
+  ,Set_collapse_data  (aSet_collapse_data)
+  ,Get_cost           (aGet_cost)
+  ,Get_placement      (aGet_placement)
+  ,mCostParams        (aCostParams)
+  ,mPlacementParams   (aPlacementParams)
   ,Visitor            (aVisitor)
   
 {
@@ -64,8 +65,8 @@ EdgeCollapse<M,P,D,C,V,S,X,F,R>::EdgeCollapse( TSM&                    aSurface
 #endif
 }
 
-template<class M,class P,class D,class C,class V,class S, class X, class F, class R>
-int EdgeCollapse<M,P,D,C,V,S,X,F,R>::run()
+template<class M,class S,class X, class F,class D,class CF,class PF,class CP, class PP,class V>
+int EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::run()
 {
   if ( Visitor )
     Visitor->OnStarted(mSurface);
@@ -88,8 +89,8 @@ int EdgeCollapse<M,P,D,C,V,S,X,F,R>::run()
   return r ;
 }
 
-template<class M,class P,class D,class C,class V,class S, class X, class F, class R>
-void EdgeCollapse<M,P,D,C,V,S,X,F,R>::Collect()
+template<class M,class S,class X, class F,class D,class CF,class PF,class CP, class PP,class V>
+void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Collect()
 {
   CGAL_TSMS_TRACE(0,"Collecting edges...");
 
@@ -136,7 +137,7 @@ void EdgeCollapse<M,P,D,C,V,S,X,F,R>::Collect()
     // But in the case of fixed edges the edge data is left default constructed
     if ( !lIsFixed )
     {
-      Set_collapse_data(lData->data(),lEdge,mSurface,mParams) ;
+      Set_collapse_data(lData->data(),lEdge,mSurface,mCostParams,mPlacementParams) ;
       insert_in_PQ(lEdge,lData);
     }
       
@@ -151,8 +152,8 @@ void EdgeCollapse<M,P,D,C,V,S,X,F,R>::Collect()
   CGAL_TSMS_TRACE(0,"Initial edge count: " << mInitialEdgeCount ) ;
 }
 
-template<class M,class P,class D,class C,class V,class S, class X, class F, class R>
-void EdgeCollapse<M,P,D,C,V,S,X,F,R>::Loop()
+template<class M,class S,class X, class F,class D,class CF,class PF,class CP, class PP,class V>
+void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Loop()
 {
   CGAL_TSMS_TRACE(0,"Collapsing edges...") ;
 
@@ -212,8 +213,8 @@ void EdgeCollapse<M,P,D,C,V,S,X,F,R>::Loop()
 //
 // The link conidition is as follows: for every vertex 'k' adjacent to both 'p and 'q', "p,k,q" is a facet of the mesh.
 //
-template<class M,class P,class D,class C,class V,class S, class X, class F, class R>
-bool EdgeCollapse<M,P,D,C,V,S,X,F,R>::Is_collapsable( edge_descriptor const& aEdgePQ )
+template<class M,class S,class X, class F,class D,class CF,class PF,class CP, class PP,class V>
+bool EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Is_collapsable( edge_descriptor const& aEdgePQ )
 {
   bool rR = true ;
 
@@ -305,8 +306,8 @@ bool EdgeCollapse<M,P,D,C,V,S,X,F,R>::Is_collapsable( edge_descriptor const& aEd
   return rR ;
 }
 
-template<class M,class P,class D,class C,class V,class S, class X, class F, class R>
-typename EdgeCollapse<M,P,D,C,V,S,X,F,R>::vertex_descriptor EdgeCollapse<M,P,D,C,V,S,X,F,R>::Collapse( edge_descriptor const& aEdgePQ )
+template<class M,class S,class X, class F,class D,class CF,class PF,class CP, class PP,class V>
+typename EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::vertex_descriptor EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Collapse( edge_descriptor const& aEdgePQ )
 {
   CGAL_TSMS_TRACE(1,"S" << mStep << ". Collapsig " << edge_to_string(aEdgePQ) ) ;
   
@@ -433,8 +434,8 @@ typename EdgeCollapse<M,P,D,C,V,S,X,F,R>::vertex_descriptor EdgeCollapse<M,P,D,C
   return rResult ;
 }
 
-template<class M,class P,class D,class C,class V,class S, class X, class F, class R>
-void EdgeCollapse<M,P,D,C,V,S,X,F,R>::Update_neighbors( vertex_descriptor const& aKeptV )
+template<class M,class S,class X, class F,class D,class CF,class PF,class CP, class PP,class V>
+void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Update_neighbors( vertex_descriptor const& aKeptV )
 {
   CGAL_TSMS_TRACE(3,"Updating cost of neighboring edges..." ) ;
 
@@ -488,7 +489,7 @@ void EdgeCollapse<M,P,D,C,V,S,X,F,R>::Update_neighbors( vertex_descriptor const&
     
     CGAL_assertion(lData);
 
-    Set_collapse_data(lData->data(),lEdge,mSurface,mParams) ;
+    Set_collapse_data(lData->data(),lEdge,mSurface,mCostParams,mPlacementParams) ;
     
     CGAL_TSMS_TRACE(3, edge_to_string(lEdge) << " updated in the PQ") ;
     

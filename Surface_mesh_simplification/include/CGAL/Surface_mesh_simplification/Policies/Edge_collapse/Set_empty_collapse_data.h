@@ -37,10 +37,18 @@ public:
   
   typedef Empty_collapse_data Collapse_data ;
   
+  typedef void CostParams ;
+  typedef void PlacementParams ;
+  
 public :
 
-  template<class Params>
-  void operator() ( Collapse_data&, edge_descriptor const&, TSM&, Params const* ) const {}                         
+  void operator() ( Collapse_data&          
+                  , edge_descriptor const&  
+                  , TSM&                    
+                  , CostParams const*       
+                  , PlacementParams const* 
+                  ) const 
+  {}                         
   
 };    
 

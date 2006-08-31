@@ -39,10 +39,11 @@ public:
   
   typedef optional<Point_3> result_type ;
 
+  typedef void Params ;
   
 public :
     
-  template<class Collapse_data, class Params>
+  template<class Collapse_data>
   result_type operator()( edge_descriptor const& aEdge
                         , TSM&                   aSurface
                         , Collapse_data const&   aData

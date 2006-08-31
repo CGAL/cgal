@@ -48,28 +48,32 @@ public:
   
   typedef optional<FT>      Optional_cost_type ;
   typedef optional<Point_3> Optional_placement_type ;
+  
+  typedef LindstromTurk_params CostParams      ;
+  typedef LindstromTurk_params PlacementParams ;
 
 public :
 
-  mutable int c ;  
-  mutable int p ;
+  Set_full_collapse_data_LindstromTurk() {}
   
-  Set_full_collapse_data_LindstromTurk() : c(0), p(0) {}
-  
-  void operator() ( Collapse_data& rData, edge_descriptor const& aEdge, TSM& aSurface, Params const* aParams ) const 
+  void operator() ( Collapse_data&         rData
+                  , edge_descriptor const& aEdge
+                  , TSM&                   aSurface
+                  , CostParams const*      aCostParams 
+                  , PlacementParams const* aPlacementParams 
+                  ) const 
   {
-    CGAL_assertion(aParams);
+    CGAL_assertion(aCostParams);
+    CGAL_assertion(aPlacementParams);
+    CGAL_assertion(aCostParams == aPlacementParams);
     CGAL_assertion( handle_assigned(aEdge) );
     
-    LindstromTurkCore<TSM> core(*aParams,aEdge,aSurface,true);
+    LindstromTurkCore<TSM> core(*aCostParams,aEdge,aSurface,true);
 
     Optional_cost_type lCost ;
     Optional_placement_type lPlacement ;
     tie(lCost,lPlacement) = core.compute();
     rData = Collapse_data(lCost,lPlacement);
-    
-    ++ c ;
-    ++ p ;
   }                         
   
 };    

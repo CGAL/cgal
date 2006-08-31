@@ -40,11 +40,13 @@ public:
   
   typedef optional<Point_3> result_type ;
     
+  typedef char Params ;
+  
 public:
 
-  mutable int p ; Midpoint_placement() : p(0) {}
+  Midpoint_placement() {}
   
-  template<class Collapse_data, class Params>
+  template<class Collapse_data>
   result_type operator()( edge_descriptor const& aEdge
                         , TSM&                   aSurface
                         , Collapse_data const&   aData
@@ -56,8 +58,6 @@ public:
     Point_3 const& ps = this->get_point(vs,aSurface);
     Point_3 const& pt = this->get_point(vt,aSurface);
   
-    ++ p ;
-        
     return result_type(midpoint(ps,pt));
   }
   

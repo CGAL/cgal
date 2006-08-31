@@ -43,24 +43,28 @@ public:
   typedef typename Collapse_data::Optional_cost_type      Optional_cost_type ;
   typedef typename Collapse_data::Optional_placement_type Optional_placement_type ;
 
+  typedef typename GetCost     ::Params CostParams ;
+  typedef typename GetPlacement::Params PlacementParams ;
+  
 public :
 
-  mutable int c, p ;
-  
   Set_full_collapse_data ( GetCost const& aGetCost, GetPlacement const& aGetPlacement ) : get_cost(aGetCost), get_placement(aGetPlacement) 
-  { c = p = 0 ; }
+  {}
     
-  template<class Params>
-  void operator() ( Collapse_data& rData, edge_descriptor const& aEdge, TSM& aSurface, Params const* aParams ) const 
+  void operator() ( Collapse_data&         rData
+                  , edge_descriptor const& aEdge
+                  , TSM&                   aSurface
+                  , CostParams const*      aCostParams 
+                  , PlacementParams const* aPlacementParams 
+                  ) const 
   {
-    CGAL_assertion(aParams);
+    CGAL_assertion(aCostParams);
+    CGAL_assertion(aPlacementParams);
     CGAL_assertion( handle_assigned(aEdge) );
 
-    Optional_cost_type      lCost      = get_cost     (aEdge,aSurface,rData,aParams);
-    Optional_placement_type lPlacement = get_placement(aEdge,aSurface,rData,aParams);
+    Optional_cost_type      lCost      = get_cost     (aEdge,aSurface,rData,aCostParams);
+    Optional_placement_type lPlacement = get_placement(aEdge,aSurface,rData,aPlacementParams);
     
-    ++ c;
-    ++ p ;
     rData = Collapse_data(lCost,lPlacement);
   }                         
   

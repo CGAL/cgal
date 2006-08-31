@@ -39,13 +39,14 @@ namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_
 // Implementation of the vertex-pair collapse triangulated surface mesh simplification algorithm
 //
 template<class TSM_
-        ,class Params_ 
+        ,class ShouldStop_
+        ,class EdgeExtraPtrMap_
+        ,class VertexIsFixedMap_
         ,class SetCollapseData_
         ,class GetCost_
         ,class GetPlacement_
-        ,class ShouldStop_
-        ,class EdgeCachedPtrMap_
-        ,class VertexIsFixedMap_
+        ,class CostParams_ 
+        ,class PlacementParams_ 
         ,class VisitorT_
         >
 class EdgeCollapse
@@ -53,13 +54,14 @@ class EdgeCollapse
 public:
 
   typedef TSM_              TSM ;
-  typedef Params_           Params ;
+  typedef ShouldStop_       ShouldStop ;
+  typedef EdgeExtraPtrMap_  EdgeExtraPtrMap ;
+  typedef VertexIsFixedMap_ VertexIsFixedMap ;
   typedef SetCollapseData_  SetCollapseData ;
   typedef GetCost_          GetCost ;
   typedef GetPlacement_     GetPlacement ;
-  typedef ShouldStop_       ShouldStop ;
-  typedef EdgeCachedPtrMap_ EdgeExtraPtrMap ;
-  typedef VertexIsFixedMap_ VertexIsFixedMap ;
+  typedef CostParams_       CostParams ;
+  typedef PlacementParams_  PlacementParams ;
   typedef VisitorT_         VisitorT ;
   
   typedef EdgeCollapse Self ;
@@ -171,14 +173,15 @@ public:
 public:
 
   EdgeCollapse( TSM&                    aSurface
-              , Params           const* aParams // Can be NULL
-              , SetCollapseData  const& aSetCollapseData
-              , GetCost          const& aGetCost
-              , GetPlacement     const& aGetPlacement
               , ShouldStop       const& aShouldStop 
               , EdgeExtraPtrMap  const& aEdge_extra_ptr_map 
               , VertexIsFixedMap const& aVertex_is_fixed_map 
-              , VisitorT*               aVisitor
+              , SetCollapseData  const& aSetCollapseData
+              , GetCost          const& aGetCost
+              , GetPlacement     const& aGetPlacement
+              , CostParams       const* aCostParams       // Can be NULL
+              , PlacementParams  const* aPlacementParams  // Can be NULL
+              , VisitorT*               aVisitor          // Can be NULL
               ) ;
   
   int run() ;
@@ -259,14 +262,14 @@ private:
   {
     Edge_data_ptr lData = get_data(aEdge);
     CGAL_assertion(lData);
-    return Get_cost(aEdge,mSurface,lData->data(),mParams);
+    return Get_cost(aEdge,mSurface,lData->data(),mCostParams);
   }
   
   Optional_placement_type get_placement( edge_descriptor const& aEdge ) const
   {
     Edge_data_ptr lData = get_data(aEdge);
     CGAL_assertion(lData);
-    return Get_placement(aEdge,mSurface,lData->data(),mParams);
+    return Get_placement(aEdge,mSurface,lData->data(),mPlacementParams);
   }
   
   bool compare_cost( edge_descriptor const& aEdgeA, edge_descriptor const& aEdgeB ) const
@@ -313,16 +316,16 @@ private:
    
 private:
 
-  TSM&          mSurface ;
-  Params const* mParams ; // Can be NULL
-
-  SetCollapseData  const& Set_collapse_data;   
-  GetCost          const& Get_cost ;
-  GetPlacement     const& Get_placement ;
+  TSM&                    mSurface ;
   ShouldStop       const& Should_stop ;
   EdgeExtraPtrMap  const& Edge_extra_ptr_map ;
   VertexIsFixedMap const& Vertex_is_fixed_map ;
-  VisitorT*               Visitor ;
+  SetCollapseData  const& Set_collapse_data;   
+  GetCost          const& Get_cost ;
+  GetPlacement     const& Get_placement ;
+  CostParams       const* mCostParams ;      // Can be NULL
+  PlacementParams  const* mPlacementParams ; // Can be NULL
+  VisitorT*               Visitor ;          // Can be NULL
   
 private:
 

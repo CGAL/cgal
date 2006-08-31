@@ -85,6 +85,30 @@ struct Surface_geometric_traits
   
 } ;
 
+template<class T, class U> struct ChooseNotVoidType ;
+template<class T>          struct ChooseNotVoidType<T   ,void> { typedef T    type ; } ;
+template<class U>          struct ChooseNotVoidType<void,U   > { typedef U    type ; } ;
+template<>                 struct ChooseNotVoidType<void,void> { typedef void type ; } ;
+
+template<class GetCost, class SetCollapseData>
+struct ExtractCostParamsType
+{
+  typedef typename ChooseNotVoidType< typename GetCost::Params
+                                    , typename SetCollapseData::CostParams
+                                    >
+                                    ::type type ;
+} ;
+
+template<class GetPlacement, class SetCollapseData>
+struct ExtractPlacementParamsType
+{
+  typedef typename ChooseNotVoidType< typename GetPlacement::Params
+                                    , typename SetCollapseData::PlacementParams
+                                    >
+                                    ::type type ;
+} ;
+
+
 } } // namespace Triangulated_surface_mesh::Simplification
 
 //

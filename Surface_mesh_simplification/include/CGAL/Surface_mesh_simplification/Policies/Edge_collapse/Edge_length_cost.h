@@ -43,12 +43,13 @@ public:
   
   typedef optional<FT> result_type ;
     
+  typedef char Params ;
+  
 public:
 
-  mutable int c ; Edge_length_cost() : c(0) {}
+  Edge_length_cost() {}
   
-  
-  template<class Collapse_data, class Params>
+  template<class Collapse_data>
   result_type operator()( edge_descriptor const& aEdge
                         , TSM&                   aSurface
                         , Collapse_data const&   aData
@@ -60,8 +61,6 @@ public:
     Point_3 const& ps = this->get_point(vs,aSurface);
     Point_3 const& pt = this->get_point(vt,aSurface);
       
-    ++ c ;
-    
     return result_type(squared_distance(ps,pt));
   }
   
