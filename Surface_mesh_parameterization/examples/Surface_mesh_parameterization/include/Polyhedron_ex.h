@@ -266,17 +266,17 @@ public:
     {
         Facet_iterator pFace = facets_begin();
         Facet_handle pClosest = pFace;
-        double min = pFace->distance(point);
+        double minimum = pFace->distance(point);
         for(;pFace != facets_end();
             pFace++)
         {
             if(is_inner(pFace))
             {
                 double distance = pFace->distance(point);
-                if(distance < min)
+                if(distance < minimum)
                 {
                     pClosest = pFace;
-                    min = distance;
+                    minimum = distance;
                 }
             }
         }
@@ -313,55 +313,55 @@ public:
     }
 
     // compute bounding interval
-    double min BOOST_PREVENT_MACRO_SUBSTITUTION (int coord)
+    double minimum (int coord)
     {
         CGAL_assertion(size_of_vertices() > 0);
         Vertex_iterator pVertex = vertices_begin();
-        double min = pVertex->point()[coord];
+        double minimum = pVertex->point()[coord];
         for(;pVertex != vertices_end();pVertex++)
-            min = (std::min)(min,pVertex->point()[coord]);
-        return min;
+            minimum = (std::min)(minimum,pVertex->point()[coord]);
+        return minimum;
     }
-    double max BOOST_PREVENT_MACRO_SUBSTITUTION (int coord)
+    double maximum (int coord)
     {
         CGAL_assertion(size_of_vertices() > 0);
         Vertex_iterator pVertex = vertices_begin();
-        double max = pVertex->point()[coord];
+        double maximum = pVertex->point()[coord];
         for(;pVertex != vertices_end();pVertex++)
-            max = (std::max)(max,pVertex->point()[coord]);
-        return max;
+            maximum = (std::max)(maximum,pVertex->point()[coord]);
+        return maximum;
     }
     Vertex_handle vertex_min(int coord,
-                             double &min)
+                             double &minimum)
     {
         CGAL_assertion(size_of_vertices() > 0);
         Vertex_iterator pVertex = vertices_begin();
         Vertex_handle pBest = pVertex;
-        min = pVertex->point()[coord];
+        minimum = pVertex->point()[coord];
         for(;pVertex != vertices_end();pVertex++)
         {
             double value = pVertex->point()[coord];
-            if(value < min)
+            if(value < minimum)
             {
-                min = (std::min)(min,value);
+                minimum = (std::min)(minimum,value);
                 pBest = pVertex;
             }
         }
         return pBest;
     }
     Vertex_handle vertex_max(int coord,
-                             double &max)
+                             double &maximum)
     {
         CGAL_assertion(size_of_vertices() > 0);
         Vertex_iterator pVertex = vertices_begin();
         Vertex_handle pBest = pVertex;
-        max = pVertex->point()[coord];
+        maximum = pVertex->point()[coord];
         for(;pVertex != vertices_end();pVertex++)
         {
             double value = pVertex->point()[coord];
-            if(value > max)
+            if(value > maximum)
             {
-                max = (std::max)(max,value);
+                maximum = (std::max)(maximum,value);
                 pBest = pVertex;
             }
         }

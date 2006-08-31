@@ -120,14 +120,14 @@ static bool write_file_eps(const Parameterization_polyhedron_adaptor& mesh_adapt
         double y1 = scale * mesh_adaptor.info(pHalfedge->prev())->uv().y();
         double x2 = scale * mesh_adaptor.info(pHalfedge)->uv().x();
         double y2 = scale * mesh_adaptor.info(pHalfedge)->uv().y();
-        xmin = std::min(xmin,x1);
-        xmin = std::min(xmin,x2);
-        xmax = std::max(xmax,x1);
-        xmax = std::max(xmax,x2);
-        ymax = std::max(ymax,y1);
-        ymax = std::max(ymax,y2);
-        ymin = std::min(ymin,y1);
-        ymin = std::min(ymin,y2);
+        xmin = (std::min)(xmin,x1);
+        xmin = (std::min)(xmin,x2);
+        xmax = (std::max)(xmax,x1);
+        xmax = (std::max)(xmax,x2);
+        ymax = (std::max)(ymax,y1);
+        ymax = (std::max)(ymax,y2);
+        ymin = (std::min)(ymin,y1);
+        ymin = (std::min)(ymin,y2);
     }
 
     out << "%!PS-Adobe-2.0 EPSF-2.0" << std::endl;

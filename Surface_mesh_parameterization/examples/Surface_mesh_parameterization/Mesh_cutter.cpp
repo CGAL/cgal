@@ -65,12 +65,12 @@ bool Mesh_cutter::init()
     m_pPolyhedron->tag_facets(FREE);
 
     // compute bounding box and center
-    double xmin = m_pPolyhedron->min(0);
-    double ymin = m_pPolyhedron->min(1);
-    double zmin = m_pPolyhedron->min(2);
-    double xmax = m_pPolyhedron->max(0);
-    double ymax = m_pPolyhedron->max(1);
-    double zmax = m_pPolyhedron->max(2);
+    double xmin = m_pPolyhedron->minimum(0);
+    double ymin = m_pPolyhedron->minimum(1);
+    double zmin = m_pPolyhedron->minimum(2);
+    double xmax = m_pPolyhedron->maximum(0);
+    double ymax = m_pPolyhedron->maximum(1);
+    double zmax = m_pPolyhedron->maximum(2);
     double xcenter = 0.5*(xmin+xmax);
     double ycenter = 0.5*(ymin+ymax);
     double zcenter = 0.5*(zmin+zmax);
