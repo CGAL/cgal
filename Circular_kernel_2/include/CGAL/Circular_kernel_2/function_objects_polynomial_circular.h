@@ -1116,6 +1116,44 @@ template < class CK >
 
   };
 
+  template <class CK>
+  class Orientation_2
+    : public CK::Linear_kernel::Orientation_2
+  {
+    typedef typename CK::Circular_arc_point_2       Circular_arc_point_2;
+
+  public:
+    typedef typename CK::Linear_kernel::Orientation   result_type;
+    typedef Arity_tag< 3 >            Arity;
+
+    using CK::Linear_kernel::Orientation_2::operator();
+
+    result_type
+    operator()(const Circular_arc_point_2& p, 
+               const Circular_arc_point_2& q, 
+               const Circular_arc_point_2& r) const
+    { return orientation<CK>(p,q,r); }
+  };
+
+  template <class CK>
+  class Collinear_2
+    : public CK::Linear_kernel::Collinear_2
+  {
+    typedef typename CK::Circular_arc_point_2       Circular_arc_point_2;
+
+  public:
+    typedef typename CK::Linear_kernel::Orientation   result_type;
+    typedef Arity_tag< 3 >            Arity;
+
+    using CK::Linear_kernel::Collinear_2::operator();
+
+    result_type
+    operator()(const Circular_arc_point_2& p, 
+               const Circular_arc_point_2& q, 
+               const Circular_arc_point_2& r) const
+    { return orientation<CK>(p,q,r) == COLLINEAR; }
+  };
+
 } // namespace CircularFunctors
 } // namespace CGAL
 
