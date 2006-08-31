@@ -78,13 +78,14 @@ CGAL_END_NAMESPACE
 
 #include <CGAL/make_root_of_2.h>
 
-// We must also include the following two, because of the overloadings
-// for Quotient<MP_Float> and Quotient<Gmpz>, which triggers their
+// We must also include the following three, because of the overloadings
+// for Quotient<MP_Float> and Quotient<Gmpz/Gmpzf>, which triggers their
 // instantiation, even if only to_double(double) is called, at least
 // when Quotient is defined...
 #include <CGAL/MP_Float.h>
 #ifdef CGAL_USE_GMP
 #  include <CGAL/Gmpz.h>
+#  include <CGAL/Gmpzf.h>
 #endif
 
 CGAL_BEGIN_NAMESPACE

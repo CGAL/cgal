@@ -57,6 +57,9 @@ typename Root_of_traits< NT >::RootOf_2
 make_root_of_2(const Quotient< NT > &a, const Quotient< NT > &b,
                const Quotient< NT > &c);
 
+template < class NT >
+Quotient<NT> exact_division(const Quotient<NT>& n, const Quotient<NT>& d);
+
 CGAL_END_NAMESPACE
 
 #endif  // CGAL_QUOTIENT_FWD_H

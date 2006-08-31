@@ -62,6 +62,22 @@ Root_of_2< Gmpz >
 make_root_of_2(const Gmpz &a, const Gmpz &b,
                const Gmpz &c, bool d);
 */
+
+class Gmpzf;
+
+double to_double(const Gmpzf&);
+Sign sign(const Gmpzf &);
+bool is_valid(const Gmpzf &);
+bool is_finite(const Gmpzf &);
+Gmpzf sqrt(const Gmpzf &);
+Gmpzf div(const Gmpzf &, const Gmpzf &);
+Gmpzf gcd(const Gmpzf &, const Gmpzf &);
+Gmpzf gcd(const Gmpzf &, int);
+// ToDo:
+// std::pair<double, double> to_interval (const Gmpzf &);
+Gmpzf exact_division(const Gmpzf&, const Gmpzf &);
+double to_double(const Quotient<Gmpzf>&);
+Comparison_result compare (const Gmpzf&, const Gmpzf &);
 CGAL_END_NAMESPACE
 
 #endif // CGAL_GMPZQ_FWD_H

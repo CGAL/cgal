@@ -533,6 +533,11 @@ const NT&
 numerator(const Quotient<NT>& q)
 { return q.num ; }
 
+template < class NT >
+Quotient<NT> exact_division(const Quotient<NT>& n, const Quotient<NT>& d) {
+  return n/d;
+}
+
 // The min/max are functions are needed since LEDA defines template
 // min/max functions which clash with std::min/max with ADL.
 template <class NT>
