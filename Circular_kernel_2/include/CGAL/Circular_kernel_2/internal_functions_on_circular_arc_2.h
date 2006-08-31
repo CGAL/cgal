@@ -67,6 +67,26 @@ namespace CircularFunctors {
     return AK().compare_xy_object()(p0.coordinates(), p1.coordinates());
   }
 
+  template < class CK >
+  Orientation 
+  orientation(const typename CK::Circular_arc_point_2 &p,
+              const typename CK::Circular_arc_point_2 &q,
+              const typename CK::Circular_arc_point_2 &r)
+  {
+    typedef typename CK::Root_of_2 Root_of_2;
+    const Root_of_2 px = p.x();
+    const Root_of_2 py = p.y();
+    const Root_of_2 qx = q.x();
+    const Root_of_2 qy = q.y();
+    const Root_of_2 rx = r.x();
+    const Root_of_2 ry = r.y();
+    const Root_of_2 a00 = qx-px;
+    const Root_of_2 a01 = qy-py;
+    const Root_of_2 a10 = rx-px;
+    const Root_of_2 a11 = ry-py;
+    return enum_cast<Orientation>(CGAL_NTS compare(a00*a11, a10*a01));
+  }
+
 //   template < class CK >
 //   inline
 //   Comparison_result 
