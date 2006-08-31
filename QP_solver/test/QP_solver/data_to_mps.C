@@ -22,6 +22,7 @@
 #include <sstream>
 #include <string>
 #include <iomanip>
+#include <CGAL/basic.h>
 
 #include <boost/any.hpp>
 
@@ -29,7 +30,7 @@ namespace CGAL {
   bool is_zero(const boost::any& a);
 }
 
-#include <CGAL/Gmpq.h>
+#include <CGAL/MP_Float.h>
 #include <CGAL/QP_solver.h>
 #include <CGAL/QP_solver/QP_full_exact_pricing.h>
 #include <CGAL/QP_solver/QP_exact_bland_pricing.h>
@@ -42,7 +43,7 @@ namespace CGAL {
 class Data_reader {
 public: // types:
   typedef boost::any ANT;
-  typedef CGAL::Gmpq Rational;
+  typedef CGAL::Quotient<CGAL::MP_Float> Rational;
   enum Row_type { LESS_EQUAL = -1, EQUAL, GREATER_EQUAL};
 
 private: // types:

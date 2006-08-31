@@ -1204,7 +1204,7 @@ public:
     if ( j < qp_n) {                                // original variable
 
       // [c_j +] A_Cj^T * lambda_C
-      mu_j = ( is_phaseI ? NT( 0) : dd * qp_c[ j]);
+      mu_j = ( is_phaseI ? NT( 0) : dd * NT(qp_c[ j]));
       mu_j__linear_part( mu_j, j, lambda_it, Has_equalities_only_and_full_rank());
 
       // ... + 2 D_Bj^T * x_B
@@ -1231,7 +1231,7 @@ public:
     if ( j < qp_n) {                                // original variable
 
       // [c_j +] A_Cj^T * lambda_C
-      mu_j = ( is_phaseI ? NT( 0) : dd * qp_c[ j]);
+      mu_j = ( is_phaseI ? NT( 0) : dd * NT(qp_c[ j]));
       mu_j__linear_part( mu_j, j, lambda_it, Has_equalities_only_and_full_rank());
 
       // ... + 2 D_Bj^T * x_B + 2 D_Nj x_N
@@ -1377,7 +1377,7 @@ public:
 	if ( art_A[ j].second) mu_j = -mu_j;
 
 	// c_j + ...
-	mu_j += dd*aux_c[ j];
+	mu_j += dd*NT(aux_c[ j]);
 
     }
 
@@ -1401,7 +1401,7 @@ public:
 	    if ( art_A[ j].second) mu_j = -mu_j;
 
 	    // c_j + ...
-	    mu_j += dd*aux_c[ j];
+	    mu_j += dd*NT(aux_c[ j]);
 	}
     }
 

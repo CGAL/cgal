@@ -28,6 +28,7 @@
 // and y = 1/8. The objective function value should be
 // 9/16 + 3/8 + 1 = 31/16 
 
+#include <CGAL/basic.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/QP_solver.h>
 

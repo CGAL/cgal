@@ -39,24 +39,8 @@ template<typename IT_,
 	 typename Use_sparse_representation_for_A_>
 bool QP_MPS_instance<IT_,ET_,
 		Use_sparse_representation_for_D_,
-		Use_sparse_representation_for_A_>::number(CGAL::Gmpq& entry) {
-    // accept rational or floating-point format
-    std::string s = token() + " "; // routines below can't deal with EOF 
-    std::istringstream from1(s), from2(s);
-    return 
-      number_from_quotient (entry, from1) || 
-      number_from_float (entry, from2);
-  }
-
-template<typename IT_,
-	 typename ET_,
-	 typename Use_sparse_representation_for_D_,
-	 typename Use_sparse_representation_for_A_>
-bool QP_MPS_instance<IT_,ET_,
-		Use_sparse_representation_for_D_,
 		     Use_sparse_representation_for_A_>::number_from_quotient(CGAL::Gmpq& entry, std::istringstream& from) {
     // reads rational in the form p/q
-    //whitespace();
     CGAL::Gmpz p,q;
     char ch;
     from >> p;
@@ -84,7 +68,6 @@ bool QP_MPS_instance<IT_,ET_,
 		Use_sparse_representation_for_A_>::number_from_float(CGAL::Gmpq& entry, std::istringstream& from) {
     // reads rationals from a decimal floating-point string; 
     // e.g. "0.1" will be parsed as 1/10
-    //whitespace();
     char c;
 
     // sign -> plus_sign
@@ -1078,6 +1061,11 @@ namespace QP_MPS_detail {
   template<>
   struct MPS_type_name<Gmpq> {
     static const char *name() { return "rational"; }
+  };  
+
+  template<>
+  struct MPS_type_name<Quotient<MP_Float> > {
+    static const char *name() { return "rational"; }
   };
 
   template<typename IT>
@@ -1097,6 +1085,11 @@ namespace QP_MPS_detail {
   template<>
   struct IT_to_ET<Gmpq> {
     typedef Gmpq ET;
+  }; 
+
+  template<>
+  struct IT_to_ET<Quotient<MP_Float> > {
+    typedef Quotient<MP_Float> ET;
   };
 
 } // QP_MPS_detail

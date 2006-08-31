@@ -58,11 +58,10 @@ else
  echo "tives/additional/, respectively. (The derivates are only generated when"
  echo "they do not exist or are outdated.)"
  echo ""
- echo "Sometimes you do not want (all) derivates of some master-MPS to be in-"
- echo "cluded in the (CGAL- or all-) testsuite; in this case, you first call"
- echo "this script (which generates the derivates) and afterwards you replace"
- echo "the derivative(s) you do not want with some very simple MPS-files (that"
- echo "are handled very fast by the solver). (See fit1d.mps, for example.)"
+ echo "Sometimes you do not want the derivates of some master-MPS to be made."
+ echo "In this case, you add the comment line"
+ echo "       *Derivatives: none "
+ echo "to your MPS file (see fit1d.mps, for example)"
  exit 1
 fi
 

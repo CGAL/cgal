@@ -58,7 +58,8 @@ bool QP_solver<Rep_>::is_valid()
       {
 	const bool f = this->is_solution_feasible_for_auxiliary_problem();
 	const bool o = this->is_solution_optimal_for_auxiliary_problem();
-	const bool aux_positive = this->solution() > et0;
+	const bool aux_positive = 
+	  ( (this->solution_numerator() > et0) && (d > et0) );
 	CGAL_qpe_debug {
 	  vout << std::endl
 	       << "----------" << std::endl
@@ -145,21 +146,21 @@ bool QP_solver<Rep_>::is_solution_feasible_for_auxiliary_problem()
        ++i_it, ++x_it)                    // iterate over all basic vars
     if (*i_it < qp_n)                     // ordinary original variable?
       for (int i=0; i<qp_m; ++i)
-	lhs_col[i] += (*x_it) * qp_A[*i_it][i];
+	lhs_col[i] += (*x_it) * ET(qp_A[*i_it][i]);
     else                                  // artificial variable?
       if (*i_it != art_s_i)   {           // normal artificial variable?
 	const int k = *i_it - qp_n - slack_A.size();
-	lhs_col[art_A[k].first] += (art_A[ k].second ? -et1 :  et1) * (*x_it);
+	lhs_col[art_A[k].first] += ET(art_A[ k].second ? -et1 : et1) * (*x_it);
       } else                              // special artificial variable
 	for (int i=0; i<qp_m; ++i)
-	  lhs_col[i] += (*x_it) * art_s[i];
+	  lhs_col[i] += (*x_it) * ET(art_s[i]);
 
   // compute left-hand side of (C1) (part for nonbasics):
   for (int j=0; j<qp_n; ++j)
     if (!is_basic(j)) {
       const ET var = nonbasic_original_variable_value(j) * d;
       for (int i=0; i<qp_m; ++i)
-	lhs_col[i] += var * qp_A[j][i];
+	lhs_col[i] += var * ET(qp_A[j][i]);
     }
 
   // compute left-hand side of (C1) (part for slackies):
@@ -169,7 +170,7 @@ bool QP_solver<Rep_>::is_solution_feasible_for_auxiliary_problem()
        ++i_it, ++x_it) {
     CGAL_qpe_assertion(B_S[in_B[*i_it]] == *i_it);
     const int k = *i_it - qp_n;
-    lhs_col[slack_A[k].first] += (slack_A[ k].second ? -et1 : et1) * (*x_it);
+    lhs_col[slack_A[k].first] += ET(slack_A[ k].second ? -et1 : et1) * (*x_it);
   }
 
   // check equality (C1);
@@ -359,12 +360,12 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
   for (int col = 0; col < no_of_wo_vars; ++col) {
     if (col < qp_n)                  // ordinary original variable
       for (int i=0; i<qp_m; ++i)
-	tau_aux[col] += lambda_aux[i] * qp_A[col][i];
+	tau_aux[col] += lambda_aux[i] * ET(qp_A[col][i]);
     else {
       int k = col - qp_n;
       if (k < static_cast<int>(slack_A.size()))
                                      // slack variable
-	tau_aux[col] += (slack_A[k].second? -et1 :  et1)
+	tau_aux[col] += ET(slack_A[k].second? -et1 :  et1)
 	  * lambda_aux[slack_A[k].first];
       else {                         // artificial variable
 	k -= slack_A.size();
@@ -372,11 +373,11 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
 	    art_s_i == -2 ||         // spec. art. out now => all art. normal
 	    col < no_of_wo_vars-1)   // spec. art still here => check
 	                             // case of normal artificial variable
-	  tau_aux[col] += (art_A[ k].second? -et1 : et1)
+	  tau_aux[col] += ET(art_A[ k].second? -et1 : et1)
 	    * lambda_aux[art_A[k].first];
 	else                         // case of special artificial variable
 	  for (int i=0; i<qp_m; ++i)
-	    tau_aux[col] += lambda_aux[i] * art_s[i];
+	    tau_aux[col] += lambda_aux[i] * ET(art_s[i]);
       }
     }
     CGAL_qpe_debug {
@@ -424,7 +425,7 @@ bool QP_solver<Rep_>::is_solution_feasible()
 
     // compute A x times d:
     for (int j=0; j<qp_m; ++j)
-      lhs_col[j] += var * qp_A[i][j];
+      lhs_col[j] += var * ET(qp_A[i][j]);
   }
   
   // check A x = b (where in the code both sides are multiplied by d):
@@ -489,13 +490,13 @@ is_solution_optimal()
   for (int col = 0; col < qp_n; ++col) {
     tau[col] = ET(qp_c[col]) * d;
     for (int i=0; i<qp_m; ++i)
-      tau[col] += lambda_prime[i] * qp_A[col][i];
+      tau[col] += lambda_prime[i] * ET(qp_A[col][i]);
   }
   if (!check_tag(Is_linear())) {
     for (int col = 0; col < qp_n; ++col) {
       D_pairwise_accessor twoD(qp_D,col);
       for (int i=0; i<qp_n; ++i)
-	tau[col] += x[i] * twoD(i);
+	tau[col] += x[i] * ET(twoD(i));
     }
   }
 
@@ -508,7 +509,7 @@ is_solution_optimal()
   Values lhs_col(qp_m, et0);
   for (int i=0; i<qp_n; ++i)
     for (int j=0; j<qp_m; ++j)
-      lhs_col[j] += x[i] * qp_A[i][j];
+      lhs_col[j] += x[i] * ET(qp_A[i][j]);
 
   // check (C5) and (C6), more precisely:
   // - check \lambda[i] >= 0 for i in LE:={j|qp_r[j]==LESS_EQUAL}
@@ -611,7 +612,7 @@ bool QP_solver<Rep_>::is_solution_unbounded()
   Values aw(qp_m, et0);
   for (int i=0; i<qp_n; ++i)
     for (int j=0; j<qp_m; ++j)
-      aw[j] += w[i] * qp_A[i][j];
+      aw[j] += w[i] * ET(qp_A[i][j]);
 
   // check feasibility (C8):
   for (int row=0; row<qp_m; ++row)
@@ -632,7 +633,7 @@ bool QP_solver<Rep_>::is_solution_unbounded()
       ET sum = et0;
       D_pairwise_accessor twoD(qp_D,i);
       for (int j=0; j<qp_n; ++j)
-	sum += w[j] * twoD(j);
+	sum += w[j] * ET(twoD(j));
       if (sum != et0)
 	return false;
     }
@@ -640,7 +641,7 @@ bool QP_solver<Rep_>::is_solution_unbounded()
   // check unboundedness c^Tw > 0 (C12):
   ET m = et0;
   for (int i=0; i<qp_n; ++i)
-    m += w[i] * qp_c[i];
+    m += w[i] * ET(qp_c[i]);
   if (m <= et0)
     return false;
 

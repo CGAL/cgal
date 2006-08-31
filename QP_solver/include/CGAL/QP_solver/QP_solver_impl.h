@@ -187,7 +187,8 @@ pivot_step( )
         if ( is_phaseI) {                               // phase I
 	    // since we no longer assume full row rank and subsys assumption
 	    // we have to strengthen the precondition for infeasibility
-            if (this->solution() > et0) {    // problem is infeasible
+            if (this->solution_numerator() > et0) {    
+	      // problem is infeasible
 	        m_phase  = 3;
 	        m_status = INFEASIBLE;
 	        CGAL_qpe_debug {
@@ -798,7 +799,7 @@ test_explicit_bounds_dir_pos(int k, const ET& x_k, const ET& q_k,
 {
     if (q_k > et0) {                                // check for lower bound
         if (*(qp_fl+k)) {
-            ET  diff = x_k - (d * qp_l[k]); 
+            ET  diff = x_k - (d * ET(qp_l[k])); 
             if (diff * q_min < d_min * q_k) {
                 i_min = k;
                 d_min = diff;
@@ -808,7 +809,7 @@ test_explicit_bounds_dir_pos(int k, const ET& x_k, const ET& q_k,
         }
     } else {                                        // check for upper bound
         if ((q_k < et0) && (*(qp_fu+k))) {
-            ET  diff = (d * qp_u[k]) - x_k;
+            ET  diff = (d * ET(qp_u[k])) - x_k;
             if (diff * q_min < -(d_min * q_k)) {
                 i_min = k;
                 d_min = diff;
@@ -830,7 +831,7 @@ test_explicit_bounds_dir_neg(int k, const ET& x_k, const ET& q_k,
 {
     if (q_k < et0) {                                // check for lower bound
         if (*(qp_fl+k)) {
-            ET  diff = x_k - (d * qp_l[k]); 
+            ET  diff = x_k - (d * ET(qp_l[k])); 
             if (diff * q_min < -(d_min * q_k)) {
                 i_min = k;
                 d_min = diff;
@@ -840,7 +841,7 @@ test_explicit_bounds_dir_neg(int k, const ET& x_k, const ET& q_k,
         }
     } else {                                        // check for upper bound
         if ((q_k > et0) && (*(qp_fu+k))) {
-            ET  diff = (d * qp_u[k]) - x_k;
+            ET  diff = (d * ET(qp_u[k])) - x_k;
             if (diff * q_min < d_min * q_k) {
                 i_min = k;
                 d_min = diff;
@@ -863,7 +864,7 @@ test_mixed_bounds_dir_pos(int k, const ET& x_k, const ET& q_k,
     if (q_k > et0) {                                // check for lower bound
         if (k < qp_n) {                             // original variable
             if (*(qp_fl+k)) {
-                ET  diff = x_k - (d * qp_l[k]);
+                ET  diff = x_k - (d * ET(qp_l[k]));
                 if (diff * q_min < d_min * q_k) {
                     i_min = k;
                     d_min = diff;
@@ -880,7 +881,7 @@ test_mixed_bounds_dir_pos(int k, const ET& x_k, const ET& q_k,
         }
     } else {                                        // check for upper bound
         if ((q_k < et0) && (k < qp_n) && *(qp_fu+k)) {
-            ET  diff = (d * qp_u[k]) - x_k;
+            ET  diff = (d * ET(qp_u[k])) - x_k;
             if (diff * q_min < -(d_min * q_k)) {
                 i_min = k;
                 d_min = diff;
@@ -903,7 +904,7 @@ test_mixed_bounds_dir_neg(int k, const ET& x_k, const ET& q_k,
     if (q_k < et0) {                                // check for lower bound
         if (k < qp_n) {                             // original variable
             if (*(qp_fl+k)) {
-                ET  diff = x_k - (d * qp_l[k]);
+                ET  diff = x_k - (d * ET(qp_l[k]));
                 if (diff * q_min < -(d_min * q_k)) {
                     i_min = k;
                     d_min = diff;
@@ -920,7 +921,7 @@ test_mixed_bounds_dir_neg(int k, const ET& x_k, const ET& q_k,
         }
     } else {                                        // check for upper bound
         if ((q_k < et0) && (k < qp_n) && *(qp_fu+k)) {
-            ET  diff = (d * qp_u[k]) - x_k;
+            ET  diff = (d * ET(qp_u[k])) - x_k;
             if (diff * q_min < d_min * q_k) {
                 i_min = k;
                 d_min = diff;
@@ -1213,7 +1214,7 @@ expel_artificial_variables_from_basis( )
 		    ratio_test_init__A_Cj( A_Cj.begin(), j_, 
 		        Has_equalities_only_and_full_rank());
 		    r_A_Cj = inv_M_B.inv_M_B_row_dot_col(row_ind, A_Cj.begin());
-		    if (r_A_Cj != 0) {
+		    if (r_A_Cj != et0) {
 		        ratio_test_1__q_x_O(Is_linear());
 			i = i_;
 			j = j_;
@@ -2333,7 +2334,7 @@ update_r_C_r_S_B__j(ET& x_j)
     
     for (Value_iterator r_C_it = r_C.begin(); r_C_it != r_C.end();
                                                     ++r_C_it, ++A_C_j_it) {
-        *r_C_it -= x_j * (*A_C_j_it); 
+        *r_C_it -= x_j * ET(*A_C_j_it); 
     }
     
     // update of r_{S_{B}}
@@ -2341,7 +2342,7 @@ update_r_C_r_S_B__j(ET& x_j)
         
     for (Value_iterator r_S_B_it = r_S_B.begin(); r_S_B_it != r_S_B.end();
                                                 ++r_S_B_it, ++A_S_B_j_it) {
-        *r_S_B_it -= x_j * (*A_S_B_j_it);
+        *r_S_B_it -= x_j * ET(*A_S_B_j_it);
     }   
 }
 
@@ -2359,7 +2360,7 @@ update_r_C_r_S_B__j_i(ET& x_j, ET& x_i)
     
     for (Value_iterator r_C_it = r_C.begin(); r_C_it != r_C.end();
                                         ++r_C_it, ++A_C_j_it, ++A_C_i_it) {
-        *r_C_it += (x_i * *A_C_i_it) - (x_j * *A_C_j_it); 
+        *r_C_it += (x_i * ET(*A_C_i_it)) - (x_j * ET(*A_C_j_it)); 
     }
     
     // update of vector r_{S_{B}}
@@ -2368,7 +2369,7 @@ update_r_C_r_S_B__j_i(ET& x_j, ET& x_i)
 
     for (Value_iterator r_S_B_it = r_S_B.begin(); r_S_B_it != r_S_B.end();
                                     ++r_S_B_it, ++A_S_B_j_it, ++A_S_B_i_it) {
-        *r_S_B_it += (x_i * *A_S_B_i_it) - (x_j * *A_S_B_j_it); 
+        *r_S_B_it += (x_i * ET(*A_S_B_i_it)) - (x_j * ET(*A_S_B_j_it)); 
     }
 }
 
@@ -2383,7 +2384,7 @@ update_r_C_r_S_B__i(ET& x_i)
     
     for (Value_iterator r_C_it = r_C.begin(); r_C_it != r_C.end(); 
                                                     ++r_C_it, ++A_C_i_it) {
-        *r_C_it += x_i * (*A_C_i_it); 
+        *r_C_it += x_i * ET(*A_C_i_it); 
     }
     
     // update of r_{S_{B}}
@@ -2391,7 +2392,7 @@ update_r_C_r_S_B__i(ET& x_i)
     
     for (Value_iterator r_S_B_it = r_S_B.begin(); r_S_B_it != r_S_B.end();
                                                 ++r_S_B_it, ++A_S_B_i_it) {
-        *r_S_B_it += x_i * (*A_S_B_i_it);
+        *r_S_B_it += x_i * ET(*A_S_B_i_it);
     }   
 }
 
@@ -3143,9 +3144,12 @@ print_solution( )
         vout2.out() << "   denominator: " << denom << std::endl;
         vout2.out() << std::endl;
     }
-    Quotient<ET>  s = solution();
     vout1 << "  ";
-    vout.out() << "solution: " << s << "  ~= " << to_double( s) << std::endl;
+    vout.out() << "solution: " 
+	       << solution_numerator() << " / " << solution_denominator() 
+	       << "  ~= " 
+      << to_double(solution_numerator())/to_double(solution_denominator())
+      << std::endl;
     vout2 << std::endl;
 }
 
@@ -3171,11 +3175,11 @@ print_ratio_1_original(int k, const ET& x_k, const ET& q_k)
             << std::endl;
         }
     } else {                                        // upper bounded
-        if (q_k * direction > et0) {                // check for lower bound
+        if (q_k * ET(direction) > et0) {            // check for lower bound
             if (B_O[k] < qp_n) {                         // original variable
                 if (*(qp_fl+B_O[k])) {                   // finite lower bound
                     vout2.out() << "t_O_" << k << ": "
-                    << x_k - (d * qp_l[B_O[k]]) << '/' << q_k
+                    << x_k - (d * ET(qp_l[B_O[k]])) << '/' << q_k
                     << ( ( q_i != et0) && ( i == B_O[ k]) ? " *" : "")
                     << std::endl;
                 } else {                            // lower bound -infinity
@@ -3190,11 +3194,11 @@ print_ratio_1_original(int k, const ET& x_k, const ET& q_k)
                 << ( ( q_i != et0) && ( i == B_O[ k]) ? " *" : "")
                 << std::endl;
             }
-        } else if (q_k * direction < et0) {         // check for upper bound
+        } else if (q_k * ET(direction) < et0) {     // check for upper bound
             if (B_O[k] < qp_n) {                         // original variable
                 if (*(qp_fu+B_O[k])) {                   // finite upper bound
                     vout2.out() << "t_O_" << k << ": "
-                    << (d * qp_l[B_O[k]]) - x_k << '/' << q_k
+                    << (d * ET(qp_l[B_O[k]])) - x_k << '/' << q_k
                     << ( ( q_i != et0) && ( i == B_O[ k]) ? " *" : "")
                     << std::endl;                    
                 } else {                            // upper bound infinity
@@ -3235,12 +3239,12 @@ print_ratio_1_slack(int k, const ET& x_k, const ET& q_k)
             << std::endl;        
         }
     } else {                                        // upper bounded
-        if (q_k * direction > et0) {                // check for lower bound
+        if (q_k * ET(direction) > et0) {            // check for lower bound
             vout2.out() << "t_S_" << k << ": "
             << x_k << '/' << q_k
             << ( ( q_i != et0) && ( i == B_S[ k]) ? " *" : "")
             << std::endl;            
-        } else if (q_k * direction < et0) {         // check for upper bound
+        } else if (q_k * ET(direction) < et0) {     // check for upper bound
             vout2.out() << "t_S_" << k << ": "
             << "inf" << '/' << q_k
             << ( ( q_i != et0) && ( i == B_S[ k]) ? " *" : "")

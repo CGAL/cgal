@@ -31,6 +31,7 @@
 // 9/16 + 3/8 + 1 = 31/16 
 
 // for some reason, almost no other include order works...
+#include <CGAL/basic.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/QP_solver.h>
 

@@ -946,9 +946,9 @@ class QP_basis_inverse {
 	}
     }
     
-    // vector-vector multiplication
+    // vector-vector multiplication  
     template < class InIt1, class InIt2 > inline
-    typename std::iterator_traits<InIt1>::value_type
+    typename std::iterator_traits<InIt1>::value_type  
     inner_product( InIt1 u_it, InIt2 v_it, unsigned int n) const
     {
 	typedef  typename std::iterator_traits<InIt1>::value_type  NT;
@@ -956,7 +956,7 @@ class QP_basis_inverse {
         // compute u^T v
 	NT sum = NT( 0);
         for ( unsigned int count = 0; count < n; ++count, ++u_it, ++v_it) {
-            sum += *u_it * *v_it;
+            sum += NT(*u_it) * NT(*v_it);
         }
     
         return sum;

@@ -17,11 +17,17 @@
 //
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
 //                 Bernd Gaertner <gaertner@inf.ethz.ch>
+#include <CGAL/basic.h>
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
 
+#ifndef CGAL_USE_GMP
+#include <CGAL/MP_Float.h>
+#else
 #include <CGAL/Gmpz.h>
+#endif 
+
 #include <CGAL/QP_solver.h>
 #include <CGAL/QP_solver/QP_full_exact_pricing.h>
 #include <CGAL/QP_solver/QP_partial_exact_pricing.h>
@@ -40,8 +46,15 @@ int main(const int argNr,const char **args) {
   const int verbosity = argNr < 2? 1 : std::atoi(args[1]);
 
   // construct QP instance:
-  typedef CGAL::Gmpz IT;
+
+#ifndef CGAL_USE_GMP   
+  typedef CGAL::MP_Float IT; 
+  typedef CGAL::MP_Float ET; 
+#else  
+  typedef CGAL::Gmpz IT; 
   typedef CGAL::Gmpz ET;
+#endif
+
   typedef CGAL::QP_MPS_instance<IT,ET> QP;
   QP qp(std::cin,true,verbosity);
 
@@ -65,7 +78,27 @@ int main(const int argNr,const char **args) {
   // (Note: if you know in advance that the problem is an LP
   // you should not do this, but set Is_linear to Tag_true.)
   if (qp.is_linear() && !check_tag(Is_linear()))
-    qp.make_zero_D();
+    qp.make_zero_D();  
+
+//   CGAL::write_MPS(cout, 
+// 		  " ", 
+// 		  qp.comment(), 
+// 		  "write_MPS",
+// 		  qp.problem_name(), 
+// 		  qp.number_of_variables(), 
+// 		  qp.number_of_constraints(),
+// 		  qp.A(), 
+// 		  qp.b(), 
+// 		  qp.c(), 
+//                qp.c_0(),
+// 		  qp.D(),
+// 		  qp.fu(), 
+// 		  qp.fl(), 
+// 		  qp.u(), 
+// 		  qp.l(),
+// 		  qp.row_types());
+//   std::exit(1);
+
 
   typedef CGAL::QP_solver_MPS_traits_d<QP,
     Is_linear,
@@ -97,21 +130,14 @@ int main(const int argNr,const char **args) {
   if (solver.status() == Solver::OPTIMAL) {
     // output solution:
     cout << "Objective function value: " << 
-      solver.solution() << " ~ " <<
-      CGAL::to_double(solver.solution_numerator()) /
-      CGAL::to_double(solver.solution_denominator()) <<
-      endl;     
+      CGAL::to_double(solver.solution()) << endl;     
      
     cout << "Variable values:" << endl;
     Solver::Variable_value_iterator it 
       = solver.variables_value_begin() ;
-    Solver::Variable_numerator_iterator it_n
-      = solver.variables_numerator_begin();
-    ET denom = solver.variables_common_denominator();
-    for (unsigned int i=0; i < qp.number_of_variables(); ++it, ++it_n, ++i)
+    for (unsigned int i=0; i < qp.number_of_variables(); ++it, ++i)
       cout << "  " << qp.name_of_variable(i) << " = "
-	   << *it << " ~ " << CGAL::to_double(*it_n)/CGAL::to_double(denom)
-           << endl;
+	   << CGAL::to_double(*it) << endl;
     return 0;
   }
   if  (solver.status() == Solver::INFEASIBLE)

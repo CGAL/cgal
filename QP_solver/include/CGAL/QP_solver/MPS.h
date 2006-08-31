@@ -296,7 +296,15 @@ private: // parsing routines:
     return from.good();
   }
   
-  bool number(CGAL::Gmpq& entry); // calls the following two:
+  bool number(CGAL::Gmpq& entry) {
+    // accept rational or floating-point format
+    std::string s = token() + " "; // routines below can't deal with EOF 
+    std::istringstream from1(s), from2(s);
+    return 
+      number_from_quotient (entry, from1) || 
+      number_from_float (entry, from2);
+  }
+
   bool number_from_quotient(CGAL::Gmpq& entry, std::istringstream& from);
   bool number_from_float(CGAL::Gmpq& entry, std::istringstream& from);
 

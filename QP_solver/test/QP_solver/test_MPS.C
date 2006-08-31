@@ -20,10 +20,14 @@
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
+#include <CGAL/basic.h>
 
-#include <CGAL/Gmpq.h>
-#include <CGAL/Gmpz.h>
+#ifndef CGAL_USE_GMP
 #include <CGAL/MP_Float.h>
+#else
+#include <CGAL/Gmpzf.h>
+#endif
+
 #include <CGAL/QP_solver.h>
 #include <CGAL/QP_solver/QP_full_exact_pricing.h>
 #include <CGAL/QP_solver/QP_exact_bland_pricing.h>
@@ -44,7 +48,11 @@ int main(const int argNr,const char **args) {
 
   // construct QP instance:
   typedef double IT;
+#ifndef CGAL_USE_GMP
   typedef CGAL::MP_Float ET;
+#else
+  typedef CGAL::Gmpzf ET;
+#endif
   typedef CGAL::QP_MPS_instance<IT,ET> QP;
   QP qp(std::cin,true,verbosity);
 
@@ -100,21 +108,14 @@ int main(const int argNr,const char **args) {
   if (solver.status() == Solver::OPTIMAL) {
     // output solution:
     cout << "Objective function value: " << 
-      solver.solution() << " ~ " <<
-      CGAL::to_double(solver.solution_numerator()) /
-      CGAL::to_double(solver.solution_denominator()) <<
-      endl;     
+      solver.solution() << endl;     
      
     cout << "Variable values:" << endl;
     Solver::Variable_value_iterator it 
       = solver.variables_value_begin() ;
-    Solver::Variable_numerator_iterator it_n
-      = solver.variables_numerator_begin();
-    ET denom = solver.variables_common_denominator();
-    for (unsigned int i=0; i < qp.number_of_variables(); ++it, ++it_n, ++i)
+    for (unsigned int i=0; i < qp.number_of_variables(); ++it, ++i)
       cout << "  " << qp.name_of_variable(i) << " = "
-	   << *it << " ~ " << CGAL::to_double(*it_n)/CGAL::to_double(denom)
-           << endl;
+	   << CGAL::to_double(*it) << endl;
     return 0;
   }
   if  (solver.status() == Solver::INFEASIBLE)

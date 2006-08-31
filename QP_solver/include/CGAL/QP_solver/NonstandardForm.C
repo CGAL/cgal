@@ -90,11 +90,11 @@ multiply__A_ixO(int row) const
     // nonzero.
     switch (x_O_v_i[i]) {
     case UPPER:
-      value += ET(qp_u[i]) * qp_A[i][row];
+      value += ET(qp_u[i]) * ET(qp_A[i][row]);
       break;
     case LOWER:
     case FIXED:
-      value += ET(qp_l[i]) * qp_A[i][row];
+      value += ET(qp_l[i]) * ET(qp_A[i][row]);
       break;
     case BASIC:
       CGAL_qpe_assertion(false);
@@ -126,7 +126,7 @@ multiply__A_CxN_O(Value_iterator out) const
       for (Index_const_iterator row_it = C.begin();
 	   row_it != C.end();
 	   ++row_it, ++out_it)
-	*out_it += x_i * a_col[*row_it];
+	*out_it += x_i * ET(a_col[*row_it]);
     }
 }
 
@@ -178,7 +178,7 @@ multiply__A_S_BxN_O(Value_iterator out) const
       for (Index_const_iterator row_it = S_B.begin();
 	   row_it != S_B.end();
 	   ++row_it, ++out_it)
-	*out_it += x_i * a_col[*row_it];
+	*out_it += x_i * ET(a_col[*row_it]);
     }
 }
 

@@ -24,10 +24,17 @@
 #include <locale>
 
 #include <cstdlib>
+#include <CGAL/basic.h>
 
+#ifndef CGAL_USE_GMP
+#include <CGAL/Gmpq.h>       // Quotient<MP_Float> is too slow, even
+#include <CGAL/MP_Float.h>   // with normalization switched on
+#else
+#include <CGAL/Gmpz.h>  
+#include <CGAL/Gmpzf.h>
 #include <CGAL/Gmpq.h>
-#include <CGAL/Gmpz.h>
-#include <CGAL/MP_Float.h>
+#endif
+
 #include <CGAL/QP_solver.h>
 #include <CGAL/QP_solver/QP_full_exact_pricing.h>
 #include <CGAL/QP_solver/QP_exact_bland_pricing.h>
@@ -71,24 +78,27 @@ typedef std::map<std::string,int>::const_iterator Key_const_iterator;
 typedef std::map<std::string,int>::iterator Key_iterator;
 typedef std::pair<std::string,int> Arg;
 
+#ifdef CGAL_USE_GMP
+typedef CGAL::Gmpzf Float; 
+typedef CGAL::Gmpz Integer;
+typedef CGAL::Gmpq Rational;
+#else
+typedef CGAL::MP_Float Float;  
+typedef CGAL::MP_Float Integer;
+typedef CGAL::Gmpq Rational; 
+//typedef CGAL::Quotient<CGAL::MP_Float> Rational;  // too slow
+#endif
+
 // The following selector is used to derive the "cheap" number-type
 // used during the pricing:
 template<typename ET>
-struct NT_selector {};
-
-template<>
-struct NT_selector<CGAL::Gmpq> {
-  typedef CGAL::Gmpq NT;
+struct NT_selector {
+  typedef ET NT;
 };
 
 template<>
-struct NT_selector<CGAL::MP_Float> {
+struct NT_selector<Float> {
   typedef double NT;
-};
-
-template<>
-struct NT_selector<CGAL::Gmpz> {
-  typedef CGAL::Gmpz NT;
 };
 
 template<typename T>
@@ -99,10 +109,10 @@ bool is_int(const T&)               { return false; }
 bool is_int(const int&)             { return true; }
 template<typename T>
 bool is_integer(const T&)           { return false; }
-bool is_integer(const CGAL::Gmpz&)  { return true; }
+bool is_integer(const Integer&)     { return true; }
 template<typename T>
 bool is_rational(const T&)          { return false; }
-bool is_rational(const CGAL::Gmpq&) { return true; }
+bool is_rational(const Rational&)   { return true; }
 
 template <typename T>
 T string_to(const std::string& s) {
@@ -470,21 +480,21 @@ bool processType(const std::string& filename,
   if (!processOnlyOneValue || value==Int_type)
     if (!process<Is_linear,Is_symmetric,
 	Has_equalities_only_and_full_rank,Is_in_standard_form,
-	int,CGAL::Gmpz>(filename,options))
+	int,Integer>(filename,options))
       success = false;
 #endif
 #ifdef QP_DOUBLE
   if (!processOnlyOneValue || value==Double_type)
     if (!process<Is_linear,Is_symmetric,
 	Has_equalities_only_and_full_rank,Is_in_standard_form,
-	double,CGAL::MP_Float>(filename,options))
+	double,Float>(filename,options))
       success = false;
 #endif
 #ifdef QP_RATIONAL
   if (!processOnlyOneValue || value==Rational_type)
     if (!process<Is_linear,Is_symmetric,
 	Has_equalities_only_and_full_rank,Is_in_standard_form,
-	CGAL::Gmpq,CGAL::Gmpq>(filename,options))
+	Rational,Rational>(filename,options))
       success = false;
 #endif
   return success;
