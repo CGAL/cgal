@@ -29,7 +29,7 @@
 #ifndef CGAL_IO_DXF_VARIANT_READER_H
 #define CGAL_IO_DXF_VARIANT_READER_H
 
-#include <CGAL/IO/Dxf_reader.h>
+#include <CGAL/IO/Dxf_reader_doubles.h>
 #include <iostream>
 #include <string>
 #include <list>
@@ -39,10 +39,11 @@
 
 namespace CGAL {
 
-
 template<class CK,class Circular_arc_2, class Line_arc_2, class OutputIterator>
   OutputIterator variant_load(std::istream& is, OutputIterator res)
 {
+
+  typedef CGAL::Triple<double,double,double> Triple;
   typedef typename CK::FT FT;
   typedef typename CK::Circular_arc_point_2 Circular_arc_point_2;    
   typedef typename CK::Root_of_2 Root_of_2;
@@ -51,75 +52,99 @@ template<class CK,class Circular_arc_2, class Line_arc_2, class OutputIterator>
   typedef typename CK::Point_2 Point_2;
   typedef typename CK::Circle_2 Circle_2;
   typedef typename boost::variant< Circular_arc_2, Line_arc_2 >        Arc;
-  typedef std::list<std::pair<Point_2, double> > Polygon;
+  typedef std::list<Triple> Polygon;
   typedef std::list<Polygon> Polygons;
-  typedef std::list<Circle_2> Circles;
+  typedef std::list<Triple> Circles;
 
   Polygons polygons;
   Circles circles;
-  CGAL::Dxf_reader<CK> reader;
+  CGAL::Dxf_reader_doubles reader;
   
   reader(is, polygons, circles);
 
   std::cout << "Read " << polygons.size() << " polygons, and " 
 	    << circles.size() << " circles" << std::endl;
-  
+
+
   for(typename Circles::iterator it = circles.begin(); it != circles.end(); it++){
-    Arc arc = *it;
+    Arc arc = typename CK::Construct_circular_arc_2()(typename CK::Construct_circle_2()(typename CK::Construct_point_2()(it->first, it->second), FT(it->third)));
     *res++ = arc;
   }
   
-  Point_2 first_point;
-  Point_2 ps;
-  Point_2 pt ;
-  Point_2 center;
-  FT bulge;
+  std::map<std::pair<double,double>, Circular_arc_point_2> points;
+  typename std::map<std::pair<double,double>, Circular_arc_point_2>::iterator p_cap_it;
+
+  double bulge;
+
+  Circular_arc_point_2 caps, capt;
+  Arc arc;
+
   for(typename Polygons::iterator it = polygons.begin(); it != polygons.end(); it++){
     typename Polygon::iterator pit = it->begin();
 
-    first_point = pit->first;    
-    
+    std::pair<double,double> xyfirst = std::make_pair(pit->first, pit->second);    
+    std::pair<double,double> xyps, xypt = std::make_pair(pit->first, pit->second);
+    Point_2 ps, pt = typename CK::Construct_point_2()(xypt.first, xypt.second);
+    Point_2 first = pt;
 
-    while(true){
-      ps = pit->first;
-      bulge = pit->second;
+      while(true){
+      xyps = xypt;
+      ps = pt;
+      bulge = pit->third;
       pit++;
 
       if(pit ==it->end()){
 	break;
       }
-      pt = pit->first;
-      //std::cerr << "bulge = " << to_double(bulge) << std::endl;
-      if(bulge == FT(0)){
-	if(ps != pt){     
-	  Arc arc = Line_arc_2(ps, pt);
-	  //std::cerr << "Line_arc_2 " << std::endl;
-	  // std::cerr << arc << std::endl;
+      xypt = std::make_pair(pit->first, pit->second);
+      pt = typename CK::Construct_point_2()(xypt.first, xypt.second);
+
+      p_cap_it = points.find(xyps);	  
+      if(p_cap_it == points.end()){
+	caps = typename CK::Construct_circular_arc_point_2()(ps);
+	points.insert(std::make_pair(xyps, caps));
+      }else{
+	caps = p_cap_it->second;
+      }
+      p_cap_it = points.find(xypt);	  
+      if(p_cap_it == points.end()){
+	capt = typename CK::Construct_circular_arc_point_2()(pt);
+	points.insert(std::make_pair(xypt, capt));
+      } else {
+	capt = p_cap_it->second;
+      } 
+      
+      if(bulge == 0){
+	
+	if(xyps != xypt){
+	  
+	  arc = Line_arc_2(typename CK::Construct_line_2()(ps,pt),caps, capt);
+
 	  *res++ = arc;
 	}
       } else {
-	Circular_arc_2 arc = Circular_arc_2(ps, pt, bulge);
+	Circular_arc_2 carc(typename CK::Construct_circle_2()(ps, pt, bulge),
+			    caps, capt);
+	print_dag(carc, std::cout);
+	arc = carc;
 	*res++ = arc;
       }
     }
 
-    if(bulge == FT(0)){
-      if(ps != first_point){
-	Arc arc = Line_arc_2(ps, first_point);      
-	//std::cerr << "Line_arc_2" << std::endl;
+    
+    if(bulge == 0){
+      if(xypt != xyfirst){
+	arc = Line_arc_2(typename CK::Construct_line_2()(pt, first),capt, points.find(xyfirst)->second);      
 	*res++ = arc;
       }
     } else {
-      pt = first_point;
-      Circular_arc_2 arc = Circular_arc_2(ps,pt, bulge);
-      
-      //std::cerr << "arc with center: "  << to_double(x_coord) << "  " << to_double(y_coord) << " and radius " << sqrt(to_double(sqr_rad)) << std::endl;	
-      //std::cerr << "source: " << to_double(ps.x()) << ", " << to_double(ps.y()) << " target: " << to_double(pt.x()) << ", " << to_double(pt.y()) << std::endl << std::endl;
-
-      //std::cerr << "arc with center: "  << x_coord << "  " << y_coord << " and radius " << sqrt(to_double(sqr_rad)) << std::endl;	
-      //std::cerr << "source: " << ps.x() << ", " << ps.y() << " target: " << pt.x() << ", " << pt.y() << std::endl << std::endl;
+      Circular_arc_2 carc(typename CK::Construct_circle_2()(pt, first, bulge),
+			  capt, points.find(xyfirst)->second);
+      print_dag(carc, std::cout);
+      arc = carc;
       *res++ = arc;
     }
+    
   }
   std::cout << " Loaded" << std::endl;
   
