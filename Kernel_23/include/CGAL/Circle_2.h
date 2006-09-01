@@ -80,6 +80,9 @@ public:
   Circle_2(const Point_2 & p, const Point_2 & q)
     : RCircle_2(typename R::Construct_circle_2()(Return_base_tag(), p, q, COUNTERCLOCKWISE)) {}
 
+  Circle_2(const Point_2 & p, const Point_2 & q, const FT &bulge)
+    : RCircle_2(typename R::Construct_circle_2()(Return_base_tag(), p, q, bulge)) {}
+
   Circle_2(const Point_2 & center, const Orientation& orientation)
     : RCircle_2(typename R::Construct_circle_2()(Return_base_tag(), center, FT(0), orientation)) {}
 

@@ -700,6 +700,27 @@ namespace CommonKernelFunctors {
     }
 
     Rep // Circle_2
+    operator()( Return_base_tag,
+                const Point_2& p, const Point_2& q,
+	        const FT& bulge) const
+    {
+     
+      typename K::Compute_squared_distance_2 squared_distance;
+      const FT sqr_bulge = CGAL::square(bulge);
+      const FT common = (FT(1) - sqr_bulge) / (FT(4)*bulge);
+      const FT x_coord = (p.x() + q.x())/FT(2)
+	                 + common*(p.y() - q.y());
+      const FT y_coord = (p.y() + q.y())/FT(2)
+                          + common*(q.x() - p.x());
+      
+      const FT sqr_rad = squared_distance(p, q) 
+	                 * (FT(1)/sqr_bulge + FT(2) + sqr_bulge) / FT(16); 
+
+      return Rep(Point_2(x_coord, y_coord), sqr_rad); 
+    }
+
+
+    Rep // Circle_2
     operator()( Return_base_tag, const Point_2& center,
 	        Orientation orientation = COUNTERCLOCKWISE) const
     {
@@ -728,6 +749,13 @@ namespace CommonKernelFunctors {
 	        Orientation orientation = COUNTERCLOCKWISE) const
     {
       return this->operator()(Return_base_tag(), p, q, orientation);
+    }
+
+    Circle_2
+    operator()( const Point_2& p, const Point_2& q,
+	        const FT& bulge) const
+    {
+      return this->operator()(Return_base_tag(), p, q, bulge);
     }
 
     Circle_2
