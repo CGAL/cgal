@@ -70,7 +70,7 @@ public:
 		Line_arc_with_bbox_2(const Line_2 &support,
                  		        const Circular_arc_point_2 &begin,
                  		        const Circular_arc_point_2 &end)
-    		: P_arc(support, begin, end) , bb(NULL)
+    		: P_arc(support, begin.point(), end.point()) , bb(NULL)
 		{}
 
 
