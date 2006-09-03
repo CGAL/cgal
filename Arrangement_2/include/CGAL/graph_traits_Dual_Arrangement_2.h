@@ -88,6 +88,7 @@ protected:
     bool                     _out;
     Edge_handle              _hh;
     bool                     _end;
+
   public:
 
     /*! Default constructor. */
@@ -129,8 +130,8 @@ protected:
 
         // In case the incident face of the twin halfedge is fictitious,
         // skip it and proceed to the next edge.
-        while (_hh->twin()->face()->is_fictitious() && ! _end)
-          this->_increment();
+        if (_hh->is_fictitious())
+          ++(*this);
       }
       else // end iterator.
       {
@@ -166,9 +167,12 @@ protected:
       do
       {
         this->_increment();
+        if (_end)
+          return (*this);
+
         _hh = this->_dereference();
 
-      } while (_hh->twin()->face()->is_fictitious() && ! _end);
+      } while (_hh->is_fictitious());
 
       return (*this);
     }
@@ -180,9 +184,12 @@ protected:
       do
       {
         this->_increment();
+        if (_end)
+          return (tmp);
+
         _hh = this->_dereference();
 
-      } while (_hh->twin()->face()->is_fictitious() && ! _end);
+      } while (_hh->is_fictitious());
 
       return (tmp);
     }
@@ -192,11 +199,11 @@ protected:
     /*! Check two iterators for equality. */
     bool _equal (const Self& it) const
     {
-      return (_out == it._out &&
-              _ccb_incremented == it._ccb_incremented &&
-              _outer_ccb_circ == it._outer_ccb_circ && 
-              _hole_iter == it._hole_iter &&
-              _face == it._face);
+      return (_out == it._out && _face == it._face &&
+              ((_end && it._end) ||
+               (_ccb_incremented == it._ccb_incremented &&
+                _outer_ccb_circ == it._outer_ccb_circ && 
+                _hole_iter == it._hole_iter)));
     }
 
     /*! Derefernce the current circulator. */
@@ -230,13 +237,16 @@ protected:
       {
         ++_outer_ccb_circ;
         _ccb_incremented = true;
+
         return;
       }
 
       if (_outer_ccb_circ != _face->outer_ccb())
       {
         ++_outer_ccb_circ;
-        return;
+
+        if (_outer_ccb_circ != _face->outer_ccb())
+          return;
       }
 
       // Otherwise, we have to move along the current hole boundary.
@@ -256,7 +266,9 @@ protected:
         if (_curr_hole_circ != *_hole_iter)
         {
           ++_curr_hole_circ;
-          return;
+          
+          if (_curr_hole_circ != *_hole_iter)
+            return;
         }
 
         // If we reached here, we have to proceed to the next hole.
@@ -271,6 +283,11 @@ protected:
           // In this case we finished traversing all outer and inner CCBs:
           _end = true;
         }
+      }
+      else
+      {
+        // In this case we finished traversing all outer and inner CCBs:
+        _end = true;
       }
       
       return;
