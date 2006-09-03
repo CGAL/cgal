@@ -79,20 +79,20 @@ protected:
 
   private:
 
-    bool                     _has_outer_ccb;
     bool                     _ccb_incremented;
     Ccb_halfedge_circulator  _outer_ccb_circ;
-    Hole_iterator           _hole_iter;
+    Hole_iterator            _hole_iter;
     Ccb_halfedge_circulator  _curr_hole_circ;
     bool                     _curr_hole_incremented;
     Face_handle              _face;
     bool                     _out;
     Edge_handle              _hh;
-
+    bool                     _end;
   public:
 
     /*! Default constructor. */
-    Face_neighbor_iterator ()
+    Face_neighbor_iterator () :
+      _end (true)
     {}
 
     /*!
@@ -106,16 +106,13 @@ protected:
                             bool out_edges,
                             bool start) :
       _face (face),
-      _out (out_edges)
+      _out (out_edges),
+      _end (! start)
     {
-      _has_outer_ccb = !(face->is_unbounded());
-      _ccb_incremented = true;
+      CGAL_precondition (! face->is_fictitious());
 
-      if (_has_outer_ccb)
-      {
-        _outer_ccb_circ = face->outer_ccb();
-        _ccb_incremented = !start;
-      }
+      _outer_ccb_circ = face->outer_ccb();
+      _ccb_incremented = !start;
 
       if (start)
       {
@@ -129,6 +126,11 @@ protected:
         }
 
         _hh = this->_dereference();
+
+        // In case the incident face of the twin halfedge is fictitious,
+        // skip it and proceed to the next edge.
+        while (_hh->twin()->face()->is_fictitious() && ! _end)
+          this->_increment();
       }
       else // end iterator.
       {
@@ -161,16 +163,27 @@ protected:
     /* Increment operators. */
     Self& operator++ ()
     {
-      this->_increment();
-      _hh = this->_dereference(); 
+      do
+      {
+        this->_increment();
+        _hh = this->_dereference();
+
+      } while (_hh->twin()->face()->is_fictitious() && ! _end);
+
       return (*this);
     }
 
     Self operator++ (int )
     {
       Self tmp = *this;
-      this->_increment();
-      _hh = this->_dereference(); 
+
+      do
+      {
+        this->_increment();
+        _hh = this->_dereference();
+
+      } while (_hh->twin()->face()->is_fictitious() && ! _end);
+
       return (tmp);
     }
 
@@ -180,7 +193,6 @@ protected:
     bool _equal (const Self& it) const
     {
       return (_out == it._out &&
-              _has_outer_ccb == it._has_outer_ccb &&
               _ccb_incremented == it._ccb_incremented &&
               _outer_ccb_circ == it._outer_ccb_circ && 
               _hole_iter == it._hole_iter &&
@@ -190,18 +202,15 @@ protected:
     /*! Derefernce the current circulator. */
     Edge_handle _dereference () const
     {
-      if (_has_outer_ccb)
+      if (! _ccb_incremented ||
+          _outer_ccb_circ != _face->outer_ccb())
       {
-        if (! _ccb_incremented ||
-            _outer_ccb_circ != _face->outer_ccb())
-        {
-          if (_out)
-            return (_outer_ccb_circ);
-          else
-            return (_outer_ccb_circ->twin());
-        }
+        if (_out)
+          return (_outer_ccb_circ);
+        else
+          return (_outer_ccb_circ->twin());
       }
-
+    
       if (_out)
         return (_curr_hole_circ);
       else
@@ -211,24 +220,32 @@ protected:
     // Increments of the iterator.
     void _increment ()
     {
-      if (_has_outer_ccb)
-      {
-        if (! _ccb_incremented)
-        {
-          ++_outer_ccb_circ;
-          _ccb_incremented = true;
-          return;
-        }
+      CGAL_assertion (! _end);
 
-        if (_outer_ccb_circ != _face->outer_ccb())
-        {
-          ++_outer_ccb_circ;
-          return;
-        }
+      // If we have not traversed the entire outer CCB (namely this is the
+      // first increment operation, or we still have not completed a full
+      // cycle around the outer CCB), move to the next halfedge along the
+      // outer CCB.
+      if (! _ccb_incremented)
+      {
+        ++_outer_ccb_circ;
+        _ccb_incremented = true;
+        return;
       }
 
+      if (_outer_ccb_circ != _face->outer_ccb())
+      {
+        ++_outer_ccb_circ;
+        return;
+      }
+
+      // Otherwise, we have to move along the current hole boundary.
       if (_hole_iter != _face->holes_end())
       {
+        // If we have not traversed the entire current hole (namely this is the
+        // first increment operation, or we still have not completed a full
+        // cycle around the current hole), move to the next halfedge along the
+        // hole.
         if (! _curr_hole_incremented)
         {
           ++_curr_hole_circ;
@@ -242,14 +259,20 @@ protected:
           return;
         }
 
+        // If we reached here, we have to proceed to the next hole.
         ++_hole_iter;
         if (_hole_iter != _face->holes_end())
         {
           _curr_hole_circ = *_hole_iter;
           _curr_hole_incremented = false;
         }
+        else
+        {
+          // In this case we finished traversing all outer and inner CCBs:
+          _end = true;
+        }
       }
-
+      
       return;
     }
 

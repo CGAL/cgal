@@ -27,13 +27,16 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/iterator/counting_iterator.hpp>
 #include <CGAL/Arrangement_2.h>
+#include <CGAL/Arr_accessor.h>
 
 namespace boost {
 
 /*! \class
- * Specialization of the BGL graph-traits template, which serve as a (primal)
+ * Specialization of the BGL graph-traits template, which serves as a (primal)
  * adapter for Arrangment_2, where the arrangement vertices correspond to graph
  * verices and arrangement halfedges correspond to arrangement edges.
+ * Note that non-fictitious vertices at infinity are also considered as graph
+ * vertices, as they have incident non-fictitious edges.
  * As halfedges are directed, we consider the graph as directed. We also allow
  * parallel edges, as two or more different arrangement edges (halfedge pairs)
  * may connect two adjacent vertices.
@@ -49,8 +52,9 @@ public:
 
 private:
 
+  typedef CGAL::Arr_accessor<Arrangement_2>          Arr_accessor;
   typedef typename Arrangement_2::Vertex_handle      Vertex_handle;
-  typedef typename Arrangement_2::Vertex_iterator    Vertex_iterator;
+  typedef typename Arr_accessor::All_vertex_iterator Vertex_iterator;
   typedef typename Arrangement_2::Halfedge_handle    Halfedge_handle;
   typedef typename Arrangement_2::Halfedge_iterator  Halfedge_iterator;
   typedef typename Arrangement_2::Halfedge_around_vertex_circulator
@@ -69,7 +73,8 @@ private:
   {};
 
   /*! \class
-   * Iteratator over all outgoing halfedges around a given vertex.
+   * Iteratator over all outgoing halfedges around a given vertex., skipping
+   * fictitious halfedges.
    * This is by adapting the Halfegde_around_vertex_circulator type to an
    * iterator. Moreover, as the circulator goes over all ingoing halfedges
    * of the vertex, the iterator adapter may return their twin halfedges, if
@@ -93,13 +98,15 @@ private:
     Halfedge_around_vertex_circulator  _circ;     // The circulator.
     bool                               _out;      // Do we need the out edges.
     int                                _counter;  // Counter for the edges.
+    int                                _cend;     // The end counter.
     Halfedge_handle                    _hh;       // The current halfedge.
 
 public:
 
     /*! Default constructor. */
     Halfedge_around_vertex_iterator () :
-      _counter(-1)
+      _counter(-1),
+      _cend(-1)
     {}
 
     /*!
@@ -107,18 +114,24 @@ public:
      * \param circ A ciruclator for the halfedges around a vertex.
      * \param out_edges Do we need the outgoing or the ingoing halfedges.
      * \param counter A counter associated with the iterator.
+     * \param cend The past-the-end counter value.
      */
     Halfedge_around_vertex_iterator (Halfedge_around_vertex_circulator circ,
                                      bool out_edges,
-                                     int counter) :
+                                     int counter,
+                                     int cend) :
       _circ (circ),
       _out (out_edges),
-      _counter (counter)
+      _counter (counter),
+      _cend (cend)
     {
+      if (_circ->is_fictitious() && _counter < _cend)
+        ++(*this);
+
       if (out_edges)
-        _hh = circ->twin();
+        _hh = _circ->twin();
       else
-        _hh = circ;
+        _hh = _circ;
     }
 
     /*! Equality operators. */
@@ -146,13 +159,17 @@ public:
     /* Increment operators. */
     Self& operator++()
     {
-      ++_circ;
-      ++_counter;
+      do
+      {
+        ++_circ;
+        ++_counter;
+        
+        if (_out)
+          _hh = _circ->twin();
+        else
+          _hh = _circ;
 
-      if (_out)
-        _hh = _circ->twin();
-      else
-        _hh = _circ;
+      } while (_circ->is_fictitious() && _counter < _cend);
 
       return (*this);
     }
@@ -160,13 +177,18 @@ public:
     Self operator++ (int )
     {
       Self tmp = *this;
-      ++_circ;
-      ++_counter;
+      
+      do
+      {
+        ++_circ;
+        ++_counter;
+        
+        if (_out)
+          _hh = _circ->twin();
+        else
+          _hh = _circ;
 
-      if (_out)
-        _hh = _circ->twin();
-      else
-        _hh = _circ;
+      } while (_circ->is_fictitious() && _counter < _cend);
 
       return (tmp);
     }
@@ -174,7 +196,8 @@ public:
 
   // Data members:
   Arrangement_2    *p_arr;
-  
+  Arr_accessor      arr_access;
+
 public:
 
   // Types required of the Graph concept:
@@ -205,18 +228,19 @@ public:
 
   /*! Constructor. */
   graph_traits (const Arrangement_2& arr) :
-    p_arr (const_cast<Arrangement_2 *> (&arr))
+    p_arr (const_cast<Arrangement_2 *> (&arr)),
+    arr_access (const_cast<Arrangement_2&> (arr))
   {}
 
   /*! Traverse the vertices. */
   vertex_iterator vertices_begin()
   {
-    return (p_arr->vertices_begin());
+    return (arr_access.all_vertices_begin());
   }
 
   vertex_iterator vertices_end()
   {
-    return (p_arr->vertices_end());
+    return (arr_access.all_vertices_end());
   }
 
   /*! Traverse the edges. */
@@ -230,13 +254,35 @@ public:
     return (p_arr->halfedges_end());
   }
 
+  /*! Get the vertex degree (in degree or out degree). */
+  degree_size_type degree (vertex_descriptor v)
+  {
+    if (v->is_isolated())
+      return (0);
+
+    Halfedge_around_vertex_circulator   first = v->incident_halfedges();
+    Halfedge_around_vertex_circulator   circ = first;
+    degree_size_type                    deg = 0;
+    
+    do
+    {
+      if (! circ->is_fictitious())
+        deg++;
+
+      ++circ;
+    } while (circ != first);
+
+    return (deg);
+  }
+
   /*! Traverse the outgoing halfedges of a given vertex. */
   out_edge_iterator out_edges_begin (vertex_descriptor v)
   {
     if (v->is_isolated())
       return out_edge_iterator();
 
-    return (out_edge_iterator (v->incident_halfedges(), true, 0));
+    return (out_edge_iterator (v->incident_halfedges(), true,
+                               0, v->degree()));
   }
 
   out_edge_iterator out_edges_end (vertex_descriptor v)
@@ -244,7 +290,9 @@ public:
     if (v->is_isolated())
       return out_edge_iterator ();
 
-    return (out_edge_iterator (v->incident_halfedges(), true, v->degree()));
+    const int  deg = v->degree();
+    return (out_edge_iterator (v->incident_halfedges(), true,
+                               deg, deg));
   }
 
   /*! Traverse the ingoing halfedges of a given vertex. */
@@ -253,7 +301,8 @@ public:
     if (v->is_isolated())
       return in_edge_iterator();
 
-    return (in_edge_iterator (v->incident_halfedges(), false, 0));
+    return (in_edge_iterator (v->incident_halfedges(), false,
+                              0, v->degree()));
   }
 
   in_edge_iterator in_edges_end (vertex_descriptor v)
@@ -261,7 +310,9 @@ public:
     if (v->is_isolated())
       return in_edge_iterator ();
 
-    return (in_edge_iterator (v->incident_halfedges(), v->degree()));
+    const int  deg = v->degree();
+    return (in_edge_iterator (v->incident_halfedges(), false,
+                              deg, deg));
   }
 
 };
@@ -279,9 +330,11 @@ template <class Traits_, class Dcel_>
 typename graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >::degree_size_type
 out_degree (typename graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >::
                                                            vertex_descriptor v,
-            const CGAL::Arrangement_2<Traits_, Dcel_>& /* arr */)
+            const CGAL::Arrangement_2<Traits_, Dcel_>& arr)
 {
-  return (v->degree());
+  graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >  gt_arr (arr);
+
+  return (gt_arr.degree (v));
 }
 
 /*!
@@ -349,9 +402,11 @@ template <class Traits_, class Dcel_>
 typename graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >::degree_size_type
 in_degree (typename graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >::
                                                            vertex_descriptor v,
-           const CGAL::Arrangement_2<Traits_, Dcel_>& /* arr */)
+           const CGAL::Arrangement_2<Traits_, Dcel_>& arr)
 {
-  return (v->degree());
+  graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >  gt_arr (arr);
+
+  return (gt_arr.degree (v));
 }
 
 /*!
@@ -386,9 +441,11 @@ template <class Traits_, class Dcel_>
 typename graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >::degree_size_type
 degree (typename graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >::
                                                            vertex_descriptor v,
-        const CGAL::Arrangement_2<Traits_, Dcel_>& /* arr */)
+        const CGAL::Arrangement_2<Traits_, Dcel_>& arr)
 {
-  return (2 * v->degree());
+  graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >  gt_arr (arr);
+
+  return (2 * gt_arr.degree (v));
 }
 
 // Functions required by the VertexListGraph concept:
@@ -403,7 +460,8 @@ template <class Traits_, class Dcel_>
 typename graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> >::vertices_size_type
 num_vertices (const CGAL::Arrangement_2<Traits_, Dcel_>& arr)
 {
-  return (arr.number_of_vertices()); 
+  return (arr.number_of_vertices() +
+          arr.number_of_vertices_at_infinity()); 
 }
 
 /*!
