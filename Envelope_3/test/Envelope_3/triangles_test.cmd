@@ -21,8 +21,8 @@
 ./data/triangles/grid_intersecting_triangles.cin
 ./data/triangles/grid_no_inter_6.cin
 ./data/triangles/test_random2.cin
-./data/triangles/osnat/osnat_4_24.dat
-./data/triangles/osnat/osnat_5_40.dat
+./data/triangles/osnat_4_24.dat
+./data/triangles/osnat_5_40.dat
 ./data/triangles/random_10.in
 ./data/triangles/random_20.in
 ./data/triangles/random_30.in
