@@ -1246,6 +1246,16 @@ public:
 
     return;
   }
+
+  bool is_upper() const
+  {
+    return ((this->_info & FACING_UP) != 0);
+  }
+
+  bool is_lower() const
+  {
+    return ((this->_info & FACING_DOWN) != 0);
+  }
   //@}
 
 private:
