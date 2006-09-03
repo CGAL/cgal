@@ -20,14 +20,10 @@
 #ifndef CGAL_ENVELOPE_TRIANGLES_TEST_3_H
 #define CGAL_ENVELOPE_TRIANGLES_TEST_3_H
 
-#include "CGAL/Envelope_base.h"
-// naive overlay doesn't support isolated vertices, so it can't be used anymore
-//#include "CGAL/Naive_overlay_2.h"
-#include <CGAL/Envelope_test_overlay_functor.h>
-#include <CGAL/Overlay_2.h>
+#include "Envelope_test_overlay_functor.h"
+#include <CGAL/Envelope_3/Env_overlay_2.h>
 
 #include <CGAL/Arr_walk_along_line_point_location.h>
-#include <CGAL/Arr_naive_point_location.h>
 #include <CGAL/Object.h>
 #include <CGAL/enum.h>
 
@@ -68,7 +64,6 @@ protected:
   typedef Envelope_overlay_2<Minimization_diagram_2, Overlay_functor> Overlay_2;
   
   typedef Arr_walk_along_line_point_location<Minimization_diagram_2> Md_point_location;
-//  typedef Arr_naive_point_location<Minimization_diagram_2>           Md_point_location;
 
   typedef typename Minimization_diagram_2::Halfedge_const_iterator   Halfedge_const_iterator;
   typedef typename Minimization_diagram_2::Halfedge_const_handle     Halfedge_const_handle;
@@ -115,22 +110,33 @@ public:
 
     int number_of_surfaces = surfaces.size();
     int j;
-    std::list<Curve_2> curves_col;
+    
+    std::list<X_monotone_curve_2> curves_col;
     std::list<Point_2> points_col;
-    typename std::list<Curve_2>::iterator boundary_it;
     for(int i=0; i<number_of_surfaces; ++i)
     {
       Xy_monotone_surface_3 &cur_surface = surfaces[i];
       // first insert all the projected curves of the boundary of the current surface
 
       #ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3
-        std::cout << "insert projected boundary of surface " << i << std::endl;;
+        std::cout << "insert projected boundary of surface " << i << std::endl;
         std::cout << cur_surface << std::endl;
       #endif
 
       // collect the curve in this list, and use sweepline at the end
-      traits.construct_projected_boundary_curves_2_object()(cur_surface, std::back_inserter(curves_col));
-      
+      std::list<std::pair<Object, Oriented_side> > boundary_list;
+      traits.construct_projected_boundary_2_object()(cur_surface, std::back_inserter(boundary_list));
+      typedef typename std::list<std::pair<Object, Oriented_side> >::iterator Boundary_iterator;
+      for(Boundary_iterator boundary_it = boundary_list.begin();
+          boundary_it != boundary_list.end();
+          ++boundary_it)
+      {
+        const Object& obj = boundary_it->first;
+        X_monotone_curve_2 cv;
+        CGAL_assertion(assign(cv, obj));
+        assign(cv, obj);
+        curves_col.push_back(cv);
+      }
       // second, intersect it with all surfaces before it
       Object cur_obj;
       for(j=0; j<i; ++j)
@@ -298,7 +304,7 @@ protected:
       ++si;
       for(; si != end; ++si)
       {
-        Comparison_result cr = traits.compare_distance_to_envelope_3_object()(v->point(), v->get_data(), *si);
+        Comparison_result cr = traits.compare_z_at_xy_3_object()(v->point(), v->get_data(), *si);
         if (cr == EQUAL)
           v->add_data(*si);
         else if (cr == LARGER)
@@ -326,7 +332,7 @@ protected:
       ++si;
       for(; si != end; ++si)
       {
-        Comparison_result cr = traits.compare_distance_to_envelope_3_object()(current_point_inside_edge,
+        Comparison_result cr = traits.compare_z_at_xy_3_object()(current_point_inside_edge,
                                                                               h->get_data(), *si);
         if (cr == EQUAL)
           h->add_data(*si);
@@ -412,7 +418,7 @@ protected:
     bool found_not_equal = false;
     do {
       Point_2 target_2 = hec->target()->point();
-      cur_res = traits.compare_distance_to_envelope_3_object()(target_2,surf1,surf2);
+      cur_res = traits.compare_z_at_xy_3_object()(target_2,surf1,surf2);
       
       #ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3 
         std::cout << "for comparison on vertices, current result = " << cur_res << std::endl;
@@ -442,7 +448,7 @@ protected:
     if (face != current_face)
     compute_point_in_current_face(face);
 
-    cur_res = traits.compare_distance_to_envelope_3_object()(current_point,surf1,surf2);
+    cur_res = traits.compare_z_at_xy_3_object()(current_point,surf1,surf2);
     
     #ifdef CGAL_DEBUG_ENVELOPE_TRIANGLES_TEST_3
       std::cout << "for comparison inside face, current result = " << cur_res << std::endl;
