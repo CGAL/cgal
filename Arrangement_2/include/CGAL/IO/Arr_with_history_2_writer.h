@@ -69,7 +69,7 @@ public:
 
   /*! Write the arrangement. */
   template <class Formatter>
-  void operator() (Formatter& formatter) const
+  void operator() (Formatter& formatter)
   {
     // Write the arrangement (without history).
     Base::operator() (formatter);

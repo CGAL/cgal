@@ -25,9 +25,8 @@
  * The header file for the Arrangement_2_writer<Arrangement> class.
  */
 
-#include <CGAL/iterator.h>
-#include <CGAL/circulator.h>
-#include <algorithm>
+#include <CGAL/Arr_accessor.h>
+#include <map>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -46,14 +45,13 @@ protected:
 
   typedef typename Arrangement_2::Size                    Size;
   
-  typedef typename Arrangement_2::Vertex_const_iterator
-                                                      Vertex_const_iterator;
-  typedef typename Arrangement_2::Halfedge_const_iterator
-                                                      Halfedge_const_iterator;
-  typedef typename Arrangement_2::Edge_const_iterator
-                                                      Edge_const_iterator;
+  typedef Arr_accessor<Arrangement_2>                  Arr_accessor;
+  typedef typename Arr_accessor::All_vertex_const_iterator
+                                                       Vertex_const_iterator;
+  typedef typename Arr_accessor::All_edge_const_iterator
+                                                       Edge_const_iterator;
   typedef typename Arrangement_2::Face_const_iterator 
-                                                      Face_const_iterator;
+                                                       Face_const_iterator;
 
   typedef typename Arrangement_2::Vertex_const_handle 
                                                       Vertex_const_handle;
@@ -69,13 +67,18 @@ protected:
   typedef typename Arrangement_2::Isolated_vertex_const_iterator
                                              Isolated_vertex_const_iterator;
   
-  typedef Inverse_index<Halfedge_const_iterator>      Halfedges_index;
-  typedef Inverse_index<Vertex_const_iterator>        Vertices_index;
+  typedef typename Arrangement_2::Vertex              Vertex;
+  typedef typename Arrangement_2::Halfedge            Halfedge;
+  typedef std::map<const Vertex*, int>                Vertex_index_map;
+  typedef std::map<const Halfedge*, int>              Halfedge_index_map;
 
   // Data memebrs:
   const Arrangement_2&   m_arr;
-  Halfedges_index*       m_he_index;
-  Vertices_index*        m_v_index;
+  const Arr_accessor     m_arr_access;
+  int                    m_curr_v;
+  Vertex_index_map       m_v_index;
+  int                    m_curr_he;
+  Halfedge_index_map     m_he_index;
 
 private:
 
@@ -87,48 +90,58 @@ public:
 
   /*! Constructor. */
   Arrangement_2_writer (const Arrangement_2& arr) :
-    m_arr(arr)
-  {
-    m_he_index = new Halfedges_index (arr.halfedges_begin(),
-                                      arr.halfedges_end());
-    m_v_index = new Vertices_index (arr.vertices_begin(),
-                                    arr.vertices_end());
-  }
+    m_arr (arr),
+    m_arr_access (const_cast<Arrangement_2&>(arr)),
+    m_curr_v (0),
+    m_curr_he (0)
+  {}
 
   /*! Destructor. */
   virtual ~Arrangement_2_writer()
-  {
-    if (m_he_index)
-      delete m_he_index;
-    if (m_v_index)
-      delete m_v_index;
-  }
+  {}
 
   /*! Write the arrangement. */
   template <class Formatter>
-  void operator() (Formatter& formatter) const
+  void operator() (Formatter& formatter)
   {
     formatter.write_arrangement_begin();
-    formatter.write_size ("number_of_vertices", m_arr.number_of_vertices());
-    formatter.write_size ("number_of_edges", m_arr.number_of_edges());
-    formatter.write_size ("number_of_faces", m_arr.number_of_faces());
+    formatter.write_size ("number_of_vertices",
+                          m_arr.number_of_vertices() +
+                          m_arr.number_of_vertices_at_infinity());
+    formatter.write_size ("number_of_edges",
+                          m_arr.number_of_edges() +
+                          m_arr.number_of_vertices_at_infinity() + 4);
+    formatter.write_size ("number_of_faces", m_arr.number_of_faces() + 1);
+
+    // Reset indices.
+    m_curr_v = 0;
+    m_curr_he = 0;
 
     // Write the vertices.
     formatter.write_vertices_begin();
     Vertex_const_iterator  vit;
-    for (vit = m_arr.vertices_begin(); vit != m_arr.vertices_end(); ++vit)
+    for (vit = m_arr_access.all_vertices_begin(); 
+         vit != m_arr_access.all_vertices_end(); ++vit)
+    {
       _write_vertex (formatter, vit);
+    }
     formatter.write_vertices_end();
 
     // Write the edges.
     formatter.write_edges_begin();
     Edge_const_iterator    eit;
-    for (eit = m_arr.edges_begin(); eit != m_arr.edges_end(); ++eit)
+    for (eit = m_arr_access.all_edges_begin();
+         eit != m_arr_access.all_edges_end(); ++eit)
+    {
       _write_edge (formatter, eit);
+    }
     formatter.write_edges_end();
 
-    // Write the faces.
+    // Write the faces (the fictitious face first).
     formatter.write_faces_begin();
+
+    _write_face(formatter, m_arr_access.fictitious_face());
+
     Face_const_iterator    fit;
     for (fit = m_arr.faces_begin(); fit != m_arr.faces_end(); ++fit)
       _write_face(formatter, fit);
@@ -141,11 +154,20 @@ protected:
 
   /*! Write a vertex. */
   template <class Formatter>
-  void _write_vertex (Formatter& formatter, Vertex_const_iterator vit) const
+  void _write_vertex (Formatter& formatter, Vertex_const_iterator vit)
   {
+    // Map the current vertex to its index.
     Vertex_const_handle  v = vit;
+
+    m_v_index[&(*vit)] = m_curr_v;
+    ++m_curr_v;
+
+    // Write the vertex.
     formatter.write_vertex_begin();
-    formatter.write_point (v->point()); // Write the associated point.
+    formatter.write_vertex_index (static_cast<int> (v->infinite_in_x()));
+    formatter.write_vertex_index (static_cast<int> (v->infinite_in_y()));
+    if (! v->is_at_infinity())
+      formatter.write_point (v->point()); // Write the associated point.
     formatter.write_vertex_data (v);    // Write additional user-defined data.
     formatter.write_vertex_end();
 
@@ -154,10 +176,18 @@ protected:
 
   /*! Write an edge (a pair of halfedges). */
   template <class Formatter>
-  void _write_edge (Formatter& formatter, Edge_const_iterator hit) const
+  void _write_edge (Formatter& formatter, Edge_const_iterator hit)
   {
-    Halfedge_const_handle he = hit;
+    // Map the halfedge and its twin to their indices.
+    Halfedge_const_handle  he = hit;
+    Halfedge_const_handle  he_t = he->twin();
 
+    m_he_index[&(*he)] = m_curr_he;
+    ++m_curr_he;
+    m_he_index[&(*he_t)] = m_curr_he;
+    ++m_curr_he;
+
+    // Write the edge.
     formatter.write_edge_begin ();
     formatter.write_vertex_index (_get_index(he->source()));
     formatter.write_vertex_index (_get_index(he->target()));
@@ -167,10 +197,15 @@ protected:
     else
       formatter.write_vertex_index (1);
       
-    formatter.write_x_monotone_curve (he->curve()); 
-                                         // Write the associated curve.
-    formatter.write_halfedge_data (he);  // Write additional user-defined data.
-    formatter.write_halfedge_data (he->twin());
+    if (! he->is_fictitious())
+    {
+      // Write the associated curve.
+      formatter.write_x_monotone_curve (he->curve()); 
+
+      // Write additional user-defined data.
+      formatter.write_halfedge_data (he);
+      formatter.write_halfedge_data (he_t);
+    }
     formatter.write_edge_end ();
 
     return;
@@ -186,7 +221,7 @@ protected:
 
     // Write the outer CCB.
     formatter.write_outer_ccb_begin();
-    if (f->is_unbounded())
+    if (f->is_fictitious())
     {
       formatter.write_size ("halfedges_on_outer_CCB", 0);
     }
@@ -232,7 +267,9 @@ protected:
     formatter.write_isolated_vertices_end();
     
     // Write additional user-defined data associated with the face.
-    formatter.write_face_data (f);
+    if (! f->is_fictitious())
+      formatter.write_face_data (f);
+
     formatter.write_face_end();
 
     return;
@@ -256,15 +293,31 @@ protected:
   }
   
   /*! Get the mapped index of a given vertex. */
-  std::size_t _get_index (Vertex_const_handle v) const
+  int _get_index (Vertex_const_handle v) const
   {
-    return (*m_v_index)[v];
+    if (v == m_arr_access.bottom_left_fictitious_vertex())
+      return (-1);
+    else if (v == m_arr_access.top_left_fictitious_vertex())
+      return (-2);
+    else if (v == m_arr_access.bottom_right_fictitious_vertex())
+      return (-3);
+    else if (v == m_arr_access.top_right_fictitious_vertex())
+      return (-4);
+    
+    typename Vertex_index_map::const_iterator  pos = m_v_index.find (&(*v));
+
+    CGAL_assertion (pos != m_v_index.end());
+    return (pos->second);
   }
 
   /*! Get the mapped index of a given halfegde. */
-  std::size_t _get_index (Halfedge_const_handle he) const
+  int _get_index (Halfedge_const_handle he) const
   {
-    return (*m_he_index)[he];
+    typename Halfedge_index_map::const_iterator
+                                               pos = m_he_index.find (&(*he));
+
+    CGAL_assertion (pos != m_he_index.end());
+    return (pos->second);
   }
 
   /*! Get the number of edges along a given CCB. */

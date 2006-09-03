@@ -297,7 +297,8 @@ public:
       ++nt;
   }
 
-  I_Filtered_iterator (Iterator it, Iterator end, Filter f) :
+  I_Filtered_iterator (Iterator it, Iterator end, 
+                       const Filter& f) :
     nt (it),
     iend (end),
     filt (f)
@@ -442,7 +443,8 @@ public:
       ++nt;
   }
 
-  I_Filtered_const_iterator (Iterator it, Iterator end, Filter f) :
+  I_Filtered_const_iterator (Iterator it, Iterator end,
+                             const Filter& f) :
     nt (it),
     iend (end),
     filt (f)
@@ -455,10 +457,7 @@ public:
     nt (it.current_iterator()),
     iend (it.past_the_end()),
     filt (it.filter())
-  {
-    //    while (nt != iend && ! filt (*nt))
-    //      ++nt;
-  }
+  {}
 
   /*! Access operations. */
   Iterator current_iterator() const

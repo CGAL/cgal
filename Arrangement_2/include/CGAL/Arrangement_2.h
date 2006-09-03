@@ -501,15 +501,15 @@ protected:
   };
 
   class _All_vertex_const_iterator :
-    public I_Filtered_const_iterator<DVertex_iter,
+    public I_Filtered_const_iterator<DVertex_const_iter,
                                      _Is_non_fictitious_vertex,
-                                     DVertex_const_iter,
+                                     DVertex_iter,
                                      Vertex, DDifference,
                                      DIterator_category>
   {
-    typedef I_Filtered_const_iterator<DVertex_iter,
+    typedef I_Filtered_const_iterator<DVertex_const_iter,
                                       _Is_non_fictitious_vertex,
-                                      DVertex_const_iter,
+                                      DVertex_iter,
                                       Vertex, DDifference,
                                       DIterator_category>    Base;
 

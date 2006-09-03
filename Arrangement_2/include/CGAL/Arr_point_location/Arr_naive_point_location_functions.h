@@ -135,7 +135,7 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
                                        traits->compare_xy_2_object();
 
   const Arr_accessor       arr_access (const_cast<Arrangement_2&>(*p_arr));
-  All_edge_const_iterator  eit = arr_access.edges_begin();
+  All_edge_const_iterator  eit = arr_access.all_edges_begin();
   Comparison_result        res_s;
   Comparison_result        res;
   Comparison_result        y_res;
@@ -143,7 +143,7 @@ Object Arr_naive_point_location<Arrangement>::_base_vertical_ray_shoot
   typename Arrangement::Halfedge_const_handle  closest_edge;
   bool                                         found = false;
 
-  while (eit != arr_access.edges_end())
+  while (eit != arr_access.all_edges_end())
   {
     // Determine whether p is in the x-range of the curve and above or below it
     // (according to the direction of the shoot).

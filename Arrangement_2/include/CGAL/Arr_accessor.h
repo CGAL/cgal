@@ -57,10 +57,10 @@ public:
 
   typedef typename Arrangement_2::_All_vertex_iterator  All_vertex_iterator;
   typedef typename Arrangement_2::_All_vertex_const_iterator
-                                                     All_vertex_const_iterator;
+                                                   All_vertex_const_iterator;
   typedef typename Arrangement_2::_All_edge_iterator    All_edge_iterator;
   typedef typename Arrangement_2::_All_edge_const_iterator
-                                                     All_edge_const_iterator;
+                                                   All_edge_const_iterator;
 
 private:
 
@@ -292,25 +292,25 @@ public:
   }
 
   /*! Get an iterator for the first edge in the arrangement. */
-  All_edge_iterator edges_begin() 
+  All_edge_iterator all_edges_begin() 
   { 
     return (All_edge_iterator (p_arr->dcel.edges_begin())); 
   }
 
   /*! Get a past-the-end iterator for the arrangement edges. */
-  All_edge_iterator edges_end()
+  All_edge_iterator all_edges_end()
   {
     return (All_edge_iterator (p_arr->dcel.edges_end())); 
   }
 
   /*! Get a const iterator for the first edge in the arrangement. */
-  All_edge_const_iterator edges_begin() const
+  All_edge_const_iterator all_edges_begin() const
   { 
     return (All_edge_const_iterator (p_arr->dcel.edges_begin()));
   }
   
   /*! Get a past-the-end const iterator for the arrangement edges. */
-  All_edge_const_iterator edges_end() const
+  All_edge_const_iterator all_edges_end() const
   {
     return (All_edge_const_iterator (p_arr->dcel.edges_end()));
   }
@@ -1029,6 +1029,16 @@ public:
   typedef DIso_vert                       Dcel_isolated_vertex;
 
   /*!
+   * Clear the entire arrangment.
+   */
+  void clear_all ()
+  {
+    p_arr->clear();
+    p_arr->dcel.delete_all();
+    return;
+  }
+
+  /*!
    * Create a new vertex, associated with the given point.
    * \param p The point.
    * \return A pointer to the created DCEL vertex.
@@ -1039,6 +1049,21 @@ public:
     Dcel_vertex                             *new_v = p_arr->dcel.new_vertex();
 
     new_v->set_point (p_pt);
+    return (new_v);
+  }
+
+  /*!
+   * Create a new vertex at infinity.
+   * \param inf_x The infinity type in x.
+   * \param inf_y The infinity type in y.
+   * \return A pointer to the created DCEL vertex.
+   */
+  Dcel_vertex* new_vertex_at_infinity (Infinity_type inf_x,
+                                       Infinity_type inf_y)
+  {
+    Dcel_vertex                             *new_v = p_arr->dcel.new_vertex();
+
+    new_v->set_at_infinity (inf_x, inf_y);
     return (new_v);
   }
 
@@ -1057,12 +1082,15 @@ public:
   }
 
   /*!
-   * Get the unbounded face.
-   * \return A pointer to the unbounded DCEL face.
+   * Create a new fictitious edge (halfedge pair).
+   * \return A pointer to one of the created DCEL halfedge.
    */
-  Dcel_face* unbounded_face ()
+  Dcel_halfedge* new_fictitious_edge ()
   {
-    return (p_arr->un_face);
+    Dcel_halfedge                           *new_he = p_arr->dcel.new_edge();
+
+    new_he->set_curve (NULL);
+    return (new_he);
   }
 
   /*!
