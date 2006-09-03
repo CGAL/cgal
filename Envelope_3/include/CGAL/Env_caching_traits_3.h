@@ -196,7 +196,7 @@ public:
         if (comp_cache_iter == compare_cache.end())
         {
           Comparison_result res =
-              parent.Base_traits_3::compare_distance_to_envelope_3_object()
+              parent.Base_traits_3::compare_z_at_xy_3_object()
                 (g, s1, s2);
           compare_cache[spair] = res;
           return res;
@@ -206,7 +206,7 @@ public:
       }
       else
         // they intersect, so must use the traits
-        return (parent.Base_traits_3::compare_distance_to_envelope_3_object()
+        return (parent.Base_traits_3::compare_z_at_xy_3_object()
                 (g, s1, s2));
     }
   };

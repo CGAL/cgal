@@ -57,7 +57,7 @@ public:
     Overlay_functor overlay_func(md1, md2, result);
     overlay(md1, md2, result, overlay_func);
         
-    post_test_assertions(result);
+    CGAL_assertion_code(post_test_assertions(result));
   }
 
 
@@ -201,7 +201,7 @@ protected:
   template <class FeatureHandle>
   Xy_monotone_surface_3 get_aux_data(FeatureHandle fh, unsigned int id)
   {
-    Object o = fh->get_aux_source(id);
+    const Object& o = fh->get_aux_source(id);
     Xy_monotone_surface_3 data;
 
     Halfedge_handle h;
@@ -222,7 +222,7 @@ protected:
   template <class FeatureHandle>
   int get_number_of_aux_data_objects(FeatureHandle fh, unsigned int id)
   {
-	  Object o = fh->get_aux_source(id);
+	  const Object& o = fh->get_aux_source(id);
     int data;
 
     Halfedge_handle h;

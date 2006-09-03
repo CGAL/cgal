@@ -527,13 +527,13 @@ public:
    * projection of the surface onto the xy-plane, into the output iterator.
    * The iterator value-type is Curve_2.
    */
-  class Construct_projected_boundary_curves_2
+  class Construct_projected_boundary_2
   {
   protected:
     const Self *parent;
   public:
 
-    Construct_projected_boundary_curves_2(const Self* p)
+    Construct_projected_boundary_2(const Self* p)
       : parent(p)
     {}
 
@@ -558,9 +558,30 @@ public:
                 b2 = parent->project(a2),
                 b3 = parent->project(a3);
 
-        *o++ = Curve_2(b1, b2);
-        *o++ = Curve_2(b2, b3);
-        *o++ = Curve_2(b3, b1);
+        Kernel k;
+
+        X_monotone_curve_2 A(b1, b2);
+        X_monotone_curve_2 B(b2, b3);
+        X_monotone_curve_2 C(b3, b1);
+
+        const Line_2& l1 = 
+          (A.is_directed_right()) ? A.line() : A.line().opposite();
+        const Line_2& l2 = 
+          (B.is_directed_right()) ? B.line() : B.line().opposite();
+        const Line_2& l3 = 
+          (C.is_directed_right()) ? C.line() : C.line().opposite();
+
+        Oriented_side s1 = k.oriented_side_2_object()(l1, b3);
+        Oriented_side s2 = k.oriented_side_2_object()(l2, b1);
+        Oriented_side s3 = k.oriented_side_2_object()(l3, b2);
+
+        CGAL_assertion(s1 != ON_ORIENTED_BOUNDARY && 
+                       s2 != ON_ORIENTED_BOUNDARY &&
+                       s3 != ON_ORIENTED_BOUNDARY);
+        
+        *o++ = std::make_pair(make_object(A), s1);
+        *o++ = std::make_pair(make_object(B), s2);
+        *o++ = std::make_pair(make_object(C), s3);
       }
       else
       {
@@ -573,17 +594,18 @@ public:
                 b2 = parent->project(a2);
         CGAL_assertion(b1 != b2);
                 
-        *o++ = Curve_2(b1, b2);
+        *o++ = std::make_pair(make_object(X_monotone_curve_2(b1, b2)), 
+                              ON_ORIENTED_BOUNDARY);
       }
       return o;
     }  
   };  
   
   /*! Get a Construct_projected_boundary_curves_2 functor object. */
-  Construct_projected_boundary_curves_2
-  construct_projected_boundary_curves_2_object() const
+  Construct_projected_boundary_2
+  construct_projected_boundary_2_object() const
   {
-    return Construct_projected_boundary_curves_2(this);
+    return Construct_projected_boundary_2(this);
   }
 
   /*!\brief

@@ -70,12 +70,7 @@ public:
 
   void set_decision(Comparison_result comp)
   {
-  	if (comp == SMALLER)
-      m_decision = FIRST;
-  	else if (comp == LARGER)
-      m_decision = SECOND;
-  	else
-      m_decision = BOTH;
+    m_decision = enum_cast<Dac_decision>(comp);
   }
 
   void set_decision(Dac_decision dec)
@@ -271,14 +266,14 @@ public:
     CGAL_precondition(id < 2);
     m_aux_source[id] = make_object(h);
   }
-  void set_aux_source(unsigned int id, Object o)
+  void set_aux_source(unsigned int id, const Object& o)
   {
     CGAL_precondition(id < 2);
     CGAL_precondition(!o.is_empty());
     m_aux_source[id] = o;
   }
 
-  Object get_aux_source(unsigned int id)
+  const Object& get_aux_source(unsigned int id)
   {
     CGAL_precondition(id < 2);
     CGAL_precondition (!m_aux_source[id].is_empty());
@@ -324,23 +319,23 @@ public:
         , flags(0)
   {}
 
-  void set_is_fake(bool b)
+  /*void set_is_fake(bool b)
   {
     set_bit(IS_FAKE, b);
   }
   bool get_is_fake() const
   {
     return get_bit(IS_FAKE);
-  }
+  }*/
 
-  void set_is_intersection(bool b)
+ /* void set_is_intersection(bool b)
   {
     set_bit(IS_INTERSECTION, b);
-  }
-  bool get_is_intersection() const
+  }*/
+  /*bool get_is_intersection() const
   {
     return get_bit(IS_FAKE);
-  }
+  }*/
 
   void set_is_equal_data_in_face(bool b)
   {
@@ -439,14 +434,14 @@ public:
                            , flags(0)
   {} 
 
-  void set_is_fake(bool b)
+ /* void set_is_fake(bool b)
   {
     set_bit(IS_FAKE, b);
   }
   bool get_is_fake() const
   {
     return get_bit(IS_FAKE);
-  }
+  }*/
 
   void set_is_equal_data_in_face(bool b)
   {

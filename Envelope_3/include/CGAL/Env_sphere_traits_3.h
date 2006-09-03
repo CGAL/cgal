@@ -125,13 +125,13 @@ public:
     return Make_xy_monotone_3(this);
   }
 
-  class Construct_projected_boundary_curves_2
+  class Construct_projected_boundary_2
   {
   protected:
-    const Self& parent;
+    Self& parent;
 
   public:
-    Construct_projected_boundary_curves_2(const Self* p)
+    Construct_projected_boundary_2(Self* p)
       : parent(*p)
     {}
 
@@ -140,22 +140,48 @@ public:
     // the OutputIterator value type is Curve_2
     template <class OutputIterator>
     OutputIterator
-    operator()(const Xy_monotone_surface_3& s, OutputIterator o) const
+    operator()(const Xy_monotone_surface_3& s, OutputIterator o)
     {
       // the projected boundary in a circle, with a projected center,
       // and same radius
       Rat_point_2 proj_center = parent.project(s.center());
       Rat_circle_2 circ(proj_center, s.squared_radius());
-      *o++ = Curve_2(circ);
+      Curve_2 curve(circ);
+      Object objs[2];
+      CGAL_assertion_code(Object *p = )
+      parent.make_x_monotone_2_object()(curve, objs);
+      CGAL_assertion(p == objs + 2);
+      
+      X_monotone_curve_2 cv1, cv2;
+      
+      CGAL_assertion(assign(cv1, objs[0]));
+      CGAL_assertion(assign(cv2, objs[1]));
+      
+      assign(cv1, objs[0]);
+      assign(cv2, objs[1]);
+
+      if(cv1.is_lower())
+      {
+        CGAL_assertion(cv2.is_upper());
+        *o++ = std::make_pair(make_object(cv1), ON_POSITIVE_SIDE);
+        *o++ = std::make_pair(make_object(cv2), ON_NEGATIVE_SIDE);
+      }
+      else
+      {
+        CGAL_assertion(cv2.is_lower());
+        *o++ = std::make_pair(make_object(cv1), ON_NEGATIVE_SIDE);
+        *o++ = std::make_pair(make_object(cv2), ON_POSITIVE_SIDE);
+      }
+
       return o;
     }  
   };  
   
-  /*! Get a Construct_projected_boundary_curves_2 functor object. */
-  Construct_projected_boundary_curves_2
-  construct_projected_boundary_curves_2_object() const
+  /*! Get a Construct_projected_boundary_2 functor object. */
+  Construct_projected_boundary_2
+  construct_projected_boundary_2_object()
   {
-    return Construct_projected_boundary_curves_2(this);
+    return Construct_projected_boundary_2(this);
   }
 
   class Construct_projected_intersections_2
@@ -1252,7 +1278,7 @@ public:
   }
 
   /*! Default constructor. */
-  Env_sphere_traits_3()
+  Env_sphere_traits_3() : m_is_lower(true)
   {}
 
 protected:

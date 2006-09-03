@@ -91,7 +91,7 @@ public:
   {
     res_v->set_aux_source(0, m_1.non_const_handle(h1));
     res_v->set_aux_source(1, m_2.non_const_handle(h2));
-    res_v->set_is_intersection(true);
+    //res_v->set_is_intersection(true);
     // res_v cannot be isolated
   }
 
@@ -101,7 +101,7 @@ public:
   {
     res_v->set_aux_source(0, m_1.non_const_handle(v1));
     res_v->set_aux_source(1, m_2.non_const_handle(v2));
-    res_v->set_is_intersection(false);
+    //res_v->set_is_intersection(false);
 
     if (v1->is_isolated() && v2->is_isolated())
     {
@@ -118,7 +118,7 @@ public:
   {
     res_v->set_aux_source(0, m_1.non_const_handle(v1));
     res_v->set_aux_source(1, m_2.non_const_handle(h2));
-    res_v->set_is_intersection(true);
+    //res_v->set_is_intersection(true);
     // res_v cannot be isolated
   }
 
@@ -128,7 +128,7 @@ public:
   {
     res_v->set_aux_source(0, m_1.non_const_handle(h1));
     res_v->set_aux_source(1, m_2.non_const_handle(v2));
-    res_v->set_is_intersection(true);
+    //res_v->set_is_intersection(true);
     // res_v cannot be isolated
   }
 
@@ -138,7 +138,7 @@ public:
   {
     res_v->set_aux_source(0, m_1.non_const_handle(f1));
     res_v->set_aux_source(1, m_2.non_const_handle(v2));
-    res_v->set_is_intersection(false);
+    //res_v->set_is_intersection(false);
 
     if (v2->is_isolated())
     {
@@ -157,7 +157,7 @@ public:
   {
     res_v->set_aux_source(0, m_1.non_const_handle(v1));
     res_v->set_aux_source(1, m_2.non_const_handle(f2));
-    res_v->set_is_intersection(false);
+    //res_v->set_is_intersection(false);
 
     if (v1->is_isolated())
     {
@@ -350,9 +350,11 @@ protected:
   // (i.e. the id of the aux information to update)
   void update_halfedge_flags_on_edge(Halfedge_handle new_h, Halfedge_handle on_edge, unsigned int id)
   {
+    if(new_h->target()->is_at_infinity())
+      return;
     Vertex_handle vh;
     Halfedge_handle hh;
-    Object trg_src = new_h->target()->get_aux_source(id);
+    const Object& trg_src = new_h->target()->get_aux_source(id);
     if (assign(vh, trg_src))
     {
 	  // vh is the target of on_edge, and we can copy the halfedge-target information
@@ -381,11 +383,13 @@ protected:
   // (i.e. the id of the aux information to update)
   void update_halfedge_flags_in_face(Halfedge_handle new_h, Face_handle in_face, unsigned int id)
   {
+    if(new_h->target()->is_at_infinity())
+      return;
     Vertex_handle vh;
     Halfedge_handle hh;
     Face_handle fh;
     // update target
-    Object trg_src = new_h->target()->get_aux_source(id);
+    const Object& trg_src = new_h->target()->get_aux_source(id);
     if (assign(vh, trg_src))
     {
       if (vh->is_isolated())
@@ -399,10 +403,10 @@ protected:
       {
         // we have a vertex vh on the boundary of the face in_face
         // todo: get rid of this calculations: (using unknown value for has_equal flag)
-        CGAL_assertion_code(
+        /*CGAL_assertion_code(
           bool calc_is_equal = vh->is_equal_data(in_face->begin_data(), in_face->end_data());
-        )
-        bool calc_has_equal = vh->has_equal_data(in_face->begin_data(), in_face->end_data());
+        )*/
+        //bool calc_has_equal = vh->has_equal_data(in_face->begin_data(), in_face->end_data());
 
         // find the halfedge with target vh on the boundary of in_face
         Halfedge_handle h_of_vh_and_in_face =
@@ -410,15 +414,15 @@ protected:
         // is_equal relationship is easy:
         bool is_equal = h_of_vh_and_in_face->get_is_equal_data_in_face() &&
                         h_of_vh_and_in_face->get_is_equal_data_in_target();
-        CGAL_assertion(is_equal == calc_is_equal);
+        //CGAL_assertion(is_equal == calc_is_equal);
 
         // has_equal relationship is problematic in one case:
         bool has_equal = 
           h_of_vh_and_in_face->get_has_equal_data_in_target_and_face();
 
-        CGAL_assertion(has_equal == calc_has_equal);
+        /*CGAL_assertion(has_equal == calc_has_equal);
         if(has_equal != calc_has_equal)
-          return;
+          return;*/
 
     		// update halfedge-target flags
         new_h->set_is_equal_aux_data_in_target(id, is_equal);
