@@ -505,6 +505,29 @@ Envelope_3/doc_tex/Envelope_3/fig/ex_triangles.fig -text svneol=unset#applicatio
 Envelope_3/doc_tex/Envelope_3/fig/ex_triangles.gif -text svneol=unset#image/gif
 Envelope_3/doc_tex/Envelope_3/fig/ex_triangles.pdf -text svneol=unset#application/pdf
 Envelope_3/examples/Envelope_3/spheres.dat -text
+Envelope_3/test/Envelope_3/data/spheres/stest.cin -text
+Envelope_3/test/Envelope_3/data/spheres/stest10.cin -text
+Envelope_3/test/Envelope_3/data/spheres/stest11.cin -text
+Envelope_3/test/Envelope_3/data/spheres/stest12.cin -text
+Envelope_3/test/Envelope_3/data/spheres/stest13.cin -text
+Envelope_3/test/Envelope_3/data/spheres/stest14.cin -text
+Envelope_3/test/Envelope_3/data/spheres/stest15.cin -text
+Envelope_3/test/Envelope_3/data/spheres/stest16.cin -text
+Envelope_3/test/Envelope_3/data/spheres/stest17.cin -text
+Envelope_3/test/Envelope_3/data/spheres/stest18.cin -text
+Envelope_3/test/Envelope_3/data/spheres/stest19.cin -text
+Envelope_3/test/Envelope_3/data/spheres/stest2.cin -text
+Envelope_3/test/Envelope_3/data/spheres/stest20.cin -text
+Envelope_3/test/Envelope_3/data/spheres/stest21.cin -text
+Envelope_3/test/Envelope_3/data/spheres/stest22.cin -text
+Envelope_3/test/Envelope_3/data/spheres/stest23.cin -text
+Envelope_3/test/Envelope_3/data/spheres/stest3.cin -text
+Envelope_3/test/Envelope_3/data/spheres/stest4.cin -text
+Envelope_3/test/Envelope_3/data/spheres/stest5.cin -text
+Envelope_3/test/Envelope_3/data/spheres/stest6.cin -text
+Envelope_3/test/Envelope_3/data/spheres/stest7.cin -text
+Envelope_3/test/Envelope_3/data/spheres/stest8.cin -text
+Envelope_3/test/Envelope_3/data/spheres/stest9.cin -text
 Envelope_3/test/Envelope_3/spheres_test.C -text
 Envelope_3/test/Envelope_3/spheres_test.cmd eol=lf
 Envelope_3/test/Envelope_3/triangles_test.C -text

@@ -1,0 +1,7 @@
+2
+0 0 4       16
+0 0 -1      4
+
+the intersection of the spheres is a circle parallel to the xy-plane,
+but on the upper part of the second sphere,
+so for envelope case, it is not considered an intersection
