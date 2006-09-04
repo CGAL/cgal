@@ -18,6 +18,7 @@
 //
 // Author(s)     : Sylvain Pion
 
+#include <CGAL/basic.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Root_of_2.h>
