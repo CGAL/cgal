@@ -80,7 +80,7 @@ protected:
   typedef typename Minimization_diagram_2::Hole_iterator            Hole_iterator;
   typedef typename Minimization_diagram_2::Dcel::Face_data_iterator  Face_data_iterator;
 
-  typedef std::pair<Curve_2, Intersection_type>                      Intersection_curve;
+  typedef std::pair<X_monotone_curve_2, Intersection_type>           Intersection_curve;
 
 public:
   // c'tor
