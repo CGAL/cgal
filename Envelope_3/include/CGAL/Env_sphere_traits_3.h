@@ -46,7 +46,7 @@ class Env_sphere_traits_3 : public ConicTraits_2
 {
 public:
   typedef ConicTraits_2                             Traits_2;
-  typedef Env_sphere_traits_3<Traits_2>       Self;
+  typedef Env_sphere_traits_3<Traits_2>             Self;
   
   typedef typename Traits_2::Point_2                Point_2;
   typedef typename Traits_2::Curve_2                Curve_2;
@@ -73,7 +73,7 @@ public:
   // here we refer to the lower part of the sphere only
   typedef Surface_3                                 Xy_monotone_surface_3;
 protected:
-  typedef std::pair<Curve_2, Intersection_type>     Intersection_curve;
+  typedef std::pair<X_monotone_curve_2, Intersection_type>     Intersection_curve;
   
   #ifdef CGAL_ENV_SPHERES_TRAITS_CACHE_POINT_ON
     // caching the computation of a surface 3d point from a 2d point
@@ -137,7 +137,7 @@ public:
 
     // insert into the OutputIterator all the (2d) curves of the boundary of
     // the vertical projection of the surface on the xy-plane
-    // the OutputIterator value type is Curve_2
+    // the OutputIterator value type is X_monotone_curve_2
     template <class OutputIterator>
     OutputIterator
     operator()(const Xy_monotone_surface_3& s, OutputIterator o)
@@ -187,11 +187,11 @@ public:
   class Construct_projected_intersections_2
   {
   protected:
-    const Self& parent;
+    Self& parent;
 
 
   public:
-    Construct_projected_intersections_2(const Self* p)
+    Construct_projected_intersections_2(Self* p)
       : parent(*p)
     {}
     
@@ -304,7 +304,9 @@ public:
           // 2(a1-a2)x - m = 0
 
           Curve_2 res(0,0,0, 2*a_diff, 0, -m, COLLINEAR, end1, end2);
-          *o++ = make_object(Intersection_curve(res, TRANSVERSAL));
+
+          parent.add_curve_to_output(res, o);
+          //*o++ = make_object(Intersection_curve(res, TRANSVERSAL));
         }
         else
         {
@@ -381,7 +383,8 @@ public:
           // equation (1) is:
           // 2(a1-a2)x + 2(b1-b2)y - m = 0
           Curve_2 res(0,0,0, 2*a_diff, 2*b_diff, -m, COLLINEAR, end1, end2);
-          *o++ = make_object(Intersection_curve(res, TRANSVERSAL));
+          parent.add_curve_to_output(res, o);
+          //*o++ = make_object(Intersection_curve(res, TRANSVERSAL));
         }
         
       }
@@ -520,7 +523,8 @@ public:
           if (sign_lc != NEGATIVE)
           {
             Curve_2 res(R, S, T, U, V, W);
-            *o++ = make_object(Intersection_curve(res, TRANSVERSAL));
+            parent.add_curve_to_output(res, o);
+            //*o++ = make_object(Intersection_curve(res, TRANSVERSAL));
           }
           return o;
         }
@@ -674,7 +678,8 @@ public:
           if (lval_sign == POSITIVE)
           {
             // the full ellipse is in the positive side
-            *o++ = make_object(Intersection_curve(inter_cv, TRANSVERSAL));
+            parent.add_curve_to_output(inter_cv, o);
+            //*o++ = make_object(Intersection_curve(inter_cv, TRANSVERSAL));
             return o;
           }
           else if (lval_sign == NEGATIVE)
@@ -697,7 +702,8 @@ public:
           CGAL_assertion(lval_sign != ZERO);
           
           if (lval_sign == POSITIVE)
-            *o++ = make_object(Intersection_curve(inter_cv, TRANSVERSAL));
+            parent.add_curve_to_output(inter_cv, o);
+            //*o++ = make_object(Intersection_curve(inter_cv, TRANSVERSAL));
           else
             *o++ = make_object(Point_2(source));
 
@@ -721,7 +727,8 @@ public:
 
         Curve_2 res(R, S, T, U, V, W, orient, source, target);
         CGAL_assertion(res.is_valid());
-        *o++ = make_object(Intersection_curve(res, TRANSVERSAL));  
+        parent.add_curve_to_output(res, o);
+        //*o++ = make_object(Intersection_curve(res, TRANSVERSAL));  
       }
       
       return o;
@@ -730,7 +737,7 @@ public:
 
   /*! Get a Construct_projected_intersections_2 functor object. */
   Construct_projected_intersections_2
-  construct_projected_intersections_2_object() const
+  construct_projected_intersections_2_object()
   {                                                                
     return Construct_projected_intersections_2(this);
   }
@@ -1275,6 +1282,30 @@ public:
     }
     else
       return cv.get_point_at_x(pt);
+  }
+
+  template <class OutputIterator>
+  OutputIterator add_curve_to_output(const Curve_2& c, OutputIterator oi)
+  {
+    Object objs[2];
+    Object* p_obj = this->make_x_monotone_2_object()(c, objs);
+    CGAL_assertion((p_obj - objs) <= 2);
+    for(Object* o = objs; o != p_obj; ++o)
+    {
+      X_monotone_curve_2 cv;
+      if(assign(cv, *o))
+      {
+        *oi++ = make_object(Intersection_curve(cv, TRANSVERSAL));
+      }
+      else
+      {
+        Point_2 pt;
+        CGAL_assertion(assign(pt, *o));
+        assign(pt, *o);
+        *oi++ = make_object(pt);
+      }
+    }
+    return oi;
   }
 
   /*! Default constructor. */

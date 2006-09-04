@@ -54,7 +54,7 @@ public:
   typedef MinimizationDiagram_2                        Minimization_diagram_2;
   typedef typename Traits::Point_2                     Point_2;
   typedef typename Traits::X_monotone_curve_2          X_monotone_curve_2;
-  typedef typename Traits::Curve_2                     Curve_2;
+  //typedef typename Traits::Curve_2                     Curve_2;
   typedef typename Traits::Has_infinite_category       Has_infinite_category;
 
 protected:
@@ -104,7 +104,7 @@ protected:
 
   typedef Unique_hash_map<Vertex_handle, Halfedge_handle>           Vertices_to_edges_map;
   
-  typedef std::pair<Curve_2, Intersection_type>                     Intersection_curve;
+  typedef std::pair<X_monotone_curve_2, Intersection_type>          Intersection_curve;
   typedef std::list<Object>                                         Intersections_list;
 
   // this is used in the resolve edge process
@@ -277,7 +277,7 @@ public:
       else if (assign(curve, cur_obj))
       {
         zone_visitor.set_current_intersection_type(curve.second);
-        insert_curve(copied_face_arr, curve.first, pl, zone_visitor);
+        insert_x_monotone_curve(copied_face_arr, curve.first, pl, zone_visitor);
       }
       else
         CGAL_assertion_msg(false, "wrong projected intersection type");
@@ -286,36 +286,6 @@ public:
     zone_visitor.finish();
 
     // now determine the envelope data in result over the new faces
-
-    //// first, we try to copy information from incident faces, thru fake edges
-    //if (fakes_exist)
-    //{
-    //  typename std::list<Face_handle>::iterator fit;
-    //  for(fit = result_face_parts.begin();
-    //      fit != result_face_parts.end(); ++fit)
-    //  {
-    //    Face_handle new_f = *fit;
-    //    // we didn't set envelope data yet
-    //    CGAL_assertion(!new_f->is_decision_set());
-    //    // try to find a fake edge on the outer boundary
-    //    // (if we have fake edges, we don't have holes)
-    //    Ccb_halfedge_circulator hec = new_f->outer_ccb();
-    //    Ccb_halfedge_circulator hec_begin = hec;
-    //    do {
-    //      Halfedge_handle hh = hec;
-    //      if (hh->get_is_fake() &&
-    //          hh->twin()->face()->is_decision_set())
-    //      {
-    //        Face_handle twin_f = hh->twin()->face();
-    //        new_f->set_decision(twin_f->get_decision());
-	   // 
-    //  	    hh->set_decision(twin_f->get_decision());
-    //  	    hh->twin()->set_decision(hh->get_decision());
-    //      }
-    //      ++hec;
-    //    }while (hec != hec_begin);
-    //  }
-    //}
     
     // in order to use resolve_minimal_face with intersection halfedge, we go over
     // the new edges, and set data over their faces
@@ -537,75 +507,57 @@ public:
       }
       else if (assign(icurve, cur_obj))
       {
-        const Curve_2& curve = icurve.first;
+        const X_monotone_curve_2& x_curve = icurve.first;
 
         // find the intersection points and overlapping segments with the
         // original curve and insert them to the list of split points
 
-        // first, get x_monotone parts
-        std::list<Object>                     x_objects;
-        std::list<Object>::const_iterator     obj_it;
-        const X_monotone_curve_2             *x_curve;
-        const Point_2                        *iso_p;
+        //// first, get x_monotone parts
+        //std::list<Object>                     x_objects;
+        //std::list<Object>::const_iterator     obj_it;
+        //const X_monotone_curve_2             *x_curve;
+        //const Point_2                        *iso_p;
 
-        traits->make_x_monotone_2_object()(curve,
-                                           std::back_inserter(x_objects));
 
-        for (obj_it = x_objects.begin(); obj_it != x_objects.end(); ++obj_it)
+        // intersect the x-monotone curve with the edge's curve
+        typedef std::pair<Point_2, unsigned int> Intersect_point_2;
+        std::list<Object> intersections_list;
+        const Intersect_point_2  *ip;
+        const X_monotone_curve_2 *icv;
+        
+        traits->intersect_2_object()(x_curve, original_cv,
+                                      std::back_inserter(intersections_list));
+
+        std::list<Object>::iterator inter_it = intersections_list.begin();
+        for(; inter_it != intersections_list.end(); ++inter_it)
         {
-          x_curve = object_cast<X_monotone_curve_2> (&(*obj_it));
-          if (x_curve != NULL)
-
+          ip = object_cast<Intersect_point_2> (&(*inter_it));
+          if (ip != NULL)
           {
-            // intersect the x-monotone curve with the edge's curve
-            typedef std::pair<Point_2, unsigned int> Intersect_point_2;
-            std::list<Object> intersections_list;
-            const Intersect_point_2  *ip;
-            const X_monotone_curve_2 *icv;
-            
-            traits->intersect_2_object()(*x_curve, original_cv,
-                                         std::back_inserter(intersections_list));
-
-            std::list<Object>::iterator inter_it = intersections_list.begin();
-            for(; inter_it != intersections_list.end(); ++inter_it)
-            {
-              ip = object_cast<Intersect_point_2> (&(*inter_it));
-              if (ip != NULL)
-              {
-                split_points.push_back(Point_2_with_info(ip->first, false, false));
-              }
-              else
-              {
-                icv = object_cast<X_monotone_curve_2> (&(*inter_it));
-                CGAL_assertion (icv != NULL);
-
-                // we will add the *icv end points to the split_points, unless
-                // but we should be carefull with infinite curves.
-                Arr_traits_adaptor_2<Traits> tr_adaptor(*traits);
-                if(tr_adaptor.infinite_in_y_2_object()(*icv, MIN_END) == FINITE &&
-                   tr_adaptor.infinite_in_x_2_object()(*icv, MIN_END) == FINITE)
-                   split_points.push_back(Point_2_with_info(
-                                           traits->construct_min_vertex_2_object()(*icv),
-                                           true, false));
-                if(tr_adaptor.infinite_in_y_2_object()(*icv, MAX_END) == FINITE &&
-                   tr_adaptor.infinite_in_x_2_object()(*icv, MAX_END) == FINITE)
-                   split_points.push_back(Point_2_with_info(
-                                           traits->construct_max_vertex_2_object()(*icv),
-                                           false, true));
-              }
-            }            
+            split_points.push_back(Point_2_with_info(ip->first, false, false));
           }
           else
           {
-            iso_p = object_cast<Point_2> (&(*obj_it));
-            CGAL_assertion (iso_p != NULL);
-            // if the point is on the curve, should add it the the split points
-            // list, otherwise, it is irrelevant and should be ignored
-            if (is_point_on_curve(*iso_p, original_cv))
-              split_points.push_back(Point_2_with_info(*iso_p, false, false));
+            icv = object_cast<X_monotone_curve_2> (&(*inter_it));
+            CGAL_assertion (icv != NULL);
+
+            // we will add the *icv end points to the split_points, unless
+            // but we should be carefull with infinite curves.
+            Arr_traits_adaptor_2<Traits> tr_adaptor(*traits);
+            if(tr_adaptor.infinite_in_y_2_object()(*icv, MIN_END) == FINITE &&
+                tr_adaptor.infinite_in_x_2_object()(*icv, MIN_END) == FINITE)
+                split_points.push_back(Point_2_with_info(
+                                        traits->construct_min_vertex_2_object()(*icv),
+                                        true, false));
+            if(tr_adaptor.infinite_in_y_2_object()(*icv, MAX_END) == FINITE &&
+                tr_adaptor.infinite_in_x_2_object()(*icv, MAX_END) == FINITE)
+                split_points.push_back(Point_2_with_info(
+                                        traits->construct_max_vertex_2_object()(*icv),
+                                        false, true));
           }
-        }        
+        }       
       }
+     
       else
         CGAL_assertion_msg(false, "wrong projected intersection type");
     }

@@ -52,7 +52,6 @@ class Env_triangle_traits_3 : public Arr_segment_traits_2<Kernel_>
 public:
   typedef Arr_segment_traits_2<Kernel_>             Traits_2;
   typedef typename Traits_2::Point_2                Point_2;
-  typedef typename Traits_2::Curve_2                Curve_2;
   typedef typename Traits_2::X_monotone_curve_2     X_monotone_curve_2;
 
   typedef Kernel_                                   Kernel;
@@ -353,7 +352,7 @@ protected:
                      Less_surface_point_pair>          Surface_point_cache;
   #endif
 
-  typedef std::pair<Curve_2, Intersection_type>        Intersection_curve;
+  typedef std::pair<X_monotone_curve_2, Intersection_type>        Intersection_curve;
 public:
 
   /***************************************************************************/
@@ -525,7 +524,7 @@ public:
   /*!\brief
    * Insert all 2D curves, which form the boundary of the vertical
    * projection of the surface onto the xy-plane, into the output iterator.
-   * The iterator value-type is Curve_2.
+   * The iterator value-type is X_monotone_curve_2.
    */
   class Construct_projected_boundary_2
   {
@@ -539,7 +538,7 @@ public:
 
     // insert into the OutputIterator all the (2d) curves of the boundary of
     // the vertical projection of the surface on the xy-plane
-    // the OutputIterator value type is Curve_2
+    // the OutputIterator value type is X_monotone_curve_2
     template <class OutputIterator>
     OutputIterator operator()(const Xy_monotone_surface_3& s,
                               OutputIterator o) const
@@ -613,7 +612,7 @@ public:
    * intersection objects between s1 and s2 into the output iterator.
    *
    * The iterator value-type is Object. An Object may be:
-   * 1. A pair<Curve_2,Intersection_type>, where the intersection 
+   * 1. A pair<X_monotone_curve_2,Intersection_type>, where the intersection 
    * type is an enumeration that can take the values
    * {Transversal, Tangency, Unknown}.
    * 2. A Point_2 instance (in degenerate cases).
@@ -660,7 +659,7 @@ public:
         k.assign_3_object()(curve, inter_obj);
         CGAL_assertion(b);
         
-        Curve_2 projected_cv = parent->project(curve);
+        const X_monotone_curve_2& projected_cv = parent->project(curve);
         if (projected_cv.is_degenerate())
           *o++ = make_object(projected_cv.left());
         else
@@ -1044,7 +1043,7 @@ public:
     return Is_defined_over();
   }
 
-  Curve_2 project(const Segment_3& segment_3) const
+  X_monotone_curve_2 project(const Segment_3& segment_3) const
   {
     Kernel k;
     Construct_vertex_3 vertex_on = k.construct_vertex_3_object();
@@ -1053,7 +1052,7 @@ public:
                     end2 = vertex_on(segment_3, 1);
     Point_2 projected_end1(end1.x(), end1.y()),
             projected_end2(end2.x(), end2.y());
-    return Curve_2(projected_end1, projected_end2);
+    return X_monotone_curve_2(projected_end1, projected_end2);
   }
 
   Point_2 project(const Point_3& obj) const

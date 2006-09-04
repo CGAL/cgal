@@ -21,7 +21,7 @@
 #define CGAL_ENVELOPE_DIVIDE_AND_CONQUER_3_H
 
 #define CGAL_ENVELOPE_SAVE_COMPARISONS
-//#define CGAL_ENVELOPE_USE_BFS_FACE_ORDER
+#define CGAL_ENVELOPE_USE_BFS_FACE_ORDER
 
 #include <CGAL/Envelope_3/Envelope_base.h>
 #include <CGAL/Object.h>
