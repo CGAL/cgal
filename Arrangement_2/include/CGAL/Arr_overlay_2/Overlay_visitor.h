@@ -236,6 +236,9 @@ public:
                     const X_monotone_curve_2& cv,
                     bool is_left_end)
   {
+    if(!e->is_finite())
+      return;
+
     Point_2& pt = e->get_point();
     if(pt.is_red_object_null())
     {
