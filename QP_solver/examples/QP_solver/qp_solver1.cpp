@@ -34,8 +34,8 @@
 
 // here we declare the types of the various QP entries
 struct Traits {
-  enum Row_type {LESS_EQUAL, EQUAL, GREATER_EQUAL}; 
-  typedef Row_type *Row_type_iterator; // iterator for the constraint type
+  // iterator for the constraint type
+  typedef CGAL::Comparison_result *Row_type_iterator; 
 
   // the exact internal type (input type must be convertible to this)
   typedef CGAL::Gmpz ET;
@@ -68,7 +68,7 @@ int main() {
   int A_col_1[] = {2};
   int b[]       = {1};
 
-  Traits::Row_type rt[] = {Traits::EQUAL};
+  CGAL::Comparison_result rt[] = {CGAL::EQUAL};
   bool fl[]        = {true, true};
   bool fu[]        = {false, true};  // x has upper bound infinity...
   int l[]       = {0, 0};

@@ -44,7 +44,6 @@ class Data_reader {
 public: // types:
   typedef boost::any ANT;
   typedef CGAL::Quotient<CGAL::MP_Float> Rational;
-  enum Row_type { LESS_EQUAL = -1, EQUAL, GREATER_EQUAL};
 
 private: // types:
   enum Input_number_type { INTEGER, RATIONAL, DOUBLE, YET_UNKOWN_NUMBER_TYPE };
@@ -57,7 +56,8 @@ private: // types:
   typedef Vector::const_iterator             Entry_iterator;
   typedef std::vector<bool>                  F_vector;
   typedef F_vector::const_iterator           F_vector_iterator;
-  typedef std::vector<Row_type>              Row_type_vector;
+  typedef std::vector<CGAL::Comparison_result>              
+                                             Row_type_vector;
 
 public: // types:
 
@@ -438,11 +438,11 @@ private: // parsing routines:
       // read row-type:
       std::string rt = token();
       if (rt == "<=")
-	row_type_[i] = LESS_EQUAL;
+	row_type_[i] = CGAL::SMALLER;
       else if (rt == "=" || rt == "==")
-	row_type_[i] = EQUAL;
+	row_type_[i] = CGAL::EQUAL;
       else if (rt == ">=")
-	row_type_[i] = GREATER_EQUAL;
+	row_type_[i] = CGAL::LARGER;
       else
 	return err2("Expected one of {'<=','=','>='} but found '%' in "
 		    "row % of CONSTRAINTS section", rt, tostr(i));

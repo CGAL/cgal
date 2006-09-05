@@ -94,7 +94,7 @@ public: // public types
   typedef  typename Rep::FL_iterator  FL_iterator;
   typedef  typename Rep::FU_iterator  FU_iterator;
   
-  typedef  typename Rep::Row_type     Row_type;
+  typedef  CGAL::Comparison_result Row_type;
   typedef  typename Rep::Row_type_iterator
                                       Row_type_iterator;
   
@@ -480,7 +480,7 @@ public:
 	      A_iterator A, B_iterator b, C_iterator c, C_entry c_0,
 	      D_iterator D,
 	      Row_type_iterator r =
-	        Const_oneset_iterator<Row_type>( Rep::EQUAL),
+	        Const_oneset_iterator<Row_type>( CGAL::EQUAL),
 	      Pricing_strategy *strategy = static_cast<Pricing_strategy *>(0),
 	      int verbosity = 0 );
 	        
@@ -505,7 +505,7 @@ public:
 	       A_iterator A, B_iterator b, C_iterator c, C_entry c_0,
 	       D_iterator D,
 	       Row_type_iterator r =
-	         Const_oneset_iterator<Row_type>( Rep::EQUAL));
+	         Const_oneset_iterator<Row_type>( CGAL::EQUAL));
 	         
     // set-up of explicit bounds
     void set_explicit_bounds(FL_iterator fl, L_iterator lb,

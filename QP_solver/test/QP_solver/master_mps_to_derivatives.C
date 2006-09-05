@@ -166,7 +166,7 @@ void create_free_instance(CGAL::QP_MPS_instance<IT, ET>& qp,
   typedef typename QP_MPS::Vector_iterator Vector_iterator;
   typedef typename QP_MPS::Matrix          Matrix;
   typedef typename QP_MPS::Beginner        Beginner;
-  typedef typename QP_MPS::Row_type        Row_type;
+  typedef typename CGAL::Comparison_result Row_type;
   typedef typename QP_MPS::Row_type_vector Row_type_vector;
   Matrix A                  = qp.A_matrix();
   Vector b                  = qp.b_vector();
@@ -184,7 +184,7 @@ void create_free_instance(CGAL::QP_MPS_instance<IT, ET>& qp,
       b.push_back(qp.l()[i]);
 
       // add corresponding row type:
-      row_types.push_back(QP_MPS::GREATER_EQUAL);
+      row_types.push_back(CGAL::LARGER);
 
       ++nr_of_rows_added;
     }
@@ -197,7 +197,7 @@ void create_free_instance(CGAL::QP_MPS_instance<IT, ET>& qp,
       b.push_back(qp.u()[i]);
 
       // add corresponding row type:
-      row_types.push_back(QP_MPS::LESS_EQUAL);
+      row_types.push_back(CGAL::SMALLER);
 
       ++nr_of_rows_added;
     }

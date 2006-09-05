@@ -129,7 +129,7 @@ set(int n, int m,
   
   // reserve memory for slack and artificial part of `A':
   if (has_ineq) {
-    const unsigned int eq = std::count(qp_r, qp_r+qp_m, Rep::EQUAL);
+    const unsigned int eq = std::count(qp_r, qp_r+qp_m, CGAL::EQUAL);
     slack_A.reserve(qp_m - eq);
     art_A.reserve  (       eq);
     art_s.insert(art_s.end(), qp_m, A_entry(0));
@@ -314,9 +314,9 @@ set_up_auxiliary_problemI(Tag_true)
   
   for (int i = 0; i < qp_m; ++i) {
     
-    if (has_ineq && (qp_r[i] != Rep::EQUAL)) {   // slack variable
+    if (has_ineq && (qp_r[i] != CGAL::EQUAL)) {   // slack variable
       row_le = signed_leading_exponent(i);
-      if (qp_r[i] == Rep::LESS_EQUAL) {                 // '<='
+      if (qp_r[i] == CGAL::SMALLER) {                 // '<='
 	if (row_le < 0) {
 	  
 	  // special entry '< -0'
@@ -415,9 +415,9 @@ set_up_auxiliary_problem(Tag_true)
 
   for (int i = 0; i < qp_m; ++i) {
 
-    if (has_ineq && (qp_r[i] != Rep::EQUAL)) {   // slack variable
+    if (has_ineq && (qp_r[i] != CGAL::EQUAL)) {   // slack variable
 
-      if (qp_r[i] == Rep::LESS_EQUAL) {                 // '<='
+      if (qp_r[i] == CGAL::SMALLER) {                 // '<='
 	if (qp_b[i] < b0) {
 
 	  // special entry '< -0'
@@ -537,10 +537,10 @@ set_up_auxiliary_problem()
     const ET rhs = check_tag(Is_in_standard_form())?
       qp_b[i] : ET(qp_b[i]) - multiply__A_ixO(i);
 
-    if (has_ineq && (qp_r[i] != Rep::EQUAL)) { // inequality constraint, so we
+    if (has_ineq && (qp_r[i] != CGAL::EQUAL)) { // inequality constraint, so we
 					       // add a slack variable, and (if
 					       // needed) a special artificial
-      if (qp_r[i] == Rep::LESS_EQUAL) {        // '<='
+      if (qp_r[i] == CGAL::SMALLER) {        // '<='
 
 	// add special artificial ('< -0') in case the inequality is
 	// infeasible for our starting point (which is the origin):
@@ -786,7 +786,7 @@ init_basis__constraints(int s_i, Tag_false)  // Note: s_i-th inequality is the
   if (s_i >= 0) s_i = slack_A[s_i].first;    // now s_i is absolute index
                                              // of most infeasible row
   for (i = 0, j = 0; i < qp_m; ++i)
-    if (qp_r[i] == Rep::EQUAL) {             // equal. constraint basic
+    if (qp_r[i] == CGAL::EQUAL) {             // equal. constraint basic
       C.push_back(i);
       in_C[i] = j;
       ++j;

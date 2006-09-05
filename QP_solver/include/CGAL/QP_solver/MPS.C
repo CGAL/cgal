@@ -312,7 +312,7 @@ bool QP_MPS_instance<IT_,ET_,
   // check if we have inequalities:
   for (typename Row_type_vector::const_iterator it = row_types_.begin();
        it != row_types_.end(); ++it)
-    if (*it != EQUAL) {
+    if (*it != CGAL::EQUAL) {
       has_equalities_only_and_full_rank_ = false;
       return has_equalities_only_and_full_rank_;
     }
@@ -450,8 +450,8 @@ bool QP_MPS_instance<IT_,ET_,
       {
 	// register name of >=, <=, or = constraint:
 	const unsigned int index = row_types_.size();
-	row_types_.push_back(type == 'G'? GREATER_EQUAL :
-		     (type == 'E'? EQUAL : LESS_EQUAL));
+	row_types_.push_back(type == 'G'? CGAL::LARGER :
+		     (type == 'E'? CGAL::EQUAL : CGAL::SMALLER));
 	if (row_names.find(t) != row_names.end())
 	  return err1("duplicate row name '%' in section ROWS",t);
 	row_names.insert(String_int_pair(t,index));
@@ -655,7 +655,7 @@ bool QP_MPS_instance<IT_,ET_,
       } else {
 	if (!ignore) {
 	  int index = row_name->second;
-	  Row_type type = row_types_[index];
+	  CGAL::Comparison_result type = row_types_[index];
 	  // duplicate the row, unless it has already been duplicated
 	  const Index_map::const_iterator duplicated_row_name = 
 	    duplicated_row_names.find(t);
@@ -678,21 +678,21 @@ bool QP_MPS_instance<IT_,ET_,
           // E              -          b - |r|      b
 	  
 	  switch (type) {
-	  case GREATER_EQUAL: // introduce "<= b+|r|" 
-	    row_types_.push_back(LESS_EQUAL);
+	  case CGAL::LARGER: // introduce "<= b+|r|" 
+	    row_types_.push_back(CGAL::SMALLER);
 	    b_.push_back(b_[index] + CGAL::abs(val));
 	    break;
-	  case LESS_EQUAL:   // introduce ">=  b-|r|" 
-	    row_types_.push_back(GREATER_EQUAL);
+	  case CGAL::SMALLER:   // introduce ">=  b-|r|" 
+	    row_types_.push_back(CGAL::LARGER);
 	    b_.push_back(b_[index] - CGAL::abs(val));
 	    break;
-	  case EQUAL:   
+	  case CGAL::EQUAL:   
 	    if (CGAL_NTS is_positive (val)) {
 	      // introduce "<= b+|r|"
-	      row_types_.push_back(LESS_EQUAL);
+	      row_types_.push_back(CGAL::SMALLER);
 	    } else {
 	      // introduce ">=  b-|r|"  
-	      row_types_.push_back(GREATER_EQUAL);  
+	      row_types_.push_back(CGAL::LARGER);  
 	    }
 	    b_.push_back(b_[index] + val);
 	    break;
@@ -968,9 +968,9 @@ std::ostream& operator<<(std::ostream& o,
     for (unsigned int i=0; i<m; ++i) {
       for (unsigned int j=0; j<n; ++j)
 	o << "  " << A[j][i];
-      if (r[i] == MPS::EQUAL)
+      if (r[i] == CGAL::EQUAL)
 	o << " == ";
-      else if (r[i] == MPS::LESS_EQUAL)
+      else if (r[i] == CGAL::SMALLER)
 	o << " <= ";
       else
 	o << " >= ";
@@ -999,45 +999,6 @@ std::ostream& operator<<(std::ostream& o,
   }
   return o;
 }
-
-template<class MPS,
-	 typename Is_linear_,
-	 typename Is_symmetric_,
-	 typename Has_equalities_only_and_full_rank_,
-	 typename Is_in_standard_form_,
-	 typename IT_,
-	 typename ET_,
-	 typename D_iterator_>
-const typename MPS::Row_type QP_solver_MPS_traits_d<MPS,
-  Is_linear_,Is_symmetric_,
-  Has_equalities_only_and_full_rank_,
-  Is_in_standard_form_,IT_,ET_,D_iterator_>::EQUAL;
-
-template<class MPS,
-	 typename Is_linear_,
-	 typename Is_symmetric_,
-	 typename Has_equalities_only_and_full_rank_,
-	 typename Is_in_standard_form_,
-	 typename IT_,
-	 typename ET_,
-	 typename D_iterator_>
-const typename MPS::Row_type QP_solver_MPS_traits_d<MPS,
-  Is_linear_,Is_symmetric_,
-  Has_equalities_only_and_full_rank_,
-  Is_in_standard_form_,IT_,ET_,D_iterator_>::LESS_EQUAL;
-
-template<class MPS,
-	 typename Is_linear_,
-	 typename Is_symmetric_,
-	 typename Has_equalities_only_and_full_rank_,
-	 typename Is_in_standard_form_,
-	 typename IT_,
-	 typename ET_,
-	 typename D_iterator_>
-const typename MPS::Row_type QP_solver_MPS_traits_d<MPS,
-  Is_linear_,Is_symmetric_,
-  Has_equalities_only_and_full_rank_,
-  Is_in_standard_form_,IT_,ET_,D_iterator_>::GREATER_EQUAL;
 
 // Routines to output to MPS format:
 

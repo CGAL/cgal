@@ -76,7 +76,6 @@ class QP_MPS_instance {
 public:
   typedef IT_ IT;
   typedef ET_ ET;
-  enum Row_type { LESS_EQUAL = -1, EQUAL, GREATER_EQUAL};
 
 public: // undocumented types, should be considered private:
   typedef std::vector<IT>                 Vector;
@@ -87,7 +86,7 @@ public: // undocumented types, should be considered private:
   typedef typename Vector::const_iterator Entry_iterator;
   typedef std::vector<bool>               F_vector;
   typedef F_vector::const_iterator        F_vector_iterator;
-  typedef std::vector<Row_type>           Row_type_vector;
+  typedef std::vector<CGAL::Comparison_result> Row_type_vector;
 
 public:
   // iterators over the input matrices and vectors:
@@ -619,10 +618,6 @@ public:
   typedef ET_ ET;
 
 public:
-  typedef typename MPS::Row_type     Row_type;
-  static const Row_type EQUAL =         MPS::EQUAL;
-  static const Row_type LESS_EQUAL =    MPS::LESS_EQUAL;
-  static const Row_type GREATER_EQUAL = MPS::GREATER_EQUAL;
 
   typedef typename MPS::A_iterator   A_iterator;
   typedef typename MPS::B_iterator   B_iterator;

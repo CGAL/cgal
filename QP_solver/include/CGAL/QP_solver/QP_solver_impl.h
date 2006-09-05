@@ -3008,8 +3008,8 @@ print_program( )
 
 	// rhs
 	vout4.out() << " |  "
-		    << ( qp_r[ row] == Rep::EQUAL      ? ' ' :
-		       ( qp_r[ row] == Rep::LESS_EQUAL ? '<' : '>')) << "=  "
+		    << ( qp_r[ row] == CGAL::EQUAL      ? ' ' :
+		       ( qp_r[ row] == CGAL::SMALLER ? '<' : '>')) << "=  "
 		    << qp_b[ row];
 		    if (!is_in_standard_form) {
 		        vout4.out() << " - " << multiply__A_ixO(row);
@@ -3060,7 +3060,7 @@ print_basis( )
 	    vout2.out() << std::endl
 			<< "basic constraints:  ";
 	    for (Index_iterator i_it = C.begin(); i_it != C.end(); ++i_it) {
-	        label = (qp_r[*i_it] == Rep::EQUAL) ? 'e' : 'i';
+	        label = (qp_r[*i_it] == CGAL::EQUAL) ? 'e' : 'i';
 		    vout2.out() << *i_it << ":" << label << " ";
 	    }
 	/*

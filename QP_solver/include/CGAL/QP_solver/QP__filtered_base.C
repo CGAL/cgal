@@ -178,7 +178,7 @@ update_maxima( )
 	if ( ! handled_A[ row]) {
 
 	    // slack variable (or artificial in phase I) involved?
-	    row_max = (    ( r_it[ row] != Rep::EQUAL)
+	    row_max = (    ( r_it[ row] != CGAL::EQUAL)
 			|| ( this->solver().phase() == 1) ? nt1 : nt0);
 
 	    // scan row and update maxima

@@ -431,9 +431,9 @@ bool QP_solver<Rep_>::is_solution_feasible()
   // check A x = b (where in the code both sides are multiplied by d):
   for (int row = 0; row < qp_m; ++row) {
     const ET rhs = ET(qp_b[row])*d;
-    if (qp_r[row] == Rep::EQUAL         && lhs_col[row] != rhs ||
-	qp_r[row] == Rep::LESS_EQUAL    && lhs_col[row] >  rhs ||
-	qp_r[row] == Rep::GREATER_EQUAL && lhs_col[row] <  rhs)
+    if (qp_r[row] == CGAL::EQUAL         && lhs_col[row] != rhs ||
+	qp_r[row] == CGAL::SMALLER    && lhs_col[row] >  rhs ||
+	qp_r[row] == CGAL::LARGER && lhs_col[row] <  rhs)
       return false;
   }
   
@@ -516,9 +516,9 @@ is_solution_optimal()
   // - check \lambda[i] <= 0 for i in GE:={j|qp_r[j]==GREATER_EQUAL}, and
   // - check \lambda'[i] * (Ax-b) == 0 for i in (LE union GE)
   for (int row = 0; row < qp_m; ++row)
-    if (qp_r[row] != Rep::EQUAL) {
+    if (qp_r[row] != CGAL::EQUAL) {
       const bool is_active = (lhs_col[row] == (ET(qp_b[row]) * d));
-      if (qp_r[row] == Rep::LESS_EQUAL) {
+      if (qp_r[row] == CGAL::SMALLER) {
 	if (lambda_prime[row] < et0 ||
 	    (lambda_prime[row] > et0) && !is_active)
 	  return false;
@@ -616,9 +616,9 @@ bool QP_solver<Rep_>::is_solution_unbounded()
 
   // check feasibility (C8):
   for (int row=0; row<qp_m; ++row)
-    if (qp_r[row] == Rep::GREATER_EQUAL && aw[row]  > et0 ||
-	qp_r[row] == Rep::EQUAL         && aw[row] != et0 ||
-	qp_r[row] == Rep::LESS_EQUAL    && aw[row]  < et0) 
+    if (qp_r[row] == CGAL::LARGER && aw[row]  > et0 ||
+	qp_r[row] == CGAL::EQUAL         && aw[row] != et0 ||
+	qp_r[row] == CGAL::SMALLER    && aw[row]  < et0) 
       return false;
 
   // check feasibility (C9) and (C10):
