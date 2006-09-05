@@ -84,8 +84,8 @@ int main(const int argNr,const char **args) {
     Has_equalities_only_and_full_rank,
     Is_in_standard_form>         Traits;
 
-  CGAL::QP_pricing_strategy<Traits> *strategy = 0;
-  //    new CGAL::QP_partial_filtered_pricing<Traits,IT>;
+  CGAL::QP_pricing_strategy<Traits> *strategy =
+      new CGAL::QP_partial_exact_pricing<Traits>;
 
   typedef CGAL::QP_solver<Traits> Solver;
   Solver solver(qp.number_of_variables(),

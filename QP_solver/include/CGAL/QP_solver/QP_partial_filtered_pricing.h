@@ -53,6 +53,7 @@ class QP_partial_filtered_pricing
 
     // types from the base class
     typedef  typename Base::ET                            ET;
+    typedef  typename Base::Is_in_standard_form           Is_in_standard_form;
     typedef  typename Partial_base::Index_iterator        Index_iterator;
     typedef  typename Partial_base::Index_const_iterator  Index_const_iterator;
   public:
@@ -75,6 +76,10 @@ class QP_partial_filtered_pricing
     
     // cleanup
     ~QP_partial_filtered_pricing() {};
+
+  private:
+    int pricing_helper(int& direction, Tag_true  is_in_standard_form);
+    int pricing_helper(int& direction, Tag_false is_in_standard_form);
 };
 
 // ----------------------------------------------------------------------------
@@ -109,9 +114,17 @@ transition( )
     Filtered_base::transition();
 }
 
+
 template < class Rep_, class NT_, class ET2NT_ >
 int  QP_partial_filtered_pricing<Rep_,NT_,ET2NT_>::
-pricing(int& direction )
+pricing(int& direction ) 
+{
+  return (pricing_helper(direction, Is_in_standard_form()));
+}
+
+template < class Rep_, class NT_, class ET2NT_ >
+int  QP_partial_filtered_pricing<Rep_,NT_,ET2NT_>::
+pricing_helper(int& direction, Tag_true is_in_standard_form )
 {
     // initialize filtered computation
     this->init_NT();
@@ -241,6 +254,149 @@ pricing(int& direction )
 	int  j = *min_it;
 	entering_basis( min_it);
 	return j;
+    }
+
+    // no entering variable found
+    return -1;
+}
+template < class Rep_, class NT_, class ET2NT_ >
+int  QP_partial_filtered_pricing<Rep_,NT_,ET2NT_>::
+pricing_helper(int& direction, Tag_false is_in_standard_form )
+{
+    // initialize filtered computation
+    this->init_NT();
+
+    // loop over all active non-basic variables
+    CGAL_qpe_debug {
+	this->vout() << "active variables:" << std::endl;
+    }
+
+    Index_const_iterator  it, min_it;    
+    int min_j = -1;
+    NT  mu, min_mu = this->nt0;
+    for ( it = this->active_set_begin(); it != this->active_set_end(); ++it) {
+
+	// don't price artificial variables
+	if (this->solver().is_artificial( *it) ||
+	    this->solver().is_basic( *it))  // added by kf
+	  continue;
+
+	// compute mu_j
+	mu = mu_j_NT( *it);
+
+	if (price_dantzig (*it, mu, this->nt0, min_j, min_mu, direction))
+	  min_it = it;
+    }
+
+    if ( min_j >= 0 ) {
+        // exact check; do we really have an entering variable
+	if ( !this->is_improving(min_j, this->mu_j( min_j), this->et0)) {
+
+	    // exact check failed!
+	    CGAL_qpe_debug {
+		this->vout() << "--> exact check of entering variable failed!"
+		       << std::endl;
+	    }
+
+	    // reject entering variable
+	    min_j = -1;
+	    min_mu = this->nt0;
+	}
+    } else {
+	CGAL_qpe_debug {
+	    this->vout() << "--> no entering variable found yet" << std::endl;
+	}
+    }
+
+    // no entering variable found so far?
+    if ( ( min_j == -1) &&
+         ( this->inactive_set_begin() < this->inactive_set_end())) {
+
+	// loop over all inactive non-basic variables
+	CGAL_qpe_debug {
+	    this->vout() << "inactive variables:" << std::endl;
+	}
+	Index_const_iterator  active_it;
+	for ( it = this->inactive_set_begin(); 
+	      it != this->inactive_set_end(); ++it) {
+
+	    // don't price artificial variables
+	    if (this->solver().is_artificial( *it)) continue;
+
+	    // compute mu_j
+	    mu = mu_j_NT( *it);
+
+	    CGAL_qpe_debug {
+		this->vout() << "  mu_" << *it << " [NT]: " << mu << std::endl;
+	    }
+
+	    // candidate for entering?
+	    if (is_improving(*it, mu, this->nt0)) {
+
+		// make variable active
+		active_it = it;
+		activating( active_it);
+		
+		// new minimum
+		if (price_dantzig (*active_it, mu, this->nt0, 
+			            min_j, min_mu, direction))
+		  min_it = active_it;
+	    }
+	}
+
+	if ( min_j >= 0) {	
+	    // exact check of entering variable
+	    if (!this->is_improving(min_j, this->mu_j( min_j), this->et0)) {
+
+		// exact check failed!
+		CGAL_qpe_debug {
+		    this->vout() << 
+		      "--> exact check of entering variable failed!"
+		      << std::endl;
+		}
+
+		// reject entering variable
+		min_j = -1;
+		min_mu = this->nt0;
+	    }
+	} else {
+	    CGAL_qpe_debug {
+		this->vout() << 
+		  "--> still no entering variable found" 
+		  << std::endl;
+	    }
+	}
+    }
+
+    // certify non-existance of entering variable, if necessary
+    if ( min_j == -1) {
+
+	// update row and column maxima
+	this->update_maxima();
+
+	// loop over all non-basic variables again
+	for ( it = this->active_set_begin(); 
+	      it != this->inactive_set_end(); ++it) {
+
+	    // don't price artificial variables
+	    if (this->solver().is_artificial( *it)) continue;
+
+	    if ( ! certify_mu_j_NT( *it)) {
+
+		// entering variable missed by inexact arithmetic
+	      min_j = *it;
+	      min_it = it;
+	      break;
+	    }
+	}
+    }
+    this->vout() << std::endl;
+
+    // return index of entering variable, if any
+    if ( min_j >= 0) {
+      CGAL_qpe_assertion(min_j == *min_it);
+      entering_basis( min_it);
+      return min_j;
     }
 
     // no entering variable found

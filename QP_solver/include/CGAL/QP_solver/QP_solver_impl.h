@@ -1658,6 +1658,9 @@ enter_and_leave_variable( )
     
     x_O_v_i[j] = ratio_test_bound_index;
     
+    // notify pricing strategy (it has called enter_basis on i before)
+    strategyP->leaving_basis (i);
+
     // variable entered and left basis
     i = -1; j = -1;
 }

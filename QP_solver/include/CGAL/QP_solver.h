@@ -708,7 +708,7 @@ public: // only the pricing strategies (including user-defined ones
   // Returns w[j] for an original variable x_j.
   ET w_j_numerator(int j) const
   { 
-    CGAL_qpe_precondition((0 <= j) && (j < qp_n));
+    CGAL_qpe_precondition((0 <= j) && (j < qp_n) && is_phaseII);
     return w[j];
   }
   

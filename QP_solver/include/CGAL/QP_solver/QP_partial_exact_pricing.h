@@ -48,6 +48,7 @@ class QP_partial_exact_pricing : public QP__partial_base<Rep_> {
 
     // types from the pricing base class
     typedef  typename Base::ET                            ET;
+    typedef  typename Base::Is_in_standard_form           Is_in_standard_form;
     typedef  typename Partial_base::Index_iterator        Index_iterator;
     typedef  typename Partial_base::Index_const_iterator  Index_const_iterator;
 
@@ -62,6 +63,10 @@ class QP_partial_exact_pricing : public QP__partial_base<Rep_> {
     
     // creation
     ~QP_partial_exact_pricing(){ };
+
+  private:
+    int pricing_helper(int& direction, Tag_true  is_in_standard_form);
+    int pricing_helper(int& direction, Tag_false is_in_standard_form);
 };
 
 // ----------------------------------------------------------------------------
@@ -83,8 +88,15 @@ template < class Rep_ >
 int  QP_partial_exact_pricing<Rep_>::
 pricing(int& direction )
 {
+  return (pricing_helper(direction, Is_in_standard_form()));
+}
+
+template < class Rep_ >
+int  QP_partial_exact_pricing<Rep_>::
+pricing_helper(int& direction, Tag_true is_in_standard_form)
+{
     Index_const_iterator  it, min_it;
-    ET                            mu, min_mu =  0;
+    ET mu, min_mu = this->et0;
 
     // loop over all active non-basic variables
     CGAL_qpe_debug {
@@ -148,6 +160,82 @@ pricing(int& direction )
 	int  j = *min_it;
 	entering_basis( min_it);
 	return j;
+    }
+
+    // no entering variable found
+    return -1;
+}
+template < class Rep_ >
+int  QP_partial_exact_pricing<Rep_>::
+pricing_helper(int& direction, Tag_false is_in_standard_form)
+{
+    Index_const_iterator  it, min_it;
+    int                   min_j = -1;
+    ET                    mu, min_mu =  this->et0;
+
+    // loop over all active non-basic variables
+    CGAL_qpe_debug {
+	this->vout() << "active variables:" << std::endl;
+    }
+    for ( it = this->active_set_begin(); it != this->active_set_end(); ++it) {
+
+        // don't price artificial variables
+	if (this->solver().is_artificial( *it) ||
+	    this->solver().is_basic( *it))  // added by kf
+	  continue;
+
+	// compute mu_j
+	mu = this->mu_j( *it);
+
+	if (price_dantzig (*it, mu, this->et0, min_j, min_mu, direction))
+	  min_it = it;
+    }
+
+    // no entering variable found so far?
+    if ( ( min_j == -1) && ( this->inactive_set_begin() <
+                             this->inactive_set_end())) 
+      {
+
+	// loop over all inactive non-basic variables
+	CGAL_qpe_debug {
+	    this->vout() << "inactive variables:" << std::endl;
+	}
+	Index_const_iterator  active_it;
+	for ( it = this->inactive_set_begin(); 
+	      it != this->inactive_set_end(); ++it) {
+
+	  // don't price basics/artificials
+	  CGAL_qpe_precondition (!this->solver().is_basic(*it));
+	  if (this->solver().is_artificial( *it)) continue;
+	    
+	  // compute mu_j
+	  mu = mu_j( *it);
+
+	  CGAL_qpe_debug {
+	    this->vout() << "  mu_" << *it << ": " << mu << std::endl;
+	  }
+
+	  // candidate for entering?
+	  if ( is_improving(*it, mu, this->et0)) {
+
+	    // make variable active
+	    active_it = it;
+	    activating( active_it);
+
+	    // new minimum?
+	    if (price_dantzig (*active_it, mu, this->et0, 
+			       min_j, min_mu, direction))
+	      min_it = active_it;
+	  }
+	}
+      }
+    this->vout() << std::endl;
+
+    // return index of entering variable, if any
+    if ( min_j >= 0) {
+      CGAL_qpe_assertion(min_j == *min_it);
+      entering_basis( min_it);
+      return min_j;
     }
 
     // no entering variable found

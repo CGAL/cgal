@@ -133,13 +133,13 @@ template < class Rep_ >
 int  QP_exact_bland_pricing<Rep_>::
 pricing_helper(int& direction, Tag_false is_in_standard_form)
 {
-  typedef typename QP_solver::Bound_index Bound_index;
     
   // get properties of quadratic program:
   int  w = this->solver().number_of_working_variables();
 
   // loop over all non-basic variables:
-  int  j;
+  int  j,  min_j  = -1;
+  ET min_mu = this->et0;
   // 
   for (j = 0; j < w; ++j) {
 
@@ -154,101 +154,11 @@ pricing_helper(int& direction, Tag_false is_in_standard_form)
 	}
 	continue;
       }
-            
-      // original variable:
-      if (this->solver().is_original(j)) {
-	const Bound_index bnd_ind =
-	  this->solver().nonbasic_original_variable_bound_index(j);
-	switch (bnd_ind) {
-	case QP_solver::LOWER:
-	  {
-	    // compute mu_j
-	    const ET mu = this->mu_j(j);
-	    
-	    CGAL_qpe_debug { 
-	      this->vout() << "mu_" << j << ": " << mu
-			   << " LOWER" << std::endl;
-	    }
-	    
-	    if (mu < this->et0) {
-	      direction = 1;
-	      return j;
-	    }
-	    break;
-	  }
-	case QP_solver::ZERO:
-	  {
-	    // compute mu_j
-	    const ET mu = this->mu_j(j);
 
-	    // determine whether the variable is on lower or upper bound, or
-	    // somewhere it the middle:
-	    //
-	    // Note: it cannot be both on the lower and upper bound (as it is
-	    // not FIXED).
-	    const int where =
-	      this->solver().state_of_zero_nonbasic_variable(j);
-	    
-	    CGAL_qpe_debug { 
-	      this->vout() << "mu_" << j << ": " << mu
-			   << " ZERO " 
-			   << (where == -1? "(LOWER)" : 
-			       (where == 0? "(MIDDLE)" : "(UPPER)"))
-			   << std::endl;
-	    }
-	    
-	    if (where >= 0 &&       // middle or on upper bound?
-		mu > this->et0) {
-	      direction = -1;
-	      return j;
-	    }
-	    if (where <= 0 &&       // middle or on lower bound?
-		mu < this->et0) {
-	      direction = 1;
-	      return j;                            
-	    }
-	    break;
-	  }
-	case QP_solver::UPPER:
-	  {
-	    // compute mu_j
-	    const ET mu = this->mu_j(j);
-	    
-	    CGAL_qpe_debug { 
-	      this->vout() << "mu_" << j << ": " << mu
-			   << " UPPER" << std::endl;
-	    }
-	    
-	    if (mu > this->et0) {
-	      direction = -1;
-	      return j;
-	    }                    
-	    break;
-	  }
-	case QP_solver::FIXED:
-	  CGAL_qpe_debug {
-	    this->vout() << "Fixed variable " << j << std::endl;
-	  }
-	  break;
-	case QP_solver::BASIC:
-	  CGAL_qpe_assertion(false);
-	  break;
-	}  
-      } else {                                    // slack variable
-	// compute mu_j
-	const ET mu = this->mu_j(j);
-
-	CGAL_qpe_debug {
-	  this->vout() << "mu_" << j << ": " << mu 
-		       << " LOWER (slack)" << std::endl;
-	}
-
-	if (mu < this->et0) {
-	  direction = 1;
-	  return j;
-	}
-
-      }
+      const ET mu = this->mu_j(j);
+      // from pricing strategy base class
+      price_dantzig (j, mu, this->et0, min_j, min_mu, direction); 
+      if (min_j >= 0) return j;
     }
   }
   this->vout() << std::endl;

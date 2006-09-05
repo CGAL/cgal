@@ -44,6 +44,7 @@ class QP_full_filtered_pricing : public QP__filtered_base<Rep_,NT_,ET2NT_> {
     // self
     typedef  Rep_                            Rep;
     typedef  QP_pricing_strategy<Rep>       Base;
+    typedef  typename Base::Is_in_standard_form     Is_in_standard_form;
     typedef  QP__filtered_base<Rep, NT_, ET2NT_>         Filtered_base;
     typedef  QP_full_filtered_pricing<Rep, NT_, ET2NT_>  Self;
 
@@ -65,6 +66,10 @@ class QP_full_filtered_pricing : public QP__filtered_base<Rep_,NT_,ET2NT_> {
     // cleanup
     ~QP_full_filtered_pricing() { };
 
+  private:
+    int pricing_helper(int& direction, Tag_true  is_in_standard_form);
+    int pricing_helper(int& direction, Tag_false is_in_standard_form);
+
 };
 
 // ----------------------------------------------------------------------------
@@ -84,7 +89,14 @@ QP_full_filtered_pricing( ET2NT et2nt)
 // operations
 template < class Rep_, class NT_, class ET2NT_ >
 int  QP_full_filtered_pricing<Rep_,NT_,ET2NT_>::
-pricing(int& direction )
+pricing (int& direction) 
+{
+  return (pricing_helper(direction, Is_in_standard_form()));
+}
+
+template < class Rep_, class NT_, class ET2NT_ >
+int  QP_full_filtered_pricing<Rep_,NT_,ET2NT_>::
+pricing_helper(int& direction, Tag_true ) // standard form
 {
     // get properties of quadratic program
     int  w = this->solver().number_of_working_variables();
@@ -148,6 +160,84 @@ pricing(int& direction )
 
 
 		// certify 'mu_j >= 0'
+		if ( ! this->certify_mu_j_NT( j)) {
+
+		    // entering variable missed by inexact arithmetic
+		    min_j = j;
+		    break;
+		}
+	    }
+	}
+    }
+    this->vout() << std::endl;
+
+    // return index of entering variable
+    return min_j;
+}
+
+template < class Rep_, class NT_, class ET2NT_ >
+int  QP_full_filtered_pricing<Rep_,NT_,ET2NT_>::
+pricing_helper(int& direction, Tag_false ) // bounds for variables
+{
+    // get properties of quadratic program
+    int  w = this->solver().number_of_working_variables();
+
+    // initialize filtered computation
+    this->init_NT();
+
+    // loop over all non-basic variables
+    int  j,  min_j  = -1;
+    NT   mu, min_mu = this->nt0;
+    for ( j = 0; j < w; ++j) {
+
+	// variable non-basic?
+	if ( ! this->solver().is_basic( j)) {
+	
+	    // don't price artificial variables
+	    if (this->solver().is_artificial( j)) continue;
+
+
+	    // compute mu_j
+	    mu = this->mu_j_NT( j);
+
+	    CGAL_qpe_debug {
+		this->vout() << "mu_" << j << " [NT]: " << mu << std::endl;
+	    }
+	    // from pricing strategy base class
+	    price_dantzig (j, mu, this->nt0, min_j, min_mu, direction);
+	}
+    }
+
+    if ( min_j >= 0) {
+        // exact check; do we really have an entering variable
+	if (!this->is_improving(min_j, this->mu_j( min_j), this->et0)) {
+
+	    // exact check failed!
+	    CGAL_qpe_debug {
+		this->vout() << "--> exact check of entering variable failed!"
+		       << std::endl;
+	    }
+	    
+	    min_j  = -1;
+	    min_mu = this->nt0;
+	}
+    }
+
+    if ( min_j == -1) {
+        // try to certify non-existence of entering variable, based on
+        // error bounds
+	this->update_maxima();
+
+	// loop over all non-basic variables again
+	for ( j = 0; j < w; ++j) {
+
+	    // variable non-basic?
+	    if ( ! this->solver().is_basic( j)) {
+	    
+	        // don't price artificial variables
+	        if (this->solver().is_artificial( j)) continue;
+
+		// certify that j is not improving
 		if ( ! this->certify_mu_j_NT( j)) {
 
 		    // entering variable missed by inexact arithmetic

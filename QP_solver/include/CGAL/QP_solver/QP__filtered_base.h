@@ -69,10 +69,21 @@ class QP__filtered_base : virtual public QP_pricing_strategy<Rep_> {
 
     // operations
     void  init_NT( );
-    NT    mu_j_NT( int j) const;
+    NT mu_j_NT( int j) const
+    {
+      return mu_j_NT(j, Is_in_standard_form());
+    } 
 
     void  update_maxima( );
-    bool  certify_mu_j_NT( int j) const;
+
+    // this function returns true if j is not a candidate for the
+    // entering variable. This can be deduced if the inexact mu_j 
+    // is sufficiently far away from 0. This test uses the error 
+    // bounds from Sven's thesis (p.99), see also the C-file. Only
+    // if these bounds are insufficient, exact arithmetic is used
+    bool  certify_mu_j_NT( int j) const {
+      return certify_mu_j_NT( j, Is_in_standard_form());
+    }
 
     virtual  void  transition( );
 
@@ -80,6 +91,9 @@ class QP__filtered_base : virtual public QP_pricing_strategy<Rep_> {
     const NT                 nt0, nt1;  // small constants of NT
 
   private:
+    // types from Rep
+    typedef  typename Rep::Is_linear    Is_linear;
+    typedef  typename Rep::Is_in_standard_form Is_in_standard_form;
 
     // private member functions
     void  set( int l, Tag_true  is_linear);
@@ -95,11 +109,25 @@ class QP__filtered_base : virtual public QP_pricing_strategy<Rep_> {
     void  update_maxima( Tag_false is_linear);
 
     void  transition( int n, Tag_true  is_linear);
-    void  transition( int n, Tag_false is_linear);
+    void  transition( int n, Tag_false is_linear);    
+    
+    NT    mu_j_NT( int j, Tag_true is_in_standard_form) const; 
+    NT    mu_j_NT( int j, Tag_false is_in_standard_form) const { 
+      return  mu_j_NT(j, is_in_standard_form, Is_linear());
+    }
+    NT    mu_j_NT( int j, Tag_false, Tag_true) const; // variable bounds, LP
+    NT    mu_j_NT( int j, Tag_false, Tag_false) const; // variable bounds, QP
+    bool  certify_mu_j_NT( int j, Tag_true) const; // standard form
+    bool  certify_mu_j_NT( int j, Tag_false) const; // variable bounds
 
-    // types
-    typedef  typename Rep::Is_linear    Is_linear;
+    // the q-parameter in the error bound
+    void set_q(int c, int b) {
+      set_q(c, b, Is_in_standard_form());
+    }
+    void set_q(int c, int b, Tag_true);
+    void set_q(int c, int b, Tag_false);
 
+    // some more types
     typedef  typename Rep::A_iterator   A_iterator;
     typedef  typename Rep::C_iterator   C_iterator;   
     typedef  typename std::iterator_traits
@@ -119,6 +147,11 @@ class QP__filtered_base : virtual public QP_pricing_strategy<Rep_> {
     typedef  typename Values_NT::const_iterator  Values_NT_iterator;
 
     // data members
+    int n;                              // number of solver variables
+    NT q;                               // for the error bounds 
+    mutable
+    NT w_j_NT;                          // inexact version of w[j]
+  
     ET2NT                    et2nt_obj; // conversion from ET to NT
 
     Values_NT                lambda_NT; // NT version of lambda (from KKT)
@@ -204,18 +237,28 @@ init_NT( Tag_true)
 
 template < class Rep_, class NT_, class ET2NT_ >  inline
 NT_  QP__filtered_base<Rep_,NT_,ET2NT_>::
-mu_j_NT( int j) const
+mu_j_NT( int j, Tag_true) const // standard form
 {
     return this->solver().mu_j( j, lambda_NT.begin(), x_B_O_NT.begin(), d_NT);
 }
-/*
-template < class Rep_, class NT_, class ET2NT_ >  inline        // LP case
-void  QP__filtered_base<Rep_,NT_,ET2NT_>::
-update_maxima( Tag_true)
+
+template < class Rep_, class NT_, class ET2NT_ >  inline
+NT_  QP__filtered_base<Rep_,NT_,ET2NT_>::
+mu_j_NT( int j, Tag_false, Tag_true) const // variable bounds, LP case
 {
-    // nop
+  return this->solver().mu_j( j, lambda_NT.begin(), x_B_O_NT.begin(), d_NT);
 }
-*/
+
+template < class Rep_, class NT_, class ET2NT_ >  inline
+NT_  QP__filtered_base<Rep_,NT_,ET2NT_>::
+mu_j_NT( int j, Tag_false, Tag_false) const // variable bounds, QP case
+{
+  w_j_NT = ( (j < n && this->solver().phase() == 2) ? 
+		et2nt_obj( this->solver().w_j_numerator(j)) : nt0 );
+  return this->solver().mu_j( j, lambda_NT.begin(), 
+				x_B_O_NT.begin(), w_j_NT, d_NT);
+}
+
 
 // transition
 template < class Rep_, class NT_, class ET2NT_ >  inline        // QP case
@@ -231,6 +274,20 @@ void  QP__filtered_base<Rep_,NT_,ET2NT_>::
 transition( int, Tag_true)
 {
     // nop
+}
+
+template < class Rep_, class NT_, class ET2NT_ >  inline // standard form
+void  QP__filtered_base<Rep_,NT_,ET2NT_>::
+set_q(int c, int b, Tag_true) 
+{
+   q = std::ldexp( 1.015625 * ( c+b+1) * ( c+b+2), -53);
+}
+
+template < class Rep_, class NT_, class ET2NT_ >  inline // variable bounds
+void  QP__filtered_base<Rep_,NT_,ET2NT_>::
+set_q(int c, int b, Tag_false) 
+{
+   q = std::ldexp( 1.015625 * ( c+b+2) * ( c+b+3), -53);
 }
 
 CGAL_END_NAMESPACE
