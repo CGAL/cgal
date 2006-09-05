@@ -22,10 +22,11 @@ int main(int argc, char *argv[]) {
   l.push_front(Weighted_point(Bare_point( 1,-1,-1), 1.25));
   l.push_front(Weighted_point(Bare_point( 1, 1, 1), 1.25));
   l.push_front(Weighted_point(Bare_point(-1, 1,-1), 1.25));
-
-  Skin_surface_3 skin_surface(l.begin(), l.end(), shrinkfactor);
+  l.push_front(Weighted_point(Bare_point(-1,-1, 1), 1.25));
 
   Polyhedron p;
+
+  Skin_surface_3 skin_surface(l.begin(), l.end(), shrinkfactor);
   CGAL::mesh_skin_surface_3(skin_surface, p);
 
   CGAL::subdivide_skin_surface_mesh_3(p, skin_surface);

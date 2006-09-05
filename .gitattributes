@@ -1684,6 +1684,7 @@ Skin_surface_3/doc_tex/Skin_surface_3/molecule.eps -text svneol=unset#applicatio
 Skin_surface_3/doc_tex/Skin_surface_3/molecule.png -text svneol=unset#image/png
 Skin_surface_3/doc_tex/Skin_surface_3/skinTwoPoints.eps -text svneol=unset#application/postscript
 Skin_surface_3/doc_tex/Skin_surface_3/skinTwoPoints.png -text svneol=unset#image/png
+Skin_surface_3/doc_tex/Skin_surface_3_ref/Skin_surface_traits_3.tex -text
 Skin_surface_3/examples/Skin_surface_3/data/1IYE.pdb -text
 Skin_surface_3/examples/Skin_surface_3/data/molecule_tunnel.cin -text
 Skin_surface_3/examples/Skin_surface_3/dsrpdb/doc/doc_footer -text

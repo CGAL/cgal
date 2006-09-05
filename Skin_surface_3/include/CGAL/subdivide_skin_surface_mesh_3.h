@@ -145,7 +145,7 @@ template <class Polyhedron_3,
 	  class SkinSurface_3>
 void subdivide_skin_surface_mesh_3(
           Polyhedron_3 &p, 
-          SkinSurface_3 &skin,
+          const SkinSurface_3 &skin,
           int nSubdiv = 1) {
   typedef Skin_surface_subdivision_policy_base_3<Polyhedron_3, SkinSurface_3> 
     Subdivision_policy;

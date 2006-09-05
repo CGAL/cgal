@@ -78,7 +78,7 @@ they were originally introduced.
 
 A skin surface is defined in terms of a finite set of weighted points
 $\ssWpoint{P}$ and a shrink factor $s$, with $0\leq s\leq 1$. A
-weighted point $\ssWpoint{p}=({p},\ssWeight{p})\in \R^d\times\R$
+weighted point $\ssWpoint{p}=({p},\ssWeight{p})\in \R^3\times\R$
 corresponds to a ball with center ${p}$ and radius
 $\sqrt{\ssWeight{p}}$. A weighted point with zero weight is called an
 unweighted point. 
@@ -123,22 +123,27 @@ Figure~\ref{fig:twoPoints} (right).
 
 We now define the skin surface $\mbox{skn}^{s}(\ssWpoint{P})$
 associated with a set of weighted points $\ssWpoint{P}$. Consider the
-set of weighted points obtained by shrinking each weighted point in
-the convex hull of the input weighted points with the shrink factor
-$s$. The skin surface is the boundary of the union of this set of
-weighted points:
+set of weighted points obtained by taking the convex hull of the input
+weighted points. A calculation shows that every weighted point lies
+within the union of the input balls. Next, we shrink each weighted
+point in the convex hull with the shrink factor $s$. Hence, we
+multiply the radius of the corresponding (real) input circles with a
+factor $\sqrt{s}$. The skin surface is the boundary of the union of
+this set of weighted points:
 \begin{eqnarray}
   \label{eq:defskin}
-  \mbox{skn}^{s}(\ssWpoint{P}) &=& \partial\;{\bigcup\{\ssWpoint{p}^s\mid \ssWpoint{p}\in \mbox{conv} (\ssWpoint{P})\}}.
+  \mbox{skn}^{s}(\ssWpoint{P})
+  &=& \partial\;{\bigcup\{\ssWpoint{p}^s\mid 
+                   \ssWpoint{p}\in \mbox{conv} (\ssWpoint{P})\}}.
 \end{eqnarray}
 %
-Here $\mbox{conv}(\ssWpoint{P}) \subset \R^d\times\R$ is the convex
+Here $\mbox{conv}(\ssWpoint{P}) \subset \R^3\times\R$ is the convex
 hull of a set of weighted points $\ssWpoint{P}$, whereas $\partial$
-denotes the boundary -- in $\R^d$ -- of the union of the corresponding
-set of balls. 
+denotes the boundary -- in $\R^3$ -- of the union of the corresponding
+set of balls.
 
-A calculation shows that each weighted point in the convex hull of the
-input weighted points is contained in the union of the input weighted
+Recall that each weighted point in the convex hull of the input
+weighted points is contained in the union of the input weighted
 points. Hence, for a shrink factor equal to one, the skin surface is
 the boundary of the union of the input weighted points.
 
@@ -179,12 +184,12 @@ steps and outputs a mesh in a \ccc{CGAL::Polyhedron_3}:
   int nSubdiv=0,
   bool grow_balls = true);}
 
-
-The \ccc{Skin_surface_3} is created from an iterator range of weighted
-points and a shrink factor. Optional arguments are a boolean telling
-whether the input weighted points should be grown in such a way that
-the skin surface wraps around the input balls instead of the shrunk
-input balls.
+To obtain more control over the algorithm, the different steps can
+also be performed separately. First, a \ccc{Skin_surface_3} object is
+created from an iterator range of weighted points and a shrink factor.
+Optional arguments are a boolean telling whether the input weighted
+points should be grown in such a way that the skin surface wraps
+around the input balls instead of the shrunk input balls.
 
 \ccGlobalFunction{
   template <class SkinSurfaceTraits_3> 
@@ -216,20 +221,16 @@ The last function takes the (coarse) mesh and subdivides it in-situ by
 applying a given number of 1-4 split operations (each triangle is
 split into four sub-triangles) and moving the new vertices towards the
 skin surface. If the number of iterations is not specified, one
-subdivision step is done. The \ccc{SkinSurface_3} object is
-needed to move the new points on the skin surface.
+subdivision step is done. The object of the \ccc{SkinSurface_3}
+concept used to construct the coarse mesh is needed to move new points
+on the skin surface.
 
 \ccGlobalFunction{
   template <class Polyhedron, class SkinSurface_3 >
   void subdivide_skin_surface_mesh_3 (Polyhedron &p,
-  SkinSurface_3 &skinsurface,
+  const SkinSurface_3 &skinsurface,
   int iterations=1);
 }
-
-The same function can be used to subdivide the union of a set of
-balls, in which case the corresponding \ccc{UnionOfBalls_3} object is
-passed instead of a \ccc{SkinSurface_3} object.
-
 
 %
 %The class \ccc{Skin_surface_3} is both a model of the concept
@@ -247,8 +248,8 @@ GHz, with 1 Gb of memory.
     Dataset & Number of weighted points & Coarse mesh & first subdivision step\\
     \hline
     \hline
-    Caffeine& 23 & 0.2 & 0.05 \\
-    Gramicidin A& 318 & 5 & 2\\
+    Caffeine& 23 & 0.2 sec. & 0.05 sec.\\
+    Gramicidin A& 318 & 5 sec. & 2 sec.\\
     \hline
   \end{tabular}
 \end{center}
@@ -256,17 +257,21 @@ GHz, with 1 Gb of memory.
 \section{Example programs}
 \subsection{Meshing a skin surface}
 The following example shows the construction of a coarse mesh of the
-skin surface from an iterator range of weighted points and a shrink
-factor. It first constructs an \ccc{Skin_surface_3} object from an
-iterator range of weighted points and a shrink factor. From this
-object, the isotopic mesh is extracted using the function
-\ccc{mesh_skin_surface_3} and is stored in a \ccc{CGAL::Polyhedron}.
+skin surface using the function \ccc{make_skin_surface_mesh_3}. The
+output is a \ccc{CGAL::Polyhedron}.
 \ccIncludeExampleCode{Skin_surface_3/skin_surface_simple.cpp}
 
 \subsection{Meshing and subdividing a skin surface}
-This example extends the previous examples with a subdivision of the
-coarse mesh to obtain a better approximation. The use of the
-polyhedral items is not necessary, but gives a significant speedup.
+The following example shows the construction of a coarse mesh of the
+skin surface by explicitly performing different steps of the
+algorithm. It first constructs a \ccc{Skin_surface_3} object from an
+iterator range of weighted points and a shrink factor. From this
+object, the isotopic mesh is extracted using the function
+
+Next, the coarse mesh is refined to obtain a better approximation. The
+use of \ccc{CGAL::Skin_surface_polyhedral_items_3<Skin_surface_3>} in
+the \ccc{CGAL::Polyhedron} is not necessary, but gives the subdivision
+a significant speedup.
 \ccIncludeExampleCode{Skin_surface_3/skin_surface_subdiv.cpp}
 
 
