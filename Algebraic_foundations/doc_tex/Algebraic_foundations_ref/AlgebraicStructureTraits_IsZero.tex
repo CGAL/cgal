@@ -1,0 +1,28 @@
+\begin{ccRefConcept}{AlgebraicStructureTraits::IsZero}
+
+\ccDefinition
+
+\ccc{AdaptableUnaryFunction}, returns true in case the zero element of the ring.  
+
+\ccRefines 
+
+\ccc{AdaptableUnaryFunction} 
+
+\ccTypes
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxxxxxxxxxxxxxxxxxxxxxx}{}
+
+\ccTypedef{typedef boll result_type;}{}\ccGlue
+\ccTypedef{typedef AlgebraicStructureTraits::Algebraic_structure argument_type;}{}
+
+\ccOperations
+\ccSetThreeColumns{xxxxxxxxxx}{xxxxx}{}
+\ccMethod{result_type operator()(argument_type x);}{ 
+returns true in case $x$ is the zero element of the ring. }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicStructureTraits}
+
+\end{ccRefConcept}

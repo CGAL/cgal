@@ -1,0 +1,26 @@
+\begin{ccRefConcept}{RealEmbeddableTraits::IsPositive}
+
+\ccDefinition
+
+\ccc{AdaptableUnaryFunction}, returns true in case the argument is positive.  
+ 
+\ccRefines 
+
+\ccc{AdaptableUnaryFunction} 
+
+\ccTypes
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccTypedef{typedef bool                                    result_type;}{}\ccGlue
+\ccTypedef{typedef RealEmbeddableTraits::Real_embeddable argument_type;}{}
+
+\ccOperations
+\ccMethod{result_type operator()( const argument_type&  x);}
+        { returns true in case $x$ is positive. }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{RealEmbeddableTraits}\\
+
+\end{ccRefConcept} 

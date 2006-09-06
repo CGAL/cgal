@@ -48,6 +48,21 @@ A model of \ccc{AlgebraicStructureTraits} is supposed to provide:\\
 
 \ccHeading{Functors}
 
+
+\ccNestedType{Is_zero}{ 
+This is either \ccc{CGAL::Null_functor} or a model of 
+\ccc{AlgebraicStructureTraits::IsZero}.\\
+In case \ccc{Algebraic_structure} is a model of \ccc{IntegralDomainWithoutDiv}
+this is not \ccc{CGAL::Null_functor}.
+}
+
+\ccNestedType{Is_one}{ 
+This is either \ccc{CGAL::Null_functor} or a model of 
+\ccc{AlgebraicStructureTraits::IsOne}.\\
+In case \ccc{Algebraic_structure} is a model of \ccc{IntegralDomainWithoutDiv}
+this is not \ccc{CGAL::Null_functor}.
+}
+
 \ccNestedType{Simplify}{ 
 This is either \ccc{CGAL::Null_functor} or a model of 
 \ccc{AlgebraicStructureTraits::Simplify}.\\
