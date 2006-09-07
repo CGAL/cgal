@@ -20,6 +20,7 @@
 #ifndef CGAL_BOOST_GRAPH_POLYHEDRON_BGL_PROPERTIES_H
 #define CGAL_BOOST_GRAPH_POLYHEDRON_BGL_PROPERTIES_H
 
+#include <CGAL/boost/graph/BGL_properties.h>
 #include <CGAL/boost/graph/Polyhedron_BGL.h>
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
@@ -156,10 +157,6 @@ public:
     return e->point();
   }
 };
-
-struct edge_is_border_t   {} ;
-struct vertex_is_border_t {} ;
-struct vertex_point_t     {} ;
 
 template <class Tag>
 struct Polyhedron_property_map {};
