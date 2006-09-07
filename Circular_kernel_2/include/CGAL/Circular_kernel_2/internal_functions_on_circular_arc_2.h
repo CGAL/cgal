@@ -147,7 +147,18 @@ namespace CircularFunctors {
 //     return compare_y<CK>(p0, p1);
 //   }
 
-
+ 
+  template < class CK >
+  bool
+  point_in_x_range(const typename CK::Circular_arc_point_2 &source,
+		   const typename CK::Circular_arc_point_2 &target,
+		   const typename CK::Circular_arc_point_2 &p) 
+  {
+    // range includes endpoints here
+    return ( (CircularFunctors::compare_x<CK>(p, source) != CircularFunctors::compare_x<CK>(p, target)) 
+	     || (CircularFunctors::compare_x<CK>(p, source) == CGAL::EQUAL) );
+  }
+  
   template < class CK >
   bool
   point_in_x_range(const typename CK::Circular_arc_2 &A,
@@ -530,6 +541,7 @@ namespace CircularFunctors {
   {
     typedef std::vector<CGAL::Object> solutions_container; 
     typedef typename CK::Circular_arc_2 Circular_arc_2; 
+    typedef typename CK::Circular_arc_point_2 Circular_arc_point_2; 
 
 #ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
     // same curve
@@ -549,6 +561,75 @@ namespace CircularFunctors {
       return res;
     }
 #endif
+
+#ifdef  CGAL_CK_EXPLOIT_IDENTITY
+    bool a1s_a2s = a1.source().equal_ref(a2.source());
+    bool a1s_a2t = a1.source().equal_ref(a2.target());
+    bool a1t_a2s = a1.target().equal_ref(a2.source());
+    bool a1t_a2t = a1.target().equal_ref(a2.target());
+    
+    if((a1s_a2s && a1t_a2t) || (a1s_a2t && a1t_a2s)){ // Case 1
+      if( (a1.supporting_circle() == a2.supporting_circle()) && (a1.on_upper_part() && a2.on_upper_part())|| (! a1.on_upper_part() && (! a2.on_upper_part()))){ 
+	*res++ = make_object(a1);
+      } else {
+	if(compare_x<CK>(a1.source(), a1.target()) == SMALLER{
+	  *res++ = make_object(std::make_pair(a1.source(),1u));
+	  *res++ = make_object(std::make_pair(a1.target(),1u));
+	} else {	  
+	  *res++ = make_object(std::make_pair(a1.target(),1u));
+	  *res++ = make_object(std::make_pair(a1.source(),1u));
+	}
+      }
+      return res;
+    } else if (a1s_a2s || a1t_a2t || a1s_a2t || a1t_a2s) {
+      Circular_arc_point_2 p,q,r;
+      
+      // Make that q is the middle vertex
+      if(a1s_a2s){
+	p = a1.target();
+	q = a1.source();
+	r = a2.target();
+      } else if(a1s_a2t){
+	p = a1.target();
+	q = a1.source();
+	r = a2.source();
+      } else if(a1t_a2s){
+	p = a1.source();
+	q = a1.target();
+	r = a2.target();
+      } else { // a1t_a2t
+	p = a1.source();
+	q = a1.target();
+	r = a2.source();
+      }
+
+      bool return_q = false;
+      if(CircularFunctors::compare_x<CK>(r,q) == LARGER){
+	if (CircularFunctors::point_in_x_range<CK>(p,r,q)){ // Case 2
+	  return_q = true;
+	}  else if (((a1.on_upper_part() && ! a2.on_upper_part()) && CircularFunctors::compare_y_to_right<CK>(a1,a2,q) == SMALLER)
+		    || ((! a1.on_upper_part() && a2.on_upper_part()) && CircularFunctors::compare_y_to_right<CK>(a1,a2,q) == LARGER)){
+	  return_q = true;
+	} else if ((a1.on_upper_part() && ! a2.on_upper_part()) && CircularFunctors::compare_y_to_right<CK>(a1,a2,q)==LARGER){
+	  typename CK::Linear_kernel::Bounded_side p_a2_bs = CircularFunctors::bounded_side<CK>(a2.supporting_circle(),p);
+	  typename CK::Linear_kernel::Bounded_side r_a1_bs = CircularFunctors::bounded_side<CK>(a1.supporting_circle(),r);
+	  if(p_a2_bs || r_a1_bs){
+	    return_q = true;
+	  } else {
+	  }
+	}
+      } else {
+	// TODO: treat the cases where the common endpoint is on the right
+      }
+	
+      if(return_q){
+
+	*res++ = make_object(std::make_pair(q,1u));
+	return res;
+      }
+
+    }
+#endif // CGAL_CK_EXPLOIT_IDENTITY
 
     const bool sqr1_eq_sqr2 = (a1.squared_radius() == a2.squared_radius());  
     const bool c1_eq_c2 = (a1.center() == a2.center());  
@@ -657,10 +738,21 @@ namespace CircularFunctors {
           const std::pair<typename CK::Circular_arc_point_2, unsigned> 
             *result = CGAL::object_cast
               <std::pair<typename CK::Circular_arc_point_2, unsigned> > (&(*it));          
+
+#ifdef CGAL_CK_TEST_BBOX_BEFORE_HAS_ON
+	  Bbox_2 rb = result->first.bbox();
+	  if(do_overlap(a1.bbox(), rb) && do_overlap(a2.bbox(),rb)){
+	    if (has_on<CK>(a1,result->first,true) && 
+		has_on<CK>(a2,result->first,true)) {
+	      *res++ = *it;
+	    }
+	  }
+#else 
 	  if (has_on<CK>(a1,result->first,true) && 
               has_on<CK>(a2,result->first,true)) {
             *res++ = *it;
           }
+#endif
         }
       //return res;
       }
