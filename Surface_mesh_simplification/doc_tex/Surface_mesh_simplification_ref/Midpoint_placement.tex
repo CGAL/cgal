@@ -1,0 +1,58 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+
+\begin{ccRefClass}{CGAL::Surface_mesh_simplification::Edge_collapse::Midpoint_placement<TSM>}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{d}
+\ccDefinition
+
+The class \ccRefName\ provides a model for the \ccc{GetPlacement} concept. 
+It computes the placement as the midpoint position along the edge.
+
+\ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_placement.h}
+
+\ccIsModel
+\ccc{GetPlacement}
+
+\ccCreation
+\ccCreationVariable{gp}  %% choose variable name
+\ccConstructor{Midpoint_placement<TSM>();}{Default constructor} 
+
+\ccHeading{Methods}
+  \ccMethod{template<class Collapse_data>
+            result_type operator()( edge_descriptor const& edge
+                                  , TSM&                   surface 
+                                  , Collapse_data const&   data
+                                  , Params const*          params
+                                  ) const;
+           }
+  {Returns the {\em placement} (vertex position) as the midpoint between 
+  the points of the source and target vertices of  \ccc{edge}. All arguments
+  except \ccc{edge} and \ccc{surface} are ignored.
+  }
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
