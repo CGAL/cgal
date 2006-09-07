@@ -572,7 +572,7 @@ namespace CircularFunctors {
       if( (a1.supporting_circle() == a2.supporting_circle()) && (a1.on_upper_part() && a2.on_upper_part())|| (! a1.on_upper_part() && (! a2.on_upper_part()))){ 
 	*res++ = make_object(a1);
       } else {
-	if(compare_x<CK>(a1.source(), a1.target()) == SMALLER{
+	if(compare_x<CK>(a1.source(), a1.target()) == SMALLER){
 	  *res++ = make_object(std::make_pair(a1.source(),1u));
 	  *res++ = make_object(std::make_pair(a1.target(),1u));
 	} else {	  
