@@ -1,9 +1,10 @@
 // Copyright (c) 1997-2001  ETH Zurich (Switzerland).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -11,8 +12,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://gaertner@scm.gforge.inria.fr/svn/cgal/trunk/QP_solver/include/CGAL/QP_solver/gmp_double.h $
-// $Id: gmp_double.h 33782 2006-08-25 14:06:31Z gaertner $
+// $URL: svn+ssh://gaertner@scm.gforge.inria.fr/svn/cgal/trunk/Number_types/include/CGAL/Gmpzf.h $
+// $Id: Gmpzf.h 33782 2006-08-25 14:06:31Z gaertner $
 // 
 //
 // Author(s)     : Bernd Gaertner <gaertner@inf.ethz.ch>
@@ -98,18 +99,79 @@ private:
 public:
   // access
   // ------
-  const mpz_t& man() const;
-  mpz_t& man();
-  const Exponent& exp() const;
+  const mpz_t& Gmpzf::man() const 
+  {
+    return Ptr()->mpZ;
+  }
 
+  mpz_t& Gmpzf::man() // actually, this shouldn't be public
+  {
+    return ptr()->mpZ;
+  }
+
+  const Gmpzf::Exponent& Gmpzf::exp() const
+  {
+    return e;
+  }
+ 
   // construction
   // ------------
-  Gmpzf( );
-  Gmpzf(const mpz_t z);
-  Gmpzf(const Gmpz& n );
-  Gmpzf( int i);
-  Gmpzf( long l);
-  Gmpzf( double d);    
+
+  Gmpzf::Gmpzf( )
+    : e(0)
+  {
+    mpz_init(man());
+    CGAL_postcondition(is_canonical());
+  }
+
+
+  Gmpzf::Gmpzf(const mpz_t z)
+    : e(0)
+  { 
+    mpz_init_set(man(), z); 
+    canonicalize();
+  }  
+
+
+  Gmpzf::Gmpzf(const Gmpz& n )
+    : e(0)
+  { 
+    mpz_init_set(man(), n.mpz()); 
+    canonicalize();
+  }
+
+
+  Gmpzf::Gmpzf( int i)
+    : e(0)
+  {   
+    mpz_init_set_si( man(), i);  
+    canonicalize();
+  }
+
+
+  Gmpzf::Gmpzf( long l)
+    : e(0)
+  {   
+    mpz_init_set_si( man(), l);
+    canonicalize();
+  }
+
+
+  Gmpzf::Gmpzf( double d)    
+  {
+    Protect_FPU_rounding<> P(CGAL_FE_TONEAREST);
+    if (d == 0) {
+      mpz_init (man());
+      e = 0;
+      return;
+    }
+    CGAL_assertion(is_finite(d) && is_valid(d));
+    int exp;
+    double x = std::frexp(d, &exp); // x in [1/2, 1], x*2^exp = d
+    mpz_init_set_d (man(), std::ldexp( x, double_precision)); // an integer   
+    e = exp - double_precision;
+    canonicalize();
+  }
 
   // arithmetics 
   // -----------
