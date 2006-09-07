@@ -31,19 +31,24 @@ namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_
 template<class TSM_>
 class Edge_length_cost
 {
+  
 public:
     
   typedef TSM_ TSM ;
   
-  typedef typename boost::graph_traits<TSM>::edge_descriptor   edge_descriptor ;
+  typedef typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor ;
+  
+  typedef typename Surface_geometric_traits<TSM>::FT FT ;
+  
+  typedef optional<FT> result_type ;
+  
+  typedef char Params ;
+
+private :
+    
   typedef typename boost::graph_traits<TSM>::vertex_descriptor vertex_descriptor ;
   
   typedef typename Surface_geometric_traits<TSM>::Point_3 Point_3 ;
-  typedef typename Surface_geometric_traits<TSM>::FT      FT ;
-  
-  typedef optional<FT> result_type ;
-    
-  typedef char Params ;
   
 public:
 

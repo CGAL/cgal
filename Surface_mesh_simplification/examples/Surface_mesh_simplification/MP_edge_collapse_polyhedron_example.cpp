@@ -1,3 +1,27 @@
+// Edge-length/Midpoint edge-collapse with ordinary surface and external per-edge pointer.
+//
+// Explicit arguments:
+// 
+//   The surface is an ordinary Polyhedron_3
+//
+//   The stop condition is to finish when the number of undirected edges 
+//   drops below a certain relartive fraction of the initial count.
+//
+//   An external map is used to store the per-edge extra pointer unintrusively.
+//
+//   No vertex is fixed.
+//
+//   No collapsed data is cached (tha collapse_data is an empty struct)
+//
+//   The cost is given by the squared length of the edge and is calculated on demand.
+// 
+//   The placement is given as the midpoint of the collapsed edge and is calculated on demand.  
+// 
+//
+// Implicit arguments:
+//
+//   No visitor is passed.
+//
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -39,28 +63,10 @@ int main( int argc, char** argv )
   ifstream is(argv[1]) ;
   is >> surface ;
 
-  //
-  // The simplification algorithm needs to associate some data to each edge.
-  // In this example we use an external map to do that, properly initialized with null pointers
-  // and passed to the edge_collapse function as a boost associative property map
-  //
   Unique_hash_map<Halfedge_handle,void*> edge2ptr ;
   for ( Surface::Halfedge_iterator hi = surface.halfedges_begin(); hi != surface.halfedges_end() ; ++ hi )
     edge2ptr[hi] = 0 ;
 
-  //
-  // Simplify surface
-  //  Down to a 10% of the number of edges.
-  //  Uing an external hasmap to store the per-edge extra pointer
-  //  With no fixed vertices
-  //  Without caching cost and placement
-  //  Using edge length cost
-  //  Using midpoint vertex placement
-  //
-  // Implicit policies:
-  //   No parameters to the cost and placement functors
-  //   No visitor.
-  //
   int r = edge_collapse(surface
                        ,Count_ratio_stop_condition<Surface>(0.10)
                        ,boost::make_assoc_property_map(edge2ptr) 

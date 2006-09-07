@@ -1,0 +1,56 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+\begin{ccRefConcept}{PartialCollapseData}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+
+The concept \ccRefName\ describes the requirements for the data structure that caches the {\em cost} of an {\em edge-collapse} but not its {\em placement}.
+
+The cached cost is stored as an \ccc{boost::optional} value (i.e. it can be absent) because the cost function might be unable to compute it (or intentionally wants to prevent a certain edge to be collapsed).
+
+\ccRefines
+\ccc{DefaultConstructible}
+\ccc{CopyConstructible}
+\ccc{Assignable}
+
+\ccTypes
+  \ccNestedType{TSM}{The type of the surface to simplify}{}
+\ccGlue    
+  \ccTypedef{typename Surface_geometric_traits<TSM>::FT FT;}{The FieldType that represents the collapse cost}
+
+\ccCreation
+\ccCreationVariable{d}  %% choose variable name
+
+\ccConstructor{PartialCollapseData();}{Default constructor}
+\ccGlue
+\ccConstructor{PartialCollapseData( boost::optional<FT> cost );}{Constructs a (partial) collapse data caching the specified \ccc{cost} }
+
+\ccAccessFunctions
+  \ccMethod{boost::optional<FT> cost() const;}{The cached cost.}
+  
+\ccHasModels
+\ccRefIdfierPage{CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse::Partial_collapse_data<TSM>}.
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

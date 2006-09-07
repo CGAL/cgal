@@ -139,13 +139,13 @@ The algorithm parameters are divided in 4 groups.
 
 There are 2 main parameters to the algorithm: the surface to be simplified (in-place) and the stop condition.
 
-The surface must correspond to a valid model of a TSM, for example, a Polyhedron. The argument itself is the surface object, but the algorithm doesn't handle the concrete argument type directly (such a Polyhedron_3), instead, it internally instantiates and uses the matching specializations and overloads of the BGL graphs traits, functions and property maps defined in the Definitions section. Such traits and property maps are implict, i.e. not passed as arguments to the algorithm.
+The surface must correspond to a valid model of a TSM, for example, a Polyhedron. The argument itself is the surface object, but the algorithm doesn't handle the concrete argument type directly (such a Polyhedron\_3), instead, it internally instantiates and uses the matching specializations and overloads of the BGL graphs traits, functions and property maps defined in the Definitions section. Such traits and property maps are implict, i.e. not passed as arguments to the algorithm.
 
 The stop condition is a boolean predicate called after each edge is selected from processing, before it is classfied as collapsable or not (thus before it is collapsed). If the stop condition returns true the algorithm terminates.
 
 \subsection{Additional surface properties}
 
-The algorithm needs to associate with each edge an implementation-specific internal record. It could do that unintrusively with an internal map, but that would incurr the additional overhead of a lookup. To avoid that inefficieny, which could be significant if the surface has millions of edges, the algorithm requires the user to pass in a BGL property map, EdgeExtraPointerMap, associating a modifiable void pointer (that is, a "void*&") to each undirected edge. The map must be initialized with null pointers for all undirected edges in the surface (or all directed edges if the concrete surface internally distinguishes between the two). 
+The algorithm needs to associate with each edge an implementation-specific internal record. It could do that unintrusively with an internal map, but that would incurr the additional overhead of a lookup. To avoid that inefficieny, which could be significant if the surface has millions of edges, the algorithm requires the user to pass in a BGL property map, EdgeExtraPointerMap, associating a modifiable void pointer (that is, a "void*\&") to each undirected edge. The map must be initialized with null pointers for all undirected edges in the surface (or all directed edges if the concrete surface internally distinguishes between the two). 
 
 Sometimes it is desirable to keep some edges uncollapsed. This can be controlled by fixing vertices in the surface: any edge incident upon a fixed vertex will be left uncollapsed. A BGL property map, VertexIsFixedMap,  associating a bool with every vertex is passed to indicate that.
 
@@ -157,43 +157,50 @@ In the current package version, for instance, one can choose between the Lindstr
 
 \subsubsection{Cache level}
 
-The collapse cost and placement can be computed on demand each time is needed for maximal storage efficiency  (which is much much more than once per edge), or cached in the edge to avoid unnecesary recomputations for maximal runtime efficiency. Which way is better depends on the specific size of the surface in relation with the storage and processing capabilities of the running enviroment so the user can choose the right balance between storage and runtime performance.
+The cost for each edge is initially fixed and changes only in those edges affected by a neighboring collapse. A given edge can be expected to be affected by a neighboring collapse only a small number of times (in the order of the average vertex degree), so the total number of cost computations and recomputations is a small factor of the total number of edges. On the other hand, edges are processed in order of increasing cost, and as is the case with any sorting situation, the cost of any given edge must be accessed several times, even if it remains constant. That is, costs are queried several times more than are computed and updated, so it make sense to cache the cost of an edge to avoid recomputing it unneedesly.
 
-For each edge, a record of information called collapse_data is associated (through the edge extra pointer map). Such collapse_data record can be empty, store the cost of the collapse but not the placement (the position of the replacement vertex) or both the cost and placement. These variations are called Empty, Partial and Full Collapse Data, respectively (note that the size of the full collapse data is about 4 times the size of the partial collapse data).
+The placement for each edge is queried only when the edge is effectively collapsed, however, most cost strategies are based on the placement, so each cost computation typically involve a hidden placement computation. Therefore, is might also make sense to cache not only the cost by also the placement (which is a Point object).
 
-Each time the algorithm needs to access the cost or placement for an edge it calls the GetCost and GetPlacement function objects passed as parameters. If an empty collapse data is used, these functions must effectively calculate the values and return it.\\
-On the other hand, if a partial or full collapse data is use, meaning that the cost and/or placement is cached, the GetCost and/or GetPlacement fucntion objects must simply extract the cached value and return it. In this case, however, the actual cost and placement computation function must be passed to the algorithm some
+The cost for all edges are computed at least once, and on avergage updated a few times, but the placement is queried only when the edge is effectively collapsed. Caching only the cost as opposed to caching both the cost and the placement makes little difference in the total running time, however, not caching the cost at all casuses a significant slowdown. Still, caching the cost and/or placement in the edge adds to the size of the surface a significant number. For example, if the cost is a double, each million edges require about 7Mb of additional storage for the cost, and 30Mb for the cost and placement, thus, it might be better in a specific context to avoid any caching altoghether, even at the expense of increased running time.
 
+The most sensible default choice is to cache only the cost.
 
- 
+For each edge, a record of information called collapse\_data is associated (through the edge extra pointer map). Such collapse\_data record can be empty, store the cost of the collapse but not the placement, or both. These variations are called Empty, Partial and Full Collapse Data.
 
+Each time the algorithm needs to access the cost or placement for an edge it calls the GetCost and GetPlacement function objects passed as argument. If an empty collapse data is used, these functions must effectively calculate the values and return it.
 
+On the other hand, if a partial or full collapse data is used, meaning that the cost and/or placement is cached, the GetCost and/or GetPlacement fucntion objects must simply extract the cached value and return it. In this case, however, the actual cost and placement must still be computated, somehow, and store in the collapse data for the extractors to get it. This is the role of the SetCollapseData function object passed as argument.
 
+In conjunction, the 3 parameters: SetCollapseData, GetCost and GetPlacement specify the cost (and placement) strategy. They are related in that if SetCollapseData corresonds to the empty case, the GetCost and GetPlacement getters must be actually computing the values, while if SetCollapseData corresponds to the partial or full case, the getter(s) would just returned the cache value and the set data itself will compute it.
 
+Concrete details of the actual choices are given in the next section.
 
 \section{API}
 
 \subsection{API Overview}
 
-The simplification algorithm is implemented as a free template function taking several parameters, most of which with default values.
-The following pseudo code presents the general form of the function call:
+The simplification algorithm is implemented as a free template function taking several parameters, most of which have default values.
+The following sample code illustrates the general form of the function call:
 
+\begin{cprog}
 int r = edge_collapse(surface
                      ,stop_condition
-					 ,edge_extra_pointer_map
-					 
-					 ,vertex_is_fixed_map
-					 ,set_collapse_data_functor
-					 ,get_cost_functor
-					 ,get_placement_functor
-					 ,
+                     ,edge_extra_ptr_map
+                     ,vertex_is_fixed_map
+                     ,set_collapse_data
+                     ,get_cost
+                     ,get_placement
+                     ,cost_params
+                     ,placement_params
+                     ,visitor 
+                     );
+\end{cprog}
 
-The algortithm simplifies a TSM by iteratively selecting and collapsing edges until a certain user-defined stop condition is met. The edges are collapsed according to a priority given by a user-supplied cost function, and the position of the vertex that replaces a collapsed edge is given by another user-defined placement function.
-Simplifying A large mesh might take several minutes 
-
-
+Only the first 2 parameters are required. All other parameters have default values correspoding to the {\em Lindstrom-Turk} cost/placement strategy, with no fixed vertices and assuming the surface edges store room for an extra pointer default initialized to \ccStyle{NULL}.
 
 \subsection{Examples}
+The following examples are presented in order of increasing complexity.
+
 \ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_polyhedron_example.cpp}
 \ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_enriched_polyhedron_example.cpp}
 \ccIncludeExampleCode{Surface_mesh_simplification/MP_edge_collapse_polyhedron_example.cpp}

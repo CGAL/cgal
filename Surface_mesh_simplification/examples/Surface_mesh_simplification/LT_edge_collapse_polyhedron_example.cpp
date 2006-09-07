@@ -1,3 +1,20 @@
+// Lindstrom-Turk edge-collapse with ordinary surface and external per-edge pointer.
+//
+// Explicit arguments:
+// 
+//   The surface is an ordinary Polyhedron_3
+//
+//   The stop condition is to finish when the number of undirected edges 
+//   drops below a certain absolute number.
+//
+//   An external map is used to store the per-edge extra pointer unintrusively.
+//
+// Implicit arguments:
+// 
+//   No vertex is fixed.
+//   The cost strategy is Lindstrom-Turk
+//   No visitor is passed.
+//
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -37,23 +54,10 @@ int main( int argc, char** argv )
   ifstream is(argv[1]) ;
   is >> surface ;
 
-  //
-  // The simplification algorithm needs to associate some data to each edge.
-  // In this example we use an external map to do that, properly initialized with null pointers
-  // and passed to the edge_collapse function as a boost associative property map
-  //
   Unique_hash_map<Halfedge_handle,void*> edge2ptr ;
   for ( Surface::Halfedge_iterator hi = surface.halfedges_begin(); hi != surface.halfedges_end() ; ++ hi )
     edge2ptr[hi] = 0 ;
  
-  //
-  // Simplify surface down to 1000 edges using an external hasmap to store the per-edge extra pointer
-  //
-  // Implicit policies:
-  //   No fixed vertices.
-  //   LindstromTurk strategy, with default parameters.
-  //   No visitor.
-  //
   int r = edge_collapse(surface, Count_stop_condition<Surface>(1000), boost::make_assoc_property_map(edge2ptr) );
 
   cout << "\nFinished...\n" << r << " edges removed.\n"  << (surface.size_of_halfedges()/2) << " final edges.\n" ;

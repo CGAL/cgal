@@ -1,3 +1,27 @@
+// Edge-collapse with ordinary surface and external per-edge pointer.
+//
+// Explicit arguments:
+// 
+//   The surface is an ordinary Polyhedron_3
+//
+//   The stop condition is to finish when the number of undirected edges 
+//   drops below a certain absolute number.
+//
+//   An external map is used to store the per-edge extra pointer unintrusively.
+//
+//   No vertex is fixed.
+//
+//   Both the cost and placement are cached in the collapse_data.
+//   The example shows two choices: following the Lindstrom-Turk strategy or the Edge-length/Midpoint strategy.
+//
+//   The on-deman cost dirtecty given by the collapse data.
+// 
+//   The on-deman placement is directly given by the collapse data.
+//
+// Implicit arguments:
+//
+//   No visitor is passed.
+//
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -43,26 +67,10 @@ int main( int argc, char** argv )
   ifstream is(argv[2]) ;
   is >> surface ;
 
-  //
-  // The simplification algorithm needs to associate some data to each edge.
-  // In this example we use an external map to do that, properly initialized with null pointers
-  // and passed to the edge_collapse function as a boost associative property map
-  //
   Unique_hash_map<Halfedge_handle,void*> edge2ptr ;
   for ( Surface::Halfedge_iterator hi = surface.halfedges_begin(); hi != surface.halfedges_end() ; ++ hi )
     edge2ptr[hi] = 0 ;
     
-  //
-  // Simplify surface
-  //  Down to 1000 edges
-  //  Uing an external hasmap to store the per-edge extra pointer
-  //  No fixed vertices
-  //  Caching cost AND placement (full collapse data)
-  //  Using LindstromTurk or Midpoint/Edge-length strategy from the cached collapse data.
-  //
-  // Implicit policies:
-  //   Deffault parameters to the cost and placement functors
-  //   No visitor.
   if ( strategy == LT )
   {
     edge_collapse(surface

@@ -1,0 +1,74 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+\begin{ccRefConcept}{GetCost}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+
+The concept \ccRefName\ describes the requirements for the {\em policy function object} which gets the {\em collapse cost} of an edge.
+
+The cost returned is an \ccc{boost::optional} value (i.e. it can be absent). An {\em absent} cost could be the result of a computational limitation (such as overflow), or can be intentionally returned to prevent the edge from being collapsed.
+
+\ccRefines
+\ccc{DefaultConstructible}
+\ccc{CopyConstructible}
+
+\ccTypes
+  \ccNestedType{TSM}{The type of the surface to simplify. Must be a model of the \ccc{TSM} concept.}{}
+\ccGlue    
+  \ccNestedType{Params}{The type of the model-specific parameters needed}{}
+\ccGlue    
+  \ccTypedef{typename Surface_geometric_traits<TSM>::FT FT;}{The FieldType that represents the collapse cost}
+\ccGlue    
+  \ccTypedef{typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}{The edge-descriptor for the surface}
+\ccGlue    
+  \ccTypedef{boost::optional<FT> result_type;}{The type of the result (an optional cost value)}
+
+\ccCreation
+\ccCreationVariable{gc}  %% choose variable name
+
+\ccConstructor{GetCost();}{Default constructor}
+\ccAccessFunctions
+  \ccMethod{template<class Collapse_data>
+            result_type operator()( edge_descriptor const& edge
+                                  , TSM&                   surface 
+                                  , Collapse_data const&   data
+                                  , Params const*          params
+                                  ) const;
+           }
+  {Computes and returns the cost of collapsing \ccc{edge} using the model-specific \ccc{params}.\\
+   \ccc{edge} is required to be in the \ccc{surface}.\\
+   The generic type \ccc{Collapse_data} must be a model of the \ccc{CollapseData} meta concept.\\
+   If \ccc{Collapse_data} is a model of \ccc{PartialCollapseData} or \ccc{FullCollapseData}, which means that
+   \ccc{data} stores a cache of the cost, a model can simply return the cost cached
+   in \ccc{data} (but is not required to do so).\\
+   \ccc{params} can be a \ccStyle{NULL} pointer.
+  }
+  
+\ccHasModels
+\ccRefIdfierPage{CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse::Cached_cost<TSM>}.
+\ccRefIdfierPage{CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse::Edge_length_cost<TSM>}.
+\ccRefIdfierPage{CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse::LindstromTurk_cost<TSM>}.
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

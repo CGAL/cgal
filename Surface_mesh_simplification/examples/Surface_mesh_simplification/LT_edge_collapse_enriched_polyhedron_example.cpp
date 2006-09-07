@@ -1,3 +1,19 @@
+// Lindstrom-Turk edge-collapse with enriched surface for embeeded per-edge pointer.
+//
+// Explicit arguments:
+// 
+//   The surface is an enriched Polyhedron_3 which embeeds the extra pointer in the edge.
+//
+//   The stop condition is to finish when the number of undirected 
+//   edges drops below a certain relative fraction of the initial count.
+//
+// Implicit arguments:
+// 
+//   The per-edge extra pointer is given by the edge itself.
+//   No vertex is fixed.
+//   The cost strategy is Lindstrom-Turk
+//   No visitor is passed.
+//
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -24,13 +40,13 @@ typedef Kernel::Vector_3         Vector;
 typedef Kernel::Point_3          Point;
 
 //
-// Setup an enriched polyhedron type which stores in a halfedge each extra pointer needed by the algorithm
+// Setup an enriched polyhedron type which stores in a halfedge the extra pointer needed by the algorithm
 //
 
 template <class Refs, class Traits>
 struct My_halfedge : public HalfedgeDS_halfedge_base<Refs> 
 { 
-  My_halfedge() : extra_ptr_(0) {}
+  My_halfedge() : extra_ptr_(0) {} // The extra pointer MUST be initialized to NULL
  
   void*& extra_pointer() { return extra_ptr_ ; }
     
@@ -65,15 +81,6 @@ int main( int argc, char** argv )
   ifstream is(argv[1]) ;
   is >> surface ;
 
-  //
-  // Simplify surface down to a 10% of the number of edges.
-  //
-  // Implicit policies:
-  //   Per-edge extra pointer embeeded in each halfedge.
-  //   No fixed vertices.
-  //   LindstromTurk strategy, with default parameters.
-  //   No visitor.
-  //
   int r = edge_collapse(surface, Count_ratio_stop_condition<Surface>(0.10) );
 
   cout << "\nFinished...\n" << r << " edges removed.\n"  << (surface.size_of_halfedges()/2) << " final edges.\n" ;
