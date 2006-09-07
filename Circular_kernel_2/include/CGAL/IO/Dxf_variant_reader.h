@@ -125,7 +125,6 @@ template<class CK,class Circular_arc_2, class Line_arc_2, class OutputIterator>
       } else {
 	Circular_arc_2 carc(typename CK::Construct_circle_2()(ps, pt, bulge),
 			    caps, capt);
-	print_dag(carc, std::cout);
 	arc = carc;
 	*res++ = arc;
       }
@@ -140,7 +139,6 @@ template<class CK,class Circular_arc_2, class Line_arc_2, class OutputIterator>
     } else {
       Circular_arc_2 carc(typename CK::Construct_circle_2()(pt, first, bulge),
 			  capt, points.find(xyfirst)->second);
-      print_dag(carc, std::cout);
       arc = carc;
       *res++ = arc;
     }
