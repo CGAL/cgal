@@ -57,6 +57,7 @@ File_writer_OFF$(OBJ_EXT) \
 File_writer_VRML_2$(OBJ_EXT) \
 File_writer_wavefront$(OBJ_EXT) \
 Geomview_stream$(OBJ_EXT) \
+Gmpzf$(OBJ_EXT) \
 Interval_arithmetic$(OBJ_EXT) \
 io$(OBJ_EXT) \
 JAMA_numeric_solver$(OBJ_EXT) \
