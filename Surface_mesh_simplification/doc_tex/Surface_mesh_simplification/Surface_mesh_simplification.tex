@@ -172,6 +172,10 @@ On the other hand, if a partial or full collapse data is used, meaning that the 
 
 In conjunction, the 3 parameters: \ccc{SetCollapseData}, \ccc{GetCost} and \ccc{GetPlacement} specify the cost (and placement) strategy. They are related in that if \ccc{SetCollapseData} sets an \ccc{EmptyCollapseData}, the \ccc{GetCost} and \ccc{GetPlacement} policies must be actually computing the values, while if \ccc{SetCollapseData} sets a \ccc{PartialCollapseData} or a \ccc{FullCollapseData}, the policies would just return the cached value.
 
+\subsection{Visitor}
+
+Simplifying a large surface with millions of edges can take up a lot of time (several minutes). Thus, it is important to be able to monitor the simplification progress. This can be achieved passing a visitor function object. The information passed to the visitor at each step can be used to track statistics such as the number of edges that couldn't be collapsed.
+
 \section{API}
 
 \subsection{API Overview}

@@ -42,13 +42,15 @@ public:
   
 public :
 
-  void operator() ( Collapse_data&          
+  void operator() ( Collapse_data& aData          
                   , edge_descriptor const&  
                   , TSM&                    
                   , CostParams const*       
                   , PlacementParams const* 
                   ) const 
-  {}                         
+  {
+    aData = Collapse_data();
+  }                         
   
 };    
 

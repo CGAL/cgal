@@ -15,7 +15,7 @@
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
 
-\begin{ccRefClass}{Straight_skeleton_builder_traits_2<Kernel>}
+\begin{ccRefClass}{CGAL::Surface_mesh_simplification::Edge_collapse::Set_full_collapse_data<TSM,GetCost,GetPlacement>}
 
 %% add template arg's if necessary
 
@@ -24,24 +24,62 @@
 \ccDefinition
 
 The class \ccRefName\ provides a model for the
-\ccc{StraightSkeletonBuilderTraits_2} concept which is the traits class
-required by the \ccc{Straight_skeleton_builder_2} algorithm class. The class 
-\ccRefName\ has one template argument: a 2D CGAL Kernel. This parameter must be a model for the \ccc{Kernel} concept, such as the \ccc{Exact_predicates_inexact_constructions_kernel}, which is the recommended one.\\
-It is unspecified which subset of the kernel is usedd into the output sequence and the returned iterator will be equal to \ccc{out}.
-
-For any given input polygon, it in this traits class (and by extension in the builder class). This is to avoid restricting the choices in the implementation.
-
-\ccInclude{CGAL/Straight_skeleton_builder_traits_2.h}
+\ccc{SetCollpaseData} where the \ccc{CollapseData} it assigns is \ccc{Full\_collapse\_data<TSM>}.\\
+The class \ccRefName\ has three template arguments: The first is the type of surface being simplified 
+and must be a model of the \ccc{TSM} concept. The second is the policy which actually computes the cached
+cost and must be a model of the \ccc{GetCost} concept. The third is the policy computing the placement
+and must be a model of \ccc{GetPlacement}.
 
 \ccIsModel
-\ccc{StraightSkeletonBuilderTraits_2}\\
-\ccc{DefaultConstructible}\\
-\ccc{CopyConstructible}\\
+\ccc{SetCollapseData}
+
+\ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Set_partial_collapse_data.h}
+
+\ccTypes
+  \ccTypedef{TSM TSM;}{The type of the surface to simplify.}
+  \ccGlue
+  \ccTypedef{boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}{A BGL \ccc{EdgeDescriptor}
+            representing an {\em undirected edge} of the surface.
+            }
+  \ccGlue
+  \ccTypedef{Full_collapse_data<TSM> Collapse_data;}{A type of collapse data which caches both the cost and placement.}
+  \ccGlue
+  \ccTypedef{typename GetCost::Params Cost_params;}{The type of the parameters to the \ccc{GetCost} policy.
+            It must be \ccc{DefaultConstructible} so it cannot be \ccc{void}.
+            }
+  \ccGlue
+  \ccTypedef{typename GetPlacement::Params Placement_params;}{The type of the parameters to the 
+             \ccc{GetPlacement} policy. It must be \ccc{DefaultConstructible} so it cannot be \ccc{void}.
+            } 
+            
+\ccCreation
+\ccCreationVariable{sd}  %% choose variable name
+
+\ccConstructor{Set_full_collapse_data<TSM,GetCost,GetPlacement>( GetCost const& get_cost, GetPlacement const& get_placemet); }
+{Initializes an instance storing a const reference to the \ccc{get\_cost} and \ccc{get\_placement} policies which are used to actually compute the cost and placement.}
+
+\ccOperations
+
+\ccMethod
+  {void operator()( Collapse_data& data
+                  , edge_descriptor const& edge
+                  , TSM& surface
+                  , CostParams const* cparams
+                  , PlacementParam const* pparams
+                  );
+  }
+{Calls GetCost(edge,surface,data,cparams) to obtain the actual cost \ccc{c}, and GetPlacement(edge,surface,data,pparams) to obtain the actual placement \ccc{p}. Then constructs a \ccc{Full\_collapse\_data<TSM>}(c,p) and assigns it to \ccc{data}.
+}  
+
 
 \ccSeeAlso
-\ccc{CGAL::Straight_skeleton_builder_2<Gt,Ssds>}
+\ccc{CGAL::Surface_mesh_simplification::Edge_collapse::Set_empty_collapse_data<TSM,GetCost>}
+\ccc{CGAL::Surface_mesh_simplification::Edge_collapse::Set_partial_collapse_data<TSM,GetCost,GetPlacement>}
+\ccc{CGAL::Surface_mesh_simplification::Edge_collapse::Set_partial_collapse_data_LindstromTurk<TSM>}
+\ccc{CGAL::Surface_mesh_simplification::Edge_collapse::Set_full_collapse_data_LindstromTurk<TSM>}
 
 \end{ccRefClass}
+
 
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of footer
