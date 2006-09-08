@@ -1,5 +1,6 @@
 #define CGAL_CHECK_EXPENSIVE
 #define CGAL_CHECK_EXACTNESS
+#define CGAL_KINETIC_DISABLE_AUDITING
 
 #include <CGAL/basic.h>
 
@@ -47,18 +48,10 @@ int main(int argc, char *argv[]) {
     std::cout << desc << "\n";
     return EXIT_FAILURE;
   }
-  //#else
-  //ifile="data/before002";
-  //ffile="data/after002";
 #endif
-  
-  //if (exact) {
   typedef CGAL::Updatable_Delaunay_triangulation_2<CGAL::Indirect_point_2_kernel<CGAL::Exact_predicates_inexact_constructions_kernel> > UD;
   return UD::run(argc, argv, n,d,seed, ifile, ffile);
-    /*} else {
-    Update_Delaunay_triangulation_2<CGAL::Kinetic::Inexact_simulation_traits_2> ud;
-    return ud.run(argc, argv, n,d,seed, ifile, ffile);
-    }*/
+   
 };
 #else
 int main(int, char *[]){

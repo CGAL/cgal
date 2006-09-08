@@ -33,6 +33,9 @@ public:
   Certificate(const Function &f, const Function_kernel_t& fk, const Time &b, const Time &e): rs_(fk.root_stack_object(f, b, e)) {
     /*typename Function_kernel_t::Lower_bound_root lbr= fk.lower_bound_root_object();
       estimate_= lbr(f, b);*/
+    /*if (f.degree() > 0) {
+      std::cout << "Certificate function is " << f << std::endl;
+      }*/
   }
   Certificate(){}
 

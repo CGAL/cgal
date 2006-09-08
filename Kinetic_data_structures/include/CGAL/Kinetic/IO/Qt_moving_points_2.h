@@ -105,7 +105,7 @@ public:
 
 
   unsigned int number_visible(NT xmin, NT xmax, NT ymin, NT ymax) const {
-    typename Traits::NT ntt(guil_.notifier()->current_time());
+    typename Traits::Simulator::NT ntt(guil_.notifier()->current_time());
     ik_.set_time(ntt);
     unsigned int ret=0;
     for (typename Traits::Active_points_2_table::Key_iterator
@@ -172,7 +172,7 @@ void Qt_moving_points_2<T,G>::draw() const
   typedef typename Traits::Static_kernel::Circle_2 C;
   typedef typename Traits::Kinetic_kernel::Is_constant IC;
   IC ic = traits_.kinetic_kernel_object().is_constant_object();
-  typename Traits::NT ntt(guil_.notifier()->current_time());
+  typename Traits::Simulator::NT ntt(guil_.notifier()->current_time());
   ik_.set_time(ntt);
 
   CGAL::Qt_widget *w= guil_.widget();

@@ -46,8 +46,8 @@ public:
   //! initialize it from a still point
   template <class Static_point>
   Cartesian_moving_point_2(const Static_point &pt) {
-    _coords[0]=pt.x();
-    _coords[1]=pt.y();
+    _coords[0]=Coordinate(pt.x());
+    _coords[1]=Coordinate(pt.y());
 
   }
 

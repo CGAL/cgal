@@ -369,14 +369,14 @@ public:
       if (CGAL::compare(t, end_priority()) == CGAL::SMALLER) {
 	//++queue_front_insertions__;
 	front_.push_back(*ni);
-	ub_= NT(to_interval(tii_(t).second).second);
+	ub_= NT(to_interval(tii_(t).second).second+.0000001);
 	all_in_front_=false;
 	/*if (almost_inf(ub_)){
 	//CGAL_assertion(std::numeric_limits<NT>::has_infinity);
 	ub_= end_split();
 	}*/
 	ni->set_in_list(Item::FRONT);
-      } else if (t == end_priority()) {
+      } else if (CGAL::compare(t, end_priority()) == CGAL::EQUAL) {
 	front_.push_back(*ni);
 	ub_=-1;
 	all_in_front_=true;
@@ -586,7 +586,8 @@ public:
 
 protected:
   void initialize(const Priority &start_time, const Priority &end_time) {
-    ub_=tii_(start_time).first;
+    ub_=tii_(start_time).first+.0000001;
+    // should be nextafter
     step_=1;
     all_in_front_= false;
     end_time_=end_time;
@@ -834,9 +835,11 @@ protected:
 	++it;
       }
 
-      NT split =  NT(to_interval(tii_(it->time()).second).second);
+      NT split =  NT(to_interval(tii_(it->time()).second).second+.00001);
       if (CGAL::compare(end_priority(), it->time())==CGAL::SMALLER
 	  || CGAL::compare(end_priority(), Priority(split))==CGAL::SMALLER) {
+	std::cout << "Past end in Queue " << end_priority() << ", "
+		  << it->time() << ", " << Priority(split) << std::endl;
 	all_in_front_=true;
 	set_front(back_.begin(), back_.end(), Item::FRONT);
 	front_.splice(front_.end(), back_);
@@ -869,7 +872,7 @@ protected:
 	  set_front(it, front_.end(), Item::BACK);
 	  back_.splice(back_.begin(), front_, it, front_.end());
 	  NT oub=ub_;
-	
+	  all_in_front_=false;
 	  ub_ = NT(split);
 	  //CGAL_assertion(!too_big(ub_));
 	  //CGAL_assertion(ub_ <= end_split());

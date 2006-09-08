@@ -9,10 +9,14 @@ template <class Simulation_traits_t, class Triangulation_t>
 class Delaunay_triangulation_default_traits_2 {
 protected:
   typedef Simulation_traits_t ST;
+
+public:
   typedef typename ST::Kinetic_kernel::Positive_side_of_oriented_circle_2 SOC;
   typedef typename ST::Kinetic_kernel::Positive_orientation_2 O2;
   typedef typename Triangulation_t::Edge Edge;
-public:
+
+
+
   typedef Triangulation_t Triangulation;
   typedef internal::Triangulation_data_structure_helper_2<typename Triangulation::Triangulation_data_structure> TDS_helper;
   typedef typename ST::Simulator Simulator;
@@ -96,7 +100,6 @@ public:
     return std::make_pair(t, s);
   }
 
-protected:
 
 
   bool is_hull_edge(const Edge &e) const {
@@ -142,6 +145,10 @@ protected:
     }
   }
 
+  SOC positive_side_of_oriented_circle_2_object() const {
+    return soc_;
+  }
+protected:
 
 
   ST st_;

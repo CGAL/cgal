@@ -25,7 +25,7 @@
 CGAL_KINETIC_BEGIN_NAMESPACE;
 
 
-template <class Traits_t>
+template <class Traits_t, bool SLOPPY>
   class HDRS
   {
   private:
@@ -45,10 +45,15 @@ template <class Traits_t>
       CGAL_expensive_precondition(solver_.top() > lb);
       CGAL::POLYNOMIAL::Sign sn= k.sign_between_roots_object(lb, solver_.top())(uf);
       if (sn == CGAL::NEGATIVE) {
-	std::cout << "Degeneracy for " << uf << " between " << lb 
-		  << " and " << solver_.top() << std::endl;
-	extra_root_=lb;
-	has_extra_=true;
+	if (!SLOPPY) {
+	  std::cout << "Invalid certificate constructed for function " << uf << " between " << lb 
+		    << " and " << ub << " will fail immediately." << std::endl;
+	  extra_root_=lb;
+	  has_extra_=true;
+	} else {
+	  solver_.pop();
+	  has_extra_=false;
+	}
       }
       else {
 	has_extra_=false;
@@ -100,11 +105,11 @@ template <class Traits_t>
     typename Traits::Is_even_multiplicity iem_;
   };
 
-template <class Traits_t>
+template <class Traits_t, bool SLOPPY>
 struct Handle_degeneracy_function_kernel: public Traits_t
 {
 
-  typedef HDRS<Traits_t> Root_stack;
+  typedef HDRS<Traits_t, SLOPPY> Root_stack;
 
   Root_stack root_stack_object(const typename Traits_t::Function &f,
 			       const typename Traits_t::Root &lb,
@@ -113,8 +118,8 @@ struct Handle_degeneracy_function_kernel: public Traits_t
   }
 };
 
-template <class T>
-std::ostream &operator<<(std::ostream &out, const HDRS<T> &k) {
+template <class T, bool SLOPPY>
+std::ostream &operator<<(std::ostream &out, const HDRS<T, SLOPPY> &k) {
   return k.write(out);
 }
 

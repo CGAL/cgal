@@ -91,8 +91,8 @@ struct Suggested_exact_simulation_traits_types
 {
   //typedef CGAL::Simple_cartesian<CGAL::Gmpq> Static_kernel;
   typedef CGAL::Exact_predicates_exact_constructions_kernel Static_kernel;
-     typedef Static_kernel::FT NT;
-     typedef CGAL::POLYNOMIAL::Polynomial<NT> Function;
+  typedef Static_kernel::FT NT;
+  typedef CGAL::POLYNOMIAL::Polynomial<NT> Function;
   //typedef CGAL::POLYNOMIAL::Upper_bound_root_stack_Descartes_traits<Function> Root_stack_traits;
   //typedef CGAL::POLYNOMIAL::Upper_bound_root_stack<Root_stack_traits> Root_stack;
   typedef CGAL::POLYNOMIAL::Sturm_root_stack_traits<Function> Root_stack_traits;
@@ -104,7 +104,7 @@ struct Suggested_exact_simulation_traits_types
   typedef CGAL::POLYNOMIAL::CORE_kernel Function_kernel;*/
 
   //struct Simulator_function_kernel: public CGAL::Kinetic::Handle_degeneracy_function_kernel<Function_kernel> {};
-  typedef CGAL::Kinetic::Handle_degeneracy_function_kernel<Function_kernel>  Simulator_function_kernel;
+  typedef CGAL::Kinetic::Handle_degeneracy_function_kernel<Function_kernel, false>  Simulator_function_kernel;
   typedef CGAL::Kinetic::Cartesian_kinetic_kernel<Simulator_function_kernel> Kinetic_kernel;
   typedef  Simulator_function_kernel::Root Time;
   typedef CGAL::Kinetic::Two_list_pointer_event_queue<Function_kernel> Queue_base;
