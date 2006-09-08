@@ -32,6 +32,9 @@ It directly returns the cost stored in the {\em collapse-data}.
 \ccIsModel
 \ccc{GetCost}
 
+\ccTypes
+  \ccTypedef{void Params}{The type of the parameters. The type void is used to identify this GetCost model as one returning a cached value instead of compuSince no paramters are used this type is void}
+  
 \ccCreation
 \ccCreationVariable{gc}  %% choose variable name
 \ccConstructor{Cached_cost<TSM>();}{Default constructor} 
