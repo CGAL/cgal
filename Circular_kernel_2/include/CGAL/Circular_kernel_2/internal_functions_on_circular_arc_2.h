@@ -569,7 +569,7 @@ namespace CircularFunctors {
     bool a1t_a2t = a1.target().equal_ref(a2.target());
     
     if((a1s_a2s && a1t_a2t) || (a1s_a2t && a1t_a2s)){ // Case 1
-      if( (a1.supporting_circle() == a2.supporting_circle()) && (a1.on_upper_part() && a2.on_upper_part())|| (! a1.on_upper_part() && (! a2.on_upper_part()))){ 
+      if( (a1.supporting_circle() == a2.supporting_circle()) && ((a1.on_upper_part() && a2.on_upper_part())|| (! a1.on_upper_part() && (! a2.on_upper_part())))){ 
 	*res++ = make_object(a1);
       } else {
 	if(compare_x<CK>(a1.source(), a1.target()) == SMALLER){
