@@ -14,124 +14,123 @@
 %%
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
-\section{Overview}
+\section{Introduction}
 
-This \cgal\ package provides a policy-based algorithm for the simplification of triangulated surface meshes. Simplification is the process of reducing the number of triangles used in the surface but keeping the overall shape, volumen and boundaries as much preserved as possible. It is the opposite of subdivision.
+This \cgal\ package provides a policy-based algorithm for the simplification of triangulated surface meshes.
+
+Simplification is the process of reducing the number of triangles used in the surface but keeping the overall shape, volumen and boundaries preserved as much as possible. It is the opposite of subdivision.
 
 %% figures of simplified surfaces
 
-The algorithm presented here can simplify any 2-manifold surface with borders (that is closed or open), and of arbitrary genus (with holes), using a method known as edge collapse. Roughly speaking, the method consist of iteratively replacing an edge with a single vertex, process which removes 2 triangles per collapse.
+The algorithm presented here can simplify any {\em 2-manifold surface with borders} (that is closed or open), and of arbitrary genus (with holes), using a method known as {\em edge collapse}. Roughly speaking, the method consist of iteratively replacing an edge with a single vertex, removing 2 triangles per collapse.
 
 %% figure of edge collapse
 
-Edges are collapsed according to a priority given by a user-supplied cost function, and the coordinates of the replacing vertex is determined by another user-supplied placement function. The algorithm terminates when a user-supplied stop condition is met, such as reaching the desired number of edges.
+Edges are collapsed according to a priority given by a user-supplied {\em cost} function, and the coordinates of the replacing vertex is determined by another user-supplied {\em placement} function. The algorithm terminates when a user-supplied {\em stop condition} is met, such as reaching the desired number of edges.
 
-The algorithm implemented here is generic in the sense that it doesn't require the surface to be of any concrete type. Instead, it defines the concept of a Triangulated Surface Mesh, and any surface that is a model of that concept can be simplified. Furthermore, the concept is defined not in terms of a monolithic class, but in terms of a set of functions and traits which makes it easy to adapt any concrete surface type without much work. In particular, the concept definition is based on the well known Boost Graph Library (BGL).
+The algorithm implemented here is generic in the sense that it doesn't require the surface to be of any concrete type. Instead, it defines the concept of a \ccStyle{Triangulated Surface Mesh}, and any surface that is a model of that concept can be simplified. Furthermore, the concept is defined not in terms of a monolithic class, but in terms of a set of functions and traits making it easy to adapt any concrete surface type without much work. In particular, the concept definition is based on the well known {\em Boost Graph Library (BGL)}.
 
 \section{Definitions}
 
-\subsection{TSM: generalized Triangulated Surface Mesh}
+\subsection{TSM - Triangulated Surface Mesh}
 
-A TSM is the main concept which defines how the algorithm requires the input surface to be modeled. It is defined as the composition of two closely related graphs augmented with two BGL property maps, a collapse operator and a geometric traits. All those elements together compose a valid TSM.
+A \ccc{TSM} is the main concept which defines how the algorithm requires the input surface to be modeled. It is defined as the composition of two closely related graphs augmented with two BGL \ccc{PropertyMaps}, a collapse operator and a geometric traits. All those elements together compose a valid \ccc{TSM}.
 
-Informally speaking, a triangulated surface mesh is a set of triangles pasted together along their edges.
+Informally speaking, a {\em triangulated surface mesh} is a set of triangles pasted together along their edges.
 
-Formally speaking, a triangulated surface mesh (of the kind used in this \cgal\ package), often called a simplicial mesh, is an Euclidean Simplicial Complex of topological dimension 3, that is, a set of connected vertices, edges and facets.\\
+Formally speaking, a {\em triangulated surface mesh} (of the kind used in this \cgal\ package), often called a {\em simplicial mesh}, is an {\em Euclidean Simplicial Complex} of topological dimension 3, that is, a set of connected {\em vertices}, {\em edges} and {\em facets}.\\
 Vertices embeed points (in 2 or 3 geometric dimensions), are the most primitive element in the mesh, and are called 0-simplicies.\\
 Edges connect 2 vertices (are a subset of 2 points), and are called 1-simplicies.\\
 Facets connect 3 edges in a cycle (are a subset of 3 points), and are called 2-simplicies.
 
-Vertices, Edges and Facets are neccesarily subsets of 1, 2 and 3 points respectively. Some meshes might embeed other geometric objects in the edges (a straight line segment for instance), or the facets (such as a plane); however, in this \cgal\ package we are only concerned about the points embeeded in the vertices.
+Vertices, Edges and Facets are neccesarily subsets of 1, 2 and 3 points respectively. Some meshes might embeed other geometric objects in the edges (a straight line segment for example), or the facets (a plane); however, in this \cgal\ package we are only concerned about the points embeeded in the vertices.
 
-The 2 vertices connected by an edge are said to be incident on the edge, and the edge incident on the two vertices it connects.\\
-Likewise, the 3 edges connected by a facet are said to be incident on the facet and the facet incident on the 3 edges.
+The 2 vertices connected by an edge are said to be {\em incident} on the edge and the edge is said to be {\em incident} on the two vertices it connects. Likewise, the 3 edges connected by a facet are said to be {\em incident} on the facet and the facet {\em incident} on the 3 edges.
 
-Any two vertices/edges incident upon the same edge/facet are said to be adjacent.
+Any two vertices/edges incident upon the same edge/facet are said to be {\em adjacent}.
 
-Any sequence of pairwise adjacent vertices or edges is a path.
+Any sequence of pairwise adjacent vertices or edges is a {\em path}.
 
-Any two vertices or edges are connected if there is a path from one to the other.
+Any two vertices or edges are connected if there is a {\em path} from one to the other.
 
-A path that connects a vertex/edge with itself is a cycle.
+A path that connects a vertex/edge with itself is a {\em cycle}.
 
-An edge which is incident upon only one facet is said to be a border edge. 
+An edge which is incident upon only one facet is said to be a {\em border} edge. 
 
-A surface is closed if none of it edges are border edges, open otherwise.
+A surface is {\em closed} if none of it edges are border edges, {\em open} otherwise.
 
-The edges in the border (often called boundary) of an open surface with more than one single facet are not adjacent because they are incident upon different facets.
+The edges in the border (often called boundary) of an open surface with more than one single facet are not adjacent because they are incident upon different facets. From the definition of incidence, adjacency and connectivity, it can be shown that all the edges incident upon a facet are cyclically connected and all cyclically connected edges are incident upon a common facet. Such a cycle of edges around a common facet is said to be the {\em boundary} of the facet (which is not the same as the surface-border, also called surface-boundary).
 
-From the definition of incidence, adjacency and connectivity, it can be shown that all the edges incident upon a facet are cyclically connected and all cyclically connected edges are incident upon a common facet. Such a cycle of edges around a common facet is said to be the boundary of the facet (which is not the same as the border, also called boundary, of the surface).
+Edges in the border of an open surface can be considered to be cyclically connected if they are considered to be ALL  incident upon an hypotetical pseudo-facet on the outside of the surface (and each on a normal facet of course).
 
-Edges in the border of an open surface can be considered to be cyclically connected if they are considered to be ALL incident on a special pseudo-facet (and each on a normal facet of course).
-
-A triangular surface mesh is said to be an open 2-manifold if every edge is incident upon 1 or 2 facets.
-
+A triangular surface mesh is said to be an {\em open 2-manifold} if every edge is incident upon 1 or 2 facets, but no more.
 
 \subsubsection{TSM Topology}
 
 The adjacency relations between vertices, edges and facets; that is, the surface topology, can be described as a graph.
 
-If only the vertices and edges are considered, such a graph is a conventional undirected 2D graph (a polyhedral graph).
+If only the vertices and edges are considered, such a graph is a conventional {\em undirected 2D graph} (a {\em polyhedral graph}).
 
-The facets of a 2-manifold surface mesh can be indirectly addressed, without being explicitely represented as graph nodes, if the edges are symmetrically directed: any directed cycle of edges in the symmetric directed graph corresponds to the boundary of a facet of the mesh.
+The facets of a 2-manifold surface mesh can be indirectly addressed, without being explicitely represented as graph nodes, if the edges are {\em symmetrically directed}: any directed cycle of edges in the symmetric directed graph corresponds to the boundary of a facet of the mesh.
 
-The topology of any 2-manifold surface mesh can be described as the combination of two closely related graphs: U(V,UE) and D(V,DE), where V is the set of vertices of the surface, UE is the set of undirected edges of the surface, and DE is a set of symmetric directed edges such that for every undirected edge s-t in UE (where s and t are vertices in V), there are exactly 2 directed edges: s->t and t->s in DE.
-Since each undirected edge contributes two symmetric directed edges and each directed edge belongs to a directed cycle that describes the boundary of a facet, each undirected edge is restricted to be incident upon at most 2 facets; that is, this graph representation can only handle 2-manifold surfaces. 
-Undirected edges in U correspond directly to the edges in the surface, thus, their connectivity is determined by the surface (only edges in the boundary of a common facet are connected, by definition). However, the symmetric directed edges in D are defined by U and its connectivity is not exactly the same as in the surface. In particular, undirected graph edges in U corresponding to border edges of the surface also contribute with two symmetric directed graph edges in D and in this case, any given directed edge in D belongs to a cycle in the boundary of the facet incident upon the corresponding surface edge, but the opposing directed edge also belongs to a cycle, the one which can be considered to be the boundary of the pseudo-facet on the outside of the mesh. That is, while the border edges around the surface are not connected, by definition, the directed form of view of them are, and form a cycle around the open surface.
+The topology of any 2-manifold surface mesh can be described as the combination of two closely related graphs: \ccc{U(V,UE)} and \ccc{D(V,DE)}, where \ccStyle{V} is the set of vertices of the surface, \ccStyle{UE} is the set of {\em undirected} edges of the surface, and \ccStyle{DE} is a set of {\em symmetric directed} edges such that for every undirected edge \ccStyle{s-t} in \ccStyle{UE} (where \ccStyle{s} and \ccStyle{t} are vertices in \ccStyle{V}), there are exactly 2 {\em directed edges}: \ccStyle{s->t} and \ccStyle{t->s} in \ccStyle{DE}.
 
-\subsubsection{TSM examples}
+Since each undirected edge contributes two symmetric directed edges and each directed edge belongs to a directed cycle which describes the boundary of a facet, each undirected edge is restricted to be incident upon at most 2 facets; that is, this graph representation can only handle 2-manifold surfaces. 
 
-A polyhedron can be used to represent a TSM as long as its facets are only triangles. A polyhedron is represented as a Halfedge Data Structure (HDS) and the vertices and edges of a HDS corresponds exactly to the symmetric directed graph D defined above, and is trivial to provide the undirected view U of a HDS by merely considering one out of two opposing halfedges (which one is unimportant) as undirected edge.
-
-Any triangulation, whether in 2 or 3 dimensions, can also represent a TSM. Its edges, defined as a cell plus 2 vertex indices: cell(c)(i,j), correspond directly to the undirected graph U defined above provide both vertices i,j are finite, and it is also trivial to provide the symmetric directed view D by merely mirroring all edges cell(c)(i,j) as cell(c)(j,i). 
-
-Throughout this documentation, the term edge, unqualified, refers to an undirected edge.
-
-These two graphs, U and D, which are part of the definition of a TSM, must be provided to the algorithm as models of a Boost Graph (with some extensions documenetd in the Reference manual).
-
-This \cgal\ package provides the BGL specializations for a Polyhedron.
+Undirected edges in \ccStyle{U} correspond directly to surface-edges, thus, their connectivity is determined by the surface: only edges in the boundary of a common facet are connected, by definition. Thus, border undirected edges are not connected in a cycle around the surface. However, the symmetric directed edges in \ccStyle{D}, and their connectivity, are defined by \ccStyle{U}, so border undirected edges contribute a directed edge which belons to a cycle around the surface.\\
+In other words, the \ccStyle{D} graph addresses the surface border(s) even if there is no explicit pseudo-facet on the outside letting border surface-edges to be cyclically connected.
 
 \subsubsection{TSM Geometry}
 
-While the U and D graphs described in the previous section are used to represent the topology of the surface, its geometry is described by a geometric traits class. In the current version, the surface is assumed to be polyhedral, that is, edges are assumed to be implicitely straight line segments and facets to be planar triangles. Therefore, the geometric traits class defines only the Point type of the surface.
+While the \ccStyle{U} and \ccStyle{D} graphs described in the previous section are used to represent the topology of the surface, its geometry is described by a geometric traits class. In the current version, the surface is assumed to be {\em polyhedral}, that is, edges are assumed to be implicitely straight line segments and facets to be planar triangles. Therefore, the geometric traits class defines only the Point type of the surface vertices.
 
 \subsubsection{TSM Properties}
 
-Even though the D graph indirectly represents a facet (by means of its boundary), it fails to distiguish a true facet from a pseudo-facet outside the surface, thus, those graphs alone cannot be used to determine whether an edge is a border or not. In order to allow the algorithm to indentify border edges, a BGL property map associating a boolean flag to each directed edge is used.
+Even though the \ccStyle{D} graph indirectly represents a facet (by means of its boundary), it fails to distiguish a true facet from a pseudo-facet outside the surface. Thus, the surface graphs alone cannot be used to determine whether an edge is a border or not. In order to allow the algorithm to indentify border edges, a BGL \ccc{PropertyMap} associating a \ccc{bool} flag to each {\em directed} edge is used.
 
-Similarly, the U and D graphs describes the topology of the surface but not its geometry. In order to access the 2D or 3D point embeeded in a surface vertex a second BGL property map is used, associating a point to each vertex.
+Similarly, the surface graphs describes the topology of the surface but not its geometry. In order to access the 2D or 3D point embeeded in a surface vertex a second BGL \ccc{PropertyMap} is used, associating a point to each vertex.
 
-These two BGL property maps are also part of the TSM definition and must be provided for any concrete surface type.
+These two BGL property maps are also part of the \ccc{TSM} definition and must be provided for any concrete surface type.
 
-This \cgal\ package provides these BGL property maps for a Polyhedron.
+This \cgal\ package provides these BGL property maps for a \ccc{Polyhedron_3}.
 
-\subsubsection{TSM operations}
+\subsubsection{TSM Operations}
 
-Operations in a TSM are defined in terms of free (non-member) operators.
-Currently, only one operator is defined since only one operation is needed in the algorithm: the edge collapse operator.
-he 
+Operations in a \ccc{TSM} are defined in terms of free (non-member) operator objects. Currently, only one operator is defined since only one operation is needed in the algorithm: the {\em edge collapse operator}.
+ 
 This operator, which must be specialized for the concrete surface type, performs the actual edge collapse by replacing the edge by one if its vertices. It is required to remove from the surface one of the vertices, the facets incident to the collapsed edge (which it turn removes the other two edges incident upon those facets), and nothing else.
 
-This operator, along with the 2 property maps and the 2 graphs, completes the TSM concept.
+This operator, along with the 2 property maps and the 2 graphs, completes the \ccc{TSM} concept.
+
+\subsubsection{TSM Models}
+
+A \ccc{Polyhedron_3} is a valid \ccc{TSM} model as long as its facets are only triangles. A polyhedron is represented as a \ccc{HalfedgeDS} whose vertices and edges corresponds exactly to the {\em symmetric directed graph D} defined above. The {\em undirected graph U} can be trivially constructed by merely considering as undirected edge 1 of the 2 opposing \ccc{halfedges} (which one is unimportant).
+
+Any \ccc{Triangulation}, whether in 2 or 3 dimensions, is also a valid \ccc{TSM} model. Its edges, defined as a cell plus 2 vertex indices: \ccStyle{cell(c)(i,j)}, correspond directly to the {\em undirected graph U} as long as both vertices i,j are finite. The {\em symmetric directed graph D} can be trivially constructed by merely mirroring all edges \ccStyle{cell(c)(i,j)} as \ccStyle{cell(c)(j,i)}. 
+
+Throughout this documentation, the term edge, unqualified, refers to an undirected edge.
+
+Th surface graphs (U and D), which are part of the definition of a \ccc{TSM}, must be provided to the algorithm as models of a \ccc{BGL Graph} (with some \cgal\ specific extensions documented in the Reference manual).
+
+This \cgal\ package provides the BGL specializations for a \ccc{Polyhedron_3}.
 
 \section{Overview of the simplification process}
 
-The free function that implements the simplifcation algorithm takes not only the surface and the desired stop condition but a number of additional parameters which control and monitor the simplification process. Thus, the overall process must be described before these parameters are explained.
+The free function that implements the simplifcation algorithm takes not only the surface and the desired stop condition but a number of additional parameters which control and monitor the simplification process. This section briefly describes the process in order to set the background for the discussion of algorithm parameters.
 
-An edge collapse operation replaces the edge with a vertex, removing the two incident triangles thus two additional edges, one from each triangle. Therefore, each edge collapse decreases the number of triangles, edges and vertices by 2, 3 and 1 respectively (if the collapsed edge is a border, by 1,2 and 1 resp. since only one triangle is removed).
+An edge collapse operation replaces the edge with a vertex, removing the two incident triangles (hence two additional edges, one from each triangle). Therefore, each edge collapse decreases the number of triangles, edges and vertices by 2, 3 and 1 respectively (if the collapsed edge is a border, by 1,2 and 1 resp. since only one triangle is removed).
 
-Naturally, the surface that results from an edge collapse deviates from the initial surface by some amount, and since the goal of simplification is to reduce the number of triangles while retaining the overall look of the surface as much as possible, it is neccesary to measure such deviation. Some methods attempt to measure the total deviation from the initial surface to the completely simplify surface, for example, by tracking an accumulated error keeping a history of the simplification changes. Other methods, like the one implemented in this package, attempt to measure only the local deviation introduced by a single simplification step, that is, a step cost, and plan the entire process as a sequence of steps of increasing cost. 
+Naturally, the surface that results from an edge collapse deviates from the initial surface by some amount, and since the goal of simplification is to reduce the number of triangles while retaining the overall look of the surface as much as possible, it is neccesary to measure such deviation. Some methods attempt to measure the total deviation from the initial surface to the completely simplified surface, for example, by tracking an accumulated error keeping a history of the simplification changes. Other methods, like the one implemented in this package, attempt to measure only the local deviation introduced by a single simplification step, that is, a step {\em cost}, and plan the entire process as a sequence of steps of increasing cost. 
+
 Global error tracking methods produce highly accurate simplifications but take up a lot of additional space. Cost-driven methods, like the one in this package, produce slightly less accurate simplifications but take up much less additional space, even none in some cases.
 
-The cost-driven method implemented in this package, mainly based on the so-called "memoryless simplification", by Lindstrom and Turk, proceeds in two stages. In the collection stage, an initial collapse cost is assigned to each and every edge in the surface. In the collapsing stage, edges are processed in order of increasing cost. Some processed edges are collapsed while some are just discarded (reasons explain further on). Collapsed edges are replaced by a vertex and the collapse cost of all the edges now incident on the replacement vertex are recalculated, affecting the order of the edges left to process.
+The cost-driven method implemented in this package, mainly based on the so-called "memoryless simplification", by Lindstrom and Turk, proceeds in two stages. In the collection stage, an initial {\em collapse cost} is assigned to each and every edge in the surface. In the collapsing stage, edges are {\em processed} in order of increasing cost. Some processed edges are {\em collapsed} while some are just discarded. Collapsed edges are replaced by a vertex and the collapse cost of all the edges now incident on the replacement vertex is recalculated, affecting the order of the edges left to process.
 
 Not all edges selected for processing are collapsed. A processed edge can be discarded without being collapsed for one of three reasons: its cost could not be computed (for whatever reason), collapsing the edge would result in an inconsistent surface, or the edge is incident upon a vertex which the user marked as fixed.
 
-If an edge is effecitively collapsed, it is are replaced by a vertex whose position, called placement, must be choosen carefully to avoid too much deviation from the initial surface. In many cases, the collpase cost is a function of the vertex position, so the placement might be calculated each time the cost is calculated and not just when an edge is effectively collapsed.
+If an edge is effecitively collapsed, is replaced by a vertex whose position, called {\em placement}, must be choosen carefully to avoid too much deviation from the initial surface. In many cases, the collpase cost is a function of the vertex position, so the placement might be calculated each time the cost is calculated and not just when an edge is effectively collapsed.
 
-The algorithm needs to maintain the varying ordering of the edges it processes, ordering which is defined by the collapse cost. As with any sorting situtation, the cost of an edge is compared with the cost of other edges several times. This poses a time-space tradeoff in the algorithm: The cost and placement for each edge can be computed on demand, each and every time it is requested, or stored in the edge and at most updated each time the edge is affected by some other collapse. The first choice sacrifices running time for storage while the second sacrifices storage for runing time. 
-
-\section{Overview of algorithm parameters}
+\section{Overview of the algorithm parameters}
 
 The algorithm parameters are divided in 4 groups.
 
@@ -139,48 +138,45 @@ The algorithm parameters are divided in 4 groups.
 
 There are 2 main parameters to the algorithm: the surface to be simplified (in-place) and the stop condition.
 
-The surface must correspond to a valid model of a TSM, for example, a Polyhedron. The argument itself is the surface object, but the algorithm doesn't handle the concrete argument type directly (such a Polyhedron\_3), instead, it internally instantiates and uses the matching specializations and overloads of the BGL graphs traits, functions and property maps defined in the Definitions section. Such traits and property maps are implict, i.e. not passed as arguments to the algorithm.
+The surface must correspond to a valid \ccc{TSM} model, for example, a \ccc{Polyhedron\_3}. The argument itself is the surface object and the algorithm doesn't handle the concrete argument type directly, instead, it internally instantiates and uses the matching specializations and overloads of the BGL graphs traits, functions and property maps defined in the Definitions section. Such traits and property maps are implict, i.e. not passed as arguments to the algorithm.
 
-The stop condition is a boolean predicate called after each edge is selected from processing, before it is classfied as collapsable or not (thus before it is collapsed). If the stop condition returns true the algorithm terminates.
+The stop condition is a boolean predicate called after each edge is selected for processing, {\em before} it is classfied as collapsable or not (thus before it is collapsed). If the stop condition returns true the algorithm terminates.
 
 \subsection{Additional surface properties}
 
-The algorithm needs to associate with each edge an implementation-specific internal record. It could do that unintrusively with an internal map, but that would incurr the additional overhead of a lookup. To avoid that inefficieny, which could be significant if the surface has millions of edges, the algorithm requires the user to pass in a BGL property map, EdgeExtraPointerMap, associating a modifiable void pointer (that is, a "void*\&") to each undirected edge. The map must be initialized with null pointers for all undirected edges in the surface (or all directed edges if the concrete surface internally distinguishes between the two). 
+The algorithm needs to associate with each edge an implementation-specific internal record. It could do that unintrusively with an internal map, but that would incurr the additional overhead of a lookup. To avoid that inefficieny (which could be significant if the surface has millions of edges) the algorithm requires the user to pass in a BGL \ccc{PropertyMap}, \ccc{EdgeExtraPointerMap}, associating a modifiable void pointer (that is, a \ccStyle{"void*\&"}) to each {\em undirected} edge. The map must be initialized with null pointers for all undirected edges in the surface (or all directed edges if the concrete surface internally distinguishes between the two). 
 
-Sometimes it is desirable to keep some edges uncollapsed. This can be controlled by fixing vertices in the surface: any edge incident upon a fixed vertex will be left uncollapsed. A BGL property map, VertexIsFixedMap,  associating a bool with every vertex is passed to indicate that.
+Sometimes it is desirable to keep some edges uncollapsed. This can be controlled by fixing vertices in the surface: any edge incident upon a fixed vertex will be left uncollapsed. A BGL \ccc{PropertyMap}, \ccc{VertexIsFixedMap}, associating a bool with every vertex is passed to indicate that.
 
 \subsection{Cost strategy}
 
-The specific way in which the collapse cost and vertex placement is calculated is called the Cost-strategy.
-The user can choose different strategies in the form of function objects, and related parameters, passed to the algorithm.
+The specific way in which the collapse cost and vertex placement is calculated is called the {\em Cost-strategy}.
+The user can choose different strategies in the form of function objects and related parameters, passed to the algorithm.
 In the current package version, for instance, one can choose between the Lindstrom-Turk strategy (the default) or an edge-length cost with a midpoint placement (much faster but less accurate).
 
 \subsubsection{Cache level}
 
-The cost for each edge is initially fixed and changes only in those edges affected by a neighboring collapse. A given edge can be expected to be affected by a neighboring collapse only a small number of times (in the order of the average vertex degree), so the total number of cost computations and recomputations is a small factor of the total number of edges. On the other hand, edges are processed in order of increasing cost, and as is the case with any sorting situation, the cost of any given edge must be accessed several times, even if it remains constant. That is, costs are queried several times more than are computed and updated, so it make sense to cache the cost of an edge to avoid recomputing it unneedesly.
+The cost for each edge is initially fixed and changes only in those edges affected by a neighboring collapse. A given edge can be expected to be affected by a neighboring collapse only a small number of times (in the order of the average vertex degree), so the total number of cost computations and recomputations is a small factor of the total number of edges. On the other hand, edges are processed in order of increasing cost, and as is the case with any sorting situation, the cost of any given edge must be accessed several times while it is compared against the cost of other edges, even if it remains constant. That is, costs are queried several times more than are computed and updated, so it make sense to cache the cost of an edge to avoid recomputing it unneedesly.
 
-The placement for each edge is queried only when the edge is effectively collapsed, however, most cost strategies are based on the placement, so each cost computation typically involve a hidden placement computation. Therefore, is might also make sense to cache not only the cost by also the placement (which is a Point object).
+The placement for each edge is queried only when the edge is effectively collapsed, however, most cost strategies are based on the placement, so each cost computation typically involves a hidden placement computation. Therefore, it might also make sense to cache not only the cost by also the placement (which is a Point object).
 
-The cost for all edges are computed at least once, and on avergage updated a few times, but the placement is queried only when the edge is effectively collapsed. Caching only the cost as opposed to caching both the cost and the placement makes little difference in the total running time, however, not caching the cost at all casuses a significant slowdown. Still, caching the cost and/or placement in the edge adds to the size of the surface a significant number. For example, if the cost is a double, each million edges require about 7Mb of additional storage for the cost, and 30Mb for the cost and placement, thus, it might be better in a specific context to avoid any caching altoghether, even at the expense of increased running time.
+The cost for all edges are computed at least once, and on avergage updated a few times, but the placement is queried only when the edge is effectively collapsed. Caching only the cost as opposed to caching both the cost and the placement makes a small difference in the total running time, while, not caching the cost at all casuses a significant slowdown. Still, caching the cost and/or placement in the edge adds to the size of the surface a significant number. For example, if the cost is a double, each million edges require about 7Mb of additional storage for the cost, and 30Mb for the cost and placement. It might be better in a specific context to avoid any caching altoghether, even at the expense of increased running time.
 
 The most sensible default choice is to cache only the cost.
 
-For each edge, a record of information called collapse\_data is associated (through the edge extra pointer map). Such collapse\_data record can be empty, store the cost of the collapse but not the placement, or both. These variations are called Empty, Partial and Full Collapse Data.
+For each edge, a record of information called \ccc{CollapseData} is associated with it (through the edge extra pointer map). Such data can be empty (\ccc{EmptyCollapseData}), store the cost of the collapse but not the placement(\ccc{PartialCollapseData}), or both (\ccc{FullCollapseData)}.
 
-Each time the algorithm needs to access the cost or placement for an edge it calls the GetCost and GetPlacement function objects passed as argument. If an empty collapse data is used, these functions must effectively calculate the values and return it.
+Each time the algorithm needs to access the cost or placement for an edge it calls the \ccc{GetCost} and \ccc{GetPlacement} function objects passed as argument. If an empty collapse data is used, these functions must effectively calculate the values and return it.
 
-On the other hand, if a partial or full collapse data is used, meaning that the cost and/or placement is cached, the GetCost and/or GetPlacement fucntion objects must simply extract the cached value and return it. In this case, however, the actual cost and placement must still be computated, somehow, and store in the collapse data for the extractors to get it. This is the role of the SetCollapseData function object passed as argument.
+On the other hand, if a partial or full collapse data is used, meaning that the cost and/or placement is cached, the \ccc{GetCost} and/or \ccc{GetPlacement} function objects must simply extract the cached value and return it. In this case, however, the actual cost and placement must somwhow still be computed and stored in the collapse data. This is the role of the \ccc{SetCollapseData} function object passed as argument.
 
-In conjunction, the 3 parameters: SetCollapseData, GetCost and GetPlacement specify the cost (and placement) strategy. They are related in that if SetCollapseData corresonds to the empty case, the GetCost and GetPlacement getters must be actually computing the values, while if SetCollapseData corresponds to the partial or full case, the getter(s) would just returned the cache value and the set data itself will compute it.
-
-Concrete details of the actual choices are given in the next section.
+In conjunction, the 3 parameters: \ccc{SetCollapseData}, \ccc{GetCost} and \ccc{GetPlacement} specify the cost (and placement) strategy. They are related in that if \ccc{SetCollapseData} sets an \ccc{EmptyCollapseData}, the \ccc{GetCost} and \ccc{GetPlacement} policies must be actually computing the values, while if \ccc{SetCollapseData} sets a \ccc{PartialCollapseData} or a \ccc{FullCollapseData}, the policies would just return the cached value.
 
 \section{API}
 
 \subsection{API Overview}
 
-The simplification algorithm is implemented as a free template function taking several parameters, most of which have default values.
-The following sample code illustrates the general form of the function call:
+The simplification algorithm is implemented as a free template function taking several parameters. The following sample code illustrates the general form of the function call:
 
 \begin{cprog}
 int r = edge_collapse(surface
@@ -196,17 +192,33 @@ int r = edge_collapse(surface
                      );
 \end{cprog}
 
-Only the first 2 parameters are required. All other parameters have default values correspoding to the {\em Lindstrom-Turk} cost/placement strategy, with no fixed vertices and assuming the surface edges store room for an extra pointer default initialized to \ccStyle{NULL}.
+Only the first 2 parameters are required. All other parameters have default values corresponding to the {\em Lindstrom-Turk} cost strategy, with no fixed vertices and assuming the surface edges store room for an extra pointer default initialized to \ccStyle{NULL}.
 
 \subsection{Examples}
-The following examples are presented in order of increasing complexity.
 
+These examples present, progressively, the varying choices of policies. It is better to read them one after the other.
+Some lines are marked with \ccStyle{<==== NOTICE THIS} to drive the attention to an important difference with respect to the previous example which can be lost in the context.
+
+This example illustrates the simplest of the cases using an ordinary polyhedron as surface and all default policies:
 \ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_polyhedron_example.cpp}
-\ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_enriched_polyhedron_example.cpp}
-\ccIncludeExampleCode{Surface_mesh_simplification/MP_edge_collapse_polyhedron_example.cpp}
-\ccIncludeExampleCode{Surface_mesh_simplification/Edge_collapse_fully_cached_polyhedron_example.cpp}
-\ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_visited_fully_enriched_polyhedron_example.cpp}
 
+This example shows how to use an enriched polyhedron which stores the extra pointer in the halfedges.
+\ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_enriched_polyhedron_example.cpp}
+
+This example shows how to use a cost strategy other than the default
+\ccIncludeExampleCode{Surface_mesh_simplification/MP_edge_collapse_polyhedron_example.cpp}
+
+This example shows how to use a full collapse-data cache for efficiency. The setup in this case is slightly different for the default cost-strategy (Lindstrom-Turk) than for alternative strategies, so both cases are shown:
+\ccIncludeExampleCode{Surface_mesh_simplification/Edge_collapse_fully_cached_polyhedron_example.cpp}
+
+This example shows how to use a Visitor to track the simplification process. It also shows how to setup the Lindstrom-Turk cost strategy but with a partial case (unlike a full cache as in the previous example):
+\ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_visited_polyhedron_example.cpp}
+
+This example shows how to fix vertices to prevent edges from being collapsed, using an ordinary polyhedron and external maps.
+\ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_with_fixed_vertices_polyhedron_example.cpp}
+
+This example shows how to fix vertices to prevent edges from being collapsed using an enriched polyhedron.
+\ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_with_fixed_vertices_enriched_polyhedron_example.cpp}
 
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of sfsooter

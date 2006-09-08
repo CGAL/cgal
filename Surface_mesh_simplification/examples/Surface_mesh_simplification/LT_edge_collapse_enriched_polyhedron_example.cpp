@@ -11,7 +11,7 @@
 // 
 //   The per-edge extra pointer is given by the edge itself.
 //   No vertex is fixed.
-//   The cost strategy is Lindstrom-Turk
+//   The cost strategy is Lindstrom-Turk with partial cache
 //   No visitor is passed.
 //
 #include <iostream>
@@ -40,7 +40,7 @@ typedef Kernel::Vector_3         Vector;
 typedef Kernel::Point_3          Point;
 
 //
-// Setup an enriched polyhedron type which stores in a halfedge the extra pointer needed by the algorithm
+// Setup an enriched polyhedron type which stores in the halfedge the extra pointer needed by the algorithm
 //
 
 template <class Refs, class Traits>

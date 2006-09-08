@@ -12,7 +12,7 @@
 // Implicit arguments:
 // 
 //   No vertex is fixed.
-//   The cost strategy is Lindstrom-Turk
+//   The cost strategy is Lindstrom-Turk with partial cache
 //   No visitor is passed.
 //
 #include <iostream>
@@ -54,6 +54,7 @@ int main( int argc, char** argv )
   ifstream is(argv[1]) ;
   is >> surface ;
 
+  // Extra pointer external map
   Unique_hash_map<Halfedge_handle,void*> edge2ptr ;
   for ( Surface::Halfedge_iterator hi = surface.halfedges_begin(); hi != surface.halfedges_end() ; ++ hi )
     edge2ptr[hi] = 0 ;

@@ -33,9 +33,11 @@ LDFLAGS = $(CGAL_LDFLAGS)
 all:            \
                 LT_edge_collapse_polyhedron_example \
                 LT_edge_collapse_enriched_polyhedron_example \
-                LT_edge_collapse_visited_fully_enriched_polyhedron_example \
                 MP_edge_collapse_polyhedron_example  \
-                Edge_collapse_fully_cached_polyhedron_example 
+                Edge_collapse_fully_cached_polyhedron_example \
+                LT_edge_collapse_visited_polyhedron_example \
+                LT_edge_collapse_with_fixed_vertices_polyhedron_example \
+                LT_edge_collapse_with_fixed_vertices_enriched_polyhedron_example \
 
 LT_edge_collapse_polyhedron_example$(EXE_EXT): LT_edge_collapse_polyhedron_example$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)LT_edge_collapse_polyhedron_example \
@@ -45,10 +47,6 @@ LT_edge_collapse_enriched_polyhedron_example$(EXE_EXT): LT_edge_collapse_enriche
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)LT_edge_collapse_enriched_polyhedron_example \
         LT_edge_collapse_enriched_polyhedron_example$(OBJ_EXT) $(LDFLAGS)
         
-LT_edge_collapse_visited_fully_enriched_polyhedron_example$(EXE_EXT): LT_edge_collapse_visited_fully_enriched_polyhedron_example$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)LT_edge_collapse_visited_fully_enriched_polyhedron_example \
-        LT_edge_collapse_visited_fully_enriched_polyhedron_example$(OBJ_EXT) $(LDFLAGS)
-        
 MP_edge_collapse_polyhedron_example$(EXE_EXT): MP_edge_collapse_polyhedron_example$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)MP_edge_collapse_polyhedron_example \
         MP_edge_collapse_polyhedron_example$(OBJ_EXT) $(LDFLAGS)
@@ -57,12 +55,26 @@ Edge_collapse_fully_cached_polyhedron_example$(EXE_EXT): Edge_collapse_fully_cac
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Edge_collapse_fully_cached_polyhedron_example \
         Edge_collapse_fully_cached_polyhedron_example$(OBJ_EXT) $(LDFLAGS)
 
+LT_edge_collapse_visited_polyhedron_example$(EXE_EXT): LT_edge_collapse_visited_polyhedron_example$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)LT_edge_collapse_visited_polyhedron_example \
+        LT_edge_collapse_visited_polyhedron_example$(OBJ_EXT) $(LDFLAGS)
+        
+LT_edge_collapse_with_fixed_vertices_polyhedron_example$(EXE_EXT): LT_edge_collapse_with_fixed_vertices_polyhedron_example$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)LT_edge_collapse_with_fixed_vertices_polyhedron_example \
+        LT_edge_collapse_with_fixed_vertices_polyhedron_example$(OBJ_EXT) $(LDFLAGS)
+
+LT_edge_collapse_with_fixed_vertices_enriched_polyhedron_example$(EXE_EXT): LT_edge_collapse_with_fixed_vertices_enriched_polyhedron_example$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)LT_edge_collapse_with_fixed_vertices_enriched_polyhedron_example \
+        LT_edge_collapse_with_fixed_vertices_enriched_polyhedron_example$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
                    LT_edge_collapse_polyhedron_example.clean \
                    LT_edge_collapse_enriched_polyhedron_example.clean \
-                   LT_edge_collapse_visited_fully_enriched_polyhedron_example.clean \
                    MP_edge_collapse_polyhedron_example.clean \
-                   Edge_collapse_fully_cached_polyhedron_example.clean
+                   Edge_collapse_fully_cached_polyhedron_example.clean \
+                   LT_edge_collapse_visited_polyhedron_example.clean \
+                   LT_edge_collapse_with_fixed_vertices_polyhedron_example.clean \
+                   LT_edge_collapse_with_fixed_vertices_enriched_polyhedron_example.clean \
 
 #---------------------------------------------------------------------#
 #                    suffix rules

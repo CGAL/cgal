@@ -1,3 +1,21 @@
+// Lindstrom-Turk edge-collapse with fixed vertices on an enriched polyhedron.
+//
+// Explicit arguments:
+// 
+//   The surface is an enriched Polyhedron_3 which embeeds the extra pointer in the edge and a boolean flag in the vertices.
+//
+//   The stop condition is to finish when the number of undirected edges 
+//   drops below a certain absolute number.
+//
+//   The per-edge extra pointer is stored in the edge itself.
+//
+//   The flag determining whether the vertex is fixed is stored in the vertex itself
+//
+// Implicit arguments:
+// 
+//   The cost strategy is Lindstrom-Turk with partial cache.
+//   No visitor is passed.
+//
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -8,7 +26,7 @@
 #include <CGAL/Surface_mesh_simplification/Polyhedron.h>
 
 // Policies
-#include <CGAL/Surface_mesh_simplification/Vertex_is_fixed_map_stored.h>
+#include <CGAL/Surface_mesh_simplification/Vertex_is_fixed_map_stored.h>  //<==== NOTICE THIS 
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_pred.h>
 
 // Simplification method
@@ -76,53 +94,6 @@ typedef Surface::Vertex_handle   Vertex_handle ;
 
 using namespace CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse ;
 
-struct Visitor
-{
-  Visitor() : collected(0), processed(0), collapsed(0), non_collapsable(0), cost_uncomputable(0) {} 
-  
-  void OnStarted( Surface& aSurface ) {} 
-  
-  void OnFinished ( Surface& aSurface ) { cerr << "\n" << flush ; } 
-  
-  void OnStopConditionReached( Surface& aSurface ) {} 
-  
-  void OnCollected( Halfedge_handle const& aEdge
-                  , bool                   aIsFixed
-                  , Surface&            aSurface
-                  )
-  {
-    ++ collected ;
-    cerr << "\rEdges collected: " << collected << flush ;
- }                
-  
-  void OnProcessed(Halfedge_handle const& aEdge
-                  ,Surface&            aSurface
-                  ,optional<double>       aCost
-                  ,Vertex_handle const&   aVertex
-                  )
-  {
-    ++ processed ;
-    if ( aVertex == Vertex_handle() )
-    {
-      if ( !aCost )
-           ++ cost_uncomputable ;
-      else ++ non_collapsable ;
-    }
-    else 
-    {
-      ++ collapsed;
-    }
-  }                
-  
-  void OnStep(Halfedge_handle const& aEdge, Surface& aSurface, size_t aInitial, size_t aCurrent)
-  {
-    if ( aCurrent == aInitial )
-      cerr << "\n" << flush ;
-    cerr << "\r" << aCurrent << flush ;
-  }                
-  
-  size_t collected, processed, collapsed, non_collapsable, cost_uncomputable ; 
-} ;
 
 int main( int argc, char** argv ) 
 {
@@ -131,43 +102,17 @@ int main( int argc, char** argv )
   ifstream is(argv[1]) ;
   is >> surface ;
 
-  //
-  // Simplify surface
-  //  Down to a 10% of the number of edges.
-  //  Per-edge extra pointer embeeded in each halfedge.
-  //  "is-fixed" flag embeeded in each vertex.
-  //  Caching cost with not placement (partial collapse data)
-  //  Using LindstromTurk cost strategy from the cached collapse data.
-  //  Using LindstromTurk placement strategy computed on demand.
-  //  Using default LindstromTurk params
-  //  Using a visitor to track progress and collect stats.
-  //
-
-  Visitor visitor ;
+  for ( Surface::Vertex_iterator vi = surface.vertices_begin(); vi != surface.vertices_end() ; ++ vi )
+    vi->is_fixed_ = true ; // only some would be set to true, of cotrue
   
-  LindstromTurk_params params ;
-    
   int r = edge_collapse(surface
                        ,Count_ratio_stop_condition<Surface>(0.10)
                        ,Edge_extra_pointer_map_stored<Surface>()
                        ,Vertex_is_fixed_map_stored<Surface>()
-                       ,Set_partial_collapse_data_LindstromTurk<Surface>()
-                       ,Cached_cost<Surface>()
-                       ,LindstromTurk_placement<Surface>()
-                       ,&params
-                       ,&params
-                       ,&visitor
                        );
 
   cout << "\nFinished...\n" << r << " edges removed.\n"  << (surface.size_of_halfedges()/2) << " final edges." ;
   
-  cout << "\nEdges collected: " << visitor.collected
-       << "\nEdges proccessed: " << visitor.processed
-       << "\nEdges collapsed: " << visitor.collapsed
-       << endl
-       << "\nEdges not collapsed due to topological constrians: " << visitor.non_collapsable
-       << "\nEdge not collapsed due to computational constrians: " << visitor.cost_uncomputable 
-       << endl ; 
         
   ofstream os( argc > 2 ? argv[2] : "out.off" ) ;
   os << surface ;
