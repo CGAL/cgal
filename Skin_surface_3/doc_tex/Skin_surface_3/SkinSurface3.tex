@@ -180,7 +180,7 @@ steps and outputs a mesh in a \ccc{CGAL::Polyhedron_3}:
   void make_skin_surface_mesh_3(
   Polyhedron_3 &p,
   WP_iterator begin, WP_iterator end, 
-  FT shrink_factor=1,
+  FT shrink_factor=.5,
   int nSubdiv=0,
   bool grow_balls = true);}
 
@@ -266,7 +266,7 @@ The following example shows the construction of a coarse mesh of the
 skin surface by explicitly performing different steps of the
 algorithm. It first constructs a \ccc{Skin_surface_3} object from an
 iterator range of weighted points and a shrink factor. From this
-object, the isotopic mesh is extracted using the function
+object, the isotopic mesh is extracted using the function \ccc{CGAL::mesh_skin_surface_3}
 
 Next, the coarse mesh is refined to obtain a better approximation. The
 use of \ccc{CGAL::Skin_surface_polyhedral_items_3<Skin_surface_3>} in

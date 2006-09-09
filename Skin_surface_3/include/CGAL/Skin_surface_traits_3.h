@@ -111,7 +111,7 @@ class Skin_surface_traits_base_3
   typedef Regular_triangulation_euclidean_traits_3<K_> Base;
 public:
   typedef K_                                  Kernel;
-  typedef Skin_surface_traits_base_3<Kernel> Self;
+  typedef Skin_surface_traits_base_3<Kernel>  Self;
 
   typedef typename Kernel::FT                 FT;
   typedef typename Kernel::Point_3            Bare_point;

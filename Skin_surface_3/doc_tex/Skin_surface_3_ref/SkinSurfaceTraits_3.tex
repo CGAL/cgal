@@ -14,78 +14,39 @@
 % +------------------------------------------------------------------------+
 
 \begin{ccRefConcept}{SkinSurfaceTraits_3}
-  NGHK: TODO
-
-  NGHK: USES SkinSurfaceTraits::Bare_point::R in Weighted_converter! CHECK
-
-
   Required types and member functions for the \ccRefName\ concept.
   This geometric traits concept is used for the construction of a
   polyhedral mesh approximating a skin surface
-  \ccc{CGAL::skin_surface_3<Traits>}.  It defines three \cgal\ kernels
-  and appropriate converters.
+  \ccc{CGAL::skin_surface_3<Traits>}.
 
-%\ccRefines
-%\ccc{CopyConstructable}, \ccc{Assignable}.
+  \ccRefines
+  \ccc{RegularTriangulationTraits_3} 
 
-\ccThree{Skin_surface_traits_3xxx}{Triangulated}{}
-\ccThreeToTwo
-\ccTypes
+  % \ccc{CopyConstructable}, \ccc{Assignable}.
 
-\ccNestedType{Regular_triangulation_traits}{The traits class is used for the
-  regular triangulation. It is a model of the
-  \ccc{RegularTriangulationTraits_3} concept.}
+  \ccThree{Skin_surface_traits_3}{Triang}{}
+  \ccThreeToTwo
+  \ccTypes
 
-\ccNestedType{Triangulated_mixed_complex_traits}{The traits
-  class used in the \ccc{Triangulated_mixed_complex}. It is a model of
-  the \ccc{TriangulationTraits_3} concept and has to be able to store
-  the constructed vertices exactly.}
+  \ccNestedType{RT}{The number type.}
 
-\ccNestedType{Polyhedron_traits}{The traits class used for the
-  geometric objects defined by the mesh.}
-
-\ccNestedType{Regular_RT}{The ring type of the
-  \ccc{Regular_triangulation_traits}.}
-
-\ccNestedType{R2T_converter}{Converter for geometric objects
-  defined within \ccc{Regular_triangulation_traits} to objects defined within
-  \ccc{Triangulated_mixed_complex_traits}.}
-
-\ccNestedType{R2P_converter}{Converter for geometric objects
-  defined within \ccc{Regular_triangulation_traits} to objects defined within
-  \ccc{Polyhedron_traits}.}
-
-\ccNestedType{T2P_converter}{Converter for geometric objects
-  defined within \ccc{Triangulated_mixed_complex_traits} to objects
-  defined within \ccc{Polyhedron_traits}.}
-
-\ccNestedType{P2T_converter}{Converter for geometric objects
-  defined within \ccc{Polyhedron_traits} to objects
-  defined within \ccc{Triangulated_mixed_complex_traits}.}
-
-% NGHK: These predicates need the Regular triangulation, which are not
-% known in the skin surface traits class
-
-%\ccNestedType{Compute_anchor_3}{A predicate object which
-%  provides the function operators defined for
-%  \ccc{Compute_anchor_3<RegularTriangulation_3>}.}
-
-\ccNestedType{Construct_anchor_point_3}{A predicate object which
-  provides the following function operator:\\
-  \ccc{TMC_Point operator()(const TMC_Point &center_del, const
-    TMC_Point &center_vor);}\\
-  Constructs the anchor point in between the Delaunay and Voronoi
-  centers.}
+  \ccNestedType{Construct_anchor_point_3}{A predicate object which
+    provides the following function operator:\\
+    \ccc{Point operator()(const Point &center_del, const
+      Point &center_vor);}\\
+    Constructs the anchor point in between the Delaunay and Voronoi
+    centers, i.e., the point $(1-s)\cdot$\ccc{center_del} +
+    $s\cdot$\ccc{center_vor}, where $s$ is the shrink factor.}
 
 \ccCreation
 \ccCreationVariable{traits}
 
-\ccConstructor{SkinSurfaceTraits_3( const Regular_triangulation_traits::FT s=.5);}{
+\ccConstructor{SkinSurfaceTraits_3(RT s=.5);}{
     constructor that takes the shrink factor as argument.}
 
 \ccHasModels
 
-\ccRefIdfierPage{CGAL::Skin_surface_traits_3<RegularKernel_3, TriangulatedMixedComplexKernel_3, PolyhedronTraits_3>}
+\ccRefIdfierPage{CGAL::Skin_surface_traits_3<K>}
 
 
 \ccThree{Construct_anchor_point_3}{traits.shrink_factor()}{}
@@ -100,30 +61,9 @@ The following functions give access to the predicate objects:
 \ccMethod{Construct_anchor_point_3 construct_anchor_point_3_object()
   const;}{returns a \ccc{Construct_anchor_point_3} object.}
 
-\ccHeading{Converters:}
-\ccThree{T2P_converterx}{Construct_anchor_point_3xxx}{}
-\ccThreeToTwo
-\ccMethod{R2T_converter r2t_converter_object() const;}{returns a
-  converter of geometric objects from the \ccc{Regular_triangulation_traits} to the
-  \ccc{Triangulated_mixed_complex_traits}.}
-
-\ccMethod{R2P_converter r2p_converter_object() const;}{returns a
-  converter of geometric objects from the \ccc{Regular_triangulation_traits} to the
-  \ccc{Polyhedron_traits}.}
-
-\ccMethod{T2P_converter t2p_converter_object() const;}{returns a
-  converter of geometric objects from the
-  \ccc{Triangulated_mixed_complex_traits} to the
-  \ccc{Polyhedron_traits}.}
-
-\ccMethod{P2T_converter p2t_converter_object() const;}{returns a
-  converter of geometric objects from the
-  \ccc{Triangulated_mixed_complex_traits} to the
-  \ccc{Polyhedron_traits}.}
-
 \ccSeeAlso
-\ccRefIdfierPage{CGAL::skin_surface_3}\\
-\ccRefIdfierPage{CGAL::Skin_surface_traits_3<RegularKernel_3, TriangulatedMixedComplexKernel_3, PolyhedronTraits_3>}
+\ccRefIdfierPage{CGAL::Skin_surface_3<SkinSurfaceTraits_3>}\\
+\ccRefIdfierPage{CGAL::Skin_surface_traits_3<K>}
 
 \end{ccRefConcept}
 

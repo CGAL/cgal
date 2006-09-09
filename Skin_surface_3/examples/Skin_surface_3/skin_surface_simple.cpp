@@ -5,7 +5,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Weighted_point<K>                             Weighted_point;
-typedef K::Point                                            Bare_point;
+typedef K::Point_3                                          Bare_point;
 typedef CGAL::Polyhedron_3<K>                               Polyhedron;
 
 int main(int argc, char *argv[]) {

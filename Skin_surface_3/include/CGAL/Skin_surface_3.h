@@ -56,6 +56,7 @@ public:
   
   typedef Regular_triangulation_3<Gt>     Regular;
 
+private:
   typedef Exact_predicates_inexact_constructions_kernel     Filtered_kernel;
   typedef Skin_surface_quadratic_surface_3<Filtered_kernel> 
                                                          Quadratic_surface;
