@@ -338,6 +338,10 @@ Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/data/random_ray_shoot.sph
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/data/simple.spheres -text svneol=unset#application/octet-stream
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/data/two.spheres -text svneol=unset#application/octet-stream
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/the_plan -text
+BGL/doc_tex/BGL.tex -text
+BGL/doc_tex/BGL_ref/ConnectedPlanarGeometricGraph.tex -text
+BGL/doc_tex/BGL_ref/intro.tex -text
+BGL/doc_tex/BGL_ref/main.tex -text
 BGL/include/CGAL/boost/graph/HalfedgeDS_BGL_aux.h -text
 BGL/include/CGAL/boost/graph/Polyhedron_BGL.h -text
 BGL/include/CGAL/boost/graph/Polyhedron_BGL_properties.h -text
