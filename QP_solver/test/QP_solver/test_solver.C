@@ -41,8 +41,9 @@
 #include <CGAL/QP_solver/QP_partial_exact_pricing.h>
 #include <CGAL/QP_solver/QP_full_filtered_pricing.h>
 #include <CGAL/QP_solver/QP_partial_filtered_pricing.h>
+#include <CGAL/QP_functions.h>
 
-#include <CGAL/QP_solver/MPS.h> // should to into QP_solver.h (?)
+#include <CGAL/QP_models.h> 
 
 // Note: The following #define's allow faster compilation for individual
 // test cases.  For instance, to only compile code for a solver
@@ -307,28 +308,28 @@ bool parse_options(std::istream& in,std::map<std::string,int>& options,
   return true;
 }
 
-template<typename Traits>
-CGAL::QP_pricing_strategy<Traits> *
+template<typename Q, typename ET, typename Tags>
+CGAL::QP_pricing_strategy<Q, ET, Tags> *
   create_strategy(const std::map<std::string,int>& options)
 {
   Key_const_iterator it = options.find("Strategy");
-  CGAL::QP_pricing_strategy<Traits> *strat = 0;
-  typedef typename NT_selector<typename Traits::ET>::NT NT;
+  CGAL::QP_pricing_strategy<Q, ET, Tags> *strat = 0;
+  typedef typename NT_selector<ET>::NT NT;
   switch (it->second) {
   case FE:
-    strat = new CGAL::QP_full_exact_pricing<Traits>;
+    strat = new CGAL::QP_full_exact_pricing<Q, ET, Tags>;
     break;  
   case EB:
-    strat = new CGAL::QP_exact_bland_pricing<Traits>;
+    strat = new CGAL::QP_exact_bland_pricing<Q, ET, Tags>;
     break;
   case FF:
-    strat = new CGAL::QP_full_filtered_pricing<Traits,NT>;
+    strat = new CGAL::QP_full_filtered_pricing<Q, ET, Tags,NT>;
     break;
   case PE:
-    strat = new CGAL::QP_partial_exact_pricing<Traits>;
+    strat = new CGAL::QP_partial_exact_pricing<Q, ET, Tags>;
     break;
   case PF:
-    strat = new CGAL::QP_partial_filtered_pricing<Traits,NT>;
+    strat = new CGAL::QP_partial_filtered_pricing<Q, ET, Tags,NT>;
   }
   return strat;
 }
@@ -362,7 +363,7 @@ bool process(const std::string& filename,
   std::ifstream in(filename.c_str());
   if (!in)
     bailout1("could not open file '%'",filename);
-  typedef CGAL::QP_MPS_instance<IT,ET> QP_instance;
+  typedef CGAL::QP_from_mps<IT> QP_instance;
   QP_instance qp(in,true,verbosity);
   in.close();
 
@@ -405,7 +406,8 @@ bool process(const std::string& filename,
       check_tag(Is_in_standard_form()) && !qp.is_in_standard_form() ||
       check_tag(Has_equalities_only_and_full_rank()) && dontComputeRank ||
       check_tag(Has_equalities_only_and_full_rank()) &&
-      !qp.has_equalities_only_and_full_rank())
+      !(CGAL::QP_is_in_equational_form(qp) &&
+	CGAL::QP_has_full_row_rank (qp, ET(0))))
     return true;
 
   if (verbosity > 0)
@@ -431,19 +433,19 @@ bool process(const std::string& filename,
   if (verbosity > 3)
     cout << endl << qp;
 
-  typedef CGAL::QP_solver_MPS_traits_d<QP_instance,
-    Is_linear,Is_symmetric,Has_equalities_only_and_full_rank,
-    Is_in_standard_form,IT,ET,
-    typename QP_instance::D_iterator> Traits;
+//  typedef CGAL::QP_solver_MPS_traits_d<QP_instance,
+//     Is_linear,Is_symmetric,Has_equalities_only_and_full_rank,
+//     Is_in_standard_form,IT,ET,
+//     typename QP_instance::D_iterator> Traits;
+
+  typedef CGAL::QP_solver_impl::QP_tags<Is_linear,
+    Is_symmetric,Has_equalities_only_and_full_rank, 
+    Is_in_standard_form> Tags;
 
   // solve:
-  CGAL::QP_pricing_strategy<Traits> *s = create_strategy<Traits>(options);
-  CGAL::QP_solver<Traits> solver(qp.number_of_variables(),
-				 qp.number_of_constraints(),
-				 qp.A(),qp.b(),qp.c(), qp.c_0(), qp.D(),
-				 qp.row_types(),
-				 qp.fl(),qp.l(),qp.fu(),qp.u(),
-				 s,verbosity);
+  CGAL::QP_pricing_strategy<QP_instance, ET, Tags> *s = 
+    create_strategy<QP_instance, ET, Tags>(options);
+  CGAL::QP_solver<QP_instance, ET, Tags> solver(qp, s, verbosity);
   // output number of iterations
   cout << solver.iterations() << " ";
   const bool is_valid = solver.is_valid();

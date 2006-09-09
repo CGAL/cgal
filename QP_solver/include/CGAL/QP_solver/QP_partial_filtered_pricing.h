@@ -32,28 +32,26 @@ CGAL_BEGIN_NAMESPACE
 // =================
 // class declaration
 // =================
-template < class Rep_, class NT_ = double, class ET2NT_ =
-    To_double<typename Rep_::ET> >
+template < typename Q, typename ET, typename Tags, class NT_ = double, class ET2NT_ =
+    To_double<ET> >
 class QP_partial_filtered_pricing;
 
 // ===============
 // class interface
 // ===============
-template < class Rep_, class NT_, class ET2NT_ >
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >
 class QP_partial_filtered_pricing
-    : public QP__partial_base <Rep_>,
-      public QP__filtered_base<Rep_,NT_,ET2NT_> {
+    : public QP__partial_base <Q,ET,Tags>,
+      public QP__filtered_base<Q,ET,Tags,NT_,ET2NT_> {
 
     // self
-    typedef  Rep_                               Rep;
-    typedef  QP_pricing_strategy<Rep>          Base;
-    typedef  QP__partial_base<Rep>             Partial_base;
-    typedef  QP__filtered_base<Rep, NT_, ET2NT_>            Filtered_base;
-    typedef  QP_partial_filtered_pricing<Rep, NT_, ET2NT_>  Self;
+    typedef  QP_pricing_strategy<Q,ET,Tags>          Base;
+    typedef  QP__partial_base<Q,ET,Tags>             Partial_base;
+    typedef  QP__filtered_base<Q,ET,Tags, NT_, ET2NT_>  Filtered_base;
+    typedef  QP_partial_filtered_pricing<Q, ET, Tags, NT_, ET2NT_>  Self;
 
     // types from the base class
-    typedef  typename Base::ET                            ET;
-    typedef  typename Base::Is_in_standard_form           Is_in_standard_form;
+    typedef  typename Tags::Is_in_standard_form           Is_in_standard_form;
     typedef  typename Partial_base::Index_iterator        Index_iterator;
     typedef  typename Partial_base::Index_const_iterator  Index_const_iterator;
   public:
@@ -89,8 +87,8 @@ class QP_partial_filtered_pricing
 // =============================
 
 // construction
-template < class Rep_, class NT_, class ET2NT_ >  inline
-QP_partial_filtered_pricing<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >  inline
+QP_partial_filtered_pricing<Q,ET,Tags,NT_,ET2NT_>::
 QP_partial_filtered_pricing( bool randomize, Random& random, ET2NT et2nt)
     : Base( "partial filtered"),
       Partial_base( randomize, random),
@@ -98,16 +96,16 @@ QP_partial_filtered_pricing( bool randomize, Random& random, ET2NT et2nt)
 { }
     
 // operations
-template < class Rep_, class NT_, class ET2NT_ >  inline
-void  QP_partial_filtered_pricing<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >  inline
+void  QP_partial_filtered_pricing<Q,ET,Tags,NT_,ET2NT_>::
 init( )
 {
      Partial_base::init();
     Filtered_base::init();
 }
 
-template < class Rep_, class NT_, class ET2NT_ >  inline
-void  QP_partial_filtered_pricing<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >  inline
+void  QP_partial_filtered_pricing<Q,ET,Tags,NT_,ET2NT_>::
 transition( )
 {
      Partial_base::transition();
@@ -115,15 +113,15 @@ transition( )
 }
 
 
-template < class Rep_, class NT_, class ET2NT_ >
-int  QP_partial_filtered_pricing<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >
+int  QP_partial_filtered_pricing<Q,ET,Tags,NT_,ET2NT_>::
 pricing(int& direction ) 
 {
   return (pricing_helper(direction, Is_in_standard_form()));
 }
 
-template < class Rep_, class NT_, class ET2NT_ >
-int  QP_partial_filtered_pricing<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >
+int  QP_partial_filtered_pricing<Q,ET,Tags,NT_,ET2NT_>::
 pricing_helper(int& direction, Tag_true is_in_standard_form )
 {
     // initialize filtered computation
@@ -259,8 +257,8 @@ pricing_helper(int& direction, Tag_true is_in_standard_form )
     // no entering variable found
     return -1;
 }
-template < class Rep_, class NT_, class ET2NT_ >
-int  QP_partial_filtered_pricing<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >
+int  QP_partial_filtered_pricing<Q,ET,Tags,NT_,ET2NT_>::
 pricing_helper(int& direction, Tag_false is_in_standard_form )
 {
     // initialize filtered computation

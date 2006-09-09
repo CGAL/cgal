@@ -35,7 +35,7 @@ CGAL_BEGIN_NAMESPACE
 // ==================
 // class declarations
 // ==================
-template < class Rep_ >
+template < typename Q, typename ET, typename Tags >
 class QP__partial_base;
 
 template < class Solver >
@@ -62,13 +62,12 @@ private:
 // ===============
 // class interface
 // ===============
-template < class Rep_ >
-class QP__partial_base : virtual public QP_pricing_strategy<Rep_> {
+template < typename Q, typename ET, typename Tags >
+class QP__partial_base : virtual public QP_pricing_strategy<Q,ET,Tags> {
 
     // self
-    typedef  Rep_                       Rep;
-    typedef  QP__partial_base<Rep>     Self;
-    typedef  QP_pricing_strategy<Rep>  Base;
+    typedef  QP__partial_base<Q,ET,Tags>     Self;
+    typedef  QP_pricing_strategy<Q,ET,Tags>  Base;
 
     typedef  typename Base::QP_solver   QP_solver;
   protected:
@@ -117,16 +116,16 @@ class QP__partial_base : virtual public QP_pricing_strategy<Rep_> {
 // ===============================
 
 // construction
-template < class Rep_ >  inline
-QP__partial_base<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline
+QP__partial_base<Q,ET,Tags>::
 QP__partial_base( bool  randomize, Random&  random)
     : permute( randomize), rand_src( random)
 { }
 
 // initialization
-template < class Rep_ >
+template < typename Q, typename ET, typename Tags >
 void
-QP__partial_base<Rep_>::
+QP__partial_base<Q,ET,Tags>::
 init( )
 {
     // initialize indices of non-basic variables
@@ -151,9 +150,9 @@ init( )
 }
 
 // operations
-template < class Rep_ >  inline
+template < typename Q, typename ET, typename Tags >  inline
 void
-QP__partial_base<Rep_>::
+QP__partial_base<Q,ET,Tags>::
 entering_basis( Index_const_iterator it)
 {
     CGAL_qpe_precondition( it >= active_set_begin() && it < active_set_end());
@@ -165,9 +164,9 @@ entering_basis( Index_const_iterator it)
     N.pop_back();
 }
 
-template < class Rep_ >  inline
+template < typename Q, typename ET, typename Tags >  inline
 void
-QP__partial_base<Rep_>::
+QP__partial_base<Q,ET,Tags>::
 activating( Index_const_iterator& it)
 {
     CGAL_qpe_precondition(
@@ -179,9 +178,9 @@ activating( Index_const_iterator& it)
     ++s;
 }
 
-template < class Rep_ >
+template < typename Q, typename ET, typename Tags >
 void
-QP__partial_base<Rep_>::
+QP__partial_base<Q,ET,Tags>::
 leaving_basis( int i)
 {
     // all non-basic variables active?
@@ -200,9 +199,9 @@ leaving_basis( int i)
 }
 
 
-template < class Rep_ >
+template < typename Q, typename ET, typename Tags >
 void
-QP__partial_base<Rep_>::
+QP__partial_base<Q,ET,Tags>::
 transition( )
 {
     // Remove from N nonbasic slack and original variables that have become

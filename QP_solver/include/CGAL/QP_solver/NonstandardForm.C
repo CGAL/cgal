@@ -29,9 +29,8 @@ CGAL_BEGIN_NAMESPACE
 //
 // Note: This routine is probably never called (but it is referenced
 // sometimes in comments for explanation.)
-template < class Rep_ >
-typename QP_solver<Rep_>::ET
-QP_solver<Rep_>::original_variable_value(int i) const
+template < typename Q, typename ET, typename Tags >
+ET QP_solver<Q, ET, Tags>::original_variable_value(int i) const
 {
   CGAL_assertion(!check_tag(Is_in_standard_form()) && i<qp_n);
   switch (x_O_v_i[i]) {
@@ -59,9 +58,8 @@ QP_solver<Rep_>::original_variable_value(int i) const
 // basic variable.
 //
 // Precondition: x_O_v_i must be initialized as well as in_B. 
-template < class Rep_ >
-typename QP_solver<Rep_>::ET
-QP_solver<Rep_>::nonbasic_original_variable_value(int i) const
+template < typename Q, typename ET, typename Tags >
+ET QP_solver<Q, ET, Tags>::nonbasic_original_variable_value(int i) const
 {
   if (check_tag(Is_in_standard_form()))
     return et0;
@@ -75,9 +73,8 @@ QP_solver<Rep_>::nonbasic_original_variable_value(int i) const
 // scalar product of the row-th row of A and the vector x_init which
 // contains as its entries the values original_variable_value(i),
 // 0<=i<qp_n.
-template < class Rep_ >
-typename QP_solver<Rep_>::ET  QP_solver<Rep_>::
-multiply__A_ixO(int row) const
+template < typename Q, typename ET, typename Tags >
+ET  QP_solver<Q, ET, Tags>::multiply__A_ixO(int row) const
 {
   ET value = et0;
 
@@ -109,8 +106,8 @@ multiply__A_ixO(int row) const
 //
 // Precondition: this routine should only be called for nonstandard form
 // problems.
-template < class Rep_ >
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >
+void  QP_solver<Q, ET, Tags>::
 multiply__A_CxN_O(Value_iterator out) const
 {
   CGAL_qpe_precondition(!check_tag(Is_in_standard_form()));
@@ -140,8 +137,8 @@ multiply__A_CxN_O(Value_iterator out) const
 // access to D. (Maybe its also faster to call
 // nonbasic_original_variable_value() only O(n) times and not O(n^2)
 // times.)
-template < class Rep_ >
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >
+void  QP_solver<Q, ET, Tags>::
 multiply__2D_OxN_O(Value_iterator out) const
 {
   CGAL_qpe_precondition(!check_tag(Is_in_standard_form()));
@@ -163,8 +160,8 @@ multiply__2D_OxN_O(Value_iterator out) const
 //
 // Precondition: this routine should only be called for nonstandard form
 // problems.
-template < class Rep_ >
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >
+void  QP_solver<Q, ET, Tags>::
 multiply__A_S_BxN_O(Value_iterator out) const
 {
   // initialize with zero vector:
@@ -186,8 +183,8 @@ multiply__A_S_BxN_O(Value_iterator out) const
 //
 // Note: this routine is called from transition() (and not during the
 // initialization of the QP-solver).
-template < class Rep_ >
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >
+void  QP_solver<Q, ET, Tags>::
 init_r_B_O()
 {
   CGAL_qpe_precondition(!check_tag(Is_in_standard_form()) &&
@@ -200,8 +197,8 @@ init_r_B_O()
 //
 // Note: this routine is called from transition() (and not during the
 // initialization of the QP-solver).
-template < class Rep_ >
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >
+void  QP_solver<Q, ET, Tags>::
 init_w()
 {
   CGAL_qpe_precondition(!check_tag(Is_in_standard_form()) &&

@@ -38,7 +38,7 @@ namespace CGAL {
 #include <CGAL/QP_solver/QP_full_filtered_pricing.h>
 #include <CGAL/QP_solver/QP_partial_filtered_pricing.h>
 
-#include <CGAL/QP_solver/MPS.h> // should to into QP_solver.h (?)
+#include <CGAL/QP_models.h>
 
 class Data_reader {
 public: // types:
@@ -50,7 +50,7 @@ private: // types:
 
   typedef std::vector<ANT>                   Vector;
   typedef std::vector<Vector>                Matrix;
-  typedef CGAL::QP_MPS_detail::Begin<Vector> Beginner;
+  typedef CGAL::QP_from_mps_detail::Begin<Vector> Beginner;
   typedef CGAL::Join_input_iterator_1<Matrix::const_iterator,
 			      Beginner >     Vector_iterator;
   typedef Vector::const_iterator             Entry_iterator;

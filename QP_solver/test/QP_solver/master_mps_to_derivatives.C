@@ -34,7 +34,7 @@
 #include <CGAL/QP_solver/QP_full_filtered_pricing.h>
 #include <CGAL/QP_solver/QP_partial_filtered_pricing.h>
 
-#include <CGAL/QP_solver/MPS.h> // should to into QP_solver.h (?)
+#include <CGAL/QP_models.h>
 
 std::auto_ptr<std::ofstream>
 create_output_file(const char *filename, // Note: "Bernd3" and not
@@ -65,7 +65,7 @@ template<typename IT,   // input number type
 	 typename ET>   // exact number type compatible with IT (ET is used,
                         // for instance, by QP in the query methods
                         // has_equalities_only_and_full_rank())
-void create_shifted_instance(CGAL::QP_MPS_instance<IT, ET>& qp,
+void create_shifted_instance(CGAL::QP_from_mps<IT>& qp,
 			     const char *path,
 			     const char *file,   // Note: "Bernd3" and
 					         // not "Bernd3.mps".
@@ -86,8 +86,8 @@ void create_shifted_instance(CGAL::QP_MPS_instance<IT, ET>& qp,
   // where v = [1,...,n]^T.
 
   // extract data from qp:
-  const int n = qp.number_of_variables();
-  const int m = qp.number_of_constraints();
+  const int n = qp.n();
+  const int m = qp.m();
 
   // offset vector:
   std::vector<IT> v(n);
@@ -98,13 +98,13 @@ void create_shifted_instance(CGAL::QP_MPS_instance<IT, ET>& qp,
   std::vector<IT> Av(m, IT(0));
   for (int i=0; i<m; ++i) 
     for (int j=0; j<n; ++j)
-      Av[i] += qp.A()[j][i] * v[j];
+      Av[i] += qp.a()[j][i] * v[j];
 
   // compute - 2 v^T D into mvTD:
   std::vector<IT> mvTD(n, IT(0));  // -2D^Tv
   for (int i=0; i<n; ++i) {
     for (int j=0; j<n; ++j)
-      mvTD[i] += qp.D()[j][i] * v[j];
+      mvTD[i] += qp.d()[j][i] * v[j];
     mvTD[i] *= -2;
   }
 
@@ -119,21 +119,21 @@ void create_shifted_instance(CGAL::QP_MPS_instance<IT, ET>& qp,
 		  "master_mps_to_derivatives-create_shifted_instance",
 		  qp.problem_name(),
 		  n, m,
-		  qp.A(),
+		  qp.a(),
 		  make_transform_iterator(
 		    make_zip_iterator(make_tuple(qp.b(),Av.begin())),
 		    tuple_add<IT>()),
 		  make_transform_iterator(
 		    make_zip_iterator(make_tuple(qp.c(),mvTD.begin())),
-		    tuple_add<IT>()), qp.c_0(),
-		  qp.D(), qp.fu(), qp.fl(),
+		    tuple_add<IT>()), qp.c0(),
+		  qp.d(), qp.fu(), qp.fl(),
 		  make_transform_iterator(
 		    make_zip_iterator(make_tuple(qp.u(),v.begin())),
 		    tuple_add<IT>()),
 		  make_transform_iterator(
 		    make_zip_iterator(make_tuple(qp.l(),v.begin())),
 		    tuple_add<IT>()),
-		  qp.row_types());
+		  qp.r());
   out->close();
 }
 
@@ -141,7 +141,7 @@ template<typename IT,   // input number type
 	 typename ET>   // exact number type compatible with IT (ET is used,
                         // for instance, by QP in the query methods
                         // has_equalities_only_and_full_rank())
-void create_free_instance(CGAL::QP_MPS_instance<IT, ET>& qp,
+void create_free_instance(CGAL::QP_from_mps<IT>& qp,
 			  const char *path,
 			  const char *file,   // Note: "Bernd3" and
 			                      // not "Bernd3.mps".
@@ -156,12 +156,12 @@ void create_free_instance(CGAL::QP_MPS_instance<IT, ET>& qp,
   // (and fl and fu are adjusted as well).
 
   // extract data from qp:
-  const int n = qp.number_of_variables();
-  const int m = qp.number_of_constraints();
+  const int n = qp.n();
+  const int m = qp.m();
 
   // allocate storage (admittedly, I don't care about efficiency and
   // elegance here...):
-  typedef CGAL::QP_MPS_instance<IT, ET>    QP_MPS;
+  typedef CGAL::QP_from_mps<IT>    QP_MPS;
   typedef typename QP_MPS::Vector          Vector;
   typedef typename QP_MPS::Vector_iterator Vector_iterator;
   typedef typename QP_MPS::Matrix          Matrix;
@@ -213,8 +213,8 @@ void create_free_instance(CGAL::QP_MPS_instance<IT, ET>& qp,
 		  n, m+nr_of_rows_added,
 		  Vector_iterator(A.begin(),Beginner()),
 		  b.begin(),
-		  qp.c(), qp.c_0(),
-		  qp.D(),
+		  qp.c(), qp.c0(),
+		  qp.d(),
 		  CGAL::Const_oneset_iterator<bool>(false), // fu
 		  CGAL::Const_oneset_iterator<bool>(false), // fl
 		  qp.u(),  // dummy
@@ -235,7 +235,7 @@ bool create_derivatives(const char *path,
 
   // diagnostics:
   cerr << "  Trying to load input MPS using "
-       << CGAL::QP_MPS_detail::MPS_type_name<IT>::name()
+       << CGAL::QP_from_mps_detail::MPS_type_name<IT>::name()
        << " number-type...\n";
 
   // open input file:
@@ -247,8 +247,8 @@ bool create_derivatives(const char *path,
 
   // load QP instance:
   const int verbosity = 5;
-  typedef typename CGAL::QP_MPS_detail::IT_to_ET<IT>::ET ET;
-  typedef CGAL::QP_MPS_instance<IT,ET> QP;
+  typedef typename CGAL::QP_from_mps_detail::IT_to_ET<IT>::ET ET;
+  typedef CGAL::QP_from_mps<IT> QP;
   QP qp(f,true,verbosity);
 
   // check for format errors in MPS file:

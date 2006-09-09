@@ -33,26 +33,24 @@ CGAL_BEGIN_NAMESPACE
 // ==================
 // class declarations
 // ==================
-template < class Rep_, class NT_ = double, class ET2NT_ =
-    To_double<typename Rep_::ET> >
+template < typename Q, typename ET, typename Tags, class NT_ = double, class ET2NT_ =
+    To_double<ET> >
 class QP__filtered_base;
 
 // ===============
 // class interface
 // ===============
-template < class Rep_, class NT_, class ET2NT_ >
-class QP__filtered_base : virtual public QP_pricing_strategy<Rep_> {
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >
+class QP__filtered_base : virtual public QP_pricing_strategy<Q, ET, Tags> {
 
     // self
-    typedef  Rep_                       Rep;
-    typedef  QP__filtered_base<Rep>    Self;
-    typedef  QP_pricing_strategy<Rep>  Base;
+    typedef  QP__filtered_base<Q, ET, Tags>    Self;
+    typedef  QP_pricing_strategy<Q, ET, Tags>  Base;
 
   public:
 
     // number type
     typedef  NT_                        NT;
-    typedef  typename Base::ET          ET;
     typedef  ET2NT_                     ET2NT;
 
   protected:
@@ -91,9 +89,9 @@ class QP__filtered_base : virtual public QP_pricing_strategy<Rep_> {
     const NT                 nt0, nt1;  // small constants of NT
 
   private:
-    // types from Rep
-    typedef  typename Rep::Is_linear    Is_linear;
-    typedef  typename Rep::Is_in_standard_form Is_in_standard_form;
+    // types from Tags
+    typedef  typename Tags::Is_linear    Is_linear;
+    typedef  typename Tags::Is_in_standard_form Is_in_standard_form;
 
     // private member functions
     void  set( int l, Tag_true  is_linear);
@@ -128,13 +126,12 @@ class QP__filtered_base : virtual public QP_pricing_strategy<Rep_> {
     void set_q(int c, int b, Tag_false);
 
     // some more types
-    typedef  typename Rep::A_iterator   A_iterator;
-    typedef  typename Rep::C_iterator   C_iterator;   
+    typedef  typename Q::A_iterator   A_iterator;
+    typedef  typename Q::C_iterator   C_iterator;   
     typedef  typename std::iterator_traits
-        <typename Rep::D_iterator>::value_type
+        <typename Q::D_iterator>::value_type
                                         D_row_iterator;
-    typedef  typename Rep::Row_type_iterator
-                                        R_iterator;
+    typedef  typename Q::R_iterator R_iterator;
 					
     typedef typename Base::QP_solver::C_auxiliary_iterator C_auxiliary_iterator;
 
@@ -177,46 +174,46 @@ class QP__filtered_base : virtual public QP_pricing_strategy<Rep_> {
 // =============================
 
 // construction
-template < class Rep_, class NT_, class ET2NT_ >  inline
-QP__filtered_base<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >  inline
+QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
 QP__filtered_base( ET2NT et2nt)
     : nt0( 0), nt1( 1), et2nt_obj( et2nt)
 { }
 
 // set-up
-template < class Rep_, class NT_, class ET2NT_ > inline         // QP case
-void  QP__filtered_base<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ > inline         // QP case
+void  QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
 set( int l, Tag_false)
 {
     x_B_O_NT.resize( l, nt0);
 }
 
-template < class Rep_, class NT_, class ET2NT_ > inline         // LP case
-void  QP__filtered_base<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ > inline         // LP case
+void  QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
 set( int l, Tag_true)
 {
      x_B_O_NT.resize( l, nt0);   
 }
 
 // initialization
-template < class Rep_, class NT_, class ET2NT_ >  inline        // QP case
-void  QP__filtered_base<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >  inline        // QP case
+void  QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
 init( Tag_false)
 {
     if ( ! row_max_D.empty()) row_max_D.clear();
     if ( ! handled_D.empty()) handled_D.clear();
 }
 
-template < class Rep_, class NT_, class ET2NT_ >  inline        // LP case
-void  QP__filtered_base<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >  inline        // LP case
+void  QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
 init( Tag_true)
 {
     // nop
 }
 
 // operations
-template < class Rep_, class NT_, class ET2NT_ >  inline        // QP case
-void  QP__filtered_base<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >  inline        // QP case
+void  QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
 init_NT( Tag_false)
 {
     if ( this->solver().number_of_basic_original_variables()
@@ -227,30 +224,30 @@ init_NT( Tag_false)
 		    x_B_O_NT.begin(), et2nt_obj);
 }
 
-template < class Rep_, class NT_, class ET2NT_ >  inline        // LP case
-void  QP__filtered_base<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >  inline        // LP case
+void  QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
 init_NT( Tag_true)
 {
     // nop
 }
 
 
-template < class Rep_, class NT_, class ET2NT_ >  inline
-NT_  QP__filtered_base<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >  inline
+NT_  QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
 mu_j_NT( int j, Tag_true) const // standard form
 {
     return this->solver().mu_j( j, lambda_NT.begin(), x_B_O_NT.begin(), d_NT);
 }
 
-template < class Rep_, class NT_, class ET2NT_ >  inline
-NT_  QP__filtered_base<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >  inline
+NT_  QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
 mu_j_NT( int j, Tag_false, Tag_true) const // variable bounds, LP case
 {
   return this->solver().mu_j( j, lambda_NT.begin(), x_B_O_NT.begin(), d_NT);
 }
 
-template < class Rep_, class NT_, class ET2NT_ >  inline
-NT_  QP__filtered_base<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >  inline
+NT_  QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
 mu_j_NT( int j, Tag_false, Tag_false) const // variable bounds, QP case
 {
   w_j_NT = ( (j < n && this->solver().phase() == 2) ? 
@@ -261,30 +258,30 @@ mu_j_NT( int j, Tag_false, Tag_false) const // variable bounds, QP case
 
 
 // transition
-template < class Rep_, class NT_, class ET2NT_ >  inline        // QP case
-void  QP__filtered_base<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >  inline        // QP case
+void  QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
 transition( int n, Tag_false)
 {
     handled_D.insert( handled_D.end(), n, false);
     row_max_D.insert( row_max_D.end(), n, nt0);
 }
 
-template < class Rep_, class NT_, class ET2NT_ >  inline        // LP case
-void  QP__filtered_base<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >  inline        // LP case
+void  QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
 transition( int, Tag_true)
 {
     // nop
 }
 
-template < class Rep_, class NT_, class ET2NT_ >  inline // standard form
-void  QP__filtered_base<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >  inline // standard form
+void  QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
 set_q(int c, int b, Tag_true) 
 {
    q = std::ldexp( 1.015625 * ( c+b+1) * ( c+b+2), -53);
 }
 
-template < class Rep_, class NT_, class ET2NT_ >  inline // variable bounds
-void  QP__filtered_base<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >  inline // variable bounds
+void  QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
 set_q(int c, int b, Tag_false) 
 {
    q = std::ldexp( 1.015625 * ( c+b+2) * ( c+b+3), -53);

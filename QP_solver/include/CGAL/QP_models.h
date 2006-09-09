@@ -11,25 +11,363 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
+// $URL: svn+ssh://gaertner@scm.gforge.inria.fr/svn/cgal/trunk/QP_solver/include/CGAL/QP_models.h $
+// $Id: QP_models.h 33922 2006-09-05 12:32:25Z gaertner $
 // 
 //
-// Author(s)     : Sven Schoenherr <sven@inf.fu-berlin.de>
-//                 Bernd Gaertner <gaertner@inf.ethz.ch>
-//                 Franz Wessendorp <fransw@inf.ethz.ch>
-//                 Kaspar Fischer <fischerk@inf.ethz.ch>
+// Author(s)     : Bernd Gaertner <gaertner@inf.ethz.ch>
 
-#ifndef CGAL_QP_SOLVER_MPS_H
-#define CGAL_QP_SOLVER_MPS_H
-#include <istream>
-#include <vector>
+#ifndef CGAL_QP_MODELS_H
+#define CGAL_QP_MODELS_H
+
+#include <CGAL/basic.h>
 #include <CGAL/iterator.h>
-#include <CGAL/Gmpz.h>
+#include <vector> 
+#include <iomanip>
+#include <istream>
+#include <sstream>
+
+#define QP_MODEL_ITERATOR_TYPES \
+  typedef typename Base::A_iterator A_iterator;\
+  typedef typename Base::B_iterator B_iterator;\
+  typedef typename Base::R_iterator R_iterator;\
+  typedef typename Base::FL_iterator FL_iterator;\
+  typedef typename Base::L_iterator L_iterator;\
+  typedef typename Base::FU_iterator FU_iterator;\
+  typedef typename Base::U_iterator U_iterator;\
+  typedef typename Base::D_iterator D_iterator; \
+  typedef typename Base::C_iterator C_iterator; \
+  typedef typename Base::value_type value_type;
+// end QP_MODEL_ITERATOR_TYPES
+
 
 CGAL_BEGIN_NAMESPACE
 
-namespace QP_MPS_detail {
+//  default iterator types to be used in LP / Nonnegative models
+template <class Iterator>
+class QP_Default {
+private:
+  typedef typename std::iterator_traits<Iterator>::value_type value_type;
+public:
+  typedef Const_oneset_iterator<value_type> 
+  It_1d; 
+  typedef Const_oneset_iterator<Const_oneset_iterator<value_type> > 
+  It_2d;
+};
+
+
+// models of QuadraticProgram
+// ==========================
+
+// QP_from_iterators
+// -----------------
+template <
+  typename A_it,   // for constraint matrix A (columnwise)
+  typename B_it,   // for right-hand side b 
+  typename R_it,   // for relations (value type Comparison)
+  typename FL_it,  // for finiteness of lower bounds (value type bool)
+  typename L_it,   // for lower bounds
+  typename FU_it,  // for finiteness of upper bounds (value type bool)
+  typename U_it,   // for upper bounds
+  typename D_it,   // for quadratic matrix D (rowwise)
+  typename C_it >  // for objective function c
+class QP_from_iterators 
+{
+public:
+  // types
+  typedef A_it   A_iterator;
+  typedef B_it   B_iterator; 
+  typedef R_it   R_iterator;
+  typedef FL_it  FL_iterator;
+  typedef L_it   L_iterator;
+  typedef FU_it  FU_iterator;
+  typedef U_it   U_iterator;  
+  typedef D_it   D_iterator;
+  typedef C_it   C_iterator;
+  typedef typename std::iterator_traits<C_iterator>::value_type value_type;
+private:
+  // data
+  const int n_;
+  const int m_;
+  const A_iterator a_it;
+  const B_iterator b_it; 
+  const R_iterator r_it;
+  const FL_iterator fl_it;
+  const L_iterator l_it;
+  const FU_iterator fu_it;
+  const U_iterator u_it; 
+  const D_iterator d_it;
+  const C_iterator c_it;
+  const value_type c_0; // constant term in objective function
+ 
+public:
+  // construction
+  QP_from_iterators (
+		     int n, int m, // number of variables / constraints
+		     const A_iterator& a, 
+		     const B_iterator& b,
+		     const R_iterator& r,
+		     const FL_iterator& fl,
+		     const L_iterator& l,
+		     const FU_iterator& fu,
+		     const U_iterator& u,
+		     const D_iterator& d,
+		     const C_iterator& c,
+		     const value_type& c0 = value_type(0)
+		     )
+    : n_ (n), m_ (m), a_it (a), b_it (b), r_it (r), fl_it (fl), l_it (l), 
+      fu_it (fu), u_it (u), d_it (d), c_it (c), c_0 (c0)    
+  {}
+
+  // access
+  int n() const {return n_;}
+  int m() const {return m_;}
+  const A_iterator& a() const {return a_it;}
+  const B_iterator& b() const {return b_it;}
+  const R_iterator& r() const {return r_it;}  
+  const FL_iterator& fl() const {return fl_it;}
+  const L_iterator& l() const {return l_it;}
+  const FU_iterator& fu() const {return fu_it;}
+  const U_iterator& u() const {return u_it;}
+  const D_iterator& d() const {return d_it;}
+  const C_iterator& c() const {return c_it;}
+  const value_type& c0() const {return c_0;}
+};
+
+// QP_from_pointers
+// ----------------
+template <typename NT>
+class QP_from_pointers : 
+  public QP_from_iterators <NT**, NT*, CGAL::Comparison_result*, 
+			    bool*, NT*, bool*, NT*, NT**, NT*>
+{
+private:
+  typedef QP_from_iterators <NT**, NT*, CGAL::Comparison_result*, 
+			     bool*, NT*, bool*, NT*, NT**, NT*> Base;
+public:
+  QP_MODEL_ITERATOR_TYPES;
+  QP_from_pointers (
+		     int n, int m, // number of variables / constraints
+		     const A_iterator& a, 
+		     const B_iterator& b,
+		     const R_iterator& r,
+		     const FL_iterator& fl,
+		     const L_iterator& l,
+		     const FU_iterator& fu,
+		     const U_iterator& u,
+		     const D_iterator& d,
+		     const C_iterator& c,
+		     const value_type& c0 = value_type(0)
+		     )
+    : Base (n, m, a, b, r, fl, l, fu, u, d, c, c0)
+  {}  
+};
+
+// LP_from_iterators
+// -----------------
+template <
+  typename A_it,   // for constraint matrix A (columnwise)
+  typename B_it,   // for right-hand side b 
+  typename R_it,   // for relations (value type Comparison)
+  typename FL_it,  // for finiteness of lower bounds (value type bool)
+  typename L_it,   // for lower bounds
+  typename FU_it,  // for finiteness of upper bounds (value type bool)
+  typename U_it,   // for upper bounds
+  typename C_it >  // for objective function c
+class LP_from_iterators : 
+  public QP_from_iterators <A_it, B_it, R_it, FL_it, L_it, FU_it, U_it,
+			    typename QP_Default<A_it>::It_2d, C_it>
+{
+private:
+  typedef QP_from_iterators <A_it, B_it, R_it, FL_it, L_it, FU_it, U_it,
+			     typename QP_Default<B_it>::It_2d, C_it> Base;
+  typedef typename QP_Default<B_it>::It_2d Const_D_iterator;
+public:
+   QP_MODEL_ITERATOR_TYPES;
+   LP_from_iterators (
+		     int n, int m, // number of variables / constraints
+		     const A_iterator& a, 
+		     const B_iterator& b,
+		     const R_iterator& r,
+		     const FL_iterator& fl,
+		     const L_iterator& l,
+		     const FU_iterator& fu,
+		     const U_iterator& u,
+		     const C_iterator& c,
+		     const value_type& c0 = value_type(0)
+		     )
+    : Base (n, m, a, b, r, fl, l, fu, u, 
+	    Const_D_iterator(value_type(0)), c, c0)
+  {}  
+}; 
+
+// LP_from_pointers
+// ----------------
+template <typename NT>
+class LP_from_pointers : 
+  public LP_from_iterators <NT**, NT*, CGAL::Comparison_result*, bool*, 
+			    NT*, bool*, NT*, NT*>
+{
+private:
+  typedef  LP_from_iterators <NT**, NT*, CGAL::Comparison_result*, bool*, 
+			    NT*, bool*, NT*, NT*> Base;
+public:
+  QP_MODEL_ITERATOR_TYPES;
+  LP_from_pointers (
+		     int n, int m, // number of variables / constraints
+		     const A_iterator& a, 
+		     const B_iterator& b,
+		     const R_iterator& r,
+		     const FL_iterator& fl,
+		     const L_iterator& l,
+		     const FU_iterator& fu,
+		     const U_iterator& u,
+		     const C_iterator& c,
+		     const value_type& c0 = value_type(0)
+		     )
+    : Base (n, m, a, b, r, fl, l, fu, u, c, c0)
+  {}  
+};
+
+// Nonnegative_QP_from_iterators
+// -----------------------------
+template <
+  typename A_it,   // for constraint matrix A (columnwise)
+  typename B_it,   // for right-hand side b 
+  typename R_it,   // for relations (value type Comparison)
+  typename D_it,   // for quadratic matrix D (rowwise)
+  typename C_it >  // for objective function c
+class Nonnegative_QP_from_iterators : 
+  public QP_from_iterators <A_it, B_it, R_it, 
+			    typename QP_Default<bool*>::It_1d, 
+			    typename QP_Default<B_it>::It_1d,
+			    typename QP_Default<bool*>::It_1d, 
+			    typename QP_Default<B_it>::It_1d,
+			    D_it, C_it>
+{
+private:
+  typedef  QP_from_iterators <A_it, B_it, R_it, 
+			      typename QP_Default<bool*>::It_1d, 
+			      typename QP_Default<B_it>::It_1d,
+			      typename QP_Default<bool*>::It_1d, 
+			      typename QP_Default<B_it>::It_1d,
+			      D_it, C_it> Base;
+  typedef typename QP_Default<bool*>::It_1d Const_FLU_iterator;
+  typedef typename QP_Default<B_it>::It_1d Const_LU_iterator;
+public:
+   QP_MODEL_ITERATOR_TYPES;
+   Nonnegative_QP_from_iterators (
+		     int n, int m, // number of variables / constraints
+		     const A_iterator& a, 
+		     const B_iterator& b,
+		     const R_iterator& r,		     
+		     const D_iterator& d,
+		     const C_iterator& c,
+		     const value_type& c0 = value_type(0)
+		     )
+    : Base (n, m, a, b, r, 
+	    Const_FLU_iterator(true), Const_LU_iterator(value_type(0)), 
+	    Const_FLU_iterator(false), Const_LU_iterator(value_type(0)), 
+	    d, c, c0)
+  {}  
+};
+
+// Nonnegative_QP_from_pointers
+// ----------------------------
+template <typename NT>
+class Nonnegative_QP_from_pointers : 
+  public Nonnegative_QP_from_iterators <NT**, NT*, CGAL::Comparison_result*, 
+					NT**, NT*>
+{
+private:
+  typedef Nonnegative_QP_from_iterators <NT**, NT*, CGAL::Comparison_result*, 
+					NT**, NT*> Base;
+public:
+  QP_MODEL_ITERATOR_TYPES;
+  Nonnegative_QP_from_pointers (
+		     int n, int m, // number of variables / constraints
+		     const A_iterator& a, 
+		     const B_iterator& b,
+		     const R_iterator& r,
+		     const D_iterator& d,
+		     const C_iterator& c,
+		     const value_type& c0 = value_type(0)
+		     )
+    : Base (n, m, a, b, r, d, c, c0)
+  {}  
+};
+
+
+ 
+// Nonnegative_LP_from_iterators
+// -----------------------------
+template <
+  typename A_it,   // for constraint matrix A (columnwise)
+  typename B_it,   // for right-hand side b 
+  typename R_it,   // for relations (value type Comparison)
+  typename C_it >  // for objective function c
+class Nonnegative_LP_from_iterators : 
+  public QP_from_iterators <A_it, B_it, R_it, 
+			    typename QP_Default<bool*>::It_1d, 
+			    typename QP_Default<B_it>::It_1d,
+			    typename QP_Default<bool*>::It_1d, 
+			    typename QP_Default<B_it>::It_1d,
+			    typename QP_Default<B_it>::It_2d, C_it>
+{
+private:
+  typedef  QP_from_iterators <A_it, B_it, R_it, 
+			      typename QP_Default<bool*>::It_1d, 
+			      typename QP_Default<B_it>::It_1d,
+			      typename QP_Default<bool*>::It_1d, 
+			      typename QP_Default<B_it>::It_1d,
+			      typename QP_Default<B_it>::It_2d, C_it> Base;
+  typedef typename QP_Default<bool*>::It_1d Const_FLU_iterator;
+  typedef typename QP_Default<B_it>::It_1d Const_LU_iterator;
+  typedef typename QP_Default<B_it>::It_2d Const_D_iterator;
+public:
+   QP_MODEL_ITERATOR_TYPES;
+   Nonnegative_LP_from_iterators (
+		     int n, int m, // number of variables / constraints
+		     const A_iterator& a, 
+		     const B_iterator& b,
+		     const R_iterator& r,		     
+		     const C_iterator& c,
+		     const value_type& c0 = value_type(0)
+		     )
+    : Base (n, m, a, b, r, 
+	    Const_FLU_iterator(true), Const_LU_iterator(value_type(0)), 
+	    Const_FLU_iterator(false), Const_LU_iterator(value_type(0)), 
+	    Const_D_iterator(value_type(0)), c, c0)
+  {}  
+}; 
+
+// Nonnegative_LP_from_pointers
+// ----------------------------
+template <typename NT>
+class Nonnegative_LP_from_pointers : 
+  public Nonnegative_LP_from_iterators <NT**, NT*, CGAL::Comparison_result*, 
+					NT*>
+{
+private:
+  typedef Nonnegative_LP_from_iterators <NT**, NT*, CGAL::Comparison_result*, 
+					NT*> Base;
+public:
+  QP_MODEL_ITERATOR_TYPES;
+  Nonnegative_LP_from_pointers (
+		     int n, int m, // number of variables / constraints
+		     const A_iterator& a, 
+		     const B_iterator& b,
+		     const R_iterator& r,
+		     const C_iterator& c,
+		     const value_type& c0 = value_type(0)
+		     )
+    : Base (a, b, r, c, c0)
+  {}  
+};
+
+// QP_from_mps
+// -----------
+namespace QP_from_mps_detail {
 
   template<typename V>
   struct Begin
@@ -39,7 +377,7 @@ namespace QP_MPS_detail {
     result_type operator () ( const V& v) const { return v.begin(); }
   };
 
-} // QP_MPS_detail
+} // QP_from_mps_detail
 
 template<typename IT_,  // The input number type: the numbers in the
 			// MPS stream are expected to be of this type
@@ -54,16 +392,6 @@ template<typename IT_,  // The input number type: the numbers in the
 			// this warning can be neglected because in a
 			// DMATRIX section, D is stored (and not 2*D).
 			// (See also method D_format_type().)
-	 typename ET_,  // The exact number type: this number type is
-			// used to compute the rank of the matrix A,
-			// if need be (see method
-			// has_equalities_only_and_full_rank()).
-			// Also, if you are going to invoke the
-			// QP_solver using the traits
-			// QP_solver_MPS_traits_d<Traits,...> then ET_
-			// will be the number type the QP_solver uses
-			// for its exact computations.  Requirements:
-			// IT_ must be losslessly convertible to ET_.
 	 typename Use_sparse_representation_for_D_=Tag_false,
                         // Use a sparse representation for D. Note:
                         // must be Tag_false currently (Tag_true not
@@ -72,15 +400,14 @@ template<typename IT_,  // The input number type: the numbers in the
                         // Use a sparse representation for A. Note:
                         // must be Tag_false currently (Tag_true not
                         // yet implemented).
-class QP_MPS_instance {
+class QP_from_mps {
 public:
   typedef IT_ IT;
-  typedef ET_ ET;
 
 public: // undocumented types, should be considered private:
   typedef std::vector<IT>                 Vector;
   typedef std::vector<Vector>             Matrix;
-  typedef QP_MPS_detail::Begin<Vector>    Beginner;
+  typedef QP_from_mps_detail::Begin<Vector>    Beginner;
   typedef CGAL::Join_input_iterator_1<typename Matrix::const_iterator,
 			      Beginner >  Vector_iterator;
   typedef typename Vector::const_iterator Entry_iterator;
@@ -89,7 +416,7 @@ public: // undocumented types, should be considered private:
   typedef std::vector<CGAL::Comparison_result> Row_type_vector;
 
 public:
-  // iterators over the input matrices and vectors:
+  // iterators over the input matrices and vectors: 
   typedef Vector_iterator   A_iterator;
   typedef Entry_iterator    B_iterator;
   typedef Entry_iterator    C_iterator;
@@ -100,8 +427,9 @@ public:
   typedef F_vector_iterator FL_iterator;
   typedef Entry_iterator    U_iterator;
   typedef Entry_iterator    L_iterator;
+  typedef IT                value_type;
 
-  typedef typename Row_type_vector::const_iterator Row_type_iterator;
+  typedef typename Row_type_vector::const_iterator R_iterator;
   typedef Use_sparse_representation_for_D_   Use_sparse_representation_for_D;
   typedef Use_sparse_representation_for_A_   Use_sparse_representation_for_A;
 
@@ -116,7 +444,7 @@ private:
   bool is_format_okay_;
   bool is_linear_;
   const bool use_CPLEX_convention;
-  IT c0;                      // constant term in objective function
+  IT c_0;                      // constant term in objective function
   Vector b_, c_;              // vectors b and c
   Matrix A_, D_;              // matrices A and D
   std::string D_section;      // name of the section from which D was read
@@ -287,7 +615,7 @@ private: // parsing routines:
   }
 
   // here is the general template, and the C-file contains
-  // implementations of a specialization for Qmpq
+  // implementations of a specialization for Gmpq
   template<typename NumberType>
   bool number(NumberType& entry) {
     whitespace();
@@ -303,10 +631,9 @@ private: // parsing routines:
       number_from_quotient (entry, from1) || 
       number_from_float (entry, from2);
   }
-
+  
   bool number_from_quotient(CGAL::Gmpq& entry, std::istringstream& from);
   bool number_from_float(CGAL::Gmpq& entry, std::istringstream& from);
-
 
   bool name_section();
   bool rows_section();
@@ -329,13 +656,13 @@ public: // methods:
   // and you set the upper bound of a variable to exactly zero and do
   // not specify a lower bound then the lower bound will be set to
   // -infinity.
-  QP_MPS_instance(std::istream& in,bool use_CPLEX_convention=true,
+  QP_from_mps(std::istream& in,bool use_CPLEX_convention=true,
 		  int verbosity=0);
 
   // Returns true if and only if the instance has been properly
   // constructed (i.e., if the QP could be loaded from the MPS
   // stream).
-  bool is_valid();
+  bool is_valid() const;
 
   // Returns the verbosity level with which the instance was
   // constructed.
@@ -356,7 +683,7 @@ public: // methods:
   // Returns the number of variables in the QP.
   //
   // Precondition: is_valid()
-  unsigned int number_of_variables()
+  unsigned int n() const
   {
     CGAL_qpe_assertion(is_valid());
     return var_names.size();
@@ -365,7 +692,7 @@ public: // methods:
   // Returns the number of constraints in the QP.
   //
   // Precondition: is_valid()
-  unsigned int number_of_constraints()
+  unsigned int m() const
   {
     CGAL_qpe_assertion(is_valid());
     return b_.size(); // row_names doesn't work as RANGES may duplicate rows
@@ -384,7 +711,7 @@ public: // methods:
   // Note: this routine has linear complexity.
   const std::string& name_of_variable(unsigned int i)
   {
-    CGAL_qpe_assertion(0<=i && i<number_of_variables());
+    CGAL_qpe_assertion(0<=i && i<n());
     return var_by_index[i];
 //     for (Index_map::const_iterator it = var_names.begin();
 // 	 it != var_names.end();
@@ -444,7 +771,7 @@ public: // methods:
   // passed to the constructor of class QP_solver).
   //
   // Precondition: is_valid()
-  A_iterator A()
+  A_iterator a() const
   {
     CGAL_qpe_assertion(is_valid());
     return Vector_iterator(A_.begin(),Beginner());
@@ -454,7 +781,7 @@ public: // methods:
   // passed to the constructor of class QP_solver).
   //
   // Precondition: is_valid()
-  B_iterator b()
+  B_iterator b() const
   {
     CGAL_qpe_assertion(is_valid());
     return b_.begin();
@@ -464,7 +791,7 @@ public: // methods:
   // passed to the constructor of class QP_solver).
   //
   // Precondition: is_valid()
-  C_iterator c()
+  C_iterator c() const
   {
     CGAL_qpe_assertion(is_valid());
     return c_.begin();
@@ -473,17 +800,17 @@ public: // methods:
   // Returns the constant term of the objective function (as
   // needs to be passed to the constructor of class QP_solver).
   // Precondition: is_valid()
-  IT c_0()
+  IT c0() const
   {
     CGAL_qpe_assertion(is_valid());
-    return c0;
+    return c_0;
   }
 
   // Returns an iterator over the matrix D (as needs to be
   // passed to the constructor of class QP_solver).
   //
   // Precondition: is_valid()
-  D_iterator D()
+  D_iterator d() const
   {
     CGAL_qpe_assertion(is_valid());
     return Vector_iterator(D_.begin(),Beginner());
@@ -506,7 +833,7 @@ public: // methods:
   // QP_solver).
   //
   // Precondition: is_valid()
-  Row_type_iterator row_types()
+  R_iterator r() const
   {
     CGAL_qpe_assertion(is_valid());
     return row_types_.begin();
@@ -517,7 +844,7 @@ public: // methods:
   // needs to be passed to the constructor of class QP_solver).
   //
   // Precondition: is_valid()
-  FL_iterator fl() {
+  FL_iterator fl() const {
     CGAL_qpe_assertion(is_valid());
     return fl_.begin();
   }
@@ -527,7 +854,7 @@ public: // methods:
   // needs to be passed to the constructor of class QP_solver).
   //
   // Precondition: is_valid()
-  FU_iterator fu() {
+  FU_iterator fu() const {
     CGAL_qpe_assertion(is_valid());
     return fu_.begin();
   }
@@ -537,7 +864,7 @@ public: // methods:
   // be passed to the constructor of class QP_solver.
   //
   // Precondition: is_valid()
-  U_iterator u() {
+  U_iterator u() const {
     CGAL_qpe_assertion(is_valid());
     return u_.begin();
   }
@@ -547,7 +874,7 @@ public: // methods:
   // be passed to the constructor of class QP_solver.
   //
   // Precondition: is_valid()
-  L_iterator l() {
+  L_iterator l() const {
     CGAL_qpe_assertion(is_valid());
     return l_.begin();
   }
@@ -583,62 +910,18 @@ public: // methods:
     }
     return is_in_standard_form_;
   }
-
-  // Returns true iff the MPS stream could be successfully parsed and
-  // the QP has only equality constraints and the coefficients (from
-  // the matrix A) corresponding to these equality constraints have
-  // full row rank.
-  //
-  // Note: This routine is expensive, more precisely O(k^3)
-  // where k is the number of variables (see number_of_variables()) or
-  // the number of equality constraints, whichever is larger.
-  bool has_equalities_only_and_full_rank();
 };
 
 template<typename IT_,
-	 typename ET_,
 	 typename Use_sparse_representation_for_D_,
 	 typename Use_sparse_representation_for_A_>
 std::ostream& operator<<(std::ostream& o,
-			 QP_MPS_instance<IT_, ET_,
+			 QP_from_mps<IT_,
 			 Use_sparse_representation_for_D_,
 			 Use_sparse_representation_for_A_>& qp);
 
-template<class MPS,
-	 typename Is_linear_,
-	 typename Is_symmetric_,
-	 typename Has_equalities_only_and_full_rank_,
-	 typename Is_in_standard_form_,
-	 typename IT_=typename MPS::IT,
-	 typename ET_=typename MPS::ET,
-	 typename D_iterator_=typename MPS::D_iterator>
-class QP_solver_MPS_traits_d {
-public:
-  typedef IT_ IT;
-  typedef ET_ ET;
-
-public:
-
-  typedef typename MPS::A_iterator   A_iterator;
-  typedef typename MPS::B_iterator   B_iterator;
-  typedef typename MPS::C_iterator   C_iterator;
-  typedef          D_iterator_       D_iterator;
-  typedef typename MPS::FU_iterator  FU_iterator;
-  typedef typename MPS::FL_iterator  FL_iterator;
-  typedef typename MPS::U_iterator   U_iterator;
-  typedef typename MPS::L_iterator   L_iterator;
-  typedef typename MPS::Row_type_iterator Row_type_iterator;
-
-  typedef Is_linear_                         Is_linear;
-  typedef Is_symmetric_                      Is_symmetric;
-  typedef Has_equalities_only_and_full_rank_ Has_equalities_only_and_full_rank;
-  typedef Is_in_standard_form_               Is_in_standard_form;
-};
-
-// helper routine to write an MPS from given A, b, c, D, fl, fu, l, u
-// and row-types; notice that the value type of Row_type_iterator is
-// assumed (todo: remove this hard-coding) to be int and -1
-// corresponds to "<=", 0 to "=", and 1 to ">=".
+// helper routine to write an MPS from given A, b, c, c0, D, fl, fu, l, u
+// and row-types;
 template<typename A_iterator,
 	 typename B_iterator,
 	 typename C_iterator,
@@ -647,7 +930,7 @@ template<typename A_iterator,
 	 typename FL_iterator,
 	 typename U_iterator,
 	 typename L_iterator,
-	 typename Row_type_iterator>
+	 typename R_iterator>
 void write_MPS(std::ostream& out,
 	       const std::string& number_type, // pass "" to deduce
 					       // the number-type from 
@@ -665,10 +948,11 @@ void write_MPS(std::ostream& out,
 	       FL_iterator fl,
 	       U_iterator u,
 	       L_iterator l,
-	       Row_type_iterator rt);
+	       R_iterator rt);
+
 
 CGAL_END_NAMESPACE
 
-#include <CGAL/QP_solver/MPS.C>
+#include <CGAL/QP_solver/QP_models_impl.h>
 
-#endif // CGAL_QP_SOLVER_MPS_H
+#endif // CGAL_QP_MODELS_H

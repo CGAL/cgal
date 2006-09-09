@@ -22,8 +22,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Rep_ >
-bool QP_solver<Rep_>::has_finite_lower_bound(int i) const
+template < typename Q, typename ET, typename Tags >
+bool QP_solver<Q, ET, Tags>::has_finite_lower_bound(int i) const
   // Given an index of an original or slack variable, returns whether
   // or not the variable has a finite lower bound.
 {
@@ -31,8 +31,8 @@ bool QP_solver<Rep_>::has_finite_lower_bound(int i) const
   return i>=qp_n || check_tag(Is_in_standard_form()) || *(qp_fl+i);
 }
 
-template < class Rep_ >
-bool QP_solver<Rep_>::has_finite_upper_bound(int i) const
+template < typename Q, typename ET, typename Tags >
+bool QP_solver<Q, ET, Tags>::has_finite_upper_bound(int i) const
   // Given an index of an original or slack variable, returns whether
   // or not the variable has a finite upper bound.
 {
@@ -40,8 +40,8 @@ bool QP_solver<Rep_>::has_finite_upper_bound(int i) const
   return i<qp_n && !check_tag(Is_in_standard_form()) && *(qp_fu+i);
 }
 
-template < class Rep_ >
-typename QP_solver<Rep_>::ET QP_solver<Rep_>::lower_bound(int i) const
+template < typename Q, typename ET, typename Tags >
+ET QP_solver<Q, ET, Tags>::lower_bound(int i) const
   // Given an index of an original or slack variable, returns its
   // lower bound.
 {
@@ -57,8 +57,8 @@ typename QP_solver<Rep_>::ET QP_solver<Rep_>::lower_bound(int i) const
     return et0;
 }
 
-template < class Rep_ >
-typename QP_solver<Rep_>::ET QP_solver<Rep_>::upper_bound(int i) const
+template < typename Q, typename ET, typename Tags >
+ET QP_solver<Q, ET, Tags>::upper_bound(int i) const
   // Given an index of an original variable, returns its upper bound.
 {
   CGAL_qpe_assertion(i < qp_n); // Note: slack variables cannot have
@@ -67,9 +67,9 @@ typename QP_solver<Rep_>::ET QP_solver<Rep_>::upper_bound(int i) const
   return *(qp_u+i);
 }
 
-template < class Rep_ >
-typename QP_solver<Rep_>::Bnd
-QP_solver<Rep_>::lower_bnd(int i) const
+template < typename Q, typename ET, typename Tags >
+typename QP_solver<Q, ET, Tags>::Bnd
+QP_solver<Q, ET, Tags>::lower_bnd(int i) const
   // Given an index of an original, slack, or artificial variable,
   // return its lower bound.
 {
@@ -80,9 +80,9 @@ QP_solver<Rep_>::lower_bnd(int i) const
     return Bnd(false, true, ET(0));
 }
 
-template < class Rep_ >
-typename QP_solver<Rep_>::Bnd
-QP_solver<Rep_>::upper_bnd(int i) const
+template < typename Q, typename ET, typename Tags >
+typename QP_solver<Q, ET, Tags>::Bnd
+QP_solver<Q, ET, Tags>::upper_bnd(int i) const
   // Given an index of an original, slack, or artificial variable,
   // return its upper bound.
 {

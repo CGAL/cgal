@@ -22,8 +22,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < class Rep_ >
-bool QP_solver<Rep_>::is_valid()
+template < typename Q, typename ET, typename Tags >
+bool QP_solver<Q, ET, Tags>::is_valid()
 {
   CGAL_qpe_debug {
     vout << std::endl;
@@ -95,8 +95,8 @@ bool QP_solver<Rep_>::is_valid()
     }
 }
 
-template < class Rep_ >
-bool QP_solver<Rep_>::is_solution_feasible_for_auxiliary_problem()
+template < typename Q, typename ET, typename Tags >
+bool QP_solver<Q, ET, Tags>::is_solution_feasible_for_auxiliary_problem()
 {
   // some simple consistency checks:
   CGAL_qpe_assertion(is_phaseI);
@@ -180,8 +180,8 @@ bool QP_solver<Rep_>::is_solution_feasible_for_auxiliary_problem()
   return true;
 }
 
-template < class Rep_ >
-bool QP_solver<Rep_>::is_value_correct()
+template < typename Q, typename ET, typename Tags >
+bool QP_solver<Q, ET, Tags>::is_value_correct()
 {
   // checks whether solution_numerator() returns the right value
   // by computing x^T D x + x^T c + c0 from scratch; we use the numerators
@@ -211,8 +211,8 @@ bool QP_solver<Rep_>::is_value_correct()
   return (z + d * d * ET(qp_c0)) == solution_numerator();
 }
 
-template < class Rep_ >
-bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
+template < typename Q, typename ET, typename Tags >
+bool QP_solver<Q, ET, Tags>::is_solution_optimal_for_auxiliary_problem()
 {
   // First, a note about artificials and how they need to be handled in this
   // optimality check. Observe that the (normal) artificial variables are
@@ -404,8 +404,8 @@ bool QP_solver<Rep_>::is_solution_optimal_for_auxiliary_problem()
   return true;
 }
 
-template < class Rep_ >
-bool QP_solver<Rep_>::is_solution_feasible()
+template < typename Q, typename ET, typename Tags >
+bool QP_solver<Q, ET, Tags>::is_solution_feasible()
 {  
   // some simple consistency checks:
   CGAL_qpe_assertion(is_phaseII);
@@ -440,8 +440,8 @@ bool QP_solver<Rep_>::is_solution_feasible()
   return true;
 }
 
-template < class Rep_ >
-bool QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >
+bool QP_solver<Q, ET, Tags>::
 is_solution_optimal()
 {
   // As described in documentation/UpperBounding.tex, the optimality
@@ -544,8 +544,8 @@ is_solution_optimal()
   return true;
 }
 
-template < class Rep_ >
-bool QP_solver<Rep_>::is_solution_unbounded()
+template < typename Q, typename ET, typename Tags >
+bool QP_solver<Q, ET, Tags>::is_solution_unbounded()
 {
   // (This is documented in documentation/Test_suite.tex for the case
   // when the program is in standard form.)

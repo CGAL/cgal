@@ -31,24 +31,22 @@ CGAL_BEGIN_NAMESPACE
 // =================
 // class declaration
 // =================
-template < class Rep_ >
+template < typename Q, typename ET, typename Tags >
 class QP_full_exact_pricing;
 
 // ===============
 // class interface
 // ===============
-template < class Rep_ >
-class QP_full_exact_pricing : public QP_pricing_strategy<Rep_> {
+template < typename Q, typename ET, typename Tags >
+class QP_full_exact_pricing : public QP_pricing_strategy<Q,ET,Tags> {
 
   // self
-  typedef  Rep_                         Rep;
-  typedef  QP_pricing_strategy<Rep>    Base;
-  typedef  QP_full_exact_pricing<Rep>  Self;
+  typedef  QP_pricing_strategy<Q,ET,Tags>    Base;
+  typedef  QP_full_exact_pricing<Q,ET,Tags>  Self;
 
   // types from the base class
-  typedef  typename Base::ET                      ET;
-  typedef  typename Base::Is_in_standard_form     Is_in_standard_form;
-  typedef  typename CGAL::QP_solver<Rep>          QP_solver;
+  typedef  typename Tags::Is_in_standard_form     Is_in_standard_form;
+  typedef  typename CGAL::QP_solver<Q,ET,Tags>    QP_solver;
 
  public:
 
@@ -73,22 +71,22 @@ class QP_full_exact_pricing : public QP_pricing_strategy<Rep_> {
 // =============================
 
 // construction
-template < class Rep_ >  inline
-QP_full_exact_pricing<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline
+QP_full_exact_pricing<Q,ET,Tags>::
 QP_full_exact_pricing()
-  : QP_pricing_strategy<Rep_>("full exact")
+  : QP_pricing_strategy<Q,ET,Tags>("full exact")
 { }
     
 // operations
-template < class Rep_ >
-int  QP_full_exact_pricing<Rep_>::
+template < typename Q, typename ET, typename Tags >
+int  QP_full_exact_pricing<Q,ET,Tags>::
 pricing(int& direction )
 {
   return (pricing_helper(direction, Is_in_standard_form()));
 }
 
-template < class Rep_ >
-int  QP_full_exact_pricing<Rep_>::
+template < typename Q, typename ET, typename Tags >
+int  QP_full_exact_pricing<Q,ET,Tags>::
 pricing_helper(int& direction, Tag_true is_in_standard_form)
 {
   // get properties of quadratic program:
@@ -129,8 +127,8 @@ pricing_helper(int& direction, Tag_true is_in_standard_form)
     
 }
 
-template < class Rep_ >
-int  QP_full_exact_pricing<Rep_>::
+template < typename Q, typename ET, typename Tags >
+int  QP_full_exact_pricing<Q,ET,Tags>::
 pricing_helper(int& direction, Tag_false is_in_standard_form)
 {
     

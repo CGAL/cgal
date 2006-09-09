@@ -31,25 +31,21 @@ CGAL_BEGIN_NAMESPACE
 // =================
 // class declaration
 // =================
-template < class Rep_, class NT_ = double, class ET2NT_ =
-    To_double<typename Rep_::ET> >
+template < typename Q, typename ET, typename Tags, class NT_ = double, class ET2NT_ =
+    To_double<ET> >
 class QP_full_filtered_pricing;
 
 // ===============
 // class interface
 // ===============
-template < class Rep_, class NT_, class ET2NT_ >
-class QP_full_filtered_pricing : public QP__filtered_base<Rep_,NT_,ET2NT_> {
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >
+class QP_full_filtered_pricing : public QP__filtered_base<Q,ET,Tags,NT_,ET2NT_> {
 
     // self
-    typedef  Rep_                            Rep;
-    typedef  QP_pricing_strategy<Rep>       Base;
-    typedef  typename Base::Is_in_standard_form     Is_in_standard_form;
-    typedef  QP__filtered_base<Rep, NT_, ET2NT_>         Filtered_base;
-    typedef  QP_full_filtered_pricing<Rep, NT_, ET2NT_>  Self;
-
-    // types from the base class
-    typedef  typename Base::ET          ET;
+    typedef  QP_pricing_strategy<Q, ET, Tags>       Base;
+    typedef  typename Tags::Is_in_standard_form     Is_in_standard_form;
+    typedef  QP__filtered_base<Q, ET, Tags, NT_, ET2NT_>         Filtered_base;
+    typedef  QP_full_filtered_pricing<Q, ET, Tags, NT_, ET2NT_>  Self;
 
   public:
 
@@ -79,23 +75,23 @@ class QP_full_filtered_pricing : public QP__filtered_base<Rep_,NT_,ET2NT_> {
 // =============================
 
 // construction
-template < class Rep_, class NT_, class ET2NT_ >  inline
-QP_full_filtered_pricing<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >  inline
+QP_full_filtered_pricing<Q,ET,Tags,NT_,ET2NT_>::
 QP_full_filtered_pricing( ET2NT et2nt)
     : Base( "full filtered"),
       Filtered_base( et2nt)
 { }
     
 // operations
-template < class Rep_, class NT_, class ET2NT_ >
-int  QP_full_filtered_pricing<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >
+int  QP_full_filtered_pricing<Q,ET,Tags,NT_,ET2NT_>::
 pricing (int& direction) 
 {
   return (pricing_helper(direction, Is_in_standard_form()));
 }
 
-template < class Rep_, class NT_, class ET2NT_ >
-int  QP_full_filtered_pricing<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >
+int  QP_full_filtered_pricing<Q,ET,Tags,NT_,ET2NT_>::
 pricing_helper(int& direction, Tag_true ) // standard form
 {
     // get properties of quadratic program
@@ -175,8 +171,8 @@ pricing_helper(int& direction, Tag_true ) // standard form
     return min_j;
 }
 
-template < class Rep_, class NT_, class ET2NT_ >
-int  QP_full_filtered_pricing<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >
+int  QP_full_filtered_pricing<Q,ET,Tags,NT_,ET2NT_>::
 pricing_helper(int& direction, Tag_false ) // bounds for variables
 {
     // get properties of quadratic program

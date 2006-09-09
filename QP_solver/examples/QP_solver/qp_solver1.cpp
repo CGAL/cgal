@@ -31,25 +31,11 @@
 #include <CGAL/basic.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/QP_solver.h>
+#include <CGAL/QP_models.h>
 
 // here we declare the types of the various QP entries
-struct Traits {
-  // iterator for the constraint type
-  typedef CGAL::Comparison_result *Row_type_iterator; 
 
-  // the exact internal type (input type must be convertible to this)
-  typedef CGAL::Gmpz ET;
-
-  // the input type is int, and the problem comes via arrays 
-  typedef int **A_iterator;  // for the columns of A
-  typedef int *B_iterator;   // for the right-hand side b
-  typedef int *C_iterator;   // for the objective function c
-  typedef int **D_iterator;  // for the rows of D
-  typedef bool *FL_iterator;    // for finiteness of lower bound L
-  typedef bool *FU_iterator;    // for finiteness of upper bound U
-  typedef int *L_iterator;   // for lower bounds L
-  typedef int *U_iterator;   // for upper bounds U
-
+struct Tags {
   typedef CGAL::Tag_false Is_linear;     // we have a proper QP
   typedef CGAL::Tag_true Is_symmetric;   // the matrix D is symmetric
   typedef CGAL::Tag_true Has_equalities_only_and_full_rank;
@@ -57,8 +43,10 @@ struct Traits {
   typedef CGAL::Tag_false Is_in_standard_form; // not only x >=0 bounds
 };
 
-typedef CGAL::QP_solver<Traits> Solver;  // the solver type
+typedef CGAL::Gmpz ET;
+typedef CGAL::QP_from_pointers<int> Q; 
 
+typedef CGAL::QP_solver<Q, ET, Tags> Solver;
 
 int main() {
   int c[]       = {0, 3};
@@ -77,9 +65,10 @@ int main() {
   int *rows_of_D[] = {D_row_0, D_row_1};
   int *cols_of_A[] = {A_col_0, A_col_1};
 
-  // now call the solver; the first two arguments are
-  // the number of variables and the number of constraints (rows of A) 
-  Solver solver(2, 1, cols_of_A, b, c, 1, rows_of_D, rt, fl, l, fu, u);
+  // now construct the quadartic program; the first two parameters are
+  // the number of variables and the number of constraints (rows of A)
+  Q qp (2, 1, cols_of_A, b, rt, fl, l, fu, u, rows_of_D, c); 
+  Solver solver(qp);
 
   if (solver.status() == Solver::OPTIMAL) { // we know that, don't we?
     std::cout << "Optimal feasible solution x: ";

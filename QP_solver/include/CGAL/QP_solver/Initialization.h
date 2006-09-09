@@ -24,48 +24,9 @@ CGAL_BEGIN_NAMESPACE
 
 // creation & initialization
 // -------------------------
-
-// creation standard form
-template < class Rep_ >
-QP_solver<Rep_>::
-QP_solver(int n, int m,
-	  A_iterator A, B_iterator b, C_iterator c, C_entry c_0,
-	  D_iterator D,
-	  Row_type_iterator r,
-	  Pricing_strategy *strategy, int verbosity)
-  : et0(0), et1(1), et2(2),
-    defaultStrategy(0),
-    inv_M_B(vout4),
-    d(inv_M_B.denominator()),
-    m_phase(-1), is_phaseI(false), is_phaseII(false),
-    is_RTS_transition(false),
-    is_LP(check_tag(Is_linear())), is_QP(!is_LP), // todo kf.: what is
-                                                  // this good for?
-                                                  // why not use
-                                                  // check_tag()
-                                                  // everywhere?
-    no_ineq(check_tag(Has_equalities_only_and_full_rank())),
-    has_ineq(!no_ineq),
-    is_in_standard_form(check_tag(Is_in_standard_form())) // same
-							  // question
-							  // here...
-{
-  set_verbosity(verbosity); 
-  set_pricing_strategy(strategy);
-  set(n,m,A,b,c,c_0,D,r);
-  init();
-  solve();
-}
-
-// creation upper bounded case
-template < class Rep_ >
-QP_solver<Rep_>::
-QP_solver(int n, int m,
-	  A_iterator A, B_iterator b, C_iterator c, C_entry c_0,
-	  D_iterator D,
-	  Row_type_iterator r,
-	  FL_iterator fl, L_iterator lb, FU_iterator fu, U_iterator ub,
-	  Pricing_strategy *strategy, int verbosity)
+template < typename Q, typename ET, typename Tags >
+QP_solver<Q, ET, Tags>::
+QP_solver(const Q& qp, Pricing_strategy* strategy, int verbosity)
   : et0(0), et1(1), et2(2),
     defaultStrategy(0),
     inv_M_B(vout4),
@@ -76,15 +37,18 @@ QP_solver(int n, int m,
     no_ineq(check_tag(Has_equalities_only_and_full_rank())),
     has_ineq(!no_ineq),
     is_in_standard_form(check_tag(Is_in_standard_form()))
-{
+  {
+  // init diagnostics
+  diagnostics.redundant_equations = false;
+
   // initialization as in the standard-form case:
   set_verbosity(verbosity); 
-  set_pricing_strategy(strategy);
+  set_pricing_strategy(strategy); 
 
   // Note: we first set the bounds and then call set() because set()
   // accesses qp_fl, qp_l, etc.
-  set_explicit_bounds(fl, lb, fu, ub);
-  set(n,m,A,b,c,c_0,D,r);
+  set_explicit_bounds(qp.fl(), qp.l(), qp.fu(), qp.u());
+  set(qp.n(), qp.m(), qp.a(), qp.b(), qp.c(), qp.c0(), qp.d(), qp.r());
 
   // initialize and solve immediately:
   init();
@@ -92,15 +56,15 @@ QP_solver(int n, int m,
 }
 
 // set-up of QP
-template < class Rep_ >
-void QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >
+void QP_solver<Q, ET, Tags>::
 set(int n, int m,
-    typename QP_solver<Rep_>::A_iterator A_it,
-    typename QP_solver<Rep_>::B_iterator b_it,
-    typename QP_solver<Rep_>::C_iterator c_it,
-    typename QP_solver<Rep_>::C_entry    c_0,
-    typename QP_solver<Rep_>::D_iterator D_it,
-    typename QP_solver<Rep_>::Row_type_iterator Row_type_it)
+    const A_iterator& A_it,
+    const B_iterator& b_it,
+    const C_iterator& c_it,
+    const C_entry&   c_0,
+    const D_iterator& D_it,
+    const Row_type_iterator& Row_type_it)
 {
   // assertions:
   CGAL_qpe_precondition(n > 0);
@@ -113,6 +77,7 @@ set(int n, int m,
   
   // store original variable indices (hack needed to allow
   // access to original variable values through Join_iterator_1
+  // BG: GET RID OF THIS!!
   O.reserve(qp_n);
   for (int i=0; i<qp_n; ++i) O.push_back(i);
 
@@ -186,9 +151,12 @@ set(int n, int m,
   is_phaseII = false;
 }
 
-template < class Rep_ >
-void QP_solver<Rep_>::
-set_explicit_bounds(FL_iterator fl,L_iterator lb,FU_iterator fu,U_iterator ub)
+template < typename Q, typename ET, typename Tags >
+void QP_solver<Q, ET, Tags>::
+set_explicit_bounds(const FL_iterator& fl,
+		    const L_iterator& lb,
+		    const FU_iterator& fu,
+		    const U_iterator& ub)
 {
   qp_fl = fl;
   qp_l = lb;
@@ -199,8 +167,8 @@ set_explicit_bounds(FL_iterator fl,L_iterator lb,FU_iterator fu,U_iterator ub)
 #if 0
 // todo: following is an old version that should be replaced by the out#def'ed
 // one below.
-template < class Rep_ >
-void QP_solver<Rep_>::init_x_O_v_i()
+template < typename Q, typename ET, typename Tags >
+void QP_solver<Q, ET, Tags>::init_x_O_v_i()
 {
   // allocate storage:
   x_O_v_i.reserve(qp_n);
@@ -254,8 +222,8 @@ void QP_solver<Rep_>::init_x_O_v_i()
 }
 #endif
 
-template < class Rep_ >
-void QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >
+void QP_solver<Q, ET, Tags>::
 init_x_O_v_i()
 {
   // allocate storage:
@@ -299,9 +267,9 @@ init_x_O_v_i()
 
 #if 0  // (fw) The following is a variant of set_up_auxiliary_problem()
        // for symbolic perturbation for the perturbed case.
-template < class Rep_ >
+template < typename Q, typename ET, typename Tags >
 void
-QP_solver<Rep_>::
+QP_solver<Q, ET, Tags>::
 set_up_auxiliary_problemI(Tag_true)
 {
   // initialize slack and artificial part of `A'
@@ -400,9 +368,9 @@ set_up_auxiliary_problemI(Tag_true)
 
 // This is the currently used variant of set_up_auxiliary_problem for
 // symbolic perturbation for the perturbed case.
-template < class Rep_ >
+template < typename Q, typename ET, typename Tags >
 void
-QP_solver<Rep_>::
+QP_solver<Q, ET, Tags>::
 set_up_auxiliary_problem(Tag_true)
 {
   // initialize slack and artificial part of `A'
@@ -506,8 +474,8 @@ set_up_auxiliary_problem(Tag_true)
 //
 // returns signed * (most significant exponent + 1) if <> 0
 // 0 otherwise
-template < class Rep_ >
-int  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >
+int  QP_solver<Q, ET, Tags>::
 signed_leading_exponent(int row)
 {
   A_entry  a0(0);
@@ -520,8 +488,8 @@ signed_leading_exponent(int row)
 }
 #endif // end of alternative implementation
 
-template < class Rep_ >
-void QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >
+void QP_solver<Q, ET, Tags>::
 set_up_auxiliary_problem()
 {
   ET            b_max(et0);
@@ -608,8 +576,8 @@ set_up_auxiliary_problem()
 }
 
 // initialization (phase I)
-template < class Rep_ >
-void QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >
+void QP_solver<Q, ET, Tags>::
 init()
 {
   CGAL_qpe_debug {
@@ -657,8 +625,8 @@ init()
 }
 
 // Set up the initial basis and basis inverse.
-template < class Rep_ >
-void QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >
+void QP_solver<Q, ET, Tags>::
 init_basis()
 {
   int s_i = -1;
@@ -723,15 +691,15 @@ init_basis()
   inv_M_B.init(art_A.size(), art_A.begin());
 }
 
-template < class Rep_ >  inline                                 // no ineq.
-void QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline                                 // no ineq.
+void QP_solver<Q, ET, Tags>::
 init_basis__slack_variables( int, Tag_true)
 {
     // nop
 }
 
-template < class Rep_ >                                        // has ineq.
-void QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >                                        // has ineq.
+void QP_solver<Q, ET, Tags>::
 init_basis__slack_variables(int s_i, Tag_false)  // Note: s_i-th inequality is
 						 // the most infeasible one,
 						 // see (C1).
@@ -755,8 +723,8 @@ init_basis__slack_variables(int s_i, Tag_false)  // Note: s_i-th inequality is
       in_B.push_back(-1);
 }
 
-template < class Rep_ >  inline                                 // no ineq.
-void QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline                                 // no ineq.
+void QP_solver<Q, ET, Tags>::
 init_basis__constraints( int, Tag_true)
 {
   // reserve memory:
@@ -768,8 +736,8 @@ init_basis__constraints( int, Tag_true)
     C.push_back(i);
 }
 
-template < class Rep_ >                                        // has ineq.
-void QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >                                        // has ineq.
+void QP_solver<Q, ET, Tags>::
 init_basis__constraints(int s_i, Tag_false)  // Note: s_i-th inequality is the
 					     // most infeasible one, see (C1).
 {
@@ -802,15 +770,15 @@ init_basis__constraints(int s_i, Tag_false)  // Note: s_i-th inequality is the
 }
 
 // Initialize r_C.
-template < class Rep_ >                 // Standard form
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >                 // Standard form
+void  QP_solver<Q, ET, Tags>::
 init_r_C(Tag_true)
 {
 }
 
 // Initialize r_C.
-template < class Rep_ >                 // Upper bounded
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >                 // Upper bounded
+void  QP_solver<Q, ET, Tags>::
 init_r_C(Tag_false)
 {
   r_C.resize(C.size());
@@ -818,31 +786,31 @@ init_r_C(Tag_false)
 }
 
 // Initialize r_S_B.
-template < class Rep_ >                 // Standard form
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >                 // Standard form
+void  QP_solver<Q, ET, Tags>::
 init_r_S_B(Tag_true)
 {
 }
 
 // Initialize r_S_B.
-template < class Rep_ >                 // Upper bounded
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >                 // Upper bounded
+void  QP_solver<Q, ET, Tags>::
 init_r_S_B(Tag_false)
 {
   r_S_B.resize(S_B.size());
   multiply__A_S_BxN_O(r_S_B.begin()); 
 }
 
-template < class Rep_ >  inline                                 // no ineq.
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline                                 // no ineq.
+void  QP_solver<Q, ET, Tags>::
 init_solution__b_C(Tag_true)
 {
   b_C.reserve(qp_m);
   std::copy(qp_b, qp_b+qp_m, std::back_inserter(b_C));
 }
 
-template < class Rep_ >  inline                                 // has ineq.
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline                                 // has ineq.
+void  QP_solver<Q, ET, Tags>::
 init_solution__b_C(Tag_false)
 { 
   b_C.insert(b_C.end(), l, et0);
@@ -854,9 +822,9 @@ init_solution__b_C(Tag_false)
 }
 
 // initial solution
-template < class Rep_ >
+template < typename Q, typename ET, typename Tags >
 void
-QP_solver<Rep_>::
+QP_solver<Q, ET, Tags>::
 init_solution()
 {
   // initialize exact version of `qp_b' restricted to basic constraints C
@@ -924,9 +892,9 @@ init_solution()
 }
 
 // Initialize additional data members.
-template < class Rep_ >
+template < typename Q, typename ET, typename Tags >
 void
-QP_solver<Rep_>::
+QP_solver<Q, ET, Tags>::
 init_additional_data_members()
 {
   // todo kf: do we really have to insert et0, or would it suffice to just

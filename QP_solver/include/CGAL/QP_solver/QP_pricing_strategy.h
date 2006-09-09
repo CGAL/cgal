@@ -34,31 +34,29 @@ CGAL_BEGIN_NAMESPACE
 // ==================
 // class declarations
 // ==================
-template < class Rep_ >
+template < typename Q, typename ET, typename Tags >
 class QP_pricing_strategy;
 
-template < class Rep_ >
+template < typename Q, typename ET, typename Tags >
 class QP_solver;
 
 // ===============
 // class interface
 // ===============
-template < class Rep_ >
+template < typename Q, typename ET, typename Tags >
 class QP_pricing_strategy {
 
   public:
 
     // self
-    typedef  Rep_                       Rep;
-    typedef  QP_pricing_strategy<Rep>  Self;
+    typedef  QP_pricing_strategy<Q, ET, Tags>  Self;
 
     // types
-    typedef  typename Rep::ET           ET;
-    typedef  CGAL::QP_solver<Rep>      QP_solver;
+    typedef  CGAL::QP_solver<Q, ET, Tags>      QP_solver;
     typedef  CGAL::Verbose_ostream      Verbose_ostream;
-    typedef  typename Rep::Is_in_standard_form
+    typedef  typename Tags::Is_in_standard_form
                                         Is_in_standard_form;
-    typedef  typename Rep::Is_linear    Is_linear;
+    typedef  typename Tags::Is_linear    Is_linear;
     typedef typename QP_solver::Bound_index Bound_index;
 
   public:
@@ -124,26 +122,27 @@ protected:
 // =============================
 
 // construction
-template < class Rep_ >  inline
-QP_pricing_strategy<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline
+QP_pricing_strategy<Q, ET, Tags>::
 QP_pricing_strategy( const std::string& strategy_name)
     : et0( 0), name( strategy_name)
 { }
 
 // detects error in virtual inheritance
-template < class Rep_ >  inline
-QP_pricing_strategy<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline
+QP_pricing_strategy<Q, ET, Tags>::
 QP_pricing_strategy( )
   : et0(0)
 {
-    CGAL_qpe_assertion_msg( false, "call to 'QP_pricing_strategy<Rep>::\n'" \
+    CGAL_qpe_assertion_msg
+      ( false, "call to 'QP_pricing_strategy<Q,ET,Tags>::\n'" \
 	"QP_pricing_strategy( const std::string&  strategy_name)'\n" \
 	"is missing in most derived pricing class!");
 }
 
 // initialization
-template < class Rep_ >  inline
-void  QP_pricing_strategy<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline
+void  QP_pricing_strategy<Q, ET, Tags>::
 set( const QP_solver&  solver, Verbose_ostream&  vout)
 {
     solverP = &solver;
@@ -151,8 +150,8 @@ set( const QP_solver&  solver, Verbose_ostream&  vout)
     set();
 }
 
-template < class Rep_ >  inline
-void  QP_pricing_strategy<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline
+void  QP_pricing_strategy<Q, ET, Tags>::
 init( int)
 {
     CGAL_qpe_debug {
@@ -162,16 +161,16 @@ init( int)
 }
 
 // operations
-template < class Rep_ >  inline
-typename Rep_::ET  QP_pricing_strategy<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline
+ET  QP_pricing_strategy<Q, ET, Tags>::
 mu_j( int j) const
 {
   return this->solver().mu_j(j);
 }
 
-template < class Rep_ >
+template < typename Q, typename ET, typename Tags >
 template <typename NT> 
-bool  QP_pricing_strategy<Rep_>::
+bool  QP_pricing_strategy<Q, ET, Tags>::
 is_improving (int j, const NT& mu, const NT& nt0 ) const
 {  
   CGAL_qpe_precondition(!this->solver().is_basic(j));
@@ -201,9 +200,9 @@ is_improving (int j, const NT& mu, const NT& nt0 ) const
   }
 }
 
-template < class Rep_ >
+template < typename Q, typename ET, typename Tags >
 template <typename NT> 
-bool QP_pricing_strategy<Rep_>::
+bool QP_pricing_strategy<Q, ET, Tags>::
 price_dantzig (int j, const NT& mu, const NT& nt0,
 	 int& min_j, NT& min_mu, int& direction) {
   CGAL_qpe_precondition(!this->solver().is_basic(j));

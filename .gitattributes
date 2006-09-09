@@ -1589,7 +1589,10 @@ QP_solver/examples/QP_solver/integer_qp_solver.cin -text
 QP_solver/examples/QP_solver/integer_qp_solver.data -text
 QP_solver/examples/QP_solver/rational_qp_solver.cin -text
 QP_solver/examples/QP_solver/rational_qp_solver.data -text
+QP_solver/include/CGAL/QP_functions.h -text
+QP_solver/include/CGAL/QP_models.h -text
 QP_solver/include/CGAL/QP_solver/QP_exact_bland_pricing.h -text
+QP_solver/include/CGAL/QP_solver/QP_models_impl.h -text
 QP_solver/test/QP_solver/create_test_solver_cin -text
 QP_solver/test/QP_solver/data_to_mps.cin -text
 QP_solver/test/QP_solver/test_solver_data/derivatives/HS118_free.mps -text

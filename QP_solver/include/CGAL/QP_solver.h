@@ -55,19 +55,19 @@ CGAL_BEGIN_NAMESPACE
 // ==================
 // class declarations
 // ==================
-template < class Rep_ >
+template < typename Q, typename ET, typename Tags  >
 class QP_solver;
 
 namespace QP_solver_impl {   // namespace for implemenation details
 
   // forward declaration of iterator over entries of
   // unbounded direction:
-  template < class Rep_ >
+  template  < typename Q, typename ET, typename Tags  >
   class Unbounded_direction_iterator;
 
   // forward declaration of functor for accessing original
   // variable values by original index
-  template < class Rep_ >
+  template  < typename Q, typename ET, typename Tags  >
   class Value_by_index;
 
 } // end of namespace for implementation details
@@ -75,35 +75,36 @@ namespace QP_solver_impl {   // namespace for implemenation details
 // ===============
 // class interface
 // ===============
-template < class Rep_ >
+template < typename Q, typename ET, typename Tags >
 class QP_solver {
 
 public: // public types
-  typedef  Rep_                       Rep;
-  typedef  QP_solver<Rep>             Self;
+  typedef  QP_solver<Q, ET, Tags> Self;
   
-  // types from the representation class:
-  typedef  typename Rep::ET           ET;
-  
-  typedef  typename Rep::A_iterator   A_iterator;
-  typedef  typename Rep::B_iterator   B_iterator;
-  typedef  typename Rep::C_iterator   C_iterator;
-  typedef  typename Rep::D_iterator   D_iterator;
-  typedef  typename Rep::L_iterator   L_iterator;
-  typedef  typename Rep::U_iterator   U_iterator;
-  typedef  typename Rep::FL_iterator  FL_iterator;
-  typedef  typename Rep::FU_iterator  FU_iterator;
+  // types from the QP
+  typedef  typename Q::A_iterator   A_iterator;
+  typedef  typename Q::B_iterator   B_iterator;
+  typedef  typename Q::C_iterator   C_iterator;
+  typedef  typename Q::D_iterator   D_iterator;
+  typedef  typename Q::L_iterator   L_iterator;
+  typedef  typename Q::U_iterator   U_iterator;
+  typedef  typename Q::FL_iterator  FL_iterator;
+  typedef  typename Q::FU_iterator  FU_iterator;
   
   typedef  CGAL::Comparison_result Row_type;
-  typedef  typename Rep::Row_type_iterator
-                                      Row_type_iterator;
-  
-  typedef  typename Rep::Is_linear    Is_linear;
-  typedef  typename Rep::Is_symmetric Is_symmetric;
-  typedef  typename Rep::Has_equalities_only_and_full_rank
+  typedef  typename Q::R_iterator Row_type_iterator;
+
+  // types from the Tags
+  typedef  typename Tags::Is_linear    Is_linear;
+  typedef  typename Tags::Is_symmetric Is_symmetric;
+  typedef  typename Tags::Has_equalities_only_and_full_rank
                                       Has_equalities_only_and_full_rank;
-  typedef  typename Rep::Is_in_standard_form
+  typedef  typename Tags::Is_in_standard_form
                                       Is_in_standard_form;
+
+  // friends
+  template <class Q_, class ET_>
+  friend bool QP_has_full_row_rank (const Q_& qp, const ET_& dummy);
 
 private: // private types
 
@@ -158,6 +159,7 @@ public: // export some additional types:
   // its lower and upper (fixed) bound, or at zero, or whether the variable is
   // basic:
   enum  Bound_index  { LOWER, ZERO, UPPER, FIXED, BASIC };
+
 private:
   typedef  std::vector<Bound_index>    Bound_index_values;
   typedef  typename Bound_index_values::iterator
@@ -183,8 +185,8 @@ private:
                                       Value_by_basic_index;
 
   // access values by original index
-  friend class QP_solver_impl::Value_by_index<Rep>;
-  typedef  QP_solver_impl::Value_by_index<Rep> Value_by_index;
+  friend class QP_solver_impl::Value_by_index<Q, ET, Tags>;
+  typedef  QP_solver_impl::Value_by_index<Q, ET, Tags> Value_by_index;
 
   // access to original problem by basic variable/constraint index:
   typedef  QP_vector_accessor<
@@ -279,7 +281,7 @@ public:
     typedef  Join_input_iterator_1< Lambda_numerator_iterator, Quotient_maker >
                                         Lambda_value_iterator;
     
-    typedef  QP_pricing_strategy<Rep>  Pricing_strategy;
+    typedef  QP_pricing_strategy<Q, ET, Tags>  Pricing_strategy;
 
   private:
     // compile time tag for symbolic perturbation, should be moved into traits
@@ -462,6 +464,12 @@ public:
     Values                   tmp_x_2;   // temporary vector of s. >= B_O.size()
                                         // Note: tmp_x_2 is only enlarged,
                                         // so its size need not be |B|.
+    // Diagnostics
+    struct Diagnostics {
+      bool redundant_equations;
+    };
+    
+    Diagnostics              diagnostics;
 
   public:
 
@@ -476,21 +484,7 @@ public:
     // creation & initialization
     // -------------------------
     // creation
-    QP_solver(int n, int m,
-	      A_iterator A, B_iterator b, C_iterator c, C_entry c_0,
-	      D_iterator D,
-	      Row_type_iterator r =
-	        Const_oneset_iterator<Row_type>( CGAL::EQUAL),
-	      Pricing_strategy *strategy = static_cast<Pricing_strategy *>(0),
-	      int verbosity = 0 );
-	        
-    QP_solver(int n, int m,
-          A_iterator A, B_iterator b, C_iterator c, C_entry c_0,
-	  D_iterator D,
-          Row_type_iterator r,
-          FL_iterator fl, L_iterator lb, FU_iterator fu, U_iterator ub,
-	  Pricing_strategy *strategy = static_cast<Pricing_strategy *>(0),
-	  int verbosity = 0 );
+    QP_solver(const Q& qp, Pricing_strategy* strategy = 0, int verbosity = 0 );
 
   ~QP_solver()
   {
@@ -502,14 +496,19 @@ public:
  private:
     // set-up of QP
     void  set( int n, int m,
-	       A_iterator A, B_iterator b, C_iterator c, C_entry c_0,
-	       D_iterator D,
-	       Row_type_iterator r =
+	       const A_iterator& A, 
+	       const B_iterator& b, 
+	       const C_iterator& c, 
+	       const C_entry& c_0,
+	       const D_iterator& D ,
+	       const Row_type_iterator& r =
 	         Const_oneset_iterator<Row_type>( CGAL::EQUAL));
 	         
     // set-up of explicit bounds
-    void set_explicit_bounds(FL_iterator fl, L_iterator lb,
-            FU_iterator fu, U_iterator ub); 
+    void set_explicit_bounds(const FL_iterator& fl, 
+			     const L_iterator& lb,
+			     const FU_iterator& fu, 
+			     const U_iterator& ub); 
 
     // initialization (of phase I)
     void  init( );
@@ -783,8 +782,8 @@ public:
     }
 
 public:
-  friend class QP_solver_impl::Unbounded_direction_iterator<Rep>;
-  typedef QP_solver_impl::Unbounded_direction_iterator<Rep>
+  friend class QP_solver_impl::Unbounded_direction_iterator<Q, ET, Tags>;
+  typedef QP_solver_impl::Unbounded_direction_iterator<Q, ET, Tags>
     Unbounded_direction_iterator;
 
   // Returns an iterator over an unbounded direction, that is a |n|-vector
@@ -1418,8 +1417,8 @@ public:
 
 // transition
 // ----------
-template < class Rep_ >  inline                                 // QP case
-void  QP_solver<Rep_>::
+template < class Q, typename ET, typename Tags >  inline                                 // QP case
+void  QP_solver<Q, ET, Tags>::
 transition( Tag_false)
 {
     typedef  Creator_2< D_iterator, int, 
@@ -1447,8 +1446,8 @@ transition( Tag_false)
 		D_transition_creator_accessor(), qp_D)), B_O.begin())));
 }
 
-template < class Rep_ >  inline                                 // LP case
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline                                 // LP case
+void  QP_solver<Q, ET, Tags>::
 transition( Tag_true)
 {
     inv_M_B.transition();
@@ -1456,15 +1455,15 @@ transition( Tag_true)
 
 // ratio test
 // ----------
-template < class Rep_ > inline                                  // LP case
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags > inline                                  // LP case
+void  QP_solver<Q, ET, Tags>::
 ratio_test_init__2_D_Bj( Value_iterator, int, Tag_true)
 {
     // nop
 }
 
-template < class Rep_ > inline                                  // QP case
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags > inline                                  // QP case
+void  QP_solver<Q, ET, Tags>::
 ratio_test_init__2_D_Bj( Value_iterator two_D_Bj_it, int j_, Tag_false)
 {
     if ( is_phaseII) {
@@ -1473,8 +1472,8 @@ ratio_test_init__2_D_Bj( Value_iterator two_D_Bj_it, int j_, Tag_false)
     }
 }
 
-template < class Rep_ > inline                                  // QP, no ineq.
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags > inline                                  // QP, no ineq.
+void  QP_solver<Q, ET, Tags>::
 ratio_test_init__2_D_Bj( Value_iterator two_D_Bj_it, int j_, Tag_false,
 			                                     Tag_true )
 {
@@ -1485,8 +1484,8 @@ ratio_test_init__2_D_Bj( Value_iterator two_D_Bj_it, int j_, Tag_false,
 	       two_D_Bj_it);
 }
 
-template < class Rep_ > inline                                  // QP, has ineq
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags > inline                                  // QP, has ineq
+void  QP_solver<Q, ET, Tags>::
 ratio_test_init__2_D_Bj( Value_iterator two_D_Bj_it, int j_, Tag_false,
 			                                     Tag_false)
 {
@@ -1498,15 +1497,15 @@ ratio_test_init__2_D_Bj( Value_iterator two_D_Bj_it, int j_, Tag_false,
     }
 }
 
-template < class Rep_ >  inline                                 // LP case
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline                                 // LP case
+void  QP_solver<Q, ET, Tags>::
 ratio_test_1__q_x_O( Tag_true)
 {
     inv_M_B.multiply_x( A_Cj.begin(), q_x_O.begin());
 }
 
-template < class Rep_ >  inline                                 // QP case
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline                                 // QP case
+void  QP_solver<Q, ET, Tags>::
 ratio_test_1__q_x_O( Tag_false)
 {
     if ( is_phaseI) {                                   // phase I
@@ -1517,15 +1516,15 @@ ratio_test_1__q_x_O( Tag_false)
     }
 }
 
-template < class Rep_ >  inline                                 // no ineq.
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline                                 // no ineq.
+void  QP_solver<Q, ET, Tags>::
 ratio_test_1__q_x_S( Tag_true)
 {
     // nop
 }
 
-template < class Rep_ >  inline                                 // has ineq.
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline                                 // has ineq.
+void  QP_solver<Q, ET, Tags>::
 ratio_test_1__q_x_S( Tag_false)
 {
     // A_S_BxB_O * q_x_O
@@ -1551,16 +1550,16 @@ ratio_test_1__q_x_S( Tag_false)
     }
 }
 
-template < class Rep_ >  inline                                 // no check
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline                                 // no check
+void  QP_solver<Q, ET, Tags>::
 ratio_test_1__t_i( Index_iterator, Index_iterator,
 		   Value_iterator, Value_iterator, Tag_true)
 {
     // nop
 }
 
-template < class Rep_ >  inline                                 // check
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline                                 // check
+void  QP_solver<Q, ET, Tags>::
 ratio_test_1__t_i( Index_iterator i_it, Index_iterator end_it,
 		   Value_iterator x_it, Value_iterator   q_it, Tag_false)
 {
@@ -1572,15 +1571,15 @@ ratio_test_1__t_i( Index_iterator i_it, Index_iterator end_it,
     }
 }
 
-template < class Rep_ >  inline                                 // LP case
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline                                 // LP case
+void  QP_solver<Q, ET, Tags>::
 ratio_test_1__t_j( Tag_true)
 {
     // nop
 }
 
-template < class Rep_ >  inline                                 // QP case
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline                                 // QP case
+void  QP_solver<Q, ET, Tags>::
 ratio_test_1__t_j( Tag_false)
 {
     if ( is_phaseII) {
@@ -1604,15 +1603,15 @@ ratio_test_1__t_j( Tag_false)
     }
 }
 
-template < class Rep_ >  inline                                 // LP case
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline                                 // LP case
+void  QP_solver<Q, ET, Tags>::
 ratio_test_2( Tag_true)
 {
     // nop
 }
 
-template < class Rep_ >  inline                                 // no ineq.
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline                                 // no ineq.
+void  QP_solver<Q, ET, Tags>::
 ratio_test_2__p( Tag_true)
 {
     // get column index of entering variable in basis
@@ -1637,8 +1636,8 @@ ratio_test_2__p( Tag_true)
     }
 }
 
-template < class Rep_ >  inline                                 // has ineq.
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline                                 // has ineq.
+void  QP_solver<Q, ET, Tags>::
 ratio_test_2__p( Tag_false)
 {
     Value_iterator  v_it;
@@ -1690,8 +1689,8 @@ ratio_test_2__p( Tag_false)
 
 // update
 // ------
-template < class Rep_ >  inline                                 // LP case
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline                                 // LP case
+void  QP_solver<Q, ET, Tags>::
 update_1( Tag_true)
 {
     // replace leaving with entering variable
@@ -1702,8 +1701,8 @@ update_1( Tag_true)
     }
 }
 
-template < class Rep_ >  inline                                 // QP case
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline                                 // QP case
+void  QP_solver<Q, ET, Tags>::
 update_1( Tag_false)
 {
     if ( is_phaseI) {                                   // phase I
@@ -1744,23 +1743,23 @@ update_1( Tag_false)
     }
 }
 
-template < class Rep_ >  inline                                 // LP case
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline                                 // LP case
+void  QP_solver<Q, ET, Tags>::
 update_2( Tag_true)
 {
     // nop
 }
 
-template < class Rep_ >  inline                                 // no ineq.
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline                                 // no ineq.
+void  QP_solver<Q, ET, Tags>::
 replace_variable( Tag_true)
 {
     replace_variable_original_original();
     strategyP->leaving_basis( i);
 }
 
-template < class Rep_ >  inline                                 // has ineq.
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline                                 // has ineq.
+void  QP_solver<Q, ET, Tags>::
 replace_variable( Tag_false)
 {
     // determine type of variables
@@ -1804,8 +1803,8 @@ replace_variable( Tag_false)
     }
 }
 
-template < class Rep_ >  inline
-bool  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline
+bool  QP_solver<Q, ET, Tags>::
 basis_matrix_stays_regular()
 {
     CGAL_qpe_precondition( is_phaseII);
@@ -1837,16 +1836,16 @@ basis_matrix_stays_regular()
 
 // current solution
 // ----------------
-template < class Rep_ >  inline             // no inequalities, upper bounded
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline             // no inequalities, upper bounded
+void  QP_solver<Q, ET, Tags>::
 compute__x_B_S( Tag_true  has_equalities_only_and_full_rank,
                 Tag_false is_in_standard_form)
 {
     // nop
 }
 
-template < class Rep_ >  inline             // no inequalities, standard form
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline             // no inequalities, standard form
+void  QP_solver<Q, ET, Tags>::
 compute__x_B_S( Tag_true has_equalities_only_and_full_rank,
                 Tag_true is_in_standard_form)
 {
@@ -1854,8 +1853,8 @@ compute__x_B_S( Tag_true has_equalities_only_and_full_rank,
 }
 
 
-template < class Rep_ >  inline             // has inequalities, upper bounded
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline             // has inequalities, upper bounded
+void  QP_solver<Q, ET, Tags>::
 compute__x_B_S( Tag_false has_equalities_only_and_full_rank,
                 Tag_false is_in_standard_form)
 {
@@ -1891,8 +1890,8 @@ compute__x_B_S( Tag_false has_equalities_only_and_full_rank,
 
 
 
-template < class Rep_ >  inline             // has inequalities, standard form
-void  QP_solver<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline             // has inequalities, standard form
+void  QP_solver<Q, ET, Tags>::
 compute__x_B_S( Tag_false has_equalities_only_and_full_rank,
                 Tag_true  is_in_standard_form)
 {
@@ -1919,16 +1918,31 @@ compute__x_B_S( Tag_false has_equalities_only_and_full_rank,
 }
 
 namespace QP_solver_impl {
+  // --------------
+  // Tags generator
+  // --------------
+  template < typename Linear, 
+	     typename Symmetric,
+	     typename Full_rank,
+	     typename Standard_form >
+  struct QP_tags {
+    typedef Linear                Is_linear;
+    typedef Symmetric             Is_symmetric;
+    typedef Full_rank             Has_equalities_only_and_full_rank;
+    typedef Standard_form         Is_in_standard_form;
+  };
+
+
 // --------------------
 // Value_by_index
 // --------------------
-template < class Rep >
-class Value_by_index : public std::unary_function< int, 
-      typename QP_solver<Rep>::ET > {
+template < typename Q, typename ET, typename Tags >
+class Value_by_index : public std::unary_function< int, ET>
+{
 public:
-  typedef QP_solver<Rep> QP;
-  typedef typename QP::ET result_type;
-  typedef typename QP::Is_in_standard_form Is_in_standard_form;
+  typedef QP_solver<Q, ET, Tags> QP;
+  typedef ET result_type;
+  typedef typename Tags::Is_in_standard_form Is_in_standard_form;
 
   Value_by_index(const QP* solver)
     : s (solver)
@@ -1974,7 +1988,6 @@ CGAL_END_NAMESPACE
 #include <CGAL/QP_solver/Unbounded_direction.h>
 #include <CGAL/QP_solver/NonstandardForm.C>
 #include <CGAL/QP_solver/Bounds.C>
-
 #include <CGAL/QP_solver/QP_solver_impl.h>
 
 #endif // CGAL_QP_SOLVER_H

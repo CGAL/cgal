@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
+// $URL: svn+ssh://gaertner@scm.gforge.inria.fr/svn/cgal/trunk/QP_solver/include/CGAL/QP_solver/QP_models_impl.h $
+// $Id: QP_models_impl.h 33922 2006-09-05 12:32:25Z gaertner $
 // 
 //
 // Author(s)     : Sven Schoenherr <sven@inf.fu-berlin.de>
@@ -20,24 +20,18 @@
 //                 Franz Wessendorp <fransw@inf.ethz.ch>
 //                 Kaspar Fischer <fischerk@inf.ethz.ch>
 
-#include <iomanip>
-#include <fstream>
-
+#include <CGAL/Quotient.h>
+#include <CGAL/MP_Float.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
-#include <CGAL/MP_Float.h>
-
-#include <CGAL/QP_solver/QP_partial_filtered_pricing.h>
-#include <CGAL/QP_solver/QP_partial_exact_pricing.h>
 
 CGAL_BEGIN_NAMESPACE
 
-// for parsing numbers
+// for parsing rational numbers
 template<typename IT_,
-	 typename ET_,
 	 typename Use_sparse_representation_for_D_,
 	 typename Use_sparse_representation_for_A_>
-bool QP_MPS_instance<IT_,ET_,
+bool QP_from_mps<IT_,
 		Use_sparse_representation_for_D_,
 		     Use_sparse_representation_for_A_>::number_from_quotient(CGAL::Gmpq& entry, std::istringstream& from) {
     // reads rational in the form p/q
@@ -60,10 +54,9 @@ bool QP_MPS_instance<IT_,ET_,
   }
 
 template<typename IT_,
-	 typename ET_,
 	 typename Use_sparse_representation_for_D_,
 	 typename Use_sparse_representation_for_A_>
-bool QP_MPS_instance<IT_,ET_,
+bool QP_from_mps<IT_,
 		Use_sparse_representation_for_D_,
 		Use_sparse_representation_for_A_>::number_from_float(CGAL::Gmpq& entry, std::istringstream& from) {
     // reads rationals from a decimal floating-point string; 
@@ -164,13 +157,12 @@ bool QP_MPS_instance<IT_,ET_,
   }
 
 template<typename IT_,
-	 typename ET_,
 	 typename Use_sparse_representation_for_D_,
 	 typename Use_sparse_representation_for_A_>
-QP_MPS_instance<IT_,ET_,
+QP_from_mps<IT_,
 		Use_sparse_representation_for_D_,
 		Use_sparse_representation_for_A_>::
-QP_MPS_instance(std::istream& in,bool use_CPLEX_convention,
+QP_from_mps(std::istream& in,bool use_CPLEX_convention,
 		int verbosity)
   : verbosity_(verbosity), from(in),
     is_format_okay_(false),
@@ -221,12 +213,11 @@ QP_MPS_instance(std::istream& in,bool use_CPLEX_convention,
 }
 
 template<typename IT_,
-	 typename ET_,
 	 typename Use_sparse_representation_for_D_,
 	 typename Use_sparse_representation_for_A_>
-bool QP_MPS_instance<IT_,ET_,
+bool QP_from_mps<IT_,
 		Use_sparse_representation_for_D_,
-		Use_sparse_representation_for_A_>::is_valid()
+		Use_sparse_representation_for_A_>::is_valid() const
 {
   if (!is_format_okay_)
     return false;
@@ -247,10 +238,9 @@ bool QP_MPS_instance<IT_,ET_,
 }
 
 template<typename IT_,
-	 typename ET_,
 	 typename Use_sparse_representation_for_D_,
 	 typename Use_sparse_representation_for_A_>
-const std::string& QP_MPS_instance<IT_,ET_,
+const std::string& QP_from_mps<IT_,
 		Use_sparse_representation_for_D_,
 		Use_sparse_representation_for_A_>::error()
 {
@@ -259,10 +249,9 @@ const std::string& QP_MPS_instance<IT_,ET_,
 }
 
 template<typename IT_,
-	 typename ET_,
 	 typename Use_sparse_representation_for_D_,
 	 typename Use_sparse_representation_for_A_>
-const std::string& QP_MPS_instance<IT_,ET_,
+const std::string& QP_from_mps<IT_,
 		Use_sparse_representation_for_D_,
 		Use_sparse_representation_for_A_>::comment()
 {
@@ -270,10 +259,9 @@ const std::string& QP_MPS_instance<IT_,ET_,
 }
 
 template<typename IT_,
-	 typename ET_,
 	 typename Use_sparse_representation_for_D_,
 	 typename Use_sparse_representation_for_A_>
-bool QP_MPS_instance<IT_,ET_,
+bool QP_from_mps<IT_,
 		Use_sparse_representation_for_D_,
 		Use_sparse_representation_for_A_>::is_symmetric()
 {
@@ -295,103 +283,11 @@ bool QP_MPS_instance<IT_,ET_,
   return is_symmetric_;
 }
   
-template<typename IT_,
-	 typename ET_,
-	 typename Use_sparse_representation_for_D_,
-	 typename Use_sparse_representation_for_A_>
-bool QP_MPS_instance<IT_,ET_,
-		Use_sparse_representation_for_D_,
-		Use_sparse_representation_for_A_>::has_equalities_only_and_full_rank()
-{
-  if (!is_format_okay_)
-    return false;
-
-  if (has_equalities_only_and_full_rank_cached)
-    return has_equalities_only_and_full_rank_;
-
-  // check if we have inequalities:
-  for (typename Row_type_vector::const_iterator it = row_types_.begin();
-       it != row_types_.end(); ++it)
-    if (*it != CGAL::EQUAL) {
-      has_equalities_only_and_full_rank_ = false;
-      return has_equalities_only_and_full_rank_;
-    }
-
-  // perform exact (!) Gaussian Elemination to determine the rank:
-  // todo: this could be made much more efficient...
-  typedef Quotient<ET> QET;
-  typedef std::vector<QET> V;
-  typedef std::vector<V>  M;
-  M A; // copy of the matrix A to work on
-       // Note: A[i][j] is the element in the i-th row and j-th column.
-  const int n = number_of_variables();
-  const int m = number_of_constraints();
-  const ET one(1);
-  for (int i=0; i<m; ++i) {
-    A.push_back(V());
-    V &row = A.back();
-    for (int j=0; j<n; ++j)
-      row.push_back(QET(A_[j][i],one));
-  }
-
-  int k = 0;
-  for (int j=0; j<n; ++j) {
-    // Invariant: The columns 0..(j-1) of A are in echelon form and
-    // column j-1 has a nonzero entry at row-index k-1.
-    //
-    // In this iteration of the loop we zero the entries k+1..m of
-    // column j of A.  In order to do this, it might be necessary to
-    // first exchange two rows.
-
-    #if 0 // debugging code
-    std::cout << "Iteration (j,k) = (" << j << "," << k << ")" << std::endl;
-    for (int ii=0; ii<m; ++ii) {
-      for (int jj=0; jj<n; ++jj) {
-	std::cout << std::setw(15) << A[ii][jj];
-      }
-      std::cout << std::endl;
-    }
-    #endif
-
-    // search for a suitable place k:
-    bool found = false;
-    int l = k;
-    for (; l<m; ++l)
-      if (!CGAL_NTS is_zero(A[l][j])) {
-	found = true;
-	break;
-      }
-    if (!found)
-      // Here, all elements k..m of column j of A are zero, so we
-      // have an echelon form (without a "step") and continue:
-      continue;
-
-    // swap rows, if necessary:
-    if (k != l)
-      std::swap(A[k],A[l]);
-    CGAL_qpe_assertion(!CGAL_NTS is_zero(A[k][j]));
-
-    // zero out the entries below entry k:
-    for (int i=k+1; i<m; ++i) {
-      // we add l times row k to row i:
-      const QET l = -A[i][j]/A[k][j];
-      for (int jj=0; jj<n; ++jj) // for (int jj=j+1; jj<n; ++jj)
-	A[i][jj] += l*A[k][jj];
-    }
-
-    // increase echelon height:
-    ++k;
-  }
-
-  has_equalities_only_and_full_rank_ = k == m;
-  return has_equalities_only_and_full_rank_;
-}
 
 template<typename IT_,
-	 typename ET_,
 	 typename Use_sparse_representation_for_D_,
 	 typename Use_sparse_representation_for_A_>
-bool QP_MPS_instance<IT_,ET_,
+bool QP_from_mps<IT_,
 		Use_sparse_representation_for_D_,
 		Use_sparse_representation_for_A_>::name_section()
 {
@@ -421,10 +317,9 @@ bool QP_MPS_instance<IT_,ET_,
 }
 
 template<typename IT_,
-	 typename ET_,
 	 typename Use_sparse_representation_for_D_,
 	 typename Use_sparse_representation_for_A_>
-bool QP_MPS_instance<IT_,ET_,
+bool QP_from_mps<IT_,
 		Use_sparse_representation_for_D_,
 		Use_sparse_representation_for_A_>::rows_section()
 {
@@ -472,10 +367,9 @@ bool QP_MPS_instance<IT_,ET_,
 }
 
 template<typename IT_,
-	 typename ET_,
 	 typename Use_sparse_representation_for_D_,
 	 typename Use_sparse_representation_for_A_>
-bool QP_MPS_instance<IT_,ET_,
+bool QP_from_mps<IT_,
 		Use_sparse_representation_for_D_,
 		Use_sparse_representation_for_A_>::columns_section()
 {
@@ -538,14 +432,13 @@ bool QP_MPS_instance<IT_,ET_,
 }
 
 template<typename IT_,
-	 typename ET_,
 	 typename Use_sparse_representation_for_D_,
 	 typename Use_sparse_representation_for_A_>
-bool QP_MPS_instance<IT_,ET_,
+bool QP_from_mps<IT_,
 		Use_sparse_representation_for_D_,
 		Use_sparse_representation_for_A_>::rhs_section()
 {
-  c0 = IT(0);  // no constant term yet
+  c_0 = IT(0);  // no constant term yet
   std::string t = token();
   if (t != "RHS")
     return err1("expected 'RHS' but found '%'",t);
@@ -583,7 +476,7 @@ bool QP_MPS_instance<IT_,ET_,
       if (row_name == row_names.end()) {
 	// no corresponding constraint; is it the constant term?
 	if (t == obj) 
-	  c0 = -val;
+	  c_0 = -val;
 	else 
 	  return err1("unknown row identifier '%' in section RHS",t);
       } else {
@@ -608,10 +501,9 @@ bool QP_MPS_instance<IT_,ET_,
 }
 
 template<typename IT_,
-	 typename ET_,
 	 typename Use_sparse_representation_for_D_,
 	 typename Use_sparse_representation_for_A_>
-bool QP_MPS_instance<IT_,ET_,
+bool QP_from_mps<IT_,
 		Use_sparse_representation_for_D_,
 		Use_sparse_representation_for_A_>::ranges_section()
 {
@@ -720,10 +612,9 @@ bool QP_MPS_instance<IT_,ET_,
 
 
 template<typename IT_,
-	 typename ET_,
 	 typename Use_sparse_representation_for_D_,
 	 typename Use_sparse_representation_for_A_>
-bool QP_MPS_instance<IT_,ET_,
+bool QP_from_mps<IT_,
 		Use_sparse_representation_for_D_,
 		Use_sparse_representation_for_A_>::bounds_section()
 {
@@ -832,10 +723,9 @@ bool QP_MPS_instance<IT_,ET_,
 }
 
 template<typename IT_,
-	 typename ET_,
 	 typename Use_sparse_representation_for_D_,
 	 typename Use_sparse_representation_for_A_>
-bool QP_MPS_instance<IT_,ET_,
+bool QP_from_mps<IT_,
 		Use_sparse_representation_for_D_,
 		Use_sparse_representation_for_A_>::qmatrix_section()
 {
@@ -903,19 +793,18 @@ bool QP_MPS_instance<IT_,ET_,
 }
 
 template<typename IT_,
-	 typename ET_,
 	 typename Use_sparse_representation_for_D_,
 	 typename Use_sparse_representation_for_A_>
 std::ostream& operator<<(std::ostream& o,
-			 QP_MPS_instance<IT_, ET_,
+			 QP_from_mps<IT_, 
 			 Use_sparse_representation_for_D_,
 			 Use_sparse_representation_for_A_>& qp)
 {
-  typedef QP_MPS_instance<IT_, ET_,
+  typedef QP_from_mps<IT_, 
     Use_sparse_representation_for_D_,
     Use_sparse_representation_for_A_> MPS;
-  const unsigned int n = qp.number_of_variables();
-  const unsigned int m = qp.number_of_constraints();
+  const unsigned int n = qp.n();
+  const unsigned int m = qp.m();
   
   // output general information:
   using std::endl;
@@ -938,9 +827,9 @@ std::ostream& operator<<(std::ostream& o,
   if (qp.verbosity() > 1) {
     // output c:
     o << "          number of variables: "
-      << qp.number_of_variables() << endl
+      << qp.n() << endl
       << "        number of constraints: "
-      << qp.number_of_constraints() << endl
+      << qp.m() << endl
       << endl
       << "objective vector: " << endl << "  ";
     std::copy(qp.c(),qp.c()+n,
@@ -950,7 +839,7 @@ std::ostream& operator<<(std::ostream& o,
     // output D:
     if (!qp.is_linear()) {
       o << "quadratic objective matrix: " << endl;
-      typename MPS::D_iterator D = qp.D();
+      typename MPS::D_iterator D = qp.d();
       for (unsigned int i=0; i<n; ++i, ++D) {
 	typename MPS::D_iterator::value_type entry = *D;
 	o << "  ";
@@ -963,8 +852,8 @@ std::ostream& operator<<(std::ostream& o,
     // output A and b:
     o << "constraints: " << endl;
     typename MPS::B_iterator b = qp.b();
-    typename MPS::A_iterator A = qp.A();
-    typename MPS::Row_type_iterator r = qp.row_types();
+    typename MPS::A_iterator A = qp.a();
+    typename MPS::R_iterator r = qp.r();
     for (unsigned int i=0; i<m; ++i) {
       for (unsigned int j=0; j<n; ++j)
 	o << "  " << A[j][i];
@@ -1002,7 +891,7 @@ std::ostream& operator<<(std::ostream& o,
 
 // Routines to output to MPS format:
 
-namespace QP_MPS_detail {
+namespace QP_from_mps_detail {
 
   template<typename T>
   struct MPS_type_name {
@@ -1027,9 +916,7 @@ namespace QP_MPS_detail {
   template<>
   struct MPS_type_name<Quotient<MP_Float> > {
     static const char *name() { return "rational"; }
-  };
-
-  template<typename IT>
+  }; template<typename IT>
   struct IT_to_ET {
   };
   
@@ -1053,7 +940,7 @@ namespace QP_MPS_detail {
     typedef Quotient<MP_Float> ET;
   };
 
-} // QP_MPS_detail
+} // QP_from_mps_detail
 
 template<typename A_iterator,
 	 typename B_iterator,
@@ -1064,7 +951,7 @@ template<typename A_iterator,
 	 typename FL_iterator,
 	 typename U_iterator,
 	 typename L_iterator,
-	 typename Row_type_iterator>
+	 typename R_iterator>
 void write_MPS(std::ostream& out,
 	       const std::string& number_type, // pass "" to deduce
 					       // the number-type from 
@@ -1083,13 +970,13 @@ void write_MPS(std::ostream& out,
 	       FL_iterator fl,
 	       U_iterator u,
 	       L_iterator l,
-	       Row_type_iterator rt)
+	       R_iterator rt)
 {
-  typedef typename Row_type_iterator::value_type Row_type;
+  typedef typename R_iterator::value_type Row_type;
 
   // output header:
   if (number_type.length() == 0) {
-    const char *tn = QP_MPS_detail::MPS_type_name<typename U_iterator::
+    const char *tn = QP_from_mps_detail::MPS_type_name<typename U_iterator::
       value_type>::name();
     if (tn != 0)
       out << "* Number-type: " << tn << "\n";

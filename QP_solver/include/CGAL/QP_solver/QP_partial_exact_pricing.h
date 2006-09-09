@@ -31,24 +31,22 @@ CGAL_BEGIN_NAMESPACE
 // =================
 // class declaration
 // =================
-template < class Rep_ >
+template < typename Q, typename ET, typename Tags >
 class QP_partial_exact_pricing;
 
 // ===============
 // class interface
 // ===============
-template < class Rep_ >
-class QP_partial_exact_pricing : public QP__partial_base<Rep_> {
+template < typename Q, typename ET, typename Tags >
+class QP_partial_exact_pricing : public QP__partial_base<Q,ET,Tags> {
 
     // self
-    typedef  Rep_                            Rep;
-    typedef  QP_pricing_strategy<Rep>       Base;
-    typedef  QP__partial_base<Rep>          Partial_base;
-    typedef  QP_partial_exact_pricing<Rep>  Self;
+    typedef  QP_pricing_strategy<Q,ET,Tags>       Base;
+    typedef  QP__partial_base<Q,ET,Tags>          Partial_base;
+    typedef  QP_partial_exact_pricing<Q,ET,Tags>  Self;
 
     // types from the pricing base class
-    typedef  typename Base::ET                            ET;
-    typedef  typename Base::Is_in_standard_form           Is_in_standard_form;
+    typedef  typename Tags::Is_in_standard_form           Is_in_standard_form;
     typedef  typename Partial_base::Index_iterator        Index_iterator;
     typedef  typename Partial_base::Index_const_iterator  Index_const_iterator;
 
@@ -76,23 +74,23 @@ class QP_partial_exact_pricing : public QP__partial_base<Rep_> {
 // =============================
 
 // construction
-template < class Rep_ >  inline
-QP_partial_exact_pricing<Rep_>::
+template < typename Q, typename ET, typename Tags >  inline
+QP_partial_exact_pricing<Q,ET,Tags>::
 QP_partial_exact_pricing( bool  randomize, Random&  random)
     : Base( "partial exact"),
       Partial_base( randomize, random)
 { }
     
 // operations
-template < class Rep_ >
-int  QP_partial_exact_pricing<Rep_>::
+template < typename Q, typename ET, typename Tags >
+int  QP_partial_exact_pricing<Q,ET,Tags>::
 pricing(int& direction )
 {
   return (pricing_helper(direction, Is_in_standard_form()));
 }
 
-template < class Rep_ >
-int  QP_partial_exact_pricing<Rep_>::
+template < typename Q, typename ET, typename Tags >
+int  QP_partial_exact_pricing<Q,ET,Tags>::
 pricing_helper(int& direction, Tag_true is_in_standard_form)
 {
     Index_const_iterator  it, min_it;
@@ -165,8 +163,8 @@ pricing_helper(int& direction, Tag_true is_in_standard_form)
     // no entering variable found
     return -1;
 }
-template < class Rep_ >
-int  QP_partial_exact_pricing<Rep_>::
+template < typename Q, typename ET, typename Tags >
+int  QP_partial_exact_pricing<Q,ET,Tags>::
 pricing_helper(int& direction, Tag_false is_in_standard_form)
 {
     Index_const_iterator  it, min_it;

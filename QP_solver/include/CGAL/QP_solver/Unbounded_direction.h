@@ -27,25 +27,25 @@ CGAL_BEGIN_NAMESPACE
 
 namespace QP_solver_impl {
   
-  template<class Rep>
+  template<typename Q, typename ET, typename Tags>
   class Unbounded_direction_iterator {
   private:
-    QP_solver<Rep> &solver;               // reference to solver
+    QP_solver<Q, ET, Tags> &solver;               // reference to solver
     int pos;                              // current position
     
   public:  // public types
-    typedef Unbounded_direction_iterator<Rep> Self;
+    typedef Unbounded_direction_iterator<Q, ET, Tags> Self;
     typedef std::random_access_iterator_tag   iterator_category;
-    typedef typename Rep::ET                  value_type;
+    typedef ET                                value_type;
     typedef int                               difference_type;
     
   private: // constructor
-    friend class QP_solver<Rep>;
+    friend class QP_solver<Q, ET, Tags>;
     
     // Note: The solver's routines unbounded_direction_begin/end()
     // construct instances of this class such that the range spanned
     // by the constructed iterators has length qp_n.
-    Unbounded_direction_iterator(QP_solver<Rep>& solver,int pos) :
+    Unbounded_direction_iterator(QP_solver<Q, ET, Tags>& solver,int pos) :
       solver(solver), pos(pos) {
       CGAL_qpe_assertion(pos <= solver.qp_n);
     }
@@ -104,18 +104,18 @@ namespace QP_solver_impl {
 
 } // namespace QP_solver_impl
 
-template<class Rep>
-typename QP_solver<Rep>::Unbounded_direction_iterator
-QP_solver<Rep>::unbounded_direction_begin()
+template<typename Q, typename ET, typename Tags>
+typename QP_solver<Q, ET, Tags>::Unbounded_direction_iterator
+QP_solver<Q, ET, Tags>::unbounded_direction_begin()
 {
-  return QP_solver_impl::Unbounded_direction_iterator<Rep>(*this,0);
+  return QP_solver_impl::Unbounded_direction_iterator<Q, ET, Tags>(*this,0);
 }
 
-template<class Rep>
-typename QP_solver<Rep>::Unbounded_direction_iterator
-QP_solver<Rep>::unbounded_direction_end()
+template<typename Q, typename ET, typename Tags>
+typename QP_solver<Q, ET, Tags>::Unbounded_direction_iterator
+QP_solver<Q, ET, Tags>::unbounded_direction_end()
 {
-  return QP_solver_impl::Unbounded_direction_iterator<Rep>(*this,qp_n);
+  return QP_solver_impl::Unbounded_direction_iterator<Q, ET, Tags>(*this,qp_n);
 }
 
 CGAL_END_NAMESPACE

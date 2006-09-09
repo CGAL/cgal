@@ -27,8 +27,8 @@ CGAL_BEGIN_NAMESPACE
 // =============================
 
 // set-up
-template < class Rep_, class NT_, class ET2NT_ >
-void  QP__filtered_base<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >
+void  QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
 set( )
 {
     // reserve memory for NT versions of current solution
@@ -40,8 +40,8 @@ set( )
 }
 
 // initialization; BG: who calls this???
-template < class Rep_, class NT_, class ET2NT_ >
-void  QP__filtered_base<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >
+void  QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
 init( )
 {
     // get properties of quadratic program
@@ -77,8 +77,8 @@ init( )
 }
 
 // operations
-template < class Rep_, class NT_, class ET2NT_ >
-void  QP__filtered_base<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >
+void  QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
 init_NT( )
 {
     // ToDo: scale 'x_B_O', 'lambda', and 'd' if necessary
@@ -150,8 +150,8 @@ init_NT( )
 // --> for bound2: take |w_NT[j]| into account for C_j
 
 
-template < class Rep_, class NT_, class ET2NT_ >
-void  QP__filtered_base<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >
+void  QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
 update_maxima( )
 {
     // get properties of quadratic program
@@ -217,8 +217,8 @@ update_maxima( )
     }
 }
 
-template < class Rep_, class NT_, class ET2NT_ >                // QP case
-void  QP__filtered_base<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >                // QP case
+void  QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
 update_maxima( Tag_false)
 {
     // update row and column maxima of 'D'
@@ -255,8 +255,8 @@ update_maxima( Tag_false)
     }
 }
 
-template < class Rep_, class NT_, class ET2NT_ >                // LP case
-void  QP__filtered_base<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >                // LP case
+void  QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
 update_maxima( Tag_true)
 {
 
@@ -272,8 +272,8 @@ update_maxima( Tag_true)
     }
 }
 
-template < class Rep_, class NT_, class ET2NT_ >
-bool  QP__filtered_base<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >
+bool  QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
 certify_mu_j_NT( int j, Tag_true) const  // standard form
 {
     // compute 'mu_j' with inexact arithmetic again
@@ -310,8 +310,8 @@ certify_mu_j_NT( int j, Tag_true) const  // standard form
     return ( mu_et >= this->et0);
 }
 
-template < class Rep_, class NT_, class ET2NT_ >
-bool  QP__filtered_base<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >
+bool  QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
 certify_mu_j_NT( int j, Tag_false) const // case with bounds
 {
   // compute 'mu_j' with inexact arithmetic again; this call sets w_j_NT
@@ -355,8 +355,8 @@ certify_mu_j_NT( int j, Tag_false) const // case with bounds
 }
 
 // transition
-template < class Rep_, class NT_, class ET2NT_ >
-void  QP__filtered_base<Rep_,NT_,ET2NT_>::
+template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >
+void  QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
 transition( )
 {
 

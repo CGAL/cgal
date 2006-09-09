@@ -35,7 +35,18 @@
 #include <CGAL/QP_solver/QP_full_filtered_pricing.h>
 #include <CGAL/QP_solver/QP_partial_filtered_pricing.h>
 
-#include <CGAL/QP_solver/MPS.h> // should to into QP_solver.h (?)
+#include <CGAL/QP_models.h>
+
+struct Tags {
+  typedef  CGAL::Tag_false Is_linear; 
+  // is instance known in advance to be an LP?
+  typedef  CGAL::Tag_false Is_symmetric; 
+  // is the D matrix known to be symmetric?
+  typedef  CGAL::Tag_false Has_equalities_only_and_full_rank; 
+  // (see manual)
+  typedef  CGAL::Tag_false Is_in_standard_form; 
+  // (see manual)?
+};
 
 int main(const int argNr,const char **args) {
   using std::cout;
@@ -53,7 +64,7 @@ int main(const int argNr,const char **args) {
 #else
   typedef CGAL::Gmpzf ET;
 #endif
-  typedef CGAL::QP_MPS_instance<IT,ET> QP;
+  typedef CGAL::QP_from_mps<IT> QP;
   QP qp(std::cin,true,verbosity);
 
   // check for format errors in MPS file:
@@ -67,35 +78,17 @@ int main(const int argNr,const char **args) {
     cout << endl << qp << endl;
   }
 
-  typedef Tag_false Is_linear; // is the instance known in advance to be an LP?
-  typedef Tag_false Is_symmetric; // is the D matrix known to be symmetric?
-  typedef Tag_false Has_equalities_only_and_full_rank; // (see manual)
-  typedef Tag_false Is_in_standard_form; // (see manual)?
-
   // in case of an LP, zero the D matrix:
   // (Note: if you know in advance that the problem is an LP
   // you should not do this, but set Is_linear to Tag_true.)
-  if (qp.is_linear() && !check_tag(Is_linear()))
+  if (qp.is_linear() && !check_tag(Tags::Is_linear()))
     qp.make_zero_D();
 
-  typedef CGAL::QP_solver_MPS_traits_d<QP,
-    Is_linear,
-    Is_symmetric,
-    Has_equalities_only_and_full_rank,
-    Is_in_standard_form>         Traits;
+  CGAL::QP_pricing_strategy<QP, ET, Tags> *strategy =
+      new CGAL::QP_partial_exact_pricing<QP, ET, Tags>;
 
-  CGAL::QP_pricing_strategy<Traits> *strategy =
-      new CGAL::QP_partial_exact_pricing<Traits>;
-
-  typedef CGAL::QP_solver<Traits> Solver;
-  Solver solver(qp.number_of_variables(),
-                qp.number_of_constraints(),
-		qp.A(),qp.b(),qp.c(), qp.c_0(),
-                                 qp.D(),
-                                 qp.row_types(),
-                                 qp.fl(),qp.l(),qp.fu(),qp.u(),
-                                 strategy,
-                                 verbosity);
+  typedef CGAL::QP_solver<QP, ET, Tags> Solver;
+  Solver solver(qp, strategy, verbosity);
 
   if (solver.is_valid()) {
     cout << "Solution is valid." << endl;
@@ -113,7 +106,7 @@ int main(const int argNr,const char **args) {
     cout << "Variable values:" << endl;
     Solver::Variable_value_iterator it 
       = solver.variables_value_begin() ;
-    for (unsigned int i=0; i < qp.number_of_variables(); ++it, ++i)
+    for (unsigned int i=0; i < qp.n(); ++it, ++i)
       cout << "  " << qp.name_of_variable(i) << " = "
 	   << CGAL::to_double(*it) << endl;
     return 0;

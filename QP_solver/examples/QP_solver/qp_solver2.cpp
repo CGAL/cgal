@@ -34,25 +34,11 @@
 #include <CGAL/basic.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/QP_solver.h>
+#include <CGAL/QP_models.h>
 
 // here we declare the types of the various QP entries
-struct Traits {
-  // iterator for the constraint type
-  typedef CGAL::Comparison_result *Row_type_iterator; 
 
-  // the exact internal type (input type must be convertible to this)
-  typedef CGAL::MP_Float ET;
-
-  // the input type is double, and the problem comes via arrays 
-  typedef double **A_iterator;  // for the columns of A
-  typedef double *B_iterator;   // for the right-hand side b
-  typedef double *C_iterator;   // for the objective function c
-  typedef double **D_iterator;  // for the rows of D
-  typedef bool *FL_iterator;    // for finiteness of lower bound L
-  typedef bool *FU_iterator;    // for finiteness of upper bound U
-  typedef double *L_iterator;   // for lower bounds L
-  typedef double *U_iterator;   // for upper bounds U
-
+struct Tags {
   typedef CGAL::Tag_false Is_linear;     // we have a proper QP
   typedef CGAL::Tag_true Is_symmetric;   // the matrix D is symmetric
   typedef CGAL::Tag_true Has_equalities_only_and_full_rank;
@@ -60,8 +46,9 @@ struct Traits {
   typedef CGAL::Tag_true Is_in_standard_form; // only x >=0 bounds
 };
 
-typedef CGAL::QP_solver<Traits> Solver;  // the solver type
-
+typedef CGAL::MP_Float ET;
+typedef CGAL::Nonnegative_QP_from_pointers<double> Q; 
+typedef CGAL::QP_solver<Q, ET, Tags> Solver;
 
 int main() {
   double c[]       = {0.0, 3.0};
@@ -76,11 +63,14 @@ int main() {
 
   CGAL::Comparison_result rt[] = {CGAL::LARGER};
 
+  CGAL::Nonnegative_QP_from_pointers<double> qp
+    (2, 1, cols_of_A, b, rt, rows_of_D, c);
+
   // now call the solver; the first two arguments are
   // the number of variables and the number of constraints (rows of A) 
   // the final 0's are for the bounds; since we are in standard form,
   // the solver will never access them
-  Solver solver(2, 1, cols_of_A, b, c, 1.0, rows_of_D, rt, 0, 0, 0, 0);
+  Solver solver(qp);
 
   if (solver.status() == Solver::OPTIMAL) { // we know that, don't we?
     std::cout << "Optimal feasible solution x: ";
