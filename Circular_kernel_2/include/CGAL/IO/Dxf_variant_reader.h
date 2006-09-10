@@ -117,14 +117,14 @@ template<class CK,class Circular_arc_2, class Line_arc_2, class OutputIterator>
       if(bulge == 0){
 	
 	if(xyps != xypt){
-	  
-	  arc = Line_arc_2(typename CK::Construct_line_2()(ps,pt),caps, capt);
-
+	  typename CK::Line_2 l(ps,pt);
+	  Line_arc_2 la  = typename CK::Construct_line_arc_2()(l,caps, capt);
+	  arc = la;
 	  *res++ = arc;
 	}
       } else {
-	Circular_arc_2 carc(typename CK::Construct_circle_2()(ps, pt, bulge),
-			    caps, capt);
+	Circular_arc_2 carc = typename CK::Construct_circular_arc_2()(typename CK::Construct_circle_2()(ps, pt, bulge),
+								      caps, capt);
 	arc = carc;
 	*res++ = arc;
       }
@@ -133,12 +133,12 @@ template<class CK,class Circular_arc_2, class Line_arc_2, class OutputIterator>
     
     if(bulge == 0){
       if(xypt != xyfirst){
-	arc = Line_arc_2(typename CK::Construct_line_2()(pt, first),capt, points.find(xyfirst)->second);      
+	arc = typename CK::Construct_line_arc_2()(typename CK::Construct_line_2()(pt, first),capt, points.find(xyfirst)->second);      
 	*res++ = arc;
       }
     } else {
-      Circular_arc_2 carc(typename CK::Construct_circle_2()(pt, first, bulge),
-			  capt, points.find(xyfirst)->second);
+      Circular_arc_2 carc = typename CK::Construct_circular_arc_2()(typename CK::Construct_circle_2()(pt, first, bulge),
+								    capt, points.find(xyfirst)->second);
       arc = carc;
       *res++ = arc;
     }
