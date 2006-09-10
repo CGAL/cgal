@@ -62,6 +62,9 @@ template <class CK>
     typedef typename CK::Compute_Circular_y_2        Compute_Circular_y_2;
   
 
+    typedef Bbox_functors::Construct_line_arc_2<Self> Construct_line_arc_2;
+    typedef Bbox_functors::Construct_circular_arc_2<Self> Construct_circular_arc_2;
+
     typedef Bbox_functors::Construct_circular_source_vertex_2<Self> Construct_circular_source_vertex_2;
     typedef Bbox_functors::Construct_circular_target_vertex_2<Self> Construct_circular_target_vertex_2;
     typedef Bbox_functors::Compare_x_2<Self>                 Compare_x_2;
