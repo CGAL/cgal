@@ -658,6 +658,7 @@ void Default_simulator<S, PQ>::audit_all_kdss()
     //CGAL_exactness_postcondition_code((*it)->new_notification(Listener::HAS_VERIFICATION_TIME));
     CGAL_postcondition_code((*it)->new_notification(Listener::HAS_AUDIT_TIME));
   }
+  queue_.audit_events();
 #endif
 }
 

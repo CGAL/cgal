@@ -245,8 +245,33 @@ struct Updatable_Delaunay_triangulation_2 {
 					   soc_(kk.positive_side_of_oriented_circle_2_object()),
 					   active_(ik_.number_of_point_2s(), false),
 					   coef_cache_(ik_.number_of_point_2s()),
-					   failure_time_(ik_.number_of_point_2s(), 1){
+					   failure_time_(ik_.number_of_point_2s(), 1), 
+					   is_init_(false), activate_time_(-1){
       clear_stats();
+    }
+
+    bool is_initializing() const {
+      return is_init_;
+    }
+
+    void set_is_initializing(bool ft) const {
+      is_init_=ft;
+    }
+
+    NT activate_time() const {
+      return activate_time_;
+    }
+
+    void set_activate_time(NT t) {
+      activate_time_=t;
+    }
+
+    bool has_activate_time() const {
+      return activate_time_ >=0;
+    }
+
+    std::vector<Point_key>& activate_list() {
+      return activate_list_;
     }
 
     void clear_stats() {
@@ -279,6 +304,7 @@ struct Updatable_Delaunay_triangulation_2 {
     // need start time for each point
     INT cur_interval(Point_key a, INT ct, int i) const {
       if (is_active(a)) {
+	CGAL_precondition(ct.inf()>=0 && ct.sup() <=1);
 
 	//INT c[2];
 	// (st-1)fi-ii+fi
@@ -286,7 +312,6 @@ struct Updatable_Delaunay_triangulation_2 {
 
 	//CGAL_precondition(ct.inf() >= 0);
 	//CGAL_precondition(ct.sup() <= 1);
-
 	return coef_cache_[a.to_index()][i][0] + ct*coef_cache_[a.to_index()][i][1];
       } else {
 	return CGAL::to_interval(initial(a)[i]);
@@ -703,7 +728,9 @@ struct Updatable_Delaunay_triangulation_2 {
     std::vector<double> failure_time_;
     mutable std::map<Cert_tuple,Cache_data> cache_;
     std::map<Cert_tuple, Exact_certificate> check_;
-
+    bool is_init_;
+    NT activate_time_;
+    std::vector<Point_key> activate_list_;
 
     mutable unsigned int kinetic_certificates_;
     mutable unsigned int unfailing_kinetic_certificates_;
@@ -899,6 +926,10 @@ struct Updatable_Delaunay_triangulation_2 {
     typedef typename Default_traits::Point_2 Point_2;
     typedef typename Default_traits::Simulator Simulator;
 
+
+    bool is_exact() const {
+      return true;
+    }
     /*typename Simulation_traits::Active_points_2_table::Handle
       active_points_2_table_handle() {
       return ui_->active_points_2_table_handle();
@@ -915,8 +946,13 @@ struct Updatable_Delaunay_triangulation_2 {
 
     Cert_tuple tuple(typename Default_traits::Edge e) const {
       Point_key ks[4];
-      P::edge_points(e, ks);
-      return Cert_tuple(ks);
+      ks[0]= TDS_helper::origin(e)->point();
+      ks[1]= TDS_helper::third_vertex(e)->point();
+      ks[2]= TDS_helper::destination(e)->point();
+      ks[3]= TDS_helper::mirror_vertex(e)->point();
+      if (ks[1] == Point_key() || ks[3]==Point_key()
+	  || ks[0] == Point_key() || ks[2]== Point_key()) return Cert_tuple();
+      else return Cert_tuple(ks);
     }
     
     void point_changed(Point_key k){
@@ -1004,9 +1040,9 @@ struct Updatable_Delaunay_triangulation_2 {
 
 
     Certificate_pair certificate_failure_time(typename Default_traits::Edge e) {
-      if (is_hull_edge(e)) return null_pair();
 
       Cert_tuple ct= tuple(e);
+      if (ct == Cert_tuple()) return null_pair();
 #ifndef NDEBUG
       Exact_time actual_failure_time;
       {
@@ -1247,14 +1283,25 @@ struct Updatable_Delaunay_triangulation_2 {
       } else return false;
     }
 
+    bool test_and_add_one(Edge e, std::vector<Point_key> &active) const {
+      ++ui_->static_certificates_;
+      if (!compute_ok(e, ui_->fk_)) {
+	//add(e.first->vertex(0)->point(), active);
+	//add(e.first->vertex(1)->point(), active);
+	//add(e.first->vertex(2)->point(), active);
+	add(TDS_helper::mirror_vertex(e)->point(), active);
+	return true;
+      } else return false;
+    }
+
     template <class TDS> 
     void initialize_events(const TDS &triangulation,
 			   Indirect_kernel fk) {
-      ui_->num_edges_=triangulation.number_of_edges();
+      ui_->num_edges_=triangulation.tds().number_of_edges();
       ui_->set_final_kernel(fk);
       std::vector<Point_key> active;
-      for (typename TDS::Edge_iterator it= triangulation.edges_begin(); 
-	   it != triangulation.edges_end(); ++it){
+      for (typename TDS::Finite_edges_iterator it= triangulation.finite_edges_begin(); 
+	   it != triangulation.finite_edges_end(); ++it){
 	if (test_and_add(*it, active)) {
 	  ++ui_->bad_edges_;
 	}
@@ -1281,13 +1328,20 @@ struct Updatable_Delaunay_triangulation_2 {
       //++num_events_;
       // schedule a bulk set event for next rational time
       std::vector<Point_key> active;
-      test_and_add(e, active);
-
+      //test_and_add(e, active);
+      //CGAL_precondition(ui_->is_active(e.first->vertex((e.second+1)%3)->point()));
+      //CGAL_precondition(ui_->is_active(e.first->vertex((e.second+2)%3)->point()));
+      //CGAL_precondition(ui_->is_active(e.first->vertex(e.second)->point()));
+      add(e.first->vertex(0)->point(), active);
+      add(e.first->vertex(1)->point(), active);
+      add(e.first->vertex(2)->point(), active);
       Edge em= TDS_helper::mirror_edge(e);
-      test_and_add(Edge(e.first, (e.second+1)%3), active);
-      test_and_add(Edge(e.first, (e.second+2)%3), active);
-      test_and_add(Edge(em.first, (em.second+1)%3), active);
-      test_and_add(Edge(em.first, (em.second+2)%3), active);
+      //CGAL_precondition(ui_->is_active(em.first->vertex(em.second)->point()));
+      add(em.first->vertex(em.second)->point(), active);
+      test_and_add_one(Edge(e.first, (e.second+1)%3), active);
+      test_and_add_one(Edge(e.first, (e.second+2)%3), active);
+      test_and_add_one(Edge(em.first, (em.second+1)%3), active);
+      test_and_add_one(Edge(em.first, (em.second+2)%3), active);
       
       Interpolate_event ev(tr_, 
 			   ui_,
@@ -1403,6 +1457,9 @@ struct Updatable_Delaunay_triangulation_2 {
 	if (ic(*c) != fc(*c)) {
 	  motions_.push_back(MP(*c, interpolate_t1(time_, ic(*c), fc(*c))));
 	}
+      }
+      if (!empty()) {
+	CGAL_UD_DEBUG("Will Interpolate at " << time());
       }
     }
     
@@ -1603,7 +1660,7 @@ struct Updatable_Delaunay_triangulation_2 {
     Indirect_kernel fk;
     fk.new_point_2s(pts.begin(), pts.end());
     kdel_->set_has_certificates(true, true);
-    kdel_->visitor().initialize_events(kdel_->triangulation_data_structure(), fk);
+    kdel_->visitor().initialize_events(kdel_->triangulation(), fk);
     return fk;
   }
 
@@ -1667,60 +1724,38 @@ struct Updatable_Delaunay_triangulation_2 {
     };
   }
   
-  static bool is_hull_edge(const Edge &e) {
+  /*static bool is_hull_edge(const Edge &e) {
     return ! TDS_helper::mirror_vertex(e)->point().is_valid()
       || ! TDS_helper::third_vertex(e)->point().is_valid()
       || ! TDS_helper::origin(e)->point().is_valid()
       || ! TDS_helper::destination(e)->point().is_valid();
-  }
+      }*/
 
   
   static bool compute_ok(const Edge &e,  Indirect_kernel sk) {
     //typename Indirect_kernel::Current_coordinates 
     //cc= sk.current_coordinates_object();
-    if (is_hull_edge(e)){
-      typename Indirect_kernel::Orientation_2 o2= sk.orientation_2_object();
-      Point_key ks[4];
-      ks[0]= TDS_helper::origin(e)->point();
-      ks[1]= TDS_helper::third_vertex(e)->point();
-      ks[2]= TDS_helper::destination(e)->point();
-      ks[3]= TDS_helper::mirror_vertex(e)->point();
-      
-      bool odd_parity=false;
-      bool infinity=false;
-      for (unsigned int i=0; i<4; ++i) {
-	if (infinity) {
-	  ks[i-1]=ks[i];
-	} else {
-	  if (ks[i] == Point_key()) {
-	    infinity=true;
-	    odd_parity= ((i%2)==1);
-	  }
-	}
+    Point_key ks[4];
+    ks[0]= TDS_helper::origin(e)->point();
+    ks[1]= TDS_helper::third_vertex(e)->point();
+    ks[2]= TDS_helper::destination(e)->point();
+    ks[3]= TDS_helper::mirror_vertex(e)->point();
+    for (unsigned int i=0; i< 4; ++i){
+      if (ks[i]==Point_key()) {
+	return true;
       }
-      if (odd_parity) {
-	std::swap(ks[0], ks[1]);
-      }
-      CGAL::Orientation o=o2(ks[0], ks[1], ks[2]);
-      return o==CGAL::POSITIVE;
-    } else {
-      typename Indirect_kernel::Side_of_oriented_circle_2 soc
-	= sk.side_of_oriented_circle_2_object();
-
-      Point_key ks[4];
-      ks[0]= TDS_helper::origin(e)->point();
-      ks[1]= TDS_helper::third_vertex(e)->point();
-      ks[2]= TDS_helper::destination(e)->point();
-      ks[3]= TDS_helper::mirror_vertex(e)->point();
-      
-      CGAL::Oriented_side s=soc(ks[0], ks[1], ks[2], ks[3]);
-
-      if (s== CGAL::ON_ORIENTED_BOUNDARY) {
-	CGAL_UD_DEBUG("Degeneracy with edge " 
-		      << ks[0] << " " << ks[2] << std::endl);
-      }
-      return s!= CGAL::ON_NEGATIVE_SIDE;
     }
+    
+    typename Indirect_kernel::Side_of_oriented_circle_2 soc
+      = sk.side_of_oriented_circle_2_object();
+      
+    CGAL::Oriented_side s=soc(ks[0], ks[1], ks[2], ks[3]);
+    
+    if (s== CGAL::ON_ORIENTED_BOUNDARY) {
+      CGAL_UD_DEBUG("Degeneracy with edge " 
+		    << ks[0] << " " << ks[2] << std::endl);
+    }
+    return s!= CGAL::ON_NEGATIVE_SIDE;
   }
 
  

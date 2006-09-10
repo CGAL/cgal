@@ -135,6 +135,8 @@ public:
     front_list_=lt;
   }
 
+  
+
   bool operator<(const This &o) const {
     CGAL::Comparison_result c= CGAL::compare(time(), o.time());
     if (c != CGAL::EQUAL) return c== CGAL::SMALLER;
@@ -153,7 +155,7 @@ public:
   virtual CGAL::Comparison_result compare_concurrent(Key a, Key b) const=0;
   virtual bool merge_concurrent(Key a, Key b)=0;
   virtual void *kds() const{return NULL;}
-
+  virtual void audit(Key) const{};
 private:
   Priority time_;
   List front_list_;
@@ -220,6 +222,9 @@ public:
   }
   virtual void process() {
     event_.process();
+  }
+  virtual void audit(typename P::Key k) const {
+    event_.audit(k);
   }
   virtual CGAL::Comparison_result compare_concurrent(typename P::Key a, typename P::Key b) const{
     return event_.compare_concurrent(a,b);
@@ -578,6 +583,15 @@ public:
     initialize(start_time, end_time);
   }
   
+  void audit_events() const {
+    for (typename Queue::const_iterator it= front_.begin(); it != front_.end(); ++it) {
+      it->audit(Key(const_cast<Item*>(&*it)));
+    }
+    for (typename Queue::const_iterator it= back_.begin(); it != back_.end(); ++it) {
+      it->audit(Key(const_cast<Item*>(&*it)));
+    }
+  }
+
   void clear() {
     front_.clear();
     back_.clear();

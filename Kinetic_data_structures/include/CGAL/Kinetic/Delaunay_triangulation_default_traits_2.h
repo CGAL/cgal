@@ -148,6 +148,11 @@ public:
   SOC positive_side_of_oriented_circle_2_object() const {
     return soc_;
   }
+  
+  bool is_exact() const {
+    return st_.is_exact();
+  }
+
 protected:
 
 

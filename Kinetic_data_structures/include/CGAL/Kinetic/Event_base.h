@@ -26,6 +26,8 @@ public:
 			Key b) {
     return false;
   }
+  template <class K>
+  void audit(K k) const {}
 protected:
   KDS_handle kds_;
 };

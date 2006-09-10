@@ -40,7 +40,7 @@ struct Triangulation_data_structure_helper_2
   static typename Face::Edge_label get_undirected_edge_label(const Edge &e) {
 #ifndef NDEBUG
     if (get_directed_edge_label(e) != get_directed_edge_label(mirror_edge(e))) {
-      std::cerr << "Edge from " << origin(e)->point() << " to " 
+      std::cerr << "FAILURE Edge from " << origin(e)->point() << " to " 
 		<< destination(e)->point() << " is screwed." << std::endl;
       std::cerr << get_directed_edge_label(e) << " "
                 <<  get_directed_edge_label(mirror_edge(e)) << std::endl;

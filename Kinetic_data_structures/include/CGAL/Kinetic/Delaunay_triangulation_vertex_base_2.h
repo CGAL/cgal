@@ -34,13 +34,13 @@ public:
   Delaunay_triangulation_vertex_base_2(Face_handle c)
     : Vb(c), degree_(-1) {}
 
-  unsigned int neighbors() const { return std::abs(degree_); }
-  bool neighbors_is_changed() const {return degree_<0;}
-  void set_neighbors_is_changed(bool tf) {
+  unsigned int neighbors() const { return degree_; } // was abs
+  //bool neighbors_is_changed() const {return degree_<0;}
+  /*void set_neighbors_is_changed(bool tf) {
     if (tf) degree_= -std::abs(degree_);
     else degree_= std::abs(degree_);
     CGAL_postcondition(neighbors_is_changed()==tf);
-  } 
+    } */
   void set_neighbors(int d) {degree_=d;}
 };
 

@@ -79,7 +79,6 @@ public:
   const Static_kernel& static_kernel_object() const {return k_;}
   const Kinetic_kernel& kinetic_kernel_object() const {return kk_;}
   const Function_kernel& function_kernel_object() const {return fk_;}
-
 protected:
   Static_kernel k_;
   Kinetic_kernel kk_;
@@ -127,6 +126,9 @@ struct Suggested_exact_simulation_traits_base: public Simulation_traits<Suggeste
 			    Suggested_exact_simulation_traits_types::Simulator> P;
   Suggested_exact_simulation_traits_base(const P::Time &lb, const P::Time &ub): P(lb, ub) {}
   Suggested_exact_simulation_traits_base() {}
+  bool is_exact() const {
+    return true;
+  }
 };
 
 struct Suggested_inexact_simulation_traits_types
@@ -157,6 +159,9 @@ struct Suggested_inexact_simulation_traits_base: public Simulation_traits<Sugges
 			    Suggested_inexact_simulation_traits_types::Simulator> P;
   Suggested_inexact_simulation_traits_base(const P::Time &lb, const P::Time &ub): P(lb, ub) {}
   Suggested_inexact_simulation_traits_base() {}
+  bool is_exact() const {
+    return false;
+  }
 };
 
 
