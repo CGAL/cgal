@@ -26,13 +26,10 @@ CGAL_BEGIN_NAMESPACE
 
 template <class Polyhedron_3, class SkinSurface_3>
 class Skin_surface_subdivision_policy_with_face_info_3 
-  : public Skin_surface_subdivision_policy_base_3<Polyhedron_3,SkinSurface_3>
 {
 public:
   typedef Polyhedron_3                            Polyhedron;
   typedef SkinSurface_3                           Skin_surface;
-  typedef Skin_surface_subdivision_policy_base_3<Polyhedron_3,SkinSurface_3>
-                                                  Base;
   typedef typename Polyhedron::Traits             P_traits;
 
   typedef typename Polyhedron::Vertex_handle      P_vertex_handle;
@@ -45,7 +42,7 @@ public:
   typedef typename P_traits::Plane_3     P_plane;
 
   Skin_surface_subdivision_policy_with_face_info_3(Skin_surface const& skin)
-    : Base(skin) {
+    : ss_3(skin) {
     
   }
 
@@ -75,6 +72,8 @@ public:
 		     (vh->point())));
   }
     
+protected:
+  Skin_surface const &ss_3;
 };
 
 CGAL_END_NAMESPACE

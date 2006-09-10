@@ -32,33 +32,33 @@ template <class Polyhedron_3,
 	  class SubdivisionPolicy_3>
 class Skin_surface_sqrt3
 {
-  typedef Polyhedron_3                                        Polyhedron;
-  typedef SkinSurface_3                                       Skin_surface_3;
+  typedef Polyhedron_3                                      Polyhedron;
+  typedef SkinSurface_3                                     Skin_surface_3;
   // Projects points to the skin surface:
-  typedef SubdivisionPolicy_3                                 Subdivision_policy;
-//   typedef typename Subdivision_policy::Triangulation           Triangulation;
+  typedef SubdivisionPolicy_3                               Subdivision_policy;
   
-  typedef typename Polyhedron::Traits                         Kernel;
-  typedef typename Kernel::Point_3                            Point;
-  typedef typename Kernel::Vector_3                           Vector;
+  typedef typename Polyhedron::Traits                       Kernel;
+  typedef typename Kernel::Point_3                          Point;
+  typedef typename Kernel::Vector_3                         Vector;
 	
-  typedef typename Polyhedron::Vertex                         Vertex;
-  typedef typename Polyhedron::Vertex_handle                  Vertex_handle;
-  typedef typename Polyhedron::Vertex_iterator                Vertex_iterator;
-  typedef typename Polyhedron::Edge_iterator                  Edge_iterator;
-  typedef typename Polyhedron::Halfedge_handle                Halfedge_handle;
-  typedef typename Polyhedron::Halfedge_iterator              Halfedge_iterator;
+  typedef typename Polyhedron::Vertex                       Vertex;
+  typedef typename Polyhedron::Vertex_handle                Vertex_handle;
+  typedef typename Polyhedron::Vertex_iterator              Vertex_iterator;
+  typedef typename Polyhedron::Edge_iterator                Edge_iterator;
+  typedef typename Polyhedron::Halfedge_handle              Halfedge_handle;
+  typedef typename Polyhedron::Halfedge_iterator            Halfedge_iterator;
   typedef typename Polyhedron::Halfedge_around_vertex_const_circulator  
-                                                              HV_circulator;
+                                                            HV_circulator;
   typedef typename Polyhedron::Halfedge_around_facet_circulator
-                                                              HF_circulator;
-  typedef typename Polyhedron::Facet                          Facet;
-  typedef typename Polyhedron::Facet_handle                   Facet_handle;
-  typedef typename Polyhedron::Facet_iterator                 Facet_iterator;
-  typedef typename Kernel::FT                                 FT;
+                                                            HF_circulator;
+  typedef typename Polyhedron::Facet                        Facet;
+  typedef typename Polyhedron::Facet_handle                 Facet_handle;
+  typedef typename Polyhedron::Facet_iterator               Facet_iterator;
+  typedef typename Kernel::FT                               FT;
 
 public:
-  Skin_surface_sqrt3(Polyhedron &P, SkinSurface_3 &skin, const Subdivision_policy &policy) 
+  Skin_surface_sqrt3(Polyhedron &P, SkinSurface_3 &skin, 
+		     const SubdivisionPolicy_3 &policy) 
     : P(P), ss(skin), policy(policy) {}
 
   //*********************************************
@@ -147,16 +147,15 @@ void subdivide_skin_surface_mesh_3(
           Polyhedron_3 &p, 
           const SkinSurface_3 &skin,
           int nSubdiv = 1) {
-  typedef Skin_surface_subdivision_policy_base_3<Polyhedron_3, SkinSurface_3> 
-    Subdivision_policy;
-  typedef Skin_surface_sqrt3<Polyhedron_3, SkinSurface_3, Subdivision_policy>   
-    Subdivider;
+  typedef Skin_surface_subdivision_policy_default_3<Polyhedron_3,
+                                                    SkinSurface_3> Policy;
+  typedef Skin_surface_sqrt3<Polyhedron_3, 
+                             SkinSurface_3, 
+                             Policy>                            Subdivider;
 
-  typedef Skin_surface_subdivision_policy_base_3<Polyhedron_3, SkinSurface_3>
-    Policy;
   
-  Policy *policy = get_subdivision_policy(p, skin);
-  Subdivider subdivider(p, skin, *policy);
+  Policy policy(skin);
+  Subdivider subdivider(p, skin, policy);
   subdivider.subdivide(nSubdiv);
 }
 

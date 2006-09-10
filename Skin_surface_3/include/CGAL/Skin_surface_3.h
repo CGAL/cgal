@@ -29,6 +29,8 @@
 // Contains the weighted converter:
 #include <CGAL/Regular_triangulation_filtered_traits_3.h>
 
+#include <CGAL/Triangulation_vertex_base_with_info_3.h>
+#include <CGAL/Triangulation_cell_base_with_info_3.h>
 #include <CGAL/triangulate_mixed_complex_3.h>
 
 // Needed for the (Delaunay) surface mesher
@@ -85,7 +87,12 @@ public:
   typedef Skin_surface_mesher_oracle_3<Mesher_Gt,Self> Surface_mesher_traits_3;
 
 private:
-  
+  // Triangulated_mixed_complex:
+  typedef Simple_cartesian<Interval_nt_advanced>                       FK;
+  typedef Triangulation_vertex_base_with_info_3<Simplex, FK>           Vb;
+  typedef Triangulation_cell_base_with_info_3<Quadratic_surface *, FK> Cb;
+  typedef Triangulation_data_structure_3<Vb,Cb>                        Tds;
+  typedef Triangulation_3<FK, Tds>                                     TMC;
 public:
   template < class WP_iterator >
   Skin_surface_3(WP_iterator begin, WP_iterator end, 
@@ -115,6 +122,12 @@ public:
     }
     
 
+    // Construct the Triangulated_mixed_complex:
+    Triangulated_mixed_complex_observer_3<TMC, Regular>
+      observer(shrink_factor);
+    triangulate_mixed_complex_3(regular, shrink_factor, tmc, observer, true);
+
+				
     mc_triangulator = new CMCT(regular, verbose);
 
   }
@@ -524,6 +537,8 @@ private:
   Sphere _bounding_sphere;
   mutable Random rng;
 
+  // Triangulated mixed complex:
+  TMC tmc;
   // We want to construct this object later (the pointer):
   CMCT *mc_triangulator;
 };

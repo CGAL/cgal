@@ -1,5 +1,5 @@
-#define CGAL_PROFILE
-#define CGAL_NO_ASSERTIONS
+// #define CGAL_PROFILE
+// #define CGAL_NO_ASSERTIONS
 
 // examples/Skin_surface_3/skin_surface_simple.C
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -10,7 +10,7 @@
 #include <list>
 
 #include <fstream>
-#include "skin_surface_writer.h"
+//#include "skin_surface_writer.h"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Skin_surface_traits_3<K>                      Traits;
@@ -45,8 +45,8 @@ int main(int argc, char *argv[]) {
 
   std::cout << "Is closed: " << (p.is_closed() ? "Yes" : "No") << std::endl;
 
-  std::ofstream out("mesh.off");
-  write_polyhedron_with_normals(p, skin_surface, out);
+//   std::ofstream out("mesh.off");
+// //   write_polyhedron_with_normals(p, skin_surface, out);
 //   out << p;
 
   return 0;

@@ -25,6 +25,15 @@
 
 CGAL_BEGIN_NAMESPACE
 
+template <class T>
+struct SS_Dereference_type {
+  typedef T value_type;
+};
+template <class T>
+struct SS_Dereference_type<T *> {
+  typedef T value_type;
+};
+
 template <class TriangulatedMixedComplex_3,
 	  class RegularTriangulation_3>
 class Triangulated_mixed_complex_observer_3 {
@@ -35,7 +44,7 @@ public:
   typedef TriangulatedMixedComplex_3                 Triangulated_mixed_complex;
   typedef typename Triangulated_mixed_complex::Triangulation_data_structure
                                                      TMC_TDS;
-  typedef typename TMC_TDS::Cell::Quadratic_surface  Quadr_surface; 
+  typedef typename SS_Dereference_type<typename TMC_TDS::Cell::Info>::value_type               Quadr_surface; 
 
   typedef typename Regular_traits::FT                FT;
 
@@ -155,7 +164,7 @@ public:
 	}
       }
     }
-    ch->surf = surf;
+    ch->info() = surf;
     //ch->simp = s;
   }
 
