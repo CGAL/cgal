@@ -178,6 +178,129 @@ class In_x_range_2
 
   };
 
+
+
+template < class BK >
+  class Construct_line_arc_2
+  {
+
+    typedef typename BK::Point_2                   Point_2;
+    typedef typename BK::Line_2                    Line_2;
+    typedef typename BK::Circle_2                  Circle_2;
+    typedef typename BK::Circular_arc_point_2      Circular_arc_point_2;
+    typedef typename BK::Segment_2                 Segment_2;
+    typedef typename BK::Line_arc_2                Line_arc_2;
+
+  public:
+    typedef Line_arc_2   result_type;
+    typedef Arity_tag<3> Arity;
+    
+    result_type
+    operator()(void) 
+    { return Rep(); }
+
+    result_type
+    operator()(const Line_2 &support,
+	       const Circle_2 &c1,const bool b1,
+	       const Circle_2 &c2,const bool b2) const
+    { return Line_arc_2(support,c1,b1,c2,b2); }
+
+    result_type
+    operator()(const Line_2 &support,
+	       const Line_2 &l1,
+	       const Line_2 &l2) const
+    { return Line_arc_2(support,l1,l2); }
+
+    result_type
+    operator()(const Line_2 &support,
+	       const Circular_arc_point_2 &p1,
+	       const Circular_arc_point_2 &p2) const
+    { return Line_arc_2(support,p1,p2); }
+
+//     result_type
+//     operator()(const Line_2 &support,
+// 	       const Point_2 &p1,
+// 	       const Point_2 &p2) const
+//     { return Line_arc_2(support,p1,p2); }
+
+    result_type
+    operator()(const Segment_2 &s) const
+    { return Line_arc_2(s); }
+
+    result_type
+    operator()(const Point_2 &p1,
+	       const Point_2 &p2) const
+    { return Line_arc_2(p1,p2); }
+
+  };
+
+
+
+  template < class BK >
+  class Construct_circular_arc_2
+  {
+
+    typedef typename BK::FT                           FT;
+    typedef typename BK::RT                           RT;
+    typedef typename BK::Point_2                      Point_2;
+    typedef typename BK::Line_2                       Line_2;
+    typedef typename BK::Circle_2                     Circle_2;
+    typedef typename BK::Circular_arc_2               Circular_arc_2;
+    typedef typename BK::Circular_arc_point_2         Circular_arc_point_2;
+
+  public:
+    typedef  Circular_arc_2 result_type;
+    typedef  Arity_tag<3>   Arity;
+    
+    result_type
+    operator()(void) 
+    { return Circular_arc_2(); }
+
+    result_type
+    operator()(const Circle_2 &c) const
+    { return Circular_arc_2(c); }
+
+    result_type
+    operator()(const Circle_2 &support,
+               const Circular_arc_point_2 &source, 
+               const Circular_arc_point_2 &target) const
+    { return Circular_arc_2(support,source,target); }
+
+    result_type
+    operator()(const Circle_2 &support,
+               const Line_2 &l1, bool b1,
+               const Line_2 &l2, bool b2) const
+    { return Circular_arc_2(support,l1,b1,l2,b2); }
+
+    result_type
+    operator()(const Circle_2 &c,
+               const Circle_2 &c1, bool b_1,
+               const Circle_2 &c2, bool b_2) const
+    { return Circular_arc_2(c,c1,b_1,c2,b_2); }
+
+    result_type
+    operator()(const Circular_arc_2 &A,
+               bool b,
+               const Circle_2 &ccut, bool b_cut) const
+    { return Circular_arc_2(A,b,ccut,b_cut); }
+
+    result_type
+    operator()(const Point_2 &begin,
+               const Point_2 &middle, 
+               const Point_2 &end) const
+    { return Circular_arc_2(begin,middle,end); }
+
+    result_type
+    operator()(const Point_2 &begin,
+               const Point_2 &end,
+	       const FT& bulge) const
+    { return Circular_arc_2(begin,end,bulge); }
+
+  };
+
+
+
+
 template <class BK>
 class Construct_circular_source_vertex_2
   {
