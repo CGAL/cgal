@@ -67,6 +67,11 @@ namespace CircularFunctors {
     return AK().compare_xy_object()(p0.coordinates(), p1.coordinates());
   }
 
+  // PRE CONDITION: 
+  // The coordinates of P, Q, R have to have the same 
+  // delta or (beta == 0 || delta == 0)
+  // We cannot code this pre condition because
+  // if Root_of_2 is interval_nt "beta", "delta" mean nothing
   template < class CK >
   Orientation 
   orientation(const typename CK::Circular_arc_point_2 &p,
