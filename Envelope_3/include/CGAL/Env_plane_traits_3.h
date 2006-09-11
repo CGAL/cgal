@@ -27,7 +27,7 @@
 #include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/number_utils.h> 
 #include <CGAL/Envelope_3/Envelope_base.h>
-#include <CGAL/Envelope_3/Env_plane_constructions.h>
+#include <CGAL/Envelope_3/Env_plane_traits_3_functions.h>
 
 CGAL_BEGIN_NAMESPACE
 

@@ -17,8 +17,8 @@
 //
 // Author(s)     : Baruch Zukerman     <baruchzu@post.tau.ac.il>
 
-#ifndef CGAL_ENV_PLANE_CONSTRUCTIONS_H
-#define CGAL_ENV_PLANE_CONSTRUCTIONS_H
+#ifndef CGAL_ENV_PLANE_TRAITE_3_FUNCTIONS_H
+#define CGAL_ENV_PLANE_TRAITE_3_FUNCTIONS_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Object.h>
