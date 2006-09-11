@@ -47,11 +47,14 @@ public:
 
   //! The constructor
   Active_objects_batch_listener_helper(typename Moving_object_table_listener::Notifier_handle h,
-				 KDS *kds):
+				       KDS *kds,
+				       bool insert):
     Moving_object_table_listener(h), t_(kds) {
-    for (typename Moving_object_table_listener::Notifier::Key_iterator it= P::notifier()->keys_begin();
-	 it != P::notifier()->keys_end(); ++it) {
-      t_->insert(*it);
+    if (insert) {
+      for (typename Moving_object_table_listener::Notifier::Key_iterator it= P::notifier()->keys_begin();
+	   it != P::notifier()->keys_end(); ++it) {
+	t_->insert(*it);
+      }
     }
   }
   Active_objects_batch_listener_helper(){}

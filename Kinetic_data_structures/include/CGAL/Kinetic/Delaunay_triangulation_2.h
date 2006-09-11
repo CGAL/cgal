@@ -37,7 +37,7 @@
 
 CGAL_KINETIC_BEGIN_NAMESPACE
 
-#define CGAL_DELAUNAY_2_DEBUG(x) 
+#define CGAL_DELAUNAY_2_DEBUG(x) x
 
 template <class KDel>
 struct Delaunay_edge_failure_event: public Event_base<KDel*> {
@@ -165,9 +165,9 @@ public:
     }
     };*/
 
-  void init_data() {
+  void init_data(bool insert) {
     siml_ = Simulator_listener(traits_.simulator_handle(), this);
-    motl_= Moving_point_table_listener(traits_.active_points_2_table_handle(), this);
+    motl_= Moving_point_table_listener(traits_.active_points_2_table_handle(), this, insert);
     has_certificates_=false; 
     clear_stats();
    
@@ -187,7 +187,7 @@ public:
       CGAL_assertion(vit->point().to_index() < del_.number_of_vertices());
       vhs_[vit->point().to_index()]=vit;
     }
-    init_data();
+    init_data(false);
   
     set_has_certificates(true);
   }
@@ -197,7 +197,7 @@ public:
     traits_(st),
     watcher_(w),
     del_(traits_.instantaneous_kernel_object()) {
-    init_data();
+    init_data(true);
     set_has_certificates(true);
   }
 
@@ -312,12 +312,27 @@ public:
 	  f->vertex(0)->set_neighbors(f->vertex(0)->neighbors()+1);
 	  f->vertex(1)->set_neighbors(f->vertex(1)->neighbors()+1);
 	  f->vertex(2)->set_neighbors(f->vertex(2)->neighbors()+1);
-	  if (no_failures) {
+	}
+	if (no_failures) {
+	  for (Face_iterator f = del_.all_faces_begin(); f != del_.all_faces_end(); ++f) {
 	    TDS_helper::set_directed_edge_label(Edge(f,0), traits_.simulator_handle()->null_event());
 	    TDS_helper::set_directed_edge_label(Edge(f,1), traits_.simulator_handle()->null_event());
 	    TDS_helper::set_directed_edge_label(Edge(f,2), traits_.simulator_handle()->null_event());
-	  }  
-	}
+	    if (f->vertex(0)->neighbors() == 3) {
+	      TDS_helper::set_directed_edge_label(Edge(f,1), Event_key()); 
+	      TDS_helper::set_directed_edge_label(Edge(f,2), Event_key()); 
+	    }
+	    if (f->vertex(1)->neighbors() == 3) {
+	      TDS_helper::set_directed_edge_label(Edge(f,0), Event_key()); 
+	      TDS_helper::set_directed_edge_label(Edge(f,2), Event_key()); 
+	    }
+	    if (f->vertex(2)->neighbors() == 3) {
+	      TDS_helper::set_directed_edge_label(Edge(f,1), Event_key()); 
+	      TDS_helper::set_directed_edge_label(Edge(f,0), Event_key()); 
+	    }
+
+	  }
+	}  
 	/*for (typename Triangulation::All_vertices_iterator vit = del_.all_vertices_begin(); 
 	     vit != del_.all_vertices_end(); ++vit) {
 	  int deg=TDS_helper::low_degree(vit, del_.tds());
@@ -623,7 +638,7 @@ public:
    
     watcher_.before_flip(e);
     del_.tds().flip(face,index);
-
+   
     // we also know that CGAL preserves the edge index of the flipped edge
     mirror_index = mirror_face->index(face);
     index= face->index(mirror_face);
@@ -635,6 +650,8 @@ public:
 
     CGAL_assertion(mirror_index == face->mirror_index(index));
     CGAL_assertion(mirror_face == face->neighbor(index));
+
+    watcher_.after_flip(flipped_edge);
 
     decrease_neighbors(flipped_edge.first->vertex(flipped_edge.second));
     increase_neighbors(flipped_edge.first->vertex((flipped_edge.second+1)%3));
@@ -669,7 +686,6 @@ public:
     CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, "Created " << TDS_helper::origin(flipped_edge)->point());
     CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, TDS_helper::destination(flipped_edge)->point() << std::endl);
 
-    watcher_.after_flip(flipped_edge);
     return flipped_edge;
   }
 
