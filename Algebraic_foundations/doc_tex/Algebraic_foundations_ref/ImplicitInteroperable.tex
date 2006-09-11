@@ -1,0 +1,23 @@
+\begin{ccRefConcept}{ImplicitInteroperable}
+
+\ccDefinition
+
+Two types A and B are a model of the \ccc{ImplicitInteroperable} concept,
+in case there is a superior type, such that binary arithmetic operations
+involing A and B result in this type. 
+This type is \ccc{Coercion_traits<A,B>::RET}. 
+
+The supported binary operations are exactly the ones provided by 
+\ccc{Coercion_traits<A,B>::RET} itself. 
+
+In this case \ccc{Coercion_traits<A,B>::Implicit_interoperable} 
+is \ccc{Tag_true}.
+
+\ccRefines
+ \ccc{ExplicitInteroperable}
+ 
+\ccSeeAlso
+\ccRefIdfierPage{Coercion_traits}\\
+\ccRefIdfierPage{ExplicitInteroperable}\\
+
+\end{ccRefConcept}
