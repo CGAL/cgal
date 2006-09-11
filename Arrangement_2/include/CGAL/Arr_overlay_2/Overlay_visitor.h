@@ -108,7 +108,8 @@ public:
   {
     m_red_th = 
       m_red_arr_accessor.bottom_left_fictitious_vertex()->incident_halfedges();
-    if(m_red_th->source()->infinite_in_x() == FINITE)
+    if(m_red_th->source()->infinite_in_x() == FINITE ||
+       m_red_th->source()->infinite_in_x() == PLUS_INFINITY)
       m_red_th = m_red_th->next()->twin();
 
      if(m_red_th->source() == 
@@ -117,7 +118,8 @@ public:
   
     m_blue_th = 
       m_blue_arr_accessor.bottom_left_fictitious_vertex()->incident_halfedges();
-    if(m_blue_th->source()->infinite_in_x() == FINITE)
+    if(m_blue_th->source()->infinite_in_x() == FINITE ||
+       m_blue_th->source()->infinite_in_x() == PLUS_INFINITY)
       m_blue_th = m_blue_th->next()->twin();
 
     if(m_blue_th->source() == 
@@ -378,8 +380,15 @@ public:
       Halfedge_handle_red  red_he  ;
       Halfedge_handle_blue blue_he ;
 
+      
+      // special case: we need to take the face that is incident to the twin
+      // halfedge
+      bool special_case = 
+        (this->current_event()->is_finite_in_x() && 
+         this->current_event()->is_plus_infinite_in_y());
+
       // get the new face
-      Face_handle new_face = res->face();
+      Face_handle new_face = (special_case ? res->twin()->face() : res->face());
 
       //traverse new_face's boundary
       Ccb_halfedge_circulator ccb_end = new_face->outer_ccb();
