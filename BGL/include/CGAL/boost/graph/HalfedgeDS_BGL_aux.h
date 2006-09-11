@@ -335,24 +335,24 @@ public :
 };
 
 template <class HDS_>
-struct HDS_undirected_graph_traits
+struct HDS_halfedge_graph_traits
 {
 public :
   
   typedef HDS_ HDS;
   
-  typedef HDS_all_undirected_edges_iterator<HDS> edge_iterator;
+  typedef HDS_all_undirected_edges_iterator<HDS> undirected_edge_iterator;
   
 };
 
 template <class HDS_>
-struct HDS_undirected_graph_traits<HDS_ const> 
+struct HDS_halfedge_graph_traits<HDS_ const> 
 {
 public :
   
   typedef HDS_ HDS;
   
-  typedef HDS_all_undirected_edges_const_iterator<HDS> edge_iterator;
+  typedef HDS_all_undirected_edges_const_iterator<HDS> undirected_edge_iterator;
   
 };
 

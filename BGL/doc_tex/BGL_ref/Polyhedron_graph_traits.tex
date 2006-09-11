@@ -1,0 +1,83 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+
+\begin{ccRefClass}{boost::graph_traits< CGAL::Polyhedron_3<Traits> >}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccDefinition
+
+The class \ccRefName\ and corresponding free-function overloads provides the specializations for \ccc{Polyhedron_3} required to make it a {\em mutable} model of the Boost Graph types: \ccc{BidirectionalGraph}, \ccc{AdjacencyGraph} and \ccc{EdgeAndVertexListGraph}.
+
+\ccInclude{CGAL/boost/graph/Polyhedron_graph_traits.h}
+
+\ccTypes
+  \ccTypedef{typename Polyhedron_3::Vertex_handle   vertex_descriptor;}
+    {The vertex descriptor.}
+  
+  \ccTypedef{typename Polyhedron_3::Halfedge_handle edge_descriptor;}
+    {The edges descriptor.}
+  
+  \ccTypedef{-implementation-defined- vertex_iterator;}{A \ccc{Polyhedron_3::Vertex_iterator}
+    wrapped to return a \ccc{Polyhedron_3::Vertex_handle} when dereferenced.}
+  
+  \ccTypedef{-implementation-defined- edge_iterator;}{A \ccc{Polyhedron_3::Halfedge_iterator}
+    wrapped to return a \ccc{Polyhedron_3::Halfedge_handle} when dereferenced.}
+  
+  \ccTypedef{-implementation-defined- in_edge_iterator;}{An edge iterator which only iterates over 
+  the incoming \ccc{halfedges} around a vertex. It correspons to a
+  \ccc{Polyhedron_3::Halfedge_around_vertex_circulator}
+  wrapped to return an \ccc{Polyhedron_3::Halfege_handle} when dereferenced}
+  
+  \ccTypedef{-implementation-defined- out_edge_iterator;}{An edge iterator which only iterates over 
+  the outgoing halfedges around a vertex. It correspons to a \ccc{Polyhedron_3::Halfedge_around_vertex_circulator}
+  wrapped to return an \ccc{Polyhedron_3::Halfege_handle} referring to the {\em opposite halfege} when
+  dereferenced.}
+  
+  \ccTypedef{boost::directed_tag directed_category;}{Indicates this is a directed graph.}
+  
+  \ccTypedef{boost::disallow_parallel_edge_tag edge_parallel_category;}
+  {Indicates this graph does not support multiedges.}
+  
+  \ccTypedef{boost::bidirectional_graph_tag  traversal_category;}
+    {Indicates this graph is bidirectional.}
+    
+  \ccTypedef{typename Polyhedron_3::size_type vertices_size_type;}
+    {The size tye of the vertex list.}
+    
+  \ccTypedef{typename Polyhedron_3::size_type edges_size_type;}
+    {The size tye of the edge list.}
+    
+  \ccTypedef{typename Polyhedron_3::size_type degree_size_type;}
+    {The size tye of the adjacency list.}
+  
+\ccIsModel
+\ccc{BidirectionalGraph}
+\ccc{AdjacencyGraph}
+\ccc{EdgeAndVertexListGraph}
+
+\ccSeeAlso
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

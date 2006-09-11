@@ -14,20 +14,23 @@
 %%
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
-\ccRefChapter{Boost Graph Library (\ccc{BGL}) interface to \cgal\ \label{ref-chapter-bgl}}
+\ccRefChapter{Boost Graph Library (BGL) interface to CGAL \label{ref-chapter-BGL}}
 
 This chapter introduces the concepts and classes that correspond to the \cgal\ \ccc{BGL} package.\\
-The packages provides a framework for interfacing \cgal\ incidence data structures to BGL algorithms.
+The packages provides a framework for interfacing \cgal\ data structures as \ccc{BGL} graphs.
 
 \section{Classified Reference Pages}
 
 \ccHeading{Concepts}
-\ccRefConceptPage{ConnectedPlanarGraph} \\
-\ccRefConceptPage{ConnectedPlanarDirectedGraph} \\
+\ccRefConceptPage{ConnectedPlanarDirectedGeometricGraph} \\
+\ccRefConceptPage{HalfedgeGraph} \\
 
 \ccHeading{Classes}
+\ccRefIdfierPage{boost::graph_traits< CGAL::Polyhedron_3<Traits> const > }\\
 \ccRefIdfierPage{boost::graph_traits< CGAL::Polyhedron_3<Traits> > }\\
-\ccRefIdfierPage{boost::graph_traits< CGAL::Polyhedron_3<Traits> const> }\\
+\ccRefIdfierPage{CGAL::geometric_graph_traits< CGAL::Polyhedron_3<Traits> > }\\
+\ccRefIdfierPage{CGAL::halfedge_graph_traits< CGAL::Polyhedron_3<Traits> const > }\\
+\ccRefIdfierPage{CGAL::halfedge_graph_traits< CGAL::Polyhedron_3<Traits> > }\\
 
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of footer

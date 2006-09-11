@@ -1,0 +1,46 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+
+\begin{ccRefClass}{CGAL::halfedge_graph_traits< CGAL::Polyhedron_3<Traits> >}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccDefinition
+
+The class \ccRefName\ and corresponding free-function overloads provides the specializations for \ccc{Polyhedron_3} required to make it a \ccc{mutable} model of a \ccc{HalfedgeGraph}.
+
+\ccInclude{CGAL/boost/graph/Polyhedron_halfedge_graph_traits.h}
+
+\ccTypes
+  \ccTypedef{typename -implementation-defined- undirected_edge_iterator;}{An edge iterator that iterates 
+  over 1 out of 2 halfedges, each time pointing to one and only one of the halfedges for each opposing pair.
+  When dereferenced, it returns a \ccc{Polyhedron_3::Halfedge_const_handle}}
+
+\ccIsModel
+\ccc{HalfedgeGraph}
+
+\ccSeeAlso
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
