@@ -51,17 +51,20 @@ public:
   const typename Function_kernel_t::Root_stack& root_stack() const {
     return rs_;
   }
-  double lower_bound() const {
+  /*double lower_bound() const {
     return estimate_;
-  }
+    }*/
 
   std::ostream &write(std::ostream &out) const {
     out << rs_;
     return out;
   }
+  /*bool operator==(const This &o) const {
+    return rs_== o.rs_;
+    }*/
 private:
   typename Function_kernel_t::Root_stack rs_;
-  double estimate_;
+  //double estimate_;
 };
 
 template <class FK>

@@ -63,6 +63,7 @@ public:
 					    timer_callback_(timer_,const_cast<This*>(this)),
 					    drawable_(NULL), processing_(false) {
     sim_= sh;
+    target_cur_time_= CGAL::to_interval(sim_->current_time()).first;
   }
 
   virtual ~Gui_base() {
@@ -138,7 +139,7 @@ public:
   //! The current time as a double.
   double current_time() const
   {
-    return to_double(sim_->current_time());
+    return target_cur_time_;
   }
 
   //! The speed in logrithmic units.
@@ -206,25 +207,23 @@ protected:
     }
   }
 
-  TT compute_next_timestep() const
-  {
-    return compute_next_timestep(sim_->end_time());
+  bool increment_target_time() {
+    double nt= target_cur_time_+ step_length_kds_time();
+    if (CGAL::compare(nt, target_cur_time_) == CGAL::EQUAL) {
+      std::cerr << "Time failed to advance due to roundoff. This is bad.\n";
+    }
+    target_cur_time_= nt;
+    if (CGAL::compare(TT(nt), sim_->next_event_time()) == CGAL::LARGER) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
-  TT compute_next_timestep(const TT& max_time) const
+  /*TT compute_next_timestep() const
   {
-    double ct= to_double(sim_->current_time());
-    double nt= ct + step_length_kds_time();
-    //Parent::set_current_time(typename Parent::Time(nt));
-    TT t(nt);
-    if (CGAL::compare(t, sim_->current_time()) == CGAL::SMALLER) {
-      std::cerr << "Time failed to advance due to roundoff. This is bad.\n";
-      return sim_->current_time();
-    }
-    //std::cout << "Time is " << t << std::endl;
-    if (CGAL::compare(t, max_time) == CGAL::LARGER) return max_time;
-    else return t;
-  }
+    return compute_next_timestep(sim_->end_time());
+    }*/
 
   double step_length_real_time() const
   {
@@ -244,43 +243,68 @@ protected:
     switch (mode_) {
     case RUNNING:
       {
-	TT nt= compute_next_timestep();
-	sim_->set_current_time(nt);
-	if (sim_->current_time() == sim_->end_time()) {
-	  std::cout << "Simulation reached end of time. "
-		    << "Press \"step over\" to process the next final event (if any)." << std::endl;
+	increment_target_time();
+	TT tt(target_cur_time_);
+	CGAL::Comparison_result cmp=CGAL::compare(tt, sim_->end_time());
+	if (cmp == CGAL::LARGER) {
+	  target_cur_time_ = CGAL::to_interval(sim_->end_time()).second;
+	  ret=false;
+	} else if (cmp== CGAL::EQUAL) {
 	  ret= false;
 	}
-	else ret= true;
+	
+	if (!ret) {
+	  sim_->set_current_time(sim_->end_time());
+	  std::cout << "Simulation reached end of time. "
+		    << "Press \"step over\" to process the next final event (if any)." << std::endl;
+	  set_mode(STOPPED);
+	} else {
+	  sim_->set_current_time(tt);
+	}
 	break;
       }
     case RUNNING_TO_EVENT:
       {
-	TT stop_time= sim_->next_event_time();
-	TT t= compute_next_timestep(stop_time);
-	if (t == stop_time) {
-	  set_mode(STOPPED);
-	  //sim_->set_current_event_number(sim_->current_event_number()+1);
-	  ret= false; break;
+	TT ct(target_cur_time_);
+	if (CGAL::compare(ct, sim_->next_event_time())== CGAL::SMALLER) {
+	  increment_target_time();
+	  TT tt(target_cur_time_);
+	  CGAL::Comparison_result cmp=CGAL::compare(tt, sim_->next_event_time());
+	  if (cmp != CGAL::SMALLER) {
+	    //target_cur_time_ = CGAL::to_interval(sim_->next_event_time()).second;
+	    ret=false;
+	  } 
+	  
+	  if (!ret) {
+	    sim_->set_current_time(sim_->next_event_time());
+	    set_mode(STOPPED);
+	  }
+	} else {
+	  ret=false;
 	}
-	else {
-	  sim_->set_current_time(t);
-	  ret= true; break;
-	}
+	break;
       }
     case RUNNING_THROUGH_EVENT:
       {
-	TT stop_time= sim_->next_event_time();
-	TT t= compute_next_timestep(stop_time);
-	if (t == stop_time) {
-	  set_mode(STOPPED);
+	TT ct(target_cur_time_);
+	if (CGAL::compare(ct, sim_->next_event_time())== CGAL::SMALLER) {
+	  increment_target_time();
+	  TT tt(target_cur_time_);
+	  CGAL::Comparison_result cmp=CGAL::compare(tt, sim_->next_event_time());
+	  if (cmp != CGAL::SMALLER) {
+	    //target_cur_time_ = CGAL::to_interval(sim_->next_event_time()).second;
+	    ret=false;
+	  } 
+	} else {
+	  ret=false;
+	}
+	  
+	if (!ret) {
+	  //sim_->set_current_time(sim_->next_event_time());
 	  sim_->set_current_event_number(sim_->current_event_number()+1);
-	  ret= false; break;
+	  set_mode(STOPPED);
 	}
-	else {
-	  sim_->set_current_time(t);
-	  ret= true; break;
-	}
+	break;
       }
     default:
       std::cerr << "Run callback in invalid mode." << std::endl;
@@ -312,6 +336,7 @@ protected:
   Mode paused_mode_;
   double fps_;
   double speed_log_;
+  double target_cur_time_;
   int dir_of_time_;
   typename Simulator::Handle sim_;
   Timer *timer_;

@@ -186,14 +186,35 @@ struct Updatable_Delaunay_triangulation_2 {
 
 
 
+  typedef typename Kinetic_kernel::Certificate Exact_certificate;
+  typedef typename Function_kernel::Root Exact_time;
 
 
 
 
 
-
-
-
+  /*typedef typename Kinetic_kernel::Positive_side_of_oriented_circle_2::result_type Exact_certificate;
+ 
+  struct Cache_data {
+    Cache_data(){}
+    Cache_data(Exact_certificate cert): cert_(cert){}
+    
+    const Exact_time& failure_time() const {
+      return cert_.failure_time();
+    }
+    
+    void pop_failure_time() {
+      //()) {
+      cert_.pop_failure_time();
+      //}
+    }
+    
+    Exact_certificate cert_;
+#ifndef NDEBUG
+    Exact_certificate check_;
+#endif
+  };
+  */
 
 
 
@@ -201,28 +222,10 @@ struct Updatable_Delaunay_triangulation_2 {
 
   struct Update_information: public Kinetic::Ref_counted<Update_information> {
 
-    typedef typename Kinetic_kernel::Positive_side_of_oriented_circle_2::result_type Exact_certificate;
-    typedef typename Function_kernel::Root Exact_time;
+   
 
-
-    struct Cache_data {
-      Cache_data(){}
-      Cache_data(Exact_certificate cert): cert_(cert){}
-
-      const Exact_time& failure_time() const {
-	return cert_.failure_time();
-      }
-  
-      void pop_failure_time() {
-	//()) {
-	cert_.pop_failure_time();
-	//}
-      }
-
-      Exact_certificate cert_;
-    };
-
-    typedef std::map<Cert_tuple,Cache_data> Cache;
+    
+    //typedef std::map<Cert_tuple,Cache_data> Cache;
     struct Coef_data {
       Coef_data(INT x_0, INT x_1, INT y_0, INT y_1){
 	c_[0][0]=x_0;
@@ -245,8 +248,8 @@ struct Updatable_Delaunay_triangulation_2 {
 					   soc_(kk.positive_side_of_oriented_circle_2_object()),
 					   active_(ik_.number_of_point_2s(), false),
 					   coef_cache_(ik_.number_of_point_2s()),
-					   failure_time_(ik_.number_of_point_2s(), 1), 
-					   is_init_(false), activate_time_(-1), next_activation_(1.0){
+					   failure_time_(ik_.number_of_point_2s(), 1){
+      reset(false);
       clear_stats();
     }
 
@@ -258,7 +261,7 @@ struct Updatable_Delaunay_triangulation_2 {
       is_init_=ft;
     }
 
-    NT activate_time() const {
+    /*NT activate_time() const {
       return activate_time_;
     }
 
@@ -268,7 +271,7 @@ struct Updatable_Delaunay_triangulation_2 {
 
     bool has_activate_time() const {
       return activate_time_ >=0;
-    }
+      }*/
 
     std::vector<Point_key>& activate_list() {
       return activate_list_;
@@ -381,8 +384,12 @@ struct Updatable_Delaunay_triangulation_2 {
       fk_=fk;
     }
 
-    void active_clear() {
-      active_.reset();
+    void reset(bool clear=true) {
+      //activate_time_=-1;
+      next_activation_=1.0;
+      start_time_=-1;
+      is_init_=false;
+      if (clear) active_.reset();
     }
     
     Static_point_2 initial(Point_key pk) const {
@@ -421,7 +428,7 @@ struct Updatable_Delaunay_triangulation_2 {
 
    
     void point_changed(Point_key k){
-      std::vector<typename Cache::iterator> tk;
+      /*std::vector<typename Cache::iterator> tk;
       for (typename Cache::iterator it = cache_.begin(); it != cache_.end(); ++it) {
 	if (it->first[0] == k
 	    || it->first[1] == k
@@ -434,30 +441,32 @@ struct Updatable_Delaunay_triangulation_2 {
       for (unsigned int i=0; i< tk.size(); ++i) {
 	CGAL_UD_DEBUG("Erasing " << tk[i]->first << std::endl);
 	cache_.erase(tk[i]);
-      }
+	}*/
     }
 
 
-
-    bool has_exact_failure_time(Cert_tuple ct) const {
-      return cache_.find(ct) != cache_.end();
-    }    
+    /*template <class Time>
+    bool has_exact_failure_time(Time ct) const {
+      return time.has_exact_failure_time();
+	//cache_.find(ct) != cache_.end();
+	} */   
    
 
-    void ensure_exact_failure_time(Cert_tuple ct,
+    /*void ensure_exact_failure_time(Cert_tuple ct,
 				   double lb) const {
       compute_exact_failure_time(ct, Exact_time(lb));
-    }
+      }*/
 
 
+    /*HMMMMMMM
     void advance_exact_failure_time(Cert_tuple ct) const {
       CGAL_precondition(cache_.find(ct) != cache_.end());
       ++certificate_advances_;
       cache_[ct].pop_failure_time();
-    }
+      }*/
 
 
-    std::pair<double,double> interval_from_exact_failure_time(Cert_tuple ct) const {
+    /*std::pair<double,double> interval_from_exact_failure_time(Cert_tuple ct) const {
       CGAL_precondition(cache_.find(ct) != cache_.end());
       if (cache_[ct].failure_time() >= Exact_time(1)) {
 	return std::make_pair(1.0, -1.0);
@@ -465,108 +474,62 @@ struct Updatable_Delaunay_triangulation_2 {
 	std::pair<double,double> ip= CGAL::to_interval(cache_[ct].failure_time());
 	return ip;
       }
-    }
+      }*/
 
-
-
-    void compute_exact_failure_time(Cert_tuple ct, Exact_time et) const {
-      //CGAL_precondition(check_.find(ct) != check_.end());
-
-      if (cache_.find(ct.opposite()) != cache_.end()) {
-	CGAL_UD_DEBUG("Advancing exact time for " << ct 
-		      << " from " << cache_[ct.opposite()].failure_time()
-		      << std::endl);
-	Cache_data cd = cache_[ct.opposite()];
-	cache_.erase(ct.opposite());
-	++certificate_advances_;
-	cd.pop_failure_time();
-	cache_[ct]= cd;
-	CGAL_postcondition(cache_.find(ct) != cache_.end());
-      }
-      if (cache_.find(ct) == cache_.end()) {
-	CGAL_UD_DEBUG("Computing exact time for " << ct 
-		      << " from " << et << "(" << cache_.size() << ")" << std::endl);
-	++kinetic_certificates_;
-	cache_.insert(typename Cache::value_type(ct,Cache_data(compute_exact_certificate(ct, et))));
-	CGAL_postcondition(cache_.find(ct) != cache_.end());
-	if (exact_failure_time(ct) > 1) {
-	  ++unfailing_kinetic_certificates_;
-	}
-      }
-      CGAL_postcondition(cache_.find(ct) != cache_.end());
-      while (cache_[ct].failure_time() < et) {
-	cache_[ct].pop_failure_time();
-	cache_[ct].pop_failure_time();
-	CGAL_UD_DEBUG("Advancing exact time for " << ct 
-		      << " from " << cache_[ct.opposite()].failure_time()
-		      << std::endl);
-	++certificate_advances_;
-	++certificate_advances_;
-	CGAL_postcondition(cache_.find(ct) != cache_.end());
-	if (exact_failure_time(ct) > 1) {
-	  ++unfailing_kinetic_certificates_;
-	}
-      }
-      CGAL_UD_DEBUG("Got " << cache_[ct].failure_time() << std::endl);
-      CGAL_UD_DEBUG("Check is " << check_.find(ct)->second.failure_time() << std::endl);
-      CGAL_postcondition(cache_[ct].failure_time() == check_.find(ct)->second.failure_time());
-      CGAL_postcondition(cache_.find(ct) != cache_.end());
-    }
-
-
-
-   
-    const Exact_time& exact_failure_time(Cert_tuple ct) const {
-      CGAL_precondition(cache_.find(ct) != cache_.end());
-      return cache_.find(ct)->second.failure_time();
-    }
-
-  
-    Exact_certificate compute_exact_certificate(Cert_tuple ct, Exact_time b) const {
-      Exact_certificate  s= soc_(point(ct[0]),
+    Exact_certificate compute_exact_failure_time(Cert_tuple ct, 
+						 Exact_time et) const {
+      CGAL_UD_DEBUG("Computing exact time for " << ct 
+		    << " from " << et  << std::endl);
+      ++kinetic_certificates_;
+      Exact_certificate ec= soc_(point(ct[0]),
 				 point(ct[1]),
 				 point(ct[2]), 
 				 point(ct[3]),
-				 b, 1);
-      return s;
-    }
-
-
-
-    bool refine(Cert_tuple ct, std::pair<double,double> &iv) const {
-      if (iv.first == iv.second) return false;
-      if (has_exact_failure_time(ct)) return false;
-
-      double dd= iv.second-iv.first;
-      if (dd > .00001) {
-	CGAL::Protect_FPU_rounding<true> prot;
-	std::pair<double,double> oiv=iv;
-	isolate_failure(ct, iv.first, iv.second, 1, true, iv);
-	return oiv != iv;
-      } else {
-	// compute exact;
-	CGAL_assertion(!has_exact_failure_time(ct));
-	++comparison_certificates_;
-	
-	ensure_exact_failure_time(ct, iv.first);
-	iv= CGAL::to_interval(exact_failure_time(ct));
-	return true;
+				 et, 1);
+      if (ec.failure_time() > 1) {
+	++unfailing_kinetic_certificates_;
       }
+      CGAL_UD_DEBUG("Got " << ec.failure_time() << std::endl);
+      return ec;
     }
 
+    void update_exact_failure_time(Cert_tuple ct, Exact_time et,
+				    Cert_tuple ot, 
+				    Exact_certificate& oc) const {
+      //CGAL_precondition(check_.find(ct) != check_.end());
+      CGAL_UD_DEBUG("Updating exact time for  " << ct 
+		    << " starting at " << et << std::endl);
 
+      if (ot != ct) {
+	CGAL_precondition(ot.opposite() == ct);
+	CGAL_UD_DEBUG("Flipping exact time for " << ct 
+		      << " from " << oc.failure_time()
+		      << std::endl);
+	++certificate_advances_;
+	oc.pop_failure_time();
+      }
+      
+      while (oc.failure_time() < et) {
+	oc.pop_failure_time();
+	oc.pop_failure_time();
+	CGAL_UD_DEBUG("Advancing exact time for " << ct 
+		      << " from " << oc.failure_time() 
+		      << std::endl);
+	++certificate_advances_;
+	++certificate_advances_;
+	if (oc.failure_time() > 1) {
+	  ++unfailing_kinetic_certificates_;
+	}
+      }
+      CGAL_UD_DEBUG("Got " << oc.failure_time() << std::endl);
+      
+    }
   
    
 
     std::pair<double,double> join(std::pair<double,double> a, INT b) const {
       return std::make_pair(std::min(a.first, b.inf()),
 			    std::max(a.second, b.sup()));
-    }
-
-
-    Exact_time check_failure_time(Cert_tuple t) const {
-      CGAL_precondition(check_.find(t) != check_.end());
-      return check_.find(t)->second.failure_time();
     }
 
 
@@ -593,8 +556,9 @@ struct Updatable_Delaunay_triangulation_2 {
 				
     Isolate_result isolate_failure(const Cert_tuple& ct, double lb, double ub, 
 				   bool starts_positive, int rem_depth,
+				   int NS,
 				   std::pair<double,double> &ret) const {
-      const int NS=20;
+      //const int NS=10;
       double ld= lb;
       const double growth=1.5;
       double step= (ub-lb)/std::pow(growth,NS-1);
@@ -629,7 +593,8 @@ struct Updatable_Delaunay_triangulation_2 {
 	CGAL_UD_DEBUG("Sign on " << ci << " is " << csn << "(" << i << ")" 
 		      << std::endl);
 	if (csn == CGAL::NEGATIVE) {
-	  CGAL_assertion(has_zero); 
+	  //CGAL_assertion(has_zero); 
+	  // could start negative in the (large) initial interval
 	  //has_negative=true;
 	  if (has_positive) {
 	    certain=CERTAIN_FAILURE;
@@ -665,7 +630,9 @@ struct Updatable_Delaunay_triangulation_2 {
 
 
       if ( has_zero) {
-	if ((certain==CERTAIN_FAILURE && lb != failures.first) || rem_depth == 0
+	if ((certain==CERTAIN_FAILURE 
+	     && (lb != failures.first || starts_positive)) 
+	    || rem_depth == 0
 	    || lb == failures.first && ub == failures.second
 	    /* || .9*(ub-lb) < (failures.second - failures.first)*/) {
 	  CGAL_UD_DEBUG(  "Not recursing with " 
@@ -679,8 +646,13 @@ struct Updatable_Delaunay_triangulation_2 {
 			 << failures.first << " " << failures.second 
 			 << " because " << has_zero << has_positive 
 			 << certain << std::endl);
+	  double nwid = failures.second-failures.first;
+	  double wid = ub-lb;
+	  if (nwid > wid/2.0) NS*=2;
+	  if (nwid < wid/4.0) NS/=2;
 	  return isolate_failure(ct, failures.first, failures.second,
 				 has_positive,
+				 NS,
 				 rem_depth-1, ret);
 	}
       } else {
@@ -693,7 +665,7 @@ struct Updatable_Delaunay_triangulation_2 {
     
     Isolate_result isolate_failure(Cert_tuple ct, double lb, double ub, bool starts_positive,std::pair<double,double> &ret) const {
       CGAL::Protect_FPU_rounding<true> prot;
-      return isolate_failure(ct, lb, ub, starts_positive, 7, ret);
+      return isolate_failure(ct, lb, ub, starts_positive, 7, 10, ret);
     }
 
     
@@ -702,6 +674,13 @@ struct Updatable_Delaunay_triangulation_2 {
     }
     void set_next_activation(double f) {
       next_activation_=f;
+    }
+  
+    double start_time() const {
+      return start_time_;
+    }
+    void set_start_time(double f) {
+      start_time_=f;
     }
   
 
@@ -732,12 +711,13 @@ struct Updatable_Delaunay_triangulation_2 {
     Active active_;
     std::vector<Coef_data > coef_cache_;
     std::vector<double> failure_time_;
-    mutable std::map<Cert_tuple,Cache_data> cache_;
-    std::map<Cert_tuple, Exact_certificate> check_;
+    //mutable std::map<Cert_tuple,Cache_data> cache_;
+    //std::map<Cert_tuple, Exact_certificate> check_;
     bool is_init_;
-    NT activate_time_;
+    //NT activate_time_;
     std::vector<Point_key> activate_list_;
     double next_activation_;
+    double start_time_;
 
     mutable unsigned int kinetic_certificates_;
     mutable unsigned int unfailing_kinetic_certificates_;
@@ -760,17 +740,53 @@ struct Updatable_Delaunay_triangulation_2 {
 
 
   struct Refiner {
-    Refiner(Cert_tuple t, typename Update_information::Handle tbl): tuple_(t), ui_(tbl){}
-    Refiner() {
+    enum State {INTERVAL, EXACT, INVALID};
+
+    Refiner(Cert_tuple t, typename Update_information::Handle tbl): tuple_(t), ui_(tbl), state_(INTERVAL){}
+    Refiner(): state_(INVALID) {
     }
-    typedef typename Update_information::Exact_time Exact_root;
+    bool operator==(const Refiner &o) const {
+      if (state_ != o.state_) return false;
+      CGAL_assertion(state_==INVALID && o.state_==INVALID);
+      return true;
+    }
+    
+    typedef Exact_time Exact_root;
     /*This operator-() const {
       return *this;
       }*/
     
     bool refine(std::pair<double,double> &iv) const {
       CGAL_precondition(ui_ != typename Update_information::Handle());
-      return ui_->refine(tuple_, iv);
+      if (iv.first == iv.second) return false;
+      if (has_exact_root()) return false;
+
+      double dd= iv.second-iv.first;
+      if (dd > .000001) {
+	CGAL::Protect_FPU_rounding<true> prot;
+	std::pair<double,double> oiv=iv;
+	ui_->isolate_failure(tuple(), iv.first, iv.second, 1, 20, true, iv);
+	return oiv != iv;
+      } else {
+	// compute exact;
+	CGAL_assertion(!has_exact_root());
+	++ui_->comparison_certificates_;
+	
+	ensure_exact_root(iv);
+	iv= CGAL::to_interval(exact_root());
+	return true;
+      }
+    }
+
+    const Exact_root& 
+    exact_root() const {
+      /*if (ui_ == typename Update_information::Handle()) {
+	CGAL_assertion(0);
+	static Exact_root er;
+	return er;
+	} else {*/
+      return cert_.failure_time();
+      //}
     }
 
     const Exact_root& 
@@ -780,8 +796,8 @@ struct Updatable_Delaunay_triangulation_2 {
 	static Exact_root er;
 	return er;
 	} else {*/
-      ui_->ensure_exact_failure_time(tuple_, iv.first);
-      return ui_->exact_failure_time(tuple_);
+      ensure_exact_root(iv);
+      return exact_root();
       //}
     }
 
@@ -789,6 +805,9 @@ struct Updatable_Delaunay_triangulation_2 {
       if (tuple_ == Cert_tuple()) {
       } else{
 	out << tuple_;
+	if (has_exact_root()) {
+	  out << " " << exact_root();
+	}
       }
     }
 
@@ -799,9 +818,52 @@ struct Updatable_Delaunay_triangulation_2 {
     bool equal_description(const Refiner &o) const {
       return tuple_== o.tuple_;
     }
+
+    bool has_exact_root() const {
+      return state_== EXACT;
+    }
     
+    void ensure_exact_root(const std::pair<double,double> &iv) const {
+      if (!has_exact_root()) {
+	state_=EXACT;
+	cert_= ui_->compute_exact_failure_time(tuple_, iv.first);
+	CGAL_assertion(check_.failure_time() == cert_.failure_time());
+      }
+    }
+    void ensure_exact_root(const Exact_time &et) const {
+      if (!has_exact_root()) {
+	cert_= ui_->compute_exact_failure_time(tuple_, et);
+	CGAL_assertion(check_.failure_time() == cert_.failure_time());
+      }
+    }
+
+    const Exact_certificate& exact_certificate() const {
+      return cert_;
+    }
+
+    std::pair<double,double> interval_from_exact() const {
+      CGAL_precondition(has_exact_root());
+      if (cert_.failure_time() >= Exact_time(1)) {
+	return std::make_pair(1.0, -1.0);
+      } else {
+	std::pair<double,double> ip= CGAL::to_interval(cert_.failure_time());
+	return ip;
+      }
+    }
+
+    void set_exact_certificate(const Exact_certificate& ec) {
+      CGAL_precondition(!has_exact_root());
+      cert_= ec;
+      CGAL_postcondition(cert_.failure_time() == check_.failure_time());
+    }
+
     Cert_tuple tuple_;
     typename Update_information::Handle ui_;
+    mutable Exact_certificate cert_;
+    mutable State state_;
+#ifndef NDEBUG
+    mutable Exact_certificate check_;
+#endif
   };
 
 
@@ -926,8 +988,6 @@ struct Updatable_Delaunay_triangulation_2 {
     typedef typename Simulation_traits::Simulator::Time Time;
     struct Certificate_data{};
     typedef std::pair<Time, Certificate_data> Certificate_pair;
-    typedef typename Update_information::Exact_time Exact_time;
-    typedef typename Update_information::Exact_certificate Exact_certificate;
 
     typedef typename Default_traits::Triangulation Triangulation;
     typedef typename Default_traits::Point_2 Point_2;
@@ -968,28 +1028,6 @@ struct Updatable_Delaunay_triangulation_2 {
 
     const Time &current_time() const {
       return P::simulator_handle()->current_time();
-    }
-
-    Exact_time exact_current_time() const {
-      static Exact_time tmp;
-      //ensure_exact_failure_time(current_time().data(), current_time());
-      //Cert_tuple cct= ct.canonicalize();
-      //CGAL_UD_DEBUG("Approximate is " << current_time() << std::endl);
-      return P::simulator_handle()->current_time().safe_exact_root();
-      /*if (current_time().data() == Cert_tuple()) {
-	tmp= Exact_time(CGAL::to_interval(current_time()).first);
-	return tmp;
-	} else {
-	if (!has_exact_failure_time(current_time().data())) {
-	++exact_current_time_certificates_;
-	}
-	ensure_exact_failure_time(current_time().data(),
-	current_time());
-	CGAL_UD_DEBUG("Exact current time is " 
-	<< cache_[current_time().data()].failure_time() << std::endl);
-	
-	return cache_[current_time().data()].failure_time();
-	}*/
     }
 
 
@@ -1052,197 +1090,196 @@ struct Updatable_Delaunay_triangulation_2 {
       if (ct == Cert_tuple()) return null_pair();
 
       double end_time= ui_->next_activation();
-      ui_->set_next_activation(1.0);
+      //ui_->set_next_activation(1.0);
 #ifndef NDEBUG
-      Exact_time actual_failure_time;
+      Exact_time check_failure_time;
+      Exact_certificate check_cert;
       {
-	Cert_tuple cct= tuple(e);
-	if (ui_->check_.find(cct) != ui_->check_.end()) {
-	  ui_->check_.erase(cct);
-	}
-	if (ui_->check_.find(cct.opposite()) != ui_->check_.end()) {
-	  ui_->check_.erase(cct.opposite());
-	}
 	Exact_time ect;
-	//= exact_current_time();
-	if (current_time().is_point()) {
-	  ect= Exact_time(CGAL::to_interval(current_time()).first);
+	if (P::simulator_handle()->current_time().refiner() == Refiner()) {
+	  ect= Exact_time(CGAL::to_interval(P::simulator_handle()->current_time()).first);
 	} else {
-	  Cert_tuple ctct= current_time().refiner().tuple();
-	  CGAL_assertion(ui_->check_.find(ctct) != ui_->check_.end());
-	  ect= ui_->check_[ctct].failure_time();
+	  ect= P::simulator_handle()->current_time().refiner().check_.failure_time();
 	}
-	Exact_certificate ecert=ui_->compute_exact_certificate(cct, ect);
-	actual_failure_time= ecert.failure_time();
-	ui_->check_[cct]= ecert;
-	if (actual_failure_time > end_time) actual_failure_time= std::numeric_limits<double>::infinity();
+	
+	check_cert=ui_->compute_exact_failure_time(ct, ect);
+	check_failure_time= check_cert.failure_time();
+
+	if (check_failure_time > end_time) check_failure_time= 2;
       }
 #endif
    
       //std::pair<Cert_tuple, bool> ctp= Cert_tuple::make(ks);
       
       if (!can_fail(ct, end_time)) {
-	CGAL_postcondition(actual_failure_time > 1);
+	CGAL_postcondition(check_failure_time > 1);
 	return null_pair();
       }
       
       CGAL_UD_DEBUG("Computing failure time for " << ct << std::endl);
-      CGAL_UD_DEBUG("Exact failure time is " << actual_failure_time<< std::endl);
+      CGAL_UD_DEBUG("Exact failure time is " << check_failure_time<< std::endl);
 
 
-    
+      double bt = ui_->start_time();
+      if (bt <0) {
+	bt= CGAL::to_interval(current_time()).first;
+      }
       
 
 
       std::pair<double,double> ft;
       typename Update_information::Isolate_result isc= ui_->isolate_failure(ct, 
-									    CGAL::to_interval(current_time()).first,
+									    bt,
 									    end_time,
 									    true,
 									    ft);
+
+
       if (isc == Update_information::NO_FAILURE) { 
 	CGAL_UD_DEBUG("Not isolated" << std::endl);
-	CGAL_postcondition(actual_failure_time > 1);
+	CGAL_assertion(check_failure_time >=1);
 	return null_pair();
       }
+
+      Time rett(ft.first, ft.second, Refiner(ct, ui_));
+#ifndef NDEBUG
+      rett.refiner().check_= check_cert;
+#endif
+
       if (isc == Update_information::CERTAIN_FAILURE) {
 	if (ft.first <= CGAL::to_interval(current_time()).second) {
 	  // interval overlaps current
-	  Exact_time ect= exact_current_time();
+	  P::simulator_handle()->current_time().refiner().ensure_exact_root(CGAL::to_interval(P::simulator_handle()->current_time()));
+	  const Exact_time &ect= P::simulator_handle()->current_time().refiner().exact_root();
 	  
 	  if (Exact_time(ft.first) <= ect) {
-	    ui_->compute_exact_failure_time(ct, ect);
-	    CGAL_UD_DEBUG("Exact" << ui_->exact_failure_time(ct) <<  std::endl);
-	    ft= ui_->interval_from_exact_failure_time(ct);
+	    rett.refiner().ensure_exact_root(ect);
+	    CGAL_UD_DEBUG("Exact" << rett.refiner().exact_root() <<  std::endl);
+	    rett.set_interval(CGAL::to_interval(rett.refiner().exact_root()));
 	  }
 	}
-	CGAL_UD_DEBUG("Returning isolated " << ft.first << " " << ft.second << std::endl);
-	CGAL_postcondition(actual_failure_time >= ft.first);
-	CGAL_postcondition(actual_failure_time <= ft.second);
-	return return_pair(Time(ft.first, ft.second,
-				Refiner(ct, ui_)));
+	CGAL_UD_DEBUG("Returning isolated " << rett << std::endl);
+	
+	return return_pair(rett);
       } else {
 	//if (!has_exact_failure_time(ct)) {
 	++ui_->uncertain_exact_computations_;
 	//	}
-	Exact_time ect= exact_current_time();
-	ui_->compute_exact_failure_time(ct, ect);
-	ft= ui_->interval_from_exact_failure_time(ct);
-	CGAL_UD_DEBUG("Not isolated " << ui_->exact_failure_time(ct) <<  std::endl);
-	if (ft.first > ft.second || ui_->exact_failure_time(ct) >= end_time) {
+	CGAL_UD_DEBUG("Not isolated " <<  std::endl);
+	P::simulator_handle()->current_time().refiner().ensure_exact_root(CGAL::to_interval(P::simulator_handle()->current_time()));
+	const Exact_time &ect= P::simulator_handle()->current_time().refiner().exact_root();
+	rett.refiner().ensure_exact_root(ect);
+	CGAL_UD_DEBUG("Exact" << rett.refiner().exact_root() <<  std::endl);
+	if (rett.refiner().exact_root() >= 1) {
+	  CGAL_assertion(check_failure_time >=1);
 	  CGAL_UD_DEBUG("Phantom root " << std::endl);
-	  CGAL_postcondition(actual_failure_time > 1);
+	  CGAL_postcondition(check_failure_time > 1);
 	  return null_pair();
 	} else {
-	  CGAL_UD_DEBUG("Returning exact " << ft.first << " " << ft.second  << " (" 
-			<< ui_->exact_failure_time(ct) << ")" << std::endl);
-	  CGAL_postcondition(actual_failure_time >= ft.first);
-	  CGAL_postcondition(actual_failure_time <= ft.second);
-	  return return_pair(Time(ft.first, ft.second,
-				  Refiner(ct, ui_)));
+	  rett.set_interval(CGAL::to_interval(rett.refiner().exact_root()));
+	  CGAL_UD_DEBUG("Returning exact " << rett << std::endl);
+	  return return_pair(rett);
 	}
       }
     }
 
 
+
+
     Certificate_pair certificate_failure_time(typename Default_traits::Edge e, 
 					      Certificate_data ) {
-      Cert_tuple ct= tuple(e);
+      const Time &curt= P::simulator_handle()->current_time();
+      Cert_tuple ct= curt.refiner().tuple().opposite();
+#ifndef NDEBUG
+      Cert_tuple check_ct= tuple(e);
+#endif
+      CGAL_assertion(ct == check_ct);
+
       double end_time= ui_->next_activation();
+      ui_->set_next_activation(1.0);
  
 #ifndef NDEBUG
-      Exact_time actual_failure_time;
+      Exact_time check_failure_time;
+      Exact_certificate check_cert;
       {
-	CGAL_precondition(ui_->check_.find(ct.opposite()) != ui_->check_.end());
-	Exact_certificate ec= ui_->check_[ct.opposite()];
-	ui_->check_.erase(ct.opposite());
-	ec.pop_failure_time();
-	ui_->check_[ct]= ec;
-	actual_failure_time= ec.failure_time();
-	if (actual_failure_time > end_time) actual_failure_time= std::numeric_limits<double>::infinity();
-	CGAL_UD_DEBUG("Exact time is " << ec.failure_time() << std::endl);
+	check_cert= curt.refiner().check_;
+	check_cert.pop_failure_time();
+
+	check_failure_time= check_cert.failure_time();
+	if (check_failure_time > end_time) check_failure_time= 2;
+	CGAL_UD_DEBUG("Exact time is " << check_cert.failure_time() << std::endl);
 
       }
 #endif
       //std::pair<Cert_tuple, bool> ctp= Cert_tuple::make(ks);
       
-      if (!can_fail(ct, end_time)) { 
-	//CGAL_assertion(0);
-	//std::cout << "Can't fail." << std::endl;
-	CGAL_postcondition(actual_failure_time > 1);
+      if (!can_fail(ct, end_time)) {
+	CGAL_postcondition(check_failure_time > 1);
 	return null_pair();
       }
 
-      CGAL_UD_DEBUG("Advancing failure time for " << ct << std::endl);
-      CGAL_UD_DEBUG("Exact time is " << actual_failure_time << std::endl);
+      CGAL_UD_DEBUG("Advancing certificate for " << ct
+		    << std::endl);
 
-      std::pair<double,double> ft;
       // this depends on being the last event of the batch whose time is computed
-      Time net= P::simulator_handle()->next_event_time();
+      const Time& net= P::simulator_handle()->next_event_time();
 
       double lb= CGAL::to_interval(net).first;
-      CGAL::Sign sn;
-      {
+      bool pos_start=false;
+      if (lb == ui_->start_time()) {
+	pos_start=true;
+      } else {
+	// done twiceish
 	CGAL::Protect_FPU_rounding<true> prot;
-	sn= ui_->sign_at(ct[0],ct[1],ct[2],ct[3], INT(lb, lb));
+	CGAL::Sign sn= ui_->sign_at(ct[0],ct[1],ct[2],ct[3], INT(lb, lb));
+	if (sn != CGAL::POSITIVE) {
+	  lb= CGAL::to_interval(current_time()).first;
+	} else {
+	  pos_start=true;
+	}
       }
-      if (sn != CGAL::POSITIVE) {
-	lb= CGAL::to_interval(current_time()).first;
-      } 
 
+      std::pair<double,double> ft;
       typename Update_information::Isolate_result isc
-	= ui_->isolate_failure(ct, lb, end_time, sn== CGAL::POSITIVE, ft);
+	= ui_->isolate_failure(ct, lb, end_time, pos_start, ft);
       
+  
+
       if (isc == Update_information::NO_FAILURE) { 
 	CGAL_UD_DEBUG("No root there." << std::endl);
-	CGAL_postcondition(actual_failure_time > 1);
+	CGAL_postcondition(check_failure_time > 1);
 	return null_pair();
       }
-      else if (isc == Update_information::CERTAIN_FAILURE) {
-	if (ft.first <= CGAL::to_interval(current_time()).second) {
-	  //ensure_exact_failure_time(ct, current_time());
-	  // this works because if there is no exact failure, we can take the first in the interval
-	  ui_->ensure_exact_failure_time(ct, ft.first);
-	  ui_->advance_exact_failure_time(ct);
-	  if (ui_->exact_failure_time(ct) > 1) {
-	    ++ui_->unfailing_kinetic_certificates_;
-	  }
-	  ft= ui_->interval_from_exact_failure_time(ct);
-	  CGAL_UD_DEBUG("Separated from current " << ui_->exact_failure_time(ct) 
-			<< std::endl);
+
+      Time rett(ft.first, ft.second, Refiner(ct, ui_));
+#ifndef NDEBUG
+      rett.refiner().check_= check_cert;
+#endif
+      if (isc == Update_information::CERTAIN_FAILURE
+	  && ft.first <= CGAL::to_interval(curt).second
+	  || isc == Update_information::POSSIBLE_FAILURE
+	  || curt.refiner().has_exact_root()) {
+	if (isc == Update_information::POSSIBLE_FAILURE) {
+	  ++ui_->uncertain_exact_computations_;
 	}
-	CGAL_UD_DEBUG("Returning isolated " << ft.first << 
-		      " " << ft.second << std::endl);
-	CGAL_postcondition(actual_failure_time >= ft.first);
-	CGAL_postcondition(actual_failure_time <= ft.second);
-	return return_pair(Time(ft.first, ft.second,
-				Refiner(ct, ui_)));
-      } else {
-	//ensure_exact_failure_time(ct, current_time());
-	//if (!has_exact_failure_time(ct)) {
-	++ui_->uncertain_exact_computations_;
-	//}
-	ui_->ensure_exact_failure_time(ct, lb);
-	ui_->advance_exact_failure_time(ct);
-	if (ui_->cache_[ct].failure_time() > 1) {
+	curt.refiner().ensure_exact_root(CGAL::to_interval(curt));
+	Exact_certificate ec= curt.refiner().exact_certificate();
+	ec.pop_failure_time();
+	if (ec.failure_time() > 1) {
 	  ++ui_->unfailing_kinetic_certificates_;
-	}
-	ft= ui_->interval_from_exact_failure_time(ct);
-	  
-	if (ft.first > ft.second || ui_->exact_failure_time(ct) >= end_time) {
-	  CGAL_UD_DEBUG("Phantom root " << ft.first << " " << ft.second << std::endl);
-	  CGAL_postcondition(actual_failure_time > 1);
+	  CGAL_UD_DEBUG("Phantom root " << std::endl);
+	  CGAL_postcondition(check_failure_time > 1);
 	  return null_pair();
-	} else {
-	  CGAL_UD_DEBUG("Returning exact " << ft.first << " " << ft.second << "(" 
-			<< ui_->exact_failure_time(ct) << ")" << std::endl);
-	  CGAL_postcondition(actual_failure_time >= ft.first);
-	  CGAL_postcondition(actual_failure_time <= ft.second);
-	  return return_pair(Time(ft.first, ft.second,
-				  Refiner(ct, ui_)));
 	}
+	++ui_->certificate_advances_;
+	ft= CGAL::to_interval(curt.refiner().exact_root());
+	rett.set_interval(ft);
+	rett.refiner().set_exact_certificate(ec);
+	return return_pair(rett);
+      } else {
+	CGAL_UD_DEBUG("Returning " << rett << std::endl);
+	return return_pair(rett);
       }
-      // evil hack
     }
 
   
@@ -1405,7 +1442,9 @@ struct Updatable_Delaunay_triangulation_2 {
       }
       if (ok) {
 	CGAL_UD_DEBUG("Skipping to " << skip_to << " from " << 	tr_.simulator_handle()->current_time() << std::endl);
-	tr_.simulator_handle()->set_current_time(skip_to);
+	ui_->set_start_time(skip_to);
+      } else {
+	ui_->set_start_time(-1);
       }
     }
 
@@ -1425,8 +1464,8 @@ struct Updatable_Delaunay_triangulation_2 {
     }
 
 
-    void active_clear() {
-      ui_->active_clear();
+    void reset() {
+      ui_->reset();
     }
     
     Static_point_2 initial(Point_key pk) const {
@@ -1696,7 +1735,7 @@ struct Updatable_Delaunay_triangulation_2 {
   }
 
   Indirect_kernel set_up_update(const Points &pts) {
-    kdel_->visitor().active_clear();
+    kdel_->visitor().reset();
     kdel_->set_has_certificates(false);
     tr_.simulator_handle()->set_interval(0,1);
     tr_.active_points_2_table_handle()->set_is_editing(Active_points_2_table::UNLOGGED);

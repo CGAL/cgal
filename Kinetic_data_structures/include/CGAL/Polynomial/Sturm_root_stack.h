@@ -1244,6 +1244,10 @@ class Sturm_root_stack
             return os;
         }
 
+  /*  bool operator==(const This &o) const {
+    
+  }*/
+
     protected:
         Root                             start_, end_;
         Traits                           traits_;

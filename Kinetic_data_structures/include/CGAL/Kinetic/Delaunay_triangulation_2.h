@@ -36,8 +36,11 @@
 #include <CGAL/Kinetic/Delaunay_triangulation_default_traits_2.h>
 
 CGAL_KINETIC_BEGIN_NAMESPACE
-
+#ifdef NDEBUG
+#define CGAL_DELAUNAY_2_DEBUG(x)
+#else
 #define CGAL_DELAUNAY_2_DEBUG(x) x
+#endif
 
 template <class KDel>
 struct Delaunay_edge_failure_event: public Event_base<KDel*> {
