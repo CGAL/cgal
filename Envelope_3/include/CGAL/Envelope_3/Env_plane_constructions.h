@@ -36,11 +36,16 @@ Object plane_half_plane_proj_intersection(const typename CGAL_WRAP(K)::Plane_3 &
   typedef typename K::Ray_2      Ray_2;
   typedef typename K::Line_3     Line_3;
   typedef typename K::Line_2     Line_2;
+  typedef typename K::Plane_3    Plane_3;
 
   // intersect the two planes
   Object h_obj = k.intersect_3_object()(h1, h2);
   if(h_obj.is_empty())
     return Object(); // no intersection at all (paralles planes)
+
+  Plane_3 p;
+  if(assign(p, h_obj))
+    return Object();
 
   // if two planes are not parallel they must intersect at a 3D line
   Line_3 l3;
@@ -73,9 +78,7 @@ Object half_plane_half_plane_proj_intersection(const typename CGAL_WRAP(K)::Plan
 
   Ray_2 ray;
   if(assign(ray, obj))
-  {
     return ray_under_linear_constraint(ray, l1, k);
-  }
 
   CGAL_assertion(false); // doesnt suppose to reach here
   return Object();

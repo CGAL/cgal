@@ -51,11 +51,11 @@ public:
   typedef EnvelopeTraits_3                             Traits;
   typedef typename Traits::Surface_3                   Surface_3;
   typedef typename Traits::Xy_monotone_surface_3       Xy_monotone_surface_3;
+  typedef typename Traits::Equal_2                     Equal_2;
 
   typedef MinimizationDiagram_2                        Minimization_diagram_2;
   typedef typename Traits::Point_2                     Point_2;
   typedef typename Traits::X_monotone_curve_2          X_monotone_curve_2;
-  //typedef typename Traits::Curve_2                     Curve_2;
   typedef typename Traits::Has_infinite_category       Has_infinite_category;
 
 protected:
@@ -127,6 +127,7 @@ protected:
           return true;
         if (res == LARGER)
           return false;
+        CGAL_assertion(false);
         return (p1.second == true || p2.third == true);
       }
   };
@@ -470,8 +471,6 @@ public:
     const X_monotone_curve_2& original_cv = edge->curve();
    
     // we want to work on the halfedge going from left to right
-    /*if (original_left != edge->source()->point())
-      edge = edge->twin();*/
     if(edge->direction() != SMALLER)
       edge = edge->twin();
       
@@ -489,6 +488,8 @@ public:
     // 2. is the point a right endpoint of an overlapping segment
     typedef std::vector<Point_2_with_info>      Points_vec;
     Points_vec                                  split_points;
+    bool is_min_end_at_inf = false;
+    bool is_max_end_at_inf = false;
 
     Point_2 point;
     Intersection_curve icurve;
@@ -512,14 +513,6 @@ public:
 
         // find the intersection points and overlapping segments with the
         // original curve and insert them to the list of split points
-
-        //// first, get x_monotone parts
-        //std::list<Object>                     x_objects;
-        //std::list<Object>::const_iterator     obj_it;
-        //const X_monotone_curve_2             *x_curve;
-        //const Point_2                        *iso_p;
-
-
         // intersect the x-monotone curve with the edge's curve
         typedef std::pair<Point_2, unsigned int> Intersect_point_2;
         std::list<Object> intersections_list;
@@ -550,11 +543,16 @@ public:
                 split_points.push_back(Point_2_with_info(
                                         traits->construct_min_vertex_2_object()(*icv),
                                         true, false));
+            else
+              is_min_end_at_inf = true;
+
             if(tr_adaptor.infinite_in_y_2_object()(*icv, MAX_END) == FINITE &&
                 tr_adaptor.infinite_in_x_2_object()(*icv, MAX_END) == FINITE)
                 split_points.push_back(Point_2_with_info(
                                         traits->construct_max_vertex_2_object()(*icv),
                                         false, true));
+            else
+              is_max_end_at_inf = true;
           }
         }       
       }
@@ -577,31 +575,32 @@ public:
     // and split the original edge in these points
     Points_compare comp(*traits);
     std::sort(split_points.begin(), split_points.end(), comp);
+ 
+    // if overlaps > 0 it will indicate that we are inside an overlapping segment
+    // meaning, we have a special edge
+    int overlaps = 0;    
 
-    // find if vertical surfaces are involved here, since if not, we can save
-    // calls to traits methods (we know that over projected intersection the
-    // surfaces are equal on the envelope, which is not neccessarily true if
-    // vertical surfaces are involved)
-    bool are_verticals_involved = false;
-//    if (traits->is_vertical_3_object()(surf1) ||
-//        traits->is_vertical_3_object()(surf2))
-//      are_verticals_involved = true;    
-    
     // check if source is a special vertex (i.e. also a projected intersection)
     // by checking the first point in the list
     bool source_is_special = false;
     CGAL_assertion(split_points.size() >= 1);
-    if (split_points[0].first == original_src->point())
+    if (!original_src->is_at_infinity() && 
+        traits->equal_2_object()(split_points[0].first, original_src->point()) ||
+        original_src->is_at_infinity() && is_min_end_at_inf)
+    {
+      overlaps++;
       source_is_special = true;
+    }
     
     // check if target is a special vertex, by checking the last point in the list
     bool target_is_special = false;
-    if (split_points[split_points.size()-1].first == original_trg->point())
+    if (!original_trg->is_at_infinity() && 
+        traits->equal_2_object()(split_points[split_points.size()-1].first, 
+                                 original_trg->point()) ||
+        original_trg->is_at_infinity() && is_max_end_at_inf)
       target_is_special = true;
 
-    // if overlaps > 0 it will indicate that we are inside an overlapping segment
-    // meaning, we have a special edge
-    int overlaps = 0;    
+    
 
     // remember the envelope decision over the first & last parts, to
     // be able to copy it to the original endpoints
@@ -619,13 +618,15 @@ public:
       // if we get to the target vertex, we end the loop, since no more splits
 
       // are needed
-      if (cur_p.first == original_trg->point())
+      if (!original_trg->is_at_infinity() && cur_p.first == original_trg->point())
         break;
         
       Vertex_handle cur_src_vertex = cur_part->source();
 
       // check that the current split point is not already a vertex
-      if (cur_p.first != cur_src_vertex->point())
+      if ((!cur_src_vertex->is_at_infinity() && cur_p.first != cur_src_vertex->point())||
+           cur_src_vertex->is_at_infinity())
+
       {
         // split the edge in this point
         X_monotone_curve_2 a,b;
@@ -637,11 +638,7 @@ public:
         CGAL_assertion(split_he->source() == cur_src_vertex);
 
         // the new vertex is split_he->target(), we set envelope data on it
-        if (!are_verticals_involved)
-          copy_all_data_to_vertex(edge, split_he->target());
-        else
-          //resolve(split_he->target());
-          deal_with_new_vertex(edge, split_he->target());
+        copy_all_data_to_vertex(edge, split_he->target());
 
         // identify the part of the split edge that we are finished with
         // (this is the one with cur_src_vertex),
@@ -654,7 +651,7 @@ public:
         // we can set both aux data on it. otherwise we should use the traits
         // compare method.
         Comparison_result finished_part_res;
-        if (overlaps > 0 && !are_verticals_involved)
+        if (overlaps > 0)
           finished_part_res = EQUAL;
         else
           finished_part_res = resolve_minimal_edge(edge, finished_part);
@@ -678,8 +675,9 @@ public:
     // if the last part is a special edge, and no verticals are involved
     // we can set both aux data on it. otherwise we should use the traits
     // compare method.
+
     Comparison_result cur_part_res;
-    if (overlaps > 0 && !are_verticals_involved)
+    if (overlaps > 0)
       cur_part_res = EQUAL;
     else
       cur_part_res = resolve_minimal_edge(edge, cur_part);
@@ -699,7 +697,6 @@ public:
     // the incident edge part to source should be edge (the first part)
     CGAL_assertion(original_src == edge->source());
     if (!original_src->is_decision_set() &&
-        !are_verticals_involved &&
         can_copy_decision_from_edge_to_vertex(edge->twin()))
     {
       if (source_is_special)
@@ -713,7 +710,6 @@ public:
     // the incident edge part to target should be cur_part (the last part)
     CGAL_assertion(original_trg == cur_part->target());
     if (!original_trg->is_decision_set() &&
-        !are_verticals_involved &&
         can_copy_decision_from_edge_to_vertex(cur_part))
     {
       if (target_is_special)

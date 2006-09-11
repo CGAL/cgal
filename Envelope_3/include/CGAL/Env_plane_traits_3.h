@@ -69,30 +69,6 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
     return Is_vertical_3();
   }
 
-  class Construct_point_on_2
-  {
-  public:
-    Point_2 operator()(const X_monotone_curve_2& cv, int i)
-    {
-      Kernel k;
-      if(cv.is_segment())
-        return k.construct_point_on_2_object()(cv.segment(), i);
-      
-      if(cv.is_ray())
-        return k.construct_point_on_2_object()(cv.ray(), i);
-
-      CGAL_assertion(cv.is_line());
-      return k.construct_point_on_2_object()(cv.line(), i);
-
-      
-    }
-  };
-
-  Construct_point_on_2 construct_point_on_2_object()
-  {
-    return Construct_point_on_2();
-  }
-
   class _Env_plane
   {
   protected:
@@ -116,7 +92,10 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
                                                      m_line(l),
                                                      m_is_all_plane(false),
                                                      m_is_vert(false)
-     {}
+     {
+       CGAL_precondition_code(Self s);
+       CGAL_precondition(!s.is_vertical_3_object()(h));
+     }
 
      bool is_vertical() const
      {
@@ -130,6 +109,7 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
 
      const Line_2& line() const
      {
+       CGAL_assertion(!m_is_all_plane);
        return m_line;
      }
 
@@ -183,7 +163,6 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
                                  const Xy_monotone_surface_3& h1,
                                  const Xy_monotone_surface_3& h2)
     {
-      CGAL_assertion(false);
       Kernel k;
       Point_2 p;
       if(cv.is_segment())
@@ -279,11 +258,10 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
       // are transformed to (v1,w1) and (v2,w2), so we need that w2 > w1
       // (otherwise the result should be multiplied by -1)
       
-      Construct_point_on_2 ctr_p;
-      Point_2 p1(ctr_p(cv, 0));
-      Point_2 p2(ctr_p(cv, 1));
-      
       Kernel k;
+      Point_2 p1 (k.construct_point_on_2_object()(line, 0));
+      Point_2 p2 (k.construct_point_on_2_object()(line, 1));
+      
       if(k.compare_xy_2_object()(p1, p2) == LARGER)
         std::swap(p1, p2);
 
@@ -309,11 +287,10 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
   {
   public:
     Comparison_result operator()(const X_monotone_curve_2& cv,
-                               const Xy_monotone_surface_3& h1,
-                               const Xy_monotone_surface_3& h2)
+                                 const Xy_monotone_surface_3& h1,
+                                 const Xy_monotone_surface_3& h2)
     {
       Compare_z_at_xy_above_3 cmp_above;
-
       return CGAL::opposite(cmp_above(cv, h1, h2));
     }
 
@@ -325,14 +302,13 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
   }
 
 
-
-   class Construct_projected_boundary_2
-   {
-   public:
+  class Construct_projected_boundary_2
+  {
+  public:
 
     template <class OutputIterator>
-    OutputIterator operator()(const Xy_monotone_surface_3& s,
-                              OutputIterator o) const
+      OutputIterator operator()(const Xy_monotone_surface_3& s,
+                                OutputIterator o) const
     {
       if(s.is_all_plane())
       {
@@ -356,13 +332,13 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
       *o++ = std::make_pair(make_object(X_monotone_curve_2(s.line())), side);
       return o;
     }
-   };
+  };
 
-   Construct_projected_boundary_2 
-     construct_projected_boundary_2_object()
-   {
-     return Construct_projected_boundary_2();
-   }
+  Construct_projected_boundary_2 
+    construct_projected_boundary_2_object()
+  {
+    return Construct_projected_boundary_2();
+  }
 
 
   class Construct_projected_intersections_2
@@ -375,115 +351,114 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
                               OutputIterator o) const
     {
       Kernel k;
-      Object_3 obj = k.intersect_3_object()(s1.plane(), s2.plane());
+
+      const Plane_3& h1 = s1.plane();
+      const Plane_3& h2 = s2.plane();
       
-      if(obj.is_empty())
-        return o; // parallel planes
-
-      Line_3 l;
-      if(assign(l, obj))
+      if(s1.is_vertical() && s2.is_vertical())
       {
-        if(s1.is_vertical() && s2.is_vertical())
-        {
-          //TODO!!
-          return o;
-        }
-       
-        if(s1.is_all_plane() && s2.is_all_plane())
-        {
-          *o++ = make_object(Intersection_curve(project_xy(l, k), TRANSVERSAL));
-          return o;
-        }
-        if(s1.is_all_plane() && !s2.is_all_plane())
-        {
-          Object obj = plane_half_plane_proj_intersection(s1.plane(),
-                                                          s2.plane(),
-                                                          s2.line(),
-                                                          k);
-          if(obj.is_empty())
-            return o;
-          Line_2 temp_l;
-          if(assign(temp_l, obj))
-          {
-            *o++ = make_object(Intersection_curve(temp_l, TRANSVERSAL));
-            return o;
-          }
-          Ray_2 ray;
-          if(assign(ray, obj))
-          {
-            *o++ = make_object(Intersection_curve(ray, TRANSVERSAL));
-            return o;
-          }
-          return o;
-        }
-        if(!s2.is_all_plane() && s2.is_all_plane())
-        {
-          Object obj = plane_half_plane_proj_intersection(s2.plane(),
-                                                          s1.plane(),
-                                                          s1.line(),
-                                                          k);
-          if(obj.is_empty())
-            return o;
-          Line_2 line;
-          if(assign(line, obj))
-          {
-            *o++ = make_object(Intersection_curve(line, TRANSVERSAL));
-            return o;
-          }
-          Ray_2 ray;
-          if(assign(ray, obj))
-          {
-            *o++ = make_object(Intersection_curve(ray, TRANSVERSAL));
-            return o;
-          }
-          return o;
-
-        }
-        CGAL_assertion(!s2.is_all_plane() && !s2.is_all_plane());
-        Object obj = half_plane_half_plane_proj_intersection(s1.plane(),
-                                                             s1.line(),
-                                                             s2.plane(),
-                                                             s2.line(),
-                                                             k);
-
-        if(obj.is_empty())
-            return o;
-          Line_2 line;
-          if(assign(line, obj))
-          {
-            *o++ = make_object(Intersection_curve(line, TRANSVERSAL));
-            return o;
-          }
-          Ray_2 ray;
-          if(assign(ray, obj))
-          {
-            *o++ = make_object(Intersection_curve(ray, TRANSVERSAL));
-            return o;
-          }
-
-          Segment_2 seg;
-          if(assign(seg, obj))
-          {
-            *o++ = make_object(Intersection_curve(seg, TRANSVERSAL));
-            return o;
-          }
-
-          Point_2 p;
-          if(assign(p, obj))
-          {
-            *o++ = make_object(p);
-            return o;
-          }
-          return o;
-
+        Line_2 l1(h1.a(), h1.b(), h1.d());
+        Line_2 l2(h2.a(), h2.b(), h2.d());
+        Object obj = k.intersect_2_object()(l1, l2);
         
-      }
-      Plane_3 h;
-      if(assign(h, obj))
-        return o; // we dont return overlap
+        Point_2 p;
+        if(assign(p, obj))
+          *o++ = make_object(p);
 
-      CGAL_assertion(false);
-      return o;
+        // otherwise, the vertical planes are parallel or overlap, so we return
+        // nothing.
+        return o;
+      }
+       
+      if(s1.is_all_plane() && s2.is_all_plane())
+      {
+        Object obj = k.intersect_3_object()(h1, h2);
+        Line_3 l;
+        if(assign(l, obj))
+          *o++ = make_object(Intersection_curve(project_xy(l, k), TRANSVERSAL));
+
+        return o;
+      }
+
+      if(s1.is_all_plane() && !s2.is_all_plane())
+      {
+        Object obj = plane_half_plane_proj_intersection(h1,
+                                                        h2,
+                                                        s2.line(),
+                                                        k);
+        if(obj.is_empty())
+          return o;
+        Line_2 temp_l;
+        if(assign(temp_l, obj))
+        {
+          *o++ = make_object(Intersection_curve(temp_l, TRANSVERSAL));
+          return o;
+        }
+        Ray_2 ray;
+        if(assign(ray, obj))
+        {
+          *o++ = make_object(Intersection_curve(ray, TRANSVERSAL));
+          return o;
+        }
+        return o;
+      }
+      if(!s2.is_all_plane() && s2.is_all_plane())
+      {
+        Object obj = plane_half_plane_proj_intersection(h2,
+                                                        h1,
+                                                        s1.line(),
+                                                        k);
+        if(obj.is_empty())
+          return o;
+        Line_2 line;
+        if(assign(line, obj))
+        {
+          *o++ = make_object(Intersection_curve(line, TRANSVERSAL));
+          return o;
+        }
+        Ray_2 ray;
+        if(assign(ray, obj))
+        {
+          *o++ = make_object(Intersection_curve(ray, TRANSVERSAL));
+          return o;
+        }
+        return o;
+
+      }
+
+      CGAL_assertion(!s2.is_all_plane() && !s2.is_all_plane());
+      Object obj = 
+        half_plane_half_plane_proj_intersection(h1, s1.line(), h2, s2.line(), k);
+
+      if(obj.is_empty())
+          return o;
+        Line_2 line;
+        if(assign(line, obj))
+        {
+          *o++ = make_object(Intersection_curve(line, TRANSVERSAL));
+          return o;
+        }
+        Ray_2 ray;
+        if(assign(ray, obj))
+        {
+          *o++ = make_object(Intersection_curve(ray, TRANSVERSAL));
+          return o;
+        }
+
+        Segment_2 seg;
+        if(assign(seg, obj))
+        {
+          *o++ = make_object(Intersection_curve(seg, TRANSVERSAL));
+          return o;
+        }
+
+        Point_2 p;
+        if(assign(p, obj))
+        {
+          *o++ = make_object(p);
+          return o;
+        }
+        return o;
     }
   };
 

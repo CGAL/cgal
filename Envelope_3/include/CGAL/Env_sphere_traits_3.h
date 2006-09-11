@@ -31,14 +31,14 @@
 
 CGAL_BEGIN_NAMESPACE
 
-inline
-Sign
-operator*(const Sign &s1, const Sign &s2)
-{
-  if ( s1 == ZERO || s2 == ZERO )  return ZERO;
-  if ( s1 == s2 )  return POSITIVE;
-  return NEGATIVE;
-}
+//inline
+//Sign
+//operator*(const Sign &s1, const Sign &s2)
+//{
+//  if ( s1 == ZERO || s2 == ZERO )  return ZERO;
+//  if ( s1 == s2 )  return POSITIVE;
+//  return NEGATIVE;
+//}
 
 template <class Kernel_> class Env_sphere_3;
  

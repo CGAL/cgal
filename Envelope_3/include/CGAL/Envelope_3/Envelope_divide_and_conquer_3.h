@@ -504,8 +504,8 @@ public:
       Faces_order_bfs_visitor<CGAL::Arr_face_index_map<Minimization_diagram_2> >
                                       bfs_visitor (index_map, faces_to_split, this);
       Face_handle first_face = result.faces_begin();
-      if (result.number_of_faces() > 1)
-        first_face = ++(result.faces_begin());
+      /*if (result.number_of_faces() > 1)
+        first_face = ++(result.faces_begin());*/
 
       boost::breadth_first_search (Dual_Minimization_diagram_2(result),
                                    first_face,
