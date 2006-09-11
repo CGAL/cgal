@@ -248,8 +248,6 @@ public:
   void reset()
   {
     resolver->reset();
-    // reset statistical measures
-    init_stats();
   }
 
   
@@ -595,6 +593,7 @@ public:
 
     // finally, remove unneccessary edges, between faces  with the same surface
     // (and which are not degenerate)
+  
     remove_unneccessary_edges(result);
     CGAL_expensive_assertion_msg(result.is_valid(), 
                        "after remove edges result is not valid");

@@ -47,7 +47,6 @@ protected:
   friend class Arr_accessor<Self>;
 
 public:
-  typedef Envelope_diagram_2<Traits_3>                  Self;
   typedef Arrangement_2<Traits_3, Env_dcel>             Base;
   typedef typename Env_dcel::Dcel_data_const_iterator   Surface_const_iterator;
 

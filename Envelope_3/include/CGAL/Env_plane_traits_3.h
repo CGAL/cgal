@@ -183,6 +183,7 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
                                  const Xy_monotone_surface_3& h1,
                                  const Xy_monotone_surface_3& h2)
     {
+      CGAL_assertion(false);
       Kernel k;
       Point_2 p;
       if(cv.is_segment())
@@ -238,7 +239,7 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
 
  	    // our line is a3*x + b3*y + c3 = 0
  	    // it is assumed that the planes intersect over this line
-      const Line_2& line = cv.line(); 
+      const Line_2& line = cv.supp_line(); 
       const FT& a3 = line.a(),
                 b3 = line.b(),
                 c3 = line.c();
@@ -279,10 +280,15 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
       // (otherwise the result should be multiplied by -1)
       
       Construct_point_on_2 ctr_p;
-      const Point_2& p1 = ctr_p(cv, 0);
-      const Point_2& p2 = ctr_p(cv, 1);
+      Point_2 p1(ctr_p(cv, 0));
+      Point_2 p2(ctr_p(cv, 1));
       
-     
+      Kernel k;
+      if(k.compare_xy_2_object()(p1, p2) == LARGER)
+        std::swap(p1, p2);
+
+      CGAL_assertion(k.compare_xy_2_object()(p1, p2) == SMALLER);
+      
       const FT& x1 = p1.x(),
                 y1 = p1.y(),
                 x2 = p2.x(),

@@ -1010,6 +1010,11 @@ protected:
     Ccb_halfedge_circulator hec_begin = hec;
     do {
       Halfedge_handle hh = hec;
+      if(hh->is_fictitious())
+      {
+        ++hec;
+        continue;
+      }
       CGAL_assertion(face == hh->face());
       // if it is a vertical decomposition edge, copy data from face
       /*if (!hh->is_decision_set() && hh->get_is_fake())
@@ -1194,6 +1199,11 @@ protected:
     Ccb_halfedge_circulator hec_begin = hec;
     do {
       Halfedge_handle hh = hec;
+      if(hh->is_fictitious())
+      {
+        ++hec;
+        continue;
+      }
       if (can_copy_decision_from_face_to_edge(hh) &&
 
           hh->is_decision_set() &&
@@ -1374,12 +1384,10 @@ protected:
     Ccb_halfedge_circulator hec_begin = hec;
     bool first_he = true;
     Halfedge_handle copied_prev_he;
-    do {
+    do 
+    {
       Halfedge_handle hh = hec;
 
-      // update fakes_exist
-      //if (hh->get_is_fake()) fakes_exist = true;
-      
       if (hh->twin()->face() == hh->face() &&
           map_orig_to_copied_halfedges.is_defined(hh))
       {
@@ -1391,8 +1399,9 @@ protected:
       {
         const X_monotone_curve_2& current_cv = hh->curve();
         if (first_he)
-        {             
+        {
           first_he = false;
+
           // create the 2 vertices and connect them with the edge
           // copied_prev_he should be directed from copied_source to copied_target
           Vertex_handle copied_source = to_accessor.create_vertex(hh->source()->point());
@@ -1412,7 +1421,7 @@ protected:
           map_orig_to_copied_vertices[hh->source()] = copied_prev_he->source();
           map_copied_to_orig_vertices[copied_prev_he->target()] = hh->target();
           map_orig_to_copied_vertices[hh->target()] = copied_prev_he->target();
-        }
+        }          
         else
         {
           CGAL_assertion(map_copied_to_orig_halfedges[copied_prev_he]->target() == hh->source());
@@ -1533,6 +1542,98 @@ protected:
 
   }
 
+  void copy_ccb_unbounded(Ccb_halfedge_circulator hec, // the circulator to insert
+                          Minimization_diagram_2 &from,// the original arrangement
+                          Minimization_diagram_2 &to,  // the arrangement to which we insert
+                          Halfedges_map& map_copied_to_orig_halfedges,
+                          Vertices_map&  map_copied_to_orig_vertices,
+                          Halfedges_map& map_orig_to_copied_halfedges,
+                          Vertices_map&  map_orig_to_copied_vertices)
+  {
+    //find a non fictitous edge (if there is such one)
+    Ccb_halfedge_circulator hec_end = hec;
+    Halfedge_handle non_fict;
+    do
+    {
+      if(!hec->is_fictitious())
+      {
+        non_fict = hec;
+        break;
+      }
+      ++hec;
+    }
+    while(hec != hec_end);
+
+    Md_accessor from_accessor(from);
+    Md_accessor to_accessor(to);
+
+    if(non_fict == Halfedge_handle())
+    {
+      // all edges are fictitous
+      Vertex_handle v_from = from_accessor.top_left_fictitious_vertex();
+      Vertex_handle v_to = to_accessor.top_left_fictitious_vertex();
+
+      Halfedge_handle curr_from = v_from->incident_halfedges();
+      Halfedge_handle curr_to = v_to->incident_halfedges();
+      if(curr_from->direction() == SMALLER)
+        curr_from = curr_from->twin();
+      else
+        curr_from = curr_from->next();
+
+       if(curr_to->direction() == SMALLER)
+        curr_to = curr_to->twin();
+      else
+        curr_to = curr_to->next();
+
+       Halfedge_handle curr_from_end = curr_from;
+       do
+       {
+         map_copied_to_orig_vertices[curr_to->source()] = curr_from->source();
+         map_orig_to_copied_vertices[curr_from->source()] = curr_to->source();
+
+         map_copied_to_orig_halfedges[curr_to] = curr_from;
+         map_copied_to_orig_halfedges[curr_to->twin()] = curr_from->twin();
+         map_orig_to_copied_halfedges[curr_from] = curr_to;
+         map_orig_to_copied_halfedges[curr_from->twin()] = curr_to->twin();
+
+         curr_from = curr_from->next();
+         curr_to = curr_to->next();
+
+       }while(curr_from != curr_from_end);
+    }
+    else
+    {
+      Halfedge_handle he =
+        insert_non_intersecting_curve(to, non_fict->curve());
+      if(he->direction() != non_fict->direction())
+        he = he->twin();
+     
+      std::list<X_monotone_curve_2> cv_list;
+      for(Halfedge_handle e = non_fict->next(); e != non_fict; e = e->next())
+      {
+        if(!e->is_fictitious())
+          cv_list.push_back(e->curve());
+      }
+      insert_non_intersecting_curves(to, cv_list.begin(), cv_list.end());
+
+      Halfedge_handle curr_edge_from = non_fict;
+      do
+      {
+        map_copied_to_orig_vertices[he->source()] = curr_edge_from->source();
+        map_orig_to_copied_vertices[curr_edge_from->source()] = he->source();
+
+        map_copied_to_orig_halfedges[he] = curr_edge_from;
+        map_copied_to_orig_halfedges[he->twin()] = curr_edge_from->twin();
+        map_orig_to_copied_halfedges[curr_edge_from] = he;
+        map_orig_to_copied_halfedges[curr_edge_from->twin()] = he->twin();
+
+        curr_edge_from = curr_edge_from->next();
+        he = he->next();
+      }
+      while(curr_edge_from != non_fict);
+    }
+  }
+
   // copy the halfedges of the boundary of face (in from) to the md "to"
   // return a handle to the copied face in "to"
   // precondition: "to" is empty
@@ -1554,20 +1655,30 @@ protected:
     // first deal with outer boundary
     
     Ccb_halfedge_circulator hec = face->outer_ccb();
-    copy_ccb(hec, from, to_uf, to,
-            map_copied_to_orig_halfedges,
-            map_copied_to_orig_vertices,
-            map_orig_to_copied_halfedges,
-            map_orig_to_copied_vertices,
-            true);
+    if(face->is_unbounded())
+      copy_ccb_unbounded(hec, from, to,  // the arrangement to which we insert
+                         map_copied_to_orig_halfedges,
+                         map_copied_to_orig_vertices,
+                         map_orig_to_copied_halfedges,
+                         map_orig_to_copied_vertices);
+    else
+      copy_ccb(hec, from, to_uf, to,
+               map_copied_to_orig_halfedges,
+               map_copied_to_orig_vertices,
+               map_orig_to_copied_halfedges,
+               map_orig_to_copied_vertices,
+               true);
     CGAL_assertion(is_valid(to));
     
 
     // we need to find the copied face
-    Hole_iterator to_uf_hi = to_uf->holes_begin();
+    /*Hole_iterator to_uf_hi = to_uf->holes_begin();
     Ccb_halfedge_circulator to_uf_hec = (*to_uf_hi);
     CGAL_assertion(to_uf->number_of_holes() == 1);
-    Halfedge_handle to_f_he = to_uf_hec->twin();
+    Halfedge_handle to_f_he = to_uf_hec->twin();*/
+    CGAL_assertion(map_orig_to_copied_halfedges.is_defined(hec));
+    Halfedge_handle hec_to = map_orig_to_copied_halfedges[hec];
+    Face_handle copied_face = hec_to->face();
 
 
     // second, deal with inner boundaries
@@ -1575,7 +1686,7 @@ protected:
     for (; hole_iter != face->holes_end(); ++hole_iter)
     {
       Ccb_halfedge_circulator he = (*hole_iter);
-      copy_ccb(he, from, to_f_he->face(), to,
+      copy_ccb(he, from, copied_face, to,
 
                map_copied_to_orig_halfedges,
                map_copied_to_orig_vertices,
@@ -1586,7 +1697,7 @@ protected:
     }
 
     // find the face in "to"
-    Face_handle copied_face = to_f_he->face();
+    //Face_handle copied_face = to_f_he->face();
 
     // copy the isolated vertices inside the given face, if any
     // and save them in map_copied_to_orig_vertices
@@ -1786,13 +1897,14 @@ protected:
 		    // set the new vertex
         (*vertices_to_halfedges)[org_he->target()] = correct_side_he;
 
-		    // update the old vertices (only one needs update, unless it is antenna)
-		    CGAL_assertion(vertices_to_halfedges->is_defined(correct_side_he->source()) &&
-			                 vertices_to_halfedges->is_defined(correct_side_he->next()->target()));
+        //BZBZ
+		   /* CGAL_assertion(vertices_to_halfedges->is_defined(correct_side_he->source()) &&
+			                vertices_to_halfedges->is_defined(correct_side_he->next()->target()));*/
     		(*vertices_to_halfedges)[correct_side_he->next()->target()] = correct_side_he->next();
 
     		if (correct_side_he == org_he && face_parts->is_defined(org_he->twin()->face()))
     		  (*vertices_to_halfedges)[org_he->source()] = org_he->twin();
+        
 
       }
     }
@@ -1851,6 +1963,56 @@ protected:
       // add indication of a new vertex (that is not connected to anything,
       // and is also no isolated)
       new_vertices.push_back(v);
+    }
+    void before_create_vertex_at_infinity(Infinity_type inf_x,
+                                          Infinity_type inf_y)
+    {}
+
+    void after_create_vertex_at_infinity(Vertex_handle v)
+    {
+      Vertex_handle new_v = 
+        big_arr_accessor.create_vertex_at_infinity(v->infinite_in_x(),
+                                                   v->infinite_in_y());
+      map_vertices[v] = new_v;
+    }
+
+    void before_split_fictitious_edge (Halfedge_handle e,
+                                       Vertex_handle v)
+    {
+      split_fict_v = v;
+      split_fict_e = e;
+    }
+
+    void after_split_fictitious_edge (Halfedge_handle e1,
+                                      Halfedge_handle e2)
+    {
+      // find the corresponding split vertex in big_arr
+      CGAL_assertion(map_vertices.is_defined(split_fict_v));
+      Vertex_handle big_v = map_vertices[split_fict_v];
+
+      //// make sure it is the only new vertex right now
+      //CGAL_assertion(new_vertices.size() == 1 &&
+      //               new_vertices.back() == split_v);
+      //new_vertices.pop_back();
+
+      // find the edge to split in big_arr
+      CGAL_assertion(map_halfedges.is_defined(split_fict_e));
+      Halfedge_handle big_e = map_halfedges[split_fict_e];
+
+      // use the O(1) operation _split_edge      
+      Halfedge_handle big_e1 =
+               big_arr_accessor.split_fictitious_edge(big_e, big_v);
+
+      Halfedge_handle big_e2 = big_e1->next();
+      
+      // update mapping of new halfedges
+      // big_e1 is directed at big_v, as e1 is directed at split_v -
+      // these are supposed to be mapped
+      CGAL_assertion(map_halfedges.is_defined(e1) &&
+                     map_halfedges[e1] == big_e1);
+      // should update the mapping of the second halfedge     
+      map_halfedges[e2] = big_e2;
+      map_halfedges[e2->twin()] = big_e2->twin();
     }
 
     virtual void before_create_edge (const X_monotone_curve_2& /* c */,
@@ -2152,8 +2314,8 @@ protected:
     // state for actions
     Vertex_handle create_edge_v1;
     Vertex_handle create_edge_v2;
-    Vertex_handle split_v;
-    Halfedge_handle split_e;
+    Vertex_handle split_v, split_fict_v;
+    Halfedge_handle split_e, split_fict_e;
     Face_handle   saved_face;
     Face_handle   move_from;
     Face_handle   move_to;    
@@ -2212,7 +2374,7 @@ protected:
       {
         copied_arr_boundary_halfedges[hi] =
                    copied_arr_boundary_halfedges.default_value();
-        if (hi->face() == copied_face)
+        if (hi->face() == copied_face && !hi->target()->is_at_infinity()) //BZBZ
 		  copied_vertices_to_halfedges[hi->target()] = hi;
 	  }
                    
