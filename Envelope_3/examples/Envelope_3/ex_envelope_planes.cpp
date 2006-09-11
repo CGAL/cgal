@@ -1,5 +1,5 @@
-//! \file examples/Envelope_3/ex_envelope_triangles.cpp
-// Constructing the lower and the upper envelope of a set of triangles.
+//! \file examples/Envelope_3/ex_envelope_planes.cpp
+// Constructing the lower and the upper envelope of a set of planes.
 
 #include <CGAL/Gmpq.h>
 #include <CGAL/Cartesian.h>
