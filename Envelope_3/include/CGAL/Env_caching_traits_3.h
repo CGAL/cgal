@@ -79,12 +79,12 @@ public:
   class Construct_projected_intersections_2
   {
   protected:
-    const Self& parent;
+    Self& parent;
     Intersections_cache& inter_cache;
     unsigned int& intersections_number;
 
   public:
-    Construct_projected_intersections_2(const Self* p,
+    Construct_projected_intersections_2(Self* p,
                                         Intersections_cache& inter,
                                         unsigned int& inter_num)
       : parent(*p), inter_cache(inter),
@@ -98,7 +98,7 @@ public:
     OutputIterator
     operator()(const Xy_monotone_surface_3& s1,
                const Xy_monotone_surface_3& s2,
-               OutputIterator o) const
+               OutputIterator o)
     {
       Intersections_list                      inter_list;
 
@@ -132,7 +132,7 @@ public:
 
   /*! Get a Construct_projected_intersections_2 functor object. */
   Construct_projected_intersections_2
-  construct_projected_intersections_2_object() const
+  construct_projected_intersections_2_object()
   {                                                                
     return Construct_projected_intersections_2(this, inter_cache,
                                                intersections_number);
@@ -141,10 +141,10 @@ public:
   class Compare_z_at_xy_3
   {
   protected:
-    const Self& parent;
+    Self& parent;
     Compare_cache& compare_cache;
   public:
-    Compare_z_at_xy_3(const Self* p, Compare_cache& comp_cache)
+    Compare_z_at_xy_3(Self* p, Compare_cache& comp_cache)
       : parent(*p), compare_cache(comp_cache)
     {}
 
@@ -154,7 +154,7 @@ public:
     // precondition: the surfaces are defined in point
     Comparison_result operator()(const Point_2& p,
                                  const Xy_monotone_surface_3& s1,
-                                 const Xy_monotone_surface_3& s2) const
+                                 const Xy_monotone_surface_3& s2)
     {
       return cmp_z_at_xy(p,s1,s2);
     }
@@ -166,7 +166,7 @@ public:
     //               answer is the same for each of these points
     Comparison_result operator()(const X_monotone_curve_2& cv,
                                  const Xy_monotone_surface_3& s1,
-                                 const Xy_monotone_surface_3& s2) const
+                                 const Xy_monotone_surface_3& s2)
     {
       return cmp_z_at_xy(cv,s1,s2);
     }
@@ -176,7 +176,7 @@ public:
     Comparison_result
     cmp_z_at_xy (Geometry& g,
                  const Xy_monotone_surface_3& s1,
-                 const Xy_monotone_surface_3& s2) const
+                 const Xy_monotone_surface_3& s2)
     {
       // check that s1 and s2 do not intersect
       Intersections_list                      inter_list;
@@ -213,7 +213,7 @@ public:
    
   /*! Get a Compare_z_at_xy_3 functor object. */
   Compare_z_at_xy_3
-  compare_z_at_xy_3_object() const
+  compare_z_at_xy_3_object()
   {
     return Compare_z_at_xy_3(this, compare_cache);
   }
