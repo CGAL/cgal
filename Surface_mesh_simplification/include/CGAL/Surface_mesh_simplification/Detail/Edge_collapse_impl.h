@@ -100,7 +100,7 @@ void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Collect()
   
   Equal_3 equal_points = Kernel().equal_3_object();
     
-  size_type lSize = num_undirected_edges(mSurface) ;
+  size_type lSize = num_edges(mSurface) / 2 ;
   
   mInitialEdgeCount = mCurrentEdgeCount = lSize;
   

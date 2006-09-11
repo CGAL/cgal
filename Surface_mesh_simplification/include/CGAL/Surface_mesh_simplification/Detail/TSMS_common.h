@@ -74,16 +74,6 @@ bool handle_exists ( Iterator begin, Iterator end, Handle h )
  return false ;
 }
 
-template<class TSM> 
-struct Surface_geometric_traits
-{ 
-  typedef typename TSM::Point_3 Point_3 ;
-  
-  typedef typename Kernel_traits<Point_3>::Kernel Kernel ;
-  
-  typedef typename Kernel::FT FT ;
-  
-} ;
 
 template<class T, class U> struct ChooseNotVoidType ;
 template<class T>          struct ChooseNotVoidType<T   ,void> { typedef T    type ; } ;

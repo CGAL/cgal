@@ -66,7 +66,7 @@ public:
   
   typedef EdgeCollapse Self ;
   
-  typedef undirected_graph_traits<TSM>       UndirectedGraphTraits ;  // This is a CGAL extension. Is not in boost
+  typedef halfedge_graph_traits<TSM>         HalfedgeGraphTraits ;  // This is a CGAL extension. Is not in boost
   typedef boost::graph_traits    <TSM>       GraphTraits ;
   typedef boost::graph_traits    <TSM const> ConstGraphTraits ;
   
@@ -82,7 +82,7 @@ public:
   typedef typename ConstGraphTraits::vertex_descriptor const_vertex_descriptor ;
   typedef typename ConstGraphTraits::edge_descriptor   const_edge_descriptor ;
   
-  typedef typename UndirectedGraphTraits::edge_iterator undirected_edge_iterator ;
+  typedef typename HalfedgeGraphTraits::undirected_edge_iterator undirected_edge_iterator ;
 
   typedef typename GetCost     ::result_type Optional_cost_type ;
   typedef typename GetPlacement::result_type Optional_placement_type ;
