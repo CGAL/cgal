@@ -163,8 +163,8 @@ class Gps_agg_meta_traits :
                  const Base_Compare_xy_2& base_cmp_xy,
                  const Base_Construct_min_vertex_2& ctr_min_v) : 
       m_base(base),
-      m_base_cmp_endpoints(m_base_cmp_endpoints),
-      m_base_cmp_xy(m_base_cmp_xy)
+      m_base_cmp_endpoints(base_cmp_endpoints),
+      m_base_cmp_xy(base_cmp_xy)
     {}
 
     template<class OutputIterator>
