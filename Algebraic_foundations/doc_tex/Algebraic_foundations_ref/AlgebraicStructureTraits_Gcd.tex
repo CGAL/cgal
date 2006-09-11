@@ -8,15 +8,12 @@ The greatest common divisor ($gcd$) of ring elements $x$ and $y$ is the unique
 ring element $d$ (up to a unit) with the property that any common divisor of 
 $x$ and $y$ also divides $d$. (In other words: $d$ is the greatest lower bound 
 of $x$ and $y$ in the partial order of divisibility.) We demand the $gcd$ to be 
-unit-normal (i.e. have unit part 1). $gcd(0,0)$ is defined as $1$.
+unit-normal (i.e. have unit part 1). 
 
-(TODO: This is the old CGAL def: 
-function gcd computes the greatest common divisor of two numbers.
-If \ccc{x} is 0, the function returns \ccc{y}.
-\ccPrecond: \ccc{y} is not zero.
- )
+$gcd(0,0)$ is defined as $0$, since $0$ is the greatest element with respect 
+to the partial order of divisibility. This is beacuse an element $a \in R$ is said to devide $b \in R$, iff $\exists r \in R$ such that $a \cdot r = b$. 
+Thus, $0$ is devided by every elemet of the Ring, i.e. by itself. 
 
- 
 \ccRefines 
 
 \ccc{AdaptableBinaryFunction} 
