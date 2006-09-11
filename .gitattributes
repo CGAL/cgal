@@ -374,6 +374,8 @@ BGL/doc_tex/BGL_ref/Polyhedron_halfedge_graph_traits.tex -text
 BGL/doc_tex/BGL_ref/Polyhedron_halfedge_graph_traits_const.tex -text
 BGL/doc_tex/BGL_ref/intro.tex -text
 BGL/doc_tex/BGL_ref/main.tex -text
+BGL/include/CGAL/boost/graph/BGL_properties.h -text
+BGL/include/CGAL/boost/graph/Extended_BGL.h -text
 BGL/include/CGAL/boost/graph/HalfedgeDS_BGL_aux.h -text
 BGL/include/CGAL/boost/graph/Polyhedron_BGL.h -text
 BGL/include/CGAL/boost/graph/Polyhedron_BGL_properties.h -text
