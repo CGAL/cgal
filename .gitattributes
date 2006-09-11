@@ -515,6 +515,7 @@ Envelope_3/doc_tex/Envelope_3/fig/ex_triangles.eps -text svneol=unset#applicatio
 Envelope_3/doc_tex/Envelope_3/fig/ex_triangles.fig -text svneol=unset#application/octet-stream
 Envelope_3/doc_tex/Envelope_3/fig/ex_triangles.gif -text svneol=unset#image/gif
 Envelope_3/doc_tex/Envelope_3/fig/ex_triangles.pdf -text svneol=unset#application/pdf
+Envelope_3/examples/Envelope_3/ex_envelope_planes.cpp eol=lf
 Envelope_3/examples/Envelope_3/spheres.dat -text
 Envelope_3/include/CGAL/Env_plane_traits_3.h -text
 Envelope_3/include/CGAL/Envelope_3/Env_plane_constructions.h eol=lf
