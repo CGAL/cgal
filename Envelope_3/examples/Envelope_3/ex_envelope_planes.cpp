@@ -28,17 +28,17 @@ void print_diagram (const Envelope_diagram_2& diag)
   {
     // Print the face boundary.
    
-      // Print the vertices along the outer boundary of the face.
-      ccb = fit->outer_ccb();
-      std::cout << "[Face]  ";
-      do
-      {
-        if(!ccb->is_fictitious())
-          std::cout << '(' << ccb->curve() << ") ";
-        ++ccb;
-      } while (ccb != fit->outer_ccb());
+    // Print the vertices along the outer boundary of the face.
+    ccb = fit->outer_ccb();
+    std::cout << "[Face]  ";
+    do
+    {
+      if(!ccb->is_fictitious())
+        std::cout << '(' << ccb->curve() << ") ";
+      ++ccb;
+    } while (ccb != fit->outer_ccb());
     
-    // Print the labels of the triangles that induce the envelope on this face.
+    // Print the planes that induce the envelope on this face.
     std::cout << "-->  " << fit->number_of_surfaces() 
               << " planes:";
 
@@ -53,7 +53,7 @@ void print_diagram (const Envelope_diagram_2& diag)
 /* The main program: */
 int main ()
 {
-  // Construct the input triangles, makred A and B.
+  // Construct the input planes.
   std::list<Surface_3>   planes;
   
   planes.push_back (Surface_3(Plane_3(0, -1, 1, 0)));
