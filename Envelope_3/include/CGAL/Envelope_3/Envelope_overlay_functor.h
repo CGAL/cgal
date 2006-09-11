@@ -16,6 +16,7 @@
 // $Name:  $
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
+//                 Baruch Zukerman        <baruchzu@post.tau.ac.il>
 
 #ifndef CGAL_ENVELOPE_OVERLAY_FUNCTOR_H
 #define CGAL_ENVELOPE_OVERLAY_FUNCTOR_H

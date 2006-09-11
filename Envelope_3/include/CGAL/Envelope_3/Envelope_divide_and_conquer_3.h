@@ -16,6 +16,7 @@
 // $Name:  $
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
+//                 Baruch Zukerman        <baruchzu@post.tau.ac.il>
 
 #ifndef CGAL_ENVELOPE_DIVIDE_AND_CONQUER_3_H
 #define CGAL_ENVELOPE_DIVIDE_AND_CONQUER_3_H

@@ -16,6 +16,7 @@
 // 
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
+//                 Baruch Zukerman        <baruchzu@post.tau.ac.il>
 
 #ifndef CGAL_ARRANGEMENT_2_INCREMENTAL_INSERT_H
 #define CGAL_ARRANGEMENT_2_INCREMENTAL_INSERT_H

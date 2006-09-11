@@ -15,7 +15,8 @@
 // $Id$
 // 
 //
-// Author(s)     : Ron Wein     <wein@post.tau.ac.il>
+// Author(s)     : Ron Wein           <wein@post.tau.ac.il>
+//                 Baruch Zukerman    <baruchzu@post.tau.ac.il>
 
 #ifndef CGAL_ENVELOPE_3_H
 #define CGAL_ENVELOPE_3_H

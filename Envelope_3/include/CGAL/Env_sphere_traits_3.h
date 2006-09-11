@@ -16,6 +16,7 @@
 // $Name:  $
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
+//                 Baruch Zukerman        <baruchzu@post.tau.ac.il>
 
 #ifndef CGAL_ENV_SPHERE_TRAITS_3_H
 #define CGAL_ENV_SPHERE_TRAITS_3_H

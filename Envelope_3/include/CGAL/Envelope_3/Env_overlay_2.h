@@ -16,6 +16,7 @@
 // 
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
+//                 Baruch Zukerman        <baruchzu@post.tau.ac.il>
 
 #ifndef ENVELOPE_OVERLAY_2_H
 #define ENVELOPE_OVERLAY_2_H
