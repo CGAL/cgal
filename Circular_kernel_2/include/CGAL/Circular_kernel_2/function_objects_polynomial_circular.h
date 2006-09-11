@@ -1188,6 +1188,11 @@ template < class CK >
 
     using CK::Linear_kernel::Collinear_2::operator();
 
+    // PRE CONDITION: 
+    // The coordinates of P, Q, R have to have the same 
+    // delta or (beta == 0 || delta == 0)
+    // We cannot code this pre condition because
+    // if Root_of_2 is interval_nt "beta", "delta" mean nothing
     result_type
     operator()(const Circular_arc_point_2& p, 
                const Circular_arc_point_2& q, 
