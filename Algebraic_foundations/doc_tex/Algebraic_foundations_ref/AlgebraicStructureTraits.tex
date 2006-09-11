@@ -31,9 +31,9 @@ A model of \ccc{AlgebraicStructureTraits} is supposed to provide:\\
         Tag is: & \ccc{Algebraic_structure} is model of:\\
         \hline
           \ccc{CGAL::Null_tag}                       & no algebraic concept\\
-          \ccc{CGAL::Integral_domain_without_div_tag}& \ccc{IntegralDomainWithoutDiv}\\     
+          \ccc{CGAL::Integral_domain_without_division_tag}& \ccc{IntegralDomainWithoutDivision}\\     
           \ccc{CGAL::Integral_domain_tag}            & \ccc{IntegralDomain}\\     
-          \ccc{CGAL::UFDomain_tag}                   & \ccc{UFDomain}\\     
+          \ccc{CGAL::Unique_factorization_domain_tag}                   & \ccc{UniqueFactorizationDomain}\\     
           \ccc{CGAL::Euclidean_ring_tag}             & \ccc{EuclideanRing}\\     
           \ccc{CGAL::Field_tag}                      & \ccc{Field}\\     
           \ccc{CGAL::Field_with_sqrt_tag}            & \ccc{FieldWithSqrt}\\
@@ -52,35 +52,35 @@ A model of \ccc{AlgebraicStructureTraits} is supposed to provide:\\
 \ccNestedType{Is_zero}{ 
 This is either \ccc{CGAL::Null_functor} or a model of 
 \ccc{AlgebraicStructureTraits::IsZero}.\\
-In case \ccc{Algebraic_structure} is a model of \ccc{IntegralDomainWithoutDiv}
+In case \ccc{Algebraic_structure} is a model of \ccc{IntegralDomainWithoutDivision}
 this is not \ccc{CGAL::Null_functor}.
 }
 
 \ccNestedType{Is_one}{ 
 This is either \ccc{CGAL::Null_functor} or a model of 
 \ccc{AlgebraicStructureTraits::IsOne}.\\
-In case \ccc{Algebraic_structure} is a model of \ccc{IntegralDomainWithoutDiv}
+In case \ccc{Algebraic_structure} is a model of \ccc{IntegralDomainWithoutDivision}
 this is not \ccc{CGAL::Null_functor}.
 }
 
 \ccNestedType{Square}{ 
 This is either \ccc{CGAL::Null_functor} or a model of 
 \ccc{AlgebraicStructureTraits::Square}.\\
-In case \ccc{Algebraic_structure} is a model of \ccc{IntegralDomainWithoutDiv}
+In case \ccc{Algebraic_structure} is a model of \ccc{IntegralDomainWithoutDivision}
 this is not \ccc{CGAL::Null_functor}.
 }
 
 \ccNestedType{Simplify}{ 
 This is either \ccc{CGAL::Null_functor} or a model of 
 \ccc{AlgebraicStructureTraits::Simplify}.\\
-In case \ccc{Algebraic_structure} is a model of \ccc{IntegralDomainWithoutDiv}
+In case \ccc{Algebraic_structure} is a model of \ccc{IntegralDomainWithoutDivision}
 this is not \ccc{CGAL::Null_functor}.
 }
 
 \ccNestedType{Unit_part}{ 
 This is either \ccc{CGAL::Null_functor} or a model of 
 \ccc{AlgebraicStructureTraits::UnitPart}.\\
-In case \ccc{Algebraic_structure} is a model of \ccc{IntegralDomainWithoutDiv} 
+In case \ccc{Algebraic_structure} is a model of \ccc{IntegralDomainWithoutDivision} 
 this is not \ccc{CGAL::Null_functor}.
 }
 
@@ -104,7 +104,7 @@ this is not \ccc{CGAL::Null_functor}.
 \ccNestedType{Gcd}{ 
 This is either \ccc{CGAL::Null_functor} or a model of 
 \ccc{AlgebraicStructureTraits::Gcd}.\\
-In case \ccc{Algebraic_structure} is a model of \ccc{UFDomain} 
+In case \ccc{Algebraic_structure} is a model of \ccc{UniqueFactorizationDomain} 
 this is not \ccc{CGAL::Null_functor}.
 }
 

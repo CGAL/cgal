@@ -1,10 +1,10 @@
-\begin{ccRefConcept}{UFDomain}
+\begin{ccRefConcept}{UniqueFactorizationDomain}
 
 
 \ccDefinition
 
 
-A model of \ccc{UFDomain} is an \ccc{IntegralDomain} with the additional property 
+A model of \ccc{UniqueFactorizationDomain} is an \ccc{IntegralDomain} with the additional property 
 that the ring it represents is a unique factorization domain 
 (a.k.a. UFD or factorial ring), meaning that every non-zero non-unit 
 element has a factorization into irreducible elements that is unique 
@@ -16,11 +16,11 @@ are precisely the prime elements.)
 In a UFD, any two elements, not both zero, possess a greatest common 
 divisor (gcd). 
 
-Moreover, \ccc{CGAL::Algebraic_structure_traits< UFDomain >} is a model of 
+Moreover, \ccc{CGAL::Algebraic_structure_traits< UniqueFactorizationDomain >} is a model of 
 \ccc{AlgebraicStructureTraits} providing:\\
  
-- \ccc{CGAL::Algebraic_structure_traits< UFDomain >::Algebraic_type} derived from \ccc{UFDomain_tag} \\
-- \ccc{CGAL::Algebraic_structure_traits< UFDomain >::Gcd} an \ccc{AdaptableBinaryFunction}\\
+- \ccc{CGAL::Algebraic_structure_traits< UniqueFactorizationDomain >::Algebraic_type} derived from \ccc{Unique_factorization_domain_tag} \\
+- \ccc{CGAL::Algebraic_structure_traits< UniqueFactorizationDomain >::Gcd} an \ccc{AdaptableBinaryFunction}\\
   
 
  
@@ -29,9 +29,9 @@ Moreover, \ccc{CGAL::Algebraic_structure_traits< UFDomain >} is a model of
  
 \ccSeeAlso
 
-\ccRefIdfierPage{IntegralDomainWithoutDiv}\\
+\ccRefIdfierPage{IntegralDomainWithoutDivision}\\
 \ccRefIdfierPage{IntegralDomain}\\
-\ccRefIdfierPage{UFDomain}\\
+\ccRefIdfierPage{UniqueFactorizationDomain}\\
 \ccRefIdfierPage{EuclideanRing}\\
 \ccRefIdfierPage{Field}\\
 \ccRefIdfierPage{FieldWithSqrt}\\

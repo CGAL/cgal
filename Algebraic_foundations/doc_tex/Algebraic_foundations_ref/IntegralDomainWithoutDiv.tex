@@ -1,11 +1,11 @@
-\begin{ccRefConcept}{IntegralDomainWithoutDiv}
+\begin{ccRefConcept}{IntegralDomainWithoutDivision}
 
 
 \ccDefinition
 
 This is the most basic concept for algebraic structures considered within CGAL. 
 
-A model \ccc{IntegralDomainWithoutDiv}  represents an integral domain,
+A model \ccc{IntegralDomainWithoutDivision}  represents an integral domain,
 i.e. commutative ring with 0, 1, +, * and unity free of zero divisors.\\ 
 {\bf Note:} A model is not required to offer the always well defined integral division.
 
@@ -17,11 +17,11 @@ The operators unary and binary plus +, unary and binary minus -,
 multiplication * and their compound forms +=, -=, *= are required and 
 implement the respective ring operations.
 
-Moreover, \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDiv >} is a model of 
+Moreover, \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >} is a model of 
 \ccc{AlgebraicStructureTraits} providing:\\ 
-- \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDiv >::Algebraic_type} derived from \ccc{Integral_domain_without_div_tag} \\
-- \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDiv >::Simplify}  an \ccc{AdaptableUnaryFunction}\\
-- \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDiv >::Unit_part} an \ccc{AdaptableUnaryFunction}\\
+- \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Algebraic_type} derived from \ccc{Integral_domain_without_division_tag} \\
+- \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Simplify}  an \ccc{AdaptableUnaryFunction}\\
+- \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Unit_part} an \ccc{AdaptableUnaryFunction}\\
 
 
 { \em \small FROM EXACUS: \\
@@ -43,44 +43,44 @@ rely in a similar fashion on a chain of user-defined conversions.
 \ccOperations
 
 \ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
-\ccFunction{IntegralDomainWithoutDiv 
-            operator+(const IntegralDomainWithoutDiv &a, 
-                      const IntegralDomainWithoutDiv &b);}{}
+\ccFunction{IntegralDomainWithoutDivision 
+            operator+(const IntegralDomainWithoutDivision &a, 
+                      const IntegralDomainWithoutDivision &b);}{}
 \ccGlue
 
-\ccFunction{IntegralDomainWithoutDiv 
-            operator-(const IntegralDomainWithoutDiv &a, 
-                      const IntegralDomainWithoutDiv &b);}{}
+\ccFunction{IntegralDomainWithoutDivision 
+            operator-(const IntegralDomainWithoutDivision &a, 
+                      const IntegralDomainWithoutDivision &b);}{}
 \ccGlue
 
-\ccFunction{IntegralDomainWithoutDiv 
-            operator*(const IntegralDomainWithoutDiv &a, 
-                      const IntegralDomainWithoutDiv &b);}{}
+\ccFunction{IntegralDomainWithoutDivision 
+            operator*(const IntegralDomainWithoutDivision &a, 
+                      const IntegralDomainWithoutDivision &b);}{}
 \ccGlue
-\ccFunction{IntegralDomainWithoutDiv 
-            operator+(const IntegralDomainWithoutDiv &a);}{}
+\ccFunction{IntegralDomainWithoutDivision 
+            operator+(const IntegralDomainWithoutDivision &a);}{}
 \ccGlue
-\ccFunction{IntegralDomainWithoutDiv 
-            operator-(const IntegralDomainWithoutDiv &a);}{}
+\ccFunction{IntegralDomainWithoutDivision 
+            operator-(const IntegralDomainWithoutDivision &a);}{}
 \ccGlue
-\ccMethod{IntegralDomainWithoutDiv 
-            operator+=(const IntegralDomainWithoutDiv &a);}{}
+\ccMethod{IntegralDomainWithoutDivision 
+            operator+=(const IntegralDomainWithoutDivision &a);}{}
 \ccGlue
-\ccMethod{IntegralDomainWithoutDiv 
-            operator-=(const IntegralDomainWithoutDiv &a);}{}
+\ccMethod{IntegralDomainWithoutDivision 
+            operator-=(const IntegralDomainWithoutDivision &a);}{}
 \ccGlue
-\ccMethod{IntegralDomainWithoutDiv 
-            operator*=(const IntegralDomainWithoutDiv &a);}{}
+\ccMethod{IntegralDomainWithoutDivision 
+            operator*=(const IntegralDomainWithoutDivision &a);}{}
 
 Equality comparable: 
 
 \ccFunction{bool 
-            operator==(const IntegralDomainWithoutDiv &a, 
-                      const IntegralDomainWithoutDiv &b);}{}
+            operator==(const IntegralDomainWithoutDivision &a, 
+                      const IntegralDomainWithoutDivision &b);}{}
 \ccGlue
 \ccFunction{bool 
-            operator!=(const IntegralDomainWithoutDiv &a, 
-                      const IntegralDomainWithoutDiv &b);}{}
+            operator!=(const IntegralDomainWithoutDivision &a, 
+                      const IntegralDomainWithoutDivision &b);}{}
 \ccGlue
  
 \ccRefines
@@ -91,9 +91,9 @@ Equality comparable:
 
 \ccSeeAlso
 
-\ccRefIdfierPage{IntegralDomainWithoutDiv}\\
+\ccRefIdfierPage{IntegralDomainWithoutDivision}\\
 \ccRefIdfierPage{IntegralDomain}\\
-\ccRefIdfierPage{UFDomain}\\
+\ccRefIdfierPage{UniqueFactorizationDomain}\\
 \ccRefIdfierPage{EuclideanRing}\\
 \ccRefIdfierPage{Field}\\
 \ccRefIdfierPage{FieldWithSqrt}\\

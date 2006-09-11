@@ -4,7 +4,7 @@
 \ccDefinition
 
 A model of \ccc{EuclideanRing} represents an euclidean ring (or Euclidean domain). 
-It is an \ccc{UFDomain} that affords a suitable notion of minimality of remainders 
+It is an \ccc{UniqueFactorizationDomain} that affords a suitable notion of minimality of remainders 
 such that given $x$ and $y != 0$ we obtain an (almost) unique solution to 
 $x = qy + r by$ demanding that a solution $(q,r)$ is chosen to minimize $r$. 
 In particular, $r$ is chosen to be $0$ if possible.
@@ -12,7 +12,7 @@ In particular, $r$ is chosen to be $0$ if possible.
 Moreover, \ccc{CGAL::Algebraic_structure_traits< EuclideanRing >} is a model of 
 \ccc{AlgebraicStructureTraits} providing:\\
  
-- \ccc{CGAL::Algebraic_structure_traits< EuclideanRing >::Algebraic_type} derived from \ccc{UFDomain_tag} \\
+- \ccc{CGAL::Algebraic_structure_traits< EuclideanRing >::Algebraic_type} derived from \ccc{Unique_factorization_domain_tag} \\
 - \ccc{CGAL::Algebraic_structure_traits< EuclideanRing >::Mod} an \ccc{AdaptableBinaryFunction}\\
 - \ccc{CGAL::Algebraic_structure_traits< EuclideanRing >::Div} an \ccc{AdaptableBinaryFunction}\\
 - \ccc{CGAL::Algebraic_structure_traits< EuclideanRing >::Div_mod}\\
@@ -39,17 +39,17 @@ Proposal: choose the unit normal remainder.
 %Another important example of a Euclidean ring are univariate polynomials over a field. 
 %Here the degree of $r$ is to be minimized. There is no remaining ambiguity.
 
-%Any Euclidean ring is necessarily a \ccc{UFDomain}, and the ability to take remainders allows 
+%Any Euclidean ring is necessarily a \ccc{UniqueFactorizationDomain}, and the ability to take remainders allows 
 %to use the Euclidean Algorithm to compute gcds.   
 
 \ccRefines
- \ccc{UFDomain}
+ \ccc{UniqueFactorizationDomain}
 
 \ccSeeAlso
 
-\ccRefIdfierPage{IntegralDomainWithoutDiv}\\
+\ccRefIdfierPage{IntegralDomainWithoutDivision}\\
 \ccRefIdfierPage{IntegralDomain}\\
-\ccRefIdfierPage{UFDomain}\\
+\ccRefIdfierPage{UniqueFactorizationDomain}\\
 \ccRefIdfierPage{EuclideanRing}\\
 \ccRefIdfierPage{Field}\\
 \ccRefIdfierPage{FieldWithSqrt}\\
