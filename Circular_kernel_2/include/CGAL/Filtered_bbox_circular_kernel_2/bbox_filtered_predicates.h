@@ -197,7 +197,7 @@ template < class BK >
     
     result_type
     operator()(void) 
-    { return Rep(); }
+    { return Line_arc_2(); }
 
     result_type
     operator()(const Line_2 &support,
