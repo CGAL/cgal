@@ -20,8 +20,12 @@ Algebraic_foundations/doc_tex/Algebraic_foundations_ref/EuclideanRing.tex -text
 Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Euclidean_ring_tag.tex -text
 Algebraic_foundations/doc_tex/Algebraic_foundations_ref/ExplicitInteroperable.tex -text
 Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Field.tex -text
+Algebraic_foundations/doc_tex/Algebraic_foundations_ref/FieldWithKthRoot.tex -text
+Algebraic_foundations/doc_tex/Algebraic_foundations_ref/FieldWithRootOf.tex -text
 Algebraic_foundations/doc_tex/Algebraic_foundations_ref/FieldWithSqrt.tex -text
 Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Field_tag.tex -text
+Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Field_with_kth_root_tag.tex -text
+Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Field_with_root_of_tag.tex -text
 Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Field_with_sqrt_tag.tex -text
 Algebraic_foundations/doc_tex/Algebraic_foundations_ref/FromSmallIntConstructible.tex -text
 Algebraic_foundations/doc_tex/Algebraic_foundations_ref/ImplicitInteroperable.tex -text

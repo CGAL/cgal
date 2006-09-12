@@ -3,8 +3,6 @@
 
 \ccDefinition
 
-
-
 A model of \ccc{AlgebraicStructureTraits} reflects the algebraic structure
 of an associated type \ccc{Algebraic_structure}. 
 
@@ -37,6 +35,8 @@ A model of \ccc{AlgebraicStructureTraits} is supposed to provide:\\
           \ccc{CGAL::Euclidean_ring_tag}             & \ccc{EuclideanRing}\\     
           \ccc{CGAL::Field_tag}                      & \ccc{Field}\\     
           \ccc{CGAL::Field_with_sqrt_tag}            & \ccc{FieldWithSqrt}\\
+          \ccc{CGAL::Field_with_kth_root_tag}            & \ccc{FieldWithKthRoot}\\
+          \ccc{CGAL::Field_with_root_of_tag}            & \ccc{FieldWithRootOf}\\
         \hline
         \end{tabular}        
         }
@@ -136,23 +136,41 @@ In case \ccc{Algebraic_structure} is a model of \ccc{FieldWithSqrt}
 this is not \ccc{CGAL::Null_functor}.
 }
 
-\begin{ccAdvanced}
+%\begin{ccAdvanced}
 \ccNestedType{Kth_root}{ 
 This is either \ccc{CGAL::Null_functor} or a model of 
 \ccc{AlgebraicStructureTraits::KthRoot}.\\
-In case \ccc{Algebraic_structure} is a model of \ccc{FieldWithSqrt} 
-[\ccc{FieldWithKthRoot}] this is not \ccc{CGAL::Null_functor}.
+In case \ccc{Algebraic_structure} is a model of \ccc{FieldWithKthRoot} this is not \ccc{CGAL::Null_functor}.
 }
 
 \ccNestedType{Root_of}{ 
 This is either \ccc{CGAL::Null_functor} or a model of 
 \ccc{AlgebraicStructureTraits::RootOf}.\\
-In case \ccc{Algebraic_structure} is a model of \ccc{FieldWithSqrt} 
-[\ccc{FieldWithRootOf}] this is not \ccc{CGAL::Null_functor}.
+In case \ccc{Algebraic_structure} is a model of \ccc{FieldWithRootOf} this is not \ccc{CGAL::Null_functor}.
 }
-\end{ccAdvanced}
+%\end{ccAdvanced}
 
 %\ccHasModels
 
+\ccSeeAlso
+
+
+\ccRefIdfierPage{IntegralDomainWithoutDivision}\\
+\ccRefIdfierPage{IntegralDomain}\\
+\ccRefIdfierPage{UniqueFactorizationDomain}\\
+\ccRefIdfierPage{EuclideanRing}\\
+\ccRefIdfierPage{Field}\\
+\ccRefIdfierPage{FieldWithSqrt}\\
+\ccRefIdfierPage{FieldWithKthRoot}\\
+\ccRefIdfierPage{FieldWithRootOf}\\
+\\
+\ccRefIdfierPage{Integral_domain_without_division_tag}\\
+\ccRefIdfierPage{Integral_domain_tag}\\
+\ccRefIdfierPage{Unique_factorization_domain_tag}\\
+\ccRefIdfierPage{Euclidean_ring_tag}\\
+\ccRefIdfierPage{Field_tag}\\
+\ccRefIdfierPage{Field_with_sqrt_tag}\\
+\ccRefIdfierPage{Field_with_kth_root_tag}\\
+\ccRefIdfierPage{Field_with_root_of_tag}\\
 
 \end{ccRefConcept}
