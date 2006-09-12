@@ -28,13 +28,11 @@ The algorithm presented here can simplify any {\em 2-manifold surface with borde
 
 Edges are collapsed according to a priority given by a user-supplied {\em cost} function, and the coordinates of the replacing vertex is determined by another user-supplied {\em placement} function. The algorithm terminates when a user-supplied {\em stop condition} is met, such as reaching the desired number of edges.
 
-The algorithm implemented here is generic in the sense that it doesn't require the surface to be of any concrete type. Instead, it defines the concept of a \ccStyle{Triangulated Surface Mesh}, and any surface that is a model of that concept can be simplified. Furthermore, the concept is defined not in terms of a monolithic class, but in terms of a set of functions and traits making it easy to adapt any concrete surface type without much work. In particular, the concept definition is based on the well known {\em Boost Graph Library (BGL)}.
+The algorithm implemented here is generic in the sense that it doesn't require the surface to be of any concrete type. Instead, it defines the concept of a \ccc{Triangulated Surface Mesh}, and any surface that is a model of that concept can be simplified. Furthermore, the concept is defined not in terms of a monolithic class, but in terms of a set of functions and traits making it easy to adapt any concrete surface type without much work. In particular, the concept definition is based on the well known {\em Boost Graph Library (BGL)}.
 
 \section{Definitions}
 
 \subsection{TSM - Triangulated Surface Mesh}
-
-A \ccc{TSM} is the main concept which defines how the algorithm requires the input surface to be modeled. It is defined as the composition of two closely related graphs augmented with two BGL \ccc{PropertyMaps}, a collapse operator and a geometric traits. All those elements together compose a valid \ccc{TSM}.
 
 Informally speaking, a {\em triangulated surface mesh} is a set of triangles pasted together along their edges.
 
@@ -65,52 +63,24 @@ Edges in the border of an open surface can be considered to be cyclically connec
 
 A triangular surface mesh is said to be an {\em open 2-manifold} if every edge is incident upon 1 or 2 facets, but no more.
 
-\subsubsection{TSM Topology}
+The topology and geometry (points embeeded in the vertics) of the 1-simplices (vertices and edges only, without considering the facets) in a surface is represented by the concept {HalfedgeGraph}.
 
-The adjacency relations between vertices, edges and facets; that is, the surface topology, can be described as a graph.
+Even though a \ccc{HalfedgeGraph} indirectly represents a facet (by means of its boundary), it fails to distiguish a true facet from a pseudo-facet outside the surface (the way a \ccc{HalfedgeDS} does). Thus, the halfedge graph alone cannot be used to determine whether an edge is a border or not. In order to allow the algorithm to identify border edges, an BGL \ccc{EdgeIsBorderPropertyMap} associating a \ccc{bool} flag to each ({\em directed}) edge is used.
 
-If only the vertices and edges are considered, such a graph is a conventional {\em undirected 2D graph} (a {\em polyhedral graph}).
-
-The facets of a 2-manifold surface mesh can be indirectly addressed, without being explicitely represented as graph nodes, if the edges are {\em symmetrically directed}: any directed cycle of edges in the symmetric directed graph corresponds to the boundary of a facet of the mesh.
-
-The topology of any 2-manifold surface mesh can be described as the combination of two closely related graphs: \ccc{U(V,UE)} and \ccc{D(V,DE)}, where \ccStyle{V} is the set of vertices of the surface, \ccStyle{UE} is the set of {\em undirected} edges of the surface, and \ccStyle{DE} is a set of {\em symmetric directed} edges such that for every undirected edge \ccStyle{s-t} in \ccStyle{UE} (where \ccStyle{s} and \ccStyle{t} are vertices in \ccStyle{V}), there are exactly 2 {\em directed edges}: \ccStyle{s->t} and \ccStyle{t->s} in \ccStyle{DE}.
-
-Since each undirected edge contributes two symmetric directed edges and each directed edge belongs to a directed cycle which describes the boundary of a facet, each undirected edge is restricted to be incident upon at most 2 facets; that is, this graph representation can only handle 2-manifold surfaces. 
-
-Undirected edges in \ccStyle{U} correspond directly to surface-edges, thus, their connectivity is determined by the surface: only edges in the boundary of a common facet are connected, by definition. Thus, border undirected edges are not connected in a cycle around the surface. However, the symmetric directed edges in \ccStyle{D}, and their connectivity, are defined by \ccStyle{U}, so border undirected edges contribute a directed edge which belons to a cycle around the surface.\\
-In other words, the \ccStyle{D} graph addresses the surface border(s) even if there is no explicit pseudo-facet on the outside letting border surface-edges to be cyclically connected.
-
-\subsubsection{TSM Geometry}
-
-While the \ccStyle{U} and \ccStyle{D} graphs described in the previous section are used to represent the topology of the surface, its geometry is described by a geometric traits class. In the current version, the surface is assumed to be {\em polyhedral}, that is, edges are assumed to be implicitely straight line segments and facets to be planar triangles. Therefore, the geometric traits class defines only the Point type of the surface vertices.
-
-\subsubsection{TSM Properties}
-
-Even though the \ccStyle{D} graph indirectly represents a facet (by means of its boundary), it fails to distiguish a true facet from a pseudo-facet outside the surface. Thus, the surface graphs alone cannot be used to determine whether an edge is a border or not. In order to allow the algorithm to indentify border edges, a BGL \ccc{PropertyMap} associating a \ccc{bool} flag to each {\em directed} edge is used.
-
-Similarly, the surface graphs describes the topology of the surface but not its geometry. In order to access the 2D or 3D point embeeded in a surface vertex a second BGL \ccc{PropertyMap} is used, associating a point to each vertex.
-
-These two BGL property maps are also part of the \ccc{TSM} definition and must be provided for any concrete surface type.
-
-This \cgal\ package provides these BGL property maps for a \ccc{Polyhedron_3}.
-
-\subsubsection{TSM Operations}
-
-Operations in a \ccc{TSM} are defined in terms of free (non-member) operator objects. Currently, only one operator is defined since only one operation is needed in the algorithm: the {\em edge collapse operator}.
+Operations in a \ccc{TSM} are defined in terms of free (non-member) operator objects. Currently, only one operator is defined since only one operation is needed in the algorithm: the \ccc{TriangulationEdgeCollapseOperator}
  
 This operator, which must be specialized for the concrete surface type, performs the actual edge collapse by replacing the edge by one if its vertices. It is required to remove from the surface one of the vertices, the facets incident to the collapsed edge (which it turn removes the other two edges incident upon those facets), and nothing else.
 
-This operator, along with the 2 property maps and the 2 graphs, completes the \ccc{TSM} concept.
+A Triangulated Surface Mesh, \ccc{TSM}, is a composition of a \ccc{HalfedgeGraph}, a \ccc{EdgeIsBorderPropertyMap}, and a
+\ccc{TriangulationEdgeCollapseOperator}.
 
 \subsubsection{TSM Models}
 
-A \ccc{Polyhedron_3} is a valid \ccc{TSM} model as long as its facets are only triangles. A polyhedron is represented as a \ccc{HalfedgeDS} whose vertices and edges corresponds exactly to the {\em symmetric directed graph D} defined above. The {\em undirected graph U} can be trivially constructed by merely considering as undirected edge 1 of the 2 opposing \ccc{halfedges} (which one is unimportant).
+A \ccc{Polyhedron_3} is a valid \ccc{TSM} model as long as its facets are only triangles. A polyhedron is represented as a \ccc{HalfedgeDS},and the vertices and edges of any halfedge data structure corresponds exactly to a \ccc{HalfedgeGraph}. The \ccc{undirected_edge_iterator} of the halfedge graph concept is trivially obtained by iterating over 1 out of two halfedges.
 
-Any \ccc{Triangulation}, whether in 2 or 3 dimensions, is also a valid \ccc{TSM} model. Its edges, defined as a cell plus 2 vertex indices: \ccStyle{cell(c)(i,j)}, correspond directly to the {\em undirected graph U} as long as both vertices i,j are finite. The {\em symmetric directed graph D} can be trivially constructed by merely mirroring all edges \ccStyle{cell(c)(i,j)} as \ccStyle{cell(c)(j,i)}. 
+Any \ccc{Triangulation}, whether in 2 or 3 dimensions, is also a valid \ccc{TSM} model. A tringulation edge is defined as a cell plus 2 vertex indices: \ccc{cell(c)(i,j)}. Such edge is inherently directed since the vertex indices are lexicographically ordered in the Edge. Furthermore, for any triangulation directed edge \ccc{cell(c)(i,j)}, the opposite directed edge, \ccc{cell(c)(j,i)}, is always well defined and belongs to the triangulation. Thus, any \ccc{TriangulationDS} can be trivially adapted to be a \ccc{HalfedgeGraph}. 
 
-Throughout this documentation, the term edge, unqualified, refers to an undirected edge.
-
-Th surface graphs (U and D), which are part of the definition of a \ccc{TSM}, must be provided to the algorithm as models of a \ccc{BGL Graph} (with some \cgal\ specific extensions documented in the Reference manual).
+Throughout this documentation, the term edge, unqualified, refers to an undirected edge (even though in a \ccc{HalfedgeGraph} the term edge alone refers to the directed edge)..
 
 This \cgal\ package provides the BGL specializations for a \ccc{Polyhedron_3}.
 
@@ -144,7 +114,7 @@ The stop condition is a boolean predicate called after each edge is selected for
 
 \subsection{Additional surface properties}
 
-The algorithm needs to associate with each edge an implementation-specific internal record. It could do that unintrusively with an internal map, but that would incurr the additional overhead of a lookup. To avoid that inefficieny (which could be significant if the surface has millions of edges) the algorithm requires the user to pass in a BGL \ccc{PropertyMap}, \ccc{EdgeExtraPointerMap}, associating a modifiable void pointer (that is, a \ccStyle{"void*\&"}) to each {\em undirected} edge. The map must be initialized with null pointers for all undirected edges in the surface (or all directed edges if the concrete surface internally distinguishes between the two). 
+The algorithm needs to associate with each edge an implementation-specific internal record. It could do that unintrusively with an internal map, but that would incurr the additional overhead of a lookup. To avoid that inefficieny (which could be significant if the surface has millions of edges) the algorithm requires the user to pass in a BGL \ccc{PropertyMap}, \ccc{EdgeExtraPointerMap}, associating a modifiable void pointer (that is, a \ccc{"void*\&"}) to each {\em undirected} edge. The map must be initialized with null pointers for all undirected edges in the surface (or all directed edges if the concrete surface internally distinguishes between the two). 
 
 Sometimes it is desirable to keep some edges uncollapsed. This can be controlled by fixing vertices in the surface: any edge incident upon a fixed vertex will be left uncollapsed. A BGL \ccc{PropertyMap}, \ccc{VertexIsFixedMap}, associating a bool with every vertex is passed to indicate that.
 
@@ -196,12 +166,12 @@ int r = edge_collapse(surface
                      );
 \end{cprog}
 
-Only the first 2 parameters are required. All other parameters have default values corresponding to the {\em Lindstrom-Turk} cost strategy, with no fixed vertices and assuming the surface edges store room for an extra pointer default initialized to \ccStyle{NULL}.
+Only the first 2 parameters are required. All other parameters have default values corresponding to the {\em Lindstrom-Turk} cost strategy, with no fixed vertices and assuming the surface edges store room for an extra pointer default initialized to \ccc{NULL}.
 
 \subsection{Examples}
 
 These examples present, progressively, the varying choices of policies. It is better to read them one after the other.
-Some lines are marked with \ccStyle{<==== NOTICE THIS} to drive the attention to an important difference with respect to the previous example which can be lost in the context.
+Some lines are marked with \ccc{<==== NOTICE THIS} to drive the attention to an important difference with respect to the previous example which can be lost in the context.
 
 This example illustrates the simplest of the cases using an ordinary polyhedron as surface and all default policies:
 \ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_polyhedron_example.cpp}

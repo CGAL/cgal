@@ -1,0 +1,40 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+\begin{ccRefConcept}{TSM}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+
+The concept \ccRefName\ describes the requirements for the Triangulated Surface Mesh (TSM) data structure.
+
+\ccRefines
+\ccc{HalfedgeGraph}
+\ccc{TriangulationEdgeCollapseOperator}
+\ccc{EdgeIsBorderPropertyMap}
+
+\ccHasModels
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>} }
+  (through the various traits and function overloads that externally adapt a Polyhedron to the involved concepts)
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
