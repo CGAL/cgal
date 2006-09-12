@@ -101,6 +101,7 @@ Mesh_3/applications/lanteri
 Mesh_3/applications/lanteri_output_tet_mesh
 Mesh_3/applications/medit_to_cgal
 Mesh_3/applications/my_makefile
+Mesh_3/applications/nb2mesh
 Mesh_3/applications/off_to_ghs
 Mesh_3/applications/off_to_medit
 Mesh_3/applications/read_mesh
