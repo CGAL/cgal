@@ -1,0 +1,65 @@
+\section{Introduction}
+
+The goal of the 3D spherical kernel is to offer to the user a large set
+of functionalities on spheres, circles and circular arcs in the 3D
+space, in a similar way as what the 2D circular kernel package (see
+Chapter~\ref{chapter-circular-kernel}) does in the plane. All the
+choices (interface, robustness, representation, and so on) made here
+are consistent with the choices made in the \cgal\ kernel, for which
+we refer the user to the kernel manual.
+
+\section{Software Design}
+
+The design of \ccc{Spherical_kernel_3} is similar to the design of
+\ccc{Circular_kernel_2}. It has two template parameters:
+\begin{itemize}
+\item {} the \ccc{LinearKernel}, from which the spherical kernel derives,
+provides all elementary geometric objects like points, lines, spheres, and
+elementary functionality on them. It must be a model of the \cgal\ three 
+dimensional \ccc{Kernel} concept.
+%The \cgal\ 2D Kernel can be used as parameter,
+%but the user may plug his own kernel 
+%instead, as long as it follows the \cgal\ kernel concept. 
+\item {} the second parameter is the algebraic kernel, which is 
+responsible for computations on polynomials and algebraic numbers. It 
+has to be a model of concept \ccc{AlgebraicKernelForSpheres}. The
+robustness of the package relies on the fact that the algebraic kernel
+provides exact computations on algebraic objects.
+\end{itemize}
+
+The 3D spherical kernel uses the extensibility scheme presented in the 
+kernel manual (see Section~\ref{section-extensible-kernel}). 
+The types of \ccc{LinearKernel} are inherited
+by the 3D spherical kernel and some types are taken from the
+\ccc{AlgebraicKernelForSpheres} parameter. New main geometric objects are
+introduced by \ccc{Spherical_kernel_3}: circles in 3D, circular arcs,
+points of circular arcs (used in particular for endpoints of arcs and
+intersection points between arcs) and line segments whose endpoints
+are points of this new type.
+
+In fact, the spherical kernel is documented as a concept,
+\ccc{SphericalKernel}. One model is currently provided: 
+\ccc{Spherical_kernel_3<LinearKernel,AlgebraicKernelForSpheres>}.
+Work is in progress to increase the efficiency by providing filtering
+techniques.
+
+\section{Example}
+
+\ccIncludeExampleCode{Circular_kernel_3/example_Spherical_kernel_3.cpp}
+
+\section{Design and Implementation History}
+
+This package follows the 2D circular kernel package (see
+Chapter~\ref{chapter-circular-kernel}), that allowed to make the basic
+choices of design.
+
+Julien Hazebrouck and Damien Leroy participated in a first
+prototype. Sylvain Pion is acknowledged for helpful discussions.
+
+Pedro Machado Manh\~{a}es de Castro made a major contribution to
+settle the first public release.
+
+This work is partially supported by the IST Programme of the 6th
+Framework Programme of the EU as a STREP (FET Open Scheme) Project
+under Contract No IST-006413 (\ccAnchor{http://acs.cs.rug.nl/}{ACS} -
+Algorithms for Complex Shapes).
