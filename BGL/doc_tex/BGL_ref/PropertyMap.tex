@@ -1,4 +1,4 @@
-%% Copyright (c) 2006  SciSoft.  All rights reserved.
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
 %%
 %% This file is part of CGAL (www.cgal.org); you may redistribute it under
 %% the terms of the Q Public License version 1.0.
@@ -14,31 +14,50 @@
 %%
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
-\ccRefChapter{Boost Graph Library (BGL) interface to CGAL \label{ref-chapter-BGL}}
+\begin{ccRefConcept}{ProperyMap}
 
-This chapter introduces the concepts and classes that correspond to the \cgal\ \ccc{BGL} package.\\
-The packages provides a framework for interfacing \cgal\ data structures as \ccc{BGL} graphs.
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
 
-\section{Classified Reference Pages}
+\ccDefinition
 
-\ccHeading{Concepts}
-\ccRefConceptPage{ConnectedPlanarDirectedGeometricGraph} \\
-\ccRefConceptPage{HalfedgeGraph} \\
-\ccRefConceptPage{PropertyMap} \\
+The concept \ccRefName\ describes the requirements of a \ccc{Boost Property Map}.
 
-\ccHeading{Classes}
-\ccRefIdfierPage{boost::graph_traits< CGAL::Polyhedron_3<Traits> const > }\\
-\ccRefIdfierPage{boost::graph_traits< CGAL::Polyhedron_3<Traits> > }\\
-\ccRefIdfierPage{CGAL::geometric_graph_traits< CGAL::Polyhedron_3<Traits> > }\\
-\ccRefIdfierPage{CGAL::halfedge_graph_traits< CGAL::Polyhedron_3<Traits> const > }\\
-\ccRefIdfierPage{CGAL::halfedge_graph_traits< CGAL::Polyhedron_3<Traits> > }\\
+\ccTypes
+  \ccNestedType{category} {The category of the property (read-only, read-write or lvalue).}{}
+  
+  \ccNestedType{value_type} {The type of the property.}{}
+    
+  \ccNestedType{reference} {The result type of the map operator.}{}
+    
+  \ccNestedType{key_type} {The key type of the map operator.}{}
+
+
+\ccOperations
+
+\ccMethod
+  {reference operator[]( key_type const& key ) const;}
+  {Returns the property associated with the given \ccc{key}.}  
+
+This \cgal\ \ccc{BGL} packages defines the following predefined property tags (not found in the BGL):
+
+\ccEnumeration
+\item \ccc{edge_is_border_t}
+\item \ccc{vertex_is_border_t}
+\item \ccc{vertex_point_t}
+  
+\ccHasModels
 \ccRefIdfierPage{CGAL::Polyhedron_edge_weight_map<Traits> }\\
 \ccRefIdfierPage{CGAL::Polyhedron_edge_is_border_map<Traits> }\\
 \ccRefIdfierPage{CGAL::Polyhedron_vertex_is_border_map<Traits> }\\
 \ccRefIdfierPage{CGAL::Polyhedron_vertex_point_const_map<Traits> }\\
 \ccRefIdfierPage{CGAL::Polyhedron_vertex_point_map<Traits> }\\
 
+\end{ccRefConcept}
+
+
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of footer
 % EOF
 % +------------------------------------------------------------------------+
+
