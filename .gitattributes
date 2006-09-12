@@ -366,6 +366,7 @@ BGL/doc_tex/BGL/BGL.tex -text
 BGL/doc_tex/BGL/PkgDescription.tex -text
 BGL/doc_tex/BGL/main.tex -text
 BGL/doc_tex/BGL_ref/ConnectedPlanarDirectedGeometricGraph.tex -text
+BGL/doc_tex/BGL_ref/EdgeIsBorderPropertyMap.tex -text
 BGL/doc_tex/BGL_ref/HalfedgeGraph.tex -text
 BGL/doc_tex/BGL_ref/Polyhedron_edge_is_border_map.tex -text
 BGL/doc_tex/BGL_ref/Polyhedron_edge_weight_map.tex -text

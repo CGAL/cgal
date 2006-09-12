@@ -14,19 +14,18 @@
 %%
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
-
-\begin{ccRefClass}{CGAL::Polyhedron_edge_is_border_map<Traits>}
-
-%% add template arg's if necessary
+\begin{ccRefConcept}{EdgeIsBorderProperyMap}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
-%% \ccHtmlIndexC[class]{} %% add further index entries
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
 \ccDefinition
 
-The class \ccRefName\ provides a \ccc{BGL} \ccc{PropertyMap} which indicates if a \ccc{Polyhedron_3} Halfedge is a border edge.
+The concept \ccRefName\ describes the requirements of a \ccc{PropertyMap} that indicates whether a graph edge is a border edge.
 
-\ccInclude{CGAL/boost/graph/Polyhedron_BGL_properties.h}
-
+\ccRefines
+  \ccc{PropertyMap}
+  
 \ccTypes
   \ccTypedef{boost::readable_property_map_tag category;}
     {Indicates that this property is read-only.}
@@ -37,25 +36,23 @@ The class \ccRefName\ provides a \ccc{BGL} \ccc{PropertyMap} which indicates if 
   \ccTypedef{bool reference;}
     {The result type of the map operator.}
 
-  \ccTypedef{typename boost::graph_traits< Polyhedron_3<Traits> const>::edge_descriptor key_type;}
-  {The key type of the property map: A \ccc{Polyhedron_3::Halfedge_const_handle}.}
+  \ccNestedType{key_type;}
+  {The type of \ccc{EdgeDescriptor} to which the boolean is-border property is associated.}
 
 \ccCreation
 \ccCreationVariable{pm}  %% choose variable name
-
-\ccConstructor{CGAL::Polyhedron_edge_is_border_map<Traits>( CGAL::Polyhedron_3<Traits> const& poly); }
-{Initializes an instance storing a const pointer to the polyhedron \ccc{poly}.}
 
 \ccOperations
 
 \ccMethod
   {reference operator[]( key_type const& edge ) const;}
-  {Returns the value of edge->is_border().}  
-    
-\ccIsModel
-\ccc{EdgeIsBorderProperyMap}
+  {Returns wether the edge is a border edge or not.}  
+  
+\ccHasModels
+\ccRefIdfierPage{CGAL::Polyhedron_edge_is_border_map<Traits> }\\
 
-\end{ccRefClass}
+\end{ccRefConcept}
+
 
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of footer
