@@ -398,6 +398,9 @@ Surface_mesher/test/Surface_mesher/internal-test-surface-mesher
 Surface_mesher/test/Surface_mesher/my_makefile
 Surface_mesher/test/Surface_mesher/test_c2t3_iterators
 Surface_mesher/test/Surface_mesher/test_robust_circumcenter
+Triangulation_2/test/Triangulation_2/T??.triangulation
+Triangulation_2/test/Triangulation_2/file_tds*
+Triangulation_2/test/Triangulation_2/vrml_tds*
 Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.aux
 Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.bbl
 Tutorial/tutorial/Polyhedron/sgp2004/paper/paper.blg
