@@ -41,14 +41,14 @@ Question: moved it to a global place?
 \subsection*{Basics}
 \subsubsection*{Basic Concepts}
 \ccRefConceptPage{FromSmallIntConstructible}\\
-\subsection*{Basic Classes}
+\subsubsection*{Basic Classes}
 \ccRefConceptPage{CGAL::Null_tag}\\
 \ccRefConceptPage{CGAL::Null_functor}\\
 
 
 \subsection*{ Algebraic Structure Hierarchy}
 
-\subsubsection*{ Algebraic Structure Concept}
+\subsubsection*{ Algebraic Structure Concepts}
 \ccRefConceptPage{IntegralDomainWithoutDivision}\\
 \ccRefConceptPage{IntegralDomain}\\
 \ccRefConceptPage{UniqueFactorizationDomain}\\
@@ -56,7 +56,7 @@ Question: moved it to a global place?
 \ccRefConceptPage{Field}\\
 \ccRefConceptPage{FieldWithSqrt}
 
-\subsubsection*{Algebraic Structure Traits}
+\subsubsection*{Concept AlgebraicStructureTraits}
 \ccRefConceptPage{AlgebraicStructureTraits}\\
 \ccRefConceptPage{AlgebraicStructureTraits::IsZero}\\
 \ccRefConceptPage{AlgebraicStructureTraits::IsOne}\\
@@ -71,33 +71,21 @@ Question: moved it to a global place?
 \ccRefConceptPage{AlgebraicStructureTraits::Sqrt}\\
 \ccRefConceptPage{AlgebraicStructureTraits::IntegralSqrt}\\
 \ccRefConceptPage{AlgebraicStructureTraits::KthRoot}\\
-\ccRefConceptPage{AlgebraicStructureTraits::RootOf}
-
-\subsubsection*{Related Tags}
-
-\ccRefIdfierPage{CGAL::Integral_domain_without_division_tag}\\
-\ccRefIdfierPage{CGAL::Integral_domain_tag}\\
-\ccRefIdfierPage{CGAL::Field_tag}\\
-\ccRefIdfierPage{CGAL::Field_with_sqrt_tag}\\
-\ccRefIdfierPage{CGAL::Unique_factorization_domain_tag}\\
-\ccRefIdfierPage{CGAL::Euclidean_ring_tag}
+\ccRefConceptPage{AlgebraicStructureTraits::RootOf}\\
 
 
-\subsection*{Concept RealEmbeddable}
+\subsubsection{Related Classes}
+\ccRefIdfierPage{Algebraic_structure_traits}\\
 
-\ccRefConceptPage{RealEmbeddable}\\
-\ccRefConceptPage{RealEmbeddableTraits}\\
-\ccRefConceptPage{RealEmbeddableTraits::Abs}\\
-\ccRefConceptPage{RealEmbeddableTraits::Sign}\\
-\ccRefConceptPage{RealEmbeddableTraits::IsZero}\\
-\ccRefConceptPage{RealEmbeddableTraits::IsPositive}\\
-\ccRefConceptPage{RealEmbeddableTraits::IsNegative}\\
-\ccRefConceptPage{RealEmbeddableTraits::Compare}\\
-\ccRefConceptPage{RealEmbeddableTraits::ToDouble}\\
-\ccRefConceptPage{RealEmbeddableTraits::ToDoubleInterval}
+%\subsubsection*{Related Tags }
+%\ccRefIdfierPage{CGAL::Integral_domain_without_division_tag}\\
+%\ccRefIdfierPage{CGAL::Integral_domain_tag}\\
+%\ccRefIdfierPage{CGAL::Field_tag}\\
+%\ccRefIdfierPage{CGAL::Field_with_sqrt_tag}\\
+%\ccRefIdfierPage{CGAL::Unique_factorization_domain_tag}\\
+%\ccRefIdfierPage{CGAL::Euclidean_ring_tag}
 
-
-\subsection*{Global functions}
+\subsubsection{Related Global Functions}
 
 \ccRefIdfierPage{is_zero}\\
 \ccRefIdfierPage{is_one}\\
@@ -114,11 +102,33 @@ Question: moved it to a global place?
 \ccRefIdfierPage{kth_root}\\
 %\ccRefIdfierPage{root_of}\\
 
+\subsection*{Real Embeddable Concept}
+
+\subsubsection{Concept RealEmbeddable}
+\ccRefConceptPage{RealEmbeddable}\\
+
+\subsubsection{RealEmbeddableTraits}
+\ccRefConceptPage{RealEmbeddableTraits}\\
+\ccRefConceptPage{RealEmbeddableTraits::Abs}\\
+\ccRefConceptPage{RealEmbeddableTraits::Compare}\\
+\ccRefConceptPage{RealEmbeddableTraits::Sign}\\
+\ccRefConceptPage{RealEmbeddableTraits::IsZero}\\
+\ccRefConceptPage{RealEmbeddableTraits::IsPositive}\\
+\ccRefConceptPage{RealEmbeddableTraits::IsNegative}\\
+\ccRefConceptPage{RealEmbeddableTraits::ToDouble}\\
+\ccRefConceptPage{RealEmbeddableTraits::ToDoubleInterval}\\
+
+\subsubsection{Related Classes}
+\ccRefIdfierPage{CGAL::Real_embeddable_traits}
+
+\subsection*{Releated Global functions}
+
 \ccRefIdfierPage{abs}\\
+\ccRefIdfierPage{compare}\\
 \ccRefIdfierPage{sign}\\
+\ccRefIdfierPage{is_zero}\\
 \ccRefIdfierPage{is_positive}\\
 \ccRefIdfierPage{is_negative}\\
-\ccRefIdfierPage{compare}\\
 \ccRefIdfierPage{to_double}\\
 \ccRefIdfierPage{to_interval}\\
 
