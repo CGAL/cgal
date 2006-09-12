@@ -7,17 +7,17 @@
 
 This concept defines the minimal set of geometric predicates and
 operations needed to compute the envelope of a set of arbitrary
-surfaces in $\reals^3$. It refines the arrangement-traits concept.
-In addition to the \ccc{Point_2}, \ccc{X_monotone_curve_2} and
-\ccc{Curve_2} types defined in the arrangement-traits concept, it
-also defines the types \ccc{Surface_3} and \ccc{Xy_monotone_surface_3}
+surfaces in $\reals^3$. It refines the arrangement-x-monotone-traits concept.
+In addition to the \ccc{Point_2} , \ccc{X_monotone_curve_2} types and the
+\ccc{Has_infinite_category} category tag defined in the arrangement-traits concept ,
+it also defines the types \ccc{Surface_3} and \ccc{Xy_monotone_surface_3}
 types, which represent arbitrary surfaces and $xy$-monotone surfaces,
-respectively, and support some constructions and predicates on these
+respectively, and supports some constructions and predicates on these
 types. Note however, that these operations usually involve the
 projection of 3D objects onto the $xy$-plane.
 
 \ccRefines
-\ccc{ArrangementTraits_2}
+\ccc{ArrangementXMonotoneTraits_2}
 
 \ccTypes
 % ======
@@ -48,14 +48,16 @@ projection of 3D objects onto the $xy$-plane.
  The operator returns a past-the-end iterator for the output sequence.
  \end{itemize}}
 
-\ccNestedType{Construct_projected_boundary_curves_2}
+\ccNestedType{Construct_projected_boundary_2}
 {provides the operator (templated by the \ccc{OutputIterator} type)~:
  \begin{itemize}
  \item \ccc{OutputIterator operator() (Xy_monotone_surface_3 s, OutputIterator oi)} \\
- which computes all planar curves that form the projection of the
+ which computes all planar $x$-monotone curves and possibly isolated planar points 
+ that form the projection of the
  boundary of the given $xy$-monotone surface $s$ onto the $xy$-plane,
  and inserts them into the output iterator. 
- The value-type of \ccc{OutputIterator} is \ccc{Curve_2}.
+ The value-type of \ccc{OutputIterator} is \ccc{std::pair<CGAL::Object , CGAL::Oriented_side>}
+ where Object stores either \ccc{X_monotone_curve_2} or \ccc{Point_2}.
  The operator returns a past-the-end iterator for the output sequence.
  \end{itemize}}
  
@@ -69,7 +71,7 @@ projection of 3D objects onto the $xy$-plane.
  $xy$-monotone surfaces \ccc{s1} and \ccc{s2} onto the $xy$-plane,
  and inserts them into the output iterator.
  The value-type of \ccc{OutputIterator} is \ccc{CGAL::Object}, where
- each \ccc{Object} either wraps a \ccc{pair<Curve_2,Multiplicity>}
+ each \ccc{Object} either wraps a \ccc{pair<X_monotone_curve_2,Multiplicity>}
  instance, which represents a projected intersection curve with its
  multiplicity (in case the multiplicity is undefined or not known, it
  should be set to $0$) or an \ccc{Point_2} instance, representing the
@@ -98,6 +100,17 @@ projection of 3D objects onto the $xy$-plane.
  of both $s_1$ and $s_2$, and that the surfaces do not intersect over
  $c$. The functor should therefore return the comparison result of
  $s_1(p')$ and $s_2(p')$ for some point $p'$ in the interior of $c$.
+ %
+ \item \ccc{Comparison_result operator() (Xy_monotone_surface_3 s1,
+                                          Xy_monotone_surface_3 s2)}\\
+ which determines the relative $z$-order of the two given infinite $xy$-monotone
+ surfaces which are defined over the entire $xy$ plane and have no boundary ,
+ with the precondition that the surfaces do not intersect at all.
+ The functor should therefore return the comparison result of
+ $s_1(p')$ and $s_2(p')$ for some planar point $p'$.
+ This operator is required iff the category tag \ccc{Has_infinite_category} 
+ is defined as \ccc{Tag_true}.
+ 
  \end{itemize}}
 
 \ccNestedType{Compare_z_at_xy_above_3}
@@ -149,13 +162,13 @@ projection of 3D objects onto the $xy$-plane.
 \ccHeading{Accessing Functor Objects}
 %====================================
 
-\ccThree{Construct_projected_boundary_curves_2~~~}{}{\hspace*{7cm}}
+\ccThree{Construct_projected_boundary_2~~~}{}{\hspace*{7cm}}
 \ccThreeToTwo
 
 \ccMethod{Make_xy_monotone_3 make_xy_monotone_3_object();}
 {}
 \ccGlue
-\ccMethod{Construct_projected_boundary_curves_2 construct_projected_boundary_curves_2_object();}
+\ccMethod{Construct_projected_boundary_2 construct_projected_boundary_2_object();}
 {}
 \ccGlue
 \ccMethod{Construct_projected_intersections_2 construct_projected_intersections_2_object();}
@@ -174,7 +187,8 @@ projection of 3D objects onto the $xy$-plane.
 %===========
 \ccc{CGAL::Envelope_triangle_traits_3<Kernel>}\\
 \ccc{CGAL::Envelope_sphere_traits_3<ConicTraits>}\\
-\ccc{CGAL::Env_surface_data_traits_2<Traits,XyData,SData,Cnv>}
+\ccc{CGAL::Env_surface_data_traits_3<Traits,XyData,SData,Cnv>}\\
+\ccc{CGAL::Env_plane_traits_3<Kernel}
 
 \end{ccRefConcept}
 
