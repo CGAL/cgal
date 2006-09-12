@@ -5,6 +5,12 @@ tests for those
 
 manual
 
+--> a transferer dans linear kernel ?
+        - unoriented equal (pb general orientation dans noyau cgal...)
+        - intersection de deux Line_3
+        - radical plane
+        - calculs de longueurs et surfaces
+
 intersection arcs/triangle
 
 spherical patch 'triangle'
