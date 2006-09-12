@@ -36,11 +36,11 @@ A model of this concept can simply return the placement stored in the passed col
 \ccGlue    
   \ccNestedType{Params}{The type of the model-specific parameters needed. Can be \ccc{void}.}{}
 \ccGlue    
-  \ccTypedef{typename Surface_geometric_traits<TSM>::Point Point;}{The Point type for the surface vertex.}
+  \ccTypedef{typename Surface_geometric_traits<TSM>::Point Point;}{The point type for the surface vertex.}
 \ccGlue    
-  \ccTypedef{typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}{A BGL \ccc{EdgeDescriptor} representing an {\em undirected edge} of the surface.}
+  \ccTypedef{typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}{A {\sc Bgl} \ccc{EdgeDescriptor} representing an {\em undirected edge} of the surface.}
 \ccGlue    
-  \ccTypedef{boost::optional<Point> result_type;}{The type of the result (an optional point)}
+  \ccTypedef{boost::optional<Point> result_type;}{The type of the result (an optional point).}
 
 \ccCreation
 \ccCreationVariable{gp}  %% choose variable name

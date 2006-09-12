@@ -24,7 +24,7 @@
 \ccDefinition
 
 The class \ccRefName\ provides a model for the
-\ccc{SetCollpaseData} where the \ccc{CollapseData} it assigns is \ccc{Partial\_collapse\_data<TSM>}.\\
+\ccc{SetCollpaseData} where the \ccc{CollapseData} it assigns is \ccc{Partial_collapse_data<TSM>}.\\
 The class \ccRefName\ has two template arguments: The first is the type of surface being simplified and must be a model of the \ccc{TSM} concept. The second is the policy which actually computes the cached cost and must be a model of the \ccc{GetCost} concept.
 
 \ccIsModel
@@ -35,7 +35,7 @@ The class \ccRefName\ has two template arguments: The first is the type of surfa
 \ccTypes
   \ccTypedef{TSM TSM;}{The type of the surface to simplify.}
   \ccGlue
-  \ccTypedef{boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}{A BGL \ccc{EdgeDescriptor} representing an {\em undirected edge} of the surface.}
+  \ccTypedef{boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}{A {\sc Bgl} \ccc{EdgeDescriptor} representing an {\em undirected edge} of the surface.}
   \ccGlue
   \ccTypedef{Partial_collapse_data<TSM> Collapse_data;}{A type of collapse data which caches only the cost.}
   \ccGlue
