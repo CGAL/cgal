@@ -47,7 +47,7 @@ The class \ccRefName\ has two template arguments: The first is the type of surfa
 \ccCreationVariable{sd}  %% choose variable name
 
 \ccConstructor{Set_partial_collapse_data<TSM,GetCost>( GetCost const& get_cost); }
-{Initializes an instance storing a const reference to the \ccc{get\_cost} policy which is used to actually compute the cost.}
+{Initializes an instance storing a const reference to the \ccc{get_cost} policy which is used to actually compute the cost.}
 
 \ccOperations
 
@@ -59,7 +59,7 @@ The class \ccRefName\ has two template arguments: The first is the type of surfa
                   , PlacementParam const* pparams
                   );
   }
-{Calls GetCost(edge,surface,data,cparams) to obtain the actual collapse cost \ccc{c}. Then constructs a \ccc{Partial\_collapse\_data<TSM>(c)} and assigns it to \ccc{data}.
+{Calls GetCost(edge,surface,data,cparams) to obtain the actual collapse cost \ccc{c}. Then constructs a \ccc{Partial_collapse_data<TSM>(c)} and assigns it to \ccc{data}.
 }  
 
 

@@ -16,7 +16,7 @@
 
 \section{Introduction}
 
-This \cgal\ package provides a policy-based algorithm for the simplification of triangulated surface meshes.
+This \cgal\ package provides an algorithm for the simplification of triangulated surface meshes.
 
 Simplification is the process of reducing the number of triangles used in the surface but keeping the overall shape, volumen and boundaries preserved as much as possible. It is the opposite of subdivision.
 
@@ -28,7 +28,9 @@ The algorithm presented here can simplify any {\em 2-manifold surface with borde
 
 Edges are collapsed according to a priority given by a user-supplied {\em cost} function, and the coordinates of the replacing vertex is determined by another user-supplied {\em placement} function. The algorithm terminates when a user-supplied {\em stop condition} is met, such as reaching the desired number of edges.
 
-The algorithm implemented here is generic in the sense that it doesn't require the surface to be of any concrete type. Instead, it defines the concept of a \ccc{Triangulated Surface Mesh}, and any surface that is a model of that concept can be simplified. Furthermore, the concept is defined not in terms of a monolithic class, but in terms of a set of functions and traits making it easy to adapt any concrete surface type without much work. In particular, the concept definition is based on the well known {\em Boost Graph Library ({\sc Bgl})}.
+The algorithm implemented here is generic in the sense that it doesn't require the surface to be of any concrete type. Instead, it defines the concept of a {\em Triangulated Surface Mesh} (\ccc{TSM}), and any surface that is a model of that concept can be simplified. Furthermore, the concept is defined not in terms of a monolithic class, but in terms of a set of functions and traits making it easy to adapt any concrete surface type without much work. In particular, the concept definition is based on the well known {\em Boost Graph Library ({\sc Bgl})}.
+
+The design is {\em policy-based}, meaning that you can customize some aspects of the process by passing a set of {\em policy objects}. Each policy object specifies a particular aspect of the algorithm, such as how edges are selected and where the replacement vertex is placed. All policies have a sensible default so you don't need to learn about them unless you need a non-default behaviour.
 
 \section{Definitions\label{SurfaceMeshSimplification:SecDefinitions}}
 
@@ -94,7 +96,7 @@ Naturally, the surface that results from an edge collapse deviates from the init
 
 Global error tracking methods produce highly accurate simplifications but take up a lot of additional space. Cost-driven methods, like the one in this package, produce slightly less accurate simplifications but take up much less additional space, even none in some cases.
 
-The cost-driven method implemented in this package, mainly based on the so-called "memoryless simplification", by Lindstrom and Turk \cite{}, proceeds in two stages. In the collection stage, an initial {\em collapse cost} is assigned to each and every edge in the surface. In the collapsing stage, edges are {\em processed} in order of increasing cost. Some processed edges are {\em collapsed} while some are just discarded. Collapsed edges are replaced by a vertex and the collapse cost of all the edges now incident on the replacement vertex is recalculated, affecting the order of the edges left to process.
+The cost-driven method implemented in this package, mainly based on the so-called "memoryless simplification", by Lindstrom and Turk \cite{a}, proceeds in two stages. In the collection stage, an initial {\em collapse cost} is assigned to each and every edge in the surface. In the collapsing stage, edges are {\em processed} in order of increasing cost. Some processed edges are {\em collapsed} while some are just discarded. Collapsed edges are replaced by a vertex and the collapse cost of all the edges now incident on the replacement vertex is recalculated, affecting the order of the edges left to process.
 
 Not all edges selected for processing are collapsed. A processed edge can be discarded without being collapsed for one of three reasons: its cost could not be computed (for whatever reason), collapsing the edge would result in an inconsistent surface, or the edge is incident upon a vertex which the user marked as fixed.
 
@@ -108,7 +110,7 @@ The algorithm parameters are divided in four groups.
 
 There are two main parameters to the algorithm: the surface to be simplified (in-place) and the stop condition.
 
-The surface must correspond to a valid \ccc{TSM} model, for example a \ccc{Polyhedron\_3}. The argument itself is the surface object and the algorithm does not handle the concrete argument type directly, instead, it internally instantiates and uses the matching specializations and overloads of the {\sc Bgl} graphs traits, functions and property maps defined in Section~\ref{SurfaceMeshSimplification:SecDefinitions}. Such traits and property maps are implict, i.e., not passed as arguments to the algorithm.
+The surface must correspond to a valid \ccc{TSM} model, for example a \ccc{Polyhedron_3}. The argument itself is the surface object and the algorithm does not handle the concrete argument type directly, instead, it internally instantiates and uses the matching specializations and overloads of the {\sc Bgl} graphs traits, functions and property maps defined in Section~\ref{SurfaceMeshSimplification:SecDefinitions}. Such traits and property maps are implict, i.e., not passed as arguments to the algorithm.
 
 The stop condition is a Boolean predicate called after each edge is selected for processing, {\em before} it is classfied as collapsable or not (thus before it is collapsed). If the stop condition returns true the algorithm terminates.
 
@@ -144,7 +146,7 @@ In conjunction, the three parameters: \ccc{SetCollapseData}, \ccc{GetCost} and \
 
 \subsection{Visitor}
 
-Simplifying a large surface with millions of edges can take up a lot of time (several minutes). Thus, it is important to be able to monitor the simplification progress. This can be achieved passing a visitor function object. The information passed to the visitor at each step can be used to track statistics such as the number of edges that couldn't be collapsed.
+Simplifying a large surface with millions of edges can take up a lot of time (several minutes). Thus, it is important to be able to monitor the simplification progress. This can be achieved passing a visitor function object. The information passed to the visitor at each step can be used to track statistics such as the number of edges that couldn't be collapsed. The requirements of the visitor object are specified in the \ccc{TSMEdgeCollapseVisitor} concept.
 
 \section{API}
 
@@ -180,41 +182,41 @@ This example illustrates the simplest of the cases using an ordinary polyhedron 
 \ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_polyhedron_example.cpp}
 
 
-\subsubsection{Example ...}
+\subsubsection{Example Using Enriched Polyhedron}
 
 This example shows how to use an enriched polyhedron which stores the extra pointer in the halfedges.
 \ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_enriched_polyhedron_example.cpp}
 
 
-\subsubsection{Example ...}
+\subsubsection{Example using Non-Default Cost Strategy}
 
 This example shows how to use a cost strategy other than the default.
 
 \ccIncludeExampleCode{Surface_mesh_simplification/MP_edge_collapse_polyhedron_example.cpp}
 
 
-\subsubsection{Example ...}
+\subsubsection{Example using a full cache for the Collapse Data}
 
 This example shows how to use a full collapse-data cache for efficiency. The setup in this case is slightly different for the default cost-strategy (Lindstrom-Turk) than for alternative strategies, so both cases are shown.
 
 \ccIncludeExampleCode{Surface_mesh_simplification/Edge_collapse_fully_cached_polyhedron_example.cpp}
 
 
-\subsubsection{Example ...}
+\subsubsection{Example using a Visitor}
 
 This example shows how to use a visitor to track the simplification process. It also shows how to setup the Lindstrom-Turk cost strategy but with a partial case (unlike a full cache as in the previous example).
 
 \ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_visited_polyhedron_example.cpp}
 
 
-\subsubsection{Example ...}
+\subsubsection{Example using Fixed Vertices via an external Property Map}
 
 This example shows how to fix vertices to prevent edges from being collapsed, using an ordinary polyhedron and external maps.
 
 \ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_with_fixed_vertices_polyhedron_example.cpp}
 
 
-\subsubsection{Example ...}
+\subsubsection{Example using Fixed Vertices via an Enriched Polyhedron}
 
 This example shows how to fix vertices to prevent edges from being collapsed using an enriched polyhedron.
 
