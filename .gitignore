@@ -162,6 +162,7 @@ Mesh_3/test/Mesh_3/read_mesh
 Mesh_3/test/Mesh_3/slivers_exuder
 Mesh_3/test/Mesh_3/stat_mesh
 Mesh_3/test/Mesh_3/test_io_methods
+Mesh_3/test/Mesh_3/test_off
 Min_annulus_d/*.aux
 Min_annulus_d/*.bbl
 Min_annulus_d/*.blg
