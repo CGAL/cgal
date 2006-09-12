@@ -206,6 +206,39 @@ public:
       return std::make_pair(t.first, t.second);
   }
 
+  // Returns the vertices on the boundary of the conflict hole.
+  template <class OutputIterator>
+  OutputIterator
+  vertices_in_conflict(const Weighted_point&p, Cell_handle c,
+		       OutputIterator res) const
+  {
+      CGAL_triangulation_precondition(dimension() >= 2);
+
+      // Get the facets on the boundary of the hole.
+      std::vector<Facet> facets;
+      find_conflicts(p, c, std::back_inserter(facets),
+	             Emptyset_iterator(), Emptyset_iterator());
+
+      // Then extract uniquely the vertices.
+      std::set<Vertex_handle> vertices;
+      if (dimension() == 3) {
+          for (typename std::vector<Facet>::const_iterator i = facets.begin();
+	       i != facets.end(); ++i) {
+	      vertices.insert(i->first->vertex((i->second+1)&3));
+	      vertices.insert(i->first->vertex((i->second+2)&3));
+	      vertices.insert(i->first->vertex((i->second+3)&3));
+          }
+      } else {
+          for (typename std::vector<Facet>::const_iterator i = facets.begin();
+	       i != facets.end(); ++i) {
+	      vertices.insert(i->first->vertex(cw(i->second)));
+	      vertices.insert(i->first->vertex(ccw(i->second)));
+          }
+      }
+
+      return std::copy(vertices.begin(), vertices.end(), res);
+  }
+
   void remove (Vertex_handle v);
 
   template < typename InputIterator >

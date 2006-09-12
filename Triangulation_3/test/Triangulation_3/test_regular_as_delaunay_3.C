@@ -32,10 +32,7 @@ int main()
 {
   typedef CGAL::Regular_triangulation_3<Traits>    Cls;
 
-  if (false)
-    _test_cls_delaunay_3( Cls() );
-  else
-    std::cout << "NOT READY TO BE TESTED" << std::endl;
+  _test_cls_delaunay_3( Cls() );
 
   return 0;
 }
