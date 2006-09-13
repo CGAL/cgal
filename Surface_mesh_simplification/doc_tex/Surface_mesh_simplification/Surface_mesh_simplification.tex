@@ -179,61 +179,56 @@ The following examples introduce the API in increasing complexity. All the examp
 As you can see, each example varies from this general form in the code sections bettween the marks.
 Each example is coded to be compilable so some neccessary parts are repeated in many of them. To simplify the exposition, repeated parts are described in detail only in the first example they appear.
 
-\subsubsection{Example Using Default Policies}
+\subsubsection{Example Using Default Parameters}
 
 The following example illustrates the simplest of the cases.\\
 It uses an {\em ordinary} Polyhedron, that is, a polyhedron without any special provision 
-for the sake of the algorithm, which is possible as illustrated in the next example, 
-and all default policies (the stop condition has no default).
-
-The ommited policies default to:
+for the sake of the algorithm (which is possible as illustrated in the next example).\\
+Many parameters are ommited, causing the algorithm to run in default mode:
 
 \begin{enumerate}
 \item \ccc{There are no fixed vertices in the surface.}
-\item \ccc{The cost strategy is that of Lindstrom-Turk, computed with default parameters and caching onlt the cost (partial cache).}
+\item \ccc{The cost strategy is that of Lindstrom-Turk, computed with default parameters and caching only the cost (partial cache).}
+\item \ccc{No visitor is used to track the algorithm progress.}
 \end{enumerate}
 
 \ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_polyhedron.cpp}
 
-
 \subsubsection{Example Using Enriched Polyhedron}
 
-The following example is equivalent to the first example (in the choice of policies) but instead of using an external map to associated the extra pointer to each edge, it directly stores the pointer in the edge by enriching the polyhedron defintion.
+The following example is equivalent to the previous example but instead of using an external map to associate the extra pointer to each edge, it directly stores the pointer in the edge by enriching the polyhedron definition.
 
 \ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_enriched_polyhedron.cpp}
 
-
 \subsubsection{Example using Non-Default Cost Strategy}
 
-This example shows how to use a cost strategy other than the default.
+The following example shows how to use non-default cost strategy: the edge length as cost and the edge
+midpoint as placement. It also shows how to specify that neither the cost nor the placement should be cached (to save memory).
 
 \ccIncludeExampleCode{Surface_mesh_simplification/MP_edge_collapse_polyhedron.cpp}
 
-
 \subsubsection{Example using a full cache for the Collapse Data}
 
-This example shows how to use a full collapse-data cache for efficiency. The setup in this case is slightly different for the default cost-strategy (Lindstrom-Turk) than for alternative strategies, so both cases are shown.
+The following example shows how to use a full collapse-data cache for efficiency. Using a full collapse data is slightly different for the default cost-strategy (Lindstrom-Turk) than for alternative strategies, so both cases are shown in the same example.
 
 \ccIncludeExampleCode{Surface_mesh_simplification/Edge_collapse_fully_cached_polyhedron.cpp}
 
-
 \subsubsection{Example using a Visitor}
 
-This example shows how to use a visitor to track the simplification process. It also shows how to setup the Lindstrom-Turk cost strategy but with a partial case (unlike a full cache as in the previous example).
+The following example shows how to use a visitor to track the simplification process. It also shows how to setup the Lindstrom-Turk cost strategy but with a partial case (unlike a full cache as in the previous example). A partial cache is the default policy so you don't need to explicitely specify it unless, as in this case, you have to pass an argument further up in the list.
 
 \ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_visited_polyhedron.cpp}
 
 
 \subsubsection{Example using Fixed Vertices via an external Property Map}
 
-This example shows how to fix vertices to prevent edges from being collapsed, using an ordinary polyhedron and external maps.
+The following example shows how to fix vertices to prevent edges from being collapsed. In this case, an ordinary polyhedron is used so the is-fixed vertex flags are stored in an external map.
 
 \ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_with_fixed_vertices_polyhedron.cpp}
 
-
 \subsubsection{Example using Fixed Vertices via an Enriched Polyhedron}
 
-This example shows how to fix vertices to prevent edges from being collapsed using an enriched polyhedron.
+The following example, just like the previous example, shows how to fix vertices to prevent edges from being collapsed. In this case, however, an enriched polyhedron is defined which stores the is-fixed flag right in the vertex.
 
 \ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_with_fixed_vertices_enriched_polyhedron.cpp}
 

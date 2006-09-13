@@ -9,12 +9,15 @@
 #include <CGAL/Surface_mesh_simplification/Polyhedron.h>
 #include <CGAL/Surface_mesh_simplification/Edge_collapse.h>
 
-// === EXAMPLE SPECIFIC POLICIES BEGINS HERE ===
+// === EXAMPLE SPECIFIC HEADERS BEGINS HERE ===
+
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_pred.h>
-// === EXAMPLE SPECIFIC POLICIES ENDS HERE ===
+
+// === EXAMPLE SPECIFIC HEADERS ENDS HERE ===
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 
+// === EXAMPLE SPECIFIC DETAILS BEGINS HERE ===
 
 //
 // Setup an enriched polyhedron type which stores in the halfedge the extra pointer needed by the algorithm
@@ -36,7 +39,7 @@ struct My_items : public CGAL::Polyhedron_items_3
 {
     template < class Refs, class Traits>
     struct Vertex_wrapper {
-        typedef CGAL::HalfedgeDS_vertex_base<Refs,Tag_true,Point> Vertex ;
+        typedef CGAL::HalfedgeDS_vertex_base<Refs,CGAL::Tag_true,Point> Vertex ;
     };
     template < class Refs, class Traits>
     struct Halfedge_wrapper { 
@@ -50,25 +53,26 @@ struct My_items : public CGAL::Polyhedron_items_3
 
 typedef CGAL::Polyhedron_3<Kernel,My_items> Surface; 
 
+// === EXAMPLE SPECIFIC DETAILS ENDS HERE ===
+
+namespace TSMS = CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse ;
+
 int main( int argc, char** argv ) 
 {
   Surface surface; 
   
   std::ifstream is(argv[1]) ; is >> surface ;
 
-  CGAL::Triangulated_surface_mesh
-      ::Simplification
-      ::Edge_collapse
-      ::Count_stop_condition<Surface> stop_policy(1000);
+  
+  // === CONCRETE USAGE EXAMPLE BEGINS HERE ===
+  
+  TSMS::Count_stop_condition<Surface> stop_policy(1000);
      
   // The third argument is ommited this time because the default policy
   // is to put the extra-pointer in the edge itself.
-  int r = CGAL::Triangulated_surface_mesh
-              ::Simplification
-              ::Edge_collapse
-              ::edge_collapse(surface
-                             ,stop_policy
-                             );
+  int r = TSMS::edge_collapse(surface,stop_policy);
+  
+  // === CONCRETE USAGE EXAMPLE ENDS HERE ===
 
   std::cout << "\nFinished...\n" << r << " edges removed.\n"  << (surface.size_of_halfedges()/2) << " final edges.\n" ;
         

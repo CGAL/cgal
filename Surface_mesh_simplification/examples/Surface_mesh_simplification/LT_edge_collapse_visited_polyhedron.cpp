@@ -1,52 +1,34 @@
-// Lindstrom-Turk edge-collapse with ordinary surface and external per-edge pointer.
-//
-// Explicit arguments:
-// 
-//   The surface is an ordinary Polyhedron_3
-//
-//   The stop condition is to finish when the number of undirected edges 
-//   drops below a certain absolute number.
-//
-//   An external map is used to store the per-edge extra pointer unintrusively.
-//
-//   No vertex is fixed.
-//
-//   The cost strategy is Lindstrom-Turk with partial cache (only cost cached)+
-//
-//   A visitor is used to track the simplification.
-//
 #include <iostream>
-#include <iomanip>
 #include <fstream>
 
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Unique_hash_map.h>
 
-// Target surface type. (this include Polyhedron_3.h itself)
 #include <CGAL/Surface_mesh_simplification/Polyhedron.h>
-
-// Policies
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_pred.h>
-
-// Simplification method
 #include <CGAL/Surface_mesh_simplification/Edge_collapse.h>
 
-#include <CGAL/IO/Polyhedron_iostream.h>
+// === EXAMPLE SPECIFIC HEADERS BEGINS HERE ===
 
-using namespace std ;
-using namespace boost ;
-using namespace CGAL ;
+// Stop-condition policy
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_pred.h>
 
-typedef Simple_cartesian<double> Kernel;
-typedef Kernel::Vector_3         Vector;
-typedef Kernel::Point_3          Point;
+// === EXAMPLE SPECIFIC HEADERS ENDS HERE ===
 
-typedef Polyhedron_3<Kernel> Surface; 
+
+typedef CGAL::Simple_cartesian<double> Kernel;
+typedef CGAL::Polyhedron_3<Kernel> Surface; 
+
+// === EXAMPLE SPECIFIC DETAILS BEGINS HERE ===
 
 typedef Surface::Halfedge_handle Halfedge_handle ;
 typedef Surface::Vertex_handle   Vertex_handle ;
 
-using namespace CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse ;
-
+// The following is the Visitor that keeps track of the simplification process.
+// In this example the progress is printed real-time and a few statistics are
+// recorded (and printed in the end).
+//
 struct Visitor
 {
   Visitor() : collected(0), processed(0), collapsed(0), non_collapsable(0), cost_uncomputable(0) {} 
@@ -55,7 +37,7 @@ struct Visitor
   void OnStarted( Surface& aSurface ) {} 
   
   // Called on algorithm exit  
-  void OnFinished ( Surface& aSurface ) { cerr << "\n" << flush ; } 
+  void OnFinished ( Surface& aSurface ) { std::cerr << "\n" << std::flush ; } 
   
   // Called when the stop condition returned true
   void OnStopConditionReached( Surface& aSurface ) {} 
@@ -67,15 +49,15 @@ struct Visitor
                   )
   {
     ++ collected ;
-    cerr << "\rEdges collected: " << collected << flush ;
+    std::cerr << "\rEdges collected: " << collected << std::flush ;
  }                
   
   // Called during the processing phase for each edge processed.
   // If aVertex is a valid handle then the edge was collapsed and aVertex is the replacement.
-  void OnProcessed(Halfedge_handle const& aEdge
-                  ,Surface&               aSurface
-                  ,optional<double>       aCost
-                  ,Vertex_handle const&   aVertex
+  void OnProcessed(Halfedge_handle const&  aEdge
+                  ,Surface&                aSurface
+                  ,boost::optional<double> aCost
+                  ,Vertex_handle const&    aVertex
                   )
   {
     ++ processed ;
@@ -93,62 +75,69 @@ struct Visitor
   
   // Call at each step in the processing phase (when each edge is selected for processing) before the
   // stop condition is evaluated.
-  void OnStep(Halfedge_handle const& aEdge, Surface& aSurface, size_t aInitial, size_t aCurrent)
+  void OnStep(Halfedge_handle const& aEdge, Surface& aSurface, std::size_t aInitial, std::size_t aCurrent)
   {
     if ( aCurrent == aInitial )
-      cerr << "\n" << flush ;
-    cerr << "\r" << aCurrent << flush ;
+      std::cerr << "\n" << std::flush ;
+    std::cerr << "\r" << aCurrent << std::flush ;
   }                
   
-  size_t collected, processed, collapsed, non_collapsable, cost_uncomputable ; 
+  std::size_t collected, processed, collapsed, non_collapsable, cost_uncomputable ; 
 } ;
 
+// === EXAMPLE SPECIFIC DETAILS ENDS HERE ===
+
+namespace TSMS = CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse ;
 
 int main( int argc, char** argv ) 
 {
   Surface surface; 
   
-  ifstream is(argv[1]) ;
-  is >> surface ;
+  std::ifstream is(argv[1]) ; is >> surface ;
 
-  // Extra pointer external map
-  Unique_hash_map<Halfedge_handle,void*> edge2ptr ;
+  // === CONCRETE USAGE EXAMPLE BEGINS HERE ===
+  
+  CGAL::Unique_hash_map<Surface::Halfedge_handle,void*> edge2ptr ;
   for ( Surface::Halfedge_iterator hi = surface.halfedges_begin(); hi != surface.halfedges_end() ; ++ hi )
     edge2ptr[hi] = 0 ;
  
   Visitor visitor ;
 
-  // Since the visitor is the last parameter, all othwerwise default arguments must be explicitely passed.
-  // (so this examples shows the default policies).
+  // Since the visitor is the last parameter, all the parameters, which could have been
+  // ommited, must be explicitely passed (so this examples shows all the defaults).
   //  
-  LindstromTurk_params params ;
+  TSMS::LindstromTurk_params params ;
     
-  int r = edge_collapse(surface
-                       ,Count_ratio_stop_condition<Surface>(0.10)
-                       ,boost::make_assoc_property_map(edge2ptr)
-                       
-                       ,Vertex_is_fixed_map_always_false<Surface>()        // Same as default
-                       ,Set_partial_collapse_data_LindstromTurk<Surface>() // Same as default
-                       ,Cached_cost<Surface>()                             // Same as default
-                       ,LindstromTurk_placement<Surface>()                 // Same as default
-                       ,&params                                            // Same as default
-                       ,&params                                            // Same as default
-                       
-                       ,&visitor
-                       );
+  int r = TSMS::edge_collapse(surface
+                             ,TSMS::Count_ratio_stop_condition<Surface>(0.10)          // StopCondition
+                             ,boost::make_assoc_property_map(edge2ptr)                 // EdgeExtraPointerMap
+                             
+                             // These are the same as the default arguments
+                             ,CGAL::Vertex_is_fixed_map_always_false<Surface>()        // VertexIsFixedMap
+                             ,TSMS::Set_partial_collapse_data_LindstromTurk<Surface>() // SetCollapseData
+                             ,TSMS::Cached_cost<Surface>()                             // GetCost
+                             ,TSMS::LindstromTurk_placement<Surface>()                 // GetPlacement
+                             ,&params                                                  // GetCost parameters
+                             ,&params                                                  // GetPlacement parameters
+                             
+                             ,&visitor
+                             );
 
-  cout << "\nFinished...\n" << r << " edges removed.\n"  << (surface.size_of_halfedges()/2) << " final edges." ;
   
-  cout << "\nEdges collected: " << visitor.collected
-       << "\nEdges proccessed: " << visitor.processed
-       << "\nEdges collapsed: " << visitor.collapsed
-       << endl
-       << "\nEdges not collapsed due to topological constrians: " << visitor.non_collapsable
-       << "\nEdge not collapsed due to computational constrians: " << visitor.cost_uncomputable 
-       << endl ; 
+  std::cout << "\nEdges collected: " << visitor.collected
+            << "\nEdges proccessed: " << visitor.processed
+            << "\nEdges collapsed: " << visitor.collapsed
+            << std::endl
+            << "\nEdges not collapsed due to topological constrians: " << visitor.non_collapsable
+            << "\nEdge not collapsed due to computational constrians: " << visitor.cost_uncomputable 
+            << std::endl ; 
+            
+  // === CONCRETE USAGE EXAMPLE ENDS HERE ===
+  
+  std::cout << "\nFinished...\n" << r << " edges removed.\n"  << (surface.size_of_halfedges()/2) << " final edges." ;
+  
         
-  ofstream os( argc > 2 ? argv[2] : "out.off" ) ;
-  os << surface ;
+  std::ofstream os( argc > 2 ? argv[2] : "out.off" ) ; os << surface ;
   
   return 0 ;      
 }

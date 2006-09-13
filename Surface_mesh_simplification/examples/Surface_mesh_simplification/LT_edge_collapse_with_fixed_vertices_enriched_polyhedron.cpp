@@ -1,46 +1,30 @@
-// Lindstrom-Turk edge-collapse with fixed vertices on an enriched polyhedron.
-//
-// Explicit arguments:
-// 
-//   The surface is an enriched Polyhedron_3 which embeeds the extra pointer in the edge and a boolean flag in the vertices.
-//
-//   The stop condition is to finish when the number of undirected edges 
-//   drops below a certain absolute number.
-//
-//   The per-edge extra pointer is stored in the edge itself.
-//
-//   The flag determining whether the vertex is fixed is stored in the vertex itself
-//
-// Implicit arguments:
-// 
-//   The cost strategy is Lindstrom-Turk with partial cache.
-//   No visitor is passed.
-//
 #include <iostream>
-#include <iomanip>
 #include <fstream>
 
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Unique_hash_map.h>
 
-// Target surface type. (this include Polyhedron_3.h itself)
 #include <CGAL/Surface_mesh_simplification/Polyhedron.h>
-
-// Policies
-#include <CGAL/Surface_mesh_simplification/Vertex_is_fixed_map_stored.h>  //<==== NOTICE THIS 
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_pred.h>
-
-// Simplification method
 #include <CGAL/Surface_mesh_simplification/Edge_collapse.h>
 
-#include <CGAL/IO/Polyhedron_iostream.h>
 
-using namespace std ;
-using namespace boost ;
-using namespace CGAL ;
+// === EXAMPLE SPECIFIC HEADERS BEGINS HERE ===
 
-typedef Simple_cartesian<double> Kernel;
-typedef Kernel::Vector_3         Vector;
-typedef Kernel::Point_3          Point;
+#include <CGAL/Surface_mesh_simplification/Vertex_is_fixed_map_stored.h>  
+
+// Stop-condition policy
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_pred.h>
+
+// === EXAMPLE SPECIFIC HEADERS ENDS HERE ===
+
+
+typedef CGAL::Simple_cartesian<double> Kernel;
+
+// === EXAMPLE SPECIFIC DETAILS BEGINS HERE ===
+
+typedef Kernel::Point_3 Point;
 
 //
 // Setup an enriched polyhedron type which stores in a halfedge each extra pointer needed by the algorithm
@@ -48,9 +32,9 @@ typedef Kernel::Point_3          Point;
 //
 
 template <class Refs, class Traits>
-struct My_vertex : public HalfedgeDS_vertex_base<Refs,Tag_true,Point>
+struct My_vertex : public CGAL::HalfedgeDS_vertex_base<Refs,CGAL::Tag_true,Point>
 { 
-  typedef HalfedgeDS_vertex_base<Refs,Tag_true,Point> Base ;
+  typedef CGAL::HalfedgeDS_vertex_base<Refs,CGAL::Tag_true,Point> Base ;
   
   My_vertex() : is_fixed_(false) {}
   
@@ -62,7 +46,7 @@ struct My_vertex : public HalfedgeDS_vertex_base<Refs,Tag_true,Point>
 };
 
 template <class Refs, class Traits>
-struct My_halfedge : public HalfedgeDS_halfedge_base<Refs> 
+struct My_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> 
 { 
   My_halfedge() : extra_ptr_(0) {}
  
@@ -71,7 +55,7 @@ struct My_halfedge : public HalfedgeDS_halfedge_base<Refs>
   void* extra_ptr_ ;
 };
 
-struct My_items : public Polyhedron_items_3 
+struct My_items : public CGAL::Polyhedron_items_3 
 {
     template < class Refs, class Traits>
     struct Vertex_wrapper {
@@ -87,35 +71,39 @@ struct My_items : public Polyhedron_items_3
     };
 };
 
-typedef Polyhedron_3<Kernel,My_items> Surface; 
+typedef CGAL::Polyhedron_3<Kernel,My_items> Surface; 
 
-typedef Surface::Halfedge_handle Halfedge_handle ;
-typedef Surface::Vertex_handle   Vertex_handle ;
+// === EXAMPLE SPECIFIC DETAILS ENDS HERE ===
 
-using namespace CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse ;
-
+namespace TSMS = CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse ;
 
 int main( int argc, char** argv ) 
 {
   Surface surface; 
   
-  ifstream is(argv[1]) ;
-  is >> surface ;
+  std::ifstream is(argv[1]) ; is >> surface ;
 
+  // === CONCRETE USAGE EXAMPLE BEGINS HERE ===
+  
+  // In this example, the polyhedron has been enriched to store a flag 
+  // right in the vertex that indicates if the vertex is fixed.
+  //
+  // This irrealistic loop just illustrates how the flag would be set.
+  //
   for ( Surface::Vertex_iterator vi = surface.vertices_begin(); vi != surface.vertices_end() ; ++ vi )
     vi->is_fixed_ = true ; // only some would be set to true, of cotrue
   
-  int r = edge_collapse(surface
-                       ,Count_ratio_stop_condition<Surface>(0.10)
-                       ,Edge_extra_pointer_map_stored<Surface>()
-                       ,Vertex_is_fixed_map_stored<Surface>()
-                       );
-
-  cout << "\nFinished...\n" << r << " edges removed.\n"  << (surface.size_of_halfedges()/2) << " final edges." ;
+  int r = TSMS::edge_collapse(surface
+                             ,TSMS::Count_ratio_stop_condition<Surface>(0.10) // StopCondition
+                             ,CGAL::Edge_extra_pointer_map_stored<Surface>()  // EdgeExtraPointerMap
+                             ,CGAL::Vertex_is_fixed_map_stored<Surface>()     // VertexIsFixedMap
+                             );
+           
+  // === CONCRETE USAGE EXAMPLE ENDS HERE ===
   
+  std::cout << "\nFinished...\n" << r << " edges removed.\n"  << (surface.size_of_halfedges()/2) << " final edges." ;
         
-  ofstream os( argc > 2 ? argv[2] : "out.off" ) ;
-  os << surface ;
+  std::ofstream os( argc > 2 ? argv[2] : "out.off" ) ; os << surface ;
   
   return 0 ;      
 }

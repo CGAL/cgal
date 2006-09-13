@@ -23,8 +23,8 @@
 // 4.Any additional header optionally needed by a non-default policy.
 // Each example includes these policy headers between these marks:
 
-// === EXAMPLE SPECIFIC POLICIES BEGINS HERE ===
-// === EXAMPLE SPECIFIC POLICIES ENDS HERE ===
+// === EXAMPLE SPECIFIC HEADERS BEGINS HERE ===
+// === EXAMPLE SPECIFIC HEADERS ENDS HERE ===
 
 
 //
@@ -32,6 +32,13 @@
 //
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Surface; 
+
+// === EXAMPLE SPECIFIC DETAILS BEGINS HERE ===
+// === EXAMPLE SPECIFIC DETAILS ENDS HERE ===
+
+// All the classes and functions used in these examples are found in the following
+// nested namespace, but a namespace alias is used for brevity.
+namespace TSMS = CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse ;
 
 //
 // main function. All the examples share the following structure.
