@@ -32,7 +32,9 @@ public:
 
   typedef TSM_ TSM ;
 
-  typedef typename Surface_geometric_traits<TSM>::FT FT ;
+  typedef typename Geometric_graph_traits<TSM>::Point Point_3 ;
+  typedef typename Kernel_traits<Point_3>::Kernel     Kernel ;
+  typedef typename Kernel::FT                         FT ;
 
   typedef optional<FT> Optional_cost_type ;
   

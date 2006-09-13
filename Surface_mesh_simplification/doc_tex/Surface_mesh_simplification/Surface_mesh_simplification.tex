@@ -172,19 +172,33 @@ Only the first 2 parameters are required. All other parameters have default valu
 
 \subsection{Examples}
 
-These examples present, progressively, the varying choices of policies. It is better to read them one after the other.
-Some lines are marked with \ccc{<==== NOTICE THIS} to drive the attention to an important difference with respect to the previous example which can be lost in the context.
+The following examples introduce the API in increasing complexity. All the examples follow this general structure:
 
-\subsubsection{Example Using Defaults}
+\ccIncludeExampleCode{Surface_mesh_simplification/general_form.cpp}
 
-This example illustrates the simplest of the cases using an ordinary polyhedron as surface and all default policies.
+As you can see, each example varies from this general form in the code sections bettween the marks.
+Each example is coded to be compilable so some neccessary parts are repeated in many of them. To simplify the exposition, repeated parts are described in detail only in the first example they appear.
+
+\subsubsection{Example Using Default Policies}
+
+The following example illustrates the simplest of the cases.\\
+It uses an {\em ordinary} Polyhedron, that is, a polyhedron without any special provision 
+for the sake of the algorithm, which is possible as illustrated in the next example, 
+and all default policies (the stop condition has no default).
+
+The ommited policies default to:
+
+\begin{enumerate}
+\item \ccc{There are no fixed vertices in the surface.}
+\item \ccc{The cost strategy is that of Lindstrom-Turk, computed with default parameters and caching onlt the cost (partial cache).}
+\end{enumerate}
 
 \ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_polyhedron.cpp}
 
 
 \subsubsection{Example Using Enriched Polyhedron}
 
-This example shows how to use an enriched polyhedron which stores the extra pointer in the halfedges.
+The following example is equivalent to the first example (in the choice of policies) but instead of using an external map to associated the extra pointer to each edge, it directly stores the pointer in the edge by enriching the polyhedron defintion.
 
 \ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_enriched_polyhedron.cpp}
 

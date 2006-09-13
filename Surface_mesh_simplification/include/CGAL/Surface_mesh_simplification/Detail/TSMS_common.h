@@ -33,7 +33,8 @@
 
 #include <CGAL/Cartesian/MatrixC33.h>
 #include <CGAL/Modifiable_priority_queue.h>
-#include <CGAL/boost/graph/Extended_BGL.h>
+#include <CGAL/boost/graph/Geometric_graph_traits.h>
+#include <CGAL/boost/graph/Halfedge_graph_traits.h>
 
 CGAL_BEGIN_NAMESPACE
 

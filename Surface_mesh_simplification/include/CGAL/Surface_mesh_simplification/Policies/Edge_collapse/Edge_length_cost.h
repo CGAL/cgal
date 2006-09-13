@@ -36,19 +36,24 @@ public:
     
   typedef TSM_ TSM ;
   
+private :
+    
+  typedef typename boost::graph_traits<TSM>::vertex_descriptor vertex_descriptor ;
+  
+  typedef typename Geometric_graph_traits<TSM>::Point Point_3 ;
+  
+  typedef typename Kernel_traits<Point_3>::Kernel     Kernel ;
+
+public:
+
   typedef typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor ;
   
-  typedef typename Surface_geometric_traits<TSM>::FT FT ;
+  typedef typename Kernel::FT FT ;
   
   typedef optional<FT> result_type ;
   
   typedef char Params ;
 
-private :
-    
-  typedef typename boost::graph_traits<TSM>::vertex_descriptor vertex_descriptor ;
-  
-  typedef typename Surface_geometric_traits<TSM>::Point_3 Point_3 ;
   
 public:
 
@@ -63,19 +68,13 @@ public:
   {
     vertex_descriptor vs,vt ; tie(vs,vt) = this->get_vertices(aEdge,aSurface);
     
-    Point_3 const& ps = this->get_point(vs,aSurface);
-    Point_3 const& pt = this->get_point(vt,aSurface);
+    Point_3 const& ps = get_point(vs,aSurface);
+    Point_3 const& pt = get_point(vt,aSurface);
       
     return result_type(squared_distance(ps,pt));
   }
   
 private:
-
-  Point_3 const& get_point ( vertex_descriptor const& v, TSM& aSurface ) const
-  {
-    vertex_point_t vertex_point ;
-    return get(vertex_point,aSurface,v) ;
-  }
   
   tuple<vertex_descriptor,vertex_descriptor> get_vertices ( edge_descriptor const& aEdge, TSM& aSurface ) const
   {

@@ -78,8 +78,8 @@ typename LindstromTurkCore<TSM>::result_type LindstromTurkCore<TSM>::compute()
   
   Extract_boundary_edges(lBdry);
     
-  Point const& lP = get_point(mP) ;
-  Point const& lQ = get_point(mQ) ;
+  Point const& lP = get_point(mP,mSurface) ;
+  Point const& lQ = get_point(mQ,mSurface) ;
   
   Optional_vector lOptionalV ;
   
@@ -182,8 +182,8 @@ void LindstromTurkCore<TSM>::Extract_boundary_edge( edge_descriptor edge, Bounda
   vertex_descriptor sv = source(face_edge,mSurface);
   vertex_descriptor tv = target(face_edge,mSurface);
   
-  Point const& sp = get_point(sv);
-  Point const& tp = get_point(tv);
+  Point const& sp = get_point(sv,mSurface);
+  Point const& tp = get_point(tv,mSurface);
   
   Vector v = tp - sp ;
   Vector n = Point_cross_product(tp,sp) ;
@@ -229,13 +229,13 @@ void LindstromTurkCore<TSM>::Extract_boundary_edges( BoundaryEdges& rBdry )
 //
 template<class TSM>
 typename LindstromTurkCore<TSM>::Triangle LindstromTurkCore<TSM>::Get_triangle( vertex_descriptor const& v0
-                                                                            , vertex_descriptor const& v1
-                                                                            , vertex_descriptor const& v2 
-                                                                            )
+                                                                              , vertex_descriptor const& v1
+                                                                              , vertex_descriptor const& v2 
+                                                                             )
 {
-  Point const& p0 = get_point(v0);
-  Point const& p1 = get_point(v1);
-  Point const& p2 = get_point(v2);
+  Point const& p0 = get_point(v0,mSurface);
+  Point const& p1 = get_point(v1,mSurface);
+  Point const& p2 = get_point(v2,mSurface);
   
   Vector v01 = p1 - p0 ;
   Vector v02 = p2 - p0 ;
@@ -440,7 +440,7 @@ void LindstromTurkCore<TSM>::Add_boundary_and_volume_optimization_constrians( Bo
     //
     // Weighted average
     //
-    FT lScaledBoundaryWeight = FT(9) * mParams.BoundaryWeight * squared_distance ( get_point(mP), get_point(mQ) )  ;
+    FT lScaledBoundaryWeight = FT(9) * mParams.BoundaryWeight * squared_distance ( get_point(mP,mSurface), get_point(mQ,mSurface) )  ;
     
     H *= mParams.VolumeWeight ;
     c = c * mParams.VolumeWeight ;
@@ -468,7 +468,7 @@ void LindstromTurkCore<TSM>::Add_shape_optimization_constrians( Link const& aLin
   Vector c = NULL_VECTOR ;
   
   for( typename Link::const_iterator it = aLink.begin(), eit = aLink.end() ; it != eit ; ++it )
-    c = c + (ORIGIN - get_point(*it)) ;  
+    c = c + (ORIGIN - get_point(*it,mSurface)) ;  
            
   CGAL_TSMS_LT_TRACE(2,"Adding shape optimization constrians: Shape vector: " << xyz_to_string(c) );
   
@@ -515,7 +515,7 @@ LindstromTurkCore<TSM>::Compute_shape_cost( Point const& p, Link const& aLink )
   FT rCost(0);
   
   for( typename Link::const_iterator it = aLink.begin(), eit = aLink.end() ; it != eit ; ++it )
-    rCost += squared_distance(p,get_point(*it)) ;  
+    rCost += squared_distance(p,get_point(*it,mSurface)) ;  
     
   return rCost ;
 }

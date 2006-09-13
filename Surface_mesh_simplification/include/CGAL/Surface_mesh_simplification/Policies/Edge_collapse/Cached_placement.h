@@ -35,7 +35,7 @@ public:
   
   typedef typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor ;
   
-  typedef typename Surface_geometric_traits<TSM>::Point_3 Point_3 ;
+  typedef typename Geometric_graph_traits<TSM>::Point Point_3 ;
   
   typedef optional<Point_3> result_type ;
 

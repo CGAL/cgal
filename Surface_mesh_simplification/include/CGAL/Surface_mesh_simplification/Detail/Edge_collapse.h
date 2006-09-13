@@ -66,9 +66,10 @@ public:
   
   typedef EdgeCollapse Self ;
   
-  typedef halfedge_graph_traits<TSM>         HalfedgeGraphTraits ;  // This is a CGAL extension. Is not in boost
   typedef boost::graph_traits    <TSM>       GraphTraits ;
   typedef boost::graph_traits    <TSM const> ConstGraphTraits ;
+  typedef Halfedge_graph_traits  <TSM>       HalfedgeGraphTraits ;  // This is a CGAL extension. Is not in boost
+  typedef Geometric_graph_traits <TSM>       GeometricGraphTraits ; // This is a CGAL extension. Is not in boost
   
   typedef typename GraphTraits::vertex_descriptor  vertex_descriptor ;
   typedef typename GraphTraits::vertex_iterator    vertex_iterator ;
@@ -89,9 +90,7 @@ public:
   
   typedef typename SetCollapseData::Collapse_data Collapse_data ;
     
-  typedef Surface_geometric_traits<TSM> Traits ;
-  
-  typedef typename Traits::Point_3 Point_3 ;
+  typedef typename GeometricGraphTraits::Point Point_3 ;
 
   typedef typename Kernel_traits<Point_3>::Kernel Kernel ;
   
@@ -195,12 +194,6 @@ private:
   void Update_neighbors( vertex_descriptor const& aKeptV ) ;
   
   bool is_vertex_fixed ( const_vertex_descriptor const& v ) const { return get(Vertex_is_fixed_map,v) ; }
-  
-  Point_3 const& get_point ( const_vertex_descriptor const& v ) const
-  {
-    vertex_point_t vertex_point ;
-    return get(vertex_point,const_cast<TSM const&>(mSurface),v) ;
-  }
   
   bool is_border ( const_vertex_descriptor const& v ) const 
   {

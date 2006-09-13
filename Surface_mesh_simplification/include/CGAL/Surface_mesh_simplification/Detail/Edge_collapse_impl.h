@@ -128,7 +128,7 @@ void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Collect()
     
     bool lIsFixed = is_vertex_fixed(p) || is_vertex_fixed(q) ;
  
-    if ( p == q || equal_points( get_point(p), get_point(q)) )
+    if ( p == q || equal_points( get_point(p,mSurface), get_point(q,mSurface)) )
       lIsFixed = true ;
   
     // For simplicity, ALL edges, fixed or not, are associated with an edge data.
@@ -418,9 +418,7 @@ typename EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::vertex_descriptor EdgeCollapse<M
       CGAL_TSMS_TRACE(2, edge_to_string(*eb1) ) ;
 #endif
     
-    // Reset the point of placement of the kept vertex.
-    vertex_point_t vertex_point ;
-    put(vertex_point,mSurface,rResult,*lPlacement) ;
+    set_point(rResult,mSurface,*lPlacement) ;
 
     Update_neighbors(rResult) ;
   }

@@ -20,7 +20,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace Triangulated_surface_mesh { namespace Simplification 
+namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse
 {
 
 
@@ -74,97 +74,9 @@ namespace Triangulated_surface_mesh { namespace Simplification
 //
 // RETURN VALUE: A handle to the vertex that IS NOT removed.
 //
-template<class DS_>
-struct Collapse_triangulation_edge
-{
-  typedef DS_ DS ;
-  
-  typedef typename boost::graph_traits<DS>::edge_descriptor   edge_descriptor ;
-  typedef typename boost::graph_traits<DS>::vertex_descriptor vertex_descriptor ;
-  
-  vertex_descriptor operator() ( edge_descriptor const& pq
-                               , edge_descriptor const& pt
-                               , edge_descriptor const& qb
-                               , DS&                    aDS 
-                               ) const
-  {
-    edge_descriptor null ;
-    
-    bool lTopFaceExists         = pt != null ;
-    bool lBottomFaceExists      = qb != null ;
-    bool lTopLeftFaceExists     = lTopFaceExists    && !pt->is_border() ;
-    bool lBottomRightFaceExists = lBottomFaceExists && !qb->is_border() ;
-    
-    CGAL_precondition( !lTopFaceExists    || (lTopFaceExists    && ( pt->vertex()->vertex_degree() > 2 ) ) ) ;
-    CGAL_precondition( !lBottomFaceExists || (lBottomFaceExists && ( qb->vertex()->vertex_degree() > 2 ) ) ) ;
-    
-    vertex_descriptor q = pq->vertex();
-    vertex_descriptor p = pq->opposite()->vertex();
-    
-    CGAL_TSMS_TRACE(3, "Collapsing p-q E" << pq->ID << " (V" << p->ID << "->V" << q->ID << ")" ) ;
-    
-    bool lP_Erased = false, lQ_Erased = false ;
-    
-    if ( lTopFaceExists )
-    { 
-      CGAL_precondition( !pt->opposite()->is_border() ) ; // p-q-t is a face of the mesh
-      if ( lTopLeftFaceExists )
-      {
-        CGAL_TSMS_TRACE(3, "Removing p-t E" << pt->ID << " (V" << p->ID << "->V" << pt->vertex()->ID << ") by joining top-left face" ) ;
-        
-        aDS.join_facet (pt);
-      }
-      else
-      {
-        CGAL_TSMS_TRACE(3, "Removing p-t E" << pt->ID << " (V" << p->ID << "->V" << pt->vertex()->ID << ") by erasing top face" ) ;
-        
-        aDS.erase_facet(pt->opposite());
-        
-        if ( !lBottomFaceExists )
-        {
-          CGAL_TSMS_TRACE(3, "Bottom face doesn't exist so vertex P already removed" ) ;
-          lP_Erased = true ;
-        }  
-      } 
-    }
-    
-    if ( lBottomFaceExists )
-    {   
-      CGAL_precondition( !qb->opposite()->is_border() ) ; // p-q-b is a face of the mesh
-      if ( lBottomRightFaceExists )
-      {
-        CGAL_TSMS_TRACE(3, "Removing q-b E" << qb->ID << " (V" << q->ID << "->V" << qb->vertex()->ID << ") by joining bottom-right face" ) ;
-        aDS.join_facet (qb);
-      }
-      else
-      {
-        CGAL_TSMS_TRACE(3, "Removing q-b E" << qb->ID << " (V" << q->ID << "->V" << qb->vertex()->ID << ") by erasing bottom face" ) ;
-        
-        aDS.erase_facet(qb->opposite());
-        
-        if ( !lTopFaceExists )
-        {
-          CGAL_TSMS_TRACE(3, "Top face doesn't exist so vertex Q already removed" ) ;
-          lQ_Erased = true ;
-        }  
-      }
-    }
+template<class TSM> struct Collapse_triangulation_edge ;
 
-    CGAL_assertion( !lP_Erased || !lQ_Erased ) ;
-    
-    if ( !lP_Erased && !lQ_Erased )
-    {
-      CGAL_TSMS_TRACE(3, "Removing vertex P by joining pQ" ) ;
-      aDS.join_vertex(pq);
-      lP_Erased = true ;
-    }    
-    
-    return lP_Erased ? q : p ;
-  }
-  
-} ;
-
-} } // namespace Triangulated_surface_mesh::Simplification
+} } } // namespace Triangulated_surface_mesh::Simplification::Edge_collapse
 
 CGAL_END_NAMESPACE
 

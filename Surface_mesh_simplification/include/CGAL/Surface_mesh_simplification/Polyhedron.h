@@ -20,10 +20,12 @@
 
 #include <CGAL/Polyhedron_3.h>
 
-#include <CGAL/boost/graph/Polyhedron_BGL.h>
-#include <CGAL/boost/graph/Polyhedron_extended_BGL.h>
+#include <CGAL/boost/graph/Polyhedron_graph_traits.h>
+#include <CGAL/boost/graph/Polyhedron_geometric_graph_traits.h>
+#include <CGAL/boost/graph/Polyhedron_halfedge_graph_traits.h>
 #include <CGAL/boost/graph/Polyhedron_BGL_properties.h>
 
+#include <CGAL/Surface_mesh_simplification/Polyhedron_collapse_operator.h>
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLYHEDRON_H
 // EOF //

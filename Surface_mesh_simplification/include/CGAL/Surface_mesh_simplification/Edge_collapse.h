@@ -19,6 +19,7 @@
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_EDGE_COLLAPSE_H 1
 
 #include <CGAL/boost/graph/BGL_properties.h>
+
 #include <CGAL/Surface_mesh_simplification/Detail/Edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Edge_extra_pointer_map_stored.h>
 #include <CGAL/Surface_mesh_simplification/Vertex_is_fixed_map_always_false.h>

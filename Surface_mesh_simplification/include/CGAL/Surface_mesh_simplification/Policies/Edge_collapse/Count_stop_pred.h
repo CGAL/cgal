@@ -46,7 +46,9 @@ public:
   typedef typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor ;
   typedef typename boost::graph_traits<TSM>::edges_size_type size_type ;
   
-  typedef typename Surface_geometric_traits<TSM>::FT FT ;
+  typedef typename Geometric_graph_traits<TSM>::Point Point_3 ;
+  typedef typename Kernel_traits<Point_3>::Kernel     Kernel ;
+  typedef typename Kernel::FT                         FT ;
 
 public :
   

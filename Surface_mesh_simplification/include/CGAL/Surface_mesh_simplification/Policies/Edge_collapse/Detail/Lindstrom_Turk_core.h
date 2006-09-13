@@ -52,9 +52,10 @@ public:
   
   typedef LindstromTurk_params Params ;
   
-  typedef typename Surface_geometric_traits<TSM>::Kernel Kernel ;
+  typedef typename Geometric_graph_traits<TSM>::Point  Point ;
   
-  typedef typename Kernel::Point_3  Point ;
+  typedef typename Kernel_traits<Point>::Kernel Kernel ;
+  
   typedef typename Kernel::Vector_3 Vector ;
   typedef typename Kernel::FT       FT ;
  
@@ -143,12 +144,6 @@ private :
     return is_border(edge) || is_border(opposite_edge(edge,mSurface)) ;
   }    
 
-  Point get_point( vertex_descriptor const& v ) const
-  {
-    vertex_point_t vertex_point_property ;
-    return get(vertex_point_property,mSurface,v) ;
-  }
-  
   static Vector Point_cross_product ( Point const& a, Point const& b ) 
   {
     return cross_product(a-ORIGIN,b-ORIGIN); 
