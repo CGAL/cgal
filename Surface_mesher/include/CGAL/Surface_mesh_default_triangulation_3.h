@@ -17,8 +17,8 @@
 //
 // Author(s)     : Laurent Rineau
 
-#ifndef SURFACE_MESH_DEFAULT_TRIANGULATION_3_H
-#define SURFACE_MESH_DEFAULT_TRIANGULATION_3_H
+#ifndef CGAL_SURFACE_MESH_DEFAULT_TRIANGULATION_3_H
+#define CGAL_SURFACE_MESH_DEFAULT_TRIANGULATION_3_H
 
 // traits class
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -62,4 +62,4 @@ namespace CGAL {
 
 } // end namespace CGAL  
 
-#endif // SURFACE_MESH_DEFAULT_TRIANGULATION_3_H
+#endif // CGAL_SURFACE_MESH_DEFAULT_TRIANGULATION_3_H

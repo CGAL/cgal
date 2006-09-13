@@ -17,8 +17,8 @@
 //
 // Author(s)     : Steve OUDOT, Laurent Rineau
 
-#ifndef _POLYHEDRAL_H
-#define _POLYHEDRAL_H
+#ifndef CGAL_SURFACE_MESHER_POLYHEDRAL_ORACLE_H
+#define CGAL_SURFACE_MESHER_POLYHEDRAL_ORACLE_H
 
 #include <boost/static_warning.hpp>
 #include <utility>
@@ -289,4 +289,4 @@ class Polyhedral : public Polyhedral_oracle<GT, Visitor>
   } // end namespace Surface_mesher
 } // end namespace CGAL
 
-#endif // _POLYHEDRAL_H
+#endif // CGAL_SURFACE_MESHER_POLYHEDRAL_ORACLE_H
