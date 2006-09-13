@@ -22,6 +22,8 @@
 
 #include <CGAL/boost/graph/HalfedgeDS_graph_traits_aux.h>
 
+#include <CGAL/Polyhedron_3.h>
+
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
 #  define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS
 #else

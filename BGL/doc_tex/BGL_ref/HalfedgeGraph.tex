@@ -69,8 +69,8 @@ Following the BGL interface, the following graph operations are defined as free 
   
   \ccFunction
   {template<class Graph>
-  std::pair < typename boost::halfedge_graph_traits<Graph const>::edge_descriptor
-             ,typename boost::halfedge_graph_traits<Graph const>::edge_descriptor
+  std::pair < typename CGAL::Halfedge_graph_traits<Graph const>::edge_descriptor
+             ,typename CGAL::Halfedge_graph_traits<Graph const>::edge_descriptor
              >   
   undirected_edges(Graph const& g );
   }
@@ -79,8 +79,8 @@ Following the BGL interface, the following graph operations are defined as free 
   }
 
 \ccHasModels
-\ccRefIdfierPage{CGAL::halfedge_graph_traits< CGAL::Polyhedron_3<Traits> const > }\\
-\ccRefIdfierPage{CGAL::halfedge_graph_traits< CGAL::Polyhedron_3<Traits> > }\\
+\ccRefIdfierPage{CGAL::Halfedge_graph_traits< CGAL::Polyhedron_3<Traits> const > }\\
+\ccRefIdfierPage{CGAL::Halfedge_graph_traits< CGAL::Polyhedron_3<Traits> > }\\
 
 \end{ccRefConcept}
 

@@ -20,9 +20,11 @@
 #ifndef CGAL_BOOST_GRAPH_HALFEDGE_GRAPH_TRAITS_H
 #define CGAL_BOOST_GRAPH_HALFEDGE_GRAPH_TRAITS_H
 
+#include <CGAL/basic.h>
+
 CGAL_BEGIN_NAMESPACE
 
-template<class T> struct halfedge_graph_traits ;
+template<class T> struct Halfedge_graph_traits ;
 
 CGAL_END_NAMESPACE
 

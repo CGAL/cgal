@@ -17,10 +17,12 @@
 //
 // Author(s): Andreas Fabri <andreas.fabri@geometryfactory.com>, Fernando Cacciola <fernando.cacciola@gmail.com>
 
-#ifndef CGAL_BOOST_GRAPH_POLYHEDRON_GRAPH_TRAITS_H
-#define CGAL_BOOST_GRAPH_POLYHEDRON_GRAPH_TRAITS_H
+#ifndef CGAL_BOOST_GRAPH_POLYHEDRON_GEOMETRIC_GRAPH_TRAITS_H
+#define CGAL_BOOST_GRAPH_POLYHEDRON_GEOMETRIC_GRAPH_TRAITS_H
 
+#include <CGAL/boost/graph/Polyhedron_BGL_properties.h>
 #include <CGAL/boost/graph/Geometric_graph_traits.h>
+#include <CGAL/Polyhedron_3.h>
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
 #  define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS
@@ -32,17 +34,28 @@
 CGAL_BEGIN_NAMESPACE
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-class geometric_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const > 
+class Geometric_graph_traits< Polyhedron_3<Gt,I,HDS,A> const > 
 {
 private:
 
-  typedef CGAL::Polyhedron_3<Gt,I,HDS,A> Polyhedron ;
+  typedef Polyhedron_3<Gt,I,HDS,A> Polyhedron ;
   
 public:
   
-  typedef typename Polyhedron::Point_3 Point_3 ;
+  typedef typename Polyhedron::Point_3 Point ;
 };
 
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+class Geometric_graph_traits< Polyhedron_3<Gt,I,HDS,A> > 
+{
+private:
+
+  typedef Polyhedron_3<Gt,I,HDS,A> Polyhedron ;
+  
+public:
+  
+  typedef typename Polyhedron::Point_3 Point ;
+};
         
 CGAL_END_NAMESPACE
 

@@ -25,6 +25,8 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 
+#include <CGAL/basic.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class Circ, class E>

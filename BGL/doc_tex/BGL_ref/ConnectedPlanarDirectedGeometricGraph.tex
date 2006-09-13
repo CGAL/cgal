@@ -49,7 +49,7 @@ Additionally, the vertices and edges of this graph are required to have a distin
 \ccc{EdgeAndVertexListGraph}
 
 \ccTypes
-  \ccNestedType{Point_3}{The 3D Point type of the vertex}{}
+  \ccNestedType{Point}{The Point type of the vertex}{}
 
 \ccOperations
 
@@ -88,18 +88,16 @@ Following the BGL interface, the following graph operations are defined as free 
   
   \ccFunction
   {template<class Graph>
-  typename CGAL::geometric_graph_traits<Graph>::Point const& 
+  typename CGAL::Geometric_graph_traits<Graph>::Point const& 
   get_point(typename boost::graph_traits<Graph const>::vertex_descriptor v, Graph const& g );
   }
-  {Returns the point of the vertex \ccc{v} belonging to the graph \ccc{g}\\
-   (non-const version ommited).
-  }
+  {Returns the point of the vertex \ccc{v} belonging to the graph \ccc{g}}
   
   \ccFunction
   {template<class Graph>
   void set_point(typename boost::graph_traits<Graph>::vertex_descriptor v
                 ,Graph& g
-                ,typename CGAL::geometric_graph_traits<Graph>::Point p
+                ,typename CGAL::Geometric_graph_traits<Graph>::Point p
                 );
   }
   {Sets \ccc{p} as the point of the vertex \ccc{v} belonging to the graph \ccc{g}.}
@@ -107,7 +105,7 @@ Following the BGL interface, the following graph operations are defined as free 
 \ccHasModels
 \ccRefIdfierPage{boost::graph_traits< CGAL::Polyhedron_3<Traits> const > }\\
 \ccRefIdfierPage{boost::graph_traits< CGAL::Polyhedron_3<Traits> > }\\
-\ccRefIdfierPage{CGAL::geometric_graph_traits< CGAL::Polyhedron_3<Traits> > }\\
+\ccRefIdfierPage{CGAL::Geometric_graph_traits< CGAL::Polyhedron_3<Traits> > }\\
 
 \end{ccRefConcept}
 

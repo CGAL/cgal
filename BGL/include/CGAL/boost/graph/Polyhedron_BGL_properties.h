@@ -21,7 +21,7 @@
 #define CGAL_BOOST_GRAPH_POLYHEDRON_BGL_PROPERTIES_H
 
 #include <CGAL/boost/graph/BGL_properties.h>
-#include <CGAL/boost/graph/Polyhedron_BGL.h>
+#include <CGAL/boost/graph/Polyhedron_graph_traits.h>
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
 #  define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS

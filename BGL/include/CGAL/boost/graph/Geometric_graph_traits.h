@@ -20,9 +20,34 @@
 #ifndef CGAL_BOOST_GRAPH_GEOMETRIC_GRAPH_TRAITS_H
 #define CGAL_BOOST_GRAPH_GEOMETRIC_GRAPH_TRAITS_H
 
+#include <boost/graph/graph_traits.hpp>
+#include <boost/property_map.hpp>
+
+#include <CGAL/basic.h>
+#include <CGAL/boost/graph/BGL_properties.h>
+
 CGAL_BEGIN_NAMESPACE
 
-template<class T> struct geometric_graph_traits ;
+template<class Graph> struct Geometric_graph_traits ;
+
+template<class Graph>
+inline
+typename Geometric_graph_traits<Graph>::Point const& 
+get_point ( typename boost::graph_traits<Graph const>::vertex_descriptor const& v, Graph const& g )
+{
+  return boost::get(vertex_point_t(),g,v) ;
+}
+
+
+template<class Graph>
+inline
+void set_point ( typename boost::graph_traits<Graph>::vertex_descriptor const& v
+               , Graph&                                                        g
+               , typename Geometric_graph_traits<Graph>::Point const&          p
+               )
+{
+  boost::put(vertex_point_t(),g,v,p) ;
+}
 
 CGAL_END_NAMESPACE
 

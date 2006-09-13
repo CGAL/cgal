@@ -20,6 +20,10 @@
 #ifndef CGAL_BOOST_GRAPH_BGL_PROPERTIES_H
 #define CGAL_BOOST_GRAPH_BGL_PROPERTIES_H
 
+#include <boost/property_map.hpp>
+#include <boost/graph/properties.hpp>
+
+#include <CGAL/basic.h>
 
 CGAL_BEGIN_NAMESPACE
 
