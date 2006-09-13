@@ -52,8 +52,9 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
   typedef typename Kernel::Line_3              Line_3;
   typedef typename Kernel::Object_3            Object_3;
   typedef std::pair<Curve_2, 
-                    Intersection_type>         Intersection_curve;
+                    Multiplicity>              Intersection_curve;
   typedef Tag_true                             Has_infinite_category;
+  typedef unsigned int                         Multiplicity;
 
   class Is_vertical_3
   {
@@ -375,7 +376,7 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
         Object obj = k.intersect_3_object()(h1, h2);
         Line_3 l;
         if(assign(l, obj))
-          *o++ = make_object(Intersection_curve(project_xy(l, k), TRANSVERSAL));
+          *o++ = make_object(Intersection_curve(project_xy(l, k), 1));
 
         return o;
       }
@@ -391,13 +392,13 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
         Line_2 temp_l;
         if(assign(temp_l, obj))
         {
-          *o++ = make_object(Intersection_curve(temp_l, TRANSVERSAL));
+          *o++ = make_object(Intersection_curve(temp_l, 1));
           return o;
         }
         Ray_2 ray;
         if(assign(ray, obj))
         {
-          *o++ = make_object(Intersection_curve(ray, TRANSVERSAL));
+          *o++ = make_object(Intersection_curve(ray, 1));
           return o;
         }
         return o;
@@ -413,13 +414,13 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
         Line_2 line;
         if(assign(line, obj))
         {
-          *o++ = make_object(Intersection_curve(line, TRANSVERSAL));
+          *o++ = make_object(Intersection_curve(line, 1));
           return o;
         }
         Ray_2 ray;
         if(assign(ray, obj))
         {
-          *o++ = make_object(Intersection_curve(ray, TRANSVERSAL));
+          *o++ = make_object(Intersection_curve(ray, 1));
           return o;
         }
         return o;
@@ -435,20 +436,20 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
         Line_2 line;
         if(assign(line, obj))
         {
-          *o++ = make_object(Intersection_curve(line, TRANSVERSAL));
+          *o++ = make_object(Intersection_curve(line, 1));
           return o;
         }
         Ray_2 ray;
         if(assign(ray, obj))
         {
-          *o++ = make_object(Intersection_curve(ray, TRANSVERSAL));
+          *o++ = make_object(Intersection_curve(ray, 1));
           return o;
         }
 
         Segment_2 seg;
         if(assign(seg, obj))
         {
-          *o++ = make_object(Intersection_curve(seg, TRANSVERSAL));
+          *o++ = make_object(Intersection_curve(seg, 1));
           return o;
         }
 

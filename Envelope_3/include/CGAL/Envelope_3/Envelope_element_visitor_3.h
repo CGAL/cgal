@@ -49,6 +49,7 @@ class Envelope_element_visitor_3
 {
 public:
   typedef EnvelopeTraits_3                             Traits;
+  typedef typename Traits::Multiplicity                Multiplicity;
   typedef typename Traits::Surface_3                   Surface_3;
   typedef typename Traits::Xy_monotone_surface_3       Xy_monotone_surface_3;
   typedef typename Traits::Equal_2                     Equal_2;
@@ -85,7 +86,7 @@ protected:
   typedef std::list<Halfedge_handle>                                Halfedges_list;
   typedef typename std::list<Halfedge_handle>::iterator             Halfedges_list_iterator;
 
-  typedef std::pair<Halfedge_handle, Intersection_type>             Halfedge_w_type;
+  typedef std::pair<Halfedge_handle, Multiplicity>             Halfedge_w_type;
   typedef std::list<Halfedge_w_type>                                Halfedges_w_type_list;
 
   typedef std::list<Vertex_handle>                                  Vertices_list;
@@ -96,7 +97,7 @@ protected:
 
   typedef Unique_hash_map<Vertex_handle, bool>                      Vertices_hash;
   typedef Unique_hash_map<Halfedge_handle, bool>                    Halfedges_hash;
-  typedef Unique_hash_map<Halfedge_handle, Intersection_type>       Halfedges_hash_w_type;
+  typedef Unique_hash_map<Halfedge_handle, Multiplicity>            Halfedges_hash_w_type;
   typedef Unique_hash_map<Face_handle, bool>                        Faces_hash;
 
   typedef Unique_hash_map<Vertex_handle, Vertex_handle>             Vertices_map;
@@ -105,7 +106,7 @@ protected:
 
   typedef Unique_hash_map<Vertex_handle, Halfedge_handle>           Vertices_to_edges_map;
   
-  typedef std::pair<X_monotone_curve_2, Intersection_type>          Intersection_curve;
+  typedef std::pair<X_monotone_curve_2, Multiplicity>          Intersection_curve;
   typedef std::list<Object>                                         Intersections_list;
 
   // this is used in the resolve edge process
@@ -297,7 +298,7 @@ public:
     {
       Halfedge_handle new_he = (*new_edge_it).first;
       Halfedge_handle new_he_twin = new_he->twin();
-      Intersection_type itype = (*new_edge_it).second;
+      Multiplicity itype = (*new_edge_it).second;
 
       // set sources of the new edge
       new_he->set_aux_source(0, face->get_aux_source(0));
@@ -327,7 +328,7 @@ public:
       if (!f2->is_decision_set())
       {
         #ifdef CGAL_ENVELOPE_SAVE_COMPARISONS
-          if (itype != UNKNOWN)
+          if (itype != 0)
           {
             res = convert_decision_to_comparison_result(f1->get_decision());
             res = resolve_by_intersection_type(res, itype);
@@ -346,7 +347,7 @@ public:
       if (!f1->is_decision_set())
       {
         #ifdef CGAL_ENVELOPE_SAVE_COMPARISONS
-          if (itype != UNKNOWN)
+          if (itype != 0)
           {
             res = convert_decision_to_comparison_result(f2->get_decision());
             res = resolve_by_intersection_type(res, itype);
@@ -870,10 +871,10 @@ protected:
   // comparison result of the other side of the intersection curve, 
   // if the first side has result "res"
   Comparison_result resolve_by_intersection_type(Comparison_result res,
-                                                 Intersection_type itype)
+                                                 Multiplicity itype)
   {
-    
-    if (itype == TRANSVERSAL)
+    itype %= 2;
+    if (itype == 1)
     {
       if (res == LARGER)
         return SMALLER;
@@ -884,7 +885,7 @@ protected:
     }
     else
     {
-      CGAL_assertion(itype == TANGENT);
+      CGAL_assertion(itype == 0);
       return res;
     }
 
@@ -2842,7 +2843,7 @@ protected:
       }
     }
 
-    void set_current_intersection_type(Intersection_type t)
+    void set_current_intersection_type(Multiplicity t)
     {
       itype = t;
     }
@@ -2914,7 +2915,7 @@ protected:
     Self* parent;
 
     // current type of interection curve that is inserted
-    Intersection_type itype;
+    Multiplicity itype;
   };
 
   // this minimization diagram observer updates data in new faces created
