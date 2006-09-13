@@ -42,6 +42,11 @@ In addition, the following operations must be provided:
 \ccGlue
 \ccFunction{RootOf_2 operator+(const RootOf_2 &r, const FT &a);}{}
 
+as well as
+\ccFunction{RootOf_2 operator+(const RootOf_2 &r, const RootOf_2 &r);}
+{Addition of two algebraic numbers, in the special case when they have 
+been constructed from equations having the same discriminant.}
+
 and similarly for operators -, * and /.
 
 \ccFunction{RootOf_2 square(const RootOf_2 & r);}{}
