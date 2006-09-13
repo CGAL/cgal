@@ -3,6 +3,7 @@
 
 #include <CGAL/Tools/Coordinate_index.h>
 #include <CGAL/Arrangement_of_spheres_3/Sphere_key.h>
+#include <CGAL/basic.h>
 
 struct Combinatorial_curve{
   typedef ::Coordinate_index Coordinate_index;
@@ -47,21 +48,12 @@ struct Combinatorial_curve{
     CGAL_precondition(!is_finite());
     }*/
   Combinatorial_curve():pt_(INVALID){}
-  bool is_valid() const {
-    return pt_>0 && pt_ < 128
-      //&& (pt_ ^ IN_BIT)
-      && index_.is_valid() 
-      && !(is_arc() && !is_finite() );
-  }
-  Combinatorial_curve other_side() const {
-    Combinatorial_curve ret=*this;
-    ret.set_is_inside(!is_inside());
-    CGAL_assertion(!(is_inside() && ret.is_inside()));
-    return ret;
-  }
-  bool is_special() const {
+  bool is_valid() const ;
+
+  const Combinatorial_curve other_side() const;
+  /*bool is_special() const {
     return pt_== SPECIAL;
-  }
+    }*/
 
   bool is_inside() const {
     return pt_&IN_BIT;
@@ -71,12 +63,8 @@ struct Combinatorial_curve{
     else pt_= pt_ & (~IN_BIT);
   }
 
-  Combinatorial_curve strip_inside() const {
-    Combinatorial_curve ret(index_, pt_& (~IN_BIT), true);
-    CGAL_assertion(!ret.is_inside());
-    CGAL_assertion(ret.is_valid());
-    return ret;
-  }
+  const Combinatorial_curve strip_inside() const ;
+
   bool is_top() const {
     return pt_ & T_BIT;
   }
@@ -92,69 +80,27 @@ struct Combinatorial_curve{
   /*int index() const {
     return index_.to_index();
     }*/
-  Key key() const {
+  const Key& key() const {
     return index_;
   }
+  void set_key(Key k);
 
 
   Coordinate_index
-  constant_coordinate() const {
-    CGAL_precondition(is_rule());
-    Coordinate_index r;
-    if ((pt_&R_BIT) || (pt_ &L_BIT)) 
-      r= Coordinate_index(1);
-    else r= Coordinate_index(0);
-    //if (!is_finite()) r=1-r;
-    return r;
-  }
-  bool can_intersect(int t) const {
-    CGAL_precondition( (t & ~(L_BIT | R_BIT | T_BIT | B_BIT)) == 0);
-    if (is_rule()) {
-      if (!is_vertical() && ((t&R_BIT) || (t &L_BIT))) return false;
-      if (is_vertical() && ((t&T_BIT) || (t &B_BIT))) return false;
-      if (((t & R_BIT) || (t & T_BIT)) && !is_inside()) return false;
-      if (((t & L_BIT) || (t & B_BIT)) && is_inside()) return false;
-      return true;
-    } else {
-      // can simplify
-      if (t&R_BIT) return (is_right() && is_inside() || !is_right() && !is_inside());
-      if (t&L_BIT) return (is_right() && !is_inside() || !is_right() && is_inside());
-      if (t&T_BIT) return (is_top() && is_inside() || !is_top() && !is_inside());
-      if (t&B_BIT) return (is_top() && is_inside() || !is_top() && !is_inside());
-      CGAL_assertion(0);
-      return false;
-    }
-  }
+  constant_coordinate() const ;
 
-  int quadrant() const {
-    if (is_rule()) {
-      if (is_vertical() && is_inside()) return R_BIT;
-      else if (is_vertical() && !is_inside()) return L_BIT;
-      else if (!is_vertical() && is_inside()) return T_BIT;
-      else return B_BIT;
-    } else {
-      if (is_inside()) {
-	return pt_ & (T_BIT | B_BIT | L_BIT | R_BIT);
-      } else {
-	return (~pt_) & (T_BIT | B_BIT | L_BIT | R_BIT);
-      }
-    }
-  }
+  bool is_same_part(const Combinatorial_curve &o) const;
 
-  Part part() const {
-    bool dont_use_part;
+  bool can_intersect(int t) const;
+
+  int quadrant() const;
+
+  const Part part() const {
+    //bool dont_use_part;
     return static_cast<Part>(pt_);
   }
 
-  void flip_rule(Key k) {
-    CGAL_precondition(is_rule());
-    index_=k;
-    if (is_vertical()) {
-      pt_ = pt_^ (T_BIT | B_BIT);
-    } else {
-      pt_ = pt_^ (L_BIT | R_BIT);
-    }
-  }
+  void flip_rule(Key k);
 
   bool is_rule() const {
     return ! is_arc();
@@ -165,28 +111,13 @@ struct Combinatorial_curve{
   bool is_finite() const {
     return index_.is_input(); //! (pt_ & INF_BIT);
   }
-  bool is_arc() const {
-    bool nb= (pt_ &ARC_BIT) != 0;
-    if (pt_&ARC_BIT) {
-      CGAL_assertion(nb);
-    }
-    if (!(pt_&ARC_BIT)) {
-      CGAL_assertion(!nb);
-    }
-    return nb;
-  }
-  bool is_vertical() const {
-    CGAL_precondition(is_rule());
-    //if (is_finite()) {
-      return (pt_ & T_BIT) || (pt_ & B_BIT);
-      /*} else {
-      return (pt_ & L_BIT) || (pt_ & R_BIT);
-      }*/
-  }
-  bool is_same_side(Combinatorial_curve o) const {
-    int u= o.pt_ & pt_; 
-    return u &( T_BIT | L_BIT | R_BIT | B_BIT);
-  }
+  bool is_arc() const ;
+  bool is_vertical() const ;
+
+  bool is_same_side(Combinatorial_curve o) const ;
+
+  static int rule_direction(const Combinatorial_curve &a,
+			    const Combinatorial_curve &b) ;
   
   bool operator==(const Combinatorial_curve &o) const {
     return index_== o.index_ && pt_== o.pt_;
@@ -206,137 +137,38 @@ struct Combinatorial_curve{
     else if (index_ < o.index_) return false;
     else return pt_ > o.pt_;
   }
-  std::ostream &write(std::ostream&out) const {
-    CGAL_precondition(is_valid());
-    out << to_string(pt_);
-    /*if (is_finite())*/  out << index_;
-    return out;
-  }
+  std::ostream &write(std::ostream&out) const;
 
-  bool is_compatible_location(int i) const {
-    //typedef Arrangement_of_spheres_traits_3::Sphere_location SL;
-    if (is_rule()) {
-      if (is_vertical()) {
-	if ( !(i & lL_BIT) && is_inside()) return false;
-	else if (  !(i & lR_BIT) && !is_inside()) return false;
-	else return true;
-      } else {
-	if (  !(i & lB_BIT) && is_inside()) return false;
-	else if ( !(i & lT_BIT) && !is_inside()) return false;
-	else return true;
-      }
-    } else {
-      if (is_inside()) {
-	if (!(i & lIN_BIT)) return false;
-	else return true;
-      } else {
-	if (!(i & lOUT_BIT)) return false;
-	if (!(i & pt_)) return false;
-	//CGAL_assertion(static_cast<int>(R_BIT) == static_cast<int>(R_BIT));
-	//CGAL_assertion(static_cast<int>(L_BIT) == static_cast<int>(L_BIT));
-	//CGAL_assertion(static_cast<int>(T_BIT) == static_cast<int>(T_BIT));
-	//CGAL_assertion(static_cast<int>(B_BIT) == static_cast<int>(B_BIT));
-	return true;
-      }
-    }
-  }
+  bool is_compatible_location(int i) const;
 
-  bool can_intersect(const Combinatorial_curve &o) const {
-    CGAL_assertion(is_rule());
-    return pt_&o.quadrant();
-  }
+  bool can_intersect(const Combinatorial_curve &o) const;
 
-  Coordinate_index is_weakly_incompatible(int i) const {
-    int a= i&pt_;
-    if (a== L_BIT || a==R_BIT) return Coordinate_index(1);
-    else if (a== T_BIT || a== B_BIT) return Coordinate_index(0);
-    else return Coordinate_index();
-  }
+  Coordinate_index is_weakly_incompatible(int i) const ;
 
-  int rule_index() const {
-    CGAL_precondition(is_rule());
-    if (pt_&R_RULE) return 0;
-    else if (pt_&T_RULE) return 1;
-    else if (pt_&L_RULE) return 2;
-    else return 3;
-  }
+  int rule_index() const;
+  int arc_index() const;
 
-  static Combinatorial_curve make_rule(Key k, int ruleindex) {
-    switch(ruleindex) {
-    case 0:
-      return Combinatorial_curve(k, R_RULE);
-    case 1:
-      return Combinatorial_curve(k, T_RULE);
-    case 2:
-      return Combinatorial_curve(k, L_RULE);
-    default:
-      return Combinatorial_curve(k, B_RULE);
-    }
-  }
+  static Combinatorial_curve make_rule(Key k, int ruleindex);
 
-  static const char *to_string(int pt){
-    switch (pt) {
-    case INVALID:
-      return "Invalid";
-    case L_RULE:
-      return "L";
-    case R_RULE:
-      return "R";
-    case T_RULE:
-      return "T";
-    case B_RULE:
-      return "B";
-    case LB_ARC:
-      return "LB";
-    case LT_ARC:
-      return "LT";
-    case RT_ARC:
-      return "RT"; 
-    case RB_ARC:
-      return "RB"; 
-      /*case L_INF:
-      return "L_inf";
-    case R_INF:
-      return "R_inf";
-    case T_INF:
-      return "T_inf"; 
-    case B_INF:
-    return "B_inf";*/
+  static const char *to_string(int pt);
 
-    case L_RULE | IN_BIT :
-      return "Li";
-    case R_RULE | IN_BIT:
-      return "Ri";
-    case T_RULE | IN_BIT:
-      return "Ti";
-    case B_RULE | IN_BIT:
-      return "Bi";
-    case LB_ARC | IN_BIT:
-      return "LBi";
-    case LT_ARC | IN_BIT:
-      return "LTi";
-    case RT_ARC | IN_BIT:
-      return "RTi"; 
-    case RB_ARC | IN_BIT:
-      return "RBi";
-    case SPECIAL:
-      return "SPECIAL";
-      /*case L_INF | IN_BIT:
-      return "Li_inf";
-    case R_INF | IN_BIT:
-      return "Ri_inf";
-    case T_INF | IN_BIT:
-      return "Ti_inf"; 
-    case B_INF | IN_BIT:
-    return "Bi_inf";*/
-    default:
-      std::cerr << "Oops, I forgot: " << pt <<std::endl; 
-      CGAL_assertion(0);
-      return "Missing";
-    }
-  }
   const char *to_string() const {
     return to_string(pt_);
+  }
+
+  bool is_outward_rule() const {
+    CGAL_precondition(is_rule());
+    switch (rule_index()) {
+    case 0:
+    case 3:
+      return !is_inside();
+    case 1:
+    case 2:
+      return is_inside();
+    default:
+      CGAL_assertion(0);
+      return false;
+    }
   }
 
 private:

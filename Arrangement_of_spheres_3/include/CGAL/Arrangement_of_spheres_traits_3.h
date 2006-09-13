@@ -2,20 +2,22 @@
 #define ARRANGEMENT_OF_SPHERES_TRAITS_3_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Gmpq.h>
+
 
 #include <CGAL/Root_of_traits.h>
 #include <CGAL/Arrangement_of_spheres_3/Filtered_sphere_line_intersection.h>
+#include <CGAL/Arrangement_of_spheres_3/Event_point_3.h>
 #include <CGAL/Arrangement_of_spheres_3/Sphere_key.h>
 #include <CGAL/Tools/Coordinate_index.h>
+#include <CGAL/Arrangement_of_spheres_3/Sphere_3_table.h>
 
+#include <CGAL/Arrangement_of_spheres_3/coordinates.h>
 
 
 struct Arrangement_of_spheres_traits_3 {
   typedef Arrangement_of_spheres_traits_3 This;
-  typedef CGAL::Cartesian<CGAL::Gmpq> Geometric_traits;
-
+ 
+  typedef ::Geometric_traits Geometric_traits;
   typedef Geometric_traits::FT FT;
   typedef CGAL::Root_of_traits<FT>::RootOf_2 Quadratic_NT;
   typedef Geometric_traits::Sphere_3 Sphere_3;
@@ -30,120 +32,97 @@ struct Arrangement_of_spheres_traits_3 {
   typedef Geometric_traits::Circle_2 Circle_2;
   typedef Geometric_traits::Segment_2 Segment_2;
   typedef Sphere_line_intersection<This> Sphere_point_3;
+  typedef Event_point_3<This> Event_point_3;
   //typedef Filtered_sphere_line_intersection<This, 2> Sphere_point_3;
-  typedef Sphere_key Key;
+  typedef Sphere_3_table Table;
+  typedef Table::Key Key;
+
   typedef ::Coordinate_index Coordinate_index;
 
 
   Geometric_traits geometric_traits_object() const {
-    return t_;
+    return table_->geometric_traits_object();
   }
-
- 
   
-
+  
+  
+  
   template <class It> 
-  Arrangement_of_spheres_traits_3(It bs, It es): has_temp_(false){
-    spheres_.reserve(std::distance(bs, es)+3);
-    initialize_1();
-    spheres_.insert(spheres_.end(), bs, es);
-    initialize_2();
+  Arrangement_of_spheres_traits_3(It bs, It es): table_(new Table(bs, es)){
+    di_= table_->geometric_traits_object().intersect_3_object();
   }
+  
+  CGAL::Bbox_3 bbox_3() const {
+    return table_->bbox_3();
+  }
+  
   
   void set_temp_sphere(const Sphere_3 &s) const {
-    has_temp_=true;
-    spheres_[0]=s;
+    table_->set_temp_sphere(s);
+  }
+
+  FT max_coordinate() const {
+    return table_->inf();
+  }
+
+  Sphere_3 sphere(Key k) const {
+    return table_->sphere(k);
   }
 
   // really just debugging
   Key new_sphere(const Sphere_3 &s) const {
-    spheres_.push_back(s);
-    return Key(spheres_.size()-4);
+    return table_->new_sphere(s);
   }
 
   unsigned int number_of_spheres() const {
-    return spheres_.size()-3;
+    return table_->size();
   }
 
-  typedef std::vector<Sphere_3>::const_iterator Sphere_iterator;
+  typedef Table::Sphere_iterator Sphere_iterator;
   Sphere_iterator spheres_begin() const {
-    return spheres_.begin()+3;
+    return table_->spheres_begin();
   }
   Sphere_iterator spheres_end() const {
-    return spheres_.end();
+    return table_->spheres_end();
   }
 
-  struct Sphere_key_iterator{
-    typedef Key value_type;
-    typedef const Key &reference_type;
-    typedef const Key* pointer_type;
-    typedef size_t difference_type;
-    Sphere_key_iterator(){}
-    Sphere_key_iterator(int i): k_(i){}
-    value_type operator*() const {return k_;}
-    pointer_type operator->() const {return &k_;}
-    Sphere_key_iterator operator++() {
-      k_= Key(k_.input_index()+1);
-      return *this;
-    }
-    Sphere_key_iterator operator++(int) {
-      Sphere_key_iterator ret=*this;
-      operator++();
-      return ret;
-    }
-    bool operator==(const Sphere_key_iterator &o) const {
-      return k_==o.k_;
-    }
-    bool operator!=(const Sphere_key_iterator &o) const {
-      return k_!=o.k_;
-    }
-    Key k_;
-  };
+  typedef Table::Sphere_key_iterator Sphere_key_iterator;
 
   Sphere_key_iterator sphere_keys_begin() const {
-    return Sphere_key_iterator(0);
+    return table_->sphere_keys_begin();
   }
   Sphere_key_iterator sphere_keys_end() const {
-    return Sphere_key_iterator(spheres_.size());
+    return table_->sphere_keys_end();
   }
 
 
-  /* 
-     linear constructions----------------------------------------------------
+  /*
+    Helpers -----------------------------------------------------------------
   */
-
-  FT inf() const {
-    return center_c(Key(Key::TR), Coordinate_index(1));
-  }
-
-  // the point described by the vertex (a,b) should be on the positive side
-  Plane_3 separating_plane(Key a, Key b) const ;
-
-  // point from the second to the first
-  Plane_3 equipower_plane(Key a, Key b) const ;
-  
-  // point from the second to the first
-  Point_3 equipower_point(Key a, Key b) const ;
-
-  FT center_c(Key ind, Coordinate_index C) const;
-
-  Point_3 center(Key ind) const;
-
-  Sphere_3 sphere(Key ind) const;
-
+  Plane_3 rule_plane(Key a, Coordinate_index C) const;
   
 
   /* 
      quadratic constructions ------------------------------------------------
   */
 
-  typedef  std::pair<Sphere_point_3, Sphere_point_3> Event_pair;
+  typedef  std::pair<Event_point_3, Event_point_3> Event_pair;
 
   Event_pair sphere_events(Key s) const;
 
-  Event_pair intersection_events(Key a, Key b) const;
+  Event_pair intersection_2_events(Key a, Key b) const;
 
-  Event_pair intersection_events(Key a, Key b, Key c) const;
+  Event_pair intersection_3_events(Key a, Key b, Key c) const;
+
+  Event_pair sphere_intersect_extremum_events(Key a,  Coordinate_index C,
+					      Key b) const;
+
+  Event_pair sphere_intersect_rule_events(Key a, Key r, Coordinate_index C) const;
+
+  Event_pair circle_cross_rule_events(Key a, Key b,
+				      Key rs, Coordinate_index C) const;
+
+  Event_pair sphere_intersect_rule_rule_events(Key s, Key rx, Key ry) const;
 
   // not really used
   Quadratic_NT intersection_c(Key s, Line_3 l, Coordinate_index C) const;
@@ -159,6 +138,8 @@ struct Arrangement_of_spheres_traits_3 {
 
   bool sphere_intersects_rule(Key sphere, Key rule_sphere, 
 			      Coordinate_index C) const;
+
+  bool sphere_intersects_sweep(Key sphere, Sphere_point_3 ep) const;
 
   CGAL::Comparison_result compare_equipower_point_to_rule(Key sphere0,
 							  Key sphere1,
@@ -181,6 +162,14 @@ struct Arrangement_of_spheres_traits_3 {
  
   CGAL::Comparison_result compare_sphere_centers_c(Key a, Key b, Coordinate_index C) const;
 
+  CGAL::Comparison_result compare_sphere_center_c(Key a,
+						  FT d,
+						  Coordinate_index C) const;
+
+  CGAL::Comparison_result compare_sphere_center_c(Key a,
+						  const Sphere_point_3& d,
+						  Coordinate_index C) const;
+
   CGAL::Bounded_side bounded_side_of_sphere_on_equipower_plane_rule_line(Key sphere0,
 									 Key Sphere1,
 									 Key rule,
@@ -194,19 +183,14 @@ struct Arrangement_of_spheres_traits_3 {
 
   CGAL::Comparison_result compare_depths(const Sphere_point_3 &a, 
 					 const Sphere_point_3 &b) const;
-
+  
 private:
-  void initialize_1();
-  void initialize_2();
-  FT disc(Key i) const;
- 
 
   //  HDS hds_;
   // ick, this is to handle location of points which are not already there
   // -1, -2 are bl, tr inf corners
-  mutable std::vector<Sphere_3> spheres_;
-  mutable bool has_temp_;
-  Geometric_traits t_;
+
+  mutable Table::Handle table_;
   Geometric_traits::Intersect_3 di_;
 };
 

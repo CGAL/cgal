@@ -51,21 +51,22 @@ public:
   
   template <class Point_3, class NT>
   inline  NT squared_depth(Point_3 p, const NT &z){
-    return CGAL::square(p.z()-z);
+    return CGAL::square(NT(p[sweep_coordinate().index()])-z);
   }
   
   template <class Sphere, class NT>
   bool has_overlap(const Sphere &s, const NT &z) {
     NT dz2= squared_depth(s.center(), z);
-    if (dz2 < s.squared_radius()) return true;
+    if (dz2 <= NT(s.squared_radius())) return true;
     else return false;
   }
   
   template <class Sphere, class NT>
   Circular_k::Circle_2 intersect(Sphere s, const NT &z){
-    NT r2= s.squared_radius()- squared_depth(s.center(), z);
+    NT r2= NT(s.squared_radius()) - squared_depth(s.center(), z);
     CGAL_assertion(r2>=0);
-    Circular_k::Circle_2  c(Circular_k::Point_2(s.center().x(), s.center().y()), r2);
+    Circular_k::Circle_2  c(Circular_k::Point_2(s.center()[plane_coordinate(0).index()],
+						s.center()[plane_coordinate(1).index()]), r2);
     return c;
   }
 
@@ -137,9 +138,9 @@ protected:
   void write(std::ostream& out, const Circular_k::Circular_arc_2 &k) const;
   void write(std::ostream& out, const Circular_k::Line_arc_2 &k) const;
 
-  static Sphere_3 unproject(Circle_2 c);
+  /*static Sphere_3 unproject(Circle_2 c);
   static Line_3 unproject(Line_2 c);
-  static Point_3 unproject(Point_2 c);
+  static Point_3 unproject(Point_2 c);*/
 
   struct Curve_handle_less {
     bool operator()(CArr::Curve_const_handle a, CArr::Curve_const_handle b) const {
@@ -160,22 +161,22 @@ protected:
     Curve_lookup(Arr *m): a_(m){}
     typedef Curve result_type;
     result_type operator()(const Circular_k::Circular_arc_2 &k) const {
-      if (a_->circle_map_.find(k) == a_->circle_map_.end()) {
-	a_->write(std::cout, k);
-      }
-      CGAL_precondition(a_->circle_map_.find(k) != a_->circle_map_.end());
-      return a_->circle_map_.find(k)->second;
+    if (a_->circle_map_.find(k) == a_->circle_map_.end()) {
+    a_->write(std::cout, k);
+    }
+    CGAL_precondition(a_->circle_map_.find(k) != a_->circle_map_.end());
+    return a_->circle_map_.find(k)->second;
     }
     result_type operator()(const Circular_k::Line_arc_2 &k) const {
-      if (a_->line_map_.find(k) == a_->line_map_.end()) {
-	a_->write(std::cout, k);
-      }
-      CGAL_precondition(a_->line_map_.find(k) != a_->line_map_.end());
-      return a_->line_map_.find(k)->second;
+    if (a_->line_map_.find(k) == a_->line_map_.end()) {
+    a_->write(std::cout, k);
+    }
+    CGAL_precondition(a_->line_map_.find(k) != a_->line_map_.end());
+    return a_->line_map_.find(k)->second;
     }
     Arr *a_;
-  };
-  friend struct Curve_lookup;*/
+    };
+    friend struct Curve_lookup;*/
 
   struct VHandle: public CArr::Vertex_const_handle {
     typedef CArr::Vertex_const_handle P;

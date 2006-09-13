@@ -27,7 +27,7 @@ bool Slice::locate_point_check_face(const T::Sphere_point_3 &z,
     } else {
       T::Key sphere= h->curve().key();
       point_sphere_orientation(z, index, sphere, locations);
-      //std::cout << "Testing " << h->curve() <<std::endl;
+      //DPRINT(std::cout << "Testing " << h->curve() <<std::endl);
       if (!h->curve().is_compatible_location(locations[sphere.input_index()])) {
 	//DPRINT(std::cout << "Nixed by edge " << h->curve() << std::endl);
 	return false;
@@ -83,15 +83,16 @@ bool Slice::locate_point_check_face_vertices(const T::Sphere_point_3 &ep,
 					     Face_const_handle it) const {
   Halfedge_const_handle h= it->halfedge();
   do {
-    if (h->vertex()->point().type() == Sds::Point::SS 
+    if (h->vertex()->point().is_sphere_sphere() 
 	&& h->curve().key() != h->next()->curve().key()
 	&& (!h->curve().is_inside() && !h->next()->curve().is_inside())) {
       // NOTE what about degeneracies?  not sure if I need to handle
       // them here
       Sds::Point npt= h->vertex()->point();
-      if (t_.oriented_side_of_center_plane(npt.sphere(0).key(),
-					   npt.sphere(1).key(),
+      if (t_.oriented_side_of_center_plane(npt.sphere_key(0),
+					   npt.sphere_key(1),
 					   index) == CGAL::ON_NEGATIVE_SIDE) {
+	CGAL_assertion(0);
 	std::cout << "Face nixed by vertex " << npt << std::endl;
 	return false;
       }
@@ -125,20 +126,21 @@ Slice::Face_handle Slice::locate_point(const T::Sphere_point_3 & ep) {
   return locate_point(ep, T::Key::temp_key());
 }
 
-Slice::Face_handle Slice::locate_point(const T::Sphere_point_3 & ep,
+template <class It>
+Slice::Face_handle Slice::locate_point(It b, It e, const T::Sphere_point_3 & ep,
 					     T::Key index) {
-  if (CGAL::abs(ep.simple_coordinate(Coordinate_index(0))) > t_.inf()
+  /*if (CGAL::abs(ep.simple_coordinate(Coordinate_index(0))) > t_.inf()
       || CGAL::abs(ep.simple_coordinate(Coordinate_index(1))) > t_.inf()){
     std::cerr << "Coordinate out of range." << std::endl;
     CGAL_assertion(0);
-  }
+    }*/
   // excessive size by 3
   std::vector<int> locations(t_.number_of_spheres(), 0);
   std::vector<Face_handle> faces;
   std::vector<Sds::Curve> edges;
   //T::Sphere_location sl= tr_.sphere_location_object(ep);
-  for (Sds::Face_iterator fit = sds_.faces_begin();
-       fit != sds_.faces_end(); ++fit){
+  for (It fit = b; fit != e; ++fit){
+    if (!sds_.is_in_slice(fit)) continue;
     /*{
       std::cout << "Trying face ";
       write(fit, std::cout) << std::endl;
@@ -199,6 +201,14 @@ Slice::Face_handle Slice::locate_point(const T::Sphere_point_3 & ep,
     write(faces[1], std::cerr) << std::endl;
     CGAL_assertion(0);
   } else {
+    // what if it lands on several edges at once. Make all intersections occur before insertions
+    /*
+      cases:
+      two edges which share a face- return that face, this is hard to detect but necessary for intersection
+      search for a face which contains all common edges and return that. 
+
+      what about a list of edges? 
+    */
     CGAL_assertion(!faces.empty());
     Halfedge_handle h= faces[0]->halfedge();
     do {
@@ -222,6 +232,11 @@ Slice::Face_handle Slice::locate_point(const T::Sphere_point_3 & ep,
 }
 
 
+Slice::Face_handle 
+    Slice::locate_point(const T::Sphere_point_3 & ep,
+                 T::Key index) {
+                   return locate_point(sds_.faces_begin(), sds_.faces_end(), ep, index);
+                        }
 
 
 

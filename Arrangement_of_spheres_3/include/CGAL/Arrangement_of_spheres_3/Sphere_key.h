@@ -1,8 +1,8 @@
 #ifndef CGAL_SPHERE_KEY_H
 #define CGAL_SPHERE_KEY_H
 struct Sphere_key{
-  static const int BL=-2, TR=-1, TEMP=-3;
-  Sphere_key(): id_(-4){}
+  enum Labels {BL=-2, TR=-1, TEMP=-3, TARGET=-5, INVALID=-4};
+  Sphere_key(): id_(INVALID){}
   explicit Sphere_key(int i): id_(i){}
   int to_index() const {return id_;}
   bool is_valid() const {
@@ -23,6 +23,9 @@ struct Sphere_key{
   bool is_input() const {
     return id_>=0;
   }
+  bool is_target() const {
+    return id_== TARGET;
+  }
   unsigned int input_index() const {
     CGAL_precondition(is_input());
     return id_;
@@ -33,13 +36,14 @@ struct Sphere_key{
   }
 
   std::ostream &write(std::ostream &out) const {
-    if (id_==TEMP) out << "tmp";
+    if (id_==TARGET) out << "tar";
     else if (id_ == TR) out << "tr";
     else if (id_ == BL) out << "bl";
     else out << id_;
     return out;
   }
 
+  static Sphere_key target_key() {return Sphere_key(TARGET);}
   static Sphere_key temp_key() {return Sphere_key(TEMP);}
   static Sphere_key bl_key() {return Sphere_key(BL);}
   static Sphere_key tr_key() {return Sphere_key(TR);}

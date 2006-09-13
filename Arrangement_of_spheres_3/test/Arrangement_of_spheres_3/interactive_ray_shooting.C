@@ -51,10 +51,11 @@ struct Do_work {
     std::cout << "Bounding box is from " << box.zmin() << " to " << box.zmax()
 	      << std::endl;
  
-    Slice_arrangement::NT z= z_;
+    Geometric_traits::FT z= z_;
   
-    Slice slice(spheres.begin(), spheres.end());
-    slice.set_rz(z);
+    Arrangement_of_spheres_traits_3 tr(spheres.begin(), spheres.end());
+    Slice slice(tr, new Simulator());
+    slice.initialize_at(z);
   
    
     slice.draw_rz(q, z);

@@ -45,9 +45,9 @@ int Slice::sphere_location(const T::Sphere_point_3& sp,
   //CGAL::Comparison_result xo= compare_event_point_to_rule(ep, s, 0);
   //CGAL::Comparison_result yo= compare_event_point_to_rule(ep, s, 1);
   CGAL::Comparison_result xo= t_.compare_sphere_centers_c(s, locate_point,
-							   T::Coordinate_index(0));
+							  plane_coordinate(0));
   CGAL::Comparison_result yo= t_.compare_sphere_centers_c(s, locate_point, 
-							   T::Coordinate_index(1));
+							  plane_coordinate(1));
   if (xo  != CGAL::LARGER) {
     r |= Sds::Curve::lR_BIT;
   } 
@@ -79,7 +79,7 @@ bool Slice::behind_arc(const T::Sphere_point_3 &ep,
 
   if (C.is_valid()) {
     CGAL::Bounded_side bs;
-    if (C== T::Coordinate_index(0)) {
+    if (C== plane_coordinate(0)) {
       bs= t_.bounded_side_of_sphere(arc.key(),
 				    arc.key(),
 				    ind,

@@ -51,8 +51,9 @@ struct Do_work {
   
     std::cout << "z is " << z << std::endl;
 
-    Slice slice(spheres.begin(), spheres.end());
-    slice.set_rz(z);
+    Slice::T tr(spheres.begin(), spheres.end());
+    Slice slice(tr, new Simulator());
+    slice.initialize_at(z);
   
    
     //slice.draw_rz(q, z);

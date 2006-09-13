@@ -6,11 +6,20 @@
 #include <CGAL/Arrangement_of_spheres_3/Slice_data_structure.h>
 #include <CGAL/Arrangement_of_spheres_3/Slice_arrangement.h>
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Arrangement_of_spheres_3/Unordered_pair.h>
+#include <CGAL/Arrangement_of_spheres_3/Unordered_triple.h>
+#include <boost/array.hpp>
+
+#include <CGAL/Arrangement_of_spheres_3/Simulator.h>
+#include <CGAL/Kinetic/Simulator_kds_listener.h>
+
+#include <CGAL/IO/Qt_widget.h>
 
 /* invariants
    
 */
 struct Slice {
+  typedef Slice This;
   typedef Arrangement_of_spheres_traits_3 T;
   typedef Slice_data_structure Sds;
   typedef T::FT NT;
@@ -23,6 +32,39 @@ struct Slice {
   typedef Sds::Face_handle Face_handle;
 
   typedef CGAL::Simple_cartesian<double> DT;
+
+  typedef Unordered_pair<T::Key> Intersection_2;
+  typedef Unordered_triple<T::Key> Intersection_3;
+
+  struct Rule_event_rep {
+    Rule_event_rep(T::Key rk, int ri, T::Key ok): rk_(rk), ri_(ri), ok_(ok){}
+    bool operator<(const Rule_event_rep &o) const {
+      if (rk_ < o.rk_) return true;
+      else if (rk_ > o.rk_) return false;
+      else if (ri_ < o.ri_) return true;
+      else if (ri_ > o.ri_) return false;
+      else return ok_ < o.ok_;
+    }
+    bool operator==(const Rule_event_rep &o) const {
+      return rk_== o.rk_ && ri_ == o.ri_ && ok_ == o.ok_;
+    }
+    const T::Key& rule_key() const {
+      return rk_;
+    }
+    const T::Key& other_key() const {
+      return ok_;
+    }
+    Coordinate_index rule_coordinate() const {
+      return plane_coordinate(ri_%2);
+    }
+    int rule_index() const {
+      return ri_;
+    }
+
+    T::Key rk_;
+    int ri_;
+    T::Key ok_;
+  };
 
   struct On_edge_exception {
     On_edge_exception(Halfedge_handle h): h_(h){}
@@ -40,11 +82,32 @@ struct Slice {
   };
 
 
-  template <class It> 
-  Slice(It bs, It es): t_(bs, es){
+  class Gui_listener: public Qt_gui::Listener
+  {
+  public:
+    Gui_listener( Qt_gui::Handle &h, Slice *t): Qt_gui::Listener(h), t_(t){}
+    virtual void new_notification( Qt_gui::Listener::Notification_type nt) {
+      if (nt == Qt_gui::Listener::PICTURE_IS_VALID) {
+	t_->draw_rz(Qt_gui::Listener::widget(), Qt_gui::Listener::notifier()->current_time());
+      }
+    }
+  protected:
+    Slice *t_;
+  };
+
+  friend class Gui_listener;
+
+  typedef ::Simulator Simulator;
+  typedef CGAL::Kinetic::Simulator_kds_listener< Simulator::Listener, This> Simulator_listener;
+  friend  class CGAL::Kinetic::Simulator_kds_listener< Simulator::Listener, This>;
+  
+
+
+  Slice(T tr);
+
+  Simulator::Handle simulator_handle() {
+    return sim_;
   }
-
-
  
 
   void new_marked_face(Face_const_handle f) {
@@ -77,43 +140,73 @@ struct Slice {
  
 
   /*bool intersection_event(Halfedge_const_handle &a, Halfedge_const_handle &b, 
-			  T::Sphere_point_3 &begin, T::Sphere_point_3 &end) const {
+    T::Sphere_point_3 &begin, T::Sphere_point_3 &end) const {
     CGAL_precondition(!a->curve().is_rule());
     CGAL_precondition(!b->curve().is_rule());
     if (a->curve().is_inside() && b->curve().is_inside()) {
-      return false;
+    return false;
     }
     if (b->curve().is_inside()) {
-      std::swap(a,b);
+    std::swap(a,b);
     }
     // b is not inside
     if (a->curve().is_inside()) {
-      if (a->curve().quadrant() == b->curve().quadrant()){
-	return build_intersection_events(a->curve().key(), b->curve().key(), 
-					 begin, end);
-      } else return false;
+    if (a->curve().quadrant() == b->curve().quadrant()){
+    return build_intersection_events(a->curve().key(), b->curve().key(), 
+    begin, end);
+    } else return false;
     } else {
-      if (a->curve().quadrant() & b->curve().quadrant()) {
-	return false;
-      } else return build_intersection_events(a->curve().key(),
-					      b->curve().key(), begin, end);
+    if (a->curve().quadrant() & b->curve().quadrant()) {
+    return false;
+    } else return build_intersection_events(a->curve().key(),
+    b->curve().key(), begin, end);
     }
     }*/
 
   // in a degeneracy this could result in a circle being formed
   /*bool rule_collapse_event(Halfedge_const_handle a, T::Sphere_point_3 &begin, 
-			   T::Sphere_point_3 &end) const {
+    T::Sphere_point_3 &end) const {
     return false;
     }*/
 
   /* bool face_collapse_event(Face_const_handle f, T::Sphere_point_3 &t) const {
-    // make sure face has three arc edges (two arc edges or just one circle will be handled separately)
-    // make two equipower planes
-    // intersect them
-    // they must intersect
-    // check line against one sphere
-    return false;
-    }*/
+  // make sure face has three arc edges (two arc edges or just one circle will be handled separately)
+  // make two equipower planes
+  // intersect them
+  // they must intersect
+  // check line against one sphere
+  return false;
+  }*/
+
+  /*
+    KDS functions -----------------------------------------------------
+  */
+
+  class One_sphere_event;
+  class Two_sphere_event;
+  class Three_sphere_event;
+  class Rule_event;
+  class Edge_event;
+  
+  void process_one_sphere_kds(T::Key k);
+  void process_two_sphere_kds(T::Key k, T::Key l, bool first);
+  void process_three_sphere_kds(T::Key k, T::Key l, T::Key m, bool first);
+  void process_rule_kds(T::Key k, int r, T::Key o);
+  void process_edge_kds(Halfedge_handle h);
+  
+  void initialize_certificates();
+
+
+ // Functions to update certificates ----------------------------------
+
+  void clean_edge(Halfedge_handle h);
+  void check_edge_face(Halfedge_handle h);
+  void check_edge_pair(Halfedge_handle h0, Halfedge_handle h1);
+  void check_merged_faces(Face_handle f, Face_handle g);
+  void check_edge_collapse(Halfedge_handle h);
+  void check_reduced_face(Face_handle f);
+
+  void set_is_editing(bool tf);
 
 
 
@@ -121,14 +214,18 @@ struct Slice {
     Modifiers ----------------------------------------------------------
   */
 
+
+  /*Face_handle intersect(const T::Sphere_point_3 &fp,
+			T::Key ka, T::Key kb);
+  Face_handle unintersect(const T::Sphere_point_3 &fp,
+  T::Key ka, T::Key kb);*/
+
   // return the face inside the sphere
   Face_handle insert_sphere(const T::Sphere_point_3 &fp, T::Key k);
 
+  // cur should point out
   T::Key roll_back_rule(const T::Sphere_point_3 &ep,
-			       Halfedge_handle cur,Halfedge_handle last);
-
-  Face_handle erase_sphere(const T::Sphere_point_3 &ep,
-			   Face_handle f);
+			Halfedge_handle cur);
 
   Face_handle erase_sphere(const T::Sphere_point_3 &ep,
 			   T::Key k);
@@ -136,6 +233,52 @@ struct Slice {
   void relabel_rule(Halfedge_handle h,
 		    Sds::Curve nl);
 
+
+  Face_handle insert_sphere_on_arc_prep(const T::Sphere_point_3 &ep, 
+					T::Key k,
+					Halfedge_handle h,
+					Halfedge_handle rvs[]);
+  
+  Face_handle insert_sphere_on_rr_prep(const T::Sphere_point_3 &ep, 
+				       T::Key k,
+				       Vertex_handle v,
+				       Halfedge_handle rvs[]);
+  
+  Face_handle insert_sphere_on_rule_prep(const T::Sphere_point_3 &ep, 
+					 T::Key k,
+					 Halfedge_handle h,
+					 Halfedge_handle rvs[]);
+
+  Face_handle insert_sphere_on_ss_prep(const T::Sphere_point_3 &ep, 
+				       T::Key k,
+				       Vertex_handle v,
+				       Halfedge_handle rvs[]);
+
+  Halfedge_handle check_remove_redundant(Halfedge_handle v);
+
+  Face_handle intersect_spheres(const T::Event_point_3 &ep,
+				T::Key k, T::Key l);
+
+  Face_handle unintersect_spheres(const T::Event_point_3 &ep,
+				  T::Key k, T::Key l);
+
+  Face_handle collapse_edge(const T::Event_point_3 &ep,
+			    Halfedge_handle rule,
+			    Halfedge_handle c,
+			    Halfedge_handle base);
+
+  Halfedge_handle uncollapse_edge(const T::Event_point_3 &ep,
+				  Halfedge_handle rule,
+				  Halfedge_handle c,
+				  Halfedge_handle base);
+
+  /*
+    Replace rule with a rule rotate 90 degres around rule->vertex().
+  */
+  Halfedge_handle rotate_rule(const T::Event_point_3 &ep,
+			      Halfedge_handle rule);
+
+  T::Key debug_new_sphere(T::Sphere_3 s);
   /*
     Display functions----------------------------------------------------
   */
@@ -144,6 +287,10 @@ struct Slice {
   DT::Point_2 display_point_rz(Sds::Point pt, NT z) const;
 
   void draw_rz(Qt_examiner_viewer_2 *qtv, NT z);
+
+  void draw_rz(CGAL::Qt_widget *qtv, NT z);
+
+  void draw_events_rz(CGAL::Qt_widget *qtv, NT z);
 
   void draw_marked_rz(Qt_examiner_viewer_2 *qtv, NT z);
 
@@ -157,7 +304,7 @@ struct Slice {
      rational z functions-------------------------------------------------
   */
 
-  void set_rz(NT z) ;
+  void initialize_at(NT z) ;
 
   T::Point_2 center_point_rz(T::Key a, T::Key b, NT z) const ;
 
@@ -167,15 +314,19 @@ struct Slice {
 
   T::Sphere_point_3 sphere_point_rz(Sds::Point pt, NT z) const ;
 
-  T::Line_3 in_line_rz(Sds::Curve r, NT z) const;
+  /*T::Line_3 in_line_rz(Sds::Curve r, NT z) const;
   
-  T::Line_3 out_line_rz(Sds::Curve r, NT z) const;
+  T::Line_3 out_line_rz(Sds::Curve r, NT z) const;*/
+
+  T::Line_3 positive_line_rz(T::Key, Coordinate_index i, NT z) const;
+  
+  T::Line_3 negative_line_rz(T::Key r, Coordinate_index i, NT z) const;
 
   /* 
      constructions----------------------------------------------------
-   */
+  */
 
-  T::Point_2 compute_rule_rule_intersection(Sds::Curve ra, Sds::Curve rb) const ;
+  T::Point_2 compute_rule_rule_intersection(T::Key rx, T::Key ry) const ;
 
   /*
     Search functions ------------------------------------------------
@@ -183,19 +334,22 @@ struct Slice {
 
 
   Face_handle locate_point(const T::Sphere_point_3 &ep, T::Key ind);
+  
+  template <class It>
+  Face_handle locate_point(It b, It e, const T::Sphere_point_3 &ep, T::Key ind);
 
   Halfedge_handle shoot_rule(const T::Sphere_point_3& source,
-				   Face_handle f,
-				   Sds::Curve rule) ;
+			     Face_handle f,
+			     Sds::Curve rule) ;
 
   Halfedge_handle 
-  insert_sphere_find_rule_vertex(const T::Sphere_point_3 &ep, 
-				 Face_handle f,
-				 Sds::Curve rule);
+  find_rule_vertex(const T::Sphere_point_3 &ep, 
+		   Face_handle f,
+		   Sds::Curve rule);
   
   /* 
      predictes--------------------------------------------------------
-   */
+  */
 
 
   //enum Location {L_BIT=1, R_BIT=2, T_BIT=4, B_BIT=8, IN_BIT=16,  };
@@ -229,8 +383,7 @@ struct Slice {
 
   CGAL::Comparison_result debug_rule_shoot_answer(const T::Sphere_point_3 &z,
 						  Sds::Curve rule,
-						  Sds::Curve p,
-						  Sds::Curve n,
+						  Sds::Point pt,
 						  bool &exact) const ;
 
   
@@ -244,16 +397,17 @@ struct Slice {
   CGAL::Comparison_result rule_shoot_compare_SR(const T::Sphere_point_3 &z,
 						Sds::Curve srule,
 						Sds::Curve arc,
-						Sds::Curve orule,
+						T::Key orule,
+						Sds::Point debug_pt,
 						bool arc_above) const ;
 
 
 
- CGAL::Comparison_result rule_shoot_compare_SS(const T::Sphere_point_3 &z,
-					       Sds::Curve srule,
-					       Sds::Curve arc0,
-					       Sds::Point pt,
-					       Sds::Curve arc1) const ;
+  CGAL::Comparison_result rule_shoot_compare_SS(const T::Sphere_point_3 &z,
+						Sds::Curve srule,
+						Sds::Curve arc0,
+						Sds::Point pt,
+						Sds::Curve arc1) const ;
  
 
   // return comparison of separator to intersection point on the C coordinate
@@ -263,11 +417,10 @@ struct Slice {
 						 Sds::Curve hp,
 						 Sds::Point p,
 						 Sds::Curve hn) const ;
-
+  
   bool rule_shoot_compare_if_rational(const T::Sphere_point_3 &z, 
 				      Sds::Curve rule,
-				      Sds::Curve a,
-				      Sds::Curve b,
+				      Sds::Point pt,
 				      CGAL::Comparison_result &ret) const ;
   bool rule_shoot_compare_if_rational_arc(const T::Sphere_point_3 &z,
 					  Sds::Curve rule,
@@ -275,17 +428,31 @@ struct Slice {
 					  CGAL::Comparison_result &ret) const;
   
 
+ 
+
 
   // Debug Functions ---------------------------------------------------
+
   Face_handle locate_point(const T::Sphere_point_3 &ep);
 
   Halfedge_handle shoot_rule(const T::Sphere_point_3 &source, 
-				   Face_handle f,
-				   int type) ;
-  
-  Face_handle insert_sphere(const T::Sphere_point_3 &ep);
+			     Face_handle f,
+			     int type) ;
+
+  void audit() const;
+  void audit_events() const;
+
+  T &traits() {
+    return t_;
+  }
+
+
+  void set_gui(Qt_gui::Handle qt);
 
 private:
+
+  typedef Simulator::Event_key Event_key;
+  typedef std::pair<Event_key,Event_key> Event_key_pair;
 
   struct Handle_compare{
     template <class H>
@@ -294,33 +461,47 @@ private:
     }
   };
 
+  /*struct Rule_events {
+    Rule_events(){}
 
-
-
-  
-
-  /*struct Temp_point {
-    Temp_point(std::vector<T::Sphere_3>  &ss, T::Sphere_3 s): ss_(ss){
-      ss_.push_back(s);
+    Simulator::Event_key collapse() const {
+      return collapse_;
     }
-    ~Temp_point(){
-      ss_.pop_back();
+    Simulator::Event_key slide(bool pos) {
+      if (pos) return slide_[1];
+      else return slide_[0];
     }
-    int index() const {
-      return ss_.size()-1;
+    void set_collapse(Simulator::Event_key k) {
+      collapse_=k;
     }
-    std::vector<T::Sphere_3> &ss_;
+    void set_slide(bool pos, Simulator::Event_key k) {
+      if (pos) slide_[1]=k;
+      else slide_[0]=k;
+    }
+    
+    Simulator::Event_key collapse_, slide_[2];
     };*/
 
-  //  HDS hds_;
-  // ick, this is to handle location of points which are not already there
-  // -1, -2 are bl, tr inf corners
   T t_;
-  std::vector<int> errors_;
   Slice_data_structure sds_;
+  
+
+  typedef std::map<Intersection_2, Event_key_pair > Intersections_2;
+  Intersections_2 intersections_2_;
+  typedef std::map<Intersection_3, Event_key_pair > Intersections_3;
+  Intersections_3 intersections_3_;
+  typedef std::map<Rule_event_rep, Event_key_pair > Rule_events;
+  Rule_events rule_events_;
+  /*std::map<Unordered_pair<T::Key>, Face_handle> pair_map_;
+    std::map<Unordered_triple<T::Key>, Face_handle> triple_map_;*/
+
   std::set<Face_const_handle, Handle_compare> marked_faces_;
   std::set<Vertex_const_handle, Handle_compare> marked_vertices_;
   std::set<Halfedge_const_handle, Handle_compare> marked_edges_;
+
+  Simulator::Handle sim_;
+  Simulator_listener siml_;
+  Gui_listener *guil_;
 };
 
 #endif

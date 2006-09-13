@@ -353,6 +353,10 @@ Arrangement_2/doc_tex/Sweep_line_2/sl_simple.ps -text svneol=unset#application/p
 Arrangement_2/examples/Arrangement_2/Bezier.dat -text
 Arrangement_2/examples/Arrangement_2/coll_points.dat -text
 Arrangement_2/examples/Arrangement_2/points.dat -text
+Arrangement_of_spheres_3/src/CGAL/Arrangement_of_spheres_3.C -text
+Arrangement_of_spheres_3/src/CGAL/Combinatorial_stuff.C -text
+Arrangement_of_spheres_3/src/CGAL/Slice_kds.C -text
+Arrangement_of_spheres_3/src/CGAL/Sphere_3_table.C -text
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/data/1GWB.spheres -text svneol=unset#application/octet-stream
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/data/degen.spheres -text svneol=unset#application/octet-stream
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/data/degen2.spheres -text svneol=unset#application/octet-stream

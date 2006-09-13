@@ -2,9 +2,8 @@
 #define CGAL_CHECK_EXACTNESS
 
 #include <CGAL/IO/Qt_debug_viewer_2.h>
-#include <CGAL/Arrangement_of_spheres_3/Slice_arrangement.h>
-#include <CGAL/Arrangement_of_spheres_traits_3.h>
 #include <CGAL/Arrangement_of_spheres_3/Slice.h>
+#include <CGAL/Arrangement_of_spheres_traits_3.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Gmpq.h>
@@ -13,14 +12,7 @@
 
 
 int main(int argc, char *argv[]){
- 
-  
-  CGAL::Bbox_3 box(std::numeric_limits<double>::max(),
-		   std::numeric_limits<double>::max(),
-		   std::numeric_limits<double>::max(),
-		   -std::numeric_limits<double>::max(),
-		   -std::numeric_limits<double>::max(),
-		   -std::numeric_limits<double>::max());
+
   //typedef CGAL::Exact_predicates_exact_constructions_kernel K;
   typedef Arrangement_of_spheres_traits_3::Geometric_traits K;
   typedef CGAL::Simple_cartesian<double> DK;
@@ -40,22 +32,23 @@ int main(int argc, char *argv[]){
 					       s.center().z()), s.squared_radius()));
       shifted_spheres.push_back(K::Sphere_3(K::Point_3(s.center().x()+.1, s.center().y()+.1,
 						       s.center().z()), s.squared_radius()));
-      box= box+ spheres.back().bbox();
     }
     //std::cout << spheres.back() << std::endl;
   }
 
 
   std::cout << "Read " << spheres.size() << " spheres." << std::endl;
-  std::cout << "Bounding box is from " << box.zmin() << " to " << box.zmax()
+  Slice::T tr(spheres.begin(), spheres.end());
+  std::cout << "Bounding box is from " << tr.bbox_3().xmin() << " to " 
+	    << tr.bbox_3().xmax()
 	    << std::endl;
  
-  Slice_arrangement::NT z= atof(argv[1]);
+  Geometric_traits::FT z= atof(argv[1]);
  
   //
-  
-  Slice slice(spheres.begin(), spheres.end());
-  slice.set_rz(z);
+ 
+  Slice slice(tr);
+  slice.initialize_at(z);
 
   QApplication app(argc, argv);
   Qt_examiner_viewer_2 *qtd= new Qt_examiner_viewer_2(10);

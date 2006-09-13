@@ -41,6 +41,15 @@ struct Filtered_sphere_line_intersection: public Sphere_line_intersection<K> {
   //typedef K::Line_3 Line_3;
   //typedef K::Sphere_3 Sphere_3;
 
+  static typename P::Coordinate_index coordinate() {
+    //return Coordinate_index(C);
+    switch (C) {
+    case 0: return Coordinate_index::X();
+    case 1: return Coordinate_index::Y();
+    default: return Coordinate_index::Z();
+    }
+  }
+
 
   Filtered_sphere_line_intersection(): lb_(1), ub_(-1){
   }
@@ -170,9 +179,9 @@ struct Filtered_sphere_line_intersection: public Sphere_line_intersection<K> {
 
   void initialize(typename P::NT cc) {
     //NT cc =closest_coord<C>(s_.center(), P::line());
-    CGAL_precondition_code(typename P::NT t=(cc-P::line().point()[C])/P::line().to_vector()[C]);
+    /*CGAL_precondition_code(typename P::NT t=(cc-P::line().point()[C])/P::line().to_vector()[C]);
     CGAL_precondition_code(typename P::Point_3 pol=P::line().point()+t*P::line().to_vector());
-    CGAL_precondition(P::sphere().bounded_side(pol) != CGAL::ON_UNBOUNDED_SIDE);
+    CGAL_precondition(P::sphere().bounded_side(pol) != CGAL::ON_UNBOUNDED_SIDE);*/
     
     
     std::pair<double,double> i=CGAL::to_interval(cc);
@@ -210,7 +219,7 @@ struct Filtered_sphere_line_intersection: public Sphere_line_intersection<K> {
     if (ub_== lb_) return ub_;
     else if (ub_-lb_ < .00001) return .5*(lb_+ub_);
     else {
-      double d=CGAL::to_double(P::exact_coordinate(typename P::Coordinate_index(C)));
+      double d=CGAL::to_double(P::exact_coordinate(coordinate()));
       CGAL_assertion(d>=lb_ && d<= ub_);
       return d;
     }
@@ -242,12 +251,12 @@ struct Filtered_sphere_line_intersection: public Sphere_line_intersection<K> {
       case CGAL::ON_BOUNDARY: lb_=ub_=bm; break;
       };
     }
-    {
+    /*{
       CGAL_assertion(P::exact_coordinate(typename P::Coordinate_index(C)) 
 		     >= typename P::Quadratic_NT(typename P::NT(lb_)));
       CGAL_assertion(P::exact_coordinate(typename P::Coordinate_index(C)) 
 		     <= typename P::Quadratic_NT(typename P::NT(ub_)));
-    }
+		     }*/
   }
 
   
@@ -361,7 +370,7 @@ struct Filtered_sphere_line_intersection: public Sphere_line_intersection<K> {
 	return compare_C2(o, sct+1);
       } else {
 	//++num_exact_tests_;
-	return static_cast<const P*>(this)->compare(o, typename P::Coordinate_index(C));
+	return static_cast<const P*>(this)->compare(o, coordinate());
       }
     }
   }

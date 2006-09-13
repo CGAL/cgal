@@ -1,9 +1,9 @@
-#ifdef CGAL_CHECK_EXPENSIVE
+/*#ifdef CGAL_CHECK_EXPENSIVE
 #undef CGAL_CHECK_EXPENSIVE
 #endif
 #ifdef CGAL_CHECK_EXPENSIVE
 #undef CGAL_CHECK_EXACTNESS
-#endif
+#endif*/
 
 #include <CGAL/basic.h>
 
@@ -13,17 +13,9 @@
 #include <CGAL/IO/Qt_examiner_viewer_2.h>
 #include <CGAL/IO/Qt_examiner_viewer_2.h>
 
-Slice_arrangement::Sphere_3 Slice_arrangement::unproject(Circle_2 c){
-  return Sphere_3(unproject(c.center()), c.squared_radius());
-}
-Slice_arrangement::Line_3 Slice_arrangement::unproject(Line_2 c){
-  return Line_3(unproject(c.point()), Vector_3(c.to_vector().x(),
-					       c.to_vector().y(),
-					       0));
-}
-Slice_arrangement::Point_3 Slice_arrangement::unproject(Point_2 c){
-  return Point_3(c.x(), c.y(), 0);
-}
+#include <CGAL/Arrangement_of_spheres_3/coordinates.h>
+
+
 
 
 template <class K>
@@ -41,31 +33,63 @@ struct Center: public boost::static_visitor<> {
 template <int C>
 struct Slice_arrangement::Rule{
   typedef Filtered_sphere_line_intersection<Circular_k,C> SLI;
-  
+  static Sphere_3 unproject(Circle_2 c){
+    return Sphere_3(unproject(c.center()), c.squared_radius());
+  }
+  static Line_3 unproject(Line_2 c){
+    NT vc[3]={0,0,0};
+    vc[0]= c.to_vector().x();
+    vc[1]= c.to_vector().y();
+    return Line_3(unproject(c.point()), Vector_3(vc[0], vc[1], vc[2]));
+  }
+  static Point_3 unproject(Point_2 c){
+    NT pt[3]={0,0,0};
+    pt[0]= c.x();
+    pt[1]= c.y();
+    return Point_3(pt[0], pt[1], pt[2]);
+  }
   Rule(Circle_2 s, Curve f, NT inf): f_(f) {
     CGAL_precondition(f.is_rule());
-    Line_3 l;
     NT v=1;
     if (!f.is_negative()) v=-1;
-    if (C== 0) {
-      l= Line_3(Point_3(s.center().x(), s.center().y(),0), Vector_3(v,0,0));
+    NT vc[3]={0,0,0};
+    vc[C]=v;
+    /*if (C== 0) {
+      vc[plane_coordinate(0).index()]= v;
     } else {
-      l= Line_3(Point_3(s.center().x(), s.center().y(),0), Vector_3(0,v,0));
-    }
-    NT pc[2];
-    pc[1-C]=s.center()[1-C];
-    pc[C]=inf;
-    if (f.is_negative()) pc[C]= -pc[C];
-    Sphere_3 s3(Point_3(s.center().x(), 
-			s.center().y(), NT(0)), 
+      vc[plane_coordinate(1).index()]= v;
+      }*/
+    NT pt[3]={0,0,0};
+    pt[0]=s.center()[0];
+    pt[1]=s.center()[1];
+    Point_3 ppt(pt[0], pt[1], pt[2]);
+    std::cout << f_ << std::endl;
+    std::cout << "ppt is " << ppt << std::endl;
+
+    Line_3 l= Line_3(ppt, Vector_3(vc[0], vc[1], vc[2]));
+
+    std::cout << "l is " << l << std::endl;
+   
+
+    Sphere_3 s3(ppt, 
 		s.squared_radius());
     start_= SLI(s3,l);
-    end_= SLI(Point_3(pc[0], pc[1], 0), l);
-    //std::cout << "Type: " << pt_ << " from " << start_ << " to " << end_ << std::endl;
+    std::cout << "start_ is " << start_ << std::endl;
+
+    NT pc[3]={0,0,0};
+    pc[1-C] =s.center()[1-C];
+    pc[C]=inf;
+    if (f.is_negative()) pc[C]= -pc[C];
+
+    Point_3 ppc(pc[0], pc[1], pc[2]);
+    std::cout << "ppc is " << ppc << std::endl;
+   
+    end_= SLI(ppc, l);
+    std::cout << "Type: " << f_ << " from " << start_ << " to " << end_ << std::endl;
   }
 
   bool is_on(const Point_2 &p) const {
-    if (p[1-C] != constant_coordinate()) return false;
+    CGAL_precondition(p[1-C] == constant_coordinate());// return false;
     SLI pc(unproject(p), unproject(line()));
     if (f_.is_negative()) {
       return pc > end_ && pc < start_;
@@ -87,6 +111,8 @@ struct Slice_arrangement::Rule{
   }
 
   void clip(SLI o) {
+    std::cout << "Clipping " << f_ << " " << start_ << " to " << end_ 
+	      << " against " << o << std::endl;
     if (!o.is_valid()) return;
     CGAL_precondition(start_.line() == o.line() || start_.line().opposite() == o.line());
     if (f_.is_negative()){
@@ -100,16 +126,17 @@ struct Slice_arrangement::Rule{
     //std::cout << start_.line() << std::endl;
     //std::cout << end_.line() << std::endl;
     CGAL_assertion(start_.line() == end_.line()  || start_.line().opposite() == end_.line());
-    return Line_2(Point_2(start_.line().point().x(), 
-			  start_.line().point().y()),
-		  Vector_2(start_.line().to_vector().x(), 
-			   start_.line().to_vector().y()));
+    return Line_2(Point_2(start_.line().point()[0], 
+			  start_.line().point()[1]),
+		  Vector_2(start_.line().to_vector()[0], 
+			   start_.line().to_vector()[1]));
   }
   Curve curve() const {
     return f_;
   }
 
   void clip(Circle_2 c) {
+    std::cout << "Clipping " << f_ << " against " << c << std::endl;
     SLI i0(unproject(c), start_.line());
     SLI i1(unproject(c), start_.line().opposite());
     clip(i0);
@@ -117,8 +144,11 @@ struct Slice_arrangement::Rule{
   }
   
   void clip(Rule<1-C> ra) {
+    std::cout << "Clipping " << f_ << " from " << start_ << " to " 
+	      << end_ << " against " << ra.f_ << " from " << ra.start_ 
+	      << " to " << ra.end_ << std::endl;
     //CGAL_precondition(CA!=CB);
-    NT pc[2];
+    NT pc[3]={0,0,0};
     pc[C]= ra.constant_coordinate();
     pc[1-C]= constant_coordinate();
     Point_2 pi(pc[0], pc[1]);
@@ -494,7 +524,14 @@ Slice_arrangement::Point Slice_arrangement::point(CArr::Vertex_const_handle h) c
       }
       //std::cout << "Final is " << fa << ", " << fb << std::endl;
     } 
-    pv=Point(fa, fb);
+    if (fa.key() == fb.key() && fa.key().is_input() && fb.key().is_input()) {
+      int ri;
+      if (fa.is_rule()) ri= fa.rule_index();
+      else ri= fb.rule_index();
+      pv= Point::make_extremum(fa.key(), ri);
+    } else {
+      pv=Point(fa, fb);
+    }
     CGAL_assertion(pv.is_valid());
 
     //std::cout << "creating " << pv << std::endl;
@@ -508,7 +545,8 @@ Slice_arrangement::Point Slice_arrangement::point(CArr::Vertex_const_handle h) c
 
 Slice_arrangement::Curve Slice_arrangement::curve(CArr::Halfedge_const_handle h) const {
   CGAL_assertion(std::distance(arr_.originating_curves_begin(h),
-			       arr_.originating_curves_end(h))==1);
+    arr_.originating_curves_end(h))==1);
+  
   CGAL_assertion(map_.find(arr_.originating_curves_begin(h)) != map_.end());
   return map_.find(arr_.originating_curves_begin(h))->second;
   //return boost::apply_visitor(lookup_curve_data_, h->curve());
@@ -660,14 +698,24 @@ void Slice_arrangement::draw(Qt_examiner_viewer_2 *qtv) const {
     *qtv << CGAL::GREEN;
     *qtv << vit->point();
     Point pt= point(vit);
-    Curve::Key sa= pt.first().key();
-    Curve::Key sb= pt.second().key();
     std::ostringstream out;
+    if (pt.is_sphere_extremum()) {
+      out << pt.sphere_key();
+    } else if (pt.is_sphere_rule()) {
+      out << pt.sphere_key() << ":" << pt.rule_key();
+    } else if (pt.is_rule_rule()) {
+      out << pt.rule_key(plane_coordinate(0)) << ":" << pt.rule_key(plane_coordinate(1));
+    } else {
+      out << pt.sphere_key(0) << ":" << pt.sphere_key(1);
+    }
+    /*Curve::Key sa= pt.first().key();
+    Curve::Key sb= pt.second().key();
+   
     if (sa != sb) {
       out << sa << ":" << sb;
     } else {
       out << sa;
-    }
+      }*/
     *qtv << CGAL::GRAY;
     *qtv << out.str().c_str();
   }

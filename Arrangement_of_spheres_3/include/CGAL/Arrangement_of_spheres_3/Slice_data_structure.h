@@ -6,10 +6,14 @@
 #include <CGAL/HalfedgeDS_halfedge_base.h>
 #include <CGAL/HalfedgeDS_face_base.h>
 
+#include <CGAL/Arrangement_of_spheres_3/Simulator.h>
 #include <CGAL/Arrangement_of_spheres_3/Combinatorial_vertex.h>
 #include <CGAL/Arrangement_of_spheres_3/Combinatorial_curve.h>
 #include <map>
 #include <set>
+#include <boost/array.hpp>
+
+
 
 class Slice_data_structure {
 public:
@@ -41,9 +45,20 @@ public:
 	Curve curve() const {
 	  return pt_;
 	}
+	Curve& curve() {
+	  return pt_;
+	}
 	void set_curve(Curve pt) {
 	  pt_=pt;
 	}
+	typename Simulator::Event_key event() const {
+	  return ev_;
+	}
+	void set_event(Simulator::Event_key ev) {
+	  ev_=ev;
+	}
+
+	Simulator::Event_key ev_;
 	Curve pt_;
       };
     };
@@ -54,6 +69,18 @@ public:
     };
   };
   
+
+  /* struct Next {
+    Halfedge_handle operator()(Halfedge_handle h) const {
+      return h->next();
+    }
+  };
+  struct Prev {
+    Halfedge_handle operator()(Halfedge_handle h) const {
+      return h->prev();
+    }
+    };*/
+
   typedef CGAL::HalfedgeDS_default<int, Slice_halfedgeDS_items_2> HDS;
 
   typedef HDS::Halfedge_handle Halfedge_handle;
@@ -63,7 +90,7 @@ public:
   typedef HDS::Face_handle Face_handle;
   typedef HDS::Face_const_handle Face_const_handle;
 
-  Slice_data_structure();
+  Slice_data_structure(int num);
 
   HDS& hds();
 
@@ -76,6 +103,10 @@ public:
   };
 
  
+  void debug_add_sphere(){
+    halfedges_.resize(halfedges_.size()+1);
+  }
+
   typedef HDS::Halfedge_const_iterator Halfedge_const_iterator;
   Halfedge_const_iterator halfedges_begin() const {
     return hds_.halfedges_begin();
@@ -83,6 +114,8 @@ public:
   Halfedge_const_iterator halfedges_end() const {
     return hds_.halfedges_end();
   }
+
+
   typedef HDS::Halfedge_iterator Halfedge_iterator;
   Halfedge_iterator halfedges_begin() {
     return hds_.halfedges_begin();
@@ -90,6 +123,7 @@ public:
   Halfedge_iterator halfedges_end() {
     return hds_.halfedges_end();
   }
+
   typedef HDS::Vertex_const_iterator Vertex_const_iterator;
   Vertex_const_iterator  vertices_begin() const {
     return hds_.vertices_begin();
@@ -113,36 +147,78 @@ public:
   Face_iterator faces_end() {
     return hds_.faces_end();
   }
-  
+
   Halfedge_handle find_halfedge(Vertex_handle v, Face_handle f);
 
-  Face_handle remove_rule(Halfedge_handle h);
+  // the first is the target of h, second the source
+  std::pair<Halfedge_handle, Halfedge_handle> remove_rule(Halfedge_handle h);
 
   bool has_vertex(Face_const_handle fh, Vertex_const_handle vh) const;
 
   void connect(Halfedge_handle a, Halfedge_handle b);
 
-  void new_circle(Curve::Key k, Face_handle f,Halfedge_handle vs[]);
+  Simulator::Event_key event(Halfedge_handle h) const {
+    return h->event();
+  }
+
+  void set_event(Halfedge_handle h, Simulator::Event_key k) const {
+    CGAL_assertion(k != Simulator::Event_key());
+    CGAL_assertion(h->event()== h->opposite()->event());
+    CGAL_assertion(h->event() == Simulator::Event_key());
+    h->set_event(k);
+    h->opposite()->set_event(k);
+  }
+
+  void unset_event(Halfedge_handle h) const {
+    CGAL_assertion(h->event()== h->opposite()->event());
+    h->set_event(Simulator::Event_key());
+    h->opposite()->set_event(Simulator::Event_key());
+  }
+
+  void new_circle(Curve::Key k, Face_handle f, Halfedge_handle c[]);
   
   /*typedef boost::tuple<Halfedge_handle, Halfedge_handle,
     Halfedge_handle, Halfedge_handle> Halfedge_handle_quadruple;*/
 
   void new_target(Curve::Key k, Halfedge_handle tar[]);
   
-  void insert_target(Halfedge_handle tar[],
+  void insert_target(Curve::Key k,
 		     Halfedge_handle cps[]);
 
-  Face_handle remove_target(Halfedge_handle ts[]);
+  Face_handle remove_target(Halfedge_handle ts[],
+			    Halfedge_handle vert[]);
 
   Halfedge_handle split_face(Halfedge_handle o, Halfedge_handle d,
 			     Curve c);
 
+  void relabel_target(Halfedge_handle v[], Curve::Key k);
 
-  void audit(unsigned int num_set=1) const ;
-
-  void audit_vertex(Vertex_const_handle v, bool has_special) const ;
   
-  void audit_halfedge(Halfedge_const_handle v) const ;
+  void exchange_vertices(Halfedge_handle h, Halfedge_handle p);
+
+  Face_handle intersect(Halfedge_handle ha, Halfedge_handle hb);
+
+  std::pair<Halfedge_handle,Halfedge_handle>  unintersect(Face_handle f);
+
+  // remove the rule from where it is connected
+  // attach it to point a a new vertex in ne, starting from t->vertex()
+  // the old target is removed, the old source is not. 
+  // OK, this is really screwy
+  // the new rule is returned
+  void move_rule(Halfedge_handle r,
+			    Halfedge_handle ne, 
+			    Halfedge_handle t); 
+
+
+  void audit() const ;
+
+  void audit_vertex(Vertex_const_handle v) const ;
+  
+  Halfedge_handle next_edge_on_curve(Halfedge_handle) const;
+  Halfedge_const_handle next_edge_on_curve(Halfedge_const_handle) const;
+  Halfedge_handle cross_edge(Halfedge_handle) const;
+
+  //void audit_halfedge(Halfedge_const_handle v) const ;
 
   void set_is_building(bool tf);
   
@@ -150,17 +226,30 @@ public:
 
   std::ostream &write_face(Halfedge_const_handle h, std::ostream &out) const;
 
+  bool is_in_slice(Vertex_const_handle v) const;
+  bool is_in_slice(Halfedge_const_handle h) const;
+  bool is_in_slice(Face_const_handle h) const;
+
   typedef std::pair<Point, Curve> NFP;
 
   void reserve(int nv, int ne, int nf);
 
-  void initialize() ;
+  void initialize(int num) ;
 
   unsigned int degree(Vertex_const_handle v) const;
 
-  Halfedge_handle remove_redundant_vertex(Vertex_handle v);
+  bool is_redundant(Vertex_const_handle v) const;
+
+  Halfedge_handle remove_redundant_vertex(Halfedge_handle v);
 
   void clear();
+
+  // a halfedge on the curve (an inside one)
+  Halfedge_handle a_halfedge(Curve::Key k) const;
+
+  // a halfedge on the rule pointing to the extremal vertex
+  Halfedge_handle rule_halfedge(Curve::Key k, int i) const;
+
 
   template <class Out>
   void find_halfedges(Curve c, Out o) const {
@@ -174,6 +263,7 @@ public:
   }
 
 
+  // insert the vertex so that h->opposite points to it
   Vertex_handle insert_vertex_in_edge(Halfedge_handle h, Point p);
 
   Halfedge_handle new_halfedge(Curve c);
@@ -181,6 +271,8 @@ public:
   //typedef std::pair<Point,Point>  ED;
 
   Vertex_handle new_vertex(Point p);
+
+  Vertex_handle new_vertex_cached(Point p);
 
   Halfedge_handle new_halfedge(Point s, Curve ff, Point f);
 
@@ -191,7 +283,7 @@ public:
     It em1=e;
     --em1;
     Point lp= em1->second;
-    if (points_.find(lp)==points_.end()) new_vertex(lp);
+    if (points_.find(lp)==points_.end()) new_vertex_cached(lp);
    
     Face_handle f= hds_.faces_push_back(HDS::Face());
     It c=b;
@@ -236,8 +328,11 @@ public:
   mutable HDS hds_;
   Face_handle inf_;
   mutable std::vector<Curve> errors_;
+  std::vector<Vertex_handle> targets_;
+  typedef boost::array<Halfedge_handle, 4> Halfedge_quad;
+  std::vector<Halfedge_quad> halfedges_;
 
-  // for construction
+  // for new_face when constructing things
   std::map<Edge, Halfedge_handle> unmatched_hedges_;
   std::map<Point, Vertex_handle> points_;
 };

@@ -14,8 +14,8 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
-
-CXXFLAGS = -I../../include -pg -Wall -DCGAL_USE_GMP -DCGAL_USE_GMPXX -DCGAL_USE_CORE -DCGAL_USE_QT -DQT_THREAD_SUPPORT '-I$(CGAL_INCL_DIR)' '-I$(CGAL_INCL_DIR)/CGAL/config/$(CGAL_OS_COMPILER)'   '-I$(QTDIR)/include' -g -DCGAL_CHECK_EXPENSIVE -DCGAL_CHECK_EXACTNESS
+# -fmudflapth
+CXXFLAGS =  -I../../include -pg -Wall -DCGAL_USE_GMP -DCGAL_USE_GMPXX -DCGAL_USE_CORE -DCGAL_USE_QT -DQT_THREAD_SUPPORT '-I$(CGAL_INCL_DIR)' '-I$(CGAL_INCL_DIR)/CGAL/config/$(CGAL_OS_COMPILER)'   '-I$(QTDIR)/include' -g -DCGAL_CHECK_EXPENSIVE -DCGAL_CHECK_EXACTNESS
 # $(CGAL_LIB_CXXFLAGS) -I../include
 #
 
@@ -24,7 +24,9 @@ CXXFLAGS = -I../../include -pg -Wall -DCGAL_USE_GMP -DCGAL_USE_GMPXX -DCGAL_USE_
 # Object files
 #---------------------------------------------------------------------#
 
-CGAL_OBJECTS = Slice_arrangement$(OBJ_EXT) Slice_data_structure$(OBJ_EXT)  Slice$(OBJ_EXT) Slice_predicates$(OBJ_EXT) Slice_constructions$(OBJ_EXT) Slice_point_location$(OBJ_EXT) Slice_shoot_rule$(OBJ_EXT) Arrangement_of_spheres_traits_3$(OBJ_EXT) Slice_modifiers$(OBJ_EXT)
+CGAL_OBJECTS = Slice_arrangement$(OBJ_EXT) Slice_data_structure$(OBJ_EXT)  Slice$(OBJ_EXT) Slice_predicates$(OBJ_EXT) Slice_constructions$(OBJ_EXT) Slice_point_location$(OBJ_EXT) Slice_shoot_rule$(OBJ_EXT) Arrangement_of_spheres_traits_3$(OBJ_EXT) Slice_modifiers$(OBJ_EXT) Combinatorial_stuff$(OBJ_EXT) Sphere_3_table$(OBJ_EXT) Slice_kds$(OBJ_EXT)
+
+#Arrangement_of_spheres_3$(OBJ_EXT)
 
 #---------------------------------------------------------------------#
 #                    target entries
