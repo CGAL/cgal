@@ -2080,6 +2080,8 @@ Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Ed
 Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Partial_collapse_data.h -text
 Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Set_full_collapse_data.h -text
 Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Set_partial_collapse_data.h -text
+Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Polyhedron.h -text
+Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Vertex_is_fixed_map_always_false.h -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/edge_collapse_test.cpp -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/edge_collapse_test.kdevelop -text
 Surface_mesher/demo/Surface_mesher/windows/Mesh.suo -text
