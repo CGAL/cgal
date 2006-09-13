@@ -39,6 +39,7 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
   typedef typename Kernel::FT                  FT;
   typedef Arr_linear_traits_2<Kernel>          Base;
   typedef Env_plane_traits_3<Kernel>           Self;
+  typedef unsigned int                         Multiplicity;
 
   typedef typename Base::Point_2               Point_2;
   typedef typename Base::Curve_2               Curve_2;
@@ -54,7 +55,7 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
   typedef std::pair<Curve_2, 
                     Multiplicity>              Intersection_curve;
   typedef Tag_true                             Has_infinite_category;
-  typedef unsigned int                         Multiplicity;
+  
 
   class Is_vertical_3
   {
