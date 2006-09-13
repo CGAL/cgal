@@ -73,6 +73,7 @@ public:
   
   // here we refer to the lower part of the sphere only
   typedef Surface_3                                 Xy_monotone_surface_3;
+  typedef unsigned int                              Multiplicity;
 protected:
   typedef std::pair<X_monotone_curve_2, Intersection_type>     Intersection_curve;
   
@@ -1296,7 +1297,7 @@ public:
       X_monotone_curve_2 cv;
       if(assign(cv, *o))
       {
-        *oi++ = make_object(Intersection_curve(cv, TRANSVERSAL));
+        *oi++ = make_object(Intersection_curve(cv, 1));
       }
       else
       {
@@ -1329,15 +1330,14 @@ public:
  * Env_sphere_traits_3 traits-class.
  */
 template <class Kernel_>
-class Env_sphere_3 :
-    public Handle_for<typename Kernel_::Sphere_3>
+class Env_sphere_3 : public Kernel_::Sphere_3
 {
   typedef Kernel_                                                  Kernel;
   typedef typename Kernel::Sphere_3                                Sphere_3;
   typedef typename Kernel::Point_3                                 Point_3;
   typedef typename Kernel::FT                                      NT;
   
-  typedef typename Kernel::Sphere_3                                Rep_type;
+  typedef typename Kernel::Sphere_3                                Base;
 
 public:
 
@@ -1345,7 +1345,7 @@ public:
    * Default constructor.
    */
   Env_sphere_3() :
-    Handle_for<Rep_type>(Rep_type())
+    Base()
   {}
 
   /*!
@@ -1353,7 +1353,7 @@ public:
    * \param seg The segment.
    */
   Env_sphere_3(const Sphere_3& s) :
-    Handle_for<Rep_type>(s)
+    Base(s)
   {}
 
   /*!
@@ -1363,7 +1363,7 @@ public:
    * \param p3 The third point.
    */
   Env_sphere_3(const Point_3 &c, const NT &r_sqr) :
-      Handle_for<Rep_type>(Rep_type(c, r_sqr))
+      Base(c, r_sqr)
   {}
 
     /*!
@@ -1371,23 +1371,8 @@ public:
    */
   operator Sphere_3() const
   {
-    return (Sphere_3(ptr()->center(), ptr()->squared_radius()));
+    return (Sphere_3(this->center(), this->squared_radius()));
   }
-
-  Point_3 center() const
-  {
-    return ptr()->center();
-  }
-
-  NT squared_radius() const
-  {
-    return ptr()->squared_radius();
-  }
-  Bbox_3 bbox() const
-  {
-    return (ptr()->bbox());
-  }
-
 };
 
 template <class Kernel>
@@ -1395,14 +1380,26 @@ bool
 operator<(const Env_sphere_3<Kernel> &a,
           const Env_sphere_3<Kernel> &b)
 {
-  return (a.id() < b.id());
+  Kernel k;
+  Comparison_result res = k.compare_xyz_3_object()(a.center(), b.center());
+  if(res == SMALLER)
+    return true;
+  if(res == LARGER)
+    return false;
+
+  if(a.squared_radius() < b.squared_radius())
+    return true;
+  if(a.squared_radius() > b.squared_radius())
+    return false;
+
+  return false;
 }
 template <class Kernel>
 bool
 operator==(const Env_sphere_3<Kernel> &a,
            const Env_sphere_3<Kernel> &b)
 {
-  return (a.id() == b.id());
+  return (a.center() == b.center() && a.squared_radius() == b.squared_radius());
 }
 /*!
  * Exporter for the triangle class used by the traits-class.
