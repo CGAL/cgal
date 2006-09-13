@@ -103,10 +103,10 @@ _test_cls_iso_rectangle_2(const R& )
 
  std::cout << '.';
 
- assert( r4.min() == p1 );
- assert( r1.min() == p1 );
- assert( r5.min() != p9 );
- assert( r2.max() == p3 );
+ assert( (r4.min)() == p1 );
+ assert( (r1.min)() == p1 );
+ assert( (r5.min)() != p9 );
+ assert( (r2.max)() == p3 );
 
  std::cout << '.';
  

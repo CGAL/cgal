@@ -78,15 +78,15 @@ _test_cls_segment_3(const R& )
 
  std::cout <<'.';
 
- assert( s2.min() == p2 );
- assert( s2.max() == p1 );
- assert( s2.min() == s3.min() );
- assert( s2.max() == s3.max() );
- assert( s5.max() != s5.min() );
- assert( s5.max() == s5.opposite().max() );
+ assert( (s2.min)() == p2 );
+ assert( (s2.max)() == p1 );
+ assert( (s2.min)() == (s3.min)() );
+ assert( (s2.max)() == (s3.max)() );
+ assert( (s5.max)() != (s5.min)() );
+ assert( (s5.max)() == (s5.opposite().max)() );
  assert( s5.vertex(0) == s5.source() );
  assert( s2.vertex(1) == s2.target() );
- assert( s2.vertex(1) == s2.min() );
+ assert( s2.vertex(1) == (s2.min)() );
  assert( s2[1] == s1[1] );
  assert( s2[1] == s3[0] );
 

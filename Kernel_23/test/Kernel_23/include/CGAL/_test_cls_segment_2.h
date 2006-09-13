@@ -79,11 +79,11 @@ _test_cls_segment_2(const R& )
  assert( s4.target() == p4 );
  assert( s5.target() == p1 );
 
- assert( s1.min() == p1 );
- assert( s3.min() == p3 );
- assert( s4.min() == p2 );
- assert( s4.max() == p4 );
- assert( s5.max() == p4 );
+ assert( (s1.min)() == p1 );
+ assert( (s3.min)() == p3 );
+ assert( (s4.min)() == p2 );
+ assert( (s4.max)() == p4 );
+ assert( (s5.max)() == p4 );
 
  assert( s3.vertex(0) == p2 );
  assert( s3.vertex(1) == p3 );
