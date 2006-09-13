@@ -54,32 +54,25 @@ struct Do_work {
     std::cout << "z is " << z << std::endl;
 
     Slice::T tr(spheres.begin(), spheres.end());
-    Slice slice(tr, new Simulator());
+    Slice slice(tr);
     slice.initialize_at(z);
-  
-   
 
     for (unsigned int nit=0; nit != 100; ++nit){
-      double x,y;
+      double x,y, radius;
       x= rand.get_double(box.xmin(), box.xmax());
       y= rand.get_double(box.ymin(), box.ymax());
-      Arrangement_of_spheres_traits_3::Sphere_point_3 sp(K::Point_3(x,y,z), 
-							K::Line_3(K::Point_3(x,y,z),
-								  K::Vector_3(0,0,1)));
-     
-      std::cout << "Locating point " << x << " " << y << std::endl;
-      try {
-	Slice::Face_const_handle f=slice.locate_point(sp);
-	std::cout << "Located in face ";
-	slice.write(f, std::cout) << std::endl;
-	
-      } catch (Slice::On_edge_exception e) {
-	std::cout << "On edge!" ;
-	slice.write(e.halfedge_handle(), std::cout) << std::endl;
-      } catch (Slice::On_vertex_exception v) {
-	std::cout << "On vertex!";
-	slice.write(v.vertex_handle(), std::cout) << std::endl;
-      }
+      y= rand.get_double(0,4);
+      K::Sphere_3 s(K::Point_3(x, y, z+radius), radius);
+      K::FT lp[3];
+      lp[plane_coordinate(0).index()]=x;
+      lp[plane_coordinate(1).index()]=y;
+      lp[sweep_coordinate().index()]=z;
+      Arrangement_of_spheres_traits_3::Sphere_point_3 sp(s, 
+							 K::Line_3(K::Point_3(lp[0], lp[1], lp[2]),
+								   sweep_vector<K::Vector_3>()));
+      std::cout << "Inserting " << s << std::endl;
+      Slice::T::Key k=slice.debug_new_sphere(s);
+      slice.insert_sphere(sp, k);
     }
   }
 };
