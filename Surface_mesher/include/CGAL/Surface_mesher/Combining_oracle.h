@@ -70,7 +70,7 @@ namespace CGAL {
       {
       }
       
-      Object operator()(Surface_3& surface, Segment_3 s) const
+      Object operator()(const Surface_3& surface, Segment_3 s) const
       {
         const Object obj = oracle_a.intersect_3_object()(surface.surface_a(), s);
         if( obj.is_empty() )
@@ -78,14 +78,14 @@ namespace CGAL {
         return obj;
       }
 
-      Object operator()(Surface_3& surface, const Ray_3& r) const {
+      Object operator()(const Surface_3& surface, const Ray_3& r) const {
         const Object obj = oracle_a.intersect_3_object()(surface.surface_a(), r);
         if( obj.is_empty() )
           return oracle_b.intersect_3_object()(surface.surface_b(), r);
         return obj;  
       }
       
-      Object operator()(Surface_3& surface, const Line_3& l) const {
+      Object operator()(const Surface_3& surface, const Line_3& l) const {
         const Object obj = oracle_a.intersect_3_object()(surface.surface_a(), l);
         if( obj.is_empty() )
           return oracle_b.intersect_3_object()(surface.surface_b(), l);
@@ -105,7 +105,7 @@ namespace CGAL {
 
       // Random points
       template <typename OutputIteratorPoints>
-      OutputIteratorPoints operator() (Surface_3& surface, 
+      OutputIteratorPoints operator() (const Surface_3& surface, 
                                        OutputIteratorPoints out, 
                                        int n = 20) // WARNING: why 20?
       {
@@ -119,17 +119,17 @@ namespace CGAL {
       }
     }; // end nested class Construct_initial_points
      
-    Intersect_3 intersect_3_object()
+    Intersect_3 intersect_3_object() const
     {
       return Intersect_3(oracle_a, oracle_b);
     }
 
-    Construct_initial_points construct_initial_points_object()
+    Construct_initial_points construct_initial_points_object() const
     {
       return Construct_initial_points(oracle_a, oracle_b);
     }
 
-    bool is_in_volume(Surface_3& surface, const Point_3& p)
+    bool is_in_volume(const Surface_3& surface, const Point_3& p) const
     {
       return( oracle_a.is_in_volume(surface.surface_a(), p) || 
               oracle_b.is_in_volume(surface.surface_b(), p) );

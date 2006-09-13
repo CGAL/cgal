@@ -74,14 +74,14 @@ namespace CGAL {
 #endif
     }
 
-    const Visitor& get_visitor()
+    const Visitor& get_visitor() const
     {
       return visitor;
     }
 
     // Predicates and Constructions
 
-    bool is_in_volume(const Surface_3& sphere, const Point& p)
+    bool is_in_volume(const Surface_3& sphere, const Point& p) const
     {
       typename GT::Has_on_bounded_side_3 on_bounded_side_of_sphere =
         GT().has_on_bounded_side_3_object();
@@ -91,7 +91,7 @@ namespace CGAL {
 
     class Intersect_3 
     {
-      Self& oracle;
+      const Self& oracle;
 
       boost::tuple<int, FT, FT> 
       intersection_line_sphere_lambda(const Surface_3& sphere,
@@ -222,7 +222,7 @@ namespace CGAL {
       };
         
     public:
-      Intersect_3(Self& oracle) : oracle(oracle)
+      Intersect_3(const Self& oracle) : oracle(oracle)
       {
       }
 
@@ -387,9 +387,9 @@ namespace CGAL {
 
     class Construct_initial_points
     {
-      Self& oracle;
+      const Self& oracle;
     public:
-      Construct_initial_points(Self& oracle) : oracle(oracle)
+      Construct_initial_points(const Self& oracle) : oracle(oracle)
       {
       }
       
@@ -397,7 +397,7 @@ namespace CGAL {
       template <typename OutputIteratorPoints>
       OutputIteratorPoints operator() (const Surface_3& sphere, 
                                        OutputIteratorPoints out, 
-                                       int n = 20) // WARNING: why 20?
+                                       int n = 20) const // WARNING: why 20?
       {
         const Point center = 
           GT().construct_center_3_object()(sphere);
@@ -424,12 +424,12 @@ namespace CGAL {
       }
     }; // end nested class Construct_initial_points
 
-    Construct_initial_points construct_initial_points_object()
+    Construct_initial_points construct_initial_points_object() const
     {
       return Construct_initial_points(*this);
     }
 
-    Intersect_3 intersect_3_object()
+    Intersect_3 intersect_3_object() const
     {
       return Intersect_3(*this);
     }

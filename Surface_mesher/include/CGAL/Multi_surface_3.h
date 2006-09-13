@@ -28,21 +28,21 @@ namespace CGAL {
     >
   class Multi_surface_3 
   {
-    Surface_a& surf_a;
-    Surface_b& surf_b;
+    const Surface_a& surf_a;
+    const Surface_b& surf_b;
   public:
-    Multi_surface_3(Surface_a& surface_a, Surface_b& surface_b)
+    Multi_surface_3(const Surface_a& surface_a, const Surface_b& surface_b)
       : surf_a(surface_a), surf_b(surface_b)
     {
     }
 
-    Surface_a& surface_a() 
+    const Surface_a& surface_a() const
     {
       return surf_a;
     }
     
       
-    Surface_b& surface_b() 
+    const Surface_b& surface_b() const
     {
       return surf_b;
     }

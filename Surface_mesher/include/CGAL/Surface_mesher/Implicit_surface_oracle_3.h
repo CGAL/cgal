@@ -198,7 +198,7 @@ namespace CGAL {
 
       // debug function
       static std::string debug_point(const Surface_3& surface,
-                                     const Point& p)
+                                     const Point& p) 
       {
         std::stringstream s;
         s << p << " (distance=" 
@@ -210,7 +210,7 @@ namespace CGAL {
       }
 
       static CGAL::Sign surf_equation (Surface_3 surface,
-                                       const Point& p)
+                                       const Point& p) 
       {
         return CGAL::sign(surface(p));
       } // @TODO, @WARNING: we use x(), y() and z()
@@ -287,9 +287,9 @@ namespace CGAL {
 
     class Construct_initial_points
     {
-      Self& oracle;
+      const Self& oracle;
     public:
-      Construct_initial_points(Self& oracle) : oracle(oracle)
+      Construct_initial_points(const Self& oracle) : oracle(oracle)
       {
       }
       
@@ -356,17 +356,17 @@ namespace CGAL {
       }
     }; // end nested class Construct_initial_points
 
-    Construct_initial_points construct_initial_points_object()
+    Construct_initial_points construct_initial_points_object() const
     {
       return Construct_initial_points(*this);
     }
 
-    Intersect_3 intersect_3_object()
+    Intersect_3 intersect_3_object() const
     {
       return Intersect_3(visitor);
     }
 
-    bool is_in_volume(const Surface_3& surface, const Point& p)
+    bool is_in_volume(const Surface_3& surface, const Point& p) const
     {
       return Intersect_3::surf_equation(surface, p)<0.;
     }

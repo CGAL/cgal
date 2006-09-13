@@ -184,9 +184,9 @@ namespace CGAL {
 
     public:
       Surface_mesher_regular_edges_base(C2T3& c2t3,
-                                        Surface& surface,
-                                        SurfaceMeshTraits mesh_traits,
-                                        Criteria& criteria)
+                                        const Surface& surface,
+                                        const SurfaceMeshTraits& mesh_traits,
+                                        const Criteria& criteria)
         : SMB(c2t3, surface, mesh_traits, criteria),
           bad_edges_initialized(false)
     {

@@ -102,9 +102,9 @@ namespace CGAL {
 
     public:
       Surface_mesher_manifold_base (C2T3& c2t3,
-                                    Surface& surface,
-                                    SurfaceMeshTraits mesh_traits,
-                                    Criteria& criteria)
+                                    const Surface& surface,
+                                    const SurfaceMeshTraits& mesh_traits,
+                                    const Criteria& criteria)
 	: SMMBB(c2t3, surface, mesh_traits, criteria),
           bad_vertices_initialized(false)
       {

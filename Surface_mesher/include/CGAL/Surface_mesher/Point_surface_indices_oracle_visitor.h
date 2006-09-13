@@ -31,7 +31,7 @@ namespace CGAL {
    */
   struct Point_surface_indices_visitor
   {
-    const int i;
+    int i;
 
     Point_surface_indices_visitor(const int index) : i(index)
     {

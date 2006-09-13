@@ -75,9 +75,9 @@ namespace CGAL {
 
     // Constructor
     Surface_mesher_base (C2T3& co, 
-                         Surface& s, 
-                         Surface_mesh_traits mesh_traits,
-                         Criteria& c) :
+                         const Surface& s, 
+                         const Surface_mesh_traits& mesh_traits,
+                         const Criteria& c) :
       Triangulation_mesher_level_traits_3<Tr>(co.triangulation()),
       c2t3(co),
       tr(co.triangulation()),
@@ -93,9 +93,9 @@ namespace CGAL {
   protected:
     C2T3& c2t3;
     Tr& tr;     // Associated triangulation reference
-    Surface& surf;  // Surface
-    Surface_mesh_traits meshtraits; // Surface mesh traits
-    Criteria& criteria;  // Meshing criteria
+    const Surface& surf;  // Surface
+    const Surface_mesh_traits& meshtraits; // Surface mesh traits
+    const Criteria& criteria;  // Meshing criteria
     Bad_facets facets_to_refine;  // Set of facets to refine
 
   public:
@@ -659,9 +659,9 @@ namespace CGAL {
 
   public:
     Surface_mesher(C2T3& c2t3,
-                   Surface& surface,
-                   Surface_mesh_traits mesh_traits,
-                   Criteria& criteria)
+                   const Surface& surface,
+                   const Surface_mesh_traits& mesh_traits,
+                   const Criteria& criteria)
       : Base(c2t3, surface, mesh_traits, criteria), 
         Mesher_lvl(null_mesher_level),
         initialized(false)

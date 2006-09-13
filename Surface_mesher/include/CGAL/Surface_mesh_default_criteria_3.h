@@ -54,7 +54,7 @@ public:
     criteria.set_criteria(criterion_vector);
   }
 
-  bool is_bad (const Facet& f, Quality& q)
+  bool is_bad (const Facet& f, Quality& q) const
   {
     return criteria.is_bad(f, q);
   }

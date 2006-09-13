@@ -51,11 +51,11 @@ namespace CGAL {
       criteria = c;
     }
 
-    bool is_bad (const Facet& f, Quality& q ) {
+    bool is_bad (const Facet& f, Quality& q ) const {
       bool bad = false;
       int i = 0;
       q.resize(criteria.size());
-      for (typename Criteria::iterator cit = criteria.begin(); cit !=
+      for (typename Criteria::const_iterator cit = criteria.begin(); cit !=
 	     criteria.end(); ++cit)
 	if ((*cit)->is_bad (f, q[i++]))
           bad = true;

@@ -92,27 +92,27 @@ public:
   friend class Intersect_3;
 
   class Intersect_3 {
-    Self& self;
+    const Self& self;
   public:
-    Intersect_3(Self& self) : self(self)
+    Intersect_3(const Self& self) : self(self)
     {
     }
 
-    Object operator()(Surface_3& surface, Segment_3 s) const
+    Object operator()(const Surface_3& surface, const Segment_3& s) const
     {
       return self.intersect_segment_surface(surface.subfacets_octree, s);
     }
     
-    Object operator()(Surface_3& surface, Ray_3& r) const {
+    Object operator()(const Surface_3& surface, const Ray_3& r) const {
       return self.intersect_ray_surface(surface.subfacets_octree, r);
     }
       
-    Object operator()(Surface_3& surface, Line_3& l) const {
+    Object operator()(const Surface_3& surface, const Line_3& l) const {
       return self.intersect_line_surface(surface.subfacets_octree, l);
     }
   };
 
-  Intersect_3 intersect_3_object()
+  Intersect_3 intersect_3_object() const
   {
     return Intersect_3(*this);
   }
@@ -123,18 +123,18 @@ public:
 
   class Construct_initial_points
   {
-    Self& self;
+    const Self& self;
   public:
-    Construct_initial_points(Self& self) : self(self)
+    Construct_initial_points(const Self& self) : self(self)
     {
     }
 
     template <typename OutputIteratorPoints>
-    OutputIteratorPoints operator() (Surface_3& surface, 
+    OutputIteratorPoints operator() (const Surface_3& surface, 
                                      OutputIteratorPoints out, 
-                                     int n = 20) // WARNING: why 20?    
+                                     int n = 20) const // WARNING: why 20?    
     {
-      for (typename std::vector<Point>::iterator vit =
+      for (typename std::vector<Point>::const_iterator vit =
              surface.input_points.begin();
            vit != surface.input_points.end() && n > 0;
            ++vit, --n)
@@ -148,12 +148,12 @@ public:
     }
   };
 
-  Construct_initial_points construct_initial_points_object() 
+  Construct_initial_points construct_initial_points_object() const
   {
     return Construct_initial_points(*this);
   }
 
-  bool is_in_volume(Surface_3& surface, const Point& p)
+  bool is_in_volume(const Surface_3& surface, const Point& p)
   {
     typename CGAL::Random_points_on_sphere_3<Point,
       Point_creator> random_point(FT(1));
@@ -185,7 +185,8 @@ public:
 //     return CGAL::Object();
 //   }
 
-  CGAL::Object intersect_segment_surface(Subfacets_octree& data_struct, Segment_3 s)
+  CGAL::Object intersect_segment_surface(const Subfacets_octree& data_struct,
+                                         const Segment_3& s) const
     {
       // debug: test if segment is degenerate
       // (can happen, because of rounding in circumcenter computations)
@@ -224,7 +225,8 @@ public:
 /*       return data_struct.intersection (s.vertex(0), s.vertex(1));  // Marie */
     }
 
-  CGAL::Object intersect_ray_surface(Subfacets_octree& data_struct, Ray_3 &r)
+  CGAL::Object intersect_ray_surface(const Subfacets_octree& data_struct,
+                                     const Ray_3 &r) const
     {
       // debug: for detecting whether Marie's code works
       // (we compare with our basic intersection function)
@@ -259,7 +261,8 @@ public:
     }
 
 
-  CGAL::Object intersect_line_surface(Subfacets_octree&, Line_3 &)
+  CGAL::Object intersect_line_surface(const Subfacets_octree&,
+                                      const Line_3 &) const
     {
       CGAL_assertion(false);
       return CGAL::Object();

@@ -1,3 +1,9 @@
+13 September 2006 Laurent Rineau
+- massive fix of const-correctness in Surface_mesher, Mesh_3 and
+Head_mesher.
+  (A nice feature of C++ is that, when you need to add *one* const
+   somewhere, then you have to fix const-correctness of all the World!)
+
 12 July 2006 Laurent Rineau
 - new class Volume_mesher_default_triangulation_3
 - new test, of io operators. It uses Volume_mesher_default_triangulation_3.
