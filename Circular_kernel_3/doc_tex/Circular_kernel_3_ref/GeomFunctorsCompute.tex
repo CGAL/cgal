@@ -1,0 +1,54 @@
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::ComputeAreaDividedByPi}
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{SphericalKernel::FT
+	operator()(const Circle_3 & c);}
+{Computes the area of the circle, divided by $\pi$.}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::ComputeSquaredLengthDividedByPiSquare}
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{SphericalKernel::FT
+	operator()(const Circle_3 & c);}
+{Computes the squared length of the circle, divided by $\pi^2$.}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::ComputeApproximateArea}
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{double
+	operator()(const Circle_3 & c);}
+{Computes an approximation of the area of the circle.}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::ComputeApproximateSquaredLength}
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{double
+	operator()(const Circle_3 & c);}
+{Computes an approximation of the squared length of the circle.}
+
+\ccMemberFunction{double
+	operator()(const Circular_arc_3 & c);}
+{Computes an approximation of the squared length of the arc.}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::ComputeApproximateAngle}
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{double
+	operator()(const Circular_arc_3 & c);}
+{Computes an approximation of the angle of the arc.}
+
+\end{ccRefFunctionObjectConcept}
