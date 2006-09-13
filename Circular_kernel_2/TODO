@@ -1,7 +1,9 @@
-manual filtered bbox kernel
+manual filtered bbox kernel, ref counting
 manual calculs aires, longueurs, etc
 manual bounded_side etc
 manual orientation (attention au concept NT Ro2)
+
+clean demos
 
 rendre Bbox filtered kernel completement generique -> 
 	utilisation dans linear kernel aussi
