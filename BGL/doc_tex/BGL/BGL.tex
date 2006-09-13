@@ -16,7 +16,103 @@
 
 \section{Introduction}
 
-This \cgal\ package provides a framework for interfacing \cgal\ data structures as Bgl (Boost Graph Library) graphs.
+Many geometric data structures can be interpreted as graphs, as they consist of
+vertices, edges and faces. This is the case for the halfedge data structure,
+for the polyhedron, for arrangements and for triangulations. With means of
+duality one can also interpret faces as vertices and edges between adjacent
+faces as edges of the dual graph. 
+
+
+As the scope of \cgal\ is geometry and not graph algorithms, we
+provide the necessary classes and functions that allow to use the
+algorithms of the \ccAnchor{http://www.boost.org/libs/graph/doc/index.html}{Boost Graph Library} for \cgal\ data structures.
+
+The algorithms of the {\sc Bgl} operate on models of the various graph concepts. 
+The traits class \ccc{boost::graph_traits} allows the algorithms to determine the types of vertices and edges. 
+Free functions that operator on graphs allow the algorithms to obtain,
+for example, the source vertex of an edge, or  all edges incident to a vertex.
+
+By providing partial specialization of the class \ccc{boost::graph_traits} and the 
+free functions for traversing a graph for \cgal\ data structures these become models of
+the Boost graph concepts, that is the graph algorithms can operate on them
+directly.
+
+Another feature used heavily in the {\sc Bgl} is the {\em property map}
+which is offered by the \ccAnchor{http://www.boost.org/libs/property_map/property_map.html}{Boost Property Map Library}.
+Property maps are used to attach information to vertices and edges. It is again
+a traits class and some free functions for obtaining the property map from
+a graph, and  for getting and putting properties. The data themselves
+may be stored in the vertex or edge, or they may be stored in an external
+data structure, or they may be computed on the fly. Only the property
+map itself knows.
+
+
+As this section is not an introduction to the {\sc Bgl}, we only point out
+where the main differences are. In \cgal\ the iterators and circulators
+are at the same time handles, that is they all dereference to a vertex
+or to an edge. In the {\sc Bgl} there is one level of indirection, that
+is the value type of a vertex iterator is a vertex descriptor.  In \cgal\ 
+we have circulators for edges incident to a vertex, as we have a
+geometric embedding with a natural order, wheras the {\sc Bgl} 
+has iterator ranges for incident edges.  
+
+
+
+
+\section{CGAL Data Structures that are Models of the Boost Graph Concept}
+
+\subsection{About Header Files and Namespaces}
+
+
+\subsection{Triangulations}
+
+As a triangulation has vertices, edges and faces, it is natural to interpret it as a graph,
+and to run graph algorithms on it.  
+
+
+Particular care has to be taken with the infinite vertex, and its incident
+edges. One can either use a filtered graph, which makes the infinite edges
+invisible, or one can have a property map that returns an infinite length
+for these edges.
+
+
+
+\ccHeading{Example: Dijkstra's shortest path}
+
+In the following example we create a triangulation and run Dijkstra's shortest path
+algorithm on it. Because the vertex handles of the triangulation are not indices
+in an array, we have to provide a property map that maps vertex handles to
+int's between 0 and \ccc{t.number_of_vertices()}.
+
+\ccIncludeExampleCode{../examples/BGL/Triangulation_2/dijkstra.cpp}
+
+
+\ccHeading{Example: Storing the vertex id in the vertex}
+
+The algorithms of the {\sc Bgl} make extensively use of the indices of
+vertices. In the previous example we stored the index in a \ccc{std::map}
+and turned that map in a property map. This property map was than
+passed as argument to the shortest path function.
+
+If the user does not pass explicitly a property map, the graph algorithms
+use the property map returned by the call \ccc{boost::get(boost::vertex_index,ft)}.
+This property map assumes that the vertex has a 
+member function \ccc{id()} that returns a reference to an int.
+Therefore \cgal\ offers a class \ccc{Trinagulation_vertex_base_with_id_2}.
+It is in the users responsability to set the indices properly.
+
+The example further illustrates that the graph traits also works
+for the Delaunay triangulation.
+
+\ccIncludeExampleCode{../examples/BGL/Triangulation_2/dijkstra_with_internal_property.cpp}
+
+
+
+
+
+
+
+
 
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of sfsooter
