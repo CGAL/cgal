@@ -17,8 +17,8 @@
 //
 // Author(s) : Fernando Caccciola <fernando.cacciola@gmail.com>
 
-#ifndef CGAL_BOOST_GRAPH_POLYHEDRON_EXTENDED_BGL_H
-#define CGAL_BOOST_GRAPH_POLYHEDRON_EXTENDED_BGL_H
+#ifndef CGAL_BOOST_GRAPH_POLYHEDRON_HALFEDGE_GRAPH_TRAITS_H
+#define CGAL_BOOST_GRAPH_POLYHEDRON_HALFEDGE_GRAPH_TRAITS_H
 
 #include <CGAL/HalfedgeDS_items_decorator.h>
 #include <CGAL/boost/graph/Polyhedron_BGL.h>
@@ -36,14 +36,6 @@ CGAL_BEGIN_NAMESPACE
 //
 // Const versions
 // 
-template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-struct geometric_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const > 
-{
-  typedef CGAL::Polyhedron_3<Gt,I,HDS,A> const Polyhedron ;
-  
-  typedef typename Polyhedron::Point_3 Point ;
-};
-
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 struct halfedge_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const > 
   : CGAL::HDS_halfedge_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const>
@@ -189,4 +181,4 @@ CGAL_END_NAMESPACE
 
 #undef CGAL_HDS_
 
-#endif // CGAL_BOOST_GRAPH_POLYHEDRON_EXTENDED_BGL_H
+#endif // CGAL_BOOST_GRAPH_POLYHEDRON_HALFEDGE_GRAPH_TRAITS_H

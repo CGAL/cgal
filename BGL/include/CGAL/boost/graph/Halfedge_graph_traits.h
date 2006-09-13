@@ -17,14 +17,13 @@
 //
 // Author(s) : Fernando Caccciola <fernando.cacciola@gmail.com>
 
-#ifndef CGAL_BOOST_GRAPH_EXTENDED_BGL_H
-#define CGAL_BOOST_GRAPH_EXTENDED_BGL_H
+#ifndef CGAL_BOOST_GRAPH_HALFEDGE_GRAPH_TRAITS_H
+#define CGAL_BOOST_GRAPH_HALFEDGE_GRAPH_TRAITS_H
 
 CGAL_BEGIN_NAMESPACE
 
-template<class T> struct geometric_graph_traits ;
 template<class T> struct halfedge_graph_traits ;
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_BOOST_GRAPH_EXTENDED_BGL_H
+#endif // CGAL_BOOST_GRAPH_HALFEDGE_GRAPH_TRAITS_H

@@ -30,7 +30,7 @@ For every vertex \ccc{b} there are exactly 4 incident edges: \ccc{a->b}, \ccc{b-
 
 For each pair of {\em symmetric directed edges} \ccc{s->t} and \ccc{t->s}, there is a correspoding {\em undirected} edge \ccc{s-t}. Therefore, the number of undirected edges is exactly half the number of directed edges.
 
-{\em Symmetric directed edges} are NOT called \ccc{halfedges} (as in a \ccc{HalfedgeDS}) because from the point of view of this graph, being a refinement of a BGL graph, each symmetric directed edge is a {\em whole} edge in itself. In other words, the unqualified term edge refers to one and only one symmetric directed edge and not both. The pair of opposing edges, seen as a unity, is an {\em undirected edge}. Such an undirected edge refers to the pair of opposing edges and this concept does not require the existence of a texplicit ype representing that. In other words, there is only one type of edge, hence only one \ccc{edge\_descriptor}, which refers to the directed edge. An undirected edge is implicitely addressed by an edge\_descriptor. There is no requirement about which of the directed edges of the pair must be used to refer to an undirected edge.
+{\em Symmetric directed edges} are NOT called \ccc{halfedges} (as in a \ccc{HalfedgeDS}) because from the point of view of this graph, being a refinement of a BGL graph, each symmetric directed edge is a {\em whole} edge in itself. In other words, the unqualified term edge refers to one and only one symmetric directed edge and not both. The pair of opposing edges, seen as a unity, is an {\em undirected edge}. Such an undirected edge refers to the pair of opposing edges and this concept does not require the existence of a texplicit ype representing that. In other words, there is only one type of edge, hence only one \ccc{edge_descriptor}, which refers to the directed edge. An undirected edge is implicitely addressed by an edge\_descriptor. There is no requirement about which of the directed edges of the pair must be used to refer to an undirected edge.
 
 All edges are {\em cyclically connected} and each cycle implicitely corresponds to a \ccc{facet} (or \ccc{face} or \ccc{cell}) of the underlying data structure (with the exception of the cycle(s) corresponding to the border(s) of the underlying DS, which might not have an associated facet).
 
@@ -54,7 +54,7 @@ Following the BGL interface, the following graph operations are defined as free 
   }
   {Returns the {\em successor} of \ccc{e}.
   That is, given the edge \ccc{a->b} returns \ccc{b->c} such that \ccc{c != a}.\\
-  [non-const version ommited]
+  (non-const version ommited)
   }
   
   \ccFunction
@@ -64,7 +64,7 @@ Following the BGL interface, the following graph operations are defined as free 
   }
   {Returns the {\em predecessor} of \ccc{e}.
   That is, given the edge \ccc{b->c} returns \ccc{a->b} such that \ccc{c != a}\\
-  [non-const version ommited]
+  (non-const version ommited)
   }
   
   \ccFunction
@@ -74,8 +74,8 @@ Following the BGL interface, the following graph operations are defined as free 
              >   
   undirected_edges(Graph const& g );
   }
-  {Returns a pair of iterators representing the range [begin,end) of undirected edges in this graph.
-  [non-const version ommited]
+  {Returns a pair of iterators representing the range [begin,end) of undirected edges in this graph.\\
+  (non-const version ommited)
   }
 
 \ccHasModels

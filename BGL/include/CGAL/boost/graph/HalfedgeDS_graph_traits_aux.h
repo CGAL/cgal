@@ -17,8 +17,8 @@
 //
 // Author(s): Fernando Cacciola <fernando.cacciola@gmail.com>, Andreas Fabri <andreas.fabri@geometryfactory.com>
 
-#ifndef CGAL_BOOST_GRAPH_HALFEDGEDS_BGL_AUX_H
-#define CGAL_BOOST_GRAPH_HALFEDGEDS_BGL_AUX_H
+#ifndef CGAL_BOOST_GRAPH_HALFEDGEDS_GRAPH_TRAITS_AUX_H
+#define CGAL_BOOST_GRAPH_HALFEDGEDS_GRAPH_TRAITS_AUX_H
 
 #include <boost/config.hpp>
 #include <boost/iterator_adaptors.hpp>
@@ -359,4 +359,4 @@ public :
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_BOOST_GRAPH_HALFEDGEDS_BGL_AUX_H
+#endif // CGAL_BOOST_GRAPH_HALFEDGEDS_GRAPH_TRAITS_AUX_H
