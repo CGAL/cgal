@@ -221,6 +221,7 @@ int main(int argc, char **argv) {
   argv0 = argv[0];
 
   init_parameters();
+  usage_ptr = &usage;
 
   parse_argv(argc, argv);
 
@@ -395,7 +396,7 @@ int main(int argc, char **argv) {
                           "Writing finale surface off to ");
   if( out )
   {
-    CGAL::output_to_medit(*out, mesher.complex_2_in_triangulation_3());
+    CGAL::output_oriented_surface_facets_to_off(*out, tr);
     if(need_delete) 
       delete out;
   }
