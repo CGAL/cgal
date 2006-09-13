@@ -108,14 +108,14 @@ struct Test_with_kernel {
 
     timer.start();
     // Surface meshing
-    make_surface_mesh(c2t3,
-                      Surface(Sphere<K>(Sphere_3(Point_3(0.3, -5., 1/3.),
-                                                 1.)),
-                              Sphere_3(Point_3(0.1, -4.5, 0.), 3.*3.),
-                              1e-03),
-                      criteria,
-                      Tag(),
-                      initial_number_of_points);
+    CGAL::make_surface_mesh(c2t3,
+                            Surface(Sphere<K>(Sphere_3(Point_3(0.3, -5., 1/3.),
+                                                       1.)),
+                                    Sphere_3(Point_3(0.1, -4.5, 0.), 3.*3.),
+                                    1e-03),
+                            criteria,
+                            Tag(),
+                            initial_number_of_points);
     timer.stop();
 
     std::cout << "Final number of points: " << tr.number_of_vertices()
