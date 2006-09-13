@@ -482,7 +482,7 @@ int main()
     CGAL_TEST(s1.point(0)==p1 && s1.point(1)==p2);
     CGAL_TEST(s1[0]==p1 && s1[1]==p2);
     CGAL_TEST(s1.opposite()==Segment(p2,p1));
-    CGAL_TEST(s1.min()==p1 && s1.max()==p2);
+    CGAL_TEST((s1.min)()==p1 && (s1.max)()==p2);
     CGAL_TEST(s2.vector()==v);
     CGAL_TEST(s2.direction()==v.direction());
     CGAL_TEST(s1.supporting_line()==Line(p1,p2));
@@ -996,7 +996,7 @@ int main()
     CGAL_TEST(s1.point(0)==p1 && s1.point(1)==p2);
     CGAL_TEST(s1[0]==p1 && s1[1]==p2);
     CGAL_TEST(s1.opposite()==Segment(p2,p1));
-    CGAL_TEST(s1.min()==p1 && s1.max()==p2);
+    CGAL_TEST((s1.min)()==p1 && (s1.max)()==p2);
     CGAL_TEST(s2.vector()==v);
     CGAL_TEST(s2.direction()==v.direction());
     CGAL_TEST(s1.supporting_line()==Line(p1,p2));
