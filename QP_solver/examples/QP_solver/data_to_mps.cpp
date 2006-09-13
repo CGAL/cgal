@@ -39,6 +39,7 @@ namespace CGAL {
 #include <CGAL/QP_solver/QP_partial_filtered_pricing.h>
 
 #include <CGAL/QP_models.h>
+#include <CGAL/QP_functions.h>
 
 class Data_reader {
 public: // types:
@@ -616,11 +617,20 @@ int main(int argnr, char **argv)
   else if (tmp.type() == typeid(int))
     number_type = "integer";
   
-  // write MPS-file to standard out:
-  CGAL::write_MPS(std::cout, number_type, desc, "data2mps", name,
-		  data.number_of_variables(), data.number_of_constraints(),
-		  data.A(), data.b(), data.c(), data.c_0(),data.D(), data.fu(),
-		  data.fl(), data.u(), data.l(), data.row_types());
+  // write MPS-file to standard out:    
 
+  std::cout << "* Number-type: " << number_type << "\n";
+  std::cout << "* Description: " << desc << "\n"
+            << "* Generated-by: " << "data2mps" << "\n";
+  CGAL::print_quadratic_program
+    (
+     std::cout, 
+     make_QP_from_iterators (data.number_of_variables(), 
+			     data.number_of_constraints(),
+			     data.A(), data.b(), data.row_types(),
+			     data.fl(), data.l(), data.fu(), data.u(),
+			     data.D(), data.c(), data.c_0()
+			     ),
+     name);
   return 0;
 }

@@ -5,7 +5,7 @@
 // the terms of the Q Public License version 1.0.
 // See the file LICENSE.QPL distributed with CGAL.
 //
-// Licensees holding a valid commercial license may use this file in
+// Licenseges holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
@@ -21,6 +21,7 @@
 #define CGAL_QP_SOLVER_H
 
 #include <CGAL/iterator.h>
+#include <CGAL/Handle_for.h>
 #include <CGAL/QP_solver/basic.h>
 #include <CGAL/QP_solver/functors.h>
 #include <CGAL/QP_solver/QP_basis_inverse.h>
@@ -58,6 +59,9 @@ CGAL_BEGIN_NAMESPACE
 template < typename Q, typename ET, typename Tags  >
 class QP_solver;
 
+template <class ET>
+class QP_solution;
+
 namespace QP_solver_impl {   // namespace for implemenation details
 
   // forward declaration of iterator over entries of
@@ -72,11 +76,45 @@ namespace QP_solver_impl {   // namespace for implemenation details
 
 } // end of namespace for implementation details
 
-// ===============
-// class interface
-// ===============
+// ================
+// class interfaces
+// ================
+
+template <class ET>
+class QP_solver_base
+{
+public:
+  // virtual access functions to solution that will 
+  // be overridden by QP_solver below
+  virtual Quotient<ET> solution() const = 0;
+
+
+  // destruction (overridden by QP_solver)
+  virtual ~QP_solver_base() {}
+};
+
+template <class ET>
+class QP_solution: Handle_for<const QP_solver_base<ET>*> 
+{
+public:
+  template <typename Q, typename Tags> 
+  QP_solution (const QP_solver<Q, ET, Tags>* const s)
+    : Handle_for<const QP_solver_base<ET>*>(s)
+  {}
+
+  Quotient<ET> solution() const
+  {
+    return (*(this->ptr()))->solution();
+  }
+
+  ~QP_solution()
+  {
+    if (!this->is_shared()) delete *(this->ptr());
+  }
+};
+
 template < typename Q, typename ET, typename Tags >
-class QP_solver {
+class QP_solver : public QP_solver_base<ET> {
 
 public: // public types
   typedef  QP_solver<Q, ET, Tags> Self;
@@ -104,7 +142,8 @@ public: // public types
 
   // friends
   template <class Q_, class ET_>
-  friend bool QP_has_full_row_rank (const Q_& qp, const ET_& dummy);
+  friend bool has_linearly_independent_equations 
+  (const Q_& qp, const ET_& dummy);
 
 private: // private types
 
@@ -486,10 +525,10 @@ public:
     // creation
     QP_solver(const Q& qp, Pricing_strategy* strategy = 0, int verbosity = 0 );
 
-  ~QP_solver()
+  virtual ~QP_solver()
   {
-    if (defaultStrategy != 0)
-      delete defaultStrategy;
+    delete defaultStrategy;
+    defaultStrategy = 0;
   }
 
 	      

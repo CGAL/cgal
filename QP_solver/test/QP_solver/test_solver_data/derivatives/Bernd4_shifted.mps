@@ -26,7 +26,6 @@ RHS
   rhs c0  4
   rhs c1  6
   rhs c2  6
-  rhs c3  0
   rhs c4  2
 BOUNDS
   LO  BND  x0  1

@@ -22,96 +22,41 @@ COLUMNS
   x0  c2  2
   x0  c3  1
   x0  c4  1
-  x0  c5  0
-  x0  c6  0
-  x0  c7  0
-  x0  c8  0
-  x0  c9  0
-  x0  c10  0
-  x1  obj  0
   x1  c0  5
   x1  c1  6
   x1  c2  4
   x1  c3  1
-  x1  c4  0
   x1  c5  1
-  x1  c6  0
-  x1  c7  0
-  x1  c8  0
-  x1  c9  0
-  x1  c10  0
-  x2  obj  0
   x2  c0  3
   x2  c1  5
   x2  c2  1
   x2  c3  2
-  x2  c4  0
-  x2  c5  0
   x2  c6  1
-  x2  c7  0
-  x2  c8  0
-  x2  c9  0
-  x2  c10  0
-  x3  obj  0
   x3  c0  2
   x3  c1  3
   x3  c2  1
   x3  c3  1
-  x3  c4  0
-  x3  c5  0
-  x3  c6  0
   x3  c7  1
-  x3  c8  0
-  x3  c9  0
-  x3  c10  0
-  x4  obj  0
   x4  c0  1
   x4  c1  5
   x4  c2  -3
   x4  c3  4
-  x4  c4  0
-  x4  c5  0
-  x4  c6  0
-  x4  c7  0
   x4  c8  1
-  x4  c9  0
-  x4  c10  0
-  x5  obj  0
   x5  c0  2
   x5  c1  5
   x5  c2  -1
   x5  c3  3
-  x5  c4  0
-  x5  c5  0
-  x5  c6  0
-  x5  c7  0
-  x5  c8  0
   x5  c9  1
-  x5  c10  0
-  x6  obj  0
   x6  c0  1
   x6  c1  6
   x6  c2  -4
   x6  c3  5
-  x6  c4  0
-  x6  c5  0
-  x6  c6  0
-  x6  c7  0
-  x6  c8  0
-  x6  c9  0
   x6  c10  1
 RHS
   rhs c0  6
   rhs c1  11
   rhs c2  1
   rhs c3  5
-  rhs c4  0
-  rhs c5  0
-  rhs c6  0
-  rhs c7  0
-  rhs c8  0
-  rhs c9  0
-  rhs c10  0
 BOUNDS
   MI  BND  x0
   MI  BND  x1

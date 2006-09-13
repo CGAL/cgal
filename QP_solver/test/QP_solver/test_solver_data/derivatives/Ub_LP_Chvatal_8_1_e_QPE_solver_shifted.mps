@@ -14,32 +14,26 @@ COLUMNS
   x0  c1  4
   x0  c2  2
   x0  c3  1
-  x1  obj  0
   x1  c0  5
   x1  c1  6
   x1  c2  4
   x1  c3  1
-  x2  obj  0
   x2  c0  3
   x2  c1  5
   x2  c2  1
   x2  c3  2
-  x3  obj  0
   x3  c0  2
   x3  c1  3
   x3  c2  1
   x3  c3  1
-  x4  obj  0
   x4  c0  1
   x4  c1  5
   x4  c2  -3
   x4  c3  4
-  x5  obj  0
   x5  c0  2
   x5  c1  5
   x5  c2  -1
   x5  c3  3
-  x6  obj  0
   x6  c0  1
   x6  c1  6
   x6  c2  -4

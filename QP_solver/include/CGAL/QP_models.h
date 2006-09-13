@@ -50,9 +50,9 @@ private:
   typedef typename std::iterator_traits<Iterator>::value_type value_type;
 public:
   typedef Const_oneset_iterator<value_type> 
-  It_1d; 
+  It_1d; // 1-dimensional random access iterator for a constant value
   typedef Const_oneset_iterator<Const_oneset_iterator<value_type> > 
-  It_2d;
+  It_2d; // 2-dimensional random access iterator for a constant value
 };
 
 
@@ -133,6 +133,37 @@ public:
   const C_iterator& c() const {return c_it;}
   const value_type& c0() const {return c_0;}
 };
+
+// global function make_QP_from_iterators
+// --------------------------------------
+template <
+  typename A_it,   // for constraint matrix A (columnwise)
+  typename B_it,   // for right-hand side b 
+  typename R_it,   // for relations (value type Comparison)
+  typename FL_it,  // for finiteness of lower bounds (value type bool)
+  typename L_it,   // for lower bounds
+  typename FU_it,  // for finiteness of upper bounds (value type bool)
+  typename U_it,   // for upper bounds
+  typename D_it,   // for quadratic matrix D (rowwise)
+  typename C_it >  // for objective function c
+QP_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>
+make_QP_from_iterators (
+   int n, int m, 
+   const A_it& a, 
+   const B_it& b, 
+   const R_it& r, 
+   const FL_it& fl, 
+   const L_it& l,
+   const FU_it& fu, 
+   const U_it& u, 
+   const D_it& d, 
+   const C_it& c, 
+   typename std::iterator_traits<C_it>::value_type c0)
+{
+  return QP_from_iterators
+    <A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>
+    (n, m, a, b, r, fl, l, fu, u, d, c, c0);
+}	
 
 // QP_from_pointers
 // ----------------
@@ -919,36 +950,6 @@ std::ostream& operator<<(std::ostream& o,
 			 QP_from_mps<IT_,
 			 Use_sparse_representation_for_D_,
 			 Use_sparse_representation_for_A_>& qp);
-
-// helper routine to write an MPS from given A, b, c, c0, D, fl, fu, l, u
-// and row-types;
-template<typename A_iterator,
-	 typename B_iterator,
-	 typename C_iterator,
-	 typename D_iterator,
-	 typename FU_iterator,
-	 typename FL_iterator,
-	 typename U_iterator,
-	 typename L_iterator,
-	 typename R_iterator>
-void write_MPS(std::ostream& out,
-	       const std::string& number_type, // pass "" to deduce
-					       // the number-type from 
-                                               // U_iterator::value_type
-	       const std::string& description,
-	       const std::string& generator_name,
-	       const std::string& problem_name,
-	       const int n,
-	       const int m,
-	       A_iterator A,
-	       B_iterator b,
-	       C_iterator c,
-	       D_iterator D,
-	       FU_iterator fu,
-	       FL_iterator fl,
-	       U_iterator u,
-	       L_iterator l,
-	       R_iterator rt);
 
 
 CGAL_END_NAMESPACE

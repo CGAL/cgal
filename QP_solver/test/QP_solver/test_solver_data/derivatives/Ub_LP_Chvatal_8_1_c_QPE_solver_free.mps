@@ -19,69 +19,37 @@ COLUMNS
   x0  c1  -5
   x0  c2  1
   x0  c3  1
-  x0  c4  0
-  x0  c5  0
-  x0  c6  0
-  x0  c7  0
-  x0  c8  0
   x1  obj  -2
   x1  c0  1
   x1  c1  4
   x1  c2  1
-  x1  c3  0
   x1  c4  1
   x1  c5  1
-  x1  c6  0
-  x1  c7  0
-  x1  c8  0
   x2  obj  3
   x2  c0  -4
   x2  c1  2
   x2  c2  2
-  x2  c3  0
-  x2  c4  0
-  x2  c5  0
   x2  c6  1
-  x2  c7  0
-  x2  c8  0
   x3  obj  -3
   x3  c0  2
   x3  c1  -3
   x3  c2  1
-  x3  c3  0
-  x3  c4  0
-  x3  c5  0
-  x3  c6  0
   x3  c7  1
   x3  c8  1
   x4  obj  -6
   x4  c0  5
   x4  c1  2
   x4  c2  1
-  x4  c3  0
-  x4  c4  0
-  x4  c5  0
-  x4  c6  0
-  x4  c7  0
-  x4  c8  0
   x5  obj  -1
   x5  c0  1
   x5  c1  3
   x5  c2  2
-  x5  c3  0
-  x5  c4  0
-  x5  c5  0
-  x5  c6  0
-  x5  c7  0
-  x5  c8  0
 RHS
   rhs c0  3
   rhs c1  25
   rhs c2  4
-  rhs c3  0
   rhs c4  2
   rhs c5  10
-  rhs c6  0
   rhs c7  -3
   rhs c8  3
 BOUNDS

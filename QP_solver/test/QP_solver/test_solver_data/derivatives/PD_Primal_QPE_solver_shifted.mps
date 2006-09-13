@@ -9,21 +9,15 @@ ROWS
 COLUMNS
   x0  obj  616
   x0  c0  1
-  x0  c1  0
   x1  obj  1108
   x1  c0  1
-  x1  c1  0
   x2  obj  1540
   x2  c0  1
-  x2  c1  0
   x3  obj  -1712
-  x3  c0  0
   x3  c1  1
   x4  obj  -2476
-  x4  c0  0
   x4  c1  1
   x5  obj  -1996
-  x5  c0  0
   x5  c1  1
 RHS
   rhs c0  7

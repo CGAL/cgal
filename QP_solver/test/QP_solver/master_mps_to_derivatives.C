@@ -35,6 +35,83 @@
 #include <CGAL/QP_solver/QP_partial_filtered_pricing.h>
 
 #include <CGAL/QP_models.h>
+#include <CGAL/QP_functions.h>
+
+// Routines to output to MPS format:
+namespace QP_from_mps_detail {
+
+  template<typename T>
+  struct MPS_type_name {
+    static const char *name() { return 0; }
+  };
+  
+  template<>
+  struct MPS_type_name<double> {
+    static const char *name() { return "floating-point"; }
+  };
+  
+  template<>
+  struct MPS_type_name<int> {
+    static const char *name() { return "integer"; }
+  };
+  
+  template<>
+  struct MPS_type_name<CGAL::Gmpq> {
+    static const char *name() { return "rational"; }
+  };  
+
+  template<>
+  struct MPS_type_name<CGAL::Quotient<CGAL::MP_Float> > {
+    static const char *name() { return "rational"; }
+  }; template<typename IT>
+  struct IT_to_ET {
+  };
+  
+  template<>
+  struct IT_to_ET<double> {
+    typedef CGAL::MP_Float ET;
+  };
+  
+  template<>
+  struct IT_to_ET<int> {
+    typedef CGAL::Gmpz ET;
+  };
+  
+  template<>
+  struct IT_to_ET<CGAL::Gmpq> {
+    typedef CGAL::Gmpq ET;
+  }; 
+
+  template<>
+  struct IT_to_ET<CGAL::Quotient<CGAL::MP_Float> > {
+    typedef CGAL::Quotient<CGAL::MP_Float> ET;
+  };
+
+} // QP_from_mps_detail
+
+template<typename QP>
+void write_MPS(std::ostream& out,
+	       const std::string& number_type, // pass "" to deduce
+					       // the number-type from 
+                                               // U_iterator::value_type
+	       const std::string& description,
+	       const std::string& generator_name,
+	       const std::string& problem_name,
+	       const QP& qp)
+{
+  // output header:
+  if (number_type.length() == 0) {
+    const char *tn = QP_from_mps_detail::MPS_type_name
+      <typename QP::U_iterator::value_type>::name();
+    if (tn != 0)
+      out << "* Number-type: " << tn << "\n";
+  } else
+      out << "* Number-type: " << number_type << "\n";
+  out << "* Description: " << description << "\n"
+      << "* Generated-by: " << generator_name << "\n";
+
+  CGAL::print_quadratic_program(out, qp, problem_name);
+}
 
 std::auto_ptr<std::ofstream>
 create_output_file(const char *filename, // Note: "Bernd3" and not
@@ -113,27 +190,51 @@ void create_shifted_instance(CGAL::QP_from_mps<IT>& qp,
   using boost::make_zip_iterator;
   using boost::make_tuple;
   std::auto_ptr<std::ofstream> out = create_output_file(file, dir, "shifted");
-  CGAL::write_MPS(*out,
+
+  write_MPS(*out,
 		  "", // deduce number-type
 		  "Shifted instance of original file",
 		  "master_mps_to_derivatives-create_shifted_instance",
-		  qp.problem_name(),
-		  n, m,
-		  qp.a(),
-		  make_transform_iterator(
-		    make_zip_iterator(make_tuple(qp.b(),Av.begin())),
-		    tuple_add<IT>()),
-		  make_transform_iterator(
-		    make_zip_iterator(make_tuple(qp.c(),mvTD.begin())),
-		    tuple_add<IT>()), qp.c0(),
-		  qp.d(), qp.fu(), qp.fl(),
-		  make_transform_iterator(
-		    make_zip_iterator(make_tuple(qp.u(),v.begin())),
-		    tuple_add<IT>()),
-		  make_transform_iterator(
-		    make_zip_iterator(make_tuple(qp.l(),v.begin())),
-		    tuple_add<IT>()),
-		  qp.r());
+		  qp.problem_name(), 
+		  CGAL::make_QP_from_iterators(
+     n, 
+     m, 
+     qp.a(), 
+     make_transform_iterator(
+			     make_zip_iterator(make_tuple(qp.b(),Av.begin())),
+			     tuple_add<IT>()),
+     qp.r(), 
+     qp.fl(),
+     make_transform_iterator(
+			      make_zip_iterator(make_tuple(qp.l(),v.begin())),
+			      tuple_add<IT>()),
+     qp.fu(),
+     make_transform_iterator(
+			     make_zip_iterator(make_tuple(qp.u(),v.begin())),
+			     tuple_add<IT>()),
+     qp.d(),
+     make_transform_iterator(
+			   make_zip_iterator(make_tuple(qp.c(),mvTD.begin())),
+			   tuple_add<IT>()), 
+     qp.c0()
+     )
+);
+// 		  n, m,
+// 		  qp.a(),
+// 		  make_transform_iterator(
+// 		    make_zip_iterator(make_tuple(qp.b(),Av.begin())),
+// 		    tuple_add<IT>()),
+// 		  make_transform_iterator(
+// 		    make_zip_iterator(make_tuple(qp.c(),mvTD.begin())),
+// 		    tuple_add<IT>()), qp.c0(),
+// 		  qp.d(), qp.fu(), qp.fl(),
+// 		  make_transform_iterator(
+// 		    make_zip_iterator(make_tuple(qp.u(),v.begin())),
+// 		    tuple_add<IT>()),
+// 		  make_transform_iterator(
+// 		    make_zip_iterator(make_tuple(qp.l(),v.begin())),
+// 		    tuple_add<IT>()),
+// 		  qp.r());
   out->close();
 }
 
@@ -205,21 +306,22 @@ void create_free_instance(CGAL::QP_from_mps<IT>& qp,
 
   // output:
   std::auto_ptr<std::ofstream> out = create_output_file(file, dir, "free");
-  CGAL::write_MPS(*out,
+  write_MPS(*out,
 		  "", // deduce number-type
 		  "Freed instance of original file",
 		  "master_mps_to_derivatives-create_free_instance",
 		  qp.problem_name(),
+		  CGAL::make_QP_from_iterators (
 		  n, m+nr_of_rows_added,
 		  Vector_iterator(A.begin(),Beginner()),
 		  b.begin(),
-		  qp.c(), qp.c0(),
-		  qp.d(),
-		  CGAL::Const_oneset_iterator<bool>(false), // fu
+		  row_types.begin(),
 		  CGAL::Const_oneset_iterator<bool>(false), // fl
-		  qp.u(),  // dummy
 		  qp.l(),  // dummy
-		  row_types.begin());
+		  CGAL::Const_oneset_iterator<bool>(false), // fu
+		  qp.u(),  // dummy
+		  qp.d(),
+		  qp.c(), qp.c0()));
   out->close();
 }
 
@@ -235,7 +337,7 @@ bool create_derivatives(const char *path,
 
   // diagnostics:
   cerr << "  Trying to load input MPS using "
-       << CGAL::QP_from_mps_detail::MPS_type_name<IT>::name()
+       << QP_from_mps_detail::MPS_type_name<IT>::name()
        << " number-type...\n";
 
   // open input file:
@@ -247,7 +349,7 @@ bool create_derivatives(const char *path,
 
   // load QP instance:
   const int verbosity = 5;
-  typedef typename CGAL::QP_from_mps_detail::IT_to_ET<IT>::ET ET;
+  typedef typename QP_from_mps_detail::IT_to_ET<IT>::ET ET;
   typedef CGAL::QP_from_mps<IT> QP;
   QP qp(f,true,verbosity);
 
@@ -302,10 +404,12 @@ int main(const int argnr, const char **argv) {
 
   // As we do not know the number-type used in the MPS-file, we simply try
   // to load the MPS-file once with a double type, once with a Rational
-  // type, and once with an int type:
+  // type, and once with an int type.
+  // we try the most special one first, so the order is 
+  // int -> double -> rational
   std::string message;
-  if (!create_derivatives<Rational>(path, file, dir, message))
-    if (!create_derivatives<int>(path, file, dir, message))
+  if (!create_derivatives<int>(path, file, dir, message))
+    if (!create_derivatives<Rational>(path, file, dir, message))
       if (!create_derivatives<double>(path, file, dir, message)) {
 	// Here, the MPS-file must be ill-formatted.
 	std::cerr << "  " << message << "\n";

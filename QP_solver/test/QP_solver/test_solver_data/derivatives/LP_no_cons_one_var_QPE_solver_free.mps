@@ -9,7 +9,6 @@ COLUMNS
   x0  obj  1
   x0  c0  1
 RHS
-  rhs c0  0
 BOUNDS
   MI  BND  x0
 ENDATA

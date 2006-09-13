@@ -20,61 +20,93 @@
 #ifndef CGAL_QP_FUNCTIONS_H
 #define CGAL_QP_FUNCTIONS_H
 
+#include <iostream>
+#include <string>
 #include <CGAL/iterator.h>
 #include <CGAL/QP_solver.h>
 #include <CGAL/QP_models.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template <class Q>
-bool QP_is_in_equational_form (const Q& qp) {
-  // check whether all constraints are equality constraints
-  typename Q::R_iterator r = qp.r();
-  typename Q::R_iterator r_end = r + qp.m();
-  for (; r < r_end; ++r)
-    if (*r != CGAL::EQUAL) return false;
-  return true;
+template <typename R>
+bool is_in_equational_form (const R& r);
+// test whether the system is of the form A x == b (equations only)
+
+template <typename Ar, class ET>
+bool has_linearly_independent_equations 
+(const Ar& r, const ET& dummy);
+// test whether the row vectors of A that correpsond to equations 
+// are linearly independent; this is done using type ET. The value
+// type of LinearInequalitySystem must be convertible to ET
+
+
+template <typename Abrc, typename Is_linear, typename Is_in_standard_form>
+void print_linear_inequality_system
+(std::ostream& out, 
+ const Abrc &abrc,
+ const std::string& problem_name,
+ Is_linear is_linear, 
+ Is_in_standard_form is_in_standard_form);
+// internal routine; writes lis to out in MPS format
+// Is_linear == Tag_true / Tag_false:
+//    lis is treated as LinearProgram / QuadraticProgram
+// Is_in_standard_form == Tag_true / Tag_false
+//    lis is treated as Nonnegative / Arbitrary  
+
+template <typename QuadraticProgram>
+void print_quadratic_program 
+(std::ostream& out, const QuadraticProgram &qp,
+ const std::string& problem_name = std::string("MY_MPS"))
+// writes qp to out in MPS format
+{
+  print_linear_inequality_system 
+    (out, qp, problem_name, CGAL::Tag_false(), CGAL::Tag_false());
 }
 
-template <class Q, class ET>
-bool QP_has_full_row_rank (const Q& qp, const ET& dummy) {
-  // we solve the following auxiliary LP, using exact type ET:
-  // --------
-  // min 0
-  // A x == 0
-  //   x >= 0
-  // --------
-  // Then A has full row rank if and only if all artificials
-  // have left the basis after phase I; the QP_solver diagnostics
-  // tells us this
-  //
-  // auxiliary LP type
-  typedef Const_oneset_iterator<typename Q::value_type>  C_iterator;
-  typedef Const_oneset_iterator<typename Q::value_type>  B_iterator;
-  typedef Const_oneset_iterator<CGAL::Comparison_result> R_iterator;
-  typedef Nonnegative_LP_from_iterators
-    <typename Q::A_iterator, B_iterator, R_iterator, C_iterator> LP;
+template <typename LinearProgram>
+void print_linear_program 
+(std::ostream& out, const LinearProgram &lp,
+ const std::string& problem_name = std::string("MY_MPS"))
+// writes lp to out in MPS format
+{
+  print_linear_inequality_system 
+    (out, lp, problem_name, CGAL::Tag_true(), CGAL::Tag_false());
+}
 
-  //  auxiliary LP
-  LP lp (qp.n(), qp.m(), 
-	 qp.a(), B_iterator(0), R_iterator(CGAL::EQUAL), C_iterator(0));
+template <typename NonnegativeQuadraticProgram>
+void print_nonnegative_quadratic_program 
+(std::ostream& out, const NonnegativeQuadraticProgram &qp,
+ const std::string& problem_name = std::string("MY_MPS"))
+// writes qp to out in MPS format
+{
+  print_linear_inequality_system 
+    (out, qp, problem_name, CGAL::Tag_false(), CGAL::Tag_true());
+}
 
-  //  solver Tags
-  typedef QP_solver_impl::QP_tags<
-    Tag_true,  // Is_linear
-    Tag_true,  // Is_symmetric
-    Tag_false, // Has_equalities_only_and_full_rank (we don't know it yet)
-    Tag_true>  // Is_in_standard_form
-  Tags;
+template <typename NonnegativeLinearProgram>
+void print_nonnegative_linear_program 
+(std::ostream& out, const NonnegativeLinearProgram &lp,
+ const std::string& problem_name = std::string("MY_MPS"))
+// writes lp to out in MPS format
+{
+  print_linear_inequality_system 
+    (out, lp,  problem_name, CGAL::Tag_true(), CGAL::Tag_true());
+}
 
-  // solver type
-  typedef QP_solver<LP, ET, Tags> Solver;
-
-  // now solve auxiliary LP and compute predicate value
-  Solver solver (lp);
-  return !solver.diagnostics.redundant_equations;
+template <typename QuadraticProgram, typename ET>
+QP_solution<ET> solve_quadratic_program 
+(const QuadraticProgram &qp, const ET& dummy)
+{
+  typedef QP_solver<
+    QuadraticProgram, ET, 
+    QP_solver_impl::QP_tags<Tag_false, Tag_false, Tag_false, Tag_false> >
+    Solver;
+  const Solver* s = new Solver(qp);
+  return QP_solution<ET>(s);
 }
 
 CGAL_END_NAMESPACE
+
+#include <CGAL/QP_solver/QP_functions_impl.h>
 
 #endif // CGAL_QP_FUNCTIONS_H

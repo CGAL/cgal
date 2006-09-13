@@ -21,7 +21,6 @@ COLUMNS
   x0  c4  -1
   x0  c5  -1
   x0  c6  1
-  x0  c7  0
   x1  obj  -4
   x1  c0  1
   x1  c1  1
@@ -29,7 +28,6 @@ COLUMNS
   x1  c3  1
   x1  c4  1
   x1  c5  1
-  x1  c6  0
   x1  c7  1
 RHS
   rhs c0  1
@@ -38,8 +36,6 @@ RHS
   rhs c3  3
   rhs c4  -1
   rhs c5  1
-  rhs c6  0
-  rhs c7  0
 BOUNDS
   MI  BND  x0
   MI  BND  x1

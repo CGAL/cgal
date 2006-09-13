@@ -11,11 +11,9 @@ ROWS
 COLUMNS
   x0  obj  -1
   x0  c0  4
-  x0  c1  0
   x0  c2  3
   x0  c3  4
   x1  obj  -1
-  x1  c0  0
   x1  c1  4
   x1  c2  4
   x1  c3  3

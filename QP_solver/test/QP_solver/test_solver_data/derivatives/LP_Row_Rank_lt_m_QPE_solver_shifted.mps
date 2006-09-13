@@ -19,10 +19,8 @@ COLUMNS
   x2  obj  1
   x2  c0  2
   x2  c1  3
-  x2  c2  0
   x3  obj  1
   x3  c0  5
-  x3  c1  0
   x3  c2  3
   x4  obj  1
   x4  c0  1

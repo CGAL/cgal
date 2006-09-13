@@ -37,7 +37,7 @@ QP_solver(const Q& qp, Pricing_strategy* strategy, int verbosity)
     no_ineq(check_tag(Has_equalities_only_and_full_rank())),
     has_ineq(!no_ineq),
     is_in_standard_form(check_tag(Is_in_standard_form()))
-  {
+{
   // init diagnostics
   diagnostics.redundant_equations = false;
 

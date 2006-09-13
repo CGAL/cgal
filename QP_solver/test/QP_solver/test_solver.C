@@ -406,8 +406,8 @@ bool process(const std::string& filename,
       check_tag(Is_in_standard_form()) && !qp.is_in_standard_form() ||
       check_tag(Has_equalities_only_and_full_rank()) && dontComputeRank ||
       check_tag(Has_equalities_only_and_full_rank()) &&
-      !(CGAL::QP_is_in_equational_form(qp) &&
-	CGAL::QP_has_full_row_rank (qp, ET(0))))
+      !(CGAL::is_in_equational_form(qp) &&
+	CGAL::has_linearly_independent_equations (qp, ET(0))))
     return true;
 
   if (verbosity > 0)
@@ -433,10 +433,6 @@ bool process(const std::string& filename,
   if (verbosity > 3)
     cout << endl << qp;
 
-//  typedef CGAL::QP_solver_MPS_traits_d<QP_instance,
-//     Is_linear,Is_symmetric,Has_equalities_only_and_full_rank,
-//     Is_in_standard_form,IT,ET,
-//     typename QP_instance::D_iterator> Traits;
 
   typedef CGAL::QP_solver_impl::QP_tags<Is_linear,
     Is_symmetric,Has_equalities_only_and_full_rank, 

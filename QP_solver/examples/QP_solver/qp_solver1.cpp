@@ -32,6 +32,7 @@
 #include <CGAL/Gmpz.h>
 #include <CGAL/QP_solver.h>
 #include <CGAL/QP_models.h>
+#include <CGAL/QP_functions.h>
 
 // here we declare the types of the various QP entries
 
@@ -65,18 +66,20 @@ int main() {
   int *rows_of_D[] = {D_row_0, D_row_1};
   int *cols_of_A[] = {A_col_0, A_col_1};
 
-  // now construct the quadartic program; the first two parameters are
+  // now construct the quadratic program; the first two parameters are
   // the number of variables and the number of constraints (rows of A)
   Q qp (2, 1, cols_of_A, b, rt, fl, l, fu, u, rows_of_D, c); 
-  Solver solver(qp);
+  CGAL::QP_solution<ET> sol = CGAL::solve_quadratic_program(qp, ET());
 
-  if (solver.status() == Solver::OPTIMAL) { // we know that, don't we?
-    std::cout << "Optimal feasible solution x: ";
-    for (Solver::Variable_value_iterator it = solver.variables_value_begin(); 
-	 it != solver.variables_value_end(); ++it)
-      std::cout << *it << " "; // variable values
-    std::cout << "f(x): " << solver.solution() << std::endl;
-  }
+  std::cout << sol.solution();
+
+ //  if (solver.status() == Solver::OPTIMAL) { // we know that, don't we?
+//     std::cout << "Optimal feasible solution x: ";
+//     for (Solver::Variable_value_iterator it = solver.variables_value_begin(); 
+// 	 it != solver.variables_value_end(); ++it)
+//       std::cout << *it << " "; // variable values
+//     std::cout << "f(x): " << solver.solution() << std::endl;
+//   }
 
   return 0;
 } 

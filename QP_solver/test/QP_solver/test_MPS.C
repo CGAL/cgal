@@ -36,6 +36,7 @@
 #include <CGAL/QP_solver/QP_partial_filtered_pricing.h>
 
 #include <CGAL/QP_models.h>
+#include <CGAL/QP_functions.h>
 
 struct Tags {
   typedef  CGAL::Tag_false Is_linear; 
@@ -75,7 +76,8 @@ int main(const int argNr,const char **args) {
   }
 
   if (verbosity > 0) {
-    cout << endl << qp << endl;
+    CGAL::print_quadratic_program (cout, qp);
+    cout << std::endl;
   }
 
   // in case of an LP, zero the D matrix:

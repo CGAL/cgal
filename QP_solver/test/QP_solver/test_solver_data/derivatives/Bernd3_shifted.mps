@@ -30,7 +30,6 @@ RHS
   rhs c1  6
   rhs c2  6
   rhs c3  6
-  rhs c4  0
   rhs c5  2
 BOUNDS
   LO  BND  x0  1

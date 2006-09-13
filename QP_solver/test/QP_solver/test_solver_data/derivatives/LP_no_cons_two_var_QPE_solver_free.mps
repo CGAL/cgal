@@ -9,13 +9,9 @@ ROWS
 COLUMNS
   x0  obj  -1
   x0  c0  1
-  x0  c1  0
   x1  obj  1
-  x1  c0  0
   x1  c1  1
 RHS
-  rhs c0  0
-  rhs c1  0
 BOUNDS
   MI  BND  x0
   MI  BND  x1
