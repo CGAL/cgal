@@ -81,22 +81,21 @@ see~\cite{cgal:m-rgece-06} for more details.
 \section{The Envelope-Traits Concept}
 %====================================
 
-In order to make the envelope-computation algorithm generic and
-handle arbitrary surfaces, it is parameterized with a traits class,
-which defines the geometry of surfaces it handles and supports all
-the necessary functionality one these surfaces and on their 
-projections onto the $xy$-plane. The traits class must be a model
-of the \ccc{EnvelopeTraits_3} concept, whose details are given in
-this section.
+The implementation of the envelope-computation algorithm is generic and
+can handle arbitrary surfaces. It is parameterized with a traits class,
+which defines the geometry of surfaces it handles, and supports all
+the necessary functionality on these surfaces, and on their projections 
+onto the $xy$-plane. The traits class must model the 
+\ccc{EnvelopeTraits_3} concept, whose details are given below.
 
 As the representation of envelope diagrams is based on 2D
 arrangements, and the envelop-computation algorithm employs overlay
 of planar arrangements, the \ccc{EnvelopeTraits_3} refines the
-\ccc{ArrangementXMonotoneTraits_2} concept. Namely, a model of this concept
-must define the planar types \ccc{Point_2} and \ccc{X_monotone_curve_2}
-and support basic operations on them, as listed
-in Section~\ref{arr_sec:traits}. Moreover, it must define the spacial
-types \ccc{Surface_3} and \ccc{Xy_monotone_surface_3} (in practice,
+\ccc{ArrangementXMonotoneTraits_2} concept. Namely, a model of this 
+concept must define the planar types \ccc{Point_2} and 
+\ccc{X_monotone_curve_2} and support basic operations on them, as 
+listed in Section~\ref{arr_sec:traits}. Moreover, it must define the 
+spacial types \ccc{Surface_3} and \ccc{Xy_monotone_surface_3} (in practice,
 these two types may be the same). Any model of the envelope-traits
 concept must also support the following operations on these spacial
 types:

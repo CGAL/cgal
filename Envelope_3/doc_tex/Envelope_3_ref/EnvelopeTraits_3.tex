@@ -7,14 +7,14 @@
 
 This concept defines the minimal set of geometric predicates and
 operations needed to compute the envelope of a set of arbitrary
-surfaces in $\reals^3$. It refines the arrangement-x-monotone-traits concept.
-In addition to the \ccc{Point_2} , \ccc{X_monotone_curve_2} types and the
-\ccc{Has_infinite_category} category tag defined in the arrangement-traits concept ,
-it also defines the \ccc{Surface_3} and \ccc{Xy_monotone_surface_3}
-types, which represent arbitrary surfaces and $xy$-monotone surfaces,
-respectively, and supports some constructions and predicates on these
-types. Note however, that these operations usually involve the
-projection of 3D objects onto the $xy$-plane.
+surfaces in $\reals^3$. It refines the arrangement-x-monotone-traits 
+concept. In addition to the \ccc{Point_2} and \ccc{X_monotone_curve_2} 
+types and the \ccc{Has_infinite_category} category tag listed in the 
+arrangement-traits concept, it also lists the \ccc{Surface_3} and 
+\ccc{Xy_monotone_surface_3} types, which represent arbitrary surfaces 
+and $xy$-monotone surfaces, respectively, and some constructions and 
+predicates on these types. Note however, that these operations usually 
+involve the projection of 3D objects onto the $xy$-plane.
 
 \ccRefines
 \ccc{ArrangementXMonotoneTraits_2}
@@ -52,13 +52,19 @@ projection of 3D objects onto the $xy$-plane.
 {provides the operator (templated by the \ccc{OutputIterator} type)~:
  \begin{itemize}
  \item \ccc{OutputIterator operator() (Xy_monotone_surface_3 s, OutputIterator oi)} \\
- which computes all planar $x$-monotone curves and possibly isolated planar points 
- that form the projection of the
- boundary of the given $xy$-monotone surface $s$ onto the $xy$-plane,
- and inserts them into the output iterator. 
- The value-type of \ccc{OutputIterator} is \ccc{std::pair<CGAL::Object , CGAL::Oriented_side>}
- where Object stores either \ccc{X_monotone_curve_2} or \ccc{Point_2}.
- The operator returns a past-the-end iterator for the output sequence.
+ which computes all planar $x$-monotone curves and possibly isolated planar 
+ points that form the projection of the boundary of the given $xy$-monotone 
+ surface $s$ onto the $xy$-plane, and inserts them into the output iterator. 
+ The value-type of \ccc{OutputIterator} is
+ \ccc{std::pair<Object, Oriented_side>}, where \ccc{Object} stores either 
+ \ccc{X_monotone_curve_2} or \ccc{Point_2}, and \ccc{Oriented_side} 
+ indicates the position of the projected surface relative to the projected
+ curve boundary. Namely, \ccc{Oriented_side} is \ccc{ON_NEGATIVE_SIDE},
+ \ccc{ON_ORIENTED_BOUNDARY}, or \ccc{ON_POSITIVE_SIDE}, if the projected 
+ surface is below, on, or above the projected curve. When the projected 
+ surface is of dimension lower than two, for example, the surface itself is 
+ vertical, \ccc{Oriented_side} is \ccc{ON_ORIENTED_BOUNDARY}. The operator 
+ returns a past-the-end iterator for the output sequence.
  \end{itemize}}
  
 \ccNestedType{Construct_projected_intersections_2}
@@ -70,7 +76,7 @@ projection of 3D objects onto the $xy$-plane.
  which computes the projection of the intersections of the
  $xy$-monotone surfaces \ccc{s1} and \ccc{s2} onto the $xy$-plane,
  and inserts them into the output iterator.
- The value-type of \ccc{OutputIterator} is \ccc{CGAL::Object}, where
+ The value-type of \ccc{OutputIterator} is \ccc{Object}, where
  each \ccc{Object} either wraps a \ccc{pair<X_monotone_curve_2,Multiplicity>}
  instance, which represents a projected intersection curve with its
  multiplicity (in case the multiplicity is undefined or not known, it
@@ -185,8 +191,8 @@ projection of 3D objects onto the $xy$-plane.
 
 \ccHasModels
 %===========
-\ccc{CGAL::Envelope_triangle_traits_3<Kernel>}\\
-\ccc{CGAL::Envelope_sphere_traits_3<ConicTraits>}\\
+\ccc{CGAL::Env_triangle_traits_3<Kernel>}\\
+\ccc{CGAL::Env_sphere_traits_3<ConicTraits>}\\
 \ccc{CGAL::Env_plane_traits_3<Kernel>}\\
 \ccc{CGAL::Env_surface_data_traits_3<Traits,XyData,SData,Cnv>}
 

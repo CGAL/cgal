@@ -16,16 +16,16 @@
 The class-template \ccClassTemplateName\ represents the minimization
 diagram that corresponds to the lower envelope of a set of curves, or the
 maximization diagram that corresponds to their upper envelope. It is
-parameterized with a traits class that must be a model of the
-\ccc{EnvelopeTraits_3} concept, and is basically an planar arrangement of
+parameterized by a traits class that must be a model of the
+\ccc{EnvelopeTraits_3} concept, and is basically a planar arrangement of
 $x$-monotone curves, as defined by this traits class. These $x$-monotone
 curves are the projections of boundary curves of $xy$-monotone surfaces,
 or the intersection curves between such surfaces, onto the $xy$-plane.
-It is thus possible to traverse the envelope diagram using the
+Thus, it is possible to traverse the envelope diagram using the
 methods inherited from the \ccc{Arrangement_2} class.
 
 The envelope diagram extends the arrangment features (namely the vertices,
-halfedges and faces), such that each feature stores a container of
+halfedges, and faces), such that each feature stores a container of
 originators --- namely, the $xy$-monotone surfaces (instances of the type
 \ccc{EnvTraits::Xy_monotone_surface_3}) that induce the lower envelop
 (or the upper envelope, in case of a maximization diagram) over this

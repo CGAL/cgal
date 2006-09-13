@@ -13,19 +13,20 @@
 \ccDefinition 
 %============
 
-The traits class \ccRefName\ is a model of the \ccc{EnvelopeTraits_3}
-concept for the construction of lower and upper envelopes of spheres.
-Note that when projecting the intersection curve of two spheres (a
-circle in 3D) onto the $xy$-plane the resulting curve is an ellipse.
-The traits class is therefore parameterized with an arrangement-traits
-class that is capable of handling conic curves --- namely an instantiation
-of the \ccc{Arr_conic_traits_2} class-template --- and inherits from it.
+The traits class \ccRefName\ models the \ccc{EnvelopeTraits_3}
+concept, and is used for the construction of lower and upper envelopes 
+of spheres. Note that when projecting the intersection curve of two 
+spheres (a circle in 3D) onto the $xy$-plane, the resulting curve is an 
+ellipse. The traits class is therefore parameterized by an 
+arrangement-traits class that is capable of handling conic 
+curves --- namely an instantiation of the \ccc{Arr_conic_traits_2} 
+class-template --- and inherits from it.
 
 The conic-traits class defines a nested type named \ccc{Rat_kernel},
-which is a geometric kernel parameterized with an exact rational type.
+which is a geometric kernel parameterized by an exact rational type.
 \ccRefName\ defines its \ccc{Surface_3} type to be constructible from
-\ccc{Rat_kernel::Sphere_3}, namely it can handle spheres whose center
-points have rational coordinates (i.e., of the type \ccc{Rat_kernel::FT})
+\ccc{Rat_kernel::Sphere_3}. Namely, it can handle spheres whose center
+points have rational coordinates (i.e., of the type \ccc{Rat_kernel::FT}),
 and whose squared radius is also rational. The \ccc{Surface_3} type is
 also convertible to a \ccc{Rat_kernel::Sphere_3} object.
 
