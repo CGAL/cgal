@@ -392,9 +392,9 @@ BGL/include/CGAL/boost/graph/Geometric_graph_traits.h -text
 BGL/include/CGAL/boost/graph/HalfedgeDS_graph_traits_aux.h -text
 BGL/include/CGAL/boost/graph/Halfedge_graph_traits.h -text
 BGL/include/CGAL/boost/graph/Polyhedron_BGL_properties.h -text
-BGL/include/CGAL/boost/graph/Polyhedron_extended_BGL.h -text
 BGL/include/CGAL/boost/graph/Polyhedron_geometric_graph_traits.h -text
 BGL/include/CGAL/boost/graph/Polyhedron_graph_traits.h -text
+BGL/include/CGAL/boost/graph/Polyhedron_halfedge_graph_traits.h -text
 Benchmark/doc_tex/Benchmark/Conics_14_1.arr -text
 Benchmark/doc_tex/Benchmark/fig/Conics_14_1.eps -text svneol=unset#application/postscript
 Benchmark/doc_tex/Benchmark/fig/Conics_14_1.png -text svneol=unset#image/png
