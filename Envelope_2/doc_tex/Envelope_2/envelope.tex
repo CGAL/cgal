@@ -1,10 +1,10 @@
 
-A continuous curve $C$ in $\reals^2$ is called {\em $x$-monotone} if
+A continuous curve $C$ in $\reals^2$ is called {\em $x$-monotone}, if
 every vertical line intersects it at a single point at most. For
 example, the circle $x^2 + y^2 = 1$ is {\em not} $xy$-monotone as the
 vertical line $x = 0$ intersects it at $(0, -1)$ and at $(0, 1)$;
 however, it is possible to split the circle into an upper part and a
-lower part, such that both these parts are $x$-monotone.
+lower part, such that both of these parts are $x$-monotone.
 
 An $x$-monotone curve can be represented as a univariate function
 $y = C(x)$, defined over some continuous range $R_C \subseteq \reals$.
@@ -56,18 +56,18 @@ In the rest of this chapter, we refer to both these diagrams as
 {\em envelope diagrams}.
 
 Lower and upper envelopes can be efficiently computed using a
-divide-and-conquer approach. First note that the envelope diagram for
+divide-and-conquer approach. First, note that the envelope diagram for
 a single $x$-monotone curve $C_k$ is trivial to compute: we project
 the boundary of its range of definition $R_{C_k}$ onto the $x$-axis
 and label the features it induces accordingly. Given a set
 $\hat{\calC}$ of (non necessarily $x$-monotone) curves in $\reals^2$,
-we start by subdividing each curve into a finite number of weakly
-$x$-monotone curves\footnote{To handle degenerate inputs, we consider
-vertical segments as {\em weakly} $x$-monotone.}, obtaining the set
-$\calC$. We continue by splitting the set into two disjoint subsets
-$\calC_1$ and $\calC_2$, and we compute their envelope diagrams
-recursively. We finally have to merge the diagrams, and we do this in
-linear time by traversing both diagrams in parallel.
+we subdivide each curve into a finite number of weakly $x$-monotone 
+curves,\footnote{We consider vertical segments as {\em weakly} 
+$x$-monotone, to handle degenerate inputs properly.} and obtain the set
+$\calC$. Then, we split the set into two disjoint subsets $\calC_1$ 
+and $\calC_2$, and we compute their envelope diagrams recursively. 
+Finally, we merge the diagrams, and we do this in linear time 
+traversing both diagrams in parallel.
 
 \section{The Envelope Diagram}
 \label{env2_sec:env_diag}
@@ -94,14 +94,14 @@ diagram these functions output.
   <img src="./fig/min_diag.gif" border=0 alt="The minimization diagram">
   </center>
 \end{ccHtmlOnly}
-\caption{The lower envelope of eight line segments, labeled
+\caption{The lower envelope of eight line segments, labelled
 $A, \ldots, H$\,, as constructed in \ccc{ex_envelope_segments.cpp}.
 The minimization diagram is shown at the bottom, where
 each diagram vertex points to the point associated with it, and the
 labels of the segment that induce a diagram edge are displayed below
 this edge. Note that there exists one edge that represents an overlap
-and there are also a few edges that represent empty
-intervals.\label{env2_fig:min_diag}}
+(even if more than a single curve induces it), and there are also a 
+few edges that represent empty intervals.\label{env2_fig:min_diag}}
 \end{figure}
 
 A minimization diagram or a maximization diagram is represented by
@@ -153,9 +153,9 @@ type.
 %=================
 
 The following example demonstrates how to compute and traverse the
-minimization diagram of line segments, ase illustrated in
+minimization diagram of line segments, as illustrated in
 Figure~\ref{env2_fig:min_diag}. We use the curve-data traits
-parameterized by the \ccc{Arr_segment_traits_2} class in order to
+instantiated by the \ccc{Arr_segment_traits_2} class, in order to
 attach a label (a \ccc{char} in this case) to each input segment.
 We use these labels when we print the minimization diagram:
 
@@ -176,7 +176,7 @@ upper envelope of $\calP^{*}$ are dual to the points along the
 e.g.,~\cite[Section~11.4]{bkos-cgaa-00} for more details.
 Note that the leftmost edge of the minimization diagram is associated
 with the same line as the rightmost edge of the maximization diagram,
-and vic-versa. We can therefore skip the rightmost edges of both
+and vice-versa. We can therefore skip the rightmost edges of both
 diagrams:
 
 \ccIncludeExampleCode{Envelope_2/ex_convex_hull.cpp}
@@ -194,7 +194,8 @@ diagrams:
 \end{ccHtmlOnly}
 \caption{A set of four circles, as constructed in
 \ccc{ex_envelope_circles.cpp}. The lower envelope and the upper
-envelope are shown using thick dashed lines.\label{env2_fig:ex_circ}}
+envelope are shown using thick dashed lines of different colors
+respectively.\label{env2_fig:ex_circ}}
 \end{figure}
 
 We conclude by an example of envelopes of non-linear curves. 
