@@ -59,6 +59,7 @@ public:
   typedef Env_triangle_traits_3<Kernel>             Self;
 
   typedef typename Kernel::Point_3                  Point_3;
+  typedef unsigned int                              Multiplicity;
 
   /*!
    * \class Representation of a 3d triangle with cached data.
@@ -353,7 +354,7 @@ protected:
                      Less_surface_point_pair>          Surface_point_cache;
   #endif
 
-  typedef std::pair<X_monotone_curve_2, Intersection_type>        Intersection_curve;
+  typedef std::pair<X_monotone_curve_2, Multiplicity>        Intersection_curve;
 public:
 
   /***************************************************************************/
@@ -665,7 +666,7 @@ public:
           *o++ = make_object(projected_cv.left());
         else
         {
-          Intersection_curve inter_cv(projected_cv, TRANSVERSAL);
+          Intersection_curve inter_cv(projected_cv, 1);
           *o++ = make_object(inter_cv);
         }
       }
@@ -1602,7 +1603,7 @@ public:
  */
 template <class Kernel_>
 class Env_triangle_3 :
-    public Handle_for<typename Env_triangle_traits_3<Kernel_>::_Triangle_cached_3>
+    public Env_triangle_traits_3<Kernel_>::_Triangle_cached_3
 {
   typedef Kernel_                                                  Kernel;
   typedef typename Kernel::Triangle_3                              Triangle_3;
@@ -1611,7 +1612,7 @@ class Env_triangle_3 :
   typedef typename Kernel::Segment_3                               Segment_3;
 
   typedef typename Env_triangle_traits_3<Kernel>::_Triangle_cached_3
-                                                                   Rep_type;
+                                                                   Base;
 
 public:
 
@@ -1619,7 +1620,7 @@ public:
    * Default constructor.
    */
   Env_triangle_3() :
-    Handle_for<Rep_type>(Rep_type())
+    Base()
   {}
 
   /*!
@@ -1627,7 +1628,7 @@ public:
    * \param seg The segment.
    */
   Env_triangle_3(const Triangle_3& tri) :
-    Handle_for<Rep_type>(Rep_type(tri))
+    Base(tri)
   {}
 
   /*!
@@ -1636,9 +1637,8 @@ public:
    * \param p2 The second point.
    * \param p3 The third point.
    */
-    Env_triangle_3(const Point_3 &p1, const Point_3 &p2,
-                        const Point_3 &p3) :
-      Handle_for<Rep_type>(Rep_type(p1, p2, p3))
+    Env_triangle_3(const Point_3 &p1, const Point_3 &p2, const Point_3 &p3) :
+      Base(p1, p2, p3)
   {}
 
   /*!
@@ -1650,9 +1650,10 @@ public:
    * \pre All points must be on the supporting plane.
    */
   Env_triangle_3(const Plane_3& pl,
-                      const Point_3 &p1, const Point_3 &p2,
-                      const Point_3 &p3) :
-    Handle_for<Rep_type>(Rep_type(pl, p1, p2, p3))
+                 const Point_3 &p1,
+                 const Point_3 &p2,
+                 const Point_3 &p3) :
+    Base(pl, p1, p2, p3)
 
   {}
 
@@ -1662,7 +1663,7 @@ public:
    * \param p2 The second point.
    */
   Env_triangle_3(const Point_3 &p1, const Point_3 &p2) :
-      Handle_for<Rep_type>(Rep_type(p1, p2))
+    Base(p1, p2)
   {}
 
   /*!
@@ -1670,7 +1671,7 @@ public:
    */
   operator Triangle_3() const
   {
-    return (Triangle_3(ptr()->vertex(0), ptr()->vertex(1), ptr()->vertex(2)));
+    return (Triangle_3(this->vertex(0), this->vertex(1), this->vertex(2)));
   }
 
   /*!
@@ -1678,8 +1679,8 @@ public:
    */
   operator Segment_3() const
   {
-    CGAL_precondition(ptr()->is_segment());
-    return (Segment_3(ptr()->vertex(0), ptr()->vertex(1)));
+    CGAL_precondition(this->is_segment());
+    return (Segment_3(this->vertex(0), this->vertex(1)));
   }
 
   /*!
@@ -1687,50 +1688,9 @@ public:
    */
   Bbox_3 bbox() const
   {
-    Triangle_3 tri(ptr()->vertex(0), ptr()->vertex(1), ptr()->vertex(2));
+    Triangle_3 tri(this->vertex(0), this->vertex(1), this->vertex(2));
     return (tri.bbox());
   }
-
-  /*!
-   * Get the ith endpoint.
-   */
-  const Point_3& vertex(unsigned int i) const
-  {
-    return ptr()->vertex(i);
-  }
-
-  /*!
-   * Get the supporting plane.
-   */
-  const Plane_3& plane() const
-  {
-    return ptr()->plane();
-  }
-
-  /*!
-   * Check if the triangle is vertical.
-   */
-  bool is_vertical() const
-  {
-    return ptr()->is_vertical();
-  }
-
-  /*!
-   * Check if the surface is a segment.
-   */
-  bool is_segment() const
-  {
-    return ptr()->is_segment();
-  }
-
-  /*!
-   * Check if the triangle is degenerate.
-   */
-  bool is_xy_monotone() const
-  {
-    return ptr()->is_xy_monotone();
-  }
-
 };
 
 template <class Kernel>
@@ -1738,14 +1698,29 @@ bool
 operator<(const Env_triangle_3<Kernel> &a,
           const Env_triangle_3<Kernel> &b)
 {
-  return (a.id() < b.id());
+  if (a.vertex(0) < b.vertex(0))
+    return true;
+  if (a.vertex(0) > b.vertex(0))
+    return false;
+  if (a.vertex(1) < b.vertex(1))
+    return true;
+  if (a.vertex(1) > b.vertex(1))
+    return false;
+  if (a.vertex(2) < b.vertex(2))
+    return true;
+  if (a.vertex(2) > b.vertex(2))
+    return false;
+
+  return false;
 }
 template <class Kernel>
 bool
 operator==(const Env_triangle_3<Kernel> &a,
            const Env_triangle_3<Kernel> &b)
 {
-  return (a.id() == b.id());
+  return (a.vertex(0) == b.vertex(0) &&
+          a.vertex(1) == b.vertex(1) &&
+          a.vertex(2) == b.vertex(2));
 }
 
 /*!
