@@ -78,7 +78,7 @@ typedef CGAL::Circular_kernel_2<Linear_k,Algebraic_k>       Circular_k;
 typedef Circular_k::Line_arc_2                              Line_arc_2;
 typedef Circular_k::Segment_2                               Segment;
 typedef Circular_k::Circular_arc_2                          Circular_arc_2;
-typedef boost::variant< Circular_arc_2, Segment >           Arc;
+typedef boost::variant< Circular_arc_2, Line_arc_2 >        Arc;
 typedef std::vector<Arc>                                    ArcContainer;
 
 #ifndef CGAL_CURVED_KERNEL_DEBUG
@@ -127,8 +127,11 @@ public:
     *widget << CGAL::BLUE;
     for (ArcContainer::const_iterator cit = arc_container().begin();
          cit != arc_container().end(); ++cit){
-      if(const Segment* line = boost::get<Segment>( &(*cit))){
-	*widget << *line;
+      if(const Line_arc_2* line = boost::get<Line_arc_2>( &(*cit))){
+	*widget << Segment(Circular_k::Point_2(to_double(line->source().x()),
+					     to_double(line->source().y())),
+			   Circular_k::Point_2(to_double(line->target().x()),
+					     to_double(line->target().y())));
       }
       else if (const Circular_arc_2* arc = boost::get<Circular_arc_2>( &(*cit))){
 	*widget << *arc;
@@ -315,7 +318,7 @@ private slots:
     std::ifstream in(s);
     CGAL::set_ascii_mode(in);
     ArcContainer arcs;
-    CGAL::variant_load<Circular_k, Circular_arc_2, Segment>(in, std::back_inserter(arcs));
+    CGAL::variant_load<Circular_k, Circular_arc_2, Line_arc_2>(in, std::back_inserter(arcs));
     arc_container().swap(arcs);
 
 
