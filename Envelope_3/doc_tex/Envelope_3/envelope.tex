@@ -1,6 +1,6 @@
 
-A continuous surface $S$ in $\reals^3$ is called {\em $xy$-monotone} if
-every line parallel to the $z$-axis intersects it at a single point
+A continuous surface $S$ in $\reals^3$ is called {\em $xy$-monotone},
+if every line parallel to the $z$-axis intersects it at a single point
 at most. For example, the sphere $x^2 + y^2 + z^2 = 1$ is {\em not}
 $xy$-monotone as the $z$-axis intersects it at $(0, 0, -1)$ and at
 $(0, 0, 1)$; however, if we use the $xy$-plane to split it to an
@@ -44,15 +44,17 @@ R_{S_k}$.
 Given a set of $xy$-monotone surfaces $\calS$, the {\em minimization
 diagram} of $\calS$ is a subdivision of the $xy$-plane into cells,
 such that the identity of the surfaces that induce the lower diagram
-over a specific cell of the subdivision (be it a face, an edge or
+over a specific cell of the subdivision (be it a face, an edge, or
 a vertex) is the same. In non-degenerate situation, a face is
 induced by a single surface (or by no surfaces at all, if there are
-no $xy$-monotone surfaces defined over it), and an edge is induced
-by a single surface and corresponds to its projected boundary, or by
-two surfaces and corresponds to their projected intersection curve.
-The {\em maximization diagram} is symmetrically defined for upper envelopes.
-In the rest of this chapter, we refer to both these diagrams as
-{\em envelope diagrams}.
+no $xy$-monotone surfaces defined over it), an edge is induced by a 
+single surface and corresponds to its projected boundary, or by two 
+surfaces and corresponds to their projected intersection curve, and
+a vertex is induced by a single surface and corresponds to its projected 
+boundary point, or by three surfaces and corresponds to their projected 
+intersection point. The {\em maximization diagram} is symmetrically 
+defined for upper envelopes. In the rest of this chapter, we refer to 
+both these diagrams as {\em envelope diagrams}.
 
 It is easy to see that an envelope diagram is no more than a planar
 arrangement (see Chapter~\ref{chapterArrangement_2}), represented
@@ -63,20 +65,20 @@ of it originators: the $xy$-monotone surfaces that induce this feature.
 Lower and upper envelopes can be efficiently computed using a
 divide-and-conquer approach. First note that the envelope diagram for
 a single $xy$-monotone curve $S_k$ is trivial to compute: we project
-the boundary of its range of definition $R_{S_k}$ onto the $xy$-plane
+the boundary of its range of definition $R_{S_k}$ onto the $xy$-plane,
 and label the faces it induces accordingly. Given a set $\hat{\calS}$
-of (non necessarily $xy$-monotone) surfaces in $\reals^3$, we start by
-subdividing each surface into a finite number of weakly $xy$-monotone
-surfaces\footnote{To handle degenerate inputs, we consider {\em vertical}
-surfaces, namely patches of planes that are perpendicular to the
-$xy$-plane, as {\em weakly} $xy$-monotone.}, obtaining the set $\calS$.
-We continue by splitting the set into two disjoint subsets $\calS_1$
+of (non necessarily $xy$-monotone) surfaces in $\reals^3$, we subdivide
+each surface into a finite number of weakly $xy$-monotone 
+surfaces,\footnote{We consider {\em vertical} surfaces, namely patches 
+of planes that are perpendicular to the $xy$-plane, as {\em weakly} 
+$xy$-monotone, to handle degenerate inputs properly.} and obtain the 
+set $\calS$. Then, we split the set into two disjoint subsets $\calS_1$
 and $\calS_2$, and we compute their envelope diagrams recursively.
-We finally have to merge the diagrams, and we do this by overlaying
-them and then applying some post-processing on the resulting diagram.
-The post-processing stage is non-trivial and involves the projection
-of intersection curves onto the $xy$-plane --- 
-see~\cite{cgal:m-rgece-06} for more details.
+Finally, we merge the diagrams, and we do this by overlaying them and 
+then applying some post-processing on the resulting diagram. The 
+post-processing stage is non-trivial and involves the projection of 
+intersection curves onto the $xy$-plane --- see~\cite{cgal:m-rgece-06}
+for more details.
 
 \section{The Envelope-Traits Concept}
 %====================================
@@ -86,7 +88,7 @@ can handle arbitrary surfaces. It is parameterized with a traits class,
 which defines the geometry of surfaces it handles, and supports all
 the necessary functionality on these surfaces, and on their projections 
 onto the $xy$-plane. The traits class must model the 
-\ccc{EnvelopeTraits_3} concept, whose details are given below.
+\ccc{EnvelopeTraits_3} concept, the details of which are given below.
 
 As the representation of envelope diagrams is based on 2D
 arrangements, and the envelop-computation algorithm employs overlay
