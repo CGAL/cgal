@@ -99,17 +99,6 @@ next_edge_cw( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> const>::edg
   return outedge->opposite()->next();
 }
 
-//
-// Non-Const versions
-// 
-template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-struct geometric_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> > 
-{
-  typedef CGAL::Polyhedron_3<Gt,I,HDS,A>  Polyhedron ;
-  
-  typedef typename Polyhedron::Point_3 Point ;
-};
-
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 struct halfedge_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> > 
   : CGAL::HDS_halfedge_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >
