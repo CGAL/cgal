@@ -31,7 +31,7 @@ struct Kernel : public CGAL::Cartesian<FT> {};
 
 typedef Kernel::Point_2                           Point;
 typedef std::vector<Point>                        Cont;
-typedef CGAL::Polygon_2<Kernel>                   Polygon;
+typedef CGAL::Polygon_2<Kernel>                   Polygon_2;
 typedef CGAL::Random_points_in_square_2<Point>    Generator;
 
 template < class RandomAccessIC,
@@ -124,7 +124,7 @@ int main() {
   int j;
 
   for (int n = 0; n < 4; ++n) {
-    Polygon p;
+    Polygon_2 p;
     CGAL::random_convex_set_2(number_of_points[n],
                               std::back_inserter(p),
                               Generator(1));
