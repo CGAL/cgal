@@ -19,6 +19,11 @@
 #ifndef CGAL_PM_CONSTR_TRIANG_TRAITS_H
 #define CGAL_PM_CONSTR_TRIANG_TRAITS_H
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4355) // complaint about using 'this' to
+#endif                          // initialize a member
+
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/generic_sweep.h>
@@ -404,5 +409,10 @@ public:
 }; // Constrained_triang_traits<PMDEC,GEOM,NEWEDGE>
 
 CGAL_END_NAMESPACE
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
 #endif // CGAL_PM_CONSTR_TRIANG_TRAITS_H
 
