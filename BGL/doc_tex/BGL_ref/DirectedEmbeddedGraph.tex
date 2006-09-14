@@ -1,0 +1,162 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+\begin{ccRefConcept}{DirectedEmbeddedGraph}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+
+The concept \ccRefName\ describes the requirements of a basic
+\ccAnchor{http://www.boost.org/libs/graph/doc/graph_concepts.html}{Boost Graph}
+commonly found associated to many geometric data structures.
+
+\ccHeading{Requirements}
+
+All edges are {\em directed}, that is, they are defined as an {\em ordered pair} 
+of vertices.
+
+The graph is geometrically embedded, that is, each vertex is associated with
+ a generalized point (whether in the plane, the sphere, a surface, etc.)
+
+Vertices and edges are required to have a distinguishible \ccc{null} state 
+such that any default constructed vertex or edge descriptor is formally
+referring to a non-existing vertex or edge.
+
+Since the graph has a geometric embedding, edges are ordered around a vertex 
+and such ordering can be used to define the following edge relations:
+
+\begin{description}
+
+\item[Opposite] 
+An edge \ccc{'v: x->y'} is said to be the {\em opposite} of edge \ccc{'u: a->b'} 
+iff \ccc{a} $==$ \ccc{y} and \ccc{b} $==$ \ccc{c}.
+
+\item[Rotational Succesor] 
+An edge \ccc{'v: s->q'} is said to be the {\em rotational succesor} 
+of edge \ccc{'u: s->p'} iff \ccc{v} is the {\em first} edge found by 
+a counter-clockwise rotation of \ccc{u} around the source vertex \ccc{s}.
+ 
+\item[Rotational Predeccesor] 
+An edge \ccc{'v: s->q'} is said to be the {\em rotational predeccesor}
+of edge \ccc{'u: s->p'} iff \ccc{v} is the {\em first} edge found by 
+a clockwise rotation of \ccc{u} around the source vertex \ccc{s}.
+
+\item[Linear Succesor] 
+An edge \ccc{'v: b->c'} is said to be the {\em linear succesor} of edge 
+\ccc{'u:a->b'} iff \ccc{v} is the rotational succesor of the opposite
+of v.
+ 
+\item[Linear Predeccesor] 
+An edge \ccc{'v: b->c'} is said to be the {\em linear predeccesor} of edge 
+\ccc{'u:a->b'} iff \ccc{v} is the opposite of the rotational predeccesor
+of v.
+
+\end{description}
+
+\ccRefines
+\ccAnchor{http://www.boost.org/libs/graph/doc/BidirectionalGraph.html}{BidirectionalGraph}\\
+\ccAnchor{http://www.boost.org/libs/graph/doc/AdjacencyGraph.html}{AdjacencyGraph}\\
+\ccAnchor{http://www.boost.org/libs/graph/doc/EdgeAndVertexListGraph.html}{EdgeAndVertexListGraph}\\
+
+\ccTypes
+  \ccNestedType{Point}{The type of generalized point representing the geometric embedding of the graph.}{}
+
+\ccOperations
+
+Following the BGL interface, the following graph operations are defined as free rather than member functions.
+
+  \ccFunction
+  {template<class Graph>
+  typename boost::graph_traits<Graph const>::edge_descriptor 
+  opposite_edge(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g );
+  }
+  {Returns the {\em opposite} of e.\\
+  If the resulting edge does not belong to \ccc{g} the result is a \ccc{null} (default constructed) edge.\\
+  (non-const version ommited)
+  }
+  
+  \ccFunction
+  {template<class Graph>
+  typename boost::graph_traits<Graph const>::edge_descriptor 
+  next_edge_ccw(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g );
+  }
+  {Returns the {\em rotational succesor} of e.\\
+  If the resulting edge does not belong to \ccc{g} the result is a \ccc{null} (default constructed) edge.\\
+  (non-const version ommited)
+  }
+  
+  \ccFunction
+  {template<class Graph>
+  typename boost::graph_traits<Graph const>::edge_descriptor 
+  next_edge_cw(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g );
+  }
+  {Returns the {\em rotational predeccesor} of e.\\
+  If the resulting edge does not belong to \ccc{g} the result is a \ccc{null} (default constructed) edge.\\
+  (non-const version ommited)
+  }
+  
+  \ccFunction
+  {template<class Graph>
+  typename boost::graph_traits<Graph const>::edge_descriptor 
+  next_edge(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g );
+  }
+  {Returns the {\em linear succesor} of e.\\
+  If the resulting edge does not belong to \ccc{g} the result is a \ccc{null} (default constructed) edge.\\
+  (non-const version ommited)
+  }
+  
+  \ccFunction
+  {template<class Graph>
+  typename boost::graph_traits<Graph const>::edge_descriptor 
+  prev_edge(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g );
+  }
+  {Returns the {\em linear predeccesor} of e.\\
+  If the resulting edge does not belong to \ccc{g} the result is a \ccc{null} (default constructed) edge.\\
+  (non-const version ommited)
+  }
+  
+  \ccFunction
+  {template<class Graph>
+  typename CGAL::Embeeded_graph_traits<Graph>::Point const& 
+  get_point(typename boost::graph_traits<Graph const>::vertex_descriptor v, Graph const& g );
+  }
+  {Returns the generalized point embeeding the vertex \ccc{v}.\\
+  The exact nature of the point depends on the embeeding of the graph and is
+  specified by the concrete model.}
+  
+  \ccFunction
+  {template<class Graph>
+  void set_point(typename boost::graph_traits<Graph>::vertex_descriptor v
+                ,Graph& g
+                ,typename CGAL::Embeeded_graph_traits<Graph>::Point p
+                );
+  }
+  {Sets \ccc{p} as the embeeding of the vertex \ccc{v}.
+  }
+
+\ccHasModels
+\ccRefIdfierPage{boost::graph_traits< CGAL::Polyhedron_3<Traits> const > }\\
+\ccRefIdfierPage{boost::graph_traits< CGAL::Polyhedron_3<Traits> > }\\
+\ccRefIdfierPage{CGAL::Embeeded_graph_traits< CGAL::Polyhedron_3<Traits> > }\\
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

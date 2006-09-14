@@ -364,10 +364,11 @@ BGL/doc_tex/BGL/BGL.tex -text
 BGL/doc_tex/BGL/PkgDescription.tex -text
 BGL/doc_tex/BGL/main.tex -text
 BGL/doc_tex/BGL_ref/ConnectedPlanarDirectedGeometricGraph.tex -text
+BGL/doc_tex/BGL_ref/DirectedEmbeddedGraph.tex -text
 BGL/doc_tex/BGL_ref/EdgeIsBorderPropertyMap.tex -text
+BGL/doc_tex/BGL_ref/Edge_is_border_property.tex -text
 BGL/doc_tex/BGL_ref/HalfedgeGraph.tex -text
 BGL/doc_tex/BGL_ref/Polyhedron_edge_is_border_map.tex -text
-BGL/doc_tex/BGL_ref/Polyhedron_edge_weight_map.tex -text
 BGL/doc_tex/BGL_ref/Polyhedron_geometric_graph_traits.tex -text
 BGL/doc_tex/BGL_ref/Polyhedron_graph_traits.tex -text
 BGL/doc_tex/BGL_ref/Polyhedron_graph_traits_const.tex -text
@@ -377,6 +378,11 @@ BGL/doc_tex/BGL_ref/Polyhedron_vertex_is_border_map.tex -text
 BGL/doc_tex/BGL_ref/Polyhedron_vertex_point_const_map.tex -text
 BGL/doc_tex/BGL_ref/Polyhedron_vertex_point_map.tex -text
 BGL/doc_tex/BGL_ref/PropertyMap.tex -text
+BGL/doc_tex/BGL_ref/VertexIsBorderPropertyMap.tex -text
+BGL/doc_tex/BGL_ref/VertexPointPropertyConstMap.tex -text
+BGL/doc_tex/BGL_ref/VertexPointPropertyMap.tex -text
+BGL/doc_tex/BGL_ref/Vertex_is_border_property.tex -text
+BGL/doc_tex/BGL_ref/Vertex_point_property.tex -text
 BGL/doc_tex/BGL_ref/intro.tex -text
 BGL/doc_tex/BGL_ref/main.tex -text
 BGL/include/CGAL/boost/graph/BGL_properties.h -text

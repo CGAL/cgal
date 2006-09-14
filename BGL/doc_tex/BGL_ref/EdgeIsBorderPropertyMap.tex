@@ -14,14 +14,14 @@
 %%
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
-\begin{ccRefConcept}{EdgeIsBorderProperyMap}
+\begin{ccRefConcept}{EdgeIsBorderPropertyMap}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 
 \ccDefinition
 
-The concept \ccRefName\ describes the requirements of a \ccc{PropertyMap} that indicates whether a graph edge is a border edge.
+The concept \ccRefName\ describes the requirements of a \ccc{PropertyMap} that accesses the \ccc{CGAL::Edge_is_border_property} for a graph.
 
 \ccRefines
   \ccc{PropertyMap}
@@ -37,7 +37,7 @@ The concept \ccRefName\ describes the requirements of a \ccc{PropertyMap} that i
     {The result type of the map operator.}
 
   \ccNestedType{key_type;}
-  {The type of \ccc{EdgeDescriptor} to which the boolean is-border property is associated.}
+  {The type of \ccc{edge-descriptor} to which the boolean is-border property is associated.}
 
 \ccCreation
 \ccCreationVariable{pm}  %% choose variable name
@@ -47,9 +47,13 @@ The concept \ccRefName\ describes the requirements of a \ccc{PropertyMap} that i
 \ccMethod
   {reference operator[]( key_type const& edge ) const;}
   {Returns wether the edge is a border edge or not.}  
-  
+
+
 \ccHasModels
 \ccRefIdfierPage{CGAL::Polyhedron_edge_is_border_map<Traits> }\\
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Edge_is_border_property} 
 
 \end{ccRefConcept}
 

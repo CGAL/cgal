@@ -14,24 +14,32 @@
 %%
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
-\begin{ccRefConcept}{PropertyMap}
+\begin{ccRefConcept}{VertexPointPropertyMap}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 
 \ccDefinition
 
-The concept \ccRefName\ describes the requirements of a property map of the 
-\ccAnchor{http://www.boost.org/libs/property_map/property_map.html}{Boost Property Map Library}.
+The concept \ccRefName\ describes the requirements of a \ccc{PropertyMap} 
+providing mutable access to the geometric embedding of a graph vertex
+(given as the \ccc{CGAL::Vertex_point_property}).
 
-\ccTypes
-  \ccNestedType{category} {The category of the property (read-only, read-write or lvalue).}{}
+\ccRefines
+  \ccc{PropertyMap}
   
-  \ccNestedType{value_type} {The type of the property.}{}
+\ccTypes
+  \ccTypedef{boost::lvalue_property_map_tag category;}
+    {Indicates that this property is an lvalue (it can be mutated).}
+  
+  \ccNestedType{value_type;}
+    {The point type which represent the embeeding of a vertex.}
     
-  \ccNestedType{reference} {The result type of the map operator.}{}
-    
-  \ccNestedType{key_type} {The key type of the map operator.}{}
+  \ccTypedef{value_type& reference;}
+    {The result type of the map operator.}
+
+  \ccNestedType{key_type;}
+  {The type of \ccc{vertex-descriptor} whose embedding is accessed.}
 
 \ccCreation
 \ccCreationVariable{pm}  %% choose variable name
@@ -39,18 +47,14 @@ The concept \ccRefName\ describes the requirements of a property map of the
 \ccOperations
 
 \ccMethod
-  {reference operator[]( key_type const& key ) const;}
-  {Returns the property associated with the given \ccc{key}.}  
-
+  {reference operator[]( key_type const& edge ) const;}
+  {Returns the geometric embedding of the vertex \ccc{v}.}  
+  
 \ccHasModels
-\ccRefIdfierPage{CGAL::Edge_is_border_property} \\
-\ccRefIdfierPage{CGAL::Vertex_is_border_property} \\
-\ccRefIdfierPage{CGAL::Vertex_point_property} \\
-\ccRefIdfierPage{CGAL::Polyhedron_edge_weight_map<Traits> }\\
-\ccRefIdfierPage{CGAL::Polyhedron_edge_is_border_map<Traits> }\\
-\ccRefIdfierPage{CGAL::Polyhedron_vertex_is_border_map<Traits> }\\
-\ccRefIdfierPage{CGAL::Polyhedron_vertex_point_const_map<Traits> }\\
 \ccRefIdfierPage{CGAL::Polyhedron_vertex_point_map<Traits> }\\
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Vertex_point_property} 
 
 \end{ccRefConcept}
 

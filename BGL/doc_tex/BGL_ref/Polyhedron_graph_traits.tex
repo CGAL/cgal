@@ -23,32 +23,37 @@
 %% \ccHtmlIndexC[class]{} %% add further index entries
 \ccDefinition
 
-The class \ccRefName\ and corresponding free-function overloads provides the specializations for \ccc{Polyhedron_3} required to make it a {\em mutable} model of the Boost Graph types: \ccc{BidirectionalGraph}, \ccc{AdjacencyGraph} and \ccc{EdgeAndVertexListGraph}.
+The class \ccRefName\ and corresponding free-function overloads provides the specializations for \ccc{Polyhedron_3} required to make it a {\em mutable} model of the \ccAnchor{http://www.boost.org/libs/graph/doc/graph_concepts.html}{Boost Graph}
+concepts:\\
+\ccAnchor{http://www.boost.org/libs/graph/doc/BidirectionalGraph.html}{BidirectionalGraph}\\
+\ccAnchor{http://www.boost.org/libs/graph/doc/AdjacencyGraph.html}{AdjacencyGraph}\\
+\ccAnchor{http://www.boost.org/libs/graph/doc/EdgeAndVertexListGraph.html}{EdgeAndVertexListGraph}\\
 
 \ccInclude{CGAL/boost/graph/Polyhedron_graph_traits.h}
 
 \ccTypes
-  \ccTypedef{typename Polyhedron_3::Vertex_handle   vertex_descriptor;}
+  \ccTypedef{typename CGAL::Polyhedron_3::Vertex_handle   vertex_descriptor;}
     {The vertex descriptor.}
   
-  \ccTypedef{typename Polyhedron_3::Halfedge_handle edge_descriptor;}
+  \ccTypedef{typename CGAL::Polyhedron_3::Halfedge_handle edge_descriptor;}
     {The edges descriptor.}
   
-  \ccTypedef{-implementation-defined- vertex_iterator;}{A \ccc{Polyhedron_3::Vertex_iterator}
-    wrapped to return a \ccc{Polyhedron_3::Vertex_handle} when dereferenced.}
+  \ccNestedType{vertex_iterator;}{A \ccc{CGAL::Polyhedron_3::Vertex_iterator}
+    wrapped to return a \ccc{CGAL::Polyhedron_3::Vertex_handle} when dereferenced.}{}
   
-  \ccTypedef{-implementation-defined- edge_iterator;}{A \ccc{Polyhedron_3::Halfedge_iterator}
-    wrapped to return a \ccc{Polyhedron_3::Halfedge_handle} when dereferenced.}
+  \ccNestedType{edge_iterator;}{A \ccc{CGAL::Polyhedron_3::Halfedge_iterator}
+    wrapped to return a \ccc{CGAL::Polyhedron_3::Halfedge_handle} when dereferenced.}{}
   
-  \ccTypedef{-implementation-defined- in_edge_iterator;}{An edge iterator which only iterates over 
+  \ccNestedType{in_edge_iterator;}{An edge iterator which only iterates over 
   the incoming \ccc{halfedges} around a vertex. It correspons to a
-  \ccc{Polyhedron_3::Halfedge_around_vertex_circulator}
-  wrapped to return an \ccc{Polyhedron_3::Halfege_handle} when dereferenced}
+  \ccc{CGAL::Polyhedron_3::Halfedge_around_vertex_circulator}
+  wrapped to return an \ccc{CGAL::Polyhedron_3::Halfege_handle} when dereferenced}{}
   
-  \ccTypedef{-implementation-defined- out_edge_iterator;}{An edge iterator which only iterates over 
-  the outgoing halfedges around a vertex. It correspons to a \ccc{Polyhedron_3::Halfedge_around_vertex_circulator}
-  wrapped to return an \ccc{Polyhedron_3::Halfege_handle} referring to the {\em opposite halfege} when
-  dereferenced.}
+  \ccNestedType{out_edge_iterator;}{An edge iterator which only iterates over 
+  the outgoing halfedges around a vertex. It correspons to a
+  \ccc{CGAL::Polyhedron_3::Halfedge_around_vertex_circulator}
+  wrapped to return an \ccc{CGAL::Polyhedron_3::Halfege_handle} 
+  referring to the {\em opposite halfege} when dereferenced.}{}
   
   \ccTypedef{boost::directed_tag directed_category;}{Indicates this is a directed graph.}
   
@@ -68,9 +73,9 @@ The class \ccRefName\ and corresponding free-function overloads provides the spe
     {The size tye of the adjacency list.}
   
 \ccIsModel
-\ccc{BidirectionalGraph}
-\ccc{AdjacencyGraph}
-\ccc{EdgeAndVertexListGraph}
+\ccAnchor{http://www.boost.org/libs/graph/doc/BidirectionalGraph.html}{BidirectionalGraph}\\
+\ccAnchor{http://www.boost.org/libs/graph/doc/AdjacencyGraph.html}{AdjacencyGraph}\\
+\ccAnchor{http://www.boost.org/libs/graph/doc/EdgeAndVertexListGraph.html}{EdgeAndVertexListGraph}\\
 
 \ccSeeAlso
 

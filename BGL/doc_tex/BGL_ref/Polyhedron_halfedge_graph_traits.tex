@@ -15,7 +15,7 @@
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
 
-\begin{ccRefClass}{CGAL::Halfedge_graph_traits< CGAL::Polyhedron_3<Traits> >}
+\begin{ccRefClass}{Halfedge_graph_traits< CGAL::Polyhedron_3<Traits> >}
 
 %% add template arg's if necessary
 
@@ -23,14 +23,17 @@
 %% \ccHtmlIndexC[class]{} %% add further index entries
 \ccDefinition
 
-The class \ccRefName\ and corresponding free-function overloads provides the specializations for \ccc{Polyhedron_3} required to make it a \ccc{mutable} model of a \ccc{HalfedgeGraph}.
+The class \ccRefName\ and corresponding free-function overloads provides
+the specializations for \ccc{CGAL::Polyhedron_3} required to make
+it a \ccc{mutable} model of a \ccc{HalfedgeGraph}.
 
 \ccInclude{CGAL/boost/graph/Polyhedron_halfedge_graph_traits.h}
 
 \ccTypes
-  \ccTypedef{typename -implementation-defined- undirected_edge_iterator;}{An edge iterator that iterates 
-  over 1 out of 2 halfedges, each time pointing to one and only one of the halfedges for each opposing pair.
-  When dereferenced, it returns a \ccc{Polyhedron_3::Halfedge_const_handle}}
+  \ccNestedType{undirected_edge_iterator;}{An edge iterator that iterates 
+  over 1 out of 2 halfedges, each time pointing to one and only one of
+  the halfedges for each opposing pair.\\
+  When dereferenced, it returns a \ccc{CGAL::Polyhedron_3::Halfedge_const_handle}}
 
 \ccIsModel
 \ccc{HalfedgeGraph}

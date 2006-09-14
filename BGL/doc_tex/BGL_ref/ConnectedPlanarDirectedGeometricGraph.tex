@@ -88,6 +88,26 @@ Following the BGL interface, the following graph operations are defined as free 
   
   \ccFunction
   {template<class Graph>
+  typename boost::graph_traits<Graph const>::edge_descriptor 
+  next_edge(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g );
+  }
+  {Returns the {\em successor} of \ccc{e}. It is alwat
+  That is, given the edge \ccc{a->b} returns \ccc{b->c} such that \ccc{c != a}.\\
+  (non-const version ommited)
+  }
+  
+  \ccFunction
+  {template<class Graph>
+  typename boost::graph_traits<Graph const>::edge_descriptor 
+  prev_edge(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g );
+  }
+  {Returns the {\em predecessor} of \ccc{e}.
+  That is, given the edge \ccc{b->c} returns \ccc{a->b} such that \ccc{c != a}\\
+  (non-const version ommited)
+  }
+  
+  \ccFunction
+  {template<class Graph>
   typename CGAL::Geometric_graph_traits<Graph>::Point const& 
   get_point(typename boost::graph_traits<Graph const>::vertex_descriptor v, Graph const& g );
   }
