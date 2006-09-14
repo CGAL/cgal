@@ -368,9 +368,6 @@ BGL/doc_tex/BGL_ref/EdgeIsBorderPropertyMap.tex -text
 BGL/doc_tex/BGL_ref/Edge_is_border_property.tex -text
 BGL/doc_tex/BGL_ref/HalfedgeGraph.tex -text
 BGL/doc_tex/BGL_ref/Polyhedron_edge_is_border_map.tex -text
-BGL/doc_tex/BGL_ref/Polyhedron_embedded_graph_traits.tex -text
-BGL/doc_tex/BGL_ref/Polyhedron_halfedge_graph_traits.tex -text
-BGL/doc_tex/BGL_ref/Polyhedron_halfedge_graph_traits_const.tex -text
 BGL/doc_tex/BGL_ref/Polyhedron_vertex_is_border_map.tex -text
 BGL/doc_tex/BGL_ref/Polyhedron_vertex_point_const_map.tex -text
 BGL/doc_tex/BGL_ref/Polyhedron_vertex_point_map.tex -text
@@ -380,8 +377,11 @@ BGL/doc_tex/BGL_ref/VertexPointPropertyConstMap.tex -text
 BGL/doc_tex/BGL_ref/VertexPointPropertyMap.tex -text
 BGL/doc_tex/BGL_ref/Vertex_is_border_property.tex -text
 BGL/doc_tex/BGL_ref/Vertex_point_property.tex -text
+BGL/doc_tex/BGL_ref/embedded_graph_traits_Polyhedron_3.tex -text
 BGL/doc_tex/BGL_ref/graph_traits_Polyhedron_3.tex -text
 BGL/doc_tex/BGL_ref/graph_traits_Polyhedron_3_const.tex -text
+BGL/doc_tex/BGL_ref/halfedge_graph_traits_Polyhedron_3.tex -text
+BGL/doc_tex/BGL_ref/halfedge_graph_traits_Polyhedron_3_const.tex -text
 BGL/doc_tex/BGL_ref/intro.tex -text
 BGL/doc_tex/BGL_ref/main.tex -text
 BGL/include/CGAL/boost/graph/BGL_properties.h -text
