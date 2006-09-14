@@ -69,7 +69,7 @@ compare (const MP_Float & a, const MP_Float & b);
 class MP_Float
 {
 public:
-  typedef Tag_false  Has_gcd;
+  typedef Tag_true   Has_gcd;
 #ifdef CGAL_MP_FLOAT_ALLOW_INEXACT
   typedef Tag_true   Has_division;
   typedef Tag_true   Has_sqrt;
@@ -79,7 +79,7 @@ public:
 #endif
 
   typedef Tag_true   Has_exact_ring_operations;
-  typedef Tag_false  Has_exact_division;
+  typedef Tag_true   Has_exact_division;
   typedef Tag_false  Has_exact_sqrt;
 
   typedef short      limb;
