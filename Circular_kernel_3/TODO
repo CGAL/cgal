@@ -3,7 +3,10 @@ Exact_circular_kernel_3
 Lazy
 tests for those
 
-manual
+check do_intersect(sphere,sphere): should be in Kernel, our local 
+version uses alg. nbs..
+
+changer les noms des polynomes (cercles et droites) dans le code... 
 
 --> a transferer dans linear kernel ?
         - unoriented equal (pb general orientation dans noyau cgal...)
