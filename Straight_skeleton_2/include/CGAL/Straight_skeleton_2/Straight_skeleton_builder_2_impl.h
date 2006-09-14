@@ -25,6 +25,11 @@
 
 #include <CGAL/Real_timer.h>
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4355) // complaint about using 'this' to
+#endif                          // initialize a member
+
 CGAL_BEGIN_NAMESPACE
 
 namespace {
@@ -1641,6 +1646,10 @@ typename Straight_skeleton_builder_2<Gt,SS,V>::SSkelPtr Straight_skeleton_builde
 }
 
 CGAL_END_NAMESPACE
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
 #endif // CGAL_STRAIGHT_SKELETON_BUILDER_2_IMPL_H //
 // EOF //
