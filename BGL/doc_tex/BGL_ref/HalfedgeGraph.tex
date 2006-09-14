@@ -25,11 +25,25 @@ The concept \ccRefName\ describes the requirements of a
 \ccAnchor{http://www.boost.org/libs/graph/doc/graph_concepts.html}{Boost Graph}
 representing a subset of a \ccc{HalfedgeDS}.
 
-This graph is a refinement of \ccc{DirectedEmbeededGraph} with the added requirement that for each directed edge \ccc{s->t} it's opposite edge \ccc{t->s} is part of the graph, that is, the directed edges are neccesarily symmetric. Furthermore, because the symmetry is mandatory, there is the added concept of an {\em undirected} edge which corresponds to a pair of symmetric edges as a whole.
+This graph is a refinement of \ccc{DirectedEmbeddedGraph} with the
+added requirement that for each directed edge $\overrightarrow{st}$
+it's opposite edge $\overrightarrow{ts}$ is part of the graph, that is, the
+directed edges are necessarily symmetric. Furthermore, because the
+symmetry is mandatory, there is the added concept of an {\em
+undirected} edge which corresponds to a pair of symmetric edges as a
+whole.
 
-For each pair of {\em symmetric directed edges} \ccc{s->t} and \ccc{t->s}, there is a correspoding {\em undirected} edge \ccc{s-t}. Therefore, the number of undirected edges is exactly half the number of directed edges.
+For each pair of {\em symmetric directed edges} $\overrightarrow{st}$
+and $\overrightarrow{ts}$, there is a correspoding {\em undirected}
+edge $\overline{st}$. Therefore, the number of undirected edges is
+exactly half the number of directed edges.
 
-{\em Symmetric directed edges} are NOT called \ccc{halfedges} (as in a \ccc{HalfedgeDS}) because from the point of view of this graph, being a refinement of a BGL graph, each symmetric directed edge is a {\em whole} edge in itself. In other words, the unqualified term edge refers to one and only one symmetric directed edge and not both. The pair of opposing edges, seen as a unity, is an {\em undirected edge}.
+{\em Symmetric directed edges} are not called \ccc{halfedges} (as in a
+\ccc{HalfedgeDS}) because from the point of view of this graph, being
+a refinement of a {\sc Bgl} graph, each symmetric directed edge is a {\em
+whole} edge in itself. In other words, the unqualified term edge
+refers to one and only one symmetric directed edge and not both. The
+pair of opposing edges, seen as a unity, is an {\em undirected edge}.
  
 This concept {\em does not} specify the existence of a explicit type representing 
 an undirected edge. Instead, if specifies that there is only one type of edge,
@@ -38,11 +52,15 @@ An undirected edge must be implicitely addressed by one single edge\_descriptor,
 and there is no requirement about which of the directed edges of the pair must
 be used to refer to an undirected edge.
 
-All edges are {\em cyclically connected} and each cycle implicitely corresponds to a \ccc{facet} (or \ccc{face} or \ccc{cell}) of the underlying data structure (with the exception of the cycle(s) corresponding to the border(s) of the underlying DS, which might not have an associated facet).
+All edges are {\em cyclically connected} and each cycle implicitely
+corresponds to a \ccc{facet} (or \ccc{face} or \ccc{cell}) of the
+underlying data structure (with the exception of the cycle(s)
+corresponding to the border(s) of the underlying DS, which might not
+have an associated facet).
 
 
 \ccRefines
-\ccc{DirectedEmbeededGraph}
+\ccc{DirectedEmbeddedGraph}
 
 \ccTypes
   \ccNestedType{undirected_edge_iterator}
@@ -53,7 +71,7 @@ All edges are {\em cyclically connected} and each cycle implicitely corresponds 
   
 \ccOperations
 
-Following the BGL interface, the following graph operations are defined as free rather than member functions.
+Following the {\sc Bgl} interface, the following graph operations are defined as free rather than member functions.
 
   \ccFunction
   {template<class Graph>
@@ -68,8 +86,8 @@ Following the BGL interface, the following graph operations are defined as free 
   }
 
 \ccHasModels
-\ccRefIdfierPage{CGAL::Halfedge_graph_traits< CGAL::Polyhedron_3<Traits> const > }\\
-\ccRefIdfierPage{CGAL::Halfedge_graph_traits< CGAL::Polyhedron_3<Traits> > }\\
+\ccRefIdfierPage{CGAL::halfedge_graph_traits< CGAL::Polyhedron_3<Traits> const > }\\
+\ccRefIdfierPage{CGAL::halfedge_graph_traits< CGAL::Polyhedron_3<Traits> > }\\
 
 \end{ccRefConcept}
 
