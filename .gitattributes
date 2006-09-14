@@ -363,13 +363,12 @@ BGL/doc_tex/BGL.tex -text
 BGL/doc_tex/BGL/BGL.tex -text
 BGL/doc_tex/BGL/PkgDescription.tex -text
 BGL/doc_tex/BGL/main.tex -text
-BGL/doc_tex/BGL_ref/ConnectedPlanarDirectedGeometricGraph.tex -text
 BGL/doc_tex/BGL_ref/DirectedEmbeddedGraph.tex -text
 BGL/doc_tex/BGL_ref/EdgeIsBorderPropertyMap.tex -text
 BGL/doc_tex/BGL_ref/Edge_is_border_property.tex -text
 BGL/doc_tex/BGL_ref/HalfedgeGraph.tex -text
 BGL/doc_tex/BGL_ref/Polyhedron_edge_is_border_map.tex -text
-BGL/doc_tex/BGL_ref/Polyhedron_geometric_graph_traits.tex -text
+BGL/doc_tex/BGL_ref/Polyhedron_embeeded_graph_traits.tex -text
 BGL/doc_tex/BGL_ref/Polyhedron_graph_traits.tex -text
 BGL/doc_tex/BGL_ref/Polyhedron_graph_traits_const.tex -text
 BGL/doc_tex/BGL_ref/Polyhedron_halfedge_graph_traits.tex -text
@@ -386,7 +385,7 @@ BGL/doc_tex/BGL_ref/Vertex_point_property.tex -text
 BGL/doc_tex/BGL_ref/intro.tex -text
 BGL/doc_tex/BGL_ref/main.tex -text
 BGL/include/CGAL/boost/graph/BGL_properties.h -text
-BGL/include/CGAL/boost/graph/Geometric_graph_traits.h -text
+BGL/include/CGAL/boost/graph/Embedded_graph_traits.h -text
 BGL/include/CGAL/boost/graph/HalfedgeDS_graph_traits_aux.h -text
 BGL/include/CGAL/boost/graph/Halfedge_graph_traits.h -text
 BGL/include/CGAL/boost/graph/Polyhedron_BGL_properties.h -text
