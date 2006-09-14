@@ -1479,7 +1479,6 @@ Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.eps -text svneol=unset#application/post
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.gif -text svneol=unset#image/gif
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.pdf -text svneol=unset#application/pdf
 Number_types/include/CGAL/Gmpzf.h -text
-Number_types/src/CGAL/Gmpzf.cpp -text
 Optimisation_doc/doc_tex/Optimisation/annulus.eps -text svneol=unset#application/postscript
 Optimisation_doc/doc_tex/Optimisation/annulus.gif -text svneol=unset#image/gif
 Optimisation_doc/doc_tex/Optimisation/annulus.pdf -text svneol=unset#application/pdf

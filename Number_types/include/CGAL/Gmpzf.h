@@ -28,8 +28,11 @@
 #include <mpfr.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Gmpz.h>
-
 #include <boost/operators.hpp>
+#include <iostream>
+#include <cmath>
+#include <limits>
+#include <string>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -50,9 +53,6 @@ private:
   Gmpzf_rep(const Gmpzf_rep &);
   Gmpzf_rep & operator= (const Gmpzf_rep &);
 };
-
-// forward declarations
-class Gmpz;
 
 // class declaration
 // =================
@@ -92,24 +92,20 @@ private:
   // - number is in canonical form, i.e.(m,e) == 0 or m is odd
   Exponent  e; 
 
-  // some static helpers
-  static const int double_precision;  // std::numeric_limits<double>::digits
-  static Gmpzf s;                     // for intermediate computations 
-
 public:
   // access
   // ------
-  const mpz_t& Gmpzf::man() const 
+  const mpz_t& man() const 
   {
     return Ptr()->mpZ;
   }
 
-  mpz_t& Gmpzf::man() // actually, this shouldn't be public
+  mpz_t& man()
   {
     return ptr()->mpZ;
   }
 
-  const Gmpzf::Exponent& Gmpzf::exp() const
+  const Exponent& exp() const
   {
     return e;
   }
@@ -165,11 +161,13 @@ public:
       e = 0;
       return;
     }
+    static int p = std::numeric_limits<double>::digits;
     CGAL_assertion(is_finite(d) && is_valid(d));
     int exp;
     double x = std::frexp(d, &exp); // x in [1/2, 1], x*2^exp = d
-    mpz_init_set_d (man(), std::ldexp( x, double_precision)); // an integer   
-    e = exp - double_precision;
+    mpz_init_set_d (man(), // to the following integer:   
+		    std::ldexp( x, p)); 
+    e = exp - p;
     canonicalize();
   }
 
@@ -221,12 +219,399 @@ Gmpzf gcd ( const Gmpzf& a, int i);
 Gmpzf div ( const Gmpzf& a, const Gmpzf& b);
 Gmpzf sqrt (  const Gmpzf& b);
 
+
+// implementation
+// ==============
+
+// arithmetics 
+// -----------
+
+inline
+Gmpzf Gmpzf::operator-() const 
+{
+  Gmpzf result;
+  mpz_neg (result.man(), man());
+  result.e = exp();
+  CGAL_postcondition(is_canonical());
+  return result;
+}
+
+inline
+Gmpzf& Gmpzf::operator+=( const Gmpzf& b)
+{  
+  Gmpzf result;
+  if (b.is_zero()) return *this; // important in sparse contexts
+  const mpz_t *a_aligned, *b_aligned;
+  align (a_aligned, b_aligned, e, *this, b);
+  mpz_add(result.man(), *a_aligned, *b_aligned);
+  swap(result);
+  canonicalize();
+  return(*this);
+}
+
+inline
+Gmpzf& Gmpzf::operator+=( int i)
+{
+  return operator+=(Gmpzf (i));   // could be optimized, but why?
+}
+
+inline
+Gmpzf& Gmpzf::operator-=( const Gmpzf& b)
+{    
+  Gmpzf result;
+  if (b.is_zero()) return *this; // important in sparse contexts
+  const mpz_t *a_aligned, *b_aligned;
+  align (a_aligned, b_aligned, e, *this, b);
+  mpz_sub(result.man(), *a_aligned, *b_aligned);
+  swap(result);
+  canonicalize();
+  return(*this);   
+}
+
+inline
+Gmpzf& Gmpzf::operator-=( int i)
+{
+  return operator-=(Gmpzf (i));   // could be optimized, but why?
+}
+
+inline
+Gmpzf& Gmpzf::operator*=( const Gmpzf& b)
+{ 
+  Gmpzf result;
+  mpz_mul(result.man(), man(), b.man());
+  e += b.exp();
+  swap (result);
+  canonicalize();
+  return *this; 
+}  
+
+inline
+Gmpzf& Gmpzf::operator*=( int i)
+{
+  Gmpzf result;
+  mpz_mul_si(result.man(), man(), i);   
+  swap (result);
+  canonicalize();
+  return *this; 
+}
+
+// *this = m1 * 2 ^ e1 = a_aligned * 2 ^ rexp
+//     b = m2 * 2 ^ e2 = b_aligned * 2 ^ rexp,   where rexp = min (e1, e2)
+// 
+// => a / b = a div b = (a_aligned div b_aligned)
+//            a mod b = (a_aligned mod b_aligned) * 2 ^ rexp
+inline
+Gmpzf& Gmpzf::operator/= (const Gmpzf& b)
+{
+  CGAL_precondition(!b.is_zero());
+  Gmpzf result;
+  const mpz_t *a_aligned, *b_aligned;
+  align (a_aligned, b_aligned, e, *this, b);
+  mpz_tdiv_q (result.man(), *a_aligned, *b_aligned); // round towards zero
+  e = 0; 
+  swap(result);
+  canonicalize();
+  return(*this);   
+}
+
+inline
+Gmpzf& Gmpzf::operator%= (const Gmpzf& b)
+{
+  CGAL_precondition(!b.is_zero());
+  Gmpzf result;
+  const mpz_t *a_aligned, *b_aligned;
+  align (a_aligned, b_aligned, e, *this, b);
+  mpz_tdiv_r (result.man(), *a_aligned, *b_aligned);
+  swap(result);
+  canonicalize();
+  return(*this);   
+}
+
+inline
+Gmpzf& Gmpzf::operator/= (int i)
+{
+  return operator/= (Gmpzf(i));
+}
+
+inline
+Gmpzf& Gmpzf::operator%= (int i) 
+{
+  return operator%= (Gmpzf(i));
+}
+
+inline
+bool Gmpzf::is_zero() const
+{
+  return mpz_sgn( man()) == 0;
+}
+
+inline
+Sign Gmpzf::sign() const 
+{
+  return static_cast<Sign>(mpz_sgn( man()));
+}
+
+inline
+Gmpzf Gmpzf::exact_division(const Gmpzf& b) const
+{
+  Gmpzf result;
+  mpz_divexact(result.man(), man(), b.man());
+  result.e = exp()-b.exp(); 
+  result.canonicalize();
+  CGAL_postcondition (*this == b * result);
+  return result;
+}
+
+inline
+Gmpzf Gmpzf::gcd (const Gmpzf& b) const
+{
+  Gmpzf result;
+  mpz_gcd (result.man(), man(), b.man()); // exponent is 0
+  result.canonicalize();
+  return result;  
+}
+
+inline
+Gmpzf Gmpzf::sqrt() const
+{
+  // is there a well-defined sqrt at all?? Here we do the
+  // following: write *this as m * 2 ^ e with e even, and 
+  // then return sqrt(m) * 2 ^ (e/2)
+  Gmpzf result;
+  // make exponent even
+  if (exp() % 2 == 0) {
+    mpz_set (result.man(), man());
+  } else {
+    mpz_mul_2exp (result.man(), man(), 1); 
+  }
+  mpz_sqrt(result.man(), result.man());
+  result.e = exp() / 2;
+  result.canonicalize();
+  return result;  
+}
+
+inline
+Comparison_result Gmpzf::compare (const Gmpzf &b) const
+{
+  const mpz_t *a_aligned, *b_aligned;
+  Exponent rexp; // ignored
+  align (a_aligned, b_aligned, rexp, *this, b);
+  int c = mpz_cmp(*a_aligned, *b_aligned);
+  if (c < 0) return SMALLER;
+  if (c > 0) return LARGER;
+  return EQUAL;
+}
+
+inline  
+void Gmpzf::canonicalize()
+{
+  if (!is_zero()) {
+    // chop off trailing zeros in m
+    unsigned long zeros = mpz_scan1(man(), 0);
+    mpz_tdiv_q_2exp( man(), man(), zeros);  // bit-wise right-shift
+    e += zeros;
+  } else {
+    e = 0;
+  }
+  CGAL_postcondition(is_canonical());
+}
+
+inline
+bool Gmpzf::is_canonical() const
+{
+  return (is_zero() && e==0) || mpz_odd_p (man());
+}
+
+// align a and b such that they have the same exponent:
+// a = m1 * 2 ^ e1 -> a_aligned * 2 ^ rexp,
+// b = m2 * 2 ^ e2 -> b_aligned * 2 ^ rexp,   where rexp = min (e1, e2)
+// 
+// function sets (pointers to) a_aligned and b_aligned and rexp;
+// it uses the static s to store the shifted number
+inline
+void Gmpzf::align ( const mpz_t*& a_aligned, 
+			   const mpz_t*& b_aligned, 
+			   Exponent& rexp, 
+			   const Gmpzf& a, const Gmpzf& b) {
+  static Gmpz s;
+  switch (CGAL::compare (b.exp(), a.exp())) {
+  case SMALLER:
+    // leftshift of a to reach b.exp()
+    mpz_mul_2exp (s.mpz(), a.man(), a.exp() - b.exp()); 
+    a_aligned = &s.mpz();  // leftshifted a
+    b_aligned = &b.man();  // b
+    rexp = b.exp();
+    break;
+  case LARGER:
+    // leftshift of b to reach a.exp()
+    mpz_mul_2exp (s.mpz(), b.man(), b.exp() - a.exp());
+    a_aligned = &a.man(); // a
+    b_aligned = &s.mpz(); // leftshifted b
+    rexp = a.exp();
+    break;
+  case EQUAL:
+    a_aligned = &a.man();
+    b_aligned = &b.man();
+    rexp = a.exp();
+  }
+}
+
+
+// global functions
+// ================
+
+// to_double functions
+// -------------------
+inline
+double to_double( const Gmpzf& a ) 
+{
+   return std::ldexp( mpz_get_d(a.man()), a.exp());
+}
+
+
+// overload to protect against overflow
+inline
+double to_double( const Quotient<Gmpzf > &q)
+{
+  // convert quotient of mantissas, then shift by difference of exponents
+  // note: this fails if difference of exponents doesn't fit into an int
+  return std::ldexp( 
+     to_double(CGAL::Quotient<Gmpz>(
+       q.numerator().man(), q.denominator().man())),
+       q.numerator().exp() -q.denominator().exp()
+     );  
+}
+
+
+// input/output
+// ------------
+inline
+std::ostream& operator<< (std::ostream& os, const Gmpzf& a) 
+{
+  return os << CGAL::to_double(a);
+}
+
+inline
+std::ostream& print (std::ostream& os, const Gmpzf& a) 
+{
+  return os << a.man() << "*2^" << a.exp();
+}
+
+inline
+std::istream&  operator>> ( std::istream& is, Gmpzf& a) 
+{
+  // simply read from double
+  double d;
+  is >> d;
+  if (is.good()) 
+    a = Gmpzf(d);
+  return is;
+}
+
+// comparisons
+// -----------
+inline
+Comparison_result compare (Gmpzf &a, const Gmpzf &b)
+{
+  return a.compare(b);
+}
+
+inline
+bool operator<(const Gmpzf &a, const Gmpzf &b)
+{ 
+  return a.compare(b) == SMALLER;
+}
+
+inline
+bool operator==(const Gmpzf &a, const Gmpzf &b)
+{ 
+  return ( (mpz_cmp(a.man(), b.man()) == 0) && a.exp() == b.exp() );
+}
+
+// mixed operators
+inline
+bool operator<(const Gmpzf &a, int b)
+{
+  return operator<(a, Gmpzf(b));
+}
+
+inline
+bool operator==(const Gmpzf &a, int b)
+{
+  return operator==(a, Gmpzf(b));
+}
+
+inline
+bool operator>(const Gmpzf &a, int b)
+{
+  return operator>(a, Gmpzf(b));
+}
+
+inline
+Sign sign (const Gmpzf &a)
+{
+  return a.sign();
+}
+
+inline
+bool is_finite(const Gmpzf &)
+{
+  return true;
+}
+ 
+inline
+bool is_valid(const Gmpzf &)
+{
+  return true;
+}
+
+inline
+io_Operator io_tag(const Gmpzf &)
+{
+  return io_Operator();
+}
+
+// arithmetic functions
+// --------------------
+
+// div, sqrt,...(interface like Gmpz)
+inline
+Gmpzf exact_division( const Gmpzf& a, const Gmpzf& b) 
+{
+  return a.exact_division(b);
+}
+
+inline
+Gmpzf gcd ( const Gmpzf& a, const Gmpzf& b)
+{
+  return a.gcd(b);
+}
+
+inline
+Gmpzf gcd ( const Gmpzf& a, int i)
+{
+  return gcd (a, Gmpzf(i)); // optimization possible, but why?
+}
+
+inline
+Gmpzf div ( const Gmpzf& a, const Gmpzf& b)
+{
+  return a / b;
+}
+
+inline
+Gmpzf sqrt (  const Gmpzf& b) 
+{
+  return b.sqrt();
+}
+
+
+CGAL_END_NAMESPACE
+
 #if ! defined( CGAL_DONT_USE_LINK_PRAGMA) && defined( _MSC_VER )
     #pragma comment(lib, "gmp.lib")
     #pragma comment(lib, "mpfr.lib")
 #endif 
-
-CGAL_END_NAMESPACE
 
 #endif // CGAL_GMPZF_H
 
