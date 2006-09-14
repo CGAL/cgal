@@ -35,7 +35,7 @@ LDFLAGS = \
           $(CGAL_LDFLAGS) \
           $(GLUT_LIBS)
 
-EXE_EXT = .exe
+EXE_EXT = #.exe
 
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \

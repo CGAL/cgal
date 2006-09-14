@@ -1,13 +1,14 @@
 Program blind
 -----------------
-takes a filename.off file as input,
+takes a polyhedron (filename.off file) as input,
 it computes a jet fitting to set the monge data at each vertex 
-computes the ridge lines
+   computes the ridge lines and the umbilics
 
 it outputs the results in :
-1. filename.off.4ogl.txt  which can be visualized with 
-	the demo program visu.exe
-2. if option -v, filename.off.verb.txt contains human readable results
+1. filename.offRIDGES-d?-m?-t?-a?-p?.4ogl.txt  which can be visualized with 
+	the demo program introspect-qt
+2. if option -v, filename.offRIDGES-d?-m?-t?-a?-p?.verb.txt contains human readable results
+
 
 Usage is : blind  with options    
     "f:fName <string>",	 // filename.off
@@ -19,50 +20,23 @@ Usage is : blind  with options
     "p:npoints <int>",   //# points
 			0 means this option is not considered, this is the default
 			n>=1 fixes the nb of points to be used
-  "u:umb_size  <number>",  //size of umbilic patches (as multiple of 1ring size)
-    "v|",                // verbose?
+    "u:umb_size  <number>",  //size of umbilic patches (as multiple of 1ring size)
+    "v|",                // verbose, filename.offRIDGES-d?-m?-t?-a?-p?.4ogl.txt contains human readable results
  
 Note : if the nb of collected points is less than the required min number of 
    points to make the approxiamtion possible (which is constrained by the deg)
    then the program exits.
 
  
-
- blind -f data/models/aim@shape/brain.off -d4 -m4 -a3 -t4
-
-
-
- ./blind -f data/ellipe0.003.off -d4 -m4 -a3 -t4
-./blind -f data/poly2x^2+y^2-0.062500.off -d4 -m4 -a0 -t4
- ./blind -f data/poly2x^2+y^2-0.062500.off -d4 -m4 -p20 -t4
-
- ./blind -f data/ellipsoid_u_0.02.off -d4 -m4 -a3 -u2 -t4  ok 4 wedge umbilics
+EXAMPLES
+---------------------------------------------------------
+./blind -f data/ellipsoid_u_0.02.off -d4 -m4 -a3 -t4 -v
 
 visu with:
-
-ridge_introspect-qt data/models/mailleurNew/surfaces/off/blend_c.00005.off data/data_models_mailleurNew_surfaces_off_blend_c.00005.offRIDGES-d4-m4-t3-a3-p0.4ogl.txt
-*
-introspect-qt ../../examples/Ridges_3/data/poly2x^2+y^2-0.062500.off ../../examples/Ridges_3/data_poly2x^2+y^2-0.062500.off.4ogl.txt
-
-
-sur ellipsoid plus precise:
-./blind -f data/ellipsoid_u_0.02 -d4 -m4 -a3 -t4
-../../demo/Ridges_3/introspect-qt data/ellipsoid_u_0.02.off data_ellipsoid_u_0.02.4ogl.txt
-si dans demo dir:
-introspect-qt ../../examples/Ridges_3/data/ellipsoid_u_0.02 ../../examples/Ridges_3/data_ellipsoid_u_0.02.4ogl.txt
+ ../../demo/Ridges_3/introspect-qt data/ellipsoid_u_0.02.off data/data_ellipsoid_u_0.02.offRIDGES-d4-m4-t4-a3-p0.4ogl.txt 0 0
 
 
 
-----------------------------Surface de mailleur2 de Steve
--------------------------------------
-Ellipsoid
 
- ./txt/umbilics_ridges_4.ex -f off/mailleur2/ellipsoid_u_0.05  -s -A0 -P -D1 -n -u1 -d4
 
- ./txt/umbilics_ridges_4.ex -f off/mailleur2/ellipsoid_u_0.02  -s -A3 -P -D1 -n -d4 -u2 
-avec -u 1, 2, 3 le nombre de faux umbilics duminiue jusqu'a 0;
-avec -A0: ridges assez irregulier
-     -A3: plus reg, un ridge isole, reduit le nb de faux umbilics 
-
-./txt/umbilics_ridges_4.ex -f off/mailleur2/ellipsoid_u_0.01 -s -A5 -P -D1 -n -d4 
-ok, moins de A5 introduit bp de bruit
+ blind -f data/models/aim@shape/brain.off -d4 -m4 -a3 -t4

@@ -33,7 +33,7 @@ class Umbilic
   const Vertex_handle vertex() const { return v;}
   const Umbilic_type umbilic_type() const { return umb_type;}
   Umbilic_type& umbilic_type() { return umb_type;}
-  const std::list<Halfedge_handle> contour_list() const { return contour;}
+  const std::list<Halfedge_handle>& contour_list() const { return contour;}
   std::list<Halfedge_handle>& contour_list() { return contour;}
 
  protected:
@@ -60,7 +60,7 @@ operator<<(std::ostream& out_stream, const Umbilic<Poly>& umbilic)
     case CGAL::UMBILIC_NON_GENERIC: out_stream << "non generic" << std::endl; break;
     case CGAL::UMBILIC_WEDGE: out_stream << "wedge" << std::endl; break;
     case CGAL::UMBILIC_TRISECTOR: out_stream << "trisector" << std::endl; break;
-    default : out_stream << "Something wrong appends for sure..." << std::endl; break;
+    default : out_stream << "Something wrong occured for sure..." << std::endl; break;
     }
   return out_stream;
 }

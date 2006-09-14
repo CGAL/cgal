@@ -1,5 +1,6 @@
 
 \newtheorem{definition}{Definition.}
+\newcommand{\hot}{h.o.t}%[0]
 
 
 This chapter describes the \cgal's package for the extraction of
@@ -11,9 +12,13 @@ ridge lines. Ridges are curves of {\em extremal} curvature and
 therefore encode important informations used in segmentation,
 registration, matching and surface analysis.  Based on the results of
 the article
-\cite{rr}, we propose several algorithms to identify and extract
+\cite{rr}, we propose algorithms to identify and extract
 different parts of this singular ridge curve as well as umbilics on a
-surface given as a triangular mesh.
+surface given as a triangular mesh. Differential quantities associated
+to the mesh vertices are assumed to be given for these algorithms;
+such quantities may be computed by the package {\em Estimation of
+Local Differential Properties of Sampled Surfaces via Polynomial
+Fitting}.
 
 
 \subsection{Overview}
@@ -56,7 +61,7 @@ the inner product induced by the ambient Euclidean space, and $dk_1$,
 $dk_2$ the gradients of the principal curvatures. Ridges, illustrated
 on Figs \ref{pict:ellipsoid_ridges} and \ref{fig:ridges_ellipsoid},
 are defined by:
-%%
+
 \begin{definition}
 \label{def:ridge-extrema}
 A non umbilical point is called
@@ -89,6 +94,29 @@ which can be seen as the visually most salient curves on a surface are
 also of interest. A crest line is an elliptic ridge which is a maximum
 of $\max(|k_1|,|k_2|)$. Hence we provide two additional ridge types :
 \ccc{BLUE_CREST} and \ccc{RED_CREST}.
+
+
+
+At any point of the surface which is not an umbilic, principal
+directions $d_1, d_2$ are well defined, and these (non oriented)
+directions together with the normal vector $n$ define two direct
+orthonormal frames. If $v_1$ is a unit vector of direction $d_1$ then
+there exists a unique unit vector $v_2$ so that $(v_1,v_2,n)$ is
+direct (and the other possible frame is $(-v_1,-v_2,n)$). In the
+coordinate systems $(v_1,v_2,n)$, the surface has the following
+canonical form~:
+
+
+
+
+
+
+
+
+
+
+
+
 
 Weigths are associated to each line
 \begin{itemize}

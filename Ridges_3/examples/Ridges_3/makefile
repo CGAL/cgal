@@ -7,7 +7,7 @@
 # Choose the right include file from the <cgalroot>/make directory.
 include $(CGAL_MAKEFILE)
 
-PROFOPT=  -O3 #-g 
+PROFOPT=  -g #-O3 # 
 CFLAGS=${PROFOPT} 
 #---------------------------------------------------------------------#
 #                    compiler flags
@@ -21,21 +21,27 @@ CXXFLAGS = \
            -I../../../Jet_fitting_3/include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
-	   $(LAPACK_INCDIRS) 
+	   $(LAPACK_INCDIRS) \
+	   $(CFLAGS)
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
 F2CDIR  = $(LAPACK_DIR)/F2CLIBS
-LAPACK_LDLIBS  = -L$(LAPACK_DIR) -L$(F2CDIR) \
-	-llapack_LINUX \
-          -lblas_LINUX -ltmglib_LINUX \
-          -lF77 -lI77 -lm -lc
+#LAPACK_LDLIBS  = -L$(LAPACK_DIR) -L$(F2CDIR) \
+#	-llapack_LINUX \
+#          -lblas_LINUX -ltmglib_LINUX \
+#          -lF77 -lI77 -lm -lc
 
-#LAPACK_LDLIBS  = \
-#	-l$(LAPACK_DIR)/lapack_LINUX.a \
+#LAPACK_LDLIBS  = 	-l$(LAPACK_DIR)/lapack_LINUX.a \
 #          -l$(LAPACK_DIR)/blas_LINUX.a -l$(LAPACK_DIR)/tmglib_LINUX.a \
 #          $(F2CDIR)/libF77.a $(F2CDIR)/libI77.a -lm -lc
+
+#this is the only way to get through the linking... for me, Marc
+F2CDIR  = $(LAPACK_DIR)/F2CLIBS
+LAPACK_LDLIBS  = $(LAPACK_DIR)/lapack_LINUX.a \
+           $(LAPACK_DIR)/blas_LINUX.a $(LAPACK_DIR)/tmglib_LINUX.a \
+           $(F2CDIR)/libF77.a $(F2CDIR)/libI77.a -lm -lc
 
 LIBPATH = \
           $(CGAL_LIBPATH)
@@ -74,12 +80,15 @@ depend:
 
 PolyhedralSurf.o: /usr/include/stdlib.h /usr/include/features.h
 PolyhedralSurf.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
-PolyhedralSurf.o: /usr/lib/gcc/i386-redhat-linux/3.4.4/include/stddef.h
-PolyhedralSurf.o: /usr/include/stdio.h /usr/include/bits/types.h
+PolyhedralSurf.o: /usr/include/sys/types.h /usr/include/bits/types.h
 PolyhedralSurf.o: /usr/include/bits/wordsize.h /usr/include/bits/typesizes.h
+PolyhedralSurf.o: /usr/include/time.h /usr/include/endian.h
+PolyhedralSurf.o: /usr/include/bits/endian.h /usr/include/sys/select.h
+PolyhedralSurf.o: /usr/include/bits/select.h /usr/include/bits/sigset.h
+PolyhedralSurf.o: /usr/include/bits/time.h /usr/include/sys/sysmacros.h
+PolyhedralSurf.o: /usr/include/bits/pthreadtypes.h /usr/include/bits/sched.h
+PolyhedralSurf.o: /usr/include/alloca.h /usr/include/stdio.h
 PolyhedralSurf.o: /usr/include/libio.h /usr/include/_G_config.h
 PolyhedralSurf.o: /usr/include/wchar.h /usr/include/bits/wchar.h
-PolyhedralSurf.o: /usr/include/gconv.h
-PolyhedralSurf.o: /usr/lib/gcc/i386-redhat-linux/3.4.4/include/stdarg.h
-PolyhedralSurf.o: /usr/include/bits/stdio_lim.h
+PolyhedralSurf.o: /usr/include/gconv.h /usr/include/bits/stdio_lim.h
 PolyhedralSurf.o: /usr/include/bits/sys_errlist.h PolyhedralSurf_operations.h
