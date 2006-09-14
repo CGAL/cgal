@@ -4,7 +4,7 @@
 
 \ccc{AdaptableUnaryFunction} computes for a given real embeddable 
 number $x$ a double interval containing $x$. 
-This interval is represented by \ccc{CGAL::Interval_nt}. 
+This interval is represented by \ccc{std::pair<double,double>}. %\ccc{CGAL::Interval_nt}. 
  
 \ccRefines 
 
@@ -16,7 +16,7 @@ This interval is represented by \ccc{CGAL::Interval_nt}.
 \ccTypedef{typedef RealEmbeddableTraits::Real_embeddable argument_type;}{}
 
 \ccOperations
-\ccMethod{result_type operator()(const argument_type&  x);}
+\ccMethod{result_type operator()(argument_type  x);}
         { computes a double interval containing $x$.}
 
 %\ccHasModels

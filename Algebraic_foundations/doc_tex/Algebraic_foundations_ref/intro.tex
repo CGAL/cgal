@@ -4,12 +4,12 @@
 
 \ccChapterAuthor{Michael Hemmer and Who Soever}
 
-\section{todo open questions:}
-
+\section{todo:}
 \begin{itemize} 
-\item Is\_exact\_tag: This tag is currently provided by \ccc{AlgebraicStructureTraits}\\
-Question: moved it to a global place? 
-\item \ccc{AlgebraicStructureTraits::Sqrt} has a special definition for Integer. \\
+\item add models to 'HasModels'
+\item Check types in functors 
+\item Introduce a IsSquare  rm IntegralSqrt\\
+      \ccc{AlgebraicStructureTraits::Sqrt} has a special definition for Integer. \\
         A type may provide this functor even if the set of 
         numbers it models does not contain real square roots in general. 
         The most important example are number types modeling the integers. 
@@ -18,10 +18,52 @@ Question: moved it to a global place?
         In EXACUS this is used to test an integer to be an perfect square. \\
         Question: Should we introduce an extra functor for that?
         see: \ccc{AlgebraicStructureTraits::Integral_sqrt}
-\item The concept \ccc{FieldWithSqrt} (also FieldWithKthRoot,FieldWithRootOf) 
+
+\item TODO: solve this by using unit normal within text?
+      The concept \ccc{FieldWithSqrt} (also FieldWithKthRoot,FieldWithRootOf) 
       implies that the number type is RealEmbeddable, in particular RootOf talks 
       about the real root of an polynomial.\\
-      Question: Should FieldWithSqrt refine RealEmbeddable?  
+      Question: Should FieldWithSqrt refine RealEmbeddable?
+      
+\end{itemize}
+
+\section{remarks}
+\begin{itemize}
+\item \ccc{AlgebraicStructureTraits::Is_exact_tag}: 
+This tag is provided by \ccc{AlgebraicStructureTraits} since it indicates the 
+exactness of algebraic operations, where functors in \ccc{RealEmbeddableTraits}
+are considered exact in any case. \\
+The exactness covers all functors that are required by the 
+algebraic structure concept only. 
+That is: an exact \ccc{Field} may have a Sqrt functor that is not exact. \\
+
+\item \ccc{AlgebraicStructureTraits::RootOf} is available as functor only.\\
+
+\item gcd(0,0)=0, in particular gcd(x,0) is allowed now and is the unit normal of x. 
+      It fits very well with the definition, 
+      \ccc{AlgebraicStructureTraits::Gcd} and avoids handling of special cases. \\
+
+\item \ccc{mod}, \ccc{div}, \ccc{div_mod} and functors:
+        It is not that clear, how to choose the sign of the remainder for negative inputs. 
+        however, the behavior of div and mod must be consistent: \\
+        That is: $ x = qy + r $, where $q= div(x,y)$ and $r = mod(x,y)$.
+        
+        But, there seems to be no universally observed convention on how to choose 
+        the sign. (In particular, the ISO C++ Standard fixes none for the modulo operation 
+        on the built-in integral types.)
+
+        Todo: Decide what to do about the sign ambiguity for the Mod operation of Euclidean rings.\\
+        Proposal: choose the unit normal (positive) remainder. In other words div is rounded to -oo.\\
+        Example: -5 div 3 is -2 rest 1 \\
+        This also coincides with the definition of the gcd. 
+\end{itemize}
+
+
+\section{open questions}
+\begin{itemize} 
+\item What about \ccc{is_valid}
+\item what about \ccc{is_finite}
+
 \item ToInterval vs ToDoubleInterval The old CGAL function \ccc{CGAL::to_interval}
        returns a
       std::pair<double>, we decided to keep the name and interface, since it is not 
@@ -30,10 +72,14 @@ Question: moved it to a global place?
       boundary type.\\
       We therefore decided not to use the name ToDoubleInterval in order to keep 
       this name free for more general interval types. \\
-      e.g. ToRationalInterval ToBigFloatInterval. 
-\item \ccc{AlgebraicStructureTraits::RootOf} is available as functor only.
-\item gcd(0,0)=0 i.e. gcd(x,0)=x is allowed now. 
-      It fits very well with the definition, \ccc{AlgebraicStructureTraits::Gcd} and avoids handling of special cases. 
+      e.g. ToRationalInterval ToBigFloatInterval. \\
+      \\ 
+      ToDoubleInterval computes for a given real embeddable number $x$ a double interval containing $x$. \\
+      NOTE: The type of \ccc{CGAL::Double_interval} is not clear yet. 
+      Options are \ccc{CGAL::Interval_nt}, \ccc{boost::interval<double>}
+\item What is to be done with the old \ccc{Number_type_traits} ? remove? 
+\item What about \ccc{Rational_traits} (EXACUS has a more flexible version called \ccc{Fraction_traits})
+
 \end{itemize}
 
 \section{Classified Reference Pages}
@@ -123,7 +169,7 @@ Question: moved it to a global place?
 \subsubsection{Related Classes}
 \ccRefIdfierPage{CGAL::Real_embeddable_traits}
 
-\subsection*{Releated Global functions}
+\subsection*{Related Global functions}
 
 \ccRefIdfierPage{abs}\\
 \ccRefIdfierPage{compare}\\

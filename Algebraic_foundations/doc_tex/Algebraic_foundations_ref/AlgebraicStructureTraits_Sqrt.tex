@@ -15,12 +15,12 @@
 
 \ccOperations
 \ccSetThreeColumns{xxxxxxxxxx}{xxxxx}{}
-\ccMethod{result_type operator()(
-        const argument_type&  x);}{ returns  $\sqrt(x)$.\\
+\ccMethod{result_type operator()(argument_type  x);}
+        { returns  $\sqrt{x}$.\\
         {\tt
 
-        NOTE: There are models that provide an exact sqrt i.e. CORE::Expr
-        There are models that provide an inexact sqrt i.e. double \\
+        NOTE: There are models that provide an exact sqrt e.g. CORE::Expr
+        There are models that provide an inexact sqrt e.g. double \\
 
         BUT FROM EXACUS: \\
         A number type may provide this functor even if the set of 
@@ -28,8 +28,8 @@
         models does not contain real square roots in general. 
         The most important example are number types modeling the integers. 
         For them, Sqrt()(x) has to return the largest integer not exceeding 
-        the square root of x.\\}       
-
+        the square root of x.\\
+        }       
         }
 
 %\ccHasModels

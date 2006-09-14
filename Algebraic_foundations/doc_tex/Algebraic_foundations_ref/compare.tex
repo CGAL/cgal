@@ -8,9 +8,9 @@ is a model of the \ccc{RealEmbeddable} concept.
 
 \ccInclude{CGAL/number_utils.h}
 
-\ccFunction{template <class NT1, class NT2>
-            Comparison_result compare(const NT1 &n1, const NT2 &n2);}
-{returns \ccc{LARGER} iff $n1>n2$, \ccc{SMALLER} iff $n1<n2$, and \ccc{EQUAL}
+\ccFunction{template <class NT>
+            Comparison_result compare(const NT &x, const NT &y);}
+{returns \ccc{LARGER} iff $x>y$, \ccc{SMALLER} iff $x<y$, and \ccc{EQUAL}
 otherwise.}
 
 \ccRefConceptPage{RealEmbeddable}\\

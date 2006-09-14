@@ -12,7 +12,7 @@ unit-normal (i.e. have unit part 1).
 
 $gcd(0,0)$ is defined as $0$, since $0$ is the greatest element with respect 
 to the partial order of divisibility. This is because an element $a \in R$ is said to divide $b \in R$, iff $\exists r \in R$ such that $a \cdot r = b$. 
-Thus, $0$ is divided by every element of the Ring, i.e. by itself. 
+Thus, $0$ is divided by every element of the Ring, in particular by itself. 
 
 \ccRefines 
 
@@ -27,9 +27,9 @@ Thus, $0$ is divided by every element of the Ring, i.e. by itself.
 
 \ccOperations
 \ccSetThreeColumns{xxxxxxxxxx}{xxxxx}{}
-\ccMethod{result_type operator()(
-        const first_argument_type&  x, 
-        const second_argument_type& y);}{ returns  $gcd(x,y)$. }
+\ccMethod{result_type operator()(first_argument_type  x, 
+                                 second_argument_type y);}
+        { returns  $gcd(x,y)$. }
 
 %\ccHasModels
 
