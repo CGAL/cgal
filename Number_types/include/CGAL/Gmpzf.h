@@ -113,7 +113,7 @@ public:
   // construction
   // ------------
 
-  Gmpzf::Gmpzf( )
+  Gmpzf( )
     : e(0)
   {
     mpz_init(man());
@@ -121,7 +121,7 @@ public:
   }
 
 
-  Gmpzf::Gmpzf(const mpz_t z)
+  Gmpzf(const mpz_t z)
     : e(0)
   { 
     mpz_init_set(man(), z); 
@@ -129,7 +129,7 @@ public:
   }  
 
 
-  Gmpzf::Gmpzf(const Gmpz& n )
+  Gmpzf(const Gmpz& n )
     : e(0)
   { 
     mpz_init_set(man(), n.mpz()); 
@@ -137,7 +137,7 @@ public:
   }
 
 
-  Gmpzf::Gmpzf( int i)
+  Gmpzf( int i)
     : e(0)
   {   
     mpz_init_set_si( man(), i);  
@@ -145,7 +145,7 @@ public:
   }
 
 
-  Gmpzf::Gmpzf( long l)
+  Gmpzf( long l)
     : e(0)
   {   
     mpz_init_set_si( man(), l);
@@ -153,7 +153,7 @@ public:
   }
 
 
-  Gmpzf::Gmpzf( double d)    
+  Gmpzf( double d)    
   {
     Protect_FPU_rounding<> P(CGAL_FE_TONEAREST);
     if (d == 0) {
