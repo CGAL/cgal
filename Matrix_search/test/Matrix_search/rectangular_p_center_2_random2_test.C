@@ -18,10 +18,6 @@
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
 
-#if defined(BOOST_MSVC)
-#  pragma warning(disable:4355) // complaint about using 'this' to
-#endif                          // initialize a member
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/point_generators_2.h>
@@ -40,6 +36,10 @@
 #include <iostream>
 #include <iterator>
 #endif // CGAL_PCENTER_NO_OUTPUT
+
+#if defined(BOOST_MSVC)
+#  pragma warning(disable:4355) // complaint about using 'this' to
+#endif                          // initialize a member
 
 using std::vector;
 using std::back_inserter;
