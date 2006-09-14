@@ -26,65 +26,37 @@ The algorithm presented here can simplify any {\em 2-manifold surface with borde
 
 %% figure of edge collapse
 
-Edges are collapsed according to a priority given by a user-supplied {\em cost} function, and the coordinates of the replacing vertex is determined by another user-supplied {\em placement} function. The algorithm terminates when a user-supplied {\em stop condition} is met, such as reaching the desired number of edges.
+Edges are collapsed according to a priority given by a user-supplied {\em cost} function, and the coordinates of the replacing vertex are determined by another user-supplied {\em placement} function. The algorithm terminates when a user-supplied {\em stop condition} is met, such as reaching the desired number of edges.
 
-The algorithm implemented here is generic in the sense that it doesn't require the surface to be of any concrete type. Instead, it defines the concept of a {\em Triangulated Surface Mesh} (\ccc{TSM}), and any surface that is a model of that concept can be simplified. Furthermore, the concept is defined not in terms of a monolithic class, but in terms of a set of functions and traits making it easy to adapt any concrete surface type without much work. In particular, the concept definition is based on the well known {\em Boost Graph Library ({\sc Bgl})}.
+The algorithm implemented here is generic in the sense that it doesn't require the surface to be of any concrete type. Instead, it defines the concept of a \ccc{TriangulatedSurfaceMesh} and any surface that is a model of that concept can be simplified. Furthermore, the concept is defined not in terms of a monolithic class, but in terms of a set of functions and traits making it easy to adapt any concrete surface type without much work. In particular, the concept definition is based on the well known
+{\em Boost Graph Library} \ccAnchor{http://www.boost.org/libs/graph/doc/index.html}{\sc Bgl}.
 
-The design is {\em policy-based}, meaning that you can customize some aspects of the process by passing a set of {\em policy objects}. Each policy object specifies a particular aspect of the algorithm, such as how edges are selected and where the replacement vertex is placed. All policies have a sensible default so you don't need to learn about them unless you need a non-default behaviour.
+The design is \ccAnchor{http://en.wikipedia.org/wiki/Policy-based_design}{\em policy-based},
+meaning that you can customize some aspects of the process by passing a set of {\em policy objects}. Each policy object specifies a particular aspect of the algorithm, such as how edges are selected and where the replacement vertex is placed. All policies have a sensible default so you don't need to learn about them unless you need a non-default behaviour.
 
 \section{Definitions\label{SurfaceMeshSimplification:SecDefinitions}}
 
-\subsection{TSM - Triangulated Surface Mesh}
+\subsection{Triangulated Surface Mesh}
 
-Informally speaking, a {\em triangulated surface mesh} is a set of triangles pasted together along their edges.
+A \ccc{TriangulatedSurfaceMesh} is structuraly equivalent to a \ccc{CGAL::Polyhedron_3}) whose facets are only triangles.
 
-Formally speaking, a {\em triangulated surface mesh} (of the kind used in this \cgal\ package), often called a {\em simplicial mesh}, is an {\em Euclidean Simplicial Complex} of topological dimension 3, that is, a set of connected {\em vertices}, {\em edges} and {\em facets}.\\
-Vertices embedding points (in 2 or 3 geometric dimensions), are the most primitive element in the mesh, and are called 0-simplicies.\\
-Edges connect 2 vertices (are a subset of 2 points), and are called 1-simplicies.\\
-Facets connect 3 edges in a cycle (are a subset of 3 points), and are called 2-simplicies.
+Conceptually, is similar to a \ccc{HalfedgeDS} with the restriction that all facets are triangular. In order to simplify the {\em efficient} adaptation of concrete surface types, it is {\em not} modeled exactly as a \ccc{HalfedgeDS} but as a directed graph, with its related fucntions, and a property map, as explained below:
 
-Vertices, edges and facets are necessarily subsets of 1, 2 and 3 points, respectively. Some meshes might embed other geometric objects in the edges (a straight line segment for example), or the facets (a plane); however, in this \cgal\ package we are only concerned about the points embedded in the vertices.
+A \ccc{TriangulatedSurfaceMesh} refines the \ccc{HalfedgeGraph} concept which desribes only the vertices and edges of a \ccc{HalfedgeDS}. The triangular facets are not explicitely modeled. 
 
-The 2 vertices connected by an edge are said to be {\em incident} on the edge and the edge is said to be {\em incident} on the two vertices it connects. Likewise, the 3 edges connected by a facet are said to be {\em incident} on the facet and the facet {\em incident} on the 3 edges.
+An edge is normally considered to be in the boundary of the surface when it is incident upon only one facet instead of two. The algorithm here needs to indentify border edges, but the incidence between triangles and edges is not represented explicitely, so a {\sc Bgl} \ccc{EdgeIsBorderPropertyMap} is used for that.
 
-Any two vertices/edges incident upon the same edge/facet are said to be {\em adjacent}.
+Following the {\sc Bgl} design, operations in a \ccc{TriangulatedSurfaceMesh} are defined in terms of free (non-member) functions.
 
-Any sequence of pairwise adjacent vertices or edges is a {\em path}.
+\subsubsection{Valid Models}
 
-Any two vertices or edges are connected if there is a {\em path} from one to the other.
+A \ccc{CGAL::Polyhedron_3} is a valid \ccc{TriangulatedSurfaceMesh} model as long as its facets are only triangles. A polyhedron is represented as a \ccc{HalfedgeDS}, and the vertices and edges of any halfedge data structure correspond exactly to a \ccc{HalfedgeGraph}. The \ccc{HalfedgeDS::undirected_edge_iterator} of the halfedge graph concept is trivially obtained by iterating over one out of two halfedges.
 
-A path that connects a vertex/edge with itself is a {\em cycle}.
-
-An edge which is incident upon only one facet is said to be a {\em border} edge. 
-
-A surface is {\em closed} if none of it edges are border edges, {\em open} otherwise.
-
-The edges in the border (often called boundary) of an open surface with more than one single facet are not adjacent because they are incident upon different facets. From the definition of incidence, adjacency and connectivity, it can be shown that all the edges incident upon a facet are cyclically connected and all cyclically connected edges are incident upon a common facet. Such a cycle of edges around a common facet is said to be the {\em boundary} of the facet (which is not the same as the surface-border, also called surface-boundary).
-
-Edges in the border of an open surface can be considered to be cyclically connected if they are considered to be ALL  incident upon an hypotetical pseudo-facet on the outside of the surface (and each on a normal facet of course).
-
-A triangular surface mesh is said to be an {\em open 2-manifold} if every edge is incident upon 1 or 2 facets, but no more.
-
-The topology and geometry (points embedded in the vertices) of the 1-simplices (vertices and edges only, without considering the facets) in a surface is represented by the concept \ccc{HalfedgeGraph}.
-
-Even though a \ccc{HalfedgeGraph} indirectly represents a facet (by means of its boundary), it fails to distinguish a true facet from a pseudo-facet outside the surface (the way a \ccc{HalfedgeDS} does). Thus, the halfedge graph alone cannot be used to determine whether an edge is a border or not. In order to allow the algorithm to identify border edges, an {\sc Bgl} \ccc{EdgeIsBorderPropertyMap} associating a \ccc{bool} flag to each ({\em directed}) edge is used.
-
-Operations in a \ccc{TSM} are defined in terms of free (non-member) operator objects. Currently, only one operator is defined since only one operation is needed in the algorithm: the \ccc{TriangulationEdgeCollapseOperator}
- 
-This operator, which must be specialized for the concrete surface type, performs the actual edge collapse by replacing the edge by one if its vertices. It is required to remove from the surface one of the vertices, the facets incident to the collapsed edge (which it turn removes the other two edges incident upon those facets), and nothing else.
-
-A Triangulated Surface Mesh, \ccc{TSM}, is a composition of a \ccc{HalfedgeGraph}, a \ccc{EdgeIsBorderPropertyMap}, and a
-\ccc{TriangulationEdgeCollapseOperator}.
-
-\subsubsection{TSM Models}
-
-A \ccc{Polyhedron_3} is a valid \ccc{TSM} model as long as its facets are only triangles. A polyhedron is represented as a \ccc{HalfedgeDS},and the vertices and edges of any halfedge data structure correspond exactly to a \ccc{HalfedgeGraph}. The \ccc{undirected_edge_iterator} of the halfedge graph concept is trivially obtained by iterating over one out of two halfedges.
-
-Any \ccc{Triangulation}, whether in 2 or 3 dimensions, is also a valid \ccc{TSM} model. A triangulation edge is defined as a cell plus 2 vertex indices: \ccc{cell(c)(i,j)}. Such edge is inherently directed since the vertex indices are lexicographically ordered in the edge. Furthermore, for any triangulation directed edge \ccc{cell(c)(i,j)}, the opposite directed edge, \ccc{cell(c)(j,i)}, is always well defined and belongs to the triangulation. Thus, any \ccc{TriangulationDS} can be trivially adapted to be a \ccc{HalfedgeGraph}. 
+Any \ccc{TriangulationDataStructure_2} is also a valid \ccc{TriangulatedSurfaceMesh} model. A triangulation edge is given as a face (triangle) plus 2 vertex indices: \ccc{face(c)(i,j)}. Such edge is inherently directed since the vertex indices are lexicographically ordered in the edge. Furthermore, for any triangulation directed edge \ccc{cell(c)(i,j)}, the opposite directed edge, \ccc{cell(c)(j,i)}, is always well defined and belongs to the triangulation. Thus, any \ccc{TriangulationDataStructure_2} can be trivially adapted to be a \ccc{HalfedgeGraph}. 
 
 Throughout this documentation, the unqualified term {\em edge} refers to an undirected edge (even though in a \ccc{HalfedgeGraph} the term edge alone refers to the directed edge).
 
-This \cgal\ package provides the {\sc Bgl} specializations for a \ccc{Polyhedron_3}.
+This \cgal\ package provides the adaptation for a \ccc{CGAL::Polyhedron_3}.
 
 \section{Overview of the Simplification Process}
 

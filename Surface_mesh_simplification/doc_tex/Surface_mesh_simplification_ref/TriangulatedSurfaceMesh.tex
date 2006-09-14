@@ -14,23 +14,39 @@
 %%
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
-\begin{ccRefConcept}{TSM}
+\begin{ccRefConcept}{TriangulatedSurfaceMesh}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 
 \ccDefinition
 
-The concept \ccRefName\ describes the requirements for the Triangulated Surface Mesh (TSM) data structure.
+The concept \ccRefName\ describes the requirements for the Triangulated Surface Mesh data structure.
 
 \ccRefines
 \ccc{HalfedgeGraph}
-\ccc{TriangulationEdgeCollapseOperator}
+
+\ccHeading{Methods}
 \ccc{EdgeIsBorderPropertyMap}
+
+\ccOperations
+
+  \ccFunction
+  {template<class Graph>
+  void
+  collapse_triangulation_edge(typename boost::graph_traits<Graph>::edge_descriptor pq
+                             ,typename boost::graph_traits<Graph>::edge_descriptor pt
+                             ,typename boost::graph_traits<Graph>::edge_descriptor qb
+                             ,Graph& surface
+                             );
+  }
+  {Collapses the egde pq.
+  }
 
 \ccHasModels
 \ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}
-  (through the various traits and function overloads that externally adapt a \cgal\ polyhedron to the involved concepts)
+  (through the various traits and function overloads that externally adapt a \cgal\
+  polyhedron to the involved concepts)
 
 \end{ccRefConcept}
 
