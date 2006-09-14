@@ -1,10 +1,10 @@
-\begin{ccRefClass}{Line_arc_3<Sphericalkernel>}
+\begin{ccRefClass}{Line_arc_3<SphericalKernel>}
 
 \ccInclude{CGAL/Line_arc_3.h}
 
 \ccIsModel
 
-\ccc{Sphericalkernel::LineArc_3}
+\ccc{SphericalKernel::LineArc_3}
 
 \ccCreation
 \ccCreationVariable{la}
@@ -12,36 +12,36 @@
 \ccThree{Circular_arc_point_3}{ca.is_x_monotone()}{}
 \ccThreeToTwo
 
-\ccConstructor{Line_arc_3(const Sphericalkernel::Line_3 &l,
-		const Sphericalkernel::Circular_arc_point_3 &p1,
-		const Sphericalkernel::Circular_arc_point_3 &p2)}
+\ccConstructor{Line_arc_3(const SphericalKernel::Line_3 &l,
+		const SphericalKernel::Circular_arc_point_3 &p1,
+		const SphericalKernel::Circular_arc_point_3 &p2)}
 {Construct the line segment supported by \ccc{l}, whose source 
 is \ccc{p1} and whose target is \ccc{p2}.
 \ccPrecond{\ccc{p1} and \ccc{p2} lie on \ccc{l}.}}
 
-\ccConstructor{Line_arc_3(const Sphericalkernel::Line_3 &l,
-		const Sphericalkernel::Point_3 &p1,
-		const Sphericalkernel::Point_3 &p2)}
+\ccConstructor{Line_arc_3(const SphericalKernel::Line_3 &l,
+		const SphericalKernel::Point_3 &p1,
+		const SphericalKernel::Point_3 &p2)}
 {Same.}
 
-\ccConstructor{Line_arc_3(const Sphericalkernel::Segment_3 &s)}
+\ccConstructor{Line_arc_3(const SphericalKernel::Segment_3 &s)}
 {}
 
 \ccAccessFunctions
 
-\ccThree{Sphericalkernel::Circular_arc_point_3}{ca.is_x_monotone()}{}
+\ccThree{SphericalKernel::Circular_arc_point_3}{ca.is_x_monotone()}{}
 \ccThreeToTwo
 
-\ccMethod{Sphericalkernel::Line_3 supporting_line();}{}
+\ccMethod{SphericalKernel::Line_3 supporting_line();}{}
 
-\ccMethod{Sphericalkernel::Circular_arc_point_3 source();}{}
+\ccMethod{SphericalKernel::Circular_arc_point_3 source();}{}
 \ccGlue
-\ccMethod{Sphericalkernel::Circular_arc_point_3 target();}{}
+\ccMethod{SphericalKernel::Circular_arc_point_3 target();}{}
 
-\ccMethod{Sphericalkernel::Circular_arc_point_3 min();}
+\ccMethod{SphericalKernel::Circular_arc_point_3 min();}
 {Constructs the minimum vertex for the lexicographic ordering of coordinates.}
 \ccGlue
-\ccMethod{Sphericalkernel::Circular_arc_point_3 max();}{}
+\ccMethod{SphericalKernel::Circular_arc_point_3 max();}{}
 
 \ccQueryFunctions
 
@@ -55,8 +55,8 @@ is \ccc{p1} and whose target is \ccc{p2}.
 
 \ccSeeAlso
 
-\ccRefIdfierPage{CGAL::Circular_arc_point_3<Sphericalkernel>}\\
-\ccRefIdfierPage{CGAL::Circular_arc_3<Sphericalkernel>}
+\ccRefIdfierPage{CGAL::Circular_arc_point_3<SphericalKernel>}\\
+\ccRefIdfierPage{CGAL::Circular_arc_3<SphericalKernel>}
 
 \end{ccRefClass}
 
