@@ -19,11 +19,6 @@
 #ifndef CGAL_PM_CONSTR_TRIANG_TRAITS_H
 #define CGAL_PM_CONSTR_TRIANG_TRAITS_H
 
-#if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4355) // complaint about using 'this' to
-#endif                          // initialize a member
-
 #include <CGAL/basic.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/generic_sweep.h>
@@ -35,6 +30,11 @@
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 19
 #include <CGAL/Nef_2/debug.h>
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4355) // complaint about using 'this' to
+#endif                          // initialize a member
 
 CGAL_BEGIN_NAMESPACE
 
