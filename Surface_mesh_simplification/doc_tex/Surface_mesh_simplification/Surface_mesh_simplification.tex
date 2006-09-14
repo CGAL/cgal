@@ -94,9 +94,15 @@ Sometimes it is desirable to keep some edges uncollapsed. This can be controlled
 
 \subsection{Cost Strategy}
 
-The specific way in which the collapse cost and vertex placement is calculated is called the {\em cost strategy}.
-The user can choose different strategies in the form of function objects and related parameters, passed to the algorithm.
-In the current package version, for instance, one can choose between the Lindstrom-Turk strategy (the default) or an edge-length cost with a midpoint placement (much faster but less accurate).
+The specific way in which the collapse cost and vertex placement is
+calculated is called the {\em cost strategy}. The user can choose 
+different strategies in the form of policies and related parameters,
+passed to the algorithm. In the current package version, for instance,
+one can choose between the Lindstrom-Turk strategy 
+(the default) or an edge-length cost with a midpoint 
+placement (much faster but less accurate).
+
+\subsubsection{Lindstrom-Turk cost and placement strategy\label{SurfaceMeshSimplification:LindstromTurkStrategy}}
 
 \subsubsection{Cache Level}
 

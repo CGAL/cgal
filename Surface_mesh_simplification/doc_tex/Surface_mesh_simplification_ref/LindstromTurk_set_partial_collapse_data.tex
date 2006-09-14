@@ -1,0 +1,93 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+
+\begin{ccRefClass}{Surface_mesh_simplification::Edge_collapse::LindstromTurk_set_partial_collapse_data<TSM>}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccDefinition
+
+The class \ccRefName\ provides a model for the
+\ccc{SetCollpaseData} where the \ccc{CollapseData} it assigns is \ccc{Partial\_collapse\_data<TSM>}.
+storing a cost calculated following the Lindstrom-Turk strategy
+(Section~\ref{SurfaceMeshSimplification:LindstromTurkStrategy}).
+
+The class \ccRefName\ has one template arguments: the type of surface being simplified. 
+It be a model of the \ccc{TriangulatedSurfaceMesh} concept.
+
+\ccIsModel
+\ccc{SetCollapseData}
+
+\ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_set_partial_collapse_data.h}
+
+\ccTypes
+  \ccTypedef{TSM TSM;}{The type of the surface to simplify. Is a model of \ccc{TriangulatedSurfaceMesh}.}
+  \ccGlue
+  \ccTypedef{boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}{A {\sc Bgl} \ccc{EdgeDescriptor}
+            representing an {\em undirected edge} of the surface.
+            }
+  \ccGlue
+  \ccTypedef{Partial_collapse_data<TSM> Collapse_data;}
+  {A type of collapse data which caches both the cost and placement.}
+  \ccGlue
+  \ccTypedef{typename LindstromTurk_params Cost_params;}
+  {The type of the parameters used by the cost computation}
+  \ccGlue
+  \ccTypedef{typename LindstromTurk_params Cost_params;}
+  {The type of the parameters used by the placement computation}
+            
+\ccCreation
+\ccCreationVariable{sd}  %% choose variable name
+
+\ccConstructor{LindstromTurk_set_partial_collapse_data<TSM>(); }
+{Default constructor.}
+
+\ccOperations
+
+\ccMethod
+  {void operator()( Collapse_data& data
+                  , edge_descriptor const& edge
+                  , TSM& surface
+                  , CostParams const* cparams
+                  , PlacementParam const* pparams
+                  );
+  }
+{Computes the cost \ccc{c} and placement \ccc{p}
+of collapsing \ccc{edge}, using \ccc{cparams} and \ccc{pparams}.
+Then constructs a \ccc{Partial_collapse_data<TSM>}(c) 
+and assigns it to \ccc{data}.\\
+(Note: the LindstromTurk strategy computes the cost as a function
+of the placement, that's why the placement is computed even 
+though is not in the data.)
+}  
+
+\ccSeeAlso
+\ccc{CGAL::Surface_mesh_simplification::Edge_collapse::LindstromTurk_set_full_collapse_data<TSM>}
+\ccc{CGAL::Surface_mesh_simplification::Edge_collapse::LindstromTurk_cost<TSM>}
+\ccc{CGAL::Surface_mesh_simplification::Edge_collapse::LindstromTurk_placement<TSM>}
+\ccc{CGAL::Surface_mesh_simplification::Edge_collapse::LindstromTurk_params}
+
+\end{ccRefClass}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

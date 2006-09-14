@@ -1,0 +1,142 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+
+\begin{ccRefFunction}{Surface_mesh_simplification::Edge_collapse::edge_collapse}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccDefinition
+
+The function \ccRefName\ simplifies in-place a triangulated suface mesh by iteratively collapsing edges.
+
+\ccInclude{CGAL/Surface_mesh_simplification/edge_collaspe.h}
+
+\ccFunction
+{
+template<class TSM
+        ,class ShouldStop
+        ,class EdgeExtraPtrMap
+        ,class VertexIsFixedMap
+        ,class SetCollapseData
+        ,class GetCost
+        ,class GetPlacement
+        ,class CostParams
+        ,class PlacementParams
+        ,class Visitor
+        >
+int edge_collapse ( TSM&                    surface
+                  , ShouldStop       const& should_stop
+                  , EdgeExtraPtrMap  const& edge_extra_ptr_map   
+                  , VertexIsFixedMap const& vertex_is_fixed_map  
+                  , SetCollapseData  const& set_collapse_data
+                  , GetCost          const& get_cost 
+                  , GetPlacement     const& get_placement
+                  , CostParams       const* cost_params
+                  , PlacementParams  const* placement_params 
+                  , Visitor*                visitor
+                  ) ;
+}
+{Simplifies \ccc{surface} in-place by collapsing edges, and returns
+the number of edges effectively removed.
+
+The process continues until the \ccc{should_stop} policy returns \ccc{true}
+or the surface cannot be simplified any furhter due to topological constrians.
+
+\ccc{edge_extra_ptr_map} is a property map which provides access
+to a \ccc{void*&} extra-pointer per edge, as needed by the algorithm.
+
+\ccc{vertex_is_fixed_map} is used to indicate that some edges should not be
+collapsed. The property map indicates whether a vertex is fixed or not,
+and any edge incident upon a fixed vertex is not collapsed.
+
+\ccc{set_collapse_data}, along with \ccc{get_cost} and \ccc{get_placement},
+are the policies which control the {\em cost-strategy}, that is, 
+the order in which edges are collapsed and the replacement vertex positioned.\\
+\ccc{get_cost_params} and \ccc{get_placement_params} are the runtime 
+parameters used by the these policies. They can be null pointers
+if the policies don't need them.\\
+This strategy is the driving factor that determines the accuaracy of the
+simplied surface with respect to the original.\\
+
+\ccc{visitor} is an optional object (can be null) which can be used
+to keep track of the simplification process.
+}
+
+\ccHeading{Requirements}
+
+\ccc{TSM} defines the type of the surface.
+It must be a model of \ccc{TriangulatedSurfaceMesh}
+
+\ccc{ShouldStop} defines the type of the stop-condition policy.
+It must be a model of \ccc{StopCondition} concept
+
+\ccc{EdgeExtraPtrMap} defines the type of the property map which 
+provides access to an extra \ccc{void*&} for each directed edge,
+as required by the algorithm.
+It must be a model of \ccc{EdgeExtraPointerMap} concept
+
+\ccc{VertexIsFixedMap} defines the type of the property map which 
+indicates whether a vertex is fixed or not.
+It must be a model of \ccc{VertexIsFixedMap} concept
+
+\ccc{SetCollaspeData} defines the type of set-collapse-data policy.
+It must be a model of \ccc{SetCollaspeData} concept
+
+\ccc{GetCost} defines the type of get-cost policy.
+It must be a model of \ccc{GetCost} concept
+
+\ccc{GetPlacement} defines the type of get-placement policy.
+It must be a model of \ccc{GetPlacement} concept
+
+\ccc{CostParams} defines the type of the parameters to the get-cost policy.
+It must be \ccc{GetCost::Params}.
+
+\ccc{PlacementParams} defines the type of the parameters to the get-placement policy.
+It must be \ccc{GetPlacement::Params}.
+
+\ccc{Visitor} defines the type of the visitor object that can be passed to track the 
+simplification process.
+It must be a \ccc{EdgeCollapseVisitor}
+
+\ccHeading{Defaults}
+
+Only the first two parameters are mandatory, the rest have default values as described below:
+
+\ccc{EdgeExtraPtrMap} defaults to \ccc{CGAL::Edge_extra_pointer_map_stored<TSM>()}.
+
+\ccc{VertexIsFixedMap} defaults to \ccc{CGAL::Vertex_is_fixed_map_always_false<TSM>()}.
+
+\ccc{SetCollaspeData} defauls to \ccc{CGAL::Surface_mesh_simplification::Edge_collapse::LindstromTurk_set_partial_collapse_data<TSM>}.
+
+\ccc{GetCost} defaults to \ccc{CGAL::Surface_mesh_simplification::Edge_collapse::Cached_cost<TSM>}.
+
+\ccc{GetPlacement} defaults to \ccc{CGAL::Surface_mesh_simplification::Edge_collapse::LindstromTurk_placement<TSM>}
+
+\ccc{CostParams} defaults to \ccc{CGAL::Surface_mesh_simplification::Edge_collapse::LindstromTurk_params}
+
+\ccc{PlacementParams} defaults to \ccc{CGAL::Surface_mesh_simplification::Edge_collapse::LindstromTurk_params}
+
+\end{ccRefFunction}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
