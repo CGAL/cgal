@@ -22,33 +22,27 @@
 \ccDefinition
 
 The concept \ccRefName\ describes the requirements of a
-\ccAnchor{http://www.boost.org/libs/graph/doc/graph_concepts.html}{Boost Graph}
+Boost \ccAnchor{http://www.boost.org/libs/graph/doc/graph_concepts.html}{graph}
 representing a subset of a \ccc{HalfedgeDS}.
 
 This graph is a refinement of \ccc{DirectedEmbeddedGraph} with the
 added requirement that for each directed edge $\overrightarrow{st}$
-it's opposite edge $\overrightarrow{ts}$ is part of the graph, that is, the
-directed edges are necessarily symmetric. Furthermore, because the
-symmetry is mandatory, there is the added concept of an {\em
-undirected} edge which corresponds to a pair of symmetric edges as a
-whole.
+it's opposite edge $\overrightarrow{ts}$ is part of the graph.
+Furthermore, because they must come in pairs, there is the additional
+notion of an {\em undirected} edge for a pair of opposite edges.
+The number of undirected edges is exactly half the number of directed edges.
 
-For each pair of {\em symmetric directed edges} $\overrightarrow{st}$
-and $\overrightarrow{ts}$, there is a correspoding {\em undirected}
-edge $\overline{st}$. Therefore, the number of undirected edges is
-exactly half the number of directed edges.
-
-{\em Symmetric directed edges} are not called \ccc{halfedges} (as in a
+The directed edges are not called \ccc{halfedges} (as in a
 \ccc{HalfedgeDS}) because from the point of view of this graph, being
-a refinement of a {\sc Bgl} graph, each symmetric directed edge is a {\em
-whole} edge in itself. In other words, the unqualified term edge
-refers to one and only one symmetric directed edge and not both. The
-pair of opposing edges, seen as a unity, is an {\em undirected edge}.
+a refinement of a {\sc Bgl} graph, each directed edge is an
+edge in itself. In other words, the unqualified term edge
+refers to one and only one directed edge and not to a pair. The
+pair of opposite edges, seen as a unity, is an {\em undirected edge}.
  
-This concept {\em does not} specify the existence of a explicit type representing 
-an undirected edge. Instead, if specifies that there is only one type of edge,
+Note that this concept does not imply the existence of two different types
+for directed and undirected edges. Instead, if specifies that there is only one type of edge,
 hence only one \ccc{edge_descriptor}, which refers to the directed edge.
-An undirected edge must be implicitely addressed by one single edge\_descriptor,
+An undirected edge must be implicitely addressed by a single \ccc{edge_descriptor},
 and there is no requirement about which of the directed edges of the pair must
 be used to refer to an undirected edge.
 
