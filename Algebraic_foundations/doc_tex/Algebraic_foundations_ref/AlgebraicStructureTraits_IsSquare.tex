@@ -2,14 +2,15 @@
 
 \begin{ccRefConcept}{AlgebraicStructureTraits::IsSquare}
 
-\begin{ccAdvanced}
 \ccDefinition
 
 \ccc{AdaptableBinaryFunction} providing an integral square root. 
 
-An ring element $x$ is said to be a square if there exists a ring element $y$ such 
-that $x= y*y$. Since the ring represented is an integral domain, 
-$y$ is uniquely defined up to multiplication by units. 
+An ring element $x$ is said to be a square iff there exists a ring element $y$ such
+that $x= y*y$. In case the ring is a \ccc{UniqueFactorizationDomain},
+$y$ is uniquely defined up to multiplication by units. \\
+
+%Note that this is an optional functor and not required by any algebraic structure concept. 
 
 \ccRefines 
 
@@ -27,8 +28,8 @@ $y$ is uniquely defined up to multiplication by units.
 \ccSetThreeColumns{xxxxxxxxxx}{xxxxx}{}
 \ccMethod{result_type operator()(first_argument_type  x, 
                                  second_argument_type y);}
-        { returns {\tt true} in case $x$ is a perfect square, i.e. $x = y*y$.
-          \ccPostcond $unit\_part(y) == 1$. ( $y$ is unit normal.) 
+        { returns {\tt true} in case $x$ is a square, i.e. $x = y*y$.
+          \ccPostcond $unit\_part(y) == 1$. 
         }
 
 %\ccHasModels
@@ -36,6 +37,5 @@ $y$ is uniquely defined up to multiplication by units.
 \ccSeeAlso
 
 \ccRefIdfierPage{AlgebraicStructureTraits}
-\end{ccAdvanced}
 
 \end{ccRefConcept} 

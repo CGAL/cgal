@@ -2,23 +2,12 @@
 \ccRefChapter{Algebraic Foundations}
 %\label{ChapterRefAlgebraicFoundations}
 
-\ccChapterAuthor{Michael Hemmer and Who Soever}
+\ccChapterAuthor{Michael Hemmer}
 
 \section{todo:}
 \begin{itemize} 
-\item add models to 'HasModels'
+\item add models to 'has models '
 \item Check types in functors 
-\item Introduce a IsSquare  rm IntegralSqrt\\
-      \ccc{AlgebraicStructureTraits::Sqrt} has a special definition for Integer. \\
-        A type may provide this functor even if the set of 
-        numbers it models does not contain real square roots in general. 
-        The most important example are number types modeling the integers. 
-        For them, Sqrt()(x) has to return the largest integer not exceeding 
-        the square root of x.\\
-        In EXACUS this is used to test an integer to be an perfect square. \\
-        Question: Should we introduce an extra functor for that?
-        see: \ccc{AlgebraicStructureTraits::Integral_sqrt}
-
 \item TODO: solve this by using unit normal within text?
       The concept \ccc{FieldWithSqrt} (also FieldWithKthRoot,FieldWithRootOf) 
       implies that the number type is RealEmbeddable, in particular RootOf talks 
@@ -56,6 +45,17 @@ That is: an exact \ccc{Field} may have a Sqrt functor that is not exact. \\
         Proposal: choose the unit normal (positive) remainder. In other words div is rounded to -oo.\\
         Example: -5 div 3 is -2 rest 1 \\
         This also coincides with the definition of the gcd. 
+
+\item \ccc{AlgebraicStructureTraits::IsSquare}: (is optional)\\
+      \ccc{AlgebraicStructureTraits::Sqrt} had a special definition for Integer. \\
+        A type may provide this functor even if the set of 
+        numbers it models does not contain real square roots in general. 
+        The most important example are number types modeling the integers. 
+        For them, Sqrt()(x) has to return the largest integer not exceeding 
+        the square root of x.\\
+        In EXACUS this is used to test an integer to be an perfect square. \\
+        \ccc{AlgebraicStructureTraits::IsSquare} has been introduced to avoid this obscure 
+        usage of Sqrt.  
 \end{itemize}
 
 
@@ -117,7 +117,7 @@ That is: an exact \ccc{Field} may have a Sqrt functor that is not exact. \\
 \ccRefConceptPage{AlgebraicStructureTraits::Div}\\
 \ccRefConceptPage{AlgebraicStructureTraits::Mod}\\
 \ccRefConceptPage{AlgebraicStructureTraits::Sqrt}\\
-\ccRefConceptPage{AlgebraicStructureTraits::IntegralSqrt}\\
+\ccRefConceptPage{AlgebraicStructureTraits::IsSquare}\\
 \ccRefConceptPage{AlgebraicStructureTraits::KthRoot}\\
 \ccRefConceptPage{AlgebraicStructureTraits::RootOf}\\
 
@@ -141,7 +141,7 @@ That is: an exact \ccc{Field} may have a Sqrt functor that is not exact. \\
 \ccRefIdfierPage{simplify}\\
 \ccRefIdfierPage{unit_part}\\
 \ccRefIdfierPage{integral_division}\\
-%\ccRefIdfierPage{integral_sqrt}\\
+%\ccRefIdfierPage{is_square}\\
 \ccRefIdfierPage{gcd}\\
 \ccRefIdfierPage{div_mod}\\
 \ccRefIdfierPage{div}\\
