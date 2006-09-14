@@ -608,11 +608,6 @@ Gmpzf sqrt (  const Gmpzf& b)
 
 CGAL_END_NAMESPACE
 
-#if ! defined( CGAL_DONT_USE_LINK_PRAGMA) && defined( _MSC_VER )
-    #pragma comment(lib, "gmp.lib")
-    #pragma comment(lib, "mpfr.lib")
-#endif 
-
 #endif // CGAL_GMPZF_H
 
 // ===== EOF ==================================================================
