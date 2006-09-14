@@ -11,7 +11,36 @@
 
 	\subsubsection*{Functors}
 
+\ccRefConceptPage{SphericalKernel::ConstructLine_3}\\
+\ccRefConceptPage{SphericalKernel::ConstructPlane_3}\\
+\ccRefConceptPage{SphericalKernel::ConstructSphere_3}\\
+\ccRefConceptPage{SphericalKernel::ConstructCircle_3}\\
+\ccRefConceptPage{SphericalKernel::ConstructCircularArcPoint_3}\\
+\ccRefConceptPage{SphericalKernel::ConstructLineArc_3}\\
+\ccRefConceptPage{SphericalKernel::ConstructCircularArc_3}
+
+\ccRefConceptPage{SphericalKernel::ConstructCircularMinVertex_3}\\
+\ccRefConceptPage{SphericalKernel::ConstructCircularMaxVertex_3}\\
+\ccRefConceptPage{SphericalKernel::ConstructCircularSourceVertex_3}\\
+\ccRefConceptPage{SphericalKernel::ConstructCircularTargetVertex_3}
+
+\ccRefConceptPage{SphericalKernel::ConstructBbox_3}
+
+\ccRefConceptPage{SphericalKernel::CompareX_3}\\
+\ccRefConceptPage{SphericalKernel::CompareY_3}\\
+\ccRefConceptPage{SphericalKernel::CompareZ_3}\\
+\ccRefConceptPage{SphericalKernel::CompareXY_3}\\
+\ccRefConceptPage{SphericalKernel::CompareXYZ_3}
+
+\ccRefConceptPage{SphericalKernel::Equal_3}
+
 \ccRefConceptPage{SphericalKernel::HasOn_3}
+
+\ccRefConceptPage{SphericalKernel::DoOverlap_3}
+
+\ccRefConceptPage{SphericalKernel::BoundedSide_3}\\
+\ccRefConceptPage{SphericalKernel::HasOnBoundedSide_3}\\
+\ccRefConceptPage{SphericalKernel::HasOnUnboundedSide_3}
 
 \ccRefConceptPage{SphericalKernel::ConstructDiametralSphere_3}
 
@@ -26,6 +55,8 @@
 \ccRefConceptPage{SphericalKernel::ComputeApproximateSquaredLength}\\
 \ccRefConceptPage{SphericalKernel::ComputeApproximateAngle}
 
+\ccRefConceptPage{SphericalKernel::GetEquation}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Algebraic Concepts}
 
@@ -36,7 +67,7 @@
 \ccRefConceptPage{AlgebraicKernelForSpheres::ConstructPolynomial_1_3}\\
 \ccRefConceptPage{AlgebraicKernelForSpheres::ConstructPolynomialForSpheres_2_3}
 
-\ccRefConceptPage{AlgebraicKernelForSpheres::ConstructPolynomials_for_lines_3}\\
+\ccRefConceptPage{AlgebraicKernelForSpheres::ConstructPolynomialsForLines_3}\\
 \ccRefConceptPage{AlgebraicKernelForSpheres::ConstructPolynomialsForCircles_2}
 
 \ccRefConceptPage{AlgebraicKernelForSpheres::CompareX}\\
@@ -58,11 +89,20 @@
 
 	\subsubsection*{Kernels}
 
+\ccRefIdfierPage{CGAL::Spherical_kernel_3<LinearKernel,AlgebraicKernelForSpheres>}
+
 	\subsubsection*{Points}
+
+\ccRefIdfierPage{CGAL::Circular_arc_point_3<SphericalKernel>}
 
 	\subsubsection*{Circles}
 
+\ccRefIdfierPage{CGAL::Circle_3<SphericalKernel>}
+
 	\subsubsection*{Arcs}
+
+\ccRefIdfierPage{CGAL::Line_arc_3<SphericalKernel>}\\
+\ccRefIdfierPage{CGAL::Circular_arc_3<SphericalKernel>}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Algebraic Kernel and Classes}
