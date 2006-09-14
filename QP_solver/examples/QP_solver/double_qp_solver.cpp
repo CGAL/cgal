@@ -28,13 +28,12 @@
 #include <CGAL/Gmpzf.h>
 #endif 
 
-#include <CGAL/QP_solver.h>
+#include <CGAL/QP_models.h>
+#include <CGAL/QP_functions.h>
 #include <CGAL/QP_solver/QP_full_exact_pricing.h>
 #include <CGAL/QP_solver/QP_partial_exact_pricing.h>
 #include <CGAL/QP_solver/QP_full_filtered_pricing.h>
 #include <CGAL/QP_solver/QP_partial_filtered_pricing.h>
-
-#include <CGAL/QP_models.h>
 
 struct Tags {
   typedef CGAL::Tag_false Is_linear; 

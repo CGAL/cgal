@@ -22,6 +22,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/iterator.h>
+#include <CGAL/QP_solver/basic.h>
 #include <vector> 
 #include <iomanip>
 #include <istream>

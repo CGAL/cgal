@@ -16,19 +16,20 @@
 // 
 //
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
+//               : Bernd Gaertner <gaertner@inf.ethz.ch>
+//               : Sven Schoenherr <sven@inf.ethz.ch>
+//               : Franz Wessendorp < fransw@inf.ethz.ch>
 
 #ifndef CGAL_QP_SOLVER_H
 #define CGAL_QP_SOLVER_H
 
 #include <CGAL/iterator.h>
-#include <CGAL/Handle_for.h>
+#include <CGAL/functional.h>
+#include <CGAL/QP_solution.h>
 #include <CGAL/QP_solver/basic.h>
 #include <CGAL/QP_solver/functors.h>
 #include <CGAL/QP_solver/QP_basis_inverse.h>
 #include <CGAL/QP_solver/QP_pricing_strategy.h>
-
-#include <CGAL/functional.h>
-
 #include <CGAL/QP_solver/QP_full_exact_pricing.h>
 #include <CGAL/QP_solver/QP_partial_exact_pricing.h>
 
@@ -60,7 +61,7 @@ template < typename Q, typename ET, typename Tags  >
 class QP_solver;
 
 template <class ET>
-class QP_solution;
+class QP_solution; 
 
 namespace QP_solver_impl {   // namespace for implemenation details
 
@@ -69,10 +70,44 @@ namespace QP_solver_impl {   // namespace for implemenation details
   template  < typename Q, typename ET, typename Tags  >
   class Unbounded_direction_iterator;
 
-  // forward declaration of functor for accessing original
-  // variable values by original index
-  template  < typename Q, typename ET, typename Tags  >
-  class Value_by_index;
+  template < class Q, class Is_linear >
+  struct D_selector {};
+
+  template <class Q>
+  struct D_selector<Q, Tag_false> // quadratic
+  {
+    typedef typename Q::D_iterator D_iterator;
+  };
+
+  template <class Q>
+  struct D_selector<Q, Tag_true> // linear
+  {
+    // dummy type, not used
+    typedef int** D_iterator;
+  };
+
+  template < class Q, class Is_in_standard_form >
+  struct Bd_selector {};
+
+  template < class Q >
+  struct Bd_selector<Q, Tag_false> // nonstandard form
+  {
+    typedef typename Q::FL_iterator FL_iterator;
+    typedef typename Q::L_iterator L_iterator;
+    typedef typename Q::FU_iterator FU_iterator;
+    typedef typename Q::U_iterator U_iterator;
+  };
+
+  template < class Q >
+  struct Bd_selector<Q, Tag_true> // standard form
+  {
+    // dummy types, not used
+    typedef int* FL_iterator;
+    typedef int* L_iterator;
+    typedef int* FU_iterator;
+    typedef int* U_iterator;
+
+  };
 
 } // end of namespace for implementation details
 
@@ -80,57 +115,45 @@ namespace QP_solver_impl {   // namespace for implemenation details
 // class interfaces
 // ================
 
-template <class ET>
-class QP_solver_base
-{
-public:
-  // virtual access functions to solution that will 
-  // be overridden by QP_solver below
-  virtual Quotient<ET> solution() const = 0;
-
-
-  // destruction (overridden by QP_solver)
-  virtual ~QP_solver_base() {}
-};
-
-template <class ET>
-class QP_solution: Handle_for<const QP_solver_base<ET>*> 
-{
-public:
-  template <typename Q, typename Tags> 
-  QP_solution (const QP_solver<Q, ET, Tags>* const s)
-    : Handle_for<const QP_solver_base<ET>*>(s)
-  {}
-
-  Quotient<ET> solution() const
-  {
-    return (*(this->ptr()))->solution();
-  }
-
-  ~QP_solution()
-  {
-    if (!this->is_shared()) delete *(this->ptr());
-  }
-};
 
 template < typename Q, typename ET, typename Tags >
 class QP_solver : public QP_solver_base<ET> {
 
 public: // public types
   typedef  QP_solver<Q, ET, Tags> Self;
+  typedef  QP_solver_base<ET> Base;
   
   // types from the QP
   typedef  typename Q::A_iterator   A_iterator;
   typedef  typename Q::B_iterator   B_iterator;
   typedef  typename Q::C_iterator   C_iterator;
-  typedef  typename Q::D_iterator   D_iterator;
-  typedef  typename Q::L_iterator   L_iterator;
-  typedef  typename Q::U_iterator   U_iterator;
-  typedef  typename Q::FL_iterator  FL_iterator;
-  typedef  typename Q::FU_iterator  FU_iterator;
-  
   typedef  CGAL::Comparison_result Row_type;
   typedef  typename Q::R_iterator Row_type_iterator;
+  
+  // the remaining types might not be present in the qp, so the
+  // following selectors generate dummy types for them 
+  typedef  typename QP_solver_impl::
+  D_selector<Q, typename Tags::Is_linear>::
+  D_iterator D_iterator;
+  typedef typename QP_solver_impl::
+  Bd_selector<Q, typename Tags::Is_in_standard_form>::
+  L_iterator L_iterator;
+  typedef typename QP_solver_impl::
+  Bd_selector<Q, typename Tags::Is_in_standard_form>::
+  U_iterator U_iterator;
+  typedef typename QP_solver_impl::
+  Bd_selector<Q, typename Tags::Is_in_standard_form>::
+  FL_iterator FL_iterator;
+  typedef typename QP_solver_impl::
+  Bd_selector<Q, typename Tags::Is_in_standard_form>::
+  FU_iterator FU_iterator;
+
+//   typedef  typename Q::D_iterator   D_iterator;
+//   typedef  typename Q::L_iterator   L_iterator;
+//   typedef  typename Q::U_iterator   U_iterator;
+//   typedef  typename Q::FL_iterator  FL_iterator;
+//   typedef  typename Q::FU_iterator  FU_iterator;
+ 
 
   // types from the Tags
   typedef  typename Tags::Is_linear    Is_linear;
@@ -188,11 +211,10 @@ private: // private types
 
 public: // export some additional types:
   
-  typedef  std::vector<int>           Indices; // QP__partial_base.h needs it.
-  
-  typedef  Indices::iterator          Index_iterator;
-  typedef  Indices::const_iterator    Index_const_iterator;
-  
+  typedef  typename Base::Indices     Indices; 
+  typedef  typename Base::Index_iterator           Index_iterator;
+  typedef  typename Base::Index_const_iterator     Index_const_iterator;
+ 
   // For problems in nonstandard form we also export the following type, which
   // for an original variable will say whether it sits at is lower, upper, at
   // its lower and upper (fixed) bound, or at zero, or whether the variable is
@@ -213,19 +235,18 @@ private:
                                       Value_const_iterator;
 
   // quotient functors:
-  typedef  Creator_2< ET, ET, Quotient<ET> >
-                                      Quotient_creator;
-  typedef  typename CGAL::Bind<Quotient_creator,
-    typename Quotient_creator::argument2_type,2>::Type
-                                      Quotient_maker;
+  typedef typename Base::U_Quotient_creator U_Quotient_creator;
+  typedef typename Base::Quotient_normalizer Quotient_normalizer;
+  typedef typename Base::Quotient_creator Quotient_creator;
+  typedef typename Base::Quotient_maker Quotient_maker;
     
   // access values by basic index functor:
   typedef  Value_by_basic_index<Value_const_iterator>
                                       Value_by_basic_index;
 
   // access values by original index
-  friend class QP_solver_impl::Value_by_index<Q, ET, Tags>;
-  typedef  QP_solver_impl::Value_by_index<Q, ET, Tags> Value_by_index;
+  friend class Base::Value_by_index;
+  typedef typename Base::Value_by_index Value_by_index;
 
   // access to original problem by basic variable/constraint index:
   typedef  QP_vector_accessor<
@@ -279,9 +300,6 @@ private:
                                       S_by_index_iterator;
   
 public:
-
-    // public types
-    enum Status { UPDATE, INFEASIBLE, UNBOUNDED, OPTIMAL };
     
     typedef  typename A_slack::const_iterator
                                         A_slack_iterator;
@@ -291,22 +309,11 @@ public:
     
     typedef  typename C_aux::const_iterator
                                         C_auxiliary_iterator;
-//  bg: as the following refers to all variables (including slackies, it's
-//  not very useful; changed to only work with original variables
-//  typedef  Join_input_iterator_1< Index_const_iterator,Value_by_basic_index >
-//                                         Variable_numerator_iterator;
 
-    typedef Join_input_iterator_1< Index_const_iterator,Value_by_index >
-                                       Variable_numerator_iterator;
-    typedef  Join_input_iterator_1< Variable_numerator_iterator,
-                                        Quotient_maker >
-                                        Variable_value_iterator;
-  
-    /*
-    typedef  Variable_numerator_iterator
-                                        Working_variable_numerator_iterator;
-    typedef  Variable_value_iterator    Working_variable_value_iterator;
-    */
+    typedef typename Base::Variable_numerator_iterator
+    Variable_numerator_iterator;
+    typedef typename Base::Variable_value_iterator
+    Variable_value_iterator;
 
     typedef  Index_const_iterator       Basic_variable_index_iterator;
     typedef  Value_const_iterator       Basic_variable_numerator_iterator;
@@ -423,7 +430,7 @@ public:
     Values                   w;         // w = 2D_{O, N_O}x_{N_O}
     
     int                      m_phase;   // phase of the Simplex method
-    Status                   m_status;  // status of last pivot step
+    QP_status                   m_status;  // status of last pivot step
     int                      m_pivots;  // number of pivot steps
     
     bool                     is_phaseI; // flag indicating phase I
@@ -534,20 +541,14 @@ public:
 	      
  private:
     // set-up of QP
-    void  set( int n, int m,
-	       const A_iterator& A, 
-	       const B_iterator& b, 
-	       const C_iterator& c, 
-	       const C_entry& c_0,
-	       const D_iterator& D ,
-	       const Row_type_iterator& r =
-	         Const_oneset_iterator<Row_type>( CGAL::EQUAL));
+    void set( const Q& qp); 
+    void set_D (const Q& qp, Tag_true is_linear);
+    void set_D (const Q& qp, Tag_false is_linear);
 	         
     // set-up of explicit bounds
-    void set_explicit_bounds(const FL_iterator& fl, 
-			     const L_iterator& lb,
-			     const FU_iterator& fu, 
-			     const U_iterator& ub); 
+    void set_explicit_bounds(const Q& qp); 
+    void set_explicit_bounds(const Q& qp, Tag_true is_in_standard_form); 
+    void set_explicit_bounds(const Q& qp, Tag_false is_in_standard_form);
 
     // initialization (of phase I)
     void  init( );
@@ -562,14 +563,14 @@ public:
     // operations
     // ----------
     // pivot step
-    Status  pivot( )
+    QP_status  pivot( )
         { CGAL_qpe_precondition( phase() > 0);
           CGAL_qpe_precondition( phase() < 3);
           pivot_step();
           return status(); }
 
     // solve QP
-    Status  solve( )
+    QP_status  solve( )
         { CGAL_qpe_precondition( phase() > 0);
           while ( phase() < 3) { pivot_step(); }
           return status(); }
@@ -601,7 +602,7 @@ public:
 
     // access to current status
     int     phase     ( ) const { return m_phase;  }
-    Status  status    ( ) const { return m_status; }
+    QP_status  status    ( ) const { return m_status; }
     int     iterations( ) const { return m_pivots; }
     
     // access to common denominator
@@ -614,8 +615,9 @@ public:
     ET  solution_denominator( ) const { return d*d; }
     
     Quotient<ET>  solution( ) const
-        { return Quotient<ET>( solution_numerator(), d*d); }
-
+    { return 
+	Quotient_creator (Quotient_normalizer(),
+			  U_Quotient_creator())(solution_numerator(), d*d);}
     // access to original variables
     int  number_of_original_variables( ) const { return qp_n; }
     
@@ -629,16 +631,16 @@ public:
     { return Variable_numerator_iterator( O.end(),  Value_by_index(this));}
     
     Variable_value_iterator
-    variables_value_begin( ) const
+    variable_values_begin( ) const
         { return Variable_value_iterator(
                      variables_numerator_begin(),
-                     Quotient_maker( Quotient_creator(), d)); }
+                     Quotient_maker( Quotient_creator(Quotient_normalizer(), U_Quotient_creator()) , d)); }
     
     Variable_value_iterator
-    variables_value_end  ( ) const
+    variable_values_end  ( ) const
         { return Variable_value_iterator(
                      variables_numerator_end(),
-                     Quotient_maker( Quotient_creator(), d)); }
+                     Quotient_maker( Quotient_creator(Quotient_normalizer(), U_Quotient_creator()) , d)); }
     
     // access to slack variables
     int  number_of_slack_variables( ) const { return slack_A.size(); }
@@ -667,15 +669,15 @@ public:
     basic_original_variables_numerator_end  ( ) const { return x_B_O.begin()
 							       + B_O.size(); }
     Basic_variable_value_iterator
-    basic_original_variables_value_begin( ) const
+    basic_original_variable_values_begin( ) const
         { return Basic_variable_value_iterator(
                      basic_original_variables_numerator_begin(),
-                     Quotient_maker( Quotient_creator(), d)); }
+                     Quotient_maker( Quotient_creator(Quotient_normalizer(), U_Quotient_creator()) , d)); }
     Basic_variable_value_iterator
-    basic_original_variables_value_end  ( ) const
+    basic_original_variable_values_end  ( ) const
         { return Basic_variable_value_iterator(
                      basic_original_variables_numerator_end(),
-                     Quotient_maker( Quotient_creator(), d)); }
+                     Quotient_maker( Quotient_creator(Quotient_normalizer(), U_Quotient_creator()) , d)); }
 
     Basic_variable_index_iterator
     basic_slack_variables_index_begin( ) const { return B_S.begin(); }
@@ -688,15 +690,15 @@ public:
     basic_slack_variables_numerator_end  ( ) const { return x_B_S.begin()
 							    + B_S.size(); }
     Basic_variable_value_iterator
-    basic_slack_variables_value_begin( ) const
+    basic_slack_variable_values_begin( ) const
         { return Basic_variable_value_iterator(
                      basic_slack_variables_numerator_begin(),
-                     Quotient_maker( Quotient_creator(), d)); }
+                     Quotient_maker( Quotient_creator(Quotient_normalizer(), U_Quotient_creator()) , d)); }
     Basic_variable_value_iterator
-    basic_slack_variables_value_end  ( ) const
+    basic_slack_variable_values_end  ( ) const
         { return Basic_variable_value_iterator(
                      basic_slack_variables_numerator_end(),
-                     Quotient_maker( Quotient_creator(), d)); }
+                     Quotient_maker( Quotient_creator(Quotient_normalizer(), U_Quotient_creator()) , d)); }
 
 public: // only the pricing strategies (including user-defined ones
         // need access to this) -- make them friends?
@@ -735,13 +737,13 @@ public: // only the pricing strategies (including user-defined ones
     lambda_value_begin( ) const
         { return Lambda_value_iterator(
                      lambda_numerator_begin(),
-                     Quotient_maker( Quotient_creator(), d)); }
+                     Quotient_maker( Quotient_creator(Quotient_normalizer(), U_Quotient_creator()) , d)); }
     
     Lambda_value_iterator
     lambda_value_end  ( ) const
         { return Lambda_value_iterator(
                      lambda_numerator_end(),
-                     Quotient_maker( Quotient_creator(), d)); }
+                     Quotient_maker( Quotient_creator(Quotient_normalizer(), U_Quotient_creator()) , d)); }
         
   // Returns w[j] for an original variable x_j.
   ET w_j_numerator(int j) const
@@ -1118,11 +1120,12 @@ public:
     bool  check_w(Tag_false is_in_standard_form) const;
     
     // utility routines for QP's in nonstandard form:
-    ET  original_variable_value(int i) const;
+    ET original_variable_value_under_bounds(int i) const;
+    ET nonbasic_original_variable_value (int i) const;
 
- public: // should probably be replaced with iterator access:
-    ET  nonbasic_original_variable_value(int i) const;
-
+ public: 
+    // for original variables
+    ET variable_value(int i) const;
  private:
     // check basis inverse
     bool  check_basis_inverse( );
@@ -1970,55 +1973,6 @@ namespace QP_solver_impl {
     typedef Full_rank             Has_equalities_only_and_full_rank;
     typedef Standard_form         Is_in_standard_form;
   };
-
-
-// --------------------
-// Value_by_index
-// --------------------
-template < typename Q, typename ET, typename Tags >
-class Value_by_index : public std::unary_function< int, ET>
-{
-public:
-  typedef QP_solver<Q, ET, Tags> QP;
-  typedef ET result_type;
-  typedef typename Tags::Is_in_standard_form Is_in_standard_form;
-
-  Value_by_index(const QP* solver)
-    : s (solver)
-    {}
-
-  // returns value * denominator 
-  result_type operator () ( int i) const
-    {
-      CGAL_qpe_assertion( 0 <= i && i < s->qp_n );
-      if (check_tag(Is_in_standard_form()))
-	if (s->in_B[i] < 0) 
-	  return s->et0;
-	else 
-	  return s->x_B_O[s->in_B[i]];
-
-      // now we have nonstandard form
-      switch (s->x_O_v_i[i]) {
-      case QP::UPPER:
-	return result_type(s->qp_u[i]) * s->d;
-	break;
-      case QP::ZERO:
-	return s->et0;
-	break;
-      case QP::LOWER:
-      case QP::FIXED:
-	return result_type(s->qp_l[i]) * s->d;
-	break;
-      case QP::BASIC:
-	return s->x_B_O[s->in_B[i]];
-	break;
-      default: // never reached
-	return s->et0;
-      }
-    }
-
-  const QP* s;
-};
 
 } // end namespace QP_solver_impl
 

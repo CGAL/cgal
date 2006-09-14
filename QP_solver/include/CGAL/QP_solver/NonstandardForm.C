@@ -26,11 +26,8 @@ CGAL_BEGIN_NAMESPACE
 // the variable's value corresponding to this bound.
 //
 // Precondition: Is_in_standard_form is Tag_false.
-//
-// Note: This routine is probably never called (but it is referenced
-// sometimes in comments for explanation.)
 template < typename Q, typename ET, typename Tags >
-ET QP_solver<Q, ET, Tags>::original_variable_value(int i) const
+ET QP_solver<Q, ET, Tags>::original_variable_value_under_bounds(int i) const
 {
   CGAL_assertion(!check_tag(Is_in_standard_form()) && i<qp_n);
   switch (x_O_v_i[i]) {
@@ -50,22 +47,47 @@ ET QP_solver<Q, ET, Tags>::original_variable_value(int i) const
   return et0; // dummy
 }
 
-// Returns the current value of a nonbasic original variable.
-//
-// Note: this routine is like original_variable_value() above with the
-// two differences that (i) it also works if In_standard_form is
-// Tag_true and (ii) that it makes the assertion check that i is not a
-// basic variable.
-//
-// Precondition: x_O_v_i must be initialized as well as in_B. 
 template < typename Q, typename ET, typename Tags >
-ET QP_solver<Q, ET, Tags>::nonbasic_original_variable_value(int i) const
+ET QP_solver<Q, ET, Tags>::variable_value(int i) const
+{
+  // Returns the current value of an *original* variable.
+  CGAL_qpe_assertion( 0 <= i && i < qp_n );
+  if (check_tag(Is_in_standard_form()))
+    if (in_B[i] < 0) 
+      return et0;
+    else 
+      return x_B_O[in_B[i]];
+
+  // now we have nonstandard form
+  typedef QP_solver<Q, ET, Tags> QP;
+  switch (x_O_v_i[i]) {
+  case QP::UPPER:
+    return ET(qp_u[i]) * d;
+    break;
+  case QP::ZERO:
+    return et0;
+    break;
+  case QP::LOWER:
+  case QP::FIXED:
+    return ET(qp_l[i]) * d;
+    break;
+  case QP::BASIC:
+    return x_B_O[in_B[i]];
+    break;
+  default: // never reached
+    return et0;
+  }
+}
+
+template < typename Q, typename ET, typename Tags >
+ET QP_solver<Q, ET, Tags>::nonbasic_original_variable_value
+(int i) const
 {
   if (check_tag(Is_in_standard_form()))
     return et0;
 
   CGAL_assertion(!is_basic(i));
-  return original_variable_value(i);
+  return original_variable_value_under_bounds(i);
 }
 
 // Computes r_i:= A_i x_init, for i=row, where x_init is the solution

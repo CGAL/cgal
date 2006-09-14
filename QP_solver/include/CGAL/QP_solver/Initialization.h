@@ -47,8 +47,8 @@ QP_solver(const Q& qp, Pricing_strategy* strategy, int verbosity)
 
   // Note: we first set the bounds and then call set() because set()
   // accesses qp_fl, qp_l, etc.
-  set_explicit_bounds(qp.fl(), qp.l(), qp.fu(), qp.u());
-  set(qp.n(), qp.m(), qp.a(), qp.b(), qp.c(), qp.c0(), qp.d(), qp.r());
+  set_explicit_bounds(qp);
+  set(qp);
 
   // initialize and solve immediately:
   init();
@@ -56,24 +56,36 @@ QP_solver(const Q& qp, Pricing_strategy* strategy, int verbosity)
 }
 
 // set-up of QP
+
 template < typename Q, typename ET, typename Tags >
 void QP_solver<Q, ET, Tags>::
-set(int n, int m,
-    const A_iterator& A_it,
-    const B_iterator& b_it,
-    const C_iterator& c_it,
-    const C_entry&   c_0,
-    const D_iterator& D_it,
-    const Row_type_iterator& Row_type_it)
+set_D(const Q& qp, Tag_true is_linear)
+{
+  // dummy value, never used
+  qp_D = 0;
+}
+
+template < typename Q, typename ET, typename Tags >
+void QP_solver<Q, ET, Tags>::
+set_D(const Q& qp, Tag_false is_linear)
+{
+  qp_D = qp.d();
+}
+
+template < typename Q, typename ET, typename Tags >
+void QP_solver<Q, ET, Tags>::
+set(const Q& qp)
 {
   // assertions:
-  CGAL_qpe_precondition(n > 0);
-  CGAL_qpe_precondition(m >= 0); 
+  CGAL_qpe_precondition(qp.n() > 0);
+  CGAL_qpe_precondition(qp.m() >= 0); 
 
   // store QP
-  qp_n = n; qp_m = m;
-  qp_A = A_it; qp_b = b_it; qp_c = c_it; qp_c0 = c_0; qp_D = D_it;
-  qp_r = Row_type_it;
+  qp_n = qp.n(); qp_m = qp.m();
+  qp_A = qp.a(); qp_b = qp.b(); qp_c = qp.c(); qp_c0 = qp.c0(); 
+
+  set_D(qp, Is_linear());
+  qp_r = qp.r();
   
   // store original variable indices (hack needed to allow
   // access to original variable values through Join_iterator_1
@@ -108,7 +120,7 @@ set(int n, int m,
   set_up_auxiliary_problem();
     
   e = qp_m-slack_A.size(); // number of equalities
-  l = (std::min)(n+e+1, m);  // maximal size of basis in phase I
+  l = (std::min)(qp_n+e+1, qp_m);  // maximal size of basis in phase I
   
   // diagnostic output:
   CGAL_qpe_debug {
@@ -119,7 +131,7 @@ set(int n, int m,
 		    << "======" << std::endl;
       }
       vout.out() << "[ " << (is_LP ? "LP" : "QP")
-		 << ", " << n << " variables, " << m << " constraints";
+		 << ", " << qp_n << " variables, " << qp_m << " constraints";
       if (vout2.verbose() && (!slack_A.empty())) {
 	vout2.out() << " (" << slack_A.size() << " inequalities)";
       }
@@ -153,16 +165,30 @@ set(int n, int m,
 
 template < typename Q, typename ET, typename Tags >
 void QP_solver<Q, ET, Tags>::
-set_explicit_bounds(const FL_iterator& fl,
-		    const L_iterator& lb,
-		    const FU_iterator& fu,
-		    const U_iterator& ub)
+set_explicit_bounds(const Q& qp)
 {
-  qp_fl = fl;
-  qp_l = lb;
-  qp_fu = fu;
-  qp_u = ub;
+  set_explicit_bounds (qp, Is_in_standard_form());
 }
+
+template < typename Q, typename ET, typename Tags >
+void QP_solver<Q, ET, Tags>::
+set_explicit_bounds(const Q& qp, Tag_true) {
+  // dummy values, never used
+  qp_fl = 0;
+  qp_l = 0;
+  qp_fu = 0;
+  qp_u = 0;
+}
+
+template < typename Q, typename ET, typename Tags >
+void QP_solver<Q, ET, Tags>::
+set_explicit_bounds(const Q& qp, Tag_false) {
+  qp_fl = qp.fl();
+  qp_l = qp.l();
+  qp_fu = qp.fu();
+  qp_u = qp.u();
+}
+
 
 #if 0
 // todo: following is an old version that should be replaced by the out#def'ed
@@ -590,7 +616,7 @@ init()
 
   // set status:
   m_phase    = 1;
-  m_status   = UPDATE;
+  m_status   = QP_UPDATE;
   m_pivots   = 0;
   is_phaseI  = true;
   is_phaseII = false;

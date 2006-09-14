@@ -189,7 +189,7 @@ pivot_step( )
             if (this->solution_numerator() > et0) {    
 	      // problem is infeasible
 	        m_phase  = 3;
-	        m_status = INFEASIBLE;
+	        m_status = QP_INFEASIBLE;
 	        CGAL_qpe_debug {
 		    vout1 << "  ";
 		    vout << "problem is INFEASIBLE" << std::endl;
@@ -202,7 +202,7 @@ pivot_step( )
 
 	    // optimal solution found
 	    m_phase  = 3;
-            m_status = OPTIMAL;
+            m_status = QP_OPTIMAL;
   
             CGAL_qpe_debug {
                 vout1 << "  ";
@@ -239,7 +239,7 @@ pivot_step( )
         // check for unboundedness
         if ( q_i == et0) {
             m_phase  = 3;
-            m_status = UNBOUNDED;
+            m_status = QP_UNBOUNDED;
             CGAL_qpe_debug {
                 vout1 << "  ";
                 vout << "problem is UNBOUNDED" << std::endl;
@@ -2042,7 +2042,8 @@ z_replace_variable_original_by_original_upd_w_r(Tag_true )
 
 // update of the vectors w and r for U_Z_1 with upper bounding, note that we 
 // need the headings C, S_{B}, B_{O} before they are updated
-template < typename Q, typename ET, typename Tags >                           // Upper bounded      
+template < typename Q, typename ET, typename Tags >                           
+// Upper bounded      
 void  QP_solver<Q, ET, Tags>::
 z_replace_variable_original_by_original_upd_w_r(Tag_false )
 {
@@ -3131,7 +3132,8 @@ print_solution( )
             vout2.out() << "   x_N_O: ";
             for (int i = 0; i < qp_n; ++i) {
                 if (!is_basic(i)) {
-                    vout2.out() << d * nonbasic_original_variable_value(i);
+                    vout2.out() << d * 
+		      nonbasic_original_variable_value(i);
                     vout2.out() << " ";    
                 }
             }

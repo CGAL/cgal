@@ -32,12 +32,12 @@ bool QP_solver<Q, ET, Tags>::is_valid()
     vout << "========" << std::endl;
   }
     switch(this->m_status) {
-    case UPDATE:
+    case QP_UPDATE:
 	CGAL_qpe_debug {
 	  vout << " still in Update state!" << std::endl;
 	}
       return false;
-    case OPTIMAL:
+    case QP_OPTIMAL:
       {
 	const bool f = this->is_solution_feasible();
 	const bool o = this->is_solution_optimal();
@@ -54,7 +54,7 @@ bool QP_solver<Q, ET, Tags>::is_valid()
 	}
 	return is_phaseII && f && o && v;
       }
-    case INFEASIBLE:
+    case QP_INFEASIBLE:
       {
 	const bool f = this->is_solution_feasible_for_auxiliary_problem();
 	const bool o = this->is_solution_optimal_for_auxiliary_problem();
@@ -72,7 +72,7 @@ bool QP_solver<Q, ET, Tags>::is_valid()
 	}
 	return is_phaseI && f && o && aux_positive;
       }
-    case UNBOUNDED:    
+    case QP_UNBOUNDED:    
       {
 	const bool f = this->is_solution_feasible();
 	const bool u = this->is_solution_unbounded();

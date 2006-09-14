@@ -25,6 +25,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/QP_solver.h>
 #include <CGAL/QP_models.h>
+#include <CGAL/QP_solution.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -105,6 +106,41 @@ QP_solution<ET> solve_quadratic_program
   return QP_solution<ET>(s);
 }
 
+template <typename QuadraticProgram, typename ET>
+QP_solution<ET> solve_nonnegative_quadratic_program 
+(const QuadraticProgram &qp, const ET& dummy)
+{
+  typedef QP_solver<
+    QuadraticProgram, ET, 
+    QP_solver_impl::QP_tags<Tag_false, Tag_false, Tag_false, Tag_true> >
+    Solver;
+  const Solver* s = new Solver(qp);
+  return QP_solution<ET>(s);
+}
+
+template <typename QuadraticProgram, typename ET>
+QP_solution<ET> solve_linear_program 
+(const QuadraticProgram &qp, const ET& dummy)
+{
+  typedef QP_solver<
+    QuadraticProgram, ET, 
+    QP_solver_impl::QP_tags<Tag_true, Tag_false, Tag_false, Tag_false> >
+    Solver;
+  const Solver* s = new Solver(qp);
+  return QP_solution<ET>(s);
+}
+
+template <typename QuadraticProgram, typename ET>
+QP_solution<ET> solve_nonnegative_linear_program 
+(const QuadraticProgram &qp, const ET& dummy)
+{
+  typedef QP_solver<
+    QuadraticProgram, ET, 
+    QP_solver_impl::QP_tags<Tag_true, Tag_false, Tag_false, Tag_true> >
+    Solver;
+  const Solver* s = new Solver(qp);
+  return QP_solution<ET>(s);
+}
 CGAL_END_NAMESPACE
 
 #include <CGAL/QP_solver/QP_functions_impl.h>
