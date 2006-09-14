@@ -27,6 +27,11 @@
 #include <vector>
 #include <iostream>
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4355) // complaint about using 'this' to
+#endif                          // initialize a member
+
 CGAL_BEGIN_NAMESPACE
 
 /*{\Moptions outfile=SM_io_parser.man }*/
@@ -470,5 +475,11 @@ void SM_io_parser<Decorator_>::dump(const Decorator_& D, std::ostream& os)
 
 
 CGAL_END_NAMESPACE
+
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
 #endif //CGAL_SM_IO_PARSER_H
 
