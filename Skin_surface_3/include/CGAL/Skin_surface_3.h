@@ -70,6 +70,7 @@ public:
   typedef typename Regular::Cell_handle                  Cell_handle;
   typedef Triangulation_simplex_3<Regular>               Simplex;
 
+  //private:
   typedef typename Regular::Finite_vertices_iterator     Finite_vertices_iterator;
   typedef typename Regular::Finite_edges_iterator        Finite_edges_iterator;
   typedef typename Regular::Finite_facets_iterator       Finite_facets_iterator;
@@ -81,7 +82,7 @@ public:
   typedef typename CMCT::Cell                             CMCT_Cell;
   typedef typename CMCT::Cell_iterator                    CMCT_Cell_iterator;
 
-
+private:
   // NGHK: added for the (Delaunay) surface mesher, document
   typedef Exact_predicates_inexact_constructions_kernel  Mesher_Gt;
   typedef Skin_surface_mesher_oracle_3<Mesher_Gt,Self> Surface_mesher_traits_3;
@@ -132,6 +133,24 @@ public:
 
   }
 
+  // This class has to be a friend:
+  template <class SkinSurface_3, 
+	    class Vertex_iterator, class Cell_iterator, 
+	    class HalfedgeDS>
+  friend class Marching_tetrahedra_traits_skin_surface_3;
+
+  template <class Polyhedron_3>
+  void mesh_skin_surface_3(Polyhedron_3 &p) const;
+  
+  Sign sign(const Bare_point &p, const Simplex &start = Simplex()) const {
+    return get_sign(locate_mixed(p,start), p);
+  }
+  Vector
+  normal(const Bare_point &p, const Simplex &start = Simplex()) const {
+    return get_normal(locate_mixed(p,start), p);
+  }
+
+private:
   bool is_infinite_mixed_cell(const Simplex &s) const {
     switch (s.dimension()) {
     case 0:
@@ -238,9 +257,6 @@ public:
 
     return construct_surface(vh->first, K()).sign(p);
   }
-  Sign sign(const Bare_point &p, const Simplex &start = Simplex()) const {
-    return get_sign(locate_mixed(p,start), p);
-  }
 
   // Trivial caching: check wether the surface is the same as the previous:
   mutable Skin_surface_quadratic_surface_3<
@@ -282,10 +298,6 @@ public:
       construct_surface(sim, typename Geometric_traits::Kernel()).value(p);
   }
   Vector
-  normal(const Bare_point &p, const Simplex &start = Simplex()) const {
-    return get_normal(locate_mixed(p,start), p);
-  }
-  Vector
   get_normal(const Simplex &mc, const Bare_point &p) const {
     return construct_surface(mc).gradient(p);
   }
@@ -321,6 +333,7 @@ public:
     Simplex s2 = vh2->first;
     intersect(p1,p2, s1,s2, p);
   }
+
   void intersect(const CMCT_Vertex_handle vh1,
 		 const CMCT_Vertex_handle vh2,
 		 const Simplex &s,
@@ -772,6 +785,36 @@ locate_mixed(const Bare_point &p, const Simplex &start) const {
 //   std::cout << "]";
 
   return s;
+}
+
+template <class MixedComplexTraits_3> 
+template <class Polyhedron_3>
+void
+Skin_surface_3<MixedComplexTraits_3>::mesh_skin_surface_3(Polyhedron_3 &p) const {
+  std::cout << "Mesh_Skin_Surface_3" << std::endl;
+
+  typedef Polyhedron_3 Polyhedron;
+
+  typedef Marching_tetrahedra_traits_skin_surface_3<
+    Self,
+    CMCT_Vertex_iterator,
+    CMCT_Cell_iterator,
+    typename Polyhedron::HalfedgeDS>               Marching_tetrahedra_traits;
+  typedef Marching_tetrahedra_observer_skin_surface_3<
+    CMCT_Vertex_iterator,
+    CMCT_Cell_iterator,
+    Polyhedron>                                    Marching_tetrahedra_observer;
+
+  // Extract the coarse mesh using marching_tetrahedra
+  Marching_tetrahedra_traits   marching_traits(*this);
+  Marching_tetrahedra_observer marching_observer;
+  marching_tetrahedra_3(cmct_vertices_begin(), 
+			cmct_vertices_end(), 
+			cmct_cells_begin(), 
+			cmct_cells_end(), 
+			p, 
+			marching_traits,
+			marching_observer);
 }
 
 CGAL_END_NAMESPACE

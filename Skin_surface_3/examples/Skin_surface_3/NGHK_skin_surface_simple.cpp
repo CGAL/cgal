@@ -45,9 +45,9 @@ int main(int argc, char *argv[]) {
 
   std::cout << "Is closed: " << (p.is_closed() ? "Yes" : "No") << std::endl;
 
-//   std::ofstream out("mesh.off");
-// //   write_polyhedron_with_normals(p, skin_surface, out);
-//   out << p;
-
+  std::ofstream out("mesh.off");
+  // //   write_polyhedron_with_normals(p, skin_surface, out);
+  out << p;
+  
   return 0;
 }
