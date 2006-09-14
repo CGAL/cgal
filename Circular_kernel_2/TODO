@@ -1,18 +1,18 @@
 manual filtered bbox kernel, ref counting
 manual calculs aires, longueurs, etc
 manual bounded_side etc
-manual orientation (attention au concept NT Ro2)
+manual orientation: NO (only when points have same delta, so don't document)
 
 clean demos
+
+clean manual AK (concepts like Polynomial_1_2, access to a() b() c() ?
+used in solve to check that solutions are the same)
 
 rendre Bbox filtered kernel completement generique -> 
 	utilisation dans linear kernel aussi
 	CK3
 
 echecs de filtres 
-
-rajouter orientation de 2 circular_arc_point (possible avec nouveaux Ro2)
-attention aux docs des concepts
 
 resoudre problemes avec GMP
 pb general Ro2 avec GMP, pb make_root_of_2
