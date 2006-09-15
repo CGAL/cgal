@@ -353,6 +353,20 @@ Arrangement_2/doc_tex/Sweep_line_2/sl_simple.ps -text svneol=unset#application/p
 Arrangement_2/examples/Arrangement_2/Bezier.dat -text
 Arrangement_2/examples/Arrangement_2/coll_points.dat -text
 Arrangement_2/examples/Arrangement_2/points.dat -text
+Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/1GWB.spheres -text svneol=unset#application/octet-stream
+Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/degen.spheres -text svneol=unset#application/octet-stream
+Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/degen2.spheres -text svneol=unset#application/octet-stream
+Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/diag.spheres -text svneol=unset#application/octet-stream
+Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/insertion.spheres -text svneol=unset#application/octet-stream
+Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/intersect.spheres -text svneol=unset#application/octet-stream
+Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/intersect2.spheres -text svneol=unset#application/octet-stream
+Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/intersect_problem.spheres -text svneol=unset#application/octet-stream
+Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/less_simple.spheres -text svneol=unset#application/octet-stream
+Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/one.spheres -text svneol=unset#application/octet-stream
+Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/problem.spheres -text svneol=unset#application/octet-stream
+Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/really_simple.spheres -text svneol=unset#application/octet-stream
+Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/simple.spheres -text svneol=unset#application/octet-stream
+Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/two.spheres -text svneol=unset#application/octet-stream
 Arrangement_of_spheres_3/src/CGAL/Arrangement_of_spheres_3.C -text
 Arrangement_of_spheres_3/src/CGAL/Combinatorial_stuff.C -text
 Arrangement_of_spheres_3/src/CGAL/Slice_kds.C -text

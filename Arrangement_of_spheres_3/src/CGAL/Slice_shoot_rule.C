@@ -1,6 +1,6 @@
 #include <CGAL/Arrangement_of_spheres_3/Slice.h>
 
-#define DPRINT(x)
+#define DPRINT(x) x
 
 
 // hits in order T R B L
@@ -102,8 +102,8 @@ Slice::Halfedge_handle Slice::shoot_rule(const T::Sphere_point_3 & source,
 
 
 
-// return comparison of separator to intersection point on the C coordinate
-// i.e. SMALLER if the separator is SMALLER than the intersection point
+// return comparison of point on edge of face to the shot rule on the C coordinate
+// i.e. SMALLER if the point on edge is smaller than the rule coordinate
 CGAL::Comparison_result Slice::rule_shoot_edge_vertex(const T::Sphere_point_3 & ep, 
 						      Sds::Curve rule,
 						      Sds::Curve hp,
@@ -297,6 +297,28 @@ CGAL::Comparison_result Slice::rule_shoot_compare_SR(const T::Sphere_point_3 & e
   //CGAL_precondition(srule.constant_coordinate() != orule.constant_coordinate());
 
    
+  if (srule.is_vertical()) {
+    CGAL::Comparison_result c= t_.compare_sphere_centers_c(srule.key(), arc.key(),
+						    plane_coordinate(0));
+    if (c== CGAL::SMALLER && arc.is_right()) {
+      debug_rule_shoot_check(debug_answer, CGAL::LARGER, exact);
+      return CGAL::LARGER;
+    } else if (c== CGAL::LARGER && arc.is_left()) {
+      debug_rule_shoot_check(debug_answer, CGAL::SMALLER, exact);
+      return CGAL::SMALLER;
+    }
+  } else {
+    CGAL::Comparison_result c= t_.compare_sphere_centers_c(srule.key(), arc.key(),
+						    plane_coordinate(1));
+    if (c== CGAL::SMALLER && arc.is_top()) {
+      debug_rule_shoot_check(debug_answer, CGAL::LARGER, exact);
+      return CGAL::LARGER;
+    } else if (c== CGAL::LARGER && !arc.is_top()) {
+      debug_rule_shoot_check(debug_answer, CGAL::SMALLER, exact);
+      return CGAL::SMALLER;
+    }
+  }
+
       
   CGAL::Bounded_side intersection_side;
   if (srule.constant_coordinate() == plane_coordinate(0)) {
@@ -368,8 +390,9 @@ CGAL::Comparison_result Slice::debug_rule_shoot_answer(const T::Sphere_point_3 &
 	 << CGAL::to_double(sp.exact_coordinate(plane_coordinate(0))) << " " 
 	 << CGAL::to_double(sp.exact_coordinate(plane_coordinate(1))) << std::endl);
     
-  CGAL::Comparison_result ans= CGAL::Comparison_result(-t_.compare_sphere_center_c(rule.key(), sp,
-							   rule.constant_coordinate()));
+  CGAL::Comparison_result ans
+    = CGAL::Comparison_result(-t_.compare_sphere_center_c(rule.key(), sp,
+							  rule.constant_coordinate()));
   DPRINT(std::cout << "Got " << ans << std::endl);
   if (ans== CGAL::EQUAL) {
     /*std::cout << "EQUAL for " << p << " " << n << ": " << sp 

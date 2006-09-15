@@ -296,7 +296,7 @@ bool Combinatorial_curve::can_intersect(const Combinatorial_curve &o) const {
 }
 
 Coordinate_index Combinatorial_curve::is_weakly_incompatible(int i) const {
-  int a= i&pt_;
+  int a= i&pt_&(~lOUT_BIT) &(~lIN_BIT);
   if (a== L_BIT || a==R_BIT) return plane_coordinate(1);
   else if (a== T_BIT || a== B_BIT) return plane_coordinate(0);
   else return Coordinate_index();

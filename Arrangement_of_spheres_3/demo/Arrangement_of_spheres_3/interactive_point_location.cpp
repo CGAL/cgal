@@ -55,13 +55,13 @@ struct Do_work {
    
     //
     Slice::T tr(spheres.begin(), spheres.end());
-    Slice slice(tr, new Simulator());
+    Slice slice(tr);
     slice.initialize_at(z);
   
     *q << Layer(0);
     slice.draw_rz(q, z);
     q->show_everything();
-    q->redraw();
+    //q->redraw();
  
 
     
@@ -85,7 +85,7 @@ struct Do_work {
 	*q << Layer(1);
 	*q << CGAL::RED;
 	*q << K::Point_2(x,y);
-	q->redraw();
+	//q->redraw();
 	Arrangement_of_spheres_traits_3::Sphere_point_3 sp(K::Point_3(x,y,z), 
 							  K::Line_3(K::Point_3(x,y,z),
 								    K::Vector_3(0,0,1)));
@@ -109,7 +109,7 @@ struct Do_work {
 	slice.draw_marked_rz(q,z);
 	*q << CGAL::RED;
 	*q << K::Point_2(x,y);
-	q->redraw();
+	//q->redraw();
       }
     }
   }

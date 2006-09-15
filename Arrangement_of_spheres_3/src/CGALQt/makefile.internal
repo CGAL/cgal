@@ -15,7 +15,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -I../../include -pg -Wall -DCGAL_USE_GMP -DCGAL_USE_GMPXX -DCGAL_USE_CORE -DCGAL_USE_QT -DQT_THREAD_SUPPORT '-I$(CGAL_INCL_DIR)' '-I$(CGAL_INCL_DIR)/CGAL/config/$(CGAL_OS_COMPILER)'   '-I$(QTDIR)/include' -g
+CXXFLAGS = -I../../include -Wall -DCGAL_USE_GMP -DCGAL_USE_GMPXX -DCGAL_USE_CORE -DCGAL_USE_QT -DQT_THREAD_SUPPORT '-I$(CGAL_INCL_DIR)' '-I$(CGAL_INCL_DIR)/CGAL/config/$(CGAL_OS_COMPILER)'   '-I$(QTDIR)/include' -g
 # $(CGAL_LIB_CXXFLAGS) -I../include
 #
 

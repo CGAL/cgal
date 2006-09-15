@@ -206,8 +206,8 @@ public:
   // OK, this is really screwy
   // the new rule is returned
   void move_rule(Halfedge_handle r,
-			    Halfedge_handle ne, 
-			    Halfedge_handle t); 
+		 Halfedge_handle ne, 
+		 Halfedge_handle t); 
 
 
   void audit() const ;
@@ -242,6 +242,8 @@ public:
 
   Halfedge_handle remove_redundant_vertex(Halfedge_handle v);
 
+  void exchange_spheres(Curve::Key k, Curve::Key l);
+
   void clear();
 
   // a halfedge on the curve (an inside one)
@@ -261,7 +263,8 @@ public:
       }
     }
   }
-
+  
+ void relabel_rule(Halfedge_handle h, Curve nl);
 
   // insert the vertex so that h->opposite points to it
   Vertex_handle insert_vertex_in_edge(Halfedge_handle h, Point p);

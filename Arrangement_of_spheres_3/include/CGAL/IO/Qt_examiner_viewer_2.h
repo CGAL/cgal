@@ -19,15 +19,14 @@
 #include "Qt_examiner_viewer_window_2.h"
 
 
-class Qt_examiner_viewer_2 : public Qt_examiner_viewer_window_2 {
+class Qt_examiner_viewer_2  {
   typedef Qt_examiner_viewer_window_2 P;
   struct QTEV_layer;
   typedef CGAL::Simple_cartesian<double> K;
   //typedef K::FT                                          NT;
   typedef CGAL::Algebraic_kernel_for_circles_2_2<double>     Algebraic_k;
   typedef CGAL::Circular_kernel_2<K, Algebraic_k>        Circular_k;
-
-  
+ 
 public:
   typedef K Geom_traits;
   typedef K::FT NT;
@@ -38,15 +37,18 @@ public:
   typedef K::Segment_2 Segment;
   typedef Circular_k::Circular_arc_2 Circular_arc;
 
-  Qt_examiner_viewer_2(NT scale=1): P(600,600),
-				  scale_(scale)
+  Qt_examiner_viewer_2(NT scale=1): window_(new P(600,600)),
+				    scale_(scale)
   {
-    *P::widget() << CGAL::BackgroundColor(CGAL::WHITE);
+    *window_->widget() << CGAL::BackgroundColor(CGAL::WHITE);
     set_layer(0);
   };
 
-  ~Qt_examiner_viewer_2();
+  virtual ~Qt_examiner_viewer_2();
 
+  P* window() {
+    return window_;
+  }
 
   virtual void click(double x, double y){}
 
@@ -56,19 +58,21 @@ public:
   // void set_is_editing_layer(bool tf);
   void show_everything() ;
   void show() ;
-  void redraw();
+  //void redraw();
   template <class K>
   void new_circle(const CGAL::Circle_2<K> &ci) {
     Circle c(Point(CGAL::to_double(ci.center().x()),
 		   CGAL::to_double(ci.center().y())),
 	     CGAL::to_double(ci.squared_radius()));
     layers_[cur_layer_]->new_circle(c);
+    //set_is_dirty(true);
   }
   template <class Pt>
   void new_point(const Pt &ci) {
     Point c(CGAL::to_double(ci.x()),
 	    CGAL::to_double(ci.y()));
     layers_[cur_layer_]->new_point(c);
+    //set_is_dirty(true);
   }
 
   template <class K>
@@ -81,6 +85,7 @@ public:
     Point tp(CGAL::to_double(ca.target().x()),
 	     CGAL::to_double(ca.target().y()));
     layers_[cur_layer_]->new_circular_arc(c, sp, tp);
+    //set_is_dirty(true);
   }
   template <class C, class P>
   void new_circular_arc(const C &ca, const P &s, const P &t) {
@@ -92,6 +97,7 @@ public:
     Point tp(CGAL::to_double(t.x()),
 	     CGAL::to_double(t.y()));
     layers_[cur_layer_]->new_circular_arc(c, sp, tp);
+    //set_is_dirty(true);
   }
 
   /*template <class K>
@@ -108,6 +114,7 @@ public:
     Point b(CGAL::to_double(ci.target().x()),
 	    CGAL::to_double(ci.target().y()));
     layers_[cur_layer_]->new_segment(Segment(a,b));
+    //set_is_dirty(true);
   }
   template <class K>
   void new_line(const CGAL::Line_2<K> &ci) {
@@ -116,10 +123,12 @@ public:
     Vector b(CGAL::to_double(ci.to_vector().x()),
 	     CGAL::to_double(ci.to_vector().y()));
     layers_[cur_layer_]->new_line(Line(a,b));
+    //set_is_dirty(true);
   }
 
   void new_label(const std::string s) {
     layers_[cur_layer_]->new_label(s);
+    //set_is_dirty(true);
   }
     
   void set_line_color(CGAL::Color c){
@@ -137,6 +146,8 @@ public:
   }
 
   void set_layer(unsigned int li);
+
+  void set_is_dirty(bool tf);
 
 private: // private data member
 
@@ -205,12 +216,13 @@ private: // private data member
     Point rescale(const Point &p) const;
 
   };
- 
 
+  Qt_examiner_viewer_window_2 *window_;
   std::vector<QTEV_layer* > layers_;
   int cur_layer_;
   NT scale_;
   QMutex mutex_;
+  //bool dirty_;
 };
 
 struct Qt_ev_layer_tag{};
@@ -309,5 +321,22 @@ inline Qt_examiner_viewer_2 &operator<<(Qt_examiner_viewer_2& e,
   e.set_point_style(o);
   return e;
 }
+
+inline Qt_examiner_viewer_2&
+operator<<(Qt_examiner_viewer_2& o,
+	   Qt_examiner_viewer_2& (*__pf)(Qt_examiner_viewer_2&)){
+  return __pf(o);
+}
+
+
+namespace std {
+
+
+  inline Qt_examiner_viewer_2 &flush(Qt_examiner_viewer_2 &o) {
+    o.set_is_dirty(true);
+    return o;
+  }
+}
+
 
 #endif

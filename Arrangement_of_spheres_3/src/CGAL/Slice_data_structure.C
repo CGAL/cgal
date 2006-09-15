@@ -22,7 +22,8 @@ Slice_data_structure::HDS& Slice_data_structure::hds() {
 
 Slice_data_structure::Halfedge_handle 
 Slice_data_structure::a_halfedge(Curve::Key k) const {
-  CGAL_precondition(halfedges_[k.input_index()][0]->curve().is_inside());
+  CGAL_precondition(halfedges_[k.input_index()][0]== Halfedge_handle()
+		    || halfedges_[k.input_index()][0]->curve().is_inside());
   return halfedges_[k.input_index()][0];
 }
 
@@ -165,101 +166,32 @@ Slice_data_structure::remove_redundant_vertex(Halfedge_handle h) {
 std::pair<Slice_data_structure::Halfedge_handle,
 	  Slice_data_structure::Halfedge_handle>
 Slice_data_structure::remove_rule(Halfedge_handle h) {
-  if (h->face() != h->opposite()->face()) {
+  std::cout << "Merging faces ";
+  write_face(h, std::cout) << " and ";
+  write_face(h->opposite(), std::cout) << std::endl;
 
-    std::cout << "Merging faces ";
-    write_face(h, std::cout) << " and ";
-    write_face(h->opposite(), std::cout) << std::endl;
+  CGAL_precondition(degree(h->vertex()) >=3);
+  CGAL_precondition(degree(h->opposite()->vertex()) >=3);
 
-    Face_handle f= h->face();
+  Face_handle f= h->face();
 
-    Vertex_handle s= h->vertex();
-    Vertex_handle t= h->opposite()->vertex();
-    Halfedge_handle sh= h->opposite()->prev();
-    Halfedge_handle th= h->prev();
-
-    CGAL::HalfedgeDS_decorator<HDS> dec(hds_);
-    h->set_curve(Curve());
-    dec.join_face(h);
-
-    
-    /*if (degree(s) ==2) {
-      CGAL_assertion(s->halfedge()->curve()
-		     == s->halfedge()->opposite()->prev()->opposite()->curve());
-      // fails for degeneracies, I'll fix that elsewhere (in the degeneracy handler)
-      remove_redundant_vertex(s->halfedge());
-    } else {
-      std::cout << "Not removing vertex " <<s->point() << std::endl;
-    }
-    if (degree(t) ==2) {
-      CGAL_assertion(t->halfedge()->curve() 
-		     == t->halfedge()->opposite()->prev()->opposite()->curve());
-      remove_redundant_vertex(t->halfedge());
-    } else {
-      std::cout << "Not removing vertex " << t->point() << std::endl;
-      }*/
-
-    std::cout << "Got face ";
-    write_face(f->halfedge(), std::cout) << std::endl;
-    std::cout << "And edge ";
-    write(sh, std::cout);
-    std::cout << " and ";
-    write(th, std::cout);
-    std::cout << std::endl;
-    return std::make_pair(sh, th);
-  } else {
-    
-    // check that vertex degree is 1
-    std::cout << "Removing peninsula " << h->curve() << "--" 
-	      << h->vertex()->point() << std::endl;
-    CGAL_assertion(0);
-    {
-      int deg=0;
-      Halfedge_handle hc= h->vertex()->halfedge();
-      do {
-	++deg;
-	h= h->opposite()->prev();
-      } while (hc != h->vertex()->halfedge());
-      CGAL_assertion(deg==1);
-    }
-    
-    
-    Halfedge_handle hp= h->prev();
-    Halfedge_handle hn= h->next()->next();
-    Face_handle f= h->face();
-    Vertex_handle vg= hp->vertex();
-    std::cout << "Ground is " << hp->curve() << "--" << vg->point()
-	      << "--" << hn->curve() << std::endl;
-
-    h->vertex()->point()= Point();
-    CGAL_precondition(h->vertex()->halfedge()==h);
-    CGAL_precondition(h->next()->opposite()==h);
-    CGAL_precondition(hp->face()==f);
-    CGAL_precondition(hn->face()==f);
-
-    hds_.vertices_erase(h->vertex());
-    
-    CGAL_assertion(hp->vertex()==vg);
-    vg->set_halfedge(hp);
-    connect(hp, hn);
-    
-    f->set_halfedge(hp);
-
-    hds_.edges_erase(h);
-    std::cout << "Got face ";
-    write_face(f->halfedge(), std::cout) << std::endl;
-
-    {
-      std::cout << "Auditing const decorator..." << std::flush;
-      CGAL::HalfedgeDS_const_decorator<HDS> chds(hds_);
-      if (!chds.is_valid(false, 3)) {
-	CGAL_assertion(0);
-	std::cerr << "Not valid." << std::endl;
-      }
-      std::cout << "done." << std::endl;
-    }
-    return std::make_pair(Halfedge_handle(), Halfedge_handle());
-  }
+  Vertex_handle s= h->vertex();
+  Vertex_handle t= h->opposite()->vertex();
+  Halfedge_handle sh= h->opposite()->prev();
+  Halfedge_handle th= h->prev();
+  
+  CGAL::HalfedgeDS_decorator<HDS> dec(hds_);
+  h->set_curve(Curve());
+  dec.join_face(h);
+  
+  std::cout << "Got face ";
+  write_face(f->halfedge(), std::cout) << std::endl;
+  std::cout << "And edge ";
+  write(sh, std::cout);
+  std::cout << " and ";
+  write(th, std::cout);
+  std::cout << std::endl;
+  return std::make_pair(sh, th);
 }
 
 Slice_data_structure::Halfedge_handle 
@@ -271,6 +203,88 @@ Slice_data_structure::find_halfedge(Vertex_handle v, Face_handle f) {
   } while (h != e);
   CGAL_assertion(0);
   return Halfedge_handle();
+}
+
+
+
+
+void 
+Slice_data_structure::relabel_rule(Halfedge_handle h, Curve c) {
+  std::cout << "Relabeling from " << h->curve() << " to " << c << std::endl;
+  //clean_edge(h);
+  CGAL_precondition(h->curve().is_inside()==c.is_inside());
+  CGAL_precondition(h->curve().is_vertical()==c.is_vertical());
+  h->set_curve(c);
+  h->opposite()->set_curve(c.other_side());
+  Halfedge_handle n;
+  if (h->next()->curve().is_rule() 
+      && h->curve().is_vertical() == h->next()->curve().is_vertical()) {
+    n= h->next();
+  } else if (h->next()->curve().is_rule() 
+	     && h->next()->opposite()->next()->curve().is_rule()
+	     && h->curve().is_vertical() 
+	     == h->next()->opposite()->next()->curve().is_vertical()) {
+    n= h->next()->opposite()->next();
+  }
+  if (n != Halfedge_handle()) {
+    CGAL_assertion(n->opposite()->vertex() == h->vertex());
+    if (n->curve().is_same_part(c)) {
+      relabel_rule(n, c);
+    } else {
+      std::cout << "Next is other dir " << std::endl; 
+    }
+  } else {
+    std::cout << "No next " << std::endl;
+  }
+}
+
+
+
+
+
+
+void
+Slice_data_structure::exchange_spheres(Curve::Key k, Curve::Key l) {
+  // k has the smaller center so it must be outside
+  // switch them
+  {
+    Halfedge_handle lh= a_halfedge(l);
+    do {
+      lh->curve().set_key(k);
+      if (lh->vertex()->point().is_sphere_extremum()) {
+	// relabel rule
+	Halfedge_handle r= lh->opposite()->prev()->opposite();
+	CGAL_assertion(r->curve().is_rule());
+	if (r->curve().key() ==l) {
+	  Curve nr= r->curve();
+	  nr.set_key(k);
+	  relabel_rule(r, nr);
+	}
+      }
+      lh= next_edge_on_curve(lh);
+    } while (lh != a_halfedge(l));
+  }
+  {
+    Halfedge_handle kh= a_halfedge(k);
+    do {
+      kh->curve().set_key(l);
+      if (kh->vertex()->point().is_sphere_extremum()) {
+	// relabel rule
+	Halfedge_handle r= kh->opposite()->prev()->opposite();
+	kes[r->curve().rule_index()]= r;
+	CGAL_assertion(r->curve().is_rule());
+	if (r->curve().key() == k) {
+	  Curve nr= r->curve();
+	  nr.set_key(l);
+	  relabel_rule(r, nr);
+	}
+      }
+      kh= next_edge_on_curve(kh);
+    } while (kh != a_halfedge(k));
+  }
+
+  std::swap(halfedges_[k.input_index()],
+	    halfedges_[l.input_index()]);
 }
 
 
@@ -877,6 +891,7 @@ void Slice_data_structure::audit() const {
       CGAL_assertion(it->vertex()->point().is_special());
       CGAL_assertion(it->vertex()->point().is_special());
       CGAL_assertion(it->opposite()->curve().key().is_target());
+      CGAL_assertion(it->event() == Simulator::Event_key());
     } else {
       CGAL_assertion(!it->vertex()->point().is_special());
       CGAL_assertion(!it->vertex()->point().is_special());

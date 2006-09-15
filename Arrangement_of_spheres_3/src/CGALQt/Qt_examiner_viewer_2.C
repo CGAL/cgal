@@ -1,7 +1,7 @@
 #include "Qt_examiner_viewer_window_2.moc"
 #include <CGAL/IO/Qt_examiner_viewer_2.h>
 #include <CGAL/IO/Qt_widget_circular_arc_2.h>
-
+Qt_examiner_viewer_2 *qt_debug_examiner_viewer_2__=NULL;
 
 /*struct Qt_examiner_viewer_2::QTEV_layer::Conditional_mutex {
   Conditional_mutex(bool skip_lock, QMutex *qm) {
@@ -111,7 +111,16 @@ void Qt_examiner_viewer_2::QTEV_layer::clear() {
 CGAL::Bbox_2 Qt_examiner_viewer_2::QTEV_layer::bounding_box(){
   return bbox_;
 }
+
+void Qt_examiner_viewer_2::set_is_dirty(bool tf) {
   
+  mutex_.lock();
+  //if (tf && !window_->is_dirty()) {
+    window_->set_is_dirty(true);
+    //}
+  mutex_.unlock();
+}
+
 void Qt_examiner_viewer_2::QTEV_layer::draw(){
   mutex_.lock();
   //::cout << "Drawing layer " << std::endl;
@@ -233,7 +242,7 @@ void  Qt_examiner_viewer_2::set_layer(unsigned int li) {
   QMutexLocker lock(&mutex_);
   while (li >= layers_.size()){
     layers_.push_back(new QTEV_layer(scale_));
-    P::widget()->attach(layers_.back());
+    window_->widget()->attach(layers_.back());
   }
   cur_layer_=li;
   layers_[cur_layer_]->clear();
@@ -244,7 +253,7 @@ void Qt_examiner_viewer_2::clear() {
   {
     QMutexLocker lock(&mutex_);
     for(unsigned int i=0; i< layers_.size(); ++i){
-      P::widget()->detach(layers_[i]);
+      window_->widget()->detach(layers_[i]);
       delete layers_[i];
     }
     layers_.clear();
@@ -272,24 +281,22 @@ void Qt_examiner_viewer_2::show_everything() {
 			cb.xmax()+ gf*width,
 			cb.ymax()+ gf*height);
     }
-    P::widget()->set_window(ncb.xmin(), ncb.xmax(), ncb.ymin(), ncb.ymax());
-    P::widget()->redraw();
+    window_->widget()->set_window(ncb.xmin(), ncb.xmax(), ncb.ymin(), ncb.ymax());
+    //window_->widget()->redraw();
   }
+  set_is_dirty(true);
   // not safe
   //CGAL_assertion(! mutex_.locked());
 }
 void Qt_examiner_viewer_2::show() {
-  P::show();
-  P::widget()->redraw();
+  qApp->postEvent(window_, new P::Show_event());
+  //P::widget()->redraw();
+  set_is_dirty(true);
 }
 
 Qt_examiner_viewer_2::~Qt_examiner_viewer_2(){
   for(unsigned int i=0; i< layers_.size(); ++i){
-    P::widget()->detach(layers_[i]);
+    window_->widget()->detach(layers_[i]);
     delete layers_[i];
   }
-}
-
-void Qt_examiner_viewer_2::redraw() {
-   P::widget()->redraw();
 }

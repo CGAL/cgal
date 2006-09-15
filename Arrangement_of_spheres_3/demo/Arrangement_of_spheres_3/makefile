@@ -37,11 +37,11 @@ LDFLAGS =   \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: libs slice_kds interactive_point_insertion  show_slice show_circles
+all: mylibs interactive_point_insertion slice_kds show_slice show_circles   interactive_ray_shooting interactive_point_location  
 
 #interactive_ray_shooting interactive_point_location random_ray_shoot random_point_locate point_locate
 
-libs: 
+mylibs: 
 	cd ../../src/CGAL && $(MAKE) -f  makefile.internal
 	cd ../../src/CGALQt && $(MAKE) -f  makefile.internal
 
@@ -49,43 +49,35 @@ libs:
 
 #	rm -f compute_slice compute_slice_numeric Qt_examiner_viewer_window_2.moc *~ */*~
 
-show_slice$(EXE_EXT):  show_slice$(OBJ_EXT) libs
+show_slice$(EXE_EXT):  show_slice$(OBJ_EXT) mylibs
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)show_slice show_slice$(OBJ_EXT) $(LDFLAGS)
 
-show_circles$(EXE_EXT):  show_circles$(OBJ_EXT) libs
+show_circles$(EXE_EXT):  show_circles$(OBJ_EXT) mylibs
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)show_circles show_circles$(OBJ_EXT) $(LDFLAGS)
 
 
-slice_kds$(EXE_EXT):  slice_kds$(OBJ_EXT) libs
+slice_kds$(EXE_EXT):  slice_kds$(OBJ_EXT) mylibs
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)slice_kds slice_kds$(OBJ_EXT) $(LDFLAGS)
 
-point_locate$(EXE_EXT): point_locate$(OBJ_EXT) libs
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)point_locate point_locate$(OBJ_EXT) $(LDFLAGS)
-
-interactive_point_location$(EXE_EXT): interactive_point_location$(OBJ_EXT) libs
+interactive_point_location$(EXE_EXT): interactive_point_location$(OBJ_EXT) mylibs
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)interactive_point_location interactive_point_location$(OBJ_EXT) $(LDFLAGS)
 
-interactive_point_insertion$(EXE_EXT): interactive_point_insertion$(OBJ_EXT) libs
+interactive_point_insertion$(EXE_EXT): interactive_point_insertion$(OBJ_EXT) mylibs
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)interactive_point_insertion interactive_point_insertion$(OBJ_EXT) $(LDFLAGS)
 
-interactive_ray_shooting$(EXE_EXT): interactive_ray_shooting$(OBJ_EXT) libs
+interactive_ray_shooting$(EXE_EXT): interactive_ray_shooting$(OBJ_EXT) mylibs
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)interactive_ray_shooting interactive_ray_shooting$(OBJ_EXT) $(LDFLAGS)
 
 
-random_ray_shoot$(EXE_EXT): random_ray_shoot$(OBJ_EXT) libs
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)random_ray_shoot random_ray_shoot$(OBJ_EXT) $(LDFLAGS)
 
-random_point_locate$(EXE_EXT): random_point_locate$(OBJ_EXT) libs
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)random_point_locate random_point_locate$(OBJ_EXT) $(LDFLAGS)
+clean: mylibsclean slice_kds.clean\
+       show_slice.clean \
+       interactive_point_location.clean\
+       interactive_point_insertion.clean\
+       interactive_ray_shooting.clean\
+       show_circles.clean
 
-sphere_line_intersection_test$(EXE_EXT):  sphere_line_intersection_test$(OBJ_EXT) libs
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)sphere_line_intersection_test sphere_line_intersection_test$(OBJ_EXT) $(LDFLAGS)
-
-sphere_location$(EXE_EXT):  sphere_location$(OBJ_EXT) libs
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)sphere_location sphere_location$(OBJ_EXT) $(LDFLAGS)
-
-
-clean: slice_kds.clean sphere_location.clean sphere_line_intersection_test.clean random_ray_shoot.clean random_point_locate.clean point_locate.clean show_slice.clean interactive_point_location.clean interactive_ray_shooting.clean interactive_point_insertion.clean
+mylibsclean:
 	cd ../../src/CGAL;  $(MAKE) -f makefile.internal clean
 	cd ../../src/CGALQt;$(MAKE) -f  makefile.internal clean
 
@@ -93,5 +85,5 @@ clean: slice_kds.clean sphere_location.clean sphere_line_intersection_test.clean
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C$(OBJ_EXT): 
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<

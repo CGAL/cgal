@@ -32,6 +32,7 @@ struct Slice {
   typedef Sds::Face_handle Face_handle;
 
   typedef CGAL::Simple_cartesian<double> DT;
+  typedef Simulator::Event_key Event_key;
 
   typedef Unordered_pair<T::Key> Intersection_2;
   typedef Unordered_triple<T::Key> Intersection_3;
@@ -181,20 +182,28 @@ struct Slice {
   /*
     KDS functions -----------------------------------------------------
   */
-
+  class Event_base;
   class One_sphere_event;
   class Two_sphere_event;
   class Three_sphere_event;
   class Rule_event;
   class Edge_event;
   
-  void process_one_sphere_kds(T::Key k);
-  void process_two_sphere_kds(T::Key k, T::Key l, bool first);
-  void process_three_sphere_kds(T::Key k, T::Key l, T::Key m, bool first);
-  void process_rule_kds(T::Key k, int r, T::Key o);
-  void process_edge_kds(Halfedge_handle h);
-  
+  void process_one_sphere_event(T::Key k);
+  void process_two_sphere_event(T::Key k, T::Key l, bool first);
+  void process_three_sphere_event(T::Key k, T::Key l, T::Key m, bool first);
+  void process_rule_collapse_event(T::Key k, int r, T::Key o);
+  void process_edge_collapse_event(Halfedge_handle h);
   void initialize_certificates();
+  CGAL::Comparison_result compare_concurrent(Event_key k0, Event_key k1) const ;
+
+  
+  void audit_one_sphere_event(T::Key k, Event_key ek);
+  void audit_two_sphere_event(T::Key k, T::Key l, bool first, Event_key ek);
+  void audit_three_sphere_event(T::Key k, T::Key l, T::Key m, bool first, 
+				Event_key ek);
+  void audit_rule_collapse_event(T::Key k, int r, T::Key o, Event_key ek);
+  void audit_edge_collapse_event(Halfedge_handle h, Event_key ek);
 
 
  // Functions to update certificates ----------------------------------
@@ -230,37 +239,37 @@ struct Slice {
   Face_handle erase_sphere(const T::Sphere_point_3 &ep,
 			   T::Key k);
 
-  void relabel_rule(Halfedge_handle h,
-		    Sds::Curve nl);
 
-
-  Face_handle insert_sphere_on_arc_prep(const T::Sphere_point_3 &ep, 
+  /* Face_handle insert_sphere_on_arc_prep(const T::Sphere_point_3 &ep, 
 					T::Key k,
 					Halfedge_handle h,
-					Halfedge_handle rvs[]);
+					Halfedge_handle rvs[]);*/
   
   Face_handle insert_sphere_on_rr_prep(const T::Sphere_point_3 &ep, 
 				       T::Key k,
 				       Vertex_handle v,
-				       Halfedge_handle rvs[]);
+				       Vertex_handle rvs[]);
   
   Face_handle insert_sphere_on_rule_prep(const T::Sphere_point_3 &ep, 
 					 T::Key k,
 					 Halfedge_handle h,
-					 Halfedge_handle rvs[]);
+					 Vertex_handle rvs[]);
 
-  Face_handle insert_sphere_on_ss_prep(const T::Sphere_point_3 &ep, 
+  /*Face_handle insert_sphere_on_ss_prep(const T::Sphere_point_3 &ep, 
 				       T::Key k,
 				       Vertex_handle v,
-				       Halfedge_handle rvs[]);
+				       Halfedge_handle rvs[]);*/
 
   Halfedge_handle check_remove_redundant(Halfedge_handle v);
 
   Face_handle intersect_spheres(const T::Event_point_3 &ep,
-				T::Key k, T::Key l);
+				Halfedge_handle h0, Halfedge_handle h1);
 
   Face_handle unintersect_spheres(const T::Event_point_3 &ep,
-				  T::Key k, T::Key l);
+				  Face_handle f);
+
+  Face_handle intersect_3_spheres(const T::Event_point_3 &ep,
+				  Face_handle f);
 
   Face_handle collapse_edge(const T::Event_point_3 &ep,
 			    Halfedge_handle rule,
@@ -304,7 +313,7 @@ struct Slice {
      rational z functions-------------------------------------------------
   */
 
-  void initialize_at(NT z) ;
+  void initialize_at(NT z, bool gen_certs=true) ;
 
   T::Point_2 center_point_rz(T::Key a, T::Key b, NT z) const ;
 
@@ -360,7 +369,6 @@ struct Slice {
   
   bool behind_arc(const T::Sphere_point_3 &ep, T::Key ind,
 		  Sds::Curve arc, int location) const;
-
 
   void point_sphere_orientation(const T::Sphere_point_3 &time,
 				T::Key point,
@@ -450,8 +458,6 @@ struct Slice {
   void set_gui(Qt_gui::Handle qt);
 
 private:
-
-  typedef Simulator::Event_key Event_key;
   typedef std::pair<Event_key,Event_key> Event_key_pair;
 
   struct Handle_compare{

@@ -45,10 +45,11 @@ int main(int argc, char *argv[]){
  
   Geometric_traits::FT z= atof(argv[1]);
  
+  if (z > tr.bbox_3().xmax() || z < tr.bbox_3().xmin()) return EXIT_FAILURE;
   //
  
   Slice slice(tr);
-  slice.initialize_at(z);
+  slice.initialize_at(z, false);
 
   QApplication app(argc, argv);
   Qt_examiner_viewer_2 *qtd= new Qt_examiner_viewer_2(10);

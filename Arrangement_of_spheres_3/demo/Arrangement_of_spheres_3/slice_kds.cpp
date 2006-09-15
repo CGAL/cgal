@@ -1,11 +1,11 @@
 #define CGAL_CHECK_EXPENSIVE
 #define CGAL_CHECK_EXACTNESS
 
-#include <CGAL/IO/Qt_debug_viewer_2.h>
 #include <CGAL/Arrangement_of_spheres_3/Slice_arrangement.h>
 #include <CGAL/Arrangement_of_spheres_traits_3.h>
 #include <CGAL/Arrangement_of_spheres_3/Slice.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/IO/qt_debug_examiner_viewer_2.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Gmpq.h>
 #include <iostream>
@@ -45,7 +45,8 @@ int main(int argc, char *argv[]){
   std::cout << "Read " << spheres.size() << " spheres." << std::endl;
   Arrangement_of_spheres_traits_3 tr(spheres.begin(), spheres.end());
 
-  std::cout << "Bounding box is from " << tr.bbox_3().xmin() << " to " << tr.bbox_3().xmax()
+  std::cout << "Bounding box is from " << tr.bbox_3().xmin() 
+	    << " to " << tr.bbox_3().xmax()
 	    << std::endl;
 
   //Simulator::Handle s= new Simulator(Simulator::Time(tr.bbox_3().xmin()-1), Simulator::Time(tr.bbox_3().xmax()+1));
@@ -56,6 +57,6 @@ int main(int argc, char *argv[]){
   Slice slice(tr);
   Qt_gui::Handle qtg= new Qt_gui(argc, argv, slice.simulator_handle());
   slice.set_gui(qtg);
-  
+  qt_debug_examiner_viewer_2__= new Qt_examiner_viewer_2();
   return qtg->begin_event_loop();
 }

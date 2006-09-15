@@ -358,7 +358,7 @@ void Slice::draw_marked_rz(Qt_examiner_viewer_2 *qtv, NT z) {
 
 
 
-void Slice::initialize_at(NT z) {
+void Slice::initialize_at(NT z, bool gen_certs) {
   sim_->clear();
   sim_->set_current_time(Simulator::Time(z));
   Slice_arrangement sa(t_.spheres_begin(),t_.spheres_end(), z, 
@@ -370,24 +370,28 @@ void Slice::initialize_at(NT z) {
        fit != sa.faces_end(); ++fit){
     sds_.new_face(fit->begin(), fit->end());
   }
-
-  initialize_certificates();
+  if (gen_certs) {
+    initialize_certificates();
+  }
     
   sds_.set_is_building(false);
 
-  for (Sds::Halfedge_iterator it= sds_.halfedges_begin(); 
-       it != sds_.halfedges_end(); ++it){
-    if (it->curve().is_inside()) check_edge_collapse(it);
+  if (gen_certs) {
+    for (Sds::Halfedge_iterator it= sds_.halfedges_begin(); 
+	 it != sds_.halfedges_end(); ++it){
+      if (it->curve().is_inside() && it->curve().is_finite()) check_edge_collapse(it);
+    }
+    for (Sds::Face_iterator it= sds_.faces_begin(); it != sds_.faces_end(); ++it){
+      Halfedge_handle c= it->halfedge();
+      do {
+	check_edge_face(c);
+	c= c->next();
+      } while (c != it->halfedge());
+    }
   }
-  for (Sds::Face_iterator it= sds_.faces_begin(); it != sds_.faces_end(); ++it){
-    Halfedge_handle c= it->halfedge();
-    do {
-      check_edge_face(c);
-      c= c->next();
-    } while (c != it->halfedge());
+  if (gen_certs) {
+    audit();
   }
-  
-  audit();
 }
 
 
@@ -408,9 +412,9 @@ void Slice::audit() const {
     if (!vit->point().is_finite()) {
       CGAL_assertion(sds_.degree(vit) ==2 || sds_.degree(vit) ==3);
     } else if (vit->point().is_sphere_sphere()) {
-      CGAL_assertion(sds_.degree(vit) ==4);
+      CGAL_assertion(sds_.degree(vit) == 4);
     } else {
-      CGAL_assertion(sds_.degree(vit) ==3);
+      CGAL_assertion(sds_.degree(vit) ==3 || sds_.degree(vit) == 4);
     }
     if (vit->point().is_rule_rule()) {
       T::Key x, y;
