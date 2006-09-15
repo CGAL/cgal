@@ -138,6 +138,10 @@ class In_x_range_2
     result_type
     _in_x_range_2(const Arc_2 &a, const Circular_arc_point_2 &p) const 
     {
+
+      if(a.source().rep().equal_ref(p.rep())) return true;
+      if(a.target().rep().equal_ref(p.rep())) return true;
+
       Bbox_2 bb11 = a.source().bbox(),
              bb12 = a.target().bbox(),
              bb2=p.bbox();      
@@ -728,7 +732,7 @@ class Do_overlap_2
       { 
          Bbox_2 bb1=c1.bbox(),bb2=c2.bbox();
 
-        if(!do_overlap(c1.bbox(),c2.bbox() ))
+        if(!do_overlap(bb1,bb2 ))
          return res;
 
 	std::vector<Object> vec;
