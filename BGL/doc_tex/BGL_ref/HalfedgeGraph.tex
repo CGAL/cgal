@@ -69,15 +69,13 @@ Following the {\sc Bgl} interface, the following graph operations are defined as
 
   \ccFunction
   {template<class Graph>
-  std::pair < typename CGAL::Halfedge_graph_traits<Graph const>::undirected_edge_iterator
-             ,typename CGAL::Halfedge_graph_traits<Graph const>::undirected_edge_iterator
+  std::pair < typename CGAL::halfedge_graph_traits<Graph const>::undirected_edge_iterator
+             ,typename CGAL::halfedge_graph_traits<Graph const>::undirected_edge_iterator
              >   
   undirected_edges(Graph const& g );
   }
   {Returns a pair of iterators representing the range [begin,end) 
-  of undirected edges in this graph.\\
-  (non-const version ommited)
-  }
+  of undirected edges in this graph.}
 
 \ccHasModels
 \ccRefIdfierPage{CGAL::halfedge_graph_traits< CGAL::Polyhedron_3<Traits> const > }\\

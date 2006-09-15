@@ -46,22 +46,22 @@ and such ordering can be used to define the following edge relations:
 An edge \ccc{'v: x->y'} is said to be the {\em opposite} of edge \ccc{'u: a->b'} 
 iff \ccc{a} $==$ \ccc{y} and \ccc{b} $==$ \ccc{c}.
 
-\item[Rotational Succesor] 
+\item[Rotational Successor] 
 An edge \ccc{'v: s->q'} is said to be the {\em rotational succesor} 
 of edge \ccc{'u: s->p'} iff \ccc{v} is the {\em first} edge found by 
 a counter-clockwise rotation of \ccc{u} around the source vertex \ccc{s}.
  
-\item[Rotational Predeccesor] 
+\item[Rotational Predecessor] 
 An edge \ccc{'v: s->q'} is said to be the {\em rotational predeccesor}
 of edge \ccc{'u: s->p'} iff \ccc{v} is the {\em first} edge found by 
 a clockwise rotation of \ccc{u} around the source vertex \ccc{s}.
 
-\item[Linear Succesor] 
+\item[Linear Successor] 
 An edge \ccc{'v: b->c'} is said to be the {\em linear succesor} of edge 
 \ccc{'u:a->b'} iff \ccc{v} is the rotational succesor of the opposite
 of v.
  
-\item[Linear Predeccesor] 
+\item[Linear Predecessor] 
 An edge \ccc{'v: b->c'} is said to be the {\em linear predeccesor} of edge 
 \ccc{'u:a->b'} iff \ccc{v} is the opposite of the rotational predeccesor
 of v.
@@ -85,7 +85,7 @@ Following the BGL interface, the following graph operations are defined as free 
   typename boost::graph_traits<Graph const>::edge_descriptor 
   opposite_edge(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g );
   }
-  {Returns the {\em opposite} of e.\\
+  {Returns the {\em opposite} of \ccc{e}.\\
   If the resulting edge does not belong to \ccc{g} the result is a \ccc{null} (default constructed) edge.\\
   (non-const version ommited)
   }
@@ -95,7 +95,7 @@ Following the BGL interface, the following graph operations are defined as free 
   typename boost::graph_traits<Graph const>::edge_descriptor 
   next_edge_ccw(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g );
   }
-  {Returns the {\em rotational succesor} of e.\\
+  {Returns the {\em rotational succesor} of \ccc{e}.\\
   If the resulting edge does not belong to \ccc{g} the result is a \ccc{null} (default constructed) edge.\\
   (non-const version ommited)
   }
@@ -105,54 +105,48 @@ Following the BGL interface, the following graph operations are defined as free 
   typename boost::graph_traits<Graph const>::edge_descriptor 
   next_edge_cw(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g );
   }
-  {Returns the {\em rotational predeccesor} of e.\\
-  If the resulting edge does not belong to \ccc{g} the result is a \ccc{null} (default constructed) edge.\\
-  (non-const version ommited)
-  }
+  {Returns the {\em rotational predeccesor} of \ccc{e}.\\
+  If the resulting edge does not belong to \ccc{g} the result is a \ccc{null} (default constructed) edge. }
   
   \ccFunction
   {template<class Graph>
   typename boost::graph_traits<Graph const>::edge_descriptor 
   next_edge(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g );
   }
-  {Returns the {\em linear succesor} of e.\\
-  If the resulting edge does not belong to \ccc{g} the result is a \ccc{null} (default constructed) edge.\\
-  (non-const version ommited)
-  }
+  {Returns the {\em linear succesor} of \ccc{e}.\\
+  If the resulting edge does not belong to \ccc{g} the result is a \ccc{null} (default constructed) edge. }
   
   \ccFunction
   {template<class Graph>
   typename boost::graph_traits<Graph const>::edge_descriptor 
   prev_edge(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g );
   }
-  {Returns the {\em linear predeccesor} of e.\\
-  If the resulting edge does not belong to \ccc{g} the result is a \ccc{null} (default constructed) edge.\\
-  (non-const version ommited)
-  }
+  {Returns the {\em linear predeccesor} of \ccc{e}.\\
+  If the resulting edge does not belong to \ccc{g} the result is a \ccc{null} (default constructed) edge. }
   
   \ccFunction
   {template<class Graph>
-  typename CGAL::Embeeded_graph_traits<Graph>::Point const& 
+  typename CGAL::embedded_graph_traits<Graph>::Point const& 
   get_point(typename boost::graph_traits<Graph const>::vertex_descriptor v, Graph const& g );
   }
-  {Returns the generalized point embeeding the vertex \ccc{v}.\\
-  The exact nature of the point depends on the embeeding of the graph and is
+  {Returns the generalized point embedding the vertex \ccc{v}.\\
+  The exact nature of the point depends on the embedding of the graph and is
   specified by the concrete model.}
   
   \ccFunction
   {template<class Graph>
   void set_point(typename boost::graph_traits<Graph>::vertex_descriptor v
                 ,Graph& g
-                ,typename CGAL::Embeeded_graph_traits<Graph>::Point p
+                ,typename CGAL::embedded_graph_traits<Graph>::Point p
                 );
   }
-  {Sets \ccc{p} as the embeeding of the vertex \ccc{v}.
+  {Sets \ccc{p} as the embedding of the vertex \ccc{v}.
   }
 
 \ccHasModels
 \ccRefIdfierPage{boost::graph_traits< CGAL::Polyhedron_3<Traits> const > }\\
 \ccRefIdfierPage{boost::graph_traits< CGAL::Polyhedron_3<Traits> > }\\
-\ccRefIdfierPage{CGAL::Embeeded_graph_traits< CGAL::Polyhedron_3<Traits> > }\\
+\ccRefIdfierPage{CGAL::embedded_graph_traits< CGAL::Polyhedron_3<Traits> > }
 
 \end{ccRefConcept}
 
