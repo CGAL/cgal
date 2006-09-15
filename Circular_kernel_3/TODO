@@ -8,6 +8,8 @@ version uses alg. nbs..
 
 changer les noms des polynomes (cercles et droites) dans le code... 
 
+cercle par 3 points
+
 --> a transferer dans linear kernel ?
         - unoriented equal (pb general orientation dans noyau cgal...)
         - intersection de deux Line_3
