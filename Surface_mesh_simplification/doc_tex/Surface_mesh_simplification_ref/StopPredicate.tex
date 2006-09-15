@@ -1,0 +1,68 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+\begin{ccRefConcept}{StopPredicate}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+
+The concept \ccRefName\ describes the requirements for the predicate which indicates if the simplification process must finish.
+
+\ccTypes
+  \ccNestedType{TSM}
+  {The type of the surface to simplify. Must be a model of the \ccc{TriangulatedSurfaceMesh} concept.}{}
+\ccGlue    
+  \ccNestedType{FT}{A \ccc{FieldType} representing the collapse cost}{}
+\ccGlue    
+  \ccNestedType{size_type}{An \ccc{IntegerType} representing a number of edges}{}
+\ccGlue    
+  \ccTypedef{typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}
+  {A {\sc Bgl edge-descriptor} representing an {\em undirected edge} of the surface.}
+
+\ccCreation
+\ccCreationVariable{should_stop}  %% choose variable name
+
+\ccOperations
+
+  \ccMethod
+    {bool  operator()( FT              current_cost
+                     , edge_descriptor edge
+                     , size_type       initial_count
+                     , size_type       current_count
+                     ) const ;
+    }
+    {
+    This predicate is called each time an \ccc{edge} is selected for processing,
+     before it is collapsed.\\
+    \ccc{current_cost} is the cost of the selected edge.\\
+    \ccc{initial_count} and \ccc{current_count} is the number of initial and current edges.\\
+    \\
+    If the return value is \ccc{true} the simplification terminates before processing \ccc{edge},
+    otherwise it continues normally.
+    }
+  
+\ccHasModels
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Edge_collapse::Count_stop_predicate<TSM>}
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Edge_collapse::Count_ratio_stop_predicate<TSM>}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

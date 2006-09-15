@@ -1,0 +1,59 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+\begin{ccRefConcept}{EdgeCollaspeSimplificationVisitor}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+
+The concept \ccRefName\ describes the requirements for the {\em visitor object} which is used to track the edge-collapse simplification algorithm.
+
+The several callbacks given as member functions in the visitor are called from certain places in the algorithm implementation.
+
+\ccTypes
+  \ccNestedType{TSM}
+  {The type of the surface to simplify. Must be a model of the \ccc{TriangulatedSurfaceMesh} concept.}{}
+\ccGlue    
+  \ccNestedType{FT}{A \ccc{FieldType} representing the collapse cost}{}
+\ccGlue    
+  \ccTypedef{typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}
+  {A {\sc Bgl} edge-descriptor representing an {\em undirected edge} of the surface.}
+\ccGlue    
+  \ccTypedef{typename boost::graph_traits<TSM>::verte_descriptor vertex_descriptor;}
+  {A {\sc Bgl} vertex-descriptor representing a {\em vertex} of the surface.}
+
+\ccCreation
+\ccCreationVariable{v}  %% choose variable name
+
+\ccOperations
+
+  \ccMethod
+  {void OnStarted( Surface& aSurface );}
+  {}
+  
+\ccHasModels
+\ccRefIdfierPage{CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse::Cached_cost<TSM>}.
+\ccRefIdfierPage{CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse::Edge_length_cost<TSM>}.
+\ccRefIdfierPage{CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse::LindstromTurk_cost<TSM>}.
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
