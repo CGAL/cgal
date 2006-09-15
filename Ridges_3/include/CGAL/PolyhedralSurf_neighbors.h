@@ -12,14 +12,14 @@ CGAL_BEGIN_NAMESPACE
 //number giving the max distance from v to the vertices of the
 //triangle incident to the halfedge.
 //---------------------------------------------------------------------------
-template < class TPoly > class T_Gate
+template < class TriangularPolyhedralSurface > class T_Gate
 {  
 public:
-  typedef typename TPoly::Traits::FT       FT;
-  typedef typename TPoly::Traits::Vector_3 Vector_3;
-  typedef typename TPoly::Traits::Point_3  Point_3;
-  typedef typename TPoly::Vertex_handle    Vertex_handle;
-  typedef typename TPoly::Halfedge_handle  Halfedge_handle;
+  typedef typename TriangularPolyhedralSurface::Traits::FT       FT;
+  typedef typename TriangularPolyhedralSurface::Traits::Vector_3 Vector_3;
+  typedef typename TriangularPolyhedralSurface::Traits::Point_3  Point_3;
+  typedef typename TriangularPolyhedralSurface::Vertex_handle    Vertex_handle;
+  typedef typename TriangularPolyhedralSurface::Halfedge_handle  Halfedge_handle;
  
   T_Gate( Vertex_handle v, Halfedge_handle he);
   FT& d() { return m_d;}
@@ -32,8 +32,8 @@ private:
 };
 
 //////////////IMPLEMENTATION//////////////////////////
-template < class TPoly > 
-T_Gate<TPoly>::T_Gate( Vertex_handle v, Halfedge_handle he)
+template < class TriangularPolyhedralSurface > 
+T_Gate<TriangularPolyhedralSurface>::T_Gate( Vertex_handle v, Halfedge_handle he)
   : m_he(he)
 {
   Point_3 p0 = v->point(),
@@ -68,20 +68,20 @@ struct compare_gates
 //class Gate and the functor compare_gates for the definition of a
 //priority queue
 //---------------------------------------------------------------------------
-template < class TPoly > class T_PolyhedralSurf_neighbors
+template < class TriangularPolyhedralSurface > class T_PolyhedralSurf_neighbors
 {
 public:
-  typedef typename TPoly::Traits::FT        FT;
-  typedef typename TPoly::Traits::Vector_3  Vector_3;
-  typedef typename TPoly::Traits::Point_3   Point_3;
-  typedef typename TPoly::Vertex_handle     Vertex_handle;
-  typedef typename TPoly::Halfedge_handle   Halfedge_handle;
-  typedef typename TPoly::Halfedge_around_vertex_circulator
+  typedef typename TriangularPolyhedralSurface::Traits::FT        FT;
+  typedef typename TriangularPolyhedralSurface::Traits::Vector_3  Vector_3;
+  typedef typename TriangularPolyhedralSurface::Traits::Point_3   Point_3;
+  typedef typename TriangularPolyhedralSurface::Vertex_handle     Vertex_handle;
+  typedef typename TriangularPolyhedralSurface::Halfedge_handle   Halfedge_handle;
+  typedef typename TriangularPolyhedralSurface::Halfedge_around_vertex_circulator
   Halfedge_around_vertex_circulator;
-  typedef typename TPoly::Vertex_iterator   Vertex_iterator;
-  typedef T_Gate<TPoly> Gate;
+  typedef typename TriangularPolyhedralSurface::Vertex_iterator   Vertex_iterator;
+  typedef T_Gate<TriangularPolyhedralSurface> Gate;
 
-  T_PolyhedralSurf_neighbors(TPoly& P);
+  T_PolyhedralSurf_neighbors(TriangularPolyhedralSurface& P);
   // vertex_neigh stores the vertex v and its 1Ring neighbors contour
   // stores halfedges, oriented CW, following the 1Ring disk border
   // OneRingSize is the max distance from v to its OneRing
@@ -114,17 +114,17 @@ public:
 };
 
 //////////////IMPLEMENTATION//////////////////////////
-template < class TPoly >
-T_PolyhedralSurf_neighbors < TPoly >::
-T_PolyhedralSurf_neighbors(TPoly& P)
+template < class TriangularPolyhedralSurface >
+T_PolyhedralSurf_neighbors < TriangularPolyhedralSurface >::
+T_PolyhedralSurf_neighbors(TriangularPolyhedralSurface& P)
 {
   //init the is_visited_map
   Vertex_iterator itb = P.vertices_begin(), ite = P.vertices_end();
   for(;itb!=ite;itb++) is_visited_map[itb] = false; 
 }
 
-template < class TPoly >
-void T_PolyhedralSurf_neighbors < TPoly >::
+template < class TriangularPolyhedralSurface >
+void T_PolyhedralSurf_neighbors < TriangularPolyhedralSurface >::
 compute_one_ring(Vertex_handle v,
 		      std::vector<Vertex_handle> &vertex_neigh,
 		      std::list<Halfedge_handle> &contour,
@@ -161,8 +161,8 @@ compute_one_ring(Vertex_handle v,
   }
 }
 
-template < class TPoly >
-void T_PolyhedralSurf_neighbors < TPoly >::
+template < class TriangularPolyhedralSurface >
+void T_PolyhedralSurf_neighbors < TriangularPolyhedralSurface >::
 compute_neighbors(Vertex_handle v,
 		   std::vector<Vertex_handle> &vertex_neigh,
 		   std::list<Halfedge_handle> &contour,
@@ -266,8 +266,8 @@ compute_neighbors(Vertex_handle v,
   reset_is_visited_map(vertex_neigh);
 }
 
-template < class TPoly >
-void T_PolyhedralSurf_neighbors < TPoly >::
+template < class TriangularPolyhedralSurface >
+void T_PolyhedralSurf_neighbors < TriangularPolyhedralSurface >::
 reset_is_visited_map(std::vector<Vertex_handle> &vces)
 {
   typename std::vector<Vertex_handle>::iterator 

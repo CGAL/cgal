@@ -7,7 +7,7 @@
 #include <cstdlib>
 #include <vector>
 #include <list>
-#include <boost/property_map.hpp>
+//#include <boost/property_map.hpp>
 
 #include <CGAL/Ridges.h> 
 #include <CGAL/Umbilic.h>
@@ -35,65 +35,37 @@ typedef CGAL::Monge_via_jet_fitting<Kernel>    Monge_via_jet_fitting;
 typedef Monge_via_jet_fitting::Monge_form      Monge_form;
 typedef Monge_via_jet_fitting::Monge_form_condition_numbers Monge_form_condition_numbers;
       
-// //Property maps
-// //Vertex property map, with std::map
-// struct Vertex_cmp{
-//   bool operator()(Vertex_handle a,  Vertex_handle b) const{
-//     return &*a < &*b;
-//   }
-// };
-// typedef std::map<Vertex_handle, FT, Vertex_cmp> Vertex2FT_map_type;
-// // typedef boost::associative_property_map< Vertex2FT_map_type > Vertex2FT_PM_type;
-
-
-// typedef std::map<Vertex_handle, Vector_3, Vertex_cmp> Vertex2Vector_map_type;
-// // typedef boost::associative_property_map< Vertex2Vector_map_type > Vertex2Vector_PM_type;
-
-// typedef CGAL::Vertex2FTPropertyMap_with_std_map<PolyhedralSurf> Vertex2FT_PM_type;
-// typedef CGAL::Vertex2VectorPropertyMap_with_std_map<PolyhedralSurf>::Vertex2Vector_PM_type Vertex2Vector_PM_type;
-
 typedef CGAL::Vertex2Data_Property_Map_with_std_map<PolyhedralSurf> Vertex2Data_Property_Map_with_std_map;
-typedef Vertex2Data_Property_Map_with_std_map::Vertex2FT_map_type Vertex2FT_map_type;
-typedef Vertex2Data_Property_Map_with_std_map::Vertex2Vector_map_type Vertex2Vector_map_type;
-typedef Vertex2Data_Property_Map_with_std_map::Vertex2FT_PM_type Vertex2FT_PM_type;
-typedef Vertex2Data_Property_Map_with_std_map::Vertex2Vector_PM_type Vertex2Vector_PM_type;
-
+typedef Vertex2Data_Property_Map_with_std_map::Vertex2FT_map Vertex2FT_map;
+typedef Vertex2Data_Property_Map_with_std_map::Vertex2Vector_map Vertex2Vector_map;
+typedef Vertex2Data_Property_Map_with_std_map::Vertex2FT_property_map Vertex2FT_property_map;
+typedef Vertex2Data_Property_Map_with_std_map::Vertex2Vector_property_map Vertex2Vector_property_map;
 
 //RIDGES
 typedef CGAL::Ridge_line<PolyhedralSurf> Ridge_line;
-// typedef CGAL::Ridge_approximation < PolyhedralSurf,
-// 				    back_insert_iterator< std::vector<Ridge_line*> >,
-// 				    Vertex2FT_PM_type, 
-// 				    Vertex2Vector_PM_type > Ridge_approximation;
-
-// typedef CGAL::Ridge_approximation < PolyhedralSurf,
-// 				    back_insert_iterator< std::vector<Ridge_line*> >,
-// 				    CGAL::Vertex2FTPropertyMap_with_std_map,
-// 				    CGAL::Vertex2VectorPropertyMap_with_std_map > Ridge_approximation;
-
 typedef CGAL::Ridge_approximation < PolyhedralSurf,
 				    back_insert_iterator< std::vector<Ridge_line*> >,
-				    Vertex2FT_PM_type,
-				    Vertex2Vector_PM_type > Ridge_approximation;
+				    Vertex2FT_property_map,
+				    Vertex2Vector_property_map > Ridge_approximation;
   
 
-// //UMBILICS
-// typedef CGAL::Umbilic<PolyhedralSurf> Umbilic;
-// typedef CGAL::Umbilic_approximation < PolyhedralSurf,
-// 				      back_insert_iterator< std::vector<Umbilic*> >, 
-// 				      Vertex2FT_PM_type, 
-// 				      Vertex2Vector_PM_type > Umbilic_approximation;
+//UMBILICS
+typedef CGAL::Umbilic<PolyhedralSurf> Umbilic;
+typedef CGAL::Umbilic_approximation < PolyhedralSurf,
+				      back_insert_iterator< std::vector<Umbilic*> >, 
+				      Vertex2FT_property_map, 
+				      Vertex2Vector_property_map > Umbilic_approximation;
 
 //create property maps, to be moved in main?
-Vertex2FT_map_type vertex2k1_map, vertex2k2_map, 
+Vertex2FT_map vertex2k1_map, vertex2k2_map, 
   vertex2b0_map, vertex2b3_map, 
   vertex2P1_map, vertex2P2_map;
-Vertex2Vector_map_type vertex2d1_map, vertex2d2_map;
+Vertex2Vector_map vertex2d1_map, vertex2d2_map;
 
-Vertex2FT_PM_type vertex2k1_pm(vertex2k1_map), vertex2k2_pm(vertex2k2_map), 
+Vertex2FT_property_map vertex2k1_pm(vertex2k1_map), vertex2k2_pm(vertex2k2_map), 
   vertex2b0_pm(vertex2b0_map), vertex2b3_pm(vertex2b3_map), 
   vertex2P1_pm(vertex2P1_map), vertex2P2_pm(vertex2P2_map);
-Vertex2Vector_PM_type vertex2d1_pm(vertex2d1_map), vertex2d2_pm(vertex2d2_map);
+Vertex2Vector_property_map vertex2d1_pm(vertex2d1_map), vertex2d2_pm(vertex2d2_map);
 
 
 //Syntax requirred by Options
@@ -339,28 +311,28 @@ int main(int argc, char *argv[])
     for (iter_lines = ridge_lines.begin();iter_lines!=iter_end;iter_lines++) 
       out_verb << **iter_lines; 
 
- //  //---------------------------------------------------------------------------
-//   // UMBILICS
-//   //--------------------------------------------------------------------------
-//   Umbilic_approximation umbilic_approximation(P, 
-// 					      vertex2k1_pm, vertex2k2_pm,
-// 					      vertex2d1_pm, vertex2d2_pm);
-//   std::vector<Umbilic*> umbilics;
-//   back_insert_iterator<std::vector<Umbilic*> > umb_it(umbilics);
-//   umbilic_approximation.compute(umb_it, umb_size);
+  //---------------------------------------------------------------------------
+  // UMBILICS
+  //--------------------------------------------------------------------------
+  Umbilic_approximation umbilic_approximation(P, 
+					      vertex2k1_pm, vertex2k2_pm,
+					      vertex2d1_pm, vertex2d2_pm);
+  std::vector<Umbilic*> umbilics;
+  back_insert_iterator<std::vector<Umbilic*> > umb_it(umbilics);
+  umbilic_approximation.compute(umb_it, umb_size);
 
-//   std::vector<Umbilic*>::iterator iter_umb = umbilics.begin(), 
-//     iter_umb_end = umbilics.end();
-//   // output
-//   std::cout << "nb of umbilics " << umbilics.size() << std::endl;
-//   for (;iter_umb!=iter_umb_end;iter_umb++) std::cout << **iter_umb;
+  std::vector<Umbilic*>::iterator iter_umb = umbilics.begin(), 
+    iter_umb_end = umbilics.end();
+  // output
+  std::cout << "nb of umbilics " << umbilics.size() << std::endl;
+  for (;iter_umb!=iter_umb_end;iter_umb++) std::cout << **iter_umb;
  
-//   //verbose txt output 
-//   if (verbose) {
-//     out_verb << "nb of umbilics " << umbilics.size() << std::endl;
-//     for ( iter_umb = umbilics.begin();iter_umb!=iter_umb_end;iter_umb++)
-//       out_verb << **iter_umb; 
-//   }
+  //verbose txt output 
+  if (verbose) {
+    out_verb << "nb of umbilics " << umbilics.size() << std::endl;
+    for ( iter_umb = umbilics.begin();iter_umb!=iter_umb_end;iter_umb++)
+      out_verb << **iter_umb; 
+  }
 
 
 

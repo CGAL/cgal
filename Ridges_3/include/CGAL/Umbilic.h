@@ -18,13 +18,13 @@ enum Umbilic_type { UMBILIC_NON_GENERIC = 0, UMBILIC_WEDGE, UMBILIC_TRISECTOR};
 //Umbilic : stores umbilic data, its location given by a vertex, its
 //type and a circle of edges bording a disk containing the vertex
 //------------------------------------------------------------------
-template < class Poly >
+template < class TriangularPolyhedralSurface >
 class Umbilic
 {
  public:
-  typedef typename Poly::Vertex_handle    Vertex_handle;
-  typedef typename Poly::Halfedge_handle  Halfedge_handle;
-  typedef typename Poly::Traits::Vector_3 Vector_3;
+  typedef typename TriangularPolyhedralSurface::Vertex_handle    Vertex_handle;
+  typedef typename TriangularPolyhedralSurface::Halfedge_handle  Halfedge_handle;
+  typedef typename TriangularPolyhedralSurface::Traits::Vector_3 Vector_3;
   
   //contructor
   Umbilic(Vertex_handle v_init,
@@ -43,16 +43,16 @@ class Umbilic
 };
 
 //contructor
-template <class Poly>
-Umbilic<Poly>::
+template <class TriangularPolyhedralSurface>
+Umbilic<TriangularPolyhedralSurface>::
 Umbilic(Vertex_handle v_init,
 	std::list<Halfedge_handle> contour_init) 
   : v(v_init), contour(contour_init) {} 
 
 
-template <class Poly>
+template <class TriangularPolyhedralSurface>
 std::ostream& 
-operator<<(std::ostream& out_stream, const Umbilic<Poly>& umbilic)
+operator<<(std::ostream& out_stream, const Umbilic<TriangularPolyhedralSurface>& umbilic)
 {
   out_stream << "Umbilic at location (" << umbilic.vertex()->point() << ") of type " ;
   switch (umbilic.umbilic_type())
@@ -70,21 +70,28 @@ operator<<(std::ostream& out_stream, const Umbilic<Poly>& umbilic)
 //T_PolyhedralSurf_neighbors to compute topological disk patches
 //around vertices
 //--------------------------------------------------------------------------
-template < class Poly, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
+template < class TriangularPolyhedralSurface, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
   class Umbilic_approximation
 {
  public:
-  typedef typename Poly::Traits::FT       FT;
-  typedef typename Poly::Traits::Vector_3 Vector_3;
-  typedef typename Poly::Vertex_handle    Vertex_handle;
-  typedef typename Poly::Halfedge_handle  Halfedge_handle;
-  typedef typename Poly::Facet_handle     Facet_handle;
-  typedef typename Poly::Facet_iterator   Facet_iterator;
-  typedef typename Poly::Vertex_iterator  Vertex_iterator;
-  typedef Umbilic<Poly> Umbilic;
+  typedef typename TriangularPolyhedralSurface::Traits::FT       FT;
+  typedef typename TriangularPolyhedralSurface::Traits::Vector_3 Vector_3;
+  typedef typename TriangularPolyhedralSurface::Vertex_handle    Vertex_handle;
+  typedef typename TriangularPolyhedralSurface::Halfedge_handle  Halfedge_handle;
+  typedef typename TriangularPolyhedralSurface::Facet_handle     Facet_handle;
+  typedef typename TriangularPolyhedralSurface::Facet_iterator   Facet_iterator;
+  typedef typename TriangularPolyhedralSurface::Vertex_iterator  Vertex_iterator;
+
+  //requirements for the templates TriangularPolyhedralSurface and Vertex2FTPropertyMap or Vertex2VectorPropertyMap
+  BOOST_STATIC_ASSERT((boost::is_same<Vertex_handle, typename Vertex2FTPropertyMap::key_type>::value));
+  BOOST_STATIC_ASSERT((boost::is_same<Vertex_handle, typename Vertex2VectorPropertyMap::key_type>::value));
+  BOOST_STATIC_ASSERT((boost::is_same<FT, typename Vertex2FTPropertyMap::value_type>::value));
+  BOOST_STATIC_ASSERT((boost::is_same<Vector_3, typename Vertex2VectorPropertyMap::value_type>::value));
+
+  typedef Umbilic<TriangularPolyhedralSurface> Umbilic;
 
   //constructor : sets propertymaps and the poly_neighbors
-  Umbilic_approximation(Poly &P, 
+  Umbilic_approximation(TriangularPolyhedralSurface &P, 
 			Vertex2FTPropertyMap vertex2k1_pm, Vertex2FTPropertyMap vertex2k2_pm,
 			Vertex2VectorPropertyMap vertex2d1_pm, Vertex2VectorPropertyMap vertex2d2_pm);
   //identify umbilics as vertices minimizing the function k1-k2 on
@@ -93,8 +100,8 @@ template < class Poly, class OutputIt, class Vertex2FTPropertyMap, class Vertex2
   OutputIt compute(OutputIt it, FT size);
 
  protected:
-  Poly* P;
-  typedef T_PolyhedralSurf_neighbors<Poly> Poly_neighbors;
+  TriangularPolyhedralSurface* P;
+  typedef T_PolyhedralSurf_neighbors<TriangularPolyhedralSurface> Poly_neighbors;
   Poly_neighbors* poly_neighbors;
 
   CGAL::Abs<FT> cgal_abs;
@@ -114,9 +121,9 @@ template < class Poly, class OutputIt, class Vertex2FTPropertyMap, class Vertex2
   int compute_type(Umbilic& umb);
 };
 
-template < class Poly, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
-  Umbilic_approximation< Poly, OutputIt, Vertex2FTPropertyMap, Vertex2VectorPropertyMap >::
-Umbilic_approximation(Poly &P, 
+template < class TriangularPolyhedralSurface, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
+  Umbilic_approximation< TriangularPolyhedralSurface, OutputIt, Vertex2FTPropertyMap, Vertex2VectorPropertyMap >::
+Umbilic_approximation(TriangularPolyhedralSurface &P, 
 		      Vertex2FTPropertyMap vertex2k1_pm, Vertex2FTPropertyMap vertex2k2_pm,
 		      Vertex2VectorPropertyMap vertex2d1_pm, Vertex2VectorPropertyMap vertex2d2_pm)
   : P(&P), k1(vertex2k1_pm), k2(vertex2k2_pm), 
@@ -129,8 +136,8 @@ Umbilic_approximation(Poly &P,
   poly_neighbors = new Poly_neighbors(P);
 }
 
-template < class Poly, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
-  OutputIt Umbilic_approximation< Poly, OutputIt, Vertex2FTPropertyMap, Vertex2VectorPropertyMap >::
+template < class TriangularPolyhedralSurface, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
+  OutputIt Umbilic_approximation< TriangularPolyhedralSurface, OutputIt, Vertex2FTPropertyMap, Vertex2VectorPropertyMap >::
 compute(OutputIt umbilics_it, FT size)
 {
   CGAL_precondition( size >= 1 );
@@ -183,8 +190,8 @@ compute(OutputIt umbilics_it, FT size)
   return umbilics_it;
 }
 
-template < class Poly, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
-  int Umbilic_approximation< Poly, OutputIt, Vertex2FTPropertyMap, Vertex2VectorPropertyMap >::
+template < class TriangularPolyhedralSurface, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
+  int Umbilic_approximation< TriangularPolyhedralSurface, OutputIt, Vertex2FTPropertyMap, Vertex2VectorPropertyMap >::
 compute_type(Umbilic& umb)
 {
   Vector_3 dir, dirnext, normal;
