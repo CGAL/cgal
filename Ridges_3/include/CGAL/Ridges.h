@@ -230,8 +230,8 @@ class Vertex2Data_Property_Map_with_std_map
 /* template < class Poly, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap > */
 /*   class Ridge_approximation */
 template < class Poly, class OutputIt, 
-           template < class Poly > class Vertex2FTPropertyMap,
-           template < class Poly > class Vertex2VectorPropertyMap > 
+           class Vertex2FTPropertyMap,
+           class Vertex2VectorPropertyMap > 
 class Ridge_approximation
 {
  public:  
@@ -253,10 +253,10 @@ class Ridge_approximation
   enum Tag_order {Tag_3 = 3, Tag_4 = 4};
   
   Ridge_approximation(Poly &P,
-		      Vertex2FTPropertyMap<Poly>& vertex2k1_pm, Vertex2FTPropertyMap<Poly>& vertex2k2_pm,
-		      Vertex2FTPropertyMap<Poly>& vertex2b0_pm, Vertex2FTPropertyMap<Poly>& vertex2b3_pm,
-		      Vertex2FTPropertyMap<Poly>& vertex2P1_pm, Vertex2FTPropertyMap<Poly>& vertex2P2_pm,
-		      Vertex2VectorPropertyMap<Poly>& vertex2d1_pm, Vertex2VectorPropertyMap<Poly>& vertex2d2_pm);
+		      Vertex2FTPropertyMap& vertex2k1_pm, Vertex2FTPropertyMap& vertex2k2_pm,
+		      Vertex2FTPropertyMap& vertex2b0_pm, Vertex2FTPropertyMap& vertex2b3_pm,
+		      Vertex2FTPropertyMap& vertex2P1_pm, Vertex2FTPropertyMap& vertex2P2_pm,
+		      Vertex2VectorPropertyMap& vertex2d1_pm, Vertex2VectorPropertyMap& vertex2d2_pm);
   OutputIt compute_all_ridges(OutputIt it, Tag_order ord = Tag_3);
   
   //Find BLUE_RIDGE, RED_RIDGE or CREST_RIDGE ridges iterate on P facets,
@@ -285,8 +285,8 @@ class Ridge_approximation
   Facet2bool_map_type is_visited_map;
 
   //Property maps
-  Vertex2FTPropertyMap<Poly> k1, k2, b0, b3, P1, P2;
-  Vertex2VectorPropertyMap<Poly> d1, d2;
+  Vertex2FTPropertyMap k1, k2, b0, b3, P1, P2;
+  Vertex2VectorPropertyMap d1, d2;
 
   //is a facet crossed by a BLUE, RED or CREST_RIDGE ridge? if so, return
   //the crossed edges and more precise type from BLUE_ELLIPTIC_RIDGE,
@@ -361,14 +361,14 @@ class Ridge_approximation
 //template < class Poly, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
 //  Ridge_approximation<Poly, OutputIt, Vertex2FTPropertyMap, Vertex2VectorPropertyMap>::
 template < class Poly, class OutputIt, 
-           template < class Poly > class Vertex2FTPropertyMap,
-           template < class Poly > class Vertex2VectorPropertyMap > 
+           class Vertex2FTPropertyMap,
+           class Vertex2VectorPropertyMap > 
 Ridge_approximation< Poly, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPropertyMap >::
 Ridge_approximation(Poly &P,
-		    Vertex2FTPropertyMap<Poly>& vertex2k1_pm, Vertex2FTPropertyMap<Poly>& vertex2k2_pm,
-		    Vertex2FTPropertyMap<Poly>& vertex2b0_pm, Vertex2FTPropertyMap<Poly>& vertex2b3_pm,
-		    Vertex2FTPropertyMap<Poly>& vertex2P1_pm, Vertex2FTPropertyMap<Poly>& vertex2P2_pm,
-		    Vertex2VectorPropertyMap<Poly>& vertex2d1_pm, Vertex2VectorPropertyMap<Poly>& vertex2d2_pm)
+		    Vertex2FTPropertyMap& vertex2k1_pm, Vertex2FTPropertyMap& vertex2k2_pm,
+		    Vertex2FTPropertyMap& vertex2b0_pm, Vertex2FTPropertyMap& vertex2b3_pm,
+		    Vertex2FTPropertyMap& vertex2P1_pm, Vertex2FTPropertyMap& vertex2P2_pm,
+		    Vertex2VectorPropertyMap& vertex2d1_pm, Vertex2VectorPropertyMap& vertex2d2_pm)
 : P(&P), k1(vertex2k1_pm), k2(vertex2k2_pm), b0(vertex2b0_pm), b3(vertex2b3_pm), 
   P1(vertex2P1_pm), P2(vertex2P2_pm), d1(vertex2d1_pm), d2(vertex2d2_pm)
 {
@@ -392,8 +392,8 @@ Ridge_approximation(Poly &P,
 /* template < class Poly, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap > */
 /* OutputIt Ridge_approximation<Poly, OutputIt, Vertex2FTPropertyMap, Vertex2VectorPropertyMap>:: */
 template < class Poly, class OutputIt, 
-           template < class Poly > class Vertex2FTPropertyMap,
-           template < class Poly > class Vertex2VectorPropertyMap > 
+           class Vertex2FTPropertyMap,
+           class Vertex2VectorPropertyMap > 
 OutputIt Ridge_approximation< Poly, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
 compute_all_ridges(OutputIt it, Tag_order ord)
 {
@@ -406,8 +406,8 @@ compute_all_ridges(OutputIt it, Tag_order ord)
 /* template < class Poly, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap > */
 /*   void Ridge_approximation<Poly, OutputIt, Vertex2FTPropertyMap, Vertex2VectorPropertyMap>:: */
 template < class Poly, class OutputIt, 
-           template < class Poly > class Vertex2FTPropertyMap,
-           template < class Poly > class Vertex2VectorPropertyMap > 
+           class Vertex2FTPropertyMap,
+           class Vertex2VectorPropertyMap > 
  void Ridge_approximation< Poly, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
 compute_ridges(Ridge_interrogation_type r_type, OutputIt ridge_lines_it, Tag_order ord)
 {
@@ -487,8 +487,8 @@ compute_ridges(Ridge_interrogation_type r_type, OutputIt ridge_lines_it, Tag_ord
 /* template < class Poly, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap > */
 /* Ridge_type Ridge_approximation<Poly, OutputIt, Vertex2FTPropertyMap, Vertex2VectorPropertyMap>:: */
 template < class Poly, class OutputIt, 
-           template < class Poly > class Vertex2FTPropertyMap,
-           template < class Poly > class Vertex2VectorPropertyMap > 
+           class Vertex2FTPropertyMap,
+           class Vertex2VectorPropertyMap > 
 Ridge_type Ridge_approximation< Poly, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
 facet_ridge_type(Facet_handle f, Halfedge_handle& he1, Halfedge_handle&
 		 he2, Ridge_interrogation_type r_type)
@@ -583,8 +583,8 @@ facet_ridge_type(Facet_handle f, Halfedge_handle& he1, Halfedge_handle&
 /* template < class Poly, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap > */
 /* void Ridge_approximation<Poly, OutputIt, Vertex2FTPropertyMap, Vertex2VectorPropertyMap>:: */
 template < class Poly, class OutputIt, 
-           template < class Poly > class Vertex2FTPropertyMap,
-           template < class Poly > class Vertex2VectorPropertyMap > 
+           class Vertex2FTPropertyMap,
+           class Vertex2VectorPropertyMap > 
 void Ridge_approximation< Poly, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
 xing_on_edge(Halfedge_handle he, bool& is_crossed, Ridge_interrogation_type color)
 {
@@ -611,8 +611,8 @@ xing_on_edge(Halfedge_handle he, bool& is_crossed, Ridge_interrogation_type colo
 /* template < class Poly, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap > */
 /*   bool Ridge_approximation<Poly, OutputIt, Vertex2FTPropertyMap, Vertex2VectorPropertyMap>:: */
 template < class Poly, class OutputIt, 
-           template < class Poly > class Vertex2FTPropertyMap,
-           template < class Poly > class Vertex2VectorPropertyMap > 
+           class Vertex2FTPropertyMap,
+           class Vertex2VectorPropertyMap > 
 bool Ridge_approximation< Poly, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
   tag_as_elliptic_hyperbolic(Ridge_interrogation_type color,
 			     Halfedge_handle he1, Halfedge_handle he2)
@@ -666,8 +666,8 @@ bool Ridge_approximation< Poly, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPr
 /* template < class Poly, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap > */
 /*   int Ridge_approximation<Poly, OutputIt, Vertex2FTPropertyMap, Vertex2VectorPropertyMap>:: */
 template < class Poly, class OutputIt, 
-           template < class Poly > class Vertex2FTPropertyMap,
-           template < class Poly > class Vertex2VectorPropertyMap > 
+           class Vertex2FTPropertyMap,
+           class Vertex2VectorPropertyMap > 
 int Ridge_approximation< Poly, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
   b_sign_pointing_to_ridge(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
 			   Vector_3 r1, Vector_3 r2, Ridge_interrogation_type color)
@@ -708,8 +708,8 @@ int Ridge_approximation< Poly, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPro
 /* template < class Poly, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap > */
 /*   void Ridge_approximation<Poly, OutputIt, Vertex2FTPropertyMap, Vertex2VectorPropertyMap>:: */
 template < class Poly, class OutputIt, 
-           template < class Poly > class Vertex2FTPropertyMap,
-           template < class Poly > class Vertex2VectorPropertyMap > 
+           class Vertex2FTPropertyMap,
+           class Vertex2VectorPropertyMap > 
 void Ridge_approximation< Poly, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
 init_ridge_line(Ridge_line* ridge_line, 
 		       Halfedge_handle h1, Halfedge_handle h2, 
@@ -723,8 +723,8 @@ init_ridge_line(Ridge_line* ridge_line,
 /* template < class Poly, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap > */
 /*   void Ridge_approximation<Poly, OutputIt, Vertex2FTPropertyMap, Vertex2VectorPropertyMap>:: */
 template < class Poly, class OutputIt, 
-           template < class Poly > class Vertex2FTPropertyMap,
-           template < class Poly > class Vertex2VectorPropertyMap > 
+           class Vertex2FTPropertyMap,
+           class Vertex2VectorPropertyMap > 
 void Ridge_approximation< Poly, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
 addback(Ridge_line* ridge_line, Halfedge_handle he,
 	Ridge_type r_type)
@@ -769,8 +769,8 @@ addback(Ridge_line* ridge_line, Halfedge_handle he,
 /* template < class Poly, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap > */
 /*   void Ridge_approximation<Poly, OutputIt, Vertex2FTPropertyMap, Vertex2VectorPropertyMap>:: */
 template < class Poly, class OutputIt, 
-           template < class Poly > class Vertex2FTPropertyMap,
-           template < class Poly > class Vertex2VectorPropertyMap > 
+           class Vertex2FTPropertyMap,
+           class Vertex2VectorPropertyMap > 
 void Ridge_approximation< Poly, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
 addfront(Ridge_line* ridge_line, Halfedge_handle he, 
 	 Ridge_type r_type)
@@ -814,8 +814,8 @@ addfront(Ridge_line* ridge_line, Halfedge_handle he,
 /* template < class Poly, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap > */
 /* typename Poly::Traits::FT Ridge_approximation<Poly, OutputIt, Vertex2FTPropertyMap, Vertex2VectorPropertyMap>:: */
 template < class Poly, class OutputIt, 
-           template < class Poly > class Vertex2FTPropertyMap,
-           template < class Poly > class Vertex2VectorPropertyMap > 
+           class Vertex2FTPropertyMap,
+           class Vertex2VectorPropertyMap > 
 typename Poly::Traits::FT Ridge_approximation< Poly, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
 bary_coord(Halfedge_handle he, Ridge_type r_type)
 {
