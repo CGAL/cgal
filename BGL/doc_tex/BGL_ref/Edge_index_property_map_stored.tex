@@ -25,7 +25,7 @@
 
 The class \ccRefName\ provides a model for the concept 
 \ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
-that maps the an edge in 
+that maps an edge in a
 \ccAnchor{http://www.boost.org/libs/graph/doc/Graph.html}{Bgl Graph}
 to the integer numbers in the range\ccc{[0,num_edges(graph)]}
 by accessing the index directly from the edge.
@@ -39,11 +39,11 @@ by accessing the index directly from the edge.
   \ccTypedef{std::size_type reference;}
     {The result type of the map operator.}
 \ccGlue
-  \ccNestedType{Graph}{The Graphs template parameter.}
+  \ccNestedType{Graph}{The Graph template parameter.}
 \ccGlue
   \ccTypedef{typename boost::graph_traits<Graph>::edge_descriptor key_type;}
   {The type of {\sc Bgl} edge descriptor used as key.\\
-   This edge must have a member function \ccc{std::size_t id() const}
+   This edge must have a member function \ccc{std::size_t id() const;}
    returning the actual index, which is required to be unique for each edge
    and in the range \ccc{[0,num_edges(graph)]}.
   }
