@@ -1,0 +1,74 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: SpatialSortingTraits_2.tex
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{SpatialSortingTraits_2}
+
+\ccDefinition
+  
+All 2D spatial sorting algorithms provided in \cgal{} are parameterized
+by a traits class \ccStyle{Traits}, which defines the
+primitives (objects and predicates) that the sorting algorithms use.
+\ccRefName\ defines the complete set of primitives required in these
+functions and functors.
+
+\ccTypes
+\ccAutoIndexingOff
+\ccSetTwoColumns{SpatialSortingTraits_2::Less_x_2}{}
+
+\ccNestedType{Point_2}%
+       {The point type on which the sorting algorithms operate.}
+
+
+\ccNestedType{Less_x_2}%
+       {Binary predicate object type comparing \ccc{Point_2}s
+        along the $x$ coordinate.
+        Must provide 
+        \ccc{bool operator()(Point_2 p, Point_2 q)} where \ccc{true}
+        is returned iff $p_x < q_x$,
+        where $p_x$ and $q_x$ denote $x$ coordinate of point $p$ and $q$,
+        respectively.
+       }
+
+\ccNestedType{Less_y_2}%
+       {Binary predicate object type comparing \ccc{Point_2}s
+        along the $y$ coordinate.
+        Must provide 
+        \ccc{bool operator()(Point_2 p, Point_2 q)} where \ccc{true}
+        is returned iff $p_y < q_y$,
+        where $p_y$ and $q_y$ denote $y$ coordinate of point $p$ and $q$,
+        respectively.
+       }
+
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+
+Only a copy constructor is required.
+
+\ccConstructor{SpatialSortingTraits_2(const SpatialSortingTraits_2& t);}{}
+
+\ccOperations
+
+The following member functions to create instances of the above predicate
+object types must exist. 
+
+\setlength\parskip{0mm}
+\ccMemberFunction{Less_x_2 less_x_2_object(); }{}
+\ccGlue
+\ccMemberFunction{Less_y_2 less_y_2_object(); }{}
+
+\ccParDims
+\ccHasModels
+
+Any \cgal{} kernel.
+
+\ccParDims
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

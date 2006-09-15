@@ -1,0 +1,30 @@
+%\begin{ccHtmlOnly}
+%<center>
+%<img border=0 src="./saarhull.gif" align=center>
+%</center>
+%\end{ccHtmlOnly} 
+%
+%\begin{ccTexOnly}
+%\begin{center}
+%\includegraphics[width=6.5cm]{Convex_hull_2/saarhull}
+%%\leavevmode\epsfxsize8cm\epsffile{Convex_hull_2/saarhull.eps}
+%\end{center}
+%\end{ccTexOnly}
+
+\section{Spatial Sorting}
+\label{sec:spatial_sorting}
+
+\cgal\ provides a small set of sorting algorithms, currently implemented only for 2D and 3D points, although it is easy to extend them to other objects through a traits mecanism.
+
+Given an iterator range of points, the function \ccc{hilbert_sort} sorts them
+along the famous space-filling Hilbert curve.
+Combined with a \ccc{std::random_shuffle}, the function \ccc{spatial_sort} will
+sort points in a way keeping enough randomness to retain theoritical optimality
+for some algorithm\footnote{in fact, this has only been proved for Delaunay triangulation},
+and close enough to a space-filling curve to speed-up algorithms.
+
+This an example that can dramatically speeds up Delaunay triangulation constructions.
+
+\ccIncludeExampleCode{Spatial_sorting/example_delaunay_2.cpp}
+
+
