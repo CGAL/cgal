@@ -380,6 +380,7 @@ BGL/doc_tex/BGL/main.tex -text
 BGL/doc_tex/BGL_ref/DirectedEmbeddedGraph.tex -text
 BGL/doc_tex/BGL_ref/Edge_index_property_map_external.tex -text
 BGL/doc_tex/BGL_ref/Edge_index_property_map_stored.tex -text
+BGL/doc_tex/BGL_ref/Edge_index_t_enum.tex -text
 BGL/doc_tex/BGL_ref/Edge_is_border_t_enum.tex -text
 BGL/doc_tex/BGL_ref/HalfedgeGraph.tex -text
 BGL/doc_tex/BGL_ref/Polyhedron_edge_is_border_map.tex -text
