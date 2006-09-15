@@ -75,7 +75,7 @@ typedef CGAL::Ridge_approximation < PolyhedralSurf,
 				    back_insert_iterator< std::vector<Ridge_line*> >,
 				    Vertex2FT_PM_type,
 				    Vertex2Vector_PM_type > Ridge_approximation;
-
+  
 
 // //UMBILICS
 // typedef CGAL::Umbilic<PolyhedralSurf> Umbilic;
