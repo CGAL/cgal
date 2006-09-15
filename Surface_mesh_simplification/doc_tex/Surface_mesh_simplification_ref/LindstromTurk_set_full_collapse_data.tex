@@ -39,8 +39,8 @@ It be a model of the \ccc{TriangulatedSurfaceMesh} concept.
 \ccTypes
   \ccTypedef{TSM TSM;}{The type of the surface to simplify. Is a model of \ccc{TriangulatedSurfaceMesh}.}
   \ccGlue
-  \ccTypedef{boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}{A {\sc Bgl} \ccc{EdgeDescriptor}
-            representing an {\em undirected edge} of the surface.
+  \ccTypedef{boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}{A {\sc Bgl} edge descriptor
+            representing an undirected edge of the surface.
             }
   \ccGlue
   \ccTypedef{Full_collapse_data<TSM> Collapse_data;}
@@ -70,14 +70,14 @@ It be a model of the \ccc{TriangulatedSurfaceMesh} concept.
   }
 {Computes the cost \ccc{c} and placement \ccc{p}
 of collapsing \ccc{edge}, using \ccc{cparams} and \ccc{pparams}.
-Then constructs a \ccc{Full_collapse_data<TSM>}(c,p) 
+Then constructs a \ccc{Full_collapse_data<TSM>(c,p)} 
 and assigns it to \ccc{data}.
 }  
 
 \ccSeeAlso
-\ccc{CGAL::Surface_mesh_simplification::Edge_collapse::LindstromTurk_set_partial_collapse_data<TSM>}
-\ccc{CGAL::Surface_mesh_simplification::Edge_collapse::LindstromTurk_cost<TSM>}
-\ccc{CGAL::Surface_mesh_simplification::Edge_collapse::LindstromTurk_placement<TSM>}
+\ccc{CGAL::Surface_mesh_simplification::Edge_collapse::LindstromTurk_set_partial_collapse_data<TSM>}\\
+\ccc{CGAL::Surface_mesh_simplification::Edge_collapse::LindstromTurk_cost<TSM>}\\
+\ccc{CGAL::Surface_mesh_simplification::Edge_collapse::LindstromTurk_placement<TSM>}\\
 \ccc{CGAL::Surface_mesh_simplification::Edge_collapse::LindstromTurk_params}
 
 \end{ccRefClass}

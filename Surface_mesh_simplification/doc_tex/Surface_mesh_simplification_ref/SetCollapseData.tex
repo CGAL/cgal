@@ -26,9 +26,9 @@ The concept \ccRefName\ describes the requirements for the {\em policy function 
 
 
 \ccTypes
-  \ccNestedType{TSM}{The type of the surface to simplify. Must be a model of the \ccc{TSM} concept.}{}
+  \ccNestedType{TSM}{The type of the surface to simplify. Must be a model of the \ccc{TriangulatedSurfaceMesh} concept.}{}
   \ccGlue
-  \ccTypedef{boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}{A {\sc Bgl} \ccc{EdgeDescriptor} representing an {\em undirected edge} of the surface.}{}
+  \ccTypedef{boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}{A {\sc Bgl} edge descriptor representing an undirected edge of the surface.}{}
   \ccGlue
   \ccNestedType{Collapse_data}{The concrete type of collapse data being assigned by this policy.}{}
   \ccGlue
@@ -51,15 +51,16 @@ If \ccc{Collapse_data} is a model of \ccc{FullCollapseData}, the object assigned
 for the given \ccc{edge} using the model-specific parameters \ccc{cparams} and \ccc{pparams}.\\
 If \ccc{Collapse_data} is a model of \ccc{PartialCollapseData}, the object assigned holds only the {\em cost}, computed 
  using \ccc{cparams}. \ccc{pparams} is ignored and can be a null pointer.\\
-If \ccc{Collapse_data} is a model of \ccc{EmptyCollapseData}, the objects assigned is a default constructed empty objects holding no values. In this case, only the {data} argument is used and the cost/placement {\em params} can be null pointers.\\
+If \ccc{Collapse_data} is a model of \ccc{EmptyCollapseData}, the objects assigned is a default constructed empty objects holding no values. In this case, only the \ccc{data} argument is used and the cost/placement 
+\ccc{params} can be null pointers.\\
 \ccc{edge} is required to belong to the \ccc{surface}.\\
 The concrete model specifies whether \ccc{cparams} or \ccc{pparams}, when not ignored, can be null pointers.
 }  
 
 \ccHasModels
-\ccRefIdfierPage{CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse::Set_empty_collapse_data<TSM>}.
-\ccRefIdfierPage{CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse::Set_partial_collapse_data<TSM,GetCost>}.
-\ccRefIdfierPage{CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse::Set_full_collapse_data<TSM,GetCost,GetPlacement>}.
+\ccRefIdfierPage{CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse::Set_empty_collapse_data<TSM>}\\
+\ccRefIdfierPage{CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse::Set_partial_collapse_data<TSM,GetCost>}\\
+\ccRefIdfierPage{CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse::Set_full_collapse_data<TSM,GetCost,GetPlacement>}\\
 
 \end{ccRefConcept}
 

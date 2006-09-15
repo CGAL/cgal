@@ -25,15 +25,15 @@
 
 The class \ccRefName\ provides a model for the
 \ccc{SetCollpaseData} where the \ccc{CollapseData} it assigns is \ccc{Empty_collapse_data}.\\
-The class \ccRefName\ has one template argument: the type of surface being simplified, must be a model of the \ccc{TSM} concept.
+The class \ccRefName\ has one template argument: the type of surface being simplified, must be a model of the \ccc{TriangulatedSurfaceMesh} concept.
 
 \ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Set_empty_collapse_data.h}
 
 \ccTypes
   \ccTypedef{TSM TSM;}{The type of the surface to simplify.}
   \ccGlue
-  \ccTypedef{boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}{A BGL \ccc{EdgeDescriptor}
-  representing an {\em undirected edge} of the surface.}
+  \ccTypedef{boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}{A {\sc Bgl} edge descriptor
+  representing an undirected edge of the surface.}
   \ccGlue
   \ccTypedef{Empty_collapse_data<TSM> Collapse_data;}{A type of collapse data which caches nothing.}
   \ccGlue
@@ -51,16 +51,16 @@ The class \ccRefName\ has one template argument: the type of surface being simpl
                   , PlacementParam const* pparams
                   );
   }
-{Default constructs an instance of \ccc{Empty\_collapse\_data} and assigns it to \ccc{data}. All other parameters are ignored.
+{Default constructs an instance of \ccc{Empty_collapse_data} and assigns it to \ccc{data}. All other parameters are ignored.
 }  
 
 \ccIsModel
 \ccc{SetCollapseData}
 
 \ccSeeAlso
-\ccc{CGAL::Surface_mesh_simplification::Edge_collapse::Set_partial_collapse_data<TSM,GetCost>}
-\ccc{CGAL::Surface_mesh_simplification::Edge_collapse::Set_full_collapse_data<TSM,GetCost,GetPlacement>}
-\ccc{CGAL::Surface_mesh_simplification::Edge_collapse::Set_partial_collapse_data_LindstromTurk<TSM>}
+\ccc{CGAL::Surface_mesh_simplification::Edge_collapse::Set_partial_collapse_data<TSM,GetCost>}\\
+\ccc{CGAL::Surface_mesh_simplification::Edge_collapse::Set_full_collapse_data<TSM,GetCost,GetPlacement>}\\
+\ccc{CGAL::Surface_mesh_simplification::Edge_collapse::Set_partial_collapse_data_LindstromTurk<TSM>}\\
 \ccc{CGAL::Surface_mesh_simplification::Edge_collapse::Set_full_collapse_data_LindstromTurk<TSM>}
 
 \end{ccRefClass}

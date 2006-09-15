@@ -28,10 +28,10 @@ The algorithm presented here can simplify any {\em 2-manifold surface with borde
 
 Edges are collapsed according to a priority given by a user-supplied {\em cost} function, and the coordinates of the replacing vertex are determined by another user-supplied {\em placement} function. The algorithm terminates when a user-supplied {\em stop predicate} is met, such as reaching the desired number of edges.
 
-The algorithm implemented here is generic in the sense that it doesn't require the surface to be of any concrete type. Instead, it defines the concept of a \ccc{TriangulatedSurfaceMesh} and any surface that is a model of that concept can be simplified. Furthermore, the concept is defined not in terms of a monolithic class, but in terms of a set of functions and traits making it easy to adapt any concrete surface type without much work. In particular, the concept definition is based on the well known
-{\em Boost Graph Library} \ccAnchor{http://www.boost.org/libs/graph/doc/index.html}{\sc Bgl}.
+The algorithm implemented here is generic in the sense that it does not require the surface to be of a particular type. Instead, it defines the concept of a \ccc{TriangulatedSurfaceMesh} and any surface that is a model of that concept can be simplified. Furthermore, the concept is defined not in terms of a monolithic class, but in terms of a set of functions and traits making it easy to adapt any concrete surface type without much work. In particular, the concept definition follows the design of the 
+ \ccAnchor{http://www.boost.org/libs/graph/doc/index.html}{ Boost Graph Library ({\sc Bgl})}.
 
-The design is \ccAnchor{http://en.wikipedia.org/wiki/Policy-based_design}{\em policy-based},
+The design is \ccAnchor{http://en.wikipedia.org/wiki/Policy-based_design}{{\em policy-based}},
 meaning that you can customize some aspects of the process by passing a set of {\em policy objects}. Each policy object specifies a particular aspect of the algorithm, such as how edges are selected and where the replacement vertex is placed. All policies have a sensible default so you don't need to learn about them unless you need a non-default behaviour.
 
 \section{Definitions\label{SurfaceMeshSimplification:SecDefinitions}}
@@ -154,7 +154,7 @@ The following examples introduce the API in increasing complexity. All the examp
 
 \ccIncludeExampleCode{Surface_mesh_simplification/general_form.cpp}
 
-As you can see, each example varies from this general form in the code sections bettween the marks.
+As you can see, each example varies from this general form in the code sections between the marks.
 Each example is coded to be compilable so some neccessary parts are repeated in many of them. To simplify the exposition, repeated parts are described in detail only in the first example they appear.
 
 \subsubsection{Example Using Default Parameters}

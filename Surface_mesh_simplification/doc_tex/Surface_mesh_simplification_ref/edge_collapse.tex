@@ -53,18 +53,18 @@ int edge_collapse ( TriangulatedSurfaceMesh&        surface
                   ) ;
 }
 {Simplifies \ccc{surface} in-place by collapsing edges, and returns
-the number of edges effectively removed.
-
+the number of edges effectively removed.\\
+%
 The process continues until the \ccc{should_stop} policy returns \ccc{true}
-or the surface cannot be simplified any furhter due to topological constrians.
-
+or the surface cannot be simplified any furhter due to topological constraints.\\
+%
 \ccc{edge_extra_ptr_map} is a property map which provides access
-to a \ccc{void*&} extra-pointer per edge, as needed by the algorithm.
-
+to a \ccc{void*&} extra-pointer per edge, as needed by the algorithm.\\
+%
 \ccc{vertex_is_fixed_map} is used to indicate that some edges should not be
 collapsed. The property map indicates whether a vertex is fixed or not,
-and any edge incident upon a fixed vertex is not collapsed.
-
+and any edge incident upon a fixed vertex is not collapsed.\\
+%
 \ccc{set_collapse_data}, along with \ccc{get_cost} and \ccc{get_placement},
 are the policies which control the {\em cost-strategy}, that is, 
 the order in which edges are collapsed and the replacement vertex positioned.\\
@@ -73,7 +73,7 @@ parameters used by the these policies. They can be null pointers
 if the policies don't need them.\\
 This strategy is the driving factor that determines the accuaracy of the
 simplied surface with respect to the original.\\
-
+%
 \ccc{visitor} is an optional object (can be null) which can be used
 to keep track of the simplification process.
 }
