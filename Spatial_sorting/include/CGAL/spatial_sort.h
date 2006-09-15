@@ -17,7 +17,7 @@ namespace CGALi {
                        const Kernel &k, typename Kernel::Point_2 *)
     {
         typedef Hilbert_sort_2<Kernel> Sort;
-        (Multiscale_sort<Sort> (4, 16, Sort (k))) (begin, end);
+        (Multiscale_sort<Sort> (Sort (k, 4), 16, 0.25)) (begin, end);
     }
 
     template <class RandomAccessIterator, class Kernel>
@@ -25,7 +25,7 @@ namespace CGALi {
                        const Kernel &k, typename Kernel::Point_3 *)
     {
         typedef Hilbert_sort_3<Kernel> Sort;
-        (Multiscale_sort<Sort> (8, 64, Sort (k))) (begin, end);
+        (Multiscale_sort<Sort> (Sort (k, 8), 64, 0.125)) (begin, end);
     }
 }
 

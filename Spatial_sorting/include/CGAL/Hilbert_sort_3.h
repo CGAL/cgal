@@ -77,31 +77,32 @@ public:
     typedef typename Kernel::Point_3 Point;
 
 private:
-    Kernel k;
+    Kernel _k;
+    int _limit;
 
     template <int x, bool up> struct Cmp : public CGALi::Hilbert_cmp_3<Kernel,x,up>
     { Cmp (const Kernel &k) : CGALi::Hilbert_cmp_3<Kernel,x,up> (k) {} };
 
 public:
-    Hilbert_sort_3 (const Kernel &_k = Kernel()) : k(_k) {}
+    Hilbert_sort_3 (const Kernel &k = Kernel(), int limit = 1)
+        : _k(k), _limit (limit)
+    {}
 
     template <int x, bool upx, bool upy, bool upz, class RandomAccessIterator>
     void sort (RandomAccessIterator begin, RandomAccessIterator end) const
     {
         const int y = (x + 1) % 3, z = (x + 2) % 3;
-        if (end - begin <= 8) return;
+        if (end - begin <= _limit) return;
 
         RandomAccessIterator m0 = begin, m8 = end;
 
-        RandomAccessIterator m4 = CGALi::hilbert_split (m0, m8, Cmp< x,  upx> (k));
-        RandomAccessIterator m2 = CGALi::hilbert_split (m0, m4, Cmp< y,  upy> (k));
-        RandomAccessIterator m1 = CGALi::hilbert_split (m0, m2, Cmp< z,  upz> (k));
-        RandomAccessIterator m3 = CGALi::hilbert_split (m2, m4, Cmp< z, !upz> (k));
-        RandomAccessIterator m6 = CGALi::hilbert_split (m4, m8, Cmp< y, !upy> (k));
-        RandomAccessIterator m5 = CGALi::hilbert_split (m4, m6, Cmp< z,  upz> (k));
-        RandomAccessIterator m7 = CGALi::hilbert_split (m6, m8, Cmp< z, !upz> (k));
-
-        if (end - begin <= 8*8) return;
+        RandomAccessIterator m4 = CGALi::hilbert_split (m0, m8, Cmp< x,  upx> (_k));
+        RandomAccessIterator m2 = CGALi::hilbert_split (m0, m4, Cmp< y,  upy> (_k));
+        RandomAccessIterator m1 = CGALi::hilbert_split (m0, m2, Cmp< z,  upz> (_k));
+        RandomAccessIterator m3 = CGALi::hilbert_split (m2, m4, Cmp< z, !upz> (_k));
+        RandomAccessIterator m6 = CGALi::hilbert_split (m4, m8, Cmp< y, !upy> (_k));
+        RandomAccessIterator m5 = CGALi::hilbert_split (m4, m6, Cmp< z,  upz> (_k));
+        RandomAccessIterator m7 = CGALi::hilbert_split (m6, m8, Cmp< z, !upz> (_k));
 
         sort<z, upz, upx, upy> (m0, m1);
         sort<y, upy, upz, upx> (m1, m2);

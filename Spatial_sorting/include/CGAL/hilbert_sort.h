@@ -14,14 +14,14 @@ namespace CGALi {
     void hilbert_sort (RandomAccessIterator begin, RandomAccessIterator end,
                        const Kernel &k, typename Kernel::Point_2 *)
     {
-        (Hilbert_sort_2<Kernel> (k)) (begin, end);
+        (Hilbert_sort_2<Kernel> (k, 4)) (begin, end);
     }
 
     template <class RandomAccessIterator, class Kernel>
     void hilbert_sort (RandomAccessIterator begin, RandomAccessIterator end,
                        const Kernel &k, typename Kernel::Point_3 *)
     {
-        (Hilbert_sort_3<Kernel> (k)) (begin, end);
+        (Hilbert_sort_3<Kernel> (k, 8)) (begin, end);
     }
 }
 
