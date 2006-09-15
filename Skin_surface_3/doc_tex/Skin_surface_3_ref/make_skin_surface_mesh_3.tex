@@ -1,0 +1,41 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: make_skin_surface_mesh_3.tex
+% +------------------------------------------------------------------------+
+% | 27.09.2005   Nico Kruithof
+% | Package: Skin_surface_3
+% | 
+\RCSdef{\RCSskinsurfaceRev}{$Id$}
+\RCSdefDate{\RCSskinsurfaceDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefFunction}{make_skin_surface_mesh_3<Polyhedron_3>}
+  \ccDefinition
+
+  The function \ccRefName\ constructs a mesh isotopic to the skin
+  surface based on the algorithm in \cite{cgal:kv-mssct-05}. It takes
+  as input a range of weighted points and a shrink factor and outputs
+  the mesh in a \ccc{Polyhedron_3} object. A number of subdivision
+  steps might be applied to refine the mesh.
+
+  \ccInclude{CGAL/make_skin_surface_mesh_3.h}
+
+  \ccThree{void}{a}{}
+  \ccThreeToTwo
+
+  \ccFunction{void mesh_skin_surface_3<Polyhedron_3>
+    (Polyhedron_3 &p, WP_iterator begin, WP_iterator end, double
+    shrink_factor=.5, int nSubdivisions=0, bool
+    grow_balls=true);}{Constructs a mesh of the skin surface defined
+    by the weighted points and the shrink factor. \ccPrecond{
+      \ccc{Polyhedron_3::HDS} can be used as the template argument of
+      the \ccc{Polyhedron_incremental_builder_3<HDS>}}.}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
