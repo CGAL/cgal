@@ -12,7 +12,8 @@ ridge lines. Ridges are curves of {\em extremal} curvature and
 therefore encode important informations used in segmentation,
 registration, matching and surface analysis.  Based on the results of
 the article
-\cite{rr}, we propose algorithms to identify and extract
+%%\cite{rr}
+, we propose algorithms to identify and extract
 different parts of this singular ridge curve as well as umbilics on a
 surface given as a triangular mesh. Differential quantities associated
 to the mesh vertices are assumed to be given for these algorithms;
@@ -44,13 +45,13 @@ And two ``container'' classes.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 A comprehensive description of ridges can be found in
-\cite{hgyg-ttdpf-99,ip-gd-01}, and in the sequel, we just
-introduce the basic notions so as to explain our algorithms.
-Consider a smooth embedded surface, and denote $k_1$ and $k_2$ the
-principal curvatures, with $k_1\geq k_2$. Umbilics are the points
-where $k_1=k_2$.  For any non umbilical point, the corresponding
-principal directions of curvature are well defined, and we denote them
-$d_1$ and $d_2$. 
+%\cite{hgyg-ttdpf-99,ip-gd-01}
+, and in the sequel, we just introduce the basic notions so as to
+explain our algorithms.  Consider a smooth embedded surface, and
+denote $k_1$ and $k_2$ the principal curvatures, with $k_1\geq
+k_2$. Umbilics are the points where $k_1=k_2$.  For any non umbilical
+point, the corresponding principal directions of curvature are well
+defined, and we denote them $d_1$ and $d_2$.
 %%
 Anything related to the maximal (minimal) curvature is qualified blue
 (red), for example we shall speak of the blue curvature for $k_1$ or
@@ -67,20 +68,16 @@ are defined by:
 A non umbilical point is called
 \begin{itemize}
 \item
-%a blue ridge point if $\langle dk_1,d_1 \rangle=0$,
 a blue ridge point if the {\em extremality coefficient} $b_0=\langle
 dk_1,d_1 \rangle$ vanishes, i.e. $b_0=0$.
 
 \item
-%a red ridge point if $\langle dk_2,d_2 \rangle=0$.
 a red ridge point if the {\em extremality coefficient} $b_3=\langle
 dk_2,d_2 \rangle$ vanishes, i.e. $b_3=0$.
 
 \end{itemize}
 \end{definition}
-%We denote $b_0=\langle dk_1,d_1 \rangle$ and $b_3=\langle dk_2,d_2
-%\rangle$, and we call these functions the {\em extremality
-%coefficients}. 
+
 %%
 The previous characterization of ridges involves third-order
 differential properties. Using fourth-order differential quantities, a
@@ -93,7 +90,7 @@ In addition, a subset of elliptic ridges, called the crest lines,
 which can be seen as the visually most salient curves on a surface are
 also of interest. A crest line is an elliptic ridge which is a maximum
 of $\max(|k_1|,|k_2|)$. Hence we provide two additional ridge types :
-\ccc{BLUE_CREST} and \ccc{RED_CREST}.
+\ccc{BLUE_CREST_RIDGE} and \ccc{RED_CREST_RIDGE}.
 
 
 
@@ -105,69 +102,132 @@ there exists a unique unit vector $v_2$ so that $(v_1,v_2,n)$ is
 direct (and the other possible frame is $(-v_1,-v_2,n)$). In the
 coordinate systems $(v_1,v_2,n)$, the surface has the following
 canonical form~:
+%
+\begin{eqnarray}
+\label{eq:monge}
+z(x,y) =  & \frac{1}{2}(k_1x^2 + k_2y^2)+
+	\frac{1}{6}(b_0x^3+3b_1x^2y+3b_2xy^2+b_3y^3) \\
+  &  +\frac{1}{24}(c_0x^4+4c_1x^3y+6c_2x^2y^2+4c_3xy^3+c_4y^4) + \hot
+\end{eqnarray}
 
+\noindent The Taylor expansion of $k_1$ (resp. $k_2$) along the blue
+(resp. red) curvature line going through the origin and parameterized
+by $x$ (resp. $y$) are:
+\begin{equation}
+\label{eq:taylor_along_line}
+k_1(x) = k_1 + b_0x + \frac{P_1}{2(k_1-k_2)}x^2 +\hot \quad \quad \quad 
+P_1= 3b_1^2+(k_1-k_2)(c_0-3k_1^3).
+\end{equation}
+%
+\begin{equation}
+\label{eq:taylor_along_red_line}
+k_2(y) = k_2 + b_3y + \frac{P_2}{2(k_2-k_1)}y^2 +\hot \quad \quad \quad 
+P_2= 3b_2^2+(k_2-k_1)(c_4-3k_2^3).
+\end{equation}
 
+\noindent Notice also that switching from one of the two coordinate systems
+mentioned to the other reverts the sign of all the odd
+coefficients on the Monge form of the surface.
+\medskip
 
-
-
-
-
-
-
-
-
-
-
-Weigths are associated to each line
+Hence ridge types are characterized by 
 \begin{itemize}
 \item
-the {\bf strength} which is the integral of the curvature along the
-line.
+\ccc{BLUE_RIDGE} if $b_0=0$
 \item
-the {\bf sharpness} which is the integral of the absolute value of
-the second derivative of the curvature along the ridge.
+\ccc{BLUE_ELLIPTIC_RIDGE} if  $b_0=0$ and $P_1<0$
+\item
+ \ccc{BLUE_HYPERBOLIC_RIDGE} if  $b_0=0$ and $P_1>0$
+\item
+ \ccc{RED_RIDGE} if  $b_3=0$
+\item
+ \ccc{RED_ELLIPTIC_RIDGE} if  $b_3=0$ and $P_2<0$
+\item
+\ccc{RED_HYPERBOLIC_RIDGE} if  $b_3=0$ and $P_2>0$
+\item
+\ccc{BLUE_CREST_RIDGE} if  $b_0=0$  and $P_1<0$ and $|k_1|>|k_2|$
+\item
+\ccc{RED_CREST_RIDGE} if  $b_3=0$ and $P_2<0$ and $|k_2|>|k_1|$
 \end{itemize}
 
-%\begin{minipage}[c]{.45\linewidth}
 
-\begin{figure}[!ht] 
-\begin{ccTexOnly}
-\centerline{ 
-\includegraphics[height=5cm]{Ridges_3/ellipsoid_ridges_mesh}}
-\end{ccTexOnly}
+\subsection{Extraction of ridges on Triangular Meshes}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{ccHtmlOnly}
-<CENTER> <img border=0 src="./ellipsoid_ridges_mesh.jpg" width=400>
-</CENTER>
-\end{ccHtmlOnly}
+As 0-level set of the extremality coefficients $b_0$ and $b_3$, ridges
+are extracted by a marching line algorithm on the surface.  As the
+signs of these extremalities depends on the orientation of the
+principal directions, we expect both extremalities and vectors
+orienting the principal direction to be given at each point vertex of
+the mesh. Except in the neighborhood of umbilics, if the mesh is dense
+enough, a coherent orientation of principal directions at both
+endpoints of an edge is chosen such than the angle between the two
+vectors is acute-- we call this method the ``acute rule''. Moreover,
+we only check for ridges in triangles such than one can find an
+orientation of its three vertices (we call theses triangles
+``regular'') such that the three edges are coherently oriented.
 
-\caption{Umbilics, ridges, and principal blue foliation on the
-ellipsoid (10k points)}
-\label{pict:ellipsoid_ridges} 
-\end{figure} 
-%\end{minipage}
-%%
-\hfill
-%%
-%\begin{minipage}[c]{.45\linewidth}
-\begin{figure}[H] 
-\begin{ccTexOnly}
-\centerline{ 
-\includegraphics[height=5cm]{Ridges_3/ellipsoid_ridges}}
-\end{ccTexOnly}
-
-\begin{ccHtmlOnly}
-<CENTER> <img border=0 src="./ellipsoid_ridges.jpg" width=400>
-</CENTER>
-\end{ccHtmlOnly}
-
-\caption{Schematic view of the umbilics and the ridges. Max of $k_1$:
-blue; Min of $k_1$: green; Min of $k_2$: red; Max of $k_2$: yellow}
-\label{fig:ridges_ellipsoid}
-\end{figure} 
-%\end{minipage}
+These choices lead to the following observations.
+\begin{itemize}
+\item
+A regular triangle can have either 0 or 2 edges crossed by a ridge of
+a given color (meaning that $b_0$ or $b_3$ change sign on the
+edge). We say that the triangle contains a ridge segment, for which we
+compute its type.  Then we define a
+\ccc{Ridge_line} as a maximal sequence of ridge segments of the 
+same type and connected together.  The topology of a \ccc{Ridge_line}
+is either that of an interval or a circle.
+\item
+In the neighborhood of umbilics, triangle are less likely to be
+regular and the detection of ridges cannot be relevant by this method.
+This is why we propose another method to detect umbilics
+independently.
+\end{itemize}
 
 
+explain
+
+tag E/H with 3 or 4 order
+
+extraction of umbilics, present the class \ccc{Umbilic}
+
+strength sharpness
+
+\subsection{Extraction of Umbilics on Triangular Meshes}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+First we need to define patches of triangles of the mesh $T$
+containing an umbilic.  The method combines a minimization and an
+index computation on the neighborhood of each triangle of $T$. The
+size of the neighborhood is the only parameter of the algorithm.
+
+\paragraph{Finding patches around vertices.}
+Given a vertex $v$, we aim at defining a collection of triangles
+around $v$ so that this collection defines a topological disk on the
+triangulation $T$. First we collect the 1-ring triangles. We define
+the size of this 1-ring patch as the distance from $v$ to its farthest
+1-ring vertex neighbor. Then we collect recursively adjacent triangles
+so that the patch remains a topological disk and such that these
+triangles are at distance less than (1-ring patch size) times a user
+given parameter.
+
+Umbilics are vertices $v$ satisfying the 2 conditions
+\begin{itemize}
+\item
+the function $k_1-k_2$ has its minimum at $v$ amongst all the
+vertices of the patch;
+\item
+the deviation $\delta$ of the principal directions along the contour
+of the patch travelled in the CCW sens is
+\begin{itemize}
+\item
+$\delta \in ]\Pi/2,3\Pi/2[$, then the umbilic is called a wedge,
+\item
+$\delta \in ]-3\Pi/2,-\Pi/2[$, then the umbilic is called a trisector,
+\item
+$\delta \geq 3\Pi/2$ or $\delta \leq -3\Pi/2$ then the umbilic is called non-generic.
+\end{itemize}
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%
 \section{Software Design}

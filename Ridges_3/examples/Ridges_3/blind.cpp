@@ -49,9 +49,14 @@ typedef Monge_via_jet_fitting::Monge_form_condition_numbers Monge_form_condition
 // typedef std::map<Vertex_handle, Vector_3, Vertex_cmp> Vertex2Vector_map_type;
 // // typedef boost::associative_property_map< Vertex2Vector_map_type > Vertex2Vector_PM_type;
 
-typedef CGAL::Vertex2FTPropertyMap_with_std_map<PolyhedralSurf> Vertex2FT_PM_type;
-typedef CGAL::Vertex2VectorPropertyMap_with_std_map<PolyhedralSurf>::Vertex2Vector_PM_type Vertex2Vector_PM_type;
+// typedef CGAL::Vertex2FTPropertyMap_with_std_map<PolyhedralSurf> Vertex2FT_PM_type;
+// typedef CGAL::Vertex2VectorPropertyMap_with_std_map<PolyhedralSurf>::Vertex2Vector_PM_type Vertex2Vector_PM_type;
 
+typedef CGAL::Vertex2Data_Property_Map_with_std_map<PolyhedralSurf> Vertex2Data_Property_Map_with_std_map;
+typedef Vertex2Data_Property_Map_with_std_map::Vertex2FT_map_type Vertex2FT_map_type;
+typedef Vertex2Data_Property_Map_with_std_map::Vertex2Vector_map_type Vertex2Vector_map_type;
+typedef Vertex2Data_Property_Map_with_std_map::Vertex2FT_PM_type Vertex2FT_PM_type;
+typedef Vertex2Data_Property_Map_with_std_map::Vertex2Vector_PM_type Vertex2Vector_PM_type;
 
 
 //RIDGES
@@ -61,10 +66,16 @@ typedef CGAL::Ridge_line<PolyhedralSurf> Ridge_line;
 // 				    Vertex2FT_PM_type, 
 // 				    Vertex2Vector_PM_type > Ridge_approximation;
 
+// typedef CGAL::Ridge_approximation < PolyhedralSurf,
+// 				    back_insert_iterator< std::vector<Ridge_line*> >,
+// 				    CGAL::Vertex2FTPropertyMap_with_std_map,
+// 				    CGAL::Vertex2VectorPropertyMap_with_std_map > Ridge_approximation;
+
 typedef CGAL::Ridge_approximation < PolyhedralSurf,
 				    back_insert_iterator< std::vector<Ridge_line*> >,
-				    CGAL::Vertex2FTPropertyMap_with_std_map,
-				    CGAL::Vertex2VectorPropertyMap_with_std_map > Ridge_approximation;
+				    Vertex2FT_PM_type,
+				    Vertex2Vector_PM_type > Ridge_approximation;
+
 
 // //UMBILICS
 // typedef CGAL::Umbilic<PolyhedralSurf> Umbilic;
@@ -73,22 +84,17 @@ typedef CGAL::Ridge_approximation < PolyhedralSurf,
 // 				      Vertex2FT_PM_type, 
 // 				      Vertex2Vector_PM_type > Umbilic_approximation;
 
-// //create property maps, to be moved in main?
-// Vertex2FT_map_type vertex2k1_map, vertex2k2_map, 
-//   vertex2b0_map, vertex2b3_map, 
-//   vertex2P1_map, vertex2P2_map;
-// Vertex2Vector_map_type vertex2d1_map, vertex2d2_map;
+//create property maps, to be moved in main?
+Vertex2FT_map_type vertex2k1_map, vertex2k2_map, 
+  vertex2b0_map, vertex2b3_map, 
+  vertex2P1_map, vertex2P2_map;
+Vertex2Vector_map_type vertex2d1_map, vertex2d2_map;
 
-// Vertex2FT_PM_type vertex2k1_pm(vertex2k1_map), vertex2k2_pm(vertex2k2_map), 
-//   vertex2b0_pm(vertex2b0_map), vertex2b3_pm(vertex2b3_map), 
-//   vertex2P1_pm(vertex2P1_map), vertex2P2_pm(vertex2P2_map);
-// Vertex2Vector_PM_type vertex2d1_pm(vertex2d1_map), vertex2d2_pm(vertex2d2_map);
+Vertex2FT_PM_type vertex2k1_pm(vertex2k1_map), vertex2k2_pm(vertex2k2_map), 
+  vertex2b0_pm(vertex2b0_map), vertex2b3_pm(vertex2b3_map), 
+  vertex2P1_pm(vertex2P1_map), vertex2P2_pm(vertex2P2_map);
+Vertex2Vector_PM_type vertex2d1_pm(vertex2d1_map), vertex2d2_pm(vertex2d2_map);
 
-
-Vertex2FT_PM_type vertex2k1_pm, vertex2k2_pm, 
-  vertex2b0_pm, vertex2b3_pm, 
-  vertex2P1_pm, vertex2P2_pm;
-Vertex2Vector_PM_type vertex2d1_pm, vertex2d2_pm;
 
 //Syntax requirred by Options
 static const char *const optv[] = {

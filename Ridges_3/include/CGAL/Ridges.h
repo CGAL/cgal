@@ -136,13 +136,14 @@ operator<<(std::ostream& out_stream, const Ridge_line<Poly>& ridge_line)
 }
 
 //---------------------------------------------------------------------------
-//Vertex2FTPropertyMap_with_std_map
+//Vertex2Data_Property_Map_with_std_map
 //--------------------------------------------------------------------------
 template < class Poly >
-class Vertex2FTPropertyMap_with_std_map 
+class Vertex2Data_Property_Map_with_std_map 
 {
  public:
   typedef typename Poly::Traits::FT        FT;
+  typedef typename Poly::Traits::Vector_3  Vector_3;
   typedef typename Poly::Vertex_handle     Vertex_handle;
 
   struct Vertex_cmp{
@@ -154,62 +155,74 @@ class Vertex2FTPropertyMap_with_std_map
   typedef std::map<Vertex_handle, FT, Vertex_cmp> Vertex2FT_map_type;
   typedef boost::associative_property_map< Vertex2FT_map_type > Vertex2FT_PM_type;
 
-  Vertex2FT_map_type map;
-  Vertex2FT_PM_type pm(map);
-
-  //define put get, []??
-  typedef Vertex_handle key_type;
-  typedef FT data_type;
-  data_type& operator[](const key_type& k) const
-    { return pm[k];}
-
-};
-
-
-//---------------------------------------------------------------------------
-//Vertex2VectorPropertyMap_with_std_map
-//--------------------------------------------------------------------------
-template < class Poly >
-class Vertex2VectorPropertyMap_with_std_map 
-{
- public:
-  typedef typename Poly::Traits::Vector_3      Vector_3;
-  typedef typename Poly::Vertex_handle         Vertex_handle;
-
-  struct Vertex_cmp{
-    bool operator()(Vertex_handle a,  Vertex_handle b) const{
-      return &*a < &*b;
-    }
-  };
-
   typedef std::map<Vertex_handle, Vector_3, Vertex_cmp> Vertex2Vector_map_type;
   typedef boost::associative_property_map< Vertex2Vector_map_type > Vertex2Vector_PM_type;
-
-  //idem...........
-  Vertex2Vector_map_type map;
-  Vertex2Vector_PM_type pm(map);
-
-  //define put get, []??
-  typedef Vertex_handle key_type;
-  typedef Vector_3 data_type;
-  data_type& operator[](const key_type& k) const
-    { return pm[k];}
-
-
-
 };
 
 
+/* //--------------------------------------------------------------------------- */
+/* //Vertex2FTPropertyMap_with_std_map */
+/* //-------------------------------------------------------------------------- */
+/* template < class Poly > */
+/* class Vertex2FTPropertyMap_with_std_map  */
+/* { */
+/*  public: */
+/*   typedef typename Poly::Traits::FT        FT; */
+/*   typedef typename Poly::Vertex_handle     Vertex_handle; */
+
+/*   struct Vertex_cmp{ */
+/*     bool operator()(Vertex_handle a,  Vertex_handle b) const{ */
+/*       return &*a < &*b; */
+/*     } */
+/*   }; */
+
+/*   typedef std::map<Vertex_handle, FT, Vertex_cmp> Vertex2FT_map_type; */
+/*   typedef boost::associative_property_map< Vertex2FT_map_type > Vertex2FT_PM_type; */
+
+/*   Vertex2FT_map_type map; */
+/*   Vertex2FT_PM_type pm(map); */
+
+/*   //define put get, []?? */
+/*   typedef Vertex_handle key_type; */
+/*   typedef FT data_type; */
+/*   data_type& operator[](const key_type& k) const */
+/*     { return pm[k];} */
+
+/* }; */
+
+
+/* //--------------------------------------------------------------------------- */
+/* //Vertex2VectorPropertyMap_with_std_map */
+/* //-------------------------------------------------------------------------- */
+/* template < class Poly > */
+/* class Vertex2VectorPropertyMap_with_std_map  */
+/* { */
+/*  public: */
+/*   typedef typename Poly::Traits::Vector_3      Vector_3; */
+/*   typedef typename Poly::Vertex_handle         Vertex_handle; */
+
+/*   struct Vertex_cmp{ */
+/*     bool operator()(Vertex_handle a,  Vertex_handle b) const{ */
+/*       return &*a < &*b; */
+/*     } */
+/*   }; */
+
+/*   typedef std::map<Vertex_handle, Vector_3, Vertex_cmp> Vertex2Vector_map_type; */
+/*   typedef boost::associative_property_map< Vertex2Vector_map_type > Vertex2Vector_PM_type; */
+
+/*   //idem........... */
+/*   Vertex2Vector_map_type map; */
+/*   Vertex2Vector_PM_type pm(map); */
+
+/*   //define put get, []?? */
+/*   typedef Vertex_handle key_type; */
+/*   typedef Vector_3 data_type; */
+/*   data_type& operator[](const key_type& k) const */
+/*     { return pm[k];} */
 
 
 
-
-
-
-
-
-
-
+/* }; */
 
 //---------------------------------------------------------------------------
 //Ridge_approximation
