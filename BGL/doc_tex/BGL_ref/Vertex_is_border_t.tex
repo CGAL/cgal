@@ -1,16 +1,24 @@
-\begin{ccRefClass}{Vertex_is_border_property}
+\begin{ccRefClass}{Vertex_is_border_t}
 
 \ccDefinition
 
 The class \ccRefName\ is a \ccAnchor{http://www.boost.org/libs/graph/doc/PropertyTag.html}
-{PropertyTag} which identifies the {\em is-border} property attached to the vertex of a Boost \ccAnchor{http://www.boost.org/libs/graph/doc/graph_concepts.html}{graph}.
+{PropertyTag} which identifies the {\em is_border} property of a vertex of a \ccc{DirectedEmbeddedGraph}.
 
-This property is a Boolean value.
+The tag is included in:
 
 \ccInclude{CGAL/boost/graph/BGL_properties.h}
 
+A \ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
+for this property can be extracted from any \ccc{DirectedEmbeddedGraph},
+using the tag \ccc{Vertex_is_border_t}, via the usual {\sc Bgl} interface:\\
+\ccAnchor{http://www.boost.org/libs/graph/doc/PropertyGraph.html}
+
+A vertex is a border vertex of it is incident upon a border edge.
+
 \ccSeeAlso
-\ccRefIdfierPage{CGAL::Edge_is_border_property} \\
-\ccRefIdfierPage{CGAL::Vertex_point_property} \\
+\ccRefIdfierPage{CGAL::Vertex_point_t} \\
+\ccRefIdfierPage{CGAL::Edge_is_border_t} \\
+
 
 \end{ccRefClass}
