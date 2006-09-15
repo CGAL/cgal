@@ -165,13 +165,11 @@ void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Loop()
   {
     CGAL_TSMS_TRACE(3,"Poped " << edge_to_string(*lEdge) ) ;
     
-    if ( Visitor )
-      Visitor->OnStep(*lEdge,mSurface,mInitialEdgeCount,mCurrentEdgeCount);
-      
-    vertex_descriptor lVertex ;
-    
     Optional_cost_type lCost = get_cost(*lEdge);
     
+    if ( Visitor )
+      Visitor->OnSelected(*lEdge,mSurface,lCost,mInitialEdgeCount,mCurrentEdgeCount);
+      
     if ( lCost != none ) 
     {
       if ( Should_stop(*lCost,*lEdge,mInitialEdgeCount,mCurrentEdgeCount) )
@@ -188,10 +186,13 @@ void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Loop()
         
       if ( Is_collapsable(*lEdge) )
       {
-        lVertex= Collapse(*lEdge);
+        Collapse(*lEdge);
       }
       else
       {
+        if ( Visitor )
+          Visitor->OnNonCollapsable(*lEdge,mSurface);
+          
         CGAL_TSMS_TRACE(1,edge_to_string(*lEdge) << " NOT Collapsable"  );
       }  
     }
@@ -200,8 +201,6 @@ void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Loop()
       CGAL_TSMS_TRACE(1,edge_to_string(*lEdge) << " uncomputable cost."  );
     }
     
-    if ( Visitor )
-      Visitor->OnProcessed(*lEdge,mSurface,lCost,lVertex);
   }
 }
 
@@ -307,7 +306,7 @@ bool EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Is_collapsable( edge_descriptor cons
 }
 
 template<class M,class S,class X, class F,class D,class CF,class PF,class CP, class PP,class V>
-typename EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::vertex_descriptor EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Collapse( edge_descriptor const& aEdgePQ )
+void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Collapse( edge_descriptor const& aEdgePQ )
 {
   CGAL_TSMS_TRACE(1,"S" << mStep << ". Collapsig " << edge_to_string(aEdgePQ) ) ;
   
@@ -320,6 +319,10 @@ typename EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::vertex_descriptor EdgeCollapse<M
   // The external function Get_new_vertex_point() is allowed to return an absent point if there is no way to place the vertex
   // satisfying its constrians. In that case the vertex-pair is simply not removed.
   Optional_placement_type lPlacement = get_placement(aEdgePQ);
+  
+  if ( Visitor )
+    Visitor->OnCollapsing(*lEdge,mSurface,lPlacement);
+    
   if ( lPlacement )
   {
     CGAL_TSMS_TRACE(2,"New vertex point: " << xyz_to_string(*lPlacement) ) ;

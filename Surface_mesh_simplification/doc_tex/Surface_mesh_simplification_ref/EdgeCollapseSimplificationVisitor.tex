@@ -34,8 +34,10 @@ The several callbacks given as member functions in the visitor are called from c
   \ccTypedef{typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}
   {A {\sc Bgl} edge-descriptor representing an {\em undirected edge} of the surface.}
 \ccGlue    
-  \ccTypedef{typename boost::graph_traits<TSM>::verte_descriptor vertex_descriptor;}
-  {A {\sc Bgl} vertex-descriptor representing a {\em vertex} of the surface.}
+  \ccTypedef{typename CGAL::embeeded_graph_traits<TSM>::Point Point;}
+  {The point type of the vertex.}
+\ccGlue    
+  \ccNestedType{size_type}{An \ccc{IntegerType} representing the number of edges}{}
 
 \ccCreation
 \ccCreationVariable{v}  %% choose variable name
@@ -43,14 +45,73 @@ The several callbacks given as member functions in the visitor are called from c
 \ccOperations
 
   \ccMethod
-  {void OnStarted( Surface& aSurface );}
-  {}
+  {void OnStarted( TSM& surface );}
+  {Called before the algorithm starts.}
   
-\ccHasModels
-\ccRefIdfierPage{CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse::Cached_cost<TSM>}.
-\ccRefIdfierPage{CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse::Edge_length_cost<TSM>}.
-\ccRefIdfierPage{CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse::LindstromTurk_cost<TSM>}.
-
+  \ccMethod
+  {void OnFinished ( TSM& surface ) ; }
+  {Called after the algorithm finishes.}
+  
+  \ccMethod
+  {void OnStopConditionReached( TSM& surface ) ; } 
+  {Called when the \ccc{StopPredicate} returned true
+  (but not if the algorithm terminates because the surface couldn't be simplified any futher)
+  }
+  
+  \ccMethod
+  {void OnCollected( edge_descriptor const& edge
+                   , bool                   is_fixed
+                   , TSM&                   surface
+                   );
+  }                  
+  {Called during the {\em collecting phase} (when a cost is assigned to the edges),
+  for each \ccc{edge} collected.\\
+  \ccc{is_fixed} indicates whether \ccc{edge} is fixed or not.
+  If it is fixed it won't be collapsed.
+  }
+  
+  \ccMethod
+  {void OnSelected(edge_descriptor const&  edge
+                  ,TSM&                    surface
+                  ,boost::optional<double> cost
+                  ,size_type               initial_count
+                  ,size_type               current_count
+                  );
+  }                 
+  {Called during the {\em processing phase} (when edges are collapsed),
+  for each \ccc{edge} that is selected.\\
+  This method is called {\em before} the algorithm checks 
+  if the edge is collapsable.\\
+  \ccc{cost} indicates the current collaspe cost for the \ccc{edge}.
+  If {\em absent} (meaning that it couldn't be comptuted)
+  the edge won't be collapsed.\\
+  \ccc{initial_count} and \ccc{current_count} refers to 
+  the number of edges.
+  }
+  
+  \ccMethod
+  {void OnCollapsing( edge_descriptor const& edge
+                    , TSM&                   surface
+                    , boost::optional<Point> placement
+                    );
+  }                  
+  {Called when \ccc{edge} is about to be collapsed and replaced by a vertex
+  whose position is \ccc{*placement}.\\
+  If \ccc{placement} is absent (meaning that it couldn't be computed)
+  the edge won't be collapsed.
+  }
+  
+  \ccMethod
+  {void OnNonCollapsable( edge_descriptor const& edge
+                        , TSM&                   surface
+                        );
+  }                  
+  {Called for each selected \ccc{edge} which cannot be 
+  collapsed because doing so would change the topological
+  type of the surface. (turn it into a non-manifold
+  for instance)
+  }
+  
 \end{ccRefConcept}
 
 % +------------------------------------------------------------------------+

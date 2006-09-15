@@ -22,8 +22,9 @@ typedef CGAL::Polyhedron_3<Kernel> Surface;
 
 // === EXAMPLE SPECIFIC DETAILS BEGINS HERE ===
 
+typedef Kernel::Point_3 Point ;
+
 typedef Surface::Halfedge_handle Halfedge_handle ;
-typedef Surface::Vertex_handle   Vertex_handle ;
 
 // The following is the Visitor that keeps track of the simplification process.
 // In this example the progress is printed real-time and a few statistics are
@@ -37,6 +38,7 @@ struct Visitor
     , collapsed(0)
     , non_collapsable(0)
     , cost_uncomputable(0) 
+    , placement_uncomputable(0) 
   {} 
 
   // Called on algorithm entry  
@@ -56,47 +58,54 @@ struct Visitor
   {
     ++ collected ;
     std::cerr << "\rEdges collected: " << collected << std::flush ;
- }                
-  
-  // Called during the processing phase for each edge processed.
-  // If aVertex is a valid handle then the edge was collapsed and aVertex is the replacement.
-  void OnProcessed(Halfedge_handle const&  aEdge
-                  ,Surface&                aSurface
-                  ,boost::optional<double> aCost
-                  ,Vertex_handle const&    aVertex
-                  )
-  {
-    ++ processed ;
-    if ( aVertex == Vertex_handle() )
-    {
-      if ( !aCost )
-           ++ cost_uncomputable ;
-      else ++ non_collapsable ;
-    }
-    else 
-    {
-      ++ collapsed;
-    }
   }                
   
-  // Call at each step in the processing phase (when each edge is selected for processing) before the
-  // stop condition is evaluated.
-  void OnStep( Halfedge_handle const& aEdge
-             , Surface&               aSurface
-             , std::size_t            aInitial
-             , std::size_t            aCurrent
-             )
+  // Called during the processing phase for each edge selected.
+  // If aCost is absent the edge won't be collapsed.
+  void OnSelected(Halfedge_handle const&  aEdge
+                 ,Surface&                aSurface
+                 ,boost::optional<double> aCost
+                 ,std::size_t             aInitial
+                 ,std::size_t             aCurrent
+                 )
   {
+    ++ processed ;
+    if ( !aCost )
+      ++ cost_uncomputable ;
+      
     if ( aCurrent == aInitial )
       std::cerr << "\n" << std::flush ;
     std::cerr << "\r" << aCurrent << std::flush ;
+  }                
+  
+  // Called during the processing phase for each edge being collapsed.
+  // If aPlacement is absent the edge is left uncollapsed.
+  void OnCollapsing(Halfedge_handle const&  aEdge
+                   ,Surface&                aSurface
+                   ,boost::optional<Point>  aPlacement
+                   )
+  {
+    if ( aPlacement )
+         ++ collapsed;
+    else ++ placement_uncomputable ;
+  }                
+  
+  // Called for each edge which failed the so called link-condition,
+  // that is, which cannot be collapsed because doing so would
+  // turn the surface into a non-manifold.
+  void OnNonCollapsable( Halfedge_handle const& aEdge
+                       , Surface&               aSurface
+                       )
+  {
+    ++ non_collapsable;
   }                
   
   std::size_t  collected
              , processed
              , collapsed
              , non_collapsable
-             , cost_uncomputable ; 
+             , cost_uncomputable  
+             , placement_uncomputable ; 
 } ;
 
 // === EXAMPLE SPECIFIC DETAILS ENDS HERE ===
@@ -147,8 +156,10 @@ int main( int argc, char** argv )
             << std::endl
             << "\nEdges not collapsed due to topological constrians: " 
             << visitor.non_collapsable
-            << "\nEdge not collapsed due to computational constrians: " 
+            << "\nEdge not collapsed due to cost computation constrians: " 
             << visitor.cost_uncomputable 
+            << "\nEdge not collapsed due to placement computation constrians: " 
+            << visitor.placement_uncomputable 
             << std::endl ; 
             
   // === CONCRETE USAGE EXAMPLE ENDS HERE ===

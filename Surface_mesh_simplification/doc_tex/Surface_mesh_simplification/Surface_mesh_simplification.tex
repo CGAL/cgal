@@ -40,11 +40,11 @@ meaning that you can customize some aspects of the process by passing a set of {
 
 A \ccc{TriangulatedSurfaceMesh} is structuraly equivalent to a \ccc{CGAL::Polyhedron_3}) whose facets are only triangles.
 
-Conceptually, is similar to a \ccc{HalfedgeDS} with the restriction that all facets are triangular. In order to simplify the {\em efficient} adaptation of concrete surface types, it is {\em not} modeled exactly as a \ccc{HalfedgeDS} but as a directed graph, with its related fucntions, and a property map, as explained below:
+Conceptually, is similar to a \ccc{HalfedgeDS} with the restriction that all facets are triangular. In order to simplify the {\em efficient} adaptation of concrete surface types, it is {\em not} modeled exactly as a \ccc{HalfedgeDS} but as a directed graph, with its related functions and associated properties, as explained below:
 
-A \ccc{TriangulatedSurfaceMesh} refines the \ccc{HalfedgeGraph} concept which desribes only the vertices and edges of a \ccc{HalfedgeDS}. The triangular facets are not explicitely modeled. 
+A \ccc{TriangulatedSurfaceMesh} refines the \ccc{HalfedgeGraph} concept which describes only the vertices and edges of a \ccc{HalfedgeDS}. The triangular facets are not explicitely modeled. 
 
-An edge is normally considered to be in the boundary of the surface when it is incident upon only one facet instead of two. The algorithm here needs to indentify border edges, but the incidence between triangles and edges is not represented explicitely, so a {\sc Bgl} \ccc{EdgeIsBorderPropertyMap} is used for that.
+An edge is normally considered to be in the boundary of the surface when it is incident upon only one facet instead of two. The algorithm here needs to indentify border edges, but the incidence between triangles and edges is not represented explicitely, so the {\em properties} \ccc{Edge_is_border} and \ccc{Vertex_is_border} are associated with the edges and vertices of a surface.
 
 Following the {\sc Bgl} design, operations in a \ccc{TriangulatedSurfaceMesh} are defined in terms of free (non-member) functions.
 
@@ -88,9 +88,14 @@ The stop predicate is called after each edge is selected for processing, {\em be
 
 \subsection{Additional Surface Properties}
 
-The algorithm needs to associate with each edge an implementation-specific internal record. It could do that unintrusively with an internal map, but that would incurr the additional overhead of a lookup. To avoid that inefficieny (which could be significant, if the surface had millions of edges) the algorithm requires the user to pass in a {\sc Bgl} \ccc{PropertyMap}, \ccc{EdgeExtraPointerMap}, associating a modifiable void pointer (that is, a \ccc{"void*\&"}) to each {\em undirected} edge. The map must be initialized with null pointers for all undirected edges in the surface (or all directed edges if the concrete surface internally distinguishes between the two). 
+The algorithm needs to associate with each edge an implementation-specific internal record.
+To do that efficiently, the surfaces edges must be propery indexed, so
+a \ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
+corresponding to the \ccc{Edge_index} property must be passed.
 
-Sometimes it is desirable to keep some edges uncollapsed. This can be controlled by fixing vertices in the surface: any edge incident upon a fixed vertex will be left uncollapsed. A {\sc BGL} \ccc{PropertyMap}, \ccc{VertexIsFixedMap}, associating a bool with every vertex is passed to indicate that.
+Sometimes it is desirable to keep some edges uncollapsed. This can be controlled by fixing vertices in the surface: any edge incident upon a fixed vertex will be left uncollapsed. Again
+\ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
+associating a bool to each vertx is passed to indicate that.
 
 \subsection{Cost Strategy}
 
@@ -124,7 +129,7 @@ In conjunction, the three parameters: \ccc{SetCollapseData}, \ccc{GetCost} and \
 
 \subsection{Visitor}
 
-Simplifying a large surface with millions of edges can take up a lot of time (several minutes). Thus, it is important to be able to monitor the simplification progress. This can be achieved passing a visitor function object. The information passed to the visitor at each step can be used to track statistics such as the number of edges that couldn't be collapsed. The requirements of the visitor object are specified in the \ccc{TSMEdgeCollapseVisitor} concept.
+Simplifying a large surface with millions of edges can take up a lot of time (several minutes). Thus, it is important to be able to monitor the simplification progress. This can be achieved passing a visitor function object. The information passed to the visitor at each step can be used to track statistics such as the number of edges that couldn't be collapsed. The requirements of the visitor object are specified in the \ccc{EdgeCollapseSimplificationVisitor} concept.
 
 \section{API}
 
@@ -135,7 +140,7 @@ The simplification algorithm is implemented as a free template function taking s
 \begin{cprog}
 int r = edge_collapse(surface
                      ,stop_condition
-                     ,edge_extra_ptr_map
+                     ,edge_index_map
                      ,vertex_is_fixed_map
                      ,set_collapse_data
                      ,get_cost

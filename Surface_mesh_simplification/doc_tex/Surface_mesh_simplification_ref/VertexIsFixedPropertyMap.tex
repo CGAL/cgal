@@ -21,14 +21,15 @@
 
 \ccDefinition
 
-The concept \ccRefName\ describes the requirements of a \ccc{PropertyMap} that indicates if a surface vertex is fixed.
+The concept \ccRefName\ describes the requirements of a
+\ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
+associating each vertex with a bool that indicates if it is fixed.
+\ccAnchor{http://www.boost.org/libs/graph/doc/Graph.html}{Bgl Graph}.
 
 \ccRefines
-  \ccc{PropertyMap}
+  \ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
   
 \ccTypes
-  \ccTypedef{boost::readable_property_map_tag category;}
-    {Indicates that this property is read-only.}
   
   \ccTypedef{bool value_type;}
     {The type of the property.}
@@ -37,7 +38,7 @@ The concept \ccRefName\ describes the requirements of a \ccc{PropertyMap} that i
     {The result type of the map operator.}
 
   \ccNestedType{key_type;}
-  {The type of {\sc Bgl vertex-descriptor} to which the boolean is-border property is associated.}
+  {The key type. Must be a valid {\sc Bgl} vertex-descriptor.}
 
 \ccCreation
 \ccCreationVariable{pm}  %% choose variable name
@@ -50,8 +51,8 @@ The concept \ccRefName\ describes the requirements of a \ccc{PropertyMap} that i
 
 
 \ccHasModels
-\ccRefIdfierPage{CGAL::Vertex_is_fixed_map_always_false<TSM> }\\
-\ccRefIdfierPage{CGAL::Vertex_is_fixed_map_stored<TSM> }\\
+\ccRefIdfierPage{CGAL::Vertex_is_fixed_property_map_always_false<TSM> }\\
+\ccRefIdfierPage{CGAL::Vertex_is_fixed_property_map_stored<TSM> }\\
 
 \end{ccRefConcept}
 

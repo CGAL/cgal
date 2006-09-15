@@ -29,17 +29,10 @@ It always returns false.
 \ccInclude{CGAL/Surface_mesh_simplification/Vertex_is_fixed_property_map_always_false.h}
 
 \ccTypes
-  \ccTypedef{boost::readable_property_map_tag category;}
-    {Indicates that this property is read-only.}
-  
-  \ccTypedef{bool value_type;}
-    {The type of the property.}
-    
-  \ccTypedef{bool reference;}
-    {The result type of the map operator.}
+  \ccNestedType{TSM}{The TSM template parameter.}
 
-  \ccTypedef{typename boost::graph_traits<TSM>::vertex_descriptor key_type;}
-  {The key type of the property map: A {\sc Bgl vertex-descriptor.}}
+  \ccTypedef{typename boost::graph_traits<TSM const>::vertex_descriptor key_type;}
+  {The type of {\sc Bgl} vertex descriptor used as key.}
 
 \ccCreation
 \ccCreationVariable{pm}  %% choose variable name

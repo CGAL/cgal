@@ -29,8 +29,10 @@ It returns a flag directly stored in the surface vertex.
 \ccInclude{CGAL/Surface_mesh_simplification/Vertex_is_fixed_property_map_stored.h}
 
 \ccTypes
-  \ccTypedef{typename boost::graph_traits<TSM>::vertex_descriptor key_type;}
-  {The key type of the property map: A {\sc Bgl vertex-descriptor}. }
+  \ccNestedType{TSM}{The TSM template parameter.}
+
+  \ccTypedef{typename boost::graph_traits<TSM const>::vertex_descriptor key_type;}
+  {The type of {\sc Bgl} vertex descriptor used as key.}
 
 \ccCreation
 \ccCreationVariable{pm}  %% choose variable name

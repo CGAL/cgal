@@ -190,7 +190,7 @@ private:
   void Collect();
   void Loop();
   bool Is_collapsable( edge_descriptor const& aEdge ) ;
-  vertex_descriptor Collapse( edge_descriptor const& aEdge ) ;
+  void Collapse( edge_descriptor const& aEdge ) ;
   void Update_neighbors( vertex_descriptor const& aKeptV ) ;
   
   bool is_vertex_fixed ( const_vertex_descriptor const& v ) const { return get(Vertex_is_fixed_map,v) ; }

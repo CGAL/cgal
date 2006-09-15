@@ -15,7 +15,7 @@
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
 
-\begin{ccRefFunction}{Surface_mesh_simplification::Edge_collapse::edge_collapse}
+\begin{ccRefFunction}{Surface_mesh_simplification::edge_collapse}
 
 %% add template arg's if necessary
 
@@ -38,33 +38,36 @@ template<class TriangulatedSurfaceMesh
         ,class GetPlacement
         ,class CostParams
         ,class PlacementParams
-        ,class Visitor
+        ,class EdgeCollaspeSimplificationVisitor
         >
-int edge_collapse ( TriangulatedSurfaceMesh&        surface
-                  , StopPredicate            const& should_stop
-                  , EdgeExtraPtrMap          const& edge_extra_ptr_map   
-                  , VertexIsFixedPropertyMap const& vertex_is_fixed_map  
-                  , SetCollapseData          const& set_collapse_data
-                  , GetCost                  const& get_cost 
-                  , GetPlacement             const& get_placement
-                  , CostParams               const* cost_params
-                  , PlacementParams          const* placement_params 
-                  , Visitor*                        visitor
+int edge_collapse ( TriangulatedSurfaceMesh&           surface
+                  , StopPredicate            const&    should_stop
+                  , EdgeExtraPtrMap          const&    edge_extra_ptr_map   
+                  , VertexIsFixedPropertyMap const&    vertex_is_fixed_map  
+                  , SetCollapseData          const&    set_collapse_data
+                  , GetCost                  const&    get_cost 
+                  , GetPlacement             const&    get_placement
+                  , CostParams               const*    cost_params
+                  , PlacementParams          const*    placement_params 
+                  , EdgeCollaspeSimplificationVisitor* visitor
                   ) ;
 }
 {Simplifies \ccc{surface} in-place by collapsing edges, and returns
-the number of edges effectively removed.\\
-%
-The process continues until the \ccc{should_stop} policy returns \ccc{true}
-or the surface cannot be simplified any furhter due to topological constraints.\\
-%
+the number of edges effectively removed.
+}
+
+\ccHeading{Semantics}
+
+The simplification process continues until the \ccc{should_stop} policy returns \ccc{true}
+or the surface cannot be simplified any furhter due to topological constraints.
+
 \ccc{edge_extra_ptr_map} is a property map which provides access
-to a \ccc{void*&} extra-pointer per edge, as needed by the algorithm.\\
-%
+to a \ccc{void*&} extra-pointer per edge, as needed by the algorithm.
+
 \ccc{vertex_is_fixed_map} is used to indicate that some edges should not be
 collapsed. The property map indicates whether a vertex is fixed or not,
-and any edge incident upon a fixed vertex is not collapsed.\\
-%
+and any edge incident upon a fixed vertex is not collapsed.
+
 \ccc{set_collapse_data}, along with \ccc{get_cost} and \ccc{get_placement},
 are the policies which control the {\em cost-strategy}, that is, 
 the order in which edges are collapsed and the replacement vertex positioned.\\
@@ -72,11 +75,10 @@ the order in which edges are collapsed and the replacement vertex positioned.\\
 parameters used by the these policies. They can be null pointers
 if the policies don't need them.\\
 This strategy is the driving factor that determines the accuaracy of the
-simplied surface with respect to the original.\\
-%
+simplied surface with respect to the original.
+
 \ccc{visitor} is an optional object (can be null) which can be used
 to keep track of the simplification process.
-}
 
 \ccHeading{Requirements}
 
@@ -110,9 +112,9 @@ It must be \ccc{GetCost::Params}.
 \ccc{PlacementParams} defines the type of the parameters to the get-placement policy.
 It must be \ccc{GetPlacement::Params}.
 
-\ccc{Visitor} defines the type of the visitor object that can be passed to track the 
-simplification process.
-It must be a \ccc{EdgeCollapseVisitor}
+\ccc{EdgeCollaspeSimplificationVisitor} defines the type of the visitor object
+that can be passed to track the simplification process.
+It must be a \ccc{EdgeCollaspeSimplificationVisitor}
 
 \ccHeading{Defaults}
 
@@ -122,15 +124,15 @@ Only the first two parameters are mandatory, the rest have default values as des
 
 \ccc{VertexIsFixedPropertyMap} defaults to \ccc{CGAL::Vertex_is_fixed_property_map_always_false<TriangulatedSurfaceMesh>()}.
 
-\ccc{SetCollaspeData} defauls to \ccc{CGAL::Surface_mesh_simplification::Edge_collapse::LindstromTurk_set_partial_collapse_data<TriangulatedSurfaceMesh>}.
+\ccc{SetCollaspeData} defauls to \ccc{CGAL::Surface_mesh_simplification::LindstromTurk_set_partial_collapse_data<TriangulatedSurfaceMesh>}.
 
-\ccc{GetCost} defaults to \ccc{CGAL::Surface_mesh_simplification::Edge_collapse::Cached_cost<TriangulatedSurfaceMesh>}.
+\ccc{GetCost} defaults to \ccc{CGAL::Surface_mesh_simplification::Cached_cost<TriangulatedSurfaceMesh>}.
 
-\ccc{GetPlacement} defaults to \ccc{CGAL::Surface_mesh_simplification::Edge_collapse::LindstromTurk_placement<TriangulatedSurfaceMesh>}
+\ccc{GetPlacement} defaults to \ccc{CGAL::Surface_mesh_simplification::LindstromTurk_placement<TriangulatedSurfaceMesh>}
 
-\ccc{CostParams} defaults to \ccc{CGAL::Surface_mesh_simplification::Edge_collapse::LindstromTurk_params}
+\ccc{CostParams} defaults to \ccc{CGAL::Surface_mesh_simplification::LindstromTurk_params}
 
-\ccc{PlacementParams} defaults to \ccc{CGAL::Surface_mesh_simplification::Edge_collapse::LindstromTurk_params}
+\ccc{PlacementParams} defaults to \ccc{CGAL::Surface_mesh_simplification::LindstromTurk_params}
 
 \end{ccRefFunction}
 

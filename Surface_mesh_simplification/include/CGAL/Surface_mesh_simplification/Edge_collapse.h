@@ -137,11 +137,14 @@ struct Dummy_visitor
   template<class Edge, class TSM>
   void OnCollected( Edge const&, bool, TSM& ) {}                
   
-  template<class Edge, class TSM, class Vertex>
-  void OnProcessed(Edge const&, TSM&, boost::optional<double>, Vertex const& ) {}                
+  template<class Edge, class TSM, class OFT, class Size_type>
+  void OnSelected( Edge const&, TSM&, OFT const&, Size_type, Size_type ) {}                
+  
+  template<class Edge, class TSM, class OPoint>
+  void OnCollapsing(Edge const&, TSM&, OPoint const& ) {}                
   
   template<class Edge, class TSM>
-  void OnStep(Edge const&, TSM&, std::size_t, std::size_t) {}
+  void OnNonCollapsable(Edge const&, TSM& ) {}                
 } ;
 
 template<class TSM
