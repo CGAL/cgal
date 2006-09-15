@@ -25,9 +25,20 @@ The concept \ccRefName\ describes the requirements of a
 Boost \ccAnchor{http://www.boost.org/libs/graph/doc/graph_concepts.html}{graph}
 representing a subset of a \ccc{HalfedgeDS}.
 
-This graph is a refinement of \ccc{DirectedEmbeddedGraph} with the
-added requirement that for each directed edge $\overrightarrow{st}$
+This graph is a refinement of \ccc{DirectedEmbeddedGraph} with 
+some added connectivity requirements:
+ 
+\begin{enumerate}
+\item For each directed edge $\overrightarrow{st}$
 it's opposite edge $\overrightarrow{ts}$ is part of the graph.
+
+\item For any directed edge it's {\em succesor} (rotational and linear)
+is part of the graph.
+
+\item For any directed edge it's {\em predeccesor} (rotational and linear) 
+is part of the graph.
+\end{enumerate}
+
 Furthermore, because they must come in pairs, there is the additional
 notion of an {\em undirected} edge for a pair of opposite edges.
 The number of undirected edges is exactly half the number of directed edges.

@@ -15,7 +15,7 @@
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
 
-\begin{ccRefClass}{Polyhedron_edge_is_border_property_map<Traits>}
+\begin{ccRefClass}{Edge_index_property_map_external<Graph>}
 
 %% add template arg's if necessary
 
@@ -23,40 +23,47 @@
 %% \ccHtmlIndexC[class]{} %% add further index entries
 \ccDefinition
 
-The class \ccRefName\ provides a {\sc Bgl} 
+The class \ccRefName\ provides a model for the concept 
 \ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
-which indicates if a \ccc{CGAL::Polyhedron_3} halfedge is a border edge.
+that maps an edge in {\em any}
+\ccAnchor{http://www.boost.org/libs/graph/doc/Graph.html}{Bgl Graph}
+to the integer numbers in the range \ccc{[0,num_edges(graph)]}
+via a non-intusive mechanism (so that any gaph can be indexed).
 
-\ccInclude{CGAL/boost/graph/Polyhedron_BGL_properties.h}
+\ccInclude{CGAL/boost/graph/Edge_index_property_map_external.h}
 
 \ccTypes
-  \ccTypedef{boost::readable_property_map_tag category;}
-    {Indicates that this property is read-only.}
-  
-  \ccTypedef{bool value_type;}
+  \ccTypedef{std::size_type value_type;}
     {The type of the property.}
-    
-  \ccTypedef{bool reference;}
+\ccGlue
+  \ccTypedef{std::size_type reference;}
     {The result type of the map operator.}
-
-  \ccTypedef{typename boost::graph_traits< CGAL::Polyhedron_3<Traits> const>::edge_descriptor key_type;}
-  {The key type of the property map: A \ccc{CGAL::Polyhedron_3::Halfedge_const_handle}.}
+\ccGlue
+  \ccNestedType{Graph}{The Graph template parameter.}
+\ccGlue
+  \ccTypedef{typename boost::graph_traits<Graph>::edge_descriptor key_type;}
+  {The type of {\sc Bgl} edge descriptor used as key.}
 
 \ccCreation
 \ccCreationVariable{pm}  %% choose variable name
 
-\ccConstructor{CGAL::Polyhedron_edge_is_border_property_map<Traits>
-% ( CGAL::Polyhedron_3<Traits> const& poly); }
-{Initializes an instance storing a const pointer to the polyhedron \ccc{poly}.}
+\ccConstructor{CGAL::Edge_index_property_map_external<Graph>( Graph const& g ); }
+{Initializes an internal table which associates a unique integer
+number in the range \ccc{[0,num_edges(g)]} to each edge in \ccc{g}.}
 
 \ccOperations
 
 \ccMethod
   {reference operator[]( key_type const& edge ) const;}
-  {Returns the value of edge->is\_border().}  
+  {Returns the unique index for \ccc{edge} as mantained by this map.\\
+  {\em Precondition}: if \ccc{edge} is no longer in the graph this function shows undefined-behaviour.
+  }
     
 \ccIsModel
 \ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Edge_index_property_stored<Graph>}\\
 
 \end{ccRefClass}
 
