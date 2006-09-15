@@ -12,11 +12,11 @@ typedef CGAL::Delaunay_triangulation_2<K> DT;
 
 int main ()
 {
-    std::istream_iterator<K::Point_2> i(std::cin), end;
     std::vector<K::Point_2> v;
 
     std::cout << "Reading..." << std::endl;
-    std::copy(i, end, std::back_inserter(v));
+    std::istream_iterator<K::Point_2> begin(std::cin), end;
+    std::copy(begin, end, std::back_inserter(v));
 
     // Comment the following three lines to get a massive speed down.
     std::cout << "Sorting..." << std::endl;
