@@ -54,7 +54,8 @@ int main( int argc, char** argv )
   
   // === CONCRETE USAGE EXAMPLE ENDS HERE ===
 
-  std::cout << "\nFinished...\n" << r << " edges removed.\n"  << (surface.size_of_halfedges()/2) << " final edges.\n" ;
+  std::cout << "\nFinished...\n" << r << " edges removed.\n" 
+            << (surface.size_of_halfedges()/2) << " final edges.\n" ;
         
   std::ofstream os( argc > 2 ? argv[2] : "out.off" ) ; os << surface ;
   

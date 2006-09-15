@@ -31,7 +31,13 @@ typedef Surface::Vertex_handle   Vertex_handle ;
 //
 struct Visitor
 {
-  Visitor() : collected(0), processed(0), collapsed(0), non_collapsable(0), cost_uncomputable(0) {} 
+  Visitor() 
+    : collected(0)
+    , processed(0)
+    , collapsed(0)
+    , non_collapsable(0)
+    , cost_uncomputable(0) 
+  {} 
 
   // Called on algorithm entry  
   void OnStarted( Surface& aSurface ) {} 
@@ -75,14 +81,22 @@ struct Visitor
   
   // Call at each step in the processing phase (when each edge is selected for processing) before the
   // stop condition is evaluated.
-  void OnStep(Halfedge_handle const& aEdge, Surface& aSurface, std::size_t aInitial, std::size_t aCurrent)
+  void OnStep( Halfedge_handle const& aEdge
+             , Surface&               aSurface
+             , std::size_t            aInitial
+             , std::size_t            aCurrent
+             )
   {
     if ( aCurrent == aInitial )
       std::cerr << "\n" << std::flush ;
     std::cerr << "\r" << aCurrent << std::flush ;
   }                
   
-  std::size_t collected, processed, collapsed, non_collapsable, cost_uncomputable ; 
+  std::size_t  collected
+             , processed
+             , collapsed
+             , non_collapsable
+             , cost_uncomputable ; 
 } ;
 
 // === EXAMPLE SPECIFIC DETAILS ENDS HERE ===
@@ -98,7 +112,10 @@ int main( int argc, char** argv )
   // === CONCRETE USAGE EXAMPLE BEGINS HERE ===
   
   CGAL::Unique_hash_map<Surface::Halfedge_handle,void*> edge2ptr ;
-  for ( Surface::Halfedge_iterator hi = surface.halfedges_begin(); hi != surface.halfedges_end() ; ++ hi )
+  for ( Surface::Halfedge_iterator hi = surface.halfedges_begin()
+      ; hi != surface.halfedges_end() 
+      ; ++ hi 
+      )
     edge2ptr[hi] = 0 ;
  
   Visitor visitor ;
@@ -128,13 +145,16 @@ int main( int argc, char** argv )
             << "\nEdges proccessed: " << visitor.processed
             << "\nEdges collapsed: " << visitor.collapsed
             << std::endl
-            << "\nEdges not collapsed due to topological constrians: " << visitor.non_collapsable
-            << "\nEdge not collapsed due to computational constrians: " << visitor.cost_uncomputable 
+            << "\nEdges not collapsed due to topological constrians: " 
+            << visitor.non_collapsable
+            << "\nEdge not collapsed due to computational constrians: " 
+            << visitor.cost_uncomputable 
             << std::endl ; 
             
   // === CONCRETE USAGE EXAMPLE ENDS HERE ===
   
-  std::cout << "\nFinished...\n" << r << " edges removed.\n"  << (surface.size_of_halfedges()/2) << " final edges." ;
+  std::cout << "\nFinished...\n" << r << " edges removed.\n"  
+            << (surface.size_of_halfedges()/2) << " final edges." ;
   
         
   std::ofstream os( argc > 2 ? argv[2] : "out.off" ) ; os << surface ;

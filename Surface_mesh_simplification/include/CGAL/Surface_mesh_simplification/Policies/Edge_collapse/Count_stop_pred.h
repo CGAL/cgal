@@ -42,13 +42,18 @@ class Count_stop_condition
 public:
 
   typedef TSM_ TSM ;
+
+private :
+
+  typedef typename Geometric_graph_traits<TSM>::Point Point_3 ;
+  typedef typename Kernel_traits<Point_3>::Kernel     Kernel ;
+
+public :
   
   typedef typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor ;
   typedef typename boost::graph_traits<TSM>::edges_size_type size_type ;
   
-  typedef typename Geometric_graph_traits<TSM>::Point Point_3 ;
-  typedef typename Kernel_traits<Point_3>::Kernel     Kernel ;
-  typedef typename Kernel::FT                         FT ;
+  typedef typename Kernel::FT FT ;
 
 public :
   

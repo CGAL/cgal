@@ -27,7 +27,8 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
 
 //
-// Setup an enriched polyhedron type which stores in a halfedge each extra pointer needed by the algorithm
+// Setup an enriched polyhedron type which stores in a halfedge
+// each extra pointer needed by the algorithm
 // and in each vertex whether it is fixed or not.
 //
 
@@ -90,7 +91,10 @@ int main( int argc, char** argv )
   //
   // This irrealistic loop just illustrates how the flag would be set.
   //
-  for ( Surface::Vertex_iterator vi = surface.vertices_begin(); vi != surface.vertices_end() ; ++ vi )
+  for ( Surface::Vertex_iterator vi = surface.vertices_begin()
+      ; vi != surface.vertices_end() 
+      ; ++ vi 
+      )
     vi->is_fixed_ = true ; // only some would be set to true, of cotrue
   
   int r = TSMS::edge_collapse(surface

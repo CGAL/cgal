@@ -26,7 +26,7 @@ The algorithm presented here can simplify any {\em 2-manifold surface with borde
 
 %% figure of edge collapse
 
-Edges are collapsed according to a priority given by a user-supplied {\em cost} function, and the coordinates of the replacing vertex are determined by another user-supplied {\em placement} function. The algorithm terminates when a user-supplied {\em stop condition} is met, such as reaching the desired number of edges.
+Edges are collapsed according to a priority given by a user-supplied {\em cost} function, and the coordinates of the replacing vertex are determined by another user-supplied {\em placement} function. The algorithm terminates when a user-supplied {\em stop predicate} is met, such as reaching the desired number of edges.
 
 The algorithm implemented here is generic in the sense that it doesn't require the surface to be of any concrete type. Instead, it defines the concept of a \ccc{TriangulatedSurfaceMesh} and any surface that is a model of that concept can be simplified. Furthermore, the concept is defined not in terms of a monolithic class, but in terms of a set of functions and traits making it easy to adapt any concrete surface type without much work. In particular, the concept definition is based on the well known
 {\em Boost Graph Library} \ccAnchor{http://www.boost.org/libs/graph/doc/index.html}{\sc Bgl}.
@@ -60,7 +60,7 @@ This \cgal\ package provides the adaptation for a \ccc{CGAL::Polyhedron_3}.
 
 \section{Overview of the Simplification Process}
 
-The free function that implements the simplifcation algorithm takes not only the surface and the desired stop condition but a number of additional parameters which control and monitor the simplification process. This section briefly describes the process in order to set the background for the discussion of algorithm parameters.
+The free function that implements the simplifcation algorithm takes not only the surface and the desired stop predicate but a number of additional parameters which control and monitor the simplification process. This section briefly describes the process in order to set the background for the discussion of algorithm parameters.
 
 An edge collapse operation replaces the edge with a vertex, removing the two incident triangles (hence two additional edges, one from each triangle). Therefore, each edge collapse decreases the number of triangles, edges, and vertices by 2, 3, and 1, respectively (if the collapsed edge is a border, by 1,2, and 1, respectively, since only one triangle is removed).
 
@@ -80,11 +80,11 @@ The algorithm parameters are divided in four groups.
 
 \subsection{Main Parameters}
 
-There are two main parameters to the algorithm: the surface to be simplified (in-place) and the stop condition.
+There are two main parameters to the algorithm: the surface to be simplified (in-place) and the stop predicate.
 
 The surface must correspond to a valid \ccc{TSM} model, for example a \ccc{Polyhedron_3}. The argument itself is the surface object and the algorithm does not handle the concrete argument type directly, instead, it internally instantiates and uses the matching specializations and overloads of the {\sc Bgl} graphs traits, functions and property maps defined in Section~\ref{SurfaceMeshSimplification:SecDefinitions}. Such traits and property maps are implict, i.e., not passed as arguments to the algorithm.
 
-The stop condition is a Boolean predicate called after each edge is selected for processing, {\em before} it is classfied as collapsable or not (thus before it is collapsed). If the stop condition returns true the algorithm terminates.
+The stop predicate is called after each edge is selected for processing, {\em before} it is classfied as collapsable or not (thus before it is collapsed). If the stop predicate returns true the algorithm terminates.
 
 \subsection{Additional Surface Properties}
 

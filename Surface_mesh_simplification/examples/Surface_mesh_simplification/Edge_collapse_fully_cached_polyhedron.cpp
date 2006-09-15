@@ -39,7 +39,10 @@ int main( int argc, char** argv )
   // === CONCRETE USAGE EXAMPLE BEGINS HERE ===
   
   CGAL::Unique_hash_map<Surface::Halfedge_handle,void*> edge2ptr ;
-  for ( Surface::Halfedge_iterator hi = surface.halfedges_begin(); hi != surface.halfedges_end() ; ++ hi )
+  for ( Surface::Halfedge_iterator hi = surface.halfedges_begin()
+      ; hi != surface.halfedges_end() 
+      ; ++ hi 
+      )
     edge2ptr[hi] = 0 ;
     
   if ( strategy == LT )

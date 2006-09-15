@@ -29,10 +29,10 @@ The function \ccRefName\ simplifies in-place a triangulated suface mesh by itera
 
 \ccFunction
 {
-template<class TSM
-        ,class ShouldStop
+template<class TriangulatedSurfaceMesh
+        ,class StopPredicate
         ,class EdgeExtraPtrMap
-        ,class VertexIsFixedMap
+        ,class VertexIsFixedPropertyMap
         ,class SetCollapseData
         ,class GetCost
         ,class GetPlacement
@@ -40,16 +40,16 @@ template<class TSM
         ,class PlacementParams
         ,class Visitor
         >
-int edge_collapse ( TSM&                    surface
-                  , ShouldStop       const& should_stop
-                  , EdgeExtraPtrMap  const& edge_extra_ptr_map   
-                  , VertexIsFixedMap const& vertex_is_fixed_map  
-                  , SetCollapseData  const& set_collapse_data
-                  , GetCost          const& get_cost 
-                  , GetPlacement     const& get_placement
-                  , CostParams       const* cost_params
-                  , PlacementParams  const* placement_params 
-                  , Visitor*                visitor
+int edge_collapse ( TriangulatedSurfaceMesh&        surface
+                  , StopPredicate            const& should_stop
+                  , EdgeExtraPtrMap          const& edge_extra_ptr_map   
+                  , VertexIsFixedPropertyMap const& vertex_is_fixed_map  
+                  , SetCollapseData          const& set_collapse_data
+                  , GetCost                  const& get_cost 
+                  , GetPlacement             const& get_placement
+                  , CostParams               const* cost_params
+                  , PlacementParams          const* placement_params 
+                  , Visitor*                        visitor
                   ) ;
 }
 {Simplifies \ccc{surface} in-place by collapsing edges, and returns
@@ -80,20 +80,20 @@ to keep track of the simplification process.
 
 \ccHeading{Requirements}
 
-\ccc{TSM} defines the type of the surface.
+\ccc{TriangulatedSurfaceMesh} defines the type of the surface.
 It must be a model of \ccc{TriangulatedSurfaceMesh}
 
-\ccc{ShouldStop} defines the type of the stop-condition policy.
-It must be a model of \ccc{StopCondition} concept
+\ccc{StopPredicate} defines the type of the stop-condition policy.
+It must be a model of \ccc{StopPredicate} concept
 
 \ccc{EdgeExtraPtrMap} defines the type of the property map which 
 provides access to an extra \ccc{void*&} for each directed edge,
 as required by the algorithm.
 It must be a model of \ccc{EdgeExtraPointerMap} concept
 
-\ccc{VertexIsFixedMap} defines the type of the property map which 
+\ccc{VertexIsFixedPropertyMap} defines the type of the property map which 
 indicates whether a vertex is fixed or not.
-It must be a model of \ccc{VertexIsFixedMap} concept
+It must be a model of \ccc{VertexIsFixedPropertyMap} concept
 
 \ccc{SetCollaspeData} defines the type of set-collapse-data policy.
 It must be a model of \ccc{SetCollaspeData} concept
@@ -118,15 +118,15 @@ It must be a \ccc{EdgeCollapseVisitor}
 
 Only the first two parameters are mandatory, the rest have default values as described below:
 
-\ccc{EdgeExtraPtrMap} defaults to \ccc{CGAL::Edge_extra_pointer_map_stored<TSM>()}.
+\ccc{EdgeExtraPtrMap} defaults to \ccc{CGAL::Edge_extra_pointer_map_stored<TriangulatedSurfaceMesh>()}.
 
-\ccc{VertexIsFixedMap} defaults to \ccc{CGAL::Vertex_is_fixed_map_always_false<TSM>()}.
+\ccc{VertexIsFixedPropertyMap} defaults to \ccc{CGAL::Vertex_is_fixed_property_map_always_false<TriangulatedSurfaceMesh>()}.
 
-\ccc{SetCollaspeData} defauls to \ccc{CGAL::Surface_mesh_simplification::Edge_collapse::LindstromTurk_set_partial_collapse_data<TSM>}.
+\ccc{SetCollaspeData} defauls to \ccc{CGAL::Surface_mesh_simplification::Edge_collapse::LindstromTurk_set_partial_collapse_data<TriangulatedSurfaceMesh>}.
 
-\ccc{GetCost} defaults to \ccc{CGAL::Surface_mesh_simplification::Edge_collapse::Cached_cost<TSM>}.
+\ccc{GetCost} defaults to \ccc{CGAL::Surface_mesh_simplification::Edge_collapse::Cached_cost<TriangulatedSurfaceMesh>}.
 
-\ccc{GetPlacement} defaults to \ccc{CGAL::Surface_mesh_simplification::Edge_collapse::LindstromTurk_placement<TSM>}
+\ccc{GetPlacement} defaults to \ccc{CGAL::Surface_mesh_simplification::Edge_collapse::LindstromTurk_placement<TriangulatedSurfaceMesh>}
 
 \ccc{CostParams} defaults to \ccc{CGAL::Surface_mesh_simplification::Edge_collapse::LindstromTurk_params}
 

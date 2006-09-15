@@ -32,7 +32,10 @@ int main( int argc, char** argv )
   // === CONCRETE USAGE EXAMPLE BEGINS HERE ===
   
   CGAL::Unique_hash_map<Surface::Halfedge_handle,void*> edge2ptr ;
-  for ( Surface::Halfedge_iterator hi = surface.halfedges_begin(); hi != surface.halfedges_end() ; ++ hi )
+  for ( Surface::Halfedge_iterator hi = surface.halfedges_begin()
+      ; hi != surface.halfedges_end()
+      ; ++ hi 
+      )
     edge2ptr[hi] = 0 ;
  
   
@@ -43,7 +46,10 @@ int main( int argc, char** argv )
   
   // This irrealistic loop just illustrates how the flag would be set.
   //
-  for ( Surface::Vertex_const_iterator vi = surface.vertices_begin(); vi != surface.vertices_end() ; ++ vi )
+  for ( Surface::Vertex_const_iterator vi = surface.vertices_begin()
+      ; vi != surface.vertices_end() 
+      ; ++ vi 
+      )
     is_vertex_fixed[vi] = false ; // some would be set to true
  
   int r = TSMS::edge_collapse(surface
@@ -54,7 +60,8 @@ int main( int argc, char** argv )
   
   // === CONCRETE USAGE EXAMPLE ENDS HERE ===
 
-  std::cout << "\nFinished...\n" << r << " edges removed.\n"  << (surface.size_of_halfedges()/2) << " final edges." ;
+  std::cout << "\nFinished...\n" << r << " edges removed.\n" 
+            << (surface.size_of_halfedges()/2) << " final edges." ;
         
   std::ofstream os( argc > 2 ? argv[2] : "out.off" ) ; os << surface ;
   

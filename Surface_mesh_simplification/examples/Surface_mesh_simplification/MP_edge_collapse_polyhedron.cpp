@@ -34,7 +34,10 @@ int main( int argc, char** argv )
   
   typedef Surface::Halfedge_handle Halfedge_handle ;
   CGAL::Unique_hash_map<Halfedge_handle,void*> edge2ptr ;
-  for ( Surface::Halfedge_iterator hi = surface.halfedges_begin(); hi != surface.halfedges_end() ; ++ hi )
+  for ( Surface::Halfedge_iterator hi = surface.halfedges_begin()
+      ; hi != surface.halfedges_end() 
+      ; ++ hi
+      )
     edge2ptr[hi] = 0 ;
 
   // In this example, wich indicates that the cost and placement values 
@@ -56,7 +59,8 @@ int main( int argc, char** argv )
       
   // === CONCRETE USAGE EXAMPLE ENDS HERE ===
   
-  std::cout << "\nFinished...\n" << r << " edges removed.\n"  << (surface.size_of_halfedges()/2) << " final edges.\n" ;
+  std::cout << "\nFinished...\n" << r << " edges removed.\n" 
+            << (surface.size_of_halfedges()/2) << " final edges.\n" ;
         
   std::ofstream os( argc > 2 ? argv[2] : "out.off" ) ; os << surface ;
   
