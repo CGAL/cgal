@@ -1776,7 +1776,6 @@ Spatial_searching/demo/Spatial_searching/help/index.html svneol=native#text/html
 Spatial_searching/doc_tex/Spatial_searching/Fig1.gif -text svneol=unset#image/gif
 Spatial_searching/doc_tex/Spatial_searching/Fig1.ps -text svneol=unset#application/postscript
 Spatial_sorting/doc_tex/Spatial_sorting/PkgDescription.tex -text
-Spatial_sorting/doc_tex/Spatial_sorting/example_delaunay_2.cpp -text
 Spatial_sorting/doc_tex/Spatial_sorting/main.tex -text
 Spatial_sorting/doc_tex/Spatial_sorting/spatial_sorting.tex -text
 Spatial_sorting/doc_tex/Spatial_sorting/spatial_sorting_def.tex -text
@@ -1789,6 +1788,7 @@ Spatial_sorting/doc_tex/Spatial_sorting_ref/hilbert_sort.tex -text
 Spatial_sorting/doc_tex/Spatial_sorting_ref/intro.tex -text
 Spatial_sorting/doc_tex/Spatial_sorting_ref/main.tex -text
 Spatial_sorting/doc_tex/Spatial_sorting_ref/spatial_sort.tex -text
+Spatial_sorting/examples/Spatial_sorting/example_delaunay_2.cpp -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_0.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_1.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_2.poly -text svneol=unset#application/octet-stream
