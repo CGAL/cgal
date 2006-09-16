@@ -38,17 +38,6 @@
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_functions.h>
 
-struct Tags {
-  typedef  CGAL::Tag_false Is_linear; 
-  // is instance known in advance to be an LP?
-  typedef  CGAL::Tag_false Is_symmetric; 
-  // is the D matrix known to be symmetric?
-  typedef  CGAL::Tag_false Has_equalities_only_and_full_rank; 
-  // (see manual)
-  typedef  CGAL::Tag_false Is_in_standard_form; 
-  // (see manual)?
-};
-
 int main(const int argNr,const char **args) {
   using std::cout;
   using std::endl;
@@ -65,10 +54,10 @@ int main(const int argNr,const char **args) {
 #else
   typedef CGAL::Gmpzf ET;
 #endif
-  typedef CGAL::QP_from_mps<IT> QP;
+  typedef CGAL::QP_from_mps<IT, CGAL::Tag_false> QP;
   QP qp(std::cin,true,verbosity);
 
-  // check for format errors in MPS file:
+  // check for format errors in MPS f\ile:
   if (!qp.is_valid()) {
     cout << "Input is not a valid MPS file." << endl
          << "Error: " << qp.error() << endl;
@@ -80,19 +69,10 @@ int main(const int argNr,const char **args) {
     cout << std::endl;
   }
 
-  // in case of an LP, zero the D matrix:
-  // (Note: if you know in advance that the problem is an LP
-  // you should not do this, but set Is_linear to Tag_true.)
-  if (qp.is_linear() && !check_tag(Tags::Is_linear()))
-    qp.make_zero_D();
+  typedef CGAL::QP_solution<ET> Solution;
+  Solution s = CGAL::solve_quadratic_program (qp, ET(0));
 
-  CGAL::QP_pricing_strategy<QP, ET, Tags> *strategy =
-      new CGAL::QP_partial_exact_pricing<QP, ET, Tags>;
-
-  typedef CGAL::QP_solver<QP, ET, Tags> Solver;
-  Solver solver(qp, strategy, verbosity);
-
-  if (solver.is_valid()) {
+  if (s.is_valid()) {
     cout << "Solution is valid." << endl;
   } else {
     cout << "Solution is not valid!" << endl;
@@ -100,20 +80,20 @@ int main(const int argNr,const char **args) {
   }
 
   // get solution:
-  if (solver.status() == Solver::OPTIMAL) {
+  if (s.status() == CGAL::QP_OPTIMAL) {
     // output solution:
     cout << "Objective function value: " << 
-      solver.solution() << endl;     
+      s.solution() << endl;     
      
     cout << "Variable values:" << endl;
-    Solver::Variable_value_iterator it 
-      = solver.variables_value_begin() ;
+    Solution::Variable_value_iterator it 
+      = s.variable_values_begin() ;
     for (unsigned int i=0; i < qp.n(); ++it, ++i)
       cout << "  " << qp.name_of_variable(i) << " = "
 	   << CGAL::to_double(*it) << endl;
     return 0;
   }
-  if  (solver.status() == Solver::INFEASIBLE)
+  if  (s.status() == CGAL::QP_INFEASIBLE)
     cout << "Problem is infeasible." << endl;
   else // unbounded
     cout << "Problem is unbounded." << endl;

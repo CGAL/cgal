@@ -23,7 +23,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < typename Q, typename ET, typename Tags >
-bool QP_solver<Q, ET, Tags>::is_valid()
+bool QP_solver<Q, ET, Tags>::is_valid() const
 {
   CGAL_qpe_debug {
     vout << std::endl;
@@ -96,7 +96,7 @@ bool QP_solver<Q, ET, Tags>::is_valid()
 }
 
 template < typename Q, typename ET, typename Tags >
-bool QP_solver<Q, ET, Tags>::is_solution_feasible_for_auxiliary_problem()
+bool QP_solver<Q, ET, Tags>::is_solution_feasible_for_auxiliary_problem() const
 {
   // some simple consistency checks:
   CGAL_qpe_assertion(is_phaseI);
@@ -181,7 +181,7 @@ bool QP_solver<Q, ET, Tags>::is_solution_feasible_for_auxiliary_problem()
 }
 
 template < typename Q, typename ET, typename Tags >
-bool QP_solver<Q, ET, Tags>::is_value_correct()
+bool QP_solver<Q, ET, Tags>::is_value_correct() const
 {
   // checks whether solution_numerator() returns the right value
   // by computing x^T D x + x^T c + c0 from scratch; we use the numerators
@@ -212,7 +212,7 @@ bool QP_solver<Q, ET, Tags>::is_value_correct()
 }
 
 template < typename Q, typename ET, typename Tags >
-bool QP_solver<Q, ET, Tags>::is_solution_optimal_for_auxiliary_problem()
+bool QP_solver<Q, ET, Tags>::is_solution_optimal_for_auxiliary_problem() const
 {
   // First, a note about artificials and how they need to be handled in this
   // optimality check. Observe that the (normal) artificial variables are
@@ -405,7 +405,7 @@ bool QP_solver<Q, ET, Tags>::is_solution_optimal_for_auxiliary_problem()
 }
 
 template < typename Q, typename ET, typename Tags >
-bool QP_solver<Q, ET, Tags>::is_solution_feasible()
+bool QP_solver<Q, ET, Tags>::is_solution_feasible() const
 {  
   // some simple consistency checks:
   CGAL_qpe_assertion(is_phaseII);
@@ -442,7 +442,7 @@ bool QP_solver<Q, ET, Tags>::is_solution_feasible()
 
 template < typename Q, typename ET, typename Tags >
 bool QP_solver<Q, ET, Tags>::
-is_solution_optimal()
+is_solution_optimal() const
 {
   // As described in documentation/UpperBounding.tex, the optimality
   // conditions for a QP that is not (necessarily) in standard form
@@ -545,7 +545,7 @@ is_solution_optimal()
 }
 
 template < typename Q, typename ET, typename Tags >
-bool QP_solver<Q, ET, Tags>::is_solution_unbounded()
+bool QP_solver<Q, ET, Tags>::is_solution_unbounded() const
 {
   // (This is documented in documentation/Test_suite.tex for the case
   // when the program is in standard form.)

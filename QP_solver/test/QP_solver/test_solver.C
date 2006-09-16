@@ -42,7 +42,6 @@
 #include <CGAL/QP_solver/QP_full_filtered_pricing.h>
 #include <CGAL/QP_solver/QP_partial_filtered_pricing.h>
 #include <CGAL/QP_functions.h>
-
 #include <CGAL/QP_models.h> 
 
 // Note: The following #define's allow faster compilation for individual
@@ -363,7 +362,7 @@ bool process(const std::string& filename,
   std::ifstream in(filename.c_str());
   if (!in)
     bailout1("could not open file '%'",filename);
-  typedef CGAL::QP_from_mps<IT> QP_instance;
+  typedef CGAL::QP_from_mps<IT, Tag_false> QP_instance;
   QP_instance qp(in,true,verbosity);
   in.close();
 
@@ -390,14 +389,6 @@ bool process(const std::string& filename,
       type==Int_type && is_rational(IT()) ||
       type==Rational_type && (is_double(IT()) || is_int(IT())))
     return true;
-
-  // construct a zero D matrix if needed:
-  if (qp.is_linear() && !check_tag(Is_linear()))
-    // Note: Revision 1.1 of this file uses qp's zero_D() routine and
-    // a special traits class for the solver for this case.  But as
-    // this more than doubles the compilation time, I removed it
-    // again...
-    qp.make_zero_D(); 
 
   // check which properties the loaded QP has, and break if they are
   // in contradiction to the routine's compile-time flags: 

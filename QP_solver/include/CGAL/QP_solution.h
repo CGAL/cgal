@@ -93,6 +93,7 @@ public:
   virtual ET variable_value (int i) const = 0; 
   virtual Variable_value_iterator variable_values_begin() const = 0;
   virtual Variable_value_iterator variable_values_end() const = 0;
+  virtual bool is_valid() const = 0;
 
   // destruction (overridden by QP_solver)
   virtual ~QP_solver_base() {}
@@ -104,6 +105,12 @@ public:
 template <class ET>
 class QP_solution: Handle_for<const QP_solver_base<ET>*> 
 {
+private:
+  ET variable_value (int i) const
+  {
+    // gives just the numerator; rename!
+    return (*(this->Ptr()))->variable_value(i);
+  }
 public:
   // types
   typedef typename QP_solver_base<ET>::Variable_value_iterator
@@ -130,11 +137,6 @@ public:
     return (*(this->Ptr()))->status();
   }
 
-  ET variable_value (int i) const
-  {
-    return (*(this->Ptr()))->variable_value(i);
-  }
-
   Variable_value_iterator variable_values_begin() const
   {
     return (*(this->Ptr()))->variable_values_begin();
@@ -143,6 +145,11 @@ public:
   Variable_value_iterator variable_values_end() const
   {
     return (*(this->Ptr()))->variable_values_end();
+  }
+
+  bool is_valid() const
+  {
+    return (*(this->Ptr()))->is_valid();
   }
 
   ~QP_solution()

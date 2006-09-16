@@ -1,6 +1,6 @@
 // Copyright (c) 1997-2001  ETH Zurich (Switzerland).
 // All rights reserved.
-//
+// 
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
 // See the file LICENSE.QPL distributed with CGAL.
@@ -338,12 +338,12 @@ public:
     const ET                 et0, et1, et2;
 
     // verbose output streams
-    Verbose_ostream          vout;      // used for any  diagnostic output
-    Verbose_ostream          vout1;     // used for some diagnostic output
-    Verbose_ostream          vout2;     // used for more diagnostic output
-    Verbose_ostream          vout3;     // used for full diagnostic output
-    Verbose_ostream          vout4;     // used for output of basis inverse
-    Verbose_ostream	     vout5; 	// used for output of validity tests
+    mutable Verbose_ostream  vout;      // used for any  diagnostic output
+    mutable Verbose_ostream  vout1;     // used for some diagnostic output
+    mutable Verbose_ostream  vout2;     // used for more diagnostic output
+    mutable Verbose_ostream  vout3;     // used for full diagnostic output
+    mutable Verbose_ostream  vout4;     // used for output of basis inverse
+    mutable Verbose_ostream  vout5; 	// used for output of validity tests
     
     // pricing strategy
     Pricing_strategy*        strategyP;
@@ -834,11 +834,11 @@ public:
   //
   // is a feasible point of the problem and the objective function on
   // this ray is unbounded (i.e., it decreases when t increases).
-  Unbounded_direction_iterator unbounded_direction_begin();
+  Unbounded_direction_iterator unbounded_direction_begin() const;
 
   // Returns the past-the-end iterator corresponding to
   // unbounded_direction_begin().
-  Unbounded_direction_iterator unbounded_direction_end();
+  Unbounded_direction_iterator unbounded_direction_end() const;
 
   private:    
 
@@ -1208,16 +1208,16 @@ private:  // (inefficient) access to bounds of variables:
 
 private:
   // validity checks:
-  bool is_solution_feasible_for_auxiliary_problem();
-  bool is_solution_optimal_for_auxiliary_problem();
-  bool is_solution_feasible();
-  bool is_solution_optimal();
-  bool is_value_correct();
-  bool is_solution_unbounded();
+  bool is_solution_feasible_for_auxiliary_problem() const;
+  bool is_solution_optimal_for_auxiliary_problem() const;
+  bool is_solution_feasible() const;
+  bool is_solution_optimal() const;
+  bool is_value_correct() const;
+  bool is_solution_unbounded() const;
 
 public:
   // validity checks:
-  bool is_valid();
+  bool is_valid() const;
 
 // ----------------------------------------------------------------------------
 

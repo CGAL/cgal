@@ -37,6 +37,13 @@
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_functions.h>
 
+using CGAL::Tag_true;
+using CGAL::Tag_false;
+
+typedef Tag_false Sparse_D;
+typedef Tag_false Sparse_A;
+typedef Tag_false Is_linear;
+
 // Routines to output to MPS format:
 namespace QP_from_mps_detail {
 
@@ -142,7 +149,8 @@ template<typename IT,   // input number type
 	 typename ET>   // exact number type compatible with IT (ET is used,
                         // for instance, by QP in the query methods
                         // has_equalities_only_and_full_rank())
-void create_shifted_instance(CGAL::QP_from_mps<IT>& qp,
+void create_shifted_instance(CGAL::QP_from_mps
+			     <IT, Is_linear, Sparse_D, Sparse_A>& qp,
 			     const char *path,
 			     const char *file,   // Note: "Bernd3" and
 					         // not "Bernd3.mps".
@@ -242,7 +250,8 @@ template<typename IT,   // input number type
 	 typename ET>   // exact number type compatible with IT (ET is used,
                         // for instance, by QP in the query methods
                         // has_equalities_only_and_full_rank())
-void create_free_instance(CGAL::QP_from_mps<IT>& qp,
+void create_free_instance(CGAL::QP_from_mps<IT, Is_linear,
+			  Sparse_D, Sparse_A>& qp_,
 			  const char *path,
 			  const char *file,   // Note: "Bernd3" and
 			                      // not "Bernd3.mps".
@@ -257,29 +266,35 @@ void create_free_instance(CGAL::QP_from_mps<IT>& qp,
   // (and fl and fu are adjusted as well).
 
   // extract data from qp:
-  const int n = qp.n();
-  const int m = qp.m();
+  const unsigned int n = qp_.n();
+  const unsigned int m = qp_.m();
 
   // allocate storage (admittedly, I don't care about efficiency and
   // elegance here...):
-  typedef CGAL::QP_from_mps<IT>    QP_MPS;
-  typedef typename QP_MPS::Vector          Vector;
-  typedef typename QP_MPS::Vector_iterator Vector_iterator;
-  typedef typename QP_MPS::Matrix          Matrix;
-  typedef typename QP_MPS::Beginner        Beginner;
+  typedef CGAL::QP_from_mps<IT, Is_linear, Sparse_D, Sparse_A>    QP_MPS;
+  typedef typename QP_MPS::Vector            Vector;
+  typedef typename QP_MPS::B_iterator   Vector_iterator;
+  typedef typename QP_MPS::A_Matrix          Matrix;
+  typedef typename QP_MPS::A_Beginner        A_Beginner;
+  typedef typename QP_MPS::A_iterator        A_iterator;
   typedef typename CGAL::Comparison_result Row_type;
-  typedef typename QP_MPS::Row_type_vector Row_type_vector;
-  Matrix A                  = qp.A_matrix();
-  Vector b                  = qp.b_vector();
-  Row_type_vector row_types = qp.row_types_vector();
+  typedef typename QP_MPS::R_vector R_vector;
+
+  // copy the qp
+  QP_MPS qp (qp_);
+
+  // copy some of its vectors (they get manipulated)
+  Vector b           = qp.b_vector();
+  R_vector row_types = qp.r_vector();
 
   // add rows to A and corresponding entries to b:
   int nr_of_rows_added = 0;
-  for (int i=0; i<n; ++i) {
+  for (unsigned int i=0; i<n; ++i) {
     if (*(qp.fl()+i)) {                        // x >= l
       // add a row to A:
-      for (int j=0; j<n; ++j)
-	A[j].push_back(i==j? 1 : 0);
+      for (unsigned int j=0; j<n; ++j)
+	qp.add_entry_in_A (j, b.size(),(i==j? 1 : 0)); 
+        //A[j].push_back(i==j? 1 : 0);
 
       // add corresponding entry to b:
       b.push_back(qp.l()[i]);
@@ -291,8 +306,9 @@ void create_free_instance(CGAL::QP_from_mps<IT>& qp,
     }
     if (*(qp.fu()+i)) {                        // x <= u
       // add a row to A:
-      for (int j=0; j<n; ++j)
-	A[j].push_back(i==j? 1 : 0);
+      for (unsigned int j=0; j<n; ++j)
+	qp.add_entry_in_A (j, b.size(),(i==j? 1 : 0)); 
+        //A[j].push_back(i==j? 1 : 0);
 
       // add corresponding entry to b:
       b.push_back(qp.u()[i]);
@@ -313,7 +329,7 @@ void create_free_instance(CGAL::QP_from_mps<IT>& qp,
 		  qp.problem_name(),
 		  CGAL::make_QP_from_iterators (
 		  n, m+nr_of_rows_added,
-		  Vector_iterator(A.begin(),Beginner()),
+		  A_iterator(qp.A_matrix().begin(),A_Beginner()),
 		  b.begin(),
 		  row_types.begin(),
 		  CGAL::Const_oneset_iterator<bool>(false), // fl
@@ -350,7 +366,7 @@ bool create_derivatives(const char *path,
   // load QP instance:
   const int verbosity = 5;
   typedef typename QP_from_mps_detail::IT_to_ET<IT>::ET ET;
-  typedef CGAL::QP_from_mps<IT> QP;
+  typedef CGAL::QP_from_mps<IT, Is_linear, Sparse_D, Sparse_A> QP;
   QP qp(f,true,verbosity);
 
   // check for format errors in MPS file:
@@ -364,11 +380,6 @@ bool create_derivatives(const char *path,
   if (qp.comment().find(std::string("Derivatives: none"))!=std::string::npos) 
     cerr << "    No derivatives made.\n";
   else {
-    // add D matrix if it is not yet there:
-    if (qp.is_linear())   // Note: the output MPS file will not contain
-   		          // D if D is zero.
-      qp.make_zero_D();
-
     // derivates:
     create_shifted_instance<IT, ET>(qp, path, file, dir);
     create_free_instance<IT, ET>(qp, path, file, dir);

@@ -29,12 +29,12 @@
 CGAL_BEGIN_NAMESPACE
 
 // for parsing rational numbers
-template<typename IT_,
-	 typename Use_sparse_representation_for_D_,
-	 typename Use_sparse_representation_for_A_>
-bool QP_from_mps<IT_,
-		Use_sparse_representation_for_D_,
-		     Use_sparse_representation_for_A_>::number_from_quotient(CGAL::Gmpq& entry, std::istringstream& from) {
+template<typename IT_, typename Is_linear_,
+	 typename Sparse_D_,
+	 typename Sparse_A_>
+bool QP_from_mps<IT_, Is_linear_,
+		Sparse_D_,
+		     Sparse_A_>::number_from_quotient(CGAL::Gmpq& entry, std::istringstream& from) {
     // reads rational in the form p/q
     CGAL::Gmpz p,q;
     char ch;
@@ -54,12 +54,12 @@ bool QP_from_mps<IT_,
     return true;
   }
 
-template<typename IT_,
-	 typename Use_sparse_representation_for_D_,
-	 typename Use_sparse_representation_for_A_>
-bool QP_from_mps<IT_,
-		Use_sparse_representation_for_D_,
-		Use_sparse_representation_for_A_>::number_from_float(CGAL::Gmpq& entry, std::istringstream& from) {
+template<typename IT_, typename Is_linear_,
+	 typename Sparse_D_,
+	 typename Sparse_A_>
+bool QP_from_mps<IT_, Is_linear_,
+		Sparse_D_,
+		Sparse_A_>::number_from_float(CGAL::Gmpq& entry, std::istringstream& from) {
     // reads rationals from a decimal floating-point string; 
     // e.g. "0.1" will be parsed as 1/10
     char c;
@@ -157,18 +157,20 @@ bool QP_from_mps<IT_,
     return true;
   }
 
-template<typename IT_,
-	 typename Use_sparse_representation_for_D_,
-	 typename Use_sparse_representation_for_A_>
-QP_from_mps<IT_,
-		Use_sparse_representation_for_D_,
-		Use_sparse_representation_for_A_>::
+template<typename IT_, typename Is_linear_,
+	 typename Sparse_D_,
+	 typename Sparse_A_>
+QP_from_mps<IT_, Is_linear_,
+		Sparse_D_,
+		Sparse_A_>::
 QP_from_mps(std::istream& in,bool use_CPLEX_convention,
 		int verbosity)
-  : verbosity_(verbosity), from(in),
+  : has_linear_tag (check_tag(Is_linear_())),
+    verbosity_(verbosity), from(in),
     is_format_okay_(false),
     is_linear_(true),
     use_CPLEX_convention(use_CPLEX_convention),
+    it0(0),
     is_symmetric_cached(false),
     has_equalities_only_and_full_rank_cached(false),
     is_in_standard_form_cached(false),
@@ -198,6 +200,11 @@ QP_from_mps(std::istream& in,bool use_CPLEX_convention,
   if (!bounds_section())
     return;
 
+  // initialize matrix D (in the linear case, this is not needed,
+  // since we return a Const_oneset_iterator that never accesses D
+  if (!has_linear_tag)
+    initialize_D(var_names.size(), Sparse_D());
+
   // read optional QMATRIX section:
   if (!qmatrix_section())
     return;
@@ -213,58 +220,43 @@ QP_from_mps(std::istream& in,bool use_CPLEX_convention,
   is_format_okay_ = true;
 }
 
-template<typename IT_,
-	 typename Use_sparse_representation_for_D_,
-	 typename Use_sparse_representation_for_A_>
-bool QP_from_mps<IT_,
-		Use_sparse_representation_for_D_,
-		Use_sparse_representation_for_A_>::is_valid() const
+template<typename IT_, typename Is_linear_,
+	 typename Sparse_D_,
+	 typename Sparse_A_>
+bool QP_from_mps<IT_, Is_linear_,
+		Sparse_D_,
+		Sparse_A_>::is_valid() const
 {
-  if (!is_format_okay_)
-    return false;
-  
-  #if 0 // These tests should go into the QP-solver itself.
-  // additional safety checks:
-  // (Note: we do not check Has_equalities_only_and_full_rank currently,
-  // as it is too expensive -- maybe add it for debugging purposes?)
-  if (check_tag(Is_symmetric()) && !is_symmetric())
-    return err("loaded instance does not have a symmetric D matrix but Is_symmetric is Tag_true");
-  if (check_tag(Is_linear()) && !is_linear())
-    return err("loaded instance is not an LP (D is nonzero) but Is_linear is Tag_true");
-  if (check_tag(Is_in_standard_form()) && !is_in_standard_form())
-    return err("loaded instance is not in standard form but Is_in_standard_form is Tag_true");
-  #endif
-
-  return true;
+  return is_format_okay_;
 }
 
-template<typename IT_,
-	 typename Use_sparse_representation_for_D_,
-	 typename Use_sparse_representation_for_A_>
-const std::string& QP_from_mps<IT_,
-		Use_sparse_representation_for_D_,
-		Use_sparse_representation_for_A_>::error()
+template<typename IT_, typename Is_linear_,
+	 typename Sparse_D_,
+	 typename Sparse_A_>
+const std::string& QP_from_mps<IT_, Is_linear_,
+		Sparse_D_,
+		Sparse_A_>::error()
 {
   CGAL_qpe_assertion(!is_valid());
   return error_msg;
 }
 
-template<typename IT_,
-	 typename Use_sparse_representation_for_D_,
-	 typename Use_sparse_representation_for_A_>
-const std::string& QP_from_mps<IT_,
-		Use_sparse_representation_for_D_,
-		Use_sparse_representation_for_A_>::comment()
+template<typename IT_, typename Is_linear_,
+	 typename Sparse_D_,
+	 typename Sparse_A_>
+const std::string& QP_from_mps<IT_, Is_linear_,
+		Sparse_D_,
+		Sparse_A_>::comment()
 {
   return comment_;
 }
 
-template<typename IT_,
-	 typename Use_sparse_representation_for_D_,
-	 typename Use_sparse_representation_for_A_>
-bool QP_from_mps<IT_,
-		Use_sparse_representation_for_D_,
-		Use_sparse_representation_for_A_>::is_symmetric()
+template<typename IT_, typename Is_linear_,
+	 typename Sparse_D_,
+	 typename Sparse_A_>
+bool QP_from_mps<IT_, Is_linear_,
+		Sparse_D_,
+		Sparse_A_>::is_symmetric()
 {
   if (!is_format_okay_)
     return false;
@@ -275,7 +267,8 @@ bool QP_from_mps<IT_,
       const unsigned int var_nr = var_names.size();
       for (unsigned int i=0; i<var_nr; ++i)
 	for (unsigned int j=i+1; j<var_nr; ++j)
-	  if (D_[i][j] != D_[j][i]) {
+	  if (get_entry_in_D (i, j, Sparse_D_()) != 
+	      get_entry_in_D (j, i, Sparse_D_())) {
 	    is_symmetric_ = false; 
 	    return is_symmetric_;
 	  }
@@ -285,12 +278,12 @@ bool QP_from_mps<IT_,
 }
   
 
-template<typename IT_,
-	 typename Use_sparse_representation_for_D_,
-	 typename Use_sparse_representation_for_A_>
-bool QP_from_mps<IT_,
-		Use_sparse_representation_for_D_,
-		Use_sparse_representation_for_A_>::name_section()
+template<typename IT_, typename Is_linear_,
+	 typename Sparse_D_,
+	 typename Sparse_A_>
+bool QP_from_mps<IT_, Is_linear_,
+		Sparse_D_,
+		Sparse_A_>::name_section()
 {
   const std::string t = token();
   if (t != "NAME")
@@ -317,12 +310,12 @@ bool QP_from_mps<IT_,
   return true;
 }
 
-template<typename IT_,
-	 typename Use_sparse_representation_for_D_,
-	 typename Use_sparse_representation_for_A_>
-bool QP_from_mps<IT_,
-		Use_sparse_representation_for_D_,
-		Use_sparse_representation_for_A_>::rows_section()
+template<typename IT_, typename Is_linear_,
+	 typename Sparse_D_,
+	 typename Sparse_A_>
+bool QP_from_mps<IT_, Is_linear_,
+		Sparse_D_,
+		Sparse_A_>::rows_section()
 {
   std::string t = token();
   if (t != "ROWS")
@@ -367,12 +360,12 @@ bool QP_from_mps<IT_,
   return true;
 }
 
-template<typename IT_,
-	 typename Use_sparse_representation_for_D_,
-	 typename Use_sparse_representation_for_A_>
-bool QP_from_mps<IT_,
-		Use_sparse_representation_for_D_,
-		Use_sparse_representation_for_A_>::columns_section()
+template<typename IT_, typename Is_linear_,
+	 typename Sparse_D_,
+	 typename Sparse_A_>
+bool QP_from_mps<IT_, Is_linear_,
+		Sparse_D_,
+		Sparse_A_>::columns_section()
 {
   std::string t = token();
   if (t != "COLUMNS")
@@ -389,7 +382,7 @@ bool QP_from_mps<IT_,
       col_name = t;
       var_names.insert(String_int_pair(t,var_index));
       var_by_index.push_back(t);
-      A_.push_back(Vector(row_names.size(),IT(0)));
+      add_column (Sparse_A_());
       c_.push_back(IT(0));
       fl_.push_back(true);  // default lower bound is finite...
       l_.push_back(IT(0));  // ...namely zero
@@ -417,7 +410,7 @@ bool QP_from_mps<IT_,
 	const Index_map::const_iterator row_name = row_names.find(t);
 	if (row_name == row_names.end())
 	  return err1("unknown row identifier '%' in section COLUMNS",t);
-	A_[var_index][row_name->second] = val;
+	set_entry_in_A (var_index, row_name->second, val, Sparse_A_());
       }
 
       // determine if we need to read another number:
@@ -432,12 +425,12 @@ bool QP_from_mps<IT_,
   return true;
 }
 
-template<typename IT_,
-	 typename Use_sparse_representation_for_D_,
-	 typename Use_sparse_representation_for_A_>
-bool QP_from_mps<IT_,
-		Use_sparse_representation_for_D_,
-		Use_sparse_representation_for_A_>::rhs_section()
+template<typename IT_, typename Is_linear_,
+	 typename Sparse_D_,
+	 typename Sparse_A_>
+bool QP_from_mps<IT_, Is_linear_,
+		Sparse_D_,
+		Sparse_A_>::rhs_section()
 {
   c_0 = IT(0);  // no constant term yet
   std::string t = token();
@@ -501,12 +494,12 @@ bool QP_from_mps<IT_,
   return true;
 }
 
-template<typename IT_,
-	 typename Use_sparse_representation_for_D_,
-	 typename Use_sparse_representation_for_A_>
-bool QP_from_mps<IT_,
-		Use_sparse_representation_for_D_,
-		Use_sparse_representation_for_A_>::ranges_section()
+template<typename IT_, typename Is_linear_,
+	 typename Sparse_D_,
+	 typename Sparse_A_>
+bool QP_from_mps<IT_, Is_linear_,
+		Sparse_D_,
+		Sparse_A_>::ranges_section()
 {
   std::string t = token();
   if (t != "RANGES") { // (Note: RANGES section is optional.)
@@ -555,8 +548,10 @@ bool QP_from_mps<IT_,
 	  if (duplicated_row_name != duplicated_row_names.end())
 	    return err1("duplicate row identifier '%' in section RANGES",t);
 	  duplicated_row_names.insert(*row_name);
+	  int new_index = b_.size();
 	  for (unsigned int j=0; j<var_names.size(); ++j) {
-	    A_[j].push_back(A_[j][index]);
+	    IT val = get_entry_in_A (j, index, Sparse_A_());
+	    add_entry_in_A (j, new_index, val, Sparse_A_());  
 	  }
 	  // determine rhs for this new row. Here are the rules:
 	  // if r is the ranges value and b is the old right-hand 
@@ -612,12 +607,12 @@ bool QP_from_mps<IT_,
 	 
 
 
-template<typename IT_,
-	 typename Use_sparse_representation_for_D_,
-	 typename Use_sparse_representation_for_A_>
-bool QP_from_mps<IT_,
-		Use_sparse_representation_for_D_,
-		Use_sparse_representation_for_A_>::bounds_section()
+template<typename IT_, typename Is_linear_,
+	 typename Sparse_D_,
+	 typename Sparse_A_>
+bool QP_from_mps<IT_, Is_linear_,
+		Sparse_D_,
+		Sparse_A_>::bounds_section()
 {
   std::string t = token();
   if (t != "BOUNDS") { // (Note: BOUNDS section is optional.)
@@ -723,27 +718,24 @@ bool QP_from_mps<IT_,
   return true;
 }
 
-template<typename IT_,
-	 typename Use_sparse_representation_for_D_,
-	 typename Use_sparse_representation_for_A_>
-bool QP_from_mps<IT_,
-		Use_sparse_representation_for_D_,
-		Use_sparse_representation_for_A_>::qmatrix_section()
+template<typename IT_, typename Is_linear_,
+	 typename Sparse_D_,
+	 typename Sparse_A_>
+bool QP_from_mps<IT_, Is_linear_,
+		Sparse_D_,
+		Sparse_A_>::qmatrix_section()
 {
   std::string t = token();
   if (t!="QMATRIX" && t!="DMATRIX" && t!="QUADOBJ") { // (Note: *MATRIX
 						      // section is optional.)
     put_token_back(t);
     return true;
-  }
+  }   
 
   // remember section name:
   D_section = t;
   const bool divide_by_two = t!="DMATRIX";
   const bool only_get_lower_part = t =="QUADOBJ";
-
-  // initialize matrix D:
-  initialize_D(var_names.size(),Use_sparse_representation_for_D());
 
   t = token();
   std::string bound_id;
@@ -751,7 +743,7 @@ bool QP_from_mps<IT_,
     // find first variable name;
     const Index_map::const_iterator var1_name = var_names.find(t);
     if (var1_name == var_names.end()) // unknown variable?
-      return err1("unknown first variable '%' in D/QMATRIX section",t);
+      return err2("unknown first variable '%' in '%' section", t, D_section);
     const unsigned int var1_index = var1_name->second;;
     //std::cout << "qvar1 " << t << std::endl;
       
@@ -759,7 +751,7 @@ bool QP_from_mps<IT_,
     t = token();
     const Index_map::const_iterator var2_name = var_names.find(t);
     if (var2_name == var_names.end()) // unknown variable?
-      return err1("unknown second variable '%' in D/QMATRIX section",t);
+      return err2("unknown second variable '%' in '%' section",t, D_section);
     const unsigned int var2_index = var2_name->second;;
     //std::cout << "qvar2 " << t << std::endl;
       
@@ -772,18 +764,24 @@ bool QP_from_mps<IT_,
     if (divide_by_two)
       halve (val);
 
-    // mark problem as nonlinear if value is nonzero:
-    if (!CGAL::is_zero(val))
+    // mark problem as nonlinear if value is nonzero, and
+    // bail out if we are supposed to read a linear program
+    if (is_linear_ && !CGAL::is_zero(val)) {
       is_linear_ = false;
+      if (has_linear_tag)
+	return err1
+	  ("nonzero value in '%' section while reading linear program", 
+	   D_section);
+    }
 
     // set entry in D:
     set_entry_in_D(var1_index,var2_index,val,
-		   Use_sparse_representation_for_D());
+		   Sparse_D());
     if (only_get_lower_part)
       // duplicate entry if not on diagonal
       if (var1_index != var2_index) 
 	set_entry_in_D(var2_index,var1_index,val,
-		       Use_sparse_representation_for_D());
+		       Sparse_D());
 
     // read next token:
     t = token();
@@ -793,17 +791,17 @@ bool QP_from_mps<IT_,
   return true;
 }
 
-template<typename IT_,
-	 typename Use_sparse_representation_for_D_,
-	 typename Use_sparse_representation_for_A_>
+template<typename IT_, typename Is_linear_,
+	 typename Sparse_D_,
+	 typename Sparse_A_>
 std::ostream& operator<<(std::ostream& o,
-			 QP_from_mps<IT_, 
-			 Use_sparse_representation_for_D_,
-			 Use_sparse_representation_for_A_>& qp)
+			 QP_from_mps<IT_, Is_linear_, 
+			 Sparse_D_,
+			 Sparse_A_>& qp)
 {
-  typedef QP_from_mps<IT_, 
-    Use_sparse_representation_for_D_,
-    Use_sparse_representation_for_A_> MPS;
+  typedef QP_from_mps<IT_, Is_linear_, 
+    Sparse_D_,
+    Sparse_A_> MPS;
   const unsigned int n = qp.n();
   const unsigned int m = qp.m();
   

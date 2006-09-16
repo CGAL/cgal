@@ -23,78 +23,87 @@
 #ifndef CGAL_QP_SOLVER_ITERATOR_H
 #define CGAL_QP_SOLVER_ITERATOR_H
 
-#ifndef CGAL_ITERATOR
-#  include <CGAL/iterator.h>
-#endif
+#include <CGAL/basic.h>
+#include <map>
 
 CGAL_BEGIN_NAMESPACE
 
-template < typename T >
-class Const_oneset_iterator {
+// this is a const iterator that - given a key_type value n - returns
+// a data_type value; if the map contains an item with key n, its
+// data_type value is returned; otherwise, a default value (to be
+// provided during construction) is returned  
+template < typename Map>
+class Fake_random_access_const_iterator
+{  
 public:
-  
   // types
   typedef  std::random_access_iterator_tag    iterator_category;
-  typedef  ptrdiff_t                          difference_type;
-  typedef  T                                  value_type;
+  typedef  typename Map::difference_type      difference_type;
+  typedef  typename Map::mapped_type          value_type;
   typedef  value_type*                        pointer;
   typedef  value_type&                        reference;
   
-  typedef  Const_oneset_iterator<T>           Self;
+  typedef  Fake_random_access_const_iterator  Self;
   typedef  difference_type                    Diff;
   typedef  value_type                         Val;
-  typedef  pointer                            Ptr;
-  typedef  reference                          Ref;
-  
+
   // construction
-  Const_oneset_iterator( const T& t = T(), Diff n = 0)
-    : value( t), index( n)
+  Fake_random_access_const_iterator ( )
+    : map (0), key (0), d()
+  {}
+
+  Fake_random_access_const_iterator (const Map* m, const Val& v = Val())
+    : map (m), key (0), d (v)
   { }
   
-  // access
-  Ref        operator *  ( )       { return  value; }
-  const Ref  operator *  ( ) const { return  value; }
-  Ptr        operator -> ( )       { return &value; }
-  const Ptr  operator -> ( ) const { return &value; }
+  const Val*  operator *  ( ) const { return at(key); }
+  const Val&  operator -> ( ) const { return &at(key); }
   
   // equality operator
-  bool       operator == ( const Self& x) const { return ( index==x.index); }
-  bool       operator != ( const Self& x) const { return ( index!=x.index); }
+  bool       operator == ( const Self& x) const { return ( key==x.key); }
+  bool       operator != ( const Self& x) const { return ( key!=x.key); }
   
   // forward operations
   // ------------------
-  Self&      operator ++ (    ) {                   ++index; return *this; }
-  Self       operator ++ ( int) { Self tmp = *this; ++index; return tmp;   }
+  Self&      operator ++ (    ) {                   ++key; return *this; }
+  Self       operator ++ ( int) { Self tmp = *this; ++key; return tmp;   }
   
   // bidirectional operations
   // ------------------------
-  Self&      operator -- (    ) {                   --index; return *this; }
-  Self       operator -- ( int) { Self tmp = *this; --index; return tmp;   }
+  Self&      operator -- (    ) {                   --key; return *this; }
+  Self       operator -- ( int) { Self tmp = *this; --key; return tmp;   }
   
   // random access operations
   // ------------------------
   // access
-  Ref        operator [] ( Diff i)       { return value;}
-  const Ref  operator [] ( Diff i) const { return value;}
+  const Val& operator [] ( Diff i) const { return at(i); }
   
   // less operator
-  bool       operator <  ( const Self& x) const { return ( index < x.index);}
+  bool       operator <  ( const Self& x) const { return ( key < x.key);}
   
   // arithmetic operations
-  Self&      operator += ( Diff n) { index += n; return *this; }
-  Self&      operator -= ( Diff n) { index -= n; return *this; }
+  Self&      operator += ( Diff n) { key += n; return *this; }
+  Self&      operator -= ( Diff n) { key -= n; return *this; }
   
   Self       operator +  ( Diff n) const { Self tmp = *this; return tmp+=n; }
   Self       operator -  ( Diff n) const { Self tmp = *this; return tmp-=n; }
   
-  Diff       operator -  ( const Self& x) const { return index - x.index; }
+  Diff       operator -  ( const Self& x) const { return key - x.key; }
   
 private:
-  
-  // data members
-  Val   value;
-  Diff  index;
-};
+  const Map* map; 
+  Diff key;
+  Val d;
+
+  const Val& at (Diff n) const {
+    CGAL_qpe_precondition (map != 0);
+    typename Map::const_iterator i = map->find (n);
+    if (i != map->end())
+      return i->second;
+    else
+      return d;
+  }
+}; 
 
 CGAL_END_NAMESPACE
 

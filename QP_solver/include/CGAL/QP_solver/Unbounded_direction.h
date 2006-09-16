@@ -30,7 +30,7 @@ namespace QP_solver_impl {
   template<typename Q, typename ET, typename Tags>
   class Unbounded_direction_iterator {
   private:
-    QP_solver<Q, ET, Tags> &solver;               // reference to solver
+    const QP_solver<Q, ET, Tags> &solver; // reference to solver
     int pos;                              // current position
     
   public:  // public types
@@ -45,7 +45,8 @@ namespace QP_solver_impl {
     // Note: The solver's routines unbounded_direction_begin/end()
     // construct instances of this class such that the range spanned
     // by the constructed iterators has length qp_n.
-    Unbounded_direction_iterator(QP_solver<Q, ET, Tags>& solver,int pos) :
+    Unbounded_direction_iterator(const QP_solver<Q, ET, Tags>& solver,
+				 int pos) :
       solver(solver), pos(pos) {
       CGAL_qpe_assertion(pos <= solver.qp_n);
     }
@@ -106,14 +107,14 @@ namespace QP_solver_impl {
 
 template<typename Q, typename ET, typename Tags>
 typename QP_solver<Q, ET, Tags>::Unbounded_direction_iterator
-QP_solver<Q, ET, Tags>::unbounded_direction_begin()
+QP_solver<Q, ET, Tags>::unbounded_direction_begin() const
 {
   return QP_solver_impl::Unbounded_direction_iterator<Q, ET, Tags>(*this,0);
 }
 
 template<typename Q, typename ET, typename Tags>
 typename QP_solver<Q, ET, Tags>::Unbounded_direction_iterator
-QP_solver<Q, ET, Tags>::unbounded_direction_end()
+QP_solver<Q, ET, Tags>::unbounded_direction_end() const
 {
   return QP_solver_impl::Unbounded_direction_iterator<Q, ET, Tags>(*this,qp_n);
 }

@@ -23,7 +23,9 @@
 #include <CGAL/basic.h>
 #include <CGAL/iterator.h>
 #include <CGAL/QP_solver/basic.h>
+#include <CGAL/QP_solver/iterator.h>
 #include <vector> 
+#include <map>
 #include <iomanip>
 #include <istream>
 #include <sstream>
@@ -401,12 +403,63 @@ public:
 // -----------
 namespace QP_from_mps_detail {
 
-  template<typename V>
+  // functor to get the appropriate begin-iterator of a container 
+  template<typename Container, typename Iterator, typename HowToBegin>
   struct Begin
-    : public std::unary_function< V, typename V::const_iterator >
+    : public std::unary_function< Container, Iterator >
   {
-    typedef typename V::const_iterator result_type;
-    result_type operator () ( const V& v) const { return v.begin(); }
+    typedef Iterator result_type;
+    result_type operator () ( const Container& v) const 
+    { 
+      return HowToBegin()(v); 
+    }
+  };
+
+  // the general representation template
+  template <typename IT, typename Use_sparse_representation>
+  struct  Rep_selector {};
+
+  // sparse representation; uses a map and "fake" random access iterator
+  template <typename IT>
+  struct Rep_selector<IT, Tag_true> 
+  {
+    typedef std::map<unsigned int, IT> Container;
+    typedef CGAL::Fake_random_access_const_iterator<Container> Iterator;
+    struct HowToBegin {
+     Iterator operator() (const Container& v) const
+      { return Iterator(&v, IT(0));}
+    };
+    typedef Begin<Container, Iterator, HowToBegin> Beginner;
+  };
+
+  // dense representation; uses vector and its const-iterator
+  template <typename IT>
+  struct Rep_selector<IT, Tag_false> 
+  {
+    typedef std::vector<IT> Container;
+    typedef typename Container::const_iterator Iterator;
+    struct HowToBegin {
+      Iterator operator() (const Container& v) const
+      { return v.begin();}
+    };
+    typedef Begin<Container, Iterator, HowToBegin> Beginner;
+  };
+
+  template <typename Matrix_iter, typename Beginner, typename IT,
+	    typename Is_linear>
+  struct D_selector {};
+
+  template <typename Matrix_iter, typename Beginner, typename IT>
+  struct D_selector<Matrix_iter, Beginner, IT, Tag_true> // linear case
+  {
+    typedef typename QP_Default<IT*>::It_2d D_iterator;
+  };
+
+  template <typename Matrix_iter, typename Beginner, typename IT>
+  struct D_selector<Matrix_iter, Beginner, IT, Tag_false> // quadratic case
+  {
+    typedef CGAL::Join_input_iterator_1<Matrix_iter, Beginner> 
+    D_iterator;
   };
 
 } // QP_from_mps_detail
@@ -424,73 +477,103 @@ template<typename IT_,  // The input number type: the numbers in the
 			// this warning can be neglected because in a
 			// DMATRIX section, D is stored (and not 2*D).
 			// (See also method D_format_type().)
-	 typename Use_sparse_representation_for_D_=Tag_false,
-                        // Use a sparse representation for D. Note:
-                        // must be Tag_false currently (Tag_true not
-                        // yet implemented).
-	 typename Use_sparse_representation_for_A_=Tag_false>
-                        // Use a sparse representation for A. Note:
-                        // must be Tag_false currently (Tag_true not
-                        // yet implemented).
+	 typename Is_linear_,
+	                // this checks that there is no DMATRIX
+                        // section, and it avoids allocation of
+	                // an (n x n) matrix in the non-sparse 
+	                // case
+	 typename Sparse_D_=Tag_false,
+                        // Use a sparse representation for D.
+	 typename Sparse_A_=Tag_false>
+                        // Use a sparse representation for A. 
 class QP_from_mps {
 public:
   typedef IT_ IT;
+  typedef Is_linear_ Is_linear;
+  typedef Sparse_D_   Sparse_D;
+  typedef Sparse_A_   Sparse_A;
 
-public: // undocumented types, should be considered private:
-  typedef std::vector<IT>                 Vector;
-  typedef std::vector<Vector>             Matrix;
-  typedef QP_from_mps_detail::Begin<Vector>    Beginner;
-  typedef CGAL::Join_input_iterator_1<typename Matrix::const_iterator,
-			      Beginner >  Vector_iterator;
-  typedef typename Vector::const_iterator Entry_iterator;
-  typedef std::vector<bool>               F_vector;
-  typedef F_vector::const_iterator        F_vector_iterator;
-  typedef std::vector<CGAL::Comparison_result> Row_type_vector;
+  // choose representation for columns of A-matrix
+  typedef typename QP_from_mps_detail::Rep_selector
+  <IT, Sparse_A>::Container A_col; 
+  typedef typename QP_from_mps_detail::Rep_selector
+  <IT, Sparse_A>::Iterator A_col_iterator;
 
-public:
-  // iterators over the input matrices and vectors: 
-  typedef Vector_iterator   A_iterator;
-  typedef Entry_iterator    B_iterator;
-  typedef Entry_iterator    C_iterator;
-  typedef Vector_iterator   D_iterator;
-  typedef Const_oneset_iterator< Const_oneset_iterator<IT> >
-                            Zero_D_iterator;
-  typedef F_vector_iterator FU_iterator;
-  typedef F_vector_iterator FL_iterator;
-  typedef Entry_iterator    U_iterator;
-  typedef Entry_iterator    L_iterator;
-  typedef IT                value_type;
+  // choose representation for rows of D-matrix
+  typedef typename QP_from_mps_detail::Rep_selector
+  <IT, Sparse_D>::Container D_row; 
+  typedef typename QP_from_mps_detail::Rep_selector
+  <IT, Sparse_D>::Iterator D_row_iterator;
 
-  typedef typename Row_type_vector::const_iterator R_iterator;
-  typedef Use_sparse_representation_for_D_   Use_sparse_representation_for_D;
-  typedef Use_sparse_representation_for_A_   Use_sparse_representation_for_A;
+  // choose Beginners (maps col/row containers to their begin iterators)
+  typedef typename QP_from_mps_detail::Rep_selector
+  <IT, Sparse_A>::Beginner A_Beginner; 
+  typedef typename QP_from_mps_detail::Rep_selector
+  <IT, Sparse_D>::Beginner D_Beginner;
+
+  // matrices A and D itself are vectors of columns resp. rows 
+  typedef std::vector<A_col>           A_Matrix; 
+  typedef std::vector<D_row>           D_Matrix;
+
+  // containers for the other QP data
+  typedef std::vector<IT>                      Vector;    // b, c, l, u
+  typedef std::vector<bool>                    F_vector;  // fl, fu 
+  typedef std::vector<CGAL::Comparison_result> R_vector;  // r
+
+  // QP_model types
+  typedef CGAL::Join_input_iterator_1
+  <typename A_Matrix::const_iterator, A_Beginner > A_iterator;
+  typedef typename A_Matrix::const_iterator A_iterator;
+  typedef typename Vector::const_iterator B_iterator;
+  typedef typename R_vector::const_iterator R_iterator;
+  typedef typename F_vector::const_iterator FL_iterator;
+  typedef typename F_vector::const_iterator FU_iterator;
+  typedef typename Vector::const_iterator L_iterator;
+  typedef typename Vector::const_iterator U_iterator;
+
+  // select D_iterator, depending on Is_linear
+  typedef typename QP_from_mps_detail::D_selector
+  <typename D_Matrix::const_iterator, D_Beginner, IT, Is_linear >::D_iterator
+  D_iterator;
+ //  typedef CGAL::Join_input_iterator_1
+//   <typename D_Matrix::const_iterator, D_Beginner>
+//     D_iterator;
+  typedef typename Vector::const_iterator C_iterator;
 
 private:
   typedef std::pair<std::string,unsigned int> String_int_pair;
   typedef std::map<std::string,unsigned int> Index_map;
+  typedef std::map<unsigned int, IT> Map;
 
 private:
+  const bool has_linear_tag;
   const int verbosity_;
   std::istream& from;
   std::string error_msg;
   bool is_format_okay_;
   bool is_linear_;
   const bool use_CPLEX_convention;
-  IT c_0;                      // constant term in objective function
-  Vector b_, c_;              // vectors b and c
-  Matrix A_, D_;              // matrices A and D
-  std::string D_section;      // name of the section from which D was read
-  Row_type_vector row_types_; // equality type for each row
-  Vector u_, l_;              // upper and lower bounds
-  F_vector fu_, fl_;          // whether the lower/upper bound is finite or not
+  const IT it0;
 
+  // actual problem data to be read from MPS file
+  A_Matrix A_;
+  D_Matrix D_;                
+  Vector b_;                  
+  R_vector row_types_;        
+  F_vector fl_, fu_;          
+  Vector l_, u_;                                
+  Vector c_;                 
+  IT c_0;   
+ 
+  std::string D_section;      // name of the section from which D was read
+  
   // cached data:
   bool is_symmetric_cached, is_symmetric_;
   bool has_equalities_only_and_full_rank_cached,
     has_equalities_only_and_full_rank_;
   bool is_in_standard_form_cached, is_in_standard_form_;
 
-  // data from MPS file:
+  // further data gathered from MPS file:
   std::string name;     // from the NAME section
   std::string comment_; // first comment in the file, if any
   std::string obj;      // name of the objective "constraint"
@@ -504,36 +587,115 @@ private:
   bool use_put_back_token;
   std::string put_back_token;
 
-public: // unofficial helper routines used in master_mps_to_derivatives.C;
-        // these should be considered private for CGAL end-users:
-
-  const Matrix& A_matrix() { return A_; }
+public: 
+  // unofficial helpers used in master_mps_to_derivatives.C;
+  // these should be considered private for CGAL end-users:
+  const A_Matrix& A_matrix() { return A_; }
   const Vector& b_vector() { return b_; }
-  const Row_type_vector& row_types_vector() { return row_types_; }
-
+  const R_vector& r_vector() { return row_types_; }
+  void add_entry_in_A(unsigned int j, unsigned int i, const IT& val) {
+    add_entry_in_A (j, i, val, Sparse_A());
+  }
 private: // helpers to deal with sparse/dense representation:
 
-  void initialize_D(unsigned int dimension,const Tag_true) // sparse case
-  {
-    CGAL_qpe_assertion_msg(false, "not implemented yet");
+  void add_column (const Tag_true sparse_A) 
+  {  
+    // append a new column to A_ (it's empty by default)
+    A_.push_back(A_col());
   }
 
-  void initialize_D(unsigned int dimension,const Tag_false) // dense case
+  void add_column (const Tag_false sparse_A) 
   {
+    // append a new empty column to A_
+    A_.push_back(A_col(row_names.size(), IT(0)));
+  }
+
+  void initialize_D(unsigned int dimension, const Tag_true sparse_D ) 
+  {
+    // generate dimension many rows (empty by default)
+    for (unsigned int i=0; i<dimension; ++i) 
+    D_.push_back(D_row()); 
+  }
+  
+  void initialize_D(unsigned int dimension, const Tag_false sparse_D)
+  {
+    // generate dimension many empty rows; this can be very costly
+    // if dimension is large
     for (unsigned int i=0; i<dimension; ++i)
-      D_.push_back(Vector(dimension,IT(0)));
+    D_.push_back(D_row(dimension,IT(0)));
   }
 
-  void set_entry_in_D(unsigned int i,unsigned int j,const IT& val,
-		      const Tag_true)                       // sparse case
+  void set_entry_in_A(unsigned int j,unsigned int i,const IT& val,
+		      const Tag_true sparse_A)      
   {
-    CGAL_qpe_assertion_msg(false, "not implemented yet");
+    // set element i in column j to val
+    if (val != it0) A_[j][i] = val;
   }
 
-  void set_entry_in_D(unsigned int i,unsigned int j,const IT& val,
-		      const Tag_false)                      // dense case
+  void set_entry_in_A(unsigned int j,unsigned int i,const IT& val,
+		      const Tag_false sparse_A) 
+  {
+    // set element i in column j to val
+    A_[j][i] = val;
+  }  
+  
+  void add_entry_in_A(unsigned int j, unsigned int i, const IT& val,
+		      const Tag_true sparse_A)
+  {
+    // append value to column j; new element has index i
+    set_entry_in_A (j, i, val, Tag_true()); 
+  }
+
+  void add_entry_in_A(unsigned int j, unsigned int i, const IT& val,
+		      const Tag_false sparse_A)
+  {
+    // append value to column j; new element has index i
+    CGAL_qpe_precondition (i == A_[j].size());
+    A_[j].push_back (val);
+  }
+
+  const IT& get_entry_in_A(unsigned int j,unsigned int i,
+		      const Tag_true sparse_A)
+  {
+    typename Map::const_iterator it = A_[j].find(i);
+    if (it != A_[j].end())
+    return it->second;
+    else
+    return it0;
+  }
+
+  const IT&  get_entry_in_A(unsigned int j,unsigned int i,
+		      const Tag_false sparse_A)
+  {
+    return A_[j][i];
+  }
+
+  void set_entry_in_D(unsigned int i, unsigned int j, const IT& val,
+		      const Tag_true sparse_D) 
+  {
+    if (val != it0) D_[i][j] = val;
+  }
+
+  void set_entry_in_D(unsigned int i, unsigned int j, const IT& val,
+		      const Tag_false sparse_D)
   {
     D_[i][j] = val;
+  }
+
+  const IT& get_entry_in_D(unsigned int i,unsigned int j,
+		      const Tag_true sparse_D)
+  {
+    typename Map::const_iterator it = D_[i].find(j);
+    if (it != D_[i].end())
+    return it->second;
+    else
+    return it0;
+  }
+
+  const IT&  get_entry_in_D(unsigned int i,unsigned int j,
+		      const Tag_false sparse_D)
+  {
+    return D_[i][j];
   }
 
 private: // private helpers:
@@ -781,24 +943,6 @@ public: // methods:
     return D_section;
   }
 
-  // Initializes the internal D matrix to the zero matrix so that D()
-  // will return an iterator over a zero matrix.  Normally, there
-  // should not be any need to call this routine; it is used by the
-  // QP_solver testsuite to solve an LP as a QP, and for this we need
-  // a zero D matrix.
-  //
-  // Note: If Use_sparse_representation_for_D_ is Tag_false, this
-  // routine allocates a zero (n x n)-matrix (where n is
-  // number_of_variables()).  If you known in advance that you need a
-  // zero D matrix, you might want to use zero_D() (see below).
-  //
-  // Precondition: is_linear()
-  void make_zero_D() 
-  {
-    CGAL_qpe_assertion(is_linear());
-    initialize_D(var_names.size(),Use_sparse_representation_for_D());
-  }
-
   // Returns an iterator over the matrix A (as needs to be
   // passed to the constructor of class QP_solver).
   //
@@ -806,7 +950,7 @@ public: // methods:
   A_iterator a() const
   {
     CGAL_qpe_assertion(is_valid());
-    return Vector_iterator(A_.begin(),Beginner());
+    return A_iterator(A_.begin(), A_Beginner());
   }
 
   // Returns an iterator over the vector b (as needs to be
@@ -842,23 +986,24 @@ public: // methods:
   // passed to the constructor of class QP_solver).
   //
   // Precondition: is_valid()
+  // it calls one of the following two helpers to decide between
+  // the appropriate iterators
   D_iterator d() const
   {
-    CGAL_qpe_assertion(is_valid());
-    return Vector_iterator(D_.begin(),Beginner());
+    return d(Is_linear());
   }
 
-  // Returns an iterator over a matrix D that is zero (as needs to be
-  // passed to the constructor of class QP_solver if you for instance
-  // want to solve an LP as a QP with a zero D-matrix for test
-  // purposes).
-  //
-  // Precondition: is_valid()
-  Zero_D_iterator zero_D()
-  {
-    CGAL_qpe_assertion(is_valid());
-    return Zero_D_iterator(Const_oneset_iterator<IT>(0));
+private:
+  D_iterator d (Tag_true is_linear) const {
+    return D_iterator(it0); 
   }
+
+  D_iterator d(Tag_false is_linear) const {
+    CGAL_qpe_assertion(is_valid());
+    return D_iterator(D_.begin(), D_Beginner());
+  }
+
+public:
 
   // Returns an iterator (of value-type Row_type) over the constraint
   // types (as needs to be passed to the constructor of class
@@ -944,13 +1089,13 @@ public: // methods:
   }
 };
 
-template<typename IT_,
-	 typename Use_sparse_representation_for_D_,
-	 typename Use_sparse_representation_for_A_>
+template<typename IT_, typename Is_linear_, 
+	 typename Sparse_D_,
+	 typename Sparse_A_>
 std::ostream& operator<<(std::ostream& o,
-			 QP_from_mps<IT_,
-			 Use_sparse_representation_for_D_,
-			 Use_sparse_representation_for_A_>& qp);
+			 QP_from_mps<IT_, Is_linear_,
+			 Sparse_D_,
+			 Sparse_A_>& qp);
 
 
 CGAL_END_NAMESPACE
