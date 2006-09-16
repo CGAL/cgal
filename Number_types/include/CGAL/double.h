@@ -27,6 +27,7 @@
 #include <CGAL/basic.h>
 #include <utility>
 #include <cmath>
+#include <math.h> // for nextafter
 #include <limits>
 
 #ifdef _MSC_VER
