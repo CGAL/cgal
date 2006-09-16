@@ -139,9 +139,6 @@ class In_x_range_2
     _in_x_range_2(const Arc_2 &a, const Circular_arc_point_2 &p) const 
     {
 
-      if(a.source().rep().equal_ref(p.rep())) return true;
-      if(a.target().rep().equal_ref(p.rep())) return true;
-
       Bbox_2 bb11 = a.source().bbox(),
              bb12 = a.target().bbox(),
              bb2=p.bbox();      
