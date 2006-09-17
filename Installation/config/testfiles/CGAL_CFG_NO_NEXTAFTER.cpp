@@ -28,10 +28,11 @@
 // The following documentation will be pasted in the generated configfile.
 // ---------------------------------------------------------------------
 
-//| If a compiler doesn't know nextafter (or only knows _nextafter as VC++7.1)
+//| If a compiler doesn't know nextafter() (or only knows _nextafter as VC++ 7.1).
+//| nextafter() is part of ISO C99, but not ISO C++98 (hence <math.h> instead of <cmath>).
 //| CGAL_CFG_NO_NEXTAFTER is set. 
 
-#include <cmath>
+#include <math.h>
 
 int main()
 {
