@@ -33,7 +33,7 @@ of vertices.
 The graph is geometrically embedded, that is, each vertex is associated with
  a generalized point (whether in the plane, the sphere, a surface, etc.)
 
-Vertices and edges are required to have a distinguishible \ccc{null} state 
+Vertices and edges are required to have a distinguishable \ccc{null} state 
 such that any default constructed vertex or edge descriptor is formally
 referring to a non-existing vertex or edge.
 
@@ -47,23 +47,23 @@ An edge \ccc{'v: x->y'} is said to be the {\em opposite} of edge \ccc{'u: a->b'}
 iff \ccc{a} $==$ \ccc{y} and \ccc{b} $==$ \ccc{c}.
 
 \item[Rotational Successor] 
-An edge \ccc{'v: s->q'} is said to be the {\em rotational succesor} 
+An edge \ccc{'v: s->q'} is said to be the {\em rotational successor} 
 of edge \ccc{'u: s->p'} iff \ccc{v} is the {\em first} edge found by 
 a counter-clockwise rotation of \ccc{u} around the source vertex \ccc{s}.
  
 \item[Rotational Predecessor] 
-An edge \ccc{'v: s->q'} is said to be the {\em rotational predeccesor}
+An edge \ccc{'v: s->q'} is said to be the {\em rotational predecessor}
 of edge \ccc{'u: s->p'} iff \ccc{v} is the {\em first} edge found by 
 a clockwise rotation of \ccc{u} around the source vertex \ccc{s}.
 
 \item[Linear Successor] 
-An edge \ccc{'v: b->c'} is said to be the {\em linear succesor} of edge 
-\ccc{'u:a->b'} iff \ccc{v} is the rotational succesor of the opposite
+An edge \ccc{'v: b->c'} is said to be the {\em linear successor} of edge 
+\ccc{'u:a->b'} iff \ccc{v} is the rotational successor of the opposite
 of v.
  
 \item[Linear Predecessor] 
-An edge \ccc{'v: b->c'} is said to be the {\em linear predeccesor} of edge 
-\ccc{'u:a->b'} iff \ccc{v} is the opposite of the rotational predeccesor
+An edge \ccc{'v: b->c'} is said to be the {\em linear predecessor} of edge 
+\ccc{'u:a->b'} iff \ccc{v} is the opposite of the rotational predecessor
 of v.
 
 \end{description}
@@ -76,7 +76,7 @@ of v.
 
 \ccOperations
 
-Following the BGL interface, the following graph operations are defined as free rather than member functions.
+Following the {\sc Bgl} design, the following graph operations are defined as free rather than member functions.
 
   \ccFunction
   {template<class Graph>
@@ -93,7 +93,7 @@ Following the BGL interface, the following graph operations are defined as free 
   typename boost::graph_traits<Graph const>::edge_descriptor 
   next_edge_ccw(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g );
   }
-  {Returns the {\em rotational succesor} of \ccc{e}.\\
+  {Returns the {\em rotational successor} of \ccc{e}.\\
   If the resulting edge does not belong to \ccc{g} the result is a \ccc{null} (default constructed) edge.\\
   (non-const version ommited)
   }
@@ -103,7 +103,7 @@ Following the BGL interface, the following graph operations are defined as free 
   typename boost::graph_traits<Graph const>::edge_descriptor 
   next_edge_cw(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g );
   }
-  {Returns the {\em rotational predeccesor} of \ccc{e}.\\
+  {Returns the {\em rotational predecessor} of \ccc{e}.\\
   If the resulting edge does not belong to \ccc{g} the result is a \ccc{null} (default constructed) edge. }
   
   \ccFunction
@@ -111,7 +111,7 @@ Following the BGL interface, the following graph operations are defined as free 
   typename boost::graph_traits<Graph const>::edge_descriptor 
   next_edge(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g );
   }
-  {Returns the {\em linear succesor} of \ccc{e}.\\
+  {Returns the {\em linear successor} of \ccc{e}.\\
   If the resulting edge does not belong to \ccc{g} the result is a \ccc{null} (default constructed) edge. }
   
   \ccFunction
@@ -119,7 +119,7 @@ Following the BGL interface, the following graph operations are defined as free 
   typename boost::graph_traits<Graph const>::edge_descriptor 
   prev_edge(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g );
   }
-  {Returns the {\em linear predeccesor} of \ccc{e}.\\
+  {Returns the {\em linear predecessor} of \ccc{e}.\\
   If the resulting edge does not belong to \ccc{g} the result is a \ccc{null} (default constructed) edge. }
   
   \ccFunction

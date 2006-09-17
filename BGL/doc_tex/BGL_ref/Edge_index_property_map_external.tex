@@ -25,9 +25,9 @@
 
 The class \ccRefName\ provides a model for the concept 
 \ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
-that maps an edge in {\em any}
-\ccAnchor{http://www.boost.org/libs/graph/doc/Graph.html}{Bgl Graph}
-to the integer numbers in the range \ccc{[0,num_edges(graph)]}
+that maps an edge in a {\sc Bgl}
+\ccAnchor{http://www.boost.org/libs/graph/doc/Graph.html}{graph}
+to the integer numbers in the range \ccc{[0,boost::num_edges(graph)]}
 via a non-intusive mechanism (so that any gaph can be indexed).
 
 \ccInclude{CGAL/boost/graph/Edge_index_property_map_external.h}
@@ -49,13 +49,13 @@ via a non-intusive mechanism (so that any gaph can be indexed).
 
 \ccConstructor{CGAL::Edge_index_property_map_external<Graph>( Graph const& g ); }
 {Initializes an internal table which associates a unique integer
-number in the range \ccc{[0,num_edges(g)]} to each edge in \ccc{g}.}
+number in the range \ccc{[0,boost::num_edges(g)]} to each edge in \ccc{g}.}
 
 \ccOperations
 
 \ccMethod
   {reference operator[]( key_type const& edge ) const;}
-  {Returns the unique index for \ccc{edge} as mantained by this map.\\
+  {Returns the unique index for \ccc{edge} as manitained by this map.\\
   {\em Precondition}: if \ccc{edge} is no longer in the graph this function shows undefined-behaviour.
   }
     
@@ -63,7 +63,7 @@ number in the range \ccc{[0,num_edges(g)]} to each edge in \ccc{g}.}
 \ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
 
 \ccSeeAlso
-\ccRefIdfierPage{CGAL::Edge_index_property_stored<Graph>}\\
+\ccRefIdfierPage{CGAL::Edge_index_property_map_stored<Graph>}\\
 
 \end{ccRefClass}
 

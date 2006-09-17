@@ -76,7 +76,7 @@ have an associated facet).
   
 \ccOperations
 
-Following the {\sc Bgl} interface, the following graph operations are defined as free rather than member functions.
+Following the {\sc Bgl} design, the following graph operations are defined as free rather than member functions.
 
   \ccFunction
   {template<class Graph>
@@ -85,7 +85,7 @@ Following the {\sc Bgl} interface, the following graph operations are defined as
              >   
   undirected_edges(Graph const& g );
   }
-  {Returns a pair of iterators representing the range [begin,end) 
+  {Returns a pair of iterators representing the range \ccc{[begin,end)} 
   of undirected edges in this graph.}
 
 \ccHasModels
