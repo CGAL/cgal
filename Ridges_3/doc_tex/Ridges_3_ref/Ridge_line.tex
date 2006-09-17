@@ -1,0 +1,61 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Ridge_line.tex
+% +------------------------------------------------------------------------+
+% | 15.09.2006   Marc Pouget and Frédéric Cazals
+% | Package: Ridges_3
+% | 
+\RCSdef{\RCSRidgelineRev}{$Id$}
+\RCSdefDate{\RCSRidgelineDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Ridge_line<TriangularPolyhedralSurface>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ stores the description of a ridge line.
+
+\ccInclude{CGAL/Ridges.h}
+
+
+\ccTypes
+
+\ccNestedType{typedef typename TriangularPolyhedralSurface::Traits::FT  FT;}{}
+\ccGlue
+\ccNestedType{typedef typename TriangularPolyhedralSurface::Halfedge_handle  Halfedge_handle;}{}
+\ccGlue
+\ccNestedType{ typedef std::pair< Halfedge_handle, FT>           ridge_he;}{}
+
+
+\ccCreation
+\ccCreationVariable{ridge_line}  %% choose variable name
+
+\ccConstructor{Ridge_line();}{default constructor.}
+
+\ccAccessFunctions
+% +--------------------------------------------------------------
+\ccMethod{const Ridge_type line_type();}{}
+\ccMethod{Ridge_type& line_type();}{}
+\ccGlue
+\ccMethod{const FT strength();}{}
+\ccMethod{FT& strength();}{}
+\ccGlue
+\ccMethod{const FT sharpness();}{}
+\ccMethod{FT& sharpness(); }{}
+
+\ccSeeAlso
+
+\ccc{Ridge_approximation},
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

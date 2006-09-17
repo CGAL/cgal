@@ -299,8 +299,7 @@ int main(int argc, char *argv[])
   //   ridge_approximation.compute_ridges(CGAL::RED_RIDGE, ii, tag_order);  
   //ridge_approximation.compute_ridges(CGAL::CREST_RIDGE, ii, tag_order);  
      ridge_approximation.compute_all_ridges(ii, tag_order);  
-
-
+ 
   std::vector<Ridge_line*>::iterator iter_lines = ridge_lines.begin(), 
     iter_end = ridge_lines.end();
   //OpenGL output

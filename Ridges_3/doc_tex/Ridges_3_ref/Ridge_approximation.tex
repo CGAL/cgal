@@ -1,18 +1,19 @@
 % +------------------------------------------------------------------------+
 % | Reference manual page: Ridge_approximation.tex
 % +------------------------------------------------------------------------+
-% | 09.02.2006   Marc Pouget and Frédéric Cazals
+% | 15.09.2006   Marc Pouget and Frédéric Cazals
 % | Package: Ridges_3
 % | 
-\RCSdef{}{}
-\RCSdefDate{}{}
+\RCSdef{\RCSRidgeapproximationRev}{$Id$}
+\RCSdefDate{\RCSRidgeapproximationDate}{$Date$}
 % |
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Ridge_approximation< TriangularPolyhedralSurface, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPropertyMap} 
- %% add template arg's if necessary
+\begin{ccRefClass}{Ridge_approximation< TriangularPolyhedralSurface, OutputIt, 
+Vertex2FTPropertyMap , Vertex2VectorPropertyMap>} %% add template
+arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -22,18 +23,19 @@
 The class \ccRefName\ is designed to perform the approximation of
 ridges of a triangular polyhedral surface. 
 
-\ccInclude{CGAL/Ridge_approximation.h}
+\ccInclude{CGAL/Ridges.h}
 
 \ccParameters
-The class \ccRefName\ has four template parameters. Parameter
+The class \ccRefName\ has four template parameters. 
 \ccc{TriangularPolyhedralSurface} provides  the surface. 
 Parameter \ccc{OutputIt} is a stl Output Iterator which
 \ccc{value_type} is \ccc{CGAL::Ridge_line*}. Parameters  \ccc{Vertex2FTPropertyMap}
 and \ccc{Vertex2VectorPropertyMap} provides the differential properties of
 the surface associated to its vertices.
 
-Requirements : the types \ccc{TriangularPolyhedralSurface::Traits::FT}
-and \ccc{Vertex2FTPropertyMap::value_type} must coincide; the types
+Requirements (checked at compile time) : the types
+\ccc{TriangularPolyhedralSurface::Traits::FT} and
+\ccc{Vertex2FTPropertyMap::value_type} must coincide; the types
 \ccc{TriangularPolyhedralSurface::Traits::Vector_3} and
 \ccc{Vertex2VectorPropertyMap::value_type} must coincide; the types
 \ccc{TriangularPolyhedralSurface::Vertex_handle},
@@ -43,7 +45,9 @@ and \ccc{Vertex2FTPropertyMap::value_type} must coincide; the types
 \ccTypes
 
 %\ccNestedType{TYPE}{some nested types}
-\ccEnum{   enum Tag_order {Tag_3, Tag_4};}{}
+\ccEnum{   enum Tag_order {Tag_3, Tag_4};}
+{Order of differential quantities used to distinguish elliptic and
+hyperbolic ridges.}
 
 
 \ccCreation
@@ -57,8 +61,9 @@ and \ccc{Vertex2FTPropertyMap::value_type} must coincide; the types
 		      Vertex2FTPropertyMap& vertex2P1_pm,
 		      Vertex2FTPropertyMap& vertex2P2_pm,
 		      Vertex2VectorPropertyMap& vertex2d1_pm,
-		      Vertex2VectorPropertyMap& vertex2d2_pm);} 
-{Precondition : check if all faces of P are triangular. } 
+		      Vertex2VectorPropertyMap& vertex2d2_pm);}
+		      {Precondition : check if all faces of P are
+		      triangular. }
 
 %\ccOperations
 

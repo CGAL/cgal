@@ -1,0 +1,80 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Umbilic_approximation.tex
+% +------------------------------------------------------------------------+
+% | 15.09.2006   Marc Pouget and Frédéric Cazals
+% | Package: Ridges_3
+% | 
+\RCSdef{\RCSUmbilicapproximationRev}{$Id$}
+\RCSdefDate{\RCSUmbilicapproximationDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Umbilic_approximation< TriangularPolyhedralSurface, 
+ OutputIt,  Vertex2FTPropertyMap,  Vertex2VectorPropertyMap > }  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is designed to perform the approximation of
+umbilics on a triangular polyhedral surface. 
+
+
+\ccInclude{CGAL/Umbilic.h}
+
+\ccParameters
+The class \ccRefName\ has four template parameters. 
+\ccc{TriangularPolyhedralSurface} provides  the surface. 
+Parameter \ccc{OutputIt} is a stl Output Iterator which
+\ccc{value_type} is \ccc{CGAL::Umbilic*}. Parameters  \ccc{Vertex2FTPropertyMap}
+and \ccc{Vertex2VectorPropertyMap} provides the differential properties of
+the surface associated to its vertices.
+
+Requirements (checked at compile time) : the types
+\ccc{TriangularPolyhedralSurface::Traits::FT} and
+\ccc{Vertex2FTPropertyMap::value_type} must coincide; the types
+\ccc{TriangularPolyhedralSurface::Traits::Vector_3} and
+\ccc{Vertex2VectorPropertyMap::value_type} must coincide; the types
+\ccc{TriangularPolyhedralSurface::Vertex_handle},
+\ccc{Vertex2FTPropertyMap::key_type} and
+\ccc{Vertex2VectorPropertyMap::key_type} must coincide;
+
+
+\ccTypes
+
+\ccNestedType{  typedef typename TriangularPolyhedralSurface::Traits::FT       FT;}{}
+
+\ccCreation
+\ccCreationVariable{umbilic_approximation}  %% choose variable name
+
+\ccConstructor{Umbilic_approximation(TriangularPolyhedralSurface &P, 
+			Vertex2FTPropertyMap vertex2k1_pm, Vertex2FTPropertyMap vertex2k2_pm,
+		Vertex2VectorPropertyMap vertex2d1_pm, Vertex2VectorPropertyMap vertex2d2_pm);}
+ {default constructor.}
+
+\ccOperations
+
+\ccMethod{  OutputIt compute(OutputIt it, FT size);}
+{Performs the approximation, \ccc{size} determines the size of the
+patches around vertices which is \ccc{size} times the size of the
+1-ring. Umbilics are output through the \ccc{OutputIt} which is an
+concept of output iterator of the stl with value type \ccc{Umbilic*}.}
+
+\ccSeeAlso
+
+\ccc{Umbilic}.
+\ccc{TriangularPolyhedralSurface}
+\ccc{Vertex2FTPropertyMap}
+\ccc{Vertex2VectorPropertyMap}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

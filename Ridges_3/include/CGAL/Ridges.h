@@ -206,9 +206,9 @@ class Ridge_approximation
   //follow non-visited, regular, 2Xing triangles in both sens to
   //create a Ridge line.  Each time an edge is added the strength and
   //sharpness(if Tag_4) are updated.
-  void compute_ridges(Ridge_interrogation_type r_type, 
-		      OutputIt ridge_lines_it,
-		      Tag_order ord = Tag_3);
+  OutputIt compute_ridges(Ridge_interrogation_type r_type, 
+			  OutputIt ridge_lines_it,
+			  Tag_order ord = Tag_3);
 
  protected:
   TriangularPolyhedralSurface* P;
@@ -341,7 +341,7 @@ compute_all_ridges(OutputIt it, Tag_order ord)
 template < class TriangularPolyhedralSurface, class OutputIt, 
            class Vertex2FTPropertyMap,
            class Vertex2VectorPropertyMap > 
- void Ridge_approximation< TriangularPolyhedralSurface, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
+OutputIt Ridge_approximation< TriangularPolyhedralSurface, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
 compute_ridges(Ridge_interrogation_type r_type, OutputIt ridge_lines_it, Tag_order ord)
 {
   tag_order = ord;
@@ -415,6 +415,7 @@ compute_ridges(Ridge_interrogation_type r_type, OutputIt ridge_lines_it, Tag_ord
 	    }
 	} 
     }
+  return ridge_lines_it;
 }
 
 template < class TriangularPolyhedralSurface, class OutputIt, 
