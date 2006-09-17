@@ -1,0 +1,99 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Ridge_approximation.tex
+% +------------------------------------------------------------------------+
+% | 09.02.2006   Marc Pouget and Frédéric Cazals
+% | Package: Ridges_3
+% | 
+\RCSdef{}{}
+\RCSdefDate{}{}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Ridge_approximation< TriangularPolyhedralSurface, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPropertyMap} 
+ %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is designed to perform the approximation of
+ridges of a triangular polyhedral surface. 
+
+\ccInclude{CGAL/Ridge_approximation.h}
+
+\ccParameters
+The class \ccRefName\ has four template parameters. Parameter
+\ccc{TriangularPolyhedralSurface} provides  the surface. 
+Parameter \ccc{OutputIt} is a stl Output Iterator which
+\ccc{value_type} is \ccc{CGAL::Ridge_line*}. Parameters  \ccc{Vertex2FTPropertyMap}
+and \ccc{Vertex2VectorPropertyMap} provides the differential properties of
+the surface associated to its vertices.
+
+Requirements : the types \ccc{TriangularPolyhedralSurface::Traits::FT}
+and \ccc{Vertex2FTPropertyMap::value_type} must coincide; the types
+\ccc{TriangularPolyhedralSurface::Traits::Vector_3} and
+\ccc{Vertex2VectorPropertyMap::value_type} must coincide; the types
+\ccc{TriangularPolyhedralSurface::Vertex_handle},
+\ccc{Vertex2FTPropertyMap::key_type} and
+\ccc{Vertex2VectorPropertyMap::key_type} must coincide;
+
+\ccTypes
+
+%\ccNestedType{TYPE}{some nested types}
+\ccEnum{   enum Tag_order {Tag_3, Tag_4};}{}
+
+
+\ccCreation
+\ccCreationVariable{ridge_approximation}  %% choose variable name, given by \ccVar
+
+\ccConstructor{Ridge_approximation(TriangularPolyhedralSurface &P,
+		      Vertex2FTPropertyMap& vertex2k1_pm,
+		      Vertex2FTPropertyMap& vertex2k2_pm,
+		      Vertex2FTPropertyMap& vertex2b0_pm,
+		      Vertex2FTPropertyMap& vertex2b3_pm,
+		      Vertex2FTPropertyMap& vertex2P1_pm,
+		      Vertex2FTPropertyMap& vertex2P2_pm,
+		      Vertex2VectorPropertyMap& vertex2d1_pm,
+		      Vertex2VectorPropertyMap& vertex2d2_pm);} 
+{Precondition : check if all faces of P are triangular. } 
+
+%\ccOperations
+
+\ccMethod{  OutputIt compute_all_ridges(OutputIt it, Tag_order ord = Tag_3);}
+{Computes blue, red and crest ridges.}
+\ccGlue
+\ccMethod{   OutputIt compute_ridges(Ridge_interrogation_type r_type, 
+			  OutputIt ridge_lines_it,
+			  Tag_order ord = Tag_3);}
+{Computes blue, red or crest ridges.}
+
+\ccSeeAlso
+
+\ccc{Ridge_line}
+
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Jet_fitting_3/Ridge_approximation.cpp}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{Jet_fitting_3/Ridge_approximation.cpp}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
