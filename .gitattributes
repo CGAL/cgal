@@ -391,9 +391,7 @@ BGL/doc_tex/BGL_ref/Vertex_is_border_t_enum.tex -text
 BGL/doc_tex/BGL_ref/Vertex_point_t_enum.tex -text
 BGL/doc_tex/BGL_ref/embedded_graph_traits_Polyhedron_3.tex -text
 BGL/doc_tex/BGL_ref/graph_traits_Polyhedron_3.tex -text
-BGL/doc_tex/BGL_ref/graph_traits_Polyhedron_3_const.tex -text
 BGL/doc_tex/BGL_ref/halfedge_graph_traits_Polyhedron_3.tex -text
-BGL/doc_tex/BGL_ref/halfedge_graph_traits_Polyhedron_3_const.tex -text
 BGL/doc_tex/BGL_ref/intro.tex -text
 BGL/doc_tex/BGL_ref/main.tex -text
 BGL/include/CGAL/boost/graph/BGL_properties.h -text
