@@ -64,28 +64,30 @@ Edges in this graph are {\em ordered} according to the following relations:
 \begin{description}
 
 \item[Opposite] 
-An edge \ccc{'v: x->y'} is said to be the {\em opposite} of edge \ccc{'u: a->b'} 
-iff \ccc{a} $==$ \ccc{y} and \ccc{b} $==$ \ccc{c}.
+An edge $'v: x->y'$ is said to be the {\em opposite} of edge $'u: a->b'$ 
+iff $a==y$ and $b==c$.
 
 \item[Rotational Successor] 
 An edge $'v: s->q'$ is said to be the {\em rotational successor} 
-of edge $'u: s->p'$ iff $v!=u$ is the {\em first} edge found by 
-a counter-clockwise rotation of $u$ around the source vertex $s$.
+of edge $'u: s->p'$ iff $v$ is the {\em first} edge with source vertex $s$
+found by a {\em counter-clockwise} rotation of $u$ around its source 
+vertex $s$ such that $u!=v$.
  
 \item[Rotational Predecessor] 
-An edge \ccc{'v: s->q'} is said to be the {\em rotational predecessor}
-of edge \ccc{'u: s->p'} iff \ccc{v} is the {\em first} edge found by 
-a clockwise rotation of \ccc{u} around the source vertex \ccc{s}.
+An edge $'v: s->q'$ is said to be the {\em rotational predecessor}
+of edge $'u: s->p'$ iff $v$ is the {\em first} edge with source vertex $s$
+found by a {\em clockwise} rotation of $u$ around its source vertex $s$
+such that $u!=v$.
 
 \item[Linear Successor] 
-An edge \ccc{'v: b->c'} is said to be the {\em linear successor} of edge 
-\ccc{'u:a->b'} iff \ccc{v} is the rotational successor of the opposite
-of v.
+An edge $'v: b->c'$ is said to be the {\em linear successor} of edge 
+$'u:a->b'$ iff $v$ is the {\em rotational successor} of the 
+{\em opposite} of $v$.
  
 \item[Linear Predecessor] 
-An edge \ccc{'v: b->c'} is said to be the {\em linear predecessor} of edge 
-\ccc{'u:a->b'} iff \ccc{v} is the opposite of the rotational predecessor
-of v.
+An edge $'v: b->c'$ is said to be the {\em linear predecessor} of edge 
+$'u:a->b'$ iff $v$ is the {\em opposite} of the {\em rotational predecessor}
+of $v$.
 
 \end{description}
 
