@@ -28,7 +28,7 @@ algorithms of the \ccAnchor{http://www.boost.org/libs/graph/doc/index.html}{Boos
 
 \section{A Short Introduction to the Boost Graph Library}
 
-The algorithms of the {\sc Bgl} operate on models of the various graph concepts. 
+The algorithms of the {\sc Bgl} operate on models of the various {\em graph concepts}. 
 The {\em traits class} \ccc{boost::graph_traits} allows the algorithms to determine the types of vertices and edges. 
 {\em Free functions} that operator on graphs allow the algorithms to obtain,
 for example, the source vertex of an edge, or  all edges incident to a vertex. The algorithms 
@@ -38,10 +38,20 @@ during the execution of the algorithms. Finally, the graph algorithms use
 the {em named parameter} mechanism, which allows to pass the  arguments in
 arbitrary order.
 
+
+\subsubsection*{Graph Concepts}
+
+The {\sc Bgl} introduces several graph concepts, which have different sets of characteristics and requirements,
+as for example whether one can enumerate all vertices or all edges, whether one only can get the outgoing 
+edges of a vertex, or also the ingoing edges, or whether one can add and remove vertices and edges or not. 
+
+Graph concepts in the {\sc Bgl} manual: \path|http://www.boost.org/libs/graph/doc/graph_concepts.html|
+
+
 \subsubsection*{The Graph Traits Class}
 
 The algorithms determine types with the help of the traits class
-\ccc{boost::graph_traits}.  Such types are the \ccc{vertex_descriptor}
+\ccAnchor{http://www.boost.org/libs/graph/doc/graph_traits.html}{\ccc{boost::graph_traits}}.  Such types are the \ccc{vertex_descriptor}
 which is equivalent to a vertex handle in \cgal\ data structures, the
 \ccc{vertex_iterator} which is similar to the vertex iterators in
 \cgal\ data structures, and the \ccc{out_edge_iterator} which is
@@ -52,6 +62,9 @@ because their value type is a \ccc{vertex_descriptor}, whereas in
 type, namely the vertex type.  Given a graph type \ccc{G} the
 declaration of a vertex descriptor looks as follows:
 \ccc{boost::graph_traits<G>::vertex_descriptor vd;}.
+
+\smallskip
+The graph traits in the {\sc Bgl} manual: \path|http://www.boost.org/libs/graph/doc/graph_traits.html|
 
 \subsubsection*{Free Functions for Exploring a Graph}
 
@@ -65,10 +78,13 @@ way we have written the types is a simplification, that is in reality
 the signature of the first of the above functions is 
 \ccc{pair<boost::graph_traits<Graph>::vertex_iterator,boost::graph_traits<Graph>::vertex_iterator> vertices(const Graph& g);}.
 
+\smallskip
+The free functions required for graph concepts: \path|http://www.boost.org/libs/graph/doc/graph_concepts.html|
+
 \subsubsection*{Property Maps}
 
 Another feature used heavily in the {\sc Bgl} is the {\em property map}
-which is offered by the \ccAnchor{http://www.boost.org/libs/property_map/property_map.html}{Boost Property Map Library}.
+which is offered by the {Boost Property Map Library}.
 Property maps are used to attach information to vertices and edges. It is again
 a traits class and some free functions for obtaining the property map from
 a graph, and  for getting and putting properties. 
@@ -87,7 +103,8 @@ The data themselves may be stored in the vertex or edge, or they may
 be stored in an external data structure, or they may be computed on
 the fly. Only the property map itself knows.
 
-
+\smallskip
+Property maps in the Boost manuals: \path|http://www.boost.org/libs/property_map/property_map.html|
 
 \subsubsection*{Visitors}
 
@@ -100,14 +117,16 @@ The functions as well as the event points are library specific. Event
 points in graph algorithms are, for example, when a vertex is {\em discovered}, when
 all outgoing edges of a vertex are {\em discovered}.
 
+\smallskip
+Visitors in the {\sc Bgl} manual: \path|http://www.boost.org/libs/graph/doc/visitor_concepts.html|
 
 \subsubsection{Named Parameters}
 
 The algorithms of the {\sc Bgl} often have many parameters. Although the default
 value is most often appropriate, one has to write them explicitly, if one only
 wants to deviate from the default for the last one.  The solution to this problem
-is to first write a tag and then the parameter, that is a typical call to
-Dijkstra's shortest path algorithm might look as follows:
+is to first write a tag and then the parameter, which for
+Dijkstra's shortest path algorithm, might look as follows:
 
 
 \begin{cprog} 
@@ -117,9 +136,11 @@ Dijkstra's shortest path algorithm might look as follows:
   dijkstra_shortest_paths(g, s, predecessor_map(&p[0]).distance_map(&d[0]));
 \end{cprog}
 
-The named parameters have the tags \ccc{predecessor_map} and \ccc{distance_map} and
+The named parameters in the example use the tags \ccc{predecessor_map} and \ccc{distance_map} and
 they are concatenated with the dot operator.
 
+\smallskip
+Named parameters in the {\sc Bgl} manual: \path|http://www.boost.org/libs/graph/doc/bgl_named_params.html|
 
 \section{Extensions of the BGL}
 
@@ -130,8 +151,8 @@ Here we should mention the oriented graph and the embedding.
 
 
 By providing partial specialization of the class \ccc{boost::graph_traits} and the 
-free functions for traversing a graph for \cgal\ data structures these become models of
-the Boost graph concepts, that is the graph algorithms can operate on them
+free functions for traversing a graph, the \cgal\ data structures become models of
+the Boost graph concepts. Consequently the graph algorithms can operate on them
 directly.
 
 \subsection{About Header Files and Namespaces}
@@ -144,11 +165,18 @@ and what naming conventions we apply to what.
 
 \subsection{Triangulations}
 
-
+Triangulations have vertices and faces. Edges are pairs of a face and the
+index of the edge.
 Particular care has to be taken with the infinite vertex, and its incident
 edges. One can either use a filtered graph, which makes the infinite edges
 invisible, or one can have a property map that returns an infinite length
 for these edges.
+
+
+{\bf TODO: Replace Dijkstra with examples for EMST}
+The Euclidean Minimum Spanning Tree for a point set in the plane can be
+computed by running the minimum spanning tree algorithm on a Delaunay
+triangulation of the point set.
 
 
 
@@ -182,11 +210,7 @@ for the Delaunay triangulation.
 \ccIncludeExampleCode{../examples/BGL/Triangulation_2/dijkstra_with_internal_property.cpp}
 
 
-
-The Euclidean Minimum Spanning Tree for a point set in the plane can be
-computed by running the minimum spanning tree algorithm on a Delaunay
-triangulation of the point set.
-
+\subsection{Arrangements}
 
 
 
