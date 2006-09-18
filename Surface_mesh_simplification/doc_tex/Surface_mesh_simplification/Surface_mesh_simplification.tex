@@ -38,7 +38,7 @@ meaning that you can customize some aspects of the process by passing a set of {
 
 \subsection{Triangulated Surface Mesh}
 
-A \ccc{TriangulatedSurfaceMesh} is structuraly equivalent to a \ccc{CGAL::Polyhedron_3}) whose facets are only triangles.
+A \ccc{TriangulatedSurfaceMesh} is structuraly equivalent to a \ccc{CGAL::Polyhedron_3} whose facets are only triangles.
 
 Conceptually, is similar to a \ccc{HalfedgeDS} with the restriction that all facets are triangular. In order to simplify the {\em efficient} adaptation of concrete surface types, it is {\em not} modeled exactly as a \ccc{HalfedgeDS} but as a directed graph, with its related functions and associated properties, as explained below:
 
@@ -50,9 +50,9 @@ Following the {\sc Bgl} design, operations in a \ccc{TriangulatedSurfaceMesh} ar
 
 \subsubsection{Valid Models}
 
-A \ccc{CGAL::Polyhedron_3} is a valid \ccc{TriangulatedSurfaceMesh} model as long as its facets are only triangles. A polyhedron is represented as a \ccc{HalfedgeDS}, and the vertices and edges of any halfedge data structure correspond exactly to a \ccc{HalfedgeGraph}. The \ccc{HalfedgeDS::undirected_edge_iterator} of the halfedge graph concept is trivially obtained by iterating over one out of two halfedges.
+A \ccc{CGAL::Polyhedron_3} is a valid \ccc{TriangulatedSurfaceMesh} model as long as its facets are only triangles. A polyhedron is represented as a \ccc{HalfedgeDS}, and the vertices and edges of any halfedge data structure correspond exactly to a \ccc{HalfedgeGraph}. The \ccc{HalfedgeGraph::undirected_edge_iterator} of the halfedge graph concept is trivially obtained by iterating over one out of two halfedges.
 
-Any \ccc{TriangulationDataStructure_2} is also a valid \ccc{TriangulatedSurfaceMesh} model. A triangulation edge is given as a face (triangle) plus 2 vertex indices: \ccc{face(c)(i,j)}. Such edge is inherently directed since the vertex indices are lexicographically ordered in the edge. Furthermore, for any triangulation directed edge \ccc{cell(c)(i,j)}, the opposite directed edge, \ccc{cell(c)(j,i)}, is always well defined and belongs to the triangulation. Thus, any \ccc{TriangulationDataStructure_2} can be trivially adapted to be a \ccc{HalfedgeGraph}. 
+Any \ccc{TriangulationDataStructure_2} is also a valid \ccc{TriangulatedSurfaceMesh} model. A triangulation edge is given as a triangular face  plus the index of the edge: \ccc{(f,i)}. Such edge is inherently directed since the vertices of the faces are oriented counterclockwise. Furthermore, for any triangulation directed edge \ccc{(f,i)}, the opposite directed edge, \ccc{f->neighbor(i), f->neighbor(i)->index(f)}, is always well defined and belongs to the triangulation. Thus, any \ccc{TriangulationDataStructure_2} can be trivially adapted to be a \ccc{HalfedgeGraph}. 
 
 Throughout this documentation, the unqualified term {\em edge} refers to an undirected edge (even though in a \ccc{HalfedgeGraph} the term edge alone refers to the directed edge).
 
