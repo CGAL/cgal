@@ -14,7 +14,6 @@
 %%
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
-\section{Introduction}
 
 Many geometric data structures can be interpreted as graphs, as they consist of
 vertices, edges and faces. This is the case for the halfedge data structure,
@@ -25,49 +24,125 @@ faces as edges of the dual graph.
 
 As the scope of \cgal\ is geometry and not graph algorithms, we
 provide the necessary classes and functions that allow to use the
-algorithms of the \ccAnchor{http://www.boost.org/libs/graph/doc/index.html}{Boost Graph Library} for \cgal\ data structures.
+algorithms of the \ccAnchor{http://www.boost.org/libs/graph/doc/index.html}{Boost Graph Library ({\sc Bgl})} for \cgal\ data structures.
+
+\section{A Short Introduction to the Boost Graph Library}
 
 The algorithms of the {\sc Bgl} operate on models of the various graph concepts. 
-The traits class \ccc{boost::graph_traits} allows the algorithms to determine the types of vertices and edges. 
-Free functions that operator on graphs allow the algorithms to obtain,
-for example, the source vertex of an edge, or  all edges incident to a vertex.
+The {\em traits class} \ccc{boost::graph_traits} allows the algorithms to determine the types of vertices and edges. 
+{\em Free functions} that operator on graphs allow the algorithms to obtain,
+for example, the source vertex of an edge, or  all edges incident to a vertex. The algorithms 
+use {\em property maps} to associate information to vertices and edges. 
+The algorithms allow {\em visitors} to register callbacks that will be called
+during the execution of the algorithms. Finally, the graph algorithms use
+the {em named parameter} mechanism, which allows to pass the  arguments in
+arbitrary order.
+
+\subsubsection*{The Graph Traits Class}
+
+The algorithms determine types with the help of the traits class
+\ccc{boost::graph_traits}.  Such types are the \ccc{vertex_descriptor}
+which is equivalent to a vertex handle in \cgal\ data structures, the
+\ccc{vertex_iterator} which is similar to the vertex iterators in
+\cgal\ data structures, and the \ccc{out_edge_iterator} which is
+similar to edge circulators, which allow to enumerate the edges
+incident to a vertex. The latter two are similar and not equivalent,
+because their value type is a \ccc{vertex_descriptor}, whereas in
+\cgal\ handles, iterators, and cicrulators all have the same value
+type, namely the vertex type.  Given a graph type \ccc{G} the
+declaration of a vertex descriptor looks as follows:
+\ccc{boost::graph_traits<G>::vertex_descriptor vd;}.
+
+\subsubsection*{Free Functions for Exploring a Graph}
+
+The algorithms obtain incidence information with the help of global
+functions like \ccc{pair<vertex_iterator,vertex_iterator>
+vertices(const Graph& g);} for getting an iterator range which allows
+to enumerate all vertices, or \ccc{int num_vertices(const Graph&);} for getting the number of vertices of a graph, or
+\ccc{vertex_descriptor source(edge_descriptor, const Graph&}, for
+getting the source vertex of an edge. Note, that the
+way we have written the types is a simplification, that is in reality
+the signature of the first of the above functions is 
+\ccc{pair<boost::graph_traits<Graph>::vertex_iterator,boost::graph_traits<Graph>::vertex_iterator> vertices(const Graph& g);}.
+
+\subsubsection*{Property Maps}
+
+Another feature used heavily in the {\sc Bgl} is the {\em property map}
+which is offered by the \ccAnchor{http://www.boost.org/libs/property_map/property_map.html}{Boost Property Map Library}.
+Property maps are used to attach information to vertices and edges. It is again
+a traits class and some free functions for obtaining the property map from
+a graph, and  for getting and putting properties. 
+
+The free functions are \ccc{get} and \ccc{put}.  The first one is overloaded.
+It allows to obtain a property map for a given property tag. For example
+\ccc{m = get(g, boost::vertex_index)} gives us a property map that allows to retrieve
+an index in the range  \ccc{[0, num_vertices(g))} for a vertex descriptor \ccc{vd}
+with the call \ccc{int vdi = get(m, vd)}.  Just as \ccc{get} allows to read data,
+\ccc{put} allows to write them.  Dijksta's shortest path algorithm will write
+the predecessor of each vertex, as well as the distance to the source in such a 
+property map.
+
+
+The data themselves may be stored in the vertex or edge, or they may
+be stored in an external data structure, or they may be computed on
+the fly. Only the property map itself knows.
+
+
+
+\subsubsection*{Visitors}
+
+Visitors are ojects that provide functions that get called at
+specified event points by the algorithm they visit.  The notion of
+visitors is a design pattern, and also used in \cgal, e.g. the \ccc{Arr_observer<Arrangement>} 
+in the arrangement package.  
+
+The functions as well as the event points are library specific. Event
+points in graph algorithms are, for example, when a vertex is {\em discovered}, when
+all outgoing edges of a vertex are {\em discovered}.
+
+
+\subsubsection{Named Parameters}
+
+The algorithms of the {\sc Bgl} often have many parameters. Although the default
+value is most often appropriate, one has to write them explicitly, if one only
+wants to deviate from the default for the last one.  The solution to this problem
+is to first write a tag and then the parameter, that is a typical call to
+Dijkstra's shortest path algorithm might look as follows:
+
+
+\begin{cprog} 
+  std::vector<vertex_descriptor> p(num_vertices(g));
+  std::vector<int> d(num_vertices(g));
+  vertex_descriptor s = vertex(A, g);
+  dijkstra_shortest_paths(g, s, predecessor_map(&p[0]).distance_map(&d[0]));
+\end{cprog}
+
+The named parameters have the tags \ccc{predecessor_map} and \ccc{distance_map} and
+they are concatenated with the dot operator.
+
+
+\section{Extensions of the BGL}
+
+Here we should mention the oriented graph and the embedding.
+
+
+\section{CGAL Data Structures that are Models of the Boost Graph Concept}
+
 
 By providing partial specialization of the class \ccc{boost::graph_traits} and the 
 free functions for traversing a graph for \cgal\ data structures these become models of
 the Boost graph concepts, that is the graph algorithms can operate on them
 directly.
 
-Another feature used heavily in the {\sc Bgl} is the {\em property map}
-which is offered by the \ccAnchor{http://www.boost.org/libs/property_map/property_map.html}{Boost Property Map Library}.
-Property maps are used to attach information to vertices and edges. It is again
-a traits class and some free functions for obtaining the property map from
-a graph, and  for getting and putting properties. The data themselves
-may be stored in the vertex or edge, or they may be stored in an external
-data structure, or they may be computed on the fly. Only the property
-map itself knows.
-
-
-As this section is not an introduction to the {\sc Bgl}, we only point
-out where the main differences are. In \cgal\ the iterators and
-circulators are at the same time handles, that is they all dereference
-to a vertex, edge or face. In the {\sc Bgl} there is one level of
-indirection. That is, the value type of a vertex iterator is a vertex
-descriptor.  In \cgal\ we have circulators for edges incident to a
-vertex, as we have a geometric embedding with a natural order, wheras
-the {\sc Bgl} has iterator ranges for incident edges.
-
-
-
-
-\section{CGAL Data Structures that are Models of the Boost Graph Concept}
-
 \subsection{About Header Files and Namespaces}
+
+As we interface two libraries we have to explain what resides in which namespace,
+and what naming conventions we apply to what. 
+
+\subsection{Polyhedral Surfaces}
 
 
 \subsection{Triangulations}
-
-As a triangulation has vertices, edges and faces, it is natural to interpret it as a graph,
-and to run graph algorithms on it.  
 
 
 Particular care has to be taken with the infinite vertex, and its incident
@@ -82,7 +157,7 @@ for these edges.
 In the following example we create a triangulation and run Dijkstra's shortest path
 algorithm on it. Because the vertex handles of the triangulation are not indices
 in an array, we have to provide a property map that maps vertex handles to
-int's between 0 and \ccc{t.number_of_vertices()}.
+int's in the range \ccc{[0, t.number_of_vertices())}.
 
 \ccIncludeExampleCode{../examples/BGL/Triangulation_2/dijkstra.cpp}
 
@@ -108,8 +183,9 @@ for the Delaunay triangulation.
 
 
 
-
-
+The Euclidean Minimum Spanning Tree for a point set in the plane can be
+computed by running the minimum spanning tree algorithm on a Delaunay
+triangulation of the point set.
 
 
 
