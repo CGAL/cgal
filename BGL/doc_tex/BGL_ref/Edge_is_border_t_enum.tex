@@ -8,15 +8,24 @@
 
 The constant \ccc{edge_is_border} is a 
 \ccAnchor{http://www.boost.org/libs/graph/doc/PropertyTag.html}
-{property tag} which identifies the {\em is\_border} property
-of an edge of a \ccc{DirectedEmbeddedGraph}.
+{property tag} which refers to the property
+of an edge of being a border edge.
 
-A \ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}
-{ReadablePropertyMap} 
-for this property can be extracted from any \ccc{DirectedEmbeddedGraph},
-using the tag \ccc{edge_is_border}, via the usual {\sc Bgl} 
+\ccc{edge_is_border} is an 
+\ccAnchor{http://www.boost.org/libs/graph/doc/using_property_maps.html}
+{interior property}. 
+That is, a
+\ccAnchor{http://www.boost.org/libs/property_map/PropertyMap.html}{PropertyMap} 
+for \ccc{edge_is_border} can be extracted from any proper model of a \ccc{HalfedgeGraph}
+via the usual {\sc Bgl}
 \ccAnchor{http://www.boost.org/libs/graph/doc/PropertyGraph.html}
-{PropertyGraph} interface.
+{PropertyGraph} interface:
+
+\ccc{boost::get(edge_is_border,graph)}
+
+The boolean flag that indicates if the edge is a border can be directly accessed via:
+
+\ccc{boost::get(edge_is_border,graph,edge)}
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::Polyhedron_edge_is_border_property_map<Traits>} \\

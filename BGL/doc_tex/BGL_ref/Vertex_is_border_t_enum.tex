@@ -6,18 +6,26 @@
 \ccRefLabel{vertex_is_border}
 \ccHtmlCrossLink{vertex_is_border}
 
-The constant \ccc{vertex_is_border} is a
+The constant \ccc{vertex_is_border} is a 
 \ccAnchor{http://www.boost.org/libs/graph/doc/PropertyTag.html}
-{property tag} which identifies the {\em is\_border} property 
-of a vertex of a \ccc{DirectedEmbeddedGraph}.
+{property tag} which refers to the property
+of a vertex of being a border vertex.
 
-A \ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
-for this property can be extracted from any \ccc{DirectedEmbeddedGraph},
-using the tag \ccc{vertex_is_border}, via the usual {\sc Bgl}
+\ccc{vertex_is_border} is an 
+\ccAnchor{http://www.boost.org/libs/graph/doc/using_property_maps.html}
+{interior property}. 
+That is, a
+\ccAnchor{http://www.boost.org/libs/property_map/PropertyMap.html}{PropertyMap} 
+for \ccc{vertex_is_border} can be extracted from any proper model of 
+a \ccc{HalfedgeGraph} via the usual {\sc Bgl}
 \ccAnchor{http://www.boost.org/libs/graph/doc/PropertyGraph.html}
-{PropertyGraph} interface.
+{PropertyGraph} interface:
 
-A vertex is a border vertex of it is incident upon a border edge.
+\ccc{boost::get(vertex_is_border,graph)}
+
+The boolean flag that indicates if the vertex is a border can be directly accessed via:
+
+\ccc{boost::get(vertex_is_border,graph,edge)}
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::Polyhedron_vertex_is_border_property_map<Traits>} \\

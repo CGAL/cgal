@@ -14,34 +14,36 @@
 %%
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
-
-\begin{ccRefClass}{embedded_graph_traits< CGAL::Polyhedron_3<Traits> >}
-
-%% add template arg's if necessary
+\begin{ccRefConcept}{EmbeddedHalfedgeGraph}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
-%% \ccHtmlIndexC[class]{} %% add further index entries
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
 \ccDefinition
 
-The class \ccRefName\ is a specialization of \ccc{CGAL::embedded_graph_traits}
-for \ccc{Polyhedron_3}. It provides the {\em Associates Types} 
-for the \ccc{EmbeededHalfedgeGraph} concept.
+The concept \ccRefName\ describes the requirements of a \ccc{HalfedgeGraph}
+with a geometric embeeding.
 
-The template parameter \ccc{Traits} is the same \ccc{Traits} template parameter 
-of a \ccc{CGAL::Polyhedron_3}
+\ccHeading{Requirements}
 
-\ccInclude{CGAL/boost/graph/embedded_graph_traits_Polyhedron_3.h}
+The graph is geometrically embedded, that is, each vertex is associated with
+ a generalized point (whether in the plane, the sphere, a surface, or whatever.)
+ 
+\ccRefines
+\ccc{HalfedgeGraph}
+
+A model of this graph is required to have the {\em interior property} \ccc{vertex_point} attached to its vertices.
 
 \ccTypes
-  \ccTypedef{typename CGAL::Polyhedron_3::Point_3 Point ;}
-  {The point type of the vertex.}
+  \ccNestedType{Point}{The type of generalized point representing the geometric embedding of the graph.}{}
 
-\ccSeeAlso
 
-\end{ccRefClass}
+\ccHasModels
+\ccRefIdfierPage{CGAL::embedded_graph_traits< CGAL::Polyhedron_3<Traits> > }
+
+\end{ccRefConcept}
 
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of footer
 % EOF
 % +------------------------------------------------------------------------+
-

@@ -21,26 +21,22 @@
 
 \ccDefinition
 
-The concept \ccRefName\ describes the requirements of a
-Boost \ccAnchor{http://www.boost.org/libs/graph/doc/graph_concepts.html}{graph}
-representing a subset of a \ccc{HalfedgeDS}.
+The concept \ccRefName\ describes the requirements of a basic
+\ccAnchor{http://www.boost.org/libs/graph/doc/graph_concepts.html}{Bgl Graph}
+commonly found associated to many geometric data structures.
 
-This graph is a refinement of \ccc{DirectedEmbeddedGraph} with 
-some added connectivity requirements:
- 
-\begin{enumerate}
-\item For each directed edge $\overrightarrow{st}$
+\ccHeading{Requirements}
+
+Vertices and edges are required to have a distinguishable \ccc{null} state 
+such that any default constructed vertex or edge descriptor is formally
+referring to a non-existing vertex or edge.
+
+All edges are {\em directed}, that is, they are defined as an {\em ordered pair} 
+of vertices, and for each directed edge $\overrightarrow{st}$
 it's opposite edge $\overrightarrow{ts}$ is part of the graph.
 
-\item For any directed edge it's {\em succesor} (rotational and linear)
-is part of the graph.
-
-\item For any directed edge it's {\em predeccesor} (rotational and linear) 
-is part of the graph.
-\end{enumerate}
-
-Furthermore, because they must come in pairs, there is the additional
-notion of an {\em undirected} edge for a pair of opposite edges.
+Because (directed) edges must come in pairs, there is the additional
+notion of an {\em undirected} edge for a pair of opposing edges.
 The number of undirected edges is exactly half the number of directed edges.
 
 The directed edges are not called \ccc{halfedges} (as in a
@@ -52,7 +48,7 @@ pair of opposite edges, seen as a unity, is an {\em undirected edge}.
  
 Note that this concept does not imply the existence of two different types
 for directed and undirected edges. Instead, if specifies that there is only one type of edge,
-hence only one \ccc{edge_descriptor}, which refers to the directed edge.
+hence only one \ccc{edge_descriptor}, which refers to the directed edge.\\
 An undirected edge must be implicitely addressed by a single \ccc{edge_descriptor},
 and there is no requirement about which of the directed edges of the pair must
 be used to refer to an undirected edge.
@@ -63,9 +59,40 @@ underlying data structure (with the exception of the cycle(s)
 corresponding to the border(s) of the underlying DS, which might not
 have an associated facet).
 
+Edges in this graph are {\em ordered} according to the following relations:
+
+\begin{description}
+
+\item[Opposite] 
+An edge \ccc{'v: x->y'} is said to be the {\em opposite} of edge \ccc{'u: a->b'} 
+iff \ccc{a} $==$ \ccc{y} and \ccc{b} $==$ \ccc{c}.
+
+\item[Rotational Successor] 
+An edge $'v: s->q'$ is said to be the {\em rotational successor} 
+of edge $'u: s->p'$ iff $v!=u$ is the {\em first} edge found by 
+a counter-clockwise rotation of $u$ around the source vertex $s$.
+ 
+\item[Rotational Predecessor] 
+An edge \ccc{'v: s->q'} is said to be the {\em rotational predecessor}
+of edge \ccc{'u: s->p'} iff \ccc{v} is the {\em first} edge found by 
+a clockwise rotation of \ccc{u} around the source vertex \ccc{s}.
+
+\item[Linear Successor] 
+An edge \ccc{'v: b->c'} is said to be the {\em linear successor} of edge 
+\ccc{'u:a->b'} iff \ccc{v} is the rotational successor of the opposite
+of v.
+ 
+\item[Linear Predecessor] 
+An edge \ccc{'v: b->c'} is said to be the {\em linear predecessor} of edge 
+\ccc{'u:a->b'} iff \ccc{v} is the opposite of the rotational predecessor
+of v.
+
+\end{description}
 
 \ccRefines
-\ccc{DirectedEmbeddedGraph}
+\ccAnchor{http://www.boost.org/libs/graph/doc/PropertyGraph.html}{PropertyGraph}
+
+A model of this graph is required to have the {\em interior properties} \ccc{edge_is_border} and \ccc{vertex_is_border} attached to its edges and vertices.
 
 \ccTypes
   \ccNestedType{undirected_edge_iterator}
@@ -73,23 +100,55 @@ have an associated facet).
   in each opposing pair. This iterator accesses a directed edge 
   (as represented by an \ccc{edge_descriptor}) and not an undirected edge 
   since there is no type explicitely representing it}{}
-  
+
 \ccOperations
 
 Following the {\sc Bgl} design, the following graph operations are defined as free rather than member functions.
 
+All overloads have a non-const version (ommited here for brevity).
+
   \ccFunction
   {template<class Graph>
-  std::pair < typename CGAL::halfedge_graph_traits<Graph const>::undirected_edge_iterator
-             ,typename CGAL::halfedge_graph_traits<Graph const>::undirected_edge_iterator
-             >   
-  undirected_edges(Graph const& g );
+  typename boost::graph_traits<Graph const>::edge_descriptor 
+  opposite_edge(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g );
   }
-  {Returns a pair of iterators representing the range \ccc{[begin,end)} 
-  of undirected edges in this graph.}
+  {Returns the {\em opposite} of \ccc{e}.}
+  
+  \ccFunction
+  {template<class Graph>
+  typename boost::graph_traits<Graph const>::edge_descriptor 
+  next_edge_ccw(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g );
+  }
+  {Returns the {\em rotational successor} of \ccc{e}.\\
+  If the resulting edge does not belong to \ccc{g} the result is a \ccc{null} (default constructed) edge.}
+  
+  \ccFunction
+  {template<class Graph>
+  typename boost::graph_traits<Graph const>::edge_descriptor 
+  next_edge_cw(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g );
+  }
+  {Returns the {\em rotational predecessor} of \ccc{e}.\\
+  If the resulting edge does not belong to \ccc{g} the result is a \ccc{null} (default constructed) edge.}
+  
+  \ccFunction
+  {template<class Graph>
+  typename boost::graph_traits<Graph const>::edge_descriptor 
+  next_edge(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g );
+  }
+  {Returns the {\em linear successor} of \ccc{e}.\\
+  If the resulting edge does not belong to \ccc{g} the result is a \ccc{null} (default constructed) edge. }
+  
+  \ccFunction
+  {template<class Graph>
+  typename boost::graph_traits<Graph const>::edge_descriptor 
+  prev_edge(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g );
+  }
+  {Returns the {\em linear predecessor} of \ccc{e}.\\
+  If the resulting edge does not belong to \ccc{g} the result is a \ccc{null} (default constructed) edge. }
 
 \ccHasModels
-\ccRefIdfierPage{CGAL::halfedge_graph_traits< CGAL::Polyhedron_3<Traits> > }\\
+\ccRefIdfierPage{boost::graph_traits< CGAL::Polyhedron_3<Traits> > }\\
+\ccRefIdfierPage{CGAL::halfedge_graph_traits< CGAL::Polyhedron_3<Traits> > }
 
 \end{ccRefConcept}
 

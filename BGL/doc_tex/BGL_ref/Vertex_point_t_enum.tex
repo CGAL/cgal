@@ -2,18 +2,29 @@
 
 \ccInclude{CGAL/boost/graph/properties.h}
 
-\ccGlobalEnum{enum vertex_point_t { Vertex_point } ; }
-\ccRefLabel{Vertex_point}
-\ccHtmlCrossLink{Vertex_point}
+\ccGlobalEnum{enum vertex_point_t { vertex_point } ; }
+\ccRefLabel{vertex_point}
+\ccHtmlCrossLink{vertex_point}
 
-The constant \ccc{Vertex_point} is a \ccAnchor{http://www.boost.org/libs/graph/doc/PropertyTag.html}
-{property tag} which identifies the {\em Point} property attached to the vertex of a \ccc{DirectedEmbeddedGraph}.
+The constant \ccc{vertex_point} is a \ccAnchor{http://www.boost.org/libs/graph/doc/PropertyTag.html}
+{property tag} which identifies the {\em Point} property attached to the vertex of a \ccc{EmbeddedHalfedgeGraph}.
 
-A \ccAnchor{http://www.boost.org/libs/property_map/PropertyMap.html}{PropertyMap} 
-for this property can be extracted from any \ccc{DirectedEmbeddedGraph},
-using the tag \ccc{Vertex_point}, via the usual {\sc Bgl}
+A \ccc{vertex_point} is an 
+\ccAnchor{http://www.boost.org/libs/graph/doc/using_property_maps.html}
+{interior property}. 
+That is, a
+\ccAnchor{http://www.boost.org/libs/property_map/PropertyMap.html}{PropertyMap} 
+for a \ccc{vertex_point} can be extracted from any proper model of \ccc{DirectedEmbeddedGraph}
+via the usual {\sc Bgl}
 \ccAnchor{http://www.boost.org/libs/graph/doc/PropertyGraph.html}
-{PropertyGraph} interface.
+{PropertyGraph} interface:
+
+\ccc{boost::get(vertex_point,graph)}
+
+A point of a vertex can be directly accessed via:
+
+\ccc{boost::get(vertex_point,graph,vertex)}\\
+\ccc{boost::put(vertex_point,graph,vertex,newpoint)}
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::Polyhedron_vertex_point_const_map<Traits> } \\
