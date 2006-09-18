@@ -433,8 +433,9 @@ bool process(const std::string& filename,
   CGAL::QP_pricing_strategy<QP_instance, ET, Tags> *s = 
     create_strategy<QP_instance, ET, Tags>(options);
   CGAL::QP_solver<QP_instance, ET, Tags> solver(qp, s, verbosity);
-  // output number of iterations
-  cout << solver.iterations() << " ";
+  // output solution + number of iterations
+  cout << CGAL::to_double(solver.solution()) << "(" 
+       << solver.iterations() << ") ";
   const bool is_valid = solver.is_valid();
   delete s;
 
@@ -560,7 +561,7 @@ bool processSRFType(const std::string& filename,
 bool processLSRFType(const std::string& filename,
 		     const std::map<std::string,int>& options)
 {
-  std::cout << " Iterations:   ";
+  std::cout << " Solution:   ";
   Key_const_iterator it = options.find("Is linear");
   const bool processOnlyOneValue = it != options.end();
   bool value = false;
