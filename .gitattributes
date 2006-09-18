@@ -1683,10 +1683,6 @@ Qt_widget/doc_tex/Qt_widget/standard_toolbar.png -text svneol=unset#image/png
 Qt_widget/doc_tex/Qt_widget/triangulation.eps -text svneol=unset#application/postscript
 Qt_widget/doc_tex/Qt_widget/triangulation.gif -text svneol=unset#image/gif
 Qt_widget/doc_tex/Qt_widget/triangulation.pdf -text svneol=unset#application/pdf
-Ridges_3/doc_tex/Ridges_3/ellipsoid_ridges.pdf -text svneol=unset#application/pdf
-Ridges_3/doc_tex/Ridges_3/ellipsoid_ridges_mesh.eps -text svneol=unset#application/postscript
-Ridges_3/doc_tex/Ridges_3/ellipsoid_ridges_mesh.jpg -text svneol=unset#image/jpeg
-Ridges_3/doc_tex/Ridges_3/ellipsoid_ridges_mesh.pdf -text svneol=unset#application/pdf
 Ridges_3/examples/Ridges_3/data/bezierpb3-0.007812.off -text svneol=unset#application/octet-stream
 Ridges_3/examples/Ridges_3/data/ellipe0.003.off -text svneol=unset#application/octet-stream
 Ridges_3/examples/Ridges_3/data/ellipsoid_u_0.02.off -text
