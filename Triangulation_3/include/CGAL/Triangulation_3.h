@@ -562,6 +562,12 @@ public:
   Vertex_handle insert(const Point & p, Cell_handle start = Cell_handle());
   Vertex_handle insert(const Point & p, Locate_type lt, Cell_handle c,
 	               int li, int lj);
+  template < class Conflict_tester, class Hidden_points_visitor >
+  inline Vertex_handle insert_in_conflict(const Point & p, 
+					  Locate_type lt, 
+					  Cell_handle c, int li, int lj,
+					  const Conflict_tester &tester,
+					  Hidden_points_visitor &hider);
  
   template < class InputIterator >
   int insert(InputIterator first, InputIterator last)
@@ -625,7 +631,7 @@ protected:
                           OutputIteratorCells,
 		          OutputIteratorInternalFacets> it) const {
     bool FIND_CONFLICTS_2_DEPRECATED_USE_FIND_CONFLICTS;
-    return find_conflicts(c,tester,it);
+    return find_conflicts<2>(c,tester,it);
   }
 
   template <class Conflict_test,
@@ -640,7 +646,7 @@ protected:
                           OutputIteratorCells,
 		          OutputIteratorInternalFacets> it) const {
     bool FIND_CONFLICTS_3_DEPRECATED_USE_FIND_CONFLICTS;
-    return find_conflicts(c,tester,it);
+    return find_conflicts<3>(c,tester,it);
   }
 
   // - c is the current cell, which must be in conflict.
@@ -650,7 +656,8 @@ protected:
   // 0 -> unknown
   // 1 -> in conflict
   // 2 -> not in conflict (== on boundary)
-  template <class Conflict_test,
+  template <int dim,
+	    class Conflict_test,
             class OutputIteratorBoundaryFacets,
             class OutputIteratorCells,
             class OutputIteratorInternalFacets>
@@ -658,17 +665,18 @@ protected:
          OutputIteratorCells,
          OutputIteratorInternalFacets>
   find_conflicts(Cell_handle c, const Conflict_test &tester,
-	           Triple<OutputIteratorBoundaryFacets,
-                          OutputIteratorCells,
-		          OutputIteratorInternalFacets> it) const
+		 Triple<OutputIteratorBoundaryFacets,
+                        OutputIteratorCells,
+		        OutputIteratorInternalFacets> it) const
   {
     CGAL_triangulation_precondition( dimension()>=2 );
+    CGAL_triangulation_precondition( dim == dimension() );
     CGAL_triangulation_precondition( tester(c) );
 
     c->set_in_conflict_flag(1);
     *it.second++ = c;
 
-    for (int i=0; i<dimension()+1; ++i) {
+    for (int i=0; i<dim+1; ++i) {
       Cell_handle test = c->neighbor(i);
       if (test->get_in_conflict_flag() == 1) {
 	  if (c < test)
@@ -679,7 +687,7 @@ protected:
 	  if (tester(test)) {
 	      if (c < test)
 		  *it.third++ = Facet(c, i); // Internal facet.
-              it = find_conflicts(test, tester, it);
+              it = find_conflicts<dim>(test, tester, it);
 	      continue;
 	  }
 	  test->set_in_conflict_flag(2); // test is on the boundary.
@@ -705,13 +713,20 @@ protected:
     Facet facet;
 
     // Find the cells in conflict
-    find_conflicts(c, tester, make_triple(Oneset_iterator<Facet>(facet),
-					  std::back_inserter(cells),
-					  Emptyset_iterator()));
-    
+    switch (dimension()) {
+    case 3:
+      find_conflicts<3>(c, tester, make_triple(Oneset_iterator<Facet>(facet),
+					       std::back_inserter(cells),
+					       Emptyset_iterator()));
+      break;
+    case 2:
+      find_conflicts<2>(c, tester, make_triple(Oneset_iterator<Facet>(facet),
+					       std::back_inserter(cells),
+					       Emptyset_iterator()));
+    }
     // Create the new cells and delete the old.
     return _tds._insert_in_hole(cells.begin(), cells.end(),
-	                        facet.first, facet.second);
+				  facet.first, facet.second);
   }
 
 private:
@@ -2337,6 +2352,168 @@ insert(const Point & p, Locate_type lt, Cell_handle c, int li, int lj)
   default:
     return insert_outside_affine_hull(p);
   }
+}
+
+
+
+template < class GT, class Tds >
+template < class Conflict_tester, class Hidden_points_visitor >
+typename Triangulation_3<GT,Tds>::Vertex_handle
+Triangulation_3<GT,Tds>::
+insert_in_conflict(const Point & p, 
+		   Locate_type lt, Cell_handle c, int li, int lj,
+		   const Conflict_tester &tester,
+		   Hidden_points_visitor &hider)
+{
+  Vertex_handle v;
+
+  switch (dimension()) {
+  case 3:
+    {
+      if ((lt == VERTEX) &&
+	  (tester.compare_weight(c->vertex(li)->point(), p)==0) ) {
+	return c->vertex(li);
+      }
+      // If the new point is not in conflict with its cell, it is hidden.
+      if (!tester.test_initial_cell(c)) {
+	hider.hide_point(c,p);
+	return Vertex_handle();
+      }
+      
+      // Ok, we really insert the point now.
+      // First, find the conflict region.
+      std::vector<Cell_handle> cells;
+      Facet facet;
+      
+      cells.reserve(32);
+      find_conflicts<3>
+	(c, tester, make_triple(Oneset_iterator<Facet>(facet),
+				std::back_inserter(cells),
+				Emptyset_iterator()));
+      
+      // Remember the points that are hidden by the conflicting cells,
+      // as they will be deleted during the insertion.
+      hider.process_cells_in_conflict(cells.begin(), cells.end());
+      
+      
+      // Insertion.
+      v = tds()._insert_in_hole(cells.begin(), cells.end(),
+				facet.first, facet.second);
+      
+      v->set_point (p);
+      // Store the hidden points in their new cells.
+      hider.reinsert_vertices(v);
+      return v;
+    }
+  case 2: 
+    {
+      // This check is added compared to the 3D case
+      if (lt == OUTSIDE_AFFINE_HULL)
+	return insert_outside_affine_hull (p);
+
+      if ((lt == VERTEX) &&
+	  (tester.compare_weight(c->vertex(li)->point(), p)==0) ) {
+	return c->vertex(li);
+      }
+      // If the new point is not in conflict with its cell, it is hidden.
+      if (!tester.test_initial_cell(c)) {
+	hider.hide_point(c,p);
+	return Vertex_handle();
+      }
+      
+      // Ok, we really insert the point now.
+      // First, find the conflict region.
+      std::vector<Cell_handle> cells;
+      Facet facet;
+      
+      cells.reserve(32);
+      find_conflicts<2>
+	(c, tester, make_triple(Oneset_iterator<Facet>(facet),
+				std::back_inserter(cells),
+				Emptyset_iterator()));
+      
+      // Remember the points that are hidden by the conflicting cells,
+      // as they will be deleted during the insertion.
+      hider.process_cells_in_conflict(cells.begin(), cells.end());
+      
+      
+      // Insertion.
+      v = tds()._insert_in_hole(cells.begin(), cells.end(),
+				facet.first, facet.second);
+      
+      v->set_point (p);
+      // Store the hidden points in their new cells.
+      hider.reinsert_vertices(v);
+      return v;
+    }
+  default:
+    {
+      // dimension() <= 1
+      if (lt == OUTSIDE_AFFINE_HULL)
+	return insert_outside_affine_hull (p);
+
+      if (lt == VERTEX && 
+	  tester.compare_weight(c->vertex(li)->point(), p) == 0) {
+	return c->vertex(li);
+      }
+
+      // If the new point is not in conflict with its cell, it is hidden.
+      if (! tester.test_initial_cell(c)) {
+	hider.hide_point(c,p);
+	return Vertex_handle();
+      }
+
+      if (dimension() == 0) {
+	return hider.replace_vertex(c, li, p);
+      }
+
+
+      // dimension() == 1;
+
+      // Ok, we really insert the point now.
+      // First, find the conflict region.
+      std::vector<Cell_handle> cells;
+      Facet facet;
+      Cell_handle bound[2];
+      // corresponding index: bound[j]->neighbor(1-j) is in conflict.
+
+      // We get all cells in conflict,
+      // and remember the 2 external boundaries.
+      cells.push_back(c);
+
+      for (int j = 0; j<2; ++j) {
+	Cell_handle n = c->neighbor(j);
+	while ( tester(n) ) {
+	  cells.push_back(n);
+	  n = n->neighbor(j);
+	}
+	bound[j] = n;
+      }
+
+      // Insertion.
+      hider.process_cells_in_conflict(cells.begin(), cells.end());
+
+      tds().delete_cells(cells.begin(), cells.end());
+      
+      // We preserve the order (like the orientation in 2D-3D).
+      v = tds().create_vertex();
+      Cell_handle c0 = tds().create_face(v, bound[0]->vertex(0), Vertex_handle());
+      Cell_handle c1 = tds().create_face(bound[1]->vertex(1), v, Vertex_handle());
+      tds().set_adjacency(c0, 1, c1, 0);
+      tds().set_adjacency(bound[0], 1, c0, 0);
+      tds().set_adjacency(c1, 1, bound[1], 0);
+      bound[0]->vertex(0)->set_cell(bound[0]);
+      bound[1]->vertex(1)->set_cell(bound[1]);
+      v->set_cell(c0);
+      v->set_point (p);
+
+      hider.reinsert_vertices(v);
+
+      return v;
+    }
+  }
+  
+
 }
 
 template < class GT, class Tds >

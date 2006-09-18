@@ -231,17 +231,19 @@ public:
 
       if (dimension() == 2) {
           Conflict_tester_2 tester(p, this);
-	  ifit = Tr_Base::find_conflicts(c, tester,
-					 make_triple(std::back_inserter(facets),
-						     std::back_inserter(cells),
-						     ifit)).third;
+	  ifit = Tr_Base::template find_conflicts<2>
+	    (c, tester,
+	     make_triple(std::back_inserter(facets),
+			 std::back_inserter(cells),
+			 ifit)).third;
       }
       else {
           Conflict_tester_3 tester(p, this);
-	  ifit = Tr_Base::find_conflicts(c, tester,
-					 make_triple(std::back_inserter(facets),
-						     std::back_inserter(cells),
-						     ifit)).third;
+	  ifit = Tr_Base::template find_conflicts<3>
+	    (c, tester,
+	     make_triple(std::back_inserter(facets),
+			 std::back_inserter(cells),
+			 ifit)).third;
       }
 
       // Reset the conflict flag on the boundary.
@@ -451,14 +453,22 @@ void make_hole_3D_new( Vertex_handle v,
       const Self *t;
 
   public:
-
-      Conflict_tester_3(const Point &pt, const Self *tr)
-	  : p(pt), t(tr) {}
-
-      bool operator()(const Cell_handle c) const
-      {
-	  return t->side_of_sphere(c, p, true) == ON_BOUNDED_SIDE;
-      }
+    
+    Conflict_tester_3(const Point &pt, const Self *tr)
+      : p(pt), t(tr) {}
+    
+    bool operator()(const Cell_handle c) const
+    {
+      return t->side_of_sphere(c, p, true) == ON_BOUNDED_SIDE;
+    }
+    Oriented_side compare_weight(const Point &, const Point &) const
+    {
+      return ZERO;
+    }
+    bool test_initial_cell(Cell_handle) const
+    {
+      return true;
+    }
   };
 
   class Conflict_tester_2
@@ -468,13 +478,36 @@ void make_hole_3D_new( Vertex_handle v,
 
   public:
 
-      Conflict_tester_2(const Point &pt, const Self *tr)
-	  : p(pt), t(tr) {}
+    Conflict_tester_2(const Point &pt, const Self *tr)
+      : p(pt), t(tr) {}
+    
+    bool operator()(const Cell_handle c) const
+    {
+      return t->side_of_circle(c, 3, p, true) == ON_BOUNDED_SIDE;
+    }
+    Oriented_side compare_weight(const Point &, const Point &) const
+    {
+      return ZERO;
+    }
+    bool test_initial_cell(Cell_handle) const
+    {
+      return true;
+    }
+  };
+  class Hidden_point_visitor
+  {
+  public:
 
-      bool operator()(const Cell_handle c) const
-      {
-	  return t->side_of_circle(c, 3, p, true) == ON_BOUNDED_SIDE;
-      }
+    Hidden_point_visitor() {}
+
+    template <class InputIterator>
+    void process_cells_in_conflict(InputIterator, InputIterator) const {}
+    void reinsert_vertices(Vertex_handle ) {}
+    Vertex_handle replace_vertex(Cell_handle c, int index, 
+				 const Point &) {
+      return c->vertex(index);
+    }
+    void hide_point(Cell_handle, const Point &) {}
   };
 
   class Perturbation_order {
@@ -492,6 +525,8 @@ void make_hole_3D_new( Vertex_handle v,
   friend class Perturbation_order;
   friend class Conflict_tester_3;
   friend class Conflict_tester_2;
+
+  Hidden_point_visitor hidden_point_visitor;
 };
 
 template < class Gt, class Tds >
@@ -508,43 +543,25 @@ insert(const Point & p, Cell_handle start)
 template < class Gt, class Tds >
 typename Delaunay_triangulation_3<Gt,Tds>::Vertex_handle
 Delaunay_triangulation_3<Gt,Tds>::
-insert(const Point & p, Locate_type lt, Cell_handle c, int li, int)
+insert(const Point & p, Locate_type lt, Cell_handle c, int li, int lj)
 {
   switch (dimension()) {
   case 3:
     {
-      if ( lt == Tr_Base::VERTEX )
-	  return c->vertex(li);
-
       Conflict_tester_3 tester(p, this);
-      Vertex_handle v = insert_conflict(c, tester);
-      v->set_point(p);
+      Vertex_handle v = insert_in_conflict(p, lt, c, li, lj, 
+					   tester, hidden_point_visitor);
       return v;
     }// dim 3
   case 2:
     {
-      switch (lt) {
-      case Tr_Base::OUTSIDE_CONVEX_HULL:
-      case Tr_Base::FACET:
-      case Tr_Base::EDGE:
-	{
-          Conflict_tester_2 tester(p, this);
-	  Vertex_handle v = insert_conflict(c, tester);
-	  v->set_point(p);
-	  return v;
-	}
-      case Tr_Base::VERTEX:
-	return c->vertex(li);
-      case Tr_Base::OUTSIDE_AFFINE_HULL:
-	  // if the 2d triangulation is Delaunay, the 3d
-	  // triangulation will be Delaunay
-	return Tr_Base::insert_outside_affine_hull(p);
-      default:
-	CGAL_triangulation_assertion(false); // CELL should not happen in 2D.
-      }
+      Conflict_tester_2 tester(p, this);
+      return insert_in_conflict(p, lt, c, li, lj, 
+				tester, hidden_point_visitor);
     }//dim 2
   default :
     // dimension <= 1
+    // Do not use the generic insert.
     return Tr_Base::insert(p, c);
   }
 }
