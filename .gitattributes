@@ -377,7 +377,6 @@ BGL/doc_tex/BGL.tex -text
 BGL/doc_tex/BGL/BGL.tex -text
 BGL/doc_tex/BGL/PkgDescription.tex -text
 BGL/doc_tex/BGL/main.tex -text
-BGL/doc_tex/BGL_ref/DirectedEmbeddedGraph.tex -text
 BGL/doc_tex/BGL_ref/Edge_index_property_map_external.tex -text
 BGL/doc_tex/BGL_ref/Edge_index_property_map_stored.tex -text
 BGL/doc_tex/BGL_ref/Edge_index_t_enum.tex -text
