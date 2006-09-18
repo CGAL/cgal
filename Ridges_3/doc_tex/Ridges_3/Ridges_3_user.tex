@@ -1,3 +1,12 @@
+%note on pictures
+
+% ellipsoid_ridges 
+% ./blind -f data/ellipsoid_u_0.02.off -d4 -m4 -a3 -t3 
+% ../../demo/Ridges_3/introspect-qt data/ellipsoid_u_0.02.off data/data_ellipsoid_u_0.02.offRIDGES-d4-m4-t3-a3-p0.4ogl.txt 0 0
+
+
+
+
 
 \newtheorem{definition}{Definition.}
 \newcommand{\hot}{h.o.t}%[0]
@@ -12,7 +21,7 @@ ridge lines. Ridges are curves of {\em extremal} curvature and
 therefore encode important informations used in segmentation,
 registration, matching and surface analysis.  Based on the results of
 the article
-%%\cite{rr}
+\cite{cgal:cp-tdare-05}
 , we propose algorithms to identify and extract
 different parts of this singular ridge curve as well as umbilics on a
 surface given as a triangular mesh. Differential quantities associated
@@ -45,7 +54,7 @@ And two ``container'' classes.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 A comprehensive description of ridges can be found in
-%\cite{hgyg-ttdpf-99,ip-gd-01}
+\cite{cgal:hgygm-ttdpf-99,cgal:p-gd-01,cgal:cp-ssulc-05}
 , and in the sequel, we just introduce the basic notions so as to
 explain our algorithms.  Consider a smooth embedded surface, and
 denote $k_1$ and $k_2$ the principal curvatures, with $k_1\geq
