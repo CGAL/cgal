@@ -7,7 +7,6 @@
 #include <cstdlib>
 #include <vector>
 #include <list>
-//#include <boost/property_map.hpp>
 
 #include <CGAL/Ridges.h> 
 #include <CGAL/Umbilic.h>
@@ -22,10 +21,11 @@
 #include "PolyhedralSurf_rings.h"
 #include "options.h"//parsing command line
 
-typedef double                          FT;
-typedef CGAL::Cartesian<FT>             Kernel;
+typedef PolyhedralSurf::Traits          Kernel;
+typedef Kernel::FT                      FT;
 typedef Kernel::Point_3                 Point_3;
 typedef Kernel::Vector_3                Vector_3;
+
 typedef PolyhedralSurf::Vertex          Vertex;
 typedef PolyhedralSurf::Vertex_handle   Vertex_handle;
 typedef PolyhedralSurf::Vertex_iterator Vertex_iterator;
@@ -77,7 +77,7 @@ static const char *const optv[] = {
   "a:nrings <int>",	//# rings
   "p:npoints <int>",	//# points
   "t:tagorder <int>",   //order of diff quant to compute ridge type :
-                        //  = 3 or 4
+                        //  = Tag_3 or Tag_4
   "u:umb_size  <number>",  //size of umbilic patches (as multiple of 1ring size)
   "v|",//verbose?
   NULL
@@ -285,7 +285,6 @@ int main(int argc, char *argv[])
   //---------------------------------------------------------------------------
   //Ridges
   //--------------------------------------------------------------------------
-  //  Differential_quantities diff_q;
   Ridge_approximation ridge_approximation(P, 
 					  vertex2k1_pm, vertex2k2_pm,
 					  vertex2b0_pm, vertex2b3_pm,
@@ -297,8 +296,8 @@ int main(int argc, char *argv[])
   //Find BLUE_RIDGE, RED_RIDGE, CREST or all ridges
   //   ridge_approximation.compute_ridges(CGAL::BLUE_RIDGE, ii, tag_order);  
   //   ridge_approximation.compute_ridges(CGAL::RED_RIDGE, ii, tag_order);  
-  //ridge_approximation.compute_ridges(CGAL::CREST_RIDGE, ii, tag_order);  
-     ridge_approximation.compute_all_ridges(ii, tag_order);  
+ ridge_approximation.compute_ridges(CGAL::CREST_RIDGE, ii, tag_order);  
+  // ridge_approximation.compute_all_ridges(ii, tag_order);  
  
   std::vector<Ridge_line*>::iterator iter_lines = ridge_lines.begin(), 
     iter_end = ridge_lines.end();

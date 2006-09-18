@@ -11,9 +11,8 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Ridge_approximation< TriangularPolyhedralSurface, OutputIt, 
-Vertex2FTPropertyMap , Vertex2VectorPropertyMap>} %% add template
-arg's if necessary
+\begin{ccRefClass}{Ridge_approximation<TriangularPolyhedralSurface,OutputIt,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>} 
+%% add templatearg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -29,7 +28,7 @@ ridges of a triangular polyhedral surface.
 The class \ccRefName\ has four template parameters. 
 \ccc{TriangularPolyhedralSurface} provides  the surface. 
 Parameter \ccc{OutputIt} is a stl Output Iterator which
-\ccc{value_type} is \ccc{CGAL::Ridge_line*}. Parameters  \ccc{Vertex2FTPropertyMap}
+\ccc{value_type} is \ccc{Ridge_line*}. Parameters  \ccc{Vertex2FTPropertyMap}
 and \ccc{Vertex2VectorPropertyMap} provides the differential properties of
 the surface associated to its vertices.
 
@@ -53,8 +52,8 @@ hyperbolic ridges.}
 \ccCreation
 \ccCreationVariable{ridge_approximation}  %% choose variable name, given by \ccVar
 
-\ccConstructor{Ridge_approximation(TriangularPolyhedralSurface &P,
-		      Vertex2FTPropertyMap& vertex2k1_pm,
+\ccConstructor{Ridge_approximation(TriangularPolyhedralSurface &P,     
+			Vertex2FTPropertyMap& vertex2k1_pm,
 		      Vertex2FTPropertyMap& vertex2k2_pm,
 		      Vertex2FTPropertyMap& vertex2b0_pm,
 		      Vertex2FTPropertyMap& vertex2b3_pm,
@@ -62,8 +61,7 @@ hyperbolic ridges.}
 		      Vertex2FTPropertyMap& vertex2P2_pm,
 		      Vertex2VectorPropertyMap& vertex2d1_pm,
 		      Vertex2VectorPropertyMap& vertex2d2_pm);}
-		      {Precondition : check if all faces of P are
-		      triangular. }
+		      {Precondition : all faces of P may be  triangular. }
 
 %\ccOperations
 

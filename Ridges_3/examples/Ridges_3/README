@@ -18,6 +18,8 @@ Usage is : blind  with options
 			0 means collect enough rings to make appro possible
 			k>=1 fixes the nb of rings to be collected
     "p:npoints <int>",   //# points
+    "t:tagorder <int>",   //order of diff quant to compute ridge type :
+                        //  = Tag_3 or Tag_4
 			0 means this option is not considered, this is the default
 			n>=1 fixes the nb of points to be used
     "u:umb_size  <number>",  //size of umbilic patches (as multiple of 1ring size)
@@ -30,13 +32,13 @@ Note : if the nb of collected points is less than the required min number of
  
 EXAMPLES
 ---------------------------------------------------------
-./blind -f data/ellipsoid_u_0.02.off -d4 -m4 -a3 -t4 -v
+./blind -f data/ellipsoid_u_0.02.off -d4 -m4 -a3 -t3 -v
 
 visu with:
  ../../demo/Ridges_3/introspect-qt data/ellipsoid_u_0.02.off data/data_ellipsoid_u_0.02.offRIDGES-d4-m4-t4-a3-p0.4ogl.txt 0 0
 
 
-
+crest -f data/mecanic.off -d4 -m4 -a4 -t4
 
 
  blind -f data/models/aim@shape/brain.off -d4 -m4 -a3 -t4

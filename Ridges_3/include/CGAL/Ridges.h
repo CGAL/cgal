@@ -346,8 +346,6 @@ compute_ridges(Ridge_interrogation_type r_type, OutputIt ridge_lines_it, Tag_ord
 {
   tag_order = ord;
 
-  CGAL_precondition( (r_type == BLUE_RIDGE) || (r_type == RED_RIDGE) || (r_type == CREST_RIDGE) );
-
   //reinit the is_visited_map
   Facet_iterator itb = P->facets_begin(), ite = P->facets_end();
   for(;itb!=ite;itb++) is_visited_map[itb] = false;
