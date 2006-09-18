@@ -25,12 +25,16 @@
 
 The class \ccRefName\ and corresponding free-function overloads
 provides the specializations for \ccc{CGAL::Polyhedron_3 const}
-which are required to make it a {\em read-only} model of the Boost
+which are required to aadapt it as a {\em read-only} model of the Boost
 \ccAnchor{http://www.boost.org/libs/graph/doc/graph_concepts.html}{graph}
 concepts:\\
 \ccAnchor{http://www.boost.org/libs/graph/doc/BidirectionalGraph.html}{BidirectionalGraph}\\
 \ccAnchor{http://www.boost.org/libs/graph/doc/AdjacencyGraph.html}{AdjacencyGraph}\\
 \ccAnchor{http://www.boost.org/libs/graph/doc/EdgeAndVertexListGraph.html}{EdgeAndVertexListGraph}\\
+\ccAnchor{http://www.boost.org/libs/graph/doc/PropertyGraph.html}{PropertyGraph}\\
+
+The template parameter \ccc{Traits} is the same \ccc{Traits} template parameter 
+of a \ccc{CGAL::Polyhedron_3}
 
 \ccInclude{CGAL/boost/graph/graph_traits_Polyhedron_3.h}
 

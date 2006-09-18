@@ -23,18 +23,21 @@
 %% \ccHtmlIndexC[class]{} %% add further index entries
 \ccDefinition
 
-The class \ccRefName\ and corresponding free-function overloads 
-provides the specializations for \ccc{CGAL::Polyhedron_3} 
-which are required to make it a model of a \ccc{DirectedEmbeddedGraph}.
+The class \ccRefName\ is a specialization of \ccc{CGAL::embedded_graph_traits}
+for \ccc{Polyhedron_3}. It provides the {\em Associates Types} 
+for the \ccc{DirectedEmbeededGraph} concept.
+
+The template parameter \ccc{Traits} is the same \ccc{Traits} template parameter 
+of a \ccc{CGAL::Polyhedron_3}
 
 \ccInclude{CGAL/boost/graph/embedded_graph_traits_Polyhedron_3.h}
+
+These associated types, along with the free-function overloads specified in the graph concept
+and defined in the header file, allows a \ccc{Polyhedron_3} instance to be modeled as a \ccc{DirectedEmbeededGraph}.
 
 \ccTypes
   \ccTypedef{typename CGAL::Polyhedron_3::Point_3 Point ;}
   {The point type of the vertex.}
-
-\ccIsModel
-\ccc{DirectedEmbeddedGraph}
 
 \ccSeeAlso
 

@@ -69,10 +69,10 @@ of v.
 \end{description}
 
 \ccRefines
-\ccAnchor{http://www.boost.org/libs/graph/doc/PropertyGraph.html}{PropertyGraph}\\
+\ccAnchor{http://www.boost.org/libs/graph/doc/PropertyGraph.html}{PropertyGraph}
 
 \ccTypes
-  \ccNestedType{Point}{The type of generalized point representing the geometric embedding of the graph.}{what is this}
+  \ccNestedType{Point}{The type of generalized point representing the geometric embedding of the graph.}{}
 
 \ccOperations
 
@@ -121,28 +121,8 @@ Following the {\sc Bgl} design, the following graph operations are defined as fr
   }
   {Returns the {\em linear predecessor} of \ccc{e}.\\
   If the resulting edge does not belong to \ccc{g} the result is a \ccc{null} (default constructed) edge. }
-  
-  \ccFunction
-  {template<class Graph>
-  typename CGAL::embedded_graph_traits<Graph>::Point const& 
-  get_point(typename boost::graph_traits<Graph const>::vertex_descriptor v, Graph const& g );
-  }
-  {Returns the generalized point embedding the vertex \ccc{v}.\\
-  The exact nature of the point depends on the embedding of the graph and is
-  specified by the concrete model.}
-  
-  \ccFunction
-  {template<class Graph>
-  void set_point(typename boost::graph_traits<Graph>::vertex_descriptor v
-                ,Graph& g
-                ,typename CGAL::embedded_graph_traits<Graph>::Point p
-                );
-  }
-  {Sets \ccc{p} as the embedding of the vertex \ccc{v}.
-  }
 
 \ccHasModels
-\ccRefIdfierPage{boost::graph_traits< CGAL::Polyhedron_3<Traits> const > }\\
 \ccRefIdfierPage{boost::graph_traits< CGAL::Polyhedron_3<Traits> > }\\
 \ccRefIdfierPage{CGAL::embedded_graph_traits< CGAL::Polyhedron_3<Traits> > }
 
