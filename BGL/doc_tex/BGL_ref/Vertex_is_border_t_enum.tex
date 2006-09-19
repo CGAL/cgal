@@ -13,17 +13,16 @@ of a vertex of being a border vertex.
 
 \ccc{vertex_is_border} is an 
 \ccAnchor{http://www.boost.org/libs/graph/doc/using_property_maps.html}
-{interior property}. 
-That is, a
-\ccAnchor{http://www.boost.org/libs/property_map/PropertyMap.html}{PropertyMap} 
-for \ccc{vertex_is_border} can be extracted from any proper model of 
-a \ccc{HalfedgeGraph} via the usual {\sc Bgl}
+{interior property}, that is, a
+\ccAnchor{http://www.boost.org/libs/property_map/PropertyMap.html}{property map} 
+for \ccc{vertex_is_border} can be extracted from any  model of 
+a \ccc{HalfedgeGraph} using the {\sc Bgl}
 \ccAnchor{http://www.boost.org/libs/graph/doc/PropertyGraph.html}
 {PropertyGraph} interface:
 
 \ccc{boost::get(vertex_is_border,graph)}
 
-The boolean flag that indicates if the vertex is a border can be directly accessed via:
+The Boolean flag that indicates if the vertex is a border can be directly accessed via:
 
 \ccc{boost::get(vertex_is_border,graph,edge)}
 

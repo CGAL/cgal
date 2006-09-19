@@ -1,4 +1,4 @@
-#include <CGAL/Cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_vertex_base_with_id_2.h>
 #include <CGAL/graph_traits_Triangulation_2.h>
@@ -6,7 +6,7 @@
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/filtered_graph.hpp>
 
-typedef CGAL::Cartesian<double> K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point;
 
 typedef CGAL::Triangulation_vertex_base_with_id_2<K> Tvb;
@@ -90,11 +90,3 @@ main(int,char*[])
   }
   return 0;
 }
-
-
-
-
-
-
-
-

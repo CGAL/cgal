@@ -27,7 +27,7 @@ The class \ccRefName\ provides a model for the concept
 \ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
 that maps an edge in a {\sc Bgl}
 \ccAnchor{http://www.boost.org/libs/graph/doc/Graph.html}{graph}
-to the integer numbers in the range\ccc{[0,boost::num_edges(graph)]}
+to the integer numbers in the range \ccc{[0,boost::num_edges(graph))}
 by accessing the index directly from the edge.
 
 The template parameter \ccc{Graph} must be a model of a {\sc Bgl}
@@ -48,7 +48,7 @@ The template parameter \ccc{Graph} must be a model of a {\sc Bgl}
   {The type of {\sc Bgl} edge descriptor used as key.\\
    This edge must have a member function \ccc{std::size_t id() const;}
    returning the actual index, which is required to be unique for each edge
-   and in the range \ccc{[0,num_edges(graph)]}.
+   and in the range \ccc{[0,num_edges(graph))}.
   }
 
 \ccCreation

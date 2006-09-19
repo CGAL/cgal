@@ -21,11 +21,14 @@
 
 \ccDefinition
 
-The concept \ccRefName\ describes the requirements for a graph to be
-structurally equivalent to a halfedge data structure, and it provides
-an interface for efficient access to the opposite edge of an edge, and
-to the successor and predecessor of an edge in the iterator range of
-the incoming edges of a vertex.
+The concept \ccRefName\ describes the requirements for a graph that is
+structurally equivalent to a polyhedral surface represented by a
+halfedge data structure, and it provides an interface for efficient
+access to the opposite edge of an edge, and to the successor and
+predecessor of an edge in the iterator range of the incoming edges of
+a vertex.  Each vertex has a geometric position in space. As in a
+halfedge data structure we define the face adjcent to a halfedge to be
+to the {\em left} of the halfedge.
 
 
 \ccHeading{Requirements}
@@ -35,12 +38,10 @@ must be part of the graph.
 
 The incoming edges of a vertex $v$ have a fixed order, that is all
 calls of \ccc{in_edges(v,g)} must return the same iterator range,
-modulo a cyclic permutation. We call the order {\em clockwise}.
+modulo a cyclic permutation. The order must be {\em clockwise}.
 
-As the \ccRefName\ represents a surface there must exist an embedding
+As the \ccRefName\ is equivalent to a polyhedral surface there must exist an embedding
 for the vertices and edges such that the ordered edges do not intersect.
-
-
 
 
 \ccRefines
@@ -48,21 +49,27 @@ for the vertices and edges such that the ordered edges do not intersect.
 \ccAnchor{http://www.boost.org/libs/graph/doc/PropertyGraph.html}{PropertyGraph}
 
 A model of \ccRefName\ must have the {\em interior properties} 
-\ccc{edge_is_border} and \ccc{vertex_is_border} attached to its edges and vertices.
+\ccc{edge_is_border} attached to its edges,
+and it must have \ccc{vertex_is_border} and \ccc{vertex_point} attached to its vertices.
+
 
 
 
 \ccHeading{Associated Types}
 
+
+\ccNestedType{halfedge_graph_traits<HalfedeGraph>::Point}{The type of the geometric location of a vertex.}
+
+
 Because (directed) edges must come in pairs, there is the additional
-notion of an {\em undirected}\footnote{
+notion of an {\em undirected edge}\footnote{
 The directed edges are not called \ccc{halfedges} (as in a
 \ccc{HalfedgeDS}) because from the point of view of this graph, being
 a refinement of a {\sc Bgl} graph, each directed edge is an
 edge in itself. In other words, the unqualified term edge
 refers to one and only one directed edge and not to a pair.}
 % 
-edge for a pair of opposite edges.
+for a pair of opposite directed edges.
 The number of undirected edges is exactly half the number of directed edges.
 
  
@@ -125,12 +132,11 @@ iterator of the iterator range.
   }
   {Returns the counterclockwise neighbor of \ccc{e}.}
   
-
-The edges subdivide the surface on which in {\em faces}. The edges
-incident to the same face form a cycle, and an edge $e'=(v,w)$ is called
-the {\em successor} of edge $e=(u,v)$, and $e$ the {\em 
-predecessor} of $e'$, iff $e'$ is the clockwise neighbor of
-the opposite edge of $e$.
+A composition of these access functions yields an access function for
+the edge cycle adjacent to the same face.  An edge $e'=(v,w)$ is
+called the {\em successor} of edge $e=(u,v)$, and $e$ the {\em
+predecessor} of $e'$, iff $e'$ is the clockwise neighbor of the
+opposite edge of $e$.
  
 
   \ccFunction

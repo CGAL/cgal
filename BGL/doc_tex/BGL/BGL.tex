@@ -146,7 +146,30 @@ Named parameters in the {\sc Bgl} manual: \path|http://www.boost.org/libs/graph/
 
 \section{Extensions of the BGL}
 
-Here we should mention the oriented graph and the embedding.
+\cgal\ provides the partial specializations and free functions such that 
+several data structures become model of some of the {\sc Bgl} graph concepts.
+Furthermore, we define the new graph concept \ccc{HalfedgeGraph}, a traits class \ccc{halfedge_graph_traits},
+and free functions for accessing opposite edges as well as the clockwise and
+counterclockwise neighbor of an edge around a given vertex.
+
+These extensions are used by the surface simplification algorithms which follow
+the design of the {\sc Bgl} as sketched in the previous section.
+
+
+
+
+
+\section{Header Files, Namespaces, and Naming Conventions}
+
+As we interface two libraries we have to explain what resides in which namespace,
+and what naming conventions we apply to what. 
+
+Partial specializations of the \ccc{boost::graph_traits<Graph>} for the \cgal\ package
+\ccc{Package} are in the namespace \ccc{boost} and in the headerfile \ccc{<CGAL/boost/graph/graph_traits_Package.h>}.
+
+The \ccc{halfedge_graph_traits} class is in the namespace \ccc{CGAL},
+but it is not capitalized as the \ccc{boost::graph_traits} is not.
+The same holds for the types and enums for vertex and edge properties.
 
 
 \section{CGAL Data Structures that are Models of the Boost Graph Concept}
@@ -154,15 +177,12 @@ Here we should mention the oriented graph and the embedding.
 
 By providing partial specialization of the class \ccc{boost::graph_traits} and the 
 free functions for traversing a graph, the \cgal\ data structures become models of
-the Boost graph concepts. Consequently the graph algorithms can operate on them
+the Boost graph concepts. Consequently, the graph algorithms can operate on them
 directly.
 
-\subsection{About Header Files and Namespaces}
-
-As we interface two libraries we have to explain what resides in which namespace,
-and what naming conventions we apply to what. 
 
 \subsection{Polyhedral Surfaces}
+
 
 
 \subsection{Triangulations}
@@ -175,11 +195,13 @@ invisible, or one can have a property map that returns an infinite length
 for these edges.
 
 
-{\bf TODO: Replace Dijkstra with examples for EMST}
-The Euclidean Minimum Spanning Tree for a point set in the plane can be
-computed by running the minimum spanning tree algorithm on a Delaunay
+A classical example for an algorithm that is a combination of
+computational geometry and graph theory is the {\em Euclidean Minimum
+Spanning Tree} for a point set in the plane.  It can be computed by
+running the minimum spanning tree algorithm on a Delaunay
 triangulation of the point set.
 
+{\bf TODO: Replace Dijkstra with examples for EMST} 
 
 
 \ccHeading{Example: Dijkstra's shortest path}

@@ -7,15 +7,15 @@
 \ccHtmlCrossLink{vertex_point}
 
 The constant \ccc{vertex_point} is a \ccAnchor{http://www.boost.org/libs/graph/doc/PropertyTag.html}
-{property tag} which identifies the {\em Point} property attached to the vertex of a \ccc{EmbeddedHalfedgeGraph}.
+{property tag} which identifies the {\em Point} property attached to the vertex of a \ccc{HalfedgeGraph}.
 
 A \ccc{vertex_point} is an 
 \ccAnchor{http://www.boost.org/libs/graph/doc/using_property_maps.html}
-{interior property}. 
-That is, a
-\ccAnchor{http://www.boost.org/libs/property_map/PropertyMap.html}{PropertyMap} 
-for a \ccc{vertex_point} can be extracted from any proper model of \ccc{DirectedEmbeddedGraph}
-via the usual {\sc Bgl}
+{interior property}, 
+that is, a
+\ccAnchor{http://www.boost.org/libs/property_map/PropertyMap.html}{property map} 
+for a \ccc{vertex_point} can be extracted from any proper model of \ccc{HalfedgeGraph}
+using the {\sc Bgl}
 \ccAnchor{http://www.boost.org/libs/graph/doc/PropertyGraph.html}
 {PropertyGraph} interface:
 
