@@ -13,6 +13,13 @@ Note: binary i/o operators are tested in Mesh_3
 
 =============================== CGAL 3.2 ============================
 
+September 2006 Nico Kruithof
+- Combined find_conflicts_2 and find_conflicts_3 to find_conflicts
+  with the dimension
+- Introduced a generic insert_in_conflict in Triangulation_3 that is
+  used by the Delaunay and the regular triangulation. Also added a
+  visitor for dealing with hidden points in the regular triangulation.
+
 14 March 2006 Joachim Reichel
 - Added/fixed CGAL_MAKEFILE= line in makefiles
 
