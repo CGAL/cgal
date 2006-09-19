@@ -40,8 +40,8 @@ balls.  For a shrink factor smaller than one, the skin surface becomes
 tangent continuous, due to the appearance of patches of spheres and
 hyperboloids connecting the balls.
 
-This package constructs an isotopic mesh from a set of balls and a
-shrink factor using the algorithm described in
+This package constructs a mesh isotopic to the skin surface defined by
+a set of balls and a shrink factor using the algorithm described in
 \cite{cgal:kv-mssct-05}. %It also provides an interface to the surface
 %mesher presented in Chapter~\ref{chapter_SurfaceMesher} by providing a
 %model of the concept \ccc{Surface_3}.
@@ -184,6 +184,8 @@ steps and outputs a mesh in a \ccc{CGAL::Polyhedron_3}:
   int nSubdiv=0,
   bool grow_balls = true);}
 
+Where, \ccc{FT} is the number type used by the \ccc{Weighted_points}.
+
 To obtain more control over the algorithm, the different steps can
 also be performed separately. First, a \ccc{Skin_surface_3} object is
 created from an iterator range of weighted points and a shrink factor.
@@ -198,8 +200,18 @@ around the input balls instead of the shrunk input balls.
   FT shrink_factor,
   bool grow_balls = true);}
 
-The constructor for the union of balls class is similar, except for
-the missing shrink factor:
+The template parameter should implement the \ccc{SkinSurfaceTraits_3}
+concept. The type \ccc{WP_iterator}, is an iterator over weighted
+points as defined by \ccc{SkinSurfaceTraits_3} and \ccc{FT} is the
+number type used by the weighted points.
+
+
+For a shrink factor equal to one the skin surface is the boundary of
+the union of the input balls. In this case the algorithm used for
+meshing the skin surface greatly simplifies. These optimizations are
+implemented in the class \ccc{Union_of_balls_3}. The constructor for
+the union of balls class is similar, except for the missing shrink
+factor:
 
 \ccGlobalFunction{
   template <class SkinSurfaceTraits_3> 
@@ -207,15 +219,13 @@ the missing shrink factor:
   WP_iterator begin, WP_iterator end, 
   bool grow_balls = true);}
 
-
 With a model of the concept \ccc{SkinSurface_3} it is possible to
 generate a coarse mesh isotopic to the skin surface. Using the
 function \ccc{mesh_skin_surface_3} with signature:
 
-\ccGlobalFunction{template <class SkinSurface_3,
-                            class FT,
-                            class Polyhedron>
-void mesh_skin_surface_3(SkinSurface_3 skin_surface, Polyhedron &p);}
+\ccGlobalFunction{
+  template <class SkinSurface_3, class Polyhedron>
+  void mesh_skin_surface_3(const SkinSurface_3 &skin_surface, Polyhedron &p);}
 
 The last function takes the (coarse) mesh and subdivides it in-situ by
 applying a given number of 1-4 split operations (each triangle is
@@ -226,9 +236,10 @@ concept used to construct the coarse mesh is needed to move new points
 on the skin surface.
 
 \ccGlobalFunction{
-  template <class Polyhedron, class SkinSurface_3 >
-  void subdivide_skin_surface_mesh_3 (Polyhedron &p,
+  template <class SkinSurface_3, class Polyhedron >
+  void subdivide_skin_surface_mesh_3 (
   const SkinSurface_3 &skinsurface,
+  Polyhedron &p,
   int iterations=1);
 }
 
@@ -262,11 +273,12 @@ output is a \ccc{CGAL::Polyhedron}.
 \ccIncludeExampleCode{Skin_surface_3/skin_surface_simple.cpp}
 
 \subsection{Meshing and subdividing a skin surface}
-The following example shows the construction of a coarse mesh of the
-skin surface by explicitly performing different steps of the
-algorithm. It first constructs a \ccc{Skin_surface_3} object from an
-iterator range of weighted points and a shrink factor. From this
-object, the isotopic mesh is extracted using the function \ccc{CGAL::mesh_skin_surface_3}
+The following example shows the construction of mesh of the skin
+surface by explicitly performing different steps of the algorithm. It
+first constructs a \ccc{Skin_surface_3} object from an iterator range
+of weighted points and a shrink factor. From this object, the coarse
+mesh isotopic to the skin surface is extracted using the function
+\ccc{CGAL::mesh_skin_surface_3}
 
 Next, the coarse mesh is refined to obtain a better approximation. The
 use of \ccc{CGAL::Skin_surface_polyhedral_items_3<Skin_surface_3>} in

@@ -141,11 +141,11 @@ private:
   const Subdivision_policy &policy;
 };
 
-template <class Polyhedron_3,
-	  class SkinSurface_3>
+template <class SkinSurface_3,
+	  class Polyhedron_3>
 void subdivide_skin_surface_mesh_3(
-          Polyhedron_3 &p, 
           const SkinSurface_3 &skin,
+          Polyhedron_3 &p, 
           int nSubdiv = 1) {
   typedef Skin_surface_subdivision_policy_default_3<Polyhedron_3,
                                                     SkinSurface_3> Policy;

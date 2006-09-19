@@ -30,7 +30,7 @@
 
   \ccNestedType{RT}{The number type.}
 
-  \ccNestedType{Construct_anchor_point_3}{A predicate object which
+  \ccNestedType{Construct_anchor_point_3}{A constructor object which
     provides the following function operator:\\
     \ccc{Point operator()(const Point &center_del, const
       Point &center_vor);}\\
@@ -41,8 +41,9 @@
 \ccCreation
 \ccCreationVariable{traits}
 
-\ccConstructor{SkinSurfaceTraits_3(RT s=.5);}{
-    constructor that takes the shrink factor as argument.}
+\ccConstructor{SkinSurfaceTraits_3(RT s=.5);}{ constructor that takes
+  the shrink factor as argument. For meshing the boundary of the union
+  of a set of balls, the shrink factor is discarded.}
 
 \ccHasModels
 
@@ -53,7 +54,7 @@
 \ccThreeToTwo
 
 \ccOperations
-The following functions give access to the predicate objects:
+The following functions give access to the constructor objects:
 
 \ccMethod{
   Regular_RT shrink_factor() const;}{Returns the shrink factor.}
