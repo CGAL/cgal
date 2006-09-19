@@ -26,9 +26,6 @@ The concept \ccRefName\ describes the requirements for the Triangulated Surface 
 \ccRefines
 \ccc{HalfedgeGraph}
 
-\ccHeading{Methods}
-\ccc{EdgeIsBorderPropertyMap}
-
 \ccOperations
 
   \ccFunction
@@ -50,13 +47,13 @@ This function assumes the surface to be an {\em open 2-manifold} and it must
 never be called in a context were the collape would result in the surface 
 becoming a {\em non-manifold}. Thus, the following preconditions hold:
 
-source(p-q) $==$ source(p-t).\\
-target(p-q) $==$ source(q-b).\\
-One of p-q or q-p is not a border edge.\\
-p-t is a null edge iff p-q is a border edge.\\
-q-b is a null edge iff q-p is a border edge.\\
-if p-t is non-null, next(t-p) $==$ p-q.\\
-if q-b is non-null, next(b-q) $==$ q-p.
+$source(p-q)==source(p-t)$.\\
+$target(p-q)==source(q-b)$.\\
+One of $p-q$ or $q-p$ is not a border edge.\\
+$p-t$ is a null edge iff $p-q$ is a border edge.\\
+$q-b$ is a null edge iff $q-p$ is a border edge.\\
+if $p-t$ is non-null, $next(t-p)==p-q$.\\
+if $q-b$ is non-null, $next(b-q)==q-p$.
 
 The net effect of the operation is equivalent to removing one of the vertices
 and re-triangulating the resulting facet.
@@ -64,28 +61,28 @@ and re-triangulating the resulting facet.
 The actual collapse operation is required to remove at most 
 2 triangles, 3 {\em undirected} edges and 1 vertex, as follows:
 
-The triangle above p-q is called top-triangle.\\
-The triangle below p-q is called bottom-triangle.\\
-The triangle adjacent to the top-triangle along p-t is called top-left-triangle.\\
-The triangle adjacent to the bottom-triangle along q-b is called bottom-right-triangle.
+The triangle above $p-q$ is called {\em top-triangle}.\\
+The triangle below $p-q$ is called {\em bottom-triangle}.\\
+The triangle adjacent to the top-triangle along $p-t$ is called {\em top-left-triangle}.\\
+The triangle adjacent to the bottom-triangle along $q-b$ is called {\em bottom-right-triangle}.
 
 The preconditions guarantee that the top-left-triangle and top-bottom-triangle
-are disjoint, that t-p and p-q are both incident on the top-triangle and that
-b-q and q-p are both incident on the bottom-triangle.
+are disjoint, that $t-p$ and $p-q$ are both incident on the top-triangle and that
+$b-q$ and $q-p$ are both incident on the bottom-triangle.
       
-Either p or q is removed, which in turn removes the pair of opposing egdes 
-p-q and q-p (that is, the undirected edge p-q).
+Either $p$ or $q$ is removed, which in turn removes the pair of opposing egdes 
+$p-q$ and $q-p$ (that is, the undirected edge $p-q$).
 
-If there is a top-triangle, that is, p-q is not a border edge and p-t $!=$ null, it is removed.\\
-If there is a bottom triange, that is, q-p is not a border edge and q-b $!=$ null, it is removed.\\
+If there is a top-triangle, that is, $p-q$ is not a border edge and $p-t!=null$, it is removed.\\
+If there is a bottom triange, that is, $q-p$ is not a border edge and $q-b!=null$, it is removed.\\
 (at least one of these triangles exist so at least 1 triangle, and at most 2, are removed).
   
-Removing the top-triangle neccesarily removes the pair of opposing edges p-t and t-p.\\
-Removing the bottom-triangle neccesarily removes the pair of opposing edges q-b and b-q.
+Removing the top-triangle neccesarily removes the pair of opposing edges $p-t$ and $t-p$.\\
+Removing the bottom-triangle neccesarily removes the pair of opposing edges $q-b$ and $b-q$.
       
 If the bottom-triangle is removed and neither the top-triangle nor
-the bottom-right-triangle exist, the vertex removed is q. In all other
-cases, the vertex removed is p.
+the bottom-right-triangle exist, the vertex removed is $q$. In all other
+cases, the vertex removed is $p$.
 
 If any triangle (other than the top and bottom, which are removed) is defined by
 the removed vertex, it must be redefined with the other vertex, but it cannot
@@ -97,8 +94,8 @@ The function returns the vertex that is not removed.
 
 \ccHasModels
 \ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}
-  (through the various traits and function overloads that externally adapt a \cgal\
-  polyhedron to the involved concepts)
+\ccRefIdfierPage{CGAL::graph_traits< Polyhedron_3<Traits> >}
+\ccRefIdfierPage{CGAL::halfedge_graph_traits< Polyhedron_3<Traits> >}
 
 \end{ccRefConcept}
 

@@ -32,7 +32,7 @@ The algorithm implemented here is generic in the sense that it does not require 
  \ccAnchor{http://www.boost.org/libs/graph/doc/index.html}{ Boost Graph Library ({\sc Bgl})}.
 
 The design is \ccAnchor{http://en.wikipedia.org/wiki/Policy-based_design}{{\em policy-based}},
-meaning that you can customize some aspects of the process by passing a set of {\em policy objects}. Each policy object specifies a particular aspect of the algorithm, such as how edges are selected and where the replacement vertex is placed. All policies have a sensible default so you don't need to learn about them unless you need a non-default behaviour.
+meaning that you can customize some aspects of the process by passing a set of {\em policy objects}. Each policy object specifies a particular aspect of the algorithm, such as how edges are selected and where the replacement vertex is placed. All policies have a sensible default so you don't need to learn about them unless you need a non-default behaviour. Furthermore, the API uses the so-called \ccc{named-parameters} technique which allows you to pass only the parameters you have without worrying about their order or the default values for those you don't care about.
 
 \section{Definitions\label{SurfaceMeshSimplification:SecDefinitions}}
 
@@ -86,23 +86,38 @@ The surface must correspond to a valid \ccc{TSM} model, for example a \ccc{Polyh
 
 The stop predicate is called after each edge is selected for processing, {\em before} it is classfied as collapsable or not (thus before it is collapsed). If the stop predicate returns true the algorithm terminates.
 
-\subsection{Additional Surface Properties}
+\subsection{Property Maps}
 
-The algorithm needs to associate with each edge an implementation-specific internal record.
-To do that efficiently, the surfaces edges must be propery indexed, so
-a \ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
-corresponding to the \ccc{Edge_index} property must be passed.
+The algorithm needs to access some bits of information associated to the vertices and edges of the surface.\\ Following the {\sc Bgl} design, the following
+\ccAnchor{http://www.boost.org/libs/property_map/property_map.html}{property maps}, 
+which must be passed to the algorithm, are used for that:
 
-Sometimes it is desirable to keep some edges uncollapsed. This can be controlled by fixing vertices in the surface: any edge incident upon a fixed vertex will be left uncollapsed. Again
-\ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
-associating a bool to each vertx is passed to indicate that.
+\begin{itemize}
+
+\item vertex_point_map\\
+This property map provides lvalue access to the point of a vertex.
+
+\item edge_is_border_map\\
+This property map indicates whether an edge is a border of the surface.
+
+\item edge_index_map\\
+This property map indexes the edges into the range
+\ccc{[0,total_number_of_edges]} 
+
+\item vertex_is_fixed_map\\
+This property map indicates whether a vertex is fixed, that is, it cannot be modified by the
+simplification. Any edge incident upon a fixed vertex won't be collapsed.
+
+\end{itemize}
 
 \subsection{Cost Strategy}
 
 The specific way in which the collapse cost and vertex placement is
 calculated is called the {\em cost strategy}. The user can choose 
 different strategies in the form of policies and related parameters,
-passed to the algorithm. In the current package version, for instance,
+passed to the algorithm.
+ 
+In the current package version, for instance,
 one can choose between the Lindstrom-Turk strategy 
 (the default) or an edge-length cost with a midpoint 
 placement (much faster but less accurate).
@@ -111,21 +126,55 @@ placement (much faster but less accurate).
 
 \subsubsection{Cache Level}
 
-The cost for each edge is initially fixed and changes only in those edges affected by a neighboring collapse. A given edge can be expected to be affected by a neighboring collapse only a small number of times (in the order of the average vertex degree), so the total number of cost computations and recomputations is a small factor of the total number of edges. On the other hand, edges are processed in order of increasing cost, and as is the case with any sorting situation, the cost of any given edge must be accessed several times while it is compared against the cost of other edges, even if it remains constant. That is, costs are queried several times more than are computed and updated, so it make sense to cache the cost of an edge to avoid recomputing it.
+The cost for each edge is initially fixed and changes only in those edges 
+affected by a neighboring collapse. A given edge can be expected to be 
+affected by a neighboring collapse only a small number of times 
+(in the order of the average vertex degree), so the total number of 
+cost {\em computations} (and recomputations) is a small factor of
+the total number of edges. 
+On the other hand, edges are processed in order of increasing cost, and as is 
+the case with any sorting situation, the cost of any given edge must be accessed 
+several times while it is compared against the cost of other edges, even if it 
+remains constant. That is, costs are {\em queried} several times more than are computed 
+and updated, so it make sense to cache the cost of an edge to avoid recomputing it.
 
-The placement for each edge is queried only when the edge is effectively collapsed, however, most cost strategies are based on the placement, so each cost computation typically involves a hidden placement computation. Therefore, it might also make sense to cache not only the cost by also the placement (which is a Point object).
+The placement for each edge is queried only when the edge is effectively collapsed, 
+however, most cost strategies are based on the placement, so each cost computation 
+typically involves a hidden placement computation. Therefore, it might also make sense
+to cache not only the cost but also the placement (which is a Point object).
 
-The cost for all edges are computed at least once, and on avergage updated a few times, but the placement is queried only when the edge is effectively collapsed. Caching only the cost as opposed to caching both the cost and the placement makes a small difference in the total running time, while, not caching the cost at all causes a significant slowdown. Still, caching the cost and/or placement in the edge adds to the size of the surface a significant number. For example, if the cost is of type {\tt double}, each million edges require about 7Mb of additional storage for the cost, and 30Mb for the cost and placement. It might be better in a specific context to avoid any caching altoghether, even at the expense of increased running time.
+The cost for all edges are computed at least once, and on avergage updated a few times,
+but the placement is queried only when the edge is effectively collapsed. Caching only
+the cost as opposed to caching both the cost and the placement makes a small difference
+in the total running time, while, not caching the cost at all causes a significant slowdown.
+Still, caching the cost and/or placement in the edge adds to the size of the surface 
+a significant amount. For example, if the cost is of type {\tt double}, each million edges
+require about 7Mb of additional storage for the cost, and 30Mb for the cost and placement.
+It might be better in a specific context to avoid any caching altoghether, even 
+at the expense of increased running time.
 
 The most sensible default choice is to cache only the cost.
 
-For each edge, a record of information called \ccc{CollapseData} is associated with it (through the edge extra pointer map). Such data can be empty (\ccc{EmptyCollapseData}), store the cost of the collapse but not the placement(\ccc{PartialCollapseData}), or both (\ccc{FullCollapseData)}.
+For each edge, a {\em cache} record is associated with it. 
+Such cache can be empty (\ccc{NoCache}), store the cost of the collapse but not the 
+placement(\ccc{CostCache}), or both (\ccc{CostAndPlacementCache)}.
 
-Each time the algorithm needs to access the cost or placement for an edge it calls the \ccc{GetCost} and \ccc{GetPlacement} function objects passed as argument. If an empty collapse data is used, these functions must effectively calculate the values and return it.
+Each time the algorithm needs to access the cost or placement for an edge
+it calls the \ccc{GetCost} and \ccc{GetPlacement} policies passed 
+as argument. If an empty cache is used, these functions must effectively
+calculate the values and return it.
 
-On the other hand, if a partial or full collapse data is used, meaning that the cost and/or placement is cached, the \ccc{GetCost} and/or \ccc{GetPlacement} function objects must simply extract the cached value and return it. In this case, however, the actual cost and placement must somwhow still be computed and stored in the collapse data. This is the role of the \ccc{SetCollapseData} function object passed as argument.
+On the other hand, if the cost and/or placement is cached, the \ccc{GetCost}
+and/or \ccc{GetPlacement} poliies must simply extract the cached value and return it. 
+In this case, however, the actual cost and placement must still be computed and stored,
+somehow, in the cache.
+This is the role of the \ccc{SetCache} policy passed as argument.
 
-In conjunction, the three parameters: \ccc{SetCollapseData}, \ccc{GetCost} and \ccc{GetPlacement} specify the cost and placement strategy. They are related in that if \ccc{SetCollapseData} sets an \ccc{EmptyCollapseData}, the \ccc{GetCost} and \ccc{GetPlacement} policies must be actually computing the values, while if \ccc{SetCollapseData} sets a \ccc{PartialCollapseData} or a \ccc{FullCollapseData}, the policies would just return the cached value.
+In conjunction, the three parameters: \ccc{SetCache}, \ccc{GetCost} and \ccc{GetPlacement} 
+specify the cost and placement strategy. They are related in that if \ccc{SetCache}
+sets a \ccc{NoCahe} record, the \ccc{GetCost} and \ccc{GetPlacement} policies must be actually
+computing the values, while if \ccc{SetCache} sets a \ccc{CostCache} or a \ccc{CostAndPlacement}
+record, the policies would just return the cached value.
 
 \subsection{Visitor}
 
@@ -135,23 +184,41 @@ Simplifying a large surface with millions of edges can take up a lot of time (se
 
 \subsection{API Overview}
 
-The simplification algorithm is implemented as a free template function taking several parameters. The following sample code illustrates the general form of the function call:
+The simplification algorithm is implemented as a free template function taking several parameters.\\
+The first two paramters are required but the rest are optional.\\
+Since the number of optional parameters is rather large, the {\em named-parameters} technique, 
+as found in the {\sc Bgl} 
+algorithms and described below, allows you to pass only the relevant parameters, by name, 
+without worring about their order or the default values of the irrelevant parameters.
 
 \begin{cprog}
 int r = edge_collapse(surface
                      ,stop_condition
-                     ,edge_index_map
-                     ,vertex_is_fixed_map
-                     ,set_collapse_data
-                     ,get_cost
-                     ,get_placement
-                     ,cost_params
-                     ,placement_params
-                     ,visitor 
+                     
+                     ,vertex_point_map   (vertex_point_map_arg)
+                     .edge_is_border_map (edge_is_border_map_arg)
+                     .edge_index_map     (edge_index_map_arg)
+                     .vertex_is_fixed_map(vertex_is_fixed_map_arg)
+                     .set_cache          (set_cache_arg)
+                     .get_cost           (get_cost_arg)
+                     .get_placement      (get_placement_arg)
+                     .cost_params        (cost_params_arg)
+                     .placement_params   (placement_params_arg)
+                     .visitor            (visitor_arg)
                      );
 \end{cprog}
 
-Only the first 2 parameters are required. All other parameters have default values corresponding to the {\em Lindstrom-Turk} cost strategy, with no fixed vertices and assuming the surface edges store room for an extra pointer default initialized to \ccc{NULL}.
+\subsection{Named parameters}
+
+The optional named parameters are passed to \ccc{edge_collapse}
+by wrapping them in functions whose name correspond to the parameter.\\
+For example: \ccc{vertex_point_map(the_actual_parameter)}
+
+Each named parameter is separated from the other named parameters
+with a dot ({\tt '.'}) instead of a comma ({\tt ','}).
+Their order is unimportant and you don't have to supply parameters
+whose default value is OK.
+
 
 \subsection{Examples}
 
