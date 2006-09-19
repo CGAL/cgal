@@ -51,12 +51,12 @@ CGAL_BEGIN_NAMESPACE
 //   Skin_surface const &ss_3;
 // };
 
-template <class Polyhedron_3, class SkinSurface_3>
+template <class SkinSurface_3, class Polyhedron_3>
 class Skin_surface_subdivision_policy_default_3 
 {
 public:
-  typedef Polyhedron_3                            Polyhedron;
   typedef SkinSurface_3                           Skin_surface;
+  typedef Polyhedron_3                            Polyhedron;
   typedef typename Polyhedron::Traits             P_traits;
 
   typedef typename Polyhedron::Vertex_handle      P_vertex_handle;

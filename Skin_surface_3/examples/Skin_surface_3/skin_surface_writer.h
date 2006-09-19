@@ -5,10 +5,10 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/subdivide_skin_surface_mesh_3.h>
 
-template <class Polyhedron, class SkinSurface>
+template <class SkinSurface, class Polyhedron>
 /// Write polyhedron with normals:
-void write_polyhedron_with_normals(Polyhedron &p, 
-				   SkinSurface &skin, 
+void write_polyhedron_with_normals(SkinSurface &skin, 
+				   Polyhedron &p, 
 				   std::ostream &out)
 {
   typedef typename Polyhedron::Vertex_iterator                  Vertex_iterator;
@@ -24,12 +24,9 @@ void write_polyhedron_with_normals(Polyhedron &p,
       << std::endl;
   
   // Write vertices
-  typedef CGAL::Skin_surface_subdivision_policy_base_3<Polyhedron, SkinSurface> 
-    Subdivision_policy;
-  Subdivision_policy *policy = get_subdivision_policy(p, skin);
   for (Vertex_iterator vit = p.vertices_begin();
        vit != p.vertices_end(); vit ++) {
-    Vector_3 n = policy->normal(vit);
+    Vector_3 n = skin.normal(vit->point());
     n = n/sqrt(n*n);
     out << vit->point() << " "
  	<< n

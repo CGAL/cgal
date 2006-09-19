@@ -27,8 +27,8 @@ CGAL_BEGIN_NAMESPACE
 
 // This code is based on the Polyhedron tutorial 
 
-template <class Polyhedron_3,
-	  class SkinSurface_3,
+template <class SkinSurface_3,
+	  class Polyhedron_3,
 	  class SubdivisionPolicy_3>
 class Skin_surface_sqrt3
 {
@@ -57,7 +57,7 @@ class Skin_surface_sqrt3
   typedef typename Kernel::FT                               FT;
 
 public:
-  Skin_surface_sqrt3(Polyhedron &P, SkinSurface_3 &skin, 
+  Skin_surface_sqrt3(const SkinSurface_3 &skin, Polyhedron &P, 
 		     const SubdivisionPolicy_3 &policy) 
     : P(P), ss(skin), policy(policy) {}
 
@@ -137,7 +137,7 @@ private:
   }
 
   Polyhedron &P;
-  SkinSurface_3 &ss;
+  const SkinSurface_3 &ss;
   const Subdivision_policy &policy;
 };
 
@@ -147,15 +147,13 @@ void subdivide_skin_surface_mesh_3(
           const SkinSurface_3 &skin,
           Polyhedron_3 &p, 
           int nSubdiv = 1) {
-  typedef Skin_surface_subdivision_policy_default_3<Polyhedron_3,
-                                                    SkinSurface_3> Policy;
-  typedef Skin_surface_sqrt3<Polyhedron_3, 
-                             SkinSurface_3, 
-                             Policy>                            Subdivider;
+  typedef Skin_surface_subdivision_policy_default_3<SkinSurface_3,
+                                                    Polyhedron_3>   Policy;
+  typedef Skin_surface_sqrt3<SkinSurface_3, Polyhedron_3, Policy>   Subdivider;
 
   
   Policy policy(skin);
-  Subdivider subdivider(p, skin, policy);
+  Subdivider subdivider(skin, p, policy);
   subdivider.subdivide(nSubdiv);
 }
 

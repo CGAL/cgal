@@ -46,7 +46,7 @@ void make_skin_surface_mesh_3(Polyhedron_3 &p,
 
   CGAL::mesh_skin_surface_3(skin_surface, p);
 
-  CGAL::subdivide_skin_surface_mesh_3(p, skin_surface);
+  CGAL::subdivide_skin_surface_mesh_3(skin_surface, p);
 }
 
 
