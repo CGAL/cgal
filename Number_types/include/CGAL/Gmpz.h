@@ -414,10 +414,10 @@ gmpz_new_read(std::istream &is, Gmpz &z)
   gmpz_eat_white_space(is);
    
   c=is.peek();
-  if (c=='-'){
+  if (c=='-' || c=='+'){
     is.get();
     CGAL_assertion(!is.fail());
-    negative=true;
+    negative=(c=='-');
     gmpz_eat_white_space(is);
     c=is.peek();
   }

@@ -362,9 +362,9 @@ operator>>(std::istream& is, Gmpq &z)
   c = is.peek();
   if (c != '.') {
     // is there a sign? 
-    if (c == '-') {
+    if (c == '-' || c == '+') {
       is.get();
-      negative = true;
+      negative = (c == '-');
       gmpz_eat_white_space(is);
       c=is.peek();
     }

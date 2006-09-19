@@ -52,19 +52,26 @@ void test_overflow_to_double()
 typedef std::pair<std::string, Gmpq> Test_pair; 
 typedef std::vector<Test_pair> Test_set;
 Test_set make_derived_tests (const Test_pair& pair) {
-  // generate exponents and minus signs
+  // generate exponents, signs, and appended letter
   Test_set result;
   std::string input = pair.first;
   Gmpq should_be = pair.second;
   std::string minus = "-";
-  for (std::string l; l != "ff"; l += "f") {
-    result.push_back(Test_pair(input + l , should_be));
-    result.push_back(Test_pair(input + "e-2" +l , should_be/100));
-    result.push_back(Test_pair(input + "e2" +l, should_be*100));
-    result.push_back(Test_pair(input + "e0" +l , should_be));
-    result.push_back(Test_pair(minus + input + "e-2" +l, -should_be/100));
-    result.push_back(Test_pair(minus + input + "e2" +l, -should_be*100));
-    result.push_back(Test_pair(minus + input + "e0" +l, -should_be));
+  for (std::string l = ""; l != "ff"; l += "f") { 
+    // append char 'f' to test whether it is correctly not eaten
+    for (std::string sign = ""; sign != "done";) {
+      // prepend signs "", "+", "-"	
+      Gmpq s = should_be;
+      if (sign == "-") s = -s;
+      result.push_back(Test_pair(sign+input+l , s));
+      result.push_back(Test_pair(sign+input+"e-2"+l , s/100));
+      result.push_back(Test_pair(sign+input+"e1"+l, s*10));      
+      result.push_back(Test_pair(sign+input+"e+3"+l, s*1000));
+      result.push_back(Test_pair(sign+input+"e0"+l , s));
+      if (sign == "-") sign = "done";
+      if (sign == "+") sign = "-";
+      if (sign == "") sign = "+";
+    }
   }
   return result;
 } 
@@ -79,14 +86,18 @@ void test_input_from_float()
   test_set.push_back (Test_pair (std::string ("0"), Gmpq(0,1)));
 
   // nonnegative floats, with or without digits before/after .
-  test_set.push_back (Test_pair (std::string ("0.0"), Gmpq(0,1)));  
+  test_set.push_back (Test_pair (std::string ("0.0"), Gmpq(0,1))); 
+  test_set.push_back (Test_pair (std::string ("0.123"), Gmpq(123,1000))); 
+  test_set.push_back (Test_pair (std::string ("00.1"), Gmpq(1,10)));   
+  test_set.push_back (Test_pair (std::string ("01.1"), Gmpq(11,10)));   
   test_set.push_back (Test_pair (std::string ("0."), Gmpq(0,1)));  
   test_set.push_back (Test_pair (std::string (".0"), Gmpq(0,1)));
   test_set.push_back (Test_pair (std::string ("12.34"), Gmpq(1234,100)));
   test_set.push_back (Test_pair (std::string ("0.56"), Gmpq(56,100)));
   test_set.push_back (Test_pair (std::string (".78"), Gmpq(78,100)));
   test_set.push_back (Test_pair (std::string ("90."), Gmpq(90,1)));
-  test_set.push_back (Test_pair (std::string ("90.0"), Gmpq(90,1)));
+  test_set.push_back (Test_pair (std::string ("90.0"), Gmpq(90,1))); 
+  test_set.push_back (Test_pair (std::string ("7.001"), Gmpq(7001,1000)));
 
   // exponents and signs are automatically generated in 
   // make_derived_tests
