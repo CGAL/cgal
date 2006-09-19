@@ -796,38 +796,19 @@ private: // parsing routines:
     put_back_token = token;
   }
     
-  // here is a general template for halving a number; we must
-  // have a specialization for Gmpz that performs exact division
-  // (and therefore fails if the result is incorrect)
+  // here is a general template for halving a number; ToDo: we must
+  // somehow trigger an error if this division is not exact
   template<typename NumberType>
   void halve(NumberType& entry) {
     entry /= 2;
   }
 
-  void halve(CGAL::Gmpz& entry) {
-    entry = CGAL::exact_division(entry,2);    
-  }
-
-  // here is the general template, and the C-file contains
-  // implementations of a specialization for Gmpq
   template<typename NumberType>
   bool number(NumberType& entry) {
-    whitespace();
+    // whitespace(); the following >> should care for this
     from >> entry;
     return from.good();
   }
-  
-  bool number(CGAL::Gmpq& entry) {
-    // accept rational or floating-point format
-    std::string s = token() + " "; // routines below can't deal with EOF 
-    std::istringstream from1(s), from2(s);
-    return 
-      number_from_quotient (entry, from1) || 
-      number_from_float (entry, from2);
-  }
-  
-  bool number_from_quotient(CGAL::Gmpq& entry, std::istringstream& from);
-  bool number_from_float(CGAL::Gmpq& entry, std::istringstream& from);
 
   bool name_section();
   bool rows_section();

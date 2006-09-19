@@ -105,8 +105,8 @@ for file in $MASTERS
     exit 1
   fi
 
-  # for each master, find all its derivatives:
-  DERS=$(find test_solver_data/derivatives -name "${name}*.mps")
+  # for each master, find one derivative:
+  DERS=$(find test_solver_data/derivatives -name "${name}_shifted.mps")
 
   # check if one of the derivatives is older:
   older=0
