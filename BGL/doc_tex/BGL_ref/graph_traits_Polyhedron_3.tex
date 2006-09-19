@@ -23,8 +23,8 @@
 %% \ccHtmlIndexC[class]{} %% add further index entries
 \ccDefinition
 
-The class \ccRefName\ is a specialization of \ccc{boost::graph_traits}
-for \ccc{Polyhedron_3}. It provides the {\em Associates Types} 
+The class \ccRefName\ is a partial specialization of \ccc{boost::graph_traits}
+for the class \ccc{Polyhedron_3}. It provides the associated types 
 for the following
 \ccAnchor{http://www.boost.org/libs/graph/doc/graph_concepts.html}
 {graph} concepts:\\
@@ -32,44 +32,44 @@ for the following
 \ccAnchor{http://www.boost.org/libs/graph/doc/AdjacencyGraph.html}{AdjacencyGraph}\\
 \ccAnchor{http://www.boost.org/libs/graph/doc/EdgeAndVertexListGraph.html}{EdgeAndVertexListGraph}\\
 
-The template parameter \ccc{Traits} is the same \ccc{Traits} template parameter 
-of a \ccc{CGAL::Polyhedron_3}
+The template parameter \ccc{Traits} must fulfill the requirements of the template parameter 
+\ccc{Traits} of the class \ccc{CGAL::Polyhedron_3<Traits>}.
+
 
 \ccInclude{CGAL/boost/graph/graph_traits_Polyhedron_3.h}
 
-These associated types, along with the free-function overloads specified in the graph concepts and defined in the header file, allows a \ccc{Polyhedron_3} instance to be modeled as a {\sc Bgl} graph.
+
 
 \ccTypes
   \ccTypedef{typename CGAL::Polyhedron_3::Vertex_handle   vertex_descriptor;}
     {The vertex descriptor.}
   
   \ccTypedef{typename CGAL::Polyhedron_3::Halfedge_handle edge_descriptor;}
-    {The edges descriptor.}
+    {The edge descriptor.}
   
-  \ccNestedType{vertex_iterator;}{A \ccc{CGAL::Polyhedron_3::Vertex_iterator}
-    wrapped to return a \ccc{CGAL::Polyhedron_3::Vertex_handle} when dereferenced.}{}
+  \ccNestedType{vertex_iterator;}{An iterator corresponding to \ccc{CGAL::Polyhedron_3::Vertex_iterator},
+    with the difference that its value type is a vertex descriptor and not \ccc{CGAL::Polyhedron_3::Vertex}.}{}
   
-  \ccNestedType{edge_iterator;}{A \ccc{CGAL::Polyhedron_3::Halfedge_iterator}
-    wrapped to return a \ccc{CGAL::Polyhedron_3::Halfedge_handle} when dereferenced.}{}
+  \ccNestedType{edge_iterator;}{An iterator corresponding to  \ccc{CGAL::Polyhedron_3::Halfedge_iterator}
+    with the difference that its value type is an edge descriptor and not \ccc{CGAL::Polyhedron_3::Halfedge}.}{}
   
   \ccNestedType{in_edge_iterator;}{An edge iterator which only iterates over 
-  the incoming \ccc{halfedges} around a vertex. It correspons to a
+  the incoming edges around a vertex. It corresponds to a
   \ccc{CGAL::Polyhedron_3::Halfedge_around_vertex_circulator}
-  wrapped to return an \ccc{CGAL::Polyhedron_3::Halfege_handle} when dereferenced}{}
+  with the difference that its value type is an edge descriptor and not \ccc{CGAL::Polyhedron_3::Halfedge}.}{}
   
   \ccNestedType{out_edge_iterator;}{An edge iterator which only iterates over 
-  the outgoing halfedges around a vertex. It correspons to a
+  the outgoing halfedges around a vertex. It corresponds to a
   \ccc{CGAL::Polyhedron_3::Halfedge_around_vertex_circulator}
-  wrapped to return an \ccc{CGAL::Polyhedron_3::Halfege_handle} 
-  referring to the {\em opposite halfege} when dereferenced.}{}
+  with the difference that its value type is an edge descriptor and not \ccc{CGAL::Polyhedron_3::Halfedge}.}{}
   
   \ccTypedef{boost::directed_tag directed_category;}{Indicates this is a directed graph.}
   
   \ccTypedef{boost::disallow_parallel_edge_tag edge_parallel_category;}
-  {Indicates this graph does not support multiedges.}
+  {Indicates that this graph does not support multiedges.}
   
   \ccTypedef{boost::bidirectional_graph_tag  traversal_category;}
-    {Indicates this graph is bidirectional.}
+    {Indicates that this graph is bidirectional.}
     
   \ccTypedef{typename Polyhedron_3::size_type vertices_size_type;}
     {The size tye of the vertex list.}
@@ -81,7 +81,7 @@ These associated types, along with the free-function overloads specified in the 
     {The size tye of the adjacency list.}
 
 The const specialization, \ccc{boost::graph_traits< CGAL::Polyhedron_3<Traits> const>} 
-(ommited for brevity) is also defined, using the constant handles in the polyhedron.
+is also defined, using the constant handles in the polyhedron.
      
 \end{ccRefClass}
 \ccDefGlobalScope{CGAL::} 

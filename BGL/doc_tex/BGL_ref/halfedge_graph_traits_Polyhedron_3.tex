@@ -23,12 +23,12 @@
 %% \ccHtmlIndexC[class]{} %% add further index entries
 \ccDefinition
 
-The class \ccRefName\ is a specialization of \ccc{CGAL::halfedge_graph_traits}
-for \ccc{Polyhedron_3}. It provides the {\em Associates Types} 
+The class \ccRefName\ is a partial specialization of \ccc{CGAL::halfedge_graph_traits}
+for \ccc{Polyhedron_3}. It provides the associated types 
 for the {HalfedgeGraph} concept.
 
-The template parameter \ccc{Traits} is the same \ccc{Traits} template parameter 
-of a \ccc{CGAL::Polyhedron_3}
+The template parameter \ccc{Traits} must fulfill the requirements of the template parameter 
+\ccc{Traits} of the class \ccc{CGAL::Polyhedron_3<Traits>}.
 
 \ccInclude{CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h}
 

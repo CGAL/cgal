@@ -35,7 +35,7 @@ for example, the source vertex of an edge, or  all edges incident to a vertex. T
 use {\em property maps} to associate information to vertices and edges. 
 The algorithms allow {\em visitors} to register callbacks that will be called
 during the execution of the algorithms. Finally, the graph algorithms use
-the {em named parameter} mechanism, which allows to pass the  arguments in
+the {\em named parameter} mechanism, which allows to pass the  arguments in
 arbitrary order.
 
 
@@ -90,10 +90,12 @@ a traits class and some free functions for obtaining the property map from
 a graph, and  for getting and putting properties. 
 
 The free functions are \ccc{get} and \ccc{put}.  The first one is overloaded.
-It allows to obtain a property map for a given property tag. For example
-\ccc{m = get(g, boost::vertex_index)} gives us a property map that allows to retrieve
-an index in the range  \ccc{[0, num_vertices(g))} for a vertex descriptor \ccc{vd}
-with the call \ccc{int vdi = get(m, vd)}.  Just as \ccc{get} allows to read data,
+One version allows to obtain a property map for a given property tag. For example
+\ccc{m = get(g, boost::vertex_index)} gives us a property map that associates
+an index in the range \ccc{[0, num_vertices(g))} to each vertex
+descriptor of the graph.  The second version of the \ccc{get} function
+allows to read it as follows for a vertex descriptor \ccc{vd}:
+\ccc{int vdi = get(m, vd)}.  Just as \ccc{get} allows to read data,
 \ccc{put} allows to write them.  Dijksta's shortest path algorithm will write
 the predecessor of each vertex, as well as the distance to the source in such a 
 property map.
@@ -101,7 +103,7 @@ property map.
 
 The data themselves may be stored in the vertex or edge, or they may
 be stored in an external data structure, or they may be computed on
-the fly. Only the property map itself knows.
+the fly. This is an ``implementation detail'' of the particular property map.
 
 \smallskip
 Property maps in the Boost manuals: \path|http://www.boost.org/libs/property_map/property_map.html|
@@ -114,8 +116,8 @@ visitors is a design pattern, and also used in \cgal, e.g. the \ccc{Arr_observer
 in the arrangement package.  
 
 The functions as well as the event points are library specific. Event
-points in graph algorithms are, for example, when a vertex is {\em discovered}, when
-all outgoing edges of a vertex are {\em discovered}.
+points in graph algorithms are, for example, when a vertex is traversed the first time, or when
+all outgoing edges of a vertex are traversed.
 
 \smallskip
 Visitors in the {\sc Bgl} manual: \path|http://www.boost.org/libs/graph/doc/visitor_concepts.html|

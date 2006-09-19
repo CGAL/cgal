@@ -21,136 +21,135 @@
 
 \ccDefinition
 
-The concept \ccRefName\ describes the requirements of a basic
-\ccAnchor{http://www.boost.org/libs/graph/doc/graph_concepts.html}{Bgl Graph}
-commonly found associated to many geometric data structures.
+The concept \ccRefName\ describes the requirements for a graph to be
+structurally equivalent to a halfedge data structure, and it provides
+an interface for efficient access to the opposite edge of an edge, and
+to the successor and predecessor of an edge in the iterator range of
+the incoming edges of a vertex.
+
 
 \ccHeading{Requirements}
 
-Vertices and edges are required to have a distinguishable \ccc{null} state 
-such that any default constructed vertex or edge descriptor is formally
-referring to a non-existing vertex or edge.
+For each {\em directed edge} $e=(v,w)$ its opposite edge $e'=(w,v)$
+must be part of the graph.
 
-All edges are {\em directed}, that is, they are defined as an {\em ordered pair} 
-of vertices, and for each directed edge $\overrightarrow{st}$
-it's opposite edge $\overrightarrow{ts}$ is part of the graph.
+The incoming edges of a vertex $v$ have a fixed order, that is all
+calls of \ccc{in_edges(v,g)} must return the same iterator range,
+modulo a cyclic permutation. We call the order {\em clockwise}.
+
+As the \ccRefName\ represents a surface there must exist an embedding
+for the vertices and edges such that the ordered edges do not intersect.
+
+
+
+
+\ccRefines
+\ccAnchor{http://www.boost.org/libs/graph/doc/IncidenceGraph.html}{IncidenceGraph}\\
+\ccAnchor{http://www.boost.org/libs/graph/doc/PropertyGraph.html}{PropertyGraph}
+
+A model of \ccRefName\ must have the {\em interior properties} 
+\ccc{edge_is_border} and \ccc{vertex_is_border} attached to its edges and vertices.
+
+
+
+\ccHeading{Associated Types}
 
 Because (directed) edges must come in pairs, there is the additional
-notion of an {\em undirected} edge for a pair of opposing edges.
-The number of undirected edges is exactly half the number of directed edges.
-
+notion of an {\em undirected}\footnote{
 The directed edges are not called \ccc{halfedges} (as in a
 \ccc{HalfedgeDS}) because from the point of view of this graph, being
 a refinement of a {\sc Bgl} graph, each directed edge is an
 edge in itself. In other words, the unqualified term edge
-refers to one and only one directed edge and not to a pair. The
-pair of opposite edges, seen as a unity, is an {\em undirected edge}.
+refers to one and only one directed edge and not to a pair.}
+% 
+edge for a pair of opposite edges.
+The number of undirected edges is exactly half the number of directed edges.
+
  
-Note that this concept does not imply the existence of two different types
-for directed and undirected edges. Instead, if specifies that there is only one type of edge,
-hence only one \ccc{edge_descriptor}, which refers to the directed edge.\\
-An undirected edge must be implicitely addressed by a single \ccc{edge_descriptor},
-and there is no requirement about which of the directed edges of the pair must
-be used to refer to an undirected edge.
+Note that the notion of directed and undirected edges does not imply
+the existence of two different types.  The type \ccc{edge_descriptor}
+is used for both.  An undirected edge must be implicitely handled, and
+there is no requirement on which of the directed edges of the undirected edge
+must be used to represent it.
 
-All edges are {\em cyclically connected} and each cycle implicitely
-corresponds to a \ccc{facet} (or \ccc{face} or \ccc{cell}) of the
-underlying data structure (with the exception of the cycle(s)
-corresponding to the border(s) of the underlying DS, which might not
-have an associated facet).
 
-Edges in this graph are {\em ordered} according to the following relations:
 
-\begin{description}
-
-\item[Opposite] 
-An edge $'v: x->y'$ is said to be the {\em opposite} of edge $'u: a->b'$ 
-iff $a==y$ and $b==c$.
-
-\item[Rotational Successor] 
-An edge $'v: s->q'$ is said to be the {\em rotational successor} 
-of edge $'u: s->p'$ iff $v$ is the {\em first} edge with source vertex $s$
-found by a {\em counter-clockwise} rotation of $u$ around its source 
-vertex $s$ such that $u!=v$.
- 
-\item[Rotational Predecessor] 
-An edge $'v: s->q'$ is said to be the {\em rotational predecessor}
-of edge $'u: s->p'$ iff $v$ is the {\em first} edge with source vertex $s$
-found by a {\em clockwise} rotation of $u$ around its source vertex $s$
-such that $u!=v$.
-
-\item[Linear Successor] 
-An edge $'v: b->c'$ is said to be the {\em linear successor} of edge 
-$'u:a->b'$ iff $v$ is the {\em rotational successor} of the 
-{\em opposite} of $v$.
- 
-\item[Linear Predecessor] 
-An edge $'v: b->c'$ is said to be the {\em linear predecessor} of edge 
-$'u:a->b'$ iff $v$ is the {\em opposite} of the {\em rotational predecessor}
-of $v$.
-
-\end{description}
-
-\ccRefines
-\ccAnchor{http://www.boost.org/libs/graph/doc/PropertyGraph.html}{PropertyGraph}
-
-A model of this graph is required to have the {\em interior properties} \ccc{edge_is_border} and \ccc{vertex_is_border} attached to its edges and vertices.
-
-\ccTypes
-  \ccNestedType{undirected_edge_iterator}
+  \ccNestedType{halfedge_graph_traits<HalfedgeGraph>::undirected_edge_iterator;}
   {An iterator that iterates over one and only one of the directed edges
-  in each opposing pair. This iterator accesses a directed edge 
-  (as represented by an \ccc{edge_descriptor}) and not an undirected edge 
-  since there is no type explicitely representing it}{}
+  in each pair of opposite directed edges. The value type of the iterator 
+  is \ccc{boost::graph_traits<HalfedgeGraph>::edge_descriptor}.}{}
 
-\ccOperations
+
+\ccHeading{Valid Expressions}
 
 Following the {\sc Bgl} design, the following graph operations are defined as free rather than member functions.
 
-All overloads have a non-const version (ommited here for brevity).
+  \ccFunction
+  {template<class Graph>
+  std::pair<typename halfedge_graph_traits<HalfedgeGraph>::undirected_edge_iterator,
+            typename halfedge_graph_traits<HalfedgeGraph>::undirected_edge_iterator>
+  undirected_edges(Graph const& g );
+  }
+  {Returns the undirected edges of \ccc{g}.}
+
+
+An edge $e=(v,w)$ is said to be the {\em opposite edge} of edge $e'=(w,v)$.
 
   \ccFunction
   {template<class Graph>
   typename boost::graph_traits<Graph const>::edge_descriptor 
   opposite_edge(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g );
   }
-  {Returns the {\em opposite} of \ccc{e}.}
+  {Returns the opposite edge of \ccc{e}.}
   
-  \ccFunction
-  {template<class Graph>
-  typename boost::graph_traits<Graph const>::edge_descriptor 
-  next_edge_ccw(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g );
-  }
-  {Returns the {\em rotational successor} of \ccc{e}.\\
-  If the resulting edge does not belong to \ccc{g} the result is a \ccc{null} (default constructed) edge.}
-  
+An edge $e'=(v,w)$ is called the {\em clockwise neighbor} of edge
+$e=(u,w)$, and $e$ the {\em counterclockwise neighbor} of $e'$, iff there
+exist two iterators $it$ and $it'$ in the iterator range
+\ccc{in_edges(w,g)} such that \ccc{**it == e} and \ccc{**it' == e'},
+and \ccc{it' == it++} or \ccc{it} is the last and \ccc{it'} the first
+iterator of the iterator range.
+ 
+
   \ccFunction
   {template<class Graph>
   typename boost::graph_traits<Graph const>::edge_descriptor 
   next_edge_cw(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g );
   }
-  {Returns the {\em rotational predecessor} of \ccc{e}.\\
-  If the resulting edge does not belong to \ccc{g} the result is a \ccc{null} (default constructed) edge.}
+  {Returns the clockwise neighbor of \ccc{e}.}
   
+
+  \ccFunction
+  {template<class Graph>
+  typename boost::graph_traits<Graph const>::edge_descriptor 
+  next_edge_ccw(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g );
+  }
+  {Returns the counterclockwise neighbor of \ccc{e}.}
+  
+
+The edges subdivide the surface on which in {\em faces}. The edges
+incident to the same face form a cycle, and an edge $e'=(v,w)$ is called
+the {\em successor} of edge $e=(u,v)$, and $e$ the {\em 
+predecessor} of $e'$, iff $e'$ is the clockwise neighbor of
+the opposite edge of $e$.
+ 
+
   \ccFunction
   {template<class Graph>
   typename boost::graph_traits<Graph const>::edge_descriptor 
   next_edge(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g );
   }
-  {Returns the {\em linear successor} of \ccc{e}.\\
-  If the resulting edge does not belong to \ccc{g} the result is a \ccc{null} (default constructed) edge. }
+  {Returns the successor of \ccc{e}.}
   
   \ccFunction
   {template<class Graph>
   typename boost::graph_traits<Graph const>::edge_descriptor 
   prev_edge(typename boost::graph_traits<Graph const>::edge_descriptor e, Graph const& g );
   }
-  {Returns the {\em linear predecessor} of \ccc{e}.\\
-  If the resulting edge does not belong to \ccc{g} the result is a \ccc{null} (default constructed) edge. }
+  {Returns the predecessor of \ccc{e}.}
 
 \ccHasModels
-\ccRefIdfierPage{boost::graph_traits< CGAL::Polyhedron_3<Traits> > }\\
-\ccRefIdfierPage{CGAL::halfedge_graph_traits< CGAL::Polyhedron_3<Traits> > }
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}\\
+Any model of the concept \ccRefIdfierPage{CGAL::HalfedgeDS}\\
 
 \end{ccRefConcept}
 
