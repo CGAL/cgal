@@ -29,7 +29,7 @@ umbilics on a triangular polyhedral surface.
 The class \ccRefName\ has four template parameters. 
 \ccc{TriangularPolyhedralSurface} provides  the surface. 
 Parameter \ccc{OutputIt} is a stl Output Iterator which
-\ccc{value_type} is \ccc{CGAL::Umbilic*}. Parameters  \ccc{Vertex2FTPropertyMap}
+\ccc{value_type} is \ccc{Umbilic*}. Parameters  \ccc{Vertex2FTPropertyMap}
 and \ccc{Vertex2VectorPropertyMap} provides the differential properties of
 the surface associated to its vertices.
 
@@ -45,7 +45,7 @@ Requirements (checked at compile time) : the types
 
 \ccTypes
 
-\ccNestedType{  typedef typename TriangularPolyhedralSurface::Traits::FT       FT;}{}
+\ccTypedef{  typedef typename TriangularPolyhedralSurface::Traits::FT       FT;}{}
 
 \ccCreation
 \ccCreationVariable{umbilic_approximation}  %% choose variable name
@@ -65,7 +65,7 @@ concept of output iterator of the stl with value type \ccc{Umbilic*}.}
 
 \ccSeeAlso
 
-\ccc{Umbilic}.
+\ccc{Umbilic}
 \ccc{TriangularPolyhedralSurface}
 \ccc{Vertex2FTPropertyMap}
 \ccc{Vertex2VectorPropertyMap}

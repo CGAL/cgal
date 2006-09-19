@@ -29,19 +29,19 @@ created with the \ccc{boost::associative_property_map} adaptor from
 
 \ccTypes
 
-\ccNestedType{  typedef typename TriangularPolyhedralSurface::Traits::FT        FT;}{}
+\ccTypedef{  typedef typename TriangularPolyhedralSurface::Traits::FT        FT;}{}
 \ccGlue
-\ccNestedType{  typedef typename TriangularPolyhedralSurface::Traits::Vector_3  Vector_3;}{}
+\ccTypedef{  typedef typename TriangularPolyhedralSurface::Traits::Vector_3  Vector_3;}{}
 \ccGlue
-\ccNestedType{  typedef typename TriangularPolyhedralSurface::Vertex_handle     Vertex_handle;}{}
+\ccTypedef{  typedef typename TriangularPolyhedralSurface::Vertex_handle     Vertex_handle;}{}
 \ccStruct{  struct Vertex_cmp{bool operator();};}{}
 
-\ccNestedType{  typedef std::map<Vertex_handle, FT, Vertex_cmp> Vertex2FT_map;}{}
+\ccTypedef{  typedef std::map<Vertex_handle, FT, Vertex_cmp> Vertex2FT_map;}{}
 \ccGlue
-\ccNestedType{  typedef boost::associative_property_map< Vertex2FT_map > Vertex2FT_property_map;}{}
-\ccNestedType{  typedef std::map<Vertex_handle, Vector_3, Vertex_cmp> Vertex2Vector_map;}{}
+\ccTypedef{  typedef boost::associative_property_map< Vertex2FT_map > Vertex2FT_property_map;}{}
+\ccTypedef{  typedef std::map<Vertex_handle, Vector_3, Vertex_cmp> Vertex2Vector_map;}{}
 \ccGlue
-\ccNestedType{  typedef boost::associative_property_map< Vertex2Vector_map > Vertex2Vector_property_map;}{}
+\ccTypedef{  typedef boost::associative_property_map< Vertex2Vector_map > Vertex2Vector_property_map;}{}
 
 
 
