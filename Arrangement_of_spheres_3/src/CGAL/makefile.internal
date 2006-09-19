@@ -15,7 +15,8 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 # -fmudflapth
-CXXFLAGS =  -I../../include -Wall -DCGAL_USE_GMP -DCGAL_USE_GMPXX -DCGAL_USE_CORE -DCGAL_USE_QT -DQT_THREAD_SUPPORT '-I$(CGAL_INCL_DIR)' '-I$(CGAL_INCL_DIR)/CGAL/config/$(CGAL_OS_COMPILER)'   '-I$(QTDIR)/include' -g -DCGAL_CHECK_EXPENSIVE -DCGAL_CHECK_EXACTNESS
+CXXFLAGS =  -I../../include -Wall -DCGAL_USE_GMP -DCGAL_USE_GMPXX -DCGAL_USE_CORE -DCGAL_USE_QT -DQT_THREAD_SUPPORT '-I$(CGAL_INCL_DIR)' '-I$(CGAL_INCL_DIR)/CGAL/config/$(CGAL_OS_COMPILER)'   '-I$(QTDIR)/include' -g -DCGAL_CHECK_EXPENSIVE
+# -DCGAL_CHECK_EXACTNESS
 # $(CGAL_LIB_CXXFLAGS) -I../include
 #
 

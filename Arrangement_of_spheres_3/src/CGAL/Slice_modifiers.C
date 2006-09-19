@@ -389,7 +389,7 @@ Slice::Face_handle Slice::insert_sphere(const T::Sphere_point_3 &ep,
   // the halfedge points to the vertex and is on this face
   Vertex_handle vhs[4];
   try {
-     f= locate_point(ep, k);
+    f= locate_point(ep);
   } catch (On_edge_exception e) {
     std::cout << "Point hit edge ";
     sds_.write( e.halfedge_handle(), std::cout) << std::endl;

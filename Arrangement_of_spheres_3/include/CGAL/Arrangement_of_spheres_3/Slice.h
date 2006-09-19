@@ -206,6 +206,10 @@ struct Slice {
   void audit_edge_collapse_event(Halfedge_handle h, Event_key ek);
 
 
+  void process_equal_centers_two_sphere_event(T::Key k, T::Key l, bool f);
+  void process_aligned_centers_two_sphere_event(T::Key k, T::Key l, bool f,
+						CGAL::Comparison_result c[2]);
+
  // Functions to update certificates ----------------------------------
 
   void clean_edge(Halfedge_handle h);
@@ -342,10 +346,10 @@ struct Slice {
   */
 
 
-  Face_handle locate_point(const T::Sphere_point_3 &ep, T::Key ind);
+  Face_handle locate_point(const T::Sphere_point_3 &ep);
   
   template <class It>
-  Face_handle locate_point(It b, It e, const T::Sphere_point_3 &ep, T::Key ind);
+  Face_handle locate_point(It b, It e, const T::Sphere_point_3 &ep);
 
   Halfedge_handle shoot_rule(const T::Sphere_point_3& source,
 			     Face_handle f,
@@ -364,29 +368,24 @@ struct Slice {
   //enum Location {L_BIT=1, R_BIT=2, T_BIT=4, B_BIT=8, IN_BIT=16,  };
 
   int sphere_location(const T::Sphere_point_3 &sp,
-		      T::Key locate_point,
 		      T::Key sphere) const ;
   
-  bool behind_arc(const T::Sphere_point_3 &ep, T::Key ind,
+  bool behind_arc(const T::Sphere_point_3 &ep,
 		  Sds::Curve arc, int location) const;
 
   void point_sphere_orientation(const T::Sphere_point_3 &time,
-				T::Key point,
 				T::Key sphere,
 				std::vector<int> &locations) const;
 
   bool locate_point_check_face(const T::Sphere_point_3 &z,
-			       Face_const_handle it, 
-			       T::Key ind,
+			       Face_const_handle it,
 			       std::vector<int> &locations) const ;
 
   bool locate_point_check_face_arcs(const T::Sphere_point_3 &z,
-				    T::Key ind,
 				    Face_const_handle f,
 				    std::vector<int> &locations) const ;
 
   bool locate_point_check_face_vertices(const T::Sphere_point_3 &ep,
-					T::Key index,
 					Face_const_handle it) const;
 
   CGAL::Comparison_result debug_rule_shoot_answer(const T::Sphere_point_3 &z,
@@ -413,9 +412,7 @@ struct Slice {
 
   CGAL::Comparison_result rule_shoot_compare_SS(const T::Sphere_point_3 &z,
 						Sds::Curve srule,
-						Sds::Curve arc0,
-						Sds::Point pt,
-						Sds::Curve arc1) const ;
+						Sds::Point pt) const ;
  
 
   // return comparison of separator to intersection point on the C coordinate
@@ -430,10 +427,10 @@ struct Slice {
 				      Sds::Curve rule,
 				      Sds::Point pt,
 				      CGAL::Comparison_result &ret) const ;
-  bool rule_shoot_compare_if_rational_arc(const T::Sphere_point_3 &z,
+  /*bool rule_shoot_compare_if_rational_arc(const T::Sphere_point_3 &z,
 					  Sds::Curve rule,
 					  Sds::Curve a,
-					  CGAL::Comparison_result &ret) const;
+					  CGAL::Comparison_result &ret) const;*/
   
 
  
@@ -441,7 +438,7 @@ struct Slice {
 
   // Debug Functions ---------------------------------------------------
 
-  Face_handle locate_point(const T::Sphere_point_3 &ep);
+  //Face_handle locate_point(const T::Sphere_point_3 &ep);
 
   Halfedge_handle shoot_rule(const T::Sphere_point_3 &source, 
 			     Face_handle f,

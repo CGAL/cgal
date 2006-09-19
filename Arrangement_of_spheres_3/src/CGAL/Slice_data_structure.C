@@ -37,6 +37,24 @@ Slice_data_structure::rule_halfedge(Curve::Key k, int i) const {
 }
 
 Slice_data_structure::Halfedge_handle 
+Slice_data_structure::extremum_halfedge(Curve::Key k, int i) const {
+  Halfedge_handle h= halfedges_[k.input_index()][i];
+  CGAL_assertion(h->vertex()->point().is_sphere_extremum());
+  CGAL_assertion(h->curve().key() == k);
+  CGAL_assertion(!h->curve().is_rule());
+  return h;
+}
+
+void 
+Slice_data_structure::set_extremum_halfedge(Curve::Key k, int i,
+					    Halfedge_handle h){
+  CGAL_precondition(h->curve().key() ==k);
+  CGAL_precondition(h->curve().is_arc());
+  CGAL_precondition(h->vertex()->point().is_sphere_extremum());
+  halfedges_[k.input_index()][i];
+}
+
+Slice_data_structure::Halfedge_handle 
 Slice_data_structure::next_edge_on_curve(Halfedge_handle h) const {
   if (h->curve().is_rule()) {
     if (!h->vertex()->point().is_rule_rule()) return Halfedge_handle();
@@ -271,7 +289,7 @@ Slice_data_structure::exchange_spheres(Curve::Key k, Curve::Key l) {
       if (kh->vertex()->point().is_sphere_extremum()) {
 	// relabel rule
 	Halfedge_handle r= kh->opposite()->prev()->opposite();
-	kes[r->curve().rule_index()]= r;
+	//kes[r->curve().rule_index()]= r;
 	CGAL_assertion(r->curve().is_rule());
 	if (r->curve().key() == k) {
 	  Curve nr= r->curve();
@@ -646,6 +664,7 @@ bool Slice_data_structure::has_vertex(Face_const_handle fh,
   Halfedge_const_handle h= vh->halfedge();
   do {
     if (h->face() == fh) return true;
+    //if (h->opposite()->face() == fh) return true;
     h= h->opposite()->prev();
     CGAL_assertion(h->vertex() == vh);
   } while (h != vh->halfedge());
@@ -1203,8 +1222,10 @@ void Slice_data_structure::exchange_vertices(Halfedge_handle h,
 
 
 
-Slice_data_structure::Face_handle
-Slice_data_structure::intersect(Halfedge_handle ha, Halfedge_handle hb) {
+std::pair<Slice_data_structure::Halfedge_handle,
+	  Slice_data_structure::Halfedge_handle>
+Slice_data_structure::intersect(Halfedge_handle ha, Halfedge_handle hb,
+				Halfedge_handle hc, Halfedge_handle hd) {
   CGAL_precondition(ha->face() == hb->face());
   Halfedge_handle ha_prev= ha->prev();
   Halfedge_handle ha_op_next= ha->opposite()->next();
@@ -1302,7 +1323,8 @@ Slice_data_structure::intersect(Halfedge_handle ha, Halfedge_handle hb) {
   write_face(hb->face()->halfedge(), std::cout);
   std::cout << std::endl;
 
-  return fn;
+  CGAL_assertion(0);
+  return std::pair<Halfedge_handle, Halfedge_handle>();;
 }
 
 

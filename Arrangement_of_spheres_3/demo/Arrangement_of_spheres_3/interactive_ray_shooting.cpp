@@ -1,7 +1,7 @@
 #define CGAL_CHECK_EXPENSIVE
 #define CGAL_CHECK_EXACTNESS
 
-#include <CGAL/IO/Qt_debug_viewer_2.h>
+#include <CGAL/IO/Qt_multithreaded_examiner_viewer_2.h>
 #include <CGAL/Arrangement_of_spheres_3/Slice_arrangement.h>
 #include <CGAL/Arrangement_of_spheres_traits_3.h>
 #include <CGAL/Arrangement_of_spheres_3/Slice.h>
@@ -157,7 +157,7 @@ int main(int argc, char *argv[]){
   
   Do_work dw(atof(argv[1]), argv[2]);
 
-  Qt_debug_viewer_2<Do_work> qtd(dw, argc, argv);
+  Qt_multithreaded_examiner_viewer_2<Do_work> qtd(dw, argc, argv);
   
   return qtd();
 }

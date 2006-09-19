@@ -139,11 +139,15 @@ struct Arrangement_of_spheres_traits_3 {
   bool sphere_intersects_rule(Key sphere, Key rule_sphere, 
 			      Coordinate_index C) const;
 
-  bool sphere_intersects_sweep(Key sphere, Sphere_point_3 ep) const;
+  bool sphere_intersects_rule(Key sphere, const Sphere_point_3& sp, 
+			      Coordinate_index C) const;
+
+  bool sphere_intersects_sweep(Key sphere, const Sphere_point_3& ep) const;
+
 
   CGAL::Comparison_result compare_equipower_point_to_rule(Key sphere0,
 							  Key sphere1,
-							  Key rule_sphere,
+							  const Sphere_point_3& sp,
 							  Coordinate_index C) const;
 
   CGAL::Sign sign_of_separating_plane_normal_c(Key sphere0, Key sphere1,
@@ -157,8 +161,8 @@ struct Arrangement_of_spheres_traits_3 {
   CGAL::Oriented_side oriented_side_of_equipower_plane(Key sphere_0, Key sphere_1,
 						       const Sphere_point_3 &s) const;
 
-  CGAL::Oriented_side oriented_side_of_center_plane(Key sphere_0, Key sphere_1, 
-						    Key sphere_center) const ;
+  CGAL::Oriented_side oriented_side_of_separating_plane(Key sphere_0, Key sphere_1, 
+							const Sphere_point_3& sp) const ;
  
   CGAL::Comparison_result compare_sphere_centers_c(Key a, Key b, Coordinate_index C) const;
 
@@ -170,20 +174,32 @@ struct Arrangement_of_spheres_traits_3 {
 						  const Sphere_point_3& d,
 						  Coordinate_index C) const;
 
-  CGAL::Bounded_side bounded_side_of_sphere_on_equipower_plane_rule_line(Key sphere0,
-									 Key Sphere1,
-									 Key rule,
-									 Coordinate_index C,
-									 const Sphere_point_3 &sp) const;
+  // return true if the interval defined by the sphere in C contains d.C
+  bool is_over_circle_c(Key c, const Sphere_point_3& d,
+			      Coordinate_index C) const;
+  
+  CGAL::Comparison_result compare_sphere_sphere_at_sweep(Key sphere0,
+							 Key Sphere1,
+							 const Sphere_point_3 &sw,
+							 const Sphere_point_3 &ep,
+							 Coordinate_index C) const;
 
+ 
+  CGAL::Bounded_side bounded_side_of_sphere_projected(Key sphere,
+				   const Sphere_point_3 &ep,
+				   Key plane,
+						      Coordinate_index C) const;
   CGAL::Bounded_side bounded_side_of_sphere(Key sphere,
-					    Key sphere_x,
-					    Key sphere_y,
+					    const Sphere_point_3 &z) const;
+  CGAL::Bounded_side bounded_side_of_sphere(Key sphere,
+					    Key x,
+					    Key y,
 					    const Sphere_point_3 &z) const;
 
   CGAL::Comparison_result compare_depths(const Sphere_point_3 &a, 
 					 const Sphere_point_3 &b) const;
-  
+  CGAL::Oriented_side oriented_side(const Plane_3 &p,
+				    const Sphere_point_3 &pt) const;
 private:
 
   //  HDS hds_;

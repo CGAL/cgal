@@ -37,7 +37,9 @@ LDFLAGS =   \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: mylibs interactive_point_insertion slice_kds show_slice show_circles   interactive_ray_shooting interactive_point_location  
+all: mylibs interactive_point_insertion slice_kds show_slice show_circles   interactive_ray_shooting 
+
+#interactive_point_location  
 
 #interactive_ray_shooting interactive_point_location random_ray_shoot random_point_locate point_locate
 

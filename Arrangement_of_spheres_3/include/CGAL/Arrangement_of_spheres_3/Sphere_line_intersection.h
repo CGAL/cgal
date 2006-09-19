@@ -177,7 +177,7 @@ public:
   }
 
   CGAL::Comparison_result compare_on_line(const Point_3 &pt) const {
-    CGAL_precondition(line().has_on(pt));
+    CGAL_exactness_precondition(line().has_on(pt));
     for (unsigned int i=0; i< 3; ++i){
       CGAL::Comparison_result c= compare(pt,Coordinate_index(i));
       if (c != CGAL::EQUAL) {

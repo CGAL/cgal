@@ -15,7 +15,6 @@
 
 bool Slice::locate_point_check_face(const T::Sphere_point_3 &z,
 				    Face_const_handle it,
-				    T::Key index,
 				    std::vector<int> &locations) const {
   Halfedge_const_handle h= it->halfedge();
   //bool finite=false;
@@ -26,12 +25,12 @@ bool Slice::locate_point_check_face(const T::Sphere_point_3 &z,
       if (h->curve().is_right() && h->curve().is_inside()) return false;
     } else {
       T::Key sphere= h->curve().key();
-      point_sphere_orientation(z, index, sphere, locations);
+      point_sphere_orientation(z, sphere, locations);
       //DPRINT(std::cout << "Testing " << h->curve() <<std::endl);
       if (!h->curve().is_compatible_location(locations[sphere.input_index()])) {
 	//DPRINT(std::cout << "Nixed by edge " << h->curve() << std::endl);
 	return false;
-      }
+      } 
     }
     //finite=true;
     //} else {
@@ -57,7 +56,6 @@ bool Slice::locate_point_check_face(const T::Sphere_point_3 &z,
 
 // cache checked arcs
 bool Slice::locate_point_check_face_arcs(const T::Sphere_point_3 &ep,
-					 T::Key ind,
 					 Face_const_handle f,
 					 std::vector<int> &locations) const {
   std::set<T::Key> check_arcs;
@@ -67,7 +65,7 @@ bool Slice::locate_point_check_face_arcs(const T::Sphere_point_3 &ep,
 	&& check_arcs.find(h->curve().key()) == check_arcs.end()){
       std::cout << "Arc test " << ep << " on " << h->curve() << std::endl;
       check_arcs.insert(h->curve().key());
-      bool ba=behind_arc(ep, ind, h->curve(), 
+      bool ba=behind_arc(ep, h->curve(), 
 			 locations[h->curve().key().input_index()]);
       if (ba) {
 	std::cout << "Point is behind arc " << std::endl;
@@ -84,8 +82,8 @@ bool Slice::locate_point_check_face_arcs(const T::Sphere_point_3 &ep,
 
 
 bool Slice::locate_point_check_face_vertices(const T::Sphere_point_3 &ep,
-					     T::Key index,
 					     Face_const_handle it) const {
+  
   Halfedge_const_handle h= it->halfedge();
   do {
     if (h->vertex()->point().is_sphere_sphere() 
@@ -94,17 +92,17 @@ bool Slice::locate_point_check_face_vertices(const T::Sphere_point_3 &ep,
       // NOTE what about degeneracies?  not sure if I need to handle
       // them here
       Sds::Point npt= h->vertex()->point();
-      if (t_.oriented_side_of_center_plane(npt.sphere_key(0),
-					   npt.sphere_key(1),
-					   index) == CGAL::ON_NEGATIVE_SIDE) {
-	CGAL_assertion(0);
+      if (t_.oriented_side_of_separating_plane(npt.sphere_key(0),
+					       npt.sphere_key(1),
+					       ep) == CGAL::ON_NEGATIVE_SIDE) {
+	//CGAL_assertion(0);
 	std::cout << "Face nixed by vertex " << npt << std::endl;
 	return false;
       }
     }
     h= h->next();
   } while (h != it->halfedge());
-
+  
   return true;
 }
 
@@ -126,18 +124,17 @@ bool Slice::locate_point_check_face_vertices(const T::Sphere_point_3 &ep,
 
  
 
-Slice::Face_handle Slice::locate_point(const T::Sphere_point_3 & ep) {
+/*Slice::Face_handle Slice::locate_point(const T::Sphere_point_3 & ep) {
   t_.set_temp_sphere(ep.sphere());
   return locate_point(ep, T::Key::temp_key());
-}
+  }*/
 
 
 
 
 Slice::Face_handle 
-    Slice::locate_point(const T::Sphere_point_3 & ep,
-			T::Key index) {
-  return locate_point(sds_.faces_begin(), sds_.faces_end(), ep, index);
+    Slice::locate_point(const T::Sphere_point_3 & ep) {
+  return locate_point(sds_.faces_begin(), sds_.faces_end(), ep);
 }
 
 

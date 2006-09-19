@@ -196,7 +196,9 @@ public:
   
   void exchange_vertices(Halfedge_handle h, Halfedge_handle p);
 
-  Face_handle intersect(Halfedge_handle ha, Halfedge_handle hb);
+  std::pair<Halfedge_handle,Halfedge_handle> 
+  intersect(Halfedge_handle ha, Halfedge_handle hb,
+	    Halfedge_handle hc, Halfedge_handle hd);
 
   std::pair<Halfedge_handle,Halfedge_handle>  unintersect(Face_handle f);
 
@@ -251,6 +253,11 @@ public:
 
   // a halfedge on the rule pointing to the extremal vertex
   Halfedge_handle rule_halfedge(Curve::Key k, int i) const;
+
+  // a halfedge on the circle pointing to the extremal vertex
+  Halfedge_handle extremum_halfedge(Curve::Key k, int i) const;
+  
+  void set_extremum_halfedge(Curve::Key k, int i, Halfedge_handle h);
 
 
   template <class Out>

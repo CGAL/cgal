@@ -344,6 +344,7 @@ Combinatorial_curve::constant_coordinate() const {
     r= plane_coordinate(1);
   else r= plane_coordinate(0);
   //if (!is_finite()) r=1-r;
+  //std::cout << "Constant coordinate of " << *this << " is " << r << std::endl;
   return r;
 }
 

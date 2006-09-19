@@ -1,7 +1,7 @@
-#define CGAL_CHECK_EXPENSIVE
-#define CGAL_CHECK_EXACTNESS
+//#define CGAL_CHECK_EXPENSIVE
+//#define CGAL_CHECK_EXACTNESS
 
-#include <CGAL/IO/Qt_debug_viewer_2.h>
+#include <CGAL/IO/Qt_examiner_viewer_2.h>
 #include <CGAL/Arrangement_of_spheres_3/Slice_arrangement.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Arrangement_of_spheres_3/coordinates.h>
@@ -82,7 +82,7 @@ int main(int argc, char *argv[]){
   }
    
  
-  app.setMainWidget( qtd);
+  app.setMainWidget( qtd->window());
   qtd->show_everything();
   qtd->show();
   return app.exec();

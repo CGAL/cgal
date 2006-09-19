@@ -544,11 +544,13 @@ Slice_arrangement::Point Slice_arrangement::point(CArr::Vertex_const_handle h) c
 }
 
 Slice_arrangement::Curve Slice_arrangement::curve(CArr::Halfedge_const_handle h) const {
-  CGAL_assertion(std::distance(arr_.originating_curves_begin(h),
-    arr_.originating_curves_end(h))==1);
-  
   CGAL_assertion(map_.find(arr_.originating_curves_begin(h)) != map_.end());
-  return map_.find(arr_.originating_curves_begin(h))->second;
+  Slice_arrangement::Curve c= map_.find(arr_.originating_curves_begin(h))->second;
+  if (std::distance(arr_.originating_curves_begin(h),
+		    arr_.originating_curves_end(h))!=1) {
+    CGAL_assertion(c.is_rule());
+  }
+  return c;
   //return boost::apply_visitor(lookup_curve_data_, h->curve());
   
   /*if (Circular_k::Circular_arc_2& a=boost::get<Circular_k::Circular_arc_2>(h->curve())) {
