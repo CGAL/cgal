@@ -49,7 +49,73 @@ void test_overflow_to_double()
   assert(CGAL::to_double(val) == 0.5);
 }
 
+typedef std::pair<std::string, Gmpq> Test_pair; 
+typedef std::vector<Test_pair> Test_set;
+Test_set make_derived_tests (const Test_pair& pair) {
+  // generate exponents and minus signs
+  Test_set result;
+  std::string input = pair.first;
+  Gmpq should_be = pair.second;
+  std::string minus = "-";
+  for (std::string l; l != "ff"; l += "f") {
+    result.push_back(Test_pair(input + l , should_be));
+    result.push_back(Test_pair(input + "e-2" +l , should_be/100));
+    result.push_back(Test_pair(input + "e2" +l, should_be*100));
+    result.push_back(Test_pair(input + "e0" +l , should_be));
+    result.push_back(Test_pair(minus + input + "e-2" +l, -should_be/100));
+    result.push_back(Test_pair(minus + input + "e2" +l, -should_be*100));
+    result.push_back(Test_pair(minus + input + "e0" +l, -should_be));
+  }
+  return result;
+} 
+
+void test_input_from_float()
+{
+  std::cout << "Tests Gmpq input from floats." << std::endl;
+
+  Test_set test_set;
+  // nonnegative integers
+  test_set.push_back (Test_pair (std::string ("123"), Gmpq(123,1))); 
+  test_set.push_back (Test_pair (std::string ("0"), Gmpq(0,1)));
+
+  // nonnegative floats, with or without digits before/after .
+  test_set.push_back (Test_pair (std::string ("0.0"), Gmpq(0,1)));  
+  test_set.push_back (Test_pair (std::string ("0."), Gmpq(0,1)));  
+  test_set.push_back (Test_pair (std::string (".0"), Gmpq(0,1)));
+  test_set.push_back (Test_pair (std::string ("12.34"), Gmpq(1234,100)));
+  test_set.push_back (Test_pair (std::string ("0.56"), Gmpq(56,100)));
+  test_set.push_back (Test_pair (std::string (".78"), Gmpq(78,100)));
+  test_set.push_back (Test_pair (std::string ("90."), Gmpq(90,1)));
+  test_set.push_back (Test_pair (std::string ("90.0"), Gmpq(90,1)));
+
+  // exponents and signs are automatically generated in 
+  // make_derived_tests
+
+  // now the actual test
+  std::cout << " Running " << test_set.size()  << " master tests..." 
+	    << std::endl;
+  for (unsigned int i=0; i<test_set.size(); ++i) {
+    Test_set derived = make_derived_tests (test_set[i]);
+    std::cout << " Running " <<derived.size() << " derived tests..." 
+	      << std::endl;
+    for (unsigned int j=0; j <derived.size(); ++j) {
+      std::stringstream is(derived[j].first);
+      Gmpq should_be (derived[j].second);
+      Gmpq q; is >> q;
+      assert(!is.fail());
+      if (!is.eof()) assert(is.peek()=='f');
+      if (q != should_be)
+	std::cout << " Error: " << derived[j].first + "  read as " 
+		  << q << std::endl;
+      assert(q == should_be);
+    }
+  }
+}
+
 int main() {
+
+  // Added by Bernd Gaertner
+  test_input_from_float();  
 
   // Added by Daniel Russel
   std::cout << "Testing IO" << std::endl;
@@ -160,9 +226,7 @@ int main() {
   test_overflow_to_double();
   test_overflow_to_interval(Gmpz());
   test_overflow_to_interval(Gmpq());
-
  
-  
 #ifdef CGAL_USE_GMPXX
   test_overflow_to_interval(mpz_class());
   test_overflow_to_interval(mpq_class());

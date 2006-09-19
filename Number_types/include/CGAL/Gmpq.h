@@ -289,26 +289,155 @@ operator<<(std::ostream& os, const Gmpq &z)
   return os;
 }
 
+// inline
+// std::istream&
+// operator>>(std::istream& is, Gmpq &z)
+// {
+//   char c;
+//   Gmpz n, d;
+//   is >> n;
+//   is >> c;
+//   //CGAL_assertion(!is || c == '/');
+//   if (c != '/'){
+//     is.setstate(std::ios_base::failbit);
+//     return is;
+//   }
+//   is >> d;
+//   if (!is.fail()) {
+//     z = Gmpq(n,d);
+//   }
+//   return is;
+// }
+
+namespace Gmpq_detail {
+  inline
+  bool is_space (const std::istream& is, std::istream::int_type c)
+  { 
+    std::istream::char_type cc= c; 
+    return 
+      (c == std::istream::traits_type::eof()) ||
+#ifndef CGAL_CFG_NO_LOCALE
+      std::isspace(cc, std::locale::classic() )
+#else
+      std::isspace(cc)
+#endif
+      ;
+  }
+
+  bool is_eof (const std::istream& is, std::istream::int_type c)
+  {
+    return c == std::istream::traits_type::eof();
+  }
+
+  bool is_digit (const std::istream& is, std::istream::int_type c)
+  {
+    std::istream::char_type cc= c;
+    return 
+#ifndef CGAL_CFG_NO_LOCALE
+      std::isdigit(cc, std::locale::classic() )
+#else
+      std::isdigit(cc)
+#endif
+      ;
+  }
+}
+
 inline
 std::istream&
 operator>>(std::istream& is, Gmpq &z)
 {
-  char c;
-  Gmpz n, d;
-  is >> n;
-  is >> c;
-  //CGAL_assertion(!is || c == '/');
-  if (c != '/'){
-    is.setstate(std::ios_base::failbit);
-    return is;
-  }
-  is >> d;
-  if (!is.fail()) {
-    z = Gmpq(n,d);
+  // reads rational and floating point literals.
+  const std::istream::char_type zero = '0';
+  std::istream::int_type c;
+  std::ios::fmtflags old_flags = is.flags();
+
+  is.unsetf(std::ios::skipws);
+  gmpz_eat_white_space(is);
+
+  Gmpz n(0);             // unsigned number before '/' or '.'
+  Gmpz d(1);             // number after '/', or denominator (fp-case)
+  bool negative = false; // do we have a leading '-'?
+  bool digits = false;   // for fp-case: are there any digits at all?
+
+  c = is.peek();
+  if (c != '.') {
+    // is there a sign? 
+    if (c == '-') {
+      is.get();
+      negative = true;
+      gmpz_eat_white_space(is);
+      c=is.peek();
+    }
+    // read n (could be empty)
+    while (!Gmpq_detail::is_eof(is, c) && Gmpq_detail::is_digit(is, c)) {
+      digits = true;
+      n = n*10 + (c-zero);
+      is.get();
+      c = is.peek();
+    }
+    // are we done? 
+    if (Gmpq_detail::is_eof(is, c) || Gmpq_detail::is_space(is, c)) {
+      is.flags(old_flags);
+      if (digits && !is.fail())
+	z = negative? Gmpq(-n,1): Gmpq(n,1);
+      return is;
+    } 
+  } else
+    n = 0;
+  
+  // now we have read n, we are not done, and c is the next character 
+  // in the stream
+  if (c == '/' || c == '.') {
+    is.get(); 
+    if (c == '/') {
+      // rational case
+      is >> d;
+      is.flags(old_flags);
+      if (!is.fail())
+	z = negative? Gmpq(-n,d): Gmpq(n,d);
+      return is;
+    }
+
+    // floating point case; read number after '.' (may be empty)  
+    while (true) {
+      c = is.peek();
+      if (Gmpq_detail::is_eof(is, c) || !Gmpq_detail::is_digit(is, c))
+	break;
+      // now we have a digit
+      is.get();
+      digits = true;
+      d *= 10;
+      n = n*10 + (c-zero);
+    }
   }
 
+  // now we have read all digits after '.', and c is the next character;
+  // read the exponential part (optional)
+  int e = 0;
+  if (c == 'e' || c == 'E') {
+    is.get();
+    is >> e;
+  } 
+
+  // now construct the Gmpq
+  if (!digits) {
+    // illegal floating-point number
+    is.setstate(std::ios_base::failbit);
+    is.flags(old_flags);
+    return is;
+  }
+   
+  // handle e
+  if (e > 0) 
+    while (e--) n *= 10;
+  else
+    while (e++) d *= 10;
+  is.flags(old_flags);
+  if (!is.fail())
+    z = (negative ? Gmpq(-n,d) : Gmpq(n,d));
   return is;
 }
+
 
 inline
 std::pair<double, double>
