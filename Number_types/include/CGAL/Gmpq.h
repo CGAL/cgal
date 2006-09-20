@@ -324,11 +324,13 @@ namespace Gmpq_detail {
       ;
   }
 
+  inline 
   bool is_eof (const std::istream& is, std::istream::int_type c)
   {
     return c == std::istream::traits_type::eof();
   }
 
+  inline
   bool is_digit (const std::istream& is, std::istream::int_type c)
   {
     std::istream::char_type cc= c;
