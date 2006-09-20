@@ -25,12 +25,11 @@
 
 The class \ccRefName\ is a partial specialization of \ccc{boost::graph_traits}
 for the class \ccc{Polyhedron_3}. It provides the types  associated 
-to the following
+to the 
 \ccAnchor{http://www.boost.org/libs/graph/doc/graph_concepts.html}
-{graph} concepts:\\
-\ccAnchor{http://www.boost.org/libs/graph/doc/BidirectionalGraph.html}{BidirectionalGraph}\\
-\ccAnchor{http://www.boost.org/libs/graph/doc/AdjacencyGraph.html}{AdjacencyGraph}\\
-\ccAnchor{http://www.boost.org/libs/graph/doc/EdgeAndVertexListGraph.html}{EdgeAndVertexListGraph}\\
+{graph} concepts 
+\ccAnchor{http://www.boost.org/libs/graph/doc/BidirectionalGraph.html}{\ccc{BidirectionalGraph}} and 
+\ccAnchor{http://www.boost.org/libs/graph/doc/EdgeAndVertexListGraph.html}{\ccc{EdgeAndVertexListGraph}}.
 
 
 
@@ -62,7 +61,6 @@ to the following
   \ccc{CGAL::Polyhedron_3::Halfedge_around_vertex_circulator}
   with the difference that its value type is an edge descriptor and not \ccc{CGAL::Polyhedron_3::Halfedge}.}{}
   
-  \ccTypedef{boost::directed_tag directed_category;}{Indicates this is a directed graph.}
   
   \ccTypedef{boost::disallow_parallel_edge_tag edge_parallel_category;}
   {Indicates that this graph does not support multiedges.}

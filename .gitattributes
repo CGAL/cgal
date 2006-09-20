@@ -376,6 +376,12 @@ Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/the_plan -text
 BGL/doc_tex/BGL.tex -text
 BGL/doc_tex/BGL/BGL.tex -text
 BGL/doc_tex/BGL/PkgDescription.tex -text
+BGL/doc_tex/BGL/fig/ex_bgl.eps -text
+BGL/doc_tex/BGL/fig/ex_bgl.fig -text
+BGL/doc_tex/BGL/fig/ex_bgl.gif -text
+BGL/doc_tex/BGL/fig/ex_bgl.pdf -text
+BGL/doc_tex/BGL/fig/ex_bgl.pstex -text
+BGL/doc_tex/BGL/fig/ex_bgl.pstex_t -text
 BGL/doc_tex/BGL/main.tex -text
 BGL/doc_tex/BGL_ref/Edge_index_property_map_external.tex -text
 BGL/doc_tex/BGL_ref/Edge_index_property_map_stored.tex -text

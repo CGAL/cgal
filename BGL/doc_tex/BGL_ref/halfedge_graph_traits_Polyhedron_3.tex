@@ -34,15 +34,14 @@ to the \ccc{HalfedgeGraph} concept.
 
 \ccTypes
   \ccNestedType{undirected_edge_iterator;}{An edge iterator that iterates 
-  over 1 out of 2 halfedges, each time pointing to one and only one of
-  the halfedges for each opposing pair.\\
-  THe value type is \ccc{CGAL::Polyhedron_3::Halfedge_const_handle}.}
+  over one of the two opposite edges forming an undirected edge.\\
+  The value type is \ccc{CGAL::Polyhedron_3::Halfedge_const_handle}.}
 
   \ccTypedef{typename CGAL::Polyhedron_3<Traits>::Point_3 Point ;}
   {The point type of the vertex.}
 
 
-\ccSeeAlso
+
 
 \end{ccRefClass}
 
