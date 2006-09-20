@@ -15,7 +15,7 @@
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
 
-\begin{ccRefClass}{Surface_mesh_simplification::Empty_collapse_data}
+\begin{ccRefClass}{Surface_mesh_simplification::No_cache}
 
 %% add template arg's if necessary
 
@@ -24,18 +24,18 @@
 \ccCreationVariable{d}
 \ccDefinition
 
-The class \ccRefName\ provides a model for the \ccc{EmptyCollapseData} concept.
-It is an empty struct which caches {\em nothing} about an {\em edge-collapse}.
+The class \ccRefName\ provides a model for the \ccc{NoCache} concept.
+It is an empty struct which caches {\em nothing}.
 
-\ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Empty_collapse_data.h}
+\ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/No_cache.h}
 
 \ccIsModel
-\ccc{EmptyCollapseData}
+\ccc{NoCache}
 
 \ccSeeAlso
-\ccc{PartialCollapseData}\\
-\ccc{FullCollapseData}\\
-\ccc{SetCollapseData}\\
+\ccc{CostCache}\\
+\ccc{FullCache}\\
+\ccc{SetCache}\\
 \ccc{GetCost}\\
 \ccc{GetPlacement}\\
 

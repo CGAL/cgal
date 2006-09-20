@@ -14,14 +14,14 @@
 %%
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
-\begin{ccRefConcept}{PartialCollapseData}
+\begin{ccRefConcept}{CostCache}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 
 \ccDefinition
 
-The concept \ccRefName\ describes the requirements for the data structure that caches the {\em cost} of an {\em edge-collapse} but not its {\em placement}.
+The concept \ccRefName\ describes the requirements for the data structure that caches the {\em cost} of an edge collapse but not its {\em placement}.
 
 The cached cost is stored as an \ccc{boost::optional} value (i.e., it can be absent) because the cost function might be unable to compute it (or intentionally wants to prevent a certain edge to be collapsed).
 
@@ -31,22 +31,22 @@ The cached cost is stored as an \ccc{boost::optional} value (i.e., it can be abs
 \ccc{Assignable}
 
 \ccTypes
-  \ccNestedType{TSM}{The type of the surface to simplify}{}
+  \ccNestedType{TSM}{The type of the surface to simplify. Must be a \ccc{TriangulatedSurfaceMesh}.}{}
 \ccGlue    
-  \ccTypedef{typename Surface_geometric_traits<TSM>::FT FT;}{The field type that represents the collapse cost}
+  \ccNestedType{FT}{The field type that represents the collapse cost.}{}
 
 \ccCreation
-\ccCreationVariable{d}  %% choose variable name
+\ccCreationVariable{c}  %% choose variable name
 
-\ccConstructor{PartialCollapseData();}{Default constructor}
+\ccConstructor{CostCache();}{Default constructor}
 \ccGlue
-\ccConstructor{PartialCollapseData( boost::optional<FT> cost );}{Constructs a (partial) collapse data caching the specified \ccc{cost} }
+\ccConstructor{CostCache( boost::optional<FT> cost );}{Constructs a partial cache storing only the specified \ccc{cost}. }
 
 \ccAccessFunctions
-  \ccMethod{boost::optional<FT> cost() const;}{The cached cost.}
+  \ccMethod{boost::optional<FT> cost() const;}{The stored cost.}
   
 \ccHasModels
-\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Partial_collapse_data<TSM>}.
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Cost_cache<TSM>}.
 
 \end{ccRefConcept}
 

@@ -27,7 +27,8 @@ The class \ccRefName\ provides a model for the \ccc{GetCost} concept.
 It computes the collapse cost following the Lindstrom-Turk strategy
 (Section~\ref{SurfaceMeshSimplification:LindstromTurkStrategy})
 
-as the squared length of the edge.
+The class \ccRefName\ has one template arguments: the type of surface being simplified. 
+It be a model of the \ccc{TriangulatedSurfaceMesh} concept.
 
 \ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_cost.h}
 
@@ -39,20 +40,19 @@ as the squared length of the edge.
 \ccConstructor{LindstromTurk_cost<TSM>();}{Default constructor} 
 
 \ccHeading{Methods}
-  \ccMethod{template<class Collapse_data>
+  \ccMethod{template<class Cache>
             result_type operator()( edge_descriptor const&      edge
                                   , TSM&                        surface 
-                                  , Collapse_data const&        data
+                                  , Cache const&                cache
                                   , LindstromTurk_Params const* params
                                   ) const;
            }
   {Returns the cost of collapsing \ccc{edge}.}
 
 \ccSeeAlso
-\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_set_partial_collapse_data<TSM>}
-\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_full_partial_collapse_data<TSM>}
-\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_cost<TSM>}
-\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_placement<TSM>}
+\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_set_cost_cache<TSM>}\\
+\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_set_cost_and_placement_cache<TSM>}\\
+\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_placement<TSM>}\\
 \ccc{CGAL::Surface_mesh_simplification::LindstromTurk_params}
 
 \end{ccRefClass}

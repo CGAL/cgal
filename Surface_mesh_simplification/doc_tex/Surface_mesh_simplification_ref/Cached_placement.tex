@@ -21,36 +21,42 @@
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
-\ccCreationVariable{d}
+\ccCreationVariable{gp}
 \ccDefinition
 
 The class \ccRefName\ provides a model for the \ccc{GetPlacement} concept. 
-It directly returns the placement stored in the {\em collapse-data}.
+It has one template argument: the type of surface being simplified,
+which must be a model of the \ccc{TriangulatedSurfaceMesh} concept.
+
+This model directly returns the placement stored in the cache.
 
 \ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Cached_placement.h}
 
 \ccIsModel
 \ccc{GetPlacement}
 
+\ccTypes
+  \ccTypedef{void Params;}{The type of the parameters. (\ccc{void} since no parameters are needed).}
+
 \ccCreation
 \ccCreationVariable{gc}  %% choose variable name
-\ccConstructor{Cached_cost<TSM>();}{Default constructor} 
+\ccConstructor{Cached_placement<TSM>();}{Default constructor} 
 
 \ccHeading{Methods}
-  \ccMethod{template<class Collapse_data>
+  \ccMethod{template<class Cache>
             result_type operator()( edge_descriptor const& edge
                                   , TSM&                   surface 
-                                  , Collapse_data const&   data
+                                  , Cache const&           cache
                                   , Params const*          params
                                   ) const;
            }
-  {Returns the {\em placement} (vertex position) stored in \ccc{data}, whose type must be
-   a model of \ccc{FullCollapseData}. All arguments except \ccc{data} are ignored.
+  {Returns the {\em placement} (vertex position) stored in \ccc{cache}, whose type must be
+   a model of \ccc{FullCache}. All arguments except \ccc{cache} are ignored.
   }
 
 \ccSeeAlso  
-\ccc{FullCollapseData}\\
-\ccc{SetCollapseData}
+\ccc{FullCache}\\
+\ccc{SetCache}
 
 \end{ccRefClass}
 

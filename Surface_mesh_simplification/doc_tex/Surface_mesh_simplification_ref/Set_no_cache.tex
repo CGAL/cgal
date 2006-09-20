@@ -15,7 +15,7 @@
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
 
-\begin{ccRefClass}{Surface_mesh_simplification::Set_empty_collapse_data<TSM>}
+\begin{ccRefClass}{Surface_mesh_simplification::Set_no_cache<TSM>}
 
 %% add template arg's if necessary
 
@@ -23,45 +23,47 @@
 %% \ccHtmlIndexC[class]{} %% add further index entries
 \ccDefinition
 
-The class \ccRefName\ provides a model for the
-\ccc{SetCollpaseData} where the \ccc{CollapseData} it assigns is \ccc{Empty_collapse_data}.\\
+The class \ccRefName\ provides a model for 
+\ccc{SetCache} which assigns a \ccc{No_cache} record.\\
 The class \ccRefName\ has one template argument: the type of surface being simplified, must be a model of the \ccc{TriangulatedSurfaceMesh} concept.
 
-\ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Set_empty_collapse_data.h}
+\ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Set_no_cache.h}
 
 \ccTypes
   \ccTypedef{TSM TSM;}{The type of the surface to simplify.}
   \ccGlue
-  \ccTypedef{boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}{A {\sc Bgl} edge descriptor
-  representing an undirected edge of the surface.}
+  \ccTypedef{boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}
+  {A {\sc Bgl} edge descriptor representing an edge of the surface.}
   \ccGlue
-  \ccTypedef{Empty_collapse_data<TSM> Collapse_data;}{A type of collapse data which caches nothing.}
+  \ccTypedef{No_cache<TSM> Cache;}
+  {The concrete type of cache record assigned by this class.}
   \ccGlue
-  \ccTypedef{void Cost_params;}{The type of the unused parameters to the non-existing cost subfunction.}
+  \ccTypedef{void Cost_params;}
+  {An unused type required by the \ccc{SetCache} concept.}
   \ccGlue
-  \ccTypedef{void Placement_params;}{The type of the unused parameters to the non-existing placement subfunction.}
+  \ccTypedef{void Placement_params;}
+  {An unused type required by the \ccc{SetCache} concept.}
 
 \ccOperations
 
 \ccMethod
-  {void operator()( Collapse_data& data
+  {void operator()( Cache&                 cache
                   , edge_descriptor const& edge
-                  , TSM& surface
-                  , CostParams const* cparams
-                  , PlacementParam const* pparams
+                  , TSM&                   surface
+                  , CostParams const*      cparams
+                  , PlacementParam const*  pparams
                   );
   }
-{Default constructs an instance of \ccc{Empty_collapse_data} and assigns it to \ccc{data}. All other parameters are ignored.
-}  
+{Default constructs an instance of \ccc{No_cache} and assigns it to \ccc{cache}.}  
 
 \ccIsModel
-\ccc{SetCollapseData}
+\ccc{SetCache}
 
 \ccSeeAlso
-\ccc{CGAL::Surface_mesh_simplification::Set_partial_collapse_data<TSM,GetCost>}\\
-\ccc{CGAL::Surface_mesh_simplification::Set_full_collapse_data<TSM,GetCost,GetPlacement>}\\
-\ccc{CGAL::Surface_mesh_simplification::Set_partial_collapse_data_LindstromTurk<TSM>}\\
-\ccc{CGAL::Surface_mesh_simplification::Set_full_collapse_data_LindstromTurk<TSM>}
+\ccc{CGAL::Surface_mesh_simplification::Set_cost_cache<TSM,GetCost>}\\
+\ccc{CGAL::Surface_mesh_simplification::Set_cost_and_placement_cache<TSM,GetCost,GetPlacement>}\\
+\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_set_cost_cache<TSM>}\\
+\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_set_cost_and_placement_cache<TSM>}
 
 \end{ccRefClass}
 

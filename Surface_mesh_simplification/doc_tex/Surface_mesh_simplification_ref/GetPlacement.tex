@@ -19,6 +19,7 @@
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 
+\ccCreationVariable{gp}  %% choose variable name
 \ccDefinition
 
 The concept \ccRefName\ describes the requirements for the {\em policy
@@ -32,45 +33,46 @@ computational limitation (such as overflow), or can be intentionally
 returned to prevent the edge from being collapsed.
 
 A model of this concept can simply return the placement stored in the
-passed collapse data, if any, or perform the actual computation.
+passed cache object, if any, or perform the actual computation.
 
 \ccRefines
 \ccc{DefaultConstructible}
 \ccc{CopyConstructible}
 
 \ccTypes
-  \ccNestedType{TSM}{The type of the surface to simplify. Must be a model of the \ccc{TriangulatedSurfaceMesh} concept.}{}
+  \ccNestedType{TSM}{The type of the surface to simplify.
+   Must be a model of the \ccc{TriangulatedSurfaceMesh} concept.}{}
 \ccGlue    
   \ccNestedType{Params}{The type of the model-specific parameters needed. Can be \ccc{void}.}{}
 \ccGlue    
-  \ccTypedef{typename Surface_geometric_traits<TSM>::Point Point;}{The point type for the surface vertex.}
+  \ccTypedef{typename CGAL::halfedge_graph_traits<TSM>::Point Point;}{The point type for the surface vertex.}
 \ccGlue    
-  \ccTypedef{typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}{A {\sc Bgl} edge descriptor representing an  undirected edge of the surface.}
+  \ccTypedef{typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}
+  {A {\sc Bgl} edge descriptor representing an edge of the surface.}
 \ccGlue    
   \ccTypedef{boost::optional<Point> result_type;}{The type of the result (an optional point).}
 
 \ccCreation
 \ccCreationVariable{gp}  %% choose variable name
 
-\ccConstructor{GetCost();}{Default constructor}
+\ccConstructor{GetPlacement();}{Default constructor}
 
 \ccOperations
 
-  \ccMethod{template<class Collapse_data>
+  \ccMethod{template<class Cache>
             result_type operator()( edge_descriptor const& edge
                                   , TSM&                   surface 
-                                  , Collapse_data const&   data
+                                  , Cache const&           cache
                                   , Params const*          params
                                   ) const;
            }
-  {Computes and returns the placement, that is, the position of the vertex which replaces the collapsing \ccc{edge},
-   using the model-specific \ccc{params}.\\
-   \ccc{edge} is required to be in the \ccc{surface}.\\
-   The generic type \ccc{Collapse_data} must be a model of the \ccc{CollapseData} meta concept.\\
-   If \ccc{Collapse_data} is a model of \ccc{FullCollapseData}, which means that
-   \ccc{data} stores a cache of the placement, a model can simply return the placement cached
-   in \ccc{data} (but is not required to do so).\\
-   \ccc{params} can be a \ccc{NULL} pointer.
+  {Computes and returns the placement, that is, the position of the vertex 
+  which replaces the collapsing \ccc{edge}, using the model-specific \ccc{params}.\\
+  \ccc{edge} is required to be in the \ccc{surface}.\\
+  If \ccc{Cache} is a model of \ccc{CostAndPlacementCache}, which means that
+  \ccc{cache} stores the placement, a model can simply return that 
+  (but is not required to do so).\\
+  \ccc{params} can be a \ccc{NULL} pointer.
   }
   
 \ccHasModels

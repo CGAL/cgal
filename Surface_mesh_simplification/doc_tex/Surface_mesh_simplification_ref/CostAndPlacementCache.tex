@@ -14,7 +14,7 @@
 %%
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
-\begin{ccRefConcept}{FullCollapseData}
+\begin{ccRefConcept}{CostAndPlacementCache}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
@@ -31,27 +31,27 @@ The cost and placement are stored as \ccc{boost::optional} values (i.e. they can
 \ccc{Assignable}
 
 \ccTypes
-  \ccNestedType{TSM}{The type of the surface to simplify}{}
+  \ccNestedType{TSM}{The type of the surface to simplify. Must be a \ccc{TriangulatedSurfaceMesh}.}{}
 \ccGlue    
-  \ccTypedef{typename Surface_geometric_traits<TSM>::FT FT ;}{The field type that represents the collapse cost}
+  \ccNestedType{FT}{A field type that represents the collapse cost.}{}
 \ccGlue    
-  \ccTypedef{typename Surface_geometric_traits<TSM>::Point Point ;}{The point type of the surface vertex}
+  \ccTypedef{typename halfedge_graph_traits<TSM>::Point Point ;}{The point type of the surface vertex}
 
 \ccCreation
-\ccCreationVariable{d}  %% choose variable name
+\ccCreationVariable{c}  %% choose variable name
 
-\ccConstructor{FullCollapseData();}{Default constructor}
+\ccConstructor{CostAndPlacementCache();}{Default constructor}
 \ccGlue
-\ccConstructor{FullCollapseData( boost::optional<FT> const& cost, boost::optional<Point> const& placement );}
-{Constructs a (full) collapse data caching the specified \ccc{cost} and \ccc{placement}}
+\ccConstructor{CostAndPlacementCache( boost::optional<FT> const& cost, boost::optional<Point> const& placement );}
+{Constructs a full cache storing the specified \ccc{cost} and \ccc{placement}}
 
 \ccAccessFunctions
-  \ccMethod{boost::optional<FT> cost() const;}{The cached cost.}
+  \ccMethod{boost::optional<FT> cost() const;}{The stored cost.}
 \ccGlue
-  \ccMethod{boost::optional<Point> placement() const;}{The cached placement.}
+  \ccMethod{boost::optional<Point> placement() const;}{The stored placement.}
   
 \ccHasModels
-\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Full_collapse_data<TSM>}.
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Cost_and_placement_cache<TSM>}.
 
 \end{ccRefConcept}
 

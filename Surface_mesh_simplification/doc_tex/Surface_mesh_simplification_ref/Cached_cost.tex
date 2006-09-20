@@ -21,11 +21,14 @@
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
-\ccCreationVariable{d}
+\ccCreationVariable{gc}
 \ccDefinition
 
 The class \ccRefName\ provides a model for the \ccc{GetCost} concept.
-It directly returns the cost stored in the {\em collapse-data}.
+It has one template argument: the type of surface being simplified,
+which must be a model of the \ccc{TriangulatedSurfaceMesh} concept.
+
+This model directly returns the cost stored in the cache.
 
 \ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Cached_cost.h}
 
@@ -40,22 +43,22 @@ It directly returns the cost stored in the {\em collapse-data}.
 \ccConstructor{Cached_cost<TSM>();}{Default constructor} 
 
 \ccHeading{Methods}
-  \ccMethod{template<class Collapse_data>
+  \ccMethod{template<class Cache>
             result_type operator()( edge_descriptor const& edge
                                   , TSM&                   surface 
-                                  , Collapse_data const&   data
+                                  , Cache const&           cache
                                   , Params const*          params
                                   ) const;
            }
-  {Returns the {\em cost} stored in \ccc{data}, whose type must be a model of
-   \ccc{PartialCollapseData} or \ccc{FullCollapseData}. All arguments 
-   except \ccc{data} are ignored.
+  {Returns the {\em cost} stored in \ccc{cache}, whose type must be a model of
+   \ccc{CostCache} or \ccc{FullCache}. All arguments 
+   except \ccc{cache} are ignored.
   }
 
 \ccSeeAlso
-\ccc{PartialCollapseData}\\
-\ccc{FullCollapseData}\\
-\ccc{SetCollapseData}
+\ccc{CostCache}\\
+\ccc{FullCache}\\
+\ccc{SetCache}
 
 \end{ccRefClass}
 

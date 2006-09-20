@@ -37,14 +37,14 @@ It computes the collapse cost as the squared length of the edge.
 \ccConstructor{Edge_length_cost<TSM>();}{Default constructor} 
 
 \ccHeading{Methods}
-  \ccMethod{template<class Collapse_data>
+  \ccMethod{template<class Cache>
             result_type operator()( edge_descriptor const& edge
                                   , TSM&                   surface 
-                                  , Collapse_data const&   data
+                                  , Cache const&           cache
                                   , Params const*          params
                                   ) const;
            }
-  {Returns the {\em collaspe cost} as the squared distance between the points
+  {Returns the {\em collapse cost} as the squared distance between the points
   of the source and target vertices of \ccc{edge}. All arguments 
   except \ccc{edge} and \ccc{surface} are ignored.
   }

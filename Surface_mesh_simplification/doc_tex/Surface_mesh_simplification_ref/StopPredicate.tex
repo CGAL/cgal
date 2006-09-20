@@ -27,12 +27,12 @@ The concept \ccRefName\ describes the requirements for the predicate which indic
   \ccNestedType{TSM}
   {The type of the surface to simplify. Must be a model of the \ccc{TriangulatedSurfaceMesh} concept.}{}
 \ccGlue    
-  \ccNestedType{FT}{A \ccc{FieldType} representing the collapse cost}{}
+  \ccNestedType{FT}{A field type representing the collapse cost}{}
 \ccGlue    
-  \ccNestedType{size_type}{An \ccc{IntegerType} representing the number of edges}{}
+  \ccNestedType{size_type}{An integer type representing the number of edges}{}
 \ccGlue    
   \ccTypedef{typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}
-  {A {\sc Bgl} edge descriptor representing an undirected edge of the surface.}
+  {A {\sc Bgl} edge descriptor representing an edge of the surface.}
 
 \ccCreation
 \ccCreationVariable{should_stop}  %% choose variable name

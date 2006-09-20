@@ -15,7 +15,7 @@
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
 
-\begin{ccRefClass}{Vertex_is_fixed_property_map_always_false<TSM>}
+\begin{ccRefClass}{Vertex_is_fixed_property_map_always_false<Graph>}
 
 %% add template arg's if necessary
 
@@ -23,15 +23,23 @@
 %% \ccHtmlIndexC[class]{} %% add further index entries
 \ccDefinition
 
-The class \ccRefName\ provides a model for the concept \ccc{VertexIsFixedPropertyMap}.
-It always returns false.
+The class \ccRefName\ provides a model for the concept 
+\ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
+that maps a vertex in a {\sc Bgl}
+\ccAnchor{http://www.boost.org/libs/graph/doc/Graph.html}{graph}
+to the boolean value \ccc{false}.
+
+The template parameter \ccc{Graph} must be a model of a {\sc Bgl}
+\ccAnchor{http://www.boost.org/libs/graph/doc/Graph.html}{graph}
+
+The mapping indicates that no vertex in the surface is to be considered fixed by the \ccc{edge_collapse} algoithm.
 
 \ccInclude{CGAL/Surface_mesh_simplification/Vertex_is_fixed_property_map_always_false.h}
 
 \ccTypes
-  \ccNestedType{TSM}{The TSM template parameter.}
+  \ccTypedef{Graph Graph;}{The template parameter corresponding to the graph type.}
 
-  \ccTypedef{typename boost::graph_traits<TSM const>::vertex_descriptor key_type;}
+  \ccTypedef{typename boost::graph_traits<Graph const>::vertex_descriptor key_type;}
   {The type of {\sc Bgl} vertex descriptor used as key.}
 
 \ccCreation
@@ -47,10 +55,10 @@ It always returns false.
   {Returns \ccc{false}.}  
     
 \ccIsModel
-\ccc{VertexIsFixedMapPropertyMap}
+\ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
 
 \ccSeeAlso
-\ccRefIdfierPage{CGAL::Vertex_is_fixed_property_map_always_false<TSM>}\\
+\ccRefIdfierPage{CGAL::Vertex_is_fixed_property_map_stored<TSM>}\\
 
 \end{ccRefClass}
 

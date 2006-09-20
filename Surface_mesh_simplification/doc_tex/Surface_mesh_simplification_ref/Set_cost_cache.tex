@@ -15,7 +15,7 @@
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
 
-\begin{ccRefClass}{Surface_mesh_simplification::Set_partial_collapse_data<TSM,GetCost>}
+\begin{ccRefClass}{Surface_mesh_simplification::Set_cost_cache<TSM,GetCost>}
 
 %% add template arg's if necessary
 
@@ -23,55 +23,60 @@
 %% \ccHtmlIndexC[class]{} %% add further index entries
 \ccDefinition
 
-The class \ccRefName\ provides a model for the \ccc{SetCollpaseData}
-where the \ccc{CollapseData} it assigns is
-\ccc{Partial_collapse_data<TSM>}.\\ The class \ccRefName\ has two
+The class \ccRefName\ provides a model for \ccc{SetCache}
+which assigns a \ccc{Cost_cache<TSM>} record.\\ 
+The class \ccRefName\ has two
 template arguments: The first is the type of surface being simplified
 and must be a model of the \ccc{TriangulatedSurfaceMesh} concept. The
-second is the policy which actually computes the cached cost and must
+second is the policy which actually computes the cost and must
 be a model of the \ccc{GetCost} concept.
 
 \ccIsModel
-\ccc{SetCollapseData}
+\ccc{SetCache}
 
-\ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Set_partial_collapse_data.h}
+\ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Set_cost_cache.h}
 
 \ccTypes
   \ccTypedef{TSM TSM;}{The type of the surface to simplify.}
   \ccGlue
-  \ccTypedef{boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}{A {\sc Bgl} edge descriptor representing an {\em undirected edge} of the surface.}
+  \ccTypedef{boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}
+  {A {\sc Bgl} edge descriptor representing an edge of the surface.}
   \ccGlue
-  \ccTypedef{Partial_collapse_data<TSM> Collapse_data;}{A type of collapse data which caches only the cost.}
+  \ccTypedef{Cost_cache<TSM> Cache;}
+  {A concrete type of cache record assigned by this class.}
   \ccGlue
-  \ccTypedef{typename GetCost::Params Cost_params;}{The type of the parameters to the \ccc{GetCost} policy. It must be \ccc{DefaultConstructible} so it cannot be \ccc{void}.}
+  \ccTypedef{typename GetCost::Params Cost_params;}
+  {The type of the parameters to the \ccc{GetCost} policy. 
+  It must be \ccc{DefaultConstructible} so it cannot be \ccc{void}.}
   \ccGlue
-  \ccTypedef{void Placement_params;}{The type of the unused parameters to the non-existing placement subfunction.}
+  \ccTypedef{void Placement_params;}
+  {An unused type required by the \ccc{SetCache} concept.}
 
 \ccCreation
 \ccCreationVariable{sd}  %% choose variable name
 
-\ccConstructor{Set_partial_collapse_data<TSM,GetCost>( GetCost const& get_cost); }
+\ccConstructor{Set_cost_cache<TSM,GetCost>( GetCost const& get_cost); }
 {Initializes an instance storing a const reference to the \ccc{get_cost} policy which is used to actually compute the cost.}
 
 \ccOperations
 
 \ccMethod
-  {void operator()( Collapse_data& data
+  {void operator()( Cache&                 cache
                   , edge_descriptor const& edge
-                  , TSM& surface
-                  , CostParams const* cparams
-                  , PlacementParam const* pparams
+                  , TSM&                   surface
+                  , CostParams const*      cparams
+                  , PlacementParam const*  pparams
                   );
   }
-{Calls \ccc{GetCost(edge,surface,data,cparams)} to obtain the actual collapse cost \ccc{c}. Then constructs a \ccc{Partial_collapse_data<TSM>(c)} and assigns it to \ccc{data}.
+{Calls \ccc{get_cost(edge,surface,cache,cparams)} to obtain the actual collapse cost \ccc{c}. Then constructs a \ccc{Cost_cache<TSM>(c)} and assigns it to \ccc{cache}.
 }  
 
 
 \ccSeeAlso
-\ccc{CGAL::Surface_mesh_simplification::Set_empty_collapse_data<TSM,GetCost>}\\
-\ccc{CGAL::Surface_mesh_simplification::Set_full_collapse_data<TSM,GetCost,GetPlacement>}\\
-\ccc{CGAL::Surface_mesh_simplification::Set_partial_collapse_data_LindstromTurk<TSM>}\\
-\ccc{CGAL::Surface_mesh_simplification::Set_full_collapse_data_LindstromTurk<TSM>}
+\ccc{CGAL::Surface_mesh_simplification::Set_no_cache<TSM>}\\
+\ccc{CGAL::Surface_mesh_simplification::Set_cost_and_placement_cache<TSM,GetCost,GetPlacement>}\\
+\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_set_cost_cache<TSM>}\\
+\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_set_cost_and_placement_cache<TSM>}
 
 \end{ccRefClass}
 

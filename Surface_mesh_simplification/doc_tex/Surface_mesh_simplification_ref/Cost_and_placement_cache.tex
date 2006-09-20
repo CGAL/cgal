@@ -15,7 +15,7 @@
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
 
-\begin{ccRefClass}{Surface_mesh_simplification::Full_collapse_data<TSM>}
+\begin{ccRefClass}{Surface_mesh_simplification::Cost_and_placement_cache<TSM>}
 
 %% add template arg's if necessary
 
@@ -24,18 +24,19 @@
 \ccCreationVariable{d}
 \ccDefinition
 
-The class \ccRefName\ provides a model for the \ccc{FullCollapseData} concept
-which caches the {\em cost} and {\em placement} of an {\em edge-collapse}.
+The class \ccRefName\ provides a model for the \ccc{CostAndPlacementCache} concept.
+It has one template argument: the type of surface being simplified,
+which must be a model of the \ccc{TriangulatedSurfaceMesh} concept.
 
-\ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Full_collapse_data.h}
+\ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Cost_and_placement_cache.h}
 
 \ccIsModel
-\ccc{FullCollapseData}
+\ccc{CostAndPlacementCache}
 
 \ccSeeAlso
-\ccc{EmptyCollapseData}\\
-\ccc{PartialCollapseData}\\
-\ccc{SetCollapseData}\\
+\ccc{NoCache}\\
+\ccc{CostCache}\\
+\ccc{SetCache}\\
 \ccc{GetCost}\\
 \ccc{GetPlacement}\\
 

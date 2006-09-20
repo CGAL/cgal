@@ -15,7 +15,7 @@
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
 
-\begin{ccRefClass}{Surface_mesh_simplification::LindstromTurk_set_full_collapse_data<TSM>}
+\begin{ccRefClass}{Surface_mesh_simplification::LindstromTurk_set_cost_and_placement_cache<TSM>}
 
 %% add template arg's if necessary
 
@@ -24,27 +24,26 @@
 \ccDefinition
 
 The class \ccRefName\ provides a model for the
-\ccc{SetCollpaseData} where the \ccc{CollapseData} it assigns is \ccc{Full\_collapse\_data<TSM>}
-storing a cost and placement calculated following the Lindstrom-Turk strategy
+\ccc{SetCache} which assigns a \ccc{Cost_and_placement_cache<TSM>} record.
+The cost and placement values are calculated following the Lindstrom-Turk strategy
 (Section~\ref{SurfaceMeshSimplification:LindstromTurkStrategy}).
 
 The class \ccRefName\ has one template arguments: the type of surface being simplified. 
-It be a model of the \ccc{TriangulatedSurfaceMesh} concept.
+It must be a model of the \ccc{TriangulatedSurfaceMesh} concept.
 
 \ccIsModel
-\ccc{SetCollapseData}
+\ccc{SetCache}
 
-\ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_set_full_collapse_data.h}
+\ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_set_cost_and_placement_cache.h}
 
 \ccTypes
   \ccTypedef{TSM TSM;}{The type of the surface to simplify. Is a model of \ccc{TriangulatedSurfaceMesh}.}
   \ccGlue
-  \ccTypedef{boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}{A {\sc Bgl} edge descriptor
-            representing an undirected edge of the surface.
-            }
+  \ccTypedef{boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}
+  {A {\sc Bgl} edge descriptor representing an edge of the surface.}
   \ccGlue
-  \ccTypedef{Full_collapse_data<TSM> Collapse_data;}
-  {A type of collapse data which caches both the cost and placement.}
+  \ccTypedef{Cost_and_placement_cache<TSM> Cache;}
+  {A concrete type of cache assigned by this class.}
   \ccGlue
   \ccTypedef{typename LindstromTurk_params Cost_params;}
   {The type of the parameters used by the cost computation}
@@ -55,27 +54,27 @@ It be a model of the \ccc{TriangulatedSurfaceMesh} concept.
 \ccCreation
 \ccCreationVariable{sd}  %% choose variable name
 
-\ccConstructor{LindstromTurk_set_full_collapse_data<TSM>(); }
+\ccConstructor{LindstromTurk_set_cost_and_placement_cache<TSM>(); }
 {Default constructor.}
 
 \ccOperations
 
 \ccMethod
-  {void operator()( Collapse_data& data
+  {void operator()( Cache&                 cache
                   , edge_descriptor const& edge
-                  , TSM& surface
-                  , CostParams const* cparams
-                  , PlacementParam const* pparams
+                  , TSM&                   surface
+                  , CostParams const*      cparams
+                  , PlacementParam const*  pparams
                   );
   }
 {Computes the cost \ccc{c} and placement \ccc{p}
 of collapsing \ccc{edge}, using \ccc{cparams} and \ccc{pparams}.
-Then constructs a \ccc{Full_collapse_data<TSM>(c,p)} 
-and assigns it to \ccc{data}.
+Then constructs a \ccc{Cost_and_placement_cache<TSM>(c,p)} 
+and assigns it to \ccc{cache}.
 }  
 
 \ccSeeAlso
-\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_set_partial_collapse_data<TSM>}\\
+\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_set_cost_cache<TSM>}\\
 \ccc{CGAL::Surface_mesh_simplification::LindstromTurk_cost<TSM>}\\
 \ccc{CGAL::Surface_mesh_simplification::LindstromTurk_placement<TSM>}\\
 \ccc{CGAL::Surface_mesh_simplification::LindstromTurk_params}

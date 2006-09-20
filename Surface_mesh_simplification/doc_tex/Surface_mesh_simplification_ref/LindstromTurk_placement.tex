@@ -27,6 +27,9 @@ The class \ccRefName\ provides a model for the \ccc{GetPlacement} concept.
 It computes the collapse cost following the Lindstrom-Turk strategy
 (Section~\ref{SurfaceMeshSimplification:LindstromTurkStrategy}).
 
+The class \ccRefName\ has one template arguments: the type of surface being simplified. 
+It be a model of the \ccc{TriangulatedSurfaceMesh} concept.
+
 \ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_placement.h}
 
 \ccIsModel
@@ -37,15 +40,19 @@ It computes the collapse cost following the Lindstrom-Turk strategy
 \ccConstructor{LindstromTurk_placement<TSM>();}{Default constructor} 
 
 \ccHeading{Methods}
-  \ccMethod{template<class Collapse_data>
+  \ccMethod{template<class Cache>
             result_type operator()( edge_descriptor const&      edge
                                   , TSM&                        surface 
-                                  , Collapse_data const&        data
+                                  , Cache const&                cache
                                   , LindstromTurk_params const* params
                                   ) const;
            }
   {Returns the position of the vertex that replaces the collapsed \ccc{edge}.}
 
+\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_set_cost_cache<TSM>}\\
+\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_set_cost_and_placement_cache<TSM>}\\
+\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_cost<TSM>}\\
+\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_params}\\
 \end{ccRefClass}
 
 % +------------------------------------------------------------------------+

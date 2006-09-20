@@ -15,7 +15,7 @@
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
 
-\begin{ccRefClass}{Surface_mesh_simplification::Partial_collapse_data<TSM>}
+\begin{ccRefClass}{Surface_mesh_simplification::Cost_cache<TSM>}
 
 %% add template arg's if necessary
 
@@ -24,18 +24,18 @@
 \ccCreationVariable{d}
 \ccDefinition
 
-The class \ccRefName\ provides a model for the \ccc{PartialCollapseData} concept
-which caches the {\em cost} (but not the {\em placement}) of an {\em edge-collapse}.
+The class \ccRefName\ provides a model for the \ccc{CostCache} concept
+which stores the {\em cost} (but not the {\em placement}) of an edge collapse.
 
-\ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Partial_collapse_data.h}
+\ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Cost_cache.h}
 
 \ccIsModel
-\ccc{PartialCollapseData}
+\ccc{CostCache}
 
 \ccSeeAlso
-\ccc{EmptyCollapseData}\\
-\ccc{FullCollapseData}\\
-\ccc{SetCollapseData}\\
+\ccc{NoCache}\\
+\ccc{FullCache}\\
+\ccc{SetCache}\\
 \ccc{GetCost}\\
 \ccc{GetPlacement}\\
 

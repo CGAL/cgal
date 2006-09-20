@@ -21,7 +21,7 @@
 
 \ccDefinition
 
-The concept \ccRefName\ describes the requirements for the {\em visitor object} which is used to track the edge-collapse simplification algorithm.
+The concept \ccRefName\ describes the requirements for the {\em visitor object} which is used to track the edge collapse simplification algorithm.
 
 The several callbacks given as member functions in the visitor are called from certain places in the algorithm implementation.
 
@@ -29,15 +29,15 @@ The several callbacks given as member functions in the visitor are called from c
   \ccNestedType{TSM}
   {The type of the surface to simplify. Must be a model of the \ccc{TriangulatedSurfaceMesh} concept.}{}
 \ccGlue    
-  \ccNestedType{FT}{A \ccc{FieldType} representing the collapse cost}{}
+  \ccNestedType{FT}{A field type representing the collapse cost}{}
 \ccGlue    
   \ccTypedef{typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}
   {A {\sc Bgl} edge descriptor representing an undirected edge of the surface.}
 \ccGlue    
-  \ccTypedef{typename CGAL::embedded_graph_traits<TSM>::Point Point;}
+  \ccTypedef{typename CGAL::halfedge_graph_traits<TSM>::Point Point;}
   {The point type of the vertex.}
 \ccGlue    
-  \ccNestedType{size_type}{An \ccc{IntegerType} representing the number of edges}{}
+  \ccNestedType{size_type}{An integer type representing the number of edges}{}
 
 \ccCreation
 \ccCreationVariable{v}  %% choose variable name
@@ -55,7 +55,7 @@ The several callbacks given as member functions in the visitor are called from c
   \ccMethod
   {void OnStopConditionReached( TSM& surface ) ; } 
   {Called when the \ccc{StopPredicate} returned true
-  (but not if the algorithm terminates because the surface couldn't be simplified any futher)
+  (but not if the algorithm terminates because the surface couldn't be simplified any futher).
   }
   
   \ccMethod

@@ -14,7 +14,7 @@
 %%
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
-\begin{ccRefConcept}{SetCollapseData}
+\begin{ccRefConcept}{SetCache}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
@@ -22,45 +22,52 @@
 
 \ccDefinition
 
-The concept \ccRefName\ describes the requirements for the {\em policy function object} which assigns the {\em collapse data} of an edge.
+The concept \ccRefName\ describes the requirements for the {\em policy function object} which assigns the the cache object associated to each edge.
 
 
 \ccTypes
-  \ccNestedType{TSM}{The type of the surface to simplify. Must be a model of the \ccc{TriangulatedSurfaceMesh} concept.}{}
+  \ccNestedType{TSM}{The type of the surface to simplify.
+  Must be a model of the \ccc{TriangulatedSurfaceMesh} concept.}{}
   \ccGlue
-  \ccTypedef{boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}{A {\sc Bgl} edge descriptor representing an undirected edge of the surface.}{}
+  \ccTypedef{boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}
+  {A {\sc Bgl} edge descriptor representing an edge of the surface.}{}
   \ccGlue
-  \ccNestedType{Collapse_data}{The concrete type of collapse data being assigned by this policy.}{}
+  \ccNestedType{Cache}{The concrete type of cache record being assigned by this policy.}{}
   \ccGlue
-  \ccNestedType{Cost_params}{The type of the parameters to the cost subfunction. Can be \ccc{void}.}{}
+  \ccNestedType{Cost_params}{The type of the parameters to the cost subfunction.
+  Can be \ccc{void}.}{}
   \ccGlue
-  \ccNestedType{Placement_params}{The type of the parameters to the placement subfunction. Can be \ccc{void}.}{}
+  \ccNestedType{Placement_params}{The type of the parameters to the placement subfunction.
+   Can be \ccc{void}.}{}
 
 \ccOperations
 
 \ccMethod
-  {void operator()( Collapse_data& data
+  {void operator()( Cache&                 cache
                   , edge_descriptor const& edge
-                  , TSM& surface
-                  , CostParams const* cparams
-                  , PlacementParam const* pparams
+                  , TSM&                   surface
+                  , CostParams const*      cparams
+                  , PlacementParam const*  pparams
                   );
   }
-{Assigns a \ccc{Collapse_data} object to \ccc{data}.\\
-If \ccc{Collapse_data} is a model of \ccc{FullCollapseData}, the object assigned holds {\em cost} and {\em placement} values computed
-for the given \ccc{edge} using the model-specific parameters \ccc{cparams} and \ccc{pparams}.\\
-If \ccc{Collapse_data} is a model of \ccc{PartialCollapseData}, the object assigned holds only the {\em cost}, computed 
- using \ccc{cparams}. \ccc{pparams} is ignored and can be a null pointer.\\
-If \ccc{Collapse_data} is a model of \ccc{EmptyCollapseData}, the objects assigned is a default constructed empty objects holding no values. In this case, only the \ccc{data} argument is used and the cost/placement 
+{Assigns a \ccc{Cache} object to \ccc{cache}.\\
+If \ccc{Cache} is a model of \ccc{CostAndPlacementCache}, \ccc{cache}
+holds {\em cost} and {\em placement} values precomputed for the given 
+\ccc{edge} using the model-specific parameters \ccc{cparams} and \ccc{pparams}.\\
+If \ccc{Cache} is a model of \ccc{CostCache}, \ccc{cache} holds only 
+the {\em cost} precomputed using \ccc{cparams}. \ccc{pparams} is ignored
+and can be a null pointer.\\
+If \ccc{Cache} is a model of \ccc{NoCache}, \ccc{cache} is an
+default-constructed empty struct holding no values. In this case, 
+only the \ccc{cache} argument is used and the cost/placement 
 \ccc{params} can be null pointers.\\
-\ccc{edge} is required to belong to the \ccc{surface}.\\
-The concrete model specifies whether \ccc{cparams} or \ccc{pparams}, when not ignored, can be null pointers.
+\ccc{edge} is required to belong to the \ccc{surface}.
 }  
 
 \ccHasModels
-\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Set_empty_collapse_data<TSM>}\\
-\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Set_partial_collapse_data<TSM,GetCost>}\\
-\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Set_full_collapse_data<TSM,GetCost,GetPlacement>}\\
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Set_no_cache<TSM>}\\
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Set_cost_cache<TSM,GetCost>}\\
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Set_cost_and_placement<TSM,GetCost,GetPlacement>}\\
 
 \end{ccRefConcept}
 

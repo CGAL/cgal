@@ -27,6 +27,9 @@
 The class \ccRefName\ provides a model for the \ccc{GetPlacement} concept. 
 It computes the placement as the midpoint position along the edge.
 
+The class \ccRefName\ has one template arguments: the type of surface being simplified. 
+It be a model of the \ccc{TriangulatedSurfaceMesh} concept.
+
 \ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_placement.h}
 
 \ccIsModel
@@ -37,10 +40,10 @@ It computes the placement as the midpoint position along the edge.
 \ccConstructor{Midpoint_placement<TSM>();}{Default constructor} 
 
 \ccHeading{Methods}
-  \ccMethod{template<class Collapse_data>
+  \ccMethod{template<class Cache>
             result_type operator()( edge_descriptor const& edge
                                   , TSM&                   surface 
-                                  , Collapse_data const&   data
+                                  , Cache const&           cache
                                   , Params const*          params
                                   ) const;
            }
