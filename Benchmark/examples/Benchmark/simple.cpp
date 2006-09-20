@@ -1,8 +1,7 @@
 #include <math.h>
 
-#include <CGAL/benchmark_basic.hpp>
-#include <CGAL/Bench.hpp>
-#include <CGAL/Bench_option_parser.hpp>
+#include <CGAL/Benchmark/Benchmark.hpp>
+#include <CGAL/Benchmark/Option_parser.hpp>
 
 #if (defined _MSC_VER)
 #define M_PI 3.14159265358979323846
@@ -31,7 +30,7 @@ int main(int argc, char * argv[])
 {
   po::options_description opts("Options");
   opts.add_options()("help,h", "print help message");
-  cb::Bench_option_parser bench_opts;
+  cb::Option_parser bench_opts;
   opts.add(bench_opts.get_opts());
   po::variables_map var_map;
 
@@ -49,7 +48,7 @@ int main(int argc, char * argv[])
     return 1;
   }
 
-  cb::Bench<Bench_sqrt> bench("Square root", bench_opts.get_seconds());
+  cb::Benchmark<Bench_sqrt> bench("Square root", bench_opts.get_seconds());
   bench();
   return 0;
 }

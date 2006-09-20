@@ -16,7 +16,7 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = \
            -I../../include \
            $(CGAL_CXXFLAGS) \
-           $(LONG_NAME_PROBLEM_CXXFLAGS)
+           $(LONG_NAME_PROBLEM_CXXFLAGS) -O2
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -36,7 +36,7 @@ endif
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: check_syntax$(EXE_EXT) simple$(EXE_EXT) leftturn$(EXE_EXT)
+all: check_syntax$(EXE_EXT) simple$(EXE_EXT) leftturn$(EXE_EXT) parm_passing$(EXE_EXT) 
 
 check_syntax$(EXE_EXT): check_syntax$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)check_syntax $? $(LDFLAGS)
@@ -47,7 +47,10 @@ simple$(EXE_EXT): simple$(OBJ_EXT)
 leftturn$(EXE_EXT): leftturn$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)leftturn $? $(LDFLAGS)
 
-clean: check_syntax.clean simple.clean leftturn.clean
+parm_passing$(EXE_EXT): parm_passing$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)parm_passing $? $(LDFLAGS)
+
+clean: check_syntax.clean simple.clean leftturn.clean parm_passing.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules

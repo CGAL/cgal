@@ -2,8 +2,8 @@
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 
-#include <CGAL/Bench.hpp>
-#include <CGAL/Bench_option_parser.hpp>
+#include <CGAL/Benchmark/Benchmark.hpp>
+#include <CGAL/Benchmark/Option_parser.hpp>
 
 typedef CGAL::Quotient<CGAL::MP_Float>          NT;
 typedef CGAL::Cartesian<NT>                     Kernel;
@@ -27,7 +27,7 @@ int main(int argc, char * argv[])
 {
   po::options_description opts("Options");
   opts.add_options()("help,h", "print help message");
-  CGAL::Bench_option_parser bench_opts;
+  cb::Option_parser bench_opts;
   opts.add(bench_opts.get_opts());
   po::variables_map var_map;
 
@@ -45,7 +45,7 @@ int main(int argc, char * argv[])
     return 1;
   }
   
-  CGAL::Bench<My_bench_bbox> bench("Leftturn", bench_opts.get_seconds());
+  CGAL::Benchmark<My_bench_bbox> bench("Leftturn", bench_opts.get_seconds());
   bench();
   return 0;
 }

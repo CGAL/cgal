@@ -19,7 +19,7 @@
 
 #include <iostream>
 
-#include "CGAL/benchmark_basic.hpp"
+#include "CGAL/Benchmark/benchmark_format.hpp"
 
 namespace cb = CGAL::benchmark;
 
