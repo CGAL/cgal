@@ -133,8 +133,12 @@ bool Slice::locate_point_check_face_vertices(const T::Sphere_point_3 &ep,
 
 
 Slice::Face_handle 
-    Slice::locate_point(const T::Sphere_point_3 & ep) {
-  return locate_point(sds_.faces_begin(), sds_.faces_end(), ep);
+Slice::locate_point(const T::Sphere_point_3 & ep) {
+  std::vector<Face_handle> faces;
+  for (Sds::Face_iterator it = sds_.faces_begin();it != sds_.faces_end(); ++it){
+    faces.push_back(it);
+  }
+  return locate_point(faces.begin(), faces.end(), ep);
 }
 
 

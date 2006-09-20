@@ -186,27 +186,28 @@ CGAL::Comparison_result Arrangement_of_spheres_traits_3::compare_sphere_centers_
 
 
 CGAL::Comparison_result 
-Arrangement_of_spheres_traits_3::compare_sphere_sphere_at_sweep(Key sphere0,
+Arrangement_of_spheres_traits_3::compare_sphere_sphere_at_sweep(const Sphere_point_3 &t,
+								Key sphere0,
 								Key sphere1,
-								const Sphere_point_3 &sw,
-								const Sphere_point_3 &ep,
+								const Sphere_point_3 &pt,
 								Coordinate_index C) const {
    {
-     std::cout << "Compare SS at sweep " << sphere0 << " " << sphere1 
-	       << " sweep " << sw << " line " << ep.line() << " coord " << C 
+     std::cout << "Compare SS at sweep " << t << " spheres " 
+	       <<  sphere0 << " " << sphere1 
+	       << " point " << pt << " line " << pt.line() << " coord " << C 
 	       << std::endl;
 
-     bool i0= sphere_intersects_rule(sphere0, ep, C);
-     bool i1= sphere_intersects_rule(sphere1, ep, C);
+     bool i0= sphere_intersects_rule(sphere0, pt, C);
+     bool i1= sphere_intersects_rule(sphere1, pt, C);
      
      
      //std::cout << "Comparisons are " << hi << " " << hp << " and " << ohi << " " << ohp << std::endl;
      if (!i0) {
-       CGAL::Comparison_result sc0= compare_sphere_center_c(sphere0, ep, C);
+       CGAL::Comparison_result sc0= compare_sphere_center_c(sphere0, pt, C);
        std::cout << "Returning " << sc0 << " since sphere 0 misses" << std::endl;
        return sc0;
      } else if (!i1) {
-       CGAL::Comparison_result sc1= compare_sphere_center_c(sphere1, ep, C);
+       CGAL::Comparison_result sc1= compare_sphere_center_c(sphere1, pt, C);
        std::cout << "Returning " << sc1 << " since sphere 0 misses" << std::endl;
        return sc1;
      }
@@ -219,9 +220,9 @@ Arrangement_of_spheres_traits_3::compare_sphere_sphere_at_sweep(Key sphere0,
    FT v[3]={0,0,0};
    v[other_plane_coordinate(C).index()]=1;
    
-   Plane_3 rule_plane(ep.line().point(),
-		      ep.line().point()+ Vector_3(v[0], v[1], v[2]),
-		      ep.line().point()+ ep.line().to_vector());
+   Plane_3 rule_plane(pt.line().point(),
+		      pt.line().point()+ Vector_3(v[0], v[1], v[2]),
+		      pt.line().point()+ pt.line().to_vector());
    if (rule_plane.orthogonal_vector()[C.index()] < 0) {
      rule_plane=rule_plane.opposite();
    }
@@ -231,7 +232,7 @@ Arrangement_of_spheres_traits_3::compare_sphere_sphere_at_sweep(Key sphere0,
    CGAL::Object o= di_(eqp, rule_plane);
    if (!CGAL::assign(l,o)) {
      CGAL::Comparison_result cr= compare_equipower_point_to_rule(sphere0, sphere1,
-								 ep, C);
+								 pt, C);
      std::cout << "Returning " << cr << " since sphere the planes miss" << std::endl;
      return cr;
    }
@@ -245,7 +246,7 @@ Arrangement_of_spheres_traits_3::compare_sphere_sphere_at_sweep(Key sphere0,
    if (!switch_point_0.is_valid()){
      
      CGAL::Comparison_result cr=  compare_equipower_point_to_rule(sphere0,sphere1,
-								  ep, C);
+								  pt, C);
      std::cout << "Returning " << cr << " line misses" << std::endl;
      return cr;
    }
@@ -268,12 +269,12 @@ Arrangement_of_spheres_traits_3::compare_sphere_sphere_at_sweep(Key sphere0,
    } 
 
    std::cout << "Oriented_side is " << fpos << std::endl;
-   CGAL::Comparison_result spcr0= switch_point_0.compare(sw, sweep_coordinate());
+   CGAL::Comparison_result spcr0= switch_point_0.compare(t, sweep_coordinate());
    
    Sphere_point_3 switch_point_1(table_->sphere(sphere0), l.opposite());
    std::cout << "switch points are " << switch_point_0 
 	     << " and " << switch_point_1 << std::endl;
-   CGAL::Comparison_result spcr1= switch_point_1.compare(sw, sweep_coordinate());
+   CGAL::Comparison_result spcr1= switch_point_1.compare(t, sweep_coordinate());
    std::cout << "spcr is " << spcr0 << spcr1 << std::endl;
    
    
@@ -301,35 +302,44 @@ Arrangement_of_spheres_traits_3::compare_sphere_sphere_at_sweep(Key sphere0,
 
 CGAL::Bounded_side 
 Arrangement_of_spheres_traits_3
-::bounded_side_of_sphere_projected(Key sphere,
-				   const Sphere_point_3 &ep,
-				   Key plane,
+::bounded_side_of_sphere_projected(const Sphere_point_3 &t,
+				   Key sphere,
+				   Key oplane,
+				   const Sphere_point_3 &pt,
 				   Coordinate_index C) const{
-  FT p[3],v[3];
-  for (unsigned int i=0; i< 3; ++i) {
-    p[i]= ep.line().point()[i];
-    v[i]= ep.line().to_vector()[i];
-  }
-  v[other_plane_coordinate(C).index()] = 0;
-  p[other_plane_coordinate(C).index()] = table_->center(plane)[other_plane_coordinate(C).index()];
-
-  Line_3 l(Point_3(p[0],p[1], p[2]),Vector_3(v[0], v[1], v[2]));
-  std::cout << "Line is " << l << std::endl;
-  Sphere_point_3 p0(table_->sphere(sphere), l);
-  if (!p0.is_valid()) {
-    std::cout << "Line misses" << std::endl;
+  FT rd[3]={0,0,0};
+  rd[other_plane_coordinate(C).index()]=1;
+  Plane_3 p(pt.line().point(),
+	    pt.line().point() + pt.line().to_vector(),
+	    pt.line().point() + Vector_3(rd[0], rd[1], rd[2]));
+  std::cout << "Rule plane is " << p << std::endl;
+  FT v[3]={0,0,0};
+  v[other_plane_coordinate(C).index()]=1;
+  Plane_3 rp(table_->center(oplane), Vector_3(v[0], v[1], v[2]));
+  std::cout << "Other rule plane is " << rp << std::endl;
+  Line_3 l;
+  CGAL::Object o= di_(rp, p);
+  if (!CGAL::assign(l,o)) {
+    CGAL_assertion(0);
     return CGAL::ON_UNBOUNDED_SIDE;
   } else {
-    Sphere_point_3 p1(table_->sphere(sphere), l.opposite());
-    std::cout << "Points are " << p0 << " " << p1 << std::endl;
-    CGAL::Comparison_result c0= compare_depths(ep, p0), c1= compare_depths(ep, p1);
-    std::cout << "Depths are " << c0 << " " << c1 << std::endl;
-    if (c0==CGAL::EQUAL || c1 == CGAL::EQUAL) {
-      return CGAL::ON_BOUNDARY;
-    } else if (c0 != c1) {
-      return CGAL::ON_BOUNDED_SIDE;
-    } else {
+    std::cout << "Line is " << l << std::endl;
+    Sphere_point_3 p0(table_->sphere(sphere), l);
+    if (!p0.is_valid()) {
+      std::cout << "Line misses" << std::endl;
       return CGAL::ON_UNBOUNDED_SIDE;
+    } else {
+      Sphere_point_3 p1(table_->sphere(sphere), l.opposite());
+      std::cout << "Points are " << p0 << " " << p1 << std::endl;
+      CGAL::Comparison_result c0= compare_depths(t, p0), c1= compare_depths(t, p1);
+      std::cout << "Depths are " << c0 << " " << c1 << std::endl;
+      if (c0==CGAL::EQUAL || c1 == CGAL::EQUAL) {
+	return CGAL::ON_BOUNDARY;
+      } else if (c0 != c1) {
+	return CGAL::ON_BOUNDED_SIDE;
+      } else {
+	return CGAL::ON_UNBOUNDED_SIDE;
+      }
     }
   }
 }

@@ -28,8 +28,8 @@ Slice_data_structure::a_halfedge(Curve::Key k) const {
 }
 
 Slice_data_structure::Halfedge_handle 
-Slice_data_structure::rule_halfedge(Curve::Key k, int i) const {
-  Halfedge_handle h= halfedges_[k.input_index()][i]->opposite()->prev();
+Slice_data_structure::rule_halfedge(Curve::Key k, Rule_direction i) const {
+  Halfedge_handle h= halfedges_[k.input_index()][i.index()]->opposite()->prev();
   CGAL_assertion(h->vertex()->point().is_sphere_extremum());
   CGAL_assertion(h->curve().key() == k);
   CGAL_assertion(h->curve().is_rule());
@@ -37,8 +37,8 @@ Slice_data_structure::rule_halfedge(Curve::Key k, int i) const {
 }
 
 Slice_data_structure::Halfedge_handle 
-Slice_data_structure::extremum_halfedge(Curve::Key k, int i) const {
-  Halfedge_handle h= halfedges_[k.input_index()][i];
+Slice_data_structure::extremum_halfedge(Curve::Key k, Rule_direction i) const {
+  Halfedge_handle h= halfedges_[k.input_index()][i.index()];
   CGAL_assertion(h->vertex()->point().is_sphere_extremum());
   CGAL_assertion(h->curve().key() == k);
   CGAL_assertion(!h->curve().is_rule());
@@ -46,12 +46,12 @@ Slice_data_structure::extremum_halfedge(Curve::Key k, int i) const {
 }
 
 void 
-Slice_data_structure::set_extremum_halfedge(Curve::Key k, int i,
+Slice_data_structure::set_extremum_halfedge(Curve::Key k, Rule_direction i,
 					    Halfedge_handle h){
   CGAL_precondition(h->curve().key() ==k);
   CGAL_precondition(h->curve().is_arc());
   CGAL_precondition(h->vertex()->point().is_sphere_extremum());
-  halfedges_[k.input_index()][i];
+  halfedges_[k.input_index()][i.index()];
 }
 
 Slice_data_structure::Halfedge_handle 
@@ -308,6 +308,16 @@ Slice_data_structure::exchange_spheres(Curve::Key k, Curve::Key l) {
 
 Slice_data_structure::Vertex_handle 
 Slice_data_structure::insert_vertex_in_edge(Halfedge_handle h, Point p) {
+ 
+
+  Vertex_handle v= new_vertex(p);
+  insert_vertex_in_edge_unsafe(h,v);
+  return v;
+}
+
+Slice_data_structure::Halfedge_handle 
+Slice_data_structure::insert_vertex_in_edge_unsafe(Halfedge_handle h,
+						   Vertex_handle v) {
   Halfedge_handle i=h->opposite();
 
   Vertex_handle vh= h->vertex();
@@ -316,7 +326,6 @@ Slice_data_structure::insert_vertex_in_edge(Halfedge_handle h, Point p) {
   Halfedge_handle hp=h->prev();
   Halfedge_handle in=i->next();
 
-  Vertex_handle v= new_vertex(p);
   Halfedge_handle j= new_halfedge(h->curve());
   Halfedge_handle k= j->opposite();
 
@@ -333,7 +342,59 @@ Slice_data_structure::insert_vertex_in_edge(Halfedge_handle h, Point p) {
   connect(i, k);
   connect(k, in);
   connect(hp, j);
-  return v;
+  return j;
+}
+
+std::pair<Slice_data_structure::Halfedge_handle,Slice_data_structure::Halfedge_handle>
+Slice_data_structure::pinch_bl(Halfedge_handle a, Halfedge_handle b, Point p) {
+  // make more efficient later
+  Vertex_handle v= new_vertex(p);
+  Halfedge_handle ha= insert_vertex_in_edge_unsafe(a,v);
+  Halfedge_handle hb= insert_vertex_in_edge_unsafe(b,v);
+  //Vertex_handle vh= insert_vertex_in_edge(h, v->vertex()->point());
+  // now merge the two vertices.
+  merge_vertices_bl(ha, hb);
+  return std::make_pair(ha, hb);
+}
+
+
+
+void Slice_data_structure::merge_vertices_bl(Halfedge_handle a,
+						 Halfedge_handle b) {
+  CGAL_precondition(a->face() == b->face());
+  CGAL_precondition(a->vertex()->point() == b->vertex()->point());
+  Vertex_handle v= a->vertex();
+  Vertex_handle ov=b->vertex();
+  b->set_vertex(v);
+  Halfedge_handle an= a->next();
+  Halfedge_handle bn= b->next();
+  bn->opposite()->set_vertex(v);
+  connect(b, an);
+  connect(a, bn);
+  Face_handle fh= hds_.faces_push_back(HDS::Face());
+  fh->set_halfedge(b);
+  CGAL::HalfedgeDS_items_decorator<HDS> dec;
+  dec.set_face_in_face_loop(b, fh);
+  if (v != ov) hds_.vertices_erase(ov);
+}
+
+Slice_data_structure::Vertex_handle
+Slice_data_structure::unpinch_bl(Halfedge_handle a, Halfedge_handle b) {  
+  CGAL_precondition(a->vertex()== b->vertex());
+  CGAL_precondition(degree(a->vertex()) == 4);
+  Halfedge_handle an= a->opposite()->prev()->opposite();
+  Halfedge_handle bn= b->opposite()->prev()->opposite();
+  Vertex_handle nv= new_vertex(a->vertex()->point());
+  connect(a,an);
+  connect(b, bn);
+  nv->set_halfedge(b);
+  b->set_vertex(nv);
+  bn->opposite()->set_vertex(nv);
+  Face_handle df= b->face();
+  CGAL::HalfedgeDS_items_decorator<HDS> dec;
+  dec.set_face_in_face_loop(a, a->face());
+  hds_.faces_erase(df);
+  return nv;
 }
 
 void Slice_data_structure::connect(Halfedge_handle a, Halfedge_handle b) {
@@ -347,7 +408,7 @@ Slice_data_structure::new_circle(Curve::Key k, Face_handle fi,
   Face_handle f= hds_.faces_push_back(HDS::Face());
   Vertex_handle vhs[4];
   for (unsigned int i=0; i< 4; ++i) {
-    vhs[i]= new_vertex(Point::make_extremum(k, i));
+    vhs[i]= new_vertex(Point::make_extremum(k, Rule_direction(i)));
   }
 
   vs[0]=new_halfedge(Curve(k, Curve::RT_ARC));
@@ -432,10 +493,10 @@ Slice_data_structure::new_target(Curve::Key k,
       && !br->curve().is_inside());*/
     
     // make all point out
-    ts[0]= new_halfedge(Curve::make_rule(k, 0));
-    ts[1]= new_halfedge(Curve::make_rule(k, 1))->opposite();
-    ts[2]= new_halfedge(Curve::make_rule(k, 2))->opposite();
-    ts[3]= new_halfedge(Curve::make_rule(k, 3));
+    ts[0]= new_halfedge(Curve::make_rule(k, Rule_direction::right()));
+    ts[1]= new_halfedge(Curve::make_rule(k, Rule_direction::top()))->opposite();
+    ts[2]= new_halfedge(Curve::make_rule(k, Rule_direction::left()))->opposite();
+    ts[3]= new_halfedge(Curve::make_rule(k, Rule_direction::bottom()));
     for (unsigned int i=0; i< 4; ++i) {
       ts[i]->opposite()->set_vertex(c[i]->vertex());
       connect(c[i], ts[i]);
@@ -477,7 +538,7 @@ Slice_data_structure::new_target(Curve::Key k,
     targets_.pop_back();
     Halfedge_handle h= rv->halfedge();
     do {
-      ts[h->curve().rule_index()]= h;
+      ts[h->curve().rule_direction().index()]= h;
       h= h->next()->opposite();
     } while (h != rv->halfedge());
   
@@ -1224,160 +1285,43 @@ void Slice_data_structure::exchange_vertices(Halfedge_handle h,
 
 std::pair<Slice_data_structure::Halfedge_handle,
 	  Slice_data_structure::Halfedge_handle>
-Slice_data_structure::intersect(Halfedge_handle ha, Halfedge_handle hb,
-				Halfedge_handle hc, Halfedge_handle hd) {
-  CGAL_precondition(ha->face() == hb->face());
-  Halfedge_handle ha_prev= ha->prev();
-  Halfedge_handle ha_op_next= ha->opposite()->next();
-  Halfedge_handle ha_next= ha->next();
-  Halfedge_handle ha_op_prev= ha->opposite()->prev();
-
-  Halfedge_handle hb_prev= hb->prev();
-  Halfedge_handle hb_op_next= hb->opposite()->next();
-  Halfedge_handle hb_next= hb->next();
-  Halfedge_handle hb_op_prev= hb->opposite()->prev();
-  
-  Vertex_handle va= new_vertex(Point(ha->curve(), hb->curve()));
-  Vertex_handle vb= new_vertex(Point(hb->curve(), ha->curve()));
-
-  Halfedge_handle hap= new_halfedge(ha->curve());
-  Halfedge_handle hbp= new_halfedge(hb->curve());
-  Halfedge_handle fha= new_halfedge(ha->curve());
-  Halfedge_handle fhb= new_halfedge(hb->curve());
-
-  Face_handle fn= hds_.faces_push_back(HDS::Face());
-  Face_handle fa= hds_.faces_push_back(HDS::Face());
-  Face_handle f= ha->face();
-  
-  Vertex_handle ha_v= ha->vertex();
-  Vertex_handle hb_v= hb->vertex();
-  Vertex_handle ha_op_v= ha->opposite()->vertex();
-  Vertex_handle hb_op_v= hb->opposite()->vertex();
-
-  hap->set_vertex(ha_v);
-  hap->opposite()->set_vertex(vb);
-  hb->set_vertex(vb);
-  hb->opposite()->set_vertex(hb_op_v);
-
-  fha->set_vertex(vb);
-  fha->opposite()->set_vertex(va);
-
-  fhb->opposite()->set_vertex(vb);
-  fhb->set_vertex(va);
-
-  hbp->opposite()->set_vertex(va);
-  ha->set_vertex(va);
-  ha->opposite()->set_vertex(ha_op_v);
-  hbp->set_vertex(hb_v);
-
-  va->set_halfedge(fhb);
-  vb->set_halfedge(fha);
-  ha_v->set_halfedge(hap);
-  hb_op_v->set_halfedge(hb->opposite());
-  ha_op_v->set_halfedge(ha->opposite());
-  hb_v->set_halfedge(hbp);
-  
-
-  connect(ha, hbp);
-  connect(hbp, hb_next);
-  connect(hb_op_prev, hbp->opposite());
-  connect(hbp->opposite(), fha);
-  connect(fhb, ha->opposite());
-  connect(fha->opposite(), fhb->opposite());
-  connect(fhb->opposite(), fha->opposite());
-  connect(hap->opposite(), fhb);
-  connect(hb, hap);
-  connect(fha, hb->opposite());
-  connect(hap, ha_next);
-  connect(ha_op_prev, hap->opposite());
-
- 
-
-  fhb->set_face(ha->opposite()->face());
-  fhb->opposite()->set_face(fn);
-  fha->set_face(hb->opposite()->face());
-  fha->opposite()->set_face(fn);
-  hap->set_face(f);
-  hap->opposite()->set_face(ha->opposite()->face());
-  hbp->set_face(fa);
-  hbp->opposite()->set_face(fha->face());
-  ha->set_face(fa);
-
-  fa->set_halfedge(ha);
-  CGAL::HalfedgeDS_items_decorator<HDS> dec;
-  dec.set_face_in_face_loop(ha, fa);
-
-  fhb->face()->set_halfedge(fhb);
-  fha->face()->set_halfedge(fha);
-  fn->set_halfedge(fha->opposite());
-  f->set_halfedge(hb);
-
-  write_face(fn->halfedge(), std::cout);
-  std::cout << std::endl;
-  write_face(fha->face()->halfedge(), std::cout);
-  std::cout << std::endl;
-  write_face(fhb->face()->halfedge(), std::cout);
-  std::cout << std::endl;
-  write_face(ha->face()->halfedge(), std::cout);
-  std::cout << std::endl;
-  write_face(hb->face()->halfedge(), std::cout);
-  std::cout << std::endl;
-
-  CGAL_assertion(0);
-  return std::pair<Halfedge_handle, Halfedge_handle>();;
+Slice_data_structure::intersect(Halfedge_handle ha, Halfedge_handle hb) {
+  std::pair<Halfedge_handle, Halfedge_handle> p0= pinch_bl(ha, hb,
+							       Point(ha->curve(),
+								     hb->curve()));
+  std::pair<Halfedge_handle, Halfedge_handle> p1= pinch_bl( p0.second->next(),
+							    p0.second,
+							    Point(p0.second->curve(), p0.first->curve()));
+  set_curve(p1.first, p1.second->curve().other_side());
+  set_curve(p1.first->next(),  p0.first->curve().other_side());
+  CGAL_precondition(p1.first->curve().key() != p1.first->next()->curve().key());
+  return std::make_pair(p1.first->next(), p1.first);
 }
 
 
-std::pair<Slice_data_structure::Halfedge_handle,Slice_data_structure::Halfedge_handle>
+void Slice_data_structure::set_curve(Halfedge_handle h, Curve c) {
+  h->set_curve(c);
+  h->opposite()->set_curve(c.other_side());
+}
+
+
+std::pair<Slice_data_structure::Halfedge_handle,
+	  Slice_data_structure::Halfedge_handle>
 Slice_data_structure::unintersect(Face_handle fn) {
-  Halfedge_handle fha= fn->halfedge()->opposite();
-  Halfedge_handle fhb= fha->opposite()->next()->opposite();
-  CGAL_assertion(fhb->opposite()->next()->opposite() == fha);
-
-  Vertex_handle va= fhb->vertex();
-  Vertex_handle vb= fha->vertex();
-  Halfedge_handle hap= fhb->prev()->opposite();
-  Halfedge_handle hb= fha->next()->opposite();
-  Halfedge_handle hbp= fha->prev()->opposite();
-  Halfedge_handle ha = fhb->next()->opposite();
-  Vertex_handle ha_v= hap->vertex();
-  //Vertex_handle hb_op_v= hb->opposite()->vertex();
-  Vertex_handle hb_v = hbp->vertex();
-  Face_handle f= hb->face();
-  Face_handle fa= ha->face();
-  
-  Halfedge_handle ha_next= hap->next();
-  Halfedge_handle ha_op_prev= hap->opposite()->prev();
-  Halfedge_handle hb_next= hbp->next();
-  Halfedge_handle hb_op_prev = hbp->opposite()->prev();
-
-  CGAL::HalfedgeDS_items_decorator<HDS> dec;
-  dec.set_face_in_face_loop(ha, f);
-
-  // delete things
-  hds_.faces_erase(fn);
-  hds_.faces_erase(fa);
-  hds_.edges_erase(fhb);
-  hds_.edges_erase(fha);
-  hds_.edges_erase(hap);
-  hds_.edges_erase(hbp);
-  hds_.vertices_erase(va);
-  hds_.vertices_erase(vb);
-
-  connect(ha, ha_next);
-  connect(ha_op_prev, ha->opposite());
-  connect(hb, hb_next);
-  connect(hb_op_prev, hb->opposite());
-  ha->set_face(f);
-  f->set_halfedge(ha);
-  ha->opposite()->face()->set_halfedge(ha->opposite());
-  hb->opposite()->face()->set_halfedge(hb->opposite());
-  
-  ha->set_vertex(ha_v);
-  ha_v->set_halfedge(ha);
-  hb->set_vertex(hb_v);
-  hb_v->set_halfedge(hb);
-  return std::make_pair(ha, hb);
+  Halfedge_handle ha= fn->halfedge();
+  Halfedge_handle hb= ha->next();
+  Vertex_handle hav= ha->vertex();
+  Vertex_handle hbv= hb->vertex();
+  Halfedge_handle up0b= ha->opposite()->next()->opposite();
+  Halfedge_handle up1a= hb->opposite()->next()->opposite();
+  Vertex_handle vn0= unpinch_bl(ha, up0b);
+  Vertex_handle vn1= unpinch_bl(up1a, hb);
+  std::swap(ha->curve(), hb->curve());
+  Halfedge_handle han= remove_redundant_vertex(up1a);
+  Halfedge_handle hbn= remove_redundant_vertex(up0b);
+  Halfedge_handle ra=remove_redundant_vertex(han);
+  Halfedge_handle rb=remove_redundant_vertex(hbn);
+  return std::make_pair(ra,rb);
 }
 
 

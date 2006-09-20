@@ -157,6 +157,8 @@ public:
 
   void connect(Halfedge_handle a, Halfedge_handle b);
 
+  void set_curve(Halfedge_handle h, Curve c);
+
   Simulator::Event_key event(Halfedge_handle h) const {
     return h->event();
   }
@@ -196,9 +198,9 @@ public:
   
   void exchange_vertices(Halfedge_handle h, Halfedge_handle p);
 
+  
   std::pair<Halfedge_handle,Halfedge_handle> 
-  intersect(Halfedge_handle ha, Halfedge_handle hb,
-	    Halfedge_handle hc, Halfedge_handle hd);
+  intersect(Halfedge_handle ha, Halfedge_handle hb);
 
   std::pair<Halfedge_handle,Halfedge_handle>  unintersect(Face_handle f);
 
@@ -252,12 +254,12 @@ public:
   Halfedge_handle a_halfedge(Curve::Key k) const;
 
   // a halfedge on the rule pointing to the extremal vertex
-  Halfedge_handle rule_halfedge(Curve::Key k, int i) const;
+  Halfedge_handle rule_halfedge(Curve::Key k, Rule_direction i) const;
 
   // a halfedge on the circle pointing to the extremal vertex
-  Halfedge_handle extremum_halfedge(Curve::Key k, int i) const;
+  Halfedge_handle extremum_halfedge(Curve::Key k, Rule_direction i) const;
   
-  void set_extremum_halfedge(Curve::Key k, int i, Halfedge_handle h);
+  void set_extremum_halfedge(Curve::Key k, Rule_direction i, Halfedge_handle h);
 
 
   template <class Out>
@@ -275,6 +277,20 @@ public:
 
   // insert the vertex so that h->opposite points to it
   Vertex_handle insert_vertex_in_edge(Halfedge_handle h, Point p);
+
+  // insert the vertex so that h->opposite points to it
+  Halfedge_handle insert_vertex_in_edge_unsafe(Halfedge_handle h,
+					     Vertex_handle  vh);
+
+  // insert a vertex for p in both edges
+  // merge the two vertices
+  std::pair<Halfedge_handle, Halfedge_handle> pinch_bl(Halfedge_handle a, Halfedge_handle b, Point p);
+
+  // a and b go to the same vertex. Make them go to different vertices
+  // return the new vertex on b
+  Vertex_handle unpinch_bl(Halfedge_handle a, Halfedge_handle b);
+
+  void merge_vertices_bl(Halfedge_handle a, Halfedge_handle b);
 
   Halfedge_handle new_halfedge(Curve c);
 

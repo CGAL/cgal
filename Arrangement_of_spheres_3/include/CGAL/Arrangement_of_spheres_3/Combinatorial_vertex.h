@@ -29,11 +29,11 @@ public:
 
 
   static Combinatorial_vertex make_extremum(Key k,
-					    int dir) ;
+					    Rule_direction dir) ;
 
   Combinatorial_vertex(Combinatorial_curve a, Combinatorial_curve b);
 
- 
+  void audit(unsigned int numvert) const;
 
   bool is_valid() const {
     //if (is_special()) return false;

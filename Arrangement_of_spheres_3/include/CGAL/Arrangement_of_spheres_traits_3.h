@@ -178,17 +178,20 @@ struct Arrangement_of_spheres_traits_3 {
   bool is_over_circle_c(Key c, const Sphere_point_3& d,
 			      Coordinate_index C) const;
   
-  CGAL::Comparison_result compare_sphere_sphere_at_sweep(Key sphere0,
+  CGAL::Comparison_result compare_sphere_sphere_at_sweep(const Sphere_point_3 &t,
+							 Key sphere0,
 							 Key Sphere1,
-							 const Sphere_point_3 &sw,
-							 const Sphere_point_3 &ep,
+							 const Sphere_point_3 &pt,
 							 Coordinate_index C) const;
 
- 
-  CGAL::Bounded_side bounded_side_of_sphere_projected(Key sphere,
-				   const Sphere_point_3 &ep,
-				   Key plane,
-						      Coordinate_index C) const;
+  // name sucks
+  // Find the line which has as coordinate C pt[C] and gets it other coord
+  // from planex. See if it is inside the sphere at t
+  CGAL::Bounded_side bounded_side_of_sphere_projected( const Sphere_point_3 &t,
+						       Key sphere,
+						       Key planex,
+						       const Sphere_point_3 &pt,
+						       Coordinate_index C) const;
   CGAL::Bounded_side bounded_side_of_sphere(Key sphere,
 					    const Sphere_point_3 &z) const;
   CGAL::Bounded_side bounded_side_of_sphere(Key sphere,

@@ -5,13 +5,57 @@
 #include <CGAL/Arrangement_of_spheres_3/Sphere_key.h>
 #include <CGAL/basic.h>
 
+struct Combinatorial_curve;
+
+struct Rule_direction {
+  explicit Rule_direction(int d);
+  Rule_direction(): dir_(-1){};
+  bool is_backwards() const;
+  bool is_positive() const;
+  bool is_negative() const;
+  Coordinate_index constant_coordinate() const;
+  bool is_vertical() const;
+  bool can_intersect(const Combinatorial_curve &o) const;
+  bool is_outwards() const;
+  static Rule_direction make_from_part(int pt);
+  int part() const {
+    return dir_;
+  }
+  bool operator<(const Rule_direction&o) const {
+    return dir_ < o.dir_;
+  }
+  bool operator>(const Rule_direction&o) const {
+    return dir_ > o.dir_;
+  }
+  bool operator==(const Rule_direction&o) const {
+    return dir_== o.dir_;
+  }
+  const char *to_str() const ;
+  void write(std::ostream& out) const;
+
+  static Rule_direction right();
+  static Rule_direction top();
+  static Rule_direction left();
+  static Rule_direction bottom();
+  int index() const ;
+private:
+  int dir_;
+};
+
+
+inline std::ostream &operator<<(std::ostream &out, Rule_direction f) {
+   f.write(out);
+   return out;
+}
+
+
 struct Combinatorial_curve{
   typedef ::Coordinate_index Coordinate_index;
 
   /* for rules
      Inside means below a horizontal arc and to the left of a vertical one
   */
-  enum PART_BITS {L_BIT=2, R_BIT=4, T_BIT=8, B_BIT=16, ARC_BIT=32, /*INF_BIT=32,*/ IN_BIT=1};
+  enum PART_BITS {R_BIT=2, T_BIT=4, L_BIT=8, B_BIT=16, ARC_BIT=32, /*INF_BIT=32,*/ IN_BIT=1};
   enum LOCATION_BITS {lL_BIT=2, lR_BIT=4, lT_BIT=8, lB_BIT=16, lIN_BIT=1, lOUT_BIT=32};
   enum Part {INVALID=0, L_RULE=L_BIT, R_RULE=R_BIT, T_RULE=T_BIT, B_RULE=B_BIT,
 	     LB_ARC=L_BIT|B_BIT|ARC_BIT, 
@@ -31,6 +75,12 @@ struct Combinatorial_curve{
     return Combinatorial_curve(i, SPECIAL);
   }
 
+  bool is_special() const {
+    return pt_==SPECIAL;
+  }
+
+  void audit(unsigned int numvert) const;
+
   Combinatorial_curve(int i, Part pt): index_(i), pt_(pt){
     CGAL_precondition(i>=0);
     CGAL_precondition(is_finite());
@@ -38,6 +88,7 @@ struct Combinatorial_curve{
   Combinatorial_curve(Key i, Part pt): index_(i), pt_(pt){
     //CGAL_precondition(is_finite());
   }
+
   /*explicit Combinatorial_curve(Part pt): pt_(pt){
     if (pt_== T_BIT || pt_ == R_BIT) {
       index_= Key(Key::TR);
@@ -116,9 +167,9 @@ struct Combinatorial_curve{
 
   bool is_same_side(Combinatorial_curve o) const ;
 
-  static int rule_direction(const Combinatorial_curve &a,
-			    const Combinatorial_curve &b) ;
-  
+  static Rule_direction rule_direction(const Combinatorial_curve &a,
+				       const Combinatorial_curve &b) ;
+
   bool operator==(const Combinatorial_curve &o) const {
     return index_== o.index_ && pt_== o.pt_;
   }
@@ -141,14 +192,15 @@ struct Combinatorial_curve{
 
   bool is_compatible_location(int i) const;
 
-  bool can_intersect(const Combinatorial_curve &o) const;
+
 
   Coordinate_index is_weakly_incompatible(int i) const ;
 
-  int rule_index() const;
+  Rule_direction rule_direction() const;
   int arc_index() const;
 
-  static Combinatorial_curve make_rule(Key k, int ruleindex);
+  static Combinatorial_curve make_rule(Key k, Rule_direction ruleindex);
+  //static Combinatorial_curve make_rule(int ruleindex);
 
   static const char *to_string(int pt);
 
@@ -158,19 +210,13 @@ struct Combinatorial_curve{
 
   bool is_outward_rule() const {
     CGAL_precondition(is_rule());
-    switch (rule_index()) {
-    case 0:
-    case 3:
+    switch (rule_direction().is_outwards()) {
       return !is_inside();
-    case 1:
-    case 2:
-      return is_inside();
     default:
-      CGAL_assertion(0);
-      return false;
+      return is_inside();
     }
   }
-
+  
 private:
 
   Combinatorial_curve(Key i, int pt, bool): index_(i), pt_(pt){
@@ -183,5 +229,8 @@ private:
 inline std::ostream &operator<<(std::ostream &out, Combinatorial_curve f) {
   return f.write(out);
 }
+
+
+
 
 #endif

@@ -1,7 +1,7 @@
 #define CGAL_CHECK_EXPENSIVE
 #define CGAL_CHECK_EXACTNESS
 
-#include <CGAL/IO/Qt_debug_viewer_2.h>
+#include <CGAL/IO/qt_debug_examiner_viewer_2.h>
 #include <CGAL/Arrangement_of_spheres_3/Slice.h>
 #include <CGAL/Arrangement_of_spheres_traits_3.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -57,7 +57,7 @@ int main(int argc, char *argv[]){
   
    
   slice.draw_rz(qtd, z);
-  app.setMainWidget( qtd);
+  app.setMainWidget( qtd->window());
   qtd->show_everything();
   qtd->show();
   return app.exec();

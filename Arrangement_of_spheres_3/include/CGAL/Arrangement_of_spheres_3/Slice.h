@@ -38,7 +38,9 @@ struct Slice {
   typedef Unordered_triple<T::Key> Intersection_3;
 
   struct Rule_event_rep {
-    Rule_event_rep(T::Key rk, int ri, T::Key ok): rk_(rk), ri_(ri), ok_(ok){}
+    Rule_event_rep(T::Key rk,
+		   Rule_direction ri,
+		   T::Key ok): rk_(rk), ri_(ri), ok_(ok){}
     bool operator<(const Rule_event_rep &o) const {
       if (rk_ < o.rk_) return true;
       else if (rk_ > o.rk_) return false;
@@ -56,14 +58,14 @@ struct Slice {
       return ok_;
     }
     Coordinate_index rule_coordinate() const {
-      return plane_coordinate(ri_%2);
+      return other_plane_coordinate(ri_.constant_coordinate());
     }
-    int rule_index() const {
+    Rule_direction rule_direction() const {
       return ri_;
     }
 
     T::Key rk_;
-    int ri_;
+    Rule_direction ri_;
     T::Key ok_;
   };
 
@@ -190,10 +192,16 @@ struct Slice {
   class Edge_event;
   
   void process_one_sphere_event(T::Key k);
+  void process_intersect_event(T::Key k, T::Key l);
+  void process_unintersect_event(T::Key k, T::Key l);
   void process_two_sphere_event(T::Key k, T::Key l, bool first);
   void process_three_sphere_event(T::Key k, T::Key l, T::Key m, bool first);
-  void process_rule_collapse_event(T::Key k, int r, T::Key o);
+  void process_rule_collapse_event(T::Key k, Rule_direction r, T::Key o);
   void process_edge_collapse_event(Halfedge_handle h);
+  // check for a degeneracy and return true if this handles it.
+  void process_degeneracy();
+  void rebuild_degenerate(const T::Sphere_point_3 &sp3, Vertex_handle a_vertex);
+  bool has_degeneracy() const;
   void initialize_certificates();
   CGAL::Comparison_result compare_concurrent(Event_key k0, Event_key k1) const ;
 
@@ -202,7 +210,8 @@ struct Slice {
   void audit_two_sphere_event(T::Key k, T::Key l, bool first, Event_key ek);
   void audit_three_sphere_event(T::Key k, T::Key l, T::Key m, bool first, 
 				Event_key ek);
-  void audit_rule_collapse_event(T::Key k, int r, T::Key o, Event_key ek);
+  void audit_rule_collapse_event(T::Key k, Rule_direction r, T::Key o, 
+				 Event_key ek);
   void audit_edge_collapse_event(Halfedge_handle h, Event_key ek);
 
 
@@ -266,12 +275,13 @@ struct Slice {
 
   Halfedge_handle check_remove_redundant(Halfedge_handle v);
 
-  Face_handle intersect_spheres(const T::Event_point_3 &ep,
-				Halfedge_handle h0, Halfedge_handle h1);
+  Face_handle intersect_spheres(const T::Event_point_3 &t,
+				Halfedge_handle ha, Halfedge_handle hb);
 
-  Face_handle unintersect_spheres(const T::Event_point_3 &ep,
-				  Face_handle f);
-
+  Face_handle unintersect_spheres(const T::Event_point_3 &t,
+				  Halfedge_handle ha,
+				  Halfedge_handle hb);
+  
   Face_handle intersect_3_spheres(const T::Event_point_3 &ep,
 				  Face_handle f);
 
@@ -351,12 +361,13 @@ struct Slice {
   template <class It>
   Face_handle locate_point(It b, It e, const T::Sphere_point_3 &ep);
 
-  Halfedge_handle shoot_rule(const T::Sphere_point_3& source,
+  Halfedge_handle shoot_rule(const T::Sphere_point_3& t,
 			     Face_handle f,
-			     Sds::Curve rule) ;
+			     const T::Sphere_point_3& source,
+			     Rule_direction ruledir) ;
 
   Halfedge_handle 
-  find_rule_vertex(const T::Sphere_point_3 &ep, 
+  find_rule_vertex(const T::Sphere_point_3 &t, 
 		   Face_handle f,
 		   Sds::Curve rule);
   
@@ -388,8 +399,9 @@ struct Slice {
   bool locate_point_check_face_vertices(const T::Sphere_point_3 &ep,
 					Face_const_handle it) const;
 
-  CGAL::Comparison_result debug_rule_shoot_answer(const T::Sphere_point_3 &z,
-						  Sds::Curve rule,
+  CGAL::Comparison_result debug_rule_shoot_answer(const T::Sphere_point_3 &t,
+						  const T::Sphere_point_3 &source,
+						  Rule_direction ruledir,
 						  Sds::Point pt,
 						  bool &exact) const ;
 
@@ -401,8 +413,9 @@ struct Slice {
 
 
 
-  CGAL::Comparison_result rule_shoot_compare_SR(const T::Sphere_point_3 &z,
-						Sds::Curve srule,
+  CGAL::Comparison_result rule_shoot_compare_SR(const T::Sphere_point_3 &t,
+						const T::Sphere_point_3 &pt,
+						Rule_direction ruledir,
 						Sds::Curve arc,
 						T::Key orule,
 						Sds::Point debug_pt,
@@ -410,21 +423,24 @@ struct Slice {
 
 
 
-  CGAL::Comparison_result rule_shoot_compare_SS(const T::Sphere_point_3 &z,
-						Sds::Curve srule,
+  CGAL::Comparison_result rule_shoot_compare_SS(const T::Sphere_point_3 &t,
+						const T::Sphere_point_3 &pt,
+						Rule_direction ruledir,
 						Sds::Point pt) const ;
  
 
   // return comparison of separator to intersection point on the C coordinate
   // i.e. SMALLER if the separator is SMALLER than the intersection point
-  CGAL::Comparison_result rule_shoot_edge_vertex(const T::Sphere_point_3 &z,
-						 Sds::Curve rule,
+  CGAL::Comparison_result rule_shoot_edge_vertex(const T::Sphere_point_3 &t,
+						 const T::Sphere_point_3 &pt,
+						 Rule_direction rule,
 						 Sds::Curve hp,
 						 Sds::Point p,
 						 Sds::Curve hn) const ;
   
-  bool rule_shoot_compare_if_rational(const T::Sphere_point_3 &z, 
-				      Sds::Curve rule,
+  bool rule_shoot_compare_if_rational(const T::Sphere_point_3 &pt, 
+				      const T::Sphere_point_3 &t, 
+				      Rule_direction rule,
 				      Sds::Point pt,
 				      CGAL::Comparison_result &ret) const ;
   /*bool rule_shoot_compare_if_rational_arc(const T::Sphere_point_3 &z,
@@ -439,10 +455,6 @@ struct Slice {
   // Debug Functions ---------------------------------------------------
 
   //Face_handle locate_point(const T::Sphere_point_3 &ep);
-
-  Halfedge_handle shoot_rule(const T::Sphere_point_3 &source, 
-			     Face_handle f,
-			     int type) ;
 
   void audit() const;
   void audit_events() const;

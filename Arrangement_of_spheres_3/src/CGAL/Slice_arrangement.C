@@ -525,9 +525,9 @@ Slice_arrangement::Point Slice_arrangement::point(CArr::Vertex_const_handle h) c
       //std::cout << "Final is " << fa << ", " << fb << std::endl;
     } 
     if (fa.key() == fb.key() && fa.key().is_input() && fb.key().is_input()) {
-      int ri;
-      if (fa.is_rule()) ri= fa.rule_index();
-      else ri= fb.rule_index();
+      Rule_direction ri;
+      if (fa.is_rule()) ri= fa.rule_direction();
+      else ri= fb.rule_direction();
       pv= Point::make_extremum(fa.key(), ri);
     } else {
       pv=Point(fa, fb);

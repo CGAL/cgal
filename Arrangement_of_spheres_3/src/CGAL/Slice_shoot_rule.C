@@ -3,34 +3,25 @@
 #define DPRINT(x) x
 
 
-// hits in order T R B L
-Slice::Halfedge_handle Slice::shoot_rule(const T::Sphere_point_3& source,
-					       Face_handle f,
-					       int type) {
-  //Temp_point tp(spheres_, source.sphere());
-  t_.set_temp_sphere(source.sphere());
-  return shoot_rule(source, f, Sds::Curve(T::Key::target_key(),  Sds::Curve::Part(type)));
 
-}
-
-
-
-Slice::Halfedge_handle Slice::shoot_rule(const T::Sphere_point_3 & source,
+Slice::Halfedge_handle Slice::shoot_rule(const T::Sphere_point_3 & t,
 					 Face_handle f,
-					 Sds::Curve rule) {
-  bool backwards= (rule.is_top() || rule.is_left());
-  DPRINT(std::cout << "Rule is " << rule << std::endl);
+					 const T::Sphere_point_3 & pt,
+					 Rule_direction rd) {
+  //Sds::Curve rule= Sds::Curve::make_rule(ruledir);
+  bool backwards= rd.is_backwards();
+  DPRINT(std::cout << "Rule is " << rd << std::endl);
   
   Halfedge_handle end= f->halfedge();
   
-  while (!rule.can_intersect(end->curve())) {
+  while (!rd.can_intersect(end->curve())) {
     end=end->next();
   }
-  while (rule.can_intersect(end->curve())) {
+  while (rd.can_intersect(end->curve())) {
     end=end->next();
   }
   Halfedge_handle h=end;
-  while (!rule.can_intersect(h->curve())) {
+  while (!rd.can_intersect(h->curve())) {
     h=h->next();
   }
   
@@ -41,7 +32,9 @@ Slice::Halfedge_handle Slice::shoot_rule(const T::Sphere_point_3 & source,
       DPRINT(sds_.write(h, std::cout) << " is returned by default" << std::endl);
       return h;
     } else {
-      CGAL::Comparison_result cr= rule_shoot_edge_vertex(source, rule, h->curve(),
+      CGAL::Comparison_result cr= rule_shoot_edge_vertex(t,
+							 pt, rd,
+							 h->curve(),
 							 h->vertex()->point(),
 							 h->next()->curve());
       DPRINT(std::cout << "Result is " << cr << std::endl);
@@ -66,8 +59,9 @@ Slice::Halfedge_handle Slice::shoot_rule(const T::Sphere_point_3 & source,
 
 // return comparison of point on edge of face to the shot rule on the C coordinate
 // i.e. SMALLER if the point on edge is smaller than the rule coordinate
-CGAL::Comparison_result Slice::rule_shoot_edge_vertex(const T::Sphere_point_3 & ep, 
-						      Sds::Curve rule,
+CGAL::Comparison_result Slice::rule_shoot_edge_vertex(const T::Sphere_point_3 & t,
+						      const T::Sphere_point_3 & pt, 
+						      Rule_direction rd,
 						      Sds::Curve hp,
 						      Sds::Point p,
 						      Sds::Curve hn) const {
@@ -75,42 +69,42 @@ CGAL::Comparison_result Slice::rule_shoot_edge_vertex(const T::Sphere_point_3 & 
   //CGAL_assertion(h->curve() != b->curve());
   CGAL::Comparison_result ret;
   // add filters on sphere centers when arcs are involved.
-  if (rule_shoot_compare_if_rational(ep, rule, p, ret)){
+  if (rule_shoot_compare_if_rational(t, pt, rd, p, ret)){
      
     bool exact;
-    CGAL::Comparison_result debug_answer= debug_rule_shoot_answer(ep, rule,
+    CGAL::Comparison_result debug_answer= debug_rule_shoot_answer(t, pt, rd,
 								  p, 
 								  exact);
     debug_rule_shoot_check(debug_answer, ret, exact);
     return ret;
   } else if (p.is_sphere_rule()) {
     if (hp.is_rule() && hn.is_arc()){
-      return rule_shoot_compare_SR(ep, rule, hn, hp.key(),
+      return rule_shoot_compare_SR(t, pt, rd, hn, hp.key(),
 				   p,
-				   !rule.is_vertical() && 
+				   !rd.is_vertical() && 
 				   (hn.quadrant() & Sds::Curve::T_BIT) 
-				   || rule.is_vertical() && 
+				   || rd.is_vertical() && 
 				   (hn.quadrant() & Sds::Curve::R_BIT));
     } else if (hp.is_arc() && hn.is_rule()){
-      return rule_shoot_compare_SR(ep, rule, hp, hn.key(), 
+      return rule_shoot_compare_SR(t, pt, rd, hp, hn.key(), 
 				   p,
-				   !rule.is_vertical() && 
+				   !rd.is_vertical() && 
 				   (hp.quadrant() & Sds::Curve::T_BIT) 
-				   || rule.is_vertical() && 
+				   || rd.is_vertical() && 
 				   (hp.quadrant() & Sds::Curve::R_BIT));
     } else if (hp.key() == hn.key()){
       CGAL_assertion(hp.is_arc() && hn.is_arc());
       if (hp == hn) {
 	//CGAL_assertion(hp==hn);
 	bool arc_top;
-	if (rule.constant_coordinate() == plane_coordinate(0)) {
+	if (rd.constant_coordinate() == plane_coordinate(0)) {
 	  arc_top= hp.is_right();
 	} else {
 	  arc_top = hp.is_top();
 	}
 	if (!hp.is_inside()) arc_top= !arc_top;
 	  
-	return rule_shoot_compare_SR(ep, rule, hp, p.rule_key(),p, arc_top);
+	return rule_shoot_compare_SR(t, pt, rd, hp, p.rule_key(),p, arc_top);
       } else {
 	// compare rational should have picked this up
 	CGAL_assertion(0);
@@ -123,11 +117,11 @@ CGAL::Comparison_result Slice::rule_shoot_edge_vertex(const T::Sphere_point_3 & 
 	= t_.intersection_2_events(p.sphere_key(0),
 				   p.sphere_key(1));
       std::cout << "Tangent." << std::endl;
-      CGAL::Comparison_result cr= ep3.first.compare(ep, sweep_coordinate());
+      CGAL::Comparison_result cr= ep3.first.compare(t, sweep_coordinate());
       //debug_rule_shoot_check(debug_answer, cr, exact);
       return cr;
     } else {
-      return rule_shoot_compare_SS(ep, rule,p);
+      return rule_shoot_compare_SS(t, pt, rd,p);
     }
   }
 
@@ -136,46 +130,49 @@ CGAL::Comparison_result Slice::rule_shoot_edge_vertex(const T::Sphere_point_3 & 
 }
 
 
-CGAL::Comparison_result Slice::rule_shoot_compare_SS(const T::Sphere_point_3 & ep, 
-						     Sds::Curve srule,
-						     Sds::Point pt) const {
+CGAL::Comparison_result Slice::rule_shoot_compare_SS(const T::Sphere_point_3 & t, 
+						     const T::Sphere_point_3 & pt, 
+						     Rule_direction rd,
+						     Sds::Point point) const {
   bool exact;
-  CGAL::Comparison_result debug_answer= debug_rule_shoot_answer(ep, srule,
-								pt,
+  CGAL::Comparison_result debug_answer= debug_rule_shoot_answer(t, pt, rd,
+								point,
 								exact);
   //std::cout << "SS " << arc0 << "--" << pt << "--" << arc1 << std::endl;
    
-  T::Coordinate_index C= srule.constant_coordinate();
+  T::Coordinate_index C= rd.constant_coordinate();
 
-  CGAL::Comparison_result cr= t_.compare_sphere_sphere_at_sweep(pt.sphere_key(0),
-								pt.sphere_key(1),
-								ep, ep, C);
+  CGAL::Comparison_result cr= t_.compare_sphere_sphere_at_sweep(t,
+								point.sphere_key(0),
+								point.sphere_key(1),
+								pt, C);
   debug_rule_shoot_check(debug_answer, cr, exact);
   return cr;
 }
 
 
 
-CGAL::Comparison_result Slice::rule_shoot_compare_SR(const T::Sphere_point_3 & ep, 
-						     Sds::Curve srule,
+CGAL::Comparison_result Slice::rule_shoot_compare_SR(const T::Sphere_point_3 & t, 
+						     const T::Sphere_point_3 & pt,
+						     Rule_direction rd,
 						     Sds::Curve arc,
 						     T::Key orule,
 						     Sds::Point debug_pt,
 						     bool arc_above) const {
   bool exact;
-  CGAL::Comparison_result debug_answer= debug_rule_shoot_answer(ep, srule, 
+  CGAL::Comparison_result debug_answer= debug_rule_shoot_answer(t, pt, rd, 
 								debug_pt,
 								exact);
   DPRINT(std::cout << "SR " << arc << "-" << arc_above << "-" << orule 
-	 << ": " << srule << std::endl);
+	 << ": " << rd << std::endl);
   //CGAL_precondition(srule.is_vertical() != orule.is_vertical());
   CGAL_precondition(arc.is_arc());
   //CGAL_precondition(orule.is_rule());
   //CGAL_precondition(srule.constant_coordinate() != orule.constant_coordinate());
 
-  CGAL::Comparison_result c= t_.compare_sphere_center_c(arc.key(), ep,
-							srule.constant_coordinate());
-  if (srule.is_vertical()) {
+  CGAL::Comparison_result c= t_.compare_sphere_center_c(arc.key(), pt,
+							rd.constant_coordinate());
+  if (rd.is_vertical()) {
     if (c== CGAL::LARGER && arc.is_right()) {
       debug_rule_shoot_check(debug_answer, CGAL::LARGER, exact);
       return CGAL::LARGER;
@@ -194,11 +191,19 @@ CGAL::Comparison_result Slice::rule_shoot_compare_SR(const T::Sphere_point_3 & e
   }
 
       
-  CGAL::Bounded_side intersection_side
-    =t_.bounded_side_of_sphere_projected(arc.key(),
-					 ep,
-					 orule,
-					 srule.constant_coordinate());
+  CGAL::Bounded_side intersection_side;
+  if (rd.constant_coordinate() == plane_coordinate(0)) {
+    intersection_side=t_.bounded_side_of_sphere_projected(t, arc.key(),
+							  orule,
+							  pt,
+							  rd.constant_coordinate());
+  } else {
+    intersection_side=t_.bounded_side_of_sphere_projected(t, arc.key(),
+							  orule,
+							  pt,
+							  rd.constant_coordinate());
+  }
+  
   
 
   if (intersection_side== CGAL::ON_BOUNDARY){
@@ -222,19 +227,18 @@ CGAL::Comparison_result Slice::rule_shoot_compare_SR(const T::Sphere_point_3 & e
 }
 
 
-CGAL::Comparison_result Slice::debug_rule_shoot_answer(const T::Sphere_point_3 & ep, 
-						       Sds::Curve rule,
-						       /*Sds::Curve p,
-							 Sds::Curve n,*/
-						       Sds::Point pt,
+CGAL::Comparison_result Slice::debug_rule_shoot_answer(const T::Sphere_point_3 & t, 
+						       const T::Sphere_point_3 & pt,
+						       Rule_direction rd,
+						       Sds::Point point,
 						       bool &exact) const {
   //CGAL::Comparison_result answer;
   NT z;
-  if (ep.has_simple_coordinate(sweep_coordinate())) {
-    z= ep.simple_coordinate(sweep_coordinate());
+  if (t.has_simple_coordinate(sweep_coordinate())) {
+    z= t.simple_coordinate(sweep_coordinate());
     exact=true;
   } else {
-    z= ep.approximate_coordinate(sweep_coordinate());
+    z= t.approximate_coordinate(sweep_coordinate());
     exact=false;
   }
   /*DPRINT(std::cout << "Comparing " << t_.center(rule.key()) << " on coord " 
@@ -244,7 +248,7 @@ CGAL::Comparison_result Slice::debug_rule_shoot_answer(const T::Sphere_point_3 &
   //std::cout << "Z is " << z << " and exact is " << exact << std::endl;
 
   //Sds::Point pt(p,n);
-  const T::Sphere_point_3 & sp= sphere_point_rz(pt, z);
+  const T::Sphere_point_3 & sp= sphere_point_rz(point, z);
   /*if (!sp.is_valid()) {
     const T::Sphere_point_3 & sp2= sphere_point_rz(pt, z);
     }*/
@@ -253,17 +257,20 @@ CGAL::Comparison_result Slice::debug_rule_shoot_answer(const T::Sphere_point_3 &
   DPRINT(std::cout << "The point " << pt << " is " 
 	 << CGAL::to_double(sp.exact_coordinate(plane_coordinate(0))) << " " 
 	 << CGAL::to_double(sp.exact_coordinate(plane_coordinate(1))) << std::endl);
-    
-  CGAL::Comparison_result ans
-    = CGAL::Comparison_result(-t_.compare_sphere_center_c(rule.key(), sp,
-							  rule.constant_coordinate()));
-  DPRINT(std::cout << "Got " << ans << std::endl);
-  if (ans== CGAL::EQUAL) {
+  
+  DPRINT(std::cout << "The center is " 
+	 << CGAL::to_double(pt.exact_coordinate(plane_coordinate(0))) << " " 
+	 << CGAL::to_double(pt.exact_coordinate(plane_coordinate(1))) << std::endl);
+  
+   CGAL::Comparison_result cr= sp.compare(pt, rd.constant_coordinate());
+   
+   DPRINT(std::cout << "Got " << cr << std::endl);
+  if (cr== CGAL::EQUAL) {
     /*std::cout << "EQUAL for " << p << " " << n << ": " << sp 
 	      <<  " vs " << ep << " on " 
 	      << rule.constant_coordinate() << std::endl;*/
   }
-  return ans;
+  return cr;
 }
 
   
@@ -310,21 +317,20 @@ void Slice::debug_rule_shoot_check(CGAL::Comparison_result check,
   }*/
 
 
-bool Slice::rule_shoot_compare_if_rational(const T::Sphere_point_3 & ep,
-					   Sds::Curve rule,
-					   Sds::Point pt,
+bool Slice::rule_shoot_compare_if_rational(const T::Sphere_point_3 & t, 
+					   const T::Sphere_point_3 & pt,
+					   Rule_direction rd,
+					   Sds::Point point,
 					   CGAL::Comparison_result &ret) const {
   //NT coord;
-  if (pt.is_rule_rule()) {
-    ret= t_.compare_sphere_center_c(pt.rule_key(rule.constant_coordinate()), 
-				    ep,
-				    rule.constant_coordinate());
+  if (point.is_rule_rule()) {
+    ret= t_.compare_sphere_center_c(point.rule_key(rd.constant_coordinate()), pt,
+				    rd.constant_coordinate());
     return true;
-  } else if (pt.is_sphere_rule() 
-	     && pt.rule_coordinate() == rule.constant_coordinate()) {
-    ret= t_.compare_sphere_center_c(pt.rule_key(),
-				    ep,
-				    rule.constant_coordinate());
+  } else if (point.is_sphere_rule() 
+	     && point.rule_coordinate() == rd.constant_coordinate()) {
+    ret= t_.compare_sphere_center_c(point.rule_key(), pt,
+				    rd.constant_coordinate());
     return true;
   } else {
     return false;

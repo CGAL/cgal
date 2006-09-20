@@ -209,6 +209,7 @@ public:
 
   CGAL::Comparison_result compare(const Sphere_line_intersection &o, Coordinate_index i) const;
   CGAL::Comparison_result compare(const Point_3 &o, Coordinate_index i) const;
+  CGAL::Comparison_result compare( NT o, Coordinate_index i) const;
 
   Quadratic_NT exact_coordinate(Coordinate_index i) const {
     if (has_simple_coordinate(i)) return simple_coordinate(i);
@@ -286,6 +287,16 @@ inline CGAL::Comparison_result Sphere_line_intersection<K>::compare(const Sphere
   NT oc= o[CC.index()];
   if (mc < oc) return CGAL::SMALLER;
   else if (oc < mc) return CGAL::LARGER;
+  else return CGAL::EQUAL;
+}
+
+
+template <class K>
+inline CGAL::Comparison_result Sphere_line_intersection<K>::compare(NT o, Coordinate_index CC) const {
+  CGAL_assertion(is_valid());
+  Quadratic_NT mc= exact_coordinate(CC);
+  if (mc < o) return CGAL::SMALLER;
+  else if (o < mc) return CGAL::LARGER;
   else return CGAL::EQUAL;
 }
 

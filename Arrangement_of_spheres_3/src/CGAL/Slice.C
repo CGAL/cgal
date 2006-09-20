@@ -57,18 +57,18 @@ void Slice::draw_rz(Qt_examiner_viewer_2 *qtv, NT z) {
     
     
   /*for (T::Sphere_key_iterator sit= t_.sphere_keys_begin(); 
-       sit != t_.sphere_keys_end(); ++sit){
+    sit != t_.sphere_keys_end(); ++sit){
     if (intersects_rz(*sit, z) {
-      T::Circle_2 c2= circle_rz(*sit, z);
+    T::Circle_2 c2= circle_rz(*sit, z);
      
-	c2= T::Circle_2(c2.center(), c2.squared_radius()*NT(1.01));
-      } else {
-	c2= T::Circle_2(c2.center(), c2.squared_radius()*NT(.99));
-      }
-      if (t_.sphere(*sit).center().z() != z){
-	*qtv << CGAL::YELLOW;
-	*qtv << c2;
-      }
+    c2= T::Circle_2(c2.center(), c2.squared_radius()*NT(1.01));
+    } else {
+    c2= T::Circle_2(c2.center(), c2.squared_radius()*NT(.99));
+    }
+    if (t_.sphere(*sit).center().z() != z){
+    *qtv << CGAL::YELLOW;
+    *qtv << c2;
+    }
     }
     }*/
 
@@ -106,7 +106,7 @@ void Slice::draw_rz(Qt_examiner_viewer_2 *qtv, NT z) {
        hit != sds_.vertices_end(); ++hit){
     if (!sds_.is_in_slice(hit)) continue;
     DT::Point_2 p= display_point_rz(hit->point(), z);
-      *qtv << CGAL::BLUE;
+    *qtv << CGAL::BLUE;
     if (hit->point().is_finite()) {
       qtv->set_updating_box(true);
     } else {
@@ -118,17 +118,17 @@ void Slice::draw_rz(Qt_examiner_viewer_2 *qtv, NT z) {
     out << hit->point();
     /*if (hit->point().first().key() == hit->point().second().key()){
       out << hit->point().rule(0);
-    } else {
-      if (hit->point().first().is_arc()){
-	out << hit->point().first().key();
       } else {
-	out << hit->point().first();
+      if (hit->point().first().is_arc()){
+      out << hit->point().first().key();
+      } else {
+      out << hit->point().first();
       }
       out << ":";
       if (hit->point().second().is_arc()){
-	out << hit->point().second().key();
+      out << hit->point().second().key();
       } else {
-	out << hit->point().second();
+      out << hit->point().second();
       }
       }*/
     //out << hit->point().first() << ":" << hit->point().second();
@@ -183,18 +183,18 @@ void Slice::draw_rz(CGAL::Qt_widget *qtv, NT z) {
     
     
   /*for (T::Sphere_key_iterator sit= t_.sphere_keys_begin(); 
-       sit != t_.sphere_keys_end(); ++sit){
+    sit != t_.sphere_keys_end(); ++sit){
     if (intersects_rz(*sit, z) {
-      T::Circle_2 c2= circle_rz(*sit, z);
+    T::Circle_2 c2= circle_rz(*sit, z);
      
-	c2= T::Circle_2(c2.center(), c2.squared_radius()*NT(1.01));
-      } else {
-	c2= T::Circle_2(c2.center(), c2.squared_radius()*NT(.99));
-      }
-      if (t_.sphere(*sit).center().z() != z){
-	*qtv << CGAL::YELLOW;
-	*qtv << c2;
-      }
+    c2= T::Circle_2(c2.center(), c2.squared_radius()*NT(1.01));
+    } else {
+    c2= T::Circle_2(c2.center(), c2.squared_radius()*NT(.99));
+    }
+    if (t_.sphere(*sit).center().z() != z){
+    *qtv << CGAL::YELLOW;
+    *qtv << c2;
+    }
     }
     }*/
 
@@ -207,7 +207,7 @@ void Slice::draw_rz(CGAL::Qt_widget *qtv, NT z) {
       DT::Point_2 s= display_point_rz(hit->opposite()->vertex()->point(), z);
       if (hit->event() != Simulator::Event_key()) {
 	if (hit->event() == sim_->null_event()) {
-	  *qtv << CGAL::Color(150,50,50);
+	  *qtv << CGAL::Color(050,150,50);
 	} else {
 	  *qtv << CGAL::Color(250,50,50);
 	}
@@ -239,7 +239,7 @@ void Slice::draw_rz(CGAL::Qt_widget *qtv, NT z) {
        hit != sds_.vertices_end(); ++hit){
     if (!sds_.is_in_slice(hit)) continue;
     DT::Point_2 p= display_point_rz(hit->point(), z);
-      *qtv << CGAL::BLUE;
+    *qtv << CGAL::BLUE;
  
     *qtv << p;
    
@@ -250,13 +250,13 @@ void Slice::draw_rz(CGAL::Qt_widget *qtv, NT z) {
 
   /*
 
-   if (numv < 150) {
-      std::ostringstream oss;
-      oss << *it;
-      w->get_painter().drawText(w->x_pixel(CGAL::to_double(pt.x()))+3,
-				w->y_pixel(CGAL::to_double(pt.y()))-3,
-				QString(oss.str().c_str()));
-    }
+  if (numv < 150) {
+  std::ostringstream oss;
+  oss << *it;
+  w->get_painter().drawText(w->x_pixel(CGAL::to_double(pt.x()))+3,
+  w->y_pixel(CGAL::to_double(pt.y()))-3,
+  QString(oss.str().c_str()));
+  }
   */
 
   //std::set<Intersection_3> certificates_3_;
@@ -311,7 +311,7 @@ void Slice::draw_marked_rz(Qt_examiner_viewer_2 *qtv, NT z) {
 
     DT::Point_2 p= display_point_rz(hit->point(), z);
   
-      *qtv << CGAL::RED;
+    *qtv << CGAL::RED;
    
     if (hit->point().is_finite()) {
       qtv->set_updating_box(true);
@@ -334,13 +334,13 @@ void Slice::draw_marked_rz(Qt_examiner_viewer_2 *qtv, NT z) {
     }
     /*if (hit->point().first().is_arc()){
       out << hit->point().first().key();
-    } else {
+      } else {
       out << hit->point().first();
-    }
-    out << ":";
-    if (hit->point().second().is_arc()){
+      }
+      out << ":";
+      if (hit->point().second().is_arc()){
       out << hit->point().second().key();
-    } else {
+      } else {
       out << hit->point().first();
       }*/
     //out << hit->point().first() << ":" << hit->point().second();
@@ -416,6 +416,9 @@ void Slice::audit() const {
     } else {
       CGAL_assertion(sds_.degree(vit) ==3 || sds_.degree(vit) == 4);
     }
+
+    vit->point().audit(t_.number_of_spheres());
+
     if (vit->point().is_rule_rule()) {
       T::Key x, y;
       Sds::Curve cx, cy;
@@ -448,11 +451,11 @@ void Slice::audit() const {
       CGAL_assertion(t_.compare_sphere_centers_c(vit->point().rule_key(plane_coordinate(0)),
 						 x,
 						 plane_coordinate(0))
-			   == CGAL::EQUAL);
+		     == CGAL::EQUAL);
       CGAL_assertion(t_.compare_sphere_centers_c(vit->point().rule_key(plane_coordinate(1)),
 						 y,
 						 plane_coordinate(1))
-			   == CGAL::EQUAL);
+		     == CGAL::EQUAL);
     } else if (vit->point().is_sphere_rule()) {
       Sds::Curve k;
       bool hk=false;
@@ -491,7 +494,7 @@ void Slice::audit() const {
       if (c0.other_side() == c1) {
 
       } else if (c0.key() != k.key()){
-	int ed= Sds::Curve::rule_direction(c0, c1);
+	Rule_direction ed= Sds::Curve::rule_direction(c0, c1);
 	Sds::Curve cr= Sds::Curve::make_rule(c0.key(), ed);
 	CGAL_assertion(cr.is_vertical() == k.is_vertical());
 	if (cr.is_vertical()) {
@@ -510,7 +513,7 @@ void Slice::audit() const {
 	    CGAL_assertion(t_.compare_sphere_centers_c(cr.key(),
 						       ko.key(),
 						       plane_coordinate(0))
-			 == CGAL::EQUAL);
+			   == CGAL::EQUAL);
 	  } else {
 	    CGAL_assertion(t_.compare_sphere_centers_c(cr.key(),
 						       ko.key(),
@@ -520,6 +523,11 @@ void Slice::audit() const {
 	}
       }
     }
+  }
+
+  for (Sds::Halfedge_const_iterator vit= sds_.halfedges_begin();
+       vit != sds_.halfedges_end(); ++vit) {
+    if (!vit->curve().is_special()) vit->curve().audit(t_.number_of_spheres());
   }
  
 }

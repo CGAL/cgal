@@ -121,8 +121,8 @@ struct Do_work {
 	      break;
 	    }
 	    ++iteration;
-	    Slice::Halfedge_handle h= slice.shoot_rule(sp, f, 
-						       dir);
+	    Slice::Halfedge_handle h= slice.shoot_rule(sp, f, sp,
+						       Rule_direction(dir));
 	 
 	    if (h != Slice::Halfedge_handle()) {
 	      slice.new_marked_edge(h);
