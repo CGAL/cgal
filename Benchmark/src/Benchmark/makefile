@@ -42,7 +42,7 @@ all: lib
 #---------------------------------------------------------------------#
 
 CGAL_OBJECTS = \
-Bench$(OBJ_EXT) \
+Benchmark$(OBJ_EXT) \
 benchmark_parser$(OBJ_EXT) \
 Benchmark_visitor$(OBJ_EXT) \
 Option_parser$(OBJ_EXT)
