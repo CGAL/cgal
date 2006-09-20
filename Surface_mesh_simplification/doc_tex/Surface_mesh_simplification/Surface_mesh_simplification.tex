@@ -28,7 +28,7 @@ The algorithm presented here can simplify any {\em 2-manifold surface with borde
 
 Edges are collapsed according to a priority given by a user-supplied {\em cost} function, and the coordinates of the replacing vertex are determined by another user-supplied {\em placement} function. The algorithm terminates when a user-supplied {\em stop predicate} is met, such as reaching the desired number of edges.
 
-The algorithm implemented here is generic in the sense that it does not require the surface to be of a particular type. Instead, it defines the concept of a \ccc{TriangulatedSurfaceMesh} and any surface that is a model of that concept can be simplified. Furthermore, the concept is defined not in terms of a monolithic class, but in terms of a set of functions and traits making it easy to adapt any concrete surface type without much work. In particular, the concept definition follows the design of the 
+The algorithm implemented here is generic in the sense that it does not require the surface to be of a particular type. Instead, it defines the concept of a \ccc{TriangulatedSurfaceMesh} and any surface that is a model of that concept can be simplified. Furthermore, the concept is defined not in terms of a monolithic class, but in terms of a set of functions and traits making it easy to adapt any concrete surface type. In particular, the concept definition follows the design of the 
  \ccAnchor{http://www.boost.org/libs/graph/doc/index.html}{ Boost Graph Library ({\sc Bgl})}.
 
 The design is \ccAnchor{http://en.wikipedia.org/wiki/Policy-based_design}{{\em policy-based}},
@@ -165,20 +165,20 @@ as argument. If an empty cache is used, these functions must effectively
 calculate the values and return it.
 
 On the other hand, if the cost and/or placement is cached, the \ccc{GetCost}
-and/or \ccc{GetPlacement} poliies must simply extract the cached value and return it. 
+and/or \ccc{GetPlacement} policies must simply extract the cached value and return it. 
 In this case, however, the actual cost and placement must still be computed and stored,
 somehow, in the cache.
 This is the role of the \ccc{SetCache} policy passed as argument.
 
 In conjunction, the three parameters: \ccc{SetCache}, \ccc{GetCost} and \ccc{GetPlacement} 
 specify the cost and placement strategy. They are related in that if \ccc{SetCache}
-sets a \ccc{NoCahe} record, the \ccc{GetCost} and \ccc{GetPlacement} policies must be actually
+sets a \ccc{NoCache} record, the \ccc{GetCost} and \ccc{GetPlacement} policies must be actually
 computing the values, while if \ccc{SetCache} sets a \ccc{CostCache} or a \ccc{CostAndPlacement}
 record, the policies would just return the cached value.
 
 \subsection{Visitor}
 
-Simplifying a large surface with millions of edges can take up a lot of time (several minutes). Thus, it is important to be able to monitor the simplification progress. This can be achieved passing a visitor function object. The information passed to the visitor at each step can be used to track statistics such as the number of edges that couldn't be collapsed. The requirements of the visitor object are specified in the \ccc{EdgeCollapseSimplificationVisitor} concept.
+Simplifying a large surface with millions of edges can take up a lot of time (several minutes). Thus, it is important to be able to monitor the simplification progress. This can be achieved passing a visitor function object. The information passed to the visitor at each step can be used to track statistics such as the number of edges that could not be collapsed. The requirements of the visitor object are specified in the \ccc{EdgeCollapseSimplificationVisitor} concept.
 
 \section{API}
 
@@ -189,7 +189,7 @@ The first two paramters are required but the rest are optional.\\
 Since the number of optional parameters is rather large, the {\em named-parameters} technique, 
 as found in the {\sc Bgl} 
 algorithms and described below, allows you to pass only the relevant parameters, by name, 
-without worring about their order or the default values of the irrelevant parameters.
+without worrying about their order or the default values of the irrelevant parameters.
 
 \begin{cprog}
 int r = edge_collapse(surface
@@ -217,7 +217,7 @@ For example: \ccc{vertex_point_map(the_actual_parameter)}
 Each named parameter is separated from the other named parameters
 with a dot ({\tt '.'}) instead of a comma ({\tt ','}).
 Their order is unimportant and you don't have to supply parameters
-whose default value is OK.
+whose default value is appropriate.
 
 
 \subsection{Examples}
