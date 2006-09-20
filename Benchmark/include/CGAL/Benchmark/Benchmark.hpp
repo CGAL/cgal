@@ -14,8 +14,12 @@
 //
 // Author(s)     : Efi Fogel <efif@post.tau.ac.il>
 
-#ifndef CGAL_BENCH_HPP
-#define CGAL_BENCH_HPP
+#ifndef CGAL_BENCHMARK_BENCHMARK_HPP
+#define CGAL_BENCHMARK_BENCHMARK_HPP
+
+/*! \file
+ * A utility template class(es) to perform benchmarks.
+ */
 
 #include <time.h>
 #include <signal.h>
@@ -28,21 +32,24 @@
 #include <unistd.h>
 #endif
 
-#include "CGAL/benchmark_basic.hpp"
+#include "CGAL/Benchmark/config.hpp"
 
 CGAL_BENCHMARK_BEGIN_NAMESPACE
 
-/*!
+/*! The non-template base class.
+ * Contains the definition of static global data that 1. controls the
+ * visual characteristics of the displayed fields, 2. displays the header,
+ * and 3. handles signals.
  */
-class Bench_base {
+class Benchmark_base {
 public:
-  /*!
-   */
+  /*! Obtain the length of the name field */
   static int get_name_length() { return m_name_length; }
+
+  /*! Set the the length of the name field */
   static void set_name_length(int nameLength) { m_name_length = nameLength; }
     
-  /*!
-   */
+  /*! Display the header */
   static void print_header()
   {
     std::cout << std::setw(m_name_length) << std::left << "Bench"
@@ -58,24 +65,27 @@ public:
     
 protected:
 #if (!defined _MSC_VER)
-  /*!
-   */
+  /*! Mark the global flag that indicates that the alarm signal was recieved */
   static void process_signal(int sig) { m_got_signal = true; }
 #endif
 
+  /*! Indicates that alarm signal was recieved */
   static bool m_got_signal;
+
+  /*! The length of the displayed name-field */
   static int m_name_length;    
 };
 
+/*! The main class.
+ */
 template <class Benchable>
-class Bench : public Bench_base {
+class Benchmark : public Benchmark_base {
 private:
-  typedef Bench<Benchable> Self;
+  typedef Benchmark<Benchable> Self;
     
 public:
-  /*!
-   */
-  Bench(std::string name = "", int seconds = 1, bool print_header = true) :
+  /*! Construcor */
+  Benchmark(std::string name = "", int seconds = 1, bool print_header = true) :
       m_name(name), 
       m_print_header(print_header),
       m_header_printed(false),
@@ -83,7 +93,8 @@ public:
       m_samples(0), m_period(0.0f), m_iterations(0)
   {}
 
-  virtual ~Bench() {}
+  /*! Destructor */
+  virtual ~Benchmark() {}
   
   int get_iterations() const { return m_iterations; }
   int get_seconds() const { return m_seconds; }
@@ -95,8 +106,7 @@ public:
 
   float get_period() const { return m_period; }
 
-  /*!
-   */
+  /*! Perform the benchmark */
   void operator()()
   {
     if (m_benchable.init() < 0) return;
@@ -105,8 +115,7 @@ public:
     print_results();
   }
 
-  /*!
-   */
+  /*! Loop over the operation, the time of which is measured */
   void loop()
   {
     int i;
@@ -193,8 +202,7 @@ public:
     //           << std::endl;
   }
 
-  /*!
-   */
+  /*! Print the results */
   virtual void print_results()
   {
     fflush(stdout);
@@ -214,18 +222,43 @@ public:
               << std::endl;
   }
 
+  /*! Obtain the benchable instance */
   Benchable & get_benchable() { return m_benchable; }
     
 private:
+  /*! The benchable instance */
   Benchable m_benchable;
 
+  /*! The title */
   std::string m_name;
+
+  /*! Indicates whether to print the header */
   bool m_print_header;
+
+  /*! Indicates whether the header was printed already */
   bool m_header_printed;
+
+  /*! Scales the number of operations (in case the measured operation already
+   * consists of a sequence of many operations)
+   */
   float m_factor;
+
+  /*! The user-specified time in seconds the benchmark should approximately
+   * last
+   */
   int m_seconds;
+
+  /*! The exact number of samples the operation being measured should be
+   * executed based on the m_seconds estimate
+   */
   int m_samples;
+
+  /*! The time in seconds the loop over the operation being measured lasted */
   float m_period;
+
+  /*! The iser-specifed number of times the operation being measured should be
+   * executed. If this is set m_seconds has no effect.
+   */
   int m_iterations;
 };
 

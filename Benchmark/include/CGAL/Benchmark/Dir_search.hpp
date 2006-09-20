@@ -15,8 +15,8 @@
 //
 // Author(s)     : Efi Fogel <efif@post.tau.ac.il>
 
-#ifndef CGAL_DIR_SEARCH_HPP
-#define CGAL_DIR_SEARCH_HPP
+#ifndef CGAL_BENCHMARK_DIR_SEARCH_HPP
+#define CGAL_BENCHMARK_DIR_SEARCH_HPP
 
 #include <sys/types.h>
 #include <sys/stat.h>

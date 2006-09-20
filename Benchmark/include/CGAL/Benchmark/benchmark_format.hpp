@@ -14,13 +14,13 @@
 //
 // Author(s) : Lutz Kettner
 
-#ifndef CGAL_BENCHMARK_BASIC_HPP
-#define CGAL_BENCHMARK_BASIC_HPP
+#ifndef CGAL_BENCHMARK_BENCHMARK_FORMAT_HPP
+#define CGAL_BENCHMARK_BENCHMARK_FORMAT_HPP
 
 #include <string>
 
-#include "CGAL/benchmark_config.hpp"
-#include "CGAL/Benchmark_visitor.hpp"
+#include "CGAL/Benchmark/config.hpp"
+#include "CGAL/Benchmark/Benchmark_visitor.hpp"
 
 CGAL_BENCHMARK_BEGIN_NAMESPACE
 

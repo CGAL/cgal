@@ -13,24 +13,24 @@
 // 
 // Author(s)     : Efi Fogel <efif@post.tau.ac.il>
 
-#ifndef CGAL_BENCH_OPTION_PARSER_HPP
-#define CGAL_BENCH_OPTION_PARSER_HPP
+#ifndef CGAL_BENCHMARK_OPTION_PARSER_HPP
+#define CGAL_BENCHMARK_OPTION_PARSER_HPP
 
 #include <boost/program_options.hpp>
 
-#include "CGAL/benchmark_basic.hpp"
+#include "CGAL/Benchmark/config.hpp"
 
 CGAL_BENCHMARK_BEGIN_NAMESPACE
 
 namespace po = boost::program_options;
 
-class Bench_option_parser {
+class Option_parser {
 public:
   /*! Constructor */
-  Bench_option_parser();
+  Option_parser();
 
   /*! Destructor */
-  virtual ~Bench_option_parser();
+  virtual ~Option_parser();
 
   /*! Parse the options */
   void operator()(po::variables_map & variable_map);
