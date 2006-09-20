@@ -179,7 +179,7 @@ namespace CGAL {
 #  include <CGAL/MSVC_standard_header_fixes.h>
 #elif defined(__BORLANDC__) && __BORLANDC__ > 0x520
 #  include <CGAL/Borland_fixes.h>
-#elif defined(__sun) && defined(__SUNPRO_CC)
+#elif defined(__SUNPRO_CC)
 #  include <CGAL/Sun_fixes.h>
 #endif
 
