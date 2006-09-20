@@ -94,17 +94,17 @@ which must be passed to the algorithm, are used for that:
 
 \begin{itemize}
 
-\item vertex_point_map\\
+\item \ccc{vertex_point_map}\\
 This property map provides lvalue access to the point of a vertex.
 
-\item edge_is_border_map\\
+\item \ccc{edge_is_border_map}\\
 This property map indicates whether an edge is a border of the surface.
 
-\item edge_index_map\\
+\item \ccc{edge_index_map}\\
 This property map indexes the edges into the range
 \ccc{[0,total_number_of_edges]} 
 
-\item vertex_is_fixed_map\\
+\item \ccc{vertex_is_fixed_map}\\
 This property map indicates whether a vertex is fixed, that is, it cannot be modified by the
 simplification. Any edge incident upon a fixed vertex won't be collapsed.
 
