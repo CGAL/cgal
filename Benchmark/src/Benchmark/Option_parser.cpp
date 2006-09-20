@@ -13,13 +13,13 @@
 //
 // Author(s)     : Efi Fogel <efif@post.tau.ac.il>
 
-#include "CGAL/benchmark_basic.hpp"
-#include "CGAL/Bench_option_parser.hpp"
+#include "CGAL/Benchmark/config.hpp"
+#include "CGAL/Benchmark/Option_parser.hpp"
 
 CGAL_BENCHMARK_BEGIN_NAMESPACE
 
 /*! Constructor */
-Bench_option_parser::Bench_option_parser() :
+ Option_parser:: Option_parser() :
   m_bench_opts("CGAL bench options"),
   m_print_header(true),
   m_name_length(32),
@@ -44,10 +44,10 @@ Bench_option_parser::Bench_option_parser() :
 }
 
 /*! Destructor */
-Bench_option_parser::~Bench_option_parser() {}
+ Option_parser::~ Option_parser() {}
 
 /*! Parse the options */
-void Bench_option_parser::operator()(po::variables_map & variable_map)
+void  Option_parser::operator()(po::variables_map & variable_map)
 {
 }
 

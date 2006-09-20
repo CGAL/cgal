@@ -1,65 +1,82 @@
-# Copyright (c) 1997  Tel-Aviv University (Israel).
+# Copyright (c) 2006 Tel-Aviv University (Israel).
 # All rights reserved.
 #
-# This file is part of CGAL (www.cgal.org); you may redistribute it and/or
+# This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public License as
 # published by the Free Software Foundation; version 2.1 of the License.
 # See the file LICENSE.LGPL distributed with CGAL.
+#
+# Licensees holding a valid commercial license may use this file in
+# accordance with the commercial license agreement provided with the software.
 #
 # This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # $URL$
 # $Id$
-# 
-# Author(s)     : Efi Fogel <efif@post.tau.ac.il>
+#
+# Author(s): Efi Fogel         <efif@post.tau.ac.il>
 
-CXX ?=g++
-CXXFLAGS ?=-Wall
-CPPFLAGS = -I. -I../../include -g
-AR ?=ar
-LEX =flex
-BISON ?=bison
-INSTALL ?=install
-RANLIB ?=ranlib
-PREFIX ?=/usr/local
+# This is the makefile for compiling the Benchmark support library libCGALBenchmark.
 
-TARGET =libCGALBenchmark.a
-CPPSOURCES =Benchmark_visitor.cpp
-CPPSOURCES+=Bench.cpp
-CPPSOURCES+=Bench_option_parser.cpp
-BISONSOURCES =benchmark_parser.y
-LEXSOURCES =benchmark_lexer.l
-DIRT =benchmark_parser.cpp benchmark_parser.hpp benchmark_parser.output
-DIRT+=benchmark_lexer.cpp
+#---------------------------------------------------------------------#
+#                    include platform specific settings
+#---------------------------------------------------------------------#
+# Choose the right include file from the <cgalroot>/make directory.
 
-CPPOBJECTS =$(CPPSOURCES:.cpp=.o)
-BISONOBJECTS =$(BISONSOURCES:.y=.o)
-LEXOBJECTS =$(LEXSOURCES:.l=.o)
-OBJECTS = $(CPPOBJECTS) $(BISONOBJECTS) $(LEXOBJECTS)
+# CGAL_MAKEFILE = SHOULD_BE_SET_BY_COMMAND_LINE
+include $(CGAL_MAKEFILE)
 
-default: all
-all: $(TARGET)
-$(TARGET): $(OBJECTS)
-	@echo Creating library $@ ...
-	$(AR) crus $@ $?
+# defaut rule
+all: lib
 
-# install: ${TARGET}
-# 	${INSTALL} -c -d ${PREFIX}/lib
-# 	${INSTALL} -c -p -m 644 ${TARGET} ${PREFIX}/lib/${TARGET}
-# 	${RANLIB} ${PREFIX}/lib/${TARGET}
+#---------------------------------------------------------------------#
+#                    compiler flags
+#---------------------------------------------------------------------#
+
+# CXXFLAGS must be provided on the make command-line.
+# CXXFLAGS = -I"../../include" $(CGAL_WINLIB_CXXFLAGS) -DCGAL_USE_BENCHMARK
+
+#---------------------------------------------------------------------#
+# Object files
+#---------------------------------------------------------------------#
+
+CGAL_OBJECTS = \
+Bench$(OBJ_EXT) \
+benchmark_parser$(OBJ_EXT) \
+Benchmark_visitor$(OBJ_EXT) \
+Option_parser$(OBJ_EXT)
+
+#---------------------------------------------------------------------#
+#                    target entries
+#---------------------------------------------------------------------#
+
+# TODO : shared_lib !
+
+static_lib: lib
+
+lib: lib_no_install
+	mv $(CGAL_BENCHMARK_LIB) $(CGAL_LIB_DESTINATION)
+
+lib_no_install: $(CGAL_OBJECTS) 
+	$(CGAL_LIB_CREATE)$(CGAL_BENCHMARK_LIB) \
+	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
+		$(CGAL_LIB_LDFLAGS)
+	$(RANLIB) $(CGAL_BENCHMARK_LIB)
+	rm $(CGAL_OBJECTS) 
 
 clean:
-	-rm -f *.o $(TARGET) $(DIRT)
+	rm -f $(CGAL_BENCHMARK_LIB) $(CGAL_OBJECTS)
 
-.SUFFIXES:
-.SUFFIXES: .o .l .y .cpp
+#---------------------------------------------------------------------#
+#                    suffix rules
+#---------------------------------------------------------------------#
 
-%.cpp %.hpp : %.y
-	$(BISON) -d $< -o $*.cpp
+%$(OBJ_EXT): %.cpp
+	$(CGAL_CXX) $(CXXFLAGS) -c $<
 
-%.cpp : %.l
-	$(LEX) -8 -o$@ $<
+.SUFFIXES: .cpp $(SUFFIXES)
 
-Benchmark_visitor.o: benchmark_parser.hpp
-benchmark_lexer.o: benchmark_parser.hpp
+.cpp$(OBJ_EXT):
+	$(CGAL_CXX)  $(CXXFLAGS) -c $<
+

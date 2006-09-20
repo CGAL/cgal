@@ -14,12 +14,12 @@
 // 
 // Author(s)     : Efi Fogel <efif@post.tau.ac.il>
 
-#include "CGAL/benchmark_basic.hpp"
-#include "CGAL/Bench.hpp"
+#include "CGAL/Benchmark/config.hpp"
+#include "CGAL/Benchmark/Benchmark.hpp"
 
 CGAL_BENCHMARK_BEGIN_NAMESPACE
 
-bool Bench_base::m_got_signal = false;
-int Bench_base::m_name_length = 32;
+bool Benchmark_base::m_got_signal = false;
+int Benchmark_base::m_name_length = 32;
 
 CGAL_BENCHMARK_END_NAMESPACE

@@ -25,8 +25,9 @@
 #include <fstream>   /* for std::ifstream */
 #include <iostream>
 
-#include "CGAL/benchmark_basic.hpp"
-#include "CGAL/Benchmark_visitor.hpp"
+#include "CGAL/Benchmark/config.hpp"
+#include "CGAL/Benchmark/Benchmark_visitor.hpp"
+#include "CGAL/Benchmark/benchmark_format.hpp"
 
 CGAL_BENCHMARK_BEGIN_NAMESPACE
 
