@@ -184,7 +184,7 @@ directly.
 \subsection{Polyhedral Surfaces}
 
 The example code computes the minimum spanning tree on a polyhedral surface.
-More examples can be found in Chapter~ref{chapter-meshsimplification} on surface mesh simplification.
+More examples can be found in Chapter~\ref{chapter-meshsimplification} on surface mesh simplification.
 
 \ccIncludeExampleCode{../examples/BGL/Polyhedron_3/kruskal.cpp}
 
@@ -204,7 +204,7 @@ Spanning Tree} for a point set in the plane.  It can be computed by
 running the minimum spanning tree algorithm on a Delaunay
 triangulation of the point set.
 
-{\bf Remark for the reviewer:} We will replace Disjkstra with the Euclidean
+{\bf Remark for the reviewer:} We will replace Dijkstra with the Euclidean
 minimum spanning tree example as it is more relevant. 
 
 
@@ -240,9 +240,11 @@ for the Delaunay triangulation.
 
 \subsection{Arrangements}
 
+For the arrangements \cgal\ offers the graph traits for the arrangement
+itself as well as for its dual graph.
 
 
-\subsubsection{The Primal Arrangement Representation\label{arr_sssec:bgl_primal}}
+\ccHeading{Example for the primal of an arrangement as graph\label{arr_sssec:bgl_primal}}
 %-------------------------------------------------
 
 Arrangement instances are adapted to \boost\ graphs by specializing the
@@ -326,7 +328,7 @@ the type \ccc{double} is used to map vertices to their distances from $v_0$.
 
 \ccIncludeExampleCode{../examples/BGL/Arrangement_2/primal.cpp}
 
-\subsubsection{The Dual Arrangement Representation\label{arr_sssec:bgl_dual}}
+\ccHeading{Example for the dual of an arrangement as graph\label{arr_sssec:bgl_dual}}
 %-----------------------------------------------
 
 It is possible to give a dual graph representation for an arrangement instance,
