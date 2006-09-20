@@ -7,7 +7,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/Unique_hash_map.h>
 
 //
 // Then the package-specific headers:
@@ -38,7 +37,7 @@ typedef CGAL::Polyhedron_3<Kernel> Surface;
 
 // All the classes and functions used in these examples are found in the following
 // nested namespace, but a namespace alias is used for brevity.
-namespace TSMS = CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse ;
+namespace SMS = CGAL::Surface_mesh_simplification ;
 
 //
 // main function. All the examples share the following structure.

@@ -15,7 +15,7 @@
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
 
-\begin{ccRefClass}{Surface_mesh_simplification::Count_ratio_stop_predicate<TSM>}
+\begin{ccRefClass}{Surface_mesh_simplification::Count_ratio_stop_predicate<ECM>}
 
 %% add template arg's if necessary
 
@@ -35,7 +35,7 @@ of edges drops below a certain ratio.
 \ccCreation
 \ccCreationVariable{should_stop}  %% choose variable name
 
-\ccConstructor{Count_ratio_stop_predicate<TSM>( double ratio );}
+\ccConstructor{Count_ratio_stop_predicate<ECM>( double ratio );}
 {Initializes the predicate establishing the \ccc{ratio}.} 
 
 \ccOperations
@@ -50,7 +50,7 @@ of edges drops below a certain ratio.
   {Returns ( $((double)current_count/ (double)initial_count) < ratio$. All other parameters are ignored.}
 
 \ccSeeAlso
-\ccc{CGAL::Surface_mesh_simplification::Count_stop_predicate<TSM>}
+\ccc{CGAL::Surface_mesh_simplification::Count_stop_predicate<ECM>}
 
 \end{ccRefClass}
 

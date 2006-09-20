@@ -15,7 +15,7 @@
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
 
-\begin{ccRefClass}{Surface_mesh_simplification::Cached_placement<TSM>}
+\begin{ccRefClass}{Surface_mesh_simplification::Cached_placement<ECM>}
 
 %% add template arg's if necessary
 
@@ -26,7 +26,7 @@
 
 The class \ccRefName\ provides a model for the \ccc{GetPlacement} concept. 
 It has one template argument: the type of surface being simplified,
-which must be a model of the \ccc{TriangulatedSurfaceMesh} concept.
+which must be a model of the \ccc{EdgeCollapsableMesh} concept.
 
 This model directly returns the placement stored in the cache.
 
@@ -40,12 +40,12 @@ This model directly returns the placement stored in the cache.
 
 \ccCreation
 \ccCreationVariable{gc}  %% choose variable name
-\ccConstructor{Cached_placement<TSM>();}{Default constructor} 
+\ccConstructor{Cached_placement<ECM>();}{Default constructor} 
 
 \ccHeading{Methods}
   \ccMethod{template<class Cache>
             result_type operator()( edge_descriptor const& edge
-                                  , TSM&                   surface 
+                                  , ECM&                   surface 
                                   , Cache const&           cache
                                   , Params const*          params
                                   ) const;

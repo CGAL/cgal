@@ -20,18 +20,8 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 // === EXAMPLE SPECIFIC DETAILS BEGINS HERE ===
 
 //
-// Setup an enriched polyhedron type which stores in the halfedge the extra pointer needed by the algorithm
+// Setup an enriched polyhedron type which stores a ID in the halfedges
 //
-
-template <class Refs, class Traits>
-struct My_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> 
-{ 
-  My_halfedge() : extra_ptr_(0) {} // The extra pointer MUST be initialized to NULL
- 
-  void*& extra_pointer() { return extra_ptr_ ; }
-    
-  void* extra_ptr_ ;
-};
 
 typedef Kernel::Point_3 Point;
 
@@ -43,7 +33,7 @@ struct My_items : public CGAL::Polyhedron_items_3
     };
     template < class Refs, class Traits>
     struct Halfedge_wrapper { 
-        typedef My_halfedge<Refs,Traits>  Halfedge;
+        typedef CGAL::HalfedgeDS_halfedge_base_with_id<Refs> Halfedge;
     };
     template < class Refs, class Traits>
     struct Face_wrapper {
@@ -55,7 +45,7 @@ typedef CGAL::Polyhedron_3<Kernel,My_items> Surface;
 
 // === EXAMPLE SPECIFIC DETAILS ENDS HERE ===
 
-namespace TSMS = CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse ;
+namespace SMS = CGAL::Surface_mesh_simplification ;
 
 int main( int argc, char** argv ) 
 {
@@ -66,11 +56,11 @@ int main( int argc, char** argv )
   
   // === CONCRETE USAGE EXAMPLE BEGINS HERE ===
   
-  TSMS::Count_stop_condition<Surface> stop_policy(1000);
+  SMS::Count_stop_condition<Surface> stop_policy(1000);
      
-  // The third argument is ommited this time because the default policy
-  // is to put the extra-pointer in the edge itself.
-  int r = TSMS::edge_collapse(surface,stop_policy);
+  // The edge_index_map() parameter is ommited becasue
+  // the halfedges in this polyhedron support the stored id().
+  int r = SMS::edge_collapse(surface,stop_policy);
   
   // === CONCRETE USAGE EXAMPLE ENDS HERE ===
 

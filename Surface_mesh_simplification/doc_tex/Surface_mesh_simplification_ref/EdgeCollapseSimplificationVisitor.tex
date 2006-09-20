@@ -26,15 +26,15 @@ The concept \ccRefName\ describes the requirements for the {\em visitor object} 
 The several callbacks given as member functions in the visitor are called from certain places in the algorithm implementation.
 
 \ccTypes
-  \ccNestedType{TSM}
-  {The type of the surface to simplify. Must be a model of the \ccc{TriangulatedSurfaceMesh} concept.}{}
+  \ccNestedType{ECM}
+  {The type of the surface to simplify. Must be a model of the \ccc{EdgeCollapsableMesh} concept.}{}
 \ccGlue    
   \ccNestedType{FT}{A field type representing the collapse cost}{}
 \ccGlue    
-  \ccTypedef{typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}
+  \ccTypedef{typename boost::graph_traits<ECM>::edge_descriptor edge_descriptor;}
   {A {\sc Bgl} edge descriptor representing an undirected edge of the surface.}
 \ccGlue    
-  \ccTypedef{typename CGAL::halfedge_graph_traits<TSM>::Point Point;}
+  \ccTypedef{typename CGAL::halfedge_graph_traits<ECM>::Point Point;}
   {The point type of the vertex.}
 \ccGlue    
   \ccNestedType{size_type}{An integer type representing the number of edges}{}
@@ -45,15 +45,15 @@ The several callbacks given as member functions in the visitor are called from c
 \ccOperations
 
   \ccMethod
-  {void OnStarted( TSM& surface );}
+  {void OnStarted( ECM& surface );}
   {Called before the algorithm starts.}
   
   \ccMethod
-  {void OnFinished ( TSM& surface ) ; }
+  {void OnFinished ( ECM& surface ) ; }
   {Called after the algorithm finishes.}
   
   \ccMethod
-  {void OnStopConditionReached( TSM& surface ) ; } 
+  {void OnStopConditionReached( ECM& surface ) ; } 
   {Called when the \ccc{StopPredicate} returned true
   (but not if the algorithm terminates because the surface couldn't be simplified any futher).
   }
@@ -61,7 +61,7 @@ The several callbacks given as member functions in the visitor are called from c
   \ccMethod
   {void OnCollected( edge_descriptor const& edge
                    , bool                   is_fixed
-                   , TSM&                   surface
+                   , ECM&                   surface
                    );
   }                  
   {Called during the {\em collecting phase} (when a cost is assigned to the edges),
@@ -72,7 +72,7 @@ The several callbacks given as member functions in the visitor are called from c
   
   \ccMethod
   {void OnSelected(edge_descriptor const&  edge
-                  ,TSM&                    surface
+                  ,ECM&                    surface
                   ,boost::optional<double> cost
                   ,size_type               initial_count
                   ,size_type               current_count
@@ -91,7 +91,7 @@ The several callbacks given as member functions in the visitor are called from c
   
   \ccMethod
   {void OnCollapsing( edge_descriptor const& edge
-                    , TSM&                   surface
+                    , ECM&                   surface
                     , boost::optional<Point> placement
                     );
   }                  
@@ -103,7 +103,7 @@ The several callbacks given as member functions in the visitor are called from c
   
   \ccMethod
   {void OnNonCollapsable( edge_descriptor const& edge
-                        , TSM&                   surface
+                        , ECM&                   surface
                         );
   }                  
   {Called for each selected \ccc{edge} which cannot be 

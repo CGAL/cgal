@@ -26,10 +26,10 @@ The concept \ccRefName\ describes the requirements for the {\em policy function 
 
 
 \ccTypes
-  \ccNestedType{TSM}{The type of the surface to simplify.
-  Must be a model of the \ccc{TriangulatedSurfaceMesh} concept.}{}
+  \ccNestedType{ECM}{The type of the surface to simplify.
+  Must be a model of the \ccc{EdgeCollapsableMesh} concept.}{}
   \ccGlue
-  \ccTypedef{boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}
+  \ccTypedef{boost::graph_traits<ECM>::edge_descriptor edge_descriptor;}
   {A {\sc Bgl} edge descriptor representing an edge of the surface.}{}
   \ccGlue
   \ccNestedType{Cache}{The concrete type of cache record being assigned by this policy.}{}
@@ -45,7 +45,7 @@ The concept \ccRefName\ describes the requirements for the {\em policy function 
 \ccMethod
   {void operator()( Cache&                 cache
                   , edge_descriptor const& edge
-                  , TSM&                   surface
+                  , ECM&                   surface
                   , CostParams const*      cparams
                   , PlacementParam const*  pparams
                   );
@@ -65,9 +65,9 @@ only the \ccc{cache} argument is used and the cost/placement
 }  
 
 \ccHasModels
-\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Set_no_cache<TSM>}\\
-\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Set_cost_cache<TSM,GetCost>}\\
-\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Set_cost_and_placement<TSM,GetCost,GetPlacement>}\\
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Set_no_cache<ECM>}\\
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Set_cost_cache<ECM,GetCost>}\\
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Set_cost_and_placement<ECM,GetCost,GetPlacement>}\\
 
 \end{ccRefConcept}
 

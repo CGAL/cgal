@@ -15,7 +15,7 @@
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
 
-\begin{ccRefClass}{Surface_mesh_simplification::Cost_and_placement_cache<TSM>}
+\begin{ccRefClass}{Surface_mesh_simplification::Cost_and_placement_cache<ECM>}
 
 %% add template arg's if necessary
 
@@ -26,7 +26,7 @@
 
 The class \ccRefName\ provides a model for the \ccc{CostAndPlacementCache} concept.
 It has one template argument: the type of surface being simplified,
-which must be a model of the \ccc{TriangulatedSurfaceMesh} concept.
+which must be a model of the \ccc{EdgeCollapsableMesh} concept.
 
 \ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Cost_and_placement_cache.h}
 

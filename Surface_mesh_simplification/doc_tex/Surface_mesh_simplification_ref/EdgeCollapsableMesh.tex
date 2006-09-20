@@ -14,14 +14,24 @@
 %%
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
-\begin{ccRefConcept}{TriangulatedSurfaceMesh}
+\begin{ccRefConcept}{EdgeCollapsableMesh}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
 
 \ccDefinition
 
-The concept \ccRefName\ describes the requirements for the Triangulated Surface Mesh cache structure.
+The concept \ccRefName\ describes the requirements for the type of 
+triangulated surface mesh that can be passed to the
+simplification algorithm.
+
+The surface must be structurally equivalent to a polyhedral surface
+having only triangular faces. 
+It can have any number of connected components, boundaries 
+(borders and holes) and handles (arbitrary genus).
+
+In the context of this concept, the surface is only required to provide one 
+mutating operation: \ccc{collapse_triangulation_edge}.
 
 \ccRefines
 \ccc{HalfedgeGraph}
@@ -43,9 +53,14 @@ The concept \ccRefName\ describes the requirements for the Triangulated Surface 
     
 \ccHeading{Collape Operation Semantics}\label{SurfaceMeshSimplification:CollapseOperationDetails}
   
-This function assumes the surface to be an {\em open 2-manifold} and it must
-never be called in a context were the collape would result in the surface 
-becoming a {\em non-manifold}. Thus, the following preconditions hold:
+This function assumes the surface to be an {\em open oriented 2-manifold} and it must
+never be called in a context were collaping the edge would result in the surface 
+becoming a {\em non-manifold}. That is, as a precondition, edge $p-q$ must satisfy
+the so-called {\em link-condition}
+(whose definition is out of scope for this manual but which is notably explained 
+in \cite[Topology preserving edge contraction]{degn-tpec-98}).
+
+The 3 edges must relate to each other as described in the following additional preconditions:
 
 $source(p-q)==source(p-t)$.\\
 $target(p-q)==source(q-b)$.\\
@@ -56,10 +71,9 @@ if $p-t$ is non-null, $next(t-p)==p-q$.\\
 if $q-b$ is non-null, $next(b-q)==q-p$.
 
 The net effect of the operation is equivalent to removing one of the vertices
-and re-triangulating the resulting facet.
-
-The actual collapse operation is required to remove at most 
-2 triangles, 3 {\em undirected} edges and 1 vertex, as follows:
+and re-triangulating the resulting facet, but the actual operation is 
+required to remove at most 2 triangles, 3 {\em undirected} edges and 1 vertex, 
+as follows:
 
 The triangle above $p-q$ is called {\em top-triangle}.\\
 The triangle below $p-q$ is called {\em bottom-triangle}.\\
@@ -93,8 +107,8 @@ that could be internally or externally attached to the old triangle)
 The function returns the vertex that is not removed.
 
 \ccHasModels
-\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}
-\ccRefIdfierPage{CGAL::graph_traits< Polyhedron_3<Traits> >}
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}\\
+\ccRefIdfierPage{CGAL::graph_traits< Polyhedron_3<Traits> >}\\
 \ccRefIdfierPage{CGAL::halfedge_graph_traits< Polyhedron_3<Traits> >}
 
 \end{ccRefConcept}

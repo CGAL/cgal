@@ -4,7 +4,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/Unique_hash_map.h>
 
 #include <CGAL/Surface_mesh_simplification/Polyhedron.h>
 #include <CGAL/Surface_mesh_simplification/Edge_collapse.h>
@@ -46,16 +45,6 @@ struct My_vertex : public CGAL::HalfedgeDS_vertex_base<Refs,CGAL::Tag_true,Point
   bool is_fixed_ ;
 };
 
-template <class Refs, class Traits>
-struct My_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs> 
-{ 
-  My_halfedge() : extra_ptr_(0) {}
- 
-  void*& extra_pointer() { return extra_ptr_ ; }
-    
-  void* extra_ptr_ ;
-};
-
 struct My_items : public CGAL::Polyhedron_items_3 
 {
     template < class Refs, class Traits>
@@ -64,7 +53,7 @@ struct My_items : public CGAL::Polyhedron_items_3
     };
     template < class Refs, class Traits>
     struct Halfedge_wrapper { 
-        typedef My_halfedge<Refs,Traits>  Halfedge;
+        typedef CGAL::HalfedgeDS_halfedge_base_with_id<Refs> Halfedge;
     };
     template < class Refs, class Traits>
     struct Face_wrapper {
@@ -76,7 +65,7 @@ typedef CGAL::Polyhedron_3<Kernel,My_items> Surface;
 
 // === EXAMPLE SPECIFIC DETAILS ENDS HERE ===
 
-namespace TSMS = CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse ;
+namespace SMS = CGAL::Surface_mesh_simplification ;
 
 int main( int argc, char** argv ) 
 {
@@ -97,10 +86,11 @@ int main( int argc, char** argv )
       )
     vi->is_fixed_ = true ; // only some would be set to true, of cotrue
   
-  int r = TSMS::edge_collapse(surface
-                             ,TSMS::Count_ratio_stop_condition<Surface>(0.10) // StopCondition
-                             ,CGAL::Edge_extra_pointer_map_stored<Surface>()  // EdgeExtraPointerMap
-                             ,CGAL::Vertex_is_fixed_map_stored<Surface>()     // VertexIsFixedMap
+  int r = SMS::edge_collapse(surface
+                             ,SMS::Count_ratio_stop_condition<Surface>(0.10) 
+                             ,SMS.vertex_is_fixed_map(CGAL::Vertex_is_fixed_map_stored<Surface>())
+                             // The edge_index_map parameter is ommited becasue
+                             // the halfedge in this polyhedron support the stored id().
                              );
            
   // === CONCRETE USAGE EXAMPLE ENDS HERE ===

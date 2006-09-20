@@ -15,7 +15,7 @@
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
 
-\begin{ccRefClass}{Surface_mesh_simplification::Edge_length_cost<TSM>}
+\begin{ccRefClass}{Surface_mesh_simplification::Edge_length_cost<ECM>}
 
 %% add template arg's if necessary
 
@@ -34,12 +34,12 @@ It computes the collapse cost as the squared length of the edge.
 
 \ccCreation
 \ccCreationVariable{gc}  %% choose variable name
-\ccConstructor{Edge_length_cost<TSM>();}{Default constructor} 
+\ccConstructor{Edge_length_cost<ECM>();}{Default constructor} 
 
 \ccHeading{Methods}
   \ccMethod{template<class Cache>
             result_type operator()( edge_descriptor const& edge
-                                  , TSM&                   surface 
+                                  , ECM&                   surface 
                                   , Cache const&           cache
                                   , Params const*          params
                                   ) const;

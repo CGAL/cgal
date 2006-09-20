@@ -31,11 +31,11 @@ The cost and placement are stored as \ccc{boost::optional} values (i.e. they can
 \ccc{Assignable}
 
 \ccTypes
-  \ccNestedType{TSM}{The type of the surface to simplify. Must be a \ccc{TriangulatedSurfaceMesh}.}{}
+  \ccNestedType{ECM}{The type of the surface to simplify. Must be a \ccc{EdgeCollapsableMesh}.}{}
 \ccGlue    
   \ccNestedType{FT}{A field type that represents the collapse cost.}{}
 \ccGlue    
-  \ccTypedef{typename halfedge_graph_traits<TSM>::Point Point ;}{The point type of the surface vertex}
+  \ccTypedef{typename halfedge_graph_traits<ECM>::Point Point ;}{The point type of the surface vertex}
 
 \ccCreation
 \ccCreationVariable{c}  %% choose variable name
@@ -51,7 +51,7 @@ The cost and placement are stored as \ccc{boost::optional} values (i.e. they can
   \ccMethod{boost::optional<Point> placement() const;}{The stored placement.}
   
 \ccHasModels
-\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Cost_and_placement_cache<TSM>}.
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Cost_and_placement_cache<ECM>}.
 
 \end{ccRefConcept}
 

@@ -4,7 +4,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/Unique_hash_map.h>
 
 #include <CGAL/Surface_mesh_simplification/Polyhedron.h>
 #include <CGAL/Surface_mesh_simplification/Edge_collapse.h>
@@ -110,7 +109,7 @@ struct Visitor
 
 // === EXAMPLE SPECIFIC DETAILS ENDS HERE ===
 
-namespace TSMS = CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse ;
+namespace SMS = CGAL::Surface_mesh_simplification ;
 
 int main( int argc, char** argv ) 
 {
@@ -120,33 +119,12 @@ int main( int argc, char** argv )
 
   // === CONCRETE USAGE EXAMPLE BEGINS HERE ===
   
-  CGAL::Unique_hash_map<Surface::Halfedge_handle,void*> edge2ptr ;
-  for ( Surface::Halfedge_iterator hi = surface.halfedges_begin()
-      ; hi != surface.halfedges_end() 
-      ; ++ hi 
-      )
-    edge2ptr[hi] = 0 ;
- 
-  Visitor visitor ;
+  Visitor vis ;
 
-  // Since the visitor is the last parameter, all the parameters, which could have been
-  // ommited, must be explicitely passed (so this examples shows all the defaults).
-  //  
-  TSMS::LindstromTurk_params params ;
-    
-  int r = TSMS::edge_collapse(surface
-                             ,TSMS::Count_ratio_stop_condition<Surface>(0.10)          // StopCondition
-                             ,boost::make_assoc_property_map(edge2ptr)                 // EdgeExtraPointerMap
-                             
-                             // These are the same as the default arguments
-                             ,CGAL::Vertex_is_fixed_map_always_false<Surface>()        // VertexIsFixedMap
-                             ,TSMS::Set_partial_collapse_data_LindstromTurk<Surface>() // SetCollapseData
-                             ,TSMS::Cached_cost<Surface>()                             // GetCost
-                             ,TSMS::LindstromTurk_placement<Surface>()                 // GetPlacement
-                             ,&params                                                  // GetCost parameters
-                             ,&params                                                  // GetPlacement parameters
-                             
-                             ,&visitor
+  int r = SMS::edge_collapse(surface
+                             ,SMS::Count_ratio_stop_condition<Surface>(0.10) 
+                             ,SMS::external_edge_index_map(surface)
+                             .SMS::visitor(&vis)
                              );
 
   

@@ -40,14 +40,14 @@ passed cache object, if any, or perform the actual computation.
 \ccc{CopyConstructible}
 
 \ccTypes
-  \ccNestedType{TSM}{The type of the surface to simplify.
-   Must be a model of the \ccc{TriangulatedSurfaceMesh} concept.}{}
+  \ccNestedType{ECM}{The type of the surface to simplify.
+   Must be a model of the \ccc{EdgeCollapsableMesh} concept.}{}
 \ccGlue    
   \ccNestedType{Params}{The type of the model-specific parameters needed. Can be \ccc{void}.}{}
 \ccGlue    
-  \ccTypedef{typename CGAL::halfedge_graph_traits<TSM>::Point Point;}{The point type for the surface vertex.}
+  \ccTypedef{typename CGAL::halfedge_graph_traits<ECM>::Point Point;}{The point type for the surface vertex.}
 \ccGlue    
-  \ccTypedef{typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}
+  \ccTypedef{typename boost::graph_traits<ECM>::edge_descriptor edge_descriptor;}
   {A {\sc Bgl} edge descriptor representing an edge of the surface.}
 \ccGlue    
   \ccTypedef{boost::optional<Point> result_type;}{The type of the result (an optional point).}
@@ -61,7 +61,7 @@ passed cache object, if any, or perform the actual computation.
 
   \ccMethod{template<class Cache>
             result_type operator()( edge_descriptor const& edge
-                                  , TSM&                   surface 
+                                  , ECM&                   surface 
                                   , Cache const&           cache
                                   , Params const*          params
                                   ) const;
@@ -76,9 +76,9 @@ passed cache object, if any, or perform the actual computation.
   }
   
 \ccHasModels
-\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Cached_cost<TSM>}.
-\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Edge_length_cost<TSM>}.
-\ccRefIdfierPage{CGAL::Surface_mesh_simplification::LindstromTurk_cost<TSM>}.
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Cached_cost<ECM>}.
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Edge_length_cost<ECM>}.
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::LindstromTurk_cost<ECM>}.
 
 \end{ccRefConcept}
 

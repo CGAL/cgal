@@ -26,7 +26,7 @@ typedef CGAL::Polyhedron_3<Kernel> Surface;
 
 enum { LT, MP } ;
 
-namespace TSMS = CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse ;
+namespace SMS = CGAL::Surface_mesh_simplification ;
 
 int main( int argc, char** argv ) 
 {
@@ -38,74 +38,65 @@ int main( int argc, char** argv )
 
   // === CONCRETE USAGE EXAMPLE BEGINS HERE ===
   
-  CGAL::Unique_hash_map<Surface::Halfedge_handle,void*> edge2ptr ;
-  for ( Surface::Halfedge_iterator hi = surface.halfedges_begin()
-      ; hi != surface.halfedges_end() 
-      ; ++ hi 
-      )
-    edge2ptr[hi] = 0 ;
-    
   if ( strategy == LT )
   {
     // This section shows how to use a full cache with the LindstromTurk strategy:
     //
-    // The policy "Set_full_collapse_data_LindstromTurk" is the one actually 
-    // computing and caching the cost and placement values. 
+    // The SetCache policy "LindstromTurk_set_cost_and_placement_cache"
+    // is the one actually computing and caching the cost and placement values. 
     //
     // Since that policy is computing the actual values, the other two policies
     // are set to "Cached_cost" and "Cached_placement", since they only need
     // to get the values already computed.
     // 
-    TSMS::edge_collapse(surface
-                       ,TSMS::Count_stop_condition<Surface>(1000)             // StopCondition
-                       ,boost::make_assoc_property_map(edge2ptr)              // EdgeExtraPointerMap 
+    SMS::edge_collapse(surface
+                      ,SMS::Count_stop_condition<Surface>(1000)             
                        
-                       ,CGAL::Vertex_is_fixed_map_always_false<Surface>()     // VertexIsFixedMap
-                       
-                       ,TSMS::Set_full_collapse_data_LindstromTurk<Surface>() // SetCollapseData   
-                       ,TSMS::Cached_cost<Surface>()                          // GetCost
-                       ,TSMS::Cached_placement<Surface>()                     // GetPlacement
-                       );
+                      ,SMS::external_edge_index_map(surface)
+                      
+                      .SMS::set_cache    (SMS::LindstromTurk_set_cost_and_placement_cache<Surface>())
+                      .SMS::get_cost     (SMS::Cached_cost     <Surface>())
+                      .SMS::get_placement(SMS::Cached_placement<Surface>())
+                      );
   }
   else
   {
     // This section shows how to use a full cache with a non-default cost strategy.
     //
     //
-    // The policy "Set_full_collapse_data<>" is the one actually computing
-    // and caching the cost and placement value.
-    // However, the policy object by itself it doesn't know how to do hat, 
+    // The SetCache policy "Set_cost_and_placemet_cache<>" is the one actually
+    // computing and caching the cost and placement values.
+    // However, the policy object by itself doesn't know how to do hat, 
     // so it delegates the computation to external policies passed
-    // to the SetCollapseData policy object constructor.
+    // to its constructor.
     // 
     // In this example, the non-default cost strategy is to use 
-    // the edge length for the cost and the edge midpoint for the placement, so
-    // we instantiate policy objects for that and pass them to the 
-    // Set_full_collapse_data<> policy object.
+    // the edge length for the cost and the edge midpoint for the placement,
+    // so the corresponding policies are instantiated and passed to the 
+    // SetCache constructor.
     // 
     // Still, the GetCost and GetPlacement policies **passed to the algorithm** are
     // Cached_cost and Cached_placement as they only need to extract the cached values 
     // from the collapse-data.
     //
-    typedef TSMS::Edge_length_cost  <Surface> Compute_cost ;
-    typedef TSMS::Midpoint_placement<Surface> Compute_placement ;
+    typedef SMS::Edge_length_cost  <Surface> Compute_cost ;
+    typedef SMS::Midpoint_placement<Surface> Compute_placement ;
     
     Compute_cost      compute_cost ;
     Compute_placement compute_placement ;
     
-    TSMS::Set_full_collapse_data<Surface,Compute_cost,Compute_placement> 
-      set_collapse_data(compute_cost,compute_placement);
+    SMS::Set_cost_and_placement_cache<Surface,Compute_cost,Compute_placement> 
+      set_full_cache(compute_cost,compute_placement);
     
-    TSMS::edge_collapse(surface
-                       ,TSMS::Count_stop_condition<Surface>(1000)         // StopCondition
-                       ,boost::make_assoc_property_map(edge2ptr)          // EdgeExtraPointerMap 
+    SMS::edge_collapse(surface
+                      ,SMS::Count_stop_condition<Surface>(1000)         
                        
-                       ,CGAL::Vertex_is_fixed_map_always_false<Surface>() // VertexIsFixedMap [default]
-                       
-                       ,set_collapse_data                                 // SetCollapseData   
-                       ,TSMS::Cached_cost<Surface>()                      // GetCost
-                       ,TSMS::Cached_placement<Surface>()                 // GetPlacement
-                       );
+                      ,SMS::external_edge_index_map(surface)
+                      
+                      .SMS::set_cache    (set_full_cache)
+                      .SMS::get_cost     (SMS::Cached_cost     <Surface>())
+                      .SMS::get_placement(SMS::Cached_placement<Surface>())
+                      );
   }  
   
   // === CONCRETE USAGE EXAMPLE ENDS HERE ===

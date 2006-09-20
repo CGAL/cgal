@@ -4,7 +4,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/Unique_hash_map.h>
 
 #include <CGAL/Surface_mesh_simplification/Polyhedron.h>
 #include <CGAL/Surface_mesh_simplification/Edge_collapse.h>
@@ -22,7 +21,7 @@
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Surface; 
 
-namespace TSMS = CGAL::Triangulated_surface_mesh::Simplification::Edge_collapse ;
+namespace SMS = CGAL::Surface_mesh_simplification ;
 
 int main( int argc, char** argv ) 
 {
@@ -32,30 +31,21 @@ int main( int argc, char** argv )
 
   // === CONCRETE USAGE EXAMPLE BEGINS HERE ===
   
-  typedef Surface::Halfedge_handle Halfedge_handle ;
-  CGAL::Unique_hash_map<Halfedge_handle,void*> edge2ptr ;
-  for ( Surface::Halfedge_iterator hi = surface.halfedges_begin()
-      ; hi != surface.halfedges_end() 
-      ; ++ hi
-      )
-    edge2ptr[hi] = 0 ;
-
   // In this example, wich indicates that the cost and placement values 
   // should be computed on demand with no caching.
   // That is specified by passing the "Set_empty_collapse_data" policy
   // along with the GetCost and GetPlacement policies that do the
   // actual on-deman computation.
   //   
-  int r = TSMS::edge_collapse(surface
-                             ,TSMS::Count_ratio_stop_condition<Surface>(0.10) // StopCondition
-                             ,boost::make_assoc_property_map(edge2ptr)        // EdgeExtraPointerMap
+  int r = SMS::edge_collapse(surface
+                            ,SMS::Count_ratio_stop_condition<Surface>(0.10)
                              
-                             ,CGAL::Vertex_is_fixed_map_always_false<Surface>() // VertexIsFixedMap [default].
-                             
-                             ,TSMS::Set_empty_collapse_data         <Surface>() // SetCollapseData
-                             ,TSMS::Edge_length_cost                <Surface>() // GetCost
-                             ,TSMS::Midpoint_placement              <Surface>() // GetPlacement
-                             );
+                            ,SMS::external_edge_index_map(surface)
+                            
+                            .SMS::set_cache    (SMS::Set_no_cache      <Surface>())
+                            .SMS::get_cost     (SMS::Edge_length_cost  <Surface>())
+                            .SMS::get_placement(SMS::Midpoint_placement<Surface>())
+                            );
       
   // === CONCRETE USAGE EXAMPLE ENDS HERE ===
   

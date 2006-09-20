@@ -15,7 +15,7 @@
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
 
-\begin{ccRefClass}{Surface_mesh_simplification::LindstromTurk_placement<TSM>}
+\begin{ccRefClass}{Surface_mesh_simplification::LindstromTurk_placement<ECM>}
 
 %% add template arg's if necessary
 
@@ -28,7 +28,7 @@ It computes the collapse cost following the Lindstrom-Turk strategy
 (Section~\ref{SurfaceMeshSimplification:LindstromTurkStrategy}).
 
 The class \ccRefName\ has one template arguments: the type of surface being simplified. 
-It be a model of the \ccc{TriangulatedSurfaceMesh} concept.
+It be a model of the \ccc{EdgeCollapsableMesh} concept.
 
 \ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_placement.h}
 
@@ -37,21 +37,21 @@ It be a model of the \ccc{TriangulatedSurfaceMesh} concept.
 
 \ccCreation
 \ccCreationVariable{gp}  %% choose variable name
-\ccConstructor{LindstromTurk_placement<TSM>();}{Default constructor} 
+\ccConstructor{LindstromTurk_placement<ECM>();}{Default constructor} 
 
 \ccHeading{Methods}
   \ccMethod{template<class Cache>
             result_type operator()( edge_descriptor const&      edge
-                                  , TSM&                        surface 
+                                  , ECM&                        surface 
                                   , Cache const&                cache
                                   , LindstromTurk_params const* params
                                   ) const;
            }
   {Returns the position of the vertex that replaces the collapsed \ccc{edge}.}
 
-\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_set_cost_cache<TSM>}\\
-\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_set_cost_and_placement_cache<TSM>}\\
-\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_cost<TSM>}\\
+\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_set_cost_cache<ECM>}\\
+\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_set_cost_and_placement_cache<ECM>}\\
+\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_cost<ECM>}\\
 \ccc{CGAL::Surface_mesh_simplification::LindstromTurk_params}\\
 \end{ccRefClass}
 

@@ -15,7 +15,7 @@
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
 
-\begin{ccRefClass}{Surface_mesh_simplification::Midpoint_placement<TSM>}
+\begin{ccRefClass}{Surface_mesh_simplification::Midpoint_placement<ECM>}
 
 %% add template arg's if necessary
 
@@ -28,7 +28,7 @@ The class \ccRefName\ provides a model for the \ccc{GetPlacement} concept.
 It computes the placement as the midpoint position along the edge.
 
 The class \ccRefName\ has one template arguments: the type of surface being simplified. 
-It be a model of the \ccc{TriangulatedSurfaceMesh} concept.
+It be a model of the \ccc{EdgeCollapsableMesh} concept.
 
 \ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_placement.h}
 
@@ -37,12 +37,12 @@ It be a model of the \ccc{TriangulatedSurfaceMesh} concept.
 
 \ccCreation
 \ccCreationVariable{gp}  %% choose variable name
-\ccConstructor{Midpoint_placement<TSM>();}{Default constructor} 
+\ccConstructor{Midpoint_placement<ECM>();}{Default constructor} 
 
 \ccHeading{Methods}
   \ccMethod{template<class Cache>
             result_type operator()( edge_descriptor const& edge
-                                  , TSM&                   surface 
+                                  , ECM&                   surface 
                                   , Cache const&           cache
                                   , Params const*          params
                                   ) const;

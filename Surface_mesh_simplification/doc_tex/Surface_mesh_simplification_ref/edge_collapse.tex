@@ -23,54 +23,159 @@
 %% \ccHtmlIndexC[class]{} %% add further index entries
 \ccDefinition
 
-The function \ccRefName\ simplifies in-place a triangulated suface mesh by iteratively collapsing edges.
+The function \ccRefName\ simplifies in-place a triangulated surface mesh by iteratively collapsing edges.
 
 \ccInclude{CGAL/Surface_mesh_simplification/edge_collaspe.h}
 
 \ccFunction
 {
-template<class TriangulatedSurfaceMesh
-        ,class StopPredicate
-        ,class EdgeExtraPtrMap
-        ,class VertexIsFixedPropertyMap
-        ,class SetCache
-        ,class GetCost
-        ,class GetPlacement
-        ,class CostParams
-        ,class PlacementParams
-        ,class EdgeCollaspeSimplificationVisitor
-        >
-int edge_collapse ( TriangulatedSurfaceMesh&           surface
-                  , StopPredicate            const&    should_stop
-                  , EdgeExtraPtrMap          const&    edge_extra_ptr_map   
-                  , VertexIsFixedPropertyMap const&    vertex_is_fixed_map  
-                  , SetCache          const&    set_collapse_cache
-                  , GetCost                  const&    get_cost 
-                  , GetPlacement             const&    get_placement
-                  , CostParams               const*    cost_params
-                  , PlacementParams          const*    placement_params 
-                  , EdgeCollaspeSimplificationVisitor* visitor
+template<class EdgeCollapsableMesh,class StopPredicate, class P, class T, class R>
+int edge_collapse ( EdgeCollapsableMesh&           surface
+                  , StopPredicate           const& should_stop
+                  , sms_named_params<P,T,R> const& named_parameters
                   ) ;
 }
 {Simplifies \ccc{surface} in-place by collapsing edges, and returns
 the number of edges effectively removed.
 }
 
+
+\ccHeading{Non-named parameters}
+
+\ccc{surface} defines the type of the surface. 
+It must be a model of the \ccc{EdgeCollapsableMesh} concept.
+
+\ccc{should_stop} defines the type of the stop-condition policy.
+It must be a model of the \ccc{StopPredicate} concept.
+
+\ccHeading{Named parameters}
+
+\ccc{named_parameters} holds the list of all the additional parameters 
+used by the \ccc{edge_collapse} function (including default parameters).
+
+The named parameters list is a composition of function calls, whose names corresponds
+to the name of the parameter, separated by a dot ($.$), as in:
+
+\ccc{param0_name(actual_param0).param1_name(actual_param1)}
+
+each named parameter function corresponds to one named parameter.
+
+All named parameters have default values and the order of the named parameters 
+is irrelevant so you only need to compose those for which the default
+is inappropiate.
+
+\subsubsection{\ccc{vertex_point_map(VertexPointMap vertex_p_map)} }
+
+Provides lvalue access to the point of a vertex of the surface.
+\ccc{VertexPointMap} must be an 
+\ccAnchor{http://www.boost.org/libs/property_map/LvaluePropertyMap.html}{LValuePropertyMap} 
+whose \ccc{key_type} is
+\ccc{boost::graph_traits<EdgeCollapsableMesh>::vertex_descriptor}
+and whose \ccc{value_type} is 
+\ccc{boost::halfedge_graph_traits<EdgeCollapsableMesh>::Point}
+
+\textbf{Default}: the property map obtained by calling \ccc{get(vertex_point,surface)}.
+
+
+\subsubsection{\ccc{edge_index_map(EdgeIndexMap edge_idx_map)} }
+
+Maps each {\em directed} edge in the surface into an integer number
+in the range \ccc{[0,num_edge(surface)}.\\
+\ccc{EdgeIndexMap} must be a 
+\ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
+whose \ccc{key_type} is
+\ccc{boost::graph_traits<EdgeCollapsableMesh const>::edge_descriptor}
+and whose \ccc{value_type} is 
+\ccc{boost::graph_traits<EdgeCollapsableMesh>::size_type}
+
+\textbf{Default}: the property map obtained by calling \ccc{get(edge_index,surface)}, which 
+in turn requires the surface edge class to have a member function 
+\ccc{edges_size_type id() const;}.
+
+\subsubsection{\ccc{edge_is_border_map(EdgeIsBorderMap edge_border_map)} }
+
+Maps each {\em directed} edge in the surface into a boolean value
+which indicates if the edge belongs to the boundary of the surface
+(facing the outside).
+\ccc{EdgeIsBorderMap} must be a 
+\ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
+whose \ccc{key_type} is
+\ccc{boost::graph_traits<EdgeCollapsableMesh const>::edge_descriptor}
+and whose \ccc{value_type} is \ccc{bool}.
+
+\textbf{Default}: the property map obtained by calling \ccc{get(edge_is_border,surface)}.
+
+\subsubsection{\ccc{vertex_is_fixed_map(VertexIsFixedMap vertex_fixed_map)} }
+
+Maps each vertex in the surface into a boolean value
+which indicates if the vertex is fixed and cannot be modified 
+by the \ccc{edge_collapse} function.\\
+\ccc{EdgeIsFixedMap} must be a 
+\ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
+whose \ccc{key_type} is
+\ccc{boost::graph_traits<EdgeCollapsableMesh const>::vertex_descriptor}
+and whose \ccc{value_type} is \ccc{bool}.
+
+\textbf{Default}: 
+\ccc{Vertex_is_fixed_map_always_false<EdgeCollapsableMesh>()}.
+
+\subsubsection{\ccc{set_cache(SetCache set_cache)} }
+
+The policy which indicates the caching level used 
+by the \ccc{edge_collapse} function.\\
+The type of \ccc{set_cache} must be a model of the \ccc{SetCache} concept.
+
+\textbf{Default}: 
+\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_set_cost_cache<EdgeCollapsableMesh>()}
+
+\subsubsection{\ccc{get_cost(GetCost get_cost)}} 
+
+The policy which returns the collapse cost for an edge.\\
+The type of \ccc{get_cost} must be a model of the \ccc{GetCost} concept.
+
+\textbf{Default}: 
+\ccc{CGAL::Surface_mesh_simplification::Cached_cost<EdgeCollapsableMesh>}.
+
+\subsubsection{\ccc{get_cost_params(GetCost::Params const* gc_params)}}
+
+The model-specific paramaters to \ccc{get_cost}.
+
+\textbf{Default}: \ccc{NULL}.
+
+\subsubsection{\ccc{get_placement(GetPlacement get_placement)}}
+
+The policy which returns the placement (position of the replacemet vertex)
+for an edge.\\
+The type of \ccc{get_placement} must be a model of the \ccc{GetPlacement} concept.
+
+\textbf{Default}: 
+\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_placement<EdgeCollapsableMesh>}
+
+\subsubsection{\ccc{get_placement_params(GetPlacement::Params const* gp_params)}}
+
+The model-specific paramaters to \ccc{get_placement}.
+
+\textbf{Default}: \ccc{NULL}.
+
+\subsubsection{\ccc{visitor(EdgeCollaspeSimplificationVisitor const* v)}}
+
+The visitor that is called by the \ccc{edge_collapse} function
+in certain points to allow the user to track the simplificatioin process.\\
+The type of \ccc{v} must be a model of the \ccc{EdgeCollaspeSimplificationVisitor} concept.
+
+\textbf{Default}: \ccc{NULL}.
+
 \ccHeading{Semantics}
 
 The simplification process continues until the \ccc{should_stop} policy returns \ccc{true}
 or the surface cannot be simplified any furhter due to topological constraints.
 
-\ccc{edge_extra_ptr_map} is a property map which provides access
-to a \ccc{void*&} extra-pointer per edge, as needed by the algorithm.
-
 \ccc{vertex_is_fixed_map} is used to indicate that some edges should not be
-collapsed. The property map indicates whether a vertex is fixed or not,
-and any edge incident upon a fixed vertex is not collapsed.
+collapsed: edges incident upon fixed vertices are not collapsed.
 
-\ccc{set_collapse_cache}, along with \ccc{get_cost} and \ccc{get_placement},
+\ccc{set_cache}, along with \ccc{get_cost} and \ccc{get_placement},
 are the policies which control the {\em cost-strategy}, that is, 
-the order in which edges are collapsed and the replacement vertex positioned.\\
+the order in which edges are collapsed and the replacement vertex is positioned.\\
 \ccc{get_cost_params} and \ccc{get_placement_params} are the runtime 
 parameters used by the these policies. They can be null pointers
 if the policies don't need them.\\
@@ -79,60 +184,6 @@ simplied surface with respect to the original.
 
 \ccc{visitor} is an optional object (can be null) which can be used
 to keep track of the simplification process.
-
-\ccHeading{Requirements}
-
-\ccc{TriangulatedSurfaceMesh} defines the type of the surface.
-It must be a model of \ccc{TriangulatedSurfaceMesh}
-
-\ccc{StopPredicate} defines the type of the stop-condition policy.
-It must be a model of \ccc{StopPredicate} concept
-
-\ccc{EdgeExtraPtrMap} defines the type of the property map which 
-provides access to an extra \ccc{void*&} for each directed edge,
-as required by the algorithm.
-It must be a model of \ccc{EdgeExtraPointerMap} concept
-
-\ccc{VertexIsFixedPropertyMap} defines the type of the property map which 
-indicates whether a vertex is fixed or not.
-It must be a model of \ccc{VertexIsFixedPropertyMap} concept
-
-\ccc{SetCollaspeData} defines the type of set-collapse-cache policy.
-It must be a model of \ccc{SetCollaspeData} concept
-
-\ccc{GetCost} defines the type of get-cost policy.
-It must be a model of \ccc{GetCost} concept
-
-\ccc{GetPlacement} defines the type of get-placement policy.
-It must be a model of \ccc{GetPlacement} concept
-
-\ccc{CostParams} defines the type of the parameters to the get-cost policy.
-It must be \ccc{GetCost::Params}.
-
-\ccc{PlacementParams} defines the type of the parameters to the get-placement policy.
-It must be \ccc{GetPlacement::Params}.
-
-\ccc{EdgeCollaspeSimplificationVisitor} defines the type of the visitor object
-that can be passed to track the simplification process.
-It must be a \ccc{EdgeCollaspeSimplificationVisitor}
-
-\ccHeading{Defaults}
-
-Only the first two parameters are mandatory, the rest have default values as described below:
-
-\ccc{EdgeExtraPtrMap} defaults to \ccc{CGAL::Edge_extra_pointer_map_stored<TriangulatedSurfaceMesh>()}.
-
-\ccc{VertexIsFixedPropertyMap} defaults to \ccc{CGAL::Vertex_is_fixed_property_map_always_false<TriangulatedSurfaceMesh>()}.
-
-\ccc{SetCollaspeData} defauls to \ccc{CGAL::Surface_mesh_simplification::LindstromTurk_set_cost_cache<TriangulatedSurfaceMesh>}.
-
-\ccc{GetCost} defaults to \ccc{CGAL::Surface_mesh_simplification::Cached_cost<TriangulatedSurfaceMesh>}.
-
-\ccc{GetPlacement} defaults to \ccc{CGAL::Surface_mesh_simplification::LindstromTurk_placement<TriangulatedSurfaceMesh>}
-
-\ccc{CostParams} defaults to \ccc{CGAL::Surface_mesh_simplification::LindstromTurk_params}
-
-\ccc{PlacementParams} defaults to \ccc{CGAL::Surface_mesh_simplification::LindstromTurk_params}
 
 \end{ccRefFunction}
 

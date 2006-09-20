@@ -24,14 +24,14 @@
 The concept \ccRefName\ describes the requirements for the predicate which indicates if the simplification process must finish.
 
 \ccTypes
-  \ccNestedType{TSM}
-  {The type of the surface to simplify. Must be a model of the \ccc{TriangulatedSurfaceMesh} concept.}{}
+  \ccNestedType{ECM}
+  {The type of the surface to simplify. Must be a model of the \ccc{EdgeCollapsableMesh} concept.}{}
 \ccGlue    
   \ccNestedType{FT}{A field type representing the collapse cost}{}
 \ccGlue    
   \ccNestedType{size_type}{An integer type representing the number of edges}{}
 \ccGlue    
-  \ccTypedef{typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor;}
+  \ccTypedef{typename boost::graph_traits<ECM>::edge_descriptor edge_descriptor;}
   {A {\sc Bgl} edge descriptor representing an edge of the surface.}
 
 \ccCreation
@@ -57,8 +57,8 @@ The concept \ccRefName\ describes the requirements for the predicate which indic
     }
   
 \ccHasModels
-\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Count_stop_predicate<TSM>}
-\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Count_ratio_stop_predicate<TSM>}
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Count_stop_predicate<ECM>}
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Count_ratio_stop_predicate<ECM>}
 
 \end{ccRefConcept}
 
