@@ -13,6 +13,7 @@
 #include <cassert>
 
 #include <sstream>
+#include <vector>
 
 typedef CGAL::Gmpz Gmpz;
 typedef CGAL::Gmpq Gmpq;
