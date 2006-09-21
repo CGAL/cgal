@@ -53,7 +53,7 @@ struct My_items : public CGAL::Polyhedron_items_3
     };
     template < class Refs, class Traits>
     struct Halfedge_wrapper { 
-        typedef CGAL::HalfedgeDS_halfedge_base_with_id<Refs> Halfedge;
+        typedef CGAL::HalfedgeDS_halfedge_max_base_with_id<Refs> Halfedge;
     };
     template < class Refs, class Traits>
     struct Face_wrapper {
@@ -90,7 +90,7 @@ int main( int argc, char** argv )
                              ,SMS::Count_ratio_stop_condition<Surface>(0.10) 
                              ,SMS.vertex_is_fixed_map(CGAL::Vertex_is_fixed_map_stored<Surface>())
                              // The edge_index_map parameter is ommited becasue
-                             // the halfedge in this polyhedron support the stored id().
+                             // the halfedge in this polyhedron supports the stored id().
                              );
            
   // === CONCRETE USAGE EXAMPLE ENDS HERE ===

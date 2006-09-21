@@ -80,17 +80,28 @@ and whose \ccc{value_type} is
 \subsubsection{\ccc{edge_index_map(EdgeIndexMap edge_idx_map)} }
 
 Maps each {\em directed} edge in the surface into an integer number
-in the range \ccc{[0,num_edge(surface)}.\\
-\ccc{EdgeIndexMap} must be a 
+in the range \ccc{[0,num_edge(surface)}.
+
+\ccc{EdgeIndexMap} must be a either a
 \ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
 whose \ccc{key_type} is
 \ccc{boost::graph_traits<EdgeCollapsableMesh const>::edge_descriptor}
 and whose \ccc{value_type} is 
-\ccc{boost::graph_traits<EdgeCollapsableMesh>::size_type}
+\ccc{boost::graph_traits<EdgeCollapsableMesh>::size_type},
+or the same as \ccc{EdgeCollapsableMesh}, in which case 
+\ccc{edge_idx_map} is in fact the surface to be simplified.
+
+If \ccc{edge_idx_map} is a valid property map, it is
+passed as the argument, but if it is the surface, a
+temporary property map is passed instead.
+Such temporary map externaly relates each edge 
+in the surface (\ccc{edge_idx_map}) to its index,
+without requiring any user intervention or any special
+provision in the surface edge.
 
 \textbf{Default}: the property map obtained by calling \ccc{get(edge_index,surface)}, which 
 in turn requires the surface edge class to have a member function 
-\ccc{edges_size_type id() const;}.
+\ccc{int id() const;}.
 
 \subsubsection{\ccc{edge_is_border_map(EdgeIsBorderMap edge_border_map)} }
 

@@ -33,7 +33,7 @@ struct My_items : public CGAL::Polyhedron_items_3
     };
     template < class Refs, class Traits>
     struct Halfedge_wrapper { 
-        typedef CGAL::HalfedgeDS_halfedge_base_with_id<Refs> Halfedge;
+        typedef CGAL::HalfedgeDS_halfedge_max_base_with_id<Refs> Halfedge;
     };
     template < class Refs, class Traits>
     struct Face_wrapper {
