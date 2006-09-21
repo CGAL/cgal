@@ -2081,6 +2081,9 @@ Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/oni.off -t
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification.tex -text
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/PkgDescription.tex -text
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/Surface_mesh_simplification.tex -text
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.eps -text
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.pdf -text svneol=unset#unset
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.png -text
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/main.tex -text
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/Cached_cost.tex -text
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/Cached_placement.tex -text
