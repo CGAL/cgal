@@ -393,7 +393,6 @@ BGL/doc_tex/BGL_ref/HalfedgeDS_vertex_max_base_with_id.tex -text
 BGL/doc_tex/BGL_ref/HalfedgeGraph.tex -text
 BGL/doc_tex/BGL_ref/Polyhedron_edge_is_border_map.tex -text
 BGL/doc_tex/BGL_ref/Polyhedron_items_with_id_3.tex -text
-BGL/doc_tex/BGL_ref/Polyhedron_vertex_is_border_map.tex -text
 BGL/doc_tex/BGL_ref/Polyhedron_vertex_point_const_map.tex -text
 BGL/doc_tex/BGL_ref/Polyhedron_vertex_point_map.tex -text
 BGL/doc_tex/BGL_ref/Vertex_is_border_t_enum.tex -text
