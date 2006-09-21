@@ -31,12 +31,7 @@ int main( int argc, char** argv )
 
   // === CONCRETE USAGE EXAMPLE BEGINS HERE ===
   
-  // In this example, wich indicates that the cost and placement values 
-  // should be computed on demand with no caching.
-  // That is specified by passing the "Set_empty_collapse_data" policy
-  // along with the GetCost and GetPlacement policies that do the
-  // actual on-deman computation.
-  //   
+  // The cost and placement values are computed on demand with no caching.
   int r = SMS::edge_collapse(surface
                             ,SMS::Count_ratio_stop_condition<Surface>(0.10)
                              

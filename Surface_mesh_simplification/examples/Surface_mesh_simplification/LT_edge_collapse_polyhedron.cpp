@@ -34,8 +34,9 @@ int main( int argc, char** argv )
   SMS::Count_stop_condition<Surface> stop_policy(1000);
      
   // This the actual call to the simplification algorithm.
-  // The surface and stop conditions are mandatory arguments,
-  // while third argument could have been omited, as shown in the next example.
+  // The surface and stop conditions are mandatory arguments.
+  // The third argument is needed because the edges on this
+  // surface lack an "id()" field.
   int r = SMS::edge_collapse(surface
                             ,stop_policy                 
                             ,CGAL::edge_index_map(surface)

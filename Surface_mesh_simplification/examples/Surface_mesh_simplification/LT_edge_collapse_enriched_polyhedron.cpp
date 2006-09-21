@@ -39,10 +39,22 @@ int main( int argc, char** argv )
   
   // === CONCRETE USAGE EXAMPLE BEGINS HERE ===
   
+  // The halfedges in this polyhedron have an "id()" field 
+  // which the default "edge_index_map()" uses to get the index
+  // of an edge.
+  // However, the Polyhedron_3 class doesn't assign any value to
+  // this id(), so we must do it here:
+  int index = 0 ;
+  
+  for( typename Surface::Halfedge_iterator eb = surface.halfedges_begin()
+     , ee = surface.halfedges_end()
+     ; eb != ee
+     ; ++ eb
+     ) 
+    eb->id() = index++;
+
   SMS::Count_stop_condition<Surface> stop_policy(1000);
      
-  // The edge_index_map() parameter is ommited becasue
-  // the halfedges in this polyhedron support the stored id().
   int r = SMS::edge_collapse(surface,stop_policy);
   
   // === CONCRETE USAGE EXAMPLE ENDS HERE ===

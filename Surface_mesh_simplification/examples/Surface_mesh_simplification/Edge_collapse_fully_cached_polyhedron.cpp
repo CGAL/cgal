@@ -4,7 +4,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/Unique_hash_map.h>
 
 #include <CGAL/Surface_mesh_simplification/Polyhedron.h>
 #include <CGAL/Surface_mesh_simplification/Edge_collapse.h>
@@ -32,12 +31,12 @@ int main( int argc, char** argv )
 {
   Surface surface; 
   
-  int strategy = atoi(argv[1]);
-  
   std::ifstream is(argv[2]) ; is >> surface ;
 
   // === CONCRETE USAGE EXAMPLE BEGINS HERE ===
   
+  int strategy = atoi(argv[1]);
+
   if ( strategy == LT )
   {
     // This section shows how to use a full cache with the LindstromTurk strategy:
@@ -66,18 +65,17 @@ int main( int argc, char** argv )
     //
     // The SetCache policy "Set_cost_and_placemet_cache<>" is the one actually
     // computing and caching the cost and placement values.
-    // However, the policy object by itself doesn't know how to do hat, 
+    // However, the policy object by itself doesn't know how to do that, 
     // so it delegates the computation to external policies passed
     // to its constructor.
     // 
     // In this example, the non-default cost strategy is to use 
     // the edge length for the cost and the edge midpoint for the placement,
     // so the corresponding policies are instantiated and passed to the 
-    // SetCache constructor.
+    // Set_cost_and_placemet_cache constructor.
     // 
     // Still, the GetCost and GetPlacement policies **passed to the algorithm** are
-    // Cached_cost and Cached_placement as they only need to extract the cached values 
-    // from the collapse-data.
+    // Cached_cost and Cached_placement as they only need to extract the cached values.
     //
     typedef SMS::Edge_length_cost  <Surface> Compute_cost ;
     typedef SMS::Midpoint_placement<Surface> Compute_placement ;

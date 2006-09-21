@@ -41,18 +41,18 @@ struct Visitor
   {} 
 
   // Called on algorithm entry  
-  void OnStarted( Surface& aSurface ) {} 
+  void OnStarted( Surface& surface ) {} 
   
   // Called on algorithm exit  
-  void OnFinished ( Surface& aSurface ) { std::cerr << "\n" << std::flush ; } 
+  void OnFinished ( Surface& surface ) { std::cerr << "\n" << std::flush ; } 
   
   // Called when the stop condition returned true
-  void OnStopConditionReached( Surface& aSurface ) {} 
+  void OnStopConditionReached( Surface& surface ) {} 
   
   // Called during the collecting phase for each edge collected.
-  void OnCollected( Halfedge_handle const& aEdge
-                  , bool                   aIsFixed
-                  , Surface&               aSurface
+  void OnCollected( Halfedge_handle const& edge
+                  , bool                   is_fixed
+                  , Surface&               surface
                   )
   {
     ++ collected ;
@@ -60,31 +60,31 @@ struct Visitor
   }                
   
   // Called during the processing phase for each edge selected.
-  // If aCost is absent the edge won't be collapsed.
-  void OnSelected(Halfedge_handle const&  aEdge
-                 ,Surface&                aSurface
-                 ,boost::optional<double> aCost
-                 ,std::size_t             aInitial
-                 ,std::size_t             aCurrent
+  // If cost is absent the edge won't be collapsed.
+  void OnSelected(Halfedge_handle const&  edge
+                 ,Surface&                surface
+                 ,boost::optional<double> cost
+                 ,std::size_t             initial
+                 ,std::size_t             current
                  )
   {
     ++ processed ;
-    if ( !aCost )
+    if ( !cost )
       ++ cost_uncomputable ;
       
-    if ( aCurrent == aInitial )
+    if ( current == initial )
       std::cerr << "\n" << std::flush ;
-    std::cerr << "\r" << aCurrent << std::flush ;
+    std::cerr << "\r" << current << std::flush ;
   }                
   
   // Called during the processing phase for each edge being collapsed.
-  // If aPlacement is absent the edge is left uncollapsed.
-  void OnCollapsing(Halfedge_handle const&  aEdge
-                   ,Surface&                aSurface
-                   ,boost::optional<Point>  aPlacement
+  // If placement is absent the edge is left uncollapsed.
+  void OnCollapsing(Halfedge_handle const&  edge
+                   ,Surface&                surface
+                   ,boost::optional<Point>  placement
                    )
   {
-    if ( aPlacement )
+    if ( placement )
          ++ collapsed;
     else ++ placement_uncomputable ;
   }                
@@ -92,8 +92,8 @@ struct Visitor
   // Called for each edge which failed the so called link-condition,
   // that is, which cannot be collapsed because doing so would
   // turn the surface into a non-manifold.
-  void OnNonCollapsable( Halfedge_handle const& aEdge
-                       , Surface&               aSurface
+  void OnNonCollapsable( Halfedge_handle const& edge
+                       , Surface&               surface
                        )
   {
     ++ non_collapsable;

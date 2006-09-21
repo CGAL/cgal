@@ -102,8 +102,9 @@ less accurate simplifications but take up much less additional space, even none 
 The cost-driven method implemented in this package is mainly based on \cite[Memoryless simplification]{cgal:lt-fmeps-98,cgal:lt-ems-99}, with contributions from \cite[Mesh Optimization]{hddms-mo-93}, \cite[Surface simplification using quadric error metrics]{gh-ssqem-97}
 and \cite[Topology preserving edge contraction]{degn-tpec-98}.
 
-The algorithm proceeds in two stages. In the collection stage, an initial {\em collapse cost} 
-is assigned to each and every edge in the surface. In the collapsing stage, edges are 
+The algorithm proceeds in two stages. In the first stage, called collection stage, 
+an initial {\em collapse cost} is assigned to each and every edge in the surface.
+Then in the second stage, called collapsing stage, edges are 
 {\em processed} in order of increasing cost. Some processed edges are {\em collapsed} 
 while some are just discarded. Collapsed edges are replaced by a vertex and the collapse 
 cost of all the edges now incident on the replacement vertex is recalculated, affecting 
@@ -115,7 +116,7 @@ without being collapsed for one of three reasons: its cost could not be computed
 or the edge is incident upon a vertex which the user marked as fixed.
 
 If an edge is effectively collapsed, is replaced by a vertex whose position, called 
-{\em placement}, must be chosen carefully to avoid too much deviation from the initial 
+{\em placement}, is chosen carefully to avoid too much deviation from the initial 
 surface. In many cases, the collapse cost is a function of the vertex position, so the 
 placement might be calculated each time the cost is calculated and not just when an 
 edge is effectively collapsed.
@@ -125,9 +126,10 @@ only edges by considering certain vertices as forming a pseudo-edge, proceeding 
 both edges and pseudo-edges in the same way as in \cite{cgal:lt-fmeps-98,cgal:lt-ems-99}, 
 which is the algorithm implemented here. Since it is always possible to physically add and 
 remove those pseudo-edges (and the required pseudo-triangles needed to keep the surface 
-structurally valid), this \cgal\ package can be used in the implementation of 
-\cite{gh-ssqem-97}, provided the appropriate cost-strategy policies are implemented 
-(they are not implemented in the current version)
+structurally valid), this \cgal\ package can be used to implement the algorithm
+in \cite{gh-ssqem-97} if the appropriate cost-strategy policies are added 
+(they are not implemented in the current version) and a pre/post processing phase that
+adds and removes pseudo-edges is used.
 
 \section{Cost Strategy}
 
@@ -136,11 +138,18 @@ calculated is called the {\em cost strategy}. The user can choose
 different strategies in the form of policies and related parameters,
 passed to the algorithm.
  
-The current version of the package version provides two strategies: 
-Lindstrom-Turk (the default) and edge-length cost with a midpoint placement 
+The current version of the package provides a set of policies implementing
+two strategies: the Lindstrom-Turk strategy, which is the default, and 
+a strategy consisting of an edge-length cost with a midpoint placement 
 (much faster but less accurate).
 
 \subsection{Lindstrom-Turk cost and placement strategy\label{SurfaceMeshSimplification:LindstromTurkStrategy}}
+
+The main characteristic of the strategy presented in \cite{cgal:lt-fmeps-98,cgal:lt-ems-99}
+is that the simplified surface is not compared at each step with the original surface (or the surface at a previous step) so there is no need to keep extra information, such as the original surface or a history of the local changes. Hence the name {\em memoryless} simplification.\\
+At each step, all remaining edges are potential candidates for a collapsing and the one with the lowest cost is selected.\\
+The cost of collapsing an edge is given by the position chosen for the vertex that replaces it. From all the potential vertex positions, the one that minimizes the local change in each of the relevant surface features (volume, area, boundary shape and triangles shape) is chosen. The cost is then a weighted sum of that minimal change in each of the relevant features.\\
+The local changes are computed independently for each edge using only the triangles {\em currently} adjacent to it, after all previous collapses, so the transitive path of minimal local changes yields at the end a global change reasonably close to the absolute minimum.
 
 \subsection{Cache Level}
 
@@ -156,21 +165,28 @@ several times while it is compared against the cost of other edges, even if it
 remains constant. That is, costs are {\em queried} several times more than are computed 
 and updated, so it make sense to cache the cost of an edge to avoid recomputing it.
 
-The placement for each edge is queried only when the edge is effectively collapsed, 
-however, most cost strategies are based on the placement, so each cost computation 
+The placement for each edge is queried only when the edge is effectively collapsed. 
+However, most cost strategies are based on the placement so each cost computation 
 typically involves a hidden placement computation. Therefore, it might also make sense
 to cache not only the cost but also the placement (which is a Point object).
 
-The cost for all edges are computed at least once, and on avergage updated a few times,
-but the placement is queried only when the edge is effectively collapsed. Caching only
-the cost as opposed to caching both the cost and the placement makes a small difference
-in the total running time, while, not caching the cost at all causes a significant slowdown.
+Caching only the cost as opposed to caching both the cost and the placement makes a
+small fractional difference in the total running time because the cost for the
+edges is computed at least once and updated a few times (on average), while the 
+placement is queried only when the edge is effectively collapsed. Not caching 
+anything, on the other hand, causes a significant slowdown because the cost is
+unnecessarily recomputed each time one candidate edge is compared with another.
+
 Still, caching the cost and/or placement in the edge adds to the size of the surface 
-a significant amount. For example, if the cost is of type {\tt double}, each million edges
-require about 7Mb of additional storage for the cost, and 30Mb for the cost and placement.
-It might be better in a specific context to avoid any caching altogether, even 
-at the expense of increased running time. The most sensible default choice is to cache
-only the cost.
+a significant amount. For example, if the cost is of type {\tt double} and a vertex
+position is a 3D point with {\tt double} coordinates, each million edges require 
+about 7Mb of additional storage for the cost, and 30Mb for the cost and placement.
+For certain applications, it might be better to avoid any caching altogether, even 
+at the expense of increased running time.
+ 
+By default, only the cost is cached, which is the most sensible tradeoff.
+
+\subsection{Cost strategy policies}
 
 The cost strategy used by the algorithm is selected by means of 3 policies: 
 \ccc{SetCache}, \ccc{GetCost} and \ccc{GetPlacement}. 
@@ -186,13 +202,15 @@ calculate the values and return it, but otherwise they can
 (and normally would) simply return the cached value.
 
 If \ccc{SetCache} actually stores any value in the cache, it computes
-such a value by calling itself to a GetCost and/or a GetPlacement
-policy (other than the ones passed to the algorithm)
+such a value by calling itself a GetCost and/or GetPlacement
+policy (other than the ones passed to the algorithm).
 
 The three policies are related in that if \ccc{SetCache}
 assigns a \ccc{NoCache} record, the \ccc{GetCost} and \ccc{GetPlacement} policies
 must be actually computing the values, while if \ccc{SetCache} sets a 
-\ccc{CostCache} or a \ccc{CostAndPlacementCache} record, 
+\ccc{CostCache}, only \ccc{GetPlacement} would actually compute a value since
+\ccc{GetCost} would simply return the cached cost.
+Similarly, if \ccc{SetCache} assigns a \ccc{CostAndPlacementCache} record, 
 the other 2 policies would just return the cached values.
 
 \section{API}
@@ -200,7 +218,7 @@ the other 2 policies would just return the cached values.
 \subsection{API Overview}
 
 The simplification algorithm is implemented as the free template function 
-\ccc{edge_collapse}.
+\ccc{CGAL::Surface_mesh_simplification::edge_collapse}.
 
 \subsubsection{Main parameters}
 
@@ -218,7 +236,7 @@ implements the simplification is the concrete surface object itself, not an adap
 which delegates the functionality to the concrete type.
 
 The stop predicate is called after each edge is selected for processing, {\em before} 
-it is classfied as collapsable or not (thus before it is collapsed). If the stop predicate 
+it is classified as collapsable or not (thus before it is collapsed). If the stop predicate 
 returns true the algorithm terminates.
 
 \subsubsection{Named parameters}
@@ -289,23 +307,25 @@ and caching only the cost.}
 
 The following example is equivalent to the previous example but using an
 enriched polyhedron whose halfedges support an "id()" field to
-store the edge index neede by the algorithm.
+store the edge index needed by the algorithm.
 
 \ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_enriched_polyhedron.cpp}
 
 \subsubsection{Example using Non-Default Cost Strategy}
 
-The following example shows how to use non-default cost strategy: the edge length as cost 
-and the edge midpoint as placement. It also shows how to specify that neither the cost nor 
-the placement should be cached (to save memory).
+The following example shows how to use a non-default cost strategy: the edge squared length
+as cost and the edge midpoint as placement. This strategy is less accurate but
+is very fast so there is little need for a cache. The example shows how to specify 
+that neither the cost nor the placement should be cached, saving memory.
 
 \ccIncludeExampleCode{Surface_mesh_simplification/MP_edge_collapse_polyhedron.cpp}
 
-\subsubsection{Example using a full cache for the Collapse Data}
+\subsubsection{Example using a full cost and placement cache}
 
-The following example shows how to use a full cache for efficiency. The code
-is slightly different for the default cost-strategy (Lindstrom-Turk) 
-than for alternative strategies, so both cases are shown in the example.
+The following example shows how to use a full cache for maximizing speed.
+The required code for the default cost-strategy (Lindstrom-Turk) is
+slightly different than the code needed for alternative strategies,
+so both cases are shown.
 
 \ccIncludeExampleCode{Surface_mesh_simplification/Edge_collapse_fully_cached_polyhedron.cpp}
 
@@ -320,11 +340,11 @@ for illustration.
 \ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_visited_polyhedron.cpp}
 
 
-\subsubsection{Example using Fixed Vertices via an external Property Map}
+\subsubsection{Example using Fixed Vertices via an external map}
 
 The following example shows how to fix vertices to prevent edges from being collapsed. 
-In this case, an ordinary polyhedron is used so the flags are stored 
-in an external map.
+In this case, an ordinary polyhedron is used and the flags are stored 
+in an external hashmap.
 
 \ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_with_fixed_vertices_polyhedron.cpp}
 
@@ -332,7 +352,7 @@ in an external map.
 
 The following example, just like the previous example, shows how to fix vertices to 
 prevent edges from being collapsed. In this case, however, an enriched polyhedron 
-is defined which stores the is-fixed flag right in the vertex.
+is defined which stores the flag right in the vertex.
 
 \ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_with_fixed_vertices_enriched_polyhedron.cpp}
 
