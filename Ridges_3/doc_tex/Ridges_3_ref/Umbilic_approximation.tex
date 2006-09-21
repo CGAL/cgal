@@ -30,7 +30,7 @@ The class \ccRefName\ has four template parameters.
 \ccc{TriangularPolyhedralSurface} provides  the surface. 
 Parameter \ccc{OutputIt} is a stl Output Iterator which
 \ccc{value_type} is \ccc{Umbilic*}. Parameters  \ccc{Vertex2FTPropertyMap}
-and \ccc{Vertex2VectorPropertyMap} provides the differential properties of
+and \ccc{Vertex2VectorPropertyMap} provide the differential properties of
 the surface associated to its vertices.
 
 Requirements (checked at compile time) : the types
@@ -59,7 +59,7 @@ Requirements (checked at compile time) : the types
 
 \ccMethod{  OutputIt compute(OutputIt it, FT size);}
 {Performs the approximation, \ccc{size} determines the size of the
-patches around vertices which is \ccc{size} times the size of the
+patches around vertices, taken as  \ccc{size} times the size of the
 1-ring. Umbilics are output through the \ccc{OutputIt} which is an
 concept of output iterator of the stl with value type \ccc{Umbilic*}.}
 
