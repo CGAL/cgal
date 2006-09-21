@@ -25,7 +25,7 @@
 \includegraphics[width=.5\linewidth]{Ridges_3/david_crest}}
 \end{ccTexOnly}
 \caption{Crest ridges on the David.}
-\label{david_crest}
+\label{david-crest}
 \begin{ccHtmlOnly}
 <CENTER> <img border=0 src="./david_crest.png" width=400>
 </CENTER>
@@ -64,7 +64,7 @@ functions of the package are provided in section \ref{examples}.
 \label{smooth}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\FC{I did not find cp-ssulc-05 in cgal_manual.bib???????}
+\FC{I did not find cp-ssulc-05 in cgal\_manual.bib???????}
 
 For a detailed introduction to ridges and related topics, the reader
 may consult 
@@ -85,7 +85,7 @@ the red direction for $d_2$.
 In local coordinates, we denote $\langle , \rangle$ the inner product
 induced by the ambient Euclidean space, and $dk_1$, $dk_2$ the
 gradients of the principal curvatures. Ridges, illustrated on figure
-\ref{ellipsoid_ridges}, are defined by:
+\ref{ellipsoid-ridges}, are defined by:
 
 \begin{definition}
 \label{def:ridge-extrema}
@@ -109,12 +109,12 @@ ridge point can further be qualified as {\em elliptic} if it
 corresponds to a maximum of $k_1$ or a minimum of $k_2$, or {\em
 hyperbolic} otherwise. Hence we end with four types of ridges, namely
 : \ccc{BLUE_ELLIPTIC_RIDGE}, \ccc{BLUE_HYPERBOLIC_RIDGE}, \ccc{RED_ELLIPTIC_RIDGE},
-\ccc{RED_HYPERBOLIC_RIDGE}, see figure \ref{ellipsoid_ridges}.
+\ccc{RED_HYPERBOLIC_RIDGE}, see figure \ref{ellipsoid-ridges}.
 In addition, a subset of elliptic ridges, called the crest lines,
 which can be seen as the visually most salient curves on a surface are
 also of interest. A crest line is an elliptic ridge which is a maximum
 of $\max(|k_1|,|k_2|)$. Hence we provide two additional ridge types :
-\ccc{BLUE_CREST_RIDGE} and \ccc{RED_CREST_RIDGE}, see figure \ref{david_crest}.
+\ccc{BLUE_CREST_RIDGE} and \ccc{RED_CREST_RIDGE}, see figure \ref{david-crest}.
 
 
 \begin{figure}[!ht]
@@ -126,7 +126,7 @@ of $\max(|k_1|,|k_2|)$. Hence we provide two additional ridge types :
  Color coding~: \ccc{BLUE_ELLIPTIC_RIDGE} are blue,
 \ccc{BLUE_HYPERBOLIC_RIDGE} are green, \ccc{RED_ELLIPTIC_RIDGE} are red and 
 \ccc{RED_HYPERBOLIC_RIDGE} are yellow.}
-\label{ellipsoid_ridges}
+\label{ellipsoid-ridges}
 \begin{ccHtmlOnly}
 <CENTER> <img border=0 src="./ellipsoid_ridges.png" width=400>
 </CENTER>
@@ -630,7 +630,7 @@ int main(int argc, char *argv[])
 }
 \end{ccExampleCode}
 
-For figure \ref{ellipsoid_ridges_example}, the data are computed with
+For figure \ref{ellipsoid-ridges-example}, the data are computed with
 the call
 \begin{ccExampleCode}
 ./blind -f data/ellipsoid_u_0.02.off -d4 -m4 -a3 -t3
@@ -658,7 +658,7 @@ Umbilic at location (0.81413 0.0018689 0.290339) of type wedge
  Color coding~: \ccc{BLUE_ELLIPTIC_RIDGE} are blue,
 \ccc{BLUE_HYPERBOLIC_RIDGE} are green, \ccc{RED_ELLIPTIC_RIDGE} are red and 
 \ccc{RED_HYPERBOLIC_RIDGE} are yellow. }
-\label{ellipsoid_ridges_example}
+\label{ellipsoid-ridges-example}
 \begin{ccHtmlOnly}
 <CENTER> <img border=0 src="./ellipsoid_ridges.png" width=400>
 </CENTER>
