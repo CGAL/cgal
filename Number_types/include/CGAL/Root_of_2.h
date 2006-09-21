@@ -16,7 +16,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Sylvain Pion, Monique Teillaud, Athanasios Kakargias
+// Author(s)     : Sylvain Pion, Monique Teillaud, Athanasios Kakargias, Pedro Machado
 
 #ifndef CGAL_ROOT_OF_2_H
 #define CGAL_ROOT_OF_2_H
