@@ -292,16 +292,16 @@ public:
       }
 
       double min_sq_length = CGAL::to_double(distance(p, q));
-      min_sq_length = CGAL::min(min_sq_length,
-                                CGAL::to_double(distance(p, r)));
-      min_sq_length = CGAL::min(min_sq_length,
-                                CGAL::to_double(distance(p, s)));
-      min_sq_length = CGAL::min(min_sq_length,
-                                CGAL::to_double(distance(q, r)));
-      min_sq_length = CGAL::min(min_sq_length,
-                                CGAL::to_double(distance(q, s)));
-      min_sq_length = CGAL::min(min_sq_length,
-                                CGAL::to_double(distance(r, s)));
+      min_sq_length = (CGAL::min)(min_sq_length,
+				  CGAL::to_double(distance(p, r)));
+      min_sq_length = (CGAL::min)(min_sq_length,
+				  CGAL::to_double(distance(p, s)));
+      min_sq_length = (CGAL::min)(min_sq_length,
+				  CGAL::to_double(distance(q, r)));
+      min_sq_length = (CGAL::min)(min_sq_length,
+				  CGAL::to_double(distance(q, s)));
+      min_sq_length = (CGAL::min)(min_sq_length,
+				  CGAL::to_double(distance(r, s)));
 
       qual.first = sq_radius / min_sq_length;
 #ifdef CGAL_MESH_3_DEBUG_CRITERIA
@@ -357,7 +357,7 @@ int main(int, char**)
   radii[4] = CGAL::to_double(r5);
 
   for(int i = 1; i < 6; ++i)
-    facets_size_bounds[i] = std::min(size_bounds[i-1], size_bounds[i]);
+    facets_size_bounds[i] = (std::min)(size_bounds[i-1], size_bounds[i]);
   facets_size_bounds[0] = 0;
 
   const FT precision = 0.001;
