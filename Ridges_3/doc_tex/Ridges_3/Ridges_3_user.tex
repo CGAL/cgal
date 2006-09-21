@@ -1,9 +1,4 @@
 %note on pictures
-
-% ellipsoid_ridges 
-% ./blind -f data/ellipsoid_u_0.02.off -d4 -m4 -a3 -t3 
-% ../../demo/Ridges_3/introspect-qt data/ellipsoid_u_0.02.off data/data_ellipsoid_u_0.02.offRIDGES-d4-m4-t3-a3-p0.4ogl.txt 0 0
-
 %david pict for old algo, don't know parameters, todo... and get better pict
 
 %\newcommand{\makeremark}[2]{{
@@ -64,12 +59,10 @@ functions of the package are provided in section \ref{examples}.
 \label{smooth}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\FC{I did not find cp-ssulc-05 in cgal\_manual.bib???????}
-
 For a detailed introduction to ridges and related topics, the reader
 may consult 
 \cite{cgal:hgygm-ttdpf-99,cgal:p-gd-01}, as well as
-the following survey article \cite{cgal:cp-dtges-05}.
+the following survey article \cite{cgal:cp-ssulc-05}.
 %%
 In the sequel, we just introduce the basic notions so as to explain
 our algorithms.  Consider a smooth embedded surface, and denote $k_1$
@@ -189,21 +182,18 @@ Hence ridge types are characterized by
 \ccc{RED_CREST_RIDGE} if  $b_3=0$ and $P_2<0$ and $|k_2|>|k_1|$
 \end{itemize}
 
-\FC{picture for the index}
-\FC{I removed  $k_1=k_2$ as umbilics have been defined several times before}
 
-
-As illustrated on Fig. \ref{umbilics} and \ref{}, the patterns made by
-curvature lines around an umbilic can be characterized using the
-notion of {\em index} associated to the principal directions ---see
-also \cite{cgal:cp-dtges-05}.
+As illustrated on Fig. \ref{umbilics} and \ref{index_umbilic}, the
+patterns made by curvature lines around an umbilic can be
+characterized using the notion of {\em index} associated to the
+principal directions ---see also \cite{cgal:cp-ssulc-05}.
 %%
-As depicted on Fig. \ref{}, consider a small circuit $C$ around the
+As depicted on Fig. \ref{index_umbilic}, consider a small circuit $C$ around the
 umbilic, and a point $p \in C$. Starting from an initial orientation
 $u$ of a tangent vector to the curvature line through point $p$,
 propagate {\em by continuity} this orientation around the circuit.  The
 index is defined by the angle swept by $u$ around this revolution,
-normalized by $2\pi$. On our example, the index is thus ???????.
+normalized by $2\pi$. On our example, the index is thus 1/2.
 
 If the index of the principal direction field is $1/2$
 then it is called a
@@ -211,7 +201,20 @@ then it is called a
  Otherwise the umbilic is qualified
 \ccc{UMBILIC_NON_GENERIC}.
 
-\FC{find the right figure: asymptotes are missing}
+
+\begin{figure}[!ht]
+\begin{ccTexOnly}
+\centerline{
+\includegraphics[width=.5\linewidth]{Ridges_3/index_umbilic}}
+\end{ccTexOnly}
+\caption{Index $1/2$ umbilic.}
+\label{index_umbilic}
+\begin{ccHtmlOnly}
+<CENTER> <img border=0 src="./index_umbilic.png" width=200>
+</CENTER>
+\end{ccHtmlOnly}
+\end{figure}
+
 
 \begin{figure}[!ht]
 \begin{ccTexOnly}
@@ -234,8 +237,6 @@ then it is called a
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{ridge-mesh}
 
-\FC{marching line -> marching triangles???}
-
 \paragraph{Compliant meshes.}
 Ridges of a smooth surface are points with prescribed differential
 properties, and reporting them from a mesh requires delicate
@@ -253,24 +254,19 @@ that a one-manifold is reported.}.
 %%
 %%on the surface.  
 %%
-As the signs of these extremality coefficients depends on the
+As the signs of these extremality coefficients depend on the
 orientation of the principal directions, we expect both extremalities
 and vectors orienting the principal direction to be given at each
 point vertex of the mesh. Except in the neighborhood of umbilics, if
 the mesh is dense enough, a coherent orientation of principal
 directions at both endpoints of an edge is chosen such than the angle
 between the two vectors is acute. This rule, the {\em acute rule}, is
-precisely analyzed in \cite{cgal:tr-cp-tdare-05}.
+precisely analyzed in \cite{cgal:cp-tdare-05}.
 %%
 Moreover, we only seek ridges in triangles such than one can find an
 orientation of its three vertices such that the three edges are
 coherently oriented by the acute rule. Such triangles are termed
 {\em regular}. This said, two remarks are in order.
-
-\FC{above: why do we expect the extremalities to be given since we use
-the acute rule???????}
-
-\FC{I introduced the def of a ridge segment type below}
 
 \noindent {\em ---Regular triangles and ridge segments.}
 A regular triangle has 0 or 2 edges crossed by a ridge of a given
@@ -279,9 +275,12 @@ later case, we say that the triangle contains a ridge segment.
 %%
 Two methods are provided to compute its type, as elliptic or
 hyperbolic. First, if fourth order differential quantities are
-provided, one can use the $P_1$ ($P_2$) polynomial of Eq.
-(\ref{{eq:taylor_along_line}}) ((\ref{eq:taylor_along_red_line})) for
-a blue (red) ridge.
+provided, one can use the $P_1$ ($P_2$) values of Eq.
+(\ref{eq:taylor_along_line}) ((\ref{eq:taylor_along_red_line})) for
+a blue (red) ridge. The value of $P_i$ for a ridge segment is defined
+as the mean value of the $P_i$ values of the two crossing points on
+edges (while the value at a crossing point on an edge is the
+$b_i$-weighted mean value of the values at endpoints).
 %%
 Alternatively, if third order differential quantities only are
 available, one may use the geometric method developed in
@@ -290,35 +289,19 @@ available, one may use the geometric method developed in
 
 Using the notion of ridge segment, a \ccc{Ridge_line} is defined as a
 maximal sequence of ridge segments of the same type and connected
-together.  Notice the the topology of a \ccc{Ridge_line} is either
+together.  Notice that the topology of a \ccc{Ridge_line} is either
 that of an interval or a circle.
-
-%We provide two methods to distinguish elliptic and hyperbolic
-%ridges. The first one uses the signs of fourth order quantities
-%$P_i$. The other uses only third order quantities, details can be
-%found in \cite{cgal:cp-tdare-05}.
-
-
-\FC{above: if fourth order taging used, type = majority of the tags of
-the triangle vertices???????}
 
 \noindent {\em ---Non-regular triangles.}  In the neighborhood of umbilics,
 triangle are less likely to be regular and the detection of ridges
 cannot be relevant by this method.  This is why we propose another
 method to detect umbilics independently.
 
-
-%We provide two methods to distinguish elliptic and hyperbolic
-%ridges. The first one uses the signs of fourth order quantities
-%$P_i$. The other uses only third order quantities, details can be
-%found in \cite{cgal:cp-tdare-05}.
-
-
 \paragraph{Non compliant meshes.}
 %%
 For real world applications dealing with coarse meshes, or meshes
 featuring degenerate regions or sharp features, meshes conveying some
-amount of noise, the hypothesis \cite{cgal:tr-cp-tdare-05} cannot be
+amount of noise, the hypothesis \cite{cgal:cp-tdare-05} cannot be
 met. In that case, it still makes sense to seek loci of points
 featuring extremality of estimated principal curvatures, but the
 ridges reported may require filtering. For example, if the principal
@@ -341,7 +324,7 @@ the model size gives a threshold and an associated sharpness-filter
 which are scale independent. Another filtering is also available with
 the {\em strength } which is the integral of the curvature along the
 ridge line
-\cite{cgal:yo-ab-hps-04}.
+\cite{cgal:ybs-rvlmi-04}.
 
 
 
@@ -370,7 +353,7 @@ declared to be an umbilic if the following two conditions are met:
 the function $k_1-k_2$ has its minimum at $v$ amongst all the
 vertices of the patch;
 \item
-the deviation $\delta$ of any principal direction along the the patch
+the deviation $\delta$ of any principal direction along the patch
 boundary, traversed counter-clock-wise (CCW), has prescribed
 properties:
 %%
@@ -384,7 +367,6 @@ $\delta \geq 3\pi/2$ or $\delta \leq -3\pi/2$ then the umbilic is called non-gen
 \end{itemize}
 \end{itemize}
 
-\FC{of any  ppal direction I guess...}
 
 \paragraph{Finding patches around vertices.}
 Given a vertex $v$, we aim at defining a collection of triangles
@@ -452,7 +434,7 @@ Two functions enable to either compute all ridges
 These functions allows the user to specify how the elliptic/hyperbolic
 tagging is carried out.  For the second function, one may further
 specify a ridge intersection type, that is an entry in the following
-enumeration \ccc{ BLUE_RIDGE, RED_RIDGE, CREST}. 
+enumeration \ccc{ BLUE_RIDGE, RED_RIDGE, CREST_RIDGE}. 
 %%
 Notice the rationale for allowing to specify an entry in this enum is
 simple: all ridges of such a type can be computed by a single pass
@@ -460,10 +442,6 @@ over the triangles of the mesh. This should be clear for the red and
 blue ridges. For crests, just notice red and blue crests cannot
 intersect over a triangle.
 \medskip
-
-\FC{in the interrogation type, why do we have crest .. while it is not
-in the enum gathering all types????????}
-
 
 The ridge lines are stored in
 \ccc{Ridge_line} objects and output through an iterator. 
@@ -504,23 +482,31 @@ using \ccc{std::maps} and \ccc{boost::associative_property_map}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{examples}
 
-\FC{provide ranges and default values}
-
 The example program computes ridges and umbilics from an off file. It
 uses the Jet fitting package to estimate the differential quantities.
 The output file contains data to be visualized with the demo program introspect-qt.
 Parameters are 
 \begin{itemize}
 \item
-d, the degree of the jet for the \ccc{Monge_via_jet_fitting} class;
+d, the degree of the jet for the \ccc{Monge_via_jet_fitting} class, d
+must be greater or equal to 3 which is the default value;
 \item
-m, the degree of the Monge representation for the \ccc{Monge_via_jet_fitting} class;
+m, the degree of the Monge representation for the
+\ccc{Monge_via_jet_fitting} class, m must be 3 (the default value) or
+4 and smaller than d;
 \item
-a, the number of rings of neighbors collected for the \ccc{Monge_via_jet_fitting} class;
+a, the number of rings of neighbors collected for the
+\ccc{Monge_via_jet_fitting} class, in addition the number of vertices
+collected must be greater than $Nd:=(d+1)(d+2)/2$ to make the
+approximation possible. a may be an integer greater than 1, the value
+0 (which is the default) means that the minimum number of rings is
+collected to make the approximation possible. (Alternativelly option p
+enable to ask for a constant number of neighbors);
 \item
-t, the \ccc{Tag_order} for the distinction between elliptic and hyperbolic ridges;
+t, the \ccc{Tag_order} for the distinction between elliptic and
+hyperbolic ridges, t is 3 (default) or 4;
 \item
-u, the parameter for umbilic patch size.
+u, the parameter for umbilic patch size, $u \geq 1$ (default is 1).
 \end{itemize}
 
 \begin{ccExampleCode} 

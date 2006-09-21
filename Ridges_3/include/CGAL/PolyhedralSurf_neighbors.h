@@ -188,7 +188,23 @@ compute_neighbors(Vertex_handle v,
   FT d_current = firstGate.d();
   // main loop
   while ( !GatePQ.empty() && d_current <= d_max ) {
-    Gate gate = GatePQ.top();
+ 
+  //debug check if the contour is closed  	 
+        typename std::list<Halfedge_handle>::iterator itbc = contour.begin(), 	 
+                                           itec = contour.end(), 	 
+        h_cur, h_next; 	 
+      for (; itbc != itec; itbc++) 	 
+        { 	 
+          h_cur = itbc; 	 
+          if ( h_cur != (--contour.end()) ) {h_next = ++h_cur; h_cur--;} 	 
+          else h_next = contour.begin(); 	 
+          assert( (*h_cur)->vertex() == (*h_next)->opposite()->vertex() ); 	 
+        //cout << endl << &**itbc ; 	 
+      } 	 
+  //debug  	 
+    //cout << endl; cout << endl;
+
+   Gate gate = GatePQ.top();
     GatePQ.pop();
     d_current = gate.d();
     Halfedge_handle he = gate.he(), he1, he2;
