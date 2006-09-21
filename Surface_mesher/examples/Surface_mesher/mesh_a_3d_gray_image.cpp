@@ -39,7 +39,7 @@ int main(int, char **) {
                                                      5.);
 
   // meshing surface, with the "manifold without boundary" algorithm
-  make_surface_mesh(c2t3, surface, criteria, CGAL::Manifold_tag());
+  CGAL::make_surface_mesh(c2t3, surface, criteria, CGAL::Manifold_tag());
 
   std::cout << "Final number of points: " << tr.number_of_vertices() << "\n";
 }
