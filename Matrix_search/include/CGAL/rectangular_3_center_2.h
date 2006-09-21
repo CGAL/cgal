@@ -1476,35 +1476,35 @@ rectangular_3_center_2_type2(
   // try rho_min
   CGAL_optimisation_assertion(rho_min <= rho_max);
   CGAL_optimisation_assertion(rho_min >= 0);
-  FT rad2 = q_t_q_r_cover_at_rho_min;
+  FT rad_2 = q_t_q_r_cover_at_rho_min;
   typedef typename Bind< Distance, Point, 1 >::Type Dist_bind;
   if (s_at_rho_min != e_at_rho_min) {
     typename Compose_shared< Min< FT >, Dist_bind, Dist_bind >::Type
     mydist(compose_shared(Min< FT >(),
                           bind_1(op.distance(), q_t_at_rho_min),
                           bind_1(op.distance(), q_r_at_rho_min)));
-    rad2 =
+    rad_2 =
       max BOOST_PREVENT_MACRO_SUBSTITUTION (
-        rad2,
+        rad_2,
         mydist(*max_element(s_at_rho_min, e_at_rho_min,
                             compose(less< FT >(), mydist, mydist))));
   }
-  CGAL_optimisation_assertion(rad2 == 0 || rad2 > rho_min);
+  CGAL_optimisation_assertion(rad_2 == 0 || rad_2 > rho_min);
 
   // if a covering with rho == 0 is possible,
   // it will be catched in the type1 functions
   Point q_t, q_r;
-  if (rad2 > rho_max || rho_min == -1) {
+  if (rad_2 > rho_max || rho_min == -1) {
     // it is rho_max ...
     q_t = q_t_at_rho_max, q_r = q_r_at_rho_max;
-    rad2 = rho_max;
+    rad_2 = rho_max;
   } else
     q_t = q_t_at_rho_min, q_r = q_r_at_rho_min;
 
 #ifndef CGAL_3COVER_NO_CHECK_OPTIMUM_FIRST
-  CGAL_optimisation_assertion(rad2 <= rad);
+  CGAL_optimisation_assertion(rad_2 <= rad);
 #endif // ! CGAL_3COVER_NO_CHECK_OPTIMUM_FIRST
-  rad = rad2;
+  rad = rad_2;
   *o++ = op.construct_corner_square(r, rad / FT(2));
   *o++ = op.construct_x_square(q_t, rad / FT(2));
   *o++ = op.construct_y_square(q_r, rad / FT(2));
