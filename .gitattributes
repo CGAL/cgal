@@ -387,7 +387,6 @@ BGL/doc_tex/BGL_ref/Edge_index_property_map_external.tex -text
 BGL/doc_tex/BGL_ref/Edge_index_property_map_stored.tex -text
 BGL/doc_tex/BGL_ref/Edge_index_t_enum.tex -text
 BGL/doc_tex/BGL_ref/Edge_is_border_t_enum.tex -text
-BGL/doc_tex/BGL_ref/EmbeddedHalfedgeGraph.tex -text
 BGL/doc_tex/BGL_ref/HalfedgeDS_face_max_base_with_id.tex -text
 BGL/doc_tex/BGL_ref/HalfedgeDS_halfedge_max_base_with_id.tex -text
 BGL/doc_tex/BGL_ref/HalfedgeDS_vertex_max_base_with_id.tex -text
@@ -399,7 +398,6 @@ BGL/doc_tex/BGL_ref/Polyhedron_vertex_point_const_map.tex -text
 BGL/doc_tex/BGL_ref/Polyhedron_vertex_point_map.tex -text
 BGL/doc_tex/BGL_ref/Vertex_is_border_t_enum.tex -text
 BGL/doc_tex/BGL_ref/Vertex_point_t_enum.tex -text
-BGL/doc_tex/BGL_ref/embedded_graph_traits_Polyhedron_3.tex -text
 BGL/doc_tex/BGL_ref/graph_traits_Polyhedron_3.tex -text
 BGL/doc_tex/BGL_ref/halfedge_graph_traits_Polyhedron_3.tex -text
 BGL/doc_tex/BGL_ref/intro.tex -text

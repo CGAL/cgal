@@ -45,21 +45,27 @@ to the
   \ccTypedef{typename CGAL::Arrangement_2::Halfedge_handle edge_descriptor;}
     {The edge descriptor.}
   
-  \ccNestedType{vertex_iterator;}{An iterator corresponding to \ccc{CGAL::Arrangement_2::Vertex_iterator},
-    with the difference that its value type is a vertex descriptor and not \ccc{CGAL::Arrangement_2::Vertex}.}{}
+  \ccNestedType{vertex_iterator;}{An iterator corresponding to 
+  \ccc{CGAL::Arrangement_2::Vertex_iterator},
+    with the difference that its value type is a vertex descriptor and not
+    \ccc{CGAL::Arrangement_2::Vertex}.}{}
   
-  \ccNestedType{edge_iterator;}{An iterator corresponding to  \ccc{CGAL::Arrangement_2::Halfedge_iterator}
-    with the difference that its value type is an edge descriptor and not \ccc{CGAL::Arrangement_2::Halfedge}.}{}
+  \ccNestedType{edge_iterator;}{An iterator corresponding to 
+   \ccc{CGAL::Arrangement_2::Halfedge_iterator}
+    with the difference that its value type is an edge descriptor and not
+    \ccc{CGAL::Arrangement_2::Halfedge}.}{}
   
   \ccNestedType{in_edge_iterator;}{An edge iterator which only iterates over 
   the incoming edges around a vertex. It corresponds to a
   \ccc{CGAL::Arrangement_2::Halfedge_around_vertex_circulator}
-  with the difference that its value type is an edge descriptor and not \ccc{CGAL::Arrangement_2::Halfedge}.}{}
+  with the difference that its value type is an edge descriptor and not
+  \ccc{CGAL::Arrangement_2::Halfedge}.}{}
   
   \ccNestedType{out_edge_iterator;}{An edge iterator which only iterates over 
   the outgoing halfedges around a vertex. It corresponds to a
   \ccc{CGAL::Arrangement_2::Halfedge_around_vertex_circulator}
-  with the difference that its value type is an edge descriptor and not \ccc{CGAL::Arrangement_2::Halfedge}.}{}
+  with the difference that its value type is an edge descriptor and not
+  \ccc{CGAL::Arrangement_2::Halfedge}.}{}
   
   
   \ccTypedef{boost::sallow_parallel_edge_tag edge_parallel_category;}
@@ -69,13 +75,13 @@ to the
     {Indicates that this graph is bidirectional.}
     
   \ccTypedef{typename Arrangement_2::size_type vertices_size_type;}
-    {The size tye of the vertex list.}
+    {The size type of the vertex list.}
     
   \ccTypedef{typename Arrangement_2::size_type edges_size_type;}
-    {The size tye of the edge list.}
+    {The size type of the edge list.}
     
   \ccTypedef{typename Arrangement_2::size_type degree_size_type;}
-    {The size tye of the adjacency list.}
+    {The size type of the adjacency list.}
 
 The const specialization, \ccc{boost::graph_traits< CGAL::Arrangement_2<Traits,Dcel> const>} 
 is also defined, using the constant handles in the arrangement.

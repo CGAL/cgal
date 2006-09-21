@@ -27,7 +27,7 @@ halfedge data structure, and it provides an interface for efficient
 access to the opposite edge of an edge, and to the successor and
 predecessor of an edge in the iterator range of the incoming edges of
 a vertex.  Each vertex has a geometric position in space. As in a
-halfedge data structure we define the face adjcent to a halfedge to be
+halfedge data structure we define the face adjacent to a halfedge to be
 to the {\em left} of the halfedge.
 
 
@@ -58,7 +58,8 @@ and it must have \ccc{vertex_is_border} and \ccc{vertex_point} attached to its v
 \ccHeading{Associated Types}
 
 
-\ccNestedType{halfedge_graph_traits<HalfedeGraph>::Point}{The type of the geometric location of a vertex.}
+\ccNestedType{halfedge_graph_traits<HalfedgeGraph>::Point}
+{The type of the geometric location of a vertex.}
 
 
 Because (directed) edges must come in pairs, there is the additional
@@ -75,7 +76,7 @@ The number of undirected edges is exactly half the number of directed edges.
  
 Note that the notion of directed and undirected edges does not imply
 the existence of two different types.  The type \ccc{edge_descriptor}
-is used for both.  An undirected edge must be implicitely handled, and
+is used for both.  An undirected edge must be implicitly handled, and
 there is no requirement on which of the directed edges of the undirected edge
 must be used to represent it.
 
@@ -89,7 +90,8 @@ must be used to represent it.
 
 \ccHeading{Valid Expressions}
 
-Following the {\sc Bgl} design, the following graph operations are defined as free rather than member functions.
+Following the {\sc Bgl} design, the following graph operations are defined as free 
+rather than member functions.
 
   \ccFunction
   {template<class Graph>
