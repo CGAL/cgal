@@ -55,7 +55,7 @@ The several callbacks given as member functions in the visitor are called from c
   \ccMethod
   {void OnStopConditionReached( ECM& surface ) ; } 
   {Called when the \ccc{StopPredicate} returned true
-  (but not if the algorithm terminates because the surface couldn't be simplified any futher).
+  (but not if the algorithm terminates because the surface couldn't be simplified any further).
   }
   
   \ccMethod
@@ -82,8 +82,8 @@ The several callbacks given as member functions in the visitor are called from c
   for each \ccc{edge} that is selected.\\
   This method is called {\em before} the algorithm checks 
   if the edge is collapsable.\\
-  \ccc{cost} indicates the current collaspe cost for the \ccc{edge}.
-  If {\em absent} (meaning that it couldn't be comptuted)
+  \ccc{cost} indicates the current collapse cost for the \ccc{edge}.
+  If {\em absent} (meaning that it couldn't be computed)
   the edge won't be collapsed.\\
   \ccc{initial_count} and \ccc{current_count} refers to 
   the number of edges.

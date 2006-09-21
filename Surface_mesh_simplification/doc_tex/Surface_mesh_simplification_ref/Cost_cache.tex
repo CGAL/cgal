@@ -24,8 +24,9 @@
 \ccCreationVariable{d}
 \ccDefinition
 
-The class \ccRefName\ provides a model for the \ccc{CostCache} concept
-which stores the {\em cost} (but not the {\em placement}) of an edge collapse.
+The class \ccRefName\ provides a model for the \ccc{CostCache} concept.
+It has one template argument: the type of surface being simplified,
+which must be a model of the \ccc{EdgeCollapsableMesh} concept.
 
 \ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Cost_cache.h}
 

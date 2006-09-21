@@ -88,7 +88,7 @@ int main( int argc, char** argv )
   
   int r = SMS::edge_collapse(surface
                              ,SMS::Count_ratio_stop_condition<Surface>(0.10) 
-                             ,SMS.vertex_is_fixed_map(CGAL::Vertex_is_fixed_map_stored<Surface>())
+                             ,CGAL::vertex_is_fixed_map(CGAL::Vertex_is_fixed_map_stored<Surface>())
                              // The edge_index_map parameter is ommited becasue
                              // the halfedge in this polyhedron supports the stored id().
                              );

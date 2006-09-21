@@ -40,11 +40,11 @@ int main( int argc, char** argv )
   int r = SMS::edge_collapse(surface
                             ,SMS::Count_ratio_stop_condition<Surface>(0.10)
                              
-                            ,SMS::edge_index_map(surface)
+                            ,CGAL::edge_index_map(surface)
                             
-                            .SMS::set_cache    (SMS::Set_no_cache      <Surface>())
-                            .SMS::get_cost     (SMS::Edge_length_cost  <Surface>())
-                            .SMS::get_placement(SMS::Midpoint_placement<Surface>())
+                            .CGAL::set_cache    (SMS::Set_no_cache      <Surface>())
+                            .CGAL::get_cost     (SMS::Edge_length_cost  <Surface>())
+                            .CGAL::get_placement(SMS::Midpoint_placement<Surface>())
                             );
       
   // === CONCRETE USAGE EXAMPLE ENDS HERE ===

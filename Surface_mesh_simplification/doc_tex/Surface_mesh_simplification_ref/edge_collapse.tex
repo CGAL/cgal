@@ -25,7 +25,7 @@
 
 The function \ccRefName\ simplifies in-place a triangulated surface mesh by iteratively collapsing edges.
 
-\ccInclude{CGAL/Surface_mesh_simplification/edge_collaspe.h}
+\ccInclude{CGAL/Surface_mesh_simplification/edge_collapse.h}
 
 \ccFunction
 {
@@ -62,7 +62,7 @@ each named parameter function corresponds to one named parameter.
 
 All named parameters have default values and the order of the named parameters 
 is irrelevant so you only need to compose those for which the default
-is inappropiate.
+is inappropriate.
 
 \subsubsection{\ccc{vertex_point_map(VertexPointMap vertex_p_map)} }
 
@@ -94,7 +94,7 @@ or the same as \ccc{EdgeCollapsableMesh}, in which case
 If \ccc{edge_idx_map} is a valid property map, it is
 passed as the argument, but if it is the surface, a
 temporary property map is passed instead.
-Such temporary map externaly relates each edge 
+Such temporary map externally relates each edge 
 in the surface (\ccc{edge_idx_map}) to its index,
 without requiring any user intervention or any special
 provision in the surface edge.
@@ -149,7 +149,7 @@ The type of \ccc{get_cost} must be a model of the \ccc{GetCost} concept.
 
 \subsubsection{\ccc{get_cost_params(GetCost::Params const* gc_params)}}
 
-The model-specific paramaters to \ccc{get_cost}.
+The model-specific parameters to \ccc{get_cost}.
 
 \textbf{Default}: \ccc{NULL}.
 
@@ -164,22 +164,24 @@ The type of \ccc{get_placement} must be a model of the \ccc{GetPlacement} concep
 
 \subsubsection{\ccc{get_placement_params(GetPlacement::Params const* gp_params)}}
 
-The model-specific paramaters to \ccc{get_placement}.
+The model-specific parameters to \ccc{get_placement}.
 
 \textbf{Default}: \ccc{NULL}.
 
 \subsubsection{\ccc{visitor(EdgeCollaspeSimplificationVisitor const* v)}}
 
 The visitor that is called by the \ccc{edge_collapse} function
-in certain points to allow the user to track the simplificatioin process.\\
+in certain points to allow the user to track the simplification process.\\
 The type of \ccc{v} must be a model of the \ccc{EdgeCollaspeSimplificationVisitor} concept.
 
 \textbf{Default}: \ccc{NULL}.
 
+All these named parameters wrapping functions are defined in \ccc{namespace CGAL}. Being non-member functions, they could clash with equally named functions in some other namespace. If that happens simply qualify the named parameter with \ccc{CGAL::} as shown in the examples in the user manual.
+
 \ccHeading{Semantics}
 
 The simplification process continues until the \ccc{should_stop} policy returns \ccc{true}
-or the surface cannot be simplified any furhter due to topological constraints.
+or the surface cannot be simplified any further due to topological constraints.
 
 \ccc{vertex_is_fixed_map} is used to indicate that some edges should not be
 collapsed: edges incident upon fixed vertices are not collapsed.
@@ -190,8 +192,8 @@ the order in which edges are collapsed and the replacement vertex is positioned.
 \ccc{get_cost_params} and \ccc{get_placement_params} are the runtime 
 parameters used by the these policies. They can be null pointers
 if the policies don't need them.\\
-This strategy is the driving factor that determines the accuaracy of the
-simplied surface with respect to the original.
+This strategy is the driving factor that determines the accuracy of the
+simplified surface with respect to the original.
 
 \ccc{visitor} is an optional object (can be null) which can be used
 to keep track of the simplification process.

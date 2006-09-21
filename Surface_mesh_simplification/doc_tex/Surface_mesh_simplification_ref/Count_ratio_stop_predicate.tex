@@ -24,6 +24,8 @@
 \ccDefinition
 
 The class \ccRefName\ provides a model for the \ccc{StopPredicate} concept.
+It has one template argument: the type of surface being simplified,
+which must be a model of the \ccc{EdgeCollapsableMesh} concept.
 It returns \ccc{true} when the relation between the initial and current number 
 of edges drops below a certain ratio.
 

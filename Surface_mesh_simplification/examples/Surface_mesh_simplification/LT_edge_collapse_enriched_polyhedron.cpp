@@ -11,6 +11,8 @@
 
 // === EXAMPLE SPECIFIC HEADERS BEGINS HERE ===
 
+#include <CGAL/Polyhedron_items_with_id_3.h>
+
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_pred.h>
 
 // === EXAMPLE SPECIFIC HEADERS ENDS HERE ===
@@ -22,26 +24,7 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 //
 // Setup an enriched polyhedron type which stores a ID in the halfedges
 //
-
-typedef Kernel::Point_3 Point;
-
-struct My_items : public CGAL::Polyhedron_items_3 
-{
-    template < class Refs, class Traits>
-    struct Vertex_wrapper {
-        typedef CGAL::HalfedgeDS_vertex_base<Refs,CGAL::Tag_true,Point> Vertex ;
-    };
-    template < class Refs, class Traits>
-    struct Halfedge_wrapper { 
-        typedef CGAL::HalfedgeDS_halfedge_max_base_with_id<Refs> Halfedge;
-    };
-    template < class Refs, class Traits>
-    struct Face_wrapper {
-        typedef CGAL::HalfedgeDS_face_base<Refs,CGAL::Tag_true> Face;
-    };
-};
-
-typedef CGAL::Polyhedron_3<Kernel,My_items> Surface; 
+typedef CGAL::Polyhedron_3<Kernel,Polyhedron_items_with_id_3> Surface; 
 
 // === EXAMPLE SPECIFIC DETAILS ENDS HERE ===
 

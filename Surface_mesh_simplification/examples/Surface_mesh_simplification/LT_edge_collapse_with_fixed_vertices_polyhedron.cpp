@@ -47,8 +47,8 @@ int main( int argc, char** argv )
  
   int r = SMS::edge_collapse(surface
                             ,SMS::Count_ratio_stop_condition<Surface>(0.10)
-                            ,SMS::edge_index_map(surface)
-                            .SMS::vertex_is_fixed_map(boost::make_assoc_property_map(is_vertex_fixed))
+                            ,CGAL::edge_index_map(surface)
+                            .CGAL::vertex_is_fixed_map(boost::make_assoc_property_map(is_vertex_fixed))
                             );
   
   // === CONCRETE USAGE EXAMPLE ENDS HERE ===

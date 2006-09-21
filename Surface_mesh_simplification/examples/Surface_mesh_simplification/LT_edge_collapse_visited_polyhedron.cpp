@@ -123,8 +123,8 @@ int main( int argc, char** argv )
 
   int r = SMS::edge_collapse(surface
                              ,SMS::Count_ratio_stop_condition<Surface>(0.10) 
-                             ,SMS::edge_index_map(surface)
-                             .SMS::visitor(&vis)
+                             ,CGAL::edge_index_map(surface)
+                             .CGAL::visitor(&vis)
                              );
 
   

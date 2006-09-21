@@ -38,7 +38,7 @@ int main( int argc, char** argv )
   // while third argument could have been omited, as shown in the next example.
   int r = SMS::edge_collapse(surface
                             ,stop_policy                 
-                            ,SMS::edge_index_map(surface)
+                            ,CGAL::edge_index_map(surface)
                             );
   
   // === CONCRETE USAGE EXAMPLE ENDS HERE ===

@@ -25,6 +25,8 @@
 \ccDefinition
 
 The class \ccRefName\ provides a model for the \ccc{GetCost} concept.
+It has one template argument: the type of surface being simplified,
+which must be a model of the \ccc{EdgeCollapsableMesh} concept.
 It computes the collapse cost as the squared length of the edge.
 
 \ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_length_cost.h}
