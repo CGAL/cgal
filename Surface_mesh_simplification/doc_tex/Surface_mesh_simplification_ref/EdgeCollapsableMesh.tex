@@ -40,10 +40,8 @@ The mesh simplification algorithn requires the free function \ccc{collapse_trian
 
   \ccFunction
   {template<class EdgeCollapsableMesh>
-  void
+  typename boost::graph_traits<EdgeCollapsableMesh>::vertex_descriptor
   collapse_triangulation_edge(typename boost::graph_traits<EdgeCollapsableMesh>::edge_descriptor p_q,
-                             typename boost::graph_traits<EdgeCollapsableMesh>::edge_descriptor p_t,
-                             typename boost::graph_traits<EdgeCollapsableMesh>::edge_descriptor q_b,
                              EdgeCollapsableMesh& surface);}  
   {Collapses the undirected edge p-q replacing it with one single vertex.\\ 
   Details below ~\ref{SurfaceMeshSimplification:CollapseOperationDetails}.
@@ -52,61 +50,87 @@ The mesh simplification algorithn requires the free function \ccc{collapse_trian
     
 \ccHeading{Collapse Operation Semantics}\label{SurfaceMeshSimplification:CollapseOperationDetails}
   
-This function assumes the surface to be an {\em open oriented 2-manifold} and it must
-never be called in a context were collapsing the edge would result in the surface 
-becoming a {\em non-manifold}. That is, as a precondition, edge $p-q$ must satisfy
+\subsubsection*{Preconditions}
+
+This function requires the surface to be an {\em open oriented 2-manifold} and it must
+never be called in a context were collapsing the undirected edge would result in the surface 
+becoming a {\em non-manifold}. That is, as a precondition, undirected edge $(p,q)$ must satisfy
 the so-called {\em link-condition}
 (whose definition is out of scope for this manual but which is notably explained 
-in \cite[Topology preserving edge contraction]{degn-tpec-98}).
+in \cite{degn-tpec-98}).
 
-The 3 edges must relate to each other as described in the following additional preconditions:
+\subsubsection*{Definitions}
 
-$source(p-q)==source(p-t)$.\\
-$target(p-q)==source(q-b)$.\\
-One of $p-q$ or $q-p$ is not a border edge.\\
-$p-t$ is a null edge iff $p-q$ is a border edge.\\
-$q-b$ is a null edge iff $q-p$ is a border edge.\\
-if $p-t$ is non-null, $next(t-p)==p-q$.\\
-if $q-b$ is non-null, $next(b-q)==q-p$.
+$p$ and $q$ are the source and target vertices of edge $(p,q)$
 
-The net effect of the operation is equivalent to removing one of the vertices
-and re-triangulating the resulting facet, but the actual operation is 
-required to remove at most 2 triangles, 3 {\em undirected} edges and 1 vertex, 
-as follows:
+An undirected edge composed of the pairs $(s,t)$ and $(t,s)$ is denoted $[s,t]$
 
-The triangle above $p-q$ is called {\em top-triangle}.\\
-The triangle below $p-q$ is called {\em bottom-triangle}.\\
-The triangle adjacent to the top-triangle along $p-t$ is called {\em top-left-triangle}.\\
-The triangle adjacent to the bottom-triangle along $q-b$ is called {\em bottom-right-triangle}.
+Removing an undirected edge $[s,t]$ corresponds to removing both directed edges $(s,t)$ and $(t,s)$.
 
-The preconditions guarantee that the top-left-triangle and top-bottom-triangle
-are disjoint, that $t-p$ and $p-q$ are both incident on the top-triangle and that
-$b-q$ and $q-p$ are both incident on the bottom-triangle.
+The triangle above $(p,q)$, if any, is called {\em top-triangle}, and the third vertex of
+such triangle is called  $t$.
+
+The triangle below $(q,p)$, if any, is called {\em bottom-triangle}, and the third vertex
+of such triangle is called $b$.
+
+If $(p,q)$ is not a border edge, hence the top-triangle exists, 
+there are edges $[p,t]$ and $[q,t]$ which are incident on such a top-triangle.
+
+If $(p,q)$ is not a border edge, hence the bottom-triangle exists, 
+there are edges $[p,b]$ and $[q,b]$ which are incident on such a bottom-triangle.
+
+If $(t,p)$ is not a border edge there exist a {\em top-left-triangle},
+adjacent to the top-triangle along $[p,t]$.
+
+If $(b,q)$ is not a border edge there exist a {\em bottom-right-triangle},
+adjacent to the bottom-triangle along $[q,b]$.
+
+\subsubsection*{Effects}
+
+The net effect of the operation is equivalent to removing one of the vertices ($p$ or $q$)
+and re-triangulating the resulting face. The actual operation is 
+required to remove at most 2 triangles, 3 undirected edges and 1 vertex. 
+
+
+%The preconditions guarantee that the top-left-triangle and top-bottom-triangle
+%are disjoint, that $t-p$ and $p-q$ are both incident on the top-triangle and that
+%$b-q$ and $q-p$ are both incident on the bottom-triangle.
+
+ 
+%The triangle adjacent to the top-triangle along $p-t$ is called {\em top-left-triangle}.\\
+%The triangle adjacent to the bottom-triangle along $q-b$ is called {\em bottom-right-triangle}.
+
+\subsubsection*{Postconditions}
       
-Either $p$ or $q$ is removed, which in turn removes the pair of opposing edges 
-$p-q$ and $q-p$ (that is, the undirected edge $p-q$).
+$[p,q]$ is removed from the surface.
 
-If there is a top-triangle, that is, $p-q$ is not a border edge and $p-t!=null$, it is removed.\\
-If there is a bottom triangle, that is, $q-p$ is not a border edge and $q-b!=null$, it is removed.\\
-(at least one of these triangles exist so at least 1 triangle, and at most 2, are removed).
+The top-triangle, if any, is removed, along with $[p,t]$.
+
+The bottom-triangle, if any, is removed, along with $[q,b]$.
+
+$[q,t]$ and $[p,b]$ are never removed.
   
-Removing the top-triangle neccessarily removes the pair of opposing edges $p-t$ and $t-p$.\\
-Removing the bottom-triangle neccessarily removes the pair of opposing edges $q-b$ and $b-q$.
-      
 If the bottom-triangle is removed and neither the top-triangle nor
-the bottom-right-triangle exist, the vertex removed is $q$. In all other
-cases, the vertex removed is $p$.
+the bottom-right-triangle exist, vertex $q$ is removed,
+otherwise, vertex $p$ is removed.
 
-If any triangle (other than the top and bottom, which are removed) is defined by
-the removed vertex, it must be redefined with the other vertex, but it cannot
-be replaced by a new triangle. (A model must follow the as-is rule: if it really
-needs to do replace triangles, the new triangles must acquire any property 
-that could be internally or externally attached to the old triangle)
+All those triangles initially defined by the removed vertex 
+(other than the top and bottom which are removed) are redefined
+with the vertex that is kept. That is, if $p$ is removed then
+every triangle $(p,x,y)$ is redefined as $(q,x,y)$. Any
+additional properties, such as texture coordinates, planes,
+surface patches, etc that these redefined triangles might have
+attached are preserved.
+\footnote{Hence a model for this concept cannot simply replace
+those triangles by new triangles, unless the replacements 
+inherit the corresponding properties.}
+
+\subsubsection*{Returns}
 
 The function returns the vertex that is not removed.
 
 \ccHasModels
-\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}\\
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>} via external adaptation.
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::graph_traits< Polyhedron_3<Traits> >}\\
