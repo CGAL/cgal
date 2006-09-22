@@ -198,7 +198,7 @@ int main()
   //initialize the diff quantities property maps
   compute_differential_quantities(P, poly_rings);
   
-  std::cout << "Compute ridges... tag_3" << std::endl;
+  std::cout << "Compute ridges with tag_3" << std::endl;
   //---------------------------------------------------------------------------
   //Ridges
   //--------------------------------------------------------------------------
@@ -216,7 +216,7 @@ int main()
   ridge_approximation.compute_ridges(CGAL::CREST_RIDGE, ii, tag_order);  
   ridge_approximation.compute_all_ridges(ii, tag_order);  
  
-  std::cout << "Compute ridges... tag_4" << std::endl;
+  std::cout << "Compute ridges with tag_4" << std::endl;
   tag_order = Ridge_approximation::Tag_4;
    //Find BLUE_RIDGE, RED_RIDGE, CREST or all ridges
   ridge_approximation.compute_ridges(CGAL::BLUE_RIDGE, ii, tag_order);  
@@ -236,15 +236,17 @@ int main()
   umbilic_approximation.compute(umb_it, umb_size);
   umb_size=2;
   std::cout << "compute umbilics u=2" << std::endl;
-  umb_size=5;
-  std::cout << "compute umbilics u=2" << std::endl;
+  umb_size=3.5;
+  std::cout << "compute umbilics u=3.5" << std::endl;
  
-
- std::vector<Umbilic*>::iterator iter_umb = umbilics.begin(), 
+  assert(umbilics.size() == 4);
+  std::vector<Umbilic*>::iterator iter_umb = umbilics.begin(), 
    iter_umb_end = umbilics.end();
   // output
   std::cout << "nb of umbilics " << umbilics.size() << std::endl;
   for (;iter_umb!=iter_umb_end;iter_umb++) std::cout << **iter_umb;
+ 
+ std::cout << "success\n";
 
   return 1;
 }

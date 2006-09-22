@@ -189,22 +189,22 @@ compute_neighbors(Vertex_handle v,
   // main loop
   while ( !GatePQ.empty() && d_current <= d_max ) {
  
-  //debug check if the contour is closed  	 
-        typename std::list<Halfedge_handle>::iterator itbc = contour.begin(), 	 
-                                           itec = contour.end(), 	 
-        h_cur, h_next; 	 
-      for (; itbc != itec; itbc++) 	 
-        { 	 
-          h_cur = itbc; 	 
-          if ( h_cur != (--contour.end()) ) {h_next = ++h_cur; h_cur--;} 	 
-          else h_next = contour.begin(); 	 
-          assert( (*h_cur)->vertex() == (*h_next)->opposite()->vertex() ); 	 
-        //cout << endl << &**itbc ; 	 
-      } 	 
-  //debug  	 
-    //cout << endl; cout << endl;
+/*   //debug check if the contour is closed  	  */
+/*         typename std::list<Halfedge_handle>::iterator itbc = contour.begin(), 	  */
+/*                                            itec = contour.end(), 	  */
+/*         h_cur, h_next; 	  */
+/*       for (; itbc != itec; itbc++) 	  */
+/*         { 	  */
+/*           h_cur = itbc; 	  */
+/*           if ( h_cur != (--contour.end()) ) {h_next = ++h_cur; h_cur--;} 	  */
+/*           else h_next = contour.begin(); 	  */
+/*           assert( (*h_cur)->vertex() == (*h_next)->opposite()->vertex() ); 	  */
+/*         //cout << endl << &**itbc ; 	  */
+/*       } 	  */
+/*   //debug  	  */
+/*     //cout << endl; cout << endl; */
 
-   Gate gate = GatePQ.top();
+    Gate gate = GatePQ.top();
     GatePQ.pop();
     d_current = gate.d();
     Halfedge_handle he = gate.he(), he1, he2;
@@ -247,7 +247,7 @@ compute_neighbors(Vertex_handle v,
 	if ( !(he1->is_border()) ) GatePQ.push(Gate(v, he1));
 	continue;
       }
-    else if ( he->prev() == (*pos_prev) )
+    else if ( he->prev() == *pos_prev )
       {  // case 2b
 	//contour
 	he1 = he->next()->opposite();
@@ -275,8 +275,8 @@ compute_neighbors(Vertex_handle v,
 	if ( !(he2->is_border()) ) GatePQ.push(Gate(v, he2));
 	continue;
       }
-    //else case non admissible
-    CGAL_postcondition ( "case non admissible" == 0);
+    //else do nothing (keep the he on the contour, and continue) to
+    //prevent a change of the topology.
   }// end while
   
   reset_is_visited_map(vertex_neigh);
