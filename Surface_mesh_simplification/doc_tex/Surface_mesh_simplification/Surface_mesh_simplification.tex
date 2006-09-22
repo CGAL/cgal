@@ -14,18 +14,14 @@
 %%
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
-\section{Introduction}
 
-This \cgal\ package provides an algorithm for the simplification of triangulated surface meshes.
 
-Simplification is the process of reducing the number of triangles used in the surface but 
-keeping the overall shape, volume and boundaries preserved as much as possible. 
-It is the opposite of subdivision.
+
 
 \begin{figure}[htbp]
 \begin{ccTexOnly}
 \begin{center}
-\includegraphics{Surface_mesh_simplification/fig/Illustration-Simplification-ALL} % omit suffix .eps to support PS and PDF
+\includegraphics[width=17cm]{Surface_mesh_simplification/fig/Illustration-Simplification-ALL} % omit suffix .eps to support PS and PDF
 \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
@@ -37,14 +33,17 @@ It is the opposite of subdivision.
 </TR>
 </TABLE>
 \end{ccHtmlOnly}
-\caption{The model on the left is the original and the two models to the right are simplified versions.
-\label{Valid-polygons}}
 \end{figure}
 %% figures of simplified surfaces
 
+\section{Introduction}
+Surface mesh  simplification is the process of reducing the number of faces used in the surface while 
+keeping the overall shape, volume and boundaries preserved as much as possible. 
+It is the opposite of subdivision.
+
 The algorithm presented here can simplify any {\em open oriented 2-manifold surface},
 with any number of connected components, with or without boundaries (border or holes) 
-and handles (arbitrary genus), using a method known as {\em edge collapse}.\\
+and handles (arbitrary genus), using a method known as {\em edge collapse}.
 Roughly speaking, the method consists of iteratively replacing an edge with a single vertex, 
 removing 2 triangles per collapse.
 
@@ -67,7 +66,7 @@ The design is \ccAnchor{http://en.wikipedia.org/wiki/Policy-based_design}{{\em p
 meaning that you can customize some aspects of the process by passing a set of
 {\em policy objects}. Each policy object specifies a particular aspect of the algorithm,
 such as how edges are selected and where the replacement vertex is placed. All policies have 
-a sensible default so you don't need to learn about them unless you need a non-default behavior.
+a sensible default.
 Furthermore, the API uses the so-called \ccc{named-parameters} technique which allows you
 to pass only the relevant parameters, in any order, omitting those parameters whose
 default is appropriate.
@@ -99,13 +98,13 @@ Global error tracking methods produce highly accurate simplifications but take u
 of additional space. Cost-driven methods, like the one in this package, produce slightly 
 less accurate simplifications but take up much less additional space, even none in some cases.
 
-The cost-driven method implemented in this package is mainly based on \cite[Memoryless simplification]{cgal:lt-fmeps-98,cgal:lt-ems-99}, with contributions from \cite[Mesh Optimization]{hddms-mo-93}, \cite[Surface simplification using quadric error metrics]{gh-ssqem-97}
-and \cite[Topology preserving edge contraction]{degn-tpec-98}.
+The cost-driven method implemented in this package is mainly based on \cite{cgal:lt-fmeps-98,cgal:lt-ems-99}, with contributions from \cite{hddms-mo-93}, \cite{gh-ssqem-97}
+and \cite{degn-tpec-98}.
 
-The algorithm proceeds in two stages. In the first stage, called collection stage, 
+The algorithm proceeds in two stages. In the first stage, called {\em collection stage}, 
 an initial {\em collapse cost} is assigned to each and every edge in the surface.
-Then in the second stage, called collapsing stage, edges are 
-{\em processed} in order of increasing cost. Some processed edges are {\em collapsed} 
+Then in the second stage, called {\em collapsing stage}, edges are 
+processed in order of increasing cost. Some processed edges are collapsed 
 while some are just discarded. Collapsed edges are replaced by a vertex and the collapse 
 cost of all the edges now incident on the replacement vertex is recalculated, affecting 
 the order of the edges left to process.
@@ -115,7 +114,7 @@ without being collapsed for one of three reasons: its cost could not be computed
 (for whatever reason), collapsing the edge would result in an inconsistent surface, 
 or the edge is incident upon a vertex which the user marked as fixed.
 
-If an edge is effectively collapsed, is replaced by a vertex whose position, called 
+If an edge is effectively collapsed, it is replaced by a vertex whose position, called 
 {\em placement}, is chosen carefully to avoid too much deviation from the initial 
 surface. In many cases, the collapse cost is a function of the vertex position, so the 
 placement might be calculated each time the cost is calculated and not just when an 
@@ -143,13 +142,29 @@ two strategies: the Lindstrom-Turk strategy, which is the default, and
 a strategy consisting of an edge-length cost with a midpoint placement 
 (much faster but less accurate).
 
-\subsection{Lindstrom-Turk cost and placement strategy\label{SurfaceMeshSimplification:LindstromTurkStrategy}}
+\subsection{Lindstrom-Turk Cost and Placement Strategy\label{SurfaceMeshSimplification:LindstromTurkStrategy}}
 
-The main characteristic of the strategy presented in \cite{cgal:lt-fmeps-98,cgal:lt-ems-99}
-is that the simplified surface is not compared at each step with the original surface (or the surface at a previous step) so there is no need to keep extra information, such as the original surface or a history of the local changes. Hence the name {\em memoryless} simplification.\\
-At each step, all remaining edges are potential candidates for a collapsing and the one with the lowest cost is selected.\\
-The cost of collapsing an edge is given by the position chosen for the vertex that replaces it. From all the potential vertex positions, the one that minimizes the local change in each of the relevant surface features (volume, area, boundary shape and triangles shape) is chosen. The cost is then a weighted sum of that minimal change in each of the relevant features.\\
-The local changes are computed independently for each edge using only the triangles {\em currently} adjacent to it, after all previous collapses, so the transitive path of minimal local changes yields at the end a global change reasonably close to the absolute minimum.
+The main characteristic of the strategy presented in
+\cite{cgal:lt-fmeps-98,cgal:lt-ems-99} is that the simplified surface
+is not compared at each step with the original surface (or the surface
+at a previous step) so there is no need to keep extra information,
+such as the original surface or a history of the local changes. Hence
+the name {\em memoryless} simplification.
+
+At each step, all remaining edges are potential candidates for a
+collapsing and the one with the lowest cost is selected.
+
+The cost of collapsing an edge is given by the position chosen for the
+vertex that replaces it. From all the potential vertex positions, the
+one that minimizes the local change in each of the relevant surface
+features (volume, area, boundary shape and triangles shape) is
+chosen. The cost is then a weighted sum of that minimal change in each
+of the relevant features.
+
+ The local changes are computed independently for each edge using only
+the triangles currently adjacent to it, after all previous
+collapses, so the transitive path of minimal local changes yields at
+the end a global change reasonably close to the absolute minimum.
 
 \subsection{Cache Level}
 
@@ -157,18 +172,18 @@ The cost for each edge is initially fixed and changes only in those edges
 affected by a neighboring collapse. A given edge can be expected to be 
 affected by a neighboring collapse only a small number of times 
 (in the order of the average vertex degree), so the total number of 
-cost {\em computations} (and recomputations) is a small factor of
+cost computations and recomputations is a small factor of
 the total number of edges. 
 On the other hand, edges are processed in order of increasing cost, and as is 
 the case with any sorting situation, the cost of any given edge must be accessed 
 several times while it is compared against the cost of other edges, even if it 
-remains constant. That is, costs are {\em queried} several times more than are computed 
+remains constant. That is, costs are queried several times more than are computed 
 and updated, so it make sense to cache the cost of an edge to avoid recomputing it.
 
 The placement for each edge is queried only when the edge is effectively collapsed. 
 However, most cost strategies are based on the placement so each cost computation 
 typically involves a hidden placement computation. Therefore, it might also make sense
-to cache not only the cost but also the placement (which is a Point object).
+to cache not only the cost but also the placement (which is a \ccc{Point} object).
 
 Caching only the cost as opposed to caching both the cost and the placement makes a
 small fractional difference in the total running time because the cost for the
@@ -186,9 +201,9 @@ at the expense of increased running time.
  
 By default, only the cost is cached, which is the most sensible tradeoff.
 
-\subsection{Cost strategy policies}
+\subsection{Cost Strategy Policies}
 
-The cost strategy used by the algorithm is selected by means of 3 policies: 
+The cost strategy used by the algorithm is selected by means of three policies: 
 \ccc{SetCache}, \ccc{GetCost} and \ccc{GetPlacement}. 
 
 The \ccc{SetCache} policy controls whether the cache is empty (\ccc{NoCache}), 
@@ -211,56 +226,20 @@ must be actually computing the values, while if \ccc{SetCache} sets a
 \ccc{CostCache}, only \ccc{GetPlacement} would actually compute a value since
 \ccc{GetCost} would simply return the cached cost.
 Similarly, if \ccc{SetCache} assigns a \ccc{CostAndPlacementCache} record, 
-the other 2 policies would just return the cached values.
+the other two policies would just return the cached values.
 
 \section{API}
 
 \subsection{API Overview}
 
 The simplification algorithm is implemented as the free template function 
-\ccc{CGAL::Surface_mesh_simplification::edge_collapse}.
-
-\subsubsection{Main parameters}
-
-There are two main parameters to the algorithm: the surface to be simplified (in-place) and the stop predicate.
-
-The surface to simplify must be a model of the \ccc{EdgeCollapsableMesh} concept. 
-Many concrete surface types, such as \ccc{CGAL::Polyhedron_3}, become models of 
-that concept via a technique known as 
-{\em external adaptation} 
-(see \ccAnchor{http://www.boost.org/libs/graph/doc/leda_conversion.html}
-{this Bgl page for details}). External adaptation is a way to add an interface to an 
-object without coercing the type of the object (which happens when you adapt it by means 
-of a wrapper). That is, the formal parameter to the \ccc{edge_collapse} function that 
-implements the simplification is the concrete surface object itself, not an adaptor 
-which delegates the functionality to the concrete type.
-
-The stop predicate is called after each edge is selected for processing, {\em before} 
-it is classified as collapsable or not (thus before it is collapsed). If the stop predicate 
-returns true the algorithm terminates.
-
-\subsubsection{Named parameters}
-
-The rest of the parameters are optional. 
-A {\em named parameters technique}, like that used in the 
-\ccAnchor{http://www.boost.org/libs/graph/doc/bgl_named_params.html}{Bgl algorithms},
-is used to allow you to specify only those parameters which are really needed,
-and by name, making the parameter ordering unimportant. 
-
-One of the named parameters is a visitor object which can be used to track the simplification 
-process. Some of the named parameters are property maps which supply information about 
-the surface, and the rest correspond to the cost-strategy policies. 
-
-The following sample call briefly introduces all of the parameters.
-Notice that the list of named parameters is really a composition
-of function calls separated by a dot ($.$). You can omit any of these named parameters, 
-and list them in any order.
+\ccc{CGAL::Surface_mesh_simplification::edge_collapse}. THe function has two mandatory and several optional parameters.
 
 \begin{cprog}
-int r = edge_collapse(surface
-                     ,stop_predicate
+int r = edge_collapse(surface,
+                     stop_predicate,
                      
-                     ,vertex_point_map   (vertex_point_map_arg)
+                     vertex_point_map   (vertex_point_map_arg)
                      .edge_index_map     (edge_index_map_arg)
                      .edge_is_border_map (edge_is_border_map_arg)
                      .vertex_is_fixed_map(vertex_is_fixed_map_arg)
@@ -275,6 +254,42 @@ int r = edge_collapse(surface
                      );
 \end{cprog}
 
+\subsubsection{Mandatory Parameters}
+
+There are two main parameters to the algorithm: the surface to be simplified (in-place) and the stop predicate.
+
+The surface to simplify must be a model of the \ccc{EdgeCollapsableMesh} concept. 
+Many concrete surface types, such as \ccc{CGAL::Polyhedron_3}, become models of 
+that concept via a technique known as 
+{\em external adaptation} 
+(see \ccAnchor{http://www.boost.org/libs/graph/doc/leda_conversion.html}
+{this {\sc Bgl} page for details}). External adaptation is a way to add an interface to an 
+object without coercing the type of the object (which happens when you adapt it by means 
+of a wrapper). That is, the formal parameter to the \ccc{edge_collapse} function that 
+implements the simplification is the concrete surface object itself, not an adaptor 
+which delegates the functionality to the concrete type.
+
+The stop predicate is called after each edge is selected for processing, {\em before} 
+it is classified as collapsable or not (thus before it is collapsed). If the stop predicate 
+returns \ccc{true} the algorithm terminates.
+
+\subsubsection{Optional Named Parameters}
+
+The notion of {\em named parameters}, was introduced with the
+\ccAnchor{http://www.boost.org/libs/graph/doc/bgl_named_params.html}{{\sc Bgl} algorithms}.
+Thay allow the user to specify only those parameters which are really needed,
+and they are specified by name, making the parameter ordering unimportant. 
+
+One of the named parameters is a visitor object which can be used to track the simplification 
+process. Some of the named parameters are property maps which supply information about 
+the surface, and the rest correspond to the cost-strategy policies. 
+
+Note that the list of named parameters is really a composition
+of function calls separated by a dot ($.$). Any of these named parameters can be omitted, 
+and they can be in any order.
+
+
+
 \subsection{Examples}
 
 The following examples introduce the API in increasing complexity. All the examples follow 
@@ -282,31 +297,32 @@ this general structure:
 
 \ccIncludeExampleCode{Surface_mesh_simplification/general_form.cpp}
 
-As you can see, each example varies from this general form in the code sections between 
-the marks. Each example is coded to be compilable so some necessary parts are repeated 
+Each example varies from this general form in the code sections between 
+the marks. As the examples are compilable some necessary parts are repeated 
 in many of them. To simplify the exposition, repeated parts are described in detail 
 only in the first example they appear.
 
 \subsubsection{Example Using Default Parameters}
 
-The following example illustrates the simplest of the cases.\\
-It uses an {\em ordinary} Polyhedron, that is, a polyhedron without any special provision 
-for the sake of the algorithm (which is possible as illustrated in the next example).\\
-Many parameters are omitted, causing the algorithm to run in default mode:
+The following example illustrates the simplest of the cases. It uses
+an ordinary polyhedron, that is, a polyhedron without any special
+provision for the sake of the algorithm (which is possible as
+illustrated in the next example).  Many parameters are omitted,
+causing the algorithm to run in default mode:
 
-\begin{enumerate}
-\item \ccc{There are no fixed vertices in the surface.}
-\item \ccc{The cost strategy is that of Lindstrom-Turk, computed with default parameters 
-and caching only the cost.}
-\item \ccc{No visitor is used to track the algorithm progress.}
-\end{enumerate}
+\begin{itemize}
+\item There are no fixed vertices in the surface.
+\item The cost strategy is that of Lindstrom-Turk, computed with default parameters 
+      and caching only the cost.
+\item No visitor is used to track the algorithm progress.
+\end{itemize}
 
 \ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_polyhedron.cpp}
 
 \subsubsection{Example Using Enriched Polyhedron}
 
 The following example is equivalent to the previous example but using an
-enriched polyhedron whose halfedges support an "id()" field to
+enriched polyhedron whose halfedges support an \ccc{id} field to
 store the edge index needed by the algorithm.
 
 \ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_enriched_polyhedron.cpp}
@@ -320,7 +336,7 @@ that neither the cost nor the placement should be cached, saving memory.
 
 \ccIncludeExampleCode{Surface_mesh_simplification/MP_edge_collapse_polyhedron.cpp}
 
-\subsubsection{Example using a full cost and placement cache}
+\subsubsection{Example Using a Full Cost and Placement Cache}
 
 The following example shows how to use a full cache for maximizing speed.
 The required code for the default cost-strategy (Lindstrom-Turk) is
@@ -340,7 +356,7 @@ for illustration.
 \ccIncludeExampleCode{Surface_mesh_simplification/LT_edge_collapse_visited_polyhedron.cpp}
 
 
-\subsubsection{Example using Fixed Vertices via an external map}
+\subsubsection{Example using Fixed Vertices via an External Map}
 
 The following example shows how to fix vertices to prevent edges from being collapsed. 
 In this case, an ordinary polyhedron is used and the flags are stored 

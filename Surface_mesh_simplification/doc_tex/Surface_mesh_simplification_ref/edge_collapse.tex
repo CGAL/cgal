@@ -64,7 +64,7 @@ All named parameters have default values and the order of the named parameters
 is irrelevant so you only need to compose those for which the default
 is inappropriate.
 
-\subsubsection{\ccc{vertex_point_map(VertexPointMap vertex_p_map)} }
+\subsubsection*{vertex\_point\_map(VertexPointMap vpm)}
 
 Provides lvalue access to the point of a vertex of the surface.
 \ccc{VertexPointMap} must be an 
@@ -77,10 +77,11 @@ and whose \ccc{value_type} is
 \textbf{Default}: the property map obtained by calling \ccc{get(vertex_point,surface)}.
 
 
-\subsubsection{\ccc{edge_index_map(EdgeIndexMap edge_idx_map)} }
+
+\subsubsection*{edge\_index\_map(EdgeIndexMap eim)} 
 
 Maps each {\em directed} edge in the surface into an integer number
-in the range \ccc{[0,num_edge(surface)}.
+in the range \ccc{[0,num_edge(surface))}.
 
 \ccc{EdgeIndexMap} must be a either a
 \ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
@@ -89,13 +90,13 @@ whose \ccc{key_type} is
 and whose \ccc{value_type} is 
 \ccc{boost::graph_traits<EdgeCollapsableMesh>::size_type},
 or the same as \ccc{EdgeCollapsableMesh}, in which case 
-\ccc{edge_idx_map} is in fact the surface to be simplified.
+\ccc{eim} is in fact the surface to be simplified.
 
-If \ccc{edge_idx_map} is a valid property map, it is
+If \ccc{eim} is a valid property map, it is
 passed as the argument, but if it is the surface, a
 temporary property map is passed instead.
 Such temporary map externally relates each edge 
-in the surface (\ccc{edge_idx_map}) to its index,
+in the surface (\ccc{eim}) to its index,
 without requiring any user intervention or any special
 provision in the surface edge.
 
@@ -103,9 +104,11 @@ provision in the surface edge.
 in turn requires the surface edge class to have a member function 
 \ccc{int id() const;}.
 
-\subsubsection{\ccc{edge_is_border_map(EdgeIsBorderMap edge_border_map)} }
 
-Maps each {\em directed} edge in the surface into a boolean value
+
+\subsubsection*{edge\_is\_border\_map(EdgeIsBorderMap ebm)} 
+
+Maps each {\em directed} edge in the surface into a Boolean value
 which indicates if the edge belongs to the boundary of the surface
 (facing the outside).
 \ccc{EdgeIsBorderMap} must be a 
@@ -116,7 +119,9 @@ and whose \ccc{value_type} is \ccc{bool}.
 
 \textbf{Default}: the property map obtained by calling \ccc{get(edge_is_border,surface)}.
 
-\subsubsection{\ccc{vertex_is_fixed_map(VertexIsFixedMap vertex_fixed_map)} }
+
+\subsubsection*{vertex\_is\_fixed\_map(VertexIsFixedMap vfm)}
+
 
 Maps each vertex in the surface into a boolean value
 which indicates if the vertex is fixed and cannot be modified 
@@ -130,45 +135,54 @@ and whose \ccc{value_type} is \ccc{bool}.
 \textbf{Default}: 
 \ccc{Vertex_is_fixed_map_always_false<EdgeCollapsableMesh>()}.
 
-\subsubsection{\ccc{set_cache(SetCache set_cache)} }
+
+\subsubsection*{set\_cache(SetCache sc)} 
 
 The policy which indicates the caching level used 
 by the \ccc{edge_collapse} function.\\
-The type of \ccc{set_cache} must be a model of the \ccc{SetCache} concept.
+The type of \ccc{sc} must be a model of the \ccc{SetCache} concept.
 
 \textbf{Default}: 
 \ccc{CGAL::Surface_mesh_simplification::LindstromTurk_set_cost_cache<EdgeCollapsableMesh>()}
 
-\subsubsection{\ccc{get_cost(GetCost get_cost)}} 
+
+\subsubsection*{get\_cost(GetCost gc)}
+
 
 The policy which returns the collapse cost for an edge.\\
-The type of \ccc{get_cost} must be a model of the \ccc{GetCost} concept.
+The type of \ccc{gc} must be a model of the \ccc{GetCost} concept.
 
 \textbf{Default}: 
 \ccc{CGAL::Surface_mesh_simplification::Cached_cost<EdgeCollapsableMesh>}.
 
-\subsubsection{\ccc{get_cost_params(GetCost::Params const* gc_params)}}
+
+\subsubsection*{get\_cost\_params(GetCost::Params const* gp)}
 
 The model-specific parameters to \ccc{get_cost}.
 
 \textbf{Default}: \ccc{NULL}.
 
-\subsubsection{\ccc{get_placement(GetPlacement get_placement)}}
+
+\subsubsection*{get\_placement(GetPlacement gp)}
 
 The policy which returns the placement (position of the replacemet vertex)
 for an edge.\\
-The type of \ccc{get_placement} must be a model of the \ccc{GetPlacement} concept.
+The type of \ccc{gp} must be a model of the \ccc{GetPlacement} concept.
 
 \textbf{Default}: 
 \ccc{CGAL::Surface_mesh_simplification::LindstromTurk_placement<EdgeCollapsableMesh>}
 
-\subsubsection{\ccc{get_placement_params(GetPlacement::Params const* gp_params)}}
+
+
+\subsubsection*{get\_placement\_params(GetPlacement::Params const* gpp)}
 
 The model-specific parameters to \ccc{get_placement}.
 
 \textbf{Default}: \ccc{NULL}.
 
-\subsubsection{\ccc{visitor(EdgeCollaspeSimplificationVisitor const* v)}}
+
+
+\subsubsection*{visitor(EdgeCollaspeSimplificationVisitor const* v)}
 
 The visitor that is called by the \ccc{edge_collapse} function
 in certain points to allow the user to track the simplification process.\\
@@ -176,7 +190,11 @@ The type of \ccc{v} must be a model of the \ccc{EdgeCollaspeSimplificationVisito
 
 \textbf{Default}: \ccc{NULL}.
 
-All these named parameters wrapping functions are defined in \ccc{namespace CGAL}. Being non-member functions, they could clash with equally named functions in some other namespace. If that happens simply qualify the named parameter with \ccc{CGAL::} as shown in the examples in the user manual.
+All these named parameters wrapping functions are defined in
+\ccc{namespace CGAL}. Being non-member functions, they could clash
+with equally named functions in some other namespace. If that happens
+simply qualify the named parameter with \ccc{CGAL::} as shown in the
+examples in the user manual.
 
 \ccHeading{Semantics}
 
@@ -191,7 +209,7 @@ are the policies which control the {\em cost-strategy}, that is,
 the order in which edges are collapsed and the replacement vertex is positioned.\\
 \ccc{get_cost_params} and \ccc{get_placement_params} are the runtime 
 parameters used by the these policies. They can be null pointers
-if the policies don't need them.\\
+if the policies does not need them.\\
 This strategy is the driving factor that determines the accuracy of the
 simplified surface with respect to the original.
 

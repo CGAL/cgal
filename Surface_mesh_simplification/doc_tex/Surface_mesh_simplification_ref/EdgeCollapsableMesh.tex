@@ -30,28 +30,27 @@ having only triangular faces.
 It can have any number of connected components, boundaries 
 (borders and holes) and handles (arbitrary genus).
 
-In the context of this concept, the surface is only required to provide one 
-mutating operation: \ccc{collapse_triangulation_edge}.
-
 \ccRefines
 \ccc{HalfedgeGraph}
 
-\ccOperations
+\ccHeading{Valid Expressions}
+
+The mesh simplification algorithn requires the free function \ccc{collapse_triangulation_edge}.
+
 
   \ccFunction
-  {template<class Graph>
+  {template<class EdgeCollapsableMesh>
   void
-  collapse_triangulation_edge(typename boost::graph_traits<Graph>::edge_descriptor p_q
-                             ,typename boost::graph_traits<Graph>::edge_descriptor p_t
-                             ,typename boost::graph_traits<Graph>::edge_descriptor q_b
-                             ,Graph& surface
-                             );}  
+  collapse_triangulation_edge(typename boost::graph_traits<EdgeCollapsableMesh>::edge_descriptor p_q,
+                             typename boost::graph_traits<EdgeCollapsableMesh>::edge_descriptor p_t,
+                             typename boost::graph_traits<EdgeCollapsableMesh>::edge_descriptor q_b,
+                             EdgeCollapsableMesh& surface);}  
   {Collapses the undirected edge p-q replacing it with one single vertex.\\ 
   Details below ~\ref{SurfaceMeshSimplification:CollapseOperationDetails}.
   }
 
     
-\ccHeading{Collape Operation Semantics}\label{SurfaceMeshSimplification:CollapseOperationDetails}
+\ccHeading{Collapse Operation Semantics}\label{SurfaceMeshSimplification:CollapseOperationDetails}
   
 This function assumes the surface to be an {\em open oriented 2-manifold} and it must
 never be called in a context were collapsing the edge would result in the surface 
@@ -108,6 +107,8 @@ The function returns the vertex that is not removed.
 
 \ccHasModels
 \ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}\\
+
+\ccSeeAlso
 \ccRefIdfierPage{CGAL::graph_traits< Polyhedron_3<Traits> >}\\
 \ccRefIdfierPage{CGAL::halfedge_graph_traits< Polyhedron_3<Traits> >}
 

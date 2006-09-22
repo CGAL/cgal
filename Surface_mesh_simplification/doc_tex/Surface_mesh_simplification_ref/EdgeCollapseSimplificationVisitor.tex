@@ -14,7 +14,7 @@
 %%
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
-\begin{ccRefConcept}{EdgeCollaspeSimplificationVisitor}
+\begin{ccRefConcept}{EdgeCollapseSimplificationVisitor}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
@@ -54,8 +54,8 @@ The several callbacks given as member functions in the visitor are called from c
   
   \ccMethod
   {void OnStopConditionReached( ECM& surface ) ; } 
-  {Called when the \ccc{StopPredicate} returned true
-  (but not if the algorithm terminates because the surface couldn't be simplified any further).
+  {Called when the \ccc{StopPredicate} returned \ccc{true}
+  (but not if the algorithm terminates because the surface could not be simplified any further).
   }
   
   \ccMethod
@@ -67,7 +67,7 @@ The several callbacks given as member functions in the visitor are called from c
   {Called during the {\em collecting phase} (when a cost is assigned to the edges),
   for each \ccc{edge} collected.\\
   \ccc{is_fixed} indicates whether \ccc{edge} is fixed or not.
-  If it is fixed it won't be collapsed.
+  If it is fixed it will not be collapsed.
   }
   
   \ccMethod
@@ -80,12 +80,12 @@ The several callbacks given as member functions in the visitor are called from c
   }                 
   {Called during the {\em processing phase} (when edges are collapsed),
   for each \ccc{edge} that is selected.\\
-  This method is called {\em before} the algorithm checks 
+  This method is called before the algorithm checks 
   if the edge is collapsable.\\
   \ccc{cost} indicates the current collapse cost for the \ccc{edge}.
-  If {\em absent} (meaning that it couldn't be computed)
-  the edge won't be collapsed.\\
-  \ccc{initial_count} and \ccc{current_count} refers to 
+  If absent (meaning that it could not be computed)
+  the edge will not be collapsed.\\
+  \ccc{initial_count} and \ccc{current_count} refer to 
   the number of edges.
   }
   
@@ -97,8 +97,8 @@ The several callbacks given as member functions in the visitor are called from c
   }                  
   {Called when \ccc{edge} is about to be collapsed and replaced by a vertex
   whose position is \ccc{*placement}.\\
-  If \ccc{placement} is absent (meaning that it couldn't be computed)
-  the edge won't be collapsed.
+  If \ccc{placement} is absent (meaning that it could not be computed)
+  the edge will not be collapsed.
   }
   
   \ccMethod
@@ -108,8 +108,8 @@ The several callbacks given as member functions in the visitor are called from c
   }                  
   {Called for each selected \ccc{edge} which cannot be 
   collapsed because doing so would change the topological
-  type of the surface. (turn it into a non-manifold
-  for instance)
+  type of the surface (turn it into a non-manifold
+  for instance).
   }
   
 \end{ccRefConcept}
