@@ -3288,8 +3288,8 @@ _set_support()
 #	    ;;
 	*GNU*)
 	    case `compiler_version` in
-		3.[234]*) CGAL_SUPPORT_COMPILER='y';;
-		4.0*) CGAL_SUPPORT_COMPILER='y';;
+		3.[34]*) CGAL_SUPPORT_COMPILER='y';;
+		[4567].*) CGAL_SUPPORT_COMPILER='y';;
 	    esac
 	    ;;
 	*Intel*|*ICC*)
@@ -3300,6 +3300,7 @@ _set_support()
 	*VC++*)
 	    case `compiler_version` in
 		1310*) CGAL_SUPPORT_COMPILER='y';;
+		14*) CGAL_SUPPORT_COMPILER='y';;
 	    esac
 	    ;;
     esac
