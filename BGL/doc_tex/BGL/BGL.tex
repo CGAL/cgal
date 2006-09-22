@@ -112,7 +112,7 @@ Property maps in the Boost manuals: \path|http://www.boost.org/libs/property_map
 
 Visitors are ojects that provide functions that get called at
 specified event points by the algorithm they visit.  The notion of
-visitors is a design pattern, and also used in \cgal, e.g. the \ccc{Arr_observer<Arrangement>} 
+visitors is a design pattern, and also used in \cgal, e.g., the \ccc{Arr_observer<Arrangement>} 
 in the arrangement package.  
 
 The functions as well as the event points are library specific. Event
@@ -188,6 +188,19 @@ More examples can be found in Chapter~\ref{chapter-meshsimplification} on surfac
 
 \ccIncludeExampleCode{../examples/BGL/Polyhedron_3/kruskal.cpp}
 
+
+
+\ccHeading{Example: Using Vertices, and Edges with an ID}
+
+The following example program shows a call to the {\sc Bgl} 
+Kruskal's minimum spanning tree algorithm accessing the id() 
+field stored in a Polyhedron vertex.\\
+The main function illustrates the access to the id() field.
+
+\ccIncludeExampleCode{../examples/BGL/Polyhedron_3/kruskal_with_stored_id.cpp}
+
+
+
 \subsection{Triangulations}
 
 Triangulations have vertices and faces. Edges are pairs of a face and the
@@ -208,7 +221,7 @@ triangulation of the point set.
 minimum spanning tree example as it is more relevant. 
 
 
-\ccHeading{Example: Dijkstra's shortest path}
+\ccHeading{Example: Dijkstra's Shortest Path}
 
 In the following example we create a triangulation and run Dijkstra's shortest path
 algorithm on it. Because the vertex handles of the triangulation are not indices
@@ -218,7 +231,7 @@ int's in the range \ccc{[0, t.number_of_vertices())}.
 \ccIncludeExampleCode{../examples/BGL/Triangulation_2/dijkstra.cpp}
 
 
-\ccHeading{Example: Storing the vertex id in the vertex}
+\ccHeading{Example: Storing the Vertex ID in the Vertex}
 
 The algorithms of the {\sc Bgl} extensively use of the indices of
 vertices. In the previous example we stored the index in a \ccc{std::map}
@@ -244,7 +257,7 @@ For the arrangements \cgal\ offers the graph traits for the arrangement
 itself as well as for its dual graph.
 
 
-\ccHeading{Example for the primal of an arrangement as graph\label{arr_sssec:bgl_primal}}
+\ccHeading{Example for the Arrangement as Graph\label{arr_sssec:bgl_primal}}
 %-------------------------------------------------
 
 Arrangement instances are adapted to \boost\ graphs by specializing the
@@ -328,7 +341,7 @@ the type \ccc{double} is used to map vertices to their distances from $v_0$.
 
 \ccIncludeExampleCode{../examples/BGL/Arrangement_2/primal.cpp}
 
-\ccHeading{Example for the dual of an arrangement as graph\label{arr_sssec:bgl_dual}}
+\ccHeading{Example for the Dual of an Arrangement as Graph\label{arr_sssec:bgl_dual}}
 %-----------------------------------------------
 
 It is possible to give a dual graph representation for an arrangement instance,
