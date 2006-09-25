@@ -96,7 +96,7 @@ an index in the range \ccc{[0, num_vertices(g))} to each vertex
 descriptor of the graph.  The second version of the \ccc{get} function
 allows to read it as follows for a vertex descriptor \ccc{vd}:
 \ccc{int vdi = get(m, vd)}.  Just as \ccc{get} allows to read data,
-\ccc{put} allows to write them.  Dijksta's shortest path algorithm will write
+\ccc{put} allows to write them.  For example, the Dijksta's shortest path algorithm writes
 the predecessor of each vertex, as well as the distance to the source in such a 
 property map.
 
@@ -172,16 +172,15 @@ but it is not capitalized as the \ccc{boost::graph_traits} is not.
 The same holds for the types and enums for vertex and edge properties.
 
 
-\section{CGAL Data Structures that are Models of the Boost Graph Concept}
 
 
-By providing partial specialization of the class \ccc{boost::graph_traits} and the 
-free functions for traversing a graph, the \cgal\ data structures become models of
-the Boost graph concepts. Consequently, the graph algorithms can operate on them
-directly.
 
+\section{Polyhedral Surfaces as Model of the Boost Graph Concept}
 
-\subsection{Polyhedral Surfaces}
+The class \ccc{Polyhedron_3} is model of the graph concept.  Furthermore
+this chapter introduces a new graph concept, the \ccc{HalfedgeGraph}.
+
+\subsection{Example: Minimum Spanning Tree of a Polyhedral Surface}
 
 The example code computes the minimum spanning tree on a polyhedral surface.
 More examples can be found in Chapter~\ref{chapter-meshsimplification} on surface mesh simplification.
@@ -190,7 +189,7 @@ More examples can be found in Chapter~\ref{chapter-meshsimplification} on surfac
 
 
 
-\ccHeading{Example: Using Vertices, and Edges with an ID}
+\subsection{Example: Using Vertices, and Edges with an ID}
 
 The following example program shows a call to the {\sc Bgl} 
 Kruskal's minimum spanning tree algorithm accessing the id() 
@@ -201,12 +200,12 @@ The main function illustrates the access to the id() field.
 
 
 
-\subsection{Triangulations}
+\section{Triangulations as Models of the Boost Graph Concept}
 
 Triangulations have vertices and faces. Edges are pairs of a face and the
 index of the edge.
 Particular care has to be taken with the infinite vertex, and its incident
-edges. One can either use a filtered graph, which makes the infinite edges
+edges. One can either use a \ccc{boost::filtered_graph}, which makes the infinite edges
 invisible, or one can have a property map that returns an infinite length
 for these edges.
 
@@ -217,21 +216,17 @@ Spanning Tree} for a point set in the plane.  It can be computed by
 running the minimum spanning tree algorithm on a Delaunay
 triangulation of the point set.
 
-{\bf Remark for the reviewer:} We will replace Dijkstra with the Euclidean
-minimum spanning tree example as it is more relevant. 
+\subsection{Example: Euclidean Minimum Spanning Tree}
 
-
-\ccHeading{Example: Dijkstra's Shortest Path}
-
-In the following example we create a triangulation and run Dijkstra's shortest path
-algorithm on it. Because the vertex handles of the triangulation are not indices
+In the following example we create a Delaunay triangulation and run Kruskal's minimum
+spanning tree algorithm on it. Because the vertex handles of the triangulation are not indices
 in an array, we have to provide a property map that maps vertex handles to
 int's in the range \ccc{[0, t.number_of_vertices())}.
 
-\ccIncludeExampleCode{../examples/BGL/Triangulation_2/dijkstra.cpp}
+\ccIncludeExampleCode{../examples/BGL/Triangulation_2/emst.cpp}
 
 
-\ccHeading{Example: Storing the Vertex ID in the Vertex}
+\subsection{Example: Storing the Vertex ID in the Vertex}
 
 The algorithms of the {\sc Bgl} extensively use of the indices of
 vertices. In the previous example we stored the index in a \ccc{std::map}
@@ -251,13 +246,13 @@ for the Delaunay triangulation.
 \ccIncludeExampleCode{../examples/BGL/Triangulation_2/dijkstra_with_internal_property.cpp}
 
 
-\subsection{Arrangements}
+\section{Arrangements as Models of the Boost Graph Concept}
 
 For the arrangements \cgal\ offers the graph traits for the arrangement
 itself as well as for its dual graph.
 
 
-\ccHeading{Example for the Arrangement as Graph\label{arr_sssec:bgl_primal}}
+\subsection{Example for the Arrangement as Graph\label{arr_sssec:bgl_primal}}
 %-------------------------------------------------
 
 Arrangement instances are adapted to \boost\ graphs by specializing the
@@ -341,7 +336,7 @@ the type \ccc{double} is used to map vertices to their distances from $v_0$.
 
 \ccIncludeExampleCode{../examples/BGL/Arrangement_2/primal.cpp}
 
-\ccHeading{Example for the Dual of an Arrangement as Graph\label{arr_sssec:bgl_dual}}
+\subsection{Example for the Dual of an Arrangement as Graph\label{arr_sssec:bgl_dual}}
 %-----------------------------------------------
 
 It is possible to give a dual graph representation for an arrangement instance,
