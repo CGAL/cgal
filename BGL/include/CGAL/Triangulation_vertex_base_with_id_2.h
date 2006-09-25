@@ -1,4 +1,4 @@
-// Copyright (c) 2003  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -11,9 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $Source: /CVSROOT/CGAL/Packages/Triangulation_2/include/CGAL/Triangulation_vertex_base_with_id_2.h,v $
-// $Revision$ $Date$
-// $Name:  $
+// $URL$
+// $Id$
 //
 // Author(s)     : Andreas Fabri
 
