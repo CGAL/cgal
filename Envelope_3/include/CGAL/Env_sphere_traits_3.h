@@ -27,18 +27,8 @@
 #include <CGAL/functions_on_signs.h>
 #include <CGAL/Envelope_3/Envelope_base.h>
 
-//#define CGAL_ENV_SPHERES_TRAITS_CACHE_POINT_ON
 
 CGAL_BEGIN_NAMESPACE
-
-//inline
-//Sign
-//operator*(const Sign &s1, const Sign &s2)
-//{
-//  if ( s1 == ZERO || s2 == ZERO )  return ZERO;
-//  if ( s1 == s2 )  return POSITIVE;
-//  return NEGATIVE;
-//}
 
 template <class Kernel_> class Env_sphere_3;
  
@@ -68,31 +58,14 @@ public:
   typedef typename Alg_kernel::Point_2              Alg_point_2;
   typedef typename Alg_kernel::Circle_2             Alg_circle_2;
   
-//  typedef typename Rat_kernel::Sphere_3             Surface_3;
-  typedef Env_sphere_3<Rat_kernel>             Surface_3;
+  typedef Env_sphere_3<Rat_kernel>                  Surface_3;
   
   // here we refer to the lower part of the sphere only
   typedef Surface_3                                 Xy_monotone_surface_3;
   typedef unsigned int                              Multiplicity;
 protected:
-  typedef std::pair<X_monotone_curve_2, Intersection_type>     Intersection_curve;
-  
-  #ifdef CGAL_ENV_SPHERES_TRAITS_CACHE_POINT_ON
-    // caching the computation of a surface 3d point from a 2d point
-    typedef std::pair<Xy_monotone_surface_3, Point_2> Surface_point_pair;
-    struct Less_surface_point_pair
-    {
-      bool operator() (const Surface_point_pair& sp1,
-                       const Surface_point_pair& sp2) const
-      {
-        // Compare the pairs of IDs lexicographically.
-        return (sp1.first < sp2.first ||
-                (sp1.first == sp2.first && Alg_kernel().less_xy_2_object()(sp1.second,sp2.second)));
-      }
-    };
-    typedef std::map<Surface_point_pair, Algebraic,
-                     Less_surface_point_pair>          Surface_point_cache;
-  #endif
+  typedef std::pair<X_monotone_curve_2, 
+                    Multiplicity>                   Intersection_curve;
 
 public:
   class Make_xy_monotone_3
@@ -854,23 +827,6 @@ public:
                                                            Algebraic(1),
                                                            A1,
                                                            A2);
-      /*if (parent.get_envelope_type() == LOWER)
-        res = CGAL::sign_a_plus_b_x_sqrt_e_plus_c_x_sqrt_f(Algebraic(c_diff),
-                                                           Algebraic(-1),
-                                                           Algebraic(1),
-                                                           A1,
-                                                           A2);
-      else
-        res = CGAL::sign_a_plus_b_x_sqrt_e_plus_c_x_sqrt_f(Algebraic(c_diff),
-                                                           Algebraic(1),
-                                                           Algebraic(-1),
-                                                           A1,
-                                                           A2);*/
-      
-//      if (parent.get_envelope_type() == LOWER)
-//        res = CGAL_NTS sign(c1 - CGAL::sqrt(A1) - c2 + CGAL::sqrt(A2));
-//      else
-//        res = CGAL_NTS sign(c1 + CGAL::sqrt(A1) - c2 - CGAL::sqrt(A2));
       return Comparison_result(res);    
     }  
   };
@@ -1112,21 +1068,7 @@ public:
                                    const Xy_monotone_surface_3& s) const
   {
     Algebraic res;
-    #ifdef CGAL_ENV_SPHERES_TRAITS_CACHE_POINT_ON
-      // first try the cache:
-      typename Surface_point_cache::iterator  cache_iter;
-      Surface_point_pair spair(const_cast<Xy_monotone_surface_3>(s), p);
-
-      std::cout << "before find" << std::endl;
-      cache_iter = point_on_cache.find(spair);
-      std::cout << "after find" << std::endl;
-      if (cache_iter != point_on_cache.end())
-      {
-        res = (*cache_iter).second;
-        return res;
-      }
-    #endif
-    
+   
     // the point coordinates
     const Algebraic x1 = p.x(), y1 = p.y();
 
@@ -1165,11 +1107,6 @@ public:
       res = ((comp == SMALLER) ? zs[0] : zs[1]);
     else
       res = ((comp == LARGER) ? zs[0] : zs[1]);
-
-    #ifdef CGAL_ENV_SPHERES_TRAITS_CACHE_POINT_ON
-      // update the cache
-      point_on_cache[spair] = res;
-    #endif
 
     return res;
   }
@@ -1316,13 +1253,6 @@ public:
 
 protected:
   bool m_is_lower;
-
-public:
-
-  #ifdef CGAL_ENV_SPHERES_TRAITS_CACHE_POINT_ON
-    mutable Surface_point_cache point_on_cache;
-  #endif
-
 };
 
 /*!
@@ -1423,14 +1353,6 @@ InputStream& operator>> (InputStream& is, Env_sphere_3<Kernel>& s)
   return (is);
 }
 
-//template <class Kernel>
-//bool
-//operator<(const CGAL::Sphere_3<Kernel> &a,
-//          const CGAL::Sphere_3<Kernel> &b)
-//{
-//  return (a.center() < b.center() ||
-//          (a.center() == b.center() && a.squared_radius() < b.squared_radius()));
-//}
 
 CGAL_END_NAMESPACE
 

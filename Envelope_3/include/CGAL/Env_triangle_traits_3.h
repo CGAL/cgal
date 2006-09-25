@@ -26,7 +26,6 @@
 #ifndef CGAL_ENV_TRIANGLE_TRAITS_3_H
 #define CGAL_ENV_TRIANGLE_TRAITS_3_H
 
-#include <CGAL/Handle_for.h>
 #include <CGAL/Object.h>
 #include <CGAL/enum.h>
 #include <CGAL/Bbox_3.h>
@@ -34,13 +33,6 @@
 #include <CGAL/Envelope_3/Envelope_base.h>
 
 #include <vector>
-
-// this cache doesn't help much
-//#define CGAL_ENV_TRIANGLES_TRAITS_CACHE_POINT_ON
-
-#ifdef CGAL_ENV_TRIANGLES_TRAITS_CACHE_POINT_ON
-  #include <map>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -64,7 +56,7 @@ public:
   /*!
    * \class Representation of a 3d triangle with cached data.
    */
-  class _Triangle_cached_3 //: public Ref_counted
+  class _Triangle_cached_3 
   {
   public:
 
@@ -260,10 +252,7 @@ public:
      */
     const Point_3& vertex(unsigned int i) const
     {
-      if (i > 2)
-        i = i % 3;
-      CGAL_assertion(i>=0 && i<=2);
-      return vertices[i];
+      return vertices[i%3];
     }
 
     /*!
@@ -336,25 +325,8 @@ protected:
   typedef typename Kernel::Line_3                   Line_3;
   typedef typename Kernel::Direction_3              Direction_3;
 
-  #ifdef CGAL_ENV_TRIANGLES_TRAITS_CACHE_POINT_ON
-    // caching the computation of a surface 3d point from a 2d point
-    typedef std::pair<Xy_monotone_surface_3, Point_2> Surface_point_pair;
-    struct Less_surface_point_pair
-    {
-      bool operator() (const Surface_point_pair& sp1,
-                       const Surface_point_pair& sp2) const
-      {
-        // Compare the pairs of IDs lexicographically.
-        return (sp1.first < sp2.first ||
-                (sp1.first == sp2.first && 
-                 Kernel().less_xy_2_object()(sp1.second,sp2.second)));
-      }
-    };
-    typedef std::map<Surface_point_pair, Point_3,
-                     Less_surface_point_pair>          Surface_point_cache;
-  #endif
-
-  typedef std::pair<X_monotone_curve_2, Multiplicity>        Intersection_curve;
+  typedef std::pair<X_monotone_curve_2,
+                    Multiplicity>                   Intersection_curve;
 public:
 
   /***************************************************************************/
@@ -719,65 +691,14 @@ public:
         return EQUAL;
       }
 
-      // these should contain the points on the surfaces that we need to 
-      // compare for the envelope
-      Point_3   ip1, ip2;
-      bool ip1_found = false, ip2_found = false;
-
-      #ifdef CGAL_ENV_TRIANGLES_TRAITS_CACHE_POINT_ON
-        // first try the cache:
-
-        typename Surface_point_cache::iterator  cache_iter;
-        Surface_point_pair                      spair1(surf1, p);
-        Surface_point_pair                      spair2(surf2, p);
-
-        cache_iter = parent->point_on_cache.find(spair1);
-        if (cache_iter != (parent->point_on_cache).end())
-        {
-          ip1 = (*cache_iter).second;
-          ip1_found = true;
-        }
-
-        cache_iter = parent->point_on_cache.find(spair2);
-        if (cache_iter != (parent->point_on_cache).end())
-        {
-          ip2 = (*cache_iter).second;
-          ip2_found = true;
-        }
-      #endif
-      
       Kernel k;
-      if (!ip1_found || !ip2_found)
-      {
-        // should calculate at least one point
 
-        // Compute the intersetion between the vertical line and the given 
-	// surfaces
-        if (!ip1_found)
-        {
-          ip1 = parent->envelope_point_of_surface(p, surf1);
-          #ifdef CGAL_ENV_TRIANGLES_TRAITS_CACHE_POINT_ON
-            // update the cache
-            (parent->point_on_cache)[spair1] = ip1;
-          #endif
-        }
-
-        if (!ip2_found)
-        {   
-          ip2 = parent->envelope_point_of_surface(p, surf2);
-          #ifdef CGAL_ENV_TRIANGLES_TRAITS_CACHE_POINT_ON
-            // update the cache
-            (parent->point_on_cache)[spair2] = ip2;
-          #endif
-        }
-      }
+      // Compute the intersetion between the vertical line and the given 
+      // surfaces
+      Point_3 ip1 = parent->envelope_point_of_surface(p, surf1);
+      Point_3 ip2 = parent->envelope_point_of_surface(p, surf2);
       
       return k.compare_z_3_object()(ip1, ip2);
-      //// the answer changes when we compute lower/upper envelope
-      //if (parent->get_envelope_type() == LOWER)
-      //  return k.compare_z_3_object()(ip1, ip2);
-      //else
-      //  return k.compare_z_3_object()(ip2, ip1);
     }
 
     // check which of the surfaces is closer to the envelope at the xy 
@@ -921,12 +842,6 @@ public:
 
       Sign s2 = CGAL_NTS sign(-b3*x1+a3*y1-(-b3*x2+a3*y2));
       return (Comparison_result(s1 * s2));
-      // the answer is reversed when computing upper envelope vs. lower
-      // envelope
-      /*if (parent->get_envelope_type() == LOWER)
-        return Comparison_result(s1 * s2);
-      else
-        return Comparison_result(s1 * s2 * -1);     */ 
     }  
   };
 
@@ -1586,14 +1501,6 @@ public:
 
     return (ip);
   }
-
- 
-public:
-
-  #ifdef CGAL_ENV_TRIANGLES_TRAITS_CACHE_POINT_ON
-    mutable Surface_point_cache point_on_cache;
-  #endif
-
 };
 
 
