@@ -155,8 +155,8 @@ namespace std {
     typedef numeric_limits<double> P;
     typedef CGAL_POLYNOMIAL_NS::Interval_nt  T;
     static const bool is_specialized = true;
-    static T min() throw() {return T(P::min());}
-    static T max() throw() {return T(P::max());}
+    static T min BOOST_PREVENT_MACRO_SUBSTITUTION () throw() {return T((P::min)());}
+    static T max BOOST_PREVENT_MACRO_SUBSTITUTION () throw() {return T((P::max)());}
     static T infinity() throw() {return P::infinity();}
   };
 };
