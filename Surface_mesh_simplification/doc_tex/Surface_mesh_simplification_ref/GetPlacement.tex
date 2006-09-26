@@ -27,7 +27,7 @@ function object} which gets the {\em collapse placement} of an edge,
 that is, the position of the vertex that replaces the edge after the
 collapse.
 
-The placement returned is an \ccc{boost::optional} value (i.e., it can
+The placement returned is a \ccc{boost::optional} value (i.e., it can
 be absent). An absent placement could be the result of a
 computational limitation (such as overflow), or can be intentionally
 returned to prevent the edge from being collapsed.
@@ -36,7 +36,7 @@ A model of this concept can simply return the placement stored in the
 passed cache object, if any, or perform the actual computation.
 
 \ccRefines
-\ccc{DefaultConstructible}
+\ccc{DefaultConstructible}\\
 \ccc{CopyConstructible}
 
 \ccTypes

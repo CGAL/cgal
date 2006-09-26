@@ -24,6 +24,10 @@
 
 The concept \ccRefName\ describes the requirements for the {\em policy function object} which assigns the the cache object associated to each edge.
 
+\ccRefines
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}
+
 
 \ccTypes
   \ccNestedType{ECM}{The type of the surface to simplify.
@@ -39,6 +43,11 @@ The concept \ccRefName\ describes the requirements for the {\em policy function 
   \ccGlue
   \ccNestedType{Placement_params}{The type of the parameters to the placement subfunction.
    Can be \ccc{void}.}{}
+
+\ccCreation
+\ccCreationVariable{sc}  %% choose variable name
+
+\ccConstructor{GetCost();}{Default constructor} 
 
 \ccOperations
 

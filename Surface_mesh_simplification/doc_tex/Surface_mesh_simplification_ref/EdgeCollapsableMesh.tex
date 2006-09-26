@@ -35,99 +35,44 @@ It can have any number of connected components, boundaries
 
 \ccHeading{Valid Expressions}
 
-The mesh simplification algorithn requires the free function \ccc{collapse_triangulation_edge}.
+The mesh simplification algorithm requires the free function \ccc{collapse_triangulation_edge}.
 
 
   \ccFunction
   {template<class EdgeCollapsableMesh>
   typename boost::graph_traits<EdgeCollapsableMesh>::vertex_descriptor
-  collapse_triangulation_edge(typename boost::graph_traits<EdgeCollapsableMesh>::edge_descriptor p_q,
-                             EdgeCollapsableMesh& surface);}  
-  {Collapses the undirected edge p-q replacing it with one single vertex.\\ 
-  Details below ~\ref{SurfaceMeshSimplification:CollapseOperationDetails}.
-  }
+  collapse_triangulation_edge(typename boost::graph_traits<EdgeCollapsableMesh>::edge_descriptor ue,
+                             EdgeCollapsableMesh& mesh);}  
+  {Collapses the undirected edge \ccc{ue} replacing it with one single vertex as described in 
+   the following paragraph.}
 
     
-\ccHeading{Collapse Operation Semantics}\label{SurfaceMeshSimplification:CollapseOperationDetails}
-  
-\subsubsection*{Preconditions}
 
-This function requires the surface to be an {\em open oriented 2-manifold} and it must
-never be called in a context were collapsing the undirected edge would result in the surface 
-becoming a {\em non-manifold}. That is, as a precondition, undirected edge $(p,q)$ must satisfy
-the so-called {\em link-condition}
-(whose definition is out of scope for this manual but which is notably explained 
-in \cite{degn-tpec-98}).
+\ccPrecond This function requires \ccc{mesh} to be an oriented 2-manifold (which can be open). Furthermore
+the undirected edge $ue$ must satisfy the {\em link condition} \cite{degn-tpec-98},
+which guarantees that the surface is also 2-manifold after the edge collapse. 
 
-\subsubsection*{Definitions}
+\smallskip
+Let \ccc{v} be the source and \ccc{w} be the target vertices of \ccc{ue}.
 
-$p$ and $q$ are the source and target vertices of edge $(p,q)$
+For \ccc{e} $\in \{$ \ccc{ue, opposite_edge(ue,mesh)} $\}$, let \ccc{en} and \ccc{ep} be the next and previous 
+edges, that is \ccc{en = next_edge(e, mesh)}, \ccc{ep = prev_edge(e,mesh)}, and let 
+\ccc{eno} and \ccc{epo} be their opposite edges, that is 
+\ccc{eno = opposite_edge(en, mesh)} and \ccc{epo = opposite_edge(ep,mesh)}.
 
-An undirected edge composed of the pairs $(s,t)$ and $(t,s)$ is denoted $[s,t]$
+Then, after the collapse of \ccc{ue} the following holds:
 
-Removing an undirected edge $[s,t]$ corresponds to removing both directed edges $(s,t)$ and $(t,s)$.
+\begin{itemize}
+\item The edge \ccc{e} is no longer in \ccc{mesh}.
+\item One of \ccc{v,w} is no longer in \ccc{mesh} while the other is kept. Let \ccc{x} be the one removed and \ccc{y} be the one kept.
+\item If \ccc{e} was a border edge, that is \ccc{get(is_border, e, mesh) == true}, then \ccc{next_edge(ep) == en}, and \ccc{prev_edge(en) == ep}.
+\item If \ccc{e} was not a border edge, that is \ccc{get(is_border, e, mesh) == false}, then \ccc{ep} and \ccc{epo} are no longer in \ccc{mesh} while \ccc{en} and \ccc{eno} are kept in \ccc{mesh}.
+\item For all edges \ccc{ie} in \ccc{in_edges(x,mesh)}, \ccc{target(ie,mesh) == y} and \ccc{source(opposite_edge(ie),mesh) == y}.
+\item No other incidence information has changed in \ccc{mesh}.
+\end{itemize}
 
-The triangle above $(p,q)$, if any, is called {\em top-triangle}, and the third vertex of
-such triangle is called  $t$.
+The function returns vertex \ccc{y}. 
 
-The triangle below $(q,p)$, if any, is called {\em bottom-triangle}, and the third vertex
-of such triangle is called $b$.
-
-If $(p,q)$ is not a border edge, hence the top-triangle exists, 
-there are edges $[p,t]$ and $[q,t]$ which are incident on such a top-triangle.
-
-If $(p,q)$ is not a border edge, hence the bottom-triangle exists, 
-there are edges $[p,b]$ and $[q,b]$ which are incident on such a bottom-triangle.
-
-If $(t,p)$ is not a border edge there exist a {\em top-left-triangle},
-adjacent to the top-triangle along $[p,t]$.
-
-If $(b,q)$ is not a border edge there exist a {\em bottom-right-triangle},
-adjacent to the bottom-triangle along $[q,b]$.
-
-\subsubsection*{Effects}
-
-The net effect of the operation is equivalent to removing one of the vertices ($p$ or $q$)
-and re-triangulating the resulting face. The actual operation is 
-required to remove at most 2 triangles, 3 undirected edges and 1 vertex. 
-
-
-%The preconditions guarantee that the top-left-triangle and top-bottom-triangle
-%are disjoint, that $t-p$ and $p-q$ are both incident on the top-triangle and that
-%$b-q$ and $q-p$ are both incident on the bottom-triangle.
-
- 
-%The triangle adjacent to the top-triangle along $p-t$ is called {\em top-left-triangle}.\\
-%The triangle adjacent to the bottom-triangle along $q-b$ is called {\em bottom-right-triangle}.
-
-\subsubsection*{Postconditions}
-      
-$[p,q]$ is removed from the surface.
-
-The top-triangle, if any, is removed, along with $[p,t]$.
-
-The bottom-triangle, if any, is removed, along with $[q,b]$.
-
-$[q,t]$ and $[p,b]$ are never removed.
-  
-If the bottom-triangle is removed and neither the top-triangle nor
-the bottom-right-triangle exist, vertex $q$ is removed,
-otherwise, vertex $p$ is removed.
-
-All those triangles initially defined by the removed vertex 
-(other than the top and bottom which are removed) are redefined
-with the vertex that is kept. That is, if $p$ is removed then
-every triangle $(p,x,y)$ is redefined as $(q,x,y)$. Any
-additional properties, such as texture coordinates, planes,
-surface patches, etc that these redefined triangles might have
-attached are preserved.
-\footnote{Hence a model for this concept cannot simply replace
-those triangles by new triangles, unless the replacements 
-inherit the corresponding properties.}
-
-\subsubsection*{Returns}
-
-The function returns the vertex that is not removed.
 
 \ccHasModels
 \ccRefIdfierPage{CGAL::Polyhedron_3<Traits>} via external adaptation.
