@@ -1,17 +1,6 @@
 #ifndef _POLY_OP_H_
 #define _POLY_OP_H_
 
-/* struct Edge_length { */
-/*   template < class HalfEdge >  */
-/*   void operator() (HalfEdge & h)  */
-/*     { */
-/*       double d = */
-/* 	CGAL::squared_distance(h.prev()->vertex()->point(), */
-/* 			 h.vertex()->point()); */
-/*       h.setLength(CGAL::sqrt(d)); */
-/*   } */
-/* }; */
-
 //the facet stores the normal
 struct Facet_unit_normal {
   template < class Facet > 
@@ -26,6 +15,5 @@ struct Facet_unit_normal {
       f.setNormal( normal / CGAL::sqrt(normal * normal));
     }
 };
-
 
 #endif

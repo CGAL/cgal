@@ -32,7 +32,7 @@ protected:
   Vector_3 normal;
 public:
   My_facet() {}
-  Vector_3 & getUnitNormal() { return normal; }
+  const Vector_3 & getUnitNormal() const { return normal; }
   void setNormal(Vector_3 n) { normal = n; }
 };
 
@@ -65,13 +65,8 @@ typedef Kernel::Vector_3 Vector_3;
 class PolyhedralSurf:public Polyhedron {
 public:
   PolyhedralSurf() {}
-  
-  //static Vector_3 getHalfedge_vector(Halfedge * h);
-  //double compute_mean_edges_length_around_vertex(Vertex * v);
-  //void compute_edges_length();
-
   void compute_facets_normals();
-  Vector_3 computeFacetsAverageUnitNormal(Vertex * v);
+  const Vector_3 computeFacetsAverageUnitNormal(const Vertex_const_handle v);
 };
 
 #endif

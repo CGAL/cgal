@@ -7,9 +7,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/PolyhedralSurf_neighbors.h>
 
-//#include <CGAL/number_utils_classes.h>
-
-
 CGAL_BEGIN_NAMESPACE
 
 enum Umbilic_type { UMBILIC_NON_GENERIC = 0, UMBILIC_WEDGE, UMBILIC_TRISECTOR};
@@ -22,31 +19,30 @@ template < class TriangularPolyhedralSurface >
 class Umbilic
 {
  public:
-  typedef typename TriangularPolyhedralSurface::Vertex_handle    Vertex_handle;
-  typedef typename TriangularPolyhedralSurface::Halfedge_handle  Halfedge_handle;
+  typedef typename TriangularPolyhedralSurface::Vertex_const_handle    Vertex_const_handle;
+  typedef typename TriangularPolyhedralSurface::Halfedge_const_handle  Halfedge_const_handle;
   typedef typename TriangularPolyhedralSurface::Traits::Vector_3 Vector_3;
   
   //contructor
-  Umbilic(Vertex_handle v_init,
-	  std::list<Halfedge_handle> contour_init); 
+  Umbilic(const Vertex_const_handle v_init,
+	  const std::list<Halfedge_const_handle> contour_init); 
   //access fct
-  const Vertex_handle vertex() const { return v;}
+  const Vertex_const_handle vertex() const { return v;}
   const Umbilic_type umbilic_type() const { return umb_type;}
   Umbilic_type& umbilic_type() { return umb_type;}
-  const std::list<Halfedge_handle>& contour_list() const { return contour;}
-  std::list<Halfedge_handle>& contour_list() { return contour;}
+  const std::list<Halfedge_const_handle>& contour_list() const { return contour;}
 
  protected:
-  Vertex_handle v;
+  const Vertex_const_handle v;
   Umbilic_type umb_type;
-  std::list<Halfedge_handle> contour;
+  const std::list<Halfedge_const_handle> contour;
 };
 
-//contructor
+//constructor
 template <class TriangularPolyhedralSurface>
 Umbilic<TriangularPolyhedralSurface>::
-Umbilic(Vertex_handle v_init,
-	std::list<Halfedge_handle> contour_init) 
+Umbilic(const Vertex_const_handle v_init,
+	const std::list<Halfedge_const_handle> contour_init) 
   : v(v_init), contour(contour_init) {} 
 
 
@@ -70,37 +66,40 @@ operator<<(std::ostream& out_stream, const Umbilic<TriangularPolyhedralSurface>&
 //T_PolyhedralSurf_neighbors to compute topological disk patches
 //around vertices
 //--------------------------------------------------------------------------
-template < class TriangularPolyhedralSurface, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
+template < class TriangularPolyhedralSurface, class OutputIt, 
+  class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
   class Umbilic_approximation
 {
  public:
   typedef typename TriangularPolyhedralSurface::Traits::FT       FT;
   typedef typename TriangularPolyhedralSurface::Traits::Vector_3 Vector_3;
-  typedef typename TriangularPolyhedralSurface::Vertex_handle    Vertex_handle;
-  typedef typename TriangularPolyhedralSurface::Halfedge_handle  Halfedge_handle;
-  typedef typename TriangularPolyhedralSurface::Facet_handle     Facet_handle;
-  typedef typename TriangularPolyhedralSurface::Facet_iterator   Facet_iterator;
-  typedef typename TriangularPolyhedralSurface::Vertex_iterator  Vertex_iterator;
+  typedef typename TriangularPolyhedralSurface::Vertex_const_handle    Vertex_const_handle;
+  typedef typename TriangularPolyhedralSurface::Halfedge_const_handle  Halfedge_const_handle;
+  typedef typename TriangularPolyhedralSurface::Facet_const_iterator   Facet_const_iterator;
+  typedef typename TriangularPolyhedralSurface::Vertex_const_iterator  Vertex_const_iterator;
 
   //requirements for the templates TriangularPolyhedralSurface and Vertex2FTPropertyMap or Vertex2VectorPropertyMap
-  BOOST_STATIC_ASSERT((boost::is_same<Vertex_handle, typename Vertex2FTPropertyMap::key_type>::value));
-  BOOST_STATIC_ASSERT((boost::is_same<Vertex_handle, typename Vertex2VectorPropertyMap::key_type>::value));
+  BOOST_STATIC_ASSERT((boost::is_same<Vertex_const_handle, typename Vertex2FTPropertyMap::key_type>::value));
+  BOOST_STATIC_ASSERT((boost::is_same<Vertex_const_handle, typename Vertex2VectorPropertyMap::key_type>::value));
   BOOST_STATIC_ASSERT((boost::is_same<FT, typename Vertex2FTPropertyMap::value_type>::value));
   BOOST_STATIC_ASSERT((boost::is_same<Vector_3, typename Vertex2VectorPropertyMap::value_type>::value));
 
   typedef Umbilic<TriangularPolyhedralSurface> Umbilic;
 
   //constructor : sets propertymaps and the poly_neighbors
-  Umbilic_approximation(TriangularPolyhedralSurface &P, 
-			Vertex2FTPropertyMap vertex2k1_pm, Vertex2FTPropertyMap vertex2k2_pm,
-			Vertex2VectorPropertyMap vertex2d1_pm, Vertex2VectorPropertyMap vertex2d2_pm);
+  Umbilic_approximation(const TriangularPolyhedralSurface& P, 
+			const Vertex2FTPropertyMap& vertex2k1_pm, 
+			const Vertex2FTPropertyMap& vertex2k2_pm,
+			const Vertex2VectorPropertyMap& vertex2d1_pm, 
+			const Vertex2VectorPropertyMap& vertex2d2_pm);
   //identify umbilics as vertices minimizing the function k1-k2 on
   //their patch and for which the index is not 0. We avoid
   //potential umbilics whose contours touch the border.
   OutputIt compute(OutputIt it, FT size);
 
  protected:
-  TriangularPolyhedralSurface* P;
+  const TriangularPolyhedralSurface& P;
+  
   typedef T_PolyhedralSurf_neighbors<TriangularPolyhedralSurface> Poly_neighbors;
   Poly_neighbors* poly_neighbors;
 
@@ -108,8 +107,8 @@ template < class TriangularPolyhedralSurface, class OutputIt, class Vertex2FTPro
   To_double<FT> To_double;
 
   //Property maps
-  Vertex2FTPropertyMap k1, k2;
-  Vertex2VectorPropertyMap d1, d2;
+  const Vertex2FTPropertyMap &k1, &k2;
+  const Vertex2VectorPropertyMap &d1, &d2;
 
   // index: following CW the contour, we choose an orientation for the
   // max dir of an arbitrary starting point, the max dir field is
@@ -123,14 +122,16 @@ template < class TriangularPolyhedralSurface, class OutputIt, class Vertex2FTPro
 
 template < class TriangularPolyhedralSurface, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
   Umbilic_approximation< TriangularPolyhedralSurface, OutputIt, Vertex2FTPropertyMap, Vertex2VectorPropertyMap >::
-Umbilic_approximation(TriangularPolyhedralSurface &P, 
-		      Vertex2FTPropertyMap vertex2k1_pm, Vertex2FTPropertyMap vertex2k2_pm,
-		      Vertex2VectorPropertyMap vertex2d1_pm, Vertex2VectorPropertyMap vertex2d2_pm)
-  : P(&P), k1(vertex2k1_pm), k2(vertex2k2_pm), 
+Umbilic_approximation(const TriangularPolyhedralSurface& P, 
+		      const Vertex2FTPropertyMap& vertex2k1_pm, 
+		      const Vertex2FTPropertyMap& vertex2k2_pm,
+		      const Vertex2VectorPropertyMap& vertex2d1_pm, 
+		      const Vertex2VectorPropertyMap& vertex2d2_pm)
+  : P(P), k1(vertex2k1_pm), k2(vertex2k2_pm), 
     d1(vertex2d1_pm), d2(vertex2d2_pm)
 {
   //check that the mesh is a triangular one.
-  Facet_iterator itb = P.facets_begin(), ite = P.facets_end();
+  Facet_const_iterator itb = P.facets_begin(), ite = P.facets_end();
   for(;itb!=ite;itb++) CGAL_precondition( itb->is_triangle() );
 
   poly_neighbors = new Poly_neighbors(P);
@@ -142,16 +143,16 @@ compute(OutputIt umbilics_it, FT size)
 {
   CGAL_precondition( size >= 1 );
   
-  std::vector<Vertex_handle> vces;
-  std::list<Halfedge_handle> contour;
+  std::vector<Vertex_const_handle> vces;
+  std::list<Halfedge_const_handle> contour;
   FT umbilicEstimatorVertex, umbilicEstimatorNeigh;
   
   bool is_umbilic = true;
 
   //MAIN loop on P vertices
-  Vertex_iterator itb = P->vertices_begin(), ite = P->vertices_end();
+  Vertex_const_iterator itb = P.vertices_begin(), ite = P.vertices_end();
   for (;itb != ite; itb++) {
-    Vertex_handle vh = itb;
+    Vertex_const_handle vh = itb;
     umbilicEstimatorVertex = cgal_abs(k1[vh]-k2[vh]);
     //reset vector, list and bool
     vces.clear();
@@ -163,7 +164,7 @@ compute(OutputIt umbilics_it, FT size)
     
     // avoid umbilics whose contours touch the border (Note may not be
     // desirable?)
-    typename std::list<Halfedge_handle>::iterator itb_cont = contour.begin(),
+    typename std::list<Halfedge_const_handle>::const_iterator itb_cont = contour.begin(),
       ite_cont = contour.end();
     for (; itb_cont != ite_cont; itb_cont++)
       if ( (*itb_cont)->is_border() ) {is_umbilic = false; continue;}
@@ -172,7 +173,7 @@ compute(OutputIt umbilics_it, FT size)
     //is v an umbilic?
     //a priori is_umbilic = true, and it switches to false as soon as a 
     //  neigh vertex has a lower umbilicEstimator value
-    typename std::vector<Vertex_handle>::iterator itbv = vces.begin(),
+    typename std::vector<Vertex_const_handle>::const_iterator itbv = vces.begin(),
       itev = vces.end();
     itbv++;
     for (; itbv != itev; itbv++)
@@ -197,8 +198,8 @@ compute_type(Umbilic& umb)
   Vector_3 dir, dirnext, normal;
   double cosinus, angle=0, angleSum=0;
   const double  pi=3.141592653589793;
-  Vertex_handle v;
-  typename std::list<Halfedge_handle>::iterator itb = umb.contour_list().begin(),
+  Vertex_const_handle v;
+  typename std::list<Halfedge_const_handle>::const_iterator itb = umb.contour_list().begin(),
     itlast = --umb.contour_list().end();
   v = (*itb)->vertex();
 

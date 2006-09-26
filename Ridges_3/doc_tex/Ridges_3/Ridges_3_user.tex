@@ -219,14 +219,14 @@ then it is called a
 \begin{figure}[!ht]
 \begin{ccTexOnly}
 \centerline{
-\includegraphics[width=.3\linewidth]{Ridges_3/lemon}
-\includegraphics[width=.3\linewidth]{Ridges_3/star}}
+\includegraphics[width=.5\linewidth]{Ridges_3/lemon}
+\includegraphics[width=.5\linewidth]{Ridges_3/star}}
 \end{ccTexOnly}
 \caption{Wedge and trisector umbilics.}
 \label{umbilics}
 \begin{ccHtmlOnly}
-<CENTER> <img border=0 src="./lemon.png" width=200>
- <img border=0 src="./star.png" width=200>
+<CENTER> <img border=0 src="./lemon.png" width=300>
+ <img border=0 src="./star.png" width=300>
 </CENTER>
 \end{ccHtmlOnly}
 \end{figure}
@@ -250,7 +250,7 @@ reported matches that of the ridges on the smooth surface. See
 As 0-level set of the extremality coefficients $b_0$ and $b_3$, ridges
 are extracted by a marching triangles algorithm \footnote{A marching
 triangles algorithm is similar to a marching cubes algorithm, excepted
-that a one-manifold is reported.}.
+that a one-manifold is reported on a two-manifold.}.
 %%
 %%on the surface.  
 %%
@@ -524,9 +524,8 @@ typedef Kernel::FT                      FT;
 typedef Kernel::Point_3                 Point_3;
 typedef Kernel::Vector_3                Vector_3;
 
-typedef PolyhedralSurf::Vertex          Vertex;
-typedef PolyhedralSurf::Vertex_handle   Vertex_handle;
-typedef PolyhedralSurf::Vertex_iterator Vertex_iterator;
+typedef PolyhedralSurf::Vertex_const_handle   Vertex_const_handle;
+typedef PolyhedralSurf::Vertex_const_iterator Vertex_const_iterator;
 
 typedef CGAL::Monge_via_jet_fitting<Kernel>    Monge_via_jet_fitting;
 typedef Monge_via_jet_fitting::Monge_form      Monge_form;

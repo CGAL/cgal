@@ -25,9 +25,8 @@ typedef Kernel::FT                      FT;
 typedef Kernel::Point_3                 Point_3;
 typedef Kernel::Vector_3                Vector_3;
 
-typedef PolyhedralSurf::Vertex          Vertex;
-typedef PolyhedralSurf::Vertex_handle   Vertex_handle;
-typedef PolyhedralSurf::Vertex_iterator Vertex_iterator;
+typedef PolyhedralSurf::Vertex_const_handle   Vertex_const_handle;
+typedef PolyhedralSurf::Vertex_const_iterator Vertex_const_iterator;
 
 typedef T_PolyhedralSurf_rings<PolyhedralSurf> Poly_rings;
 typedef CGAL::Monge_via_jet_fitting<Kernel>    Monge_via_jet_fitting;
@@ -46,8 +45,6 @@ typedef CGAL::Ridge_approximation < PolyhedralSurf,
 				    back_insert_iterator< std::vector<Ridge_line*> >,
 				    Vertex2FT_property_map,
 				    Vertex2Vector_property_map > Ridge_approximation;
-  
-
 //UMBILICS
 typedef CGAL::Umbilic<PolyhedralSurf> Umbilic;
 typedef CGAL::Umbilic_approximation < PolyhedralSurf,
@@ -82,12 +79,12 @@ Vertex2Vector_property_map vertex2d1_pm(vertex2d1_map), vertex2d2_pm(vertex2d2_m
    2. the exact number of rings to be used
    3. nothing is specified
 */
-void gather_fitting_points(Vertex* v, 
+void gather_fitting_points(Vertex_const_handle v, 
 			   std::vector<Point_3> &in_points,
 			   Poly_rings& poly_rings)
 {
   //container to collect vertices of v on the PolyhedralSurf
-  std::vector<Vertex*> gathered; 
+  std::vector<Vertex_const_handle> gathered; 
   //initialize
   in_points.clear();  
   
@@ -108,7 +105,7 @@ void gather_fitting_points(Vertex* v,
   }
      
   //store the gathered points
-  std::vector<Vertex*>::iterator 
+  std::vector<Vertex_const_handle>::const_iterator 
     itb = gathered.begin(), ite = gathered.end();
   CGAL_For_all(itb,ite) in_points.push_back((*itb)->point());
 }
@@ -122,10 +119,10 @@ void compute_differential_quantities(PolyhedralSurf& P, Poly_rings& poly_rings)
   std::vector<Point_3> in_points;
  
   //MAIN LOOP
-  Vertex_iterator vitb = P.vertices_begin(), vite = P.vertices_end();
+  Vertex_const_iterator vitb = P.vertices_begin(), vite = P.vertices_end();
   for (; vitb != vite; vitb++) {
     //initialize
-    Vertex* v = &(*vitb);
+    Vertex_const_handle v = vitb;
     in_points.clear();  
     Monge_form monge_form;
     Monge_form_condition_numbers monge_form_condition_numbers;
@@ -149,22 +146,22 @@ void compute_differential_quantities(PolyhedralSurf& P, Poly_rings& poly_rings)
     monge_form.comply_wrt_given_normal(normal_mesh);
        
     //Store monge data needed for ridge computations in property maps
-    vertex2d1_pm[v] = monge_form.d1();
-    vertex2d2_pm[v] = monge_form.d2();
-    vertex2k1_pm[v] = monge_form.coefficients()[0];
-    vertex2k2_pm[v] = monge_form.coefficients()[1];
-    vertex2b0_pm[v] = monge_form.coefficients()[2];
-    vertex2b3_pm[v] = monge_form.coefficients()[5];
+    vertex2d1_map[v] = monge_form.d1();
+    vertex2d2_map[v] = monge_form.d2();
+    vertex2k1_map[v] = monge_form.coefficients()[0];
+    vertex2k2_map[v] = monge_form.coefficients()[1];
+    vertex2b0_map[v] = monge_form.coefficients()[2];
+    vertex2b3_map[v] = monge_form.coefficients()[5];
     if ( d_monge >= 4) {
       //= 3*b1^2+(k1-k2)(c0-3k1^3)
-      vertex2P1_pm[v] =
+      vertex2P1_map[v] =
 	3*monge_form.coefficients()[3]*monge_form.coefficients()[3]
 	+(monge_form.coefficients()[0]-monge_form.coefficients()[1])
 	*(monge_form.coefficients()[6]
 	  -3*monge_form.coefficients()[0]*monge_form.coefficients()[0]
 	  *monge_form.coefficients()[0]); 
       //= 3*b2^2+(k2-k1)(c4-3k2^3)
-      vertex2P2_pm[v] = 
+      vertex2P2_map[v] = 
 	3*monge_form.coefficients()[4]*monge_form.coefficients()[4]
 	+(-monge_form.coefficients()[0]+monge_form.coefficients()[1])
 	*(monge_form.coefficients()[10]
@@ -173,7 +170,6 @@ void compute_differential_quantities(PolyhedralSurf& P, Poly_rings& poly_rings)
     }
   } //END FOR LOOP
 }
-
 
 int main()
 {  
@@ -202,23 +198,29 @@ int main()
   //---------------------------------------------------------------------------
   //Ridges
   //--------------------------------------------------------------------------
-  Ridge_approximation ridge_approximation(P, 
-					  vertex2k1_pm, vertex2k2_pm,
-					  vertex2b0_pm, vertex2b3_pm,
-					  vertex2P1_pm, vertex2P2_pm,
-					  vertex2d1_pm, vertex2d2_pm);
+  Ridge_approximation ridge_approximation_tag_3(P, 
+						vertex2k1_pm, vertex2k2_pm,
+						vertex2b0_pm, vertex2b3_pm,
+						vertex2d1_pm, vertex2d2_pm,
+						Vertex2FT_property_map(), 
+						Vertex2FT_property_map());
   std::vector<Ridge_line*> ridge_lines;
   back_insert_iterator<std::vector<Ridge_line*> > ii(ridge_lines);
   
   //Find BLUE_RIDGE, RED_RIDGE, CREST or all ridges
-  ridge_approximation.compute_ridges(CGAL::BLUE_RIDGE, ii, tag_order);  
-  ridge_approximation.compute_ridges(CGAL::RED_RIDGE, ii, tag_order);  
-  ridge_approximation.compute_ridges(CGAL::CREST_RIDGE, ii, tag_order);  
-  ridge_approximation.compute_all_ridges(ii, tag_order);  
+  ridge_approximation_tag_3.compute_ridges(CGAL::BLUE_RIDGE, ii);  
+  ridge_approximation_tag_3.compute_ridges(CGAL::RED_RIDGE, ii);  
+  ridge_approximation_tag_3.compute_ridges(CGAL::CREST_RIDGE, ii);  
+  ridge_approximation_tag_3.compute_all_ridges(ii);  
  
   std::cout << "Compute ridges with tag_4" << std::endl;
   tag_order = Ridge_approximation::Tag_4;
    //Find BLUE_RIDGE, RED_RIDGE, CREST or all ridges
+  Ridge_approximation ridge_approximation(P, 
+					  vertex2k1_pm, vertex2k2_pm,
+					  vertex2b0_pm, vertex2b3_pm,
+					  vertex2d1_pm, vertex2d2_pm,
+					  vertex2P1_pm, vertex2P2_pm );
   ridge_approximation.compute_ridges(CGAL::BLUE_RIDGE, ii, tag_order);  
   ridge_approximation.compute_ridges(CGAL::RED_RIDGE, ii, tag_order);  
   ridge_approximation.compute_ridges(CGAL::CREST_RIDGE, ii, tag_order);  
@@ -246,7 +248,7 @@ int main()
   std::cout << "nb of umbilics " << umbilics.size() << std::endl;
   for (;iter_umb!=iter_umb_end;iter_umb++) std::cout << **iter_umb;
  
- std::cout << "success\n";
+  std::cout << "success\n";
 
   return 1;
 }

@@ -52,16 +52,21 @@ hyperbolic ridges.}
 \ccCreation
 \ccCreationVariable{ridge_approximation}  %% choose variable name, given by \ccVar
 
-\ccConstructor{Ridge_approximation(TriangularPolyhedralSurface &P,     
-			Vertex2FTPropertyMap& vertex2k1_pm,
-		      Vertex2FTPropertyMap& vertex2k2_pm,
-		      Vertex2FTPropertyMap& vertex2b0_pm,
-		      Vertex2FTPropertyMap& vertex2b3_pm,
-		      Vertex2FTPropertyMap& vertex2P1_pm,
-		      Vertex2FTPropertyMap& vertex2P2_pm,
-		      Vertex2VectorPropertyMap& vertex2d1_pm,
-		      Vertex2VectorPropertyMap& vertex2d2_pm);}
-		      {Precondition : all faces of P may be  triangular. }
+\ccConstructor{Ridge_approximation(const TriangularPolyhedralSurface &P,
+		      const Vertex2FTPropertyMap& vertex2k1_pm, const
+		      Vertex2FTPropertyMap& vertex2k2_pm, const
+		      Vertex2FTPropertyMap& vertex2b0_pm, const
+		      Vertex2FTPropertyMap& vertex2b3_pm, const
+		      Vertex2VectorPropertyMap& vertex2d1_pm, const
+		      Vertex2VectorPropertyMap& vertex2d2_pm, const
+		      Vertex2FTPropertyMap& vertex2P1_pm, const
+		      Vertex2FTPropertyMap& vertex2P2_pm);}
+		      {Precondition : all faces of P must be
+		      triangular. \\ The two last property maps may
+		      not be used if computations are performed with
+		      the parameter \ccc{Tag_3}, in which case these
+		      property maps shall be initialized with their
+		      default constructors.}
 
 %\ccOperations
 
@@ -76,22 +81,6 @@ hyperbolic ridges.}
 \ccSeeAlso
 
 \ccc{Ridge_line}
-
-%\ccExample
-
-%A short example program.
-%Instead of a short program fragment, a full running program can be
-%included using the 
-%\verb|\ccIncludeExampleCode{Jet_fitting_3/Ridge_approximation.cpp}| 
-%macro. The program example would be part of the source code distribution and
-%also part of the automatic test suite.
-
-%\begin{ccExampleCode}
-%void your_example_code() {
-%}
-%\end{ccExampleCode}
-
-%% \ccIncludeExampleCode{Jet_fitting_3/Ridge_approximation.cpp}
 
 \end{ccRefClass}
 

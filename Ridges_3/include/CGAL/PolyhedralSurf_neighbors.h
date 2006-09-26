@@ -18,22 +18,23 @@ public:
   typedef typename TriangularPolyhedralSurface::Traits::FT       FT;
   typedef typename TriangularPolyhedralSurface::Traits::Vector_3 Vector_3;
   typedef typename TriangularPolyhedralSurface::Traits::Point_3  Point_3;
-  typedef typename TriangularPolyhedralSurface::Vertex_handle    Vertex_handle;
-  typedef typename TriangularPolyhedralSurface::Halfedge_handle  Halfedge_handle;
+  typedef typename TriangularPolyhedralSurface::Vertex_const_handle    Vertex_const_handle;
+  typedef typename TriangularPolyhedralSurface::Halfedge_const_handle  Halfedge_const_handle;
  
-  T_Gate( Vertex_handle v, Halfedge_handle he);
+  T_Gate(const Vertex_const_handle v, const Halfedge_const_handle he);
   FT& d() { return m_d;}
   const FT d() const { return m_d;}            
-  Halfedge_handle he() { return m_he;}
+  const Halfedge_const_handle he() { return m_he;}
 
 private:
   FT m_d;
-  Halfedge_handle m_he;
+  Halfedge_const_handle m_he;
 };
 
 //////////////IMPLEMENTATION//////////////////////////
 template < class TriangularPolyhedralSurface > 
-T_Gate<TriangularPolyhedralSurface>::T_Gate( Vertex_handle v, Halfedge_handle he)
+T_Gate<TriangularPolyhedralSurface>::T_Gate(const Vertex_const_handle v, 
+					    const Halfedge_const_handle he)
   : m_he(he)
 {
   Point_3 p0 = v->point(),
@@ -51,7 +52,7 @@ T_Gate<TriangularPolyhedralSurface>::T_Gate( Vertex_handle v, Halfedge_handle he
 
 //---------------------------------------------------------------------------
 // functor for priority queue
-// order so than the top element is the smallest in the queue
+// order so that the top element is the smallest in the queue
 //---------------------------------------------------------------------------
 template<class g>
 struct compare_gates 
@@ -74,65 +75,65 @@ public:
   typedef typename TriangularPolyhedralSurface::Traits::FT        FT;
   typedef typename TriangularPolyhedralSurface::Traits::Vector_3  Vector_3;
   typedef typename TriangularPolyhedralSurface::Traits::Point_3   Point_3;
-  typedef typename TriangularPolyhedralSurface::Vertex_handle     Vertex_handle;
-  typedef typename TriangularPolyhedralSurface::Halfedge_handle   Halfedge_handle;
-  typedef typename TriangularPolyhedralSurface::Halfedge_around_vertex_circulator
-  Halfedge_around_vertex_circulator;
-  typedef typename TriangularPolyhedralSurface::Vertex_iterator   Vertex_iterator;
+  typedef typename TriangularPolyhedralSurface::Vertex_const_handle     Vertex_const_handle;
+  typedef typename TriangularPolyhedralSurface::Halfedge_const_handle   Halfedge_const_handle;
+  typedef typename TriangularPolyhedralSurface::Halfedge_around_vertex_const_circulator
+  Halfedge_around_vertex_const_circulator;
+  typedef typename TriangularPolyhedralSurface::Vertex_const_iterator   Vertex_const_iterator;
   typedef T_Gate<TriangularPolyhedralSurface> Gate;
 
-  T_PolyhedralSurf_neighbors(TriangularPolyhedralSurface& P);
+  T_PolyhedralSurf_neighbors(const TriangularPolyhedralSurface& P);
   // vertex_neigh stores the vertex v and its 1Ring neighbors contour
   // stores halfedges, oriented CW, following the 1Ring disk border
   // OneRingSize is the max distance from v to its OneRing
   // neighbors. (the tag is_visited is not mofified)
-  void compute_one_ring(Vertex_handle v,
-			std::vector<Vertex_handle> &vertex_neigh,
-			std::list<Halfedge_handle> &contour,
+  void compute_one_ring(const Vertex_const_handle v,
+			std::vector<Vertex_const_handle> &vertex_neigh,
+			std::list<Halfedge_const_handle> &contour,
 			FT &OneRingSize);
   // call compute_one_ring and expand the contour (circle of halfedges
   // CW), vertex_neigh are vertices on and inside the contour (there
   // tag is_visited is set to true, but reset to false at the end),
   // size is such that gates with distance less than size*OneRingSize
   // are processed
-  void compute_neighbors(Vertex_handle v,
-			 std::vector<Vertex_handle> &vertex_neigh,
-			 std::list<Halfedge_handle> &contour,
-			 FT size); 
+  void compute_neighbors(const Vertex_const_handle v,
+			 std::vector<Vertex_const_handle> &vertex_neigh,
+			 std::list<Halfedge_const_handle> &contour,
+			 const FT size); 
   //vertex tags is_visited are set to false
-  void reset_is_visited_map(std::vector<Vertex_handle> &vces);
+  void reset_is_visited_map(std::vector<Vertex_const_handle> &vces);
 
  protected:
   //tag to visit vertices
   struct Vertex_cmp{//comparison is wrt vertex addresses
-    bool operator()(Vertex_handle a,  Vertex_handle b) const{
+    bool operator()(const Vertex_const_handle a, const Vertex_const_handle b) const{
       return &*a < &*b;
     }
   };
-  typedef std::map<Vertex_handle, bool, Vertex_cmp> Vertex2bool_map_type;
-  Vertex2bool_map_type is_visited_map;
+  typedef std::map<Vertex_const_handle, bool, Vertex_cmp> Vertex2bool_map;
+  Vertex2bool_map is_visited_map;
 };
 
 //////////////IMPLEMENTATION//////////////////////////
 template < class TriangularPolyhedralSurface >
 T_PolyhedralSurf_neighbors < TriangularPolyhedralSurface >::
-T_PolyhedralSurf_neighbors(TriangularPolyhedralSurface& P)
+T_PolyhedralSurf_neighbors(const TriangularPolyhedralSurface& P)
 {
   //init the is_visited_map
-  Vertex_iterator itb = P.vertices_begin(), ite = P.vertices_end();
+  Vertex_const_iterator itb = P.vertices_begin(), ite = P.vertices_end();
   for(;itb!=ite;itb++) is_visited_map[itb] = false; 
 }
 
 template < class TriangularPolyhedralSurface >
 void T_PolyhedralSurf_neighbors < TriangularPolyhedralSurface >::
-compute_one_ring(Vertex_handle v,
-		      std::vector<Vertex_handle> &vertex_neigh,
-		      std::list<Halfedge_handle> &contour,
-		      FT &OneRingSize)
+compute_one_ring(const Vertex_const_handle v,
+		 std::vector<Vertex_const_handle> &vertex_neigh,
+		 std::list<Halfedge_const_handle> &contour,
+		 FT &OneRingSize)
 {
-  typedef typename std::list<Halfedge_handle>::iterator list_it;
+  typedef typename std::list<Halfedge_const_handle>::const_iterator list_it;
   vertex_neigh.push_back(v);
-  Halfedge_around_vertex_circulator he_circ = v->vertex_begin(), 
+  Halfedge_around_vertex_const_circulator he_circ = v->vertex_begin(), 
                                     he_end = he_circ;
   do {
       if ( he_circ->is_border() )//then he and he->next follow the contour CW
@@ -145,7 +146,7 @@ compute_one_ring(Vertex_handle v,
 
   //compute OneRingSize = distance(v, 1Ring)
   OneRingSize = 0;
-  typename std::vector<Vertex_handle>::iterator itb = vertex_neigh.begin(),
+  typename std::vector<Vertex_const_handle>::const_iterator itb = vertex_neigh.begin(),
     ite = vertex_neigh.end();
   itb++;//the first vertex v is the center to which distances are
 	//computed from, for other 1ring neighbors
@@ -163,22 +164,22 @@ compute_one_ring(Vertex_handle v,
 
 template < class TriangularPolyhedralSurface >
 void T_PolyhedralSurf_neighbors < TriangularPolyhedralSurface >::
-compute_neighbors(Vertex_handle v,
-		   std::vector<Vertex_handle> &vertex_neigh,
-		   std::list<Halfedge_handle> &contour,
-		   FT size)  
+compute_neighbors(const Vertex_const_handle v,
+		  std::vector<Vertex_const_handle> &vertex_neigh,
+		  std::list<Halfedge_const_handle> &contour,
+		  const FT size)  
 {
   FT OneRingSize;
   compute_one_ring(v, vertex_neigh, contour, OneRingSize);
-  FT d_max = OneRingSize*size;
+  const FT d_max = OneRingSize*size;
   std::priority_queue< Gate, std::vector< Gate >, compare_gates< Gate > > GatePQ;
   // tag neighbors 
-  typename std::vector<Vertex_handle>::iterator itbv = vertex_neigh.begin(),
+  typename std::vector<Vertex_const_handle>::const_iterator itbv = vertex_neigh.begin(),
     itev = vertex_neigh.end();
   for (; itbv != itev; itbv++) is_visited_map.find(*itbv)->second = true;
 
   // init GatePQ
-  typename std::list<Halfedge_handle>::iterator itb = contour.begin(),
+  typename std::list<Halfedge_const_handle>::const_iterator itb = contour.begin(),
                                        ite = contour.end();
   for (; itb != ite; itb++) {
     if (!( (*itb)->is_border() )) GatePQ.push(Gate(v, *itb));
@@ -188,29 +189,13 @@ compute_neighbors(Vertex_handle v,
   FT d_current = firstGate.d();
   // main loop
   while ( !GatePQ.empty() && d_current <= d_max ) {
- 
-/*   //debug check if the contour is closed  	  */
-/*         typename std::list<Halfedge_handle>::iterator itbc = contour.begin(), 	  */
-/*                                            itec = contour.end(), 	  */
-/*         h_cur, h_next; 	  */
-/*       for (; itbc != itec; itbc++) 	  */
-/*         { 	  */
-/*           h_cur = itbc; 	  */
-/*           if ( h_cur != (--contour.end()) ) {h_next = ++h_cur; h_cur--;} 	  */
-/*           else h_next = contour.begin(); 	  */
-/*           assert( (*h_cur)->vertex() == (*h_next)->opposite()->vertex() ); 	  */
-/*         //cout << endl << &**itbc ; 	  */
-/*       } 	  */
-/*   //debug  	  */
-/*     //cout << endl; cout << endl; */
-
     Gate gate = GatePQ.top();
     GatePQ.pop();
     d_current = gate.d();
-    Halfedge_handle he = gate.he(), he1, he2;
-    Vertex_handle v1;
+    Halfedge_const_handle he = gate.he(), he1, he2;
+    Vertex_const_handle v1;
     // find the gate on the contour
-    typename std::list<Halfedge_handle>::iterator pos_he, pos_prev, pos_next, iter;
+    typename std::list<Halfedge_const_handle>::iterator pos_he, pos_prev, pos_next, iter;
    
     pos_he = find(contour.begin(), contour.end(), he);
     iter = pos_he;
@@ -284,9 +269,9 @@ compute_neighbors(Vertex_handle v,
 
 template < class TriangularPolyhedralSurface >
 void T_PolyhedralSurf_neighbors < TriangularPolyhedralSurface >::
-reset_is_visited_map(std::vector<Vertex_handle> &vces)
+reset_is_visited_map(std::vector<Vertex_const_handle> &vces)
 {
-  typename std::vector<Vertex_handle>::iterator 
+  typename std::vector<Vertex_const_handle>::const_iterator 
     itb = vces.begin(), ite = vces.end();
   for (;itb != ite; itb++) is_visited_map[*itb] = false;
 }
