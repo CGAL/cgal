@@ -420,8 +420,8 @@ int main(const int argnr, const char **argv) {
   // int -> double -> rational
   std::string message;
   if (!create_derivatives<int>(path, file, dir, message))
-    if (!create_derivatives<Rational>(path, file, dir, message))
-      if (!create_derivatives<double>(path, file, dir, message)) {
+    if (!create_derivatives<double>(path, file, dir, message))
+      if (!create_derivatives<Rational>(path, file, dir, message)) {
 	// Here, the MPS-file must be ill-formatted.
 	std::cerr << "  " << message << "\n";
 	return 2;

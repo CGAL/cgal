@@ -143,23 +143,23 @@ Processing:    test_solver_data/masters/cgal/PRIMALC1.mps
 Processing:    test_solver_data/derivatives/b_float_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -10001(2) -10001(2) -10001(2) -10001(2) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/b_float_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -10001(2) -10001(2) -10001(2) -10001(2) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/b_float_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -10001(2) -10001(2) -10001(2) -10001(2) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/b_float_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -10001(2) -10001(2) -10001(2) -10001(2) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/b_float_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -10001(2) -10001(2) -10001(2) -10001(2) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/b_float_free.mps
  Strategy:     fe
  Verbosity:    0
@@ -1323,23 +1323,23 @@ Processing:    test_solver_data/masters/cgal/QPTEST.mps
 Processing:    test_solver_data/derivatives/b_float_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -10001(2) -10001(2) -10001(2) -10001(2) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/b_float_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -10001(2) -10001(2) -10001(2) -10001(2) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/b_float_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -10001(2) -10001(2) -10001(2) -10001(2) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/b_float_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -10001(2) -10001(2) -10001(2) -10001(2) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/b_float_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -10001(2) -10001(2) -10001(2) -10001(2) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/b_float_free.mps
  Strategy:     fe
  Verbosity:    0
@@ -1363,23 +1363,23 @@ Processing:    test_solver_data/derivatives/b_float_free.mps
 Processing:    test_solver_data/derivatives/b_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -10001(2) -10001(2) -10001(2) -10001(2) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/b_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -10001(2) -10001(2) -10001(2) -10001(2) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/b_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -10001(2) -10001(2) -10001(2) -10001(2) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/b_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -10001(2) -10001(2) -10001(2) -10001(2) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/b_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -10001(2) -10001(2) -10001(2) -10001(2) 
+ Solution:   -10000(2) -10000(2) -10000(2) -10000(2) 
 Processing:    test_solver_data/derivatives/b_free.mps
  Strategy:     fe
  Verbosity:    0
