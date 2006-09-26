@@ -27,6 +27,7 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/functional.h>
 #include <CGAL/function_objects.h>
+#include <CGAL/QP_solver/iterator.h>
 #include <vector>
 
 CGAL_BEGIN_NAMESPACE
@@ -75,9 +76,12 @@ public:
   typedef Indices::const_iterator    
   Index_const_iterator;
 
+  typedef Transform_diff_const_iterator<int, Identity <int> >
+  Original_index_const_iterator; 
+
   typedef typename QP_solution_detail::Value_by_index<ET> Value_by_index;
 
-  typedef Join_input_iterator_1< Index_const_iterator,Value_by_index >
+  typedef Join_input_iterator_1< Original_index_const_iterator,Value_by_index >
   Variable_numerator_iterator;
 
   typedef  Join_input_iterator_1< Variable_numerator_iterator,

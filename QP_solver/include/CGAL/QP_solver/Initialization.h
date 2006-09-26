@@ -87,12 +87,6 @@ set(const Q& qp)
   set_D(qp, Is_linear());
   qp_r = qp.r();
   
-  // store original variable indices (hack needed to allow
-  // access to original variable values through Join_iterator_1
-  // BG: GET RID OF THIS!!
-  O.reserve(qp_n);
-  for (int i=0; i<qp_n; ++i) O.push_back(i);
-
   // set up slack variables and auxiliary problem
   // --------------------------------------------
 

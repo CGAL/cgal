@@ -24,6 +24,7 @@
 #define CGAL_QP_SOLVER_ITERATOR_H
 
 #include <CGAL/basic.h>
+#include <CGAL/QP_solver/basic.h>
 #include <map>
 
 CGAL_BEGIN_NAMESPACE
@@ -56,8 +57,8 @@ public:
     : map (m), key (0), d (v)
   { }
   
-  const Val*  operator *  ( ) const { return at(key); }
-  const Val&  operator -> ( ) const { return &at(key); }
+  const Val&  operator *  ( ) const { return at(key); }
+  const Val*  operator -> ( ) const { return &at(key); }
   
   // equality operator
   bool       operator == ( const Self& x) const { return ( key==x.key); }
@@ -104,6 +105,74 @@ private:
       return d;
   }
 }; 
+
+
+// this is a random access iterator that is dereferenced by applying
+// a fixed operation to its difference from a fixed Diff value
+// -----------------------------------------------------------------
+
+template <class Diff, class Op>
+class Transform_diff_const_iterator {
+public:
+  // types
+  typedef  std::random_access_iterator_tag    iterator_category;
+  typedef  Diff                               difference_type;
+  typedef  typename Op::result_type           value_type;
+  typedef  value_type*                        pointer;
+  typedef  value_type&                        reference;
+  
+  typedef  Transform_diff_const_iterator      Self;
+  typedef  value_type                         Val;
+
+  // construction
+  Transform_diff_const_iterator ( )
+    : base_diff(), diff(), op()
+  {}
+
+  Transform_diff_const_iterator (Diff n)
+    : base_diff(n), diff(n), op()
+  { }
+  
+  const Val&  operator *  ( ) const { return op(diff-base_diff); }
+  // const Val*  operator -> ( ) const { return op(diff-base_diff); }
+  
+  // equality operator
+  bool       operator == ( const Self& x) const { return ( diff==x.diff); }
+  bool       operator != ( const Self& x) const { return ( diff!=x.diff); }
+  
+  // forward operations
+  // ------------------
+  Self&      operator ++ (    ) {                   ++diff; return *this; }
+  Self       operator ++ ( int) { Self tmp = *this; ++diff; return tmp;   }
+  
+  // bidirectional operations
+  // ------------------------
+  Self&      operator -- (    ) {                   --diff; return *this; }
+  Self       operator -- ( int) { Self tmp = *this; --diff; return tmp;   }
+  
+  // random access operations
+  // ------------------------
+  // access
+  const Val& operator [] ( Diff i) const { return op(i-base_diff); }
+  
+  // less operator
+  bool       operator <  ( const Self& x) const { return ( diff < x.diff);}
+  
+  // arithmetic operations
+  Self&      operator += ( Diff n) { diff += n; return *this; }
+  Self&      operator -= ( Diff n) { diff -= n; return *this; }
+  
+  Self       operator +  ( Diff n) const { Self tmp = *this; return tmp+=n; }
+  Self       operator -  ( Diff n) const { Self tmp = *this; return tmp-=n; }
+  
+  Diff       operator -  ( const Self& x) const { return diff - x.diff; }
+  
+private:
+  Diff base_diff;
+  Diff diff;
+  Op op;
+};
+ 
 
 CGAL_END_NAMESPACE
 
