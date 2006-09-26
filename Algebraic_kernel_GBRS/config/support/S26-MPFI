@@ -17,22 +17,18 @@
 //
 // Author(s)     : Luis Peñaranda <penarand@loria.fr>
 
-#ifndef CGAL_GBRS_SOLVE_1_H
-#define CGAL_GBRS_SOLVE_1_H
+# interval library (http://perso.ens-lyon.fr/nathalie.revol/software.html)
 
-#include <mpfi.h>
-#include <CGAL/Gbrs_polynomial_1.h>
+DESCRIPTION = 
+PROVIDES = MPFI
+CXXFLAGS = 
+LDFLAGS = 
+LIBS = mpfi
+REQUIRES = GMP MPFR DOLLAR_MPFI_INCL_DIR
+INCOMPATIBLE = 
+STDINCLDIRS = ${MPFI_INCL_DIR}
+INCLTHING = 
+STDLIBDIRS = ${MPFI_LIB_DIR}
+LIBTHING = 
 
-CGAL_BEGIN_NAMESPACE
-// both functions return the number of roots, -1 if it is infinite and -2 if
-// there were an error
-
-// solve given the precision
-int solve_1 (mpfi_t *&, const Rational_polynomial_1 &, unsigned int);
-
-// solve with the default precision
-int solve_1 (mpfi_t *&, const Rational_polynomial_1 &);
-
-CGAL_END_NAMESPACE
-
-#endif	// CGAL_GBRS_SOLVE_1_H
+# EOF

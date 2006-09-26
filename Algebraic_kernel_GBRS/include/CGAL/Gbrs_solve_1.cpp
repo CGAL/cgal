@@ -1,3 +1,22 @@
+// Copyright (c) 2006 Inria Lorraine (France). All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL:  $
+// $Id:  $
+// 
+//
+// Author(s)     : Luis Peñaranda <penarand@loria.fr>
+
 // this file is based on the RS original example, rs_demo_mp.c
 
 #include <gmp.h>
@@ -47,19 +66,16 @@ void create_rs_upoly(mpq_t *poly, const int deg) {
 	rs_import_uppring ("T");
 	ident_pol = rs_get_default_up ();
 	for (i=0; i<deg+1; i++) {
+		ident_mon = rs_export_new_mon_upp_bz ();
+		ident_coeff = rs_export_new_gmp ();
 		CGAL_assertion_msg
 			(mpz_cmp_ui (mpq_denref (poly[deg-i]), 1) == 0,
-			 "by now, RS works only with integer coefficients");
-		// don't add the monomial if the coefficient is zero!
-		if (mpq_cmp_ui (poly[deg-i], 0, 1) != 0) {
-			ident_mon = rs_export_new_mon_upp_bz ();
-			ident_coeff = rs_export_new_gmp ();
-			rs_import_bz_gmp
-				(ident_coeff,
-				 TO_RSPTR_IN (mpq_numref (poly[deg-i])));
-			rs_dset_mon_upp_bz (ident_mon, ident_coeff, i);
-			rs_dappend_list_mon_upp_bz (ident_pol, ident_mon);
-		}
+			"by now, RS works only with integer coefficients");
+		rs_import_bz_gmp
+			(ident_coeff, TO_RSPTR_IN (mpq_numref (poly[deg-i])));
+		//rs_import_bz_gmp (ident_coeff, TO_RSPTR_IN (&(poly[deg-i])));
+		rs_dset_mon_upp_bz (ident_mon, ident_coeff, i);
+		rs_dappend_list_mon_upp_bz (ident_pol, ident_mon);
 	}
 }
 

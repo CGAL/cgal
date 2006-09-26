@@ -1,3 +1,22 @@
+// Copyright (c) 2006 Inria Lorraine (France). All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL:  $
+// $Id:  $
+// 
+//
+// Author(s)     : Luis Peñaranda <penarand@loria.fr>
+
 #ifndef GBRS_FUNCTORS_H
 #define GBRS_FUNCTORS_H
 
@@ -29,6 +48,28 @@ class Construct_polynomial_1 {
 		Polynomial_1 p (elements - 1);
 		for (it = first; it != last; ++it)
 			p.set_coef (--elements, *it);
+		return p;
+	};
+
+	template <class InputIterator1, class InputIterator2>
+	Polynomial_1 operator()
+		(InputIterator1 first_coeff, InputIterator1 last_coeff,
+		InputIterator2 deg) {
+		// the degree of the polynomial will be the greater degree
+		unsigned int greater = 0;
+		InputIterator1 c;
+		InputIterator2 d = deg;
+		for (c = first_coeff; c != last_coeff; ++c) {
+			if (d > greater)
+				greater = d;
+			++d;
+		}
+		// now, construct the polynomial of degree d
+		Polynomial_1 p (d);
+		for (c = first_coeff; c != last_coeff; ++c) {
+			p.set_coef (deg, *c);
+			++deg;
+		}
 		return p;
 	};
 };	// Construct_polynomial_1

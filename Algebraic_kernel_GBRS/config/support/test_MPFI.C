@@ -17,22 +17,20 @@
 //
 // Author(s)     : Luis Peñaranda <penarand@loria.fr>
 
-#ifndef CGAL_GBRS_SOLVE_1_H
-#define CGAL_GBRS_SOLVE_1_H
+// Tests if MPFI is available.
 
-#include <mpfi.h>
-#include <CGAL/Gbrs_polynomial_1.h>
+#include <iostream>
+#include "gmp.h"
+#include "mpfi.h"
+#include "mpfi_io.h"
 
-CGAL_BEGIN_NAMESPACE
-// both functions return the number of roots, -1 if it is infinite and -2 if
-// there were an error
+int main()
+{
+	mpfi_t a, b;	// declare two intervals
+	mpfi_init_set_si (a, 100);	// initialize & set a
+	mpfi_init (b);	// initialize b
 
-// solve given the precision
-int solve_1 (mpfi_t *&, const Rational_polynomial_1 &, unsigned int);
+	mpfi_div_si (b, a, 3);	// b=a/3
 
-// solve with the default precision
-int solve_1 (mpfi_t *&, const Rational_polynomial_1 &);
-
-CGAL_END_NAMESPACE
-
-#endif	// CGAL_GBRS_SOLVE_1_H
+	return 0;
+}
