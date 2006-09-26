@@ -20,9 +20,9 @@ int main ()
 #include "arr_rational_nt.h"
 #include "point_location_utils.h"
 
-typedef CGAL::Cartesian<Number_type>                  Kernel;
-typedef CGAL::Arr_segment_traits_2<Kernel>            Traits_2;
-typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
+typedef CGAL::Cartesian<Number_type>                    Kernel;
+typedef CGAL::Arr_segment_traits_2<Kernel>              Traits_2;
+typedef CGAL::Arrangement_2<Traits_2>                   Arrangement_2;
 
 int main ()
 {
