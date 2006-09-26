@@ -70,7 +70,7 @@ public:
   Indices;
 
   typedef Indices::iterator    
-  Index_iterator;
+  Index_mutable_iterator;
 
   typedef Indices::const_iterator    
   Index_const_iterator;
@@ -91,8 +91,16 @@ public:
   virtual Quotient<ET> solution() const = 0;
   virtual QP_status status() const = 0;
   virtual ET variable_value (int i) const = 0; 
-  virtual Variable_value_iterator variable_values_begin() const = 0;
-  virtual Variable_value_iterator variable_values_end() const = 0;
+  virtual Variable_value_iterator original_variable_values_begin() const = 0;
+  virtual Variable_value_iterator original_variable_values_end() const = 0;
+  virtual Index_const_iterator 
+  basic_original_variable_indices_begin() const = 0;
+  virtual Index_const_iterator 
+  basic_original_variable_indices_end() const = 0;
+  virtual int number_of_basic_original_variables() const = 0;
+  virtual Index_const_iterator basic_constraint_indices_begin() const = 0;
+  virtual Index_const_iterator basic_constraint_indices_end() const = 0;
+  virtual int number_of_basic_constraints() const = 0;
   virtual bool is_valid() const = 0;
 
   // destruction (overridden by QP_solver)
@@ -112,9 +120,12 @@ private:
     return (*(this->Ptr()))->variable_value(i);
   }
 public:
-  // types
+  // interface types
   typedef typename QP_solver_base<ET>::Variable_value_iterator
   Variable_value_iterator;
+
+  typedef typename QP_solver_base<ET>::Index_const_iterator
+  Index_iterator;
 
   // methods
   QP_solution ()
@@ -139,12 +150,42 @@ public:
 
   Variable_value_iterator variable_values_begin() const
   {
-    return (*(this->Ptr()))->variable_values_begin();
+    return (*(this->Ptr()))->original_variable_values_begin();
   }
 
   Variable_value_iterator variable_values_end() const
   {
-    return (*(this->Ptr()))->variable_values_end();
+    return (*(this->Ptr()))->original_variable_values_end();
+  }
+
+  Index_iterator basic_variable_indices_begin() const
+  {
+    return (*(this->Ptr()))->basic_original_variable_indices_begin();
+  }
+
+  Index_iterator basic_variable_indices_end() const
+  {
+    return (*(this->Ptr()))->basic_original_variable_indices_end();
+  }
+
+  int number_of_basic_variables() const
+  {
+    return (*(this->Ptr()))->number_of_basic_original_variables();
+  }
+
+  Index_iterator basic_constraint_indices_begin() const
+  {
+    return (*(this->Ptr()))->basic_constraint_indices_begin();
+  }
+
+  Index_iterator basic_constraint_indices_end() const
+  {
+    return (*(this->Ptr()))->basic_constraint_indices_end();
+  }
+
+  int number_of_basic_constraints() const
+  {
+    return (*(this->Ptr()))->number_of_basic_constraints();
   }
 
   bool is_valid() const

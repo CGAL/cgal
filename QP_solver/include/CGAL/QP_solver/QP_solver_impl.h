@@ -132,22 +132,25 @@ solution_numerator( ) const
       if (is_QP) {
 	// quadratic part
 	i=0;
-	for (Variable_numerator_iterator i_it = variables_numerator_begin(); 
-	     i_it < variables_numerator_end(); ++i_it, ++i) {
+	for (Variable_numerator_iterator 
+	       i_it = original_variables_numerator_begin(); 
+	     i_it < original_variables_numerator_end(); ++i_it, ++i) {
 	  // do something only if *i_it != 0
 	  if (*i_it == et0) continue;
 	  s = et0; // contribution of i-th row
 	  j=0; 
-	  for (Variable_numerator_iterator j_it = variables_numerator_begin(); 
-	       j_it < variables_numerator_end(); ++j_it, ++j)
+	  for (Variable_numerator_iterator 
+		 j_it = original_variables_numerator_begin(); 
+	       j_it < original_variables_numerator_end(); ++j_it, ++j)
 	    s += ET(qp_D[i][j]) * *j_it;
 	  z += s * *i_it;
 	}
       }
       // linear part
       j=0; s = et0;
-      for (Variable_numerator_iterator j_it = variables_numerator_begin();
-	   j_it < variables_numerator_end(); ++j_it, ++j)
+      for (Variable_numerator_iterator 
+	     j_it = original_variables_numerator_begin();
+	   j_it < original_variables_numerator_end(); ++j_it, ++j)
 	s +=  ET(qp_c[j]) * *j_it;
       z += d * s;
     }

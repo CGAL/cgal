@@ -84,12 +84,32 @@ int main(const int argNr,const char **args) {
     cout << "Objective function value: " << 
       CGAL::to_double(s.solution()) << endl;     
      
-  //   cout << "Variable values:" << endl;
-//     Solution::Variable_value_iterator it 
-//       = s.variable_values_begin() ;
-//     for (unsigned int i=0; i < qp.n(); ++it, ++i)
-//       cout << "  " << qp.name_of_variable(i) << " = "
-// 	   << CGAL::to_double(*it) << endl;
+    cout << "Variable values:" << endl;
+    Solution::Variable_value_iterator vit = 
+      s.variable_values_begin() ;
+    for (unsigned int i=0; i < qp.n(); ++vit, ++i)
+      cout << "  " << qp.name_of_variable(i) << " = "
+	   << CGAL::to_double(*vit) << endl;
+
+    cout << "Basic variables (index, value):" << endl;
+    Solution::Index_iterator iit = 
+      s.basic_variable_indices_begin();
+    vit = s.variable_values_begin();
+    for ( ; iit < s.basic_variable_indices_end(); ++iit)
+      cout << "  (" << *iit << ", " 
+	   <<  CGAL::to_double(vit[*iit]) << ")" << endl;
+    cout << "  There are " << s.number_of_basic_variables() 
+	 << " basic variables. " << endl;
+
+    cout << "Basic constraints: " << endl;
+    Solution::Index_iterator cit = 
+      s.basic_constraint_indices_begin();
+    for ( ; cit < s.basic_constraint_indices_end(); ++cit)
+      cout << *cit << " ";
+    cout << endl;
+    cout << "  There are " << s.number_of_basic_constraints() 
+	 << " basic constraints. " << endl;
+
     return 0;
   }
   if  (s.status() == CGAL::QP_INFEASIBLE)

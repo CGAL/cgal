@@ -192,14 +192,16 @@ bool QP_solver<Q, ET, Tags>::is_value_correct() const
   // compute x^T D x + d c = sum_i x_i (D_i x + d c_i)
   ET z = et0; // for x^T D x + d c
   int i = 0;
-  for (Variable_numerator_iterator i_it = variables_numerator_begin(); 
-       i_it < variables_numerator_end(); ++i_it, ++i) {
+  for (Variable_numerator_iterator 
+	 i_it = original_variables_numerator_begin(); 
+       i_it < original_variables_numerator_end(); ++i_it, ++i) {
     if (*i_it == et0) continue; // no contribution from this variable
     ET s = et0; // for D_i x + c_i
     int j = 0;
     if (is_QP) {
-      for (Variable_numerator_iterator j_it = variables_numerator_begin(); 
-            j_it < variables_numerator_end(); ++j_it, ++j)
+      for (Variable_numerator_iterator j_it = 
+	     original_variables_numerator_begin(); 
+            j_it < original_variables_numerator_end(); ++j_it, ++j)
          s += ET(qp_D[i][j]) * *j_it; // D_ij x_j
     } 
     // now s = D_i x
@@ -411,14 +413,14 @@ bool QP_solver<Q, ET, Tags>::is_solution_feasible() const
   CGAL_qpe_assertion(is_phaseII);
 
   Values lhs_col(qp_m, et0);
-  Variable_numerator_iterator it = variables_numerator_begin();
+  Variable_numerator_iterator it = original_variables_numerator_begin();
   for (int i=0; i<qp_n; ++i, ++it) {
 
     // check bounds on original variables:
     const ET var = is_basic(i)? x_B_O[in_B[i]] :  // should be ET &
       nonbasic_original_variable_value(i) * d;
     if (var != *it)
-      return false; // variables_numerator_begin() inconsistent
+      return false; // original_variables_numerator_begin() inconsistent
     if (has_finite_lower_bound(i) && var < lower_bound(i) * d ||
 	has_finite_upper_bound(i) && var > upper_bound(i) * d)
       return false;

@@ -170,8 +170,8 @@ update_maxima( )
 
     Basic_constraint_index_iterator  it;
     Values_NT_iterator v_it = lambda_NT.begin();
-    for ( it =  this->solver().basic_constraints_index_begin();
-	  it != this->solver().basic_constraints_index_end(); ++it, ++v_it) {
+    for ( it =  this->solver().basic_constraint_indices_begin();
+	  it != this->solver().basic_constraint_indices_end(); ++it, ++v_it) {
 	row = *it;
 
 	// row not handled yet?
@@ -228,8 +228,8 @@ update_maxima( Tag_false)
 
     Basic_variable_index_iterator  it;
     Values_NT_iterator v_it = x_B_O_NT.begin();
-    for ( it =  this->solver().basic_original_variables_index_begin();
-	  it != this->solver().basic_original_variables_index_end();
+    for ( it =  this->solver().basic_original_variable_indices_begin();
+	  it != this->solver().basic_original_variable_indices_end();
 	  ++it, ++v_it) {
 	row = *it;
 

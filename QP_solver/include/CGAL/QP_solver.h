@@ -148,13 +148,6 @@ public: // public types
   Bd_selector<Q, typename Tags::Is_in_standard_form>::
   FU_iterator FU_iterator;
 
-//   typedef  typename Q::D_iterator   D_iterator;
-//   typedef  typename Q::L_iterator   L_iterator;
-//   typedef  typename Q::U_iterator   U_iterator;
-//   typedef  typename Q::FL_iterator  FL_iterator;
-//   typedef  typename Q::FU_iterator  FU_iterator;
- 
-
   // types from the Tags
   typedef  typename Tags::Is_linear    Is_linear;
   typedef  typename Tags::Is_symmetric Is_symmetric;
@@ -212,7 +205,7 @@ private: // private types
 public: // export some additional types:
   
   typedef  typename Base::Indices     Indices; 
-  typedef  typename Base::Index_iterator           Index_iterator;
+  typedef  typename Base::Index_mutable_iterator   Index_iterator;
   typedef  typename Base::Index_const_iterator     Index_const_iterator;
  
   // For problems in nonstandard form we also export the following type, which
@@ -622,24 +615,24 @@ public:
     int  number_of_original_variables( ) const { return qp_n; }
     
     Variable_numerator_iterator
-    variables_numerator_begin( ) const
+    original_variables_numerator_begin( ) const
     { return Variable_numerator_iterator( O.begin(), Value_by_index(this));}
 				  
     
     Variable_numerator_iterator
-    variables_numerator_end  ( ) const
+    original_variables_numerator_end  ( ) const
     { return Variable_numerator_iterator( O.end(),  Value_by_index(this));}
     
     Variable_value_iterator
-    variable_values_begin( ) const
+    original_variable_values_begin( ) const
         { return Variable_value_iterator(
-                     variables_numerator_begin(),
+                     original_variables_numerator_begin(),
                      Quotient_maker( Quotient_creator(Quotient_normalizer(), U_Quotient_creator()) , d)); }
     
     Variable_value_iterator
-    variable_values_end  ( ) const
+    original_variable_values_end  ( ) const
         { return Variable_value_iterator(
-                     variables_numerator_end(),
+                     original_variables_numerator_end(),
                      Quotient_maker( Quotient_creator(Quotient_normalizer(), U_Quotient_creator()) , d)); }
     
     // access to slack variables
@@ -659,9 +652,9 @@ public:
     int  number_of_basic_slack_variables( ) const { return B_S.size(); }
 
     Basic_variable_index_iterator
-    basic_original_variables_index_begin( ) const { return B_O.begin(); }
+    basic_original_variable_indices_begin( ) const { return B_O.begin(); }
     Basic_variable_index_iterator
-    basic_original_variables_index_end  ( ) const { return B_O.end(); }
+    basic_original_variable_indices_end  ( ) const { return B_O.end(); }
     
     Basic_variable_numerator_iterator
     basic_original_variables_numerator_begin( ) const { return x_B_O.begin(); }
@@ -805,9 +798,9 @@ public:
     int  number_of_basic_constraints( ) const { return C.size(); }
 
     Basic_constraint_index_iterator
-    basic_constraints_index_begin( ) const { return C.begin(); }
+    basic_constraint_indices_begin( ) const { return C.begin(); }
     Basic_constraint_index_iterator
-    basic_constraints_index_end  ( ) const { return C.end(); }
+    basic_constraint_indices_end  ( ) const { return C.end(); }
 
     // helper functions
     template < class RndAccIt1, class RndAccIt2, class NT >  
