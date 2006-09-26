@@ -492,12 +492,12 @@ void MyWindow::updateSnapMode( bool on )
   if (on)
   {
     setGridSnapMode->setEnabled( TRUE );
-        if (w_demo_p->snap_mode == GRID)
+        if (w_demo_p->snap_mode == SNAP_GRID)
           setGridSnapMode->setOn( TRUE );
         else
         {
       setGridSnapMode->setOn( FALSE );
-      w_demo_p->snap_mode = POINT;
+      w_demo_p->snap_mode = SNAP_POINT;
         }
     w_demo_p->snap = true;
   }
@@ -508,8 +508,8 @@ void MyWindow::updateSnapMode( bool on )
         setSnapMode->setOn( FALSE );
     setGridSnapMode->setEnabled( FALSE );
     w_demo_p->snap = false;
-    w_demo_p->snap_mode = NONE;
-    if (old == GRID)
+    w_demo_p->snap_mode = SNAP_NONE;
+    if (old == SNAP_GRID)
       something_changed();
   }
 }
@@ -528,9 +528,9 @@ void MyWindow::updateGridSnapMode( bool on )
     static_cast<Qt_widget_base_tab *> (myBar->currentPage());
   
   if (on && w_demo_p->snap)
-    w_demo_p->snap_mode = GRID;
+    w_demo_p->snap_mode = SNAP_GRID;
   else
-    w_demo_p->snap_mode = POINT;
+    w_demo_p->snap_mode = SNAP_POINT;
   
   something_changed();
 }
@@ -640,7 +640,7 @@ void MyWindow::update()
   {
     setGridSnapMode->setEnabled( TRUE );
     setSnapMode->setOn( TRUE );
-    if ( w_demo_p->snap_mode == GRID)
+    if ( w_demo_p->snap_mode == SNAP_GRID)
       setGridSnapMode->setOn( TRUE );
     else
       setGridSnapMode->setOn( FALSE );

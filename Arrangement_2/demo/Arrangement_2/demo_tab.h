@@ -60,7 +60,7 @@ public:
     CGAL::Qt_widget( parent ),
     current_state(0),
     index(tab_number),
-    snap_mode(NONE),
+    snap_mode(SNAP_NONE),
     mode(INSERT),
     m_line_width(2),
     m_vertex_width(3),
@@ -345,7 +345,7 @@ public:
     // draw all faces (fill them with their color)
     visit_faces(FillFace(this));  
 
-    if (snap_mode == GRID || grid)
+    if (snap_mode == SNAP_GRID || grid)
       draw_grid();
 
     for (Edge_iterator ei = m_curves_arr->edges_begin(); 
@@ -1125,7 +1125,7 @@ public:
     int ymax = static_cast<int> (y_max());
     Coord_type d = std::max(0.5 , (x_max() - x_min())/40);
     switch ( snap_mode ) {
-     case POINT:
+     case SNAP_POINT:
       {
        Coord_type min_dist = 0;
        Coord_point closest;
@@ -1142,11 +1142,11 @@ public:
        
        break;
       }
-     case GRID:
+     case SNAP_GRID:
       return Coord_point(getMid(x, xmin, xmax), 
                          getMid(y, ymin, ymax) );
 
-     case NONE: break;
+     case SNAP_NONE: break;
     }
     return Coord_point(x,y);
   }
