@@ -1,6 +1,17 @@
 //! \file examples/Arrangement_2/ex_postscript.cpp
 // Using the arrangement Postscript output operator.
 
+#include <CGAL/basic.h>
+
+#ifndef CGAL_USE_LEDA
+#include <iostream>
+int main ()
+{
+  std::cout << "Sorry, this example needs LEDA ..." << std::endl; 
+  return 0;
+}
+#else
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
@@ -42,3 +53,5 @@ int main ()
   ps_file.close();
   return 0;
 }
+
+#endif
