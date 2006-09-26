@@ -27,6 +27,14 @@
     only the basic geometric and topological features of the arrangement are
     written, without any auxiliary data that may be attached to the \dcel\ features.}
 
+\ccFunction{template<class Traits, class Dcel>
+            Arr_postscript_file_stream& operator<< (std::ostream& os,
+                                        const Arrangement_2<Traits,Dcel>& arr);}
+   {Writes the arrangement \ccc{arr} into the given Postscript stream.
+    Only the basic geometric and topological features of the arrangement are
+    written. Auxiliary data that might be attached to the \dcel\ features is
+    lost.}
+
 \begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 \ccInclude{CGAL/IO/Arr_with_history_iostream.h}
 
