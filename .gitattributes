@@ -2123,7 +2123,11 @@ Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/collapse.sxi
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/collapse0.sxi -text
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/collapse1.sxi -text
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/edge_collapse.tex -text
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/collapse0.eps -text
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/collapse0.pdf -text
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/collapse0.png -text
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/collapse1.eps -text
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/collapse1.pdf -text
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/collapse1.png -text
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/intro.tex -text
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/main.tex -text
