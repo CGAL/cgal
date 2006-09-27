@@ -53,6 +53,19 @@ the natural neighbor coordinates have the following properties:
   \item[(iii)] $\sum_{i=1}^n \lambda_i(\mathbf{x}) = 1$ (partition of unity
     property).
   \end{itemize}
+  For the case where the query point x is located on the envelope of the convex hull of $\mathcal{P}$,
+  the potential Voronoi cell of x becomes infinite and :
+	  
+  $\pi(\mathbf{x}) = \infty$
+  
+  $\lambda_i(\mathbf{x}) = 0 $ for all data point $\mathbf{p_i}$ of $\mathcal{P}$ except for the two endpoints, let's say $\mathbf{p}$ and $\mathbf{q}$ ,of the edge where x lies.
+  
+  The natural neighbor coordinate of $\mathbf{x}$ with respect to these endpoints $\mathbf{p}$ and $\mathbf{q}$ will be :
+	  
+  $\lambda_p(\mathbf{x}) = \frac{\|\mathbf{x} - \mathbf{q}\| }{ \|\mathbf{q} - \mathbf{p}\|} $ 
+  
+  $\lambda_q(\mathbf{x}) = \frac{\|\mathbf{x} - \mathbf{p}\| }{ \|\mathbf{q} - \mathbf{p}\|} $ 
+  
   Furthermore, Piper \cite{cgal:p-plcbd-93} shows that the coordinate
   functions are continuous in the convex hull of $\mathcal{P}$ and
   continuously differentiable except on the data points $\mathcal{P}$.
