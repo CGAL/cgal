@@ -730,6 +730,8 @@ Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#image/gif
 Interpolation/doc_tex/Interpolation/nn_coords.ipe -text svneol=unset#application/postscript
 Interpolation/doc_tex/Interpolation/nn_coords.pdf -text svneol=unset#application/pdf
 Interpolation/doc_tex/Interpolation/nn_coords.xml svneol=native#text/xml
+Interpolation/test/Interpolation/include/CGAL/_test_natural_neighbors_2.C -text
+Interpolation/test/Interpolation/test_natural_neighbors_2.C -text
 Jet_fitting_3/demo/Jet_fitting_3/README_visu -text
 Jet_fitting_3/demo/Jet_fitting_3/data/ellipe0.003.off -text svneol=unset#application/octet-stream
 Jet_fitting_3/doc_tex/AIDE -text
