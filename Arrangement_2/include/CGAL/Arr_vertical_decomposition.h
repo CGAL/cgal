@@ -40,7 +40,7 @@ CGAL_BEGIN_NAMESPACE
  *                         the vertex, respectively.
  */
 template<class Traits, class Dcel>
-void vertical_decomposition_2
+void decompose
   (const Arrangement_2<Traits,Dcel>& arr,
    Unique_hash_map<typename Arrangement_2<Traits,Dcel>::Vertex_const_handle,
                    std::pair<CGAL::Object, CGAL::Object> >& vert_map)

@@ -5,7 +5,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/Arr_vertical_decomposition_2.h>
+#include <CGAL/Arr_vertical_decomposition.h>
 #include <list>
 
 typedef CGAL::MP_Float                                  Number_type;
@@ -39,7 +39,7 @@ int main ()
   // that lie below it and the feature that lies above it.
   Vertical_map     v_map;
 
-  vertical_decomposition_2 (arr, v_map);
+  CGAL::decompose (arr, v_map);
 
   // Print the results.
   Arrangement_2::Vertex_const_iterator   vit;
