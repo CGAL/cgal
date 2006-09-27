@@ -7,6 +7,7 @@ Approximate_min_ellipsoid_d
 Arrangement_2
 Boolean_set_operations_2
 Box_intersection_d
+BGL
 Cartesian_kernel
 Circular_kernel_2
 Circular_kernel_3
@@ -85,6 +86,7 @@ Stream_support
 Subdivision_method_3
 Surface_mesher
 Surface_mesh_parameterization
+Surface_mesh_simplification
 Testsuite
 Timer
 Trapezoidal_decomposition
