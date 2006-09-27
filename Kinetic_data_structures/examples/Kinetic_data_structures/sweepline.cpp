@@ -14,6 +14,9 @@
 #include <list>
 #include <map>
 
+#pragma warning(disable:4355) // complaint about using 'this' to
+                                // initialize a member
+
 template <class Arrangement>
 struct Arrangement_visitor: public CGAL::Kinetic::Sort_visitor_base
 {

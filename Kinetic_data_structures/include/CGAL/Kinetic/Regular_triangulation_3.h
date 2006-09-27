@@ -34,6 +34,12 @@
 #include <CGAL/Kinetic/Simulator_kds_listener.h>
 #include <CGAL/Kinetic/Active_objects_listener_helper.h>
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4355) // complaint about using 'this' to
+#endif                          // initialize a member
+
+
 CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
 
 template <class KD, class Root_stack, class VH>
@@ -340,17 +346,12 @@ protected:
 public:
   typedef VisitorT Visitor;
 
-  /*#ifdef _MSC_VER
-    #pragma warning(disable:C4355)
-    #endif*/
   Regular_triangulation_3(Traits tr, Visitor v= Visitor()): kdel_(Base_traits(this, tr), v),
 							    listener_(NULL) {
     siml_= Simulator_listener(tr.simulator_handle(), this);
     motl_= Moving_point_table_listener(tr.active_points_3_table_handle(), this);
   }
-  /*#ifdef _MSC_VER
-    #pragma warning(enable:C4355)
-    #endif*/
+
 
   const Visitor &visitor() const
   {
@@ -1139,4 +1140,9 @@ std::ostream &operator<<(std::ostream &out, const Regular_triangulation_3<Traits
 
 
 CGAL_KINETIC_END_NAMESPACE
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
 #endif

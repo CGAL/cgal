@@ -41,6 +41,11 @@
 #include <CGAL/Kinetic/Active_objects_listener_helper.h>
 #include <CGAL/Kinetic/Delaunay_triangulation_visitor_base_3.h>
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4355) // complaint about using 'this' to
+#endif                          // initialize a member
+
 CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
 
 template <class Traits>
@@ -135,17 +140,11 @@ friend class  internal::Delaunay_3_facet_flip_event<This,
 
 public:
   //! Initialize it.
-  /*#ifdef _MSC_VER
-    #pragma warning(disable:4355)
-    #endif*/
   Delaunay_triangulation_3(TraitsT tr, Visitor v= Visitor()): kdel_(Base_traits(this, tr), v),
 							      listener_(NULL) {
     siml_= Simulator_listener(tr.simulator_handle(), this);
     motl_= Moving_point_table_listener(tr.active_points_3_table_handle(), this);
   }
-  /*#ifdef _MSC_VER
-    #pragma warning(enable:4355)
-    #endif*/
 
   //! The type of the underlying triangulation
   typedef TriangulationT Triangulation;
@@ -238,4 +237,9 @@ public:
 };
 
 CGAL_KINETIC_END_NAMESPACE
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
 #endif
