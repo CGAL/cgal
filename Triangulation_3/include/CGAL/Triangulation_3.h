@@ -631,7 +631,7 @@ protected:
                           OutputIteratorCells,
 		          OutputIteratorInternalFacets> it) const {
     bool FIND_CONFLICTS_2_DEPRECATED_USE_FIND_CONFLICTS;
-    return find_conflicts<2>(c,tester,it);
+    return find_conflicts(c,tester,it);
   }
 
   template <class Conflict_test,
@@ -646,7 +646,7 @@ protected:
                           OutputIteratorCells,
 		          OutputIteratorInternalFacets> it) const {
     bool FIND_CONFLICTS_3_DEPRECATED_USE_FIND_CONFLICTS;
-    return find_conflicts<3>(c,tester,it);
+    return find_conflicts(c,tester,it);
   }
 
   // - c is the current cell, which must be in conflict.
@@ -656,7 +656,7 @@ protected:
   // 0 -> unknown
   // 1 -> in conflict
   // 2 -> not in conflict (== on boundary)
-  template <int dim,
+  template <
 	    class Conflict_test,
             class OutputIteratorBoundaryFacets,
             class OutputIteratorCells,
@@ -670,13 +670,12 @@ protected:
 		        OutputIteratorInternalFacets> it) const
   {
     CGAL_triangulation_precondition( dimension()>=2 );
-    CGAL_triangulation_precondition( dim == dimension() );
     CGAL_triangulation_precondition( tester(c) );
 
     c->set_in_conflict_flag(1);
     *it.second++ = c;
 
-    for (int i=0; i<dim+1; ++i) {
+    for (int i=0; i<dimension()+1; ++i) {
       Cell_handle test = c->neighbor(i);
       if (test->get_in_conflict_flag() == 1) {
 	  if (c < test)
@@ -687,7 +686,7 @@ protected:
 	  if (tester(test)) {
 	      if (c < test)
 		  *it.third++ = Facet(c, i); // Internal facet.
-              it = find_conflicts<dim>(test, tester, it);
+              it = find_conflicts(test, tester, it);
 	      continue;
 	  }
 	  test->set_in_conflict_flag(2); // test is on the boundary.
@@ -715,14 +714,14 @@ protected:
     // Find the cells in conflict
     switch (dimension()) {
     case 3:
-      find_conflicts<3>(c, tester, make_triple(Oneset_iterator<Facet>(facet),
-					       std::back_inserter(cells),
-					       Emptyset_iterator()));
+      find_conflicts(c, tester, make_triple(Oneset_iterator<Facet>(facet),
+					    std::back_inserter(cells),
+					    Emptyset_iterator()));
       break;
     case 2:
-      find_conflicts<2>(c, tester, make_triple(Oneset_iterator<Facet>(facet),
-					       std::back_inserter(cells),
-					       Emptyset_iterator()));
+      find_conflicts(c, tester, make_triple(Oneset_iterator<Facet>(facet),
+					    std::back_inserter(cells),
+					    Emptyset_iterator()));
     }
     // Create the new cells and delete the old.
     return _tds._insert_in_hole(cells.begin(), cells.end(),
@@ -2386,7 +2385,7 @@ insert_in_conflict(const Point & p,
       Facet facet;
       
       cells.reserve(32);
-      find_conflicts<3>
+      find_conflicts
 	(c, tester, make_triple(Oneset_iterator<Facet>(facet),
 				std::back_inserter(cells),
 				Emptyset_iterator()));
@@ -2427,7 +2426,7 @@ insert_in_conflict(const Point & p,
       Facet facet;
       
       cells.reserve(32);
-      find_conflicts<2>
+      find_conflicts
 	(c, tester, make_triple(Oneset_iterator<Facet>(facet),
 				std::back_inserter(cells),
 				Emptyset_iterator()));

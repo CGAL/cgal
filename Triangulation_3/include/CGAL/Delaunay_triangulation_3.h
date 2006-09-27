@@ -231,7 +231,7 @@ public:
 
       if (dimension() == 2) {
           Conflict_tester_2 tester(p, this);
-	  ifit = Tr_Base::template find_conflicts<2>
+	  ifit = Tr_Base::find_conflicts
 	    (c, tester,
 	     make_triple(std::back_inserter(facets),
 			 std::back_inserter(cells),
@@ -239,7 +239,7 @@ public:
       }
       else {
           Conflict_tester_3 tester(p, this);
-	  ifit = Tr_Base::template find_conflicts<3>
+	  ifit = Tr_Base::find_conflicts
 	    (c, tester,
 	     make_triple(std::back_inserter(facets),
 			 std::back_inserter(cells),
