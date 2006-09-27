@@ -23,6 +23,7 @@
 #include <utility>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Polygon_2.h>
+#include <CGAL/number_utils_classes.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -106,17 +107,31 @@ natural_neighbor_coordinates_vertex_2(const Dt& dt,
   int li;
   Face_handle fh = dt.locate(p, lt, li, start);
 
-  //the point must lie inside the convex hull:
-  // otherwise return false
   if (lt == Dt::OUTSIDE_AFFINE_HULL
-     || lt == Dt::OUTSIDE_CONVEX_HULL
-     || (lt == Dt::EDGE &&
-	 (dt.is_infinite(fh) ||
-	  dt.is_infinite(fh->neighbor(li))))){
+     || lt == Dt::OUTSIDE_CONVEX_HULL)
+  {
     return make_triple(out, Coord_type(1), false);
   }
   
+  if ((lt == Dt::EDGE &&
+	 (dt.is_infinite(fh) ||
+	  dt.is_infinite(fh->neighbor(li)))))
+  {	  
+	Vertex_handle v1 = fh->vertex(dt.cw(li));
+	Vertex_handle v2 = fh->vertex(dt.ccw(li));
 
+   	typename Traits::Compute_squared_distance_2 squared_distance;
+	Point_2 p1(v1->point()),p2(v2->point());
+	
+	Coord_type coef1 = sqrt(squared_distance(p,p2)); // TODO we can do better if we use the barycentric coordinates.
+	Coord_type coef2 = sqrt(squared_distance(p,p1)); 
+	
+	*out++= std::make_pair(v1,coef1);	  	
+ 	*out++= std::make_pair(v2,coef2);	  	
+
+	return make_triple(out, coef1+coef2, true);
+  }
+  
   if (lt == Dt::VERTEX)
   {
     *out++= std::make_pair(fh->vertex(li), Coord_type(1));
@@ -190,8 +205,10 @@ natural_neighbor_coordinates_vertex_2(const Dt& dt,
 
      area += polygon_area_2(vor.begin(), vor.end(), dt.geom_traits());
 
-     *out++= std::make_pair(current,area);
+     
+	 *out++= std::make_pair(current,area);
      area_sum += area;
+	
 
      //update prev and hit:
      prev= current;
