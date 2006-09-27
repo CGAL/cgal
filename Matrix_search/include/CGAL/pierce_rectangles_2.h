@@ -28,6 +28,11 @@
 #include <iterator>
 #include <vector>
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4355) // complaint about using 'this' to
+#endif                          // initialize a member
+
 CGAL_BEGIN_NAMESPACE
 
 //!!! STL-extensions
@@ -1025,6 +1030,10 @@ struct Four_covering_algorithm {
   { return four_cover_points(d, o, ok); }
 }; // class Four_covering_algorithm
 CGAL_END_NAMESPACE
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
 #endif // ! (CGAL_PIERCE_RECTANGLES_2_H)
 // ----------------------------------------------------------------------------
