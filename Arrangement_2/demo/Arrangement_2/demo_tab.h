@@ -1571,7 +1571,7 @@ public:
       } while (++cc != f->outer_ccb());
 
       // make polygon from the outer ccb of the face 'f'
-      Polygon pgn (pts.begin() , pts.end()); 
+      My_polygon pgn (pts.begin() , pts.end()); 
 
       w->setFilled(true);
 
@@ -1601,7 +1601,7 @@ public:
       
       QPen old_penstyle = w->get_painter().pen();
       w->get_painter().setPen(Qt::NoPen);
-      (*w)<<Polygon(points , points +4 );
+      (*w)<<My_polygon(points , points +4 );
       w->setFilled(false);
        w->get_painter().setPen(old_penstyle);
     }
@@ -1872,7 +1872,7 @@ public:
       } while (++cc != f->outer_ccb());
 
       // make polygon from the outer ccb of the face 'f'
-      Polygon pgn (pts.begin() , pts.end());
+      My_polygon pgn (pts.begin() , pts.end());
 
       w->setFilled(true);
 
@@ -1902,7 +1902,7 @@ public:
       
       QPen old_penstyle = w->get_painter().pen();
       w->get_painter().setPen(Qt::NoPen);
-      (*w)<<Polygon(points , points +4 );
+      (*w)<<My_polygon(points , points +4 );
       w->setFilled(false);
        w->get_painter().setPen(old_penstyle);
     }
@@ -2301,7 +2301,7 @@ public:
       } while (++cc != f->outer_ccb());
 
        // make polygon from the outer ccb of the face 'f'
-      Polygon pgn (pts.begin() , pts.end());
+      My_polygon pgn (pts.begin() , pts.end());
       QPen old_penstyle = w->get_painter().pen();
       w->get_painter().setPen(Qt::NoPen);
       w->setFilled(true);
@@ -2330,7 +2330,7 @@ public:
       
       QPen old_penstyle = w->get_painter().pen();
       w->get_painter().setPen(Qt::NoPen);
-      (*w)<<Polygon(points , points +4 );
+      (*w)<<My_polygon(points , points +4 );
       w->setFilled(false);
        w->get_painter().setPen(old_penstyle);
     }

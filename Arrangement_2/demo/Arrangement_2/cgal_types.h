@@ -79,7 +79,7 @@ typedef Coord_kernel::Segment_2                            Coord_segment;
 typedef Coord_kernel::Circle_2                             Coord_circle;
 
 
-typedef CGAL::Polygon_2<Coord_kernel> Polygon;  
+typedef CGAL::Polygon_2<Coord_kernel> My_polygon;  
                                       // polygon is usefull for filling faces
 
 #ifdef CGAL_USE_GMP
