@@ -300,7 +300,7 @@ bool QP_solver<Q, ET, Tags>::is_solution_optimal_for_auxiliary_problem() const
   // feasible point x is optimal iff there exists a m-vector \lambda and a
   // |x|-vector \tau such that
   //
-  //              \tau^T = c^T + \lambda^T aux_A,                (C2)
+  //              \tau^T = aux_c^T + \lambda^T aux_A,            (C2)
   //
   //                      / >= 0   if x_j = l_j and l_j < u_j,
   //              \tau_j  |  = 0   if l_j < x_j < u_j,           (C2')
@@ -364,7 +364,7 @@ bool QP_solver<Q, ET, Tags>::is_solution_optimal_for_auxiliary_problem() const
       vout5 << "lambda_aux[" << col << "]= " << lambda_aux[col] << std::endl;
   }
   
-  // compute \tau^T = c^T + \lambda^T * aux_A (see conditions (C2) above):
+  // compute \tau^T = aux_c^T + \lambda^T * aux_A (see conditions (C2) above):
   //
   // Note: as the \lambda we have access to is actual d times the lambda
   // from (C2), we will not compute \tau but \tau * d.
