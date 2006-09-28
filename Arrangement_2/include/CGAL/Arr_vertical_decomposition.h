@@ -17,10 +17,9 @@
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
 
-#ifndef CGAL_ARR_VERTICAL_DECOMPOSITION_2_H
-#define CGAL_ARR_VERTICAL_DECOMPOSITION_2_H
+#ifndef CGAL_ARR_VERTICAL_DECOMPOSITION_H
+#define CGAL_ARR_VERTICAL_DECOMPOSITION_H
 
-#include <CGAL/Arrangement_2.h>
 #include <CGAL/Basic_sweep_line_2.h>
 #include <CGAL/Sweep_line_2/Sweep_line_subcurve.h>
 #include <CGAL/Sweep_line_2/Sweep_line_event.h>
@@ -38,17 +37,22 @@ CGAL_BEGIN_NAMESPACE
  *                         of objects, representing the arrangement features
  *                         (vertices or halfedges) that lie below and above
  *                         the vertex, respectively.
+ * \param voi Output: An aoutput iterator for the arrangement vertices
+ *                    sorted in ascending xy-lexicographic order.
+ * \return A past-the-end iterator for the ordered arrangement vertices.
  */
-template<class Traits, class Dcel>
-void decompose
-  (const Arrangement_2<Traits,Dcel>& arr,
-   Unique_hash_map<typename Arrangement_2<Traits,Dcel>::Vertex_const_handle,
-                   std::pair<CGAL::Object, CGAL::Object> >& vert_map)
+template<class Arrangement, class OutputIterator>
+OutputIterator decompose
+  (const Arrangement& arr,
+   Unique_hash_map<typename Arrangement::Vertex_const_handle,
+                   std::pair<CGAL::Object, CGAL::Object> >& vert_map,
+   OutputIterator voi)
 {
   // Arrangement types:
-  typedef Traits                                      Traits_2;
-  typedef Arrangement_2<Traits_2, Dcel>               Arrangement_2;
+  typedef Arrangement                                 Arrangement_2;
+  typedef typename Arrangement_2::Traits_2            Traits_2;
   typedef typename Traits_2::X_monotone_curve_2       Base_X_monotone_curve_2;
+
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
   typedef typename Arrangement_2::Edge_const_iterator   Edge_const_iterator;
@@ -63,7 +67,8 @@ void decompose
 
   // Define the sweep-line visitor:
   typedef Arr_vertical_decomposition_visitor<Meta_traits_2,
-                                             Arrangement_2>  Visitor;
+                                             Arrangement_2,
+                                             OutputIterator>  Visitor;
   
   typedef Basic_sweep_line_2<Meta_traits_2, Visitor>       Sweep_line;
 
@@ -94,7 +99,7 @@ void decompose
   }
   
   // Perform the sweep and fill the vertical mapping.
-  Visitor          visitor (arr, vert_map);
+  Visitor          visitor (arr, vert_map, voi);
   Meta_traits_2    meta_tr (arr.get_traits());
   Sweep_line       sweep_line (&meta_tr ,&visitor);
   
@@ -103,7 +108,7 @@ void decompose
                     iso_points.begin(),  
                     iso_points.end()); 
   
-  return;
+  return visitor.get_output_iterator();  // return a past_end iterator
 }
 
 

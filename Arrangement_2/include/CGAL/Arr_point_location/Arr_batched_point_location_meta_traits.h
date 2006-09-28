@@ -161,6 +161,7 @@ public:
   typedef typename Traits::Construct_min_vertex_2   Base_Construct_min_vertex_2;
   typedef typename Traits::Construct_max_vertex_2   Base_Construct_max_vertex_2;
   typedef typename Traits::Compare_xy_2             Base_Compare_xy_2;
+  typedef typename Traits::Compare_y_at_x_right_2   Base_Compare_y_at_x_right_2;
 
   class Construct_min_vertex_2
   {
@@ -260,6 +261,70 @@ public:
   {
     return Compare_xy_2(m_base_traits->compare_xy_2_object());
   }
+
+
+  class Compare_y_at_x_right_2
+  {
+  private:
+    Base_Compare_y_at_x_right_2 m_base_comp;
+
+  public:
+
+    Compare_y_at_x_right_2(const Base_Compare_y_at_x_right_2& base):
+      m_base_comp(base)
+    {}
+
+    /*!
+     * Compare two x-monotone curve to the right of their common left endpoint.
+     */
+    Comparison_result operator() (const X_monotone_curve_2& cv1,
+                                  const X_monotone_curve_2& cv2,
+                                  const Point_2& p) 
+    {
+      // Both cv1 and cv2 are associated with halfedges incident to the same
+      // vertex. Thus, if we go in a clockwise direction from he1 and find
+      // he2 after crossing to the other side (the left side) of the vertex
+      // and crossing back, he1 is below he2 (and vice-versa). 
+      Halfedge_const_handle  he1 = cv1.get_halfedge_handle();
+      Halfedge_const_handle  he2 = cv2.get_halfedge_handle();
+      Halfedge_const_handle  he;
+
+      CGAL_assertion (he1->target() == p.get_vertex_handle());
+      CGAL_assertion (he2->target() == p.get_vertex_handle());
+
+      he = he1;
+      do
+      {
+        he = he->next()->twin();
+        if (he == he2)
+          break;
+        if (he->direction() == SMALLER)
+          return (SMALLER);
+      } while (he != he1);
+
+      he = he2;
+      do
+      {
+        he = he->next()->twin();
+        if (he == he1)
+          break;
+        if (he->direction() == SMALLER)
+          return (LARGER);
+      } while (he != he2);
+
+      // If we reached here, we have to compare geometrically:
+      return (m_base_comp (cv1.base_curve(), cv2.base_curve(),
+                           p.base_point()));
+    }
+  };
+
+  /*! Get a Compare_y_at_x_right_2 functor object. */
+  Compare_y_at_x_right_2 compare_y_at_x_right_2_object () 
+  {
+    return 
+      Compare_y_at_x_right_2(m_base_traits->compare_y_at_x_right_2_object());
+  }
+
 };
 
 

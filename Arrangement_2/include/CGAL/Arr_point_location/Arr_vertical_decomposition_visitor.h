@@ -30,21 +30,22 @@ CGAL_BEGIN_NAMESPACE
 /*!
  * A sweep-line visitor for the vertical decomposition operation.
  */
-template< class Traits_, class Arrangement_>
+template< class Traits_, class Arrangement_, class OutputIterator_>
 class Arr_vertical_decomposition_visitor : public Empty_visitor<Traits_>
 {
   typedef Traits_                                            Traits_2;
   typedef Arrangement_                                       Arrangement_2;
+  typedef OutputIterator_                                    OutputIterator;
 
   typedef Arr_vertical_decomposition_visitor<Traits_2,
-                                             Arrangement_2>  Self;
+                                             Arrangement_2,
+                                             OutputIterator> Self;
   
   typedef Empty_visitor<Traits_2>                            Base;
   typedef typename Base::Event                               Event;
   typedef typename Base::Subcurve                            Subcurve;
   typedef typename Base::SL_iterator                         SL_iterator;
-
-   
+ 
   typedef typename Traits_2::X_monotone_curve_2          X_monotone_curve_2;
   typedef typename Traits_2::Point_2                     Point_2;
   typedef typename Traits_2::Base_Point_2                Base_Point_2;
@@ -60,6 +61,7 @@ class Arr_vertical_decomposition_visitor : public Empty_visitor<Traits_>
      
 private:
 
+  OutputIterator           m_oi;
   Halfedge_const_handle    m_top_he;
   Halfedge_const_handle    m_bottom_he;
   Vert_map                *m_vert_map;
@@ -69,7 +71,9 @@ private:
 public:
 
   Arr_vertical_decomposition_visitor (const Arrangement_2& arr,
-                                      Vert_map& map) :
+                                      Vert_map& map,
+                                      OutputIterator oi) :
+    m_oi (oi),
     m_vert_map (&map),
     traits (arr.get_traits())
   {
@@ -122,8 +126,12 @@ public:
       return (true);
     }
 
-    // Get the vertex handle associated with the current event.
+    // Get the vertex handle associated with the current event, and insert
+    // it into the output iterator.
     Vertex_const_handle vh = event->get_point().get_vertex_handle();
+
+    *m_oi = vh;
+    ++m_oi;
 
     // Check the feature from above.
     if (above == this->status_line_end())
@@ -255,6 +263,12 @@ public:
 
     // It is safe to deallocate the event.
     return (true);
+  }
+
+  /*! Get the output iterator of vertices sorted xy-lexicographically. */
+  OutputIterator get_output_iterator()
+  {
+    return (m_oi);
   }
 };
 

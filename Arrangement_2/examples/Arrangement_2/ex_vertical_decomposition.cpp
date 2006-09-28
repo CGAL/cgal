@@ -17,6 +17,7 @@ typedef CGAL::Arrangement_2<Traits_2>                   Arrangement_2;
 typedef Arrangement_2::Vertex_const_handle              Vertex_const_handle;
 typedef Arrangement_2::Halfedge_const_handle            Halfedge_const_handle;
 
+typedef std::list<Vertex_const_handle>                  Vertex_list;
 typedef CGAL::Unique_hash_map<Vertex_const_handle,
                               std::pair<CGAL::Object,
                                         CGAL::Object> > Vertical_map;
@@ -38,40 +39,43 @@ int main ()
   // Perform vertical ray-shooting from every vertex and locate the feature
   // that lie below it and the feature that lies above it.
   Vertical_map     v_map;
+  Vertex_list      vs;
 
-  CGAL::decompose (arr, v_map);
+  CGAL::decompose (arr, v_map, std::back_inserter(vs));
 
   // Print the results.
-  Arrangement_2::Vertex_const_iterator   vit;
-  Vertex_const_handle                    vh;
-  Halfedge_const_handle                  hh;
+  Vertex_list::const_iterator   vit;
+  Vertex_const_handle           curr_v;
+  Vertex_const_handle           vh;
+  Halfedge_const_handle         hh;
 
-  for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
+  for (vit = vs.begin(); vit != vs.end(); ++vit)
   {
-    std::cout << "Vertex (" << vit->point() << ") : ";
+    curr_v = *vit;
+    std::cout << "Vertex (" << curr_v->point() << ") : ";
 
     std::cout << " feature below: ";
-    if (CGAL::assign (hh, v_map[vit].first))
+    if (CGAL::assign (hh, v_map[curr_v].first))
     {
       if (! hh->is_fictitious())
         std::cout << '[' << hh->curve() << ']';
       else
         std::cout << "NONE";
     }
-    else if (CGAL::assign (vh, v_map[vit].first))
+    else if (CGAL::assign (vh, v_map[curr_v].first))
       std::cout << '(' << vh->point() << ')';
     else
       std::cout << "EMPTY";
 
     std::cout << "   feature above: ";
-    if (CGAL::assign (hh, v_map[vit].second))
+    if (CGAL::assign (hh, v_map[curr_v].second))
     {
       if (! hh->is_fictitious())
         std::cout << '[' << hh->curve() << ']' << std::endl;
       else
         std::cout << "NONE" << std::endl;
     }
-    else if (CGAL::assign (vh, v_map[vit].second))
+    else if (CGAL::assign (vh, v_map[curr_v].second))
       std::cout << '(' << vh->point() << ')' << std::endl;
     else
       std::cout << "EMPTY" << std::endl;
