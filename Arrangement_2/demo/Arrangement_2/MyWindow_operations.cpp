@@ -548,54 +548,54 @@ void MyWindow::updateMode( QAction *action )
   
   if ( action == insertMode ) 
   {
-    w_demo_p->mode = INSERT;
+    w_demo_p->mode = MODE_INSERT;
     w_demo_p->setCursor(QCursor( QPixmap( (const char**)small_draw_xpm)));
     something_changed();
   }
   else if ( action == deleteMode ) 
   {
-    w_demo_p->mode = DELETE;
+    w_demo_p->mode = MODE_DELETE;
     w_demo_p->setCursor(QCursor( QPixmap( (const char**)delete_xpm)));
     something_changed();
   }
   
   else if ( action == pointLocationMode ) 
   {
-    w_demo_p->mode = POINT_LOCATION;
+    w_demo_p->mode = MODE_POINT_LOCATION;
     w_demo_p->setCursor(Qt::CrossCursor);
     current_label = point_location_label;
   }
   else if ( action == rayShootingUpMode ) 
   {
-    w_demo_p->mode = RAY_SHOOTING_UP;
+    w_demo_p->mode = MODE_RAY_SHOOTING_UP;
     w_demo_p->setCursor(QCursor(QPixmap((const char**)demo_arrow_up_xpm)));
   }
   else if( action == rayShootingDownMode )
   {
-    w_demo_p->mode = RAY_SHOOTING_DOWN;
+    w_demo_p->mode = MODE_RAY_SHOOTING_DOWN;
     w_demo_p->setCursor(QCursor(QPixmap((const char**)demo_arrow_down_xpm)));
   }
   else if ( action == dragMode ) 
   {
-    w_demo_p->mode = DRAG;
+    w_demo_p->mode = MODE_DRAG;
     w_demo_p->setCursor(QCursor( QPixmap( (const char**)hand_xpm)));
     something_changed();
   }
   else if ( action == mergeMode ) 
   {
-    w_demo_p->mode = MERGE;
+    w_demo_p->mode = MODE_MERGE;
     w_demo_p->setCursor(Qt::IbeamCursor );
     something_changed();
   }
   else if ( action == splitMode ) 
   {
-    w_demo_p->mode = SPLIT;
+    w_demo_p->mode = MODE_SPLIT;
     w_demo_p->setCursor(Qt::SplitHCursor  );
     something_changed();
   }
   else if ( action == fillfaceMode ) 
   {
-    w_demo_p->mode = FILLFACE;
+    w_demo_p->mode = MODE_FILLFACE;
     w_demo_p->setCursor(Qt::CrossCursor  );        
   }
 }
@@ -612,15 +612,15 @@ void MyWindow::setMode( Mode m )
   
   w_demo_p->mode = m;
   switch ( m ) {
-   case INSERT: insertMode->setOn( TRUE ); break;
-   case DELETE: deleteMode->setOn( TRUE ); break;
-   case POINT_LOCATION: pointLocationMode->setOn( TRUE ); break;
-   case RAY_SHOOTING_UP: rayShootingUpMode->setOn( TRUE ); break;
-   case RAY_SHOOTING_DOWN: rayShootingDownMode->setOn( TRUE ); break;
-   case DRAG: dragMode->setOn( TRUE ); break;
-   case MERGE: mergeMode->setOn( TRUE ); break;
-   case SPLIT: splitMode->setOn( TRUE ); break;
-   case FILLFACE: fillfaceMode->setOn( TRUE ); break;
+   case MODE_INSERT: insertMode->setOn( TRUE ); break;
+   case MODE_DELETE: deleteMode->setOn( TRUE ); break;
+   case MODE_POINT_LOCATION: pointLocationMode->setOn( TRUE ); break;
+   case MODE_RAY_SHOOTING_UP: rayShootingUpMode->setOn( TRUE ); break;
+   case MODE_RAY_SHOOTING_DOWN: rayShootingDownMode->setOn( TRUE ); break;
+   case MODE_DRAG: dragMode->setOn( TRUE ); break;
+   case MODE_MERGE: mergeMode->setOn( TRUE ); break;
+   case MODE_SPLIT: splitMode->setOn( TRUE ); break;
+   case MODE_FILLFACE: fillfaceMode->setOn( TRUE ); break;
   }
 }
 

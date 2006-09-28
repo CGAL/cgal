@@ -61,7 +61,7 @@ public:
     current_state(0),
     index(tab_number),
     snap_mode(SNAP_NONE),
-    mode(INSERT),
+    mode(MODE_INSERT),
     m_line_width(2),
     m_vertex_width(3),
     first_time(true),
@@ -329,7 +329,7 @@ public:
     QCursor old = cursor();
     setCursor(Qt::WaitCursor);
 
-    if ( mode == FILLFACE ) 
+    if ( mode == MODE_FILLFACE ) 
     {
       Point_2 temp_p (pl_point.x(), pl_point.y());
       CGAL::Object obj = locate(temp_p);
@@ -377,7 +377,7 @@ public:
           static_cast<CGAL::Qt_widget&>(*this) << p;
       
     }
-    if (mode == POINT_LOCATION)
+    if (mode == MODE_POINT_LOCATION)
     {
       static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(3);
       setColor(Qt::yellow);
@@ -421,7 +421,7 @@ public:
       static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(m_line_width);
     }
     
-    if (mode == RAY_SHOOTING_UP)
+    if (mode == MODE_RAY_SHOOTING_UP)
     {
       Coord_point up;
       Point_2 temp_p (pl_point.x(), pl_point.y());
@@ -494,7 +494,7 @@ public:
         static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(m_line_width);
       }
     }
-    if (mode == RAY_SHOOTING_DOWN)
+    if (mode == MODE_RAY_SHOOTING_DOWN)
     {
       Coord_point up;
       Point_2 temp_p (pl_point.x(), pl_point.y());
@@ -688,15 +688,15 @@ public:
     QCursor old = cursor();
     setCursor(Qt::WaitCursor);
 
-    if (mode == POINT_LOCATION || mode == RAY_SHOOTING_UP ||
-        mode == RAY_SHOOTING_DOWN || mode == FILLFACE)
+    if (mode == MODE_POINT_LOCATION || mode == MODE_RAY_SHOOTING_UP ||
+        mode == MODE_RAY_SHOOTING_DOWN || mode == MODE_FILLFACE)
     {
       mousePressEvent_point_location( e );
       setCursor(old);
       return;
     }
 
-    if (mode == DELETE)
+    if (mode == MODE_DELETE)
     {
       if(removable_halfedge == Halfedge_handle())
       {
@@ -728,7 +728,7 @@ public:
       return;
     }
 
-    if (mode == INSERT)
+    if (mode == MODE_INSERT)
     {
       Coord_type x, y;
       x_real(e->x(), x);
@@ -749,20 +749,20 @@ public:
       setCursor(old);
       return;
     }
-    if (mode == DRAG)
+    if (mode == MODE_DRAG)
     {
       mousePressEvent_drag(e);
       setCursor(old);
       return;
     }
-    if (mode == MERGE)
+    if (mode == MODE_MERGE)
     {
       mousePressEvent_merge(e);
       setCursor(old);
       removable_halfedge = Halfedge_handle();
       return;
     }
-    if (mode == SPLIT)
+    if (mode == MODE_SPLIT)
     {
       Coord_type x, y;
       x_real(e->x(), x);
@@ -1030,17 +1030,17 @@ public:
   void mouseMoveEvent(QMouseEvent *e)
   {
     static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(m_line_width);
-    if (mode == DELETE)
+    if (mode == MODE_DELETE)
       // find removable edges , store them in the list 
       find_removable_halfedges(e);
     //'removable_halfedges' and highlight them
 
-    if (mode == DRAG)
+    if (mode == MODE_DRAG)
     {
       mouseMoveEvent_drag(e);
       return;
     }
-    if (mode == MERGE && !first_time_merge)
+    if (mode == MODE_MERGE && !first_time_merge)
     {
       if (second_curve != m_curves_arr->halfedges_end())
       {
@@ -1177,7 +1177,7 @@ public:
   void mouseReleaseEvent(QMouseEvent *e)
   {
     if(e->button() == Qt::LeftButton
-       && mode == DRAG
+       && mode == MODE_DRAG
        && is_pure(e->state()))
     {
       setCursor(QCursor( QPixmap( (const char**)hand_xpm)));
@@ -1948,7 +1948,7 @@ public:
   void first_point( Coord_point p , Mode m)
   {
     last_of_poly = p;
-    if (m == INSERT)
+    if (m == MODE_INSERT)
       points.push_back(Arr_pol_point_2(p.x(),p.y()));    
   }
   
@@ -2569,7 +2569,7 @@ public:
    */
   void draw_last_segment( Qt_widget_demo_tab<Conic_tab_traits> * w)
   {
-    if (w->mode == SPLIT)
+    if (w->mode == MODE_SPLIT)
       *w << Coord_segment( m_p1 , m_p_old );
     else
     {
