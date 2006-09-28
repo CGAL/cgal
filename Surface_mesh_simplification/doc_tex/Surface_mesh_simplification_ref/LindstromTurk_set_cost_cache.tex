@@ -23,9 +23,9 @@
 %% \ccHtmlIndexC[class]{} %% add further index entries
 \ccDefinition
 
-The class \ccRefName\ provides a model for the
-\ccc{SetCollpaseData} where the \ccc{Cache} it assigns is \ccc{Partial\_collapse\_cache<ECM>}.
-storing a cost calculated following the Lindstrom-Turk strategy
+The class \ccRefName\ provides a model for 
+\ccc{SetCache} which assigns a \ccc{Cost_cache<ECM>} record.
+The cost value is calculated following the Lindstrom-Turk strategy
 (Section~\ref{SurfaceMeshSimplification:LindstromTurkStrategy}).
 
 The class \ccRefName\ has one template argument: the type of surface being simplified. 
@@ -45,14 +45,14 @@ It must be a model of the \ccc{EdgeCollapsableMesh} concept.
   \ccTypedef{Cost_cache<ECM> Cache;}
   {A concrete type of cache assigned by this class.}
   \ccGlue
-  \ccTypedef{typename LindstromTurk_params Cost_params;}
+  \ccTypedef{LindstromTurk_params Cost_params;}
   {The type of the parameters used by the cost computation}
   \ccGlue
-  \ccTypedef{typename LindstromTurk_params Cost_params;}
-  {The type of the parameters used by the placement computation}
+  \ccTypedef{void Placemet_params;}
+  {An unused type required by the \ccc{SetCache} concept.}
             
 \ccCreation
-\ccCreationVariable{sd}  %% choose variable name
+\ccCreationVariable{scc}  %% choose variable name
 
 \ccConstructor{LindstromTurk_set_cost_cache<ECM>(); }
 {Default constructor.}

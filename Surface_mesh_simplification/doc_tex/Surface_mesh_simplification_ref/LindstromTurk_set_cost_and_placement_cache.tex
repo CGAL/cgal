@@ -23,7 +23,7 @@
 %% \ccHtmlIndexC[class]{} %% add further index entries
 \ccDefinition
 
-The class \ccRefName\ provides a model for the
+The class \ccRefName\ provides a model for
 \ccc{SetCache} which assigns a \ccc{Cost_and_placement_cache<ECM>} record.
 The cost and placement values are calculated following the Lindstrom-Turk strategy
 (Section~\ref{SurfaceMeshSimplification:LindstromTurkStrategy}).
@@ -45,10 +45,10 @@ It must be a model of the \ccc{EdgeCollapsableMesh} concept.
   \ccTypedef{Cost_and_placement_cache<ECM> Cache;}
   {A concrete type of cache assigned by this class.}
   \ccGlue
-  \ccTypedef{typename LindstromTurk_params Cost_params;}
+  \ccTypedef{LindstromTurk_params Cost_params;}
   {The type of the parameters used by the cost computation}
   \ccGlue
-  \ccTypedef{typename LindstromTurk_params Cost_params;}
+  \ccTypedef{LindstromTurk_params Placement_params;}
   {The type of the parameters used by the placement computation}
             
 \ccCreation

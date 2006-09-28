@@ -81,7 +81,7 @@ and whose \ccc{value_type} is
 \subsubsection*{edge\_index\_map(EdgeIndexMap eim)} 
 
 Maps each {\em directed} edge in the surface into an integer number
-in the range \ccc{[0,num_edge(surface))}.
+in the range \ccc{[0,num_edges(surface))}.
 
 \ccc{EdgeIndexMap} must be a either a
 \ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
@@ -100,11 +100,7 @@ in the surface (\ccc{eim}) to its index,
 without requiring any user intervention or any special
 provision in the surface edge.
 
-\textbf{Default}: the property map obtained by calling \ccc{get(edge_index,surface)}, which 
-in turn requires the surface edge class to have a member function 
-\ccc{int id() const;}.
-
-
+\textbf{Default}: the property map obtained by calling \ccc{get(edge_index,surface)}.
 
 \subsubsection*{edge\_is\_border\_map(EdgeIsBorderMap ebm)} 
 
@@ -126,14 +122,14 @@ and whose \ccc{value_type} is \ccc{bool}.
 Maps each vertex in the surface into a boolean value
 which indicates if the vertex is fixed and cannot be modified 
 by the \ccc{edge_collapse} function.\\
-\ccc{EdgeIsFixedMap} must be a 
+\ccc{VertexIsFixedMap} must be a 
 \ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
 whose \ccc{key_type} is
 \ccc{boost::graph_traits<EdgeCollapsableMesh const>::vertex_descriptor}
 and whose \ccc{value_type} is \ccc{bool}.
 
 \textbf{Default}: 
-\ccc{Vertex_is_fixed_map_always_false<EdgeCollapsableMesh>()}.
+\ccc{Vertex_is_fixed_property_map_always_false<EdgeCollapsableMesh>()}.
 
 
 \subsubsection*{set\_cache(SetCache sc)} 
@@ -178,19 +174,19 @@ The type of \ccc{gp} must be a model of the \ccc{GetPlacement} concept.
 
 The model-specific parameters to \ccc{get_placement}.
 
-\textbf{Default}: \ccc{NULL}.
+\textbf{Default}: A pointer to a local default constructed instance of \ccc{CGAL::LindstromTurk_params}.
 
 
 
-\subsubsection*{visitor(EdgeCollaspeSimplificationVisitor const* v)}
+\subsubsection*{visitor(EdgeCollapseSimplificationVisitor const* v)}
 
 The visitor that is called by the \ccc{edge_collapse} function
 in certain points to allow the user to track the simplification process.\\
-The type of \ccc{v} must be a model of the \ccc{EdgeCollaspeSimplificationVisitor} concept.
+The type of object pointed to by \ccc{v} must be a model of the \ccc{EdgeCollapseSimplificationVisitor} concept.
 
 \textbf{Default}: \ccc{NULL}.
 
-All these named parameters wrapping functions are defined in
+All these functions naming parameters are defined in
 \ccc{namespace CGAL}. Being non-member functions, they could clash
 with equally named functions in some other namespace. If that happens
 simply qualify the named parameter with \ccc{CGAL::} as shown in the
@@ -209,8 +205,7 @@ are the policies which control the {\em cost-strategy}, that is,
 the order in which edges are collapsed and the replacement vertex is positioned.\\
 \ccc{get_cost_params} and \ccc{get_placement_params} are the runtime 
 parameters used by the these policies. They can be null pointers
-if the policies does not need them.\\
-This strategy is the driving factor that determines the accuracy of the
+if the policies do not need them. This strategy is the driving factor that determines the accuracy of the
 simplified surface with respect to the original.
 
 \ccc{visitor} is an optional object (can be null) which can be used
