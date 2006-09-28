@@ -21,6 +21,23 @@
 //                 Kaspar Fischer <fischerk@inf.ethz.ch>
 
 CGAL_BEGIN_NAMESPACE
+template < typename Q, typename ET, typename Tags >
+ET QP_solver<Q, ET, Tags>::optimality_certificate(int i) const
+{
+  // we use the vector lambda which conforms to C (basic constraints)
+  CGAL_qpe_precondition (i >= 0);
+  CGAL_qpe_precondition (i <= qp_m);
+  if (no_ineq)
+    return lambda[i];
+  else {
+    int k = in_C[i];     // position of i in C
+    if (k != -1) 
+      return lambda[k];
+    else 
+      return et0;
+  }   
+}
+
 
 template < typename Q, typename ET, typename Tags >
 bool QP_solver<Q, ET, Tags>::is_valid() const
@@ -475,11 +492,16 @@ is_solution_optimal() const
   // get \lambda:
   // Note: as the \lambda we have access to is actual d times the \lambda
   // from (C3), we will not compute \tau but \tau * d.
-  Values lambda_prime(qp_m, et0);
-  Value_const_iterator v_it = lambda.begin();
-  for (Index_const_iterator i_it = C.begin();
-       i_it != C.end(); ++i_it, ++v_it)
-    lambda_prime[*i_it] = *v_it;
+//   Values lambda_prime(qp_m, et0);
+//   Value_const_iterator v_it = lambda.begin();
+//   for (Index_const_iterator i_it = C.begin();
+//        i_it != C.end(); ++i_it, ++v_it)
+//     lambda_prime[*i_it] = *v_it;
+  Optimality_certificate_iterator itb = optimality_certificate_begin();
+  Optimality_certificate_iterator ite = optimality_certificate_end();
+  Values lambda_prime;
+  for (Optimality_certificate_iterator it = itb; it != ite; ++it)
+    lambda_prime.push_back(*it);
   
   // debug output:
   CGAL_qpe_debug {

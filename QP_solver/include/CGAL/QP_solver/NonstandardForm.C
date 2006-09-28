@@ -48,7 +48,7 @@ ET QP_solver<Q, ET, Tags>::original_variable_value_under_bounds(int i) const
 }
 
 template < typename Q, typename ET, typename Tags >
-ET QP_solver<Q, ET, Tags>::variable_value(int i) const
+ET QP_solver<Q, ET, Tags>::variable_numerator_value(int i) const
 {
   // Returns the current value of an *original* variable.
   CGAL_qpe_assertion( 0 <= i && i < qp_n );

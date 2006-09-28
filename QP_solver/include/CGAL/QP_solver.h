@@ -63,11 +63,6 @@ class QP_solution;
 
 namespace QP_solver_impl {   // namespace for implemenation details
 
-  // forward declaration of iterator over entries of
-  // unbounded direction:
-  template  < typename Q, typename ET, typename Tags  >
-  class Unbounded_direction_iterator;
-
   template < class Q, class Is_linear >
   struct D_selector {};
 
@@ -839,6 +834,21 @@ public:
   { return Unbounded_direction_iterator 
       (0, Unbounded_direction_by_index(this)) + qp_n;}
 
+  // Optimality; iterators for the vector lambda, see the doc in
+  // Validity.C
+  typedef typename Base::Optimality_certificate_by_index
+  Optimality_certificate_by_index;
+  typedef typename Base::Optimality_certificate_iterator 
+  Optimality_certificate_iterator;
+
+  Optimality_certificate_iterator optimality_certificate_begin() const 
+  { return Optimality_certificate_iterator 
+      (0, Optimality_certificate_by_index(this));}
+
+  Optimality_certificate_iterator optimality_certificate_end() const
+  { return Optimality_certificate_iterator 
+      (0, Optimality_certificate_by_index(this)) + qp_m;}
+
 private:    
 
   // private member functions
@@ -1230,8 +1240,9 @@ private:
 
 public: 
   // for original variables
-  ET variable_value(int i) const;
+  ET variable_numerator_value(int i) const;
   ET unbounded_direction_value(int i) const;
+  ET optimality_certificate(int i) const;
 
 private:
   // check basis inverse

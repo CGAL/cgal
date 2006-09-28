@@ -45,6 +45,9 @@ namespace QP_solution_detail {
 
   template <typename ET>
   class Unbounded_direction_by_index;
+
+  template <typename ET>
+  class Optimality_certificate_by_index;
 }
 
 // global status type
@@ -97,16 +100,33 @@ public:
   typedef Transform_diff_const_iterator<int, Unbounded_direction_by_index>
   Unbounded_direction_iterator;
 
+  typedef typename QP_solution_detail::Optimality_certificate_by_index<ET> 
+  Optimality_certificate_by_index;
+  
+  typedef Transform_diff_const_iterator<int, Optimality_certificate_by_index>
+  Optimality_certificate_iterator;
+
 public:
 
   // virtual access functions to solution that will 
   // be overridden by QP_solver below
   virtual Quotient<ET> solution() const = 0;
   virtual QP_status status() const = 0;
-  virtual ET variable_value (int i) const = 0; 
-  virtual ET unbounded_direction_value(int i) const = 0;
+
+  virtual ET variable_numerator_value (int i) const = 0; 
   virtual Variable_value_iterator original_variable_values_begin() const = 0;
   virtual Variable_value_iterator original_variable_values_end() const = 0;
+
+  virtual ET unbounded_direction_value(int i) const = 0;
+  virtual Unbounded_direction_iterator unbounded_direction_begin() const = 0;
+  virtual Unbounded_direction_iterator unbounded_direction_end() const = 0;
+
+  virtual ET optimality_certificate(int i) const = 0;
+  virtual 
+  Optimality_certificate_iterator optimality_certificate_begin() const = 0;
+  virtual 
+  Optimality_certificate_iterator optimality_certificate_end() const = 0;
+
   virtual Index_const_iterator 
   basic_original_variable_indices_begin() const = 0;
   virtual Index_const_iterator 
@@ -127,12 +147,6 @@ public:
 template <class ET>
 class QP_solution: Handle_for<const QP_solver_base<ET>*> 
 {
-private:
-  ET variable_value (int i) const
-  {
-    // gives just the numerator; rename!
-    return (*(this->Ptr()))->variable_value(i);
-  }
 public:
   // interface types
   typedef typename QP_solver_base<ET>::Variable_value_iterator
@@ -140,6 +154,9 @@ public:
 
   typedef typename QP_solver_base<ET>::Index_const_iterator
   Index_iterator;
+
+  typedef typename QP_solver_base<ET>::Unbounded_direction_iterator
+  Unbounded_direction_iterator;
 
   // methods
   QP_solution ()
@@ -174,6 +191,18 @@ public:
   {
     CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
     return (*(this->Ptr()))->original_variable_values_end();
+  }
+
+  Unbounded_direction_iterator unbounded_direction_begin() const
+  {
+    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
+    return (*(this->Ptr()))->unbounded_direction_begin();
+  }
+
+  Unbounded_direction_iterator unbounded_direction_end() const
+  {
+    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
+    return (*(this->Ptr()))->unbounded_direction_end();
   }
 
   Index_iterator basic_variable_indices_begin() const
@@ -293,7 +322,7 @@ namespace QP_solution_detail {
     // returns value * denominator 
     result_type operator () ( int i) const
     {
-      return s->variable_value(i);
+      return s->variable_numerator_value(i);
     }
     
     const QP* s;
@@ -320,6 +349,26 @@ namespace QP_solution_detail {
     const QP* s;
   };
 
+  // Optimality_certificate_by_index
+  // -------------------------------
+  template < typename ET>
+  class Optimality_certificate_by_index : public std::unary_function< int, ET>
+  {
+  public:
+    typedef QP_solver_base<ET> QP;
+    typedef ET result_type;
+
+    Optimality_certificate_by_index(const QP* solver)
+      : s (solver)
+    {}
+
+    result_type operator () ( int i) const
+    {
+      return s->optimality_certificate(i);
+    }
+      
+    const QP* s;
+  };
 }
 CGAL_END_NAMESPACE
 
