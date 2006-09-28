@@ -620,15 +620,19 @@ public:
     
   Variable_value_iterator
   original_variable_values_begin( ) const
-  { return Variable_value_iterator(
-				   original_variables_numerator_begin(),
-				   Quotient_maker( Quotient_creator(Quotient_normalizer(), U_Quotient_creator()) , d)); }
+  { return Variable_value_iterator
+      (original_variables_numerator_begin(),
+       Quotient_maker( Quotient_creator(Quotient_normalizer(), 
+					U_Quotient_creator()) , d)); 
+  }
     
   Variable_value_iterator
   original_variable_values_end  ( ) const
-  { return Variable_value_iterator(
-				   original_variables_numerator_end(),
-				   Quotient_maker( Quotient_creator(Quotient_normalizer(), U_Quotient_creator()) , d)); }
+  { return Variable_value_iterator
+      (original_variables_numerator_end(),
+       Quotient_maker( Quotient_creator(Quotient_normalizer(), 
+					U_Quotient_creator()) , d)); 
+  }
     
   // access to slack variables
   int  number_of_slack_variables( ) const { return slack_A.size(); }
@@ -838,16 +842,38 @@ public:
   // Validity.C
   typedef typename Base::Optimality_certificate_by_index
   Optimality_certificate_by_index;
+  typedef typename Base::Optimality_certificate_numerator_iterator 
+  Optimality_certificate_numerator_iterator;
   typedef typename Base::Optimality_certificate_iterator 
   Optimality_certificate_iterator;
-
-  Optimality_certificate_iterator optimality_certificate_begin() const 
-  { return Optimality_certificate_iterator 
+  
+  Optimality_certificate_numerator_iterator 
+  optimality_certificate_numerator_begin() const 
+  { return Optimality_certificate_numerator_iterator 
       (0, Optimality_certificate_by_index(this));}
 
-  Optimality_certificate_iterator optimality_certificate_end() const
-  { return Optimality_certificate_iterator 
+  Optimality_certificate_numerator_iterator 
+  optimality_certificate_numerator_end() const
+  { return Optimality_certificate_numerator_iterator 
       (0, Optimality_certificate_by_index(this)) + qp_m;}
+
+  Optimality_certificate_iterator
+  optimality_certificate_begin() const
+  {
+    return Optimality_certificate_iterator
+     (optimality_certificate_numerator_begin(),
+      Quotient_maker( Quotient_creator(Quotient_normalizer(), 
+				       U_Quotient_creator()) , d));
+  }
+
+  Optimality_certificate_iterator
+  optimality_certificate_end() const
+  {
+    return Optimality_certificate_iterator
+     (optimality_certificate_numerator_end(),
+      Quotient_maker( Quotient_creator(Quotient_normalizer(), 
+				       U_Quotient_creator()) , d));
+  }
 
 private:    
 
@@ -1242,7 +1268,7 @@ public:
   // for original variables
   ET variable_numerator_value(int i) const;
   ET unbounded_direction_value(int i) const;
-  ET optimality_certificate(int i) const;
+  ET optimality_certificate_numerator(int i) const;
 
 private:
   // check basis inverse

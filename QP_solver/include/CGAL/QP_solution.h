@@ -104,40 +104,81 @@ public:
   Optimality_certificate_by_index;
   
   typedef Transform_diff_const_iterator<int, Optimality_certificate_by_index>
+  Optimality_certificate_numerator_iterator;
+
+  typedef Join_input_iterator_1<Optimality_certificate_numerator_iterator,
+				Quotient_maker >
   Optimality_certificate_iterator;
 
 public:
 
   // virtual access functions to solution that will 
   // be overridden by QP_solver below
+
+  // Solution
+  // --------
   virtual Quotient<ET> solution() const = 0;
   virtual QP_status status() const = 0;
 
+  // Variable values
+  // ---------------
   virtual ET variable_numerator_value (int i) const = 0; 
+  virtual const ET& variables_common_denominator( ) const = 0;
+
+  // value type ET
+  virtual Variable_numerator_iterator 
+  original_variables_numerator_begin() const = 0;
+  virtual Variable_numerator_iterator 
+  original_variables_numerator_end() const = 0;
+
+  // value type Quotient<ET>
   virtual Variable_value_iterator original_variable_values_begin() const = 0;
   virtual Variable_value_iterator original_variable_values_end() const = 0;
 
-  virtual ET unbounded_direction_value(int i) const = 0;
-  virtual Unbounded_direction_iterator unbounded_direction_begin() const = 0;
-  virtual Unbounded_direction_iterator unbounded_direction_end() const = 0;
-
-  virtual ET optimality_certificate(int i) const = 0;
-  virtual 
-  Optimality_certificate_iterator optimality_certificate_begin() const = 0;
-  virtual 
-  Optimality_certificate_iterator optimality_certificate_end() const = 0;
-
+  // Basic variables and constraints
+  // -------------------------------
   virtual Index_const_iterator 
   basic_original_variable_indices_begin() const = 0;
   virtual Index_const_iterator 
   basic_original_variable_indices_end() const = 0;
   virtual int number_of_basic_original_variables() const = 0;
-  virtual Index_const_iterator basic_constraint_indices_begin() const = 0;
-  virtual Index_const_iterator basic_constraint_indices_end() const = 0;
+  virtual Index_const_iterator 
+  basic_constraint_indices_begin() const = 0;
+  virtual Index_const_iterator 
+  basic_constraint_indices_end() const = 0;
   virtual int number_of_basic_constraints() const = 0;
+
+  // Unboundedness
+  // -------------
+  virtual ET unbounded_direction_value(int i) const = 0;
+  virtual Unbounded_direction_iterator unbounded_direction_begin() const = 0;
+  virtual Unbounded_direction_iterator unbounded_direction_end() const = 0;
+
+  // Optimality
+  // ----------
+  virtual ET optimality_certificate_numerator(int i) const = 0;
+
+  // value type ET
+  virtual Optimality_certificate_numerator_iterator 
+  optimality_certificate_numerator_begin() const = 0;
+  virtual Optimality_certificate_numerator_iterator 
+  optimality_certificate_numerator_end() const = 0;
+
+  // value type Quotient<ET>
+  virtual Optimality_certificate_iterator 
+  optimality_certificate_begin() const = 0;
+  virtual Optimality_certificate_iterator 
+  optimality_certificate_end() const = 0;
+
+  // Infeasibility
+  // -------------
+
+  // Validity
+  // --------
   virtual bool is_valid() const = 0;
 
-  // destruction (overridden by QP_solver)
+  // destruction
+  // -----------
   virtual ~QP_solver_base() {}
 };
 
@@ -364,7 +405,7 @@ namespace QP_solution_detail {
 
     result_type operator () ( int i) const
     {
-      return s->optimality_certificate(i);
+      return s->optimality_certificate_numerator(i);
     }
       
     const QP* s;
