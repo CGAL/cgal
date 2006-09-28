@@ -616,14 +616,12 @@ public:
  
   Variable_numerator_iterator
   original_variables_numerator_begin( ) const
-  { return Variable_numerator_iterator
-      ( Original_index_const_iterator(0), Value_by_index(this));}
+  { return Variable_numerator_iterator (0, Value_by_index(this));}
 				  
     
   Variable_numerator_iterator
   original_variables_numerator_end  ( ) const
-  { return Variable_numerator_iterator
-      ( Original_index_const_iterator(0) + qp_n,  Value_by_index(this));}
+  { return Variable_numerator_iterator (0, Value_by_index(this)) + qp_n;} 
     
   Variable_value_iterator
   original_variable_values_begin( ) const
@@ -818,8 +816,10 @@ public:
   }
 
 public:
-  friend class QP_solver_impl::Unbounded_direction_iterator<Q, ET, Tags>;
-  typedef QP_solver_impl::Unbounded_direction_iterator<Q, ET, Tags>
+
+  typedef typename Base::Unbounded_direction_by_index 
+  Unbounded_direction_by_index;
+  typedef typename Base::Unbounded_direction_iterator 
   Unbounded_direction_iterator;
 
   // Returns an iterator over an unbounded direction, that is a |n|-vector
@@ -829,11 +829,15 @@ public:
   //
   // is a feasible point of the problem and the objective function on
   // this ray is unbounded (i.e., it decreases when t increases).
-  Unbounded_direction_iterator unbounded_direction_begin() const;
+  Unbounded_direction_iterator unbounded_direction_begin() const 
+  { return Unbounded_direction_iterator 
+      (0, Unbounded_direction_by_index(this));}
 
   // Returns the past-the-end iterator corresponding to
   // unbounded_direction_begin().
-  Unbounded_direction_iterator unbounded_direction_end() const;
+  Unbounded_direction_iterator unbounded_direction_end() const
+  { return Unbounded_direction_iterator 
+      (0, Unbounded_direction_by_index(this)) + qp_n;}
 
 private:    
 
@@ -1227,6 +1231,8 @@ private:
 public: 
   // for original variables
   ET variable_value(int i) const;
+  ET unbounded_direction_value(int i) const;
+
 private:
   // check basis inverse
   bool  check_basis_inverse( );

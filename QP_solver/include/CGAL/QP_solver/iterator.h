@@ -126,15 +126,14 @@ public:
 
   // construction
   Transform_diff_const_iterator ( )
-    : base_diff(), diff(), op()
+    : base_diff(), diff(), op(), val()
   {}
 
-  Transform_diff_const_iterator (Diff n)
-    : base_diff(n), diff(n), op()
+  Transform_diff_const_iterator (Diff n, Op operation = Op())
+    : base_diff(n), diff(n), op(operation), val()
   { }
   
-  const Val&  operator *  ( ) const { return op(diff-base_diff); }
-  // const Val*  operator -> ( ) const { return op(diff-base_diff); }
+  const Val&  operator *  ( ) const { val = op(diff-base_diff); return val; }
   
   // equality operator
   bool       operator == ( const Self& x) const { return ( diff==x.diff); }
@@ -153,7 +152,7 @@ public:
   // random access operations
   // ------------------------
   // access
-  const Val& operator [] ( Diff i) const { return op(i-base_diff); }
+  const Val& operator [] ( Diff i) const { val= op(i-base_diff); return val; }
   
   // less operator
   bool       operator <  ( const Self& x) const { return ( diff < x.diff);}
@@ -171,6 +170,7 @@ private:
   Diff base_diff;
   Diff diff;
   Op op;
+  mutable Val val;
 };
  
 

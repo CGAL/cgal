@@ -42,6 +42,9 @@ namespace QP_solution_detail {
   
   template <typename ET>
   class Value_by_index;
+
+  template <typename ET>
+  class Unbounded_direction_by_index;
 }
 
 // global status type
@@ -81,12 +84,18 @@ public:
 
   typedef typename QP_solution_detail::Value_by_index<ET> Value_by_index;
 
-  typedef Join_input_iterator_1< Original_index_const_iterator,Value_by_index >
+  typedef Transform_diff_const_iterator<int, Value_by_index>
   Variable_numerator_iterator;
 
   typedef  Join_input_iterator_1< Variable_numerator_iterator,
 				  Quotient_maker >
   Variable_value_iterator;
+
+  typedef typename QP_solution_detail::Unbounded_direction_by_index<ET> 
+  Unbounded_direction_by_index;
+
+  typedef Transform_diff_const_iterator<int, Unbounded_direction_by_index>
+  Unbounded_direction_iterator;
 
 public:
 
@@ -95,6 +104,7 @@ public:
   virtual Quotient<ET> solution() const = 0;
   virtual QP_status status() const = 0;
   virtual ET variable_value (int i) const = 0; 
+  virtual ET unbounded_direction_value(int i) const = 0;
   virtual Variable_value_iterator original_variable_values_begin() const = 0;
   virtual Variable_value_iterator original_variable_values_end() const = 0;
   virtual Index_const_iterator 
@@ -285,6 +295,28 @@ namespace QP_solution_detail {
     {
       return s->variable_value(i);
     }
+    
+    const QP* s;
+  };
+
+  // Unbounded_direction_by_index
+  // ----------------------------
+  template < typename ET>
+  class Unbounded_direction_by_index : public std::unary_function< int, ET>
+  {
+  public:
+    typedef QP_solver_base<ET> QP;
+    typedef ET result_type;
+
+    Unbounded_direction_by_index(const QP* solver)
+      : s (solver)
+    {}
+
+    result_type operator () ( int i) const
+    {
+      return s->unbounded_direction_value(i);
+    }
+      
     const QP* s;
   };
 
