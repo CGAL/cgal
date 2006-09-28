@@ -1,3 +1,6 @@
+27 September 2006 Naceur Meskini
+- Bug Fix in natural neighbor coordinates 2D to handle the case where the query point is located on the envelope of the convex-hull
+
 28 June 2006 Raphaelle Chaine
 - Bug Fix in Sibson 3D natural neighbor coordinates to handle somes cases where the query point is located on the enveloppe of the convex-hull
 

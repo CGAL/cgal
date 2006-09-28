@@ -453,5 +453,5 @@ _test_interpolation_functions_2_delaunay( const Triangul &,
    coordinate_result =
     CGAL::natural_neighbor_coordinates_2(T2,p,
 					 std::back_inserter(coords));
-  assert(!coordinate_result.third);
+  assert(coordinate_result.third);
 }

@@ -42,7 +42,7 @@ all:            \
                 test_interpolation_functions_2$(EXE_EXT) \
                 test_regular_neighbors_2$(EXE_EXT) \
                 test_surface_neighbor_3$(EXE_EXT) \
-				test_natural_neighbors_2$$(EXE_EXT)
+				test_natural_neighbors_2$(EXE_EXT)
 test_interpolation_functions_2$(EXE_EXT): test_interpolation_functions_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_interpolation_functions_2 test_interpolation_functions_2$(OBJ_EXT) $(LDFLAGS)
 
