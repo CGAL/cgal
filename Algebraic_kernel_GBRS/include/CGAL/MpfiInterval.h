@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:  $
-// $Id:  $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Luis Peñaranda <penarand@loria.fr>
@@ -24,12 +24,23 @@
 #include <CGAL/assertions.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
+#include <exception>
 #include <iostream>
 #include <mpfi.h>
 #include <mpfi_io.h>
 #include <mpfr.h>
 
 CGAL_BEGIN_NAMESPACE
+
+// the exception thrown when it's not clear how to handle inequality
+class comparison_overlap_exn : public std::exception {
+	public:
+	virtual const char* what() const throw () {;
+		return "Intervals overlap in comparison";
+	};
+};
+
+void overlap ();
 
 // The representation of intervals. TODO: think about reference counting
 class MpfiInterval_rep {
@@ -61,7 +72,7 @@ public:
 	typedef CGAL::Tag_true	Has_exact_division;
 	typedef CGAL::Tag_false	Has_exact_sqrt;
 
-	// constructors
+	// constructors I
 	MpfiInterval ();
 	MpfiInterval (int);
 	MpfiInterval (unsigned int);
@@ -70,6 +81,15 @@ public:
 	MpfiInterval (double);
 	MpfiInterval (const CGAL::Gmpq &);
 	MpfiInterval (const CGAL::Gmpz &);
+
+	// constructors II
+	MpfiInterval (int, int);
+	MpfiInterval (unsigned int, unsigned int);
+	MpfiInterval (long int, long int);
+	MpfiInterval (unsigned long int, unsigned long int);
+	MpfiInterval (double, double);
+	MpfiInterval (const CGAL::Gmpq &, const CGAL::Gmpq &);
+	MpfiInterval (const CGAL::Gmpz &, const CGAL::Gmpz &);
 	MpfiInterval (const mpfi_t &);
 	MpfiInterval (const MpfiInterval &);
 
@@ -88,8 +108,16 @@ public:
 	inline mpfi_t & mpfi ();
 	inline void set_prec (mp_prec_t);
 	inline mp_prec_t get_prec ();
-	inline void get_left (mpfr_t &);
-	inline void get_right (mpfr_t &);
+	inline void get_left (mpfr_t &) const;
+	inline void get_right (mpfr_t &) const;
+	inline void get_endpoints (mpfr_t &, mpfr_t &) const;
+	inline bool is_point () const;	// are endpoints equal?
+	inline bool contains (const int n) const;
+	inline bool contains (const mpfr_t &n) const;
+	inline bool contains (const mpz_t &n) const;
+	inline bool contains (const mpq_t &n) const;
+	inline bool contains (const Gmpz &n) const;
+	inline bool contains (const Gmpq &n) const;
 
 	// Arithmetic functions required by RingNumberType:
 	// 1. comparisons between MpfiInterval's
@@ -119,18 +147,15 @@ public:
 	bool operator> (const int) const;
 	bool operator<= (const int) const;
 	bool operator>= (const int) const;
-	bool operator== (const CGAL::Gmpz &) const;
-	bool operator!= (const CGAL::Gmpz &) const;
+	// for Gmpz and Gmpz, we can find some elements in common...
+	template <class T> bool operator== (const T &) const;
+	template <class T> bool operator!= (const T &) const;
 	bool operator< (const CGAL::Gmpz &) const;
-	bool operator> (const CGAL::Gmpz &) const;
-	bool operator<= (const CGAL::Gmpz &) const;
-	bool operator>= (const CGAL::Gmpz &) const;
-	bool operator== (const CGAL::Gmpq &) const;
-	bool operator!= (const CGAL::Gmpq &) const;
 	bool operator< (const CGAL::Gmpq &) const;
+	bool operator> (const CGAL::Gmpz &) const;
 	bool operator> (const CGAL::Gmpq &) const;
-	bool operator<= (const CGAL::Gmpq &) const;
-	bool operator>= (const CGAL::Gmpq &) const;
+	template <class T> bool operator<= (const T &) const;
+	template <class T> bool operator>= (const T &) const;
 	// 3
 	MpfiInterval operator+ (const MpfiInterval &) const;
 	MpfiInterval operator- (const MpfiInterval &) const;
@@ -188,20 +213,17 @@ public:
 	MpfiInterval operator*= (const mpq_t &);
 
 	// 11
-	MpfiInterval (const mpfr_t &);	// constructor
+	MpfiInterval (const mpfr_t &);	// constructor I
+	MpfiInterval (const mpfr_t &, const mpfr_t &);	// constructor II
 	MpfiInterval operator= (const mpfr_t &);	// assigning
-	// comparison
-	bool operator== (const mpfr_t &) const;
-	bool operator!= (const mpfr_t &) const;
+	// comparison (previous template definitions should work with mpfr_t)
 	bool operator< (const mpfr_t &) const;
 	bool operator> (const mpfr_t &) const;
-	bool operator<= (const mpfr_t &) const;
-	bool operator>= (const mpfr_t &) const;
 	// arithmetics
 	MpfiInterval operator+ (const mpfr_t &) const;
 	MpfiInterval operator- (const mpfr_t &) const;
 	MpfiInterval operator* (const mpfr_t &) const;
-	MpfiInterval operator/ (const mpfr_t &);
+	MpfiInterval operator/ (const mpfr_t &) const;
 	MpfiInterval operator+= (const mpfr_t &);
 	MpfiInterval operator-= (const mpfr_t &);
 	MpfiInterval operator*= (const mpfr_t &);
@@ -213,6 +235,7 @@ std::ostream& operator<< (std::ostream &, MpfiInterval &);
 CGAL_END_NAMESPACE
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
+// the implementation of functions inside and outside the class
 #include <CGAL/MpfiInterval.C>
 #endif	// CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 

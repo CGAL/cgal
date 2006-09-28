@@ -11,19 +11,19 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:  $
-// $Id:  $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Luis Peñaranda <penarand@loria.fr>
 
 // TODO:
 //	-change the order in which functions are written in the file, so it
-//	becames more readable
+//	becames more readable (someone, someday, will do this)
 //	-think about precision propagation in arithmetic functions
-//	-throw an exception when comparison between intervals is not known
-//	(when they have points in common)
-//	-add interfaces to more number types
+//	-enhance the exception mechanism (when comparison between intervals is
+//	not known)
+//	-add interfaces to more CGAL number types
 
 #include <CGAL/basic.h>
 #include <CGAL/assertions.h>
@@ -36,7 +36,15 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// constructors
+// the exception object
+comparison_overlap_exn exn_overlap;
+
+// what to do when a comparison fails?
+void overlap () {
+	throw exn_overlap;
+}
+
+// constructors of a "point" interval
 MpfiInterval::MpfiInterval () {};
 
 MpfiInterval::MpfiInterval (int i) {
@@ -67,6 +75,35 @@ MpfiInterval::MpfiInterval (const CGAL::Gmpq &q) {
 	mpfi_set_q (mpfi (), q.mpq());
 };
 
+// constructors of a "proper" interval
+MpfiInterval::MpfiInterval (int l, int r) {
+	mpfi_interv_si (mpfi (), (long int)l, (long int)r);
+};
+
+MpfiInterval::MpfiInterval (unsigned int l, unsigned int r) {
+	mpfi_interv_ui (mpfi (), (unsigned long int)l, (unsigned long int)r);
+};
+
+MpfiInterval::MpfiInterval (long int l, long int r) {
+	mpfi_interv_si (mpfi (), l, r);
+};
+
+MpfiInterval::MpfiInterval (unsigned long int l, unsigned long int r) {
+	mpfi_interv_ui (mpfi (), l, r);
+};
+
+MpfiInterval::MpfiInterval (double l, double r) {
+	mpfi_interv_d (mpfi (), l, r);
+};
+
+MpfiInterval::MpfiInterval (const CGAL::Gmpz &l, const CGAL::Gmpz &r) {
+	mpfi_interv_z (mpfi (), l.mpz(), r.mpz());
+};
+
+MpfiInterval::MpfiInterval (const CGAL::Gmpq &l, const CGAL::Gmpq &r) {
+	mpfi_interv_q (mpfi (), l.mpq(), r.mpq());
+};
+
 MpfiInterval::MpfiInterval (const mpfi_t &i) {
 	mpfi_set (mpfi (), i);
 };
@@ -88,12 +125,140 @@ inline void MpfiInterval::set_prec (mp_prec_t p) { mpfi_set_prec (mpfi (), p); }
 
 inline mp_prec_t MpfiInterval::get_prec () { return mpfi_get_prec (mpfi ()); };
 
-inline void MpfiInterval::get_left (mpft_r &f) {
+inline void MpfiInterval::get_left (mpfr_t &f) const {
 	mpfi_get_left (f, mpfi ());
 }
 
-inline void MpfiInterval::get_right (mpft_r &f) {
+inline void MpfiInterval::get_right (mpfr_t &f) const {
 	mpfi_get_right (f, mpfi ());
+}
+
+inline void MpfiInterval::get_endpoints (mpfr_t &l, mpfr_t &r) const {
+	mpfi_get_left (l, mpfi ());
+	mpfi_get_right (r, mpfi ());
+}
+
+inline bool MpfiInterval::is_point () const {
+	mpfr_t l, r;
+	mpfr_inits (l, r, NULL);
+	get_endpoints (l, r);
+	int comp = mpfr_equal_p (l, r);
+	mpfr_clears (l, r, NULL);
+	return (comp != 0);
+}
+
+inline bool MpfiInterval::contains (const int n) const {
+	mpfr_t end;
+	mpfr_init (end);
+	int comp;
+	get_left (end);	// first, we compare the left end
+	comp = mpfr_cmp_si (end, n);
+	if (comp > 0) {	// n is lower than the left end
+		mpfr_clear (end);
+		return false;
+	}
+	get_right (end);	// now, the right one
+	comp = mpfr_cmp_si (end, n);
+	if (comp < 0) {	// n is higher than the right end
+		mpfr_clear (end);
+		return false;
+	}
+	return true;
+}
+
+inline bool MpfiInterval::contains (const mpfr_t &n) const {
+	mpfr_t end;
+	mpfr_init (end);
+	int comp;
+	get_left (end);	// first, we compare the left end
+	comp = mpfr_cmp (end, n);
+	if (comp > 0) {	// n is lower than the left end
+		mpfr_clear (end);
+		return false;
+	}
+	get_right (end);	// now, the right one
+	comp = mpfr_cmp (end, n);
+	if (comp < 0) {	// n is higher than the right end
+		mpfr_clear (end);
+		return false;
+	}
+	return true;
+}
+
+inline bool MpfiInterval::contains (const mpz_t &n) const {
+	mpfr_t end;
+	mpfr_init (end);
+	int comp;
+	get_left (end);	// first, we compare the left end
+	comp = mpfr_cmp_z (end, n);
+	if (comp > 0) {	// n is lower than the left end
+		mpfr_clear (end);
+		return false;
+	}
+	get_right (end);	// now, the right one
+	comp = mpfr_cmp_z (end, n);
+	if (comp < 0) {	// n is higher than the right end
+		mpfr_clear (end);
+		return false;
+	}
+	return true;
+}
+
+inline bool MpfiInterval::contains (const mpq_t &n) const {
+	mpfr_t end;
+	mpfr_init (end);
+	int comp;
+	get_left (end);	// first, we compare the left end
+	comp = mpfr_cmp_q (end, n);
+	if (comp > 0) {	// n is lower than the left end
+		mpfr_clear (end);
+		return false;
+	}
+	get_right (end);	// now, the right one
+	comp = mpfr_cmp_q (end, n);
+	if (comp < 0) {	// n is higher than the right end
+		mpfr_clear (end);
+		return false;
+	}
+	return true;
+}
+
+inline bool MpfiInterval::contains (const Gmpz &n) const {
+	mpfr_t end;
+	mpfr_init (end);
+	int comp;
+	get_left (end);	// first, we compare the left end
+	comp = mpfr_cmp_z (end, n.mpz());
+	if (comp > 0) {	// n is lower than the left end
+		mpfr_clear (end);
+		return false;
+	}
+	get_right (end);	// now, the right one
+	comp = mpfr_cmp_z (end, n.mpz());
+	if (comp < 0) {	// n is higher than the right end
+		mpfr_clear (end);
+		return false;
+	}
+	return true;
+}
+
+inline bool MpfiInterval::contains (const Gmpq &n) const {
+	mpfr_t end;
+	mpfr_init (end);
+	int comp;
+	get_left (end);	// first, we compare the left end
+	comp = mpfr_cmp_q (end, n.mpq());
+	if (comp > 0) {	// n is lower than the left end
+		mpfr_clear (end);
+		return false;
+	}
+	get_right (end);	// now, the right one
+	comp = mpfr_cmp_q (end, n.mpq());
+	if (comp < 0) {	// n is higher than the right end
+		mpfr_clear (end);
+		return false;
+	}
+	return true;
 }
 
 // overcharge for assignment
@@ -121,75 +286,154 @@ MpfiInterval MpfiInterval::operator= (const MpfiInterval &i) {
 // 2
 // comparisons with ints
 bool MpfiInterval::operator== (const int n2) const {
-	return (mpfi_is_inside_si ((long int)n2, mpfi ()) > 0);
+	if (contains (n2)) {
+		if (is_point ())
+			return true;
+		else
+			overlap ();
+	}
+	return false;
 };
 
 bool MpfiInterval::operator!= (const int n2) const {
-	return (mpfi_is_inside_si ((long int)n2, mpfi ()) == 0);
+	return !(operator== (n2));
 };
 
 bool MpfiInterval::operator< (const int n2) const {
-	return (mpfi_cmp_si (mpfi (), (long int)n2) < 0);
+	if (contains (n2))
+		if (is_point ())
+			return false;
+		else
+			overlap ();
+	mpfr_t end;
+	mpfr_init (end);
+	get_right (end);	// end is the right endpoint
+	int comp1 = mpfr_cmp_si (end, n2);
+	if (comp1 < 0) {
+		mpfr_clear (end);
+		return true;
+	}
+	mpfr_clear (end);
+	return false;
 };
 
 bool MpfiInterval::operator> (const int n2) const {
-	return (mpfi_cmp_si (mpfi (), (long int)n2) > 0);
+	if (contains (n2))
+		if (is_point ())
+			return false;
+		else
+			overlap ();
+	mpfr_t end;
+	mpfr_init (end);
+	get_left (end);	// end is the left endpoint
+	int comp1 = mpfr_cmp_si (end, n2);
+	if (comp1 > 0) {
+		mpfr_clear (end);
+		return true;
+	}
+	mpfr_clear (end);
+	return false;
 };
 
 bool MpfiInterval::operator<= (const int n2) const {
-	return (mpfi_cmp_si (mpfi (), (long int)n2) <= 0);
+	return ((operator== (n2)) || (operator< (n2)));
 };
 
 bool MpfiInterval::operator>= (const int n2) const {
-	return (mpfi_cmp_si (mpfi (), (long int)n2) >= 0);
-};
-// comparisons with Gmpz
-bool MpfiInterval::operator== (const CGAL::Gmpz &n2) const {
-	return (mpfi_is_inside_z (n2.mpz(), mpfi ()) > 0);
+	return ((operator== (n2)) || (operator> (n2)));
 };
 
-bool MpfiInterval::operator!= (const CGAL::Gmpz &n2) const {
-	return (mpfi_is_inside_z (n2.mpz(), mpfi ()) == 0);
+// comparisons with Gmpz and Gmpq
+template <class T>
+bool MpfiInterval::operator== (const T &n2) const {
+	if (contains (n2)) {
+		if (is_point ())
+			return true;
+		else
+			overlap ();
+	}
+	return false;
+};
+
+template <class T>
+bool MpfiInterval::operator!= (const T &n2) const {
+	return !(operator== (n2));
 };
 
 bool MpfiInterval::operator< (const CGAL::Gmpz &n2) const {
-	return (mpfi_cmp_z (mpfi (), n2.mpz()) < 0);
-};
-
-bool MpfiInterval::operator> (const CGAL::Gmpz &n2) const {
-	return (mpfi_cmp_z (mpfi (), n2.mpz()) > 0);
-};
-
-bool MpfiInterval::operator<= (const CGAL::Gmpz &n2) const {
-	return (mpfi_cmp_z (mpfi (), n2.mpz()) <= 0);
-};
-
-bool MpfiInterval::operator>= (const CGAL::Gmpz &n2) const {
-	return (mpfi_cmp_z (mpfi (), n2.mpz()) >= 0);
-};
-// comparisons with Gmpq
-bool MpfiInterval::operator== (const CGAL::Gmpq &n2) const {
-	return (mpfi_is_inside_q (n2.mpq(), mpfi ()) > 0);
-};
-
-bool MpfiInterval::operator!= (const CGAL::Gmpq &n2) const {
-	return (mpfi_is_inside_q (n2.mpq(), mpfi ()) == 0);
+	if (contains (n2))
+		if (is_point ())
+			return false;
+		else
+			overlap ();
+	mpfr_t end;
+	mpfr_init (end);
+	get_right (end);	// end is the right endpoint
+	int comp1 = mpfr_cmp_z (end, n2.mpz());
+	if (comp1 < 0) {
+		mpfr_clear (end);
+		return true;
+	}
+	mpfr_clear (end);
+	return false;
 };
 
 bool MpfiInterval::operator< (const CGAL::Gmpq &n2) const {
-	return (mpfi_cmp_q (mpfi (), n2.mpq()) < 0);
+	if (contains (n2))
+		if (is_point ())
+			return false;
+		else
+			overlap ();
+	mpfr_t end;
+	mpfr_init (end);
+	get_right (end);	// end is the right endpoint
+	int comp1 = mpfr_cmp_q (end, n2.mpq());
+	if (comp1 < 0) {
+		mpfr_clear (end);
+		return true;
+	}
+	mpfr_clear (end);
+	return false;
+};
+
+bool MpfiInterval::operator> (const CGAL::Gmpz &n2) const {
+	if (contains (n2))
+		overlap ();
+	mpfr_t end;
+	mpfr_init (end);
+	get_left (end);	// end is the left endpoint
+	int comp1 = mpfr_cmp_z (end, n2.mpz());
+	if (comp1 > 0) {
+		mpfr_clear (end);
+		return true;
+	}
+	mpfr_clear (end);
+	return false;
 };
 
 bool MpfiInterval::operator> (const CGAL::Gmpq &n2) const {
-	return (mpfi_cmp_q (mpfi (), n2.mpq()) > 0);
+	if (contains (n2))
+		overlap ();
+	mpfr_t end;
+	mpfr_init (end);
+	get_left (end);	// end is the left endpoint
+	int comp1 = mpfr_cmp_q (end, n2.mpq());
+	if (comp1 > 0) {
+		mpfr_clear (end);
+		return true;
+	}
+	mpfr_clear (end);
+	return false;
 };
 
-bool MpfiInterval::operator<= (const CGAL::Gmpq &n2) const {
-	return (mpfi_cmp_q (mpfi (), n2.mpq()) <= 0);
+template <class T>
+bool MpfiInterval::operator<= (const T &n2) const {
+	return ((operator== (n2)) || (operator< (n2)));
 };
 
-bool MpfiInterval::operator>= (const CGAL::Gmpq &n2) const {
-	return (mpfi_cmp_q (mpfi (), n2.mpq()) >= 0);
+template <class T>
+bool MpfiInterval::operator>= (const T &n2) const {
+	return ((operator== (n2)) || (operator> (n2)));
 };
 
 // 3
@@ -445,8 +689,7 @@ std::ostream& MpfiInterval::show (std::ostream &o) {
 	expptr1 = (mp_exp_t*)malloc(sizeof(mp_exp_t));
 	expptr2 = (mp_exp_t*)malloc(sizeof(mp_exp_t));
 
-	mpfr_init (op1);
-	mpfr_init (op2);
+	mpfr_inits (op1, op2, NULL);
 
 	mpfi_get_left (op1, mpfi ());
 	mpfi_get_right (op2, mpfi ());
@@ -465,8 +708,7 @@ std::ostream& MpfiInterval::show (std::ostream &o) {
 
 	mpfr_free_str (str1);
 	mpfr_free_str (str2);
-	mpfr_clear (op1);
-	mpfr_clear (op2);
+	mpfr_clears (op1, op2, NULL);
 
 	return o;
 };
@@ -554,9 +796,14 @@ MpfiInterval MpfiInterval::operator*= (const mpq_t &n2) {
 
 // 11. all the functions with mpfr_t that need to be inside the class
 
-// constructor
+// constructor I
 MpfiInterval::MpfiInterval (const mpfr_t &r) {
 	mpfi_set_fr (mpfi (), r);
+};
+
+// constructor II
+MpfiInterval::MpfiInterval (const mpfr_t &l, const mpfr_t &r) {
+	mpfi_interv_fr (mpfi (), l, r);
 };
 
 // assigning: mpfi = mpfr
@@ -566,28 +813,39 @@ MpfiInterval MpfiInterval::operator= (const mpfr_t &r) {
 };
 
 // comparison: mpfi (op) mpfr
-bool MpfiInterval::operator== (const mpfr_t &r) const {
-	return (mpfi_cmp_fr (mpfi (), r) == 0);
+//	NOTE: the previous template definitions of operators =, !=, >= and <=
+//	should work with mpfr_t
+bool MpfiInterval::operator< (const mpfr_t &n2) const {
+	if (contains (n2))
+		if (is_point ())
+			return false;
+		else
+			overlap ();
+	mpfr_t end;
+	mpfr_init (end);
+	get_right (end);	// end is the right endpoint
+	int comp1 = mpfr_cmp (end, n2);
+	if (comp1 < 0) {
+		mpfr_clear (end);
+		return true;
+	}
+	mpfr_clear (end);
+	return false;
 };
 
-bool MpfiInterval::operator!= (const mpfr_t &r) const {
-	return (mpfi_cmp_fr ((long int)n2, r) != 0);
-};
-
-bool MpfiInterval::operator< (const mpfr_t &r) const {
-	return (mpfi_cmp_fr (mpfi (), r) < 0);
-};
-
-bool MpfiInterval::operator> (const mpfr_t &r) const {
-	return (mpfi_cmp_fr (mpfi (), r) > 0);
-};
-
-bool MpfiInterval::operator<= (const mpfr_t &r) const {
-	return (mpfi_cmp_fr (mpfi (), r) <= 0);
-};
-
-bool MpfiInterval::operator>= (const mpfr_t &r) const {
-	return (mpfi_cmp_fr (mpfi (), r) >= 0);
+bool MpfiInterval::operator> (const mpfr_t &n2) const {
+	if (contains (n2))
+		overlap ();
+	mpfr_t end;
+	mpfr_init (end);
+	get_left (end);	// end is the left endpoint
+	int comp1 = mpfr_cmp (end, n2);
+	if (comp1 > 0) {
+		mpfr_clear (end);
+		return true;
+	}
+	mpfr_clear (end);
+	return false;
 };
 
 // arithmetics: mpfi (op) mpfr
@@ -658,191 +916,96 @@ MpfiInterval MpfiInterval::operator/= (const mpfr_t &f) {
 
 // These functions are required, but they need to be coded outside the class:
 
-// 1.5
+// 1.5 TODO
 bool operator== (const MpfiInterval &n1, const MpfiInterval &n2) {
-	// mpfi_cmp returns 0 iff the two intervals have some point in common
-	return (mpfi_cmp (n1.mpfi (), n2.mpfi ()) == 0);
+	mpfr_t n1_l, n1_r, n2_l, n2_r;
+	mpfr_inits (n1_l, n1_r, n2_l, n2_r, NULL);
+	n1.get_endpoints (n1_l, n1_r);
+	n2.get_endpoints (n2_l, n2_r);
+	// we assume here that the left endpoint is lesser or equal than the
+	// right one (it is responsibility of the user to assure that)
+	if ((mpfr_cmp (n1_l, n2_l) == 0) && (mpfr_cmp (n1_r, n2_r) == 0)) {
+		mpfr_clears (n1_l, n1_r, n2_l, n2_r, NULL);
+		return true;
+	}
+	if ((mpfr_cmp (n1_r, n2_l) < 0) || (mpfr_cmp (n2_r, n1_l) < 0)) {
+		mpfr_clears (n1_l, n1_r, n2_l, n2_r, NULL);
+		return false;
+	}
+	mpfr_clears (n1_l, n1_r, n2_l, n2_r, NULL);
+	overlap ();
+	return false;	// this never occurs
 }
 
 bool operator!= (const MpfiInterval &n1, const MpfiInterval &n2) {
-	return (mpfi_cmp (n1.mpfi (), n2.mpfi ()) != 0);
+	return !(n1 == n2);
 }
 
 bool operator< (const MpfiInterval &n1, const MpfiInterval &n2) {
-	return (mpfi_cmp (n1.mpfi (), n2.mpfi ()) < 0);
+	mpfr_t n1_r, n2_l;
+	mpfr_inits (n1_r, n2_l, NULL);
+	n1.get_right (n1_r);
+	n2.get_left (n2_l);
+	if (mpfr_cmp (n1_r, n2_l) < 0) {
+		mpfr_clears (n1_r, n2_l, NULL);
+		return true;
+	}
+	mpfr_clears (n1_r, n2_l, NULL);
+	mpfr_t n1_l, n2_r;
+	mpfr_inits (n1_l, n2_r, NULL);
+	n1.get_left (n1_l);
+	n2.get_right (n2_r);
+	if (mpfr_cmp (n2_r, n1_l) < 0) {
+		mpfr_clears (n1_l, n2_r, NULL);
+		return false;
+	}
+	mpfr_clears (n1_l, n2_r, NULL);
+	overlap ();
+	return false;	// this never occurs
 }
 
 bool operator> (const MpfiInterval &n1, const MpfiInterval &n2) {
-	return (mpfi_cmp (n1.mpfi (), n2.mpfi ()) > 0);
+	return (n2 < n1);
 }
 
 bool operator<= (const MpfiInterval &n1, const MpfiInterval &n2) {
-	return (mpfi_cmp (n1.mpfi (), n2.mpfi ()) <= 0);
+	return ((n1 == n2) || (n1 < n2));
 }
 
 bool operator>= (const MpfiInterval &n1, const MpfiInterval &n2) {
-	return (mpfi_cmp (n1.mpfi (), n2.mpfi ()) >= 0);
+	return ((n1 == n2) || (n1 > n2));
 }
 
 // 2.5
-// -between ints and intervals
-bool operator== (const int n1, const MpfiInterval &n2) {
-	return (mpfi_is_inside_si ((long int)n1, n2.mpfi ()) > 0);
+// comparison between int|mpfr_t|mp[zq]_t|Gmp[zq] and intervals
+template <class T>
+bool operator== (const T &n1, const MpfiInterval &n2) {
+	return (n2 == n1);
 }
 
-bool operator!= (const int n1, const MpfiInterval &n2) {
-	return (mpfi_is_inside_si ((long int)n1, n2.mpfi ()) == 0);
+template <class T>
+bool operator!= (const T &n1, const MpfiInterval &n2) {
+	return (n2 != n1);
 }
 
-bool operator< (const int n1, const MpfiInterval &n2) {
-	return (mpfi_cmp_si (n2.mpfi (), (long int)n1) < 0);
+template <class T>
+bool operator< (const T &n1, const MpfiInterval &n2) {
+	return (n2 > n1);
 }
 
-bool operator> (const int n1, const MpfiInterval &n2) {
-	return (mpfi_cmp_si (n2.mpfi (), (long int)n1) > 0);
+template <class T>
+bool operator> (const T &n1, const MpfiInterval &n2) {
+	return (n2 < n1);
 }
 
-bool operator<= (const int n1, const MpfiInterval &n2) {
-	return (mpfi_cmp_si (n2.mpfi (), (long int)n1) <= 0);
+template <class T>
+bool operator<= (const T &n1, const MpfiInterval &n2) {
+	return (n2 >= n1);
 }
 
-bool operator>= (const int n1, const MpfiInterval &n2) {
-	return (mpfi_cmp_si (n2.mpfi (), (long int)n1) >= 0);
-}
-
-// -between Gmpz and intervals
-bool operator== (const CGAL::Gmpz &n1, const MpfiInterval &n2) {
-	return (mpfi_is_inside_z (n1.mpz(), n2.mpfi ()) > 0);
-}
-
-bool operator!= (const CGAL::Gmpz &n1, const MpfiInterval &n2) {
-	return (mpfi_is_inside_z (n1.mpz(), n2.mpfi ()) == 0);
-}
-
-bool operator< (const CGAL::Gmpz &n1, const MpfiInterval &n2) {
-	return (mpfi_cmp_z (n2.mpfi (), n1.mpz()) < 0);
-}
-
-bool operator> (const CGAL::Gmpz &n1, const MpfiInterval &n2) {
-	return (mpfi_cmp_z (n2.mpfi (), n1.mpz()) > 0);
-}
-
-bool operator<= (const CGAL::Gmpz &n1, const MpfiInterval &n2) {
-	return (mpfi_cmp_z (n2.mpfi (), n1.mpz()) <= 0);
-}
-
-bool operator>= (const CGAL::Gmpz &n1, const MpfiInterval &n2) {
-	return (mpfi_cmp_z (n2.mpfi (), n1.mpz()) >= 0);
-}
-
-// -between Gmpq and intervals
-bool operator== (const CGAL::Gmpq &n1, const MpfiInterval &n2) {
-	return (mpfi_is_inside_q (n1.mpq(), n2.mpfi ()) > 0);
-}
-
-bool operator!= (const CGAL::Gmpq &n1, const MpfiInterval &n2) {
-	return (mpfi_is_inside_q (n1.mpq(), n2.mpfi ()) == 0);
-}
-
-bool operator< (const CGAL::Gmpq &n1, const MpfiInterval &n2) {
-	return (mpfi_cmp_q (n2.mpfi (), n1.mpq()) < 0);
-}
-
-bool operator> (const CGAL::Gmpq &n1, const MpfiInterval &n2) {
-	return (mpfi_cmp_q (n2.mpfi (), n1.mpq()) > 0);
-}
-
-bool operator<= (const CGAL::Gmpq &n1, const MpfiInterval &n2) {
-	return (mpfi_cmp_q (n2.mpfi (), n1.mpq()) <= 0);
-}
-
-bool operator>= (const CGAL::Gmpq &n1, const MpfiInterval &n2) {
-	return (mpfi_cmp_q (n2.mpfi (), n1.mpq()) >= 0);
-}
-
-// 4.5
-// int (op) interval
-MpfiInterval operator+ (const int n1, const MpfiInterval &n2) {
-	mpfi_t r;
-	mpfi_init (r);
-	mpfi_add_si (r, n2.mpfi (), (long int)n1);
-	MpfiInterval ret (r);
-	mpfi_clear (r);
-	return ret;
-}
-
-MpfiInterval operator- (const int n1, const MpfiInterval &n2) {
-	mpfi_t r;
-	mpfi_init (r);
-	mpfi_si_sub (r, (long int)n1, n2.mpfi ());
-	MpfiInterval ret (r);
-	mpfi_clear (r);
-	return ret;
-}
-
-MpfiInterval operator* (const int n1, const MpfiInterval &n2) {
-	mpfi_t r;
-	mpfi_init (r);
-	mpfi_mul_si (r, n2.mpfi (), (long int)n1);
-	MpfiInterval ret (r);
-	mpfi_clear (r);
-	return ret;
-}
-
-// Gmpz int (op) interval
-MpfiInterval operator+ (const CGAL::Gmpz &n1, const MpfiInterval &n2) {
-	mpfi_t r;
-	mpfi_init (r);
-	mpfi_add_z (r, n2.mpfi (), n1.mpz());
-	MpfiInterval ret (r);
-	mpfi_clear (r);
-	return ret;
-}
-
-MpfiInterval operator- (const CGAL::Gmpz &n1, const MpfiInterval &n2) {
-	mpfi_t r;
-	mpfi_init (r);
-	mpfi_z_sub (r, n1.mpz(), n2.mpfi ());
-	MpfiInterval ret (r);
-	mpfi_clear (r);
-	return ret;
-}
-
-MpfiInterval operator* (const CGAL::Gmpz &n1, const MpfiInterval &n2) {
-	mpfi_t r;
-	mpfi_init (r);
-	mpfi_mul_z (r, n2.mpfi (), n1.mpz());
-	MpfiInterval ret (r);
-	mpfi_clear (r);
-	return ret;
-}
-
-// Gmpq (op) interval
-MpfiInterval operator+ (const CGAL::Gmpq &n1, const MpfiInterval &n2) {
-	mpfi_t r;
-	mpfi_init (r);
-	mpfi_add_q (r, n2.mpfi (), n1.mpq());
-	MpfiInterval ret (r);
-	mpfi_clear (r);
-	return ret;
-}
-
-MpfiInterval operator- (const CGAL::Gmpq &n1, const MpfiInterval &n2) {
-	mpfi_t r;
-	mpfi_init (r);
-	mpfi_q_sub (r, n1.mpq(), n2.mpfi ());
-	MpfiInterval ret (r);
-	mpfi_clear (r);
-	return ret;
-}
-
-MpfiInterval operator* (const CGAL::Gmpq &n1, const MpfiInterval &n2) {
-	mpfi_t r;
-	mpfi_init (r);
-	mpfi_mul_q (r, n2.mpfi (), n1.mpq());
-	MpfiInterval ret (r);
-	mpfi_clear (r);
-	return ret;
+template <class T>
+bool operator>= (const T &n1, const MpfiInterval &n2) {
+	return (n2 <= n1);
 }
 
 // 5.5
@@ -901,117 +1064,24 @@ std::ostream& operator<< (std::ostream &o, MpfiInterval &n) {
 	return n.show(o);
 };
 
-// 10.5
-// mpz_t (op) interval
-MpfiInterval operator+ (const mpz_t &n1, const MpfiInterval &n2) {
-	mpfi_t r;
-	mpfi_init (r);
-	mpfi_add_z (r, n2.mpfi (), n1);
-	MpfiInterval ret (r);
-	mpfi_clear (r);
-	return ret;
-}
-
-MpfiInterval operator- (const mpz_t &n1, const MpfiInterval &n2) {
-	mpfi_t r;
-	mpfi_init (r);
-	mpfi_z_sub (r, n1, n2.mpfi ());
-	MpfiInterval ret (r);
-	mpfi_clear (r);
-	return ret;
-}
-
-MpfiInterval operator* (const mpz_t &n1, const MpfiInterval &n2) {
-	mpfi_t r;
-	mpfi_init (r);
-	mpfi_mul_z (r, n2.mpfi (), n1);
-	MpfiInterval ret (r);
-	mpfi_clear (r);
-	return ret;
-}
-
-// mpq_t (op) interval
-MpfiInterval operator+ (const mpq_t &n1, const MpfiInterval &n2) {
-	mpfi_t r;
-	mpfi_init (r);
-	mpfi_add_q (r, n2.mpfi (), n1);
-	MpfiInterval ret (r);
-	mpfi_clear (r);
-	return ret;
-}
-
-MpfiInterval operator- (const mpq_t &n1, const MpfiInterval &n2) {
-	mpfi_t r;
-	mpfi_init (r);
-	mpfi_q_sub (r, n1, n2.mpfi ());
-	MpfiInterval ret (r);
-	mpfi_clear (r);
-	return ret;
-}
-
-MpfiInterval operator* (const mpq_t &n1, const MpfiInterval &n2) {
-	mpfi_t r;
-	mpfi_init (r);
-	mpfi_mul_q (r, n2.mpfi (), n1);
-	MpfiInterval ret (r);
-	mpfi_clear (r);
-	return ret;
-}
-
 // 11.5
-// all the mpfr functions that can't be inside the class
-
-// comparison
-bool operator== (const mpfr_t &r, const MpfiInterval &n2) {
-	return (mpfi_is_inside_fr ((long int)n1, n2.mpfi ()) > 0);
-}
-
-bool operator!= (const mpfr_t &r, const MpfiInterval &n2) {
-	return (mpfi_is_inside_fr ((long int)n1, n2.mpfi ()) == 0);
-}
-
-bool operator< (const mpfr_t &r, const MpfiInterval &n2) {
-	return (mpfi_cmp_fr (n2.mpfi (), (long int)n1) < 0);
-}
-
-bool operator> (const mpfr_t &r, const MpfiInterval &n2) {
-	return (mpfi_cmp_fr (n2.mpfi (), (long int)n1) > 0);
-}
-
-bool operator<= (const mpfr_t &r, const MpfiInterval &n2) {
-	return (mpfi_cmp_fr (n2.mpfi (), (long int)n1) <= 0);
-}
-
-bool operator>= (const mpfr_t &r, const MpfiInterval &n2) {
-	return (mpfi_cmp_fr (n2.mpfi (), (long int)n1) >= 0);
-}
+// all the mpfr functions that can't be inside the class (and aren't covered
+// by the template functions
 
 // arithmetics
-MpfiInterval operator+ (const mpfr_t &n1, const MpfiInterval &n2) {
-	mpfi_t r;
-	mpfi_init (r);
-	mpfi_add_fr (r, n2.mpfi (), n1);
-	MpfiInterval ret (r);
-	mpfi_clear (r);
-	return ret;
+template <class T>
+MpfiInterval operator+ (const T &n1, const MpfiInterval &n2) {
+	return (n2 + n1);
 }
 
-MpfiInterval operator- (const mpfr_t &n1, const MpfiInterval &n2) {
-	mpfi_t r;
-	mpfi_init (r);
-	mpfi_fr_sub (r, n1, n2.mpfi ());
-	MpfiInterval ret (r);
-	mpfi_clear (r);
-	return ret;
+template <class T>
+MpfiInterval operator- (const T &n1, const MpfiInterval &n2) {
+	return ((-n2) + n1);
 }
 
-MpfiInterval operator* (const mpfr_t &n1, const MpfiInterval &n2) {
-	mpfi_t r;
-	mpfi_init (r);
-	mpfi_mul_fr (r, n2.mpfi (), n1);
-	MpfiInterval ret (r);
-	mpfi_clear (r);
-	return ret;
+template <class T>
+MpfiInterval operator* (const T &n1, const MpfiInterval &n2) {
+	return (n2 * n1);
 }
 
 MpfiInterval operator/ (const mpfr_t &n1, const MpfiInterval &n2) {
