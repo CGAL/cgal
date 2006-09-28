@@ -54,7 +54,7 @@ int main(const int argNr,const char **args) {
 #else
   typedef CGAL::Gmpzf ET;
 #endif
-  typedef CGAL::QP_from_mps<IT, CGAL::Tag_false> QP;
+  typedef CGAL::QP_from_mps<IT, CGAL::Tag_false, CGAL::Tag_true> QP;
   QP qp(std::cin,true,verbosity);
 
   // check for format errors in MPS f\ile:

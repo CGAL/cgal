@@ -134,11 +134,6 @@ set(const Q& qp)
       }
       vout.out() << " ]" << std::endl;
       if (vout2.verbose()) {
-	if (is_QP) {
-	  vout2.out() << "flag: D "
-		      << (check_tag(Is_symmetric()) ? "" : "not ")
-		      << "symmetric" << std::endl;
-	}
 	if (has_ineq)
 	  vout2.out() << "flag: has inequalities or rank not full"
 		      << std::endl;

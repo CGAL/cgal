@@ -148,7 +148,6 @@ public: // public types
 
   // types from the Tags
   typedef  typename Tags::Is_linear    Is_linear;
-  typedef  typename Tags::Is_symmetric Is_symmetric;
   typedef  typename Tags::Is_in_standard_form Is_in_standard_form;
 
   // friends
@@ -270,12 +269,12 @@ private:
   A_row_by_index_iterator;
 
   // Access to the matrix D is sometimes exact, and sometimes inexact:
-  typedef  QP_matrix_pairwise_accessor< D_iterator, Is_symmetric, ET >
+  typedef  QP_matrix_pairwise_accessor< D_iterator, Tag_true, ET >
   D_pairwise_accessor;
   typedef  Join_input_iterator_1< Index_const_iterator,
 				  D_pairwise_accessor >
   D_pairwise_iterator;
-  typedef  QP_matrix_pairwise_accessor< D_iterator, Is_symmetric, D_entry >
+  typedef  QP_matrix_pairwise_accessor< D_iterator, Tag_true, D_entry >
   D_pairwise_accessor_inexact;
   typedef  Join_input_iterator_1< Index_const_iterator, 
 				  D_pairwise_accessor_inexact >
@@ -917,20 +916,20 @@ private:
   }
 
 
-  template < class NT, class It >
-  void  mu_j__quadratic_part_( NT& mu_j, int j, It x_it,
-			       Tag_true  is_linear) const;
-  template < class NT, class It >
-  void  mu_j__quadratic_part_( NT& mu_j, int j, It x_it,
-			       Tag_false is_linear) const;
-  template < class NT, class It >
-  void  mu_j__quadratic_part_( NT& mu_j, int j, It x_it,
-			       Tag_false is_linear,
-			       Tag_true  is_symmetric) const;
-  template < class NT, class It >
-  void  mu_j__quadratic_part_( NT& mu_j, int j, It x_it,
-			       Tag_false is_linear,
-			       Tag_false is_symmetric) const;
+//   template < class NT, class It >
+//   void  mu_j__quadratic_part_( NT& mu_j, int j, It x_it,
+// 			       Tag_true  is_linear) const;
+//   template < class NT, class It >
+//   void  mu_j__quadratic_part_( NT& mu_j, int j, It x_it,
+// 			       Tag_false is_linear) const;
+//   template < class NT, class It >
+//   void  mu_j__quadratic_part_( NT& mu_j, int j, It x_it,
+// 			       Tag_false is_linear,
+// 			       Tag_true  is_symmetric) const;
+//   template < class NT, class It >
+//   void  mu_j__quadratic_part_( NT& mu_j, int j, It x_it,
+// 			       Tag_false is_linear,
+// 			       Tag_false is_symmetric) const;
 
   template < class NT, class It >
   void  mu_j__slack_or_artificial_( NT& mu_j, int j, It lambda_it, 
@@ -1462,17 +1461,11 @@ private:
   mu_j__quadratic_part( NT& mu_j, int j, It x_it, Tag_false) const
   {
     if ( is_phaseII) {
-      if (check_tag(Is_symmetric())) {           // D symmetric
-	// 2 D_Bj^T * x_B
-	mu_j += inv_M_B.inner_product_x( x_it,
-					 D_by_index_iterator( B_O.begin(),
-							      D_by_index_accessor( qp_D[ j]))) * NT( 2);
-      } else {                                   // D non-symmetric
-	// ( D_Bj^T + D_jB) * x_B
-	mu_j += inv_M_B.inner_product_x( x_it,
-					 D_pairwise_iterator_inexact( B_O.begin(),
-								      D_pairwise_accessor_inexact( qp_D, j)));
-      }
+      // 2 D_Bj^T * x_B
+      mu_j += inv_M_B.inner_product_x
+	( x_it,
+	  D_by_index_iterator( B_O.begin(),
+			       D_by_index_accessor( qp_D[ j]))) * NT( 2);
     }
   }
 
@@ -1483,42 +1476,15 @@ private:
   {
     if ( is_phaseII) {
       mu_j += dd * w_j;
-      if (check_tag(Is_symmetric())) {           // D symmetric
-	// 2 D_Bj^T * x_B
-	mu_j += inv_M_B.inner_product_x( x_it,
-					 D_by_index_iterator( B_O.begin(),
-							      D_by_index_accessor( qp_D[ j]))) * NT( 2);
-      } else {                                   // D non-symmetric
-	// ( D_Bj^T + D_jB) * x_B
-	mu_j += inv_M_B.inner_product_x( x_it,
-					 D_pairwise_iterator_inexact( B_O.begin(),
-								      D_pairwise_accessor_inexact( qp_D, j)));
-      }
+      // 2 D_Bj^T * x_B
+      mu_j += inv_M_B.inner_product_x
+	( x_it,
+	  D_by_index_iterator( B_O.begin(),
+			       D_by_index_accessor( qp_D[ j]))) * NT( 2);
     }
   }
 
-  /*
-    template < class NT, class It >  inline                     // QP, D sym.
-    void
-    mu_j__quadratic_part( NT& mu_j, int j, It x_it, Tag_false, Tag_true) const
-    {
-    // 2 D_Bj^T * x_B
-    mu_j += inv_M_B.inner_product_x( x_it,
-    D_by_index_iterator( B_O.begin(),
-    D_by_index_accessor( qp_D[ j])))
-    * NT( 2);
-    }
 
-    template < class NT, class It >  inline                     // QP, D no-sym
-    void
-    mu_j__quadratic_part( NT& mu_j, int j, It x_it, Tag_false, Tag_false) const
-    {
-    // ( D_Bj^T + D_jB) * x_B
-    mu_j += inv_M_B.inner_product_x( x_it,
-    D_pairwise_iterator_inexact( B_O.begin(),
-    D_pairwise_accessor_inexact( qp_D, j)));
-    }
-  */
   template < class NT, class It >  inline                     // no ineq.
   void
   mu_j__slack_or_artificial( NT& mu_j, int j, It lambda_it, const NT& dd, Tag_true) const
@@ -2085,11 +2051,9 @@ namespace QP_solver_impl {
   // Tags generator
   // --------------
   template < typename Linear, 
-	     typename Symmetric,
 	     typename Standard_form >
   struct QP_tags {
     typedef Linear                Is_linear;
-    typedef Symmetric             Is_symmetric;
     typedef Standard_form         Is_in_standard_form;
   };
 

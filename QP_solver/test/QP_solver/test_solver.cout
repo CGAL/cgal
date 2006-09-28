@@ -263,63 +263,63 @@ Processing:    test_solver_data/masters/cgal/LP_Test_Expel_Drive_Pivots_Remove_P
 Processing:    test_solver_data/derivatives/QPE_solver_example_bug_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -22(4) -22(4) 
+ Solution:   -6(4) -6(4) -6(4) -6(4) 
 Processing:    test_solver_data/derivatives/QPE_solver_example_bug_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -22(4) -22(4) 
+ Solution:   -6(4) -6(4) -6(4) -6(4) 
 Processing:    test_solver_data/derivatives/QPE_solver_example_bug_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -22(4) -22(4) 
+ Solution:   -6(4) -6(4) -6(4) -6(4) 
 Processing:    test_solver_data/derivatives/QPE_solver_example_bug_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -22(4) -22(4) 
+ Solution:   -6(4) -6(4) -6(4) -6(4) 
 Processing:    test_solver_data/derivatives/QPE_solver_example_bug_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -22(4) -22(4) 
+ Solution:   -6(4) -6(4) -6(4) -6(4) 
 Processing:    test_solver_data/derivatives/QPE_solver_example_bug_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/derivatives/QPE_solver_example_bug_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/derivatives/QPE_solver_example_bug_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/derivatives/QPE_solver_example_bug_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/derivatives/QPE_solver_example_bug_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/QPE_solver_example_bug.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0(4) 0(4) 0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/QPE_solver_example_bug.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0(4) 0(4) 0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/QPE_solver_example_bug.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0(4) 0(4) 0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/QPE_solver_example_bug.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0(4) 0(4) 0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/QPE_solver_example_bug.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0(4) 0(4) 0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/derivatives/LP_Row_Rank_lt_m_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
@@ -443,63 +443,63 @@ Processing:    test_solver_data/masters/cgal/LP_no_cons_two_var_QPE_solver.mps
 Processing:    test_solver_data/derivatives/QP_leave_variable_bug_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -22(4) -22(4) 
+ Solution:   -6(4) -6(4) -6(4) -6(4) 
 Processing:    test_solver_data/derivatives/QP_leave_variable_bug_QPE_solver_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -22(4) -22(4) 
+ Solution:   -6(4) -6(4) -6(4) -6(4) 
 Processing:    test_solver_data/derivatives/QP_leave_variable_bug_QPE_solver_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -22(4) -22(4) 
+ Solution:   -6(4) -6(4) -6(4) -6(4) 
 Processing:    test_solver_data/derivatives/QP_leave_variable_bug_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -22(4) -22(4) 
+ Solution:   -6(4) -6(4) -6(4) -6(4) 
 Processing:    test_solver_data/derivatives/QP_leave_variable_bug_QPE_solver_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -22(4) -22(4) 
+ Solution:   -6(4) -6(4) -6(4) -6(4) 
 Processing:    test_solver_data/derivatives/QP_leave_variable_bug_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/derivatives/QP_leave_variable_bug_QPE_solver_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/derivatives/QP_leave_variable_bug_QPE_solver_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/derivatives/QP_leave_variable_bug_QPE_solver_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/derivatives/QP_leave_variable_bug_QPE_solver_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/QP_leave_variable_bug_QPE_solver.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0(4) 0(4) 0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/QP_leave_variable_bug_QPE_solver.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0(4) 0(4) 0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/QP_leave_variable_bug_QPE_solver.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0(4) 0(4) 0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/QP_leave_variable_bug_QPE_solver.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0(4) 0(4) 0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/QP_leave_variable_bug_QPE_solver.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0(4) 0(4) 0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/derivatives/LP_KM3_base_3_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
@@ -843,63 +843,63 @@ Processing:    test_solver_data/masters/cgal/PD_Primal_QPE_solver.mps
 Processing:    test_solver_data/derivatives/QP_Degenerate_rank_zero_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -281.25(3) -281.25(3) 
+ Solution:   -11.5(4) -11.5(4) -11.5(4) -11.5(4) 
 Processing:    test_solver_data/derivatives/QP_Degenerate_rank_zero_QPE_solver_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -281.25(3) -281.25(3) 
+ Solution:   -11.5(4) -11.5(4) -11.5(4) -11.5(4) 
 Processing:    test_solver_data/derivatives/QP_Degenerate_rank_zero_QPE_solver_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -281.25(3) -281.25(3) 
+ Solution:   -11.5(4) -11.5(4) -11.5(4) -11.5(4) 
 Processing:    test_solver_data/derivatives/QP_Degenerate_rank_zero_QPE_solver_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -281.25(3) -281.25(3) 
+ Solution:   -11.5(4) -11.5(4) -11.5(4) -11.5(4) 
 Processing:    test_solver_data/derivatives/QP_Degenerate_rank_zero_QPE_solver_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -281.25(3) -281.25(3) 
+ Solution:   -11.5(4) -11.5(4) -11.5(4) -11.5(4) 
 Processing:    test_solver_data/derivatives/QP_Degenerate_rank_zero_QPE_solver_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -2.5(5) -2.5(5) 
+ Solution:   -2.5(5) -2.5(5) -2.5(5) -2.5(5) 
 Processing:    test_solver_data/derivatives/QP_Degenerate_rank_zero_QPE_solver_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -2.5(5) -2.5(5) 
+ Solution:   -2.5(5) -2.5(5) -2.5(5) -2.5(5) 
 Processing:    test_solver_data/derivatives/QP_Degenerate_rank_zero_QPE_solver_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -2.5(5) -2.5(5) 
+ Solution:   -2.5(5) -2.5(5) -2.5(5) -2.5(5) 
 Processing:    test_solver_data/derivatives/QP_Degenerate_rank_zero_QPE_solver_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -2.5(5) -2.5(5) 
+ Solution:   -2.5(5) -2.5(5) -2.5(5) -2.5(5) 
 Processing:    test_solver_data/derivatives/QP_Degenerate_rank_zero_QPE_solver_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -2.5(5) -2.5(5) 
+ Solution:   -2.5(5) -2.5(5) -2.5(5) -2.5(5) 
 Processing:    test_solver_data/masters/cgal/QP_Degenerate_rank_zero_QPE_solver.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -2.5(4) -2.5(4) -2.5(4) -2.5(4) 
+ Solution:   -2.5(4) -2.5(4) -2.5(4) -2.5(4) -2.5(4) -2.5(4) -2.5(4) -2.5(4) 
 Processing:    test_solver_data/masters/cgal/QP_Degenerate_rank_zero_QPE_solver.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -2.5(4) -2.5(4) -2.5(4) -2.5(4) 
+ Solution:   -2.5(4) -2.5(4) -2.5(4) -2.5(4) -2.5(4) -2.5(4) -2.5(4) -2.5(4) 
 Processing:    test_solver_data/masters/cgal/QP_Degenerate_rank_zero_QPE_solver.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -2.5(4) -2.5(4) -2.5(4) -2.5(4) 
+ Solution:   -2.5(4) -2.5(4) -2.5(4) -2.5(4) -2.5(4) -2.5(4) -2.5(4) -2.5(4) 
 Processing:    test_solver_data/masters/cgal/QP_Degenerate_rank_zero_QPE_solver.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -2.5(4) -2.5(4) -2.5(4) -2.5(4) 
+ Solution:   -2.5(4) -2.5(4) -2.5(4) -2.5(4) -2.5(4) -2.5(4) -2.5(4) -2.5(4) 
 Processing:    test_solver_data/masters/cgal/QP_Degenerate_rank_zero_QPE_solver.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -2.5(4) -2.5(4) -2.5(4) -2.5(4) 
+ Solution:   -2.5(4) -2.5(4) -2.5(4) -2.5(4) -2.5(4) -2.5(4) -2.5(4) -2.5(4) 
 Processing:    test_solver_data/derivatives/Ub_LP_Chvatal_8_1_a_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
@@ -2023,63 +2023,63 @@ Processing:    test_solver_data/masters/cgal/LP_KM3_Dual_QPE_solver.mps
 Processing:    test_solver_data/derivatives/QP_translation_bug_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -22(4) -22(4) 
+ Solution:   -6(4) -6(4) -6(4) -6(4) 
 Processing:    test_solver_data/derivatives/QP_translation_bug_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -22(4) -22(4) 
+ Solution:   -6(4) -6(4) -6(4) -6(4) 
 Processing:    test_solver_data/derivatives/QP_translation_bug_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -22(4) -22(4) 
+ Solution:   -6(4) -6(4) -6(4) -6(4) 
 Processing:    test_solver_data/derivatives/QP_translation_bug_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -22(4) -22(4) 
+ Solution:   -6(4) -6(4) -6(4) -6(4) 
 Processing:    test_solver_data/derivatives/QP_translation_bug_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -22(4) -22(4) 
+ Solution:   -6(4) -6(4) -6(4) -6(4) 
 Processing:    test_solver_data/derivatives/QP_translation_bug_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/derivatives/QP_translation_bug_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/derivatives/QP_translation_bug_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/derivatives/QP_translation_bug_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/derivatives/QP_translation_bug_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/QP_translation_bug.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   0(4) 0(4) 0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/QP_translation_bug.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   0(4) 0(4) 0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/QP_translation_bug.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   0(4) 0(4) 0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/QP_translation_bug.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   0(4) 0(4) 0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/masters/cgal/QP_translation_bug.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   0(4) 0(4) 0(4) 0(4) 
+ Solution:   0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 0(4) 
 Processing:    test_solver_data/derivatives/PD_Dual_Eq_QPE_solver_shifted.mps
  Strategy:     fe
  Verbosity:    0
@@ -2443,61 +2443,61 @@ Processing:    test_solver_data/masters/cgal/Ub_LP_Chvatal_8_1_d_QPE_solver.mps
 Processing:    test_solver_data/derivatives/Unbounded_asymmetric_shifted.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -76(4) -76(4) 
+ Solution:   -60(4) -60(4) -60(4) -60(4) 
 Processing:    test_solver_data/derivatives/Unbounded_asymmetric_shifted.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -76(4) -76(4) 
+ Solution:   -60(4) -60(4) -60(4) -60(4) 
 Processing:    test_solver_data/derivatives/Unbounded_asymmetric_shifted.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -76(4) -76(4) 
+ Solution:   -60(4) -60(4) -60(4) -60(4) 
 Processing:    test_solver_data/derivatives/Unbounded_asymmetric_shifted.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -76(4) -76(4) 
+ Solution:   -60(4) -60(4) -60(4) -60(4) 
 Processing:    test_solver_data/derivatives/Unbounded_asymmetric_shifted.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -76(4) -76(4) 
+ Solution:   -60(4) -60(4) -60(4) -60(4) 
 Processing:    test_solver_data/derivatives/Unbounded_asymmetric_free.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -22(6) -22(6) 
+ Solution:   -22(6) -22(6) -22(6) -22(6) 
 Processing:    test_solver_data/derivatives/Unbounded_asymmetric_free.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -22(6) -22(6) 
+ Solution:   -22(6) -22(6) -22(6) -22(6) 
 Processing:    test_solver_data/derivatives/Unbounded_asymmetric_free.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -22(6) -22(6) 
+ Solution:   -22(6) -22(6) -22(6) -22(6) 
 Processing:    test_solver_data/derivatives/Unbounded_asymmetric_free.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -22(6) -22(6) 
+ Solution:   -22(6) -22(6) -22(6) -22(6) 
 Processing:    test_solver_data/derivatives/Unbounded_asymmetric_free.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -22(6) -22(6) 
+ Solution:   -22(6) -22(6) -22(6) -22(6) 
 Processing:    test_solver_data/masters/cgal/Unbounded_asymmetric.mps
  Strategy:     fe
  Verbosity:    0
- Solution:   -22(4) -22(4) 
+ Solution:   -22(4) -22(4) -22(4) -22(4) 
 Processing:    test_solver_data/masters/cgal/Unbounded_asymmetric.mps
  Strategy:     pe
  Verbosity:    0
- Solution:   -22(4) -22(4) 
+ Solution:   -22(4) -22(4) -22(4) -22(4) 
 Processing:    test_solver_data/masters/cgal/Unbounded_asymmetric.mps
  Strategy:     eb
  Verbosity:    0
- Solution:   -22(4) -22(4) 
+ Solution:   -22(4) -22(4) -22(4) -22(4) 
 Processing:    test_solver_data/masters/cgal/Unbounded_asymmetric.mps
  Strategy:     ff
  Verbosity:    0
- Solution:   -22(4) -22(4) 
+ Solution:   -22(4) -22(4) -22(4) -22(4) 
 Processing:    test_solver_data/masters/cgal/Unbounded_asymmetric.mps
  Strategy:     pf
  Verbosity:    0
- Solution:   -22(4) -22(4) 
+ Solution:   -22(4) -22(4) -22(4) -22(4) 
 All test cases were successfully passed.

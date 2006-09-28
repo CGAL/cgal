@@ -9,10 +9,9 @@ ROWS
 COLUMNS
   x0  obj  -64
   x0  c0  -4
-  x1  obj  33
+  x1  obj  21
   x1  c0  2
   x1  c1  1
-  x2  obj  -8
   x2  c1  1
 RHS
   rhs c0  -8
@@ -26,6 +25,4 @@ QMATRIX
   x0  x1  -32
   x1  x0  -32
   x1  x1  8
-  x1  x2  4
-  x2  x1  -4
 ENDATA

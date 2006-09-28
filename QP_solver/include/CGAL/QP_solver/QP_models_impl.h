@@ -42,8 +42,6 @@ QP_from_mps(std::istream& in,bool use_CPLEX_convention,
     is_linear_(true),
     use_CPLEX_convention(use_CPLEX_convention),
     it0(0),
-    is_symmetric_cached(false),
-    has_equalities_only_and_full_rank_cached(false),
     is_in_standard_form_cached(false),
     use_put_back_token(false)
 {
@@ -125,27 +123,40 @@ const std::string& QP_from_mps<IT_, Is_linear_,
 template<typename IT_, typename Is_linear_,
 	 typename Sparse_D_,
 	 typename Sparse_A_>
-bool QP_from_mps<IT_, Is_linear_,
-		Sparse_D_,
-		Sparse_A_>::is_symmetric()
+bool QP_from_mps<IT_, Is_linear_, Sparse_D_, Sparse_A_>
+::is_symmetric(Tag_false sparse_D, unsigned int&i, unsigned int&j) const
 {
-  if (!is_format_okay_)
-    return false;
+  // only called if we have a qp, i.e. if D is initialized
+  const unsigned int var_nr = var_names.size();
+  for (i=0; i<var_nr; ++i)
+    for (j=i+1; j<var_nr; ++j)
+      if (D_[i][j] != D_[j][i])
+	return false;
+  return true;
+}
 
-  if (!is_symmetric_cached) {
-    is_symmetric_ = true;
-    if (!is_linear()) {
-      const unsigned int var_nr = var_names.size();
-      for (unsigned int i=0; i<var_nr; ++i)
-	for (unsigned int j=i+1; j<var_nr; ++j)
-	  if (get_entry_in_D (i, j, Sparse_D_()) != 
-	      get_entry_in_D (j, i, Sparse_D_())) {
-	    is_symmetric_ = false; 
-	    return is_symmetric_;
-	  }
+template<typename IT_, typename Is_linear_,
+	 typename Sparse_D_,
+	 typename Sparse_A_>
+bool QP_from_mps<IT_, Is_linear_, Sparse_D_, Sparse_A_>
+::is_symmetric(Tag_true sparse_D, unsigned int&i, unsigned int&j) const
+{
+  // only called if we have a qp, i.e. if D is initialized
+  const unsigned int var_nr = var_names.size();
+  for (i=0; i<var_nr; ++i) {
+    typename Map::const_iterator b = D_[i].begin();
+    typename Map::const_iterator e = D_[i].end();
+    for (; b != e; ++b) {
+      j = b->first;
+      // check entry (j, i)
+      IT expected_val = b->second;
+      IT found_val = it0;
+      typename Map::const_iterator it = D_[j].find(i);
+      if (it !=  D_[j].end()) found_val = it->second;
+      if (expected_val != found_val) return false;
     }
   }
-  return is_symmetric_;
+  return true;
 }
   
 
@@ -597,8 +608,7 @@ bool QP_from_mps<IT_, Is_linear_,
 		Sparse_A_>::qmatrix_section()
 {
   std::string t = token();
-  if (t!="QMATRIX" && t!="DMATRIX" && t!="QUADOBJ") { // (Note: *MATRIX
-						      // section is optional.)
+  if (t!="QMATRIX" && t!="DMATRIX" && t!="QUADOBJ") { // optional
     put_token_back(t);
     return true;
   }   
@@ -646,19 +656,27 @@ bool QP_from_mps<IT_, Is_linear_,
     }
 
     // set entry in D:
-    set_entry_in_D(var1_index,var2_index,val,
-		   Sparse_D());
+    set_entry_in_D(var1_index, var2_index, val, Sparse_D());
     if (only_get_lower_part)
       // duplicate entry if not on diagonal
       if (var1_index != var2_index) 
-	set_entry_in_D(var2_index,var1_index,val,
-		       Sparse_D());
+	set_entry_in_D(var2_index, var1_index, val, Sparse_D());
 
     // read next token:
     t = token();
   }
   put_token_back(t);
 
+  // now check symmetry
+  unsigned int bad_i, bad_j;
+  if (!is_symmetric(Sparse_D(), bad_i, bad_j)) {
+    std::string bad_i_name = var_by_index[bad_i];
+    std::string bad_j_name = var_by_index[bad_j];
+    return 
+      err3("nonsymmetric '%' section for variables '%' and '%'",
+	   D_section, bad_i_name, bad_j_name);
+  }
+	   
   return true;
 }
 
@@ -689,9 +707,7 @@ std::ostream& operator<<(std::ostream& o,
     << "equalities only and full rank: not checked" << endl;
   //<< (qp.has_equalities_only_and_full_rank()? yes : no) << endl;
   if (!qp.is_linear())
-    o << "           symmetric D matrix: not checked" << endl
-   //  << (qp.is_symmetic()? yes : no) << endl
-      << "      D matrix storage format: "
+    o << "      D matrix storage format: "
       << qp.D_format_type() << endl;
 
   if (qp.verbosity() > 1) {

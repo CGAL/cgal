@@ -155,11 +155,6 @@ void usage()
        << "{fe,ff,pe,pf}, and file is a path to a MPS file. In addition,\n"
        << "you can specify any of the following additional options:\n"
        << "  +l       use the dedicated LP-solver on this instance\n"
-       << "  +s       use the dedicated solver for instances whose\n"
-       << "           D matrix is symmetric\n"
-       << "  +r       use the dedicated solver for instances that only\n"
-       << "           have equality constraints and whose coefficient\n"
-       << "           matrix has full row rank\n"
        << "  +f       use the dedicated solver for instances in standard\n"
        << "           form (i.e., all variables have bounds [0,+inf]).\n"
        << "  int      assume the numbers in the MPS file are ints and use\n"
@@ -169,10 +164,11 @@ void usage()
        << "  rational assume the numbers in the MPS file are rationals\n"
        << "           use arbitrary-precision rationals internally\n"
        << "If any option is not specified, the program will test all\n"
-       << "possible combinations (e.g., if '+s' is not specified, it will\n"
-       << "check whether D is symmetric and run both, the dedicated solver\n"
-       << "for symmetric and the non-dedicated solver on the instance).\n"
-       << "You can also negate the options 'l', 's', 'r', or 'f' by\n"
+       << "possible combinations (e.g., if '+l' is not specified, it will\n"
+       << "check whether the problem is linear and run both, the dedicated\n" 
+       << "solver for the linear case and the non-dedicated solver on the\n"
+       << " instance).\n"
+       << "You can also negate the options 'l'or 'f' by\n"
        << "replacing the '-' by a '+'.\n";
   std::exit(1);
 }
@@ -252,10 +248,6 @@ bool parse_options(std::istream& in,std::map<std::string,int>& options,
       good = options.insert(Arg("Is linear",1)).second;
     else if (t == "-l")
       good = options.insert(Arg("Is linear",0)).second;
-    else if (t == "+s")
-      good = options.insert(Arg("Is symmetric",1)).second;
-    else if (t == "-s")
-      good = options.insert(Arg("Is symmetric",0)).second;
     else if (t == "+f")
       good = options.insert(Arg("Is in standard form",1)).second;
     else if (t == "-f")
@@ -329,21 +321,11 @@ CGAL::QP_pricing_strategy<Q, ET, Tags> *
   return strat;
 }
 
-// template<typename IT>
-// std::string print_IT (IT t)
-// {
-//   using std::cout;
-//   if (is_int(t)) return "int";
-//   if (is_rational(t)) return "rational";
-//   if (is_double(t)) return "double";
-//   return "unknown";
-// } 
-
 template<typename Is_linear,
-	 typename Is_symmetric,
 	 typename Is_in_standard_form,
 	 typename IT,
-	 typename ET>
+	 typename ET,
+	 typename Sparse>
 bool process(const std::string& filename,
 	     const std::map<std::string,int>& options)
 {
@@ -357,7 +339,7 @@ bool process(const std::string& filename,
   std::ifstream in(filename.c_str());
   if (!in)
     bailout1("could not open file '%'",filename);
-  typedef CGAL::QP_from_mps<IT, Tag_false> QP_instance;
+  typedef CGAL::QP_from_mps<IT, Tag_false, Sparse, Sparse> QP_instance;
   QP_instance qp(in,true,verbosity);
   in.close();
 
@@ -381,17 +363,13 @@ bool process(const std::string& filename,
       type==Rational_type && (is_double(IT()) || is_int(IT())))
     return true;
 
-  // check which properties the loaded QP has, and break if they are
-  // in contradiction to the routine's compile-time flags: 
   if (check_tag(Is_linear()) && !qp.is_linear() ||
-      check_tag(Is_symmetric()) && !qp.is_symmetric() ||
       check_tag(Is_in_standard_form()) && !qp.is_in_standard_form())
     return true;
 
   if (verbosity > 0)
     cout << "- Running a solver specialized for: "
 	 << (check_tag(Is_linear())? "linear " : "")
-	 << (check_tag(Is_symmetric())? "symmetric " : "")
 	 << (check_tag(Is_in_standard_form())? "standard-form " : "")
 	 << "file-IT=" << number_type << ' '
 	 << "IT=" << (is_double(IT())? "double" :
@@ -410,8 +388,7 @@ bool process(const std::string& filename,
     cout << endl << qp;
 
 
-  typedef CGAL::QP_solver_impl::QP_tags<Is_linear,
-    Is_symmetric, Is_in_standard_form> Tags;
+  typedef CGAL::QP_solver_impl::QP_tags<Is_linear,Is_in_standard_form> Tags;
 
   // solve:
   CGAL::QP_pricing_strategy<QP_instance, ET, Tags> *s = 
@@ -429,7 +406,6 @@ bool process(const std::string& filename,
 }
 
 template<typename Is_linear,
-	 typename Is_symmetric,
 	 typename Is_in_standard_form>
 bool processType(const std::string& filename,
 		 const std::map<std::string,int>& options)
@@ -443,29 +419,51 @@ bool processType(const std::string& filename,
 
   // do only this particular value or all possibilities:
   bool success = true;
+
+  // sparse representation 
 #ifdef QP_INT
   if (!processOnlyOneValue || value==Int_type)
-    if (!process<Is_linear,Is_symmetric,Is_in_standard_form,
-	int,Integer>(filename,options))
+    if (!process<Is_linear,Is_in_standard_form,
+	int,Integer, Tag_true>(filename,options))
       success = false;
 #endif
 #ifdef QP_DOUBLE
   if (!processOnlyOneValue || value==Double_type)
-    if (!process<Is_linear,Is_symmetric,Is_in_standard_form,
-	double,Float>(filename,options))
+    if (!process<Is_linear,Is_in_standard_form,
+	double,Float, Tag_true>(filename,options))
       success = false;
 #endif
 #ifdef QP_RATIONAL
   if (!processOnlyOneValue || value==Rational_type)
-    if (!process<Is_linear,Is_symmetric,Is_in_standard_form,
-	Rational,Rational>(filename,options))
+    if (!process<Is_linear,Is_in_standard_form,
+	Rational,Rational, Tag_true>(filename,options))
       success = false;
 #endif
+
+  // dense representation 
+#ifdef QP_INT
+  if (!processOnlyOneValue || value==Int_type)
+    if (!process<Is_linear,Is_in_standard_form,
+	int,Integer, Tag_false>(filename,options))
+      success = false;
+#endif
+#ifdef QP_DOUBLE
+  if (!processOnlyOneValue || value==Double_type)
+    if (!process<Is_linear,Is_in_standard_form,
+	double,Float, Tag_false>(filename,options))
+      success = false;
+#endif
+#ifdef QP_RATIONAL
+  if (!processOnlyOneValue || value==Rational_type)
+    if (!process<Is_linear,Is_in_standard_form,
+	Rational,Rational, Tag_false>(filename,options))
+      success = false;
+#endif
+
   return success;
 }
 
-template<typename Is_linear,
-	 typename Is_symmetric>
+template<typename Is_linear>
 bool processFType(const std::string& filename,
 		  const std::map<std::string,int>& options)
 {
@@ -477,42 +475,19 @@ bool processFType(const std::string& filename,
   bool success = true;
 #ifdef QP_F
   if (!processOnlyOneValue || value==true)
-    if (!processType<Is_linear,Is_symmetric,Tag_true>(filename,options))
+    if (!processType<Is_linear,Tag_true>(filename,options))
       success = false;
 #endif
 #ifdef QP_NOT_F
   if (!processOnlyOneValue || value==false)
-    if (!processType<Is_linear,Is_symmetric,Tag_false>(filename,options))
+    if (!processType<Is_linear,Tag_false>(filename,options))
       success = false;
 #endif
   return success;  
 }
 
-template<typename Is_linear>
-bool processSRFType(const std::string& filename,
-		    const std::map<std::string,int>& options)
-{
-  Key_const_iterator it = options.find("Is symmetric");
-  const bool processOnlyOneValue = it != options.end();
-  bool value = false;
-  if (processOnlyOneValue)
-    value = it->second > 0;
-  bool success = true;
-#ifdef QP_S
-  if (!processOnlyOneValue || value==true)
-    if (!processFType<Is_linear,Tag_true>(filename,options))
-      success = false;
-#endif
-#ifdef QP_NOT_S
-  if (!processOnlyOneValue || value==false)
-    if (!processFType<Is_linear,Tag_false>(filename,options))
-      success = false;
-#endif
-  return success;  
-}
-
-bool processLSRFType(const std::string& filename,
-		     const std::map<std::string,int>& options)
+bool processLFType(const std::string& filename,
+		   const std::map<std::string,int>& options)
 {
   std::cout << " Solution:   ";
   Key_const_iterator it = options.find("Is linear");
@@ -523,12 +498,12 @@ bool processLSRFType(const std::string& filename,
   bool success = true;
 #ifdef QP_L
   if (!processOnlyOneValue || value==true)
-    if (!processSRFType<Tag_true>(filename,options))
+    if (!processFType<Tag_true>(filename,options))
       success = false;
 #endif
 #ifdef QP_NOT_L
   if (!processOnlyOneValue || value==false)
-    if (!processSRFType<Tag_false>(filename,options))
+    if (!processFType<Tag_false>(filename,options))
       success = false;
 #endif
   return success;  
@@ -558,7 +533,7 @@ int main(const int ac,const char **av) {
   std::string filename;
   bool success = true;
   while (parse_options(in,options,filename))
-    if (!processLSRFType(filename,options))
+    if (!processLFType(filename,options))
       success = false;
 
   // final output:

@@ -22,11 +22,6 @@ RHS
 QMATRIX
   x1  x1  128
   x1  x2  -32
-  x1  x3  0
   x2  x1  -32
   x2  x2  8
-  x2  x3  4
-  x3  x1  0
-  x3  x2  -4
-  x3  x3  0
 ENDATA

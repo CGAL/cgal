@@ -31,6 +31,4 @@ QMATRIX
   x0  x1  -32
   x1  x0  -32
   x1  x1  8
-  x1  x2  4
-  x2  x1  -4
 ENDATA

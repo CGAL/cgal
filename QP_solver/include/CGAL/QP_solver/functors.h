@@ -160,24 +160,8 @@ public:
   QP_matrix_pairwise_accessor() {}
   
   QP_matrix_pairwise_accessor( MatrixIt it, int row)
-  {
-    if ( check_tag( IsSymmetric())) {               // store i-th row
-      v = it[ row];
-      m = it;                                       // (See (*) below.)
-    } else {                                        // matrix and index
-      m = it;
-      v = it[0];                                    // (See (*) below.)
-      r = row;
-    }
-    // (*) These two statements are not needed, semantically.  If we
-    // drop them, however, the if-clause will default-construct the
-    // iterator 'm' and the else-clause will default-construct the
-    // iterator 'v'.  In any case we end up with a singular iterator,
-    // and as instances of this class are copied around, this violates
-    // the requirement that singular iterators must not be copied.
-    // (In other words: dropping these statements will cause assertion
-    // violations when compiled with GCC using -D_GLIBCXX_DEBUG.)
-  }
+    : m (it), v (it[ row]), r (row)                                  
+  {}
   
   ResultType operator () ( int c) const
   {
@@ -185,7 +169,14 @@ public:
   }
   
   ResultType entry_pair( int c, Tag_true ) const           // symmetric
-  { return ResultType(v[ c]) * 2; }
+  { 
+    // make sure that only entries on or below the diagonal are
+    // accessed
+    if (c <= r)
+      return ResultType(v[ c]) * 2; 
+    else
+      return ResultType(m[ c][ r]) * 2;
+  }
   
   ResultType entry_pair( int c, Tag_false) const           // not symmetric
   { 

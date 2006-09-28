@@ -22,11 +22,6 @@ RHS
 DMATRIX
   x1  x1  64
   x1  x2  -16
-  x1  x3  0
   x2  x1  -16
   x2  x2  4
-  x2  x3  2
-  x3  x1  0
-  x3  x2  -2
-  x3  x3  0
 ENDATA

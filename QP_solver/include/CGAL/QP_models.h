@@ -568,9 +568,6 @@ private:
   std::string D_section;      // name of the section from which D was read
   
   // cached data:
-  bool is_symmetric_cached, is_symmetric_;
-  bool has_equalities_only_and_full_rank_cached,
-    has_equalities_only_and_full_rank_;
   bool is_in_standard_form_cached, is_in_standard_form_;
 
   // further data gathered from MPS file:
@@ -725,6 +722,15 @@ private: // private helpers:
 	    const std::string& parameter1,
 	    const std::string& parameter2) {
     error_msg = replace1(replace1(msg,parameter1),parameter2);
+    return false;
+  }
+
+  bool err3(const char* msg,
+	    const std::string& parameter1,
+	    const std::string& parameter2,
+	    const std::string& parameter3) {
+    error_msg = 
+    replace1(replace1(replace1(msg,parameter1),parameter2),parameter3);
     return false;
   }
 
@@ -888,16 +894,6 @@ public: // methods:
   {
     CGAL_qpe_assertion(0<=i && i<n());
     return var_by_index[i];
-//     for (Index_map::const_iterator it = var_names.begin();
-// 	 it != var_names.end();
-// 	 ++it)
-//       if ((*it).second == i)
-//         return (*it).first;
-
-//     CGAL_qpe_assertion(false); // should never get here; following
-// 			       // only to fix compiler warnings
-//     static std::string dummy;
-//     return dummy;
   }
 
   // Returns the section name of the MPS stream in which the D matrix
@@ -983,6 +979,10 @@ private:
     CGAL_qpe_assertion(is_valid());
     return D_iterator(D_.begin(), D_Beginner());
   }
+  
+  // checks symmetry; if false, it assigns offending i and j 
+  bool is_symmetric(Tag_true, unsigned int&, unsigned int&) const;  
+  bool is_symmetric(Tag_false, unsigned int&, unsigned int&) const;
 
 public:
 
@@ -1036,11 +1036,6 @@ public:
     CGAL_qpe_assertion(is_valid());
     return l_.begin();
   }
-
-  // Returns true iff the MPS stream could be successfully parsed and
-  // the loaded QP instance has a symmetric D matrix (if it has a D
-  // matrix at all).
-  bool is_symmetric();
 
   // Returns true iff the MPS stream could be successfully parsed and
   // the loaded QP instance has a D matrix that is zero (i.e., iff the
