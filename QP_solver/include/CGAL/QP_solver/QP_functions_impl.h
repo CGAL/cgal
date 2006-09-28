@@ -66,7 +66,6 @@ bool has_linearly_independent_equations
   typedef QP_solver_impl::QP_tags<
     Tag_true,  // Is_linear
     Tag_true,  // Is_symmetric
-    Tag_false, // Has_equalities_only_and_full_rank (we don't know it)
     Tag_true>  // Is_in_standard_form
   Tags;
 

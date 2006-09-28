@@ -1,6 +1,3 @@
-// Copyright (c) 1997-2001  ETH Zurich (Switzerland).
-// All rights reserved.
-// 
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
 // See the file LICENSE.QPL distributed with CGAL.
@@ -152,10 +149,7 @@ public: // public types
   // types from the Tags
   typedef  typename Tags::Is_linear    Is_linear;
   typedef  typename Tags::Is_symmetric Is_symmetric;
-  typedef  typename Tags::Has_equalities_only_and_full_rank
-  Has_equalities_only_and_full_rank;
-  typedef  typename Tags::Is_in_standard_form
-  Is_in_standard_form;
+  typedef  typename Tags::Is_in_standard_form Is_in_standard_form;
 
   // friends
   template <class Q_, class ET_>
@@ -431,13 +425,19 @@ private:
   bool                     is_RTS_transition; // flag indicating transition
   // from Ratio Test Step1 to Ratio
   // Test Step2                                           
-  const bool               is_LP;     // flag indicating a linear    program
+  const bool               is_LP;     // flag indicating a linear program
   const bool               is_QP;     // flag indicating a quadratic program
-  const bool               no_ineq;   // flag indicating no ineq. constraits
-  const bool               has_ineq;  // flag indicating that there might be
-  // inequality constraits
-  const bool               is_in_standard_form; // flag indicating standard
-  // form ..
+
+  // the following flag indicates whether the program is in equational form
+  // AND still has all its equations; this is given in phase I for any
+  // program in equational form, but it may change if redundant constraints
+  // get removed from the basis. If no_ineq == true, the program is treated
+  // in a more efficient manner, since in that case we need no bookkeeping 
+  // for basic constraints
+  bool                     no_ineq;   
+  bool                     has_ineq;  // !no_ineq
+
+  const bool               is_in_standard_form; // standard form, from Tag
 
   // additional variables
   int                      l;         // minimum of 'qp_n+e+1' and 'qp_m'
@@ -844,8 +844,22 @@ private:
   void  init_basis( );
   void  init_basis__slack_variables( int s_i, Tag_true  has_no_inequalities);
   void  init_basis__slack_variables( int s_i, Tag_false has_no_inequalities);
+  void  init_basis__slack_variables( int s_i, bool has_no_inequalities) {
+    if (has_no_inequalities)
+      init_basis__slack_variables (s_i, Tag_true());
+    else 
+      init_basis__slack_variables (s_i, Tag_false());
+  }
+
   void  init_basis__constraints    ( int s_i, Tag_true  has_no_inequalities);
   void  init_basis__constraints    ( int s_i, Tag_false has_no_inequalities);
+  void  init_basis__constraints    ( int s_i, bool has_no_inequalities) {
+    if (has_no_inequalities)
+      init_basis__constraints (s_i, Tag_true());
+    else 
+      init_basis__constraints (s_i, Tag_false());
+  }
+
   void  init_x_O_v_i();
   void  init_r_C(Tag_true  is_in_standard_form);
   void  init_r_C(Tag_false is_in_standard_form);
@@ -858,7 +872,13 @@ private:
 
   void  init_solution( );
   void  init_solution__b_C( Tag_true  has_no_inequalities);
-  void  init_solution__b_C( Tag_false has_no_inequalities);
+  void  init_solution__b_C( Tag_false has_no_inequalities); 
+  void  init_solution__b_C( bool has_no_inequalities) {
+    if (has_no_inequalities)
+      init_solution__b_C (Tag_true());
+    else
+      init_solution__b_C (Tag_false());
+  }
 
   void  init_additional_data_members( );
     
@@ -887,6 +907,15 @@ private:
   template < class NT, class It >
   void  mu_j__linear_part_( NT& mu_j, int j, It lambda_it,
 			    Tag_false has_no_inequalities) const;
+  template < class NT, class It >
+  void  mu_j__linear_part_( NT& mu_j, int j, It lambda_it,
+			    bool has_no_inequalities) const {
+    if (has_no_inequalities)
+      mu_j__linear_part_ (mu_j, j, lambda_it, Tag_true());
+    else
+      mu_j__linear_part_ (mu_j, j, lambda_it, Tag_false());
+  }
+
 
   template < class NT, class It >
   void  mu_j__quadratic_part_( NT& mu_j, int j, It x_it,
@@ -904,11 +933,23 @@ private:
 			       Tag_false is_symmetric) const;
 
   template < class NT, class It >
-  void  mu_j__slack_or_artificial_( NT& mu_j, int j, It lambda_it, const NT& dd,
+  void  mu_j__slack_or_artificial_( NT& mu_j, int j, It lambda_it, 
+				    const NT& dd,
 				    Tag_true  has_no_inequalities) const;
   template < class NT, class It >
-  void  mu_j__slack_or_artificial_( NT& mu_j, int j, It lambda_it, const NT& dd,
+  void  mu_j__slack_or_artificial_( NT& mu_j, int j, It lambda_it, 
+				    const NT& dd,
 				    Tag_false has_no_inequalities) const;
+
+  template < class NT, class It >
+  void  mu_j__slack_or_artificial_( NT& mu_j, int j, It lambda_it,
+				    const NT& dd,
+				    bool has_no_inequalities) const {
+    if (has_no_inequalities)
+      mu_j__slack_or_artificial_ (mu_j, j, lambda_it, dd, Tag_true());
+    else
+      mu_j__slack_or_artificial_ (mu_j, j, lambda_it, dd, Tag_false());
+  }
 
   // ratio test
   void  ratio_test_init( );
@@ -916,6 +957,14 @@ private:
 			       Tag_true  has_no_inequalities);
   void  ratio_test_init__A_Cj( Value_iterator A_Cj_it, int j,
 			       Tag_false has_no_inequalities);
+  void  ratio_test_init__A_Cj( Value_iterator A_Cj_it, int j,
+			       bool has_no_inequalities) {
+    if (has_no_inequalities) 
+      ratio_test_init__A_Cj (A_Cj_it, j, Tag_true());
+    else
+      ratio_test_init__A_Cj (A_Cj_it, j, Tag_false());
+  }
+
   void  ratio_test_init__2_D_Bj( Value_iterator two_D_Bj_it, int j,
 				 Tag_true  is_linear);
   void  ratio_test_init__2_D_Bj( Value_iterator two_D_Bj_it, int j,
@@ -926,12 +975,28 @@ private:
   void  ratio_test_init__2_D_Bj( Value_iterator two_D_Bj_it, int j,
 				 Tag_false is_linear,
 				 Tag_false has_no_inequalities);
+  void  ratio_test_init__2_D_Bj( Value_iterator two_D_Bj_it, int j,
+				 Tag_false is_linear,
+				 bool has_no_inequalities) {
+    if (has_no_inequalities)
+      ratio_test_init__2_D_Bj( two_D_Bj_it, j, is_linear, Tag_true());
+    else
+      ratio_test_init__2_D_Bj( two_D_Bj_it, j, is_linear, Tag_false());
+  }
+
 
   void  ratio_test_1( );
   void  ratio_test_1__q_x_O( Tag_true  is_linear);
   void  ratio_test_1__q_x_O( Tag_false is_linear);
   void  ratio_test_1__q_x_S( Tag_true  has_no_inequalities);
   void  ratio_test_1__q_x_S( Tag_false has_no_inequalities);
+  void  ratio_test_1__q_x_S( bool has_no_inequalities) {
+    if (has_no_inequalities)
+      ratio_test_1__q_x_S (Tag_true());
+    else
+      ratio_test_1__q_x_S (Tag_false());
+  }
+
   void  ratio_test_1__t_min_j(Tag_true  is_in_standard_form);  
   void  ratio_test_1__t_min_j(Tag_false is_in_standard_form);
     
@@ -943,8 +1008,15 @@ private:
 			   Tag_false  no_check);
     
   // replaces the above two functions
-  void  ratio_test_1__t_min_B(Tag_true  has_equalities_only_and_full_rank);
-  void  ratio_test_1__t_min_B(Tag_false has_equalities_only_and_full_rank);    
+  void  ratio_test_1__t_min_B(Tag_true has_no_inequalities );
+  void  ratio_test_1__t_min_B(Tag_false has_no_inequalities ); 
+  void  ratio_test_1__t_min_B(bool has_no_inequalities ) {
+    if (has_no_inequalities)
+      ratio_test_1__t_min_B (Tag_true());
+    else
+      ratio_test_1__t_min_B (Tag_false());
+  }
+   
   void  ratio_test_1_B_O__t_i(Index_iterator i_it, Index_iterator end_it,
 			      Value_iterator x_it, Value_iterator q_it,
 			      Tag_true  is_in_standard_form);
@@ -977,7 +1049,13 @@ private:
   void  ratio_test_2( Tag_true  is_linear);
   void  ratio_test_2( Tag_false is_linear);
   void  ratio_test_2__p( Tag_true  has_no_inequalities);
-  void  ratio_test_2__p( Tag_false has_no_inequalities);                    
+  void  ratio_test_2__p( Tag_false has_no_inequalities);   
+  void  ratio_test_2__p( bool has_no_inequalities) {
+    if (has_no_inequalities)
+      ratio_test_2__p (Tag_true());
+    else
+      ratio_test_2__p (Tag_false());
+  }
 
   // update
   void  update_1( );
@@ -988,8 +1066,15 @@ private:
   void  update_2( Tag_false is_linear);
 
   void  replace_variable( );
-  void  replace_variable( Tag_true  is_linear);
-  void  replace_variable( Tag_false is_linear);
+  void  replace_variable( Tag_true  has_no_inequalities);
+  void  replace_variable( Tag_false has_no_inequalities);
+  void  replace_variable( bool has_no_inequalities) {
+    if (has_no_inequalities)
+      replace_variable (Tag_true());
+    else
+      replace_variable (Tag_false());
+  }
+
   void  replace_variable_original_original( );
   // update of the vector r
   void  replace_variable_original_original_upd_r(Tag_true
@@ -1039,15 +1124,21 @@ private:
   void  leave_variable_slack_upd_w_r(Tag_false is_in_standard_form);
     
   void  z_replace_variable( );
-  void  z_replace_variable( Tag_true is_linear);
-  void  z_replace_variable( Tag_false is_linear);
+  void  z_replace_variable( Tag_true has_no_inequalities);
+  void  z_replace_variable( Tag_false has_no_inequalities);
+  void  z_replace_variable( bool has_no_inequalities) {
+    if (has_no_inequalities) 
+      z_replace_variable (Tag_true());
+    else
+      z_replace_variable (Tag_false());
+  }
     
   void  z_replace_variable_original_by_original( );
   // update of the vectors w and r
   void  z_replace_variable_original_by_original_upd_w_r(Tag_true 
-                                                        is_in_standard_form);
+							is_in_standard_form);
   void  z_replace_variable_original_by_original_upd_w_r(Tag_false 
-                                                        is_in_standard_form);
+							is_in_standard_form);
     
   void  z_replace_variable_original_by_slack( );
   // update of the vectors w and r    
@@ -1095,7 +1186,22 @@ private:
 			Tag_false is_in_standard_form);
   void  compute__x_B_S( Tag_true  has_no_inequalities,
 			Tag_true  is_in_standard_form);
+  void  compute__x_B_S( bool  has_no_inequalities,
+			Tag_true  is_in_standard_form) {
+    if (has_no_inequalities)
+      compute__x_B_S (Tag_true(), is_in_standard_form);
+    else
+      compute__x_B_S (Tag_false(), is_in_standard_form);
+  }
     
+  void  compute__x_B_S( bool  has_no_inequalities,
+			Tag_false  is_in_standard_form) {
+    if (has_no_inequalities)
+      compute__x_B_S (Tag_true(), is_in_standard_form);
+    else
+      compute__x_B_S (Tag_false(), is_in_standard_form);
+  }  
+
   void  multiply__A_S_BxB_O( Value_iterator in, Value_iterator out) const;
     
   ET    multiply__A_ixO(int row) const;
@@ -1165,7 +1271,7 @@ private:  // (inefficient) access to bounds of variables:
   ET upper_bound(int i) const;
 
   struct Bnd { // (inefficient) utility class representing a possibly
-               // infinite bound
+    // infinite bound
     enum Kind { MINUS_INF=-1, FINITE=0, PLUS_INF=1 };
     const Kind kind;      // whether the bound is finite or not
     const ET value;       // bound's value in case it is finite
@@ -1242,7 +1348,7 @@ public:
 
       // [c_j +] A_Cj^T * lambda_C
       mu_j = ( is_phaseI ? NT( 0) : dd * NT(qp_c[ j]));
-      mu_j__linear_part( mu_j, j, lambda_it, Has_equalities_only_and_full_rank());
+      mu_j__linear_part( mu_j, j, lambda_it, no_ineq);
 
       // ... + 2 D_Bj^T * x_B
       mu_j__quadratic_part( mu_j, j, x_it, Is_linear());
@@ -1250,7 +1356,7 @@ public:
     } else {                                        // slack or artificial
 
       mu_j__slack_or_artificial( mu_j, j, lambda_it, dd,
-				 Has_equalities_only_and_full_rank());
+				 no_ineq);
 
     }
 
@@ -1269,7 +1375,7 @@ public:
 
       // [c_j +] A_Cj^T * lambda_C
       mu_j = ( is_phaseI ? NT( 0) : dd * NT(qp_c[ j]));
-      mu_j__linear_part( mu_j, j, lambda_it, Has_equalities_only_and_full_rank());
+      mu_j__linear_part( mu_j, j, lambda_it, no_ineq);
 
       // ... + 2 D_Bj^T * x_B + 2 D_Nj x_N
       mu_j__quadratic_part( mu_j, j, x_it, w_j, dd, Is_linear());
@@ -1277,7 +1383,7 @@ public:
     } else {                                        // slack or artificial
 
       mu_j__slack_or_artificial( mu_j, j, lambda_it, dd,
-				 Has_equalities_only_and_full_rank());
+				 no_ineq);
 
     }
 
@@ -1324,6 +1430,16 @@ private:
     mu_j += inv_M_B.inner_product_l( lambda_it,
 				     A_by_index_iterator( C.begin(),
 							  A_by_index_accessor( qp_A[ j])));
+  }
+
+  template < class NT, class It > inline                     
+  void
+  mu_j__linear_part( NT& mu_j, int j, It lambda_it, 
+		     bool has_no_inequalities) const {
+    if (has_no_inequalities) 
+      mu_j__linear_part (mu_j, j, lambda_it, Tag_true());
+    else
+      mu_j__linear_part (mu_j, j, lambda_it, Tag_false());     
   }
 
   template < class NT, class It > inline          // LP case, standard form
@@ -1442,6 +1558,15 @@ private:
     }
   }
 
+  template < class NT, class It >  inline
+  void
+  mu_j__slack_or_artificial( NT& mu_j, int j, It lambda_it, 
+			     const NT& dd, bool has_no_inequalities) const {
+    if (has_no_inequalities)
+      mu_j__slack_or_artificial (mu_j, j, lambda_it, dd, Tag_true());
+    else
+      mu_j__slack_or_artificial (mu_j, j, lambda_it, dd, Tag_false());
+  }
 };
 
 // ----------------------------------------------------------------------------
@@ -1506,7 +1631,7 @@ ratio_test_init__2_D_Bj( Value_iterator two_D_Bj_it, int j_, Tag_false)
 {
   if ( is_phaseII) {
     ratio_test_init__2_D_Bj( two_D_Bj_it, j_,
-			     Tag_false(), Has_equalities_only_and_full_rank());
+			     Tag_false(), no_ineq);
   }
 }
 
@@ -1961,12 +2086,10 @@ namespace QP_solver_impl {
   // --------------
   template < typename Linear, 
 	     typename Symmetric,
-	     typename Full_rank,
 	     typename Standard_form >
   struct QP_tags {
     typedef Linear                Is_linear;
     typedef Symmetric             Is_symmetric;
-    typedef Full_rank             Has_equalities_only_and_full_rank;
     typedef Standard_form         Is_in_standard_form;
   };
 

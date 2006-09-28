@@ -135,7 +135,7 @@ public:
   QP_solution ()
     : Handle_for<const QP_solver_base<ET>*>()
   {
-    *(this->ptr()) = 0; // important to avoid trouble in ~QP_solution
+    *(this->ptr()) = 0; // unitialized solution
   }
 
   QP_solution (const QP_solver_base<ET>* s)
@@ -144,56 +144,67 @@ public:
 
   Quotient<ET> solution() const
   {
+    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
     return (*(this->Ptr()))->solution();
   }
 
   QP_status status() const
   {
+    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
     return (*(this->Ptr()))->status();
   }
 
   Variable_value_iterator variable_values_begin() const
   {
-    return (*(this->Ptr()))->original_variable_values_begin();
+   CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
+   return (*(this->Ptr()))->original_variable_values_begin();
   }
 
   Variable_value_iterator variable_values_end() const
   {
+    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
     return (*(this->Ptr()))->original_variable_values_end();
   }
 
   Index_iterator basic_variable_indices_begin() const
   {
+    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
     return (*(this->Ptr()))->basic_original_variable_indices_begin();
   }
 
   Index_iterator basic_variable_indices_end() const
   {
+    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
     return (*(this->Ptr()))->basic_original_variable_indices_end();
   }
 
   int number_of_basic_variables() const
   {
+    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
     return (*(this->Ptr()))->number_of_basic_original_variables();
   }
 
   Index_iterator basic_constraint_indices_begin() const
   {
+    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
     return (*(this->Ptr()))->basic_constraint_indices_begin();
   }
 
   Index_iterator basic_constraint_indices_end() const
   {
+    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
     return (*(this->Ptr()))->basic_constraint_indices_end();
   }
 
   int number_of_basic_constraints() const
   {
+    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
     return (*(this->Ptr()))->number_of_basic_constraints();
   }
 
   bool is_valid() const
   {
+    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
     return (*(this->Ptr()))->is_valid();
   }
 

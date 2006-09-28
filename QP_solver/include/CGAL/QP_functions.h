@@ -100,7 +100,7 @@ QP_solution<ET> solve_quadratic_program
 {
   typedef QP_solver<
     QuadraticProgram, ET, 
-    QP_solver_impl::QP_tags<Tag_false, Tag_false, Tag_false, Tag_false> >
+    QP_solver_impl::QP_tags<Tag_false, Tag_false, Tag_false> >
     Solver;
   const Solver* s = new Solver(qp);
   return QP_solution<ET>(s);
@@ -112,7 +112,7 @@ QP_solution<ET> solve_nonnegative_quadratic_program
 {
   typedef QP_solver<
     QuadraticProgram, ET, 
-    QP_solver_impl::QP_tags<Tag_false, Tag_false, Tag_false, Tag_true> >
+    QP_solver_impl::QP_tags<Tag_false, Tag_false, Tag_true> >
     Solver;
   const Solver* s = new Solver(qp);
   return QP_solution<ET>(s);
@@ -124,7 +124,7 @@ QP_solution<ET> solve_linear_program
 {
   typedef QP_solver<
     QuadraticProgram, ET, 
-    QP_solver_impl::QP_tags<Tag_true, Tag_false, Tag_false, Tag_false> >
+    QP_solver_impl::QP_tags<Tag_true, Tag_false, Tag_false> >
     Solver;
   const Solver* s = new Solver(qp);
   return QP_solution<ET>(s);
@@ -136,7 +136,7 @@ QP_solution<ET> solve_nonnegative_linear_program
 {
   typedef QP_solver<
     QuadraticProgram, ET, 
-    QP_solver_impl::QP_tags<Tag_true, Tag_false, Tag_false, Tag_true> >
+    QP_solver_impl::QP_tags<Tag_true, Tag_false, Tag_true> >
     Solver;
   const Solver* s = new Solver(qp);
   return QP_solution<ET>(s);

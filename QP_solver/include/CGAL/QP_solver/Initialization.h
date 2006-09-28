@@ -20,6 +20,8 @@
 //                 Franz Wessendorp <fransw@inf.ethz.ch>
 //                 Kaspar Fischer <fischerk@inf.ethz.ch>
 
+#include<CGAL/QP_functions.h>
+
 CGAL_BEGIN_NAMESPACE
 
 // creation & initialization
@@ -34,7 +36,8 @@ QP_solver(const Q& qp, Pricing_strategy* strategy, int verbosity)
     m_phase(-1), is_phaseI(false), is_phaseII(false),
     is_RTS_transition(false),
     is_LP(check_tag(Is_linear())), is_QP(!is_LP),
-    no_ineq(check_tag(Has_equalities_only_and_full_rank())),
+    //no_ineq(check_tag(Has_equalities_only_and_full_rank())),
+    no_ineq(is_in_equational_form(qp)), // may change after phase I
     has_ineq(!no_ineq),
     is_in_standard_form(check_tag(Is_in_standard_form()))
 {
@@ -685,7 +688,7 @@ init_basis()
   in_B.reserve(qp_n+s+art_A.size());
   in_B.insert(in_B.end(), qp_n, -1);  // no original variable is basic
   
-  init_basis__slack_variables(s_i, Has_equalities_only_and_full_rank());
+  init_basis__slack_variables(s_i, no_ineq);
   
   if (!B_O.empty()) B_O.clear();
   B_O.reserve(qp_n);                  // all artificial variables are basic
@@ -697,7 +700,7 @@ init_basis()
   
   // initialize indices of 'basic' and 'nonbasic' constraints:
   if (!C.empty()) C.clear();
-  init_basis__constraints(s_i, Has_equalities_only_and_full_rank());
+  init_basis__constraints(s_i, no_ineq);
   
   // diagnostic output:
   CGAL_qpe_debug {
@@ -749,11 +752,13 @@ init_basis__constraints( int, Tag_true)
 {
   // reserve memory:
   C.reserve(qp_m);
+  in_C.reserve(qp_m);
 
   // As there are no inequalities, C consists of all inequality constraints
   // only, so we add them all:
-  for (int i = 0; i < qp_m; ++i)
+  for (int i = 0; i < qp_m; ++i) {
     C.push_back(i);
+  }
 }
 
 template < typename Q, typename ET, typename Tags >                                        // has ineq.
@@ -850,7 +855,7 @@ init_solution()
   // initialize exact version of `qp_b' restricted to basic constraints C
   // (implicit conversion to ET):
   if (!b_C.empty()) b_C.clear();
-  init_solution__b_C(Has_equalities_only_and_full_rank());
+  init_solution__b_C(no_ineq);
 
   // initialize exact version of `aux_c' and 'minus_c_B', the
   // latter restricted to basic variables B_O:

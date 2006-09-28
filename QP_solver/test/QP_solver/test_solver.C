@@ -256,10 +256,6 @@ bool parse_options(std::istream& in,std::map<std::string,int>& options,
       good = options.insert(Arg("Is symmetric",1)).second;
     else if (t == "-s")
       good = options.insert(Arg("Is symmetric",0)).second;
-    else if (t == "+r")
-      good = options.insert(Arg("Has equalities and full rank",1)).second;
-    else if (t == "-r")
-      good = options.insert(Arg("Has equalities and full rank",0)).second;
     else if (t == "+f")
       good = options.insert(Arg("Is in standard form",1)).second;
     else if (t == "-f")
@@ -345,7 +341,6 @@ CGAL::QP_pricing_strategy<Q, ET, Tags> *
 
 template<typename Is_linear,
 	 typename Is_symmetric,
-	 typename Has_equalities_only_and_full_rank,
 	 typename Is_in_standard_form,
 	 typename IT,
 	 typename ET>
@@ -366,11 +361,7 @@ bool process(const std::string& filename,
   QP_instance qp(in,true,verbosity);
   in.close();
 
-  // check whether we should compute the rank of the coefficient
-  // matrix:
   std::string comment = qp.comment();
-  const bool dontComputeRank = 
-    comment.find("dont-compute-row-rank") < comment.size();
 
   // check for the number-type:
   Input_type type;
@@ -394,11 +385,7 @@ bool process(const std::string& filename,
   // in contradiction to the routine's compile-time flags: 
   if (check_tag(Is_linear()) && !qp.is_linear() ||
       check_tag(Is_symmetric()) && !qp.is_symmetric() ||
-      check_tag(Is_in_standard_form()) && !qp.is_in_standard_form() ||
-      check_tag(Has_equalities_only_and_full_rank()) && dontComputeRank ||
-      check_tag(Has_equalities_only_and_full_rank()) &&
-      !(CGAL::is_in_equational_form(qp) &&
-	CGAL::has_linearly_independent_equations (qp, ET(0))))
+      check_tag(Is_in_standard_form()) && !qp.is_in_standard_form())
     return true;
 
   if (verbosity > 0)
@@ -406,8 +393,6 @@ bool process(const std::string& filename,
 	 << (check_tag(Is_linear())? "linear " : "")
 	 << (check_tag(Is_symmetric())? "symmetric " : "")
 	 << (check_tag(Is_in_standard_form())? "standard-form " : "")
-	 << (check_tag(Has_equalities_only_and_full_rank())?
-	     "has-equalities-only-and-full-rank " : "") 
 	 << "file-IT=" << number_type << ' '
 	 << "IT=" << (is_double(IT())? "double" :
 		      (is_rational(IT())? "Gmpq" : "int")) << ' '
@@ -426,8 +411,7 @@ bool process(const std::string& filename,
 
 
   typedef CGAL::QP_solver_impl::QP_tags<Is_linear,
-    Is_symmetric,Has_equalities_only_and_full_rank, 
-    Is_in_standard_form> Tags;
+    Is_symmetric, Is_in_standard_form> Tags;
 
   // solve:
   CGAL::QP_pricing_strategy<QP_instance, ET, Tags> *s = 
@@ -446,7 +430,6 @@ bool process(const std::string& filename,
 
 template<typename Is_linear,
 	 typename Is_symmetric,
-	 typename Has_equalities_only_and_full_rank,
 	 typename Is_in_standard_form>
 bool processType(const std::string& filename,
 		 const std::map<std::string,int>& options)
@@ -462,22 +445,19 @@ bool processType(const std::string& filename,
   bool success = true;
 #ifdef QP_INT
   if (!processOnlyOneValue || value==Int_type)
-    if (!process<Is_linear,Is_symmetric,
-	Has_equalities_only_and_full_rank,Is_in_standard_form,
+    if (!process<Is_linear,Is_symmetric,Is_in_standard_form,
 	int,Integer>(filename,options))
       success = false;
 #endif
 #ifdef QP_DOUBLE
   if (!processOnlyOneValue || value==Double_type)
-    if (!process<Is_linear,Is_symmetric,
-	Has_equalities_only_and_full_rank,Is_in_standard_form,
+    if (!process<Is_linear,Is_symmetric,Is_in_standard_form,
 	double,Float>(filename,options))
       success = false;
 #endif
 #ifdef QP_RATIONAL
   if (!processOnlyOneValue || value==Rational_type)
-    if (!process<Is_linear,Is_symmetric,
-	Has_equalities_only_and_full_rank,Is_in_standard_form,
+    if (!process<Is_linear,Is_symmetric,Is_in_standard_form,
 	Rational,Rational>(filename,options))
       success = false;
 #endif
@@ -485,8 +465,7 @@ bool processType(const std::string& filename,
 }
 
 template<typename Is_linear,
-	 typename Is_symmetric,
-	 typename Has_equalities_only_and_full_rank>
+	 typename Is_symmetric>
 bool processFType(const std::string& filename,
 		  const std::map<std::string,int>& options)
 {
@@ -498,38 +477,12 @@ bool processFType(const std::string& filename,
   bool success = true;
 #ifdef QP_F
   if (!processOnlyOneValue || value==true)
-    if (!processType<Is_linear,Is_symmetric,
-	Has_equalities_only_and_full_rank,Tag_true>(filename,options))
+    if (!processType<Is_linear,Is_symmetric,Tag_true>(filename,options))
       success = false;
 #endif
 #ifdef QP_NOT_F
   if (!processOnlyOneValue || value==false)
-    if (!processType<Is_linear,Is_symmetric,
-	Has_equalities_only_and_full_rank,Tag_false>(filename,options))
-      success = false;
-#endif
-  return success;  
-}
-
-template<typename Is_linear,
-	 typename Is_symmetric>
-bool processRFType(const std::string& filename,
-		   const std::map<std::string,int>& options)
-{
-  Key_const_iterator it = options.find("Has equalities and full rank");
-  const bool processOnlyOneValue = it != options.end();
-  bool value = false;
-  if (processOnlyOneValue)
-    value = it->second > 0;
-  bool success = true;
-#ifdef QP_R
-  if (!processOnlyOneValue || value==true)
-    if (!processFType<Is_linear,Is_symmetric,Tag_true>(filename,options))
-      success = false;
-#endif
-#ifdef QP_NOT_R
-  if (!processOnlyOneValue || value==false)
-    if (!processFType<Is_linear,Is_symmetric,Tag_false>(filename,options))
+    if (!processType<Is_linear,Is_symmetric,Tag_false>(filename,options))
       success = false;
 #endif
   return success;  
@@ -547,12 +500,12 @@ bool processSRFType(const std::string& filename,
   bool success = true;
 #ifdef QP_S
   if (!processOnlyOneValue || value==true)
-    if (!processRFType<Is_linear,Tag_true>(filename,options))
+    if (!processFType<Is_linear,Tag_true>(filename,options))
       success = false;
 #endif
 #ifdef QP_NOT_S
   if (!processOnlyOneValue || value==false)
-    if (!processRFType<Is_linear,Tag_false>(filename,options))
+    if (!processFType<Is_linear,Tag_false>(filename,options))
       success = false;
 #endif
   return success;  

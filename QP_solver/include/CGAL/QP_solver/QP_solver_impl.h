@@ -408,7 +408,7 @@ QP_solver<Q, ET, Tags>::
 ratio_test_init( )
 {
     // store exact version of `A_Cj' (implicit conversion)
-    ratio_test_init__A_Cj( A_Cj.begin(), j, Has_equalities_only_and_full_rank());
+    ratio_test_init__A_Cj( A_Cj.begin(), j, no_ineq);
 
     // store exact version of `2 D_{B_O,j}'
     ratio_test_init__2_D_Bj( two_D_Bj.begin(), j, Is_linear());
@@ -508,7 +508,7 @@ ratio_test_1( )
     
     // compute `q_lambda' and `q_x'
     ratio_test_1__q_x_O( Is_linear());
-    ratio_test_1__q_x_S( Has_equalities_only_and_full_rank());
+    ratio_test_1__q_x_S( no_ineq);
 
     // diagnostic output
     CGAL_qpe_debug {
@@ -553,9 +553,9 @@ ratio_test_1( )
     ratio_test_1__t_i(   B_O.begin(),   B_O.end(),
 		       x_B_O.begin(), q_x_O.begin(), Tag_false());
     ratio_test_1__t_i(   B_S.begin(),   B_S.end(),
-		       x_B_S.begin(), q_x_S.begin(), Has_equalities_only_and_full_rank());
+		       x_B_S.begin(), q_x_S.begin(), no_ineq);
 */		       
-    ratio_test_1__t_min_B(Has_equalities_only_and_full_rank());    
+    ratio_test_1__t_min_B(no_ineq);    
 
     // check `t_j'
     ratio_test_1__t_j( Is_linear());
@@ -950,7 +950,7 @@ ratio_test_2( Tag_false)
     }
 
     // compute `p_lambda' and `p_x' (Note: `p_...' is stored in `q_...')
-    ratio_test_2__p( Has_equalities_only_and_full_rank());
+    ratio_test_2__p( no_ineq);
  
     // diagnostic output
     CGAL_qpe_debug {
@@ -1179,7 +1179,7 @@ update_2( Tag_false)
     // compute current solution
     compute_solution(Is_in_standard_form());
 }
-
+ 
 template < typename Q, typename ET, typename Tags >
 void
 QP_solver<Q, ET, Tags>::
@@ -1213,8 +1213,7 @@ expel_artificial_variables_from_basis( )
 	    // if there is any
 	    for (unsigned int j_ = 0; j_ < qp_n + slack_A.size(); ++j_) {
 	        if (!is_basic(j_)) {  				// is nonbasic 
-		    ratio_test_init__A_Cj( A_Cj.begin(), j_, 
-		        Has_equalities_only_and_full_rank());
+		    ratio_test_init__A_Cj( A_Cj.begin(), j_, no_ineq);
 		    r_A_Cj = inv_M_B.inv_M_B_row_dot_col(row_ind, A_Cj.begin());
 		    if (r_A_Cj != et0) {
 		        ratio_test_1__q_x_O(Is_linear());
@@ -1228,10 +1227,17 @@ expel_artificial_variables_from_basis( )
 	}
     }
     if ((art_basic != 0) && no_ineq) {
-      CGAL_qpe_assertion_msg(false,
-        "Constraint matrix has not full row rank");
+      // the vector in_C was not used in phase I, but now we remove redundant
+      // constraints and switch to has_ineq treatment, hence we need it to
+      // be correct at this stage
+      for (int i=0; i<qp_m; ++i)
+	in_C.push_back(i);
     }
     diagnostics.redundant_equations = (art_basic != 0);
+
+    // now reset the no_ineq and has_ineq flags to match the situation
+    no_ineq = no_ineq && !diagnostics.redundant_equations;
+    has_ineq = !no_ineq;
     
     // remove the remaining ones with their corresponding equality constraints
     // Note: the special artificial variable can always be driven out of the
@@ -1264,7 +1270,7 @@ replace_variable( )
     }
 
     // replace variable
-    replace_variable( Has_equalities_only_and_full_rank());
+    replace_variable( no_ineq);
 
     // pivot step done
     i = j = -1;
@@ -1957,7 +1963,7 @@ z_replace_variable( )
     }
 
     // replace variable
-    z_replace_variable( Has_equalities_only_and_full_rank());
+    z_replace_variable( no_ineq);
 
     // pivot step not yet completely done
     i = -1;
@@ -2495,7 +2501,7 @@ compute_solution(Tag_true)
 		    lambda.begin(), x_B_O.begin());
   
   // compute current solution, slack variables
-  compute__x_B_S(Has_equalities_only_and_full_rank(), Is_in_standard_form());
+  compute__x_B_S(no_ineq, Is_in_standard_form());
 }
 
 // Compute solution, meaning compute the solution vector x and the KKT
@@ -2527,7 +2533,7 @@ compute_solution(Tag_false)
   }
   
   // compute current solution, slack variables
-  compute__x_B_S( Has_equalities_only_and_full_rank(), Is_in_standard_form());
+  compute__x_B_S( no_ineq, Is_in_standard_form());
 }
 
 template < typename Q, typename ET, typename Tags >
@@ -2767,7 +2773,7 @@ check_basis_inverse( Tag_true)
     // ratio_test_init__A_Cj
     for ( col = 0; col < cols; ++col, ++i_it) {
 	ratio_test_init__A_Cj( tmp_l.begin(), *i_it,
-			       Has_equalities_only_and_full_rank());
+			       no_ineq);
 	inv_M_B.multiply_x( tmp_l.begin(), q_x_O.begin());
 
 	CGAL_qpe_debug {
@@ -2883,7 +2889,7 @@ check_basis_inverse( Tag_false)
     i_it = B_O.begin();
     for ( col = 0; col < cols; ++col, ++i_it) {
 	ratio_test_init__A_Cj  ( tmp_l.begin(), *i_it, 
-				 Has_equalities_only_and_full_rank());
+				 no_ineq);
 	ratio_test_init__2_D_Bj( tmp_x.begin(), *i_it, Tag_false());
 	inv_M_B.multiply( tmp_l.begin(), tmp_x.begin(),
 			  q_lambda.begin(), q_x_O.begin());
