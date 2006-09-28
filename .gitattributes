@@ -336,14 +336,12 @@ BGL/doc_tex/BGL_ref/halfedge_graph_traits_Polyhedron_3.tex -text
 BGL/doc_tex/BGL_ref/intro.tex -text
 BGL/doc_tex/BGL_ref/main.tex -text
 BGL/examples/BGL/Polyhedron_3/kruskal_with_stored_id.cpp -text
-BGL/include/CGAL/boost/graph/BGL_properties.h -text
-BGL/include/CGAL/boost/graph/Embedded_graph_traits.h -text
-BGL/include/CGAL/boost/graph/HalfedgeDS_graph_traits_aux.h -text
-BGL/include/CGAL/boost/graph/Halfedge_graph_traits.h -text
-BGL/include/CGAL/boost/graph/Polyhedron_BGL_properties.h -text
-BGL/include/CGAL/boost/graph/Polyhedron_geometric_graph_traits.h -text
-BGL/include/CGAL/boost/graph/Polyhedron_graph_traits.h -text
-BGL/include/CGAL/boost/graph/Polyhedron_halfedge_graph_traits.h -text
+BGL/include/CGAL/boost/graph/graph_traits_HalfedgeDS.h -text
+BGL/include/CGAL/boost/graph/graph_traits_Polyhedron.h -text
+BGL/include/CGAL/boost/graph/halfedge_graph_traits.h -text
+BGL/include/CGAL/boost/graph/halfedge_graph_traits_Polyhedron.h -text
+BGL/include/CGAL/boost/graph/properties.h -text
+BGL/include/CGAL/boost/graph/properties_Polyhedron.h -text
 Benchmark/doc_tex/Benchmark/Conics_14_1.arr -text
 Benchmark/doc_tex/Benchmark/fig/Conics_14_1.eps -text svneol=unset#application/postscript
 Benchmark/doc_tex/Benchmark/fig/Conics_14_1.png -text svneol=unset#image/png
