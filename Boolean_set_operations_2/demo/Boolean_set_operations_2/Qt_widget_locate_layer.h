@@ -55,7 +55,7 @@ class  Qt_widget_locate_layer : public CGAL::Qt_widget_layer
     void draw()
     {
       widget->lock();
-      const Polygon& outer_boundary = m_pgn.outer_boundary();
+      const Polygon_2& outer_boundary = m_pgn.outer_boundary();
       *widget << CGAL::YELLOW;
       if(m_found_pgn)
       {

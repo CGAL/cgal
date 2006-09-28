@@ -120,7 +120,7 @@ public:
     while(itpgn1 != red_pgns_list.end())
     {
       const Polygon_with_holes& pgn_with_hole = *itpgn1;
-      const Polygon& outer_boundary = pgn_with_hole.outer_boundary();
+      const Polygon_2& outer_boundary = pgn_with_hole.outer_boundary();
       widget->setFillColor (CGAL::RED);
       if(outer_boundary.is_empty())
        {
@@ -155,7 +155,7 @@ public:
     while(itpgn2 != blue_pgns_list.end())
     {
       const Polygon_with_holes& pgn_with_hole = *itpgn2;
-      const Polygon& outer_boundary = pgn_with_hole.outer_boundary();
+      const Polygon_2& outer_boundary = pgn_with_hole.outer_boundary();
       widget->setFillColor (CGAL::BLUE);
       if(outer_boundary.is_empty())
        {
@@ -473,7 +473,7 @@ private:
      for(PgnItr itr = begin; itr != end; ++itr)
      {
        const Polygon_with_holes& pgn_with_hole = *itr;
-       const Polygon& outer_boundary = pgn_with_hole.outer_boundary();
+       const Polygon_2& outer_boundary = pgn_with_hole.outer_boundary();
        widget->setFillColor (CGAL::ORANGE);
        if(outer_boundary.is_empty())
        {
@@ -540,7 +540,7 @@ public slots:
       widget->clear_history();
 
       CGAL::Dxf_bsop_reader<Kernel> reader;
-      std::vector<Polygon>  circ_polygons;
+      std::vector<Polygon_2>  circ_polygons;
       std::vector<Polygon_with_holes>  circ_polygons_with_holes;
       reader(in_file,
              std::back_inserter(circ_polygons),
@@ -571,7 +571,7 @@ public slots:
         box = circ_polygons_with_holes.front().outer_boundary().bbox();
       }
 
-      std::vector<Polygon>::iterator itr1 = circ_polygons.begin();
+      std::vector<Polygon_2>::iterator itr1 = circ_polygons.begin();
       for(itr1 = circ_polygons.begin();
           itr1 != circ_polygons.end();
           ++itr1)
@@ -824,7 +824,7 @@ public slots:
 private slots:
   void get_new_object(CGAL::Object obj)
   {
-    Polygon pgn;
+    Polygon_2 pgn;
     if(CGAL::assign(pgn,obj))
     {
       if(pgn.orientation() == CGAL::CLOCKWISE)
