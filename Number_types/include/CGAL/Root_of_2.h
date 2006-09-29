@@ -101,7 +101,7 @@ public:
 
 #ifdef CGAL_ROOT_OF_2_ENABLE_HISTOGRAM_OF_NUMBER_OF_DIGIT_ON_THE_COMPLEX_CONSTRUCTOR
   static int max_num_digit;
-  static int histogram[1000];
+  static int histogram[10000];
 #endif
 
   Root_of_2()
@@ -302,7 +302,7 @@ template < typename RT_ >
 int Root_of_2<RT_>::max_num_digit = 0;
 
 template < typename RT_ >
-int Root_of_2<RT_>::histogram[1000];
+int Root_of_2<RT_>::histogram[10000];
 
 #endif
 
