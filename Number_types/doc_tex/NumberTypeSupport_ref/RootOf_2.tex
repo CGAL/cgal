@@ -14,14 +14,15 @@ degree up to~2 over a \ccc{RingNumberType} denoted as \ccc{RT}.
 
 \ccFunction{RootOf_2 make_root_of_2(RT a, RT b, RT c, bool s);}{Returns 
 the smaller (resp. larger) root of the equation $aX^2+bX+c=0$ if \ccc{s}
-is true (resp. false).}
+is true (resp. false). \ccPrecond{$\gamma\geq 0$}}
 %\footnote{numbering of roots from 0 or 1? to be checked}
 \ccGlue
-\ccFunction{RootOf_2 make_root_of_2(FT alpha, FT beta, FT gamma);}{It is
-the root_of_2 representation for $\alpha + \beta \sqrt{\gamma}$}
-\ccFunction{RootOf_2 make_root_of_2(FT a, FT b, FT c, bool s);}{Returns
-the smaller (resp. larger) root of the equation $aX^2+bX+c=0$ if \ccc{s}
-is true (resp. false).}
+\ccFunction{RootOf_2 make_root_of_2(FT a, FT b, FT c, bool s);}{Returns the 
+smaller or larger root of the equation $aX^2+bX+c=0$, if \ccc{s}
+is \ccc{true} or \ccc{false}, respectively. \ccPrecond{$b^2-4ac\geq 0$}}
+\ccGlue
+\ccFunction{RootOf_2 make_root_of_2(FT alpha, FT beta, FT gamma);}{Constructs 
+the number $\alpha + \beta \sqrt{\gamma}$. \ccPrecond{$\gamma\geq 0$}}
 
 
 \ccOperations
