@@ -18,9 +18,9 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_MIDPOINT_AND_LENGTH_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_MIDPOINT_AND_LENGTH_H
 
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Set_empty_collapse_data.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Set_partial_collapse_data.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Set_full_collapse_data.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Set_no_cache.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Set_cost_cache.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Set_cost_and_placement_cache.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Cached_cost.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Cached_placement.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_length_cost.h>

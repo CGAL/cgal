@@ -18,7 +18,7 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_SET_PARTIAL_COLLAPSE_DATA_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_SET_PARTIAL_COLLAPSE_DATA_H 1
 
-#include <CGAL/Surface_mesh_simplification/Detail/TSMS_common.h>
+#include <CGAL/Surface_mesh_simplification/Detail/ECMS_common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Partial_collapse_data.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_params.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Detail/Lindstrom_Turk_core.h>
@@ -26,23 +26,23 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse
+namespace Surface_mesh_simplification
 {
 
-template<class TSM_>    
-class Set_partial_collapse_data_LindstromTurk
+template<class ECM_>    
+class LindstromTurk_set_cost_cache
 {
 public:
 
-  typedef TSM_ TSM ;
+  typedef ECM_ ECM ;
 
   typedef LindstromTurk_params Params ;
   
-  typedef typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor ;
+  typedef typename boost::graph_traits<ECM>::edge_descriptor edge_descriptor ;
   
-  typedef Partial_collapse_data<TSM> Collapse_data ;
+  typedef Cost_cache<ECM> Cache ;
   
-  typedef typename Geometric_graph_traits<TSM>::Point Point_3 ;
+  typedef typename halfedge_graph_traits<ECM>::Point Point_3 ;
   typedef typename Kernel_traits<Point_3>::Kernel     Kernel ;
   typedef typename Kernel::FT                         FT ;
   
@@ -54,11 +54,11 @@ public:
   
 public :
 
-  Set_partial_collapse_data_LindstromTurk() {}
+  LindstromTurk_set_cost_cache() {}
     
-  void operator() ( Collapse_data&         rData
+  void operator() ( Cache&                 rCache
                   , edge_descriptor const& aEdge
-                  , TSM&                   aSurface
+                  , ECM&                   aSurface
                   , CostParams const*      aCostParams 
                   , PlacementParams const* 
                   ) const 
@@ -66,17 +66,17 @@ public :
     CGAL_assertion(aCostParams);
     CGAL_assertion( handle_assigned(aEdge) );
     
-    LindstromTurkCore<TSM> core(*aCostParams,aEdge,aSurface,true);
+    LindstromTurkCore<ECM> core(*aCostParams,aEdge,aSurface,true);
 
     Optional_cost_type lCost ;
     Optional_placement_type lPlacement ;
     tie(lCost,lPlacement) = core.compute();
-    rData = Collapse_data(lCost);
+    rCache = Cache(lCost);
 }                         
   
 };    
 
-} } } // namespace Triangulated_surface_mesh::Simplification::Edge_collapse
+} // namespace Surface_mesh_simplification
 
 CGAL_END_NAMESPACE
 

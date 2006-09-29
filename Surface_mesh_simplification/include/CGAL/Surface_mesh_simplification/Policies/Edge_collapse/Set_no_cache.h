@@ -18,43 +18,43 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_SET_EMPTY_COLLAPSE_DATA_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_SET_EMPTY_COLLAPSE_DATA_H
 
-#include <CGAL/Surface_mesh_simplification/Detail/TSMS_common.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Empty_collapse_data.h>
+#include <CGAL/Surface_mesh_simplification/Detail/ECMS_common.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/No_cache.h>
 
 CGAL_BEGIN_NAMESPACE
 
-namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse
+namespace Surface_mesh_simplification
 {
 
-template<class TSM_>    
-class Set_empty_collapse_data
+template<class ECM_>    
+class Set_no_cache
 {
 public:
 
-  typedef TSM_ TSM ;
+  typedef ECM_ ECM ;
 
-  typedef typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor ;
+  typedef typename boost::graph_traits<ECM>::edge_descriptor edge_descriptor ;
   
-  typedef Empty_collapse_data Collapse_data ;
+  typedef No_cache Cache ;
   
   typedef void CostParams ;
   typedef void PlacementParams ;
   
 public :
 
-  void operator() ( Collapse_data& aData          
+  void operator() ( Cache& aCache          
                   , edge_descriptor const&  
-                  , TSM&                    
+                  , ECM&                    
                   , CostParams const*       
                   , PlacementParams const* 
                   ) const 
   {
-    aData = Collapse_data();
+    aCache = Cache();
   }                         
   
 };    
 
-} } } // namespace Triangulated_surface_mesh::Simplification::Edge_collapse
+} // namespace Surface_mesh_simplification
 
 
 CGAL_END_NAMESPACE

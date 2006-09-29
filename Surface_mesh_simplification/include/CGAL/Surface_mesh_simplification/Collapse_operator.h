@@ -20,7 +20,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse
+namespace Surface_mesh_simplification
 {
 
 
@@ -74,9 +74,9 @@ namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_
 //
 // RETURN VALUE: A handle to the vertex that IS NOT removed.
 //
-template<class TSM> struct Collapse_triangulation_edge ;
+template<class ECM> struct Collapse_triangulation_edge ;
 
-} } } // namespace Triangulated_surface_mesh::Simplification::Edge_collapse
+} // namespace Surface_mesh_simplification
 
 CGAL_END_NAMESPACE
 

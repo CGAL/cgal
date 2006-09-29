@@ -18,24 +18,24 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_COST_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_COST_H 1
 
-#include <CGAL/Surface_mesh_simplification/Detail/TSMS_common.h>
+#include <CGAL/Surface_mesh_simplification/Detail/ECMS_common.h>
 
 CGAL_BEGIN_NAMESPACE
 
-namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse  
+namespace Surface_mesh_simplification  
 {
 
-template<class TSM_>
+template<class ECM_>
 class LindstromTurk_cost
 {
 public:
     
-  typedef TSM_ TSM ;
+  typedef ECM_ ECM ;
   
-  typedef typename boost::graph_traits<TSM>::vertex_descriptor vertex_descriptor ;
-  typedef typename boost::graph_traits<TSM>::edge_descriptor   edge_descriptor ;
+  typedef typename boost::graph_traits<ECM>::vertex_descriptor vertex_descriptor ;
+  typedef typename boost::graph_traits<ECM>::edge_descriptor   edge_descriptor ;
   
-  typedef typename Geometric_graph_traits<TSM>::Point Point_3 ;
+  typedef typename halfedge_graph_traits<ECM>::Point Point_3 ;
   typedef typename Kernel_traits<Point_3>::Kernel     Kernel ;
   typedef typename Kernel::FT                         FT ;
   
@@ -47,17 +47,17 @@ public:
 
   LindstromTurk_cost() {}
      
-  template<class Collapse_data>
+  template<class Cache>
   result_type operator()( edge_descriptor const& aEdge
-                        , TSM&                   aSurface
-                        , Collapse_data const&   aData
+                        , ECM&                   aSurface
+                        , Cache const&           aCache
                         , Params const*          aParams
                         ) const
   {
     CGAL_assertion(aParams);
     CGAL_assertion( handle_assigned(aEdge) );
     
-    LindstromTurkCore<TSM> core(*aParams,aEdge,aSurface,true);
+    LindstromTurkCore<ECM> core(*aParams,aEdge,aSurface,true);
 
     optional<FT> lCost ;
     optional<Point_3> lPlacement ;
@@ -68,7 +68,7 @@ public:
   
 };
 
-} } } // namespace Triangulated_surface_mesh::Simplification::Edge_collapse
+} // namespace Surface_mesh_simplification
 
 CGAL_END_NAMESPACE
 

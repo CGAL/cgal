@@ -20,7 +20,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse 
+namespace Surface_mesh_simplification 
 {
 
 struct LindstromTurk_params
@@ -44,7 +44,7 @@ struct LindstromTurk_params
   double ShapeWeight ;
 };
   
-} } } // namespace Triangulated_surface_mesh::Simplification::Edge_collapse
+} // namespace Surface_mesh_simplification
 
 CGAL_END_NAMESPACE
 

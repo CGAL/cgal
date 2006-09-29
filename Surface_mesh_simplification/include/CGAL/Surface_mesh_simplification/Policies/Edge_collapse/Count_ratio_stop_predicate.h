@@ -18,11 +18,11 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_COUNT_RATIO_STOP_PRED_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_COUNT_RATIO_STOP_PRED_H 1
 
-#include <CGAL/Surface_mesh_simplification/Detail/TSMS_common.h>
+#include <CGAL/Surface_mesh_simplification/Detail/ECMS_common.h>
 
 CGAL_BEGIN_NAMESPACE
 
-namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse 
+namespace Surface_mesh_simplification 
 {
 
 //*******************************************************************************************************************
@@ -36,23 +36,23 @@ namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_
 // 
 // Stops when the ratio of initial to current vertex pairs is below some value.
 //
-template<class TSM_>    
-class Count_ratio_stop_condition
+template<class ECM_>    
+class Count_ratio_stop_predicate
 {
 public:
 
-  typedef TSM_ TSM ;
+  typedef ECM_ ECM ;
   
-  typedef typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor ;
-  typedef typename boost::graph_traits<TSM>::edges_size_type size_type ;
+  typedef typename boost::graph_traits<ECM>::edge_descriptor edge_descriptor ;
+  typedef typename boost::graph_traits<ECM>::edges_size_type size_type ;
   
-  typedef typename Geometric_graph_traits<TSM>::Point Point_3 ;
-  typedef typename Kernel_traits<Point_3>::Kernel     Kernel ;
-  typedef typename Kernel::FT                         FT ;
+  typedef typename halfedge_graph_traits<ECM>::Point Point ;
+  typedef typename Kernel_traits<Point>::Kernel      Kernel ;
+  typedef typename Kernel::FT                        FT ;
   
 public :
   
-  Count_ratio_stop_condition( double aRatio ) : mRatio(aRatio) {}
+  Count_ratio_stop_predicate( double aRatio ) : mRatio(aRatio) {}
   
   bool operator()( FT const&              // aCurrentCost
                  , edge_descriptor const& //aEdge
@@ -68,7 +68,7 @@ private:
   double mRatio ;
 };    
 
-} }  } // namespace Triangulated_surface_mesh::Simplification::Edge_collapse
+} // namespace Surface_mesh_simplification
 
 CGAL_END_NAMESPACE
 

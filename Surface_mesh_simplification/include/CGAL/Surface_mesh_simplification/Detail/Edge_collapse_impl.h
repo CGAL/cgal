@@ -20,15 +20,15 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse 
+namespace Surface_mesh_simplification 
 {
 
 template<class M,class S,class X, class F,class D,class CF,class PF,class CP, class PP,class V>
-EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::EdgeCollapse( TSM&                    aSurface
+EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::EdgeCollapse( ECM&                    aSurface
                                                    , ShouldStop       const& aShould_stop
                                                    , EdgeExtraPtrMap  const& aEdge_extra_ptr_map 
                                                    , VertexIsFixedMap const& aVertex_is_fixed_map 
-                                                   , SetCollapseData  const& aSet_collapse_data
+                                                   , SetCache         const& aSet_cache
                                                    , GetCost          const& aGet_cost
                                                    , GetPlacement     const& aGet_placement
                                                    , CostParams       const* aCostParams
@@ -40,7 +40,7 @@ EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::EdgeCollapse( TSM&                    aSu
   ,Should_stop        (aShould_stop) 
   ,Edge_extra_ptr_map (aEdge_extra_ptr_map)
   ,Vertex_is_fixed_map(aVertex_is_fixed_map)
-  ,Set_collapse_data  (aSet_collapse_data)
+  ,Set_cache  (aSet_cache)
   ,Get_cost           (aGet_cost)
   ,Get_placement      (aGet_placement)
   ,mCostParams        (aCostParams)
@@ -50,18 +50,18 @@ EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::EdgeCollapse( TSM&                    aSu
 {
   CGAL_expensive_precondition( is_valid_triangulated_surface_mesh(mSurface) );
   
-  CGAL_TSMS_TRACE(0,"EdgeCollapse of TSM with " << num_undirected_edges(aSurface) << " edges" ); 
+  CGAL_ECMS_TRACE(0,"EdgeCollapse of ECM with " << num_undirected_edges(aSurface) << " edges" ); 
   
-  CGAL_TSMS_DEBUG_CODE ( mStep = 0 ; )
+  CGAL_ECMS_DEBUG_CODE ( mStep = 0 ; )
   
 #ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE
     vertex_iterator vb, ve ;     
     for ( tie(vb,ve) = vertices(mSurface) ; vb != ve ; ++ vb )  
-      CGAL_TSMS_TRACE(2, vertex_to_string(*vb) ) ;
+      CGAL_ECMS_TRACE(2, vertex_to_string(*vb) ) ;
       
     undirected_edge_iterator eb, ee ;
     for ( tie(eb,ee) = undirected_edges(mSurface); eb!=ee; ++eb )
-      CGAL_TSMS_TRACE(2, edge_to_string(*eb) ) ;
+      CGAL_ECMS_TRACE(2, edge_to_string(*eb) ) ;
 #endif
 }
 
@@ -77,7 +77,7 @@ int EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::run()
   // Then proceed to collapse each edge in turn
   Loop();
 
-  CGAL_TSMS_TRACE(0,"Finished: " << (mInitialEdgeCount - mCurrentEdgeCount) << " edges removed." ) ;
+  CGAL_ECMS_TRACE(0,"Finished: " << (mInitialEdgeCount - mCurrentEdgeCount) << " edges removed." ) ;
 
   int r = (int)(mInitialEdgeCount - mCurrentEdgeCount) ;
     
@@ -92,7 +92,7 @@ int EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::run()
 template<class M,class S,class X, class F,class D,class CF,class PF,class CP, class PP,class V>
 void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Collect()
 {
-  CGAL_TSMS_TRACE(0,"Collecting edges...");
+  CGAL_ECMS_TRACE(0,"Collecting edges...");
 
   //
   // Loop over all the _undirected_ edges in the surface putting them in the PQ
@@ -137,25 +137,25 @@ void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Collect()
     // But in the case of fixed edges the edge data is left default constructed
     if ( !lIsFixed )
     {
-      Set_collapse_data(lData->data(),lEdge,mSurface,mCostParams,mPlacementParams) ;
+      Set_cache(lData->cache(),lEdge,mSurface,mCostParams,mPlacementParams) ;
       insert_in_PQ(lEdge,lData);
     }
       
     if ( Visitor )
       Visitor->OnCollected(lEdge,lIsFixed,mSurface);
     
-    CGAL_TSMS_TRACE(2,edge_to_string(lEdge));
+    CGAL_ECMS_TRACE(2,edge_to_string(lEdge));
     
     ++ lData ;
   }
  
-  CGAL_TSMS_TRACE(0,"Initial edge count: " << mInitialEdgeCount ) ;
+  CGAL_ECMS_TRACE(0,"Initial edge count: " << mInitialEdgeCount ) ;
 }
 
 template<class M,class S,class X, class F,class D,class CF,class PF,class CP, class PP,class V>
 void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Loop()
 {
-  CGAL_TSMS_TRACE(0,"Collapsing edges...") ;
+  CGAL_ECMS_TRACE(0,"Collapsing edges...") ;
 
   //
   // Pops and processes each edge from the PQ
@@ -163,7 +163,7 @@ void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Loop()
   optional<edge_descriptor> lEdge ;
   while ( (lEdge = pop_from_PQ()) )
   {
-    CGAL_TSMS_TRACE(3,"Poped " << edge_to_string(*lEdge) ) ;
+    CGAL_ECMS_TRACE(3,"Poped " << edge_to_string(*lEdge) ) ;
     
     Optional_cost_type lCost = get_cost(*lEdge);
     
@@ -177,7 +177,7 @@ void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Loop()
         if ( Visitor )
           Visitor->OnStopConditionReached(mSurface);
           
-        CGAL_TSMS_TRACE(0,"Stop condition reached with InitialEdgeCount=" << mInitialEdgeCount
+        CGAL_ECMS_TRACE(0,"Stop condition reached with InitialEdgeCount=" << mInitialEdgeCount
                        << " CurrentEdgeCount=" << mCurrentEdgeCount
                        << " Current Edge: " << edge_to_string(*lEdge)
                        );
@@ -193,12 +193,12 @@ void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Loop()
         if ( Visitor )
           Visitor->OnNonCollapsable(*lEdge,mSurface);
           
-        CGAL_TSMS_TRACE(1,edge_to_string(*lEdge) << " NOT Collapsable"  );
+        CGAL_ECMS_TRACE(1,edge_to_string(*lEdge) << " NOT Collapsable"  );
       }  
     }
     else
     {
-      CGAL_TSMS_TRACE(1,edge_to_string(*lEdge) << " uncomputable cost."  );
+      CGAL_ECMS_TRACE(1,edge_to_string(*lEdge) << " uncomputable cost."  );
     }
     
   }
@@ -219,12 +219,12 @@ bool EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Is_collapsable( edge_descriptor cons
 
   vertex_descriptor p,q ; tie(p,q) = get_vertices(aEdgePQ);
   
-  CGAL_TSMS_TRACE(3,"Testing collapsabilty of p_q=V" << p->ID << "(%" << p->vertex_degree() << ")"
+  CGAL_ECMS_TRACE(3,"Testing collapsabilty of p_q=V" << p->ID << "(%" << p->vertex_degree() << ")"
                  << "->V" << q->ID << "(%" << q->vertex_degree() << ")" 
                  );
                  
-  CGAL_TSMS_TRACE(4, "is p_q border:" << is_border(aEdgePQ) );
-  CGAL_TSMS_TRACE(4, "is q_q border:" << is_border(opposite_edge(aEdgePQ,mSurface)) ) ;
+  CGAL_ECMS_TRACE(4, "is p_q border:" << is_border(aEdgePQ) );
+  CGAL_ECMS_TRACE(4, "is q_q border:" << is_border(opposite_edge(aEdgePQ,mSurface)) ) ;
 
   bool lIsBoundary = is_undirected_edge_a_border(aEdgePQ) ;  
   std::size_t min = lIsBoundary ? 3 : 4 ;
@@ -238,8 +238,8 @@ bool EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Is_collapsable( edge_descriptor cons
     vertex_descriptor t = target(next_edge(aEdgePQ,mSurface),mSurface);
     vertex_descriptor b = target(next_edge(lEdgeQP,mSurface),mSurface);
   
-    CGAL_TSMS_TRACE(4,"  t=V" << t->ID << "(%" << t->vertex_degree() << ")" );
-    CGAL_TSMS_TRACE(4,"  b=V" << b->ID << "(%" << b->vertex_degree() << ")" );
+    CGAL_ECMS_TRACE(4,"  t=V" << t->ID << "(%" << t->vertex_degree() << ")" );
+    CGAL_ECMS_TRACE(4,"  b=V" << b->ID << "(%" << b->vertex_degree() << ")" );
 
     // The following loop checks the link condition for aEdgePQ.
     // Specifically, that every vertex 'k' adjacent to both 'p and 'q' is a face of the mesh.
@@ -274,13 +274,13 @@ bool EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Is_collapsable( edge_descriptor cons
                           
             if ( !lIsFace )
             {
-              CGAL_TSMS_TRACE(3,"  k=V" << k->ID << " IS NOT in a face with p-q. NON-COLLAPSABLE edge." ) ;
+              CGAL_ECMS_TRACE(3,"  k=V" << k->ID << " IS NOT in a face with p-q. NON-COLLAPSABLE edge." ) ;
               rR = false ;
               break ;
             }  
             else 
             {
-              CGAL_TSMS_TRACE(4,"  k=V" << k->ID << " is in a face with p-q") ;
+              CGAL_ECMS_TRACE(4,"  k=V" << k->ID << " is in a face with p-q") ;
             }
           }
         }  
@@ -290,7 +290,7 @@ bool EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Is_collapsable( edge_descriptor cons
   else
   {
     rR = false ;
-    CGAL_TSMS_TRACE(3,"  Surface is irreducible. NON-COLLAPSABLE edge." ) ;
+    CGAL_ECMS_TRACE(3,"  Surface is irreducible. NON-COLLAPSABLE edge." ) ;
   }
      
   if ( rR && !lIsBoundary )
@@ -298,7 +298,7 @@ bool EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Is_collapsable( edge_descriptor cons
     if ( is_border(p) && is_border(q) )
     {
       rR = false ;
-      CGAL_TSMS_TRACE(3,"  both p and q are boundary vertices but p-q is not. NON-COLLAPSABLE edge." ) ;
+      CGAL_ECMS_TRACE(3,"  both p and q are boundary vertices but p-q is not. NON-COLLAPSABLE edge." ) ;
     }  
   }
   
@@ -308,7 +308,7 @@ bool EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Is_collapsable( edge_descriptor cons
 template<class M,class S,class X, class F,class D,class CF,class PF,class CP, class PP,class V>
 void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Collapse( edge_descriptor const& aEdgePQ )
 {
-  CGAL_TSMS_TRACE(1,"S" << mStep << ". Collapsig " << edge_to_string(aEdgePQ) ) ;
+  CGAL_ECMS_TRACE(1,"S" << mStep << ". Collapsig " << edge_to_string(aEdgePQ) ) ;
   
   vertex_descriptor lP, lQ ; tie(lP,lQ) = get_vertices(aEdgePQ);
   
@@ -325,7 +325,7 @@ void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Collapse( edge_descriptor const& aEd
     
   if ( lPlacement )
   {
-    CGAL_TSMS_TRACE(2,"New vertex point: " << xyz_to_string(*lPlacement) ) ;
+    CGAL_ECMS_TRACE(2,"New vertex point: " << xyz_to_string(*lPlacement) ) ;
 
     -- mCurrentEdgeCount ;
         
@@ -344,7 +344,7 @@ void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Collapse( edge_descriptor const& aEd
     if ( !is_border(lEdgeQP) ) // Exists bottom facet
       lEdgeQB = opposite_edge(prev_edge(lEdgeQP,mSurface),mSurface);
     
-    CGAL_TSMS_TRACE(3,"EdgePQ E" << aEdgePQ->ID 
+    CGAL_ECMS_TRACE(3,"EdgePQ E" << aEdgePQ->ID 
                    << "(V" <<  aEdgePQ->vertex()->ID << "->V" << aEdgePQ->opposite()->vertex()->ID 
                    << ") EdgeQP E" << aEdgePQ->opposite()->ID 
                    ) ;
@@ -355,7 +355,7 @@ void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Collapse( edge_descriptor const& aEd
     
     if ( handle_assigned(lEdgePT) )
     {
-      CGAL_TSMS_TRACE(3,"EdgePT E" << lEdgePT->ID 
+      CGAL_ECMS_TRACE(3,"EdgePT E" << lEdgePT->ID 
                      << "(V" <<  lEdgePT->vertex()->ID << "->V" << lEdgePT->opposite()->vertex()->ID 
                      << ") EdgeTP E" << lEdgePT->opposite()->ID 
                      ) ;
@@ -371,7 +371,7 @@ void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Collapse( edge_descriptor const& aEd
       
       if ( lDataPT->is_in_PQ() )
       {
-        CGAL_TSMS_TRACE(2,"Removing E" << lUndirectedEdgePT->ID << " from PQ" ) ;
+        CGAL_ECMS_TRACE(2,"Removing E" << lUndirectedEdgePT->ID << " from PQ" ) ;
         remove_from_PQ(lUndirectedEdgePT,lDataPT) ;
         -- mCurrentEdgeCount ;
       }
@@ -379,7 +379,7 @@ void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Collapse( edge_descriptor const& aEd
     
     if ( handle_assigned(lEdgeQB) )
     {
-      CGAL_TSMS_TRACE(3,"EdgeQB E" << lEdgeQB->ID 
+      CGAL_ECMS_TRACE(3,"EdgeQB E" << lEdgeQB->ID 
                      << "(V" <<  lEdgeQB->vertex()->ID << "->V" << lEdgeQB->opposite()->vertex()->ID 
                      << ") EdgeBQ E" << lEdgeQB->opposite()->ID 
                      ) ;
@@ -395,15 +395,15 @@ void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Collapse( edge_descriptor const& aEd
       }
       if ( lDataQB->is_in_PQ() )
       {
-        CGAL_TSMS_TRACE(2,"Removing E" << lUndirectedEdgeQB->ID << " from PQ") ;
+        CGAL_ECMS_TRACE(2,"Removing E" << lUndirectedEdgeQB->ID << " from PQ") ;
         remove_from_PQ(lUndirectedEdgeQB,lDataQB) ;
         -- mCurrentEdgeCount ;
       }
     }
 
-    CGAL_TSMS_TRACE(1,"Removing:\n  P-Q: E" << aEdgePQ->ID << "(V" << lP->ID << "->V" << lQ->ID << ")" );
-    CGAL_TSMS_TRACE_IF(handle_assigned(lEdgePT),1,"  P-T: E" << lEdgePT->ID << "(V" << lP->ID << "->V" << target(lEdgePT,mSurface)->ID << ")" ) ;
-    CGAL_TSMS_TRACE_IF(handle_assigned(lEdgeQB),1,"  Q-B: E" << lEdgeQB->ID << "(V" << lQ->ID << "->V" << target(lEdgeQB,mSurface)->ID << ")" ) ;
+    CGAL_ECMS_TRACE(1,"Removing:\n  P-Q: E" << aEdgePQ->ID << "(V" << lP->ID << "->V" << lQ->ID << ")" );
+    CGAL_ECMS_TRACE_IF(handle_assigned(lEdgePT),1,"  P-T: E" << lEdgePT->ID << "(V" << lP->ID << "->V" << target(lEdgePT,mSurface)->ID << ")" ) ;
+    CGAL_ECMS_TRACE_IF(handle_assigned(lEdgeQB),1,"  Q-B: E" << lEdgeQB->ID << "(V" << lQ->ID << "->V" << target(lEdgeQB,mSurface)->ID << ")" ) ;
     
       
     // Perform the actuall collapse.
@@ -413,12 +413,12 @@ void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Collapse( edge_descriptor const& aEd
     // All directed edges incident to vertex removed are relink to the vertex kept.
     rResult = Collapse_triangulation_edge(aEdgePQ,lEdgePT,lEdgeQB,mSurface);
     
-    CGAL_TSMS_TRACE(1,"V" << rResult->ID << " kept." ) ;
+    CGAL_ECMS_TRACE(1,"V" << rResult->ID << " kept." ) ;
                    
 #ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE
     out_edge_iterator eb1, ee1 ;     
     for ( tie(eb1,ee1) = out_edges(rResult,mSurface) ; eb1 != ee1 ; ++ eb1 )  
-      CGAL_TSMS_TRACE(2, edge_to_string(*eb1) ) ;
+      CGAL_ECMS_TRACE(2, edge_to_string(*eb1) ) ;
 #endif
     
     set_point(rResult,mSurface,*lPlacement) ;
@@ -427,10 +427,10 @@ void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Collapse( edge_descriptor const& aEd
   }
   else
   {
-    CGAL_TSMS_TRACE(0,"Unable to calculate new vertex point. E" << aEdgePQ->ID << " discarded without being collapsed" ) ;
+    CGAL_ECMS_TRACE(0,"Unable to calculate new vertex point. E" << aEdgePQ->ID << " discarded without being collapsed" ) ;
   }
   
-  CGAL_TSMS_DEBUG_CODE ( ++mStep ; )
+  CGAL_ECMS_DEBUG_CODE ( ++mStep ; )
   
   return rResult ;
 }
@@ -438,7 +438,7 @@ void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Collapse( edge_descriptor const& aEd
 template<class M,class S,class X, class F,class D,class CF,class PF,class CP, class PP,class V>
 void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Update_neighbors( vertex_descriptor const& aKeptV )
 {
-  CGAL_TSMS_TRACE(3,"Updating cost of neighboring edges..." ) ;
+  CGAL_ECMS_TRACE(3,"Updating cost of neighboring edges..." ) ;
 
   //
   // (A) Collect all edges to update its cost: all those around each vertex adjacent to the vertex kept
@@ -470,7 +470,7 @@ void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Update_neighbors( vertex_descriptor 
         CGAL_assertion(lData2);
       }
 
-      CGAL_TSMS_TRACE(4,"Inedge around V" << lAdj_k->ID << edge_to_string(lEdge2) ) ;
+      CGAL_ECMS_TRACE(4,"Inedge around V" << lAdj_k->ID << edge_to_string(lEdge2) ) ;
     
       // Only those edges still in the PQ _and_ not already collected are updated.
       if ( lData2->is_in_PQ() && lToUpdate.find(lEdge2) == lToUpdate.end() )
@@ -490,9 +490,9 @@ void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Update_neighbors( vertex_descriptor 
     
     CGAL_assertion(lData);
 
-    Set_collapse_data(lData->data(),lEdge,mSurface,mCostParams,mPlacementParams) ;
+    Set_cache(lData->cache(),lEdge,mSurface,mCostParams,mPlacementParams) ;
     
-    CGAL_TSMS_TRACE(3, edge_to_string(lEdge) << " updated in the PQ") ;
+    CGAL_ECMS_TRACE(3, edge_to_string(lEdge) << " updated in the PQ") ;
     
     update_in_PQ(lEdge,lData);
   }
@@ -500,7 +500,7 @@ void EdgeCollapse<M,S,X,F,D,CF,PF,CP,PP,V>::Update_neighbors( vertex_descriptor 
 }
 
 
-} } } // namespace Triangulated_surface_mesh::Simplification::Edge_collapse
+} // namespace Surface_mesh_simplification
 
 CGAL_END_NAMESPACE
 

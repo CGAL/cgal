@@ -18,38 +18,38 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_SET_PARTIAL_COLLAPSE_DATA_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_SET_PARTIAL_COLLAPSE_DATA_H 1
 
-#include <CGAL/Surface_mesh_simplification/Detail/TSMS_common.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Partial_collapse_data.h>
+#include <CGAL/Surface_mesh_simplification/Detail/ECMS_common.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Cost_cache.h>
 
 CGAL_BEGIN_NAMESPACE
 
-namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse
+namespace Surface_mesh_simplification
 {
 
-template<class TSM_, class GetCost_>    
-class Set_partial_collapse_data
+template<class ECM_, class GetCost_>    
+class Set_cost_cache
 {
 public:
 
-  typedef TSM_     TSM ;
+  typedef ECM_     ECM ;
   typedef GetCost_ GetCost ;
   
-  typedef typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor ;
+  typedef typename boost::graph_traits<ECM>::edge_descriptor edge_descriptor ;
   
-  typedef Partial_collapse_data<TSM> Collapse_data ;
+  typedef Cost_cache<ECM> Cache ;
   
-  typedef typename Collapse_data::Optional_cost_type Optional_cost_type ;
+  typedef typename Cache::Optional_cost_type Optional_cost_type ;
   
   typedef typename GetCost::Params CostParams ;
   typedef void                     PlacementParams ;
 
 public :
 
-  Set_partial_collapse_data ( GetCost const& aGetCost ) : get_cost(aGetCost) {}
+  Set_cost_cache ( GetCost const& aGetCost ) : get_cost(aGetCost) {}
 
-  void operator() ( Collapse_data&          rData
+  void operator() ( Cache&                  rCache
                   , edge_descriptor const&  aEdge
-                  , TSM&                    aSurface
+                  , ECM&                    aSurface
                   , CostParams const*       aCostParams 
                   , PlacementParams const* 
                   ) const 
@@ -57,16 +57,16 @@ public :
     CGAL_assertion(aCostParams);
     CGAL_assertion( handle_assigned(aEdge) );
 
-    Optional_cost_type lCost = get_cost(aEdge,aSurface,rData,aCostParams);
+    Optional_cost_type lCost = get_cost(aEdge,aSurface,rCache,aCostParams);
     
-    rData = Collapse_data(lCost);
+    rCache = Cache(lCost);
     
   }                         
   
   GetCost get_cost ;
 };    
 
-} } } // namespace Triangulated_surface_mesh::Simplification::Edge_collapse
+} // namespace Surface_mesh_simplification
 
 CGAL_END_NAMESPACE
 

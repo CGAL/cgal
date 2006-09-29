@@ -20,7 +20,7 @@
 
 #include <vector>
 
-#include <CGAL/Surface_mesh_simplification/Detail/TSMS_common.h>
+#include <CGAL/Surface_mesh_simplification/Detail/ECMS_common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_params.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -34,17 +34,17 @@ CGAL_BEGIN_NAMESPACE
 //  Peter Lindstrom, Greg Turk
 //
 
-namespace Triangulated_surface_mesh { namespace Simplification  { namespace Edge_collapse
+namespace Surface_mesh_simplification
 {
 
-template<class TSM_>
+template<class ECM_>
 class LindstromTurkCore
 {
 public:
     
-  typedef TSM_ TSM ;
+  typedef ECM_ ECM ;
   
-  typedef boost::graph_traits<TSM> GraphTraits ;
+  typedef boost::graph_traits<ECM> GraphTraits ;
   
   typedef typename GraphTraits::vertex_descriptor vertex_descriptor ;
   typedef typename GraphTraits::edge_descriptor   edge_descriptor ;
@@ -52,7 +52,7 @@ public:
   
   typedef LindstromTurk_params Params ;
   
-  typedef typename Geometric_graph_traits<TSM>::Point  Point ;
+  typedef typename halfedge_graph_traits<ECM>::Point  Point ;
   
   typedef typename Kernel_traits<Point>::Kernel Kernel ;
   
@@ -71,7 +71,7 @@ public:
   
   LindstromTurkCore( Params const&          aParams
                    , edge_descriptor const& aP_Q
-                   , TSM&                   aSurface 
+                   , ECM&                   aSurface 
                    , bool                   aComputeCost
                    ) ;
     
@@ -196,7 +196,7 @@ private:
 
   Params const&          mParams ; 
   edge_descriptor const& mP_Q ;
-  TSM&                   mSurface ;
+  ECM&                   mSurface ;
   bool                   mComputeCost ;
   
   vertex_descriptor mP ;
@@ -211,7 +211,7 @@ private:
   
 };
 
-} } } // namespace Triangulated_surface_mesh::Simplification::Edge_collapse
+} // namespace Surface_mesh_simplification
 
 CGAL_END_NAMESPACE
 

@@ -18,32 +18,32 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_FULL_COLLAPSE_DATA_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_FULL_COLLAPSE_DATA_H
 
-#include <CGAL/Surface_mesh_simplification/Detail/TSMS_common.h>
+#include <CGAL/Surface_mesh_simplification/Detail/ECMS_common.h>
 
 CGAL_BEGIN_NAMESPACE
 
-namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse
+namespace Surface_mesh_simplification
 {
 
-template<class TSM_>    
-class Full_collapse_data
+template<class ECM_>    
+class Cost_and_placement_cache
 {
 public:
 
-  typedef TSM_ TSM ;
+  typedef ECM_ ECM ;
   
-  typedef typename Geometric_graph_traits<TSM>::Point Point_3 ;
-  typedef typename Kernel_traits<Point_3>::Kernel     Kernel ;
-  typedef typename Kernel::FT                         FT ;
+  typedef typename halfedge_graph_traits<ECM>::Point Point ;
+  typedef typename Kernel_traits<Point>::Kernel      Kernel ;
+  typedef typename Kernel::FT                        FT ;
 
   typedef optional<FT>      Optional_cost_type ;
   typedef optional<Point_3> Optional_placement_type ;
   
 public :
 
-  Full_collapse_data() {}
+  Cost_and_placement_cache() {}
 
-  Full_collapse_data( Optional_cost_type const& aCost, Optional_placement_type const& aPlacement )
+  Cost_and_placement_cache( Optional_cost_type const& aCost, Optional_placement_type const& aPlacement )
    :
     mCost     (aCost) 
    ,mPlacement(aPlacement) 
@@ -58,7 +58,7 @@ private :
   Optional_placement_type mPlacement ;  
 };    
 
-} } } // namespace Triangulated_surface_mesh::Simplification::Edge_collapse
+} // namespace Surface_mesh_simplification
 
 
 CGAL_END_NAMESPACE

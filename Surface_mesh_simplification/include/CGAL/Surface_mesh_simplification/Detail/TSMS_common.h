@@ -15,8 +15,8 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_TSMS_COMMON_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_TSMS_COMMON_H 1
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_ECMS_COMMON_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_ECMS_COMMON_H 1
 
 #include <functional>
 #include <utility>
@@ -33,12 +33,12 @@
 
 #include <CGAL/Cartesian/MatrixC33.h>
 #include <CGAL/Modifiable_priority_queue.h>
-#include <CGAL/boost/graph/Geometric_graph_traits.h>
+#include <CGAL/boost/graph/halfedge_graph_traits.h>
 #include <CGAL/boost/graph/Halfedge_graph_traits.h>
 
 CGAL_BEGIN_NAMESPACE
 
-namespace Triangulated_surface_mesh { namespace Simplification 
+namespace Surface_mesh_simplification 
 {
 
 using boost::num_edges ;
@@ -81,32 +81,32 @@ template<class T>          struct ChooseNotVoidType<T   ,void> { typedef T    ty
 template<class U>          struct ChooseNotVoidType<void,U   > { typedef U    type ; } ;
 template<>                 struct ChooseNotVoidType<void,void> { typedef void type ; } ;
 
-template<class GetCost, class SetCollapseData>
+template<class GetCost, class SetCache>
 struct ExtractCostParamsType
 {
-  typedef typename ChooseNotVoidType< typename GetCost::Params
-                                    , typename SetCollapseData::CostParams
+  typedef typename ChooseNotVoidType< typename GetCost ::Params
+                                    , typename SetCache::CostParams
                                     >
                                     ::type type ;
 } ;
 
-template<class GetPlacement, class SetCollapseData>
+template<class GetPlacement, class SetCache>
 struct ExtractPlacementParamsType
 {
   typedef typename ChooseNotVoidType< typename GetPlacement::Params
-                                    , typename SetCollapseData::PlacementParams
+                                    , typename SetCache    ::PlacementParams
                                     >
                                     ::type type ;
 } ;
 
 
-} } // namespace Triangulated_surface_mesh::Simplification
+} // namespace Surface_mesh_simplification
 
 //
 // Valid surface predicate
 //
-template<class TSM>
-inline bool is_valid_triangulated_surface_mesh ( TSM const& aTSM ) { return aTSM.is_pure_triangle() ; }
+template<class ECM>
+inline bool is_valid_triangulated_surface_mesh ( ECM const& aECM ) { return aECM.is_pure_triangle() ; }
 
 template<class XYZ>
 inline std::string xyz_to_string( XYZ const& xyz )
@@ -133,44 +133,44 @@ CGAL_END_NAMESPACE
 
 #if   defined(CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE)    \
    || defined(CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE) 
-#define CGAL_TSMS_ENABLE_TRACE
+#define CGAL_ECMS_ENABLE_TRACE
 #endif
 
-#ifdef CGAL_TSMS_ENABLE_TRACE
+#ifdef CGAL_ECMS_ENABLE_TRACE
 
 #  include<string>
 #  include<iostream>
 #  include<sstream>
-#  define CGAL_TSMS_TRACE_IMPL(m) \
+#  define CGAL_ECMS_TRACE_IMPL(m) \
      { \
        std::ostringstream ss ; ss << m ; std::string s = ss.str(); \
        Surface_simplification_external_trace(s); \
      }
      
-#  define CGAL_TSMS_DEBUG_CODE(code) code     
+#  define CGAL_ECMS_DEBUG_CODE(code) code     
 
 #else
 
-#  define CGAL_TSMS_DEBUG_CODE(code)
+#  define CGAL_ECMS_DEBUG_CODE(code)
 
 #endif
 
 #ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE
-#  define CGAL_TSMS_LT_TRACE(l,m) if ( (l) <= CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE ) CGAL_TSMS_TRACE_IMPL(m)
+#  define CGAL_ECMS_LT_TRACE(l,m) if ( (l) <= CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE ) CGAL_ECMS_TRACE_IMPL(m)
 #else
-#  define CGAL_TSMS_LT_TRACE(l,m)
+#  define CGAL_ECMS_LT_TRACE(l,m)
 #endif
 
 #ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE
-#  define CGAL_TSMS_TRACE_IF(c,l,m) if ( (c) && ( (l) <= CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE) ) CGAL_TSMS_TRACE_IMPL(m)
-#  define CGAL_TSMS_TRACE(l,m)      if ( (l) <= CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE ) CGAL_TSMS_TRACE_IMPL(m)
+#  define CGAL_ECMS_TRACE_IF(c,l,m) if ( (c) && ( (l) <= CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE) ) CGAL_ECMS_TRACE_IMPL(m)
+#  define CGAL_ECMS_TRACE(l,m)      if ( (l) <= CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE ) CGAL_ECMS_TRACE_IMPL(m)
 #else
-#  define CGAL_TSMS_TRACE_IF(c,l,m)
-#  define CGAL_TSMS_TRACE(l,m)
+#  define CGAL_ECMS_TRACE_IF(c,l,m)
+#  define CGAL_ECMS_TRACE(l,m)
 #endif
 
-#undef CGAL_TSMS_ENABLE_TRACE
+#undef CGAL_ECMS_ENABLE_TRACE
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_TSMS_COMMON_H //
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_ECMS_COMMON_H //
 // EOF //
  

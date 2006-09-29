@@ -4,8 +4,8 @@
 // the terms of the Q Public License version 1.0.
 // See the file LICENSE.QPL distributed with CGAL.
 //
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
+// Licensees holding a valid Surface_mesh_simplification license may use this file in
+// accordance with the Surface_mesh_simplification license agreement provided with the software.
 //
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -27,13 +27,13 @@ CGAL_BEGIN_NAMESPACE
 //  Peter Lindstrom, Greg Turk
 //
 
-namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse  
+namespace Surface_mesh_simplification
 {
 
-template<class TSM>
-LindstromTurkCore<TSM>::LindstromTurkCore( Params const&          aParams
+template<class ECM>
+LindstromTurkCore<ECM>::LindstromTurkCore( Params const&          aParams
                                          , edge_descriptor const& aP_Q
-                                         , TSM&                   aSurface 
+                                         , ECM&                   aSurface 
                                          , bool                   aComputeCost
                                          )
   :
@@ -48,13 +48,13 @@ LindstromTurkCore<TSM>::LindstromTurkCore( Params const&          aParams
 {
 }
 
-template<class TSM>
-typename LindstromTurkCore<TSM>::result_type LindstromTurkCore<TSM>::compute()
+template<class ECM>
+typename LindstromTurkCore<ECM>::result_type LindstromTurkCore<ECM>::compute()
 {
   Optional_FT    lOptionalCost ;
   Optional_point lOptionalP ;
   
-  CGAL_TSMS_LT_TRACE(2,"Computing LT data for E" << mP_Q->ID << " (V" << mP->ID << "->V" << mQ->ID << ")" );
+  CGAL_ECMS_LT_TRACE(2,"Computing LT data for E" << mP_Q->ID << " (V" << mP->ID << "->V" << mQ->ID << ")" );
   
   // Volume preservation and optimization constrians are based on the normals to the triangles in the star of the collapsing egde 
   // Triangle shape optimization constrians are based on the link of the collapsing edge (the cycle of vertices around the edge)
@@ -71,7 +71,7 @@ typename LindstromTurkCore<TSM>::result_type LindstromTurkCore<TSM>::compute()
   for( typename Link::const_iterator it = lLink.begin(), eit = lLink.end() ; it != eit ; ++it )
     ss << "v" << (*it)->ID << " " ;
   std::string s = ss.str(); 
-  CGAL_TSMS_LT_TRACE(3,"Link: " << s );
+  CGAL_ECMS_LT_TRACE(3,"Link: " << s );
 #endif
   
   BoundaryEdges lBdry ;
@@ -130,13 +130,13 @@ typename LindstromTurkCore<TSM>::result_type LindstromTurkCore<TSM>::compute()
       
       lOptionalV = mConstrians.b * lAi ;
       
-      CGAL_TSMS_LT_TRACE(1,"New vertex point: " << xyz_to_string(*lOptionalV) );
+      CGAL_ECMS_LT_TRACE(1,"New vertex point: " << xyz_to_string(*lOptionalV) );
     }
     else
-      CGAL_TSMS_LT_TRACE(1,"Can't solve optimization, singular system.");
+      CGAL_ECMS_LT_TRACE(1,"Can't solve optimization, singular system.");
   }
   else
-    CGAL_TSMS_LT_TRACE(1,"Can't solve optimization, not enough alpha-compatible constrians.");
+    CGAL_ECMS_LT_TRACE(1,"Can't solve optimization, not enough alpha-compatible constrians.");
   
   if ( lOptionalV )
   {
@@ -146,7 +146,7 @@ typename LindstromTurkCore<TSM>::result_type LindstromTurkCore<TSM>::compute()
     {
       FT lSquaredLength = squared_distance(lP,lQ);
       
-      CGAL_TSMS_LT_TRACE(1,"Squared edge length: " << lSquaredLength ) ;
+      CGAL_ECMS_LT_TRACE(1,"Squared edge length: " << lSquaredLength ) ;
       
       FT lBdryCost   = Compute_boundary_cost(*lOptionalV,lBdry);
       FT lVolumeCost = Compute_volume_cost  (*lOptionalV,lTriangles);
@@ -158,7 +158,7 @@ typename LindstromTurkCore<TSM>::result_type LindstromTurkCore<TSM>::compute()
       
       lOptionalCost = Optional_FT(lTotalCost);
       
-      CGAL_TSMS_LT_TRACE(1,"\nSquared edge length: " << lSquaredLength 
+      CGAL_ECMS_LT_TRACE(1,"\nSquared edge length: " << lSquaredLength 
                         << "\nBoundary cost: " << lBdryCost 
                         << "\nVolume cost: " << lVolumeCost 
                         << "\nShape cost: " << lShapeCost 
@@ -174,8 +174,8 @@ typename LindstromTurkCore<TSM>::result_type LindstromTurkCore<TSM>::compute()
 //
 // Caches the "local boundary", that is, the sequence of 3 border edges: o->p, p->q, q->e 
 //
-template<class TSM>
-void LindstromTurkCore<TSM>::Extract_boundary_edge( edge_descriptor edge, BoundaryEdges& rBdry )
+template<class ECM>
+void LindstromTurkCore<ECM>::Extract_boundary_edge( edge_descriptor edge, BoundaryEdges& rBdry )
 {
   edge_descriptor face_edge = is_border(edge) ? opposite_edge(edge,mSurface) : edge ;
       
@@ -188,7 +188,7 @@ void LindstromTurkCore<TSM>::Extract_boundary_edge( edge_descriptor edge, Bounda
   Vector v = tp - sp ;
   Vector n = Point_cross_product(tp,sp) ;
   
-  CGAL_TSMS_LT_TRACE(3,"Boundary edge. S:" << xyz_to_string(sp) << " T:" << xyz_to_string(tp)
+  CGAL_ECMS_LT_TRACE(3,"Boundary edge. S:" << xyz_to_string(sp) << " T:" << xyz_to_string(tp)
                     << " V:" << xyz_to_string(v) << " N:" << xyz_to_string(n) 
                     ) ;
   
@@ -196,8 +196,8 @@ void LindstromTurkCore<TSM>::Extract_boundary_edge( edge_descriptor edge, Bounda
         
 }
 
-template<class TSM>
-void LindstromTurkCore<TSM>::Extract_boundary_edges( vertex_descriptor const& v
+template<class ECM>
+void LindstromTurkCore<ECM>::Extract_boundary_edges( vertex_descriptor const& v
                                                   , edge_descriptor_vector&  rCollected
                                                   , BoundaryEdges&           rBdry
                                                   )
@@ -216,8 +216,8 @@ void LindstromTurkCore<TSM>::Extract_boundary_edges( vertex_descriptor const& v
   }
 }
 
-template<class TSM>
-void LindstromTurkCore<TSM>::Extract_boundary_edges( BoundaryEdges& rBdry )
+template<class ECM>
+void LindstromTurkCore<ECM>::Extract_boundary_edges( BoundaryEdges& rBdry )
 {
   edge_descriptor_vector lCollected ;
   Extract_boundary_edges(mP,lCollected,rBdry);
@@ -227,8 +227,8 @@ void LindstromTurkCore<TSM>::Extract_boundary_edges( BoundaryEdges& rBdry )
 //
 // Calculates the normal of the triangle (v0,v1,v2) (both vector and its length as (v0xv1).v2)
 //
-template<class TSM>
-typename LindstromTurkCore<TSM>::Triangle LindstromTurkCore<TSM>::Get_triangle( vertex_descriptor const& v0
+template<class ECM>
+typename LindstromTurkCore<ECM>::Triangle LindstromTurkCore<ECM>::Get_triangle( vertex_descriptor const& v0
                                                                               , vertex_descriptor const& v1
                                                                               , vertex_descriptor const& v2 
                                                                              )
@@ -244,7 +244,7 @@ typename LindstromTurkCore<TSM>::Triangle LindstromTurkCore<TSM>::Get_triangle( 
   
   FT lNormalL = Point_cross_product(p0,p1) * (p2-ORIGIN);
   
-  CGAL_TSMS_LT_TRACE(3,"Extracting triangle v" << v0->ID << "->v" << v1->ID << "->v" << v2->ID 
+  CGAL_ECMS_LT_TRACE(3,"Extracting triangle v" << v0->ID << "->v" << v1->ID << "->v" << v2->ID 
                     << " N:" << xyz_to_string(lNormalV) << " L:" << lNormalL
                     );
   
@@ -256,8 +256,8 @@ typename LindstromTurkCore<TSM>::Triangle LindstromTurkCore<TSM>::Get_triangle( 
 // the triangle (properly oriented) is added to rTriangles.
 // The triangle is encoded as its normal, calculated using the actual facet orientation [(v0,v1,v2) or (v0,v2,v1)]
 //
-template<class TSM>
-void LindstromTurkCore<TSM>::Extract_triangle( vertex_descriptor const& v0
+template<class ECM>
+void LindstromTurkCore<ECM>::Extract_triangle( vertex_descriptor const& v0
                                             , vertex_descriptor const& v1
                                             , vertex_descriptor const& v2 
                                             , edge_descriptor   const& e02
@@ -289,8 +289,8 @@ void LindstromTurkCore<TSM>::Extract_triangle( vertex_descriptor const& v0
 //
 // Extract all triangles (its normals) and vertices (the link) around the collpasing edge p_q
 //
-template<class TSM>
-void LindstromTurkCore<TSM>::Extract_triangles_and_link( Triangles& rTriangles, Link& rLink )
+template<class ECM>
+void LindstromTurkCore<ECM>::Extract_triangles_and_link( Triangles& rTriangles, Link& rLink )
 {
   // 
   // Extract around mP, CCW
@@ -352,8 +352,8 @@ void LindstromTurkCore<TSM>::Extract_triangles_and_link( Triangles& rTriangles, 
   while ( e02 != mQ_P ) ;
 }
 
-template<class TSM>
-void LindstromTurkCore<TSM>::Add_boundary_preservation_constrians( BoundaryEdges const& aBdry )
+template<class ECM>
+void LindstromTurkCore<ECM>::Add_boundary_preservation_constrians( BoundaryEdges const& aBdry )
 {
   
   if ( aBdry.size() > 0 )
@@ -367,7 +367,7 @@ void LindstromTurkCore<TSM>::Add_boundary_preservation_constrians( BoundaryEdges
       e2 = e2 + it->n ;
     }     
   
-    CGAL_TSMS_LT_TRACE(2,"Adding boundary preservation constrians. SumV=" << xyz_to_string(e1) << " SumN=" << xyz_to_string(e2) );
+    CGAL_ECMS_LT_TRACE(2,"Adding boundary preservation constrians. SumV=" << xyz_to_string(e1) << " SumN=" << xyz_to_string(e2) );
     
     Matrix H = LT_product(e1);
     
@@ -377,10 +377,10 @@ void LindstromTurkCore<TSM>::Add_boundary_preservation_constrians( BoundaryEdges
   }
 }
 
-template<class TSM>
-void LindstromTurkCore<TSM>::Add_volume_preservation_constrians( Triangles const& aTriangles )
+template<class ECM>
+void LindstromTurkCore<ECM>::Add_volume_preservation_constrians( Triangles const& aTriangles )
 {
-  CGAL_TSMS_LT_TRACE(2,"Adding volume preservation constrians. " << aTriangles.size() << " triangles.");
+  CGAL_ECMS_LT_TRACE(2,"Adding volume preservation constrians. " << aTriangles.size() << " triangles.");
   
   Vector lSumV = NULL_VECTOR ;
   FT     lSumL(0) ;
@@ -395,10 +395,10 @@ void LindstromTurkCore<TSM>::Add_volume_preservation_constrians( Triangles const
 
 }
 
-template<class TSM>
-void LindstromTurkCore<TSM>::Add_boundary_and_volume_optimization_constrians( BoundaryEdges const& aBdry, Triangles const& aTriangles )
+template<class ECM>
+void LindstromTurkCore<ECM>::Add_boundary_and_volume_optimization_constrians( BoundaryEdges const& aBdry, Triangles const& aTriangles )
 {
-  CGAL_TSMS_LT_TRACE(2,"Adding boundary and volume optimization constrians. ");
+  CGAL_ECMS_LT_TRACE(2,"Adding boundary and volume optimization constrians. ");
   
   Matrix H = NULL_MATRIX ;
   Vector c = NULL_VECTOR ;
@@ -415,7 +415,7 @@ void LindstromTurkCore<TSM>::Add_boundary_and_volume_optimization_constrians( Bo
     c = c - ( lTri.NormalL * lTri.NormalV ) ;
   }   
   
-  CGAL_TSMS_LT_TRACE(3,"Hv:" << matrix_to_string(H) << "\n cv:" << xyz_to_string(c) ) ;
+  CGAL_ECMS_LT_TRACE(3,"Hv:" << matrix_to_string(H) << "\n cv:" << xyz_to_string(c) ) ;
   
   
   if ( aBdry.size() > 0 )
@@ -435,7 +435,7 @@ void LindstromTurkCore<TSM>::Add_boundary_and_volume_optimization_constrians( Bo
       cb = cb + c ;
     }     
     
-    CGAL_TSMS_LT_TRACE(3,"Hb:" << matrix_to_string(Hb) << "\n cb:" << xyz_to_string(cb) ) ;
+    CGAL_ECMS_LT_TRACE(3,"Hb:" << matrix_to_string(Hb) << "\n cb:" << xyz_to_string(cb) ) ;
     
     //
     // Weighted average
@@ -448,15 +448,15 @@ void LindstromTurkCore<TSM>::Add_boundary_and_volume_optimization_constrians( Bo
     H += lScaledBoundaryWeight * Hb ;
     c = c + ( lScaledBoundaryWeight * cb ) ;
     
-    CGAL_TSMS_LT_TRACE(3,"VolW=" << mParams.VolumeWeight << " BdryW=" << mParams.BoundaryWeight << " ScaledBdryW=" << lScaledBoundaryWeight ) ;
+    CGAL_ECMS_LT_TRACE(3,"VolW=" << mParams.VolumeWeight << " BdryW=" << mParams.BoundaryWeight << " ScaledBdryW=" << lScaledBoundaryWeight ) ;
     
   }
   
   mConstrians.Add_from_gradient(H,c);
 }
 
-template<class TSM>
-void LindstromTurkCore<TSM>::Add_shape_optimization_constrians( Link const& aLink )
+template<class ECM>
+void LindstromTurkCore<ECM>::Add_shape_optimization_constrians( Link const& aLink )
 {
   FT s(aLink.size());
   
@@ -470,14 +470,14 @@ void LindstromTurkCore<TSM>::Add_shape_optimization_constrians( Link const& aLin
   for( typename Link::const_iterator it = aLink.begin(), eit = aLink.end() ; it != eit ; ++it )
     c = c + (ORIGIN - get_point(*it,mSurface)) ;  
            
-  CGAL_TSMS_LT_TRACE(2,"Adding shape optimization constrians: Shape vector: " << xyz_to_string(c) );
+  CGAL_ECMS_LT_TRACE(2,"Adding shape optimization constrians: Shape vector: " << xyz_to_string(c) );
   
   mConstrians.Add_from_gradient(H,c);
 }
 
-template<class TSM>
-typename LindstromTurkCore<TSM>::FT
-LindstromTurkCore<TSM>::Compute_boundary_cost( Vector const& v, BoundaryEdges const& aBdry )
+template<class ECM>
+typename LindstromTurkCore<ECM>::FT
+LindstromTurkCore<ECM>::Compute_boundary_cost( Vector const& v, BoundaryEdges const& aBdry )
 {
   FT rCost(0);
   for ( typename BoundaryEdges::const_iterator it = aBdry.begin() ; it != aBdry.end() ; ++ it )
@@ -489,9 +489,9 @@ LindstromTurkCore<TSM>::Compute_boundary_cost( Vector const& v, BoundaryEdges co
   return rCost / FT(4) ;
 }
 
-template<class TSM>
-typename LindstromTurkCore<TSM>::FT
-LindstromTurkCore<TSM>::Compute_volume_cost( Vector const& v, Triangles const& aTriangles )
+template<class ECM>
+typename LindstromTurkCore<ECM>::FT
+LindstromTurkCore<ECM>::Compute_volume_cost( Vector const& v, Triangles const& aTriangles )
 {
   FT rCost(0);
   
@@ -508,9 +508,9 @@ LindstromTurkCore<TSM>::Compute_volume_cost( Vector const& v, Triangles const& a
   return rCost / FT(36) ;
 }
 
-template<class TSM>
-typename LindstromTurkCore<TSM>::FT
-LindstromTurkCore<TSM>::Compute_shape_cost( Point const& p, Link const& aLink )
+template<class ECM>
+typename LindstromTurkCore<ECM>::FT
+LindstromTurkCore<ECM>::Compute_shape_cost( Point const& p, Link const& aLink )
 {
   FT rCost(0);
   
@@ -520,8 +520,8 @@ LindstromTurkCore<TSM>::Compute_shape_cost( Point const& p, Link const& aLink )
   return rCost ;
 }
 
-template<class TSM>
-void LindstromTurkCore<TSM>::Constrians::Add_if_alpha_compatible( Vector const& Ai, FT const& bi )
+template<class ECM>
+void LindstromTurkCore<ECM>::Constrians::Add_if_alpha_compatible( Vector const& Ai, FT const& bi )
 {
   double slai = to_double(Ai*Ai) ;
   if ( slai > 0.0 )
@@ -575,7 +575,7 @@ void LindstromTurkCore<TSM>::Constrians::Add_if_alpha_compatible( Vector const& 
       }
       ++ n ;
       
-      CGAL_TSMS_LT_TRACE(1,"Constrains.A:" << matrix_to_string(A) << "\nConstrains.b:" << xyz_to_string(b) ) ;
+      CGAL_ECMS_LT_TRACE(1,"Constrains.A:" << matrix_to_string(A) << "\nConstrains.b:" << xyz_to_string(b) ) ;
     }
   }
 }
@@ -600,8 +600,8 @@ int index_of_max_component ( V const& v )
   return i ;
 }
 
-template<class TSM>
-void LindstromTurkCore<TSM>::Constrians::Add_from_gradient ( Matrix const& H, Vector const& c )
+template<class ECM>
+void LindstromTurkCore<ECM>::Constrians::Add_from_gradient ( Matrix const& H, Vector const& c )
 {
   CGAL_precondition(n >= 0 && n<=2 );
   
@@ -666,7 +666,7 @@ void LindstromTurkCore<TSM>::Constrians::Add_from_gradient ( Matrix const& H, Ve
   }
 }
 
-} } } // namespace Triangulated_surface_mesh::Simplification::Edge_collapse
+} // namespace Surface_mesh_simplification
 
 CGAL_END_NAMESPACE
 

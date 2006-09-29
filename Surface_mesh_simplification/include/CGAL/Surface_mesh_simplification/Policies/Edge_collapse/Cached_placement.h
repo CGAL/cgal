@@ -18,43 +18,43 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_CACHED_PLACEMENT_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_CACHED_PLACEMENT_H
 
-#include <CGAL/Surface_mesh_simplification/Detail/TSMS_common.h>
+#include <CGAL/Surface_mesh_simplification/Detail/ECMS_common.h>
 
 CGAL_BEGIN_NAMESPACE
 
-namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse
+namespace Surface_mesh_simplification
 {
 
-template<class TSM_>
+template<class ECM_>
 class Cached_placement
 {
   
 public:
   
-  typedef TSM_ TSM ;
+  typedef ECM_ ECM ;
   
-  typedef typename boost::graph_traits<TSM>::edge_descriptor edge_descriptor ;
+  typedef typename boost::graph_traits<ECM>::edge_descriptor edge_descriptor ;
   
-  typedef typename Geometric_graph_traits<TSM>::Point Point_3 ;
+  typedef typename halfedge_graph_traits<ECM>::Point Point ;
   
-  typedef optional<Point_3> result_type ;
+  typedef optional<Point> result_type ;
 
   typedef void Params ;
   
 public :
     
-  template<class Collapse_data>
+  template<class Cache>
   result_type operator()( edge_descriptor const& aEdge
-                        , TSM&                   aSurface
-                        , Collapse_data const&   aData
+                        , ECM&                   aSurface
+                        , Cache const&           aCache
                         , Params const*          aParams
                         ) const
   {
-    return aData.placement();
+    return aCache.placement();
   }
 };
 
-} } } // namespace Triangulated_surface_mesh::Simplification::Edge_collapse
+} // namespace Surface_mesh_simplification
 
 
 CGAL_END_NAMESPACE

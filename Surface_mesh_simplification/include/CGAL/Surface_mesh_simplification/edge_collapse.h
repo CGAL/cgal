@@ -30,7 +30,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse
+namespace Surface_mesh_simplification
 {
 
 //
@@ -65,7 +65,7 @@ namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_
 //
 //   This global function returns the number of edges collapsed.
 //
-template<class TSM
+template<class ECM
         ,class ShouldStop
         ,class EdgeExtraPtrMap
         ,class VertexIsFixedMap
@@ -76,12 +76,12 @@ template<class TSM
         ,class PlacementParams
         ,class Visitor
         >
-int edge_collapse ( TSM&                    aSurface
+int edge_collapse ( ECM&                    aSurface
                   , ShouldStop       const& aShould_stop
                   
                   // optional mesh information policies 
-                  , EdgeExtraPtrMap  const& aEdge_extra_ptr_map   // defaults to Edge_extra_pointer_map_stored<TSM>
-                  , VertexIsFixedMap const& aVertex_is_fixed_map  // defaults to Vertex_is_fixed_map_always_false<TSM>
+                  , EdgeExtraPtrMap  const& aEdge_extra_ptr_map   // defaults to Edge_extra_pointer_map_stored<ECM>
+                  , VertexIsFixedMap const& aVertex_is_fixed_map  // defaults to Vertex_is_fixed_map_always_false<ECM>
                   
                   // optional strategy policies - defaults to LindstomTurk
                   , SetCollapseData  const& aSet_collapse_data
@@ -93,7 +93,7 @@ int edge_collapse ( TSM&                    aSurface
                   , Visitor*                aVisitor // Can be NULL
                   ) 
 {
-  typedef EdgeCollapse<TSM
+  typedef EdgeCollapse<ECM
                       ,ShouldStop
                       ,EdgeExtraPtrMap
                       ,VertexIsFixedMap
@@ -125,29 +125,29 @@ int edge_collapse ( TSM&                    aSurface
 
 struct Dummy_visitor
 {
-  template<class TSM>
-  void OnStarted( TSM& ) {} 
+  template<class ECM>
+  void OnStarted( ECM& ) {} 
   
-  template<class TSM>
-  void OnFinished ( TSM& ) {} 
+  template<class ECM>
+  void OnFinished ( ECM& ) {} 
   
-  template<class TSM>
-  void OnStopConditionReached( TSM& ) {} 
+  template<class ECM>
+  void OnStopConditionReached( ECM& ) {} 
   
-  template<class Edge, class TSM>
-  void OnCollected( Edge const&, bool, TSM& ) {}                
+  template<class Edge, class ECM>
+  void OnCollected( Edge const&, bool, ECM& ) {}                
   
-  template<class Edge, class TSM, class OFT, class Size_type>
-  void OnSelected( Edge const&, TSM&, OFT const&, Size_type, Size_type ) {}                
+  template<class Edge, class ECM, class OFT, class Size_type>
+  void OnSelected( Edge const&, ECM&, OFT const&, Size_type, Size_type ) {}                
   
-  template<class Edge, class TSM, class OPoint>
-  void OnCollapsing(Edge const&, TSM&, OPoint const& ) {}                
+  template<class Edge, class ECM, class OPoint>
+  void OnCollapsing(Edge const&, ECM&, OPoint const& ) {}                
   
-  template<class Edge, class TSM>
-  void OnNonCollapsable(Edge const&, TSM& ) {}                
+  template<class Edge, class ECM>
+  void OnNonCollapsable(Edge const&, ECM& ) {}                
 } ;
 
-template<class TSM
+template<class ECM
         ,class ShouldStop
         ,class EdgeExtraPtrMap
         ,class VertexIsFixedMap
@@ -157,7 +157,7 @@ template<class TSM
         ,class CostParams
         ,class PlacementParams
         >
-int edge_collapse ( TSM&                    aSurface
+int edge_collapse ( ECM&                    aSurface
                   , ShouldStop       const& aShould_stop
                   , EdgeExtraPtrMap  const& aEdge_extra_ptr_map
                   , VertexIsFixedMap const& aVertex_is_fixed_map
@@ -181,7 +181,7 @@ int edge_collapse ( TSM&                    aSurface
                       );
 }                          
 
-template<class TSM
+template<class ECM
         ,class ShouldStop
         ,class EdgeExtraPtrMap
         ,class VertexIsFixedMap
@@ -189,7 +189,7 @@ template<class TSM
         ,class GetCost
         ,class GetPlacement
         >
-int edge_collapse ( TSM&                    aSurface
+int edge_collapse ( ECM&                    aSurface
                   , ShouldStop       const& aShould_stop
                   , EdgeExtraPtrMap  const& aEdge_extra_ptr_map
                   , VertexIsFixedMap const& aVertex_is_fixed_map
@@ -214,8 +214,8 @@ int edge_collapse ( TSM&                    aSurface
                       );
 }                          
 
-template<class TSM, class ShouldStop, class EdgeExtraPtrMap, class VertexIsFixedMap>
-int edge_collapse ( TSM&                    aSurface
+template<class ECM, class ShouldStop, class EdgeExtraPtrMap, class VertexIsFixedMap>
+int edge_collapse ( ECM&                    aSurface
                   , ShouldStop       const& aShould_stop
                   , EdgeExtraPtrMap  const& aEdge_extra_ptr_map
                   , VertexIsFixedMap const& aVertex_is_fixed_map
@@ -227,52 +227,52 @@ int edge_collapse ( TSM&                    aSurface
                       ,aShould_stop
                       ,aEdge_extra_ptr_map
                       ,aVertex_is_fixed_map
-                      ,Set_partial_collapse_data_LindstromTurk<TSM>()
-                      ,Cached_cost<TSM>()
-                      ,LindstromTurk_placement<TSM>()
+                      ,Set_partial_collapse_data_LindstromTurk<ECM>()
+                      ,Cached_cost<ECM>()
+                      ,LindstromTurk_placement<ECM>()
                       ,&params
                       ,&params
                       ,((Dummy_visitor*)0)
                       );
 }                          
 
-template<class TSM, class ShouldStop, class EdgeExtraPtrMap>
-int edge_collapse ( TSM& aSurface, ShouldStop const& aShould_stop, EdgeExtraPtrMap const& aEdge_extra_ptr_map ) 
+template<class ECM, class ShouldStop, class EdgeExtraPtrMap>
+int edge_collapse ( ECM& aSurface, ShouldStop const& aShould_stop, EdgeExtraPtrMap const& aEdge_extra_ptr_map ) 
 {
   LindstromTurk_params params ;
   
   return edge_collapse(aSurface 
                       ,aShould_stop
                       ,aEdge_extra_ptr_map
-                      ,Vertex_is_fixed_map_always_false<TSM>()
-                      ,Set_partial_collapse_data_LindstromTurk<TSM>()
-                      ,Cached_cost<TSM>()
-                      ,LindstromTurk_placement<TSM>()
+                      ,Vertex_is_fixed_map_always_false<ECM>()
+                      ,Set_partial_collapse_data_LindstromTurk<ECM>()
+                      ,Cached_cost<ECM>()
+                      ,LindstromTurk_placement<ECM>()
                       ,&params
                       ,&params
                       ,((Dummy_visitor*)0)
                       );
 }                          
 
-template<class TSM, class ShouldStop>
-int edge_collapse ( TSM& aSurface, ShouldStop const& aShould_stop ) 
+template<class ECM, class ShouldStop>
+int edge_collapse ( ECM& aSurface, ShouldStop const& aShould_stop ) 
 {
   LindstromTurk_params params ;
   
   return edge_collapse(aSurface 
                       ,aShould_stop
-                      ,Edge_extra_pointer_map_stored<TSM>()
-                      ,Vertex_is_fixed_map_always_false<TSM>()
-                      ,Set_partial_collapse_data_LindstromTurk<TSM>()
-                      ,Cached_cost<TSM>()
-                      ,LindstromTurk_placement<TSM>()
+                      ,Edge_extra_pointer_map_stored<ECM>()
+                      ,Vertex_is_fixed_map_always_false<ECM>()
+                      ,Set_partial_collapse_data_LindstromTurk<ECM>()
+                      ,Cached_cost<ECM>()
+                      ,LindstromTurk_placement<ECM>()
                       ,&params
                       ,&params
                       ,((Dummy_visitor*)0)
                       );
 }                          
 
-} } } // namespace Triangulated_surface_mesh::Simplification::Edge_collapse
+} // namespace Surface_mesh_simplification
 
 
 CGAL_END_NAMESPACE

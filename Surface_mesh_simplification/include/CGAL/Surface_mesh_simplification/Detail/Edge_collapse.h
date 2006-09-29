@@ -27,22 +27,22 @@
 #include <boost/iterator_adaptors.hpp>
 #include <boost/graph/adjacency_list.hpp>
 
-#include <CGAL/Surface_mesh_simplification/Detail/TSMS_common.h>
+#include <CGAL/Surface_mesh_simplification/Detail/ECMS_common.h>
 #include <CGAL/Surface_mesh_simplification/Collapse_operator.h>
 
 CGAL_BEGIN_NAMESPACE
 
-namespace Triangulated_surface_mesh { namespace Simplification { namespace Edge_collapse
+namespace Surface_mesh_simplification
 {
 
 //
 // Implementation of the vertex-pair collapse triangulated surface mesh simplification algorithm
 //
-template<class TSM_
+template<class ECM_
         ,class ShouldStop_
         ,class EdgeExtraPtrMap_
         ,class VertexIsFixedMap_
-        ,class SetCollapseData_
+        ,class SetCache_
         ,class GetCost_
         ,class GetPlacement_
         ,class CostParams_ 
@@ -53,11 +53,11 @@ class EdgeCollapse
 {
 public:
 
-  typedef TSM_              TSM ;
+  typedef ECM_              ECM ;
   typedef ShouldStop_       ShouldStop ;
   typedef EdgeExtraPtrMap_  EdgeExtraPtrMap ;
   typedef VertexIsFixedMap_ VertexIsFixedMap ;
-  typedef SetCollapseData_  SetCollapseData ;
+  typedef SetCache_         SetCache ;
   typedef GetCost_          GetCost ;
   typedef GetPlacement_     GetPlacement ;
   typedef CostParams_       CostParams ;
@@ -66,10 +66,9 @@ public:
   
   typedef EdgeCollapse Self ;
   
-  typedef boost::graph_traits    <TSM>       GraphTraits ;
-  typedef boost::graph_traits    <TSM const> ConstGraphTraits ;
-  typedef Halfedge_graph_traits  <TSM>       HalfedgeGraphTraits ;  // This is a CGAL extension. Is not in boost
-  typedef Geometric_graph_traits <TSM>       GeometricGraphTraits ; // This is a CGAL extension. Is not in boost
+  typedef boost::graph_traits  <ECM>       GraphTraits ;
+  typedef boost::graph_traits  <ECM const> ConstGraphTraits ;
+  typedef Halfedge_graph_traits<ECM>       HalfedgeGraphTraits ; 
   
   typedef typename GraphTraits::vertex_descriptor  vertex_descriptor ;
   typedef typename GraphTraits::vertex_iterator    vertex_iterator ;
@@ -84,15 +83,14 @@ public:
   typedef typename ConstGraphTraits::edge_descriptor   const_edge_descriptor ;
   
   typedef typename HalfedgeGraphTraits::undirected_edge_iterator undirected_edge_iterator ;
+  typedef typename HalfedgeGraphTraits::Point                    Point ;
 
   typedef typename GetCost     ::result_type Optional_cost_type ;
   typedef typename GetPlacement::result_type Optional_placement_type ;
   
-  typedef typename SetCollapseData::Collapse_data Collapse_data ;
-    
-  typedef typename GeometricGraphTraits::Point Point_3 ;
+  typedef typename SetCache::Cache Cache ;
 
-  typedef typename Kernel_traits<Point_3>::Kernel Kernel ;
+  typedef typename Kernel_traits<Point>::Kernel Kernel ;
   
   typedef typename Kernel::Equal_3 Equal_3 ;
 
@@ -142,10 +140,10 @@ public:
   {
   public :
   
-    Edge_data() : mPQHandle(), mID(0) {}
+    Edge_cache() : mPQHandle(), mID(0) {}
     
-    Collapse_data const& data() const { return mData ; }
-    Collapse_data &      data()       { return mData ; }
+    Cache const& cache() const { return mCache ; }
+    Cache &      cache()       { return mCache ; }
     
     pq_handle PQ_handle() const { return mPQHandle ;}
     
@@ -160,9 +158,9 @@ public:
     
   private:  
     
-    Collapse_data mData ;
-    pq_handle     mPQHandle ;
-    size_type     mID ;
+    Cache     mCache ;
+    pq_handle mPQHandle ;
+    size_type mID ;
     
   } ;
   typedef Edge_data* Edge_data_ptr ;
@@ -171,11 +169,11 @@ public:
   
 public:
 
-  EdgeCollapse( TSM&                    aSurface
+  EdgeCollapse( ECM&                    aSurface
               , ShouldStop       const& aShouldStop 
               , EdgeExtraPtrMap  const& aEdge_extra_ptr_map 
               , VertexIsFixedMap const& aVertex_is_fixed_map 
-              , SetCollapseData  const& aSetCollapseData
+              , SetCache         const& aSetCache
               , GetCost          const& aGetCost
               , GetPlacement     const& aGetPlacement
               , CostParams       const* aCostParams       // Can be NULL
@@ -241,7 +239,7 @@ private:
   
   std::string vertex_to_string( const_vertex_descriptor const& v ) const
   {
-    Point_3 const& p = get_point(v);
+    Point const& p = get_point(v);
     return boost::str( boost::format("[V%1%:%2%]") % v->ID % xyz_to_string(p) ) ;
   }
     
@@ -255,14 +253,14 @@ private:
   {
     Edge_data_ptr lData = get_data(aEdge);
     CGAL_assertion(lData);
-    return Get_cost(aEdge,mSurface,lData->data(),mCostParams);
+    return Get_cost(aEdge,mSurface,lData->cache(),mCostParams);
   }
   
   Optional_placement_type get_placement( edge_descriptor const& aEdge ) const
   {
     Edge_data_ptr lData = get_data(aEdge);
     CGAL_assertion(lData);
-    return Get_placement(aEdge,mSurface,lData->data(),mPlacementParams);
+    return Get_placement(aEdge,mSurface,lData->cache(),mPlacementParams);
   }
   
   bool compare_cost( edge_descriptor const& aEdgeA, edge_descriptor const& aEdgeB ) const
@@ -309,11 +307,11 @@ private:
    
 private:
 
-  TSM&                    mSurface ;
+  ECM&                    mSurface ;
   ShouldStop       const& Should_stop ;
   EdgeExtraPtrMap  const& Edge_extra_ptr_map ;
   VertexIsFixedMap const& Vertex_is_fixed_map ;
-  SetCollapseData  const& Set_collapse_data;   
+  SetCache         const& Set_cache;   
   GetCost          const& Get_cost ;
   GetPlacement     const& Get_placement ;
   CostParams       const* mCostParams ;      // Can be NULL
@@ -322,7 +320,7 @@ private:
   
 private:
 
-  Collapse_triangulation_edge<TSM> Collapse_triangulation_edge ;  
+  Collapse_triangulation_edge<ECM> Collapse_triangulation_edge ;  
 
   Edge_data_array mEdgeDataArray ;
   
@@ -331,10 +329,10 @@ private:
   std::size_t mInitialEdgeCount ;
   std::size_t mCurrentEdgeCount ; 
 
-  CGAL_TSMS_DEBUG_CODE ( unsigned mStep ; )
+  CGAL_ECMS_DEBUG_CODE ( unsigned mStep ; )
 } ;
 
-} } } // namespace Triangulated_surface_mesh::Simplification::edge_collapse
+} // namespace Triangulated_surface_mesh::Simplification::edge_collapse
 
 CGAL_END_NAMESPACE
 

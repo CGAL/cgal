@@ -19,7 +19,6 @@
 
 // === EXAMPLE SPECIFIC HEADERS ENDS HERE ===
 
-
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Surface; 
 
