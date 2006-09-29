@@ -21,8 +21,9 @@
 #define CGAL_BOOST_GRAPH_POLYHEDRON_HALFEDGE_GRAPH_TRAITS_H
 
 #include <CGAL/HalfedgeDS_items_decorator.h>
-#include <CGAL/boost/graph/Polyhedron_graph_traits.h>
-#include <CGAL/boost/graph/Halfedge_graph_traits.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron.h>
+#include <CGAL/boost/graph/halfedge_graph_traits.h>
+#include <CGAL/boost/graph/halfedge_graph_traits_HalfegeDS.h>
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
 #  define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS
@@ -39,7 +40,6 @@ template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 struct Halfedge_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const > 
   : CGAL::HDS_halfedge_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const>
 {
-  typedef typename CGAL::Polyhedron_3<Gt,I,HDS,A>::Point_3 Point ;
 };
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
@@ -108,7 +108,6 @@ template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 struct Halfedge_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> > 
   : CGAL::HDS_halfedge_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >
 {
-  typedef typename CGAL::Polyhedron_3<Gt,I,HDS,A>::Point_3 Point ;
 };
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>

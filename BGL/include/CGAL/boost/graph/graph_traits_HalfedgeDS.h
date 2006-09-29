@@ -17,8 +17,8 @@
 //
 // Author(s): Fernando Cacciola <fernando.cacciola@gmail.com>, Andreas Fabri <andreas.fabri@geometryfactory.com>
 
-#ifndef CGAL_BOOST_GRAPH_HALFEDGEDS_GRAPH_TRAITS_AUX_H
-#define CGAL_BOOST_GRAPH_HALFEDGEDS_GRAPH_TRAITS_AUX_H
+#ifndef CGAL_BOOST_GRAPH_GRAPH_TRAITS_HALFEDGEDS_H
+#define CGAL_BOOST_GRAPH_GRAPH_TRAITS_HALFEDGEDS_H
 
 #include <boost/config.hpp>
 #include <boost/iterator_adaptors.hpp>
@@ -226,36 +226,6 @@ public:
   HDS_all_halfedges_iterator( Iterator j) : Base(j) {}
 };
 
-
-template < class HDS >
-class HDS_all_undirected_edges_const_iterator 
-  : public HDS_all_edges_iterator_base<HDS,typename HDS::Edge_const_iterator,typename HDS::Halfedge_const_handle>
-{
-  typedef HDS_all_edges_iterator_base<HDS,typename HDS::Edge_const_iterator,typename HDS::Halfedge_const_handle> Base ;
-  
-public:
-
-  typedef typename HDS::Edge_const_iterator Iterator;
-
-  HDS_all_undirected_edges_const_iterator() {}
-  HDS_all_undirected_edges_const_iterator( Iterator j) : Base(j) {}
-};
-
-template < class HDS >
-class HDS_all_undirected_edges_iterator 
-  : public HDS_all_edges_iterator_base<HDS,typename HDS::Edge_iterator,typename HDS::Halfedge_handle>
-{
-  typedef HDS_all_edges_iterator_base<HDS,typename HDS::Edge_iterator,typename HDS::Halfedge_handle> Base ;
-  
-public:
-
-  typedef typename HDS::Edge_iterator Iterator;
-
-  HDS_all_undirected_edges_iterator() {}
-  HDS_all_undirected_edges_iterator( Iterator j) : Base(j) {}
-};
-
-
 template <class HDS_>
 struct HDS_graph_traits
 {
@@ -336,29 +306,6 @@ public :
   typedef vertices_size_type      degree_size_type;
 };
 
-template <class HDS_>
-struct HDS_halfedge_graph_traits
-{
-public :
-  
-  typedef HDS_ HDS;
-  
-  typedef HDS_all_undirected_edges_iterator<HDS> undirected_edge_iterator;
-  
-};
-
-template <class HDS_>
-struct HDS_halfedge_graph_traits<HDS_ const> 
-{
-public :
-  
-  typedef HDS_ HDS;
-  
-  typedef HDS_all_undirected_edges_const_iterator<HDS> undirected_edge_iterator;
-  
-};
-
-
 CGAL_END_NAMESPACE
 
-#endif // CGAL_BOOST_GRAPH_HALFEDGEDS_GRAPH_TRAITS_AUX_H
+#endif // CGAL_BOOST_GRAPH_GRAPH_TRAITS_HALFEDGEDS_H
