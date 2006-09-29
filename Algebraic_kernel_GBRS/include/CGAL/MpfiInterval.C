@@ -67,6 +67,14 @@ MpfiInterval::MpfiInterval (double d) {
 	mpfi_set_d (mpfi (), d);
 };
 
+MpfiInterval::MpfiInterval (const mpz_t &z) {
+	mpfi_set_z (mpfi (), z);
+};
+
+MpfiInterval::MpfiInterval (const mpq_t &q) {
+	mpfi_set_q (mpfi (), q);
+};
+
 MpfiInterval::MpfiInterval (const CGAL::Gmpz &z) {
 	mpfi_set_z (mpfi (), z.mpz());
 };
@@ -94,6 +102,14 @@ MpfiInterval::MpfiInterval (unsigned long int l, unsigned long int r) {
 
 MpfiInterval::MpfiInterval (double l, double r) {
 	mpfi_interv_d (mpfi (), l, r);
+};
+
+MpfiInterval::MpfiInterval (const mpz_t &l, const mpz_t &r) {
+	mpfi_interv_z (mpfi (), l, r);
+};
+
+MpfiInterval::MpfiInterval (const mpq_t &l, const mpq_t &r) {
+	mpfi_interv_q (mpfi (), l, r);
 };
 
 MpfiInterval::MpfiInterval (const CGAL::Gmpz &l, const CGAL::Gmpz &r) {
@@ -264,6 +280,16 @@ inline bool MpfiInterval::contains (const Gmpq &n) const {
 // overcharge for assignment
 MpfiInterval MpfiInterval::operator= (const long int i) {
 	mpfi_set_si (mpfi (), i);
+	return *this;
+};
+
+MpfiInterval MpfiInterval::operator= (const mpz_t &z) {
+	mpfi_set_z (mpfi (), z);
+	return *this;
+};
+
+MpfiInterval MpfiInterval::operator= (const mpq_t &q) {
+	mpfi_set_q (mpfi (), q);
 	return *this;
 };
 
@@ -714,6 +740,72 @@ std::ostream& MpfiInterval::show (std::ostream &o) {
 };
 
 // 10
+bool MpfiInterval::operator< (const mpz_t &n2) const {
+	if (contains (n2))
+		if (is_point ())
+			return false;
+		else
+			overlap ();
+	mpfr_t end;
+	mpfr_init (end);
+	get_right (end);	// end is the right endpoint
+	int comp1 = mpfr_cmp_z (end, n2);
+	if (comp1 < 0) {
+		mpfr_clear (end);
+		return true;
+	}
+	mpfr_clear (end);
+	return false;
+};
+
+bool MpfiInterval::operator> (const mpz_t &n2) const {
+	if (contains (n2))
+		overlap ();
+	mpfr_t end;
+	mpfr_init (end);
+	get_left (end);	// end is the left endpoint
+	int comp1 = mpfr_cmp_z (end, n2);
+	if (comp1 > 0) {
+		mpfr_clear (end);
+		return true;
+	}
+	mpfr_clear (end);
+	return false;
+};
+
+bool MpfiInterval::operator< (const mpq_t &n2) const {
+	if (contains (n2))
+		if (is_point ())
+			return false;
+		else
+			overlap ();
+	mpfr_t end;
+	mpfr_init (end);
+	get_right (end);	// end is the right endpoint
+	int comp1 = mpfr_cmp_q (end, n2);
+	if (comp1 < 0) {
+		mpfr_clear (end);
+		return true;
+	}
+	mpfr_clear (end);
+	return false;
+};
+
+bool MpfiInterval::operator> (const mpq_t &n2) const {
+	if (contains (n2))
+		overlap ();
+	mpfr_t end;
+	mpfr_init (end);
+	get_left (end);	// end is the left endpoint
+	int comp1 = mpfr_cmp_q (end, n2);
+	if (comp1 > 0) {
+		mpfr_clear (end);
+		return true;
+	}
+	mpfr_clear (end);
+	return false;
+};
+
 MpfiInterval MpfiInterval::operator+ (const mpz_t &n2) const {
 	mpfi_t r;
 	mpfi_init (r);

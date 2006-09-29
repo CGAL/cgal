@@ -79,6 +79,8 @@ public:
 	MpfiInterval (long int);
 	MpfiInterval (unsigned long int);
 	MpfiInterval (double);
+	MpfiInterval (const mpz_t &);
+	MpfiInterval (const mpq_t &);
 	MpfiInterval (const CGAL::Gmpq &);
 	MpfiInterval (const CGAL::Gmpz &);
 
@@ -88,12 +90,16 @@ public:
 	MpfiInterval (long int, long int);
 	MpfiInterval (unsigned long int, unsigned long int);
 	MpfiInterval (double, double);
+	MpfiInterval (const mpz_t &, const mpz_t &);
+	MpfiInterval (const mpq_t &, const mpq_t &);
 	MpfiInterval (const CGAL::Gmpq &, const CGAL::Gmpq &);
 	MpfiInterval (const CGAL::Gmpz &, const CGAL::Gmpz &);
 	MpfiInterval (const mpfi_t &);
 	MpfiInterval (const MpfiInterval &);
 
 	MpfiInterval operator= (const long int);
+	MpfiInterval operator= (const mpz_t &);
+	MpfiInterval operator= (const mpq_t &);
 	MpfiInterval operator= (const CGAL::Gmpz &);
 	MpfiInterval operator= (const CGAL::Gmpq &);
 	MpfiInterval operator= (const MpfiInterval &);
@@ -147,7 +153,7 @@ public:
 	bool operator> (const int) const;
 	bool operator<= (const int) const;
 	bool operator>= (const int) const;
-	// for Gmpz and Gmpz, we can find some elements in common...
+	// this template classes should work at least with Gmpz and Gmpq
 	template <class T> bool operator== (const T &) const;
 	template <class T> bool operator!= (const T &) const;
 	bool operator< (const CGAL::Gmpz &) const;
@@ -199,6 +205,12 @@ public:
 	// 9
 	std::ostream& show (std::ostream &);
 	// 10
+	// (the other comparison cases for mp[zq]_t should be covered by the
+	// template functions)
+	bool operator< (const mpz_t &) const;
+	bool operator> (const mpz_t &) const;
+	bool operator< (const mpq_t &) const;
+	bool operator> (const mpq_t &) const;
 	MpfiInterval operator+ (const mpz_t &) const;
 	MpfiInterval operator- (const mpz_t &) const;
 	MpfiInterval operator* (const mpz_t &) const;
