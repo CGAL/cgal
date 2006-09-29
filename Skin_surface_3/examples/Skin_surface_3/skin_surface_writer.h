@@ -24,6 +24,9 @@ void write_polyhedron_with_normals(SkinSurface &skin,
       << std::endl;
   
   // Write vertices
+//   typedef CGAL::Skin_surface_subdivision_policy_default_3<Polyhedron, SkinSurface> 
+//     Subdivision_policy;
+//   Subdivision_policy *policy = get_subdivision_policy(p, skin);
   for (Vertex_iterator vit = p.vertices_begin();
        vit != p.vertices_end(); vit ++) {
     Vector_3 n = skin.normal(vit->point());

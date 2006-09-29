@@ -17,29 +17,29 @@
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
-#ifndef CGAL_SKIN_SURFACE_SUBDIVISION_POLICY_H
-#define CGAL_SKIN_SURFACE_SUBDIVISION_POLICY_H
+#ifndef CGAL_SKIN_SURFACE_REFINEMENT_POLICY_3_H
+#define CGAL_SKIN_SURFACE_REFINEMENT_POLICY_3_H
 
 #include <CGAL/intersection_3_1.h>
 CGAL_BEGIN_NAMESPACE
 
 // template <class Polyhedron_3, class SkinSurface_3>
-// class Skin_surface_subdivision_policy_base_3 {
+// class Skin_surface_refinement_policy_3 {
 // public:
 //   typedef Polyhedron_3                            Polyhedron;
 //   typedef SkinSurface_3                           Skin_surface;
-//   typedef typename Polyhedron::Traits             P_traits;
+//   typedef typename Polyhedron::Policy             P_policy;
 
 //   typedef typename Polyhedron::Vertex_handle      P_vertex_handle;
 
-//   typedef typename P_traits::RT          P_rt;
-//   typedef typename P_traits::Point_3     P_point;
-//   typedef typename P_traits::Segment_3   P_segment;
-//   typedef typename P_traits::Line_3      P_line;
-//   typedef typename P_traits::Vector_3    P_vector;
-//   typedef typename P_traits::Plane_3     P_plane;
+//   typedef typename P_policy::RT          P_rt;
+//   typedef typename P_policy::Point_3     P_point;
+//   typedef typename P_policy::Segment_3   P_segment;
+//   typedef typename P_policy::Line_3      P_line;
+//   typedef typename P_policy::Vector_3    P_vector;
+//   typedef typename P_policy::Plane_3     P_plane;
 
-//   Skin_surface_subdivision_policy_base_3(Skin_surface const& skin)
+//   Skin_surface_refinement_policy_base_3(Skin_surface const& skin)
 //     : ss_3(skin)
 //   {}
     
@@ -52,7 +52,7 @@ CGAL_BEGIN_NAMESPACE
 // };
 
 template <class SkinSurface_3, class Polyhedron_3>
-class Skin_surface_subdivision_policy_default_3 
+class Skin_surface_refinement_policy_3 
 {
 public:
   typedef SkinSurface_3                           Skin_surface;
@@ -68,7 +68,7 @@ public:
   typedef typename P_traits::Vector_3    P_vector;
   typedef typename P_traits::Plane_3     P_plane;
 
-  Skin_surface_subdivision_policy_default_3(Skin_surface const& skin)
+  Skin_surface_refinement_policy_3(Skin_surface const& skin)
     : ss_3(skin)
   {
     
@@ -105,23 +105,23 @@ protected:
 
 // // Partial specialisation for Skin_surface_polyhedral_items_3
 // #include <CGAL/Skin_surface_polyhedral_items_3.h>
-// #include <CGAL/Skin_surface_refinement_traits_with_face_info_3.h>
+// #include <CGAL/Skin_surface_refinement_policy_with_face_info_3.h>
 
 // CGAL_BEGIN_NAMESPACE
 
-// template <class P_Traits,
+// template <class P_Policy,
 // 	  class SkinSurface_3>
-// Skin_surface_subdivision_policy_base_3<Polyhedron_3<P_Traits, 
+// Skin_surface_refinement_policy_base_3<Polyhedron_3<P_Policy, 
 // 			 Skin_surface_polyhedral_items_3<SkinSurface_3> >, SkinSurface_3> *
-// get_subdivision_policy(Polyhedron_3<P_Traits, 
+// get_refinement_policy(Polyhedron_3<P_Policy, 
 // 			 Skin_surface_polyhedral_items_3<SkinSurface_3> > &p,
 // 		       const SkinSurface_3 &skinsurface) 
 // {
-//   typedef Polyhedron_3<P_Traits, 
+//   typedef Polyhedron_3<P_Policy, 
 //     Skin_surface_polyhedral_items_3<SkinSurface_3> >           Polyhedron;
 
 //   typedef
-//     Skin_surface_subdivision_policy_with_face_info_3<Polyhedron, SkinSurface_3>
+//     Skin_surface_refinement_policy_with_face_info_3<Polyhedron, SkinSurface_3>
 //     Policy;
   
 //   return new Policy(skinsurface);
@@ -130,4 +130,4 @@ protected:
 CGAL_END_NAMESPACE
 
 
-#endif // CGAL_SKIN_SURFACE_SUBDIVISION_TRAITS_H
+#endif // CGAL_SKIN_SURFACE_REFINEMENT_POLICY_3_H

@@ -20,7 +20,7 @@
 #ifndef CGAL_SUBDIVIDE_SKIN_SURFACE_MESH_3_H
 #define CGAL_SUBDIVIDE_SKIN_SURFACE_MESH_3_H
 
-#include <CGAL/Skin_surface_refinement_traits_3.h>
+#include <CGAL/Skin_surface_refinement_policy_3.h>
 #include <CGAL/Polyhedron_3.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -57,14 +57,15 @@ class Skin_surface_sqrt3
   typedef typename Kernel::FT                               FT;
 
 public:
-  Skin_surface_sqrt3(const SkinSurface_3 &skin, Polyhedron &P, 
+  Skin_surface_sqrt3(const SkinSurface_3 &skin, 
+		     Polyhedron &P,
 		     const SubdivisionPolicy_3 &policy) 
     : P(P), ss(skin), policy(policy) {}
 
   //*********************************************
   // Subdivision
   //*********************************************
-  int subdivide(int iter)
+  int subdivide(int iter=1)
   {
     // check for valid polygon mesh
     if(P.size_of_facets() == 0)
@@ -74,7 +75,7 @@ public:
     P.normalize_border();
 
     while (iter > 0) {
-      subdivide();
+      do_subdivide();
       iter--;
     }
     return true;
@@ -85,7 +86,7 @@ private:
   //*********************************************
   // Subdivide
   //*********************************************
-  void subdivide()
+  void do_subdivide()
   {
 
     // We use that new vertices/halfedges/facets are appended at the end.
@@ -141,20 +142,25 @@ private:
   const Subdivision_policy &policy;
 };
 
-template <class SkinSurface_3,
-	  class Polyhedron_3>
+template <class SkinSurface_3, class Polyhedron_3>
 void subdivide_skin_surface_mesh_3(
           const SkinSurface_3 &skin,
           Polyhedron_3 &p, 
           int nSubdiv = 1) {
-  typedef Skin_surface_subdivision_policy_default_3<SkinSurface_3,
-                                                    Polyhedron_3>   Policy;
-  typedef Skin_surface_sqrt3<SkinSurface_3, Polyhedron_3, Policy>   Subdivider;
+  while (nSubdiv > 0) {
+    skin.subdivide_skin_surface_mesh_3(p);
+    nSubdiv--;
+  }
+//   typedef Skin_surface_subdivision_policy_default_3<Polyhedron_3,
+//                                                     SkinSurface_3> Policy;
+//   typedef Skin_surface_sqrt3<Polyhedron_3, 
+//                              SkinSurface_3, 
+//                              Policy>                            Subdivider;
 
   
-  Policy policy(skin);
-  Subdivider subdivider(skin, p, policy);
-  subdivider.subdivide(nSubdiv);
+//   Policy policy(skin);
+//   Subdivider subdivider(p, skin, policy);
+//   subdivider.subdivide(nSubdiv);
 }
 
 CGAL_END_NAMESPACE

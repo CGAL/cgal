@@ -41,6 +41,10 @@
 #include <CGAL/Random.h>
 #include <CGAL/Skin_surface_traits_3.h>
 
+#include <CGAL/Skin_surface_marching_tetrahedra_observer_3.h>
+#include <CGAL/Skin_surface_refinement_policy_3.h>
+#include <CGAL/subdivide_skin_surface_mesh_3.h>
+
 CGAL_BEGIN_NAMESPACE 
 
 template <class MixedComplexTraits_3> 
@@ -50,10 +54,10 @@ class Skin_surface_3 {
 public:
   typedef MixedComplexTraits_3            Geometric_traits;
   typedef typename Gt::Weighted_point     Weighted_point;
-  typedef typename Gt::FT                 FT;
+  typedef typename Weighted_point::Weight RT;
   // NGHK:: added for the Delaunay mesher
   typedef typename Gt::Sphere_3           Sphere;
-  typedef typename Gt::Bare_point         Bare_point;
+  typedef typename Weighted_point::Point  Bare_point;
   typedef typename Gt::Vector_3           Vector;
   
   typedef Regular_triangulation_3<Gt>     Regular;
@@ -97,7 +101,7 @@ private:
 public:
   template < class WP_iterator >
   Skin_surface_3(WP_iterator begin, WP_iterator end, 
-		 FT shrink_factor,
+		 RT shrink_factor,
 		 bool grow_balls = true,
 		 Gt gt_ = Gt(),
 		 bool _verbose = false
@@ -139,11 +143,15 @@ public:
 	    class HalfedgeDS>
   friend class Marching_tetrahedra_traits_skin_surface_3;
 
-  template <class SkinSurface_3, class Polyhedron_3>
-  friend class Skin_surface_subdivision_policy_default_3;
-
   template <class Polyhedron_3>
   void mesh_skin_surface_3(Polyhedron_3 &p) const;
+  
+  // This class has to be a friend:
+  template <class SkinSurface_3, class Polyhedron_3>
+  friend class Skin_surface_refinement_policy_3;
+
+  template <class Polyhedron_3>
+  void subdivide_skin_surface_mesh_3(Polyhedron_3 &p) const;
   
   Sign sign(const Bare_point &p, const Simplex &start = Simplex()) const {
     return get_sign(locate_mixed(p,start), p);
@@ -289,13 +297,13 @@ private:
       (sim, 
        Exact_predicates_exact_constructions_kernel()).sign(p);
   }
-  FT
+  RT
   value(const Bare_point &p) const {
     Simplex sim = locate_mixed(p);
     return value(sim,p);
   }
 
-  FT
+  RT
   value(const Simplex &sim, const Bare_point &p) const {
     return 
       construct_surface(sim, typename Geometric_traits::Kernel()).value(p);
@@ -351,11 +359,11 @@ private:
 		 Simplex &s1, Simplex &s2,
 		 Bare_point &p) const {
     typedef typename Bare_point::R  Traits;
-    typedef typename Traits::FT FT;
+    typedef typename Traits::RT RT;
     Cartesian_converter<Traits, 
                         typename Geometric_traits::Bare_point::R> converter;
 
-    FT sq_dist = squared_distance(p1,p2);
+    RT sq_dist = squared_distance(p1,p2);
     // Use value to make the computation robust (endpoints near the surface)
     if (value(s1, p1) > value(s2, p2)) std::swap(p1, p2);
     Simplex sp = s1;
@@ -379,9 +387,9 @@ private:
     p = midpoint(p1, p2);
   }
 
-  void 
-  intersect_with_transversal_segment(Bare_point &p, 
-				     const Simplex &start = Simplex()) const 
+  void intersect_with_transversal_segment
+  (Bare_point &p,
+   const Simplex &start = Simplex()) const 
   {
 
     typedef typename Geometric_traits::Kernel::Plane_3 Plane;
@@ -469,8 +477,8 @@ private:
     typedef Weighted_converter_3<Cartesian_converter<
       typename Geometric_traits::Bare_point::R, Traits> > Converter;
     typedef typename Traits::Point_3                      Point;
-    typedef typename Traits::FT                           FT;
-    typedef CGAL::Weighted_point<Point,FT>                Weighted_point;
+    typedef typename Traits::RT                           RT;
+    typedef CGAL::Weighted_point<Point,RT>                Weighted_point;
 
     Converter conv;
 
@@ -528,11 +536,11 @@ private:
   Sphere bounding_sphere() const {
     return _bounding_sphere;
   }
-  FT squared_error_bound() const {
+  RT squared_error_bound() const {
     return .01;
   }
 
-  typename Mesher_Gt::FT 
+  typename Mesher_Gt::RT 
   get_density(const typename Mesher_Gt::Point_3 &p) const {
     // NGHK: Make adaptive
     return 1;
@@ -540,7 +548,7 @@ private:
   const Regular &get_regular_triangulation() const {
     return regular;
   }
-  FT get_shrink_factor() const {
+  RT get_shrink_factor() const {
     return gt.get_shrink();
   }
 
@@ -568,12 +576,12 @@ construct_bounding_box(Regular &regular)
   typedef typename Regular::Geom_traits     GT;
   typedef typename GT::Bare_point             Point;
   typedef typename GT::Point                Weighted_point;
-  typedef typename GT::FT                     FT;
+  typedef typename GT::RT                     RT;
   
   Finite_vertices_iterator vit = regular.finite_vertices_begin();
   if (vit != regular.finite_vertices_end()) {
     Bbox_3 bbox = vit->point().bbox();
-    FT max_weight=vit->point().weight();
+    RT max_weight=vit->point().weight();
     while (++vit != regular.finite_vertices_end()) {
       bbox = bbox + vit->point().bbox();
       if (max_weight < vit->point().weight())
@@ -581,12 +589,12 @@ construct_bounding_box(Regular &regular)
     }
 
     // add a bounding octahedron:
-    FT dx = bbox.xmax() - bbox.xmin();
-    FT dy = bbox.ymax() - bbox.ymin();
-    FT dz = bbox.zmax() - bbox.zmin();
+    RT dx = bbox.xmax() - bbox.xmin();
+    RT dy = bbox.ymax() - bbox.ymin();
+    RT dz = bbox.zmax() - bbox.zmin();
   
     Bare_point mid(bbox.xmin() + dx/2, bbox.ymin() + dy/2, bbox.zmin() + dz/2);
-    FT dr = sqrt(CGAL::to_double(max_weight)) + .001;
+    RT dr = sqrt(CGAL::to_double(max_weight)) + .001;
   
     regular.insert(Weighted_point(
       Bare_point(bbox.xmax()+(dy+dz+dr)/gt.get_shrink(),mid.y(),mid.z()),-1));
@@ -790,30 +798,6 @@ locate_mixed(const Bare_point &p, const Simplex &start) const {
   return s;
 }
 
-template <class SkinSurface_3, class Polyhedron_3>
-struct Skin_surface_3_marching_tetrahedra_observer {
-  typedef Marching_tetrahedra_observer_default_3<
-    typename SkinSurface_3::CMCT_Vertex_iterator,
-    typename SkinSurface_3::CMCT_Cell_iterator,
-    Polyhedron_3>                                    value_type;
-};
-
-template <class SkinSurface_3, class PolyhedronTraits>
-struct Skin_surface_3_marching_tetrahedra_observer
-<SkinSurface_3,
- Polyhedron_3<PolyhedronTraits, 
-	      Skin_surface_polyhedral_items_3<SkinSurface_3> > >
-{
-  typedef Polyhedron_3
-  <PolyhedronTraits, 
-   Skin_surface_polyhedral_items_3<SkinSurface_3> >       Polyhedron;
-  typedef Marching_tetrahedra_observer_skin_surface_3<
-    typename SkinSurface_3::CMCT_Vertex_iterator,
-    typename SkinSurface_3::CMCT_Cell_iterator,
-    Polyhedron>                                           value_type;
-};
-
-
 template <class MixedComplexTraits_3> 
 template <class Polyhedron_3>
 void
@@ -826,14 +810,15 @@ Skin_surface_3<MixedComplexTraits_3>::mesh_skin_surface_3(Polyhedron_3 &p) const
     Self,
     CMCT_Vertex_iterator,
     CMCT_Cell_iterator,
-    typename Polyhedron::HalfedgeDS>               Marching_tetrahedra_traits;
-  typedef typename 
-    Skin_surface_3_marching_tetrahedra_observer<Self, Polyhedron_3>::value_type
-                                                   Marching_tetrahedra_observer;
+    typename Polyhedron::HalfedgeDS>               Traits;
+  typedef Skin_surface_marching_tetrahedra_observer_3<
+    CMCT_Vertex_iterator,
+    CMCT_Cell_iterator,
+    Polyhedron>                                    Observer;
 
   // Extract the coarse mesh using marching_tetrahedra
-  Marching_tetrahedra_traits   marching_traits(*this);
-  Marching_tetrahedra_observer marching_observer;
+  Traits   marching_traits(*this);
+  Observer marching_observer;
   marching_tetrahedra_3(cmct_vertices_begin(), 
 			cmct_vertices_end(), 
 			cmct_cells_begin(), 
@@ -843,6 +828,22 @@ Skin_surface_3<MixedComplexTraits_3>::mesh_skin_surface_3(Polyhedron_3 &p) const
 			marching_observer);
 }
 
+template <class MixedComplexTraits_3> 
+template <class Polyhedron_3>
+void
+Skin_surface_3<MixedComplexTraits_3>::subdivide_skin_surface_mesh_3(Polyhedron_3 &p) const {
+  std::cout << "Skin_Surface_3.subdivide_skin_surface_mesh_3(p)" << std::endl;
+
+  typedef Skin_surface_refinement_policy_3<Self, Polyhedron_3> Policy;
+  typedef Skin_surface_sqrt3<Self, Polyhedron_3, Policy>       Subdivider;
+
+  Policy policy(*this);
+  Subdivider subdivider(*this, p, policy);
+  subdivider.subdivide();
+}
+
+
+  
 
 CGAL_END_NAMESPACE
 
