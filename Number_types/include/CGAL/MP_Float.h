@@ -126,6 +126,10 @@ private:
 
 public:
 
+#ifdef CGAL_ROOT_OF_2_ENABLE_HISTOGRAM_OF_NUMBER_OF_DIGIT_ON_THE_COMPLEX_CONSTRUCTOR
+  int tam() const { return v.size(); }
+#endif
+
   // Splits a limb2 into 2 limbs (high and low).
   static
   void split(limb2 l, limb & high, limb & low)

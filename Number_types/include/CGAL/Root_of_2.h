@@ -99,6 +99,11 @@ private:
 
 public:
 
+#ifdef CGAL_ROOT_OF_2_ENABLE_HISTOGRAM_OF_NUMBER_OF_DIGIT_ON_THE_COMPLEX_CONSTRUCTOR
+  static int max_num_digit;
+  static int histogram[1000];
+#endif
+
   Root_of_2()
     : _alpha(0), _rational(1)
   {
@@ -148,11 +153,31 @@ public:
     if(is_zero(c1) || is_zero(c2)) {
       _alpha = c0; 
       _rational = 1;
+      
+#ifdef CGAL_ROOT_OF_2_ENABLE_HISTOGRAM_OF_NUMBER_OF_DIGIT_ON_THE_COMPLEX_CONSTRUCTOR
+      int n_a = c0.tam();
+      if(max_num_digit < n_a) max_num_digit = n_a;
+      histogram[n_a]++;
+#endif
+
     } else {
       _alpha = c0; 
       _beta = c1; 
       _gamma = c2; 
       _rational = 0;
+
+#ifdef CGAL_ROOT_OF_2_ENABLE_HISTOGRAM_OF_NUMBER_OF_DIGIT_ON_THE_COMPLEX_CONSTRUCTOR
+      int n_a = c0.tam();
+      int n_b = c1.tam();
+      int n_c = c2.tam();
+      if(max_num_digit < n_a) max_num_digit = n_a;
+      if(max_num_digit < n_b) max_num_digit = n_b;
+      if(max_num_digit < n_c) max_num_digit = n_c;
+      histogram[n_a]++;
+      histogram[n_b]++;
+      histogram[n_c]++;
+#endif
+
     } 
     CGAL_assertion(is_valid());
   }
@@ -270,6 +295,16 @@ public:
   }
 
 }; // Root_of_2
+
+#ifdef CGAL_ROOT_OF_2_ENABLE_HISTOGRAM_OF_NUMBER_OF_DIGIT_ON_THE_COMPLEX_CONSTRUCTOR
+
+template < typename RT_ >
+int Root_of_2<RT_>::max_num_digit = 0;
+
+template < typename RT_ >
+int Root_of_2<RT_>::histogram[1000];
+
+#endif
 
 
 template < class NT1,class NT2 >

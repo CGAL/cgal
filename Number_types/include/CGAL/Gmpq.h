@@ -133,6 +133,16 @@ public:
     mpq_set_str(mpq(), str.c_str(), base);
     mpq_canonicalize(mpq());
   }
+  
+#ifdef CGAL_ROOT_OF_2_ENABLE_HISTOGRAM_OF_NUMBER_OF_DIGIT_ON_THE_COMPLEX_CONSTRUCTOR
+  int tam() const { return 0; }  // put here a code
+                                 // measuring the number of digits
+                                 // of the Gmpq
+// a possible code is:
+//  int tam() const { return std::max(numerator().tam(), 
+//  	                                denominator().tam()); }  
+// the same as Quotient<MP_Float>
+#endif
 
 
   Gmpz numerator() const
