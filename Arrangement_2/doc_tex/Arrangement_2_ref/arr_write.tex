@@ -1,57 +1,34 @@
-% +------------------------------------------------------------------------+
-% | Reference manual page: arr_write.tex
-% +------------------------------------------------------------------------+
-% | 
-% | Package: Arrangement_2
-% | 
-% +------------------------------------------------------------------------+
-
 \ccRefPageBegin
 \begin{ccRefFunction}{write}
 
+\ccDefinition
+
+%%%%
+
+Writes the arrangement \ccc{arr} into the given output stream using a
+specific output format. \ccc{formatter}, which must be a model of the
+\ccc{ArrangementOutputFormatter}, defines the output format.
+
 \ccInclude{CGAL/IO/Arr_iostream.h}
 
-\ccFunction{template<class Traits, class Dcel, class Formatter>
+\ccGlobalFunction{template<typename Traits, typename Dcel, typename Formatter>
             std::ostream& write (const Arrangement_2<Traits,Dcel>& arr,
                                  std::ostream& os,
                                  Formatter& formatter);}
-   {Writes the arrangement \ccc{arr} into the given output stream using a specific
-    output format. \ccc{formatter}, which must be a model of the
-    \ccc{ArrangementOutputFormatter}, defines the output format.}
 
-\ccFunction{template<class Traits, class Dcel>
-            std::ostream& operator<< (std::ostream& os,
-                                      const Arrangement_2<Traits,Dcel>& arr);}
-   {Writes the arrangement \ccc{arr} into the given output stream using the
-    output format defined by the \ccc{Arr_text_formatter} class --- that is,
-    only the basic geometric and topological features of the arrangement are
-    written, without any auxiliary data that may be attached to the \dcel\ features.}
+%%%%
 
-\ccFunction{template<class Traits, class Dcel>
-            Arr_postscript_file_stream& operator<< (std::ostream& os,
-                                        const Arrangement_2<Traits,Dcel>& arr);}
-   {Writes the arrangement \ccc{arr} into the given Postscript stream.
-    Only the basic geometric and topological features of the arrangement are
-    written. Auxiliary data that might be attached to the \dcel\ features is
-    lost.}
+Writes the arrangement-with-history object \ccc{arr} into the given
+output stream using a specific output format. \ccc{formatter}, which must
+be a model of the \ccc{ArrWithHistoryOutputFormatter}, defines the output
+format.
 
-\begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
 \ccInclude{CGAL/IO/Arr_with_history_iostream.h}
 
-\ccFunction{template<class Traits, class Dcel, class Formatter>
-            std::ostream& write (const Arrangement_with_history_2<Traits,Dcel>& arr,
-                                 std::ostream& os,
-                                 Formatter& formatter);}
-   {Writes the arrangement-with-history instance \ccc{arr} into the given
-    output stream using a specific output format. \ccc{formatter}, which must
-    be a model of the \ccc{ArrWithHistoryOutputFormatter}, defines the output
-    format.}
-
-\ccFunction{template<class Traits, class Dcel>
-            std::ostream& operator<< (std::ostream& os,
-                                      const Arrangement_with_history_2<Traits,Dcel>& arr);}
-   {Writes the arrangement-with-history instance \ccc{arr} into the given
-    output stream using the default output format.}
+\ccGlobalFunction{template<typename Traits, typename Dcel, typename Formatter>
+      std::ostream& write (const Arrangement_with_history_2<Traits,Dcel>& arr,
+      std::ostream& os,
+      Formatter& formatter);}
 
 \ccSeeAlso
   \ccc{read}\lcTex{(\ccRefPage{CGAL::read})}

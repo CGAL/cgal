@@ -1,50 +1,35 @@
-% +------------------------------------------------------------------------+
-% | Reference manual page: arr_read.tex
-% +------------------------------------------------------------------------+
-% | 
-% | Package: Arrangement_2
-% | 
-% +------------------------------------------------------------------------+
-
-% \ccRefPageBegin
+\ccRefPageBegin
 
 \begin{ccRefFunction}{read}
 
+\ccDefinition
+
+%%%%
+  
+Reads the arrangement \ccc{arr} from the given input stream using a
+specific input format. \ccc{formatter}, which must be a model of the
+\ccc{ArrangementInputFormatter}, defines the input format.
+   
 \ccInclude{CGAL/IO/Arr_iostream.h}
 
-\ccFunction{template<class Traits, class Dcel, class Formatter>
+\ccGlobalFunction{template<class Traits, class Dcel, class Formatter>
             std::istream& read (Arrangement_2<Traits,Dcel>& arr,
                                 std::istream& is,
                                 Formatter& formatter);}
-   {Reads the arrangement \ccc{arr} from the given input stream using a
-    specific input format. \ccc{formatter}, which must be a model of the
-    \ccc{ArrangementInputFormatter}, defines the input format.}
 
-\ccFunction{template<class Traits, class Dcel>
-            std::istream& operator>> (std::ostream& is,
-                                      Arrangement_2<Traits,Dcel>& arr);}
-   {Reads the arrangement \ccc{arr} from the given input stream using the
-    input format defined by the \ccc{Arr_text_formatter} class --- that is,
-    only the basic geometric and topological features of the arrangement are
-    read and no auxiliary data is attached to the \dcel\ features.}
+%%%%
 
-\begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
+Reads the arrangement-with-history instance \ccc{arr} from the given 
+input stream using a specific input format. \ccc{formatter}, which must
+be a model of the \ccc{ArrWithHistoryInputFormatter}, defines the input
+format.
+
 \ccInclude{CGAL/IO/Arr_with_history_iostream.h}
 
-\ccFunction{template<class Traits, class Dcel, class Formatter>
+\ccGlobalFunction{template<class Traits, class Dcel, class Formatter>
             std::istream& read (Arrangement_with_history_2<Traits,Dcel>& arr,
                                 std::istream& is,
                                 Formatter& formatter);}
-   {Reads the arrangement-with-history instance \ccc{arr} from the given 
-    input stream using a specific input format. \ccc{formatter}, which must
-    be a model of the \ccc{ArrWithHistoryInputFormatter}, defines the input
-    format.}
-
-\ccFunction{template<class Traits, class Dcel>
-            std::istream& operator>> (std::ostream& is,
-                                      Arrangement_with_history_2<Traits,Dcel>& arr);}
-   {Reads the arrangement-with-history instance \ccc{arr} from the given
-    input stream using the default input format.}
 
 \ccSeeAlso
   \ccc{write}\lcTex{(\ccRefPage{CGAL::write})}
