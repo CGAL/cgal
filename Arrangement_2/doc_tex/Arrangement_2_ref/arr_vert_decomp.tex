@@ -14,9 +14,9 @@
 \ccInclude{CGAL/Arr_vertical_decomposition.h}
 
 \ccFunction{template<class Arrangement, class OutputIterator>
-            OutputIterator locate (const Arrangement& arr,
-                                   Vertical_map& vert_map,
-                                   OutputIterator voi);}
+            OutputIterator decompose (const Arrangement& arr,
+                                      Vertical_map& vert_map,
+                                      OutputIterator voi);}
    {Produces the symbolic vertical decomposition of the given arrangement
     \ccc{arr}. More precisely, it performs batched vertical ray-shooting
     query from all arrangement vertices, such that every vertex is associated
