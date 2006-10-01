@@ -86,7 +86,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
 typedef CGAL_LEDA_SCOPE::ps_file   leda_ps_file;
 
 class Postscript_file_stream : public leda_ps_file
@@ -171,8 +170,11 @@ create_and_display_demo_postscript_file_stream(float w = 512.0,
   return Wptr;
 }
 
+CGAL_END_NAMESPACE
 
 #endif // CGAL_POSTSCRIPT_FILE_STREAM_H
+
+CGAL_BEGIN_NAMESPACE
 
 //  Each of the following operators is individually
 //  protected against multiple inclusion.
@@ -337,4 +339,3 @@ operator<<(Postscript_file_stream& w, const Bbox_2& b)
 #endif // CGAL_BBOX_2_H
 
 CGAL_END_NAMESPACE
-
