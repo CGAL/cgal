@@ -1,8 +1,8 @@
 //! \file examples/Arrangement_2/ex_batched_point_location.cpp
 // Answering a batched point-location query.
 
-#include <CGAL/MP_Float.h>
 #include <CGAL/Cartesian.h>
+#include <CGAL/MP_Float.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_batched_point_location.h>

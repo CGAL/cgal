@@ -1,8 +1,8 @@
 //! \file examples/Arrangement_2/ex_vertical_ray_shooting.cpp
 // Answering vertical ray-shooting queries.
 
-#include <CGAL/MP_Float.h>
 #include <CGAL/Cartesian.h>
+#include <CGAL/MP_Float.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>

@@ -1,8 +1,8 @@
 //! \file examples/Arrangement_2/ex_vertical_decomposition.cpp
 // Performing vertical decomposition of an arrangement.
 
-#include <CGAL/MP_Float.h>
 #include <CGAL/Cartesian.h>
+#include <CGAL/MP_Float.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_vertical_decomposition.h>
