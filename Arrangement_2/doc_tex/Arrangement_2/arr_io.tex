@@ -19,11 +19,11 @@ that other applications can read.
 
 This package provides an {\em inserter} (the \ccc{<<} operator) and an 
 {\em extractor} (the \ccc{>>} operator) for the 
-\ccc{Arrangement_2<Traits,Dcel>} class, such that an arrangement object 
-can be inserted into an output stream or read from an input stream. The 
-arrangement is written using a simple predefined ASCII format that encodes 
-the arrangement topology, as well as all geometric entities associated with 
-vertices and edges.
+\ccc{Arrangement_2<Traits,Dcel>} class that inserts and an arrangement
+object into an output stream and extracts an arrangement object from an
+input stream respectively. The arrangement is written using a simple
+predefined ASCII format that encodes the arrangement topology, as well
+as all geometric entities associated with vertices and edges.
 
 The ability to use the input/output operators, requires that the 
 \ccc{Point_2} type and the \ccc{X_monotone_curve_2} type defined by the 
@@ -142,6 +142,26 @@ You can create nice drawings of arrangements in Postscript format, which
 you can insert into your publications, using the utility class 
 \ccc{Arr_postscript_file_stream}. This class is derived from the 
 \ccc{Postscript_file_stream} utility class, which in turn is derived from
-the \leda\ class \ccc{ps_file}. The \ccc{Arr_postscript_file_stream}
+the \leda\ class \ccc{ps_file}. Note that you must have \leda\ installed
+in order to use this feature. 
+This package provides an {\em inserter} (the \ccc{<<} operator) for
+the \ccc{Arrangement_2<Traits,Dcel>} class that inserts an arrangement
+object into a Postscript output stream.
+
+The \ccc{Arr_postscript_file_stream}
 class allows you to specify the color of points and curves separately
-in addition to the functionality of the based class.
+in addition to the functionality of the based class. 
+
+The ability to use this output operator, requires that the
+\ccc{Point_2} and \ccc{X_monotone_curve_2} types defined by the
+traits class both support the \ccc{<<} operator that inserts the
+respective geometric object into a Postscript stream. The
+\ccc{Arr_conic_traits_2} class (see Section~\ref{arr_ssec:tr_conic}), the
+\ccc{Arr_rational_arc_traits_2} class (see Section~\ref{arr_ssec:tr_ratfunc}),
+and the \ccc{Arr_linear_traits_2} class (see Section~\ref{arr_ssec:tr_segs})
+currently do not provide this operator for the geometric types they define.
+Thus, only arrangements of line segments or of polylines can be written.
+The \ccc{<<} operator for polylines is defined in
+\ccc{Polyline_postscript_file_sctream.h}, which must be explicitly included,
+to insert polylines into Postscript streams.
+
