@@ -5,6 +5,7 @@ Alpha_shapes_3
 Apollonius_graph_2
 Approximate_min_ellipsoid_d
 Arrangement_2
+Benchmark
 Boolean_set_operations_2
 Box_intersection_d
 BGL
@@ -20,6 +21,8 @@ Core
 Developers_manual
 Distance_2
 Distance_3
+Envelope_2
+Envelope_3
 Filtered_kernel
 Generator
 Geomview
