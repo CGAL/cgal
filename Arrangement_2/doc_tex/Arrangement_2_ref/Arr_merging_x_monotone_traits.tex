@@ -1,0 +1,95 @@
+\ccRefPageBegin
+
+\begin{ccRefConcept}{ArrangementMergingXMonotoneTraits_2}
+
+\ccThree{ArrangementMergingXMonotoneTraits::Has_merge_category}{}{}
+\ccThreeToTwo
+
+\ccDefinition
+
+This concept refines the \ccc{ArrangementXMonotoneTraits_2} concept.
+A model of this concept is able to merge $x$-monotone curves. This
+is necessary, for example, by the \ccc{remove_vertex} free function
+that removed a given vertex from a given arrangement.
+
+\ccRefines
+\ccc{ArrangementXMonotoneTraits_2}
+
+\ccHeading{Tags}
+%===============
+
+\ccNestedType{Has_merge_category}{indicates whether the nested functors
+                                  \ccc{Are_mergeable_2} and \ccc{Merge_2}
+                                  are provided.}
+
+
+\ccHeading{Functor Types}
+%========================
+
+\ccThree{Compare_y_at_x_2}{}{\hspace*{14cm}}
+\ccThreeToTwo
+
+\ccNestedType{Are_mergeable_2}
+{provides the operator~:
+ \begin{itemize}
+ \item \ccc{bool operator() (X_monotone_curve_2 c1, X_monotone_curve_2 c2)} \\
+ which accepts two $x$-monotone curves \ccc{c1} and \ccc{c2} that share
+ a common endpoint, and determines whether they can be merged to form a single
+ continuous $x$-monotone curve.
+ \end{itemize}
+ This functor is required only if the traits class defines the
+ \ccc{Has_merge_category} tag as \ccc{Tag_true}).}
+
+\ccNestedType{Merge_2}
+{provides the operator~:
+ \begin{itemize}
+ \item \ccc{void operator() (X_monotone_curve_2 c1, X_monotone_curve_2 c2,
+                             X_monotone_curve_2& c)} \\
+ which accepts two {\sl mergeable} $x$-monotone curves \ccc{c1} and \ccc{c2}
+ (see above), and sets \ccc{c} to be the merged curve.
+ \end{itemize}
+ This functor is required only if the traits class defines the
+ \ccc{Has_merge_category} tag as \ccc{Tag_true}).} 
+
+\ccCreation
+\ccCreationVariable{traits}
+%==========================
+
+\ccThree{Construct_x_monotone_curve_2~~~}{}{\hspace*{7cm}}
+\ccThreeToTwo
+
+\ccConstructor{ArrangementMergingXMonotoneTraits_2();}{default constructor.}
+\ccGlue
+\ccConstructor{ArrangementMergingXMonotoneTraits_2(ArrangementMergingXMonotoneTraits_2 other);}
+{copy constructor}
+\ccGlue
+\ccMethod{ArrangementMergingXMonotoneTraits_2  operator=(other);}{assignment operator.}
+
+\ccHeading{Accessing Functor Objects}
+%====================================
+
+\ccMethod{Are_mergeable_2 are_mergeable_2_object() const;} {}
+\ccGlue
+\ccMethod{Merge_2 merge_2_object();} {}
+
+\ccHasModels
+%===========
+
+\ccc{CGAL::Arr_segment_traits_2<Kernel>} \\
+\ccc{CGAL::Arr_non_caching_segment_traits_2<Kernel>} \\
+\ccc{CGAL::Arr_polyline_traits_2<SegmentTraits>} \\
+\ccc{CGAL::Arr_circle_segment_traits_2<Kernel>} \\
+\ccc{CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>} \\
+\ccc{CGAL::Arr_rational_arc_traits_2<AlgKernel,NtTraits>} \\
+\ccc{CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>}\\
+\ccc{CGAL::Arr_consolidated_curve_data_traits_2<Traits,Data>}
+
+\ccSeeAlso
+%=========
+
+\ccc{ArrangementXMonotoneTraits_2}\lcTex{
+  (\ccRefPage{ArrangementXMonotoneTraits_2})}
+
+\end{ccRefConcept}
+
+\ccRefPageEnd
