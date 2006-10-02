@@ -64,7 +64,7 @@ private:
   Color m_curve_color;
 };
 
-/*! Exporter an Arrangement_2 object to a Postscript stream
+/*! Export an Arrangement_2 object to a Postscript stream
  * \param ps_stream the Postscript stream
  * \param arr the arrangement
  * \return the Postscript stream
