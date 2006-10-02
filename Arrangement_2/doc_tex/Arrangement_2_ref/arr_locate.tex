@@ -17,9 +17,9 @@ the output sequence.
 
 \ccInclude{CGAL/Arr_batched_point_location.h}
 
-\ccGlobalFunction{template<typename Arrangement, 
+\ccGlobalFunction{template<typename Traits, typename Dcel,
                            typename PointsIterator, typename OutputIterator>
-            OutputIterator locate (const Arrangement& arr,
+            OutputIterator locate (const Arrangement_2<Traits,Dcel>& arr,
                                    PointsIterator points_begin,
                                    PointsIterator points_end,
                                    OutputIterator oi);}

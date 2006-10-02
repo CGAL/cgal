@@ -40,23 +40,25 @@ CGAL_BEGIN_NAMESPACE
  *      and the value-type of OutputIterator is pair<Point_2,Object>, where
  *      the Object represents the arrangement feature containing the points.
  */
-template<class Arrangement, class PointsIterator, class OutputIterator> 
-OutputIterator locate(const Arrangement& arr,
+template<typename Traits, typename Dcel, typename PointsIterator,
+         typename OutputIterator> 
+OutputIterator locate(const Arrangement_2<Traits,Dcel>& arr,
                       PointsIterator points_begin,
                       PointsIterator points_end,
                       OutputIterator oi)
 {
   // Arrangement types:
-  typedef typename Arrangement::Traits_2               Traits_2;
+  typedef Arrangement_2<Traits,Dcel>                   Arrangement_2;
+  typedef typename Arrangement_2::Traits_2             Traits_2;
   typedef typename Traits_2::X_monotone_curve_2        Base_X_monotone_curve_2;
-  typedef typename Arrangement::Halfedge_const_handle  Halfedge_const_handle;
-  typedef typename Arrangement::Vertex_const_iterator  Vertex_const_iterator;
-  typedef typename Arrangement::Edge_const_iterator    Edge_const_iterator;
-  typedef typename Arrangement::Size                   Size;
+  typedef typename Arrangement_2::Halfedge_const_handle  Halfedge_const_handle;
+  typedef typename Arrangement_2::Vertex_const_iterator  Vertex_const_iterator;
+  typedef typename Arrangement_2::Edge_const_iterator    Edge_const_iterator;
+  typedef typename Arrangement_2::Size                   Size;
 
 
   // Define meta-traits class for the batched point location:
-  typedef Arr_batched_point_location_meta_traits<Traits_2, Arrangement>
+  typedef Arr_batched_point_location_meta_traits<Traits_2, Arrangement_2>
                                                        Meta_traits_2;
 
   typedef typename Meta_traits_2::X_monotone_curve_2   X_monotone_curve_2;
@@ -65,7 +67,7 @@ OutputIterator locate(const Arrangement& arr,
   // Define the sweep-line visitor:
   typedef Arr_batched_point_location_visitor<Meta_traits_2,
                                              OutputIterator,
-                                             Arrangement>  Visitor;
+                                             Arrangement_2>  Visitor;
   
   typedef Basic_sweep_line_2<Meta_traits_2, Visitor>       Sweep_line;
 

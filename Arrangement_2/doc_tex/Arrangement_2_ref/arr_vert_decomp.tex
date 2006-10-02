@@ -15,8 +15,9 @@ and the other corresponds to the feature that lies above it.
 
 \ccThree{OutputIterator  }{}{\hspace*{12cm}}
 
-\ccGlobalFunction{template<typename Arrangement, typename OutputIterator>
-            OutputIterator decompose (const Arrangement& arr,
+\ccGlobalFunction{template<typename Traits, typename Dcel,
+                           typename OutputIterator>
+            OutputIterator decompose (const Arrangement<Traits,Dcel>& arr,
                                       Vertical_map& vert_map,
                                       OutputIterator voi);}
 Produces the symbolic vertical decomposition of the \ccc{arr} arrangement.

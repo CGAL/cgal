@@ -41,15 +41,15 @@ CGAL_BEGIN_NAMESPACE
  *                    sorted in ascending xy-lexicographic order.
  * \return A past-the-end iterator for the ordered arrangement vertices.
  */
-template<class Arrangement, class OutputIterator>
+template<typename Traits, typename Dcel, typename OutputIterator>
 OutputIterator decompose
-  (const Arrangement& arr,
-   Unique_hash_map<typename Arrangement::Vertex_const_handle,
+  (const Arrangement_2<Traits,Dcel>& arr,
+   Unique_hash_map<typename Arrangement_2<Traits,Dcel>::Vertex_const_handle,
                    std::pair<CGAL::Object, CGAL::Object> >& vert_map,
    OutputIterator voi)
 {
   // Arrangement types:
-  typedef Arrangement                                 Arrangement_2;
+  typedef Arrangement_2<Traits,Dcel>                    Arrangement_2;
   typedef typename Arrangement_2::Traits_2            Traits_2;
   typedef typename Traits_2::X_monotone_curve_2       Base_X_monotone_curve_2;
 
