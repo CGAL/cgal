@@ -91,7 +91,7 @@ std::ostream& operator<< (std::ostream &, const Rational_polynomial_1 &);
 CGAL_END_NAMESPACE
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/Gbrs_polynomial_1.cpp>
+#include <CGAL/Gbrs_polynomial_1.C>
 #endif	// CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 
 #endif	// CGAL_GRBS_POLYNOMIAL_1_H
