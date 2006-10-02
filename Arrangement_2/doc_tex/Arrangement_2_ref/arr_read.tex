@@ -4,32 +4,40 @@
 
 \ccDefinition
 
+The function \ccRefName\ reads a given arrangement from a given input stream
+using a specific input format.
+   
 %%%%
   
-Reads the arrangement \ccc{arr} from the given input stream using a
-specific input format. \ccc{formatter}, which must be a model of the
-\ccc{ArrangementInputFormatter}, defines the input format.
-   
 \ccInclude{CGAL/IO/Arr_iostream.h}
 
 \ccGlobalFunction{template<typename Traits, typename Dcel, typename Formatter>
             std::istream& read (Arrangement_2<Traits,Dcel>& arr,
                                 std::istream& is,
                                 Formatter& formatter);}
+Reads the arrangement object \ccc{arr} from the given input stream \ccc{is}
+using a specific input format defined by \ccc{}formatter.
 
 %%%%
 
-Reads the arrangement-with-history instance \ccc{arr} from the given 
-input stream using a specific input format. \ccc{formatter}, which must
-be a model of the \ccc{ArrWithHistoryInputFormatter}, defines the input
-format.
-
 \ccInclude{CGAL/IO/Arr_with_history_iostream.h}
 
-\ccGlobalFunction{template<typename Traits, typename Dcel, typename Formatter>
+\ccGlobalFunction{template<typename Traits, typename Dcel,
+                           typename WithHistoryFormatter>
             std::istream& read (Arrangement_with_history_2<Traits,Dcel>& arr,
                                 std::istream& is,
-                                Formatter& formatter);}
+                                WithHistoryFormatter& formatter);}
+Reads the arrangement-with-history instance \ccc{arr} from the given 
+input stream \ccc{is} using a specific input format defined by
+\ccc{}formatter.
+
+\ccHeading{Requirements}
+\begin{enumerate}
+\item The instantiated \ccc{Formatter} class must model the
+  \ccc{ArrangementInputFormatter} concept.
+\item The instantiated \ccc{WithHistoryFormatter} class must model the
+  \ccc{ArrWithHistoryInputFormatter} concept.
+\end{enumerate}
 
 \ccSeeAlso
   \ccc{write}\lcTex{(\ccRefPage{CGAL::write})}\\

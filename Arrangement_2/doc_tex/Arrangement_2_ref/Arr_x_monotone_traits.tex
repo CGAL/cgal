@@ -26,17 +26,10 @@ stores pairwise interior-disjoint curves, the input curves are split at
 the intersection points before being inserted into the arrangement. 
 A model of this refined concept therefore needs to compute the intersections
 (and possibly overlaps) between two $x$-monotone curves and to support
-curve splitting. The reverse merge operation is optionally supported.
+curve splitting.
 
 \ccRefines
 \ccc{ArrangementBasicTraits_2}
-
-\ccHeading{Tags}
-%===============
-
-\ccNestedType{Has_merge_category}{indicates whether the nested functors
-                                  \ccc{Are_mergeable_2} and \ccc{Merge_2}
-                                  are provided.}
 
 \ccTypes
 %=======
@@ -77,28 +70,6 @@ curve splitting. The reverse merge operation is optionally supported.
  \ccc{c2}'s {\sl left} endpoint.
  \end{itemize}} 
 
-\ccNestedType{Are_mergeable_2}
-{provides the operator~:
- \begin{itemize}
- \item \ccc{bool operator() (X_monotone_curve_2 c1, X_monotone_curve_2 c2)} \\
- which accepts two $x$-monotone curves \ccc{c1} and \ccc{c2} that share
- a common endpoint, and determines whether they can be merged to form a single
- continuous $x$-monotone curve.
- \end{itemize}
- This functor is required only if the traits class defines the
- \ccc{Has_merge_category} tag as \ccc{Tag_true}).}
-
-\ccNestedType{Merge_2}
-{provides the operator~:
- \begin{itemize}
- \item \ccc{void operator() (X_monotone_curve_2 c1, X_monotone_curve_2 c2,
-                             X_monotone_curve_2& c)} \\
- which accepts two {\sl mergeable} $x$-monotone curves \ccc{c1} and \ccc{c2}
- (see above), and sets \ccc{c} to be the merged curve.
- \end{itemize}
- This functor is required only if the traits class defines the
- \ccc{Has_merge_category} tag as \ccc{Tag_true}).} 
-
 \ccCreation
 \ccCreationVariable{traits}
 %==========================
@@ -111,7 +82,7 @@ curve splitting. The reverse merge operation is optionally supported.
 \ccConstructor{ArrangementXMonotoneTraits_2(ArrangementXMonotoneTraits_2 other);}
 {copy constructor}
 \ccGlue
-\ccMethod{ArrangementXMonotoneTraits_2  operator=(other);}{assignment operator.}
+\ccMethod{ArrangementXMonotoneTraits_2 operator=(other);}{assignment operator.}
 
 
 \ccHeading{Accessing Functor Objects}
@@ -120,10 +91,6 @@ curve splitting. The reverse merge operation is optionally supported.
 \ccMethod{Intersect_2 intersect_2_object();} {}
 \ccGlue
 \ccMethod{Split_2 split_2_object();} {}
-\ccGlue
-\ccMethod{Are_mergeable_2 are_mergeable_2_object() const;} {}
-\ccGlue
-\ccMethod{Merge_2 merge_2_object();} {}
 
 \ccHasModels
 %===========
@@ -140,8 +107,7 @@ curve splitting. The reverse merge operation is optionally supported.
 \ccSeeAlso
 %=========
 
-\ccc{ArrangementBasicTraits_2}\lcTex{ 
-      (\ccRefPage{ArrangementBasicTraits_2})}
+\ccc{ArrangementBasicTraits_2}\lcTex{(\ccRefPage{ArrangementBasicTraits_2})}
 
 \end{ccRefConcept}
 

@@ -4,15 +4,13 @@
 
 \ccDefinition
 
-Attempts to removed the vertex \ccc{v} from the given arrangement \ccc{arr}.
-The vertex can be removed if it is either an isolated vertex and has no
-incident edge, or if it is a {\sl redundant} vertex --- that is, it has
-exactly two incident edges whose associated curves can be merged to form
-a single $x$-monotone curve. The assumption is that \ccc{Traits} is a
-model of the refines \ccc{ArrangementXMonotoneTraits_2}, such that it
-supports merge operations on $x$-monotone curves.
-The function returns whether it succeeded in deleting \ccc{v} from the
-arrangement.
+The function \ccRefName\ attempts to removed a given vertex from a given
+arrangement. The vertex can be removed if it is either an isolated vertex,
+(and has no incident edge,) or if it is a {\em redundant} vertex --- that
+is, it has exactly two incident edges, whose associated curves can be
+merged to form a single $x$-monotone curve.
+The function returns a boolean value that indicates whether it succeeded
+removing the vertex from the arrangement.
 
 \ccInclude{CGAL/Arrangement_2.h}
 
@@ -20,6 +18,11 @@ arrangement.
    bool remove_vertex (Arrangement_2<Traits,Dcel>& arr,
                        typename Arrangement_2<Traits,Dcel>::Vertex_handle v);}
 
+\ccHeading{Requirements}
+The instantiated \ccc{Traits} class must model the
+\ccc{ArrangementMergingXMonotoneTraits_2} concept, which requires the merge
+operation on $x$-monotone curves.
+	       
 \end{ccRefFunction}
 
 \ccRefPageEnd

@@ -3,11 +3,10 @@
 
 \ccDefinition
 
-%%%%
+The function \ccRefName\ writes a given arrangement into a given output stream
+using a specific output format.
 
-Writes the arrangement \ccc{arr} into the given output stream using a
-specific output format. \ccc{formatter}, which must be a model of the
-\ccc{ArrangementOutputFormatter}, defines the output format.
+%%%%
 
 \ccInclude{CGAL/IO/Arr_iostream.h}
 
@@ -15,21 +14,30 @@ specific output format. \ccc{formatter}, which must be a model of the
             std::ostream& write (const Arrangement_2<Traits,Dcel>& arr,
                                  std::ostream& os,
                                  Formatter& formatter);}
+Writes the arrangement object \ccc{arr} into the given output stream
+\ccc{os} using a specific output format defined by \ccc{formatter}.
 
 %%%%
 
-Writes the arrangement-with-history object \ccc{arr} into the given
-output stream using a specific output format. \ccc{formatter}, which must
-be a model of the \ccc{ArrWithHistoryOutputFormatter}, defines the output
-format.
-
 \ccInclude{CGAL/IO/Arr_with_history_iostream.h}
 
-\ccGlobalFunction{template<typename Traits, typename Dcel, typename Formatter>
+\ccGlobalFunction{template<typename Traits, typename Dcel,
+                  typename WithHistoryFormatter>
       std::ostream& write (const Arrangement_with_history_2<Traits,Dcel>& arr,
       std::ostream& os,
-      Formatter& formatter);}
+      WithHistoryFormatter& formatter);}
+Writes the arrangement-with-history object \ccc{arr} into the given
+output stream \ccc{os} using a specific output format defined by
+\ccc{formatter}.
 
+\ccHeading{Requirements}
+\begin{enumerate}
+\item The instantiated \ccc{Formatter} class must model the
+  \ccc{ArrangementOutputFormatter} concept.
+\item The instantiated \ccc{WithHistoryFormatter} class must model the
+  \ccc{ArrWithHistoryOutputFormatter} concept.
+\end{enumerate}
+      
 \ccSeeAlso
   \ccc{read}\lcTex{(\ccRefPage{CGAL::read})}\\
   \lcTex{\ccc{operator<<} page~\pageref{ref_arr_operator_leftshift}}
@@ -39,3 +47,4 @@ format.
 
 \end{ccRefFunction}
 \ccRefPageEnd
+

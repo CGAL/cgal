@@ -4,14 +4,15 @@
 
 \ccDefinition
 
-Inserts a given $x$-monotone curve into a given arrangement, where the
-interior of \ccc{xc} is disjoint from all existing arrangement vertices
-and edges. Under this assumption, it is possible to locate the endpoints
-of the given curve in the arrangement and use one of the specialized
-insertion member-functions of the arrangement according to the results.
-The insertion operations creates a single new edge, that is, two twin
-halfedges, and the function returns a handle for the one directed
-lexicographically in increasing order (from left to right).
+The function \ccRefName\ inserts a given $x$-monotone curve into a given
+arrangement, where the interior of the given curve is disjoint from all
+existing arrangement vertices and edges. Under this assumption, it is
+possible to locate the endpoints of the given curve in the arrangement,
+and use one of the specialized insertion member-functions of the
+arrangement according to the results. The insertion operations creates a
+single new edge, that is, two twin halfedges, and the function returns a
+handle for the one directed lexicographically in increasing order (from
+left to right).
 
 A given point-location object is used for answering the two point-location
 queries on the given curve endpoints. By default, the function uses the
