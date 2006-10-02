@@ -1,0 +1,63 @@
+\ccHtmlNoClassLinks
+\begin{ccRefFunction}{operator<<}
+\label{ref_arr_operator_leftshift}
+
+\ccDefinition
+
+%%%%
+
+Inserts an arrangement into a given output stream using the
+output format defined by the \ccc{Arr_text_formatter} class --- that is,
+only the basic geometric and topological features of the arrangement are
+written, without any auxiliary data that may be attached to the
+\dcel\ features.
+
+\ccInclude{CGAL/IO/Arr_iostream.h}
+
+\ccGlobalFunction{template<typename Traits, typename Dcel>
+            std::ostream& operator<< (std::ostream& os,
+                                      const Arrangement_2<Traits,Dcel>& arr);}
+
+%%%%
+
+Inserts an arrangement into a given Postscript stream.
+Only the basic geometric and topological features of the arrangement are
+written. Auxiliary data that might be attached to the \dcel\ features is
+lost.
+
+\ccInclude{CGAL/IO/Arr_postscript_file_stream.h}
+
+\ccGlobalFunction{template<typename Traits, typename Dcel>
+            Arr_postscript_file_stream& operator<< (std::ostream& os,
+                                      const Arrangement_2<Traits,Dcel>& arr);}
+
+%%%%
+
+Inserts a polyline into a given Postscript stream.
+Only the basic geometric and topological features of the polylines are
+written. Auxiliary data that might be attached is lost.
+    
+\ccInclude{CGAL/IO/Polyline_postscript_file_stream.h}
+
+\ccGlobalFunction{template<typename SegmentTraits>
+            Postscript_file_stream& operator<< (std::ostream& os,
+                                  const Polyline_2<SegmentTraits>& polyline);}
+%%%%
+
+Inserts an arrangement-with-history into a given
+output stream using the default output format.
+
+\ccInclude{CGAL/IO/Arr_with_history_iostream.h}
+
+\ccGlobalFunction{template<typename Traits, typename Dcel>
+            std::ostream& operator<< (std::ostream& os,
+                         const Arrangement_with_history_2<Traits,Dcel>& arr);}
+
+\ccSeeAlso
+  \ccc{read}\lcTex{(\ccRefPage{CGAL::read})}\\
+  \ccc{write}\lcTex{(\ccRefPage{CGAL::write})}\\
+  \lcTex{\ccc{operator>>} page~\pageref{ref_arr_operator_rightshift}}
+  \lcRawHtml{<I><A HREF="Function_operator--.html">operator&gt;&gt;</A></I>}
+
+\end{ccRefFunction}
+\ccRefPageEnd
