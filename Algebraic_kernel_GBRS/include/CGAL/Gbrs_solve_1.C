@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://penarand@scm.gforge.inria.fr/svn/cgal/trunk/Algebraic_kernel_GBRS/include/CGAL/Gbrs_solve_1.cpp $
-// $Id: Gbrs_solve_1.cpp 34592 2006-09-28 17:19:55Z penarand $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Luis Peñaranda <penarand@loria.fr>

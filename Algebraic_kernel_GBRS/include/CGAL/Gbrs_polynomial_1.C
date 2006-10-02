@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://penarand@scm.gforge.inria.fr/svn/cgal/trunk/Algebraic_kernel_GBRS/include/CGAL/Gbrs_polynomial_1.cpp $
-// $Id: Gbrs_polynomial_1.cpp 34639 2006-10-02 18:36:46Z penarand $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Luis Peñaranda <penarand@loria.fr>
