@@ -12,7 +12,7 @@ specific input format. \ccc{formatter}, which must be a model of the
    
 \ccInclude{CGAL/IO/Arr_iostream.h}
 
-\ccGlobalFunction{template<class Traits, class Dcel, class Formatter>
+\ccGlobalFunction{template<typename Traits, typename Dcel, typename Formatter>
             std::istream& read (Arrangement_2<Traits,Dcel>& arr,
                                 std::istream& is,
                                 Formatter& formatter);}
@@ -26,13 +26,17 @@ format.
 
 \ccInclude{CGAL/IO/Arr_with_history_iostream.h}
 
-\ccGlobalFunction{template<class Traits, class Dcel, class Formatter>
+\ccGlobalFunction{template<typename Traits, typename Dcel, typename Formatter>
             std::istream& read (Arrangement_with_history_2<Traits,Dcel>& arr,
                                 std::istream& is,
                                 Formatter& formatter);}
 
 \ccSeeAlso
-  \ccc{write}\lcTex{(\ccRefPage{CGAL::write})}
+  \ccc{write}\lcTex{(\ccRefPage{CGAL::write})}\\
+  \lcTex{\ccc{operator<<} page~\pageref{ref_arr_operator_leftshift}}
+  \lcRawHtml{<I><A HREF="Function_operator.html">operator&lt;&lt;</A></I>}\\
+  \lcTex{\ccc{operator>>} page~\pageref{ref_arr_operator_rightshift}}
+  \lcRawHtml{<I><A HREF="Function_operator--.html">operator&gt;&gt;</A></I>}
 
 \end{ccRefFunction}
 

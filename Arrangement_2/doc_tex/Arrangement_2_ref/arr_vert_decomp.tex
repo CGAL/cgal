@@ -1,57 +1,53 @@
-% +------------------------------------------------------------------------+
-% | Reference manual page: arr_vert_decomp.tex
-% +------------------------------------------------------------------------+
-% | 
-% | Package: Arrangement_2
-% | 
-% +------------------------------------------------------------------------+
-
 \ccRefPageBegin
 
 \begin{ccRefFunction}{decompose}
-\ccThree{OutputIterator  }{}{\hspace*{12cm}}
+
+\ccDefinition
+
+Produces the symbolic vertical decomposition of the given arrangement
+\ccc{arr}. More precisely, it performs batched vertical ray-shooting
+query from all arrangement vertices, such that every vertex is associated
+with a pair of objects, one corresponding to the arrangement feature that
+lies below it, while the other corresponds to the feature that lies above
+it. The query results are given through the output \ccc{vert_map}. The
+type \ccc{Vertical_map} used in the function prototype stated above really
+stand for: \\
+\begin{tabbing}
+\ccc{Unique_hash_map<}\=\ccc{typename Arrangement::Vertex_const_handle,}\\
+                 ~   \>\ccc{std::pair<CGAL::Object, CGAL::Object> >}
+\end{tabbing}
+Namely, it is a mapping of each arrangement vertex to a pair of \cgal\
+objects, the first representing the feature below the object and the second
+is the feature above it. Each \ccc{Object} may be: \\
+\begin{itemize}
+\item \ccc{Halfedge_const_handle}, if the vertex is located above (or below)
+  an edge. The given halfedge is always directed from right to left.
+  In case there is no concrete edge below (or above) the vertex, then
+  the object returned is a {\em fictitious halfedge}.
+\item \ccc{Vertex_const_handle}, in case the vertex is located vertically
+  above (or below) another arrangement vertex.
+\item An empty object, in case the vertex is the top end-vertex of
+  a vertical edge, we define there is no feature below it. Similarly, if
+  it is the bottom end-vertex of a vertical edge, we define that there
+  is no feature above it.
+\end{itemize}
+The output of this function can be readily used for inserting vertical walls
+and physically decomposing the arrangement into pseudo-trapezoids. To do
+this, it is convenient to process the vertices in an ascending
+$xy$-lexicographic order. The function therefore returns of ordered vertices
+through the output iterator \ccc{voi}. Its returned value is a past-the-end
+iterator for this ordered sequence.
 
 \ccInclude{CGAL/Arr_vertical_decomposition.h}
 
-\ccFunction{template<class Arrangement, class OutputIterator>
+\ccThree{OutputIterator  }{}{\hspace*{12cm}}
+
+\ccGlobalFunction{template<typename Arrangement, typename OutputIterator>
             OutputIterator decompose (const Arrangement& arr,
                                       Vertical_map& vert_map,
                                       OutputIterator voi);}
-   {Produces the symbolic vertical decomposition of the given arrangement
-    \ccc{arr}. More precisely, it performs batched vertical ray-shooting
-    query from all arrangement vertices, such that every vertex is associated
-    with a pair of objects, one corresponding to the arrangement feature that
-    lies below it, while the other corresponds to the feature that lies above
-    it. The query results are given through the output \ccc{vert_map}. The
-    type \ccc{Vertical_map} used in the function prototype stated above really
-    stand for: \\
-    \begin{tabbing}
-    \ccc{Unique_hash_map<}\=\ccc{typename Arrangement::Vertex_const_handle,}\\
-                      ~   \>\ccc{std::pair<CGAL::Object, CGAL::Object> >}
-    \end{tabbing}
-    Namely, it is a mapping of each arrangement vertex to a pair of \cgal\
-    objects, the first representing the feature below the object and the second
-    is the feature above it. Each \ccc{Object} may be: \\
-   \begin{itemize}
-   \item \ccc{Halfedge_const_handle}, if the vertex is located above (or below)
-         an edge. The given halfedge is always directed from right to left.
-         In case there is no concrete edge below (or above) the vertex, then
-         the object returned is a {\em fictitious halfedge}.
-   \item \ccc{Vertex_const_handle}, in case the vertex is located vertically
-         above (or below) another arrangement vertex.
-   \item An empty object, in case the vertex is the top end-vertex of
-         a vertical edge, we define there is no feature below it. Similarly, if
-         it is the bottom end-vertex of a vertical edge, we define that there
-         is no feature above it.
-   \end{itemize}
-   The output of this function can be readily used for inserting vertical walls
-   and physically decomposing the arrangement into pseudo-trapezoids. To do
-   this, it is convenient to process the vertices in an ascending
-   $xy$-lexicographic order. The function therefore returns of ordered vertices
-   through the output iterator \ccc{voi}. Its returned value is a past-the-end
-   iterator for this ordered sequence.
-    \ccPrecond{The value-type of \ccc{OutputIterator} is 
-               \ccc{Arrangement::Vertex_const_handle}.}}
+\ccPrecond{The value-type of \ccc{OutputIterator} is 
+           \ccc{Arrangement::Vertex_const_handle}.}
 
 \end{ccRefFunction}
 

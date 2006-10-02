@@ -1,77 +1,76 @@
-% +------------------------------------------------------------------------+
-% | Reference manual page: arr_insert.tex
-% +------------------------------------------------------------------------+
-% | 
-% | Package: Arrangement_2
-% | 
-% +------------------------------------------------------------------------+
-
 \ccRefPageBegin
 
 \begin{ccRefFunction}{insert_curve}
 
+\ccDefinition
+
+Inserts the given curve \ccc{c} into the arrangement \ccc{arr}, where
+no restrictions are made on the nature of the inserted curve.
+The \ccc{Traits} parameter must be a model of the
+\ccc{ArrangementTraits_2}
+concept. That is, it should define the \ccc{Curve_2} type and support
+its subdivision into $x$-monotone subcurves (and perhaps isolated points).
+Each subcurve is in turn inserted into the arrangement by locating its
+left endpoint and computing its zone until reaching the right endpoint.
+The point-location object \ccc{pl}, which must be a model of the
+\ccc{ArrangementPointLocation_2} concept, is used for answering
+point-location queries during the insertion process.
+By default, the function uses the ``walk along line'' point-location
+strategy --- namely an instance of the class
+\ccc{Arr_walk_along_line_point_location<Arrangement_2<Traits,Dcel> >}.
+
 \ccInclude{CGAL/Arrangement_2.h}
 
-\ccFunction{template<class Traits, class Dcel, class PointLocation>
+\ccGlobalFunction{template<typename Traits, typename Dcel,
+                  typename PointLocation>
             void insert_curve (Arrangement_2<Traits,Dcel>& arr,
                                const typename Traits::Curve_2& c,
                                const PointLocation& pl = walk_pl);}
-   {Inserts the given curve \ccc{c} into the arrangement \ccc{arr}, where
-    no restrictions are made on the nature of the inserted curve.
-    The \ccc{Traits} parameter must be a model of the
-    \ccc{ArrangementTraits_2}
-    concept. That is, it should define the \ccc{Curve_2} type and support
-    its subdivision into $x$-monotone subcurves (and perhaps isolated points).
-    Each subcurve is in turn inserted into the arrangement by locating its
-    left endpoint and computing its zone until reaching the right endpoint.
-    The point-location object \ccc{pl}, which must be a model of the
-    \ccc{ArrangementPointLocation_2} concept, is used for answering
-    point-location queries during the insertion process.
-    By default, the function uses the ``walk along line'' point-location
-    strategy --- namely an instance of the class
-    \ccc{Arr_walk_along_line_point_location<Arrangement_2<Traits,Dcel> >}.
-    \ccPrecond{If provided, \ccc{pl} must be attached to the given arrangement
-    \ccc{arr}.}}
+\ccPrecond{If provided, \ccc{pl} must be attached to the given arrangement
+\ccc{arr}.}
 
-%\ccFunction{template<class Traits, class Dcel>
+% Inserts the given curve \ccc{c} into the arrangement \ccc{arr}, where
+% no restrictions are made on the nature of the inserted curve.
+% The function operates as the function listed above, but it uses the default
+% ``walk along line'' point-location strategy, so users need not provide a
+% point-location object.
+%
+%\ccGlobalFunction{template<typename Traits, typename Dcel>
 %            void insert_curve (Arrangement_2<Traits,Dcel>& arr,
 %                               const typename Traits::Curve_2& c);}
-%   {Inserts the given curve \ccc{c} into the arrangement \ccc{arr}, where
-%    no restrictions are made on the nature of the inserted curve.
-%   The function operates as the function listed above, but it uses the default
-%    ``walk along line'' point-location strategy, so users need not provide a
-%    point-location object.}
 
-\begin{ccHtmlOnly}<p>\end{ccHtmlOnly}
+Inserts the given curve \ccc{c} into the arrangement \ccc{arr}, and returns
+a handle to the inserted curve.
+The point-location object \ccc{pl}, which should be a model of the
+\ccc{ArrangementPointLocation_2} concept, is used for answering
+point-location queries during the insertion process.
+By default, the function uses the ``walk along line'' point-location
+strategy --- namely an instance of the class
+\ccc{Arr_walk_along_line_point_location<Arrangement_with_history_2<Traits,Dcel> >}.
+
 \ccInclude{CGAL/Arrangement_with_history_2.h}
 
 \ccThree{Orientation~~}{}{\hspace*{8.5cm}}
 
-\ccFunction{template<class Traits, class Dcel, class PointLocation>
+\ccGlobalFunction{template<typename Traits, typename Dcel,
+                           typename PointLocation>
             typename Arrangement_with_history_2<Traits,Dcel>::Curve_handle
             insert_curve (Arrangement_with_history_2<Traits,Dcel>& arr,
                     const typename Traits::Curve_2& c,
                     const PointLocation& pl = walk_pl);}
-   {Inserts the given curve \ccc{c} into the arrangement \ccc{arr}, and returns
-    a handle to the inserted curve.
-    The point-location object \ccc{pl}, which should be a model of the
-    \ccc{ArrangementPointLocation_2} concept, is used for answering
-    point-location queries during the insertion process.
-    By default, the function uses the ``walk along line'' point-location
-    strategy --- namely an instance of the class
-    \ccc{Arr_walk_along_line_point_location<Arrangement_with_history_2<Traits,Dcel> >}.
-    \ccPrecond{If provided, \ccc{pl} is attached to the given arrangement
-    \ccc{arr}.}}
+\ccPrecond{If provided, \ccc{pl} is attached to the given arrangement
+\ccc{arr}.}
 
-%\ccFunction{template<class Traits, class Dcel>
+% Inserts the given curve \ccc{c} into the arrangement \ccc{arr}, and
+% returns a handle to the inserted curve.
+% The function operates as the function listed above, but it uses the default
+% ``walk along line'' point-location strategy, so users need not provide a
+% point-location object.
+%
+%\ccGlobalFunction{template<typename Traits, typename Dcel>
 %            typename Arrangement_with_history_2<Traits,Dcel>::Curve_handle
 %            insert_curve (Arrangement_with_history_2<Traits,Dcel>& arr,
 %                    const typename Traits::Curve_2& c);}
-%   {Inserts the given curve \ccc{c} into the arrangement \ccc{arr}, and
-%    returns a handle to the inserted curve.
-%   The function operates as the function listed above, but it uses the default
-%    ``walk along line'' point-location strategy, so users need not provide a
-%    point-location object.}
 
 \end{ccRefFunction}
 

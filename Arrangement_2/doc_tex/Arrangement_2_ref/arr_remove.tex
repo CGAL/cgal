@@ -1,34 +1,29 @@
-% +------------------------------------------------------------------------+
-% | Reference manual page: arr_remove.tex
-% +------------------------------------------------------------------------+
-% | 
-% | Package: Arrangement_2
-% | 
-% +------------------------------------------------------------------------+
-
 \ccRefPageBegin
 
 \begin{ccRefFunction}{remove_edge}
 
+\ccDefinition
+
+Removes an edge given by one of the twin halfedges \ccc{e} that forms it,
+from the arrangement \ccc{arr}. Using this function is equivalent to
+invoking \ccc{arr.remove_edge (e, true, true)} --- that is, to remove the
+edge and its end-vertices, in case they become isolated. However, this
+free function requires that \ccc{Traits} be a model of the refined concept
+\ccc{ArrangementXMonotoneTraits_2}, which requires merge operations
+on $x$-monotone curves. If one of the end-vertices of \ccc{e} becomes
+redundant after \ccc{e} is removed (see \ccc{remove_vertex()} for the
+definition of a redundant vertex), it is removed and its
+incident edges are merged.
+If the edge-removal operation causes two faces to merge, the merged face
+is returned. Otherwise, the face to which the edge was incident is
+returned.
+
 \ccInclude{CGAL/Arrangement_2.h}
 
-\ccFunction{template<class Traits, class Dcel>
-            typename Arrangement_2<Traits,Dcel>::Face_handle
-            remove_edge (Arrangement_2<Traits,Dcel>& arr,
+\ccGlobalFunction{template<typename Traits, typename Dcel>
+        typename Arrangement_2<Traits,Dcel>::Face_handle
+        remove_edge (Arrangement_2<Traits,Dcel>& arr,
                      typename Arrangement_2<Traits,Dcel>::Halfedge_handle e);}
-   {removes an edge given by one of the twin halfedges \ccc{e} that forms it,
-    from the arrangement \ccc{arr}. Using this function is equivalent to
-    invoking \ccc{arr.remove_edge (e, true, true)} --- that is, to remove the
-    edge and its end-vertices, in case they become isolated. However, this
-    free function requires that \ccc{Traits} be a model of the refined concept
-    \ccc{ArrangementXMonotoneTraits_2}, which requires merge operations
-    on $x$-monotone curves. If one of the end-vertices of \ccc{e} becomes
-    redundant after \ccc{e} is removed (see \ccc{remove_vertex()} for the
-    definition of a redundant vertex), it is removed and its
-    incident edges are merged.
-    If the edge-removal operation causes two faces to merge, the merged face
-    is returned. Otherwise, the face to which the edge was incident is
-    returned.}
 
 \end{ccRefFunction}
 

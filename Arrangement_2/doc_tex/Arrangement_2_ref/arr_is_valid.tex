@@ -1,29 +1,24 @@
-% +------------------------------------------------------------------------+
-% | Reference manual page: arr_is_valid.tex
-% +------------------------------------------------------------------------+
-% | 
-% | Package: Arrangement_2
-% | 
-% +------------------------------------------------------------------------+
-
 \ccRefPageBegin
 
 \begin{ccRefFunction}{is_valid}
 
+\ccDefinition
+
+Checks the validity of the given arrangement. It first invokes the
+member function \ccc{arr.is_valid()} to ensure the topological correctness
+of the arrangement. Then it performs additional validity tests. First, it
+checks that all $x$-monotone curves associated with arrangement edges are
+pairwise disjoint in their interior. Then it makes sure that all holes and
+all isolated vertices are located within the proper arrangement faces.
+The traits class in use must be a model of the concept
+\ccc{ArranagmentXMonotoneTraits_2}. Note that the test carried out by this
+functions may take a considerable amount of time; it should therefore be
+used only for debugging purposes.
+
 \ccInclude{CGAL/Arrangement_2.h}
 
-\ccFunction{template<class Traits, class Dcel>
-            bool is_valid (const Arrangement_2<Traits, Dcel>& arr);}
-   {Checks the validity of the given arrangement. It first invokes the
-    member function \ccc{arr.is_valid()} to ensure the topological correctness
-    of the arrangement. Then it performs additional validity tests. First, it
-    checks that all $x$-monotone curves associated with arrangement edges are
-    pairwise disjoint in their interior. Then it makes sure that all holes and
-    all isolated vertices are located within the proper arrangement faces.
-    The traits class in use must be a model of the concept
-    \ccc{ArranagmentXMonotoneTraits_2}. Note that the test carried out by this
-    functions may take a considerable amount of time; it should therefore be
-    used only for debugging purposes.}
+\ccGlobalFunction{template<typename Traits, typename Dcel>
+                  bool is_valid (const Arrangement_2<Traits, Dcel>& arr);}
 
 \end{ccRefFunction}
 
