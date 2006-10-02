@@ -35,4 +35,8 @@ int solve_1 (mpfi_t *&, const Rational_polynomial_1 &);
 
 CGAL_END_NAMESPACE
 
+#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
+#include <CGAL/Gbrs_solve_1.cpp>
+#endif	// CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
+
 #endif	// CGAL_GBRS_SOLVE_1_H
