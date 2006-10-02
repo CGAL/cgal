@@ -27,9 +27,9 @@
 
 CGAL_BEGIN_NAMESPACE
 
-struct edge_is_border_t   {} ;
-struct vertex_is_border_t {} ;
-struct vertex_point_t     {} ;
+enum edge_is_border_t   { edge_is_border   } ;
+enum vertex_is_border_t { vertex_is_border } ;
+enum vertex_point_t     { vertex_point     } ;
 
 CGAL_END_NAMESPACE
 

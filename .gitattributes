@@ -344,7 +344,9 @@ BGL/examples/BGL/Polyhedron_3/kruskal_with_stored_id.cpp -text
 BGL/include/CGAL/boost/graph/graph_traits_HalfedgeDS.h -text
 BGL/include/CGAL/boost/graph/graph_traits_Polyhedron.h -text
 BGL/include/CGAL/boost/graph/halfedge_graph_traits.h -text
+BGL/include/CGAL/boost/graph/halfedge_graph_traits_HalfedgeDS.h -text
 BGL/include/CGAL/boost/graph/halfedge_graph_traits_Polyhedron.h -text
+BGL/include/CGAL/boost/graph/named_function_params.h -text
 BGL/include/CGAL/boost/graph/properties.h -text
 BGL/include/CGAL/boost/graph/properties_Polyhedron.h -text
 Benchmark/doc_tex/Benchmark/Conics_14_1.arr -text
