@@ -136,6 +136,29 @@ an arrangement formatter class (see Section~\ref{arr_ssec:arr_io_aux_data})
 and defines a simple textual input/output format.
 \end{ccAdvanced}
 
+\subsection{Output \qt\-widget Stream}\label{arr_ssec:qt_stream}
+%--------------------------------------------
+You can display the drawings of arrangements in a graphical window
+powered by \qt\ interactively. All you need to do is follow the
+guidelines for handling \ccc{Qt_widget} objects, and apply the
+{\em inserter}, which inserts an arrangement into a \ccc{Qt_widget}
+stream to complete the drawing.
+
+The ability to use this output operator, requires that the
+\ccc{Point_2} and \ccc{X_monotone_curve_2} types defined by the
+traits class both support the \ccc{<<} operator that inserts the
+respective geometric object into a \ccc{Qt_widget} stream. The
+\ccc{Arr_rational_arc_traits_2} class (see
+Section~\ref{arr_ssec:tr_ratfunc}) and the \ccc{Arr_linear_traits_2}
+class (see Section~\ref{arr_ssec:tr_segs}) currently do not provide
+this operator for the geometric types they define. Thus, only
+arrangements of line segments, polylines, or conic ards can be written.
+The \ccc{<<} operator for polylines and conic arcs defined in
+\ccc{CGAL/IO/Qt_widget_Polyline_2.h} and
+\ccc{CGAL/IO/Qt_widget_Conic_arc_2.h}
+must be explicitly included, to insert polylines and conic arcs
+respectively into \ccc{Qt_widget} streams.
+
 \subsection{Output Postscript Stream}\label{arr_ssec:ps_stream}
 %--------------------------------------------
 You can create nice drawings of arrangements in Postscript format, which
@@ -161,7 +184,6 @@ respective geometric object into a Postscript stream. The
 and the \ccc{Arr_linear_traits_2} class (see Section~\ref{arr_ssec:tr_segs})
 currently do not provide this operator for the geometric types they define.
 Thus, only arrangements of line segments or of polylines can be written.
-The \ccc{<<} operator for polylines is defined in
-\ccc{Polyline_postscript_file_sctream.h}, which must be explicitly included,
-to insert polylines into Postscript streams.
-
+The \ccc{<<} operator for polylines defined in
+\ccc{CGAL/IO/Polyline_postscript_file_sctream.h} must be explicitly
+included, to insert polylines into Postscript streams.

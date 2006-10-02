@@ -20,30 +20,6 @@ written, without any auxiliary data that may be attached to the
 
 %%%%
 
-Inserts an arrangement into a given Postscript stream.
-Only the basic geometric and topological features of the arrangement are
-written. Auxiliary data that might be attached to the \dcel\ features is
-lost.
-
-\ccInclude{CGAL/IO/Arr_postscript_file_stream.h}
-
-\ccGlobalFunction{template<typename Traits, typename Dcel>
-            Arr_postscript_file_stream& operator<< (std::ostream& os,
-                                      const Arrangement_2<Traits,Dcel>& arr);}
-
-%%%%
-
-Inserts a polyline into a given Postscript stream.
-Only the basic geometric and topological features of the polylines are
-written. Auxiliary data that might be attached is lost.
-    
-\ccInclude{CGAL/IO/Polyline_postscript_file_stream.h}
-
-\ccGlobalFunction{template<typename SegmentTraits>
-            Postscript_file_stream& operator<< (std::ostream& os,
-                                  const Polyline_2<SegmentTraits>& polyline);}
-%%%%
-
 Inserts an arrangement-with-history into a given
 output stream using the default output format.
 
@@ -52,6 +28,55 @@ output stream using the default output format.
 \ccGlobalFunction{template<typename Traits, typename Dcel>
             std::ostream& operator<< (std::ostream& os,
                          const Arrangement_with_history_2<Traits,Dcel>& arr);}
+
+%%%%
+
+Inserts an arrangement into a given Postscript stream.
+Only the basic geometric and topological features of the arrangement are
+written. Auxiliary data that might be attached to the \dcel\ features is
+lost.
+
+\ccInclude{CGAL/IO/Arr_postscript_file_stream.h}
+
+\ccGlobalFunction{template<typename Traits, typename Dcel>
+Arr_postscript_file_stream& operator<< (std::ostream& os,
+                                      const Arrangement_2<Traits,Dcel>& arr);}
+
+%%%%
+
+Inserts a polyline into a given Postscript stream.
+Only the basic geometric and topological features of the polylines are
+written. Auxiliary data that might be attached is lost.
+    
+\ccInclude{CGAL/IO/Polyline_2_postscript_file_stream.h}
+
+\ccGlobalFunction{template<typename SegmentTraits>
+Postscript_file_stream& operator<< (std::ostream& os,
+                                  const Polyline_2<SegmentTraits>& polyline);}
+
+%%%%
+
+Inserts a polyline into a given \ccc{Qt_widget} stream.
+Only the basic geometric and topological features of the polylines are
+written. Auxiliary data that might be attached is lost.
+    
+\ccInclude{CGAL/IO/Qt_widget_Polyline_2.h}
+
+\ccGlobalFunction{template<typename SegmentTraits>
+          Qt_widget& operator<< (std::ostream& os,
+                                 const Polyline_2<SegmentTraits>& polyline);}
+
+%%%%
+
+Inserts a conic arc into a given \ccc{Qt_widget} stream.
+Only the basic geometric and topological features of the conic arcs are
+written. Auxiliary data that might be attached is lost.
+    
+\ccInclude{CGAL/IO/Qt_widget_Conic_arc_2.h}
+
+\ccGlobalFunction{template<typename ConicArc>
+         Qt_widget& operator<< (std::ostream& os,
+                                const _Conic_x_monotone_arc_2<ConicArc>& cv);}
 
 \ccSeeAlso
   \ccc{read}\lcTex{(\ccRefPage{CGAL::read})}\\
