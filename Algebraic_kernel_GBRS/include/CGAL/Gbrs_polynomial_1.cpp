@@ -21,7 +21,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
-#include <CGAL/Gbrs_polynomial_1.h>
 #include <CGAL/MpfiInterval.h>
 #include <iostream>
 #include <gmp.h>
@@ -83,7 +82,7 @@ void Rational_polynomial_1::set_degree (int d) {	// noone should call this funct
 	return;
 };
 
-int Rational_polynomial_1::calc_index (int pow_x) const {
+inline int Rational_polynomial_1::calc_index (int pow_x) const {
 	// we have to calculate the index in the array to store the coefficient
 	// of x^pow_x
 	return degree-pow_x;
@@ -122,12 +121,20 @@ void Rational_polynomial_1::set_coef (int pow_x, unsigned long int c) {
 	mpq_set_ui (coef[calc_index (pow_x)], c, (unsigned long int)1);
 };
 
-void Rational_polynomial_1::set_coef_rat_li (int pow_x, long int num, long int den) {
-	mpq_set_si (coef[calc_index (pow_x)], num, den);
-};
-
 // scaling
 void Rational_polynomial_1::scale (const int s) {
+	Gmpq rational (s);
+	scale (rational);
+	return;
+};
+
+void Rational_polynomial_1::scale (const mpz_t &s) {
+	Gmpq rational (s);
+	scale (rational);
+	return;
+};
+
+void Rational_polynomial_1::scale (const mpq_t &s) {
 	Gmpq rational (s);
 	scale (rational);
 	return;
@@ -153,15 +160,15 @@ void Rational_polynomial_1::scale (const CGAL::Gmpq &s) {
 	return;
 };
 
-int Rational_polynomial_1::get_degree () const {
+inline int Rational_polynomial_1::get_degree () const {
 	return (int)degree;
 };
 
-int Rational_polynomial_1::get_number_of_monomials () const {
+inline int Rational_polynomial_1::get_number_of_monomials () const {
 	return nm;
 };
 
-mpq_t* Rational_polynomial_1::get_coefs () const {
+inline mpq_t* Rational_polynomial_1::get_coefs () const {
 	return coef;
 };
 
@@ -376,12 +383,22 @@ Rational_polynomial_1 Rational_polynomial_1::operator* (const Rational_polynomia
 	return product;
 };
 
+template <class T>
+Rational_polynomial_1 Rational_polynomial_1::operator* (const T &n) const {
+	Rational_polynomial_1 r (*this);
+	r.scale (n);
+	return r;
+};
+
 void Rational_polynomial_1::operator*= (const Rational_polynomial_1 &f) {
 	Rational_polynomial_1 aux (*this);
 	*this = aux * f;
 	return;
 };
 
+// TODO: this function returns false if the two polynomials have different
+// degree (it may be the case where the two are equal and one of them has
+// the coefficients of higher degree set to zero)
 bool Rational_polynomial_1::operator== (const Rational_polynomial_1 &p) const {
 	mpq_t *p_coef;
 	if (degree != p.get_degree ())

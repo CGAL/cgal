@@ -38,7 +38,7 @@ class Rational_polynomial_1 {
 		int degree;	// degree
 		int nm;	// number of monomials in the polynomial
 		mpq_t* coef;	// the coefficients
-		int calc_index (int) const;	// index of the element
+		inline int calc_index (int) const;	// index of the element
 	public:
 		// construction and destruction
 		Rational_polynomial_1 ();
@@ -56,14 +56,15 @@ class Rational_polynomial_1 {
 		void set_coef (int, unsigned int);
 		void set_coef (int, long int);
 		void set_coef (int, unsigned long int);
-		void set_coef_rat_li (int, long int, long int);
 		void scale (const int);
+		void scale (const mpz_t &);
+		void scale (const mpq_t &);
 		void scale (const CGAL::Gmpz &);
 		void scale (const CGAL::Gmpq &);
 		// access to the data
-		int get_degree () const;
-		int get_number_of_monomials () const;
-		mpq_t* get_coefs () const;
+		inline int get_degree () const;
+		inline int get_number_of_monomials () const;
+		inline mpq_t* get_coefs () const;
 		void get_coef (int, mpq_t *) const;
 		CGAL::MpfiInterval eval (const CGAL::MpfiInterval &) const;
 		CGAL::Gmpq eval (const CGAL::Gmpq &) const;
@@ -80,6 +81,7 @@ class Rational_polynomial_1 {
 		void operator-= (const Rational_polynomial_1 &);
 		void shift (int);
 		Rational_polynomial_1 operator* (const Rational_polynomial_1 &) const;
+		template <class T> Rational_polynomial_1 operator* (const T &) const;
 		void operator*= (const Rational_polynomial_1 &);
 		bool operator== (const Rational_polynomial_1 &) const;
 };
@@ -87,5 +89,9 @@ class Rational_polynomial_1 {
 std::ostream& operator<< (std::ostream &, const Rational_polynomial_1 &);
 
 CGAL_END_NAMESPACE
+
+#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
+#include <CGAL/Gbrs_polynomial_1.cpp>
+#endif	// CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 
 #endif	// CGAL_GRBS_POLYNOMIAL_1_H
