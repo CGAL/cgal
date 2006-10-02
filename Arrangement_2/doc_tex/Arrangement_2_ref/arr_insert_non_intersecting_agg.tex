@@ -4,20 +4,24 @@
 
 \ccDefinition
 
-Aggregately inserts the given range of $x$-monotone curves
-\ccc{[first,last)} into the arrangement \ccc{arr}. The input curves should
-be pairwise disjoint in their interior and pairwise interrior-disjoint
-from all existing arrangement vertices and edges. 
-The \ccc{Traits} parameter must be a model of the
-\ccc{ArrangementBasicTraits_2} concept.
+Inserts a set of $x$-monotone curves in a given range into a given
+arrangement. The insertion is performed in an aggregated manner, using
+the sweep-line algorithm. The input curves should be pairwise disjoint
+in their interior and pairwise interrior-disjoint from all existing
+arrangement vertices and edges. 
 
 \ccInclude{CGAL/Arrangement_2.h}
 
 \ccGlobalFunction{template<typename Traits, typename Dcel, InputIterator>
 void insert_non_intersecting_curves(Arrangement_2<Traits,Dcel>& arr,
                                     InputIterator first, InputIterator last);}
-\ccPrecond{The value-type of \ccc{InputIterator} is 
-\ccc{Traits::X_monotone_curve_2}.}
+
+\ccHeading{Requirements}
+\begin{enumerate}
+\item The instantiated \ccc{Traits} class must model the
+  \ccc{ArrangementBasicTraits_2} concept, as no intersections are computed.
+\item \ccc{InputIterator::value_type} must be \ccc{Traits::X_monotone_curve_2}
+\end{enumerate}
 
 \end{ccRefFunction}
 

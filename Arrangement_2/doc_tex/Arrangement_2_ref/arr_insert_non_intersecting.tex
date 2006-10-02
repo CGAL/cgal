@@ -4,22 +4,19 @@
 
 \ccDefinition
 
-Inserts the given $x$-monotone curve \ccc{xc} into the arrangement
-\ccc{arr}, where the interior of \ccc{xc} is disjoint from all existing
-arrangement vertices and edges. Under this assumption, it is possible to
-locate the endpoints of \ccc{xc} in the arrangement and use one of the
-specialized insertion member-functions of \ccc{arr} according to the
-results. As no intersection are computed, the \ccc{Traits} parameter
-must model the restricted \ccc{ArrangementBasicTraits_2} concept.
-The point-location object \ccc{pl}, which must model the
-\ccc{ArrangementPointLocation_2} concept, is used for answering
-the two point-location queries on \ccc{xc}'s endpoints. The insertion
-operations creates a single new edge, that is, two twin halfedges,
-and the function returns a handle for the one directed
+Inserts a given $x$-monotone curve into a given arrangement, where the
+interior of \ccc{xc} is disjoint from all existing arrangement vertices
+and edges. Under this assumption, it is possible to locate the endpoints
+of the given curve in the arrangement and use one of the specialized
+insertion member-functions of the arrangement according to the results.
+The insertion operations creates a single new edge, that is, two twin
+halfedges, and the function returns a handle for the one directed
 lexicographically in increasing order (from left to right).
-By default, the function uses the ``walk along line'' point-location
-strategy --- namely, an instance of the class
-\ccc{Arr_walk_along_line_point_location<Arrangement_2<Traits,Dcel> >}.
+
+A given point-location object is used for answering the two point-location
+queries on the given curve endpoints. By default, the function uses the
+``walk along line'' point-location strategy --- namely, an instance of the
+class \ccc{Arr_walk_along_line_point_location<Arrangement_2<Traits,Dcel> >}.
 
 \ccInclude{CGAL/Arrangement_2.h}
 
@@ -32,18 +29,13 @@ strategy --- namely, an instance of the class
 \ccPrecond{If provided, \ccc{pl} must be attached to the given arrangement
 \ccc{arr}.}
 
-% Inserts the given $x$-monotone curve \ccc{xc} into the arrangement
-% \ccc{arr}, where the interior of \ccc{xc} is disjoint from all existing
-% arrangement vertices and edges. The function returns a handle for the
-% one of the twin halfedges created by the insertion.
-% The function operates as the function listed above, but it uses the default
-% ``walk along line'' point-location strategy, so users need not provide a
-% point-location object.
-%
-%\ccGlobalFunction{template<typename Traits, typename Dcel>
-%            typename Arrangement_2<Traits,Dcel>::Halfedge_handle
-%            insert_non_intersecting_curve (Arrangement_2<Traits,Dcel>& arr,
-%                         const typename Traits::X_monotone_curve_2& xc);}
+\ccHeading{Requirements}
+\begin{enumerate}
+\item The instantiated \ccc{Traits} class must model the restricted
+\ccc{ArrangementBasicTraits_2} concept, as no intersections are computed.
+\item The point-location object \ccc{pl} must model the
+\ccc{ArrangementPointLocation_2} concept. 
+\end{enumerate}
 
 \end{ccRefFunction}
 

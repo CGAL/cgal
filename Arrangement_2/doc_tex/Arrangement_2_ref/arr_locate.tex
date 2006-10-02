@@ -4,17 +4,16 @@
 
 \ccDefinition
 
-Performs a batched point-location operation on an arrangement.
-The function accepts a range of query points, defined by
-\ccc{[points_begin, points_end)} and locates each point in the
-arrangement. The query-results are returned in through the output iterator,
-whose value type is \ccc{std::pair<Point_2,Object>}. Namely, each
-result is given as a point and an object represneting the arrangement
-feature that contains it (an \ccc{Object} that may be either
-\ccc{Face_const_handle}, \ccc{Halfedge_const_handle} or
-\ccc{Vertex_const_hanlde}). The result pair in output sequence are sorted
-by an increasing $xy$-lexicographical order on the query points.
-The function returns a past-the-end iterator for the output sequence.
+The function \ccRefName\ performs a batched point-location operation on a
+given arrangement. It accepts a range of query points, and locates each
+point in the arrangement. The query results are returned through the output
+iterator. Each result is given as a pair of the query point and an object
+represneting the arrangement feature that contains it, namely an
+\ccc{Object} that may be either \ccc{Face_const_handle},
+\ccc{Halfedge_const_handle}, or \ccc{Vertex_const_hanlde}. The resulting
+pairs in the output sequence are sorted in increasing $xy$-lexicographical
+order of the query points. The function returns a past-the-end iterator of
+the output sequence.
 
 \ccInclude{CGAL/Arr_batched_point_location.h}
 
@@ -24,10 +23,13 @@ The function returns a past-the-end iterator for the output sequence.
                                    PointsIterator points_begin,
                                    PointsIterator points_end,
                                    OutputIterator oi);}
-\ccPrecond{The value-type of \ccc{PointsIterator} is 
-           \ccc{Traits::Point_2}.}
-\ccPrecond{The value-type of \ccc{OutputIterator} is 
-           \ccc{std::pair<Traits::Point_2,Object>}.}
+
+\ccHeading{Requirements}
+\begin{enumerate}
+\item \ccc{InputIterator::value_type} must be \ccc{Traits::Point_2}.
+\item \ccc{OutputIterator::value_type} must be
+  \ccc{std::pair<Traits::Point_2,Object>}.
+\end{enumerate}
 
 \end{ccRefFunction}
 

@@ -4,10 +4,9 @@
 
 \ccDefinition
 
-Inserts the given range of $x$-monotone curves \ccc{[first,last)}
-into the arrangement \ccc{arr}. The insertion is performed in an aggregated
-manner, using the sweep-line algorithm. The \ccc{Traits} parameter must
-be a model of the \ccc{ArrangementXMonotoneTraits_2} concept.
+Inserts a set of $x$-monotone curves in a given range into a given
+arrangement. The insertion is performed in an aggregated manner, using
+the sweep-line algorithm.
 
 \ccInclude{CGAL/Arrangement_2.h}
 
@@ -15,8 +14,13 @@ be a model of the \ccc{ArrangementXMonotoneTraits_2} concept.
                            typename InputIterator>
             void insert_x_monotone_curves (Arrangement_2<Traits,Dcel>& arr,
                          InputIterator first, InputIterator last);}
-\ccPrecond{The value-type of \ccc{InputIterator} is 
-\ccc{Traits::X_monotone_curve_2}.}
+
+\ccHeading{Requirements}
+\begin{enumerate}
+\item The instantiated \ccc{Traits} class must model the
+  \ccc{ArrangementXMonotoneTraits_2} concept.
+\item \ccc{InputIterator::value_type} must be \ccc{Traits::X_monotone_curve_2}
+\end{enumerate}
 
 \end{ccRefFunction}
 
