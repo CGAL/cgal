@@ -20,7 +20,7 @@
 
 #include <vector>
 
-#include <CGAL/Surface_mesh_simplification/Detail/ECMS_common.h>
+#include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_params.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -136,13 +136,17 @@ private :
 
   bool is_border ( edge_descriptor const& edge ) const
   {
-    edge_is_border_t is_border_property ;
-    return get(is_border_property,mSurface,edge) ;
+    return get(edge_is_border,mSurface,edge) ;
   }    
   bool is_undirected_edge_a_border ( edge_descriptor const& edge ) const
   {
     return is_border(edge) || is_border(opposite_edge(edge,mSurface)) ;
   }    
+
+  Point const& get_point ( const_vertex_descriptor const& v ) const 
+  {
+    return get(vertex_point,mSurface,v);
+  }
 
   static Vector Point_cross_product ( Point const& a, Point const& b ) 
   {

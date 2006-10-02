@@ -15,10 +15,10 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_FULL_COLLAPSE_DATA_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_FULL_COLLAPSE_DATA_H
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_COST_AND_PLACEMENT_CACHE_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_COST_AND_PLACEMENT_CACHE_H
 
-#include <CGAL/Surface_mesh_simplification/Detail/ECMS_common.h>
+#include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -36,8 +36,8 @@ public:
   typedef typename Kernel_traits<Point>::Kernel      Kernel ;
   typedef typename Kernel::FT                        FT ;
 
-  typedef optional<FT>      Optional_cost_type ;
-  typedef optional<Point_3> Optional_placement_type ;
+  typedef optional<FT>    Optional_cost_type ;
+  typedef optional<Point> Optional_placement_type ;
   
 public :
 
@@ -63,6 +63,6 @@ private :
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_FULL_COLLAPSE_DATA_H
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_COST_AND_PLACEMENT_CACHE_H
 // EOF //
  

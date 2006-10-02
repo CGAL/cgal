@@ -27,7 +27,7 @@
 #include <boost/iterator_adaptors.hpp>
 #include <boost/graph/adjacency_list.hpp>
 
-#include <CGAL/Surface_mesh_simplification/Detail/ECMS_common.h>
+#include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 #include <CGAL/Surface_mesh_simplification/Collapse_operator.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -40,8 +40,10 @@ namespace Surface_mesh_simplification
 //
 template<class ECM_
         ,class ShouldStop_
-        ,class EdgeExtraPtrMap_
+        ,class VertexPointMap_
         ,class VertexIsFixedMap_
+        ,class EdgeIndexMap_
+        ,class EdgeIsBorderMap_
         ,class SetCache_
         ,class GetCost_
         ,class GetPlacement_
@@ -55,8 +57,10 @@ public:
 
   typedef ECM_              ECM ;
   typedef ShouldStop_       ShouldStop ;
-  typedef EdgeExtraPtrMap_  EdgeExtraPtrMap ;
+  typedef VertexPointMap_   VertexPointMap ;
   typedef VertexIsFixedMap_ VertexIsFixedMap ;
+  typedef EdgeIndexMap_     EdgeIndexMap ;
+  typedef EdgeIsBorderMap_  EdgeIsBorderMap ;
   typedef SetCache_         SetCache ;
   typedef GetCost_          GetCost ;
   typedef GetPlacement_     GetPlacement ;
@@ -116,21 +120,8 @@ public:
     Self const* mAlgorithm ;
   } ;
   
-  struct ID_map : boost::put_get_helper<size_type, ID_map>
-  {
-    ID_map( Self const* aAlgorithm ) : mAlgorithm(aAlgorithm) {}
-    
-    typedef boost::readable_property_map_tag category;
-    typedef size_type                        value_type;
-    typedef size_type                        reference;
-    typedef edge_descriptor                  key_type;
-    
-    size_type operator[]( edge_descriptor const& e ) const { return mAlgorithm->get_id(e); }
-    
-    Self const* mAlgorithm ;
-  };
   
-  typedef Modifiable_priority_queue<edge_descriptor,Compare_cost,ID_map> PQ ;
+  typedef Modifiable_priority_queue<edge_descriptor,Compare_cost,EdgeIndexMap> PQ ;
   typedef typename PQ::handle pq_handle ;
   
   // An Edge_data is associated with EVERY _undirected_ edge in the mesh (collapsable or not).
@@ -140,7 +131,7 @@ public:
   {
   public :
   
-    Edge_cache() : mPQHandle(), mID(0) {}
+    Edge_cache() : mPQHandle() {}
     
     Cache const& cache() const { return mCache ; }
     Cache &      cache()       { return mCache ; }
@@ -153,15 +144,10 @@ public:
     
     void reset_PQ_handle() { mPQHandle = PQ::null_handle() ; }
     
-    size_type  id() const { return mID ; }
-    size_type& id()       { return mID ; }
-    
   private:  
     
     Cache     mCache ;
     pq_handle mPQHandle ;
-    size_type mID ;
-    
   } ;
   typedef Edge_data* Edge_data_ptr ;
   typedef boost::scoped_array<Edge_data> Edge_data_array ;
@@ -171,8 +157,10 @@ public:
 
   EdgeCollapse( ECM&                    aSurface
               , ShouldStop       const& aShouldStop 
-              , EdgeExtraPtrMap  const& aEdge_extra_ptr_map 
+              , VertexPointMap   const& aVertex_point_map 
               , VertexIsFixedMap const& aVertex_is_fixed_map 
+              , EdgeIndxMap      const& aEdge_index_map 
+              , EdgeIsBorderMap  const& aEdge_is_border_map 
               , SetCache         const& aSetCache
               , GetCost          const& aGetCost
               , GetPlacement     const& aGetPlacement
@@ -191,36 +179,26 @@ private:
   void Collapse( edge_descriptor const& aEdge ) ;
   void Update_neighbors( vertex_descriptor const& aKeptV ) ;
   
-  bool is_vertex_fixed ( const_vertex_descriptor const& v ) const { return get(Vertex_is_fixed_map,v) ; }
+  size_type get_id ( edge_descriptor const& aEdge ) const { return get(Edge_index_map,aEdge); }
   
-  bool is_border ( const_vertex_descriptor const& v ) const 
-  {
-    vertex_is_border_t is_border_vertex_property ;
-    return get(is_border_vertex_property,mSurface,v) ;
-  }    
+  bool is_vertex_fixed ( const_vertex_descriptor const& aV ) const { return get(Vertex_is_fixed_map,aV) ; }
   
-  bool is_border ( const_edge_descriptor const& aEdge ) const
-  {
-    edge_is_border_t is_border_edge_property ;
-    return get(is_border_edge_property,mSurface,aEdge) ;
-  }    
+  bool is_border ( const_edge_descriptor const& aEdge ) const { return get(Edge_is_border_map,aEdge) ; }    
   
   bool is_undirected_edge_a_border ( const_edge_descriptor const& aEdge ) const
   {
     return is_border(aEdge) || is_border(opposite_edge(aEdge,mSurface)) ;
   }    
   
-  Edge_data_ptr get_data ( edge_descriptor const& aEdge ) const { return static_cast<Edge_data_ptr>(get(Edge_extra_ptr_map,aEdge)) ; }
+  bool is_border ( const_vertex_descriptor const& aV ) const ;
   
-  void set_data ( edge_descriptor const& aEdge, Edge_data_ptr aData ) { put(Edge_extra_ptr_map,aEdge,static_cast<void*>(aData)) ; }
-
-  size_type get_id ( edge_descriptor const& aEdge ) const
-  {
-    Edge_data_ptr lData = get_data(aEdge);
-    CGAL_assertion(lData);
-    return lData->id(); 
+  Edge_data& get_data ( edge_descriptor const& aEdge ) const 
+  { 
+    return mEdgeDataArray[get_id(aEdge)/2];
   }
-    
+  
+  Point get_point ( const_vertex_descriptor const aV ) const { return get(Vertex_point_map,aV); }
+  
   tuple<const_vertex_descriptor,const_vertex_descriptor> get_vertices( const_edge_descriptor const& aEdge ) const
   {
     const_vertex_descriptor p,q ;
@@ -251,16 +229,12 @@ private:
   
   Optional_cost_type get_cost ( edge_descriptor const& aEdge ) const
   {
-    Edge_data_ptr lData = get_data(aEdge);
-    CGAL_assertion(lData);
-    return Get_cost(aEdge,mSurface,lData->cache(),mCostParams);
+    return Get_cost(aEdge,mSurface,get_data(aEdge).cache(),mCostParams);
   }
   
   Optional_placement_type get_placement( edge_descriptor const& aEdge ) const
   {
-    Edge_data_ptr lData = get_data(aEdge);
-    CGAL_assertion(lData);
-    return Get_placement(aEdge,mSurface,lData->cache(),mPlacementParams);
+    return Get_placement(aEdge,mSurface,get_data(aEdge).cache(),mPlacementParams);
   }
   
   bool compare_cost( edge_descriptor const& aEdgeA, edge_descriptor const& aEdgeB ) const
@@ -301,7 +275,7 @@ private:
   {
     optional<edge_descriptor> rEdge = mPQ->extract_top();
     if ( rEdge )
-      get_data(*rEdge)->reset_PQ_handle();
+      get_data(*rEdge).reset_PQ_handle();
     return rEdge ;  
   }
    
@@ -309,8 +283,10 @@ private:
 
   ECM&                    mSurface ;
   ShouldStop       const& Should_stop ;
-  EdgeExtraPtrMap  const& Edge_extra_ptr_map ;
+  VertexPointMap   const& Vertex_point_map ;
   VertexIsFixedMap const& Vertex_is_fixed_map ;
+  EdgeIndexMap     const& Edge_index_map ;
+  EdgeIsBorderMap  const& Edge_is_border_map ;
   SetCache         const& Set_cache;   
   GetCost          const& Get_cost ;
   GetPlacement     const& Get_placement ;

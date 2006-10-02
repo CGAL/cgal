@@ -15,11 +15,11 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_SET_FULL_COLLAPSE_DATA_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_SET_FULL_COLLAPSE_DATA_H 1
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_SET_COST_AND_PLACEMENT_CACHE_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_SET_COST_AND_PLACEMENT_CACHE_H 1
 
-#include <CGAL/Surface_mesh_simplification/Detail/ECMS_common.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Full_collapse_data.h>
+#include <CGAL/Surface_mesh_simplification/Detail/Common.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Cost_and_placement_cache.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_params.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Detail/Lindstrom_Turk_core.h>
 
@@ -41,14 +41,14 @@ public:
   typedef typename boost::graph_traits<ECM>::vertex_descriptor vertex_descriptor ;
   typedef typename boost::graph_traits<ECM>::edge_descriptor   edge_descriptor ;
   
-  typedef typename halfedge_graph_traits<ECM>::Point Point_3 ;
-  typedef typename Kernel_traits<Point_3>::Kernel     Kernel ;
-  typedef typename Kernel::FT                         FT ;
+  typedef typename halfedge_graph_traits<ECM>::Point Point ;
+  typedef typename Kernel_traits<Point>::Kernel      Kernel ;
+  typedef typename Kernel::FT                        FT ;
   
   typedef Cost_and_placement_cache<ECM> Cache ;
   
-  typedef optional<FT>      Optional_cost_type ;
-  typedef optional<Point_3> Optional_placement_type ;
+  typedef optional<FT>    Optional_cost_type ;
+  typedef optional<Point> Optional_placement_type ;
   
   typedef LindstromTurk_params CostParams      ;
   typedef LindstromTurk_params PlacementParams ;
@@ -83,6 +83,6 @@ public :
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_SET_FULL_COLLAPSE_DATA_H //
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_SET_COST_AND_PLACEMENT_CACHE_H //
 // EOF //
  

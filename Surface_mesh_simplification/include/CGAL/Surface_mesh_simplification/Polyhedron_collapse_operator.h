@@ -18,7 +18,7 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLYHEDRON_COLLAPSE_OPERATOR_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLYHEDRON_COLLAPSE_OPERATOR_H 1
 
-#include <CGAL/Surface_mesh_simplification/Detail/ECMS_common.h>
+#include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 #include <CGAL/Surface_mesh_simplification/Collapse_operator.h>
 #include <CGAL/Polyhedron_3.h>
 
@@ -41,18 +41,17 @@ struct Collapse_triangulation_edge< Polyhedron_3<Gt,I,HDS,A> >
   typedef typename boost::graph_traits<ECM>::edge_descriptor   edge_descriptor ;
   typedef typename boost::graph_traits<ECM>::vertex_descriptor vertex_descriptor ;
   
-  vertex_descriptor operator() ( edge_descriptor const& pq
-                               , edge_descriptor const& pt
-                               , edge_descriptor const& qb
-                               , ECM&                   aSurface 
-                               ) const
+  vertex_descriptor operator() ( edge_descriptor const& pq, ECM& aSurface ) const
   {
-    edge_descriptor null ;
+    edge_descriptor qp = opposite_edge(pq,aSurface);
     
-    bool lTopFaceExists         = pt != null ;
-    bool lBottomFaceExists      = qb != null ;
+    bool lTopFaceExists         = !pq->is_border() ;
+    bool lBottomFaceExists      = !qp->is_border() ;
     bool lTopLeftFaceExists     = lTopFaceExists    && !pt->is_border() ;
     bool lBottomRightFaceExists = lBottomFaceExists && !qb->is_border() ;
+    
+    edge_descriptor pq = opposite_edge(prev_edge(pq,aSurface),aSurface);
+    edge_descriptor qb = opposite_edge(prev_edge(qp,aSurface),aSurface);
     
     CGAL_precondition( !lTopFaceExists    || (lTopFaceExists    && ( pt->vertex()->vertex_degree() > 2 ) ) ) ;
     CGAL_precondition( !lBottomFaceExists || (lBottomFaceExists && ( qb->vertex()->vertex_degree() > 2 ) ) ) ;

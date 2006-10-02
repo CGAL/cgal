@@ -15,8 +15,8 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_ECMS_COMMON_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_ECMS_COMMON_H 1
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_COMMON_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_COMMON_H 1
 
 #include <functional>
 #include <utility>
@@ -34,7 +34,6 @@
 #include <CGAL/Cartesian/MatrixC33.h>
 #include <CGAL/Modifiable_priority_queue.h>
 #include <CGAL/boost/graph/halfedge_graph_traits.h>
-#include <CGAL/boost/graph/Halfedge_graph_traits.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -102,12 +101,6 @@ struct ExtractPlacementParamsType
 
 } // namespace Surface_mesh_simplification
 
-//
-// Valid surface predicate
-//
-template<class ECM>
-inline bool is_valid_triangulated_surface_mesh ( ECM const& aECM ) { return aECM.is_pure_triangle() ; }
-
 template<class XYZ>
 inline std::string xyz_to_string( XYZ const& xyz )
 {
@@ -171,6 +164,6 @@ CGAL_END_NAMESPACE
 
 #undef CGAL_ECMS_ENABLE_TRACE
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_ECMS_COMMON_H //
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_COMMON_H //
 // EOF //
  

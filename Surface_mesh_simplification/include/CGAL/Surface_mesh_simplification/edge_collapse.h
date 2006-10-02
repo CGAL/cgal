@@ -18,13 +18,13 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_EDGE_COLLAPSE_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_EDGE_COLLAPSE_H 1
 
-#include <CGAL/boost/graph/BGL_properties.h>
+#include <CGAL/boost/graph/properties.h>
+#include <CGAL/boost/graph/named_function_params.h>
 
 #include <CGAL/Surface_mesh_simplification/Detail/Edge_collapse.h>
-#include <CGAL/Surface_mesh_simplification/Edge_extra_pointer_map_stored.h>
-#include <CGAL/Surface_mesh_simplification/Vertex_is_fixed_map_always_false.h>
+#include <CGAL/Surface_mesh_simplification/Vertex_is_fixed_property_map_always_false.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_params.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_set_partial_collapse_data.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_set_cost_cache.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_placement.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Cached_cost.h>
 
@@ -32,6 +32,7 @@ CGAL_BEGIN_NAMESPACE
 
 namespace Surface_mesh_simplification
 {
+
 
 //
 // Edge-collapse method:
@@ -67,9 +68,11 @@ namespace Surface_mesh_simplification
 //
 template<class ECM
         ,class ShouldStop
-        ,class EdgeExtraPtrMap
+        ,class VertexPointMap
         ,class VertexIsFixedMap
-        ,class SetCollapseData
+        ,class EdgeIndexMap
+        ,class EdgeIsBorderMap
+        ,class SetCache
         ,class GetCost
         ,class GetPlacement
         ,class CostParams
@@ -80,11 +83,13 @@ int edge_collapse ( ECM&                    aSurface
                   , ShouldStop       const& aShould_stop
                   
                   // optional mesh information policies 
-                  , EdgeExtraPtrMap  const& aEdge_extra_ptr_map   // defaults to Edge_extra_pointer_map_stored<ECM>
-                  , VertexIsFixedMap const& aVertex_is_fixed_map  // defaults to Vertex_is_fixed_map_always_false<ECM>
+                  , VertexPointMap   const& aVertex_point_map     // defaults to get(Vertex_point,aSurface)
+                  , VertexIsFixedMap const& aVertex_is_fixed_map  // defaults to Vertex_is_fixed_map_always_false<ECM>()
+                  , EdgeIndexMap     const& aEdge_index_map       // defaults to get(Edge_index,aSurface) 
+                  , EdgeIsBorderMap  const& aEdge_is_border_map   //  defaults to get(Edge_is_border,aSurface) 
                   
                   // optional strategy policies - defaults to LindstomTurk
-                  , SetCollapseData  const& aSet_collapse_data
+                  , SetCache         const& aSet_cache
                   , GetCost          const& aGet_cost 
                   , GetPlacement     const& aGet_placement
                   , CostParams       const* aCostParams       // Can be NULL 
@@ -93,30 +98,34 @@ int edge_collapse ( ECM&                    aSurface
                   , Visitor*                aVisitor // Can be NULL
                   ) 
 {
-  typedef EdgeCollapse<ECM
-                      ,ShouldStop
-                      ,EdgeExtraPtrMap
-                      ,VertexIsFixedMap
-                      ,SetCollapseData
-                      ,GetCost
-                      ,GetPlacement
-                      ,CostParams
-                      ,PlacementParams
-                      ,Visitor
+  typedef EdgeCollapse< ECM
+                      , ShouldStop
+                      , VertexPointMap
+                      , VertexIsFixedMap
+                      , EdgeIndexMap
+                      , EdgeIsBorderMap
+                      , SetCache
+                      , GetCost
+                      , GetPlacement
+                      , CostParams
+                      , PlacementParams
+                      , Visitor
                       >
                       Algorithm 
                       ;
                       
-  Algorithm algorithm(aSurface
-                     ,aShould_stop
-                     ,aEdge_extra_ptr_map
-                     ,aVertex_is_fixed_map
-                     ,aSet_collapse_data
-                     ,aGet_cost
-                     ,aGet_placement
-                     ,aCostParams
-                     ,aPlacementParams
-                     ,aVisitor
+  Algorithm algorithm( aSurface
+                     , aShould_stop
+                     , aVertex_point_map
+                     , aVertex_is_fixed_map
+                     , aEdge_index_map
+                     , aEdge_is_border_map
+                     , aSet_cache
+                     , aGet_cost
+                     , aGet_placement
+                     , aCostParams
+                     , aPlacementParams
+                     , aVisitor
                      ) ;
                      
   return algorithm.run();
@@ -147,130 +156,13 @@ struct Dummy_visitor
   void OnNonCollapsable(Edge const&, ECM& ) {}                
 } ;
 
-template<class ECM
-        ,class ShouldStop
-        ,class EdgeExtraPtrMap
-        ,class VertexIsFixedMap
-        ,class SetCollapseData
-        ,class GetCost
-        ,class GetPlacement
-        ,class CostParams
-        ,class PlacementParams
-        >
-int edge_collapse ( ECM&                    aSurface
-                  , ShouldStop       const& aShould_stop
-                  , EdgeExtraPtrMap  const& aEdge_extra_ptr_map
-                  , VertexIsFixedMap const& aVertex_is_fixed_map
-                  , SetCollapseData  const& aSet_collapse_data
-                  , GetCost          const& aGet_cost 
-                  , GetPlacement     const& aGet_placement
-                  , CostParams       const* aCostParams
-                  , PlacementParams  const* aPlacementParams
-                  ) 
-{
-  return edge_collapse(aSurface 
-                      ,aShould_stop
-                      ,aEdge_extra_ptr_map
-                      ,aVertex_is_fixed_map
-                      ,aSet_collapse_data
-                      ,aGet_cost
-                      ,aGet_placement
-                      ,aCostParams
-                      ,aPlacementParams
-                      ,((Dummy_visitor*)0)
-                      );
-}                          
 
 template<class ECM
         ,class ShouldStop
-        ,class EdgeExtraPtrMap
-        ,class VertexIsFixedMap
-        ,class SetCollapseData
-        ,class GetCost
-        ,class GetPlacement
+        ,class NamedParams
         >
-int edge_collapse ( ECM&                    aSurface
-                  , ShouldStop       const& aShould_stop
-                  , EdgeExtraPtrMap  const& aEdge_extra_ptr_map
-                  , VertexIsFixedMap const& aVertex_is_fixed_map
-                  , SetCollapseData  const& aSet_collapse_data
-                  , GetCost          const& aGet_cost 
-                  , GetPlacement     const& aGet_placement
-                  ) 
+int edge_collapse ( ECM& aSurface, ShouldStop const& aShould_stop, NamedParams const& aNamed_params ) 
 {
-  typename ExtractCostParamsType     <GetCost     ,SetCollapseData>::type      cost_params ;
-  typename ExtractPlacementParamsType<GetPlacement,SetCollapseData>::type placement_params ;
-  
-  return edge_collapse(aSurface 
-                      ,aShould_stop
-                      ,aEdge_extra_ptr_map
-                      ,aVertex_is_fixed_map
-                      ,aSet_collapse_data
-                      ,aGet_cost
-                      ,aGet_placement
-                      ,&cost_params
-                      ,&placement_params
-                      ,((Dummy_visitor*)0)
-                      );
-}                          
-
-template<class ECM, class ShouldStop, class EdgeExtraPtrMap, class VertexIsFixedMap>
-int edge_collapse ( ECM&                    aSurface
-                  , ShouldStop       const& aShould_stop
-                  , EdgeExtraPtrMap  const& aEdge_extra_ptr_map
-                  , VertexIsFixedMap const& aVertex_is_fixed_map
-                  ) 
-{
-  LindstromTurk_params params ;
-  
-  return edge_collapse(aSurface 
-                      ,aShould_stop
-                      ,aEdge_extra_ptr_map
-                      ,aVertex_is_fixed_map
-                      ,Set_partial_collapse_data_LindstromTurk<ECM>()
-                      ,Cached_cost<ECM>()
-                      ,LindstromTurk_placement<ECM>()
-                      ,&params
-                      ,&params
-                      ,((Dummy_visitor*)0)
-                      );
-}                          
-
-template<class ECM, class ShouldStop, class EdgeExtraPtrMap>
-int edge_collapse ( ECM& aSurface, ShouldStop const& aShould_stop, EdgeExtraPtrMap const& aEdge_extra_ptr_map ) 
-{
-  LindstromTurk_params params ;
-  
-  return edge_collapse(aSurface 
-                      ,aShould_stop
-                      ,aEdge_extra_ptr_map
-                      ,Vertex_is_fixed_map_always_false<ECM>()
-                      ,Set_partial_collapse_data_LindstromTurk<ECM>()
-                      ,Cached_cost<ECM>()
-                      ,LindstromTurk_placement<ECM>()
-                      ,&params
-                      ,&params
-                      ,((Dummy_visitor*)0)
-                      );
-}                          
-
-template<class ECM, class ShouldStop>
-int edge_collapse ( ECM& aSurface, ShouldStop const& aShould_stop ) 
-{
-  LindstromTurk_params params ;
-  
-  return edge_collapse(aSurface 
-                      ,aShould_stop
-                      ,Edge_extra_pointer_map_stored<ECM>()
-                      ,Vertex_is_fixed_map_always_false<ECM>()
-                      ,Set_partial_collapse_data_LindstromTurk<ECM>()
-                      ,Cached_cost<ECM>()
-                      ,LindstromTurk_placement<ECM>()
-                      ,&params
-                      ,&params
-                      ,((Dummy_visitor*)0)
-                      );
-}                          
 
 } // namespace Surface_mesh_simplification
 

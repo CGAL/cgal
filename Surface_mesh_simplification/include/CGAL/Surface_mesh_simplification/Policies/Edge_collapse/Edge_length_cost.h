@@ -18,7 +18,7 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_EDGE_LENGHT_COST_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_EDGE_LENGHT_COST_H
 
-#include <CGAL/Surface_mesh_simplification/Detail/ECMS_common.h>
+#include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -40,9 +40,9 @@ private :
     
   typedef typename boost::graph_traits<ECM>::vertex_descriptor vertex_descriptor ;
   
-  typedef typename halfedge_graph_traits<ECM>::Point Point_3 ;
+  typedef typename halfedge_graph_traits<ECM>::Point Point ;
   
-  typedef typename Kernel_traits<Point_3>::Kernel     Kernel ;
+  typedef typename Kernel_traits<Point>::Kernel Kernel ;
 
 public:
 
@@ -68,8 +68,8 @@ public:
   {
     vertex_descriptor vs,vt ; tie(vs,vt) = this->get_vertices(aEdge,aSurface);
     
-    Point_3 const& ps = get_point(vs,aSurface);
-    Point_3 const& pt = get_point(vt,aSurface);
+    Point_3 const& ps = get(vertex_point,aSurface,vs);
+    Point_3 const& pt = get(vertex_point,aSurface,vt);
       
     return result_type(squared_distance(ps,pt));
   }

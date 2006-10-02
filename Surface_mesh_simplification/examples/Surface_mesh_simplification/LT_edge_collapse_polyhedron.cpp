@@ -11,7 +11,7 @@
 // === EXAMPLE SPECIFIC HEADERS BEGINS HERE ===
 
 // Stop-condition policy
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_pred.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
 
 // === EXAMPLE SPECIFIC HEADERS ENDS HERE ===
 
@@ -31,7 +31,7 @@ int main( int argc, char** argv )
   // This is a stop-condition policy (defines when the algorithm terminates).
   // In this example, the simplification stops when the number of undirected edges
   // left in the surface drops below the specified number (1000)
-  SMS::Count_stop_condition<Surface> stop_policy(1000);
+  SMS::Count_stop_predicate<Surface> stop_policy(1000);
      
   // This the actual call to the simplification algorithm.
   // The surface and stop conditions are mandatory arguments.

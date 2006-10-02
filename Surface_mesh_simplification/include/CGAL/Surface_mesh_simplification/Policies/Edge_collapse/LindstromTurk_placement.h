@@ -18,7 +18,7 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_PLACEMENT_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_PLACEMENT_H 1
 
-#include <CGAL/Surface_mesh_simplification/Detail/ECMS_common.h>
+#include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -35,13 +35,13 @@ public:
   typedef typename boost::graph_traits<ECM>::vertex_descriptor vertex_descriptor ;
   typedef typename boost::graph_traits<ECM>::edge_descriptor   edge_descriptor ;
   
-  typedef typename halfedge_graph_traits<ECM>::Point Point_3 ;
-  typedef typename Kernel_traits<Point_3>::Kernel     Kernel ;
-  typedef typename Kernel::FT                         FT ;
+  typedef typename halfedge_graph_traits<ECM>::Point Point ;
+  typedef typename Kernel_traits<Point>::Kernel      Kernel ;
+  typedef typename Kernel::FT                        FT ;
   
   typedef LindstromTurk_params Params ;
 
-  typedef optional<Point_3> result_type ;
+  typedef optional<Point> result_type ;
       
 public:
 

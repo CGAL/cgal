@@ -15,11 +15,11 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_SET_PARTIAL_COLLAPSE_DATA_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_SET_PARTIAL_COLLAPSE_DATA_H 1
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_SET_COST_CACHE_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_SET_COST_CACHE_H 1
 
-#include <CGAL/Surface_mesh_simplification/Detail/ECMS_common.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Partial_collapse_data.h>
+#include <CGAL/Surface_mesh_simplification/Detail/Common.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Cost_cache.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_params.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Detail/Lindstrom_Turk_core.h>
 
@@ -42,12 +42,12 @@ public:
   
   typedef Cost_cache<ECM> Cache ;
   
-  typedef typename halfedge_graph_traits<ECM>::Point Point_3 ;
-  typedef typename Kernel_traits<Point_3>::Kernel     Kernel ;
-  typedef typename Kernel::FT                         FT ;
+  typedef typename halfedge_graph_traits<ECM>::Point Point ;
+  typedef typename Kernel_traits<Point>::Kernel      Kernel ;
+  typedef typename Kernel::FT                        FT ;
   
-  typedef optional<FT>      Optional_cost_type ;
-  typedef optional<Point_3> Optional_placement_type ;
+  typedef optional<FT>    Optional_cost_type ;
+  typedef optional<Point> Optional_placement_type ;
 
   typedef LindstromTurk_params CostParams ;
   typedef void                 PlacementParams ;
@@ -80,6 +80,6 @@ public :
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_SET_PARTIAL_COLLAPSE_DATA_H //
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_SET_COST_CACHE_H //
 // EOF //
  

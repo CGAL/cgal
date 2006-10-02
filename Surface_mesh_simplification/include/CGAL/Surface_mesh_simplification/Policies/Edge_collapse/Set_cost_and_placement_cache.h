@@ -15,11 +15,11 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_SET_FULL_COLLAPSE_DATA_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_SET_FULL_COLLAPSE_DATA_H 1
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_SET_COST_AND_PLACEMET_CACHE_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_SET_COST_AND_PLACEMET_CACHE_H
 
-#include <CGAL/Surface_mesh_simplification/Detail/ECMS_common.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Full_collapse_data.h>
+#include <CGAL/Surface_mesh_simplification/Detail/Common.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Cost_and_placement_cache.h>
 
 
 CGAL_BEGIN_NAMESPACE
@@ -76,6 +76,6 @@ public :
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_SET_FULL_COLLAPSE_DATA_H //
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_COST_AND_PLACEMET_CACHE_H
 // EOF //
  

@@ -18,7 +18,7 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_MIDPOINT_PLACEMENT_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_MIDPOINT_PLACEMENT_H 1
 
-#include <CGAL/Surface_mesh_simplification/Detail/ECMS_common.h>
+#include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -35,11 +35,11 @@ public:
   typedef typename boost::graph_traits<ECM>::edge_descriptor   edge_descriptor ;
   typedef typename boost::graph_traits<ECM>::vertex_descriptor vertex_descriptor ;
   
-  typedef typename halfedge_graph_traits<ECM>::Point Point_3 ;
-  typedef typename Kernel_traits<Point_3>::Kernel     Kernel ;
-  typedef typename Kernel::FT                         FT ;
+  typedef typename halfedge_graph_traits<ECM>::Point Point ;
+  typedef typename Kernel_traits<Point>::Kernel      Kernel ;
+  typedef typename Kernel::FT                        FT ;
   
-  typedef optional<Point_3> result_type ;
+  typedef optional<Point> result_type ;
     
   typedef char Params ;
   
@@ -54,10 +54,10 @@ public:
                         , Params const*          aParams
                         ) const
   {
-    vertex_descriptor vs,vt ; tie(vs,vt) = this->get_vertices(aEdge,aSurface);
+    vertex_descriptor vs,vt ; tie(vs,vt) = get_vertices(aEdge,aSurface);
     
-    Point_3 const& ps = get_point(vs,aSurface);
-    Point_3 const& pt = get_point(vt,aSurface);
+    Point const& ps = get(vertex_point,aSurface,vs); 
+    Point const& pt = get(vertex_point,aSurface,vt); 
   
     return result_type(midpoint(ps,pt));
   }
