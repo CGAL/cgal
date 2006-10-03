@@ -32,9 +32,8 @@ int main(int, char*){
 #include <fstream>
 #include <string>
 
-#include "typedefs.h"
-
 #include <CGAL/IO/Qt_widget.h>
+#include <CGAL/Random.h> 
 
 
 
@@ -63,6 +62,7 @@ int main(int, char*){
 #include <qpixmap.h> 
 #include <qpainter.h> 
 #include <qpushbutton.h> 
+#include "typedefs.h"
 
 
 //The envelope diagram
@@ -82,7 +82,19 @@ public:
   // this method overrides the virtual method 'draw()' of Qt_widget_layer
   void draw()
   {
-    widget->lock(); // widget have to be locked before drawing 
+    widget->lock(); // widget have to be locked before drawing
+
+    
+    for(Face_const_iterator fit = diag.faces_begin();
+        fit != diag.faces_end();
+        ++fit)
+    {
+      if(! fit->number_of_surfaces())
+        continue;
+
+      draw_face(widget, fit);
+    }
+
     *widget <<  CGAL::BLUE; 
     for(Edge_const_iterator eit = diag.edges_begin();
         eit != diag.edges_end();
@@ -197,7 +209,7 @@ public slots:
       if(s==QString::null)
         return;
       curr_dir = s;
-
+      
       std::ifstream in_file(s);
       if(!in_file.is_open())
       {
@@ -214,11 +226,16 @@ public slots:
       std::list<Surface_3> triangles;
       int num_of_triangles;
       in_file >> num_of_triangles;
+      CGAL::Random rand;
       for(int i=0 ; i<num_of_triangles; i++)
       {
+        int r = rand.get_int(0, 256);
+        int g = rand.get_int(0, 256);
+        int b = rand.get_int(0, 256);
+
         Triangle_3 tri;
         in_file >> tri;
-        triangles.push_back(tri);
+        triangles.push_back(Surface_3(tri, CGAL::Color(r, g, b)));
         box = box + bbox_2d(tri);
       }
       diag.clear();
