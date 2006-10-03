@@ -18,17 +18,20 @@
 # Author(s)     : Luis Peñaranda <penarand@loria.fr>
 
 # interval library (http://perso.ens-lyon.fr/nathalie.revol/software.html)
+#
+# This library is provided only in static flavor... and I didn't find the way
+# of telling this to the installation program.
 
 DESCRIPTION = 
 PROVIDES = MPFI
 CXXFLAGS = 
 LDFLAGS = 
 LIBS = mpfi
-REQUIRES = GMP MPFR DOLLAR_MPFI_INCL_DIR
+REQUIRES = GMP MPFR
 INCOMPATIBLE = 
 STDINCLDIRS = 
 INCLTHING = mpfi.h
-STDLIBDIRS = 
+STDLIBDIRS = /usr/lib
 LIBTHING = libmpfi.a
 
 # EOF
