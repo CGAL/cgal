@@ -17,8 +17,8 @@
 //
 // Author(s): Andreas Fabri <andreas.fabri@geometryfactory.com>, Fernando Cacciola <fernando.cacciola@gmail.com>
 
-#ifndef CGAL_BOOST_GRAPH_POLYHEDRON_GRAPH_TRAITS_H
-#define CGAL_BOOST_GRAPH_POLYHEDRON_GRAPH_TRAITS_H
+#ifndef CGAL_BOOST_GRAPH_GRAPH_TRAITS_POLYHEDRON_3_H
+#define CGAL_BOOST_GRAPH_GRAPH_TRAITS_POLYHEDRON_3_H
 
 #include <CGAL/boost/graph/graph_traits_HalfedgeDS.h>
 
@@ -208,4 +208,4 @@ out_edges( typename graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::vertex_descr
 
 #undef CGAL_HDS_
 
-#endif // CGAL_BOOST_GRAPH_POLYHEDRON_GRAPH_TRAITS_H
+#endif // CGAL_BOOST_GRAPH_GRAPH_TRAITS_POLYHEDRON_3_H

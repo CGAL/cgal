@@ -17,11 +17,11 @@
 //
 // Author(s): Andreas Fabri <andreas.fabri@geometryfactory.com>, Fernando Cacciola <fernando.cacciola@gmail.com>
 
-#ifndef CGAL_BOOST_GRAPH_PROPERTIES_POLYHEDRON_H
-#define CGAL_BOOST_GRAPH_PROPERTIES_POLYHEDRON_H
+#ifndef CGAL_BOOST_GRAPH_PROPERTIES_POLYHEDRON_3_H
+#define CGAL_BOOST_GRAPH_PROPERTIES_POLYHEDRON_3_H
 
 #include <CGAL/boost/graph/properties.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Unique_hash_map.h>
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
@@ -136,7 +136,7 @@ public:
 
   Polyhedron_vertex_point_map( Polyhedron& ) {}
 
-  reference operator[](key_type const& v) const { return e->point(); }
+  reference operator[](key_type const& v) const { return v->point(); }
 };
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
@@ -159,11 +159,11 @@ public:
 
   Polyhedron_vertex_point_const_map( Polyhedron const& ) {}
 
-  reference operator[](key_type const& v) const { return e->point(); }
+  reference operator[](key_type const& v) const { return v->point(); }
 };
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-class Polyhedron_vertex_index_map_stored : public boost::put_get_helper<strd::size_t, Polyhedron_vertex_index_map_stored<Gt, I, HDS, A> >
+class Polyhedron_vertex_index_map_stored : public boost::put_get_helper<std::size_t, Polyhedron_vertex_index_map_stored<Gt, I, HDS, A> >
 {
 private:
 
@@ -195,7 +195,7 @@ public:
   typedef std::size_t                                                       reference;
   typedef typename boost::graph_traits<Polyhedron const>::vertex_descriptor key_type;
 
-  Polyhedron_edge_index_map_external( Polyhedron const& p) 
+  Polyhedron_vertex_index_map_external( Polyhedron const& p) 
     : map( p.vertices_begin(),p.vertices_end(),0,std::size_t(-1),p.size_of_vertices() )
   {}
 
@@ -234,6 +234,17 @@ struct Polyhedron_property_map<boost::edge_index_t>
 };
 
 template <>
+struct Polyhedron_property_map<edge_external_index_t> 
+{
+  template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+  struct bind_ 
+  {
+    typedef Polyhedron_edge_index_map_external<Gt,I,HDS,A> type;
+    typedef Polyhedron_edge_index_map_external<Gt,I,HDS,A> const_type;
+  };
+};
+
+template <>
 struct Polyhedron_property_map<edge_is_border_t> 
 {
   template<class Gt, class I, CGAL_HDS_PARAM_, class A>
@@ -241,17 +252,6 @@ struct Polyhedron_property_map<edge_is_border_t>
   {
     typedef Polyhedron_edge_is_border_map<Gt,I,HDS,A> type;
     typedef Polyhedron_edge_is_border_map<Gt,I,HDS,A> const_type;
-  };
-};
-
-template <>
-struct Polyhedron_property_map<vertex_is_border_t> 
-{
-  template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-  struct bind_ 
-  {
-    typedef Polyhedron_vertex_is_border_map<Gt,I,HDS,A> type;
-    typedef Polyhedron_vertex_is_border_map<Gt,I,HDS,A> const_type;
   };
 };
 
@@ -274,6 +274,17 @@ struct Polyhedron_property_map<boost::vertex_index_t>
   {
     typedef Polyhedron_vertex_index_map_stored<Gt,I,HDS,A> type;
     typedef Polyhedron_vertex_index_map_stored<Gt,I,HDS,A> const_type;
+  };
+};
+
+template <>
+struct Polyhedron_property_map<vertex_external_index_t> 
+{
+  template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+  struct bind_ 
+  {
+    typedef Polyhedron_vertex_index_map_external<Gt,I,HDS,A> type;
+    typedef Polyhedron_vertex_index_map_external<Gt,I,HDS,A> const_type;
   };
 };
 
@@ -308,9 +319,9 @@ CGAL::Polyhedron_edge_index_map_stored<Gt,I,HDS,A> get( edge_index_t, CGAL::Poly
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 inline 
-CGAL::Polyhedron_vertex_is_border_map<Gt,I,HDS,A> get(CGAL::vertex_is_border_t, CGAL::Polyhedron_3<Gt,I,HDS,A> const& p) 
+CGAL::Polyhedron_edge_index_map_external<Gt,I,HDS,A> get( CGAL::edge_external_index_t, CGAL::Polyhedron_3<Gt,I,HDS,A> const& p) 
 {
-  CGAL::Polyhedron_vertex_is_border_map<Gt,I,HDS,A> m(p);
+  CGAL::Polyhedron_edge_index_map_external<Gt,I,HDS,A> m(p);
   return m;
 }
 
@@ -335,6 +346,14 @@ inline
 CGAL::Polyhedron_vertex_index_map_stored<Gt,I,HDS,A> get(vertex_index_t, CGAL::Polyhedron_3<Gt,I,HDS,A> const& p) 
 {
   CGAL::Polyhedron_vertex_index_map_stored<Gt,I,HDS,A> m(p);
+  return m;
+}
+
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+inline 
+CGAL::Polyhedron_vertex_index_map_external<Gt,I,HDS,A> get(CGAL::vertex_external_index_t, CGAL::Polyhedron_3<Gt,I,HDS,A> const& p) 
+{
+  CGAL::Polyhedron_vertex_index_map_external<Gt,I,HDS,A> m(p);
   return m;
 }
 
@@ -390,4 +409,4 @@ struct vertex_property_type<CGAL::Polyhedron_3<Gt,I,HDS,A> >
 
 #undef CGAL_HDS_PARAM_
 
-#endif // CGAL_BOOST_GRAPH_POLYHEDRON_BGL_PROPERTIES_H
+#endif // CGAL_BOOST_GRAPH_PROPERTIES_POLYHEDRON_3_H

@@ -50,6 +50,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
+  enum vertex_is_fixed_t             { vertex_is_fixed             } ;  
   enum set_cache_policy_t            { set_cache_policy            } ;
   enum get_cost_policy_t             { get_cost_policy             } ;
   enum get_cost_policy_params_t      { get_cost_policy_params      } ;
@@ -63,8 +64,12 @@ CGAL_BEGIN_NAMESPACE
     typedef Base next_type;
     typedef Tag tag_type;
     typedef T value_type;
+
+    cgal_bgl_named_params() { }
+
     cgal_bgl_named_params(T v) : m_value(v) { }
     cgal_bgl_named_params(T v, const Base& b) : Base(b), m_value(v) { }
+
     T m_value;
 
     template <typename IndexMap>
@@ -213,34 +218,34 @@ CGAL_BEGIN_NAMESPACE
   }
   
   template <typename GetCost>
-  cgal_bgl_named_params<GetCost, get_cost_policy_t, self>
-  get_cost(const GetCost& p) const 
+  cgal_bgl_named_params<GetCost, get_cost_policy_t>
+  get_cost(const GetCost& p)
   {
-    typedef cgal_bgl_named_params<GetCost, get_cost_policy_t, self> Params;
+    typedef cgal_bgl_named_params<GetCost, get_cost_policy_t> Params;
      return Params(p);
   }
 
   template <typename GetCostParams>
-  cgal_bgl_named_params<GetCostParams, get_cost_policy_params_t, self>
-  get_cost_params(const GetCostParams& p) const 
+  cgal_bgl_named_params<GetCostParams, get_cost_policy_params_t>
+  get_cost_params(const GetCostParams& p)
   {
-    typedef cgal_bgl_named_params<GetCostParams, get_cost_policy_params_t, self> Params;
+    typedef cgal_bgl_named_params<GetCostParams, get_cost_policy_params_t> Params;
     return Params(p);
   }
   
   template <typename GetPlacement>
-  cgal_bgl_named_params<GetPlacement, get_placement_policy_t, self>
-  get_placement(const GetPlacement& p) const 
+  cgal_bgl_named_params<GetPlacement, get_placement_policy_t>
+  get_placement(const GetPlacement& p) 
   {
-    typedef cgal_bgl_named_params<GetPlacement, get_placement_policy_t, self> Params;
+    typedef cgal_bgl_named_params<GetPlacement, get_placement_policy_t> Params;
     return Params(p);
   }
   
   template <typename GetPlacementParams>
-  cgal_bgl_named_params<GetPlacementParams, get_placement_policy_params_t, self>
-  get_placement_params(const GetPlacementParams& p) const 
+  cgal_bgl_named_params<GetPlacementParams, get_placement_policy_params_t>
+  get_placement_params(const GetPlacementParams& p)
   {
-    typedef cgal_bgl_named_params<GetPlacementParams, get_placement_policy_params_t, self> Params;
+    typedef cgal_bgl_named_params<GetPlacementParams, get_placement_policy_params_t> Params;
     return Params(p);
   }
   
@@ -255,7 +260,7 @@ CGAL_BEGIN_NAMESPACE
       boost::property_value< cgal_bgl_named_params<T1,Tag1,Base>, Tag2>::type T2;
     T2* t2 = 0;
     typedef boost::detail::property_value_dispatch<match> Dispatcher;
-    return boost::Dispatcher::const_get_value(p, t2, tag2);
+    return Dispatcher::const_get_value(p, t2, tag2);
   }
 
 CGAL_END_NAMESPACE

@@ -17,11 +17,11 @@
 //
 // Author(s) : Fernando Caccciola <fernando.cacciola@gmail.com>
 
-#ifndef CGAL_BOOST_GRAPH_POLYHEDRON_HALFEDGE_GRAPH_TRAITS_H
-#define CGAL_BOOST_GRAPH_POLYHEDRON_HALFEDGE_GRAPH_TRAITS_H
+#ifndef CGAL_BOOST_GRAPH_HALFEDGE_GRAPH_TRAITS_POLYHEDRON_3_H
+#define CGAL_BOOST_GRAPH_HALFEDGE_GRAPH_TRAITS_POLYHEDRON_3_H
 
 #include <CGAL/HalfedgeDS_items_decorator.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_HalfedgeDS.h>
 
@@ -37,18 +37,18 @@ CGAL_BEGIN_NAMESPACE
 // Const versions
 // 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-struct Halfedge_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const > 
+struct halfedge_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const > 
   : CGAL::HDS_halfedge_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const>
 {
 };
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-inline std::pair<typename Halfedge_graph_traits< Polyhedron_3<Gt,I,HDS,A> const>::undirected_edge_iterator
-                ,typename Halfedge_graph_traits< Polyhedron_3<Gt,I,HDS,A> const>::undirected_edge_iterator 
+inline std::pair<typename halfedge_graph_traits< Polyhedron_3<Gt,I,HDS,A> const>::undirected_edge_iterator
+                ,typename halfedge_graph_traits< Polyhedron_3<Gt,I,HDS,A> const>::undirected_edge_iterator 
                 >  
 undirected_edges( Polyhedron_3<Gt,I,HDS,A> const& p )
 {
-  typedef typename Halfedge_graph_traits< Polyhedron_3<Gt,I,HDS,A> const>::undirected_edge_iterator Iter;
+  typedef typename halfedge_graph_traits< Polyhedron_3<Gt,I,HDS,A> const>::undirected_edge_iterator Iter;
   return std::make_pair( Iter(p.edges_begin()), Iter(p.edges_end()) );
 }
 
@@ -105,18 +105,18 @@ next_edge_cw( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> const>::edg
 // 
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-struct Halfedge_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> > 
+struct halfedge_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> > 
   : CGAL::HDS_halfedge_graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >
 {
 };
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-inline std::pair<typename Halfedge_graph_traits< Polyhedron_3<Gt,I,HDS,A> >::undirected_edge_iterator
-                ,typename Halfedge_graph_traits< Polyhedron_3<Gt,I,HDS,A> >::undirected_edge_iterator 
+inline std::pair<typename halfedge_graph_traits< Polyhedron_3<Gt,I,HDS,A> >::undirected_edge_iterator
+                ,typename halfedge_graph_traits< Polyhedron_3<Gt,I,HDS,A> >::undirected_edge_iterator 
                 >  
 undirected_edges( Polyhedron_3<Gt,I,HDS,A>& p )
 {
-  typedef typename Halfedge_graph_traits< Polyhedron_3<Gt,I,HDS,A> >::undirected_edge_iterator Iter;
+  typedef typename halfedge_graph_traits< Polyhedron_3<Gt,I,HDS,A> >::undirected_edge_iterator Iter;
   return std::make_pair( Iter(p.edges_begin()), Iter(p.edges_end()) );
 }
 
@@ -176,4 +176,4 @@ CGAL_END_NAMESPACE
 
 #undef CGAL_HDS_
 
-#endif // CGAL_BOOST_GRAPH_POLYHEDRON_HALFEDGE_GRAPH_TRAITS_H
+#endif // CGAL_BOOST_GRAPH_HALFEDGE_GRAPH_TRAITS_POLYHEDRON_3_H

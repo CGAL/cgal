@@ -27,9 +27,11 @@
 
 CGAL_BEGIN_NAMESPACE
 
-enum edge_is_border_t   { edge_is_border   } ;
-enum vertex_is_border_t { vertex_is_border } ;
-enum vertex_point_t     { vertex_point     } ;
+enum vertex_is_border_t      { vertex_is_border } ;
+enum vertex_point_t          { vertex_point     } ;
+enum vertex_external_index_t { vertex_external_index } ;
+enum edge_is_border_t        { edge_is_border   } ;
+enum edge_external_index_t   { edge_external_index } ;
 
 CGAL_END_NAMESPACE
 

@@ -24,7 +24,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<class T> struct Halfedge_graph_traits ;
+template<class T> struct halfedge_graph_traits ;
 
 CGAL_END_NAMESPACE
 
