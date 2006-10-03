@@ -20,7 +20,7 @@
 #ifndef CGAL_BOOST_GRAPH_POLYHEDRON_GRAPH_TRAITS_H
 #define CGAL_BOOST_GRAPH_POLYHEDRON_GRAPH_TRAITS_H
 
-#include <CGAL/boost/graph/HalfedgeDS_graph_traits_aux.h>
+#include <CGAL/boost/graph/graph_traits_HalfedgeDS.h>
 
 #include <CGAL/Polyhedron_3.h>
 

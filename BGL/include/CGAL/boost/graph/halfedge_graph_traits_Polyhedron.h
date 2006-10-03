@@ -23,7 +23,7 @@
 #include <CGAL/HalfedgeDS_items_decorator.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron.h>
 #include <CGAL/boost/graph/halfedge_graph_traits.h>
-#include <CGAL/boost/graph/halfedge_graph_traits_HalfegeDS.h>
+#include <CGAL/boost/graph/halfedge_graph_traits_HalfedgeDS.h>
 
 #ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
 #  define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS

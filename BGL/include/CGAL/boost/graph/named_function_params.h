@@ -50,11 +50,11 @@
 
 CGAL_BEGIN_NAMESPACE
 
-  struct set_cache_policy_t            {} ;
-  struct get_cost_policy_t             {} ;
-  struct get_cost_policy_params_t      {} ;
-  struct get_placement_policy_t        {} ;
-  struct get_placement_policy_params_t {} ;
+  enum set_cache_policy_t            { set_cache_policy            } ;
+  enum get_cost_policy_t             { get_cost_policy             } ;
+  enum get_cost_policy_params_t      { get_cost_policy_params      } ;
+  enum get_placement_policy_t        { get_placement_policy        } ;
+  enum get_placement_policy_params_t { get_placement_policy_params } ;
   
   template <typename T, typename Tag, typename Base = boost::no_property>
   struct cgal_bgl_named_params : public Base
