@@ -16,11 +16,11 @@
 // 
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
-#ifndef CGAL_ENV_SURFACE_DATA_TRAITS_2_H
-#define CGAL_ENV_SURFACE_DATA_TRAITS_2_H
+#ifndef CGAL_ENV_SURFACE_DATA_TRAITS_3_H
+#define CGAL_ENV_SURFACE_DATA_TRAITS_3_H
 
 /*! \file
- * Definition of the env_surface_data_traits_2<> class template.
+ * Definition of the env_surface_data_traits_3<> class template.
  */
 
 #include<CGAL/Arr_traits_2/Curve_data_aux.h>
