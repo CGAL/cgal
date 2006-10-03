@@ -15,18 +15,16 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLYHEDRON_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLYHEDRON_H
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_HALFEDGEGRAPH_POLYHEDRON_3_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_HALFEDGEGRAPH_POLYHEDRON_3_H
 
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/properties_Polyhedron_3.h>
+#include <CGAL/Surface_mesh_simplification/collapse_triangulation_operator_Polyhedron_3.h>
 
-#include <CGAL/boost/graph/graph_traits_Polyhedron.h>
-#include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron.h>
-#include <CGAL/boost/graph/properties_Polyhedron.h>
-
-#include <CGAL/Surface_mesh_simplification/Polyhedron_collapse_operator.h>
-
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLYHEDRON_H
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_HALFEDGEGRAPH_POLYHEDRON_3_H
 // EOF //
  
  
