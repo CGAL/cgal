@@ -60,8 +60,8 @@ public:
     
     LindstromTurkCore<ECM> core(*aParams,aEdge,aSurface,false);
 
-    optional<FT> lCost ;
-    optional<Point_3> lPlacement ;
+    optional<FT>    lCost ;
+    optional<Point> lPlacement ;
     tie(lCost,lPlacement) = core.compute();
     
     return lPlacement ;

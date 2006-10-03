@@ -28,7 +28,6 @@
 #include <boost/graph/adjacency_list.hpp>
 
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
-#include <CGAL/Surface_mesh_simplification/Collapse_operator.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -72,19 +71,20 @@ public:
   
   typedef boost::graph_traits  <ECM>       GraphTraits ;
   typedef boost::graph_traits  <ECM const> ConstGraphTraits ;
-  typedef Halfedge_graph_traits<ECM>       HalfedgeGraphTraits ; 
+  typedef halfedge_graph_traits<ECM>       HalfedgeGraphTraits ; 
   
-  typedef typename GraphTraits::vertex_descriptor  vertex_descriptor ;
-  typedef typename GraphTraits::vertex_iterator    vertex_iterator ;
-  typedef typename GraphTraits::edge_descriptor    edge_descriptor ;
-  typedef typename GraphTraits::edge_iterator      edge_iterator ;
-  typedef typename GraphTraits::out_edge_iterator  out_edge_iterator ;
-  typedef typename GraphTraits::in_edge_iterator   in_edge_iterator ;
-  typedef typename GraphTraits::traversal_category traversal_category ;
-  typedef typename GraphTraits::edges_size_type    size_type ;
+  typedef typename GraphTraits::vertex_descriptor      vertex_descriptor ;
+  typedef typename GraphTraits::vertex_iterator        vertex_iterator ;
+  typedef typename GraphTraits::edge_descriptor        edge_descriptor ;
+  typedef typename GraphTraits::edge_iterator          edge_iterator ;
+  typedef typename GraphTraits::out_edge_iterator      out_edge_iterator ;
+  typedef typename GraphTraits::in_edge_iterator       in_edge_iterator ;
+  typedef typename GraphTraits::traversal_category     traversal_category ;
+  typedef typename GraphTraits::edges_size_type        size_type ;
   
   typedef typename ConstGraphTraits::vertex_descriptor const_vertex_descriptor ;
   typedef typename ConstGraphTraits::edge_descriptor   const_edge_descriptor ;
+  typedef typename ConstGraphTraits::in_edge_iterator  const_in_edge_iterator ;
   
   typedef typename HalfedgeGraphTraits::undirected_edge_iterator undirected_edge_iterator ;
   typedef typename HalfedgeGraphTraits::Point                    Point ;
@@ -131,7 +131,7 @@ public:
   {
   public :
   
-    Edge_cache() : mPQHandle() {}
+    Edge_data() : mPQHandle() {}
     
     Cache const& cache() const { return mCache ; }
     Cache &      cache()       { return mCache ; }
@@ -159,7 +159,7 @@ public:
               , ShouldStop       const& aShouldStop 
               , VertexPointMap   const& aVertex_point_map 
               , VertexIsFixedMap const& aVertex_is_fixed_map 
-              , EdgeIndxMap      const& aEdge_index_map 
+              , EdgeIndexMap     const& aEdge_index_map 
               , EdgeIsBorderMap  const& aEdge_is_border_map 
               , SetCache         const& aSetCache
               , GetCost          const& aGetCost
@@ -179,11 +179,11 @@ private:
   void Collapse( edge_descriptor const& aEdge ) ;
   void Update_neighbors( vertex_descriptor const& aKeptV ) ;
   
-  size_type get_id ( edge_descriptor const& aEdge ) const { return get(Edge_index_map,aEdge); }
+  size_type get_id ( const_edge_descriptor const& aEdge ) const { return Edge_index_map[aEdge]; }
   
-  bool is_vertex_fixed ( const_vertex_descriptor const& aV ) const { return get(Vertex_is_fixed_map,aV) ; }
+  bool is_vertex_fixed ( const_vertex_descriptor const& aV ) const { return Vertex_is_fixed_map[aV] ; }
   
-  bool is_border ( const_edge_descriptor const& aEdge ) const { return get(Edge_is_border_map,aEdge) ; }    
+  bool is_border ( const_edge_descriptor const& aEdge ) const { return Edge_is_border_map[aEdge] ; }    
   
   bool is_undirected_edge_a_border ( const_edge_descriptor const& aEdge ) const
   {
@@ -250,25 +250,22 @@ private:
     return get_id(aEdgeA) < get_id(aEdgeB);
   }
   
-  void insert_in_PQ( edge_descriptor const& aEdge, Edge_data_ptr aData ) 
+  void insert_in_PQ( edge_descriptor const& aEdge, Edge_data& aData ) 
   {
-    CGAL_precondition(aData);
-    CGAL_precondition(!aData->is_in_PQ());
-    aData->set_PQ_handle(mPQ->push(aEdge));
+    CGAL_precondition(!aData.is_in_PQ());
+    aData.set_PQ_handle(mPQ->push(aEdge));
   }
   
-  void update_in_PQ( edge_descriptor const& aEdge, Edge_data_ptr aData )
+  void update_in_PQ( edge_descriptor const& aEdge, Edge_data& aData )
   {
-    CGAL_precondition(aData);
-    CGAL_precondition(aData->is_in_PQ());
-    aData->set_PQ_handle(mPQ->update(aEdge,aData->PQ_handle())) ; 
+    CGAL_precondition(aData.is_in_PQ());
+    aData.set_PQ_handle(mPQ->update(aEdge,aData.PQ_handle())) ; 
   }   
   
-  void remove_from_PQ( edge_descriptor const& aEdge, Edge_data_ptr aData )
+  void remove_from_PQ( edge_descriptor const& aEdge, Edge_data& aData )
   {
-    CGAL_precondition(aData);
-    CGAL_precondition(aData->is_in_PQ());
-    aData->set_PQ_handle(mPQ->erase(aEdge,aData->PQ_handle()));
+    CGAL_precondition(aData.is_in_PQ());
+    aData.set_PQ_handle(mPQ->erase(aEdge,aData.PQ_handle()));
   }   
   
   optional<edge_descriptor> pop_from_PQ() 
@@ -296,8 +293,6 @@ private:
   
 private:
 
-  Collapse_triangulation_edge<ECM> Collapse_triangulation_edge ;  
-
   Edge_data_array mEdgeDataArray ;
   
   boost::scoped_ptr<PQ> mPQ ;
@@ -308,7 +303,7 @@ private:
   CGAL_ECMS_DEBUG_CODE ( unsigned mStep ; )
 } ;
 
-} // namespace Triangulated_surface_mesh::Simplification::edge_collapse
+} // namespace Surface_mesh_simplification
 
 CGAL_END_NAMESPACE
 

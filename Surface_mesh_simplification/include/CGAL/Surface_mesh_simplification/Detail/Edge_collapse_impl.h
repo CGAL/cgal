@@ -26,7 +26,7 @@ namespace Surface_mesh_simplification
 template<class M,class SP,class VPM, class VFM, class EIM,class EBM, class SC, class CF,class PF,class CP, class PP,class V>
 EdgeCollapse<M,SP,VPM,VFM,EIM,EBM,SC,CF,PF,CP,PP,V>::EdgeCollapse( ECM&                    aSurface
                                                                  , ShouldStop       const& aShould_stop
-                                                                 , VertexPoinntMap  const& aVertex_point_map 
+                                                                 , VertexPointMap   const& aVertex_point_map 
                                                                  , VertexIsFixedMap const& aVertex_is_fixed_map 
                                                                  , EdgeIndexMap     const& aEdge_index_map 
                                                                  , EdgeIsBorderMap  const& aEdge_is_border_map 
@@ -52,9 +52,7 @@ EdgeCollapse<M,SP,VPM,VFM,EIM,EBM,SC,CF,PF,CP,PP,V>::EdgeCollapse( ECM&         
   ,Visitor            (aVisitor)
   
 {
-  CGAL_ECMS_TRACE(0,"EdgeCollapse of ECM with " << num_undirected_edges(aSurface) << " edges" ); 
-  
-  CGAL_assertion( num_undirected_edges(aSurface) * 2 == num_edges(aSurface) ) ;
+  CGAL_ECMS_TRACE(0,"EdgeCollapse of ECM with " << (num_edges(aSurface)/2) << " edges" ); 
   
   CGAL_ECMS_DEBUG_CODE ( mStep = 0 ; )
   
@@ -104,7 +102,7 @@ void EdgeCollapse<M,SP,VPM,VFM,EIM,EBM,SC,CF,PF,CP,PP,V>::Collect()
   
   Equal_3 equal_points = Kernel().equal_3_object();
     
-  size_type lSize = num_undirected_edges(mSurface) ;
+  size_type lSize = num_edges(mSurface) / 2 ;
   
   mInitialEdgeCount = mCurrentEdgeCount = lSize;
   
@@ -122,7 +120,7 @@ void EdgeCollapse<M,SP,VPM,VFM,EIM,EBM,SC,CF,PF,CP,PP,V>::Collect()
     
     bool lIsFixed = is_vertex_fixed(p) || is_vertex_fixed(q) ;
  
-    if ( p == q || equal_points( get_point(p,mSurface), get_point(q,mSurface)) )
+    if ( p == q || equal_points( get_point(p), get_point(q)) )
       lIsFixed = true ;
   
     // But in the case of fixed edges the edge data is left default constructed
@@ -195,14 +193,14 @@ void EdgeCollapse<M,SP,VPM,VFM,EIM,EBM,SC,CF,PF,CP,PP,V>::Loop()
 }
 
 template<class M,class SP,class VPM, class VFM, class EIM,class EBM, class SC, class CF,class PF,class CP, class PP,class V>
-bool EdgeCollapse<M,SP,VPM,VFM,EIM,EBM,SC,CF,PF,CP,PP,V>::is_border( const_vertex_descriptor const& aV )
+bool EdgeCollapse<M,SP,VPM,VFM,EIM,EBM,SC,CF,PF,CP,PP,V>::is_border( const_vertex_descriptor const& aV ) const
 {
   bool rR = false ;
   
-  in_edge_iterator eb, ee ; 
+  const_in_edge_iterator eb, ee ; 
   for ( tie(eb,ee) = in_edges(aV,mSurface) ; eb != ee ; ++ eb )
   {
-    edge_descriptor lEdge = *eb ;
+    const_edge_descriptor lEdge = *eb ;
     if ( is_undirected_edge_a_border(lEdge) )
     {
       rR = true ;
@@ -330,7 +328,7 @@ void EdgeCollapse<M,SP,VPM,VFM,EIM,EBM,SC,CF,PF,CP,PP,V>::Collapse( edge_descrip
   Optional_placement_type lPlacement = get_placement(aEdgePQ);
   
   if ( Visitor )
-    Visitor->OnCollapsing(*lEdge,mSurface,lPlacement);
+    Visitor->OnCollapsing(aEdgePQ,mSurface,lPlacement);
     
   if ( lPlacement )
   {
@@ -404,7 +402,7 @@ void EdgeCollapse<M,SP,VPM,VFM,EIM,EBM,SC,CF,PF,CP,PP,V>::Collapse( edge_descrip
     // It's REQUIRED to remove ONLY 1 vertex (P or Q) and edges PQ,PT and QB (PT and QB are removed if they are not null).
     // All other edges must be kept.
     // All directed edges incident to vertex removed are relink to the vertex kept.
-    rResult = Collapse_triangulation_edge(aEdgePQ,mSurface);
+    rResult = collapse_triangulation_edge(aEdgePQ,mSurface);
     
     CGAL_ECMS_TRACE(1,"V" << rResult->ID << " kept." ) ;
                    
@@ -414,7 +412,7 @@ void EdgeCollapse<M,SP,VPM,VFM,EIM,EBM,SC,CF,PF,CP,PP,V>::Collapse( edge_descrip
       CGAL_ECMS_TRACE(2, edge_to_string(*eb1) ) ;
 #endif
     
-    set_point(rResult,mSurface,*lPlacement) ;
+    put(vertex_point,mSurface,rResult,*lPlacement) ;
 
     Update_neighbors(rResult) ;
   }
@@ -424,8 +422,6 @@ void EdgeCollapse<M,SP,VPM,VFM,EIM,EBM,SC,CF,PF,CP,PP,V>::Collapse( edge_descrip
   }
   
   CGAL_ECMS_DEBUG_CODE ( ++mStep ; )
-  
-  return rResult ;
 }
 
 template<class M,class SP,class VPM, class VFM, class EIM,class EBM, class SC, class CF,class PF,class CP, class PP,class V>

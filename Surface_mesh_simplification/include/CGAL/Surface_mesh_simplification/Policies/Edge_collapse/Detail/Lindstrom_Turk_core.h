@@ -52,7 +52,7 @@ public:
   
   typedef LindstromTurk_params Params ;
   
-  typedef typename halfedge_graph_traits<ECM>::Point  Point ;
+  typedef typename halfedge_graph_traits<ECM>::Point Point ;
   
   typedef typename Kernel_traits<Point>::Kernel Kernel ;
   
@@ -143,7 +143,7 @@ private :
     return is_border(edge) || is_border(opposite_edge(edge,mSurface)) ;
   }    
 
-  Point const& get_point ( const_vertex_descriptor const& v ) const 
+  Point const& get_point ( vertex_descriptor const& v ) const 
   {
     return get(vertex_point,mSurface,v);
   }

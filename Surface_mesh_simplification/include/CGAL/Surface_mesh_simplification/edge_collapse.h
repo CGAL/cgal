@@ -156,30 +156,60 @@ struct Dummy_visitor
   void OnNonCollapsable(Edge const&, ECM& ) {}                
 } ;
 
-template<class ECM, class ShouldStop, class P, class T, class R>
-int edge_collapse ( ECM& aSurface, ShouldStop const& aShould_stop, cgal_bgl_named_params<P,T,R> const& aParams ) 
+namespace detail
 {
-  using boost::choose_pmap ;
+
+  template <class PropertyMap>
+  inline 
+  boost::put_get_helper<std::size_t, PropertyMap> const& 
+  choose_index_pmap( boost::put_get_helper<std::size_t, PropertyMap> const& imap) { return imap; }
+
+  template<class Surface>
+  inline 
+  typename boost::property_map<Surface,edge_external_index_t>::const_type
+  choose_index_pmap( Surface const& s) { return boost::get(edge_external_index,s); }
+  
+}
+template<class ECM, class ShouldStop, class P, class T, class R>
+int edge_collapse ( ECM& aSurface
+                  , ShouldStop const& aShould_stop
+                  , cgal_bgl_named_params<P,T,R> const& aParams 
+                  ) 
+{
+  using boost::choose_param ;
+  using boost::choose_const_pmap ;
   using boost::get_param ;
+  
+  using detail::choose_index_pmap ;
   
   LindstromTurk_params lPolicyParams ;
   
+  boost::graph_visitor_t visitor ;
+  
+  
   return edge_collapse(aSurface
                       ,aShould_stop
-                      ,choose_pmap (get_param(aParams,vertex_point),aSurface,vertex_point)
-                      ,choose_pmap (get_param(aParams,vertex_point),aSurface,vertex_is_fixed)
-                      ,choose_pmap (get_param(aParams,vertex_point),aSurface,boost::edge_index)
-                      ,choose_pmap (get_param(aParams,vertex_point),aSurface,edge_is_border)
-                      ,choose_param(get_param(aParams,set_cache_policy), LindstromTurk_set_cost_cache<ECM>())
-                      ,choose_param(get_param(aParams,get_cost_policy), Cached_cost<ECM>())
-                      ,choose_param(get_param(aParams,get_placement_policy), LindstromTurk_placement<ECM>())
-                      ,choose_param(get_param(aParams,get_cost_policy_params), &PolicyParmas)
-                      ,choose_param(get_param(aParams,get_placement_policy_params), &PolicyParams)
-                      ,choose_param(get_param(aParams,graph_visitor), ((Dummy_visitor*)0))
+                      ,choose_const_pmap (get_param(aParams,vertex_point),aSurface,vertex_point)
+                      ,choose_param      (get_param(aParams,vertex_is_fixed),Vertex_is_fixed_property_map_always_false<ECM>())
+                      ,choose_index_pmap (get_param(aParams,boost::edge_index))
+                      ,choose_const_pmap (get_param(aParams,edge_is_border),aSurface,edge_is_border)
+                      ,choose_param      (get_param(aParams,set_cache_policy), LindstromTurk_set_cost_cache<ECM>())
+                      ,choose_param      (get_param(aParams,get_cost_policy), Cached_cost<ECM>())
+                      ,choose_param      (get_param(aParams,get_placement_policy), LindstromTurk_placement<ECM>())
+                      ,choose_param      (get_param(aParams,get_cost_policy_params), &lPolicyParams)
+                      ,choose_param      (get_param(aParams,get_placement_policy_params), &lPolicyParams)
+                      ,choose_param      (get_param(aParams,visitor), ((Dummy_visitor*)0))
                       ) ;
 
-} // namespace Surface_mesh_simplification
+}
 
+template<class ECM, class ShouldStop>
+int edge_collapse ( ECM& aSurface, ShouldStop const& aShould_stop ) 
+{
+  return edge_collapse(aSurface,aShould_stop, edge_index_map(get(boost::edge_index,aSurface)));
+}
+
+} // namespace Surface_mesh_simplification
 
 CGAL_END_NAMESPACE
 

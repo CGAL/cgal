@@ -38,15 +38,19 @@ collapse_triangulation_edge( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS
                            , Polyhedron_3<Gt,I,HDS,A>& aSurface
                            )     
 {
+  typedef Polyhedron_3<Gt,I,HDS,A> Surface ;
+  
+  typedef typename boost::graph_traits<Surface>::vertex_descriptor vertex_descriptor ;
+  typedef typename boost::graph_traits<Surface>::edge_descriptor   edge_descriptor ;
+  
   edge_descriptor qp = opposite_edge(pq,aSurface);
+  edge_descriptor pt = opposite_edge(prev_edge(pq,aSurface),aSurface);
+  edge_descriptor qb = opposite_edge(prev_edge(qp,aSurface),aSurface);
   
   bool lTopFaceExists         = !pq->is_border() ;
   bool lBottomFaceExists      = !qp->is_border() ;
   bool lTopLeftFaceExists     = lTopFaceExists    && !pt->is_border() ;
   bool lBottomRightFaceExists = lBottomFaceExists && !qb->is_border() ;
-  
-  edge_descriptor pq = opposite_edge(prev_edge(pq,aSurface),aSurface);
-  edge_descriptor qb = opposite_edge(prev_edge(qp,aSurface),aSurface);
   
   CGAL_precondition( !lTopFaceExists    || (lTopFaceExists    && ( pt->vertex()->vertex_degree() > 2 ) ) ) ;
   CGAL_precondition( !lBottomFaceExists || (lBottomFaceExists && ( qb->vertex()->vertex_degree() > 2 ) ) ) ;
@@ -115,7 +119,7 @@ collapse_triangulation_edge( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS
   return lP_Erased ? q : p ;
 } 
 
-} // namespace Triangulated_surface_mesh::Simplification
+} // namespace Surface_mesh_simplification
 
 CGAL_END_NAMESPACE
 
