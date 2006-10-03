@@ -494,6 +494,9 @@ Envelope_2/test/Envelope_2/data/Europe.dat -text
 Envelope_2/test/Envelope_2/data/onebig_100.dat -text
 Envelope_2/test/Envelope_2/data/random_500.dat -text
 Envelope_2/test/Envelope_2/data/segs_4.dat -text
+Envelope_3/demo/Envelope_3/envelope_3.cpp eol=lf
+Envelope_3/demo/Envelope_3/makefile -text
+Envelope_3/demo/Envelope_3/typedefs.h eol=lf
 Envelope_3/doc_tex/Envelope_3/fig/compare_over_curve.eps -text svneol=unset#application/postscript
 Envelope_3/doc_tex/Envelope_3/fig/compare_over_curve.fig -text svneol=unset#application/octet-stream
 Envelope_3/doc_tex/Envelope_3/fig/compare_over_curve.gif -text svneol=unset#image/gif
