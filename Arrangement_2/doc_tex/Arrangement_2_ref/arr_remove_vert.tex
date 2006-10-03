@@ -4,7 +4,7 @@
 
 \ccDefinition
 
-The function \ccRefName\ attempts to removed a given vertex from a given
+The function \ccRefName{} attempts to removed a given vertex from a given
 arrangement. The vertex can be removed if it is either an isolated vertex,
 (and has no incident edge,) or if it is a {\em redundant} vertex --- that
 is, it has exactly two incident edges, whose associated curves can be
@@ -18,7 +18,7 @@ removing the vertex from the arrangement.
    bool remove_vertex (Arrangement_2<Traits,Dcel>& arr,
                        typename Arrangement_2<Traits,Dcel>::Vertex_handle v);}
 
-\ccHeading{Requirements}
+\ccRequirements
 The instantiated \ccc{Traits} class must model the
 \ccc{ArrangementMergingXMonotoneTraits_2} concept, which requires the merge
 operation on $x$-monotone curves.

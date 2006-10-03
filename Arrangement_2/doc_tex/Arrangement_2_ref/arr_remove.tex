@@ -4,7 +4,7 @@
 
 \ccDefinition
 
-The function \ccRefName\ removes an edge given by one of the twin halfedges
+The function \ccRefName{} removes an edge given by one of the twin halfedges
 that forms it, from a given arrangement. Once the edge is removed, if the
 vertices associated with its endpoints become isolated, they are removed as
 well. The call \ccc{remove_edge(arr, e)} is equivalent to the call
@@ -26,7 +26,7 @@ removal is returned.
         remove_edge (Arrangement_2<Traits,Dcel>& arr,
                      typename Arrangement_2<Traits,Dcel>::Halfedge_handle e);}
 
-\ccHeading{Requirements}
+\ccRequirements
 The instantiated traits class must model the concept
 \ccc{ArrangementXMonotoneTraits_2}. 
 

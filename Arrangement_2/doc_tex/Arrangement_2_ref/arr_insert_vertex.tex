@@ -4,9 +4,8 @@
 
 \ccDefinition
 
-The function \ccRefName\ inserts a given point into a given arrangement.
-
-The function uses a given point-location object to locate the given
+The function \ccRefName{} inserts a given point into a given arrangement.
+It uses a given point-location object to locate the given
 point in the given arrangement. If the point conincides with an existing
 vertex, there is nothing left to do; if it lies on an edge, the edge is
 split at the point. Otherwise, the point is contained inside a face, and is
@@ -14,7 +13,6 @@ inserted as an isolated vertex inside this face.
 By default, the function uses the ``walk along line'' point-location
 strategy --- namely, an instance of the class
 \ccc{Arr_walk_along_line_point_location<Arrangement_2<Traits,Dcel> >}.
-
 In either case, the function returns a handle for the vertex associated
 with the point.
 
@@ -29,7 +27,7 @@ with the point.
 \ccPrecond{If provided, \ccc{pl} must be attached to the given arrangement
 \ccc{arr}.}
 
-\ccHeading{Requirements}
+\ccRequirements
 \begin{enumerate}
 \item The instantiated \ccc{Traits} class must model the
   \ccc{ArrangementXMonotoneTraits_2} concept, which requires the provision

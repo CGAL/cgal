@@ -4,30 +4,33 @@
 
 \ccDefinition
 
-%%%%
+The function \ccRefName{} inserts an object into a given output stream.
 
-Inserts an arrangement into a given output stream using the
-output format defined by the \ccc{Arr_text_formatter} class --- that is,
-only the basic geometric and topological features of the arrangement are
-written, without any auxiliary data that may be attached to the
-\dcel\ features.
+%%%%
 
 \ccInclude{CGAL/IO/Arr_iostream.h}
 
 \ccGlobalFunction{template<typename Traits, typename Dcel>
             std::ostream& operator<< (std::ostream& os,
                                       const Arrangement_2<Traits,Dcel>& arr);}
+Inserts the arrangement object \ccc{arr} into the output stream
+\ccc{os} using the output format defined by the
+\ccc{Arr_text_formatter} class. Only the basic geometric and
+topological features of the arrangement are inserted. Auxiliary data
+that may be attached to the \dcel\ features is ignored.
 
 %%%%
-
-Inserts an arrangement-with-history into a given
-output stream using the default output format.
 
 \ccInclude{CGAL/IO/Arr_with_history_iostream.h}
 
 \ccGlobalFunction{template<typename Traits, typename Dcel>
             std::ostream& operator<< (std::ostream& os,
                          const Arrangement_with_history_2<Traits,Dcel>& arr);}
+Inserts the arrangement-with-history object \ccc{arr} into the output
+stream \ccc{os} using the output format defined by the
+\ccc{Arr_with_history_text_formatter} class. Only the basic geometric
+and topological features of the arrangement are inserted. Auxiliary
+data that may be attached to the \dcel\ features is ignored.
 
 %%%%
 

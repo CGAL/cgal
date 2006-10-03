@@ -4,7 +4,7 @@
 
 \ccDefinition
 
-The function \ccRefName\ inserts a given $x$-monotone curve into a given
+The function \ccRefName{} inserts a given $x$-monotone curve into a given
 arrangement, where the interior of the given curve is disjoint from all
 existing arrangement vertices and edges. Under this assumption, it is
 possible to locate the endpoints of the given curve in the arrangement,
@@ -30,12 +30,12 @@ class \ccc{Arr_walk_along_line_point_location<Arrangement_2<Traits,Dcel> >}.
 \ccPrecond{If provided, \ccc{pl} must be attached to the given arrangement
 \ccc{arr}.}
 
-\ccHeading{Requirements}
+\ccRequirements
 \begin{enumerate}
 \item The instantiated \ccc{Traits} class must model the restricted
-\ccc{ArrangementBasicTraits_2} concept, as no intersections are computed.
+  \ccc{ArrangementBasicTraits_2} concept, as no intersections are computed.
 \item The point-location object \ccc{pl} must model the
-\ccc{ArrangementPointLocation_2} concept. 
+  \ccc{ArrangementPointLocation_2} concept. 
 \end{enumerate}
 
 \end{ccRefFunction}

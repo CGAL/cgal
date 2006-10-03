@@ -4,7 +4,7 @@
 
 \ccDefinition
 
-The function \ccRefName\ aggregately inserts curves in a given range into
+The function \ccRefName{} aggregately inserts curves in a given range into
 a given arrangement, where no restrictions are made on the nature of
 the inserted curves.  The input curves are subdivided into
 $x$-monotone subcurves (and perhaps isolated points), which are inserted
@@ -17,7 +17,8 @@ into the arrangement using the sweep-line algorithm.
 \ccGlobalFunction{template<class Traits, class Dcel, InputIterator>
             void insert_curves (Arrangement_2<Traits,Dcel>& arr,
                                 InputIterator first, InputIterator last);}
-Inserts the curves in \ccc{[first,last)} into the arrangement \ccc{arr}. 
+Inserts the curves in the range \ccc{[first,last)} into the
+arrangement \ccc{arr}.
 
 %%%%
 
@@ -28,13 +29,13 @@ Inserts the curves in \ccc{[first,last)} into the arrangement \ccc{arr}.
 \ccGlobalFunction{template<class Traits, class Dcel, InputIterator>
             void insert_curves (Arrangement_with_history_2<Traits,Dcel>& arr,
                          InputIterator first, InputIterator last);}
-Inserts the curves in \ccc{[first,last)} into the arrangement with
-history \ccc{arr}. 
+Inserts the curves in the range \ccc{[first,last)} into the
+arrangement with history \ccc{arr}.
 
-\ccHeading{Requirements}
+\ccRequirements
 \begin{enumerate}
 \item The instantiated \ccc{Traits} class must model the
-\ccc{ArrangementTraits_2} concept.
+  \ccc{ArrangementTraits_2} concept.
 \item \ccc{InputIterator::value_type} must be \ccc{Traits::Curve_2}.
 \end{enumerate}
 

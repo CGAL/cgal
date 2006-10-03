@@ -4,7 +4,7 @@
 
 \ccDefinition
 
-The function \ccRefName\ inserts a given curve into a given arrangement,
+The function \ccRefName{} inserts a given curve into a given arrangement,
 where no restrictions are made on the nature of the inserted curve.
 It subdivides the given curve into $x$-monotone subcurves. Each subcurve
 is in turn inserted into the arrangement by locating its left endpoint
@@ -45,14 +45,14 @@ Inserts the given curve \ccc{c} into the arrangement with history
 \ccPrecond{If provided, \ccc{pl} is attached to the given arrangement
 \ccc{arr}.}
 
-\ccHeading{Requirements}
+\ccRequirements
 \begin{enumerate}
 \item The instantiated \ccc{Traits} class must model the
   \ccc{ArrangementTraits_2} concept. That is, it should define the
   \ccc{Curve_2} type, and support its subdivision into $x$-monotone
   subcurves (and perhaps isolated points).
 \item The point-location object \ccc{pl}, must model the
-\ccc{ArrangementPointLocation_2} concept.
+  \ccc{ArrangementPointLocation_2} concept.
 \end{enumerate}
 
 \end{ccRefFunction}
