@@ -125,7 +125,7 @@ public:
      */
     setCentralWidget(widget);
 
-    file_name= QString::null;
+    curr_dir= QString::null;
     
     //create a timer for checking if somthing changed
     QTimer *timer = new QTimer( this ); // constructs a timer whose parent is this window
@@ -189,13 +189,14 @@ public slots:
     void open_file()
     {
 
-      QString s = QFileDialog::getOpenFileName("./",
+      QString s = QFileDialog::getOpenFileName(curr_dir,
                                                QString::null,
                                                this,
                                                "open file dialog",
                                                "Choose a file" );
       if(s==QString::null)
         return;
+      curr_dir = s;
 
       std::ifstream in_file(s);
       if(!in_file.is_open())
@@ -204,8 +205,7 @@ public slots:
         return ;
       }
      
-      CGAL::Bbox_2 box = CGAL::Bbox_2 (widget->x_min(), widget->y_min(),
-                                       widget->x_max(), widget->y_max());
+      CGAL::Bbox_2 box;
       QCursor old = widget->cursor();
       widget->setCursor(Qt::WaitCursor);
       widget->lock();
@@ -224,10 +224,12 @@ public slots:
       diag.clear();
       CGAL::lower_envelope_3(triangles.begin(), triangles.end(), diag);
 
-      widget->set_window(box.xmin(),
-                         box.xmax(),
-                         box.ymin(),
-                         box.ymax());
+      double w = (box.xmax() - box.xmin())/10;
+      double h = (box.ymax() - box.ymin())/10;
+      widget->set_window(box.xmin() - w,
+                         box.xmax() + w,
+                         box.ymin() - h,
+                         box.ymax() + h);
       widget->unlock();
       something_changed();
       widget->setCursor(old);
@@ -237,7 +239,6 @@ public slots:
   void new_instance()
   {
     widget->lock();
-    file_name = QString::null;
     
     diag.clear();
     widget->clear_history();
@@ -299,7 +300,7 @@ private:
   
 
   int                                  old_state;
-  QString                              file_name;
+  QString                              curr_dir;
 };
 
 #include "envelope_3.moc"
