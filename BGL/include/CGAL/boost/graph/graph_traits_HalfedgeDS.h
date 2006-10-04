@@ -26,6 +26,7 @@
 #include <boost/graph/properties.hpp>
 
 #include <CGAL/basic.h>
+#include <CGAL/Counting_iterator.h>
 
 CGAL_BEGIN_NAMESPACE
 

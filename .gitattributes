@@ -354,6 +354,9 @@ BGL/include/CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h -text
 BGL/include/CGAL/boost/graph/named_function_params.h -text
 BGL/include/CGAL/boost/graph/properties.h -text
 BGL/include/CGAL/boost/graph/properties_Polyhedron_3.h -text
+BGL/test/BGL/data/triangle.off -text
+BGL/test/BGL/graph_traits_Polyhedron_3.cpp -text
+BGL/test/BGL/makefile -text
 Benchmark/doc_tex/Benchmark/Conics_14_1.arr -text
 Benchmark/doc_tex/Benchmark/fig/Conics_14_1.eps -text svneol=unset#application/postscript
 Benchmark/doc_tex/Benchmark/fig/Conics_14_1.png -text svneol=unset#image/png
