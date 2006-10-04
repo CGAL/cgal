@@ -97,12 +97,12 @@ public:
 	MpfiInterval (const mpfi_t &);
 	MpfiInterval (const MpfiInterval &);
 
-	MpfiInterval operator= (const long int);
-	MpfiInterval operator= (const mpz_t &);
-	MpfiInterval operator= (const mpq_t &);
-	MpfiInterval operator= (const CGAL::Gmpz &);
-	MpfiInterval operator= (const CGAL::Gmpq &);
-	MpfiInterval operator= (const MpfiInterval &);
+	MpfiInterval& operator= (const long int);
+	MpfiInterval& operator= (const mpz_t &);
+	MpfiInterval& operator= (const mpq_t &);
+	MpfiInterval& operator= (const CGAL::Gmpz &);
+	MpfiInterval& operator= (const CGAL::Gmpq &);
+	MpfiInterval& operator= (const MpfiInterval &);
 
 	// destructor
 	/* not needed
@@ -163,32 +163,32 @@ public:
 	template <class T> bool operator<= (const T &) const;
 	template <class T> bool operator>= (const T &) const;
 	// 3
-	MpfiInterval operator+ (const MpfiInterval &) const;
-	MpfiInterval operator- (const MpfiInterval &) const;
-	MpfiInterval operator* (const MpfiInterval &) const;
-	MpfiInterval operator- () const;
-	MpfiInterval operator+= (const MpfiInterval &);
-	MpfiInterval operator-= (const MpfiInterval &);
-	MpfiInterval operator*= (const MpfiInterval &);
+	MpfiInterval& operator+ (const MpfiInterval &) const;
+	MpfiInterval& operator- (const MpfiInterval &) const;
+	MpfiInterval& operator* (const MpfiInterval &) const;
+	MpfiInterval& operator- () const;
+	MpfiInterval& operator+= (const MpfiInterval &);
+	MpfiInterval& operator-= (const MpfiInterval &);
+	MpfiInterval& operator*= (const MpfiInterval &);
 	// 4
-	MpfiInterval operator+ (const int) const;
-	MpfiInterval operator- (const int) const;
-	MpfiInterval operator* (const int) const;
-	MpfiInterval operator+= (const int);
-	MpfiInterval operator-= (const int);
-	MpfiInterval operator*= (const int);
-	MpfiInterval operator+ (const CGAL::Gmpz &) const;
-	MpfiInterval operator- (const CGAL::Gmpz &) const;
-	MpfiInterval operator* (const CGAL::Gmpz &) const;
-	MpfiInterval operator+= (const CGAL::Gmpz &);
-	MpfiInterval operator-= (const CGAL::Gmpz &);
-	MpfiInterval operator*= (const CGAL::Gmpz &);
-	MpfiInterval operator+ (const CGAL::Gmpq &) const;
-	MpfiInterval operator- (const CGAL::Gmpq &) const;
-	MpfiInterval operator* (const CGAL::Gmpq &) const;
-	MpfiInterval operator+= (const CGAL::Gmpq &);
-	MpfiInterval operator-= (const CGAL::Gmpq &);
-	MpfiInterval operator*= (const CGAL::Gmpq &);
+	MpfiInterval& operator+ (const int) const;
+	MpfiInterval& operator- (const int) const;
+	MpfiInterval& operator* (const int) const;
+	MpfiInterval& operator+= (const int);
+	MpfiInterval& operator-= (const int);
+	MpfiInterval& operator*= (const int);
+	MpfiInterval& operator+ (const CGAL::Gmpz &) const;
+	MpfiInterval& operator- (const CGAL::Gmpz &) const;
+	MpfiInterval& operator* (const CGAL::Gmpz &) const;
+	MpfiInterval& operator+= (const CGAL::Gmpz &);
+	MpfiInterval& operator-= (const CGAL::Gmpz &);
+	MpfiInterval& operator*= (const CGAL::Gmpz &);
+	MpfiInterval& operator+ (const CGAL::Gmpq &) const;
+	MpfiInterval& operator- (const CGAL::Gmpq &) const;
+	MpfiInterval& operator* (const CGAL::Gmpq &) const;
+	MpfiInterval& operator+= (const CGAL::Gmpq &);
+	MpfiInterval& operator-= (const CGAL::Gmpq &);
+	MpfiInterval& operator*= (const CGAL::Gmpq &);
 	// 5: the required functions are outside the class 
 	// 6
 	bool is_valid () const;
@@ -196,10 +196,10 @@ public:
 	double to_double () const;
 	std::pair <double,double> to_interval () const;
 	// 7
-	MpfiInterval operator/ (const MpfiInterval &) const;
-	MpfiInterval operator/ (const int) const;
-	MpfiInterval operator/= (const MpfiInterval &);
-	MpfiInterval operator/= (const int);
+	MpfiInterval& operator/ (const MpfiInterval &) const;
+	MpfiInterval& operator/ (const int) const;
+	MpfiInterval& operator/= (const MpfiInterval &);
+	MpfiInterval& operator/= (const int);
 	// 8
 	MpfiInterval sqrt () const;
 	// 9
@@ -211,35 +211,35 @@ public:
 	bool operator> (const mpz_t &) const;
 	bool operator< (const mpq_t &) const;
 	bool operator> (const mpq_t &) const;
-	MpfiInterval operator+ (const mpz_t &) const;
-	MpfiInterval operator- (const mpz_t &) const;
-	MpfiInterval operator* (const mpz_t &) const;
-	MpfiInterval operator+= (const mpz_t &);
-	MpfiInterval operator-= (const mpz_t &);
-	MpfiInterval operator*= (const mpz_t &);
-	MpfiInterval operator+ (const mpq_t &) const;
-	MpfiInterval operator- (const mpq_t &) const;
-	MpfiInterval operator* (const mpq_t &) const;
-	MpfiInterval operator+= (const mpq_t &);
-	MpfiInterval operator-= (const mpq_t &);
-	MpfiInterval operator*= (const mpq_t &);
+	MpfiInterval& operator+ (const mpz_t &) const;
+	MpfiInterval& operator- (const mpz_t &) const;
+	MpfiInterval& operator* (const mpz_t &) const;
+	MpfiInterval& operator+= (const mpz_t &);
+	MpfiInterval& operator-= (const mpz_t &);
+	MpfiInterval& operator*= (const mpz_t &);
+	MpfiInterval& operator+ (const mpq_t &) const;
+	MpfiInterval& operator- (const mpq_t &) const;
+	MpfiInterval& operator* (const mpq_t &) const;
+	MpfiInterval& operator+= (const mpq_t &);
+	MpfiInterval& operator-= (const mpq_t &);
+	MpfiInterval& operator*= (const mpq_t &);
 
 	// 11
 	MpfiInterval (const mpfr_t &);	// constructor I
 	MpfiInterval (const mpfr_t &, const mpfr_t &);	// constructor II
-	MpfiInterval operator= (const mpfr_t &);	// assigning
+	MpfiInterval& operator= (const mpfr_t &);	// assigning
 	// comparison (previous template definitions should work with mpfr_t)
 	bool operator< (const mpfr_t &) const;
 	bool operator> (const mpfr_t &) const;
 	// arithmetics
-	MpfiInterval operator+ (const mpfr_t &) const;
-	MpfiInterval operator- (const mpfr_t &) const;
-	MpfiInterval operator* (const mpfr_t &) const;
-	MpfiInterval operator/ (const mpfr_t &) const;
-	MpfiInterval operator+= (const mpfr_t &);
-	MpfiInterval operator-= (const mpfr_t &);
-	MpfiInterval operator*= (const mpfr_t &);
-	MpfiInterval operator/= (const mpfr_t &);
+	MpfiInterval& operator+ (const mpfr_t &) const;
+	MpfiInterval& operator- (const mpfr_t &) const;
+	MpfiInterval& operator* (const mpfr_t &) const;
+	MpfiInterval& operator/ (const mpfr_t &) const;
+	MpfiInterval& operator+= (const mpfr_t &);
+	MpfiInterval& operator-= (const mpfr_t &);
+	MpfiInterval& operator*= (const mpfr_t &);
+	MpfiInterval& operator/= (const mpfr_t &);
 };
 
 std::ostream& operator<< (std::ostream &, MpfiInterval &);
