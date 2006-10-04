@@ -42,7 +42,7 @@ class comparison_overlap_exn : public std::exception {
 
 void overlap ();
 
-// The representation of intervals. TODO: think about reference counting
+// The representation of intervals.
 class MpfiInterval_rep {
 public:
 	mpfi_t mpfI;
@@ -59,8 +59,15 @@ private:
 // The class of the MPFI intervals. It's a model of the RingNumberType concept
 class MpfiInterval
 : Handle_for<MpfiInterval_rep>,
-	boost::field_operators1< MpfiInterval ,
-		boost::field_operators2< MpfiInterval, int > > {
+	boost::field_operators1<MpfiInterval,
+		boost::field_operators2<MpfiInterval, int,
+		boost::field_operators2<MpfiInterval, mpz_t,
+		boost::field_operators2<MpfiInterval, mpq_t,
+		boost::field_operators2<MpfiInterval, Gmpz,
+		boost::field_operators2<MpfiInterval, Gmpq,
+		boost::field_operators2<MpfiInterval, mpfr_t > > > > > > > {
+			// XXX: the functions provided by BOOST (or supposed
+			// to be) are commented
 
 	typedef Handle_for<MpfiInterval_rep> Base;
 public:
@@ -163,29 +170,37 @@ public:
 	template <class T> bool operator<= (const T &) const;
 	template <class T> bool operator>= (const T &) const;
 	// 3
-	MpfiInterval& operator+ (const MpfiInterval &) const;
-	MpfiInterval& operator- (const MpfiInterval &) const;
-	MpfiInterval& operator* (const MpfiInterval &) const;
+	//--------------------------------------------------
+	// MpfiInterval& operator+ (const MpfiInterval &) const;
+	// MpfiInterval& operator- (const MpfiInterval &) const;
+	// MpfiInterval& operator* (const MpfiInterval &) const;
+	//-------------------------------------------------- 
 	MpfiInterval& operator- () const;
 	MpfiInterval& operator+= (const MpfiInterval &);
 	MpfiInterval& operator-= (const MpfiInterval &);
 	MpfiInterval& operator*= (const MpfiInterval &);
 	// 4
-	MpfiInterval& operator+ (const int) const;
-	MpfiInterval& operator- (const int) const;
-	MpfiInterval& operator* (const int) const;
+	//--------------------------------------------------
+	// MpfiInterval& operator+ (const int) const;
+	// MpfiInterval& operator- (const int) const;
+	// MpfiInterval& operator* (const int) const;
+	//-------------------------------------------------- 
 	MpfiInterval& operator+= (const int);
 	MpfiInterval& operator-= (const int);
 	MpfiInterval& operator*= (const int);
-	MpfiInterval& operator+ (const CGAL::Gmpz &) const;
-	MpfiInterval& operator- (const CGAL::Gmpz &) const;
-	MpfiInterval& operator* (const CGAL::Gmpz &) const;
+	//--------------------------------------------------
+	// MpfiInterval& operator+ (const CGAL::Gmpz &) const;
+	// MpfiInterval& operator- (const CGAL::Gmpz &) const;
+	// MpfiInterval& operator* (const CGAL::Gmpz &) const;
+	//-------------------------------------------------- 
 	MpfiInterval& operator+= (const CGAL::Gmpz &);
 	MpfiInterval& operator-= (const CGAL::Gmpz &);
 	MpfiInterval& operator*= (const CGAL::Gmpz &);
-	MpfiInterval& operator+ (const CGAL::Gmpq &) const;
-	MpfiInterval& operator- (const CGAL::Gmpq &) const;
-	MpfiInterval& operator* (const CGAL::Gmpq &) const;
+	//--------------------------------------------------
+	// MpfiInterval& operator+ (const CGAL::Gmpq &) const;
+	// MpfiInterval& operator- (const CGAL::Gmpq &) const;
+	// MpfiInterval& operator* (const CGAL::Gmpq &) const;
+	//-------------------------------------------------- 
 	MpfiInterval& operator+= (const CGAL::Gmpq &);
 	MpfiInterval& operator-= (const CGAL::Gmpq &);
 	MpfiInterval& operator*= (const CGAL::Gmpq &);
@@ -196,8 +211,10 @@ public:
 	double to_double () const;
 	std::pair <double,double> to_interval () const;
 	// 7
-	MpfiInterval& operator/ (const MpfiInterval &) const;
-	MpfiInterval& operator/ (const int) const;
+	//--------------------------------------------------
+	// MpfiInterval& operator/ (const MpfiInterval &) const;
+	// MpfiInterval& operator/ (const int) const;
+	//-------------------------------------------------- 
 	MpfiInterval& operator/= (const MpfiInterval &);
 	MpfiInterval& operator/= (const int);
 	// 8
@@ -211,15 +228,19 @@ public:
 	bool operator> (const mpz_t &) const;
 	bool operator< (const mpq_t &) const;
 	bool operator> (const mpq_t &) const;
-	MpfiInterval& operator+ (const mpz_t &) const;
-	MpfiInterval& operator- (const mpz_t &) const;
-	MpfiInterval& operator* (const mpz_t &) const;
+	//--------------------------------------------------
+	// MpfiInterval& operator+ (const mpz_t &) const;
+	// MpfiInterval& operator- (const mpz_t &) const;
+	// MpfiInterval& operator* (const mpz_t &) const;
+	//-------------------------------------------------- 
 	MpfiInterval& operator+= (const mpz_t &);
 	MpfiInterval& operator-= (const mpz_t &);
 	MpfiInterval& operator*= (const mpz_t &);
-	MpfiInterval& operator+ (const mpq_t &) const;
-	MpfiInterval& operator- (const mpq_t &) const;
-	MpfiInterval& operator* (const mpq_t &) const;
+	//--------------------------------------------------
+	// MpfiInterval& operator+ (const mpq_t &) const;
+	// MpfiInterval& operator- (const mpq_t &) const;
+	// MpfiInterval& operator* (const mpq_t &) const;
+	//-------------------------------------------------- 
 	MpfiInterval& operator+= (const mpq_t &);
 	MpfiInterval& operator-= (const mpq_t &);
 	MpfiInterval& operator*= (const mpq_t &);
@@ -232,10 +253,12 @@ public:
 	bool operator< (const mpfr_t &) const;
 	bool operator> (const mpfr_t &) const;
 	// arithmetics
-	MpfiInterval& operator+ (const mpfr_t &) const;
-	MpfiInterval& operator- (const mpfr_t &) const;
-	MpfiInterval& operator* (const mpfr_t &) const;
-	MpfiInterval& operator/ (const mpfr_t &) const;
+	//--------------------------------------------------
+	// MpfiInterval& operator+ (const mpfr_t &) const;
+	// MpfiInterval& operator- (const mpfr_t &) const;
+	// MpfiInterval& operator* (const mpfr_t &) const;
+	// MpfiInterval& operator/ (const mpfr_t &) const;
+	//-------------------------------------------------- 
 	MpfiInterval& operator+= (const mpfr_t &);
 	MpfiInterval& operator-= (const mpfr_t &);
 	MpfiInterval& operator*= (const mpfr_t &);
