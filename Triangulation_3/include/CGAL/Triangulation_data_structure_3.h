@@ -1424,7 +1424,7 @@ flip( const Cell_handle& c, int i, int j )
 				   && (0<=i) && (i<4) 
 				   && (0<=j) && (j<4)
 				   && ( i != j )
-				   && (number_of_vertices() > 6) );
+				   && (number_of_vertices() >= 6) );
   CGAL_triangulation_expensive_precondition( is_cell(c) );
 
   // checks that the edge is flippable ie degree 3
