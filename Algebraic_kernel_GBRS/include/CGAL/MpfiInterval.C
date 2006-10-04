@@ -137,7 +137,9 @@ inline const mpfi_t & MpfiInterval::mpfi () const { return Ptr()->mpfI; };
 
 inline mpfi_t & MpfiInterval::mpfi () { return ptr()->mpfI; };
 
-inline void MpfiInterval::set_prec (mp_prec_t p) { mpfi_set_prec (mpfi (), p); };
+inline void MpfiInterval::set_prec (mp_prec_t p) {
+	mpfi_round_prec (mpfi (), p);
+};
 
 inline mp_prec_t MpfiInterval::get_prec () { return mpfi_get_prec (mpfi ()); };
 
