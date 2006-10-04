@@ -23,7 +23,7 @@
 
 \ccDefinition
 
-An object of the class \ccStyle{MpfiInterval} is an interval, whose endpoints
+An object of the class \ccRefName\ is an interval, whose endpoints
 are arbitrary precision floating point numbers (implemented using the
 {\sc MPFR} library).
 
@@ -64,17 +64,17 @@ are arbitrary precision floating point numbers (implemented using the
 	{creates an interval object given another interval}
 
 \ccOperations
-\ccSetThreeColumns{MpfiInterval}{}{\hspace*{8cm}}
+%\ccSetThreeColumns{MpfiInterval}{}{\hspace*{8cm}}
 
 \ccMethod{mpfi_t mpfi();}{returns the MPFI value stored.}
-\ccMethod{void set_prec(mp_prec_t p);}{sets the precision of the interval to $p$.}
+\ccMethod{void set_prec(mp_prec_t p);}{sets the precision of the interval to \ccStyle{p}.}
 \ccMethod{mp_prec_t get_prec ();}{gets the current precision of the interval.}
 \ccMethod{void get_left (mpfr_t l);}
-	{stores in $l$ the value of the left endpoint of the interval.}
+	{stores in \ccStyle{l} the value of the left endpoint of the interval.}
 \ccMethod{void get_right (mpfr_t r);}
-	{stores in $r$ the value of the right endpoint of the interval.}
+	{stores in \ccStyle{r} the value of the right endpoint of the interval.}
 \ccMethod{void get_endpoints (mpfr_t l, mpfr_t r);}
-	{stores in $l$ and $r$ the values of the endpoints of the interval.}
+	{stores in \ccStyle{l} and \ccStyle{r} the values of the endpoints of the interval.}
 \ccMethod{bool is_point ();}
 	{returns true iff the two endpoints of the interval are equal.}
 
@@ -84,25 +84,38 @@ are arbitrary precision floating point numbers (implemented using the
 \ccMethod{bool contains (mpq_t n);}{} \ccGlue
 \ccMethod{bool contains (Gmpz n);}{} \ccGlue
 \ccMethod{bool contains (Gmpq n);}
-	{returns true iff the interval contains $n$.}
+	{returns true iff the interval contains \ccStyle{n}.}
 
 \ccMethod{bool operator== (n);}{} \ccGlue
 \ccMethod{bool operator!= (n);}{} \ccGlue
 \ccMethod{bool operator< (n);}{} \ccGlue
 \ccMethod{bool operator> (n);}{} \ccGlue
 \ccMethod{bool operator<= (n);}{} \ccGlue
-\ccMethod{bool operator>= (n);}
-	{comparison operators, where $n$ has type int, mpz\_t, mpq\_t, Gmpz, Gmpq, mpfr\_t or MpfiInterval.}
+\ccMethod{bool operator>= (n);}{} \ccGlue
+\ccFunction{bool operator== (n, MpfiInterval i);}{} \ccGlue
+\ccFunction{bool operator!= (n, MpfiInterval i);}{} \ccGlue
+\ccFunction{bool operator> (n, MpfiInterval i);}{} \ccGlue
+\ccFunction{bool operator< (n, MpfiInterval i);}{} \ccGlue
+\ccFunction{bool operator>= (n, MpfiInterval i);}{} \ccGlue
+\ccFunction{bool operator<= (n, MpfiInterval i);}
+	{comparison operators, where \ccStyle{n} has type int, mpz\_t, mpq\_t, Gmpz,
+	Gmpq, mpfr\_t or MpfiInterval; in case of interval overlap, the
+	exception \ccStyle{exn_overlap} is thrown.}
 
 \ccMethod{MpfiInterval operator+ (n);}{} \ccGlue
 \ccMethod{MpfiInterval operator- (n);}{} \ccGlue
 \ccMethod{MpfiInterval operator* (n);}{} \ccGlue
 \ccMethod{MpfiInterval operator/ (n);}{} \ccGlue
+\ccFunction{MpfiInterval operator+ (n, MpfiInterval i);}{} \ccGlue
+\ccFunction{MpfiInterval operator- (n, MpfiInterval i);}{} \ccGlue
+\ccFunction{MpfiInterval operator* (n, MpfiInterval i);}{} \ccGlue
+\ccFunction{MpfiInterval operator/ (n, MpfiInterval i);}{} \ccGlue
 \ccMethod{MpfiInterval operator+= (n);}{} \ccGlue
 \ccMethod{MpfiInterval operator-= (n);}{} \ccGlue
 \ccMethod{MpfiInterval operator*= (n);}{} \ccGlue
 \ccMethod{MpfiInterval operator/= (n);}
-	{arithmetic operators, where $n$ has type int, mpz\_t, mpq\_t, Gmpz, Gmpq, mpfr\_t or MpfiInterval.}
+	{arithmetic operators, where \ccStyle{n} has type int, mpz\_t, mpq\_t,
+	Gmpz, Gmpq, mpfr\_t or MpfiInterval.}
 
 \end{ccRefClass}
 
