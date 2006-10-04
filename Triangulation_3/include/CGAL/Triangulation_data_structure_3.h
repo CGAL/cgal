@@ -1335,7 +1335,7 @@ flip( const Cell_handle& c, int i )
   // c will be replaced by one of the new cells
 {
   CGAL_triangulation_precondition( (dimension() == 3) && (0<=i) && (i<4) 
-				   && (number_of_vertices() > 6) );
+				   && (number_of_vertices() >= 6) );
   CGAL_triangulation_expensive_precondition( is_cell(c) );
 
   Cell_handle n = c->neighbor(i);
@@ -1358,7 +1358,7 @@ flip_flippable(const Cell_handle& c, int i )
   // c will be replaced by one of the new cells
 {
   CGAL_triangulation_precondition( (dimension() == 3) && (0<=i) && (i<4) 
-				   && (number_of_vertices() > 6) );
+				   && (number_of_vertices() >= 6) );
   CGAL_triangulation_expensive_precondition( is_cell(c) );
 
   Cell_handle n = c->neighbor(i);

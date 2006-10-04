@@ -2142,7 +2142,7 @@ Triangulation_3<GT,Tds>::
 flip( Cell_handle c, int i )
 {
   CGAL_triangulation_precondition( (dimension() == 3) && (0<=i) && (i<4) 
-				   && (number_of_vertices() > 5) );
+				   && (number_of_vertices() >= 5) );
 
   Cell_handle n = c->neighbor(i);
   int in = n->index(c);
@@ -2193,7 +2193,7 @@ Triangulation_3<GT,Tds>::
 flip_flippable( Cell_handle c, int i )
 {
   CGAL_triangulation_precondition( (dimension() == 3) && (0<=i) && (i<4) 
-				   && (number_of_vertices() > 5) );
+				   && (number_of_vertices() >= 5) );
   CGAL_triangulation_precondition_code( Cell_handle n = c->neighbor(i); );
   CGAL_triangulation_precondition_code( int in = n->index(c); );
   CGAL_triangulation_precondition( ( ! is_infinite( c ) ) && 
@@ -2247,7 +2247,7 @@ flip( Cell_handle c, int i, int j )
 				   && (0<=i) && (i<4) 
 				   && (0<=j) && (j<4)
 				   && ( i != j )
-				   && (number_of_vertices() > 5) );
+				   && (number_of_vertices() >= 5) );
 
   // checks that degree 3 and not on the convex hull
   int degree = 0;
@@ -2292,7 +2292,7 @@ flip_flippable( Cell_handle c, int i, int j )
 				   && (0<=i) && (i<4) 
 				   && (0<=j) && (j<4)
 				   && ( i != j )
-				   && (number_of_vertices() > 5) );
+				   && (number_of_vertices() >= 5) );
   int degree = 0;
   Cell_circulator ccir = incident_cells(c,i,j);
   Cell_circulator cdone = ccir;
