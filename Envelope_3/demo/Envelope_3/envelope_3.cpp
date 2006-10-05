@@ -72,12 +72,12 @@ int current_state;
 const QString my_title_string("envelopes of 3d triangles");
 
 
-class Qt_layer_show_ch : public CGAL::Qt_widget_layer
+class Qt_layer_show_diag : public CGAL::Qt_widget_layer
 {
 public:
     
     // default constructor
-  Qt_layer_show_ch(){};
+  Qt_layer_show_diag(){};
 
   // this method overrides the virtual method 'draw()' of Qt_widget_layer
   void draw()
@@ -172,13 +172,8 @@ public:
     //the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this, "ST");
 
-   
-
-
     //layers
     widget->attach(&testlayer);  
-
-   
   
     resize(w,h);
     widget->set_window(-1, 1, -1, 1);
@@ -191,11 +186,7 @@ public:
 private:
   void something_changed(){current_state++;};
 
- 
 
-  
-
-        
 public slots:
 
     void open_file()
@@ -272,7 +263,7 @@ private slots:
   void about()
   {
     QMessageBox::about( this, my_title_string,
-        "This is a demo for 2d envelopes of triangles\n");
+        "This is a demo for 3d envelopes of triangles\n");
           
   }
 
@@ -295,7 +286,10 @@ private slots:
     MyWindow *ed = new MyWindow(500, 500);
     ed->setCaption("Layer");
     ed->widget->clear_history();
-    ed->widget->set_window(-1.1, 1.1, -1.1, 1.1);
+    ed->widget->set_window(widget->x_min(), 
+                           widget->x_max(),
+                           widget->y_min(),
+                           widget->y_max());
     ed->show();
     something_changed();
   }
@@ -303,7 +297,8 @@ private slots:
 
   void timer_done()
   {
-    if(old_state!=current_state){
+    if(old_state!=current_state)
+    {
       widget->redraw();
       old_state = current_state;
     }
@@ -313,9 +308,7 @@ private slots:
 private:
   CGAL::Qt_widget*                     widget;
   CGAL::Qt_widget_standard_toolbar*    stoolbar;
-  Qt_layer_show_ch                     testlayer;
-  
-
+  Qt_layer_show_diag                   testlayer;
   int                                  old_state;
   QString                              curr_dir;
 };
