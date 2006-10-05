@@ -70,19 +70,19 @@ class Rational_polynomial_1 {
 		CGAL::Gmpq eval (const CGAL::Gmpq &) const;
 		Rational_polynomial_1 derive () const;
 		// assignment
-		Rational_polynomial_1 operator= (const Rational_polynomial_1 &);
+		Rational_polynomial_1& operator= (const Rational_polynomial_1 &);
 		// i/o functions
 		std::ostream& show (std::ostream &) const;
 		// overcharging
 		Rational_polynomial_1 operator- () const;
 		Rational_polynomial_1 operator+ (const Rational_polynomial_1 &) const;
-		void operator+= (const Rational_polynomial_1 &);
+		Rational_polynomial_1& operator+= (const Rational_polynomial_1 &);
 		Rational_polynomial_1 operator- (const Rational_polynomial_1 &) const;
-		void operator-= (const Rational_polynomial_1 &);
+		Rational_polynomial_1& operator-= (const Rational_polynomial_1 &);
 		void shift (int);
 		Rational_polynomial_1 operator* (const Rational_polynomial_1 &) const;
 		template <class T> Rational_polynomial_1 operator* (const T &) const;
-		void operator*= (const Rational_polynomial_1 &);
+		Rational_polynomial_1& operator*= (const Rational_polynomial_1 &);
 		bool operator== (const Rational_polynomial_1 &) const;
 };
 

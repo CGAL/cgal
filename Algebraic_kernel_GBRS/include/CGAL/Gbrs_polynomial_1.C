@@ -229,7 +229,7 @@ Rational_polynomial_1 Rational_polynomial_1::derive () const {
 	return derivative;
 };
 
-Rational_polynomial_1 Rational_polynomial_1::operator= (const Rational_polynomial_1 &p) {
+Rational_polynomial_1& Rational_polynomial_1::operator= (const Rational_polynomial_1 &p) {
 	// destroy the current data
 	for (int i=0; i<nm; ++i)
 		mpq_clear (coef[i]);
@@ -333,20 +333,20 @@ Rational_polynomial_1 Rational_polynomial_1::operator+ (const Rational_polynomia
 	return sum;
 };
 
-void Rational_polynomial_1::operator+= (const Rational_polynomial_1 &s) {
+Rational_polynomial_1& Rational_polynomial_1::operator+= (const Rational_polynomial_1 &s) {
 	Rational_polynomial_1 aux (*this);
 	*this = aux + s;
-	return;
+	return *this;
 };
 
 Rational_polynomial_1 Rational_polynomial_1::operator- (const Rational_polynomial_1 &s) const {
 	return *this + (-s);
 };
 
-void Rational_polynomial_1::operator-= (const Rational_polynomial_1 &s) {
+Rational_polynomial_1& Rational_polynomial_1::operator-= (const Rational_polynomial_1 &s) {
 	Rational_polynomial_1 aux (*this);
 	*this = aux - s;
-	return;
+	return *this;
 };
 
 // multiplies the polynomial by x^shiftn (precondition: shiftn>=0)
@@ -390,10 +390,10 @@ Rational_polynomial_1 Rational_polynomial_1::operator* (const T &n) const {
 	return r;
 };
 
-void Rational_polynomial_1::operator*= (const Rational_polynomial_1 &f) {
+Rational_polynomial_1& Rational_polynomial_1::operator*= (const Rational_polynomial_1 &f) {
 	Rational_polynomial_1 aux (*this);
 	*this = aux * f;
-	return;
+	return *this;
 };
 
 // TODO: this function returns false if the two polynomials have different
