@@ -75,7 +75,7 @@ int main (int argc, char **argv)
                                max_diag);
 
   // Output the points along the boundary convex hull in a counterclockwise
-  // order. We start be traversing the minimization diagram from left to
+  // order. We start by traversing the minimization diagram from left to
   // right, then the maximization diagram from left to right.
   Diagram_1::Edge_const_handle  e = min_diag.leftmost();
 

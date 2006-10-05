@@ -51,7 +51,7 @@ void print_diagram (const Diagram_1& diag)
 /*! The main program. */
 int main ()
 {
-  // Create sour input circle.
+  // Create four input circles.
   Curve_2          circles[4];
 
   circles[0] = Circle_2 (Kernel_point_2 (1, 3), CGAL::square(2));

@@ -127,16 +127,18 @@ induce the envelope over this interval. Note that this set may be
 empty if no $x$-monotone curves are defined over this interval. In
 degenerate situations where curves overlap, there may be more than
 a single curve that induces the envelope over the interval the edge
-represents. Almost all diagram edges are bounded by two vertices, one
-to the edge left and the other to its right. The diagram also contains
-two unbounded edges, a {\em leftmost} edge, representing an interval
-that starts at $-\infty$, and a {\em rightmost} edge, representing an
-interval that ends at $\infty$. (In the example depicted in 
-Figure~\ref{env2_fig:min_diag} we have only bounded curves, so the
-leftmost and rightmost edges represent empty intervals. This is not
-the case when we deal, for example, with envelopes of sets of lines.)
-Note that a diagram may contain no vertices at all, in which case it
-comprises a single edge.
+represents. An envelop diagram of a set of curves either consists of
+a single unbounded edge (in case the curve set is empty or if the
+envelope contains a single unbounded curve that is below or above
+all other curves), or at least one vertex and two unbounded edges,
+while each additional vertex comes along with an additional edge. It
+is possible to directly access the {\em leftmost} edge, representing
+the unbounded interval that starts at $-\infty$, and the {\em rightmost}
+edge, representing the unbounded interval that ends at $\infty$.
+(In the example depicted in Figure~\ref{env2_fig:min_diag} we have
+only bounded curves, so the leftmost and rightmost edges represent
+empty intervals. This is not the case when we deal, for example, with
+envelopes of sets of lines.)
 
 Any model of the \ccRefName\ concept must define a geometric
 traits class, which in turn defines the \ccc{Point_2} and 
@@ -161,18 +163,19 @@ We use these labels when we print the minimization diagram:
 
 \ccIncludeExampleCode{Envelope_2/ex_envelope_segments.cpp}
 
-The next example shows how to construct the envelope of unbounded
-curves. In this case we use the \ccc{Arr_linear_traits_2} class to
-compute the lower envelope of a set of lines. We read a set of
-points $\calP = p_1, \ldots, p_n$ from an input file, and compute the
-corresponding dual lines $\calP^{*} = p^{*}_1, \ldots, p^{*}_n$, where
-the line $p^{*}$ dual to a point $p = (p_x, p_y)$ is given by
-$y = p_x x - p_y$. We then compute the convex hull of the point-set
-$\calP$, using the fact that the lines that form the
-lower envelope of $\calP^{*}$ are dual to the points along the
-{\em upper} part of $\calP$'s convex hull, and the lines that form the
-upper envelope of $\calP^{*}$ are dual to the points along the
-{\em lower} part of the convex hull; see,
+The next example computes the convex hull of a set of input points
+by constructing envelopes of unbounded curves, in our case lines
+that are dual to the input points. Here use the
+\ccc{Arr_linear_traits_2} class to compute the lower envelope of the
+set of dual lines. We read a set of points $\calP = p_1, \ldots, p_n$
+from an input file, and construct the corresponding dual lines
+$\calP^{*} = p^{*}_1, \ldots, p^{*}_n$, where the line $p^{*}$ dual
+to a point $p = (p_x, p_y)$ is given by $y = p_x x - p_y$. We then
+compute the convex hull of the point-set $\calP$, using the fact that
+the lines that form the lower envelope of $\calP^{*}$ are dual to the
+points along the {\em upper} part of $\calP$'s convex hull, and the
+lines that form the upper envelope of $\calP^{*}$ are dual to the
+points along the {\em lower} part of the convex hull; see,
 e.g.,~\cite[Section~11.4]{bkos-cgaa-00} for more details.
 Note that the leftmost edge of the minimization diagram is associated
 with the same line as the rightmost edge of the maximization diagram,
