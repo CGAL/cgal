@@ -30,8 +30,10 @@ with the point.
 \ccRequirements
 \begin{itemize}
 \item The instantiated \ccc{Traits} class must model the
-  \ccc{ArrangementXMonotoneTraits_2} concept, which requires the provision
-  of the split operations.
+  \ccc{ArrangementXMonotoneTraits_2} concept. Not all expressions listed 
+  by this concept are required. In fact the traits class must model the 
+  \ccc{ArrangementBasicTraits_2} concept, and support the splitting
+  functionality.
 \item The point-location object \ccc{pl}, must model the
   \ccc{ArrangementPointLocation_2} concept.
 \end{itemize}
