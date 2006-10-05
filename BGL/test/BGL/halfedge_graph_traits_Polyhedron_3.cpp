@@ -21,17 +21,19 @@
 #include <CGAL/basic.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-
-typedef CGAL::Simple_cartesian<double> Kernel ;
-typedef CGAL::Polyhedron_3<Kernel> Polyhedron ;
+#include <CGAL/Unique_hash_map.h>
 
 using namespace boost ;
+using namespace std ;
+using namespace CGAL ;
+
+typedef Simple_cartesian<double> Kernel ;
+typedef Polyhedron_3<Kernel> Polyhedron ;
 
 int sOK     = 0 ; 
 int sFailed = 0 ;
-
-using namespace std ;
  
 #define CHECK(pred) \
         if (!(pred)) \
@@ -54,6 +56,9 @@ bool test_aux ( Graph& aG )
   typedef typename graph_traits<Graph>::edge_iterator     edge_iterator ;
   typedef typename graph_traits<Graph>::in_edge_iterator  in_edge_iterator ;
   typedef typename graph_traits<Graph>::out_edge_iterator out_edge_iterator ;
+
+  typedef typename halfedge_graph_traits<Graph>::undirected_edge_iterator undirected_edge_iterator ;
+  typedef typename halfedge_graph_traits<Graph>::Point Point ;
   
   bool result = false ;
   
@@ -62,14 +67,20 @@ bool test_aux ( Graph& aG )
     CHECK_EQUAL( num_vertices(aG), aG.size_of_vertices () ) ;
     CHECK_EQUAL( num_edges   (aG), aG.size_of_halfedges() ) ;
     
+    Unique_hash_map<vertex_descriptor,bool> vtable(false,aG.size_of_vertices());
+    
     vertex_iterator vb,ve ;
     for ( tie(vb,ve) = vertices(aG) ; vb != ve ; ++ vb )
     {
       vertex_descriptor v = *vb ;
+      
+      CHECK_EQUAL(vtable[v],false); vtable[v] = true ;
+      
       CHECK_EQUAL( degree    (v,aG), v->vertex_degree() * 2) ;
       CHECK_EQUAL( out_degree(v,aG), v->vertex_degree() ) ;
       CHECK_EQUAL( in_degree (v,aG), v->vertex_degree() ) ;
     
+      size_t iec = 0, oec = 0 ;
       in_edge_iterator ieb,iee ;
       for ( tie(ieb,iee) = in_edges(v,aG) ; ieb != iee ; ++ ieb )
       {
@@ -81,6 +92,8 @@ bool test_aux ( Graph& aG )
         CHECK_NOT_EQUAL(s,t);        
         CHECK_EQUAL    (t,v);        
         CHECK_EQUAL    (s, ie->opposite()->vertex());        
+        
+        ++ iec ;
       }
     
       out_edge_iterator oeb,oee ;
@@ -94,20 +107,65 @@ bool test_aux ( Graph& aG )
         CHECK_NOT_EQUAL(s,t);        
         CHECK_EQUAL    (s,v);        
         CHECK_EQUAL    (t, oe->vertex());        
+        
+        ++ oec ;
       }
+      
+      CHECK_EQUAL(iec,oec);
+      CHECK_EQUAL(iec,v->vertex_degree());
     }
 
+    Unique_hash_map<edge_descriptor,bool> etable(false,aG.size_of_halfedges());
+    
+    size_t ec = 0 ;
     edge_iterator eb,ee ;
     for ( tie(eb,ee) = edges(aG) ; eb != ee ; ++ eb )
     {
       edge_descriptor e = *eb ;
+      edge_descriptor oe = opposite_edge(e,aG);
       
-      vertex_descriptor s = source(e,aG);
-      vertex_descriptor t = target(e,aG);
+      CHECK_EQUAL(etable[e],false); etable[e] = true ;
+      
+      CHECK_NOT_EQUAL(e,oe);
+      CHECK_EQUAL(oe,e->opposite());
+      
+      vertex_descriptor s  = source(e,aG);
+      vertex_descriptor t  = target(e,aG);
+      vertex_descriptor os = source(oe,aG);
+      vertex_descriptor ot = target(oe,aG);
 
       CHECK_NOT_EQUAL(s,t);        
+      CHECK_NOT_EQUAL(os,ot);        
+      CHECK_EQUAL    (s,ot);        
+      CHECK_EQUAL    (t,os);        
+      CHECK_EQUAL    (s, oe->vertex());        
+      CHECK_EQUAL    (t, e->vertex());        
+      
+      ++ ec ;
     }
       
+    CHECK_EQUAL(ec,aG.size_of_halfedges());
+
+    Unique_hash_map<edge_descriptor,bool> etable2(0,aG.size_of_halfedges());
+    
+    size_t uec = 0 ;
+    undirected_edge_iterator ueb,uee ;
+    for ( tie(ueb,uee) = undirected_edges(aG) ; ueb != uee ; ++ ueb )
+    {
+      edge_descriptor ue = *eb ;
+      edge_descriptor oe = opposite_edge(ue,aG);
+    
+      CHECK_EQUAL(etable2[ue],false); etable2[ue] = true ;
+      CHECK_EQUAL(etable2[oe],false); etable2[oe] = true ;
+      
+      CHECK_NOT_EQUAL(ue,oe);
+      CHECK_EQUAL(oe,ue->opposite());
+      
+      ++ uec ;
+    }
+    
+    CHECK_EQUAL(uec*2,ec);
+    
     result = true ;
   }
   catch(...) {}

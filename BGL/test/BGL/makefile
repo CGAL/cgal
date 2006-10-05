@@ -37,13 +37,13 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all: \
-  graph_traits_Polyhedron_3$(EXE_EXT) \
+  halfedge_graph_traits_Polyhedron_3$(EXE_EXT) \
 
-graph_traits_Polyhedron_3$(EXE_EXT): graph_traits_Polyhedron_3$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)graph_traits_Polyhedron_3 graph_traits_Polyhedron_3$(OBJ_EXT) $(LDFLAGS)
+halfedge_graph_traits_Polyhedron_3$(EXE_EXT): halfedge_graph_traits_Polyhedron_3$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)halfedge_graph_traits_Polyhedron_3 halfedge_graph_traits_Polyhedron_3$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
-        graph_traits_Polyhedron_3.clean \
+        halfedge_graph_traits_Polyhedron_3.clean \
 
 #---------------------------------------------------------------------#
 #                    suffix rules
