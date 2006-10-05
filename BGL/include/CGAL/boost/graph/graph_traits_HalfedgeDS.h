@@ -207,7 +207,7 @@ class HDS_all_halfedges_const_iterator
   
 public:
 
-  typedef typename HDS::Halfdge_const_iterator Iterator;
+  typedef typename HDS::Halfedge_const_iterator Iterator;
 
   HDS_all_halfedges_const_iterator() {}
   HDS_all_halfedges_const_iterator( Iterator j) : Base(j) {}

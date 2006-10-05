@@ -61,7 +61,7 @@ template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 typename graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const>::degree_size_type
 degree(typename graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const >::vertex_descriptor v, const CGAL::Polyhedron_3<Gt,I,HDS,A>&)
 {
-  return v->vertex_degree();
+  return v->vertex_degree() * 2 ;
 }
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>

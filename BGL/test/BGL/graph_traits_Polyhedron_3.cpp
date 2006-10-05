@@ -26,36 +26,103 @@
 typedef CGAL::Simple_cartesian<double> Kernel ;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron ;
 
+using namespace boost ;
+
 int sOK     = 0 ; 
 int sFailed = 0 ;
 
 using namespace std ;
  
-struct Match
-{
-  std::size_t num_vertices ;
-};
-
-istream& operator >> ( istream& is, Match& rMatch )
-{
-  return is ;
-}
-
-#define CHECK_EQUAL(x,y) \
-        if ( (x) != (y) ) \
+#define CHECK(pred) \
+        if (!(pred)) \
         { \
-          cerr << "Assertion failure: " << (x) << "==" << (y) << endl \
+          cerr << "Assertion failure: " << #pred << endl \
                << "File:" << __FILE__ << endl \
                << "Line:" << __LINE__ << endl ; \
           throw 0 ; \
         }
+        
+#define CHECK_EQUAL(x,y)     CHECK(((x)==(y)))
+#define CHECK_NOT_EQUAL(x,y) CHECK(((x)!=(y)))
 
-void test ( Polyhedron const& aPoly, Match const& aMatch )
+template<class Graph>
+bool test_aux ( Graph& aG )
 {
-  using namespace boost ;
+  typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor ;
+  typedef typename graph_traits<Graph>::edge_descriptor   edge_descriptor ;
+  typedef typename graph_traits<Graph>::vertex_iterator   vertex_iterator ;
+  typedef typename graph_traits<Graph>::edge_iterator     edge_iterator ;
+  typedef typename graph_traits<Graph>::in_edge_iterator  in_edge_iterator ;
+  typedef typename graph_traits<Graph>::out_edge_iterator out_edge_iterator ;
   
-  CHECK_EQUAL( num_vertices(aPoly), aPoly.size_of_vertices () ) 
-  CHECK_EQUAL( num_edges   (aPoly), aPoly.size_of_halfedges() ) 
+  bool result = false ;
+  
+  try
+  {
+    CHECK_EQUAL( num_vertices(aG), aG.size_of_vertices () ) ;
+    CHECK_EQUAL( num_edges   (aG), aG.size_of_halfedges() ) ;
+    
+    vertex_iterator vb,ve ;
+    for ( tie(vb,ve) = vertices(aG) ; vb != ve ; ++ vb )
+    {
+      vertex_descriptor v = *vb ;
+      CHECK_EQUAL( degree    (v,aG), v->vertex_degree() * 2) ;
+      CHECK_EQUAL( out_degree(v,aG), v->vertex_degree() ) ;
+      CHECK_EQUAL( in_degree (v,aG), v->vertex_degree() ) ;
+    
+      in_edge_iterator ieb,iee ;
+      for ( tie(ieb,iee) = in_edges(v,aG) ; ieb != iee ; ++ ieb )
+      {
+        edge_descriptor ie = *ieb ;
+      
+        vertex_descriptor s = source(ie,aG);
+        vertex_descriptor t = target(ie,aG);
+
+        CHECK_NOT_EQUAL(s,t);        
+        CHECK_EQUAL    (t,v);        
+        CHECK_EQUAL    (s, ie->opposite()->vertex());        
+      }
+    
+      out_edge_iterator oeb,oee ;
+      for ( tie(oeb,oee) = out_edges(v,aG) ; oeb != oee ; ++ oeb )
+      {
+        edge_descriptor oe = *oeb ;
+      
+        vertex_descriptor s = source(oe,aG);
+        vertex_descriptor t = target(oe,aG);
+
+        CHECK_NOT_EQUAL(s,t);        
+        CHECK_EQUAL    (s,v);        
+        CHECK_EQUAL    (t, oe->vertex());        
+      }
+    }
+
+    edge_iterator eb,ee ;
+    for ( tie(eb,ee) = edges(aG) ; eb != ee ; ++ eb )
+    {
+      edge_descriptor e = *eb ;
+      
+      vertex_descriptor s = source(e,aG);
+      vertex_descriptor t = target(e,aG);
+
+      CHECK_NOT_EQUAL(s,t);        
+    }
+      
+    result = true ;
+  }
+  catch(...) {}
+    
+  return result ;  
+}
+
+bool test ( Polyhedron& aG )
+{
+  bool r = true ;
+  
+  r = r && test_aux<Polyhedron const>(aG);
+  r = r && test_aux<Polyhedron      >(aG);
+  
+  return r ;
 }
 
 bool test( string off_file )
@@ -68,30 +135,16 @@ bool test( string off_file )
     ifstream is(off_file.c_str());
     if ( is )
     {
-      string traits_file = off_file.substr(0,extpos)+".traits";
-      ifstream match(traits_file.c_str());
-      if ( match )
-      {
-        Polyhedron lPoly ;
-        is >> lPoly ;
-        
-        Match lMatch ;
-        match >> lMatch ;
-        
-        bool ok = false ;
-        try
-        {
-          test(lPoly,lMatch) ;
-          ok = true ;
-        } catch(...) {}  
-        
-        if ( ok )
-             ++ sOK ;
-        else ++ sFailed ;  
-        
-        cout << ( ok ? "OK" : "FAILED!" ) << endl ;
-      }
-      else cerr << "Unable to load .traits file: " << traits_file << endl ;
+      Polyhedron lPoly ;
+      is >> lPoly ;
+      
+      bool ok = test(lPoly) ;
+      
+      if ( ok )
+           ++ sOK ;
+      else ++ sFailed ;  
+      
+      cout << ( ok ? "OK" : "FAILED!" ) << endl ;
     }
     else cerr << "Unable to load input .off file: " << off_file << endl ;
   }
