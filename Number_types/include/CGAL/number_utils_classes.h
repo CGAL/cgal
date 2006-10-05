@@ -32,6 +32,7 @@
 #include <utility>
 #include <CGAL/functional_base.h>
 #include <CGAL/number_utils_fwd.h>
+#include <boost/config.hpp>
 
 CGAL_BEGIN_NAMESPACE
 

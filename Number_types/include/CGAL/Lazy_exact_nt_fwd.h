@@ -24,6 +24,7 @@
 // Forward declarations of functions on Lazy_exact_nt.
 
 #include <CGAL/Root_of_traits.h>
+#include <boost/config.hpp>
 
 CGAL_BEGIN_NAMESPACE
 

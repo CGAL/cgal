@@ -28,6 +28,7 @@
 // two-stage name lookup.
 
 #include <CGAL/Uncertain.h>
+#include <boost/config.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
