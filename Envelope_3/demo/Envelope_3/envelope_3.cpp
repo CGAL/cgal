@@ -25,7 +25,8 @@
 #include <iostream>
 int main(int, char*){
   std::cout << "Sorry, this demo needs QT...";
-  std::cout << std::endl; return 0;
+  std::cout << std::endl;
+  return 0;
 }
 #else
 
@@ -33,15 +34,11 @@ int main(int, char*){
 #include <string>
 
 #include <CGAL/IO/Qt_widget.h>
-#include <CGAL/Random.h> 
-
-
-
-
 #include <CGAL/IO/Qt_widget_standard_toolbar.h>
 #include <CGAL/IO/Qt_help_window.h>
 #include <CGAL/IO/Qt_widget_layer.h>
 #include <CGAL/IO/pixmaps/demoicon.xpm>
+#include <CGAL/Random.h> 
 
 #include <qplatinumstyle.h>
 #include <qapplication.h>
@@ -191,7 +188,6 @@ public slots:
 
     void open_file()
     {
-
       QString s = QFileDialog::getOpenFileName(curr_dir,
                                                QString::null,
                                                this,
@@ -272,7 +268,8 @@ private slots:
     QMessageBox::aboutQt( this, my_title_string );
   }
 
-  void howto(){
+  void howto()
+  {
     QString home;
     home = "help/index.html";
     CGAL::Qt_help_window *help = new 
@@ -314,8 +311,6 @@ private:
 };
 
 #include "envelope_3.moc"
-
-
 
 int main(int argc, char **argv)
 {
