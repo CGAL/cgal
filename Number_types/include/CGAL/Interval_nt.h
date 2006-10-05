@@ -42,7 +42,6 @@
 #include <CGAL/Interval_nt_fwd.h>
 #include <CGAL/number_utils_fwd.h>
 #include <CGAL/functional_base.h> // Unary_function, Binary_function
-#include <boost/config.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
