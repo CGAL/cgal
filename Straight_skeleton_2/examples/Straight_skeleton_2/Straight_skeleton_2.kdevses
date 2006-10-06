@@ -1,16 +1,10 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="3" >
-  <Doc0 NumberOfViews="1" URL="file:/home/fcacciola/Programming/CGAL_SVN/Straight_skeleton_2/examples/Straight_skeleton_2/Straight_skeleton_2.C" >
-   <View0 line="29" Type="Source" />
+ <DocsAndViews NumberOfDocuments="1" >
+  <Doc0 NumberOfViews="1" URL="file:/home/fcacciola/Programming/CGAL_SVN/Straight_skeleton_2/test/Straight_skeleton_2/include/CGAL/test_offset_builder_types.h" >
+   <View0 line="28" Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:/home/fcacciola/Programming/CGAL_SVN/Straight_skeleton_2/test/Straight_skeleton_2/test_offset_builder.C" >
-   <View0 line="28" Type="Source" />
-  </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:/home/fcacciola/Programming/CGAL_SVN/Straight_skeleton_2/test/Straight_skeleton_2/include/CGAL/test_offset_builder_types.h" >
-   <View0 line="28" Type="Source" />
-  </Doc2>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>

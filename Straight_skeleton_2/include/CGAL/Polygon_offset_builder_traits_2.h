@@ -18,6 +18,7 @@
 #define CGAL_POLYGON_OFFSET_BUILDER_TRAITS_2_H 1
 
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
+#include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_builder_traits_2_aux.h>
 #include <CGAL/predicates/Polygon_offset_pred_ftC2.h>
 #include <CGAL/constructions/Polygon_offset_cons_ftC2.h>
@@ -105,6 +106,7 @@ template<class K>
 struct Polygon_offset_builder_traits_2_functors
 {
   typedef CGAL_SS_i::Compare_offset_against_event_time_2<K> Compare_offset_against_event_time_2 ;
+  typedef CGAL_SS_i::Compare_ss_event_times_2           <K> Compare_ss_event_times_2 ;
   typedef CGAL_SS_i::Construct_offset_point_2           <K> Construct_offset_point_2 ;
   typedef CGAL_SS_i::Construct_ss_trisegment_2          <K> Construct_ss_trisegment_2 ;
   typedef CGAL_SS_i::Construct_ss_seeded_trisegment_2   <K> Construct_ss_seeded_trisegment_2 ;
@@ -137,6 +139,9 @@ public:
   typedef Unfiltered_predicate_adaptor<typename Unfiltering::Compare_offset_against_event_time_2>
     Compare_offset_against_event_time_2 ;
 
+  typedef Unfiltered_predicate_adaptor<typename Unfiltering::Compare_ss_event_times_2>
+    Compare_ss_event_times_2 ;
+    
   typedef typename Unfiltering::Construct_offset_point_2         Construct_offset_point_2 ;
   typedef typename Unfiltering::Construct_ss_trisegment_2        Construct_ss_trisegment_2 ;
   typedef typename Unfiltering::Construct_ss_seeded_trisegment_2 Construct_ss_seeded_trisegment_2 ;
@@ -174,6 +179,13 @@ public:
                             >
                             Compare_offset_against_event_time_2 ;
 
+  typedef Filtered_predicate< typename Exact    ::Compare_ss_event_times_2
+                            , typename Filtering::Compare_ss_event_times_2
+                            , C2E
+                            , C2F
+                            >
+                            Compare_ss_event_times_2 ;
+                            
   typedef CGAL_SS_i::Exceptionless_filtered_construction< typename Unfiltering::Construct_offset_point_2
                                                         , typename Exact      ::Construct_offset_point_2
                                                         , typename Unfiltering::Construct_offset_point_2

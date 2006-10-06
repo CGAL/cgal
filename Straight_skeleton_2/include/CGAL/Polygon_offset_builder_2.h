@@ -140,7 +140,7 @@ private:
                                              , Vertex_const_handle   aRSeed
                                              ) const
   {
-    return Construct_ss_seeded_trisegment_2(mTraits)(CreateTrisegment(aE0,aE1,aE1)
+    return Construct_ss_seeded_trisegment_2(mTraits)(CreateTrisegment(aE0,aE1,aE2)
                                                     ,CreateTrisegment(aLSeed)
                                                     ,CreateTrisegment(aRSeed)
                                                     );
@@ -185,15 +185,33 @@ private:
     Halfedge_const_handle lBorderA = aBisector->defining_contour_edge();
     Halfedge_const_handle lBorderB = aBisector->opposite()->defining_contour_edge();
     
+    // If aBisector is not a border bisector the offset point construction needs to get to the event
+    // that generated the node closer to the border. That event is lSrcEvent 
+    // (relevant only for inner bisectors)
     Seeded_trisegment_2 lSrcEvent ;
-    
-    Vertex_const_handle lNode = aBisector->opposite()->vertex();
-    
-    if ( lNode->is_skeleton() )
+    if ( aBisector->is_inner_bisector() )
     {
-      Vertex_const_handle lLSeed = aBisector->prev()->opposite()->vertex();
-      Vertex_const_handle lRSeed = aBisector->opposite()->next()->vertex();
-      lSrcEvent = CreateSeededTrisegment(lNode,lLSeed,lRSeed);
+      // aBisector might be pointing toward or away from the border, so we need to determine which
+      // one of its endpoint nodes is closer to the border, that is, which one has the smaller event time.
+      
+      Seeded_trisegment_2 lSrcEventS, lSrcEventT ;
+      
+      Vertex_const_handle lNodeS = aBisector->opposite()->vertex();
+      Vertex_const_handle lNodeT = aBisector->vertex();
+      
+      CGAL_assertion ( lNodeS->is_skeleton() ) ;
+      CGAL_assertion ( lNodeT->is_skeleton() ) ;
+        
+      Vertex_const_handle lLSeedS = aBisector->prev()->opposite()->vertex();
+      Vertex_const_handle lRSeedS = aBisector->opposite()->next()->vertex();
+      lSrcEventS = CreateSeededTrisegment(lNodeS,lLSeedS,lRSeedS);
+      
+      Vertex_const_handle lLSeedT = aBisector->opposite()->prev()->opposite()->vertex();
+      Vertex_const_handle lRSeedT = aBisector->next()->vertex();
+      lSrcEventT = CreateSeededTrisegment(lNodeT,lLSeedT,lRSeedT);
+      
+      lSrcEvent = Compare_ss_event_times_2(mTraits)(lSrcEventS,lSrcEventT) != LARGER ? lSrcEventS : lSrcEventT ;
+     
     }
 
     return Construct_offset_point_2(mTraits)(aT

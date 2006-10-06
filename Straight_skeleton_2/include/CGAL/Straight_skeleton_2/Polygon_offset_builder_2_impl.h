@@ -56,13 +56,13 @@ Polygon_offset_builder_2<Ss,Gt,Cont>::LocateHook( FT aTime, Halfedge_const_handl
 
   while ( aBisector->is_bisector() )
   {
-    CGAL_POLYOFFSET_TRACE(3,"Testing hook on B" << aBisector->id() ) ;
-
     Halfedge_const_handle lPrev = aBisector->prev();
     Halfedge_const_handle lNext = aBisector->next();
 
     if ( !IsVisited(aBisector) )
     {
+      CGAL_POLYOFFSET_TRACE(3,"Testing hook on B" << aBisector->id() << " (Next: B" << lNext->id() << " Prev: B" << lPrev->id() << ")" ) ;
+      
       Comparison_result lCNext = lNext->is_bisector() ? Compare_offset_against_event_time(aTime,aBisector,lNext)
                                                       : SMALLER ;
 

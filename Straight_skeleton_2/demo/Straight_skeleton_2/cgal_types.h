@@ -70,7 +70,7 @@ typedef CGAL::Segment_2<K>            Segment;
 typedef std::vector<PolygonPtr>       Region ;
 typedef boost::shared_ptr<Region>     RegionPtr ;
 typedef std::vector<RegionPtr>        Regions ;
-typedef std::vector<double>           Doubles ;
+typedef std::set<double>              Doubles ;
 
 }
 #endif

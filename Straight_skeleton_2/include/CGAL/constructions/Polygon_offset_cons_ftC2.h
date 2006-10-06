@@ -77,8 +77,11 @@ optional< Point_2<K> > construct_offset_pointC2 ( typename K::FT const&         
         Optional_point_2 q = st.event().is_null() ? cgal_make_optional(e1.source()) : construct_offset_lines_isecC2(st);
         if ( q )
         {
-          x = q->x() + l0->a() * t  ;
-          y = q->y() + l0->b() * t  ;
+          FT px, py ;
+          line_project_pointC2(l0->a(),l0->b(),l0->c(),q->x(),q->y(),px,py); 
+          
+          x = px + l0->a() * t  ;
+          y = py + l0->b() * t  ;
           
           ok = CGAL_NTS is_finite(x) && CGAL_NTS is_finite(y) ;
         }    
