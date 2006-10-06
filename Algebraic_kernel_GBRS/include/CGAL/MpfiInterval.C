@@ -472,12 +472,12 @@ bool MpfiInterval::operator>= (const T &n2) const {
 // 3
 //--------------------------------------------------
 // BOOST:
-// MpfiInterval& MpfiInterval::operator+ (const MpfiInterval &n2) const
-// MpfiInterval& MpfiInterval::operator- (const MpfiInterval &n2) const
-// MpfiInterval& MpfiInterval::operator* (const MpfiInterval &n2) const
+// MpfiInterval MpfiInterval::operator+ (const MpfiInterval &n2) const
+// MpfiInterval MpfiInterval::operator- (const MpfiInterval &n2) const
+// MpfiInterval MpfiInterval::operator* (const MpfiInterval &n2) const
 //-------------------------------------------------- 
 
-MpfiInterval& MpfiInterval::operator- () const {
+MpfiInterval MpfiInterval::operator- () const {
 	mpfi_t n;
 	mpfi_init (n);
 	mpfi_neg (n, mpfi ());
@@ -505,9 +505,9 @@ MpfiInterval& MpfiInterval::operator*= (const MpfiInterval &n2) {
 // this (op) int
 //--------------------------------------------------
 // BOOST:
-// MpfiInterval& MpfiInterval::operator+ (const int n2) const
-// MpfiInterval& MpfiInterval::operator- (const int n2) const
-// MpfiInterval& MpfiInterval::operator* (const int n2) const
+// MpfiInterval MpfiInterval::operator+ (const int n2) const
+// MpfiInterval MpfiInterval::operator- (const int n2) const
+// MpfiInterval MpfiInterval::operator* (const int n2) const
 //-------------------------------------------------- 
 
 MpfiInterval& MpfiInterval::operator+= (const int n2) {
@@ -528,9 +528,9 @@ MpfiInterval& MpfiInterval::operator*= (const int n2) {
 // this (op) Gmpz
 //--------------------------------------------------
 // BOOST:
-// MpfiInterval& MpfiInterval::operator+ (const CGAL::Gmpz &n2) const
-// MpfiInterval& MpfiInterval::operator- (const CGAL::Gmpz &n2) const
-// MpfiInterval& MpfiInterval::operator* (const CGAL::Gmpz &n2) const
+// MpfiInterval MpfiInterval::operator+ (const CGAL::Gmpz &n2) const
+// MpfiInterval MpfiInterval::operator- (const CGAL::Gmpz &n2) const
+// MpfiInterval MpfiInterval::operator* (const CGAL::Gmpz &n2) const
 //-------------------------------------------------- 
 
 MpfiInterval& MpfiInterval::operator+= (const CGAL::Gmpz &n2) {
@@ -546,9 +546,9 @@ MpfiInterval& MpfiInterval::operator-= (const CGAL::Gmpz &n2) {
 // this (op) Gmpq
 //--------------------------------------------------
 // BOOST:
-// MpfiInterval& MpfiInterval::operator+ (const CGAL::Gmpq &n2) const
-// MpfiInterval& MpfiInterval::operator- (const CGAL::Gmpq &n2) const
-// MpfiInterval& MpfiInterval::operator* (const CGAL::Gmpq &n2) const
+// MpfiInterval MpfiInterval::operator+ (const CGAL::Gmpq &n2) const
+// MpfiInterval MpfiInterval::operator- (const CGAL::Gmpq &n2) const
+// MpfiInterval MpfiInterval::operator* (const CGAL::Gmpq &n2) const
 //-------------------------------------------------- 
 
 MpfiInterval& MpfiInterval::operator+= (const CGAL::Gmpq &n2) {
@@ -596,8 +596,8 @@ std::pair <double, double> MpfiInterval::to_interval () const {
 // 7
 //--------------------------------------------------
 // BOOST:
-// MpfiInterval& MpfiInterval::operator/ (const MpfiInterval &n2) const
-// MpfiInterval& MpfiInterval::operator/ (const int n2) const
+// MpfiInterval MpfiInterval::operator/ (const MpfiInterval &n2) const
+// MpfiInterval MpfiInterval::operator/ (const int n2) const
 //-------------------------------------------------- 
 
 MpfiInterval& MpfiInterval::operator/= (const MpfiInterval &n2) {
@@ -723,9 +723,9 @@ bool MpfiInterval::operator> (const mpq_t &n2) const {
 
 //--------------------------------------------------
 // BOOST:
-// MpfiInterval& MpfiInterval::operator+ (const mpz_t &n2) const
-// MpfiInterval& MpfiInterval::operator- (const mpz_t &n2) const
-// MpfiInterval& MpfiInterval::operator* (const mpz_t &n2) const
+// MpfiInterval MpfiInterval::operator+ (const mpz_t &n2) const
+// MpfiInterval MpfiInterval::operator- (const mpz_t &n2) const
+// MpfiInterval MpfiInterval::operator* (const mpz_t &n2) const
 //-------------------------------------------------- 
 
 MpfiInterval& MpfiInterval::operator+= (const mpz_t &n2) {
@@ -741,9 +741,9 @@ MpfiInterval& MpfiInterval::operator-= (const mpz_t &n2) {
 // this (op) mpq_t
 //--------------------------------------------------
 // BOOST:
-// MpfiInterval& MpfiInterval::operator+ (const mpq_t &n2) const
-// MpfiInterval& MpfiInterval::operator- (const mpq_t &n2) const
-// MpfiInterval& MpfiInterval::operator* (const mpq_t &n2) const
+// MpfiInterval MpfiInterval::operator+ (const mpq_t &n2) const
+// MpfiInterval MpfiInterval::operator- (const mpq_t &n2) const
+// MpfiInterval MpfiInterval::operator* (const mpq_t &n2) const
 //-------------------------------------------------- 
 
 MpfiInterval& MpfiInterval::operator+= (const mpq_t &n2) {
@@ -818,10 +818,10 @@ bool MpfiInterval::operator> (const mpfr_t &n2) const {
 // arithmetics: mpfi (op) mpfr
 //--------------------------------------------------
 // BOOST:
-// MpfiInterval& MpfiInterval::operator+ (const mpfr_t &f) const
-// MpfiInterval& MpfiInterval::operator- (const mpfr_t &f) const
-// MpfiInterval& MpfiInterval::operator* (const mpfr_t &f) const
-// MpfiInterval& MpfiInterval::operator/ (const mpfr_t &f) const
+// MpfiInterval MpfiInterval::operator+ (const mpfr_t &f) const
+// MpfiInterval MpfiInterval::operator- (const mpfr_t &f) const
+// MpfiInterval MpfiInterval::operator* (const mpfr_t &f) const
+// MpfiInterval MpfiInterval::operator/ (const mpfr_t &f) const
 //-------------------------------------------------- 
 
 MpfiInterval& MpfiInterval::operator+= (const mpfr_t &f) {
@@ -968,9 +968,9 @@ std::pair<double, double> to_interval (const MpfiInterval &n) {
 // anything / interval
 //--------------------------------------------------
 // BOOST:
-// MpfiInterval& operator/ (const int n1, const MpfiInterval &n2)
-// MpfiInterval& operator/ (const CGAL::Gmpz &n1, const MpfiInterval &n2)
-// MpfiInterval& operator/ (const CGAL::Gmpq &n1, const MpfiInterval &n2)
+// MpfiInterval operator/ (const int n1, const MpfiInterval &n2)
+// MpfiInterval operator/ (const CGAL::Gmpz &n1, const MpfiInterval &n2)
+// MpfiInterval operator/ (const CGAL::Gmpq &n1, const MpfiInterval &n2)
 //-------------------------------------------------- 
 
 // 8.5
@@ -991,12 +991,12 @@ std::ostream& operator<< (std::ostream &o, MpfiInterval &n) {
 //--------------------------------------------------
 // BOOST:
 // template <class T>
-// MpfiInterval& operator+ (const T &n1, const MpfiInterval &n2)
+// MpfiInterval operator+ (const T &n1, const MpfiInterval &n2)
 // template <class T>
-// MpfiInterval& operator- (const T &n1, const MpfiInterval &n2)
+// MpfiInterval operator- (const T &n1, const MpfiInterval &n2)
 // template <class T>
-// MpfiInterval& operator* (const T &n1, const MpfiInterval &n2)
-// MpfiInterval& operator/ (const mpfr_t &n1, const MpfiInterval &n2)
+// MpfiInterval operator* (const T &n1, const MpfiInterval &n2)
+// MpfiInterval operator/ (const mpfr_t &n1, const MpfiInterval &n2)
 //-------------------------------------------------- 
 
 // not implemented: mpfr (op=) mpfi (because they must not return an interval)
