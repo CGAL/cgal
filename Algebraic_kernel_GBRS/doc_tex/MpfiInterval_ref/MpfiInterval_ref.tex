@@ -32,59 +32,50 @@ are arbitrary precision floating point numbers (implemented using the
 \ccCreationVariable{i}
 \ccCreation
 
-\ccConstructor{MpfiInterval();}
-	{creates an interval object without setting its endpoints.}
+Creation of an interval object without setting its endpoints.
 
-\ccConstructor{MpfiInterval (int);}{} \ccGlue
-\ccConstructor{MpfiInterval (unsigned int);}{} \ccGlue
-\ccConstructor{MpfiInterval (long int);}{} \ccGlue
-\ccConstructor{MpfiInterval (unsigned long int);}{} \ccGlue
-\ccConstructor{MpfiInterval (double);}{} \ccGlue
-\ccConstructor{MpfiInterval (mpz_t);}{} \ccGlue
-\ccConstructor{MpfiInterval (mpq_t);}{} \ccGlue
-\ccConstructor{MpfiInterval (CGAL::Gmpq);}{} \ccGlue
-\ccConstructor{MpfiInterval (CGAL::Gmpz);}{} \ccGlue
-\ccConstructor{MpfiInterval (mpfr_t);}
-	{creates an interval object whose endpoints are the same number.}
+\ccConstructor{MpfiInterval();}{}
 
-\ccConstructor{MpfiInterval (int, int);}{} \ccGlue
-\ccConstructor{MpfiInterval (unsigned int, unsigned int);}{} \ccGlue
-\ccConstructor{MpfiInterval (long int, long int);}{} \ccGlue
-\ccConstructor{MpfiInterval (unsigned long int, unsigned long int);}{} \ccGlue
-\ccConstructor{MpfiInterval (double, double);}{} \ccGlue
-\ccConstructor{MpfiInterval (mpz_t, mpz_t);}{} \ccGlue
-\ccConstructor{MpfiInterval (mpq_t, mpq_t);}{} \ccGlue
-\ccConstructor{MpfiInterval (CGAL::Gmpq, CGAL::Gmpq);}{} \ccGlue
-\ccConstructor{MpfiInterval (CGAL::Gmpz, CGAL::Gmpz);}{} \ccGlue
-\ccConstructor{MpfiInterval (mpfr_t, mpfr_t);}
-	{creates an interval object given its two endpoints.}
+Creation of an interval object \ccStyle{i} given a number. Both endpoints of
+\ccStyle{i} will be equal.
 
-\ccConstructor{MpfiInterval (mpfi_t);}{} \ccGlue
-\ccConstructor{MpfiInterval (MpfiInterval);}
-	{creates an interval object given another interval}
+\ccConstructor{MpfiInterval (int n);}{} \ccGlue
+\ccConstructor{MpfiInterval (unsigned int n);}{} \ccGlue
+\ccConstructor{MpfiInterval (long int n);}{} \ccGlue
+\ccConstructor{MpfiInterval (unsigned long int n);}{} \ccGlue
+\ccConstructor{MpfiInterval (double n);}{} \ccGlue
+\ccConstructor{MpfiInterval (mpz_t n);}{} \ccGlue
+\ccConstructor{MpfiInterval (mpq_t n);}{} \ccGlue
+\ccConstructor{MpfiInterval (CGAL::Gmpq n);}{} \ccGlue
+\ccConstructor{MpfiInterval (CGAL::Gmpz n);}{} \ccGlue
+\ccConstructor{MpfiInterval (mpfr_t n);}{}
+
+Creation of an interval object \ccStyle{i} given its two endpoints,
+\ccStyle{left} and \ccStyle{right}.
+
+\ccConstructor{MpfiInterval (int left, int right);}{} \ccGlue
+\ccConstructor{MpfiInterval (unsigned int left, unsigned int right);}{} \ccGlue
+\ccConstructor{MpfiInterval (long int left, long int right);}{} \ccGlue
+\ccConstructor{MpfiInterval (unsigned long int left, unsigned long int right);}{} \ccGlue
+\ccConstructor{MpfiInterval (double left, double right);}{} \ccGlue
+\ccConstructor{MpfiInterval (mpz_t left, mpz_t right);}{} \ccGlue
+\ccConstructor{MpfiInterval (mpq_t left, mpq_t right);}{} \ccGlue
+\ccConstructor{MpfiInterval (CGAL::Gmpq left, CGAL::Gmpq right);}{} \ccGlue
+\ccConstructor{MpfiInterval (CGAL::Gmpz left, CGAL::Gmpz right);}{} \ccGlue
+\ccConstructor{MpfiInterval (mpfr_t left, mpfr_t right);}{}
+
+Creation of an interval object \ccStyle{i} given another interval \ccStyle{n}.
+
+\ccConstructor{MpfiInterval (mpfi_t n);}{} \ccGlue
+\ccConstructor{MpfiInterval (MpfiInterval n);}{}
 
 \ccOperations
 %\ccSetThreeColumns{MpfiInterval}{}{\hspace*{8cm}}
 
-\ccMethod{mpfi_t mpfi();}{returns the MPFI value stored.}
-\ccMethod{void set_prec(mp_prec_t p);}{sets the precision of the interval to \ccStyle{p}.}
-\ccMethod{mp_prec_t get_prec ();}{gets the current precision of the interval.}
-\ccMethod{void get_left (mpfr_t l);}
-	{stores in \ccStyle{l} the value of the left endpoint of the interval.}
-\ccMethod{void get_right (mpfr_t r);}
-	{stores in \ccStyle{r} the value of the right endpoint of the interval.}
-\ccMethod{void get_endpoints (mpfr_t l, mpfr_t r);}
-	{stores in \ccStyle{l} and \ccStyle{r} the values of the endpoints of the interval.}
-\ccMethod{bool is_point ();}
-	{returns true iff the two endpoints of the interval are equal.}
-
-\ccMethod{bool contains (int n);}{} \ccGlue
-\ccMethod{bool contains (mpfr_t n);}{} \ccGlue
-\ccMethod{bool contains (mpz_t n);}{} \ccGlue
-\ccMethod{bool contains (mpq_t n);}{} \ccGlue
-\ccMethod{bool contains (Gmpz n);}{} \ccGlue
-\ccMethod{bool contains (Gmpq n);}
-	{returns true iff the interval contains \ccStyle{n}.}
+\textbf{Comparison operators}. Here \ccStyle{i} is an interval and \ccStyle{n}
+is a number of type int, mpz\_t, mpq\_t, Gmpz, Gmpq, mpfr\_t or an interval.
+If interval \ccStyle{i} contains \ccStyle{n} or overlaps with \ccStyle{n} then
+the exception \ccStyle{exn_overlap} is thrown.
 
 \ccMethod{bool operator== (n);}{} \ccGlue
 \ccMethod{bool operator!= (n);}{} \ccGlue
@@ -97,10 +88,10 @@ are arbitrary precision floating point numbers (implemented using the
 \ccFunction{bool operator> (n, MpfiInterval i);}{} \ccGlue
 \ccFunction{bool operator< (n, MpfiInterval i);}{} \ccGlue
 \ccFunction{bool operator>= (n, MpfiInterval i);}{} \ccGlue
-\ccFunction{bool operator<= (n, MpfiInterval i);}
-	{comparison operators, where \ccStyle{n} has type int, mpz\_t, mpq\_t, Gmpz,
-	Gmpq, mpfr\_t or MpfiInterval; in case of interval overlap, the
-	exception \ccStyle{exn_overlap} is thrown.}
+\ccFunction{bool operator<= (n, MpfiInterval i);}{}
+
+\textbf{Arithmetic operators}. \ccStyle{i} is an interval and \ccStyle{n}
+can be an int, mpz\_t, mpq\_t, Gmpz, Gmpq, mpfr\_t or a MpfiInterval.
 
 \ccMethod{MpfiInterval operator+ (n);}{} \ccGlue
 \ccMethod{MpfiInterval operator- (n);}{} \ccGlue
@@ -113,9 +104,43 @@ are arbitrary precision floating point numbers (implemented using the
 \ccMethod{MpfiInterval operator+= (n);}{} \ccGlue
 \ccMethod{MpfiInterval operator-= (n);}{} \ccGlue
 \ccMethod{MpfiInterval operator*= (n);}{} \ccGlue
-\ccMethod{MpfiInterval operator/= (n);}
-	{arithmetic operators, where \ccStyle{n} has type int, mpz\_t, mpq\_t,
-	Gmpz, Gmpq, mpfr\_t or MpfiInterval.}
+\ccMethod{MpfiInterval operator/= (n);}{}
+
+\textbf{Other functions}
+
+\ccMethod{mpfi_t mpfi();}
+	{returns the interval of type mpfi\_t stored in \ccStyle{i}.}
+\ccMethod{void set_prec(mp_prec_t p);}{sets the precision of the interval to \ccStyle{p}.}
+\ccMethod{mp_prec_t get_prec ();}{returns the current precision of the interval.}
+\ccMethod{void get_left (mpfr_t left);}
+	{stores in \ccStyle{left} the value of the left endpoint of the interval.}
+\ccMethod{void get_right (mpfr_t right);}
+	{stores in \ccStyle{right} the value of the right endpoint of the interval.}
+\ccMethod{void get_endpoints (mpfr_t left, mpfr_t right);}
+	{stores in \ccStyle{left} and \ccStyle{right} the values of the endpoints of the interval.}
+\ccMethod{bool is_point ();}
+	{returns true iff the two endpoints of the interval are equal.}
+
+The \ccStyle{contains} functions return true iff the interval \ccStyle{i}
+contains \ccStyle{n}.
+
+\ccMethod{bool contains (int n);}{} \ccGlue
+\ccMethod{bool contains (mpfr_t n);}{} \ccGlue
+\ccMethod{bool contains (mpz_t n);}{} \ccGlue
+\ccMethod{bool contains (mpq_t n);}{} \ccGlue
+\ccMethod{bool contains (Gmpz n);}{} \ccGlue
+\ccMethod{bool contains (Gmpq n);}{}
+
+\ccMethod{bool is_valid ();}{returns true iff both endpoints aren't NAN.}
+\ccMethod{bool is_finite ();}{returns true iff the interval is bounded.}
+\ccMethod{double to_double ();}
+	{returns the center of the interval, rounded to the nearest double.}
+\ccMethod{std::pair <double,double> to_interval ();}
+	{returns a pair formed by the endpoints of the interval, rounded to the
+	nearest doubles.}
+\ccMethod{MpfiInterval sqrt ();}
+	{returns the square root of the interval (NAN if it is negative).}
+%\ccFunction{std::ostream\& \operator<< (std::ostream \&, MpfiInterval &);}{}
 
 \end{ccRefClass}
 

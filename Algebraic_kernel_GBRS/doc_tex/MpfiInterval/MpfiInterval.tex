@@ -19,15 +19,20 @@
 
 \begin{ccPkgDescription}{MpfiInterval \label{MpfiInterval}}
 
-MPFI is an interval library, it can be found in
-\emph{http://gforge.inria.fr/projects/mpfi/}.
-Its implementation uses the MPFR arbitrary precision number library.
-It is used by GB and RS, programs that solve systems of multivariate
-polynomials.
+MPFI is an arbitrary-precision interval-arithmetic library developed at INRIA
+by N. Revol and F. Rouillier
+(see \emph{http://gforge.inria.fr/projects/mpfi/}).
+It is based on the MPFR arbitrary precision floating-point number library (see
+\emph{http://www.mpfr.org/}), itself based on the GMP arbitrary-precision
+integer library (see \emph{www.swox.com/gmp}).
+MPFI is used by FGb-RS, a program developed by J. C. Faug\`ere and F. Rouillier
+which computes the real roots of polynomials systems.
 
-The present interface adapt the C functions provided by the library to be
-used as a number type in {\cgal}, planning to include GB/RS support in a
-short term.
+The library provides a complete set of functions that deal with the arithmetics
+of intervals of arbitrary-precision floating point numbers.
+
+The present number type adapts all functions provided by the MPFI library so
+that MPFI intervals can be used in {\cgal}.
 
 %\ccPkgIntroducedInCGAL{3.?}
 %\ccPkgLicense{?}
