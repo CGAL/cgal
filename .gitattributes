@@ -346,6 +346,10 @@ BGL/doc_tex/BGL_ref/halfedge_graph_traits_Polyhedron_3.tex -text
 BGL/doc_tex/BGL_ref/intro.tex -text
 BGL/doc_tex/BGL_ref/main.tex -text
 BGL/examples/BGL/Polyhedron_3/kruskal_with_stored_id.cpp -text
+BGL/include/CGAL/HalfedgeDS_face_max_base_with_id.h -text
+BGL/include/CGAL/HalfedgeDS_halfedge_max_base_with_id.h -text
+BGL/include/CGAL/HalfedgeDS_vertex_max_base_with_id.h -text
+BGL/include/CGAL/Polyhedron_items_with_id_3.h -text
 BGL/include/CGAL/boost/graph/graph_traits_HalfedgeDS.h -text
 BGL/include/CGAL/boost/graph/graph_traits_Polyhedron_3.h -text
 BGL/include/CGAL/boost/graph/halfedge_graph_traits.h -text

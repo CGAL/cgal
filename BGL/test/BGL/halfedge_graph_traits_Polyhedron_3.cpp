@@ -57,41 +57,56 @@ bool test_aux ( Graph& aG )
   typedef typename graph_traits<Graph>::in_edge_iterator  in_edge_iterator ;
   typedef typename graph_traits<Graph>::out_edge_iterator out_edge_iterator ;
 
+  typedef typename graph_traits<Graph const>::vertex_descriptor vertex_const_descriptor ;
+  typedef typename graph_traits<Graph const>::edge_descriptor   edge_const_descriptor ;
+  
   typedef typename halfedge_graph_traits<Graph>::undirected_edge_iterator undirected_edge_iterator ;
-  typedef typename halfedge_graph_traits<Graph>::Point Point ;
   
   bool result = false ;
   
   try
   {
+    // Basic facts
     CHECK_EQUAL( num_vertices(aG), aG.size_of_vertices () ) ;
     CHECK_EQUAL( num_edges   (aG), aG.size_of_halfedges() ) ;
     
-    Unique_hash_map<vertex_descriptor,bool> vtable(false,aG.size_of_vertices());
+    // vtable is used to check that each vertex is reached only once by vertex_iterator
+    Unique_hash_map<vertex_const_descriptor,bool> vtable(false,aG.size_of_vertices());
     
+    // Check operations on vertices
     vertex_iterator vb,ve ;
     for ( tie(vb,ve) = vertices(aG) ; vb != ve ; ++ vb )
     {
       vertex_descriptor v = *vb ;
       
+      // Checks that 'v' has not been reached before
       CHECK_EQUAL(vtable[v],false); vtable[v] = true ;
-      
+
+      // Degree
       CHECK_EQUAL( degree    (v,aG), v->vertex_degree() * 2) ;
       CHECK_EQUAL( out_degree(v,aG), v->vertex_degree() ) ;
       CHECK_EQUAL( in_degree (v,aG), v->vertex_degree() ) ;
     
+      // Checks incident edges.
+      // The number of in and out edges is counted and then asserted they match.
       size_t iec = 0, oec = 0 ;
+      
       in_edge_iterator ieb,iee ;
       for ( tie(ieb,iee) = in_edges(v,aG) ; ieb != iee ; ++ ieb )
       {
         edge_descriptor ie = *ieb ;
       
+        // The in-edge is OK if it is incident upon 'v'
+        CHECK_EQUAL(ie->vertex(),v);
+        
         vertex_descriptor s = source(ie,aG);
         vertex_descriptor t = target(ie,aG);
-
-        CHECK_NOT_EQUAL(s,t);        
-        CHECK_EQUAL    (t,v);        
-        CHECK_EQUAL    (s, ie->opposite()->vertex());        
+        
+        // 't' is OK if it is 'v' (since this is an in-edge)
+        CHECK_EQUAL(t,v);  
+        
+        // 's' is OK if the outgoing edge 'ie->opposite()' is incident upon it.
+        CHECK_EQUAL(s, ie->opposite()->vertex());        
         
         ++ iec ;
       }
@@ -101,52 +116,84 @@ bool test_aux ( Graph& aG )
       {
         edge_descriptor oe = *oeb ;
       
+        // The out-edge is OK if it's opposite is incident upon 'v'
+        CHECK_EQUAL(oe->opposite()->vertex(),v);
+        
         vertex_descriptor s = source(oe,aG);
         vertex_descriptor t = target(oe,aG);
 
-        CHECK_NOT_EQUAL(s,t);        
-        CHECK_EQUAL    (s,v);        
-        CHECK_EQUAL    (t, oe->vertex());        
+        // 's' is OK if it is 'v' (since this is an out-edge)
+        CHECK_EQUAL(s,v);        
+        
+        // 't' is OK if the outgoing edge 'ie->opposite()' is incident upon it.
+        CHECK_EQUAL(t, oe->vertex());        
         
         ++ oec ;
       }
       
+      // Checks that the number if incoming and outgoing edges matches
       CHECK_EQUAL(iec,oec);
+      
+      // Checks that the number of in/out edges reached by the iterator is correct
       CHECK_EQUAL(iec,v->vertex_degree());
     }
 
-    Unique_hash_map<edge_descriptor,bool> etable(false,aG.size_of_halfedges());
+    // Now check that all the vertices in aG are contained in the range returned by the call to vertices()
+    for ( typename Graph::Vertex_const_iterator vit = aG.vertices_begin() ; vit != aG.vertices_end() ; ++ vit )
+      CHECK(vtable[vit]);
+      
+    // 'etable' is used to check that each halfedge is reached only once by edge_iterator
+    Unique_hash_map<edge_const_descriptor,bool> etable(false,aG.size_of_halfedges());
     
+    // Check operations on halfedges
     size_t ec = 0 ;
     edge_iterator eb,ee ;
     for ( tie(eb,ee) = edges(aG) ; eb != ee ; ++ eb )
     {
-      edge_descriptor e = *eb ;
-      edge_descriptor oe = opposite_edge(e,aG);
+      edge_descriptor e    = *eb ;
+      edge_descriptor oe   = opposite_edge(e,aG);
+      edge_descriptor ne   = next_edge(e,aG);
+      edge_descriptor pe   = prev_edge(e,aG);
+      edge_descriptor ccwe = next_edge_ccw(e,aG);
+      edge_descriptor cwe  = next_edge_cw(e,aG);
       
+      // Checks that 'e' has not been reached before
       CHECK_EQUAL(etable[e],false); etable[e] = true ;
-      
-      CHECK_NOT_EQUAL(e,oe);
+
+      // Checks neighbors are OK      
       CHECK_EQUAL(oe,e->opposite());
+      CHECK_EQUAL(ne,e->next());
+      CHECK_EQUAL(pe,e->prev());
+      CHECK_EQUAL(ccwe,e->prev()->opposite());
+      CHECK_EQUAL(cwe,e->opposite()->next());
       
       vertex_descriptor s  = source(e,aG);
       vertex_descriptor t  = target(e,aG);
       vertex_descriptor os = source(oe,aG);
       vertex_descriptor ot = target(oe,aG);
-
-      CHECK_NOT_EQUAL(s,t);        
-      CHECK_NOT_EQUAL(os,ot);        
-      CHECK_EQUAL    (s,ot);        
-      CHECK_EQUAL    (t,os);        
-      CHECK_EQUAL    (s, oe->vertex());        
-      CHECK_EQUAL    (t, e->vertex());        
+ 
+      // Checks that 'o' and 'oe' are in fact opposite
+      CHECK_EQUAL(s,ot);        
+      CHECK_EQUAL(t,os);        
+      
+      // 's' is OK if the opposite edge 'oe' is incident upon it.
+      CHECK_EQUAL(s, oe->vertex());        
+      
+      // 't' is OK if the the edge 'e' is incident upon it.
+      CHECK_EQUAL(t, e->vertex());        
       
       ++ ec ;
     }
       
+    // Checks that the number of halfedges reached is correct
     CHECK_EQUAL(ec,aG.size_of_halfedges());
+    
+    // Now check that all the halfedges in aG are contained in the range returned by the call to edges()
+    for ( typename Graph::Halfedge_const_iterator eit = aG.halfedges_begin() ; eit != aG.halfedges_end() ; ++ eit )
+      CHECK(etable[eit]);
 
-    Unique_hash_map<edge_descriptor,bool> etable2(0,aG.size_of_halfedges());
+    // 'uetable' is used to check that only one halfedge out of each pair is reached by undirected_edge_iterator
+    Unique_hash_map<edge_const_descriptor,bool> uetable(0,aG.size_of_halfedges());
     
     size_t uec = 0 ;
     undirected_edge_iterator ueb,uee ;
@@ -154,16 +201,15 @@ bool test_aux ( Graph& aG )
     {
       edge_descriptor ue = *eb ;
       edge_descriptor oe = opposite_edge(ue,aG);
-    
-      CHECK_EQUAL(etable2[ue],false); etable2[ue] = true ;
-      CHECK_EQUAL(etable2[oe],false); etable2[oe] = true ;
       
-      CHECK_NOT_EQUAL(ue,oe);
-      CHECK_EQUAL(oe,ue->opposite());
+      // Checks that none of 'ue,oe' has been reached before
+      CHECK_EQUAL(uetable[ue],false); uetable[ue] = true ;
+      CHECK_EQUAL(uetable[oe],false); uetable[oe] = true ;
       
       ++ uec ;
     }
-    
+
+    // Checks that the number of undirected edges is exactly half the number of directed edges    
     CHECK_EQUAL(uec*2,ec);
     
     result = true ;
