@@ -1228,7 +1228,6 @@ public:
   {
     Object objs[2];
     Object* p_obj = this->make_x_monotone_2_object()(c, objs);
-    CGAL_assertion((p_obj - objs) <= 2);
     for(Object* o = objs; o != p_obj; ++o)
     {
       X_monotone_curve_2 cv;
