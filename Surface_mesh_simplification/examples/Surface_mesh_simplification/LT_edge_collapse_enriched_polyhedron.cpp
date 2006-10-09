@@ -4,16 +4,15 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/Unique_hash_map.h>
 
-#include <CGAL/Surface_mesh_simplification/Polyhedron.h>
-#include <CGAL/Surface_mesh_simplification/Edge_collapse.h>
+#include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
+#include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 
 // === EXAMPLE SPECIFIC HEADERS BEGINS HERE ===
 
 #include <CGAL/Polyhedron_items_with_id_3.h>
 
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_pred.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
 
 // === EXAMPLE SPECIFIC HEADERS ENDS HERE ===
 
@@ -24,7 +23,7 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 //
 // Setup an enriched polyhedron type which stores a ID in the halfedges
 //
-typedef CGAL::Polyhedron_3<Kernel,Polyhedron_items_with_id_3> Surface; 
+typedef CGAL::Polyhedron_3<Kernel,CGAL::Polyhedron_items_with_id_3> Surface; 
 
 // === EXAMPLE SPECIFIC DETAILS ENDS HERE ===
 
@@ -46,16 +45,16 @@ int main( int argc, char** argv )
   // this id(), so we must do it here:
   int index = 0 ;
   
-  for( typename Surface::Halfedge_iterator eb = surface.halfedges_begin()
+  for( Surface::Halfedge_iterator eb = surface.halfedges_begin()
      , ee = surface.halfedges_end()
      ; eb != ee
      ; ++ eb
      ) 
     eb->id() = index++;
 
-  SMS::Count_stop_condition<Surface> stop_policy(1000);
+  SMS::Count_stop_predicate<Surface> stop(1000);
      
-  int r = SMS::edge_collapse(surface,stop_policy);
+  int r = SMS::edge_collapse(surface,stop);
   
   // === CONCRETE USAGE EXAMPLE ENDS HERE ===
 

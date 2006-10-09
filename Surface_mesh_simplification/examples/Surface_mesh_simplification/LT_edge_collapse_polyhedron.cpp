@@ -28,19 +28,16 @@ int main( int argc, char** argv )
 
   // === CONCRETE USAGE EXAMPLE BEGINS HERE ===
   
-  // This is a stop-condition policy (defines when the algorithm terminates).
+  // This is a stop predicate (defines when the algorithm terminates).
   // In this example, the simplification stops when the number of undirected edges
   // left in the surface drops below the specified number (1000)
-  SMS::Count_stop_predicate<Surface> stop_policy(1000);
+  SMS::Count_stop_predicate<Surface> stop(1000);
      
   // This the actual call to the simplification algorithm.
   // The surface and stop conditions are mandatory arguments.
   // The third argument is needed because the edges on this
   // surface lack an "id()" field.
-  int r = SMS::edge_collapse(surface
-                            ,stop_policy                 
-                            ,CGAL::edge_index_map(surface)
-                            );
+  int r = SMS::edge_collapse(surface, stop, CGAL::edge_index_map(surface));
   
   // === CONCRETE USAGE EXAMPLE ENDS HERE ===
 

@@ -5,13 +5,13 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
-#include <CGAL/Surface_mesh_simplification/Polyhedron.h>
-#include <CGAL/Surface_mesh_simplification/Edge_collapse.h>
+#include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
+#include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 
 // === EXAMPLE SPECIFIC HEADERS BEGINS HERE ===
 
 // Stop-condition policy
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_pred.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
 
 // Cost-strategy policies
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk.h>  
@@ -48,13 +48,13 @@ int main( int argc, char** argv )
     // to get the values already computed.
     // 
     SMS::edge_collapse(surface
-                      ,SMS::Count_stop_condition<Surface>(1000)             
+                      ,SMS::Count_stop_predicate<Surface>(1000)             
                        
                       ,CGAL::edge_index_map(surface)
                       
-                      .CGAL::set_cache    (SMS::LindstromTurk_set_cost_and_placement_cache<Surface>())
-                      .CGAL::get_cost     (SMS::Cached_cost     <Surface>())
-                      .CGAL::get_placement(SMS::Cached_placement<Surface>())
+                      .set_cache    (SMS::LindstromTurk_set_cost_and_placement_cache<Surface>())
+                      .get_cost     (SMS::Cached_cost     <Surface>())
+                      .get_placement(SMS::Cached_placement<Surface>())
                       );
   }
   else
@@ -86,13 +86,13 @@ int main( int argc, char** argv )
       set_full_cache(compute_cost,compute_placement);
     
     SMS::edge_collapse(surface
-                      ,SMS::Count_stop_condition<Surface>(1000)         
+                      ,SMS::Count_stop_predicate<Surface>(1000)         
                        
                       ,CGAL::edge_index_map(surface)
                       
-                      .CGAL::set_cache    (set_full_cache)
-                      .CGAL::get_cost     (SMS::Cached_cost     <Surface>())
-                      .CGAL::get_placement(SMS::Cached_placement<Surface>())
+                      .set_cache    (set_full_cache)
+                      .get_cost     (SMS::Cached_cost     <Surface>())
+                      .get_placement(SMS::Cached_placement<Surface>())
                       );
   }  
   

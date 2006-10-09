@@ -5,13 +5,13 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
-#include <CGAL/Surface_mesh_simplification/Polyhedron.h>
-#include <CGAL/Surface_mesh_simplification/Edge_collapse.h>
+#include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
+#include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 
 // === EXAMPLE SPECIFIC HEADERS BEGINS HERE ===
 
 // Stop-condition policy
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_pred.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_predicate.h>
 
 // === EXAMPLE SPECIFIC HEADERS ENDS HERE ===
 
@@ -122,22 +122,22 @@ int main( int argc, char** argv )
   Visitor vis ;
 
   int r = SMS::edge_collapse(surface
-                             ,SMS::Count_ratio_stop_condition<Surface>(0.10) 
+                             ,SMS::Count_ratio_stop_predicate<Surface>(0.10) 
                              ,CGAL::edge_index_map(surface)
-                             .CGAL::visitor(&vis)
+                             .visitor(&vis)
                              );
 
   
-  std::cout << "\nEdges collected: " << visitor.collected
-            << "\nEdges proccessed: " << visitor.processed
-            << "\nEdges collapsed: " << visitor.collapsed
+  std::cout << "\nEdges collected: " << vis.collected
+            << "\nEdges proccessed: " << vis.processed
+            << "\nEdges collapsed: " << vis.collapsed
             << std::endl
             << "\nEdges not collapsed due to topological constrians: " 
-            << visitor.non_collapsable
+            << vis.non_collapsable
             << "\nEdge not collapsed due to cost computation constrians: " 
-            << visitor.cost_uncomputable 
+            << vis.cost_uncomputable 
             << "\nEdge not collapsed due to placement computation constrians: " 
-            << visitor.placement_uncomputable 
+            << vis.placement_uncomputable 
             << std::endl ; 
             
   // === CONCRETE USAGE EXAMPLE ENDS HERE ===

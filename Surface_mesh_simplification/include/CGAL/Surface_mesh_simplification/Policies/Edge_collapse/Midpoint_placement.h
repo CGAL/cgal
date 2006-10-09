@@ -41,7 +41,7 @@ public:
   
   typedef optional<Point> result_type ;
     
-  typedef char Params ;
+  typedef void Params ;
   
 public:
 
@@ -50,8 +50,8 @@ public:
   template<class Cache>
   result_type operator()( edge_descriptor const& aEdge
                         , ECM&                   aSurface
-                        , Cache const&           aCache
-                        , Params const*          aParams
+                        , Cache const&         //aCache
+                        , Params const*        //aParams
                         ) const
   {
     vertex_descriptor vs,vt ; tie(vs,vt) = get_vertices(aEdge,aSurface);

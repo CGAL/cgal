@@ -52,7 +52,7 @@ public:
   
   typedef optional<FT> result_type ;
   
-  typedef char Params ;
+  typedef void Params ;
 
   
 public:
@@ -62,14 +62,14 @@ public:
   template<class Cache>
   result_type operator()( edge_descriptor const& aEdge
                         , ECM&                   aSurface
-                        , Cache const&           aCache
-                        , Params const*          aParams
+                        , Cache const&           //aCache
+                        , Params const*          //aParams
                         ) const
   {
-    vertex_descriptor vs,vt ; tie(vs,vt) = this->get_vertices(aEdge,aSurface);
+    vertex_descriptor vs,vt ; tie(vs,vt) = get_vertices(aEdge,aSurface);
     
-    Point_3 const& ps = get(vertex_point,aSurface,vs);
-    Point_3 const& pt = get(vertex_point,aSurface,vt);
+    Point const& ps = get(vertex_point,aSurface,vs);
+    Point const& pt = get(vertex_point,aSurface,vt);
       
     return result_type(squared_distance(ps,pt));
   }

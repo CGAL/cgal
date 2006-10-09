@@ -5,13 +5,13 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
-#include <CGAL/Surface_mesh_simplification/Polyhedron.h>
-#include <CGAL/Surface_mesh_simplification/Edge_collapse.h>
+#include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
+#include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 
 // === EXAMPLE SPECIFIC HEADERS BEGINS HERE ===
 
 // Stop-condition policy
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_pred.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_predicate.h>
 
 // Cost-strategy policy
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_and_length.h> 
@@ -33,13 +33,13 @@ int main( int argc, char** argv )
   
   // The cost and placement values are computed on demand with no caching.
   int r = SMS::edge_collapse(surface
-                            ,SMS::Count_ratio_stop_condition<Surface>(0.10)
+                            ,SMS::Count_ratio_stop_predicate<Surface>(0.10)
                              
                             ,CGAL::edge_index_map(surface)
                             
-                            .CGAL::set_cache    (SMS::Set_no_cache      <Surface>())
-                            .CGAL::get_cost     (SMS::Edge_length_cost  <Surface>())
-                            .CGAL::get_placement(SMS::Midpoint_placement<Surface>())
+                            .set_cache    (SMS::Set_no_cache      <Surface>())
+                            .get_cost     (SMS::Edge_length_cost  <Surface>())
+                            .get_placement(SMS::Midpoint_placement<Surface>())
                             );
       
   // === CONCRETE USAGE EXAMPLE ENDS HERE ===

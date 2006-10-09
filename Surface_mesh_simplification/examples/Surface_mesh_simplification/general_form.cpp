@@ -13,10 +13,10 @@
 //
 
 // 1.The header defining how a concrete surface type is adapted to the TSM concept.
-#include <CGAL/Surface_mesh_simplification/Polyhedron.h>
+#include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
 
 // 2.The header defining the algorithm.
-#include <CGAL/Surface_mesh_simplification/Edge_collapse.h>
+#include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 
 // 3.The header defining the stop condition policy (which has no default)
 // 4.Any additional header optionally needed by a non-default policy.

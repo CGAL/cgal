@@ -46,10 +46,10 @@ public:
 public :
 
   template<class Cache>    
-  result_type operator()( edge_descriptor const& aEdge
-                        , ECM&                   aSurface
+  result_type operator()( edge_descriptor const& //aEdge
+                        , ECM&                   // aSurface
                         , Cache const&           aCache
-                        , Params const*          aParams
+                        , Params const*          //aParams
                         ) const
   {
     return aCache.cost();

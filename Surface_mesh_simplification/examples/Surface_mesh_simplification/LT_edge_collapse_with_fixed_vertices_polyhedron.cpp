@@ -5,15 +5,15 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
-#include <CGAL/Surface_mesh_simplification/Polyhedron.h>
-#include <CGAL/Surface_mesh_simplification/Edge_collapse.h>
+#include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
+#include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 
 // === EXAMPLE SPECIFIC HEADERS BEGINS HERE ===
 
 #include <CGAL/Unique_hash_map.h>
 
 // Stop-condition policy
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_pred.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_predicate.h>
 
 // === EXAMPLE SPECIFIC HEADERS ENDS HERE ===
 
@@ -46,9 +46,9 @@ int main( int argc, char** argv )
     is_vertex_fixed[vi] = false ; // some would be set to true
  
   int r = SMS::edge_collapse(surface
-                            ,SMS::Count_ratio_stop_condition<Surface>(0.10)
+                            ,SMS::Count_ratio_stop_predicate<Surface>(0.10)
                             ,CGAL::edge_index_map(surface)
-                            .CGAL::vertex_is_fixed_map(boost::make_assoc_property_map(is_vertex_fixed))
+                            .vertex_is_fixed_map(boost::make_assoc_property_map(is_vertex_fixed))
                             );
   
   // === CONCRETE USAGE EXAMPLE ENDS HERE ===

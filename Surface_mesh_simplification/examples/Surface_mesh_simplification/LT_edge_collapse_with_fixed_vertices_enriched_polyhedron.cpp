@@ -5,16 +5,17 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
-#include <CGAL/Surface_mesh_simplification/Polyhedron.h>
-#include <CGAL/Surface_mesh_simplification/Edge_collapse.h>
+#include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
+#include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 
 
 // === EXAMPLE SPECIFIC HEADERS BEGINS HERE ===
 
-#include <CGAL/Surface_mesh_simplification/Vertex_is_fixed_map_stored.h>  
+#include <CGAL/Surface_mesh_simplification/Vertex_is_fixed_property_map_stored.h>  
+#include <CGAL/HalfedgeDS_halfedge_max_base_with_id.h>  
 
 // Stop-condition policy
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_pred.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_predicate.h>
 
 // === EXAMPLE SPECIFIC HEADERS ENDS HERE ===
 
@@ -53,7 +54,7 @@ struct My_items : public CGAL::Polyhedron_items_3
     };
     template < class Refs, class Traits>
     struct Halfedge_wrapper { 
-        typedef CGAL::HalfedgeDS_halfedge_max_base_with_id<Refs> Halfedge;
+        typedef CGAL::HalfedgeDS_halfedge_max_base_with_id<Refs,std::size_t> Halfedge;
     };
     template < class Refs, class Traits>
     struct Face_wrapper {
@@ -84,11 +85,11 @@ int main( int argc, char** argv )
       ; vi != surface.vertices_end() 
       ; ++ vi 
       )
-    vi->is_fixed_ = true ; // only some would be set to true, of cotrue
+    vi->is_fixed_ = true ; // only some would be set to true, of course
   
   int r = SMS::edge_collapse(surface
-                             ,SMS::Count_ratio_stop_condition<Surface>(0.10) 
-                             ,CGAL::vertex_is_fixed_map(CGAL::Vertex_is_fixed_map_stored<Surface>())
+                             ,SMS::Count_ratio_stop_predicate<Surface>(0.10) 
+                             ,CGAL::vertex_is_fixed_map(CGAL::Vertex_is_fixed_property_map_stored<Surface>())
                              // The edge_index_map parameter is ommited becasue
                              // the halfedge in this polyhedron supports the stored id().
                              );
