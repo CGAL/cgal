@@ -33,20 +33,18 @@ CGAL_BEGIN_NAMESPACE
  * Perform a vertical decomposition of an arrangement, by performing a
  * "batched vertical ray-shooting" query from all arrangement vertices.
  * \param arr The arrangement.
- * \param vert_map Output: A mapping of each arrangement vertex to a pair
- *                         of objects, representing the arrangement features
- *                         (vertices or halfedges) that lie below and above
- *                         the vertex, respectively.
- * \param voi Output: An aoutput iterator for the arrangement vertices
- *                    sorted in ascending xy-lexicographic order.
+ * \param oi Output: An output iterator of the vertices, each paired with
+ *                   a pair of arrangement features that lie below and above
+ *                   it, respectively.
+ *                   The vertices are sorted by increasing xy-order.
  * \return A past-the-end iterator for the ordered arrangement vertices.
+ * \pre The value-type of OutputIterator is
+ *      pair<Vertex_const_handle, pair<Object, Object> >, where
+ *      the Object represents a handle to an arrangement feature.
  */
 template<typename Traits, typename Dcel, typename OutputIterator>
-OutputIterator decompose
-  (const Arrangement_2<Traits,Dcel>& arr,
-   Unique_hash_map<typename Arrangement_2<Traits,Dcel>::Vertex_const_handle,
-                   std::pair<CGAL::Object, CGAL::Object> >& vert_map,
-   OutputIterator voi)
+OutputIterator decompose (const Arrangement_2<Traits,Dcel>& arr, 
+                          OutputIterator oi)
 {
   // Arrangement types:
   typedef Arrangement_2<Traits,Dcel>                    Arrangement_2;
@@ -99,7 +97,7 @@ OutputIterator decompose
   }
   
   // Perform the sweep and fill the vertical mapping.
-  Visitor          visitor (arr, vert_map, voi);
+  Visitor          visitor (arr, oi);
   Meta_traits_2    meta_tr (arr.get_traits());
   Sweep_line       sweep_line (&meta_tr ,&visitor);
   
@@ -107,8 +105,9 @@ OutputIterator decompose
                     xcurves_vec.end(),
                     iso_points.begin(),  
                     iso_points.end()); 
-  
-  return visitor.get_output_iterator();  // return a past_end iterator
+
+  // Return a past-the-end iterator.
+  return (visitor.get_output_iterator());
 }
 
 

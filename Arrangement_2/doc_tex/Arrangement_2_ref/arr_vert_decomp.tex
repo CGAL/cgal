@@ -9,7 +9,13 @@ given arrangement, performing a batched vertical ray-shooting query from
 all arrangement vertices, such that every vertex is associated with a pair
 of objects, one corresponds to the arrangement feature that lies below it,
 and the other corresponds to the feature that lies above it.
-% The visible objects are returned through an output iterator.
+The output of this function can be readily used for inserting vertical walls
+and physically decomposing the arrangement into pseudo-trapezoids. To do
+this, it is convenient to process the vertices in an ascending
+$xy$-lexicographic order. The visible objects are therefore returned through
+an output iterator, which pairs each finite arrangement vertex with the two
+features it ``sees'', such that the vertices are given in ascending
+$xy$-lexicographic order. 
 
 \ccInclude{CGAL/Arr_vertical_decomposition.h}
 
@@ -17,24 +23,17 @@ and the other corresponds to the feature that lies above it.
 
 \ccGlobalFunction{template<typename Traits, typename Dcel,
                            typename OutputIterator>
-            OutputIterator decompose (const Arrangement<Traits,Dcel>& arr,
-                                      Vertical_map& vert_map,
-                                      OutputIterator voi);}
+            OutputIterator decompose (const Arrangement_2<Traits,Dcel>& arr,
+                                      OutputIterator oi);}
 Produces the symbolic vertical decomposition of the \ccc{arr} arrangement.
 More precisely, it performs a batched vertical ray-shooting query from all
 arrangement vertices, such that every vertex is associated with a pair of
 objects, one corresponding to the arrangement feature that lies below it,
 while the other corresponds to the feature that lies above it. 
-The query results are returned through the output \ccc{vert_map}. The
-type \ccc{Vertical_map} used in the function prototype really stands for:\\
-\begin{tabbing}
-\ccc{Unique_hash_map<}\=\ccc{typename Arrangement::Vertex_const_handle,}\\
-                 ~   \>\ccc{std::pair<CGAL::Object, CGAL::Object> >}
-\end{tabbing}
-Namely, it is a mapping from an arrangement vertex to a pair of
-\cgal\ objects, the first refers to the feature below the vertex and
-the second refers to the feature above it. Each \ccc{Object} may be one of
-the following:
+The query results are returned through the output iterator, which pairs
+each finite arrangement vertex with a pair of \ccc{Object}s, the first
+represents the feature below the vertex, and the secong represents the
+feature that lies above it. Each \ccc{Object} may be one of the following:
 \begin{itemize}
 \item \ccc{Halfedge_const_handle}, if the vertex is located above (or
   below) an edge. The given halfedge is always directed from right to left.
@@ -47,16 +46,11 @@ the following:
   it is the bottom end-vertex of a vertical edge, we define that there
   is no feature above it.
 \end{itemize}
-The output of this function can be readily used for inserting vertical walls
-and physically decomposing the arrangement into pseudo-trapezoids. To do
-this, it is convenient to process the vertices in an ascending
-$xy$-lexicographic order. The function therefore returns the set of ordered
-vertices through the output iterator \ccc{voi}. Its returned value is a
-past-the-end iterator for this ordered sequence.
+The function returns a past-the-end iterator for its output sequence.
 
 \ccHeading{Requirements}
 \ccc{OutputIterator::value_type} must be
-  \ccc{Arrangement::Vertex_const_handle}.
+  \ccc{pair<Arrangement_2::Vertex_const_handle, pair<Object, Object> >}.
 
 \end{ccRefFunction}
 

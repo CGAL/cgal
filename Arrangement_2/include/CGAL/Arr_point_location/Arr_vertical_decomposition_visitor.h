@@ -24,7 +24,6 @@ CGAL_BEGIN_NAMESPACE
 
 #include <CGAL/Sweep_line_2_empty_visitor.h>
 #include <CGAL/Arr_accessor.h>
-#include <CGAL/Unique_hash_map.h>
 #include <CGAL/Object.h>
 
 /*!
@@ -56,25 +55,24 @@ class Arr_vertical_decomposition_visitor : public Empty_visitor<Traits_>
 
   typedef Arr_accessor<Arrangement_2>                    Arr_accessor;
 
-  typedef std::pair<CGAL::Object, CGAL::Object>            Vert_pair;
-  typedef Unique_hash_map<Vertex_const_handle, Vert_pair>  Vert_map;
+  typedef std::pair<CGAL::Object, CGAL::Object>          Vert_pair;
+  typedef std::pair<Vertex_const_handle, Vert_pair>      Vert_entry;
      
 private:
 
   OutputIterator           m_oi;
   Halfedge_const_handle    m_top_he;
   Halfedge_const_handle    m_bottom_he;
-  Vert_map                *m_vert_map;
   Vertex_const_handle      m_prev_vh;
+  CGAL::Object             m_prev_obj_below;
+  CGAL::Object             m_prev_obj_above;
   const typename Arrangement_2::Traits_2    *traits;
 
 public:
 
   Arr_vertical_decomposition_visitor (const Arrangement_2& arr,
-                                      Vert_map& map,
                                       OutputIterator oi) :
     m_oi (oi),
-    m_vert_map (&map),
     traits (arr.get_traits())
   {
     // Get a fictitious halfedge on the top edge of the bounding rectangle.
@@ -91,6 +89,15 @@ public:
     m_bottom_he = v_bl->incident_halfedges();
     if (m_bottom_he->source()->infinite_in_y() != MINUS_INFINITY)
       m_bottom_he = m_bottom_he->next()->twin();
+  }
+
+  /*!
+   * Notification before the sweep starts.
+   */
+  void before_sweep ()
+  {
+    m_prev_vh = Vertex_const_handle();     // Invalid previous vertex.
+    return;
   }
 
   /*!
@@ -129,22 +136,20 @@ public:
     // Get the vertex handle associated with the current event, and insert
     // it into the output iterator.
     Vertex_const_handle vh = event->get_point().get_vertex_handle();
-
-    *m_oi = vh;
-    ++m_oi;
+    CGAL::Object        obj_above, obj_below;
 
     // Check the feature from above.
     if (above == this->status_line_end())
     {
       // There is no concrete subcurve above the current event point, so the
       // ficitious top halfegde is above it.
-      ((*m_vert_map)[vh]).second = CGAL::make_object(m_top_he);
+      obj_above = CGAL::make_object(m_top_he);
     }
     else
     {
       // We have a valid subcurve above the event: get its halfedge handle
       // and associate it with the vertex.
-      ((*m_vert_map)[vh]).second =
+      obj_above =
         CGAL::make_object((*above)->get_last_curve().get_halfedge_handle());
     }
 
@@ -191,20 +196,20 @@ public:
 
         if (! vert_connected)
         {
-          ((*m_vert_map)[vh]).first = CGAL::make_object(m_prev_vh);
-          ((*m_vert_map)[m_prev_vh]).second = CGAL::make_object(vh);
+          obj_below = CGAL::make_object(m_prev_vh);
+          m_prev_obj_above = CGAL::make_object(vh);
         }
         else
         {
-          ((*m_vert_map)[vh]).first = CGAL::Object();
-          ((*m_vert_map)[m_prev_vh]).second = CGAL::Object();
+          obj_below = CGAL::Object();
+          m_prev_obj_above = CGAL::Object();
         }
       }
       else
       {
         // There is no concrete subcurve below the current event point, so the
         // ficitious bottom halfegde is below it.
-        ((*m_vert_map)[vh]).first = CGAL::make_object(m_bottom_he);
+        obj_below = CGAL::make_object(m_bottom_he);
       }
     }
     else
@@ -240,29 +245,57 @@ public:
 
         if (! vert_connected)
         {
-          ((*m_vert_map)[vh]).first = CGAL::make_object(m_prev_vh);
-          ((*m_vert_map)[m_prev_vh]).second = CGAL::make_object(vh);
+          obj_below = CGAL::make_object(m_prev_vh);
+          m_prev_obj_above = CGAL::make_object(vh);
         }
         else
         {
-          ((*m_vert_map)[vh]).first = CGAL::Object();
-          ((*m_vert_map)[m_prev_vh]).second = CGAL::Object();
+          obj_below = CGAL::Object();
+          m_prev_obj_above = CGAL::Object();
         }
       }
       else
       {
         // Get the halfedge handle of the subcurve below the current event and
         // associate it with its vertex.
-        ((*m_vert_map)[vh]).first =
+        obj_below =
           CGAL::make_object((*below)->get_last_curve().get_halfedge_handle());
       }
     }
 
-    // We are done with the current vertex, but we store it for future use.
+    // We can now create the entry for the previous vertex, as we are not
+    // going to change the identity of the features below or above it.
+    if (m_prev_vh != Vertex_const_handle())
+    {
+      *m_oi = Vert_entry (m_prev_vh, Vert_pair (m_prev_obj_below,
+                                                m_prev_obj_above));
+      ++m_oi;
+    }
+
+    // We are done with the current vertex, but we cannot create the entry
+    // yet - so we store it for the next event.
     m_prev_vh = vh;
+    m_prev_obj_below = obj_below;
+    m_prev_obj_above = obj_above;
 
     // It is safe to deallocate the event.
     return (true);
+  }
+
+  /*!
+   * A notification issued when the sweep process is over.
+   */
+  void after_sweep ()
+  {
+    // Create an entry for the last vertex (the xy-largest one). 
+    if (m_prev_vh != Vertex_const_handle())
+    {
+      *m_oi = Vert_entry (m_prev_vh, Vert_pair (m_prev_obj_below,
+                                                m_prev_obj_above));
+      ++m_oi;
+    }
+
+    return;
   }
 
   /*! Get the output iterator of vertices sorted xy-lexicographically. */
