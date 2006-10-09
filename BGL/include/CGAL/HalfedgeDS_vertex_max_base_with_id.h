@@ -9,24 +9,24 @@ template < class Refs, class P, class ID>
 class HalfedgeDS_vertex_max_base_with_id : public HalfedgeDS_vertex_base< Refs, Tag_true, P>
 {
 public:
-    typedef HalfedgeDS_vertex_max_base_with_id< Refs, P, ID> Base;
-    
-    typedef HalfedgeDS_vertex_base< Refs, Tag_true, P> Base_base ;
+    typedef HalfedgeDS_vertex_base< Refs, Tag_true, P> Base ;
     
     typedef ID size_type ;
     
+    typedef P Point ;
+    
 private:
 
-    size_type id ;
+    size_type mID ;
     
 public:
 
-    HalfedgeDS_vertex_max_base_with_id() : id ( size_type(-1) )  {}
-    HalfedgeDS_vertex_max_base_with_id( Point const& p) : Base_base(p), id ( size_type(-1) ) {}
-    HalfedgeDS_vertex_max_base_with_id( Point const& p, size_type i ) : Base_base(p), id(i) {}
+    HalfedgeDS_vertex_max_base_with_id() : mID ( size_type(-1) )  {}
+    HalfedgeDS_vertex_max_base_with_id( Point const& p) : Base(p), mID ( size_type(-1) ) {}
+    HalfedgeDS_vertex_max_base_with_id( Point const& p, size_type i ) : Base(p), mID(i) {}
     
-    size_type&       id()       { return id; }
-    size_type const& id() const { return id; }
+    size_type&       id()       { return mID; }
+    size_type const& id() const { return mID; }
 };
 
 CGAL_END_NAMESPACE

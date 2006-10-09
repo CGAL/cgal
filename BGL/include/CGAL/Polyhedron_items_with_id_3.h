@@ -35,14 +35,41 @@ public:
     };
     template < class Refs, class Traits>
     struct Halfedge_wrapper {
-        typedef HalfedgeDS_halfedge_max_base_with_id< Refs>                 Halfedge;
+        typedef HalfedgeDS_halfedge_max_base_with_id<Refs, std::size_t> Halfedge;
     };
     template < class Refs, class Traits>
     struct Face_wrapper {
-        typedef HalfedgeDS_face_max_base_with_id< Refs, Tag_false, std::std::size_t>  Face;
+        typedef HalfedgeDS_face_max_base_with_id< Refs, Tag_false, std::size_t>  Face;
     };
 };
 
+template<class HalfedgeDS_with_id>
+void set_halfedgeds_items_id ( HalfedgeDS_with_id& hds )
+{
+  std::size_t vertex_id   = 0 ;
+  std::size_t halfedge_id = 0 ;
+  std::size_t face_id     = 0 ;
+  
+  for ( typename HalfedgeDS_with_id::Vertex_iterator vit = hds.vertices_begin(), evit = hds.vertices_end()
+      ; vit != evit
+      ; ++  vit
+      )
+    vit->id() = vertex_id ++ ;    
+    
+  for ( typename HalfedgeDS_with_id::Halfedge_iterator hit = hds.halfedges_begin(), ehit = hds.halfedges_end()
+      ; hit != ehit
+      ; ++  hit
+      )
+    hit->id() = halfedge_id ++ ;    
+    
+  for ( typename HalfedgeDS_with_id::Face_iterator fit = hds.facets_begin(), efit = hds.facets_end()
+      ; fit != efit
+      ; ++  fit
+      )
+    fit->id() = face_id ++ ;    
+}
+
 CGAL_END_NAMESPACE
+
 #endif // CGAL_POLYHEDRON_ITEMS_WITH_ID_3_H //
 // EOF //

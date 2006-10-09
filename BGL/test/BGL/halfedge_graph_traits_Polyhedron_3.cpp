@@ -15,37 +15,10 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
+#define TEST_NAME    "Polyhedron's Graph Traits"
+#define TEST_PROGRAM "halfedge_graph_traits_Polyhedron_3"
 
-#include <cstdio> 
-#include <fstream>
-#include <CGAL/basic.h>
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/Unique_hash_map.h>
-
-using namespace boost ;
-using namespace std ;
-using namespace CGAL ;
-
-typedef Simple_cartesian<double> Kernel ;
-typedef Polyhedron_3<Kernel> Polyhedron ;
-
-int sOK     = 0 ; 
-int sFailed = 0 ;
- 
-#define CHECK(pred) \
-        if (!(pred)) \
-        { \
-          cerr << "Assertion failure: " << #pred << endl \
-               << "File:" << __FILE__ << endl \
-               << "Line:" << __LINE__ << endl ; \
-          throw 0 ; \
-        }
-        
-#define CHECK_EQUAL(x,y)     CHECK(((x)==(y)))
-#define CHECK_NOT_EQUAL(x,y) CHECK(((x)!=(y)))
+#include "test_prefix_Polyhedron_3.cpp"
 
 template<class Graph>
 bool test_aux ( Graph& aG )
@@ -71,7 +44,7 @@ bool test_aux ( Graph& aG )
     CHECK_EQUAL( num_edges   (aG), aG.size_of_halfedges() ) ;
     
     // vtable is used to check that each vertex is reached only once by vertex_iterator
-    Unique_hash_map<vertex_const_descriptor,bool> vtable(false,aG.size_of_vertices());
+    vector<bool> vtable(aG.size_of_vertices());
     
     // Check operations on vertices
     vertex_iterator vb,ve ;
@@ -80,7 +53,7 @@ bool test_aux ( Graph& aG )
       vertex_descriptor v = *vb ;
       
       // Checks that 'v' has not been reached before
-      CHECK_EQUAL(vtable[v],false); vtable[v] = true ;
+      CHECK_EQUAL(vtable[v->id()],false); vtable[v->id()] = true ;
 
       // Degree
       CHECK_EQUAL( degree    (v,aG), v->vertex_degree() * 2) ;
@@ -140,10 +113,10 @@ bool test_aux ( Graph& aG )
 
     // Now check that all the vertices in aG are contained in the range returned by the call to vertices()
     for ( typename Graph::Vertex_const_iterator vit = aG.vertices_begin() ; vit != aG.vertices_end() ; ++ vit )
-      CHECK(vtable[vit]);
+      CHECK(vtable[vit->id()]);
       
     // 'etable' is used to check that each halfedge is reached only once by edge_iterator
-    Unique_hash_map<edge_const_descriptor,bool> etable(false,aG.size_of_halfedges());
+    vector<bool> etable(aG.size_of_halfedges());
     
     // Check operations on halfedges
     size_t ec = 0 ;
@@ -158,7 +131,7 @@ bool test_aux ( Graph& aG )
       edge_descriptor cwe  = next_edge_cw(e,aG);
       
       // Checks that 'e' has not been reached before
-      CHECK_EQUAL(etable[e],false); etable[e] = true ;
+      CHECK_EQUAL(etable[e->id()],false); etable[e->id()] = true ;
 
       // Checks neighbors are OK      
       CHECK_EQUAL(oe,e->opposite());
@@ -190,21 +163,22 @@ bool test_aux ( Graph& aG )
     
     // Now check that all the halfedges in aG are contained in the range returned by the call to edges()
     for ( typename Graph::Halfedge_const_iterator eit = aG.halfedges_begin() ; eit != aG.halfedges_end() ; ++ eit )
-      CHECK(etable[eit]);
+      CHECK(etable[eit->id()]);
 
     // 'uetable' is used to check that only one halfedge out of each pair is reached by undirected_edge_iterator
-    Unique_hash_map<edge_const_descriptor,bool> uetable(0,aG.size_of_halfedges());
+    vector<bool> uetable(aG.size_of_halfedges());
     
     size_t uec = 0 ;
     undirected_edge_iterator ueb,uee ;
     for ( tie(ueb,uee) = undirected_edges(aG) ; ueb != uee ; ++ ueb )
     {
-      edge_descriptor ue = *eb ;
+      edge_descriptor ue = *ueb ;
       edge_descriptor oe = opposite_edge(ue,aG);
       
       // Checks that none of 'ue,oe' has been reached before
-      CHECK_EQUAL(uetable[ue],false); uetable[ue] = true ;
-      CHECK_EQUAL(uetable[oe],false); uetable[oe] = true ;
+      // This also checks that 'ueb' iterates over just one halfedge in the opposing pair.
+      CHECK_EQUAL(uetable[ue->id()],false); uetable[ue->id()] = true ;
+      CHECK_EQUAL(uetable[oe->id()],false); uetable[oe->id()] = true ;
       
       ++ uec ;
     }
@@ -229,108 +203,6 @@ bool test ( Polyhedron& aG )
   return r ;
 }
 
-bool test( string off_file )
-{
-  bool rContinue = true ;
-  
-  std::size_t extpos = off_file.find_last_of('.') ;
-  if ( extpos != string::npos && off_file.substr(extpos) == ".off" )
-  {
-    ifstream is(off_file.c_str());
-    if ( is )
-    {
-      Polyhedron lPoly ;
-      is >> lPoly ;
-      
-      bool ok = test(lPoly) ;
-      
-      if ( ok )
-           ++ sOK ;
-      else ++ sFailed ;  
-      
-      cout << ( ok ? "OK" : "FAILED!" ) << endl ;
-    }
-    else cerr << "Unable to load input .off file: " << off_file << endl ;
-  }
-  else cerr << "Input file must have .off extension: " << off_file << endl ;
-  
-  return rContinue ;
-}
 
-// This is here only to allow a breakpoint to be placed so I can trace back the problem.
-void error_handler ( char const* what, char const* expr, char const* file, int line, char const* msg )
-{
-  cerr << "CGAL error: " << what << " violation!\n"
-            << "Expr: " << expr << endl
-            << "File: " << file << endl 
-            << "Line: " << line << endl;
-  if ( msg != 0)
-      cerr << "Explanation:" << msg << endl;
-      
-  // Avoid an abort()    
-  throw runtime_error(msg);     
-}
-
-int main( int argc, char const* argv[] )
-{
-  cout << "Testing Polyhedron's Graph Traits\n";
-  
-  CGAL::set_error_handler  (error_handler);
-  CGAL::set_warning_handler(error_handler);
-  
-  bool print_usage = false ;
-  bool nop = false ;
-  
-  string folder = "" ;
-  
-  for ( int i = 1 ; i < argc ; ++ i )  
-  {
-    if ( argv[i][0] == '#' )
-    {
-      folder = string(&argv[i][1]);
-      cout << "Input folder: " << folder << endl ;
-      break ;
-    }  
-  }
-  
-  vector<string> samples ;
-  
-  for ( int i = 1 ; i < argc ; ++ i )  
-    if ( argv[i][0] != '-' && argv[i][0] != '#' )
-      samples.push_back(folder+ string(argv[i])); 
-  
-  if ( samples.size() > 0 ) 
-  {
-    for ( vector<string>::const_iterator it = samples.begin() ; it != samples.end() ; ++ it )
-    {
-      if ( !nop )
-      {
-        if (!test(*it) )
-          break ;
-      }
-      else
-        cout << *it << endl ; 
-    }    
-
-    int lTotal = sOK + sFailed ;
-     
-    if ( lTotal > 0 )
-    {
-      cout << "Total cases: " << lTotal << endl
-                << "Succeeded cases: " << sOK << endl
-                << "Failed cases: " << sFailed << endl
-                << "Failure ratio: " << ((double)sFailed/lTotal*100.0) << "%\n" ;
-    } 
-    
-  }
-  else print_usage = true ;
-
-  if ( print_usage )
-  {
-    cout << "USAGE: graph_traits_Polyhedron_3 #folder file0 file1 ... fileN\n"
-              << "  If file is '*' then all files with extension .off in the current folder are loaded\n" ;
-  }
-
-  return sFailed == 0 ? 0 : 1 ;
-}
+#include "test_suffix_Polyhedron_3.cpp"
 

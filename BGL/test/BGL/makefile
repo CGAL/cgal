@@ -38,12 +38,17 @@ LDFLAGS = \
 
 all: \
   halfedge_graph_traits_Polyhedron_3$(EXE_EXT) \
+  properties_Polyhedron_3$(EXE_EXT) \
 
 halfedge_graph_traits_Polyhedron_3$(EXE_EXT): halfedge_graph_traits_Polyhedron_3$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)halfedge_graph_traits_Polyhedron_3 halfedge_graph_traits_Polyhedron_3$(OBJ_EXT) $(LDFLAGS)
 
+properties_Polyhedron_3$(EXE_EXT): properties_Polyhedron_3$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)properties_Polyhedron_3 properties_Polyhedron_3$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
         halfedge_graph_traits_Polyhedron_3.clean \
+        properties_Polyhedron_3.clean \
 
 #---------------------------------------------------------------------#
 #                    suffix rules

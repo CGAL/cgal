@@ -9,24 +9,23 @@ template < class Refs, class Pln, class ID>
 class HalfedgeDS_face_max_base_with_id : public HalfedgeDS_face_base< Refs, Tag_true, Pln>
 {
 public:
-    typedef HalfedgeDS_face_max_base_with_id< Refs, Pln, ID> Base;
     
-    typedef HalfedgeDS_face_base< Refs, Tag_true, Pln> Base_base ;
+    typedef HalfedgeDS_face_base< Refs, Tag_true, Pln> Base ;
     
     typedef ID size_type ;
     
 private:
 
-    size_type id ;
+    size_type mID ;
     
 public:
 
-    HalfedgeDS_face_max_base_with_id() : id ( size_type(-1) ) {}
-    HalfedgeDS_face_max_base_with_id( Pln const& p) : Base_base(p), id ( size_type(-1) ) {}
-    HalfedgeDS_face_max_base_with_id( Pln const& p, size_type i ) : Base_base(p), id (i) {}
+    HalfedgeDS_face_max_base_with_id() : mID ( size_type(-1) ) {}
+    HalfedgeDS_face_max_base_with_id( Pln const& p) : Base(p), mID ( size_type(-1) ) {}
+    HalfedgeDS_face_max_base_with_id( Pln const& p, size_type i ) : Base(p), mID (i) {}
     
-    size_type&       id()       { return id; }
-    size_type const& id() const { return id; }
+    size_type&       id()       { return mID; }
+    size_type const& id() const { return mID; }
 };
 
 CGAL_END_NAMESPACE

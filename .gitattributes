@@ -360,9 +360,21 @@ BGL/include/CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h -text
 BGL/include/CGAL/boost/graph/named_function_params.h -text
 BGL/include/CGAL/boost/graph/properties.h -text
 BGL/include/CGAL/boost/graph/properties_Polyhedron_3.h -text
+BGL/test/BGL/data/7_faces_traingle.off -text
+BGL/test/BGL/data/genus3.off -text
+BGL/test/BGL/data/head.off -text
+BGL/test/BGL/data/hedra.off -text
+BGL/test/BGL/data/hedra_open.off -text
+BGL/test/BGL/data/open_cube.off -text
+BGL/test/BGL/data/rombus.off -text
+BGL/test/BGL/data/tetrahedron.off -text
 BGL/test/BGL/data/triangle.off -text
+BGL/test/BGL/data/triangular_hole.off -text
 BGL/test/BGL/halfedge_graph_traits_Polyhedron_3.cpp -text
 BGL/test/BGL/makefile -text
+BGL/test/BGL/properties_Polyhedron_3.cpp -text
+BGL/test/BGL/test_prefix_Polyhedron_3.cpp -text
+BGL/test/BGL/test_suffix_Polyhedron_3.cpp -text
 Benchmark/doc_tex/Benchmark/Conics_14_1.arr -text
 Benchmark/doc_tex/Benchmark/fig/Conics_14_1.eps -text svneol=unset#application/postscript
 Benchmark/doc_tex/Benchmark/fig/Conics_14_1.png -text svneol=unset#image/png

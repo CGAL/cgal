@@ -9,22 +9,22 @@ template < class Refs, class ID>
 class HalfedgeDS_halfedge_max_base_with_id : public HalfedgeDS_halfedge_base< Refs, Tag_true, Tag_true, Tag_true >
 {
 public:
-    typedef HalfedgeDS_halfedge_max_base_with_id< Refs, P, ID> Base;
+    typedef HalfedgeDS_halfedge_base< Refs, Tag_true, Tag_true, Tag_true> Base ;
     
-    typedef HalfedgeDS_halfedge_base< Refs, Tag_true, Tag_true, Tag_true> Base_base ;
+    typedef typename Base::Base_base Base_base ;
     
     typedef ID size_type ;
     
 private:
 
-    size_type id ;
+    size_type mID ;
     
 public:
 
-    HalfedgeDS_halfedge_max_base_with_id( size_type i = size_type(-1) ) : id(i) {}
+    HalfedgeDS_halfedge_max_base_with_id( size_type i = size_type(-1) ) : mID(i) {}
     
-    size_type&       id()       { return id; }
-    size_type const& id() const { return id; }
+    size_type&       id()       { return mID; }
+    size_type const& id() const { return mID; }
 };
 
 CGAL_END_NAMESPACE
