@@ -398,15 +398,19 @@ std::ostream& Rational_polynomial_2::show (std::ostream &s) const {
 					break;
 			}
 			if (!zero) {
-				s << coef[i][j];
+				if ((mpq_cmp_ui (coef[i][j], 1, 1) != 0) &&
+						!((i==0)&&(j==0))) {
+					s << coef[i][j];
+					if (i > 0)
+						s << "*";
+				}
 				printed = true;
 				if (i > 0) {
-					s << "*x";
+					s << "x";
 					if (i > 1)
 						s << "^" << i;
 				}
 				if (j > 0) {
-					s << "*";
 					s << "y";
 					if (j > 1)
 						s << "^" << j;
