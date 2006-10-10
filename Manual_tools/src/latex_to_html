@@ -428,6 +428,7 @@ convert() {
     lgout -n ", "
     lgout -n "creating stage 2 anchor rules"
     # bottom up propagation of rule sets
+    touch cc_anchor_rules.stage_0
     for dir in ${AllSubDirsPostfix} ; do
         vout -n " "$dir
         \touch ${dir}/cc_anchor_rules.stage_2  # necessary to make stage_3 work
