@@ -37,7 +37,7 @@ int affiche_vect_ibfr (mpfi_t *&x, int index, const int ident_vect) {
 	int nb = rs_export_dim_vect_ibfr (ident_vect);
 	CGAL_assertion_msg (nb == 1, "the dimension of vector must be 1");
 	ident_elt = rs_export_elt_vect_ibfr (ident_vect, 0);
-	mpfi_set (x[index-1], rs_export_ibfr_mpfi (ident_elt));
+	mpfi_set (x[index-1], (mpfi_ptr)rs_export_ibfr_mpfi (ident_elt));
 	return nb;
 }
 
