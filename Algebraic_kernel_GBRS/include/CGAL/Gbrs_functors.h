@@ -154,12 +154,16 @@ class Compare_1 {
 	public:
 	Comparison_result operator()
 		(const Algebraic_1 &r1, const Algebraic_1 &r2) const {
-		if (r1 == r2)
-			return EQUAL;
-		if (r1 < r2)
-			return SMALLER;
-		return LARGER;
-	};
+			//try {
+				if (r1 == r2)
+					return EQUAL;
+				if (r1 < r2)
+					return SMALLER;
+				return LARGER;
+			//} catch (CGAL::comparison_overlap_exn &o) {
+				//return UNDECIDED;
+			//}
+		};
 };	// Compare_1
 
 }	// namespace AlgebraicFunctors
