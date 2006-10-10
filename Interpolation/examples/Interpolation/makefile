@@ -36,6 +36,7 @@ LDFLAGS = \
 all:            \
                 interpolation_2$(EXE_EXT) \
                 linear_interpolation_2$(EXE_EXT) \
+                linear_interpolation_3$(EXE_EXT) \
                 nn_coordinates_2$(EXE_EXT) \
                 nn_coordinates_3$(EXE_EXT) \
                 rn_coordinates_2$(EXE_EXT) \
@@ -47,6 +48,9 @@ interpolation_2$(EXE_EXT): interpolation_2$(OBJ_EXT)
 
 linear_interpolation_2$(EXE_EXT): linear_interpolation_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)linear_interpolation_2 linear_interpolation_2$(OBJ_EXT) $(LDFLAGS)
+	
+linear_interpolation_3$(EXE_EXT): linear_interpolation_3$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)linear_interpolation_3 linear_interpolation_3$(OBJ_EXT) $(LDFLAGS)
 
 nn_coordinates_2$(EXE_EXT): nn_coordinates_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)nn_coordinates_2 nn_coordinates_2$(OBJ_EXT) $(LDFLAGS)
@@ -66,6 +70,7 @@ surface_neighbor_coordinates_3$(EXE_EXT): surface_neighbor_coordinates_3$(OBJ_EX
 clean: \
                    interpolation_2.clean \
                    linear_interpolation_2.clean \
+                   linear_interpolation_3.clean \
                    nn_coordinates_2.clean \
                    nn_coordinates_3.clean \
                    rn_coordinates_2.clean \

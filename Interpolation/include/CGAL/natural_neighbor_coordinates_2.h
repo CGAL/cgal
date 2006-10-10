@@ -101,6 +101,7 @@ natural_neighbor_coordinates_vertex_2(const Dt& dt,
   typedef typename Dt::Vertex_handle     Vertex_handle;
   typedef typename Dt::Edge              Edge;
   typedef typename Dt::Locate_type       Locate_type;
+  typedef typename Traits::Equal_x_2     Equal_x_2;
 
 
   Locate_type lt;
@@ -120,15 +121,26 @@ natural_neighbor_coordinates_vertex_2(const Dt& dt,
 	Vertex_handle v1 = fh->vertex(dt.cw(li));
 	Vertex_handle v2 = fh->vertex(dt.ccw(li));
 
-   	typename Traits::Compute_squared_distance_2 squared_distance;
 	Point_2 p1(v1->point()),p2(v2->point());
 	
-	Coord_type coef1 = sqrt(squared_distance(p,p2)); // TODO we can do better if we use the barycentric coordinates.
-	Coord_type coef2 = sqrt(squared_distance(p,p1)); 
-	
-	*out++= std::make_pair(v1,coef1);	  	
- 	*out++= std::make_pair(v2,coef2);	  	
+	Coord_type coef1(0); 
+	Coord_type coef2(0);
+	Equal_x_2 equal_x_2;
+	if(!equal_x_2(p1,p2))
+	{
+		coef1 =  (p.x() - p2.x())/(p1.x() - p2.x()) ; 
+		coef2 = 1-coef1;
+		*out++= std::make_pair(v1,coef1);	  	
+		*out++= std::make_pair(v2,coef2);	  	
 
+	}else{
+		coef1 = (p.y() - p2.y())/(p1.y() - p2.y()) ; 
+		coef2 = 1-coef1;
+		*out++= std::make_pair(v1,coef1);	  	
+		*out++= std::make_pair(v2,coef2);	  	
+	
+	}
+	
 	return make_triple(out, coef1+coef2, true);
   }
   
