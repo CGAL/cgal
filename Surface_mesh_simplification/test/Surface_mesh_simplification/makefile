@@ -35,12 +35,12 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all:            edge_collapse_test 
+all:            create_audit_edge_collapse_Polyhedron_3_LT
 
-edge_collapse_test$(EXE_EXT): edge_collapse_test$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)edge_collapse_test edge_collapse_test$(OBJ_EXT) $(LDFLAGS)
+create_audit_edge_collapse_Polyhedron_3_LT$(EXE_EXT): create_audit_edge_collapse_Polyhedron_3_LT$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)create_audit_edge_collapse_Polyhedron_3_LT create_audit_edge_collapse_Polyhedron_3_LT$(OBJ_EXT) $(LDFLAGS)
 
-clean:          edge_collapse_test.clean 
+clean:          create_audit_edge_collapse_Polyhedron_3_LT.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules

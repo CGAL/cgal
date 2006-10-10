@@ -86,8 +86,6 @@ int EdgeCollapse<M,SP,VPM,VFM,EIM,EBM,SC,CF,PF,CP,PP,V>::run()
   if ( Visitor )
     Visitor->OnFinished(mSurface);
     
-  CGAL_expensive_precondition( is_valid_triangulated_surface_mesh(mSurface) );
-    
   return r ;
 }
 
@@ -108,13 +106,18 @@ void EdgeCollapse<M,SP,VPM,VFM,EIM,EBM,SC,CF,PF,CP,PP,V>::Collect()
   
   mEdgeDataArray.reset( new Edge_data[lSize] ) ;
   
-  mPQ.reset( new PQ (lSize, Compare_cost(this), Edge_index_map ) ) ;
+  mPQ.reset( new PQ (lSize, Compare_cost(this), Undirected_edge_id(this) ) ) ;
+  
+  std::size_t id = 0 ;
   
   undirected_edge_iterator eb, ee ;
   for ( tie(eb,ee) = undirected_edges(mSurface); eb!=ee; ++eb )
   {
     edge_descriptor lEdge = *eb ;
-    
+  
+    CGAL_assertion( get_directed_edge_id(lEdge) == id ) ;
+    CGAL_assertion( get_directed_edge_id(opposite_edge(lEdge,mSurface)) == id+1 ) ;
+      
     vertex_descriptor p,q ;
     tie(p,q) = get_vertices(lEdge);
     
@@ -135,6 +138,8 @@ void EdgeCollapse<M,SP,VPM,VFM,EIM,EBM,SC,CF,PF,CP,PP,V>::Collect()
       Visitor->OnCollected(lEdge,lIsFixed,mSurface);
     
     CGAL_ECMS_TRACE(2,edge_to_string(lEdge));
+    
+    id += 2 ;
   }
  
   CGAL_ECMS_TRACE(0,"Initial edge count: " << mInitialEdgeCount ) ;

@@ -104,7 +104,10 @@ public:
     
     Compare_id( Self const* aAlgorithm ) : mAlgorithm(aAlgorithm) {}
     
-    bool operator() ( edge_descriptor const& a, edge_descriptor const& b ) const { return mAlgorithm->compare_id(a,b); }
+    bool operator() ( edge_descriptor const& a, edge_descriptor const& b ) const 
+    {
+      return mAlgorithm->get_directed_edge_id(a) < mAlgorithm->get_directed_edge_id(b);
+    }
     
     Self const* mAlgorithm ;
   } ;
@@ -115,18 +118,40 @@ public:
     
     Compare_cost( Self const* aAlgorithm ) : mAlgorithm(aAlgorithm) {}
     
-    bool operator() ( edge_descriptor const& a, edge_descriptor const& b ) const  { return mAlgorithm->compare_cost(a,b); }
+    bool operator() ( edge_descriptor const& a, edge_descriptor const& b ) const
+    { 
+      // NOTE: A cost is an optional<> value.
+      // Absent optionals are ordered first; that is, "none < T" and "T > none" for any defined T != none.
+      // In consequence, edges with undefined costs will be promoted to the top of the priority queue and poped out first.
+      return mAlgorithm->get_cost(a) < mAlgorithm->get_cost(b);
+    }
+    
+    Self const* mAlgorithm ;
+  } ;
+  
+  struct Undirected_edge_id : boost::put_get_helper<size_type, Undirected_edge_id>
+  {
+    typedef boost::readable_property_map_tag category;
+    typedef size_type                        value_type;
+    typedef size_type                        reference;
+    typedef edge_descriptor                  key_type;
+    
+    Undirected_edge_id() : mAlgorithm(0) {}
+    
+    Undirected_edge_id( Self const* aAlgorithm ) : mAlgorithm(aAlgorithm) {}
+    
+    size_type operator[] ( edge_descriptor const& e ) const { return mAlgorithm->get_undirected_edge_id(e); }
     
     Self const* mAlgorithm ;
   } ;
   
   
-  typedef Modifiable_priority_queue<edge_descriptor,Compare_cost,EdgeIndexMap> PQ ;
+  typedef Modifiable_priority_queue<edge_descriptor,Compare_cost,Undirected_edge_id> PQ ;
   typedef typename PQ::handle pq_handle ;
   
   // An Edge_data is associated with EVERY _undirected_ edge in the mesh (collapsable or not).
-  // It relates the edge with the PQ-handle and unique index needed to update the priority queue
-  // It also relates the edge with a policy-based collapse data.
+  // It relates the edge with the PQ-handle needed to update the priority queue
+  // It also relates the edge with a policy-based cache
   class Edge_data
   {
   public :
@@ -179,7 +204,8 @@ private:
   void Collapse( edge_descriptor const& aEdge ) ;
   void Update_neighbors( vertex_descriptor const& aKeptV ) ;
   
-  size_type get_id ( const_edge_descriptor const& aEdge ) const { return Edge_index_map[aEdge]; }
+  size_type get_directed_edge_id   ( const_edge_descriptor const& aEdge ) const { return Edge_index_map[aEdge]; }
+  size_type get_undirected_edge_id ( const_edge_descriptor const& aEdge ) const { return get_directed_edge_id(aEdge) / 2 ; }
   
   bool is_vertex_fixed ( const_vertex_descriptor const& aV ) const { return Vertex_is_fixed_map[aV] ; }
   
@@ -194,7 +220,7 @@ private:
   
   Edge_data& get_data ( edge_descriptor const& aEdge ) const 
   { 
-    return mEdgeDataArray[get_id(aEdge)/2];
+    return mEdgeDataArray[get_undirected_edge_id(aEdge)];
   }
   
   Point get_point ( const_vertex_descriptor const aV ) const { return get(Vertex_point_map,aV); }
@@ -235,19 +261,6 @@ private:
   Optional_placement_type get_placement( edge_descriptor const& aEdge ) const
   {
     return Get_placement(aEdge,mSurface,get_data(aEdge).cache(),mPlacementParams);
-  }
-  
-  bool compare_cost( edge_descriptor const& aEdgeA, edge_descriptor const& aEdgeB ) const
-  {
-    // NOTE: A cost is an optional<> value.
-    // Absent optionals are ordered first; that is, "none < T" and "T > none" for any defined T != none.
-    // In consequence, edges with undefined costs will be promoted to the top of the priority queue and poped out first.
-    return get_cost(aEdgeA) < get_cost(aEdgeB);
-  }
-  
-  bool compare_id( edge_descriptor const& aEdgeA, edge_descriptor const& aEdgeB ) const
-  {
-    return get_id(aEdgeA) < get_id(aEdgeB);
   }
   
   void insert_in_PQ( edge_descriptor const& aEdge, Edge_data& aData ) 

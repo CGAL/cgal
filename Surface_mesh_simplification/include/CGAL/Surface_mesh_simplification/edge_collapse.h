@@ -190,8 +190,7 @@ int edge_collapse ( ECM& aSurface
   
   LindstromTurk_params lPolicyParams ;
   
-  boost::graph_visitor_t visitor ;
-  
+  boost::graph_visitor_t vis ;
   
   return edge_collapse(aSurface
                       ,aShould_stop
@@ -204,7 +203,7 @@ int edge_collapse ( ECM& aSurface
                       ,choose_param          (get_param(aParams,get_placement_policy), LindstromTurk_placement<ECM>())
                       ,choose_param          (get_param(aParams,get_cost_policy_params), &lPolicyParams)
                       ,choose_param          (get_param(aParams,get_placement_policy_params), &lPolicyParams)
-                      ,choose_param          (get_param(aParams,visitor), ((Dummy_visitor*)0))
+                      ,choose_param          (get_param(aParams,vis), ((Dummy_visitor*)0))
                       ) ;
 
 }
