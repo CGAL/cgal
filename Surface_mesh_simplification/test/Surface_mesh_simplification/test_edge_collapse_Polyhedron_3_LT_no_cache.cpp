@@ -1,4 +1,4 @@
-#define VISITOR           "create_audit_edge_collapse_visitor.cpp"
+#define VISITOR           "check_audit_edge_collapse_visitor.cpp"
 #define STRATEGY_ACRN     "LT"
 #define STRATEGY_POLICIES "LT_no_cache_strategy.cpp"
 

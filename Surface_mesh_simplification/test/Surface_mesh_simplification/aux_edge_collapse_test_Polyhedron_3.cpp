@@ -22,8 +22,6 @@
 #include <iomanip>
 #include <iostream>
 #include <fstream>
-#include <boost/tokenizer.hpp>
-#include <boost/lexical_cast.hpp>
 
 #define CGAL_CHECK_EXPENSIVE
 
@@ -72,212 +70,97 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
   if ( msg != 0)
     cerr << "Explanation:" << msg << endl;
     
-  throw std::logic_error("");  
+  throw std::runtime_error(expr);  
 }
 
 namespace SMS = CGAL::Surface_mesh_simplification ;
 
 typedef Vertex_is_fixed_property_map_always_false<Surface> Vertex_is_fixed_map ;
 
-enum Method { LT, MP } ;
-enum Cache  { None, Cost, CostAndPlacement } ;
-
-char const* method_to_string( Method aMethod )
+template<class T>
+ostream&  operator << ( ostream& os, optional<T> const& o )
 {
-  switch(aMethod)
-  {
-    case LT: return "LT" ; break ;
-    case MP: return "MP" ; break ;
-  }
-  
-  return "<unknown>" ;
+  if ( o )
+       return os << *o ; 
+  else return os << "<null>" ;
 }
 
-char const* cache_to_string( Cache aCache )
-{
-  switch(aCache)
-  {
-    case None             : return "NoCache" ; break ;
-    case Cost             : return "CostCache" ; break ;
-    case CostAndPlacement : return "CostAndPlacementCache" ; break ;
-  }
-  
-  return "<unknown>" ;
-}
+#define ERROR(msg) \
+          { \
+            cerr << "\nError: " << msg << endl \
+                 << "  File:" << __FILE__ << endl \
+                 << "  Line:" << __LINE__ << endl ; \
+            throw runtime_error("test error"); \
+          }
+          
+#define CHECK_MSG(pred,msg) if (!(pred)) ERROR(msg) 
+         
+#define CHECK(pred) CHECK_MSG(pred,#pred)
+        
+#define CHECK_EQUAL(x,y)       CHECK_MSG(((x)==(y)),"assertion " << #x << ":(" << x << ")==" << #y << ":(" << y << ") FAILED")
+#define CHECK_NOT_EQUAL(x,y)   CHECK_MSG(((x)!=(y)),"assertion " << #x << ":(" << x << ")!=" << #y << ":(" << y << ") FAILED")
 
 #include VISITOR
-#include STRATEGY
 
-typedef SMS::LindstromTurk_params LT_params ;
-typedef char                      Dummy_params ;
-
-typedef SMS::Cost_cache<Surface>                Cost_cache ;
-typedef SMS::Cost_and_placement_cache<Surface>  Cost_placement_cache ;
-
-typedef SMS::Cached_cost       <Surface>  Cached_cost ;
-typedef SMS::Edge_length_cost  <Surface>  MP_cost ;
-typedef SMS::LindstromTurk_cost<Surface>  LT_cost ; 
-         
-typedef SMS::Cached_placement<Surface>        Cached_placement ;
-typedef SMS::Midpoint_placement<Surface>      MP_placement ;
-typedef SMS::LindstromTurk_placement<Surface> LT_placement ;
-
-typedef SMS::Set_no_cache<Surface> Set_no_cache ;
-
-typedef SMS::Set_cost_cache<Surface,MP_cost>       Set_cost_cache_MP ;
-typedef SMS::LindstromTurk_set_cost_cache<Surface> Set_cost_cache_LT ;
-
-typedef SMS::Set_cost_and_placement_cache<Surface,MP_cost,MP_placement> Set_cost_placement_cache_MP ;
-typedef SMS::LindstromTurk_set_cost_and_placement_cache<Surface>        Set_cost_placement_cache_LT ;
-
-bool Test ( string aName, Method aMethod, Cache aCache )
+bool Test ( string aName )
 {
   bool rSucceeded = false ;
   
-  string off_name = aName ;
-  
-  string audit_name = aName.substr(0,aName.find_last_of(".")) + "_" + method_to_string(aMethod) + ".audit" ;
-  
-  ifstream off_is(off_name.c_str());
-  if ( off_is )
+  try
   {
-    Surface lSurface; 
-    off_is >> lSurface ;
-    if ( lSurface.is_valid() )
+    string off_name = aName ;
+    
+    string audit_name = aName.substr(0,aName.find_last_of(".")) + "_" + STRATEGY_ACRN + ".audit" ;
+    
+    ifstream off_is(off_name.c_str());
+    if ( off_is )
     {
-      if ( lSurface.is_pure_triangle() )
+      Surface lSurface; 
+      off_is >> lSurface ;
+      if ( lSurface.is_valid() )
       {
-        ofstream audit_s(audit_name.c_str());
-        if ( audit_s )
+        if ( lSurface.is_pure_triangle() )
         {
+          Visitor lVisitor(audit_name) ;
+          
           set_halfedgeds_items_id(lSurface);
           
           SMS::Count_stop_predicate<Surface> stop(1);
           
-          Cached_cost get_cached_cost ;          
-          MP_cost     get_MP_cost;
-          LT_cost     get_LT_cost;
-          
-          Cached_placement get_cached_placement ;          
-          MP_placement     get_MP_placement;
-          LT_placement     get_LT_placement;
-                    
-          Set_no_cache set_no_cache ;
-          
-          Set_cost_cache_MP set_cost_cache_MP(get_MP_cost) ;
-          Set_cost_cache_LT set_cost_cache_LT ;
-          
-          Set_cost_placement_cache_MP set_cost_placement_cache_MP(get_MP_cost,get_MP_placement) ;
-          Set_cost_placement_cache_LT set_cost_placement_cache_LT ;
-          
-          Visitor lVisitor(audit_s) ;
-      
-          int r = -1 ;
-          
+#include STRATEGY_POLICIES
+
           Real_timer t ; t.start();    
-          switch( aMethod )
-          {
-            case MP:  
-            
-              switch ( aCache )
-              {
-                case None :
-                
-                  r = edge_collapse(lSurface
-                                   ,stop
-                                   ,set_cache(set_no_cache)
-                                   .get_cost(get_MP_cost)
-                                   .get_placement(get_MP_placement)
-                                   .visitor(&lVisitor)
-                                   );
-                  break ;                 
-                                   
-                case Cost :
-                
-                  r = edge_collapse(lSurface
-                                   ,stop
-                                   ,set_cache(set_cost_cache_MP)
-                                   .get_cost(get_cached_cost)
-                                   .get_placement(get_MP_placement)
-                                   .visitor(&lVisitor)
-                                   );
-                  break ;                  
-                  
-                case CostAndPlacement :
-  
-                  r = edge_collapse(lSurface
-                                   ,stop
-                                   ,set_cache(set_cost_placement_cache_MP)
-                                   .get_cost(get_cached_cost)
-                                   .get_placement(get_cached_placement)
-                                   .visitor(&lVisitor)
-                                   );
-                  break ;                  
-                                   
-              }
-              
-              break ;
-              
-            case LT: 
-            
-              switch ( aCache )
-              {
-                case None :
-                
-                  r = edge_collapse(lSurface
-                                   ,stop
-                                   ,set_cache(set_no_cache)
-                                   .get_cost(get_LT_cost)
-                                   .get_placement(get_LT_placement)
-                                   .visitor(&lVisitor)
-                                   );
-                  break ;                 
-                                   
-                case Cost :
-                
-                  r = edge_collapse(lSurface
-                                   ,stop
-                                   ,set_cache(set_cost_cache_LT)
-                                   .get_cost(get_cached_cost)
-                                   .get_placement(get_LT_placement)
-                                   .visitor(&lVisitor)
-                                   );
-                  break ;                  
-                  
-                case CostAndPlacement :
-                
-                  r = edge_collapse(lSurface
-                                   ,stop
-                                   ,set_cache(set_cost_placement_cache_LT)
-                                   .get_cost(get_cached_cost)
-                                   .get_placement(get_cached_placement)
-                                   .visitor(&lVisitor)
-                                   );
-                  break ;                  
-                                   
-              }
-              
-              break ;
-          }
+          edge_collapse(lSurface
+                       ,stop
+                       ,set_cache(cache)
+                       .get_cost(cost)
+                       .get_placement(placement)
+                       .visitor(&lVisitor)
+                       );
           t.stop();
+          
           rSucceeded = true ;
         }
-        else cerr << "Unable to open audit file: " << audit_name << endl ;
+        else
+        {
+          cerr << "Surface is not triangulated (has faces with more than 3 sides): " << aName << endl ;
+        }
       }
       else
       {
-        cerr << "Surface is not triangulated (has faces with more than 3 sides): " << aName << endl ;
+        cerr << "Invalid surface: " << aName << endl ;
       }
     }
     else
     {
-      cerr << "Invalid surface: " << aName << endl ;
-    }
+      cerr << "Unable to open test file " << aName << endl ;
+    }              
   }
-  else
+  catch ( exception const& x ) 
   {
-    cerr << "Unable to open test file " << aName << endl ;
-  }              
+    cerr << "Exception caught: " << x.what() << endl ;
+  }
+  
   
   return rSucceeded ;
 }
@@ -306,7 +189,7 @@ int main( int argc, char** argv )
     unsigned lOK = 0 ;
     for ( vector<string>::const_iterator it = lCases.begin(); it != lCases.end() ; ++ it )
     {
-     if ( Test(*it, sMethod, sCache) )
+     if ( Test(*it) )
        ++ lOK ;
     }  
       

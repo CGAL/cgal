@@ -35,12 +35,20 @@ LDFLAGS = \
 #                    target entries
 #---------------------------------------------------------------------#
 
-all:            create_audit_edge_collapse_Polyhedron_3_LT
+all:            create_audit_edge_collapse_Polyhedron_3_LT \
+                create_audit_edge_collapse_Polyhedron_3_MP \
+                test_edge_collapse_Polyhedron_3_LT \
 
 create_audit_edge_collapse_Polyhedron_3_LT$(EXE_EXT): create_audit_edge_collapse_Polyhedron_3_LT$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)create_audit_edge_collapse_Polyhedron_3_LT create_audit_edge_collapse_Polyhedron_3_LT$(OBJ_EXT) $(LDFLAGS)
 
-clean:          create_audit_edge_collapse_Polyhedron_3_LT.clean 
+ 
+test_edge_collapse_Polyhedron_3_LT$(EXE_EXT): test_edge_collapse_Polyhedron_3_LT$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_edge_collapse_Polyhedron_3_LT test_edge_collapse_Polyhedron_3_LT$(OBJ_EXT) $(LDFLAGS)
+
+clean:          create_audit_edge_collapse_Polyhedron_3_LT.clean \
+                create_audit_edge_collapse_Polyhedron_3_MP.clean \
+                test_edge_collapse_Polyhedron_3_LT.clean \
 
 #---------------------------------------------------------------------#
 #                    suffix rules

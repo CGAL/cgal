@@ -15,6 +15,7 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = -I../../include/ \
            -I../../../BGL/include/ \
+           $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) 
 
@@ -22,9 +23,13 @@ CXXFLAGS = -I../../include/ \
 #                    linker flags
 #---------------------------------------------------------------------#
 
-LIBPATH = $(CGAL_LIBPATH)
+LIBPATH = \
+          $(TESTSUITE_LIBPATH) \
+          $(CGAL_LIBPATH)
 
-LDFLAGS = $(CGAL_LDFLAGS)
+LDFLAGS = \
+          $(TESTSUITE_LDFLAGS) \
+          $(CGAL_LDFLAGS) 
 
 #---------------------------------------------------------------------#
 #                    target entries
