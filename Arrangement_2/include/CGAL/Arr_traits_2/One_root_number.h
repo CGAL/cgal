@@ -48,7 +48,7 @@ private:
   NT        m_alpha;
   NT        m_beta;
   NT        m_gamma;
-  bool      m_is_rational;      // Is the number rational (that is, m_beta = 0).
+  bool      m_is_rational;      // Is the number rational (i.e., m_beta = 0).
 
 public:
 
@@ -158,28 +158,32 @@ public:
     return;
   }
 
-  NT alpha() const
+  /// \name Get the rational coefficients defining the one-root number.
+  //@{
+  const NT& alpha() const
   {
     return (m_alpha);
   }
 
-  NT beta() const
+  const NT& beta() const
   {
     return (m_beta);
   }
 
-  NT gamma() const
+  const NT& gamma() const
   {
     return (m_gamma);
   }
+  //@}
 
+  /*! Check if the number is rational. */
   bool is_rational() const
   {
     return (m_is_rational);
   }
 
-//private:
-
+  /// \name Auxiliary functions (not for public usage).
+  //@{
   CGAL::Sign _sign () const
   {
     const CGAL::Sign    sign_alpha = CGAL::sign (m_alpha);
@@ -207,6 +211,7 @@ public:
     else
       return (ZERO);
   }
+  //@}
 };
 
 /*!
@@ -525,6 +530,18 @@ CGAL::Comparison_result compare (const _One_root_number<NT, FL>& x,
     return (swap_res ? LARGER : SMALLER);
   else
     return (EQUAL);
+}
+
+/*!
+ * Casting to a rational number.
+ * \param x A one-root number.
+ * \pre The number is indeed rational.
+ */
+template <class NT, bool FL>
+const NT& to_rational (const _One_root_number<NT, FL>& x)
+{
+  CGAL_precondition (x.is_rational());
+  return (x.alpha());
 }
 
 CGAL_END_NAMESPACE
