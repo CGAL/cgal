@@ -44,6 +44,7 @@ all: lib
 CGAL_OBJECTS = \
 Benchmark$(OBJ_EXT) \
 benchmark_parser$(OBJ_EXT) \
+benchmark_lexer$(OBJ_EXT) \
 Benchmark_visitor$(OBJ_EXT) \
 Option_parser$(OBJ_EXT)
 
@@ -80,3 +81,11 @@ clean:
 .cpp$(OBJ_EXT):
 	$(CGAL_CXX)  $(CXXFLAGS) -c $<
 
+LEX ?=flex
+BISON ?=bison
+
+%.cpp %.hpp : %.y
+	$(BISON) -d $< -o $*.cpp
+
+%.cpp : %.l
+	$(LEX) -8 -o$@ $<
