@@ -4,7 +4,7 @@ struct Visitor
     :
     mOut( new ofstream(audit_name.c_str(), ios::trunc ) ) 
   {
-    CHECK_MSG(!out(), "Unable to open audit file: " << audit_name);
+    CHECK_MSG(out(), "Unable to open audit file: " << audit_name);
   }
   
   void OnStarted( Surface& ) {} 

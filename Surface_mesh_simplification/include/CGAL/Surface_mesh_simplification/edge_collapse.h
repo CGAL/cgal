@@ -190,7 +190,7 @@ int edge_collapse ( ECM& aSurface
   
   LindstromTurk_params lPolicyParams ;
   
-  boost::graph_visitor_t vis ;
+  boost::graph_visitor_t vis = boost::graph_visitor_t() ;
   
   return edge_collapse(aSurface
                       ,aShould_stop

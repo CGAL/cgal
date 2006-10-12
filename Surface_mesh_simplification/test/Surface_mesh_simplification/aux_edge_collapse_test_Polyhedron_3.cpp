@@ -121,6 +121,8 @@ bool Test ( string aName )
       {
         if ( lSurface.is_pure_triangle() )
         {
+          cerr << "Processing " << aName << " (" << ( lSurface.size_of_halfedges() / 2 ) << " edges)" << endl ;
+          
           Visitor lVisitor(audit_name) ;
           
           set_halfedgeds_items_id(lSurface);
@@ -138,8 +140,10 @@ bool Test ( string aName )
                        .visitor(&lVisitor)
                        );
           t.stop();
+                       
+          rSucceeded = lSurface.is_valid() && lSurface.is_pure_triangle() ;
           
-          rSucceeded = true ;
+          cerr << "\r" << aName << ( rSucceeded ? " succeeded" : "FAILED" ) << ". Elapsed time=" << t.time() << " seconds." << endl ;
         }
         else
         {
@@ -175,7 +179,8 @@ int main( int argc, char** argv )
   for ( int i = 1 ; i < argc ; ++i )
   {
     string c(argv[i]);
-    if ( c.find(".off") != string::npos )
+    string ext = c.substr(c.find_last_of("."));
+    if ( ext == ".off" )
       lCases.push_back(c);
   }
    

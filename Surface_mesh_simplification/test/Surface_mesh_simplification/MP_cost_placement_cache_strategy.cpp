@@ -1,5 +1,5 @@
-typedef SMS::Edge_lenght_cost <Surface> ActualCost ;
-typedef SMS::Midpoint_placemet<Surface> ActualPlacement ;
+typedef SMS::Edge_length_cost  <Surface> ActualCost ;
+typedef SMS::Midpoint_placement<Surface> ActualPlacement ;
 
 ActualCost      actual_cost ;
 ActualPlacement actual_placement ;

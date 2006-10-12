@@ -1,4 +1,4 @@
-typedef SMS::Edge_lenght_cost<Surface> ActualCost ;
+typedef SMS::Edge_length_cost<Surface> ActualCost ;
 
 ActualCost actual_cost ;
 

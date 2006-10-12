@@ -56,7 +56,7 @@ test_edge_collapse_Polyhedron_3_LT_no_cache$(EXE_EXT): test_edge_collapse_Polyhe
 test_edge_collapse_Polyhedron_3_LT_cost_cache$(EXE_EXT): test_edge_collapse_Polyhedron_3_LT_cost_cache$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_edge_collapse_Polyhedron_3_LT_cost_cache test_edge_collapse_Polyhedron_3_LT_cost_cache$(OBJ_EXT) $(LDFLAGS)
 
-test_edge_collapse_Polyhedron_3_LT_cost_placement_cache$(EXE_EXT): test_edge_collapse_Polyhedron_3_LT_placement_cache$(OBJ_EXT)
+test_edge_collapse_Polyhedron_3_LT_cost_placement_cache$(EXE_EXT): test_edge_collapse_Polyhedron_3_LT_cost_placement_cache$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_edge_collapse_Polyhedron_3_LT_cost_placement_cache \
    test_edge_collapse_Polyhedron_3_LT_cost_placement_cache$(OBJ_EXT) $(LDFLAGS)
 
@@ -66,7 +66,7 @@ test_edge_collapse_Polyhedron_3_MP_no_cache$(EXE_EXT): test_edge_collapse_Polyhe
 test_edge_collapse_Polyhedron_3_MP_cost_cache$(EXE_EXT): test_edge_collapse_Polyhedron_3_MP_cost_cache$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_edge_collapse_Polyhedron_3_MP_cost_cache test_edge_collapse_Polyhedron_3_MP_cost_cache$(OBJ_EXT) $(LDFLAGS)
 
-test_edge_collapse_Polyhedron_3_MP_cost_placement_cache$(EXE_EXT): test_edge_collapse_Polyhedron_3_MP_placement_cache$(OBJ_EXT)
+test_edge_collapse_Polyhedron_3_MP_cost_placement_cache$(EXE_EXT): test_edge_collapse_Polyhedron_3_MP_cost_placement_cache$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_edge_collapse_Polyhedron_3_MP_cost_placement_cache \
    test_edge_collapse_Polyhedron_3_MP_cost_placement_cache$(OBJ_EXT) $(LDFLAGS)
 
