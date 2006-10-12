@@ -790,6 +790,7 @@ set_compiler_flags()
     EXE_EXT=""
     CGAL_LIBNAME="libCGAL.a"
     CGAL_QT_LIBNAME="libCGALQt.a"
+    CGAL_BENCHMARK_LIBNAME="libCGALBenchmark.a"
     CORE_LIBNAME="libcore++.a"
     CGAL_WIN_EXTRA_DIR=x11
     MATH_LIB="m"
@@ -819,6 +820,7 @@ set_compiler_flags()
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
 	    CGAL_QT_LIBNAME="CGALQt.lib"
+            CGAL_BENCHMARK_LIBNAME="CGALBenchmark.lib"
 	    CORE_LIBNAME="libcore++.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    MATH_LIB=""
@@ -848,6 +850,7 @@ set_compiler_flags()
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
 	    CGAL_QT_LIBNAME="CGALQt.lib"
+            CGAL_BENCHMARK_LIBNAME="CGALBenchmark.lib"
 	    CORE_LIBNAME="core++.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    MATH_LIB=
@@ -877,6 +880,7 @@ set_compiler_flags()
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
 	    CGAL_QT_LIBNAME="CGALQt.lib"
+            CGAL_BENCHMARK_LIBNAME="CGALBenchmark.lib"	    
 	    CORE_LIBNAME="core++.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    MATH_LIB=
@@ -3864,6 +3868,11 @@ write_linker_flags()
   if [ -d "${CGAL_SRC_DIR}/CGALQt" -a -n "${PROVIDE_PKG_QT}" ]; then
       makefile_print_continuationline "`lib_option \"CGALQt\"`" >> ${FILE}
   fi
+  # FIXME: this special treatment is not so nice...
+#  if [ -d "${CGAL_SRC_DIR}/Benchmark" -a -n "${PROVIDE_PKG_CGALBENCHMARK}" ]; then
+  if [ -d "${CGAL_SRC_DIR}/Benchmark" ]; then
+      makefile_print_continuationline "`lib_option \"CGALBenchmark\"`" >> ${FILE}
+  fi
   for i in ${R_SUPPORT_PKGS}; do
       if [ -n "`value_of \"${i}_SUPPORT\"`" ]; then
 	  makefile_print_continuationline "\$(${i}_LDFLAGS)" >> ${FILE}
@@ -3883,7 +3892,7 @@ write_linker_flags()
   ${_printf} "%s\n\n" "CGAL_WINDOW_LDFLAGS = \$(CGAL_LDFLAGS)" >> ${FILE}
   ${_printf} "%s\n\n" "CGAL_GEOWIN_LDFLAGS = \$(CGAL_LDFLAGS)" >> ${FILE}
   ${_printf} "%s\n\n" "CGAL_QT_LDFLAGS = \$(CGAL_LDFLAGS)" >> ${FILE}
-
+  ${_printf} "%s\n\n" "CGAL_BENCHMARK_LDFLAGS = \$(CGAL_LDFLAGS)" >> ${FILE}
 }
 
 # create the include makefile for current configuration
@@ -4013,6 +4022,7 @@ create_include_makefile()
   ${_printf} "%s\n" "CGAL_LIB = ${CGAL_LIBNAME}" >> ${FILE}
   ${_printf} "%s\n" "CGAL_WIN_EXTRA_DIR = ${CGAL_WIN_EXTRA_DIR}" >> ${FILE}
   ${_printf} "%s\n" "CGAL_QT_LIB = ${CGAL_QT_LIBNAME}" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_BENCHMARK_LIB = ${CGAL_BENCHMARK_LIBNAME}" >> ${FILE}
 
   ${_printf} "%s\n" "CGAL_CORE_LIB = ${CORE_LIBNAME}" >> ${FILE}
 
@@ -4041,6 +4051,7 @@ create_include_makefile()
   ${_printf} "%s\n" "CGAL_SHARED_LIB = libCGAL${SHARED_LIB_EXT}" >> ${FILE}
   ${_printf} "%s\n" "CGAL_CORE_SHARED_LIB = libcore++${SHARED_LIB_EXT}" >> ${FILE}
   ${_printf} "%s\n" "CGAL_QT_SHARED_LIB = libCGALQt${SHARED_LIB_EXT}" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_BENCHMARK_SHARED_LIB = libCGALBenchmark${SHARED_LIB_EXT}" >> ${FILE}
 
   #
   # CGAL_SHARED_LIB_CXXFLAGS
@@ -4129,7 +4140,7 @@ generatemakefiles()
 }
 
 # compile $1 $2
-# $1 = libCGAL, libCore, libCGALQt ...
+# $1 = libCGAL, libCore, libCGALQt, libCGALBenchmark ...
 # $2 = static, shared
 # return 0, iff success
 _do_compile()
@@ -4232,6 +4243,13 @@ build_cgal()
 	    cd "${CGAL_SRC_DIR}/CGALQt"
 	    _do_compile libCGALQt static
 	    # _do_compile libCGALQt shared # Not yet ready
+	fi
+	# Move CGALBenchmark into libCGAL?
+#	if [ -d "${CGAL_SRC_DIR}/Benchmark" -a -n "${PROVIDE_PKG_CGALBENCHMARK}" ]; then
+	if [ -d "${CGAL_SRC_DIR}/Benchmark" ]; then
+	    cd "${CGAL_SRC_DIR}/Benchmark"
+	    _do_compile libCGALBenchmark static
+	    # _do_compile libCGALBenchmark shared # Not yet ready
 	fi
 	if [ -d "${CGAL_SRC_DIR}/Core" -a "${PROVIDE_PKG_CORE}" = "CGALCORE" ]; then
 	    cd "${CGAL_SRC_DIR}/Core"
