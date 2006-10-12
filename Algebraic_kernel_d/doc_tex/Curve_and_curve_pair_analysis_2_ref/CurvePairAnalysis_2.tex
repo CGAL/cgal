@@ -59,6 +59,15 @@ not allowed.
   \ccPrecond{$0 \leq j < \mbox{num\_events()}$}
 }
 
+Note that this interface mainly rewrites {f,g,x}^n in a different way - using
+integer. Actually the CPVL has to compute this sequence, but for
+the interface it is nicer to have it already here to avoid conversion objects
+(introducing additional constructor calls, cache-misses, lookup and so on) in
+the next layer on top (CK). Obviously, the ints can be computed in a generic
+way from a sequence, so that it makes sense to offer a default implementation
+providing such conversion. There is no need to document this fact on the 
+conceptual view.
+
 \ccMethod{bool has_event_of_curve();}{
   returns \ccc{true} if curve has vertical line component or
   curve $f$ has intersection with $f_y$ at $x$
