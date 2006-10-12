@@ -43,7 +43,7 @@ Note : if the nb of collected points is less than the required min number of
 
  ./blind -f data/ellipe0.003.off -d2 -m2 -a2 
  ./blind -f data/poly2x\^2+y\^2-0.062500-off -d2 -m2 -a2   
-
+		
 visu with:
 ./introspect-qt ../../examples/Jet_fitting_3/data/ellipe0.003.off ../../examples/Jet_fitting_3/data_ellipe0.003.off.4ogl.txt
 
