@@ -1,0 +1,43 @@
+\begin{ccRefConcept}{Solution_2}
+
+\ccDefinition
+
+The concept \ccc{Solution_2} is meant to store both coordinates of a point
+on a curve.
+
+\ccCreationVariable{sol2}
+
+\ccAccessFunctions
+
+\ccMethod{Solution_1 x();}{
+  returns $x$-coordinate. 
+  May throw some exception if algebraic degree becomes to large.
+  Usual always computed and therefore easy to access.
+}
+
+\ccMethod{Solution_1 y();}{
+  returns $y$-coordinate.
+  May throw some exception if algebraic degree becomes to large.
+  Note that it can be costly to compute this value, so accessing it
+  should be handled with care. 
+}
+
+\ccMethod{std::pair<Boundary,Boundary> s1.approximate_x(int prec);}{
+  Refines the representation of $x$ to the given precision 
+  (binary digits after point).
+  Internally the precision can already be higher. Note that it can just
+  refer to x().approximate(), but it can be more efficient or just possible
+  to compute it without constructing the exact value.
+} 
+
+\ccMethod{std::pair<Boundary,Boundary> s1.approximate_y(int prec);}{
+  Refines the representation of $y$ to the given precision 
+  (binary digits after point).
+  Internally the precision can already be higher. Note that it can just
+  refer to y().approximate(), but it can be more efficient or just possible
+  to compute it without constructing the exact value.
+} 
+
+
+\end{ccRefConcept}
+

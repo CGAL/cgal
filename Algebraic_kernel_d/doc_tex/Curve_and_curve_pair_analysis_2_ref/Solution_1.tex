@@ -1,0 +1,51 @@
+\begin{ccRefConcept}{Solution_1}
+
+\ccDefinition
+
+The concept \ccc{Solution_1} is meant to store a coordinate ($x$, or $y$) of
+a point on curve. 
+
+\ccRefines
+ \ccc{RealEmbeddable}
+
+Remark: Michael Hemmer proposed to extend the concept \ccc{RealEmbeddable} 
+with the notion of compactification (adding/dealing with $\pm\infty$). A
+valid model has to implement handling of infinity.
+
+\begin{ccAdvanced}
+
+\ccTypes
+
+\ccTypedef{typedef typename Solution_1::Boundary Boundary;}{A NT being able
+to represent values between two Solution\_1}
+
+\ccCreationVariable{sol1}
+
+\ccAccessFunctions
+
+Is this type meant to be really abstract (only RealEmbeddable) or 
+do we want to have access
+to certain entries? In general, it should be possible to use an appropriate
+NT here, i.e., a NT that fits the needs of the CA/CPA.
+
+TODO: Defining polynomial?
+
+TODO: For some purposes (e.g., drawing, seperation) it is useful to have the 
+following methods:
+
+\ccMethod{Boundary between(Solution_1 s);}{
+  returns a rational between \ccc{sol1} and \ccc{s}
+  \ccPrecond{sol1 != s}
+}
+
+\ccMethod{std::pair<Boundary,Boundary> s1.approximate(int prec);}{
+  Refines the representation to the given precision (binary digits 
+  after point). Internally the precision can already be higher.
+} 
+
+The advanced methods can be seen as a refined concept for enabling drawing. 
+Maybe, we can have it orthogonal to the normal concept.
+
+\end{ccAdvanced}
+
+\end{ccRefConcept}
