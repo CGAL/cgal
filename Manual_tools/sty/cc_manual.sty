@@ -2169,14 +2169,17 @@ Reference~Manual}%
                            \unhbox\returntypebox
                        }}
                        \setbox\functioncallbox=\hbox{{\ccFont
-                           \ifnum#1=0 \ccVar.\fi
-                           \unhcopy\functionnamebox(%
+                           \ifnum#1=0 \ccVar\fi
+                           %\ifnum#1=0 \ccVar.\fi
+                           %\unhcopy\functionnamebox(%
                            \isEmpty{#6}\ifnum\ccBool=\ccFalse
                                \ \ccPrintParamList{#6)#7}%
                            \fi)\unhcopy\trailingconstbox}}
                        \setbox\callnamebox=\hbox{{\ccFont
-                           \ifnum#1=0 \ccVar.\fi
-                           \unhbox\functionnamebox}}%
+                           \ifnum#1=0 \ccVar\fi
+                           %\ifnum#1=0 \ccVar.\fi
+                           %\unhbox\functionnamebox
+                           }}%
                        \ccLayoutThreeColumns{(}{#6)#7}{)\unhbox
                            \trailingconstbox}{#2}%
                      }
@@ -3339,6 +3342,7 @@ Reference~Manual}%
 
 \newcommand{\ccPkgName}[1]{}
 \newcommand{\ccPkgSummary}[1]{}
+\newcommand{\ccPkgIllustration}[1]{}
 \newcommand{\ccPkgIntroducedInCGAL}[1]{}
 \newcommand{\ccPkgMaturity}[1]{}
 \newcommand{\ccPkgDependsOn}[1]{}
