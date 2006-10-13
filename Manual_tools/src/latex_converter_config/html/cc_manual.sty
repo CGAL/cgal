@@ -987,7 +987,11 @@
 
 \newcommand{\ccPartSummary}[1]{#1}
 \newcommand{\ccPkgAuthor}[1]{\gdef\ccValueOfPkgAuthor{#1\lcRawHtml{<br>}}}
-\newcommand{\ccPkgSummary}[1]{\gdef\ccValueofPkgSummary{#1\lcRawHtml{<br>}}}
+\newcommand{\ccPkgSummary}[1]{\gdef\ccValueofPkgSummary{#1}}
+\newcommand{\ccPkgIllustration}[2]{%
+  \gdef\ccValueofPkgIllustration{%
+    \lcRawHtml{<a href="#C2"><img src="}\lciOutputUppath\lcRawHtml{#C1" alt="Package Illustration" width="120" height="120"></a>}}%
+}
 \newcommand{\ccPkgIntroducedInCGAL}[1]{\gdef\ccValueofPkgIntroducedInCGAL{\lcRawHtml{<b>Introduced in: </b>}\cgal\ #1\lcRawHtml{<br>}}}
 \newcommand{\ccPkgMaturity}[1]{\gdef\ccValueofPkgMaturity{\lcRawHtml{<b>Maturity: </b>}#1\lcRawHtml{<br>}}}
 \newcommand{\ccPkgDependsOn}[1]{\gdef\ccValueofPkgDependsOn{\lcRawHtml{<b>Depends on: </b>}#1\lcRawHtml{<br>}}}
@@ -1000,6 +1004,7 @@
   \gdef\ccValueofPkgName{#1}%
   % author is reset in latex.sty:\chapter
   \gdef\ccValueofPkgSummary{}%
+  \gdef\ccValueofPkgIllustration{}%
   \gdef\ccValueofPkgIntroducedInCGAL{}%
   \gdef\ccValueofPkgMaturity{}%
   \gdef\ccValueofPkgDependsOn{}%
@@ -1024,12 +1029,16 @@
       \gdef\lciCurrentPartName{}%
     }%
     \lciPushOutput{packages}%
-    \lcRawHtml{<tr><td colspan="3" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}
+    \lcRawHtml{<tr><td class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">&nbsp;</td>}
+    \lcRawHtml{<td colspan="3" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}
     \lciCheckForLabelInsideHeadingX{\ccValueofPkgName}{\lciCurrentPackageName}%
     \lcRawHtml{<h3>}\lciCurrentPackageName\lcRawHtml{</h3>}%
     \ccValueOfPkgAuthor%
     \lcRawHtml{</td></tr>}%
-    \lcRawHtml{<tr valign="top"><td width="75\%" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}%
+    \lcRawHtml{<tr valign="top">}
+    \lcRawHtml{<td width="140" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}%
+    \ccValueofPkgIllustration
+    \lcRawHtml{</td><td class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}%
     \ccValueofPkgSummary
     \lcRawHtml{<p></td><td width="2\%" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}
     \lcRawHtml{</td><td width="23\%" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}

@@ -35,12 +35,13 @@ unquotedfilename {letter}+"."{ext}
 /* src{ws}*={ws}*\"{ws}*       BEGIN( FilenameMode ); */
 
 %%
-src{ws}*={ws}*{unquotedfilename} { 
-                 std::cerr << "WARNING: unquoted images not allowed in XHTML" 
+src{ws}*={ws}*{unquotedfilename} {
+                 std::cerr << "WARNING: unquoted images not allowed in XHTML"
                            << std::endl; }
-src{ws}*={ws}*                  { BEGIN(FilenameMode); break; }        
+src{ws}*={ws}*                  { BEGIN(FilenameMode); break; }
+href{ws}*={ws}*                  { BEGIN(FilenameMode); break; }
 <FilenameMode>{filename}        { report_filename(yytext);
-                                  BEGIN(INITIAL); }                                
+                                  BEGIN(INITIAL); }
 <*>{ws}                         /* ignore whitespace */
 <*>.                            { BEGIN(INITIAL); }
 
