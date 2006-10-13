@@ -44,13 +44,14 @@ class Construct_polynomial_1 {
 			++elements;
 		CGAL_assertion_msg (elements != 0,
 				"the container can't be empty");
-		// the degree of the polynomial is (elements-1)
-		Polynomial_1 p (elements - 1);
+		int degree = elements-1;
+		Polynomial_1 p (degree);
 		for (it = first; it != last; ++it)
-			p.set_coef (--elements, *it);
+			p.set_coef (degree-(--elements), *it);
 		return p;
 	};
 
+	// TODO: check this "functor" (is this a functor?)
 	template <class InputIterator1, class InputIterator2>
 	Polynomial_1 operator()
 		(InputIterator1 first_coeff, InputIterator1 last_coeff,
@@ -127,7 +128,7 @@ class SignAt_1 {
 	public:
 	typedef Sign	result_type;
 	// TODO: allow UNDECIDED as sign type
-	// TODO: can RS calculate the sign?
+	// TODO: calculate the sign with RS
 	result_type operator() (const Polynomial_1 &p,
 			const Algebraic_1 &r) const {
 		return ZERO;

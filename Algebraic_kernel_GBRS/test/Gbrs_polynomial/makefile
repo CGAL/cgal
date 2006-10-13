@@ -1,6 +1,6 @@
 include ${CGAL_MAKEFILE}
 
-OBJS=Gbrs_polynomial_1 Gbrs_polynomial_2
+OBJS=Gbrs_polynomial_1 #Gbrs_polynomial_2
 
 all: ${OBJS}
 

@@ -59,24 +59,22 @@ int affiche_sols_eqs (mpfi_t *&x) {
 	return nb_elts;
 }
 
-void create_rs_upoly(mpq_t *poly, const int deg) {
+void create_rs_upoly(mpz_t *poly, const int deg, const int ident_pol) {
 	int i;
-	int ident_pol, ident_mon, ident_coeff;
+	int /*ident_pol,*/ ident_mon, ident_coeff;
 	rs_import_uppring ("T");
-	ident_pol = rs_get_default_up ();
-	for (i=0; i<deg+1; i++)
-		if (mpq_sgn (poly[deg-i]) != 0)	{	// don't add if == 0
+	for (i=0; i<=deg; ++i)
+		if (mpz_sgn (poly[/*deg-*/i]) != 0)	{	// don't add if == 0
 			ident_mon = rs_export_new_mon_upp_bz ();
 			ident_coeff = rs_export_new_gmp ();
-			CGAL_assertion_msg
+			/*CGAL_assertion_msg
 				(mpz_cmp_ui (mpq_denref (poly[deg-i]), 1) == 0,
-				 "by now, RS works only with integer coeffs");
-			rs_import_bz_gmp
-				(ident_coeff,
-				 TO_RSPTR_IN (mpq_numref (poly[deg-i])));
+				 "by now, RS works only with integer coeffs");*/
 			/*rs_import_bz_gmp
 				(ident_coeff,
-				 TO_RSPTR_IN (&(poly[deg-i])));*/
+				 TO_RSPTR_IN (mpq_numref (poly[deg-i])));*/
+			rs_import_bz_gmp
+				(ident_coeff, TO_RSPTR_IN (&(poly[/*deg-*/i])));
 			rs_dset_mon_upp_bz (ident_mon, ident_coeff, i);
 			rs_dappend_list_mon_upp_bz (ident_pol, ident_mon);
 		}
@@ -85,8 +83,9 @@ void create_rs_upoly(mpq_t *poly, const int deg) {
 int solve_1 (mpfi_t *&x, const Rational_polynomial_1 &p1, unsigned int prec) {
 	rs_init_rs ();
 	rs_reset_all ();
-	create_rs_upoly (p1.get_coefs (), p1.get_degree ());	// the RS poly
-	set_rs_precisol (prec);	// preciseness
+	create_rs_upoly
+		(p1.get_coefs (), p1.get_degree (), rs_get_default_up ());
+	set_rs_precisol (prec);	// precision
 	set_rs_verbose (0);	// we don't want any output
 	rs_run_algo ("UISOLE");	// isolate roots
 	// XXX remember to free the results array x and

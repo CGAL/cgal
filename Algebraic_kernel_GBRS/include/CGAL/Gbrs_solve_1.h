@@ -24,8 +24,7 @@
 #include <CGAL/Gbrs_polynomial_1.h>
 
 CGAL_BEGIN_NAMESPACE
-// both functions return the number of roots, -1 if it is infinite and -2 if
-// there were an error
+// both functions return the number of roots
 
 // solve given the precision
 int solve_1 (mpfi_t *&, const Rational_polynomial_1 &, unsigned int);
