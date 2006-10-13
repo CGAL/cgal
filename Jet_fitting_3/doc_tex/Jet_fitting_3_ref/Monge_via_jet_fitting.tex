@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Monge_via_jet_fitting<DataKernel, LocalKernel = Cartesian<double>, LinAlgTraits = Lapack>} 
+\begin{ccRefClass}{Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>} 
  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
@@ -25,10 +25,12 @@ through an iterator ---and its past the end, it is assumed the point
 where the calculation is carried out is the first point provided by
 the iterator.
 %%
-The results are stored in instances of the classes \ccc{Monge_form} and
-\ccc{Monge_form_condition_numbers}, the particular information returned depending on
-the degrees specified for the polynomial fitting and for the Monge form.
+The results are stored in an instance of the class \ccc{Monge_form},
+the particular information returned depending on the degrees specified
+for the polynomial fitting and for the Monge form.
 
+The default for the template \ccc{LocalKernel} is
+\ccc{Cartesian<double>} and the default for \ccc{SvdTraits} is \ccc{Lapack_svd}.
 
 \ccInclude{CGAL/Monge_via_jet_fitting.h}
 
@@ -38,7 +40,7 @@ The class \ccRefName\ has three template parameters. Parameter
 corresponding to the input points, and also selected members of the
 \ccc{Monge_form} class. Parameter  \ccc{LocalKernel} provides
 the geometric classes and tools required by local
-computations. Parameter \ccc{LinAlgTraits} features the linear
+computations. Parameter \ccc{SvdTraits} features the linear
 algebra algorithms required by the fitting method.
 
 \ccTypes
@@ -48,52 +50,39 @@ algebra algorithms required by the fitting method.
 \ccGlue
 \ccTypedef{  typedef LocalKernel  Local_Kernel;}{}
 \ccGlue
+\ccTypedef{typedef typename Local_Kernel::FT       LFT; }{}
+\ccGlue
+\ccTypedef{  typedef typename Local_Kernel::Vector_3 LVector;}{}
+\ccGlue
 \ccTypedef{   typedef typename std::vector<typename
 Data_Kernel::Point_3>::iterator Range_Iterator; }{} 
 \ccGlue
 \ccTypedef{  typedef Monge_form<Data_Kernel>   Monge_form;}{}
-\ccGlue
-\ccTypedef{  typedef Monge_form_condition_numbers<Local_Kernel> Monge_form_condition_numbers;}{}
 
 \ccCreation
 \ccCreationVariable{monge_fitting}  %% choose variable name, given by \ccVar
 
-\ccConstructor{Monge_via_jet_fitting(Range_Iterator begin, Range_Iterator end, 
-int d, int dprime, Monge_form &monge_form,
-Monge_form_condition_numbers &monge_form_condition_numbers);} {The
-constructor performs all the computations. The $N$ input points are
-given by the \ccc{Range_Iterators}, \ccc{d} is the degree of the
-fitted polynomial, \ccc{dprime} is the degree of the expected Monge
-coefficients, outputs are stored in \ccc{monge_form} and
-\ccc{monge_form_condition_numbers}.
-\ccPrecond $N \geq N_d:=(d+1)(d+2)/2$, $1 \leq d$, $dprime \leq d$, $1
-\leq dprime \leq 4$ } 
+\ccConstructor{Monge_via_jet_fitting();} {default constructor} 
 
-%\ccOperations
+\ccOperations
+\ccMethod{Monge_form operator()(Range_Iterator begin, Range_Iterator end,
+ 		size_t deg, size_t deg_monge);} {This operator performs
+ 		all the computations. The $N$ input points are given
+ 		by the \ccc{Range_Iterators}, \ccc{deg} is the degree of
+ 		the fitted polynomial, \ccc{deg_monge} is the degree of
+ 		the expected Monge coefficients.
+\ccPrecond $N \geq N_{deg}:=(deg+1)(deg+2)/2$, $1 \leq deg_{monge} \leq \min(deg,4)  $ } 
 
-%\ccMethod{void foo();}{some member functions}
+
+\ccMethod{LFT condition_number();}{condition number of the linear fitting system.}
+\ccGlue
+\ccMethod{std::pair<LFT, LVector> pca_basis(size_t i);}{pca eigenvalues and eigenvectors.}
+
 
 \ccSeeAlso
 
 \ccc{Monge_form},
-\ccc{Monge_form_condition_numbers}
-\ccc{Lapack}.
-
-%\ccExample
-
-%A short example program.
-%Instead of a short program fragment, a full running program can be
-%included using the 
-%\verb|\ccIncludeExampleCode{Jet_fitting_3/Monge_via_jet_fitting.cpp}| 
-%macro. The program example would be part of the source code distribution and
-%also part of the automatic test suite.
-
-%\begin{ccExampleCode}
-%void your_example_code() {
-%}
-%\end{ccExampleCode}
-
-%% \ccIncludeExampleCode{Jet_fitting_3/Monge_via_jet_fitting.cpp}
+\ccc{Lapack_svd}.
 
 \end{ccRefClass}
 

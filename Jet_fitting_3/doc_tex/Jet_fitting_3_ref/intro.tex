@@ -37,33 +37,27 @@ The following picture illustrates the template dependencies.
 
 
 \ccRequirements
-The three classes  \ccc{Monge_form}, \ccc{Monge_form_condition_numbers} and
-\ccc{Monge_via_jet_fitting} are designed to be used
-simultaneously. 
+This has no meaning if we do the nest!!!!!!!!!
 
+The two classes  \ccc{Monge_form} and
+\ccc{Monge_via_jet_fitting} are designed to be used
+simultaneously.
 The \ccc{DataKernel} template parameter must be the
 same for the classes \ccc{Monge_form} and
-\ccc{Monge_via_jet_fitting}. The \ccc{LocalKernel} template parameter
-must be the same for the classes \ccc{Monge_form_condition_numbers} and
-\ccc{Monge_via_jet_fitting}. Its default value is \ccc{Cartesian<double>}. 
+\ccc{Monge_via_jet_fitting}. 
 
 \subsection*{Concepts}
 \ccRefConceptPage{DataKernel} \\
 \ccRefConceptPage{LocalKernel} \\
-\ccRefConceptPage{LinAlgTraits} \\
+\ccRefConceptPage{SvdTraits} \\
 
 \subsection*{Classes}
 \ccRefIdfierPage{CGAL::Monge_form<DataKernel>}\\
-\ccRefIdfierPage{CGAL::Monge_form_condition_numbers<LocalKernel = Cartesian<double> >}\\
-\ccRefIdfierPage{CGAL::Monge_via_jet_fitting<DataKernel, LocalKernel = Cartesian<double>, LinAlgTraits = Lapack>}\\
-\ccRefIdfierPage{CGAL::Lapack_matrix}\\
-\ccRefIdfierPage{CGAL::Lapack}\\
+\ccRefIdfierPage{CGAL::Monge_via_jet_fitting<DataKernel, LocalKernel, LinAlgTraits>}\\
+\ccRefIdfierPage{CGAL::Lapack_svd}\\
 
 \subsection*{Global Functions}
-The insert operator is overloaded for the classes \ccc{Monge_form} and
-\ccc{Monge_form_condition_numbers}.
-
-\ccRefIdfierPage{CGAL::operator<<}\\
+The insert operator is overloaded for the class \ccc{Monge_form}.
 
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of footer

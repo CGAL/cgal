@@ -10,7 +10,7 @@
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
-\begin{ccRefClass}{Lapack} %%add template arg's if necessary
+\begin{ccRefClass}{Lapack_svd} %%add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -18,34 +18,36 @@
 \ccDefinition
   
 The class \ccRefName\ provides an algorithm to solve in the least
-square sense a linear system.
+square sense a linear system with a singular value decomposition.
 
 \ccInclude{CGAL/Lapack/Linear_algebra_lapack.h}
 
 \ccIsModel
-\ccc{LinAlgTraits}
+\ccc{SvdTraits}
 
 \ccTypes
 % +--------------------------------------------------------------
 %\ccNestedType{TYPE}{some nested types}
+\ccTypedef{  typedef double FT; }{}
+\ccTypedef{  typedef Lapack_vector Vector; }{}
 \ccTypedef{  typedef Lapack_matrix Matrix; }{}
 
 \ccCreation
 % +--------------------------------------------------------------
-\ccCreationVariable{lapack}  %% choose variable name
+\ccCreationVariable{lapack_svd}  %% choose variable name
 
-\ccConstructor{Lapack();}{default constructor.}
+\ccConstructor{Lapack_svd();}{default constructor.}
 
 \ccOperations
 % +--------------------------------------------------------------
-\ccMemberFunction{ void solve_ls_svd_algo(Matrix& M, double* B, double &cond_nb);
+\ccMemberFunction{ void solve(Matrix& M, Vector& B, FT& cond_nb);
 }{Solve MX=B using SVD and give the condition number of M. The
 solution is stored in B.}
 
 \ccSeeAlso
 
-\ccc{LinAlgTraits}\\
-\ccc{Lapack_matrix}
+\ccc{SvdTraits}\\
+%\ccc{Lapack_matrix}
 %\ccc{some_other_function}.
 
 \end{ccRefClass}

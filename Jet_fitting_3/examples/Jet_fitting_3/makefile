@@ -7,7 +7,7 @@
 # Choose the right include file from the <cgalroot>/make directory.
 include $(CGAL_MAKEFILE)
 
-PROFOPT= -O3 #-g
+PROFOPT= -g #-O3 #-g
 CFLAGS=${PROFOPT} 
 #---------------------------------------------------------------------#
 #                    compiler flags
