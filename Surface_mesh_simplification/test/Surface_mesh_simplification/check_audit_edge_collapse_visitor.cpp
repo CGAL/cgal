@@ -8,9 +8,16 @@ private :
   
   struct Data
   {
-    Data ( bool isf ) : is_fixed(isf) {}
+    Data ( bool isf )
+      : 
+       is_fixed(isf) 
+      ,selected(false)
+      ,is_collapsable(false)
+      ,order( size_t(-1) )
+    {}
 
     bool             is_fixed ;
+    bool             selected ; 
     bool             is_collapsable ;
     size_t           order ;
     optional<double> cost ;
@@ -58,9 +65,9 @@ private :
               optional<double> cost ;
               if ( tokens.size() > 2 )
                 cost = lexical_cast<double>(tokens[2]);
-                
-              data->cost  = cost ;
-              data->order = order++;
+              data->selected = true ;  
+              data->cost     = cost ;
+              data->order    = order++;
             }  
             break ;
             
@@ -124,11 +131,15 @@ public :
       Data_ptr actual_data = actual_table[idx];
       CHECK(audit_data);
       CHECK(actual_data);
-      CHECK_EQUAL(audit_data->order          ,actual_data->order);
-      CHECK_EQUAL(audit_data->is_fixed       ,actual_data->is_fixed);
-      CHECK_EQUAL(audit_data->is_collapsable ,actual_data->is_collapsable);
-      CHECK_EQUAL(!audit_data->cost          ,!actual_data->cost);
-      CHECK_EQUAL(!audit_data->placement     ,!actual_data->placement);
+      CHECK_EQUAL(audit_data->is_fixed,actual_data->is_fixed);
+      CHECK_EQUAL(audit_data->selected,actual_data->selected);
+      if ( audit_data->selected )
+      {
+        CHECK_EQUAL(audit_data->order          ,actual_data->order);
+        CHECK_EQUAL(audit_data->is_collapsable ,actual_data->is_collapsable);
+        CHECK_EQUAL(!audit_data->cost          ,!actual_data->cost);
+        CHECK_EQUAL(!audit_data->placement     ,!actual_data->placement);
+      }
     }
   } 
   
@@ -143,8 +154,9 @@ public :
   
   void OnSelected( Halfedge_handle const& aEdge, Surface&, optional<double> const& aCost, size_t, size_t )
   {
-    actual_table[aEdge->id()]->cost = aCost ; 
-    actual_table[aEdge->id()]->order = order ++ ; 
+    actual_table[aEdge->id()]->selected = true ;
+    actual_table[aEdge->id()]->cost     = aCost ; 
+    actual_table[aEdge->id()]->order    = order ++ ; 
   }                
   
   void OnCollapsing(Halfedge_handle const& aEdge, Surface&, optional<Point> const& aPlacement ) 

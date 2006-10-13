@@ -179,9 +179,13 @@ int main( int argc, char** argv )
   for ( int i = 1 ; i < argc ; ++i )
   {
     string c(argv[i]);
-    string ext = c.substr(c.find_last_of("."));
-    if ( ext == ".off" )
-      lCases.push_back(c);
+    string::size_type pos = c.find_last_of(".") ;
+    if ( pos != string::npos )
+    {
+      string ext = c.substr(pos);
+      if ( ext == ".off" )
+        lCases.push_back(c);
+    }
   }
    
   if ( lCases.size() == 0 )
