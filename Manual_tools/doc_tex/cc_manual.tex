@@ -32,10 +32,10 @@
 \makeindex
 
 %\pagestyle{empty}
-\textwidth 15.4cm 
+\textwidth 15.4cm
 \textheight 24cm
-\topmargin -14mm       
-\evensidemargin 3mm 
+\topmargin -14mm
+\evensidemargin 3mm
 \oddsidemargin 3mm
 
 
@@ -63,7 +63,7 @@
  \newcommand{\leavevmode}{}
 }
 
-\lcTex{\ccIndexingOff}  % this manual produces its own index; examples are not 
+\lcTex{\ccIndexingOff}  % this manual produces its own index; examples are not
                         % to be indexed
 
 
@@ -83,7 +83,7 @@
 \date{\ccRevision. \ccDate}
 
 \begin{document}
-\lcTex{\ccIndexingOff}  % this manual produces its own index; examples are not 
+\lcTex{\ccIndexingOff}  % this manual produces its own index; examples are not
                         % to be indexed
 
 \maketitle
@@ -103,8 +103,8 @@
 
 The tools for writing \CC\ reference manuals are arranged around two
 \LaTeX\ style files called {\tt cc\_manual.sty} and {\tt cc\_manual\_index.sty}.
-The latter style file provides commands to that can be used for producing an 
-index for the reference manual and is documented separately 
+The latter style file provides commands to that can be used for producing an
+index for the reference manual and is documented separately
 \cite{h-crmissfd-99}.  The {\tt cc\_manual.sty} style file provides
 three groups of macros. The first group is a set of commonly used
 abbreviations such as \verb+\R+ for \R. The second group helps to
@@ -185,7 +185,7 @@ the tools is given in Figure~\ref{ToolsOverviewFig}.
 \end{figure}
 
 \index{naming scheme} The style uses a {\tt cc} prefix\index{name
-  prefix} for its macros since it is related to format \CC\ 
+  prefix} for its macros since it is related to format \CC\
 declarations. The only exceptions are the common abbreviations listed
 in the next section. Their usefulness is their brevity. The naming
 scheme requires macro names in lower case.  Concatenated names start
@@ -219,19 +219,22 @@ layout: \index{argument lists}\index{parameter lists}
 
 
 % ----------------------------------------------------------------------
-\section{Including \CC\ source code} 
+\section{Including \CC\ source code}
 \label{sectionSourceCode}
 \index{C++ source code, including@\CC\ source code, including}
 
 
 The style {\tt cprog.sty} offers a macro \verb+\cprogfile{+{\em
-    filename\/}\verb+}+ to include C source code files verbatim into
+filename\/}\verb+}+ to include C source code files verbatim into
 the document, but with font changes for C comments and such. However,
 \CC\ source code is not well supported. Similar to the {\tt verbatim}
 environment, the {\tt ccExampleCode} environment encapsulates source
 code examples. The related \verb+\ccIncludeExampleCode{+{\em
-    filename\/}\verb+}+ command includes and formats source code
-files. The macro \verb+\ccIncludeVerbatim{+{\em filename\/}\verb+}+
+filename\/}\verb+}+ command includes and formats source code
+files. License headers in example source files are stripped and
+a filename is printed below the example code.
+
+The macro \verb+\ccIncludeVerbatim{+{\em filename\/}\verb+}+
 includes a file verbatim without any further formatting and displays
 it in {\tt tt}-style.
 \ccIndexEntry{IncludeVerbatim}\ccIndexEntry{IncludeExampleCode}\TTindex{cprog.sty}
@@ -269,8 +272,8 @@ the revision of the {\tt cc\_manual.sty} are available with the macros
 \begin{scriptsize}
 \begin{tabbing}
 \lcTex{  M \= implementationNNN \= ImplementationMMMMM \= \kill}
-  \> \verb@\RCSdef{\a}{$Id$}@ \hspace*{1cm}\=\\ 
-  \> \verb@\RCSdefDate{\b}{$Date$}@ \\ 
+  \> \verb@\RCSdef{\a}{$Id$}@ \hspace*{1cm}\=\\
+  \> \verb@\RCSdefDate{\b}{$Date$}@ \\
   \> \verb+\a+ \>       \aManual \\
   \> \verb+\b+ \>       \bManual \\
   \> \verb+\ccRevision+ \> \ccRevision \\
@@ -294,7 +297,7 @@ need the package {\tt amssymb} and \LaTeXe.
   \> \verb+\cgal+       \> \cgal       \> \verb+\E+        \> \E\\
   \> \verb+\galia+      \> \galia      \> \verb+\leda+     \> \leda\\
   \> \verb+\stl+        \> \stl        \> \verb+\plageo+   \> \plageo\\
-  \> \verb+\protocgal+  \> \protocgal  
+  \> \verb+\protocgal+  \> \protocgal
 \end{tabbing}
 \Mindex{CC}\Mindex{gcc}\Mindex{nat}\Mindex{real}
 \Mindex{leda}\Mindex{cgal}\Mindex{galia}
@@ -313,7 +316,7 @@ subtitle {\em text\/} for a chapter in a small italics font.  Multiple
 formatting for chapter authors or a release number\footnote{This is
   useful for a multi-author manual or an RCS release number or date
   as it is available with the \Backslash {\tt RCSdef} or \Backslash {\tt
-    RCSdefDate} macros from Section~\ref{sectionRCSmacros}.}.  
+    RCSdefDate} macros from Section~\ref{sectionRCSmacros}.}.
 
 All macros are formatted in \TeX\ vertical mode. They can be used
 several times and in arbitrary order, with or without paragraphs (that
@@ -379,39 +382,39 @@ subsections are possible (therefore no numbering).
 
 \begin{tabbing}
 \lcTex{  M \= CCimplementationNNN \= IsxModelxforxthexConceptxxx \= \kill}
-  \> \verb+\ccDefinition+      \>  {\bf Definition}    \> 
+  \> \verb+\ccDefinition+      \>  {\bf Definition}    \>
                                           including template parameters\\
-  \> \verb+\ccInheritsFrom+    \>  {\bf Inherits From}     \> 
+  \> \verb+\ccInheritsFrom+    \>  {\bf Inherits From}     \>
                                                      base classes\\
-  \> \verb+\ccHasModels+       \>  {\bf Has Models}     \> 
+  \> \verb+\ccHasModels+       \>  {\bf Has Models}     \>
                                                      models for concepts\\
-  \> \verb+\ccIsModel+         \>  {\bf Is Model for the Concept}     \> 
+  \> \verb+\ccIsModel+         \>  {\bf Is Model for the Concept}     \>
                                                      concept names\\
-  \> \verb+\ccGeneralizes+     \>  {\bf Generalizes}     \> 
+  \> \verb+\ccGeneralizes+     \>  {\bf Generalizes}     \>
                                                      concept names\\
-  \> \verb+\ccRefines+         \>  {\bf Refines}     \> 
+  \> \verb+\ccRefines+         \>  {\bf Refines}     \>
                                                      concept names\\
-  \> \verb+\ccRequirements+    \>  {\bf Requirements}     \> 
+  \> \verb+\ccRequirements+    \>  {\bf Requirements}     \>
                                                      type requirements, etc.\\
   \> \verb+\ccTypes+           \>  {\bf Types}         \>
                                                      local type definitions \\
-  \> \verb+\ccConstants+       \>  {\bf Constants}     \> 
+  \> \verb+\ccConstants+       \>  {\bf Constants}     \>
                                                      constant values\\
-  \> \verb+\ccCreation+        \>  {\bf Creation}      \> 
+  \> \verb+\ccCreation+        \>  {\bf Creation}      \>
                                                      constructors, assignment\\
-  \> \verb+\ccOperations+      \>  {\bf Operations}    \> 
+  \> \verb+\ccOperations+      \>  {\bf Operations}    \>
                                                      functions and operators\\
-  \> \verb+\ccAccessFunctions+ \>  {\bf Access Functions}    \> 
+  \> \verb+\ccAccessFunctions+ \>  {\bf Access Functions}    \>
                                                      member access\\
-  \> \verb+\ccQueryFunctions+ \>   {\bf Query Functions}    \> 
+  \> \verb+\ccQueryFunctions+ \>   {\bf Query Functions}    \>
                                                      query functions\\
-  \> \verb+\ccPredicates+      \>  {\bf Predicates}    \> 
+  \> \verb+\ccPredicates+      \>  {\bf Predicates}    \>
                                                      predicates\\
-  \> \verb+\ccModifiers +      \>  {\bf Modifiers}    \> 
+  \> \verb+\ccModifiers +      \>  {\bf Modifiers}    \>
                                                      insert, delete, update\\
-  \> \verb+\ccSeeAlso+         \>  {\bf See Also}\> 
+  \> \verb+\ccSeeAlso+         \>  {\bf See Also}\>
                                                      other classes, functions\\
-  \> \verb+\ccImplementation+  \>  {\bf Implementation}\> 
+  \> \verb+\ccImplementation+  \>  {\bf Implementation}\>
                                                      running time, memory\\
   \> \verb+\ccExample+         \>  {\bf Example}       \>
                                                      programming examples
@@ -437,7 +440,7 @@ includes should be separated with \verb+\\+.
   \> \verb+\ccInclude{CGAL/Point_2.h}+   \>  \ccc{#include <CGAL/Point_2.h>}
 \end{tabbing}
 
-  
+
 A few subtitles are predefined for the descriptive text in the third
 column.
 
@@ -482,17 +485,17 @@ produces angles around the encapsulated paragraphs like it does here.
 \section{Multiple Manuals in One Document}
 \label{sectionPartCommand}
 
-The \LaTeX\ \verb+\part+\lcIndex{part} command can be used to generate a 
-single document that consists of more than one manual but has a common table 
-of contents, index and bibliography.  This can be used, for example, to 
-combine a user manual and reference manual and thus get easy referencing 
+The \LaTeX\ \verb+\part+\lcIndex{part} command can be used to generate a
+single document that consists of more than one manual but has a common table
+of contents, index and bibliography.  This can be used, for example, to
+combine a user manual and reference manual and thus get easy referencing
 between the two while keeping them logically separated.  The command
 \verb+\ccNumberChatpersByPart+ should be used if you wish to start renumbering
-chapters at 1 after each new \verb+\part+ command (which is probably a 
-good idea); otherwise chapter numbering is continuous.  
-For the HTML conversion, the command \verb+\ccMultiplePartsToc+ should be used 
-to tell the HTML converter to use the appropriate format for the table of 
-contents.  
+chapters at 1 after each new \verb+\part+ command (which is probably a
+good idea); otherwise chapter numbering is continuous.
+For the HTML conversion, the command \verb+\ccMultiplePartsToc+ should be used
+to tell the HTML converter to use the appropriate format for the table of
+contents.
 
 For manuals written with separate user and reference manual parts it is
 useful to have a link between a chapter in the user manual part and its
@@ -512,7 +515,7 @@ chapter to which a link is to be created.
 
 All arguments of macros that are \CC\ code are parsed from \TeX\ with
 changed \verb"\catcode"\index{catcode} values for some characters.
-This allows to use such \Dindex{special characters} as ``\_'' in \CC\ 
+This allows to use such \Dindex{special characters} as ``\_'' in \CC\
 declarations without quoting them as it is usual within \LaTeX.  The
 rule is that in any case, the complete original \CC\ source text is
 written without quoting. The formatting macros handle for example the
@@ -559,29 +562,29 @@ identifier plus an optional list of template arguments (for classes)
 is given. Function parameters, function template declarations or macro
 parameters or not given here. The item name will be formatted as
 section title. Member declarations of concepts and classes and the
-global declarations for enums, variables, constant, functions and macros 
+global declarations for enums, variables, constant, functions and macros
 are written within these environments using the macros following in the
 sections below. The currently available environments are:
 
 \begin{tabbing}
 \lcTex{\= CCimplementationNNNMMMMMMMMMMMn \= Imple \= \kill}
-  \> \verb+\begin{ccRefConcept}{Circulator}+ \> {\em text} 
+  \> \verb+\begin{ccRefConcept}{Circulator}+ \> {\em text}
   \> \verb+\end{ccRefConcept}+\\
-  \> \verb+\begin{ccRefFunctionObjectConcept}{C}+ \> {\em text} 
+  \> \verb+\begin{ccRefFunctionObjectConcept}{C}+ \> {\em text}
   \> \verb+\end{ccRefFunctionObjectConcept}+\\
-  \> \verb+\begin{ccRefClass}{Circulator_traits<C>}+ \> {\em text} 
+  \> \verb+\begin{ccRefClass}{Circulator_traits<C>}+ \> {\em text}
   \> \verb+\end{ccRefClass}+\\
-  \> \verb+\begin{ccRefFunctionObjectClass}{C<R>}+ \> {\em text} 
+  \> \verb+\begin{ccRefFunctionObjectClass}{C<R>}+ \> {\em text}
   \> \verb+\end{ccRefFunctionObjectClass}+\\
-  \> \verb+\begin{ccRefEnum}{Orientation}+ \> {\em text} 
+  \> \verb+\begin{ccRefEnum}{Orientation}+ \> {\em text}
   \> \verb+\end{ccRefEnum}+\\
   \> \verb+\begin{ccRefFunction}{is_empty_range}+ \>{\em text}
   \> \verb+\end{ccRefFunction}+\\
-  \> \verb+\begin{ccRefVariable}{VARIABLE}+ \> {\em text} 
+  \> \verb+\begin{ccRefVariable}{VARIABLE}+ \> {\em text}
   \> \verb+\end{ccRefVariable}+\\
-  \> \verb+\begin{ccRefConstant}{ORIGIN}+ \> {\em text} 
+  \> \verb+\begin{ccRefConstant}{ORIGIN}+ \> {\em text}
   \> \verb+\end{ccRefConstant}+\\
-  \> \verb+\begin{ccRefMacro}{For_all}+ \> {\em text} 
+  \> \verb+\begin{ccRefMacro}{For_all}+ \> {\em text}
   \> \verb+\end{ccRefMacro}+
 \end{tabbing}
 \Eindex{ccRefConcept}
@@ -602,17 +605,17 @@ sections below. The currently available environments are:
 These environments have an optional argument to declare a
 \Dindex{class scope} or \Dindex{namespace} that the item is in.
 Furthermore, the style maintains a \Dindex{global scope}, which is
-prepended to each item except {\tt Concept}, {\tt FunctionObjectConcept} 
+prepended to each item except {\tt Concept}, {\tt FunctionObjectConcept}
 and {\tt Macro}.\index{scope, class}\index{scope, global}. The global scope
 is empty by default.
 
 \begin{tabbing}
 \lcTex{  M \= CCimplementationNNNMMMMMMMMM \= ImplementationMMMMM \= \kill}
   \> \verb+\ccDefGlobalScope{CGAL::}+    \>   \\
-  \> \verb+\begin{ccRefConcept}{Circulator}+    
+  \> \verb+\begin{ccRefConcept}{Circulator}+
     \> {\large\bf Concept Circulator}  \\
-  \> \verb+\end{ccRefConcept}+ \\  
-  \> \verb+\begin{ccRefClass}[Poly::]{Vertex}+    
+  \> \verb+\end{ccRefConcept}+ \\
+  \> \verb+\begin{ccRefClass}[Poly::]{Vertex}+
     \> {\large\bf Class CGAL::Poly::Vertex}\\
   \> \verb+\end{ccRefClass}+
 \end{tabbing}
@@ -621,7 +624,7 @@ is empty by default.
 There are two different styles of formatting the reference pages. The
 old style created a section title as in the example above. The new
 style, which is now the default choice, creates a new page for each
-item and draws a tab marker at 
+item and draws a tab marker at
 the side margin indicating the category of this item. Use the
 \verb+\ccNewRefManualStyle+ macro as follows to switch between these
 styles explicitly. The tab markers use the side margins of \LaTeX. The
@@ -696,10 +699,10 @@ class \ccc{CGAL::Poly::Vertex}.
       \= CCpuretemplatenameMMMM \= \kill}
   \>formatted  \> example \> unformatted ~~~~~~~~~~~~
                  example using \verb+\tt+\\[1ex]
-  \>\> \> \verb+\ccRefCategory+  \> {\tt Class}\\ 
-  \>\verb+\ccGlobalScope+  \> \ccc{CGAL::}  
+  \>\> \> \verb+\ccRefCategory+  \> {\tt Class}\\
+  \>\verb+\ccGlobalScope+  \> \ccc{CGAL::}
     \> \verb+\ccPureGlobalScope+ \> {\tt CGAL::}  \\
-  \>\verb+\ccRefScope+  \> \ccc{Poly::}  
+  \>\verb+\ccRefScope+  \> \ccc{Poly::}
     \> \verb+\ccPureRefScope+ \> {\tt Poly::}  \\
   \>\verb+\ccRefName+ \> \ccc{Vertex} \> \verb+\ccPureRefName+ \>{\tt Vertex}\\
   \>\verb+\ccVar+ \> \ccVar \> \verb+\ccPureVar+ \> {\tt\ccPureVar}
@@ -724,17 +727,17 @@ pages. The macro \verb|\ccRefIdfierPage| should be used for all reference pages
 labeled with \CC\ identifiers ({\em i.e.}, for everything except concepts);
 \verb|\ccRefConceptPage| should be used for concepts.
 The macros format their arguments in the usual way and
-create page references.  
+create page references.
 
 You can change the way these page references are formatted using the
-commands \verb+\ccRefPageNumAtMargin+\ccIndexEntry{RefPageNumAtMargin} and 
+commands \verb+\ccRefPageNumAtMargin+\ccIndexEntry{RefPageNumAtMargin} and
 \verb+\ccRefPageFill+\ccIndexEntry{RefPageFill}.  If the first
 command is set to \verb+\ccTrue+ (the default), page numbers are printed
-at the right margin with the space in between filled using 
+at the right margin with the space in between filled using
 \verb+\ccRefPageFill+.  The default value for \verb+\ccRefPageFill+
-is \verb+\dotfill+.  When \verb+\ccRefPageNumAtMargin+  is set to 
-\verb+\ccFalse+, page numbers appear directly after the identifiers in 
-parentheses using the format ``(pg. \#)''.  Note that the \LaTeX\ 
+is \verb+\dotfill+.  When \verb+\ccRefPageNumAtMargin+  is set to
+\verb+\ccFalse+, page numbers appear directly after the identifiers in
+parentheses using the format ``(pg. \#)''.  Note that the \LaTeX\
 to HTML converter ignores these page references since it expects to
 generate proper hyper-links for the identifier used as the
 argument for \verb+\ccRefIdfierPage+ or \verb|\ccRefConceptPage|.
@@ -748,7 +751,7 @@ macro with the full name of the label.
 \begin{tabbing}
 \lcTex{  M \= CCimplementationNNNMMMMMMMMMM \= ImplementationMMMMM \= \kill}
   \> \verb+\ccRefLabel{ClassA}\ccRefLabel{ClassB}\ccRefLabel{A_Concept}+ \\ ~\\
-  \> see for example \verb+\ccRefPage{ClassA}+.\verb+\\+ 
+  \> see for example \verb+\ccRefPage{ClassA}+.\verb+\\+
       \> see for example \ccRefPage{ClassA}.\\
   \> \verb+\ccRefIdfierPage{ClassA}\\+ \> \ccc{ClassA} \> \ccRefPage{ClassA}\\
   \> \verb+\ccRefIdfierPage{ClassB}+ \> \ccc{ClassB} \> \ccRefPage{ClassB}\\
@@ -768,7 +771,7 @@ order. If a file called {\tt intro.tex} exists it is included first.
 This file is supposed to give some chapter title, some introduction,
 and an overview of the reference pages, for example, a
 table-of-contents created with the \verb+\ccRefIdfierPage+ and
-\verb+\ccRefConceptPage+ macros from above. Both scripts give a list 
+\verb+\ccRefConceptPage+ macros from above. Both scripts give a list
 of options if called without
 parameters. An example of reference pages is given in the {\tt example}
 subdirectory of the distribution of this style file and its related
@@ -778,8 +781,8 @@ tools.\TTindex{cc\_make\_ref\_pages}\TTindex{cc\_ref\_wizard}
     cc\_make\_ref\_pages}} \index{scripts, cc\_ref\_wizard@scripts,
   {\tt cc\_ref\_wizard}}
 
-The command \verb+\listofrefpages+\lcIndex{listofrefpages} is similar to 
-the \verb+\listoffigures+ 
+The command \verb+\listofrefpages+\lcIndex{listofrefpages} is similar to
+the \verb+\listoffigures+
 and \verb+\listoftables+ commands provided with \LaTeX.  It produces a file
 with extension \texttt{.ref} containing a list of all reference pages.  When
 \LaTeX\ is run again, this list of pages will be placed at the point where
@@ -818,7 +821,7 @@ appropriate (with the exceptions of
 \index{argument list formatting} \index{parameter|see{argument}}
 \index{cast operator} \index{operator()@{\tt operator()({\em
       args\/})}} \index{operator type@{\tt operator {\em type\/}()}}
-Several rules are built in to simplify the appearance of \CC\ 
+Several rules are built in to simplify the appearance of \CC\
 declarations in the manual. By default they are all active, but they
 can be switched off separately, see Section~\ref{sectionCustomize}.
 The first rule examines function argument lists for
@@ -852,15 +855,15 @@ not visible.
   \> \verb+\begin{ccClass}{A}+\>\>{\em formatting result}:\\
   \>\> \verb+\ccCreationVariable{a}+\\
   \>\> \verb+\ccFunction{int foo(const X& x);}{+\ldots\verb+}+
-    \> \ccStyle{int}  \> \ccStyle{foo(X x)}  \>  \ldots \\ 
+    \> \ccStyle{int}  \> \ccStyle{foo(X x)}  \>  \ldots \\
   \>\> \verb+\ccFunction{A foo(const A& c);}{+\ldots\verb+}+
-    \> \ccStyle{A}  \> \ccStyle{foo(c)}  \>  \ldots \\ 
+    \> \ccStyle{A}  \> \ccStyle{foo(c)}  \>  \ldots \\
   \>\> \verb!\ccFunction{A operator+(A a, A b);}{!\ldots\verb+}+
-    \> \ccStyle{A}  \> \ccStyle{a + b}  \>  \ldots \\ 
+    \> \ccStyle{A}  \> \ccStyle{a + b}  \>  \ldots \\
   \>\> \verb!\ccMethod{A operator+(A b);}{!\ldots\verb+}+
-    \> \ccStyle{A}  \> \ccStyle{a + b}  \>  \ldots \\ 
+    \> \ccStyle{A}  \> \ccStyle{a + b}  \>  \ldots \\
   \>\> \verb+\ccMethod{int bar() const;}{+\ldots\verb+}+
-    \> \ccStyle{int}\> \ccStyle{a.bar()}  \>  \ldots \\ 
+    \> \ccStyle{int}\> \ccStyle{a.bar()}  \>  \ldots \\
   \> \verb+\end{ccClass}+
 \end{tabbing}
 \ccIndexEntry{Section}\ccIndexEntry{Subsection}
@@ -967,13 +970,13 @@ shows the different possibilities.
       \= CCpuretemplatenameMMMMM \= \kill}
   formatted name, \> example \> unformatted name,~~
                  example using \verb+\tt+\\[1ex]
-  \verb+\ccClassName+  \> \ccClassName  
+  \verb+\ccClassName+  \> \ccClassName
     \> \verb+\ccPureClassName+  \> {\tt \ccPureClassName}  \\
-  \verb+\ccClassTemplateName+  \> \ccClassTemplateName  
-    \> \verb+\ccPureClassTemplateName+  
+  \verb+\ccClassTemplateName+  \> \ccClassTemplateName
+    \> \verb+\ccPureClassTemplateName+
         \> {\tt \ccPureClassTemplateName}  \\
 %%  \verb+\ccTemplateParameters+  \> \ccTemplateParameters
-%%    \> \verb+\ccPureTemplateParameters+  
+%%    \> \verb+\ccPureTemplateParameters+
 %%        \> {\tt \ccPureTemplateParameters}  \\
   \verb+\ccVar+ \> \ccVar \> \verb+\ccPureVar+ \> {\tt\ccPureVar}
 \end{tabbing}
@@ -984,7 +987,7 @@ shows the different possibilities.
 The following macros have the similar structure \verb+\cc+{\em
   Category\/}\verb+{+{\em decl\/}\verb+}{+{\em desc\/}\verb+}+. The
 macro formats a specific {\em category\/} of \CC\ declarations {\em
-  decl\/} with the description {\em desc}. Note that the \CC\ 
+  decl\/} with the description {\em desc}. Note that the \CC\
 declaration terminates with a semicolon. The macros
 \verb+\ccConstructor+ and \verb+\ccMemberFunction+ are only allowed
 within the context of a class environment. The macro \verb+\ccMethod+
@@ -1047,21 +1050,21 @@ a class \ccc{Gnu<T>}.
 \begin{tabbing}
 \lcTex{  CCimplementationNNNMMMMMMMMMMMMM \= typedef AN \= foo(coXx);MM \=\kill}
        \verb+\ccNestedType{ Stampede}{+\ldots\verb+}+
-    \> \ccStyle{Gnu<T>::Stampede}  \>\>  \ldots \\ 
+    \> \ccStyle{Gnu<T>::Stampede}  \>\>  \ldots \\
        \verb+\ccStruct{ struct S { int i;};}{+\ldots\verb+}+
-    \> \ccStyle{struct S \{ int i;\};}  \>\>  \ldots \\ 
+    \> \ccStyle{struct S \{ int i;\};}  \>\>  \ldots \\
        \verb+\ccEnum{ enum E { E1, E2};}{+\ldots\verb+}+
-    \> \ccStyle{enum E \{ E1, E2\};}  \>\>  \ldots \\ 
+    \> \ccStyle{enum E \{ E1, E2\};}  \>\>  \ldots \\
        \verb+\ccTypedef{ typedef A Sleep;}{+\ldots\verb+}+
-    \> \ccStyle{typedef A}  \> \ccStyle{Sleep;}  \>  \ldots \\ 
+    \> \ccStyle{typedef A}  \> \ccStyle{Sleep;}  \>  \ldots \\
        \verb+\ccVariable{ const int i = 42;}{+\ldots\verb+}+
-    \> \ccStyle{const int}  \> \ccStyle{i = 42;}  \>  \ldots \\ 
+    \> \ccStyle{const int}  \> \ccStyle{i = 42;}  \>  \ldots \\
        \verb+\ccConstructor{ Gnu(Gnu<T> a);}{+\ldots\verb+}+
-    \> \ccStyle{Gnu<T> g(a);}  \>\>  \ldots \\ 
+    \> \ccStyle{Gnu<T> g(a);}  \>\>  \ldots \\
        \verb+\ccMemberFunction{ int gnat(X x);}{+\ldots\verb+}+
-    \> \ccStyle{int}  \> \ccStyle{g.gnat(X x)}  \>  \ldots \\ 
+    \> \ccStyle{int}  \> \ccStyle{g.gnat(X x)}  \>  \ldots \\
        \verb+\ccFunction{ int foo(X x);}{+\ldots\verb+}+
-    \> \ccStyle{int}  \> \ccStyle{foo(X x)}  \>  \ldots \\ 
+    \> \ccStyle{int}  \> \ccStyle{foo(X x)}  \>  \ldots \\
        \verb+\ccFunction{ template<class A>+
     \> \ccStyle{template<class A>} \\
        \verb+                 int bar(A a);}{+%
@@ -1105,7 +1108,7 @@ a class \ccc{Gnu<T>}.
 \Eindex{ccTraitsClass}\Eindex{ccTraitsClassTemplate}
 
 For traits classes, one should use the environments {\tt ccTraitsClass}
-and {\tt ccTraitsClassTemplate} instead of {\tt ccClass} and 
+and {\tt ccTraitsClassTemplate} instead of {\tt ccClass} and
 {\tt ccClassTemplate}, respectively. Both of these environments require
 three arguments: the first argument supplies the name
 of the traits class; the second argument should be a semicolon-separated
@@ -1122,7 +1125,7 @@ class names without template parameters or any other decoration.
 Either of the last two arguments for the traits class environments
 may be empty.
 
-But for the index entries produced, the traits class environments behave 
+But for the index entries produced, the traits class environments behave
 exactly the same as the {\tt ccClass} and {\tt ccClassTemplate} environments,
 respectively.
 
@@ -1131,7 +1134,7 @@ respectively.
 %\label{sectionPackages}
 %\Eindex{ccPackage}
 %
-%The descriptions of packages that have no associated classes or, possibly 
+%The descriptions of packages that have no associated classes or, possibly
 %include more than one class should be enclosed in a {\tt ccPackage}
 %environment. This environment defines a variable \verb|\ccIndexPackageName|
 %that is used for producing the index \cite{h-crmissfd-99} but has no
@@ -1193,7 +1196,7 @@ The \LaTeX\ to {\tt HTML} converter, {\tt
   cc\_manual\_to\_html}~\cite{k-lhcll-99}, fully supports the {\tt
   cc\_manual.sty} including hyper-links, for example, from class names
 to their place of definition.  A couple of macros are provided to
-support these cases where the automatic conversion fails, i.e.\ 
+support these cases where the automatic conversion fails, i.e.\
 complex tables and mathematical formulas are not handled
 automatically. These macros are outdated, but kept because of their
 widespread use. See the respective converter manual~\cite{k-lhcll-99}
@@ -1212,7 +1215,7 @@ code.
      \verb+\end{ccHtmlOnly}+
 \end{tabbing}
 
-\index{catcode}\index{parsing|see{catcode}} 
+\index{catcode}\index{parsing|see{catcode}}
 \Eindex{ccHtmlOnly}
 \Eindex{ccTexOnly}
 The \verb+ccHtmlOnly+ environment modifies the catcodes of a couple of
@@ -1243,14 +1246,14 @@ description).
 \index{hyper-links}
 The {\tt cc\_extract\_html} converter provides a couple of
 automatisms to generate hyper-links for the manual. This includes
-declared classes and function names, the bibliography, an index, and 
+declared classes and function names, the bibliography, an index, and
 \verb+\label+-\verb+\ref+-pairs. Other references, for
 example to resources beyond the manual, can be introduced as
-hyper-links with the 
-\verb+\ccAnchor{+{\em  URL\/}\verb+}{+{\em tex\/}\verb+}+ macro. 
+hyper-links with the
+\verb+\ccAnchor{+{\em  URL\/}\verb+}{+{\em tex\/}\verb+}+ macro.
 The written manual will only show the {\em tex\/} part. The online
 {\tt HTML} manual will have the {\tt URL\/} as a hyper-link associated
-with the text {\em tex}. 
+with the text {\em tex}.
 
 \begin{tabbing}
 \lcTex{  M \= CCimplementationNNNMMMMMMMMMMMMMMMMMM \= ImplementationMMMMM \= \kill}
@@ -1294,7 +1297,7 @@ deactivates the automatic cross linking and \verb+\ccHtmlNoIndex+
 deactivates the automatic index generation of the declaration
 following these macros.  Similarly, the macros \verb+\ccHtmlNoRefLinks+
 and \verb+\ccHtmlNoRefIndex+ can be used just before the beginning of
-a reference page to turn off, respectively, the linking and indexing 
+a reference page to turn off, respectively, the linking and indexing
 of a reference page identifier.
 
 In addition, the macro \verb+\ccHtmlNoLinksFrom+, which takes a single
@@ -1310,7 +1313,7 @@ you can protect this word ``set'' using the \verb+\ccHtmlNoLinksFrom+ macro:
 \end{verbatim}
 
 This macro uses the two no-argument macros \verb+\ccHtmlLinksOff+ and
-\verb+\ccHtmlLinksOn+, which insert comments in the {\tt .html} files 
+\verb+\ccHtmlLinksOn+, which insert comments in the {\tt .html} files
 to indcate that text between the two commands should not have links
 in it.
 
@@ -1346,12 +1349,12 @@ in it.
   \> \verb+\ccHtmlNoRefIndex+   \> no index entry for the following
                                    reference page identifier. \\
   \> \verb+\ccHtmlNoLinksFrom+{text}   \> no links from the text argument will
-                                   be created. 
+                                   be created.
 \end{tabbing}
 
 \footnotetext{A class without its own file will be formatted in the
   enclosing chapter file. The embedded layout within this chapter file
-  may be not be optimal and might be customized with the {\tt HTML} 
+  may be not be optimal and might be customized with the {\tt HTML}
   specific macros.}
 
 The \verb+ccHtmlClassFile{+{\em filename\/}\verb+}{+{\em
@@ -1366,9 +1369,9 @@ will automatically be stopped to create own files.  \Eindex{ccHtmlClassFile}
 
 \begin{tabbing}
 \lcTex{  M \= CCimplementationNNNMM \= ImplementationMMMMM \= \kill}
-  \> 
+  \>
   \verb+\begin{ccHtmlClassFile}{My_point.html}{Declaration of \ccc{My_point}}+
-     \\ 
+     \\
   \> \ldots\\
   \> \verb+\end{ccHtmlClassFile}+
 \end{tabbing}
@@ -1407,6 +1410,71 @@ argument {\em C-idfier}.
   \> \verb+\ccHtmlIndexC{My_point<R>}+
 \end{tabbing}
 
+\section{CGAL Related Macros}
+\subsection{Package Description}
+The HTML version of the CGAL Manual allows to give short descriptions for
+each CGAL package. It is considered good practice to put the package
+description in a file called \verb+PkgDescription.tex+. This file has to be
+included explicitly from the main tex file.
+
+To mark the package description as such, all other related macros have to be
+enclosed in
+
+\verb+  \begin{ccPkgDescription}{+{\em packagename}\verb+\label{...}} ... \end{ccPkgDescription}+.
+
+
+
+At least there has to be a summary text given by
+\verb+\ccPkgSummary{+{\em text}\verb+}+. For the hurried user, small
+illustrations provide a nice graphical overview of
+CGAL packages. It is strongly encouraged to provide such illustrations.
+Thumbnails are rendered to the left of the summary and can be clicked to
+reveal a larger, more detailled image:
+
+\verb+  \ccPkgIllustration{+{\em imagefilename}\verb+}{+{\em largeimagefilename}\verb+}+
+
+Note that the image filename must also include its relative path
+(ie\., the package name). Other optional but encouraged macro is
+\verb+\ccPkgIntroducedInCGAL{+{\em version}\verb+}+.
+
+Dependencies among packages can be expressed with
+\verb+\ccPkgDependsOn{+{\em text}\verb+}+. For this purpose, a special
+kind of reference macro can be used inside of {\em text}:
+
+\verb+  \ccPkgDependsOn{\ccRef[+{\em replacementtext}\verb+]}+{\em label}\verb+}+
+
+where {\em replacementtext} would be the packagename and {\em label} the
+respective package description label.
+
+Packages may have individual licenses. To indicate which one, use
+\verb+\ccPkgLicense{+{\em license}\verb+}+, where {\em license} can be one of
+
+\begin{itemize}
+ \item \verb+\ccLicenseGPL+
+ \item \verb+\ccLicenseLGPL+
+ \item \verb+\ccLicenseQPL+
+ \item \verb+\ccLicenseCommercial+
+\end{itemize}
+
+Finally, you have the opportunity to let other researchers cite your CGAL package using
+\verb+\ccPkgHowToCiteCgal{+{\em bibkey}\verb+}+.
+
+A typical package description may look like this:
+
+\begin{verbatim}
+\begin{ccPkgDescription}{2D Envelopes\label{Pkg:Envelope2}}
+\ccPkgHowToCiteCgal{cgal:w-e2-06}
+\ccPkgSummary{
+  This package consists of functions that computes the lower (or upper)
+  envelope of a set of arbitrary curves in 2D. The output is
+  represented as an envelope diagram, namely a subdivision of the
+  $x$-axis into intervals, such that the identity of the curves that
+  induce the envelope on each interval is unique.}
+\ccPkgDependsOn{\ccRef[2D Arrangements]{Pkg:Arrangement2}}
+\ccPkgIntroducedInCGAL{3.3}
+\ccPkgLicense{\ccLicenseQPL}
+\end{ccPkgDescription}
+\end{verbatim}
 
 
 % ----------------------------------------------------------------------
@@ -1418,7 +1486,7 @@ argument {\em C-idfier}.
 The customization can be subdivided in the following topics:
 Dimensions of the three- and two-column layout, rules for simplifying
 \CC\ declarations, the formatting style for \CC\ code, the replacement
-of a name prefix, and miscellaneous other options. 
+of a name prefix, and miscellaneous other options.
 
 
 % -------------------------------------------------
@@ -1428,7 +1496,7 @@ of a name prefix, and miscellaneous other options.
 {\em
 NOTE: The commands described in this section that define columns widths
 have no affect on the layout of the HTML manual and the assignment of values
-to variables such as \verb|\ccwIndent=0.0cm| is no supported by the conversion 
+to variables such as \verb|\ccwIndent=0.0cm| is no supported by the conversion
 tools.  See \cite{k-lhcll-99} for further information
 about unsupported commands.
 }
@@ -1450,7 +1518,7 @@ determine their dimensions as appropriate for \CC\ code.
 
 \begin{tabbing}
 \lcTex{  M \= CCimplementationNNNMMMMMMMMMMMMMM \= ImplementationMMMMM \= \kill}
-  \> \verb+\ccSetThreeColumns{int}{foo(double d)}{}+ 
+  \> \verb+\ccSetThreeColumns{int}{foo(double d)}{}+
           \> (or \verb+\ccThree{..}{..}{}+)\\
   \> \verb+\ccSetTwoColumns{A a(double d);}{}+
           \> (or \verb+\ccTwo{..}{})+
@@ -1467,7 +1535,7 @@ others can be changed with \verb+\ccSetOneOfTwoColumns{+{\em
     dim3\/}\verb+}+ where {\em dim3\/} denotes the width for the
 second column. The third column is computed automatically and the
 first column (including its padding space towards the second column)
-are set to zero.  
+are set to zero.
 \index{three-column layout}
 
 \begin{tabbing}
@@ -1477,7 +1545,7 @@ are set to zero.
 \end{tabbing}
 \ccIndexEntry{SetTwoOfThreeColumns}\ccIndexEntry{SetOneOfTwoColumns}
 
-\index{padding space} 
+\index{padding space}
 {\bf Note:} There is a padding space called \verb+\ccwBetween+ between
 the columns. To achieve a nice formatting where the third columns of
 functions and constructors lines up, the equation {\em dim1 $+$ dim2
@@ -1544,7 +1612,7 @@ very short entries, this can be combined into one line by setting the
 tag \verb+\ccTagTemplateInline+ to \verb+\ccTrue+. The declarations
 involved are constructors, functions, member functions, and
 \verb+\ccStruct+. The example shows a struct entry with both
-possibilities. 
+possibilities.
 
 \begin{figure}[tbp!]
 \lcTex{\includegraphics[width=1.0\textwidth]{Manual_tools/horizontal_struct}%
@@ -1588,8 +1656,8 @@ macro \verb+\ccInitConstructorWidths+. Note that the
 compensates the padding space between the empty first column and the
 second column.
 
-Two pairs of commands are available that allow you to save and restore these 
-column width values easily when, for example, you want to change the 
+Two pairs of commands are available that allow you to save and restore these
+column width values easily when, for example, you want to change the
 formatting for only a single function or class.  These commands
 are:\verb|\ccSaveThreeColumns|%
 \ccIndexEntry{SaveThreeColumns} and \verb|\ccRestoreThreeColumns|%
@@ -1600,8 +1668,8 @@ variables and then restore them; and \verb|\ccSaveTwoColumns|%
 \ccIndexEntry{RestoreTwoColumns}, which save the current value of
 \verb|\ccwConstructorSecond| and then restore it.
 
-The other two dimensions, \verb+\ccwIndent+ and 
-\verb+\ccwRightMargin+, are useful to narrow the original 
+The other two dimensions, \verb+\ccwIndent+ and
+\verb+\ccwRightMargin+, are useful to narrow the original
 \verb+\textwidth+ for the declarations as in the following
 example.
 
@@ -1718,7 +1786,7 @@ value using the macro \verb+\ccTagDefaults+.
 \ccIndexEntry{TagFullDeclarations}\ccIndexEntry{TagDefaults}\ccIndexEntry{True}\ccIndexEntry{False}
 
 The first tag \verb+\ccTagRmConstRefPair+ controls whether {\tt
-  const\ldots\&}-pairs are removed or not. The second tag 
+  const\ldots\&}-pairs are removed or not. The second tag
 \verb+\ccTagRmEigenClassName+ controls whether the name of a
 class within a class environment is removed from function argument
 lists. The third tag \verb+\ccTagOperatorLayout+ controls
@@ -1775,7 +1843,7 @@ Another rule that is switched off by default is the removal of the template
 keyword including its argument list from template declarations. It is
 controlled with the tag \verb+\ccTagRmTemplate+. It is set to
 \verb+\ccFalse+ by \verb+\ccTagDefaults+ and also by
-\verb+\ccTagFullDeclarations+. 
+\verb+\ccTagFullDeclarations+.
 
 
 % -------------------------------------------------
@@ -1784,7 +1852,7 @@ controlled with the tag \verb+\ccTagRmTemplate+. It is set to
 \index{C++ formatting@\CC\ formatting}
 
 The font and style in which the declarations are formatted can be
-changed by overwriting the macros \verb"\ccFont" and \verb"\ccEndFont". 
+changed by overwriting the macros \verb"\ccFont" and \verb"\ccEndFont".
 Their default settings are:
 \ccIndexEntry{Font}\ccIndexEntry{EndFont}
 
@@ -1822,7 +1890,7 @@ declaration.
 \index{font changes}\index{change font}
 For special purposes the \Dindex{formatting style} can be changed within the
 \CC\ declaration with the usual \LaTeX\ font changing macros. The
-following example is generated with 
+following example is generated with
 \verb+\tt k-th\ccFont -dim \tt k-th\ccFont -foo;+ in the \CC\
 declaration part of a \verb+\ccVariable+ macro. Please note that the
 use of \LaTeX\ macros within the \CC\ declaration is {\em not} recommended,
@@ -1846,7 +1914,7 @@ A couple of \Dindex{special characters} are also changeable with a
 
 \begin{tabbing}
 \lcTex{
-  M \= +foo ccUnderscore bar M \= foo\ccUnderscore barMMM 
+  M \= +foo ccUnderscore bar M \= foo\ccUnderscore barMMM
     \= +foo ccAmpersand bar M \= foo\ccAmpersand bar\kill }
 
   \> \verb+foo\ccUnderscore bar+      \> {\em foo\ccUnderscore bar} \>
@@ -1869,7 +1937,7 @@ A couple of \Dindex{special characters} are also changeable with a
 
 \index{name prefix}
 The external identifiers in \cgal\ were originally prefixed with {\tt CGAL\_}
-before the conversion to the \cgal\ namespace. The {\tt cc\_manual.sty} 
+before the conversion to the \cgal\ namespace. The {\tt cc\_manual.sty}
 therefore offers two possibilities to change this prefix: The prefix is removed
 or the prefix is changed to another prefix. In the latter case the
 prefix {\tt CGAL/} for the include files of the library is probably
@@ -1951,9 +2019,9 @@ that does not exist in \cgal).
 
 \ccIndexEntry{Hidden}\ccIndexEntry{Declaration}\ccIndexEntry{MakeAllVisible}
 The macros \verb+\ccHidden+ and \verb+\ccDeclaration+ from
-Section~\ref{sectionDeclarations} allow the writing of \CC\ 
+Section~\ref{sectionDeclarations} allow the writing of \CC\
 declarations that are only visible for the checking program and not in
-the manual. This can be changed using the macro \verb+\ccMakeAllVisible+. 
+the manual. This can be changed using the macro \verb+\ccMakeAllVisible+.
 It redefines both macros to format their parameters also in the
 manual. The effect cannot be reversed. For the macro
 \verb+\ccDeclaration+ the macro \verb+\ccStyle+ is used for the
@@ -1963,7 +2031,7 @@ declaration thereafter.
 
 \ccIndexEntry{ChapterAuthor}\ccIndexEntry{TagChapterAuthor}
 \ccIndexEntry{ChapterRelease}\ccIndexEntry{TagChapterRelease}
-\ccIndexEntry{False}\ccIndexEntry{True}\ccIndexEntry{TagDefaults} 
+\ccIndexEntry{False}\ccIndexEntry{True}\ccIndexEntry{TagDefaults}
 
 The macros \verb+\ccChapterAuthor+ and \verb+\ccChapterRelease+ from
 Section~\ref{sectionStructureMacros} format their parameters as
@@ -1985,7 +2053,7 @@ defaults.
  % ----------------------------------------------------
     \item[Revision: 3.12~~~Date: 2002/08/23]~\\[-3mm]
     \begin{itemize}
-       \item New macros \verb|\ccRefChapter| and \verb|\ccUserChapter| introduced. 
+       \item New macros \verb|\ccRefChapter| and \verb|\ccUserChapter| introduced.
           \end{itemize}
     % ----------------------------------------------------
     \item[Revision: 3.11~~~Date: 2001/08/20]~\\[-3mm]
@@ -2009,7 +2077,7 @@ defaults.
              \verb|\listoffigures| command, which produces a listing of
              all refernece pages in the PostScript manual.  The listing
              can be made alphabetical using the Unix \verb|sort| command.
-       \item added commands \verb|\ccMultiplePartsToc| and 
+       \item added commands \verb|\ccMultiplePartsToc| and
              \verb|\ccNumberChaptersByPart|
              to allow manuals with separate parts.  The first tells the
              HTML converter that its table of contents should be formatted
@@ -2026,7 +2094,7 @@ defaults.
              and \verb|\ccHtmlNoRefIndex| that turn off, respectively,
              linking and indexing of reference page identifiers.
        \item added command \verb|\ccRefPageFill|, which is the command used
-             by \verb|\ccRefIdfierPage| and \verb|\ccRefConceptPage| to fill 
+             by \verb|\ccRefIdfierPage| and \verb|\ccRefConceptPage| to fill
              the space between a reference page identifier name and
              the page number (default is \verb|\dotfill|).
        \item fixed bug in HTML converter that duplicated the local scopes
@@ -2039,8 +2107,8 @@ defaults.
     \item[Revision: 3.9~~~Date: 2000/09/01]~\\[-3mm]
     \begin{itemize}
        \item added commands \verb|\ccHtmlLinksOff|, \verb|\ccHtmlLinksOn|,
-             and \verb|\ccHtmlNoLinksFrom| that allow one to cause links not 
-             to be created in the HTML manual for the text delimited by 
+             and \verb|\ccHtmlNoLinksFrom| that allow one to cause links not
+             to be created in the HTML manual for the text delimited by
              these commands.
     \end{itemize}
     % ----------------------------------------------------
@@ -2049,7 +2117,7 @@ defaults.
         \item Fixed bug in \verb|\ccRefConceptPage| for HTML conversion
         \item Fixed bug in HTML converter that did not attach the local scope
               to reference page labels, files, {\em etc.}
-        \item Fixed HTML converter so it does not generate file names 
+        \item Fixed HTML converter so it does not generate file names
               containing $<$, $>$ or $:$ (which Microsoft doesn't like).
     \end{itemize}
     % ----------------------------------------------------
@@ -2057,22 +2125,22 @@ defaults.
     \begin{itemize}
         \item Fixed bugs in {\tt cc\_manual\_index.sty} causing problems with
               modified items and concepts as subitems.
-        \item Fixed bug in {\tt ccInclude} macro in {\tt latex\_converter.sty} 
+        \item Fixed bug in {\tt ccInclude} macro in {\tt latex\_converter.sty}
               that caused the item following such a command not to be linked
               when include files were not linked.
-        \item Changed the tabs for the new manual style so they are now in 
+        \item Changed the tabs for the new manual style so they are now in
               color.
         \item Changed {\tt ccAdvanced} envrionment brackets to include the
-              word "advanced". 
-        \item Added environments {\tt ccRefConstant}, 
-              {\tt ccRefFunctionObjectConcept}, and 
-              {\tt ccRefFunctionObjectClass}. 
-        \item Added heading commands \verb|\ccGeneralizes| and 
+              word "advanced".
+        \item Added environments {\tt ccRefConstant},
+              {\tt ccRefFunctionObjectConcept}, and
+              {\tt ccRefFunctionObjectClass}.
+        \item Added heading commands \verb|\ccGeneralizes| and
               \verb|\ccQueryFunctions|.
         \item Added \verb|\ccRefConceptPage| command to be used instead of
               \verb|\ccRefIdfierPage| for concepts so the font for the concepts
               is correct.
-        \item Added commands \verb|\ccSaveThreeColmns|, 
+        \item Added commands \verb|\ccSaveThreeColmns|,
               \verb|\ccRestoreThreeColumns|, \verb|\ccSaveTwoColumns|,
               and \verb|\ccRestoreTwoColumns| that save and restore column
               widths for help in temporarily changing formatting.
@@ -2083,32 +2151,32 @@ defaults.
        \item  Modified \verb|cc_extract_html| so it now uses the environment
               variable \verb|LATEX_CONV_INPUTS| to search for input files.
               This is analogous to the \verb|TEXINPUTS| environment variable
-              used by \LaTeX.  If 
+              used by \LaTeX.  If
               \verb|LATEX_CONV_INPUTS| is set, files are searched for in the
               indicated directories in the indicated order; if not set, files
               are searched for in the current directory.
        \item  Modified the indexing and fromatting commands for \LaTeX, so
-              now underscores are allowed in concept names but no other 
-              ``special'' characters.  Concept names are displayed in the 
+              now underscores are allowed in concept names but no other
+              ``special'' characters.  Concept names are displayed in the
               default font in both the body and the index. (Note: This
               is true only for the PostScript manual; in the HTML manual,
               concept names are still displayed in italics.)
        \item  Changed test suite and {\tt cc\_check} script so they do
               not assume the current directory is in your path.
        \item  Fixed a bug in \verb|cc_manual.sty| that was placing the global
-              scope string ({\em e.g.} ``CGAL::'') before concept names in page 
+              scope string ({\em e.g.} ``CGAL::'') before concept names in page
               headers.
-       \item  Fixed a bug in \verb|cc_manual_index.sty| for index entries 
+       \item  Fixed a bug in \verb|cc_manual_index.sty| for index entries
               produced by the \verb|\ccRef...| environments that were not
               formatted using \verb|\ccFont| when the optional scope argument
               was used.
        \item  Made \verb|cc_manual.sty| include the package \verb|graphicx| if
-              the new manual style is used, since this is where the 
-              \verb|\includegraphics| command that is used to include the side 
+              the new manual style is used, since this is where the
+              \verb|\includegraphics| command that is used to include the side
               tabs for the reference pages is defined.
-       \item  Made \verb|cc_manual_index.sty| include the \verb|makeindex| 
+       \item  Made \verb|cc_manual_index.sty| include the \verb|makeindex|
               package.
-       \item  Added the do-nothing command \verb|\printindex| to 
+       \item  Added the do-nothing command \verb|\printindex| to
               the HTML version of \verb|latex.sty|.
        \item  Added a \verb|\cc_manual_index.sty| file to the HTML style files.
               This simply defines all the indexing commands that might appear
@@ -2124,27 +2192,27 @@ defaults.
        \item In the \verb|\parseText| macro of \verb|cc_manual_index.sty| the
              variable \verb|\text| was renamed to \verb|\indexText| to avoid
              a conflict with the existing AMS-\LaTeX\ \verb|\text| command.
-       \item In \verb|cc_extract_html| (in \verb|cpp_formatting.C|), fixed a 
-             formatting problem that left off the template parameters from 
+       \item In \verb|cc_extract_html| (in \verb|cpp_formatting.C|), fixed a
+             formatting problem that left off the template parameters from
              nested types and typedefs in the HTML index.
-       \item Added missing command \verb|\galia| to HTML \verb|cc_manual.sty| 
+       \item Added missing command \verb|\galia| to HTML \verb|cc_manual.sty|
              file.
        \item Added a new style file {\tt nonlinkedpath.sty} in the release.
              This file defines the command \verb|\nonlinkedpath|, which
-             behaves the same as the \verb|\path| command, except it 
-             does not create a link in the HTML manual. 
-       \item Modified {\tt cc\_manual.sty} to include the 
-             {\tt cc\_manual\_index.sty} and {\tt alltt.sty} style files upon 
-             which it depends.  Similarly modified {\tt cc\_manual\_index.sty} 
-             to include {\tt cc\_manual.sty} since it uses commands defined 
+             behaves the same as the \verb|\path| command, except it
+             does not create a link in the HTML manual.
+       \item Modified {\tt cc\_manual.sty} to include the
+             {\tt cc\_manual\_index.sty} and {\tt alltt.sty} style files upon
+             which it depends.  Similarly modified {\tt cc\_manual\_index.sty}
+             to include {\tt cc\_manual.sty} since it uses commands defined
              there.
        \item Fixed a problem with the figure and table environments for
              the {\tt latex.sty} file that caused problems when optional
              arguments indicating placement preferences were used.
        \item Changed the names of the HTML files created to remove the
-             special characters (such as \verb|<| and \verb|>|) that are 
+             special characters (such as \verb|<| and \verb|>|) that are
              not supported under Microsoft windows.
-       \item Updated the documentation of {\tt cc\_manual.sty} and 
+       \item Updated the documentation of {\tt cc\_manual.sty} and
              {\tt cc\_manual\_index.sty} to include
              appendices that summarize all commands and to fix a few
              inconsistencies with the style files.
@@ -2154,7 +2222,7 @@ defaults.
     \item[Revision: 3.4~~~Date: 1999/09/27]~\\[3mm]
     %
     Added new \LaTeX\ style file \verb|cc_manual_index.sty| that contains
-    macros for producing an index for the PostScript version of the manual.  
+    macros for producing an index for the PostScript version of the manual.
     This style file is documented separately.
     The style file \verb|cc_manual.sty| has been modified to allow for
     automatic indexing of most of the \CC\ names that are formatted with the
@@ -2165,8 +2233,8 @@ defaults.
     %
     Updated documentation and a new example directory showing the new
     style of reference manual pages. The documentation is split into
-    three manuals. The documentation could still be enhanced for the 
-    \LaTeX\ to HTML converter. A few bug fixes and some heavy cleanups 
+    three manuals. The documentation could still be enhanced for the
+    \LaTeX\ to HTML converter. A few bug fixes and some heavy cleanups
     are done in the source code and other distributed files. The old
     slides are no longer distributed. Maintenance for \cgal\ is taken
     over by Susan Hert.
@@ -2174,10 +2242,10 @@ defaults.
     % ----------------------------------------------------
     \item[Revision: 3.2~~~Date: 1999/08/24]~\\[3mm]
     %
-    HTML converter and \verb+cc_manual.sty+ support the new manual 
+    HTML converter and \verb+cc_manual.sty+ support the new manual
     reference manual style (incl.~tabs at the side margins) and
-    the style for the intermediate transition period. Several bugs 
-    have been fixed. The documentation lacks all the new features 
+    the style for the intermediate transition period. Several bugs
+    have been fixed. The documentation lacks all the new features
     and will be updated for the next release.
 
     % ----------------------------------------------------
@@ -2192,7 +2260,7 @@ defaults.
     HTML, they are included as inline GIF images. In addition
     \verb+\mathcal+ and \verb+\mathbb+ are supported with uppercase letters.
     Font style changes are fully supported including font size changes and
-    small caps font shape (small caps may produce unpredictable results 
+    small caps font shape (small caps may produce unpredictable results
     if other non-trivial macros are used within a small caps text).
     Only limited table and formula support. No figure or PostScript
     picture support.
@@ -2226,7 +2294,7 @@ defaults.
     % ----------------------------------------------------
     \item[Revision: 2.13~~~Date: 1998/03/19]~\\[3mm]
     %
-    Bug in {\tt cc\_manual.sty} with template declarations fixed. 
+    Bug in {\tt cc\_manual.sty} with template declarations fixed.
     Parentheses removed from bibliography keys for HTML conversion.
 
     % ----------------------------------------------------
@@ -2285,7 +2353,7 @@ defaults.
     allowed. \verb+\ccHtmlNoClassIndex+ also inhibits member declarations
     from writing index entries. Single letter classes are no longer
     automatically cross linked. Math spacing like \verb+\;+ works again. Line
-    numbers in error messages corrected. 
+    numbers in error messages corrected.
 
     % ----------------------------------------------------
     \item[Revision: 2.7~~~Date: 1997/05/08]~\\[3mm]
@@ -2308,7 +2376,7 @@ defaults.
     \item[Revision: 2.5~~~Date: 1997/04/24]~\\[3mm]
     %
     Bug fix for {\tt cc\_manual.sty}. The \verb+ccHtmlOnly+ environment
-    failed. The \verb+\ccPrecond+ and \verb+\ccPostcond+ macros 
+    failed. The \verb+\ccPrecond+ and \verb+\ccPostcond+ macros
     sometimes did not format in a separate line as they should. Long class
     names caused the \verb+\ccNestedClass+ macro to forget the type name.
 
@@ -2322,7 +2390,7 @@ defaults.
     % ----------------------------------------------------
     \item[Revision: 2.4~~~Date: 1997/03/25]~\\[3mm]
     %
-    Bug fix for {\tt cc\_manual.sty}. The keyword \verb+\end+ from \LaTeX\ 
+    Bug fix for {\tt cc\_manual.sty}. The keyword \verb+\end+ from \LaTeX\
     environments might have caused trouble with the {\tt cc\_manual.sty}
     internal parsing technique. Operators were not able to format argument
     lists with extra parentheses like for function pointer types.
@@ -2351,9 +2419,9 @@ defaults.
     lines. It must be set to the value \verb+\ccTrue+ to activate the old
     names again. However, the supporting tools cannot support the old
     names. See below for scripts to help in renaming old
-    files.\ccIndexEntry{Portability} 
+    files.\ccIndexEntry{Portability}
 
-    The style has been extended with the \verb+\ccChapterSubTitle+ and 
+    The style has been extended with the \verb+\ccChapterSubTitle+ and
     \verb+\RCSdefDate+ macro. The handling of template declarations is
     made more flexible with the \verb+\ccTagTemplateInline+ and
     \verb+\ccTagRmTemplate+ tags. Small changes in the layout were made.
@@ -2370,9 +2438,9 @@ defaults.
     \item[Revision: 2.1~~~Date: 1997/01/22]~\\[3mm]
     %
     Major new release. If you still have to upgrade old documentations
-    from revision 1.14 based on {\tt cgal\_manual.sty}, a \Dindex{Perl 
-    script}\index{scripts, Perl} helps in upgrading: 
-    {\tt cc\_update\_2.1} renames all of the older 
+    from revision 1.14 based on {\tt cgal\_manual.sty}, a \Dindex{Perl
+    script}\index{scripts, Perl} helps in upgrading:
+    {\tt cc\_update\_2.1} renames all of the older
     macros.\index{renaming macros}
 \end{description}
 
