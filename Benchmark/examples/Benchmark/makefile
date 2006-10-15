@@ -30,7 +30,7 @@ LDFLAGS = $(LONG_NAME_PROBLEM_LDFLAGS) $(CGAL_LDFLAGS)
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: check_syntax$(EXE_EXT) simple$(EXE_EXT) leftturn$(EXE_EXT) parm_passing$(EXE_EXT) 
+all: check_syntax$(EXE_EXT) simple$(EXE_EXT) leftturn$(EXE_EXT) 
 
 check_syntax$(EXE_EXT): check_syntax$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)check_syntax $? $(LDFLAGS)
@@ -41,10 +41,7 @@ simple$(EXE_EXT): simple$(OBJ_EXT)
 leftturn$(EXE_EXT): leftturn$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)leftturn $? $(LDFLAGS)
 
-parm_passing$(EXE_EXT): parm_passing$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)parm_passing $? $(LDFLAGS)
-
-clean: check_syntax.clean simple.clean leftturn.clean parm_passing.clean
+clean: check_syntax.clean simple.clean leftturn.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
