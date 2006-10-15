@@ -23,6 +23,9 @@ public:
 
 typedef Bench_bbox<Kernel>                      My_bench_bbox;
 
+namespace po = boost::program_options;
+namespace cb = CGAL::benchmark;
+
 int main(int argc, char * argv[])
 {
   po::options_description opts("Options");
@@ -45,7 +48,7 @@ int main(int argc, char * argv[])
     return 1;
   }
   
-  CGAL::Benchmark<My_bench_bbox> bench("Leftturn", bench_opts.get_seconds());
+  cb::Benchmark<My_bench_bbox> bench("Leftturn", bench_opts.get_seconds());
   bench();
   return 0;
 }
