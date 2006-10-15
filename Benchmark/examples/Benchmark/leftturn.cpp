@@ -20,7 +20,7 @@ public:
   typename Kernel::Left_turn_2 leftturn;
   Bench_leftturn()
   {
-    leftturn = left_turn_2_object();
+    leftturn = this->left_turn_2_object();
     p = typename Kernel::Point_2(0,0);
     q = typename Kernel::Point_2(1,1);
     r = typename Kernel::Point_2(0,1);
