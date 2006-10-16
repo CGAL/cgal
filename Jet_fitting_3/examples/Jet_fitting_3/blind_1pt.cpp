@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 // 				 monge_form);
 
    My_Monge_via_jet_fitting monge_fit; 
-   //  monge_form = monge_fit()(in_points.begin(), in_points.end(), d_fitting, d_monge);
+   //    monge_form = monge_fit()(in_points.begin(), in_points.end(), d_fitting, d_monge);
    monge_form = monge_fit.run(in_points.begin(), in_points.end(), d_fitting, d_monge);
 
   //OUTPUT on std::cout
