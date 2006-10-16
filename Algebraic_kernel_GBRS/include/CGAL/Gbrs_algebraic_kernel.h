@@ -20,7 +20,7 @@
 #ifndef CGAL_GBRS_ALGEBRAIC_KERNEL
 #define CGAL_GBRS_ALGEBRAIC_KERNEL
 
-#include <CGAL/Algebraic_1.h>
+#include <CGAL/Gbrs_algebraic_1.h>
 #include <CGAL/Gbrs_polynomial_1.h>
 #include <CGAL/Gbrs_functors.h>
 

@@ -271,7 +271,7 @@ CGAL_END_NAMESPACE
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 // the implementation of functions inside and outside the class
-#include <CGAL/Algebraic_1.C>
+#include <CGAL/Gbrs_algebraic_1.C>
 #endif	// CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 
 #endif	// CGAL_MPFIINTERVAL_H

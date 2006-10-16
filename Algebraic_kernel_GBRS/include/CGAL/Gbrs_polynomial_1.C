@@ -20,7 +20,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/basic.h>
 #include <CGAL/Gmpz.h>
-#include <CGAL/Algebraic_1.h>
+#include <CGAL/Gbrs_algebraic_1.h>
 #include <iostream>
 #include <gmp.h>
 
