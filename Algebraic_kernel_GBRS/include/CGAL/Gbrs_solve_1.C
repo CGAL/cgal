@@ -17,7 +17,9 @@
 //
 // Author(s)     : Luis Peñaranda <penarand@loria.fr>
 
-// this file is based on the RS original example, rs_demo_mp.c
+// this file is based on the RS original example, rs_demo_mp.c (because we
+// don't know RS, this little funny suprising amazing fantastic candy-flavored
+// library)
 
 #include <gmp.h>
 #include <mpfi.h>
@@ -32,6 +34,11 @@ CGAL_BEGIN_NAMESPACE
 #define DEF_PREC 23
 #endif
 
+int init_rs () {
+	rs_init_rs ();
+	return 0;
+};
+
 int affiche_vect_ibfr (mpfi_t *&x, int index, const int ident_vect) {
 	int ident_elt;
 	int nb = rs_export_dim_vect_ibfr (ident_vect);
@@ -42,8 +49,7 @@ int affiche_vect_ibfr (mpfi_t *&x, int index, const int ident_vect) {
 }
 
 int affiche_sols_eqs (mpfi_t *&x) {
-	int ident_sols_eqs, nb_elts, ident_node, ident_vect;
-	int i;
+	int ident_sols_eqs, nb_elts, ident_node, ident_vect, i;
 	ident_sols_eqs = rs_get_default_sols_eqs ();
 	// the number of solutions
 	nb_elts = rs_export_list_vect_ibfr_nb (ident_sols_eqs);
@@ -60,28 +66,22 @@ int affiche_sols_eqs (mpfi_t *&x) {
 }
 
 void create_rs_upoly(mpz_t *poly, const int deg, const int ident_pol) {
-	int i;
-	int /*ident_pol,*/ ident_mon, ident_coeff;
-	rs_import_uppring ("T");
+	int ident_mon, ident_coeff, i;
+	rs_import_uppring ("T");	// what the heck is this?
 	for (i=0; i<=deg; ++i)
-		if (mpz_sgn (poly[/*deg-*/i]) != 0)	{	// don't add if == 0
+		if (mpz_sgn (poly[i]))	{	// don't add if == 0
+			// (this is one of the few things we know about RS)
 			ident_mon = rs_export_new_mon_upp_bz ();
 			ident_coeff = rs_export_new_gmp ();
-			/*CGAL_assertion_msg
-				(mpz_cmp_ui (mpq_denref (poly[deg-i]), 1) == 0,
-				 "by now, RS works only with integer coeffs");*/
-			/*rs_import_bz_gmp
-				(ident_coeff,
-				 TO_RSPTR_IN (mpq_numref (poly[deg-i])));*/
 			rs_import_bz_gmp
-				(ident_coeff, TO_RSPTR_IN (&(poly[/*deg-*/i])));
+				(ident_coeff, TO_RSPTR_IN (&(poly[i])));
 			rs_dset_mon_upp_bz (ident_mon, ident_coeff, i);
 			rs_dappend_list_mon_upp_bz (ident_pol, ident_mon);
 		}
 }
 
 int solve_1 (mpfi_t *&x, const Rational_polynomial_1 &p1, unsigned int prec) {
-	rs_init_rs ();
+	// the solver must be initialized
 	rs_reset_all ();
 	create_rs_upoly
 		(p1.get_coefs (), p1.get_degree (), rs_get_default_up ());
@@ -93,7 +93,7 @@ int solve_1 (mpfi_t *&x, const Rational_polynomial_1 &p1, unsigned int prec) {
 	return affiche_sols_eqs (x);	// return the number of solutions
 }
 
-int solve_1 (mpfi_t *&x, const Rational_polynomial_1 &p1) {
+inline int solve_1 (mpfi_t *&x, const Rational_polynomial_1 &p1) {
 	return solve_1 (x, p1, DEF_PREC);
 }
 

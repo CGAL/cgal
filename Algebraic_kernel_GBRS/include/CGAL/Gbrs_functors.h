@@ -42,8 +42,7 @@ class Construct_polynomial_1 {
 		InputIterator it;
 		for (it = first; it != last; ++it)
 			++elements;
-		CGAL_assertion_msg (elements != 0,
-				"the container can't be empty");
+		CGAL_assertion_msg (elements, "the container can't be empty");
 		int degree = elements-1;
 		Polynomial_1 p (degree);
 		for (it = first; it != last; ++it)
@@ -51,7 +50,10 @@ class Construct_polynomial_1 {
 		return p;
 	};
 
-	// TODO: check this "functor" (is this a functor?)
+	// TODO: check this "functor" (what is a functor in C++?)
+
+	// great! now I know what is that... now I hate C++ a lot more than
+	// ten minutes ago... f_-_!
 	template <class InputIterator1, class InputIterator2>
 	Polynomial_1 operator()
 		(InputIterator1 first_coeff, InputIterator1 last_coeff,
@@ -60,17 +62,13 @@ class Construct_polynomial_1 {
 		unsigned int greater = 0;
 		InputIterator1 c;
 		InputIterator2 d = deg;
-		for (c = first_coeff; c != last_coeff; ++c) {
+		for (c = first_coeff; c != last_coeff; ++c)
 			if (d > greater)
-				greater = d;
-			++d;
-		}
+				greater = d++;
 		// now, construct the polynomial of degree d
 		Polynomial_1 p (d);
-		for (c = first_coeff; c != last_coeff; ++c) {
-			p.set_coef (deg, *c);
-			++deg;
-		}
+		for (c = first_coeff; c != last_coeff; ++c)
+			p.set_coef (deg++, *c);
 		return p;
 	};
 };	// Construct_polynomial_1
@@ -87,13 +85,15 @@ class Solve_1 {
 		if (known_to_be_square_free)
 			return res;
 		mpfi_t *x;
-		int nr = solve_1 (x, p);
-		if (nr > 0)
+		int nr;
+		CGAL_assertion_msg (((nr = solve_1 (x, p)) >= 0),
+				"error in resolution");
+		if (nr)
 			for (int i=0; i<nr; ++i) {
 				Algebraic a (x[i]);
-				mpfi_clear (x[i]);	// don't waste space
-				*res = a;
-				++res;
+				// x[i] was mpfi_inited by RS? If so,
+				mpfi_clear (x[i]);
+				*(res++) = a;
 			}
 		free (x);
 		return res;
@@ -107,14 +107,16 @@ class Solve_1 {
 			OutputIteratorMult mult) const {
 		CGAL_assertion_msg (false, "not implemented yet");
 		mpfi_t *x;
-		int nr = solve_1 (x, p);
-		if (nr > 0)
+		int nr;
+		CGAL_assertion_msg (!((nr = solve_1 (x, p)) < 0),
+				"error in resolution");
+		if (nr)
 			for (int i=0; i<nr; ++i) {
 				Algebraic a (x[i]);
-				*roots = a;
-				*mult = 1;	// FIXME
-				++roots;
-				++mult;
+				// x[i] was mpfi_inited by RS? If so,
+				mpfi_clear (x[i]);
+				*(roots++) = a;
+				*(mult++) = 1;	// FIXME
 			}
 		return std::make_pair (roots, mult);
 	};

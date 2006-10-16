@@ -24,13 +24,17 @@
 #include <CGAL/Gbrs_polynomial_1.h>
 
 CGAL_BEGIN_NAMESPACE
-// both functions return the number of roots
+
+// initialize the RS solver, returns 0 if everything was OK
+int init_solver ();
+
+// next functions return the number of roots:
 
 // solve given the precision
 int solve_1 (mpfi_t *&, const Rational_polynomial_1 &, unsigned int);
 
 // solve with the default precision
-int solve_1 (mpfi_t *&, const Rational_polynomial_1 &);
+inline int solve_1 (mpfi_t *&, const Rational_polynomial_1 &);
 
 CGAL_END_NAMESPACE
 
