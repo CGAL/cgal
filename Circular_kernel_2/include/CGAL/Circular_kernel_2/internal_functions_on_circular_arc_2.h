@@ -1710,15 +1710,15 @@ advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
       double ymin, ymax;
 
       if(is_on_upper) {
-        ymin = CGAL::min(left_bb.ymin(),right_bb.ymin());
+        ymin = (CGAL::min)(left_bb.ymin(),right_bb.ymin());
         ymax = cy.sup() + r.sup();
       } else {
         ymin = cy.inf() - r.sup();
-        ymax = CGAL::max(left_bb.ymax(),right_bb.ymax());
+        ymax = (CGAL::max)(left_bb.ymax(),right_bb.ymax());
       }
       /*
       double ymin = (is_on_upper) ? 
-	CGAL::min(left_bb.ymin(),right_bb.ymin()) :
+	(CGAL::min)(left_bb.ymin(),right_bb.ymin()) :
 	to_interval
 	( CircularFunctors::y_extremal_point<CK>(a.supporting_circle(),true).y()).first;
       double ymax = (is_on_upper) ? 
@@ -1740,16 +1740,16 @@ advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
       Interval r = CGAL::sqrt(r2); 
       double xmin, xmax;
       if(is_on_left) {
-        xmax = CGAL::max(source_bb.xmax(), target_bb.xmax()); 
+        xmax = (CGAL::max)(source_bb.xmax(), target_bb.xmax()); 
         xmin = cx.inf() - r.sup();
       } else {
         xmax = cx.sup() + r.sup();
-        xmin = CGAL::min(source_bb.xmin(), target_bb.xmin()); 
+        xmin = (CGAL::min)(source_bb.xmin(), target_bb.xmin()); 
       }
       return Bbox_2(xmin,
-                    CGAL::min(source_bb.ymin(),target_bb.ymin()),
+                    (CGAL::min)(source_bb.ymin(),target_bb.ymin()),
                     xmax,
-                    CGAL::max(source_bb.ymax(),target_bb.ymax()));
+                    (CGAL::max)(source_bb.ymax(),target_bb.ymax()));
     }
 	
     // Else return the bounding box of the circle.
@@ -1777,11 +1777,11 @@ advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
 	if( cmp_source_y==LARGER || cmp_target_y==LARGER)
 	{
 	ymin=to_interval( y_extremal_point<CK>(a.supporting_circle(),true).y() ).first;
-	ymax=CGAL::max(to_interval(a.source().y()).second,to_interval(a.target().y()).second);
+	ymax=(CGAL::max)(to_interval(a.source().y()).second,to_interval(a.target().y()).second);
 	}
 	else{
 	ymax=to_interval( y_extremal_point<CK>(a.supporting_circle(),false).y() ).second;
-	ymin=CGAL::min(to_interval(a.source().y()).first,to_interval(a.target().y()).first);
+	ymin=(CGAL::min)(to_interval(a.source().y()).first,to_interval(a.target().y()).first);
 	}
 	
 	return Bbox_2(xmin,ymin,xmax,ymax);
@@ -1790,11 +1790,11 @@ advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
 	if(cmp_source_y > EQUAL)
 	{
 	xmin=to_interval(x_extremal_points<CK>(a.supporting_circle(),true).x()).first;
-	xmax=CGAL::max(to_interval(a.source().x()).second,to_interval(a.target().x()).second);
+	xmax=(CGAL::max)(to_interval(a.source().x()).second,to_interval(a.target().x()).second);
 	}
 	else
 	{
-	xmin=CGAL::min(to_interval(a.source().x()).first,to_interval(a.target().x()).first);
+	xmin=(CGAL::min)(to_interval(a.source().x()).first,to_interval(a.target().x()).first);
 	xmax=to_interval(x_extremal_points<CK>(a.supporting_circle(),false).x()).second;
 	}
 	
@@ -1803,14 +1803,14 @@ advanced_make_xy_monotone( const typename CK::Circular_arc_2 &a,
 	( cmp_target_y== LARGER && cmp_target_x<= EQUAL) )
 	ymax=to_interval(y_extremal_point<CK>(a.supporting_circle(),false).y()).second;
 	else
-	ymax=CGAL::max(to_interval(a.source().y()).second,to_interval(a.target().y()).second);
+	ymax=(CGAL::max)(to_interval(a.source().y()).second,to_interval(a.target().y()).second);
 	
 	
 	if( ( cmp_source_y== SMALLER && cmp_source_x<= EQUAL) ||		
 	( cmp_target_y== SMALLER && cmp_target_x>= EQUAL) )
 	ymin=to_interval(y_extremal_point<CK>(a.supporting_circle(),true).y()).first;
 	else
-	ymin=CGAL::min(to_interval(a.source().y()).first,to_interval(a.target().y()).first);
+	ymin=(CGAL::min)(to_interval(a.source().y()).first,to_interval(a.target().y()).first);
 	
 	return Bbox_2(xmin,ymin,xmax,ymax);
     */

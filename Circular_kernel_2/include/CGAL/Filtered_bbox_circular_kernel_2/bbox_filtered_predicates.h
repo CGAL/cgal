@@ -153,8 +153,8 @@ class In_x_range_2
         else if(bb11.xmax() < bb2.xmin() &&
                 bb2.xmax() < bb12.xmin()) return true;
       } else {
-        if(bb2.xmin() > std::max(bb11.xmax(),bb12.xmax())) return false;
-        if(bb2.xmax() < std::min(bb11.xmin(),bb12.xmin())) return false;
+        if(bb2.xmin() > (std::max)(bb11.xmax(),bb12.xmax())) return false;
+        if(bb2.xmax() < (std::min)(bb11.xmin(),bb12.xmin())) return false;
       }
     
       typename CK::In_x_range_2 Range;
