@@ -1,14 +1,14 @@
 #include <CGAL/Gmpq.h>
 #include <CGAL/Gmpz.h>
 #include <mpfr.h>
-#include <CGAL/MpfiInterval.h>
+#include <CGAL/Algebraic_1.h>
 
 bool test_int () {
 	int one = 1;
 	int two = 2;
 
-	CGAL::MpfiInterval interval1 (1);
-	CGAL::MpfiInterval interval2 (0.5, 1.5);
+	CGAL::Algebraic_1 interval1 (1);
+	CGAL::Algebraic_1 interval2 (0.5, 1.5);
 
 	interval1.is_point ();
 	interval2.is_point ();
@@ -33,8 +33,8 @@ bool test_int () {
 }
 
 bool test_intervals () {
-	CGAL::MpfiInterval i1 (7);
-	CGAL::MpfiInterval i2 (9);
+	CGAL::Algebraic_1 i1 (7);
+	CGAL::Algebraic_1 i2 (9);
 	(i1==i2);
 	(i1!=i2);
 	(i1<i2);
@@ -96,8 +96,8 @@ bool test_class () {
 	T one (1);
 	T two (2);
 
-	CGAL::MpfiInterval interval1 (1);
-	CGAL::MpfiInterval interval2 (0.5, 1.5);
+	CGAL::Algebraic_1 interval1 (1);
+	CGAL::Algebraic_1 interval2 (0.5, 1.5);
 
 	interval1.is_point ();
 	interval2.is_point ();
@@ -128,8 +128,8 @@ bool test_mpfr () {
 	mpfr_set_si (one, 1, GMP_RNDN);
 	mpfr_set_si (two, 2, GMP_RNDN);
 
-	CGAL::MpfiInterval interval1 (1);
-	CGAL::MpfiInterval interval2 (0.5, 1.5);
+	CGAL::Algebraic_1 interval1 (1);
+	CGAL::Algebraic_1 interval2 (0.5, 1.5);
 
 	interval1.is_point ();
 	interval2.is_point ();

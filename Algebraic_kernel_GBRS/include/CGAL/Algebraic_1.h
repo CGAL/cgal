@@ -43,33 +43,33 @@ class comparison_overlap_exn : public std::exception {
 void overlap ();
 
 // The representation of intervals.
-class MpfiInterval_rep {
+class Algebraic_1_rep {
 public:
 	mpfi_t mpfI;
 
-	MpfiInterval_rep () { mpfi_init (mpfI); }
-	~MpfiInterval_rep () { mpfi_clear (mpfI); }
+	Algebraic_1_rep () { mpfi_init (mpfI); }
+	~Algebraic_1_rep () { mpfi_clear (mpfI); }
 
 private:
 	// Make sure it does not get accidentally copied.
-	MpfiInterval_rep (const MpfiInterval_rep &);
-	MpfiInterval_rep & operator= (const MpfiInterval_rep &);
+	Algebraic_1_rep (const Algebraic_1_rep &);
+	Algebraic_1_rep & operator= (const Algebraic_1_rep &);
 };
 
 // The class of the MPFI intervals. It's a model of the RingNumberType concept
-class MpfiInterval
-: Handle_for<MpfiInterval_rep>,
-	boost::field_operators1<MpfiInterval,
-		boost::field_operators2<MpfiInterval, int,
-		boost::field_operators2<MpfiInterval, mpz_t,
-		boost::field_operators2<MpfiInterval, mpq_t,
-		boost::field_operators2<MpfiInterval, Gmpz,
-		boost::field_operators2<MpfiInterval, Gmpq,
-		boost::field_operators2<MpfiInterval, mpfr_t > > > > > > > {
+class Algebraic_1
+: Handle_for<Algebraic_1_rep>,
+	boost::field_operators1<Algebraic_1,
+		boost::field_operators2<Algebraic_1, int,
+		boost::field_operators2<Algebraic_1, mpz_t,
+		boost::field_operators2<Algebraic_1, mpq_t,
+		boost::field_operators2<Algebraic_1, Gmpz,
+		boost::field_operators2<Algebraic_1, Gmpq,
+		boost::field_operators2<Algebraic_1, mpfr_t > > > > > > > {
 			// XXX: the functions provided by BOOST (or supposed
 			// to be) are commented
 
-	typedef Handle_for<MpfiInterval_rep> Base;
+	typedef Handle_for<Algebraic_1_rep> Base;
 public:
 	typedef CGAL::Tag_false	Has_gcd;
 	typedef CGAL::Tag_true	Has_division;
@@ -80,40 +80,40 @@ public:
 	typedef CGAL::Tag_false	Has_exact_sqrt;
 
 	// constructors I
-	MpfiInterval ();
-	MpfiInterval (int);
-	MpfiInterval (unsigned int);
-	MpfiInterval (long int);
-	MpfiInterval (unsigned long int);
-	MpfiInterval (double);
-	MpfiInterval (const mpz_t &);
-	MpfiInterval (const mpq_t &);
-	MpfiInterval (const CGAL::Gmpq &);
-	MpfiInterval (const CGAL::Gmpz &);
+	Algebraic_1 ();
+	Algebraic_1 (int);
+	Algebraic_1 (unsigned int);
+	Algebraic_1 (long int);
+	Algebraic_1 (unsigned long int);
+	Algebraic_1 (double);
+	Algebraic_1 (const mpz_t &);
+	Algebraic_1 (const mpq_t &);
+	Algebraic_1 (const CGAL::Gmpq &);
+	Algebraic_1 (const CGAL::Gmpz &);
 
 	// constructors II
-	MpfiInterval (int, int);
-	MpfiInterval (unsigned int, unsigned int);
-	MpfiInterval (long int, long int);
-	MpfiInterval (unsigned long int, unsigned long int);
-	MpfiInterval (double, double);
-	MpfiInterval (const mpz_t &, const mpz_t &);
-	MpfiInterval (const mpq_t &, const mpq_t &);
-	MpfiInterval (const CGAL::Gmpq &, const CGAL::Gmpq &);
-	MpfiInterval (const CGAL::Gmpz &, const CGAL::Gmpz &);
-	MpfiInterval (const mpfi_t &);
-	MpfiInterval (const MpfiInterval &);
+	Algebraic_1 (int, int);
+	Algebraic_1 (unsigned int, unsigned int);
+	Algebraic_1 (long int, long int);
+	Algebraic_1 (unsigned long int, unsigned long int);
+	Algebraic_1 (double, double);
+	Algebraic_1 (const mpz_t &, const mpz_t &);
+	Algebraic_1 (const mpq_t &, const mpq_t &);
+	Algebraic_1 (const CGAL::Gmpq &, const CGAL::Gmpq &);
+	Algebraic_1 (const CGAL::Gmpz &, const CGAL::Gmpz &);
+	Algebraic_1 (const mpfi_t &);
+	Algebraic_1 (const Algebraic_1 &);
 
-	MpfiInterval& operator= (const long int);
-	MpfiInterval& operator= (const mpz_t &);
-	MpfiInterval& operator= (const mpq_t &);
-	MpfiInterval& operator= (const CGAL::Gmpz &);
-	MpfiInterval& operator= (const CGAL::Gmpq &);
-	MpfiInterval& operator= (const MpfiInterval &);
+	Algebraic_1& operator= (const long int);
+	Algebraic_1& operator= (const mpz_t &);
+	Algebraic_1& operator= (const mpq_t &);
+	Algebraic_1& operator= (const CGAL::Gmpz &);
+	Algebraic_1& operator= (const CGAL::Gmpq &);
+	Algebraic_1& operator= (const Algebraic_1 &);
 
 	// destructor
 	/* not needed
-	~MpfiInterval ();
+	~Algebraic_1 ();
 	*/
 
 	// functions related to the member data
@@ -133,9 +133,9 @@ public:
 	inline bool contains (const Gmpq &n) const;
 
 	// Arithmetic functions required by RingNumberType:
-	// 1. comparisons between MpfiInterval's
+	// 1. comparisons between Algebraic_1's
 	// 2. comparisons with int's
-	// 3. arithmetic between MpfiInterval's
+	// 3. arithmetic between Algebraic_1's
 	// 4. arithmetic with int's
 	// 5. accesory functions
 	// 6. extra arithmetic functions (not required)
@@ -171,39 +171,39 @@ public:
 	template <class T> bool operator>= (const T &) const;
 	// 3
 	//--------------------------------------------------
-	// MpfiInterval operator+ (const MpfiInterval &) const;
-	// MpfiInterval operator- (const MpfiInterval &) const;
-	// MpfiInterval operator* (const MpfiInterval &) const;
+	// Algebraic_1 operator+ (const Algebraic_1 &) const;
+	// Algebraic_1 operator- (const Algebraic_1 &) const;
+	// Algebraic_1 operator* (const Algebraic_1 &) const;
 	//-------------------------------------------------- 
-	MpfiInterval operator- () const;
-	MpfiInterval& operator+= (const MpfiInterval &);
-	MpfiInterval& operator-= (const MpfiInterval &);
-	MpfiInterval& operator*= (const MpfiInterval &);
+	Algebraic_1 operator- () const;
+	Algebraic_1& operator+= (const Algebraic_1 &);
+	Algebraic_1& operator-= (const Algebraic_1 &);
+	Algebraic_1& operator*= (const Algebraic_1 &);
 	// 4
 	//--------------------------------------------------
-	// MpfiInterval operator+ (const int) const;
-	// MpfiInterval operator- (const int) const;
-	// MpfiInterval operator* (const int) const;
+	// Algebraic_1 operator+ (const int) const;
+	// Algebraic_1 operator- (const int) const;
+	// Algebraic_1 operator* (const int) const;
 	//-------------------------------------------------- 
-	MpfiInterval& operator+= (const int);
-	MpfiInterval& operator-= (const int);
-	MpfiInterval& operator*= (const int);
+	Algebraic_1& operator+= (const int);
+	Algebraic_1& operator-= (const int);
+	Algebraic_1& operator*= (const int);
 	//--------------------------------------------------
-	// MpfiInterval operator+ (const CGAL::Gmpz &) const;
-	// MpfiInterval operator- (const CGAL::Gmpz &) const;
-	// MpfiInterval operator* (const CGAL::Gmpz &) const;
+	// Algebraic_1 operator+ (const CGAL::Gmpz &) const;
+	// Algebraic_1 operator- (const CGAL::Gmpz &) const;
+	// Algebraic_1 operator* (const CGAL::Gmpz &) const;
 	//-------------------------------------------------- 
-	MpfiInterval& operator+= (const CGAL::Gmpz &);
-	MpfiInterval& operator-= (const CGAL::Gmpz &);
-	MpfiInterval& operator*= (const CGAL::Gmpz &);
+	Algebraic_1& operator+= (const CGAL::Gmpz &);
+	Algebraic_1& operator-= (const CGAL::Gmpz &);
+	Algebraic_1& operator*= (const CGAL::Gmpz &);
 	//--------------------------------------------------
-	// MpfiInterval operator+ (const CGAL::Gmpq &) const;
-	// MpfiInterval operator- (const CGAL::Gmpq &) const;
-	// MpfiInterval operator* (const CGAL::Gmpq &) const;
+	// Algebraic_1 operator+ (const CGAL::Gmpq &) const;
+	// Algebraic_1 operator- (const CGAL::Gmpq &) const;
+	// Algebraic_1 operator* (const CGAL::Gmpq &) const;
 	//-------------------------------------------------- 
-	MpfiInterval& operator+= (const CGAL::Gmpq &);
-	MpfiInterval& operator-= (const CGAL::Gmpq &);
-	MpfiInterval& operator*= (const CGAL::Gmpq &);
+	Algebraic_1& operator+= (const CGAL::Gmpq &);
+	Algebraic_1& operator-= (const CGAL::Gmpq &);
+	Algebraic_1& operator*= (const CGAL::Gmpq &);
 	// 5: the required functions are outside the class 
 	// 6
 	bool is_valid () const;
@@ -212,13 +212,13 @@ public:
 	std::pair <double,double> to_interval () const;
 	// 7
 	//--------------------------------------------------
-	// MpfiInterval operator/ (const MpfiInterval &) const;
-	// MpfiInterval operator/ (const int) const;
+	// Algebraic_1 operator/ (const Algebraic_1 &) const;
+	// Algebraic_1 operator/ (const int) const;
 	//-------------------------------------------------- 
-	MpfiInterval& operator/= (const MpfiInterval &);
-	MpfiInterval& operator/= (const int);
+	Algebraic_1& operator/= (const Algebraic_1 &);
+	Algebraic_1& operator/= (const int);
 	// 8
-	MpfiInterval sqrt () const;
+	Algebraic_1 sqrt () const;
 	// 9
 	std::ostream& show (std::ostream &);
 	// 10
@@ -229,49 +229,49 @@ public:
 	bool operator< (const mpq_t &) const;
 	bool operator> (const mpq_t &) const;
 	//--------------------------------------------------
-	// MpfiInterval operator+ (const mpz_t &) const;
-	// MpfiInterval operator- (const mpz_t &) const;
-	// MpfiInterval operator* (const mpz_t &) const;
+	// Algebraic_1 operator+ (const mpz_t &) const;
+	// Algebraic_1 operator- (const mpz_t &) const;
+	// Algebraic_1 operator* (const mpz_t &) const;
 	//-------------------------------------------------- 
-	MpfiInterval& operator+= (const mpz_t &);
-	MpfiInterval& operator-= (const mpz_t &);
-	MpfiInterval& operator*= (const mpz_t &);
+	Algebraic_1& operator+= (const mpz_t &);
+	Algebraic_1& operator-= (const mpz_t &);
+	Algebraic_1& operator*= (const mpz_t &);
 	//--------------------------------------------------
-	// MpfiInterval operator+ (const mpq_t &) const;
-	// MpfiInterval operator- (const mpq_t &) const;
-	// MpfiInterval operator* (const mpq_t &) const;
+	// Algebraic_1 operator+ (const mpq_t &) const;
+	// Algebraic_1 operator- (const mpq_t &) const;
+	// Algebraic_1 operator* (const mpq_t &) const;
 	//-------------------------------------------------- 
-	MpfiInterval& operator+= (const mpq_t &);
-	MpfiInterval& operator-= (const mpq_t &);
-	MpfiInterval& operator*= (const mpq_t &);
+	Algebraic_1& operator+= (const mpq_t &);
+	Algebraic_1& operator-= (const mpq_t &);
+	Algebraic_1& operator*= (const mpq_t &);
 
 	// 11
-	MpfiInterval (const mpfr_t &);	// constructor I
-	MpfiInterval (const mpfr_t &, const mpfr_t &);	// constructor II
-	MpfiInterval& operator= (const mpfr_t &);	// assigning
+	Algebraic_1 (const mpfr_t &);	// constructor I
+	Algebraic_1 (const mpfr_t &, const mpfr_t &);	// constructor II
+	Algebraic_1& operator= (const mpfr_t &);	// assigning
 	// comparison (previous template definitions should work with mpfr_t)
 	bool operator< (const mpfr_t &) const;
 	bool operator> (const mpfr_t &) const;
 	// arithmetics
 	//--------------------------------------------------
-	// MpfiInterval operator+ (const mpfr_t &) const;
-	// MpfiInterval operator- (const mpfr_t &) const;
-	// MpfiInterval operator* (const mpfr_t &) const;
-	// MpfiInterval operator/ (const mpfr_t &) const;
+	// Algebraic_1 operator+ (const mpfr_t &) const;
+	// Algebraic_1 operator- (const mpfr_t &) const;
+	// Algebraic_1 operator* (const mpfr_t &) const;
+	// Algebraic_1 operator/ (const mpfr_t &) const;
 	//-------------------------------------------------- 
-	MpfiInterval& operator+= (const mpfr_t &);
-	MpfiInterval& operator-= (const mpfr_t &);
-	MpfiInterval& operator*= (const mpfr_t &);
-	MpfiInterval& operator/= (const mpfr_t &);
+	Algebraic_1& operator+= (const mpfr_t &);
+	Algebraic_1& operator-= (const mpfr_t &);
+	Algebraic_1& operator*= (const mpfr_t &);
+	Algebraic_1& operator/= (const mpfr_t &);
 };
 
-std::ostream& operator<< (std::ostream &, MpfiInterval &);
+std::ostream& operator<< (std::ostream &, Algebraic_1 &);
 
 CGAL_END_NAMESPACE
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 // the implementation of functions inside and outside the class
-#include <CGAL/MpfiInterval.C>
+#include <CGAL/Algebraic_1.C>
 #endif	// CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 
 #endif	// CGAL_MPFIINTERVAL_H

@@ -22,7 +22,6 @@
 
 #include <mpfi.h>
 #include <CGAL/enum.h>
-#include <CGAL/MpfiInterval.h>
 #include <CGAL/Gbrs_polynomial_1.h>
 #include <CGAL/Gbrs_solve_1.h>
 

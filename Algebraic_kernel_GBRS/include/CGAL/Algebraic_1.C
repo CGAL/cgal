@@ -50,118 +50,118 @@ void overlap () {
 }
 
 // constructors of a "point" interval
-MpfiInterval::MpfiInterval () {};
+Algebraic_1::Algebraic_1 () {};
 
-MpfiInterval::MpfiInterval (int i) {
+Algebraic_1::Algebraic_1 (int i) {
 	mpfi_set_si (mpfi (), (long int)i);
 };
 
-MpfiInterval::MpfiInterval (unsigned int i) {
+Algebraic_1::Algebraic_1 (unsigned int i) {
 	mpfi_set_ui (mpfi (), i);
 };
 
-MpfiInterval::MpfiInterval (long int i) {
+Algebraic_1::Algebraic_1 (long int i) {
 	mpfi_set_si (mpfi (), i);
 };
 
-MpfiInterval::MpfiInterval (unsigned long int i) {
+Algebraic_1::Algebraic_1 (unsigned long int i) {
 	mpfi_set_ui (mpfi (), i);
 };
 
-MpfiInterval::MpfiInterval (double d) {
+Algebraic_1::Algebraic_1 (double d) {
 	mpfi_set_d (mpfi (), d);
 };
 
-MpfiInterval::MpfiInterval (const mpz_t &z) {
+Algebraic_1::Algebraic_1 (const mpz_t &z) {
 	mpfi_set_z (mpfi (), z);
 };
 
-MpfiInterval::MpfiInterval (const mpq_t &q) {
+Algebraic_1::Algebraic_1 (const mpq_t &q) {
 	mpfi_set_q (mpfi (), q);
 };
 
-MpfiInterval::MpfiInterval (const CGAL::Gmpz &z) {
+Algebraic_1::Algebraic_1 (const CGAL::Gmpz &z) {
 	mpfi_set_z (mpfi (), z.mpz());
 };
 
-MpfiInterval::MpfiInterval (const CGAL::Gmpq &q) {
+Algebraic_1::Algebraic_1 (const CGAL::Gmpq &q) {
 	mpfi_set_q (mpfi (), q.mpq());
 };
 
 // constructors of a "proper" interval
-MpfiInterval::MpfiInterval (int l, int r) {
+Algebraic_1::Algebraic_1 (int l, int r) {
 	mpfi_interv_si (mpfi (), (long int)l, (long int)r);
 };
 
-MpfiInterval::MpfiInterval (unsigned int l, unsigned int r) {
+Algebraic_1::Algebraic_1 (unsigned int l, unsigned int r) {
 	mpfi_interv_ui (mpfi (), (unsigned long int)l, (unsigned long int)r);
 };
 
-MpfiInterval::MpfiInterval (long int l, long int r) {
+Algebraic_1::Algebraic_1 (long int l, long int r) {
 	mpfi_interv_si (mpfi (), l, r);
 };
 
-MpfiInterval::MpfiInterval (unsigned long int l, unsigned long int r) {
+Algebraic_1::Algebraic_1 (unsigned long int l, unsigned long int r) {
 	mpfi_interv_ui (mpfi (), l, r);
 };
 
-MpfiInterval::MpfiInterval (double l, double r) {
+Algebraic_1::Algebraic_1 (double l, double r) {
 	mpfi_interv_d (mpfi (), l, r);
 };
 
-MpfiInterval::MpfiInterval (const mpz_t &l, const mpz_t &r) {
+Algebraic_1::Algebraic_1 (const mpz_t &l, const mpz_t &r) {
 	mpfi_interv_z (mpfi (), l, r);
 };
 
-MpfiInterval::MpfiInterval (const mpq_t &l, const mpq_t &r) {
+Algebraic_1::Algebraic_1 (const mpq_t &l, const mpq_t &r) {
 	mpfi_interv_q (mpfi (), l, r);
 };
 
-MpfiInterval::MpfiInterval (const CGAL::Gmpz &l, const CGAL::Gmpz &r) {
+Algebraic_1::Algebraic_1 (const CGAL::Gmpz &l, const CGAL::Gmpz &r) {
 	mpfi_interv_z (mpfi (), l.mpz(), r.mpz());
 };
 
-MpfiInterval::MpfiInterval (const CGAL::Gmpq &l, const CGAL::Gmpq &r) {
+Algebraic_1::Algebraic_1 (const CGAL::Gmpq &l, const CGAL::Gmpq &r) {
 	mpfi_interv_q (mpfi (), l.mpq(), r.mpq());
 };
 
-MpfiInterval::MpfiInterval (const mpfi_t &i) {
+Algebraic_1::Algebraic_1 (const mpfi_t &i) {
 	mpfi_set (mpfi (), i);
 };
 
-MpfiInterval::MpfiInterval (const MpfiInterval &i) {
+Algebraic_1::Algebraic_1 (const Algebraic_1 &i) {
 	mpfi_set (mpfi (), i.mpfi ());
 };
 
 // destructor
 /* not needed
-MpfiInterval::~MpfiInterval () {};
+Algebraic_1::~Algebraic_1 () {};
 */
 
-inline const mpfi_t & MpfiInterval::mpfi () const { return Ptr()->mpfI; };
+inline const mpfi_t & Algebraic_1::mpfi () const { return Ptr()->mpfI; };
 
-inline mpfi_t & MpfiInterval::mpfi () { return ptr()->mpfI; };
+inline mpfi_t & Algebraic_1::mpfi () { return ptr()->mpfI; };
 
-inline void MpfiInterval::set_prec (mp_prec_t p) {
+inline void Algebraic_1::set_prec (mp_prec_t p) {
 	mpfi_round_prec (mpfi (), p);
 };
 
-inline mp_prec_t MpfiInterval::get_prec () { return mpfi_get_prec (mpfi ()); };
+inline mp_prec_t Algebraic_1::get_prec () { return mpfi_get_prec (mpfi ()); };
 
-inline void MpfiInterval::get_left (mpfr_t &f) const {
+inline void Algebraic_1::get_left (mpfr_t &f) const {
 	mpfi_get_left (f, mpfi ());
 }
 
-inline void MpfiInterval::get_right (mpfr_t &f) const {
+inline void Algebraic_1::get_right (mpfr_t &f) const {
 	mpfi_get_right (f, mpfi ());
 }
 
-inline void MpfiInterval::get_endpoints (mpfr_t &l, mpfr_t &r) const {
+inline void Algebraic_1::get_endpoints (mpfr_t &l, mpfr_t &r) const {
 	mpfi_get_left (l, mpfi ());
 	mpfi_get_right (r, mpfi ());
 }
 
-inline bool MpfiInterval::is_point () const {
+inline bool Algebraic_1::is_point () const {
 	mpfr_t l, r;
 	mpfr_inits (l, r, NULL);
 	get_endpoints (l, r);
@@ -170,7 +170,7 @@ inline bool MpfiInterval::is_point () const {
 	return (comp != 0);
 }
 
-inline bool MpfiInterval::contains (const int n) const {
+inline bool Algebraic_1::contains (const int n) const {
 	mpfr_t end;
 	mpfr_init (end);
 	int comp;
@@ -189,7 +189,7 @@ inline bool MpfiInterval::contains (const int n) const {
 	return true;
 }
 
-inline bool MpfiInterval::contains (const mpfr_t &n) const {
+inline bool Algebraic_1::contains (const mpfr_t &n) const {
 	mpfr_t end;
 	mpfr_init (end);
 	int comp;
@@ -208,7 +208,7 @@ inline bool MpfiInterval::contains (const mpfr_t &n) const {
 	return true;
 }
 
-inline bool MpfiInterval::contains (const mpz_t &n) const {
+inline bool Algebraic_1::contains (const mpz_t &n) const {
 	mpfr_t end;
 	mpfr_init (end);
 	int comp;
@@ -227,7 +227,7 @@ inline bool MpfiInterval::contains (const mpz_t &n) const {
 	return true;
 }
 
-inline bool MpfiInterval::contains (const mpq_t &n) const {
+inline bool Algebraic_1::contains (const mpq_t &n) const {
 	mpfr_t end;
 	mpfr_init (end);
 	int comp;
@@ -246,7 +246,7 @@ inline bool MpfiInterval::contains (const mpq_t &n) const {
 	return true;
 }
 
-inline bool MpfiInterval::contains (const Gmpz &n) const {
+inline bool Algebraic_1::contains (const Gmpz &n) const {
 	mpfr_t end;
 	mpfr_init (end);
 	int comp;
@@ -265,7 +265,7 @@ inline bool MpfiInterval::contains (const Gmpz &n) const {
 	return true;
 }
 
-inline bool MpfiInterval::contains (const Gmpq &n) const {
+inline bool Algebraic_1::contains (const Gmpq &n) const {
 	mpfr_t end;
 	mpfr_init (end);
 	int comp;
@@ -285,32 +285,32 @@ inline bool MpfiInterval::contains (const Gmpq &n) const {
 }
 
 // overcharge for assignment
-MpfiInterval& MpfiInterval::operator= (const long int i) {
+Algebraic_1& Algebraic_1::operator= (const long int i) {
 	mpfi_set_si (mpfi (), i);
 	return *this;
 };
 
-MpfiInterval& MpfiInterval::operator= (const mpz_t &z) {
+Algebraic_1& Algebraic_1::operator= (const mpz_t &z) {
 	mpfi_set_z (mpfi (), z);
 	return *this;
 };
 
-MpfiInterval& MpfiInterval::operator= (const mpq_t &q) {
+Algebraic_1& Algebraic_1::operator= (const mpq_t &q) {
 	mpfi_set_q (mpfi (), q);
 	return *this;
 };
 
-MpfiInterval& MpfiInterval::operator= (const CGAL::Gmpz &z) {
+Algebraic_1& Algebraic_1::operator= (const CGAL::Gmpz &z) {
 	mpfi_set_z (mpfi (), z.mpz());
 	return *this;
 };
 
-MpfiInterval& MpfiInterval::operator= (const CGAL::Gmpq &q) {
+Algebraic_1& Algebraic_1::operator= (const CGAL::Gmpq &q) {
 	mpfi_set_q (mpfi (), q.mpq());
 	return *this;
 };
 
-MpfiInterval& MpfiInterval::operator= (const MpfiInterval &i) {
+Algebraic_1& Algebraic_1::operator= (const Algebraic_1 &i) {
 	mpfi_set (mpfi (), i.mpfi ());
 	return *this;
 };
@@ -318,7 +318,7 @@ MpfiInterval& MpfiInterval::operator= (const MpfiInterval &i) {
 // 1
 // 2
 // comparisons with ints
-bool MpfiInterval::operator== (const int n2) const {
+bool Algebraic_1::operator== (const int n2) const {
 	if (contains (n2)) {
 		if (is_point ())
 			return true;
@@ -328,11 +328,11 @@ bool MpfiInterval::operator== (const int n2) const {
 	return false;
 };
 
-bool MpfiInterval::operator!= (const int n2) const {
+bool Algebraic_1::operator!= (const int n2) const {
 	return !(operator== (n2));
 };
 
-bool MpfiInterval::operator< (const int n2) const {
+bool Algebraic_1::operator< (const int n2) const {
 	if (contains (n2))
 		if (is_point ())
 			return false;
@@ -350,7 +350,7 @@ bool MpfiInterval::operator< (const int n2) const {
 	return false;
 };
 
-bool MpfiInterval::operator> (const int n2) const {
+bool Algebraic_1::operator> (const int n2) const {
 	if (contains (n2))
 		if (is_point ())
 			return false;
@@ -368,17 +368,17 @@ bool MpfiInterval::operator> (const int n2) const {
 	return false;
 };
 
-bool MpfiInterval::operator<= (const int n2) const {
+bool Algebraic_1::operator<= (const int n2) const {
 	return ((operator== (n2)) || (operator< (n2)));
 };
 
-bool MpfiInterval::operator>= (const int n2) const {
+bool Algebraic_1::operator>= (const int n2) const {
 	return ((operator== (n2)) || (operator> (n2)));
 };
 
 // comparisons with Gmpz and Gmpq
 template <class T>
-bool MpfiInterval::operator== (const T &n2) const {
+bool Algebraic_1::operator== (const T &n2) const {
 	if (contains (n2)) {
 		if (is_point ())
 			return true;
@@ -389,11 +389,11 @@ bool MpfiInterval::operator== (const T &n2) const {
 };
 
 template <class T>
-bool MpfiInterval::operator!= (const T &n2) const {
+bool Algebraic_1::operator!= (const T &n2) const {
 	return !(operator== (n2));
 };
 
-bool MpfiInterval::operator< (const CGAL::Gmpz &n2) const {
+bool Algebraic_1::operator< (const CGAL::Gmpz &n2) const {
 	if (contains (n2))
 		if (is_point ())
 			return false;
@@ -411,7 +411,7 @@ bool MpfiInterval::operator< (const CGAL::Gmpz &n2) const {
 	return false;
 };
 
-bool MpfiInterval::operator< (const CGAL::Gmpq &n2) const {
+bool Algebraic_1::operator< (const CGAL::Gmpq &n2) const {
 	if (contains (n2))
 		if (is_point ())
 			return false;
@@ -429,7 +429,7 @@ bool MpfiInterval::operator< (const CGAL::Gmpq &n2) const {
 	return false;
 };
 
-bool MpfiInterval::operator> (const CGAL::Gmpz &n2) const {
+bool Algebraic_1::operator> (const CGAL::Gmpz &n2) const {
 	if (contains (n2))
 		overlap ();
 	mpfr_t end;
@@ -444,7 +444,7 @@ bool MpfiInterval::operator> (const CGAL::Gmpz &n2) const {
 	return false;
 };
 
-bool MpfiInterval::operator> (const CGAL::Gmpq &n2) const {
+bool Algebraic_1::operator> (const CGAL::Gmpq &n2) const {
 	if (contains (n2))
 		overlap ();
 	mpfr_t end;
@@ -460,43 +460,43 @@ bool MpfiInterval::operator> (const CGAL::Gmpq &n2) const {
 };
 
 template <class T>
-bool MpfiInterval::operator<= (const T &n2) const {
+bool Algebraic_1::operator<= (const T &n2) const {
 	return ((operator== (n2)) || (operator< (n2)));
 };
 
 template <class T>
-bool MpfiInterval::operator>= (const T &n2) const {
+bool Algebraic_1::operator>= (const T &n2) const {
 	return ((operator== (n2)) || (operator> (n2)));
 };
 
 // 3
 //--------------------------------------------------
 // BOOST:
-// MpfiInterval MpfiInterval::operator+ (const MpfiInterval &n2) const
-// MpfiInterval MpfiInterval::operator- (const MpfiInterval &n2) const
-// MpfiInterval MpfiInterval::operator* (const MpfiInterval &n2) const
+// Algebraic_1 Algebraic_1::operator+ (const Algebraic_1 &n2) const
+// Algebraic_1 Algebraic_1::operator- (const Algebraic_1 &n2) const
+// Algebraic_1 Algebraic_1::operator* (const Algebraic_1 &n2) const
 //-------------------------------------------------- 
 
-MpfiInterval MpfiInterval::operator- () const {
+Algebraic_1 Algebraic_1::operator- () const {
 	mpfi_t n;
 	mpfi_init (n);
 	mpfi_neg (n, mpfi ());
-	MpfiInterval ret (n);
+	Algebraic_1 ret (n);
 	mpfi_clear (n);
 	return ret;
 }
 
-MpfiInterval& MpfiInterval::operator+= (const MpfiInterval &n2) {
+Algebraic_1& Algebraic_1::operator+= (const Algebraic_1 &n2) {
 	mpfi_add (mpfi (), mpfi (), n2.mpfi ());
 	return *this;
 };
 
-MpfiInterval& MpfiInterval::operator-= (const MpfiInterval &n2) {
+Algebraic_1& Algebraic_1::operator-= (const Algebraic_1 &n2) {
 	mpfi_sub (mpfi (), mpfi (), n2.mpfi ());
 	return *this;
 };
 
-MpfiInterval& MpfiInterval::operator*= (const MpfiInterval &n2) {
+Algebraic_1& Algebraic_1::operator*= (const Algebraic_1 &n2) {
 	mpfi_mul (mpfi (), mpfi (), n2.mpfi ());
 	return *this;
 };
@@ -505,22 +505,22 @@ MpfiInterval& MpfiInterval::operator*= (const MpfiInterval &n2) {
 // this (op) int
 //--------------------------------------------------
 // BOOST:
-// MpfiInterval MpfiInterval::operator+ (const int n2) const
-// MpfiInterval MpfiInterval::operator- (const int n2) const
-// MpfiInterval MpfiInterval::operator* (const int n2) const
+// Algebraic_1 Algebraic_1::operator+ (const int n2) const
+// Algebraic_1 Algebraic_1::operator- (const int n2) const
+// Algebraic_1 Algebraic_1::operator* (const int n2) const
 //-------------------------------------------------- 
 
-MpfiInterval& MpfiInterval::operator+= (const int n2) {
+Algebraic_1& Algebraic_1::operator+= (const int n2) {
 	mpfi_add_si (mpfi (), mpfi (), (long int)n2);
 	return *this;
 };
 
-MpfiInterval& MpfiInterval::operator-= (const int n2) {
+Algebraic_1& Algebraic_1::operator-= (const int n2) {
 	mpfi_sub_si (mpfi (), mpfi (), (long int)n2);
 	return *this;
 };
 
-MpfiInterval& MpfiInterval::operator*= (const int n2) {
+Algebraic_1& Algebraic_1::operator*= (const int n2) {
 	mpfi_mul_si (mpfi (), mpfi (), (long int)n2);
 	return *this;
 };
@@ -528,17 +528,17 @@ MpfiInterval& MpfiInterval::operator*= (const int n2) {
 // this (op) Gmpz
 //--------------------------------------------------
 // BOOST:
-// MpfiInterval MpfiInterval::operator+ (const CGAL::Gmpz &n2) const
-// MpfiInterval MpfiInterval::operator- (const CGAL::Gmpz &n2) const
-// MpfiInterval MpfiInterval::operator* (const CGAL::Gmpz &n2) const
+// Algebraic_1 Algebraic_1::operator+ (const CGAL::Gmpz &n2) const
+// Algebraic_1 Algebraic_1::operator- (const CGAL::Gmpz &n2) const
+// Algebraic_1 Algebraic_1::operator* (const CGAL::Gmpz &n2) const
 //-------------------------------------------------- 
 
-MpfiInterval& MpfiInterval::operator+= (const CGAL::Gmpz &n2) {
+Algebraic_1& Algebraic_1::operator+= (const CGAL::Gmpz &n2) {
 	mpfi_add_z (mpfi (), mpfi (), n2.mpz());
 	return *this;
 };
 
-MpfiInterval& MpfiInterval::operator-= (const CGAL::Gmpz &n2) {
+Algebraic_1& Algebraic_1::operator-= (const CGAL::Gmpz &n2) {
 	mpfi_sub_z (mpfi (), mpfi (), n2.mpz());
 	return *this;
 };
@@ -546,22 +546,22 @@ MpfiInterval& MpfiInterval::operator-= (const CGAL::Gmpz &n2) {
 // this (op) Gmpq
 //--------------------------------------------------
 // BOOST:
-// MpfiInterval MpfiInterval::operator+ (const CGAL::Gmpq &n2) const
-// MpfiInterval MpfiInterval::operator- (const CGAL::Gmpq &n2) const
-// MpfiInterval MpfiInterval::operator* (const CGAL::Gmpq &n2) const
+// Algebraic_1 Algebraic_1::operator+ (const CGAL::Gmpq &n2) const
+// Algebraic_1 Algebraic_1::operator- (const CGAL::Gmpq &n2) const
+// Algebraic_1 Algebraic_1::operator* (const CGAL::Gmpq &n2) const
 //-------------------------------------------------- 
 
-MpfiInterval& MpfiInterval::operator+= (const CGAL::Gmpq &n2) {
+Algebraic_1& Algebraic_1::operator+= (const CGAL::Gmpq &n2) {
 	mpfi_add_q (mpfi (), mpfi (), n2.mpq());
 	return *this;
 };
 
-MpfiInterval& MpfiInterval::operator-= (const CGAL::Gmpq &n2) {
+Algebraic_1& Algebraic_1::operator-= (const CGAL::Gmpq &n2) {
 	mpfi_sub_q (mpfi (), mpfi (), n2.mpq());
 	return *this;
 };
 
-MpfiInterval& MpfiInterval::operator*= (const CGAL::Gmpq &n2) {
+Algebraic_1& Algebraic_1::operator*= (const CGAL::Gmpq &n2) {
 	mpfi_mul_q (mpfi (), mpfi (), n2.mpq());
 	return *this;
 };
@@ -569,19 +569,19 @@ MpfiInterval& MpfiInterval::operator*= (const CGAL::Gmpq &n2) {
 // 5
 
 // 6
-bool MpfiInterval::is_valid () const {
+bool Algebraic_1::is_valid () const {
 	return (mpfi_nan_p (mpfi ()) == 0);
 };
 
-bool MpfiInterval::is_finite () const {
+bool Algebraic_1::is_finite () const {
 	return (mpfi_inf_p (mpfi ()) == 0);
 };
 
-double MpfiInterval::to_double () const {
+double Algebraic_1::to_double () const {
 	return mpfi_get_d (mpfi ());
 };
 
-std::pair <double, double> MpfiInterval::to_interval () const {
+std::pair <double, double> Algebraic_1::to_interval () const {
 	mpfr_t temp;
 	double left, right;
 	mpfr_init (temp);
@@ -596,33 +596,33 @@ std::pair <double, double> MpfiInterval::to_interval () const {
 // 7
 //--------------------------------------------------
 // BOOST:
-// MpfiInterval MpfiInterval::operator/ (const MpfiInterval &n2) const
-// MpfiInterval MpfiInterval::operator/ (const int n2) const
+// Algebraic_1 Algebraic_1::operator/ (const Algebraic_1 &n2) const
+// Algebraic_1 Algebraic_1::operator/ (const int n2) const
 //-------------------------------------------------- 
 
-MpfiInterval& MpfiInterval::operator/= (const MpfiInterval &n2) {
+Algebraic_1& Algebraic_1::operator/= (const Algebraic_1 &n2) {
 	mpfi_div (mpfi (), mpfi (), n2.mpfi ());
 	return *this;
 };
 
-MpfiInterval& MpfiInterval::operator/= (const int n2) {
+Algebraic_1& Algebraic_1::operator/= (const int n2) {
 	mpfi_div_si (mpfi (), mpfi (), (long int)n2);
 	return *this;
 };
 
 // 8
-MpfiInterval MpfiInterval::sqrt () const {
+Algebraic_1 Algebraic_1::sqrt () const {
 	mpfi_t s;
 	mpfi_init (s);
 	mpfi_sqrt (s, mpfi ());
-	MpfiInterval ret (s);
+	Algebraic_1 ret (s);
 	mpfi_clear (s);
 	return ret;
 };
 
 // 9
 // TODO: rewrite this to better show the results
-std::ostream& MpfiInterval::show (std::ostream &o) {
+std::ostream& Algebraic_1::show (std::ostream &o) {
 	char *str1, *str2;
 	mpfr_t op1, op2;
 	mp_exp_t *expptr1, *expptr2;
@@ -655,7 +655,7 @@ std::ostream& MpfiInterval::show (std::ostream &o) {
 };
 
 // 10
-bool MpfiInterval::operator< (const mpz_t &n2) const {
+bool Algebraic_1::operator< (const mpz_t &n2) const {
 	if (contains (n2))
 		if (is_point ())
 			return false;
@@ -673,7 +673,7 @@ bool MpfiInterval::operator< (const mpz_t &n2) const {
 	return false;
 };
 
-bool MpfiInterval::operator> (const mpz_t &n2) const {
+bool Algebraic_1::operator> (const mpz_t &n2) const {
 	if (contains (n2))
 		overlap ();
 	mpfr_t end;
@@ -688,7 +688,7 @@ bool MpfiInterval::operator> (const mpz_t &n2) const {
 	return false;
 };
 
-bool MpfiInterval::operator< (const mpq_t &n2) const {
+bool Algebraic_1::operator< (const mpq_t &n2) const {
 	if (contains (n2))
 		if (is_point ())
 			return false;
@@ -706,7 +706,7 @@ bool MpfiInterval::operator< (const mpq_t &n2) const {
 	return false;
 };
 
-bool MpfiInterval::operator> (const mpq_t &n2) const {
+bool Algebraic_1::operator> (const mpq_t &n2) const {
 	if (contains (n2))
 		overlap ();
 	mpfr_t end;
@@ -723,17 +723,17 @@ bool MpfiInterval::operator> (const mpq_t &n2) const {
 
 //--------------------------------------------------
 // BOOST:
-// MpfiInterval MpfiInterval::operator+ (const mpz_t &n2) const
-// MpfiInterval MpfiInterval::operator- (const mpz_t &n2) const
-// MpfiInterval MpfiInterval::operator* (const mpz_t &n2) const
+// Algebraic_1 Algebraic_1::operator+ (const mpz_t &n2) const
+// Algebraic_1 Algebraic_1::operator- (const mpz_t &n2) const
+// Algebraic_1 Algebraic_1::operator* (const mpz_t &n2) const
 //-------------------------------------------------- 
 
-MpfiInterval& MpfiInterval::operator+= (const mpz_t &n2) {
+Algebraic_1& Algebraic_1::operator+= (const mpz_t &n2) {
 	mpfi_add_z (mpfi (), mpfi (), n2);
 	return *this;
 };
 
-MpfiInterval& MpfiInterval::operator-= (const mpz_t &n2) {
+Algebraic_1& Algebraic_1::operator-= (const mpz_t &n2) {
 	mpfi_sub_z (mpfi (), mpfi (), n2);
 	return *this;
 };
@@ -741,22 +741,22 @@ MpfiInterval& MpfiInterval::operator-= (const mpz_t &n2) {
 // this (op) mpq_t
 //--------------------------------------------------
 // BOOST:
-// MpfiInterval MpfiInterval::operator+ (const mpq_t &n2) const
-// MpfiInterval MpfiInterval::operator- (const mpq_t &n2) const
-// MpfiInterval MpfiInterval::operator* (const mpq_t &n2) const
+// Algebraic_1 Algebraic_1::operator+ (const mpq_t &n2) const
+// Algebraic_1 Algebraic_1::operator- (const mpq_t &n2) const
+// Algebraic_1 Algebraic_1::operator* (const mpq_t &n2) const
 //-------------------------------------------------- 
 
-MpfiInterval& MpfiInterval::operator+= (const mpq_t &n2) {
+Algebraic_1& Algebraic_1::operator+= (const mpq_t &n2) {
 	mpfi_add_q (mpfi (), mpfi (), n2);
 	return *this;
 };
 
-MpfiInterval& MpfiInterval::operator-= (const mpq_t &n2) {
+Algebraic_1& Algebraic_1::operator-= (const mpq_t &n2) {
 	mpfi_sub_q (mpfi (), mpfi (), n2);
 	return *this;
 };
 
-MpfiInterval& MpfiInterval::operator*= (const mpq_t &n2) {
+Algebraic_1& Algebraic_1::operator*= (const mpq_t &n2) {
 	mpfi_mul_q (mpfi (), mpfi (), n2);
 	return *this;
 };
@@ -764,17 +764,17 @@ MpfiInterval& MpfiInterval::operator*= (const mpq_t &n2) {
 // 11. all the functions with mpfr_t that need to be inside the class
 
 // constructor I
-MpfiInterval::MpfiInterval (const mpfr_t &r) {
+Algebraic_1::Algebraic_1 (const mpfr_t &r) {
 	mpfi_set_fr (mpfi (), r);
 };
 
 // constructor II
-MpfiInterval::MpfiInterval (const mpfr_t &l, const mpfr_t &r) {
+Algebraic_1::Algebraic_1 (const mpfr_t &l, const mpfr_t &r) {
 	mpfi_interv_fr (mpfi (), l, r);
 };
 
 // assigning: mpfi = mpfr
-MpfiInterval& MpfiInterval::operator= (const mpfr_t &r) {
+Algebraic_1& Algebraic_1::operator= (const mpfr_t &r) {
 	mpfi_set_fr (mpfi (), r);
 	return *this;
 };
@@ -782,7 +782,7 @@ MpfiInterval& MpfiInterval::operator= (const mpfr_t &r) {
 // comparison: mpfi (op) mpfr
 //	NOTE: the previous template definitions of operators =, !=, >= and <=
 //	should work with mpfr_t
-bool MpfiInterval::operator< (const mpfr_t &n2) const {
+bool Algebraic_1::operator< (const mpfr_t &n2) const {
 	if (contains (n2))
 		if (is_point ())
 			return false;
@@ -800,7 +800,7 @@ bool MpfiInterval::operator< (const mpfr_t &n2) const {
 	return false;
 };
 
-bool MpfiInterval::operator> (const mpfr_t &n2) const {
+bool Algebraic_1::operator> (const mpfr_t &n2) const {
 	if (contains (n2))
 		overlap ();
 	mpfr_t end;
@@ -818,28 +818,28 @@ bool MpfiInterval::operator> (const mpfr_t &n2) const {
 // arithmetics: mpfi (op) mpfr
 //--------------------------------------------------
 // BOOST:
-// MpfiInterval MpfiInterval::operator+ (const mpfr_t &f) const
-// MpfiInterval MpfiInterval::operator- (const mpfr_t &f) const
-// MpfiInterval MpfiInterval::operator* (const mpfr_t &f) const
-// MpfiInterval MpfiInterval::operator/ (const mpfr_t &f) const
+// Algebraic_1 Algebraic_1::operator+ (const mpfr_t &f) const
+// Algebraic_1 Algebraic_1::operator- (const mpfr_t &f) const
+// Algebraic_1 Algebraic_1::operator* (const mpfr_t &f) const
+// Algebraic_1 Algebraic_1::operator/ (const mpfr_t &f) const
 //-------------------------------------------------- 
 
-MpfiInterval& MpfiInterval::operator+= (const mpfr_t &f) {
+Algebraic_1& Algebraic_1::operator+= (const mpfr_t &f) {
 	mpfi_add_fr (mpfi (), mpfi (), f);
 	return *this;
 };
 
-MpfiInterval& MpfiInterval::operator-= (const mpfr_t &f) {
+Algebraic_1& Algebraic_1::operator-= (const mpfr_t &f) {
 	mpfi_sub_fr (mpfi (), mpfi (), f);
 	return *this;
 };
 
-MpfiInterval& MpfiInterval::operator*= (const mpfr_t &f) {
+Algebraic_1& Algebraic_1::operator*= (const mpfr_t &f) {
 	mpfi_mul_fr (mpfi (), mpfi (), f);
 	return *this;
 };
 
-MpfiInterval& MpfiInterval::operator/= (const mpfr_t &f) {
+Algebraic_1& Algebraic_1::operator/= (const mpfr_t &f) {
 	mpfi_div_fr (mpfi (), mpfi (), f);
 	return *this;
 };
@@ -848,7 +848,7 @@ MpfiInterval& MpfiInterval::operator/= (const mpfr_t &f) {
 
 
 // ----------------------------------------
-// end of the MpfiInterval class
+// end of the Algebraic_1 class
 // ----------------------------------------
 
 
@@ -856,7 +856,7 @@ MpfiInterval& MpfiInterval::operator/= (const mpfr_t &f) {
 // These functions are required, but they need to be coded outside the class:
 
 // 1.5 TODO
-bool operator== (const MpfiInterval &n1, const MpfiInterval &n2) {
+bool operator== (const Algebraic_1 &n1, const Algebraic_1 &n2) {
 	mpfr_t n1_l, n1_r, n2_l, n2_r;
 	mpfr_inits (n1_l, n1_r, n2_l, n2_r, NULL);
 	n1.get_endpoints (n1_l, n1_r);
@@ -876,11 +876,11 @@ bool operator== (const MpfiInterval &n1, const MpfiInterval &n2) {
 	return false;	// this never occurs
 }
 
-bool operator!= (const MpfiInterval &n1, const MpfiInterval &n2) {
+bool operator!= (const Algebraic_1 &n1, const Algebraic_1 &n2) {
 	return !(n1 == n2);
 }
 
-bool operator< (const MpfiInterval &n1, const MpfiInterval &n2) {
+bool operator< (const Algebraic_1 &n1, const Algebraic_1 &n2) {
 	mpfr_t n1_r, n2_l;
 	mpfr_inits (n1_r, n2_l, NULL);
 	n1.get_right (n1_r);
@@ -903,64 +903,64 @@ bool operator< (const MpfiInterval &n1, const MpfiInterval &n2) {
 	return false;	// this never occurs
 }
 
-bool operator> (const MpfiInterval &n1, const MpfiInterval &n2) {
+bool operator> (const Algebraic_1 &n1, const Algebraic_1 &n2) {
 	return (n2 < n1);
 }
 
-bool operator<= (const MpfiInterval &n1, const MpfiInterval &n2) {
+bool operator<= (const Algebraic_1 &n1, const Algebraic_1 &n2) {
 	return ((n1 == n2) || (n1 < n2));
 }
 
-bool operator>= (const MpfiInterval &n1, const MpfiInterval &n2) {
+bool operator>= (const Algebraic_1 &n1, const Algebraic_1 &n2) {
 	return ((n1 == n2) || (n1 > n2));
 }
 
 // 2.5
 // comparison between int|mpfr_t|mp[zq]_t|Gmp[zq] and intervals
 template <class T>
-bool operator== (const T &n1, const MpfiInterval &n2) {
+bool operator== (const T &n1, const Algebraic_1 &n2) {
 	return (n2 == n1);
 }
 
 template <class T>
-bool operator!= (const T &n1, const MpfiInterval &n2) {
+bool operator!= (const T &n1, const Algebraic_1 &n2) {
 	return (n2 != n1);
 }
 
 template <class T>
-bool operator< (const T &n1, const MpfiInterval &n2) {
+bool operator< (const T &n1, const Algebraic_1 &n2) {
 	return (n2 > n1);
 }
 
 template <class T>
-bool operator> (const T &n1, const MpfiInterval &n2) {
+bool operator> (const T &n1, const Algebraic_1 &n2) {
 	return (n2 < n1);
 }
 
 template <class T>
-bool operator<= (const T &n1, const MpfiInterval &n2) {
+bool operator<= (const T &n1, const Algebraic_1 &n2) {
 	return (n2 >= n1);
 }
 
 template <class T>
-bool operator>= (const T &n1, const MpfiInterval &n2) {
+bool operator>= (const T &n1, const Algebraic_1 &n2) {
 	return (n2 <= n1);
 }
 
 // 5.5
-bool is_valid (const MpfiInterval &n) {
+bool is_valid (const Algebraic_1 &n) {
 	return n.is_valid ();
 };
 
-bool is_finite (const MpfiInterval &n) {
+bool is_finite (const Algebraic_1 &n) {
 	return n.is_finite ();
 };
 
-double to_double (const MpfiInterval &n) {
+double to_double (const Algebraic_1 &n) {
 	return n.to_double ();
 };
 
-std::pair<double, double> to_interval (const MpfiInterval &n) {
+std::pair<double, double> to_interval (const Algebraic_1 &n) {
 	return n.to_interval ();
 };
 
@@ -968,18 +968,18 @@ std::pair<double, double> to_interval (const MpfiInterval &n) {
 // anything / interval
 //--------------------------------------------------
 // BOOST:
-// MpfiInterval operator/ (const int n1, const MpfiInterval &n2)
-// MpfiInterval operator/ (const CGAL::Gmpz &n1, const MpfiInterval &n2)
-// MpfiInterval operator/ (const CGAL::Gmpq &n1, const MpfiInterval &n2)
+// Algebraic_1 operator/ (const int n1, const Algebraic_1 &n2)
+// Algebraic_1 operator/ (const CGAL::Gmpz &n1, const Algebraic_1 &n2)
+// Algebraic_1 operator/ (const CGAL::Gmpq &n1, const Algebraic_1 &n2)
 //-------------------------------------------------- 
 
 // 8.5
-MpfiInterval sqrt (const MpfiInterval &ntval) {
+Algebraic_1 sqrt (const Algebraic_1 &ntval) {
 	return ntval.sqrt ();
 };
 
 // 9.5
-std::ostream& operator<< (std::ostream &o, MpfiInterval &n) {
+std::ostream& operator<< (std::ostream &o, Algebraic_1 &n) {
 	return n.show(o);
 };
 
@@ -991,12 +991,12 @@ std::ostream& operator<< (std::ostream &o, MpfiInterval &n) {
 //--------------------------------------------------
 // BOOST:
 // template <class T>
-// MpfiInterval operator+ (const T &n1, const MpfiInterval &n2)
+// Algebraic_1 operator+ (const T &n1, const Algebraic_1 &n2)
 // template <class T>
-// MpfiInterval operator- (const T &n1, const MpfiInterval &n2)
+// Algebraic_1 operator- (const T &n1, const Algebraic_1 &n2)
 // template <class T>
-// MpfiInterval operator* (const T &n1, const MpfiInterval &n2)
-// MpfiInterval operator/ (const mpfr_t &n1, const MpfiInterval &n2)
+// Algebraic_1 operator* (const T &n1, const Algebraic_1 &n2)
+// Algebraic_1 operator/ (const mpfr_t &n1, const Algebraic_1 &n2)
 //-------------------------------------------------- 
 
 // not implemented: mpfr (op=) mpfi (because they must not return an interval)

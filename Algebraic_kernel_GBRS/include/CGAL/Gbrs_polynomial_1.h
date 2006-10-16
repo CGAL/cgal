@@ -24,7 +24,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/basic.h>
 #include <CGAL/Gmpz.h>
-#include <CGAL/MpfiInterval.h>
+#include <CGAL/Algebraic_1.h>
 #include <gmp.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -58,7 +58,7 @@ class Rational_polynomial_1 {
 		inline int get_number_of_monomials () const;
 		inline mpz_t* get_coefs () const;
 		void get_coef (int, mpz_t *) const;
-		//CGAL::MpfiInterval eval (const CGAL::MpfiInterval &) const;
+		//CGAL::Algebraic_1 eval (const CGAL::Algebraic_1 &) const;
 		//CGAL::Gmpq eval (const CGAL::Gmpq &) const;
 		Rational_polynomial_1 derive () const;
 		// assignment

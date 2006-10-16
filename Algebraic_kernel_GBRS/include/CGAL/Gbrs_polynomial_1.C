@@ -20,7 +20,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/basic.h>
 #include <CGAL/Gmpz.h>
-#include <CGAL/MpfiInterval.h>
+#include <CGAL/Algebraic_1.h>
 #include <iostream>
 #include <gmp.h>
 
@@ -156,9 +156,9 @@ void Rational_polynomial_1::get_coef (int pow_x, mpz_t *c) const {
 	return;
 };
 
-/*CGAL::MpfiInterval Rational_polynomial_1::eval (const CGAL::MpfiInterval &x) const {
-	MpfiInterval result(0);
-	MpfiInterval x_pow(1);
+/*CGAL::Algebraic_1 Rational_polynomial_1::eval (const CGAL::Algebraic_1 &x) const {
+	Algebraic_1 result(0);
+	Algebraic_1 x_pow(1);
 	for (int i=0; i<=degree; ++i) {
 		// invariant at this point: x_pow = x^i
 		result += x_pow * coef[calc_index (i)];

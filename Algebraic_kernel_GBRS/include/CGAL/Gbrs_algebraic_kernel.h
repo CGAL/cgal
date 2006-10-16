@@ -20,7 +20,7 @@
 #ifndef CGAL_GBRS_ALGEBRAIC_KERNEL
 #define CGAL_GBRS_ALGEBRAIC_KERNEL
 
-#include <CGAL/MpfiInterval.h>
+#include <CGAL/Algebraic_1.h>
 #include <CGAL/Gbrs_polynomial_1.h>
 #include <CGAL/Gbrs_functors.h>
 
@@ -40,7 +40,7 @@ class GBRS_algebraic_kernel {
 
 	typedef IntegralDomain_				Coefficient;
 	typedef Rational_polynomial_1			Polynomial_1;
-	typedef MpfiInterval				Algebraic_real_1;
+	typedef Algebraic_1				Algebraic_real_1;
 	typedef AlgebraicFunctors::Construct_polynomial_1<Self>
 							Construct_polynomial_1;
 	typedef AlgebraicFunctors::Solve_1<Self>	Solve_1;

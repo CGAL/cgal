@@ -21,7 +21,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
-#include <CGAL/MpfiInterval.h>
+#include <CGAL/Algebraic_1.h>
 #include <iostream>
 #include <gmp.h>
 

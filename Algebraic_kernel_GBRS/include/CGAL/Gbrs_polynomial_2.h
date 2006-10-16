@@ -25,7 +25,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
-#include <CGAL/MpfiInterval.h>
+#include <CGAL/Algebraic_1.h>
 #include <gmp.h>
 
 CGAL_BEGIN_NAMESPACE
