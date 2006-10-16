@@ -41,12 +41,12 @@ sufficient.  However, some applications involving shape analysis
 require estimating third and fourth order differential quantities.
 %%
 Many different estimators have been proposed in the vast literature of
-applied geometry \cite{cgal:p-smrqt-01}, and all of them need to
-define a neighborhood around the point at which the estimation is
-computed.  Our method relying on smooth differential geometry
-calculations, carried out on smooth objects {\em fitted} from the
-sample points provided. Such naturally accommodate meshes, but also
-point clouds.
+applied geometry \cite{cgal:p-smrqt-01} (section 3, page 7), and all
+of them need to define a neighborhood around the point at which the
+estimation is computed.  Our method relies on smooth differential
+geometry calculations, carried out on smooth objects {\em fitted} from
+the sample points. Such naturally accommodate meshes, but also point
+clouds.
 
 
 On one hand, estimating differential quantities naturally assumes that
@@ -62,7 +62,7 @@ smooth surface or sampled on a unknown surface. In such a case, no
 analysis can be carried out and only the user can judge if the results
 are relevant for its use.
 
-Unlike most of the \cgal packages, ours uses approximation methods and
+Unlike most of the \cgal\ packages, ours uses approximation methods and
 is not intended to provide exact canonical result in any sens. This is
 why internal computations are done with a different number type as
 than of the input data, even if the results are given with the same
@@ -125,15 +125,19 @@ Based on the above concepts, the algorithm consists of 4 steps.
 \item
 We perform a Principal Component Analysis (PCA) on $P^+$. This
 analysis outputs three orthonormal eigenvectors and the associated
-eigenvalues.  If the surface is well sampled, we expect the PCA to
-provide one small and two large eigenvalues, the eigenvector
-associated to the small one approximating the normal vector.
+eigenvalues.  The fitting basis consists of these three vectors so
+that the vector associated to the smallest eigenvalue is the last
+vector of the basis. (Indeed, if the surface is well sampled, one
+expects the PCA to provide one small and two large eigenvalues, the
+eigenvector associated to the small one approximating the normal
+vector.)
 \item
 We perform a change of coordinates to move the samples into the
-coordinate system defined by the PCA eigenvectors. We then resort to
-polynomial fitting, so as to either interpolate or approximate the
-$d$-jet of the surface in the coordinate system. This bivariate
-polynomial approximation reduces to linear algebra operations.
+coordinate system of the fitting basis and with origin the point $p$
+at which the estimation is sought. We then resort to polynomial
+fitting, so as to either interpolate or approximate the $d$-jet of the
+surface in this coordinate system. This bivariate polynomial
+approximation reduces to linear algebra operations.
 \item
 From the fitted $d$-jet, we compute the Monge basis $(d_1,d_2,n)$.
 \item
@@ -153,8 +157,8 @@ cases:
 \begin{itemize}
 \item
 Due to poor sampling, the PCA used to determine a rough normal vector
-may not yield an eigenvalue significantly smaller than the two
-remaining ones.
+may not be good. The nearer this direction to the tangent plane the
+worse the estimation. 
 
 \item
 As observed in \cite{cgal:cp-edqpf-05}, the interpolating problem is
@@ -203,7 +207,9 @@ The \ccc{Monge_form} class provides the following information.
 \begin{itemize}
 \item Origin. This is the point on the fitted polynomial surface
 where the differential quantities have been computed. In the
-approximation case, it differs from the input point $p$.
+approximation case, it differs from the input point $p$~: it is the
+projection of $p$ onto the fitted surface following the $z$-direction
+of the fitting basis.
 
 \item Monge Basis. The monge-basis $(d_1,d_2,n)$ is orthonormal
 direct, and the maximal, minimal curvatures are defined wrt this
@@ -216,7 +222,7 @@ is small then this means that the orientation of the surface is not so
 clear!
 
 \item Monge Coefficients.
-The vector of coefficient of the Monge form is $(k_1, k_2 (\leq k_1),
+The coefficient of the Monge form is $(k_1, k_2 (\leq k_1),
 b_0, b_1, b_2, b_3, c_0, c_1, c_2, c_3, c_4)$ for $d' = 4$.
 
 \end{itemize}
@@ -232,26 +238,26 @@ the coordinate system of the PCA (in which the fitting is performed).
 \subsection{Template Parameters}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsubsection{Template parameter \ccc{Data_Kernel}}
+\subsubsection{Template parameter \ccc{DataKernel}}
 %%%%%%%%%%%
 
 This concept provides the types for the input sample points, together
 with $3d$ vectors and a number type. It is used as template for the
 classes
 \ccc{Monge_form<DataKernel>} and 
-\ccc{Monge_via_jet_fitting<DataKernel, LocalKernel = Cartesian<double>, SvdTraits = Lapack>} 
+\ccc{Monge_via_jet_fitting<DataKernel, LocalKernel = Cartesian<double>, SvdTraits = lapack_svd>} 
 . Typically, one can use \ccc{CGAL::Cartesian<double>}.
 
-\subsubsection{Template parameter \ccc{Local_Kernel}}
+\subsubsection{Template parameter \ccc{LocalKernel}}
 %%%%%%%%%%%
-This is a parameter of the classe 
-\ccc{Monge_via_jet_fitting<DataKernel, LocalKernel = Cartesian<double>, SvdTraits = Lapack>}. 
+This is a parameter of the class 
+\ccc{Monge_via_jet_fitting<DataKernel, LocalKernel = Cartesian<double>, SvdTraits = lapack_svd>}. 
 This concept defines the vector and number types used for local
 computations and to store pca basis data.  
 
 Input points of type
-\ccc{Data_Kernel::Point_3} are converted to
-\ccc{Local_Kernel::Point_3}. For output of the \ccc{Monge_form} class,
+\ccc{DataKernel::Point_3} are converted to
+\ccc{LocalKernel::Point_3}. For output of the \ccc{Monge_form} class,
 these types are converted back to \ccc{Data_Kernel} ones.  Typically,
 one can use
 \ccc{CGAL::Cartesian<double>} which is the default.
@@ -261,24 +267,22 @@ one can use
 
 This concept provides the number, vertor and matrix types for algebra
 operations required by the fitting method in
-\ccc{Monge_via_jet_fitting<DataKernel, LocalKernel = Cartesian<double>, SvdTraits = Lapack>} 
-. That is a linear solver using a singular value decomposition.
+\ccc{Monge_via_jet_fitting<DataKernel, LocalKernel = Cartesian<double>, SvdTraits = lapack_svd>} 
+. The main method is a linear solver using a singular value decomposition.
 
 \subsubsection{Compatibility requirements}
+%%%%%%%%%%%
 
-An important requirement is the following. To solve the fitting
-problem, the coordinates of the samples undergo two types of
-operations: first, an eigen analysis is performed in the world-basis
-(with the SvdTraits::FT which is also the LocalKernel::FT); second,
-points are expressed into the fitting-basis; third, matrices used for the
-linear algebra operations are filled from powers of the coordinates of
-the samples in fitting-basis. Linear algebra operations being used for
-these three stages, we assume the linear algebra traits class provides
-functions compatible with the number type defining the coordinates of
-the samples. In particular, for number types supporting
-multi-precision, this requires converting the samples into points with
-more standard types --- unless the user has a package supporting linear
-algebra operation on such number types.
+To solve the fitting problem, the sample points are first converted
+from the \ccc{DataKernel} to the \ccc{LocalKernel} (this is done using
+the \ccc{CGAL::Cartesian_converter}). Then change of coordinate
+systems and linear algebra operations are performed with this
+kernel. This implies that the number types \ccc{LocalKernel::FT} and
+\ccc{SvdTraits::FT} must be compatible.
+Second the Monge basis and coefficients, computed with the
+\ccc{LocalKernel}, are converted back to the \ccc{DataKernel} 
+(this is done using the \ccc{CGAL::Cartesian_converter} and the
+\ccc{CGAL::NT_converter}).
 
 
 \section{Examples} 
@@ -288,8 +292,8 @@ algebra operation on such number types.
 The first example illustrates the computation of the local
 differential quantities from a set of points given in a text file as
 input. The first point of the list is the one at which the computation
-is performed. The user has to specify a file for the input points, a
-file to output the results, the degrees $d$ and $d'$.
+is performed. The user has to specify a file for the input points and
+the degrees $d$ and $d'$.
 \ccIncludeExampleCode{Jet_fitting_3/blind_1pt.cpp}
 
 \paragraph{On a mesh.}
@@ -299,8 +303,9 @@ given mesh. The neighborhood of a given vertex is computed using rings on
 the triangulation. Results are twofold:
 \begin{itemize}
 \item
-a human readable text file featuring the \ccc{Monge_form} and the
-Monge\_form\_condition\_numbers data;
+a human readable text file featuring the \ccc{Monge_form} and
+numerical information on the computation~: condition number and pca
+basis;
 \item
 another text file which may be visualised with the demo program
 introspect-qt displaying the Monge basis at each vertex of the mesh.
@@ -402,27 +407,44 @@ sampling quality can be assessed. For a good sampling, the eigenvector
 associated to the smallest eigenvalue should roughly give the normal
 direction.
 
-
-\paragraph{Implementation details.}
-We assume a \ccc{eigen_symm_algo} function is provided by the traits
-\ccc{SvdTraits}.
-%%
-This function computes the eigenvalues and eigenvectors of a real
-symmetric matrix. Eigenvalues are sorted in ascending order,
-eigenvectors are sorted in accordance.  The eigenvectors are
-guaranteed to be mutually orthogonal and normalized to unit magnitude.
-
 \subsection{Solving the Interpolation / Approximation Problem}
 \label{sec:solving}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-{\bf Input : samples, fitting-basis \\ Output : coefficients $A_{i,j}$ of the
-bivariate fitted polynomial in the fitting-basis }
+{\bf Input : samples, fitting-basis \\ Output : coefficients $A_{i,j}$
+of the bivariate fitted polynomial in the fitting-basis }
 
 Computations are done in the fitting-basis and the origin is the point
 $p$. First, one has to transform coordinates of sample points with a
 translation ($-p$) and multiplication by $ P_{W\rightarrow F}$.
 
+The fitting consists of finding the coefficients
+$A_{i,j}$ of the degree $d$ polynomial 
+\begin{equation}
+\label{eq-answer}
+J_{A,d}= \sum_{k=0}^{k=d}(\sum_{i=0}^{i=k}
+\frac{A_{k-i,i}x^{k-i}y^{i}}{i!(k-i)!}).
+\end{equation}
+
+
+Denote $p_i=(x_i,y_i,z_i), \ i=1,\ldots , N$ the coordinates of the
+sample points of $P^+$.
+%%
+For interpolation the linear equations to solve are $A(x_i,y_i)=z_i \
+i=1,\ldots,N$, and for approximation one has to minimize $\sum_{i=1}^N
+(A(x_i,y_i)-z_i)^2$. The linear algebra formulation of the problem is
+given by
+%
+\begin{eqnarray}
+\label{eq:fit-linalg}
+ A =  & (A_{0,0}, A_{1,0},A_{0,1}, \ldots , A_{0,d})^T \\ 
+ Z=  &(z_1, z_2,\ldots , z_N)^T \\ 
+ M=  &(1,x_i,\ y_i,\ \frac{x_i^2}{2},\ldots ,
+\ \frac{x_iy_i^{d-1}}{(d-1)!},\ \frac{y_i^d}{d!})_{i=1,...,N}\\
+\end{eqnarray}
+%
+The equations for interpolation become $MA=Z$. For approximation, one
+seeks the vector $A$ such that $A = \arg \min_A  ||MA-Z||_2$.
 
 We solve the system $MA=Z$, in the least square sense for
 approximation. There is a preconditioning of the matrix $M$ so as to
@@ -469,7 +491,7 @@ that is the smallest singular value is zero. Then, an exception is
 raised.
 
 \paragraph{Implementation details.}
-We assume a \ccc{solve_ls_svd_algo} function is provided by the traits
+We assume a \ccc{solve} function is provided by the traits
 \ccc{SvdTraits}. This function solves the system MX=B (in the least square sense
 if M is not square) using a Singular Value Decomposition and gives the
 condition number of M. 
@@ -523,12 +545,10 @@ operator $W=-I^{-1}II$ is first computed in the basis of the tangent
 plane $\{ (1,0,A_{1,0}), (0,1,A_{0,1}) \}$. We compute an orthonormal
 basis of the tangent plane using the Gram-Schimdt algorithm, and then
 we compute Weingarten in this basis (apply a change of basis matrix
-$W'=P^{-1}WP$). It is then symmetric, we can apply the eigensystem
-function for a symmetric matrix:
-\verb+eigen_symm_algo+.
-One finally gets the principal curvatures which are the eigenvalues of
-$W$ and the principal directions. Sort the values and give an
-orthonormal direct basis $(d_1,d_2,n)$. Let's note $P_{F
+$W'=P^{-1}WP$). It is then symmetric and we diagonalize it.  One
+finally gets the principal curvatures which are the eigenvalues of $W$
+and the principal directions. This  gives an orthonormal
+direct basis $(d_1,d_2,n)$. Let's note $P_{F
 \rightarrow M}$ the matrix to change coordinates from the
 fitting-basis to the monge-basis. Its rows are the coordinates of the
 vectors $(d_1,d_2,n)$ in the fitting-basis. It is an orthogonal matrix
@@ -570,7 +590,7 @@ $g_{0,0}=g_{1,0}=g_{0,1}=g_{1,1}=0$ and $g_{2,0}=k_1$,
 $g_{0,2}=k_2$. The partial derivative of order $n$ of $f$ depends on
 the matrix $P_{F\rightarrow M}$ and the partial derivatives of order
 at most $n$ of $J_{A,d}$. The third and fourth order coefficients of are
-computed with the implicit function theorem~:
+computed with the implicit function theorem. For instance~:
 \begin{eqnarray*}
 %&b_0=g_{3,0}=-(f_{3,0,0}-3f_{1,0,1}f_{2,0,0}/f_{0,0,1})/f_{0,0,1}\\
 %&b_3=g_{0,3}=-(f_{0,3,0}-3f_{0,1,1}f_{0,2,0}/f_{0,0,1})/f_{0,0,1}\\
@@ -583,17 +603,5 @@ f_{0,0,1} ^{2}}}
 \\
 &b_1=g_{2,1}=-{\frac {-  f_{0,1,1}      f_{2,0,0}    +  f_{2,1,0}    f_{0,0,1}  }{  f_{0,0,1}    ^{2}}}
 \\
-&b_2=g_{1,2}=-{\frac {  f_{1,2,0}    f_{0,0,1}  -  f_{1,0,1}      f_{0,2,0}    }{  f_{0,0,1}    ^{2}}}
-\\
-&b_3=g_{0,3}=-{\frac {  f_{0,3,0}    f_{0,0,1}  -3\,  f_{0,1,1}      f_{0,2,0}    }{  f_{0,0,1}    ^{2}}}
-\\
-&c_0=g_{4,0}={\frac {-3\,  f_{0,0,2}        f_{2,0,0}      ^{2}-  f_{4,0,0}      f_{0,0,1}    ^{2}+6\,  f_{2,0,1}    f_{0,0,1}    f_{2,0,0}    +4\,  f_{1,0,1}    f_{0,0,1}    f_{3,0,0}    -12\,    f_{1,0,1}      ^{2}  f_{2,0,0}    }{  f_{0,0,1}    ^{3}}}
-\\
-&c_1=g_{3,1}={\frac {-6\,  f_{1,0,1}      f_{0,1,1}      f_{2,0,0}    +3\,f_{0,0,1}    f_{1,1,1}      f_{2,0,0}    +3\,  f_{1,0,1}    f_{0,0,1}    f_{2,1,0}    +  f_{0,1,1}    f_{0,0,1}    f_{3,0,0}    -  f_{3,1,0}      f_{0,0,1}    ^{2}}{  f_{0,0,1}    ^{3}}}
-\\
-&c_2=g_{2,2}=-{\frac {  f_{2,2,0}      f_{0,0,1}    ^{2}-  f_{2,0,1}   f_{0,0,1}    f_{0,2,0}    -2\,  f_{1,0,1}    f_{0,0,1}    f_{1,2,0}    +2\,    f_{1,0,1}      ^{2}  f_{0,2,0}    -  f_{0,2,1}    f_{0,0,1}    f_{2,0,0}    +2\,    f_{0,1,1}      ^{2}  f_{2,0,0}    -2\,  f_{0,1,1}    f_{0,0,1}    f_{2,1,0}    +  f_{0,0,2}      f_{0,2,0}      f_{2,0,0}    }{  f_{0,0,1}    ^{3}}}
-\\
-&c_3=g_{1,3}=-{\frac {  f_{1,3,0}      f_{0,0,1}    ^{2}+6\,  f_{1,0,1}      f_{0,1,1}      f_{0,2,0}    -3\,  f_{0,1,1}    f_{0,0,1}    f_{1,2,0}    -3\,  f_{1,1,1}    f_{0,0,1}    f_{0,2,0}    -  f_{1,0,1}    f_{0,0,1}    f_{0,3,0}    }{  f_{0,0,1}    ^{3}}}
-\\
-&c_4=g_{0,4}=-{\frac {  f_{0,4,0}     f_{0,0,1}    ^{2}+3\,  f_{0,0,2}        f_{0,2,0}      ^{2}-6\,  f_{0,2,1}    f_{0,0,1}    f_{0,2,0}    -4\,  f_{0,1,1}    f_{0,0,1}    f_{0,3,0}    +12\,    f_{0,1,1}      ^{2}  f_{0,2,0}    }{  f_{0,0,1}    ^{3}}}
+& .... \\
 \end{eqnarray*} 

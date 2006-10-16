@@ -19,11 +19,9 @@
 \ccDefinition
   
 The concept \ccRefName\ describes the set of requirements to be
-fulfilled by any class used to instantiate the template
+fulfilled by any class used to instantiate the second template
 parameter of the class
-\ccc{Monge_info<LocalKernel>} and the second template parameter of the
-class
-\ccc{Monge_via_jet_fitting<DataKernel,LocalKernel,LinAlgTraits>}.
+\ccc{Monge_via_jet_fitting<DataKernel,LocalKernel,SvdTraits>}.
  
 This concept provides the geometric primitives used for the
 computations in the class
@@ -32,16 +30,13 @@ computations in the class
 \ccRequirements
 % +------------------------------------------------------------------
  
-The scalar type, \ccc{LocalKernel::FT}, must be the same as that of
-the \ccc{LinAlgTraits} concept~: \ccc{LinAlgTraits::FT}.
+In the class \ccc{Monge_via_jet_fitting} the scalar type,
+\ccc{LocalKernel::FT}, must be the same as that of the \ccc{SvdTraits}
+concept~: \ccc{SvdTraits::FT}.
 
-The concept \ccRefName\ must fulfill the requirement of the
-\ccc{Kernel} template of the class
-\ccc{CGAL::Aff_transformation_3<Kernel>}.
+%The concept \ccRefName\ must fulfill the requirement of the\ccc{Kernel} template of the class\ccc{CGAL::Aff_transformation_3<Kernel>}.
 
-The type \ccc{LocalKernel::FT} must fulfill the requirement of the
-\ccc{FT} template of the class
-\ccc{CGAL::Linear_algebraCd<FT>}.
+%The type \ccc{LocalKernel::FT} must fulfill the requirement of the\ccc{FT} template of the class\ccc{CGAL::Linear_algebraCd<FT>}.
 
 The type \ccc{LocalKernel::FT} must fulfill the requirement of the
 \ccc{FT} template of the function \ccc{CGAL::Sqrt<NT>}. An alternative 
@@ -79,7 +74,7 @@ square root.
 
 \ccSeeAlso
 % +------------------------------------------------------------------
-The \ccc{DataKernel} and \ccc{LinAlgTraits} concepts.
+The \ccc{DataKernel} and \ccc{SvdTraits} concepts.
 
 
 %\ccExample
