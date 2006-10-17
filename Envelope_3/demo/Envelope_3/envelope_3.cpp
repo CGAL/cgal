@@ -63,10 +63,11 @@ int main(int, char*){
 
 
 //The envelope diagram
-Envelope_diagram_2 diag;
+Envelope_tri_diagram_2    tri_diag;
+Envelope_sphere_diagram_2 sphere_diag;
 int current_state;
 
-const QString my_title_string("envelopes of 3d triangles");
+const QString my_title_string("Envelopes of 3D surfaces");
 
 
 class Qt_layer_show_diag : public CGAL::Qt_widget_layer
@@ -81,33 +82,11 @@ public:
   {
     widget->lock(); // widget have to be locked before drawing
 
+    if(!tri_diag.is_empty())
+      draw_arr(widget, tri_diag);
+    else
+      draw_arr(widget, sphere_diag);
     
-    for(Face_const_iterator fit = diag.faces_begin();
-        fit != diag.faces_end();
-        ++fit)
-    {
-      if(! fit->number_of_surfaces())
-        continue;
-
-      draw_face(widget, fit);
-    }
-
-    *widget <<  CGAL::BLUE; 
-    for(Edge_const_iterator eit = diag.edges_begin();
-        eit != diag.edges_end();
-        ++eit)
-    {
-      *widget << eit->curve();
-    }
-   
-    *widget <<  CGAL::RED; 
-    for(Vertex_const_iterator vit = diag.vertices_begin();
-        vit != diag.vertices_end();
-        ++vit)
-    {
-      *widget << vit->point();
-    }
-
     widget->unlock(); // widget have to be unlocked when finished drawing
   };    
   
@@ -149,7 +128,9 @@ public:
     file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
     file->insertItem("New &Window", this, SLOT(new_window()), CTRL+Key_W);
     file->insertSeparator();
-    file->insertItem("&Open triangles file", this, SLOT(open_file()),CTRL+Key_O);
+    file->insertItem("&Open Triangles File", this, SLOT(open_triangles_file()),CTRL+Key_O);
+    file->insertSeparator();
+    file->insertItem("&Open Spheres File", this, SLOT(open_spheres_file()),CTRL+Key_O);
     file->insertSeparator();
     
     file->insertSeparator();
@@ -171,6 +152,7 @@ public:
 
     //layers
     widget->attach(&testlayer);  
+    *widget <<CGAL::BackgroundColor (CGAL::BLACK);
   
     resize(w,h);
     widget->set_window(-1, 1, -1, 1);
@@ -183,11 +165,12 @@ public:
 private:
   void something_changed(){current_state++;};
 
-
-public slots:
-
-    void open_file()
+   template<class Arrangement>
+    void open_file(Arrangement &arr)
     {
+      typedef typename Arrangement::Traits_3    Traits_3;
+      typedef typename Traits_3::Surface_3      Surface_3;
+      typedef typename Traits_3::Base_traits_3:: Surface_3     Base_surface_3;
       QString s = QFileDialog::getOpenFileName(curr_dir,
                                                QString::null,
                                                this,
@@ -210,23 +193,23 @@ public slots:
       widget->lock();
       widget->clear_history();
 
-      std::list<Surface_3> triangles;
-      int num_of_triangles;
-      in_file >> num_of_triangles;
+      std::list<Surface_3> surfaces;
+      int num_of_surfaces;
+      in_file >> num_of_surfaces;
       CGAL::Random rand;
-      for(int i=0 ; i<num_of_triangles; i++)
+      for(int i=0 ; i<num_of_surfaces; i++)
       {
-        int r = rand.get_int(0, 256);
+        int r = rand.get_int(128, 256);
         int g = rand.get_int(0, 256);
         int b = rand.get_int(0, 256);
 
-        Triangle_3 tri;
-        in_file >> tri;
-        triangles.push_back(Surface_3(tri, CGAL::Color(r, g, b)));
-        box = box + bbox_2d(tri);
+        Base_surface_3 s;
+        read_surface(in_file, s);
+        surfaces.push_back(Surface_3(s, CGAL::Color(r, g, b)));
+        box = box + bbox_2d(s);
       }
-      diag.clear();
-      CGAL::lower_envelope_3(triangles.begin(), triangles.end(), diag);
+      arr.clear();
+      CGAL::lower_envelope_3(surfaces.begin(), surfaces.end(), arr);
 
       double w = (box.xmax() - box.xmin())/10;
       double h = (box.ymax() - box.ymin())/10;
@@ -239,12 +222,41 @@ public slots:
       widget->setCursor(old);
     }
 
- 
+
+    void read_surface(std::ifstream& is, Base_triangle_3& tri)
+    {
+      is >> tri;
+    }
+
+    void read_surface(std::ifstream& is, Base_sphere_3& s)
+    {
+      Rat_point_3 a;
+      Rational sr;
+      is >> a >> sr;
+      s = Base_sphere_3(a, sr);
+    }
+public slots:
+
+    void open_triangles_file()
+    {
+      tri_diag.clear();
+      sphere_diag.clear();
+      open_file(tri_diag);
+    }
+
+    void open_spheres_file()
+    {
+      tri_diag.clear();
+      sphere_diag.clear();
+      open_file(sphere_diag);
+    }
+
   void new_instance()
   {
     widget->lock();
     
-    diag.clear();
+    tri_diag.clear();
+    sphere_diag.clear();
     widget->clear_history();
     widget->set_window(-1.1, 1.1, -1.1, 1.1);
         // set the Visible Area to the Interval
