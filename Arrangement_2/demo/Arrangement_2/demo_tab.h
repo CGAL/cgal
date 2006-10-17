@@ -660,12 +660,12 @@ public:
     int max_y = static_cast<int> (y_max());
     
     // calculate cube size (minimum of 1)
-    //int cube_size_x = CGAL::max(1, abs(max_x - min_x)/20);
-    //int cube_size_y = CGAL::max(1, abs(max_y - min_y)/20);
+    //int cube_size_x = (CGAL::max)(1, abs(max_x - min_x)/20);
+    //int cube_size_y = (CGAL::max)(1, abs(max_y - min_y)/20);
     if (cube_size < std::abs(max_x - min_x)/40 ||
         cube_size < std::abs(max_y - min_y)/40)
-      cube_size = CGAL::max(CGAL::max(1, std::abs(max_x - min_x)/20),
-                            CGAL::max(1, std::abs(max_y - min_y)/20));
+      cube_size = (CGAL::max)((CGAL::max)(1, std::abs(max_x - min_x)/20),
+			      (CGAL::max)(1, std::abs(max_y - min_y)/20));
     
     int cube_size_x = cube_size;
     int cube_size_y = cube_size;
@@ -918,7 +918,7 @@ public:
    */
   Coord_type getMid(Coord_type coord, int my_min, int my_max)
   {
-    //int cube_size = CGAL::max(1, abs(my_max - my_min)/20);
+    //int cube_size = (CGAL::max)(1, abs(my_max - my_min)/20);
     Coord_type d = static_cast<Coord_type>(cube_size)/2;
     for (int i = my_min - cube_size; i <= my_max; i += cube_size)
     {
@@ -1123,7 +1123,7 @@ public:
     int xmax = static_cast<int> (x_max());
     int ymin = static_cast<int> (y_min());
     int ymax = static_cast<int> (y_max());
-    Coord_type d = CGAL::max(0.5 , (x_max() - x_min())/40);
+    Coord_type d = (CGAL::max)(0.5 , (x_max() - x_min())/40);
     switch ( snap_mode ) {
      case SNAP_POINT:
       {
