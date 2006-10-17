@@ -1,9 +1,4 @@
  =============================================================================
-% The CGAL Reference Manual
-% Chapter: Geometric Optimisation
-% Section: Smallest Enclosing Sphere
-% =============================================================================
-
 \begin{ccRefClass}{QP_solver<Traits>}
 
 % -----------------------------------------------------------------------------
@@ -11,19 +6,19 @@
 that represents a point $\tilde{x}$ attaining the minimum of a convex
 quadratic objective function $f(x)=c^{T}x+x^{T}Dx$ on
 a domain $R \subseteq \R^{n}$ given as the intersection $R=\{ x\in\R^n
-\mid \mbox{$Ax\gtreqless b$, $l \le x \le u$}\}$ of halfspaces and
+\mid \mbox{$Ax\ccTexHtml{\gtreqless}{<=,=,>=} b$, $l \le x \le u$}\}$ of halfspaces and
 hyperplanes. In other words, an object of class \ccRefName\ represents
 a solution to the convex mathematical program
 \begin{eqnarray*}
 \mbox{(QP)}&\mbox{minimize} & c^{T}x+x^{T}Dx \\
-&\mbox{subject to}   & Ax \gtreqless b, \\
+&\mbox{subject to}   & Ax\ccTexHtml{\gtreqless}{<=,=,>=}  b, \\
 && l \leq x \leq u,
 \end{eqnarray*}
 over the $n$ variables $x=(x_0,\ldots,x_{n-1})$.
 
 Here, $A \in \R^{m \times n}$, $b \in \R^{m}$, $c \in \R^{n}$, and in
 addition, the matrix $D \in \R^{n \times n}$ is positive-semidefinite.
-The symbol ``$\gtreqless$'' in the program's constraint $Ax \gtreqless
+The symbol ``$\ccTexHtml{\gtreqless}{<=,=,>=}$'' in the program's constraint $Ax \ccTexHtml{\gtreqless}{<=,=,>=}
 b$ means that any row of this may either be an inequality $(Ax)_i \leq b_i$ or
 $(Ax)_i \geq b_i$, or an equality $(Ax)_i = b_i$.  Furthermore, $l\in
 (\R\cup\{-\infty\})^n$ and $r\in (\R\cup\{\infty\})^n$, so that each
@@ -66,7 +61,7 @@ variables are zero (and therefore need not be queried).
 
 \paragraph{Usage.}
 An object of class \ccRefName\ is constructed by specifing $A, b, c,
-D, l, u$, and for each constraint from $Ax \gtreqless b$ whether it
+D, l, u$, and for each constraint from $Ax \ccTexHtml{\gtreqless}{<=,=,>=} b$ whether it
 needs to hold with inequality ($\leq$ or $\geq$) or with equality.
 The algorithm then determines the object's \emph{status}, which
 reflects whether the quadratic program (QP) is infeasible, unbounded,
@@ -119,7 +114,7 @@ In order to improve performance, the algorithm can be tailored to
 specific variants of the quadratic program.  In particular, if the
 program is (at compile time) known to be linear (i.e., $D=0$), or in
 standard form, or symmetric (meaning $D^{T}=D$), or if the constraint
-matrix $A$ is known to have full row rank and $Ax \gtreqless b$
+matrix $A$ is known to have full row rank and $Ax \ccTexHtml{\gtreqless}{<=,=,>=} b$
 consists of equalities only then compile-time flags in the traits
 class \ccc{Traits} can be used to specialize the algorithm.  The
 resulting code will take advantage of the given additional knowledge
@@ -292,7 +287,7 @@ all entries of $u$ are $\infty$ (i.e., (QP) is assumed to be in
 standard form).  The matrix $A$ of (QP) is given by \ccc{a_it}, which
 is an iterator over the columns of $A$.  Similarly, \ccc{d_it}
 iterates over the rows of $D$. The iterator \ccc{r_it} specifies for
-each row of $Ax \gtreqless b$ whether it is an inequality ($\leq$ or
+each row of $Ax \ccTexHtml{\gtreqless}{<=,=,>=} b$ whether it is an inequality ($\leq$ or
 $\geq$) or an equality constraint.  \ccRequire
 \ccc{a_it} iterates over $n$ columns each of which has $m$ elements,
 \ccc{d_it} iterates over $n$ rows each of which having $n$ elements,
@@ -309,7 +304,7 @@ strategy = FULL_EXACT_PRICING)}
 program (QP).  The matrix $A$ of (QP) is given by \ccc{a_it}, which is
 an iterator over the columns of $A$.  Similarly, \ccc{d_it} iterates
 over the rows of $D$. The iterator \ccc{r_it} specifies for each row
-of $Ax \gtreqless b$ whether it is an inequality ($\leq$ or $\geq$) or
+of $Ax \ccTexHtml{\gtreqless}{<=,=,>=} b$ whether it is an inequality ($\leq$ or $\geq$) or
 an equality constraint. \ccc{fl_it} iterates over $n$ Boolean values,
 one for each variable $x_i$, $i\in\{0,\ldots,n-1\}$, and specifies
 whether $l_i>-\infty$.  If so, the corresponding entry from the
@@ -541,7 +536,7 @@ The following example solves the quadratic programming problem
 && 0 \le  x_1 \le 1.
 \end{eqnarray*}
 
-\ccIncludeExampleCode{QP_solver/small_example.cpp}
+\ccIncludeExampleCode{QP_solver/qp_solver1.cpp}
 
 Please refer also to the documentation of class
 \ccc{CGAL::QP_MPS_instance<IT,ET>}; using it, you can read programs of
