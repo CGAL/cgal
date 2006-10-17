@@ -124,18 +124,19 @@ public:
       #endif
 
       // collect the curve in this list, and use sweepline at the end
-      std::list<std::pair<Object, Oriented_side> > boundary_list;
+      std::list<Object> boundary_list;
+      typedef std::pair<X_monotone_curve_2, Oriented_side>     Boundary_xcurve;
       traits.construct_projected_boundary_2_object()(cur_surface, std::back_inserter(boundary_list));
-      typedef typename std::list<std::pair<Object, Oriented_side> >::iterator Boundary_iterator;
+      typedef std::list<Object>::const_iterator Boundary_iterator;
       for(Boundary_iterator boundary_it = boundary_list.begin();
           boundary_it != boundary_list.end();
           ++boundary_it)
       {
-        const Object& obj = boundary_it->first;
-        X_monotone_curve_2 cv;
-        CGAL_assertion(assign(cv, obj));
-        assign(cv, obj);
-        curves_col.push_back(cv);
+        const Object& obj = *boundary_it;
+        Boundary_xcurve boundary_cv;
+        CGAL_assertion(assign(boundary_cv, obj));
+        assign(boundary_cv, obj);
+        curves_col.push_back(boundary_cv.first);
       }
       // second, intersect it with all surfaces before it
       Object cur_obj;
