@@ -18,7 +18,7 @@
 #ifndef CGAL_MODIFIABLE_PRIORITY_QUEUE_H
 #define CGAL_MODIFIABLE_PRIORITY_QUEUE_H
 
-#include <boost/relaxed_heap.hpp>
+#include <boost/pending/relaxed_heap.hpp>
 
 CGAL_BEGIN_NAMESPACE
 
