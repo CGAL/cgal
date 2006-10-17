@@ -12,16 +12,16 @@ degree up to~2 over a \ccc{RingNumberType} denoted as \ccc{RT}.
 
 %\footnote{How to get RT...?}
 
-\ccFunction{RootOf_2 make_root_of_2(RT a, RT b, RT c, bool s){Returns the 
+\ccFunction{RootOf_2 make_root_of_2(RT a, RT b, RT c, bool s);}{Returns the
 smaller or larger root of the equation $aX^2+bX+c=0$, if \ccc{s}
 is \ccc{true} or \ccc{false}, respectively. \ccPrecond{$b^2-4ac\geq 0$}}
 %\footnote{numbering of roots from 0 or 1? to be checked}
 \ccGlue
-\ccFunction{RootOf_2 make_root_of_2(FT a, FT b, FT c, bool s);}{Returns the 
+\ccFunction{RootOf_2 make_root_of_2(FT a, FT b, FT c, bool s);}{Returns the
 smaller or larger root of the equation $aX^2+bX+c=0$, if \ccc{s}
 is \ccc{true} or \ccc{false}, respectively. \ccPrecond{$b^2-4ac\geq 0$}}
 \ccGlue
-\ccFunction{RootOf_2 make_root_of_2(FT alpha, FT beta, FT gamma);}{Constructs 
+\ccFunction{RootOf_2 make_root_of_2(FT alpha, FT beta, FT gamma);}{Constructs
 the number $\alpha + \beta \sqrt{\gamma}$. \ccPrecond{$\gamma\geq 0$}}
 
 
@@ -29,7 +29,7 @@ the number $\alpha + \beta \sqrt{\gamma}$. \ccPrecond{$\gamma\geq 0$}}
 
 The comparison operators \ccc{==, !=, <, >, <=, >=} as well as the \ccc{sign}
 and \ccc{compare} functions need to be
-provided to compare elements of types \ccc{RootOf_2, RT} and \ccc{FT}. 
+provided to compare elements of types \ccc{RootOf_2, RT} and \ccc{FT}.
 
 In addition, the following operations must be provided:
 
@@ -45,7 +45,7 @@ In addition, the following operations must be provided:
 
 as well as
 \ccFunction{RootOf_2 operator+(const RootOf_2 &r, const RootOf_2 &r);}
-{Addition of two algebraic numbers, in the special case when they have 
+{Addition of two algebraic numbers, in the special case when they have
 been constructed from equations having the same discriminant.}
 
 and similarly for operators -, * and /.

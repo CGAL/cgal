@@ -2,7 +2,7 @@
 % $Date$
 % author : Sylvain Pion
 
-\begin{ccRefClass} {MP_Float}
+\begin{ccRefClass}{MP_Float}
 %\subsection{Multi Precision Floats}
 %\label{mpfloat}
 
@@ -81,7 +81,7 @@ guarantees that the remainder has a smaller bitlength than \ccc{b}
 \ccFunction{MP_Float gcd(const MP_Float &a, const MP_Float &b);}
 {returns the greatest common divisor of \ccc{a} and \ccc{b}.
 For \ccc{MP_Float}, this is defined up to a power of 2.}
-\ccPrecond{\ccc{a} and \ccc{b} are non zero.}}
+\ccPrecond{\ccc{a} and \ccc{b} are non zero.}
 
 \ccFunction{MP_Float approximate_division(const MP_Float &a, const MP_Float &b);}
 {computes an approximation of the (field) division by converting the operands
@@ -94,10 +94,10 @@ to \ccc{MP_Float}.}
 to \ccc{MP_Float}.}
 
 
-\ccImplementation 
+\ccImplementation
 The implementation of \ccc{MP_Float} is simple but provides a quadratic
 complexity for multiplications.  This can be a problem for large operands.
 For faster implementations of the same functionality with large integral
 values, you may want to consider using \ccc{GMP} or \ccc{LEDA} instead.
 
-\end{ccRefClass} 
+\end{ccRefClass}
