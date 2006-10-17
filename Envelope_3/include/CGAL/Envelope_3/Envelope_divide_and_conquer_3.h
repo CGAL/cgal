@@ -299,29 +299,30 @@ protected:
 
   void deal_with_one_surface(Xy_monotone_surface_3& surf, Minimization_diagram_2& result)
   {
-    typedef std::list<std::pair<Object, Oriented_side> > Boundary_list;
-    typedef typename Boundary_list::iterator             Boundary_iterator;
+    typedef std::list<Object>                            Boundary_list;
+    typedef std::pair<X_monotone_curve_2, Oriented_side> Boundary_xcurve;
+    typedef Boundary_list::iterator                      Boundary_iterator;
 
-    Boundary_list     boundary_xcurves;
-    traits->construct_projected_boundary_2_object()(surf, std::back_inserter(boundary_xcurves));
+    Boundary_list     boundary;
+    traits->construct_projected_boundary_2_object()(surf, std::back_inserter(boundary));
     
-    if(boundary_xcurves.empty())
+    if(boundary.empty())
     {
       //one infinite surface
       result.unbounded_face()->set_data(surf);
       return;
     }
 
-    for(Boundary_iterator boundary_it = boundary_xcurves.begin();
-        boundary_it != boundary_xcurves.end();
+    for(Boundary_iterator boundary_it = boundary.begin();
+        boundary_it != boundary.end();
         ++boundary_it)
     {
-      const Object& obj = boundary_it->first;
-      X_monotone_curve_2 cv;
-      if(assign(cv, obj))
+      const Object& obj = *boundary_it;
+      Boundary_xcurve boundary_cv;
+      if(assign(boundary_cv, obj))
       {
-        Oriented_side side = boundary_it->second;
-        Halfedge_handle he = insert_non_intersecting_curve(result, cv);
+        Oriented_side side = boundary_cv.second;
+        Halfedge_handle he = insert_non_intersecting_curve(result, boundary_cv.first);
         
         if(side == ON_ORIENTED_BOUNDARY)
         {

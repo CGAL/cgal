@@ -319,8 +319,8 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
 
         const Plane_3& h = s.plane();
         Line_2 proj_line(h.a(), h.b(), h.d());
-        *o++ = std::make_pair(make_object(X_monotone_curve_2(proj_line)),
-                              ON_ORIENTED_BOUNDARY);
+        *o++ = make_object(std::make_pair(X_monotone_curve_2(proj_line),
+                                          ON_ORIENTED_BOUNDARY));
         return o;
       }
       
@@ -331,7 +331,7 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
       Comparison_result res = k.compare_xy_2_object()(p1, p2);
 
       Oriented_side side = (res == SMALLER) ? ON_POSITIVE_SIDE : ON_NEGATIVE_SIDE;
-      *o++ = std::make_pair(make_object(X_monotone_curve_2(s.line())), side);
+      *o++ = make_object(std::make_pair(X_monotone_curve_2(s.line()), side));
       return o;
     }
   };

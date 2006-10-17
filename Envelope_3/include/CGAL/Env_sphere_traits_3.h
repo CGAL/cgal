@@ -138,14 +138,14 @@ public:
       if(cv1.is_lower())
       {
         CGAL_assertion(cv2.is_upper());
-        *o++ = std::make_pair(make_object(cv1), ON_POSITIVE_SIDE);
-        *o++ = std::make_pair(make_object(cv2), ON_NEGATIVE_SIDE);
+        *o++ = make_object(std::make_pair(cv1, ON_POSITIVE_SIDE));
+        *o++ = make_object(std::make_pair(cv2, ON_NEGATIVE_SIDE));
       }
       else
       {
         CGAL_assertion(cv2.is_lower());
-        *o++ = std::make_pair(make_object(cv1), ON_NEGATIVE_SIDE);
-        *o++ = std::make_pair(make_object(cv2), ON_POSITIVE_SIDE);
+        *o++ = make_object(std::make_pair(cv1, ON_NEGATIVE_SIDE));
+        *o++ = make_object(std::make_pair(cv2, ON_POSITIVE_SIDE));
       }
 
       return o;

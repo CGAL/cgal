@@ -551,9 +551,9 @@ public:
                        s2 != ON_ORIENTED_BOUNDARY &&
                        s3 != ON_ORIENTED_BOUNDARY);
         
-        *o++ = std::make_pair(make_object(A), s1);
-        *o++ = std::make_pair(make_object(B), s2);
-        *o++ = std::make_pair(make_object(C), s3);
+        *o++ = make_object(std::make_pair(A, s1));
+        *o++ = make_object(std::make_pair(B, s2));
+        *o++ = make_object(std::make_pair(C, s3));
       }
       else
       {
@@ -566,8 +566,8 @@ public:
                 b2 = parent->project(a2);
         CGAL_assertion(b1 != b2);
                 
-        *o++ = std::make_pair(make_object(X_monotone_curve_2(b1, b2)), 
-                              ON_ORIENTED_BOUNDARY);
+        *o++ = make_object(std::make_pair(X_monotone_curve_2(b1, b2), 
+                                          ON_ORIENTED_BOUNDARY));
       }
       return o;
     }  
