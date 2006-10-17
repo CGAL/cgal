@@ -1,18 +1,25 @@
-\begin{ccRefConcept}{AlgebraicCurveKernel_2}
+\begin{ccRefConcept}{AlgebraicKernelBase_2}
 
 \ccDefinition
-
-
-The \ccc{AlgebraicCurveKernel_2} concept is meant to provide the curved
-kernel with all the algebraic functionalities on bivariate polynomials
-required for the manipulation of arcs of algebraic curves of general degree
-$\R^2$ using an $y$-per-$x$-view on the curves.
+The \ccc{AlgebraicKernelBase_2} concept is meant to provide the curved
+kernel with very fundamental algebraic functionalities on uni- and bivariate
+polynomials.
 
 \ccTypes
 
-A model of \ccc{AlgebraicCurveKernel_2} is supposed to provide
+A model of \ccc{AlgebraicKernelBase_2} is supposed to provide
 
 \ccNestedType{Coefficient}{A model of \ccc{IntegralDomain}. }
+
+\ccNestedType{Polynomial_1}{A model of \ccc{Polynomial_1}, for
+univariate polynomials when the \ccc{Coefficient} type is an 
+\ccc{IntegralDomain}. It must also be possible to perform \ccc{Canonicalize, 
+    GcdUpToConstantFactor, 
+    IntegralDivUpToConstantFactor, 
+    MakeSquareFreeUpToConstantFactor, and 
+    SquareFreeFactorizationUpToConstantFactor. 
+    Also needed some PolynomialConstruction concept.}
+} 
 
 \ccNestedType{Polynomial_2}{A model of \ccc{Polynomial_2}, for
   bivariate polynomials on an \ccc{IntegralDomain} coefficient type. 
@@ -21,23 +28,16 @@ A model of \ccc{AlgebraicCurveKernel_2} is supposed to provide
     IntegralDivUpToConstantFactor, 
     MakeSquareFreeUpToConstantFactor, and 
     SquareFreeFactorizationUpToConstantFactor} on this type - maybe using a
-  traits class. Also needed some PolynomialConstruction concept
+  traits class. Also needed some PolynomialConstruction concept.
 } 
 
-% TODO: Boundary: RealEmbeddable that is 'dense R'
+\ccNestedType{Solution_1}{A model of
+\ccc{AlgebraicKernelBase_2::Solution_1}, for real roots of univariate 
+polynomials of type \ccc{Polynomial_1}.}
 
 \ccNestedType{Solution_2}{A model of
-\ccc{AlgebraicCurveKernel_2::Solution_2}, for solutions of systems
+\ccc{AlgebraicKernelBase_2::Solution_2}, for solutions of systems
 of two bivariate polynomials of type \ccc{Polynomial_2}.}
-
-\ccNestedType{CurvePairAnalysis_2}{A model of
-\ccc{AlgebraicCurveKernel_2::CurvePairAnalysis_2}, 
-for analysing a pair of curves
-defined as two analyses of type \ccc{CurveAnalysis_2}.}
-
-\ccNestedType{CurveAnalysis_2}{A model of
-\ccc{CurvePairAnalyis_2::CurveAnalysis_2}, for analysing single
-curves defined as bivariate polynomials of type \ccc{Polynomial_2}.}
 
 \ccNestedType{Compare_x_2}{A model of the concept 
 \ccc{AlgebraicKernel_d_2::CompareX_2}.}
@@ -48,5 +48,79 @@ curves defined as bivariate polynomials of type \ccc{Polynomial_2}.}
 \ccNestedType{Compare_xy_2}{A model of the concept 
 \ccc{AlgebraicKernel_d_2::CompareXY_2}.}
 
+
+\end{ccRefConcept}
+
+\begin{ccRefConcept}{AlgebraicKernelBasic_2}
+\footnote{Adapted the concepts \ccc{AlgebraicKernel_d_1} and 
+\ccc{AlgebraicKernel_d_2} and re-assigned types/functors 
+to Base and Basic part.}
+
+\ccDefinition
+
+The \ccc{AlgebraicKernelBasic_2} concept is meant to provide the curved
+kernel with all the algebraic functionalities on uni- and bivariate polynomials
+required for the manipulation of arcs of algebraic curves of general degree
+$d$ in $\R^2$.
+
+\ccNestedType{Solve_1}{A model of the concept
+\ccc{AlgebraicKernelBasic_1::Solve_1}.} 
+
+\ccNestedType{Sign_at_1}{A model of the concept
+\ccc{AlgebraicKernelBasic_1::SignAt_1}.}
+
+\ccNestedType{Derivative_1}{A model of the concept
+\ccc{AlgebraicKernelBasic_1::Derivative}.} 
+
+\ccNestedType{Compare_1}{A model of the concept 
+\ccc{AlgebraicKernelBasic_1::Compare_1}.}
+
+\textbf{Question: what is the righ interface with AK 
+for \ccc{compare_y_at_x_right}?}
+
+\ccNestedType{Solve_2}{A model of the concept
+\ccc{AlgebraicKernelBasic_2::Solve_2}.} 
+
+\ccNestedType{Sign_at_2}{A model of the concept
+\ccc{AlgebraicKernelBasic_2::SignAt_2}.}
+
+\ccNestedType{Derivative_x_2}{A model of the concept
+\ccc{AlgebraicKernelBasic_2::DerivativeX_2}.} 
+
+\ccNestedType{Derivative_y_2}{A model of the concept
+\ccc{AlgebraicKernelBasic_2::DerivativeY_2}.} 
+
+\ccNestedType{X_critical_points_2}{A model of the concept 
+\ccc{AlgebraicKernelBasic_2::XCriticalPoints_2}.}
+\ccGlue
+\ccNestedType{Y_critical_points_2}{A model of the concept 
+\ccc{AlgebraicKernelBasic_2::YCriticalPoints_2}.}
+
+\end{ccRefConcept}
+
+\begin{ccRefConcept}{AlgebraicKernelCCPA_2}
+
+\ccDefinition
+
+The \ccc{AlgebraicKernelCCPA_2} concept refines the \ccc{AlgebraicKernelBase_2}
+concept with functionality on bivariate polynomials
+required for the manipulation of arcs of algebraic curves of general degree
+$\R^2$ using an $y$-per-$x$-view on the curves.
+
+\ccRefines
+\ccc{AlgebraicKernelBase_2}
+
+\ccTypes
+
+\ccNestedType{CurvePairAnalysis_2}{A model of
+\ccc{AlgebraicKernelCCPA_2::CurvePairAnalysis_2}, 
+for analysing a pair of curves
+defined as two analyses of type \ccc{CurveAnalysis_2}.}
+
+\ccNestedType{CurveAnalysis_2}{A model of
+\ccc{CurvePairAnalyis_2::CurveAnalysis_2}, for analysing single
+curves defined as bivariate polynomials of type \ccc{Polynomial_2}.}
+
+{\small TODO: Boundary: RealEmbeddable that is 'dense R'??}
 
 \end{ccRefConcept}

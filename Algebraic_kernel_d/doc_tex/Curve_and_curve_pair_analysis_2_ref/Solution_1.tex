@@ -6,11 +6,22 @@ The concept \ccc{Solution_1} is meant to store a coordinate ($x$, or $y$) of
 a point on curve. 
 
 \ccRefines
- \ccc{RealEmbeddable}
+ \ccc{DefaultConstructible, Assignable, LessThanComparable, CompactifiedNumber}
 
-Remark: Michael Hemmer proposed to extend the concept \ccc{RealEmbeddable} 
-with the notion of compactification (adding/dealing with $\pm\infty$). A
-valid model has to implement handling of infinity.
+The concept \ccc{CompactifiedNumber} has not been introduced so far. Michael
+Hemmer will introduce it as basic tool as soon as possible. For
+now we assume that a number of this type is either finite, and if not,
+we can ask, wether it represents $\pm\infty$.
+
+There are reasons why we introduce \ccc{Solution_1} over 
+\ccc{AlgebraicReal_1}\footnote{Not yet introduced so far}:
+\begin{itemize}
+\item It may suffices to use a simpler number type ($Q[\sqrt{2}]$).
+\item Keep concept minimal, \ccc{AlgebraicReal_1} will quite certainly
+contain more than needed here.
+\item \ccc{AlgebraicReal_1} won't be a refinement of \ccc{CompaticiedNumber}.
+\ccc{double} is.
+\end{itemize}
 
 \begin{ccAdvanced}
 
@@ -38,7 +49,7 @@ following methods:
   \ccPrecond{sol1 != s}
 }
 
-\ccMethod{std::pair<Boundary,Boundary> s1.approximate(int prec);}{
+\ccMethod{std::pair<Boundary,Boundary> approximate(int prec);}{
   Refines the representation to the given precision (binary digits 
   after point). Internally the precision can already be higher.
 } 
@@ -47,5 +58,12 @@ The advanced methods can be seen as a refined concept for enabling drawing.
 Maybe, we can have it orthogonal to the normal concept.
 
 \end{ccAdvanced}
+
+Remark: Note that this concept only deals with the interface to upper
+layers. There might be additional requirements for number types to 
+implement a model of this concept.
+
+\ccHasModels
+\ccc{double, NiX::Compactified< NiX::Algebraic_real >}
 
 \end{ccRefConcept}

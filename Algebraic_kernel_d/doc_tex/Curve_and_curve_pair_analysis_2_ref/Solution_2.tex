@@ -5,6 +5,18 @@
 The concept \ccc{Solution_2} is meant to store both coordinates of a point
 on a curve.
 
+There are reasons why we introduce \ccc{Solution_2} over 
+\ccc{AlgebraicReal_2}:
+\begin{itemize}
+\item \ccc{AlgebraicReal_2} seems to be pair of \ccc{AlgebraicReal_1}, while
+\ccc{Solution_2} has members to access \ccc{Solution_1} for $x$ and $y$. 
+With the name we state better to be more generic.
+\item Keep concept minimal, in contrast to \ccc{AlgebraicReal_2} that
+seems to be quite powerful.
+\item \ccc{Solution_2} is ``compactified'' (with the help of 
+\ccc{Solution_1}) in contrast to \ccc{AlgebraicReal_2}.
+\end{itemize}
+
 \ccCreationVariable{sol2}
 
 \ccAccessFunctions
