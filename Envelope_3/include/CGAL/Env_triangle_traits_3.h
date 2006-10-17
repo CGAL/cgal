@@ -306,7 +306,6 @@ protected:
   typedef typename Kernel::Triangle_2               Triangle_2;
   typedef typename Kernel::Segment_2                Segment_2;
 
-  typedef typename Kernel::Point_3                  Point_3;
   typedef typename Kernel::Segment_3                Segment_3;
   typedef typename Kernel::Triangle_3               Triangle_3;
   typedef typename Kernel::Plane_3                  Plane_3;
