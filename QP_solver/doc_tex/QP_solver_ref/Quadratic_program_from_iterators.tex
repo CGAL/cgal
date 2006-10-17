@@ -1,0 +1,56 @@
+\begin{ccRefClass}{Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}
+
+\ccInclude{CGAL/QP_models.h}
+
+\ccDefinition
+An object of class \ccRefName\ describes a convex quadratic program of the form
+%%
+\begin{eqnarray*}
+\mbox{(QP)}& \mbox{minimize} & x^{T}Dx+c^{T}x+c_0 \\
+&\mbox{subject to}   & Ax\qprel b, \\
+&                    & l \leq x \leq u
+\end{eqnarray*}
+%%
+in $n$ real variables $x=(x_0,\ldots,x_{n-1})$.
+Here, 
+\begin{itemize}
+\item $A$ is an $m\times n$ matrix (the constraint matrix), 
+\item $b$ is an $m$-dimensional vector (the right-hand side),
+\item $\qprel$ is an $m$-dimensional vector of relations 
+from $\{\leq, =, \geq\}$, 
+\item $l$ is an $n$-dimensional vector of lower
+bounds for $x$,
+\item $u$ is an $n$-dimensional vector of upper bounds for
+$x$, 
+\item $D$ is a symmetric positive-semidefinite $n\times n$ matrix (the
+  quadratic objective function),
+\item $c$ is an $n$-dimensional vector (the linear objective
+  function), and 
+\item $c_0$ is a constant.
+\end{itemize}
+
+\ccIsModel
+\ccc{NonnegativeQuadraticProgramInterface}\\
+\ccc{LinearProgramInterface}\\
+\ccc{NonnegativeLinearProgramInterface}
+
+\ccCreation
+\ccIndexClassCreation
+\ccCreationVariable{qp}
+
+\ccConstructor{(int n, int m, 
+  const A_iterator& a, 
+  const B_iterator& b,
+  const R_iterator& r,
+  const FL_iterator& fl,
+  const L_iterator& l,
+  const FU_iterator& fu,
+  const U_iterator& u,
+  const D_iterator& d,
+  const C_iterator& c,
+  const value_type& c0 = value_type(0)
+  )}{constructs \ccVar\ from the given iterators and the constant \ccc{c0}.}
+
+\ccSeeAlso
+
+\end{ccRefClass}

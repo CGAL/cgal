@@ -1,0 +1,89 @@
+\begin{ccRefConcept}{NonnegativeLinearProgramInterface}
+
+\ccDefinition
+A model of \ccRefName\ describes a linear program of the form
+%%
+\begin{eqnarray*}
+\mbox{(QP)}& \mbox{minimize} &c^{T}x+c_0 \\
+&\mbox{subject to}   & Ax\qprel b, \\
+&                    & x \geq 0
+\end{eqnarray*}
+%%
+in $n$ nonnegative real variables $x=(x_0,\ldots,x_{n-1})$.
+Here, 
+\begin{itemize}
+\item $A$ is an $m\times n$ matrix (the constraint matrix), 
+\item $b$ is an $m$-dimensional vector (the right-hand side),
+\item $\qprel$ is an $m$-dimensional vector of relations 
+from $\{\leq, =, \geq\}$, 
+\item $c$ is an $n$-dimensional vector (the linear objective
+  function), and 
+\item $c_0$ is a constant.
+\end{itemize}
+
+\ccHasModels
+\ccc{CGAL::Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>}\\
+\ccc{CGAL::Nonnegative_linear_program_from_pointers<NT>}\\
+\ccc{CGAL::Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, D_it, C_it>}\\
+\ccc{CGAL::Nonnegative_quadratic_program_from_pointers<NT>}\\
+\ccc{CGAL::Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, C_it>}\\
+\ccc{CGAL::Linear_program_from_pointers<NT>}\\
+\ccc{CGAL::Linear_program_from_mps<NT>}\\
+\ccc{CGAL::Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}\\
+\ccc{CGAL::Quadratic_program_from_pointers<NT>}\\
+\ccc{CGAL::Quadratic_program_from_mps<NT>}
+
+\ccTypes
+
+\ccNestedType{A_iterator}{A random access iterator type for 
+  the \emph{columns} of the constraint matrix $A$.}
+
+\ccNestedType{B_iterator}{A random access iterator type for 
+  the entries of the right-hand side $b$.}
+
+\ccNestedType{R_iterator}{A random access iterator type for the
+  relations $\qprel$. The value type of \ccc{R_iterator} is
+  \ccc{CGAL::Comparison_result}.}
+
+\ccNestedType{C_iterator}{A random access iterator type for the
+  entries of the linear objective function vector $c$.}
+
+\ccOperations
+
+\ccCreationVariable{qp}
+
+\ccMethod{int n() const;}{returns the number $n$ of variables (number
+  of columns of $A$) in \ccVar.}
+
+\ccMethod{int m() const;}{returns the number $m$ of constraints
+  (number of rows of $A$) in \ccVar.}
+
+\ccMethod{const A_iterator& a() const;}{returns an iterator for the columns
+  of $A$. For $j=0,\ldots,n-1$, $\ccVar.\ccc{a()}[j]$ is a random access
+  iterator for column $j$. This means that $\ccVar.\ccc{a()}[j][i]$ is the
+  entry of $A$ in row $i$ and column $j$ (row and column indices start
+  from $0$).}
+
+\ccMethod{const B_iterator& b() const;}{returns an iterator for the entries
+  of $b$.}
+
+\ccMethod{const R_iterator& r() const;}{returns an iterator for the entries
+  of $\qprel$. The value \ccc{CGAL::SMALLER} stands
+  for $\leq$, \ccc{CGAL::EQUAL} stands for $=$, and \ccc{CGAL::LARGER}
+  stands for $\geq$.}
+
+\ccMethod{const C_iterator& c() const;}{returns an iterator for the entries
+  of $c$.}
+
+\ccMethod{const C_iterator::value_type& c0() const;}{returns the constant term
+$c_0$ of the objective function.}
+
+\ccRequirements
+
+The value types of all iterator types (nested iterator types,
+respectively, for \ccc{A_iterator}) must be
+convertible to some common Euclidian ring number type \ccc{ET}.
+
+\ccSeeAlso
+
+\end{ccRefConcept}
