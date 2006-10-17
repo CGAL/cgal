@@ -14,10 +14,10 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = -I../../include/\
+           -I../../../BGL/include\
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
-           $(CGAL_CXXFLAGS) \
-           $(DEBUG_OPT)
+           $(CGAL_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -29,20 +29,18 @@ LIBPATH = \
 
 LDFLAGS = \
           $(TESTSUITE_LDFLAGS) \
-          $(CGAL_LDFLAGS)
+          $(CGAL_LDFLAGS) 
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
-all:            \
-                simplification_demo 
+all:            edge_collapse_demo 
 
-simplification_demo$(EXE_EXT): simplification_demo$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)simplification_demo simplification_demo$(OBJ_EXT) $(LDFLAGS)
+edge_collapse_demo$(EXE_EXT): edge_collapse_demo$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)edge_collapse_demo edge_collapse_demo$(OBJ_EXT) $(LDFLAGS)
 
-clean: \
-                   simplification_demo.clean 
+clean:          edge_collapse_demo.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules

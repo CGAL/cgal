@@ -2056,6 +2056,7 @@ Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/cube.off -
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/high_genus.off -text svneol=unset#application/octet-stream
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/knot2.off -text svneol=unset#application/octet-stream
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/oni.off -text svneol=unset#application/octet-stream
+Surface_mesh_simplification/demo/Surface_mesh_simplification/edge_collapse_demo.cpp -text
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification.tex -text
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/PkgDescription.tex -text
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/Surface_mesh_simplification.tex -text
@@ -2142,12 +2143,12 @@ Surface_mesh_simplification/test/Surface_mesh_simplification/data/cube_MP.audit 
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/cube_open.off -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/cube_open_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/cube_open_MP.audit -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/eight.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/eight_LT.audit -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/eight_MP.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/genus1.off -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/genus1_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/genus1_MP.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/genus2.off -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/genus2_LT.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/genus2_MP.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/head_open_with_holes.off -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/head_open_with_holes_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/head_open_with_holes_MP.audit -text

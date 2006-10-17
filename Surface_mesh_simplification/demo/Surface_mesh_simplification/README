@@ -1,7 +1,7 @@
 demo/Surface_simplification/README
 ----------------------------------
 
-simplification_demo.C
+edge_collapse_demo.cpp
 
 
 Fernando Cacciola
