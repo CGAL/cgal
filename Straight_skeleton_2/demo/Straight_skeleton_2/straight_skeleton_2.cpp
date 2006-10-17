@@ -215,7 +215,7 @@ private slots:
       double m = s * 0.01 ;
       offsets.clear();
       for ( int c = 1 ; c < 30 ; ++ c )
-        offsets.push_back(c*m);
+        offsets.insert(c*m);
 
       RegionPtr lRegion;
 
@@ -270,7 +270,8 @@ private slots:
       {
         Polygon const& lOuter = *lRegion.front() ;
         
-        double lMaxOffset = offsets.size() > 0 ? offsets.back() : 10.0 ;
+        Doubles::iterator last = offsets.end() ;
+        double lMaxOffset = offsets.size() > 0 ? *--last : 10.0 ;
 
         boost::optional<double> lMargin = CGAL::compute_outer_frame_margin(lOuter.rbegin(),lOuter.rend(),lMaxOffset);
         if ( lMargin )
@@ -313,7 +314,7 @@ private slots:
       output.clear();
 
       if ( offsets.size() == 0 )
-        offsets.push_back(1);
+        offsets.insert(1);
 
       for ( Doubles::const_iterator i = offsets.begin() ; i != offsets.end() ; ++ i )
       {
@@ -333,7 +334,7 @@ private slots:
 
   void set_offset()
   {
-    double lOld = offsets.size() > 0 ? offsets.front() : 0.0 ;
+    double lOld = offsets.size() > 0 ? *offsets.begin() : 0.0 ;
 
     bool ok = FALSE;
     QString text = QInputDialog::getText( "Straight Skeleton and Offseting demo"
@@ -349,7 +350,7 @@ private slots:
       if ( ok )
       {
         offsets.clear() ;
-        offsets.push_back(tmp) ;
+        offsets.insert(tmp) ;
       }
     }
   }
@@ -445,7 +446,7 @@ private slots:
       {
         double v ;
         offsets_file >> v;
-        offsets.push_back(v);
+        offsets.insert(v);
       }
       auto_create_offsets = false ;
     }
@@ -486,7 +487,7 @@ private slots:
             if ( auto_create_offsets )
             {
               for ( int c = 1 ; c < 30 ; ++ c )
-                offsets.push_back(c*m);
+                offsets.insert(c*m);
             }
           }
           
