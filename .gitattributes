@@ -803,7 +803,10 @@ Kinetic_data_structures/doc_tex/Kinetic_framework/architecture_pct.gif -text svn
 Kinetic_data_structures/doc_tex/Kinetic_framework/architecture_pct.pdf -text svneol=unset#application/pdf
 Kinetic_data_structures/doc_tex/Kinetic_framework/sort_usage_pct.gif -text svneol=unset#image/gif
 Kinetic_data_structures/doc_tex/Kinetic_framework_ref/#Time.tex# -text
+Kinetic_data_structures/examples/Kinetic_data_structures/update_Delaunay_triangulation_2.cpp -text
 Kinetic_data_structures/include/CGAL/Indirect_point_2_kernel.h -text
+Kinetic_data_structures/include/CGAL/Kinetic/Free_event_base.h -text
+Kinetic_data_structures/include/CGAL/Kinetic/Interval_simulator_traits.h -text
 Kinetic_data_structures/include/CGAL/Updatable_Delaunay_triangulation_table_2.h -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=1,n -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=3 -text

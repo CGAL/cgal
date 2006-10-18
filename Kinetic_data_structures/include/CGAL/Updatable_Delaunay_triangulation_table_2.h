@@ -864,9 +864,9 @@ public:
     return cum;
   }
 
-  bool can_fail(Cert_tuple ct, double cur_time) const {
+  bool can_fail(Cert_tuple ct, double cur_time, double end_time) const {
     CGAL::Protect_FPU_rounding<true> prot;
-    INT rct(cur_time, 1);
+    INT rct(cur_time, end_time);
     bool ret= (sign_at(ct[0],ct[1],ct[2],ct[3], rct) != CGAL::POSITIVE);
     
     if (!ret) {
@@ -1012,7 +1012,9 @@ public:
     //CGAL::Protect_FPU_rounding<true> prot;
     INT v= evaluate_ipoly(f, lb);
     CGAL_UD_DEBUG("Const is " << v );
+#ifndef NDEBUG
     double olb= lb;
+#endif
     if (v.inf() >= 0) {
       INT deriv= INT(0,1)*f[1]+INT(0,2)*f[2]+INT(0,3)*f[3]+INT(0,4)*f[4];
       CGAL_UD_DEBUG(" and derivitive is "<<  deriv 
