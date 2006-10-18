@@ -915,6 +915,9 @@ struct Binary_operator_result <Root_of_2<T1>, T2>
     typedef Root_of_2<T1>  type;
 };
 
+// af: I am not sure that the following specializations are needed. 
+//     In fact they lead to an ICE of VC++
+#ifndef _MSC_VER
 template < typename RT >
 struct Binary_operator_result <Root_of_2<RT>, typename Root_of_traits<RT>::RootOf_1 > 
 {
@@ -926,7 +929,7 @@ struct Binary_operator_result <typename Root_of_traits<RT>::RootOf_1, Root_of_2<
 {
     typedef Root_of_2<RT>  type;
 };
-
+#endif 
 
 template < typename RT >
 Root_of_2<RT>
