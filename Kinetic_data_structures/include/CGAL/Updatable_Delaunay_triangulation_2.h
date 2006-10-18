@@ -513,7 +513,7 @@ struct Updatable_Delaunay_triangulation_2 {
 	bt= CGAL::to_interval(current_time()).first;
       }
 
-      if (!ui()->can_fail(ct, bt)) {
+      if (!ui()->can_fail(ct, bt, end_time)) {
 	CGAL_postcondition(check_failure_time > 1);
 	return null_pair();
       }
