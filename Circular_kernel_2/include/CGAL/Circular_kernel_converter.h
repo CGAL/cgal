@@ -53,7 +53,97 @@ public:
 	typedef typename Linear_kernel_converter::Number_type_converter       RT_type_converter;
 	typedef typename Algebraic_kernel_converter::Root_of_type_converter   Root_of_type_converter;
 
+
+
+
+#ifdef _MSC_VER
+   bool operator()(bool b) const { return Linear_kernel_converter::operator()(b); }
+
+    Bounded_side operator()(Bounded_side bs) const {
+      return Linear_kernel_converter::operator()(bs);
+    }
+
+    Comparison_result operator()(Comparison_result cr) const {
+      return Linear_kernel_converter::operator()(cr);
+    }
+
+    Angle operator()(Angle a) const { return Base::operator()(a); }
+
+    Origin
+    operator()(const Origin& o) const
+    {
+        return o;
+    }
+
+    Null_vector
+    operator()(const Null_vector& n) const
+    {
+        return n;
+    }
+
+    Bbox_2
+    operator()(const Bbox_2& b) const
+    {
+        return b;
+    }
+
+    Bbox_3
+    operator()(const Bbox_3& b) const
+    {
+        return b;
+    }
+
+    typename C2::FT
+    operator()(const typename C1::FT &a) const
+    {
+      return Linear_kernel_converter::operator()(a);
+    }
+
+    typename C2::Point_2
+    operator()(const typename C1::Point_2 &a) const
+    {
+      return Linear_kernel_converter::operator()(a);
+    }
+
+    typename C2::Vector_2
+    operator()(const typename C1::Vector_2 &a) const
+    {
+      return Linear_kernel_converter::operator()(a);
+    }
+
+    typename C2::Direction_2
+    operator()(const typename C1::Direction_2 &a) const
+    {
+      return Linear_kernel_converter::operator()(a);
+    }
+
+    typename C2::Segment_2
+    operator()(const typename C1::Segment_2 &a) const
+    {
+      return Linear_kernel_converter::operator()(a);
+    }
+
+    typename C2::Line_2
+    operator()(const typename C1::Line_2 &a) const
+    {
+      return Linear_kernel_converter::operator()(a);
+    }
+
+    typename C2::Ray_2
+    operator()(const typename C1::Ray_2 &a) const
+    {
+      return Linear_kernel_converter::operator()(a);
+    }
+
+    typename C2::Circle_2
+    operator()(const typename C1::Circle_2 &a) const
+    {
+      return Linear_kernel_converter::operator()(a);
+    }
+#else
         using LK_converter::operator();
+#endif
+
 
 	typename C2::Circular_arc_point_2
 	operator()(const typename C1::Circular_arc_point_2 &a) const
@@ -64,6 +154,7 @@ public:
 	   	  )
 	   );
 	}
+
 
 	typename C2::Circular_arc_2
 	operator()(const typename C1::Circular_arc_2 &a) const
@@ -82,7 +173,6 @@ public:
 		                     		     operator()( a.target() ) );
 	}
 	
-
 
 	  typename C2::Object_2
     operator()(const typename C1::Object_2 &obj) const
@@ -105,6 +195,7 @@ public:
 	
     }
 	
+
 	
   std::vector<typename C2::Object_2>
   operator()(const std::vector<typename C1::Object_2>& v) const
@@ -117,7 +208,7 @@ public:
     return res;
   }
 	
-        
+
         
   std::pair<typename C2::Line_arc_2,typename C2::Line_arc_2>
   operator()(const std::pair<typename C1::Line_arc_2,typename C1::Line_arc_2> &a) const
@@ -132,7 +223,8 @@ public:
     return std::make_pair (operator()( a.first ),
 		           operator()( a.second ));
   }
-	
+
+
 }; 
 
 CGAL_END_NAMESPACE
