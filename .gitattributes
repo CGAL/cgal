@@ -348,11 +348,11 @@ BGL/doc_tex/BGL_ref/graph_traits_Polyhedron_3.tex -text
 BGL/doc_tex/BGL_ref/halfedge_graph_traits_Polyhedron_3.tex -text
 BGL/doc_tex/BGL_ref/intro.tex -text
 BGL/doc_tex/BGL_ref/main.tex -text
-BGL/examples/BGL/BGL_arrangement_2/arr_print.h -text
-BGL/examples/BGL/BGL_arrangement_2/makefile -text
-BGL/examples/BGL/BGL_polyhedron_3/kruskal_with_stored_id.cpp -text
-BGL/examples/BGL/BGL_polyhedron_3/makefile -text
-BGL/examples/BGL/BGL_triangulation_2/makefile -text
+BGL/examples/BGL_arrangement_2/arr_print.h -text
+BGL/examples/BGL_arrangement_2/makefile -text
+BGL/examples/BGL_polyhedron_3/kruskal_with_stored_id.cpp -text
+BGL/examples/BGL_polyhedron_3/makefile -text
+BGL/examples/BGL_triangulation_2/makefile -text
 BGL/include/CGAL/HalfedgeDS_face_max_base_with_id.h -text
 BGL/include/CGAL/HalfedgeDS_halfedge_max_base_with_id.h -text
 BGL/include/CGAL/HalfedgeDS_vertex_max_base_with_id.h -text
