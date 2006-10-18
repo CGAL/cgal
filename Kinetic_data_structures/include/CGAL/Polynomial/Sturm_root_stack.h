@@ -1221,8 +1221,7 @@ class Sturm_root_stack
 
         int& root_index() { return root_idx; }
 
-        template<class Stream>
-            Stream& write(Stream& os) const
+  std::ostream& write(std::ostream& os) const
         {
 	  /*for (unsigned int i = 0; i < sseq.size(); i++) {
                 os << sseq[i] << std::endl;
@@ -1241,7 +1240,7 @@ class Sturm_root_stack
 	  os << sseq[0] << "->" ;
 	  os << top();
 	  
-            return os;
+	  return os;
         }
 
   /*  bool operator==(const This &o) const {
@@ -1261,8 +1260,8 @@ class Sturm_root_stack
         mutable int                      root_idx;
 };
 
-template<class Stream, class T, class S, class M, bool D>
-Stream& operator<<(Stream& os,
+template<class T, class S, class M, bool D>
+std::ostream& operator<<(std::ostream& os,
 const Sturm_root_stack<T,S,M,D>& solver)
 {
     return solver.write(os);

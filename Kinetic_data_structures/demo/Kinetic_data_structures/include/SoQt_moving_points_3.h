@@ -289,7 +289,7 @@ void SoQt_moving_points_3<Tr, G>::update_coordinates()
   for (typename MPT::Key_iterator it= tr_.active_points_3_table_handle()->keys_begin();
        it != tr_.active_points_3_table_handle()->keys_end(); ++it, ++cp) {
     //std::cout << "drawing point " << *it  << "= " << ik_.to_static(*it) << std::endl;
-    typename IK::Static_kernel::Point_3 pt= ik_.static_object(*it);
+    typename IK::Static_kernel::Point_3 pt= ik_.current_coordinates_object()(*it);
     pts[it->to_index()].setValue(CGAL::to_double(pt.x()), CGAL::to_double(pt.y()),
 			      CGAL::to_double(pt.z()));
     if (vpts != NULL) vpts[cp].setValue(CGAL::to_double(pt.x()),
@@ -470,7 +470,7 @@ void SoQt_moving_points_3<Tr, G>::write(std::ostream &out) const
   for (typename MPT::Key_iterator it= tr_.active_points_3_table_handle()->keys_begin();
        it != tr_.active_points_3_table_handle()->keys_end(); ++it) {
     out << *it;
-    out << ": " << ik_.static_object(*it) << std::endl;
+    out << ": " << ik_.current_coordinates_object()(*it) << std::endl;
   }
 }
 

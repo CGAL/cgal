@@ -64,9 +64,9 @@ public:
   }
 
   CGAL::Comparison_result compare_concurrent(typename Simulator::Event_key a,
-					     Edge ea,
+					     Edge ,
 					     typename Simulator::Event_key b,
-					     Edge eb) const {
+					     Edge ) const {
     return CGAL::compare(a,b);
   }
  
@@ -93,7 +93,7 @@ public:
      return certificate_failure_time(e, s);
   }
 
-  Certificate_pair certificate_failure_time(Edge e,
+  Certificate_pair certificate_failure_time(Edge ,
 					    Certificate_data s) {
     Time t= s.failure_time();
     s.pop_failure_time();

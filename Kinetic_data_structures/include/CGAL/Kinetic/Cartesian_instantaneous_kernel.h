@@ -182,11 +182,11 @@ public:
   }
 
 
-  typedef Instantaneous_adaptor<std::less<RT>, This, Point_1> Less_x_1;
+  typedef Instantaneous_adaptor<std::less<RT>, Current_coordinates, Point_1> Less_x_1;
   Less_x_1 less_x_1_object() const
   {
     typename std::less<RT> sp;
-    return Less_x_1(*this, sp);
+    return Less_x_1(current_coordinates_object(), sp);
   }
 
   CGAL_MSA(Side_of_oriented_circle,side_of_oriented_circle, 2);

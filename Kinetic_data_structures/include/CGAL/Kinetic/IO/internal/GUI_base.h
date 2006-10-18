@@ -58,7 +58,7 @@ public:
 
   //! Initialize with a pointer to the simulator.
   Gui_base(typename Simulator::Handle sh): mode_(STOPPED), paused_mode_(STOPPED),
-					    fps_(30), speed_log_(0),
+					    fps_(60), speed_log_(0),
 					    dir_of_time_(1), timer_(new Timer()),
 					    timer_callback_(timer_,const_cast<This*>(this)),
 					    drawable_(NULL), processing_(false) {

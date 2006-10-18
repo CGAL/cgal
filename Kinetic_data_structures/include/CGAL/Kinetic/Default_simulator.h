@@ -277,6 +277,12 @@ public:
     else return Time(queue_.front_priority());
   }
 
+  Event_key next_event() const
+  {
+    if (queue_.empty()) return Event_key();
+    else return queue_.front();
+  }
+
   //! The last time of interest
   /*!
     If time is running backwards, then this returns Time::infinity()
@@ -364,9 +370,10 @@ public:
     This is just passed to the event queue.
   */
   void delete_event(const Event_key &k) {
+    CGAL_precondition(k != Event_key());
     //if (k== final_event()) return;
     //#ifdef NDEBUG
-    if (k == Event_key() || k== null_event()) {
+    if (k== null_event()) {
       return;
     }
     //#endif
@@ -412,7 +419,7 @@ public:
   {
     CGAL_precondition(k != Event_key());
     CGAL_precondition(k != null_event());
-    CGAL_KINETIC_LOG(LOG_LOTS, "Accessing event for key " << k << std::endl);
+    //CGAL_KINETIC_LOG(LOG_LOTS, "Accessing event for key " << k << std::endl);
     return queue_.template get<Event_type>(k);
   }
 

@@ -1,5 +1,5 @@
-#include <CGAL/Kinetic/Delaunay_triangulation_2.h>
 #include <CGAL/Kinetic/Exact_simulation_traits_2.h>
+#include <CGAL/Kinetic/Delaunay_triangulation_2.h>
 
 int main(int, char *[])
 {

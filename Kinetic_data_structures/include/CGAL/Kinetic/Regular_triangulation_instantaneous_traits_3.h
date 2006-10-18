@@ -24,12 +24,12 @@
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Kinetic/internal/Kernel/Cartesian_moving_weighted_point_3.h>
 
-#define CGAL_MSAW(Pred, pred, d) typedef Instantaneous_adaptor<typename Parent::Static_kernel::Pred##_##d, This, Weighted_point_3> Pred##_##d;\
-Pred##_##d pred##_##d##_object() const \
-{ \
-    typename Parent::Static_kernel::Pred##_##d sp= Parent::rep_->static_kernel().pred##_##d##_object();\
-    return Pred##_##d(*this, sp);\
-}
+#define CGAL_MSAW(Pred, pred, d) typedef Instantaneous_adaptor<typename Parent::Static_kernel::Pred##_##d, typename Parent::Current_coordinates, Weighted_point_##d> Pred##_##d; \
+  Pred##_##d pred##_##d##_object() const				\
+  {									\
+    typename Parent::Static_kernel::Pred##_##d sp= Parent::rep_->static_kernel().pred##_##d##_object(); \
+    return Pred##_##d(Parent::current_coordinates_object(), sp);	\
+  }
 
 CGAL_KINETIC_BEGIN_NAMESPACE
 
@@ -47,7 +47,8 @@ public Cartesian_instantaneous_kernel<MPT, SK>
     public:
 
         Regular_triangulation_instantaneous_traits_3(typename MPT::Const_handle mot,
-						     const typename Parent::Static_kernel &sk= typename Parent::Static_kernel()): Parent(mot, sk) {
+						     const typename Parent::Static_kernel &sk
+						     = typename Parent::Static_kernel()): Parent(mot, sk) {
         }
 //! Use a key from the moving point table as the point primitive.
 /*!
@@ -59,13 +60,13 @@ public Cartesian_instantaneous_kernel<MPT, SK>
   structure wrapping this kernel for anything other than debugging
   or temporaries.
 */
-        typedef typename Parent::Static_kernel::Bare_point Bare_point;
-        CGAL_MSAW(Power_test,power_test, 3);
-
-        void write_point(const Weighted_point_3 p, std::ostream &out) const
-        {
-            out << p << " = " << Parent::rep_->static_object(p) << std::endl;;
-        }
+  typedef typename Parent::Static_kernel::Bare_point Bare_point;
+  CGAL_MSAW(Power_test,power_test, 3);
+  
+  void write_point(const Weighted_point_3 p, std::ostream &out) const
+  {
+    out << p << " = " << Parent::rep_->static_object(p) << std::endl;;
+  }
 };
 #undef CGAL_MSAW
 

@@ -288,7 +288,7 @@ void SoQt_moving_weighted_points_3<T,G>::update_coordinates()
   for (typename MPT::Key_iterator it= tr_.active_points_3_table_handle()->keys_begin();
        it != tr_.active_points_3_table_handle()->keys_end(); ++it, ++cp) {
     //std::cout << "drawing point " << *it  << "= " << ik_.to_static(*it) << std::endl;
-    typename IK::Static_kernel::Weighted_point pt= ik_.static_object(*it);
+    typename IK::Static_kernel::Weighted_point pt= ik_.current_coordinates_object()(*it);
     double w= CGAL::to_double(pt.weight());
     if (w < 0) w=0;
     double radius = std::sqrt(w);
@@ -470,7 +470,7 @@ void SoQt_moving_weighted_points_3<T,G>::write(std::ostream &out) const
   for (typename MPT::Key_iterator it= tr_.active_points_3_table_handle()->keys_begin();
        it != tr_.active_points_3_table_handle()->keys_end(); ++it) {
     out << *it;
-    out << ": " << ik_.static_object(*it) << std::endl;
+    out << ": " << ik_.current_coordinates_object()(*it) << std::endl;
   }
 }
 

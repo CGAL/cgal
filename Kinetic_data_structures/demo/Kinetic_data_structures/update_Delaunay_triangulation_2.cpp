@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
     ("exact", boost::program_options::bool_switch(&exact), "Run an exact simulation")
     ("num-points,n", boost::program_options::value<int>(&n), "Number of points to use.")
     ("random-seed,s", boost::program_options::value<int>(&seed), "The value to use for the random seed.")
-    ("degree,d", boost::program_options::value<int>(&d), "The degree of the motions to use.")
+    //("degree,d", boost::program_options::value<int>(&d), "The degree of the motions to use.")
     ("ifile,i", boost::program_options::value<std::string>(&ifile), "The inital coordinates.")
     ("ffile,f", boost::program_options::value<std::string>(&ffile), "The final coordinates.")
     ;

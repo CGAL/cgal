@@ -59,7 +59,7 @@ public:
     /*std::cout << "Args " << cc_(arg0) <<", "
       << cc_(arg1) << " result " << pred_(cc_(arg0), cc_(arg1))
       << " antiresult " << pred_(cc_(arg1), cc_(arg0)) << std::endl;*/
-
+    //typename Curcoord::result_type a0= , a1= cc_(arg1);
     return pred_(cc_(arg0), cc_(arg1));
   }
 

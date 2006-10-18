@@ -22,12 +22,12 @@ public:
     return CGAL::compare(a,b);
   }	
   template <class Key>
-  bool merge_concurrent(Key a,
-			Key b) {
+  bool merge_concurrent(Key ,
+			Key ) {
     return false;
   }
   template <class K>
-  void audit(K k) const {}
+  void audit(K ) const {}
 protected:
   KDS_handle kds_;
 };

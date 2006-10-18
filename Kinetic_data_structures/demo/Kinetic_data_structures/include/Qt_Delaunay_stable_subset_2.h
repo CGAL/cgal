@@ -89,10 +89,10 @@ protected:
 	  && fit->first->vertex((fit->second+2)%3)->point().is_valid()
 	  && fit->first->vertex(fit->second)->point().is_valid()
 	  && fit->first->neighbor(fit->second)->vertex(fit->first->mirror_index(fit->second))->point().is_valid()) {
-	Static_point o= tri.geom_traits().static_object(fit->first->vertex((fit->second+1)%3)->point());
-	Static_point d= tri.geom_traits().static_object(fit->first->vertex((fit->second+2)%3)->point());
-	Static_point a= tri.geom_traits().static_object(fit->first->vertex(fit->second)->point());
-	Static_point b= tri.geom_traits().static_object(fit->first->neighbor(fit->second)->vertex(fit->first->mirror_index(fit->second))->point());
+	Static_point o= tri.geom_traits().current_coordinates_object()(fit->first->vertex((fit->second+1)%3)->point());
+	Static_point d= tri.geom_traits().current_coordinates_object()(fit->first->vertex((fit->second+2)%3)->point());
+	Static_point a= tri.geom_traits().current_coordinates_object()(fit->first->vertex(fit->second)->point());
+	Static_point b= tri.geom_traits().current_coordinates_object()(fit->first->neighbor(fit->second)->vertex(fit->first->mirror_index(fit->second))->point());
 	
 	double angle1= std::abs(angle(o,a, d));
 	double angle2= std::abs(angle(o,b, d));
@@ -108,8 +108,8 @@ protected:
 	  }
 	  w << ss;
 	} else {
-	  Static_point o= tri.geom_traits().static_object(fit->first->vertex((fit->second+1)%3)->point());
-	  Static_point d= tri.geom_traits().static_object(fit->first->vertex((fit->second+2)%3)->point());
+	  Static_point o= tri.geom_traits().current_coordinates_object()(fit->first->vertex((fit->second+1)%3)->point());
+	  Static_point d= tri.geom_traits().current_coordinates_object()(fit->first->vertex((fit->second+2)%3)->point());
 	  Static_segment ss(o,d);
 	  w << CGAL::Color(0,0,0);
 	  w << ss;
@@ -124,8 +124,8 @@ protected:
 	//w << ss;
       }
 
-      //Static_point p0= tri.geom_traits().static_object(fit->first->vertex((fit->second+1)%3)->point());
-      //Static_point p1= tri.geom_traits().static_object(fit->first->vertex((fit->second+2)%3)->point());
+      //Static_point p0= tri.geom_traits().current_coordinates_object()(fit->first->vertex((fit->second+1)%3)->point());
+      //Static_point p1= tri.geom_traits().current_coordinates_object()(fit->first->vertex((fit->second+2)%3)->point());
 
     }
   }

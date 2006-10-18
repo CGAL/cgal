@@ -447,8 +447,10 @@ public:
 	//int i= fc->index(vh);
 	Edge e0(f, i);
 	delete_certificate(e0);
+	update_edge(e0);
 	Edge e1=Edge(f, (i+1)%3);
 	delete_certificate(e1);
+	update_edge(e1);
 	f= f->neighbor((i+1)%3);
 	i= f->index(vh);
       } while (f != fe);
@@ -457,7 +459,7 @@ public:
    
     watcher_.modify_vertex(vh);
 
-    if (has_certificates_) {
+    /*if (has_certificates_) {
       Face_handle f= vh->face(), fe= vh->face();
       int i= f->index(vh);
       do {
@@ -469,7 +471,7 @@ public:
 	f= f->neighbor((i+1)%3);
 	i= f->index(vh);
       } while (f != fe);
-    }
+      }*/
     //write(std::cout);
   }
 
@@ -878,8 +880,10 @@ protected:
   void delete_certificate(Edge e) {
     CGAL_DELAUNAY_2_DEBUG(std::cout << "Cleaning edge " << TDS_helper::origin(e)->point() << " " << TDS_helper::destination(e)->point() << std::endl);
     Event_key k=  TDS_helper::get_undirected_edge_label(e);
-    traits_.simulator_handle()->delete_event(k);
-    TDS_helper::set_undirected_edge_label(e, Event_key());
+    if (k != Event_key()) {
+      traits_.simulator_handle()->delete_event(k);
+      TDS_helper::set_undirected_edge_label(e, Event_key());
+    }
   }
 
 
