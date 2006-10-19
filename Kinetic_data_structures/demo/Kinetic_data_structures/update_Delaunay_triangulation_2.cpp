@@ -1,6 +1,9 @@
+//#define NDEBUG
+#ifndef NDEBUG
 #define CGAL_CHECK_EXPENSIVE
 #define CGAL_CHECK_EXACTNESS
 #define CGAL_KINETIC_DISABLE_AUDITING
+#endif
 
 #include <CGAL/basic.h>
 

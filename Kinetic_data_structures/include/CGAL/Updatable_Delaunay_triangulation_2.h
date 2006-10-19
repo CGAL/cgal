@@ -427,7 +427,10 @@ struct Updatable_Delaunay_triangulation_2 {
       return true;
     }
 
-    Cert_tuple tuple(typename Default_traits::Edge e) const {
+    Cert_typle tuple(Point_key ks[4]) const {
+      return Cert_typle(ks);
+    }
+    /*Cert_tuple tuple(typename Default_traits::Edge e) const {
       Point_key ks[4];
       ks[0]= TDS_helper::origin(e)->point();
       ks[1]= TDS_helper::third_vertex(e)->point();
@@ -436,7 +439,7 @@ struct Updatable_Delaunay_triangulation_2 {
       if (ks[1] == Point_key() || ks[3]==Point_key()
 	  || ks[0] == Point_key() || ks[2]== Point_key()) return Cert_tuple();
       else return Cert_tuple(ks);
-    }
+      }*/
     
     void point_changed(Point_key k){
       ui()->point_changed(k);
@@ -468,13 +471,14 @@ struct Updatable_Delaunay_triangulation_2 {
     }
  
 
-   
+    bool hull_certificate_failure_time(typename Default_traits::Edge, Point_key [3], Time, Certificate_data) {
+      return false;
+    }
 
 
-    Certificate_pair certificate_failure_time(typename Default_traits::Edge e) {
+    bool internal_certificate_failure_time(typename Default_traits::Edge e, Point_key pks[4], Time &rett, Certificate_data) {
 
-      Cert_tuple ct= tuple(e);
-      if (ct == Cert_tuple()) return null_pair();
+      Cert_tuple ct= tuple(pks);
 
       double end_time= ui()->next_activation();
       //ui()->set_next_activation(1.0);
@@ -553,7 +557,7 @@ struct Updatable_Delaunay_triangulation_2 {
 	return null_pair();
       }
 
-      Time rett(ft.first, ft.second, Refiner(ct, cf, ui()));
+      rett= Time(ft.first, ft.second, Refiner(ct, cf, ui()));
 #ifndef NDEBUG
       rett.refiner().check_= check_cert;
 #endif
@@ -576,7 +580,7 @@ struct Updatable_Delaunay_triangulation_2 {
 	}
 	CGAL_UD_DEBUG("Returning isolated " << rett << std::endl);
 	
-	return return_pair(rett);
+	return true;
       } else {
 	//if (!has_exact_failure_time(ct)) {
 	++uncertain_exact_computations_;
@@ -591,11 +595,11 @@ struct Updatable_Delaunay_triangulation_2 {
 	  CGAL_assertion(check_failure_time >=1);
 	  CGAL_UD_DEBUG("Phantom root " << std::endl);
 	  CGAL_postcondition(check_failure_time > 1);
-	  return null_pair();
+	  return false;
 	} else {
 	  rett.set_interval(CGAL::to_interval(rett.refiner().exact_root()));
 	  CGAL_UD_DEBUG("Returning exact " << rett << std::endl);
-	  return return_pair(rett);
+	  return true;
 	}
       }
     }
@@ -603,8 +607,11 @@ struct Updatable_Delaunay_triangulation_2 {
 
 
 
-    Certificate_pair certificate_failure_time(typename Default_traits::Edge, 
-					      Certificate_data ) {
+    bool certificate_failure_time(typename Default_traits::Edge, 
+				  Certificate_data , Time &rett, Certificate_data) {
+
+      bool end_time_is_not_correct;
+
       const Time &curt= P::simulator_handle()->current_time();
       Cert_tuple ct= curt.refiner().tuple().opposite();
 #ifndef NDEBUG
@@ -674,10 +681,10 @@ struct Updatable_Delaunay_triangulation_2 {
       if (isc == Update_information::NO_FAILURE) { 
 	CGAL_UD_DEBUG("No root there." << std::endl);
 	CGAL_postcondition(check_failure_time > 1);
-	return null_pair();
+	return false;
       }
 
-      Time rett(ft.first, ft.second, Refiner(ct, cf, ui()));
+      rett=Time(ft.first, ft.second, Refiner(ct, cf, ui()));
 #ifndef NDEBUG
       rett.refiner().check_= check_cert;
 #endif
@@ -695,16 +702,16 @@ struct Updatable_Delaunay_triangulation_2 {
 	  ++unfailing_kinetic_certificates_;
 	  CGAL_UD_DEBUG("Phantom root " << std::endl);
 	  CGAL_postcondition(check_failure_time > 1);
-	  return null_pair();
+	  return false;
 	}
 	++certificate_advances_;
 	ft= CGAL::to_interval(curt.refiner().exact_root());
 	rett.set_interval(ft);
 	rett.refiner().set_exact_certificate(ec);
-	return return_pair(rett);
+	return true;
       } else {
 	CGAL_UD_DEBUG("Returning " << rett << std::endl);
-	return return_pair(rett);
+	return true;
       }
     }
 

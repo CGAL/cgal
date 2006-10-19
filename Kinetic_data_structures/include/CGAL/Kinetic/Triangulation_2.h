@@ -12,46 +12,45 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
+// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk/Kinetic_data_structures/include/CGAL/Kinetic/Delaunay_triangulation_2.h $
+// $Id: Delaunay_triangulation_2.h 34827 2006-10-18 00:39:13Z drussel $
 // 
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
-#ifndef CGAL_KINETIC_KINETIC_DELAUNAY_2_H
-#define CGAL_KINETIC_KINETIC_DELAUNAY_2_H
+#ifndef CGAL_KINETIC_KINETIC_TRIANGULATION_2_H
+#define CGAL_KINETIC_KINETIC_TRIANGULATION_2_H
 #include <CGAL/Kinetic/basic.h>
 
-#include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/Kinetic/Delaunay_triangulation_face_base_2.h>
-#include <CGAL/Kinetic/Delaunay_triangulation_vertex_base_2.h>
-#include <CGAL/Kinetic/Delaunay_triangulation_visitor_base_2.h>
+#include <CGAL/Kinetic/Triangulation_face_base_2.h>
+#include <CGAL/Kinetic/Triangulation_vertex_base_2.h>
+#include <CGAL/Kinetic/Triangulation_visitor_base_2.h>
 #include <CGAL/Kinetic/Active_objects_batch_listener_helper.h>
 #include <CGAL/Kinetic/Simulator_kds_listener.h>
 #include <CGAL/Kinetic/internal/tds_2_helpers.h>
-#include <CGAL/Triangulation_data_structure_2.h>
+#include <CGAL/Triangulation_2.h>
 #include <CGAL/Kinetic/Ref_counted.h>
 #include <iterator>
 #include <CGAL/Kinetic/Event_base.h>
-#include <CGAL/Kinetic/Delaunay_triangulation_default_traits_2.h>
+#include <CGAL/Kinetic/Triangulation_default_traits_2.h>
 
 CGAL_KINETIC_BEGIN_NAMESPACE
 #ifdef NDEBUG
-#define CGAL_DELAUNAY_2_DEBUG(x)
+#define CGAL_TRIANGULATION_2_DEBUG(x)
 #else
-#define CGAL_DELAUNAY_2_DEBUG(x) x
+#define CGAL_TRIANGULATION_2_DEBUG(x) x
 #endif
 
 template <class KDel>
-struct Delaunay_edge_failure_event: public Event_base<KDel*> {
+struct Triangulation_event: public Event_base<KDel*> {
   typedef Event_base<KDel*>  P;
-  Delaunay_edge_failure_event(const typename KDel::Certificate_data &c,
-			      const typename KDel::Edge &e,
-			      KDel *kdel): P(kdel), c_(c), e_(e) {}
+  Triangulation_event(const typename KDel::Certificate_data &c,
+				   const typename KDel::Face_handle &e,
+				   KDel *kdel): P(kdel), c_(c), e_(e) {}
   typename KDel::Certificate_data &certificate() const {
     return c_;
   }
-  const typename KDel::Edge edge() const {
+  const typename KDel::Face_handle face() const {
     return e_;
   }
   KDel* kdel() {
@@ -76,46 +75,55 @@ struct Delaunay_edge_failure_event: public Event_base<KDel*> {
 
   std::ostream& write(std::ostream &out) const
   {
-    out << "Flip " << KDel::TDS_helper::origin(edge())->point() << ","
-	<< KDel::TDS_helper::destination(edge())->point() 
-	<< " to " << KDel::TDS_helper::third_vertex(edge())->point() 
-	<< ", " << KDel::TDS_helper::mirror_vertex(edge())->point() ;
+    out << "Face " << e_->vertex(0)->point() << ", "
+	<< e_->vertex(1)->point() 
+	<< ", " << e_->vertex(2)->point() ;
     return out;
   }
 
   typename KDel::Certificate_data c_;
-  const typename KDel::Edge e_;
+  const typename KDel::Face_handle e_;
 };
 
 
 
 
 
-//! A 2D kinetic Delaunay triangulation.
-/*!  Points are added via the Moving_point_table, so the public
-  interface is very limited. See kinetic_Delaunay_2.cc for a useage example.
+//! A 2D kinetic triangulation.
+/*!  There is one certificate for each face. For the internal faces
+  (inside the convex hull), that certificate is for the face
+  collapsing at which point we need to figure out which edge to flip.
+
+  For the faces outside the convex hull, the certificate is for the
+  edge that is CCW from the infinite vertex and for whether the other
+  vertex on the edge leaves the convex hull.
+
+  The annoying part is how to figure out which edge to flip when an
+  internal face collapses.  As far as I can tell this requires
+  evaluating which point is in the segment defined by which other two,
+  so four 1D orientation predicates.
 */
 template <class Simulation_traits_t, 
-	  class Visitor= Delaunay_triangulation_visitor_base_2,
-	  class Delaunay
-	  = CGAL::Delaunay_triangulation_2<typename Simulation_traits_t::Instantaneous_kernel,
-					   CGAL::Triangulation_data_structure_2<
-	    Delaunay_triangulation_vertex_base_2<typename Simulation_traits_t::Instantaneous_kernel>,
-  CGAL::Kinetic::Delaunay_triangulation_face_base_2<Simulation_traits_t > > >,
-	  class Delaunay_traits_t= Delaunay_triangulation_default_traits_2<Simulation_traits_t, Delaunay> >
-class Delaunay_triangulation_2:
-  public Ref_counted<Delaunay_triangulation_2<Simulation_traits_t, Visitor, Delaunay, Delaunay_traits_t> >
+	  class Visitor= Triangulation_visitor_base_2,
+	  class Triangulation
+	  = CGAL::Triangulation_2<typename Simulation_traits_t::Instantaneous_kernel,
+				  CGAL::Triangulation_data_structure_2<
+	    Triangulation_vertex_base_2<typename Simulation_traits_t::Instantaneous_kernel>,
+  CGAL::Kinetic::Triangulation_face_base_2<Simulation_traits_t > > >,
+	  class Triangulation_traits_t= Triangulation_default_traits_2<Simulation_traits_t, Delaunay> >
+class Triangulation_2:
+  public Ref_counted<Triangulation_2<Simulation_traits_t, Visitor, Delaunay, Delaunay_traits_t> >
 {
 
-  typedef CGAL::Delaunay_triangulation_2<typename Simulation_traits_t::Instantaneous_kernel,
-					 CGAL::Triangulation_data_structure_2<
-    Delaunay_triangulation_vertex_base_2<typename Simulation_traits_t::Instantaneous_kernel>,
-    CGAL::Kinetic::Delaunay_triangulation_face_base_2<Simulation_traits_t > > > Basic_Delaunay;
+  typedef CGAL::Triangulation_2<typename Simulation_traits_t::Instantaneous_kernel,
+				CGAL::Triangulation_data_structure_2<
+    Ttriangulation_vertex_base_2<typename Simulation_traits_t::Instantaneous_kernel>,
+    CGAL::Kinetic::Triangulation_face_base_2<Simulation_traits_t > > > Basic_Delaunay;
 
 public:
-  typedef Delaunay_traits_t Traits;
+  typedef Triangulation_traits_t Traits;
   typedef Simulation_traits_t Simulation_traits;
-  typedef Delaunay_triangulation_2<Simulation_traits, Visitor, Delaunay, Traits> This;
+  typedef Triangulation_2<Simulation_traits, Visitor, Delaunay, Traits> This;
 
   typedef typename Simulation_traits::Kinetic_kernel Kinetic_kernel;
   typedef typename Simulation_traits::Simulator Simulator;
@@ -143,7 +151,7 @@ public:
   typedef typename Traits::Time Time;
   typedef internal::Triangulation_data_structure_helper_2<typename Triangulation::Triangulation_data_structure> TDS_helper;
 
-  typedef Delaunay_edge_failure_event<This> Event;
+  typedef Triangulation_event<This> Event;
   
   //friend class Delaunay_edge_failure_event<This>;
   //friend class Delaunay_hull_edge_failure_event<This>;
@@ -179,9 +187,9 @@ public:
 
 public:
 
-  Delaunay_triangulation_2(Traits st,
-			   Triangulation del,
-			   Visitor w= Visitor()): 
+  Triangulation_2(Traits st,
+		  Triangulation del,
+		  Visitor w= Visitor()): 
     traits_(st),
     watcher_(w),
     del_(del) {
@@ -274,7 +282,7 @@ public:
 	//Point_key t=TDS_helper::destination(batched_certs_[i])->point();
 	
 	//std::cout << std::min(s,t) << "--" << std::max(s,t) << std::endl;
-	update_edge(batched_certs_[i]);
+	update_face(batched_certs_[i]);
       }
       
       batched_certs_.clear();
@@ -294,11 +302,11 @@ public:
   //! Verify that the current state of the
   void audit()const;
 
-  void audit_event(Event_key k, Edge e) const {
-    if (TDS_helper::get_undirected_edge_label(e) !=k) {
+  void audit_event(Event_key k, Face_handle e) const {
+    if (e->event() !=k) {
       std::cerr << "AUDIT FAILURE orphan event " << k << std::endl;
     }
-    CGAL_assertion(TDS_helper::get_undirected_edge_label(e) ==k);
+    CGAL_assertion(e->event() ==k);
   }
 
   void set_has_certificates(bool tf, bool no_failures=false) {
@@ -307,33 +315,9 @@ public:
     } else {
       if (tf==true && del_.dimension()==2) {
 	CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, "DELAUNAY2: Creating certificates."<< std::endl);
-	for (typename Triangulation::All_vertices_iterator vit = del_.all_vertices_begin(); 
-	     vit != del_.all_vertices_end(); ++vit) {
-	  vit->set_neighbors(0);
-	}
-	for (Face_iterator f = del_.all_faces_begin(); f != del_.all_faces_end(); ++f) {
-	  f->vertex(0)->set_neighbors(f->vertex(0)->neighbors()+1);
-	  f->vertex(1)->set_neighbors(f->vertex(1)->neighbors()+1);
-	  f->vertex(2)->set_neighbors(f->vertex(2)->neighbors()+1);
-	}
 	if (no_failures) {
 	  for (Face_iterator f = del_.all_faces_begin(); f != del_.all_faces_end(); ++f) {
-	    TDS_helper::set_directed_edge_label(Edge(f,0), traits_.simulator_handle()->null_event());
-	    TDS_helper::set_directed_edge_label(Edge(f,1), traits_.simulator_handle()->null_event());
-	    TDS_helper::set_directed_edge_label(Edge(f,2), traits_.simulator_handle()->null_event());
-	    if (f->vertex(0)->neighbors() == 3) {
-	      TDS_helper::set_directed_edge_label(Edge(f,1), Event_key()); 
-	      TDS_helper::set_directed_edge_label(Edge(f,2), Event_key()); 
-	    }
-	    if (f->vertex(1)->neighbors() == 3) {
-	      TDS_helper::set_directed_edge_label(Edge(f,0), Event_key()); 
-	      TDS_helper::set_directed_edge_label(Edge(f,2), Event_key()); 
-	    }
-	    if (f->vertex(2)->neighbors() == 3) {
-	      TDS_helper::set_directed_edge_label(Edge(f,1), Event_key()); 
-	      TDS_helper::set_directed_edge_label(Edge(f,0), Event_key()); 
-	    }
-
+	    f->set_event(traits_.simulator_handle()->null_event());
 	  }
 	}  
 	/*for (typename Triangulation::All_vertices_iterator vit = del_.all_vertices_begin(); 
@@ -346,19 +330,16 @@ public:
 	  //vit->set_neighbors_is_changed(false);
 	  }*/
 	if (!no_failures) {
-	  for (Edge_iterator eit = del_.all_edges_begin(); eit != del_.all_edges_end(); ++eit) {
-	    TDS_helper::set_undirected_edge_label(*eit, Event_key());
-	    update_edge(*eit);
+	  for (Face_iterator eit = del_.all_faces_begin(); eit != del_.all_faces_end(); ++eit) {
+	    eit->set_event(Event_key());
+	    update_face(*eit);
 	  }
 	}
 
 	watcher_.create_faces(del_.all_faces_begin(), del_.all_faces_end());
       } else if (tf==false) { 
 	for (Face_iterator f = del_.all_faces_begin(); f != del_.all_faces_end(); ++f) {
-	  for(unsigned int i=0; i< 3; ++i) {
-	    Edge e(f,i);
-	    delete_certificate(e);
-	  }
+	  delete_certificate(f);
 	}
       } 
       CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, 
@@ -678,16 +659,11 @@ public:
     update_edge(Edge(mirror_flipped_edge.first, (mirror_flipped_edge.second+2)%3));
 
     {
-      Time t; Certificate_data cd;
-      if (traits_.certificate_failure_time(flipped_edge,cert, t, cd)){
-	Event_key k =traits_.simulator_handle()->new_event(t,
-							   Event(cd, flipped_edge, this));
-	TDS_helper::set_directed_edge_label(flipped_edge, k);
-	TDS_helper::set_directed_edge_label(mirror_flipped_edge, k);
-      } else {
-	TDS_helper::set_directed_edge_label(flipped_edge, traits_.simulator_handle()->null_event());
-	TDS_helper::set_directed_edge_label(mirror_flipped_edge, traits_.simulator_handle()->null_event());
-      }
+     std::pair<Time, Certificate_data> sp= traits_.certificate_failure_time(flipped_edge,cert);
+      Event_key k =traits_.simulator_handle()->new_event(sp.first,
+							 Event(sp.second, flipped_edge, this));
+      TDS_helper::set_directed_edge_label(flipped_edge, k);
+      TDS_helper::set_directed_edge_label(mirror_flipped_edge, k);
     }
     //write(std::cout);
     //new_edges_.clear();
@@ -869,76 +845,6 @@ protected:
     }
   }
 
-  // return true if hull
-  bool points(const Edge &e, Point_key ks[4]) const {
-    ks[0]= TDS_helper::origin(e)->point();
-    ks[1]= TDS_helper::third_vertex(e)->point();
-    ks[2]= TDS_helper::destination(e)->point();
-    ks[3]= TDS_helper::mirror_vertex(e)->point();
-
-    bool odd_parity=false;
-    bool infinity=false;
-    for (unsigned int i=0; i<4; ++i) {
-      if (infinity) {
-	ks[i-1]=ks[i];
-      }
-      else {
-	if (!ks[i].is_valid()) {
-	  infinity=true;
-	  odd_parity= ((i%2)==1);
-	} 
-      }
-    }
-    if (odd_parity) {
-      std::swap(ks[0], ks[1]);
-    }
-    return infinity;
-  }
-
-
-  /*bool is_hull_edge(const Edge &e) const {
-    return ! TDS_helper::mirror_vertex(e)->point().is_valid()
-      || ! TDS_helper::third_vertex(e)->point().is_valid()
-      || ! TDS_helper::origin(e)->point().is_valid()
-      || ! TDS_helper::destination(e)->point().is_valid();
-  }
-
-
- 
-  void edge_points(const Edge &e, Point_key ks[4]) const {
-    ks[0]= TDS_helper::origin(e)->point();
-    ks[1]= TDS_helper::third_vertex(e)->point();
-    ks[2]= TDS_helper::destination(e)->point();
-    ks[3]= TDS_helper::mirror_vertex(e)->point();
-  }
-
-  // very dangerous
-
-  void hull_points(const Edge &e,
-		   Point_key ks[4]) const {
-    ks[0]= TDS_helper::origin(e)->point();
-    ks[1]= TDS_helper::third_vertex(e)->point();
-    ks[2]= TDS_helper::destination(e)->point();
-    ks[3]= TDS_helper::mirror_vertex(e)->point();
-
-    bool odd_parity=false;
-    bool infinity=false;
-    for (unsigned int i=0; i<4; ++i) {
-      if (infinity) {
-	ks[i-1]=ks[i];
-      }
-      else {
-	if (!ks[i].is_valid()) {
-	  infinity=true;
-	  odd_parity= ((i%2)==1);
-	} 
-      }
-    }
-    if (odd_parity) {
-      std::swap(ks[0], ks[1]);
-    }
-    }*/
-
 
   void new_certificate(Edge e) {
     CGAL_precondition(TDS_helper::get_undirected_edge_label(e) == Event_key());
@@ -947,24 +853,9 @@ protected:
 			  << " which would make " << TDS_helper::mirror_vertex(e)->point() << " " 
 			  << TDS_helper::third_vertex(e)->point()
 			  << std::endl);
-    Time t; Certificate_data cd;
-    Point_key ks[4];
-    if (points(e,ks)) {
-      if (traits_.hull_certificate_failure_time(e, ks, t, cd)) {
-	Event_key k= traits_.simulator_handle()->new_event(t, Event(cd, e, this));
-	TDS_helper::set_undirected_edge_label(e, k);
-      } else {
-	TDS_helper::set_undirected_edge_label(e, traits_.simulator_handle()->null_event());
-      }
-    } else {
-      if (traits_.internal_certificate_failure_time(e, ks, t, cd)) {
-	Event_key k= traits_.simulator_handle()->new_event(t, Event(cd, e, this));
-	TDS_helper::set_undirected_edge_label(e, k);
-      } else {
-	TDS_helper::set_undirected_edge_label(e, traits_.simulator_handle()->null_event());
-      }
-    }
-   
+    std::pair<Time, Certificate_data> sp= traits_.certificate_failure_time(e);
+    Event_key k= traits_.simulator_handle()->new_event(sp.first, Event(sp.second, e, this));
+    TDS_helper::set_undirected_edge_label(e, k);
   }
 
   void delete_certificate(Edge e) {
