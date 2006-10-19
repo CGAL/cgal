@@ -102,7 +102,8 @@ function at this optimal solution is $2^2 + 4(3-4)^2 = 8$.
 \end{figure}
 
 Here is how this quadratic program can be solved in CGAL (for an example
-how to work with \ccc{double} as input type see \ldots)
+how to work with the type \ccc{double} as input type see Section 
+\ref{sec:QP-working_from_iterators}).
 The output will be:
 \begin{verbatim}
 Optimal feasible solution: 2/1  3/1
@@ -168,7 +169,7 @@ there are means to switch to a slower variant that is guaranteed
 not to cycle, see\ldots 
 \end{itemize}
 
-\section{Linear programs}\label{sec:QP-lp}
+\section{Solving linear programs}\label{sec:QP-lp}
 You can solve a linear program by solving a quadratic program with
 quadratic objective function matrix $D=0$. But there is a more efficient
 dedicated function for solving a linear program that also saves you
@@ -222,7 +223,7 @@ Optimal objective function value: -160/3
 
 \ccIncludeExampleCode{QP_solver/first_lp.cpp}
 
-\section{Nonnegative programs}\label{sec:QP-nonnegative}
+\section{Solving nonnegative programs}\label{sec:QP-nonnegative}
 
 Often, the bounds in a quadratic or linear program are of the special
 type $x\geq 0$. Programs of this type are called nonnegative and
@@ -294,7 +295,19 @@ Optimal objective function value: -352/3
 
 \ccIncludeExampleCode{QP_solver/first_nonnegative_lp.cpp}
 
-\section{The solution}
+\section{Working from iterators}\label{sec:QP-working_from_iterators}
+In the examples of the previous sections, the linear or quadratic
+program was explicitly represented by arrays. In general, other types
+of containers or implicit representations may occur, so the
+generic interface to the solver is iterator-based. Let's look at a
+situation in which a linear program is represented implicitly, and
+access to it is gained through properly constructed iterators.
+
+The problem we are going to solve is the following: given
+points $p_1,\ldots p_{n}$ in $d$-space and another point $p$: is $p$
+in the convex hull of $\{p_1,\ldots,p_{n}\}$? 
+
+\section{Working from MPS files}
 
 \section{Infeasibility}\label{sec:QP-infeasible}
 
@@ -304,9 +317,7 @@ Optimal objective function value: -352/3
 
 \section{The important constraints}
 
-\section{Certificates for the solution}
-
-\section{Solving linear and quadratic programs from MPS files}
+\section{Solution certificates}
 
 
 
