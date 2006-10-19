@@ -81,9 +81,15 @@ int main () {
 	print_sign (std::cout, ker.construct_signat_1_object()(p, rootsq[0]));
 	std::cout << std::endl;
 
-	std::cout << "\nsign of q evaluated at the root 2 of p: ";
+	std::cout << "sign of q evaluated at the root 2 of p: ";
 	print_sign (std::cout, ker.construct_signat_1_object()(q, rootsp[2]));
-	std::cout << "\n" << std::endl;
+	std::cout << std::endl;
+
+	std::cout << "\np(3) = " << p.eval(3) << std::endl;
+	std::cout << "sign of p evaluated at (coefficient)3: ";
+	print_sign (std::cout,
+			ker.construct_signat_1_object()(p, Coefficient(3)));
+	std::cout << std::endl;
 
 	return 0;
 }

@@ -136,7 +136,11 @@ class SignAt_1 {
 
 	result_type operator() (const Polynomial_1 &p,
 			const Coefficient_1 &r) const {
-		CGAL_assertion_msg (false, "not implemented yet");
+		Coefficient_1 c = p.eval (r);
+		if (c < 0)
+			return NEGATIVE;
+		if (c > 0)
+			return POSITIVE;
 		return ZERO;
 	};
 };	// SignAt_1

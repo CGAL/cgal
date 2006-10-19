@@ -167,27 +167,27 @@ void Rational_polynomial_1::get_coef (int pow_x, mpz_t *c) const {
 	return result;
 };*/
 
-/*CGAL::Gmpq Rational_polynomial_1::eval (const CGAL::Gmpq &x) const {
-	mpq_t result, x_pow, temp1, temp2;
-	mpq_init (result);	// it's 0 now
-	mpq_init (x_pow);
-	mpq_set_si (x_pow, 1, 1);	// x^0 = 1
-	mpq_init (temp1);
-	mpq_init (temp2);
+CGAL::Gmpz Rational_polynomial_1::eval (const CGAL::Gmpz &x) const {
+	mpz_t result, x_pow, temp1, temp2;
+	mpz_init (result);	// it's 0 now
+	mpz_init (x_pow);
+	mpz_set_si (x_pow, 1);	// x^0 = 1
+	mpz_init (temp1);
+	mpz_init (temp2);
 	for (int i=0; i<=degree; ++i) {	// invariant: x_pow = x^i
-		mpq_mul (temp1, coef[calc_index (i)], x_pow);
-		mpq_set (temp2, result);
-		mpq_add (result, temp1, temp2);
-		mpq_mul (temp1, x_pow, x.mpq());
-		mpq_set (x_pow, temp1);	// to use it in the next iteration
+		mpz_mul (temp1, coef[calc_index (i)], x_pow);
+		mpz_set (temp2, result);
+		mpz_add (result, temp1, temp2);
+		mpz_mul (temp1, x_pow, x.mpz());
+		mpz_set (x_pow, temp1);	// to use it in the next iteration
 	}
-	mpq_clear (x_pow);
-	mpq_clear (temp1);
-	mpq_clear (temp2);
-	CGAL::Gmpq ret(result);
-	mpq_clear (result);
+	mpz_clear (x_pow);
+	mpz_clear (temp1);
+	mpz_clear (temp2);
+	CGAL::Gmpz ret(result);
+	mpz_clear (result);
 	return ret;
-};*/
+};
 
 // derive polynomial
 Rational_polynomial_1 Rational_polynomial_1::derive () const {

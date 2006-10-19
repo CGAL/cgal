@@ -59,7 +59,7 @@ class Rational_polynomial_1 {
 		inline mpz_t* get_coefs () const;
 		void get_coef (int, mpz_t *) const;
 		//CGAL::Algebraic_1 eval (const CGAL::Algebraic_1 &) const;
-		//CGAL::Gmpq eval (const CGAL::Gmpq &) const;
+		CGAL::Gmpz eval (const CGAL::Gmpz &) const;
 		Rational_polynomial_1 derive () const;
 		// assignment
 		Rational_polynomial_1& operator= (const Rational_polynomial_1 &);
