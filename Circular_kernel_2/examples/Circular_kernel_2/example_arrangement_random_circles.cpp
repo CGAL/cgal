@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_2.h>
@@ -41,10 +40,10 @@ int main(){
     ac.push_back( Circle_2( Point_2(x,y), x*x + y*y));
   }
 
-  Arr  _pm;
-  Point_location _pl(_pm);
+  Arr  arr;
+  Point_location _pl(arr);
   for (ArcContainer::const_iterator it=ac.begin(); it != ac.end(); ++it) {
-    insert_curve(_pm,*it,_pl);
+    insert_curve(arr, *it, _pl);
   };
   
   return 0;

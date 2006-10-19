@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_2.h>
@@ -18,14 +17,14 @@ typedef Circular_k::Circle_2                            Circle_2;
 typedef Circular_k::Circular_arc_2                      Circular_arc_2;
 typedef Circular_k::Line_arc_2                          Line_arc_2;
 
-typedef boost::variant< Circular_arc_2, Line_arc_2>       Arc;
-typedef std::vector< Arc> ArcContainer;
+typedef boost::variant< Circular_arc_2, Line_arc_2>     Arc_2;
+typedef std::vector< Arc_2>                             ArcContainer;
 
 typedef CGAL::Arr_circular_line_arc_traits
-<Circular_k, Circular_arc_2, Line_arc_2>  Traits;
+<Circular_k, Circular_arc_2, Line_arc_2>                Traits;
 
-typedef CGAL::Arrangement_2<Traits>                            Arr;
-typedef CGAL::Arr_naive_point_location<Arr>                 Point_location;
+typedef CGAL::Arrangement_2<Traits>                     Arr;
+typedef CGAL::Arr_naive_point_location<Arr>             Point_location;
 
 int main(){
   
@@ -61,10 +60,10 @@ int main(){
     ac.push_back(v);
    }
   
-  Arr _pm;
-  Point_location _pl(_pm);
+  Arr arr;
+  Point_location _pl(arr);
   for (ArcContainer::const_iterator it=ac.begin(); it != ac.end(); ++it) {
-    insert_curve(_pm,*it,_pl);
+    insert_curve(arr, *it, _pl);
   };
   
   return 0;

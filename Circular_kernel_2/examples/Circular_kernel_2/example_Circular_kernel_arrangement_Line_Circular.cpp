@@ -1,6 +1,3 @@
-//#include <fstream>
-
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/MP_Float.h>
@@ -20,27 +17,25 @@ typedef CGAL::Cartesian<NT>                                 Linear_k;
 typedef CGAL::Algebraic_kernel_for_circles_2_2<NT>          Algebraic_k;
 typedef CGAL::Circular_kernel_2<Linear_k,Algebraic_k>       Circular_k;
 
-typedef Circular_k::Point_2                           Point_2;
-typedef Circular_k::Circle_2                          Circle_2;
-typedef Circular_k::Circular_arc_2                    Circular_arc_2;
-typedef Circular_k::Line_arc_2                        Line_arc_2;
+typedef Circular_k::Point_2                                 Point_2;
+typedef Circular_k::Circle_2                                Circle_2;
+typedef Circular_k::Circular_arc_2                          Circular_arc_2;
+typedef Circular_k::Line_arc_2                              Line_arc_2;
 
-typedef boost::variant< Circular_arc_2, Line_arc_2>        Arc;
-typedef std::vector< Arc> ArcContainer;
+typedef boost::variant< Circular_arc_2, Line_arc_2>         Arc_2;
+typedef std::vector< Arc_2>                                 ArcContainer;
 
 #ifndef CGAL_CURVED_KERNEL_DEBUG
-typedef CGAL::Arr_circular_line_arc_traits<Circular_k, Circular_arc_2, Line_arc_2>                  Traits;
+typedef CGAL::Arr_circular_line_arc_traits<Circular_k, Circular_arc_2, Line_arc_2>  Traits;
 #else
-typedef CGAL::Arr_circular_line_arc_traits<Circular_k, Circular_arc_2, Line_arc_2>                  Traits0;
-typedef CGAL::Variant_traits_tracer<Traits0>            Traits;
+typedef CGAL::Arr_circular_line_arc_traits<Circular_k, Circular_arc_2, Line_arc_2>  Traits0;
+typedef CGAL::Variant_traits_tracer<Traits0>                                        Traits;
 #endif
 
 
-typedef Traits::Curve_2                             Conic_arc_2;
-typedef CGAL::Arrangement_2<Traits>                 Pmwx;
-typedef CGAL::Arr_naive_point_location<Pmwx>        Point_location;
+typedef CGAL::Arrangement_2<Traits>                         Arrangement;
+typedef CGAL::Arr_naive_point_location<Arrangement>         Point_location;
 
-typedef Traits::X_monotone_curve_2                  X_monotone_curve_2;
 
 int main(){
   
@@ -82,12 +77,12 @@ int main(){
 
 
   
-  Pmwx _pm;
-  Point_location _pl(_pm);
+  Arrangement arr;
+  Point_location _pl(arr);
   for (ArcContainer::const_iterator it=ac.begin();
        it != ac.end(); ++it) {
-    //insert(_pm,_pl,*it);
-    insert_curve(_pm,*it,_pl);
+    //insert(arr,_pl,*it);
+    insert_curve(arr, *it, _pl);
       };
   
   return 0;
