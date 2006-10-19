@@ -52,9 +52,9 @@
   typedef typename Base::L_iterator L_iterator;\
   typedef typename Base::FU_iterator FU_iterator;\
   typedef typename Base::U_iterator U_iterator;\
-  typedef typename Base::D_iterator D_iterator; \
-  typedef typename Base::C_iterator C_iterator; \
-  typedef typename Base::value_type value_type;
+  typedef typename Base::D_iterator D_iterator;\
+  typedef typename Base::C_iterator C_iterator;\
+  typedef typename Base::C_entry C_entry;
 // end QP_MODEL_ITERATOR_TYPES
 
 
@@ -99,7 +99,7 @@ public:
   typedef U_it   U_iterator;  
   typedef D_it   D_iterator;
   typedef C_it   C_iterator;
-  typedef typename std::iterator_traits<C_it>::value_type value_type;
+  typedef typename std::iterator_traits<C_it>::value_type C_entry;
 private:
   // data
   const int n_;
@@ -113,7 +113,7 @@ private:
   const U_iterator u_it; 
   const D_iterator d_it;
   const C_iterator c_it;
-  const value_type c_0; // constant term
+  const C_entry c_0; // constant term
 public:
   // construction
   Quadratic_program_from_iterators (
@@ -127,7 +127,7 @@ public:
      const U_iterator& u,
      const D_iterator& d,
      const C_iterator& c,
-     const value_type& c0 = value_type(0))
+     const C_entry& c0 = C_entry(0))
     : n_ (n), m_ (m), a_it (a), b_it (b), r_it (r), fl_it (fl), l_it (l), 
       fu_it (fu), u_it (u), d_it (d), c_it (c), c_0 (c0)    
   {}
@@ -144,7 +144,7 @@ public:
   const U_iterator& u() const {return u_it;}
   const D_iterator& d() const {return d_it;}
   const C_iterator& c() const {return c_it;}
-  const value_type& c0() const {return c_0;}
+  const C_entry& c0() const {return c_0;}
 };
 
 // corresponding global function make_quadratic_program_from_iterators
@@ -203,7 +203,7 @@ public:
      const U_iterator& u,
      const D_iterator& d,
      const C_iterator& c,
-     const value_type& c0 = value_type(0))
+     const C_entry& c0 = C_entry(0))
     : Base (n, m, a, b, r, fl, l, fu, u, d, c, c0)
   {}  
 };
@@ -227,8 +227,8 @@ class Linear_program_from_iterators :
 private:
   typedef Quadratic_program_from_iterators 
   <A_it, B_it, R_it, FL_it, L_it, FU_it, U_it,
-   typename QP_model_default_iterators<B_it>::It_2d, C_it> Base;
-  typedef typename QP_model_default_iterators<B_it>::It_2d Const_D_iterator;
+   typename QP_model_default_iterators<A_it>::It_2d, C_it> Base;
+  typedef typename QP_model_default_iterators<A_it>::It_2d Const_D_iterator;
 public:
    QP_MODEL_ITERATOR_TYPES;
    Linear_program_from_iterators (
@@ -241,10 +241,10 @@ public:
 		     const FU_iterator& fu,
 		     const U_iterator& u,
 		     const C_iterator& c,
-		     const value_type& c0 = value_type(0)
+		     const C_entry& c0 = C_entry(0)
 		     )
     : Base (n, m, a, b, r, fl, l, fu, u, 
-	    Const_D_iterator(value_type(0)), c, c0)
+	    Const_D_iterator(C_entry(0)), c, c0)
   {}  
 }; 
 
@@ -299,7 +299,7 @@ public:
 		     const FU_iterator& fu,
 		     const U_iterator& u,
 		     const C_iterator& c,
-		     const value_type& c0 = value_type(0)
+		     const C_entry& c0 = C_entry(0)
 		     )
     : Base (n, m, a, b, r, fl, l, fu, u, c, c0)
   {}  
@@ -339,11 +339,11 @@ public:
 		     const R_iterator& r,		     
 		     const D_iterator& d,
 		     const C_iterator& c,
-		     const value_type& c0 = value_type(0)
+		     const C_entry& c0 = C_entry(0)
 		     )
     : Base (n, m, a, b, r, 
-	    Const_FLU_iterator(true), Const_LU_iterator(value_type(0)), 
-	    Const_FLU_iterator(false), Const_LU_iterator(value_type(0)), 
+	    Const_FLU_iterator(true), Const_LU_iterator(C_entry(0)), 
+	    Const_FLU_iterator(false), Const_LU_iterator(C_entry(0)), 
 	    d, c, c0)
   {}  
 };
@@ -391,7 +391,7 @@ public:
 		     const R_iterator& r,
 		     const D_iterator& d,
 		     const C_iterator& c,
-		     const value_type& c0 = value_type(0)
+		     const C_entry& c0 = C_entry(0)
 		     )
     : Base (n, m, a, b, r, d, c, c0)
   {}  
@@ -432,12 +432,12 @@ public:
 		     const B_iterator& b,
 		     const R_iterator& r,		     
 		     const C_iterator& c,
-		     const value_type& c0 = value_type(0)
+		     const C_entry& c0 = C_entry(0)
 		     )
     : Base (n, m, a, b, r, 
-	    Const_FLU_iterator(true), Const_LU_iterator(value_type(0)), 
-	    Const_FLU_iterator(false), Const_LU_iterator(value_type(0)), 
-	    Const_D_iterator(value_type(0)), c, c0)
+	    Const_FLU_iterator(true), Const_LU_iterator(C_entry(0)), 
+	    Const_FLU_iterator(false), Const_LU_iterator(C_entry(0)), 
+	    Const_D_iterator(C_entry(0)), c, c0)
   {}  
 }; 
 
@@ -482,9 +482,9 @@ public:
 		     const B_iterator& b,
 		     const R_iterator& r,
 		     const C_iterator& c,
-		     const value_type& c0 = value_type(0)
+		     const C_entry& c0 = C_entry(0)
 		     )
-    : Base (a, b, r, c, c0)
+    : Base (n, m, a, b, r, c, c0)
   {}  
 };
 
