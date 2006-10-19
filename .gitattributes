@@ -1642,6 +1642,11 @@ Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/id
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb8.bmp -text svneol=unset#image/bmp
 Principal_component_analysis/doc_tex/Principal_component_analysis/fit.eps -text svneol=unset#application/postscript
 Principal_component_analysis/doc_tex/Principal_component_analysis/fit.png -text svneol=unset#image/png
+QP_solver/doc_tex/QP_solver/first_qp.eps -text
+QP_solver/doc_tex/QP_solver/first_qp.fig -text
+QP_solver/doc_tex/QP_solver/first_qp.gif -text
+QP_solver/doc_tex/QP_solver/first_qp.pdf -text
+QP_solver/doc_tex/QP_solver/main.tex -text
 QP_solver/doc_tex/QP_solver_ref/LinearProgramInterface.tex -text
 QP_solver/doc_tex/QP_solver_ref/NonnegativeLinearProgramInterface.tex -text
 QP_solver/doc_tex/QP_solver_ref/NonnegativeQuadraticProgramInterface.tex -text
@@ -1650,6 +1655,7 @@ QP_solver/doc_tex/QP_solver_ref/Quadratic_program_from_iterators.tex -text
 QP_solver/examples/QP_solver/data_to_mps.cin -text
 QP_solver/examples/QP_solver/double_qp_solver.cin -text
 QP_solver/examples/QP_solver/double_qp_solver.data -text
+QP_solver/examples/QP_solver/first_qp.cpp -text
 QP_solver/examples/QP_solver/integer_qp_solver.cin -text
 QP_solver/examples/QP_solver/integer_qp_solver.data -text
 QP_solver/examples/QP_solver/rational_qp_solver.cin -text

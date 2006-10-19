@@ -183,10 +183,10 @@ public:
 };
 
 
-// QP_solution class: a handle for QP_solver_base<ET>
+// Quadratic_program_solution class: a handle for QP_solver_base<ET>
 // -------------------------------------------------- 
 template <class ET>
-class QP_solution: Handle_for<const QP_solver_base<ET>*> 
+class Quadratic_program_solution: Handle_for<const QP_solver_base<ET>*> 
 {
 public:
   // interface types
@@ -200,13 +200,13 @@ public:
   Unbounded_direction_iterator;
 
   // methods
-  QP_solution ()
+  Quadratic_program_solution ()
     : Handle_for<const QP_solver_base<ET>*>()
   {
     *(this->ptr()) = 0; // unitialized solution
   }
 
-  QP_solution (const QP_solver_base<ET>* s)
+  Quadratic_program_solution (const QP_solver_base<ET>* s)
     : Handle_for<const QP_solver_base<ET>*>(s)
   {}
 
@@ -288,7 +288,7 @@ public:
     return (*(this->Ptr()))->is_valid();
   }
 
-  ~QP_solution()
+  ~Quadratic_program_solution()
   {
     if (!this->is_shared()) delete *(this->ptr());
   }

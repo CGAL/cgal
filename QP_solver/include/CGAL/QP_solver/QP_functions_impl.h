@@ -55,7 +55,7 @@ bool has_linearly_independent_equations
     std::iterator_traits<typename Ar::B_iterator>::value_type B_value;
   typedef Const_oneset_iterator <C_value>  C_iterator;
   typedef Const_oneset_iterator <B_value>  B_iterator;
-  typedef Nonnegative_LP_from_iterators
+  typedef Nonnegative_linear_program_from_iterators
     <typename Ar::A_iterator, B_iterator, 
     typename Ar::R_iterator, C_iterator> LP;
 

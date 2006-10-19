@@ -95,7 +95,7 @@ void print_nonnegative_linear_program
 }
 
 template <typename QuadraticProgram, typename ET>
-QP_solution<ET> solve_quadratic_program 
+Quadratic_program_solution<ET> solve_quadratic_program 
 (const QuadraticProgram &qp, const ET& dummy)
 {
   typedef QP_solver<
@@ -103,11 +103,11 @@ QP_solution<ET> solve_quadratic_program
     QP_solver_impl::QP_tags<Tag_false, Tag_false> >
     Solver;
   const Solver* s = new Solver(qp);
-  return QP_solution<ET>(s);
+  return Quadratic_program_solution<ET>(s);
 }
 
 template <typename QuadraticProgram, typename ET>
-QP_solution<ET> solve_nonnegative_quadratic_program 
+Quadratic_program_solution<ET> solve_nonnegative_quadratic_program 
 (const QuadraticProgram &qp, const ET& dummy)
 {
   typedef QP_solver<
@@ -115,11 +115,11 @@ QP_solution<ET> solve_nonnegative_quadratic_program
     QP_solver_impl::QP_tags<Tag_false, Tag_true> >
     Solver;
   const Solver* s = new Solver(qp);
-  return QP_solution<ET>(s);
+  return Quadratic_program_solution<ET>(s);
 }
 
 template <typename QuadraticProgram, typename ET>
-QP_solution<ET> solve_linear_program 
+Quadratic_program_solution<ET> solve_linear_program 
 (const QuadraticProgram &qp, const ET& dummy)
 {
   typedef QP_solver<
@@ -127,11 +127,11 @@ QP_solution<ET> solve_linear_program
     QP_solver_impl::QP_tags<Tag_true, Tag_false> >
     Solver;
   const Solver* s = new Solver(qp);
-  return QP_solution<ET>(s);
+  return Quadratic_program_solution<ET>(s);
 }
 
 template <typename QuadraticProgram, typename ET>
-QP_solution<ET> solve_nonnegative_linear_program 
+Quadratic_program_solution<ET> solve_nonnegative_linear_program 
 (const QuadraticProgram &qp, const ET& dummy)
 {
   typedef QP_solver<
@@ -139,7 +139,7 @@ QP_solution<ET> solve_nonnegative_linear_program
     QP_solver_impl::QP_tags<Tag_true, Tag_true> >
     Solver;
   const Solver* s = new Solver(qp);
-  return QP_solution<ET>(s);
+  return Quadratic_program_solution<ET>(s);
 }
 CGAL_END_NAMESPACE
 

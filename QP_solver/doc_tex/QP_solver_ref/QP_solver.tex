@@ -18,8 +18,8 @@ over the $n$ variables $x=(x_0,\ldots,x_{n-1})$.
 
 Here, $A \in \R^{m \times n}$, $b \in \R^{m}$, $c \in \R^{n}$, and in
 addition, the matrix $D \in \R^{n \times n}$ is positive-semidefinite.
-The symbol ``$\ccTexHtml{\gtreqless}{<=,=,>=}$'' in the program's constraint $Ax \ccTexHtml{\gtreqless}{<=,=,>=}
-b$ means that any row of this may either be an inequality $(Ax)_i \leq b_i$ or
+The symbol ``$\qprel$'' in the program's constraint 
+$Ax \qprel b$ means that any row of this may either be an inequality $(Ax)_i \leq b_i$ or
 $(Ax)_i \geq b_i$, or an equality $(Ax)_i = b_i$.  Furthermore, $l\in
 (\R\cup\{-\infty\})^n$ and $r\in (\R\cup\{\infty\})^n$, so that each
 variable $x_i$, $i\in\{0,\ldots,n-1\}$, can be \emph{free} (if
