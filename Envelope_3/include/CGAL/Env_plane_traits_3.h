@@ -109,6 +109,12 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
        return m_plane;
      }
 
+   
+     operator Plane_3 () const
+     {
+       return (m_plane);
+     }
+
      const Line_2& line() const
      {
        CGAL_assertion(!m_is_all_plane);
