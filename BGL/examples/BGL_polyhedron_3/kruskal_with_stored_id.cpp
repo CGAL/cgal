@@ -2,7 +2,8 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 
 #include <iostream>
 #include <algorithm>
@@ -11,14 +12,14 @@
 #include <boost/graph/kruskal_min_spanning_tree.hpp>
 
 
-typedef CGAL::Cartesian<double>                                Kernel;
-typedef Kernel::Vector_3                                       Vector;
-typedef Kernel::Point_3                                        Point;
-typedef CGAL::Polyhedron_3<Kernel,Polyhedron_items_with_id_3>  Polyhedron;
+typedef CGAL::Cartesian<double>                                      Kernel;
+typedef Kernel::Vector_3                                             Vector;
+typedef Kernel::Point_3                                              Point;
+typedef CGAL::Polyhedron_3<Kernel,CGAL::Polyhedron_items_with_id_3>  Polyhedron;
 
-typedef boost::graph_traits<Polyhedron>::vertex_descriptor   vertex_descriptor;
-typedef boost::graph_traits<Polyhedron>::vertex_iterator     vertex_iterator;  
-typedef boost::graph_traits<Polyhedron>::edge_descriptor     edge_descriptor;  
+typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_const_descriptor;
+typedef boost::graph_traits<Polyhedron>::vertex_iterator   vertex_const_iterator;  
+typedef boost::graph_traits<Polyhedron>::edge_descriptor   edge_const_descriptor;  
 
 
 void
@@ -26,13 +27,13 @@ kruskal(const Polyhedron& P)
 {
   // associate indices to the vertices using the "id()" field of the vertex.
   {
-    vertex_iterator vb, ve;
+    vertex_const_iterator vb, ve;
     int index = 0;
 
   // boost::tie assigns the first and second element of the std::pair 
   // returned by boost::vertices to the variables vit and ve
     for(boost::tie(vb,ve)=boost::vertices(P); vb!=ve; ++vb ){
-      vertex_descriptor  vd = *vb;
+      vertex_const_descriptor  vd = *vb;
        vd->id() = index++;
     }
   }  
@@ -44,10 +45,10 @@ kruskal(const Polyhedron& P)
    // when  ommitted defaults to "get(vertex_index,graph)".
    // That default works here because the vertex type supports the "id()"
    // field which is used by the vertex_index internal property.
-   std::list<edge_descriptor> mst;
+   std::list<edge_const_descriptor> mst;
    boost::kruskal_minimum_spanning_tree(P,std::back_inserter(mst));
 
-   vertex_iterator vb, ve;
+   vertex_const_iterator vb, ve;
     
    std::cout << "#VRML V2.0 utf8\n"
       "Shape {\n"
@@ -66,8 +67,8 @@ kruskal(const Polyhedron& P)
       "}\n"
       "coordIndex [\n";
     
-    for(std::list<edge_descriptor>::iterator it = mst.begin(); it != mst.end(); ++it){
-      std::cout << vertex_id_map[boost::source(*it,P)] 
+    for(std::list<edge_const_descriptor>::iterator it = mst.begin(); it != mst.end(); ++it){
+      std::cout << boost::source(*it,P)->id() 
 		<< ", " << boost::target(*it,P)->id() <<  ", -1\n";
     } 
 
