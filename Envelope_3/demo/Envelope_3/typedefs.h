@@ -27,12 +27,16 @@
 #include <CGAL/CORE_algebraic_number_traits.h>
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/Env_sphere_traits_3.h>
+#include <CGAL/Env_plane_traits_3.h>
 #include <CGAL/Bbox_2.h> 
 #include <CGAL/Bbox_3.h> 
 #include <CGAL/IO/Color.h> 
 #include <CGAL/Polygon_2.h>
 #include <CGAL/IO/Qt_widget_Polygon_2.h>
 #include <CGAL/IO/Qt_widget_Conic_arc_2.h>
+#include <CGAL/IO/Qt_widget_Linear_object_2.h>
+#include <CGAL/Arr_overlay.h>
+#include <CGAL/Arr_overlay_2/Arr_overlay_traits.h>
 
 #include <qpainter.h> 
 
@@ -98,31 +102,86 @@ typedef CGAL::Envelope_diagram_2<Sphere_traits_3>     Envelope_sphere_diagram_2;
 typedef Envelope_sphere_diagram_2::Ccb_halfedge_const_circulator 
                                                       Sphere_ccb_halfedge_const_circulator;
 
+
+typedef Kernel::Plane_3                                  Plane_3;
+typedef CGAL::Env_plane_traits_3<Kernel>                 Base_plane_traits_3;
+typedef Base_plane_traits_3::Surface_3                   Base_plane_3;
+typedef CGAL::Env_surface_data_traits_3<Base_plane_traits_3, 
+                                        CGAL::Color>     Plane_traits_3;
+typedef Plane_traits_3::Surface_3                        Plane_surface_3;
+typedef Plane_traits_3::X_monotone_curve_2               Plane_x_monotone_curve_2;
+typedef CGAL::Envelope_diagram_2<Plane_traits_3>         Envelope_plane_diagram_2;
+typedef Envelope_plane_diagram_2::Ccb_halfedge_const_circulator 
+                                                         Plane_ccb_halfedge_const_circulator;
+typedef Envelope_plane_diagram_2::Halfedge_const_handle 
+                                                         Plane_halfedge_const_handle;
+
+
+
 typedef CGAL::Cartesian<double>                       Double_kernel;
 typedef Double_kernel::Point_2                        Double_point_2;
 typedef CGAL::Polygon_2<Double_kernel>     Polygon_2;
-CGAL::Bbox_2 bbox_2d(const Triangle_3& tri)
-{
-  const Point_3& p0 = tri.vertex(0);
-  const Point_3& p1 = tri.vertex(1);
-  const Point_3& p2 = tri.vertex(2);
-  Triangle_2 proj_tri(Point_2(p0.x(), p0.y()),
-                      Point_2(p1.x(), p1.y()),
-                      Point_2(p2.x(), p2.y()));
-  return proj_tri.bbox();
-}
 
-CGAL::Bbox_2 bbox_2d(const Sphere_3& s)
+template<class Arrangement, class OutputIterator>
+class Faces_visitor : 
+  public CGAL::_Arr_default_overlay_traits<Arrangement,
+                                           Arrangement,
+                                           Arrangement>
 {
-  CGAL::Bbox_3 bbox_3d = s.bbox();
-  return CGAL::Bbox_2(bbox_3d.xmin(), bbox_3d.ymin(), bbox_3d.xmax(), bbox_3d.ymax());
-}
+  typedef typename Arrangement::Face_const_handle Face_const_handle;
+  typedef typename Arrangement::Face_handle       Face_handle;
+  typedef typename Arrangement::Ccb_halfedge_const_circulator
+                                Ccb_halfedge_const_circulator;
 
-void construct_polygon(CGAL::Qt_widget* w, Tri_ccb_halfedge_const_circulator ccb, Polygon_2& pgn)
+  Face_const_handle m_f1;
+  Face_const_handle m_f2;
+  OutputIterator    m_oi;
+
+public:
+  Faces_visitor(Face_const_handle f1,
+                Face_const_handle f2,
+                OutputIterator oi):
+      m_f1(f1),
+      m_f2(f2),
+      m_oi(oi)
+  {}
+
+  void create_face(Face_const_handle f1,
+                   Face_const_handle f2,
+                   Face_handle f)
+  {
+    if(f1 == m_f1 && f2 == m_f2)
+    {
+      Polygon_2 pgn;
+      Ccb_halfedge_const_circulator ccb = f->outer_ccb();
+      Ccb_halfedge_const_circulator cc = ccb;
+      do 
+      {
+        pgn.push_back(Double_point_2(CGAL::to_double(cc->source()->point().x()),
+                                     CGAL::to_double(cc->source()->point().y())));
+          //created from the outer boundary of the face
+      } 
+      while (++cc !=ccb);
+      *m_oi++ = pgn;
+
+    }
+  }
+};
+                                             
+template <class OutoutIterator>
+void construct_polygon(CGAL::Qt_widget* w,
+                       Tri_ccb_halfedge_const_circulator ccb,
+                       OutoutIterator oi,
+                       bool is_unb,
+                       bool is_hole)
 {
+  if(is_unb)
+    return;
   /* running with around the outer of the face and generate from it
     * polygon
     */
+
+  Polygon_2 pgn;
   
   Tri_ccb_halfedge_const_circulator cc=ccb;
   do 
@@ -132,10 +191,21 @@ void construct_polygon(CGAL::Qt_widget* w, Tri_ccb_halfedge_const_circulator ccb
     //created from the outer boundary of the face
   } 
   while (++cc !=ccb);
+
+  *oi = pgn;
 }
 
-void construct_polygon(CGAL::Qt_widget* w, Sphere_ccb_halfedge_const_circulator ccb, Polygon_2& pgn)
+template <class OutoutIterator>
+void construct_polygon(CGAL::Qt_widget* w,
+                       Sphere_ccb_halfedge_const_circulator ccb,
+                       OutoutIterator oi,
+                       bool is_unb,
+                       bool is_hole)
 {
+  if(is_unb)
+    return;
+  Polygon_2 pgn;
+
   Sphere_ccb_halfedge_const_circulator cc=ccb;
   do
   {
@@ -186,36 +256,147 @@ void construct_polygon(CGAL::Qt_widget* w, Sphere_ccb_halfedge_const_circulator 
   
     //created from the outer boundary of the face
   } while (++cc != ccb);
+  *oi = pgn;
+}
+template <class OutoutIterator>
+void construct_polygon(CGAL::Qt_widget* w,
+                       Plane_ccb_halfedge_const_circulator ccb,
+                       OutoutIterator oi,
+                       bool is_unb,
+                       bool is_hole)
+{
+  if(is_unb && !is_hole)
+  {
+    Plane_ccb_halfedge_const_circulator curr_ccb = ccb;
+    Plane_ccb_halfedge_const_circulator non_fict;
+    do
+    {
+      if(!curr_ccb->is_fictitious())
+      {
+        non_fict = curr_ccb;
+        break;
+      }
+      ++curr_ccb;
+    }
+    while(curr_ccb != ccb);
+
+    Polygon_2 pgn;
+    if(non_fict == Plane_ccb_halfedge_const_circulator())
+    {
+      // didn't find any non-fictitous edge
+      pgn.push_back(Double_point_2(w->x_min(), w->y_min()));
+      pgn.push_back(Double_point_2(w->x_min(), w->y_max()));
+      pgn.push_back(Double_point_2(w->x_max(), w->y_max()));
+      pgn.push_back(Double_point_2(w->x_max(), w->y_min()));
+      *oi = pgn;
+      
+    }
+    else
+    {
+      // create two arrangements: one from the ccb of the unbounded face,
+      // the second fromthe bounding box of the widget and overlay them
+      // construct polygons from the intersection faces.
+
+      Envelope_plane_diagram_2 arr_box;
+      Envelope_plane_diagram_2 arr_unb_f;
+
+      Point_2 p1(w->x_min(), w->y_min());
+      Point_2 p2(w->x_min(), w->y_max());
+      Point_2 p3(w->x_max(), w->y_max());
+      Point_2 p4(w->x_max(), w->y_min());
+
+      Plane_x_monotone_curve_2 c1(p1, p2);
+      Plane_x_monotone_curve_2 c2(p2, p3);
+      Plane_x_monotone_curve_2 c3(p3, p4);
+      Plane_x_monotone_curve_2 c4(p4, p1);
+      Plane_halfedge_const_handle e=
+        CGAL::insert_non_intersecting_curve(arr_box, c1);
+      CGAL::insert_non_intersecting_curve(arr_box, c2);
+      CGAL::insert_non_intersecting_curve(arr_box, c3);
+      CGAL::insert_non_intersecting_curve(arr_box, c4);
+
+      if(e->face()->is_unbounded())
+        e = e->twin();
+
+
+      Plane_halfedge_const_handle he =
+        insert_non_intersecting_curve(arr_unb_f, non_fict->curve());
+      if(he->direction() != non_fict->direction())
+        he = he->twin();
+     
+      std::list<Plane_x_monotone_curve_2> cv_list;
+      for(Plane_halfedge_const_handle e = non_fict->next(); e != non_fict; e = e->next())
+      {
+        if(!e->is_fictitious())
+          cv_list.push_back(e->curve());
+      }
+      CGAL::insert_non_intersecting_curves(arr_unb_f, cv_list.begin(), cv_list.end());
+
+      Faces_visitor<Envelope_plane_diagram_2, OutoutIterator> 
+        visitor(e->face(), he->face(), oi);
+      Envelope_plane_diagram_2 res;
+      CGAL::overlay(arr_box, arr_unb_f, res, visitor);
+                                            
+    }
+      
+    return;
+  }
+
+  // its a a bounded face
+  Polygon_2 pgn;
+
+  Plane_ccb_halfedge_const_circulator cc=ccb;
+  do 
+  {
+    pgn.push_back(Double_point_2(CGAL::to_double(cc->source()->point().x()),
+                                 CGAL::to_double(cc->source()->point().y())));
+    //created from the outer boundary of the face
+  } 
+  while (++cc !=ccb);
+
+  *oi = pgn;
 }
 
 
 template<class Arr>
 void draw_face(CGAL::Qt_widget* w, typename Arr::Face_const_iterator f)
 {
+  bool is_unb = false;
   if(f->is_unbounded())
-    return;
+    is_unb = true;
   
   Qt::RasterOp old_rasterop = w->rasterOp();
   w->get_painter().setRasterOp(Qt::XorROP);
   // make polygon from the outer ccb of the face 'f'
-  Polygon_2 pgn;
-  construct_polygon(w, f->outer_ccb(), pgn);
+  std::list<Polygon_2> pgns;
+  construct_polygon(w, f->outer_ccb(), std::back_inserter(pgns), is_unb, false);
 
-
-  w->setFilled(true);
-  CGAL::Color c = f->surface().data();
-  w->setFillColor(c);
-
-  (*w) << pgn ;  // draw the polyong
+  for(std::list<Polygon_2>::iterator itr = pgns.begin();
+      itr != pgns.end();
+      ++itr)
+  {
+    Polygon_2 &pgn = *itr;
+    if(!pgn.is_empty())
+    {
+      w->setFilled(true);
+      CGAL::Color c = f->surface().data();
+      w->setFillColor(c);
+      (*w) << pgn ;  // draw the polyong
+    }
+  }
+  
 
  
   for(typename Arr::Hole_const_iterator hit = f->holes_begin();
       hit != f->holes_end();
       ++hit)
   {
-    Polygon_2 hole;
-    construct_polygon(w, *hit, hole);
-    (*w) << hole ;  // draw the polyong
+    pgns.clear();
+    construct_polygon(w, *hit, std::back_inserter(pgns), is_unb, true);
+    CGAL_assertion(pgns.size() == 1);
+    const Polygon_2& hole = pgns.front();
+    if (!hole.is_empty())
+      (*w) << hole;  // draw the polyong
   }
   w->get_painter().setRasterOp(old_rasterop);
   w->setFilled(false);
@@ -226,6 +407,7 @@ void draw_face(CGAL::Qt_widget* w, typename Arr::Face_const_iterator f)
 template <class Arrangement>
 void draw_arr(CGAL::Qt_widget* w, const Arrangement& arr)
 {
+  *w <<  CGAL::BLACK;
   typedef typename Arrangement::Face_const_iterator     Face_const_iterator;
   typedef typename Arrangement::Edge_const_iterator     Edge_const_iterator;
   typedef typename Arrangement::Vertex_const_iterator   Vertex_const_iterator;
@@ -240,12 +422,11 @@ void draw_arr(CGAL::Qt_widget* w, const Arrangement& arr)
       draw_face<Arrangement>(w, fit);
     }
 
-    *w <<  CGAL::BLUE; 
+    /**w <<  CGAL::BLUE; 
     for(Edge_const_iterator eit = arr.edges_begin();
         eit != arr.edges_end();
         ++eit)
     {
-      //draw_curve(w, eit->curve());
       *w << eit->curve();
     }
    
@@ -255,7 +436,7 @@ void draw_arr(CGAL::Qt_widget* w, const Arrangement& arr)
         ++vit)
     {
       *w << vit->point();
-    }
+    }*/
 }
 
 #endif

@@ -65,6 +65,7 @@ int main(int, char*){
 //The envelope diagram
 Envelope_tri_diagram_2    tri_diag;
 Envelope_sphere_diagram_2 sphere_diag;
+Envelope_plane_diagram_2  plane_diag;
 int current_state;
 
 const QString my_title_string("Envelopes of 3D surfaces");
@@ -84,8 +85,10 @@ public:
 
     if(!tri_diag.is_empty())
       draw_arr(widget, tri_diag);
-    else
+    else if(!sphere_diag.is_empty())
       draw_arr(widget, sphere_diag);
+    else
+      draw_arr(widget, plane_diag);
     
     widget->unlock(); // widget have to be unlocked when finished drawing
   };    
@@ -132,6 +135,8 @@ public:
     file->insertSeparator();
     file->insertItem("&Open Spheres File", this, SLOT(open_spheres_file()),CTRL+Key_O);
     file->insertSeparator();
+    file->insertItem("&Open Planes File", this, SLOT(open_planes_file()),CTRL+Key_O);
+    file->insertSeparator();
     
     file->insertSeparator();
     file->insertItem("Print", widget, SLOT(print_to_ps()), CTRL+Key_P);
@@ -171,6 +176,7 @@ private:
       typedef typename Arrangement::Traits_3    Traits_3;
       typedef typename Traits_3::Surface_3      Surface_3;
       typedef typename Traits_3::Base_traits_3:: Surface_3     Base_surface_3;
+      typedef typename Arrangement::Vertex_const_iterator  Vertex_const_iterator;
       QString s = QFileDialog::getOpenFileName(curr_dir,
                                                QString::null,
                                                this,
@@ -187,7 +193,6 @@ private:
         return ;
       }
      
-      CGAL::Bbox_2 box;
       QCursor old = widget->cursor();
       widget->setCursor(Qt::WaitCursor);
       widget->lock();
@@ -206,17 +211,45 @@ private:
         Base_surface_3 s;
         read_surface(in_file, s);
         surfaces.push_back(Surface_3(s, CGAL::Color(r, g, b)));
-        box = box + bbox_2d(s);
       }
       arr.clear();
       CGAL::lower_envelope_3(surfaces.begin(), surfaces.end(), arr);
 
-      double w = (box.xmax() - box.xmin())/10;
-      double h = (box.ymax() - box.ymin())/10;
-      widget->set_window(box.xmin() - w,
-                         box.xmax() + w,
-                         box.ymin() - h,
-                         box.ymax() + h);
+      if(arr.number_of_vertices() != 0)
+      {
+        Vertex_const_iterator vit = arr.vertices_begin();
+        double x_min = CGAL::to_double(vit->point().x());
+        double x_max = CGAL::to_double(vit->point().x());
+        double y_min = CGAL::to_double(vit->point().y());
+        double y_max = CGAL::to_double(vit->point().y());
+
+      
+        for(++vit; vit != arr.vertices_end(); ++vit)
+        {
+          double curr_x = CGAL::to_double(vit->point().x());
+          double curr_y = CGAL::to_double(vit->point().y());
+
+          if(curr_x < x_min)
+            x_min = curr_x;
+          else if(curr_x > x_max)
+            x_max = curr_x;
+
+          if(curr_y < y_min)
+            y_min = curr_y;
+          else if(curr_y > y_max)
+            y_max = curr_y;
+
+        }
+        double w = (x_max - x_min)/10;
+        double h = (y_max - y_min)/10;
+
+        // make sure the bbox is not degenerated
+        if(w == 0.0)
+          w+=10.0;
+        if(h == 0.0)
+          h+=10.0;
+        widget->set_window(x_min - w, x_max + w, y_min - h, y_max + h);
+      }
       widget->unlock();
       something_changed();
       widget->setCursor(old);
@@ -235,12 +268,21 @@ private:
       is >> a >> sr;
       s = Base_sphere_3(a, sr);
     }
+
+    void read_surface(std::ifstream& is, Base_plane_3& p)
+    {
+      Coord_type a, b, c, d;
+      is >> a >> b >> c >> d;
+      p = Base_plane_3(Plane_3(a, b, c, d));
+    }
+
 public slots:
 
     void open_triangles_file()
     {
       tri_diag.clear();
       sphere_diag.clear();
+      plane_diag.clear();
       open_file(tri_diag);
     }
 
@@ -248,7 +290,16 @@ public slots:
     {
       tri_diag.clear();
       sphere_diag.clear();
+      plane_diag.clear();
       open_file(sphere_diag);
+    }
+
+    void open_planes_file()
+    {
+      tri_diag.clear();
+      sphere_diag.clear();
+      plane_diag.clear();
+      open_file(plane_diag);
     }
 
   void new_instance()
