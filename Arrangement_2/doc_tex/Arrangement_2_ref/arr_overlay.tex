@@ -7,8 +7,8 @@
 The function \ccRefName\ computes the overlay of two input arrangement
 objects, and returns the overlaid arrangement. All three arrangements
 are instantiated using the same geometric traits class, but may be
-represented using different \dcel\ classes. A given overlay-traits object
-is used to properly construct the overlaid \dcel\ that represents the
+represented using different \dcel{} classes. A given overlay-traits object
+is used to properly construct the overlaid \dcel{} that represents the
 resulting arrangement.
 
 %%%%
@@ -45,7 +45,7 @@ consolidated set of curves that induce \ccc{res}.
 \ccPrecond{\ccc{res} does not refer to either \ccc{arr1} or \ccc{arr2}
 (that is, ``self overlay'' is not supported).}
 
-\ccHeading{Requirements}
+\ccRequirements
 \begin{itemize}
 \item The overlay-traits object \ccc{ovl_tr} must model the \ccc{OverlayTraits}
   concept, which is able to construct records of the \ccc{ResDcel} class on
