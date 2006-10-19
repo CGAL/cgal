@@ -19,16 +19,19 @@
 
 // TODO:
 //	-change the order in which functions are written in the file, so it
-//	becames more readable (someone, someday, will do this)
+//	becomes more readable (someone, someday, will do this)
 //	-think about precision propagation in arithmetic functions (MPFI is
 //	supposed to do this)
 //	-enhance the exception mechanism (when comparison between intervals is
 //	not known)
 //	-add interfaces to more CGAL number types
+//	-avoid the use of BOOST, because the operators that it provides here
+//	are not correct (note that alg += non_alg will need to clear its
+//	pointer to the polynomial, while alg + non_alg won't)
 
 // NOTE:
 // some functions are not coded because BOOST will provide them; they are
-// marked in the code
+// commented in the code
 
 #include <CGAL/basic.h>
 #include <CGAL/assertions.h>
@@ -131,6 +134,18 @@ Algebraic_1::Algebraic_1 (const mpfi_t &i) {
 
 Algebraic_1::Algebraic_1 (const Algebraic_1 &i) {
 	mpfi_set (mpfi (), i.mpfi ());
+	set_pol (i.pol ());
+	set_nr (i.nr ());
+	set_mult (i.mult ());
+};
+
+// interesting constructor
+Algebraic_1::Algebraic_1
+(const mpfi_t &i, const Rational_polynomial_1 &p, const int n, const int m) {
+	mpfi_set (mpfi (), i);
+	set_pol (p);
+	set_nr (n);
+	set_mult (m);
 };
 
 // destructor
@@ -138,9 +153,48 @@ Algebraic_1::Algebraic_1 (const Algebraic_1 &i) {
 Algebraic_1::~Algebraic_1 () {};
 */
 
-inline const mpfi_t & Algebraic_1::mpfi () const { return Ptr()->mpfI; };
+inline const mpfi_t & Algebraic_1::mpfi () const {
+	return Ptr()->mpfI;
+};
 
-inline mpfi_t & Algebraic_1::mpfi () { return ptr()->mpfI; };
+inline mpfi_t & Algebraic_1::mpfi () {
+	return ptr()->mpfI;
+};
+
+inline const Rational_polynomial_1 & Algebraic_1::pol () const {
+	return *(Ptr()->poly);
+};
+
+inline Rational_polynomial_1 & Algebraic_1::pol () {
+	return *(ptr()->poly);
+};
+
+inline const int Algebraic_1::nr () const {
+	return ptr()->nr;
+};
+
+inline const int Algebraic_1::mult () const {
+	return ptr()->mult;
+};
+
+void Algebraic_1::clear_pol () {
+	ptr()->poly = NULL;
+	return;
+};
+
+void Algebraic_1::set_pol (const Rational_polynomial_1 &p) {
+	// thanks Julien!
+	ptr()->poly = const_cast<Rational_polynomial_1 *>(&p);
+	return;
+};
+
+void Algebraic_1::set_nr (const int n) {
+	ptr()->nr = n;
+};
+
+void Algebraic_1::set_mult (const int m) {
+	ptr()->mult = m;
+};
 
 inline void Algebraic_1::set_prec (mp_prec_t p) {
 	mpfi_round_prec (mpfi (), p);
@@ -160,6 +214,10 @@ inline void Algebraic_1::get_endpoints (mpfr_t &l, mpfr_t &r) const {
 	mpfi_get_left (l, mpfi ());
 	mpfi_get_right (r, mpfi ());
 }
+
+inline bool Algebraic_1::is_consistent () const {
+	return (ptr()->poly);
+};
 
 inline bool Algebraic_1::is_point () const {
 	mpfr_t l, r;
@@ -287,31 +345,39 @@ inline bool Algebraic_1::contains (const Gmpq &n) const {
 // overcharge for assignment
 Algebraic_1& Algebraic_1::operator= (const long int i) {
 	mpfi_set_si (mpfi (), i);
+	clear_pol ();
 	return *this;
 };
 
 Algebraic_1& Algebraic_1::operator= (const mpz_t &z) {
 	mpfi_set_z (mpfi (), z);
+	clear_pol ();
 	return *this;
 };
 
 Algebraic_1& Algebraic_1::operator= (const mpq_t &q) {
 	mpfi_set_q (mpfi (), q);
+	clear_pol ();
 	return *this;
 };
 
 Algebraic_1& Algebraic_1::operator= (const CGAL::Gmpz &z) {
 	mpfi_set_z (mpfi (), z.mpz());
+	clear_pol ();
 	return *this;
 };
 
 Algebraic_1& Algebraic_1::operator= (const CGAL::Gmpq &q) {
 	mpfi_set_q (mpfi (), q.mpq());
+	clear_pol ();
 	return *this;
 };
 
 Algebraic_1& Algebraic_1::operator= (const Algebraic_1 &i) {
 	mpfi_set (mpfi (), i.mpfi ());
+	set_pol (i.pol ());
+	set_nr (i.nr ());
+	set_mult (i.mult ());
 	return *this;
 };
 
@@ -319,12 +385,11 @@ Algebraic_1& Algebraic_1::operator= (const Algebraic_1 &i) {
 // 2
 // comparisons with ints
 bool Algebraic_1::operator== (const int n2) const {
-	if (contains (n2)) {
+	if (contains (n2))
 		if (is_point ())
 			return true;
 		else
 			overlap ();
-	}
 	return false;
 };
 
@@ -379,12 +444,11 @@ bool Algebraic_1::operator>= (const int n2) const {
 // comparisons with Gmpz and Gmpq
 template <class T>
 bool Algebraic_1::operator== (const T &n2) const {
-	if (contains (n2)) {
+	if (contains (n2))
 		if (is_point ())
 			return true;
 		else
 			overlap ();
-	}
 	return false;
 };
 
@@ -470,12 +534,6 @@ bool Algebraic_1::operator>= (const T &n2) const {
 };
 
 // 3
-//--------------------------------------------------
-// BOOST:
-// Algebraic_1 Algebraic_1::operator+ (const Algebraic_1 &n2) const
-// Algebraic_1 Algebraic_1::operator- (const Algebraic_1 &n2) const
-// Algebraic_1 Algebraic_1::operator* (const Algebraic_1 &n2) const
-//-------------------------------------------------- 
 
 Algebraic_1 Algebraic_1::operator- () const {
 	mpfi_t n;
@@ -484,20 +542,45 @@ Algebraic_1 Algebraic_1::operator- () const {
 	Algebraic_1 ret (n);
 	mpfi_clear (n);
 	return ret;
-}
+};
+
+Algebraic_1 Algebraic_1::operator+ (const Algebraic_1 &n2) const {
+	mpfi_t n;
+	mpfi_init (n);
+	mpfi_add (n, mpfi (), n2.mpfi());
+	Algebraic_1 ret (n);
+	mpfi_clear (n);
+	return ret;
+};
+
+inline Algebraic_1 Algebraic_1::operator- (const Algebraic_1 &n2) const {
+	return (*this + (-n2));
+};
+
+Algebraic_1 Algebraic_1::operator* (const Algebraic_1 &n2) const {
+	mpfi_t n;
+	mpfi_init (n);
+	mpfi_mul (n, mpfi (), n2.mpfi());
+	Algebraic_1 ret (n);
+	mpfi_clear (n);
+	return ret;
+};
 
 Algebraic_1& Algebraic_1::operator+= (const Algebraic_1 &n2) {
 	mpfi_add (mpfi (), mpfi (), n2.mpfi ());
+	clear_pol ();
 	return *this;
 };
 
 Algebraic_1& Algebraic_1::operator-= (const Algebraic_1 &n2) {
 	mpfi_sub (mpfi (), mpfi (), n2.mpfi ());
+	clear_pol ();
 	return *this;
 };
 
 Algebraic_1& Algebraic_1::operator*= (const Algebraic_1 &n2) {
 	mpfi_mul (mpfi (), mpfi (), n2.mpfi ());
+	clear_pol ();
 	return *this;
 };
 
@@ -600,8 +683,18 @@ std::pair <double, double> Algebraic_1::to_interval () const {
 // Algebraic_1 Algebraic_1::operator/ (const int n2) const
 //-------------------------------------------------- 
 
+Algebraic_1 Algebraic_1::operator/ (const Algebraic_1 &n2) const {
+	mpfi_t n;
+	mpfi_init (n);
+	mpfi_div (n, mpfi (), n2.mpfi());
+	Algebraic_1 ret (n);
+	mpfi_clear (n);
+	return ret;
+};
+
 Algebraic_1& Algebraic_1::operator/= (const Algebraic_1 &n2) {
 	mpfi_div (mpfi (), mpfi (), n2.mpfi ());
+	clear_pol ();
 	return *this;
 };
 

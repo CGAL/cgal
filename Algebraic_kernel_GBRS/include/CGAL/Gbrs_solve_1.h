@@ -22,19 +22,21 @@
 
 #include <mpfi.h>
 #include <CGAL/Gbrs_polynomial_1.h>
+#include <CGAL/Gbrs_algebraic_1.h>
 
 CGAL_BEGIN_NAMESPACE
 
 // initialize the RS solver, returns 0 if everything was OK
 int init_solver ();
 
-// next functions return the number of roots:
-
-// solve given the precision
+// solve given the precision, returns de number of roots
 int solve_1 (mpfi_t *&, const Rational_polynomial_1 &, unsigned int);
 
-// solve with the default precision
+// solve with the default precision, returns de number of roots
 inline int solve_1 (mpfi_t *&, const Rational_polynomial_1 &);
+
+// evaluate a polynomial at a given algebraic number
+Sign sign_1 (const Rational_polynomial_1 &, const Algebraic_1 &);
 
 CGAL_END_NAMESPACE
 

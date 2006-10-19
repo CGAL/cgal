@@ -89,7 +89,8 @@ class Solve_1 {
 				"error in resolution");
 		if (nr)
 			for (int i=0; i<nr; ++i) {
-				Algebraic a (x[i]);
+				// the multiplicity will be always 1 for now
+				Algebraic a (x[i], p, i, 1);
 				// x[i] was mpfi_inited by RS? If so,
 				mpfi_clear (x[i]);
 				*(res++) = a;
@@ -111,7 +112,7 @@ class Solve_1 {
 				"error in resolution");
 		if (nr)
 			for (int i=0; i<nr; ++i) {
-				Algebraic a (x[i]);
+				Algebraic a (x[i], p);
 				// x[i] was mpfi_inited by RS? If so,
 				mpfi_clear (x[i]);
 				*(roots++) = a;
@@ -128,15 +129,14 @@ class SignAt_1 {
 	typedef typename AK::Coefficient	Coefficient_1;
 	public:
 	typedef Sign	result_type;
-	// TODO: allow UNDECIDED as sign type
-	// TODO: calculate the sign with RS
 	result_type operator() (const Polynomial_1 &p,
 			const Algebraic_1 &r) const {
-		return ZERO;
+		return sign_1 (p, r);
 	};
 
 	result_type operator() (const Polynomial_1 &p,
 			const Coefficient_1 &r) const {
+		CGAL_assertion_msg (false, "not implemented yet");
 		return ZERO;
 	};
 };	// SignAt_1

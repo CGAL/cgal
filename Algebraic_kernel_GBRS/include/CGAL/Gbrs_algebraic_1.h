@@ -22,8 +22,10 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/assertions.h>
+#include <CGAL/Handle_for.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
+#include <CGAL/Gbrs_polynomial_1.h>
 #include <exception>
 #include <iostream>
 #include <mpfi.h>
@@ -46,8 +48,11 @@ void overlap ();
 class Algebraic_1_rep {
 public:
 	mpfi_t mpfI;
+	Rational_polynomial_1 *poly;
+	int nr;
+	int mult;
 
-	Algebraic_1_rep () { mpfi_init (mpfI); }
+	Algebraic_1_rep () : poly(NULL), nr(0), mult(0) { mpfi_init (mpfI); }
 	~Algebraic_1_rep () { mpfi_clear (mpfI); }
 
 private:
@@ -59,13 +64,13 @@ private:
 // The class of the MPFI intervals. It's a model of the RingNumberType concept
 class Algebraic_1
 : Handle_for<Algebraic_1_rep>,
-	boost::field_operators1<Algebraic_1,
+	/*boost::field_operators1<Algebraic_1,*/
 		boost::field_operators2<Algebraic_1, int,
 		boost::field_operators2<Algebraic_1, mpz_t,
 		boost::field_operators2<Algebraic_1, mpq_t,
 		boost::field_operators2<Algebraic_1, Gmpz,
 		boost::field_operators2<Algebraic_1, Gmpq,
-		boost::field_operators2<Algebraic_1, mpfr_t > > > > > > > {
+		boost::field_operators2<Algebraic_1, mpfr_t > > > > > > /*>*/ {
 			// XXX: the functions provided by BOOST (or supposed
 			// to be) are commented
 
@@ -104,6 +109,10 @@ public:
 	Algebraic_1 (const mpfi_t &);
 	Algebraic_1 (const Algebraic_1 &);
 
+	// the only interesting constructor
+	Algebraic_1 (const mpfi_t &, const Rational_polynomial_1 &,
+			const int, const int);
+
 	Algebraic_1& operator= (const long int);
 	Algebraic_1& operator= (const mpz_t &);
 	Algebraic_1& operator= (const mpq_t &);
@@ -119,11 +128,20 @@ public:
 	// functions related to the member data
 	inline const mpfi_t & mpfi () const;
 	inline mpfi_t & mpfi ();
+	inline const Rational_polynomial_1 & pol () const;
+	inline Rational_polynomial_1 & pol ();
+	inline const int nr () const;
+	inline const int mult () const;
+	void clear_pol ();
+	void set_pol (const Rational_polynomial_1 &);
+	void set_nr (const int);
+	void set_mult (const int);
 	inline void set_prec (mp_prec_t);
 	inline mp_prec_t get_prec ();
 	inline void get_left (mpfr_t &) const;
 	inline void get_right (mpfr_t &) const;
 	inline void get_endpoints (mpfr_t &, mpfr_t &) const;
+	inline bool is_consistent () const;
 	inline bool is_point () const;	// are endpoints equal?
 	inline bool contains (const int n) const;
 	inline bool contains (const mpfr_t &n) const;
@@ -170,12 +188,10 @@ public:
 	template <class T> bool operator<= (const T &) const;
 	template <class T> bool operator>= (const T &) const;
 	// 3
-	//--------------------------------------------------
-	// Algebraic_1 operator+ (const Algebraic_1 &) const;
-	// Algebraic_1 operator- (const Algebraic_1 &) const;
-	// Algebraic_1 operator* (const Algebraic_1 &) const;
-	//-------------------------------------------------- 
 	Algebraic_1 operator- () const;
+	Algebraic_1 operator+ (const Algebraic_1 &) const;
+	inline Algebraic_1 operator- (const Algebraic_1 &) const;
+	Algebraic_1 operator* (const Algebraic_1 &) const;
 	Algebraic_1& operator+= (const Algebraic_1 &);
 	Algebraic_1& operator-= (const Algebraic_1 &);
 	Algebraic_1& operator*= (const Algebraic_1 &);
@@ -212,9 +228,9 @@ public:
 	std::pair <double,double> to_interval () const;
 	// 7
 	//--------------------------------------------------
-	// Algebraic_1 operator/ (const Algebraic_1 &) const;
 	// Algebraic_1 operator/ (const int) const;
 	//-------------------------------------------------- 
+	Algebraic_1 operator/ (const Algebraic_1 &) const;
 	Algebraic_1& operator/= (const Algebraic_1 &);
 	Algebraic_1& operator/= (const int);
 	// 8

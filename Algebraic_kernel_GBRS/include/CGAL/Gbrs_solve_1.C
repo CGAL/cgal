@@ -30,14 +30,22 @@
 CGAL_BEGIN_NAMESPACE
 
 // the default precision of gb/rs
-#ifndef DEF_PREC
-#define DEF_PREC 23
+#ifndef CGAL_RS_DEF_PREC
+#define CGAL_RS_DEF_PREC 23
+#endif
+
+#ifndef CGAL_RS_MIN_PREC
+#define CGAL_RS_MIN_PREC 5
+#endif
+
+#ifndef CGAL_RS_MAX_PREC
+#define CGAL_RS_MAX_PREC 50
 #endif
 
 int init_rs () {
 	rs_init_rs ();
 	return 0;
-};
+}
 
 int affiche_vect_ibfr (mpfi_t *&x, int index, const int ident_vect) {
 	int ident_elt;
@@ -65,7 +73,37 @@ int affiche_sols_eqs (mpfi_t *&x) {
 	return nb_elts;
 }
 
-void create_rs_upoly(mpz_t *poly, const int deg, const int ident_pol) {
+Sign affiche_sols_constr (const Algebraic_1 &a) {
+	int ident_sols_eqs,nb_elts,ident_node,ident_vect, nb, ident_elt;
+	mpfi_t tmp;
+	mpfi_init(tmp);
+	ident_sols_eqs = rs_get_default_sols_ineqs ();
+	nb_elts = rs_export_list_vect_ibfr_nb (ident_sols_eqs);
+	ident_node = rs_export_list_vect_ibfr_firstnode (ident_sols_eqs);
+	for (int i=1; i<nb_elts+1; ++i) {
+		ident_vect = rs_export_list_vect_ibfr_monnode (ident_node);
+		nb = rs_export_dim_vect_ibfr (ident_vect);
+		CGAL_assertion_msg ((nb == 1),
+				"the vector must contain one element");
+		ident_elt = rs_export_elt_vect_ibfr (ident_vect, 0);
+		if (i == a.nr()+1) {
+			mpfi_set(tmp,(mpfi_ptr)rs_export_ibfr_mpfi(ident_elt));
+			break;
+			}
+		ident_node = rs_export_list_vect_ibfr_nextnode (ident_node);
+	}
+	/*std::cout << "returned value: ";
+	mpfi_out_str(stdout,10,0,tmp);
+	std::cout << std::endl;*/
+	if (mpfi_is_strictly_pos (tmp))
+		return POSITIVE;
+	if (mpfi_is_strictly_neg (tmp))
+		return NEGATIVE;
+	// TODO: refine the result when needed
+	return ZERO;
+}
+
+void create_rs_upoly (mpz_t *poly, const int deg, const int ident_pol) {
 	int ident_mon, ident_coeff, i;
 	rs_import_uppring ("T");	// what the heck is this?
 	for (i=0; i<=deg; ++i)
@@ -78,6 +116,14 @@ void create_rs_upoly(mpz_t *poly, const int deg, const int ident_pol) {
 			rs_dset_mon_upp_bz (ident_mon, ident_coeff, i);
 			rs_dappend_list_mon_upp_bz (ident_pol, ident_mon);
 		}
+}
+
+void create_rs_uconstr (mpz_t ** list_constr,
+		const int * list_degs, const int ident_list) {
+	int ident_poly;
+	ident_poly = rs_export_new_list_mon_upp_bz ();
+	create_rs_upoly (*list_constr, *list_degs, ident_poly);
+	rs_dappend_list_sup_bz (ident_list, ident_poly);
 }
 
 int solve_1 (mpfi_t *&x, const Rational_polynomial_1 &p1, unsigned int prec) {
@@ -94,7 +140,28 @@ int solve_1 (mpfi_t *&x, const Rational_polynomial_1 &p1, unsigned int prec) {
 }
 
 inline int solve_1 (mpfi_t *&x, const Rational_polynomial_1 &p1) {
-	return solve_1 (x, p1, DEF_PREC);
+	return solve_1 (x, p1, CGAL_RS_DEF_PREC);
+}
+
+Sign sign_1 (const Rational_polynomial_1 &p1, const Algebraic_1 &a) {
+	mpz_t **constr;
+	int *degs;
+	CGAL_assertion_msg (a.is_consistent (),
+		"this number was not calculated as a root of a polynomial");
+	rs_reset_all ();
+	// tell RS to find the roots of this polynomial
+	create_rs_upoly (a.pol().get_coefs (), a.pol().get_degree (),
+			rs_get_default_up ());
+	// the constraint vector will have just one element
+	constr = (mpz_t**)malloc(sizeof(mpz_t*));
+	*constr = p1.get_coefs ();
+	degs = (int*)malloc(sizeof(int));
+	*degs = p1.get_degree ();
+	create_rs_uconstr (constr, degs, rs_get_default_ineqs_u ());
+	set_rs_precisol (CGAL_RS_MIN_PREC);
+	set_rs_verbose (0);
+	rs_run_algo ("UISOLES");
+	return affiche_sols_constr (a);
 }
 
 CGAL_END_NAMESPACE
