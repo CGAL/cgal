@@ -167,7 +167,7 @@ typedef Set_cost_cache<Polyhedron,P_MP_cost>     P_set_cost_cache_MP ;
 typedef LindstromTurk_set_cost_cache<Polyhedron> P_set_cost_cache_LT ;
 
 typedef Set_cost_and_placement_cache<Polyhedron,P_MP_cost,P_MP_placement> P_set_cost_and_placement_cache_MP ;
-typedef LindstromTurk_set_cost_and_placement_cache<Polyhedron>           P_set_cost_and_placement_cache_LT ;
+typedef LindstromTurk_set_cost_and_placement_cache<Polyhedron>            P_set_cost_and_placement_cache_LT ;
 
 
 void Simplify ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Method aMethod, Cache aCache )
@@ -307,6 +307,7 @@ void Simplify ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName
                                    .get_cost(get_cached_cost)
                                    .get_placement(get_cached_placement)
                                    .visitor(&lVisitor)
+                                   .edge_index_map(get(CGAL::edge_external_index,lP))
                                    );
                   break ;                  
                                    

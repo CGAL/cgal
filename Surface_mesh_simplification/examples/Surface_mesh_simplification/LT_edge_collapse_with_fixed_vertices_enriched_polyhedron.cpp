@@ -86,7 +86,15 @@ int main( int argc, char** argv )
       ; ++ vi 
       )
     vi->is_fixed_ = true ; // only some would be set to true, of course
-  
+
+  // It also stores the edge index right in the edge, so we need to initialize it.
+  std::size_t id = 0 ;
+  for ( Surface::Halfedge_iterator hi = surface.halfedges_begin()
+      ; hi != surface.halfedges_end() 
+      ; ++ hi 
+      )
+    hi->id() = id ++ ;
+    
   int r = SMS::edge_collapse(surface
                              ,SMS::Count_ratio_stop_predicate<Surface>(0.10) 
                              ,CGAL::vertex_is_fixed_map(CGAL::Vertex_is_fixed_property_map_stored<Surface>())

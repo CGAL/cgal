@@ -50,7 +50,7 @@ int main( int argc, char** argv )
     SMS::edge_collapse(surface
                       ,SMS::Count_stop_predicate<Surface>(1000)             
                        
-                      ,CGAL::edge_index_map(surface)
+                      ,CGAL::edge_index_map(boost::get(CGAL::edge_external_index,surface))
                       
                       .set_cache    (SMS::LindstromTurk_set_cost_and_placement_cache<Surface>())
                       .get_cost     (SMS::Cached_cost     <Surface>())
@@ -88,7 +88,7 @@ int main( int argc, char** argv )
     SMS::edge_collapse(surface
                       ,SMS::Count_stop_predicate<Surface>(1000)         
                        
-                      ,CGAL::edge_index_map(surface)
+                      ,CGAL::edge_index_map(boost::get(CGAL::edge_external_index,surface))
                       
                       .set_cache    (set_full_cache)
                       .get_cost     (SMS::Cached_cost     <Surface>())

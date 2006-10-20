@@ -35,7 +35,7 @@ int main( int argc, char** argv )
   int r = SMS::edge_collapse(surface
                             ,SMS::Count_ratio_stop_predicate<Surface>(0.10)
                              
-                            ,CGAL::edge_index_map(surface)
+                            ,CGAL::edge_index_map(boost::get(CGAL::edge_external_index,surface))
                             
                             .set_cache    (SMS::Set_no_cache      <Surface>())
                             .get_cost     (SMS::Edge_length_cost  <Surface>())

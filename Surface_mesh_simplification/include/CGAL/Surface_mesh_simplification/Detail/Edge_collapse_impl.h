@@ -115,6 +115,9 @@ void EdgeCollapse<M,SP,VPM,VFM,EIM,EBM,SC,CF,PF,CP,PP,V>::Collect()
   {
     edge_descriptor lEdge = *eb ;
   
+    std::cerr << "get_directed_edge_id(lEdge)" << get_directed_edge_id(lEdge) << std::endl ;
+    std::cerr << "get_directed_edge_id(opp lEdge)" << get_directed_edge_id(opposite_edge(lEdge,mSurface)) << std::endl ;
+    
     CGAL_assertion( get_directed_edge_id(lEdge) == id ) ;
     CGAL_assertion( get_directed_edge_id(opposite_edge(lEdge,mSurface)) == id+1 ) ;
       

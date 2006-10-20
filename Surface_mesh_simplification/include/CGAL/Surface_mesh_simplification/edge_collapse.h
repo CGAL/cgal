@@ -156,26 +156,6 @@ struct Dummy_visitor
   void OnNonCollapsable(Edge const&, ECM& ) {}                
 } ;
 
-namespace detail
-{
-  template <typename Param, typename Graph, typename PropertyTag>
-  typename
-  boost::detail::choose_pmap_helper<Param,Graph,PropertyTag>::const_result_type
-  choose_const_index_map(const Param& p, const Graph& g, PropertyTag tag)
-  { 
-    typedef typename 
-      boost::detail::choose_pmap_helper<Param,Graph,PropertyTag>::Selector Choice;
-    return Choice::const_apply(p, g, tag);
-  }
-  
-  template <typename Surface, typename PropertyTag>
-  typename boost::property_map<Surface,CGAL::edge_external_index_t>::const_type
-  choose_const_index_map(const Surface& p, const Surface& g, PropertyTag tag)
-  { 
-    return boost::get(CGAL::edge_external_index,p);
-  }
-}
-
 template<class ECM, class ShouldStop, class P, class T, class R>
 int edge_collapse ( ECM& aSurface
                   , ShouldStop const& aShould_stop
@@ -186,17 +166,15 @@ int edge_collapse ( ECM& aSurface
   using boost::choose_const_pmap ;
   using boost::get_param ;
   
-  using detail::choose_const_index_map ;
-  
   LindstromTurk_params lPolicyParams ;
   
   boost::graph_visitor_t vis = boost::graph_visitor_t() ;
-  
+    
   return edge_collapse(aSurface
                       ,aShould_stop
                       ,choose_const_pmap     (get_param(aParams,vertex_point),aSurface,vertex_point)
                       ,choose_param          (get_param(aParams,vertex_is_fixed),Vertex_is_fixed_property_map_always_false<ECM>())
-                      ,choose_const_index_map(get_param(aParams,boost::edge_index),aSurface,boost::edge_index)
+                      ,choose_const_pmap     (get_param(aParams,boost::edge_index),aSurface,boost::edge_index)
                       ,choose_const_pmap     (get_param(aParams,edge_is_border),aSurface,edge_is_border)
                       ,choose_param          (get_param(aParams,set_cache_policy), LindstromTurk_set_cost_cache<ECM>())
                       ,choose_param          (get_param(aParams,get_cost_policy), Cached_cost<ECM>())
