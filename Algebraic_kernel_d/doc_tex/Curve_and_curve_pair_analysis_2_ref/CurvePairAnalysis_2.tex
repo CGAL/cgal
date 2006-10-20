@@ -197,6 +197,19 @@ $x$, just one representative vertical line for an interval). The others
 enables a user to compute vertical lines for given $x$, i.e. also to 
 $y$-coordinates at given $x$.
 
+\ccMethod{Solution_2_const_iterator solve_begin();}{
+  returns iterator running over all intersection of the two curves
+}
+
+\ccMethod{Solution_2_const_iterator solve_end();}{
+  returns past-end-value for all intersections of the two curves
+}
+
+\ccMethod{int find(Solution_2 s);}{
+  returns the index of the event at the vertical line defined by 
+  $s$'s $x$-coordinate, or -1 if $s$ is does not lie on any curve.
+}
+
 %Additionally note that we talk about 4 sequences of $x$-critical lines here. 
 %
 %\begin{itemize}
