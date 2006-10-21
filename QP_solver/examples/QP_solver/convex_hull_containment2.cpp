@@ -1,11 +1,11 @@
 // Example: check whether a point is in the convex hull of other points
 #include <cassert>
 #include <vector>
-#include <CGAL/Homogeneous_d.h>
+#include <CGAL/Cartesian_d.h>
 #include <CGAL/MP_Float.h>
 #include "solve_convex_hull_lp2.h"
 
-typedef CGAL::Homogeneous_d<double> Kernel_d;
+typedef CGAL::Cartesian_d<double> Kernel_d;
 typedef Kernel_d::Point_d Point_d;
 
 bool is_in_convex_hull (const Point_d& p, 
