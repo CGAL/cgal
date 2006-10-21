@@ -10,9 +10,9 @@
 \ccChapterAuthor{Kaspar Fischer \and Bernd G{\"a}rtner 
 \and Sven Sch{\"o}nherr \and Frans Wessendorp}
 
-\section{A first quadratic program}
+\section{Getting Started---A First Quadratic Program}
 This section explains what linear and quadratic programs are, gives a
-simple example of a quadratic program, and shows how CGAL can be used
+simple example of a quadratic program, and shows how \cgal\ can be used
 to solve it.
 
 \subsection{Quadratic programs}
@@ -101,7 +101,7 @@ function at this optimal solution is $2^2 + 4(3-4)^2 = 8$.
 \end{ccHtmlOnly}
 \end{figure}
 
-Here is how this quadratic program can be solved in CGAL (for an example
+Here is how this quadratic program can be solved in \cgal\ (for an example
 how to work with the type \ccc{double} as input type see Section 
 \ref{sec:QP-working_from_iterators}).
 The output will be:
@@ -113,7 +113,7 @@ Optimal objective function value: 8/1
 \ccIncludeExampleCode{QP_solver/first_qp.cpp}
 
 
-\section{Which programs can efficiently be solved?}
+\section{Which Programs can Efficiently be Solved?}
 \label{sec:QP-efficiency}
 This can quite precisely be answered in terms of the following
 parameters.
@@ -143,13 +143,13 @@ If $\min(n,m)+r$ is up to a few hundreds, you may still get a solution
 within reasonable time, depending on the problem characteristics.
 
 If you have a problem where both $n$ and $e$ are above
-$1,000$, say, then chances are high that CGAL cannot solve it.
+$1,000$, say, then chances are high that \cgal\ cannot solve it.
 This even holds if the problem is \emph{sparse}, i.e. has a small
-number of nonzero elements in $A$ and $D$. CGAL's quadratic programming
+number of nonzero elements in $A$ and $D$. \cgal's quadratic programming
 solver is tailored to \emph{dense} problems and therefore does not 
 profit from sparse input.
 
-\section{How robust is the solver?}
+\section{How Robust is the Solver?}
 Given that you use an \emph{exact number type} for the 
 calculations (as in the example program above), the solver
 will give you \emph{exact rational output}, for \emph{every}
@@ -169,7 +169,7 @@ there are means to switch to a slower variant that is guaranteed
 not to cycle, see\ldots 
 \end{itemize}
 
-\section{Solving linear programs}\label{sec:QP-lp}
+\section{Solving Linear Programs}\label{sec:QP-lp}
 You can solve a linear program by solving a quadratic program with
 quadratic objective function matrix $D=0$. But there is a more efficient
 dedicated function for solving a linear program that also saves you
@@ -215,7 +215,7 @@ value is $-32(11/3)+64=-160/3$.
 \end{ccHtmlOnly}
 \end{figure}
 
-Here is a CGAL code for solving it. Its output is
+Here is a \cgal\ code for solving it. Its output is
 \begin{verbatim}
 Optimal feasible solution: 10/3  11/3
 Optimal objective function value: -160/3
@@ -223,11 +223,11 @@ Optimal objective function value: -160/3
 
 \ccIncludeExampleCode{QP_solver/first_lp.cpp}
 
-\section{Solving nonnegative programs}\label{sec:QP-nonnegative}
+\section{Solving Nonnegative Programs}\label{sec:QP-nonnegative}
 
 Often, the bounds in a quadratic or linear program are of the special
 type $x\geq 0$. Programs of this type are called nonnegative and
-can be solved by dedicated CGAL functions. This is more efficient than
+can be solved by dedicated \cgal\ functions. This is more efficient than
 calling the general functions, and it saves you from providing any bound
 information at all. If we go back to our first quadratic program and
 remove the constraint $y\leq 4$, we arrive at a nonnegative quadratic
@@ -295,29 +295,79 @@ Optimal objective function value: -352/3
 
 \ccIncludeExampleCode{QP_solver/first_nonnegative_lp.cpp}
 
-\section{Working from iterators}\label{sec:QP-working_from_iterators}
+\section{Working from Iterators}\label{sec:QP-working_from_iterators}
 In the examples of the previous sections, the linear or quadratic
 program was explicitly represented by arrays. In general, other types
 of containers or implicit representations may occur, so the
 generic interface to the solver is iterator-based. Let's look at a
-situation in which a linear program is represented implicitly, and
+situation in which a linear program is given implicitly, and
 access to it is gained through properly constructed iterators.
 
-The problem we are going to solve is the following: given
-points $p_1,\ldots p_{n}$ in $d$-space and another point $p$: is $p$
-in the convex hull of $\{p_1,\ldots,p_{n}\}$? 
+The problem we are going to solve is the following: given points
+$p_1,\ldots p_{n}$ in $d$-dimensional space and another point $p$: is
+$p$ in the convex hull of $\{p_1,\ldots,p_{n}\}$? In formulas, this is
+the case if and only if there real coefficients
+$\lambda_1,\ldots,\lambda_n$ such that $p$ is a convex combination of
+$p_1,\ldots,p_n$: 
+\[
+p = \sum_{j=1}^{n}~\lambda_j~p_j, \quad \sum_{j=1}^{n}~\lambda_j = 1,
+\quad \lambda_j \geq 0 \mbox{~for all $j$.}
+\]
+The problem of testing the existence of such $\lambda_j$ can 
+be expressed as a linear program. It becomes particularly easy
+when we use the homogeneous representations of the points: if
+$q_1,\ldots,q_n,q\in\R^{d+1}$ are homogeneous coordinates for
+$p_1,\ldots,p_n,p$ with positive homogenizing coordinates 
+$h_1,\ldots,h_n,h$, we have
+\[q_j = h_j \cdot (p_j \mid 1) \mbox{~for all $j$, and~} q = h \cdot
+(p\mid 1).\] Now, nonnegative $\lambda_1,\ldots,\lambda_n$ are
+suitable coefficients for a convex combination if and only if
+\[\sum_{j=1}^n~ \lambda_j(p_j \mid 1) = (p\mid 1), \]
+equivalently, if there are $\mu_1,\ldots,\mu_n$ 
+(with $\mu_j = \lambda_j \cdot h/{h_j}$ for all $j$) such that
+\[
+\sum_{j=1}^n~\mu_j~q_j = q, \quad \mu_j \geq 0\mbox{~for all $j$}.
+\]
 
-\section{Working from MPS files}
+The linear program now tests for the existence of nonnegative $\mu_j$
+that satisfy the latter equation. Below is the code; it defines a function
+that performs the test, given $p$ and $p_1,\ldots,p_n$ (through an iterator
+range), and then calls it with $p_1=(0,0), p_2=(10,0), p_3=(0,10)$ fixed 
+(they define a triangle) and all integral points $p$ in $[0,10]^2$. We know
+that $p$ is in the convex hull of $\{p_1,p_2,p_3\}$ if and only if its two
+coordinates sum up to $10$ at most.
+
+\ccIncludeExampleCode{QP_solver/is_in_convex_hull.cpp}
+
+\subsection{Using Makers}
+You already noticed in the previous example that the actual 
+template arguments for 
+\ccc{CGAL::Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>} 
+can be quite elaborate, and this only gets worse if you plug more 
+iterators into each other. In general, you want to construct a 
+program from given expressions for the iterators, but the
+types of these expressions are probably very complicated and 
+difficult to look up. 
+
+You can avoid the explicit construction of the type
+\ccc{CGAL::Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>} 
+if you only need an expression of it, e.g.\ to pass it directly 
+as an argument to the solving function. Here is how this works.
+
+\ccIncludeExampleCode{QP_solver/is_in_convex_hull2.cpp}
+
+\section{The Important Variables}
+
+\section{Working from MPS Files}
 
 \section{Infeasibility}\label{sec:QP-infeasible}
 
 \section{Unboundedness}\label{sec:QP-unbounded}
 
-\section{The important variables}
 
-\section{The important constraints}
+\section{The Important Constraints}
 
-\section{Solution certificates}
+\section{Solution Certificates}
 
 
 

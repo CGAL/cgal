@@ -1642,6 +1642,8 @@ QP_solver/examples/QP_solver/first_nonnegative_qp.cpp -text
 QP_solver/examples/QP_solver/first_qp.cpp -text
 QP_solver/examples/QP_solver/integer_qp_solver.cin -text
 QP_solver/examples/QP_solver/integer_qp_solver.data -text
+QP_solver/examples/QP_solver/is_in_convex_hull.cpp -text
+QP_solver/examples/QP_solver/is_in_convex_hull2.cpp -text
 QP_solver/examples/QP_solver/rational_qp_solver.cin -text
 QP_solver/examples/QP_solver/rational_qp_solver.data -text
 QP_solver/include/CGAL/QP_functions.h -text

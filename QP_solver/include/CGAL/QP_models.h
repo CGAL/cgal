@@ -171,7 +171,8 @@ make_quadratic_program_from_iterators (
    const U_it& u, 
    const D_it& d, 
    const C_it& c, 
-   typename std::iterator_traits<C_it>::value_type c0)
+   typename std::iterator_traits<C_it>::value_type c0 = 
+   typename std::iterator_traits<C_it>::value_type(0))
 {
   return Quadratic_program_from_iterators
     <A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>
@@ -270,7 +271,8 @@ make_linear_program_from_iterators (
    const FU_it& fu, 
    const U_it& u, 
    const C_it& c, 
-   typename std::iterator_traits<C_it>::value_type c0)
+   typename std::iterator_traits<C_it>::value_type c0 =
+   typename std::iterator_traits<C_it>::value_type(0))
 {
   return Linear_program_from_iterators
     <A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, C_it>
@@ -365,7 +367,8 @@ make_nonnegative_quadratic_program_from_iterators (
    const R_it& r, 
    const D_it& d, 
    const C_it& c, 
-   typename std::iterator_traits<C_it>::value_type c0)
+   typename std::iterator_traits<C_it>::value_type c0 =
+   typename std::iterator_traits<C_it>::value_type(0))
 {
   return Nonnegative_quadratic_program_from_iterators
     <A_it, B_it, R_it, D_it, C_it>
@@ -457,7 +460,8 @@ make_nonnegative_linear_program_from_iterators (
    const B_it& b, 
    const R_it& r, 
    const C_it& c, 
-   typename std::iterator_traits<C_it>::value_type c0)
+   typename std::iterator_traits<C_it>::value_type c0 =
+   typename std::iterator_traits<C_it>::value_type(0))
 {
   return Nonnegative_linear_program_from_iterators
     <A_it, B_it, R_it, C_it>
