@@ -2972,7 +2972,7 @@ set_verbosity( int verbose, std::ostream& stream)
 
 template < typename Q, typename ET, typename Tags >
 void  QP_solver<Q, ET, Tags>::
-print_program( )
+print_program( ) const
 {
     int  row, i;
 
@@ -3050,7 +3050,7 @@ print_program( )
 
 template < typename Q, typename ET, typename Tags >
 void  QP_solver<Q, ET, Tags>::
-print_basis( )
+print_basis( ) const
 {
     char label;
     vout1 << "  basis: ";
@@ -3069,7 +3069,8 @@ print_basis( )
 	if ( has_ineq) {
 	    vout2.out() << std::endl
 			<< "basic constraints:  ";
-	    for (Index_iterator i_it = C.begin(); i_it != C.end(); ++i_it) {
+	    for (Index_const_iterator i_it = 
+		   C.begin(); i_it != C.end(); ++i_it) {
 	        label = (qp_r[*i_it] == CGAL::EQUAL) ? 'e' : 'i';
 		    vout2.out() << *i_it << ":" << label << " ";
 	    }
@@ -3103,7 +3104,7 @@ print_basis( )
 
 template < typename Q, typename ET, typename Tags >
 void  QP_solver<Q, ET, Tags>::
-print_solution( )
+print_solution( ) const
 {
     if ( vout3.verbose()) {
 	   vout3.out() << std::endl

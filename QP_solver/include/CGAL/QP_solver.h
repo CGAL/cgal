@@ -327,7 +327,7 @@ private:
   mutable Verbose_ostream  vout2;     // used for more diagnostic output
   mutable Verbose_ostream  vout3;     // used for full diagnostic output
   mutable Verbose_ostream  vout4;     // used for output of basis inverse
-  mutable Verbose_ostream  vout5; 	// used for output of validity tests
+  mutable Verbose_ostream  vout5;     // used for output of validity tests
     
   // pricing strategy
   Pricing_strategy*        strategyP;
@@ -1277,9 +1277,9 @@ private:
   bool  check_basis_inverse( Tag_false is_linear);
 
   // diagnostic output
-  void  print_program ( );
-  void  print_basis   ( );
-  void  print_solution( );
+  void  print_program ( ) const;
+  void  print_basis   ( ) const;
+  void  print_solution( ) const;
   void  print_ratio_1_original(int k, const ET& x_k, const ET& q_k);
   void  print_ratio_1_slack(int k, const ET& x_k, const ET& q_k);
 

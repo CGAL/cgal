@@ -36,8 +36,6 @@ solve_convex_hull_lp (const Point_d& p,
   typedef
     CGAL::Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>
     Program;
-  // the solution type
-  typedef CGAL::Quadratic_program_solution<ET> Solution;
 
   // ok, we are prepared now: construct program and solve it
   Program lp (end-begin,        // number of variables 
@@ -45,8 +43,4 @@ solve_convex_hull_lp (const Point_d& p,
 	      A_it (begin), B_it (p.homogeneous_begin()), 
 	      R_it (CGAL::EQUAL), C_it (0));
   return CGAL::solve_nonnegative_linear_program (lp, ET(0));
-}
-  
-  // p is in the convex hull if and only if the program is feasible
-  return (s.status() != CGAL::QP_INFEASIBLE);
 }

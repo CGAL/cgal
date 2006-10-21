@@ -3,10 +3,19 @@
 #include <vector>
 #include <CGAL/Homogeneous_d.h>
 #include <CGAL/MP_Float.h>
-#include "is_in_convex_hull2.h"
+#include "solve_convex_hull_lp2.h"
 
 typedef CGAL::Homogeneous_d<double> Kernel_d;
 typedef Kernel_d::Point_d Point_d;
+
+bool is_in_convex_hull (const Point_d& p, 
+			std::vector<Point_d>::const_iterator begin,
+			std::vector<Point_d>::const_iterator end)
+{
+  CGAL::Quadratic_program_solution<CGAL::MP_Float> s =
+    solve_convex_hull_lp (p, begin, end, CGAL::MP_Float());
+  return s.status() != CGAL::QP_INFEASIBLE;
+}
 
 int main()
 {
@@ -19,7 +28,7 @@ int main()
     for (int j=0; j<=10; ++j) {
       // (i,j) is in the simplex iff i+j <= 10 
       bool contained = is_in_convex_hull 
-	(Point_d (i, j), points.begin(), points.end(), CGAL::MP_Float());
+	(Point_d (i, j), points.begin(), points.end());
       assert (contained == (i+j<=10));
     }
 	

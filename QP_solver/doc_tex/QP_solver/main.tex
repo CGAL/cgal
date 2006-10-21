@@ -330,14 +330,19 @@ equivalently, if there are $\mu_1,\ldots,\mu_n$
 \]
 
 The linear program now tests for the existence of nonnegative $\mu_j$
-that satisfy the latter equation. Below is the code; it defines a function
-that performs the test, given $p$ and $p_1,\ldots,p_n$ (through an iterator
-range), and then calls it with $p_1=(0,0), p_2=(10,0), p_3=(0,10)$ fixed 
-(they define a triangle) and all integral points $p$ in $[0,10]^2$. We know
-that $p$ is in the convex hull of $\{p_1,p_2,p_3\}$ if and only if its two
-coordinates sum up to $10$ at most.
+that satisfy the latter equation. Below is the code; it defines a
+function that solves the linear program, given $p$ and
+$p_1,\ldots,p_n$ (through an iterator range).
 
-\ccIncludeExampleCode{QP_solver/is_in_convex_hull.cpp}
+\ccIncludeExampleCode{QP_solver/solve_convex_hull_lp.h}
+
+To see this in action, let us call it with $p_1=(0,0), p_2=(10,0),
+p_3=(0,10)$ fixed (they define a triangle) and all integral points $p$
+in $[0,10]^2$. We know that $p$ is in the convex hull of
+$\{p_1,p_2,p_3\}$ if and only if its two coordinates sum up to $10$ at
+most.
+
+\ccIncludeExampleCode{QP_solver/convex_hull_containment.cpp}
 
 \subsection{Using Makers}
 You already noticed in the previous example that the actual 
@@ -354,9 +359,25 @@ You can avoid the explicit construction of the type
 if you only need an expression of it, e.g.\ to pass it directly 
 as an argument to the solving function. Here is how this works.
 
-\ccIncludeExampleCode{QP_solver/is_in_convex_hull2.cpp}
+\ccIncludeExampleCode{QP_solver/solve_convex_hull_lp2.h}
 
 \section{The Important Variables}
+If we have an optimal solution $x^*$ of a linear or quadratic program,
+the ``important'' variables are typically the ones that are not on
+their bounds. In case of a nonnegative program, these are the nonzero
+variables.  Going back to the example of the previous Section
+\ref{sec:QP-working_from_iterators}, we can easily interpret their
+importance: the nonzero variables correspond to points $p_j$ that
+actually contribute to the convex combination that yields $p$. 
+
+The following example shows how we can access the important variables.
+We generate a set of points on a line and then find the ones that 
+contribute to the convex combinations of intermediate points.
+
+\ccIncludeExampleCode{QP_solver/important_variables.cpp}
+
+Not surprisingly, only two points contribute to any convex
+combination.
 
 \section{Working from MPS Files}
 
