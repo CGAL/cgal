@@ -541,6 +541,7 @@ Envelope_3/demo/Envelope_3/data/triangles/triangle1.txt eol=lf
 Envelope_3/demo/Envelope_3/data/triangles/triangle2.txt eol=lf
 Envelope_3/demo/Envelope_3/data/triangles/triangle3.txt eol=lf
 Envelope_3/demo/Envelope_3/data/triangles/triangle4.txt eol=lf
+Envelope_3/demo/Envelope_3/data/triangles/triangle5.txt eol=lf
 Envelope_3/demo/Envelope_3/envelope_3.cpp eol=lf
 Envelope_3/demo/Envelope_3/makefile -text
 Envelope_3/demo/Envelope_3/typedefs.h eol=lf
