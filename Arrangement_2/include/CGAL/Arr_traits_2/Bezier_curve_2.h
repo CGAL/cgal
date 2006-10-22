@@ -25,6 +25,7 @@
  */
 
 #include <CGAL/Handle_for.h>
+#include <CGAL/Bbox_2.h>
 #include <algorithm>
 #include <vector>
 #include <list>
@@ -88,6 +89,8 @@ private:
 
   Control_point_vec _ctrl_pts;    // The control points.
 
+  Bbox_2            _bbox;        // A bounding box for the curve.
+
 public:
 
   /*! Default constructor. */
@@ -129,6 +132,9 @@ public:
     //                   *****
     //                    k=0
     //
+    double                 x, y;
+    double                 x_min = 0, x_max = 0;
+    double                 y_min = 0, y_max = 0;
     Rational               px, py;
     Integer                n_over_k_j;
     bool                   even_exp;
@@ -140,6 +146,28 @@ public:
 
       px = pts_begin->x();
       py = pts_begin->y();
+
+      // Update the bounding rectangle of the control points.
+      x = CGAL::to_double (px);
+      y = CGAL::to_double (py);
+      
+      if (k == 0)
+      {
+        x_min = x_max = x;
+        y_min = y_max = y;
+      }
+      else
+      {
+        if (x < x_min)
+          x_min = x;
+        else if (x > x_max)
+          x_max = x;
+
+        if (y < y_min)
+          y_min = y;
+        else if (y > y_max)
+          y_max = y;
+      }
 
       // By simplifying (1 - t)^(n-k) we obtain that the k'th expression of
       // the above sum is given by:
@@ -190,6 +218,9 @@ public:
     delete[] coeffsY;
 
     // TODO: Should we normalize the polynomials by GCD computation (?)
+
+    // Update the bounding box.
+    _bbox = Bbox_2 (x_min, y_min, x_max, y_max);
   }
 
 private:
@@ -525,19 +556,19 @@ public:
    * with the other curve, where t is always in [0, 1].
    * \param bc The other Bezier curve.
    * \param oi Output: An output iterator for the t-values.
-   * \param do_overlap Output: Do the two curves overlap.
+   * \param do_ovlp Output: Do the two curves overlap.
    * \return A past-the-end iterator for the t-values.
    */
   template <class OutputIterator>
   OutputIterator intersect (const Self& bc, OutputIterator oi,
-                            bool& do_overlap) const
+                            bool& do_ovlp) const
   {
     // Compute all t-values that correspond to intersection points. 
     std::list<Algebraic>  t_vals;
 
-    basic_intersect (bc, std::back_inserter (t_vals), do_overlap);
+    basic_intersect (bc, std::back_inserter (t_vals), do_ovlp);
 
-    if (do_overlap)
+    if (do_ovlp)
       return;
 
     // Report only t-values in the legal range of [0, 1]. Note that we use
@@ -568,13 +599,52 @@ public:
    * t-values, namely values outside the range [0, 1].
    * \param bc The other Bezier curve.
    * \param oi Output: An output iterator for the t-values.
-   * \param do_overlap Output: Do the two curves overlap.
+   * \param do_ovlp Output: Do the two curves overlap.
    * \return A past-the-end iterator for the t-values.
    */
   template <class OutputIterator>
   OutputIterator basic_intersect (const Self& bc, OutputIterator oi,
-                                  bool& do_overlap) const
+                                  bool& do_ovlp) const
   {
+    // In case the bounding boxes of the two curves do not overlap, they
+    // cannot have any intersection.
+    if (! do_overlap (bbox(), bc.bbox()))
+    {
+      do_ovlp = false;
+      return (oi);
+    }
+
+    // RWRW: Experimental code:
+    if (bbox().xmin() == bc.bbox().xmax() ||
+        bbox().xmax() == bc.bbox().xmin() ||
+        bbox().ymin() == bc.bbox().ymax() ||
+        bbox().ymax() == bc.bbox().ymin())
+    {
+      // Check if there are equal endpoints.
+      Rat_kernel                    ker;
+      typename Rat_kernel::Equal_2  equal = ker.equal_2_object();
+      const Rat_point_2&  s1 = this->control_point (0);
+      const Rat_point_2&  t1 = this->control_point 
+                                       (this->number_of_control_points() - 1);
+      const Rat_point_2&  s2 = bc.control_point (0);
+      const Rat_point_2&  t2 = bc.control_point 
+                                       (bc.number_of_control_points() - 1);
+      
+      if (equal (s1, s2) || equal (s1, t2))
+      {
+        *oi = Algebraic(0);
+        ++oi;
+      }
+      else if (equal (t1, s2) || equal (t1, t2))
+      {
+        *oi = Algebraic(1);
+        ++oi;
+      }
+       
+      do_ovlp = false;
+      return (oi);
+    }
+
     // Let us denote our curve by (X_1(s), Y_1(s)) and the other curve by
     // (X_2(t), Y_2(t)), so we have to solve the system of bivariate
     // polynomials in s and t:
@@ -621,11 +691,11 @@ public:
 
     if (nt_traits.degree (res) < 0)
     {
-      do_overlap = true;
+      do_ovlp = true;
       return (oi);
     }
 
-    do_overlap = false;
+    do_ovlp = false;
     return (nt_traits.compute_polynomial_roots (res, oi));
   }
 
@@ -696,6 +766,100 @@ public:
     }
 
     return (oi);
+  }
+
+  /*!
+   * Compute all parameter values t such that the x-coordinate of B(t) is x0.
+   * Note that the function does not return only values between 0 and 1, so
+   * the output t-values may belong to the imaginary continuation of the curve.
+   * \param x0 The given x-coordinate.
+   * \param oi Output: An output iterator for the t-values.
+   * \return A past-the-end iterator.
+   */
+  template <class OutputIterator>
+  OutputIterator get_t_at_x (const Rational& x0,
+                             OutputIterator oi) const
+  {
+    return (_solve_t_values (_rep()._polyX, _rep()._normX, x0, oi));
+  }
+
+  /*!
+   * Compute all parameter values t such that the y-coordinate of B(t) is y0.
+   * Note that the function does not return only values between 0 and 1, so
+   * the output t-values may belong to the imaginary continuation of the curve.
+   * \param y0 The given y-coordinate.
+   * \param oi Output: An output iterator for the t-values.
+   * \return A past-the-end iterator.
+   */
+  template <class OutputIterator>
+  OutputIterator get_t_at_y (const Rational& y0,
+                             OutputIterator oi) const
+  {
+    return (_solve_t_values (_rep()._polyY, _rep._normY(), y0, oi));
+  }
+
+  /*!
+   * Check if the two curves have the same support.
+   */
+  bool has_same_support (const Self& bc) const
+  {
+    // If one curve is of degree d1 and the other of degree d2, there can be
+    // at most d1*d2 intersection points between them.
+    const int      deg1 = number_of_control_points() - 1;
+    const int      deg2 = bc.number_of_control_points() - 1;
+    const int      n_samples = deg1*deg2;
+    Rat_point_2    p1;
+    int            k;
+
+    for (k = 0; k <= n_samples; k++)
+    {
+      // Compute p1 = B1(k/n_samples), where B1 is (*this) curve.
+      if (k == 0)
+        p1 = (_rep()._ctrl_pts[0]);
+      else if (k == 1)
+        p1 = (_rep()._ctrl_pts[_rep()._ctrl_pts.size() - 1]);
+      else
+        p1 = this->operator() (Rational (k, n_samples));
+
+      // Get all t-values such that the x-coordinate of B2(t) equals x1,
+      // and check if there exists a t-value such that the y-coordinate of
+      // b2(t) equals the y-coordinate of p1.
+      std::list<Algebraic>                           t_vals;
+      typename std::list<Algebraic>::const_iterator  t_iter;
+      Nt_traits                             nt_traits;
+      const Algebraic&                      y1 = nt_traits.convert (p1.y());
+      bool                                  eq_y = false;
+
+      bc.get_t_at_x (p1.x(), std::back_inserter(t_vals));
+
+      for (t_iter = t_vals.begin(); t_iter != t_vals.end(); ++t_iter)
+      {
+        const Alg_point_2&  p2 = bc (*t_iter, false);
+
+        if (CGAL::compare (y1, p2.y()) == CGAL::EQUAL)
+        {
+          eq_y = true;
+          break;
+        }
+      }
+      
+      // If we found a point on B1 which is not of B2, the two curves do not
+      // have the same support.
+      if (! eq_y)
+        return (false);
+    }
+    
+    // If we reached here, we found (d1*d2 + 1) common points of B1 and B2.
+    // This means they have the same support.
+    return (true);
+  }
+
+  /*!
+   * Get the bounding box of the curve.
+   */
+  const Bbox_2& bbox () const
+  {
+    return (_rep()._bbox);
   }
 
 private:
@@ -876,6 +1040,42 @@ private:
     det = nt_traits.divide (diag_prod, det_factor, rem);
     CGAL_assertion (nt_traits.degree(rem) < 0);
     return (det);
+  }
+
+  /*!
+   * Compute all parameter values t, such that P(t) = val.
+   * \param poly The polynomial.
+   * \param norm Its normalizing factor.
+   * \param val The required value.
+   * \param oi Output: An output iterator for the t-values.
+   * \return A past-the-end iterator.
+   */
+  template <class OutputIterator>
+  OutputIterator _solve_t_values (const Polynomial& poly,
+                                  const Integer& norm,
+                                  const Rational& val,
+                                  OutputIterator oi) const
+  {
+    // Construct the polynomial P(t) - val = 0:
+    Nt_traits             nt_traits;
+    const Integer         numer = nt_traits.numerator (val);
+    const Integer         denom = nt_traits.denominator (val);
+    const int             deg = nt_traits.degree (poly);
+    Integer              *coeffs = new Integer [deg + 1];
+    int                   k;
+
+    for (k = 1; k <= deg; k++)
+      coeffs[k] = nt_traits.get_coefficient (poly, k) * denom;
+    coeffs[0] = nt_traits.get_coefficient (poly, 0) * denom -
+                numer * norm;
+
+    // Solve the polynomial and obtain the t-values.
+    OutputIterator  end = nt_traits.compute_polynomial_roots
+                            (nt_traits.construct_polynomial (coeffs, deg),
+                             oi);
+
+    delete[] coeffs;
+    return (end);
   }
 
   /*!

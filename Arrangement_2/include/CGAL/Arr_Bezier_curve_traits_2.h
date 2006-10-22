@@ -146,12 +146,20 @@ public:
       if (p1.is_same (p2))
         return (EQUAL);
 
-      const Comparison_result   res = CGAL::compare (p1.x(), p2.x());
+      Comparison_result   res = CGAL::compare (p1.x(), p2.x());
 
       if (res != EQUAL)
         return (res);
 
-      return (CGAL::compare (p1.y(), p2.y()));
+      res = CGAL::compare (p1.y(), p2.y());
+
+      if (res == EQUAL)
+      {
+        // If the two points are the same, merge their originator lists.
+        p1.merge_originators (p2);
+        p2.merge_originators (p1);
+      }
+      return (res);
     }
   };
 
@@ -366,7 +374,16 @@ public:
      */
     bool operator() (const Point_2& p1, const Point_2& p2) const
     {
-      return (p1.equals (p2));
+      bool   eq = p1.equals (p2);
+
+      if (eq)
+      {
+        // If the two points are the same, merge their originator lists.
+        p1.merge_originators (p2);
+        p2.merge_originators (p1);
+      }
+
+      return (eq);
     }
   };
 

@@ -538,14 +538,26 @@ public:
                Intersection_map& inter_map) const
   {
     // Check if the two subcurve have overlapping supporting curves.
-    if (_curve.is_same (cv._curve))
+    if (! _curve.is_same (cv._curve))
     {
-      bool    do_overlap;
-      _get_curve_intersections (_curve, cv._curve,
-                                inter_map, do_overlap);
-
-      if (! do_overlap)
+      if (! _curve.has_same_support (cv._curve))
         return (false);
+
+      // Mark that the two curves overlap.
+      const Curve_id               id1 = _curve.id();
+      const Curve_id               id2 = cv._curve.id();
+      Curve_pair                   curve_pair;
+
+      if (id1 < id2)
+        curve_pair = Curve_pair (id1, id2);
+      else
+        curve_pair = Curve_pair (id2, id1);
+      
+      if (inter_map.find (curve_pair) == inter_map.end())
+      {
+        Intersection_info&  info = inter_map[curve_pair];
+        info.second = true;
+      }
     }
 
     // Check for equality of the endpoints.
@@ -986,30 +998,14 @@ private:
    */
   Algebraic _get_y (const Rational& x0) const
   {
-    // Construct the polynomial X(t) - x0 = 0:
-    Nt_traits             nt_traits;
-    const Integer         numer = nt_traits.numerator (x0);
-    const Integer         denom = nt_traits.denominator (x0);
-    const Polynomial&     polyX = _curve.x_polynomial();
-    const int             degX = nt_traits.degree (polyX);
-    Integer              *coeffs = new Integer [degX + 1];
-    int                   k;
-
-    for (k = 1; k <= degX; k++)
-      coeffs[k] = nt_traits.get_coefficient (polyX, k) * denom;
-    coeffs[0] = nt_traits.get_coefficient (polyX, 0) * denom -
-                numer * _curve.x_norm();
-
-    // Solve the polynomial and obtain the t-values.
+    // Obtain the t-values for with the x-coordinates of the supporting
+    // curve equal x0.
     std::list<Algebraic>  t_vals;
 
-    nt_traits.compute_polynomial_roots
-      (nt_traits.construct_polynomial (coeffs, degX),
-       std::back_inserter(t_vals));
-
-    delete[] coeffs;
+    _curve.get_t_at_x (x0, std::back_inserter(t_vals));
 
     // Find a t-value that is in the range of the current curve.
+    Nt_traits                                nt_traits;
     typename std::list<Algebraic>::iterator  t_iter;
     Comparison_result                        res1, res2;
 
@@ -1193,7 +1189,6 @@ private:
     
     return (CGAL::compare (nt_traits.convert (q1.y()), y2));
   }
-
 };
 
 /*!
