@@ -511,12 +511,18 @@ struct Lazy_exact_Max : public Lazy_exact_binary<ET>
 #define CGAL_double(T) typename First_if_different<double, T>::Type
 
 // The real number type, handle class
-template <typename ET>
+template <typename ET_>
 class Lazy_exact_nt
   : public Handle
-  , boost::ordered_euclidian_ring_operators2< Lazy_exact_nt<ET>, int >
-  , boost::ordered_euclidian_ring_operators2< Lazy_exact_nt<ET>, double >
+  , boost::ordered_euclidian_ring_operators2< Lazy_exact_nt<ET_>, int >
+  , boost::ordered_euclidian_ring_operators2< Lazy_exact_nt<ET_>, double >
 {
+public:
+
+  typedef ET_                    ET;
+  typedef Interval_nt_advanced   AT;
+
+private:
   typedef Lazy_exact_nt<ET> Self;
   typedef Lazy_construct_rep<Interval_nt<false>, ET, To_interval<ET> > Self_rep;
 
