@@ -29,17 +29,24 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// the default precision of gb/rs
+// the default precision of RS to calculate a root (precision is 2^n)
 #ifndef CGAL_RS_DEF_PREC
-#define CGAL_RS_DEF_PREC 23
+#define CGAL_RS_DEF_PREC 15
 #endif
 
+// the minimum, used when calculating a sign
 #ifndef CGAL_RS_MIN_PREC
 #define CGAL_RS_MIN_PREC 5
 #endif
 
+// when refining a calculation, increase by this factor
+#ifndef CGAL_RS_PREC_FACTOR
+#define CGAL_RS_PREC_FACTOR 2
+#endif
+
+// after reaching this precision, give up
 #ifndef CGAL_RS_MAX_PREC
-#define CGAL_RS_MAX_PREC 50
+#define CGAL_RS_MAX_PREC 80
 #endif
 
 int init_rs () {
@@ -73,7 +80,7 @@ int affiche_sols_eqs (mpfi_t *&x) {
 	return nb_elts;
 }
 
-Sign affiche_sols_constr (const Algebraic_1 &a) {
+int affiche_sols_constr (const Algebraic_1 &a) {
 	int ident_sols_eqs,nb_elts,ident_node,ident_vect, nb, ident_elt;
 	mpfi_t tmp;
 	mpfi_init(tmp);
@@ -92,15 +99,19 @@ Sign affiche_sols_constr (const Algebraic_1 &a) {
 			}
 		ident_node = rs_export_list_vect_ibfr_nextnode (ident_node);
 	}
-	/*std::cout << "returned value: ";
+	/*std::cout << "\nreturned value: ";
 	mpfi_out_str(stdout,10,0,tmp);
 	std::cout << std::endl;*/
-	if (mpfi_is_strictly_pos (tmp))
-		return POSITIVE;
+	// XXX: mpfi_is_strictly_pos (tmp) doesn't seem to work
+	if (mpfi_cmp_ui (tmp, 0) > 0)
+		return 1;
 	if (mpfi_is_strictly_neg (tmp))
-		return NEGATIVE;
-	// TODO: refine the result when needed
-	return ZERO;
+		return -1;
+	if (mpfi_is_zero (tmp))
+		return 0;
+	// the interval contains 0 and it isn't a point:
+	// we have to refine the result
+	return -2;
 }
 
 void create_rs_upoly (mpz_t *poly, const int deg, const int ident_pol) {
@@ -143,11 +154,13 @@ inline int solve_1 (mpfi_t *&x, const Rational_polynomial_1 &p1) {
 	return solve_1 (x, p1, CGAL_RS_DEF_PREC);
 }
 
-Sign sign_1 (const Rational_polynomial_1 &p1, const Algebraic_1 &a) {
+// TODO: when implemented UNDECIDED as a valid CGAL sign type,
+// the return type will change to "Sign"
+int sign_1 (const Rational_polynomial_1 &p1, const Algebraic_1 &a,
+		unsigned int prec) {
 	mpz_t **constr;
 	int *degs;
-	CGAL_assertion_msg (a.is_consistent (),
-		"this number was not calculated as a root of a polynomial");
+	// XXX: is this always necessary? can I do it just once?
 	rs_reset_all ();
 	// tell RS to find the roots of this polynomial
 	create_rs_upoly (a.pol().get_coefs (), a.pol().get_degree (),
@@ -158,10 +171,29 @@ Sign sign_1 (const Rational_polynomial_1 &p1, const Algebraic_1 &a) {
 	degs = (int*)malloc(sizeof(int));
 	*degs = p1.get_degree ();
 	create_rs_uconstr (constr, degs, rs_get_default_ineqs_u ());
-	set_rs_precisol (CGAL_RS_MIN_PREC);
+	set_rs_precisol (prec);
 	set_rs_verbose (0);
 	rs_run_algo ("UISOLES");
 	return affiche_sols_constr (a);
+}
+
+Sign sign_1 (const Rational_polynomial_1 &p1, const Algebraic_1 &a) {
+	CGAL_assertion_msg (a.is_consistent (),
+			"this number was not calculated as a root of a polynomial");
+	unsigned int prec = CGAL_RS_MIN_PREC;
+	while (1)
+		switch (sign_1 (p1, a, prec)) {
+			case -1: return NEGATIVE;
+				 break;
+			case 0: return ZERO;
+				break;
+			case 1: return POSITIVE;
+				break;
+			default:
+				if ((prec *= CGAL_RS_PREC_FACTOR) >
+						CGAL_RS_MAX_PREC)
+					return ZERO;	// TODO: UNDECIDED
+		}
 }
 
 CGAL_END_NAMESPACE
