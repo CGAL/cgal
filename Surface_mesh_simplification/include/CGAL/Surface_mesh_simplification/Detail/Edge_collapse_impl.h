@@ -115,9 +115,6 @@ void EdgeCollapse<M,SP,VPM,VFM,EIM,EBM,SC,CF,PF,CP,PP,V>::Collect()
   {
     edge_descriptor lEdge = *eb ;
   
-    std::cerr << "get_directed_edge_id(lEdge)" << get_directed_edge_id(lEdge) << std::endl ;
-    std::cerr << "get_directed_edge_id(opp lEdge)" << get_directed_edge_id(opposite_edge(lEdge,mSurface)) << std::endl ;
-    
     CGAL_assertion( get_directed_edge_id(lEdge) == id ) ;
     CGAL_assertion( get_directed_edge_id(opposite_edge(lEdge,mSurface)) == id+1 ) ;
       
@@ -242,83 +239,153 @@ bool EdgeCollapse<M,SP,VPM,VFM,EIM,EBM,SC,CF,PF,CP,PP,V>::Is_collapsable( edge_d
   CGAL_ECMS_TRACE(4, "is q_q border:" << is_border(opposite_edge(aEdgePQ,mSurface)) ) ;
 
   bool lIsBoundary = is_undirected_edge_a_border(aEdgePQ) ;  
-  std::size_t min = lIsBoundary ? 3 : 4 ;
-  if ( num_vertices(mSurface) > min )
-  {
-    out_edge_iterator eb1, ee1 ; 
-    out_edge_iterator eb2, ee2 ; 
   
-    edge_descriptor lEdgeQP = opposite_edge(aEdgePQ,mSurface);
-    
-    vertex_descriptor t = target(next_edge(aEdgePQ,mSurface),mSurface);
-    vertex_descriptor b = target(next_edge(lEdgeQP,mSurface),mSurface);
-  
-    CGAL_ECMS_TRACE(4,"  t=V" << t->ID << "(%" << t->vertex_degree() << ")" );
-    CGAL_ECMS_TRACE(4,"  b=V" << b->ID << "(%" << b->vertex_degree() << ")" );
+  out_edge_iterator eb1, ee1 ; 
+  out_edge_iterator eb2, ee2 ; 
 
-    // The following loop checks the link condition for aEdgePQ.
-    // Specifically, that every vertex 'k' adjacent to both 'p and 'q' is a face of the mesh.
-    // 
-    for ( tie(eb1,ee1) = out_edges(p,mSurface) ; rR && eb1 != ee1 ; ++ eb1 )
-    {
-      edge_descriptor p_k = *eb1 ;
-      
-      if ( p_k != aEdgePQ )
-      {
-        vertex_descriptor k = target(p_k,mSurface);
-        
-        for ( tie(eb2,ee2) = out_edges(k,mSurface) ; rR && eb2 != ee2 ; ++ eb2 )
-        {
-          edge_descriptor k_l = *eb2 ;
+  edge_descriptor lEdgeQP = opposite_edge(aEdgePQ,mSurface);
   
-          if ( target(k_l,mSurface) == q )
-          {
-            // At this point we know p-q-k are connected and we need to determine if this triangle is a face of the mesh.
-            //
-            // Since the mesh is known to be triangular there are at most two faces sharing the edge p-q.
-            //
-            // If p->q is NOT a border edge, the top face is p->q->t where t is target(next(p->q))
-            // If q->p is NOT a border edge, the bottom face is q->p->b where b is target(next(q->p))
-            //
-            // If k is either t or b then p-q-k *might* be a face of the mesh. It won't be if k==t but p->q is border
-            // or k==b but q->b is a border (because in that case even though there exists triangles p->q->t (or q->p->b)
-            // they are holes, not faces)
-            // 
-            bool lIsFace =   ( t == k && !is_border(aEdgePQ) )
-                          || ( b == k && !is_border(lEdgeQP) ) ;
-                          
-            if ( !lIsFace )
-            {
-              CGAL_ECMS_TRACE(3,"  k=V" << k->ID << " IS NOT in a face with p-q. NON-COLLAPSABLE edge." ) ;
-              rR = false ;
-              break ;
-            }  
-            else 
-            {
-              CGAL_ECMS_TRACE(4,"  k=V" << k->ID << " is in a face with p-q") ;
-            }
-          }
-        }  
-      }
-    }   
-  }
-  else
+  vertex_descriptor t = target(next_edge(aEdgePQ,mSurface),mSurface);
+  vertex_descriptor b = target(next_edge(lEdgeQP,mSurface),mSurface);
+
+  CGAL_ECMS_TRACE(4,"  t=V" << t->ID << "(%" << t->vertex_degree() << ")" );
+  CGAL_ECMS_TRACE(4,"  b=V" << b->ID << "(%" << b->vertex_degree() << ")" );
+
+  // The following loop checks the link condition for aEdgePQ.
+  // Specifically, that every vertex 'k' adjacent to both 'p and 'q' is a face of the mesh.
+  // 
+  for ( tie(eb1,ee1) = out_edges(p,mSurface) ; rR && eb1 != ee1 ; ++ eb1 )
   {
-    rR = false ;
-    CGAL_ECMS_TRACE(3,"  Surface is irreducible. NON-COLLAPSABLE edge." ) ;
-  }
-     
-  if ( rR && !lIsBoundary )
-  {
-    if ( is_border(p) && is_border(q) )
+    edge_descriptor p_k = *eb1 ;
+    
+    if ( p_k != aEdgePQ )
     {
-      rR = false ;
-      CGAL_ECMS_TRACE(3,"  both p and q are boundary vertices but p-q is not. NON-COLLAPSABLE edge." ) ;
-    }  
+      vertex_descriptor k = target(p_k,mSurface);
+      
+      for ( tie(eb2,ee2) = out_edges(k,mSurface) ; rR && eb2 != ee2 ; ++ eb2 )
+      {
+        edge_descriptor k_l = *eb2 ;
+
+        if ( target(k_l,mSurface) == q )
+        {
+          // At this point we know p-q-k are connected and we need to determine if this triangle is a face of the mesh.
+          //
+          // Since the mesh is known to be triangular there are at most two faces sharing the edge p-q.
+          //
+          // If p->q is NOT a border edge, the top face is p->q->t where t is target(next(p->q))
+          // If q->p is NOT a border edge, the bottom face is q->p->b where b is target(next(q->p))
+          //
+          // If k is either t or b then p-q-k *might* be a face of the mesh. It won't be if k==t but p->q is border
+          // or k==b but q->b is a border (because in that case even though there exists triangles p->q->t (or q->p->b)
+          // they are holes, not faces)
+          // 
+          bool lIsFace =   ( t == k && !is_border(aEdgePQ) )
+                        || ( b == k && !is_border(lEdgeQP) ) ;
+                        
+          if ( !lIsFace )
+          {
+            CGAL_ECMS_TRACE(3,"  k=V" << k->ID << " IS NOT in a face with p-q. NON-COLLAPSABLE edge." ) ;
+            rR = false ;
+            break ;
+          }  
+          else 
+          {
+            CGAL_ECMS_TRACE(4,"  k=V" << k->ID << " is in a face with p-q") ;
+          }
+        }
+      }  
+    }
+  }   
+     
+  if ( rR )
+  {
+    if ( lIsBoundary )
+    {
+      if ( Is_open_triangle(aEdgePQ) )
+      {
+        rR = false ;
+        CGAL_ECMS_TRACE(3,"  p-q belongs to an open triangle. NON-COLLAPSABLE edge." ) ;
+      }
+    }
+    else
+    {
+      if ( is_border(p) && is_border(q) )
+      {
+        rR = false ;
+        CGAL_ECMS_TRACE(3,"  both p and q are boundary vertices but p-q is not. NON-COLLAPSABLE edge." ) ;
+      }  
+      else if ( Is_tetrahedron(aEdgePQ) )
+      {
+        rR = false ;
+        CGAL_ECMS_TRACE(3,"  p-q belongs to a tetrahedron. NON-COLLAPSABLE edge." ) ;
+      }
+    }
   }
   
   return rR ;
 }
+
+template<class M,class SP,class VPM, class VFM, class EIM,class EBM, class SC, class CF,class PF,class CP, class PP,class V>
+bool EdgeCollapse<M,SP,VPM,VFM,EIM,EBM,SC,CF,PF,CP,PP,V>::Is_tetrahedron( edge_descriptor const& h1 )
+{
+  //
+  // Code copied from Polyhedron_3::is_tetrahedron()
+  //
+  edge_descriptor h2 = next_edge(h1,mSurface);
+  edge_descriptor h3 = next_edge(h2,mSurface);
+  
+  edge_descriptor h1o = opposite_edge(h1,mSurface) ;
+  edge_descriptor h2o = opposite_edge(h2,mSurface) ;
+  edge_descriptor h3o = opposite_edge(h3,mSurface) ;
+  
+  edge_descriptor h4 = next_edge(h1o,mSurface);
+  edge_descriptor h5 = next_edge(h2o,mSurface);
+  edge_descriptor h6 = next_edge(h3o,mSurface);
+  
+  edge_descriptor h4o = opposite_edge(h4,mSurface) ;
+  edge_descriptor h5o = opposite_edge(h5,mSurface) ;
+  edge_descriptor h6o = opposite_edge(h6,mSurface) ;
+  
+  // check halfedge combinatorics.
+  // at least three edges at vertices 1, 2, 3.
+  if ( h4 == h3o ) return false;
+  if ( h5 == h1o ) return false;
+  if ( h6 == h2o ) return false;
+  
+  // exact three edges at vertices 1, 2, 3.
+  if ( next_edge(h4o,mSurface) != h3o ) return false;
+  if ( next_edge(h5o,mSurface) != h1o ) return false;
+  if ( next_edge(h6o,mSurface) != h2o ) return false;
+  
+  // three edges at v4.
+  if ( opposite_edge(next_edge(h4,mSurface),mSurface) != h5) return false;
+  if ( opposite_edge(next_edge(h5,mSurface),mSurface) != h6) return false;
+  if ( opposite_edge(next_edge(h6,mSurface),mSurface) != h4) return false;
+  
+  // All facets are triangles.
+  if ( next_edge(next_edge(next_edge(h1,mSurface),mSurface),mSurface) != h1) return false;
+  if ( next_edge(next_edge(next_edge(h4,mSurface),mSurface),mSurface) != h4) return false;
+  if ( next_edge(next_edge(next_edge(h5,mSurface),mSurface),mSurface) != h5) return false;
+  if ( next_edge(next_edge(next_edge(h6,mSurface),mSurface),mSurface) != h6) return false;
+  
+  // all edges are non-border edges.
+  if ( is_border(h1)) return false;  // implies h2 and h3
+  if ( is_border(h4)) return false;
+  if ( is_border(h5)) return false;
+  if ( is_border(h6)) return false;
+
+  return true;
+}
+
+template<class M,class SP,class VPM, class VFM, class EIM,class EBM, class SC, class CF,class PF,class CP, class PP,class V>
+bool EdgeCollapse<M,SP,VPM,VFM,EIM,EBM,SC,CF,PF,CP,PP,V>::Is_open_triangle( edge_descriptor const& h1 )
+{
+  edge_descriptor h2 = next_edge(h1,mSurface);
+  edge_descriptor h3 = next_edge(h2,mSurface);
+  
+  return is_undirected_edge_a_border(h2) && is_undirected_edge_a_border(h3);  
+}
+
 
 template<class M,class SP,class VPM, class VFM, class EIM,class EBM, class SC, class CF,class PF,class CP, class PP,class V>
 void EdgeCollapse<M,SP,VPM,VFM,EIM,EBM,SC,CF,PF,CP,PP,V>::Collapse( edge_descriptor const& aEdgePQ )
@@ -354,10 +421,10 @@ void EdgeCollapse<M,SP,VPM,VFM,EIM,EBM,SC,CF,PF,CP,PP,V>::Collapse( edge_descrip
     edge_descriptor lEdgePT, lEdgeQB ;
     
     if ( !is_border(aEdgePQ) ) // Exists top facet
-      lEdgePT = opposite_edge(prev_edge(aEdgePQ,mSurface),mSurface);
+      lEdgePT = primary_edge(opposite_edge(prev_edge(aEdgePQ,mSurface),mSurface));
     
     if ( !is_border(lEdgeQP) ) // Exists bottom facet
-      lEdgeQB = opposite_edge(prev_edge(lEdgeQP,mSurface),mSurface);
+      lEdgeQB = primary_edge(opposite_edge(prev_edge(lEdgeQP,mSurface),mSurface));
     
     CGAL_ECMS_TRACE(3,"EdgePQ E" << aEdgePQ->ID 
                    << "(V" <<  aEdgePQ->vertex()->ID << "->V" << aEdgePQ->opposite()->vertex()->ID 
@@ -457,7 +524,7 @@ void EdgeCollapse<M,SP,VPM,VFM,EIM,EBM,SC,CF,PF,CP,PP,V>::Update_neighbors( vert
     in_edge_iterator eb2, ee2 ; 
     for ( tie(eb2,ee2) = in_edges(lAdj_k,mSurface) ; eb2 != ee2 ; ++ eb2 )
     {
-      edge_descriptor lEdge2 = *eb2 ;
+      edge_descriptor lEdge2 = primary_edge(*eb2) ;
       
       Edge_data& lData2 = get_data(lEdge2);
       CGAL_ECMS_TRACE(4,"Inedge around V" << lAdj_k->ID << edge_to_string(lEdge2) ) ;

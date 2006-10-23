@@ -75,12 +75,16 @@ struct Visitor
   
   void OnCollected( Halfedge_handle const& aEdge, bool aIsFixed, Polyhedron& )
   {
+    CGAL_assertion( ( aEdge->id() % 2 ) == 0 ) ;
+    
     ++ mCollected ;
     cerr << "\rEdges collected: " << mCollected << flush ;
   }                
   
   void OnSelected( Halfedge_handle const& aEdge, Polyhedron&, optional<double> const& aCost, size_t aInitial, size_t aCurrent )
   {
+    CGAL_assertion( ( aEdge->id() % 2 ) == 0 ) ;
+    
     if ( aCurrent == aInitial )
       cerr << "\n" << flush ;
         
@@ -94,10 +98,12 @@ struct Visitor
   
   void OnCollapsing(Halfedge_handle const& aEdge, Polyhedron&, optional<Point> const& aPlacement ) 
   {
+    CGAL_assertion( ( aEdge->id() % 2 ) == 0 ) ;
   }                
   
   void OnNonCollapsable(Halfedge_handle const& aEdge, Polyhedron& ) 
   {
+    CGAL_assertion( ( aEdge->id() % 2 ) == 0 ) ;
   }                
   
   size_t mRequested ;
@@ -317,17 +323,24 @@ void Simplify ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName
           }
           t.stop();
           
-          ofstream off_out(result_name.c_str(),ios::trunc);
-          off_out << lP ;
-          
-          cout << "\nFinished...\n"
-               << "Ellapsed time: " << t.time() << " seconds.\n" 
-               << r << " edges removed.\n"
-               << endl
-               << lP.size_of_vertices() << " final vertices.\n"
-               << (lP.size_of_halfedges()/2) << " final edges.\n"
-               << lP.size_of_facets() << " final triangles.\n" 
-               << ( lP.is_valid() ? " valid\n" : " INVALID!!\n" ) ;
+          if ( lP.is_valid() && lP.is_pure_triangle() )
+          {
+            ofstream off_out(result_name.c_str(),ios::trunc);
+            off_out << lP ;
+            
+            cout << "\nFinished...\n"
+                 << "Ellapsed time: " << t.time() << " seconds.\n" 
+                 << r << " edges removed.\n"
+                 << endl
+                 << lP.size_of_vertices() << " final vertices.\n"
+                 << (lP.size_of_halfedges()/2) << " final edges.\n"
+                 << lP.size_of_facets() << " final triangles.\n"  ;
+          }
+          else
+          {
+            cout << "\nFAILED. The resulting surface is not " << ( lP.is_valid() ? " valid" : " triangular" ) << endl
+                 << "Ellapsed time: " << t.time() << " seconds.\n" ;
+          }
         }   
         else
         {

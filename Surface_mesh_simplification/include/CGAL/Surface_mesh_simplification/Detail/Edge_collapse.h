@@ -201,12 +201,21 @@ private:
   void Collect();
   void Loop();
   bool Is_collapsable( edge_descriptor const& aEdge ) ;
+  bool Is_tetrahedron( edge_descriptor const& h1 ) ;
+  bool Is_open_triangle( edge_descriptor const& h1 ) ;
   void Collapse( edge_descriptor const& aEdge ) ;
   void Update_neighbors( vertex_descriptor const& aKeptV ) ;
   
   size_type get_directed_edge_id   ( const_edge_descriptor const& aEdge ) const { return Edge_index_map[aEdge]; }
   size_type get_undirected_edge_id ( const_edge_descriptor const& aEdge ) const { return get_directed_edge_id(aEdge) / 2 ; }
+
+  bool is_primary_edge ( const_edge_descriptor const& aEdge ) const { return ( get_directed_edge_id(aEdge) % 2 ) == 0 ; }
   
+  edge_descriptor primary_edge ( edge_descriptor const& aEdge ) 
+  { 
+    return is_primary_edge(aEdge) ? aEdge : opposite_edge(aEdge,mSurface) ;
+  }  
+    
   bool is_vertex_fixed ( const_vertex_descriptor const& aV ) const { return Vertex_is_fixed_map[aV] ; }
   
   bool is_border ( const_edge_descriptor const& aEdge ) const { return Edge_is_border_map[aEdge] ; }    
@@ -220,6 +229,7 @@ private:
   
   Edge_data& get_data ( edge_descriptor const& aEdge ) const 
   { 
+    CGAL_assertion( is_primary_edge(aEdge) ) ;
     return mEdgeDataArray[get_undirected_edge_id(aEdge)];
   }
   
@@ -265,18 +275,21 @@ private:
   
   void insert_in_PQ( edge_descriptor const& aEdge, Edge_data& aData ) 
   {
+    CGAL_precondition( is_primary_edge(aEdge) ) ;
     CGAL_precondition(!aData.is_in_PQ());
     aData.set_PQ_handle(mPQ->push(aEdge));
   }
   
   void update_in_PQ( edge_descriptor const& aEdge, Edge_data& aData )
   {
+    CGAL_precondition( is_primary_edge(aEdge) ) ;
     CGAL_precondition(aData.is_in_PQ());
     aData.set_PQ_handle(mPQ->update(aEdge,aData.PQ_handle())) ; 
   }   
   
   void remove_from_PQ( edge_descriptor const& aEdge, Edge_data& aData )
   {
+    CGAL_precondition( is_primary_edge(aEdge) ) ;
     CGAL_precondition(aData.is_in_PQ());
     aData.set_PQ_handle(mPQ->erase(aEdge,aData.PQ_handle()));
   }   
@@ -285,7 +298,10 @@ private:
   {
     optional<edge_descriptor> rEdge = mPQ->extract_top();
     if ( rEdge )
+    {
+      CGAL_precondition( is_primary_edge(*rEdge) ) ;
       get_data(*rEdge).reset_PQ_handle();
+    }  
     return rEdge ;  
   }
    
