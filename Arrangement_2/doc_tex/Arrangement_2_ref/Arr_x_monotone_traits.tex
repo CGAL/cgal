@@ -127,10 +127,10 @@ the \ccc{Has_merge_category} tag should be defined as \ccc{Tag_true} (and
                      ArrTraits::Point_2 p,
 		     ArrTraits::X_monotone_curve_2& xc1,
 		     ArrTraits::X_monotone_curve_2& xc2);}{%
-  accepts an input curve \ccc{c} and a split point \ccc{p} in its
-  interior. It splits \ccc{c} at the split point into two subcurves \ccc{c1}
-  and \ccc{c2}, such that \ccc{p} is \ccc{c1}'s {\sl right} endpoint and
-  \ccc{c2}'s {\sl left} endpoint.}%
+  accepts an input curve \ccc{xc} and a split point \ccc{p} in its
+  interior. It splits \ccc{xc} at the split point into two subcurves \ccc{xc1}
+  and \ccc{xc2}, such that \ccc{p} is \ccc{xc1}'s {\sl right} endpoint and
+  \ccc{xc2}'s {\sl left} endpoint.}%
 \ccTagDefaults
 \end{ccRefConcept}
 \ccRefPageEnd
@@ -147,7 +147,7 @@ the \ccc{Has_merge_category} tag should be defined as \ccc{Tag_true} (and
 
 \ccMethod{bool are_mergeable(ArrTraits::X_monotone_curve_2 xc1,
                              ArrTraits::X_monotone_curve_2 xc2);}{%
-  accepts two $x$-monotone curves \ccc{c1} and \ccc{c2} that share
+  accepts two $x$-monotone curves \ccc{xc1} and \ccc{xc2} that share
   a common endpoint, and determines whether they can be merged to form
   a single continuous $x$-monotone curve.}
 \end{ccRefConcept}
@@ -167,8 +167,8 @@ the \ccc{Has_merge_category} tag should be defined as \ccc{Tag_true} (and
 \ccMethod{void merge(ArrTraits::X_monotone_curve_2 xc1,
                      ArrTraits::X_monotone_curve_2 xc2,
 		     ArrTraits::X_monotone_curve_2& xc);}{%
-  accepts two {\sl mergeable} $x$-monotone curves \ccc{xc1} 
-  and \ccc{xc2} (see above), and sets \ccc{xc} to be the merged curve.}%
+  accepts two mergeable $x$-monotone curves \ccc{xc1} and \ccc{xc2}
+  (see definition above), and sets\ccc{xc} to be the merged curve.}
 \ccTagDefaults
 \end{ccRefConcept}
 \ccRefPageEnd
