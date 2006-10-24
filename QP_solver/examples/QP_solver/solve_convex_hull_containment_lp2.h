@@ -1,5 +1,6 @@
 // function to check whether a point is in the convex hull of other points
 #include <CGAL/iterator.h>
+#include <CGAL/Kernel_traits.h>
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_functions.h>
 
@@ -16,9 +17,9 @@ struct Homogeneous_begin  {
 // the type ET is an exact type used for the computations
 template <class Point_d, class RandomAccessIterator, class ET>
 CGAL::Quadratic_program_solution<ET> 
-solve_convex_hull_lp (const Point_d& p, 
-		      RandomAccessIterator begin, 
-		      RandomAccessIterator end, const ET& dummy) 
+solve_convex_hull_containment_lp (const Point_d& p, 
+				  RandomAccessIterator begin, 
+				  RandomAccessIterator end, const ET& dummy) 
 {
   // the right-hand side type
   typedef typename Point_d::Homogeneous_const_iterator B_it;
@@ -33,6 +34,6 @@ solve_convex_hull_lp (const Point_d& p,
       B_it (p.homogeneous_begin()),                                      // b
       CGAL::Const_oneset_iterator<CGAL::Comparison_result>(CGAL::EQUAL), // ~
       CGAL::Const_oneset_iterator
-      <typename std::iterator_traits<B_it>::value_type> (0)), ET(0));    // c
+      <typename CGAL::Kernel_traits<Point_d>::Kernel::RT> (0)), ET(0));  // c
 }
 

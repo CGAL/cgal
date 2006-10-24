@@ -3,7 +3,7 @@
 #include <vector>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/MP_Float.h>
-#include "solve_convex_hull_lp2.h"
+#include "solve_convex_hull_containment_lp2.h"
 
 typedef CGAL::Cartesian_d<double> Kernel_d;
 typedef Kernel_d::Point_d Point_d;
@@ -13,7 +13,7 @@ bool is_in_convex_hull (const Point_d& p,
 			std::vector<Point_d>::const_iterator end)
 {
   CGAL::Quadratic_program_solution<CGAL::MP_Float> s =
-    solve_convex_hull_lp (p, begin, end, CGAL::MP_Float());
+    solve_convex_hull_containment_lp (p, begin, end, CGAL::MP_Float());
   return s.status() != CGAL::QP_INFEASIBLE;
 }
 

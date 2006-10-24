@@ -1661,8 +1661,8 @@ QP_solver/examples/QP_solver/integer_qp_solver.cin -text
 QP_solver/examples/QP_solver/integer_qp_solver.data -text
 QP_solver/examples/QP_solver/rational_qp_solver.cin -text
 QP_solver/examples/QP_solver/rational_qp_solver.data -text
-QP_solver/examples/QP_solver/solve_convex_hull_lp.h -text
-QP_solver/examples/QP_solver/solve_convex_hull_lp2.h -text
+QP_solver/examples/QP_solver/solve_convex_hull_containment_lp.h -text
+QP_solver/examples/QP_solver/solve_convex_hull_containment_lp2.h -text
 QP_solver/include/CGAL/QP_functions.h -text
 QP_solver/include/CGAL/QP_models.h -text
 QP_solver/include/CGAL/QP_solution.h -text
