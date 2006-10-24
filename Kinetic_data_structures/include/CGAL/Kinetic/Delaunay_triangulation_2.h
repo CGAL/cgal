@@ -192,7 +192,7 @@ public:
     }
     init_data(false);
   
-    set_has_certificates(true);
+    set_has_certificates(false);
   }
 
   Delaunay_triangulation_2(Simulation_traits st,
@@ -301,20 +301,28 @@ public:
     CGAL_assertion(get_undirected_edge_label(e) ==k);
   }
 
-  void set_has_certificates(bool tf, bool no_failures=false) {
+  void set_neighbors_initialized(bool tf) const {
+    if (tf) {
+      for (typename Triangulation::All_vertices_iterator vit = del_.all_vertices_begin(); 
+	   vit != del_.all_vertices_end(); ++vit) {
+	vit->set_neighbors(0);
+      }
+      for (Face_iterator f = del_.all_faces_begin(); f != del_.all_faces_end(); ++f) {
+	f->vertex(0)->set_neighbors(f->vertex(0)->neighbors()+1);
+	f->vertex(1)->set_neighbors(f->vertex(1)->neighbors()+1);
+	f->vertex(2)->set_neighbors(f->vertex(2)->neighbors()+1);
+      }
+    }
+  }
+
+  void set_has_certificates(bool tf, bool no_failures=false, bool no_structure_changes=false) {
     if (tf == has_certificates_){
 
     } else {
       if (tf==true && del_.dimension()==2) {
 	CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, "DELAUNAY2: Creating certificates."<< std::endl);
-	for (typename Triangulation::All_vertices_iterator vit = del_.all_vertices_begin(); 
-	     vit != del_.all_vertices_end(); ++vit) {
-	  vit->set_neighbors(0);
-	}
-	for (Face_iterator f = del_.all_faces_begin(); f != del_.all_faces_end(); ++f) {
-	  f->vertex(0)->set_neighbors(f->vertex(0)->neighbors()+1);
-	  f->vertex(1)->set_neighbors(f->vertex(1)->neighbors()+1);
-	  f->vertex(2)->set_neighbors(f->vertex(2)->neighbors()+1);
+	if (!no_structure_changes) {
+	  set_neighbors_initialized(true);
 	}
 	if (no_failures) {
 	  for (Face_iterator f = del_.all_faces_begin(); f != del_.all_faces_end(); ++f) {
@@ -335,17 +343,7 @@ public:
 	    }
 
 	  }
-	}  
-	/*for (typename Triangulation::All_vertices_iterator vit = del_.all_vertices_begin(); 
-	     vit != del_.all_vertices_end(); ++vit) {
-	  int deg=TDS_helper::low_degree(vit, del_.tds());
-	  CGAL_assertion(deg >=3);
-	  Vertex_handle vh= vit;
-	  vh->set_neighbors(deg);
-	  CGAL_DELAUNAY_2_DEBUG(std::cout << "Set degree of " << vit->point() << " to " << deg << std::endl);
-	  //vit->set_neighbors_is_changed(false);
-	  }*/
-	if (!no_failures) {
+	} else {
 	  for (Edge_iterator eit = del_.all_edges_begin(); eit != del_.all_edges_end(); ++eit) {
 	    set_undirected_edge_label(*eit, Event_key());
 	    update_edge(*eit);
@@ -354,10 +352,12 @@ public:
 
 	watcher_.create_faces(del_.all_faces_begin(), del_.all_faces_end());
       } else if (tf==false) { 
-	for (Face_iterator f = del_.all_faces_begin(); f != del_.all_faces_end(); ++f) {
-	  for(unsigned int i=0; i< 3; ++i) {
-	    Edge e(f,i);
-	    delete_certificate(e);
+	if (!no_failures) {
+	  for (Face_iterator f = del_.all_faces_begin(); f != del_.all_faces_end(); ++f) {
+	    for(unsigned int i=0; i< 3; ++i) {
+	      Edge e(f,i);
+	      delete_certificate(e);
+	    }
 	  }
 	}
       } 
@@ -678,6 +678,7 @@ public:
     update_edge(Edge(mirror_flipped_edge.first, (mirror_flipped_edge.second+2)%3));
 
     {
+
       Time t; Certificate_data cd;
       if (traits_.certificate_failure_time(flipped_edge,cert, t, cd)){
 	Event_key k =traits_.simulator_handle()->new_event(t,
@@ -947,6 +948,7 @@ protected:
 			  << " which would make " << TDS_helper::mirror_vertex(e)->point() << " " 
 			  << TDS_helper::third_vertex(e)->point()
 			  << std::endl);
+
     Time t; Certificate_data cd;
     Point_key ks[4];
     if (points(e,ks)) {
@@ -964,7 +966,6 @@ protected:
 	set_undirected_edge_label(e, traits_.simulator_handle()->null_event());
       }
     }
-   
   }
 
   void delete_certificate(Edge e) {
