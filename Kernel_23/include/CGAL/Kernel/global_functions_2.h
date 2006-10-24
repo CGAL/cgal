@@ -206,6 +206,16 @@ compare_distance_to_point(const Point_2<K>& p,
   return CGALi::compare_distance_to_point(p, q, r, K());
 }
 
+template <class K >
+inline
+Comparison_result
+compare_squared_distance(const Point_2<K>& p,
+                         const Point_2<K>& q,
+                         const typename K::FT& d2)
+{
+  return CGALi::compare_squared_distance(p, q, d2, K());
+}
+
 template <class K>
 inline
 Comparison_result

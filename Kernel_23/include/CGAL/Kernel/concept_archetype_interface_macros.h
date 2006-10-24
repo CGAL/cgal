@@ -162,6 +162,18 @@ CGAL_Kernel_pred(Compare_slope_2,
 #endif
 
 #if !defined(CGAL_CA_LIMITED_INTERFACE) || \
+    defined(CGAL_CA_COMPARE_SQUARED_DISTANCE_2)
+CGAL_Kernel_pred(Compare_squared_distance_2,
+		 compare_squared_distance_2_object)
+#endif
+
+#if !defined(CGAL_CA_LIMITED_INTERFACE) || \
+    defined(CGAL_CA_COMPARE_SQUARED_DISTANCE_3)
+CGAL_Kernel_pred(Compare_squared_distance_3,
+		 compare_squared_distance_3_object)
+#endif
+
+#if !defined(CGAL_CA_LIMITED_INTERFACE) || \
     defined(CGAL_CA_COMPARE_X_AT_Y_2)
 CGAL_Kernel_pred(Compare_x_at_y_2,
 		 compare_x_at_y_2_object)

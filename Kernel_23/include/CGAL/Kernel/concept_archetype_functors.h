@@ -366,6 +366,20 @@ public:
 };
 
 template <typename K>
+class Compare_squared_distance_2
+{
+    typedef typename K::Point_2   Point_2;
+    typedef typename K::FT        FT;
+public:
+    typedef Comparison_result     result_type;
+    typedef Arity_tag< 3 >        Arity;
+
+    Comparison_result
+    operator()(const Point_2&, const Point_2&, const FT&) const
+    { return CGAL::LARGER; }
+};
+
+template <typename K>
 class Compare_distance_3
 {
     typedef typename K::Point_3   Point_3;
@@ -375,6 +389,20 @@ public:
 
     Comparison_result
     operator()(const Point_3&, const Point_3&, const Point_3&) const
+    { return CGAL::LARGER; }
+};
+
+template <typename K>
+class Compare_squared_distance_3
+{
+    typedef typename K::Point_3   Point_3;
+    typedef typename K::FT        FT;
+public:
+    typedef Comparison_result     result_type;
+    typedef Arity_tag< 3 >        Arity;
+
+    Comparison_result
+    operator()(const Point_3&, const Point_3&, const FT&) const
     { return CGAL::LARGER; }
 };
 

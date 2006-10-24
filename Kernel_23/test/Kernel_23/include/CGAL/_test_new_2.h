@@ -467,6 +467,10 @@ test_new_2(const R& rep)
         = rep.compare_distance_2_object();
   Comparison_result tmp34ab = compare_dist(p1,p2,p3);
 
+  typename R::Compare_squared_distance_2 compare_sq_dist
+        = rep.compare_squared_distance_2_object();
+                    tmp34ab = compare_sq_dist(p1,p2,FT(1));
+
   typename R::Compare_angle_with_x_axis_2 compare_angle
         = rep.compare_angle_with_x_axis_2_object();
   Comparison_result tmp34ac = compare_angle(d3,d2);
@@ -608,7 +612,7 @@ test_new_2(const R& rep)
   typename R::Angle_2 angle
         = rep.angle_2_object();
   Angle tmp58 = angle(p2,p3,p4);
-  
+
   use(v1); use(v4); use(r1);
   use(d4); use(d5);
   use(c4); use(c11);

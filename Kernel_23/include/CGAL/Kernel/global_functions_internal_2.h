@@ -203,6 +203,16 @@ compare_distance_to_point(const typename CGAL_WRAP(K)::Point_2 &p,
   return k.compare_distance_2_object()(p, q, r);
 }
 
+template <class K >
+inline
+Comparison_result
+compare_squared_distance(const typename CGAL_WRAP(K)::Point_2 &p,
+                         const typename CGAL_WRAP(K)::Point_2 &q,
+                         const typename CGAL_WRAP(K)::FT &d2, const K& k)
+{
+  return k.compare_squared_distance_2_object()(p, q, d2);
+}
+
 template <class K>
 inline
 Comparison_result

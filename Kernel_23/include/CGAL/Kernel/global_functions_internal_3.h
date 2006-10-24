@@ -212,6 +212,17 @@ compare_distance_to_point(const typename CGAL_WRAP(K)::Point_3 &p,
 template < class K >
 inline
 Comparison_result
+compare_squared_distance(const typename CGAL_WRAP(K)::Point_3 &p,
+                         const typename CGAL_WRAP(K)::Point_3 &q,
+                         const typename CGAL_WRAP(K)::FT &d2,
+		         const K& k)
+{
+  return k.compare_squared_distance_3_object()(p, q, d2);
+}
+
+template < class K >
+inline
+Comparison_result
 compare_lexicographically_xyz(const typename CGAL_WRAP(K)::Point_3 &p,
                               const typename CGAL_WRAP(K)::Point_3 &q,
 			      const K& k)

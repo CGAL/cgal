@@ -1,18 +1,18 @@
-\begin{ccRefFunctionObjectConcept}{Kernel::CompareDistance_3}
+\begin{ccRefFunctionObjectConcept}{Kernel::CompareSquaredDistance_3}
 A model for this must provide:
 
 \ccCreationVariable{fo}
 
 \ccMemberFunction{Comparison_result operator()(const Kernel::Point_3&p,
                                                const Kernel::Point_3&q, 
-                                               const Kernel::Point_3&r);}
-      {compares the distances of points \ccc{q} and \ccc{r} to point \ccc{p}}
+                                               const Kernel::FT&d2);}
+      {compares the squared distance of points \ccc{p} and \ccc{q} to \ccc{d2}}
 
 \ccRefines
 AdaptableFunctor (with three arguments)
 
 \ccSeeAlso
-\ccRefIdfierPage{Kernel::CompareSquaredDistance_3} \\
+\ccRefIdfierPage{Kernel::CompareDistance_3} \\
 \ccRefIdfierPage{CGAL::compare_distance_to_point} \\
 \ccRefIdfierPage{CGAL::compare_squared_distance} \\
 

@@ -194,6 +194,14 @@ _test_fct_point_2(const R& )
  assert( CGAL::compare_distance_to_point(p2,p3,p3) == CGAL::EQUAL );
  assert( CGAL::compare_distance_to_point(p2,p4,p9) == CGAL::LARGER );
 
+ assert( CGAL::compare_squared_distance(p3,p2,CGAL::squared_distance(p1,p3)) == CGAL::LARGER );
+ assert( CGAL::compare_squared_distance(p1,p5,CGAL::squared_distance(p1,p1)) == CGAL::LARGER );
+ assert( CGAL::compare_squared_distance(p4,p6,CGAL::squared_distance(p5,p4)) == CGAL::SMALLER );
+ assert( CGAL::compare_squared_distance(p4,p9,CGAL::squared_distance(p1,p4)) == CGAL::SMALLER );
+ assert( CGAL::compare_squared_distance(p8,p3,CGAL::squared_distance(p3,p8)) == CGAL::EQUAL );
+ assert( CGAL::compare_squared_distance(p2,p3,CGAL::squared_distance(p3,p2)) == CGAL::EQUAL );
+ assert( CGAL::compare_squared_distance(p2,p4,CGAL::squared_distance(p9,p2)) == CGAL::LARGER );
+
  assert( CGAL::has_larger_distance_to_point(p3,p2,p1) );
  assert( CGAL::has_larger_distance_to_point(p1,p5,p2) );
  assert( CGAL::has_larger_distance_to_point(p1,p5,p1) );

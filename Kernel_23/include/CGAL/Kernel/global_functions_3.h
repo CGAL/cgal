@@ -213,6 +213,16 @@ compare_distance_to_point(const Point_3<K> &p,
 template < class K >
 inline
 Comparison_result
+compare_squared_distance(const Point_3<K> &p,
+                         const Point_3<K> &q,
+                         const typename K::FT &d2)
+{
+  return CGALi::compare_squared_distance(p, q, d2, K());
+}
+
+template < class K >
+inline
+Comparison_result
 compare_lexicographically_xyz(const Point_3<K> &p,
                               const Point_3<K> &q)
 {
