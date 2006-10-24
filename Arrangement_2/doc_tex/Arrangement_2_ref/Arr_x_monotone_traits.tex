@@ -9,11 +9,11 @@
 
 \ccDefinition
 % ===========
-This concept refines the basic arrangement-traits concept. A model of
-this concept is able to handle $x$-monotone curves that intersect in
-their interior (and points that conincide with curve interiors). This
-is necessary for constructing arrangements of sets of intersecting
-$x$-monotone curves.
+This concept\ccRefName{} refines the basic arrangement-traits concept.
+A model of this concept is able to handle $x$-monotone curves that
+intersect in their interior (and points that conincide with curve
+interiors). This is necessary for constructing arrangements of sets of
+intersecting $x$-monotone curves.
 
 As the resulting structure, represented by the \ccc{Arrangement_2} class,
 stores pairwise interior-disjoint curves, the input curves are split at
@@ -167,7 +167,7 @@ the \ccc{Has_merge_category} tag should be defined as \ccc{Tag_true} (and
 \ccMethod{void merge(ArrTraits::X_monotone_curve_2 xc1,
                      ArrTraits::X_monotone_curve_2 xc2,
 		     ArrTraits::X_monotone_curve_2& xc);}{%
-  accepts two mergeable $x$-monotone curves \ccc{xc1} and \ccc{xc2}
+  accepts two {\em mergeable} $x$-monotone curves \ccc{xc1} and \ccc{xc2}
   (see definition above), and sets\ccc{xc} to be the merged curve.}
 \ccTagDefaults
 \end{ccRefConcept}

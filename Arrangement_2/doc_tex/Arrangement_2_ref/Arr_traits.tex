@@ -1,18 +1,12 @@
-% +------------------------------------------------------------------------+
-% | Reference manual page: ArrangementTraits.tex
-% +------------------------------------------------------------------------+
-% | 
-% | Package: Arrangement_2
-% | 
-% +------------------------------------------------------------------------+
+% Reference manual page: ArrangementTraits.tex
+% Package: Arrangement_2
 
 \ccRefPageBegin
-
 \begin{ccRefConcept}{ArrangementTraits_2}
 
 \ccDefinition
-
-This refined arrangement-traits concept allows the construction of arrangement
+% ===========
+The concept \ccRefName{} allows the construction of arrangement
 of {\sl general} planar curves. Models of this concept are used
 by the free \ccc{insert()} functions of the arrangement package and
 by the \ccc{Arrangement_with_history_2} class.
@@ -27,20 +21,18 @@ and \ccc{X_monotone_curve_2} types, defined in the basic traits concept).
 \ccc{ArrangementXMonotoneTraits_2}
 
 \ccTypes
-%=======
-
+% ======
 \ccNestedType{Curve_2}{represents a general planar curve.}
 
 \ccHeading{Functor Types}
-%========================
-
+% =======================
 \ccThree{Compare_y_at_x_2}{}{\hspace*{14cm}}
 \ccThreeToTwo
 
 \ccNestedType{Make_x_monotone_2}
 {provides the operator (parameterized by the \ccc{OutputIterator} type)~:
  \begin{itemize}
- \item \ccc{OutputIterator operator() (Curve_2 c, OutputIterator oi)} \\
+ \item \ccc{OutputIterator operator() (Curve_2 c, OutputIterator oi)}\\
  which subdivides the input curve \ccc{c} into $x$-monotone subcurves and
  isolated points, and inserts the results into a container through the
  given output iterator. The value type of \ccc{OutputIterator} is
@@ -49,43 +41,32 @@ and \ccc{X_monotone_curve_2} types, defined in the basic traits concept).
  operator returns a past-the-end iterator for the output sequence.
  \end{itemize}}
 
-\ccCreation
-\ccCreationVariable{traits}
-%==========================
-
 \ccThree{Construct_x_monotone_curve_2~~~}{}{\hspace*{7cm}}
 \ccThreeToTwo
 
-\ccConstructor{ArrangementTraits_2();}{default constructor.}
-\ccGlue
-\ccConstructor{ArrangementTraits_2(ArrangementTraits_2 other);}
-{copy constructor}
-\ccGlue
-\ccMethod{ArrangementTraits_2  operator=(other);}{assignment operator.}
-
+\ccCreationVariable{traits}
+% \ccCreation
+% =========
 
 \ccHeading{Accessing Functor Objects}
-%====================================
-
-\ccMethod{Make_x_monotone_2 make_x_monotone_2_object();} {}
+% ===================================
+\ccMethod{Make_x_monotone_2 make_x_monotone_2_object();}{}
 
 \ccHasModels
-%===========
-
-\ccc{CGAL::Arr_segment_traits_2<Kernel>} \\
-\ccc{CGAL::Arr_non_caching_segment_traits_2<Kernel>} \\
-\ccc{CGAL::Arr_polyline_traits_2<SegmentTraits>} \\
-\ccc{CGAL::Arr_circle_segment_traits_2<Kernel>} \\
-\ccc{CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>} \\
-\ccc{CGAL::Arr_rational_arc_traits_2<AlgKernel,NtTraits>} \\
+% ==========
+\ccc{CGAL::Arr_segment_traits_2<Kernel>}\\
+\ccc{CGAL::Arr_non_caching_segment_traits_2<Kernel>}\\
+\ccc{CGAL::Arr_polyline_traits_2<SegmentTraits>}\\
+\ccc{CGAL::Arr_circle_segment_traits_2<Kernel>}\\
+\ccc{CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>}\\
+\ccc{CGAL::Arr_rational_arc_traits_2<AlgKernel,NtTraits>}\\
 \ccc{CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>}\\
 \ccc{CGAL::Arr_consolidated_curve_data_traits_2<Traits,Data>}
 
 \ccSeeAlso
-%=========
-
+% ========
 \ccc{ArrangementBasicTraits_2}\lcTex{ 
-      (\ccRefPage{ArrangementBasicTraits_2})} \\
+      (\ccRefPage{ArrangementBasicTraits_2})}\\
 \ccc{ArrangementXMonotoneTraits_2}\lcTex{ 
       (\ccRefPage{ArrangementXMonotoneTraits_2})}\\
 \ccc{ArrangementLandmarkTraits_2}\lcTex{ 
