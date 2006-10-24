@@ -2161,7 +2161,7 @@ Reference~Manual}%
 
 % This macro is used to format function operators "operator()(....)",
 % if they are not formatted in operator notation.
-\def\ccOperatorFunctionCall #1#2#3 #4(#5(#6)#7;#8\ccEnd{%
+\long\def\ccOperatorFunctionCall #1#2#3 #4(#5(#6)#7;#8\ccEnd{%
                        \def\ccExtendedFormat{\ }% Switches ext. format OFF.
                        \ccSeparateFunction{}#3 #4(#5::\ccEnd%
                        \setbox\returntypebox=\hbox{{\ccFont
