@@ -135,8 +135,7 @@ public :
       CHECK_EQUAL(audit_data->selected,actual_data->selected);
       if ( audit_data->selected )
       {
-        //CHECK_EQUAL(audit_data->order          ,actual_data->order);  // The ordering of equally costing edges can vary
-
+        CHECK_EQUAL(audit_data->order          ,actual_data->order); 
         CHECK_EQUAL(audit_data->is_collapsable ,actual_data->is_collapsable);
         CHECK_EQUAL(!audit_data->cost          ,!actual_data->cost);
         CHECK_EQUAL(!audit_data->placement     ,!actual_data->placement);
