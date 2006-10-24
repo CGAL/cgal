@@ -168,7 +168,7 @@ protected:
   // This is evil here.
   typedef std::set<Listener*> Subscribers;
 
-
+#ifndef ALL_MOVE
   struct Coef_data {
     Coef_data(double st, INT x_0, INT x_1, INT y_0, INT y_1){
       c_[0][0]=x_0;
@@ -194,6 +194,8 @@ protected:
     double start_time_;
     INT c_[2][2];
   };
+#endif
+
   typedef boost::dynamic_bitset<> Active;
 public:
 
@@ -203,13 +205,19 @@ public:
 
   //! default constructor
   Updatable_delaunay_triangulation_table_2(Indirect_kernel ik,
-					   Kinetic_kernel kk):
+                                           Kinetic_kernel kk):
+#ifndef ALL_MOVE
     active_(ik.number_of_point_2s(), false),
     coef_cache_(ik.number_of_point_2s()),
+#endif
     editing_(NOT), 
     notifying_(false),
     soc_(kk.positive_side_of_oriented_circle_2_object()),
-    ik_(ik) {
+    ik_(ik)
+#ifdef ALL_MOVE
+    , fk_(ik.clone())
+#endif
+ {
     reset(false);
     clear_stats();
   }
@@ -223,6 +231,8 @@ public:
     return exact_point(key);
   }
 
+ 
+
   //! access a point
   const Exact_point_2 &exact_point(Key key) const
   {
@@ -233,32 +243,42 @@ public:
       typedef typename MF::NT NT;
       MF mf[2];
       CGAL_UD_DEBUG("Computing exact motions for " << key << " from " << ip );
-      if (is_active(key)) {
-	Static_point_2 fp= final(key);
-	double start_time= coef_cache_[key.to_index()].start_time();
-	for (unsigned int i=0; i< 2; ++i){
-	  NT c[2];
-	  c[1]=(NT(ip[i])-NT(fp[i]))/NT(start_time-1);
-	  c[0]=NT(fp[i])-c[1];
-	  mf[i]=MF(c, c+2);
-	}
-
-	CGAL_UD_DEBUG(" starting at " << start_time 
-		      << " to " << fp);
-      } else {
-	mf[0] = MF(ip.x());
-	mf[1] = MF(ip.y());
+     
+#ifdef ALL_MOVE
+      Static_point_2 fp= final(key);
+      
+      for (unsigned int i=0; i< 2; ++i){
+        NT c[2];
+        c[1]=-(NT(ip[i])-NT(fp[i]));
+        c[0]=NT(fp[i])-c[1];
+        mf[i]=MF(c, c+2);
       }
+#else
+      if (is_active(key)) {
+        Static_point_2 fp= final(key);
+        double start_time= coef_cache_[key.to_index()].start_time();
+        
+        for (unsigned int i=0; i< 2; ++i){
+          NT c[2];
+          c[1]=(NT(ip[i])-NT(fp[i]))/NT(start_time-1);
+          c[0]=NT(fp[i])-c[1];
+          mf[i]=MF(c, c+2);
+        }
+      } else {
+        mf[0] = MF(ip.x());
+        mf[1] = MF(ip.y());
+      }
+#endif
+
+      /*CGAL_UD_DEBUG(" starting at " << start_time 
+        << " to " << fp);*/
+
       Exact_point_2 ep(mf[0], mf[1]);
      
       CGAL_UD_DEBUG(" got " << ep << std::endl);
       exact_points_[key]= ep;
     }
-#if 0
-    std::cout << "Exact point is " << exact_points_.find(key)->second << " and approx is " 
-	      << coef_cache_[key.to_index()][0][0] << "+t*" << coef_cache_[key.to_index()][0][1] << ", "
-	      << coef_cache_[key.to_index()][1][0] << "+t*" << coef_cache_[key.to_index()][1][1] << std::endl;
-#endif
+
     return exact_points_.find(key)->second;
   }
 
@@ -304,6 +324,47 @@ public:
   return Key(storage_.size()-1);
   }*/
 
+  typedef CGAL::Counter<int, Key> Key_iterator;
+  Key_iterator keys_begin() const {
+    return Key_iterator(0);
+  }
+  Key_iterator keys_end() const {
+    return Key_iterator(size());
+  }
+
+#ifdef MOVE_ALL
+
+  typedef Key_iterator Changed_iterator;
+  Changed_iterator changed_begin() const
+  {
+    return keys_begin();
+  }
+  Changed_iterator changed_end() const
+  {
+    return keys_end();
+  }
+
+
+  typedef Key_iterator Inserted_iterator;
+  Changed_iterator inserted_begin() const
+  {
+    return keys_end();
+  }
+  Changed_iterator inserted_end() const
+  {
+    return keys_end();
+  }
+  typedef Key_iterator Erased_iterator;
+  Erased_iterator erased_begin() const
+  {
+    return keys_end();
+  }
+  Erased_iterator erased_end() const
+  {
+    return keys_end();
+  }
+
+#else
   
   typedef typename std::vector<Key>::const_iterator Changed_iterator;
   Changed_iterator changed_begin() const
@@ -334,14 +395,8 @@ public:
   {
     return changed_objects_.end();
   }
+#endif
 
-  typedef CGAL::Counter<int, Key> Key_iterator;
-  Key_iterator keys_begin() const {
-    return Key_iterator(0);
-  }
-  Key_iterator keys_end() const {
-    return Key_iterator(size());
-  }
 
 
   unsigned int size() const
@@ -386,7 +441,11 @@ public:
 
   bool is_set(Key k) const {
     CGAL_precondition(notifying_);
+#ifdef MOVE_ALL
+    return true;
+#else
     return std::binary_search(k, changed_objects_.begin(), changed_objects_.end());
+#endif
   }
 
 
@@ -426,7 +485,9 @@ public:
 
 
   INT interval(Key a, int i) const {
+#ifndef MOVE_ALL
     if (!is_active(a)) return CGAL::to_interval(initial(a)[i]);
+#endif
     INT ii= CGAL::to_interval(initial(a)[i]);
     INT fi= CGAL::to_interval(final(a)[i]);
     return INT(std::min(fi.inf(), ii.inf()),
@@ -436,19 +497,20 @@ public:
 
   // need start time for each point
   INT cur_interval(Key a, INT ct, int i) const {
-    if (is_active(a)) {
       CGAL_precondition(ct.inf()>=0 && ct.sup() <=1);
+#ifdef MOVE_ALL
+    INT c[2];
+    coef(a,i,c);
+    return c[0] + ct*c[1];
+#else
 
-      //INT c[2];
-      // (st-1)fi-ii+fi
-      // stfi -ii
-
-      //CGAL_precondition(ct.inf() >= 0);
-      //CGAL_precondition(ct.sup() <= 1);
+    if (is_active(a)) {
       return coef_cache_[a.to_index()][i][0] + ct*coef_cache_[a.to_index()][i][1];
     } else {
       return CGAL::to_interval(initial(a)[i]);
     }
+
+#endif
   }
 
 
@@ -474,10 +536,17 @@ public:
 	<< exact_current_time_certificates_ 
 	<< " were caused to make the current time exact " 
 	<< " and " << comparison_certificates_ 
-	<< " were caused in order to compare." << std::endl;
+        << " were caused in order to compare." << std::endl;
   }
 
+#ifdef MOVE_ALL
+  void coef(Key a, int i, INT r[2]) const {
+    r[0]= CGAL::to_interval(initial(a)[i]);
+    r[1]= INT(CGAL::to_interval(final(a)[i]))-r[0];
+  }
+#endif
 
+#ifndef MOVE_ALL
   bool is_active(Key k) const {
     return active_[k.to_index()];
   }
@@ -506,6 +575,7 @@ public:
       //aot_->set(k, kp);
     }
   }
+#endif
 
   void set_final_kernel(Indirect_kernel &fk){
     fk_=fk;
@@ -513,15 +583,19 @@ public:
 
   void reset(bool clear=true) {
     //activate_time_=-1;
+#ifndef MOVE_ALL
     next_activation_=1.0;
+#endif
     start_time_=-1;
     is_init_=false;
     exact_points_.clear();
     typename Indirect_kernel::Current_coordinates cc= ik_.current_coordinates_object();
+#ifndef MOVE_ALL
     for (unsigned int i=0; i< coef_cache_.size(); ++i){
       coef_cache_[i]= Coef_data(cc(Key(i))[0],cc(Key(i))[1]) ;
     }
     if (clear) active_.reset();
+#endif
   }
     
   const Static_point_2& initial(Key pk) const {
@@ -599,15 +673,30 @@ public:
   }
 
   void certificate_function(Key a, Key b, Key c, Key d, INT *ret) const {
+#ifdef MOVE_ALL
+    INT a0[2]; coef(a, 0, a0);
+    INT a1[2]; coef(a, 0, a1);
+    INT b0[2]; coef(b, 0, b0);
+    INT b1[2]; coef(b, 0, b1);
+    INT c0[2]; coef(c, 0, c0);
+    INT c1[2]; coef(c, 0, c1);
+    INT d0[2]; coef(d, 0, d0);
+    INT d1[2]; coef(d, 0, d1);
+   
+    incircle_p(a0, a1, b0, b1, c0, c1, d0, d1,
+               ret);
+
+#else
     incircle_p(coef_cache_[a.to_index()][0],
-	       coef_cache_[a.to_index()][1],
-	       coef_cache_[b.to_index()][0],
+               coef_cache_[a.to_index()][1],
+               coef_cache_[b.to_index()][0],
 	       coef_cache_[b.to_index()][1],
 	       coef_cache_[c.to_index()][0],
 	       coef_cache_[c.to_index()][1],
-	       coef_cache_[d.to_index()][0],
-	       coef_cache_[d.to_index()][1],
-	       ret);
+               coef_cache_[d.to_index()][0],
+               coef_cache_[d.to_index()][1],
+               ret);
+#endif
 
 #ifndef NDEBUG
     /*
@@ -722,7 +811,9 @@ public:
   
   void set(Key k, Exact_point_2 ep) {
     exact_points_[k]=ep;
+#ifndef MOVE_ALL
     changed_objects_.push_back(k);
+#endif
   }
 
   
@@ -762,9 +853,17 @@ public:
     return cum;
   }
 
-  bool can_fail(Cert_tuple ct, double cur_time, double end_time) const {
+  bool can_fail(Cert_tuple ct, double cur_time
+#ifndef MOVE_ALL
+                , double end_time
+#endif
+                ) const {
     CGAL::Protect_FPU_rounding<true> prot;
+#ifdef MOVE_ALL
+    INT rct(cur_time, 1);
+#else
     INT rct(cur_time, end_time);
+#endif
     bool ret= (sign_at(ct[0],ct[1],ct[2],ct[3], rct) != CGAL::POSITIVE);
     
     if (!ret) {
@@ -906,7 +1005,7 @@ public:
  
   Isolate_result isolate_failure(INT *f, double lb, double ub,
 				 bool starts_positive,
-				 std::pair<double,double> &ret) const {
+                                 std::pair<double,double> &ret) const {
     //CGAL::Protect_FPU_rounding<true> prot;
     INT v= evaluate_ipoly(f, lb);
     double c=lb;
@@ -927,14 +1026,14 @@ public:
       }
       else slope= -deriv.inf();
       do {
-	INT step= v/slope;
-	lb=c;
-	c= c+step.inf();
-	if (c >= ub) {
-	  ++deriv_filtered_;
-	  return NO_FAILURE;
-	}
-	v= evaluate_ipoly(f,c);
+        INT step= v/slope;
+        lb=c;
+        c= c+step.inf();
+        if (c >= ub) {
+          ++deriv_filtered_;
+          return NO_FAILURE;
+        }
+        v= evaluate_ipoly(f,c);
       } while (v.inf() >0);
       ub= c;
     }
@@ -944,13 +1043,14 @@ public:
     return isolate_failure(Certificate_evaluator(f), lb, ub, starts_positive, 3, 20, ret);
   }
 
-    
+#ifndef MOVE_ALL  
   double next_activation() const {
     return next_activation_;
   }
   void set_next_activation(double f) {
     next_activation_=f;
   }
+#endif
   
   double start_time() const {
     return start_time_;
@@ -977,32 +1077,43 @@ private:
   }
 
   void finish_editing() {
+#ifdef MOVE_ALL
+    notifying_=true;
+    for (typename Subscribers::iterator it= subscribers_.begin(); it != subscribers_.end(); ++it) {
+      (*it)->new_notification(Listener::IS_EDITING);
+    }
+    notifying_=false;
+#else
     if (!changed_objects_.empty()) {
       notifying_=true;
-      std::sort(changed_objects_.begin(), changed_objects_.end());
+      std::sort(changed_objects.begin(), changed_objects.end());
       for (typename Subscribers::iterator it= subscribers_.begin(); it != subscribers_.end(); ++it) {
 	(*it)->new_notification(Listener::IS_EDITING);
       }
-      
       changed_objects_.clear();
       notifying_=false;
     }
+#endif
   }
 
 
 protected:
   mutable std::map<Key, Exact_point_2> exact_points_;
-  Active active_;
-  std::vector<Coef_data > coef_cache_;
+  //std::vector<Coef_data > coef_cache_;
   bool is_init_;
   //std::vector<Key> activate_list_;
-  double next_activation_;
   double start_time_;
   
   mutable Subscribers subscribers_;
-  std::vector<Key> changed_objects_;
   Editing_state editing_;
   bool notifying_;
+
+#ifndef MOVE_ALL
+  Active active_;
+  std::vector<Coef_data> coef_cache_;
+  double next_activation_;
+  std::vector<Key> changed_objects_;
+#endif
 
 public:
   typename Kinetic_kernel::Positive_side_of_oriented_circle_2 soc_;

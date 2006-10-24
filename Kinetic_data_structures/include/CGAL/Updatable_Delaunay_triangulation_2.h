@@ -476,8 +476,8 @@ struct Updatable_Delaunay_triangulation_2 {
     }
 
 
-    bool internal_certificate_failure_time(typename Default_traits::Edge e, Point_key pks[4], Time &rett, Certificate_data) {
 
+    bool internal_certificate_failure_time(typename Default_traits::Edge e, Point_key pks[4], Time &rett, Certificate_data) {
       Cert_tuple ct= tuple(pks);
       bool check_if_point_is_activated;
       double end_time= 1; //i()->next_activation();
@@ -518,43 +518,38 @@ struct Updatable_Delaunay_triangulation_2 {
       }
 
       if (!ui()->can_fail(ct, bt, end_time)) {
-	CGAL_postcondition(check_failure_time > 1);
-	return null_pair();
+        CGAL_postcondition(check_failure_time > 1);
+        return false;
       }
       
       INT cf[5];
       std::pair<double,double> ft;
       typename Update_information::Isolate_result isc;
 #ifndef NDEBUG
-      if (ui()->is_active(ct[0]) 
-	  || ui()->is_active(ct[1])
-	  || ui()->is_active(ct[2])
-	  || ui()->is_active(ct[3])){
-#else 
-	{
+#ifndef MOVE_ALL
+      if (!(ui()->is_active(ct[0]) || ui()->is_active(ct[1])
+	    || ui()->is_active(ct[2]) || ui()->is_active(ct[3]))) {
+	isc= Update_information::NO_FAILURE;
+      } else 
 #endif
-	CGAL::Protect_FPU_rounding<true> prot;
-	ui()->certificate_function(ct[0], ct[1], ct[2], ct[3], cf);
-	//typename Update_information::Certificate_evaluator se(cf);
+#endif
+        {
+        CGAL::Protect_FPU_rounding<true> prot;
+        ui()->certificate_function(ct[0], ct[1], ct[2], ct[3], cf);
+        //typename Update_information::Certificate_evaluator se(cf);
 	
 	
 	isc= ui()->isolate_failure(cf, 
 				   bt,
-				   end_time,
-				   true,
-				   ft);
-#ifndef NDEBUG
-      } else {
-	isc = Update_information::NO_FAILURE;
+                                   end_time,
+                                   true,
+                                   ft);
       }
-#else 
-      }
-#endif
 
       if (isc == Update_information::NO_FAILURE) { 
-	CGAL_UD_DEBUG("Not isolated" << std::endl);
-	CGAL_assertion(check_failure_time >=1);
-	return null_pair();
+        CGAL_UD_DEBUG("Not isolated" << std::endl);
+        CGAL_assertion(check_failure_time >=1);
+        return false;
       }
 
       rett= Time(ft.first, ft.second, Refiner(ct, cf, ui()));
@@ -607,11 +602,9 @@ struct Updatable_Delaunay_triangulation_2 {
 
 
 
+
     bool certificate_failure_time(typename Default_traits::Edge, 
-				  Certificate_data , Time &rett, Certificate_data) {
-
-      bool end_time_is_not_correct;
-
+                                  Certificate_data , Time &rett, Certificate_data) {
       const Time &curt= P::simulator_handle()->current_time();
       Cert_tuple ct= curt.refiner().tuple().opposite();
 #ifndef NDEBUG
@@ -619,8 +612,11 @@ struct Updatable_Delaunay_triangulation_2 {
 #endif
       CGAL_assertion(ct == check_ct);
 
-      double end_time= 1; //ui()->next_activation();
+      const double end_time= 1; //ui()->next_activation();
+
+#ifndef MOVE_ALL
       ui()->set_next_activation(1.0);
+#endif
  
 #ifndef NDEBUG
       Exact_time check_failure_time;
@@ -758,10 +754,11 @@ struct Updatable_Delaunay_triangulation_2 {
       return tr_.active_points_2_table_handle();
     }
 
+#ifndef MOVE_ALL
     bool test_and_add(Edge e, std::vector<Point_key> &active) const {
       ++static_certificates_;
       if (!compute_ok(e, ui()->fk_)) {
-	add(e.first->vertex(0)->point(), active);
+        add(e.first->vertex(0)->point(), active);
 	add(e.first->vertex(1)->point(), active);
 	add(e.first->vertex(2)->point(), active);
 	add(TDS_helper::mirror_vertex(e)->point(), active);
@@ -775,37 +772,37 @@ struct Updatable_Delaunay_triangulation_2 {
 	//add(e.first->vertex(0)->point(), active);
 	//add(e.first->vertex(1)->point(), active);
 	//add(e.first->vertex(2)->point(), active);
-	add(TDS_helper::mirror_vertex(e)->point(), active);
-	return true;
+        add(TDS_helper::mirror_vertex(e)->point(), active);
+        return true;
       } else return false;
     }
+#endif
 
     template <class TDS> 
     void initialize_events(const TDS &triangulation,
-			   Indirect_kernel fk) {
+                           Indirect_kernel fk) {
       stat_num_edges_=triangulation.tds().number_of_edges();
       ui()->set_final_kernel(fk);
+#ifndef MOVE_ALL
       std::vector<Point_key> active;
       for (typename TDS::Finite_edges_iterator it= triangulation.finite_edges_begin(); 
-	   it != triangulation.finite_edges_end(); ++it){
-	if (test_and_add(*it, active)) {
-	  ++stat_bad_edges_;
-	}
+           it != triangulation.finite_edges_end(); ++it){
+        if (test_and_add(*it, active)) {
+          ++stat_bad_edges_;
+        }
       }
       
       Interpolate_event ev(tr_,
-			   ui(),
-			   ui()->ik_.current_coordinates_object(),
-			   ui()->fk_.current_coordinates_object(), 
-			   active.begin(), 
-			   active.end());
+                           ui(),
+                           ui()->ik_.current_coordinates_object(),
+                           ui()->fk_.current_coordinates_object(), 
+                           active.begin(), 
+                           active.end());
       if (!ev.empty()) {
-	INT iat= CGAL::to_interval(ev.time());
-	tr_.simulator_handle()->new_event(ev.time(), ev);
-	/*for (unsigned int i=0; i< active.size(); ++i){
-	  ui_->activate(active[i],iat);
-	  }*/
+        INT iat= CGAL::to_interval(ev.time());
+        tr_.simulator_handle()->new_event(ev.time(), ev);
       }
+#endif
     }
 
 
@@ -818,10 +815,12 @@ struct Updatable_Delaunay_triangulation_2 {
       //CGAL_precondition(ui_->is_active(e.first->vertex((e.second+1)%3)->point()));
       //CGAL_precondition(ui_->is_active(e.first->vertex((e.second+2)%3)->point()));
       //CGAL_precondition(ui_->is_active(e.first->vertex(e.second)->point()));
+      Edge em= TDS_helper::mirror_edge(e);
+#ifndef MOVE_ALL
       add(e.first->vertex(0)->point(), active);
       add(e.first->vertex(1)->point(), active);
       add(e.first->vertex(2)->point(), active);
-      Edge em= TDS_helper::mirror_edge(e);
+
       //CGAL_precondition(ui_->is_active(em.first->vertex(em.second)->point()));
       add(em.first->vertex(em.second)->point(), active);
       //test_and_add_one(Edge(e.first, (e.second+1)%3), active);
@@ -841,9 +840,10 @@ struct Updatable_Delaunay_triangulation_2 {
 	  /*for (unsigned int i=0; i< active.size(); ++i){
 	    ui_->activate(active[i], true);
 	    }*/
-	  ui()->set_next_activation(CGAL::to_interval(ev.time()).second);
-	}
+          ui()->set_next_activation(CGAL::to_interval(ev.time()).second);
+        }
       }
+#endif
 
       bool ok=true;
       double skip_to= CGAL::to_interval(tr_.simulator_handle()->next_event_time()).first;
@@ -894,17 +894,17 @@ struct Updatable_Delaunay_triangulation_2 {
 
    
     
-
+#ifndef MOVE_ALL
     bool is_active(Point_key k) const {
       return ui()->is_active(k);
     }
 
     void add( Point_key k, std::vector<Point_key> &active)  const {
       if (!is_active(k)) {
-	active.push_back(k);
+        active.push_back(k);
       }
     }
-
+#endif
 
     void reset() {
       ui()->reset();
@@ -928,9 +928,11 @@ struct Updatable_Delaunay_triangulation_2 {
   };
 
 
+#ifndef MOVE_ALL
+
 
   static Kinetic_point_2 interpolate_t1(NT time,
-					Static_point_2 ip,
+                                        Static_point_2 ip,
 					Static_point_2 fp) {
     typedef typename Simulation_traits::Kinetic_kernel::Motion_function MF;
     typedef typename MF::NT NT;
@@ -1088,7 +1090,7 @@ struct Updatable_Delaunay_triangulation_2 {
   };
 
 
- 
+ #endif
   
 
 
@@ -1115,6 +1117,7 @@ struct Updatable_Delaunay_triangulation_2 {
     kdel_= new KDel(traits, tr, Visitor(tr_));
     kdel_->clear_stats();
     kdel_->visitor().stats_clear();
+    kdel_->set_neighbors_initialized(true);
   }
  
   const Triangulation &triangulation() const {
@@ -1145,41 +1148,31 @@ struct Updatable_Delaunay_triangulation_2 {
     //qtmps->set_point_size(10);
     typename Qt_triangulation::Handle qtdel
       = new Qt_triangulation(kdel_,
-			     tr_.instantaneous_kernel_object(), 
-			     qtsim);
-    
+                             tr_.instantaneous_kernel_object(), 
+                             qtsim);
+#ifndef MOVE_ALL
     tr_.simulator_handle()->new_final_event(Final_event(tr_,
-							kdel_));
+                                                        kdel_));
+#endif
 
     std::cout << "Green edges just flipped, grey edges will not flip until"
-	      << " their certificate changes and black edges will flip." << std::endl;
+              << " their certificate changes and black edges will flip." << std::endl;
   
     qtsim->begin_event_loop();
-    
+    kdel_->visitor().stats_write(std::cout);
     ik_.swap(fk);
     audit();
   }
 
   Indirect_kernel set_up_update(const Points &pts) {
     kdel_->visitor().reset();
-    kdel_->set_has_certificates(false);
+    kdel_->set_has_certificates(false, true);
     tr_.simulator_handle()->set_interval(0,1);
-    /*
-    tr_.active_points_2_table_handle()->set_is_editing(Update_information::UNLOGGED);
-    typename Indirect_kernel::Current_coordinates cc= ik_.current_coordinates_object();
-    for (typename Simulation_traits::Active_points_2_table::Key_iterator
-	   kit= tr_.active_points_2_table_handle()->keys_begin();
-	 kit !=  tr_.active_points_2_table_handle()->keys_end(); ++kit) {
-      tr_.active_points_2_table_handle()->set(*kit, Kinetic_point_2(Kinetic_coordinate(cc(*kit).x()),
-								    Kinetic_coordinate(cc(*kit).y())));
-    }
-    tr_.active_points_2_table_handle()->set_is_editing(Update_information::NOT);*/
-
 
     Indirect_kernel fk;
     fk.new_point_2s(pts.begin(), pts.end());
-    kdel_->set_has_certificates(true, true);
     kdel_->visitor().initialize_events(kdel_->triangulation(), fk);
+    kdel_->set_has_certificates(true, false, true);
     return fk;
   }
 
@@ -1281,8 +1274,8 @@ struct Updatable_Delaunay_triangulation_2 {
 
 
 
-  static int run(int argc, char *argv[], int n, int d, 
-		 int seed, std::string ifile, std::string ffile) {
+  static int run(int , char *[], int , int , 
+                 int , std::string ifile, std::string ffile) {
     //typedef CGAL::Kinetic::Inexact_simulation_traits_2 Traits;
  
 
