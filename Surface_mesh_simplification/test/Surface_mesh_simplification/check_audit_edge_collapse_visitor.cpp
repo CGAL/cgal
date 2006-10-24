@@ -40,6 +40,8 @@ private :
     {
       if ( line.length() > 1 )
       {
+        //std::cerr << "AUDIT: " << line << " (order=" << order << ")" << std::endl ;
+ 
         Tokenizer tk(line,Separator(" "));
         vector<string> tokens(tk.begin(),tk.end());
         CHECK( tokens.size() > 1 ) ;
@@ -112,6 +114,7 @@ public :
   
   Visitor ( string audit_name ) 
   {
+    //std::cerr << "audit_name: " << audit_name << std::endl ;
     ifstream in(audit_name.c_str());  
     if ( in )
          ReadAudit(in);
@@ -149,11 +152,13 @@ public :
   
   void OnCollected( Halfedge_handle const& aEdge, bool aIsFixed, Surface& )
   {
+    //std::cerr << "ACTUAL: I" << aEdge->id() << std::endl ;
     actual_table.insert(make_pair(aEdge->id(), Data_ptr( new Data(aIsFixed) ) ) ) ;
   }                
   
   void OnSelected( Halfedge_handle const& aEdge, Surface&, optional<double> const& aCost, size_t, size_t )
   {
+    //std::cerr << "ACTUAL: S" << aEdge->id() << " (order=" << order << ")" << std::endl ;
     actual_table[aEdge->id()]->selected = true ;
     actual_table[aEdge->id()]->cost     = aCost ; 
     actual_table[aEdge->id()]->order    = order ++ ; 
@@ -161,12 +166,14 @@ public :
   
   void OnCollapsing(Halfedge_handle const& aEdge, Surface&, optional<Point> const& aPlacement ) 
   {
+    //std::cerr << "ACTUAL: C" << aEdge->id() << std::endl ;
     actual_table[aEdge->id()]->placement      = aPlacement ; 
     actual_table[aEdge->id()]->is_collapsable = true ; 
   }                
   
   void OnNonCollapsable(Halfedge_handle const& aEdge, Surface& ) 
   {
+    //std::cerr << "ACTUAL: N" << aEdge->id() << std::endl ;
     actual_table[aEdge->id()]->is_collapsable = false ; 
   }                
   

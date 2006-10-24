@@ -112,6 +112,8 @@ bool Test ( string aName )
     
     string audit_name = aName.substr(0,aName.find_last_of(".")) + "_" + STRATEGY_ACRN + ".audit" ;
     
+    cerr << "Audit file: " << audit_name << endl ;
+    
     ifstream off_is(off_name.c_str());
     if ( off_is )
     {
@@ -128,7 +130,8 @@ bool Test ( string aName )
           set_halfedgeds_items_id(lSurface);
           
           SMS::Count_stop_predicate<Surface> stop(1);
-          
+
+          cerr << "Using " << STRATEGY_POLICIES << "\nVia visitor: " << VISITOR << endl ;
 #include STRATEGY_POLICIES
 
           Real_timer t ; t.start();    
