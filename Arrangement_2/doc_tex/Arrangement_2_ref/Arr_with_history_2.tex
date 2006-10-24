@@ -46,13 +46,16 @@ value of this parameter is by default
 \ccc{Arr_default_dcel<Traits>}.
 \end{itemize}
 
-\ccc{Self} is an abbreviation of the \ccRefName\ type hereafter.
+\ccInheritsFrom\ccc{Arrangement_2<Traits,Dcel>}
 
 \ccInclude{CGAL/Arrangement_with_history_2.h}
 
 \ccTypes
 %=======
 
+\ccTypedef{typedef Arrangement_with_history_2<Traits_2,Dcel> Self;}
+  {a private type used as an abbreviation of the \ccRefName\ type hereafter.}
+  
 \ccNestedType{Traits_2}{the traits class in use.}
 \ccGlue
 \ccNestedType{Dcel}{the {\sc Dcel} representation of the arrangement.}

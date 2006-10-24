@@ -37,22 +37,19 @@ value of this parameter is by default
 \end{itemize}
 The available traits classes and {\sc Dcel} classes are described below. 
 
-\ccc{Self} is an abbreviation of the \ccRefName\ type hereafter.
-
 \ccInclude{CGAL/Arrangement_2.h}
 
 \ccTypes
 %=======
 
-\ccThree{Arrangement_2<Traits,Dcel>::Halfedge_iterator}{}{}
+\ccThree{typedef typename Traits_2::X_monotone_curve_2}{X_monotone_2;}{}
 \ccThreeToTwo
+\ccTypedef{typedef Arrangement_2<Traits_2,Dcel> Self;}
+  {a private type used as an abbreviation of the \ccRefName\ type hereafter.}
+  
 \ccNestedType{Traits_2}{the traits class in use.}
 \ccGlue
 \ccNestedType{Dcel}{the {\sc Dcel} representation of the arrangement.}
-
-\ccThree{typedef typename Traits_2::X_monotone_curve_2}{Point_2;}{}
-\ccThreeToTwo
-\ccTypedef{typedef Arrangement_2<Traits_2,Dcel> Self;}{}
 
 \ccTypedef{typedef typename Traits_2::Point_2 Point_2;}
   {the point type, as defined by the traits class.}
