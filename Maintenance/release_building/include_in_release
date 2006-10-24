@@ -68,6 +68,7 @@ Point_set_2
 Polygon
 Polyhedron
 Polyhedron_IO
+Polynomial
 NefPolynomial
 Polytope_distance_d
 Principal_component_analysis

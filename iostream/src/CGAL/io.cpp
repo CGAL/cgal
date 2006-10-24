@@ -27,6 +27,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/IO/io.h>
+#include <CGAL/assertions.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -65,6 +66,12 @@ set_pretty_mode(std::ios& i)
     return m;
 }
 
+IO::Mode
+set_benchmark_mode(std::ios& i)
+{
+    set_mode( i, IO::BENCHMARK );
+}
+
 
 IO::Mode
 set_mode(std::ios& i, IO::Mode m)
@@ -92,6 +99,19 @@ is_binary(std::ios& i)
 {
     return i.iword(IO::mode) == IO::BINARY;
 }
+
+bool
+is_benchmark(std::ios& i)
+{
+    return i.iword(IO::mode) == IO::BENCHMARK;
+}
+
+const char* mode_name( IO::Mode m) {
+    static const char* const names[] = {"ASCII", "PRETTY", "BENCHMARK", "BINARY" };
+    CGAL_assertion( IO::ASCII <= m && m <= IO::BINARY );
+    return names[m];
+}
+
 
 CGAL_END_NAMESPACE
 

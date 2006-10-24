@@ -1,0 +1,501 @@
+// ============================================================================
+//
+// Copyright (c) 2001-2006 Max-Planck-Institut Saarbruecken (Germany).
+// All rights reserved.
+//
+// This file is part of EXACUS (http://www.mpi-inf.mpg.de/projects/EXACUS/);
+// you may redistribute it under the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with EXACUS.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// ----------------------------------------------------------------------------
+//
+// Library       : LiS
+// File          : test/Handle.C
+// LiS_release   : $Name:  $
+// Revision      : $Revision$
+// Revision_date : $Date$
+//
+// Author(s)     : Michael Seel <seel@mpi-inf.mpg.de>
+//                 Arno Eigenwillig <arno@mpi-inf.mpg.de>
+//                 Lutz Kettner <kettner@mpi-inf.mpg.de>
+//
+// ============================================================================
+
+#define HANDLE_WITH_POLICY_TEST
+
+#include <CGAL/basic.h>
+#include <CGAL/memory.h>
+#include <CGAL/Testsuite/assert.h>
+
+#include <CGAL/LiS/basic.h>
+#include <CGAL/Handle_with_policy.h>
+#include <cstdlib>
+
+struct Int_rep {
+    int val;
+    Int_rep( int i = 0) : val(i) {}
+    Int_rep( int i, int j) : val(i+j) {}
+    Int_rep( int i, int j, int k) : val(i+j+k) {}
+};
+
+template < class Unify>
+struct Int_t : public ::CGAL::Handle_with_policy< Int_rep, Unify > {
+    typedef ::CGAL::Handle_with_policy< Int_rep, Unify > Base;
+    Int_t( int i = 0) : Base( i) {}
+    Int_t( int i, int j) : Base( i, j) {}     // test template constructors
+    Int_t( int i, int j, int k) : Base( Base::USE_WITH_INITIALIZE_WITH) {
+        // test initialize_with
+        this->initialize_with( i, j + k);
+    }
+    int  value() const { return this->ptr()->val; }
+    void set_value( int i) {
+        this->copy_on_write();
+        this->ptr()->val = i;
+    }
+    bool operator==( const Int_t<Unify>& i) const {
+        bool equal = (value() == i.value());
+        if ( equal)
+            unify(i);
+        return equal;
+    }
+};
+
+void test_handle() {
+    { // test template constructor and initialize_with
+        typedef Int_t< ::CGAL::Handle_policy_no_union> Int;
+        Int i(5,6);
+        CGAL_test_assert( i == Int(11));
+        Int j(5,6,7);
+        CGAL_test_assert( j == Int(18));
+    }
+    {
+        typedef Int_t< ::CGAL::Handle_policy_in_place> Int;
+        Int i(5);
+        Int j(5);
+        Int k(6);
+        CGAL_test_assert( ! i.test_identical_ptr( j));
+        CGAL_test_assert( ! i.test_identical_ptr( k));
+        CGAL_test_assert( ! j.test_identical_ptr( k));
+        CGAL_test_assert( i == j);
+        CGAL_test_assert( ! (i == k));
+        CGAL_test_assert( ! i.test_identical_ptr( j));
+        CGAL_test_assert( ! i.test_identical_ptr( k));
+        CGAL_test_assert( ! j.test_identical_ptr( k));
+    }
+    {
+        typedef Int_t< ::CGAL::Handle_policy_no_union> Int;
+        Int i(5);
+        Int j(5);
+        Int k(6);
+        CGAL_test_assert( ! i.test_identical_ptr( j));
+        CGAL_test_assert( ! i.test_identical_ptr( k));
+        CGAL_test_assert( ! j.test_identical_ptr( k));
+        CGAL_test_assert( i == j);
+        CGAL_test_assert( ! (i == k));
+        CGAL_test_assert( ! i.test_identical_ptr( j));
+        CGAL_test_assert( ! i.test_identical_ptr( k));
+        CGAL_test_assert( ! j.test_identical_ptr( k));
+        CGAL_test_assert( (std::ptrdiff_t)(ID_Number(i)) == i.id() );
+    }
+    {
+        typedef Int_t< ::CGAL::Handle_policy_union> Int;
+        Int i(5);
+        Int j(5);
+        Int k(6);
+        CGAL_test_assert( ! i.test_identical_ptr( j));
+        CGAL_test_assert( ! i.test_identical_ptr( k));
+        CGAL_test_assert( ! j.test_identical_ptr( k));
+        CGAL_test_assert( i == j);
+        CGAL_test_assert( ! (i == k));
+        CGAL_test_assert( i.test_identical_ptr( j));
+        CGAL_test_assert( ! i.test_identical_ptr( k));
+        CGAL_test_assert( ! j.test_identical_ptr( k));
+    }
+    {
+        typedef Int_t< ::CGAL::Handle_policy_union_and_reset> Int;
+        Int i(5);
+        Int j(5);
+        Int k(6);
+        CGAL_test_assert( ! i.test_identical_ptr( j));
+        CGAL_test_assert( ! i.test_identical_ptr( k));
+        CGAL_test_assert( ! j.test_identical_ptr( k));
+        CGAL_test_assert( i == j);
+        CGAL_test_assert( ! (i == k));
+        CGAL_test_assert( i.test_identical_ptr( j));
+        CGAL_test_assert( ! i.test_identical_ptr( k));
+        CGAL_test_assert( ! j.test_identical_ptr( k));
+    }
+    {
+        typedef Int_t< ::CGAL::Handle_policy_union> Int;
+        Int i(5);
+        Int j(5);
+        Int k(5);
+        Int l(5);
+        CGAL_test_assert( ! i.test_identical_ptr( j));
+        CGAL_test_assert( ! i.test_identical_ptr( k));
+        CGAL_test_assert( ! i.test_identical_ptr( l));
+        CGAL_test_assert( ! j.test_identical_ptr( k));
+        CGAL_test_assert( ! j.test_identical_ptr( l));
+        CGAL_test_assert( ! k.test_identical_ptr( l));
+        // pump up the union_size counter for j, k and l
+        Int j1(j);
+        CGAL_test_assert( j1.test_identical_ptr( j));
+        Int k1(k);
+        Int k2(k);
+        Int k3(k);
+        Int l1(l);
+        Int l2(l);
+        Int l3(l);
+        Int l4(l);
+        Int l5(l);
+        Int l6(l);
+        Int l7(l);
+        Int l8(l);
+        CGAL_test_assert( ! i.is_forwarding());
+        CGAL_test_assert( ! j.is_forwarding());
+        CGAL_test_assert( ! k.is_forwarding());
+        CGAL_test_assert( ! l.is_forwarding());
+        CGAL_test_assert( i.union_size() == 2);
+        CGAL_test_assert( j.union_size() == 3);
+        CGAL_test_assert( k.union_size() == 5);
+        CGAL_test_assert( l.union_size() == 10);
+        CGAL_test_assert( ! i.test_identical_ptr( j));
+        CGAL_test_assert( ! i.test_identical_ptr( k));
+        CGAL_test_assert( ! i.test_identical_ptr( l));
+        CGAL_test_assert( ! j.test_identical_ptr( k));
+        CGAL_test_assert( ! j.test_identical_ptr( l));
+        CGAL_test_assert( ! k.test_identical_ptr( l));
+        // link i to j
+        CGAL_test_assert( i == j);
+        CGAL_test_assert( ! i.is_forwarding());
+        CGAL_test_assert( ! j.is_forwarding());
+        CGAL_test_assert( ! k.is_forwarding());
+        CGAL_test_assert( ! l.is_forwarding());
+        CGAL_test_assert( i.union_size() == 4);
+        CGAL_test_assert( j.union_size() == 4);
+        CGAL_test_assert( k.union_size() == 5);
+        CGAL_test_assert( l.union_size() == 10);
+        CGAL_test_assert( i.test_identical_ptr( j));
+        CGAL_test_assert( i.test_identical_ptr( j1));
+        CGAL_test_assert( ! i.test_identical_ptr( k));
+        CGAL_test_assert( ! i.test_identical_ptr( l));
+        CGAL_test_assert( ! j.test_identical_ptr( k));
+        CGAL_test_assert( ! j.test_identical_ptr( l));
+        CGAL_test_assert( ! k.test_identical_ptr( l));
+        // link j to k
+        CGAL_test_assert( j == k);
+        CGAL_test_assert( i.is_forwarding());
+        CGAL_test_assert( ! j.is_forwarding());
+        CGAL_test_assert( ! k.is_forwarding());
+        CGAL_test_assert( ! l.is_forwarding());
+        CGAL_test_assert( i.union_size() == 3);
+        CGAL_test_assert( j.union_size() == 9);
+        CGAL_test_assert( k.union_size() == 9);
+        CGAL_test_assert( l.union_size() == 10);
+        CGAL_test_assert( ! i.test_identical_ptr( j));
+        CGAL_test_assert( ! i.test_identical_ptr( k));
+        CGAL_test_assert( ! i.test_identical_ptr( l));
+        CGAL_test_assert( j.test_identical_ptr( k));
+        CGAL_test_assert( ! j.test_identical_ptr( l));
+        CGAL_test_assert( ! k.test_identical_ptr( l));
+        // link k to l
+        CGAL_test_assert( k == l);
+        CGAL_test_assert( i.is_forwarding());
+        CGAL_test_assert( j.is_forwarding());
+        CGAL_test_assert( ! k.is_forwarding());
+        CGAL_test_assert( ! l.is_forwarding());
+        CGAL_test_assert( i.union_size() == 3);
+        CGAL_test_assert( j.union_size() == 8);
+        CGAL_test_assert( k.union_size() == 19);
+        CGAL_test_assert( l.union_size() == 19);
+        CGAL_test_assert( ! i.test_identical_ptr( j));
+        CGAL_test_assert( ! i.test_identical_ptr( k));
+        CGAL_test_assert( ! i.test_identical_ptr( l));
+        CGAL_test_assert( ! j.test_identical_ptr( k));
+        CGAL_test_assert( ! j.test_identical_ptr( l));
+        CGAL_test_assert( k.test_identical_ptr( l));
+        // find j, links it to k and l
+        CGAL_test_assert( j.value() == 5);
+        CGAL_test_assert( i.is_forwarding());
+        CGAL_test_assert( ! j.is_forwarding());
+        CGAL_test_assert( ! k.is_forwarding());
+        CGAL_test_assert( ! l.is_forwarding());
+        CGAL_test_assert( i.union_size() == 3);
+        CGAL_test_assert( j.union_size() == 19);
+        CGAL_test_assert( k.union_size() == 19);
+        CGAL_test_assert( l.union_size() == 19);
+        CGAL_test_assert( ! i.test_identical_ptr( j));
+        CGAL_test_assert( ! i.test_identical_ptr( k));
+        CGAL_test_assert( ! i.test_identical_ptr( l));
+        CGAL_test_assert( j.test_identical_ptr( k));
+        CGAL_test_assert( j.test_identical_ptr( l));
+        CGAL_test_assert( k.test_identical_ptr( l));
+        // find i, links it to j, k and l
+        CGAL_test_assert( i.value() == 5);
+        CGAL_test_assert( ! i.is_forwarding());
+        CGAL_test_assert( ! j.is_forwarding());
+        CGAL_test_assert( ! k.is_forwarding());
+        CGAL_test_assert( ! l.is_forwarding());
+        CGAL_test_assert( i.union_size() == 19);
+        CGAL_test_assert( j.union_size() == 19);
+        CGAL_test_assert( k.union_size() == 19);
+        CGAL_test_assert( l.union_size() == 19);
+        CGAL_test_assert( i.test_identical_ptr( j));
+        CGAL_test_assert( i.test_identical_ptr( k));
+        CGAL_test_assert( i.test_identical_ptr( l));
+        CGAL_test_assert( j.test_identical_ptr( k));
+        CGAL_test_assert( j.test_identical_ptr( l));
+        CGAL_test_assert( k.test_identical_ptr( l));
+    }
+}
+
+// fully generic example to show, how allocator and policy can be transported
+// from the templated handle to the templated rep. For hard-coded choices
+// one could derive directly from one of the following base classes:
+//  -- struct Int_vrep : public ::CGAL::Reference_counted_hierarchy_with_union<>
+//  -- struct Int_vrep : public ::CGAL::Reference_counted_hierarchy<>
+
+template <class Policy, class Alloc>
+struct Int_vrep : public Policy::template Hierarchy_base< Alloc>::Type {
+    int val;
+    virtual CGAL::Reference_counted_hierarchy<Alloc>* clone() { 
+        return new Int_vrep( *this); 
+    }
+    virtual int  get_val() const { return val; }
+    virtual void set_val( int i) { val = i; }
+    Int_vrep( int i = 0) : val(i) {}
+};
+
+template <class Policy, class Alloc>
+struct Int_vrep2 : public Int_vrep<Policy,Alloc> {
+    int val2;
+    virtual ::CGAL::Reference_counted_hierarchy<Alloc>* clone() { 
+        return new Int_vrep2( *this);
+    }
+    virtual int get_val() const { return this->val + val2; }
+    virtual void set_val( int i) { this->val = i - val2; }
+    Int_vrep2( int i, int j) : Int_vrep<Policy,Alloc>(i), val2(j) {}
+};
+
+template <class Policy, class Alloc>
+struct Int_vrep3 : public Int_vrep2<Policy,Alloc> {
+    int val3;
+    virtual ::CGAL::Reference_counted_hierarchy<Alloc>* clone() {
+        return new Int_vrep3( *this);
+    }
+    virtual int get_val() const { return this->val + this->val2 + val3; }
+    virtual void set_val( int i) { this->val = i - this->val2 - val3; }
+    Int_vrep3( int i, int j, int k) : Int_vrep2<Policy,Alloc>(i,j), val3(k) {}
+};
+
+template < class Unify, class Alloc = CGAL_ALLOCATOR(char) >
+struct Int_vt : public ::CGAL::Handle_with_policy< Int_vrep<Unify,Alloc>, Unify > {
+    typedef ::CGAL::Handle_with_policy< Int_vrep<Unify,Alloc>, Unify > Base;
+    Int_vt( int i = 0) : Base( new Int_vrep<Unify,Alloc>(i)) {}
+    Int_vt( int i, int j) : Base( new Int_vrep2<Unify,Alloc>(i,j)) {}
+    Int_vt( int i, int j, int k) : Base( new Int_vrep3<Unify,Alloc>(i,j,k)) {}
+
+    int  value() const { return this->ptr()->get_val(); }
+    void set_value( int i) {
+        this->copy_on_write();
+        this->ptr()->set_val(i);
+    }
+    bool operator==( const Int_vt<Unify>& i) const {
+        bool equal = (value() == i.value());
+        if ( equal)
+            unify(i);
+        return equal;
+    }
+};
+
+
+
+void test_handle_with_class_hierarchy() {
+    { // test template constructor and initialize_with
+        typedef Int_vt< ::CGAL::Handle_policy_no_union> Int; 
+        Int i(5,6);
+        CGAL_test_assert( i == Int(11));
+        Int j(5,6,7);
+        CGAL_test_assert( j == Int(18));
+    }
+    {
+        //typedef Int_vt< ::CGAL::Handle_policy_in_place> Int; // That's supposed to fail
+    }
+    {
+        typedef Int_vt< ::CGAL::Handle_policy_no_union> Int;
+        Int i(5);
+        Int j(5);
+        Int k(6);
+        CGAL_test_assert( ! i.test_identical_ptr( j));
+        CGAL_test_assert( ! i.test_identical_ptr( k));
+        CGAL_test_assert( ! j.test_identical_ptr( k));
+        CGAL_test_assert( i == j);
+        CGAL_test_assert( ! (i == k));
+        CGAL_test_assert( ! i.test_identical_ptr( j));
+        CGAL_test_assert( ! i.test_identical_ptr( k));
+        CGAL_test_assert( ! j.test_identical_ptr( k));
+        CGAL_test_assert( (std::ptrdiff_t)(ID_Number(i)) == i.id() );
+    }
+    {
+        typedef Int_vt< ::CGAL::Handle_policy_union> Int;
+        Int i(5);
+        Int j(5);
+        Int k(6);
+        CGAL_test_assert( ! i.test_identical_ptr( j));
+        CGAL_test_assert( ! i.test_identical_ptr( k));
+        CGAL_test_assert( ! j.test_identical_ptr( k));
+        CGAL_test_assert( i == j);
+        CGAL_test_assert( ! (i == k));
+        CGAL_test_assert( i.test_identical_ptr( j));
+        CGAL_test_assert( ! i.test_identical_ptr( k));
+        CGAL_test_assert( ! j.test_identical_ptr( k));
+    }
+    {
+        typedef Int_vt< ::CGAL::Handle_policy_union_and_reset> Int;
+        Int i(5);
+        Int j(5);
+        Int k(6);
+        CGAL_test_assert( ! i.test_identical_ptr( j));
+        CGAL_test_assert( ! i.test_identical_ptr( k));
+        CGAL_test_assert( ! j.test_identical_ptr( k));
+        CGAL_test_assert( i == j);
+        CGAL_test_assert( ! (i == k));
+        CGAL_test_assert( i.test_identical_ptr( j));
+        CGAL_test_assert( ! i.test_identical_ptr( k));
+        CGAL_test_assert( ! j.test_identical_ptr( k));
+    }
+    {
+        typedef Int_vt< ::CGAL::Handle_policy_union> Int;
+        Int i(5);
+        Int j(5);
+        Int k(5);
+        Int l(5);
+        CGAL_test_assert( ! i.test_identical_ptr( j));
+        CGAL_test_assert( ! i.test_identical_ptr( k));
+        CGAL_test_assert( ! i.test_identical_ptr( l));
+        CGAL_test_assert( ! j.test_identical_ptr( k));
+        CGAL_test_assert( ! j.test_identical_ptr( l));
+        CGAL_test_assert( ! k.test_identical_ptr( l));
+        // pump up the union_size counter for j, k and l
+        Int j1(j);
+        CGAL_test_assert( j1.test_identical_ptr( j));
+        Int k1(k);
+        Int k2(k);
+        Int k3(k);
+        Int l1(l);
+        Int l2(l);
+        Int l3(l);
+        Int l4(l);
+        Int l5(l);
+        Int l6(l);
+        Int l7(l);
+        Int l8(l);
+        CGAL_test_assert( ! i.is_forwarding());
+        CGAL_test_assert( ! j.is_forwarding());
+        CGAL_test_assert( ! k.is_forwarding());
+        CGAL_test_assert( ! l.is_forwarding());
+        CGAL_test_assert( i.union_size() == 2);
+        CGAL_test_assert( j.union_size() == 3);
+        CGAL_test_assert( k.union_size() == 5);
+        CGAL_test_assert( l.union_size() == 10);
+        CGAL_test_assert( ! i.test_identical_ptr( j));
+        CGAL_test_assert( ! i.test_identical_ptr( k));
+        CGAL_test_assert( ! i.test_identical_ptr( l));
+        CGAL_test_assert( ! j.test_identical_ptr( k));
+        CGAL_test_assert( ! j.test_identical_ptr( l));
+        CGAL_test_assert( ! k.test_identical_ptr( l));
+        // link i to j
+        CGAL_test_assert( i == j);
+        CGAL_test_assert( ! i.is_forwarding());
+        CGAL_test_assert( ! j.is_forwarding());
+        CGAL_test_assert( ! k.is_forwarding());
+        CGAL_test_assert( ! l.is_forwarding());
+        CGAL_test_assert( i.union_size() == 4);
+        CGAL_test_assert( j.union_size() == 4);
+        CGAL_test_assert( k.union_size() == 5);
+        CGAL_test_assert( l.union_size() == 10);
+        CGAL_test_assert( i.test_identical_ptr( j));
+        CGAL_test_assert( i.test_identical_ptr( j1));
+        CGAL_test_assert( ! i.test_identical_ptr( k));
+        CGAL_test_assert( ! i.test_identical_ptr( l));
+        CGAL_test_assert( ! j.test_identical_ptr( k));
+        CGAL_test_assert( ! j.test_identical_ptr( l));
+        CGAL_test_assert( ! k.test_identical_ptr( l));
+        // link j to k
+        CGAL_test_assert( j == k);
+        CGAL_test_assert( i.is_forwarding());
+        CGAL_test_assert( ! j.is_forwarding());
+        CGAL_test_assert( ! k.is_forwarding());
+        CGAL_test_assert( ! l.is_forwarding());
+        CGAL_test_assert( i.union_size() == 3);
+        CGAL_test_assert( j.union_size() == 9);
+        CGAL_test_assert( k.union_size() == 9);
+        CGAL_test_assert( l.union_size() == 10);
+        CGAL_test_assert( ! i.test_identical_ptr( j));
+        CGAL_test_assert( ! i.test_identical_ptr( k));
+        CGAL_test_assert( ! i.test_identical_ptr( l));
+        CGAL_test_assert( j.test_identical_ptr( k));
+        CGAL_test_assert( ! j.test_identical_ptr( l));
+        CGAL_test_assert( ! k.test_identical_ptr( l));
+        // link k to l
+        CGAL_test_assert( k == l);
+        CGAL_test_assert( i.is_forwarding());
+        CGAL_test_assert( j.is_forwarding());
+        CGAL_test_assert( ! k.is_forwarding());
+        CGAL_test_assert( ! l.is_forwarding());
+        CGAL_test_assert( i.union_size() == 3);
+        CGAL_test_assert( j.union_size() == 8);
+        CGAL_test_assert( k.union_size() == 19);
+        CGAL_test_assert( l.union_size() == 19);
+        CGAL_test_assert( ! i.test_identical_ptr( j));
+        CGAL_test_assert( ! i.test_identical_ptr( k));
+        CGAL_test_assert( ! i.test_identical_ptr( l));
+        CGAL_test_assert( ! j.test_identical_ptr( k));
+        CGAL_test_assert( ! j.test_identical_ptr( l));
+        CGAL_test_assert( k.test_identical_ptr( l));
+        // find j, links it to k and l
+        CGAL_test_assert( j.value() == 5);
+        CGAL_test_assert( i.is_forwarding());
+        CGAL_test_assert( ! j.is_forwarding());
+        CGAL_test_assert( ! k.is_forwarding());
+        CGAL_test_assert( ! l.is_forwarding());
+        CGAL_test_assert( i.union_size() == 3);
+        CGAL_test_assert( j.union_size() == 19);
+        CGAL_test_assert( k.union_size() == 19);
+        CGAL_test_assert( l.union_size() == 19);
+        CGAL_test_assert( ! i.test_identical_ptr( j));
+        CGAL_test_assert( ! i.test_identical_ptr( k));
+        CGAL_test_assert( ! i.test_identical_ptr( l));
+        CGAL_test_assert( j.test_identical_ptr( k));
+        CGAL_test_assert( j.test_identical_ptr( l));
+        CGAL_test_assert( k.test_identical_ptr( l));
+        // find i, links it to j, k and l
+        CGAL_test_assert( i.value() == 5);
+        CGAL_test_assert( ! i.is_forwarding());
+        CGAL_test_assert( ! j.is_forwarding());
+        CGAL_test_assert( ! k.is_forwarding());
+        CGAL_test_assert( ! l.is_forwarding());
+        CGAL_test_assert( i.union_size() == 19);
+        CGAL_test_assert( j.union_size() == 19);
+        CGAL_test_assert( k.union_size() == 19);
+        CGAL_test_assert( l.union_size() == 19);
+        CGAL_test_assert( i.test_identical_ptr( j));
+        CGAL_test_assert( i.test_identical_ptr( k));
+        CGAL_test_assert( i.test_identical_ptr( l));
+        CGAL_test_assert( j.test_identical_ptr( k));
+        CGAL_test_assert( j.test_identical_ptr( l));
+        CGAL_test_assert( k.test_identical_ptr( l));
+    }
+}
+
+int main() {
+    test_handle();
+    test_handle_with_class_hierarchy();
+    return EXIT_SUCCESS;
+}

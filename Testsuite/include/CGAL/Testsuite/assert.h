@@ -28,4 +28,7 @@
 #define CGAL_test_assert(EX) \
    ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, 0))
 
+#define CGAL_test_assert_msg(EX,MSG) \
+   ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
+
 #endif // CGAL_TESTSUITE_ASSERT_H

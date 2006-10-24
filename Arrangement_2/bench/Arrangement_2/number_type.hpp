@@ -59,13 +59,13 @@
 
 #elif BENCH_NT == NIX_LEDA_FIELD_WITH_SQRT_NT
 #include <NiX/Arithmetic_traits.h>
-#if !LiS_HAVE_LEDA
+#if ! defined(CGAL_USE_LEDA)
 #error "Leda not supported"
 #endif
 
 #elif BENCH_NT == NIX_CORE_FIELD_WITH_SQRT_NT
 #include <NiX/Arithmetic_traits.h>
-#if !LiS_HAVE_CORE
+#if !defined(CGAL_USE_CORE)
 #error "Core not supported!"
 #endif
 

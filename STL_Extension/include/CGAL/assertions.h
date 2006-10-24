@@ -17,7 +17,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Geert-Jan Giezeman and Sven Schoenherr
 
@@ -295,6 +295,8 @@ void warning_fail( const char*, const char*, int, const char*);
 #  define CGAL_expensive_exactness_warning_code(CODE) CODE
 #endif // CGAL_KERNEL_NO_WARNINGS
 
+// CGAL error
+#define CGAL_error(MSG) ::CGAL::assertion_fail( "", __FILE__, __LINE__, MSG )
 
 // failure handler declarations
 // ==========================

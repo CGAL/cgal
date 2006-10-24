@@ -17,7 +17,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -26,6 +26,7 @@
 #define CGAL_IO_H
 
 #include <iostream>
+#include <CGAL/tags.h>
 #include <CGAL/IO/io_tags.h>
 #include <CGAL/IO/Color.h>
 
@@ -35,8 +36,70 @@ CGAL_BEGIN_NAMESPACE
 class IO {
 public:
     static int mode;
-    enum Mode {ASCII = 0, PRETTY, BINARY};
+    enum Mode {ASCII = 0, PRETTY, BENCHMARK, BINARY};
 };
+
+template <class T, class F = ::CGAL::Null_tag >
+class Output_rep {
+    const T& t;
+public:
+    //! initialize with a const reference to \a t.
+    Output_rep( const T& tt) : t(tt) {}
+    //! perform the output, calls \c operator\<\< by default.
+    std::ostream& operator()( std::ostream& out) const { return (out << t); }
+};
+
+/*! \relates Output_rep
+    \brief stream output of the \c Output_rep calls its \c operator().
+*/
+template <class T, class F>
+std::ostream&
+operator<<( std::ostream& out, Output_rep<T,F> rep) {
+    return rep( out);
+}
+
+//! generic IO output format manipulator.
+template <class T>
+Output_rep<T>
+oformat( const T& t) { return Output_rep<T>(t); }
+
+//! generic IO output format manipulator with formatting tag.
+template <class T, class F>
+Output_rep<T,F>
+oformat( const T& t, F) { return Output_rep<T,F>(t); }
+
+
+
+/*!\brief
+ * input functor class created by the generic IO input manipulator.
+ *
+ * It holds a reference to the input object. Default implementation
+ * calls the stream input operator. Specializations can be written
+ * for external types not supporting our stream IO format.
+ */
+template <class T>
+class Input_rep {
+    T& t;
+public:
+    //! initialize with a reference to \a t.
+    Input_rep( T& tt) : t(tt) {}
+    //! perform the input, calls \c operator\>\> by default.
+    std::istream& operator()( std::istream& in) const { return (in >> t); }
+};
+
+/*! \relates Input_rep
+    \brief stream input to the \c Input_rep calls its \c operator().
+*/
+template <class T>
+std::istream&
+operator>>( std::istream& in, Input_rep<T> rep) {
+    return rep( in);
+}
+
+//! generic IO input format manipulator.
+template <class T>
+Input_rep<T>
+iformat( T& t) { return Input_rep<T>(t); }
 
 IO::Mode
 get_mode(std::ios& i);
@@ -51,7 +114,11 @@ IO::Mode
 set_pretty_mode(std::ios& i);
 
 IO::Mode
+set_benchmark_mode(std::ios& i);
+
+IO::Mode
 set_mode(std::ios& i, IO::Mode m);
+
 bool
 is_pretty(std::ios& i);
 
@@ -60,6 +127,9 @@ is_ascii(std::ios& i);
 
 bool
 is_binary(std::ios& i);
+
+bool
+is_benchmark(std::ios& i);
 
 inline io_Read_write io_tag(char){ return io_Read_write(); }
 
@@ -78,7 +148,7 @@ inline
 void
 write(std::ostream& os, const T& t, const io_Operator&)
 {
-    os << t;
+    os << oformat(t);
 }
 
 
@@ -114,7 +184,7 @@ inline
 void
 read(std::istream& is, T& t, const io_Operator&)
 {
-    is >> t;
+    is >> iformat(t);
 }
 
 
@@ -141,8 +211,8 @@ std::ostream& operator<<( std::ostream& out, const Color& col)
 {
     switch(out.iword(IO::mode)) {
     case IO::ASCII :
-        return out << static_cast<int>(col.red())   << ' ' 
-		   << static_cast<int>(col.green()) << ' ' 
+        return out << static_cast<int>(col.red())   << ' '
+		   << static_cast<int>(col.green()) << ' '
 		   << static_cast<int>(col.blue());
     case IO::BINARY :
         write(out, static_cast<int>(col.red()));
@@ -150,7 +220,7 @@ std::ostream& operator<<( std::ostream& out, const Color& col)
         write(out, static_cast<int>(col.blue()));
         return out;
     default:
-        return out << "Color(" << static_cast<int>(col.red()) << ", " 
+        return out << "Color(" << static_cast<int>(col.red()) << ", "
 		   << static_cast<int>(col.green()) << ", "
                    << static_cast<int>(col.blue()) << ')';
     }
@@ -177,6 +247,9 @@ std::istream &operator>>(std::istream &is, Color& col)
     col = Color(r,g,b);
     return is;
 }
+
+const char* mode_name( IO::Mode m );
+
 
 CGAL_END_NAMESPACE
 

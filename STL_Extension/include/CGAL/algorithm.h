@@ -17,7 +17,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //                 Lutz Kettner <kettner@mpi-sb.mpg.de>
@@ -29,6 +29,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/copy_n.h>
 #include <algorithm>
+
+#include <iosfwd>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -63,6 +65,7 @@ min_max_element(ForwardIterator first, ForwardIterator last)
     }
   return result;
 }
+
 template < class ForwardIterator, class CompareMin, class CompareMax >
 std::pair< ForwardIterator, ForwardIterator >
 min_max_element(ForwardIterator first,
@@ -81,6 +84,7 @@ min_max_element(ForwardIterator first,
     }
   return result;
 }
+
 template < class ForwardIterator, class Predicate >
 ForwardIterator
 min_element_if(ForwardIterator first,
@@ -94,6 +98,7 @@ min_element_if(ForwardIterator first,
         result = first;
   return result;
 }
+
 template < class ForwardIterator, class Compare, class Predicate >
 ForwardIterator
 min_element_if(ForwardIterator first,
@@ -108,6 +113,7 @@ min_element_if(ForwardIterator first,
         result = first;
   return result;
 }
+
 template < class ForwardIterator, class Predicate >
 ForwardIterator
 max_element_if(ForwardIterator first,
@@ -121,6 +127,7 @@ max_element_if(ForwardIterator first,
         result = first;
   return result;
 }
+
 template < class ForwardIterator, class Compare, class Predicate >
 ForwardIterator
 max_element_if(ForwardIterator first,
@@ -135,6 +142,74 @@ max_element_if(ForwardIterator first,
         result = first;
   return result;
 }
+
+
+
+/*! \brief lexicographic comparison of the two ranges using the \a cmp
+    function object.
+
+    Compares the two ranges \c [first1,last1) and \c [first2,last2)
+    lexicographically and returns one of the \c CGAL::Comparison_result enum
+    values respectively:
+      - \c CGAL::SMALLER
+      - \c CGAL::EQUAL
+      - \c CGAL::LARGER
+
+    \pre The \c value_type of \a InputIterator1 must be convertible
+    to the \c first_argument_type of \c BinaryFunction.
+    The \c value_type of \a InputIterator2 must be convertible
+    to the \c second_argument_type of \c BinaryFunction.
+    The \c result_type of \c BinaryFunction must be convertible to
+    \c CGAL::Comparison_result.
+ */
+
+template <class InputIterator1, class InputIterator2, class BinaryFunction>
+CGAL::Comparison_result
+lexicographical_compare_three_valued( InputIterator1 first1, InputIterator1 last1,
+             InputIterator2 first2, InputIterator2 last2,
+             BinaryFunction cmp) {
+    while ( first1 != last1 && first2 != last2) {
+        CGAL::Comparison_result result = cmp( *first1, *first2);
+        if ( result != CGAL::EQUAL)
+            return result;
+        ++first1;
+        ++first2;
+    }
+    if ( first1 != last1)
+        return CGAL::LARGER;
+    if ( first2 != last2)
+        return CGAL::SMALLER;
+    return CGAL::EQUAL;
+}
+
+/*! \brief output iterator range to a stream, with separators
+
+    The iterator range \c [first,beyond) is written
+    to \c os (obeying EXACUS I/O modes). Each element is bracketed by
+    \c pre and \c post (default: empty string). Adjacent values are
+    spearated by \c sep (default: ", ", i.e. comma space).
+    The stream \c os is returned in its new state after output.
+
+    Example:
+<PRE>
+    int a[] = {1, 2, 3};
+    output_range(std::cout, a, a+3, ":", "(", ")");
+</PRE>
+    produces \c (1):(2):(3)
+ */
+template <class InputIterator>
+std::ostream& output_range(std::ostream& os,
+        InputIterator first, InputIterator beyond,
+        const char* sep = ", ", const char* pre = "", const char* post = ""
+) {
+    InputIterator it = first;
+    if (it != beyond) {
+        os << pre << oformat(*it) << post;
+        while (++it != beyond) os << sep << pre << oformat(*it) << post;
+    }
+    return os;
+}
+
 
 
 CGAL_END_NAMESPACE
