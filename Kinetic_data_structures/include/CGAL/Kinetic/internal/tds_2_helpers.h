@@ -32,24 +32,6 @@ struct Triangulation_data_structure_helper_2
   typedef typename TDS::Face Face;
   //typedef typename Face::Edge_label Edge_label;
 
-
-  static typename Face::Edge_label get_directed_edge_label(const Edge &e) {
-    return e.first->get_edge_label(e.second);
-  }
-
-  static typename Face::Edge_label get_undirected_edge_label(const Edge &e) {
-#ifndef NDEBUG
-    if (get_directed_edge_label(e) != get_directed_edge_label(mirror_edge(e))) {
-      std::cerr << "FAILURE Edge from " << origin(e)->point() << " to " 
-		<< destination(e)->point() << " is screwed." << std::endl;
-      std::cerr << get_directed_edge_label(e) << " "
-                <<  get_directed_edge_label(mirror_edge(e)) << std::endl;
-      CGAL_precondition(get_directed_edge_label(e) == get_directed_edge_label(mirror_edge(e)));
-    }
-#endif
-    return e.first->get_edge_label(e.second);
-  }
-
   static int low_degree(Vertex_handle vh, const TDS &tds) {
     unsigned int r=3;
     typename TDS::Face_circulator f= tds.incident_faces(vh), s=f;
@@ -70,16 +52,7 @@ struct Triangulation_data_structure_helper_2
     return Edge(e.first->neighbor(e.second), i);
   }
 
-  static void set_directed_edge_label(const Edge &e,
-					       const typename Face::Edge_label& l) {
-    e.first->set_edge_label(e.second, l);
-  }
 
-  static void set_undirected_edge_label(const Edge &e,
-					const typename Face::Edge_label& l) {
-    set_directed_edge_label(e,l);
-    set_directed_edge_label(mirror_edge(e),l);
-  }
   static Vertex_handle origin(const Edge &e) {
     int o= e.first->ccw(e.second);
     return e.first->vertex(o);

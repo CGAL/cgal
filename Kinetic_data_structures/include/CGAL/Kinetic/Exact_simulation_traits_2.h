@@ -38,7 +38,7 @@ struct Exact_simulation_traits_2: public Suggested_exact_simulation_traits_base 
     return Instantaneous_kernel(ap_, P::static_kernel_object());
   }
   Exact_simulation_traits_2(const P::Time &lb = 0,
-			    const P::Time &ub = std::numeric_limits<P::Time>::infinity()): P(lb,ub), 
+			    const P::Time &ub = P::Time(100000)): P(lb,ub), 
 											   ap_(new Active_points_2_table()){}
  
 

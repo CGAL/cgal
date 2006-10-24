@@ -165,7 +165,7 @@ template <class Priority> class Bin_pointer_event_queue;
   have to worry about them being processed (and deleted or not). I am
   not sure which is better.
 */
-template <class FK>
+template <class FK, bool INF=false>
 class Heap_pointer_event_queue
 {
 public:
@@ -228,6 +228,11 @@ public:
     null_event_= Key(new internal::Heap_pointer_event_queue_dummy_item<Priority>());
   }
 
+  Heap_pointer_event_queue(const Priority&, FK, int sz=1000) {
+    queue_.reserve(sz);
+    null_event_= Key(new internal::Heap_pointer_event_queue_dummy_item<Priority>());
+  }
+
   const Priority& end_priority() const
   {
     return end_;
@@ -238,13 +243,19 @@ public:
     end_=e;
   }
 
+  bool is_after_end(const Priority &t) const {
+    if (INF) return false;
+    else return  CGAL::compare(t,end_priority()) == CGAL::LARGER;
+  }
+
+
   //! insert value_type into the queue and return a reference to it
   /*!
     The reference can be used to update or erase it.
   */
   template <class E>
   Key insert(const Priority &t, const E & e) {
-    if (CGAL::compare(t, end_) != CGAL::LARGER) {
+    if (!is_after_end()) {
       Item_handle k= new internal::Heap_pointer_event_queue_item_rep<Priority, E>(t, e, queue_.size());
       queue_.push_back(k);
       bubble_up(queue_.size()-1);
@@ -568,8 +579,8 @@ protected:
 
 };
 
-template <class D>
-std::ostream &operator<<(std::ostream &out, const Heap_pointer_event_queue<D> &q)
+template <class D, bool INF>
+std::ostream &operator<<(std::ostream &out, const Heap_pointer_event_queue<D, INF> &q)
 {
   q.write(out);
   return out;

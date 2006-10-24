@@ -596,108 +596,6 @@ public:
     ret[3] =
       -yc1*t33+xc0*t34+(-t42*yc0+t43*yd0)*xb1+(t40*yd0+t32)*xc1+t26*xd0+(t43*xb0+(-yd0+yc0)*t35+t40*xc0+(t27+(yd0-yb0)*t50)*xc1)*yd1+((-xd0+xb0)*t35+(t29+2*(-xc0+xd0)*xc1)*yb1+t25)*xd1;
     ret[4] = (-t42*yc1+t43*yd1)*xb1+(t40*yd1+t34)*xc1+t26*xd1;
-      /*
-    INT t410 = 2*yd[1]-2*yc[1];
-    INT t324 = yc[0]*t410;
-    INT t364 = 2*xd[1];
-    INT t359 = 2*yd[1];
-    INT t409 = 2*(ya[1]-yb[1])*yb[0];
-    INT t408 = 2*(ya[1]-yc[1])*yc[0];
-    INT t407 = 2*(yd[1]-ya[1])*yd[0];
-    INT t406 = 2*(yb[0]-ya[0])*yb[1];
-    INT t405 = -2*xb[1];
-    INT t404 = xc[0]*xb[0];
-    INT t403 = yc[0]*yc[1];
-    INT t401 = -yc[0]+yb[0];
-    INT t400 = yd[0]*yd[1];
-    INT t399 = xd[1]-xb[1];
-    INT t398 = xc[1]*xc[0];
-    INT t397 = yc[0]*xb[0];
-    INT t396 = yd[0]-yb[0];
-    INT t395 = yb[1]*yb[0];
-    INT t394 = xb[0]-xc[0];
-    INT t393 = xc[1]*yb[1];
-    INT t392 = xb[1]*xb[0];
-    INT t391 = xd[0]*xd[1];
-    INT t390 = -yd[0]+yc[0];
-    INT t389 = yb[0]*xc[0];
-    INT t385 = yd[1]*yc[1];
-    INT t383 = -xc[1]+xb[1];
-    INT t382 = xd[1]-xc[1];
-    INT t381 = -CGAL::square(yd[0])-CGAL::square(xd[0]);
-    INT t380 = -CGAL::square(xb[0])-CGAL::square(yb[0]);
-    INT t379 = CGAL::square(xb[1])+CGAL::square(yb[1]);
-    INT t378 = -CGAL::square(xc[1])-CGAL::square(yc[1]);
-    INT t377 = CGAL::square(ya[1])+CGAL::square(xa[1]);
-    INT t376 = -CGAL::square(yd[1])-CGAL::square(xd[1]);
-    INT t375 = -CGAL::square(ya[0])-CGAL::square(xa[0]);
-    INT t374 = CGAL::square(xc[0])+CGAL::square(yc[0]);
-    INT t373 = 2*t398;
-    INT t372 = -2*t392;
-    INT t371 = 2*t403;
-    INT t370 = -2*t389;
-    INT t369 = 2*t397;
-    INT t368 = 2*yc[1];
-    INT t367 = 2*xc[1];
-    INT t365 = 2*xa[0];
-    INT t363 = 2*xd[0];
-    INT t361 = 2*xb[1];
-    INT t360 = 2*xa[1];
-    INT t356 = 2*t396;
-    INT t355 = 2*t394;
-    INT t353 = 2*t401;
-    INT t352 = 2*t390;
-    INT t350 = -2*yb[1]+2*yd[1];
-    INT t349 = 2*t383;
-    INT t348 = -t376+t378;
-    INT t347 = t377+t378;
-    INT t346 = -t378-t379;
-    INT t345 = t376+t379;
-    INT t344 = t374+t375;
-    INT t343 = -t376-t377;
-    INT t342 = t375-t381;
-    INT t341 = t374+t381;
-    INT t340 = -t374-t380;
-    INT t339 = t380-t381;
-    INT t338 = t377-t379;
-    INT t337 = t375-t380;
-    INT t336 = -2*yb[0]*yc[0]+t375;
-    INT t335 = 2*t385+t379;
-    INT t334 = 2*t404-t375;
-    INT t333 = -2*t404+t381;
-    INT t332 = xc[1]*t405-t377;
-    INT t331 = -2*yb[1]*yc[1]-t377;
-    INT t330 = t372+2*t391;
-    INT t329 = t373+t372;
-    INT t328 = -2*t400+t371;
-    INT t327 = t390*t361;
-    INT t326 = t396*t367;
-    INT t325 = xc[0]*t350;
-    INT t323 = t343*yb[0];
-    INT t322 = t342*yb[1];
-    INT t321 = t348*yb[0];
-    INT t320 = t340*xd[1];
-    INT t319 = t342*xb[1];
-    INT t318 = t343*yc[0];
-    INT t317 = -t332-t379;
-    INT t316 = -2*xc[0]*t393+2*yc[1]*t392;
-    INT t315 = t331+t379;
-    INT t314 = t332-t378;
-    INT t313 = -t331+t378;
-    INT t312 = -2*t403+2*t400;
-    INT t311 = -2*t400+2*t395;
-    INT t310 = t373-2*t391+t328;
-    INT t309 = xd[1]*t355+t329;
-    INT t308 = yb[0]*t410+t310;
-    INT t307 = (t334+t380)*xc[1]+(-t334+t374)*xb[1];
-    INT t306 = xb[1]*t369+xc[1]*t370+(t336-t380)*yc[1]+(-t336-t374)*yb[1];
-    INT t305 = -xb[0]*t410+t327+t325+t326+t401*t364+(yb[1]-yc[1])*t363;
-    ret[0] = (-t342*yc[0]+t344*yd[0]-t341*ya[0])*xb[0]+(-t337*yd[0]-t339*ya[0]+t342*yb[0])*xc[0]+(t337*yc[0]-t340*ya[0]-t344*yb[0])*xd[0]+(t339*yc[0]+t340*yd[0]+t341*yb[0])*xa[0];
-    ret[1] = (-t342*yc[1]-t341*ya[1]+t344*yd[1])*xb[0]+(-t319+t337*xd[1]+t339*xa[1])*yc[0]+(-t339*ya[1]-t337*yd[1]+t322)*xc[0]+(t342*xc[1]-t344*xd[1]+t341*xa[1])*yb[0]+(-xb[0]*t324+yb[0]*t325+t340*xa[1]+t307)*yd[0]+((-t397+t389)*t364-t340*ya[1]+t306)*xd[0]+((t408+t407)*xb[0]-t341*xb[1]-t339*xc[1]-t320+(xb[0]*t349-t407-t409)*xc[0]+(-t408+t409+t309)*xd[0])*ya[0]+(t339*yc[1]+((-xd[0]+xb[0])*t360+t330)*yc[0]+t340*yd[1]+t341*yb[1]+(t324-t394*t360-t329)*yd[0]+(-yb[1]*t352+(-xc[0]+xd[0])*t360+t310)*yb[0])*xa[0];
-    ret[2] = -yc[1]*t319-xb[0]*t318+xc[0]*t323+xc[1]*t322+(yb[1]*t370+yc[1]*t369+t307)*yd[1]+t306*xd[1]+(-xb[1]*t324+yb[0]*xc[1]*t350+(-2*t385+t314)*xb[0]+(yb[1]*t359+t317)*xc[0])*yd[0]+((yb[1]*xc[0]-xb[0]*yc[1])*t364+(xd[1]*t405+t315)*yc[0]+(xc[1]*t364+t313)*yb[0]+t316)*xd[0]+(xb[0]*t312+xc[0]*t311-t320+(-t333-t374)*xb[1]+(t333-t380)*xc[1]+(-2*t395+t371+t309)*xd[0])*ya[1]+(-t352*t392-t356*t398-t353*t391+(-yc[0]*t356+t339)*yc[1]+(-yd[0]*t353+t340)*yd[1]+(-yb[0]*t352+t341)*yb[1])*xa[1]+(xb[1]*t312+xc[1]*t311+(t403-t395)*t364+(-t382*t361+t348)*xb[0]+(t399*t367+t345)*xc[0]+(xd[1]*t349+t346)*xd[0]+t305*ya[1])*ya[0]+((-t392+t391)*t368+(-t398+t392)*t359-t321+(-t335-t376)*yc[0]+(t335+t378)*yd[0]+t308*yb[1]+t305*xa[1])*xa[0];
-    ret[3] = (-t343*xb[0]-t338*xd[0]-t345*xa[0])*yc[1]+(-t318-t347*yd[0]+t348*ya[0])*xb[1]+(t343*xc[0]+t347*xd[0]-t348*xa[0])*yb[1]+(t338*yd[0]+t345*ya[0]+t323)*xc[1]+(yc[1]*t327+yb[1]*t326-t346*xa[0]+t314*xb[0]+t317*xc[0])*yd[1]+((t393-xb[1]*yc[1])*t363+t346*ya[0]+t315*yc[0]+t313*yb[0]+t316)*xd[1]+(t348*xb[0]+(-ya[0]*t410-t328)*xb[1]+t345*xc[0]+t346*xd[0]+(xb[1]*t355+(ya[0]-yd[0])*t359+t406)*xc[1]+((-ya[0]+yc[0])*t368-t406+xd[0]*t349+t329)*xd[1])*ya[1]+((-t399*t365+t330)*yc[1]-t345*yc[0]-t346*yd[0]-t321+(-yc[1]*t352-t383*t365-t329)*yd[1]+(t382*t365+t308)*yb[1])*xa[1];
-    ret[4] = (-t343*yc[1]+t348*ya[1]-t347*yd[1])*xb[1]+(t345*ya[1]+t338*yd[1]+t343*yb[1])*xc[1]+(-t338*yc[1]+t346*ya[1]+t347*yb[1])*xd[1]+(-t345*yc[1]-t346*yd[1]-t348*yb[1])*xa[1];*/
-
   }
 
   void certificate_function(Key a, Key b, Key c, Key d, INT *ret) const {
@@ -1011,9 +909,11 @@ public:
 				 std::pair<double,double> &ret) const {
     //CGAL::Protect_FPU_rounding<true> prot;
     INT v= evaluate_ipoly(f, lb);
+    double c=lb;
     CGAL_UD_DEBUG("Const is " << v );
 #ifndef NDEBUG
     double olb= lb;
+    double oub=ub;
 #endif
     if (v.inf() >= 0) {
       INT deriv= INT(0,1)*f[1]+INT(0,2)*f[2]+INT(0,3)*f[3]+INT(0,4)*f[4];
@@ -1028,15 +928,18 @@ public:
       else slope= -deriv.inf();
       do {
 	INT step= v/slope;
-	lb= lb+step.inf();
-	if (lb >= ub) {
+	lb=c;
+	c= c+step.inf();
+	if (c >= ub) {
 	  ++deriv_filtered_;
 	  return NO_FAILURE;
 	}
-	v= evaluate_ipoly(f,lb);
+	v= evaluate_ipoly(f,c);
       } while (v.inf() >0);
+      ub= c;
     }
     CGAL_UD_DEBUG("lb changed from " << olb << " to " << lb << std::endl);
+    CGAL_UD_DEBUG("ub changed from " << oub << " to " << lb << std::endl);
 
     return isolate_failure(Certificate_evaluator(f), lb, ub, starts_positive, 3, 20, ret);
   }

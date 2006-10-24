@@ -295,10 +295,10 @@ public:
   void audit()const;
 
   void audit_event(Event_key k, Edge e) const {
-    if (TDS_helper::get_undirected_edge_label(e) !=k) {
+    if (get_undirected_edge_label(e) !=k) {
       std::cerr << "AUDIT FAILURE orphan event " << k << std::endl;
     }
-    CGAL_assertion(TDS_helper::get_undirected_edge_label(e) ==k);
+    CGAL_assertion(get_undirected_edge_label(e) ==k);
   }
 
   void set_has_certificates(bool tf, bool no_failures=false) {
@@ -318,20 +318,20 @@ public:
 	}
 	if (no_failures) {
 	  for (Face_iterator f = del_.all_faces_begin(); f != del_.all_faces_end(); ++f) {
-	    TDS_helper::set_directed_edge_label(Edge(f,0), traits_.simulator_handle()->null_event());
-	    TDS_helper::set_directed_edge_label(Edge(f,1), traits_.simulator_handle()->null_event());
-	    TDS_helper::set_directed_edge_label(Edge(f,2), traits_.simulator_handle()->null_event());
+	    set_directed_edge_label(Edge(f,0), traits_.simulator_handle()->null_event());
+	    set_directed_edge_label(Edge(f,1), traits_.simulator_handle()->null_event());
+	    set_directed_edge_label(Edge(f,2), traits_.simulator_handle()->null_event());
 	    if (f->vertex(0)->neighbors() == 3) {
-	      TDS_helper::set_directed_edge_label(Edge(f,1), Event_key()); 
-	      TDS_helper::set_directed_edge_label(Edge(f,2), Event_key()); 
+	      set_directed_edge_label(Edge(f,1), Event_key()); 
+	      set_directed_edge_label(Edge(f,2), Event_key()); 
 	    }
 	    if (f->vertex(1)->neighbors() == 3) {
-	      TDS_helper::set_directed_edge_label(Edge(f,0), Event_key()); 
-	      TDS_helper::set_directed_edge_label(Edge(f,2), Event_key()); 
+	      set_directed_edge_label(Edge(f,0), Event_key()); 
+	      set_directed_edge_label(Edge(f,2), Event_key()); 
 	    }
 	    if (f->vertex(2)->neighbors() == 3) {
-	      TDS_helper::set_directed_edge_label(Edge(f,1), Event_key()); 
-	      TDS_helper::set_directed_edge_label(Edge(f,0), Event_key()); 
+	      set_directed_edge_label(Edge(f,1), Event_key()); 
+	      set_directed_edge_label(Edge(f,0), Event_key()); 
 	    }
 
 	  }
@@ -347,7 +347,7 @@ public:
 	  }*/
 	if (!no_failures) {
 	  for (Edge_iterator eit = del_.all_edges_begin(); eit != del_.all_edges_end(); ++eit) {
-	    TDS_helper::set_undirected_edge_label(*eit, Event_key());
+	    set_undirected_edge_label(*eit, Event_key());
 	    update_edge(*eit);
 	  }
 	}
@@ -384,7 +384,7 @@ public:
 	do {
 	  for (unsigned int j=0; j<3; ++j) {
 	    Edge e(fc, j);
-	    Event_key k= TDS_helper::get_undirected_edge_label(e);
+	    Event_key k= get_undirected_edge_label(e);
 	    delete_certificate(e);
 	  }
 	  ++fc;
@@ -412,7 +412,7 @@ public:
       for (unsigned int i=0; i< faces.size(); ++i) {
 	for (unsigned int j=0; j<3; ++j) {
 	  Edge e(faces[i],j);
-	  //Event_key k= TDS_helper::get_undirected_edge_label(e);
+	  //Event_key k= get_undirected_edge_label(e);
 	  // a bit redundant for certificates which don't fail
 	  update_edge(e);
 	  //new_edges_.insert(e);
@@ -491,7 +491,7 @@ public:
 	Face_handle f= faces[i];
 	for (unsigned int j=0; j<3; ++j) {
 	  Edge e(f, j);
-	  Event_key k= TDS_helper::get_undirected_edge_label(e);
+	  Event_key k= get_undirected_edge_label(e);
 	  delete_certificate(e);
 	}
       }
@@ -609,12 +609,12 @@ public:
       //make this better
       //double ub=to_interval(traits_.simulator_handle()->next_event_time()).second;
       Edge bad_edge(bef, bei);
-      Event_key bek= TDS_helper::get_undirected_edge_label(bad_edge);
+      Event_key bek= get_undirected_edge_label(bad_edge);
       
       if (bek == traits_.simulator_handle()->null_event()) {
 	CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME,
 			 "Dropping the event." << std::endl);
-	TDS_helper::set_undirected_edge_label(e, Event_key());
+	set_undirected_edge_label(e, Event_key());
 	return e;
       } else {
 
@@ -625,15 +625,15 @@ public:
 	Time t(ub);
 	CGAL_precondition(CGAL::compare(t, traits_.simulator_handle()->next_event_time()) == CGAL::LARGER);
 	Event_key k =traits_.simulator_handle()->new_event(t, Event(cert, e, this));
-	TDS_helper::set_undirected_edge_label(e, k);
+	set_undirected_edge_label(e, k);
 	return e;
       }
     }
     CGAL_precondition(!del_.is_edge(TDS_helper::third_vertex(e), TDS_helper::mirror_vertex(e),
 				    bef, bei));
 
-    TDS_helper::set_directed_edge_label(e, Event_key());
-    TDS_helper::set_directed_edge_label(em, Event_key());
+    set_directed_edge_label(e, Event_key());
+    set_directed_edge_label(em, Event_key());
 
     delete_certificate(Edge(face, (index+1)%3));
     delete_certificate(Edge(face, (index+2)%3));
@@ -664,8 +664,8 @@ public:
     decrease_neighbors(mirror_flipped_edge.first->vertex(mirror_flipped_edge.second));
 
     // make sure it is not created by a 3-4 transition
-    TDS_helper::set_directed_edge_label(flipped_edge, traits_.simulator_handle()->null_event());
-    TDS_helper::set_directed_edge_label(mirror_flipped_edge, traits_.simulator_handle()->null_event());
+    set_directed_edge_label(flipped_edge, traits_.simulator_handle()->null_event());
+    set_directed_edge_label(mirror_flipped_edge, traits_.simulator_handle()->null_event());
 
     update_decreased_vertex(flipped_edge.first->vertex(flipped_edge.second));
     update_increased_vertex(flipped_edge.first->vertex((flipped_edge.second+1)%3));
@@ -682,11 +682,11 @@ public:
       if (traits_.certificate_failure_time(flipped_edge,cert, t, cd)){
 	Event_key k =traits_.simulator_handle()->new_event(t,
 							   Event(cd, flipped_edge, this));
-	TDS_helper::set_directed_edge_label(flipped_edge, k);
-	TDS_helper::set_directed_edge_label(mirror_flipped_edge, k);
+	set_directed_edge_label(flipped_edge, k);
+	set_directed_edge_label(mirror_flipped_edge, k);
       } else {
-	TDS_helper::set_directed_edge_label(flipped_edge, traits_.simulator_handle()->null_event());
-	TDS_helper::set_directed_edge_label(mirror_flipped_edge, traits_.simulator_handle()->null_event());
+	set_directed_edge_label(flipped_edge, traits_.simulator_handle()->null_event());
+	set_directed_edge_label(mirror_flipped_edge, traits_.simulator_handle()->null_event());
       }
     }
     //write(std::cout);
@@ -757,7 +757,7 @@ protected:
 			      << vh->point() << std::endl);
     typename Triangulation::Edge_circulator ec= del_.incident_edges(vh);
     do {
-      if (TDS_helper::get_undirected_edge_label(*ec) == Event_key()) {
+      if (get_undirected_edge_label(*ec) == Event_key()) {
 	// check other vertex, it it is not changed and not 3, build
 	Vertex_handle ov= ec->first->vertex((ec->second+1)%3);
 	if (ov== vh) {
@@ -845,7 +845,7 @@ protected:
     CGAL_precondition(neighbors_ok(ov));
     CGAL_precondition(neighbors_ok(dv));
 
-    if (TDS_helper::get_undirected_edge_label(e) != Event_key()) {
+    if (get_undirected_edge_label(e) != Event_key()) {
       CGAL_DELAUNAY_2_DEBUG(std::cout << "Already has event " << std::endl);
       // can't do this since I create all edges around vertex of degree 4 at once
       // CGAL_assertion(0);
@@ -864,7 +864,7 @@ protected:
     if (batching_) {
       //delete_certificate(e);
       batched_certs_.push_back(e);
-    } else if (TDS_helper::get_undirected_edge_label(e) == Event_key()) {
+    } else if (get_undirected_edge_label(e) == Event_key()) {
       update_edge_no_batch(e);
     }
   }
@@ -889,7 +889,7 @@ protected:
 	} 
       }
     }
-    if (odd_parity) {
+    if (!odd_parity) {
       std::swap(ks[0], ks[1]);
     }
     return infinity;
@@ -941,7 +941,7 @@ protected:
 
 
   void new_certificate(Edge e) {
-    CGAL_precondition(TDS_helper::get_undirected_edge_label(e) == Event_key());
+    CGAL_precondition(get_undirected_edge_label(e) == Event_key());
     CGAL_DELAUNAY_2_DEBUG(std::cout << "\nMaking certificate for " << TDS_helper::origin(e)->point() << " " 
 			  << TDS_helper::destination(e)->point() 
 			  << " which would make " << TDS_helper::mirror_vertex(e)->point() << " " 
@@ -952,16 +952,16 @@ protected:
     if (points(e,ks)) {
       if (traits_.hull_certificate_failure_time(e, ks, t, cd)) {
 	Event_key k= traits_.simulator_handle()->new_event(t, Event(cd, e, this));
-	TDS_helper::set_undirected_edge_label(e, k);
+	set_undirected_edge_label(e, k);
       } else {
-	TDS_helper::set_undirected_edge_label(e, traits_.simulator_handle()->null_event());
+	set_undirected_edge_label(e, traits_.simulator_handle()->null_event());
       }
     } else {
       if (traits_.internal_certificate_failure_time(e, ks, t, cd)) {
 	Event_key k= traits_.simulator_handle()->new_event(t, Event(cd, e, this));
-	TDS_helper::set_undirected_edge_label(e, k);
+	set_undirected_edge_label(e, k);
       } else {
-	TDS_helper::set_undirected_edge_label(e, traits_.simulator_handle()->null_event());
+	set_undirected_edge_label(e, traits_.simulator_handle()->null_event());
       }
     }
    
@@ -969,10 +969,10 @@ protected:
 
   void delete_certificate(Edge e) {
     CGAL_DELAUNAY_2_DEBUG(std::cout << "Cleaning edge " << TDS_helper::origin(e)->point() << " " << TDS_helper::destination(e)->point() << std::endl);
-    Event_key k=  TDS_helper::get_undirected_edge_label(e);
+    Event_key k=  get_undirected_edge_label(e);
     if (k != Event_key()) {
       traits_.simulator_handle()->delete_event(k);
-      TDS_helper::set_undirected_edge_label(e, Event_key());
+      set_undirected_edge_label(e, Event_key());
     }
   }
 
@@ -984,6 +984,35 @@ protected:
       return e;
     }
   }
+
+  static Event_key get_directed_edge_label(const Edge &e) {
+    return e.first->get_edge_label(e.second);
+  }
+
+  static Event_key get_undirected_edge_label(const Edge &e) {
+#ifndef NDEBUG
+    if (get_directed_edge_label(e) != get_directed_edge_label(mirror_edge(e))) {
+      std::cerr << "FAILURE Edge from " << origin(e)->point() << " to " 
+		<< destination(e)->point() << " is screwed." << std::endl;
+      std::cerr << get_directed_edge_label(e) << " "
+                <<  get_directed_edge_label(mirror_edge(e)) << std::endl;
+      CGAL_precondition(get_directed_edge_label(e) == get_directed_edge_label(mirror_edge(e)));
+    }
+#endif
+    return e.first->get_edge_label(e.second);
+  }
+
+  static void set_directed_edge_label(const Edge &e,
+				      Event_key l) {
+    e.first->set_edge_label(e.second, l);
+  }
+
+  static void set_undirected_edge_label(const Edge &e,
+					Event_key l) {
+    set_directed_edge_label(e,l);
+    set_directed_edge_label(mirror_edge(e),l);
+  }
+
 };
 
 template <class Sim, class Del, class W, class T>
@@ -1091,25 +1120,25 @@ void Delaunay_triangulation_2<Sim, Del, W, T>::audit() const
     }
 
     for (typename Triangulation::Edge_iterator fit = del_.edges_begin(); fit != del_.edges_end(); ++fit){
-      if (TDS_helper::get_directed_edge_label(*fit) != 
-	  TDS_helper::get_directed_edge_label(TDS_helper::mirror_edge(*fit))) {
+      if (get_directed_edge_label(*fit) != 
+	  get_directed_edge_label(TDS_helper::mirror_edge(*fit))) {
 	CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_NONE, "AUDIT FAILURE mismatched labels on " 
 			 << TDS_helper::origin(*fit)->point() << " " 
 			 << TDS_helper::destination(*fit)->point() 
-			 << " front has " << TDS_helper::get_directed_edge_label(*fit)
-			 << " and back has " << TDS_helper::get_directed_edge_label(TDS_helper::mirror_edge(*fit))<< std::endl);
+			 << " front has " << get_directed_edge_label(*fit)
+			 << " and back has " << get_directed_edge_label(TDS_helper::mirror_edge(*fit))<< std::endl);
       }
       if (TDS_helper::origin(*fit)->degree()==3 || TDS_helper::destination(*fit)->degree()==3) {
-	if (TDS_helper::get_undirected_edge_label(*fit) != Event_key()) {
+	if (get_undirected_edge_label(*fit) != Event_key()) {
 	  CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_NONE, "AUDIT FAILURE certificate on degree 3 edge: " 
 			   << TDS_helper::origin(*fit)->point()
 			   << " " <<  TDS_helper::destination(*fit)->point() 
 			   << TDS_helper::origin(*fit)->degree() <<  " "
 			   << TDS_helper::destination(*fit)->degree() << std::endl);
 	} 
-	CGAL_exactness_assertion(TDS_helper::get_undirected_edge_label(*fit) == Event_key());
+	CGAL_exactness_assertion(get_undirected_edge_label(*fit) == Event_key());
       } else {
-	if (TDS_helper::get_undirected_edge_label(*fit) == Event_key()) {
+	if (get_undirected_edge_label(*fit) == Event_key()) {
 	  CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_NONE, "AUDIT FAILURE no certificate on edge: " 
 			   << TDS_helper::origin(*fit)->point()
 			   << " " <<  TDS_helper::destination(*fit)->point() << std::endl);
@@ -1118,7 +1147,7 @@ void Delaunay_triangulation_2<Sim, Del, W, T>::audit() const
 			   << " " <<  TDS_helper::destination(*fit)->degree() << std::endl);
 	  
 	} 
-	CGAL_exactness_assertion(TDS_helper::get_undirected_edge_label(*fit) != Event_key());
+	CGAL_exactness_assertion(get_undirected_edge_label(*fit) != Event_key());
       }
     }
 

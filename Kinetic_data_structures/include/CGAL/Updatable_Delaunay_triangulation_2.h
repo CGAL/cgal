@@ -479,8 +479,8 @@ struct Updatable_Delaunay_triangulation_2 {
     bool internal_certificate_failure_time(typename Default_traits::Edge e, Point_key pks[4], Time &rett, Certificate_data) {
 
       Cert_tuple ct= tuple(pks);
-
-      double end_time= ui()->next_activation();
+      bool check_if_point_is_activated;
+      double end_time= 1; //i()->next_activation();
       //ui()->set_next_activation(1.0);
 #ifndef NDEBUG
       Exact_time check_failure_time;
@@ -619,7 +619,7 @@ struct Updatable_Delaunay_triangulation_2 {
 #endif
       CGAL_assertion(ct == check_ct);
 
-      double end_time= ui()->next_activation();
+      double end_time= 1; //ui()->next_activation();
       ui()->set_next_activation(1.0);
  
 #ifndef NDEBUG

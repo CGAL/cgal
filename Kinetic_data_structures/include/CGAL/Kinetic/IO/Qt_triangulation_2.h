@@ -42,7 +42,7 @@ class Qt_triangulation_2: public Ref_counted<Qt_triangulation_2<KDel, IK, Qt_gui
   typedef typename KDel::Triangulation Triangulation;
   typedef internal::Triangulation_data_structure_helper_2<typename Triangulation::Triangulation_data_structure> TDS_helper;
 
-  typedef typename TDS_helper::Edge Edge;
+  typedef typename Triangulation::Edge Edge;
 
   // maybe icl wants the class definition before the useage. 
   typedef typename Qt_gui::Listener QTL;
@@ -62,8 +62,6 @@ class Qt_triangulation_2: public Ref_counted<Qt_triangulation_2<KDel, IK, Qt_gui
   };
   friend class Listener;
 
-
-  typedef typename KDel::Event_key Event_key;
 public:
   //typedef Kinetic_Delaunay Kinetic_Delaunay;
   //typedef CGAL::Ref_counted_pointer<This> Pointer;
@@ -84,9 +82,9 @@ protected:
 
   template <class V>
   void set_color(const Edge &e, CGAL::Qt_widget &w, const V &) const {
-    if (TDS_helper::get_undirected_edge_label(e) == Event_key()) {
+    if (!kdel_->has_event(e)) {
       w << CGAL::Color(125,125,125);
-    } else if (TDS_helper::get_undirected_edge_label(e) == listener_.notifier()->simulator_handle()->null_event()){
+    } else if (kdel_->has_finite_event(e)){
       w << CGAL::Color(0,0,0);
     } else {
       w << CGAL::Color(255,0,0);
@@ -98,11 +96,11 @@ protected:
   void set_color(const Edge &e, CGAL::Qt_widget &w,
                  const REV& ) const {
     w << CGAL::LineWidth(2);
-    if (!TDS_helper::get_undirected_edge_label(e).is_valid()) {
+    if (!kdel_->has_event(e)) {
       w << CGAL::Color(125,125,125);
     } else if (kdel_->visitor().contains(e) || kdel_->visitor().contains(TDS_helper::mirror_edge(e))) {
       w<< CGAL::Color(0,255,0);
-    } else if (TDS_helper::get_undirected_edge_label(e) == listener_.notifier()->simulator_handle()->null_event()){
+    } else if (kdel_->has_finite_event(e)){
       w << CGAL::Color(125,125,125);
     } else {
       w << CGAL::Color(0,0,0);

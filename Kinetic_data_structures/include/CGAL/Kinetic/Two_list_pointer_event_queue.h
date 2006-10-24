@@ -298,7 +298,7 @@ CGAL_KINETIC_BEGIN_NAMESPACE
   have to worry about them being processed (and deleted or not). I am
   not sure which is better.
 */
-template <class FK, unsigned int TARGET=8>
+template <class FK, bool INF=false, unsigned int TARGET=8>
 class Two_list_pointer_event_queue
 {
   typedef typename FK::Root PriorityT;
@@ -326,23 +326,16 @@ public:
 			       Priority end_time, 
 			       FK fk, int =0): tii_(fk.to_isolating_interval_object()),
 					       null_event_(new internal::Two_list_event_queue_dummy_item<Priority>()){
-  
+    CGAL_precondition(!INF);
     initialize(start_time, end_time);
-    /*=======
-      Two_list_pointer_event_queue(Priority start_time, Priority end_time, FK fk, int =0): tii_(fk.to_isolating_interval_object()),
-      ub_(tii_(start_time).first),
-      step_(1),
-      all_in_front_(false){*/
+  }
 
-    //std::cout << "UB is " << ub_ << std::endl;
-    //null_event_= 
-    //if (end_time != std::numeric_limits<Priority>::infinity()){
-    //set_end_priority(end_time);
-    /*} else {
-      NT end=(std::numeric_limits<int>::max)();
-      std::cerr << "WARNING Infinity is being rounded down to " << end << std::endl;
-      set_end_priority(end);
-      }*/
+ //! Construct it with a suggested size of sz.
+  Two_list_pointer_event_queue(Priority start_time,
+			       FK fk, int =0): tii_(fk.to_isolating_interval_object()),
+					       null_event_(new internal::Two_list_event_queue_dummy_item<Priority>()){
+    CGAL_precondition(INF);
+    initialize(start_time);
   }
 
   
@@ -351,6 +344,11 @@ public:
 
   }*/
   
+
+  bool is_after_end(const Priority &t) const {
+    if (INF) return false; 
+    else return  CGAL::compare(t,end_priority()) == CGAL::LARGER;
+  }
 
   //! insert value_type into the queue and return a reference to it
   /*!
@@ -365,7 +363,9 @@ public:
 
     //CGAL_exactness_assertion(t >= lbs_);
     //lb_=(std::min)(t, lb_);
-    
+    if ( is_after_end(t)){
+      return end_key();
+    } 
 
 
     if (leq_ub(t)) {
@@ -380,34 +380,14 @@ public:
       //++queue_front_insertions__;
     }  else if (front_.empty()) {
       CGAL_assertion(back_.empty());
-      CGAL_assertion(CGAL::compare(t, end_priority()) != CGAL::LARGER);
-      CGAL_assertion(CGAL::compare(end_priority(), std::numeric_limits<Priority>::infinity()) == CGAL::SMALLER);
+      CGAL_assertion(INF || CGAL::compare(t, end_priority()) != CGAL::LARGER);
+      CGAL_assertion(INF || CGAL::compare(end_priority(), std::numeric_limits<Priority>::infinity()) == CGAL::SMALLER);
       if (true){
 	//++queue_front_insertions__;
 	front_.push_back(*ni);
 	ub_= NT(to_interval(tii_(t).second).second);
-	//all_in_front_=false;
-	/*if (almost_inf(ub_)){
-	//CGAL_assertion(std::numeric_limits<NT>::has_infinity);
-	ub_= end_split();
-	}*/
 	ni->set_in_list(Item::FRONT);
-      } /*else if (CGAL::compare(t, end_priority()) == CGAL::EQUAL) {
-	front_.push_back(*ni);
-	ub_=-1;
-	all_in_front_=true;
-      } else {
-	//inf_.push_back(*ni);
-	// special case the inf event (to drop it)
-	ni->set_in_list(Item::INF);
-	Key ret(ni);
-#ifndef NDEBUG
-	inf_.push_back(Key(ni));
-#endif
-	unmake_event(ni);
-	//std::cout << "Made inf event " << ni << std::endl;
-	return ret;
-	}*/
+      } 
     } else {
       ni->set_in_list(Item::BACK);
       back_.push_back(*ni);
@@ -596,6 +576,7 @@ public:
 
 
   void set_interval(const Priority &start_time, const Priority &end_time) {
+    CGAL_precondition(!INF);
     initialize(start_time, end_time);
   }
   
@@ -622,26 +603,21 @@ protected:
     //all_in_front_= false;
     end_time_=end_time;
   }
+
+ void initialize(const Priority &start_time) {
+   CGAL_precondition(INF);
+    ub_=to_interval(tii_(start_time).second).second;
+    // should be nextafter
+    step_=1;
+    //all_in_front_= false;
+  }
   bool leq_ub(const Priority &t) const {
     //if (all_in_front_) return true;
     //else 
     return (CGAL::compare(t, Priority(ub_)) != CGAL::LARGER);
   }
 
-  /*bool at_end(const NT &nt) const {
-    CGAL_precondition(nt <= end_priority());
-    if (end_time_== std::numeric_limits<Priority>::infinity()){
-    return false;
-    } else {
-    return Priority(nt) == end_priority();
-    }
-    }
-
-    bool at_end(const Priority &nt) const {
-    CGAL_precondition(nt <= end_priority());
-    return nt == end_priority();
-    }*/
-
+ 
   template <class E>
   Item *make_event(const Priority &t, E &e) {
     typedef typename boost::remove_const<E>::type NCE;
@@ -670,7 +646,7 @@ protected:
 #ifndef NDEBUG
     for (unsigned int i=0; i< inf_.size(); ++i) {
       Priority t= inf_[i]->time();
-      CGAL_assertion(CGAL::compare(t, end_priority())== CGAL::LARGER);
+      CGAL_assertion(INF || CGAL::compare(t, end_priority())== CGAL::LARGER);
       CGAL_assertion(inf_[i]->in_list() == Item::INF);
     }
 #endif
@@ -755,7 +731,7 @@ protected:
   template <class C, class It>
   void make_inf(C &c, It b, It e) {
     for (It cit = b; cit != e; ++cit) {
-      CGAL_assertion(CGAL::compare(cit->time(), end_priority()) == CGAL::LARGER);
+      CGAL_assertion(INF || CGAL::compare(cit->time(), end_priority()) == CGAL::LARGER);
       //std::cout << "Dropping inf event " << &*cit << std::endl;
 #ifndef NDEBUG
       inf_.push_back(&*cit);
@@ -868,8 +844,8 @@ protected:
     }
 
     NT split =  NT(to_interval(tii_(it->time()).second).second+.00001);
-    if (CGAL::compare(end_priority(), it->time())==CGAL::SMALLER
-	|| CGAL::compare(end_priority(), Priority(split))==CGAL::SMALLER) {
+    if (!INF && (CGAL::compare(end_priority(), it->time())==CGAL::SMALLER
+		 || CGAL::compare(end_priority(), Priority(split))==CGAL::SMALLER)) {
       std::cout << "Past end in Queue " << end_priority() << ", "
 		<< it->time() << ", " << Priority(split) << std::endl;
       //all_in_front_=true;
@@ -949,8 +925,8 @@ protected:
   //NT end_split_;
 };
 
-template <class D, unsigned int T>
-std::ostream &operator<<(std::ostream &out, const Two_list_pointer_event_queue<D, T> &q)
+template <class D, unsigned int T, bool INF>
+std::ostream &operator<<(std::ostream &out, const Two_list_pointer_event_queue<D, INF, T> &q)
 {
   q.write(out);
   return out;

@@ -142,9 +142,26 @@ public:
   typedef typename Function_kernel::NT NT;
 
   //! Create a simulator passing the start time and the end time.
-  Default_simulator(const Time &start_time=Time(0.0),
-		    const Time &end_time= internal::infinity_or_max(Time()),
+  Default_simulator(const Time &start_time,
+		    const Time &end_time,
 		    Function_kernel fk=Function_kernel()):queue_(start_time, end_time, fk, 100),
+							  cur_time_(start_time),
+							  //last_event_time_(start_time),
+							  mp_(fk.rational_between_roots_object()),
+							  ir_(fk.is_rational_object()),
+							  tr_(fk.to_rational_object()),
+							  is_forward_(true) {
+    number_of_events_=0;
+#ifdef CGAL_KINETIC_ENABLE_AUDITING
+    // make it less than the current time.
+    //std::pair<double, double> ival= to_interval(cur_time_);
+    //audit_time_=NT(ival.first-10.0);
+    audit_time_= CGAL::to_interval(start_time).first-1;
+#endif
+  };
+
+  Default_simulator(const Time &start_time,
+		    Function_kernel fk=Function_kernel()):queue_(start_time, fk, 100),
 							  cur_time_(start_time),
 							  //last_event_time_(start_time),
 							  mp_(fk.rational_between_roots_object()),
@@ -195,12 +212,12 @@ public:
       cur_time_=audit_time_;
       #endif*/
     }
-    if (CGAL::compare(t, end_time()) == CGAL::SMALLER) {
-      cur_time_= t;
-    }  else {
-      cur_time_= end_time();
+    if (queue_.is_after_end(t)) {
+      cur_time_= queue_.end_priority();
+    } else {
+      cur_time_=t;
     }
-    //cur_time_=(std::min)(t, end_time());
+  
   }
 
   //! Not clear if I want two methods
@@ -319,13 +336,6 @@ public:
   Event_key new_event(const Time &t, const E& cert) {
     //CGAL_exactness_precondition(!(t < current_time()));
     //if (cert.time() == Time::infinity()) return final_event();
-
-    if ( CGAL::compare(t, end_time()) != CGAL::SMALLER){
-      CGAL_KINETIC_LOG(LOG_LOTS, "Dropped event " << t << " ");
-      CGAL_KINETIC_LOG_WRITE(LOG_LOTS, cert.write(LOG_STREAM));
-      CGAL_KINETIC_LOG(LOG_LOTS, std::endl);
-      return null_event();
-    } /*else {*/
     //CGAL_assertion(cert.time() < end_time());
     //if (0) cert.process();
     //std::cout << "Requested to schedule "; cert->write(std::cout);

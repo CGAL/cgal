@@ -28,7 +28,7 @@ CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
 template <class KK>
 struct Cartesian_orientation_2
 {
-    Cartesian_orientation_2(){}
+  Cartesian_orientation_2(){}
   typedef typename KK::Certificate_function result_type;
     typedef typename KK::Point_2 first_argument_type;
     typedef typename KK::Point_2 second_argument_type;
@@ -38,19 +38,20 @@ struct Cartesian_orientation_2
         const third_argument_type &c) const
     {
         typedef typename KK::Certificate_function FT;
-        FT a00= a.hx();
-        FT a01= a.hy();
-        FT a10= b.hx();
-        FT a11= b.hy();
-        FT a20= c.hx();
-        FT a21= c.hy();
+        FT a00= a.x();
+        FT a01= a.y();
+        FT a10= b.x();
+        FT a11= b.y();
+        FT a20= c.x();
+        FT a21= c.y();
 
 // First compute the det2x2
         const FT m01 = a00*a11 - a10*a01;
         const FT m02 = a00*a21 - a20*a01;
         const FT m12 = a10*a21 - a20*a11;
 // Now compute the minors of rank 3
-        const FT m012 = m01 - m02 + m12;
+        const FT m012 =  m01 - m02 + m12;
+	std::cout << "Orientation 2 is " << m012 << std::endl;
         return m012;
     }
 };

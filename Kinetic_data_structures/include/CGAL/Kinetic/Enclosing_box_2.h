@@ -258,9 +258,9 @@ protected:
       NT od= cd(f)(t);
       }*/
 
-    CGAL_exactness_assertion_code(Function ft(out.begin(), out.end()););
-    CGAL_exactness_assertion(ft(time) == f(time));
-    CGAL_exactness_assertion(cd(ft)(time) == -cd(f)(time));
+    //CGAL_exactness_assertion_code(Function ft(out.begin(), out.end()););
+    //CGAL_exactness_assertion(ft(t) == f(t));
+    //CGAL_exactness_assertion(cd(ft)(t) == -cd(f)(t));
   }
 
   NT bounds_[4];
