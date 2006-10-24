@@ -42,6 +42,7 @@ class Construct_polynomial_1 {
 		for (it = first; it != last; ++it)
 			++elements;
 		CGAL_assertion_msg (elements, "the container can't be empty");
+		// TODO: if the last elements in the container are zero...
 		int degree = elements-1;
 		Polynomial_1 p (degree);
 		for (it = first; it != last; ++it)
@@ -89,8 +90,8 @@ class Solve_1 {
 				"error in resolution");
 		if (nr)
 			for (int i=0; i<nr; ++i) {
-				// the multiplicity will be always 1 for now
-				Algebraic a (x[i], p, i, 1);
+				// multiplicity is -1 (we didn't calculate it)
+				Algebraic a (x[i], p, i, -1, CGAL_RS_DEF_PREC);
 				// x[i] was mpfi_inited by RS? If so,
 				mpfi_clear (x[i]);
 				*(res++) = a;
@@ -129,7 +130,7 @@ class SignAt_1 {
 	typedef typename AK::Coefficient	Coefficient_1;
 	public:
 	typedef Sign	result_type;
-	result_type operator() (const Polynomial_1 &p,
+	inline result_type operator() (const Polynomial_1 &p,
 			const Algebraic_1 &r) const {
 		return sign_1 (p, r);
 	};
@@ -137,11 +138,7 @@ class SignAt_1 {
 	result_type operator() (const Polynomial_1 &p,
 			const Coefficient_1 &r) const {
 		Coefficient_1 c = p.eval (r);
-		if (c < 0)
-			return NEGATIVE;
-		if (c > 0)
-			return POSITIVE;
-		return ZERO;
+		return ((c<0)?NEGATIVE:((c>0)?POSITIVE:ZERO));
 	};
 };	// SignAt_1
 
@@ -149,7 +146,7 @@ template <class AK>
 class Derivative_1 {
 	typedef typename AK::Polynomial_1	Polynomial_1;
 	public:
-	Polynomial_1 operator() (const Polynomial_1 &p) const {
+	inline Polynomial_1 operator() (const Polynomial_1 &p) const {
 		return p.derive ();
 	};
 };	// Derivative_1
@@ -158,17 +155,9 @@ template <class AK>
 class Compare_1 {
 	typedef typename AK::Algebraic_real_1	Algebraic_1;
 	public:
-	Comparison_result operator()
-		(const Algebraic_1 &r1, const Algebraic_1 &r2) const {
-			//try {
-				if (r1 == r2)
-					return EQUAL;
-				if (r1 < r2)
-					return SMALLER;
-				return LARGER;
-			//} catch (CGAL::comparison_overlap_exn &o) {
-				//return UNDECIDED;
-			//}
+	inline Comparison_result operator()
+		(Algebraic_1 &r1, Algebraic_1 &r2) const {
+			return compare_1 (r1, r2);
 		};
 };	// Compare_1
 

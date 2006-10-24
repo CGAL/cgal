@@ -137,15 +137,17 @@ Algebraic_1::Algebraic_1 (const Algebraic_1 &i) {
 	set_pol (i.pol ());
 	set_nr (i.nr ());
 	set_mult (i.mult ());
+	set_rsprec (i.rsprec ());
 };
 
 // interesting constructor
-Algebraic_1::Algebraic_1
-(const mpfi_t &i, const Rational_polynomial_1 &p, const int n, const int m) {
+Algebraic_1::Algebraic_1 (const mpfi_t &i, const Rational_polynomial_1 &p,
+		const int n, const int m, const int rsp) {
 	mpfi_set (mpfi (), i);
 	set_pol (p);
 	set_nr (n);
 	set_mult (m);
+	set_rsprec (rsp);
 };
 
 // destructor
@@ -177,6 +179,10 @@ inline const int Algebraic_1::mult () const {
 	return ptr()->mult;
 };
 
+inline const int Algebraic_1::rsprec () const {
+	return ptr()->rsprec;
+};
+
 void Algebraic_1::clear_pol () {
 	ptr()->poly = NULL;
 	return;
@@ -194,6 +200,10 @@ void Algebraic_1::set_nr (const int n) {
 
 void Algebraic_1::set_mult (const int m) {
 	ptr()->mult = m;
+};
+
+void Algebraic_1::set_rsprec (const int p) {
+	ptr()->rsprec = p;
 };
 
 inline void Algebraic_1::set_prec (mp_prec_t p) {
@@ -378,6 +388,7 @@ Algebraic_1& Algebraic_1::operator= (const Algebraic_1 &i) {
 	set_pol (i.pol ());
 	set_nr (i.nr ());
 	set_mult (i.mult ());
+	set_rsprec (i.rsprec ());
 	return *this;
 };
 

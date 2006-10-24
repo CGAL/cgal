@@ -51,8 +51,9 @@ public:
 	Rational_polynomial_1 *poly;
 	int nr;
 	int mult;
+	int rsprec;
 
-	Algebraic_1_rep () : poly(NULL), nr(0), mult(0) { mpfi_init (mpfI); }
+	Algebraic_1_rep():poly(NULL),nr(0),mult(0),rsprec(0){mpfi_init(mpfI);}
 	~Algebraic_1_rep () { mpfi_clear (mpfI); }
 
 private:
@@ -111,7 +112,7 @@ public:
 
 	// the only interesting constructor
 	Algebraic_1 (const mpfi_t &, const Rational_polynomial_1 &,
-			const int, const int);
+			const int, const int, const int);
 
 	Algebraic_1& operator= (const long int);
 	Algebraic_1& operator= (const mpz_t &);
@@ -132,10 +133,12 @@ public:
 	inline Rational_polynomial_1 & pol ();
 	inline const int nr () const;
 	inline const int mult () const;
+	inline const int rsprec () const;
 	void clear_pol ();
 	void set_pol (const Rational_polynomial_1 &);
 	void set_nr (const int);
 	void set_mult (const int);
+	void set_rsprec (const int);
 	inline void set_prec (mp_prec_t);
 	inline mp_prec_t get_prec ();
 	inline void get_left (mpfr_t &) const;

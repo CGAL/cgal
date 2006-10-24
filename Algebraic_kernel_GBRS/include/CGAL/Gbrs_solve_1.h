@@ -20,6 +20,26 @@
 #ifndef CGAL_GBRS_SOLVE_1_H
 #define CGAL_GBRS_SOLVE_1_H
 
+// the default precision of RS to calculate a root (precision is 2^n)
+#ifndef CGAL_RS_DEF_PREC
+#define CGAL_RS_DEF_PREC 10
+#endif
+
+// the minimum, used when calculating a sign
+#ifndef CGAL_RS_MIN_PREC
+#define CGAL_RS_MIN_PREC 5
+#endif
+
+// when refining a calculation, increase by this factor
+#ifndef CGAL_RS_PREC_FACTOR
+#define CGAL_RS_PREC_FACTOR 2
+#endif
+
+// after reaching this precision, give up
+#ifndef CGAL_RS_MAX_PREC
+#define CGAL_RS_MAX_PREC 80
+#endif
+
 #include <mpfi.h>
 #include <CGAL/Gbrs_polynomial_1.h>
 #include <CGAL/Gbrs_algebraic_1.h>
@@ -30,13 +50,14 @@ CGAL_BEGIN_NAMESPACE
 int init_solver ();
 
 // solve given the precision, returns de number of roots
-int solve_1 (mpfi_t *&, const Rational_polynomial_1 &, unsigned int);
-
-// solve with the default precision, returns de number of roots
-inline int solve_1 (mpfi_t *&, const Rational_polynomial_1 &);
+int solve_1 (mpfi_t *&, const Rational_polynomial_1 &,
+		unsigned int = CGAL_RS_DEF_PREC);
 
 // evaluate a polynomial at a given algebraic number
 Sign sign_1 (const Rational_polynomial_1 &, const Algebraic_1 &);
+
+// compare two algebraic numbers
+Comparison_result compare_1 (Algebraic_1 &, Algebraic_1 &);
 
 CGAL_END_NAMESPACE
 

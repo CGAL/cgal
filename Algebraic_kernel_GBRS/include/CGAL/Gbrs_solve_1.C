@@ -29,26 +29,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-// the default precision of RS to calculate a root (precision is 2^n)
-#ifndef CGAL_RS_DEF_PREC
-#define CGAL_RS_DEF_PREC 15
-#endif
-
-// the minimum, used when calculating a sign
-#ifndef CGAL_RS_MIN_PREC
-#define CGAL_RS_MIN_PREC 5
-#endif
-
-// when refining a calculation, increase by this factor
-#ifndef CGAL_RS_PREC_FACTOR
-#define CGAL_RS_PREC_FACTOR 2
-#endif
-
-// after reaching this precision, give up
-#ifndef CGAL_RS_MAX_PREC
-#define CGAL_RS_MAX_PREC 80
-#endif
-
 int init_rs () {
 	rs_init_rs ();
 	return 0;
@@ -69,9 +49,8 @@ int affiche_sols_eqs (mpfi_t *&x) {
 	// the number of solutions
 	nb_elts = rs_export_list_vect_ibfr_nb (ident_sols_eqs);
 	ident_node = rs_export_list_vect_ibfr_firstnode (ident_sols_eqs);
-	// allocate space
 	x = (mpfi_t *) malloc (nb_elts*sizeof(mpfi_t));
-	for (i=0; i<nb_elts; i++) {
+	for (i=0; i<nb_elts; ++i) {
 		mpfi_init (x[i]);
 		ident_vect = rs_export_list_vect_ibfr_monnode (ident_node);
 		affiche_vect_ibfr (x, i+1, ident_vect);
@@ -96,7 +75,7 @@ int affiche_sols_constr (const Algebraic_1 &a) {
 		if (i == a.nr()+1) {
 			mpfi_set(tmp,(mpfi_ptr)rs_export_ibfr_mpfi(ident_elt));
 			break;
-			}
+		}
 		ident_node = rs_export_list_vect_ibfr_nextnode (ident_node);
 	}
 	/*std::cout << "\nreturned value: ";
@@ -142,16 +121,12 @@ int solve_1 (mpfi_t *&x, const Rational_polynomial_1 &p1, unsigned int prec) {
 	rs_reset_all ();
 	create_rs_upoly
 		(p1.get_coefs (), p1.get_degree (), rs_get_default_up ());
-	set_rs_precisol (prec);	// precision
-	set_rs_verbose (0);	// we don't want any output
-	rs_run_algo ("UISOLE");	// isolate roots
+	set_rs_precisol (prec);
+	set_rs_verbose (0);
+	rs_run_algo ("UISOLE");
 	// XXX remember to free the results array x and
 	// clear all the mpfi_t elements
 	return affiche_sols_eqs (x);	// return the number of solutions
-}
-
-inline int solve_1 (mpfi_t *&x, const Rational_polynomial_1 &p1) {
-	return solve_1 (x, p1, CGAL_RS_DEF_PREC);
 }
 
 // TODO: when implemented UNDECIDED as a valid CGAL sign type,
@@ -179,21 +154,57 @@ int sign_1 (const Rational_polynomial_1 &p1, const Algebraic_1 &a,
 
 Sign sign_1 (const Rational_polynomial_1 &p1, const Algebraic_1 &a) {
 	CGAL_assertion_msg (a.is_consistent (),
-			"this number was not calculated as a root of a polynomial");
-	unsigned int prec = CGAL_RS_MIN_PREC;
-	while (1)
+			"this number was not calculated as a root");
+	for (unsigned int prec = CGAL_RS_MIN_PREC;;)
 		switch (sign_1 (p1, a, prec)) {
 			case -1: return NEGATIVE;
-				 break;
 			case 0: return ZERO;
-				break;
 			case 1: return POSITIVE;
-				break;
 			default:
 				if ((prec *= CGAL_RS_PREC_FACTOR) >
 						CGAL_RS_MAX_PREC)
 					return ZERO;	// TODO: UNDECIDED
 		}
+}
+
+int get_root (mpfi_ptr x, int n) {
+	int ident_sols_eqs = rs_get_default_sols_eqs ();
+	int ident_node = rs_export_list_vect_ibfr_firstnode (ident_sols_eqs);
+	for (int i=0; i<rs_export_list_vect_ibfr_nb (ident_sols_eqs); ++i) {
+		if (i == n) {
+			mpfi_set (x, (mpfi_ptr)rs_export_ibfr_mpfi
+					(rs_export_elt_vect_ibfr
+					 (rs_export_list_vect_ibfr_monnode
+					  (ident_node), 0)));
+			return 1;	// true: we succeeded
+		}
+		ident_node = rs_export_list_vect_ibfr_nextnode (ident_node);
+	}
+	return 0;	// false: we couldn't copy the root
+}
+
+int refine_1 (Algebraic_1 &a) {
+	rs_reset_all ();
+	create_rs_upoly (a.pol().get_coefs (), a.pol().get_degree (),
+			rs_get_default_up ());
+	int newprec = a.rsprec() * CGAL_RS_PREC_FACTOR;
+	a.set_rsprec (newprec);
+	set_rs_precisol (newprec);
+	set_rs_verbose (0);
+	rs_run_algo ("UISOLE");
+	return get_root (a.mpfi(), a.nr());
+}
+
+Comparison_result compare_1 (Algebraic_1 &r1, Algebraic_1 &r2) {
+	try {return ((r1==r2)?EQUAL:((r1<r2)?SMALLER:LARGER));}
+	catch (CGAL::comparison_overlap_exn &o) {
+		int p1, p2;
+		if (((p1=r1.rsprec())>CGAL_RS_MAX_PREC) &&
+				((p2=r2.rsprec())>CGAL_RS_MAX_PREC))
+			return EQUAL;
+		refine_1 ((p1<p2)?r1:r2);
+		return compare_1 (r1, r2);
+	}
 }
 
 CGAL_END_NAMESPACE
