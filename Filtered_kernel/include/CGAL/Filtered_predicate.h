@@ -47,6 +47,10 @@ CGAL_BEGIN_NAMESPACE
 //   not, or we let all this up to the compiler optimizer to figure out ?
 // - Some caching should be done at the Point_2 level.
 
+#ifdef __VARIADIC_TEMPLATES
+# define CGAL_HAS_VARIADIC_TEMPLATES
+#endif
+
 
 template <class EP, class AP, class C2E, class C2A, bool Protection = true>
 class Filtered_predicate
@@ -84,6 +88,30 @@ public:
   Filtered_predicate(const O1 &o1, const O2 &o2)
     : ep(c2e(o1), c2e(o2)), ap(c2a(o1), c2a(o2))
   {}
+
+#ifdef CGAL_HAS_VARIADIC_TEMPLATES
+  template <typename... Args>
+  result_type
+  operator()(const Args&... args) const
+#ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
+  ;
+#else
+  {
+    try
+    {
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+      Protect_FPU_rounding<Protection> P;
+      Ares res = ap(c2a(args)...);
+      if (! is_indeterminate(res))
+        return res;
+    }
+    catch (Interval_nt_advanced::unsafe_comparison) {}
+    CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+    return ep(c2e(args)...);
+  }
+#endif
+#else
 
   template <class A1>
   result_type
@@ -323,9 +351,33 @@ public:
               c2e(a5), c2e(a6), c2e(a7), c2e(a8), c2e(a9), c2e(a10) );
   }
 #endif
-
   // Idem for more than 10 arguments.  Do it on demand.
+
+#endif
 };
+
+#ifdef CGAL_HAS_VARIADIC_TEMPLATES
+
+template <class EP, class AP, class C2E, class C2A, bool Protection>
+  template <typename... Args>
+typename Filtered_predicate<EP,AP,C2E,C2A,Protection>::result_type
+Filtered_predicate<EP,AP,C2E,C2A,Protection>::
+  operator()(const Args&... args) const
+{
+    try
+    {
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+      Protect_FPU_rounding<Protection> P;
+      Ares res = ap(c2a(args)...);
+      if (! is_indeterminate(res))
+        return res;
+    }
+    catch (Interval_nt_advanced::unsafe_comparison) {}
+    CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+    return ep(c2e(args)...);
+}
+#else
 
 #ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
 template <class EP, class AP, class C2E, class C2A, bool Protection>
@@ -546,6 +598,8 @@ Filtered_predicate<EP,AP,C2E,C2A,Protection>::
     return ep(c2e(a1), c2e(a2), c2e(a3), c2e(a4), c2e(a5), c2e(a6), c2e(a7),
               c2e(a8), c2e(a9), c2e(a10));
 }
+
+#endif
 
 #endif
 
