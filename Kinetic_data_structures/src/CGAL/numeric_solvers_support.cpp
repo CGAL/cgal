@@ -34,8 +34,9 @@ CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
 static double max_error_value=.00005;
 
+namespace {
 template <bool CLEAN, class NT>
-static inline void compute_quadratic_roots_t(const NT *begin, const NT *end,  NT lb, NT ub,
+inline void compute_quadratic_roots_t(const NT *begin, const NT *end,  NT lb, NT ub,
 std::vector<NT> &roots)
 {
   NT max_error=0;
@@ -78,6 +79,7 @@ std::vector<NT> &roots)
     }
     }*/
 }
+}
 
 
 void compute_quadratic_roots(const double *begin, const double *end,
@@ -93,9 +95,9 @@ double lb, double ub, std::vector<double> &roots)
     return compute_quadratic_roots_t<true>(begin, end, lb, ub, roots);
 }
 
-
+namespace {
 template <bool CLEAN, class NT>
-static inline void compute_linear_roots_t(const NT *begin, const NT *,
+inline void compute_linear_roots_t(const NT *begin, const NT *,
 					  NT lb, NT ub,
 					  std::vector<NT> &roots)
 {
@@ -107,7 +109,7 @@ static inline void compute_linear_roots_t(const NT *begin, const NT *,
         roots.push_back(r);
     }
 }
-
+}
 
 void compute_linear_roots(const double *begin, const double *end,
 double lb, double ub, std::vector<double> &roots)
@@ -123,8 +125,9 @@ void compute_linear_cleaned_roots(const double *begin, const double *end,
 }
 
 
+namespace {
 template <class NT>
-static inline void filter_roots_t(const NT *begin, const NT *end,
+ inline void filter_roots_t(const NT *begin, const NT *end,
 				  NT lb, NT ub, NT last_root, std::vector<NT> &roots)
 {
 // if we are not close to the current time, then we are fine
@@ -210,7 +213,7 @@ static inline void filter_roots_t(const NT *begin, const NT *end,
 	  }*/
     }
 }
-
+}
 
 void filter_solver_roots(const double *begin, const double *end,
 			 double lb, double ub, double last,
