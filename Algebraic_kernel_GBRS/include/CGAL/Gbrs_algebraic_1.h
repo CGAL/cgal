@@ -53,7 +53,7 @@ public:
 	int mult;
 	int rsprec;
 
-	Algebraic_1_rep():poly(NULL),nr(0),mult(0),rsprec(0){mpfi_init(mpfI);}
+	Algebraic_1_rep():poly(NULL),nr(-1),mult(-1),rsprec(0){mpfi_init(mpfI);}
 	~Algebraic_1_rep () { mpfi_clear (mpfI); }
 
 private:

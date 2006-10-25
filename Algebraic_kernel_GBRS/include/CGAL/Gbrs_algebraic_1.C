@@ -690,7 +690,6 @@ std::pair <double, double> Algebraic_1::to_interval () const {
 // 7
 //--------------------------------------------------
 // BOOST:
-// Algebraic_1 Algebraic_1::operator/ (const Algebraic_1 &n2) const
 // Algebraic_1 Algebraic_1::operator/ (const int n2) const
 //-------------------------------------------------- 
 
@@ -959,8 +958,8 @@ Algebraic_1& Algebraic_1::operator/= (const mpfr_t &f) {
 
 // These functions are required, but they need to be coded outside the class:
 
-// 1.5 TODO
-bool operator== (const Algebraic_1 &n1, const Algebraic_1 &n2) {
+// 1.5
+/*bool operator== (const Algebraic_1 &n1, const Algebraic_1 &n2) {
 	mpfr_t n1_l, n1_r, n2_l, n2_r;
 	mpfr_inits (n1_l, n1_r, n2_l, n2_r, NULL);
 	n1.get_endpoints (n1_l, n1_r);
@@ -978,6 +977,23 @@ bool operator== (const Algebraic_1 &n1, const Algebraic_1 &n2) {
 	mpfr_clears (n1_l, n1_r, n2_l, n2_r, NULL);
 	overlap ();
 	return false;	// this never occurs
+}*/
+bool operator== (const Algebraic_1 &n1, const Algebraic_1 &n2) {
+	mpfr_t n1_l,n1_r,n2_l,n2_r;
+	mpfr_inits(n1_l,n1_r,n2_l,n2_r,NULL);
+	n1.get_endpoints(n1_l,n1_r);
+	n2.get_endpoints(n2_l,n2_r);
+	if (n1.is_point() && n2.is_point() && (mpfr_cmp(n1_l,n2_l)==0)) {
+		mpfr_clears (n1_l,n1_r,n2_l,n2_r,NULL);
+		return true;
+	}
+	if ((mpfr_cmp(n1_r,n2_l)<0) || (mpfr_cmp(n2_r,n1_l)<0)) {
+		mpfr_clears (n1_l,n1_r,n2_l,n2_r,NULL);
+		return false;
+	}
+	mpfr_clears (n1_l, n1_r, n2_l, n2_r, NULL);
+	overlap();
+	return false;
 }
 
 bool operator!= (const Algebraic_1 &n1, const Algebraic_1 &n2) {

@@ -22,7 +22,7 @@
 
 // the default precision of RS to calculate a root (precision is 2^n)
 #ifndef CGAL_RS_DEF_PREC
-#define CGAL_RS_DEF_PREC 10
+#define CGAL_RS_DEF_PREC 5
 #endif
 
 // the minimum, used when calculating a sign

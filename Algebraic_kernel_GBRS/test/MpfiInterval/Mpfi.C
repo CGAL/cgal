@@ -1,7 +1,7 @@
 #include <CGAL/Gmpq.h>
 #include <CGAL/Gmpz.h>
 #include <mpfr.h>
-#include <CGAL/Algebraic_1.h>
+#include <CGAL/Gbrs_algebraic_1.h>
 
 bool test_int () {
 	int one = 1;
