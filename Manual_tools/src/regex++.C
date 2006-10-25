@@ -20,9 +20,9 @@ Regular_expression::Regular_expression( const string& rx )
 void
 Regular_expression::init( const char* rx ) {
   assert( rx != NULL );
-	if( regcomp( &regex, rx, REG_EXTENDED ) != REG_NOERROR ) {
+  if( regcomp( &regex, rx, REG_EXTENDED ) != 0 ) {
     std::cout << "!! Error: regex compilation error" << std::endl;
- 		exit(1);
+    exit(1);
   }
 	regmatch = ( regmatch_t* ) malloc ( maxgroups * sizeof ( regmatch_t ) );
   assert( regmatch != NULL );
