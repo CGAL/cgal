@@ -1029,16 +1029,15 @@
       \gdef\lciCurrentPartName{}%
     }%
     \lciPushOutput{packages}%
-    \lcRawHtml{<tr><td class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">&nbsp;</td>}
-    \lcRawHtml{<td colspan="3" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}
+    \lcRawHtml{<tr><td valign="top" width="140" rowspan="2" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}
+    \ccValueofPkgIllustration
+    \lcRawHtml{</td><td colspan="2" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}
     \lciCheckForLabelInsideHeadingX{\ccValueofPkgName}{\lciCurrentPackageName}%
     \lcRawHtml{<h3>}\lciCurrentPackageName\lcRawHtml{</h3>}%
     \ccValueOfPkgAuthor%
     \lcRawHtml{</td></tr>}%
     \lcRawHtml{<tr valign="top">}
-    \lcRawHtml{<td width="140" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}%
-    \ccValueofPkgIllustration
-    \lcRawHtml{</td><td class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}%
+    \lcRawHtml{<td class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}%
     \ccValueofPkgSummary
     \lcRawHtml{<p></td><td width="2\%" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}
     \lcRawHtml{</td><td width="23\%" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}
