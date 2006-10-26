@@ -43,6 +43,13 @@
 #include <CGAL/number_utils_fwd.h>
 #include <CGAL/functional_base.h> // Unary_function, Binary_function
 
+#include <CGAL/Algebraic_structure_traits.h>
+#include <CGAL/Real_embeddable_traits.h>
+#include <CGAL/Coercion_traits.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/utils.h>
+
+
 CGAL_BEGIN_NAMESPACE
 
 template <bool Protected = true>
@@ -70,9 +77,10 @@ public:
 
   Interval_nt()
 #ifndef CGAL_NO_ASSERTIONS
-    : _inf(1), _sup(0)  // to early and deterministically detect use of uninitialized
+      : _inf(1), _sup(0)  
+             // to early and deterministically detect use of uninitialized
 #endif
-  {}
+    {}
 
   Interval_nt(int i)
     : _inf(i), _sup(i) {}
@@ -292,16 +300,6 @@ Uncertain<bool>
 operator!=(const Interval_nt<Protected> &a, int b)
 { return ! (a == b); }
 
-
-template <bool Protected>
-inline
-double
-to_double (const Interval_nt<Protected> & d)
-{
-  return (d.sup() + d.inf()) * 0.5;
-  // This may overflow...
-}
-
 // Returns true if the interval is a unique representable double.
 template <bool Protected>
 inline
@@ -312,32 +310,17 @@ fit_in_double (const Interval_nt<Protected> & d, double &r)
   return d.is_point();
 }
 
-template <bool Protected>
-inline
-std::pair<double, double>
-to_interval (const Interval_nt<Protected> & d)
-{
-  return d.pair();
-}
 
-
-template <bool Protected>
-inline
-bool
-is_valid (const Interval_nt<Protected> & d)
-{
-  return CGAL::is_valid(d.inf()) && 
-         CGAL::is_valid(d.sup()) && 
-         d.inf() <= d.sup();
-}
-
-template <bool Protected>
-inline
-bool
-is_finite (const Interval_nt<Protected> & d)
-{
-  return CGAL::is_finite(d.inf()) && CGAL::is_finite(d.sup());
-}
+template< bool Protected >
+class Is_valid< Interval_nt<Protected> > 
+  : public Unary_function< Interval_nt<Protected>, bool > {
+  public :
+    bool operator()( const Interval_nt<Protected>& x ) {
+      return CGAL::is_valid(x.inf()) && 
+             CGAL::is_valid(x.sup()) && 
+             x.inf() <= x.sup();
+    }  
+};
 
 template <bool Protected>
 inline
@@ -406,6 +389,13 @@ Interval_nt<Protected>
 operator+ (const Interval_nt<Protected> & a, int b)
 {
   return a+Interval_nt<Protected>(b);
+}
+
+template< bool Protected >
+inline
+Interval_nt<Protected>
+operator+( const Interval_nt<Protected>& a ) {
+  return a;
 }
 
 template <bool Protected>
@@ -607,26 +597,12 @@ operator/ (const Interval_nt<Protected> & a, int b)
   return a/Interval_nt<Protected>(b);
 }
 
+// TODO: What about these two guys? Where do they belong to?
 template <bool Protected>
 inline
 Interval_nt<Protected>
-sqrt (const Interval_nt<Protected> & d)
-{
-  typename Interval_nt<Protected>::Internal_protector P;  // not optimal here.
-  // sqrt([+a,+b]) => [sqrt(+a);sqrt(+b)]
-  // sqrt([-a,+b]) => [0;sqrt(+b)] => assumes roundoff error.
-  // sqrt([-a,-b]) => [0;sqrt(-b)] => assumes user bug (unspecified result).
-  FPU_set_cw(CGAL_FE_DOWNWARD);
-  double i = (d.inf() > 0.0) ? CGAL_IA_SQRT(d.inf()) : 0.0;
-  FPU_set_cw(CGAL_FE_UPWARD);
-  return Interval_nt<Protected>(i, CGAL_IA_SQRT(d.sup()));
-}
-
-template <bool Protected>
-inline
-Interval_nt<Protected>
-min  BOOST_PREVENT_MACRO_SUBSTITUTION (const Interval_nt<Protected> & d,
-				       const Interval_nt<Protected> & e)
+min BOOST_PREVENT_MACRO_SUBSTITUTION (const Interval_nt<Protected> & d, 
+                                      const Interval_nt<Protected> & e)
 {
   return Interval_nt<Protected>((std::min)(d.inf(), e.inf()),
 		                (std::min)(d.sup(), e.sup()));
@@ -636,120 +612,12 @@ template <bool Protected>
 inline
 Interval_nt<Protected>
 max BOOST_PREVENT_MACRO_SUBSTITUTION (const Interval_nt<Protected> & d, 
-				      const Interval_nt<Protected> & e)
+                                      const Interval_nt<Protected> & e)
 {
   return Interval_nt<Protected>((std::max)(d.inf(), e.inf()),
 		                (std::max)(d.sup(), e.sup()));
 }
 
-template <bool Protected>
-inline
-Interval_nt<Protected>
-square (const Interval_nt<Protected> & d)
-{
-  typename Interval_nt<Protected>::Internal_protector P;
-  if (d.inf()>=0.0)
-      return Interval_nt<Protected>(-CGAL_IA_MUL(d.inf(), -d.inf()),
-	                             CGAL_IA_MUL(d.sup(), d.sup()));
-  if (d.sup()<=0.0)
-      return Interval_nt<Protected>(-CGAL_IA_MUL(d.sup(), -d.sup()),
-	     	                     CGAL_IA_MUL(d.inf(), d.inf()));
-  return Interval_nt<Protected>(0.0, CGAL_IA_SQUARE((std::max)(-d.inf(),
-							       d.sup())));
-}
-
-template <bool Protected>
-inline
-Interval_nt<Protected>
-abs (const Interval_nt<Protected> & d)
-{
-  if (d.inf() >= 0.0) return d;
-  if (d.sup() <= 0.0) return -d;
-  return Interval_nt<Protected>(0.0, (std::max)(-d.inf(), d.sup()));
-}
-
-template <bool Protected>
-inline
-Uncertain<Sign>
-sign (const Interval_nt<Protected> & d)
-{
-  if (d.inf() > 0.0) return POSITIVE;
-  if (d.sup() < 0.0) return NEGATIVE;
-  if (d.inf() == d.sup()) return ZERO;
-  return Uncertain<Sign>::indeterminate();
-}
-
-template <bool Protected>
-inline
-Uncertain<Comparison_result>
-compare (const Interval_nt<Protected> & d, const Interval_nt<Protected> & e)
-{
-  if (d.inf() > e.sup()) return LARGER;
-  if (e.inf() > d.sup()) return SMALLER;
-  if (e.inf() == d.sup() && d.inf() == e.sup()) return EQUAL;
-  return Uncertain<Comparison_result>::indeterminate();
-}
-
-template <bool Protected>
-inline
-Uncertain<bool>
-is_zero (const Interval_nt<Protected> & d)
-{
-  if (d.inf() > 0.0) return false;
-  if (d.sup() < 0.0) return false;
-  if (d.inf() == d.sup()) return true;
-  return Uncertain<bool>::indeterminate();
-}
-
-template <bool Protected>
-inline
-Uncertain<bool>
-is_one (const Interval_nt<Protected> & d)
-{
-  if (d.inf() > 1) return false;
-  if (d.sup() < 1) return false;
-  if (d.inf() == d.sup()) return true;
-  return Uncertain<bool>::indeterminate();
-}
-
-template <bool Protected>
-inline
-Uncertain<bool>
-is_positive (const Interval_nt<Protected> & d)
-{
-  if (d.inf() > 0.0) return true;
-  if (d.sup() <= 0.0) return false;
-  return Uncertain<bool>::indeterminate();
-}
-
-template <bool Protected>
-inline
-Uncertain<bool>
-is_negative (const Interval_nt<Protected> & d)
-{
-  if (d.inf() >= 0.0) return false;
-  if (d.sup() < 0.0) return true;
-  return Uncertain<bool>::indeterminate();
-}
-
-inline
-std::pair<double, double>
-to_interval (const long & l)
-{
-#ifndef __BORLANDC__ // The stupid Borland compiler generates warnings...
-  if (sizeof(double) > sizeof(long)) {
-    // On 64bit platforms, a long doesn't fit exactly in a double.
-    // Well, a perfect fix would be to use std::numeric_limits<>, but...
-    Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
-    Interval_nt<false> approx ((double) l);
-    FPU_set_cw(CGAL_FE_UPWARD);
-    approx += Interval_nt<false>::smallest();
-    return approx.pair();
-  }
-  else
-#endif
-    return std::pair<double,double>(l,l);
-}
 
 // TODO : document, when we are OK with the interface.
 // - should it allow other number types for the exponent ?
@@ -759,7 +627,7 @@ ldexp(const Interval_nt<b> &i, int e)
 {
   double scale = CGAL_CLIB_STD::ldexp(1.0, e);
   Interval_nt<b> scale_interval (
-                      CGAL::is_finite(scale) ? scale : CGAL_IA_MAX_DOUBLE,
+                      CGAL_NTS is_finite(scale) ? scale : CGAL_IA_MAX_DOUBLE,
                       scale == 0 ? CGAL_IA_MIN_DOUBLE : scale);
   return i * scale_interval;
 }
@@ -767,6 +635,7 @@ ldexp(const Interval_nt<b> &i, int e)
 
 // We also specialize some corresponding functors returning Uncertain<>.
 
+// TODO: To which concept do these functors belong? Can we remove them??
 template < bool b >
 struct Equal_to < Interval_nt<b>, Interval_nt<b> >
   : public Binary_function< Interval_nt<b>, Interval_nt<b>, Uncertain<bool> >
@@ -821,55 +690,383 @@ struct Less_equal < Interval_nt<b>, Interval_nt<b> >
   { return x <= y; }
 };
 
-template < bool b >
-struct Is_zero < Interval_nt<b> >
-  : public Unary_function< Interval_nt<b>, Uncertain<bool> >
-{
-  Uncertain<bool> operator()( const Interval_nt<b>& x) const
-  { return CGAL_NTS is_zero(x); }
-};
 
-template < bool b >
-struct Is_one < Interval_nt<b> >
-  : public Unary_function< Interval_nt<b>, Uncertain<bool> >
-{
-  Uncertain<bool> operator()( const Interval_nt<b>& x) const
-  { return CGAL_NTS is_one(x); }
-};
+// As in MP_float.h, the namespace INTERN_INTERVAL_NT contains (now) global
+// functions like square or sqrt which would have collided with the new
+// global functions from AST/RET
+//
+// TODO: IMHO, a better solution would be to put the INTERN_MP_FLOAT-functions
+//       into the MP_Float-class... But there is surely a reason why this is not
+//       the case..?
 
-template < bool b >
-struct Is_negative < Interval_nt<b> >
-  : public Unary_function< Interval_nt<b>, Uncertain<bool> >
-{
-  Uncertain<bool> operator()( const Interval_nt<b>& x) const
-  { return CGAL_NTS is_negative(x); }
-};
 
-template < bool b >
-struct Is_positive < Interval_nt<b> >
-  : public Unary_function< Interval_nt<b>, Uncertain<bool> >
-{
-  Uncertain<bool> operator()( const Interval_nt<b>& x) const
-  { return CGAL_NTS is_positive(x); }
-};
+namespace INTERN_INTERVAL_NT {
 
-template < bool b >
-struct Sgn < Interval_nt<b> >
-  : public Unary_function< Interval_nt<b>, Uncertain<Sign> >
-{
-  Uncertain<Sign> operator()( const Interval_nt<b>& x) const
-  { return CGAL_NTS sign(x); }
-};
+  template <bool Protected>
+  inline
+  double
+  to_double (const Interval_nt<Protected> & d)
+  {
+    return (d.sup() + d.inf()) * 0.5;
+    // This may overflow...
+  }
+  
+  template <bool Protected>
+  inline
+  std::pair<double, double>
+  to_interval (const Interval_nt<Protected> & d)
+  {
+    return d.pair();
+  }
+  
+  template <bool Protected>
+  inline
+  Interval_nt<Protected>
+  sqrt (const Interval_nt<Protected> & d)
+  {
+    typename Interval_nt<Protected>::Internal_protector P;  // not optimal here.
+    // sqrt([+a,+b]) => [sqrt(+a);sqrt(+b)]
+    // sqrt([-a,+b]) => [0;sqrt(+b)] => assumes roundoff error.
+    // sqrt([-a,-b]) => [0;sqrt(-b)] => assumes user bug (unspecified result).
+    FPU_set_cw(CGAL_FE_DOWNWARD);
+    double i = (d.inf() > 0.0) ? CGAL_IA_SQRT(d.inf()) : 0.0;
+    FPU_set_cw(CGAL_FE_UPWARD);
+    return Interval_nt<Protected>(i, CGAL_IA_SQRT(d.sup()));
+  }
 
-template < bool b >
-struct Compare < Interval_nt<b> >
-  : public Binary_function< Interval_nt<b>, Interval_nt<b>,
-                            Uncertain<Comparison_result> >
-{
+  template <bool Protected>
+  inline
+  Interval_nt<Protected>
+  square (const Interval_nt<Protected> & d)
+  {
+    typename Interval_nt<Protected>::Internal_protector P;
+    if (d.inf()>=0.0)
+        return Interval_nt<Protected>(-CGAL_IA_MUL(d.inf(), -d.inf()),
+                                 CGAL_IA_MUL(d.sup(), d.sup()));
+    if (d.sup()<=0.0)
+        return Interval_nt<Protected>(-CGAL_IA_MUL(d.sup(), -d.sup()),
+                               CGAL_IA_MUL(d.inf(), d.inf()));
+    return Interval_nt<Protected>(0.0, CGAL_IA_SQUARE((std::max)(-d.inf(),
+                     d.sup())));
+  }
+  
+  template <bool Protected>
+  inline
+  Interval_nt<Protected>
+  abs (const Interval_nt<Protected> & d)
+  {
+    if (d.inf() >= 0.0) return d;
+    if (d.sup() <= 0.0) return -d;
+    return Interval_nt<Protected>(0.0, (std::max)(-d.inf(), d.sup()));
+  }
+  
+  template <bool Protected>
+  inline
+  Uncertain<Sign>
+  sign (const Interval_nt<Protected> & d)
+  {
+    if (d.inf() > 0.0) return POSITIVE;
+    if (d.sup() < 0.0) return NEGATIVE;
+    if (d.inf() == d.sup()) return ZERO;
+    return Uncertain<Sign>::indeterminate();
+  }
+  
+  template <bool Protected>
+  inline
   Uncertain<Comparison_result>
-  operator()( const Interval_nt<b>& x, const Interval_nt<b>& y) const
-  { return CGAL_NTS compare(x, y); }
+  compare (const Interval_nt<Protected> & d, const Interval_nt<Protected> & e)
+  {
+    if (d.inf() > e.sup()) return LARGER;
+    if (e.inf() > d.sup()) return SMALLER;
+    if (e.inf() == d.sup() && d.inf() == e.sup()) return EQUAL;
+    return Uncertain<Comparison_result>::indeterminate();
+  }
+  
+  template <bool Protected>
+  inline
+  Uncertain<bool>
+  is_zero (const Interval_nt<Protected> & d)
+  {
+    if (d.inf() > 0.0) return false;
+    if (d.sup() < 0.0) return false;
+    if (d.inf() == d.sup()) return true;
+    return Uncertain<bool>::indeterminate();
+  }
+  
+  template <bool Protected>
+  inline
+  Uncertain<bool>
+  is_one (const Interval_nt<Protected> & d)
+  {
+    if (d.inf() > 1) return false;
+    if (d.sup() < 1) return false;
+    if (d.inf() == d.sup()) return true;
+    return Uncertain<bool>::indeterminate();
+  }
+  
+  template <bool Protected>
+  inline
+  Uncertain<bool>
+  is_positive (const Interval_nt<Protected> & d)
+  {
+    if (d.inf() > 0.0) return true;
+    if (d.sup() <= 0.0) return false;
+    return Uncertain<bool>::indeterminate();
+  }
+  
+  template <bool Protected>
+  inline
+  Uncertain<bool>
+  is_negative (const Interval_nt<Protected> & d)
+  {
+    if (d.inf() >= 0.0) return false;
+    if (d.sup() < 0.0) return true;
+    return Uncertain<bool>::indeterminate();
+  }
+    
+  // TODO: Whats this for? Why is this in this file??
+  inline
+  std::pair<double, double>
+  to_interval (const long & l)
+  {
+  #ifndef __BORLANDC__ // The stupid Borland compiler generates warnings...
+    if (sizeof(double) > sizeof(long)) {
+      // On 64bit platforms, a long doesn't fit exactly in a double.
+      // Well, a perfect fix would be to use std::numeric_limits<>, but...
+      Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
+      Interval_nt<false> approx ((double) l);
+      FPU_set_cw(CGAL_FE_UPWARD);
+      approx += Interval_nt<false>::smallest();
+      return approx.pair();
+    }
+    else
+  #endif
+      return std::pair<double,double>(l,l);
+  }
+  
+/*  template < bool b >
+  struct Is_zero < Interval_nt<b> >
+    : public Unary_function< Interval_nt<b>, Uncertain<bool> >
+  {
+    Uncertain<bool> operator()( const Interval_nt<b>& x) const
+    { return CGAL_NTS is_zero(x); }
+  };
+  
+  template < bool b >
+  struct Is_one < Interval_nt<b> >
+    : public Unary_function< Interval_nt<b>, Uncertain<bool> >
+  {
+    Uncertain<bool> operator()( const Interval_nt<b>& x) const
+    { return CGAL_NTS is_one(x); }
+  };
+  
+  template < bool b >
+  struct Is_negative < Interval_nt<b> >
+    : public Unary_function< Interval_nt<b>, Uncertain<bool> >
+  {
+    Uncertain<bool> operator()( const Interval_nt<b>& x) const
+    { return CGAL_NTS is_negative(x); }
+  };
+  
+  template < bool b >
+  struct Is_positive < Interval_nt<b> >
+    : public Unary_function< Interval_nt<b>, Uncertain<bool> >
+  {
+    Uncertain<bool> operator()( const Interval_nt<b>& x) const
+    { return CGAL_NTS is_positive(x); }
+  };
+  
+  template < bool b >
+  struct Sgn < Interval_nt<b> >
+    : public Unary_function< Interval_nt<b>, Uncertain<Sign> >
+  {
+    Uncertain<Sign> operator()( const Interval_nt<b>& x) const
+    { return CGAL_NTS sign(x); }
+  };
+  
+  template < bool b >
+  struct Compare < Interval_nt<b> >
+    : public Binary_function< Interval_nt<b>, Interval_nt<b>,
+                              Uncertain<Comparison_result> >
+  {
+    Uncertain<Comparison_result>
+    operator()( const Interval_nt<b>& x, const Interval_nt<b>& y) const
+    { return CGAL_NTS compare(x, y); }
+  };*/
+  
+} // namespace INTERN_INTERVAL_NT
+
+
+// Algebraic structure traits
+template< bool B > 
+class Algebraic_structure_traits< Interval_nt<B> >
+  : public Algebraic_structure_traits_base< Interval_nt<B>, 
+                                            CGAL::Field_with_sqrt_tag >  {
+  public:
+    typedef Interval_nt<B>    Algebraic_structure;
+    typedef CGAL::Tag_false   Is_exact;
+                
+    class Is_zero 
+      : public Unary_function< Algebraic_structure, Uncertain<bool> > {
+      public:
+        Uncertain<bool> operator()( const Algebraic_structure& x ) const {
+          return INTERN_INTERVAL_NT::is_zero( x );
+        }        
+    };
+    
+    class Is_one
+      : public Unary_function< Algebraic_structure, Uncertain<bool> > {
+      public:
+        Uncertain<bool> operator()( const Algebraic_structure& x ) const {
+          return INTERN_INTERVAL_NT::is_one( x );
+        }
+    };
+
+    class Square
+      : public Unary_function< Algebraic_structure, Algebraic_structure > {
+      public:
+        Algebraic_structure operator()( const Algebraic_structure& x ) const {
+          return INTERN_INTERVAL_NT::square( x );
+        }
+    };
+
+    class Sqrt 
+      : public Unary_function< Algebraic_structure, Algebraic_structure > {
+      public:        
+        Algebraic_structure operator()( const Algebraic_structure& x ) const {
+          return INTERN_INTERVAL_NT::sqrt( x );
+        }
+    };
+    
+    struct Is_square
+        :public Binary_function<Interval_nt<B>,Interval_nt<B>&,Uncertain<bool> >
+    {
+        bool operator()(const Interval_nt<B>& x){
+            return INTERN_INTERVAL_NT::is_positive( x );
+        }
+        
+        bool operator()(
+                const Interval_nt<B>& x,
+                Interval_nt<B>      & result){
+            Uncertain<bool> is_positive = INTERN_INTERVAL_NT::is_positive( x );
+            if ( is_positive.inf() == true ){
+                typename Algebraic_structure_traits<Interval_nt<B> >::Sqrt sqrt;
+                result = sqrt(x);
+            }else{ 
+                typename Real_embeddable_traits<Interval_nt<B> >::Abs  abs;
+                typename Algebraic_structure_traits<Interval_nt<B> >::Sqrt sqrt;
+                result = sqrt(abs(x));
+            }
+            return is_positive;
+        }
+    };
 };
+
+template< bool B > class Real_embeddable_traits< Interval_nt<B> > 
+  : public Real_embeddable_traits_base< Interval_nt<B> > {
+  public:
+    typedef Interval_nt<B>  Real_embeddable;
+    
+    class Abs 
+      : public Unary_function< Real_embeddable, Real_embeddable > {
+      public:        
+        Real_embeddable operator()( const Real_embeddable& x ) const {
+            return INTERN_INTERVAL_NT::abs( x );
+        }
+    };    
+
+    class Sign
+        : public Unary_function< Real_embeddable, ::CGAL::Uncertain< CGAL::Sign > > {
+      public:        
+        ::CGAL::Uncertain< ::CGAL::Sign > operator()( const Real_embeddable& x ) const {
+            return INTERN_INTERVAL_NT::sign( x );
+        }
+    };    
+
+    class Is_positive
+      : public Unary_function< Real_embeddable, Uncertain<bool> > {
+      public:        
+        Uncertain<bool> operator()( const Real_embeddable& x ) const {          
+          return INTERN_INTERVAL_NT::is_positive( x );
+        }
+    };    
+
+    class Is_negative
+      : public Unary_function< Real_embeddable, Uncertain<bool> > {
+      public:        
+        Uncertain<bool> operator()( const Real_embeddable& x ) const {          
+          return INTERN_INTERVAL_NT::is_negative( x );
+        }
+    };    
+
+    class Compare
+      : public Binary_function< Real_embeddable, Real_embeddable,
+                                Comparison_result > {
+      public:        
+        Comparison_result operator()( const Real_embeddable& x,
+                                      const Real_embeddable& y ) const {
+            return INTERN_INTERVAL_NT::compare( x, y );
+        }
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Real_embeddable,
+                CGAL::Comparison_result );
+    };    
+
+    class To_double
+      : public Unary_function< Real_embeddable, double > {
+      public:        
+        double operator()( const Real_embeddable& x ) const {
+            return INTERN_INTERVAL_NT::to_double( x );
+        }
+    };    
+
+    class To_interval
+      : public Unary_function< Real_embeddable, std::pair< double, double > > {
+      public:        
+        std::pair<double, double> operator()( const Real_embeddable& x ) const {
+            return INTERN_INTERVAL_NT::to_interval( x );
+        }
+    };    
+    
+    class Is_finite
+      : public Unary_function< Real_embeddable, bool > {
+      public :
+        bool operator()( const Real_embeddable& x ) const {
+          return CGAL_NTS is_finite( x.inf() ) && CGAL_NTS is_finite( x.sup() );
+        }
+    };
+
+};
+
+// COERCION_TRAITS BEGIN
+template < class A, class B , int > class Coercion_traits_for_level;
+template < class A, class B, class C> class Coercion_traits_interval_nt;
+
+template<class A , bool P> class Coercion_traits_for_level<Interval_nt<P>,A,CTL_INTERVAL>
+    :public Coercion_traits_for_level<A,Interval_nt<P>, CTL_INTERVAL>{};
+
+template<class A ,bool P > class Coercion_traits_for_level<A,Interval_nt<P>,CTL_INTERVAL>
+    :public Coercion_traits_interval_nt<A,Interval_nt<P>, typename Real_embeddable_traits<A>::Is_real_embeddable>{};
+
+
+template<class A , bool P > class Coercion_traits_interval_nt<A, Interval_nt<P>,Tag_false>
+    :public Coercion_traits_for_level<A,Interval_nt<P>,0>{};
+
+template<class A , bool P> class Coercion_traits_interval_nt<A, Interval_nt<P>, Tag_true>{
+public:
+    typedef Tag_true Are_explicit_interoperable;
+    typedef Tag_false Are_implicit_interoperable;
+    typedef Interval_nt<P> Coercion_type;
+    struct Cast {
+        typedef Interval_nt<P> result_type;
+        Interval_nt<P> inline operator()(const Interval_nt<P>& x ) const {return x;}
+        Interval_nt<P> inline operator()(const A& x ) const {
+            return typename Real_embeddable_traits<A>::To_interval()(x);
+        }
+    };
+};
+
+
+// COERCION_TRAITS END
 
 CGAL_END_NAMESPACE
 

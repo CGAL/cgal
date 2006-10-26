@@ -59,6 +59,7 @@ test_gcd(const NT&, CGAL::Tag_true)
   NT eleven(11);
   NT three(3);
   std::cout << "  div()" << std::endl;
+  std::cout << "  ##################### div( 11, 3): " << div(eleven, three) <<std::endl;
   if (CGAL_NTS div(eleven, three) != three) return false;
   CGAL::Div<NT> d;
   if (d(eleven, three) != three) return false;

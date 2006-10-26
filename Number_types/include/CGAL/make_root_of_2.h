@@ -23,6 +23,7 @@
 
 #include <iostream>
 #include <CGAL/basic.h>
+#include <CGAL/number_utils.h>
 #include <CGAL/Root_of_traits.h>
 #include <CGAL/Root_of_2_fwd.h>
 

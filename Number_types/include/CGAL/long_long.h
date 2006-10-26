@@ -19,7 +19,7 @@
 // $Id$
 // 
 //
-// Author(s)     : Stefan Schirra
+// Author(s)     : Stefan Schirra, Michael Hemmer
 
 // ISO C++ does not support `long long', but ISO C does, which means the next
 // revision of ISO C++ probably will too.  However, currently, g++ -pedantic
@@ -30,6 +30,10 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Interval_nt.h>
+#include <CGAL/Algebraic_structure_traits.h>
+#include <CGAL/Real_embeddable_traits.h>
+#include <CGAL/utils.h>
+#include <CGAL/functional_base.h> // Unary_function, Binary_function
 
 CGAL_BEGIN_NAMESPACE
 
@@ -43,37 +47,52 @@ template <> struct Number_type_traits<long long int> {
   typedef Tag_false  Has_exact_sqrt;
 };
 
-inline
-long long int
-div(long long int i1, long long int i2)
-{ return i1 / i2; }
+template<> class Algebraic_structure_traits< long long int >
+  : public Algebraic_structure_traits_base< long long int, 
+                                            CGAL::Euclidean_ring_tag > {
 
-inline
-double
-to_double(long long int i)
-{ return (double)i; }
+  public:
+    typedef CGAL::Tag_true            Is_exact;
+    
+    typedef CGAL::INTERN_AST::Div_per_operator< Algebraic_structure >  Div;
+    typedef CGAL::INTERN_AST::Mod_per_operator< Algebraic_structure >  Mod;       
 
-inline
-bool
-is_finite(long long int)
-{ return true; }
+    class Is_square 
+      : public Binary_function< Algebraic_structure, Algebraic_structure&,
+                                bool > {
+      public:
+        bool operator()( const Algebraic_structure& x,
+                         Algebraic_structure& y ) const {
+          y = (Algebraic_structure) CGAL_CLIB_STD::sqrt( (double)x );
+          return x == y * y;
+        }
+        bool operator()( const Algebraic_structure& x) const {
+            Algebraic_structure y 
+                = (Algebraic_structure) CGAL_CLIB_STD::sqrt( (double)x );
+          return x == y * y;
+        }
+    };
+};
 
-inline
-bool
-is_valid(long long int)
-{ return true; }
+template <> class Real_embeddable_traits< long long int > 
+  : public Real_embeddable_traits_base< long long int > {
+  public:
+          
+    typedef CGAL::INTERN_RET::To_double_by_conversion< Real_embeddable >
+                                                                      To_double;
 
-inline
-std::pair<double,double>
-to_interval (const long long & z)
-{
-  Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
-  Interval_nt<false> approx ((double) z);
-  FPU_set_cw(CGAL_FE_UPWARD);
-  approx += Interval_nt<false>::smallest();
-  return approx.pair();
-}
-
+    class To_interval 
+      : public Unary_function< Real_embeddable, std::pair< double, double > > {
+      public:
+        std::pair<double, double> operator()( const Real_embeddable& x ) {
+          Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
+          CGAL::Interval_nt<false> approx ((double) x);
+          FPU_set_cw(CGAL_FE_UPWARD);
+          approx += Interval_nt<false>::smallest();
+          return approx.pair();          
+        }
+    };
+};
 
 #if (defined(__sparc__) || defined(__sparc) || defined(sparc)) || \
     (defined(__sgi__)   || defined(__sgi)   || defined(sgi)) || \
@@ -86,5 +105,7 @@ typedef  unsigned long long int  UInteger64;
 #endif
 
 CGAL_END_NAMESPACE
+
+#include <CGAL/Interval_nt.h>
 
 #endif // CGAL_LONG_LONG_H

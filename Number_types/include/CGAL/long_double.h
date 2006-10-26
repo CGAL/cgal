@@ -19,12 +19,17 @@
 // $Id$
 // 
 //
-// Author(s)     : Sylvain Pion
+// Author(s)     : Sylvain Pion, Michael Hemmer
 
 #ifndef CGAL_LONG_DOUBLE_H
 #define CGAL_LONG_DOUBLE_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Algebraic_structure_traits.h>
+#include <CGAL/Real_embeddable_traits.h>
+#include <CGAL/utils.h>
+#include <CGAL/functional_base.h> // Unary_function, Binary_function
+
 #include <utility>
 #include <cmath>
 #ifdef CGAL_CFG_IEEE_754_BUG
@@ -34,7 +39,7 @@
 #  include <fp_class.h>
 #endif
 
-#include <CGAL/Interval_nt.h>
+#include <CGAL/FPU.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -48,70 +53,124 @@ template<> struct Number_type_traits<long double> {
   typedef Tag_false  Has_exact_sqrt;
 };
 
-inline
-double
-to_double(const long double & d)
-{ return d; }
+template <> class Algebraic_structure_traits< long double >
+  : public Algebraic_structure_traits_base< long double, 
+                                            CGAL::Field_with_kth_root_tag >  {
+  public:
+    typedef CGAL::Tag_false            Is_exact;
+                
+    class Sqrt 
+      : public Unary_function< Algebraic_structure, Algebraic_structure > {
+      public:
+        Algebraic_structure operator()( const Algebraic_structure& x ) const {
+          return CGAL_CLIB_STD::sqrt( x );
+        }
+    };
+    
+    class Kth_root 
+      :public Binary_function<int, Algebraic_structure, Algebraic_structure > {
+      public:
+        Algebraic_structure operator()( int k, 
+                                        const Algebraic_structure& x) const {
+          CGAL_precondition_msg( k > 0, 
+                                    "'k' must be positive for k-th roots");
+          return CGAL_CLIB_STD::pow(x, 1.0 / (long double)(k));
+        };
+    };
+    
+};
 
-inline
-std::pair<double,double>
-to_interval(const long double & d)
-{
-  // We hope that the long double -> double conversion
-  // follows the current rounding mode.
-  Protect_FPU_rounding<true> P(CGAL_FE_UPWARD);
-  volatile long double md = -d; // needed otherwise the conversion can get
-                                // factorized between d and -d...
-  return std::make_pair(- (double) CGAL_IA_FORCE_TO_DOUBLE(md),
-                        (double) CGAL_IA_FORCE_TO_DOUBLE(d));
-}
+template <> class Real_embeddable_traits< long double > 
+  : public Real_embeddable_traits_base< long double > {
+  public:
 
-inline
-long double
-sqrt(const long double & d)
-{ return std::sqrt(d); }
+    typedef CGAL::INTERN_RET::To_double_by_conversion< Real_embeddable >
+                                                                  To_double;      
+    class To_interval 
+      : public Unary_function< Real_embeddable, std::pair< double, double > > {
+      public:
+        std::pair<double, double> operator()( const Real_embeddable& x ) const {
+
+          // We hope that the long double -> double conversion
+          // follows the current rounding mode.
+          Protect_FPU_rounding<true> P(CGAL_FE_UPWARD);
+          volatile long double mx = -x; // needed otherwise the conversion can
+                                        // get factorized between d and -d...
+          return std::make_pair(- (double) CGAL_IA_FORCE_TO_DOUBLE(mx),
+                                (double) CGAL_IA_FORCE_TO_DOUBLE(x));
+          
+        }
+    };
+
+// Is_finite depends on platform
+#ifdef __sgi
+    class Is_finite 
+      : public Unary_function< Real_embeddable, bool > {
+      public:
+        bool operator()( const Real_embeddable& x ) {
+          switch (fp_class_d(x)) {
+          case FP_POS_NORM:
+          case FP_NEG_NORM:
+          case FP_POS_ZERO:
+          case FP_NEG_ZERO:
+          case FP_POS_DENORM:
+          case FP_NEG_DENORM:
+              return true;
+          case FP_SNAN:
+          case FP_QNAN:
+          case FP_POS_INF:
+          case FP_NEG_INF:
+              return false;
+          }
+          return false; // NOT REACHED
+        }
+    };
+#elif defined CGAL_CFG_IEEE_754_BUG
+    class Is_finite 
+      : public Unary_function< Real_embeddable, bool > {
+      public:
+        bool operator()( const Real_embeddable& x ) {
+          Real_embeddable d = x;
+          IEEE_754_double* p = reinterpret_cast<IEEE_754_double*>(&d);
+          return is_finite_by_mask_long_double( p->c.H );
+        }
+    };
+#else
+    class Is_finite 
+      : public Unary_function< Real_embeddable, bool > {
+      public:
+        bool operator()( const Real_embeddable& x ) {
+         return (x == x) && (is_valid(x-x)); 
+        }
+    };
+#endif
+    
+};
 
 #ifdef __sgi
 
-inline
-bool is_finite(const long double & d)
-{
-    switch (fp_class_d(d)) {
-    case FP_POS_NORM:
-    case FP_NEG_NORM:
-    case FP_POS_ZERO:
-    case FP_NEG_ZERO:
-    case FP_POS_DENORM:
-    case FP_NEG_DENORM:
-        return true;
-    case FP_SNAN:
-    case FP_QNAN:
-    case FP_POS_INF:
-    case FP_NEG_INF:
-        return false;
-    }
-    return false; // NOT REACHED
-}
-
-inline
-bool is_valid(const long double & d)
-{
-    switch (fp_class_d(d)) {
-    case FP_POS_NORM:
-    case FP_NEG_NORM:
-    case FP_POS_ZERO:
-    case FP_NEG_ZERO:
-    case FP_POS_INF:
-    case FP_NEG_INF:
-    case FP_POS_DENORM:
-    case FP_NEG_DENORM:
-        return true;
-    case FP_SNAN:
-    case FP_QNAN:
-        return false;
-    }
-    return false; // NOT REACHED
-}
+template<>
+class Is_valid< long double > 
+  : public Unary_function< long double, bool > {
+  public :
+    bool operator()( const long_double& x ) {
+      switch (fp_class_d(x)) {
+      case FP_POS_NORM:
+      case FP_NEG_NORM:
+      case FP_POS_ZERO:
+      case FP_NEG_ZERO:
+      case FP_POS_INF:
+      case FP_NEG_INF:
+      case FP_POS_DENORM:
+      case FP_NEG_DENORM:
+          return true;
+      case FP_SNAN:
+      case FP_QNAN:
+          return false;
+      }
+      return false; // NOT REACHED
+    }  
+};
 
 #elif defined CGAL_CFG_IEEE_754_BUG
 
@@ -135,35 +194,27 @@ is_nan_by_mask_long_double(unsigned int h, unsigned int l)
   return (( h & CGAL_MANTISSA_DOUBLE_MASK ) != 0) || (( l & 0xffffffff ) != 0);
 }
 
-inline
-bool
-is_finite( const long double& dble)
-{
-  double d = dble;
-  IEEE_754_double* p = reinterpret_cast<IEEE_754_double*>(&d);
-  return is_finite_by_mask_long_double( p->c.H );
-}
-
-inline
-bool
-is_valid( const long double& dble)
-{
-  double d = dble;
-  IEEE_754_double* p = reinterpret_cast<IEEE_754_double*>(&d);
-  return ! ( is_nan_by_mask_long_double( p->c.H, p->c.L ));
-}
+template<>
+class Is_valid< long double > 
+  : public Unary_function< long double, bool > {
+  public :
+    bool operator()( const long_double& x ) {
+      double d = x;
+      IEEE_754_double* p = reinterpret_cast<IEEE_754_double*>(&d);
+      return ! ( is_nan_by_mask_long_double( p->c.H, p->c.L ));
+    }  
+};
 
 #else
 
-inline
-bool
-is_valid(const long double & d)
-{ return (d == d); }
-
-inline
-bool
-is_finite(const long double & d)
-{ return (d == d) && (is_valid(d-d)); }
+template<>
+class Is_valid< long double > 
+  : public Unary_function< long double, bool > {
+  public :
+    bool operator()( const long double& x ) {
+      return (x == x);
+    }  
+};
 
 #endif
 

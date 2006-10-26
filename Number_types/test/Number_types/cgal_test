@@ -72,21 +72,45 @@ if [ $# -ne 0 ] ; then
   done
 else
   compile_and_run bench_interval
+  compile_and_run Coercion_traits
   compile_and_run constant
+  compile_and_run CORE_BigFloat
+  compile_and_run CORE_BigInt
+  compile_and_run CORE_BigRat
+  compile_and_run CORE_Expr
+  compile_and_run Counted_number
+  compile_and_run double
   compile_and_run doubletst
+  compile_and_run float
   compile_and_run floattst
   compile_and_run Gmpq
+  compile_and_run Gmpq_new
+  compile_and_run Gmpz
+  compile_and_run int
   compile_and_run Interval_nt
+  compile_and_run Interval_nt_new
   compile_and_run known_bit_size_integers
   compile_and_run Lazy_exact_nt
+  compile_and_run Lazy_exact_nt_new
+  compile_and_run leda_bigfloat
+  compile_and_run leda_integer
+  compile_and_run leda_rational
+  compile_and_run leda_real
+  compile_and_run long_double
   compile_and_run long_doubletst
+  compile_and_run long_long
   compile_and_run MP_Float
+  compile_and_run MP_Float_new
+  compile_and_run mpq_class
+  compile_and_run mpz_class
   compile_and_run NT_checker
   compile_and_run Quotient
   compile_and_run quotient_io
+  compile_and_run Quotient_new
   compile_and_run root_of_2
   compile_and_run rounding_modes
   compile_and_run simplest_rational
+  compile_and_run Sqrt_extension
   compile_and_run _test_valid_finite_double
   compile_and_run _test_valid_finite_float
   compile_and_run to_interval_test

@@ -1,0 +1,75 @@
+#include <iostream>
+#include <CGAL/basic.h>
+#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Quotient.h>
+#include <CGAL/_test_algebraic_structure.h>
+#include <CGAL/_test_real_embeddable.h>
+
+template< class AT >
+void test_quotient() {
+  {
+    typedef CGAL::Quotient< typename AT::Integer > NT;
+    typedef CGAL::Field_tag Tag;
+    typedef CGAL::Tag_true Is_exact;
+    CGAL::test_algebraic_structure<NT,Tag, Is_exact>();
+    CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(4),NT(6),NT(15));
+    CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(6),NT(15));
+    CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(4),NT(-6),NT(15));
+    CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(-6),NT(15));
+    CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(4),NT(6),NT(-15));
+    CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(6), NT(15));
+    CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(4),NT(-6),NT(-15));
+    CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(-6),NT(-15));
+
+    CGAL::test_algebraic_structure<NT,Tag, Is_exact>( NT(5,74), NT(3,25), NT(7,3));
+    CGAL::test_algebraic_structure<NT,Tag, Is_exact>(-NT(5,74), NT(3,25), NT(7,3));
+    CGAL::test_algebraic_structure<NT,Tag, Is_exact>( NT(5,74),-NT(3,25), NT(7,3));
+    CGAL::test_algebraic_structure<NT,Tag, Is_exact>(-NT(5,74),-NT(3,25), NT(7,3));
+    CGAL::test_algebraic_structure<NT,Tag, Is_exact>( NT(5,74), NT(3,25),-NT(7,3));
+    CGAL::test_algebraic_structure<NT,Tag, Is_exact>(-NT(5,74), NT(3,25),-NT(7,3));
+    CGAL::test_algebraic_structure<NT,Tag, Is_exact>( NT(5,74),-NT(3,25),-NT(7,3));
+    CGAL::test_algebraic_structure<NT,Tag, Is_exact>(-NT(5,74),-NT(3,25),-NT(7,3));
+
+    CGAL::test_real_embeddable<NT>();
+
+  }
+  /* // Quotient for inexact types not implemented 
+     {
+      typedef CGAL::Quotient< leda_bigfloat > NT;
+      typedef CGAL::Field_with_sqrt_tag Tag;
+      CGAL::test_algebraic_structure<NT,Tag>();
+      CGAL::test_algebraic_structure<NT,Tag>( NT(5,74), NT(3,25), NT(7,3));
+      CGAL::test_algebraic_structure<NT,Tag>(-NT(5,74), NT(3,25), NT(7,3));
+      CGAL::test_algebraic_structure<NT,Tag>( NT(5,74),-NT(3,25), NT(7,3));
+      CGAL::test_algebraic_structure<NT,Tag>(-NT(5,74),-NT(3,25), NT(7,3));
+      CGAL::test_algebraic_structure<NT,Tag>( NT(5,74), NT(3,25),-NT(7,3));
+      CGAL::test_algebraic_structure<NT,Tag>(-NT(5,74), NT(3,25),-NT(7,3));
+      CGAL::test_algebraic_structure<NT,Tag>( NT(5,74),-NT(3,25),-NT(7,3));
+      CGAL::test_algebraic_structure<NT,Tag>(-NT(5,74),-NT(3,25),-NT(7,3));
+      
+      CGAL::test_real_embeddable<NT>();
+      }
+  */
+  
+  {   // see also  Coercion_traits_test.C
+      typedef typename AT::Integer                 I ;
+      typedef CGAL::Quotient<typename AT::Integer> QI;
+      typedef CGAL::Coercion_traits<I,QI>  CT;
+      BOOST_STATIC_ASSERT((boost::is_same< typename CT::Are_explicit_interoperable,CGAL::Tag_true>::value));
+      BOOST_STATIC_ASSERT((boost::is_same< typename CT::Are_implicit_interoperable,CGAL::Tag_true>::value));
+      BOOST_STATIC_ASSERT((boost::is_same< typename CT::Coercion_type,QI>::value));
+  }
+}
+
+int main() {
+#ifdef CGAL_USE_LEDA
+  test_quotient<CGAL::LEDA_arithmetic_kernel>();
+#endif
+#ifdef CGAL_USE_CORE
+  test_quotient<CGAL::CORE_arithmetic_kernel>();
+#endif
+#ifdef CGAL_USE_GMP
+  test_quotient<CGAL::GMP_arithmetic_kernel>();
+#endif
+  return 0;
+}

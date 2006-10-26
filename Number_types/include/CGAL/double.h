@@ -19,16 +19,21 @@
 // $Id$
 // 
 //
-// Author(s)     : Geert-Jan Giezeman
+// Author(s)     : Geert-Jan Giezeman, Michael Hemmer
 
 #ifndef CGAL_DOUBLE_H
 #define CGAL_DOUBLE_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Algebraic_structure_traits.h>
+#include <CGAL/Real_embeddable_traits.h>
+#include <CGAL/utils.h>
+#include <CGAL/functional_base.h> // Unary_function, Binary_function
 #include <utility>
 #include <cmath>
 #include <math.h> // for nextafter
 #include <limits>
+
 
 #ifdef _MSC_VER
 #include <float.h>
@@ -41,8 +46,9 @@
 #  include <fp_class.h>
 #endif
 
-CGAL_BEGIN_NAMESPACE
 
+
+CGAL_BEGIN_NAMESPACE
 template<> struct Number_type_traits<double> {
   typedef Tag_false  Has_gcd;
   typedef Tag_true   Has_division;
@@ -53,62 +59,30 @@ template<> struct Number_type_traits<double> {
   typedef Tag_false  Has_exact_sqrt;
 };
 
-inline
-const double &
-to_double(const double & d)
-{ return d; }
-
-inline 
-std::pair<double,double>
-to_interval(double d)
-{ return std::make_pair(d,d);}
-
-inline
-double
-sqrt(double d)
-{ return std::sqrt(d); }
-
 #ifdef __sgi
 
-inline
-bool is_finite(double d)
-{
-    switch (fp_class_d(d)) {
-    case FP_POS_NORM:
-    case FP_NEG_NORM:
-    case FP_POS_ZERO:
-    case FP_NEG_ZERO:
-    case FP_POS_DENORM:
-    case FP_NEG_DENORM:
-        return true;
-    case FP_SNAN:
-    case FP_QNAN:
-    case FP_POS_INF:
-    case FP_NEG_INF:
-        return false;
-    }
-    return false; // NOT REACHED
-}
-
-inline
-bool is_valid(double d)
-{
-    switch (fp_class_d(d)) {
-    case FP_POS_NORM:
-    case FP_NEG_NORM:
-    case FP_POS_ZERO:
-    case FP_NEG_ZERO:
-    case FP_POS_INF:
-    case FP_NEG_INF:
-    case FP_POS_DENORM:
-    case FP_NEG_DENORM:
-        return true;
-    case FP_SNAN:
-    case FP_QNAN:
-        return false;
-    }
-    return false; // NOT REACHED
-}
+template<>
+class Is_valid< double > 
+  : public Unary_function< double, bool > {
+  public :
+    bool operator()( const double& x ) {
+      switch (fp_class_d(x)) {
+      case FP_POS_NORM:
+      case FP_NEG_NORM:
+      case FP_POS_ZERO:
+      case FP_NEG_ZERO:
+      case FP_POS_INF:
+      case FP_NEG_INF:
+      case FP_POS_DENORM:
+      case FP_NEG_DENORM:
+          return true;
+      case FP_SNAN:
+      case FP_QNAN:
+          return false;
+      }
+      return false; // NOT REACHED
+    }  
+};
 
 #elif defined CGAL_CFG_IEEE_754_BUG
 
@@ -132,74 +106,150 @@ is_nan_by_mask_double(unsigned int h, unsigned int l)
   return (( h & CGAL_MANTISSA_DOUBLE_MASK ) != 0) || (( l & 0xffffffff ) != 0);
 }
 
-inline
-bool
-is_finite( const double& dble)
-{
-  double d = dble;
-  IEEE_754_double* p = reinterpret_cast<IEEE_754_double*>(&d);
-  return is_finite_by_mask_double( p->c.H );
-}
-
-inline
-bool
-is_valid( const double& dble)
-{
-  double d = dble;
-  IEEE_754_double* p = reinterpret_cast<IEEE_754_double*>(&d);
-  return ! ( is_nan_by_mask_double( p->c.H, p->c.L ));
-}
+template<>
+class Is_valid< double > 
+  : public Unary_function< double, bool > {
+  public :
+    bool operator()( const double& x ) {
+      double d = x;
+      IEEE_754_double* p = reinterpret_cast<IEEE_754_double*>(&d);
+      return ! ( is_nan_by_mask_double( p->c.H, p->c.L ));
+    }  
+};
 
 #else
 
 #ifdef _MSC_VER
 
-inline
-bool
-is_valid(double d)
-{ return ! _isnan(d); }
+template<>
+class Is_valid< double > 
+  : public Unary_function< double, bool > {
+  public :
+    bool operator()( const double& x ) {
+      return ! _isnan(x);
+    }  
+};
+
 #else
 
-inline
-bool
-is_valid(double d)
-{ return (d == d); }
+template<>
+class Is_valid< double > 
+  : public Unary_function< double, bool > {
+  public :
+    bool operator()( const double& x ) {
+      return (x == x);
+    }  
+};
+
 #endif 
 
-#ifdef CGAL_CFG_NUMERIC_LIMITS_BUG
-
-inline
-bool
-is_finite(double d)
-{ return (d == d) && (is_valid(d-d)); }
-
-#else 
-
-inline
-bool
-is_finite(double d)
-{ return (d != std::numeric_limits<double>::infinity()) 
-    && (-d != std::numeric_limits<double>::infinity())
-    && is_valid(d); }
-
 #endif
 
+template <> class Algebraic_structure_traits< double >
+  : public Algebraic_structure_traits_base< double, 
+                                            CGAL::Field_with_kth_root_tag >  {
+  public:
+    typedef CGAL::Tag_false            Is_exact;
+            
+    class Sqrt 
+      : public Unary_function< Algebraic_structure, Algebraic_structure > {
+      public:
+        Algebraic_structure operator()( const Algebraic_structure& x ) const {
+          return CGAL_CLIB_STD::sqrt( x );
+        }
+    };
+    
+    class Kth_root 
+      : public Binary_function<int, Algebraic_structure, Algebraic_structure> {
+      public:
+        Algebraic_structure operator()( int k, 
+                                        const Algebraic_structure& x) const {
+          CGAL_precondition_msg( k > 0, "'k' must be positive for k-th roots");
+          return CGAL_CLIB_STD::pow(x, 1.0 / double(k));
+        }
+    };
+    
+};
 
+template <> class Real_embeddable_traits< double > 
+  : public Real_embeddable_traits_base< double > {
+  public:
+
+// GCC is faster with std::fabs().
+#ifdef __GNUG__
+    class Abs 
+      : public Unary_function< Real_embeddable, Real_embeddable > {
+      public:        
+        Real_embeddable operator()( const Real_embeddable& x ) const {
+          return CGAL_CLIB_STD::fabs( x );
+        }
+    };    
 #endif
+
+    typedef CGAL::INTERN_RET::To_double_by_conversion< Real_embeddable >
+                                                                  To_double;      
+    typedef CGAL::INTERN_RET::To_interval_by_conversion< Real_embeddable >
+                                                                  To_interval;    
+                                                                  
+// Is_finite depends on platform
+#ifdef __sgi
+    class Is_finite
+      : public Unary_function< Real_embeddable, bool > {
+      public :
+        bool operator()( const Real_embeddable& x ) {
+          switch (fp_class_d(x)) {
+          case FP_POS_NORM:
+          case FP_NEG_NORM:
+          case FP_POS_ZERO:
+          case FP_NEG_ZERO:
+          case FP_POS_DENORM:
+          case FP_NEG_DENORM:
+              return true;
+          case FP_SNAN:
+          case FP_QNAN:
+          case FP_POS_INF:
+          case FP_NEG_INF:
+              return false;
+          }
+          return false; // NOT REACHED          
+        }
+    };                                                                      
+
+#elif defined CGAL_CFG_IEEE_754_BUG
+    class Is_finite
+      : public Unary_function< Real_embeddable, bool > {
+      public :
+        bool operator()( const Real_embeddable& x ) {
+          Real_embeddable d = x;
+          IEEE_754_double* p = reinterpret_cast<IEEE_754_double*>(&d);
+          return is_finite_by_mask_double( p->c.H );
+        }
+    };                                                                      
+#elif defined CGAL_CFG_NUMERIC_LIMITS_BUG
+    class Is_finite
+      : public Unary_function< Real_embeddable, bool > {
+      public :
+        bool operator()( const Real_embeddable& x ) {
+           return (x == x) && (is_valid(x-x));
+        }
+    };                                                                      
+#else
+    class Is_finite
+      : public Unary_function< Real_embeddable, bool > {
+      public :
+        bool operator()( const Real_embeddable& x ) {
+          return (x != std::numeric_limits<Real_embeddable>::infinity()) 
+              && (-x != std::numeric_limits<Real_embeddable>::infinity())
+              && is_valid(x);
+      }
+    };                                                                      
+#endif
+};
 
 inline
 io_Read_write
 io_tag(double)
 { return io_Read_write(); }
-
-// GCC is faster with std::fabs().
-#ifdef __GNUG__
-inline
-double
-abs(const double& d)
-{ return CGAL_CLIB_STD::fabs(d); }
-#endif
-
 
 inline
 double

@@ -7,6 +7,7 @@
 
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
+#include <CGAL/Gmpzf.h>
 #include <CGAL/Gmpq.h>
 #endif
 
@@ -43,6 +44,8 @@ typedef CGAL::Quotient<CGAL::MP_Float>            QMPF;
 
 int main()
 {
+  
+
   // builtin NTs
   TESTIT(int, "int")
   TESTIT(long int, "long int")
@@ -60,7 +63,7 @@ int main()
   TESTIT(long double, "long double")
 
   // CGAL number types
-  TESTIT(CGAL::MP_Float, "MP_Float")
+  //TESTIT(CGAL::MP_Float, "MP_Float")
   TESTIT(CGAL::Quotient<int>, "Quotient<int>")
   TESTIT(QMPF, "Quotient<MP_Float>")
   TESTIT(CGAL::Lazy_exact_nt<QMPF>, "Lazy_exact_nt<Quotient<MP_Float> >")
@@ -69,6 +72,8 @@ int main()
   // GMP based NTs
 #ifdef CGAL_USE_GMP
   TESTIT(CGAL::Gmpz, "Gmpz")
+  TESTIT(CGAL::Gmpz, "Gmpzf")
+      TESTIT(CGAL::MP_Float, "MP_Float")
   TESTIT(CGAL::Gmpq, "Gmpq")
 #endif // CGAL_USE_GMP
 #ifdef CGAL_USE_GMPXX

@@ -1,0 +1,59 @@
+// TODO: Add licence
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL:$
+// $Id:$
+// 
+//
+// Author(s)     : Michael Hemmer <mhemmer@uni-mainz.de>
+//                 Lutz Kettner   <kettner@mpi-inf.mpg.de>
+//
+// ============================================================================
+
+// TODO: The comments are all original EXACUS comments and aren't adapted. So
+//         they may be wrong now.
+
+/*! \file NiX/Fraction_traits.h
+    \brief Defines class NiX::Fraction_traits. 
+ 
+    Provides dependent types and function objects for all the functions
+    beyond operators with specializations of the \c Fraction_traits<NT>
+    class for each number type.
+*/
+
+#ifndef CGAL_FRACTION_TRAITS_H
+#define CGAL_FRACTION_TRAITS_H 
+
+#include <CGAL/basic.h>
+
+CGAL_BEGIN_NAMESPACE
+
+/*! \ingroup NiX_Fraction_traits_spec
+ *  \brief Traits class for accessing numerator and denominator.\n 
+ *  It is a model of the concept FractionTraits. 
+ *
+ *  This is the default version of NiX::Fraction_traits. 
+ *  It typedefs NiX::Fraction_traits::Is_decomposable
+ *  as ::CGAL::Tag_false and all functors to LiS::Null_type.
+ *  
+ *  \see module NiX_Fraction_traits 
+ *  \see module NiX_Cofraction_traits
+ */
+template <class Fraction_ >
+class Fraction_traits {
+public:
+    typedef Fraction_ Fraction;
+    typedef CGAL::Tag_false Is_fraction;
+    typedef CGAL::Null_tag Numerator;
+    typedef CGAL::Null_tag Denominator;
+    typedef CGAL::Null_functor Common_factor;
+    typedef CGAL::Null_functor Decompose;
+    typedef CGAL::Null_functor Compose;
+};
+
+CGAL_END_NAMESPACE
+
+#endif // CGAL_FRACTION_TRAITS_H
+// EOF

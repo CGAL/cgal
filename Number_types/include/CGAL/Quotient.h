@@ -42,16 +42,26 @@
 #  include <cctype>
 #endif
 
+#include <CGAL/Quotient_fwd.h>
+
+#include <CGAL/Algebraic_structure_traits.h>
+#include <CGAL/Real_embeddable_traits.h>
+#include <CGAL/Coercion_traits.h>
+#include <CGAL/utils.h>
+
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Number_type_traits.h>
 #include <CGAL/Kernel/mpl.h>
-#include <CGAL/Binary_operator_result.h>
-#include <CGAL/Quotient_fwd.h>
 
 #include <boost/operators.hpp>
+#include <boost/mpl/if.hpp>
 
 #include <CGAL/Root_of_traits.h>
 #include <CGAL/make_root_of_2.h>
+
+#include <CGAL/number_utils.h>
+
+#include <CGAL/functional_base.h> // Unary_function, Binary_function
 
 CGAL_BEGIN_NAMESPACE
 
@@ -129,7 +139,7 @@ class Quotient
     swap(num, q.num);
     swap(den, q.den);
   }
-  
+
 #ifdef CGAL_ROOT_OF_2_ENABLE_HISTOGRAM_OF_NUMBER_OF_DIGIT_ON_THE_COMPLEX_CONSTRUCTOR
   int tam() const { return std::max(num.tam(), den.tam()); }
 #endif
@@ -139,30 +149,11 @@ class Quotient
   NT   den;
 };
 
-
-template < typename NT >
-struct Binary_operator_result < Quotient<NT>, NT >
-{ typedef Quotient<NT>  type; };
-
-template < typename NT >
-struct Binary_operator_result < NT, Quotient<NT> >
-{ typedef Quotient<NT>  type; };
-
-
 template <class NT>
 inline
 void swap(Quotient<NT> &p, Quotient<NT> &q)
 {
   p.swap(q);
-}
-
-template <class NT>
-Quotient<NT>
-sqrt(const Quotient<NT> &q)
-{
-    CGAL_precondition(q > 0);
-    return Quotient<NT>(CGAL_NTS sqrt(q.numerator()*q.denominator()),
-	                q.denominator());
 }
 
 template <class NT>
@@ -338,11 +329,6 @@ quotient_cmp(const Quotient<NT>& x, const Quotient<NT>& y)
     }
 }
 
-template <class NT>
-inline
-Comparison_result
-compare(const Quotient<NT>& x, const Quotient<NT>& y)
-{ return quotient_cmp(x, y); }
 
 template <class NT>
 std::ostream&
@@ -402,6 +388,13 @@ io_Operator
 io_tag(const Quotient<NT>&)
 { return io_Operator(); }
 
+
+template< class NT >
+inline
+Quotient<NT>
+operator+( const Quotient<NT>& x ) {
+  return Quotient<NT>(x);
+}
 
 template <class NT>
 inline
@@ -476,54 +469,15 @@ operator>(const Quotient<NT>& x, const CGAL_int(NT)& y)
 { return quotient_cmp(x, Quotient<NT>(y)) == LARGER; }
 
 
-template <class NT>
-double
-to_double(const Quotient<NT>& q)   /* TODO */
-{
-  if (q.num == 0 )
-    return 0;
+template< class NT >
+class Is_valid< Quotient<NT> > 
+  : public Unary_function< Quotient<NT>, bool > {
+  public :
+    bool operator()( const Quotient<NT>& x ) {
+      return is_valid(x.num) && is_valid(x.den);
+    }
+};
 
-  double nd = CGAL_NTS to_double( q.num );
-
-  if (q.den == 1 )
-    return nd;
-
-  double dd = CGAL_NTS to_double( q.den );
-
-  if ( is_finite( q.den ) && is_finite( q.num ) )
-    return nd/dd;
-
-  if ( CGAL_NTS abs(q.num) > CGAL_NTS abs(q.den) )
-  {
-      NT  nt_div = q.num / q.den;
-      double divd = CGAL_NTS to_double(nt_div);
-      if ( divd >= CGAL_CLIB_STD::ldexp(1.0,53) )
-      { return divd; }
-  }
-  if ( CGAL_NTS abs(q.num) < CGAL_NTS abs(q.den) )
-  { return 1.0 / CGAL_NTS to_double( NT(1) / q ); }
-
-  return nd/dd;
-}
-
-template <class RT>
-std::pair<double,double>
-to_interval (const Quotient<RT>& z)
-{
-    Interval_nt<> quot = Interval_nt<>(CGAL_NTS to_interval(z.numerator())) /
-		         Interval_nt<>(CGAL_NTS to_interval(z.denominator()));
-    return std::make_pair(quot.inf(), quot.sup());
-}
-
-template <class NT>
-bool
-is_valid(const Quotient<NT>& q)
-{ return is_valid(q.num) && is_valid(q.den); }
-
-template <class NT>
-bool
-is_finite(const Quotient<NT>& q)
-{ return is_finite(q.num) && is_finite(q.den); }
 
 template <class NT>
 inline
@@ -539,7 +493,7 @@ numerator(const Quotient<NT>& q)
 
 template < class NT >
 Quotient<NT> exact_division(const Quotient<NT>& n, const Quotient<NT>& d) {
-  return n/d;
+    return n/d;
 }
 
 // The min/max are functions are needed since LEDA defines template
@@ -572,6 +526,213 @@ gcd(const NT&, const NT&)
 
 #undef CGAL_double
 #undef CGAL_int
+
+//
+// Algebraic structure traits
+//
+namespace INTERN_QUOTIENT {
+  template< class NT, class Sqrt_functor >
+  class Sqrt_selector {
+    public:
+      class Sqrt
+        : public Unary_function< NT, NT > {
+        public:
+          NT operator()( const NT& x ) const {
+            CGAL_precondition(x > 0);
+            return NT(CGAL_NTS sqrt(x.numerator()*x.denominator()),
+                      x.denominator());          
+          }
+      };
+  };
+  
+  template< class NT >
+  class Sqrt_selector< NT, CGAL::Null_functor > {
+    public:
+      typedef CGAL::Null_functor Sqrt;
+  };
+
+// TODO: Algebraic_structure_tag could be Field_with_sqrt_tag, if NT
+//       is INEXACT (because Sqrt can be inexact) and has a Sqrt-functor.
+template<class NT> class Algebraic_structure_traits_quotient_base;
+
+template< class NT > class Algebraic_structure_traits_quotient_base< Quotient<NT> >
+  : public Algebraic_structure_traits_base< Quotient<NT>, CGAL::Field_tag >  {
+public:
+    typedef Quotient<NT> Algebraic_structure;  
+ 
+    typedef typename Algebraic_structure_traits<NT>::Is_exact        Is_exact;
+    
+
+    
+    class Is_square
+        : public Binary_function< Quotient<NT>, Quotient<NT>&, bool > {
+    public:
+        bool operator()( Quotient<NT> x, Quotient<NT>& y ) const {
+            NT x_num, x_den, y_num, y_den;
+            x.normalize();
+            x_num = x.numerator();
+            x_den = x.denominator();
+            
+            typename Algebraic_structure_traits<NT>::Is_square is_square;
+            bool num_is_square = is_square(x_num,y_num);
+            bool den_is_square = is_square(x_den,y_den);
+            y= Quotient<NT>(y_num,y_den);
+            return num_is_square && den_is_square;
+        }
+        bool operator()(Quotient<NT> x) const {
+            x.normalize();
+            typename Algebraic_structure_traits<NT>::Is_square is_square;
+            return is_square(x.numerator())&&is_square(x.denominator());
+        }
+        
+    };
+
+    typedef typename boost::mpl::if_c< 
+        !boost::is_same< typename Algebraic_structure_traits<NT>::Sqrt, 
+                         CGAL::Null_functor >::value,
+         typename INTERN_QUOTIENT::Sqrt_selector< Algebraic_structure, 
+                                                  Is_exact >::Sqrt,
+         CGAL::Null_functor 
+                            >::type Sqrt;
+
+    class Simplify 
+      : public Unary_function< Algebraic_structure&, void > {
+      public:
+        void operator()( Algebraic_structure& x) const {
+            x.normalize();
+        }
+    };
+};
+
+
+template<class NT> class Real_embeddable_traits_quotient_base;
+// Real embeddable traits
+template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> > 
+  : public INTERN_RET::Real_embeddable_traits_base_selector< Quotient<NT>,
+                  typename Real_embeddable_traits< NT >::Is_real_embeddable > {
+  public:
+    typedef Quotient<NT> Real_embeddable;  
+               
+    class Compare 
+      : public Binary_function< Real_embeddable, Real_embeddable,
+                                CGAL::Comparison_result > {
+      public:
+        CGAL::Comparison_result operator()( const Real_embeddable& x, 
+                                            const Real_embeddable& y ) const {
+          return quotient_cmp(x, y);
+        }
+    };
+    
+    class To_double 
+      : public Unary_function< Real_embeddable, double > {
+      public:
+        double operator()( const Real_embeddable& x ) const {
+        // Original global function was marked with an TODO!!
+          if (x.num == 0 )
+            return 0;
+        
+          double nd = CGAL_NTS to_double( x.num );
+        
+          if (x.den == 1 )
+            return nd;
+        
+          double dd = CGAL_NTS to_double( x.den );
+        
+          if ( CGAL_NTS is_finite( x.den ) && CGAL_NTS is_finite( x.num ) )
+            return nd/dd;
+        
+          if ( CGAL_NTS abs(x.num) > CGAL_NTS abs(x.den) )
+          {
+              NT  nt_div = x.num / x.den;
+              double divd = CGAL_NTS to_double(nt_div);
+              if ( divd >= CGAL_CLIB_STD::ldexp(1.0,53) )
+              { return divd; }
+          }
+          if ( CGAL_NTS abs(x.num) < CGAL_NTS abs(x.den) )
+          { return 1.0 / CGAL_NTS to_double( NT(1) / x ); }
+        
+          return nd/dd;
+        }
+    };
+    
+    class To_interval 
+      : public Unary_function< Real_embeddable, std::pair< double, double > > {
+      public:
+        std::pair<double, double> operator()( const Real_embeddable& x ) const {
+          Interval_nt<> quot = 
+                          Interval_nt<>(CGAL_NTS to_interval(x.numerator())) /
+                          Interval_nt<>(CGAL_NTS to_interval(x.denominator()));
+          return std::make_pair(quot.inf(), quot.sup());
+        }
+    };
+    
+    class Is_finite
+      : public Unary_function< Real_embeddable, bool > {
+      public:
+        bool operator()( const Real_embeddable& x ) {
+          return CGAL_NTS is_finite(x.num) && CGAL_NTS is_finite(x.den);
+        }
+    };
+};
+} // namespace INTERN_QUOTIENT 
+
+template< class NT > class Algebraic_structure_traits< Quotient<NT> >
+    : public INTERN_QUOTIENT::Algebraic_structure_traits_quotient_base<Quotient<NT> >{};
+
+template< class NT > class Real_embeddable_traits< Quotient<NT> >
+    : public INTERN_QUOTIENT::Real_embeddable_traits_quotient_base<Quotient<NT> >{};
+
+
+// fwd 
+template <class A, class B> class Coercion_traits;
+// self coercion
+CGAL_DEFINE_COERCION_TRAITS_FOR_SELF_TEM( Quotient<NT>, class NT);
+// from int to Quotient
+
+template <class NT>                                                      
+struct Coercion_traits<typename First_if_different<int, NT>::Type,Quotient<NT> >{                                    
+    typedef CGAL::Tag_true  Are_explicit_interoperable;             
+    typedef CGAL::Tag_true  Are_implicit_interoperable;             
+    typedef Quotient<NT> Coercion_type;                                       
+    struct Cast{                                                    
+        typedef Coercion_type result_type;                          
+        Coercion_type operator()(const Quotient<NT>& x)   const { return x;}  
+        Coercion_type operator()(const typename First_if_different<int, NT>::Type& x) const {             
+            return Coercion_type(x);}                               
+    };                                                              
+};                                                                  
+template <class NT>                                                      
+struct Coercion_traits<Quotient<NT>,typename First_if_different<int, NT>::Type>
+    :public Coercion_traits<typename First_if_different<int, NT>::Type,Quotient<NT> >
+{};
+
+// from double to Quotient
+template <class NT>                                                      
+struct Coercion_traits<typename First_if_different<double, NT>::Type,Quotient<NT> >{                                    
+    typedef CGAL::Tag_true  Are_explicit_interoperable;             
+    typedef CGAL::Tag_true  Are_implicit_interoperable;             
+    typedef Quotient<NT> Coercion_type;                                       
+    struct Cast{                                                    
+        typedef Coercion_type result_type;                          
+        Coercion_type operator()(const Quotient<NT>& x)   const { return x;}  
+        Coercion_type operator()(const typename First_if_different<double, NT>::Type& x) const {             
+            return Coercion_type(x);}                               
+    };                                                              
+};                                                                  
+template <class NT>                                                      
+struct Coercion_traits<Quotient<NT>,typename First_if_different<double, NT>::Type>
+    :public Coercion_traits<typename First_if_different<double, NT>::Type,Quotient<NT> >
+{};
+
+
+
+
+
+// from NT to Quotient
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO_TEM ( NT, Quotient<NT>, class NT);
+
+
+
 
 // Rational traits
 template < class NT >

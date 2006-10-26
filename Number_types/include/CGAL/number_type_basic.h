@@ -27,8 +27,21 @@
 
 #define CGAL_PI 3.14159265358979323846
 
-#define CGAL_NTS CGAL::
-// #define CGAL_NTS CGAL::NTS::
+
+//#ifdef CGAL_USE_NTS_NAMESPACE
+#if 0 
+
+#define CGAL_NTS_BEGIN_NAMESPACE namespace NTS {
+#define CGAL_NTS_END_NAMESPACE }
+#define CGAL_NTS ::CGAL::NTS::
+
+#else
+
+#define CGAL_NTS_BEGIN_NAMESPACE
+#define CGAL_NTS_END_NAMESPACE
+#define CGAL_NTS ::CGAL::
+
+#endif
 
 // CGAL uses std::min and std::max
 #include <algorithm>
@@ -42,9 +55,32 @@ using std::max;
 
 CGAL_END_NAMESPACE
 
-#include <CGAL/number_utils_fwd.h>
+#include <CGAL/functional_base.h> // Unary_function, Binary_function
+
+#include <CGAL/Kernel/mpl.h>
 #include <CGAL/known_bit_size_integers.h>
-#include <CGAL/Number_type_traits.h>
+#include <CGAL/enum.h>
+
+#include <CGAL/Coercion_traits.h>
+#include <CGAL/Algebraic_structure_traits.h>
+#include <CGAL/Real_embeddable_traits.h>
+#include <CGAL/Number_type_traits.h> 
+
+#include <CGAL/Fraction_traits.h>
+//#include <CGAL/Scalar_factor_traits.h>
+//#include <CGAL/Algebraic_number_traits.h>
+
+
+#include <CGAL/utils_classes.h>
+#include <CGAL/utils.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/tags.h>
+#include <cmath>
+
+//#include <CGAL/Algebraic_structure_traits.h>
+//#include <CGAL/Real_embeddable_traits.h>
+//#include <CGAL/number_utils_fwd.h>
+
 #include <CGAL/float.h>
 #include <CGAL/double.h>
 #include <CGAL/long_double.h>
@@ -52,6 +88,10 @@ CGAL_END_NAMESPACE
 #ifdef CGAL_USE_LONG_LONG
 #include <CGAL/long_long.h>
 #endif
+
+#include <CGAL/FPU.h>
+
+#include <CGAL/Interval_nt_fwd.h>
 
 // Including all number type files is necessary for compilers implementing
 // two-stage name lookup (like g++ >= 3.4).
@@ -64,15 +104,19 @@ CGAL_END_NAMESPACE
 #include <CGAL/MP_Float_fwd.h>
 #include <CGAL/Nef_polynomial_fwd.h>
 #include <CGAL/Number_type_checker_fwd.h>
+
 #ifdef CGAL_USE_GMP
-#  include <CGAL/Gmpzq_fwd.h>
+#include <CGAL/Gmpzq_fwd.h>
 #endif
+
 #ifdef CGAL_USE_GMPXX
 #  include <CGAL/gmpxx_fwd.h>
 #endif
+
 #ifdef CGAL_USE_CORE
 #  include <CGAL/CORE_Expr_fwd.h>
 #endif
+
 #include <CGAL/Quotient_fwd.h>
 #include <CGAL/Root_of_2_fwd.h>
 
@@ -82,10 +126,12 @@ CGAL_END_NAMESPACE
 // for Quotient<MP_Float> and Quotient<Gmpz/Gmpzf>, which triggers their
 // instantiation, even if only to_double(double) is called, at least
 // when Quotient is defined...
-#include <CGAL/MP_Float.h>
+
+//#include <CGAL/MP_Float.h>
 #ifdef CGAL_USE_GMP
-#  include <CGAL/Gmpz.h>
-#  include <CGAL/Gmpzf.h>
+#include <CGAL/Gmpz.h>
+//#include <CGAL/Gmpq.h>
+//#include <CGAL/Gmpzf.h>
 #endif
 
 CGAL_BEGIN_NAMESPACE
@@ -131,6 +177,7 @@ Nef_polynomial<ET> gcd(const Nef_polynomial<ET> &, const Nef_polynomial<ET> &);
 CGAL_END_NAMESPACE
 
 #endif // CGAL_CFG_NO_TWO_STAGE_NAME_LOOKUP
+
 
 #include <CGAL/number_utils.h>
 #include <CGAL/number_utils_classes.h>

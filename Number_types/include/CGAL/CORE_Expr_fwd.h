@@ -35,13 +35,6 @@ namespace CORE
 
 CGAL_BEGIN_NAMESPACE
 
-double to_double(const CORE::Expr &);
-CORE::Expr sqrt(const CORE::Expr &);
-bool is_finite(const CORE::Expr &);
-bool is_valid(const CORE::Expr &);
-Sign sign(const CORE::Expr&);
-Comparison_result compare(const CORE::Expr&, const CORE::Expr&);
-std::pair<double,double> to_interval (const CORE::Expr &);
 io_Operator io_tag(const CORE::Expr &);
 
 CGAL_END_NAMESPACE

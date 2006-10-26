@@ -135,7 +135,7 @@ MP_Float::MP_Float(long double d)
 }
 
 Comparison_result
-compare (const MP_Float & a, const MP_Float & b)
+INTERN_MP_FLOAT::compare (const MP_Float & a, const MP_Float & b)
 {
   if (a.is_zero())
     return (Comparison_result) - b.sign();
@@ -239,7 +239,7 @@ operator*(const MP_Float &a, const MP_Float &b)
 
 // Squaring simplifies things and is faster, so we specialize it.
 MP_Float
-square(const MP_Float &a)
+INTERN_MP_FLOAT::square(const MP_Float &a)
 {
   // There is a bug here (see test-case in test/NT/MP_Float.C).
   // For now, I disable this small optimization.
@@ -401,14 +401,14 @@ to_interval_exp(const MP_Float &b)
 // to_double() returns, not the closest double, but a one bit error is allowed.
 // We guarantee : to_double(MP_Float(double d)) == d.
 double
-to_double(const MP_Float &b)
+INTERN_MP_FLOAT::to_double(const MP_Float &b)
 {
   pair<double, int> ap = to_double_exp(b);
   return ap.first * CGAL_CLIB_STD::ldexp(1.0, ap.second);
 }
 
 double
-to_double(const Quotient<MP_Float> &q)
+INTERN_MP_FLOAT::to_double(const Quotient<MP_Float> &q)
 {
     pair<double, int> n = to_double_exp(q.numerator());
     pair<double, int> d = to_double_exp(q.denominator());
@@ -418,7 +418,7 @@ to_double(const Quotient<MP_Float> &q)
 
 
 double
-to_double(const Root_of_2<MP_Float> &x)
+INTERN_MP_FLOAT::to_double(const Root_of_2<MP_Float> &x)
 {
   typedef MP_Float RT;
   typedef Quotient<RT> FT;
@@ -459,7 +459,7 @@ to_double(const Root_of_2<MP_Float> &x)
 
 // FIXME : This function deserves proper testing...
 pair<double,double>
-to_interval(const MP_Float &b)
+INTERN_MP_FLOAT::to_interval(const MP_Float &b)
 {
   pair<pair<double, double>, int> ap = to_interval_exp(b);
   return ldexp(Interval_nt<>(ap.first), ap.second).pair();
@@ -467,7 +467,7 @@ to_interval(const MP_Float &b)
 
 // FIXME : This function deserves proper testing...
 pair<double,double>
-to_interval(const Quotient<MP_Float> &q)
+INTERN_MP_FLOAT::to_interval(const Quotient<MP_Float> &q)
 {
   pair<pair<double, double>, int> n = to_interval_exp(q.numerator());
   pair<pair<double, double>, int> d = to_interval_exp(q.denominator());

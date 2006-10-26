@@ -30,43 +30,14 @@ CGAL_BEGIN_NAMESPACE
 template <typename ET> class Lazy_exact_nt;
 
 template <typename ET>
-double to_double(const Lazy_exact_nt<ET> &);
-
+Lazy_exact_nt<ET> min BOOST_PREVENT_MACRO_SUBSTITUTION 
+(const Lazy_exact_nt<ET> &, const Lazy_exact_nt<ET> &);
 template <typename ET>
-std::pair<double,double> to_interval(const Lazy_exact_nt<ET> &);
+Lazy_exact_nt<ET> max BOOST_PREVENT_MACRO_SUBSTITUTION 
+(const Lazy_exact_nt<ET> &, const Lazy_exact_nt<ET> &);
 
-template <typename ET>
-Sign sign(const Lazy_exact_nt<ET> &);
-
-template <typename ET1, typename ET2>
-Comparison_result
-compare(const Lazy_exact_nt<ET1> &, const Lazy_exact_nt<ET2> &);
-
-template <typename ET>
-Lazy_exact_nt<ET> abs(const Lazy_exact_nt<ET> &);
-
-template <typename ET>
-Lazy_exact_nt<ET> square(const Lazy_exact_nt<ET> &);
-
-template <typename ET>
-Lazy_exact_nt<ET> sqrt(const Lazy_exact_nt<ET> &);
-
-template <typename ET>
-Lazy_exact_nt<ET> min BOOST_PREVENT_MACRO_SUBSTITUTION (const Lazy_exact_nt<ET> &,
-							const Lazy_exact_nt<ET> &);
-
-template <typename ET>
-Lazy_exact_nt<ET> max BOOST_PREVENT_MACRO_SUBSTITUTION (const Lazy_exact_nt<ET> &,
-							const Lazy_exact_nt<ET> &);
-
-template <typename ET>
-bool is_finite(const Lazy_exact_nt<ET> &);
-
-template <typename ET>
-bool is_valid(const Lazy_exact_nt<ET> &);
-
-template <typename ET>
-Lazy_exact_nt<ET> gcd(const Lazy_exact_nt<ET> &, const Lazy_exact_nt<ET> &);
+//template <typename ET> Lazy_exact_nt<ET> 
+//gcd(const Lazy_exact_nt<ET> &, const Lazy_exact_nt<ET> &);
 
 #if 0 // to be finished
 template < typename ET >

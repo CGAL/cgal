@@ -26,13 +26,23 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/Number_type_traits.h>
+
+#include <CGAL/Algebraic_structure_traits.h>
+#include <CGAL/Real_embeddable_traits.h>
+#include <CGAL/utils.h>
+
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Handle.h>
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/NT_converter.h>
-#include <CGAL/Binary_operator_result.h>
+#include <CGAL/Coercion_traits.h>
 #include <CGAL/Lazy_exact_nt_fwd.h>
+
 #include <CGAL/Profile_counter.h>
+
+#include <CGAL/functional_base.h> // Unary_function, Binary_function
+#include <boost/iterator/transform_iterator.hpp> // for Root_of functor
+#include <boost/static_assert.hpp>
 
 #include <boost/operators.hpp>
 
@@ -249,9 +259,9 @@ public:
 // Abstract base representation class for lazy numbers
 template <typename ET>
 struct Lazy_exact_rep : public Lazy_construct_rep<Interval_nt<false>,
-                                                  ET, To_interval<ET> >
+                                                  ET, typename Real_embeddable_traits<ET>::To_interval >
 {
-  typedef Lazy_construct_rep<Interval_nt<false>, ET, To_interval<ET> > Base;
+  typedef Lazy_construct_rep<Interval_nt<false>, ET, typename Real_embeddable_traits<ET>::To_interval > Base;
 
   Lazy_exact_rep (const Interval_nt<false> & i)
       : Base(i) {}
@@ -295,7 +305,7 @@ template <typename ET>
 struct Lazy_exact_Ex_Cst : public Lazy_exact_rep<ET>
 {
   Lazy_exact_Ex_Cst (const ET & e)
-      : Lazy_exact_rep<ET>(to_interval(e))
+      : Lazy_exact_rep<ET>(CGAL_NTS to_interval(e))
   {
     this->et = new ET(e);
   }
@@ -403,7 +413,7 @@ struct NAME : public Lazy_exact_unary<ET>                                \
   {                                                                      \
     this->et = new ET(OP(this->op1.exact()));                            \
     if (!this->approx().is_point())                                      \
-      this->approx() = CGAL::to_interval(*(this->et));                   \
+      this->approx() = CGAL_NTS to_interval(*(this->et));                \
     this->prune_dag();                                                   \
    }                                                                     \
 };
@@ -422,7 +432,7 @@ struct NAME : public Lazy_exact_unary<ET>                                \
   {                                                                      \
     this->et = new ET(OP(this->op1.exact()));                            \
     if (!this->approx().is_point())                                      \
-      this->approx() = CGAL::to_interval(*(this->et));                   \
+      this->approx() = CGAL_NTS to_interval(*(this->et));                \
     this->prune_dag();                                                   \
   }                                                                      \
 };
@@ -431,7 +441,7 @@ struct NAME : public Lazy_exact_unary<ET>                                \
 CGAL_LAZY_UNARY_OP(CGAL::opposite,  Lazy_exact_Opp)
 CGAL_LAZY_UNARY_OP(CGAL_NTS abs,    Lazy_exact_Abs)
 CGAL_LAZY_UNARY_OP(CGAL_NTS square, Lazy_exact_Square)
-CGAL_LAZY_UNARY_OP(CGAL::sqrt,      Lazy_exact_Sqrt)
+CGAL_LAZY_UNARY_OP(CGAL_NTS sqrt,   Lazy_exact_Sqrt)
 
 #ifndef CGAL_CFG_COMMA_BUG
 // A macro for +, -, * and /
@@ -447,7 +457,7 @@ struct NAME : public Lazy_exact_binary<ET, ET1, ET2>                     \
   {                                                                      \
     this->et = new ET(this->op1.exact() OP this->op2.exact());           \
     if (!this->approx().is_point())                                      \
-      this->approx() = CGAL::to_interval(*(this->et));                   \
+      this->approx() = CGAL_NTS to_interval(*(this->et));                \
     this->prune_dag();                                                   \
    }                                                                     \
 };
@@ -524,7 +534,7 @@ public:
 
 private:
   typedef Lazy_exact_nt<ET> Self;
-  typedef Lazy_construct_rep<Interval_nt<false>, ET, To_interval<ET> > Self_rep;
+  typedef Lazy_construct_rep< Interval_nt<false>, ET, typename Real_embeddable_traits<ET>::To_interval > Self_rep;
 
 public :
 
@@ -559,6 +569,9 @@ public :
   template <class ET1>
   Lazy_exact_nt (const Lazy_exact_nt<ET1> &x)
   { PTR = new Lazy_lazy_exact_Cst<ET, ET1>(x); }
+
+  Self operator+ () const
+  { return *this; }
 
   Self operator- () const
   { return new Lazy_exact_Opp<ET>(*this); }
@@ -792,139 +805,477 @@ operator==(const Lazy_exact_nt<ET>& a, int b)
 }
 
 
-// Mixed operators
-template < typename ET1, typename ET2 >
-struct Binary_operator_result < Lazy_exact_nt<ET1>, Lazy_exact_nt<ET2> >
-{
-  typedef Lazy_exact_nt< typename Binary_operator_result<ET1, ET2>::type > type;
-};
-
 template <typename ET1, typename ET2>
-Lazy_exact_nt< typename Binary_operator_result<ET1, ET2>::type >
+Lazy_exact_nt< typename Coercion_traits<ET1, ET2>::Coercion_type >
 operator+(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
 {
   CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-  return new Lazy_exact_Add<typename Binary_operator_result<ET1, ET2>::type,
+  return new Lazy_exact_Add<typename Coercion_traits<ET1, ET2>::Coercion_type,
                             ET1, ET2>(a, b);
 }
 
 template <typename ET1, typename ET2>
-Lazy_exact_nt< typename Binary_operator_result<ET1, ET2>::type >
+Lazy_exact_nt< typename Coercion_traits<ET1, ET2>::Coercion_type >
 operator-(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
 {
   CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-  return new Lazy_exact_Sub<typename Binary_operator_result<ET1, ET2>::type,
+  return new Lazy_exact_Sub<typename Coercion_traits<ET1, ET2>::Coercion_type,
                             ET1, ET2>(a, b);
 }
 
 template <typename ET1, typename ET2>
-Lazy_exact_nt< typename Binary_operator_result<ET1, ET2>::type >
+Lazy_exact_nt< typename Coercion_traits<ET1, ET2>::Coercion_type >
 operator*(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
 {
   CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-  return new Lazy_exact_Mul<typename Binary_operator_result<ET1, ET2>::type,
+  return new Lazy_exact_Mul<typename Coercion_traits<ET1, ET2>::Coercion_type,
                             ET1, ET2>(a, b);
 }
 
 template <typename ET1, typename ET2>
-Lazy_exact_nt< typename Binary_operator_result<ET1, ET2>::type >
+Lazy_exact_nt< typename Coercion_traits<ET1, ET2>::Coercion_type >
 operator/(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
 {
   CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
   CGAL_precondition(b != 0);
-  return new Lazy_exact_Div<typename Binary_operator_result<ET1, ET2>::type,
+  return new Lazy_exact_Div<typename Coercion_traits<ET1, ET2>::Coercion_type,
                             ET1, ET2>(a, b);
 }
 
+//
+// Algebraic structure traits
+//
 
-template <typename ET>
-double
-to_double(const Lazy_exact_nt<ET> & a)
-{
-    CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
 
-    const Interval_nt<false>& app = a.approx();
-    if (app.sup() == app.inf())
-	return app.sup();
+namespace INTERN_LAZY_EXACT_NT {
+  template< class ET, class Algebraic_structure_tag >
+  class Lazy_exact_algebraic_structure_traits_base;
+  
+  template< class ET, class Algebraic_structure_tag >
+  class Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
+                                                    Algebraic_structure_tag >
+    : public Algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
+                                              Algebraic_structure_tag > {};
 
-    // If it's precise enough, then OK.
-    if ((app.sup() - app.inf())
-	    < Lazy_exact_nt<ET>::get_relative_precision_of_to_double()
-	      * (std::max)(std::fabs(app.inf()), std::fabs(app.sup())) )
-        return CGAL::to_double(app);
+  template< class ET >
+  class Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
+                                 CGAL::Integral_domain_without_division_tag >
+    : public Algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
+                                 CGAL::Integral_domain_without_division_tag > {
+    public:
+      typedef Lazy_exact_nt<ET> Algebraic_structure;
+      class Unit_part
+        : public Unary_function< Algebraic_structure, Algebraic_structure > {
+        public:
+          Algebraic_structure operator()( const Algebraic_structure& x ) const {
+            return Lazy_exact_nt<ET>( CGAL_NTS unit_part( x.exact() ) );
+          }
+      };
+  
+      class Is_zero
+        : public Unary_function< Algebraic_structure, bool > {
+        public:
+          bool operator()( const Algebraic_structure& x ) const {
+            return CGAL_NTS is_zero( x.exact() );
+          }
+      };
+  
+      class Is_one
+        : public Unary_function< Algebraic_structure, bool > {
+        public:
+          bool operator()( const Algebraic_structure& x ) const {
+            return CGAL_NTS is_one( x.exact() );
+          }
+      };
+  
+      class Square 
+        : public Unary_function< Algebraic_structure, Algebraic_structure > {
+        public:
+          Algebraic_structure operator()( const Algebraic_structure& x ) const {
+              CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+              return new Lazy_exact_Square<ET>(x);
+          }
+      };    
+  };
+  
+  template< class ET >
+  class Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
+                                                    CGAL::Integral_domain_tag >
+    : public Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
+                                  CGAL::Integral_domain_without_division_tag > {
+    public:
+      typedef Lazy_exact_nt<ET>          Algebraic_structure;
+      typedef CGAL::Integral_domain_tag  Algebraic_structure_tag;
+      
+      class Integral_division
+        : public Binary_function< Algebraic_structure, Algebraic_structure,
+                                  Algebraic_structure > {
+        public:
+          Algebraic_structure operator()( const Algebraic_structure& x,
+                                          const Algebraic_structure& y ) const {
+            return Lazy_exact_nt<ET>( CGAL_NTS integral_division( x.exact(), 
+                                                                  y.exact() ) );
+          }
+          
+          CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
+      };
+  };
 
-    CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+  template< class ET >
+  class Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
+                                                    CGAL::Field_tag >
+    : public Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
+                                                  CGAL::Integral_domain_tag > {
+    public:
+      typedef Lazy_exact_nt<ET>  Algebraic_structure;
+      typedef CGAL::Field_tag    Algebraic_structure_tag;
+  };
 
-    // Otherwise we trigger exact computation first,
-    // which will refine the approximation.
-    a.exact();
-    return CGAL::to_double(a.approx());
-}
+  template< class ET >
+  class Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
+                                                    CGAL::Field_with_sqrt_tag >
+    : public Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
+                                                         CGAL::Field_tag > {
+    public:
+      typedef Lazy_exact_nt<ET>          Algebraic_structure;
+      typedef CGAL::Field_with_sqrt_tag  Algebraic_structure_tag;
+                                                                                   
+      class Sqrt 
+        : public Unary_function< Algebraic_structure, Algebraic_structure > {
+        public:
+          Algebraic_structure operator()( const Algebraic_structure& x ) const {
+            CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+            CGAL_precondition(x >= 0);
+            return new Lazy_exact_Sqrt<ET>(x);
+          }
+      };
+      
+  };
 
-template <typename ET>
-inline
-std::pair<double,double>
-to_interval(const Lazy_exact_nt<ET> & a)
-{
-  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-  return a.approx().pair();
-}
+  template< class ET >
+  class Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
+                                                CGAL::Field_with_kth_root_tag >
+    : public Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
+                                                  CGAL::Field_with_sqrt_tag > {
 
-template <typename ET>
-inline
-Sign
-sign(const Lazy_exact_nt<ET> & a)
-{
-  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-  Uncertain<Sign> res = sign(a.approx());
-  if (is_singleton(res))
-    return res;
-  CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
-  return CGAL_NTS sign(a.exact());
-}
+    public:
+      typedef Lazy_exact_nt<ET>          Algebraic_structure;
+      typedef CGAL::Field_with_kth_root_tag  Algebraic_structure_tag;
+                                                                                         
+      class Kth_root
+        : public Binary_function< int, Algebraic_structure, 
+                                  Algebraic_structure > {
+        public:
+          Algebraic_structure operator()( int k, 
+                                          const Algebraic_structure& x ) const {
+            return Lazy_exact_nt<ET>( CGAL_NTS kth_root( k, x.exact() ) );
+          }
+      };
+      
+  };
 
-template <typename ET1, typename ET2>
-inline
-Comparison_result
-compare(const Lazy_exact_nt<ET1> & a, const Lazy_exact_nt<ET2> & b)
-{
-  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-  if (a.identical(b))
-    return EQUAL;
-  Uncertain<Comparison_result> res = compare(a.approx(), b.approx());
-  if (is_singleton(res))
-    return res;
-  CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
-  return CGAL_NTS compare(a.exact(), b.exact());
-}
+  template< class ET >
+  class Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
+                                                CGAL::Field_with_root_of_tag >
+    : public Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
+                                              CGAL::Field_with_kth_root_tag > {
+    private:
+      struct Cast{                                      
+        typedef ET result_type;                               
+        ET operator()(const Lazy_exact_nt<ET>& lazy_exact) const { 
+          return lazy_exact.exact();
+        }
+      }; 
 
-template <typename ET>
-inline
-Lazy_exact_nt<ET>
-abs(const Lazy_exact_nt<ET> & a)
-{
-  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-  return new Lazy_exact_Abs<ET>(a);
-}
+    public:
+      typedef Lazy_exact_nt<ET>          Algebraic_structure;
+      typedef CGAL::Field_with_root_of_tag  Algebraic_structure_tag;
+                                                                                         
+      class Root_of {
+        public:
+          typedef Algebraic_structure result_type;
+          typedef Arity_tag< 3 >         Arity;
 
-template <typename ET>
-inline
-Lazy_exact_nt<ET>
-square(const Lazy_exact_nt<ET> & a)
-{
-  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-  return new Lazy_exact_Square<ET>(a);
-}
+          template< class Input_iterator >
+          Algebraic_structure operator()( int k, Input_iterator begin,
+                                                 Input_iterator end ) const {
+            Cast cast;
+            return Lazy_exact_nt<ET>( typename Algebraic_structure_traits<ET>::
+                                                  Root_of()( k, 
+                              ::boost::make_transform_iterator( begin, cast ), 
+                              ::boost::make_transform_iterator( end, cast ) ) );
+          }
+      };      
+  };
 
-template <typename ET>
-inline
-Lazy_exact_nt<ET>
-sqrt(const Lazy_exact_nt<ET> & a)
-{
-  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-  CGAL_precondition(a >= 0);
-  return new Lazy_exact_Sqrt<ET>(a);
-}
+  template< class ET >
+  class Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
+                                        CGAL::Unique_factorization_domain_tag >
+    : public Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
+                                              CGAL::Integral_domain_tag > {
+    public:
+      typedef Lazy_exact_nt<ET>          Algebraic_structure;
+      typedef CGAL::Unique_factorization_domain_tag  Algebraic_structure_tag;
+
+      // gcd kills filtering.
+      class Gcd 
+        : public Binary_function< Algebraic_structure, Algebraic_structure,
+                                  Algebraic_structure > {
+        public:
+          Algebraic_structure operator()( const Algebraic_structure& x,
+                                         const Algebraic_structure& y ) const {
+              CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+              return Lazy_exact_nt<ET>( CGAL_NTS gcd( x.exact(), y.exact() ) );
+          }
+          
+          CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
+      };                                                                                         
+  };
+
+  template< class ET >
+  class Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
+                                                    CGAL::Euclidean_ring_tag >
+    : public Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
+                                      CGAL::Unique_factorization_domain_tag > {
+    public:
+      typedef Lazy_exact_nt<ET>          Algebraic_structure;
+      typedef CGAL::Euclidean_ring_tag  Algebraic_structure_tag;
+
+      class Div
+        : public Binary_function< Algebraic_structure, Algebraic_structure,
+                                  Algebraic_structure > {
+        public:
+          Algebraic_structure operator()( const Algebraic_structure& x,
+                                         const Algebraic_structure& y ) const {
+            return Lazy_exact_nt<ET>( CGAL_NTS div( x.exact(), y.exact() ) );
+          }
+          
+          CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
+      };                                                                                         
+
+      class Mod
+        : public Binary_function< Algebraic_structure, Algebraic_structure,
+                                  Algebraic_structure > {
+        public:
+          Algebraic_structure operator()( const Algebraic_structure& x,
+                                         const Algebraic_structure& y ) const {
+            return Lazy_exact_nt<ET>( CGAL_NTS mod( x.exact(), y.exact() ) );
+          }
+          
+          CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
+      };
+      
+      class Div_mod {
+        public:
+          typedef void                  result_type;
+          typedef Algebraic_structure   first_argument_type;
+          typedef Algebraic_structure   second_argument_type;
+          typedef Algebraic_structure&  third_arugment_type;
+          typedef Algebraic_structure&  fourth_argument_type;
+          typedef Arity_tag< 4 >         Arity;
+          
+          void operator()( const Algebraic_structure& x, 
+                           const Algebraic_structure& y,
+                           Algebraic_structure& q, 
+                           Algebraic_structure& r ) const {
+            ET q_et;
+            ET r_et;
+            CGAL_NTS div_mod( x.exact(), y.exact(), q_et, r_et );
+            q = Lazy_exact_nt<ET>( q_et );
+            r = Lazy_exact_nt<ET>( r_et );
+          }
+          
+          template< class NT1, class NT2 >
+          void operator()( const NT1& x, const NT2& y,
+                           Algebraic_structure& q, 
+                           Algebraic_structure& r ) const {
+            BOOST_STATIC_ASSERT((::boost::is_same<
+                 typename Coercion_traits< NT1, NT2 >::Coercion_type, Algebraic_structure
+                                                 >::value));
+            
+            typename Coercion_traits< NT1, NT2 >::Cast cast;
+            operator()( cast(x), cast(y), q, r );                      
+          }
+      };
+  };  
+} // INTERN_LAZY_EXACT_NT
+
+     
+
+template< class ET > class Algebraic_structure_traits< Lazy_exact_nt<ET> >
+  : public INTERN_LAZY_EXACT_NT::
+                Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
+         typename Algebraic_structure_traits<ET>::Algebraic_structure_tag > {
+  public:
+    typedef typename Algebraic_structure_traits<ET>::Is_exact Is_exact;          
+};
+
+//
+// Real embeddalbe traits
+//
+
+template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> > 
+  : public Real_embeddable_traits_base< Lazy_exact_nt<ET> > {
+  
+  // Every type ET of Lazy_exact_nt<ET> has to be real embeddable.
+  BOOST_STATIC_ASSERT((::boost::is_same< typename Real_embeddable_traits< ET >
+                                ::Is_real_embeddable, CGAL::Tag_true >::value));
+
+  public:
+    typedef Lazy_exact_nt<ET> Real_embeddable;  
+           
+    class Abs 
+      : public Unary_function< Real_embeddable, Real_embeddable > {
+      public:
+        Real_embeddable operator()( const Real_embeddable& a ) const {
+            CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+            return new Lazy_exact_Abs<ET>(a);
+        }
+    };
+    
+    class Sign 
+      : public Unary_function< Real_embeddable, CGAL::Sign > {
+      public:
+        CGAL::Sign operator()( const Real_embeddable& a ) const {
+            CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+            Uncertain<CGAL::Sign> res = CGAL_NTS sign(a.approx());
+            if (is_singleton(res))
+                return res;
+            CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+            return CGAL_NTS sign(a.exact());
+        }
+    };
+    
+    class Compare 
+      : public Binary_function< Real_embeddable, Real_embeddable,
+                                CGAL::Comparison_result > {
+      public:
+        CGAL::Comparison_result operator()( const Real_embeddable& a, 
+                                            const Real_embeddable& b ) const {
+            CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+            if (a.identical(b))
+                return EQUAL;
+            Uncertain<Comparison_result> res = CGAL_NTS compare(a.approx(), b.approx());
+            if (is_singleton(res))
+                return res;
+            CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+            return CGAL_NTS compare(a.exact(), b.exact());
+        }
+        
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Real_embeddable,
+                                                      CGAL::Comparison_result );
+        
+    };
+    
+    class To_double 
+      : public Unary_function< Real_embeddable, double > {
+      public:
+        double operator()( const Real_embeddable& a ) const {
+            CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+            
+            const Interval_nt<false>& app = a.approx();
+            if (app.sup() == app.inf())
+                return app.sup();
+            
+            // If it's precise enough, then OK.
+            if ((app.sup() - app.inf())
+                    < Lazy_exact_nt<ET>::get_relative_precision_of_to_double()
+                    * (std::max)(std::fabs(app.inf()), std::fabs(app.sup())) )
+                return CGAL::to_double(app);
+            
+            CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
+            
+            // Otherwise we trigger exact computation first,
+            // which will refine the approximation.
+            a.exact();
+            return CGAL::to_double(a.approx());
+        }
+    };
+    
+    class To_interval 
+      : public Unary_function< Real_embeddable, std::pair< double, double > > {
+      public:
+        std::pair<double, double> operator()( const Real_embeddable& a ) const {
+            CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+            return a.approx().pair();
+        }
+    };
+    
+    class Is_finite
+      : public Unary_function< Real_embeddable, bool > {
+      public:
+        bool operator()( const Real_embeddable& x ) {
+          return CGAL_NTS is_finite(x.approx()) || CGAL_NTS is_finite(x.exact());        
+        }
+    };
+    
+};
+
+template <class ET1, class ET2, class F>
+class Lazy_exact_nt_coercion_traits_base{
+    typedef Tag_false Are_explicit_interoperable;
+    typedef Tag_false Are_implicit_interoperable;
+    //typedef Null_type    Coercion_type
+    typedef Null_functor Cast;
+};
+
+template <class ET1, class ET2>
+class Lazy_exact_nt_coercion_traits_base
+< Lazy_exact_nt<ET1>, Lazy_exact_nt<ET2>, CGAL::Tag_true >{
+    typedef Coercion_traits<ET1,ET2> CT;
+    typedef Lazy_exact_nt<ET1> A;
+    typedef Lazy_exact_nt<ET2> B;
+public:
+    typedef Lazy_exact_nt<typename CT::Coercion_type> Coercion_type;
+    typedef typename CT::Are_implicit_interoperable Are_explicit_interoperable; 
+    typedef typename CT::Are_implicit_interoperable Are_implicit_interoperable; 
+    
+    class Cast{
+    private:
+        template <class T>
+        inline Coercion_type cast(const T& x) const{ return Coercion_type(x); }
+        inline Coercion_type cast(const Coercion_type& x) const{ return x; }
+    public:
+        typedef Coercion_type result_type;       
+        Coercion_type operator()(const A& x) const { return cast(x);}
+        Coercion_type operator()(const B& x) const { return cast(x);}         
+    };
+};
+
+
+CGAL_DEFINE_COERCION_TRAITS_FOR_SELF_TEM(Lazy_exact_nt<ET>, class ET);
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO_TEM (int, Lazy_exact_nt<ET>, class ET);
+
+template<class ET1, class ET2 >
+class Coercion_traits< Lazy_exact_nt<ET1>, Lazy_exact_nt<ET2> >
+    :public Lazy_exact_nt_coercion_traits_base 
+           <Lazy_exact_nt<ET1>, Lazy_exact_nt<ET2>, 
+            typename Coercion_traits<ET1,ET2>::Are_implicit_interoperable>{};
+
+
+template<class ET>
+struct Coercion_traits< Lazy_exact_nt<ET>, double >
+    :public Coercion_traits<double, Lazy_exact_nt<ET> >{};
+
+
+template<class ET>
+struct Coercion_traits< double, Lazy_exact_nt<ET> >{
+private:
+    typedef Coercion_traits<double,ET> CT;
+    typedef Lazy_exact_nt<ET> NT;
+public:
+    typedef typename CT::Are_explicit_interoperable Are_explicit_interoperable;
+    typedef typename CT::Are_implicit_interoperable Are_implicit_interoperable;
+private:
+    static const  bool interoperable = boost::is_same< Are_implicit_interoperable, CGAL::Tag_false>::value;
+public:
+    // define Coercion_type
+    typedef typename boost::mpl::if_c< interoperable, CGAL::Null_tag, 
+    NT >::type                                 Coercion_type;
+    // define Cast
+    typedef typename boost::mpl::if_c< interoperable, CGAL::Null_functor, 
+    INTERN_CT::Cast_from_to<double,NT> >::type Cast;
+};
 
 template <typename ET>
 inline
@@ -946,14 +1297,6 @@ max BOOST_PREVENT_MACRO_SUBSTITUTION (const Lazy_exact_nt<ET> & a,
   return new Lazy_exact_Max<ET>(a, b);
 }
 
-// gcd kills filtering.
-template <typename ET>
-Lazy_exact_nt<ET>
-gcd(const Lazy_exact_nt<ET>& a, const Lazy_exact_nt<ET>& b)
-{
-  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-  return Lazy_exact_nt<ET>(CGAL_NTS gcd(a.exact(), b.exact()));
-}
 
 template <typename ET>
 std::ostream &
@@ -971,23 +1314,14 @@ operator>> (std::istream & is, Lazy_exact_nt<ET> & a)
   return is;
 }
 
-
-
-template <typename ET>
-inline
-bool
-is_finite(const Lazy_exact_nt<ET> & a)
-{
-  return is_finite(a.approx()) || is_finite(a.exact());
-}
-
-template <typename ET>
-inline
-bool
-is_valid(const Lazy_exact_nt<ET> & a)
-{
-  return is_valid(a.approx()) || is_valid(a.exact());
-}
+template< class ET >
+class Is_valid< Lazy_exact_nt<ET> > 
+  : public Unary_function< Lazy_exact_nt<ET>, bool > {
+  public :
+    bool operator()( const Lazy_exact_nt<ET>& x ) {
+      return is_valid(x.approx()) || is_valid(x.exact());
+    }  
+};
 
 template <typename ET>
 inline

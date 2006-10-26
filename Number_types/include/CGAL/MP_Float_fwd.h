@@ -30,22 +30,20 @@ CGAL_BEGIN_NAMESPACE
 
 class MP_Float;
 
+namespace INTERN_MP_FLOAT {
 Comparison_result compare(const MP_Float&, const MP_Float&);
-Sign sign(const MP_Float &);
 MP_Float square(const MP_Float&);
-MP_Float approximate_sqrt(const MP_Float&);
 double to_double(const MP_Float&);
-std::pair<double,double> to_interval(const MP_Float &);
-bool is_finite(const MP_Float &);
-bool is_valid(const MP_Float &);
-
 double to_double(const Quotient<MP_Float>&);
 double to_double(const Root_of_2<MP_Float> &x);
+std::pair<double,double> to_interval(const MP_Float &);
 std::pair<double,double> to_interval(const Quotient<MP_Float>&);
-
-MP_Float exact_division(const MP_Float & n, const MP_Float & d);
 MP_Float div(const MP_Float& n1, const MP_Float& n2);
 MP_Float gcd( const MP_Float& a, const MP_Float& b);
+}
+
+MP_Float approximate_sqrt(const MP_Float&);
+MP_Float exact_division(const MP_Float & n, const MP_Float & d);
 
 CGAL_END_NAMESPACE
 

@@ -1,6 +1,7 @@
-// Copyright (c) 2006  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2006  
+// INRIA Sophia-Antipolis (France), 
+// Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
-//
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
 // published by the Free Software Foundation; version 2.1 of the License.
@@ -16,12 +17,15 @@
 // $Id$
 // 
 //
-// Author(s)     : Sylvain Pion
+// Author(s)     : Sylvain Pion, Michael Hemmer 
+
+// This is a backward compatibility header.
 
 #ifndef CGAL_BINARY_OPERATOR_RESULT_H
 #define CGAL_BINARY_OPERATOR_RESULT_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Coercion_traits.h>
 
 // This class helps finding out the result type of mixed operators +-*/.
 // For example it answers what the type of double+int is.
@@ -31,23 +35,15 @@
 
 CGAL_BEGIN_NAMESPACE
 
+// fwd
+template <class T1,class T2> struct Coercion_traits;
+
 template < typename T1, typename T2 >
-struct Binary_operator_result;
-
-// T1 == T2
-template < typename T >
-struct Binary_operator_result <T, T>
-{ typedef T type; };
-
-// T1 == int
-template < typename T >
-struct Binary_operator_result <T, int>
-{ typedef T type; };
-
-// T2 == int
-template < typename T >
-struct Binary_operator_result <int, T>
-{ typedef T type; };
+class Binary_operator_result{
+    typedef Coercion_traits<T1,T2> CT;
+public:
+    typedef typename CT::Coercion_type type;
+};
 
 CGAL_END_NAMESPACE
 

@@ -25,61 +25,15 @@
 #ifndef CGAL_NUMBER_UTILS_FWD_H
 #define CGAL_NUMBER_UTILS_FWD_H
 
-#include <CGAL/basic.h>
-#include <CGAL/enum.h>
+//#include <CGAL/basic.h>
+//#include <CGAL/enum.h>
+//#include <boost/mpl/if.hpp>
+//#include <boost/type_traits/is_same.hpp>
+//#include <CGAL/Coercion_traits.h>
+//#include <CGAL/Algebraic_structure_traits.h>
+//#include <CGAL/Real_embeddable_traits.h>
 
 CGAL_BEGIN_NAMESPACE
-
-template < class NT1, class NT2 > struct Equal_to;
-template < class NT1, class NT2 > struct Not_equal_to;
-template < class NT1, class NT2 > struct Greater;
-template < class NT1, class NT2 > struct Less;
-template < class NT1, class NT2 > struct Greater_equal;
-template < class NT1, class NT2 > struct Less_equal;
-
-template < class NT > struct Is_zero;
-template < class NT > struct Is_one;
-template < class NT > struct Is_negative;
-template < class NT > struct Is_positive;
-template < class NT > struct Sgn;
-template < class NT > struct Abs;
-template < class NT, class Compare > struct Min;
-template < class NT, class Compare > struct Max;
-template < class NT > struct Compare;
-template < class NT > struct Square;
-template < class NT > struct Sqrt;
-template < class NT > struct Div;
-template < class NT > struct Gcd;
-template < class NT > struct To_double;
-template < class NT > struct To_interval;
-
-template <class NT>
-bool is_zero(const NT& x);
-
-template <class NT>
-bool is_one(const NT& x);
-
-template <class NT>
-bool is_negative(const NT& x);
-
-template <class NT>
-bool is_positive(const NT& x);
-
-template <class NT>
-Sign sign(const NT& x);
-
-template <class NT>
-NT abs(const NT& x);
-
-template <class NT1, class NT2>
-Comparison_result compare(const NT1& n1, const NT2& n2);
-
-template <class NT>
-NT square( const NT& n);
-
-template <class NT>
-NT gcd( const NT& n1, const NT& n2);
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_NUMBER_UTILS_FWD_H

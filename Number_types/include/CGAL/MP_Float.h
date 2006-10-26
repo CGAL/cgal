@@ -22,6 +22,13 @@
 #define CGAL_MP_FLOAT_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Algebraic_structure_traits.h>
+#include <CGAL/Real_embeddable_traits.h>
+#include <CGAL/Coercion_traits.h>
+#include <CGAL/Quotient.h>
+
+#include <CGAL/utils.h>
+
 #include <CGAL/Interval_nt.h>
 #include <CGAL/MP_Float_fwd.h>
 #include <iostream>
@@ -62,9 +69,6 @@ MP_Float operator*(const MP_Float &a, const MP_Float &b);
 MP_Float operator/(const MP_Float &a, const MP_Float &b);
 #endif
 MP_Float operator%(const MP_Float &a, const MP_Float &b);
-
-Comparison_result
-compare (const MP_Float & a, const MP_Float & b);
 
 class MP_Float
 {
@@ -125,9 +129,8 @@ private:
   void construct_from_builtin_fp_type(T d);
 
 public:
-
 #ifdef CGAL_ROOT_OF_2_ENABLE_HISTOGRAM_OF_NUMBER_OF_DIGIT_ON_THE_COMPLEX_CONSTRUCTOR
-  int tam() const { return v.size(); }
+    int tam() const { return v.size(); }
 #endif
 
   // Splits a limb2 into 2 limbs (high and low).
@@ -183,6 +186,10 @@ public:
   MP_Float(double d);
 
   MP_Float(long double d);
+
+  MP_Float operator+() const {
+    return *this;
+  }
 
   MP_Float operator-() const
   {
@@ -287,7 +294,7 @@ void swap(MP_Float &m, MP_Float &n)
 
 inline
 bool operator<(const MP_Float &a, const MP_Float &b)
-{ return CGAL_NTS compare(a, b) == SMALLER; }
+{ return CGAL::INTERN_MP_FLOAT::compare(a, b) == SMALLER; }
 
 inline
 bool operator>(const MP_Float &a, const MP_Float &b)
@@ -309,16 +316,6 @@ inline
 bool operator!=(const MP_Float &a, const MP_Float &b)
 { return ! (a == b); }
 
-inline
-Sign
-sign (const MP_Float &a)
-{
-  return a.sign();
-}
-
-MP_Float
-square(const MP_Float&);
-
 MP_Float
 approximate_sqrt(const MP_Float &d);
 
@@ -332,32 +329,328 @@ operator/(const MP_Float &a, const MP_Float &b)
 {
   return approximate_division(a, b);
 }
+#endif
+
+// Algebraic structure traits
+template <> class Algebraic_structure_traits< MP_Float >
+  : public Algebraic_structure_traits_base< MP_Float, 
+#ifdef CGAL_MP_FLOAT_ALLOW_INEXACT
+                                            CGAL::Field_with_sqrt_tag
+#else                                            
+                                            CGAL::Euclidean_ring_tag
+#endif
+                                          >  {
+  public:
+
+#ifdef CGAL_MP_FLOAT_ALLOW_INEXACT
+    typedef CGAL::Tag_false           Is_exact;
+#else // !CGAL_MP_FLOAT_ALLOW_INEXACT
+    typedef CGAL::Tag_true            Is_exact;
+#endif
+                                                                                             
+    class Square 
+      : public Unary_function< Algebraic_structure, Algebraic_structure > {
+      public:
+        Algebraic_structure operator()( const Algebraic_structure& x ) const {
+          return CGAL::INTERN_MP_FLOAT::square(x);
+        }
+    };
+
+#ifdef CGAL_MP_FLOAT_ALLOW_INEXACT  
+    class Sqrt 
+      : public Unary_function< Algebraic_structure, Algebraic_structure > {
+      public:
+        Algebraic_structure operator()( const Algebraic_structure& x ) const {
+          return approximate_sqrt( x );
+        }
+    };
+#endif
+    
+    class Gcd
+      : public Binary_function< Algebraic_structure, Algebraic_structure,
+                                Algebraic_structure > {
+      public:
+        Algebraic_structure operator()( const Algebraic_structure& x,
+                                        const Algebraic_structure& y ) const {
+          return CGAL::INTERN_MP_FLOAT::gcd( x, y );
+        }
+    };
+    
+    class Div
+      : public Binary_function< Algebraic_structure, Algebraic_structure,
+                                Algebraic_structure > {
+      public:
+        Algebraic_structure operator()( const Algebraic_structure& x,
+                                        const Algebraic_structure& y ) const {
+          return CGAL::INTERN_MP_FLOAT::div( x, y );
+        }
+    };
+    
+    typedef CGAL::INTERN_AST::Mod_per_operator< Algebraic_structure > Mod;
+};
+
+
+
+// Real embeddable traits
+template <> class Real_embeddable_traits< MP_Float > 
+  : public Real_embeddable_traits_base< MP_Float > {
+  public:
+      
+    class Sign 
+      : public Unary_function< Real_embeddable, CGAL::Sign > {
+      public:
+        CGAL::Sign operator()( const Real_embeddable& x ) const {
+          return x.sign();
+        }        
+    };
+    
+    class Compare 
+      : public Binary_function< Real_embeddable, Real_embeddable,
+                                CGAL::Comparison_result > {
+      public:
+        CGAL::Comparison_result operator()( const Real_embeddable& x, 
+                                            const Real_embeddable& y ) const {
+          return CGAL::INTERN_MP_FLOAT::compare( x, y );
+        }
+    };
+    
+    class To_double 
+      : public Unary_function< Real_embeddable, double > {
+      public:
+        double operator()( const Real_embeddable& x ) const {
+          return CGAL::INTERN_MP_FLOAT::to_double( x );
+        }
+    };
+    
+    class To_interval 
+      : public Unary_function< Real_embeddable, std::pair< double, double > > {
+      public:
+        std::pair<double, double> operator()( const Real_embeddable& x ) const {
+          return CGAL::INTERN_MP_FLOAT::to_interval( x );
+        }
+    };
+};
+
+
+
+
+namespace CGALi {
+
+// This compares the absolute values of the odd-mantissa.
+// (take the mantissas, get rid of all powers of 2, compare
+// the absolute values)
+inline
+Sign
+compare_bitlength(const MP_Float &a, const MP_Float &b)
+{
+  if (a.is_zero())
+    return b.is_zero() ? EQUAL : SMALLER;
+  if (b.is_zero())
+    return LARGER;
+
+  //Real_embeddable_traits<MP_Float>::Abs abs;
+
+  MP_Float aa = CGAL_NTS abs(a);
+  MP_Float bb = CGAL_NTS abs(b);
+
+  if (aa.size() > (bb.size() + 2)) return LARGER;
+  if (bb.size() > (aa.size() + 2)) return SMALLER;
+
+  // multiply by 2 till last bit is 1.
+  while (((aa.v[0]) & 1) == 0) // last bit is zero
+    aa = aa + aa;
+
+  while (((bb.v[0]) & 1) == 0) // last bit is zero
+    bb = bb + bb;
+
+  // sizes might have changed
+  if (aa.size() > bb.size()) return LARGER;
+  if (aa.size() < bb.size()) return SMALLER;
+
+  for (int i = aa.size()-1; i >= 0; --i)
+  {
+    if (aa.v[i] > bb.v[i]) return LARGER;
+    if (aa.v[i] < bb.v[i]) return SMALLER;
+  }
+  return EQUAL;
+}
+
+inline // Move it to libCGAL once it's stable.
+std::pair<MP_Float, MP_Float> // <quotient, remainder>
+division(const MP_Float & n, const MP_Float & d)
+{
+  typedef MP_Float::exponent_type  exponent_type;
+
+  MP_Float remainder = n, divisor = d;
+
+  CGAL_precondition(divisor != 0);
+
+  // Rescale d to have a to_double() value with reasonnable exponent.
+  exponent_type scale_d = divisor.find_scale();
+  divisor.rescale(scale_d);
+  const double dd = INTERN_MP_FLOAT::to_double(divisor);
+
+  MP_Float res = 0;
+  exponent_type scale_remainder = 0;
+
+  bool first_time_smaller_than_divisor = true;
+
+  // School division algorithm.
+
+  while ( remainder != 0 )
+  {
+    // We have to rescale, since remainder can diminish towards 0.
+    exponent_type tmp_scale = remainder.find_scale();
+    remainder.rescale(tmp_scale);
+    res.rescale(tmp_scale);
+    scale_remainder += tmp_scale;
+
+    // Compute a double approximation of the quotient
+    // (imagine school division with base ~2^53).
+    double approx = INTERN_MP_FLOAT::to_double(remainder) / dd;
+    CGAL_assertion(approx != 0);
+    res += approx;
+    remainder -= approx * divisor;
+
+    if (remainder == 0)
+      break;
+
+    // Then we need to fix it up by checking if neighboring double values
+    // are closer to the exact result.
+    // There should not be too many iterations, because approx is only a few ulps
+    // away from the optimal.
+    // If we don't do the fixup, then spurious bits can be introduced, which
+    // will require an unbounded amount of additional iterations to be eliminated.
+
+    // The direction towards which we need to try to move from "approx".
+    double direction = (CGAL_NTS sign(remainder) == CGAL_NTS sign(dd))
+                     ?  std::numeric_limits<double>::infinity()
+                     : -std::numeric_limits<double>::infinity();
+
+    while (true)
+    {
+      const double approx2 = nextafter(approx, direction);
+      const double delta = approx2 - approx;
+      MP_Float new_remainder = remainder - delta * divisor;
+      if (CGAL_NTS abs(new_remainder) < CGAL_NTS abs(remainder)) {
+        remainder = new_remainder;
+        res += delta;
+        approx = approx2;
+      }
+      else {
+        break;
+      }
+    }
+
+    if (remainder == 0)
+      break;
+
+    // Test condition for non-exact division (with remainder).
+    if (compare_bitlength(remainder, divisor) == SMALLER)
+    {
+      if (! first_time_smaller_than_divisor)
+      {
+        // Scale back.
+        res.rescale(scale_d - scale_remainder);
+        remainder.rescale(- scale_remainder);
+        CGAL_postcondition(res * d  + remainder == n);
+        return std::make_pair(res, remainder);
+      }
+      first_time_smaller_than_divisor = false;
+    }
+  }
+
+  // Scale back the result.
+  res.rescale(scale_d - scale_remainder);
+  CGAL_postcondition(res * d == n);
+  return std::make_pair(res, MP_Float(0));
+}
+
+} // namespace CGALi
+
+inline // Move it to libCGAL once it's stable.
+MP_Float
+exact_division(const MP_Float & n, const MP_Float & d)
+{
+  std::pair<MP_Float, MP_Float> res = CGALi::division(n, d);
+  CGAL_assertion_msg(res.second == 0,
+                  "exact_division() called with operands which do not divide");
+  return res.first;
+}
+
+inline // Move it to libCGAL once it's stable.
+bool
+divides(const MP_Float & n, const MP_Float & d)
+{
+  return CGALi::division(n, d).second == 0;
+}
 
 inline
 MP_Float
-sqrt(const MP_Float &d)
+operator%(const MP_Float& n1, const MP_Float& n2)
 {
-  return approximate_sqrt(d);
+  return CGALi::division(n1, n2).second;
 }
-#endif
 
-// to_double() returns, not the closest double, but a one bit error is allowed.
-// We guarantee : to_double(MP_Float(double d)) == d.
-double
-to_double(const MP_Float &b);
 
-std::pair<double,double>
-to_interval(const MP_Float &b);
+// The namespace INTERN_MP_FLOAT contains global functions like square or sqrt
+// which collide with the global functor adapting functions provided by the new
+// AST/RET concept.
+//
+// TODO: IMHO, a better solution would be to put the INTERN_MP_FLOAT-functions
+//       into the MP_Float-class... But there is surely a reason why this is not
+//       the case..?
 
-template < typename > class Quotient;
+template < typename > class Quotient; // Needed for overloaded To_double
 
-// Overloaded in order to protect against overflow.
-double
-to_double(const Quotient<MP_Float> &b);
+namespace INTERN_MP_FLOAT {
+  Comparison_result
+  compare (const MP_Float & a, const MP_Float & b);
 
-std::pair<double, double>
-to_interval(const Quotient<MP_Float> &b);
+  MP_Float
+  square(const MP_Float&);
 
+  // to_double() returns, not the closest double, but a one bit error is allowed.
+  // We guarantee : to_double(MP_Float(double d)) == d.
+  double
+  to_double(const MP_Float &b);
+
+  std::pair<double,double>
+  to_interval(const MP_Float &b);
+
+  // Overloaded in order to protect against overflow.
+  double
+  to_double(const Quotient<MP_Float> &b);
+
+  std::pair<double, double>
+  to_interval(const Quotient<MP_Float> &b);
+
+  inline
+  MP_Float
+  div(const MP_Float& n1, const MP_Float& n2)
+  {
+    return CGALi::division(n1, n2).first;
+  }
+  
+  inline
+  MP_Float
+  gcd( const MP_Float& a, const MP_Float& b)
+  {
+    CGAL_precondition( a != 0 );
+    CGAL_precondition( b != 0 );
+    MP_Float x = a, y = b;
+    while (true) {
+      x = x % y;
+      if (x == 0) {
+        CGAL_postcondition(divides(a, y) && divides(b, y));
+        return y;
+      }
+      swap(x, y);
+    }
+  }
+
+} // INTERN_MP_FLOAT
+  
 std::pair<double, int>
 to_double_exp(const MP_Float &b);
 
@@ -428,22 +721,6 @@ namespace CGALi {
   }
 }
 
-
-
-inline
-bool
-is_finite(const MP_Float &)
-{
-  return true;
-}
-
-inline
-bool
-is_valid(const MP_Float &)
-{
-  return true;
-}
-
 inline
 io_Operator
 io_tag(const MP_Float &)
@@ -461,187 +738,20 @@ print (std::ostream & os, const MP_Float &b);
 std::istream &
 operator>> (std::istream & is, MP_Float &b);
 
-// TODO : needs function div(), with remainder.
+// specialization of to double functor
+template<> struct Real_embeddable_traits< Quotient<MP_Float> >
+    : public INTERN_QUOTIENT::Real_embeddable_traits_quotient_base< Quotient<MP_Float> >{
+    struct To_double: public Unary_function<Quotient<MP_Float>, double>{
+        double operator()(const Quotient<MP_Float>& q){
+            return INTERN_MP_FLOAT::to_double(q);
+        }
+    };
+};
 
-namespace CGALi {
+// Coercion_traits 
+CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(MP_Float);
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int, MP_Float);
 
-// This compares the absolute values of the odd-mantissa.
-// (take the mantissas, get rid of all powers of 2, compare
-// the absolute values)
-inline
-Sign
-compare_bitlength(const MP_Float &a, const MP_Float &b)
-{
-  if (a.is_zero())
-    return b.is_zero() ? EQUAL : SMALLER;
-  if (b.is_zero())
-    return LARGER;
-
-  MP_Float aa = abs(a);
-  MP_Float bb = abs(b);
-
-  if (aa.size() > (bb.size() + 2)) return LARGER;
-  if (bb.size() > (aa.size() + 2)) return SMALLER;
-
-  // multiply by 2 till last bit is 1.
-  while (((aa.v[0]) & 1) == 0) // last bit is zero
-    aa = aa + aa;
-
-  while (((bb.v[0]) & 1) == 0) // last bit is zero
-    bb = bb + bb;
-
-  // sizes might have changed
-  if (aa.size() > bb.size()) return LARGER;
-  if (aa.size() < bb.size()) return SMALLER;
-
-  for (int i = aa.size()-1; i >= 0; --i)
-  {
-    if (aa.v[i] > bb.v[i]) return LARGER;
-    if (aa.v[i] < bb.v[i]) return SMALLER;
-  }
-  return EQUAL;
-}
-
-inline // Move it to libCGAL once it's stable.
-std::pair<MP_Float, MP_Float> // <quotient, remainder>
-division(const MP_Float & n, const MP_Float & d)
-{
-  typedef MP_Float::exponent_type  exponent_type;
-
-  MP_Float remainder = n, divisor = d;
-
-  CGAL_precondition(divisor != 0);
-
-  // Rescale d to have a to_double() value with reasonnable exponent.
-  exponent_type scale_d = divisor.find_scale();
-  divisor.rescale(scale_d);
-  const double dd = to_double(divisor);
-
-  MP_Float res = 0;
-  exponent_type scale_remainder = 0;
-
-  bool first_time_smaller_than_divisor = true;
-
-  // School division algorithm.
-
-  while ( remainder != 0 )
-  {
-    // We have to rescale, since remainder can diminish towards 0.
-    exponent_type tmp_scale = remainder.find_scale();
-    remainder.rescale(tmp_scale);
-    res.rescale(tmp_scale);
-    scale_remainder += tmp_scale;
-
-    // Compute a double approximation of the quotient
-    // (imagine school division with base ~2^53).
-    double approx = to_double(remainder) / dd;
-    CGAL_assertion(approx != 0);
-    res += approx;
-    remainder -= approx * divisor;
-
-    if (remainder == 0)
-      break;
-
-    // Then we need to fix it up by checking if neighboring double values
-    // are closer to the exact result.
-    // There should not be too many iterations, because approx is only a few ulps
-    // away from the optimal.
-    // If we don't do the fixup, then spurious bits can be introduced, which
-    // will require an unbounded amount of additional iterations to be eliminated.
-
-    // The direction towards which we need to try to move from "approx".
-    double direction = (sign(remainder) == sign(dd))
-                     ?  std::numeric_limits<double>::infinity()
-                     : -std::numeric_limits<double>::infinity();
-
-    while (true)
-    {
-      const double approx2 = nextafter(approx, direction);
-      const double delta = approx2 - approx;
-      MP_Float new_remainder = remainder - delta * divisor;
-      if (abs(new_remainder) < abs(remainder)) {
-        remainder = new_remainder;
-        res += delta;
-        approx = approx2;
-      }
-      else {
-        break;
-      }
-    }
-
-    if (remainder == 0)
-      break;
-
-    // Test condition for non-exact division (with remainder).
-    if (compare_bitlength(remainder, divisor) == SMALLER)
-    {
-      if (! first_time_smaller_than_divisor)
-      {
-        // Scale back.
-        res.rescale(scale_d - scale_remainder);
-        remainder.rescale(- scale_remainder);
-        CGAL_postcondition(res * d  + remainder == n);
-        return std::make_pair(res, remainder);
-      }
-      first_time_smaller_than_divisor = false;
-    }
-  }
-
-  // Scale back the result.
-  res.rescale(scale_d - scale_remainder);
-  CGAL_postcondition(res * d == n);
-  return std::make_pair(res, MP_Float(0));
-}
-
-} // namespace CGALi
-
-inline // Move it to libCGAL once it's stable.
-MP_Float
-exact_division(const MP_Float & n, const MP_Float & d)
-{
-  std::pair<MP_Float, MP_Float> res = CGALi::division(n, d);
-  CGAL_assertion_msg(res.second == 0,
-                  "exact_division() called with operands which do not divide");
-  return res.first;
-}
-
-inline // Move it to libCGAL once it's stable.
-bool
-divides(const MP_Float & n, const MP_Float & d)
-{
-  return CGALi::division(n, d).second == 0;
-}
-
-inline
-MP_Float
-operator%(const MP_Float& n1, const MP_Float& n2)
-{
-  return CGALi::division(n1, n2).second;
-}
-
-inline
-MP_Float
-div(const MP_Float& n1, const MP_Float& n2)
-{
-  return CGALi::division(n1, n2).first;
-}
-
-inline
-MP_Float
-gcd( const MP_Float& a, const MP_Float& b)
-{
-  CGAL_precondition( a != 0 );
-  CGAL_precondition( b != 0 );
-  MP_Float x = a, y = b;
-  while (true) {
-    x = x % y;
-    if (x == 0) {
-      CGAL_postcondition(divides(a, y) && divides(b, y));
-      return y;
-    }
-    swap(x, y);
-  }
-}
 
 CGAL_END_NAMESPACE
 

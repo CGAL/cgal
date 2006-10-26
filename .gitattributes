@@ -1508,7 +1508,57 @@ Nef_S2/doc_tex/Nef_S2_ref/fig/shalfedge.pdf -text svneol=unset#application/pdf
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.eps -text svneol=unset#application/postscript
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.gif -text svneol=unset#image/gif
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.pdf -text svneol=unset#application/pdf
+Number_types/include/CGAL/Algebraic_structure_traits.h -text
+Number_types/include/CGAL/CORE_BigFloat.h -text
+Number_types/include/CGAL/CORE_BigInt.h -text
+Number_types/include/CGAL/CORE_BigRat.h -text
+Number_types/include/CGAL/CORE_coercion_traits.h -text
+Number_types/include/CGAL/Coercion_traits.h -text
+Number_types/include/CGAL/Fraction_traits.h -text
+Number_types/include/CGAL/Gmp_coercion_traits.h -text
+Number_types/include/CGAL/Gmpq_type.h -text
+Number_types/include/CGAL/Gmpz_type.h -text
 Number_types/include/CGAL/Gmpzf.h -text
+Number_types/include/CGAL/MP_Float_branch.h -text
+Number_types/include/CGAL/MP_Float_trunk.h -text
+Number_types/include/CGAL/Needs_parens_as_product.h -text
+Number_types/include/CGAL/Real_embeddable_traits.h -text
+Number_types/include/CGAL/Sqrt_extension.h -text
+Number_types/include/CGAL/gmpxx_coercion_traits.h -text
+Number_types/include/CGAL/leda_coercion_traits.h -text
+Number_types/include/CGAL/mpq_class.h -text
+Number_types/include/CGAL/mpz_class.h -text
+Number_types/include/CGAL/utils.h -text
+Number_types/include/CGAL/utils_classes.h -text
+Number_types/test/Number_types/CORE_BigFloat.C -text
+Number_types/test/Number_types/CORE_BigInt.C -text
+Number_types/test/Number_types/CORE_BigRat.C -text
+Number_types/test/Number_types/CORE_Expr.C -text
+Number_types/test/Number_types/Coercion_traits.C -text
+Number_types/test/Number_types/Counted_number.C -text
+Number_types/test/Number_types/Gmpq_new.C -text
+Number_types/test/Number_types/Gmpz.C -text
+Number_types/test/Number_types/Interval_nt_new.C -text
+Number_types/test/Number_types/Lazy_exact_nt_new.C -text
+Number_types/test/Number_types/MP_Float_new.C -text
+Number_types/test/Number_types/Quotient_new.C -text
+Number_types/test/Number_types/Sqrt_extension.C -text
+Number_types/test/Number_types/double.C -text
+Number_types/test/Number_types/float.C -text
+Number_types/test/Number_types/include/CGAL/Arithmetic_kernel.h -text
+Number_types/test/Number_types/include/CGAL/_test_algebraic_structure.h -text
+Number_types/test/Number_types/include/CGAL/_test_basic.h -text
+Number_types/test/Number_types/include/CGAL/_test_coercion_traits.h -text
+Number_types/test/Number_types/include/CGAL/_test_real_embeddable.h -text
+Number_types/test/Number_types/int.C -text
+Number_types/test/Number_types/leda_bigfloat.C -text
+Number_types/test/Number_types/leda_integer.C -text
+Number_types/test/Number_types/leda_rational.C -text
+Number_types/test/Number_types/leda_real.C -text
+Number_types/test/Number_types/long_double.C -text
+Number_types/test/Number_types/long_long.C -text
+Number_types/test/Number_types/mpq_class.C -text
+Number_types/test/Number_types/mpz_class.C -text
 Optimisation_doc/doc_tex/Optimisation/annulus.eps -text svneol=unset#application/postscript
 Optimisation_doc/doc_tex/Optimisation/annulus.gif -text svneol=unset#image/gif
 Optimisation_doc/doc_tex/Optimisation/annulus.pdf -text svneol=unset#application/pdf

@@ -31,58 +31,13 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template < typename T, typename U >
-::__gmp_expr<T, T> sqrt(const ::__gmp_expr<T, U> &);
-
-template < typename T, typename U >
-double to_double(const ::__gmp_expr<T, U> &);
-
-template < typename T, typename U >
-bool is_finite(const ::__gmp_expr<T, U> &);
-
-template < typename T, typename U >
-bool is_valid(const ::__gmp_expr<T, U> &);
-
-template < typename T, typename U >
-std::pair<double,double> to_interval (const ::__gmp_expr<T, U> &);
-
-std::pair<double, double> to_interval (const mpz_class &);
-
-std::pair<double, double> to_interval (const mpq_class &);
-
-template < typename T, typename U >
-::__gmp_expr<T, T> abs(const ::__gmp_expr<T, U>&);
-
-template < typename T, typename U >
-::__gmp_expr<T, T> square(const ::__gmp_expr<T, U>&);
-
-
-template < typename T, typename U >
-Sign sign(const ::__gmp_expr<T, U> &);
-
-template < typename T, typename U1, typename U2 >
-Comparison_result
-compare(const ::__gmp_expr<T, U1> &, const ::__gmp_expr<T, U2> &);
-
-template < typename T, typename U >
-bool is_zero(const ::__gmp_expr<T, U> &);
-
-template < typename T, typename U >
-bool is_one(const ::__gmp_expr<T, U> &);
-
-template < typename T, typename U >
-bool is_positive(const ::__gmp_expr<T, U> &);
-
-template < typename T, typename U >
-bool is_negative(const ::__gmp_expr<T, U> &);
-
 /* FIX gmpxx.h first
-template < typename T, typename U1, typename U2, typename U3 >
-typename Root_of_traits< ::__gmp_expr<T, T> >::RootOf_2
-make_root_of_2(const ::__gmp_expr< T, U1> & a,
-               const ::__gmp_expr< T, U2> & b,
-               const ::__gmp_expr< T, U3> & c,
-               bool d);*/
+   template < typename T, typename U1, typename U2, typename U3 >
+   typename Root_of_traits< ::__gmp_expr<T, T> >::RootOf_2
+   make_root_of_2(const ::__gmp_expr< T, U1> & a,
+   const ::__gmp_expr< T, U2> & b,
+   const ::__gmp_expr< T, U3> & c,
+   bool d);*/
 
 CGAL_END_NAMESPACE
 

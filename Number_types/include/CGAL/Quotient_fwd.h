@@ -29,23 +29,6 @@ CGAL_BEGIN_NAMESPACE
 template <class NT> class Quotient;
 template <class RT> struct Root_of_traits;
 
-template <class NT>
-Quotient<NT> sqrt(const Quotient<NT> &);
-
-template <class NT>
-Comparison_result compare(const Quotient<NT>&, const Quotient<NT>&);
-
-template <class NT>
-double to_double(const Quotient<NT>&);
-
-template <class NT>
-std::pair<double,double> to_interval (const Quotient<NT>&);
-
-template <class NT>
-bool is_valid(const Quotient<NT>&);
-
-template <class NT>
-bool is_finite(const Quotient<NT>&);
 
 template < class NT >
 typename Root_of_traits< NT >::RootOf_2

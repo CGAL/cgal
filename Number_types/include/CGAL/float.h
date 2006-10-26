@@ -19,14 +19,18 @@
 // $Id$
 // 
 //
-// Author(s)     : Geert-Jan Giezeman
+// Author(s)     : Geert-Jan Giezeman, Michael Hemmer
  
 
 #ifndef CGAL_FLOAT_H
 #define CGAL_FLOAT_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Algebraic_structure_traits.h>
+#include <CGAL/Real_embeddable_traits.h>
+#include <CGAL/utils.h>
 #include <CGAL/tags.h>
+#include <CGAL/functional_base.h> // Unary_function, Binary_function
 #include <cmath>
 #ifdef CGAL_CFG_IEEE_754_BUG
 #  include <CGAL/IEEE_754_unions.h>
@@ -47,61 +51,30 @@ template <> struct Number_type_traits<float> {
   typedef Tag_false Has_exact_sqrt;
 };
 
-inline
-double
-to_double(float f)
-{ return static_cast<double>(f); }
-
-
-inline 
-std::pair<double,double>
-to_interval(float f)
-{
-  return std::pair<double,double>(f, f);
-}
-
-
 #ifdef __sgi
 
-inline
-bool is_finite(float f)
-{
-    switch (fp_class_f(f)) {
-    case FP_POS_NORM:
-    case FP_NEG_NORM:
-    case FP_POS_ZERO:
-    case FP_NEG_ZERO:
-    case FP_POS_DENORM:
-    case FP_NEG_DENORM:
-        return true;
-    case FP_SNAN:
-    case FP_QNAN:
-    case FP_POS_INF:
-    case FP_NEG_INF:
-        return false;
-    }
-    return false; // NOT REACHED
-}
-
-inline
-bool is_valid(float d)
-{
-    switch (fp_class_f(d)) {
-    case FP_POS_NORM:
-    case FP_NEG_NORM:
-    case FP_POS_ZERO:
-    case FP_NEG_ZERO:
-    case FP_POS_INF:
-    case FP_NEG_INF:
-    case FP_POS_DENORM:
-    case FP_NEG_DENORM:
-        return true;
-    case FP_SNAN:
-    case FP_QNAN:
-        return false;
-    }
-    return false; // NOT REACHED
-}
+template<>
+class Is_valid< float > 
+  : public Unary_function< float, bool > {
+  public :
+    bool operator()( const float& x ) {
+      switch (fp_class_f(x)) {
+      case FP_POS_NORM:
+      case FP_NEG_NORM:
+      case FP_POS_ZERO:
+      case FP_NEG_ZERO:
+      case FP_POS_INF:
+      case FP_NEG_INF:
+      case FP_POS_DENORM:
+      case FP_NEG_DENORM:
+          return true;
+      case FP_SNAN:
+      case FP_QNAN:
+          return false;
+      }
+      return false; // NOT REACHED
+    }  
+};
 
 #elif defined CGAL_CFG_IEEE_754_BUG
 
@@ -125,37 +98,112 @@ is_nan_by_mask_float(unsigned int u)
   return ( (u & CGAL_MANTISSA_FLOAT_MASK) != 0);
 }
 
-inline
-bool
-is_finite( const float& flt)
-{
-  float f = flt;
-  IEEE_754_float* p = reinterpret_cast<IEEE_754_float*>(&f);
-  return is_finite_by_mask_float( p->c );
-}
-
-inline
-bool
-is_valid( const float& flt)
-{
-  float f = flt;
-  IEEE_754_float* p = reinterpret_cast<IEEE_754_float*>(&f);
-  return !is_nan_by_mask_float( p->c );
-}
+template<>
+class Is_valid< float > 
+  : public Unary_function< float, bool > {
+  public :
+    bool operator()( const float& x ) {
+      float f = x;
+      IEEE_754_float* p = reinterpret_cast<IEEE_754_float*>(&f);
+      return !is_nan_by_mask_float( p->c );
+    }  
+};
 
 #else
 
-inline
-bool
-is_valid(float d)
-{ return (d == d); }
-
-inline
-bool
-is_finite(float d)
-{ return (d == d) && (is_valid(d-d)); }
+template<>
+class Is_valid< float > 
+  : public Unary_function< float, bool > {
+  public :
+    bool operator()( const float& x ) {
+      return (x == x);
+    }  
+};
 
 #endif
+
+template <> class Algebraic_structure_traits< float >
+  : public Algebraic_structure_traits_base< float, 
+                                            CGAL::Field_with_kth_root_tag >  {
+  public:
+    typedef CGAL::Tag_false            Is_exact;
+            
+    class Sqrt 
+      : public Unary_function< Algebraic_structure, Algebraic_structure > {
+      public:
+        Algebraic_structure operator()( const Algebraic_structure& x ) const {
+          return CGAL_CLIB_STD::sqrt( x );
+        }
+    };
+    
+    class Kth_root 
+      : public Binary_function<int, Algebraic_structure, Algebraic_structure> {
+      public:
+        Algebraic_structure operator()( int k, 
+                                        const Algebraic_structure& x) const {
+          CGAL_precondition_msg( k > 0, "'k' must be positive for k-th roots");
+          return CGAL_CLIB_STD::pow(double(x), 1.0 / double(k));
+        };
+    };
+    
+};
+
+template <> class Real_embeddable_traits< float > 
+  : public Real_embeddable_traits_base< float > {
+  public:
+
+    typedef CGAL::INTERN_RET::To_double_by_conversion< Real_embeddable >
+                                                                  To_double;      
+    typedef CGAL::INTERN_RET::To_interval_by_conversion< Real_embeddable >
+                                                                  To_interval;
+// Is_finite depends on platform
+#ifdef __sgi
+
+    class Is_finite
+      : public Unary_function< Real_embeddable, bool > {
+      public:
+        bool operator()( const Real_embeddable& x ) {
+          switch (fp_class_f(x)) {
+          case FP_POS_NORM:
+          case FP_NEG_NORM:
+          case FP_POS_ZERO:
+          case FP_NEG_ZERO:
+          case FP_POS_DENORM:
+          case FP_NEG_DENORM:
+              return true;
+          case FP_SNAN:
+          case FP_QNAN:
+          case FP_POS_INF:
+          case FP_NEG_INF:
+              return false;
+          }
+          return false; // NOT REACHED
+        }
+    };
+    
+#elif defined CGAL_CFG_IEEE_754_BUG
+
+    class Is_finite
+      : public Unary_function< Real_embeddable, bool > {
+      public:
+        bool operator()( const Real_embeddable& x ) {
+          Real_embeddable f = x;
+          IEEE_754_float* p = reinterpret_cast<IEEE_754_float*>(&f);
+          return is_finite_by_mask_float( p->c );
+        }
+    };
+#else
+    class Is_finite
+      : public Unary_function< Real_embeddable, bool > {
+      public:
+        bool operator()( const Real_embeddable& x ) {
+          return (x == x) && (is_valid(x-x));        
+        }
+    };
+
+#endif
+    
+};
 
 inline
 io_Read_write
