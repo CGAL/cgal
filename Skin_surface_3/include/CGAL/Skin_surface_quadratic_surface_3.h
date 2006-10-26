@@ -26,24 +26,24 @@ template < class SkinSurfaceQuadraticSurfaceTraits_3 >
 class Skin_surface_quadratic_surface_3 {
 public:
   typedef SkinSurfaceQuadraticSurfaceTraits_3 K;
-  typedef typename K::RT                  RT;
+  typedef typename K::FT                  FT;
   typedef typename K::Point_3             Point;
   typedef typename K::Vector_3            Vector;
   typedef typename K::Segment_3           Segment;
-  typedef Weighted_point<Point,RT>        Weighted_point;
+  typedef Weighted_point<Point,FT>        Weighted_point;
 
   Skin_surface_quadratic_surface_3()
     : dim(-1), p(0,0,0), c(0) 
   {
     for (int i=0; i<6; i++) Q[i] = 0;
   }
-  Skin_surface_quadratic_surface_3(RT Qinput[], Point p, RT c, int d)
+  Skin_surface_quadratic_surface_3(FT Qinput[], Point p, FT c, int d)
     : dim(10+d), p(p), c(c)
   {
     for (int i=0; i<6; i++) Q[i] = Qinput[i];
   }
   int dim;
-  Skin_surface_quadratic_surface_3(Weighted_point wp0, RT s)
+  Skin_surface_quadratic_surface_3(Weighted_point wp0, FT s)
     : dim(0), p(wp0.point()), c(-s*(1-s)*wp0.weight()) 
   {
     CGAL_PROFILER(std::string("Constructor : ") + 
@@ -53,7 +53,7 @@ public:
   }
   Skin_surface_quadratic_surface_3(Weighted_point wp0, 
 				   Weighted_point wp1, 
-				   RT s) : dim(1)
+				   FT s) : dim(1)
   {
     CGAL_PROFILER(std::string("Constructor : ") + 
 		  std::string(CGAL_PRETTY_FUNCTION));
@@ -62,7 +62,7 @@ public:
     c = s*(1-s)*reg_traits.compute_squared_radius_smallest_orthogonal_sphere_3_object()(wp0,wp1);
     Vector t = wp0-wp1;
 
-    RT den = t*t;
+    FT den = t*t;
     Q[0] = (-  t.x()*t.x()/den + (1-s));
     
     Q[1] = (-2*t.y()*t.x()/den);
@@ -76,7 +76,7 @@ public:
   Skin_surface_quadratic_surface_3(Weighted_point wp0, 
 				   Weighted_point wp1, 
 				   Weighted_point wp2, 
-				   RT s) : dim(2)
+				   FT s) : dim(2)
   {
     CGAL_PROFILER(std::string("Constructor : ") + 
 		  std::string(CGAL_PRETTY_FUNCTION));
@@ -86,7 +86,7 @@ public:
     
     Vector t = K().construct_orthogonal_vector_3_object()(wp0,wp1,wp2);
 
-    RT den = t*t;
+    FT den = t*t;
     Q[0] = -(-  t.x()*t.x()/den + s);
     
     Q[1] = -(-2*t.y()*t.x()/den);
@@ -101,7 +101,7 @@ public:
 				   Weighted_point wp1, 
 				   Weighted_point wp2, 
 				   Weighted_point wp3, 
-				   RT s) : dim(3)
+				   FT s) : dim(3)
   {
     CGAL_PROFILER(std::string("Constructor : ") + 
 		  std::string(CGAL_PRETTY_FUNCTION));
@@ -113,12 +113,12 @@ public:
   }
 
   template <class Input_point>
-  RT value(Input_point const &x) const {
+  FT value(Input_point const &x) const {
     typedef Cartesian_converter<typename Input_point::R, K> Converter;
     
-    RT vx = Converter()(x.x()) - p.x();
-    RT vy = Converter()(x.y()) - p.y();
-    RT vz = Converter()(x.z()) - p.z();
+    FT vx = Converter()(x.x()) - p.x();
+    FT vy = Converter()(x.y()) - p.y();
+    FT vz = Converter()(x.z()) - p.z();
 
     return 
       vx*(Q[0]*vx) +
@@ -172,18 +172,18 @@ private:
   //template <class Input_point>
   Vector compute_gradient(Point const &x) {
     
-    RT vx = x.x() - p.x();
-    RT vy = x.y() - p.y();
-    RT vz = x.z() - p.z();
+    FT vx = x.x() - p.x();
+    FT vy = x.y() - p.y();
+    FT vz = x.z() - p.z();
 
     return Vector(2*Q[0]*vx + Q[1]*vy + Q[3]*vz,
 		  Q[1]*vx + 2*Q[2]*vy + Q[4]*vz,
 		  Q[3]*vx + Q[4]*vy + 2*Q[5]*vz);
   }
 	
-  RT Q[6]; 
+  FT Q[6]; 
   Point p; 
-  RT c;
+  FT c;
 };
 
 CGAL_END_NAMESPACE

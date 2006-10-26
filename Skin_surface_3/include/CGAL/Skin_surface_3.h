@@ -256,6 +256,7 @@ private:
 
     return CMCT_Cell();
   }
+public:
   Simplex locate_mixed(const Bare_point &p, 
 		       const Simplex &start = Simplex()) const;
 
@@ -545,6 +546,7 @@ private:
     // NGHK: Make adaptive
     return 1;
   }
+public:
   const Regular &get_regular_triangulation() const {
     return regular;
   }

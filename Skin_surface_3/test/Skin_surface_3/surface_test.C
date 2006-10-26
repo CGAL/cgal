@@ -12,7 +12,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Inexact_K;
 typedef CGAL::Skin_surface_traits_3<Inexact_K>             Traits;
 typedef CGAL::Skin_surface_3<Traits>                        Skin_surface_3;
 typedef Skin_surface_3::Simplex                             Simplex;
-typedef Skin_surface_3::RT                                  RT;
+typedef Skin_surface_3::FT                                  FT;
 typedef Skin_surface_3::Weighted_point                      Weighted_point;
 typedef Weighted_point::Point                               Bare_point;
 typedef CGAL::Polyhedron_3<Traits>                          Polyhedron;
@@ -22,12 +22,10 @@ typedef CGAL::Skin_surface_quadratic_surface_3<Exact_K>     Quadratic_surface;
 CGAL::Cartesian_converter<Exact_K,Inexact_K> e2i_converter;
 CGAL::Cartesian_converter<Inexact_K,Exact_K> i2e_converter;
 
-typedef CGAL::Triangulation_3<
-     Exact_K,
-     CGAL::Triangulation_data_structure_3
-     < CGAL::Triangulated_mixed_complex_vertex_3<Exact_K>,
-       CGAL::Triangulated_mixed_complex_cell_3<Exact_K,Quadratic_surface> > 
-   >                                      Triangulated_mixed_complex;
+typedef CGAL::Triangulation_vertex_base_with_info_3<Simplex, Exact_K>           Vb;
+typedef CGAL::Triangulation_cell_base_with_info_3<Quadratic_surface *, Exact_K> Cb;
+typedef CGAL::Triangulation_data_structure_3<Vb,Cb>                        Tds;
+typedef CGAL::Triangulation_3<Exact_K, Tds>         Triangulated_mixed_complex;
 //typedef Skin_surface_3::Triangulated_mixed_complex  Triangulated_mixed_complex;
 typedef Triangulated_mixed_complex::Vertex_handle   Tmc_Vertex_handle;
 typedef Triangulated_mixed_complex::Finite_vertices_iterator 
@@ -63,14 +61,14 @@ public:
       if (tmc.is_infinite(vit->cell())) {
 	std::cerr << "ERROR: is_infinite (main)" << std::endl;
       }
-      Quadratic_surface::RT val = vit->cell()->surf->value(vit->point());
+      Quadratic_surface::FT val = vit->cell()->info()->value(vit->point());
       std::list<Triangulated_mixed_complex::Cell_handle> cells;
       tmc.incident_cells(vit, std::back_inserter(cells));
       for (std::list<Triangulated_mixed_complex::Cell_handle>::iterator cell = 
 	     cells.begin();
 	   cell != cells.end(); cell++) {
 	if (!tmc.is_infinite(*cell)) {
-	  Quadratic_surface::RT val2 = (*cell)->surf->value(vit->point());
+	  Quadratic_surface::FT val2 = (*cell)->info()->value(vit->point());
  	  CGAL_assertion(val == val2);
 	}
       }
@@ -84,9 +82,9 @@ public:
 		      (cit->vertex(2)->point()-cit->vertex(0)->point())/4 +
 		      (cit->vertex(3)->point()-cit->vertex(0)->point())/4);
       if (tmc.tetrahedron(cit).has_on_bounded_side(i2e_converter(baryc))) {
-	Quadratic_surface::RT val1 = cit->surf->value(i2e_converter(baryc));
+	Quadratic_surface::FT val1 = cit->info()->value(i2e_converter(baryc));
 	Simplex s = skin_surface.locate_mixed(baryc);
-	Quadratic_surface::RT val2 = 
+	Quadratic_surface::FT val2 = 
 	  skin_surface.construct_surface(s, Exact_K()).value(i2e_converter(baryc));
 	//	std::cout << val1 << " " << val2 << " " << val2-val1 << std::endl;
 	CGAL_assertion(val1==val2);

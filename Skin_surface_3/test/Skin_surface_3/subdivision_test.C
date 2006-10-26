@@ -11,7 +11,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Skin_surface_traits_3<K>                     Traits;
 typedef CGAL::Skin_surface_3<Traits>                        Skin_surface_3;
-typedef Skin_surface_3::RT                                  RT;
+typedef Skin_surface_3::FT                                  FT;
 typedef Skin_surface_3::Weighted_point                      Weighted_point;
 typedef Weighted_point::Point                               Bare_point;
 typedef CGAL::Polyhedron_3<K>                               Polyhedron;
@@ -38,7 +38,7 @@ void construct_and_subdivide_mesh(Skin_surface_3 &skin_surface,
   CGAL::mesh_skin_surface_3(skin_surface, polyhedron);
   CGAL_assertion(polyhedron.is_valid() && polyhedron.is_closed());
 
-  CGAL::subdivide_skin_surface_mesh_3(polyhedron, skin_surface);
+  CGAL::subdivide_skin_surface_mesh_3(skin_surface, polyhedron);
   CGAL_assertion(polyhedron.is_valid() && polyhedron.is_closed());
 }
 

@@ -15,7 +15,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Skin_surface_traits_3<K>                      Traits;
 typedef CGAL::Skin_surface_3<Traits>                        Skin_surface_3;
-typedef Skin_surface_3::RT                                  RT;
+typedef Skin_surface_3::FT                                  FT;
 typedef Skin_surface_3::Weighted_point                      Weighted_point;
 typedef Weighted_point::Point                               Bare_point;
 typedef CGAL::Polyhedron_3<K,
@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
   }
 
   std::list<Weighted_point> l;
-  RT                        shrinkfactor = 0.5;
+  FT                        shrinkfactor = 0.5;
 
   Weighted_point wp;
   std::ifstream in(argv[1]);
@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
   std::cout << "Is closed: " << (p.is_closed() ? "Yes" : "No") << std::endl;
 
   std::ofstream out("mesh.off");
-  write_polyhedron_with_normals(p, skin_surface, out);
+  write_polyhedron_with_normals(skin_surface, p, out);
 //   out << p;
 
   return 0;
