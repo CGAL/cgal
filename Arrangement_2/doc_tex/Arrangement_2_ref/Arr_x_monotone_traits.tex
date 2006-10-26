@@ -33,17 +33,18 @@ curve splitting.
 % =======================
 \ccThree{Compare_y_at_x_2}{}{\hspace*{14cm}}
 \ccThreeToTwo
-\ccNestedType{Intersect_2}{models the concept \ccc{Intersect_2}.}
+\ccNestedType{Intersect_2}{models the concept \ccc{ArrTraits::Intersect_2}.}
 \ccGlue
-\ccNestedType{Split_2}{models the concept \ccc{Split_2}.}
+\ccNestedType{Split_2}{models the concept \ccc{ArrTraits::Split_2}.}
 
 The two following function-object types are optional. If they are
 supported, the \ccc{Has_merge_category} tag should be defined as
 \ccc{Tag_true} (and \ccc{Tag_false} otherwise.
 
-\ccNestedType{Are_mergeable_2}{models the concept \ccc{AreMergeable_2}.}
+\ccNestedType{Are_mergeable_2}%
+  {models the concept \ccc{ArrTraits::AreMergeable_2}.}
 \ccGlue
-\ccNestedType{Merge_2}{models the concept \ccc{Merge_2}.}
+\ccNestedType{Merge_2}{models the concept \ccc{ArrTraits::Merge_2}.}
 
 \ccThree{Construct_x_monotone_curve_2~~~}{}{\hspace*{7cm}}
 \ccThreeToTwo
@@ -89,7 +90,7 @@ the \ccc{Has_merge_category} tag should be defined as \ccc{Tag_true} (and
 %%%%%%%% Intersect_2
 % ==================
 \ccRefPageBegin
-\begin{ccRefConcept}{Intersect_2}
+\begin{ccRefConcept}{ArrTraits::Intersect_2}
 \ccRefines{Functor}
 
 \ccHasModels\ccc{ArrangementXMonotoneTraits_2::Intersect_2}
@@ -115,7 +116,7 @@ the \ccc{Has_merge_category} tag should be defined as \ccc{Tag_true} (and
 %%%%%%%% Split_2
 % ==============
 \ccRefPageBegin
-\begin{ccRefConcept}{Split_2}
+\begin{ccRefConcept}{ArrTraits::Split_2}
 \ccRefines{Functor}
 
 \ccHasModels\ccc{ArrangementXMonotoneTraits_2::Split_2}
@@ -138,7 +139,7 @@ the \ccc{Has_merge_category} tag should be defined as \ccc{Tag_true} (and
 %%%%%%%% AreMergeable_2
 % =====================
 \ccRefPageBegin
-\begin{ccRefConcept}{AreMergeable_2}
+\begin{ccRefConcept}{ArrTraits::AreMergeable_2}
 \ccRefines{Functor}
 
 \ccHasModels\ccc{ArrangementXMonotoneTraits_2::Are_mergeable_2}
@@ -156,7 +157,7 @@ the \ccc{Has_merge_category} tag should be defined as \ccc{Tag_true} (and
 %%%%%%%% Merge_2
 % ==============
 \ccRefPageBegin
-\begin{ccRefConcept}{Merge_2}
+\begin{ccRefConcept}{ArrTraits::Merge_2}
 \ccRefines{Functor}
 
 \ccHasModels\ccc{ArrangementXMonotoneTraits_2::Merge_2}
