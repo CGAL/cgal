@@ -32,7 +32,6 @@ CGAL_BEGIN_NAMESPACE
 class Rational_polynomial_1 {
 	private:
 		int degree;	// degree
-		int nm;	// number of monomials in the polynomial
 		mpz_t* coef;	// the coefficients
 		inline int calc_index (int) const;	// index of the element
 	public:

@@ -29,34 +29,30 @@ CGAL_BEGIN_NAMESPACE
 // constructors
 Rational_polynomial_1::Rational_polynomial_1 () {
 	degree = 0;
-	nm = 1;
 	coef = (mpz_t*)malloc (sizeof(mpz_t));
 	mpz_init (coef[0]);
 };
 
 Rational_polynomial_1::Rational_polynomial_1 (unsigned int d) {
 	degree = (int)d;
-	nm = degree+1;
-	coef = (mpz_t*)malloc (sizeof(mpz_t)*nm);
-	for (int i=0; i<nm; ++i)
+	coef = (mpz_t*)malloc (sizeof(mpz_t)*(degree+1));
+	for (int i=0; i<degree+1; ++i)
 		mpz_init (coef[i]);
 };
 
 Rational_polynomial_1::Rational_polynomial_1 (int d) {
 	degree = d<0?0:d;
-	nm = degree+1;
-	coef = (mpz_t*)malloc (sizeof(mpz_t)*nm);
-	for (int i=0; i<nm; ++i)
+	coef = (mpz_t*)malloc (sizeof(mpz_t)*(degree+1));
+	for (int i=0; i<degree+1; ++i)
 		mpz_init (coef[i]);
 };
 
 Rational_polynomial_1::Rational_polynomial_1 (const Rational_polynomial_1 &p) {
 	degree = p.degree;
-	nm = p.nm;
 	mpz_t *p_coef = p.get_coefs ();
-	coef = (mpz_t*)malloc (sizeof(mpz_t)*nm);
+	coef = (mpz_t*)malloc (sizeof(mpz_t)*(degree+1));
 	// we have to copy the contents, not just the pointer
-	for (int i=0; i<nm; ++i) {
+	for (int i=0; i<degree+1; ++i) {
 		mpz_init (coef[i]);
 		mpz_set (coef[i], p_coef[i]);
 		}
@@ -64,19 +60,18 @@ Rational_polynomial_1::Rational_polynomial_1 (const Rational_polynomial_1 &p) {
 
 // destructor
 Rational_polynomial_1::~Rational_polynomial_1 () {
-	for (int i=0; i<nm; ++i)
+	for (int i=0; i<degree+1; ++i)
 		mpz_clear (coef[i]);
 	free (coef);
 };
 
 void Rational_polynomial_1::set_degree (int d) {	// noone should call this function
-	for (int i=0; i<nm; ++i)	// free the old coefficients
+	for (int i=0; i<degree+1; ++i)	// free the old coefficients
 		mpz_clear (coef[i]);
 	free (coef);
 	degree = d;	// do it again
-	nm = d+1;
-	coef = (mpz_t*)malloc (sizeof(mpz_t)*nm);
-	for (int i=0; i<nm; ++i)
+	coef = (mpz_t*)malloc (sizeof(mpz_t)*(degree+1));
+	for (int i=0; i<degree+1; ++i)
 		mpz_init (coef[i]);
 	return;
 };
@@ -144,7 +139,7 @@ inline int Rational_polynomial_1::get_degree () const {
 };
 
 inline int Rational_polynomial_1::get_number_of_monomials () const {
-	return nm;
+	return (degree+1);
 };
 
 inline mpz_t* Rational_polynomial_1::get_coefs () const {
@@ -210,14 +205,13 @@ Rational_polynomial_1 Rational_polynomial_1::derive () const {
 
 Rational_polynomial_1& Rational_polynomial_1::operator= (const Rational_polynomial_1 &p) {
 	// destroy the current data
-	for (int i=0; i<nm; ++i)
+	for (int i=0; i<degree+1; ++i)
 		mpz_clear (coef[i]);
 	free (coef);
 	// copy data from p
 	degree = p.degree;
-	nm = p.nm;
-	coef = (mpz_t*)malloc (sizeof(mpz_t)*nm);
-	for (int i=0; i<nm; ++i) {
+	coef = (mpz_t*)malloc (sizeof(mpz_t)*(degree+1));
+	for (int i=0; i<degree+1; ++i) {
 		mpz_init (coef[i]);
 		mpz_set (coef[i], p.coef[i]);
 		}
@@ -262,7 +256,7 @@ Rational_polynomial_1 Rational_polynomial_1::operator- () const {
 	Rational_polynomial_1 opposite (degree);	// the opposite has the same degree
 	mpz_t temp;
 	mpz_init (temp);
-	for (int i=0; i<nm; ++i) {
+	for (int i=0; i<degree+1; ++i) {
 		mpz_neg (temp, coef[calc_index (i)]);
 		opposite.set_coef (i, temp);
 	}
@@ -333,17 +327,16 @@ void Rational_polynomial_1::shift (int shiftn) {
 	CGAL_assertion (shiftn>=0);
 	if (shiftn == 0)
 		return;
-	mpz_t *new_coef = (mpz_t*)malloc (sizeof(mpz_t)*(nm+shiftn));
-	for (int i=0; i<nm; ++i) {
+	mpz_t *new_coef = (mpz_t*)malloc (sizeof(mpz_t)*(degree+1+shiftn));
+	for (int i=0; i<degree+1; ++i) {
 		mpz_init (new_coef[i]);
 		mpz_set (new_coef[i], coef[i]);
 		mpz_clear (coef[i]);
 	}
 	free (coef);
-	for (int i=nm; i<nm+shiftn; ++i)
+	for (int i=degree+1; i<degree+1+shiftn; ++i)
 		mpz_init (new_coef[i]);
 	degree += shiftn;
-	nm = degree+1;
 	coef = new_coef;
 	return;
 };
