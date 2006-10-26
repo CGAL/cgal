@@ -1,0 +1,90 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: SvdTraits.tex
+% +------------------------------------------------------------------------+
+% | 09.02.2006   Marc Pouget and Frédéric Cazals
+% | Package: Jet_fitting_3
+% | 
+\RCSdef{\RCSSvdTraitsRev}{$Id$}
+\RCSdefDate{\RCSSvdTraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{SvdTraits}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+% +------------------------------------------------------------------
+The concept \ccRefName\ describes the set of requirements to be
+fulfilled by any class used to instantiate the third template
+parameter of the class
+\ccc{Monge_via_jet_fitting<DataKernel,LocalKernel,SvdTraits>}.
+
+It describes the linear algebra types and algorithms needed by the
+class \ccc{Monge_via_jet_fitting}. 
+
+\ccRequirements
+% +------------------------------------------------------------------
+The scalar type, \ccc{SvdTraits::FT}, must be the same as that of
+the \ccc{LocalKernel} concept~: \ccc{LocalKernel::FT}.
+
+\ccTypes
+% +------------------------------------------------------------------
+\ccNestedType{FT}{The scalar type.}
+\ccGlue
+\ccNestedType{Vector }{The Vector type.}
+\ccGlue
+\ccNestedType{Matrix }{The Matrix type.}
+
+%\ccCreation
+%\ccCreationVariable{a}  %% choose variable name
+
+%\ccConstructor{SvdTraits();}{default constructor.}
+\ccCreationVariable{vector} %choose variable name
+\ccOperations
+The Vector has the access methods
+\ccMethod{size_t size();}{}
+\ccGlue
+\ccMethod{FT operator()(size_t i); }{}
+\ccGlue
+\ccMethod{void set(size_t i, const FT value);}{}
+
+The Matrix has the access methods
+
+\ccCreationVariable{matrix} %choose variable name
+\ccMethod{size_t number_of_rows();}{}
+\ccGlue
+\ccMethod{size_t number_of_columns();}{}
+\ccGlue
+\ccMethod{void set(size_t i, size_t j, const FT value); }{}
+\ccGlue
+\ccMethod{FT operator()(size_t i, size_t j); }{}
+
+The SvdTraits has a linear solver using a singular value decomposition
+algorithm.
+\ccCreationVariable{traits} %choose variable name
+
+\ccMethod{void solve(Matrix& M, Vector& B, FT& cond_nb);}
+{ Solves the system MX=B (in the least square sense if M is not
+square) using a Singular Value Decomposition and gives the condition
+number of M. The solution is stored in B, the condition number is
+strored in cond\_nb.}
+
+\ccHasModels
+% +------------------------------------------------------------------
+\ccc{Lapack_svd}. 
+
+\ccSeeAlso
+% +------------------------------------------------------------------
+\ccc{LocalKernel}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
