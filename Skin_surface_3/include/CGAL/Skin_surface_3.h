@@ -54,7 +54,7 @@ class Skin_surface_3 {
 public:
   typedef MixedComplexTraits_3            Geometric_traits;
   typedef typename Gt::Weighted_point     Weighted_point;
-  typedef typename Weighted_point::Weight RT;
+  typedef typename Weighted_point::Weight FT;
   // NGHK:: added for the Delaunay mesher
   typedef typename Gt::Sphere_3           Sphere;
   typedef typename Weighted_point::Point  Bare_point;
@@ -101,7 +101,7 @@ private:
 public:
   template < class WP_iterator >
   Skin_surface_3(WP_iterator begin, WP_iterator end, 
-		 RT shrink_factor,
+		 FT shrink_factor,
 		 bool grow_balls = true,
 		 Gt gt_ = Gt(),
 		 bool _verbose = false
@@ -297,13 +297,13 @@ private:
       (sim, 
        Exact_predicates_exact_constructions_kernel()).sign(p);
   }
-  RT
+  FT
   value(const Bare_point &p) const {
     Simplex sim = locate_mixed(p);
     return value(sim,p);
   }
 
-  RT
+  FT
   value(const Simplex &sim, const Bare_point &p) const {
     return 
       construct_surface(sim, typename Geometric_traits::Kernel()).value(p);
@@ -359,11 +359,11 @@ private:
 		 Simplex &s1, Simplex &s2,
 		 Bare_point &p) const {
     typedef typename Bare_point::R  Traits;
-    typedef typename Traits::RT RT;
+    typedef typename Traits::FT FT;
     Cartesian_converter<Traits, 
                         typename Geometric_traits::Bare_point::R> converter;
 
-    RT sq_dist = squared_distance(p1,p2);
+    FT sq_dist = squared_distance(p1,p2);
     // Use value to make the computation robust (endpoints near the surface)
     if (value(s1, p1) > value(s2, p2)) std::swap(p1, p2);
     Simplex sp = s1;
@@ -477,8 +477,8 @@ private:
     typedef Weighted_converter_3<Cartesian_converter<
       typename Geometric_traits::Bare_point::R, Traits> > Converter;
     typedef typename Traits::Point_3                      Point;
-    typedef typename Traits::RT                           RT;
-    typedef CGAL::Weighted_point<Point,RT>                Weighted_point;
+    typedef typename Traits::FT                           FT;
+    typedef CGAL::Weighted_point<Point,FT>                Weighted_point;
 
     Converter conv;
 
@@ -536,11 +536,11 @@ private:
   Sphere bounding_sphere() const {
     return _bounding_sphere;
   }
-  RT squared_error_bound() const {
+  FT squared_error_bound() const {
     return .01;
   }
 
-  typename Mesher_Gt::RT 
+  typename Mesher_Gt::FT 
   get_density(const typename Mesher_Gt::Point_3 &p) const {
     // NGHK: Make adaptive
     return 1;
@@ -548,7 +548,7 @@ private:
   const Regular &get_regular_triangulation() const {
     return regular;
   }
-  RT get_shrink_factor() const {
+  FT get_shrink_factor() const {
     return gt.get_shrink();
   }
 
@@ -576,12 +576,12 @@ construct_bounding_box(Regular &regular)
   typedef typename Regular::Geom_traits     GT;
   typedef typename GT::Bare_point             Point;
   typedef typename GT::Point                Weighted_point;
-  typedef typename GT::RT                     RT;
+  typedef typename GT::FT                     FT;
   
   Finite_vertices_iterator vit = regular.finite_vertices_begin();
   if (vit != regular.finite_vertices_end()) {
     Bbox_3 bbox = vit->point().bbox();
-    RT max_weight=vit->point().weight();
+    FT max_weight=vit->point().weight();
     while (++vit != regular.finite_vertices_end()) {
       bbox = bbox + vit->point().bbox();
       if (max_weight < vit->point().weight())
@@ -589,12 +589,12 @@ construct_bounding_box(Regular &regular)
     }
 
     // add a bounding octahedron:
-    RT dx = bbox.xmax() - bbox.xmin();
-    RT dy = bbox.ymax() - bbox.ymin();
-    RT dz = bbox.zmax() - bbox.zmin();
+    FT dx = bbox.xmax() - bbox.xmin();
+    FT dy = bbox.ymax() - bbox.ymin();
+    FT dz = bbox.zmax() - bbox.zmin();
   
     Bare_point mid(bbox.xmin() + dx/2, bbox.ymin() + dy/2, bbox.zmin() + dz/2);
-    RT dr = sqrt(CGAL::to_double(max_weight)) + .001;
+    FT dr = sqrt(CGAL::to_double(max_weight)) + .001;
   
     regular.insert(Weighted_point(
       Bare_point(bbox.xmax()+(dy+dz+dr)/gt.get_shrink(),mid.y(),mid.z()),-1));
