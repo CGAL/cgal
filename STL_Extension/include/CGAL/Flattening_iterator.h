@@ -37,7 +37,6 @@
 #define CGAL_FLATTENING_ITERATOR_H 1
 
 #include <CGAL/basic.h>
-#include <CGAL/LiS/basic.h>
 #include <CGAL/Nested_iterator.h>
 
 #include <iterator>

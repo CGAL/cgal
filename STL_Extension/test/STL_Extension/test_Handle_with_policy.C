@@ -33,7 +33,6 @@
 #include <CGAL/memory.h>
 #include <CGAL/Testsuite/assert.h>
 
-#include <CGAL/LiS/basic.h>
 #include <CGAL/Handle_with_policy.h>
 #include <cstdlib>
 

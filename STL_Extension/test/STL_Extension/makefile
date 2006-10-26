@@ -40,21 +40,34 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
+                test_Cache$(EXE_EXT) \
                 test_Compact_container$(EXE_EXT) \
                 test_Concatenate_iterator$(EXE_EXT) \
+                test_Flattening_iterator$(EXE_EXT) \
+                test_Handle_with_policy$(EXE_EXT) \
                 test_In_place_list$(EXE_EXT) \
                 test_Nested_iterator$(EXE_EXT) \
                 test_composition$(EXE_EXT) \
+                test_lexcompare_outputrange$(EXE_EXT) \
                 test_new_binders1$(EXE_EXT) \
                 test_stl_extension$(EXE_EXT) \
                 test_vector$(EXE_EXT) \
                 test_multiset$(EXE_EXT) 
+
+test_Cache$(EXE_EXT): test_Cache$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Cache test_Cache$(OBJ_EXT) $(LDFLAGS)
 
 test_Compact_container$(EXE_EXT): test_Compact_container$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Compact_container test_Compact_container$(OBJ_EXT) $(LDFLAGS)
 
 test_Concatenate_iterator$(EXE_EXT): test_Concatenate_iterator$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Concatenate_iterator test_Concatenate_iterator$(OBJ_EXT) $(LDFLAGS)
+
+test_Flattening_iterator$(EXE_EXT): test_Flattening_iterator$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Flattening_iterator test_Flattening_iterator$(OBJ_EXT) $(LDFLAGS)
+
+test_Handle_with_policy$(EXE_EXT): test_Handle_with_policy$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_Handle_with_policy test_Handle_with_policy$(OBJ_EXT) $(LDFLAGS)
 
 test_In_place_list$(EXE_EXT): test_In_place_list$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_In_place_list test_In_place_list$(OBJ_EXT) $(LDFLAGS)
@@ -64,6 +77,9 @@ test_Nested_iterator$(EXE_EXT): test_Nested_iterator$(OBJ_EXT)
 
 test_composition$(EXE_EXT): test_composition$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_composition test_composition$(OBJ_EXT) $(LDFLAGS)
+
+test_lexcompare_outputrange$(EXE_EXT): test_lexcompare_outputrange$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_lexcompare_outputrange test_lexcompare_outputrange$(OBJ_EXT) $(LDFLAGS)
 
 test_new_binders1$(EXE_EXT): test_new_binders1$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_new_binders1 test_new_binders1$(OBJ_EXT) $(LDFLAGS)
@@ -78,11 +94,15 @@ test_multiset$(EXE_EXT): test_multiset$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_multiset test_multiset$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
+                   test_Cache.clean \
                    test_Compact_container.clean \
                    test_Concatenate_iterator.clean \
+                   test_Flattening_iterator.clean \
+                   test_Handle_with_policy.clean \
                    test_In_place_list.clean \
                    test_Nested_iterator.clean \
                    test_composition.clean \
+                   test_lexcompare_outputrange.clean \
                    test_new_binders1.clean \
                    test_stl_extension.clean \
                    test_vector.clean \

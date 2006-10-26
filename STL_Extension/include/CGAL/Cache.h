@@ -29,7 +29,6 @@
 #define CGAL_CACHE_H 1
 
 #include <CGAL/basic.h>
-#include <CGAL/LiS/basic.h>
 #include <CGAL/function_objects.h>
 
 #include <map>
