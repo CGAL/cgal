@@ -13,16 +13,16 @@ int main () {
 	// p = 2*x^2*y + 3*x + 7
 	q = -p;
 	p.set_coef (0, 0, 5);
-	std::cout << p << "\n" << q << "\n" << zero << "\n";
+	std::cout << "p = " << p << "\nq = " << q << "\n0 = " << zero << "\n";
 	std::cout << "p==q : " << (p==q) << "\np!=q : " << (p!=q) << "\n";
 
 	Polynomial r;
 	Polynomial s (1, 0);
 	s.set_coef (1, 0, 1);	// s = 1 * x^1
 	r = p*s;
-	std::cout << "r = " << r << "\n" << "s = " << s <<
+	std::cout << "s = " << s << "\nr = p*s = " << r <<
 		"\np*=(s*2) = " << (p*=(s*2)) << std::endl;
-	
+
 	return 0;
 }
 
