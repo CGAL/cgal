@@ -16,7 +16,7 @@ typedef Data_Kernel::Point_3     DPoint;
 typedef double                   LFT;
 typedef CGAL::Cartesian<LFT>     Local_Kernel;
 typedef CGAL::Monge_via_jet_fitting<Data_Kernel> My_Monge_via_jet_fitting;
-typedef My_Monge_via_jet_fitting::Monge_form  My_Monge_form;
+typedef My_Monge_via_jet_fitting::LMonge_form  My_Monge_form;
        
 int main(int argc, char *argv[])
 {
@@ -59,7 +59,8 @@ int main(int argc, char *argv[])
 
    My_Monge_via_jet_fitting monge_fit; 
    //    monge_form = monge_fit()(in_points.begin(), in_points.end(), d_fitting, d_monge);
-   monge_form = monge_fit.run(in_points.begin(), in_points.end(), d_fitting, d_monge);
+   //monge_form = monge_fit.run(in_points.begin(), in_points.end(), d_fitting, d_monge);
+   monge_form = monge_fit(in_points.begin(), in_points.end(), d_fitting, d_monge);
 
   //OUTPUT on std::cout
   CGAL::set_pretty_mode(std::cout);
