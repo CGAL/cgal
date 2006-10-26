@@ -21,7 +21,7 @@ unsigned int fact(unsigned int n){
 
 ////////////////////// CLASS Monge_form ////////////////////////
 template <class DataKernel>
-class Monge_form {
+class TMonge_form {
  public: 
   typedef typename DataKernel::FT        FT;
   typedef typename DataKernel::Point_3   Point_3;
@@ -41,14 +41,14 @@ class Monge_form {
   
 public:
   //constructor
-  Monge_form() {
+  TMonge_form() {
     m_origin_pt  = Point_3(0.,0.,0.); 
     m_d1 = Vector_3(0.,0.,0.);
     m_d2 = Vector_3(0.,0.,0.);
     m_n = Vector_3(0.,0.,0.);
     m_coefficients = std::vector<FT>();
   }
-  ~Monge_form() {}
+  ~TMonge_form() {}
   //access
   const Point_3 origin() const { return m_origin_pt; }
   Point_3& origin() { return m_origin_pt; }
@@ -84,14 +84,14 @@ public:
 };
 
 template <class DataKernel>
-void Monge_form<DataKernel>::
+void TMonge_form<DataKernel>::
 set_up(int degree) {
   if ( degree >= 2 ) std::fill_n(back_inserter(m_coefficients),
 				 (degree+1)*(degree+2)/2-4, 0.);
 }
 
 template <class DataKernel>
-void Monge_form<DataKernel>::
+void TMonge_form<DataKernel>::
 comply_wrt_given_normal(const Vector_3 given_normal)
 {
   if ( given_normal*this->normal_direction() < 0 )
@@ -113,7 +113,7 @@ comply_wrt_given_normal(const Vector_3 given_normal)
 }
 
 template <class DataKernel>
-void Monge_form<DataKernel>::
+void TMonge_form<DataKernel>::
 dump_verbose(std::ostream& out_stream)
 {
   out_stream << "origin : " << origin() << std::endl
@@ -138,7 +138,7 @@ dump_verbose(std::ostream& out_stream)
 }
 
 template <class DataKernel>
-void Monge_form<DataKernel>::
+void TMonge_form<DataKernel>::
 dump_4ogl(std::ostream& out_stream, const FT scale)
 {
   CGAL_precondition( coefficients().size() >= 2 );
@@ -153,7 +153,7 @@ dump_4ogl(std::ostream& out_stream, const FT scale)
 
 template <class DataKernel>
 std::ostream& 
-operator<<(std::ostream& out_stream, Monge_form<DataKernel>& monge)
+operator<<(std::ostream& out_stream, TMonge_form<DataKernel>& monge)
 {
   monge.dump_verbose(out_stream);
   return out_stream;
@@ -164,10 +164,10 @@ operator<<(std::ostream& out_stream, Monge_form<DataKernel>& monge)
 template < class DataKernel, class LocalKernel = Cartesian<double>, class SvdTraits = Lapack_svd>  
   class Monge_via_jet_fitting {
   public:
-  typedef DataKernel   Data_Kernel;
-  typedef LocalKernel  Local_Kernel;
+  typedef  DataKernel   Data_Kernel;
+  typedef  LocalKernel  Local_Kernel;
   typedef typename std::vector<typename Data_Kernel::Point_3>::iterator Range_Iterator;
-  typedef Monge_form<Data_Kernel>  Monge_form;
+  typedef  TMonge_form<Data_Kernel>  Monge_form;
 
   //used to convert number types, points and vectors back and forth
   typedef NT_converter<typename Local_Kernel::FT, typename  Data_Kernel::FT> L2D_NTconverter;
@@ -199,37 +199,37 @@ template < class DataKernel, class LocalKernel = Cartesian<double>, class SvdTra
   //should not be there, but i cant find a correct type for the return 
   //value if it is outside of the class def
   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-/*   Monge_form operator()(Range_Iterator begin, Range_Iterator end,  */
-/* 			size_t d, size_t dprime) */
-  Monge_form run(Range_Iterator begin, Range_Iterator end, 
-		 size_t d, size_t dprime)
-  {
-    m_pca_basis = std::vector< std::pair<LFT, LVector> >(3);
+    Monge_form operator()(Range_Iterator begin, Range_Iterator end,  
+			  size_t d, size_t dprime);
+    Monge_form run(Range_Iterator begin, Range_Iterator end, 
+		   size_t d, size_t dprime);
+//   {
+//     m_pca_basis = std::vector< std::pair<LFT, LVector> >(3);
 
-  // precondition: on the degrees, jet and monge
-  CGAL_precondition( (d >=1) && (dprime >= 1) 
-		             && (dprime <= 4) && (dprime <= d) );
-  this->deg = d;
-  this->deg_monge = dprime;
-  this->nb_d_jet_coeff = (d+1)*(d+2)/2;
-  this->nb_input_pts = end - begin;
-  // precondition: solvable ls system
-  CGAL_precondition( nb_input_pts >= nb_d_jet_coeff );
+//   // precondition: on the degrees, jet and monge
+//   CGAL_precondition( (d >=1) && (dprime >= 1) 
+// 		             && (dprime <= 4) && (dprime <= d) );
+//   this->deg = d;
+//   this->deg_monge = dprime;
+//   this->nb_d_jet_coeff = (d+1)*(d+2)/2;
+//   this->nb_input_pts = end - begin;
+//   // precondition: solvable ls system
+//   CGAL_precondition( nb_input_pts >= nb_d_jet_coeff );
 
-  //Initialize
-  Monge_form monge_form;
-  monge_form.set_up(dprime);
-  //for the system MA=Z
-  LAMatrix M(nb_input_pts, nb_d_jet_coeff);
-  LAVector Z(nb_input_pts);
+//   //Initialize
+//   Monge_form monge_form;
+//   monge_form.set_up(dprime);
+//   //for the system MA=Z
+//   LAMatrix M(nb_input_pts, nb_d_jet_coeff);
+//   LAVector Z(nb_input_pts);
 
-  compute_PCA(begin, end);
-  fill_matrix(begin, end, d, M, Z);//with precond
-  solve_linear_system(M, Z);  //correct with precond
-  compute_Monge_basis(Z.vector(), monge_form);
-  if ( dprime >= 3) compute_Monge_coefficients(Z.vector(), dprime, monge_form);
-  return monge_form;
-  }
+//   compute_PCA(begin, end);
+//   fill_matrix(begin, end, d, M, Z);//with precond
+//   solve_linear_system(M, Z);  //correct with precond
+//   compute_Monge_basis(Z.vector(), monge_form);
+//   if ( dprime >= 3) compute_Monge_coefficients(Z.vector(), dprime, monge_form);
+//   return monge_form;
+//   }
   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   //should not be there, but i cant find a correct type for the return 
   //value is it is out side of the class def
@@ -324,47 +324,54 @@ Monge_via_jet_fitting(Range_Iterator begin, Range_Iterator end,
   if ( dprime >= 3) compute_Monge_coefficients(Z.vector(), dprime, monge_form);
 } 
 
-/* template < class DataKernel, class LocalKernel, class SvdTraits>   */
-/*  typename Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::Monge_form<DataKernel> */
-/*   //   Monge_form1 */
-/*   // Monge_via_jet_fitting::Monge_form */
-/* Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>:: */
-/* operator()(Range_Iterator begin, Range_Iterator end,  */
-/* 	   int d, int dprime); */
-/* {} */
+// template < class DataKernel, class LocalKernel, class SvdTraits>  
+//  typename Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::Monge_form<DataKernel>
+//   //   Monge_form1
+//   // Monge_via_jet_fitting::Monge_form
+// Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::
+// operator()(Range_Iterator begin, Range_Iterator end, 
+// 	   int d, int dprime);
+// {}
 
-/* template < class DataKernel, class LocalKernel, class SvdTraits>  */
-/*   Monge_form  */
-/*   Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>:: */
-/* run(Range_Iterator begin, Range_Iterator end,  */
-/*     size_t d, size_t dprime) */
-/*   { */
-/*     m_pca_basis = std::vector< std::pair<LFT, LVector> >(3); */
+template < class DataKernel, class LocalKernel, class SvdTraits> 
+TMonge_form<DataKernel>
+Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::
+operator()(Range_Iterator begin, Range_Iterator end, 
+    size_t d, size_t dprime)
+{run(begin,  end, d, dprime);}
 
-/*   // precondition: on the degrees, jet and monge */
-/*   CGAL_precondition( (d >=1) && (dprime >= 1)  */
-/* 		             && (dprime <= 4) && (dprime <= d) ); */
-/*   this->deg = d; */
-/*   this->deg_monge = dprime; */
-/*   this->nb_d_jet_coeff = (d+1)*(d+2)/2; */
-/*   this->nb_input_pts = end - begin; */
-/*   // precondition: solvable ls system */
-/*   CGAL_precondition( nb_input_pts >= nb_d_jet_coeff ); */
+template < class DataKernel, class LocalKernel, class SvdTraits> 
+TMonge_form<DataKernel>
+Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::
+run(Range_Iterator begin, Range_Iterator end, 
+    size_t d, size_t dprime)
+  {
+    m_pca_basis = std::vector< std::pair<LFT, LVector> >(3);
 
-/*   //Initialize */
-/*   Monge_form monge_form; */
-/*   monge_form.set_up(dprime); */
-/*   //for the system MA=Z */
-/*   LAMatrix M(nb_input_pts, nb_d_jet_coeff); */
-/*   LAVector Z(nb_input_pts); */
+  // precondition: on the degrees, jet and monge
+  CGAL_precondition( (d >=1) && (dprime >= 1) 
+		             && (dprime <= 4) && (dprime <= d) );
+  this->deg = d;
+  this->deg_monge = dprime;
+  this->nb_d_jet_coeff = (d+1)*(d+2)/2;
+  this->nb_input_pts = end - begin;
+  // precondition: solvable ls system
+  CGAL_precondition( nb_input_pts >= nb_d_jet_coeff );
 
-/*   compute_PCA(begin, end); */
-/*   fill_matrix(begin, end, d, M, Z);//with precond */
-/*   solve_linear_system(M, Z);  //correct with precond */
-/*   compute_Monge_basis(Z.vector(), monge_form); */
-/*   if ( dprime >= 3) compute_Monge_coefficients(Z.vector(), dprime, monge_form); */
-/*   return monge_form; */
-/*   } */
+  //Initialize
+  Monge_form monge_form;
+  monge_form.set_up(dprime);
+  //for the system MA=Z
+  LAMatrix M(nb_input_pts, nb_d_jet_coeff);
+  LAVector Z(nb_input_pts);
+
+  compute_PCA(begin, end);
+  fill_matrix(begin, end, d, M, Z);//with precond
+  solve_linear_system(M, Z);  //correct with precond
+  compute_Monge_basis(Z.vector(), monge_form);
+  if ( dprime >= 3) compute_Monge_coefficients(Z.vector(), dprime, monge_form);
+  return monge_form;
+  }
  
 
 template < class DataKernel, class LocalKernel, class SvdTraits>  
