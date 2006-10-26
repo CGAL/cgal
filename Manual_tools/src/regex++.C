@@ -38,7 +38,7 @@ Regular_expression::~Regular_expression() {
 bool
 Regular_expression::match( const string& s ) {
   assert( regmatch != NULL );
-	if( regexec( &regex, s.c_str(), maxgroups, regmatch, 0 ) == REG_NOERROR )	{
+	if( regexec( &regex, s.c_str(), maxgroups, regmatch, 0 ) == 0 )	{
 		int so, eo;
 		for ( unsigned int i = 0; i < maxgroups; i++ ) {
 			so = regmatch[ i ].rm_so;
