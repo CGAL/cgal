@@ -81,7 +81,7 @@ typedef double                   LFT;
 typedef CGAL::Cartesian<LFT>     Local_Kernel;
 typedef CGAL::Monge_via_jet_fitting<Data_Kernel> My_Monge_via_jet_fitting;
 typedef My_Monge_via_jet_fitting::Monge_form My_Monge_form;
-typedef My_Monge_via_jet_fitting::Monge_form_condition_numbers My_Monge_form_condition_numbers;
+//typedef My_Monge_via_jet_fitting::Monge_form_condition_numbers My_Monge_form_condition_numbers;
 
          
 //Syntax requirred by Options
@@ -250,7 +250,7 @@ int main(int argc, char *argv[])
     Vertex* v = &(*vitb);
     in_points.clear();  
     My_Monge_form monge_form;
-    My_Monge_form_condition_numbers monge_form_condition_numbers;
+    //    My_Monge_form_condition_numbers monge_form_condition_numbers;
       
     //gather points around the vertex using rings
     gather_fitting_points(v, in_points, vpm);
@@ -263,7 +263,7 @@ int main(int argc, char *argv[])
     // run the main fct : perform the fitting
     My_Monge_via_jet_fitting do_it(in_points.begin(), in_points.end(),
 				   d_fitting, d_monge, 
-				   monge_form, monge_form_condition_numbers);
+				   monge_form);//, monge_form_condition_numbers);
  
     //switch min-max ppal curv/dir wrt the mesh orientation
     const DVector normal_mesh = Poly_facet_ops::compute_vertex_average_unit_normal(v, fpm);
@@ -285,8 +285,8 @@ int main(int argc, char *argv[])
       (*out_verbose) << "--- vertex " <<  ++nb_vertices_considered 
 		     <<	" : " << v->point() << std::endl
 		     << "number of points used : " << in_points.size() << std::endl
-		     << monge_form
-		     << monge_form_condition_numbers;
+		     << monge_form;
+      //		     << monge_form_condition_numbers;
     }
   } //all vertices processed
 
