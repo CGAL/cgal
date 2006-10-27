@@ -272,10 +272,10 @@ class ConicCPA2
                 trivial = false;
                 FT z_prime = d*w() - u()*u()*s() - v()*v()*r() + u()*v()*t();
                 if (CGAL_NTS is_positive (r())) {
-                    empty = CGAL_NTS is_positive(CGAL_NTS sign (z_prime));
+                    empty = CGAL_NTS sign (z_prime) == CGAL::POSITIVE;
                     empty ? o = CGAL::POSITIVE : o = CGAL::NEGATIVE;
                 } else {
-                    empty = CGAL_NTS is_negative(CGAL_NTS sign (z_prime));
+                    empty = CGAL_NTS sign (z_prime) == CGAL::NEGATIVE ;
                     empty ? o = CGAL::NEGATIVE : o = CGAL::POSITIVE;
                 }
                 degenerate = empty || CGAL_NTS is_zero (z_prime);
