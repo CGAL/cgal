@@ -27,7 +27,7 @@ CXXFLAGS = \
 #---------------------------------------------------------------------#
 F2CDIR  = $(LAPACK_DIR)/F2CLIBS
 LAPACK_LDLIBS  = $(LAPACK_DIR)/lapack_LINUX.a \
-          $(LAPACK_DIR)/blas_LINUX.a $(LAPACK_DIR)/tmglib_LINUX.a \
+          $(LAPACK_DIR)/blas_LINUX.a \
           $(F2CDIR)/libF77.a $(F2CDIR)/libI77.a -lm -lc
 
 LIBPATH = \
@@ -68,17 +68,14 @@ depend:
 
 # DO NOT DELETE
 
-blind_1pt.o: /usr/include/stdio.h /usr/include/features.h
-blind_1pt.o: /usr/include/sys/cdefs.h /usr/include/gnu/stubs.h
-blind_1pt.o: /usr/include/bits/types.h /usr/include/bits/wordsize.h
-blind_1pt.o: /usr/include/bits/typesizes.h /usr/include/libio.h
-blind_1pt.o: /usr/include/_G_config.h /usr/include/wchar.h
-blind_1pt.o: /usr/include/bits/wchar.h /usr/include/gconv.h
-blind_1pt.o: /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h
-blind_1pt.o: /usr/include/stdlib.h /usr/include/sys/types.h
-blind_1pt.o: /usr/include/time.h /usr/include/endian.h
-blind_1pt.o: /usr/include/bits/endian.h /usr/include/sys/select.h
-blind_1pt.o: /usr/include/bits/select.h /usr/include/bits/sigset.h
-blind_1pt.o: /usr/include/bits/time.h /usr/include/sys/sysmacros.h
-blind_1pt.o: /usr/include/bits/pthreadtypes.h /usr/include/bits/sched.h
-blind_1pt.o: /usr/include/alloca.h
+blind_1pt.o: /usr/include/stdio.h /usr/include/_types.h
+blind_1pt.o: /usr/include/sys/_types.h /usr/include/sys/cdefs.h
+blind_1pt.o: /usr/include/machine/_types.h /usr/include/i386/_types.h
+blind_1pt.o: /usr/include/stdlib.h /usr/include/sys/wait.h
+blind_1pt.o: /usr/include/sys/signal.h /usr/include/sys/appleapiopts.h
+blind_1pt.o: /usr/include/machine/signal.h /usr/include/i386/signal.h
+blind_1pt.o: /usr/include/sys/resource.h /usr/include/machine/endian.h
+blind_1pt.o: /usr/include/i386/endian.h /usr/include/sys/_endian.h
+blind_1pt.o: /usr/include/stdint.h /usr/include/libkern/OSByteOrder.h
+blind_1pt.o: /usr/include/libkern/i386/OSByteOrder.h /usr/include/alloca.h
+blind_1pt.o: /usr/include/machine/types.h /usr/include/i386/types.h

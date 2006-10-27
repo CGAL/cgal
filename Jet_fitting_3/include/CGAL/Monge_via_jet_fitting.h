@@ -186,30 +186,28 @@ template < class DataKernel, class LocalKernel = Cartesian<double>, class SvdTra
   typedef typename SvdTraits::Matrix LAMatrix;
 
   public:
-  Monge_via_jet_fitting(){}
+  Monge_via_jet_fitting();
 
   Monge_via_jet_fitting(Range_Iterator begin, Range_Iterator end, 
 			size_t d, size_t dprime, 
 			LMonge_form &monge_form);
     
-    LMonge_form operator()(Range_Iterator begin, Range_Iterator end,  
-			  size_t d, size_t dprime);
-    //     LMonge_form run(Range_Iterator begin, Range_Iterator end, 
-    // 		   size_t d, size_t dprime);
-
-    const LFT condition_number() const {return condition_nb;}
-    const std::pair<LFT, LVector> pca_basis(size_t i) const {return m_pca_basis[i];}
-    
-  protected:
-    int deg;
-    int deg_monge;
-    int nb_d_jet_coeff;
-    int nb_input_pts;
-    LFT preconditionning;
-    CGAL::Sqrt<LFT> Lsqrt;
-    LFT condition_nb;
+  LMonge_form operator()(Range_Iterator begin, Range_Iterator end,  
+				  size_t d, size_t dprime);
   
-    std::vector< std::pair<LFT, LVector> > m_pca_basis;
+  const LFT condition_number() const {return condition_nb;}
+  const std::pair<LFT, LVector> pca_basis(size_t i) const {return m_pca_basis[i];}
+  
+ protected:
+  int deg;
+  int deg_monge;
+  int nb_d_jet_coeff;
+  int nb_input_pts;
+  LFT preconditionning;
+  CGAL::Sqrt<LFT> Lsqrt;
+  LFT condition_nb;
+  
+  std::vector< std::pair<LFT, LVector> > m_pca_basis;
 
   //translate_p0 changes the origin of the world to p0 the first point 
   //  of the input data points
@@ -246,8 +244,6 @@ template < class DataKernel, class LocalKernel = Cartesian<double>, class SvdTra
   //for a trihedron (v1,v2,v3) switches v1 to -v1 if det(v1,v2,v3) < 0
   void switch_to_direct_orientation(LVector& v1, const LVector& v2,
 				   const LVector& v3);
-
-
 };
 
 //-------------------------------------------------------------------
@@ -255,48 +251,21 @@ template < class DataKernel, class LocalKernel = Cartesian<double>, class SvdTra
 //------------------------------------------------------------------
 
 template < class DataKernel, class LocalKernel, class SvdTraits>  
-Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::
-Monge_via_jet_fitting(Range_Iterator begin, Range_Iterator end, 
-		      size_t d, size_t dprime, 
-		      LMonge_form& monge_form)
+  Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::
+  Monge_via_jet_fitting()
 {
-  //init in the constructor if any...
   m_pca_basis = std::vector< std::pair<LFT, LVector> >(3);
-
-  // precondition: on the degrees, jet and monge
-  CGAL_precondition( (d >=1) && (dprime >= 1) 
-		             && (dprime <= 4) && (dprime <= d) );
-  this->deg = d;
-  this->deg_monge = dprime;
-  this->nb_d_jet_coeff = (d+1)*(d+2)/2;
-  this->nb_input_pts = end - begin;
-  // precondition: solvable ls system
-  CGAL_precondition( nb_input_pts >= nb_d_jet_coeff );
-
-  //Initialize
-  monge_form.set_up(dprime);
-  //for the system MA=Z
-  LAMatrix M(nb_input_pts, nb_d_jet_coeff);
-  LAVector Z(nb_input_pts);
-
-  compute_PCA(begin, end);
-  fill_matrix(begin, end, d, M, Z);//with precond
-  solve_linear_system(M, Z);  //correct with precond
-  compute_Monge_basis(Z.vector(), monge_form);
-  if ( dprime >= 3) compute_Monge_coefficients(Z.vector(), dprime, monge_form);
 } 
 
 template < class DataKernel, class LocalKernel, class SvdTraits> 
-Monge_form<DataKernel>
-Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::
-operator()(Range_Iterator begin, Range_Iterator end, 
-    size_t d, size_t dprime)
-  {
-    m_pca_basis = std::vector< std::pair<LFT, LVector> >(3);
-
+  Monge_form<DataKernel>
+  Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::
+  operator()(Range_Iterator begin, Range_Iterator end, 
+	     size_t d, size_t dprime)
+{
   // precondition: on the degrees, jet and monge
   CGAL_precondition( (d >=1) && (dprime >= 1) 
-		             && (dprime <= 4) && (dprime <= d) );
+		     && (dprime <= 4) && (dprime <= d) );
   this->deg = d;
   this->deg_monge = dprime;
   this->nb_d_jet_coeff = (d+1)*(d+2)/2;
@@ -317,41 +286,7 @@ operator()(Range_Iterator begin, Range_Iterator end,
   compute_Monge_basis(Z.vector(), monge_form);
   if ( dprime >= 3) compute_Monge_coefficients(Z.vector(), dprime, monge_form);
   return monge_form;
-  }
-
-// template < class DataKernel, class LocalKernel, class SvdTraits> 
-// Monge_form<DataKernel>
-// Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::
-// run(Range_Iterator begin, Range_Iterator end, 
-//     size_t d, size_t dprime)
-//   {
-//     m_pca_basis = std::vector< std::pair<LFT, LVector> >(3);
-
-//   // precondition: on the degrees, jet and monge
-//   CGAL_precondition( (d >=1) && (dprime >= 1) 
-// 		             && (dprime <= 4) && (dprime <= d) );
-//   this->deg = d;
-//   this->deg_monge = dprime;
-//   this->nb_d_jet_coeff = (d+1)*(d+2)/2;
-//   this->nb_input_pts = end - begin;
-//   // precondition: solvable ls system
-//   CGAL_precondition( nb_input_pts >= nb_d_jet_coeff );
-
-//   //Initialize
-//   Monge_form monge_form;
-//   monge_form.set_up(dprime);
-//   //for the system MA=Z
-//   LAMatrix M(nb_input_pts, nb_d_jet_coeff);
-//   LAVector Z(nb_input_pts);
-
-//   compute_PCA(begin, end);
-//   fill_matrix(begin, end, d, M, Z);//with precond
-//   solve_linear_system(M, Z);  //correct with precond
-//   compute_Monge_basis(Z.vector(), monge_form);
-//   if ( dprime >= 3) compute_Monge_coefficients(Z.vector(), dprime, monge_form);
-//   return monge_form;
-//   }
- 
+}
 
 template < class DataKernel, class LocalKernel, class SvdTraits>  
 void Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::

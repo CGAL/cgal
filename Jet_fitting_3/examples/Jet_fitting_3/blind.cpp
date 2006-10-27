@@ -258,10 +258,10 @@ int main(int argc, char *argv[])
       {std::cerr << "not enough pts for fitting this vertex" << in_points.size() << std::endl;
 	continue;}
 
-    // run the main fct : perform the fitting
-    My_Monge_via_jet_fitting do_it(in_points.begin(), in_points.end(),
-				   d_fitting, d_monge, monge_form);
- 
+    // perform the fitting
+    My_Monge_via_jet_fitting monge_fit;
+    monge_form = monge_fit(in_points.begin(), in_points.end(),
+			   d_fitting, d_monge);
     //switch min-max ppal curv/dir wrt the mesh orientation
     const DVector normal_mesh = Poly_facet_ops::compute_vertex_average_unit_normal(v, fpm);
     monge_form.comply_wrt_given_normal(normal_mesh);
