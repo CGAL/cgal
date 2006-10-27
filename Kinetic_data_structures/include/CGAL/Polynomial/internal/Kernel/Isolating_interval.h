@@ -25,8 +25,8 @@
 
 #ifdef CGAL_POLYNOMIAL_USE_CORE
 #include <CGAL/Polynomial/internal/Explicit_root.h>
-#include <CORE/BigRat.h>
-#include <CORE/Expr.h>
+#include <CGAL/CORE_BigRat.h>
+#include <CGAL/CORE_Expr.h>
 #endif
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE

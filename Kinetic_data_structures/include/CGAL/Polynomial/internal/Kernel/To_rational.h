@@ -24,8 +24,8 @@
 #include <CGAL/Polynomial/basic.h>
 
 #ifdef CGAL_POLYNOMIAL_USE_CORE
-#include <CORE/BigRat.h>
-#include <CORE/Expr.h>
+#include <CGAL/CORE_BigRat.h>
+#include <CGAL/CORE_Expr.h>
 #include <CGAL/Polynomial/internal/Explicit_root.h>
 #endif
 

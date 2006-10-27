@@ -25,7 +25,7 @@
 #include <CGAL/Polynomial/internal/Explicit_root.h>
 #include <CGAL/Polynomial/internal/CORE_polynomial.h>
 #include <CGAL/Polynomial/internal/Root_stack_traits_base.h>
-#include <CORE/BigInt.h>
+#include <CGAL/CORE_BigInt.h>
 
 #include <iostream>
 

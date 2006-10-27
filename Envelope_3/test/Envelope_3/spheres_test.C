@@ -1,6 +1,6 @@
 
 #include <CGAL/Cartesian.h>
-#include <CORE/BigInt.h>
+#include <CGAL/CORE_BigInt.h>
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/CORE_algebraic_number_traits.h>

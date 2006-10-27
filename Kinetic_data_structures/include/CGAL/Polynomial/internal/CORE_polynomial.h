@@ -19,9 +19,9 @@
 
 #include <CGAL/CORE_Expr.h>
 #include <CORE/poly/Poly.h>
-#include <CORE/BigFloat.h>
-#include <CORE/Expr.h>
-#include <CORE/BigRat.h>
+#include <CGAL/CORE_BigFloat.h>
+#include <CGAL/CORE_Expr.h>
+#include <CGAL/CORE_BigRat.h>
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 

@@ -24,8 +24,8 @@
  * The number-type traits for CORE algebraic numbers.
  */
 
-#include <CORE/BigInt.h>
-#include <CORE/BigRat.h>
+#include <CGAL/CORE_BigInt.h>
+#include <CGAL/CORE_BigRat.h>
 #include <CGAL/CORE_Expr.h>
 
 CGAL_BEGIN_NAMESPACE
