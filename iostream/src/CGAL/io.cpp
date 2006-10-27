@@ -69,7 +69,7 @@ set_pretty_mode(std::ios& i)
 IO::Mode
 set_benchmark_mode(std::ios& i)
 {
-    set_mode( i, IO::BENCHMARK );
+    return set_mode( i, IO::BENCHMARK );
 }
 
 
