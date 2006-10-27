@@ -74,7 +74,7 @@ template <> class Algebraic_structure_traits< long double >
                                         const Algebraic_structure& x) const {
           CGAL_precondition_msg( k > 0, 
                                     "'k' must be positive for k-th roots");
-          return CGAL_CLIB_STD::pow(x, 1.0 / (long double)(k));
+          return CGAL_CLIB_STD::pow(x, (long double)1.0 / (long double)(k));
         };
     };
     
