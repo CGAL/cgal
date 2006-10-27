@@ -248,6 +248,13 @@ std::ostream& Rational_polynomial_1::show (std::ostream &s) const {
 	}
 	if (!printed)
 		s << "0";
+#ifdef CGAL_RS_DEBUG
+	s<<" [ d="<<degree<<" ";
+	s<<"[ ";
+	for (int i=0; i<degree+1; ++i)
+		s<<coef[i]<<" ";
+	s<<"] ]";
+#endif
 	return s;
 };
 

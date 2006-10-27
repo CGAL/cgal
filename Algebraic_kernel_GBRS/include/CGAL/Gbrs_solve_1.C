@@ -122,7 +122,7 @@ int solve_1 (mpfi_t *&x, const Rational_polynomial_1 &p1, unsigned int prec) {
 	create_rs_upoly
 		(p1.get_coefs (), p1.get_degree (), rs_get_default_up ());
 	set_rs_precisol (prec);
-	set_rs_verbose (0);
+	set_rs_verbose (CGAL_RS_VERB);
 	rs_run_algo ("UISOLE");
 	// XXX remember to free the results array x and
 	// clear all the mpfi_t elements
@@ -147,7 +147,7 @@ int sign_1 (const Rational_polynomial_1 &p1, const Algebraic_1 &a,
 	*degs = p1.get_degree ();
 	create_rs_uconstr (constr, degs, rs_get_default_ineqs_u ());
 	set_rs_precisol (prec);
-	set_rs_verbose (0);
+	set_rs_verbose (CGAL_RS_VERB);
 	rs_run_algo ("UISOLES");
 	return affiche_sols_constr (a);
 }
@@ -190,7 +190,7 @@ int refine_1 (Algebraic_1 &a) {
 	int newprec = a.rsprec() * CGAL_RS_PREC_FACTOR;
 	a.set_rsprec (newprec);
 	set_rs_precisol (newprec);
-	set_rs_verbose (0);
+	set_rs_verbose (CGAL_RS_VERB);
 	rs_run_algo ("UISOLE");
 	return get_root (a.mpfi(), a.nr());
 }

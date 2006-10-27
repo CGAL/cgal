@@ -389,7 +389,22 @@ std::ostream& Rational_polynomial_2::show (std::ostream &s) const {
 				}
 			}
 		}
+#ifdef CGAL_RS_DEBUG
+	if (!printed)
+		s<<"0";
+	s<<" [ dx="<<degree_x<<" dy="<<degree_y<<" ";
+	int i,j;
+	for (i=0; i<degree_x+1; ++i) {
+		s<<"[ ";
+		for (j=0; j<degree_y+1; ++j)
+			s<<coef[i][j]<<" ";
+		s<<"] ";
+	}
+	s<<"]";
+	return s;
+#else
 	return (printed?s:(s<<"0"));
+#endif
 };
 
 Rational_polynomial_2& Rational_polynomial_2::operator*= (const Rational_polynomial_2 &f) {

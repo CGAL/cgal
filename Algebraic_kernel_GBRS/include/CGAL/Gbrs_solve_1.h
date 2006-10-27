@@ -20,6 +20,14 @@
 #ifndef CGAL_GBRS_SOLVE_1_H
 #define CGAL_GBRS_SOLVE_1_H
 
+#ifndef CGAL_RS_VERB
+#ifdef CGAL_RS_DEBUG
+#define CGAL_RS_VERB 1
+#else
+#define CGAL_RS_VERB 0
+#endif
+#endif
+
 // the default precision of RS to calculate a root (precision is 2^n)
 #ifndef CGAL_RS_DEF_PREC
 #define CGAL_RS_DEF_PREC 5
