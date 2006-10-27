@@ -18,7 +18,38 @@
 This chapter describes the \cgal's package geared towards the
 estimation of local differential quantities on sampled surfaces, known
 either as a mesh or a point cloud.
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\section{Notes for reviewers ---section to be removed after the review}
+\label{sec:notes-reviewers}
+%%%%%%%%%%%%%%%%%%%%%%%
  
+\begin{enumerate}
+\item
+The main function is provided as the constructor of the
+Monge\_via\_jet\_fitting class for two reasons
+\begin{itemize}
+
+\item  the class defines the types Monge\_form which is a canonical
+object of independent interest
+
+%\item  the class defines the types Monge\_form and
+%Monge\_form\_condition\_numbers types which are of independent interest
+
+\item the class is used as a container for the various fields which
+are passed in between the several functions performing the calculation
+\end{itemize}
+
+\item 
+Notice also the constructor modifies two arguments through
+references. These two objects are of independent interest the former
+provides the geometric information, the latter assesses the quality of
+the construction and may be discarded if the user is happy with the
+condition numbers.
+
+\end{enumerate}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 \label{sec:intro}
@@ -45,38 +76,48 @@ applied geometry \cite{cgal:p-smrqt-01} (section 3, page 7), and all
 of them need to define a neighborhood around the point at which the
 estimation is computed.  Our method relies on smooth differential
 geometry calculations, carried out on smooth objects {\em fitted} from
-the sample points. Such naturally accommodate meshes, but also point
-clouds.
+the sample points. 
+%%
+Datasets amenable to such a processing are naturally unstructured
+point clouds, as well as meshes ---whose topological information may
+be discarded.
 
+Estimating differential properties from discrete date always raises a
+philosophical issue.
+%%
+On one hand, estimating differential quantities subsumes a smooth
+surface does exist.
+In this spirit one wishes to recover its differential
+properties, so that any estimation method must come with an
+asymptotic convergence analysis of the results returned. For the
+method developed in this CGAL package, the
+interested will find such an analysis in
+\cite{cgal:cp-edqpf-05}, ---\ it should be stressed 
+the error bounds proved therein are optimal.
 
-On one hand, estimating differential quantities naturally assumes that
-a smooth surface exists and one wishes to recover its differential
-properties.
-%
-This two observations call for the convergence analysis of the methods
-developed (the interested reader can find the analysis of our method
-in \cite{cgal:cp-edqpf-05}). 
+On the other hand, any estimation method may be applied to arbitrarily
+data ---surface unknown, surface piecewise smooth etc. In such a case,
+no analysis can be carried out, and it is up to the user to check the
+results match his/her needs.
 
-On the other hand, our method can be applied to data not sampled on a
-smooth surface or sampled on a unknown surface. In such a case, no
-analysis can be carried out and only the user can judge if the results
-are relevant for its use.
+%% and only the user can judge if the results are relevant for its use.
 
-Unlike most of the \cgal\ packages, ours uses approximation methods and
-is not intended to provide exact canonical result in any sens. This is
-why internal computations are done with a different number type as
-than of the input data, even if the results are given with the same
-number type than the data for convenience. A reasonable choice for
-this internal number type is for example the \ccc{double} type.
+Unlike most of the \cgal\ packages, this package uses approximation
+methods and is not intended to provide an exact canonical result in
+any sense. This is why internal computations are performed with a
+number type possibly different from that of the input data, even if
+for convenience the results are returned with this original number
+type. A reasonable choice for this internal number type is for example
+the \ccc{double} type.
 
-\subsection{Smooth surfaces, $d$-jets and the Monge form.}
+\subsection{Smooth surfaces, $d$-jets and the Monge form}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 To present the method, we shall need the following notions. Consider a
 smooth surface.  About one of its points, consider a coordinate system
 whose $z$-axis does not belong to the tangent space. In such a frame,
 the surface can locally be written as the graph of a bivariate
-function. Denoting $\hot$ standing for {\em higher order terms}, one
+function. Letting $\hot$ stand for {\em higher order terms}, one
 has~:
 %
 \begin{equation}
@@ -85,7 +126,7 @@ J_{B,d}(x,y)=\sum_{k=0}^{k=d}(\sum_{i=0}^{i=k}
 \frac{B_{k-i,i}x^{k-i}y^{i}}{i!(k-i)!}).
 \end{equation}
 The degree $d$ polynomial $J_{B,d}$ is the Taylor expansion of the
-function $z$, an is called its $d$-jet. Notice that a $d$-jet contains
+function $z$, and is called its $d$-jet. Notice that a $d$-jet contains
 $N_d=(d+1)(d+2)/2$ coefficients.
 
 Recall that an umbilical point of a surface --- or umbilic for short,
@@ -93,7 +134,7 @@ is a point where both principal curvatures are identical.  At any
 point of the surface which is not an umbilic, principal directions
 $d_1, d_2$ are well defined, and these (non oriented) directions
 together with the normal vector $n$ define two direct orthonormal
-frames. If $v_1$ is a unit vector of direction $d_1$ then there exists
+frames. If $v_1$ is a unit vector of direction $d_1$, there exists
 a unique unit vector $v_2$ so that $(v_1,v_2,n)$ is direct; and the
 other possible frame is $(-v_1,-v_2,n)$. In one of these Monge
 coordinate systems, the surface is said to be given in the Monge form
@@ -106,9 +147,9 @@ z(x,y) =  & \frac{1}{2}(k_1x^2 + k_2y^2)+
   &  +\frac{1}{24}(c_0x^4+4c_1x^3y+6c_2x^2y^2+4c_3xy^3+c_4y^4) + \hot
 \end{eqnarray}
 
-Recall that coefficients $k_1, k_2$ are the principal curvatures,
+The coefficients $k_1, k_2$ are the principal curvatures,
 $b_0,b_3$ are the directional derivatives of $k_1,k_2$ along their
-respective curvature lines, while $b_1,b_2$ are the directional
+respective curvature line, while $b_1,b_2$ are the directional
 derivatives of $k_1,k_2$ along the other curvature lines.
 
 The Monge coordinate system can be computed from any $d$-jet ($d\geq
@@ -117,7 +158,7 @@ characterize the local geometry of the surface in a canonical way, and
 are the quantities returned by our algorithm.
 
 
-\subsection{Algorithm.}
+\subsection{Algorithm}
 %
 Based on the above concepts, the algorithm consists of 4 steps.
 %
@@ -162,7 +203,7 @@ worse the estimation.
 
 \item
 As observed in \cite{cgal:cp-edqpf-05}, the interpolating problem is
-not {\em poised} if the points used project, into the fitting frame,
+not {\em poised} if the points project, into the fitting frame,
 onto an algebraic curve of degree $d$. More generally, the problem is
 ill poised if the condition number is too large.
 \end{itemize}
@@ -170,7 +211,7 @@ ill poised if the condition number is too large.
 In these cases, even if a result is provided, the estimation may not
 be relevant. To inform the user of these issues, we provide the PCA
 results and the condition number of the fitting. In any case, it is up
-to the user to judge if the result fits its need.
+to the user to judge if the result meets its need.
 
 
 \section{Software Design}
@@ -185,12 +226,12 @@ The fitting strategy performed by the class
 \item
 the degree $d$ of the fitted polynomial ($d \geq 1$),
 \item
-the degree $d'$ of the monge coefficients one wants to compute, with
-$1 \leq d' \leq \min(d,4)  $,
+the degree $d'$ of the Monge coefficients sought, with $1 \leq d' \leq
+\min(d,4) $,
 \item
 a range of $N$ input points on the surface, with the precondition that
-$N \geq N_d = (d+1)(d+2)/2$. Note that if $N=N_d$ then interpolation
-is performed, otherwise ($N >N_d$) approximation is used.
+$N \geq N_d = (d+1)(d+2)/2$. Note that if $N=N_d$, interpolation
+is performed; and if $N >N_d$, approximation is used.
 \end{itemize}
 
 \subsection{Output}
@@ -198,7 +239,7 @@ is performed, otherwise ($N >N_d$) approximation is used.
 
 As explained in Section \ref{sec:intro}, the output consists of a
 coordinate system, the Monge basis, together with the Monge
-coefficients which are stored in a \ccc{Monge_form} class. In
+coefficients which are stored in the \ccc{Monge_form} class. In
 addition, more information on the computational issues are stored in
 the \ccc{Monge_via_jet_fitting} class.
 
@@ -211,15 +252,18 @@ approximation case, it differs from the input point $p$~: it is the
 projection of $p$ onto the fitted surface following the $z$-direction
 of the fitting basis.
 
-\item Monge Basis. The monge-basis $(d_1,d_2,n)$ is orthonormal
+\item Monge Basis. The Monge basis $(d_1,d_2,n)$ is orthonormal
 direct, and the maximal, minimal curvatures are defined wrt this
 basis. If the user has a predefined normal $n_0$ (e.g. the sample
-points come from an oriented mesh) then if $n_0 . n >0$ then max-min is
-correct, if $n_0 . n <0$ then the user should prefer the orthonormal
-direct basis $(d_1',d_2',n')=(d_2,d_1,-n)$ with the maximal curvature
-$k_1'=-k_2$ and the minimal curvature $k_2'=-k_1$. If $n_0 . n =0$ or
-is small then this means that the orientation of the surface is not so
-clear!
+points come from an oriented mesh) then if $n_0 . n >0$ then max-min
+is correct; if not, i.e. $n_0 . n <0$, the user should switch to the
+orthonormal direct basis $(d_1',d_2',n')=(d_2,d_1,-n)$ with the
+maximal curvature $k_1'=-k_2$ and the minimal curvature
+$k_2'=-k_1$. If $n_0 . n =0$ or is small, the orientation of the
+surface is clearly ill-defined, and the user may proof-check the
+samples used to comply with its predefined normal.
+
+%% then this means that the orientation of the surface is not so clear!
 
 \item Monge Coefficients.
 The coefficient of the Monge form is $(k_1, k_2 (\leq k_1),
@@ -253,7 +297,7 @@ classes
 This is a parameter of the class 
 \ccc{Monge_via_jet_fitting<DataKernel, LocalKernel = Cartesian<double>, SvdTraits = lapack_svd>}. 
 This concept defines the vector and number types used for local
-computations and to store pca basis data.  
+computations and to store the PCA basis data.  
 
 Input points of type
 \ccc{DataKernel::Point_3} are converted to
@@ -262,10 +306,10 @@ these types are converted back to \ccc{Data_Kernel} ones.  Typically,
 one can use
 \ccc{CGAL::Cartesian<double>} which is the default.
 
-\subsubsection{Template parameter \ccc{SvdTraits.}}
+\subsubsection{Template parameter \ccc{SvdTraits}}
 %%%%%%%%%%%
 
-This concept provides the number, vertor and matrix types for algebra
+This concept provides the number, vector and matrix types for algebra
 operations required by the fitting method in
 \ccc{Monge_via_jet_fitting<DataKernel, LocalKernel = Cartesian<double>, SvdTraits = lapack_svd>} 
 . The main method is a linear solver using a singular value decomposition.
@@ -288,7 +332,7 @@ Second the Monge basis and coefficients, computed with the
 \section{Examples} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\paragraph{Single estimation about a point of a given point set.}
+\paragraph{Single estimation about a point of a point cloud.}
 The first example illustrates the computation of the local
 differential quantities from a set of points given in a text file as
 input. The first point of the list is the one at which the computation
@@ -304,19 +348,25 @@ the triangulation. Results are twofold:
 \begin{itemize}
 \item
 a human readable text file featuring the \ccc{Monge_form} and
-numerical information on the computation~: condition number and pca
-basis;
+numerical informations on the computation~: condition number and the
+PCA basis;
 \item
 another text file which may be visualised with the demo program
 introspect-qt displaying the Monge basis at each vertex of the mesh.
 \end{itemize}
 
-Following are some illustrations featuring principal directions of curvature.
+
+%%Following are some illustrations featuring principal directions of curvature.
+
+Figs.
+\ref{fig:jet3:fig-david} and
+\ref{fig:jet3:fig-elliptic-paraboloid}
+provide illustrations of principal directions of curvature.
 
 \begin{figure}[!ht]
 \begin{ccTexOnly}
 \centerline{
-\includegraphics[width=.5\linewidth]{Jet_fitting_3/david-dirmaxkmin-jpg-white-back}}
+\includegraphics[width=.5\linewidth]{Jet_fitting_3/david-dirmaxkmin-jpg-white-back.pdf}}
 \end{ccTexOnly}
 \caption{Principal directions associated with $k_{max}$ scaled by $k_{min}$.}
 
@@ -324,6 +374,7 @@ Following are some illustrations featuring principal directions of curvature.
 <CENTER> <img border=0 src="./david-dirmaxkmin-white-back.jpg" width=600>
 </CENTER>
 \end{ccHtmlOnly}
+\label{fig:jet3:fig-david}
 \end{figure}
 
  
@@ -333,13 +384,14 @@ Following are some illustrations featuring principal directions of curvature.
 \centerline{
 \includegraphics[width=.5\linewidth]{Jet_fitting_3/ppal_curv_poly2x2+y2}}
 \end{ccTexOnly}
-\caption{Principal directions of curvature and nomals at vertices of a mesh of the
+\caption{Principal directions of curvature and normals at vertices of a mesh of the
  graph of the function $f(x,y)=2x^2+y^2$.}
 
 \begin{ccHtmlOnly}
 <CENTER> <img border=0 src="./ppal_curv_poly2x2+y2.jpg" width=600>
 </CENTER>
 \end{ccHtmlOnly}
+\label{fig:jet3:fig-elliptic-paraboloid}
 \end{figure}
 
 %\ccIncludeExampleCode{Jet_fitting_3/blind.cpp} %too long to be included?
@@ -352,9 +404,9 @@ Following are some illustrations featuring principal directions of curvature.
 In this Section, we detail the mathematics involved, in order to
 justify the design choices made.
 %%
-To do so, observe that there are three relevant direct orthonormal
-basis: the world-basis $(w_x,w_y,w_z)$, the fitting-basis
-$(f_x,f_y,f_z)$, the monge-basis $(d_1,d_2,n)$.
+To begin with, observe the fitting problem involves three relevant
+direct orthonormal basis: the world-basis $(w_x,w_y,w_z)$, the
+fitting-basis $(f_x,f_y,f_z)$, the Monge basis $(d_1,d_2,n)$.
 
 \begin{figure}[!ht]
 \begin{ccTexOnly}
@@ -394,7 +446,7 @@ PCA. Then the change of basis reduces to a permutation of axis.} Note
 one may have to swap the orientation of a vector to get a direct
 basis.
 
-Let's note $P_{W\rightarrow F}$ the matrix to change coordinates from the
+Let us note $P_{W\rightarrow F}$ the matrix to change coordinates from the
 world-basis $(w_x,w_y,w_z)$ to the fitting-basis $(f_x,f_y,f_z)$. The
 rows of $P_{W\rightarrow F}$ are the coordinates of the vectors
 $(f_x,f_y,f_z)$ in the world-basis. This matrix represents a
@@ -418,7 +470,7 @@ Computations are done in the fitting-basis and the origin is the point
 $p$. First, one has to transform coordinates of sample points with a
 translation ($-p$) and multiplication by $ P_{W\rightarrow F}$.
 
-The fitting consists of finding the coefficients
+The fitting process consists of finding the coefficients
 $A_{i,j}$ of the degree $d$ polynomial 
 \begin{equation}
 \label{eq-answer}
@@ -443,11 +495,11 @@ given by
 \ \frac{x_iy_i^{d-1}}{(d-1)!},\ \frac{y_i^d}{d!})_{i=1,...,N}\\
 \end{eqnarray}
 %
-The equations for interpolation become $MA=Z$. For approximation, one
-seeks the vector $A$ such that $A = \arg \min_A  ||MA-Z||_2$.
+The equations for interpolation become $MA=Z$. For approximation, the
+system $MA=Z$ is solved in the least square sense, i.e. one seeks the
+vector $A$ such that $A = \arg \min_A ||MA-Z||_2$.
 
-We solve the system $MA=Z$, in the least square sense for
-approximation. There is a preconditioning of the matrix $M$ so as to
+In any case, there is a preconditioning of the matrix $M$ so as to
 improve the condition number. Assuming the $\{x_i\}$, $\{y_i\}$ are of
 order $h$, the pre-conditioning consists of performing a column
 scaling by dividing each monomial $x_i^ky_i^l$ by $h^{k+l}$ --- refer
@@ -515,7 +567,7 @@ condition number of the system. For more on these alternatives, see
 
 {\bf Input : coefficients of the fit $A_{i,j}$, 
 fitting-basis \\
-Output : monge-basis wrt fitting-basis and world-basis
+Output : Monge basis wrt fitting-basis and world-basis
 }
 
 In the fitting basis, we have determined a height function expressed
@@ -543,16 +595,17 @@ $n=(-A_{1,0},-A_{0,1},1)/\sqrt{A_{1,0}^2+A_{0,1}^2+1}$.\\
 differential calculus \cite{c-dgcs-76}. More precisely, the Weingarten
 operator $W=-I^{-1}II$ is first computed in the basis of the tangent
 plane $\{ (1,0,A_{1,0}), (0,1,A_{0,1}) \}$. We compute an orthonormal
-basis of the tangent plane using the Gram-Schimdt algorithm, and then
-we compute Weingarten in this basis (apply a change of basis matrix
-$W'=P^{-1}WP$). It is then symmetric and we diagonalize it.  One
-finally gets the principal curvatures which are the eigenvalues of $W$
-and the principal directions. This  gives an orthonormal
-direct basis $(d_1,d_2,n)$. Let's note $P_{F
+basis of the tangent plane using the Gram-Schmidt algorithm, and then
+we compute Weingarten in this basis (applying a change of basis with
+the matrix $W'=P^{-1}WP$). In this orthonormal basis, the matrix of
+the Weingarten map is symmetric and we diagonalize it.  One finally
+gets the principal curvatures which are the eigenvalues of $W$, and
+the associated principal directions. This gives an orthonormal direct
+basis $(d_1,d_2,n)$. Let us note $P_{F
 \rightarrow M}$ the matrix to change coordinates from the
-fitting-basis to the monge-basis. Its rows are the coordinates of the
+fitting-basis to the Monge basis. Its rows are the coordinates of the
 vectors $(d_1,d_2,n)$ in the fitting-basis. It is an orthogonal matrix
-$P_{F \rightarrow M}^{-1}=P_{F \rightarrow M}^T$. The monge-basis
+$P_{F \rightarrow M}^{-1}=P_{F \rightarrow M}^T$. The Monge basis
 expressed in the world-basis is obtained by multiplying the coordinates
 of $(d_1,d_2,n)$ in the fitting-basis by $P_{W\rightarrow F}^{-1}$,
 (the same holds for the origin point which has in addition to be
@@ -561,7 +614,7 @@ $P_{W\rightarrow F}^{-1} (0,0,A_{0,0}) +p$.
 
 \subsection{Computing  Higher Order Monge Coefficients}
 
-{\bf Input : coefficients of the fit, monge-basis wrt fitting-basis ($P_{F
+{\bf Input : coefficients of the fit, Monge basis wrt fitting-basis ($P_{F
 \rightarrow M}$)\\ 
 Output : third and fourth order coefficients of Monge}
 
@@ -572,9 +625,9 @@ $(0,0,A_{0,0})$ is $Q=0$ with
 Q=-w-A_{0,0}  +\sum_{i,j}\frac{A_{i,j}u^iv^j}{i!j!}.
 \end{equation}
 %%
-The equation in the monge-basis is obtained by substituting $(u,v,w)$
+The equation in the Monge basis is obtained by substituting $(u,v,w)$
 by $P^T_{F\rightarrow M}(x,y,z)$. Denote $f(x,y,z)=0$ this implicit
-equation. By definition of the monge-basis, we have locally (at
+equation. By definition of the Monge basis, we have locally (at
 $(0,0,0)$)
 \begin{equation}
 f(x,y,z)=0 \Leftrightarrow z=g(x,y)
@@ -582,7 +635,7 @@ f(x,y,z)=0 \Leftrightarrow z=g(x,y)
 and the Taylor expansion of $g$ at $(0,0)$ are the Monge coefficients
 sought.
 %
-Let's denote the partial derivatives evaluated at the origin of $f$
+Let us denote the partial derivatives evaluated at the origin of $f$
 and $g$ by $f_{i,j,k}=\frac{\partial^{i+j+k}f}{\partial^ix
 \partial^jy \partial^kz}$ and $g_{i,j}=\frac{\partial^{i+j}g}{\partial^ix
 \partial^jy}$. One has $f_{1,0,0}=f_{0,1,0}=f_{1,1,0}=0$,
