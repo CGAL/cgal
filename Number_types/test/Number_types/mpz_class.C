@@ -1,3 +1,7 @@
+#include <CGAL/basic.h>
+
+#ifdef CGAL_USE_GMPXX
+
 #include <iostream>
 #include <CGAL/mpz_class.h>
 #include <CGAL/_test_algebraic_structure.h>
@@ -67,3 +71,9 @@ int main() {
     }
     return 0;
 }
+#else 
+int main()
+{
+  return 0;
+}
+#endif //CGAL_USE_GMPXX

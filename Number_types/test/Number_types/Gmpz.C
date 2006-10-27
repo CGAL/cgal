@@ -1,5 +1,10 @@
-#include <iostream>
+
+
 #include <CGAL/basic.h>
+
+#ifdef CGAL_USE_GMP
+
+#include <iostream>
 #include <CGAL/Gmpz.h>
 #include <CGAL/_test_algebraic_structure.h>
 #include <CGAL/_test_real_embeddable.h>
@@ -24,3 +29,10 @@ int main() {
 
   return 0;
 }
+
+#else 
+int main()
+{
+  return 0;
+}
+#endif //CGAL_USE_GMP
