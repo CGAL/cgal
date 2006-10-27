@@ -29,6 +29,8 @@
 
 CGAL_BEGIN_NAMESPACE
 
+struct Void {};
+
 // Two struct's to denote boolean compile time decisions.
 
 struct Tag_true  {};
@@ -38,7 +40,10 @@ inline bool check_tag( Tag_true)  {return true;}
 inline bool check_tag( Tag_false) {return false;}
 
 struct Null_tag {};
-struct Null_functor {};
+struct Null_functor {
+  typedef void result_type;
+  typedef Void second_argument_type;
+};
 
 
 // A function that asserts a specific compile time tag
