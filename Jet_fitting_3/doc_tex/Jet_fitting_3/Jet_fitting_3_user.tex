@@ -19,36 +19,6 @@ This chapter describes the \cgal's package geared towards the
 estimation of local differential quantities on sampled surfaces, known
 either as a mesh or a point cloud.
 
-%%%%%%%%%%%%%%%%%%%%%%%
-\section{Notes for reviewers ---section to be removed after the review}
-\label{sec:notes-reviewers}
-%%%%%%%%%%%%%%%%%%%%%%%
- 
-\begin{enumerate}
-\item
-The main function is provided as the constructor of the
-Monge\_via\_jet\_fitting class for two reasons
-\begin{itemize}
-
-\item  the class defines the types Monge\_form which is a canonical
-object of independent interest
-
-%\item  the class defines the types Monge\_form and
-%Monge\_form\_condition\_numbers types which are of independent interest
-
-\item the class is used as a container for the various fields which
-are passed in between the several functions performing the calculation
-\end{itemize}
-
-\item 
-Notice also the constructor modifies two arguments through
-references. These two objects are of independent interest the former
-provides the geometric information, the latter assesses the quality of
-the construction and may be discarded if the user is happy with the
-condition numbers.
-
-\end{enumerate}
-
 
 %%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
@@ -322,7 +292,7 @@ from the \ccc{DataKernel} to the \ccc{LocalKernel} (this is done using
 the \ccc{CGAL::Cartesian_converter}). Then change of coordinate
 systems and linear algebra operations are performed with this
 kernel. This implies that the number types \ccc{LocalKernel::FT} and
-\ccc{SvdTraits::FT} must be compatible.
+\ccc{SvdTraits::FT} must be identical.
 Second the Monge basis and coefficients, computed with the
 \ccc{LocalKernel}, are converted back to the \ccc{DataKernel} 
 (this is done using the \ccc{CGAL::Cartesian_converter} and the
@@ -350,9 +320,9 @@ the triangulation. Results are twofold:
 a human readable text file featuring the \ccc{Monge_form} and
 numerical informations on the computation~: condition number and the
 PCA basis;
-\item
-another text file which may be visualised with the demo program
-introspect-qt displaying the Monge basis at each vertex of the mesh.
+\item another text file which may be visualised with the demo program
+  introspect-qt (experimental \cgal\ package) displaying the Monge
+  basis at each vertex of the mesh.
 \end{itemize}
 
 
@@ -366,7 +336,7 @@ provide illustrations of principal directions of curvature.
 \begin{figure}[!ht]
 \begin{ccTexOnly}
 \centerline{
-\includegraphics[width=.5\linewidth]{Jet_fitting_3/david-dirmaxkmin-jpg-white-back.pdf}}
+\includegraphics[width=.5\linewidth]{Jet_fitting_3/david-dirmaxkmin-jpg-white-back}}
 \end{ccTexOnly}
 \caption{Principal directions associated with $k_{max}$ scaled by $k_{min}$.}
 
