@@ -23,6 +23,7 @@
 
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Polynomial/internal/Sign_variations_counter.h>
+#include <vector>
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
