@@ -35,7 +35,13 @@
 #  include <CGAL/MP_Float.h>
 #endif
 
+#ifndef CGAL_DONT_USE_LAZY_KERNEL
+#  include <CGAL/Lazy_kernel.h>
+#endif
+
 CGAL_BEGIN_NAMESPACE
+
+#ifdef CGAL_DONT_USE_LAZY_KERNEL
 
 #ifdef CGAL_USE_GMP
 typedef Filtered_kernel<Simple_cartesian<Lazy_exact_nt<Gmpq > > >
@@ -43,6 +49,18 @@ typedef Filtered_kernel<Simple_cartesian<Lazy_exact_nt<Gmpq > > >
 #else
 typedef Filtered_kernel<Simple_cartesian<Lazy_exact_nt<Quotient<MP_Float> > > >
         Exact_predicates_exact_constructions_kernel;
+#endif
+
+#else
+
+#ifdef CGAL_USE_GMP
+typedef Lazy_kernel<Simple_cartesian<Gmpq> >
+        Exact_predicates_exact_constructions_kernel;
+#else
+typedef Lazy_kernel<Simple_cartesian<Quotient<MP_Float> > >
+        Exact_predicates_exact_constructions_kernel;
+#endif
+
 #endif
 
 CGAL_END_NAMESPACE
