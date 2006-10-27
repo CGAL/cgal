@@ -1041,12 +1041,11 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
 template < class A, class B , int > class Coercion_traits_for_level;
 template < class A, class B, class C> class Coercion_traits_interval_nt;
 
-template<class A , bool P> class Coercion_traits_for_level<Interval_nt<P>,A,CTL_INTERVAL>
-    :public Coercion_traits_for_level<A,Interval_nt<P>, CTL_INTERVAL>{};
-
 template<class A ,bool P > class Coercion_traits_for_level<A,Interval_nt<P>,CTL_INTERVAL>
     :public Coercion_traits_interval_nt<A,Interval_nt<P>, typename Real_embeddable_traits<A>::Is_real_embeddable>{};
 
+template<class A , bool P> class Coercion_traits_for_level<Interval_nt<P>,A,CTL_INTERVAL>
+    :public Coercion_traits_for_level<A,Interval_nt<P>, CTL_INTERVAL>{};
 
 template<class A , bool P > class Coercion_traits_interval_nt<A, Interval_nt<P>,Tag_false>
     :public Coercion_traits_for_level<A,Interval_nt<P>,0>{};
