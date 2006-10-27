@@ -349,6 +349,7 @@ public:
 	    d, c, c0)
   {}  
 };
+
 // corresponding global function 
 // make_nonnegative_quadratic_program_from_iterators
 // -------------------------------------------------
@@ -400,6 +401,98 @@ public:
   {}  
 };
 
+// Free_quadratic_program_from_iterators
+// -------------------------------------
+template <
+  typename A_it,   // for constraint matrix A (columnwise)
+  typename B_it,   // for right-hand side b 
+  typename R_it,   // for relations (value type Comparison)
+  typename D_it,   // for quadratic matrix D (rowwise)
+  typename C_it >  // for objective function c
+class Free_quadratic_program_from_iterators : 
+  public Quadratic_program_from_iterators <A_it, B_it, R_it, 
+     typename QP_model_default_iterators<bool*>::It_1d, 
+     typename QP_model_default_iterators<B_it>::It_1d,
+     typename QP_model_default_iterators<bool*>::It_1d, 
+     typename QP_model_default_iterators<B_it>::It_1d,
+     D_it, C_it>
+{
+private:
+  typedef  Quadratic_program_from_iterators <A_it, B_it, R_it, 
+     typename QP_model_default_iterators<bool*>::It_1d, 
+     typename QP_model_default_iterators<B_it>::It_1d,
+     typename QP_model_default_iterators<bool*>::It_1d, 
+     typename QP_model_default_iterators<B_it>::It_1d,
+     D_it, C_it> Base;
+  typedef typename QP_model_default_iterators<bool*>::It_1d Const_FLU_iterator;
+  typedef typename QP_model_default_iterators<B_it>::It_1d Const_LU_iterator;
+public:
+   QP_MODEL_ITERATOR_TYPES;
+   Free_quadratic_program_from_iterators (
+		     int n, int m, // number of variables / constraints
+		     const A_iterator& a, 
+		     const B_iterator& b,
+		     const R_iterator& r,		     
+		     const D_iterator& d,
+		     const C_iterator& c,
+		     const C_entry& c0 = C_entry(0)
+		     )
+    : Base (n, m, a, b, r, 
+	    Const_FLU_iterator(false), Const_LU_iterator(C_entry(0)), 
+	    Const_FLU_iterator(false), Const_LU_iterator(C_entry(0)), 
+	    d, c, c0)
+  {}  
+};
+// corresponding global function 
+// make_free_quadratic_program_from_iterators
+// ------------------------------------------
+template <
+  typename A_it,   // for constraint matrix A (columnwise)
+  typename B_it,   // for right-hand side b 
+  typename R_it,   // for relations (value type Comparison)
+  typename D_it,   // for quadratic matrix D (rowwise)
+  typename C_it >  // for objective function c
+Free_quadratic_program_from_iterators
+<A_it, B_it, R_it, D_it, C_it>
+make_free_quadratic_program_from_iterators (
+   int n, int m, 
+   const A_it& a, 
+   const B_it& b, 
+   const R_it& r, 
+   const D_it& d, 
+   const C_it& c, 
+   typename std::iterator_traits<C_it>::value_type c0 =
+   typename std::iterator_traits<C_it>::value_type(0))
+{
+  return Free_quadratic_program_from_iterators
+    <A_it, B_it, R_it, D_it, C_it>
+    (n, m, a, b, r, d, c, c0);
+}	
+
+// Free_Quadratic_program_from_pointers
+// -------------------------------------------
+template <typename NT>
+class Free_quadratic_program_from_pointers : 
+  public Free_quadratic_program_from_iterators 
+<NT**, NT*, CGAL::Comparison_result*, NT**, NT*>
+{
+private:
+  typedef Free_quadratic_program_from_iterators 
+<NT**, NT*, CGAL::Comparison_result*, NT**, NT*> Base;
+public:
+  QP_MODEL_ITERATOR_TYPES;
+  Free_quadratic_program_from_pointers (
+		     int n, int m, // number of variables / constraints
+		     const A_iterator& a, 
+		     const B_iterator& b,
+		     const R_iterator& r,
+		     const D_iterator& d,
+		     const C_iterator& c,
+		     const C_entry& c0 = C_entry(0)
+		     )
+    : Base (n, m, a, b, r, d, c, c0)
+  {}  
+};
 
  
 // Nonnegative_linear_program_from_iterators
@@ -481,6 +574,96 @@ private:
 public:
   QP_MODEL_ITERATOR_TYPES;
   Nonnegative_linear_program_from_pointers (
+		     int n, int m, // number of variables / constraints
+		     const A_iterator& a, 
+		     const B_iterator& b,
+		     const R_iterator& r,
+		     const C_iterator& c,
+		     const C_entry& c0 = C_entry(0)
+		     )
+    : Base (n, m, a, b, r, c, c0)
+  {}  
+};
+
+// Free_linear_program_from_iterators
+// ----------------------------------
+template <
+  typename A_it,   // for constraint matrix A (columnwise)
+  typename B_it,   // for right-hand side b 
+  typename R_it,   // for relations (value type Comparison)
+  typename C_it >  // for objective function c
+class Free_linear_program_from_iterators : 
+  public Quadratic_program_from_iterators <A_it, B_it, R_it, 
+     typename QP_model_default_iterators<bool*>::It_1d, 
+     typename QP_model_default_iterators<B_it>::It_1d,
+     typename QP_model_default_iterators<bool*>::It_1d, 
+     typename QP_model_default_iterators<B_it>::It_1d,
+     typename QP_model_default_iterators<B_it>::It_2d, C_it>
+{
+private:
+  typedef Quadratic_program_from_iterators <A_it, B_it, R_it, 
+     typename QP_model_default_iterators<bool*>::It_1d, 
+     typename QP_model_default_iterators<B_it>::It_1d,
+     typename QP_model_default_iterators<bool*>::It_1d, 
+     typename QP_model_default_iterators<B_it>::It_1d,
+     typename QP_model_default_iterators<B_it>::It_2d, C_it> Base;
+  typedef typename QP_model_default_iterators<bool*>::It_1d Const_FLU_iterator;
+  typedef typename QP_model_default_iterators<B_it>::It_1d Const_LU_iterator;
+  typedef typename QP_model_default_iterators<B_it>::It_2d Const_D_iterator;
+public:
+   QP_MODEL_ITERATOR_TYPES;
+   Free_linear_program_from_iterators (
+		     int n, int m, // number of variables / constraints
+		     const A_iterator& a, 
+		     const B_iterator& b,
+		     const R_iterator& r,		     
+		     const C_iterator& c,
+		     const C_entry& c0 = C_entry(0)
+		     )
+    : Base (n, m, a, b, r, 
+	    Const_FLU_iterator(false), Const_LU_iterator(C_entry(0)), 
+	    Const_FLU_iterator(false), Const_LU_iterator(C_entry(0)), 
+	    Const_D_iterator(C_entry(0)), c, c0)
+  {}  
+}; 
+
+// corresponding global function 
+// make_free_linear_program_from_iterators
+// ---------------------------------------
+template <
+  typename A_it,   // for constraint matrix A (columnwise)
+  typename B_it,   // for right-hand side b 
+  typename R_it,   // for relations (value type Comparison)
+  typename C_it >  // for objective function c
+Nonnegative_linear_program_from_iterators
+<A_it, B_it, R_it, C_it>
+make_free_linear_program_from_iterators (
+   int n, int m, 
+   const A_it& a, 
+   const B_it& b, 
+   const R_it& r, 
+   const C_it& c, 
+   typename std::iterator_traits<C_it>::value_type c0 =
+   typename std::iterator_traits<C_it>::value_type(0))
+{
+  return Free_linear_program_from_iterators
+    <A_it, B_it, R_it, C_it>
+    (n, m, a, b, r, c, c0);
+}
+	
+// Free_linear_program_from_pointers
+// ---------------------------------
+template <typename NT>
+class Free_linear_program_from_pointers : 
+  public Free_linear_program_from_iterators 
+<NT**, NT*, CGAL::Comparison_result*, NT*>
+{
+private:
+  typedef Free_linear_program_from_iterators 
+<NT**, NT*, CGAL::Comparison_result*, NT*> Base;
+public:
+  QP_MODEL_ITERATOR_TYPES;
+  Free_linear_program_from_pointers (
 		     int n, int m, // number of variables / constraints
 		     const A_iterator& a, 
 		     const B_iterator& b,

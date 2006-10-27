@@ -53,12 +53,20 @@ the smallest objective function value among all feasible solutions.
 Such a solution may not exist, see Sections
 \ref{sec:QP-infeasible} and \ref{sec:QP-unbounded} below.
 
-\subsection{Linear and nonnegative programs.}
+\subsection{Linear, nonnegative, and free programs.}
 If $D=0$, the quadratic program is in fact a \emph{linear program},
 and in the case that $l$ is the zero vector and all entries of
 $u$ are $\infty$, the program is said to be \emph{nonnegative}. The 
 package offers dedicated solution methods for these special cases,
 see Sections \ref{sec:QP-lp} and \ref{sec:QP-nonnegative} below.
+
+Often, there are no bounds at all for the variables, i.e.\ all entries
+of $l$ are $-\infty$, and all entries of $u$ are $\infty$. Such a
+program is called \emph{free}. There is no dedicated solution method
+for this case (a free quadratic or linear program is treated like a
+general quadratic or linear program), but the package provides models
+for free programs that save you from specifying the infinite bounds (see
+Section \ref{sec:QP-important_constraints} for an example). 
 
 \subsection{A first example}
 Let's consider the following quadratic program in two variables:
@@ -379,6 +387,32 @@ contribute to the convex combinations of intermediate points.
 Not surprisingly, only two points contribute to any convex
 combination.
 
+\section{The Important Constraints}\label{sec:QP-important_constraints}
+If we have a linear or quadratic program with many inequality constraints,
+the ``important'' constraints are typically the ones that are satisfied with
+equality at the optimal solution. 
+
+To demonstrate this, let's consider the problem of finding the point $q$
+in the intersection of halfspaces that is closest to a given point $p$, 
+see Figure \ref{fig:QP-closest_point}. 
+
+\begin{figure}[htbp]
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics{QP_solver/closest_point} 
+\end{center}
+\end{ccTexOnly}
+\caption{The closest point in the intersection of halfspaces
+\label{fig:QP-closest_point}}
+
+\begin{ccHtmlOnly}
+<CENTER>
+<IMG BORDER=0 SRC="./closest_point.gif" ALIGN=center ALT="The closest point in the intersection of halfspaces">
+</CENTER>
+\end{ccHtmlOnly}
+\end{figure}
+
+
 \section{Working from MPS Files}
 
 \section{Infeasibility}\label{sec:QP-infeasible}
@@ -386,7 +420,7 @@ combination.
 \section{Unboundedness}\label{sec:QP-unbounded}
 
 
-\section{The Important Constraints}
+
 
 \section{Solution Certificates}
 

@@ -1681,6 +1681,10 @@ Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/id
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb8.bmp -text svneol=unset#image/bmp
 Principal_component_analysis/doc_tex/Principal_component_analysis/fit.eps -text svneol=unset#application/postscript
 Principal_component_analysis/doc_tex/Principal_component_analysis/fit.png -text svneol=unset#image/png
+QP_solver/doc_tex/QP_solver/closest_point.eps -text
+QP_solver/doc_tex/QP_solver/closest_point.fig -text
+QP_solver/doc_tex/QP_solver/closest_point.gif -text
+QP_solver/doc_tex/QP_solver/closest_point.pdf -text
 QP_solver/doc_tex/QP_solver/first_lp.eps -text
 QP_solver/doc_tex/QP_solver/first_lp.fig -text
 QP_solver/doc_tex/QP_solver/first_lp.gif -text
@@ -1713,6 +1717,7 @@ QP_solver/examples/QP_solver/integer_qp_solver.cin -text
 QP_solver/examples/QP_solver/integer_qp_solver.data -text
 QP_solver/examples/QP_solver/rational_qp_solver.cin -text
 QP_solver/examples/QP_solver/rational_qp_solver.data -text
+QP_solver/examples/QP_solver/shortest_vector.cpp -text
 QP_solver/examples/QP_solver/solve_convex_hull_containment_lp.h -text
 QP_solver/examples/QP_solver/solve_convex_hull_containment_lp2.h -text
 QP_solver/include/CGAL/QP_functions.h -text
