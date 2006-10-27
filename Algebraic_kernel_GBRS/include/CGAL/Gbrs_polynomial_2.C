@@ -98,6 +98,7 @@ inline mpq_t** Rational_polynomial_2::get_coefs () const {
 };
 
 void Rational_polynomial_2::get_coef (int pow_x, int pow_y, mpq_t *c) const {
+	CGAL_precondition ((pow_x<=degree_x) && (pow_y<=degree_y));
 	mpq_set (*c, coef[pow_x][pow_y]);
 	return;
 };
@@ -115,7 +116,7 @@ void Rational_polynomial_2::set_coef (int pow_x, int pow_y, const CGAL::Gmpq &q)
 	mpq_set (coef[pow_x][pow_y], q.mpq());
 };
 
-void Rational_polynomial_2::set_coef (int pow_x, int pow_y, const CGAL::Gmpz &z) {
+void Rational_polynomial_2::set_coef(int pow_x,int pow_y,const CGAL::Gmpz &z) {
 	mpq_set_z (coef[pow_x][pow_y], z.mpz());
 };
 
@@ -124,7 +125,8 @@ void Rational_polynomial_2::set_coef (int pow_x, int pow_y, int c) {
 };
 
 void Rational_polynomial_2::set_coef (int pow_x, int pow_y, unsigned int c) {
-	mpq_set_ui (coef[pow_x][pow_y], (unsigned long int)c, (unsigned long int)1);
+	mpq_set_ui
+		(coef[pow_x][pow_y],(unsigned long int)c,(unsigned long int)1);
 };
 
 void Rational_polynomial_2::set_coef (int pow_x, int pow_y, long int c) {
@@ -135,7 +137,8 @@ void Rational_polynomial_2::set_coef (int pow_x, int pow_y, unsigned long int c)
 	mpq_set_ui (coef[pow_x][pow_y], c, (unsigned long int)1);
 };
 
-Rational_polynomial_2& Rational_polynomial_2::operator= (const Rational_polynomial_2 &p) {
+Rational_polynomial_2&
+Rational_polynomial_2::operator= (const Rational_polynomial_2 &p) {
 	// destroy the current data
 	for (int i=0; i<degree_x+1; ++i) {
 		for (int j=0; j<degree_y+1; ++j)
@@ -172,84 +175,78 @@ Rational_polynomial_2 Rational_polynomial_2::operator- () const {
 	return opposite;
 };
 
-Rational_polynomial_2 Rational_polynomial_2::operator+ (const Rational_polynomial_2 &s) const {
-	int sx = s.get_degree_x ();
-	int sy = s.get_degree_y ();
-	int minorx, majorx, minory, majory;	// the minor and major of both degrees
-	bool am_i_bigger_x, am_i_bigger_y;	// is *this' degree bigger?
-	mpq_t temp1, temp2, temp3;
+Rational_polynomial_2
+Rational_polynomial_2::operator+ (const Rational_polynomial_2 &s) const {
+	int sx=s.get_degree_x ();
+	int sy=s.get_degree_y ();
+	int minorx,majorx,minory,majory;
+	bool am_i_bigger_x,am_i_bigger_y, am_i_bigger,am_i_smaller;
+	mpq_t temp1,temp2,temp3;
 
-	if (sx < degree_x) {
-		am_i_bigger_x = true;
-		minorx = sx;
-		majorx = degree_x;
+	if (sx<degree_x) {
+		am_i_bigger_x=true;
+		minorx=sx;
+		majorx=degree_x;
 	} else {
-		am_i_bigger_x = false;
-		minorx = degree_x;
-		majorx = sx;
+		am_i_bigger_x=false;
+		minorx=degree_x;
+		majorx=sx;
 	}
 
-	if (sy < degree_y) {
-		am_i_bigger_y = true;
-		minory = sy;
-		majory = degree_y;
+	if (sy<degree_y) {
+		am_i_bigger_y=true;
+		minory=sy;
+		majory=degree_y;
 	} else {
-		am_i_bigger_y = false;
-		minory = degree_y;
-		majory = sy;
+		am_i_bigger_y=false;
+		minory=degree_y;
+		majory=sy;
 	}
+
+	am_i_bigger=(am_i_bigger_x&&am_i_bigger_y);
+	am_i_smaller=((!am_i_bigger_x)&&(!am_i_bigger_y));
 
 	Rational_polynomial_2 sum (am_i_bigger_x?degree_x:sx,
-			am_i_bigger_y>sy?degree_y:sy);
+			am_i_bigger_y?degree_y:sy);
 
-	mpq_init (temp1);
-	mpq_init (temp2);
-	mpq_init (temp3);
-	int i, j;
+	mpq_init(temp1);
+	mpq_init(temp2);
+	mpq_init(temp3);
+	int i,j;
 
-	if (am_i_bigger_x)
-		// copiar a "sum" los X que yo tengo y él no
-		for (i=minorx+1; i<=majorx; ++i)
-			for (j=0; j<=minory; ++j) {
-				get_coef (i, j, &temp1);
-				sum.set_coef (i, j, temp1);
-			}
-	else
-		// copiar a "sum" los X que él tiene y yo no
-		for (i=minorx+1; i<=majorx; ++i)
-			for (j=0; j<=minory; ++j) {
-				s.get_coef (i, j, &temp1);
-				sum.set_coef (i, j, temp1);
-			}
-
-	if (am_i_bigger_y)
-		// copiar a "sum" los Y que yo tengo y él no, pero no copiar de nuevo los X que ya copiamos
-		for (i=0; i<=minorx; ++i)
-			for (j=minory+1; j<=majory; ++j) {
-				get_coef (i, j, &temp1);
-				sum.set_coef (i, j, temp1);
-			}
-	else
-		// copiar a "sum" los Y que él tiene y yo no, pero no copiar de nuevo los X que ya copiamos
-		for (i=0; i<=minorx; ++i)
-			for (j=minory+1; j<=majory; ++j) {
-				s.get_coef (i, j, &temp1);
-				sum.set_coef (i, j, temp1);
-			}
-
-	// ahora copiar las sumas de los que ambos tenemos en común
-	for (i=0; i<=minorx; ++i)
-		for (j=0; j<=minory; ++j) {	// XXX mmm... veremos
-		//for (j=minory+1; j<=majory; ++j) {
-				get_coef (i, j, &temp1);
-				s.get_coef (i, j, &temp2);	// XXX acá es el segfault... existe s[i][j] ?
-				mpq_add (temp3, temp2, temp1);
-				sum.set_coef (i, j, temp3);
+	for (i=0; i<minorx+1; ++i) {
+		for (j=0; j<minory+1; ++j) {
+			get_coef(i,j,&temp1);
+			s.get_coef(i,j,&temp2);
+			mpq_add(temp3,temp2,temp1);
+			sum.set_coef(i,j,temp3);
 		}
+		for (j=minory+1; j<majory+1; ++j) {
+			(am_i_bigger_y?
+			 get_coef(i,j,&temp1):
+			 s.get_coef(i,j,&temp1));
+			sum.set_coef(i,j,temp1);
+		}
+	}
+	for (i=minorx+1; i<majorx+1; ++i) {
+		for (j=0; j<minory+1; ++j) {
+			(am_i_bigger_x?
+			 get_coef(i,j,&temp1):
+			 s.get_coef(i,j,&temp1));
+			sum.set_coef(i,j,temp1);
+		}
+		if (am_i_bigger||am_i_smaller)
+			for (j=minory+1; j<majory+1; ++j) {
+				(am_i_bigger?
+				 get_coef(i,j,&temp1):
+				 s.get_coef(i,j,&temp1));
+				sum.set_coef(i,j,temp1);
+			}
+	}
 
-	mpq_clear (temp1);
-	mpq_clear (temp2);
-	mpq_clear (temp3);
+	mpq_clear(temp1);
+	mpq_clear(temp2);
+	mpq_clear(temp3);
 
 	return sum;
 };
@@ -301,37 +298,30 @@ Rational_polynomial_2& Rational_polynomial_2::operator*= (const CGAL::Gmpq &s) {
 
 // multiplies the polynomial by x^shift_x * y^shift_y
 // (preconditions: shift_[xy] >= 0)
-Rational_polynomial_2 & Rational_polynomial_2::shift (int shift_x, int shift_y)
-{
+Rational_polynomial_2& Rational_polynomial_2::shift (int shift_x,int shift_y) {
 	CGAL_assertion ((shift_x >= 0) && (shift_y >= 0));
 	if ((!shift_x) && (!shift_y))
 		return *this;
 	int i, j;
-	degree_x += shift_x;
-	degree_y += shift_y;
-	mpq_t **new_coef =
-		(mpq_t**)malloc (sizeof(mpq_t*)*(degree_x+1));
-	// init the coefficients that will be zero
-	for (i=0; i<shift_x; ++i) {
-		new_coef[i] = (mpq_t*)malloc (sizeof(mpq_t)*(degree_y+1));
+	degree_x+=shift_x;
+	degree_y+=shift_y;
+	mpq_t **new_coef=(mpq_t**)malloc(sizeof(mpq_t*)*(degree_x+1));
+	// init all the coefficients in the new matrix and set them to zero
+	for (i=0; i<degree_x+1; ++i) {
+		new_coef[i]=(mpq_t*)malloc (sizeof(mpq_t)*(degree_y+1));
 		for (j=0; j<degree_y+1; ++j)
-			mpq_init (new_coef[i][j]);
+			mpq_init(new_coef[i][j]);
 	}
-	// copy the rest
+	// copy all
 	for (i=shift_x; i<degree_x+1; ++i) {
-		new_coef[i] =
-			(mpq_t*)malloc (sizeof(mpq_t)*(degree_y+1));
-		for (j=0; j<shift_y; ++j)
-			mpq_init (new_coef[i][j]);
 		for (j=shift_y; j<degree_y+1; ++j) {
-			mpq_init (new_coef[i][j]);
-			mpq_set (new_coef[i][j], coef[i-shift_x][j-shift_y]);
-			mpq_clear (coef[i-shift_x][j-shift_y]);
+			mpq_set(new_coef[i][j],coef[i-shift_x][j-shift_y]);
+			mpq_clear(coef[i-shift_x][j-shift_y]);
 		}
-		free (coef [i-shift_x]);	// free the old column
+		free(coef[i-shift_x]);	// free the old column
 	}
-	free (coef);
-	coef = new_coef;
+	free(coef);
+	coef=new_coef;
 	return *this;
 };
 
