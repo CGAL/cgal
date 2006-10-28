@@ -265,7 +265,7 @@ public:
   //! multiply with scalar
   This operator*(const NT& a) const
   {
-    if ( is_zero() || sign(a)==ZERO ) { return This(); }
+    if ( is_zero() || CGAL_NTS sign(a)==ZERO ) { return This(); }
 
     This res;
     unsigned int deg = degree();
