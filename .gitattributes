@@ -1541,6 +1541,7 @@ Number_types/test/Number_types/Gmpz.C -text
 Number_types/test/Number_types/Interval_nt_new.C -text
 Number_types/test/Number_types/Lazy_exact_nt_new.C -text
 Number_types/test/Number_types/MP_Float_new.C -text
+Number_types/test/Number_types/Nef_polynomial.C -text
 Number_types/test/Number_types/Quotient_new.C -text
 Number_types/test/Number_types/Sqrt_extension.C -text
 Number_types/test/Number_types/double.C -text
