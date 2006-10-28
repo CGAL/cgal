@@ -45,7 +45,6 @@ all:            \
                 Counted_number$(EXE_EXT) \
                 double$(EXE_EXT) \
                 doubletst$(EXE_EXT) \
-                EPoint-test$(EXE_EXT) \
                 float$(EXE_EXT) \
                 floattst$(EXE_EXT) \
                 Gmpq$(EXE_EXT) \
@@ -110,9 +109,6 @@ double$(EXE_EXT): double$(OBJ_EXT)
 
 doubletst$(EXE_EXT): doubletst$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)doubletst doubletst$(OBJ_EXT) $(LDFLAGS)
-
-EPoint-test$(EXE_EXT): EPoint-test$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)EPoint-test EPoint-test$(OBJ_EXT) $(LDFLAGS)
 
 float$(EXE_EXT): float$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)float float$(OBJ_EXT) $(LDFLAGS)
@@ -227,7 +223,6 @@ clean: \
                    Counted_number.clean \
                    double.clean \
                    doubletst.clean \
-                   EPoint-test.clean \
                    float.clean \
                    floattst.clean \
                    Gmpq.clean \
