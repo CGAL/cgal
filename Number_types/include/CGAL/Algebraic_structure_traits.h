@@ -77,12 +77,12 @@ class Algebraic_structure_traits  {
   
 };
 
-// TODO: Should this be in CGAL::NTS too?
-// Global function to determine if an number type is exact
+// Do we need this function? 
+// Currently it causes an error in package Min_sphere_of_spheres
 template< class Algebraic_structure >
-bool is_exact( const Algebraic_structure& as ) {
-  return CGAL::check_tag( 
-    typename Algebraic_structure_traits< Algebraic_structure >::Is_exact() );
+const bool is_exact( const Algebraic_structure& as ) {
+    return CGAL::check_tag( 
+            typename Algebraic_structure_traits< Algebraic_structure >::Is_exact() );
 }
 
 // The algebraic structure traits base class
