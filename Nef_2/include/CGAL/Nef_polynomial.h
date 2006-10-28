@@ -83,6 +83,13 @@ class Nef_polynomial
 
 template <class NT> 
 inline
+Nef_polynomial<NT> operator+(const Nef_polynomial<NT> &a)
+{
+  return a;
+}
+
+template <class NT> 
+inline
 Nef_polynomial<NT> operator-(const Nef_polynomial<NT> &a)
 {
   return - a.polynomial();
@@ -123,27 +130,85 @@ bool operator>(const Nef_polynomial<NT> &a, int b)
   return a.polynomial() > b;
 }
 
-template <class NT>
-double to_double(const Nef_polynomial<NT>& p)
-{
-  return CGAL::to_double(p.eval_at(Nef_polynomial<NT>::infi_maximal_value()));
-}
-
-template <class NT>
-std::pair<double,double> to_interval(const Nef_polynomial<NT>& p)
-{
-  return CGAL::to_interval(p.eval_at(Nef_polynomial<NT>::infi_maximal_value()));
-}
-
-template <class NT>
-Nef_polynomial<NT>
-gcd(const Nef_polynomial<NT>& p1, const Nef_polynomial<NT>& p2)
-{
-  return gcd(p1.polynomial(), p2.polynomial());
-}
 
 #undef CGAL_double
 #undef CGAL_int
+
+
+// TODO: integral_division to get it an UniqueFactorizationDomain
+// TODO: div / mod  for EuclideanRing
+template <class NT> class Algebraic_structure_traits< Nef_polynomial<NT> >
+    : public Algebraic_structure_traits_base
+             < Nef_polynomial<NT>, CGAL::Integral_domain_without_division_tag> 
+{
+    typedef Algebraic_structure_traits<NT> AST_NT;
+public:
+    typedef Nef_polynomial<NT> Algebraic_structure;
+    typedef typename AST_NT::Is_exact            Is_exact;                                                           
+    class Gcd 
+      : public Binary_function< Algebraic_structure, Algebraic_structure,
+                                Algebraic_structure > {
+    public:
+        Algebraic_structure operator()( const Algebraic_structure& x, 
+                                        const Algebraic_structure& y ) const {
+            // By definition gcd(0,0) == 0
+          if( x == Algebraic_structure(0) && y == Algebraic_structure(0) )
+            return Algebraic_structure(0);
+            
+          return CGAL::Nef::gcd( x, y );
+        }
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
+    };
+};
+
+template <class NT> class Real_embeddable_traits< Nef_polynomial<NT> > 
+  : public Real_embeddable_traits_base< Nef_polynomial<NT> > {
+  public:
+    typedef Nef_polynomial<NT> Real_embeddable;
+    class Abs 
+        : public Unary_function< Real_embeddable, Real_embeddable> {
+    public:
+        Real_embeddable inline operator()( const Real_embeddable& x ) const {
+            return (CGAL::Nef::sign( x ) == CGAL::NEGATIVE)? -x : x;
+        }        
+    };
+
+    class Sign 
+      : public Unary_function< Real_embeddable, CGAL::Sign > {
+      public:
+        CGAL::Sign inline operator()( const Real_embeddable& x ) const {
+            return CGAL::Nef::sign( x );
+        }        
+    };
+    
+    class Compare 
+      : public Binary_function< Real_embeddable, Real_embeddable,
+                                CGAL::Comparison_result > {
+      public:
+        CGAL::Comparison_result inline operator()( 
+                const Real_embeddable& x, 
+                const Real_embeddable& y ) const {
+            return (CGAL::Comparison_result) CGAL::Nef::sign( x - y );
+        }
+    };
+    
+    class To_double 
+      : public Unary_function< Real_embeddable, double > {
+      public:
+        double inline operator()( const Real_embeddable& p ) const {
+            return CGAL::to_double(
+                    p.eval_at(Nef_polynomial<NT>::infi_maximal_value()));
+        }
+    };
+    
+    class To_interval 
+      : public Unary_function< Real_embeddable, std::pair< double, double > > {
+      public:
+        std::pair<double, double> operator()( const Real_embeddable& p ) const {
+            return CGAL::to_interval(p.eval_at(Nef_polynomial<NT>::infi_maximal_value()));
+        }
+    };
+};
 
 CGAL_END_NAMESPACE
 

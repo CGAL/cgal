@@ -24,8 +24,6 @@
 #ifndef CGAL_NEF_POLYNOMIAL_FWD_H
 #define CGAL_NEF_POLYNOMIAL_FWD_H
 
-#include <CGAL/Quotient_fwd.h>
-
 // Forward declarations of functions over Polynomial and Nef_polynomial
 
 CGAL_BEGIN_NAMESPACE
@@ -33,9 +31,7 @@ CGAL_BEGIN_NAMESPACE
 namespace Nef { 
 template <typename> class Polynomial;
 
-
-template <typename ET>
-double to_double(const Polynomial<ET> &);
+template <typename ET> double to_double(const Polynomial<ET> &);
 
 //template <typename ET>
 //std::pair<double,double> to_interval(const Polynomial<ET> &);
@@ -43,15 +39,8 @@ double to_double(const Polynomial<ET> &);
 template <typename ET>
 Sign sign(const Polynomial<ET> &);
 
-
 template <typename ET>
 Polynomial<ET> abs(const Polynomial<ET> &);
-
-template <typename ET>
-bool is_finite(const Polynomial<ET> &);
-
-template <typename ET>
-bool is_valid(const Polynomial<ET> &);
 
 template <typename ET>
 Polynomial<ET> gcd(const Polynomial<ET> &, const Polynomial<ET> &);
@@ -61,26 +50,6 @@ Polynomial<ET> gcd(const Polynomial<ET> &, const Polynomial<ET> &);
 
 template <typename> class Nef_polynomial;
 
-template <typename ET>
-double to_double(const Nef_polynomial<ET> &);
-
-template <class NT>
-std::pair<double,double> to_interval(const Nef_polynomial<NT>& p);
-
-template <typename ET>
-Nef_polynomial<ET> gcd(const Nef_polynomial<ET> &, const Nef_polynomial<ET> &);
-
-//template <typename ET>
-//double to_double(const Quotient<Nef_polynomial<ET> >&);
-
-
-
-using Nef::to_double;
-using Nef::sign;
-using Nef::abs;
-using Nef::is_finite;
-using Nef::is_valid;
-using Nef::gcd;
 
 CGAL_END_NAMESPACE
 
