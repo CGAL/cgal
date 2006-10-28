@@ -141,7 +141,7 @@ class ConicCPA2
           -u()*u()*s()-v()*v()*r()+u()*v()*t(),
            c0 = -FT(2)*a0*b1 + FT(3)*a1*b0;
     
-        return CGAL_NTS sign (-CGAL_NTS sign (c0)*o);
+        return CGAL_NTS sign ((int)-CGAL_NTS sign (c0)*o);
     }
     
     double vol_minimum (FT dr, FT ds, FT dt, FT du, FT dv, FT dw) const

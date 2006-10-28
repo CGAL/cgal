@@ -418,8 +418,7 @@ class Optimisation_ellipse_2 {
 	   Conic c;
 	   c.set_circle(boundary_point1, boundary_point2, boundary_point3);
            set_d_values();
-	   return (CGAL_NTS is_zero (c.vol_derivative
-		   (dr, ds, dt, du, dv, dw)));
+	   return (CGAL::ZERO ==  (c.vol_derivative(dr, ds, dt, du, dv, dw)));
 	 }
        default:
 	 CGAL_optimisation_assertion( ( n_boundary_points >= 0) &&

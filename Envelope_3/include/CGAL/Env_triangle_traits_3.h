@@ -465,7 +465,7 @@ public:
       // should also take care for the original and trasformed direction of
       // the segment
       Sign s2 = CGAL_NTS sign(w3 - w1);
-      Sign s = CGAL_NTS sign(s1 * s2);
+      Sign s = CGAL_NTS sign(int(s1 * s2));
                   
       bool use_one_segment = true;
       if ((m_is_lower  && s == NEGATIVE) ||

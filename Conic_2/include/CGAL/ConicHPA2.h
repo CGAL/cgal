@@ -141,7 +141,7 @@ class ConicHPA2
                 -u()*u()*s()-v()*v()*r()+u()*v()*t(),
            c0 = -RT(2)*a0*b1 + RT(3)*a1*b0;
     
-        return CGAL_NTS sign (-CGAL_NTS sign (c0)*o);
+        return CGAL_NTS sign ((int)-CGAL_NTS sign (c0)*o);
     }
     
     double vol_minimum (RT dr, RT ds, RT dt, RT du, RT dv, RT dw) const
@@ -272,15 +272,13 @@ class ConicHPA2
                 trivial = false;
                 RT z_prime = d*w() - u()*u()*s() - v()*v()*r() + u()*v()*t();
                 if (CGAL_NTS is_positive (r())) {
-                    empty = CGAL_NTS is_positive(CGAL_NTS sign (z_prime));
+                    empty = (CGAL::POSITIVE == CGAL_NTS sign (z_prime));
                     empty ? o = CGAL::POSITIVE : o = CGAL::NEGATIVE;
                 } else {
-                    empty = CGAL_NTS is_negative(CGAL_NTS sign (z_prime));
+                    empty = (CGAL::NEGATIVE == CGAL_NTS sign (z_prime));
                     empty ? o = CGAL::NEGATIVE : o = CGAL::POSITIVE;
                 }
                 degenerate = empty || CGAL_NTS is_zero (z_prime);
-                
-                
             }
             break;
         }

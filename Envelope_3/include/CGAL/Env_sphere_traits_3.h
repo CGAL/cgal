@@ -1185,7 +1185,7 @@ public:
       if (sign_eq == ZERO)
 	      is_point = true;
 
-      Sign sign_disc = CGAL_NTS sign(sign_s * sign_eq);
+      Sign sign_disc = CGAL_NTS sign(int(sign_s * sign_eq));
       return (sign_disc != NEGATIVE);
     }
     // if A = 0 we get (***) f(x) = (stv - 4su)*x + (v^2 - 4sw) = B*x + C
