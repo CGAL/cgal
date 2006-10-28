@@ -17,15 +17,15 @@
 typedef CGAL::Gmpq FieldType;
 
 template<typename FT>
-CGAL::Tag_true is_exact(const FT&) {
+CGAL::Tag_true get_is_exact_tag(const FT&) {
   return CGAL::Tag_true();
 }
 
-CGAL::Tag_false is_exact(const float) {
+CGAL::Tag_false get_is_exact_tag(const float) {
   return CGAL::Tag_false();
 }
 
-CGAL::Tag_false is_exact(const double) {
+CGAL::Tag_false get_is_exact_tag(const double) {
   return CGAL::Tag_false();
 }
 
@@ -107,7 +107,7 @@ void checkRelError(const double exact,
 
 template<int D,typename Sphere,typename FT>
 void compare(const FT& tol,Sphere& m1,Sphere& m2,
-	     const CGAL::Tag_true is_exact) {
+             const CGAL::Tag_true) {
   typedef typename Sphere::Result Pair;
   typedef typename Sphere::Cartesian_const_iterator CIt;
 
@@ -126,7 +126,7 @@ void compare(const FT& tol,Sphere& m1,Sphere& m2,
 
 template<int D,typename Sphere,typename FT>
 void compare(const FT& tol,Sphere& m1,Sphere& m2,
-	     const CGAL::Tag_false is_exact) {
+	     const CGAL::Tag_false get_is_exact_tag) {
   typedef typename Sphere::Cartesian_const_iterator CIt;
 
   // check radii:
@@ -168,27 +168,27 @@ void test(const int n,const FT& tol) {
   Min_sphere  ms2;
   ms2.set(S.begin(),S.end());
   checkCondition(ms2.is_valid(),"Minsphere not valid.");
-  compare<D,Min_sphere,FT>(tol,ms1,ms2,is_exact(tol));
+  compare<D,Min_sphere,FT>(tol,ms1,ms2,get_is_exact_tag(tol));
 
   cout << " default constructor and insert()..." << endl;
   Min_sphere  ms3;
   ms3.insert(S.begin(),S.end());
   checkCondition(ms3.is_valid(),"Minsphere not valid.");
-  compare<D,Min_sphere,FT>(tol,ms1,ms3,is_exact(tol));
+  compare<D,Min_sphere,FT>(tol,ms1,ms3,get_is_exact_tag(tol));
 
   cout << " default constructor and multiple insert()'s..." << endl;
   Min_sphere  ms4;
   for (unsigned int i=0; i<S.size(); ++i)
     ms4.insert(S[i]);
   checkCondition(ms4.is_valid(),"Minsphere not valid.");
-  compare<D,Min_sphere,FT>(tol,ms1,ms4,is_exact(tol));
+  compare<D,Min_sphere,FT>(tol,ms1,ms4,get_is_exact_tag(tol));
 
   cout << " clearing and multiple insert()'s..." << endl;
   ms2.clear();
   for (unsigned int i=0; i<S.size(); ++i)
     ms2.insert(S[i]);
   checkCondition(ms2.is_valid(),"Minsphere not valid.");
-  compare<D,Min_sphere,FT>(tol,ms1,ms2,is_exact(tol));
+  compare<D,Min_sphere,FT>(tol,ms1,ms2,get_is_exact_tag(tol));
 }
 
 int main () {
