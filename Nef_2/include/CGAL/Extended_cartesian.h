@@ -22,7 +22,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_2.h> 
 #include <CGAL/Line_2_Line_2_intersection.h>
-#include <CGAL/Nef_2/Nef_polynomial.h>
+#include <CGAL/Nef_polynomial.h>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 5

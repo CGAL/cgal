@@ -25,7 +25,7 @@
 #include <CGAL/Line_2_Line_2_intersection.h> 
 #include <CGAL/squared_distance_2.h> 
 #include <CGAL/number_utils.h>
-#include <CGAL/Nef_2/Nef_polynomial.h>
+#include <CGAL/Nef_polynomial.h>
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 5
 #include <CGAL/Nef_2/debug.h>

@@ -30,7 +30,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-namespace Nef {
+namespace Nef { 
 template <typename> class Polynomial;
 
 
