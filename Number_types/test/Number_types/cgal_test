@@ -81,6 +81,7 @@ else
   compile_and_run Counted_number
   compile_and_run double
   compile_and_run doubletst
+  compile_and_run EPoint-test
   compile_and_run float
   compile_and_run floattst
   compile_and_run Gmpq
