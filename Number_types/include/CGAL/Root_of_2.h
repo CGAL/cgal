@@ -396,21 +396,50 @@ struct NT_converter < Root_of_2<NT1>, Root_of_2<NT1> >
     }
 };
 
+template <class RT>
+struct Algebraic_structure_traits<Root_of_2<RT> >
+    :public Algebraic_structure_traits_base<Root_of_2<RT> , CGAL::Null_tag >{
+    
+    typedef Root_of_2<RT> Algebraic_structure;
+    typedef typename Algebraic_structure_traits<RT>::Is_exact Is_exact;
+    struct Square
+        : public Unary_function< Root_of_2<RT> , Root_of_2<RT> >{
+        Root_of_2<RT> operator()(const Root_of_2<RT>& a){
+
+            CGAL_assertion(is_valid(a));
+  
+            if(a.is_rational()) {
+                return Root_of_2<RT>(CGAL_NTS square(a.alpha()));
+            }
+
+            // It's easy to get the explicit formulas for the square of the two roots.
+            // Then it's easy to compute their sum and their product, which gives the
+            // coefficients of the polynomial (X^2 - Sum X + Product).
+            return Root_of_2<RT> ( CGAL_NTS square(a.alpha()) + 
+                    (CGAL_NTS square(a.beta())) * a.gamma(),
+                    2 * a.alpha() * a.beta(), 
+                    a.gamma());
+        }
+    };
+};
+
 
 template<class RT>
-struct Real_embeddable_traits<Root_of_2<RT> >{
+struct Real_embeddable_traits<Root_of_2<RT> >
+    :public Real_embeddable_traits_base<Root_of_2<RT> >{
 private:
     typedef Real_embeddable_traits<RT> RET_RT;
     typedef typename Root_of_traits<RT>::RootOf_1 Root_of_1;
 public:
     
     typedef Root_of_2<RT> Real_embeddable;
-    
+    typedef CGAL::Tag_true Is_real_embeddable;
+
     class Abs 
         : public Unary_function< Real_embeddable, Real_embeddable >{
     public:
         Real_embeddable operator()(const Real_embeddable& x) const {  
-            (x>=0)?x:-x;
+            return (x>=0)?x:-x;
         }
     };    
 
@@ -944,45 +973,6 @@ bool operator!=(const Root_of_2<RT> &a, const CGAL_int(RT) &b)
 // END OF COMPARISON OPERATORS
 
 template < typename RT >
-bool is_negative(const Root_of_2<RT> &a) 
-{
-  return sign(a) == NEGATIVE;
-}
-
-template < typename RT >
-bool is_positive(const Root_of_2<RT> &a) 
-{
-  return sign(a) == POSITIVE;
-}
-
-template < typename RT >
-bool is_zero(const Root_of_2<RT> &a) 
-{
-  return sign(a) == ZERO;
-}
-
-
-template < typename RT >
-Root_of_2<RT>
-square(const Root_of_2<RT> &a)
-{
-
-  CGAL_assertion(is_valid(a));
-  
-  if(a.is_rational()) {
-    return Root_of_2<RT>(CGAL_NTS square(a.alpha()));
-  }
-
-  // It's easy to get the explicit formulas for the square of the two roots.
-  // Then it's easy to compute their sum and their product, which gives the
-  // coefficients of the polynomial (X^2 - Sum X + Product).
- return Root_of_2<RT> ( CGAL_NTS square(a.alpha()) + 
-                          (CGAL_NTS square(a.beta())) * a.gamma(),
-                        2 * a.alpha() * a.beta(), 
-                        a.gamma());
-}
-
-template < typename RT >
 Root_of_2<RT> inverse(const Root_of_2<RT> &a) 
 {
   CGAL_assertion(is_valid(a));
@@ -1005,48 +995,6 @@ Root_of_2<RT> make_sqrt(const typename Root_of_traits< RT >::RootOf_1 r)
   return Root_of_2<RT>(0,1,r);
 }
 
-// Mixed operators with Root_of_2 and RT/FT.
-// Specializations of Binary_operator_result.
-// Note : T1 can be different from T2 because of quotient types...
-template < typename T1, typename T2 >
-struct Binary_operator_result <Root_of_2<T1>, Root_of_2<T2> >
-{
-  typedef void  type;
-};
-
-template <typename T1>
-struct Binary_operator_result <Root_of_2<T1>, Root_of_2<T1> >
-{
-  typedef Root_of_2<T1>	  type;
-};
-
-template < typename T1, typename T2 >
-struct Binary_operator_result <T1, Root_of_2<T2> > 
-{
-    typedef Root_of_2<T2>  type;
-};
-
-template < typename T1, typename T2 >
-struct Binary_operator_result <Root_of_2<T1>, T2> 
-{
-    typedef Root_of_2<T1>  type;
-};
-
-// af: I am not sure that the following specializations are needed. 
-//     In fact they lead to an ICE of VC++
-#ifndef _MSC_VER
-template < typename RT >
-struct Binary_operator_result <Root_of_2<RT>, typename Root_of_traits<RT>::RootOf_1 > 
-{
-    typedef Root_of_2<RT>  type;
-};
-
-template < typename RT >
-struct Binary_operator_result <typename Root_of_traits<RT>::RootOf_1, Root_of_2<RT> > 
-{
-    typedef Root_of_2<RT>  type;
-};
-#endif 
 
 template < typename RT >
 Root_of_2<RT>
@@ -1370,21 +1318,6 @@ to_double(const Root_of_2<RT> &x)
 }
 
 template < typename RT >
-std::pair<double, double>
-to_interval(const Root_of_2<RT> &x)
-{
-
-  if(x.is_rational()) return to_interval(x.alpha());
-
-  const CGAL::Interval_nt<true>   alpha_in = to_interval(x.alpha());
-  const CGAL::Interval_nt<true>   beta_in = to_interval(x.beta());
-  const CGAL::Interval_nt<true>   gamma_in = to_interval(x.gamma());
-  const CGAL::Interval_nt<true>&  x_in = alpha_in + 
-                                         (beta_in * CGAL::sqrt(gamma_in));
-  return x_in.pair();
-}
-
-template < typename RT >
 std::ostream &
 operator<<(std::ostream &os, const Root_of_2<RT> &r)
 {
@@ -1429,11 +1362,12 @@ print(std::ostream &os, const Root_of_2<RT> &r)
 }
 
 template < typename RT >
-bool
-is_valid(const Root_of_2<RT> &r)
-{
-  return r.is_valid();
-}
+struct Is_valid<Root_of_2<RT> >: public Unary_function<Root_of_2<RT> , bool>{
+    bool operator()(const Root_of_2<RT> &r)
+    {
+        return r.is_valid();
+    }
+};
 
 
 template < class RT >
