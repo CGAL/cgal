@@ -54,7 +54,7 @@ public:
 	int rsprec;
 
 	Algebraic_1_rep():poly(NULL),nr(-1),mult(-1),rsprec(0){mpfi_init(mpfI);}
-	~Algebraic_1_rep () { mpfi_clear (mpfI); }
+	~Algebraic_1_rep () {}
 
 private:
 	// Make sure it does not get accidentally copied.
@@ -107,11 +107,11 @@ public:
 	Algebraic_1 (const mpq_t &, const mpq_t &);
 	Algebraic_1 (const CGAL::Gmpq &, const CGAL::Gmpq &);
 	Algebraic_1 (const CGAL::Gmpz &, const CGAL::Gmpz &);
-	Algebraic_1 (const mpfi_t &);
+	Algebraic_1 (mpfi_t &);
 	Algebraic_1 (const Algebraic_1 &);
 
 	// the only interesting constructor
-	Algebraic_1 (const mpfi_t &, const Rational_polynomial_1 &,
+	Algebraic_1 (const mpfi_ptr &, const Rational_polynomial_1 &,
 			const int, const int, const int);
 
 	Algebraic_1& operator= (const long int);

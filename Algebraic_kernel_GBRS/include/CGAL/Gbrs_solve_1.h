@@ -58,7 +58,7 @@ CGAL_BEGIN_NAMESPACE
 int init_solver ();
 
 // solve given the precision, returns de number of roots
-int solve_1 (mpfi_t *&, const Rational_polynomial_1 &,
+int solve_1 (mpfi_ptr *&, const Rational_polynomial_1 &,
 		unsigned int = CGAL_RS_DEF_PREC);
 
 // evaluate a polynomial at a given algebraic number

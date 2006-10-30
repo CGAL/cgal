@@ -128,10 +128,13 @@ Algebraic_1::Algebraic_1 (const CGAL::Gmpq &l, const CGAL::Gmpq &r) {
 	mpfi_interv_q (mpfi (), l.mpq(), r.mpq());
 };
 
-Algebraic_1::Algebraic_1 (const mpfi_t &i) {
-	mpfi_set (mpfi (), i);
+// here, the constructor copies the address of the mpfi, not the contents
+Algebraic_1::Algebraic_1 (mpfi_t &i) {
+	mpfi_clear(mpfi());
+	*mpfi()=*i;
 };
 
+// this is a copy constructor that copies everything, including the mpfi
 Algebraic_1::Algebraic_1 (const Algebraic_1 &i) {
 	mpfi_set (mpfi (), i.mpfi ());
 	set_pol (i.pol ());
@@ -141,9 +144,10 @@ Algebraic_1::Algebraic_1 (const Algebraic_1 &i) {
 };
 
 // interesting constructor
-Algebraic_1::Algebraic_1 (const mpfi_t &i, const Rational_polynomial_1 &p,
+Algebraic_1::Algebraic_1 (const mpfi_ptr &i, const Rational_polynomial_1 &p,
 		const int n, const int m, const int rsp) {
-	mpfi_set (mpfi (), i);
+	mpfi_clear(mpfi());
+	*mpfi()=*i;
 	set_pol (p);
 	set_nr (n);
 	set_mult (m);
@@ -551,7 +555,6 @@ Algebraic_1 Algebraic_1::operator- () const {
 	mpfi_init (n);
 	mpfi_neg (n, mpfi ());
 	Algebraic_1 ret (n);
-	mpfi_clear (n);
 	return ret;
 };
 
@@ -560,7 +563,6 @@ Algebraic_1 Algebraic_1::operator+ (const Algebraic_1 &n2) const {
 	mpfi_init (n);
 	mpfi_add (n, mpfi (), n2.mpfi());
 	Algebraic_1 ret (n);
-	mpfi_clear (n);
 	return ret;
 };
 
@@ -573,7 +575,6 @@ Algebraic_1 Algebraic_1::operator* (const Algebraic_1 &n2) const {
 	mpfi_init (n);
 	mpfi_mul (n, mpfi (), n2.mpfi());
 	Algebraic_1 ret (n);
-	mpfi_clear (n);
 	return ret;
 };
 
@@ -698,7 +699,6 @@ Algebraic_1 Algebraic_1::operator/ (const Algebraic_1 &n2) const {
 	mpfi_init (n);
 	mpfi_div (n, mpfi (), n2.mpfi());
 	Algebraic_1 ret (n);
-	mpfi_clear (n);
 	return ret;
 };
 
@@ -719,7 +719,6 @@ Algebraic_1 Algebraic_1::sqrt () const {
 	mpfi_init (s);
 	mpfi_sqrt (s, mpfi ());
 	Algebraic_1 ret (s);
-	mpfi_clear (s);
 	return ret;
 };
 

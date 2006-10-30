@@ -34,27 +34,19 @@ int init_rs () {
 	return 0;
 }
 
-int affiche_vect_ibfr (mpfi_t *&x, int index, const int ident_vect) {
-	int ident_elt;
-	int nb = rs_export_dim_vect_ibfr (ident_vect);
-	CGAL_assertion_msg (nb == 1, "the dimension of vector must be 1");
-	ident_elt = rs_export_elt_vect_ibfr (ident_vect, 0);
-	mpfi_set (x[index-1], (mpfi_ptr)rs_export_ibfr_mpfi (ident_elt));
-	return nb;
-}
-
-int affiche_sols_eqs (mpfi_t *&x) {
-	int ident_sols_eqs, nb_elts, ident_node, ident_vect, i;
-	ident_sols_eqs = rs_get_default_sols_eqs ();
-	// the number of solutions
-	nb_elts = rs_export_list_vect_ibfr_nb (ident_sols_eqs);
-	ident_node = rs_export_list_vect_ibfr_firstnode (ident_sols_eqs);
-	x = (mpfi_t *) malloc (nb_elts*sizeof(mpfi_t));
+int affiche_sols_eqs (mpfi_ptr *&x) {
+	int ident_sols_eqs,nb_elts,ident_node,ident_vect,i,ident_elt;
+	ident_sols_eqs=rs_get_default_sols_eqs ();
+	nb_elts=rs_export_list_vect_ibfr_nb(ident_sols_eqs);
+	ident_node=rs_export_list_vect_ibfr_firstnode(ident_sols_eqs);
+	x=(mpfi_ptr*)malloc(nb_elts*sizeof(mpfi_ptr));
 	for (i=0; i<nb_elts; ++i) {
-		mpfi_init (x[i]);
-		ident_vect = rs_export_list_vect_ibfr_monnode (ident_node);
-		affiche_vect_ibfr (x, i+1, ident_vect);
-		ident_node = rs_export_list_vect_ibfr_nextnode (ident_node);
+		ident_vect=rs_export_list_vect_ibfr_monnode(ident_node);
+		CGAL_assertion_msg(rs_export_dim_vect_ibfr(ident_vect)==1,
+				"the dimension of vector must be 1");
+		ident_elt=rs_export_elt_vect_ibfr(ident_vect,0);
+		x[i]=(mpfi_ptr)rs_export_ibfr_mpfi(ident_elt);
+		ident_node=rs_export_list_vect_ibfr_nextnode(ident_node);
 	}
 	return nb_elts;
 }
@@ -116,7 +108,7 @@ void create_rs_uconstr (mpz_t ** list_constr,
 	rs_dappend_list_sup_bz (ident_list, ident_poly);
 }
 
-int solve_1 (mpfi_t *&x, const Rational_polynomial_1 &p1, unsigned int prec) {
+int solve_1 (mpfi_ptr *&x, const Rational_polynomial_1 &p1, unsigned int prec) {
 	// the solver must be initialized
 	rs_reset_all ();
 	create_rs_upoly

@@ -84,7 +84,7 @@ class Solve_1 {
 			bool known_to_be_square_free) const {
 		if (known_to_be_square_free)
 			return res;
-		mpfi_t *x;
+		mpfi_ptr *x;
 		int nr;
 		CGAL_assertion_msg (((nr = solve_1 (x, p)) >= 0),
 				"error in resolution");
@@ -92,8 +92,6 @@ class Solve_1 {
 			for (int i=0; i<nr; ++i) {
 				// multiplicity is -1 (we didn't calculate it)
 				Algebraic a (x[i], p, i, -1, CGAL_RS_DEF_PREC);
-				// x[i] was mpfi_inited by RS? If so,
-				mpfi_clear (x[i]);
 				*(res++) = a;
 			}
 		free (x);
@@ -107,18 +105,6 @@ class Solve_1 {
 			OutputIteratorRoots roots,
 			OutputIteratorMult mult) const {
 		CGAL_assertion_msg (false, "not implemented yet");
-		mpfi_t *x;
-		int nr;
-		CGAL_assertion_msg (!((nr = solve_1 (x, p)) < 0),
-				"error in resolution");
-		if (nr)
-			for (int i=0; i<nr; ++i) {
-				Algebraic a (x[i], p);
-				// x[i] was mpfi_inited by RS? If so,
-				mpfi_clear (x[i]);
-				*(roots++) = a;
-				*(mult++) = 1;	// FIXME
-			}
 		return std::make_pair (roots, mult);
 	};
 };	// Solve_1
