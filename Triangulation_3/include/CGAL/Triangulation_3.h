@@ -2946,11 +2946,11 @@ operator==(const Triangulation_3<GT, Tds> &t1,
         std::copy(t2.points_begin(), t2.points_end(), std::back_inserter(V2));
 #endif
         std::sort(V1.begin(), V1.end(),
-                  compose(Is_negative<Comparison_result>(),
-                          t1.geom_traits().compare_xyz_3_object()));
+                compose(Is_negative<int>(),// implicit conversion of CGAL::Sign 
+                        t1.geom_traits().compare_xyz_3_object()));
         std::sort(V2.begin(), V2.end(),
-                  compose(Is_negative<Comparison_result>(),
-                          t2.geom_traits().compare_xyz_3_object()));
+                compose(Is_negative<int>(),// implicit conversion of CGAL::Sign 
+                        t2.geom_traits().compare_xyz_3_object()));
         return V1 == V2;
     }
 
