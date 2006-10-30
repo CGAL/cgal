@@ -296,6 +296,56 @@ public:
 
 }; // Root_of_2
 
+// COERCION_TRAITS BEGIN
+
+CGAL_DEFINE_COERCION_TRAITS_FOR_SELF_TEM(Root_of_2<RT>,class RT);
+
+template <class RT>                                                      
+struct Coercion_traits< RT , Root_of_2<RT> >{                                    
+    typedef CGAL::Tag_true  Are_explicit_interoperable;             
+    typedef CGAL::Tag_true  Are_implicit_interoperable;             
+    typedef Root_of_2<RT> Coercion_type;                                       
+    struct Cast{                                                    
+        typedef Coercion_type result_type;                          
+        Coercion_type operator()(const Root_of_2<RT>& x)   const { return x;}  
+        Coercion_type operator()(const RT& x) const {             
+            return Coercion_type(x);}                               
+    };                                                              
+};   
+
+template <class RT>                                                      
+struct Coercion_traits< CGAL_int(RT) , Root_of_2<RT> >{                                    
+    typedef CGAL::Tag_true  Are_explicit_interoperable;             
+    typedef CGAL::Tag_true  Are_implicit_interoperable;             
+    typedef Root_of_2<RT> Coercion_type;                                       
+    struct Cast{                                                    
+        typedef Coercion_type result_type;                          
+        Coercion_type operator()(const Root_of_2<RT>& x)   const { return x;}  
+        Coercion_type operator()(CGAL_int(RT) x) const {             
+            return Coercion_type(x);}                               
+    };                                                              
+};   
+
+template <class RT>                                                      
+struct Coercion_traits< typename Root_of_traits<RT>::RootOf_1 , Root_of_2<RT> >{                                    
+    typedef CGAL::Tag_true  Are_explicit_interoperable;             
+    typedef CGAL::Tag_true  Are_implicit_interoperable;             
+    typedef Root_of_2<RT> Coercion_type;                                       
+    struct Cast{                                                    
+        typedef Coercion_type result_type;                          
+        Coercion_type operator()(const Root_of_2<RT>& x)   const { return x;}  
+        Coercion_type operator()(const RT& x) const {             
+            return Coercion_type(x);}                               
+    };                                                              
+};   
+
+
+template <class RT, class NTX >
+struct Coercion_traits< Root_of_2<RT> , NTX  >
+    :public Coercion_traits<NTX , Root_of_2<RT> >{};
+
+// COERCION_TRAITS END
+
 #ifdef CGAL_ROOT_OF_2_ENABLE_HISTOGRAM_OF_NUMBER_OF_DIGIT_ON_THE_COMPLEX_CONSTRUCTOR
 
 template < typename RT_ >
@@ -346,220 +396,287 @@ struct NT_converter < Root_of_2<NT1>, Root_of_2<NT1> >
     }
 };
 
-template < typename RT >
-Sign
-sign(const Root_of_2<RT> &a)
-{
-  const CGAL::Sign sign_alpha = CGAL::sign(a.alpha());
-  if (a.is_rational()) return (sign_alpha);
-  // If alpha and beta have the same sign, return this sign.
-  const CGAL::Sign sign_beta = CGAL::sign (a.beta());
-  if (sign_alpha == sign_beta) return (sign_alpha);
-  if (sign_alpha == ZERO) return (sign_beta);
 
-  // Compare the squared values of m_alpha and of m_beta*sqrt(m_gamma):
-  const Comparison_result res = CGAL::compare (CGAL_NTS square(a.alpha()),
-                                               CGAL_NTS square(a.beta()) * a.gamma());
-  if (res == LARGER) return sign_alpha;
-  else if (res == SMALLER) return sign_beta;
-  else return ZERO;
-}
+template<class RT>
+struct Real_embeddable_traits<Root_of_2<RT> >{
+private:
+    typedef Real_embeddable_traits<RT> RET_RT;
+    typedef typename Root_of_traits<RT>::RootOf_1 Root_of_1;
+public:
+    
+    typedef Root_of_2<RT> Real_embeddable;
+    
+    class Abs 
+        : public Unary_function< Real_embeddable, Real_embeddable >{
+    public:
+        Real_embeddable operator()(const Real_embeddable& x) const {  
+            (x>=0)?x:-x;
+        }
+    };    
 
-template < typename RT >
-Comparison_result
-compare(const Root_of_2<RT> &a, const Root_of_2<RT> &b)
-{
-  typedef typename Root_of_traits< RT >::RootOf_1 FT;
-  typedef typename First_if_different<FT, RT>::Type WhatType;
-  typedef typename boost::is_same< WhatType, RT > do_not_filter;
+    class Sign 
+        : public Unary_function< Real_embeddable, CGAL::Sign >{
+    public:
+        CGAL::Sign operator()(const Real_embeddable& a) const {
+            const CGAL::Sign sign_alpha = CGAL::sign(a.alpha());
+            if (a.is_rational()) return (sign_alpha);
+            // If alpha and beta have the same sign, return this sign.
+            const CGAL::Sign sign_beta = CGAL::sign (a.beta());
+            if (sign_alpha == sign_beta) return (sign_alpha);
+            if (sign_alpha == ZERO) return (sign_beta);
+            
+            // Compare the squared values of m_alpha and of m_beta*sqrt(m_gamma):
+            const Comparison_result res = CGAL::compare (CGAL_NTS square(a.alpha()),
+                    CGAL_NTS square(a.beta()) * a.gamma());
+            if (res == LARGER) return sign_alpha;
+            else if (res == SMALLER) return sign_beta;
+            else return ZERO;
+        }
+    };
+    
+    class Compare 
+        : public Binary_function< Real_embeddable, 
+                                  Real_embeddable, 
+                                  CGAL::Comparison_result >{
+    public:
+        CGAL::Comparison_result operator()(
+                const Real_embeddable& a, 
+                const Real_embeddable& b) const{
+            typedef typename Root_of_traits< RT >::RootOf_1 FT;
+            typedef typename First_if_different<FT, RT>::Type WhatType;
+            typedef typename boost::is_same< WhatType, RT > do_not_filter;
 
-  CGAL_assertion(is_valid(a) && is_valid(b));
+            CGAL_assertion(is_valid(a) && is_valid(b));
 
-  if (a.is_rational()) return (CGAL::compare(a.alpha(), b));
-  if (b.is_rational()) return (CGAL::compare(a, b.alpha()));
+            if (a.is_rational()) return (CGAL::compare(a.alpha(), b));
+            if (b.is_rational()) return (CGAL::compare(a, b.alpha()));
 
-  if(!do_not_filter::value) {
-    Interval_nt<> ia = to_interval(a);
-    Interval_nt<> ib = to_interval(b);
-    if(ia.inf() > ib.sup()) return LARGER;
-    if(ia.sup() < ib.inf()) return SMALLER;
-  }
+            if(!do_not_filter::value) {
+                Interval_nt<> ia = to_interval(a);
+                Interval_nt<> ib = to_interval(b);
+                if(ia.inf() > ib.sup()) return LARGER;
+                if(ia.sup() < ib.inf()) return SMALLER;
+            }
 
-  // Perform the exact comparison:
-  // Note that the comparison of (a1 + b1*sqrt(c1)) and (a2 + b2*sqrt(c2))
-  // is equivalent to comparing (a1 - a2) and (b2*sqrt(c2) -  b1*sqrt(c1)).
-  // We first determine the signs of these terms.
-  const FT diff_alpha = a.alpha() - b.alpha();
-  const CGAL::Sign sign_left = CGAL::sign(diff_alpha);
-  const FT a_sqr = a.beta()*a.beta()*a.gamma();
-  const FT b_sqr = b.beta()*b.beta()*b.gamma();
-  Comparison_result right_res = CGAL::compare (b_sqr, a_sqr);
-  CGAL::Sign sign_right = ZERO;
+            // Perform the exact comparison:
+            // Note that the comparison of (a1 + b1*sqrt(c1)) and (a2 + b2*sqrt(c2))
+            // is equivalent to comparing (a1 - a2) and (b2*sqrt(c2) -  b1*sqrt(c1)).
+            // We first determine the signs of these terms.
+            const FT diff_alpha = a.alpha() - b.alpha();
+            const CGAL::Sign sign_left = CGAL::sign(diff_alpha);
+            const FT a_sqr = a.beta()*a.beta()*a.gamma();
+            const FT b_sqr = b.beta()*b.beta()*b.gamma();
+            Comparison_result right_res = CGAL::compare (b_sqr, a_sqr);
+            CGAL::Sign sign_right = ZERO;
 
-  if (right_res == LARGER)
-  {
-    // Take the sign of b2:
-    sign_right = CGAL::sign(b.beta());
-  }
-  else if (right_res == SMALLER)
-  {
-    // Take the opposite sign of b1:
-    switch (CGAL::sign (a.beta()))
-    {
-    case POSITIVE :
-      sign_right = NEGATIVE;
-      break;
-    case NEGATIVE:
-      sign_right = POSITIVE;
-      break;
-    case ZERO:
-      sign_right = ZERO;
-      break;
-    default:
-      // We should never reach here.
-      CGAL_assertion (false);
-    }
-  }
-  else
-  {
-    // We take the sign of (b2*sqrt(c2) -  b1*sqrt(c1)), where both terms
-    // have the same absolute value. The sign is equal to the sign of b2,
-    // unless both terms have the same sign, so the whole expression is 0.
-    sign_right = CGAL::sign (b.beta());
-    if (sign_right == CGAL::sign (a.beta()))
-      sign_right = ZERO;
-  }
+            if (right_res == LARGER)
+                {
+                    // Take the sign of b2:
+                    sign_right = CGAL::sign(b.beta());
+                }
+            else if (right_res == SMALLER)
+                {
+                    // Take the opposite sign of b1:
+                    switch (CGAL::sign (a.beta()))
+                        {
+                        case POSITIVE :
+                            sign_right = NEGATIVE;
+                            break;
+                        case NEGATIVE:
+                            sign_right = POSITIVE;
+                            break;
+                        case ZERO:
+                            sign_right = ZERO;
+                            break;
+                        default:
+                            // We should never reach here.
+                            CGAL_assertion (false);
+                        }
+                }
+            else
+                {
+                    // We take the sign of (b2*sqrt(c2) -  b1*sqrt(c1)), where both terms
+                    // have the same absolute value. The sign is equal to the sign of b2,
+                    // unless both terms have the same sign, so the whole expression is 0.
+                    sign_right = CGAL::sign (b.beta());
+                    if (sign_right == CGAL::sign (a.beta()))
+                        sign_right = ZERO;
+                }
 
-  // Check whether on of the terms is zero. In this case, the comparsion
-  // result is simpler:
-  if (sign_left == ZERO)
-  {
-    if (sign_right == POSITIVE)
-      return (SMALLER);
-    else if (sign_right == NEGATIVE)
-      return (LARGER);
-    else
-      return (EQUAL);
-  }
-  else if (sign_right == ZERO)
-  {
-    if (sign_left == POSITIVE)
-      return (LARGER);
-    else if (sign_left == NEGATIVE)
-      return (SMALLER);
-    else
-      return (EQUAL);
-  }
+            // Check whether on of the terms is zero. In this case, the comparsion
+            // result is simpler:
+            if (sign_left == ZERO)
+                {
+                    if (sign_right == POSITIVE)
+                        return (SMALLER);
+                    else if (sign_right == NEGATIVE)
+                        return (LARGER);
+                    else
+                        return (EQUAL);
+                }
+            else if (sign_right == ZERO)
+                {
+                    if (sign_left == POSITIVE)
+                        return (LARGER);
+                    else if (sign_left == NEGATIVE)
+                        return (SMALLER);
+                    else
+                        return (EQUAL);
+                }
 
-  // If the signs are not equal, we can determine the comparison result:
-  if (sign_left != sign_right)
-  {
-    if (sign_left == POSITIVE)
-      return (LARGER);
-    else
-      return (SMALLER);
-  }
+            // If the signs are not equal, we can determine the comparison result:
+            if (sign_left != sign_right)
+                {
+                    if (sign_left == POSITIVE)
+                        return (LARGER);
+                    else
+                        return (SMALLER);
+                }
 
-  // We now square both terms and look at the sign of the one-root number:
-  //   ((a1 - a2)^2 - (b1^2*c1 + b2^2*c2)) + 2*b1*b2*sqrt(c1*c2)
-  //
-  // If both signs are negative, we should swap the comparsion result
-  // we eventually compute.
-  const FT A = diff_alpha*diff_alpha - (a_sqr + b_sqr);
-  const FT B = 2 * a.beta() * b.beta();
-  const FT C = a.gamma() * b.gamma();
-  const CGAL::Sign sgn = sign(Root_of_2<RT>(A, B, C));
-  const bool swap_res = (sign_left == NEGATIVE);
+            // We now square both terms and look at the sign of the one-root number:
+            //   ((a1 - a2)^2 - (b1^2*c1 + b2^2*c2)) + 2*b1*b2*sqrt(c1*c2)
+            //
+            // If both signs are negative, we should swap the comparsion result
+            // we eventually compute.
+            const FT A = diff_alpha*diff_alpha - (a_sqr + b_sqr);
+            const FT B = 2 * a.beta() * b.beta();
+            const FT C = a.gamma() * b.gamma();
+            const CGAL::Sign sgn = sign(Root_of_2<RT>(A, B, C));
+            const bool swap_res = (sign_left == NEGATIVE);
 
-  if (sgn == POSITIVE)
-    return (swap_res ? SMALLER : LARGER);
-  else if (sgn == NEGATIVE)
-    return (swap_res ? LARGER : SMALLER);
-  else
-    return (EQUAL);
-}
+            if (sgn == POSITIVE)
+                return (swap_res ? SMALLER : LARGER);
+            else if (sgn == NEGATIVE)
+                return (swap_res ? LARGER : SMALLER);
+            else
+                return (EQUAL);
+        }
 
-template < typename RT >
-Comparison_result
-compare(const Root_of_2<RT> &a,
-	const typename Root_of_traits< RT >::RootOf_1 &b)
-{
-  typedef typename Root_of_traits< RT >::RootOf_1 FT;
-  typedef typename First_if_different<FT, RT>::Type WhatType;
-  typedef typename boost::is_same< WhatType, RT > do_not_filter;
+        CGAL::Comparison_result 
+        inline
+        operator()(
+                const Real_embeddable& a,
+                const Root_of_1& b 
+        ) const{
+            typedef typename Root_of_traits< RT >::RootOf_1 FT;
+            typedef typename First_if_different<FT, RT>::Type WhatType;
+            typedef typename boost::is_same< WhatType, RT > do_not_filter;
 
-  CGAL_assertion(is_valid(a) && is_valid(b));
+            CGAL_assertion(is_valid(a) && is_valid(b));
 
-  if (a.is_rational()) return (CGAL::compare (a.alpha(), b));
+            if (a.is_rational()) return (CGAL::compare (a.alpha(), b));
 
-  if(!do_not_filter::value) {
-    Interval_nt<> ia = to_interval(a);
-    Interval_nt<> ib = to_interval(b);
-    if(ia.inf() > ib.sup()) return LARGER;
-    if(ia.sup() < ib.inf()) return SMALLER;
-  }
+            if(!do_not_filter::value) {
+                Interval_nt<> ia = to_interval(a);
+                Interval_nt<> ib = to_interval(b);
+                if(ia.inf() > ib.sup()) return LARGER;
+                if(ia.sup() < ib.inf()) return SMALLER;
+            }
 
-   // Perform the exact comparison.
-  const CGAL::Sign   sgn = sign(a - b);
-  if (sgn == POSITIVE) return (LARGER);
-  else if (sgn == NEGATIVE) return (SMALLER);
-  else return (EQUAL);
-}
+            // Perform the exact comparison.
+            const CGAL::Sign   sgn = sign(a - b);
+            if (sgn == POSITIVE) return (LARGER);
+            else if (sgn == NEGATIVE) return (SMALLER);
+            else return (EQUAL);
+        }
+        
+        CGAL::Comparison_result 
+        inline 
+        operator()(
+                const Root_of_1& a, 
+                const Real_embeddable& b
+        ) const{ return opposite(this->operator()(b,a) ); }
+        
+        CGAL::Comparison_result 
+        inline 
+        operator()(
+                const Real_embeddable& a, 
+                const RT& b
+        ) const{
+            typedef typename Root_of_traits< RT >::RootOf_1 FT;
+            typedef typename First_if_different<FT, RT>::Type WhatType;
+            typedef typename boost::is_same< WhatType, RT > do_not_filter;
 
-template < typename RT >  inline
-Comparison_result
-compare(const typename Root_of_traits< RT >::RootOf_1 &a,
-	const Root_of_2<RT> &b)
-{
-   return opposite(CGAL_NTS compare(b, a));
-}
+            CGAL_assertion(is_valid(a) && is_valid(b));
 
-template < typename RT >
-Comparison_result
-compare(const Root_of_2<RT> &a, const RT &b)
-{
-  typedef typename Root_of_traits< RT >::RootOf_1 FT;
-  typedef typename First_if_different<FT, RT>::Type WhatType;
-  typedef typename boost::is_same< WhatType, RT > do_not_filter;
+            if (a.is_rational()) return (CGAL::compare (a.alpha(), b));
 
-  CGAL_assertion(is_valid(a) && is_valid(b));
+            if(!do_not_filter::value) {
+                Interval_nt<> ia = to_interval(a);
+                Interval_nt<> ib = to_interval(b);
+                if(ia.inf() > ib.sup()) return LARGER;
+                if(ia.sup() < ib.inf()) return SMALLER;
+            }
 
-  if (a.is_rational()) return (CGAL::compare (a.alpha(), b));
+            // Perform the exact comparison.
+            const CGAL::Sign   sgn = sign(a - b);
+            if (sgn == POSITIVE) return (LARGER);
+            else if (sgn == NEGATIVE) return (SMALLER);
+            else return (EQUAL);
+        }
+        
+        inline
+        Comparison_result
+        operator()(const RT &a, const Root_of_2<RT> &b)
+        {
+            return opposite(this->operator()(b, a));
+        }
+      
+        inline
+        Comparison_result
+        operator()( CGAL_int(RT)  a, const Root_of_2<RT> &b)
+        {
+            return this->operator()(RT(a),b);
+        }
 
-  if(!do_not_filter::value) {
-    Interval_nt<> ia = to_interval(a);
-    Interval_nt<> ib = to_interval(b);
-    if(ia.inf() > ib.sup()) return LARGER;
-    if(ia.sup() < ib.inf()) return SMALLER;
-  }
+        inline
+        Comparison_result
+        operator()(const Root_of_2<RT> &a, CGAL_int(RT) b)
+        {
+            return this->operator()(a,RT(b));
+        }        
+    };
+    
+    class To_double 
+        : public Unary_function< Real_embeddable, double >{
+    public:
+        double operator()(const Real_embeddable& x) const {
+            typedef typename Root_of_traits<RT>::RootOf_1 FT;
+            typedef CGAL::Rational_traits< FT > Rational;
+            Rational r;
+            const RT r1 = r.numerator(x.alpha());
+            const RT d1 = r.denominator(x.alpha());
+            const RT r2 = r.numerator(x.beta());
+            const RT d2 = r.denominator(x.beta());
+            const RT r3 = r.numerator(x.gamma());
+            const RT d3 = r.denominator(x.gamma());
 
-   // Perform the exact comparison.
-  const CGAL::Sign   sgn = sign(a - b);
-  if (sgn == POSITIVE) return (LARGER);
-  else if (sgn == NEGATIVE) return (SMALLER);
-  else return (EQUAL);
-}
+            if (x.is_rational()) {
+                return (CGAL::to_double(r1) / CGAL::to_double(d1));
+            }
+  
+            return ((CGAL::to_double(r1) / CGAL::to_double(d1)) +
+                    (CGAL::to_double(r2) / CGAL::to_double(d2)) * 
+                    std::sqrt((CGAL::to_double(r3) / CGAL::to_double(d3)))); 
+        }
+    };
+    
+    class To_interval 
+        : public Unary_function< Real_embeddable, std::pair< double, double > >{
+    public:
+        std::pair<double,double> operator()(const Real_embeddable& x) const {
 
-template < typename RT >  inline
-Comparison_result
-compare(const RT &a, const Root_of_2<RT> &b)
-{
-   return opposite(CGAL_NTS compare(b, a));
-}
+            if(x.is_rational()) return to_interval(x.alpha());
 
-template < typename RT >  inline
-Comparison_result
-compare(const Root_of_2<RT> &a, const CGAL_int(RT) &b)
-{
-   return CGAL_NTS compare(a, RT(b));
-}
-
-template < typename RT >  inline
-Comparison_result
-compare(const CGAL_int(RT) &a, const Root_of_2<RT> &b)
-{
-   return opposite(CGAL_NTS compare(b, RT(a)));
-}
+            const CGAL::Interval_nt<true>   alpha_in = to_interval(x.alpha());
+            const CGAL::Interval_nt<true>   beta_in = to_interval(x.beta());
+            const CGAL::Interval_nt<true>   gamma_in = to_interval(x.gamma());
+            const CGAL::Interval_nt<true>&  x_in = alpha_in + 
+                (beta_in * CGAL::sqrt(gamma_in));
+            return x_in.pair();
+        }        
+    };   
+};
 
 template < typename RT > inline
 bool operator<(const Root_of_2<RT> &a, const Root_of_2<RT> &b) {

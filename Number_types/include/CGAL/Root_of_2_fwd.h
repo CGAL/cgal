@@ -29,14 +29,14 @@ CGAL_BEGIN_NAMESPACE
 
 template < typename T > class Root_of_2;
 
-template < typename T >
-Comparison_result compare(const Root_of_2<T>&, const Root_of_2<T>&);
+// template < typename T >
+// Comparison_result compare(const Root_of_2<T>&, const Root_of_2<T>&);
 
-template < typename T >
-Comparison_result compare(const Root_of_2<T> &, const T &);
+// template < typename T >
+// Comparison_result compare(const Root_of_2<T> &, const T &);
 
-template < typename T >
-Comparison_result compare(const T &, const Root_of_2<T> &);
+// template < typename T >
+// Comparison_result compare(const T &, const Root_of_2<T> &);
 
 // template < typename RT >
 // Comparison_result
@@ -56,14 +56,14 @@ Comparison_result compare(const T &, const Root_of_2<T> &);
 // Comparison_result
 // compare(const CGAL_CK_int(RT) &a, const Root_of_2<RT> &b)
 
-template < typename T >
-Sign sign(const Root_of_2<T> &);
+// template < typename T >
+// Sign sign(const Root_of_2<T> &);
 
-template < typename T >
-double to_double(const Root_of_2<T>&);
+// template < typename T >
+// double to_double(const Root_of_2<T>&);
 
-template < typename T >
-std::pair<double, double> to_interval (const Root_of_2<T>&);
+// template < typename T >
+// std::pair<double, double> to_interval (const Root_of_2<T>&);
 
 template < typename T >
 bool is_valid(const Root_of_2<T>&);
