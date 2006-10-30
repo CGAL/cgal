@@ -1255,9 +1255,6 @@ class Coercion_traits< Lazy_exact_nt<ET1>, Lazy_exact_nt<ET2> >
             typename Coercion_traits<ET1,ET2>::Are_implicit_interoperable>{};
 
 
-template<class ET>
-struct Coercion_traits< Lazy_exact_nt<ET>, double >
-    :public Coercion_traits<double, Lazy_exact_nt<ET> >{};
 
 
 template<class ET>
@@ -1278,6 +1275,10 @@ public:
     typedef typename boost::mpl::if_c< interoperable, CGAL::Null_functor, 
     INTERN_CT::Cast_from_to<double,NT> >::type Cast;
 };
+
+template<class ET>
+struct Coercion_traits< Lazy_exact_nt<ET>, double >
+    :public Coercion_traits<double, Lazy_exact_nt<ET> >{};
 
 template <typename ET>
 inline
