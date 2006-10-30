@@ -106,12 +106,23 @@ struct Abs :public Unary_function< NT, NT > {
     NT operator()( const NT& x) const
     { return CGAL_NTS abs( x); }
 };
-template < class NT >
-struct Compare
+
+template <class NT, class Compare> struct Compare_base: public Compare {};
+template <class NT> struct Compare_base<NT,CGAL::Null_functor>
     :public Binary_function< NT, NT, Comparison_result > {
     Comparison_result operator()( const NT& x, const NT& y) const
-    { return CGAL_NTS compare( x, y); }
+    {
+        if (x < y) return CGAL::SMALLER;
+        if (x > y) return CGAL::LARGER;
+        CGAL_postcondition(x == y);
+        return CGAL::EQUAL;
+    }
 };
+
+
+template < class NT >
+struct Compare
+    :public Compare_base<NT, typename Real_embeddable_traits<NT>::Compare>{};
 
 template < class NT >
 struct Square : public Unary_function< NT, NT > {
