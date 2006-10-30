@@ -32,13 +32,6 @@ template<class NT>
 class Sqrt_extension_1;
 
 template<class NT>
-Sign sign(const Sqrt_extension_1<NT>&);
-
-template<class NT>
-Comparison_result compare(const Sqrt_extension_1<NT>&,
-			  const Sqrt_extension_1<NT>&);
-
-template<class NT>
 class Sqrt_extension_1
 {
 private:
@@ -223,6 +216,78 @@ operator-(const Sqrt_extension_1<NT>& x, const Sqrt_extension_1<NT>& y)
 
 //=============================================================
 
+template <class NT> 
+struct Algebraic_structure_traits<Sqrt_extension_1<NT> >
+    :public Algebraic_structure_traits_base<Sqrt_extension_1<NT>,CGAL::Integral_domain_without_division_tag>{
+    // I haven't found division 
+private:
+    typedef Algebraic_structure_traits<NT> AST_NT;
+public:
+    typedef Sqrt_extension_1<NT> Algebraic_structure;
+    typedef typename AST_NT::Is_exact Is_exact;
+};
+
+template<class NT>
+struct Real_embeddable_traits<Sqrt_extension_1<NT> >{
+private:
+    typedef Real_embeddable_traits<NT> RET_NT;
+public:
+    
+    typedef Sqrt_extension_1<NT> Real_embeddable;
+    
+    class Abs 
+        : public Unary_function< Real_embeddable, Real_embeddable >{
+    public:
+        Real_embeddable operator()(const Real_embeddable& x) const {
+            return (x>=0)?x:-x;
+        }
+    };    
+
+    class Sign 
+        : public Unary_function< Real_embeddable, CGAL::Sign >{
+    public:
+        CGAL::Sign operator()(const Real_embeddable& x) const {
+            return x.sign();
+        }
+    };
+    
+    class Compare 
+        : public Binary_function< Real_embeddable, 
+                                  Real_embeddable, 
+                                  CGAL::Comparison_result >{
+    public:
+        CGAL::Comparison_result operator()(
+                const Real_embeddable& x, 
+                const Real_embeddable& y) const {
+            CGAL_exactness_precondition( CGAL::compare(x.c(), y.c()) == EQUAL );
+            return (x - y).sign();
+            
+// This is not needed due to equality of CGAL::Sign CGAL::Comparison_result
+//             CGAL::Sign s = (x - y).sign();
+//             if ( s == ZERO ) { return EQUAL; }
+//             return (s == POSITIVE) ? LARGER : SMALLER;
+        }
+    };
+    
+    class To_double 
+        : public Unary_function< Real_embeddable, double >{
+    public:
+        double operator()(const Real_embeddable& x) const {
+            return x.to_double();
+        }
+    };
+    
+    class To_interval 
+        : public Unary_function< Real_embeddable, std::pair< double, double > >{
+    public:
+        std::pair<double,double> operator()(const Real_embeddable& x) const {
+            return x.to_interval();
+        }
+    };   
+};
+
+
+
 template<class NT>
 struct Number_type_traits< Sqrt_extension_1<NT> >
 {
@@ -268,6 +333,13 @@ struct Number_type_traits< Sqrt_extension_1<NT> >
     return x.to_double();
   }
 };
+
+
+
+
+
+
+
 
 template<class NT>
 inline
