@@ -854,10 +854,22 @@ namespace INTERN_LAZY_EXACT_NT {
   class Lazy_exact_algebraic_structure_traits_base;
   
   template< class ET, class Algebraic_structure_tag >
-  class Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
+  struct Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
                                                     Algebraic_structure_tag >
     : public Algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
-                                              Algebraic_structure_tag > {};
+                                              Algebraic_structure_tag > {
+        typedef Lazy_exact_nt<ET> Algebraic_structure;
+        typedef typename Algebraic_structure_traits<ET>::Is_exact Is_exact; 
+        
+      class Square 
+        : public Unary_function< Algebraic_structure, Algebraic_structure > {
+        public:
+          Algebraic_structure operator()( const Algebraic_structure& x ) const {
+              CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+              return new Lazy_exact_Square<ET>(x);
+          }
+      };    
+  };
 
   template< class ET >
   class Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
@@ -1108,8 +1120,6 @@ template< class ET > class Algebraic_structure_traits< Lazy_exact_nt<ET> >
   : public INTERN_LAZY_EXACT_NT::
                 Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
          typename Algebraic_structure_traits<ET>::Algebraic_structure_tag > {
-  public:
-    typedef typename Algebraic_structure_traits<ET>::Is_exact Is_exact;          
 };
 
 //
