@@ -1,0 +1,37 @@
+\begin{ccRefConcept}{FractionTraits::Decompose}
+
+\ccDefinition
+
+\ccc{AdaptableFunctor}, decomposing the first argument into its numerator and denominator.   
+
+\ccRefines 
+
+\ccc{AdaptableFunctor} 
+
+\ccTypes
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxxxxxxxxxxxxxxxxxxxxxx}{}
+
+\ccTypedef{typedef void result_type;}{}\ccGlue
+\ccTypedef{typedef FractionTraits::Fraction first_argument_type;}{}
+\ccTypedef{typedef FractionTraits::Numerator& second_argument_type;}{}
+\ccTypedef{typedef FractionTraits::Denominator& third_argument_type;}{}
+
+\ccOperations
+\ccSetThreeColumns{xxxxxxxxxx}{xxxxx}{}
+\ccCreationVariable{operator()}
+\ccMethod{result_type operator()( first_argument_type  f,
+                                  second_argument_type n,
+                                  third_argument_type  d);}
+        {decompose $f$ into numerator $n$ and denominator $d$. }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+
+\ccRefConceptPage{FractionTraits}\\
+%\ccRefConceptPage{FractionTraits::Decompose}\\
+\ccRefConceptPage{FractionTraits::Compose}\\
+\ccRefConceptPage{FractionTraits::CommonFactor}\\
+
+\end{ccRefConcept}

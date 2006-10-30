@@ -1,0 +1,45 @@
+\begin{ccRefConcept}{AlgebraicStructureTraits::DivMod}
+
+\ccDefinition
+
+\ccc{AdaptableFunctor} computes both integral quotient and remainder
+of division with remainder. 
+ 
+\ccRefines 
+
+\ccc{AdaptableFunctor} 
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccTypedef{typedef void result_type;}{}\ccGlue
+\ccTypedef{typedef AlgebraicStructureTraits::Algebraic_structure  first_argument_type;}{}\ccGlue
+\ccTypedef{typedef AlgebraicStructureTraits::Algebraic_structure  second_argument_type;}{}\ccGlue
+\ccTypedef{typedef AlgebraicStructureTraits::Algebraic_structure& third_argument_type;}{}\ccGlue
+\ccTypedef{typedef AlgebraicStructureTraits::Algebraic_structure& fourth_argument_type;}{}
+
+\ccOperations
+\ccSetThreeColumns{xxxxxxxxxx}{xxxxx}{}
+\ccCreationVariable{operator()}
+\ccMethod{result_type operator()( first_argument_type  x, 
+                                  second_argument_type y,
+                                  third_argument_type  q,
+                                  fourth_argument_type r);}{ 
+        computes the quotient $q$ and remainder $r$, such that $x = q*y + r$ 
+        and $r$ minimal with respect to the Euclidean Norm on   
+        \ccc{Algebraic_structure}. }
+
+\ccMethod{template <class NT1, class NT2> result_type 
+        operator()(NT1  x, NT2  y, third_argument_type q, fourth_argument_type r);}
+         {This operator is well defined if \ccc{NT1} and \ccc{NT2} are \ccc{ExplicitInteroperable} 
+          with coercion type \ccc{AlgebraicStructureTraits::Algebraic_structure}. }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicStructureTraits}\\
+\ccRefIdfierPage{AlgebraicStructureTraits::Mod}\\
+\ccRefIdfierPage{AlgebraicStructureTraits::Div}\\
+
+\end{ccRefConcept} 

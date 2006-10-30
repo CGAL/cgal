@@ -1,0 +1,22 @@
+\begin{ccRefFunction}{kth_root}
+
+\ccDefinition
+
+The function \ccRefName\ returns the k-th root of a value.
+
+The function is guaranteed to be well defined in case the second argument type 
+is a model of the \ccc{FieldWithKthRoot} concept. 
+
+\ccInclude{CGAL/number_utils.h}
+
+\ccFunction{template <class NT> NT kth_root(int k, const NT& x);}
+{}
+
+
+\ccSeeAlso
+
+\ccRefConceptPage{FieldWithKthRoot}\\
+\ccRefConceptPage{AlgebraicStructureTraits::KthRoot}\\
+
+
+\end{ccRefFunction}

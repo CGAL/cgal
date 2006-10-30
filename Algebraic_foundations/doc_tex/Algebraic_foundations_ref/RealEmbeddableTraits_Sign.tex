@@ -1,0 +1,33 @@
+\begin{ccRefConcept}{RealEmbeddableTraits::Sign}
+
+\ccDefinition
+
+\ccc{AdaptableUnaryFunction} computes the sign of a real embeddable number. 
+ 
+\ccRefines 
+
+\ccc{AdaptableUnaryFunction} 
+
+\ccTypes
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+%\ccTypedef{typedef CGAL::Sign result_type;}{}\ccGlue
+\ccTypedef{typedef result_type result_type;}
+{The \ccc{result_type} is convertible to \ccc{CGAL::Sign}. 
+ \footnote{In some cases, e.g. NT is \ccc{Interval_nt}, the 
+ \ccc{result_type} differs from \ccc{CGAL::Sign}. 
+ However, it is guaranteed that it is always convertible to \ccc{CGAL::Sign}.}
+}\ccGlue
+\ccTypedef{typedef RealEmbeddableTraits::Real_embeddable argument_type;}{}
+
+\ccOperations
+\ccCreationVariable{operator()}
+\ccMethod{result_type operator()(argument_type x);}
+        { computes the sign of $x$. }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{RealEmbeddableTraits}\\
+
+\end{ccRefConcept} 

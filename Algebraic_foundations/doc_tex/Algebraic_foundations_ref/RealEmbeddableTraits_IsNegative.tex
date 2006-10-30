@@ -1,0 +1,33 @@
+\begin{ccRefConcept}{RealEmbeddableTraits::IsNegative}
+
+\ccDefinition
+
+\ccc{AdaptableUnaryFunction}, returns true in case the argument is negative.  
+ 
+\ccRefines 
+
+\ccc{AdaptableUnaryFunction} 
+
+\ccTypes
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+%\ccTypedef{typedef bool                         result_type;}{}\ccGlue
+\ccTypedef{typedef result_type result_type;}
+{The \ccc{result_type} is convertible to \ccc{bool}. 
+ \footnote{In some cases, e.g. NT is \ccc{Interval_nt}, the 
+ \ccc{result_type} differs from \ccc{bool}. 
+ However, it is guaranteed that it is always convertible to \ccc{bool}.}
+}\ccGlue
+\ccTypedef{typedef RealEmbeddableTraits::Real_embeddable argument_type;}{}
+
+\ccOperations
+\ccCreationVariable{operator()}
+\ccMethod{result_type operator()(argument_type x);}
+        { returns true in case $x$ is negative. }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{RealEmbeddableTraits}\\
+
+\end{ccRefConcept} 

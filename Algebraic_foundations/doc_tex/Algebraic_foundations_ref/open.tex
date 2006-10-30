@@ -1,0 +1,188 @@
+\section{Overview - TODO - OPEN Questions}
+
+\subsection{Overview}
+
+We introduced three traits classes and related concepts, for more details see 
+section \ref{caf::classified_refernce_pages}
+\begin{itemize}
+\item \ccc{Algebraic_structure_traits} reflects the algebraic concepts of a 
+      type. e.g. \ccc{Field}, \ccc{EuclideanRing}
+\item \ccc{Real_embeddable_traits} is use for number types that are embedded on 
+      the real axis. 
+\item \ccc{Coercion_traits}, reflects interoperability of types. 
+\end{itemize}
+
+We decided to use two traits classes \ccc{Algebraic_structure_traits} 
+and \ccc{Real_embeddable_traits} instead of one \ccc{Number_type_traits} since there are 
+types, in particular polynomials, that are valid algebraic structures, 
+but should not be considered as a number type.\\
+Note that Polynomials are not part of this package. 
+
+\subsubsection{for Release 3.4}
+
+TODO: (after merge) 
+\begin{itemize}
+\item document function \ccc{is_exact}
+\item remove broken links within pdf
+\item add concept \ccc{FromDoubleConstructible}
+\item find a place for basic stuff. see section remarks
+\item revise include strategy 
+\item rm \ccc{Number_type_traits}
+\item rm \ccc{Rational_traits}  will be replaced by \ccc{Fraction_traits}
+      find name for concept.   
+\item add links in \ccc{IsZero}s
+\item revise doc of NTs
+\item 'built-in' types -> 'fundamental' types 
+\item add a new entry in the globally maintained Bib file.
+\end{itemize}
+
+CONJECTURE:
+\begin{itemize}
+\item fix rounding mode in Div/Mod ? see remarks
+\item rm \ccc{IsFinite} from Real Embeddable (after merge)
+\item keep name \ccc{IntegralDomainWithoutDivision} and \ccc{IntegralDomain}.
+\item keep name \ccc{Coercion_trait} and \ccc{CT::Coercion_type}
+\item consider \ccc{Interval_nt} as exact 
+\end{itemize}
+
+
+OPEN:
+\begin{itemize}
+\item split \ccc{MP_float} into two types. 
+\item What about the Small in \ccc{FromSmallIntConstructible}?
+\item Should we add Ipower? motivation see introduction of Square.
+\item rm support for io mode BENCHMARK ?
+\item rm \ccc{Output_rep} etc. ? 
+\end{itemize}
+
+\subsubsection{planed: for Release 3.5}
+\begin{itemize}
+\item \ccc{Modular_traits} for concept \ccc{Modularizable}\\
+      new package \ccc{Modular_arithmetic}? 
+\item \ccc{Scalar_factor_traits} extracts a scalar factor, 
+      makes sense for \ccc{Polynomials}, \ccc{Sqrt_extension}. 
+\item \ccc{Arithmetic_kernel}, new name for \ccc{NiX::Arithmetic_traits}
+\item \ccc{Polynomial_d} in package Polynomial. 
+\item introduce something like: \ccc{NT_converter}, currently undocumented.     
+\end{itemize}
+
+Keep in mind: 
+\begin{itemize}
+\item generic interoperable operators via Coercion Traits
+\item may add arithmetic functors as Add, Sub to Algebraic Structure Traits
+\item may add more fundamental concepts, such as Abelian Group.
+\item second operator for RootOf
+\item can we do better for \ccc{mpz_class}, \ccc{mpq_class }
+\item think about 'hint' tags. e.g. for Horner Scheme. 
+\item ToDoubleInterval etc. 
+\item what about namespace of leda types ? \ccc{leda_integer} vs. \ccc{leda::integer}
+\end{itemize}
+
+
+\subsection{remarks / changes }
+\begin{itemize}
+\item The concepts \ccc{AdaptableUnaryFunction} and \ccc{AdaptableBinaryFunction}
+      should be part of the \ccc{STL_extension} package.  
+
+\item Functions \ccc{min}, \ccc{max}, \ccc{is_valid} are considered to be more 
+      basic than this package. We added a file utils.h for this. 
+      (should be not part of \ccc{Algebraic_foundations}. )
+
+\item Functors \ccc{Min}/\ccc{Max} are considered to be more basic than 
+      this package. We added a file \ccc{utils_classes.h} for this. 
+      (should be not part of \ccc{Algebraic_foundations}. )        
+      
+\item gcd(0,0)=0, in particular gcd(x,0) is allowed now and is the unit normal of x. 
+      For more details see \ccc{AlgebraicStructureTraits::Gcd}. \\
+
+\item The generic gcd function has been changed, such that it first removes the 
+      \ccc{UnitPart}s of the 
+      arguments (this is in most case equivalent to abs)\\
+      Thus, NT does not need to be a model of \ccc{RealEmbeddable} 
+
+\item \ccc{mod}, \ccc{div}, \ccc{div_mod} and functors:
+        The behavior of div and mod must be consistent: \\
+        That is: $ x = qy + r $, where $q= div(x,y)$ and $r = mod(x,y)$.
+        
+        But, there seems to be no universally observed convention on how to choose 
+        the sign. (In particular, the ISO C++ Standard fixes none for the modulo
+        operation on the built-in integral types.)
+
+        Todo: Decide what to do about the sign ambiguity for the Mod operation of
+        Euclidean rings.\\
+        We currently expect that div is rounded to zero.\\
+        Example: -5 div 3 is -1 rest -2 \\
+        \\      
+        The other option is that div is rounded to $-\infty$\\
+        Example: -5 div 3 is -2 rest 1 \\
+        \\      
+        PROPOSAL:
+        The other option is that div is rounded to $nearest $\\
+        Example: -5 div 3 is -2 rest 1 \\
+        Advantage: mod is unique
+
+
+\item The second operator of \ccc{AlgebraicStructureTraits::RootOf} is not 
+        part of the concept, since the difference in the interface of the 
+        according function provided by the two possible models \ccc{leda::real}
+        and \ccc{CORE::Expr} is to large.  
+
+\item IO: \ccc{Output_rep}  \\
+      This can be found in the package 
+      \ccc{CGAL_with_EXACUS/iostream/include/CGAL/io.h}
+      Several types already have specialization of \ccc{Output_rep}. 
+      That supports mode: ASCII(default), PRETTY, BENCHMARK.\\
+        e.g. the format of a Rational in benchmark mode is 
+        Rational(num,denom).\\
+      That is just an proposal and can be removed easily.  \\
+        In case this extra mode is to general, we propose a \ccc{Benchmark_io_traits.h} 
+        provided by the Benchmark package of Tel Aviv. \\
+        Providing a Write and Read functor.  
+
+\end{itemize}
+
+
+\subsection{remarks on current status of number type classes}
+\begin{itemize}
+\item \ccc{Lazy_exact_nt}:\\
+      Now supports all algebraic structures that are real embeddable.\\
+      Supports \ccc{Coercion_traits< Lazy_exact_nt<A> , Lazy_exact_nt<B> >}\\ 
+      From Rons email: The output behavior is not the same, as the internal NT. 
+
+\item \ccc{Counted_number}:\\
+        The type has been left undocumented.\\
+        Implementation supports all algebraic structures, all functions are counted.\\
+        Functors of \ccc{RealEmbeddable} are not counted. \\
+        It's current implementation does not use the \ccc{result_type} of the used 
+        functors. i.e. does not fully support \ccc{Interval_nt} as internal type. \\
+         
+\item \ccc{MP_Float}: 
+In order to use both version exact {EuclideanRing} inexact \ccc{FieldWithSqrt} 
+of \ccc{MP_Float}, we should  introduce two types. \\
+possible names are: \\
+      - \ccc{Exact_binary_fraction} since it represents Z[1/2]
+      - \ccc{Multi_precision_float}(old \ccc{MP_Float}) \\
+      same problem for \ccc{Gmpzf}
+\item \ccc{Gmpz}:\\
+       Implementation supports global functions for gcd(Gmpz,int).
+\item \ccc{mpz_class}:\\
+       Implementation supports expression templates, 
+       up to the same level as the old CGAL implementation.       
+       i.e. it is possible to call CGAL::square(x+x) but the result is 
+       \ccc{mpz_class } and not the according expression template.  
+\item \ccc{mpq_class}:\\
+        same as \ccc{mpz_class}.
+\item \ccc{Quotient<NT>}\\
+        For an exact NT it is always a model of \ccc{Field}. (implemented)\\
+        For inexact types it is a FieldWithSqrt in case the internal type has a sqrt.
+        This is not implemented yet, since it is unclear what this sqrt is good for. 
+        Since all inexact types with sqrt are Fields, and thus it make no sense to use 
+        them as the internal type.  \\
+        Supports \ccc{Coercion_traits}. 
+
+\item We had a quick look at \ccc{Nef_polynomial}. \\ 
+      is it \ccc{RealEmbeddable}?
+
+\item We did not touch \ccc{Roof_of_2} stuff. \\ 
+
+\end{itemize}

@@ -1,0 +1,137 @@
+\begin{ccRefConcept}{IntegralDomainWithoutDivision}
+
+
+\ccDefinition
+
+This is the most basic concept for algebraic structures considered within CGAL. 
+
+A model \ccc{IntegralDomainWithoutDivision}  represents an integral domain,
+i.e. commutative ring with 0, 1, +, * and unity free of zero divisors.\\ 
+{\bf Note:} A model is not required to offer the always well defined integral division.
+
+It refines \ccc{Assignable}, \ccc{CopyConstructible}, \ccc{DefaultConstructible}
+and \ccc{FromSmallIntConstructible}. \\ 
+It refines \ccc{EqualityComparable}, where equality is defined w.r.t. 
+the ring element being represented. \\
+The operators unary and binary plus +, unary and binary minus -, 
+multiplication * and their compound forms +=, -=, *= are required and 
+implement the respective ring operations.
+
+Moreover, \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >} is a model of 
+\ccc{AlgebraicStructureTraits} providing:\\ 
+- \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Algebraic_type} derived from \ccc{Integral_domain_without_division_tag} \\
+- \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Is_zero}  \\
+- \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Is_one}  \\
+- \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Square}  \\
+- \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Simplify} \\
+- \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Unit_part} \\
+
+
+{ \em \small FROM EXACUS: \\
+It is permissible for the constructor 
+to convert from another built-in type than int, provided ints are
+automatically converted to this type. It is not permissible to 
+rely in a similar fashion on a chain of user-defined conversions.
+}
+
+
+
+\ccRefines
+\ccc{Assignable}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+\ccc{FromSmallIntConstructible}\\ 
+\ccc{EqualityComparable}\\
+
+\ccOperations
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccFunction{IntegralDomainWithoutDivision 
+            operator+(const IntegralDomainWithoutDivision &a, 
+                      const IntegralDomainWithoutDivision &b);}{}
+\ccGlue
+
+\ccFunction{IntegralDomainWithoutDivision 
+            operator-(const IntegralDomainWithoutDivision &a, 
+                      const IntegralDomainWithoutDivision &b);}{}
+\ccGlue
+
+\ccFunction{IntegralDomainWithoutDivision 
+            operator*(const IntegralDomainWithoutDivision &a, 
+                      const IntegralDomainWithoutDivision &b);}{}
+\ccGlue
+\ccFunction{IntegralDomainWithoutDivision 
+            operator+(const IntegralDomainWithoutDivision &a);}{}
+\ccGlue
+\ccFunction{IntegralDomainWithoutDivision 
+            operator-(const IntegralDomainWithoutDivision &a);}{}
+\ccGlue
+\ccMethod{IntegralDomainWithoutDivision 
+            operator+=(const IntegralDomainWithoutDivision &a);}{}
+\ccGlue
+\ccMethod{IntegralDomainWithoutDivision 
+            operator-=(const IntegralDomainWithoutDivision &a);}{}
+\ccGlue
+\ccMethod{IntegralDomainWithoutDivision 
+            operator*=(const IntegralDomainWithoutDivision &a);}{}
+
+Equality comparable: 
+
+\ccFunction{bool 
+            operator==(const IntegralDomainWithoutDivision &a, 
+                      const IntegralDomainWithoutDivision &b);}{}
+\ccGlue
+\ccFunction{bool 
+            operator!=(const IntegralDomainWithoutDivision &a, 
+                      const IntegralDomainWithoutDivision &b);}{}
+\ccGlue
+ 
+\ccRefines
+ \ccc{DefaultConstructible} \\
+ \ccc{EqualityComparable}\\
+ \ccc{Assignable}\\
+ \ccc{FromSmallIntConstructible}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{IntegralDomainWithoutDivision}\\
+\ccRefIdfierPage{IntegralDomain}\\
+\ccRefIdfierPage{UniqueFactorizationDomain}\\
+\ccRefIdfierPage{EuclideanRing}\\
+\ccRefIdfierPage{Field}\\
+\ccRefIdfierPage{FieldWithSqrt}\\
+\ccRefIdfierPage{FieldWithKthRoot}\\
+\ccRefIdfierPage{FieldWithRootOf}\\
+\ccRefIdfierPage{AlgebraicStructureTraits}\\
+
+\ccHasModels
+\CC\ built-in number types \\
+\ccc{CGAL::Gmpq} \\
+\ccc{CGAL::Gmpz} \\
+\ccc{CGAL::Gmpzf} \\
+
+\ccc{mpz_class} \\
+\ccc{mpq_class} \\
+%\ccc{mpf_class} \\
+
+\ccc{leda_integer} \\
+\ccc{leda_rational} \\
+\ccc{leda_bigfloat} \\
+\ccc{leda_real} \\
+
+\ccc{CORE::BigInt} \\
+\ccc{CORE::BigRat} \\
+%\ccc{CORE::BigFloat} \\
+\ccc{CORE::Expr} \\
+
+%\ccc{CGAL::Interval_nt} \\
+%\ccc{CGAL::Interval_nt_advanced} \\
+
+\ccc{CGAL::MP_Float} \\
+\ccc{CGAL::Lazy_exact_nt< NT >} (depends on NT) \\
+\ccc{CGAL::Quotient< NT >} \\
+
+\ccc{CGAL::Sqrt_extension< NT, Root >} \\
+%\ccc{CGAL::Polynomial< T >} \\
+
+\end{ccRefConcept}

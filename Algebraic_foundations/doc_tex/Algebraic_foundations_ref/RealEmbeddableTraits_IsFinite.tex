@@ -1,0 +1,34 @@
+\begin{ccRefConcept}{RealEmbeddableTraits::IsFinite}
+
+\ccDefinition
+
+\ccc{AdaptableUnaryFunction} determines whether the argument represents 
+a value in $\R$, this implies that the argument \ccc{is_valid}.
+
+\ccRefines 
+
+\ccc{AdaptableUnaryFunction} 
+
+\ccTypes
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+%\ccTypedef{typedef bool result_type;}{}\ccGlue
+\ccTypedef{typedef result_type result_type;}
+{The \ccc{result_type} is convertible to \ccc{bool}. 
+ \footnote{In some cases, e.g. NT is \ccc{Interval_nt}, the 
+ \ccc{result_type} differs from \ccc{bool}. 
+ However, it is guaranteed that it is always convertible to \ccc{bool}.}
+}\ccGlue
+\ccTypedef{typedef RealEmbeddableTraits::Real_embeddable argument_type;}{}
+
+\ccOperations
+\ccCreationVariable{operator()}
+\ccMethod{result_type operator()(argument_type  x);}
+        { Determines whether the argument represents a value in $\R$. }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{RealEmbeddableTraits}\\
+
+\end{ccRefConcept} 

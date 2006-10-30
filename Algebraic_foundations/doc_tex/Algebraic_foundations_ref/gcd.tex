@@ -1,0 +1,26 @@
+\begin{ccRefFunction}{gcd}
+
+\ccDefinition
+
+The function \ccRefName\ computes the greatest common divisor of two values.
+
+In case the argument types \ccc{NT1} and \ccc{NT2} differ, 
+the \ccc{result_type} is determined via \ccc{Coercion_traits}.\\
+Thus, the \ccc{result_type} is well defined if \ccc{NT1} and \ccc{NT2} 
+are a model of \ccc{ExplicitInteroperable}. \\
+The actual \ccRefName\ is performed with the semantic of that type.
+
+The function is guaranteed to be well defined in case \ccc{result_type}
+is a model of the \ccc{UniqueFactorizationDomain} concept.
+
+\ccInclude{CGAL/number_utils.h}
+
+\ccFunction{template <class NT1, class NT2> result_type 
+            gcd(const NT1& x, const NT2& y);}{}
+
+\ccSeeAlso
+
+\ccRefConceptPage{UniqueFactorizationDomain}\\
+\ccRefConceptPage{AlgebraicStructureTraits::Gcd}\\
+
+\end{ccRefFunction}

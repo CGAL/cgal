@@ -1,0 +1,21 @@
+\begin{ccRefFunction}{to_interval}
+
+\ccDefinition
+
+The template function \ccRefName\ computes for a given real embeddable 
+number $x$ a double interval containing $x$. 
+This interval is represented by a \ccc{CGAL::Interval_nt}. 
+The function is guaranteed to be well defined in case the argument type 
+is a model of the \ccc{RealEmbeddable} concept. 
+
+\ccInclude{CGAL/number_utils.h}
+
+\ccFunction{template <class NT> Interval_nt to_interval(const NT& x);}
+{}
+
+\ccSeeAlso
+
+\ccRefConceptPage{RealEmbeddable}\\
+\ccRefConceptPage{RealEmbeddableTraits::ToInterval}\\
+
+\end{ccRefFunction}

@@ -1,0 +1,35 @@
+\begin{ccRefConcept}{FractionTraits::Compose}
+
+\ccDefinition
+
+\ccc{AdaptableBinaryFunction}, returns the fraction of its arguments.  
+
+\ccRefines 
+
+\ccc{AdaptableBinaryFunction} 
+
+\ccTypes
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxxxxxxxxxxxxxxxxxxxxxx}{}
+
+\ccTypedef{typedef FractionTraits::Fraction    result_type;}{}
+\ccTypedef{typedef FractionTraits::Numerator   first_argument_type;}{}
+\ccTypedef{typedef FractionTraits::Denominator second_argument_type;}{}
+
+
+\ccOperations
+\ccSetThreeColumns{xxxxxxxxxx}{xxxxx}{}
+\ccCreationVariable{operator()}
+\ccMethod{result_type operator()(first_argument_type n, second_argument_type d);}
+        {return the fraction $n/d$. }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+
+\ccRefConceptPage{FractionTraits}\\
+\ccRefConceptPage{FractionTraits::Decompose}\\
+%\ccRefConceptPage{FractionTraits::Compose}\\
+\ccRefConceptPage{FractionTraits::CommonFactor}\\
+
+\end{ccRefConcept}

@@ -1,0 +1,27 @@
+\begin{ccRefClass} {Gmpzf}
+\label{Gmpzf}
+
+\begin{ccAdvanced}
+\ccDefinition
+
+This is an exact floating point type; it can represent numbers
+of the form $m*2^e$, where $m$ is of type \ccc{mpz_t} and $e$ (currently)
+of type \ccc{long}.
+
+More details coming up by : Bernd Gaertner <gaertner@inf.ethz.ch>
+ 
+\ccInclude{CGAL/Gmpzf.h}
+
+\ccIsModel
+\ccc{EuclideanRing}\\
+\\
+\ccc{RealEmbeddable}
+
+
+\ccImplementation
+\ccc{Gmpzf}s are reference counted.
+
+\end{ccAdvanced}
+
+\end{ccRefClass} 
+\ccDefGlobalScope{CGAL::}

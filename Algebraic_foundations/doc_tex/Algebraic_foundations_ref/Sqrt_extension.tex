@@ -1,0 +1,206 @@
+
+\begin{ccRefClass}{Sqrt_extension<NT,ROOT>}
+
+\ccDefinition
+
+An instance of this class represents an extension of the type \ccc{NT} by a 
+square root of the type \ccc{ROOT}. \\
+In case \ccc{NT} and \ccc{ROOT} do not coincide, 
+\ccc{NT} must be constructible from \ccc{ROOT}. \\
+The type \ccc{NT} must be at least a model of the concept 
+\ccc{IntegralDomainWithoutDivision}.\\
+
+The table below shows the resulting algebraic type 
+with respect to the algebraic type of \ccc{NT}.
+Both \ccc{NT} and \ccc{ROOT} can themselves be an instance of
+\ccc{Sqrt_extension}, yielding a nested extension.
+        
+  \label{sqrt_extension:tabular_1}       
+  \begin{tabular}{|l|l|}
+        \hline
+        \ccc{NT} is model of:  &  \ccc{Sqrt_extension<NT,ROOT>} is model of:\\
+        \hline
+          \ccc{CGAL::IntegralDomainWithoutDivision} 
+                & \ccc{IntegralDomainWithoutDivision}\\     
+          \ccc{CGAL::IntegralDomain}    & \ccc{IntegralDomain}\\     
+          \ccc{CGAL::UniqueFactorizationDomain} 
+                & \ccc{IntegralDomain}\\     
+          \ccc{CGAL::EuclideanRing}     & \ccc{IntegralDomain}\\     
+          \ccc{CGAL::Field}             & \ccc{Field}\\     
+          \ccc{CGAL::FieldWithSqrt}     & \ccc{Field} (not recommended)\\
+          \ccc{CGAL::FieldWithKthRoot}  & \ccc{Field} (not recommended)\\
+          \ccc{CGAL::FieldWithRootOf}   & \ccc{Field} (not recommended)\\
+        \hline
+        \end{tabular}
+
+Note that the extension of an \ccc{UniqueFactorizationDomain} or 
+\ccc{EuclideanRing} is just an 
+\ccc{IntegralDomain}, since the extension in general destroys the unique 
+factorization property. \\
+For example take $\Z[\sqrt{10}]$:  
+%as indicated by \cite{e-eacfcc-03} referring to \cite{hardy-wright,hasse}:
+For the fact that $2$, $5$, and $\sqrt{10}$ are irreducible elements 
+of $\Z[\sqrt{10}]$. It follows immediately that $\Z[\sqrt{10}]$ is not a 
+\ccc{UniqueFactorizationDomain},
+because \[10 = \sqrt{10} \cdot \sqrt{10} = 2 \cdot 5\] factors in two essentially
+different ways. \\
+
+%motivate the type , with respect to leda:real 
+\ccc{Sqrt_extension} is motivated due to the fact that
+ number types such as \ccc{leda_real}
+or \ccc{CORE::Expr} 
+%\footnote{ For a details discussion on these types see 
+%\cite{mn-lpcgc-00, klpy-clp-99}} 
+being a model of the superior \ccc{FieldWithSqrt} concept should 
+%avoid to many arithmetic operations. As a consequence they should
+not be use as the coefficient type of polynomials, since e.g. an polynomial gcd 
+operation would cause large and thus slow expression trees.  
+In contrast, an object of \ccc{Sqrt_extension} represents an extension 
+by one square root only, which is defined at construction time. As a consequence
+two objects of this type are interoperable if and only if they are defined 
+within the same extension
+%\footnote{It is also possible to leave the extension undefined, in particular \ccc{Sqrt_extension} is constructible from \ccc{int}}.
+The type \ccc{Sqrt_extension} is thus predestinated to be used as the 
+coefficient type of 
+polynomials defined over a particular algebraic extension of degree 2 or nested forms,  
+%optional remark 
+%in particular it is possible to use it as the coefficient type of an 
+%\ccc{NiX::Algebraic\_real}.
+\\
+
+\ccc{Sqrt_extension} is \ccc{RealComparable} if \ccc{NT} is \ccc{RealComparable}.
+
+\begin{ccAdvanced}
+\ccc{Sqrt_extension} is \ccc{Modularizable} in case \ccc{NT} is \ccc{Modularizable}.
+\end{ccAdvanced}
+
+\ccIsModel
+\begin{tabular}{ll}
+\ccc{IntegralDomainWithoutDivision}& if \ccc{NT} is 
+        \ccc{IntegralDomainWithoutDivision}\\
+\ccc{IntegralDomain} &if \ccc{NT} is \ccc{IntegralDomain}\\
+\ccc{Field} &if \ccc{NT} is \ccc{Field}\\
+\\ \ccc{RealEmbeddable} &if \ccc{NT} is \ccc{RealEmbeddable}\\
+\end{tabular}
+
+\ccCreation
+\ccCreationVariable{ext}
+\ccConstructor{Sqrt_extension ();}
+        {Introduces an variable initialized with 0.}
+\ccConstructor{Sqrt_extension (const int &i);}
+        {Explicit constructor from int.}
+\ccConstructor{Sqrt_extension (const NT &x);}
+        {Explicit constructor from type NT.}
+\ccConstructor{Sqrt_extension (int a0, int a1, int r);}
+ 	{Constructor from int: \ccVar $= a0 +a1 \cdot sqrt(r)$.}
+\ccConstructor{Sqrt_extension (NT a0, NT a1, ROOT r);}
+ 	{General constructor: \ccVar $= a0 + a1 \cdot sqrt(r)$.}
+\ccConstructor{Sqrt_extension (const Sqrt_extension& x);}
+ 	{copy constructor.}
+
+\begin{ccAdvanced}
+\ccConstructor{
+        template<class NTX> 
+        Sqrt_extension (const NTX &x);}
+        {Explicit constructor of \ccc{Sqrt_extension}, from any type NTX.\\
+         \ccc{NT} must be constructible from \ccc{NTX}.}
+\ccConstructor{
+        template<class NTX,class ROOTX> 
+        Sqrt_extension (const Sqrt_extension< NTX, ROOTX > &x);}
+        {Explicit constructor of \ccc{Sqrt_extension}, from \ccc{Sqrt_extension}<NTX,ROOTX>.\\
+           \ccc{NT} must be constructible from \ccc{NTX}.\\
+           \ccc{ROOT} must be constructible from \ccc{ROOTX}.}
+\ccConstructor{
+        template<class NTX,class ROOTX> 
+        Sqrt_extension (NTX a0, NTX a1, ROOTX r);}
+        {General constructor: \ccVar $= a0 + a1 \cdot sqrt(r)$.\\
+         \ccc{NT} must be constructible from \ccc{NTX}.\\
+         \ccc{ROOT} must be constructible from \ccc{ROOTX}.}
+\end{ccAdvanced}
+
+\ccOperations
+
+An object of type \ccc{Sqrt_extension} is considered to be 
+represented by the following expression: $a0 + a1 * sqrt(root)$. 
+The following methods give access to these values:
+
+\ccMethod{const NT & a0 () const ;    }{Access operator for a0, const.} \ccGlue
+%\ccMethod{NT & 	a0 ()    ;    }{Access operator for a0.}\ccGlue
+\ccMethod{const NT & a1 () const ;    }{Access operator for a1, const.}\ccGlue
+%\ccMethod{NT & 	a1 ()    ;    }{Access operator for a1.}\ccGlue
+\ccMethod{const ROOT & 	root () const;}{Access operator for root, const.}\ccGlue
+%\ccMethod{ROOT & 	root ()  ;    }{Access operator for root.}
+
+Member functions:\\
+\ccMethod{bool is_extended () const;}
+ 	{Returns true in case root of \ccVar\ is not zero.  \\
+         Note that $a1 == 0 $ does not imply $root == 0$. }   
+\ccMethod{void 	simplify ();}
+        { Propagates the simplify command to members of \ccVar. \\
+          see also: \ccc{AlgebraicStructureTraits::Simplify}.}
+\ccMethod{bool 	is_zero () const;}
+        {returns true if \ccVar\ represents the value zero.}
+
+\ccMethod{CGAL::Sign sign () const;}
+        {Determines sign of \ccVar\ by repeated squaring.
+        \ccPrecond\\ \ccc{Sqrt_extension} is \ccc{RealEmbeddable}.}
+\ccMethod{Sqrt_extension abs () const;}
+ 	{returns the absolute value of \ccVar. 
+        \ccPrecond\\ \ccc{Sqrt_extension} is \ccc{RealEmbeddable}.}
+
+Mixed operations: 
+
+\ccFunction{Sqrt_extension operator+(const Sqrt_extension&a, const NT &b);}{}\ccGlue
+\ccFunction{Sqrt_extension operator-(const Sqrt_extension&a, const NT &b);}{}\ccGlue
+\ccFunction{Sqrt_extension operator*(const Sqrt_extension&a, const NT &b);}{}\ccGlue
+
+
+\ccFunction{Sqrt_extension operator+(const NT&a, const Sqrt_extension &b);}{}\ccGlue
+\ccFunction{Sqrt_extension operator-(const NT&a, const Sqrt_extension &b);}{}\ccGlue
+\ccFunction{Sqrt_extension operator*(const NT&a, const Sqrt_extension &b);}{}\ccGlue
+
+
+\ccMethod{Sqrt_extension & 	operator += (const NT &a);}{}\ccGlue
+\ccMethod{Sqrt_extension & 	operator -= (const NT &a);}{}\ccGlue
+\ccMethod{Sqrt_extension & 	operator *= (const NT &a);}{}\ccGlue
+
+In case  \ccc{Sqrt_extension} is a \ccc{Field}:
+\ccFunction{Sqrt_extension operator/(const Sqrt_extension&a, const NT &b);}{}\ccGlue
+\ccFunction{Sqrt_extension operator/(const NT&a, const Sqrt_extension &b);}{}\ccGlue
+\ccMethod{Sqrt_extension & 	operator /= (const NT &a);}{}
+
+\ccFunction{bool operator==(const NT&a, const Sqrt_extension &b);}{}\ccGlue
+\ccFunction{bool operator!=(const NT&a, const Sqrt_extension &b);}{}\ccGlue
+\ccFunction{bool operator==(const Sqrt_extension&a, const NT &b);}{}\ccGlue
+\ccFunction{bool operator!=(const Sqrt_extension&a, const NT &b);}{}
+
+In case  \ccc{Sqrt_extension} is \ccc{RealEmbeddable}:
+\ccFunction{bool operator< (const NT&a, const Sqrt_extension &b);}{}\ccGlue
+\ccFunction{bool operator<=(const NT&a, const Sqrt_extension &b);}{}\ccGlue
+\ccFunction{bool operator> (const NT&a, const Sqrt_extension &b);}{}\ccGlue
+\ccFunction{bool operator>=(const NT&a, const Sqrt_extension &b);}{}
+
+\ccFunction{bool operator< (const Sqrt_extension&a, const NT &b);}{}\ccGlue
+\ccFunction{bool operator<=(const Sqrt_extension&a, const NT &b);}{}\ccGlue
+\ccFunction{bool operator> (const Sqrt_extension&a, const NT &b);}{}\ccGlue
+\ccFunction{bool operator>=(const Sqrt_extension&a, const NT &b);}{}
+
+The stream operations are available as well. 
+They assume that corresponding stream operators for type \ccc{NT} and \ccc{ROOT} exist.
+
+\ccFunction{std::ostream& operator<<(std::ostream& os, const Sqrt_extension<NT,ROOT> &ext);}
+{writes \ccc{ext} to ostream \ccc{os}. The format depends on the \ccc{CGAL::IO::MODE} of \ccc{os}.\\
+        In case the mode is \ccc{CGAL::IO::ASCII} the format is {\tt EXT[a0,a1,root]}. \\
+        In case the mode is \ccc{CGAL::IO::PRETTY} the format is human readable. \\
+        }
+
+\ccFunction{std::istream& operator>>(std::istream& is, const Sqrt_extension<NT,ROOT> &ext);}
+{reads \ccc{ext} from istream \ccc{is} in format {\tt EXT[a0,a1,root]}, the output format in mode \ccc{CGAL::IO::ASCII} }
+
+
+
+%void 	output_maple (std::ostream &os) const
+% 	write Sqrt_extension to os in LiS::IO::PRETTY format
+%void 	output_ascii (std::ostream &os) const
+% 	write Sqrt_extension to os in a format readable by input_ascii()
+\end{ccRefClass}

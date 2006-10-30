@@ -1,0 +1,28 @@
+\begin{ccRefConcept}{AlgebraicStructureTraits::Simplify}
+
+\ccDefinition
+
+This \ccc{AdaptableUnaryFunction} may simplify a given object. 
+
+\ccRefines 
+
+\ccc{AdaptableUnaryFunction} 
+
+\ccTypes
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxxxxxxxxxxxxxxxxxxxxxx}{}
+
+\ccTypedef{typedef void result_type;}{}\ccGlue
+\ccTypedef{typedef AlgebraicStructureTraits::Algebraic_structure& argument_type;}{}
+
+\ccOperations
+\ccSetThreeColumns{xxxxxxxxxx}{xxxxx}{}
+\ccCreationVariable{operator()}
+\ccMethod{result_type operator()(argument_type x);}{ may simplify $x$.}
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicStructureTraits}
+
+\end{ccRefConcept}

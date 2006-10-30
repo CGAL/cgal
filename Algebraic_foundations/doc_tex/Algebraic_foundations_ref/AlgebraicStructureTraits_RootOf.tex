@@ -1,0 +1,55 @@
+\begin{ccRefConcept}{AlgebraicStructureTraits::RootOf}
+
+%\begin{ccAdvanced}
+\ccDefinition
+
+\ccc{AdaptableFunctor} computes a real root of a square-free univariate
+polynomial.
+
+\ccRefines
+
+\ccc{AdaptableFunctor}
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccTypedef{typedef AlgebraicStructureTraits::Algebraic_structure result_type;}{}
+%\ccTypedef{typedef AlgebraicStructureTraits::Algebraic_structure AS;}{}
+
+\ccOperations
+\ccSetThreeColumns{xxxxxxxxxx}{xxxxx}{}
+\ccCreationVariable{operatorxxy}
+
+\ccMethod{
+template<class InputIterator>
+result_type operator() (int k, InputIterator begin, InputIterator end);}
+        {returns the k-th real root of the univariate polynomial,
+        which is defined by the iterator range,
+        where begin refers to the constant term.
+        \ccPrecond The polynomial is square-free.
+        \ccPrecond The value type of the InputIterator is \ccc{AlgebraicStructureTraits::Algebraic_structure}\\ }
+
+\begin{ccAdvanced}
+\ccMethod{
+template<class InputIterator>
+result_type operator()(const Algebraic_structure& lower,
+                       const Algebraic_structure& upper,
+                       InputIterator begin,
+                       InputIterator end);}
+        {returns the only real root within the interval [lower,upper]
+        of the univariate polynomial, which is defined by the iterator
+        range, where begin refers to the constant term.
+        \ccPrecond The polynomial is square-free.
+        \ccPrecond The value type of the InputIterator is \ccc{AlgebraicStructureTraits::Algebraic_structure}\\
+}
+\end{ccAdvanced}
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{FieldWithRootOf}\\
+\ccRefIdfierPage{AlgebraicStructureTraits}
+
+%\end{ccAdvanced}
+\end{ccRefConcept}
