@@ -21,6 +21,11 @@
 #ifndef CGAL_LAZY_EXACT_NT_H
 #define CGAL_LAZY_EXACT_NT_H
 
+#define CGAL_int(T)    typename First_if_different<int,    T>::Type
+#define CGAL_double(T) typename First_if_different<double, T>::Type
+#define CGAL_To_interval(T) CGAL::To_interval<T>
+
+
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
 #include <CGAL/number_utils.h>
@@ -259,9 +264,9 @@ public:
 // Abstract base representation class for lazy numbers
 template <typename ET>
 struct Lazy_exact_rep : public Lazy_construct_rep<Interval_nt<false>,
-                                                  ET, typename Real_embeddable_traits<ET>::To_interval >
+                                                  ET, CGAL_To_interval(ET) >
 {
-  typedef Lazy_construct_rep<Interval_nt<false>, ET, typename Real_embeddable_traits<ET>::To_interval > Base;
+  typedef Lazy_construct_rep<Interval_nt<false>, ET, CGAL_To_interval(ET) > Base;
 
   Lazy_exact_rep (const Interval_nt<false> & i)
       : Base(i) {}
@@ -517,9 +522,6 @@ struct Lazy_exact_Max : public Lazy_exact_binary<ET>
   }
 };
 
-#define CGAL_int(T)    typename First_if_different<int,    T>::Type
-#define CGAL_double(T) typename First_if_different<double, T>::Type
-
 // The real number type, handle class
 template <typename ET_>
 class Lazy_exact_nt
@@ -534,7 +536,7 @@ public:
 
 private:
   typedef Lazy_exact_nt<ET> Self;
-  typedef Lazy_construct_rep< Interval_nt<false>, ET, typename Real_embeddable_traits<ET>::To_interval > Self_rep;
+  typedef Lazy_construct_rep< Interval_nt<false>, ET, To_interval<ET> > Self_rep;
 
 public :
 
@@ -1417,6 +1419,7 @@ public:
 
 #undef CGAL_double
 #undef CGAL_int
+#undef CGAL_To_interval
 
 CGAL_END_NAMESPACE
 
