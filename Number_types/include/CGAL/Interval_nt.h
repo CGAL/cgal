@@ -1001,10 +1001,11 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
 
     class Compare
       : public Binary_function< Real_embeddable, Real_embeddable,
-                                Comparison_result > {
+                                Uncertain<Comparison_result> > {
       public:        
-        Comparison_result operator()( const Real_embeddable& x,
-                                      const Real_embeddable& y ) const {
+        Uncertain<Comparison_result> operator()( 
+                const Real_embeddable& x,
+                const Real_embeddable& y ) const {
             return INTERN_INTERVAL_NT::compare( x, y );
         }
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Real_embeddable,
