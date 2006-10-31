@@ -469,7 +469,7 @@ public:
  
   bool        prev1_before_prev2 = true;
 
-  if (this->m_arr_access.are_on_same_component(hhandle, prev))
+  if (this->m_arr_access.are_on_same_inner_component(hhandle, prev))
   {
     // If prev1 and prev2 are on different components, the insertion of the
     // new curve does not generate a new face, so the way we send these

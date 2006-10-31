@@ -1009,7 +1009,7 @@ public:
   }
 
 
-  bool are_on_same_component(Halfedge_handle e1, Halfedge_handle e2)
+  bool are_on_same_inner_component(Halfedge_handle e1, Halfedge_handle e2)
   {
      DHalfedge  *p_prev1 = p_arr->_halfedge (e1);
      DHalfedge  *p_prev2 = p_arr->_halfedge (e2);
