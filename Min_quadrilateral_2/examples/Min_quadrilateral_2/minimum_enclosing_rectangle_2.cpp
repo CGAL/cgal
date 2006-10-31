@@ -1,4 +1,4 @@
-// file: examples/Min_quadrilateral_2/minimum_enclosing_rectangle_2_example.C
+// file: examples/Min_quadrilateral_2/minimum_enclosing_rectangle_2.cpp
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polygon_2.h>
@@ -29,7 +29,4 @@ int main()
 
   return 0;
 } 
-// ----------------------------------------------------------------------------
-// ** EOF
-// ----------------------------------------------------------------------------
 
