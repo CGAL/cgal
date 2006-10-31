@@ -185,7 +185,7 @@ this chapter introduces a new graph concept, the \ccc{HalfedgeGraph}.
 The example code computes the minimum spanning tree on a polyhedral surface.
 More examples can be found in Chapter~\ref{chapter-meshsimplification} on surface mesh simplification.
 
-\ccIncludeExampleCode{../examples/BGL/Polyhedron_3/kruskal.cpp}
+\ccIncludeExampleCode{BGL_polyhedron_3/kruskal.cpp}
 
 
 
@@ -196,7 +196,7 @@ Kruskal's minimum spanning tree algorithm accessing the id()
 field stored in a Polyhedron vertex.\\
 The main function illustrates the access to the id() field.
 
-\ccIncludeExampleCode{../examples/BGL/Polyhedron_3/kruskal_with_stored_id.cpp}
+\ccIncludeExampleCode{BGL_polyhedron_3/kruskal_with_stored_id.cpp}
 
 
 
@@ -223,7 +223,7 @@ spanning tree algorithm on it. Because the vertex handles of the triangulation a
 in an array, we have to provide a property map that maps vertex handles to
 int's in the range \ccc{[0, t.number_of_vertices())}.
 
-\ccIncludeExampleCode{../examples/BGL/Triangulation_2/emst.cpp}
+\ccIncludeExampleCode{BGL_triangulation_2/emst.cpp}
 
 
 \subsection{Example: Storing the Vertex ID in the Vertex}
@@ -243,7 +243,7 @@ It is in the users responsibility to set the indices properly.
 The example further illustrates that the graph traits also works
 for the Delaunay triangulation.
 
-\ccIncludeExampleCode{../examples/BGL/Triangulation_2/dijkstra_with_internal_property.cpp}
+\ccIncludeExampleCode{BGL_triangulation_2/dijkstra_with_internal_property.cpp}
 
 
 \section{Arrangements as Models of the Boost Graph Concept}
@@ -334,7 +334,7 @@ arrangement $v_0$. Note the usage of the \ccc{Arr_vertex_index_map} and
 the \ccc{Arr_vertex_property_map} classes. The latter one, instantiated by
 the type \ccc{double} is used to map vertices to their distances from $v_0$.
 
-\ccIncludeExampleCode{../examples/BGL/Arrangement_2/primal.cpp}
+\ccIncludeExampleCode{BGL_arrangement_2/primal.cpp}
 
 \subsection{Example for the Dual of an Arrangement as Graph\label{arr_sssec:bgl_dual}}
 %-----------------------------------------------
@@ -372,7 +372,7 @@ with an unsigned integer, marking the discover time of the face and use a
 breadth-first-search visitor to obtain these times and update the faces
 accordingly:
 
-\ccIncludeExampleCode{../examples/BGL/Arrangement_2/dual.cpp}
+\ccIncludeExampleCode{BGL_arrangement_2/dual.cpp}
 
 
 % +------------------------------------------------------------------------+
