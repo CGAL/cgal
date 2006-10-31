@@ -877,6 +877,7 @@ namespace INTERN_LAZY_EXACT_NT {
     : public Algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
                                  CGAL::Integral_domain_without_division_tag > {
     public:
+      typedef typename Algebraic_structure_traits<ET>::Is_exact Is_exact; 
       typedef Lazy_exact_nt<ET> Algebraic_structure;
       class Unit_part
         : public Unary_function< Algebraic_structure, Algebraic_structure > {
