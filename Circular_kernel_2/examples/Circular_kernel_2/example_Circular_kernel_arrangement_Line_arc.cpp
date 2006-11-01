@@ -76,7 +76,7 @@ int main(){
 	   it != ac.end(); ++it) {
 	std::cout << i++ << std::endl;
 	//insert(arr,_pl,*it);
-	insert_curve(arr, *it,_ pl);
+	insert_curve(arr, *it,_pl);
       }
     }
   }
