@@ -109,11 +109,11 @@ ET  QP_solver<Q, ET, Tags>::multiply__A_ixO(int row) const
     // nonzero.
     switch (x_O_v_i[i]) {
     case UPPER:
-      value += ET(qp_u[i]) * ET(qp_A[i][row]);
+      value += ET(qp_u[i]) * ET(A_column(qp_A[i])[row]);
       break;
     case LOWER:
     case FIXED:
-      value += ET(qp_l[i]) * ET(qp_A[i][row]);
+      value += ET(qp_l[i]) * ET(A_column(qp_A[i])[row]);
       break;
     case BASIC:
       CGAL_qpe_assertion(false);

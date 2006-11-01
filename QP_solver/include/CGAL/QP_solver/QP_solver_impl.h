@@ -421,7 +421,7 @@ ratio_test_init__A_Cj( Value_iterator A_Cj_it, int j_, Tag_true)
     // store exact version of `A_Cj' (implicit conversion)
     if ( j_ < qp_n) {                                   // original variable
 
-	CGAL::copy_n( qp_A[ j_], qp_m, A_Cj_it);
+	CGAL::copy_n( A_column(qp_A[ j_]), qp_m, A_Cj_it);
 
     } else {                                            // artificial variable
 
@@ -1869,7 +1869,7 @@ leave_variable( )
 	// enter inequality constraint [ in: i ]
 	int new_row = slack_A[ i-qp_n].first;
 
-	A_Cj[ C.size()] = ( j < qp_n ? ET( qp_A[ j][ new_row]) : et0);
+	A_Cj[ C.size()] = ( j < qp_n ? ET( A_column(qp_A[ j])[ new_row]) : et0);
 
 	 b_C[ C.size()] = ET( qp_b[ new_row]);
 	in_C[ new_row ] = C.size();
@@ -2225,7 +2225,7 @@ z_replace_variable_slack_by_original( )
     
     
     // prepare kappa
-    ET  kappa = d * ET(qp_A[j][new_row]) 
+    ET  kappa = d * ET(A_column(qp_A[j])[new_row]) 
                 - inv_M_B.inner_product_x( tmp_x.begin(), q_x_O.begin());
 		
 	// note: (-1)/hat{\nu} is stored instead of \hat{\nu}	 
@@ -2824,7 +2824,7 @@ check_basis_inverse( Tag_false)
 	row = ( has_ineq ? C[ col] : col);
 	v_it = tmp_x.begin();
 	for ( i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
-	    *v_it = ( *i_it < qp_n ? qp_A[ *i_it][ row] :           // original
+	    *v_it = ( *i_it < qp_n ? A_column(qp_A[ *i_it])[ row] :  // original
 		      art_A[ *i_it - qp_n].first != (int)row ? et0 :// artific.
 		      ( art_A[ *i_it - qp_n].second ? -et1 : et1));
 	}
@@ -2993,7 +2993,8 @@ print_program( ) const
     for ( row = 0; row < qp_m; ++row) {
 
 	// original variables
-	for ( i = 0; i < qp_n; ++i) vout4.out() << qp_A[ i][ row] << ' ';
+	for (i = 0; i < qp_n; ++i) 
+	  vout4.out() << A_column(qp_A[ i])[row] << ' ';
 
 	// slack variables
 	if ( ! slack_A.empty()) {

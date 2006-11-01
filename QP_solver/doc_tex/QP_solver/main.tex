@@ -10,12 +10,19 @@
 \ccChapterAuthor{Kaspar Fischer \and Bernd G{\"a}rtner 
 \and Sven Sch{\"o}nherr \and Frans Wessendorp}
 
-\section{Getting Started---A First Quadratic Program}
-This section explains what linear and quadratic programs are, gives a
-simple example of a quadratic program, and shows how \cgal\ can be used
-to solve it.
+\section{Getting Started}
+This section explains what linear and quadratic programs are, where
+they typically occur in geometric computing, and which other, more
+specialized \cgal\ packages exist for solving some of these typical
+quadratic programs. If your intended application is not covered
+by these packages, \cgal's general quadratic programming solver might
+be of use to you.
 
-\subsection{Quadratic programs}
+We conclude this section with a simple example of a quadratic program
+and show how it can be solved using \cgal's general quadratic
+programming solver.
+
+\subsection{What is a Quadratic Program?}
 This package lets you solve \emph{convex quadratic programs} of the 
 general form
 \begin{eqnarray*}
@@ -53,7 +60,7 @@ the smallest objective function value among all feasible solutions.
 Such a solution may not exist, see Sections
 \ref{sec:QP-infeasible} and \ref{sec:QP-unbounded} below.
 
-\subsection{Linear, nonnegative, and free programs.}
+\subsection{Linear, Nonnegative, and Free Programs}
 If $D=0$, the quadratic program is in fact a \emph{linear program},
 and in the case that $l$ is the zero vector and all entries of
 $u$ are $\infty$, the program is said to be \emph{nonnegative}. The 
@@ -67,6 +74,9 @@ for this case (a free quadratic or linear program is treated like a
 general quadratic or linear program), but the package provides models
 for free programs that save you from specifying the infinite bounds (see
 Section \ref{sec:QP-important_constraints} for an example). 
+
+\subsection{Linear and Quadratic Programs in Geometry}
+
 
 \subsection{A first example}
 Let's consider the following quadratic program in two variables:
@@ -120,6 +130,7 @@ Optimal objective function value: 8/1
 
 \ccIncludeExampleCode{QP_solver/first_qp.cpp}
 
+\subsection{Finding D }
 
 \section{Which Programs can Efficiently be Solved?}
 \label{sec:QP-efficiency}
@@ -156,6 +167,7 @@ This even holds if the problem is \emph{sparse}, i.e. has a small
 number of nonzero elements in $A$ and $D$. \cgal's quadratic programming
 solver is tailored to \emph{dense} problems and therefore does not 
 profit from sparse input.
+
 
 \section{How Robust is the Solver?}
 Given that you use an \emph{exact number type} for the 
@@ -303,7 +315,7 @@ Optimal objective function value: -352/3
 
 \ccIncludeExampleCode{QP_solver/first_nonnegative_lp.cpp}
 
-\section{Working from Iterators}\label{sec:QP-working_from_iterators}
+\section{Working from Iterators I}\label{sec:QP-working_from_iterators}
 In the examples of the previous sections, the linear or quadratic
 program was explicitly represented by arrays. In general, other types
 of containers or implicit representations may occur, so the
@@ -369,6 +381,54 @@ as an argument to the solving function. Here is how this works.
 
 \ccIncludeExampleCode{QP_solver/solve_convex_hull_containment_lp2.h}
 
+\section{Working from Iterators II}\label{sec:QP-working_from_iteratorsII}
+Here we discuss another typical application of quadratic programming
+in geometry; its iterator-based solution is somewhat more advanced,
+since the constraint matrix is quite naturally available row-wise, 
+but the solver needs it column-wise.
+
+The problem is that of finding the point $q$
+in the intersection of halfspaces that is closest to a given point $p$, 
+see Figure \ref{fig:QP-closest_point}. 
+
+\begin{figure}[htbp]
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics{QP_solver/closest_point} 
+\end{center}
+\end{ccTexOnly}
+\caption{The closest point in the intersection of halfspaces
+\label{fig:QP-closest_point}}
+
+\begin{ccHtmlOnly}
+<CENTER>
+<IMG BORDER=0 SRC="./closest_point.gif" ALIGN=center ALT="The closest point in the intersection of halfspaces">
+</CENTER>
+\end{ccHtmlOnly}
+\end{figure}
+
+Let us assume that the closed halfspaces are modeled as positive halfspaces
+defined by objects of type \ccc{CGAL::Hyperplane_d<Kernel>} in $d$-dimensional
+space. Such a hyperplane has the formula 
+\[\sum_{0\leq i< d}~ h_{i}x_{i} + h_{d}=0,\]
+and the positive halfspace is the set of all $x=(x_{0},\ldots,x_{d-1})$ 
+such that 
+\[\sum_{0\leq i< d}~h_{i}x_{i} + h_{d} \geq 0.\]
+
+Now we want to minimize the quadratic function $\|p-x\|^2$ among all $x$
+that are contained in all the positive halfspaces. Expanding this function
+yields 
+\[
+\|p-x\|^2 = x^{T}x - 2p^{T}x + p^{T}p.
+\]
+Consequently, the quadratic objective function matrix $D$ is the identity
+matrix, the linear objective function vector $c$ is 
+$(-2p_{0},\ldots -2p_{d-1})$, and the constant term $c_{0}$ is
+\[
+\sum_{0\leq i< d}~ p_{i}^2.
+\]  
+
+
 \section{The Important Variables}
 If we have an optimal solution $x^*$ of a linear or quadratic program,
 the ``important'' variables are typically the ones that are not on
@@ -392,25 +452,7 @@ If we have a linear or quadratic program with many inequality constraints,
 the ``important'' constraints are typically the ones that are satisfied with
 equality at the optimal solution. 
 
-To demonstrate this, let's consider the problem of finding the point $q$
-in the intersection of halfspaces that is closest to a given point $p$, 
-see Figure \ref{fig:QP-closest_point}. 
 
-\begin{figure}[htbp]
-\begin{ccTexOnly}
-\begin{center}
-\includegraphics{QP_solver/closest_point} 
-\end{center}
-\end{ccTexOnly}
-\caption{The closest point in the intersection of halfspaces
-\label{fig:QP-closest_point}}
-
-\begin{ccHtmlOnly}
-<CENTER>
-<IMG BORDER=0 SRC="./closest_point.gif" ALIGN=center ALT="The closest point in the intersection of halfspaces">
-</CENTER>
-\end{ccHtmlOnly}
-\end{figure}
 
 
 \section{Working from MPS Files}

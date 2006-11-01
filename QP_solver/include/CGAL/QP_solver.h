@@ -231,9 +231,7 @@ private:
   typedef typename Base::Value_by_index Value_by_index;
 
   // access to original problem by basic variable/constraint index:
-  typedef  QP_vector_accessor<
-    typename std::iterator_traits<A_iterator>::value_type,
-    false, false >         A_by_index_accessor;
+  typedef  QP_vector_accessor<A_column, false, false >  A_by_index_accessor;
   typedef  Join_input_iterator_1< Index_const_iterator, A_by_index_accessor >
   A_by_index_iterator;
 
@@ -1462,7 +1460,7 @@ private:
   void
   mu_j__linear_part( NT& mu_j, int j, It lambda_it, Tag_true) const
   {
-    mu_j += inv_M_B.inner_product_l( lambda_it, qp_A[ j]);
+    mu_j += inv_M_B.inner_product_l( lambda_it, A_column(qp_A[ j]));
   }
 
   template < class NT, class It > inline                      // has ineq.
@@ -1835,7 +1833,8 @@ ratio_test_2__p( Tag_false)
     for (   i_it =  B_O.begin(),   v_it = tmp_x.begin();
 	    i_it != B_O.end();
 	    ++i_it,                ++v_it                ) {
-      *v_it = ( sign ? qp_A[ *i_it][ row] : -qp_A[ *i_it][ row]);
+      *v_it = ( sign ? 
+		A_column(qp_A[ *i_it])[ row] : - A_column(qp_A[ *i_it])[ row]);
     }
 
     // compute  ( p_l | p_x_O )^T = M_B^{-1} * ( 0 | A_{S_j,B_O} )^T

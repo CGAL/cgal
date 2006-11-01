@@ -1,6 +1,6 @@
 // function to check whether a point is in the convex hull of other points
+#include <boost/config.hpp>
 #include <boost/iterator/transform_iterator.hpp>
-#include <CGAL/iterator.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_functions.h>
@@ -24,8 +24,6 @@ solve_convex_hull_containment_lp (const Point_d& p,
 				  RandomAccessIterator end, const ET& dummy) 
 {
   // Constraint matrix type: A[j][i] is the i-th homogeneous coordinate of p_j
-  // typedef CGAL::Join_input_iterator_1
-  //  <RandomAccessIterator, Homogeneous_begin<Point_d> > A_it;   
   typedef boost::transform_iterator
     <Homogeneous_begin<Point_d>, RandomAccessIterator> A_it; 
   // Right-hand side type: b[i] is the i-th homogeneous coordinate of p

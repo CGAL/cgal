@@ -110,9 +110,8 @@ class QP_matrix_accessor {
     typedef CGAL::Arity_tag<2> Arity;
     typedef int argument1_type;
     typedef int argument2_type;
-    typedef typename std::iterator_traits<
-            typename std::iterator_traits<MatrixIt>::value_type>::value_type  
-    result_type;
+    typedef typename std::iterator_traits<MatrixIt>::value_type VectorIt;
+    typedef typename std::iterator_traits<VectorIt>::value_type result_type;
 
     QP_matrix_accessor( MatrixIt it, int lower_1 = 0, int upper_1 = 0,
 			              int lower_2 = 0, int upper_2 = 0)
@@ -130,7 +129,7 @@ class QP_matrix_accessor {
 	if ( check_1st_upper && ( r >= u1)) return z;
 	if ( check_2nd_lower && ( c <  l2)) return z;
 	if ( check_2nd_upper && ( c >= u2)) return z;
-	return m[ r][ c];
+	return VectorIt(m[ r])[ c];
     }
 
   private:
