@@ -41,7 +41,7 @@ typedef SK::Sphere_3                                        Sphere_3;
 typedef SK::Circle_3                                        Circle_3;
 typedef SK::Intersect_3                                     Intersect_3;
 typedef SK::Construct_sphere_3                              Construct_sphere_3;
-typedef SK::AK                                              AK;
+typedef SK::Algebraic_kernel                                AK;
 typedef AK::Polynomial_for_spheres_2_3                      Polynomial_for_spheres_2_3;
 
 int main() {
