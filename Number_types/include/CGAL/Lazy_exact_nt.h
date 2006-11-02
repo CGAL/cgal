@@ -481,7 +481,7 @@ struct NAME : public Lazy_exact_binary<ET, ET1, ET2>                     \
   {                                                                      \
     this->et = new ET(this->op1.exact() OP this->op2.exact());           \
     if (!this->approx().is_point())                                      \
-      this->approx() = CGAL::to_interval(*(this->et));                   \
+      this->approx() = CGAL_NTS to_interval(*(this->et));                   \
     this->prune_dag();                                                   \
    }                                                                     \
 };
@@ -502,7 +502,7 @@ struct Lazy_exact_Min : public Lazy_exact_binary<ET>
   void update_exact()
   {
     this->et = new ET((CGAL::min)(this->op1.exact(), this->op2.exact()));
-    if (!this->approx().is_point()) this->approx() = CGAL::to_interval(*(this->et));
+    if (!this->approx().is_point()) this->approx() = CGAL_NTS to_interval(*(this->et));
     this->prune_dag();
   }
 };
@@ -517,7 +517,7 @@ struct Lazy_exact_Max : public Lazy_exact_binary<ET>
   void update_exact()
   {
     this->et = new ET((CGAL::max)(this->op1.exact(), this->op2.exact()));
-    if (!this->approx().is_point()) this->approx() = CGAL::to_interval(*(this->et));
+    if (!this->approx().is_point()) this->approx() = CGAL_NTS to_interval(*(this->et));
     this->prune_dag();
   }
 };
@@ -1147,11 +1147,11 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
     };
     
     class Sign 
-      : public Unary_function< Real_embeddable, CGAL::Sign > {
+      : public Unary_function< Real_embeddable, ::CGAL::Sign > {
       public:
-        CGAL::Sign operator()( const Real_embeddable& a ) const {
+        ::CGAL::Sign operator()( const Real_embeddable& a ) const {
             CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-            Uncertain<CGAL::Sign> res = CGAL_NTS sign(a.approx());
+            Uncertain< ::CGAL::Sign> res = CGAL_NTS sign(a.approx());
             if (is_singleton(res))
                 return res;
             CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
@@ -1194,14 +1194,14 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
             if ((app.sup() - app.inf())
                     < Lazy_exact_nt<ET>::get_relative_precision_of_to_double()
                     * (std::max)(std::fabs(app.inf()), std::fabs(app.sup())) )
-                return CGAL::to_double(app);
+                return CGAL_NTS to_double(app);
             
             CGAL_PROFILER(std::string("failures of : ") + std::string(CGAL_PRETTY_FUNCTION));
             
             // Otherwise we trigger exact computation first,
             // which will refine the approximation.
             a.exact();
-            return CGAL::to_double(a.approx());
+            return CGAL_NTS to_double(a.approx());
         }
     };
     
@@ -1315,7 +1315,7 @@ max BOOST_PREVENT_MACRO_SUBSTITUTION (const Lazy_exact_nt<ET> & a,
 template <typename ET>
 std::ostream &
 operator<< (std::ostream & os, const Lazy_exact_nt<ET> & a)
-{ return os << CGAL::to_double(a); }
+{ return os << CGAL_NTS to_double(a); }
 
 template <typename ET>
 std::istream &

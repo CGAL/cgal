@@ -162,7 +162,7 @@ public:
       return;
     }
     static int p = std::numeric_limits<double>::digits;
-    CGAL_assertion(is_finite(d) && is_valid(d));
+    CGAL_assertion(CGAL_NTS is_finite(d) && is_valid(d));
     int exp;
     double x = std::frexp(d, &exp); // x in [1/2, 1], x*2^exp = d
     mpz_init_set_d (man(), // to the following integer:   
@@ -434,7 +434,7 @@ void Gmpzf::align ( const mpz_t*& a_aligned,
 			   Exponent& rexp, 
 			   const Gmpzf& a, const Gmpzf& b) {
   static Gmpz s;
-  switch (CGAL::compare (b.exp(), a.exp())) {
+  switch (CGAL_NTS compare (b.exp(), a.exp())) {
   case SMALLER:
     // leftshift of a to reach b.exp()
     mpz_mul_2exp (s.mpz(), a.man(), a.exp() - b.exp()); 

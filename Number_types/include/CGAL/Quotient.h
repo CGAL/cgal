@@ -172,7 +172,7 @@ Quotient<NT>::normalize()
       den = 1;
       return *this;
   }
-  NT ggt = gcd(num, den);
+  NT ggt = CGAL_NTS gcd(num, den);
   if (ggt != 1 )
   {
       num /= ggt;

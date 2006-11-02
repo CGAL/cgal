@@ -224,7 +224,7 @@ abs( const Real_embeddable& x ) {
 
 template< class Real_embeddable >
 inline 
-//CGAL::Sign 
+//::CGAL::Sign 
 typename CGAL::Real_embeddable_traits< Real_embeddable >::Sign::result_type
 sign( const Real_embeddable& x ) {
     typename CGAL::Real_embeddable_traits< Real_embeddable >::Sign sign;

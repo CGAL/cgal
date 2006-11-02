@@ -27,12 +27,12 @@ void test_overflow_to_interval(const NT&)
   NT val = 2;
   for (int i=0; i<20; ++i) {
     val = val*val;
-    CGAL::Interval_nt<> inter = CGAL::to_interval(val);
-    CGAL::Interval_nt<> minter = CGAL::to_interval(-val);
+    CGAL::Interval_nt<> inter = CGAL_NTS to_interval(val);
+    CGAL::Interval_nt<> minter = CGAL_NTS to_interval(-val);
     assert(CGAL::is_valid(inter));
-    assert(CGAL::is_finite(inter.inf()));
+    assert(CGAL_NTS is_finite(inter.inf()));
     assert(CGAL::is_valid(minter));
-    assert(CGAL::is_finite(minter.sup()));
+    assert(CGAL_NTS is_finite(minter.sup()));
   }
 }
 
@@ -42,12 +42,12 @@ void test_overflow_to_double()
 
   Gmpq val = Gmpq(1)/2;
   for (int i=0; i<3000; ++i) {
-    // std::cout << CGAL::to_double(val) << std::endl;
+    // std::cout << CGAL_NTS to_double(val) << std::endl;
     // std::cout << val.numerator() << " , " << val.denominator() << std::endl;
     val = val * (1<<16);
     val = val / (1<<16);
   }
-  assert(CGAL::to_double(val) == 0.5);
+  assert(CGAL_NTS to_double(val) == 0.5);
 }
 
 typedef std::pair<std::string, Gmpq> Test_pair; 

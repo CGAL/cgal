@@ -233,11 +233,11 @@ public:
     };
     
     struct Sign 
-        : public Unary_function< mpz_class, CGAL::Sign > {
+        : public Unary_function< mpz_class, ::CGAL::Sign > {
     public:
         template <class U2> 
-        CGAL::Sign operator()( const ::__gmp_expr< ::__gmpz_value,U2>& x ) const {
-            return (CGAL::Sign) ::sgn( x );
+        ::CGAL::Sign operator()( const ::__gmp_expr< ::__gmpz_value,U2>& x ) const {
+            return (::CGAL::Sign) ::sgn( x );
         }        
     };
     

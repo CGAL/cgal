@@ -137,7 +137,7 @@ public:
   {
     _alpha = FT(-b,2*a);
     _gamma = CGAL_NTS square(alpha()) - FT(c,a);
-    if(is_zero(gamma())) {
+    if(CGAL_NTS is_zero(gamma())) {
       _rational = 1;
     } else {
       _beta = (s ? -1 : 1);
@@ -150,7 +150,7 @@ public:
             const typename First_if_different<FT, RT>::Type & c1,
             const typename First_if_different<FT, RT>::Type & c2)
   {
-    if(is_zero(c1) || is_zero(c2)) {
+    if(CGAL_NTS is_zero(c1) || CGAL_NTS is_zero(c2)) {
       _alpha = c0; 
       _rational = 1;
       
@@ -208,10 +208,12 @@ public:
 
   Root_of_2 inverse() const 
   {
-    CGAL_assertion(!(is_zero(alpha()) && (is_zero(beta()) || is_zero(gamma())))); // root = 0,   
+    CGAL_assertion(!(CGAL_NTS is_zero(alpha()) && (CGAL_NTS is_zero(beta()) || CGAL_NTS is_zero(gamma())))); // root = 0,   
     FT r = (CGAL_NTS square(alpha())) -  (CGAL_NTS square(beta()))*gamma();
-    CGAL_assertion(!(is_zero(r) && (sign(beta()) != sign(alpha())))); // ex. 6 - 2 sqrt(9)
-    if(is_zero(r)) return Root_of_2(1 / (2 * alpha()));
+    CGAL_assertion(!(CGAL_NTS is_zero(r) 
+                   && (CGAL_NTS sign(beta()) != CGAL_NTS sign(alpha())))); 
+// ex. 6 - 2 sqrt(9)
+    if(CGAL_NTS is_zero(r)) return Root_of_2(1 / (2 * alpha()));
     else return Root_of_2(alpha()/r, -beta()/r, gamma());
   }
 
@@ -278,9 +280,9 @@ public:
   T eval_at(const T& x) const 
   {
     if(is_rational()) return x * (operator[](0)) - (operator[](1));
-    if(is_zero(x)) return (operator[](2));
-    const bool zeroC0 = is_zero((operator[](2)));
-    const bool zeroC1 = is_zero((operator[](1)));
+    if(CGAL_NTS is_zero(x)) return (operator[](2));
+    const bool zeroC0 = CGAL_NTS is_zero((operator[](2)));
+    const bool zeroC1 = CGAL_NTS is_zero((operator[](1)));
     if(zeroC0 && zeroC1) return x * (operator[](0));
     if(zeroC0) return x * ((operator[](1)) + x * (operator[](0)));
     if(zeroC1) return (x * x * (operator[](0))) + (operator[](2));
@@ -444,18 +446,18 @@ public:
     };    
 
     class Sign 
-        : public Unary_function< Real_embeddable, CGAL::Sign >{
+        : public Unary_function< Real_embeddable, ::CGAL::Sign >{
     public:
-        CGAL::Sign operator()(const Real_embeddable& a) const {
-            const CGAL::Sign sign_alpha = CGAL::sign(a.alpha());
+        ::CGAL::Sign operator()(const Real_embeddable& a) const {
+            const ::CGAL::Sign sign_alpha = CGAL_NTS sign(a.alpha());
             if (a.is_rational()) return (sign_alpha);
             // If alpha and beta have the same sign, return this sign.
-            const CGAL::Sign sign_beta = CGAL::sign (a.beta());
+            const ::CGAL::Sign sign_beta = CGAL_NTS sign (a.beta());
             if (sign_alpha == sign_beta) return (sign_alpha);
             if (sign_alpha == ZERO) return (sign_beta);
             
             // Compare the squared values of m_alpha and of m_beta*sqrt(m_gamma):
-            const Comparison_result res = CGAL::compare (CGAL_NTS square(a.alpha()),
+            const Comparison_result res = CGAL_NTS compare (CGAL_NTS square(a.alpha()),
                     CGAL_NTS square(a.beta()) * a.gamma());
             if (res == LARGER) return sign_alpha;
             else if (res == SMALLER) return sign_beta;
@@ -477,12 +479,12 @@ public:
 
             CGAL_assertion(is_valid(a) && is_valid(b));
 
-            if (a.is_rational()) return (CGAL::compare(a.alpha(), b));
-            if (b.is_rational()) return (CGAL::compare(a, b.alpha()));
+            if (a.is_rational()) return (CGAL_NTS compare(a.alpha(), b));
+            if (b.is_rational()) return (CGAL_NTS compare(a, b.alpha()));
 
             if(!do_not_filter::value) {
-                Interval_nt<> ia = to_interval(a);
-                Interval_nt<> ib = to_interval(b);
+                Interval_nt<> ia = CGAL_NTS to_interval(a);
+                Interval_nt<> ib = CGAL_NTS to_interval(b);
                 if(ia.inf() > ib.sup()) return LARGER;
                 if(ia.sup() < ib.inf()) return SMALLER;
             }
@@ -492,21 +494,21 @@ public:
             // is equivalent to comparing (a1 - a2) and (b2*sqrt(c2) -  b1*sqrt(c1)).
             // We first determine the signs of these terms.
             const FT diff_alpha = a.alpha() - b.alpha();
-            const CGAL::Sign sign_left = CGAL::sign(diff_alpha);
+            const ::CGAL::Sign sign_left = CGAL_NTS sign(diff_alpha);
             const FT a_sqr = a.beta()*a.beta()*a.gamma();
             const FT b_sqr = b.beta()*b.beta()*b.gamma();
-            Comparison_result right_res = CGAL::compare (b_sqr, a_sqr);
-            CGAL::Sign sign_right = ZERO;
+            Comparison_result right_res = CGAL_NTS compare (b_sqr, a_sqr);
+            ::CGAL::Sign sign_right = ZERO;
 
             if (right_res == LARGER)
                 {
                     // Take the sign of b2:
-                    sign_right = CGAL::sign(b.beta());
+                    sign_right = CGAL_NTS sign(b.beta());
                 }
             else if (right_res == SMALLER)
                 {
                     // Take the opposite sign of b1:
-                    switch (CGAL::sign (a.beta()))
+                    switch (CGAL_NTS sign (a.beta()))
                         {
                         case POSITIVE :
                             sign_right = NEGATIVE;
@@ -527,8 +529,8 @@ public:
                     // We take the sign of (b2*sqrt(c2) -  b1*sqrt(c1)), where both terms
                     // have the same absolute value. The sign is equal to the sign of b2,
                     // unless both terms have the same sign, so the whole expression is 0.
-                    sign_right = CGAL::sign (b.beta());
-                    if (sign_right == CGAL::sign (a.beta()))
+                    sign_right = CGAL_NTS sign (b.beta());
+                    if (sign_right == CGAL_NTS sign (a.beta()))
                         sign_right = ZERO;
                 }
 
@@ -570,7 +572,7 @@ public:
             const FT A = diff_alpha*diff_alpha - (a_sqr + b_sqr);
             const FT B = 2 * a.beta() * b.beta();
             const FT C = a.gamma() * b.gamma();
-            const CGAL::Sign sgn = sign(Root_of_2<RT>(A, B, C));
+            const ::CGAL::Sign sgn = CGAL_NTS sign(Root_of_2<RT>(A, B, C));
             const bool swap_res = (sign_left == NEGATIVE);
 
             if (sgn == POSITIVE)
@@ -593,17 +595,17 @@ public:
 
             CGAL_assertion(is_valid(a) && is_valid(b));
 
-            if (a.is_rational()) return (CGAL::compare (a.alpha(), b));
+            if (a.is_rational()) return (CGAL_NTS compare (a.alpha(), b));
 
             if(!do_not_filter::value) {
-                Interval_nt<> ia = to_interval(a);
-                Interval_nt<> ib = to_interval(b);
+                Interval_nt<> ia = CGAL_NTS to_interval(a);
+                Interval_nt<> ib = CGAL_NTS to_interval(b);
                 if(ia.inf() > ib.sup()) return LARGER;
                 if(ia.sup() < ib.inf()) return SMALLER;
             }
 
             // Perform the exact comparison.
-            const CGAL::Sign   sgn = sign(a - b);
+            const ::CGAL::Sign   sgn = CGAL_NTS  sign(a - b);
             if (sgn == POSITIVE) return (LARGER);
             else if (sgn == NEGATIVE) return (SMALLER);
             else return (EQUAL);
@@ -628,17 +630,17 @@ public:
 
             CGAL_assertion(is_valid(a) && is_valid(b));
 
-            if (a.is_rational()) return (CGAL::compare (a.alpha(), b));
+            if (a.is_rational()) return (CGAL_NTS compare (a.alpha(), b));
 
             if(!do_not_filter::value) {
-                Interval_nt<> ia = to_interval(a);
-                Interval_nt<> ib = to_interval(b);
+                Interval_nt<> ia = CGAL_NTS to_interval(a);
+                Interval_nt<> ib = CGAL_NTS to_interval(b);
                 if(ia.inf() > ib.sup()) return LARGER;
                 if(ia.sup() < ib.inf()) return SMALLER;
             }
 
             // Perform the exact comparison.
-            const CGAL::Sign   sgn = sign(a - b);
+            const ::CGAL::Sign   sgn = CGAL_NTS sign(a - b);
             if (sgn == POSITIVE) return (LARGER);
             else if (sgn == NEGATIVE) return (SMALLER);
             else return (EQUAL);
@@ -681,12 +683,12 @@ public:
             const RT d3 = r.denominator(x.gamma());
 
             if (x.is_rational()) {
-                return (CGAL::to_double(r1) / CGAL::to_double(d1));
+                return (CGAL_NTS to_double(r1) / CGAL_NTS to_double(d1));
             }
   
-            return ((CGAL::to_double(r1) / CGAL::to_double(d1)) +
-                    (CGAL::to_double(r2) / CGAL::to_double(d2)) * 
-                    std::sqrt((CGAL::to_double(r3) / CGAL::to_double(d3)))); 
+            return ((CGAL_NTS to_double(r1) / CGAL_NTS to_double(d1)) +
+                    (CGAL_NTS to_double(r2) / CGAL_NTS to_double(d2)) * 
+                    std::sqrt((CGAL_NTS to_double(r3) / CGAL_NTS to_double(d3)))); 
         }
     };
     
@@ -695,13 +697,16 @@ public:
     public:
         std::pair<double,double> operator()(const Real_embeddable& x) const {
 
-            if(x.is_rational()) return to_interval(x.alpha());
+            if(x.is_rational()) return CGAL_NTS to_interval(x.alpha());
 
-            const CGAL::Interval_nt<true>   alpha_in = to_interval(x.alpha());
-            const CGAL::Interval_nt<true>   beta_in = to_interval(x.beta());
-            const CGAL::Interval_nt<true>   gamma_in = to_interval(x.gamma());
+            const CGAL::Interval_nt<true>   alpha_in 
+                = CGAL_NTS to_interval(x.alpha());
+            const CGAL::Interval_nt<true>   beta_in 
+                = CGAL_NTS to_interval(x.beta());
+            const CGAL::Interval_nt<true>   gamma_in 
+                = CGAL_NTS to_interval(x.gamma());
             const CGAL::Interval_nt<true>&  x_in = alpha_in + 
-                (beta_in * CGAL::sqrt(gamma_in));
+                (beta_in * CGAL_NTS sqrt(gamma_in));
             return x_in.pair();
         }        
     };   
@@ -983,7 +988,7 @@ template < typename RT >
 Root_of_2<RT> make_sqrt(const RT& r) 
 {
   CGAL_assertion(r >= 0); 
-  if(is_zero(r)) return Root_of_2<RT>();
+  if(CGAL_NTS is_zero(r)) return Root_of_2<RT>();
   return Root_of_2<RT>(0,1,r);
 }
 
@@ -991,7 +996,7 @@ template < typename RT >
 Root_of_2<RT> make_sqrt(const typename Root_of_traits< RT >::RootOf_1 r) 
 {
   CGAL_assertion(r >= 0); 
-  if(is_zero(r)) return Root_of_2<RT>();
+  if(CGAL_NTS is_zero(r)) return Root_of_2<RT>();
   return Root_of_2<RT>(0,1,r);
 }
 
@@ -1107,7 +1112,7 @@ operator*(const Root_of_2<RT> &a,
 
   CGAL_assertion(is_valid(a) && is_valid(b));
 
-  if(is_zero(b)) return Root_of_2<RT>();
+  if(CGAL_NTS is_zero(b)) return Root_of_2<RT>();
 
   if(a.is_rational()) {
     return Root_of_2<RT>(a.alpha() * b);
@@ -1137,7 +1142,7 @@ operator*(const Root_of_2<RT> &a, const RT& b)
 
   CGAL_assertion(is_valid(a) && is_valid(b));
 
-  if(is_zero(b)) return Root_of_2<RT>();
+  if(CGAL_NTS is_zero(b)) return Root_of_2<RT>();
 
   if(a.is_rational()) {
     return Root_of_2<RT>(a.alpha() * b);
@@ -1274,12 +1279,12 @@ operator*(const Root_of_2<RT> &a,
   }
 
   if(a.is_rational()) {
-    if(is_zero(a.alpha())) return Root_of_2<RT>();
+    if(CGAL_NTS is_zero(a.alpha())) return Root_of_2<RT>();
     return Root_of_2<RT>(b.alpha() * a.alpha(), b.beta() * a.alpha(), b.gamma());
   }
 
   if(b.is_rational()) {
-    if(is_zero(b.alpha())) return Root_of_2<RT>();
+    if(CGAL_NTS is_zero(b.alpha())) return Root_of_2<RT>();
     return Root_of_2<RT>(a.alpha() * b.alpha(), a.beta() * b.alpha(), a.gamma());
   }
 
@@ -1309,12 +1314,12 @@ to_double(const Root_of_2<RT> &x)
   const RT d3 = r.denominator(x.gamma());
 
   if (x.is_rational()) {
-    return (CGAL::to_double(r1) / CGAL::to_double(d1));
+    return (CGAL_NTS to_double(r1) / CGAL_NTS to_double(d1));
   }
   
-  return ((CGAL::to_double(r1) / CGAL::to_double(d1)) +
-          (CGAL::to_double(r2) / CGAL::to_double(d2)) * 
-          std::sqrt((CGAL::to_double(r3) / CGAL::to_double(d3)))); 
+  return ((CGAL_NTS to_double(r1) / CGAL_NTS to_double(d1)) +
+          (CGAL_NTS to_double(r2) / CGAL_NTS to_double(d2)) * 
+          std::sqrt((CGAL_NTS to_double(r3) / CGAL_NTS to_double(d3)))); 
 }
 
 template < typename RT >

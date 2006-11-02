@@ -97,7 +97,7 @@ template < typename Root >
 bool
 test_compare(const Root &r1, const Root &r2)
 {
-  if (compare(r1, r2) == compare(to_double(r1), to_double(r2)))
+  if (CGAL_NTS compare(r1, r2) == compare(to_double(r1), to_double(r2)))
     return true;
 
   std::cout << "ERROR in comparing :" << std::endl << " r1 = ";
@@ -115,7 +115,7 @@ template < typename Root >
 bool
 test_to_interval(const Root &r1)
 {
-  std::pair<double, double> the_interval = to_interval(r1);
+  std::pair<double, double> the_interval = CGAL_NTS to_interval(r1);
   if(!((to_double(r1) >= the_interval.first) && (to_double(r1) <= the_interval.second))) {
     std::cout << r1[2] << " " << r1[1] << " " << r1[0] << " " << r1.is_smaller() << std::endl;
     std::cout << setprecision (18) << to_double(r1) << std::endl;
@@ -144,19 +144,19 @@ test_root_of()
   assert(is_valid(zero1));
   assert(is_valid(zero2));
   assert(is_valid(zero3));
-  assert(to_double(zero1) == 0.0);
-  assert(to_double(zero2) == 0.0);
-  assert(to_double(zero3) == 0.0);
+  assert(CGAL_NTS to_double(zero1) == 0.0);
+  assert(CGAL_NTS to_double(zero2) == 0.0);
+  assert(CGAL_NTS to_double(zero3) == 0.0);
   assert(test_to_interval(zero1));
   assert(test_to_interval(zero2));
   assert(test_to_interval(zero3));
-  assert(sign(zero1) == 0);
-  assert(sign(zero2) == 0);
-  assert(sign(zero3) == 0);
-  assert(compare(zero1, zero1) == 0);
-  assert(compare(zero2, zero2) == 0);
-  assert(compare(zero1, zero2) == 0);
-  assert(compare(zero2, zero1) == 0);
+  assert(CGAL_NTS sign(zero1) == 0);
+  assert(CGAL_NTS sign(zero2) == 0);
+  assert(CGAL_NTS sign(zero3) == 0);
+  assert(CGAL_NTS compare(zero1, zero1) == 0);
+  assert(CGAL_NTS compare(zero2, zero2) == 0);
+  assert(CGAL_NTS compare(zero1, zero2) == 0);
+  assert(CGAL_NTS compare(zero2, zero1) == 0);
   assert(zero2 == zero1);
   assert(zero2 == zero3);
   assert(zero1 == zero3);
@@ -176,11 +176,11 @@ test_root_of()
   assert(!(zero2 > zero3));
   assert(!(zero1 > zero3));
 
-  assert(compare(zero2, -zero1) == 0);
-  assert(compare(zero1, -zero2) == 0);
+  assert(CGAL_NTS compare(zero2, -zero1) == 0);
+  assert(CGAL_NTS compare(zero1, -zero2) == 0);
 
-  assert(compare(zero1, zero3) == 0);
-  assert(compare(zero2, zero3) == 0);
+  assert(CGAL_NTS compare(zero1, zero3) == 0);
+  assert(CGAL_NTS compare(zero2, zero3) == 0);
 
   std::cout << "  Testing ones" << std::endl;
   Root one1 (-1, 0, 1, false);
@@ -199,10 +199,10 @@ test_root_of()
   assert(is_valid(mone1));
   assert(is_valid(one2));
   assert(is_valid(mone2));
-  assert(to_double(one1)  ==  1.0);
-  assert(to_double(mone1) == -1.0);
-  assert(to_double(one2)  ==  1.0);
-  assert(to_double(mone2) == -1.0);
+  assert(CGAL_NTS to_double(one1)  ==  1.0);
+  assert(CGAL_NTS to_double(mone1) == -1.0);
+  assert(CGAL_NTS to_double(one2)  ==  1.0);
+  assert(CGAL_NTS to_double(mone2) == -1.0);
   assert(test_to_interval(one1));
   assert(test_to_interval(mone1));
   assert(test_to_interval(one2));
@@ -210,32 +210,32 @@ test_root_of()
   assert(test_to_interval(one3));
   assert(test_to_interval(mone3));
 
-  assert(sign( one1) > 0);
-  assert(sign( one2) > 0);
-  assert(sign(mone1) < 0);
-  assert(sign(mone2) < 0);
-  assert(compare( one1,  one1) == 0);
-  assert(compare(mone1, mone1) == 0);
-  assert(compare(mone1,  one1) < 0);
-  assert(compare( one1, mone1) > 0);
+  assert(CGAL_NTS sign( one1) > 0);
+  assert(CGAL_NTS sign( one2) > 0);
+  assert(CGAL_NTS sign(mone1) < 0);
+  assert(CGAL_NTS sign(mone2) < 0);
+  assert(CGAL_NTS compare( one1,  one1) == 0);
+  assert(CGAL_NTS compare(mone1, mone1) == 0);
+  assert(CGAL_NTS compare(mone1,  one1) < 0);
+  assert(CGAL_NTS compare( one1, mone1) > 0);
 
-  assert(compare( one2,  one2) == 0);
-  assert(compare(mone2, mone2) == 0);
-  assert(compare(mone2,  one2) < 0);
-  assert(compare( one2, mone2) > 0);
+  assert(CGAL_NTS compare( one2,  one2) == 0);
+  assert(CGAL_NTS compare(mone2, mone2) == 0);
+  assert(CGAL_NTS compare(mone2,  one2) < 0);
+  assert(CGAL_NTS compare( one2, mone2) > 0);
 
-  assert(compare( one1, -mone1) == 0);
-  assert(compare(-one1,  mone1) == 0);
+  assert(CGAL_NTS compare( one1, -mone1) == 0);
+  assert(CGAL_NTS compare(-one1,  mone1) == 0);
 
-  assert(compare( one1,  one2) == 0);
-  assert(compare(mone1, mone2) == 0);
-  assert(compare( one1,  one3) == 0);
-  assert(compare(mone1, mone3) == 0);
-  assert(compare( one2,  one3) == 0);
-  assert(compare(mone2, mone3) == 0);
+  assert(CGAL_NTS compare( one1,  one2) == 0);
+  assert(CGAL_NTS compare(mone1, mone2) == 0);
+  assert(CGAL_NTS compare( one1,  one3) == 0);
+  assert(CGAL_NTS compare(mone1, mone3) == 0);
+  assert(CGAL_NTS compare( one2,  one3) == 0);
+  assert(CGAL_NTS compare(mone2, mone3) == 0);
 
-  assert(compare( one1, zero1) > 0);
-  assert(compare(mone1, zero2) < 0);
+  assert(CGAL_NTS compare( one1, zero1) > 0);
+  assert(CGAL_NTS compare(mone1, zero2) < 0);
 
   std::cout << "  Testing output" << std::endl;
   std::cout << "  zero = ";
@@ -255,15 +255,15 @@ test_root_of()
   std::cout << " approx =  " << mone1 << std::endl;
 
   std::cout << "  Testing degree 1" << std::endl;
-  assert(compare( Root(0),  Root(0)) == 0);
-  assert(compare( Root(1),  Root(1)) == 0);
-  assert(compare(Root(-1), Root(-1)) == 0);
-  assert(compare( Root(0),  Root(1)) < 0);
-  assert(compare( Root(1), Root(-1)) > 0);
+  assert(CGAL_NTS compare( Root(0),  Root(0)) == 0);
+  assert(CGAL_NTS compare( Root(1),  Root(1)) == 0);
+  assert(CGAL_NTS compare(Root(-1), Root(-1)) == 0);
+  assert(CGAL_NTS compare( Root(0),  Root(1)) < 0);
+  assert(CGAL_NTS compare( Root(1), Root(-1)) > 0);
 
-  assert(compare( Root(-4, 2), Root(-2)) == 0);
-  assert(compare( Root(-4, 2), Root(-1)) < 0);
-  assert(compare( Root(-4, 2), Root(-3)) > 0);
+  assert(CGAL_NTS compare( Root(-4, 2), Root(-2)) == 0);
+  assert(CGAL_NTS compare( Root(-4, 2), Root(-1)) < 0);
+  assert(CGAL_NTS compare( Root(-4, 2), Root(-3)) > 0);
 
   std::cout << "  Testing degree 1 and 2" << std::endl;
   Root rone(1, 0, -1, false);
@@ -273,26 +273,26 @@ test_root_of()
   assert(test_to_interval(rmone));
   // Compare the two roots of the above polynomial (-1 and 1),
   // succesively with -2, -1, 0, 1, 2.
-  assert(compare(Root(-2), rmone) < 0);
-  assert(compare(Root(-2), rone)  < 0);
-  assert(compare(rmone, Root(-2)) > 0);
-  assert(compare(rone, Root(-2))  > 0);
-  assert(compare(Root(-1), rmone) == 0);
-  assert(compare(Root(-1), rone)  < 0);
-  assert(compare(rmone, Root(-1)) == 0);
-  assert(compare(rone, Root(-1))  > 0);
-  assert(compare(Root(0), rmone)  > 0);
-  assert(compare(Root(0), rone)   < 0);
-  assert(compare(rmone, Root(0))  < 0);
-  assert(compare(rone, Root(0))   > 0);
-  assert(compare(Root(1), rmone)  > 0);
-  assert(compare(Root(1), rone)   == 0);
-  assert(compare(rmone, Root(1))  < 0);
-  assert(compare(rone, Root(1))   == 0);
-  assert(compare(Root(2), rmone)  > 0);
-  assert(compare(Root(2), rone)   > 0);
-  assert(compare(rmone, Root(2))  < 0);
-  assert(compare(rone, Root(2))   < 0);
+  assert(CGAL_NTS compare(Root(-2), rmone) < 0);
+  assert(CGAL_NTS compare(Root(-2), rone)  < 0);
+  assert(CGAL_NTS compare(rmone, Root(-2)) > 0);
+  assert(CGAL_NTS compare(rone, Root(-2))  > 0);
+  assert(CGAL_NTS compare(Root(-1), rmone) == 0);
+  assert(CGAL_NTS compare(Root(-1), rone)  < 0);
+  assert(CGAL_NTS compare(rmone, Root(-1)) == 0);
+  assert(CGAL_NTS compare(rone, Root(-1))  > 0);
+  assert(CGAL_NTS compare(Root(0), rmone)  > 0);
+  assert(CGAL_NTS compare(Root(0), rone)   < 0);
+  assert(CGAL_NTS compare(rmone, Root(0))  < 0);
+  assert(CGAL_NTS compare(rone, Root(0))   > 0);
+  assert(CGAL_NTS compare(Root(1), rmone)  > 0);
+  assert(CGAL_NTS compare(Root(1), rone)   == 0);
+  assert(CGAL_NTS compare(rmone, Root(1))  < 0);
+  assert(CGAL_NTS compare(rone, Root(1))   == 0);
+  assert(CGAL_NTS compare(Root(2), rmone)  > 0);
+  assert(CGAL_NTS compare(Root(2), rone)   > 0);
+  assert(CGAL_NTS compare(rmone, Root(2))  < 0);
+  assert(CGAL_NTS compare(rone, Root(2))   < 0);
 
 // All compare tests are wrong since the double
 // cannot handle all of them
@@ -345,15 +345,15 @@ test_root_of()
   for (int i = 0; i < test_loops; ++i) {
     Root r1 = my_rand_root<Root>();
     Root r2 = my_rand_root<Root>();
-    Root r1_sqr = square(r1);
-    Root r2_sqr = square(r2);
+    Root r1_sqr = CGAL_NTS square(r1);
+    Root r2_sqr = CGAL_NTS square(r2);
     assert(test_to_interval(r1));
     assert(test_to_interval(r2));
     assert(test_to_interval(r1_sqr));
     assert(test_to_interval(r2_sqr));
 //   double dr1 = to_double(r1);
 //   double dr2 = to_double(r2);
-//    assert(compare(r1_sqr, r2_sqr) == compare(dr1*dr1, dr2*dr2));
+//    assert(CGAL_NTS compare(r1_sqr, r2_sqr) == compare(dr1*dr1, dr2*dr2));
   }
 
   std::cout << "  Testing addition/subtraction of Root_of_2<NT> with NT"
@@ -418,11 +418,11 @@ test_root_of()
 //    assert(test_compare(r2, r3));
     assert(r2 == r3);
     if (r > 0) {
-//      assert(compare(r1, r2) == compare(1, r) * sign(r1));
-//      assert(compare(r1, r3) == compare(1, r) * sign(r1));
+//      assert(CGAL_NTS compare(r1, r2) == compare(1, r) * sign(r1));
+//      assert(CGAL_NTS compare(r1, r3) == compare(1, r) * sign(r1));
     } else if (r < 0) {
-//      assert(compare(r1, -r2) == compare(1, -r) * sign(r1));
-//      assert(compare(r1, -r3) == compare(1, -r) * sign(r1));
+//      assert(CGAL_NTS compare(r1, -r2) == compare(1, -r) * sign(r1));
+//      assert(CGAL_NTS compare(r1, -r3) == compare(1, -r) * sign(r1));
     } else {
       assert(r2 == Root(0));
       assert(r3 == Root(0));
@@ -443,7 +443,7 @@ test_root_of()
     assert(test_to_interval(r2_inv));
 //    double dr1 = to_double(r1);
 //    double dr2 = to_double(r2);
-//    assert(compare(r1_inv, r2_inv) == compare(1.0/dr1, 1.0/dr2));
+//    assert(CGAL_NTS compare(r1_inv, r2_inv) == compare(1.0/dr1, 1.0/dr2));
   }
 
   std::cout << "  Testing make_sqrt(RT)" << std::endl;
@@ -458,7 +458,7 @@ test_root_of()
     assert(test_to_interval(sqr_r2));
 //    double dr1 = to_double(r1);
 //    double dr2 = to_double(r2);
-//    assert(compare(sqr_r1, sqr_r2) == compare(std::sqrt(dr1), std::sqrt(dr2)));
+//    assert(CGAL_NTS compare(sqr_r1, sqr_r2) == compare(std::sqrt(dr1), std::sqrt(dr2)));
   }
 
   std::cout << "  Testing Root_of_2<FT>" << std::endl;

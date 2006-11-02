@@ -189,12 +189,12 @@ class Real_embeddable_traits< ::__gmp_expr< ::__gmpq_value,U> >
     };
     
     struct Sign 
-        : public Unary_function< mpq_class, CGAL::Sign > {
+        : public Unary_function< mpq_class, ::CGAL::Sign > {
     public:
         template <class U2> 
-        CGAL::Sign 
+        ::CGAL::Sign 
         operator()( const ::__gmp_expr< ::__gmpq_value,U2>& x ) const {
-            return (CGAL::Sign) ::sgn( x );
+            return (::CGAL::Sign) ::sgn( x );
         }        
     };
     

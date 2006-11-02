@@ -33,9 +33,9 @@ test(const NT &)
   NT one (1);
   NT one_third = one / NT(3);
 
-  std::pair<double,double> zero_i      = CGAL::to_interval(zero);
-  std::pair<double,double> one_i       = CGAL::to_interval(one);
-  std::pair<double,double> one_third_i = CGAL::to_interval(one_third);
+  std::pair<double,double> zero_i      = CGAL_NTS to_interval(zero);
+  std::pair<double,double> one_i       = CGAL_NTS to_interval(one);
+  std::pair<double,double> one_third_i = CGAL_NTS to_interval(one_third);
 
   if (zero_i.first > 0 || zero_i.second < 0)
     std::cout << "  BUG zero ! : " << zero_i.first << " " << zero_i.second << std::endl;

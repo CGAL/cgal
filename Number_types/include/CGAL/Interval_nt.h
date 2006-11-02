@@ -976,7 +976,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     };    
 
     class Sign
-        : public Unary_function< Real_embeddable, ::CGAL::Uncertain< CGAL::Sign > > {
+        : public Unary_function< Real_embeddable, ::CGAL::Uncertain< ::CGAL::Sign > > {
       public:        
         ::CGAL::Uncertain< ::CGAL::Sign > operator()( const Real_embeddable& x ) const {
             return INTERN_INTERVAL_NT::sign( x );

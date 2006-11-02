@@ -231,11 +231,11 @@ public:
     }
     
     //! determines the sign of xx by repeated squaring.
-    CGAL::Sign sign() const { 
+    ::CGAL::Sign sign() const { 
         if (!is_extended()) 
             return CGAL_NTS sign(a0());
         
-        CGAL::Sign s0,s1;
+        ::CGAL::Sign s0,s1;
 
         s0 = CGAL_NTS sign(a0());
         s1 = CGAL_NTS sign(a1());

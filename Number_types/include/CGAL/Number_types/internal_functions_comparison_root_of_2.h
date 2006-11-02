@@ -56,7 +56,7 @@ compare_21_11(const FT& A2, const FT& B2, const FT& C2,
 
   // If it doesn't work, we evaluate the sign of P2 at the root of P1.
 
-  FT p2 = B1 * (A1*B2 - A2*B1) - C2 * CGAL::square(A1);
+  FT p2 = B1 * (A1*B2 - A2*B1) - C2 * CGAL_NTS square(A1);
 
   return enum_cast<Comparison_result>(CGAL_NTS sign(p2));
 }
@@ -189,7 +189,7 @@ compare_22_22( const FT& A1, const FT& B1, const FT& C1,
 
 template <class FT>
 inline FT calcI(const FT& A, const FT& B, const FT& C)
-{ return CGAL::square(B)-A*C; }
+{ return CGAL_NTS square(B)-A*C; }
 
 template <class FT>
 inline FT calcJ(const FT& A1, const FT& B1, const FT& A2, const FT& B2)
@@ -208,15 +208,15 @@ template <class FT>
 inline FT calcP4(const FT& J,  const FT& Jp,
 		 const FT& A1, const FT& C1,
 		 const FT& A2, const FT& C2)
-{ return CGAL::square(A1*C2-C1*A2)-4*J*Jp;}
+{ return CGAL_NTS square(A1*C2-C1*A2)-4*J*Jp;}
 
 template <class FT>
 inline FT calcP4(const FT& I1, const FT& I2, const FT& K)
-{ return CGAL::square(K)-4*I1*I2;}
+{ return CGAL_NTS square(K)-4*I1*I2;}
 
 template <class FT>
 inline FT calcD(const FT& A1, const FT& I1, const FT& A2, const FT& I2)
-{ return I1*CGAL::square(A2) - I2*CGAL::square(A1);}
+{ return I1*CGAL_NTS square(A2) - I2*CGAL_NTS square(A1);}
 
 } // namespace CGALi
 } // namespace CGAL

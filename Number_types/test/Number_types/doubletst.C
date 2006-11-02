@@ -9,29 +9,29 @@ int main()
     double posinf = posnormal/zero;
     double neginf = negnormal/zero;
     
-    if (!CGAL::is_valid(zero))
+    if (!CGAL:: is_valid(zero))
 	return 1;
-    if (!CGAL::is_finite(zero))
+    if (!CGAL_NTS is_finite(zero))
 	return 1;
-    if (!CGAL::is_valid(posnormal))
+    if (!CGAL:: is_valid(posnormal))
 	return 1;
-    if (!CGAL::is_finite(posnormal))
+    if (!CGAL_NTS is_finite(posnormal))
 	return 1;
-    if (!CGAL::is_valid(negnormal))
+    if (!CGAL:: is_valid(negnormal))
 	return 1;
-    if (!CGAL::is_finite(negnormal))
+    if (!CGAL_NTS is_finite(negnormal))
 	return 1;
-    if (CGAL::is_valid(nan))
+    if (CGAL:: is_valid(nan))
 	return 1;
-    if (CGAL::is_finite(nan))
+    if (CGAL_NTS is_finite(nan))
 	return 1;
-    if (!CGAL::is_valid(posinf))
+    if (!CGAL:: is_valid(posinf))
 	return 1;
-    if (CGAL::is_finite(posinf))
+    if (CGAL_NTS is_finite(posinf))
 	return 1;
-    if (!CGAL::is_valid(neginf))
+    if (!CGAL:: is_valid(neginf))
 	return 1;
-    if (CGAL::is_finite(neginf))
+    if (CGAL_NTS is_finite(neginf))
 	return 1;
     return 0;
 }

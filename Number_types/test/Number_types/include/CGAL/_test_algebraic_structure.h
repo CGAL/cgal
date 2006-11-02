@@ -356,6 +356,10 @@ void test_algebraic_structure_intern(
     
     typedef CGAL::Algebraic_structure_traits<  AS  > AST;
     CGAL_SNAP_AST_FUNCTORS(AST);    
+    const Div div = Div();
+    const Mod mod = Mod();
+    const Div_mod div_mod = Div_mod();
+    
     // do we have any 
     AS  tmp_mod,tmp_div;
     div_mod(a,b,tmp_div,tmp_mod);
@@ -418,19 +422,20 @@ void test_algebraic_structure_intern(
     
     typedef CGAL::Algebraic_structure_traits<  AS  > AST;
     CGAL_SNAP_AST_FUNCTORS(AST);
+    const Sqrt sqrt = Sqrt();
    
     AS  tmp;
     AS  epsilon =  AS (1);
     
-    tmp=unit_part(a)*a;
+    tmp=CGAL_NTS unit_part(a)*a;
     CGAL_test_assert( test_equality_epsilon( sqrt(tmp)*sqrt(tmp),
                                              tmp, epsilon ) );
    
-    tmp=unit_part(b)*b;
+    tmp=CGAL_NTS unit_part(b)*b;
     CGAL_test_assert( test_equality_epsilon( sqrt(tmp)*sqrt(tmp),
                                              tmp, epsilon ) );
    
-    tmp=unit_part(c)*c;
+    tmp=CGAL_NTS unit_part(c)*c;
     CGAL_test_assert( test_equality_epsilon( sqrt(tmp)*sqrt(tmp),
                                              tmp, epsilon ) );
 };

@@ -59,7 +59,7 @@ test_gcd(const NT&, CGAL::Tag_true)
   NT eleven(11);
   NT three(3);
   std::cout << "  div()" << std::endl;
-  std::cout << "  ##################### div( 11, 3): " << div(eleven, three) <<std::endl;
+  std::cout << "  ##################### div( 11, 3): " << CGAL_NTS div(eleven, three) <<std::endl;
   if (CGAL_NTS div(eleven, three) != three) return false;
   CGAL::Div<NT> d;
   if (d(eleven, three) != three) return false;
@@ -279,13 +279,13 @@ test_utilities(const NT& x)
 
   // to_double
   std::cout << "  to_double()" << std::endl;
-  if (CGAL::to_double(zero) != 0.0) return false;
-  if (CGAL::to_double(one)  != 1.0) return false;
+  if (CGAL_NTS to_double(zero) != 0.0) return false;
+  if (CGAL_NTS to_double(one)  != 1.0) return false;
   CGAL::To_double<NT> tdb;
   if (tdb(one) != 1.0) return false;
 
   // to_interval
-  std::pair<double, double> I = CGAL::to_interval( NT(2) );
+  std::pair<double, double> I = CGAL_NTS to_interval( NT(2) );
   if ( I.first  > 2.0) return false;
   if ( I.second < 2.0) return false;
   CGAL::To_interval<NT> tint;
@@ -302,9 +302,9 @@ test_utilities(const NT& x)
   std::cout << "  is_finite()" << std::endl;
   const CGAL::Is_valid<NT> is_valid = CGAL::Is_valid<NT>(); 
   if(!is_valid(zero)) return false;
-  if(!CGAL_NTS is_valid(zero)) return false;
+  if(!CGAL:: is_valid(zero)) return false;
   
-  if (! CGAL::is_finite(zero)) return false;
+  if (! CGAL_NTS is_finite(zero)) return false;
   std::cout << "  is_valid()" << std::endl;
   if (! CGAL::is_valid(zero)) return false;
 
@@ -327,8 +327,8 @@ test_utilities(const NT& x)
   if (CGAL_NTS compare(zero+zero, one-zero) != CGAL::SMALLER) return false;
   if (CGAL_NTS compare(zero, one-zero) != CGAL::SMALLER) return false;
   if (CGAL_NTS compare(zero+zero, one) != CGAL::SMALLER) return false;
-  if (CGAL::to_double(zero+zero) != 0.0) return false;
-  if (! CGAL::is_finite(zero+zero)) return false;
+  if (CGAL_NTS to_double(zero+zero) != 0.0) return false;
+  if (! CGAL_NTS is_finite(zero+zero)) return false;
   if (! CGAL::is_valid(zero+zero)) return false;
   if (CGAL_NTS square(two+two) != NT(16)) return false;
 

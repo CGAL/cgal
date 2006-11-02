@@ -61,7 +61,7 @@ void bench()
   BENCH_MACRO_generic(c = 1, c += b; c -= b, "+= -=");
   BENCH_MACRO_generic(c = 1, c *= b; c /= b, "*= /=");
 
-  BENCH_MACRO_generic(EMPTY, c = CGAL::sqrt(b), "sqrt");
+  BENCH_MACRO_generic(EMPTY, c = CGAL_NTS sqrt(b), "sqrt");
   BENCH_MACRO_generic(EMPTY, c = CGAL_NTS square(b), "square");
   BENCH_MACRO_generic(EMPTY, c = c * IA_nt(dd), "ia*d");
   BENCH_MACRO_generic(EMPTY, c = IA_nt(dd) * c, "d*ia");

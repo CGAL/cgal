@@ -91,13 +91,13 @@ void square_test()
   {
     double d = CGAL::default_random.get_double();
     MPF D(d);
-    CGAL_assertion(D*D == CGAL::square(D));
+    CGAL_assertion(D*D == CGAL_NTS square(D));
   }
 
   // Test case by Nico Kruithof.
   CGAL::MP_Float f = 32767.5;
   CGAL::MP_Float g = 32767.5;
-  CGAL::MP_Float sqr = CGAL::square(f);
+  CGAL::MP_Float sqr = CGAL_NTS square(f);
   assert(sqr == f*g);
 
   // Another test case.
@@ -142,7 +142,7 @@ void test_overflow_to_double()
     val = val * (1<<16);
     val = val / (1<<16);
   }
-  assert(CGAL::to_double(val) == 0.5);
+  assert(CGAL_NTS to_double(val) == 0.5);
 }
 
 void test_overflow_to_interval()
@@ -157,22 +157,22 @@ void test_overflow_to_interval()
     val = val * (1<<16);
     val = val / (1<<16);
   }
-  assert(CGAL::to_interval(val) == std::make_pair(0.5, 0.5));
+  assert(CGAL_NTS to_interval(val) == std::make_pair(0.5, 0.5));
 
   // Reported by Pedro to_interval(10^400) returns [+inf;+inf] :
   MPF m = 10;
   for (int j=0; j<400; ++j)
     m = 10 * m;
-  CGAL::Interval_nt<> inter = CGAL::to_interval(m);
+  CGAL::Interval_nt<> inter = CGAL_NTS to_interval(m);
   std::cout << inter << std::endl;
-  assert(CGAL::is_finite(inter.inf()));
-  assert(!CGAL::is_finite(inter.sup()));
+  assert(CGAL_NTS is_finite(inter.inf()));
+  assert(!CGAL_NTS is_finite(inter.sup()));
 
   // Testing for underflow as well.
   MPF mm = 0.1;
   for (int k=0; k<1000; ++k)
     mm = mm * 0.125;
-  CGAL::Interval_nt<> inter2 = CGAL::to_interval(mm);
+  CGAL::Interval_nt<> inter2 = CGAL_NTS to_interval(mm);
   std::cout << inter2 << std::endl;
   assert(inter2.inf() == 0);
   assert(inter2.sup() != 0);
@@ -217,8 +217,8 @@ int main(int argc, char **argv)
     d = CGAL_CLIB_STD::ldexp(d, exp);
     // std::cout << d << std::endl;
     // std::cout << MPF(d) << std::endl;
-    // std::cout << CGAL::to_double(MPF(d)) << std::endl;
-    if (CGAL::to_double(MPF(d)) != (double) d) {
+    // std::cout << CGAL_NTS to_double(MPF(d)) << std::endl;
+    if (CGAL_NTS to_double(MPF(d)) != (double) d) {
       std::cerr << "CONVERSION ERROR with float : " << d << std::endl;
       std::abort();
     }
@@ -232,8 +232,8 @@ int main(int argc, char **argv)
     d = CGAL_CLIB_STD::ldexp(d, exp);
     // std::cout << d << std::endl;
     // std::cout << MPF(d) << std::endl;
-    // std::cout << CGAL::to_double(MPF(d)) << std::endl;
-    if (CGAL::to_double(MPF(d)) != d) {
+    // std::cout << CGAL_NTS to_double(MPF(d)) << std::endl;
+    if (CGAL_NTS to_double(MPF(d)) != d) {
       std::cerr << "CONVERSION ERROR with double : " << d << std::endl;
       std::abort();
     }
@@ -247,11 +247,11 @@ int main(int argc, char **argv)
     d = d * CGAL_CLIB_STD::ldexp(1.0, exp);
     //std::cout << d << std::endl;
     //std::cout << MPF(d) << std::endl;
-    //std::cout << CGAL::to_double(MPF(d)) << std::endl;
+    //std::cout << CGAL_NTS to_double(MPF(d)) << std::endl;
 
     // Here we have to use a lesser test.
     MPF res = d;
-    std::pair<double, double> ia = CGAL::to_interval(res);
+    std::pair<double, double> ia = CGAL_NTS to_interval(res);
     if ( MPF(ia.first) > res || MPF(ia.second) < res) {
       std::cerr << "CONVERSION ERROR with long double : " << d << std::endl;
       std::abort();
@@ -315,7 +315,7 @@ int main(int argc, char **argv)
   std::cout << "100! = " << bb << std::endl;
   
   MPF b = factoriel(10);
-  std::cout << "10! = " << b << " =? 3628800 " << " =? " << CGAL::to_double(b);
+  std::cout << "10! = " << b << " =? 3628800 " << " =? " << CGAL_NTS to_double(b);
   std::cout << std::endl;
   CGAL_assertion ( b == MPF(3628800));
 

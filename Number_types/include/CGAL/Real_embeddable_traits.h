@@ -91,10 +91,10 @@ class Real_embeddable_traits_base {
     
     //! The generic \c Sign functor implementation uses two comparisons.
     class Sign 
-      : public Unary_function< Real_embeddable, CGAL::Sign > {
+      : public Unary_function< Real_embeddable, ::CGAL::Sign > {
       public:
         //! the function call.
-        CGAL::Sign operator()( const Real_embeddable& x ) const {
+        ::CGAL::Sign operator()( const Real_embeddable& x ) const {
           if ( x < Real_embeddable(0))
             return CGAL::NEGATIVE;
           if ( x > Real_embeddable(0))

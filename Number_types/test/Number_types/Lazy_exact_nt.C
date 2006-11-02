@@ -111,8 +111,8 @@ void test_to_double()
   // Now we square it repeatedly (the interval is going to grow), and we check
   // that to_double() stays reasonnably close to 1.
   for (int i = 0; i < 20; ++i) {
-    tmp = CGAL::square(tmp);
-    double d = CGAL::to_double(tmp);
+    tmp = CGAL_NTS square(tmp);
+    double d = CGAL_NTS to_double(tmp);
     std::cout << "double approximation is : " << d << std::endl;
     std::cout << "interval approximation is : " << tmp.approx() << std::endl;
     //std::cout << "numerator   = " << tmp.exact().numerator() << std::endl;
@@ -167,7 +167,7 @@ int main ()
   CGAL::Lazy_exact_nt<int> tmp35(35), tmp7(7), tmp9(9);
   assert((tmp35 % tmp7) == 0);
   assert((tmp35 % 7) == 0);
-  assert(gcd(tmp35, tmp7) == 7);
+  assert(CGAL_NTS gcd(tmp35, tmp7) == 7);
   tmp9 %= tmp7;
   assert(tmp9 == 2);
   tmp9 = 9;

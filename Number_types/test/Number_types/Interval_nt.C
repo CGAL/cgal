@@ -36,8 +36,8 @@ bool spiral_test()
 
   while (++i < 500)
   {
-    IA_nt x_ip1 = x_i - y_i/CGAL::sqrt(IA_nt(i));
-    IA_nt y_ip1 = y_i + x_i/CGAL::sqrt(IA_nt(i));
+    IA_nt x_ip1 = x_i - y_i/CGAL_NTS sqrt(IA_nt(i));
+    IA_nt y_ip1 = y_i + x_i/CGAL_NTS sqrt(IA_nt(i));
     x_i = x_ip1;
     y_i = y_ip1;
     DEBUG( IA_nt length = CGAL_NTS square(x_i) + CGAL_NTS square(y_i); )
@@ -80,7 +80,7 @@ bool cprop_test()
     std::cerr << "ERROR : Constant propagation through operator/." <<std::endl;
 
   // Testing cprop through sqrt.
-  IA_nt sqrt2 = CGAL::sqrt(IA_nt(2));
+  IA_nt sqrt2 = CGAL_NTS sqrt(IA_nt(2));
   bool good_sqrt = !sqrt2.is_point();
   if (!good_sqrt)
     std::cerr << "ERROR : Constant propagation through sqrt()." <<std::endl;
@@ -100,7 +100,7 @@ bool square_root_test()
 
   while (++i < 500)
   {
-    IA_nt b = CGAL::sqrt(a);
+    IA_nt b = CGAL_NTS sqrt(a);
     DEBUG ( std::cout << a-1.0 << std::endl; )
     if ( b.is_same(a) )
       break;
@@ -270,7 +270,7 @@ bool utility_test()
   DEBUG( std::cout << "is_valid test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
-  tmpflag = CGAL::is_finite(a) && !CGAL::is_finite(h);
+  tmpflag = CGAL_NTS is_finite(a) && !CGAL_NTS is_finite(h);
   DEBUG( std::cout << "is_finite test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
@@ -367,7 +367,7 @@ bool is_finite_test()
 
   DEBUG(
   const double nan = inf-inf;
-  using CGAL::is_finite;
+  using CGAL_NTS is_finite;
   std::cout << "Test de is_finite(double)" << std::endl;
   std::cout << "is_finite( " << inf << " ) = " << is_finite(inf) << std::endl;
   std::cout << "is_finite( " << 0.0 << " ) = " << is_finite(0.0) << std::endl;
@@ -377,28 +377,28 @@ bool is_finite_test()
   std::cout << "is_finite( " << nan << " ) = " << is_finite(nan) << std::endl;
   )
 
-  tmpflag = CGAL::is_finite(a);
+  tmpflag = CGAL_NTS is_finite(a);
   DEBUG( std::cout << std::endl; )
   DEBUG( std::cout << "is_finite( " << a << " ) = " << tmpflag << std::endl; )
   flag = flag && !tmpflag;
 
-  tmpflag = CGAL::is_finite(b);
+  tmpflag = CGAL_NTS is_finite(b);
   DEBUG( std::cout << "is_finite( " << b << " ) = " << tmpflag << std::endl; )
   flag = flag && !tmpflag;
 
-  tmpflag = CGAL::is_finite(c);
+  tmpflag = CGAL_NTS is_finite(c);
   DEBUG( std::cout << "is_finite( " << c << " ) = " << tmpflag << std::endl; )
   flag = flag && !tmpflag;
 
-  tmpflag = CGAL::is_finite(d);
+  tmpflag = CGAL_NTS is_finite(d);
   DEBUG( std::cout << "is_finite( " << d << " ) = " << tmpflag << std::endl; )
   flag = flag && !tmpflag;
 
-  tmpflag = CGAL::is_finite(e);
+  tmpflag = CGAL_NTS is_finite(e);
   DEBUG( std::cout << "is_finite( " << e << " ) = " << tmpflag << std::endl; )
   flag = flag && tmpflag;
 
-  tmpflag = CGAL::is_finite(f);
+  tmpflag = CGAL_NTS is_finite(f);
   DEBUG( std::cout << "is_finite( " << f << " ) = " << tmpflag << std::endl; )
   flag = flag && tmpflag;
 

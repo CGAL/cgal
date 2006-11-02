@@ -104,7 +104,6 @@ else
   compile_and_run mpq_class
   compile_and_run mpz_class
   compile_and_run Nef_polynomial
-  compile_and_run NT_checker
   compile_and_run Quotient
   compile_and_run quotient_io
   compile_and_run Quotient_new

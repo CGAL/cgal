@@ -100,10 +100,10 @@ template <> class Real_embeddable_traits< leda_bigfloat >
     };
     
     class Sign 
-      : public Unary_function< Real_embeddable, CGAL::Sign > {
+      : public Unary_function< Real_embeddable, ::CGAL::Sign > {
       public:
-        CGAL::Sign operator()( const Real_embeddable& x ) const {
-          return (CGAL::Sign) CGAL_LEDA_SCOPE::sign( x );
+        ::CGAL::Sign operator()( const Real_embeddable& x ) const {
+          return (::CGAL::Sign) CGAL_LEDA_SCOPE::sign( x );
         }        
     };
     

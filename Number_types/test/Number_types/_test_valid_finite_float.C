@@ -34,17 +34,17 @@ _test_valid_finite( const float& )
   assert( CGAL::is_valid( d0) );
   assert( CGAL::is_valid( d1) );
   
-  assert( CGAL::is_finite( d0) );
-  assert( CGAL::is_finite( d1) );
+  assert( CGAL_NTS is_finite( d0) );
+  assert( CGAL_NTS is_finite( d1) );
   
   if ( CGAL::is_valid( d1/d0 - d1/d0 ))
   { d2 = d1/d0 - d1/d0; show( reinterpret_cast<IEEE_754_float*>(&d2)); }
-  if ( CGAL::is_finite( d1/d0 ))
+  if ( CGAL_NTS is_finite( d1/d0 ))
   { d2 = d1/d0; show( reinterpret_cast<IEEE_754_float*>(&d2)); }
   
   assert( CGAL::is_valid( d1/d0 ));
   assert( !CGAL::is_valid( d1/d0 - d1/d0 ));
-  assert( !CGAL::is_finite( d1/d0 ));
+  assert( !CGAL_NTS is_finite( d1/d0 ));
 
   return true;
 }

@@ -24,16 +24,16 @@ template <class Q>
 void test_it()
 {
   Q q = CGAL::simplest_rational_in_interval<Q>(-0.1, 0.1);
-  assert(CGAL::is_zero(q));
+  assert(CGAL_NTS is_zero(q));
 
   double l = 3.1415, h = 3.1416;
   q = CGAL::simplest_rational_in_interval<Q>(l, h);
-  assert(l <= CGAL::to_double(q));
-  assert(CGAL::to_double(q) <= h);
+  assert(l <= CGAL_NTS to_double(q));
+  assert(CGAL_NTS to_double(q) <= h);
   
   double d = 1234.56789;
-  q = CGAL::to_rational<Q>(d);
-  assert(CGAL::to_double(q) == d);
+  q = CGAL:: to_rational<Q>(d);
+  assert(CGAL_NTS to_double(q) == d);
 }
 
 int main() {
