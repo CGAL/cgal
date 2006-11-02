@@ -730,6 +730,10 @@ public:
   {
     CGAL_precondition (_ofile.is_open());
 
+    //is the point outside the iso-rectangle?
+    if(_bound_rect.has_on_unbounded_side(p))
+      return;
+
     switch (_point_style)
     {
     case (FIG_CROSS):
@@ -758,10 +762,10 @@ public:
 
       // Draw solid lines with width 1.
       _write_segment (Segment_2(s1, t1),
-                      _color, 1, FIG_SOLID,
+                      _color, 1, FIG_SOLID, _style_value,
                       false);
       _write_segment (Segment_2(s2, t2),
-                      _color, 1, FIG_SOLID,
+                      _color, 1, FIG_SOLID, _style_value,
                       false);
 
       break;
@@ -773,7 +777,7 @@ public:
       _write_ellipse (p,
                       CGAL::square(_point_size), 
                       CGAL::square(_point_size),
-                      _color, 1, FIG_SOLID,
+                      _color, 1, FIG_SOLID,_style_value,
                       FIG_WHITE, FIG_NOT_FILLED);
 
       break;
@@ -785,7 +789,7 @@ public:
       _write_ellipse (p,
                       CGAL::square(_point_size), 
                       CGAL::square(_point_size),
-                      _color, 1, FIG_SOLID,
+                      _color, 1, FIG_SOLID,_style_value,
                       _color, FIG_FILLED);
 
       break;
@@ -818,14 +822,14 @@ public:
       {
         // Draw an empty rectangular shape (use a solid line with width 1).
         _write_polygon (4, vertices.begin(), vertices.end(),
-                        _color, 1, FIG_SOLID,
+                        _color, 1, FIG_SOLID,_style_value,
                         FIG_WHITE, FIG_NOT_FILLED);
       }
       else
       {
         // Draw a filled rectangular shape.
         _write_polygon (4, vertices.begin(), vertices.end(),
-                        _color, 1, FIG_SOLID,
+                        _color, 1, FIG_SOLID,_style_value,
                         _color, FIG_FILLED);
       }
 
@@ -1349,10 +1353,10 @@ protected:
    * Write a polygon, reprsented as a range of points.
    */
   template <class Input_iterator>
-  void _write_polygon (const int& n_points,
+  void _write_polygon (const int n_points,
                        Input_iterator begin, Input_iterator end,
                        const Fig_color&      line_color,
-                       const int&            line_width,
+                       const int             line_width,
                        const Fig_line_style& line_style,
                        const double&         style_value,
                        const Fig_color&      fill_color,
