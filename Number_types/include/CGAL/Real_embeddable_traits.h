@@ -23,17 +23,17 @@ template< class Real_embeddable_ >
 class Real_embeddable_traits {
   public:
     typedef Real_embeddable_  Real_embeddable;
-    typedef CGAL::Tag_false   Is_real_embeddable;
+    typedef Tag_false   Is_real_embeddable;
 
-    typedef CGAL::Null_functor Abs;
-    typedef CGAL::Null_functor Sign;
-    typedef CGAL::Null_functor Is_finite;
-    typedef CGAL::Null_functor Is_positive;
-    typedef CGAL::Null_functor Is_negative;
-    typedef CGAL::Null_functor Is_zero;
-    typedef CGAL::Null_functor Compare;
-    typedef CGAL::Null_functor To_double;
-    typedef CGAL::Null_functor To_interval;
+    typedef Null_functor Abs;
+    typedef Null_functor Sign;
+    typedef Null_functor Is_finite;
+    typedef Null_functor Is_positive;
+    typedef Null_functor Is_negative;
+    typedef Null_functor Is_zero;
+    typedef Null_functor Compare;
+    typedef Null_functor To_double;
+    typedef Null_functor To_interval;
 };
 
 namespace INTERN_RET {
@@ -48,7 +48,7 @@ namespace INTERN_RET {
     };
     
     template< class Real_embeddable >
-    class Is_zero_selector< Real_embeddable, CGAL::Null_functor >
+    class Is_zero_selector< Real_embeddable, Null_functor >
       : public Unary_function< Real_embeddable, bool > {
       public:        
         //! the function call.
@@ -63,7 +63,7 @@ template< class Real_embeddable_ >
 class Real_embeddable_traits_base {
   public:
     typedef Real_embeddable_  Real_embeddable;
-    typedef CGAL::Tag_true    Is_real_embeddable; 
+    typedef Tag_true    Is_real_embeddable; 
         
     //! The generic \c Is_zero functor implementation uses one comparison
     typedef INTERN_RET::Is_zero_selector< Real_embeddable, 
@@ -96,10 +96,10 @@ class Real_embeddable_traits_base {
         //! the function call.
         ::CGAL::Sign operator()( const Real_embeddable& x ) const {
           if ( x < Real_embeddable(0))
-            return CGAL::NEGATIVE;
+            return NEGATIVE;
           if ( x > Real_embeddable(0))
-            return CGAL::POSITIVE;
-          return CGAL::ZERO;
+            return POSITIVE;
+          return ZERO;
         }
     };
     
@@ -129,21 +129,21 @@ class Real_embeddable_traits_base {
                                 Comparison_result > {
       public:
         //! the function call.
-        CGAL::Comparison_result operator()( const Real_embeddable& x, 
+        Comparison_result operator()( const Real_embeddable& x, 
                                             const Real_embeddable& y) const {
           if( x < y )
-            return CGAL::SMALLER;
+            return SMALLER;
           if( x > y )
-            return CGAL::LARGER;
-         return CGAL::EQUAL;
+            return LARGER;
+         return EQUAL;
         }
         
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Real_embeddable,
-                                                      CGAL::Comparison_result );
+                                                      Comparison_result );
     };
 
-    typedef CGAL::Null_functor To_double;
-    typedef CGAL::Null_functor To_interval;
+    typedef Null_functor To_double;
+    typedef Null_functor To_interval;
 };
 
 // Some common functors to be used by RET specializations
@@ -152,11 +152,11 @@ namespace INTERN_RET {
   class Real_embeddable_traits_base_selector;
   
   template< class Real_embeddable >
-  class Real_embeddable_traits_base_selector< Real_embeddable, CGAL::Tag_false >
-    : public Real_embeddable_traits< CGAL::Null_tag > {};
+  class Real_embeddable_traits_base_selector< Real_embeddable, Tag_false >
+    : public Real_embeddable_traits< Null_tag > {};
     
   template< class Real_embeddable >
-  class Real_embeddable_traits_base_selector< Real_embeddable, CGAL::Tag_true >
+  class Real_embeddable_traits_base_selector< Real_embeddable, Tag_true >
     : public Real_embeddable_traits_base< Real_embeddable > {};
 
   template< class Real_embeddable >

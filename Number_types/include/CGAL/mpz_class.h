@@ -55,10 +55,10 @@ struct Number_type_traits<mpz_class> {
 
 template <class U> 
 class Algebraic_structure_traits< ::__gmp_expr< ::__gmpz_value,U>  >
-    :public Algebraic_structure_traits_base<  ::__gmp_expr< ::__gmpz_value,U>  , CGAL::Null_tag > {
+    :public Algebraic_structure_traits_base<  ::__gmp_expr< ::__gmpz_value,U>  , Null_tag > {
 public:
-    typedef CGAL::Euclidean_ring_tag  Algebraic_structure_tag;
-    typedef CGAL::Tag_true            Is_exact;
+    typedef Euclidean_ring_tag  Algebraic_structure_tag;
+    typedef Tag_true            Is_exact;
     typedef mpz_class                 Algebraic_structure;
     
     struct Is_zero: public Unary_function< mpz_class , bool > {
@@ -104,7 +104,7 @@ public:
             mpz_class result = x / y;
             CGAL_precondition_msg( result * y == x,
             "'x' must be divisible by 'y' in "
-            "CGAL::Algebraic_structure_traits<mpz_class>::Integral_div()(x,y)" );
+            "Algebraic_structure_traits<mpz_class>::Integral_div()(x,y)" );
             return result;         
         } 
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
@@ -155,7 +155,7 @@ public:
                 mpz_class& q, 
                 mpz_class& r
         ) const {
-            typedef CGAL::Algebraic_structure_traits<mpz_class> Traits;
+            typedef Algebraic_structure_traits<mpz_class> Traits;
                 typename Traits::Div  actual_div;
                 typename Traits::Mod  actual_mod;
                 q = actual_div( x, y );
@@ -242,15 +242,15 @@ public:
     };
     
     struct Compare 
-        : public Binary_function< mpz_class, mpz_class, CGAL::Comparison_result > {
+        : public Binary_function< mpz_class, mpz_class, Comparison_result > {
         template <class U2, class U3>
-        CGAL::Comparison_result operator()( const ::__gmp_expr< ::__gmpz_value,U2>& x, 
+        Comparison_result operator()( const ::__gmp_expr< ::__gmpz_value,U2>& x, 
                 const ::__gmp_expr< ::__gmpz_value,U3>& y ) const {
             // cmp returns any int value, not just -1/0/1...
-            return (::CGAL::Comparison_result) CGAL_NTS sign( ::cmp(x, y) );
+            return (Comparison_result) CGAL_NTS sign( ::cmp(x, y) );
         }
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT
-        ( Real_embeddable, CGAL::Comparison_result);
+        ( Real_embeddable, Comparison_result);
     };
     
     struct To_double 
@@ -309,7 +309,7 @@ io_tag(const ::__gmp_expr< T , U> &)
    const ::mpq_class & c,
    bool d)
    {
-   typedef CGAL::Rational_traits< ::mpq_class > Rational;
+   typedef Rational_traits< ::mpq_class > Rational;
 
    Rational r;
    CGAL_assertion( r.denominator(a) > 0 );
@@ -354,8 +354,8 @@ CGAL_END_NAMESPACE
 
 // XXX : These seem necessary.
 // I don't know why doing them in namespace CGAL is not enough.
-// using CGAL::to_double;
-// using CGAL::is_valid;
+// using to_double;
+// using is_valid;
 
 
 #endif // CGAL_MPZ_CLASS_H

@@ -57,8 +57,8 @@ CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, NT )
 #define CGAL_DEFINE_COERCION_TRAITS_FROM_TO(FROM,TO)                    \
     template <>                                                         \
     struct Coercion_traits< FROM , TO >{                                    \
-        typedef CGAL::Tag_true  Are_explicit_interoperable;             \
-        typedef CGAL::Tag_true  Are_implicit_interoperable;             \
+        typedef Tag_true  Are_explicit_interoperable;             \
+        typedef Tag_true  Are_implicit_interoperable;             \
         typedef TO Coercion_type;                                       \
         struct Cast{                                                    \
             typedef Coercion_type result_type;                          \
@@ -69,8 +69,8 @@ CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, NT )
     };                                                                  \
     template <>                                                         \
     struct Coercion_traits< TO , FROM >{                                    \
-        typedef CGAL::Tag_true  Are_explicit_interoperable;             \
-        typedef CGAL::Tag_true  Are_implicit_interoperable;             \
+        typedef Tag_true  Are_explicit_interoperable;             \
+        typedef Tag_true  Are_implicit_interoperable;             \
         typedef TO Coercion_type;                                       \
         struct Cast{                                                    \
             typedef Coercion_type result_type;                          \
@@ -83,8 +83,8 @@ CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, NT )
 #define CGAL_DEFINE_COERCION_TRAITS_FROM_TO_TEM(FROM,TO,TEM)            \
     template <TEM>                                                      \
     struct Coercion_traits< FROM , TO >{                                    \
-        typedef CGAL::Tag_true  Are_explicit_interoperable;             \
-        typedef CGAL::Tag_true  Are_implicit_interoperable;             \
+        typedef Tag_true  Are_explicit_interoperable;             \
+        typedef Tag_true  Are_implicit_interoperable;             \
         typedef TO Coercion_type;                                       \
         struct Cast{                                                    \
             typedef Coercion_type result_type;                          \
@@ -95,8 +95,8 @@ CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, NT )
     };                                                                  \
     template <TEM>                                                      \
     struct Coercion_traits< TO , FROM >{                                    \
-        typedef CGAL::Tag_true  Are_explicit_interoperable;             \
-        typedef CGAL::Tag_true  Are_implicit_interoperable;             \
+        typedef Tag_true  Are_explicit_interoperable;             \
+        typedef Tag_true  Are_implicit_interoperable;             \
         typedef TO Coercion_type;                                       \
         struct Cast{                                                    \
             typedef Coercion_type result_type;                          \
@@ -111,8 +111,8 @@ CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, NT )
 #define CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(A)                         \
     template <>                                                         \
     struct Coercion_traits< A , A >{                                        \
-        typedef CGAL::Tag_true  Are_explicit_interoperable;             \
-        typedef CGAL::Tag_true  Are_implicit_interoperable;             \
+        typedef Tag_true  Are_explicit_interoperable;             \
+        typedef Tag_true  Are_implicit_interoperable;             \
         typedef A Coercion_type;                                        \
         struct Cast{                                                    \
             typedef Coercion_type result_type;                          \
@@ -123,8 +123,8 @@ CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, NT )
 #define CGAL_DEFINE_COERCION_TRAITS_FOR_SELF_TEM(A,TEM)                 \
     template <TEM>                                                      \
     struct Coercion_traits< A , A >{                                        \
-        typedef CGAL::Tag_true  Are_explicit_interoperable;             \
-        typedef CGAL::Tag_true  Are_implicit_interoperable;             \
+        typedef Tag_true  Are_explicit_interoperable;             \
+        typedef Tag_true  Are_implicit_interoperable;             \
         typedef A Coercion_type;                                        \
         struct Cast{                                                    \
             typedef Coercion_type result_type;                          \
@@ -184,8 +184,8 @@ CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double,long double);
 //! Specialization for equal types.
 template <class A>    
 struct Coercion_traits<A,A>{ 
-    typedef CGAL::Tag_true  Are_explicit_interoperable;
-    typedef CGAL::Tag_false Are_implicit_interoperable;
+    typedef Tag_true  Are_explicit_interoperable;
+    typedef Tag_false Are_implicit_interoperable;
     typedef A Coercion_type; 
     struct Cast{                                        
         typedef Coercion_type result_type;                             
@@ -217,10 +217,10 @@ class Coercion_traits_for_level: public Coercion_traits_for_level<A,B,i-1>{};
 template <class A, class B> 
 class Coercion_traits_for_level<A,B,0> {
 public:
-    typedef CGAL::Tag_false Are_explicit_interoperable;
-    typedef CGAL::Tag_false Are_implicit_interoperable;
+    typedef Tag_false Are_explicit_interoperable;
+    typedef Tag_false Are_implicit_interoperable;
     typedef void               Coercion_type;
-    typedef CGAL::Null_functor Cast;
+    typedef Null_functor Cast;
 };
 
 template<class A , class B> 

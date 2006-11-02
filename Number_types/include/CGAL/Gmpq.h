@@ -39,9 +39,9 @@ io_tag(const Gmpq&)
 
 // AST for Gmpq-class
 template <> class Algebraic_structure_traits< Gmpq >
-  : public Algebraic_structure_traits_base< Gmpq, CGAL::Field_tag >  {
+  : public Algebraic_structure_traits_base< Gmpq, Field_tag >  {
   public:
-    typedef CGAL::Tag_true            Is_exact;
+    typedef Tag_true            Is_exact;
     
     class Is_square
       : public Binary_function< Algebraic_structure, Algebraic_structure&, 
@@ -123,23 +123,23 @@ struct Rational_traits<Gmpq> {
 
 /* FIX ME: this not compile
 inline
-Root_of_2< CGAL::Gmpz >
-make_root_of_2(const CGAL::Gmpq &a, const CGAL::Gmpq &b,
-               const CGAL::Gmpq &c, bool d)
+Root_of_2< Gmpz >
+make_root_of_2(const Gmpq &a, const CGAL::Gmpq &b,
+               const Gmpq &c, bool d)
 {
-  return CGALi::make_root_of_2_rational< CGAL::Gmpz, CGAL::Gmpq >(a,b,c,d);
+  return CGALi::make_root_of_2_rational< Gmpz, CGAL::Gmpq >(a,b,c,d);
 }
 */
 
 #include <CGAL/make_root_of_2.h>
 #include <CGAL/Root_of_traits.h>
 #include <CGAL/Root_of_2.h>
-// CGAL::Gmpq is the same as Root_of_traits< CGAL::Gmpz >::RootOf_1
+// Gmpq is the same as Root_of_traits< CGAL::Gmpz >::RootOf_1
 template <>
-struct Root_of_traits< CGAL::Gmpq >
+struct Root_of_traits< Gmpq >
 {
-  typedef CGAL::Gmpq               RootOf_1;
-  typedef Root_of_2< CGAL::Gmpz >  RootOf_2;
+  typedef Gmpq               RootOf_1;
+  typedef Root_of_2< Gmpz >  RootOf_2;
 };
 
 CGAL_END_NAMESPACE

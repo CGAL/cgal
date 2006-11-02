@@ -23,7 +23,7 @@
 
 #define CGAL_int(T)    typename First_if_different<int,    T>::Type
 #define CGAL_double(T) typename First_if_different<double, T>::Type
-#define CGAL_To_interval(T) CGAL::To_interval<T>
+#define CGAL_To_interval(T) To_interval<T>
 
 
 #include <CGAL/basic.h>
@@ -120,7 +120,7 @@ template <>
 void
 print_at(std::ostream& os, const Object& o)
 {
-  os << "CGAL::Object";
+  os << "Object";
 }
 
 template <class T1, class T2>
@@ -240,14 +240,14 @@ public:
       os << "    ";
     }
     os << "Approximation: ";
-    CGAL::print_at(os, at);
+    print_at(os, at);
     os << std::endl;
     if(! is_lazy()){
       for(int i = 0; i < level; i++){
 	os << "    ";
       }
       os << "Exact: ";
-      CGAL::print_at(os, *et);
+      print_at(os, *et);
       os << std::endl;
     }
   }
@@ -361,8 +361,8 @@ struct Lazy_exact_unary : public Lazy_exact_rep<ET>
   {
     this->print_at_et(os, level);
     if(this->is_lazy()){
-      CGAL::msg(os, level, "Unary number operator:");
-      CGAL::print_dag(op1, os, level+1);
+      msg(os, level, "Unary number operator:");
+      print_dag(op1, os, level+1);
     }
   }
 #endif
@@ -392,9 +392,9 @@ struct Lazy_exact_binary : public Lazy_exact_rep<ET>
   {
     this->print_at_et(os, level);
     if(this->is_lazy()){
-      CGAL::msg(os, level, "Binary number operator:");
-      CGAL::print_dag(op1, os, level+1);
-      CGAL::print_dag(op2, os, level+1);
+      msg(os, level, "Binary number operator:");
+      print_dag(op1, os, level+1);
+      print_dag(op2, os, level+1);
     }
   }
 #endif
@@ -443,7 +443,7 @@ struct NAME : public Lazy_exact_unary<ET>                                \
 };
 #endif
 
-CGAL_LAZY_UNARY_OP(CGAL::opposite,  Lazy_exact_Opp)
+CGAL_LAZY_UNARY_OP(opposite,  Lazy_exact_Opp)
 CGAL_LAZY_UNARY_OP(CGAL_NTS abs,    Lazy_exact_Abs)
 CGAL_LAZY_UNARY_OP(CGAL_NTS square, Lazy_exact_Square)
 CGAL_LAZY_UNARY_OP(CGAL_NTS sqrt,   Lazy_exact_Sqrt)
@@ -497,11 +497,11 @@ template <typename ET>
 struct Lazy_exact_Min : public Lazy_exact_binary<ET>
 {
   Lazy_exact_Min (const Lazy_exact_nt<ET> &a, const Lazy_exact_nt<ET> &b)
-    : Lazy_exact_binary<ET>((CGAL::min)(a.approx(), b.approx()), a, b) {}
+    : Lazy_exact_binary<ET>((min)(a.approx(), b.approx()), a, b) {}
 
   void update_exact()
   {
-    this->et = new ET((CGAL::min)(this->op1.exact(), this->op2.exact()));
+    this->et = new ET((min)(this->op1.exact(), this->op2.exact()));
     if (!this->approx().is_point()) this->approx() = CGAL_NTS to_interval(*(this->et));
     this->prune_dag();
   }
@@ -512,11 +512,11 @@ template <typename ET>
 struct Lazy_exact_Max : public Lazy_exact_binary<ET>
 {
   Lazy_exact_Max (const Lazy_exact_nt<ET> &a, const Lazy_exact_nt<ET> &b)
-    : Lazy_exact_binary<ET>((CGAL::max)(a.approx(), b.approx()), a, b) {}
+    : Lazy_exact_binary<ET>((max)(a.approx(), b.approx()), a, b) {}
 
   void update_exact()
   {
-    this->et = new ET((CGAL::max)(this->op1.exact(), this->op2.exact()));
+    this->et = new ET((max)(this->op1.exact(), this->op2.exact()));
     if (!this->approx().is_point()) this->approx() = CGAL_NTS to_interval(*(this->et));
     this->prune_dag();
   }
@@ -678,8 +678,9 @@ public :
 
   bool identical(const Self& b) const
   {
-    return CGAL::identical(static_cast<const Handle &>(*this),
-                           static_cast<const Handle &>(b));
+      return ::CGAL::identical(
+              static_cast<const Handle &>(*this),
+              static_cast<const Handle &>(b));
   }
 
   template < typename T >
@@ -873,9 +874,9 @@ namespace INTERN_LAZY_EXACT_NT {
 
   template< class ET >
   class Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
-                                 CGAL::Integral_domain_without_division_tag >
+                                 Integral_domain_without_division_tag >
     : public Algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
-                                 CGAL::Integral_domain_without_division_tag > {
+                                 Integral_domain_without_division_tag > {
     public:
       typedef typename Algebraic_structure_traits<ET>::Is_exact Is_exact; 
       typedef Lazy_exact_nt<ET> Algebraic_structure;
@@ -915,12 +916,12 @@ namespace INTERN_LAZY_EXACT_NT {
   
   template< class ET >
   class Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
-                                                    CGAL::Integral_domain_tag >
+                                                    Integral_domain_tag >
     : public Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
-                                  CGAL::Integral_domain_without_division_tag > {
+                                  Integral_domain_without_division_tag > {
     public:
       typedef Lazy_exact_nt<ET>          Algebraic_structure;
-      typedef CGAL::Integral_domain_tag  Algebraic_structure_tag;
+      typedef Integral_domain_tag  Algebraic_structure_tag;
       
       class Integral_division
         : public Binary_function< Algebraic_structure, Algebraic_structure,
@@ -938,22 +939,22 @@ namespace INTERN_LAZY_EXACT_NT {
 
   template< class ET >
   class Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
-                                                    CGAL::Field_tag >
+                                                    Field_tag >
     : public Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
-                                                  CGAL::Integral_domain_tag > {
+                                                  Integral_domain_tag > {
     public:
       typedef Lazy_exact_nt<ET>  Algebraic_structure;
-      typedef CGAL::Field_tag    Algebraic_structure_tag;
+      typedef Field_tag    Algebraic_structure_tag;
   };
 
   template< class ET >
   class Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
-                                                    CGAL::Field_with_sqrt_tag >
+                                                    Field_with_sqrt_tag >
     : public Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
-                                                         CGAL::Field_tag > {
+                                                         Field_tag > {
     public:
       typedef Lazy_exact_nt<ET>          Algebraic_structure;
-      typedef CGAL::Field_with_sqrt_tag  Algebraic_structure_tag;
+      typedef Field_with_sqrt_tag  Algebraic_structure_tag;
                                                                                    
       class Sqrt 
         : public Unary_function< Algebraic_structure, Algebraic_structure > {
@@ -969,13 +970,13 @@ namespace INTERN_LAZY_EXACT_NT {
 
   template< class ET >
   class Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
-                                                CGAL::Field_with_kth_root_tag >
+                                                Field_with_kth_root_tag >
     : public Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
-                                                  CGAL::Field_with_sqrt_tag > {
+                                                  Field_with_sqrt_tag > {
 
     public:
       typedef Lazy_exact_nt<ET>          Algebraic_structure;
-      typedef CGAL::Field_with_kth_root_tag  Algebraic_structure_tag;
+      typedef Field_with_kth_root_tag  Algebraic_structure_tag;
                                                                                          
       class Kth_root
         : public Binary_function< int, Algebraic_structure, 
@@ -991,9 +992,9 @@ namespace INTERN_LAZY_EXACT_NT {
 
   template< class ET >
   class Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
-                                                CGAL::Field_with_root_of_tag >
+                                                Field_with_root_of_tag >
     : public Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
-                                              CGAL::Field_with_kth_root_tag > {
+                                              Field_with_kth_root_tag > {
     private:
       struct Cast{                                      
         typedef ET result_type;                               
@@ -1004,7 +1005,7 @@ namespace INTERN_LAZY_EXACT_NT {
 
     public:
       typedef Lazy_exact_nt<ET>          Algebraic_structure;
-      typedef CGAL::Field_with_root_of_tag  Algebraic_structure_tag;
+      typedef Field_with_root_of_tag  Algebraic_structure_tag;
                                                                                          
       class Root_of {
         public:
@@ -1025,12 +1026,12 @@ namespace INTERN_LAZY_EXACT_NT {
 
   template< class ET >
   class Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
-                                        CGAL::Unique_factorization_domain_tag >
+                                        Unique_factorization_domain_tag >
     : public Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
-                                              CGAL::Integral_domain_tag > {
+                                              Integral_domain_tag > {
     public:
       typedef Lazy_exact_nt<ET>          Algebraic_structure;
-      typedef CGAL::Unique_factorization_domain_tag  Algebraic_structure_tag;
+      typedef Unique_factorization_domain_tag  Algebraic_structure_tag;
 
       // gcd kills filtering.
       class Gcd 
@@ -1049,12 +1050,12 @@ namespace INTERN_LAZY_EXACT_NT {
 
   template< class ET >
   class Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
-                                                    CGAL::Euclidean_ring_tag >
+                                                    Euclidean_ring_tag >
     : public Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
-                                      CGAL::Unique_factorization_domain_tag > {
+                                      Unique_factorization_domain_tag > {
     public:
       typedef Lazy_exact_nt<ET>          Algebraic_structure;
-      typedef CGAL::Euclidean_ring_tag  Algebraic_structure_tag;
+      typedef Euclidean_ring_tag  Algebraic_structure_tag;
 
       class Div
         : public Binary_function< Algebraic_structure, Algebraic_structure,
@@ -1132,7 +1133,7 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
   
   // Every type ET of Lazy_exact_nt<ET> has to be real embeddable.
   BOOST_STATIC_ASSERT((::boost::is_same< typename Real_embeddable_traits< ET >
-                                ::Is_real_embeddable, CGAL::Tag_true >::value));
+                                ::Is_real_embeddable, Tag_true >::value));
 
   public:
     typedef Lazy_exact_nt<ET> Real_embeddable;  
@@ -1161,9 +1162,9 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
     
     class Compare 
       : public Binary_function< Real_embeddable, Real_embeddable,
-                                CGAL::Comparison_result > {
+                                Comparison_result > {
       public:
-        CGAL::Comparison_result operator()( const Real_embeddable& a, 
+        Comparison_result operator()( const Real_embeddable& a, 
                                             const Real_embeddable& b ) const {
             CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
             if (a.identical(b))
@@ -1176,7 +1177,7 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
         }
         
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Real_embeddable,
-                                                      CGAL::Comparison_result );
+                                                      Comparison_result );
         
     };
     
@@ -1234,7 +1235,7 @@ class Lazy_exact_nt_coercion_traits_base{
 
 template <class ET1, class ET2>
 class Lazy_exact_nt_coercion_traits_base
-< Lazy_exact_nt<ET1>, Lazy_exact_nt<ET2>, CGAL::Tag_true >{
+< Lazy_exact_nt<ET1>, Lazy_exact_nt<ET2>, Tag_true >{
     typedef Coercion_traits<ET1,ET2> CT;
     typedef Lazy_exact_nt<ET1> A;
     typedef Lazy_exact_nt<ET2> B;
@@ -1277,13 +1278,13 @@ public:
     typedef typename CT::Are_explicit_interoperable Are_explicit_interoperable;
     typedef typename CT::Are_implicit_interoperable Are_implicit_interoperable;
 private:
-    static const  bool interoperable = boost::is_same< Are_implicit_interoperable, CGAL::Tag_false>::value;
+    static const  bool interoperable = boost::is_same< Are_implicit_interoperable, Tag_false>::value;
 public:
     // define Coercion_type
-    typedef typename boost::mpl::if_c< interoperable, CGAL::Null_tag, 
+    typedef typename boost::mpl::if_c< interoperable, Null_tag, 
     NT >::type                                 Coercion_type;
     // define Cast
-    typedef typename boost::mpl::if_c< interoperable, CGAL::Null_functor, 
+    typedef typename boost::mpl::if_c< interoperable, Null_functor, 
     INTERN_CT::Cast_from_to<double,NT> >::type Cast;
 };
 
@@ -1396,7 +1397,7 @@ struct Lazy_exact_ro2
                                           op3.exact(), smaller));
 
         if (!this->approx().is_point())
-            this->at = CGAL::to_interval(*(this->et));
+            this->at = to_interval(*(this->et));
         this->prune_dag();
 
     }

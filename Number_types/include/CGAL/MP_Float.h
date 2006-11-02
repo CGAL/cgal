@@ -294,7 +294,7 @@ void swap(MP_Float &m, MP_Float &n)
 
 inline
 bool operator<(const MP_Float &a, const MP_Float &b)
-{ return CGAL::INTERN_MP_FLOAT::compare(a, b) == SMALLER; }
+{ return INTERN_MP_FLOAT::compare(a, b) == SMALLER; }
 
 inline
 bool operator>(const MP_Float &a, const MP_Float &b)
@@ -335,24 +335,24 @@ operator/(const MP_Float &a, const MP_Float &b)
 template <> class Algebraic_structure_traits< MP_Float >
   : public Algebraic_structure_traits_base< MP_Float, 
 #ifdef CGAL_MP_FLOAT_ALLOW_INEXACT
-                                            CGAL::Field_with_sqrt_tag
+                                            Field_with_sqrt_tag
 #else                                            
-                                            CGAL::Euclidean_ring_tag
+                                            Euclidean_ring_tag
 #endif
                                           >  {
   public:
 
 #ifdef CGAL_MP_FLOAT_ALLOW_INEXACT
-    typedef CGAL::Tag_false           Is_exact;
+    typedef Tag_false           Is_exact;
 #else // !CGAL_MP_FLOAT_ALLOW_INEXACT
-    typedef CGAL::Tag_true            Is_exact;
+    typedef Tag_true            Is_exact;
 #endif
                                                                                              
     class Square 
       : public Unary_function< Algebraic_structure, Algebraic_structure > {
       public:
         Algebraic_structure operator()( const Algebraic_structure& x ) const {
-          return CGAL::INTERN_MP_FLOAT::square(x);
+          return INTERN_MP_FLOAT::square(x);
         }
     };
 
@@ -372,7 +372,7 @@ template <> class Algebraic_structure_traits< MP_Float >
       public:
         Algebraic_structure operator()( const Algebraic_structure& x,
                                         const Algebraic_structure& y ) const {
-          return CGAL::INTERN_MP_FLOAT::gcd( x, y );
+          return INTERN_MP_FLOAT::gcd( x, y );
         }
     };
     
@@ -382,11 +382,11 @@ template <> class Algebraic_structure_traits< MP_Float >
       public:
         Algebraic_structure operator()( const Algebraic_structure& x,
                                         const Algebraic_structure& y ) const {
-          return CGAL::INTERN_MP_FLOAT::div( x, y );
+          return INTERN_MP_FLOAT::div( x, y );
         }
     };
     
-    typedef CGAL::INTERN_AST::Mod_per_operator< Algebraic_structure > Mod;
+    typedef INTERN_AST::Mod_per_operator< Algebraic_structure > Mod;
 };
 
 
@@ -406,11 +406,11 @@ template <> class Real_embeddable_traits< MP_Float >
     
     class Compare 
       : public Binary_function< Real_embeddable, Real_embeddable,
-                                CGAL::Comparison_result > {
+                                Comparison_result > {
       public:
-        CGAL::Comparison_result operator()( const Real_embeddable& x, 
+        Comparison_result operator()( const Real_embeddable& x, 
                                             const Real_embeddable& y ) const {
-          return CGAL::INTERN_MP_FLOAT::compare( x, y );
+          return INTERN_MP_FLOAT::compare( x, y );
         }
     };
     
@@ -418,7 +418,7 @@ template <> class Real_embeddable_traits< MP_Float >
       : public Unary_function< Real_embeddable, double > {
       public:
         double operator()( const Real_embeddable& x ) const {
-          return CGAL::INTERN_MP_FLOAT::to_double( x );
+          return INTERN_MP_FLOAT::to_double( x );
         }
     };
     
@@ -426,7 +426,7 @@ template <> class Real_embeddable_traits< MP_Float >
       : public Unary_function< Real_embeddable, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Real_embeddable& x ) const {
-          return CGAL::INTERN_MP_FLOAT::to_interval( x );
+          return INTERN_MP_FLOAT::to_interval( x );
         }
     };
 };
@@ -688,11 +688,11 @@ simplify_quotient(MP_Float & numerator, MP_Float & denominator)
 
 inline void simplify_root_of_2(MP_Float &/*a*/, MP_Float &/*b*/, MP_Float&/*c*/) {
 #if 0
-  if(CGAL::is_zero(a)) {
+  if(is_zero(a)) {
   	simplify_quotient(b,c); return;
-  } else if(CGAL::is_zero(b)) {
+  } else if(is_zero(b)) {
   	simplify_quotient(a,c); return;
-  } else if(CGAL::is_zero(c)) {
+  } else if(is_zero(c)) {
   	simplify_quotient(a,b); return;
   }  	
   MP_Float::exponent_type va = a.exp + 

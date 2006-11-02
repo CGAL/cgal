@@ -73,7 +73,7 @@ extern "C" {
 #  if defined CGAL_CFG_DENORMALS_COMPILE_BUG
      // For compilers crashing when dealing with denormalized values.
      // So we have to generate it at run time instead.
-#    define CGAL_IA_MIN_DOUBLE (CGAL::CGALi::minimin)
+#    define CGAL_IA_MIN_DOUBLE (CGALi::minimin)
 #  else
 #    define CGAL_IA_MIN_DOUBLE (5e-324)
 #  endif
@@ -141,7 +141,7 @@ inline double IA_force_to_double(double x)
 #if !defined (CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT) && \
     ((defined __i386__ && !defined CGAL_SAFE_SSE2) \
      || defined _MSC_VER || defined __BORLANDC__)
-#  define CGAL_IA_FORCE_TO_DOUBLE(x) CGAL::IA_force_to_double(x)
+#  define CGAL_IA_FORCE_TO_DOUBLE(x) IA_force_to_double(x)
 #else
 #  define CGAL_IA_FORCE_TO_DOUBLE(x) (x)
 #endif
@@ -154,12 +154,12 @@ inline double IA_force_to_double(double x)
 	// Note : GCC 3 doesn't guarantee __builtin_constant_p to return false
 	// when he will not do cprop :(.
 #    define CGAL_IA_STOP_CPROP(x) \
-            (__builtin_constant_p (x) ? CGAL::IA_force_to_double(x) : (x) )
+            (__builtin_constant_p (x) ? IA_force_to_double(x) : (x) )
 #    define CGAL_IA_STOP_CPROP2(x,y) \
             (__builtin_constant_p (y) ? CGAL_IA_STOP_CPROP(x) : (x) )
 #  else
-#    define CGAL_IA_STOP_CPROP(x)    CGAL::IA_force_to_double(x)
-#    define CGAL_IA_STOP_CPROP2(x,y) CGAL::IA_force_to_double(x)
+#    define CGAL_IA_STOP_CPROP(x)    IA_force_to_double(x)
+#    define CGAL_IA_STOP_CPROP2(x,y) IA_force_to_double(x)
 #  endif
 #else
 #  define CGAL_IA_STOP_CPROP(x)    (x)
@@ -179,7 +179,7 @@ inline double IA_bug_sqrt(double d)
   return d;
 }
 
-#  define CGAL_BUG_SQRT(d) CGAL::IA_bug_sqrt(d)
+#  define CGAL_BUG_SQRT(d) IA_bug_sqrt(d)
 
 
 #elif defined __SSE2_MATH__
@@ -192,7 +192,7 @@ inline double IA_bug_sqrt(double d)
   asm volatile ("fsqrt" : "=t"(r) : "0"(d));
   return r;
 }
-#  define CGAL_BUG_SQRT(d) CGAL::IA_bug_sqrt(d)
+#  define CGAL_BUG_SQRT(d) IA_bug_sqrt(d)
 #else
 #  define CGAL_BUG_SQRT(d) CGAL_CLIB_STD::sqrt(d)
 #endif

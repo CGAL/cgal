@@ -57,23 +57,23 @@ template< class Algebraic_structure_ >
 class Algebraic_structure_traits  {
   public:
     typedef Algebraic_structure_  Algebraic_structure;
-    typedef CGAL::Null_tag       Algebraic_structure_tag;
-    typedef CGAL::Null_tag       Is_exact;
+    typedef Null_tag       Algebraic_structure_tag;
+    typedef Null_tag       Is_exact;
 
-    typedef CGAL::Null_functor Simplify;
-    typedef CGAL::Null_functor Unit_part;
-    typedef CGAL::Null_functor Integral_division;
-    typedef CGAL::Null_functor Is_square;    
-    typedef CGAL::Null_functor Gcd;
-    typedef CGAL::Null_functor Div_mod;
-    typedef CGAL::Null_functor Div;
-    typedef CGAL::Null_functor Mod;
-    typedef CGAL::Null_functor Square;
-    typedef CGAL::Null_functor Is_zero;
-    typedef CGAL::Null_functor Is_one;    
-    typedef CGAL::Null_functor Sqrt;
-    typedef CGAL::Null_functor Kth_root;
-    typedef CGAL::Null_functor Root_of; 
+    typedef Null_functor Simplify;
+    typedef Null_functor Unit_part;
+    typedef Null_functor Integral_division;
+    typedef Null_functor Is_square;    
+    typedef Null_functor Gcd;
+    typedef Null_functor Div_mod;
+    typedef Null_functor Div;
+    typedef Null_functor Mod;
+    typedef Null_functor Square;
+    typedef Null_functor Is_zero;
+    typedef Null_functor Is_one;    
+    typedef Null_functor Sqrt;
+    typedef Null_functor Kth_root;
+    typedef Null_functor Root_of; 
   
 };
 
@@ -81,7 +81,7 @@ class Algebraic_structure_traits  {
 // Currently it causes an error in package Min_sphere_of_spheres
 template< class Algebraic_structure >
 const bool is_exact( const Algebraic_structure& as ) {
-    return CGAL::check_tag( 
+    return check_tag( 
             typename Algebraic_structure_traits< Algebraic_structure >::Is_exact() );
 }
 
@@ -91,14 +91,14 @@ template< class Algebraic_structure, class Algebra_type >
 class Algebraic_structure_traits_base;
 
 //! The template specialization that can be used for types that are not any
-//! of the number type concepts. All functors are set to \c CGAL::Null_functor
+//! of the number type concepts. All functors are set to \c Null_functor
 //! or suitable defaults. The \c Simplify functor does nothing by default.
 template< class Algebraic_structure_ >
-class Algebraic_structure_traits_base< Algebraic_structure_, CGAL::Null_tag > {
+class Algebraic_structure_traits_base< Algebraic_structure_, Null_tag > {
   public:
     typedef Algebraic_structure_  Algebraic_structure;
-    typedef CGAL::Null_tag       Algebraic_structure_tag;
-    typedef CGAL::Tag_false       Is_exact;
+    typedef Null_tag       Algebraic_structure_tag;
+    typedef Tag_false       Is_exact;
 
     // does nothing by default
     class Simplify 
@@ -107,19 +107,19 @@ class Algebraic_structure_traits_base< Algebraic_structure_, CGAL::Null_tag > {
         void operator()( Algebraic_structure& ) const {}
     };
 
-    typedef CGAL::Null_functor Unit_part;
-    typedef CGAL::Null_functor Integral_division;
-    typedef CGAL::Null_functor Is_square;    
-    typedef CGAL::Null_functor Gcd;
-    typedef CGAL::Null_functor Div_mod;
-    typedef CGAL::Null_functor Div;
-    typedef CGAL::Null_functor Mod;
-    typedef CGAL::Null_functor Square;
-    typedef CGAL::Null_functor Is_zero;
-    typedef CGAL::Null_functor Is_one;    
-    typedef CGAL::Null_functor Sqrt;
-    typedef CGAL::Null_functor Kth_root;
-    typedef CGAL::Null_functor Root_of; 
+    typedef Null_functor Unit_part;
+    typedef Null_functor Integral_division;
+    typedef Null_functor Is_square;    
+    typedef Null_functor Gcd;
+    typedef Null_functor Div_mod;
+    typedef Null_functor Div;
+    typedef Null_functor Mod;
+    typedef Null_functor Square;
+    typedef Null_functor Is_zero;
+    typedef Null_functor Is_one;    
+    typedef Null_functor Sqrt;
+    typedef Null_functor Kth_root;
+    typedef Null_functor Root_of; 
 };
 
 //! The template specialization that is used if the number type is
@@ -129,12 +129,12 @@ class Algebraic_structure_traits_base< Algebraic_structure_, CGAL::Null_tag > {
 //! \c Algebraic_structure(1) otherwise
 template< class Algebraic_structure_ >
 class Algebraic_structure_traits_base< Algebraic_structure_, 
-                                       CGAL::Integral_domain_without_division_tag > 
+                                       Integral_domain_without_division_tag > 
     : public Algebraic_structure_traits_base< Algebraic_structure_, 
-                                              CGAL::Null_tag > {
+                                              Null_tag > {
   public:
     typedef Algebraic_structure_                   Algebraic_structure;
-    typedef CGAL::Integral_domain_without_division_tag  Algebraic_structure_tag;
+    typedef Integral_domain_without_division_tag  Algebraic_structure_tag;
 
     // returns Algebraic_structure(1) by default
     class Unit_part 
@@ -181,12 +181,12 @@ class Algebraic_structure_traits_base< Algebraic_structure_,
 //! \c Algebraic_structure_traits itself.
 template< class Algebraic_structure_ >
 class Algebraic_structure_traits_base< Algebraic_structure_, 
-                                       CGAL::Integral_domain_tag >
+                                       Integral_domain_tag >
     : public Algebraic_structure_traits_base< Algebraic_structure_, 
-                                       CGAL::Integral_domain_without_division_tag > {
+                                       Integral_domain_without_division_tag > {
   public:
     typedef Algebraic_structure_       Algebraic_structure;
-    typedef CGAL::Integral_domain_tag  Algebraic_structure_tag;
+    typedef Integral_domain_tag  Algebraic_structure_tag;
 };
 
 
@@ -198,12 +198,12 @@ class Algebraic_structure_traits_base< Algebraic_structure_,
 //! \c Algebraic_structure_traits itself.
 template< class Algebraic_structure_ >
 class Algebraic_structure_traits_base< Algebraic_structure_, 
-                                       CGAL::Unique_factorization_domain_tag >
+                                       Unique_factorization_domain_tag >
     : public Algebraic_structure_traits_base< Algebraic_structure_, 
-                                              CGAL::Integral_domain_tag > {
+                                              Integral_domain_tag > {
   public:
     typedef Algebraic_structure_  Algebraic_structure;
-    typedef CGAL::Unique_factorization_domain_tag    Algebraic_structure_tag;
+    typedef Unique_factorization_domain_tag    Algebraic_structure_tag;
 };
 
 
@@ -211,12 +211,12 @@ class Algebraic_structure_traits_base< Algebraic_structure_,
 //! a model of the \c EuclideanRing concept.
 template< class Algebraic_structure_ >
 class Algebraic_structure_traits_base< Algebraic_structure_, 
-                                       CGAL::Euclidean_ring_tag >
+                                       Euclidean_ring_tag >
     : public Algebraic_structure_traits_base< Algebraic_structure_, 
-                                              CGAL::Unique_factorization_domain_tag > {
+                                              Unique_factorization_domain_tag > {
   public:
     typedef Algebraic_structure_        Algebraic_structure;
-    typedef CGAL::Euclidean_ring_tag    Algebraic_structure_tag;
+    typedef Euclidean_ring_tag    Algebraic_structure_tag;
 
     // maps to \c Div by default.
     class Integral_division 
@@ -225,11 +225,11 @@ class Algebraic_structure_traits_base< Algebraic_structure_,
       public:
         Algebraic_structure operator()( const Algebraic_structure& x, 
                                         const Algebraic_structure& y) const { 
-          typename CGAL::Algebraic_structure_traits<Algebraic_structure>::Div 
+          typename Algebraic_structure_traits<Algebraic_structure>::Div 
                                                                     actual_div;
           CGAL_precondition_msg( !is_exact(x) || actual_div( x, y) * y == x,
             "'x' must be divisible by 'y' in "
-            "CGAL::Algebraic_structure_traits<...>::Integral_div()(x,y)" );
+            "Algebraic_structure_traits<...>::Integral_div()(x,y)" );
           return actual_div( x, y);          
         }
       
@@ -243,9 +243,9 @@ class Algebraic_structure_traits_base< Algebraic_structure_,
       public:
         Algebraic_structure operator()( const Algebraic_structure& x, 
                                         const Algebraic_structure& y) const {
-          typename CGAL::Algebraic_structure_traits<Algebraic_structure>::Mod mod;
-          typename CGAL::Algebraic_structure_traits<Algebraic_structure>::Unit_part unit_part;
-          typename CGAL::Algebraic_structure_traits<Algebraic_structure>::Integral_division integral_div;
+          typename Algebraic_structure_traits<Algebraic_structure>::Mod mod;
+          typename Algebraic_structure_traits<Algebraic_structure>::Unit_part unit_part;
+          typename Algebraic_structure_traits<Algebraic_structure>::Integral_division integral_div;
           // First: the extreme cases and negative sign corrections.
           if (x == Algebraic_structure(0)) {
               if (y == Algebraic_structure(0))  
@@ -304,7 +304,7 @@ class Algebraic_structure_traits_base< Algebraic_structure_,
         void operator()( const Algebraic_structure& x, 
                          const Algebraic_structure& y, 
                          Algebraic_structure& q, Algebraic_structure& r) const {
-          typedef CGAL::Algebraic_structure_traits<Algebraic_structure> Traits;
+          typedef Algebraic_structure_traits<Algebraic_structure> Traits;
           typename Traits::Div  actual_div;
           typename Traits::Mod  actual_mod;
           q = actual_div( x, y );
@@ -331,7 +331,7 @@ class Algebraic_structure_traits_base< Algebraic_structure_,
       public:
         Algebraic_structure operator()( const Algebraic_structure& x, 
                                         const Algebraic_structure& y) const {
-          typename CGAL::Algebraic_structure_traits<Algebraic_structure>
+          typename Algebraic_structure_traits<Algebraic_structure>
                                                     ::Div_mod actual_div_mod;
           Algebraic_structure q;     
           Algebraic_structure r;
@@ -349,7 +349,7 @@ class Algebraic_structure_traits_base< Algebraic_structure_,
       public:
         Algebraic_structure operator()( const Algebraic_structure& x, 
                                         const Algebraic_structure& y) const {
-          typename CGAL::Algebraic_structure_traits<Algebraic_structure>
+          typename Algebraic_structure_traits<Algebraic_structure>
                                                     ::Div_mod actual_div_mod;
           Algebraic_structure q;     
           Algebraic_structure r;
@@ -371,12 +371,12 @@ class Algebraic_structure_traits_base< Algebraic_structure_,
 //! \ingroup NiX_NT_traits_bases
 //
 template< class Algebraic_structure_ >
-class Algebraic_structure_traits_base< Algebraic_structure_, CGAL::Field_tag >
+class Algebraic_structure_traits_base< Algebraic_structure_, Field_tag >
     : public Algebraic_structure_traits_base< Algebraic_structure_, 
-                                              CGAL::Integral_domain_tag > {
+                                              Integral_domain_tag > {
   public:
     typedef Algebraic_structure_        Algebraic_structure;
-    typedef CGAL::Field_tag             Algebraic_structure_tag;
+    typedef Field_tag             Algebraic_structure_tag;
 
     // returns the argument \a a by default
     class Unit_part 
@@ -396,7 +396,7 @@ class Algebraic_structure_traits_base< Algebraic_structure_, CGAL::Field_tag >
 
           CGAL_precondition_msg( !is_exact(x) || (x / y) * y  == x,
             "'x' must be divisible by 'y' in "
-            "CGAL::Algebraic_structure_traits<...>::Integral_div()(x,y)" );
+            "Algebraic_structure_traits<...>::Integral_div()(x,y)" );
           return x / y;
         }
         
@@ -414,12 +414,12 @@ class Algebraic_structure_traits_base< Algebraic_structure_, CGAL::Field_tag >
 //
 template< class Algebraic_structure_ >
 class Algebraic_structure_traits_base< Algebraic_structure_, 
-                                       CGAL::Field_with_sqrt_tag>
+                                       Field_with_sqrt_tag>
     : public Algebraic_structure_traits_base< Algebraic_structure_, 
-                                              CGAL::Field_tag> {
+                                              Field_tag> {
   public:
     typedef Algebraic_structure_        Algebraic_structure;
-    typedef CGAL::Field_with_sqrt_tag   Algebraic_structure_tag;
+    typedef Field_with_sqrt_tag   Algebraic_structure_tag;
 
     struct Is_square
         :public Binary_function<Algebraic_structure,Algebraic_structure&,bool>
@@ -444,15 +444,15 @@ class Algebraic_structure_traits_base< Algebraic_structure_,
 //
 template< class Algebraic_structure_ >
 class Algebraic_structure_traits_base< Algebraic_structure_, 
-                                       CGAL::Field_with_kth_root_tag>
+                                       Field_with_kth_root_tag>
     : public Algebraic_structure_traits_base< Algebraic_structure_, 
-                                              CGAL::Field_with_sqrt_tag> {
+                                              Field_with_sqrt_tag> {
     
     
     
   public:
     typedef Algebraic_structure_        Algebraic_structure;
-    typedef CGAL::Field_with_kth_root_tag   Algebraic_structure_tag;
+    typedef Field_with_kth_root_tag   Algebraic_structure_tag;
 };
 
 
@@ -467,12 +467,12 @@ class Algebraic_structure_traits_base< Algebraic_structure_,
 //
 template< class Algebraic_structure_ >
 class Algebraic_structure_traits_base< Algebraic_structure_, 
-                                       CGAL::Field_with_root_of_tag >
+                                       Field_with_root_of_tag >
     : public Algebraic_structure_traits_base< Algebraic_structure_, 
-                                              CGAL::Field_with_kth_root_tag > {
+                                              Field_with_kth_root_tag > {
   public:
     typedef Algebraic_structure_           Algebraic_structure;
-    typedef CGAL::Field_with_root_of_tag   Algebraic_structure_tag;
+    typedef Field_with_root_of_tag   Algebraic_structure_tag;
 };
 
 // Some common functors to be used by AST specializations
@@ -510,7 +510,7 @@ namespace INTERN_AST {
     public:      
       bool operator()( const Algebraic_structure& x, 
                        Algebraic_structure& y ) const {
-          typename CGAL::Algebraic_structure_traits< Algebraic_structure >::Sqrt
+          typename Algebraic_structure_traits< Algebraic_structure >::Sqrt
               actual_sqrt;
           y = actual_sqrt( x );
           return y * y == x;

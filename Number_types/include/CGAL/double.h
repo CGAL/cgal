@@ -147,9 +147,9 @@ class Is_valid< double >
 
 template <> class Algebraic_structure_traits< double >
   : public Algebraic_structure_traits_base< double, 
-                                            CGAL::Field_with_kth_root_tag >  {
+                                            Field_with_kth_root_tag >  {
   public:
-    typedef CGAL::Tag_false            Is_exact;
+    typedef Tag_false            Is_exact;
             
     class Sqrt 
       : public Unary_function< Algebraic_structure, Algebraic_structure > {
@@ -186,9 +186,9 @@ template <> class Real_embeddable_traits< double >
     };    
 #endif
 
-    typedef CGAL::INTERN_RET::To_double_by_conversion< Real_embeddable >
+    typedef INTERN_RET::To_double_by_conversion< Real_embeddable >
                                                                   To_double;      
-    typedef CGAL::INTERN_RET::To_interval_by_conversion< Real_embeddable >
+    typedef INTERN_RET::To_interval_by_conversion< Real_embeddable >
                                                                   To_interval;    
                                                                   
 // Is_finite depends on platform

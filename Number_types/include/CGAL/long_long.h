@@ -49,13 +49,13 @@ template <> struct Number_type_traits<long long int> {
 
 template<> class Algebraic_structure_traits< long long int >
   : public Algebraic_structure_traits_base< long long int, 
-                                            CGAL::Euclidean_ring_tag > {
+                                            Euclidean_ring_tag > {
 
   public:
-    typedef CGAL::Tag_true            Is_exact;
+    typedef Tag_true            Is_exact;
     
-    typedef CGAL::INTERN_AST::Div_per_operator< Algebraic_structure >  Div;
-    typedef CGAL::INTERN_AST::Mod_per_operator< Algebraic_structure >  Mod;       
+    typedef INTERN_AST::Div_per_operator< Algebraic_structure >  Div;
+    typedef INTERN_AST::Mod_per_operator< Algebraic_structure >  Mod;       
 
     class Is_square 
       : public Binary_function< Algebraic_structure, Algebraic_structure&,
@@ -78,7 +78,7 @@ template <> class Real_embeddable_traits< long long int >
   : public Real_embeddable_traits_base< long long int > {
   public:
           
-    typedef CGAL::INTERN_RET::To_double_by_conversion< Real_embeddable >
+    typedef INTERN_RET::To_double_by_conversion< Real_embeddable >
                                                                       To_double;
 
     class To_interval 
@@ -86,7 +86,7 @@ template <> class Real_embeddable_traits< long long int >
       public:
         std::pair<double, double> operator()( const Real_embeddable& x ) const {
           Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
-          CGAL::Interval_nt<false> approx ((double) x);
+          Interval_nt<false> approx ((double) x);
           FPU_set_cw(CGAL_FE_UPWARD);
           approx += Interval_nt<false>::smallest();
           return approx.pair();          

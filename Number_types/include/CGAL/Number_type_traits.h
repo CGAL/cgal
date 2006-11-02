@@ -43,30 +43,30 @@ template < class NT >
 struct Number_type_traits {
 private:
     typedef Algebraic_structure_traits<NT> AST; 
-    static const bool is_exact =   ::boost::is_same< CGAL::Tag_true, typename AST::Is_exact>::value;
-    static const bool has_gcd  = ! ::boost::is_same< CGAL::Null_functor, typename AST::Gcd>::value;
-    static const bool has_sqrt = ! ::boost::is_same< CGAL::Null_functor, typename AST::Sqrt >::value;
+    static const bool is_exact =   ::boost::is_same< Tag_true, typename AST::Is_exact>::value;
+    static const bool has_gcd  = ! ::boost::is_same< Null_functor, typename AST::Gcd>::value;
+    static const bool has_sqrt = ! ::boost::is_same< Null_functor, typename AST::Sqrt >::value;
 
     static const bool has_division  = 
-        ::boost::is_base_and_derived<CGAL::Field_tag , typename AST::Algebraic_structure_tag>::value 
-    ||  ::boost::is_same<CGAL::Field_tag, typename AST::Algebraic_structure_tag>::value ;
+        ::boost::is_base_and_derived<Field_tag , typename AST::Algebraic_structure_tag>::value 
+    ||  ::boost::is_same<Field_tag, typename AST::Algebraic_structure_tag>::value ;
     
     static const bool has_ring_operations = 
-        ::boost::is_base_and_derived<CGAL::Integral_domain_without_division_tag , typename AST::Algebraic_structure_tag>::value 
-    ||  ::boost::is_same<CGAL::Integral_domain_without_division_tag, typename AST::Algebraic_structure_tag>::value ;
+        ::boost::is_base_and_derived<Integral_domain_without_division_tag , typename AST::Algebraic_structure_tag>::value 
+    ||  ::boost::is_same<Integral_domain_without_division_tag, typename AST::Algebraic_structure_tag>::value ;
 public:
-    typedef typename ::boost::mpl::if_c<has_gcd     ,CGAL::Tag_true, CGAL::Tag_false>::type 
+    typedef typename ::boost::mpl::if_c<has_gcd     ,Tag_true, CGAL::Tag_false>::type 
     Has_gcd;
-    typedef typename ::boost::mpl::if_c<has_division,CGAL::Tag_true, CGAL::Tag_false>::type 
+    typedef typename ::boost::mpl::if_c<has_division,Tag_true, CGAL::Tag_false>::type 
     Has_division;
-    typedef typename ::boost::mpl::if_c<has_sqrt    ,CGAL::Tag_true, CGAL::Tag_false>::type 
+    typedef typename ::boost::mpl::if_c<has_sqrt    ,Tag_true, CGAL::Tag_false>::type 
     Has_sqrt;
 
-    typedef typename ::boost::mpl::if_c<is_exact && has_ring_operations ,CGAL::Tag_true, CGAL::Tag_false>::type 
+    typedef typename ::boost::mpl::if_c<is_exact && has_ring_operations ,Tag_true, CGAL::Tag_false>::type 
     Has_exact_ring_operations;
-    typedef typename ::boost::mpl::if_c<is_exact && has_division        ,CGAL::Tag_true, CGAL::Tag_false>::type 
+    typedef typename ::boost::mpl::if_c<is_exact && has_division        ,Tag_true, CGAL::Tag_false>::type 
     Has_exact_division;
-    typedef typename ::boost::mpl::if_c<is_exact && has_sqrt            ,CGAL::Tag_true, CGAL::Tag_false>::type 
+    typedef typename ::boost::mpl::if_c<is_exact && has_sqrt            ,Tag_true, CGAL::Tag_false>::type 
     Has_exact_sqrt;
 };
 */

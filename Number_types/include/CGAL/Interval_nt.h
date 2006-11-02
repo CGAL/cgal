@@ -316,8 +316,8 @@ class Is_valid< Interval_nt<Protected> >
   : public Unary_function< Interval_nt<Protected>, bool > {
   public :
     bool operator()( const Interval_nt<Protected>& x ) const {
-      return CGAL::is_valid(x.inf()) && 
-             CGAL::is_valid(x.sup()) && 
+      return is_valid(x.inf()) && 
+             is_valid(x.sup()) && 
              x.inf() <= x.sup();
     }  
 };
@@ -901,10 +901,10 @@ namespace INTERN_INTERVAL_NT {
 template< bool B > 
 class Algebraic_structure_traits< Interval_nt<B> >
   : public Algebraic_structure_traits_base< Interval_nt<B>, 
-                                            CGAL::Field_with_sqrt_tag >  {
+                                            Field_with_sqrt_tag >  {
   public:
     typedef Interval_nt<B>    Algebraic_structure;
-    typedef CGAL::Tag_false   Is_exact;
+    typedef Tag_false   Is_exact;
                 
     class Is_zero 
       : public Unary_function< Algebraic_structure, Uncertain<bool> > {
@@ -976,9 +976,9 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     };    
 
     class Sign
-        : public Unary_function< Real_embeddable, ::CGAL::Uncertain< ::CGAL::Sign > > {
+        : public Unary_function< Real_embeddable, Uncertain< ::CGAL::Sign > > {
       public:        
-        ::CGAL::Uncertain< ::CGAL::Sign > operator()( const Real_embeddable& x ) const {
+        Uncertain< ::CGAL::Sign > operator()( const Real_embeddable& x ) const {
             return INTERN_INTERVAL_NT::sign( x );
         }
     };    
@@ -1009,7 +1009,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
             return INTERN_INTERVAL_NT::compare( x, y );
         }
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Real_embeddable,
-                CGAL::Comparison_result );
+                Comparison_result );
     };    
 
     class To_double

@@ -470,8 +470,8 @@ struct Simplify_selector {
 };
 
 template< class NT >
-struct Simplify_selector< NT, CGAL::Null_functor > {
-  typedef CGAL::Null_functor Simplify;
+struct Simplify_selector< NT, Null_functor > {
+  typedef Null_functor Simplify;
 };
 
 template< class NT, class Functor >
@@ -484,8 +484,8 @@ struct Unit_part_selector {
 };
 
 template< class NT >
-struct Unit_part_selector< NT, CGAL::Null_functor > {
-  typedef CGAL::Null_functor Unit_part;
+struct Unit_part_selector< NT, Null_functor > {
+  typedef Null_functor Unit_part;
 };
 
 template< class NT, class Functor >
@@ -498,8 +498,8 @@ struct Is_zero_selector {
 };
 
 template< class NT >
-struct Is_zero_selector< NT, CGAL::Null_functor > {
-  typedef CGAL::Null_functor Is_zero;
+struct Is_zero_selector< NT, Null_functor > {
+  typedef Null_functor Is_zero;
 };
 
 template< class NT, class Functor >
@@ -512,8 +512,8 @@ struct Is_one_selector {
 };
 
 template< class NT >
-struct Is_one_selector< NT, CGAL::Null_functor > {
-  typedef CGAL::Null_functor Is_one;
+struct Is_one_selector< NT, Null_functor > {
+  typedef Null_functor Is_one;
 };
 
 template< class NT, class Functor >
@@ -526,8 +526,8 @@ struct Square_selector {
 };
 
 template< class NT >
-struct Square_selector< NT, CGAL::Null_functor > {
-  typedef CGAL::Null_functor Square;
+struct Square_selector< NT, Null_functor > {
+  typedef Null_functor Square;
 };
 
 template< class NT, class Functor >
@@ -540,8 +540,8 @@ struct Integral_division_selector {
 };
 
 template< class NT >
-struct Integral_division_selector< NT, CGAL::Null_functor > {
-  typedef CGAL::Null_functor Integral_division;
+struct Integral_division_selector< NT, Null_functor > {
+  typedef Null_functor Integral_division;
 };
 
 template< class NT, class Functor >
@@ -558,8 +558,8 @@ struct Is_square_selector {
 };
 
 template< class NT >
-struct Is_square_selector< NT, CGAL::Null_functor > {
-  typedef CGAL::Null_functor Is_square;
+struct Is_square_selector< NT, Null_functor > {
+  typedef Null_functor Is_square;
 };
 
 
@@ -572,8 +572,8 @@ struct Sqrt_selector{
     };
 };
 template <class NT>
-struct Sqrt_selector<NT,CGAL::Null_functor> {
-    typedef CGAL::Null_functor Sqrt;
+struct Sqrt_selector<NT,Null_functor> {
+    typedef Null_functor Sqrt;
 };
 
 template< class NT, class Functor >
@@ -586,8 +586,8 @@ struct Kth_root_selector {
 };
 
 template< class NT >
-struct Kth_root_selector< NT, CGAL::Null_functor > {
-  typedef CGAL::Null_functor Kth_root;
+struct Kth_root_selector< NT, Null_functor > {
+  typedef Null_functor Kth_root;
 };
 
 template< class NT, class Functor >
@@ -629,8 +629,8 @@ struct Root_of_selector {
 };
 
 template< class NT >
-struct Root_of_selector< NT, CGAL::Null_functor > {
-  typedef CGAL::Null_functor Root_of;
+struct Root_of_selector< NT, Null_functor > {
+  typedef Null_functor Root_of;
 };
 
 template< class NT, class Functor >
@@ -643,8 +643,8 @@ struct Gcd_selector {
 };
 
 template< class NT >
-struct Gcd_selector< NT, CGAL::Null_functor > {
-  typedef CGAL::Null_functor Gcd;
+struct Gcd_selector< NT, Null_functor > {
+  typedef Null_functor Gcd;
 };
 
 template< class NT, class Functor >
@@ -657,8 +657,8 @@ struct Div_selector {
 };
 
 template< class NT >
-struct Div_selector< NT, CGAL::Null_functor > {
-  typedef CGAL::Null_functor Div;
+struct Div_selector< NT, Null_functor > {
+  typedef Null_functor Div;
 };
 
 template< class NT, class Functor >
@@ -671,8 +671,8 @@ struct Mod_selector {
 };
 
 template< class NT >
-struct Mod_selector< NT, CGAL::Null_functor > {
-  typedef CGAL::Null_functor Mod;
+struct Mod_selector< NT, Null_functor > {
+  typedef Null_functor Mod;
 };
 
 template< class NT, class Functor >
@@ -692,8 +692,8 @@ struct Div_mod_selector {
 };
 
 template< class NT >
-struct Div_mod_selector< NT, CGAL::Null_functor >{
-  typedef CGAL::Null_functor Div_mod;
+struct Div_mod_selector< NT, Null_functor >{
+  typedef Null_functor Div_mod;
 };
 
 } // end namespace INTERN_COUNTED_NUMBER

@@ -52,7 +52,7 @@ class Output_rep<T, Parens_as_product_tag> {
 public:
     Output_rep(const T& tt) : t(tt) {}
     std::ostream& operator () (std::ostream& out) const { 
-        if ( ::CGAL::needs_parens_as_product(t)) {
+        if ( needs_parens_as_product(t)) {
             return out << "(" << oformat(t) << ")";
         } else {
             return out << oformat(t);

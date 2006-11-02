@@ -476,7 +476,7 @@ double to_double( const Quotient<Gmpzf > &q)
   // convert quotient of mantissas, then shift by difference of exponents
   // note: this fails if difference of exponents doesn't fit into an int
   return std::ldexp( 
-     to_double(CGAL::Quotient<Gmpz>(
+     to_double(Quotient<Gmpz>(
        q.numerator().man(), q.denominator().man())),
        q.numerator().exp() -q.denominator().exp()
      );  
@@ -488,7 +488,7 @@ double to_double( const Quotient<Gmpzf > &q)
 inline
 std::ostream& operator<< (std::ostream& os, const Gmpzf& a) 
 {
-  return os << CGAL::to_double(a);
+  return os << to_double(a);
 }
 
 inline

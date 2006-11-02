@@ -546,9 +546,9 @@ namespace INTERN_QUOTIENT {
   };
   
   template< class NT >
-  class Sqrt_selector< NT, CGAL::Null_functor > {
+  class Sqrt_selector< NT, Null_functor > {
     public:
-      typedef CGAL::Null_functor Sqrt;
+      typedef Null_functor Sqrt;
   };
 
 // TODO: Algebraic_structure_tag could be Field_with_sqrt_tag, if NT
@@ -556,7 +556,7 @@ namespace INTERN_QUOTIENT {
 template<class NT> class Algebraic_structure_traits_quotient_base;
 
 template< class NT > class Algebraic_structure_traits_quotient_base< Quotient<NT> >
-  : public Algebraic_structure_traits_base< Quotient<NT>, CGAL::Field_tag >  {
+  : public Algebraic_structure_traits_base< Quotient<NT>, Field_tag >  {
 public:
     typedef Quotient<NT> Algebraic_structure;  
  
@@ -589,10 +589,10 @@ public:
 
     typedef typename boost::mpl::if_c< 
         !boost::is_same< typename Algebraic_structure_traits<NT>::Sqrt, 
-                         CGAL::Null_functor >::value,
+                         Null_functor >::value,
          typename INTERN_QUOTIENT::Sqrt_selector< Algebraic_structure, 
                                                   Is_exact >::Sqrt,
-         CGAL::Null_functor 
+         Null_functor 
                             >::type Sqrt;
 
     class Simplify 
@@ -615,9 +615,9 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
                
     class Compare 
       : public Binary_function< Real_embeddable, Real_embeddable,
-                                CGAL::Comparison_result > {
+                                Comparison_result > {
       public:
-        CGAL::Comparison_result operator()( const Real_embeddable& x, 
+        Comparison_result operator()( const Real_embeddable& x, 
                                             const Real_embeddable& y ) const {
           return quotient_cmp(x, y);
         }
@@ -691,8 +691,8 @@ CGAL_DEFINE_COERCION_TRAITS_FOR_SELF_TEM( Quotient<NT>, class NT);
 
 template <class NT>                                                      
 struct Coercion_traits<typename First_if_different<int, NT>::Type,Quotient<NT> >{                                    
-    typedef CGAL::Tag_true  Are_explicit_interoperable;             
-    typedef CGAL::Tag_true  Are_implicit_interoperable;             
+    typedef Tag_true  Are_explicit_interoperable;             
+    typedef Tag_true  Are_implicit_interoperable;             
     typedef Quotient<NT> Coercion_type;                                       
     struct Cast{                                                    
         typedef Coercion_type result_type;                          
@@ -710,8 +710,8 @@ struct Coercion_traits<Quotient<NT>,typename First_if_different<int, NT>::Type>
 // from double to Quotient
 template <class NT>                                                      
 struct Coercion_traits<typename First_if_different<double, NT>::Type,Quotient<NT> >{                                    
-    typedef CGAL::Tag_true  Are_explicit_interoperable;             
-    typedef CGAL::Tag_true  Are_implicit_interoperable;             
+    typedef Tag_true  Are_explicit_interoperable;             
+    typedef Tag_true  Are_implicit_interoperable;             
     typedef Quotient<NT> Coercion_type;                                       
     struct Cast{                                                    
         typedef Coercion_type result_type;                          
@@ -769,7 +769,7 @@ make_root_of_2(const Quotient< NT > &a, const Quotient< NT > &b, const Quotient<
   return typename Root_of_traits< NT >::RootOf_2(a,b,c);
 }
 
-// CGAL::Quotient<NT> should be the same as Root_of_traits<NT>::RootOf_1
+// Quotient<NT> should be the same as Root_of_traits<NT>::RootOf_1
 // i.e the default implementation.
 template < class NT >
 struct Root_of_traits< Quotient< NT > >

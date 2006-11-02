@@ -43,9 +43,9 @@ template <> struct Number_type_traits<CORE::BigFloat> {
 //
 template <> class Algebraic_structure_traits< CORE::BigFloat >
   : public Algebraic_structure_traits_base< CORE::BigFloat, 
-                                            CGAL::Field_with_kth_root_tag >  {
+                                            Field_with_kth_root_tag >  {
   public:
-    typedef CGAL::Tag_false            Is_exact;
+    typedef Tag_false            Is_exact;
                           
     class Sqrt 
       : public Unary_function< Algebraic_structure, Algebraic_structure > {
@@ -92,17 +92,17 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
       : public Unary_function< Real_embeddable, ::CGAL::Sign > {
       public:        
         ::CGAL::Sign operator()( const Real_embeddable& x ) const {
-          return (::CGAL::Sign) CORE::sign( x );
+            return (::CGAL::Sign) CORE::sign( x );
         }        
     };
     
     class Compare 
       : public Binary_function< Real_embeddable, Real_embeddable,
-                                CGAL::Comparison_result > {
+                                Comparison_result > {
       public:        
-        CGAL::Comparison_result operator()( const Real_embeddable& x, 
+        Comparison_result operator()( const Real_embeddable& x, 
                                             const Real_embeddable& y ) const {
-          return (CGAL::Comparison_result) CORE::cmp( x, y );
+          return (Comparison_result) CORE::cmp( x, y );
         }
     };
     

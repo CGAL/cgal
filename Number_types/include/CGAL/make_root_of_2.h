@@ -72,7 +72,7 @@ namespace CGALi {
     Root_of_2< RT >
     make_root_of_2_rational(const FT &a, const FT &b, const FT &c, bool smaller)
     {
-      typedef CGAL::Rational_traits< FT > Rational;
+      typedef Rational_traits< FT > Rational;
 
       Rational r;
       // CGAL_assertion( r.denominator(a) > 0 );

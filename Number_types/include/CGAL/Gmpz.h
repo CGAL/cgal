@@ -52,11 +52,11 @@ io_tag(const Gmpz&)
 // Algebraic structure traits
 template <> class Algebraic_structure_traits< Gmpz >
     : public Algebraic_structure_traits_base< Gmpz, 
-                                            CGAL::Euclidean_ring_tag >  {
+                                            Euclidean_ring_tag >  {
 public:
-    typedef CGAL::Tag_true            Is_exact;
+    typedef Tag_true            Is_exact;
                 
-    typedef CGAL::INTERN_AST::Is_square_per_sqrt< Algebraic_structure >
+    typedef INTERN_AST::Is_square_per_sqrt< Algebraic_structure >
     Is_square;
     class Integral_division 
         : public Binary_function< Algebraic_structure, Algebraic_structure,
@@ -100,8 +100,8 @@ public:
         }
     };
     
-    typedef CGAL::INTERN_AST::Div_per_operator< Algebraic_structure > Div;
-    typedef CGAL::INTERN_AST::Mod_per_operator< Algebraic_structure > Mod;
+    typedef INTERN_AST::Div_per_operator< Algebraic_structure > Div;
+    typedef INTERN_AST::Mod_per_operator< Algebraic_structure > Mod;
     
     class Sqrt 
         : public Unary_function< Algebraic_structure, Algebraic_structure > {
@@ -185,10 +185,10 @@ CGAL_BEGIN_NAMESPACE
 class Gmpq;
 
 template <>
-struct Root_of_traits< CGAL::Gmpz >
+struct Root_of_traits< Gmpz >
 {
-    typedef CGAL::Gmpq               RootOf_1;
-    typedef Root_of_2< CGAL::Gmpz >  RootOf_2;
+    typedef Gmpq               RootOf_1;
+    typedef Root_of_2< Gmpz >  RootOf_2;
 };
 
 // FIX ME: This not compile

@@ -54,9 +54,9 @@ struct Number_type_traits<CORE::Expr> {
 
 template <> class Algebraic_structure_traits< CORE::Expr >
   : public Algebraic_structure_traits_base< CORE::Expr, 
-                                            CGAL::Field_with_root_of_tag >  {
+                                            Field_with_root_of_tag >  {
   public:
-    typedef CGAL::Tag_true            Is_exact;
+    typedef Tag_true            Is_exact;
 
     class Sqrt 
       : public Unary_function< Algebraic_structure, Algebraic_structure > {
@@ -165,15 +165,15 @@ template <> class Real_embeddable_traits< CORE::Expr >
     
     class Compare 
       : public Binary_function< Real_embeddable, Real_embeddable,
-                                CGAL::Comparison_result > {
+                                Comparison_result > {
       public:
-        CGAL::Comparison_result operator()( const Real_embeddable& x, 
+        Comparison_result operator()( const Real_embeddable& x, 
                                             const Real_embeddable& y ) const {
-          return (CGAL::Comparison_result) CORE::cmp( x, y );
+          return (Comparison_result) CORE::cmp( x, y );
         }
         
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Real_embeddable,
-                                                      CGAL::Comparison_result );
+                                                      Comparison_result );
         
     };
     

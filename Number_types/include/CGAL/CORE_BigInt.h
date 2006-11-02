@@ -43,15 +43,15 @@ template <> struct Number_type_traits<CORE::BigInt> {
 //
 template <> class Algebraic_structure_traits< CORE::BigInt >
   : public Algebraic_structure_traits_base< CORE::BigInt, 
-                                            CGAL::Euclidean_ring_tag >  {
+                                            Euclidean_ring_tag >  {
   public:
-    typedef CGAL::Tag_true            Is_exact;
+    typedef Tag_true            Is_exact;
                 
-    typedef CGAL::INTERN_AST::Is_square_per_sqrt< Algebraic_structure >
+    typedef INTERN_AST::Is_square_per_sqrt< Algebraic_structure >
                                                                  Is_square;            
 
-    typedef CGAL::INTERN_AST::Div_per_operator< Algebraic_structure > Div;
-    typedef CGAL::INTERN_AST::Mod_per_operator< Algebraic_structure > Mod;
+    typedef INTERN_AST::Div_per_operator< Algebraic_structure > Div;
+    typedef INTERN_AST::Mod_per_operator< Algebraic_structure > Mod;
     
     class Sqrt 
       : public Unary_function< Algebraic_structure, Algebraic_structure > {
@@ -106,9 +106,9 @@ template <> class Real_embeddable_traits< CORE::BigInt >
     
     class Compare 
       : public Binary_function< Real_embeddable, Real_embeddable,
-                                CGAL::Comparison_result > {
+                                Comparison_result > {
       public:
-        CGAL::Comparison_result operator()( const Real_embeddable& x, 
+        Comparison_result operator()( const Real_embeddable& x, 
                                             const Real_embeddable& y ) const {
           typedef Real_embeddable_traits<int> Int_traits;
           return Int_traits::Sign()( ::CORE::cmp(x,y));

@@ -74,7 +74,7 @@ namespace CGAL {
 // TODO :
 // - use Boost.Operators.
 // - add subtraction/addition with a degree 2 Root_of of the same field ?
-// - add constructor from CGAL::Polynomial ?
+// - add constructor from Polynomial ?
 //   There should be a proper separate class Polynomial.
 // - in compare_roots, we evaluate the polynomial at some FT, or at some
 //   root of degree 1 polynomials.  It would be nice to have a separate
@@ -248,7 +248,7 @@ public:
 
   RT operator[](int i) const
   {
-    typedef CGAL::Rational_traits< FT > Rational;
+    typedef Rational_traits< FT > Rational;
     CGAL_assertion((i>=0)&&(i<3));
     Rational r;
     const RT r1 = r.numerator(alpha());
@@ -304,8 +304,8 @@ CGAL_DEFINE_COERCION_TRAITS_FOR_SELF_TEM(Root_of_2<RT>,class RT);
 
 template <class RT>                                                      
 struct Coercion_traits< RT , Root_of_2<RT> >{                                    
-    typedef CGAL::Tag_true  Are_explicit_interoperable;             
-    typedef CGAL::Tag_true  Are_implicit_interoperable;             
+    typedef Tag_true  Are_explicit_interoperable;             
+    typedef Tag_true  Are_implicit_interoperable;             
     typedef Root_of_2<RT> Coercion_type;                                       
     struct Cast{                                                    
         typedef Coercion_type result_type;                          
@@ -317,8 +317,8 @@ struct Coercion_traits< RT , Root_of_2<RT> >{
 
 template <class RT>                                                      
 struct Coercion_traits< CGAL_int(RT) , Root_of_2<RT> >{                                    
-    typedef CGAL::Tag_true  Are_explicit_interoperable;             
-    typedef CGAL::Tag_true  Are_implicit_interoperable;             
+    typedef Tag_true  Are_explicit_interoperable;             
+    typedef Tag_true  Are_implicit_interoperable;             
     typedef Root_of_2<RT> Coercion_type;                                       
     struct Cast{                                                    
         typedef Coercion_type result_type;                          
@@ -330,8 +330,8 @@ struct Coercion_traits< CGAL_int(RT) , Root_of_2<RT> >{
 
 template <class RT>                                                      
 struct Coercion_traits< typename Root_of_traits<RT>::RootOf_1 , Root_of_2<RT> >{                                    
-    typedef CGAL::Tag_true  Are_explicit_interoperable;             
-    typedef CGAL::Tag_true  Are_implicit_interoperable;             
+    typedef Tag_true  Are_explicit_interoperable;             
+    typedef Tag_true  Are_implicit_interoperable;             
     typedef Root_of_2<RT> Coercion_type;                                       
     struct Cast{                                                    
         typedef Coercion_type result_type;                          
@@ -400,7 +400,7 @@ struct NT_converter < Root_of_2<NT1>, Root_of_2<NT1> >
 
 template <class RT>
 struct Algebraic_structure_traits<Root_of_2<RT> >
-    :public Algebraic_structure_traits_base<Root_of_2<RT> , CGAL::Null_tag >{
+    :public Algebraic_structure_traits_base<Root_of_2<RT> , Null_tag >{
     
     typedef Root_of_2<RT> Algebraic_structure;
     typedef typename Algebraic_structure_traits<RT>::Is_exact Is_exact;
@@ -435,7 +435,7 @@ private:
 public:
     
     typedef Root_of_2<RT> Real_embeddable;
-    typedef CGAL::Tag_true Is_real_embeddable;
+    typedef Tag_true Is_real_embeddable;
 
     class Abs 
         : public Unary_function< Real_embeddable, Real_embeddable >{
@@ -468,9 +468,9 @@ public:
     class Compare 
         : public Binary_function< Real_embeddable, 
                                   Real_embeddable, 
-                                  CGAL::Comparison_result >{
+                                  Comparison_result >{
     public:
-        CGAL::Comparison_result operator()(
+        Comparison_result operator()(
                 const Real_embeddable& a, 
                 const Real_embeddable& b) const{
             typedef typename Root_of_traits< RT >::RootOf_1 FT;
@@ -583,7 +583,7 @@ public:
                 return (EQUAL);
         }
 
-        CGAL::Comparison_result 
+        Comparison_result 
         inline
         operator()(
                 const Real_embeddable& a,
@@ -611,14 +611,14 @@ public:
             else return (EQUAL);
         }
         
-        CGAL::Comparison_result 
+        Comparison_result 
         inline 
         operator()(
                 const Root_of_1& a, 
                 const Real_embeddable& b
         ) const{ return opposite(this->operator()(b,a) ); }
         
-        CGAL::Comparison_result 
+        Comparison_result 
         inline 
         operator()(
                 const Real_embeddable& a, 
@@ -673,7 +673,7 @@ public:
     public:
         double operator()(const Real_embeddable& x) const {
             typedef typename Root_of_traits<RT>::RootOf_1 FT;
-            typedef CGAL::Rational_traits< FT > Rational;
+            typedef Rational_traits< FT > Rational;
             Rational r;
             const RT r1 = r.numerator(x.alpha());
             const RT d1 = r.denominator(x.alpha());
@@ -699,13 +699,13 @@ public:
 
             if(x.is_rational()) return CGAL_NTS to_interval(x.alpha());
 
-            const CGAL::Interval_nt<true>   alpha_in 
+            const Interval_nt<true>   alpha_in 
                 = CGAL_NTS to_interval(x.alpha());
-            const CGAL::Interval_nt<true>   beta_in 
+            const Interval_nt<true>   beta_in 
                 = CGAL_NTS to_interval(x.beta());
-            const CGAL::Interval_nt<true>   gamma_in 
+            const Interval_nt<true>   gamma_in 
                 = CGAL_NTS to_interval(x.gamma());
-            const CGAL::Interval_nt<true>&  x_in = alpha_in + 
+            const Interval_nt<true>&  x_in = alpha_in + 
                 (beta_in * CGAL_NTS sqrt(gamma_in));
             return x_in.pair();
         }        
@@ -1007,7 +1007,7 @@ operator-(const Root_of_2<RT> &a,
 	  const typename Root_of_traits< RT >::RootOf_1& b)
 {
   typedef typename Root_of_traits< RT >::RootOf_1  RootOf_1;
-  typedef CGAL::Rational_traits< RootOf_1 >        Rational;
+  typedef Rational_traits< RootOf_1 >        Rational;
   //RT should be the same as Rational::RT
 
   CGAL_assertion(is_valid(a) && is_valid(b));
@@ -1033,7 +1033,7 @@ Root_of_2<RT>
 operator-(const Root_of_2<RT> &a, const RT& b)
 {
   typedef typename Root_of_traits< RT >::RootOf_1  RootOf_1;
-  typedef CGAL::Rational_traits< RootOf_1 >        Rational;
+  typedef Rational_traits< RootOf_1 >        Rational;
   //RT should be the same as Rational::RT
 
   CGAL_assertion(is_valid(a) && is_valid(b));
@@ -1107,7 +1107,7 @@ operator*(const Root_of_2<RT> &a,
 	  const typename Root_of_traits< RT >::RootOf_1& b)
 {
   typedef typename Root_of_traits< RT >::RootOf_1  RootOf_1;
-  typedef CGAL::Rational_traits< RootOf_1 >        Rational;
+  typedef Rational_traits< RootOf_1 >        Rational;
   //RT should be the same as Rational::RT
 
   CGAL_assertion(is_valid(a) && is_valid(b));
@@ -1137,7 +1137,7 @@ Root_of_2<RT>
 operator*(const Root_of_2<RT> &a, const RT& b)
 {
   typedef typename Root_of_traits< RT >::RootOf_1  RootOf_1;
-  typedef CGAL::Rational_traits< RootOf_1 >        Rational;
+  typedef Rational_traits< RootOf_1 >        Rational;
   //RT should be the same as Rational::RT
 
   CGAL_assertion(is_valid(a) && is_valid(b));
@@ -1304,7 +1304,7 @@ double
 to_double(const Root_of_2<RT> &x)
 {
   typedef typename Root_of_traits<RT>::RootOf_1 FT;
-  typedef CGAL::Rational_traits< FT > Rational;
+  typedef Rational_traits< FT > Rational;
   Rational r;
   const RT r1 = r.numerator(x.alpha());
   const RT d1 = r.denominator(x.alpha());

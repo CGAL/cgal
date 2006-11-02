@@ -395,11 +395,11 @@ simplify_quotient(MP_Float & numerator, MP_Float & denominator)
 
 inline void simplify_root_of_2(MP_Float &/*a*/, MP_Float &/*b*/, MP_Float&/*c*/) {
 #if 0
-  if(CGAL::is_zero(a)) {
+  if(is_zero(a)) {
   	simplify_quotient(b,c); return;
-  } else if(CGAL::is_zero(b)) {
+  } else if(is_zero(b)) {
   	simplify_quotient(a,c); return;
-  } else if(CGAL::is_zero(c)) {
+  } else if(is_zero(c)) {
   	simplify_quotient(a,b); return;
   }  	
   MP_Float::exponent_type va = a.exp + 

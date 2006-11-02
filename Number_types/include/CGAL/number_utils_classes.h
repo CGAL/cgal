@@ -108,14 +108,14 @@ struct Abs :public Unary_function< NT, NT > {
 };
 
 template <class NT, class Compare> struct Compare_base: public Compare {};
-template <class NT> struct Compare_base<NT,CGAL::Null_functor>
+template <class NT> struct Compare_base<NT,Null_functor>
     :public Binary_function< NT, NT, Comparison_result > {
     Comparison_result operator()( const NT& x, const NT& y) const
     {
-        if (x < y) return CGAL::SMALLER;
-        if (x > y) return CGAL::LARGER;
+        if (x < y) return SMALLER;
+        if (x > y) return LARGER;
         CGAL_postcondition(x == y);
-        return CGAL::EQUAL;
+        return EQUAL;
     }
 };
 

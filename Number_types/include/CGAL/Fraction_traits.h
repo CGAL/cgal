@@ -36,7 +36,7 @@ CGAL_BEGIN_NAMESPACE
  *
  *  This is the default version of NiX::Fraction_traits. 
  *  It typedefs NiX::Fraction_traits::Is_decomposable
- *  as ::CGAL::Tag_false and all functors to LiS::Null_type.
+ *  as Tag_false and all functors to LiS::Null_type.
  *  
  *  \see module NiX_Fraction_traits 
  *  \see module NiX_Cofraction_traits
@@ -45,12 +45,12 @@ template <class Fraction_ >
 class Fraction_traits {
 public:
     typedef Fraction_ Fraction;
-    typedef CGAL::Tag_false Is_fraction;
-    typedef CGAL::Null_tag Numerator;
-    typedef CGAL::Null_tag Denominator;
-    typedef CGAL::Null_functor Common_factor;
-    typedef CGAL::Null_functor Decompose;
-    typedef CGAL::Null_functor Compose;
+    typedef Tag_false Is_fraction;
+    typedef Null_tag Numerator;
+    typedef Null_tag Denominator;
+    typedef Null_functor Common_factor;
+    typedef Null_functor Decompose;
+    typedef Null_functor Compose;
 };
 
 CGAL_END_NAMESPACE

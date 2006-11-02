@@ -67,15 +67,15 @@ template <> struct Number_type_traits<int> {
 };
 
 template<> class Algebraic_structure_traits< int >
-  : public Algebraic_structure_traits_base< int, CGAL::Euclidean_ring_tag > {
+  : public Algebraic_structure_traits_base< int, Euclidean_ring_tag > {
 
   public:
-    typedef CGAL::Tag_true            Is_exact;
+    typedef Tag_true            Is_exact;
     
-    typedef CGAL::INTERN_AST::Div_per_operator< Algebraic_structure >  Div;
-    typedef CGAL::INTERN_AST::Mod_per_operator< Algebraic_structure >  Mod;
+    typedef INTERN_AST::Div_per_operator< Algebraic_structure >  Div;
+    typedef INTERN_AST::Mod_per_operator< Algebraic_structure >  Mod;
     
-    typedef CGAL::INTERN_INT::
+    typedef INTERN_INT::
        Is_square_per_double_conversion< Algebraic_structure > Is_square;
 };
 
@@ -83,9 +83,9 @@ template <> class Real_embeddable_traits< int >
   : public Real_embeddable_traits_base< int > {
   public:
           
-    typedef CGAL::INTERN_RET::To_double_by_conversion< Real_embeddable >
+    typedef INTERN_RET::To_double_by_conversion< Real_embeddable >
                                                                       To_double;
-    typedef CGAL::INTERN_RET::To_interval_by_conversion< Real_embeddable >
+    typedef INTERN_RET::To_interval_by_conversion< Real_embeddable >
                                                                     To_interval;
 };
 
@@ -108,15 +108,15 @@ template <> struct Number_type_traits<long int> {
 
 template<> class Algebraic_structure_traits< long int >
   : public Algebraic_structure_traits_base< long int, 
-                                            CGAL::Euclidean_ring_tag > {
+                                            Euclidean_ring_tag > {
 
   public:
-    typedef CGAL::Tag_true            Is_exact;
+    typedef Tag_true            Is_exact;
     
-    typedef CGAL::INTERN_AST::Div_per_operator< Algebraic_structure >  Div;
-    typedef CGAL::INTERN_AST::Mod_per_operator< Algebraic_structure >  Mod;       
+    typedef INTERN_AST::Div_per_operator< Algebraic_structure >  Div;
+    typedef INTERN_AST::Mod_per_operator< Algebraic_structure >  Mod;       
 
-    typedef CGAL::INTERN_INT::
+    typedef INTERN_INT::
        Is_square_per_double_conversion< Algebraic_structure > Is_square;
 };
 
@@ -124,9 +124,9 @@ template <> class Real_embeddable_traits< long int >
   : public Real_embeddable_traits_base< long int > {
   public:
           
-    typedef CGAL::INTERN_RET::To_double_by_conversion< Real_embeddable >
+    typedef INTERN_RET::To_double_by_conversion< Real_embeddable >
                                                                       To_double;
-    typedef CGAL::INTERN_RET::To_interval_by_conversion< Real_embeddable >
+    typedef INTERN_RET::To_interval_by_conversion< Real_embeddable >
                                                                     To_interval;
 };
 
@@ -149,10 +149,10 @@ template <> struct Number_type_traits<short int> {
 
 template<> class Algebraic_structure_traits< short int >
   : public Algebraic_structure_traits_base< short int, 
-                                            CGAL::Euclidean_ring_tag > {
+                                            Euclidean_ring_tag > {
 
   public:
-    typedef CGAL::Tag_true            Is_exact;
+    typedef Tag_true            Is_exact;
 
     // Explicitly defined functors which have no support for implicit
     //  interoperability. This is nescessary because of the implicit conversion
@@ -163,10 +163,10 @@ template<> class Algebraic_structure_traits< short int >
       public:
         Algebraic_structure operator()( const Algebraic_structure& x, 
                                         const Algebraic_structure& y) const { 
-          CGAL::Algebraic_structure_traits<Algebraic_structure>::Div actual_div;
+          Algebraic_structure_traits<Algebraic_structure>::Div actual_div;
           CGAL_precondition_msg( !is_exact(x) || actual_div( x, y) * y == x,
             "'x' must be divisible by 'y' in "
-            "CGAL::Algebraic_structure_traits<...>::Integral_div()(x,y)" );
+            "Algebraic_structure_traits<...>::Integral_div()(x,y)" );
           return actual_div( x, y);          
         }      
     };
@@ -177,9 +177,9 @@ template<> class Algebraic_structure_traits< short int >
       public:
         Algebraic_structure operator()( const Algebraic_structure& x, 
                                         const Algebraic_structure& y) const {
-          CGAL::Algebraic_structure_traits<Algebraic_structure>::Mod mod;
-          CGAL::Algebraic_structure_traits<Algebraic_structure>::Unit_part unit_part;
-          CGAL::Algebraic_structure_traits<Algebraic_structure>::Integral_division integral_div;
+          Algebraic_structure_traits<Algebraic_structure>::Mod mod;
+          Algebraic_structure_traits<Algebraic_structure>::Unit_part unit_part;
+          Algebraic_structure_traits<Algebraic_structure>::Integral_division integral_div;
           // First: the extreme cases and negative sign corrections.
           if (x == Algebraic_structure(0)) {
               if (y == Algebraic_structure(0))  
@@ -252,7 +252,7 @@ template<> class Algebraic_structure_traits< short int >
         };        
     };
     
-    typedef CGAL::INTERN_INT::
+    typedef INTERN_INT::
        Is_square_per_double_conversion< Algebraic_structure > Is_square;
 };
 
@@ -260,9 +260,9 @@ template <> class Real_embeddable_traits< short int >
   : public Real_embeddable_traits_base< short int > {
   public:
           
-    typedef CGAL::INTERN_RET::To_double_by_conversion< Real_embeddable >
+    typedef INTERN_RET::To_double_by_conversion< Real_embeddable >
                                                                       To_double;
-    typedef CGAL::INTERN_RET::To_interval_by_conversion< Real_embeddable >
+    typedef INTERN_RET::To_interval_by_conversion< Real_embeddable >
                                                                     To_interval;
 };
 

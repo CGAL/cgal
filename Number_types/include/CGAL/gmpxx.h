@@ -76,7 +76,7 @@ make_root_of_2_gmpxx(const ::mpq_class & a,
                      const ::mpq_class & c,
                      bool d)
 {
-    typedef CGAL::Rational_traits< ::mpq_class > Rational;
+    typedef Rational_traits< ::mpq_class > Rational;
 
     Rational r;
     CGAL_assertion( r.denominator(a) > 0 );
@@ -121,7 +121,7 @@ struct Root_of_traits< ::__gmp_expr<T, U> >
 CGAL_END_NAMESPACE
 // XXX : These seem necessary.
 // I don't know why doing them in namespace CGAL is not enough.
-// using CGAL::to_double;
-// using CGAL::is_valid;
+// using to_double;
+// using is_valid;
 
 #endif // CGAL_GMPXX_H

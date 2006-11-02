@@ -78,12 +78,12 @@ struct Rational_traits<leda_rational> {
 
 template <> class Algebraic_structure_traits< leda_rational >
   : public Algebraic_structure_traits_base< leda_rational, 
-                                            CGAL::Field_tag >  {
+                                            Field_tag >  {
   public:
-    typedef CGAL::Tag_true            Is_exact;
+    typedef Tag_true            Is_exact;
                 
 //    TODO: How to implement this without having sqrt?
-//    typedef CGAL::INTERN_AST::Is_square_per_sqrt< Algebraic_structure >
+//    typedef INTERN_AST::Is_square_per_sqrt< Algebraic_structure >
 //                                                                 Is_square;
 
     class Simplify 
@@ -112,17 +112,17 @@ template <> class Real_embeddable_traits< leda_rational >
       : public Unary_function< Real_embeddable, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Real_embeddable& x ) const {
-          return (::CGAL::Sign) CGAL_LEDA_SCOPE::sign( x );
+            return (::CGAL::Sign) CGAL_LEDA_SCOPE::sign( x );
         }        
     };
     
     class Compare 
       : public Binary_function< Real_embeddable, Real_embeddable,
-                                CGAL::Comparison_result > {
+                                Comparison_result > {
       public:
-        CGAL::Comparison_result operator()( const Real_embeddable& x, 
+        Comparison_result operator()( const Real_embeddable& x, 
                                             const Real_embeddable& y ) const {
-          return (CGAL::Comparison_result) CGAL_LEDA_SCOPE::compare( x, y );
+          return (Comparison_result) CGAL_LEDA_SCOPE::compare( x, y );
         }
     };
     
@@ -196,13 +196,13 @@ public:
     Output_rep( const leda_rational& tt) : t(tt) {}
     //! perform the output, calls \c operator\<\< by default.
     std::ostream& operator()( std::ostream& out) const {
-        switch (CGAL::get_mode(out)) {
-        case CGAL::IO::BENCHMARK:
+        switch (get_mode(out)) {
+        case IO::BENCHMARK:
             return out << "Rational(" 
                        << t.numerator()<< "," 
                        << t.denominator() << ")";
             break;
-        case CGAL::IO::PRETTY:{
+        case IO::PRETTY:{
             if(t.denominator() == leda_integer(1))
                 return out <<t.numerator();
             else
@@ -231,7 +231,7 @@ struct Needs_parens_as_product< leda_rational >{
 };
 
 template <>
-class Output_rep< leda_rational, CGAL::Parens_as_product_tag > {
+class Output_rep< leda_rational, Parens_as_product_tag > {
     const leda_rational& t;
 public:
     // Constructor 
@@ -251,7 +251,7 @@ template <>
 class Fraction_traits< leda_rational > {
   public:
     typedef leda_rational Fraction;
-    typedef CGAL::Tag_true Is_fraction;
+    typedef Tag_true Is_fraction;
     typedef leda_integer Numerator;
     typedef leda_integer Denominator;
     typedef Algebraic_structure_traits< leda_integer >::Gcd Common_factor;

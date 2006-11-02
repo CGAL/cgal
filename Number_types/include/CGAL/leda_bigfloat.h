@@ -59,9 +59,9 @@ template <> struct Number_type_traits<leda_bigfloat> {
 
 template <> class Algebraic_structure_traits< leda_bigfloat >
   : public Algebraic_structure_traits_base< leda_bigfloat, 
-                                            CGAL::Field_with_kth_root_tag >  {
+                                            Field_with_kth_root_tag >  {
   public:
-    typedef CGAL::Tag_false           Is_exact;
+    typedef Tag_false           Is_exact;
                                          
     class Sqrt 
       : public Unary_function< Algebraic_structure, Algebraic_structure > {
@@ -109,11 +109,11 @@ template <> class Real_embeddable_traits< leda_bigfloat >
     
     class Compare 
       : public Binary_function< Real_embeddable, Real_embeddable,
-                                CGAL::Comparison_result > {
+                                Comparison_result > {
       public:
-        CGAL::Comparison_result operator()( const Real_embeddable& x, 
+        Comparison_result operator()( const Real_embeddable& x, 
                                             const Real_embeddable& y ) const {
-          return (CGAL::Comparison_result) CGAL_LEDA_SCOPE::compare( x, y );
+          return (Comparison_result) CGAL_LEDA_SCOPE::compare( x, y );
         }
     };
     

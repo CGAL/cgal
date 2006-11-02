@@ -61,11 +61,11 @@ template <> struct Number_type_traits<leda_integer> {
 
 template <> class Algebraic_structure_traits< leda_integer >
   : public Algebraic_structure_traits_base< leda_integer, 
-                                            CGAL::Euclidean_ring_tag >  {
+                                            Euclidean_ring_tag >  {
   public:
-    typedef CGAL::Tag_true            Is_exact;
+    typedef Tag_true            Is_exact;
                 
-    typedef CGAL::INTERN_AST::Is_square_per_sqrt< Algebraic_structure >
+    typedef INTERN_AST::Is_square_per_sqrt< Algebraic_structure >
                                                                  Is_square;
                                                                  
     class Gcd 
@@ -84,7 +84,7 @@ template <> class Algebraic_structure_traits< leda_integer >
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
     };
     
-    typedef CGAL::INTERN_AST::Div_per_operator< Algebraic_structure > Div;
+    typedef INTERN_AST::Div_per_operator< Algebraic_structure > Div;
     
     class Mod 
       : public Binary_function< Algebraic_structure, Algebraic_structure,
@@ -129,17 +129,17 @@ template <> class Real_embeddable_traits< leda_integer >
       : public Unary_function< Real_embeddable, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Real_embeddable& x ) const {
-          return (::CGAL::Sign) CGAL_LEDA_SCOPE::sign( x );
+            return (::CGAL::Sign) CGAL_LEDA_SCOPE::sign( x );
         }        
     };
     
     class Compare 
       : public Binary_function< Real_embeddable, Real_embeddable,
-                                CGAL::Comparison_result > {
+                                Comparison_result > {
       public:
-        CGAL::Comparison_result operator()( const Real_embeddable& x, 
+        Comparison_result operator()( const Real_embeddable& x, 
                                             const Real_embeddable& y ) const {
-          return (CGAL::Comparison_result) CGAL_LEDA_SCOPE::compare( x, y );
+          return (Comparison_result) CGAL_LEDA_SCOPE::compare( x, y );
         }
         
     };

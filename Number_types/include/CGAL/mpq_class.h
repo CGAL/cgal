@@ -69,10 +69,10 @@ struct Rational_traits<mpq_class> {
 template <class U> 
 class Algebraic_structure_traits< ::__gmp_expr< ::__gmpq_value,U> >
   : public Algebraic_structure_traits_base< ::__gmp_expr< ::__gmpq_value,U>, 
-                                            CGAL::Null_tag >  {
+                                            Null_tag >  {
   public:
-    typedef CGAL::Field_tag           Algebraic_structure_tag;
-    typedef CGAL::Tag_true            Is_exact;
+    typedef Field_tag           Algebraic_structure_tag;
+    typedef Tag_true            Is_exact;
     typedef mpq_class                 Algebraic_structure;
 
     struct Is_zero: public Unary_function< mpq_class , bool > {
@@ -120,7 +120,7 @@ class Algebraic_structure_traits< ::__gmp_expr< ::__gmpq_value,U> >
             mpq_class result = x / y;
             CGAL_precondition_msg( result * y == x,
             "'x' must be divisible by 'y' in "
-            "CGAL::Algebraic_structure_traits<mpq_class>::Integral_div()(x,y)" );
+            "Algebraic_structure_traits<mpq_class>::Integral_div()(x,y)" );
             return result;         
         }
     }; 
@@ -199,17 +199,17 @@ class Real_embeddable_traits< ::__gmp_expr< ::__gmpq_value,U> >
     };
     
     struct Compare 
-        : public Binary_function< mpq_class, mpq_class, CGAL::Comparison_result>
+        : public Binary_function< mpq_class, mpq_class, Comparison_result>
     {
         template <class U2, class U3>
-        CGAL::Comparison_result operator()( 
+        Comparison_result operator()( 
                 const ::__gmp_expr< ::__gmpq_value,U2>& x, 
                 const ::__gmp_expr< ::__gmpq_value,U3>& y ) const {
             // cmp returns any int value, not just -1/0/1...
-            return (::CGAL::Comparison_result) CGAL_NTS sign( ::cmp(x, y) );
+            return (Comparison_result) CGAL_NTS sign( ::cmp(x, y) );
         }
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT
-        ( Real_embeddable, CGAL::Comparison_result);
+        ( Real_embeddable, Comparison_result);
     };
     
     struct To_double 

@@ -229,8 +229,8 @@ Number_type_checker<NT1, NT2, Cmp>
 sqrt(const Number_type_checker<NT1, NT2, Cmp> &a)
 {
    CGAL_NT_CHECK_DEBUG("operator/");
-   return Number_type_checker<NT1, NT2, Cmp>(CGAL::sqrt(a.n1()),
-                                             CGAL::sqrt(a.n2()));
+   return Number_type_checker<NT1, NT2, Cmp>(sqrt(a.n1()),
+                                             sqrt(a.n2()));
 }
 
 
@@ -424,8 +424,8 @@ template < typename NT1, typename NT2, typename Cmp >
 Sign
 sign(const Number_type_checker<NT1, NT2, Cmp> &a)
 {
-   Sign s1 = CGAL::sign(a.n1());
-   Sign s2 = CGAL::sign(a.n2());
+   Sign s1 = sign(a.n1());
+   Sign s2 = sign(a.n2());
    CGAL_assertion(s1 == s2);
    return s1;
 }
@@ -435,8 +435,8 @@ Comparison_result
 compare(const Number_type_checker<NT1, NT2, Cmp> &a,
         const Number_type_checker<NT1, NT2, Cmp> &b)
 {
-   Comparison_result c1 = CGAL::compare(a.n1(), b.n1());
-   Comparison_result c2 = CGAL::compare(a.n2(), b.n2());
+   Comparison_result c1 = compare(a.n1(), b.n1());
+   Comparison_result c2 = compare(a.n2(), b.n2());
    CGAL_assertion(c1 == c2);
    return c1;
 }
@@ -445,8 +445,8 @@ template < typename NT1, typename NT2, typename Cmp >
 Comparison_result
 compare(int a, const Number_type_checker<NT1, NT2, Cmp> &b)
 {
-   Comparison_result c1 = CGAL::compare(a, b.n1());
-   Comparison_result c2 = CGAL::compare(a, b.n2());
+   Comparison_result c1 = compare(a, b.n1());
+   Comparison_result c2 = compare(a, b.n2());
    CGAL_assertion(c1 == c2);
    return c1;
 }
@@ -455,8 +455,8 @@ template < typename NT1, typename NT2, typename Cmp >
 Comparison_result
 compare(const Number_type_checker<NT1, NT2, Cmp> &a, int b)
 {
-   Comparison_result c1 = CGAL::compare(a.n1(), b);
-   Comparison_result c2 = CGAL::compare(a.n2(), b);
+   Comparison_result c1 = compare(a.n1(), b);
+   Comparison_result c2 = compare(a.n2(), b);
    CGAL_assertion(c1 == c2);
    return c1;
 }
@@ -465,8 +465,8 @@ template < typename NT1, typename NT2, typename Cmp >
 bool
 is_finite(const Number_type_checker<NT1, NT2, Cmp> &a)
 {
-   bool b1 = CGAL::is_finite(a.n1());
-   bool b2 = CGAL::is_finite(a.n2());
+   bool b1 = is_finite(a.n1());
+   bool b2 = is_finite(a.n2());
    CGAL_assertion(b1 == b2);
    return b1;
 }
@@ -475,8 +475,8 @@ template < typename NT1, typename NT2, typename Cmp >
 bool
 is_valid(const Number_type_checker<NT1, NT2, Cmp> &a)
 {
-   bool b1 = CGAL::is_valid(a.n1());
-   bool b2 = CGAL::is_valid(a.n2());
+   bool b1 = is_valid(a.n1());
+   bool b2 = is_valid(a.n2());
    CGAL_assertion(b1 == b2);
    // Should we also call a.is_valid() ?
    return b1;
@@ -486,8 +486,8 @@ template < typename NT1, typename NT2, typename Cmp >
 std::pair<double, double>
 to_interval(const Number_type_checker<NT1, NT2, Cmp> &a)
 {
-   std::pair<double, double> i1 = CGAL::to_interval(a.n1());
-   std::pair<double, double> i2 = CGAL::to_interval(a.n2());
+   std::pair<double, double> i1 = to_interval(a.n1());
+   std::pair<double, double> i2 = to_interval(a.n2());
    // Here we could check that there is a common point.
    // CGAL_assertion( ??? );
 
@@ -499,8 +499,8 @@ template < typename NT1, typename NT2, typename Cmp >
 double
 to_double(const Number_type_checker<NT1, NT2, Cmp> &a)
 {
-   double d1 = CGAL::to_double(a.n1());
-   double d2 = CGAL::to_double(a.n2());
+   double d1 = to_double(a.n1());
+   double d2 = to_double(a.n2());
    // What can we check ?
    // We return one of the two.
    return d1;

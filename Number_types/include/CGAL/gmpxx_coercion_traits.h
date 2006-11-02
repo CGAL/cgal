@@ -32,8 +32,8 @@ CGAL_BEGIN_NAMESPACE
 template <class U>                                              
 struct Coercion_traits<
   ::__gmp_expr< ::__gmpz_value , U>,::__gmp_expr< ::__gmpz_value , U>  >{                                
-    typedef CGAL::Tag_true  Are_explicit_interoperable;     
-    typedef CGAL::Tag_true  Are_implicit_interoperable;     
+    typedef Tag_true  Are_explicit_interoperable;     
+    typedef Tag_true  Are_implicit_interoperable;     
     typedef ::__gmp_expr< ::__gmpz_value , ::__gmpz_value> Coercion_type;                                          
     struct Cast{                                            
         typedef Coercion_type result_type;  
@@ -47,8 +47,8 @@ struct Coercion_traits<
 template <class U1, class U2>                                              
 struct Coercion_traits<
   ::__gmp_expr< ::__gmpz_value , U1>,::__gmp_expr< ::__gmpz_value , U2>  >{                                
-    typedef CGAL::Tag_true  Are_explicit_interoperable;     
-    typedef CGAL::Tag_true  Are_implicit_interoperable;     
+    typedef Tag_true  Are_explicit_interoperable;     
+    typedef Tag_true  Are_implicit_interoperable;     
     typedef ::__gmp_expr< ::__gmpz_value , ::__gmpz_value> Coercion_type;                                          
     struct Cast{                                            
         typedef Coercion_type result_type;  
@@ -65,8 +65,8 @@ struct Coercion_traits<
 template <class U>                                              
 struct Coercion_traits<
   ::__gmp_expr< ::__gmpq_value , U>,::__gmp_expr< ::__gmpq_value , U>  >{                                
-    typedef CGAL::Tag_true  Are_explicit_interoperable;     
-    typedef CGAL::Tag_true  Are_implicit_interoperable;     
+    typedef Tag_true  Are_explicit_interoperable;     
+    typedef Tag_true  Are_implicit_interoperable;     
     typedef ::__gmp_expr< ::__gmpq_value , ::__gmpq_value> Coercion_type;                                          
     struct Cast{                                            
         typedef Coercion_type result_type;  
@@ -80,8 +80,8 @@ struct Coercion_traits<
 template <class U1, class U2>                                              
 struct Coercion_traits<
   ::__gmp_expr< ::__gmpq_value , U1>,::__gmp_expr< ::__gmpq_value , U2>  >{                                
-    typedef CGAL::Tag_true  Are_explicit_interoperable;     
-    typedef CGAL::Tag_true  Are_implicit_interoperable;     
+    typedef Tag_true  Are_explicit_interoperable;     
+    typedef Tag_true  Are_implicit_interoperable;     
     typedef ::__gmp_expr< ::__gmpq_value , ::__gmpq_value> Coercion_type;                                          
     struct Cast{                                            
         typedef Coercion_type result_type;  
@@ -98,8 +98,8 @@ struct Coercion_traits<
 template <class U1, class U2>                                              
 struct Coercion_traits<
   ::__gmp_expr< ::__gmpz_value , U1>,::__gmp_expr< ::__gmpq_value , U2>  >{                                
-    typedef CGAL::Tag_true  Are_explicit_interoperable;     
-    typedef CGAL::Tag_true  Are_implicit_interoperable;     
+    typedef Tag_true  Are_explicit_interoperable;     
+    typedef Tag_true  Are_implicit_interoperable;     
     typedef ::__gmp_expr< ::__gmpq_value , ::__gmpq_value> Coercion_type;                                          
     struct Cast{                                            
         typedef Coercion_type result_type;  
@@ -122,8 +122,8 @@ struct Coercion_traits<
 template <class U1, class GMPX_VALUE>                                              
 struct Coercion_traits<
   ::__gmp_expr< GMPX_VALUE , U1>, int >{                                
-    typedef CGAL::Tag_true  Are_explicit_interoperable;     
-    typedef CGAL::Tag_true  Are_implicit_interoperable;     
+    typedef Tag_true  Are_explicit_interoperable;     
+    typedef Tag_true  Are_implicit_interoperable;     
     typedef ::__gmp_expr< GMPX_VALUE , GMPX_VALUE> Coercion_type;                                          
     struct Cast{                                            
         typedef Coercion_type result_type;  

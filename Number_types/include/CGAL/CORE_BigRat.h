@@ -55,9 +55,9 @@ struct Number_type_traits<CORE::BigRat> {
 //
 template <> class Algebraic_structure_traits< CORE::BigRat >
   : public Algebraic_structure_traits_base< CORE::BigRat, 
-                                            CGAL::Field_tag >  {
+                                            Field_tag >  {
   public:
-    typedef CGAL::Tag_true            Is_exact;
+    typedef Tag_true            Is_exact;
 
     // BigRat are always normalized, so no special simplify-functor is needed
     
@@ -92,9 +92,9 @@ template <> class Real_embeddable_traits< CORE::BigRat >
     
     class Compare 
       : public Binary_function< Real_embeddable, Real_embeddable,
-                                CGAL::Comparison_result > {
+                                Comparison_result > {
       public:
-        CGAL::Comparison_result operator()( const Real_embeddable& x, 
+        Comparison_result operator()( const Real_embeddable& x, 
                                             const Real_embeddable& y ) const {
           typedef Real_embeddable_traits<int> Int_traits;
           return Int_traits::Sign()( ::CORE::cmp(x,y));
@@ -134,13 +134,13 @@ public:
     Output_rep( const ::CORE::BigRat& tt) : t(tt) {}
     //! perform the output, calls \c operator\<\< by default.
     std::ostream& operator()( std::ostream& out) const {
-        switch (CGAL::get_mode(out)) {
-        case CGAL::IO::BENCHMARK:
+        switch (get_mode(out)) {
+        case IO::BENCHMARK:
             return out << "Rational(" 
                        << CGAL_CORE_NUMERATOR(t)<< "," 
                        << CGAL_CORE_DENOMINATOR(t) << ")";
             break;
-        case CGAL::IO::PRETTY:{
+        case IO::PRETTY:{
             if(CGAL_CORE_DENOMINATOR(t) == ::CORE::BigRat(1))
                 return out <<CGAL_CORE_NUMERATOR(t);
             else
@@ -169,7 +169,7 @@ struct Needs_parens_as_product< ::CORE::BigRat >{
 };
 
 template <>
-class Output_rep< ::CORE::BigRat, CGAL::Parens_as_product_tag > {
+class Output_rep< ::CORE::BigRat, Parens_as_product_tag > {
     const ::CORE::BigRat& t;
 public:
     // Constructor 

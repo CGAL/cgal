@@ -38,7 +38,7 @@ template< class AS >
 inline 
 void
 simplify( AS& x ) {
-    typename CGAL::Algebraic_structure_traits< AS >::Simplify simplify;
+    typename Algebraic_structure_traits< AS >::Simplify simplify;
     simplify( x );
 }
 
@@ -46,7 +46,7 @@ template< class AS >
 inline
 typename Algebraic_structure_traits< AS >::Unit_part::result_type
 unit_part( const AS& x ) {
-    typename CGAL::Algebraic_structure_traits< AS >::Unit_part unit_part;
+    typename Algebraic_structure_traits< AS >::Unit_part unit_part;
     return unit_part( x );
 }
 
@@ -57,7 +57,7 @@ typename Algebraic_structure_traits< AS >::Is_square::result_type
 is_square( const AS& x, 
            typename Algebraic_structure_traits< AS >::Is_square::second_argument_type y ) 
 {
-    typename CGAL::Algebraic_structure_traits< AS >::Is_square is_square;
+    typename Algebraic_structure_traits< AS >::Is_square is_square;
     return is_square( x, y );
 }
 
@@ -65,7 +65,7 @@ template< class AS >
 inline
 typename Algebraic_structure_traits< AS >::Is_square::result_type
 is_square( const AS& x){
-    typename CGAL::Algebraic_structure_traits< AS >::Is_square is_square;
+    typename Algebraic_structure_traits< AS >::Is_square is_square;
     return is_square( x );
 }
 
@@ -74,14 +74,14 @@ template< class AS >
 inline
 typename Algebraic_structure_traits< AS >::Square::result_type
 square( const AS& x ) {
-    typename CGAL::Algebraic_structure_traits< AS >::Square square;
+    typename Algebraic_structure_traits< AS >::Square square;
     return square( x );
 }
 template< class AS >
 inline 
 typename Algebraic_structure_traits<AS>::Is_one::result_type
 is_one( const AS& x ) {
-    typename CGAL::Algebraic_structure_traits< AS >::Is_one is_one;
+    typename Algebraic_structure_traits< AS >::Is_one is_one;
     return is_one( x );
 }
 
@@ -89,7 +89,7 @@ template< class AS >
 inline
 typename Algebraic_structure_traits< AS >::Sqrt::result_type
 sqrt( const AS& x ) {
-    typename CGAL::Algebraic_structure_traits< AS >::Sqrt sqrt;
+    typename Algebraic_structure_traits< AS >::Sqrt sqrt;
     return sqrt( x );
 }
 
@@ -125,7 +125,7 @@ typename Algebraic_structure_traits< typename Coercion_traits<A,B>::Coercion_typ
 ::Mod::result_type
 mod( const A& x, const B& y ) {
     typedef typename Coercion_traits<A,B>::Coercion_type Coercion_type;
-    typename CGAL::Algebraic_structure_traits<Coercion_type >::Mod mod;
+    typename Algebraic_structure_traits<Coercion_type >::Mod mod;
     return mod( x, y );
 }
 
@@ -135,7 +135,7 @@ typename Algebraic_structure_traits< typename Coercion_traits<A,B>::Coercion_typ
 ::Div::result_type
 div( const A& x, const B& y ) {
     typedef typename Coercion_traits<A,B>::Coercion_type Coercion_type;
-    typename CGAL::Algebraic_structure_traits<Coercion_type >::Div div;
+    typename Algebraic_structure_traits<Coercion_type >::Div div;
     return div( x, y );
 }
 
@@ -149,7 +149,7 @@ div_mod(
         typename Coercion_traits<A,B>::Coercion_type& q, 
         typename Coercion_traits<A,B>::Coercion_type& r ) {
     typedef typename Coercion_traits<A,B>::Coercion_type Coercion_type;
-    typename CGAL::Algebraic_structure_traits< Coercion_type >::Div_mod div_mod;
+    typename Algebraic_structure_traits< Coercion_type >::Div_mod div_mod;
     div_mod( x, y, q, r );                                                                    
 }
 
@@ -158,7 +158,7 @@ template< class AS >
 inline
 typename Algebraic_structure_traits< AS >::Kth_root::result_type
 kth_root( int k, const AS& x ) {
-    typename CGAL::Algebraic_structure_traits< AS >::Kth_root
+    typename Algebraic_structure_traits< AS >::Kth_root
         kth_root;
     return kth_root( k, x );                                                                    
 }
@@ -178,22 +178,22 @@ template< class Number_type >
 inline 
 // select a Is_zero functor
 typename boost::mpl::if_c< 
-  (bool)( boost::is_same< typename CGAL::Algebraic_structure_traits< 
+  (bool)( boost::is_same< typename Algebraic_structure_traits< 
           Number_type >::Is_zero,
-          CGAL::Null_functor
+          Null_functor
           >::value ),
-  typename CGAL::Real_embeddable_traits< Number_type >::Is_zero,
-  typename CGAL::Algebraic_structure_traits< Number_type >::Is_zero
+  typename Real_embeddable_traits< Number_type >::Is_zero,
+  typename Algebraic_structure_traits< Number_type >::Is_zero
   >::type::result_type
 is_zero( const Number_type& x ) {
     // We take the Algebraic_structure_traits<>::Is_zero functor by default. If it
     //  is not available, we take the Real_embeddable_traits functor
     typename ::boost::mpl::if_c< 
     bool(::boost::is_same<
-            typename CGAL::Algebraic_structure_traits< Number_type >::Is_zero,
-            ::CGAL::Null_functor >::value ),
-        typename CGAL::Real_embeddable_traits< Number_type >::Is_zero,
-        typename CGAL::Algebraic_structure_traits< Number_type >::Is_zero >::type
+            typename Algebraic_structure_traits< Number_type >::Is_zero,
+            Null_functor >::value ),
+        typename Real_embeddable_traits< Number_type >::Is_zero,
+        typename Algebraic_structure_traits< Number_type >::Is_zero >::type
         is_zero;
     return is_zero( x );                                                                    
 }
@@ -201,11 +201,11 @@ is_zero( const Number_type& x ) {
 
 template <class A, class B>
 inline
-typename Real_embeddable_traits< typename CGAL::Coercion_traits<A,B>::Coercion_type >
+typename Real_embeddable_traits< typename Coercion_traits<A,B>::Coercion_type >
 ::Compare::result_type 
 compare(const A& a, const B& b)
 { 
-    typedef typename CGAL::Coercion_traits<A,B>::Coercion_type Coercion_type;
+    typedef typename Coercion_traits<A,B>::Coercion_type Coercion_type;
     typename Real_embeddable_traits<Coercion_type>::Compare compare;
     return compare (a,b);
     // return (a < b) ? SMALLER : (b < a) ? LARGER : EQUAL; 
@@ -218,32 +218,32 @@ inline
 //Real_embeddable 
 typename Real_embeddable_traits< Real_embeddable >::Abs::result_type 
 abs( const Real_embeddable& x ) {
-    typename CGAL::Real_embeddable_traits< Real_embeddable >::Abs abs;
+    typename Real_embeddable_traits< Real_embeddable >::Abs abs;
     return abs( x );
 }
 
 template< class Real_embeddable >
 inline 
-//::CGAL::Sign 
-typename CGAL::Real_embeddable_traits< Real_embeddable >::Sign::result_type
+//::Sign 
+typename Real_embeddable_traits< Real_embeddable >::Sign::result_type
 sign( const Real_embeddable& x ) {
-    typename CGAL::Real_embeddable_traits< Real_embeddable >::Sign sign;
+    typename Real_embeddable_traits< Real_embeddable >::Sign sign;
     return sign( x );
 }
 
 template< class Real_embeddable >
 inline 
 //bool
-typename CGAL::Real_embeddable_traits< Real_embeddable >::Is_finite::result_type
+typename Real_embeddable_traits< Real_embeddable >::Is_finite::result_type
 is_finite( const Real_embeddable& x ) {
-    return typename CGAL::Real_embeddable_traits< Real_embeddable >::Is_finite()( x );
+    return typename Real_embeddable_traits< Real_embeddable >::Is_finite()( x );
 }
 
 template< class Real_embeddable >
 inline 
 typename Real_embeddable_traits< Real_embeddable >::Is_positive::result_type
 is_positive( const Real_embeddable& x ) {
-    typename CGAL::Real_embeddable_traits< Real_embeddable >::Is_positive 
+    typename Real_embeddable_traits< Real_embeddable >::Is_positive 
         is_positive;
     return is_positive( x );
 }
@@ -252,7 +252,7 @@ template< class Real_embeddable >
 inline
 typename Real_embeddable_traits< Real_embeddable >::Is_negative::result_type
 is_negative( const Real_embeddable& x ) {
-    typename CGAL::Real_embeddable_traits< Real_embeddable >::Is_negative
+    typename Real_embeddable_traits< Real_embeddable >::Is_negative
         is_negative;
     return is_negative( x );
 }
@@ -260,9 +260,9 @@ is_negative( const Real_embeddable& x ) {
 template< class Real_embeddable >
 inline
 typename Real_embeddable_traits< Real_embeddable >::Compare::result_type
-//CGAL::Comparison_result
+//Comparison_result
 compare( const Real_embeddable& x, const Real_embeddable& y ) {
-    typename CGAL::Real_embeddable_traits< Real_embeddable >::Compare compare;
+    typename Real_embeddable_traits< Real_embeddable >::Compare compare;
     return compare( x, y );
 }
 
@@ -271,7 +271,7 @@ inline
 typename Real_embeddable_traits< Real_embeddable >::To_double::result_type
 //double
 to_double( const Real_embeddable& x ) {
-    typename CGAL::Real_embeddable_traits< Real_embeddable >::To_double to_double;  
+    typename Real_embeddable_traits< Real_embeddable >::To_double to_double;  
     return to_double( x );
 }
 
@@ -280,7 +280,7 @@ inline
 typename Real_embeddable_traits< Real_embeddable >::To_interval::result_type
 //std::pair< double, double >
 to_interval( const Real_embeddable& x) {
-    typename CGAL::Real_embeddable_traits< Real_embeddable >::To_interval 
+    typename Real_embeddable_traits< Real_embeddable >::To_interval 
         to_interval;
     return to_interval( x );
 }

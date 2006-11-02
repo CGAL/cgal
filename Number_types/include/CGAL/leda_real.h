@@ -61,14 +61,14 @@ template <> class Algebraic_structure_traits< leda_real >
 
 #if CGAL_LEDA_VERSION >= 500 
   : public Algebraic_structure_traits_base< leda_real, 
-                                            CGAL::Field_with_root_of_tag >  {
+                                            Field_with_root_of_tag >  {
 #else
   : public Algebraic_structure_traits_base< leda_real, 
-                                            CGAL::Field_with_kth_root_tag >  {
+                                            Field_with_kth_root_tag >  {
 #endif
 
   public:
-    typedef CGAL::Tag_true           Is_exact;
+    typedef Tag_true           Is_exact;
                                                                              
     class Sqrt 
       : public Unary_function< Algebraic_structure, Algebraic_structure > {
@@ -151,15 +151,15 @@ template <> class Real_embeddable_traits< leda_real >
     
     class Compare 
       : public Binary_function< Real_embeddable, Real_embeddable,
-                                CGAL::Comparison_result > {
+                                Comparison_result > {
       public:
-        CGAL::Comparison_result operator()( const Real_embeddable& x, 
+        Comparison_result operator()( const Real_embeddable& x, 
                                             const Real_embeddable& y ) const {
-          return (CGAL::Comparison_result) CGAL_LEDA_SCOPE::compare( x, y );
+          return (Comparison_result) CGAL_LEDA_SCOPE::compare( x, y );
         }
         
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Real_embeddable,
-                                                      CGAL::Comparison_result );
+                                                      Comparison_result );
         
     };
     
