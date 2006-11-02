@@ -429,10 +429,11 @@ operator * (const Sqrt_extension<NT,ROOT>& p1, const Sqrt_extension<NT,ROOT>& p2
 
 template <class NT,class ROOT> inline Sqrt_extension<NT,ROOT> 
 operator / (const Sqrt_extension<NT,ROOT>& p1, const Sqrt_extension<NT,ROOT>& p2) { 
+    
     typedef Sqrt_extension<NT,ROOT> EXT;
     CGAL_assertion(! p2.is_zero());
     typename CGAL::Algebraic_structure_traits<NT>::Integral_division Idiv;
-    
+   
     if(p1.is_extended()){
         if (p2.is_extended()){
             CGAL_precondition(p1.root()==p2.root());
@@ -595,7 +596,7 @@ class Sqrt_extension_algebraic_structure_traits_base< Algebraic_structure,
                                 Algebraic_structure > {
       public:
         Algebraic_structure operator()( const Algebraic_structure& x, 
-                                        const Algebraic_structure& y ) {
+                                        const Algebraic_structure& y ) const {
           return x/y;
         }
 
