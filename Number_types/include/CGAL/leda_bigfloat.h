@@ -142,7 +142,7 @@ template <> class Real_embeddable_traits< leda_bigfloat >
     class Is_finite
       : public Unary_function< Real_embeddable, bool > {
       public:
-        bool operator()( const Real_embeddable& x ) {
+        bool operator()( const Real_embeddable& x )  const {
           return !( CGAL_LEDA_SCOPE::isInf(x) || CGAL_LEDA_SCOPE::isNaN(x) ); 
         }
     };
@@ -152,7 +152,7 @@ template<>
 class Is_valid< leda_bigfloat > 
   : public Unary_function< leda_bigfloat, bool > {
   public :
-    bool operator()( const leda_bigfloat& x ) {
+    bool operator()( const leda_bigfloat& x ) const {
       return !( CGAL_LEDA_SCOPE::isNaN(x) );
     }  
 };

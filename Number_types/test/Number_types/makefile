@@ -67,6 +67,7 @@ all:            \
                 MP_Float_new$(EXE_EXT) \
                 mpq_class$(EXE_EXT) \
                 mpz_class$(EXE_EXT) \
+                Nef_polynomial$(EXE_EXT) \
                 NT_checker$(EXE_EXT) \
                 Quotient$(EXE_EXT) \
                 quotient_io$(EXE_EXT) \
@@ -176,6 +177,9 @@ mpq_class$(EXE_EXT): mpq_class$(OBJ_EXT)
 mpz_class$(EXE_EXT): mpz_class$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)mpz_class mpz_class$(OBJ_EXT) $(LDFLAGS)
 
+Nef_polynomial$(EXE_EXT): Nef_polynomial$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Nef_polynomial Nef_polynomial$(OBJ_EXT) $(LDFLAGS)
+
 NT_checker$(EXE_EXT): NT_checker$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)NT_checker NT_checker$(OBJ_EXT) $(LDFLAGS)
 
@@ -245,6 +249,7 @@ clean: \
                    MP_Float_new.clean \
                    mpq_class.clean \
                    mpz_class.clean \
+                   Nef_polynomial.clean \
                    NT_checker.clean \
                    Quotient.clean \
                    quotient_io.clean \

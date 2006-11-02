@@ -107,7 +107,7 @@ template <> class Real_embeddable_traits< long double >
     class Is_finite 
       : public Unary_function< Real_embeddable, bool > {
       public:
-        bool operator()( const Real_embeddable& x ) {
+        bool operator()( const Real_embeddable& x ) const {
           switch (fp_class_d(x)) {
           case FP_POS_NORM:
           case FP_NEG_NORM:
@@ -129,7 +129,7 @@ template <> class Real_embeddable_traits< long double >
     class Is_finite 
       : public Unary_function< Real_embeddable, bool > {
       public:
-        bool operator()( const Real_embeddable& x ) {
+        bool operator()( const Real_embeddable& x ) const {
           Real_embeddable d = x;
           IEEE_754_double* p = reinterpret_cast<IEEE_754_double*>(&d);
           return is_finite_by_mask_long_double( p->c.H );
@@ -139,7 +139,7 @@ template <> class Real_embeddable_traits< long double >
     class Is_finite 
       : public Unary_function< Real_embeddable, bool > {
       public:
-        bool operator()( const Real_embeddable& x ) {
+        bool operator()( const Real_embeddable& x ) const {
          return (x == x) && (is_valid(x-x)); 
         }
     };
@@ -153,7 +153,7 @@ template<>
 class Is_valid< long double > 
   : public Unary_function< long double, bool > {
   public :
-    bool operator()( const long_double& x ) {
+    bool operator()( const long_double& x ) const {
       switch (fp_class_d(x)) {
       case FP_POS_NORM:
       case FP_NEG_NORM:
@@ -198,7 +198,7 @@ template<>
 class Is_valid< long double > 
   : public Unary_function< long double, bool > {
   public :
-    bool operator()( const long_double& x ) {
+    bool operator()( const long_double& x ) const {
       double d = x;
       IEEE_754_double* p = reinterpret_cast<IEEE_754_double*>(&d);
       return ! ( is_nan_by_mask_long_double( p->c.H, p->c.L ));
@@ -211,7 +211,7 @@ template<>
 class Is_valid< long double > 
   : public Unary_function< long double, bool > {
   public :
-    bool operator()( const long double& x ) {
+    bool operator()( const long double& x ) const {
       return (x == x);
     }  
 };

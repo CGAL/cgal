@@ -65,7 +65,7 @@ template<>
 class Is_valid< double > 
   : public Unary_function< double, bool > {
   public :
-    bool operator()( const double& x ) {
+    bool operator()( const double& x ) const {
       switch (fp_class_d(x)) {
       case FP_POS_NORM:
       case FP_NEG_NORM:
@@ -110,7 +110,7 @@ template<>
 class Is_valid< double > 
   : public Unary_function< double, bool > {
   public :
-    bool operator()( const double& x ) {
+    bool operator()( const double& x ) const{
       double d = x;
       IEEE_754_double* p = reinterpret_cast<IEEE_754_double*>(&d);
       return ! ( is_nan_by_mask_double( p->c.H, p->c.L ));
@@ -125,7 +125,7 @@ template<>
 class Is_valid< double > 
   : public Unary_function< double, bool > {
   public :
-    bool operator()( const double& x ) {
+    bool operator()( const double& x ) const {
       return ! _isnan(x);
     }  
 };
@@ -136,7 +136,7 @@ template<>
 class Is_valid< double > 
   : public Unary_function< double, bool > {
   public :
-    bool operator()( const double& x ) {
+    bool operator()( const double& x ) const {
       return (x == x);
     }  
 };
@@ -196,7 +196,7 @@ template <> class Real_embeddable_traits< double >
     class Is_finite
       : public Unary_function< Real_embeddable, bool > {
       public :
-        bool operator()( const Real_embeddable& x ) {
+        bool operator()( const Real_embeddable& x ) const {
           switch (fp_class_d(x)) {
           case FP_POS_NORM:
           case FP_NEG_NORM:
@@ -219,7 +219,7 @@ template <> class Real_embeddable_traits< double >
     class Is_finite
       : public Unary_function< Real_embeddable, bool > {
       public :
-        bool operator()( const Real_embeddable& x ) {
+        bool operator()( const Real_embeddable& x ) const {
           Real_embeddable d = x;
           IEEE_754_double* p = reinterpret_cast<IEEE_754_double*>(&d);
           return is_finite_by_mask_double( p->c.H );
@@ -229,7 +229,7 @@ template <> class Real_embeddable_traits< double >
     class Is_finite
       : public Unary_function< Real_embeddable, bool > {
       public :
-        bool operator()( const Real_embeddable& x ) {
+        bool operator()( const Real_embeddable& x ) const {
            return (x == x) && (is_valid(x-x));
         }
     };                                                                      
@@ -237,7 +237,7 @@ template <> class Real_embeddable_traits< double >
     class Is_finite
       : public Unary_function< Real_embeddable, bool > {
       public :
-        bool operator()( const Real_embeddable& x ) {
+        bool operator()( const Real_embeddable& x ) const {
           return (x != std::numeric_limits<Real_embeddable>::infinity()) 
               && (-x != std::numeric_limits<Real_embeddable>::infinity())
               && is_valid(x);

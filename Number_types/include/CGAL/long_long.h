@@ -84,7 +84,7 @@ template <> class Real_embeddable_traits< long long int >
     class To_interval 
       : public Unary_function< Real_embeddable, std::pair< double, double > > {
       public:
-        std::pair<double, double> operator()( const Real_embeddable& x ) {
+        std::pair<double, double> operator()( const Real_embeddable& x ) const {
           Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
           CGAL::Interval_nt<false> approx ((double) x);
           FPU_set_cw(CGAL_FE_UPWARD);

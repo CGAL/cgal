@@ -424,10 +424,10 @@ class Algebraic_structure_traits_base< Algebraic_structure_,
     struct Is_square
         :public Binary_function<Algebraic_structure,Algebraic_structure&,bool>
     {
-        bool operator()(const Algebraic_structure& x){return true;}
+        bool operator()(const Algebraic_structure& x) const {return true;}
         bool operator()(
                 const Algebraic_structure& x,
-                Algebraic_structure      & result){
+                Algebraic_structure      & result) const {
             typename Algebraic_structure_traits<Algebraic_structure>::Sqrt sqrt;
             result = sqrt(x);
             return true;

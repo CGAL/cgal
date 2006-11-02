@@ -47,14 +47,14 @@ template <> class Algebraic_structure_traits< Gmpq >
       : public Binary_function< Algebraic_structure, Algebraic_structure&, 
                                 bool > {
       public:
-        bool operator()( const Algebraic_structure& x_, Algebraic_structure& y ) {
+        bool operator()( const Algebraic_structure& x_, Algebraic_structure& y ) const {
           Gmpq x( x_ );
           mpq_canonicalize( x.mpq() );
           Algebraic_structure_traits< Gmpz >::Sqrt sqrt;
           y = Gmpq( sqrt( x.numerator() ), sqrt( x.denominator() ) );
           return y*y == x;
         }
-        bool operator()( const Algebraic_structure& x) {
+        bool operator()( const Algebraic_structure& x) const {
             Algebraic_structure y;
             return operator()(x,y);
         }

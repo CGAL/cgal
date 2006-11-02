@@ -315,7 +315,7 @@ template< bool Protected >
 class Is_valid< Interval_nt<Protected> > 
   : public Unary_function< Interval_nt<Protected>, bool > {
   public :
-    bool operator()( const Interval_nt<Protected>& x ) {
+    bool operator()( const Interval_nt<Protected>& x ) const {
       return CGAL::is_valid(x.inf()) && 
              CGAL::is_valid(x.sup()) && 
              x.inf() <= x.sup();
@@ -941,13 +941,13 @@ class Algebraic_structure_traits< Interval_nt<B> >
     struct Is_square
         :public Binary_function<Interval_nt<B>,Interval_nt<B>&,Uncertain<bool> >
     {
-        bool operator()(const Interval_nt<B>& x){
+        bool operator()(const Interval_nt<B>& x) const {
             return INTERN_INTERVAL_NT::is_positive( x );
         }
         
         bool operator()(
                 const Interval_nt<B>& x,
-                Interval_nt<B>      & result){
+                Interval_nt<B>      & result) const {
             Uncertain<bool> is_positive = INTERN_INTERVAL_NT::is_positive( x );
             if ( is_positive.inf() == true ){
                 typename Algebraic_structure_traits<Interval_nt<B> >::Sqrt sqrt;

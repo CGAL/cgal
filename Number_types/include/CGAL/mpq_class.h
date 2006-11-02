@@ -131,7 +131,7 @@ class Algebraic_structure_traits< ::__gmp_expr< ::__gmpq_value,U> >
         template <class U2>
         bool operator()( 
                 const ::__gmp_expr< ::__gmpq_value,U2>& x_, 
-                mpq_class& y ) {
+                mpq_class& y ) const {
             mpq_class x( x_ );
             y = mpq_class (::sqrt( x.get_num() ), ::sqrt( x.get_den() )) ;
             
@@ -139,7 +139,7 @@ class Algebraic_structure_traits< ::__gmp_expr< ::__gmpq_value,U> >
         }
         
         template <class U2>
-        bool operator()( const ::__gmp_expr< ::__gmpq_value,U2>& x ) {
+        bool operator()( const ::__gmp_expr< ::__gmpq_value,U2>& x ) const {
             mpq_class y;
             return operator()(x,y);
         }

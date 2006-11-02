@@ -766,7 +766,7 @@ public:
     class Is_finite
       : public Unary_function< Counted_number<NT>, bool > {
       public:
-        bool operator()( const Counted_number<NT>& x ) {
+        bool operator()( const Counted_number<NT>& x ) const {
           return CGAL_NTS is_finite( x.rep() );
         }
     };

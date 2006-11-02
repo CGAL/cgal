@@ -473,7 +473,7 @@ template< class NT >
 class Is_valid< Quotient<NT> > 
   : public Unary_function< Quotient<NT>, bool > {
   public :
-    bool operator()( const Quotient<NT>& x ) {
+    bool operator()( const Quotient<NT>& x ) const {
       return is_valid(x.num) && is_valid(x.den);
     }
 };
@@ -669,7 +669,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
     class Is_finite
       : public Unary_function< Real_embeddable, bool > {
       public:
-        bool operator()( const Real_embeddable& x ) {
+        bool operator()( const Real_embeddable& x ) const {
           return CGAL_NTS is_finite(x.num) && CGAL_NTS is_finite(x.den);
         }
     };
@@ -697,7 +697,8 @@ struct Coercion_traits<typename First_if_different<int, NT>::Type,Quotient<NT> >
     struct Cast{                                                    
         typedef Coercion_type result_type;                          
         Coercion_type operator()(const Quotient<NT>& x)   const { return x;}  
-        Coercion_type operator()(const typename First_if_different<int, NT>::Type& x) const {             
+        Coercion_type operator()(
+                const typename First_if_different<int, NT>::Type& x) const {             
             return Coercion_type(x);}                               
     };                                                              
 };                                                                  
@@ -715,7 +716,8 @@ struct Coercion_traits<typename First_if_different<double, NT>::Type,Quotient<NT
     struct Cast{                                                    
         typedef Coercion_type result_type;                          
         Coercion_type operator()(const Quotient<NT>& x)   const { return x;}  
-        Coercion_type operator()(const typename First_if_different<double, NT>::Type& x) const {             
+        Coercion_type operator()(
+                const typename First_if_different<double, NT>::Type& x) const {
             return Coercion_type(x);}                               
     };                                                              
 };                                                                  

@@ -28,6 +28,17 @@
 //#include <CGAL/Algebraic_structure_traits.h>
 #include <CGAL/Real_embeddable_traits.h>
 
+#define CGAL_SNAP_RET_FUNCTORS(RET)                      \
+    typedef typename RET::Abs Abs;                       \
+    typedef typename RET::Sign Sign;                     \
+    typedef typename RET::Is_finite Is_finite;           \
+    typedef typename RET::Is_positive Is_positive;       \
+    typedef typename RET::Is_negative Is_negative;       \
+    typedef typename RET::Is_zero Is_zero;               \
+    typedef typename RET::Compare Compare;               \
+    typedef typename RET::To_double To_double;           \
+    typedef typename RET::To_interval To_interval;       
+
 #ifndef CGAL_TEST_REAL_EMBEDDABLE_H
 #define CGAL_TEST_REAL_EMBEDDABLE_H
 
@@ -36,7 +47,7 @@ CGAL_BEGIN_NAMESPACE
     template<class Real_embeddable, class ToDouble>
     class Test_to_double {
     public:
-        void operator() (ToDouble to_double) {
+        void operator() (const ToDouble& to_double) {
             typedef typename ToDouble::argument_type Argument_type;
             typedef typename ToDouble::result_type   Result_type;
             BOOST_STATIC_ASSERT(( ::boost::is_same<Real_embeddable, Argument_type>::value));  
@@ -56,7 +67,7 @@ CGAL_BEGIN_NAMESPACE
     template<class Real_embeddable, class To_interval>
     class Test_to_interval {
     public:
-        void operator() (To_interval to_interval) {
+        void operator() (const To_interval& to_interval) {
             typedef typename To_interval::argument_type Argument_type;
             typedef typename To_interval::result_type   Result_type;
             typedef std::pair<double,double>  Interval_type;
@@ -116,19 +127,20 @@ void test_ret_functor_arity() {
 //! and terminates the program with an error message if not.
 template <class Real_embeddable>
 void test_real_embeddable() {    
-    typedef CGAL::Real_embeddable_traits<Real_embeddable> Traits;
-    typedef typename Traits::Is_real_embeddable Is_real_embeddable;
+    typedef CGAL::Real_embeddable_traits<Real_embeddable> RET;
+    CGAL_SNAP_RET_FUNCTORS(RET);
+    typedef typename RET::Is_real_embeddable Is_real_embeddable;
     using CGAL::Tag_true;
     BOOST_STATIC_ASSERT(( ::boost::is_same< Is_real_embeddable, Tag_true>::value));
 
     test_ret_functor_arity< Real_embeddable >();
-    typename Traits::Compare compare;
-    typename Traits::Sign    sign;
-    typename Traits::Abs     abs; 
-    typename Traits::Is_finite  is_finite;
-    typename Traits::Is_positive is_positive;
-    typename Traits::Is_negative is_negative;
-    typename Traits::Is_zero     is_zero;
+    typename RET::Compare compare;
+    const Sign    sign = Sign();
+    const Abs     abs=Abs(); 
+    const Is_finite  is_finite=Is_finite();
+    const Is_positive is_positive=Is_positive();
+    const Is_negative is_negative=Is_negative();
+    const Is_zero     is_zero=Is_zero();
 
     Real_embeddable a(-2);
     Real_embeddable b(1);
@@ -178,22 +190,22 @@ void test_real_embeddable() {
     CGAL_test_assert( abs(c) == Real_embeddable(0));   
     
     // To_double --------------------------------------------------------------
-    typename Traits::To_double  to_double;
+    const To_double to_double = To_double();
     (void)to_double;
-    Test_to_double<Real_embeddable, typename Traits::To_double> ttd;
+    Test_to_double<Real_embeddable, To_double> ttd;
     ttd(to_double);
     
     // To_Interval ------------------------------------------------------------
-    typename Traits::To_interval  to_Interval;
-    (void)to_Interval;
-    Test_to_interval<Real_embeddable, typename Traits::To_interval> tti;
-    tti(to_Interval);
+    const To_interval to_interval = To_interval();
+    (void)to_interval;
+    Test_to_interval<Real_embeddable, To_interval> tti;
+    tti(to_interval);
     
     // additional functions     
     CGAL_test_assert( CGAL_NTS is_finite( Real_embeddable(1) ) );
     CGAL_test_assert( CGAL_NTS sign(Real_embeddable(-5))==CGAL::NEGATIVE);
     CGAL_test_assert( CGAL_NTS abs(Real_embeddable(-5))==Real_embeddable(5));
-//    CGAL_test_assert(NiX::in(5.0,NiX::to_Interval(Real_embeddable(5))));
+//    CGAL_test_assert(NiX::in(5.0,NiX::to_interval(Real_embeddable(5))));
     CGAL_test_assert( CGAL_NTS compare(Real_embeddable(-5),Real_embeddable(6))==CGAL::SMALLER);
     CGAL_test_assert( CGAL_NTS is_positive(Real_embeddable(23)) );
     CGAL_test_assert( CGAL_NTS is_negative(Real_embeddable(-23)) );
@@ -207,8 +219,8 @@ void test_real_embeddable() {
 //! actually is.
 template <class Real_embeddable>
 void test_not_real_embeddable() {
-    typedef CGAL::Real_embeddable_traits<Real_embeddable> Traits;
-    typedef typename Traits::Is_real_embeddable Is_real_embeddable;
+    typedef CGAL::Real_embeddable_traits<Real_embeddable> RET;
+    typedef typename RET::Is_real_embeddable Is_real_embeddable;
     using CGAL::Tag_false;
     BOOST_STATIC_ASSERT(( ::boost::is_same< Is_real_embeddable, Tag_false>::value));
 }

@@ -300,6 +300,10 @@ test_utilities(const NT& x)
 
   // is_finite, is_valid
   std::cout << "  is_finite()" << std::endl;
+  const CGAL::Is_valid<NT> is_valid = CGAL::Is_valid<NT>(); 
+  if(!is_valid(zero)) return false;
+  if(!CGAL_NTS is_valid(zero)) return false;
+  
   if (! CGAL::is_finite(zero)) return false;
   std::cout << "  is_valid()" << std::endl;
   if (! CGAL::is_valid(zero)) return false;

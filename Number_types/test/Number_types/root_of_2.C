@@ -24,6 +24,8 @@
 #include <CGAL/Root_of_2.h>
 #include <iomanip>
 
+#include <CGAL/_test_real_embeddable.h>
+
 #ifdef CGAL_USE_GMP
 #  include <CGAL/Gmpz.h>
 #  include <CGAL/Gmpq.h>
@@ -129,6 +131,7 @@ bool
 test_root_of()
 {
   typedef typename Root::RT RT;
+  CGAL::test_real_embeddable<Root>();  
 
   std::cout << "  Testing zeros" << std::endl;
   Root zero1(1, 0, 0, true);
@@ -449,8 +452,8 @@ test_root_of()
     RT r2 = my_rand<RT>();
     while(r1 < 0) r1 = my_rand<RT>();
     while(r2 < 0) r2 = my_rand<RT>();
-    Root sqr_r1 = make_sqrt(r1);
-    Root sqr_r2 = make_sqrt(r2);
+    Root sqr_r1 = CGAL::make_sqrt(r1);
+    Root sqr_r2 = CGAL::make_sqrt(r2);
     assert(test_to_interval(sqr_r1));
     assert(test_to_interval(sqr_r2));
 //    double dr1 = to_double(r1);
@@ -500,10 +503,13 @@ int main(int argc, char **argv) {
   result = result &&
            test_root_of<Root_of_2<CGAL::Quotient<CGAL::MP_Float> > >();
   */
- std::cout << "Testing Lazy_exact_nt<MP_Float>'s RootOf_2 " << std::endl;
- result = result &&
-          test_root_of<CGAL::Root_of_traits<CGAL::Lazy_exact_nt<CGAL::MP_Float> >::RootOf_2 >();
-
+ 
+  /*
+    std::cout << "Testing Lazy_exact_nt<MP_Float>'s RootOf_2 " << std::endl;
+    result = result &&
+    test_root_of<CGAL::Root_of_traits<CGAL::Lazy_exact_nt<CGAL::MP_Float> >::RootOf_2 >();
+  */
+  
 #ifdef CGAL_USE_GMP
   std::cout << "Testing Root_of_2<Gmpz>" << std::endl;
   result = result && test_root_of<Root_of_2<CGAL::Gmpz> >();
@@ -529,8 +535,8 @@ int main(int argc, char **argv) {
 #endif
 
 #ifdef CGAL_USE_LEDA
-  std::cout << "Testing Root_of_2<leda_real>" << std::endl;
-  result = result && test_root_of<Root_of_2<leda_real> >();
+  //std::cout << "Testing Root_of_2<leda_real>" << std::endl;
+  //result = result && test_root_of<Root_of_2<leda_real> >();
 #endif
 
   if (result) {

@@ -57,7 +57,7 @@ template<>
 class Is_valid< float > 
   : public Unary_function< float, bool > {
   public :
-    bool operator()( const float& x ) {
+    bool operator()( const float& x ) const {
       switch (fp_class_f(x)) {
       case FP_POS_NORM:
       case FP_NEG_NORM:
@@ -102,7 +102,7 @@ template<>
 class Is_valid< float > 
   : public Unary_function< float, bool > {
   public :
-    bool operator()( const float& x ) {
+    bool operator()( const float& x ) const {
       float f = x;
       IEEE_754_float* p = reinterpret_cast<IEEE_754_float*>(&f);
       return !is_nan_by_mask_float( p->c );
@@ -115,7 +115,7 @@ template<>
 class Is_valid< float > 
   : public Unary_function< float, bool > {
   public :
-    bool operator()( const float& x ) {
+    bool operator()( const float& x ) const {
       return (x == x);
     }  
 };
@@ -162,7 +162,7 @@ template <> class Real_embeddable_traits< float >
     class Is_finite
       : public Unary_function< Real_embeddable, bool > {
       public:
-        bool operator()( const Real_embeddable& x ) {
+        bool operator()( const Real_embeddable& x ) const {
           switch (fp_class_f(x)) {
           case FP_POS_NORM:
           case FP_NEG_NORM:
@@ -186,7 +186,7 @@ template <> class Real_embeddable_traits< float >
     class Is_finite
       : public Unary_function< Real_embeddable, bool > {
       public:
-        bool operator()( const Real_embeddable& x ) {
+        bool operator()( const Real_embeddable& x ) const {
           Real_embeddable f = x;
           IEEE_754_float* p = reinterpret_cast<IEEE_754_float*>(&f);
           return is_finite_by_mask_float( p->c );
@@ -196,7 +196,7 @@ template <> class Real_embeddable_traits< float >
     class Is_finite
       : public Unary_function< Real_embeddable, bool > {
       public:
-        bool operator()( const Real_embeddable& x ) {
+        bool operator()( const Real_embeddable& x ) const {
           return (x == x) && (is_valid(x-x));        
         }
     };

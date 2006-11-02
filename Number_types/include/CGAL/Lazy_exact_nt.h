@@ -1217,7 +1217,7 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
     class Is_finite
       : public Unary_function< Real_embeddable, bool > {
       public:
-        bool operator()( const Real_embeddable& x ) {
+        bool operator()( const Real_embeddable& x ) const {
           return CGAL_NTS is_finite(x.approx()) || CGAL_NTS is_finite(x.exact());        
         }
     };
@@ -1332,7 +1332,7 @@ template< class ET >
 class Is_valid< Lazy_exact_nt<ET> > 
   : public Unary_function< Lazy_exact_nt<ET>, bool > {
   public :
-    bool operator()( const Lazy_exact_nt<ET>& x ) {
+    bool operator()( const Lazy_exact_nt<ET>& x ) const {
       return is_valid(x.approx()) || is_valid(x.exact());
     }  
 };
