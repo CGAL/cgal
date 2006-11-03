@@ -22,6 +22,7 @@
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Gbrs_algebraic_1.h>
+#include <CGAL/Gbrs_polynomial_2.h>
 #include <iostream>
 #include <gmp.h>
 
@@ -84,57 +85,10 @@ Rational_polynomial_2::~Rational_polynomial_2 () {
 	free (coef);
 };
 
-// other functions
-inline int Rational_polynomial_2::get_degree_x () const {
-	return degree_x;
-};
-
-inline int Rational_polynomial_2::get_degree_y () const {
-	return degree_y;
-};
-
-inline mpq_t** Rational_polynomial_2::get_coefs () const {
-	return coef;
-};
-
 void Rational_polynomial_2::get_coef (int pow_x, int pow_y, mpq_t *c) const {
 	CGAL_precondition ((pow_x<=degree_x) && (pow_y<=degree_y));
 	mpq_set (*c, coef[pow_x][pow_y]);
 	return;
-};
-
-// functions for setting polynomial coefficients
-void Rational_polynomial_2::set_coef (int pow_x, int pow_y, const mpq_t &q) {
-	mpq_set (coef[pow_x][pow_y], q);
-};
-
-void Rational_polynomial_2::set_coef (int pow_x, int pow_y, const mpz_t &z) {
-	mpq_set_z (coef[pow_x][pow_y], z);
-};
-
-void Rational_polynomial_2::set_coef (int pow_x, int pow_y, const CGAL::Gmpq &q) {
-	mpq_set (coef[pow_x][pow_y], q.mpq());
-};
-
-void Rational_polynomial_2::set_coef(int pow_x,int pow_y,const CGAL::Gmpz &z) {
-	mpq_set_z (coef[pow_x][pow_y], z.mpz());
-};
-
-void Rational_polynomial_2::set_coef (int pow_x, int pow_y, int c) {
-	mpq_set_si (coef[pow_x][pow_y], (long int)c, (unsigned long int)1);
-};
-
-void Rational_polynomial_2::set_coef (int pow_x, int pow_y, unsigned int c) {
-	mpq_set_ui
-		(coef[pow_x][pow_y],(unsigned long int)c,(unsigned long int)1);
-};
-
-void Rational_polynomial_2::set_coef (int pow_x, int pow_y, long int c) {
-	mpq_set_si (coef[pow_x][pow_y], c, (unsigned long int)1);
-};
-
-void Rational_polynomial_2::set_coef (int pow_x, int pow_y, unsigned long int c) {
-	mpq_set_ui (coef[pow_x][pow_y], c, (unsigned long int)1);
 };
 
 Rational_polynomial_2&
@@ -267,23 +221,6 @@ Rational_polynomial_2& Rational_polynomial_2::operator-= (const Rational_polynom
 	return *this;
 };
 
-// scaling
-inline Rational_polynomial_2& Rational_polynomial_2::operator*= (const int s) {
-	return (*this *= Gmpq(s));
-};
-
-inline Rational_polynomial_2& Rational_polynomial_2::operator*= (const mpz_t &s) {
-	return (*this *= Gmpq(s));
-};
-
-inline Rational_polynomial_2& Rational_polynomial_2::operator*= (const mpq_t &s) {
-	return (*this *= Gmpq(s));
-};
-
-inline Rational_polynomial_2& Rational_polynomial_2::operator*= (const CGAL::Gmpz &s) {
-	return (*this *= Gmpq(s.mpz()));
-};
-
 Rational_polynomial_2& Rational_polynomial_2::operator*= (const CGAL::Gmpq &s) {
 	mpq_t temp;
 	mpq_init (temp);
@@ -354,10 +291,6 @@ bool Rational_polynomial_2::operator== (const Rational_polynomial_2 &p) const {
 	return true;
 };
 
-inline bool Rational_polynomial_2::operator!= (const Rational_polynomial_2 &p) const {
-	return !(*this == p);
-};
-
 std::ostream& Rational_polynomial_2::show (std::ostream &s) const {
 	bool printed = false;
 	bool zero;
@@ -413,19 +346,8 @@ Rational_polynomial_2& Rational_polynomial_2::operator*= (const Rational_polynom
 	return *this;
 };
 
-template <class T>
-Rational_polynomial_2 Rational_polynomial_2::operator* (const T &n) const {
-	Rational_polynomial_2 r (*this);
-	return (r*=n);
-};
-
 std::ostream& operator<< (std::ostream &o, const Rational_polynomial_2 &p) {
 	return p.show (o);
-};
-
-template <class T>
-inline Rational_polynomial_2 operator* (const T &n, Rational_polynomial_2 &p) {
-		return (p*n);
 };
 
 CGAL_END_NAMESPACE

@@ -24,12 +24,14 @@
 #include <gmp.h>
 #include <mpfi.h>
 #include <CGAL/assertions.h>
+#include <CGAL/Gbrs_algebraic_1.h>
 #include <CGAL/Gbrs_polynomial_1.h>
+#include <CGAL/Gbrs_solve_1.h>
 #include <rs_exports.h>
 
 CGAL_BEGIN_NAMESPACE
 
-int init_rs () {
+int init_solver(){
 	rs_init_rs ();
 	return 0;
 }

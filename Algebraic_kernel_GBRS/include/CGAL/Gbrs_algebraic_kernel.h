@@ -22,6 +22,7 @@
 
 #include <CGAL/Gbrs_algebraic_1.h>
 #include <CGAL/Gbrs_polynomial_1.h>
+#include <CGAL/Gbrs_solve_1.h>
 #include <CGAL/Gbrs_functors.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -35,7 +36,7 @@ class GBRS_algebraic_kernel {
 	// constructor: we must initialize RS just a time, so this is a good
 	// time to do it
 	GBRS_algebraic_kernel () {
-		CGAL_assertion_msg (!(init_rs ()), "error initializing RS");
+		CGAL_assertion_msg(!(init_solver()),"error initializing RS");
 	};
 
 	typedef IntegralDomain_				Coefficient;

@@ -21,6 +21,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gbrs_algebraic_1.h>
+#include <CGAL/Gbrs_polynomial_1.h>
 #include <iostream>
 #include <gmp.h>
 
@@ -76,12 +77,6 @@ void Rational_polynomial_1::set_degree (int d) {	// noone should call this funct
 	return;
 };
 
-inline int Rational_polynomial_1::calc_index (int pow_x) const {
-	// we have to calculate the index in the array to store the coefficient
-	// of x^pow_x
-	return /*degree-*/pow_x;
-};
-
 // functions for setting polynomial coefficients
 void Rational_polynomial_1::set_coef (int pow_x, const mpz_t &z) {
 	mpz_set (coef[calc_index (pow_x)], z);
@@ -132,18 +127,6 @@ void Rational_polynomial_1::scale (const CGAL::Gmpz &s) {
 	}
 	mpz_clear(temp);
 	return;
-};
-
-inline int Rational_polynomial_1::get_degree () const {
-	return (int)degree;
-};
-
-inline int Rational_polynomial_1::get_number_of_monomials () const {
-	return (degree+1);
-};
-
-inline mpz_t* Rational_polynomial_1::get_coefs () const {
-	return coef;
 };
 
 void Rational_polynomial_1::get_coef (int pow_x, mpz_t *c) const {
@@ -360,13 +343,6 @@ Rational_polynomial_1 Rational_polynomial_1::operator* (const Rational_polynomia
 		product += partial;
 	}
 	return product;
-};
-
-template <class T>
-Rational_polynomial_1 Rational_polynomial_1::operator* (const T &n) const {
-	Rational_polynomial_1 r (*this);
-	r.scale (n);
-	return r;
 };
 
 Rational_polynomial_1& Rational_polynomial_1::operator*= (const Rational_polynomial_1 &f) {

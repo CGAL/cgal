@@ -53,9 +53,9 @@ class Rational_polynomial_1 {
 		void scale (const mpz_t &);
 		void scale (const CGAL::Gmpz &);
 		// access to the data
-		inline int get_degree () const;
-		inline int get_number_of_monomials () const;
-		inline mpz_t* get_coefs () const;
+		int get_degree () const;
+		int get_number_of_monomials () const;
+		mpz_t* get_coefs () const;
 		void get_coef (int, mpz_t *) const;
 		//CGAL::Algebraic_1 eval (const CGAL::Algebraic_1 &) const;
 		CGAL::Gmpz eval (const CGAL::Gmpz &) const;
@@ -79,10 +79,29 @@ class Rational_polynomial_1 {
 
 std::ostream& operator<< (std::ostream &, const Rational_polynomial_1 &);
 
+// /////////////////
+// inline functions
+
+inline int Rational_polynomial_1::calc_index(int pow_x) const{
+	return pow_x;
+};
+
+inline int Rational_polynomial_1::get_degree() const{
+	return (int)degree;
+};
+
+inline int Rational_polynomial_1::get_number_of_monomials() const{
+	return (degree+1);
+};
+
+inline mpz_t* Rational_polynomial_1::get_coefs() const{
+	return coef;
+};
+
 CGAL_END_NAMESPACE
 
 #ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/Gbrs_polynomial_1.C>
+#include <CGAL/Gbrs_polynomial_1_impl.h>
 #endif	// CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 
 #endif	// CGAL_GRBS_POLYNOMIAL_1_H

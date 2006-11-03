@@ -37,6 +37,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
+#include <CGAL/Gbrs_algebraic_1.h>
 #include <iostream>
 #include <mpfi.h>
 #include <mpfi_io.h>
@@ -146,7 +147,7 @@ Algebraic_1::Algebraic_1 (const Algebraic_1 &i) {
 // interesting constructor
 Algebraic_1::Algebraic_1 (const mpfi_ptr &i, const Rational_polynomial_1 &p,
 		const int n, const int m, const int rsp) {
-	mpfi_clear(mpfi());
+	mpfi_clear(mpfi());	// not sure whether this is right...
 	*mpfi()=*i;
 	set_pol (p);
 	set_nr (n);
@@ -158,34 +159,6 @@ Algebraic_1::Algebraic_1 (const mpfi_ptr &i, const Rational_polynomial_1 &p,
 /* not needed
 Algebraic_1::~Algebraic_1 () {};
 */
-
-inline const mpfi_t & Algebraic_1::mpfi () const {
-	return Ptr()->mpfI;
-};
-
-inline mpfi_t & Algebraic_1::mpfi () {
-	return ptr()->mpfI;
-};
-
-inline const Rational_polynomial_1 & Algebraic_1::pol () const {
-	return *(Ptr()->poly);
-};
-
-inline Rational_polynomial_1 & Algebraic_1::pol () {
-	return *(ptr()->poly);
-};
-
-inline const int Algebraic_1::nr () const {
-	return ptr()->nr;
-};
-
-inline const int Algebraic_1::mult () const {
-	return ptr()->mult;
-};
-
-inline const int Algebraic_1::rsprec () const {
-	return ptr()->rsprec;
-};
 
 void Algebraic_1::clear_pol () {
 	ptr()->poly = NULL;
@@ -209,152 +182,6 @@ void Algebraic_1::set_mult (const int m) {
 void Algebraic_1::set_rsprec (const int p) {
 	ptr()->rsprec = p;
 };
-
-inline void Algebraic_1::set_prec (mp_prec_t p) {
-	mpfi_round_prec (mpfi (), p);
-};
-
-inline mp_prec_t Algebraic_1::get_prec () { return mpfi_get_prec (mpfi ()); };
-
-inline void Algebraic_1::get_left (mpfr_t &f) const {
-	mpfi_get_left (f, mpfi ());
-}
-
-inline void Algebraic_1::get_right (mpfr_t &f) const {
-	mpfi_get_right (f, mpfi ());
-}
-
-inline void Algebraic_1::get_endpoints (mpfr_t &l, mpfr_t &r) const {
-	mpfi_get_left (l, mpfi ());
-	mpfi_get_right (r, mpfi ());
-}
-
-inline bool Algebraic_1::is_consistent () const {
-	return (ptr()->poly);
-};
-
-inline bool Algebraic_1::is_point () const {
-	mpfr_t l, r;
-	mpfr_inits (l, r, NULL);
-	get_endpoints (l, r);
-	int comp = mpfr_equal_p (l, r);
-	mpfr_clears (l, r, NULL);
-	return (comp != 0);
-}
-
-inline bool Algebraic_1::contains (const int n) const {
-	mpfr_t end;
-	mpfr_init (end);
-	int comp;
-	get_left (end);	// first, we compare the left end
-	comp = mpfr_cmp_si (end, n);
-	if (comp > 0) {	// n is lower than the left end
-		mpfr_clear (end);
-		return false;
-	}
-	get_right (end);	// now, the right one
-	comp = mpfr_cmp_si (end, n);
-	if (comp < 0) {	// n is higher than the right end
-		mpfr_clear (end);
-		return false;
-	}
-	return true;
-}
-
-inline bool Algebraic_1::contains (const mpfr_t &n) const {
-	mpfr_t end;
-	mpfr_init (end);
-	int comp;
-	get_left (end);	// first, we compare the left end
-	comp = mpfr_cmp (end, n);
-	if (comp > 0) {	// n is lower than the left end
-		mpfr_clear (end);
-		return false;
-	}
-	get_right (end);	// now, the right one
-	comp = mpfr_cmp (end, n);
-	if (comp < 0) {	// n is higher than the right end
-		mpfr_clear (end);
-		return false;
-	}
-	return true;
-}
-
-inline bool Algebraic_1::contains (const mpz_t &n) const {
-	mpfr_t end;
-	mpfr_init (end);
-	int comp;
-	get_left (end);	// first, we compare the left end
-	comp = mpfr_cmp_z (end, n);
-	if (comp > 0) {	// n is lower than the left end
-		mpfr_clear (end);
-		return false;
-	}
-	get_right (end);	// now, the right one
-	comp = mpfr_cmp_z (end, n);
-	if (comp < 0) {	// n is higher than the right end
-		mpfr_clear (end);
-		return false;
-	}
-	return true;
-}
-
-inline bool Algebraic_1::contains (const mpq_t &n) const {
-	mpfr_t end;
-	mpfr_init (end);
-	int comp;
-	get_left (end);	// first, we compare the left end
-	comp = mpfr_cmp_q (end, n);
-	if (comp > 0) {	// n is lower than the left end
-		mpfr_clear (end);
-		return false;
-	}
-	get_right (end);	// now, the right one
-	comp = mpfr_cmp_q (end, n);
-	if (comp < 0) {	// n is higher than the right end
-		mpfr_clear (end);
-		return false;
-	}
-	return true;
-}
-
-inline bool Algebraic_1::contains (const Gmpz &n) const {
-	mpfr_t end;
-	mpfr_init (end);
-	int comp;
-	get_left (end);	// first, we compare the left end
-	comp = mpfr_cmp_z (end, n.mpz());
-	if (comp > 0) {	// n is lower than the left end
-		mpfr_clear (end);
-		return false;
-	}
-	get_right (end);	// now, the right one
-	comp = mpfr_cmp_z (end, n.mpz());
-	if (comp < 0) {	// n is higher than the right end
-		mpfr_clear (end);
-		return false;
-	}
-	return true;
-}
-
-inline bool Algebraic_1::contains (const Gmpq &n) const {
-	mpfr_t end;
-	mpfr_init (end);
-	int comp;
-	get_left (end);	// first, we compare the left end
-	comp = mpfr_cmp_q (end, n.mpq());
-	if (comp > 0) {	// n is lower than the left end
-		mpfr_clear (end);
-		return false;
-	}
-	get_right (end);	// now, the right one
-	comp = mpfr_cmp_q (end, n.mpq());
-	if (comp < 0) {	// n is higher than the right end
-		mpfr_clear (end);
-		return false;
-	}
-	return true;
-}
 
 // overcharge for assignment
 Algebraic_1& Algebraic_1::operator= (const long int i) {
@@ -457,21 +284,6 @@ bool Algebraic_1::operator>= (const int n2) const {
 };
 
 // comparisons with Gmpz and Gmpq
-template <class T>
-bool Algebraic_1::operator== (const T &n2) const {
-	if (contains (n2))
-		if (is_point ())
-			return true;
-		else
-			overlap ();
-	return false;
-};
-
-template <class T>
-bool Algebraic_1::operator!= (const T &n2) const {
-	return !(operator== (n2));
-};
-
 bool Algebraic_1::operator< (const CGAL::Gmpz &n2) const {
 	if (contains (n2))
 		if (is_point ())
@@ -538,16 +350,6 @@ bool Algebraic_1::operator> (const CGAL::Gmpq &n2) const {
 	return false;
 };
 
-template <class T>
-bool Algebraic_1::operator<= (const T &n2) const {
-	return ((operator== (n2)) || (operator< (n2)));
-};
-
-template <class T>
-bool Algebraic_1::operator>= (const T &n2) const {
-	return ((operator== (n2)) || (operator> (n2)));
-};
-
 // 3
 
 Algebraic_1 Algebraic_1::operator- () const {
@@ -566,7 +368,7 @@ Algebraic_1 Algebraic_1::operator+ (const Algebraic_1 &n2) const {
 	return ret;
 };
 
-inline Algebraic_1 Algebraic_1::operator- (const Algebraic_1 &n2) const {
+Algebraic_1 Algebraic_1::operator- (const Algebraic_1 &n2) const {
 	return (*this + (-n2));
 };
 
@@ -1036,36 +838,6 @@ bool operator>= (const Algebraic_1 &n1, const Algebraic_1 &n2) {
 
 // 2.5
 // comparison between int|mpfr_t|mp[zq]_t|Gmp[zq] and intervals
-template <class T>
-bool operator== (const T &n1, const Algebraic_1 &n2) {
-	return (n2 == n1);
-}
-
-template <class T>
-bool operator!= (const T &n1, const Algebraic_1 &n2) {
-	return (n2 != n1);
-}
-
-template <class T>
-bool operator< (const T &n1, const Algebraic_1 &n2) {
-	return (n2 > n1);
-}
-
-template <class T>
-bool operator> (const T &n1, const Algebraic_1 &n2) {
-	return (n2 < n1);
-}
-
-template <class T>
-bool operator<= (const T &n1, const Algebraic_1 &n2) {
-	return (n2 >= n1);
-}
-
-template <class T>
-bool operator>= (const T &n1, const Algebraic_1 &n2) {
-	return (n2 <= n1);
-}
-
 // 5.5
 bool is_valid (const Algebraic_1 &n) {
 	return n.is_valid ();

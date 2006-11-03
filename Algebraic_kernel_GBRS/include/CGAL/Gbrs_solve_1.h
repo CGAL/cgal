@@ -20,6 +20,10 @@
 #ifndef CGAL_GBRS_SOLVE_1_H
 #define CGAL_GBRS_SOLVE_1_H
 
+#include <mpfi.h>
+#include <CGAL/Gbrs_algebraic_1.h>
+#include <CGAL/Gbrs_polynomial_1.h>
+
 #ifndef CGAL_RS_VERB
 #ifdef CGAL_RS_DEBUG
 #define CGAL_RS_VERB 1
@@ -48,10 +52,6 @@
 #define CGAL_RS_MAX_PREC 80
 #endif
 
-#include <mpfi.h>
-#include <CGAL/Gbrs_polynomial_1.h>
-#include <CGAL/Gbrs_algebraic_1.h>
-
 CGAL_BEGIN_NAMESPACE
 
 // initialize the RS solver, returns 0 if everything was OK
@@ -68,9 +68,5 @@ Sign sign_1 (const Rational_polynomial_1 &, const Algebraic_1 &);
 Comparison_result compare_1 (Algebraic_1 &, Algebraic_1 &);
 
 CGAL_END_NAMESPACE
-
-#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
-#include <CGAL/Gbrs_solve_1.C>
-#endif	// CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 
 #endif	// CGAL_GBRS_SOLVE_1_H
