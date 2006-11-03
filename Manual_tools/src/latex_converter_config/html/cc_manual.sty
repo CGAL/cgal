@@ -1025,7 +1025,7 @@
 \newcommand{\lciFlushPkgDescriptionX}[3]{%
   \lciIfEmpty{#X3}{}{%
     \lciIfEmpty{\lciCurrentPartName}{}{%
-      \lciHtmlPartPkgDesciption{\lciCurrentPartName}%
+      \lciHtmlPartPkgDesciption{\lciCurrentPartName}{\lciCurrentPartLabel}%
       \gdef\lciCurrentPartName{}%
     }%
     \lciPushOutput{packages}%
