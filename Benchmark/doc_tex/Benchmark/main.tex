@@ -4,28 +4,20 @@
 \ccParDims
 
 \ccUserChapter{Benchmark}
-\input{Benchmark/PkgDescription.tex}
 \begingroup
 \label{chapterBenchmark}
 \ccChapterRelease{\benchmarkRev. \ \benchmarkDate}
 \ccChapterAuthor{Eric Berberich and Efi Fogel}
 
-\minitoc
+% \input{Benchmark/PkgDescription.tex}
+% \minitoc
 
 %% ----- cc2tex color definition -----
-%% for color print
-\def\RED#1{\Mahogany{#1}}
-\def\BLUE#1{\Orchid{#1}}
-\def\LBLUE#1{\MidnightBlue{#1}}
-\def\MBLUE#1{\Periwinkle{#1}}
-\def\GBLUE#1{\CadetBlue{#1}}
-\def\BLACK#1{\Black{#1}}
-\def\TAN#1{\Tan{#1}}
-\def\VIOLET#1{\Blue{#1}}
-\def\MAGENTA#1{\Thistle{#1}}
-\def\BROWN#1{\Plum{#1}}
-\def\GRAY#1{\Gray{#1}}
-\def\GREEN#1{\OliveGreen{#1}}
+\newcommand{\Red}[1]{#1}
+\newcommand{\Green}[1]{#1}
+\newcommand{\Blue}[1]{#1}
+\newcommand{\Maroon}[1]{#1}
+\newcommand{\Apricot}[1]{#1}
 
 \newcommand{\ascii}{\textsc{Ascii}}
 
@@ -52,27 +44,16 @@
 % 
 % % A handy macro to include files in verbatim mode.
 % % #1 = the file name.
-% \newcommand{\IncludeVerbatim}[1]{%
-%     \begin{alltt}
-%     \begingroup
-%     \catcode`\{=12
-%     \catcode`\}=12
-%     \catcode`\\=12
-%     \input{#1}
-%     \endgroup
-%     \end{alltt}
-% }
-
-\newenvironment{FramedVerb}%
-	       {\VerbatimEnvironment
-		 \begin{Sbox}\begin{minipage}{\textwidth}\begin{Verbatim}}%
-	       {\end{Verbatim}\end{minipage}\end{Sbox}
-		 \setlength{\fboxsep}{8pt}\fbox{\TheSbox}}
-
-\newenvironment{fminipage}%
-	       {\begin{Sbox}\begin{minipage}}%
-	       {\end{minipage}\end{Sbox}\fbox{\TheSbox}}
-
+\newcommand{\IncludeVerbatim}[1]{%
+    \begin{alltt}
+    \begingroup
+    \catcode`\{=12
+    \catcode`\}=12
+    \catcode`\\=12
+    \input{#1}
+    \endgroup
+    \end{alltt}
+}
 
 \input{Benchmark/Benchmark}
 

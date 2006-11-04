@@ -15,157 +15,122 @@ the reproduction of the results.
 
 \begin{ccRefConcept}{Benchanble}
 
-  \ccCreationVariable{benchable} 
+\ccCreationVariable{benchable} 
 
-  \ccCreation
-  \ccConstructor{Benchanble();}
-  {A default constructor.}
+\ccCreation
+% =========
+\ccConstructor{Benchanble();}{default constructor.}
 
-  \ccOperations
-
-  \ccMethod{void init(void);}
-  {this function is invoked once before the function that tests target
-    operation is invoked. It is used to initialize all the data members that
-    are operands consumed by the target operation. This allows for accurate
-    measure of the target-operation performance, through timing of the function
-    that performs the target operation.}
+\ccOperations
+% ===========
+\ccMethod{void init(void);}{%
+  this function is invoked once before the function that tests target
+  operation is invoked. It is used to initialize all the data members that
+  are operands consumed by the target operation. This allows for accurate
+  measure of the target-operation performance, through timing of the function
+  that performs the target operation.}
   
-  \ccMethod{void clean(void);}
-  {this function is invoked once after the function that tests the target
-    operation returns. It is used to clean up the data members in general and
-    the results in particular produced by the target operation.}
+\ccMethod{void clean(void);}{%
+  this function is invoked once after the function that tests the target
+  operation returns. It is used to clean up the data members in general and
+  the results in particular produced by the target operation.}
   
-  \ccMethod{void op(void);}
-  {this function performs the target operation
-    repeatedly in loop constrained, either by a maximum number of repetitions,
-    or by by a limit on the time period alloted for the target operation,
-    depending on the bench configuration.}
+\ccMethod{void op(void);}{%this function performs the target operation
+  repeatedly in loop constrained, either by a maximum number of repetitions,
+  or by by a limit on the time period alloted for the target operation,
+  depending on the bench configuration.}
 
-  \ccMethod{void sync(void);}
-  {this function synchronizes between the target operation and the measure of
-    its time consumption. It is called once after initialization and before the
-    starting time is sampled, and once again after the target operation is
-    performed in a loop and before the ending time is sampled. In many cases
-    the \ccc{sync} function is empty, as there is no need to synchronize
-    anything. On the other hand, suppose that the performance of a sequence of
-    commands in pipeline architecture is to be measured. In this case the
-    \ccc{sync} function can be used to flush the pipeline and force all pending
-    commands to complete before the ending time is sampled. This situation
-    manifests itself when the performance of some {\textbf openGl} (see cite)
-    commands is to be measured. The \ccc{sync} function can be implemented to
-    call {\textbf glFlush} to cause all issued commands trapped in intermediate
-    buffers of the pipeline to be executed as quickly as they are accepted by
-    the actual rendering engine before they are assumed to complete.}
+\ccMethod{void sync(void);}{%
+  this function synchronizes between the target operation and the measure of
+  its time consumption. It is called once after initialization and before the
+  starting time is sampled, and once again after the target operation is
+  performed in a loop and before the ending time is sampled. In many cases
+  the \ccc{sync} function is empty, as there is no need to synchronize
+  anything. On the other hand, suppose that the performance of a sequence of
+  commands in pipeline architecture is to be measured. In this case the
+  \ccc{sync} function can be used to flush the pipeline and force all pending
+  commands to complete before the ending time is sampled. This situation
+  manifests itself when the performance of some {\textbf openGl} (see cite)
+  commands is to be measured. The \ccc{sync} function can be implemented to
+  call {\textbf glFlush} to cause all issued commands trapped in intermediate
+  buffers of the pipeline to be executed as quickly as they are accepted by
+  the actual rendering engine before they are assumed to complete.}
 
 \end{ccRefConcept}
 
-\begin{ccRefClass}{Bench}
-    
-  \ccDefinition
-  \ccStyle{Bench} is a utility class that performs the bench. The benchmark is
-  configured during construction of the \ccc{Bench} class or through
-  some modifiers.
+\begin{ccRefClass}{Benchmark}
 
-  \ccInclude{CGAL/Bench.h}
+\ccDefinition
+% ===========
+\ccRefName{} is a utility class that performs the bench. The benchmark is
+configured during construction of the \ccc{Bench} class or through
+some modifiers.
 
-  % \ccInheritsFrom
+\ccInclude{CGAL/Benchmark/Benchmark.hpp}
+
+% \ccInheritsFrom
   
-  \ccCreationVariable{bench}
+\ccCreationVariable{bench}
 
-  \ccCreation
-    
-  \ccConstructor{Bench<Benchable>(std::string name = "",
-                                  int seconds = 1,
-				  bool printHeader = true);}
-  {constructs an instance of the \ccStyle{Bench} class.}
+\ccCreation
+% =========  
+\ccConstructor{Bench<Benchable>(std::string name = "",
+                                int seconds = 1,
+				bool print_header = true);}
+  {constructs an object of the type \ccc{Benchmark}.}
 
-  \ccModifiers
-  \ccMethod{void set_iterations(int iterations);}
-  {}
+\ccModifiers
+% ==========
+\ccMethod{void set_iterations(unsigned int iterations);}{}
   
-  \ccMethod{void set_seconds(int seconds);}
-  {}
+\ccMethod{void set_seconds(unsigned int seconds);}{}
   
-  \ccMethod{void set_samples(int samples);}
-  {}
+\ccMethod{void set_samples(unsigned int samples);}{}
 
-  \ccQueryFunctions
-  \ccMethod{int get_iterations() const;}
-  {}
+\ccQueryFunctions
+% ===============
+\ccMethod{unsigned int iterations() const;}{}
 
-  \ccMethod{int get_seconds() const;}
-  {}
+\ccMethod{unsigned int seconds() const;}{}
   
-  \ccMethod{int get_samples() const;}
-  {}
+\ccMethod{unsigned int samples() const;}{}
   
-  \ccMethod{Benchable & get_bench_user();}
-  {}
+\ccMethod{Benchable & benchable();}{}
 
-  \ccMethod{void print_results();}
-  {}
+\ccMethod{void print_results();}{}
 
-  \ccMethod{void operator()();}
-  {}
+\ccMethod{void operator()();}{}
   
 \end{ccRefClass}
 
+\begin{ccRefClass}{Option_parser}
 
-\begin{ccRefClass}{Bench_parse_args}
+\ccDefinition
+% ===========
 
-  \ccDefinition
+\ccInclude{CGAL/Benchmark/Option_parser.hpp}
 
-  \ccInclude{CGAL/Bench_parse_args.h}
+% \ccInheritsFrom
+  
+\ccCreationVariable{option_parser}
 
-  % \ccInheritsFrom
-  
-  \ccCreationVariable{bench_parse_args}
+\ccCreation
+% =========  
+\ccConstructor{Option_parser(int argc, char * argv[]);}
+  {constructs an instance of the \ccc{Option_parser} class.}
 
-  \ccCreation
-    
-  \ccConstructor{Bench_parse_args(int argc, char * argv[]);}
-  {constructs an instance of the \ccStyle{Bench_parse_args} class.}
+% \ccModifiers
 
-  % \ccModifiers
+\ccQueryFunctions
+% ===============  
+\ccMethod{unsigned int samples() const;}{}
   
-  \ccQueryFunctions
-  \ccMethod{unsigned int get_Type_mask() const;}
-  {}
+\ccMethod{unsigned int iterations() const;}{}
   
-  \ccMethod{unsigned int get_Strategy_mask() const;}
-  {}
-  
-  \ccMethod{bool get_verbose() const;}
-  {}
-  
-  \ccMethod{FormatId get_input_format() const;}
-  {}
-  
-  \ccMethod{int get_samples() const;}
-  {}
-  
-  \ccMethod{int get_iterations() const;}
-  {}
-  
-  \ccMethod{int get_seconds() const;}
-  {}
+\ccMethod{int seconds() const;}{}
 
-  \ccMethod{bool get_print_header() const;}
-  {}
+\ccMethod{bool do_print_header() const;}{}
   
-  \ccMethod{int get_name_length() const;}
-  {}
+\ccMethod{int field_width(Field_id) const;}{}
   
-  \ccMethod{const char * get_filename() const;}
-  {}
-  
-  \ccMethod{const char * get_fullname() const;}
-  {}
-  
-  \ccMethod{const char * get_type_name(TypeId id) const;}
-  {}
-    
-  \ccMethod{const char * get_strategy_name(StrategyId id) const;}
-  {}
-
 \end{ccRefClass}

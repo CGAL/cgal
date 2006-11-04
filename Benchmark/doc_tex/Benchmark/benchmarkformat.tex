@@ -143,7 +143,6 @@ objects are randomized or degenerated. Grammar:
   \nts{FileHeaderOption} & \ts{::=} & \ts{BenchmarkName( STRING )}
 \end{tabular}
 
-
 \subsubsection {The Classification}
 \label{classification}
 
@@ -159,90 +158,21 @@ classification is not necessarily the only valid view on such a
 classification problem, e.g., which property is more specific than
 some other property. We also allow property entries to be undefined
 and set to the empty string \ts{""}.
-The classification with its dependencies is illustrated in Figure~\ref{fig}.
+The classification with its dependencies is illustrated in
+Figure~\ref{bench_fig::class}.
 
-\begin{figure}
-{\footnotesize
-\noindent
-\begin{center}
-\newpsstyle{dh}{linestyle=dashed}
-%\newgray{dgray}{.48}
-\def\dedge{\ncline[linestyle=dashed]}
-\def\dashedbox{\psframebox[linestyle=dashed]{%
-    \vphantom{1}
-    \vrule width1.5mm height0pt depth0pt\relax}}
-\def\pssp{\hspace{2mm}}
-\scalebox{0.4}{
-  \pstree[treesep=2mm,levelsep=2cm]
-  {\Tr{\psframebox {Objects}}}{
-    \pstree{\Tr{\psframebox{(RootIsolation)}}}{
-      \Tr[edge=\dedge]{\dashedbox}%
-      \Tr[edge=\dedge]{\dashedbox}%
-      \Tr[edge=\dedge]{\dashedbox}%
-    }
-    \pstree{\Tr{\psframebox{Arrangements}}}{
-      \pstree{\Tr{\psframebox{2D Curves \& Arcs}}}{
-        \pstree{\Tr{\psframebox{Lines}}}{
-          \Tr{\psframebox{FullCurves}}
-          \Tr{\psframebox{BoundedArcs}}
-          \Tr{\psframebox{UnboundedArcs}}
-        }
-        \pstree{\Tr{\psframebox{Circles}}}{
-          \Tr[edge=\dedge]{\dashedbox}%
-          \Tr[edge=\dedge]{\dashedbox}%
-          \Tr[edge=\dedge]{\dashedbox}%
-        }
-        \pstree{\Tr{\psframebox{Conics}}}{
-          \Tr[edge=\dedge]{\dashedbox}%
-          \Tr[edge=\dedge]{\dashedbox}%
-          \Tr{\psframebox[linecolor=lightgray]{Ellipses}}
-          \Tr[edge=\dedge]{\dashedbox}
-        }
-        \pstree{\Tr{\psframebox{Cubics}}}{
-          \Tr[edge=\dedge]{\dashedbox}
-          \Tr[edge=\dedge]{\dashedbox}
-          \Tr[edge=\dedge]{\dashedbox}
-        }
-        \pstree{\Tr{\psframebox{arbitrary degree Curves}}}{
-          \Tr[edge=\dedge]{\dashedbox}
-          \Tr[edge=\dedge]{\dashedbox}
-          \Tr[edge=\dedge]{\dashedbox}
-        }
-      }
-      \pstree{\Tr{\psframebox{3D Curves \& Arcs}}}{
-        \Tr[edge=\dedge]{\dashedbox}%
-        \Tr[edge=\dedge]{\dashedbox}%
-        \Tr[edge=\dedge]{\dashedbox}%
-      }
-      \pstree{\Tr{\psframebox{3D Surfaces \& Patches}}} {
-        \pstree{\Tr{\psframebox{Planes}}}{
-          \Tr[edge=\dedge]{\dashedbox}
-          \Tr[edge=\dedge]{\dashedbox}
-          \Tr[edge=\dedge]{\dashedbox}
-        }        
-        \pstree{\Tr{\psframebox{Quadrics}}}{
-          \Tr{\psframebox{FullSurfaces}}
-          \Tr{\psframebox{BoundedPatches}}
-          \Tr{\psframebox{UndboundedPatches}}
-        }
-        \pstree{\Tr{\psframebox{Tori}}}{
-          \Tr[edge=\dedge]{\dashedbox}
-          \Tr[edge=\dedge]{\dashedbox}
-          \Tr[edge=\dedge]{\dashedbox}
-        }
-      }
-    }
-    \pstree{\Tr{\psframebox{CSG}}}{
-      \Tr[edge=\dedge]{\dashedbox}%
-      \Tr[edge=\dedge]{\dashedbox}%
-      \Tr[edge=\dedge]{\dashedbox}%
-    }
-  } 
-}
-\end{center}
-}
-\caption{Classification}
-\label{fig}
+\begin{figure}[t]
+\begin{ccTexOnly}
+  \begin{center}
+  \includegraphics[width=\textwidth]{Benchmark/fig/classification}
+  \end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+  <p><center>
+  <img src="./fig/classification.gif" border=0 alt="classification">
+  </center>
+\end{ccHtmlOnly}
+\caption{Classification\label{bench_fig::class}}
 \end{figure}
 
 \begin{itemize}
@@ -336,4 +266,3 @@ line segments. Its filename could be shortened to
 
 Combining different problems or different dimensions in one file does
 not seem to make sense from our current perspective.
-

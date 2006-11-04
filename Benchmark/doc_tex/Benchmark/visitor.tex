@@ -31,8 +31,8 @@ exists in source code in the distribution at
 \verb|BMTools/parser/src/check_syntax.C|. 
 
 \begin{verbatim}
-#include <benchmark_parser.h>
 #include <iostream>
+#include <benchmark_visitor.hpp>
 
 struct Checker : public Benchmark_visitor {
     Checker() {}
