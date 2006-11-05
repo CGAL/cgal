@@ -45,7 +45,9 @@
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
 
+#ifdef CGAL_USE_GMPXX
 #include <CGAL/gmpxx.h>
+#endif // CGAL_USE_GMPXX
 #endif // CGAL_USE_GMP
 
 CGAL_BEGIN_NAMESPACE
@@ -120,7 +122,7 @@ public:
 };
 #endif // CGAL_USE_GMP
 
-#ifdef CGAL_USE_GMP
+#ifdef CGAL_USE_GMPXX
 /*! \ingroup CGAL_Arithmetic_kernel
  *  \brief  The GMP set of exact number types
  */
@@ -133,7 +135,7 @@ public:
     //! exact root expressions, constructible from integers and rationals
     typedef CGAL::Null_tag  Field_with_sqrt;
 };
-#endif // CGAL_USE_GMP
+#endif // CGAL_USE_GMPXX
 
 
 
