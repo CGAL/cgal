@@ -851,7 +851,269 @@ operator/(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
 
 
 namespace INTERN_LAZY_EXACT_NT {
-  template< class ET, class Algebraic_structure_tag >
+  
+template< class NT, class Functor >
+struct Simplify_selector {
+  struct Simplify : public Unary_function<NT&, void> {
+    void operator()( NT& x ) const {
+      // TODO: In the old implementation the Simplify-functor was the default
+      //       (which does nothing). But this cannot be the correct way!?
+    }
+  };
+};
+
+template< class NT >
+struct Simplify_selector< NT, Null_functor > {
+  typedef Null_functor Simplify;
+};
+
+template< class NT, class Functor >
+struct Unit_part_selector {
+  struct Unit_part : public Unary_function<NT, NT > {
+    NT operator()( const NT& x ) const {
+      return NT( CGAL_NTS unit_part( x.exact() ) );
+    }
+  };
+};
+
+template< class NT >
+struct Unit_part_selector< NT, Null_functor > {
+  typedef Null_functor Unit_part;
+};
+
+template< class NT, class Functor >
+struct Is_zero_selector {
+  struct Is_zero : public Unary_function<NT, bool > {
+    bool operator()( const NT& x ) const {
+      return CGAL_NTS is_zero( x.exact() );
+    }
+  };
+};
+
+template< class NT >
+struct Is_zero_selector< NT, Null_functor > {
+  typedef Null_functor Is_zero;
+};
+
+template< class NT, class Functor >
+struct Is_one_selector {
+  struct Is_one : public Unary_function<NT, bool > {
+    bool operator()( const NT& x ) const {
+      return CGAL_NTS is_one( x.exact() );
+    }
+  };
+};
+
+template< class NT >
+struct Is_one_selector< NT, Null_functor > {
+  typedef Null_functor Is_one;
+};
+
+template< class NT, class Functor >
+struct Square_selector {
+  struct Square : public Unary_function<NT, NT > {  
+    NT operator()( const NT& x ) const {
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+      return new Lazy_exact_Square<typename NT::ET>(x);
+    }
+  };
+};
+
+template< class NT >
+struct Square_selector< NT, Null_functor > {
+  typedef Null_functor Square;
+};
+
+template< class NT, class Functor >
+struct Integral_division_selector {
+  struct Integral_division : public Binary_function<NT, NT, NT > {
+    NT operator()( const NT& x, const NT& y ) const {
+      return NT( CGAL_NTS integral_division( x.exact(), y.exact() ) );
+    }
+    
+    CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( NT )    
+  };
+};
+
+template< class NT >
+struct Integral_division_selector< NT, Null_functor > {
+  typedef Null_functor Integral_division;
+};
+
+template< class NT, class Functor >
+struct Is_square_selector {
+  struct Is_square : public Binary_function<NT, NT&, bool > {
+      bool operator()( const NT& x, NT& y ) const {
+          typename NT::ET y_et;
+          bool result = CGAL_NTS is_square( x.exact(), y_et );
+          y = NT(y_et);
+          return result;
+      } 
+      bool operator()( const NT& x) const {
+          typename NT::ET y_et;
+          return CGAL_NTS is_square( x.exact(), y_et );          
+      }
+  };
+};
+
+template< class NT >
+struct Is_square_selector< NT, Null_functor > {
+  typedef Null_functor Is_square;
+};
+
+
+template <class NT, class AlgebraicStructureTag>
+struct Sqrt_selector{
+    struct Sqrt : public Unary_function<NT, NT > { 
+        NT operator ()(const NT& x) const {
+          CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+          CGAL_precondition(x >= 0);
+          return new Lazy_exact_Sqrt<typename NT::ET>(x);
+        }  
+    };
+};
+template <class NT>
+struct Sqrt_selector<NT,Null_functor> {
+    typedef Null_functor Sqrt;
+};
+
+template< class NT, class Functor >
+struct Kth_root_selector {
+  struct Kth_root : public Binary_function<int, NT, NT > {
+    NT operator()( int k, const NT& x ) const {
+      return NT( CGAL_NTS kth_root( k, x.exact() ) );
+    }
+  };
+};
+
+template< class NT >
+struct Kth_root_selector< NT, Null_functor > {
+  typedef Null_functor Kth_root;
+};
+
+template< class NT, class Functor >
+struct Root_of_selector {
+  private:
+      struct Cast{                                      
+        typedef typename NT::ET result_type;                               
+        result_type operator()(const NT& lazy_exact) const { 
+          return lazy_exact.exact();
+        }
+      }; 
+      
+  public:
+    struct Root_of {
+//      typedef typename Functor::Boundary Boundary;
+      typedef NT result_type;
+      typedef Arity_tag< 3 >         Arity;
+      template< class Input_iterator >
+      NT operator()( int k, Input_iterator begin, Input_iterator end ) const {
+       Cast cast;
+       return NT( typename Algebraic_structure_traits<typename NT::ET>::
+                                 Root_of()( k, 
+                              ::boost::make_transform_iterator( begin, cast ), 
+                              ::boost::make_transform_iterator( end, cast ) ) );
+      }
+      
+    };    
+};
+
+template< class NT >
+struct Root_of_selector< NT, Null_functor > {
+  typedef Null_functor Root_of;
+};
+
+template< class NT, class Functor >
+struct Gcd_selector {
+  struct Gcd : public Binary_function<NT, NT, NT > {
+    NT operator()( const NT& x, const NT& y ) const {
+     CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+     return NT( CGAL_NTS gcd( x.exact(), y.exact() ) );
+    }
+          
+    CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( NT )
+  };
+};
+
+template< class NT >
+struct Gcd_selector< NT, Null_functor > {
+  typedef Null_functor Gcd;
+};
+
+template< class NT, class Functor >
+struct Div_selector {
+  struct Div : public Binary_function<NT, NT, NT > {
+    NT operator()( const NT& x, const NT& y ) const {
+      return NT( CGAL_NTS div( x.exact(), y.exact() ) );
+    }
+
+    CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( NT )
+
+  };
+};
+
+template< class NT >
+struct Div_selector< NT, Null_functor > {
+  typedef Null_functor Div;
+};
+
+template< class NT, class Functor >
+struct Mod_selector {
+  struct Mod : public Binary_function<NT, NT, NT > {
+    NT operator()( const NT& x, const NT& y ) const {
+      return NT( CGAL_NTS mod( x.exact(), y.exact() ) );
+    }
+
+    CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( NT )
+
+  };
+};
+
+template< class NT >
+struct Mod_selector< NT, Null_functor > {
+  typedef Null_functor Mod;
+};
+
+template< class NT, class Functor >
+struct Div_mod_selector {
+  struct Div_mod {
+    typedef void result_type;
+    typedef NT   first_argument_type;
+    typedef NT   second_argument_type;
+    typedef NT&  third_argument_type;
+    typedef NT&  fourth_argument_type;
+    typedef Arity_tag< 4 >         Arity;
+    
+    void operator()( const NT& x, const NT& y, NT& q, NT& r ) const {
+      typename NT::ET q_et;
+      typename NT::ET r_et;
+      CGAL_NTS div_mod( x.exact(), y.exact(), q_et, r_et );
+      q = NT( q_et );
+      r = NT( r_et );
+    }
+          
+    template< class NT1, class NT2 >
+    void operator()( const NT1& x, const NT2& y,
+                     NT& q, 
+                     NT& r ) const {
+      BOOST_STATIC_ASSERT((::boost::is_same<
+        typename Coercion_traits< NT1, NT2 >::Coercion_type, NT
+                                              >::value));
+            
+      typename Coercion_traits< NT1, NT2 >::Cast cast;
+      operator()( cast(x), cast(y), q, r );                      
+    }
+  };
+};
+
+template< class NT >
+struct Div_mod_selector< NT, Null_functor >{
+  typedef Null_functor Div_mod;
+};
+  
+  
+  
+/*  template< class ET, class Algebraic_structure_tag >
   class Lazy_exact_algebraic_structure_traits_base;
   
   template< class ET, class Algebraic_structure_tag >
@@ -1113,16 +1375,74 @@ namespace INTERN_LAZY_EXACT_NT {
             operator()( cast(x), cast(y), q, r );                      
           }
       };
-  };  
+  };*/  
 } // INTERN_LAZY_EXACT_NT
 
      
 
-template< class ET > class Algebraic_structure_traits< Lazy_exact_nt<ET> >
+/*template< class ET > class Algebraic_structure_traits< Lazy_exact_nt<ET> >
   : public INTERN_LAZY_EXACT_NT::
                 Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
          typename Algebraic_structure_traits<ET>::Algebraic_structure_tag > {
+};*/
+
+
+template <class ET>
+class Algebraic_structure_traits< Lazy_exact_nt<ET> >
+    :public Algebraic_structure_traits_base
+      < Lazy_exact_nt<ET>, 
+       typename Algebraic_structure_traits<ET>::Algebraic_structure_tag >
+{
+private:
+    typedef Algebraic_structure_traits<ET> AST_ET;
+    typedef typename AST_ET::Algebraic_structure_tag ET_as_tag;
+public:
+    typedef typename AST_ET::Is_exact Is_exact;
+
+    typedef typename INTERN_LAZY_EXACT_NT::Simplify_selector
+    <Lazy_exact_nt<ET>, typename AST_ET::Simplify > ::Simplify Simplify;
+
+    typedef typename INTERN_LAZY_EXACT_NT::Unit_part_selector
+    <Lazy_exact_nt<ET>, typename AST_ET::Unit_part > ::Unit_part Unit_part;
+
+    typedef typename INTERN_LAZY_EXACT_NT::Is_zero_selector
+    <Lazy_exact_nt<ET>, typename AST_ET::Is_zero > ::Is_zero Is_zero;
+
+    typedef typename INTERN_LAZY_EXACT_NT::Is_one_selector
+    <Lazy_exact_nt<ET>, typename AST_ET::Is_one > ::Is_one Is_one;
+
+    typedef typename INTERN_LAZY_EXACT_NT::Square_selector
+    <Lazy_exact_nt<ET>, typename AST_ET::Square > ::Square Square;
+
+    typedef typename INTERN_LAZY_EXACT_NT::Integral_division_selector
+    <Lazy_exact_nt<ET>, typename AST_ET::Integral_division> ::Integral_division Integral_division;
+
+    typedef typename INTERN_LAZY_EXACT_NT::Is_square_selector
+    <Lazy_exact_nt<ET>, typename AST_ET::Is_square > ::Is_square Is_square;
+
+    typedef typename INTERN_LAZY_EXACT_NT::Sqrt_selector
+    <Lazy_exact_nt<ET>, typename AST_ET::Sqrt> ::Sqrt Sqrt;
+
+    typedef typename INTERN_LAZY_EXACT_NT::Kth_root_selector
+    <Lazy_exact_nt<ET>, typename AST_ET::Kth_root > ::Kth_root Kth_root;
+
+    typedef typename INTERN_LAZY_EXACT_NT::Root_of_selector
+    <Lazy_exact_nt<ET>, typename AST_ET::Root_of > ::Root_of Root_of;
+
+    typedef typename INTERN_LAZY_EXACT_NT::Gcd_selector
+    <Lazy_exact_nt<ET>, typename AST_ET::Gcd > ::Gcd Gcd;
+
+    typedef typename INTERN_LAZY_EXACT_NT::Div_selector
+    <Lazy_exact_nt<ET>, typename AST_ET::Div > ::Div Div;
+
+    typedef typename INTERN_LAZY_EXACT_NT::Mod_selector
+    <Lazy_exact_nt<ET>, typename AST_ET::Mod > ::Mod Mod;
+
+    typedef typename INTERN_LAZY_EXACT_NT::Div_mod_selector
+    <Lazy_exact_nt<ET>, typename AST_ET::Div_mod > ::Div_mod Div_mod;            
 };
+
+
 
 //
 // Real embeddalbe traits
