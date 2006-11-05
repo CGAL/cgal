@@ -12,6 +12,7 @@ are only used within the grammar rules of other symbols.  The non-bold
 objects are auxiliary tokens that occur only in the structure of bold
 objects. \medskip
 
+\begin{ccTexOnly}
 \begin{tabular}{*{3}{| l} |} \hline
 Object   & syntax                         & description \\ \hline \hline
 Integer  & INTEGER                        & an integer value \\ \hline
@@ -120,12 +121,25 @@ ConicPoint    & ConicPoint\_2 (Conic,
         & \ \ Integer, Integer, Integer & \begin{math}Fz^2+Gx+Hy+Kz+L\end{math}\\
         & \ \ Integer)                  & \\ \hline
 \end{tabular}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<div align="center">
+<table cellpadding=3 border="1">
+<tr><th>Object</th><th>syntax</th><th>description</th></tr>
+</table>
+</div>
+\end{ccHtmlOnly}
 
 \subsubsection {Example: Complete File for Conics}
 \label{longexample}
 
 \begin{figure}
+\begin{ccTexOnly}
 \centerline{\includegraphics[width=0.7\textwidth]{Benchmark/fig/Conics_14_1}}
+\end{ccTexOnly}
+% \begin{ccHtmlOnly}
+% \end{ccHtmlOnly}
 \caption{The curves and arcs contained in the example benchmark file.
   \label{fig:example}}
 \end{figure}
@@ -134,5 +148,10 @@ We give a longer example containing 14 object of different types; line
 segments, circles, conics, bounded and unbounded arcs of conics. See
 Figure~\ref{fig:example} for their geometry.
 
-\IncludeVerbatim{Benchmark/Conics_14_1.arr}
+% \begin{ccTexOnly}
+% \IncludeVerbatim{Benchmark/Conics_14_1.arr}
+% \end{ccTexOnly}
+
+% \begin{ccHtmlOnly}
 % \ccIncludeExampleCode{Benchmark/Conics_14_1.arr}
+% \end{ccHtmlOnly}
