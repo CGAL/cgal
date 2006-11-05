@@ -170,6 +170,10 @@ typedef LEDA_arithmetic_kernel Arithmetic_kernel;
 
 // end #define
 
+template <class NT>
+class Lazy_exact_nt;
+
+
 namespace INTERN_AK{
 template <class NT>
 struct Lazy_exact_type{
