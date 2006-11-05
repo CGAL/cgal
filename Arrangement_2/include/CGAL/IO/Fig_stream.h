@@ -777,7 +777,7 @@ public:
       _write_ellipse (p,
                       CGAL::square(_point_size), 
                       CGAL::square(_point_size),
-                      _color, 1, FIG_SOLID,_style_value,
+                      _color, 1, FIG_SOLID, _style_value,
                       FIG_WHITE, FIG_NOT_FILLED);
 
       break;
@@ -789,7 +789,7 @@ public:
       _write_ellipse (p,
                       CGAL::square(_point_size), 
                       CGAL::square(_point_size),
-                      _color, 1, FIG_SOLID,_style_value,
+                      _color, 1, FIG_SOLID, _style_value,
                       _color, FIG_FILLED);
 
       break;
@@ -822,14 +822,14 @@ public:
       {
         // Draw an empty rectangular shape (use a solid line with width 1).
         _write_polygon (4, vertices.begin(), vertices.end(),
-                        _color, 1, FIG_SOLID,_style_value,
+                        _color, 1, FIG_SOLID, _style_value,
                         FIG_WHITE, FIG_NOT_FILLED);
       }
       else
       {
         // Draw a filled rectangular shape.
         _write_polygon (4, vertices.begin(), vertices.end(),
-                        _color, 1, FIG_SOLID,_style_value,
+                        _color, 1, FIG_SOLID, _style_value,
                         _color, FIG_FILLED);
       }
 
