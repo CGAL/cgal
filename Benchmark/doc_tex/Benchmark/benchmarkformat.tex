@@ -27,6 +27,7 @@ that define the benchmark content, e.g., polynomials, curves, or
 surfaces. These sequences might be empty. Formally:
 \medskip
 
+\begin{ccTexOnly}
 \begin{tabular}{lll@{\hspace{10mm}\ldots\ }l}
 %  \nts{Input} & \ts{::=} & \multicolumn{2}{l}{\Open\ \nts{File} \Close}\\[\ebnfskip]
   \nts{Input} & \ts{::=} & \multicolumn{2}{l}{\nts{File}}\\[\ebnfskip]
@@ -38,6 +39,7 @@ surfaces. These sequences might be empty. Formally:
               &          & \verb|{| \nts{Object} \verb|}|
                                           & see Section~\ref{grammar}
 \end{tabular}
+\end{ccTexOnly}
 
 We give a short example file that contains a single line segments. The
 end points are given with homogeneous integer coordinates. A longer
@@ -82,6 +84,7 @@ constants \ts{VOID}, \ts{MINUS\_INFTY}, \ts{PLUS\_INFTY},
 \ts{COUNTERCLOCKWISE}, and \ts{CLOCKWISE}. In particular we have:
 \medskip
 
+\begin{ccTexOnly}
 \begin{tabular}{ll}
   \ts{INTEGER} &  integer number of arbitrary precision, may have a
   leading sign.\\[\ebnfskip]
@@ -93,6 +96,7 @@ constants \ts{VOID}, \ts{MINUS\_INFTY}, \ts{PLUS\_INFTY},
   double quotes within the string as \verb|\"|, or to represent\\ & the
   escape character itself in the string as \verb|\\|.
 \end{tabular}
+\end{ccTexOnly}
 
 \subsubsection{IncludeFile}
 \label{inclfiles}
@@ -139,9 +143,11 @@ many there are, which random number seed has been used, and if the
 objects are randomized or degenerated. Grammar:
 
 \medskip
+\begin{ccTexOnly}
 \begin{tabular}{lll}
   \nts{FileHeaderOption} & \ts{::=} & \ts{BenchmarkName( STRING )}
 \end{tabular}
+\end{ccTexOnly}
 
 \subsubsection {The Classification}
 \label{classification}

@@ -174,142 +174,142 @@ must be provided after the executable name and before an optional name of an
 input file. A brief description is displayed on the console as a
 response to the \textbf{`` -h''} option.
 
-\begin{list}{}
-  {
-    \setlength{\topsep}{0pt}
-    \setlength{\partopsep}{0pt}
-    \setlength{\parskip}{0pt}
-    \setlength{\parsep}{0pt}
-    \setlength{\itemsep}{0pt}
-    \setlength{\itemindent}{0pt}
-    \setlength{\leftmargin}{0.2\textwidth}
-    \setlength{\labelsep}{0pt}
-    \setlength{\labelwidth}{0.2\textwidth}
-    \settowidth{\listparindent}{abc}
-  }
-\item[\bf{-b {\em options}}\hfill]
-  set bench options
-
-  \begin{list}{}
-    {
-      \setlength{\topsep}{0pt}
-      \setlength{\partopsep}{0pt}
-      \setlength{\parskip}{0pt}
-      \setlength{\parsep}{0pt}
-      \setlength{\itemsep}{0pt}
-      \setlength{\itemindent}{0pt}
-      \setlength{\leftmargin}{0.2\textwidth}
-      \setlength{\labelsep}{0pt}
-      \setlength{\labelwidth}{0.2\textwidth}
-      \settowidth{\listparindent}{abc}
-    }
-  \item[\bf{type\_name={\em type}}\hfill]
-  \item[\bf{tn={\em type}}\hfill]
-    set bench type to {\em type} (default all).\\
-    {\em type} is one of:
-    \begin{list}{}
-      {
-	\setlength{\topsep}{0pt}
-	\setlength{\partopsep}{0pt}
-	\setlength{\parskip}{0pt}
-	\setlength{\parsep}{0pt}
-	\setlength{\itemsep}{0pt}
-	\setlength{\itemindent}{0pt}
-	\setlength{\leftmargin}{0.2\textwidth}
-	\setlength{\labelsep}{0pt}
-	\setlength{\labelwidth}{0.2\textwidth}
-	\settowidth{\listparindent}{abc}
-      }
-    \item[\bf{i[ncrement]}\hfill] \bf{0x1}
-    \item[\bf{a[ggregate]}\hfill] \bf{0x2}
-    \item[\bf{d[isplay]}\hfill] \bf{0x4}
-    \end{list}
-  \item[\bf{type\_mask={\em mask}}\hfill]
-  \item[\bf{tm={\em mask}}\hfill]
-    set bench type mask to {\em mask}
-  \item[\bf{strategy\_name={\em strategy}}\hfill]
-  \item[\bf{sn={\em strategy}}\hfill]
-    set bench strategy to {\em strategy} (default all).\\
-    {\em strategy} is one of:
-    \begin{list}{}
-      {
-	\setlength{\topsep}{0pt}
-	\setlength{\partopsep}{0pt}
-	\setlength{\parskip}{0pt}
-	\setlength{\parsep}{0pt}
-	\setlength{\itemsep}{0pt}
-	\setlength{\itemindent}{0pt}
-	\setlength{\leftmargin}{0.2\textwidth}
-	\setlength{\labelsep}{0pt}
-	\setlength{\labelwidth}{0.2\textwidth}
-	\settowidth{\listparindent}{abcdefg}
-      }
-    \item[\bf{t[rapezoidal]}\hfill] \bf{0x1}
-    \item[\bf{n[aive]}\hfill]       \bf{0x2}
-    \item[\bf{w[alk]}\hfill]        \bf{0x4}
-    \item[\bf{d[ummy]}\hfill]       \bf{0x8}
-    \end{list}
-  \item[\bf{strategy\_mask={\em mask}}\hfill]
-  \item[\bf{sm={\em mask}}\hfill]\
-    set bench strategy mask to {\em mask}
-  \item[\bf{h[eader]={\em bool}}\hfill]
-    print header (default \textbf{true})
-  \item[\bf{name\_length={\em length}}\hfill]
-  \item[\bf{nl={\em length}}\hfill]
-    set the length of the name field to {\em length}
-  \end{list}
-\item[\bf{-d {\em dir}}\hfill]
-  add directory {\em dir} to list of search directories
-\item[\bf{-h}\hfill]
-  print this help message
-\item[\bf{-i {\em iters}}\hfill]
-  set number of iterations to {\em iters} (default 0)
-\item[\bf{-I {\em options}}\hfill]
-  set input options
-  \begin{list}{}
-    {
-      \setlength{\topsep}{0pt}
-      \setlength{\partopsep}{0pt}
-      \setlength{\parskip}{0pt}
-      \setlength{\parsep}{0pt}
-      \setlength{\itemsep}{0pt}
-      \setlength{\itemindent}{0pt}
-      \setlength{\leftmargin}{0.2\textwidth}
-      \setlength{\labelsep}{0pt}
-      \setlength{\labelwidth}{0.2\textwidth}
-      \settowidth{\listparindent}{abcdefg}
-    }
-    \item[\bf{f[ormat]={\em format}}\hfill]
-      set format to {\em format} (default \textbf{rat}).\\
-      {\em format} is one of:
-      \begin{list}{}
-	{
-	  \setlength{\topsep}{0pt}
-	  \setlength{\partopsep}{0pt}
-	  \setlength{\parskip}{0pt}
-	  \setlength{\parsep}{0pt}
-	  \setlength{\itemsep}{0pt}
-	  \setlength{\itemindent}{0pt}
-	  \setlength{\leftmargin}{0.2\textwidth}
-	  \setlength{\labelsep}{0pt}
-	  \setlength{\labelwidth}{0.2\textwidth}
-	  \settowidth{\listparindent}{abcdefg}
-	}
-	\item[\bf{i[nt]}\hfill] integer
-	\item[\bf{f[lt]}\hfill] floating point
-	\item[\bf{r[at]}\hfill] rational
-      \end{list}
-  \end{list}
-\item[\bf{-r {\em root}}\hfill]
-  set the {\tt \$ROOT} to {\em root} (default is the environment
-  variable {\tt \$ROOT})
-\item[\bf{-s {\em samples}}\hfill]
-  set number of samples to {\em samples} (default 10)
-\item[\bf{-t {\em seconds}}\hfill]
-  set number of seconds to {\em seconds} (default 1)
-\item[\bf{-v}\hfill]
-  toggle verbosity (default \textbf{false})
-\end{list}
+% \begin{list}{}
+%   {
+%     \setlength{\topsep}{0pt}
+%     \setlength{\partopsep}{0pt}
+%     \setlength{\parskip}{0pt}
+%     \setlength{\parsep}{0pt}
+%     \setlength{\itemsep}{0pt}
+%     \setlength{\itemindent}{0pt}
+%     \setlength{\leftmargin}{0.2\textwidth}
+%     \setlength{\labelsep}{0pt}
+%     \setlength{\labelwidth}{0.2\textwidth}
+%     \settowidth{\listparindent}{abc}
+%   }
+% \item[\bf{-b {\em options}}\hfill]
+%   set bench options
+% 
+%   \begin{list}{}
+%     {
+%       \setlength{\topsep}{0pt}
+%       \setlength{\partopsep}{0pt}
+%       \setlength{\parskip}{0pt}
+%       \setlength{\parsep}{0pt}
+%       \setlength{\itemsep}{0pt}
+%       \setlength{\itemindent}{0pt}
+%       \setlength{\leftmargin}{0.2\textwidth}
+%       \setlength{\labelsep}{0pt}
+%       \setlength{\labelwidth}{0.2\textwidth}
+%       \settowidth{\listparindent}{abc}
+%     }
+%   \item[\bf{type\_name={\em type}}\hfill]
+%   \item[\bf{tn={\em type}}\hfill]
+%     set bench type to {\em type} (default all).\\
+%     {\em type} is one of:
+%     \begin{list}{}
+%       {
+% 	\setlength{\topsep}{0pt}
+% 	\setlength{\partopsep}{0pt}
+% 	\setlength{\parskip}{0pt}
+% 	\setlength{\parsep}{0pt}
+% 	\setlength{\itemsep}{0pt}
+% 	\setlength{\itemindent}{0pt}
+% 	\setlength{\leftmargin}{0.2\textwidth}
+% 	\setlength{\labelsep}{0pt}
+% 	\setlength{\labelwidth}{0.2\textwidth}
+% 	\settowidth{\listparindent}{abc}
+%       }
+%     \item[\bf{i[ncrement]}\hfill] \bf{0x1}
+%     \item[\bf{a[ggregate]}\hfill] \bf{0x2}
+%     \item[\bf{d[isplay]}\hfill] \bf{0x4}
+%     \end{list}
+%   \item[\bf{type\_mask={\em mask}}\hfill]
+%   \item[\bf{tm={\em mask}}\hfill]
+%     set bench type mask to {\em mask}
+%   \item[\bf{strategy\_name={\em strategy}}\hfill]
+%   \item[\bf{sn={\em strategy}}\hfill]
+%     set bench strategy to {\em strategy} (default all).\\
+%     {\em strategy} is one of:
+%     \begin{list}{}
+%       {
+% 	\setlength{\topsep}{0pt}
+% 	\setlength{\partopsep}{0pt}
+% 	\setlength{\parskip}{0pt}
+% 	\setlength{\parsep}{0pt}
+% 	\setlength{\itemsep}{0pt}
+% 	\setlength{\itemindent}{0pt}
+% 	\setlength{\leftmargin}{0.2\textwidth}
+% 	\setlength{\labelsep}{0pt}
+% 	\setlength{\labelwidth}{0.2\textwidth}
+% 	\settowidth{\listparindent}{abcdefg}
+%       }
+%     \item[\bf{t[rapezoidal]}\hfill] \bf{0x1}
+%     \item[\bf{n[aive]}\hfill]       \bf{0x2}
+%     \item[\bf{w[alk]}\hfill]        \bf{0x4}
+%     \item[\bf{d[ummy]}\hfill]       \bf{0x8}
+%     \end{list}
+%   \item[\bf{strategy\_mask={\em mask}}\hfill]
+%   \item[\bf{sm={\em mask}}\hfill]\
+%     set bench strategy mask to {\em mask}
+%   \item[\bf{h[eader]={\em bool}}\hfill]
+%     print header (default \textbf{true})
+%   \item[\bf{name\_length={\em length}}\hfill]
+%   \item[\bf{nl={\em length}}\hfill]
+%     set the length of the name field to {\em length}
+%   \end{list}
+% \item[\bf{-d {\em dir}}\hfill]
+%   add directory {\em dir} to list of search directories
+% \item[\bf{-h}\hfill]
+%   print this help message
+% \item[\bf{-i {\em iters}}\hfill]
+%   set number of iterations to {\em iters} (default 0)
+% \item[\bf{-I {\em options}}\hfill]
+%   set input options
+%   \begin{list}{}
+%     {
+%       \setlength{\topsep}{0pt}
+%       \setlength{\partopsep}{0pt}
+%       \setlength{\parskip}{0pt}
+%       \setlength{\parsep}{0pt}
+%       \setlength{\itemsep}{0pt}
+%       \setlength{\itemindent}{0pt}
+%       \setlength{\leftmargin}{0.2\textwidth}
+%       \setlength{\labelsep}{0pt}
+%       \setlength{\labelwidth}{0.2\textwidth}
+%       \settowidth{\listparindent}{abcdefg}
+%     }
+%     \item[\bf{f[ormat]={\em format}}\hfill]
+%       set format to {\em format} (default \textbf{rat}).\\
+%       {\em format} is one of:
+%       \begin{list}{}
+% 	{
+% 	  \setlength{\topsep}{0pt}
+% 	  \setlength{\partopsep}{0pt}
+% 	  \setlength{\parskip}{0pt}
+% 	  \setlength{\parsep}{0pt}
+% 	  \setlength{\itemsep}{0pt}
+% 	  \setlength{\itemindent}{0pt}
+% 	  \setlength{\leftmargin}{0.2\textwidth}
+% 	  \setlength{\labelsep}{0pt}
+% 	  \setlength{\labelwidth}{0.2\textwidth}
+% 	  \settowidth{\listparindent}{abcdefg}
+% 	}
+% 	\item[\bf{i[nt]}\hfill] integer
+% 	\item[\bf{f[lt]}\hfill] floating point
+% 	\item[\bf{r[at]}\hfill] rational
+%       \end{list}
+%   \end{list}
+% \item[\bf{-r {\em root}}\hfill]
+%   set the {\tt \$ROOT} to {\em root} (default is the environment
+%   variable {\tt \$ROOT})
+% \item[\bf{-s {\em samples}}\hfill]
+%   set number of samples to {\em samples} (default 10)
+% \item[\bf{-t {\em seconds}}\hfill]
+%   set number of seconds to {\em seconds} (default 1)
+% \item[\bf{-v}\hfill]
+%   toggle verbosity (default \textbf{false})
+% \end{list}
 
 \subsubsection{Input}
 The sole input file, if provided, must appear after the last
@@ -374,31 +374,31 @@ simple language derived from the Extensible Markup Language (XML).
 
 \subsubsection{Command-line options}
 
-\begin{list}{}
-  {
-    \setlength{\topsep}{0pt}
-    \setlength{\partopsep}{0pt}
-    \setlength{\parskip}{0pt}
-    \setlength{\parsep}{0pt}
-    \setlength{\itemsep}{0pt}
-    \setlength{\itemindent}{0pt}
-    \setlength{\leftmargin}{0.2\textwidth}
-    \setlength{\labelsep}{0pt}
-    \setlength{\labelwidth}{0.2\textwidth}
-    \settowidth{\listparindent}{abc}
-  }
-\item[\textbf{ -args {\em args}}\hfill]
-  set additional arguments passed to the benchmark programs.
-\item[\textbf{-help}\hfill]  
-  print this help message.
-\item[\textbf{-verbose {\em level}}\hfill]  
-  set verbose level to \textbf{\em level} (default 0).
-\item[\textbf{-database {\em file}}\hfill]  
-  set database xml file to \textbf{\em file} (default
-  {\tt \$ROOT/bench/data/benchDb.xml}).
-\item[\textbf{-filter {\em name}}\hfill]  
-  select bench \textbf{\em name}, and sub benches (default all).
-\end{list}
+% \begin{list}{}
+%   {
+%     \setlength{\topsep}{0pt}
+%     \setlength{\partopsep}{0pt}
+%     \setlength{\parskip}{0pt}
+%     \setlength{\parsep}{0pt}
+%     \setlength{\itemsep}{0pt}
+%     \setlength{\itemindent}{0pt}
+%     \setlength{\leftmargin}{0.2\textwidth}
+%     \setlength{\labelsep}{0pt}
+%     \setlength{\labelwidth}{0.2\textwidth}
+%     \settowidth{\listparindent}{abc}
+%   }
+% \item[\textbf{ -args {\em args}}\hfill]
+%   set additional arguments passed to the benchmark programs.
+% \item[\textbf{-help}\hfill]  
+%   print this help message.
+% \item[\textbf{-verbose {\em level}}\hfill]  
+%   set verbose level to \textbf{\em level} (default 0).
+% \item[\textbf{-database {\em file}}\hfill]  
+%   set database xml file to \textbf{\em file} (default
+%   {\tt \$ROOT/bench/data/benchDb.xml}).
+% \item[\textbf{-filter {\em name}}\hfill]  
+%   select bench \textbf{\em name}, and sub benches (default all).
+% \end{list}
   
 A unique prefix is sufficient to indicate the desired
 option. For example, when the \textbf{``-help''} option is specified, 

@@ -180,24 +180,25 @@ and builds a new polynomial from the list in the
 implementation would work with stacks to reflect the recursive nature
 of the grammar.
 
+\begin{ccTexOnly}
 \begin{tabular}{*{2}{| l} |} \hline
 Object   & grammar rule with visitor function          \\ \hline \hline
 Integer  & {\bf Integer} \{accept\_integer(\$1);\}  \\ \hline
 Rational & {\bf Rational ( Integer , Integer )} \{accept\_rational(\$3, \$5);\} \\ \hline
-Infty    & {\bf MINUS\_INFTY} \{accept\_infty(\$1);\}  \\ 
-         & {\bf PLUS\_INFTY} \{accept\_infty(\$1);\}  \\ \hline
+ Infty    & {\bf MINUS\_INFTY} \{accept\_infty(\$1);\}  \\ 
+          & {\bf PLUS\_INFTY} \{accept\_infty(\$1);\}  \\ \hline
 Orientation  & {\bf COUNTERCLOCKWISE} \\
              & {\bf CLOCKWISE} \\
              & {\bf VOID}          \\ \hline
 Integer\_sequence &  {\bf Integer} \{accept\_integer(\$1);\} \\
-                 & Integer\_sequence {\bf \Large ,} {\bf Integer} \{accept\_integer(\$3);\} \\ \hline
-Point\_2 & {\bf Point\_2 ( Integer , Integer )} \{accept\_point\_2(\$3, \$5);\} \\ 
-         & {\bf Point\_2 ( Integer , Integer , Integer )} \{accept\_point\_2(\$3, \$5, \$7);\} \\
-         & {\bf Point\_2 ( Rational ( Integer , Integer ) , Rational ( Integer , Integer ) )} \\
-         & \ \ \ \ \{accept\_point\_2(\$5, \$7, \$12, \$14);\} \\ \hline
-Polynomial &  {\bf Polynomial\_1} \{begin\_polynomial\_1();\} {\bf \Large (} Integer\_sequence {\bf \Large )} \\
-           &\ \ \ \ \{end\_polynomial\_1();\} \\ \hline
-AlgebraicReal & {\bf AlgebraicReal} \{begin\_algebraic\_real();\} {\bf \Large (}         \\
+                  & Integer\_sequence {\bf \Large ,} {\bf Integer} \{accept\_integer(\$3);\} \\ \hline
+ Point\_2 & {\bf Point\_2 ( Integer , Integer )} \{accept\_point\_2(\$3, \$5);\} \\ 
+          & {\bf Point\_2 ( Integer , Integer , Integer )} \{accept\_point\_2(\$3, \$5, \$7);\} \\
+          & {\bf Point\_2 ( Rational ( Integer , Integer ) , Rational ( Integer , Integer ) )}\\
+          & \ \ \ \ \{accept\_point\_2(\$5, \$7, \$12, \$14);\} \\ \hline
+Polynomial &  {\bf Polynomial\_1} \{begin\_polynomial\_1();\} {\bf \Large (} Integer\_sequence {\bf \Large )}\\
+           & \ \ \ \ \{end\_polynomial\_1();\} \\ \hline
+AlgebraicReal & {\bf AlgebraicReal} \{begin\_algebraic\_real();\} {\bf \Large (}\\
               & \ \ {\bf Polynomial\_1} \{begin\_polynomial\_1();\}\\
               & \ \ \ \ \ {\bf \Large (} Integer\_sequence {\bf \Large )}\\
               & \ \ \ \ \ \ \ \ \ \{end\_polynomial\_1();\} {\bf \Large ,}         \\
@@ -225,14 +226,23 @@ ConicArc      & {\bf ConicArc\_2} \{begin\_conic\_arc\_2();\} {\bf \Large (} Con
               & \ \ ConicPoint {\bf \Large ,}                    \\
               & \ \ orientation \{accept\_orientation(\$10);\} {\bf \Large )}                  \\
               & \{end\_conic\_arc\_2();\}\\
-              & {\bf ConicArc\_2} \{begin\_conic\_arc\_2();\} {\bf \Large (} ConicPoint {\bf \Large )} \{end\_conic\_arc\_2();\}\\ \hline 
-              
+              & {\bf ConicArc\_2} \{begin\_conic\_arc\_2();\} {\bf \Large (} ConicPoint {\bf \Large )} \{end\_conic\_arc\_2();\}\\ \hline
 \end {tabular}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<div align="center">
+<table cellpadding=3 border="1">
+<tr><th>Object</th><th>grammar rule with visitor function</th></tr>
+</table>
+</div>
+\end{ccHtmlOnly}
 
 \newpage
 
+\begin{ccTexOnly}
 \begin{tabular}{*{2}{| l} |} \hline
-Object   & grammar rule with visitor function          \\ \hline \hline
+Object  & grammar rule with visitor function          \\ \hline \hline
 Cubic   & {\bf Cubic\_2 (}        \\
         & \ \ {\bf Integer , Integer , Integer , Integer , Integer ,} \\
         & \ \ {\bf Integer , Integer , Integer , Integer , Integer )}  \\
@@ -241,5 +251,13 @@ Quadric & {\bf Quadric\_3 (}      \\
         & \ \ {\bf Integer , Integer , Integer , Integer , Integer ,}  \\
         & \ \ {\bf Integer , Integer , Integer , Integer , Integer )}                  \\ 
         & \{accept\_quadric\_3 (\$3, \$5, \$7, \$9, \$11, \$13, \$15, \$17, \$19, \$21);\}\\ \hline
-
 \end{tabular}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<div align="center">
+<table cellpadding=3 border="1">
+<tr><th>Object</th><th>grammar rule with visitor function</th></tr>
+</table>
+</div>
+\end{ccHtmlOnly}
