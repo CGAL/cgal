@@ -25,6 +25,7 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 # CGAL_MAKEFILE = SHOULD_BE_SET_BY_COMMAND_LINE
+
 include $(CGAL_MAKEFILE)
 
 # defaut rule
@@ -84,8 +85,18 @@ clean:
 LEX ?=flex
 BISON ?=bison
 
+# Apparently, old versions of bison (e.g., 1.28) name the generated definion
+# header file <base>.cpp.h. The file must be renamed to <base>.hpp 
+BISON_VERSION_CMD =expr match "$$(bison --version)" '.*\([1-9]\.[0-9]*\)'
+BISON_VERSION =$(shell $(BISON_VERSION_CMD))
+OLD_BISON_VERSION_CMD =expr "$(BISON_VERSION)" \<= 1.28
+OLD_BISON_VERSION =$(shell $(OLD_BISON_VERSION_CMD))
+
 %.cpp %.hpp : %.y
-	$(BISON) --defines=$*.hpp $< -o $*.cpp
+	$(BISON) -d $< -o $*.cpp
+ifeq ($(OLD_BISON_VERSION), 1)
+	mv $*.cpp.h $*.hpp
+endif
 
 %.cpp : %.l
 	$(LEX) -8 -o$@ $<
