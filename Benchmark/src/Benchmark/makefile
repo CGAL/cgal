@@ -74,7 +74,7 @@ clean:
 #---------------------------------------------------------------------#
 
 %$(OBJ_EXT): %.cpp
-	$(CGAL_CXX) $(CXXFLAGS) -I. -c $<
+	$(CGAL_CXX) $(CXXFLAGS) -c $<
 
 .SUFFIXES: .cpp $(SUFFIXES)
 
@@ -85,7 +85,7 @@ LEX ?=flex
 BISON ?=bison
 
 %.cpp %.hpp : %.y
-	$(BISON) -d $< -o $*.cpp
+	$(BISON) --defines=$*.hpp $< -o $*.cpp
 
 %.cpp : %.l
 	$(LEX) -8 -o$@ $<
