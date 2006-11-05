@@ -228,21 +228,21 @@ int main() {
     }{//  functions min max
         {//min
             {
-                Interval I=CGAL::min(Interval(-2.0,-1.0),Interval(1.0,4.0));
+                Interval I=(CGAL::min)(Interval(-2.0,-1.0),Interval(1.0,4.0));
                 CGAL_test_assert(I.inf()==-2.0);
                 CGAL_test_assert(I.sup()==-1.0);
             }{
-                Interval I=CGAL::min(Interval(2.0,3.0),Interval(1.0,4.0));
+                Interval I=(CGAL::min)(Interval(2.0,3.0),Interval(1.0,4.0));
                 CGAL_test_assert(I.inf()==1.0);
                 CGAL_test_assert(I.sup()==3.0);
             }
         }{//max
             {
-                Interval I=CGAL::max(Interval(-2.0,-1.0),Interval(1.0,4.0));
+                Interval I=(CGAL::max)(Interval(-2.0,-1.0),Interval(1.0,4.0));
                 CGAL_test_assert(I.inf()==1.0);
                 CGAL_test_assert(I.sup()==4.0);
             }{
-                Interval I=CGAL::max(Interval(2.0,3.0),Interval(1.0,4.0));
+                Interval I=(CGAL::max)(Interval(2.0,3.0),Interval(1.0,4.0));
                 CGAL_test_assert(I.inf()==2.0);
                 CGAL_test_assert(I.sup()==4.0);
             }
