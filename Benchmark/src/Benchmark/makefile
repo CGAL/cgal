@@ -74,7 +74,7 @@ clean:
 #---------------------------------------------------------------------#
 
 %$(OBJ_EXT): %.cpp
-	$(CGAL_CXX) $(CXXFLAGS) -c $<
+	$(CGAL_CXX) $(CXXFLAGS) -I. -c $<
 
 .SUFFIXES: .cpp $(SUFFIXES)
 
