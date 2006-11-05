@@ -4,7 +4,7 @@
 \ccParDims
 
 \ccUserChapter{Benchmark}
-\begingroup
+% \begingroup
 \label{chapterBenchmark}
 \ccChapterRelease{\benchmarkRev. \ \benchmarkDate}
 \ccChapterAuthor{Eric Berberich and Efi Fogel}
@@ -44,16 +44,18 @@
 % 
 % % A handy macro to include files in verbatim mode.
 % % #1 = the file name.
-\newcommand{\IncludeVerbatim}[1]{%
-    \begin{alltt}
-    \begingroup
-    \catcode`\{=12
-    \catcode`\}=12
-    \catcode`\\=12
-    \input{#1}
-    \endgroup
-    \end{alltt}
-}
+% \begin{ccTexOnly}
+% \newcommand{\IncludeVerbatim}[1]{%
+%     \begin{alltt}
+%     \begingroup
+%     \catcode`\{=12
+%     \catcode`\}=12
+%     \catcode`\\=12
+%     \input{#1}
+%     \endgroup
+%     \end{alltt}
+% }
+% \end{ccTexOnly}
 
 \input{Benchmark/Benchmark}
 
