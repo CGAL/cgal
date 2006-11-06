@@ -30,7 +30,6 @@
 #include <CGAL/utils.h>
 
 #include <CGAL/Interval_nt.h>
-#include <CGAL/MP_Float_fwd.h>
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -61,6 +60,52 @@
 CGAL_BEGIN_NAMESPACE
 
 class MP_Float;
+template < typename > class Quotient; // Needed for overloaded To_double
+
+namespace INTERN_MP_FLOAT {
+Comparison_result compare(const MP_Float&, const MP_Float&);
+MP_Float square(const MP_Float&);
+
+// to_double() returns, not the closest double, but a one bit error is allowed.
+// We guarantee : to_double(MP_Float(double d)) == d.
+double to_double(const MP_Float&);
+double to_double(const Root_of_2<MP_Float> &x);
+double to_double(const Quotient<MP_Float>&);
+std::pair<double,double> to_interval(const MP_Float &);
+std::pair<double,double> to_interval(const Quotient<MP_Float>&);
+MP_Float div(const MP_Float& n1, const MP_Float& n2);
+MP_Float gcd(const MP_Float& a, const MP_Float& b);
+}
+
+MP_Float approximate_sqrt(const MP_Float&);
+MP_Float exact_division(const MP_Float & n, const MP_Float & d);
+
+std::pair<double, int>
+to_double_exp(const MP_Float &b);
+
+// Returns (first * 2^second), an interval surrounding b.
+std::pair<std::pair<double, double>, int>
+to_interval_exp(const MP_Float &b);
+
+
+inline
+io_Operator
+io_tag(const MP_Float &)
+{
+  return io_Operator();
+}
+
+std::ostream &
+operator<< (std::ostream & os, const MP_Float &b);
+
+// This one is for debug.
+std::ostream &
+print (std::ostream & os, const MP_Float &b);
+
+std::istream &
+operator>> (std::istream & is, MP_Float &b);
+
+
 
 MP_Float operator+(const MP_Float &a, const MP_Float &b);
 MP_Float operator-(const MP_Float &a, const MP_Float &b);
@@ -431,9 +476,6 @@ template <> class Real_embeddable_traits< MP_Float >
     };
 };
 
-
-
-
 namespace CGALi {
 
 // This compares the absolute values of the odd-mantissa.
@@ -601,30 +643,8 @@ operator%(const MP_Float& n1, const MP_Float& n2)
 //       into the MP_Float-class... But there is surely a reason why this is not
 //       the case..?
 
-template < typename > class Quotient; // Needed for overloaded To_double
 
 namespace INTERN_MP_FLOAT {
-  Comparison_result
-  compare (const MP_Float & a, const MP_Float & b);
-
-  MP_Float
-  square(const MP_Float&);
-
-  // to_double() returns, not the closest double, but a one bit error is allowed.
-  // We guarantee : to_double(MP_Float(double d)) == d.
-  double
-  to_double(const MP_Float &b);
-
-  std::pair<double,double>
-  to_interval(const MP_Float &b);
-
-  // Overloaded in order to protect against overflow.
-  double
-  to_double(const Quotient<MP_Float> &b);
-
-  std::pair<double, double>
-  to_interval(const Quotient<MP_Float> &b);
-
   inline
   MP_Float
   div(const MP_Float& n1, const MP_Float& n2)
@@ -651,12 +671,6 @@ namespace INTERN_MP_FLOAT {
 
 } // INTERN_MP_FLOAT
   
-std::pair<double, int>
-to_double_exp(const MP_Float &b);
-
-// Returns (first * 2^second), an interval surrounding b.
-std::pair<std::pair<double, double>, int>
-to_interval_exp(const MP_Float &b);
 
 inline
 void
@@ -721,22 +735,6 @@ namespace CGALi {
   }
 }
 
-inline
-io_Operator
-io_tag(const MP_Float &)
-{
-  return io_Operator();
-}
-
-std::ostream &
-operator<< (std::ostream & os, const MP_Float &b);
-
-// This one is for debug.
-std::ostream &
-print (std::ostream & os, const MP_Float &b);
-
-std::istream &
-operator>> (std::istream & is, MP_Float &b);
 
 // specialization of to double functor
 template<> struct Real_embeddable_traits< Quotient<MP_Float> >

@@ -100,7 +100,7 @@ CGAL_END_NAMESPACE
 
 #include <CGAL/Interval_nt_fwd.h>
 #include <CGAL/Lazy_exact_nt_fwd.h>
-#include <CGAL/MP_Float_fwd.h>
+//#include <CGAL/MP_Float_fwd.h>
 #include <CGAL/Nef_polynomial_fwd.h>
 #include <CGAL/Number_type_checker_fwd.h>
 
@@ -112,9 +112,6 @@ CGAL_END_NAMESPACE
 #  include <CGAL/gmpxx_fwd.h>
 #endif
 
-#ifdef CGAL_USE_CORE
-#  include <CGAL/CORE_Expr_fwd.h>
-#endif
 
 #include <CGAL/Quotient_fwd.h>
 #include <CGAL/Root_of_2_fwd.h>
@@ -128,7 +125,7 @@ CGAL_END_NAMESPACE
 
 //#include <CGAL/MP_Float.h>
 #ifdef CGAL_USE_GMP
-#include <CGAL/Gmpz.h>
+//#include <CGAL/Gmpz.h>
 //#include <CGAL/Gmpq.h>
 //#include <CGAL/Gmpzf.h>
 #endif

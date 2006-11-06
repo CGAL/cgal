@@ -25,6 +25,7 @@
 
 #include <CGAL/Root_of_traits.h>
 
+
 CGAL_BEGIN_NAMESPACE
 
 template <typename ET> class Lazy_exact_nt;
