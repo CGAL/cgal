@@ -27,6 +27,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Gmpq_type.h>
+#include <CGAL/Gmpz.h>
 #include <CGAL/Gmp_coercion_traits.h>
 
 CGAL_BEGIN_NAMESPACE
