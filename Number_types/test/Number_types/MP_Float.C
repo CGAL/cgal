@@ -16,13 +16,13 @@
 typedef CGAL::MP_Float       MPF;
 typedef CGAL::Quotient<MPF>  QMPF;
 
-void test_exact_division()
+void test_integral_division()
 {
-  std::cout << "Testing exact_division()" << std::endl;
+  std::cout << "Testing integral_division()" << std::endl;
 
   // Let's pick 2 random values, multiply them, divide and check.
 
-  MPF tmp = exact_division(MPF(0), MPF(1));
+  MPF tmp = integral_division(MPF(0), MPF(1));
 
   for (int i = 0; i < 10000; ++i) {
     MPF d = CGAL::default_random.get_double();
@@ -51,8 +51,8 @@ void test_exact_division()
     assert(nd == n * d);
     //std::cout << "d = " << d << std::endl;
     //std::cout << "n = " << n << std::endl;
-    assert( exact_division(nd, n) == d);
-    assert( exact_division(nd, d) == n);
+    assert( integral_division(nd, n) == d);
+    assert( integral_division(nd, d) == n);
     assert( divides(nd, n) );
     assert( divides(nd, d) );
   }
@@ -354,7 +354,7 @@ int main(int argc, char **argv)
   assert(q == CGAL::Gmpq(dt));
 #endif // CGAL_USE_GMP
 
-  test_exact_division();
+  test_integral_division();
 
   return 0;
 }

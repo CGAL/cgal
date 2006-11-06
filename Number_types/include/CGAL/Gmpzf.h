@@ -173,6 +173,7 @@ public:
 
   // arithmetics 
   // -----------
+  Gmpzf operator+() const; 
   Gmpzf operator-() const; 
   Gmpzf& operator+=( const Gmpzf& b);
   Gmpzf& operator+=( int i);
@@ -186,7 +187,7 @@ public:
   Gmpzf& operator%= (int i); 
   bool is_zero() const;
   Sign sign() const;
-  Gmpzf exact_division(const Gmpzf& b) const;
+  Gmpzf integral_division(const Gmpzf& b) const;
   Gmpzf gcd (const Gmpzf& b) const;
   Gmpzf sqrt() const;
   Comparison_result compare (const Gmpzf &b) const;
@@ -198,26 +199,115 @@ private:
 		     Exponent& rexp, const Gmpzf& a, const Gmpzf& b);  
 };
 
-double to_double( const Gmpzf& a );
 double to_double( const Quotient<Gmpzf > &q);
 std::ostream& operator<< (std::ostream& os, const Gmpzf& a);
 std::ostream& print (std::ostream& os, const Gmpzf& a);
 std::istream&  operator>> ( std::istream& is, Gmpzf& a);
-Comparison_result compare (Gmpzf &a, const Gmpzf &b);
 bool operator<(const Gmpzf &a, const Gmpzf &b);
 bool operator==(const Gmpzf &a, const Gmpzf &b);
 bool operator<(const Gmpzf &a, int b);
 bool operator==(const Gmpzf &a, int b);
 bool operator>(const Gmpzf &a, int b);
-Sign sign (const Gmpzf &a);
-bool is_finite(const Gmpzf &);
-bool is_valid(const Gmpzf &);
 io_Operator io_tag(const Gmpzf &);
-Gmpzf exact_division( const Gmpzf& a, const Gmpzf& b);
-Gmpzf gcd ( const Gmpzf& a, const Gmpzf& b);
-Gmpzf gcd ( const Gmpzf& a, int i);
-Gmpzf div ( const Gmpzf& a, const Gmpzf& b);
-Gmpzf sqrt (  const Gmpzf& b);
+
+// Algebraic structure traits
+template <> struct Algebraic_structure_traits< Gmpzf >
+  : public Algebraic_structure_traits_base< Gmpzf, Euclidean_ring_tag >  {
+
+    typedef Tag_true            Is_exact;
+    
+    struct Is_zero 
+      : public Unary_function< Algebraic_structure, bool > {
+      public:        
+        bool operator()( const Algebraic_structure& x ) const {
+            return x.is_zero();
+        }
+    };
+    
+    struct Integral_division
+      : public Binary_function< Algebraic_structure, 
+                                Algebraic_structure,
+                                Algebraic_structure > {
+    public:
+        Algebraic_structure operator()( 
+                const Algebraic_structure& x,
+                const Algebraic_structure& y ) const {
+            return x.integral_division(y);
+        }
+    };
+    
+    struct Gcd
+      : public Binary_function< Algebraic_structure, 
+                                Algebraic_structure,
+                                Algebraic_structure > {
+    public:
+        Algebraic_structure operator()( 
+                const Algebraic_structure& x,
+                const Algebraic_structure& y ) const {
+            return x.gcd(y);
+        }
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR(int);
+    };
+    
+    typedef INTERN_AST::Div_per_operator< Algebraic_structure > Div;
+    typedef INTERN_AST::Mod_per_operator< Algebraic_structure > Mod;
+
+    struct Sqrt 
+        : public Unary_function< Algebraic_structure, Algebraic_structure > {
+        Algebraic_structure operator()( const Algebraic_structure& x ) const {
+            return x.sqrt();
+        }
+    };       
+    
+};
+
+
+// Real embeddable traits
+template <> struct Real_embeddable_traits< Gmpzf > 
+  : public Real_embeddable_traits_base< Gmpzf > {
+private:    
+    typedef Algebraic_structure_traits<Gmpzf> AST;
+public:
+    typedef AST::Is_zero Is_zero;
+
+    struct Sign 
+        : public Unary_function< Real_embeddable, ::CGAL::Sign > {
+    public:
+        ::CGAL::Sign operator()( const Real_embeddable& x ) const {
+            return x.sign();
+        }        
+    };
+    
+    struct Compare 
+        : public Binary_function< Real_embeddable, 
+                                  Real_embeddable,
+                                  Comparison_result > {
+    public:
+        Comparison_result operator()( 
+                const Real_embeddable& x, 
+                const Real_embeddable& y ) const {
+            return x.compare(y);
+        }
+    };
+    
+    struct To_double 
+        : public Unary_function< Real_embeddable, double > {
+    public:
+        double operator()( const Real_embeddable& x ) const {
+            return std::ldexp( mpz_get_d(x.man()), x.exp());
+        }
+    };
+    
+    struct To_interval 
+        : public Unary_function< Real_embeddable, std::pair< double, double > > {
+    public:
+        std::pair<double, double> operator()( const Real_embeddable& x ) const {
+            // dummy
+            return std::pair<double,double>(0.0,0.0);
+        }
+    };
+};
+
 
 
 // implementation
@@ -225,6 +315,12 @@ Gmpzf sqrt (  const Gmpzf& b);
 
 // arithmetics 
 // -----------
+
+inline
+Gmpzf Gmpzf::operator+() const 
+{
+    return *this;
+}
 
 inline
 Gmpzf Gmpzf::operator-() const 
@@ -352,7 +448,7 @@ Sign Gmpzf::sign() const
 }
 
 inline
-Gmpzf Gmpzf::exact_division(const Gmpzf& b) const
+Gmpzf Gmpzf::integral_division(const Gmpzf& b) const
 {
   Gmpzf result;
   mpz_divexact(result.man(), man(), b.man());
@@ -462,12 +558,6 @@ void Gmpzf::align ( const mpz_t*& a_aligned,
 
 // to_double functions
 // -------------------
-inline
-double to_double( const Gmpzf& a ) 
-{
-   return std::ldexp( mpz_get_d(a.man()), a.exp());
-}
-
 
 // overload to protect against overflow
 inline
@@ -510,11 +600,6 @@ std::istream&  operator>> ( std::istream& is, Gmpzf& a)
 
 // comparisons
 // -----------
-inline
-Comparison_result compare (Gmpzf &a, const Gmpzf &b)
-{
-  return a.compare(b);
-}
 
 inline
 bool operator<(const Gmpzf &a, const Gmpzf &b)
@@ -547,64 +632,12 @@ bool operator>(const Gmpzf &a, int b)
   return operator>(a, Gmpzf(b));
 }
 
-inline
-Sign sign (const Gmpzf &a)
-{
-  return a.sign();
-}
-
-inline
-bool is_finite(const Gmpzf &)
-{
-  return true;
-}
- 
-inline
-bool is_valid(const Gmpzf &)
-{
-  return true;
-}
 
 inline
 io_Operator io_tag(const Gmpzf &)
 {
   return io_Operator();
 }
-
-// arithmetic functions
-// --------------------
-
-// div, sqrt,...(interface like Gmpz)
-inline
-Gmpzf exact_division( const Gmpzf& a, const Gmpzf& b) 
-{
-  return a.exact_division(b);
-}
-
-inline
-Gmpzf gcd ( const Gmpzf& a, const Gmpzf& b)
-{
-  return a.gcd(b);
-}
-
-inline
-Gmpzf gcd ( const Gmpzf& a, int i)
-{
-  return gcd (a, Gmpzf(i)); // optimization possible, but why?
-}
-
-inline
-Gmpzf div ( const Gmpzf& a, const Gmpzf& b)
-{
-  return a / b;
-}
-
-inline
-Gmpzf sqrt (  const Gmpzf& b) 
-{
-  return b.sqrt();
-}
-
 
 CGAL_END_NAMESPACE
 

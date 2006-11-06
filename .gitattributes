@@ -1633,6 +1633,7 @@ Number_types/test/Number_types/Coercion_traits.C -text
 Number_types/test/Number_types/Counted_number.C -text
 Number_types/test/Number_types/Gmpq_new.C -text
 Number_types/test/Number_types/Gmpz.C -text
+Number_types/test/Number_types/Gmpzf_new.C -text
 Number_types/test/Number_types/Interval_nt_new.C -text
 Number_types/test/Number_types/Lazy_exact_nt_new.C -text
 Number_types/test/Number_types/MP_Float_new.C -text

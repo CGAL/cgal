@@ -43,7 +43,7 @@
 // The main algorithms are :
 // - Addition/Subtraction
 // - Multiplication
-// - Integral division div(), exact_division(), gcd(), operator%().
+// - Integral division div(), gcd(), operator%().
 // - Comparison
 // - to_double() / to_interval()
 // - Construction from a double.
@@ -77,8 +77,12 @@ MP_Float div(const MP_Float& n1, const MP_Float& n2);
 MP_Float gcd(const MP_Float& a, const MP_Float& b);
 }
 
+namespace CGALi{
+std::pair<MP_Float, MP_Float> // <quotient, remainder>
+division(const MP_Float & n, const MP_Float & d);
+} // namespace CGALi
+
 MP_Float approximate_sqrt(const MP_Float&);
-MP_Float exact_division(const MP_Float & n, const MP_Float & d);
 
 std::pair<double, int>
 to_double_exp(const MP_Float &b);
@@ -392,7 +396,27 @@ template <> class Algebraic_structure_traits< MP_Float >
 #else // !CGAL_MP_FLOAT_ALLOW_INEXACT
     typedef Tag_true            Is_exact;
 #endif
-                                                                                             
+                                    
+    struct Integral_division
+        : public Binary_function< Algebraic_structure, 
+                                 Algebraic_structure,
+                                 Algebraic_structure > {
+    public:
+        Algebraic_structure operator()( 
+                const Algebraic_structure& x,
+                const Algebraic_structure& y ) const {
+#ifdef CGAL_MP_FLOAT_ALLOW_INEXACT // inexact
+            return x/y;
+#else // exact
+            std::pair<MP_Float, MP_Float> res = CGALi::division(x, y);
+            CGAL_assertion_msg(res.second == 0,
+                    "exact_division() called with operands which do not divide");
+            return res.first;
+#endif
+        }
+    };                                                         
+
+
     class Square 
       : public Unary_function< Algebraic_structure, Algebraic_structure > {
       public:
@@ -475,6 +499,8 @@ template <> class Real_embeddable_traits< MP_Float >
         }
     };
 };
+
+
 
 namespace CGALi {
 
@@ -610,15 +636,6 @@ division(const MP_Float & n, const MP_Float & d)
 
 } // namespace CGALi
 
-inline // Move it to libCGAL once it's stable.
-MP_Float
-exact_division(const MP_Float & n, const MP_Float & d)
-{
-  std::pair<MP_Float, MP_Float> res = CGALi::division(n, d);
-  CGAL_assertion_msg(res.second == 0,
-                  "exact_division() called with operands which do not divide");
-  return res.first;
-}
 
 inline // Move it to libCGAL once it's stable.
 bool
@@ -692,8 +709,8 @@ simplify_quotient(MP_Float & numerator, MP_Float & denominator)
     numerator.exp -= denominator.exp;
     denominator.exp = 0;
     const MP_Float g = gcd(numerator, denominator);
-    numerator = exact_division(numerator, g);
-    denominator = exact_division(denominator, g);
+    numerator = integral_division(numerator, g);
+    denominator = integral_division(denominator, g);
   }
   numerator.exp -= denominator.exp;
   denominator.exp = 0;
