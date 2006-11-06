@@ -204,7 +204,7 @@ z_replace_original_by_original(ForwardIterator y_l_it,
                       hat_k_1 * hat_k_1, -hat_k_2, -hat_k_1, d*d);
     
     // store new denominator
-    d = CGAL::exact_division(hat_k_1 * hat_k_1, d);
+    d = CGAL::integral_division(hat_k_1 * hat_k_1, d);
 
     CGAL_qpe_postcondition( d > et0);
 
@@ -247,7 +247,7 @@ z_replace_original_by_slack( )
                            hat_kappa * hat_kappa, hat_xi, -hat_kappa, d * d);
 		     
     // store new denominator
-    d = CGAL::exact_division(hat_kappa * hat_kappa, d);
+    d = CGAL::integral_division(hat_kappa * hat_kappa, d);
 
     CGAL_qpe_postcondition( d > et0);
 
@@ -311,7 +311,7 @@ z_replace_slack_by_original(ForwardIterator y_l_it,
            row_it != M[s].end() - 1;
 	 ++row_it,  ++x_l_it,  ++y_l_it                ) {
         *row_it = 
-	  CGAL::exact_division((hat_nu * *x_l_it)-(hat_kappa * *y_l_it), d);  
+	  CGAL::integral_division((hat_nu * *x_l_it)-(hat_kappa * *y_l_it), d);  
     } 
     *row_it = -hat_nu;
      
@@ -321,7 +321,7 @@ z_replace_slack_by_original(ForwardIterator y_l_it,
            count < b;
 	 ++matrix_it,  ++count, ++x_x_it, ++y_x_it                  ) {
         (*matrix_it)[s] = 
-	  CGAL::exact_division((hat_nu * *x_x_it) - (hat_kappa * *y_x_it), d);
+	  CGAL::integral_division((hat_nu * *x_x_it) - (hat_kappa * *y_x_it), d);
     }
           
     // insert new row and column at the end of blocks Q and R
@@ -331,7 +331,7 @@ z_replace_slack_by_original(ForwardIterator y_l_it,
     for (  row_it = M[l+b].begin(), count = 0, x_l_it = x_l.begin();
            count < s;
 	 ++row_it,  ++count,  ++x_l_it                              ) {
-        *row_it = CGAL::exact_division(-hat_kappa * *x_l_it, d);
+        *row_it = CGAL::integral_division(-hat_kappa * *x_l_it, d);
     }
     *row_it = hat_kappa;
     
@@ -339,7 +339,7 @@ z_replace_slack_by_original(ForwardIterator y_l_it,
     for (  row_it = M[l+b].begin()+l, count = 0, x_x_it = x_x.begin();
            count < b;
 	 ++row_it,  ++count,  ++x_x_it                                ) {
-        *row_it = CGAL::exact_division(-hat_kappa * *x_x_it, d);
+        *row_it = CGAL::integral_division(-hat_kappa * *x_x_it, d);
     }
     *row_it = et0;
     
@@ -347,7 +347,7 @@ z_replace_slack_by_original(ForwardIterator y_l_it,
     ++s; ++b; 
 
     // store new denominator
-    d = CGAL::exact_division(hat_kappa * hat_kappa, d);
+    d = CGAL::integral_division(hat_kappa * hat_kappa, d);
 
     CGAL_qpe_postcondition( d > et0);
 
@@ -390,7 +390,7 @@ z_replace_slack_by_slack(ForwardIterator u_x_it, unsigned int k_j)
                      hat_k_1 * hat_k_1, -hat_k_3, -hat_k_1, d * d);
 		     
     // store new denominator
-    d = CGAL::exact_division(hat_k_1 * hat_k_1, d);
+    d = CGAL::integral_division(hat_k_1 * hat_k_1, d);
 
     CGAL_qpe_postcondition( d > et0);
 
