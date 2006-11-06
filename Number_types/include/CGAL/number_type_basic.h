@@ -104,9 +104,9 @@ CGAL_END_NAMESPACE
 #include <CGAL/Nef_polynomial_fwd.h>
 #include <CGAL/Number_type_checker_fwd.h>
 
-#ifdef CGAL_USE_GMP
-#include <CGAL/Gmpzq_fwd.h>
-#endif
+//#ifdef CGAL_USE_GMP
+//#include <CGAL/Gmpzq_fwd.h>
+//#endif
 
 #ifdef CGAL_USE_GMPXX
 #  include <CGAL/gmpxx_fwd.h>
