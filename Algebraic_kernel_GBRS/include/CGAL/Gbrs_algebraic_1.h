@@ -17,8 +17,8 @@
 //
 // Author(s)     : Luis Peñaranda <penarand@loria.fr>
 
-#ifndef CGAL_MPFIINTERVAL_H
-#define CGAL_MPFIINTERVAL_H
+#ifndef CGAL_GBRS_ALGEBRAIC_1_H
+#define CGAL_GBRS_ALGEBRAIC_1_H
 
 #include <CGAL/basic.h>
 #include <CGAL/assertions.h>
@@ -491,4 +491,4 @@ CGAL_END_NAMESPACE
 #include <CGAL/Gbrs_algebraic_1_impl.h>
 #endif	// CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
 
-#endif	// CGAL_MPFIINTERVAL_H
+#endif	// CGAL_GBRS_ALGEBRAIC_1_H
