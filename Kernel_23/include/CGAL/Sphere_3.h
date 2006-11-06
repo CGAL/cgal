@@ -163,8 +163,6 @@ public:
 
 };
 
-// Note that we write R_::Aff_transformation_3 instead of using the nested typedef in Sphere_3
-// as VC 7.3 has a matching problem
 template <class R_>
 Sphere_3<R_>
 Sphere_3<R_>::
