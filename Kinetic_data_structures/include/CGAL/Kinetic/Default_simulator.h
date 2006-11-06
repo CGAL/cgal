@@ -344,6 +344,7 @@ public:
     //write_eventqueue(log().stream(Log::DEBUG));
     //log()->stream(Log::SOME) << key;
     //log()->stream(Log::SOME)
+    CGAL_exactness_precondition(CGAL::compare(t, current_time()) != CGAL::SMALLER);
 
     CGAL_KINETIC_LOG(LOG_SOME, "Created event " << key << std::endl);
     CGAL_KINETIC_LOG(LOG_SOME, *this << std::endl);

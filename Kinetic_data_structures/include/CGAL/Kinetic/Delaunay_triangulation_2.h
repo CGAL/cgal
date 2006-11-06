@@ -709,6 +709,15 @@ public:
     return watcher_;
   }
 
+
+  bool has_event(const Edge &e) const {
+    return get_directed_edge_label(e) != Event_key();
+  }
+
+  bool has_finite_event(const Edge &e) const {
+    return has_event(e) && get_directed_edge_label(e) != traits_.simulator_handle()->null_event();
+  }
+
 protected:
   Traits traits_;
   Visitor watcher_;
@@ -890,7 +899,7 @@ protected:
 	} 
       }
     }
-    if (!odd_parity) {
+    if (odd_parity) {
       std::swap(ks[0], ks[1]);
     }
     return infinity;
@@ -992,12 +1001,13 @@ protected:
 
   static Event_key get_undirected_edge_label(const Edge &e) {
 #ifndef NDEBUG
-    if (get_directed_edge_label(e) != get_directed_edge_label(mirror_edge(e))) {
-      std::cerr << "FAILURE Edge from " << origin(e)->point() << " to " 
-		<< destination(e)->point() << " is screwed." << std::endl;
+    if (get_directed_edge_label(e) != get_directed_edge_label(TDS_helper::mirror_edge(e))) {
+      std::cerr << "FAILURE Edge from " << TDS_helper::origin(e)->point() << " to " 
+		<< TDS_helper::destination(e)->point() << " is screwed." << std::endl;
       std::cerr << get_directed_edge_label(e) << " "
-                <<  get_directed_edge_label(mirror_edge(e)) << std::endl;
-      CGAL_precondition(get_directed_edge_label(e) == get_directed_edge_label(mirror_edge(e)));
+                <<  get_directed_edge_label(TDS_helper::mirror_edge(e)) << std::endl;
+      CGAL_precondition(get_directed_edge_label(e)
+			== get_directed_edge_label(TDS_helper::mirror_edge(e)));
     }
 #endif
     return e.first->get_edge_label(e.second);
@@ -1011,7 +1021,7 @@ protected:
   static void set_undirected_edge_label(const Edge &e,
 					Event_key l) {
     set_directed_edge_label(e,l);
-    set_directed_edge_label(mirror_edge(e),l);
+    set_directed_edge_label(TDS_helper::mirror_edge(e),l);
   }
 
 };

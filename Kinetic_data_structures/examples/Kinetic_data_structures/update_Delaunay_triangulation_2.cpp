@@ -1,7 +1,9 @@
 //#define CGAL_CHECK_EXPENSIVE
 //#define CGAL_CHECK_EXACTNESS
+#define NEWTON
 #define NDEBUG
 #define CGAL_NO_STATIC_FILTERS
+//#define MOVE_ALL
 
 #include <CGAL/basic.h>
 
@@ -14,6 +16,7 @@
 #include <CGAL/Triangulation_hierarchy_2.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_2.h>
 #include <algorithm>
+
 
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
 #include <boost/program_options.hpp>
@@ -142,6 +145,24 @@ void ival(typename Indirect_kernel::Point_2 p, typename  Indirect_kernel::Curren
   rp[1]= INT(std::min(iy.inf(), fy.inf()), std::max(iy.sup(), fy.sup()));
 }
 
+template <class Indirect_kernel, class INT>
+void ival(typename Indirect_kernel::Point_2 p, 
+	  typename Indirect_kernel::Point_2 pb, typename  Indirect_kernel::Current_coordinates ic,
+	  typename Indirect_kernel::Current_coordinates fc, INT rp[2]){
+  INT ix= ic(p).x();
+  INT iy= ic(p).y();
+  INT fx= fc(p).x();
+  INT fy= fc(p).y();
+
+  INT ixb= ic(pb).x();
+  INT iyb= ic(pb).y();
+  INT fxb= fc(pb).x();
+  INT fyb= fc(pb).y();
+
+  rp[0]= INT(std::min((ix-ixb).inf(), (fx-fxb).inf()), std::max((ix-ixb).sup(), (fx-fxb).sup()));
+  rp[1]= INT(std::min((iy-iyb).inf(), (fy-fyb).inf()), std::max((iy-iyb).sup(), (fy-fyb).sup()));
+}
+
 template <class Del, class Indirect_kernel>
 static bool compute_ok_int(const typename Del::Edge &e,  Indirect_kernel ik, Indirect_kernel fk) {
   typedef MTDSH<typename Del::Triangulation_data_structure>  TDS_helper;
@@ -168,6 +189,38 @@ static bool compute_ok_int(const typename Del::Edge &e,  Indirect_kernel ik, Ind
     ival<Indirect_kernel>(ks[2], ic, fc, c);
     ival<Indirect_kernel>(ks[3], ic, fc, d);
     INT v= incircle(a[0], a[1], b[0], b[1], c[0], c[1], d[0], d[1]);
+    return v.inf() >0;
+  }
+}
+
+
+
+template <class Del, class Indirect_kernel>
+static bool compute_ok_intp(const typename Del::Edge &e,  Indirect_kernel ik, Indirect_kernel fk) {
+  typedef MTDSH<typename Del::Triangulation_data_structure>  TDS_helper;
+  //typename Indirect_kernel::Current_coordinates 
+  //cc= sk.current_coordinates_object();
+  typename Indirect_kernel::Point_2 ks[4];
+  ks[0]= TDS_helper::origin(e)->point();
+  ks[1]= TDS_helper::third_vertex(e)->point();
+  ks[2]= TDS_helper::destination(e)->point();
+  ks[3]= TDS_helper::mirror_vertex(e)->point();
+
+
+  
+  if (ks[0] == typename Indirect_kernel::Point_2() || ks[1]== typename Indirect_kernel::Point_2()
+      || ks[2] == typename Indirect_kernel::Point_2() || ks[3] == typename Indirect_kernel::Point_2()){
+    return true;
+  } else {
+    typename Indirect_kernel::Current_coordinates ic= ik.current_coordinates_object();
+    typename Indirect_kernel::Current_coordinates fc= fk.current_coordinates_object();
+    typedef CGAL::Interval_nt_advanced INT;
+    INT b[2], c[2], d[2];
+    //ival<Indirect_kernel>(ks[0], ic, fc, a);
+    ival<Indirect_kernel>(ks[1], ks[0], ic, fc, b);
+    ival<Indirect_kernel>(ks[2], ks[0], ic, fc, c);
+    ival<Indirect_kernel>(ks[3], ks[0], ic, fc, d);
+    INT v= incircle(INT(0.0), INT(0.0), b[0], b[1], c[0], c[1], d[0], d[1]);
     return v.inf() >0;
   }
 }
@@ -267,6 +320,7 @@ int main(int argc, char *argv[]) {
     d.insert(ir.first, ir.second);
     int bad_count=0;
     int filter_1_failure=0;
+    int filter_1p_failure=0;
     for (Del::Edge_iterator it= d.edges_begin(); 
 	 it != d.edges_end(); ++it){
       if (!compute_ok<Del>(*it, fk)) {
@@ -275,10 +329,39 @@ int main(int argc, char *argv[]) {
       if (!compute_ok_int<Del>(*it, ik, fk)) {
 	++filter_1_failure;
       }
+      if (!compute_ok_intp<Del>(*it, ik, fk)) {
+	++filter_1p_failure;
+      }
     }
     std::cout << "For " << std::distance(d.edges_begin(), d.edges_end()) << " edges " 
 	      << " there were " << bad_count << " failed certs "
-	      << "and " <<  filter_1_failure << " edges which failed on 1" << std::endl;
+	      << "and " <<  filter_1_failure << " edges which failed on 1" 
+	      << " and " << filter_1p_failure << " which failed on the improved 1" << std::endl;
+  }
+
+  {
+    UD ud(ipts.begin(), ipts.end());
+
+    // moncontrol(1);
+
+    std::cout << "Timing patching..." << std::flush;
+    
+    int count=0;
+    double min_time=10;
+    if (profile) min_time =60;
+    CGAL::Timer tim;
+    tim.start();
+    while (tim.time() < min_time) {
+      ud.update_coordinates(fpts);
+      ud.update_coordinates(ipts);
+      count+=2;
+    }
+    tim.stop();
+    
+    std::cout << "done." << std::endl;
+    std::cout << count << " reps in " << tim.time() << " seconds" << std::endl;
+    ud.write_statistics(std::cout);
+    ud.audit();
   }
   
   if (!profile) {
@@ -310,7 +393,7 @@ int main(int argc, char *argv[]) {
     std::cout << "Bad count is " << bad_count << std::endl;
   }
   
-  if (!profile) {
+  if (0) {
     K ik, fk;
     K::Key_range ir= ik.new_point_2s(ipts.begin(), ipts.end());
     K::Key_range fr= fk.new_point_2s(fpts.begin(), fpts.end());
@@ -367,41 +450,43 @@ int main(int argc, char *argv[]) {
 	std::cerr  << "Point " << ipts[i] << " duplicated in input." << std::endl;
       }
     }
-    std::cout << "Timing reinsert ..." << std::flush;
- 
-    int count=0; 
-    CGAL::Timer tim;
-
-    tim.start();
-    while (tim.time() < 10) {
-      for (unsigned int i=0; i < ipts.size(); ++i) {
-	if (fpts[i] != vhs[i]->point()) {
-	  CDel::Vertex_handle nvhs= d.insert(fpts[i], vhs[i]->face());
-	  d.remove(vhs[i]);
-	  vhs[i]=nvhs;
+    if (0) {
+      std::cout << "Timing reinsert ..." << std::flush;
+      
+      int count=0; 
+      CGAL::Timer tim;
+      
+      tim.start();
+      while (tim.time() < 10) {
+	for (unsigned int i=0; i < ipts.size(); ++i) {
+	  if (fpts[i] != vhs[i]->point()) {
+	    CDel::Vertex_handle nvhs= d.insert(fpts[i], vhs[i]->face());
+	    d.remove(vhs[i]);
+	    vhs[i]=nvhs;
+	  }
 	}
-      }
-      for (unsigned int i=0; i < fpts.size(); ++i) {
-	if (ipts[i] != vhs[i]->point()) {
-	  CDel::Vertex_handle nvhs=  d.insert(ipts[i], vhs[i]->face());
-	  d.remove(vhs[i]);
-	  vhs[i]=nvhs;
+	for (unsigned int i=0; i < fpts.size(); ++i) {
+	  if (ipts[i] != vhs[i]->point()) {
+	    CDel::Vertex_handle nvhs=  d.insert(ipts[i], vhs[i]->face());
+	    d.remove(vhs[i]);
+	    vhs[i]=nvhs;
+	  }
 	}
+	count+=2;
       }
-      count+=2;
+      tim.stop();
+      std::cout << "done." << std::endl;
+      std::cout << count << " reps in " << tim.time() 
+		<< " seconds" << std::endl;
     }
-    tim.stop();
-    std::cout << "done." << std::endl;
-    std::cout << count << " reps in " << tim.time() << " seconds" << std::endl;
   }
-
   {
     UD ud(ipts.begin(), ipts.end());
 
     // moncontrol(1);
 
     std::cout << "Timing patching..." << std::flush;
-    
+
     int count=0;
     double min_time=10;
     if (profile) min_time =60;
@@ -413,12 +498,13 @@ int main(int argc, char *argv[]) {
       count+=2;
     }
     tim.stop();
-    
+
     std::cout << "done." << std::endl;
     std::cout << count << " reps in " << tim.time() << " seconds" << std::endl;
     ud.write_statistics(std::cout);
     ud.audit();
   }
+
 
   return EXIT_SUCCESS;
   

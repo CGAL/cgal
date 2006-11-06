@@ -85,9 +85,9 @@ protected:
     if (!kdel_->has_event(e)) {
       w << CGAL::Color(125,125,125);
     } else if (kdel_->has_finite_event(e)){
-      w << CGAL::Color(0,0,0);
-    } else {
       w << CGAL::Color(255,0,0);
+    } else {
+      w << CGAL::Color(0,0,0);
     }
   }
 

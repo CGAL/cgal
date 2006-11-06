@@ -593,11 +593,12 @@ public:
   }
 
   bool has_event(const Edge &e) const {
-    return e.first->event() != Event_key();
+    return e.first->event() != Event_key() || e.first->neighbor(e.second)->event() != Event_key();
   }
 
   bool has_finite_event(const Edge &e) const {
-    return e.first->event() != traits_.simulator_handle()->null_event();
+    return e.first->event() != traits_.simulator_handle()->null_event()
+    || e.first->neighbor(e.second)->event() != traits_.simulator_handle()->null_event() ;
   }
   
 protected:

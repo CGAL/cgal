@@ -51,6 +51,9 @@ class Indirect_point_2_kernel: public SK
     typedef typename SK::Point_2 Pt;
     typedef typename std::vector<Pt> Container;
     
+    Rep(const Rep &o ): points_(o.points_){}
+    Rep(){}
+
     void swap(Container &sc) {
       CGAL_precondition(sc.size() == points_.size());
       std::swap(sc, points_);
@@ -235,6 +238,10 @@ public:
   void set_time(T) const {
   }
 
+  This clone() const {
+    return This(new Rep(*rep_), *this);
+  }
+
   CGAL_MSA(Side_of_oriented_circle,side_of_oriented_circle);
   CGAL_MSA(Orientation,orientation);
   CGAL_MSA(Compare_x, compare_x);
@@ -259,6 +266,8 @@ public:
   //CGAL_MSA(Coplanar_side_of_bounded_circle, coplanar_side_of_bounded_circle, 3);
 
 protected:
+  Indirect_point_2_kernel(typename Rep::Handle rep, SK sk= SK()): SK(sk), rep_(rep) {
+  }
   mutable typename Rep::Handle rep_;
 };
 #undef CGAL_MSA

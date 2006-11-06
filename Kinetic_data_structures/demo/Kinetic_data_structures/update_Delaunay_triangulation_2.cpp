@@ -1,4 +1,5 @@
-//#define NDEBUG
+//#define MOVE_ALL
+#define NEWTON
 #ifndef NDEBUG
 #define CGAL_CHECK_EXPENSIVE
 #define CGAL_CHECK_EXACTNESS
@@ -20,7 +21,6 @@
 #include <boost/program_options.hpp>
 #endif
 
-#define UD_DEBUG(x) 
 
 
 int main(int argc, char *argv[]) {
@@ -30,6 +30,7 @@ int main(int argc, char *argv[]) {
   bool print_help=false;
   bool exact=false;
   std::string ifile="data/before002", ffile="data/after002";
+  std::cout.precision(18); // std::ios::precision(18);
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
   boost::program_options::options_description desc("Allowed options");
   desc.add_options()
@@ -53,8 +54,7 @@ int main(int argc, char *argv[]) {
   }
 #endif
   typedef CGAL::Updatable_Delaunay_triangulation_2<CGAL::Indirect_point_2_kernel<CGAL::Exact_predicates_inexact_constructions_kernel> > UD;
-  return UD::run(argc, argv, n,d,seed, ifile, ffile);
-   
+  return UD::run(argc, argv, n,d,seed, ifile, ffile);   
 };
 #else
 int main(int, char *[]){

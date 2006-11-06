@@ -77,7 +77,7 @@ class Primitive_part_Sturm_sequence
         template<class RT>
         static RT compute_lcm(const CGAL_POLYNOMIAL_NS::Polynomial<RT>& p) {
             int deg = p.degree();
-            assert( deg >= 1 );
+            CGAL_assertion( deg >= 1 );
 
             RT lcm_ = lcm(abs(p[0]), abs(p[1]));
             for (int i = 2; i <= deg; i++) {
@@ -89,7 +89,7 @@ class Primitive_part_Sturm_sequence
         template<class RT>
         static RT compute_lazy_lcm(const CGAL_POLYNOMIAL_NS::Polynomial<RT>& p) {
             int deg = p.degree();
-            assert( deg >= 1 );
+            CGAL_assertion( deg >= 1 );
 
             RT lcm_ = abs(p[0] * p[1]);
             for (int i = 2; i <= deg; i++) {

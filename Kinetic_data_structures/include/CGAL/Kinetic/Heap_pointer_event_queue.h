@@ -255,7 +255,7 @@ public:
   */
   template <class E>
   Key insert(const Priority &t, const E & e) {
-    if (!is_after_end()) {
+    if (!is_after_end(t)) {
       Item_handle k= new internal::Heap_pointer_event_queue_item_rep<Priority, E>(t, e, queue_.size());
       queue_.push_back(k);
       bubble_up(queue_.size()-1);

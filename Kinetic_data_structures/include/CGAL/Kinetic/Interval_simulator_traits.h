@@ -62,7 +62,18 @@ public:
     return (iv_.first+iv_.second)/2.0;
   }
   const Exact_root& exact_root() const {
+#ifndef NDEBUG
+    std::pair<double,double> oiv= iv_;
+    Exact_root er=data_.exact_root(iv_);
+    if (er < oiv.first || er > oiv.second) {
+      std::cerr << "Exact root in bounds. Root is " << er 
+		<< " bounds are " << oiv.first << " " << oiv.second << std::endl;
+    }
+    CGAL_precondition(er >= oiv.first);
+    CGAL_precondition(er <= oiv.second);
     //CGAL_precondition(!is_point());
+#endif
+    
     return data_.exact_root(iv_);
   }
 

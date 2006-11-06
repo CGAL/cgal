@@ -31,7 +31,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-
+#define NEWTON
 
 
 
@@ -107,13 +107,6 @@ struct Updatable_Delaunay_triangulation_2 {
   typedef typename Function_kernel::Root Exact_time;
 
 
-
-
-
-
-
-
-
   struct Refiner {
     struct CS: public CGAL::Kinetic::Ref_counted<CS> {
       CS(const Exact_certificate &c): cert_(c){}
@@ -123,20 +116,17 @@ struct Updatable_Delaunay_triangulation_2 {
     // enum State {INTERVAL, EXACT, INVALID};
 
     Refiner(Cert_tuple t,
-	    const INT *certf,
+	    typename Update_information::Certificate_function_const_pointer certf,
+#ifdef NEWTON
+	    typename Update_information::Certificate_derivitive_const_pointer certpf,
+#endif
 	    typename Update_information::Handle tbl): tuple_(t),
-						      ui_(tbl){
-      /*CGAL::Protect_FPU_rounding<true> prot;
-      ui_->certificate_function(t[0], t[1], t[2], t[3], certf_);
-      CGAL_UD_DEBUG("Certificate func is " << certf_[0] << " + "
-		    << certf_[1] << "*t + " << certf_[2] << "*t^2 +"
-		    << certf_[2] << "*t^3 + " << certf_[3] << "*t^4" 
-		    << std::endl);*/
-      certf_[0]=certf[0];
-      certf_[1]=certf[1];
-      certf_[2]=certf[2];
-      certf_[3]=certf[3];
-      certf_[4]=certf[4];
+						      ui_(tbl),
+						      certf_(certf)
+#ifdef NEWTON
+						    , certpf_(certpf)
+#endif
+{
     }
     Refiner() {
     }
@@ -157,9 +147,11 @@ struct Updatable_Delaunay_triangulation_2 {
       double dd= iv.second-iv.first;
       if (dd > .000001) {
 	CGAL::Protect_FPU_rounding<true> prot;
+
+#ifndef NEWTON
 	std::pair<double,double> oiv=iv;
-	typename Update_information::Certificate_evaluator se(certf_);
-	ui_->isolate_failure(se,
+	typename Update_information::Certificate_sign_at<5> se(certf_);
+	ui_->isolate_failure(se, sep,
 			     iv.first, iv.second, false, 0, 20, iv);
 #ifndef NDEBUG
 	if ( oiv ==iv) {
@@ -167,6 +159,12 @@ struct Updatable_Delaunay_triangulation_2 {
 	}
 #endif
 	return oiv != iv;
+#else
+	INT niv=ui_->Newton_refine(certf_, certpf_, INT(iv));
+	bool ret= (niv.inf() != iv.first || niv.sup() != iv.second);
+	iv= std::pair<double,double>(niv.inf(), niv.sup());
+	return ret;
+#endif
       } else {
 	// compute exact;
 	CGAL_assertion(!has_exact_root());
@@ -180,25 +178,13 @@ struct Updatable_Delaunay_triangulation_2 {
 
     const Exact_root& 
     exact_root() const {
-      /*if (ui_ == typename Update_information::Handle()) {
-	CGAL_assertion(0);
-	static Exact_root er;
-	return er;
-	} else {*/
       return cert_->cert_.failure_time();
-      //}
     }
 
     const Exact_root& 
     exact_root(std::pair<double,double> &iv) const {
-      /*if (ui_ == typename Update_information::Handle()) {
-	CGAL_assertion(0);
-	static Exact_root er;
-	return er;
-	} else {*/
       ensure_exact_root(iv);
       return exact_root();
-      //}
     }
 
     void write(std::ostream &out) const {
@@ -231,10 +217,12 @@ struct Updatable_Delaunay_triangulation_2 {
     void ensure_exact_root(std::pair<double,double> &iv) const {
       if (!has_exact_root()) {
 	if (ui_ != typename Update_information::Handle()) {
-	  ++comparison_certificates_;
+	  ++stat_exact_certificate_functions_;
+	  ++stat_exact_certificate_functions_from_compare_;
 	  CGAL_UD_DEBUG("Generating exact with interval " << iv.first << " " << iv.second << std::endl);
 	  cert_= new CS(ui_->compute_exact_failure_time(tuple_, iv.first));
-	  CGAL_assertion(check_.failure_time() == exact_root());
+	  CGAL_UD_DEBUG("Got " << cert_->cert_.failure_time() << std::endl);
+	  CGAL_assertion(check_.failure_time() == cert_->cert_.failure_time());
 	  iv= CGAL::to_interval(exact_root());
 	} else {
 	  double cs[2];
@@ -251,10 +239,10 @@ struct Updatable_Delaunay_triangulation_2 {
 	}
       }
     }
-    void ensure_exact_root(const Exact_time &et) const {
+    void compute_exact_root(const Exact_time &et) const {
       if (!has_exact_root()) {
+	++stat_exact_certificate_functions_;
 	CGAL_UD_DEBUG("Generating exact with root " << et << std::endl);
-	++comparison_certificates_;
 	CGAL_precondition(ui_ != typename Update_information::Handle());
 	//if (ui_ != ) {
 	cert_= new CS(ui_->compute_exact_failure_time(tuple_, et));
@@ -282,10 +270,23 @@ struct Updatable_Delaunay_triangulation_2 {
       CGAL_postcondition(exact_root() == check_.failure_time());
     }
 
+    typename Update_information::Certificate_function_const_pointer certificate_function() const {
+      return certf_;
+    }
+
+#ifdef NEWTON
+    typename Update_information::Certificate_derivitive_const_pointer certificate_derivitive() const {
+      return certpf_;
+    }
+#endif
+
     Cert_tuple tuple_;
     typename Update_information::Handle ui_;
     mutable typename CS::Handle cert_;
-    INT certf_[5];
+    typename Update_information::Certificate_function certf_;
+#ifdef NEWTON
+    typename Update_information::Certificate_derivitive certpf_;
+#endif
 #ifndef NDEBUG
     mutable Exact_certificate check_;
 #endif
@@ -322,7 +323,7 @@ struct Updatable_Delaunay_triangulation_2 {
       return Instantaneous_kernel(ap_, Static_kernel());
     }
     typedef typename Kinetic::Interval_simulator_traits<Refiner> Simulator_traits;
-    typedef typename Kinetic::Two_list_pointer_event_queue<Simulator_traits, 2> Queue;
+    typedef typename Kinetic::Two_list_pointer_event_queue<Simulator_traits, false, 2> Queue;
     typedef typename Kinetic::Default_simulator<Simulator_traits, Queue > Simulator;
 
     typename Simulator::Handle simulator_handle() {
@@ -427,10 +428,12 @@ struct Updatable_Delaunay_triangulation_2 {
       return true;
     }
 
-    Cert_typle tuple(Point_key ks[4]) const {
-      return Cert_typle(ks);
+    Cert_tuple tuple(Point_key ks[4]) const {
+      return Cert_tuple(ks);
     }
-    /*Cert_tuple tuple(typename Default_traits::Edge e) const {
+    
+#ifndef NDEBUG
+    Cert_tuple tuple(typename Default_traits::Edge e) const {
       Point_key ks[4];
       ks[0]= TDS_helper::origin(e)->point();
       ks[1]= TDS_helper::third_vertex(e)->point();
@@ -439,10 +442,11 @@ struct Updatable_Delaunay_triangulation_2 {
       if (ks[1] == Point_key() || ks[3]==Point_key()
 	  || ks[0] == Point_key() || ks[2]== Point_key()) return Cert_tuple();
       else return Cert_tuple(ks);
-      }*/
+    }
+#endif
     
     void point_changed(Point_key k){
-      ui()->point_changed(k);
+      //ui()->point_changed(k);
     }
 
     const Time &current_time() const {
@@ -471,17 +475,37 @@ struct Updatable_Delaunay_triangulation_2 {
     }
  
 
-    bool hull_certificate_failure_time(typename Default_traits::Edge, Point_key [3], Time, Certificate_data) {
+    bool hull_certificate_failure_time(typename Default_traits::Edge, Point_key [3], 
+				       Time, Certificate_data) {
       return false;
     }
 
 
 
-    bool internal_certificate_failure_time(typename Default_traits::Edge e, Point_key pks[4], Time &rett, Certificate_data) {
+    bool internal_certificate_failure_time(typename Default_traits::Edge e, Point_key pks[4],
+					   Time &rett, Certificate_data) {
+      ++stat_certificate_computations_;
+
       Cert_tuple ct= tuple(pks);
-      bool check_if_point_is_activated;
+      //bool check_if_point_is_activated;
       double end_time= 1; //i()->next_activation();
       //ui()->set_next_activation(1.0);
+      CGAL_UD_DEBUG("Current time is " << P::simulator_handle()->current_time() << std::endl);
+
+#ifndef MOVE_ALL
+      bool found=false;
+      for (unsigned int i=0; i< 4; ++i) {
+	if (ui()->is_activating(ct[i])) {
+	  found=true;
+	  break;
+	}
+      }
+      if (found) {
+	CGAL_UD_DEBUG("Shortening end time to " << ui()->next_activation() << std::endl);
+	end_time= ui()->next_activation();
+      }
+#endif
+
 #ifndef NDEBUG
       Exact_time check_failure_time;
       Exact_certificate check_cert;
@@ -493,37 +517,44 @@ struct Updatable_Delaunay_triangulation_2 {
 	  ect= P::simulator_handle()->current_time().refiner().check_.failure_time();
 	}
 	
-	check_cert= ui()->soc_(ui()->exact_point(ct[0]),
-			       ui()->exact_point(ct[1]),
-			       ui()->exact_point(ct[2]), 
-			       ui()->exact_point(ct[3]),
-			       ect, 1);
+	check_cert= ui()->in_circle_object()(ui()->exact_point(ct[0]),
+					     ui()->exact_point(ct[1]),
+					     ui()->exact_point(ct[2]), 
+					     ui()->exact_point(ct[3]),
+					     ect, 1);
 	check_failure_time= check_cert.failure_time();
 
 	if (check_failure_time > end_time) check_failure_time= 2;
       }
+      //CGAL_UD_DEBUG("Computing failure time for " << ct << std::endl);
+      CGAL_UD_DEBUG("True failure time is " << check_failure_time<< std::endl);
+      //CGAL_UD_DEBUG("Exact cert is " << check_cert << std::endl);
 #endif
-   
-      //std::pair<Cert_tuple, bool> ctp= Cert_tuple::make(ks);
-      
-    
-      
-      CGAL_UD_DEBUG("Computing failure time for " << ct << std::endl);
-      CGAL_UD_DEBUG("Exact failure time is " << check_failure_time<< std::endl);
 
 
-      double bt = ui()->start_time();
-      if (bt <0) {
-	bt= CGAL::to_interval(current_time()).first;
+      double bt;// = ui()->start_time();
+      //if (bt <0) {
+      bt= CGAL::to_interval(current_time()).first;
+	//}
+      
+#ifdef MOVE_ALL
+      if (!ui()->can_fail(ct, bt)) {
+        CGAL_postcondition(check_failure_time > 1);
+        return false;
       }
 
+#else
       if (!ui()->can_fail(ct, bt, end_time)) {
         CGAL_postcondition(check_failure_time > 1);
         return false;
       }
+#endif
       
-      INT cf[5];
-      std::pair<double,double> ft;
+      typename Update_information::Certificate_function cf;
+#ifdef NEWTON
+      typename Update_information::Certificate_derivitive cfp;
+#endif
+      INT ft;
       typename Update_information::Isolate_result isc;
 #ifndef NDEBUG
 #ifndef MOVE_ALL
@@ -534,25 +565,41 @@ struct Updatable_Delaunay_triangulation_2 {
 #endif
 #endif
         {
-        CGAL::Protect_FPU_rounding<true> prot;
-        ui()->certificate_function(ct[0], ct[1], ct[2], ct[3], cf);
-        //typename Update_information::Certificate_evaluator se(cf);
-	
-	
-	isc= ui()->isolate_failure(cf, 
-				   bt,
-                                   end_time,
-                                   true,
-                                   ft);
-      }
+	  CGAL::Protect_FPU_rounding<true> prot;
+	  
+	  ++stat_interval_certificate_functions_;
+	  ui()->certificate_function(ct[0], ct[1], ct[2], ct[3], cf);
+	  //typename Update_information::Certificate_evaluator se(cf);
+	  
+#ifndef NEWTON
+	  isc= ui()->isolate_failure(cf, 
+				     bt,
+				     end_time,
+				     true,
+				     ft);
+#else
+	  cfp= cf.prime();
+	  typename Update_information::Certificate_acceleration cfpp= cfp.prime();
+	  isc= ui()->Newton_isolate(cf, cfp, cfpp, 
+				    bt, end_time, ft);
+	  CGAL_UD_DEBUG("Newton isolate got " << isc << " with interval " << ft << std::endl);
+	  if (isc == Update_information::CERTAIN_FAILURE) {
+	    ft= ui()->Newton_refine(cf,cfp, ft);
+	    CGAL_UD_DEBUG("After refinement got " << ft << std::endl);
+	  }
+	}
+#endif
 
       if (isc == Update_information::NO_FAILURE) { 
-        CGAL_UD_DEBUG("Not isolated" << std::endl);
+        CGAL_UD_DEBUG("No root" << std::endl << std::endl);
         CGAL_assertion(check_failure_time >=1);
         return false;
       }
-
-      rett= Time(ft.first, ft.second, Refiner(ct, cf, ui()));
+#ifdef NEWTON
+      rett= Time(ft.inf(), ft.sup(), Refiner(ct, cf,cfp, ui()));
+#else
+      rett= Time(ft.inf(), ft.sup(), Refiner(ct, cf, ui()));
+#endif
 #ifndef NDEBUG
       rett.refiner().check_= check_cert;
 #endif
@@ -561,35 +608,79 @@ struct Updatable_Delaunay_triangulation_2 {
 
 
       if (isc == Update_information::CERTAIN_FAILURE) {
-	if (ft.first <= CGAL::to_interval(current_time()).second) {
+	if (CGAL::compare(rett, P::simulator_handle()->current_time()) != CGAL::LARGER) {
 	  // interval overlaps current
 	  //std::pair<double,double> cti= CGAL::to_interval(P::simulator_handle()->current_time());
 	  //P::simulator_handle()->current_time().refiner().ensure_exact_root(cti);
 	  const Exact_time &ect= P::simulator_handle()->current_time().exact_root();
-	  
-	  if (Exact_time(ft.first) <= ect) {
-	    rett.refiner().ensure_exact_root(ect);
-	    CGAL_UD_DEBUG("Exact" << rett.refiner().exact_root() <<  std::endl);
-	    rett.set_interval(CGAL::to_interval(rett.refiner().exact_root()));
-	  }
+	  rett.refiner().compute_exact_root(ect);
+	  ++stat_exact_certificate_functions_from_compare_curt_;
+	  CGAL_UD_DEBUG("Can't separate root from cur " << std::endl);
+	  std::cout << "Have to generate exact certificate" << std::endl;
+	  CGAL_UD_DEBUG("Exact" << rett.refiner().exact_root() <<  std::endl);
+	  rett.set_interval(CGAL::to_interval(rett.refiner().exact_root()));
+	} else {
+#ifndef NDEBUG
+	  CGAL::Protect_FPU_rounding<true> prot;
+	  double owid;
+	  INT nft= ui()->Newton_refine(cf,cfp, ft);
+	  do {
+	    owid= nft.sup()- nft.inf();
+	    nft= ui()->Newton_refine(cf,cfp, nft);
+	  } while (owid  > 1.01 * (nft.sup() -nft.inf()));
+	  stat_total_interval_width_+= owid;
+	  stat_number_of_intervals_+= 1;
+#endif
 	}
 	CGAL_UD_DEBUG("Returning isolated " << rett << std::endl);
-	
+	CGAL_assertion(Exact_time(CGAL::to_interval(rett).first) <= check_failure_time);
+	CGAL_assertion(Exact_time(CGAL::to_interval(rett).second) >= check_failure_time);
 	return true;
       } else {
 	//if (!has_exact_failure_time(ct)) {
-	++uncertain_exact_computations_;
 	//	}
-	CGAL_UD_DEBUG("Not isolated " <<  std::endl);
+	CGAL_UD_DEBUG("Possible root " <<  std::endl);
 	//std::pair<double,double> cti=CGAL::to_interval(P::simulator_handle()->current_time());
 	//P::simulator_handle()->current_time().refiner().ensure_exact_root(cti);
 	const Exact_time &ect= P::simulator_handle()->current_time().exact_root();
-	rett.refiner().ensure_exact_root(ect);
-	CGAL_UD_DEBUG("Exact" << rett.refiner().exact_root() <<  std::endl);
+	rett.refiner().compute_exact_root(ect);
+	CGAL_UD_DEBUG(std::cout << "Have to generate exact certificate" << std::endl);
+	CGAL_UD_DEBUG("Exact root is" << rett.refiner().exact_root() <<  std::endl);
+	CGAL_UD_DEBUG("Exact cert is " << rett.refiner().exact_certificate() << std::endl);
+	CGAL_UD_DEBUG("Initial points are " << std:: endl);
+#ifndef NDEBUG
+	typename Indirect_kernel::Current_coordinates ic= ui()->initial_coordinates_object();
+	typename Indirect_kernel::Current_coordinates fc= ui()->final_coordinates_object();
+	
+#endif
+	{
+	  CGAL::Protect_FPU_rounding<true> prot;
+	CGAL_UD_DEBUG(ic(ct[0]) << ": "
+		      << ic(ct[1]) << ": " 
+		      << ic(ct[2]) << ": " 
+		      << ic(ct[3]) << std::endl);
+	CGAL_UD_DEBUG("Final points are " << std:: endl);
+	CGAL_UD_DEBUG(fc(ct[0]) << ": "
+		      << fc(ct[1]) << ": " 
+		      << fc(ct[2]) << ": " 
+		      << fc(ct[3]) << std::endl);
+	CGAL_UD_DEBUG("Initial incircle is " 
+		      << ui()->eval_incircle(INT(ic(ct[0])[0]),  INT(ic(ct[0])[1]),
+					     INT(ic(ct[1])[0]),  INT(ic(ct[1])[1]),
+					     INT(ic(ct[2])[0]),  INT(ic(ct[2])[1]),
+					     INT(ic(ct[3])[0]),  INT(ic(ct[3])[1])) << std::endl);
+	CGAL_UD_DEBUG("Final incircle is " 
+		      << ui()->eval_incircle(INT(fc(ct[0])[0]),  INT(fc(ct[0])[1]),
+					     INT(fc(ct[1])[0]),  INT(fc(ct[1])[1]),
+					     INT(fc(ct[2])[0]),  INT(fc(ct[2])[1]),
+					     INT(fc(ct[3])[0]),  INT(fc(ct[3])[1])) << std::endl);
+	}
+					     
 	if (rett.refiner().exact_root() >= 1) {
 	  CGAL_assertion(check_failure_time >=1);
 	  CGAL_UD_DEBUG("Phantom root " << std::endl);
 	  CGAL_postcondition(check_failure_time > 1);
+	  ++stat_unfailing_exact_certificate_functions_;
 	  return false;
 	} else {
 	  rett.set_interval(CGAL::to_interval(rett.refiner().exact_root()));
@@ -599,20 +690,24 @@ struct Updatable_Delaunay_triangulation_2 {
       }
     }
 
-
-
-
-
-    bool certificate_failure_time(typename Default_traits::Edge, 
+    bool certificate_failure_time(
+#ifndef NDEBUG
+				  typename Default_traits::Edge e, 
+#else
+				  typename Default_traits::Edge, 
+#endif
                                   Certificate_data , Time &rett, Certificate_data) {
+      ++stat_certificate_advances_;
       const Time &curt= P::simulator_handle()->current_time();
       Cert_tuple ct= curt.refiner().tuple().opposite();
+      CGAL_UD_DEBUG("Current time is " << P::simulator_handle()->current_time() << std::endl);
+
 #ifndef NDEBUG
       Cert_tuple check_ct= tuple(e);
 #endif
       CGAL_assertion(ct == check_ct);
 
-      const double end_time= 1; //ui()->next_activation();
+      double end_time= 1; //ui()->next_activation();
 
 #ifndef MOVE_ALL
       ui()->set_next_activation(1.0);
@@ -627,49 +722,91 @@ struct Updatable_Delaunay_triangulation_2 {
 
 	check_failure_time= check_cert.failure_time();
 	if (check_failure_time > end_time) check_failure_time= 2;
-	CGAL_UD_DEBUG("Exact time is " << check_cert.failure_time() << std::endl);
-
+	//GAL_UD_DEBUG("Exact time is " << check_cert.failure_time() << std::endl);
+	CGAL_UD_DEBUG("True failure time is " << check_cert.failure_time() << std::endl);
       }
 #endif
-      //std::pair<Cert_tuple, bool> ctp= Cert_tuple::make(ks);
-      
-      /*if (!can_fail(ct, end_time)) {
-	CGAL_postcondition(check_failure_time > 1);
-	return null_pair();
-	}*/
 
-      CGAL_UD_DEBUG("Advancing certificate for " << ct
-		    << std::endl);
 
       // this depends on being the last event of the batch whose time is computed
       const Time& net= P::simulator_handle()->next_event_time();
 
+     
+
       double lb= CGAL::to_interval(net).first;
-      bool pos_start=false;
-      if (lb == ui()->start_time()) {
-	pos_start=true;
-      } else {
-	// done twiceish
-	CGAL::Protect_FPU_rounding<true> prot;
-	CGAL::Sign sn= curt.refiner().sign_at(INT(lb,lb));
-	  //ui()->sign_at(ct[0],ct[1],ct[2],ct[3], INT(lb, lb));
-	if (sn != CGAL::POSITIVE) {
-	  lb= CGAL::to_interval(curt).first;
-	} else {
-	  pos_start=true;
+      CGAL_UD_DEBUG("Advancing certificate for " << ct << " to " << lb
+		    << std::endl);
+
+#ifndef MOVE_ALL
+      bool found=false;
+      for (unsigned int i=0; i< 4; ++i) {
+	if (ui()->is_activating(ct[i])) {
+	  found=true;
+	  break;
 	}
       }
+      if (found) {
+	CGAL_UD_DEBUG("Shortening end time to " << ui()->next_activation() << std::endl);
+	end_time= ui()->next_activation();
+	if (end_time <= lb) {
+	  CGAL_UD_DEBUG("And the interval is empty " << std::endl);
+	  return false;
+	}
+      }
+#endif
+    
+      typename Update_information::Certificate_function cf(curt.refiner().certificate_function(), true);
+         
+      
+      bool wrap_this_into_newton;
+      // done twiceish
+      CGAL::Protect_FPU_rounding<true> prot;
+      ++stat_point_predicate_evaluations_;
+      //CGAL::Sign sn= curt.refiner().sign_at(INT(lb,lb));
+      {
+	INT lbv= cf(lb);
+	
+	//ui()->sign_at(ct[0],ct[1],ct[2],ct[3], INT(lb, lb));
+	if (lbv.inf()<=0) {
+	  CGAL_UD_DEBUG("Not positive at " << lb << std::endl);
+	  lb= CGAL::to_interval(curt).first;
+	} 
+      }
 
-      INT cf[5];
-      std::pair<double,double> ft;
+      {
+	++stat_interval_predicate_evaluations_;
+	//CGAL::Sign sn= curt.refiner().sign_at(INT(lb,lb));
+	INT lbv= cf(INT(lb, end_time));
+	if (lbv.inf()>0) {
+	  CGAL_UD_DEBUG("No root in interval." << std::endl);
+	  CGAL_postcondition(check_failure_time > 1);
+	  return false;
+	} 
+      }
+
+  
+#ifdef NEWTON
+      typename Update_information::Certificate_derivitive cfp(curt.refiner().certificate_derivitive(), true);
+#endif
+      INT ft;
       typename Update_information::Isolate_result isc;
       {
 	CGAL::Protect_FPU_rounding<true> prot;
-	ui()->certificate_function(ct[0], ct[1], ct[2], ct[3], cf);
+	//ui()->certificate_function(ct[0], ct[1], ct[2], ct[3], cf);
+;
 	//typename Update_information::Certificate_evaluator se(cf);
-       
+#ifndef NEWTON
 	isc
 	  = ui()->isolate_failure(cf, lb, end_time, pos_start, ft);
+#else
+	
+	typename Update_information::Certificate_acceleration cfpp(cfp.prime());
+	isc= ui()->Newton_isolate(cf, cfp, cfpp, lb, end_time, ft);
+	if (isc == Update_information::CERTAIN_FAILURE) {
+	  ft= ui()->Newton_refine(cf, cfp, ft);
+	}
+	CGAL_UD_DEBUG("Newton isolate got " << isc << " with interval " << ft << std::endl);
+#endif
       }
       
   
@@ -680,32 +817,40 @@ struct Updatable_Delaunay_triangulation_2 {
 	return false;
       }
 
-      rett=Time(ft.first, ft.second, Refiner(ct, cf, ui()));
+#ifdef NEWTON
+      rett=Time(ft.inf(), ft.sup(), Refiner(ct, cf, cfp, ui()));
+#else
+      rett=Time(ft.inf(), ft.sup(), Refiner(ct, cf, ui()));
+#endif
 #ifndef NDEBUG
       rett.refiner().check_= check_cert;
 #endif
       if (isc == Update_information::CERTAIN_FAILURE
-	  && ft.first <= CGAL::to_interval(curt).second
+	  && ft.inf() <= CGAL::to_interval(curt).second
 	  || isc == Update_information::POSSIBLE_FAILURE
 	  || curt.refiner().has_exact_root()) {
-	if (isc == Update_information::POSSIBLE_FAILURE) {
-	  ++uncertain_exact_computations_;
-	}
+	
 	curt.exact_root();
+	CGAL_UD_DEBUG("Have to generate exact certificate" << std::endl);
 	Exact_certificate ec= curt.refiner().exact_certificate();
+	CGAL_UD_DEBUG("Curt is now " << curt << std::endl);
+	CGAL_UD_DEBUG("Root was " << ec.failure_time() << std::endl);
 	ec.pop_failure_time();
+	CGAL_UD_DEBUG("Root is " << ec.failure_time() << std::endl);
+	CGAL_UD_DEBUG("Exact cert is " << ec << std::endl);
+	++stat_exact_certificate_functions_from_advance_;
 	if (ec.failure_time() > 1) {
-	  ++unfailing_kinetic_certificates_;
 	  CGAL_UD_DEBUG("Phantom root " << std::endl);
 	  CGAL_postcondition(check_failure_time > 1);
 	  return false;
 	}
-	++certificate_advances_;
 	ft= CGAL::to_interval(curt.refiner().exact_root());
-	rett.set_interval(ft);
+	rett.set_interval(CGAL::to_interval(ft));
 	rett.refiner().set_exact_certificate(ec);
 	return true;
       } else {
+	CGAL_assertion(Exact_time(CGAL::to_interval(rett).first) <= check_failure_time);
+	CGAL_assertion(Exact_time(CGAL::to_interval(rett).second) >= check_failure_time);
 	CGAL_UD_DEBUG("Returning " << rett << std::endl);
 	return true;
       }
@@ -756,8 +901,8 @@ struct Updatable_Delaunay_triangulation_2 {
 
 #ifndef MOVE_ALL
     bool test_and_add(Edge e, std::vector<Point_key> &active) const {
-      ++static_certificates_;
-      if (!compute_ok(e, ui()->fk_)) {
+      ++stat_point_predicate_evaluations_;
+      if (!compute_ok(e, ui()->final_kernel_object())) {
         add(e.first->vertex(0)->point(), active);
 	add(e.first->vertex(1)->point(), active);
 	add(e.first->vertex(2)->point(), active);
@@ -767,8 +912,8 @@ struct Updatable_Delaunay_triangulation_2 {
     }
 
     bool test_and_add_one(Edge e, std::vector<Point_key> &active) const {
-      ++ui()->static_certificates_;
-      if (!compute_ok(e, ui()->fk_)) {
+      ++stat_point_predicate_evaluations_;
+      if (!compute_ok(e, ui()->final_kernel_object())) {
 	//add(e.first->vertex(0)->point(), active);
 	//add(e.first->vertex(1)->point(), active);
 	//add(e.first->vertex(2)->point(), active);
@@ -781,23 +926,24 @@ struct Updatable_Delaunay_triangulation_2 {
     template <class TDS> 
     void initialize_events(const TDS &triangulation,
                            Indirect_kernel fk) {
-      stat_num_edges_=triangulation.tds().number_of_edges();
+      stat_number_of_edges_=triangulation.tds().number_of_edges();
       ui()->set_final_kernel(fk);
 #ifndef MOVE_ALL
       std::vector<Point_key> active;
       for (typename TDS::Finite_edges_iterator it= triangulation.finite_edges_begin(); 
            it != triangulation.finite_edges_end(); ++it){
         if (test_and_add(*it, active)) {
-          ++stat_bad_edges_;
+          ++stat_number_of_bad_edges_;
         }
       }
       
       Interpolate_event ev(tr_,
                            ui(),
-                           ui()->ik_.current_coordinates_object(),
-                           ui()->fk_.current_coordinates_object(), 
+                           ui()->initial_coordinates_object(),
+                           ui()->final_coordinates_object(), 
                            active.begin(), 
                            active.end());
+      ++stat_number_of_interpolations_;
       if (!ev.empty()) {
         INT iat= CGAL::to_interval(ev.time());
         tr_.simulator_handle()->new_event(ev.time(), ev);
@@ -830,13 +976,14 @@ struct Updatable_Delaunay_triangulation_2 {
       if (!active.empty()) {
 	Interpolate_event ev(tr_, 
 			     ui(),
-			     ui()->ik_.current_coordinates_object(),
-			     ui()->fk_.current_coordinates_object(), 
+			     ui()->initial_coordinates_object(),
+			     ui()->final_coordinates_object(), 
 			     active.begin(), active.end());
 	if (!ev.empty()){
+	  ++stat_number_of_interpolations_;
 	  tr_.simulator_handle()->new_event(ev.time(), ev);
 	  //active_.set(active.begin(), active.end());
-	  ++num_interpolations_;
+	  //++num_interpolations_;
 	  /*for (unsigned int i=0; i< active.size(); ++i){
 	    ui_->activate(active[i], true);
 	    }*/
@@ -844,17 +991,13 @@ struct Updatable_Delaunay_triangulation_2 {
         }
       }
 #endif
-
+      /*
       bool ok=true;
       double skip_to= CGAL::to_interval(tr_.simulator_handle()->next_event_time()).first;
       {
 	CGAL::Protect_FPU_rounding<true> prot;
 	CGAL::Sign sn = tr_.simulator_handle()->current_time().refiner().sign_at(INT(skip_to));
-	  /*= ui()->sign_at(e.first->vertex(0)->point(),
-				     e.first->vertex(1)->point(),
-				     e.first->vertex(2)->point(), 
-				     em.first->vertex(em.second)->point(),
-				     INT(skip_to));*/
+
 	if (sn == CGAL::POSITIVE) {
 	  for (int i=0; i< 3; ++i) {
 	    if (i != e.second) {
@@ -888,6 +1031,7 @@ struct Updatable_Delaunay_triangulation_2 {
       } else {
 	ui()->set_start_time(-1);
       }
+      */
     }
 
   
@@ -928,6 +1072,9 @@ struct Updatable_Delaunay_triangulation_2 {
   };
 
 
+  typedef CGAL::Kinetic::Delaunay_triangulation_2<Simulation_traits, Visitor, Triangulation, Traits> KDel;
+
+
 #ifndef MOVE_ALL
 
 
@@ -936,9 +1083,9 @@ struct Updatable_Delaunay_triangulation_2 {
 					Static_point_2 fp) {
     typedef typename Simulation_traits::Kinetic_kernel::Motion_function MF;
     typedef typename MF::NT NT;
-    MF mf[2];
+    Protected_array<MF, 2> mf;
     for (unsigned int i=0; i< 2; ++i){
-      NT c[2];
+      Protected_array<NT,2> c;
       c[1]=(NT(ip[i])-NT(fp[i]))/NT(time-1);
       c[0]=NT(fp[i])-c[1];
       mf[i]=MF(c, c+2);
@@ -950,12 +1097,12 @@ struct Updatable_Delaunay_triangulation_2 {
   static Kinetic_point_2 interpolate_12(Static_point_2 ip,
 					Static_point_2 fp) {
     typedef typename Simulation_traits::Kinetic_kernel::Motion_function MF;
-    MF mf[2];
+    Protected_array<MF, 2> mf;
     for (unsigned int i=0; i< 2; ++i){
-      NT c[2];
+      Protected_array<NT,2> c;
       c[1]=(fp[i]-ip[i]);
       c[0]=2*ip[i]-fp[i];
-      mf[i]=MF(c, c+2);
+      mf[i]=MF(c.begin(), c.end());
     }
     return Kinetic_point_2(mf[0], mf[1]);
   }
@@ -963,11 +1110,6 @@ struct Updatable_Delaunay_triangulation_2 {
 
 
   struct Interpolate_event: public CGAL::Kinetic::Free_event_base {
-    //typedef typename Simulation_traits::Active_points_2_table Table;
-    //typedef typename Simulation_traits::Active_points_2_table::Key Table_key;
-    //typedef typename std::pair<Table_key, Kinetic_point_2>  MP;
-
-    
   
     
     template <class It>
@@ -976,20 +1118,25 @@ struct Updatable_Delaunay_triangulation_2 {
 		      IK_current_coordinates ic,
 		      IK_current_coordinates fc, 
 		      It b, It e): ui_(ui) {
-      // make sure it is clear of the event to not prompt building of exact
-      /*if (tr.simulator_handle()->current_time()
-	== typename Simulation_traits::Simulator::NT(0)) {
+      if (CGAL::to_interval(tr.simulator_handle()->current_time()).second != 0) {
+	time_= nextafter(CGAL::to_interval(tr.simulator_handle()->current_time()).second,
+			 std::numeric_limits<double>::max());
+      } else {
 	time_=0;
-	} else {*/
-      time_= CGAL::to_interval(tr.simulator_handle()->current_time()).second;
+      }
       //}
       std::sort(b,e);
       It ne= std::unique(b,e);
-      for (It c=b; c!= ne; ++c){
-	if (ic(*c) != fc(*c)) {
-	  motions_.push_back(*c);
-	} else {
-	  CGAL_UD_DEBUG("Point " << *c << " doesn't move." << std::endl);
+      ui_->set_next_activation(time_);
+      {
+	CGAL::Protect_FPU_rounding<true> prot;
+	for (It c=b; c!= ne; ++c){
+	  if (ic(*c) != fc(*c)) {
+	    motions_.push_back(*c);
+	    ui_->preactivate(*c);
+	  } else {
+	    CGAL_UD_DEBUG("Point " << *c << " doesn't move." << std::endl);
+	  }
 	}
       }
       if (!empty()) {
@@ -1014,18 +1161,12 @@ struct Updatable_Delaunay_triangulation_2 {
     }
 
     void process() {
+      ui_->set_next_activation(-1);
       INT it= CGAL::to_interval(time_);
       ui_->set_is_editing(Update_information::LOGGED);
       CGAL::Protect_FPU_rounding<true> prot;
       for (unsigned int i=0; i< motions_.size(); ++i) {
-	/*out << "Setting motion of " << motions_[i].first 
-	  << " to " <<  motions_[i].second 
-	  << " which is currently " 
-	  << motions_[i].second.x()(time_) << " " 
-	  << motions_[i].second.y()(time_) 
-	  << " with a current position of " 
-	  << tr_.active_points_2_table_handle()->at(motions_[i].first) 
-	  << std::endl;*/
+
 	ui_->activate(time_, motions_[i]);
       }
       ui_->set_is_editing(Update_information::NOT);
@@ -1035,7 +1176,6 @@ struct Updatable_Delaunay_triangulation_2 {
     double time_;
   };
 
-  typedef CGAL::Kinetic::Delaunay_triangulation_2<Simulation_traits, Visitor, Triangulation, Traits> KDel;
 
     
 
@@ -1052,8 +1192,8 @@ struct Updatable_Delaunay_triangulation_2 {
       return out;
     }
 
-    void process() {
-      
+    void process() { 
+
       kdel_->write_stats(std::cout);
       kdel_->visitor().stats_write(std::cout);
       
@@ -1063,8 +1203,8 @@ struct Updatable_Delaunay_triangulation_2 {
       for (typename Simulation_traits::Active_points_2_table::Key_iterator 
 	     it = tr_.active_points_2_table_handle()->keys_begin(); 
 	   it != tr_.active_points_2_table_handle()->keys_end(); ++it) {
-	if (!kdel_->visitor().is_active(*it)) {
-	  tr_.active_points_2_table_handle()->set(*it, interpolate_12(initial(*it),
+	if (!kdel_->visitor().is_active(*it)) {	
+  tr_.active_points_2_table_handle()->set(*it, interpolate_12(initial(*it),
 								      final(*it)));
 	} else {
 	  Kinetic_point_2 np(ENT(final(*it).x()),
@@ -1104,20 +1244,15 @@ struct Updatable_Delaunay_triangulation_2 {
     tr.insert(rg.first, rg.second);
     
     Traits traits(tr_);
-
-    /*traits.active_points_2_table_handle()->set_is_editing(Update_information::UNLOGGED);
-    for (It c=b; c!= e; ++c){
-      traits.active_points_2_table_handle()->insert(Kinetic_point_2(Kinetic_coordinate(c->x()),
-								    Kinetic_coordinate(c->y())));
-    }
-    traits.active_points_2_table_handle()->set_is_editing(Update_information::NOT);*/
-
   
     
     kdel_= new KDel(traits, tr, Visitor(tr_));
     kdel_->clear_stats();
     kdel_->visitor().stats_clear();
     kdel_->set_neighbors_initialized(true);
+#ifndef MOVE_ALL
+    kdel_->set_has_certificates(true, true, true);
+#endif
   }
  
   const Triangulation &triangulation() const {
@@ -1166,13 +1301,18 @@ struct Updatable_Delaunay_triangulation_2 {
 
   Indirect_kernel set_up_update(const Points &pts) {
     kdel_->visitor().reset();
+
     kdel_->set_has_certificates(false, true);
     tr_.simulator_handle()->set_interval(0,1);
 
     Indirect_kernel fk;
     fk.new_point_2s(pts.begin(), pts.end());
     kdel_->visitor().initialize_events(kdel_->triangulation(), fk);
+#ifdef MOVE_ALL
     kdel_->set_has_certificates(true, false, true);
+#else
+    kdel_->set_has_certificates(true, true, true);
+#endif
     return fk;
   }
 
@@ -1235,13 +1375,6 @@ struct Updatable_Delaunay_triangulation_2 {
       }
     };
   }
-  
-  /*static bool is_hull_edge(const Edge &e) {
-    return ! TDS_helper::mirror_vertex(e)->point().is_valid()
-      || ! TDS_helper::third_vertex(e)->point().is_valid()
-      || ! TDS_helper::origin(e)->point().is_valid()
-      || ! TDS_helper::destination(e)->point().is_valid();
-      }*/
 
   
   static bool compute_ok(const Edge &e,  Indirect_kernel sk) {

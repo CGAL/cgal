@@ -68,7 +68,7 @@ public:
   typedef typename KineticKernel::Function_kernel::Root Time;
 
   Simulation_traits(const Time &lb, const Time &ub): sp_(new Simulator(lb, ub, kk_.function_kernel_object())){}
-  Simulation_traits(): sp_(new Simulator()) {
+  Simulation_traits(const Time &lb): sp_(new Simulator(lb, kk_.function_kernel_object())) {
   }
 
   Simulator* simulator_handle(){ return sp_.get();}
@@ -112,6 +112,7 @@ struct Suggested_exact_simulation_traits_types
   struct Event_queue: public Queue_base
   {
     Event_queue(const Time &start, const Time &end, Function_kernel fk, int num): Queue_base(start, end, fk, num){}
+    Event_queue(const Time &start, Function_kernel fk, int num): Queue_base(start, fk, num){}
   };
 
   typedef CGAL::Kinetic::Default_simulator<Simulator_function_kernel, Event_queue > Simulator;
@@ -125,7 +126,7 @@ struct Suggested_exact_simulation_traits_base: public Simulation_traits<Suggeste
 			    Suggested_exact_simulation_traits_types::Kinetic_kernel,
 			    Suggested_exact_simulation_traits_types::Simulator> P;
   Suggested_exact_simulation_traits_base(const P::Time &lb, const P::Time &ub): P(lb, ub) {}
-  Suggested_exact_simulation_traits_base() {}
+  Suggested_exact_simulation_traits_base(const P::Time &lb): P(lb) {}
   bool is_exact() const {
     return true;
   }
@@ -147,6 +148,7 @@ struct Suggested_inexact_simulation_traits_types
   struct Event_queue: public Queue_base
   {
     Event_queue(const Time &start, const Time &finish, Function_kernel fk, int num): Queue_base(start, finish, fk, num){}
+    Event_queue(const Time &start, Function_kernel fk, int num): Queue_base(start, fk, num){}
   };
   typedef CGAL::Kinetic::Default_simulator<Simulator_function_kernel, Event_queue > Simulator;
 };
@@ -158,7 +160,7 @@ struct Suggested_inexact_simulation_traits_base: public Simulation_traits<Sugges
 			    Suggested_inexact_simulation_traits_types::Kinetic_kernel,
 			    Suggested_inexact_simulation_traits_types::Simulator> P;
   Suggested_inexact_simulation_traits_base(const P::Time &lb, const P::Time &ub): P(lb, ub) {}
-  Suggested_inexact_simulation_traits_base() {}
+  Suggested_inexact_simulation_traits_base(const P::Time &lb): P(lb) {}
   bool is_exact() const {
     return false;
   }

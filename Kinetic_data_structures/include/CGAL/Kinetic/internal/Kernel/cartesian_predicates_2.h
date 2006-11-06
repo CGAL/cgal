@@ -72,6 +72,7 @@ struct Cartesian_side_of_oriented_circle_2
     {
         typedef typename KK::Certificate_function RT;
 
+#if 0
         const RT qhx = ap.hx();
         const RT qhy = ap.hy();
         const RT rhx = bp.hx();
@@ -107,6 +108,18 @@ struct Cartesian_side_of_oriented_circle_2
             - e * ( b*(k - o) + j*(o - c) + n*(c - k) )
             + i * ( b*(g - o) + f*(o - c) + n*(c - g) )
             - m * ( b*(g - k) + f*(k - c) + j*(c - g) );
+#endif
+	  RT qpx = bp.x()-ap.x();
+	  RT qpy = bp.y()-ap.y();
+	  RT rpx = cp.x()-ap.x();
+	  RT rpy = cp.y()-ap.y();
+	  RT tpx = dp.x()-ap.x();
+	  RT tpy = dp.y()-ap.y();
+	  
+	  RT det= (qpx*tpy - qpy*tpx)*(rpx*(cp.x()-bp.x()) + rpy*(cp.y()-bp.y()))
+	    -(tpx*(dp.x()-bp.x()) + tpy*(dp.y()-bp.y()))*( qpx*rpy - qpy*rpx) ;
+	  //std::cout << "New is " << nret << std::endl;
+	  //std::cout << "Old is " << det << std::endl;
 
         return det;
     }
