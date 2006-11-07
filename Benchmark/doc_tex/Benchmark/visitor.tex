@@ -241,7 +241,42 @@ Quadric & {\bf Quadric\_3 (}      \\
 \begin{ccHtmlOnly}
 <div align="center">
 <table cellpadding=3 border="1">
-<tr><th>Object</th><th>grammar rule with visitor function</th></tr>
+<tr><th>Object</th><th>Grammar rule with visitor function</th></tr>
+<tr><td>Integer</td><td><b>Integer</b>{accept_integer($1);}</td></tr>
+<tr><td>Rational</td><td><b>Rational(Integer, Integer)</b> {accept_rational($3, $5);}</td></tr>
+<tr><td>Infty</td><td><b>MINUS_INFTY</b> {accept_infty($1);}<br>
+                      <b>PLUS_INFTY</b> {accept_infty($1);}</td></tr>
+<tr><td>Orientation</td><td><b>COUNTERCLOCKWISE</b><br>
+                            <b>CLOCKWISE</b><br>
+                            <b>VOID</b></td></tr>
+<tr><td>Integer_sequence</td>
+    <td><b>Integer} {accept_integer($1);}<br>
+           Integer_sequence, <b>Integer</b> {accept_integer($3);}</td></tr>
+<tr><td>Point_2</td>
+    <td><b>Point_2(Integer,Integer)</b> {accept_point_2($3, $5);}<br>
+        <b>Point_2(Integer,Integer,Integer)</b> {accept_point_2($3, $5, $7);}<br>
+        <b>Point_2(Rational(Integer,Integer),Rational(Integer,Integer))</b> {accept_point_2($5, $7, $12, $14);}</td></tr>
+<tr><td>Polynomial</td><td><b>Polynomial_1</b> {begin_polynomial_1();}<b>(</b>Integer_sequence<b>)</b>{end_polynomial_1();}</td></tr>
+<tr><td>AlgebraicReal</td>
+    <td><b>AlgebraicReal</b> {begin_algebraic_real();}<b>(</b><br>
+        <b>Polynomial_1} {begin_polynomial_1();}<b>(</b>Integer_sequence<b>)</b>{end_polynomial_1();}<b>,</b>Rational<b>,</b>Rational<b>,</b><b>Integer} {accept_integer($15);}<br>
+        <b>)</b> {end_algebraic_real();}</td></tr>
+<tr><td>LineSegment</td><td><b>LineSegment_2</b> {begin_line_segment_2();}<b>(</b>Point_2<b>,</b>Point_2<b>)</b>{end_line_segment_2();}</td></tr>
+<tr><td>Circle<br>
+        Circle</td><td><b>Circle_2</b> {begin_circle_2();}<b>(</b>Point_2<b>,</b><b>Integer</b> {accept_integer($6);}<b>)</b> {end_circle_2();}<br>
+                       <b>Circle_2</b> {begin_circle_2();}<b>(</b>Point_2<b>,</b>Rational<b>)</b> {end_circle_2();}</td></tr>
+<tr><td>Conic</td>
+    <td><b>Conic_2(Integer,Integer,Integer,Integer,Integer,Integer)</b> {accept_conic_2 ($3, $5, $7, $9, $11, $13);}</td></tr>
+<tr><td>ConicPoint</td>
+    <td><b>ConicPoint_2</b> {begin_conic_point_2();}<b>(}Conic,AlgebraicReal<b>,</b>Integer<b>)</b> {end_conic_point_2();}<br>
+        <b>ConicPoint_2</b> {begin_conic_point_2();}<b>(}Conic,Infty<b>,</b>Integer<b>)</b> {end_conic_point_2();}<br>
+        <b>ConicPoint_2</b> {begin_conic_point_2();}<b>(}Conic,AlgebraicReal<b>,</b>Infty<b>)</b> {end_conic_point_2();}</td></tr>
+<tr><td>ConicArc</td>
+    <td><b>ConicArc_2</b> {begin_conic_arc_2();} <b>(</b>Conic<b>,</b>ConicPoint<b>,</b>ConicPoint<b>,</b>orientation {accept_orientation($10);}<b>)</b> {end_conic_arc_2();}<br>
+        <b>ConicArc_2</b> {begin_conic_arc_2();} <b>(</b>ConicPoint<b>)</b> {end_conic_arc_2();}</td></tr>
+<tr><td>Cubic</td>
+    <td><b>Cubic_2(Integer,Integer,Integer,Integer,Integer,Integer,Integer,Integer,Integer,Integer)</b> {accept_cubic_2($3, $5, $7, $9, $11, $13, $15, $17, $19, $21);}</td></tr>
+<tr><td>Quadric</td><td><b>Quadric_3(Integer,Integer,Integer,Integer,Integer,Integer,Integer,Integer,Integer,Integer)</b> {accept_quadric_3($3, $5, $7, $9, $11, $13, $15, $17, $19, $21);}
 </table>
 </div>
 \end{ccHtmlOnly}
