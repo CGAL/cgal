@@ -43,6 +43,7 @@
 
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
+#include <CGAL/Gmpzf.h>
 #include <CGAL/Gmpq.h>
 
 #ifdef CGAL_USE_GMPXX
@@ -60,22 +61,12 @@ class LEDA_arithmetic_kernel {
 public:
     //! exact integers
     typedef leda_integer Integer;
+    //! exact float nummber
+    typedef leda_bigfloat Exact_float_number;
     //! exact rationals, constructible from integers
     typedef leda_rational Rational;
     //! exact root expressions, constructible from integers and rationals
     typedef leda_real Field_with_sqrt;
-//     //! univariate polynomial type with integer coefficients
-//     typedef CGAL::Polynomial<Integer>   Poly_int1;
-//     //! bivariate polynomial type with integer coefficients
-//     typedef CGAL::Polynomial<Poly_int1> Poly_int2;
-//     //! trivariate polynomial type with integer coefficients
-//     typedef CGAL::Polynomial<Poly_int2> Poly_int3;
-//     //! univariate polynomial type with rational coefficients
-//     typedef CGAL::Polynomial<Rational>  Poly_rat1;
-//     //! bivariate polynomial type with rational coefficients
-//     typedef CGAL::Polynomial<Poly_rat1> Poly_rat2;
-//     //! trivariate polynomial type with rational coefficients
-//     typedef CGAL::Polynomial<Poly_rat2> Poly_rat3;       
 };
 #endif // CGAL_USE_LEDA
 
@@ -87,22 +78,12 @@ class CORE_arithmetic_kernel {
 public:
     //! exact integers
     typedef CORE::BigInt Integer;
+    //! exact float nummber
+    typedef CORE::BigRat Exact_float_number;
     //! exact rationals, constructible from integers
     typedef CORE::BigRat Rational;
     //! exact root expressions, constructible from integers and rationals
     typedef CORE::Expr Field_with_sqrt;
-    //! univariate polynomial type with integer coefficients
-//     typedef CGAL::Polynomial<Integer>   Poly_int1;
-//     //! bivariate polynomial type with integer coefficients
-//     typedef CGAL::Polynomial<Poly_int1> Poly_int2;
-//     //! trivariate polynomial type with integer coefficients
-//     typedef CGAL::Polynomial<Poly_int2> Poly_int3;
-//     //! univariate polynomial type with rational coefficients
-//     typedef CGAL::Polynomial<Rational>  Poly_rat1;
-//     //! bivariate polynomial type with rational coefficients
-//     typedef CGAL::Polynomial<Poly_rat1> Poly_rat2;
-//     //! trivariate polynomial type with rational coefficients
-//     typedef CGAL::Polynomial<Poly_rat2> Poly_rat3;
 };
 #endif // CGAL_USE_CORE
 
@@ -115,6 +96,8 @@ class GMP_arithmetic_kernel {
 public:
     //! exact integers
     typedef CGAL::Gmpz Integer;
+    //! exact float nummber
+    typedef CGAL::Gmpq Exact_float_number;
     //! exact rationals, constructible from integers
     typedef CGAL::Gmpq Rational;
     //! exact root expressions, constructible from integers and rationals
@@ -130,16 +113,14 @@ class GMPXX_arithmetic_kernel {
 public:
     //! exact integers
     typedef mpz_class Integer;
+    //! exact float nummber
+    typedef mpq_class Exact_float_number;
     //! exact rationals, constructible from integers
     typedef mpq_class Rational;
     //! exact root expressions, constructible from integers and rationals
     typedef CGAL::Null_tag  Field_with_sqrt;
 };
 #endif // CGAL_USE_GMPXX
-
-
-
-
 
 #if defined(CGAL_USE_CORE)
 typedef CORE_arithmetic_kernel Arithmetic_kernel;
@@ -188,6 +169,7 @@ struct Lazy_exact_type<CGAL::Null_tag>{
 template <class AT>
 struct Lazy_exact_arithmetic_kernel{
     typedef typename INTERN_AK::Lazy_exact_type<typename AT::Integer>::type Integer;
+    typedef typename INTERN_AK::Lazy_exact_type<typename AT::Exact_float_number>::type Exact_float_number;
     typedef typename INTERN_AK::Lazy_exact_type<typename AT::Rational>::type Rational;
     typedef typename INTERN_AK::Lazy_exact_type<typename AT::Field_with_sqrt>::type Field_with_sqrt;
 };

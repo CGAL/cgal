@@ -18,8 +18,8 @@
 //
 // Author(s)     : Bernd Gaertner <gaertner@inf.ethz.ch>
 
-#ifndef CGAL_GMPZF_H
-#define CGAL_GMPZF_H
+#ifndef CGAL_GMPZF_TYPE_H
+#define CGAL_GMPZF_TYPE_H
 
 // includes
 #include <CGAL/basic.h>
@@ -27,7 +27,7 @@
 #include <gmp.h>
 #include <mpfr.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/Gmpz.h>
+#include <CGAL/Gmpz_type.h>
 #include <boost/operators.hpp>
 #include <iostream>
 #include <cmath>
@@ -35,6 +35,14 @@
 #include <string>
 
 CGAL_BEGIN_NAMESPACE
+
+//internal fwd 
+class Gmpzf;
+bool operator<(const Gmpzf &a, const Gmpzf &b);
+bool operator==(const Gmpzf &a, const Gmpzf &b);
+bool operator<(const Gmpzf &a, int b);
+bool operator==(const Gmpzf &a, int b);
+bool operator>(const Gmpzf &a, int b);
 
 struct Gmpzf_rep // as in Gmpz.h
 {
@@ -144,14 +152,12 @@ public:
     canonicalize();
   }
 
-
   Gmpzf( long l)
     : e(0)
   {   
     mpz_init_set_si( man(), l);
     canonicalize();
   }
-
 
   Gmpzf( double d)    
   {
@@ -191,6 +197,7 @@ public:
   Gmpzf gcd (const Gmpzf& b) const;
   Gmpzf sqrt() const;
   Comparison_result compare (const Gmpzf &b) const;
+  double to_double() const ;
  
 private:
   void canonicalize();
@@ -199,116 +206,9 @@ private:
 		     Exponent& rexp, const Gmpzf& a, const Gmpzf& b);  
 };
 
-double to_double( const Quotient<Gmpzf > &q);
-std::ostream& operator<< (std::ostream& os, const Gmpzf& a);
-std::ostream& print (std::ostream& os, const Gmpzf& a);
-std::istream&  operator>> ( std::istream& is, Gmpzf& a);
-bool operator<(const Gmpzf &a, const Gmpzf &b);
-bool operator==(const Gmpzf &a, const Gmpzf &b);
-bool operator<(const Gmpzf &a, int b);
-bool operator==(const Gmpzf &a, int b);
-bool operator>(const Gmpzf &a, int b);
-io_Operator io_tag(const Gmpzf &);
-
-// Algebraic structure traits
-template <> struct Algebraic_structure_traits< Gmpzf >
-  : public Algebraic_structure_traits_base< Gmpzf, Euclidean_ring_tag >  {
-
-    typedef Tag_true            Is_exact;
-    
-    struct Is_zero 
-      : public Unary_function< Algebraic_structure, bool > {
-      public:        
-        bool operator()( const Algebraic_structure& x ) const {
-            return x.is_zero();
-        }
-    };
-    
-    struct Integral_division
-      : public Binary_function< Algebraic_structure, 
-                                Algebraic_structure,
-                                Algebraic_structure > {
-    public:
-        Algebraic_structure operator()( 
-                const Algebraic_structure& x,
-                const Algebraic_structure& y ) const {
-            return x.integral_division(y);
-        }
-    };
-    
-    struct Gcd
-      : public Binary_function< Algebraic_structure, 
-                                Algebraic_structure,
-                                Algebraic_structure > {
-    public:
-        Algebraic_structure operator()( 
-                const Algebraic_structure& x,
-                const Algebraic_structure& y ) const {
-            return x.gcd(y);
-        }
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR(int);
-    };
-    
-    typedef INTERN_AST::Div_per_operator< Algebraic_structure > Div;
-    typedef INTERN_AST::Mod_per_operator< Algebraic_structure > Mod;
-
-    struct Sqrt 
-        : public Unary_function< Algebraic_structure, Algebraic_structure > {
-        Algebraic_structure operator()( const Algebraic_structure& x ) const {
-            return x.sqrt();
-        }
-    };       
-    
-};
 
 
-// Real embeddable traits
-template <> struct Real_embeddable_traits< Gmpzf > 
-  : public Real_embeddable_traits_base< Gmpzf > {
-private:    
-    typedef Algebraic_structure_traits<Gmpzf> AST;
-public:
-    typedef AST::Is_zero Is_zero;
-
-    struct Sign 
-        : public Unary_function< Real_embeddable, ::CGAL::Sign > {
-    public:
-        ::CGAL::Sign operator()( const Real_embeddable& x ) const {
-            return x.sign();
-        }        
-    };
     
-    struct Compare 
-        : public Binary_function< Real_embeddable, 
-                                  Real_embeddable,
-                                  Comparison_result > {
-    public:
-        Comparison_result operator()( 
-                const Real_embeddable& x, 
-                const Real_embeddable& y ) const {
-            return x.compare(y);
-        }
-    };
-    
-    struct To_double 
-        : public Unary_function< Real_embeddable, double > {
-    public:
-        double operator()( const Real_embeddable& x ) const {
-            return std::ldexp( mpz_get_d(x.man()), x.exp());
-        }
-    };
-    
-    struct To_interval 
-        : public Unary_function< Real_embeddable, std::pair< double, double > > {
-    public:
-        std::pair<double, double> operator()( const Real_embeddable& x ) const {
-            // dummy
-            return std::pair<double,double>(0.0,0.0);
-        }
-    };
-};
-
-
 
 // implementation
 // ==============
@@ -498,6 +398,12 @@ Comparison_result Gmpzf::compare (const Gmpzf &b) const
   return EQUAL;
 }
 
+inline
+double Gmpzf::to_double() const
+{
+    return std::ldexp( mpz_get_d(man()),exp());
+}
+
 inline  
 void Gmpzf::canonicalize()
 {
@@ -552,33 +458,12 @@ void Gmpzf::align ( const mpz_t*& a_aligned,
   }
 }
 
-
-// global functions
-// ================
-
-// to_double functions
-// -------------------
-
-// overload to protect against overflow
-inline
-double to_double( const Quotient<Gmpzf > &q)
-{
-  // convert quotient of mantissas, then shift by difference of exponents
-  // note: this fails if difference of exponents doesn't fit into an int
-  return std::ldexp( 
-     to_double(Quotient<Gmpz>(
-       q.numerator().man(), q.denominator().man())),
-       q.numerator().exp() -q.denominator().exp()
-     );  
-}
-
-
 // input/output
 // ------------
 inline
 std::ostream& operator<< (std::ostream& os, const Gmpzf& a) 
 {
-  return os << to_double(a);
+    return os << a.to_double();
 }
 
 inline
@@ -632,15 +517,8 @@ bool operator>(const Gmpzf &a, int b)
   return operator>(a, Gmpzf(b));
 }
 
-
-inline
-io_Operator io_tag(const Gmpzf &)
-{
-  return io_Operator();
-}
-
 CGAL_END_NAMESPACE
 
-#endif // CGAL_GMPZF_H
+#endif // CGAL_GMPZF_TYPE_H
 
 // ===== EOF ==================================================================

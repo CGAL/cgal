@@ -34,19 +34,40 @@ typedef CGAL::Interval_nt<false> Interval;
 template <class AT> 
 void AT_coercion_test_at_int(){
     typedef typename AT::Integer Integer;
+    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<short  ,Integer>();
     CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int    ,Integer>();
     CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Integer,Integer>();
 }
 
 template <class AT> 
-void AT_coercion_test_at_rat(){
-    AT_coercion_test_at_int<AT>();;
+void AT_coercion_test_at_bf(){
+    AT_coercion_test_at_int<AT>();
+
     typedef typename AT::Integer Integer;
+    typedef typename AT::Exact_float_number Bigfloat;    
+    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<short     ,Bigfloat>();
+    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int     ,Bigfloat>();
+    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<float   ,Bigfloat>();
+    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<double  ,Bigfloat>();
+    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Integer ,Bigfloat>();
+    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Bigfloat,Bigfloat>();
+}
+
+
+
+template <class AT> 
+void AT_coercion_test_at_rat(){
+    AT_coercion_test_at_bf<AT>();;
+    typedef typename AT::Integer Integer;
+    typedef typename AT::Exact_float_number Bigfloat;
     typedef typename AT::Rational Rational;
 
+    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<short   ,Rational>();
     CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int     ,Rational>();
+    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<float   ,Rational>();
     CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<double  ,Rational>();
     CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Integer ,Rational>();
+    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Bigfloat ,Rational>();
     CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Rational,Rational>();
 }
 
@@ -55,13 +76,17 @@ void AT_coercion_test_at_fws(){
     AT_coercion_test_at_rat<AT>();
     
     typedef typename AT::Integer Integer;
+    typedef typename AT::Exact_float_number Bigfloat;
     typedef typename AT::Rational Rational;
     typedef typename AT::Field_with_sqrt Real;
 
     
+    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<short       ,Real>();
     CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<int         ,Real>();
+    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<float       ,Real>();
     CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<double      ,Real>();
     CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Integer     ,Real>();
+    CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Bigfloat    ,Real>();
     CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Rational    ,Real>();
     CGAL::INTERN_COERCION_TRAITS::direct_coercion_from_to_test<Real        ,Real>();
 }
