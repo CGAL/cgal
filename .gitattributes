@@ -1612,9 +1612,10 @@ Number_types/include/CGAL/CORE_BigRat.h -text
 Number_types/include/CGAL/CORE_coercion_traits.h -text
 Number_types/include/CGAL/Coercion_traits.h -text
 Number_types/include/CGAL/Fraction_traits.h -text
+Number_types/include/CGAL/GMP/Gmpq_type.h -text
+Number_types/include/CGAL/GMP/Gmpz_type.h -text
+Number_types/include/CGAL/GMP/Gmpzf_type.h -text
 Number_types/include/CGAL/Gmp_coercion_traits.h -text
-Number_types/include/CGAL/Gmpq_type.h -text
-Number_types/include/CGAL/Gmpz_type.h -text
 Number_types/include/CGAL/Gmpzf.h -text
 Number_types/include/CGAL/Needs_parens_as_product.h -text
 Number_types/include/CGAL/Real_embeddable_traits.h -text
