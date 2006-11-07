@@ -46,8 +46,8 @@ CGAL_BEGIN_NAMESPACE
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::leda::integer,::leda::rational);
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::leda::integer,::leda::real);
 
-    //NiX_DEFINE_COERCION_TRAITS_FROM_TO(::leda::bigfloat,::leda::rational);
-//    NiX_DEFINE_COERCION_TRAITS_FROM_TO(::leda::bigfloat,::leda::real);
+// CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::leda::bigfloat,::leda::rational); see below
+    CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::leda::bigfloat,::leda::real);
 
     CGAL_DEFINE_COERCION_TRAITS_FROM_TO(::leda::rational,::leda::real);
 
@@ -88,6 +88,23 @@ CGAL_BEGIN_NAMESPACE
 //CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long       ,::leda::real);
 //CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long  ,::leda::real); 
 //CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long double,::leda::real);
+
+
+template <> 
+struct Coercion_traits< ::leda::bigfloat ,::leda::rational  >{  
+    typedef Tag_true  Are_explicit_interoperable; 
+    typedef Tag_false Are_implicit_interoperable; 
+    typedef ::leda::rational Coercion_type;  
+    struct Cast{
+        typedef Coercion_type result_type; 
+        Coercion_type operator()(const ::leda::rational& x)  const { return x;} 
+        Coercion_type operator()(const ::leda::bigfloat& x) const { 
+            return x.to_rational();}  
+    };
+}; 
+template <> struct Coercion_traits< ::leda::rational, ::leda::bigfloat >
+    :public Coercion_traits< ::leda::bigfloat , ::leda::rational >{};
+
 
 CGAL_END_NAMESPACE
 #endif // CGAL_USE_LEDA
