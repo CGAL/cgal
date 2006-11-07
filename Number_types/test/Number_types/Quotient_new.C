@@ -4,6 +4,8 @@
 #include <CGAL/Quotient.h>
 #include <CGAL/_test_algebraic_structure.h>
 #include <CGAL/_test_real_embeddable.h>
+#include <CGAL/_test_fraction_traits.h>
+#include <CGAL/_test_rational_traits.h>
 
 template< class AT >
 void test_quotient() {
@@ -31,6 +33,9 @@ void test_quotient() {
     CGAL::test_algebraic_structure<NT,Tag, Is_exact>(-NT(5,74),-NT(3,25),-NT(7,3));
 
     CGAL::test_real_embeddable<NT>();
+    CGAL::test_fraction_traits<NT>(); 
+    // backward compatiblity
+    CGAL::test_rational_traits<NT>();  
 
   }
   /* // Quotient for inexact types not implemented 

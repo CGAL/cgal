@@ -1618,6 +1618,7 @@ Number_types/include/CGAL/GMP/Gmpzf_type.h -text
 Number_types/include/CGAL/Gmp_coercion_traits.h -text
 Number_types/include/CGAL/Gmpzf.h -text
 Number_types/include/CGAL/Needs_parens_as_product.h -text
+Number_types/include/CGAL/Rational_traits.h -text
 Number_types/include/CGAL/Real_embeddable_traits.h -text
 Number_types/include/CGAL/Sqrt_extension.h -text
 Number_types/include/CGAL/gmpxx_coercion_traits.h -text
@@ -1647,6 +1648,8 @@ Number_types/test/Number_types/include/CGAL/Arithmetic_kernel.h -text
 Number_types/test/Number_types/include/CGAL/_test_algebraic_structure.h -text
 Number_types/test/Number_types/include/CGAL/_test_basic.h -text
 Number_types/test/Number_types/include/CGAL/_test_coercion_traits.h -text
+Number_types/test/Number_types/include/CGAL/_test_fraction_traits.h -text
+Number_types/test/Number_types/include/CGAL/_test_rational_traits.h -text
 Number_types/test/Number_types/include/CGAL/_test_real_embeddable.h -text
 Number_types/test/Number_types/int.C -text
 Number_types/test/Number_types/leda_bigfloat.C -text

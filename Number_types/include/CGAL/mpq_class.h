@@ -25,8 +25,9 @@
 #define CGAL_MPQ_CLASS_H
 
 #include <CGAL/basic.h>
-#include <CGAL/gmpxx.h>
+//#include <gmpxx.h>
 #include <CGAL/gmpxx_coercion_traits.h>
+#include <CGAL/mpz_class.h> // for GCD in Fraction traits
 
 
 // This file gathers the necessary adaptors so that the following
@@ -51,18 +52,6 @@ struct Number_type_traits<mpq_class> {
   typedef Tag_true  Has_exact_ring_operations;
   typedef Tag_true  Has_exact_division;
   typedef Tag_false Has_exact_sqrt;
-};
-
-template <>
-struct Rational_traits<mpq_class> {
-  typedef mpz_class RT;
-  RT numerator   (const mpq_class & r) const { return r.get_num(); }
-  RT denominator (const mpq_class & r) const { return r.get_den(); }
-
-  mpq_class make_rational(const RT & n, const RT & d) const
-  { return mpq_class(n, d); } 
-  mpq_class make_rational(const mpq_class & n, const mpq_class & d) const
-  { return n / d; } 
 };
 
 // AST for mpq_class
@@ -238,6 +227,50 @@ class Real_embeddable_traits< ::__gmp_expr< ::__gmpq_value,U> >
         }
     };
 };
+
+/*! \ingroup NiX_Fraction_traits_spec
+ *  \brief Specialization of Fraction_traits for mpq_class
+ */
+template <>
+class Fraction_traits< mpq_class > {
+public:
+    typedef mpq_class Fraction;
+    
+    typedef ::CGAL::Tag_true Is_fraction;
+    typedef mpz_class Numerator;
+    typedef mpz_class Denominator;
+
+    typedef Algebraic_structure_traits< mpz_class >::Gcd Common_factor;
+
+    class Decompose {
+    public:
+        typedef mpq_class first_argument_type;
+        typedef mpz_class& second_argument_type;
+        typedef mpz_class& third_argument_type;
+        void operator () (
+                const mpq_class& rat,
+                mpz_class& num,
+                mpz_class& den) {
+            num = rat.get_num();
+            den = rat.get_den();
+        }
+    };
+    
+    class Compose {
+    public:
+        typedef mpz_class first_argument_type;
+        typedef mpz_class second_argument_type;
+        typedef mpq_class result_type;
+        mpq_class operator ()(
+                const mpz_class& num , 
+                const mpz_class& den ) {
+            mpq_class result(num, den);
+            result.canonicalize();
+            return result;
+        }
+    };
+};
+
 
 CGAL_END_NAMESPACE
 

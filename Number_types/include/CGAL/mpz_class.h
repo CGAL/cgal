@@ -25,7 +25,7 @@
 #define CGAL_MPZ_CLASS_H
 
 #include <CGAL/basic.h>
-#include <CGAL/gmpxx.h>
+//#include <gmpxx.h>
 #include <CGAL/gmpxx_coercion_traits.h>
 
 // This file gathers the necessary adaptors so that the following

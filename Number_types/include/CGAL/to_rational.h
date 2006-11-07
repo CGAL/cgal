@@ -25,6 +25,7 @@
 #define CGAL_TO_RATIONAL_H
 
 #include <CGAL/Number_type_traits.h>
+#include <CGAL/Fraction_traits.h>
 
 #include <cmath>
 
@@ -34,51 +35,58 @@ template <class Rational>
 Rational
 to_rational(double x)
 { 
-    typename Rational_traits<Rational>::RT num = 0;
-    typename Rational_traits<Rational>::RT den = 1;
+    typedef Fraction_traits<Rational> FT;
+    typedef typename FT::Is_fraction Is_fraction;
+    typedef typename FT::Numerator Numerator;
+    typedef typename FT::Denominator Denominator;
+    typename FT::Compose compose;
+    
+    BOOST_STATIC_ASSERT((::boost::is_same<Is_fraction,Tag_true>::value));
+    BOOST_STATIC_ASSERT((::boost::is_same<Numerator,Denominator>::value));
+     
+    Numerator num(0),den(1); 
 
     if (x != 0.0)
-    { bool neg = (x < 0);
-      if (neg) x = -x;
+        { bool neg = (x < 0);
+            if (neg) x = -x;
 
-      const unsigned shift = 15;   // a safe shift per step
-      const int shift_pow = 32768; // = 2^shift
-      const double width = 32768;  // = 2^shift
-      const int maxiter = 20;      // ought not be necessary, but just in
-                                   // case, max 300 bits of precision
-      int expt;
-      double mantissa = std::frexp(x, &expt);
-      long exponent = expt;
-      double intpart;
-      int k = 0;
+            const unsigned shift = 15;   // a safe shift per step
+            const int shift_pow = 32768; // = 2^shift
+            const double width = 32768;  // = 2^shift
+            const int maxiter = 20;      // ought not be necessary, but just in
+            // case, max 300 bits of precision
+            int expt;
+            double mantissa = std::frexp(x, &expt);
+            long exponent = expt;
+            double intpart;
+            int k = 0;
 
-      while (mantissa != 0.0 && k++ < maxiter)
-
-      { mantissa *= width; // shift double mantissa
-        mantissa = CGAL_CLIB_STD::modf(mantissa, &intpart);
-        num *= shift_pow;
-        num += (int)intpart;
-        exponent -= shift;
-      }
-      int expsign = (exponent>0 ? +1 : (exponent<0 ? -1 : 0));
-      exponent *= expsign;
-      typename Rational_traits<Rational>::RT twopot(2);
-      typename Rational_traits<Rational>::RT exppot(1);
-      while (exponent!=0) {
-        if (exponent & 1)
-          exppot *= twopot;
-        exponent >>= 1;
-        twopot *= twopot;
-      }
-
-      if (expsign > 0)
-        num *= exppot;
-      else if (expsign < 0)
-        den *= exppot;
-      if (neg)
-        num = -num;
-    }
-    return Rational(num,den);
+            while (mantissa != 0.0 && k++ < maxiter)
+                { 
+                    mantissa *= width; // shift double mantissa
+                    mantissa = CGAL_CLIB_STD::modf(mantissa, &intpart);
+                    num *= shift_pow;
+                    num += (int)intpart;
+                    exponent -= shift;
+                }
+            int expsign = (exponent>0 ? +1 : (exponent<0 ? -1 : 0));
+            exponent *= expsign;
+            Numerator twopot(2);
+            Numerator exppot(1);
+            while (exponent!=0) {
+                if (exponent & 1)
+                    exppot *= twopot;
+                exponent >>= 1;
+                twopot *= twopot;
+            }
+            if (expsign > 0)
+                num *= exppot;
+            else if (expsign < 0)
+                den *= exppot;
+            if (neg)
+                num = -num;
+        }
+    return compose(num,den);
 }
 
 CGAL_END_NAMESPACE

@@ -42,7 +42,20 @@ CGAL_BEGIN_NAMESPACE
 template <class Rational>
 Rational 
 simplest_rational_in_interval(double x, double y) {
-
+    
+    typedef Fraction_traits<Rational> FT;
+    typedef typename FT::Is_fraction Is_fraction; 
+    typedef typename FT::Numerator Numerator;
+    typedef typename FT::Denominator Denominator;
+    typedef typename FT::Decompose Decompose;
+    typedef typename FT::Compose Compose;
+    
+    // Must be a fraction
+    BOOST_STATIC_ASSERT((::boost::is_same<Is_fraction, Tag_true>::value));
+    // Numerator,Denominator must be the same
+    BOOST_STATIC_ASSERT((::boost::is_same<Numerator, Denominator>::value));
+    
+    
   if(x == y){
     return to_rational<Rational>(x);
   }
@@ -52,8 +65,7 @@ simplest_rational_in_interval(double x, double y) {
   }
 
   Rational r;  // Return value. 
-  typename Rational_traits<Rational>::RT r_numerator, r_denominator;
-  Rational_traits<Rational> t;
+  Numerator r_numerator, r_denominator;
   // Deal with negative arguments.  We only have to deal with the case
   // where both x and y are negative -- when exactly one is negative
   // the best rational in the interval [x,y] is 0.
@@ -86,13 +98,15 @@ simplest_rational_in_interval(double x, double y) {
 
       // Return 1/(xc + s).
 
-      r_numerator = t.denominator(s);
-      typename Rational_traits<Rational>::RT  xc_rt(xc);
-      r_denominator = t.numerator(s) + xc_rt * t.denominator(s);
+      Numerator xc_rt(xc);      
+      Numerator s_num,s_den;
+      Decompose()(s,s_num,s_den);
+      r_numerator = s_den;
+      r_denominator = s_num + xc_rt * s_den;  
     }
   }
 
-  return t.make_rational(r_numerator, r_denominator);
+  return Compose()(r_numerator, r_denominator);
 }
 
 CGAL_END_NAMESPACE

@@ -110,17 +110,41 @@ template <> class Real_embeddable_traits< Gmpq >
     };
 };
 
-
+/*! \ingroup NiX_Fraction_traits_spec
+ *  \brief Specialization of Fraction_traits for Gmpq
+ */
 template <>
-struct Rational_traits<Gmpq> {
-  typedef Gmpz RT;
-  RT   numerator     (const Gmpq & r) const { return r.numerator(); }
-  RT   denominator   (const Gmpq & r) const { return r.denominator(); }
-  Gmpq make_rational (const RT & n, const RT & d) const
-  { return Gmpq(n, d); }
-  Gmpq make_rational (const Gmpq & n, const Gmpq & d) const
-  { return n / d; }
+class Fraction_traits< Gmpq > {
+public:
+    typedef Gmpq Fraction;
+    typedef ::CGAL::Tag_true Is_fraction;
+    typedef Gmpz Numerator;
+    typedef Gmpz Denominator;
+    typedef Algebraic_structure_traits< Gmpz >::Gcd Common_factor;
+    class Decompose {
+    public:
+        typedef Gmpq first_argument_type;
+        typedef Gmpz& second_argument_type;
+        typedef Gmpz& third_argument_type;
+        void operator () (const Gmpq& rat, Gmpz& num,Gmpz& den) {
+            num = rat.numerator();
+            den = rat.denominator();
+        }
+    };
+    class Compose {
+    public:
+        typedef Gmpz first_argument_type;
+        typedef Gmpz second_argument_type;
+        typedef Gmpq result_type;
+        Gmpq operator () (const Gmpz& num,const Gmpz& den) {
+            return Gmpq(num, den);
+        }
+    };
 };
+
+
+
+
 
 /* FIX ME: this not compile
 inline

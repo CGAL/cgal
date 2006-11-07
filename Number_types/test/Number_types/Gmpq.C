@@ -6,7 +6,7 @@
 #include <CGAL/Gmpq.h>
 
 #ifdef CGAL_USE_GMPXX
-#  include <CGAL/gmpxx.h>
+#include <CGAL/gmpxx.h>
 #endif
 
 #include <CGAL/Interval_nt.h>

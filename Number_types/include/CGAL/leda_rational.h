@@ -47,9 +47,10 @@
 #include <LEDA/numbers/interval.h>
 #endif
 
-
 #include <LEDA/rational.h>
 #include <LEDA/interval.h>
+
+#include <CGAL/leda_integer.h> // for GCD in Fraction_traits
 
 CGAL_BEGIN_NAMESPACE
 
@@ -62,18 +63,6 @@ struct Number_type_traits<leda_rational> {
   typedef Tag_true  Has_exact_ring_operations;
   typedef Tag_true  Has_exact_division;
   typedef Tag_false Has_exact_sqrt;
-};
-
-template <>
-struct Rational_traits<leda_rational> {
-  typedef leda_integer RT;
-  RT numerator   (const leda_rational & r) const { return r.numerator(); }
-  RT denominator (const leda_rational & r) const { return r.denominator(); }
-  leda_rational make_rational(const RT & n, const RT & d) const
-  { return leda_rational(n, d); }
-  leda_rational make_rational(const leda_rational & n,
-                              const leda_rational & d) const
-  { return n / d; }
 };
 
 template <> class Algebraic_structure_traits< leda_rational >
@@ -184,6 +173,48 @@ template <> class Real_embeddable_traits< leda_rational >
     };
 };
 
+/*! \ingroup NiX_Fraction_traits_spec
+ *  \brief Specialization of Fraction_traits for ::leda::rational
+ */
+template <>
+class Fraction_traits< leda_rational > {
+public:
+    typedef leda_rational Fraction;
+    typedef ::CGAL::Tag_true Is_fraction;
+    typedef leda_integer Numerator;
+    typedef Numerator Denominator;
+
+    typedef Algebraic_structure_traits< Numerator >::Gcd Common_factor;
+
+    class Decompose {
+    public:
+        typedef Fraction first_argument_type;
+        typedef Numerator& second_argument_type;
+        typedef Numerator& third_argument_type;
+        void operator () (
+                const Fraction& rat,
+                Numerator& num,
+                Numerator& den) {
+            num = rat.numerator();
+            den = rat.denominator();
+        }
+    };
+    
+    class Compose {
+    public:
+        typedef Numerator first_argument_type;
+        typedef Numerator second_argument_type;
+        typedef Fraction result_type;
+        Fraction operator ()(
+                const Numerator& num , 
+                const Numerator& den ) {
+            Fraction result(num, den);
+            result.normalize();
+            return result;
+        }
+    };
+};
+
 inline
 io_Operator
 io_tag(const leda_rational &)
@@ -246,44 +277,6 @@ public:
             return out << oformat(t);
     }
 };
-////////////////////////////////////////////////////////////////////////////////
-// Additional Fraction traits (not part of official concept)
-template <>
-class Fraction_traits< leda_rational > {
-  public:
-    typedef leda_rational Fraction;
-    typedef Tag_true Is_fraction;
-    typedef leda_integer Numerator;
-    typedef leda_integer Denominator;
-    typedef Algebraic_structure_traits< leda_integer >::Gcd Common_factor;
-    class Decompose {
-      public:
-        typedef leda_rational first_argument_type;
-        typedef leda_integer& second_argument_type;
-        typedef leda_integer& third_argument_type;
-        void operator () (const leda_rational& rat,
-                          leda_integer& num,
-                          leda_integer& den
-        ) {
-            num = rat.numerator();
-            den = rat.denominator();
-        }
-    };
-    class Compose {
-    public:
-        typedef leda_integer first_argument_type;
-        typedef leda_integer second_argument_type;
-        typedef leda_rational result_type;
-        leda_rational operator () (const leda_integer& num,
-                                   const leda_integer& den
-        ) {
-            return leda_rational(num, den);
-        }
-    };
-};
-////////////////////////////////////////////////////////////////////////////////
-
-
 
 CGAL_END_NAMESPACE
 

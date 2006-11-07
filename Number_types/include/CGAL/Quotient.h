@@ -721,31 +721,53 @@ struct Coercion_traits<Quotient<NT>,typename First_if_different<double, NT>::Typ
     :public Coercion_traits<typename First_if_different<double, NT>::Type,Quotient<NT> >
 {};
 
-
-
-
-
 // from NT to Quotient
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO_TEM ( NT, Quotient<NT>, class NT);
 
+/*! \ingroup NiX_Fraction_traits_spec
+ *  \brief Specialization of Fraction_traits for Quotient<NT>
+ */
+template <class NT>
+class Fraction_traits< Quotient<NT> > {
+public:
+    typedef Quotient<NT> Fraction;
+    typedef ::CGAL::Tag_true Is_fraction;
+    typedef NT Numerator;
+    typedef Numerator Denominator;
 
+    //TODO: check whether Numerator has a GCD.
+    //will use Scalar_factor from Scalar_factor_traits (not implemented yet)
+    //for more details see EXACUS:NumeriX/include/NiX/Scalar_factor_traits.h
+    typedef typename Algebraic_structure_traits< Numerator >::Gcd Common_factor;
 
-
-// Rational traits
-template < class NT >
-struct Rational_traits< Quotient<NT> >
-{
-  typedef NT RT;
-
-  const RT & numerator   (const Quotient<NT>& r) const { return r.numerator(); }
-  const RT & denominator (const Quotient<NT>& r) const { return r.denominator(); }
-  
-  Quotient<NT> make_rational(const RT & n, const RT & d) const
-  { return Quotient<NT>(n, d); } 
-  Quotient<NT> make_rational(const Quotient<NT> & n,
-                             const Quotient<NT> & d) const
-  { return n / d; } 
+    class Decompose {
+    public:
+        typedef Fraction first_argument_type;
+        typedef Numerator& second_argument_type;
+        typedef Numerator& third_argument_type;
+        void operator () (
+                const Fraction& rat,
+                Numerator& num,
+                Numerator& den) {
+            num = rat.numerator();
+            den = rat.denominator();
+        }
+    };
+    
+    class Compose {
+    public:
+        typedef Numerator first_argument_type;
+        typedef Numerator second_argument_type;
+        typedef Fraction result_type;
+        Fraction operator ()(
+                const Numerator& num , 
+                const Numerator& den ) {
+            Fraction result(num, den);
+            return result;
+        }
+    };
 };
+
 
 template < class NT >
 inline

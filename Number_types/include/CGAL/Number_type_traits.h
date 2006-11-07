@@ -26,6 +26,7 @@
 #define CGAL_NUMBER_TYPE_TRAITS_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Rational_traits.h>
 
 //#include <CGAL/Algebraic_structure_traits.h>
 
@@ -82,16 +83,6 @@ struct Number_type_traits {
   typedef typename NT::Has_sqrt      Has_sqrt;
 };
 
-template < class Rational >
-struct Rational_traits {
-  typedef Rational RT;
-
-  const RT& numerator   (const Rational& r) const { return r; }
-  RT denominator (const Rational&) const { return RT(1); }
-  
-  Rational make_rational(const RT & n, const RT & d) const
-  { return n / d; }
-};
 
 // number type tags
 struct Ring_tag {};
