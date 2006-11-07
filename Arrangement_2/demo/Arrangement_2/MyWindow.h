@@ -180,6 +180,10 @@ private slots:
     void setConicType( ConicType t );
     /*! open the color dialog */
     void openColorDialog();
+    /* compute and draw lower envelope */
+    void lowerEnvelope(bool);
+     /* compute and draw upper envelope */
+    void upperEnvelope(bool);
 
 private:
     /*! myBar - hold the tab widgets */
@@ -264,6 +268,10 @@ private:
     QToolBar *conicTypeTool;
     /*! color dialog action (for filling faces) */
     QAction *color_dialog_bt;
+    /*! lower envelope  dialog action */
+    QAction *lower_env_dialog_bt;
+    /*! upper envelope dialog action */
+    QAction *upper_env_dialog_bt;
     /*! number of colors */
     const unsigned int num_of_colors;
     /*! array of colors */

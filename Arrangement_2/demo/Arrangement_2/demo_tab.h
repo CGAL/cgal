@@ -43,6 +43,8 @@
 #include <CGAL/IO/Qt_widget_Polygon_2.h>
 #include <CGAL/iterator.h> //for CGAL::Oneset_iterator<T>
 #include <CGAL/Object.h>
+#include <CGAL/envelope_2.h>
+#include <CGAL/Env_default_diagram_1.h> 
 
 #include <vector>
 
@@ -81,7 +83,9 @@ public:
     read_from_file(false),
     first_time_merge(true),
     draw_vertex(true),
-    fill_face_color(def_bg_color)
+    fill_face_color(def_bg_color),
+    lower_env(false),
+    upper_env(false)
   {
     static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(2) <<
       CGAL::BackgroundColor (CGAL::BLACK);
@@ -173,7 +177,14 @@ public:
   /*! get the color of the unbounded face (its the same as the background
    * color of the tab)
    */
-  QColor unbounded_face_color() { return this->backgroundColor(); } 
+  QColor unbounded_face_color() { return this->backgroundColor(); }
+
+  /*! lower envelope mode */
+  bool lower_env;
+
+   /*! upper envelope mode */
+  bool upper_env;
+
 
   /*! set the colo of the unbounded face (its the same as the background
    * color of the tab)
@@ -243,6 +254,7 @@ private:
                                                     Originating_curve_iterator;
   typedef typename Arrangement_2::Induced_edge_iterator Induced_edge_iterator;
   typedef typename Arrangement_2::Curve_handle          Curve_handle;
+  typedef CGAL::Env_default_diagram_1<Traits>           Diagram_1;
 
 private:
   // function object - FillFace
@@ -566,7 +578,53 @@ public:
         static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(m_line_width);
       }
     }
+
+    if(lower_env || upper_env)
+    {
+      std::list<X_monotone_curve_2> xcurves;
+      for (Edge_iterator ei = m_curves_arr->edges_begin(); 
+           ei != m_curves_arr->edges_end();
+           ++ei) 
+      {
+        xcurves.push_back(ei->curve());
+      }
+      Diagram_1 diag;
+      if(lower_env)
+      {
+        CGAL::lower_envelope_x_monotone_2(xcurves.begin(), xcurves.end(), diag);
+        print_diag_1(diag);
+      }
+      diag.clear();
+      if(upper_env)
+      {
+        CGAL::upper_envelope_x_monotone_2(xcurves.begin(), xcurves.end(), diag);
+        print_diag_1(diag);
+      }
+    }
     setCursor(old);
+  }
+
+  void print_diag_1(const Diagram_1 & diag)
+  {
+    // Print the minimization diagram.
+    typename Diagram_1::Edge_const_handle     e = diag.leftmost();
+    typename Diagram_1::Vertex_const_handle   v;
+    typename Diagram_1::Curve_const_iterator  cit;
+ 
+    setColor(CGAL::RED);
+    while (e != diag.rightmost())
+    {
+      if (! e->is_empty())
+      {
+        for (cit = e->curves_begin(); cit != e->curves_end(); ++cit)
+          m_tab_traits.draw_xcurve(this , *cit);
+      }
+
+      v = e->right();
+      for (cit = v->curves_begin(); cit != v->curves_end(); ++cit)
+        m_tab_traits.draw_xcurve(this , *cit);
+      e = v->right();
+    }
   }
 
  

@@ -177,6 +177,14 @@ MyWindow::MyWindow(int w, int h) : num_of_colors(18)
    // color dialog
   color_dialog_bt = new QAction("Choose color", QPixmap( (const char**)demo_colors_xpm ),
                          "&choose color", 0 , this, "choose color" );
+
+  lower_env_dialog_bt = new QAction("Lower envelope", QPixmap( (const char**)demo_colors_xpm ),
+                             "&lower envelope", 0, this, "Lower envelop" );
+  lower_env_dialog_bt->setToggleAction( TRUE );
+
+  upper_env_dialog_bt = new QAction("Upper envelope", QPixmap( (const char**)demo_colors_xpm ),
+                             "&upper envelope", 0, this, "Upper envelop" );
+  upper_env_dialog_bt->setToggleAction( TRUE );
   
   // Conic Type Group
   QActionGroup *conicTypeGroup = new QActionGroup( this ); // Connected later
@@ -343,6 +351,13 @@ MyWindow::MyWindow(int w, int h) : num_of_colors(18)
   color_dialog_bt->addTo(colorTool);
   colorTool->addSeparator();
 
+  QToolBar *envelopeTool = new QToolBar( this, "envelopes" );
+  envelopeTool->addSeparator();
+  envelopeTool->setLabel("Envelopes");
+  lower_env_dialog_bt->addTo(envelopeTool);
+  upper_env_dialog_bt->addTo(envelopeTool);
+  envelopeTool->addSeparator();
+
 
 
   conicTypeTool = new QToolBar( this, "conic type" );
@@ -363,7 +378,12 @@ MyWindow::MyWindow(int w, int h) : num_of_colors(18)
 
   connect (color_dialog_bt , SIGNAL( activated()) , 
           this , SLOT(openColorDialog() ) );
-  
+
+  connect (lower_env_dialog_bt, SIGNAL(toggled(bool)) ,
+           this, SLOT(lowerEnvelope(bool) ));
+
+  connect (upper_env_dialog_bt, SIGNAL(toggled(bool)) ,
+           this, SLOT(upperEnvelope(bool) ));
   // connect mode group
   connect( modeGroup, SIGNAL( selected(QAction*) ), 
            this, SLOT( updateMode(QAction*) ) );

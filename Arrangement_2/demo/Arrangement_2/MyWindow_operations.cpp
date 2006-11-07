@@ -35,6 +35,7 @@
 #include "icons/demo_arrow_down.xpm"
 #include "icons/demo_arrow_up.xpm"
 
+
 /*! something_changed - change the current page's current_state
  *  and thats makes him redraw
  */
@@ -474,6 +475,22 @@ void MyWindow::openColorDialog()
   QColor c = QColorDialog::getColor();
   if( c.isValid())
     w_demo_p->fill_face_color = c;
+}
+
+void MyWindow::lowerEnvelope(bool b)
+{
+  Qt_widget_base_tab    *w_demo_p = 
+    static_cast<Qt_widget_base_tab *> (myBar->currentPage());
+  w_demo_p->lower_env = b;
+  something_changed();
+}
+
+void MyWindow::upperEnvelope(bool b)
+{
+  Qt_widget_base_tab    *w_demo_p = 
+    static_cast<Qt_widget_base_tab *> (myBar->currentPage());
+  w_demo_p->upper_env = b;
+  something_changed();
 }
 
 
