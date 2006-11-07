@@ -127,6 +127,59 @@ ConicPoint    & ConicPoint\_2 (Conic,
 <div align="center">
 <table cellpadding=3 border="1">
 <tr><th>Object</th><th>syntax</th><th>description</th></tr>
+<tr><td>Integer</rd><td>INTEGER</td><td>an integer value</td></tr>
+<tr><td>Rational</td><td>Rational (Integer, Integer)</td>
+  <td>Rational(integer nominator, integer denominator)</td></tr>
+<tr><td>Infty</td><td>MINUS_INFTY<br>PLUS_INFTY</td>
+  <td>encodes $-\infty$<br>encodes $+\infty$</td></tr>
+<tr><td>Integer_sequence</td><td>integer_sequence (Integer,...)</td>
+  <td>a sequence of arbitrary many integer values</td></tr>
+<tr><td>Orientation</td><td>COUNTERCLOCKWISE<br>CLOCKWISE<br>VOID</td><td>orientation of a ConicArc</td></tr>
+<tr><td>Point_2</td>
+  <td>Point_2 (Integer,Integer)<br>
+      Point_2 (Integer,Integer,Integer)<br>
+      Point_2 (Rational,Rational)</td>
+  <td>cartesian point with integer coordinates x and y<br>
+      homogeneous point with integer coordinates x,y,w<br>
+      cartesian point of two rational coordinates x,y</td></tr>
+<tr><td><b>Polynomial</b></td><td><b>Polynomial_1</b>(Integer_sequence)</td>
+  <td>the coefficients of an integer polynomial</td></tr>
+<tr><td>AlgebraicReal</td>
+    <td>AlgebraicReal(Polynomial,Rational,Rational,Integer)</td>
+    <td>an algebraic real is a real root of a polynomial defined by an
+        isolating interval with rational boundaries or redundantly by
+	the index of the root</td></tr>
+<tr><td><b>LineSegment</b></td><td><b>LineSegment_2</b>(Point_2,Point_2)</td>
+  <td>LineSegment_2(source, target)</td></tr>
+<tr><td><b>Circle</b></td><td><b>Circle_2</b>(Point_2,Integer)<br>
+                              <b>Circle_2</b>(Point_2,Rational)</td>
+  <td>Circle_2(center, radius)<br>
+      Circle_2(center, radius)</td></tr>
+<tr><td><b>Conic</b></td>
+  <td><b>Conic_2</b>(Integer,Integer,Integer,Integer,Integer,Integer)</td>
+  <td>Conic defined by its 6 coefficients (A,B,C,D,E,F)<br>
+      <i>Ax<sup>2</sup>+Bxy+Cy<sup>2</sup>+Dx+Ey+F</i></td></tr>
+<tr><td>ConicPoint</td><td>ConicPoint_2(Conic,AlgebraicReal,Integer)<br>
+                           ConicPoint_2(Conic,infty,Integer)<br>
+			   ConicPoint_2(Conic,AlgebraicReal,infty)</td>
+                       <td>ConicPoint(Conic, x-coordinate, arc number implying y-coordinate (0 or 1))<br>
+		           ConicPoint(Conic, x-coordinate at infinity, arc number)<br>
+                           ConicPoint(Conic, x-coordinate, y-coordinate at infinity)</td></tr>
+<tr><td><b>ConicArc</b></td>
+    <td><b>ConicArc_2</b>(Conic,ConicPoint,ConicPoint,Orientation)<br>
+        <b>ConicArc_2</b>(ConicPoint)</td>
+    <td>an Arc of a Conic with source, target, and its orientation<br>
+        degenerated arc (single point)</td></tr>
+<tr><td><b>Cubic</b></td>
+    <td><b>Cubic_2</b>(Integer,Integer,Integer,Integer,Integer,<br>
+                       Integer,Integer,Integer,Integer,Integer)</td>
+    <td>Cubic defined by its 10 coefficients (A,B,C,D,E,F,G,H,K,L)<br>
+        <i>Ax<sup>3</sup>+Bx<sup>2</sup>y+Cxy<sup>2</sup>+Dy<sup>3</sup>+Ex<sup>2</sup>+Fxy+Gy<sup>2</sup>+Hx+Ky+L</i></td></tr>
+<tr><td><b>Quadric</b></td>
+    <td><b>Quadric_3</b>(Integer,Integer,Integer,Integer,Integer,<br>
+                         Integer,Integer,Integer,Integer,Integer)</td>
+    <td>Quadric defined by its 10 coefficients (A,B,C,D,E,F,G,H,K,L)<br>
+        <i>Ax<sup>2</sup>+Bxy+Cxz+Dy<sup>2</sup>+Eyz+Fz<sup>2</sup>+Gx+Hy+Kz+L</i></td></tr>
 </table>
 </div>
 \end{ccHtmlOnly}

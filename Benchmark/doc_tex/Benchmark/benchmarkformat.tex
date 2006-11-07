@@ -40,6 +40,15 @@ surfaces. These sequences might be empty. Formally:
                                           & see Section~\ref{grammar}
 \end{tabular}
 \end{ccTexOnly}
+\begin{ccHtmlOnly}
+<table>
+<tr><td><b>Input</b></td><td>::=</td><td><b>File</b></td><td>&nbsp;</td></tr>
+<tr><td><b>File</b></td><td>::=</td><td><b>FileFormat</b></td><td>... see Section <a href=""></a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td>{<b>FileHeaderOption</b>}</td><td>... see Section <a href=""></a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td>{<b>Classification</b>}</td><td>... see Section <a href=""></a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td>{<b>Object</b>}</td><td>... see Section <a href=""></a></td></tr>
+</table>
+\end{ccHtmlOnly}
 
 We give a short example file that contains a single line segments. The
 end points are given with homogeneous integer coordinates. A longer
@@ -142,12 +151,16 @@ is that already the filename communicates the types of objects, how
 many there are, which random number seed has been used, and if the
 objects are randomized or degenerated. Grammar:
 
-\medskip
 \begin{ccTexOnly}
 \begin{tabular}{lll}
   \nts{FileHeaderOption} & \ts{::=} & \ts{BenchmarkName( STRING )}
 \end{tabular}
 \end{ccTexOnly}
+\begin{ccHtmlOnly}
+<table>
+<tr><td><b>FileHeaderOption</b></td><td>::=</td><td><tt>BenchmarkName( STRING )</tt></td></tr>
+</table>
+\end{ccHtmlOnly}
 
 \subsubsection {The Classification}
 \label{classification}
