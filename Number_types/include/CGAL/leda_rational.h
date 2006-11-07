@@ -121,9 +121,10 @@ template <> class Real_embeddable_traits< leda_rational >
                                 Comparison_result > {
       public:
         Comparison_result operator()( const Real_embeddable& x, 
-                                            const Real_embeddable& y ) const {
+                                      const Real_embeddable& y ) const {
           return (Comparison_result) CGAL_LEDA_SCOPE::compare( x, y );
         }
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT(Real_embeddable,Comparison_result);
     };
     
     class To_double 
