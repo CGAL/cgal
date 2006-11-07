@@ -1578,7 +1578,6 @@ public:
 
 
 CGAL_DEFINE_COERCION_TRAITS_FOR_SELF_TEM(Lazy_exact_nt<ET>, class ET);
-CGAL_DEFINE_COERCION_TRAITS_FROM_TO_TEM (int, Lazy_exact_nt<ET>, class ET);
 
 template<class ET1, class ET2 >
 class Coercion_traits< Lazy_exact_nt<ET1>, Lazy_exact_nt<ET2> >
@@ -1587,30 +1586,37 @@ class Coercion_traits< Lazy_exact_nt<ET1>, Lazy_exact_nt<ET2> >
             typename Coercion_traits<ET1,ET2>::Are_implicit_interoperable>{};
 
 
+#define CGAL_COERCION_TRAITS_LAZY_EXACT(NTX)                            \
+    template<class ET>                                                  \
+    struct Coercion_traits< NTX, Lazy_exact_nt<ET> >{                   \
+    private:                                                            \
+        typedef Coercion_traits<NTX,ET> CT;                             \
+        typedef Lazy_exact_nt<ET> NT;                                   \
+    public:                                                             \
+        typedef typename CT::Are_explicit_interoperable                 \
+        Are_explicit_interoperable;                                     \
+        typedef typename CT::Are_implicit_interoperable                 \
+        Are_implicit_interoperable;                                     \
+    private:                                                            \
+        static const  bool interoperable                                \
+        =boost::is_same< Are_implicit_interoperable, Tag_false>::value; \
+    public:                                                             \
+        typedef typename boost::mpl::if_c <interoperable,Null_tag,NT>   \
+        ::type  Coercion_type;                                          \
+        typedef typename boost::mpl::if_c <interoperable, Null_functor, \
+    INTERN_CT::Cast_from_to<NTX,NT> >::type Cast;                       \
+    };                                                                  \
+                                                                        \
+    template<class ET>                                                  \
+    struct Coercion_traits< Lazy_exact_nt<ET>, NTX >                    \
+        :public Coercion_traits<NTX, Lazy_exact_nt<ET> >{};             \
+    
 
-
-template<class ET>
-struct Coercion_traits< double, Lazy_exact_nt<ET> >{
-private:
-    typedef Coercion_traits<double,ET> CT;
-    typedef Lazy_exact_nt<ET> NT;
-public:
-    typedef typename CT::Are_explicit_interoperable Are_explicit_interoperable;
-    typedef typename CT::Are_implicit_interoperable Are_implicit_interoperable;
-private:
-    static const  bool interoperable = boost::is_same< Are_implicit_interoperable, Tag_false>::value;
-public:
-    // define Coercion_type
-    typedef typename boost::mpl::if_c< interoperable, Null_tag, 
-    NT >::type                                 Coercion_type;
-    // define Cast
-    typedef typename boost::mpl::if_c< interoperable, Null_functor, 
-    INTERN_CT::Cast_from_to<double,NT> >::type Cast;
-};
-
-template<class ET>
-struct Coercion_traits< Lazy_exact_nt<ET>, double >
-    :public Coercion_traits<double, Lazy_exact_nt<ET> >{};
+CGAL_COERCION_TRAITS_LAZY_EXACT(int);
+CGAL_COERCION_TRAITS_LAZY_EXACT(short);
+CGAL_COERCION_TRAITS_LAZY_EXACT(double);
+CGAL_COERCION_TRAITS_LAZY_EXACT(float);
+#undef CGAL_COERCION_TRAITS_LAZY_EXACT
 
 template <typename ET>
 inline
