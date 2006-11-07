@@ -758,14 +758,14 @@ template<> struct Real_embeddable_traits< Quotient<MP_Float> >
     : public INTERN_QUOTIENT::Real_embeddable_traits_quotient_base< Quotient<MP_Float> >{
     struct To_double: public Unary_function<Quotient<MP_Float>, double>{
          inline
-         double operator()(const Quotient<MP_Float>& q){
+         double operator()(const Quotient<MP_Float>& q) const {
             return INTERN_MP_FLOAT::to_double(q);
         }
     };
     struct To_interval
-        : public Unary_function<Quotient<MP_Float>, std::pair<double,double> >{
+        : public Unary_function<Quotient<MP_Float>, std::pair<double,double> > {
         inline
-        std::pair<double,double> operator()(const Quotient<MP_Float>& q){
+        std::pair<double,double> operator()(const Quotient<MP_Float>& q) const {
             return INTERN_MP_FLOAT::to_interval(q);
         }
     };
