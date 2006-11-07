@@ -482,7 +482,6 @@ BGL/test/BGL/test_suffix_Polyhedron_3.cpp -text
 Benchmark/doc_tex/Benchmark/Conics_14_1.arr -text
 Benchmark/doc_tex/Benchmark/fig/Conics_14_1.eps -text svneol=unset#application/postscript
 Benchmark/doc_tex/Benchmark/fig/Conics_14_1.gif -text svneol=unset#image/gif
-Benchmark/doc_tex/Benchmark/fig/Conics_14_1.pdf -text svneol=unset#application/pdf
 Benchmark/doc_tex/Benchmark/fig/Conics_14_1.png -text svneol=unset#image/png
 Benchmark/doc_tex/Benchmark/fig/classification.eps -text svneol=unset#application/postscript
 Benchmark/doc_tex/Benchmark/fig/classification.gif -text svneol=unset#image/gif
