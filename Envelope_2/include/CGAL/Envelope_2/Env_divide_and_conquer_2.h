@@ -302,11 +302,10 @@ protected:
 
   public:
 
-    Less_vertical_segment (const Traits_2 *traits)
-    {
-      comp_x = traits->compare_x_2_object();
-      min_vertex = traits->construct_min_vertex_2_object();
-    }
+    Less_vertical_segment (const Traits_2 *traits) :
+        comp_x(traits->compare_x_2_object()),
+        min_vertex(traits->construct_min_vertex_2_object())
+    {}
 
     bool operator() (const X_monotone_curve_2 *cv1,
                      const X_monotone_curve_2 *cv2) const
