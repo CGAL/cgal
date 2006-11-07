@@ -32,7 +32,6 @@
 #include <CGAL/Number_types/internal_functions_comparison_root_of_2.h>
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/assertions.h>
-#include <CGAL/Binary_operator_result.h>
 #include <boost/type_traits/is_same.hpp>
 
 #define CGAL_int(T)    typename First_if_different<int,    T>::Type
