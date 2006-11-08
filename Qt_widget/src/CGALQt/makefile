@@ -25,7 +25,7 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 # CGAL_MAKEFILE = SHOULD_BE_SET_BY_COMMAND_LINE
-include $(CGAL_MAKEFILE)
+include $(CGAL_MAKEFILE) 
 
 # defaut rule
 all: lib
@@ -64,7 +64,12 @@ $(CGAL_KDS_OBJECTS)
 #                    target entries
 #---------------------------------------------------------------------#
 
-# TODO : shared_lib !
+shared_lib: $(CGAL_OBJECTS)
+	$(CGAL_SHARED_LIB_CREATE)$(CGAL_QT_SHARED_LIB) -Wl,-soname,$(CGAL_QT_SHARED_LIB) \
+	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
+		$(CGAL_SHARED_LIB_LDFLAGS) -lGL
+	mv $(CGAL_QT_SHARED_LIB) '$(CGAL_LIB_DESTINATION)'
+	rm $(CGAL_OBJECTS)
 
 static_lib: lib
 
@@ -79,7 +84,7 @@ lib_no_install: $(CGAL_OBJECTS)
 	rm $(CGAL_OBJECTS) 
 
 clean:
-	rm -f $(CGAL_QT_LIB) $(CGAL_OBJECTS) *.moc
+	rm -f $(CGAL_QT_LIB) $(CGAL_QT_SHARED_LIB) $(CGAL_OBJECTS) *.moc
 
 ### inclusion of KDS dependencies sub-makefile
 

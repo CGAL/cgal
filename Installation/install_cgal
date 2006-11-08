@@ -77,6 +77,10 @@ BUILD_ONE_CONFIG=''
 ENABLE_SHARED='y'
 
 # ---------------------------------------------
+# set to empty to disable building of static libraries.
+ENABLE_STATIC='y'
+
+# ---------------------------------------------
 # indicate whether there is a "long name problem" on the current platform
 LONG_NAME_PROBLEM=''
 
@@ -3073,6 +3077,10 @@ retrieve_compiler_settings()
 	ENABLE_SHARED='y'
 	SETUP_COMPLETE=''
     fi
+    if try_to_get_var_from_config_file ENABLE_STATIC "${_file}"; then
+	ENABLE_STATIC='y'
+	SETUP_COMPLETE=''
+    fi
 
     # legacy mode: package CORE corresponds to an external CORE
     # installation now
@@ -3123,6 +3131,7 @@ store_compiler_settings()
     _store_install_config_variable CUSTOM_LDFLAGS >>${_file}
     _store_install_config_variable LONG_NAME_PROBLEM >>${_file}
     _store_install_config_variable ENABLE_SHARED >>${_file}
+    _store_install_config_variable ENABLE_STATIC >>${_file}
     ${_printf} "\n%s\n" "/* EOF */" >>${_file}
     log_print "Settings stored in ${_file}."
 }
@@ -4154,8 +4163,16 @@ _do_compile()
 
     case "$2" in
 	static)
+	    if ! [ -n "${ENABLE_STATIC}" ]; then
+	        ${_printf} "%s\n" " skipped."
+		return 0
+	    fi
 	    MAKE_OPTION="${MAKE_OPTION} CXXFLAGS=\$(CGAL_LIB_CXXFLAGS) static_lib";;
 	shared)
+	    if ! [ -n "${ENABLE_SHARED}" ]; then
+	        ${_printf} "%s\n" " skipped."
+		return 0
+	    fi
 	    MAKE_OPTION="${MAKE_OPTION} CXXFLAGS=\$(CGAL_SHARED_LIB_CXXFLAGS) shared_lib";;
     esac
 
@@ -4221,6 +4238,15 @@ write_menu_information()
 # USES: i _tmp
 build_cgal()
 {
+    if [ -n "${ENABLE_SHARED}" ]; then
+	case ${CGAL_OS_COMPILER} in
+	    *CYGWIN*)
+		${_printf} "%s\n" \
+		    "${_LEFTSPACE}No shared libraries on this platform!"
+	        ENABLE_SHARED='';;
+	    *) ;;
+	esac
+    fi
     cd "${CGAL_SRC_DIR}/CGAL"
     if _do_compile libCGAL static; then
 	LIB_COMPILED='ok'
@@ -4229,20 +4255,13 @@ build_cgal()
 	${_printf} "\n${_LEFTSPACE}%s\n" \
 	"----------------------------------------------------------" \
 	    >> "${INSTALL_RIS_LOGFILE}"
-        if [ -n "${ENABLE_SHARED}" ]; then
-            case ${CGAL_OS_COMPILER} in
-                *CYGWIN*)
-                    ${_printf} "%s\n" \
-			"${_LEFTSPACE}No shared libraries on this platform!";;
-                *) _do_compile libCGAL shared;;
-            esac
-        fi
+	_do_compile libCGAL shared
 	# FIXME: Should this be hardcoded here?
 	# Move CGALQt into libCGAL?
 	if [ -d "${CGAL_SRC_DIR}/CGALQt" -a -n "${PROVIDE_PKG_QT}" ]; then
 	    cd "${CGAL_SRC_DIR}/CGALQt"
 	    _do_compile libCGALQt static
-	    # _do_compile libCGALQt shared # Not yet ready
+	    _do_compile libCGALQt shared
 	fi
 	# Move CGALBenchmark into libCGAL?
 #	if [ -d "${CGAL_SRC_DIR}/Benchmark" -a -n "${PROVIDE_PKG_CGALBENCHMARK}" ]; then
@@ -5132,6 +5151,9 @@ if [ -z "${_WHAT_TO_DO}" ]; then
 		fi
 		;;
 	    -DISABLE-SHARED*) ENABLE_SHARED='';;
+	    -ENABLE-SHARED*) ;; # Already the default.
+	    -DISABLE-STATIC*) ENABLE_STATIC='';;
+	    -ENABLE-STATIC*) ;; # Already the default.
 	    *) _WHAT_TO_DO='help';;
 	esac
 	shift
