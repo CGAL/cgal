@@ -187,9 +187,7 @@ _test_fct_line_2(const R& )
      typedef ::CGAL::Algebraic_structure_traits<FT> AST; 
      static const bool has_sqrt = 
          ! ::boost::is_same< ::CGAL::Null_functor, typename AST::Sqrt >::value;
-     typedef typename ::boost::mpl::if_c<has_sqrt ,CGAL::Tag_true, CGAL::Tag_false>
-         ::type Has_sqrt;
-     _test_fct_line_sqrt_2(R(), Has_sqrt());
+     _test_fct_line_sqrt_2(R(), ::CGAL::Boolean_tag<has_sqrt>());
  }
  std::cout << "done" << std::endl;
  return true;

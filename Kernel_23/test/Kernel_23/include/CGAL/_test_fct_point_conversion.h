@@ -133,9 +133,7 @@ _test_fct_point_conversion (const NT& x)
         ::boost::is_base_and_derived< ::CGAL::Field_tag , typename AST::Algebraic_structure_tag>::value 
         ||  
         ::boost::is_same< ::CGAL::Field_tag, typename AST::Algebraic_structure_tag>::value ;
-    typedef typename ::boost::mpl::if_c<has_division,::CGAL::Tag_true, ::CGAL::Tag_false>::type 
-        Has_division;
-    return _test_fct_point_conversion (x, Has_division());
+    return _test_fct_point_conversion (x, ::CGAL::Boolean_tag<has_division>());
 };
 
 #endif // CGAL__TEST_FCT_POINT_CONVERSION_H

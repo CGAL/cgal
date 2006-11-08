@@ -743,9 +743,7 @@ test_new_3(const R& rep)
   typedef ::CGAL::Algebraic_structure_traits<FT> AST; 
   static const bool has_sqrt = 
       ! ::boost::is_same< ::CGAL::Null_functor, typename AST::Sqrt >::value;
-  typedef typename ::boost::mpl::if_c<has_sqrt ,::CGAL::Tag_true, ::CGAL::Tag_false>
-         ::type Has_sqrt;
-  _test_new_3_sqrt(rep, Has_sqrt());
+  _test_new_3_sqrt(rep, ::CGAL::Boolean_tag<has_sqrt>() );
   
   return true;
 }
