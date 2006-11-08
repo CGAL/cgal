@@ -1,3 +1,6 @@
+8 November 2006 Laurent Rineau
+- enable shared libCGALQt
+
 29 March 2006 Andreas Fabri
 - Removed rounding for Gmpq as it may change orientation of points
 

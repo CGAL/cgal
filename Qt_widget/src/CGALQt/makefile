@@ -67,7 +67,7 @@ $(CGAL_KDS_OBJECTS)
 shared_lib: $(CGAL_OBJECTS)
 	$(CGAL_SHARED_LIB_CREATE)$(CGAL_QT_SHARED_LIB) -Wl,-soname,$(CGAL_QT_SHARED_LIB) \
 	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
-		$(CGAL_SHARED_LIB_LDFLAGS) -lGL
+		$(CGAL_SHARED_LIB_LDFLAGS) $(OPENGL_LIBS)
 	mv $(CGAL_QT_SHARED_LIB) '$(CGAL_LIB_DESTINATION)'
 	rm $(CGAL_OBJECTS)
 
