@@ -33,8 +33,13 @@ struct Void {};
 
 // Two struct's to denote boolean compile time decisions.
 
-struct Tag_true  {};
-struct Tag_false {};
+template <bool b>
+struct Boolean_tag {
+  static const bool value = b;
+};
+
+typedef Boolean_tag<true>   Tag_true;
+typedef Boolean_tag<false>  Tag_false; 
 
 inline bool check_tag( Tag_true)  {return true;}
 inline bool check_tag( Tag_false) {return false;}
