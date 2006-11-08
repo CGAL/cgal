@@ -40,10 +40,7 @@ inline bool check_tag( Tag_true)  {return true;}
 inline bool check_tag( Tag_false) {return false;}
 
 struct Null_tag {};
-struct Null_functor {
-  typedef void result_type;
-  typedef Void second_argument_type;
-};
+struct Null_functor {};
 
 
 // A function that asserts a specific compile time tag
