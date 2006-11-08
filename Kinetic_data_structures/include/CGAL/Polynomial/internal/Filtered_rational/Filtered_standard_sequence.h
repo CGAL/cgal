@@ -23,7 +23,6 @@
 
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Polynomial/Filtered_rational/Filtered_Sturm_sequence.h>
-#include <CGAL/Number_type_traits.h>
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
