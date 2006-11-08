@@ -186,7 +186,8 @@ print_usage_information()
 "Usage: ${CGAL_INSTALL_CGAL}
       [--help | --version | -i | --interactive |
        -u <dir> | --upgrade <dir> | --build-all | --rebuild-all |
-       --build <config> | --rebuild <config> | --disable-shared |
+       --build <config> | --rebuild <config> |
+       --disable-shared | --disable-static |
        -ni | --non-interactive | -os]
       [--verbose]
       [--without-autofind]
@@ -240,6 +241,8 @@ print_usage_information()
                specified explicitly.
   --disable-shared
                Do not build shared libraries, only the static archives.
+  --disable-static
+               Do not build static archives, only the shared libraries.
   --CXX <comp> Use <comp> as a C++ compiler.
   --CXXFLAGS <flags>
                Pass the specified <flags> to the compiler.
