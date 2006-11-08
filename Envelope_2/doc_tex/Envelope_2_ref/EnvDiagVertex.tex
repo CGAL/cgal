@@ -14,13 +14,15 @@
 %============
 
 A vertex record in an envelope diagram. It is always associated with a point
-on the lower (upper) envelope of a set of curves. A vertex is also
+on the lower (upper) envelope of a non-empty set of curves. A vertex is also
 associated with a set of $x$-monotone curves that induce the envelope
 over this point. It is incident to two edges, one lying to its
 left and the other to its right.
 
 \ccTypes
 %=======
+
+\ccNestedType{Size}{the size type (convertible to \ccc{size_t}).}
 
 \ccNestedType{Edge}{the corresponding diagram-edge type.}
 

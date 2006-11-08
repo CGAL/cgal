@@ -15,11 +15,14 @@
 
 The default envelope-diagram class used by the envelops functions to represent
 the lower or the upper envelope of a set of curves. It is parameterized by a
-traits class, which is a model of the \ccc{ArrangementXMontoneTraits_2}
+traits class, which is a model of the \ccc{ArrangementXMonotoneTraits_2}
 concept, in case we handle only envelopes of $x$-monotone curves, or of the
 refined \ccc{ArrangementTraits_2} concept in case we handle arbitrary planar
 curves.
 
+The space needed by this envelope-diagram class is linear in the size of
+the minimization diagram, and traversing requires linear time.
+ 
 \ccInclude{CGAL/Env_default_diagram_1.h}
 
 \ccIsModel

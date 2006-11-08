@@ -38,7 +38,7 @@ int main (int argc, char **argv)
     return (1);
   }
 
-  // Read the points from the file, and consturct their dual lines.
+  // Read the points from the file, and construct their dual lines.
   unsigned int            n;
   int                     px, py;
   std::vector<Point_2>    points;
@@ -48,7 +48,7 @@ int main (int argc, char **argv)
 
   in_file >> n;
   points.resize (n);
-  for (k = 0; k < n; k++)
+  for (k = 0; k < n; ++k)
   {
     in_file >> px >> py;
     points[k] = Point_2 (px, py);
@@ -74,9 +74,9 @@ int main (int argc, char **argv)
   upper_envelope_x_monotone_2 (dual_lines.begin(), dual_lines.end(),
                                max_diag);
 
-  // Output the points along the boundary convex hull in a counterclockwise
+  // Output the points along the boundary convex hull in counterclockwise
   // order. We start by traversing the minimization diagram from left to
-  // right, then the maximization diagram from left to right.
+  // right, then the maximization diagram from right to left.
   Diagram_1::Edge_const_handle  e = min_diag.leftmost();
 
   std::cout << "The convex hull of " << points.size() << " input points:";
@@ -87,12 +87,12 @@ int main (int argc, char **argv)
     e = e->right()->right();
   }
 
-  e = max_diag.leftmost();
-  while (e != max_diag.rightmost())
+  e = max_diag.rightmost();
+  while (e != max_diag.leftmost())
   {
     k = e->curve().data();    // The index of the dual point.
     std::cout << " (" << points[k] << ')';
-    e = e->right()->right();
+    e = e->left()->left();
   }
   std::cout << std::endl;
 

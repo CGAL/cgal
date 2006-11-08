@@ -16,10 +16,12 @@
 An edge record in an envelope diagram, which represents a continuous portion
 of the $x$-axis. It is associated with a (possibly empty) set of curves that
 induce the envelope over this portion of the $x$-axis. Note that all curves
-in this set overlap of the interval represented by the edge.
+in this set overlap over the interval represented by the edge.
 
 \ccTypes
 %=======
+
+\ccNestedType{Size}{the size type (convertible to \ccc{size_t}).}
 
 \ccNestedType{Vertex}{the corresponding diagram-vertex type.}
 
@@ -55,10 +57,12 @@ in this set overlap of the interval represented by the edge.
     {return a past-the-end iterator for the $x$-monotone curves associated with \ccVar.}
 
 \ccMethod{Vertex_const_handle left() const;}
-    {returns the vertex lying to \ccVar's left.}
-\ccGlue
+    {returns the vertex lying to \ccVar's left.
+     \ccPrecond{\ccVar\ is not the leftmost edge in the diagram.}}
+
 \ccMethod{Vertex_const_handle right() const;}
-    {returns the vertex lying to \ccVar's right.}
+    {returns the vertex lying to \ccVar's right.
+     \ccPrecond{\ccVar\ is not the rightmost edge in the diagram.}}
 
 \ccModifiers
 %===========
