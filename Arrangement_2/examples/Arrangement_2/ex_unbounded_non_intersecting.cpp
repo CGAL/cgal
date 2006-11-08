@@ -62,34 +62,5 @@ int main ()
             << " (" << arr.number_of_unbounded_faces() << " unbounded)"
             << std::endl << std::endl;
 
-  // Print the outer CCBs of the unbounded faces.
-  Arrangement_2::Unbounded_face_const_iterator  fit;
-  Arrangement_2::Ccb_halfedge_const_circulator  first, curr;
-  Arrangement_2::Halfedge_const_handle          he;
-  int                                           k = 1;
-
-  for (fit = arr.unbounded_faces_begin();
-       fit != arr.unbounded_faces_end(); ++fit, k++)
-  {
-    std::cout << "Face no. " << k << ": ";
-    curr = first = fit->outer_ccb();
-    if (! curr->source()->is_at_infinity())
-      std::cout << "(" << curr->source()->point() << ")";
-    do
-    {
-      he = curr;
-      if (! he->is_fictitious())
-        std::cout << "   [" << he->curve() << "]   ";
-      else
-        std::cout << "   [ ... ]   ";
-
-      if (! he->target()->is_at_infinity())
-        std::cout << "(" << he->target()->point() << ")";
-
-      ++curr;
-    } while (curr != first);
-    std::cout << std::endl;
-  }
-
   return (0);
 }

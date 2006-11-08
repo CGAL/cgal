@@ -737,7 +737,13 @@ public:
     {
       return (DVertex_const_iter (Base::opposite()->vertex()));
     }
-    
+
+    /*! Check if the source lies at infinity. */
+    bool source_at_infinity () const
+    {
+      return (Base::opposite()->vertex()->has_null_point());
+    }
+
     /*! Get the target vertex (non-const version). */
     Vertex_handle target ()
     {
@@ -750,6 +756,12 @@ public:
       return (DVertex_const_iter (Base::vertex()));
     }
     
+    /*! Check if the target lies at infinity. */
+    bool target_at_infinity () const
+    {
+      return (Base::vertex()->has_null_point());
+    }
+
     /*! Get the incident face (non-const version). */
     Face_handle face()
     {

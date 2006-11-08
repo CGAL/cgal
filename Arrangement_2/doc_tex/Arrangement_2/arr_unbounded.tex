@@ -7,6 +7,135 @@ face that contains all other arrangement features. In this section
 explains how to construct arrangements of unbounded curves, such as
 lines and rays.
 
+\subsection{Basic Manipulation and Traversal Methods\label{arr_ssec:unb_basic}}
+%--------------------------------------------
+
+Let us consider the arrangement induced by the two lines $y = x$ and
+$y = -x$. These two line intersect at the origin, such that the
+arrangement contains a single vertex $v = (0,0)$, with four infinite
+rays emanating from it. Each ray corresponds to an arrangement edge,
+and these edges subdivide the plane into four unbounded faces.
+Consider a halfedge pair that represents one of the edges. The source
+vertex of one of these halfedges is $v$ and its target is at infinity,
+while the other has its source at infinity and $v$ is its target.
+
+If \ccc{e} is an object of the nested type
+\ccc{Arrangement_2::Halfedge}, then the predicates
+\ccc{e.source_at_infinity()} and \ccc{e.target_at_infinity()} indicate
+whether the halfedge represents a curve with an infinite end.
+In general we do not have to access the source (or the target) of
+halfedge if it lies at infinity, since this vertex is not associated
+with any valid point. Similary, calling \ccc{arr.number_of_vertices()}
+for an arrangement instance \ccc{arr} counts only the vertices
+associated with finite points, and disregards vertices at
+infinity (and the range \ccc{[vertices_begin(), vertices_end())}
+contains only finite vertices).
+One can obtain the number of vertices at infinity by
+calling \ccc{arr.number_of_vertices_at_infinity()}.
+
+As we have already mentioned, arrangements of unbounded curves
+usually have more than one unbounded face. The function
+\ccc{arr.number_of_unbounded_faces()} returns the number of unbounded
+arrangement faces (thus, \ccc{arr.number_of_faces() -
+arr.number_of_unbounded_faces()} is the number of bounded faces).
+The functions \ccc{arr.unbounded_faces_begin()} and
+\ccc{arr.unbounded_faces_end()} return iterators of type
+\ccc{Arrangement_2::Unbounded_face_iterator} that specify the range
+of unbounded faces. The value-type of this iterator is of course
+\ccc{Arrangement_2::Face}.
+
+The specialized insertion functions listed in
+Section~\ref{arr_sssec:mf_insert_cv} can also be used for inserting
+$x$-monotone unbounded curves, provided that they interior-disjoint
+from any subcurve that already exists in the arrangement. For example,
+if we wish to insert a ray $r$ emanating from $(0,0)$ in the direction
+of $(1,0)$, to the arrangement of $y = -x$ and $y = x$, we can use
+the functions \ccc{arr.insert_from_left_vertex()}, as the left
+endpoint of $r$ is already associated with an arrangement vertex.
+Other edge-manipulation functions can also be applied on edges
+associated with unbounded curves.
+
+\begin{figure}[t]
+\begin{ccTexOnly}
+  \begin{center}
+  \includegraphics{Arrangement_2/fig/ex_unb1}
+  \end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+  <p><center>
+  <img src="./fig/ex_unb1.gif" border=0 alt="Unbounded example 1">
+  </center>
+\end{ccHtmlOnly}
+\caption{An arrangement of unbounded linear objects, as constructed
+in \ccc{ex_unbounded_non_intersecting.cpp}.\label{arr_fig:ex_unb1}}
+\end{figure}
+
+The following example demonstrates the use of the insertion function
+for pairwise interior-disjoint unbounded curves. In this example
+we use the traits class \ccc{Arr_linear_traits_2<Kernel>} to
+instantiate the \ccc{Arrangement_2} template. This traits class is
+capable of representing line segments as well as unbounded linear
+curves (namely lines and rays). Observe that objects of the
+\ccc{X_monotone_curve_2} type defined by this traits class are
+constructible from \ccc{Line_2}, \ccc{Ray_2}, and \ccc{Segment_2}
+objects, as defined in the kernel.
+
+The first three curves are inserted using the special insertion
+functions for $x$-monotone curves whose location in the arrangement
+is known. Notice that inserting an unbounded curve in the interior
+of an unbounded face, or from an existing vertex that represents the
+bounded end of the curve, may cause an unbounded face to split (this
+is never the case when inserting a bounded curve --- compare with
+Section~\ref{arr_sssec:mf_insert_cv}). Then, three additional rays are 
+inserted incrementally, using the insertion function for $x$-monotone
+curves whose interior is disjoint from all arrangement features.
+Finally, the program prints the size of the arrangement (compare to
+the the illustration in Figure~\ref{arr_fig:ex_unb1}) and the outer
+boundaries of its six unbounded faces:
+
+\ccIncludeExampleCode{Arrangement_2/ex_unbounded_non_intersecting.cpp}
+
+\subsection{Free Functions\label{arr_ssec:unb_global}}
+%---------------------------
+
+In principle, all queries and operations that relate to arrangements
+of bounded curves can also be applied to arrangements of unbounded
+curves. For example, it is possible to issue point-location and
+vertical ray-shooting queries (see also Section~\ref{arr_sec:queries})
+on arrangements of lines, where the only restriction is that the query
+point has finite coordinates.\footnote{Currently, all point-location
+strategies except the trapezoidal RIC point-location strategy is
+capable of handling arrangements of unbounded curves.} 
+
+In the following example we show how an arrangement of unbounded lines
+is utilized to solve the following problem: Given a set of points, does
+the set contain at least three collinear points? In this example a set
+of input points is read from a file. The file  \ccc{points.dat} is
+used by default. It contains definitions of $100$ points randomly
+selected on the grid $[-10000,10000]\times[-10000,10000]$. We
+construct an arrangement of the dual lines, where the line $p^{*}$
+dual to the point $p = (p_x, p_y)$ is given by the equation
+$y = p_x*x - p_y$, and check whether three (or more) of the dual lines
+intersect at a common point, by searching for a (dual) vertex, whose
+degree is greater than $4$. If such a vertex exists, then there are at
+least three dual lines that intersect at a common point, which implies
+that there are at least three collinear points.
+
+\ccIncludeExampleCode{Arrangement_2/ex_dual_lines.cpp}
+
+Note that there are no three collinear points among the points defined
+in the input file \ccc{points.dat}. In the second part of the example
+the existance of collinearity is forced and verified as follows. A line
+dual to the midpoint of two randomly selected points is introduced,
+and inserted into the arrangement. This operation is followed by a
+test that verifies that a vertex of degree greater than $4$
+exists. This implied that collinearity indeed exists as explained above.
+
+\begin{ccAdvanced}
+
+\subsection{Representation of Unbounded Arrangements\label{arr_ssec:unb_rep}}
+%--------------------------------------------
+
 \begin{figure}[t]
 \begin{ccTexOnly}
   \begin{center}
@@ -110,9 +239,6 @@ See Section~\ref{arr_sec:traits} on how the traits-class interface
 helps imposing the fact that we never have more than one curve
 incident to any true vertex at infinity.
 
-\subsection{Basic Manipulation and Traversal Methods\label{arr_ssec:unb_basic}}
-%--------------------------------------------
-
 The nested types defined in the \ccc{Arrangement_2} class support the
 following methods, in addition to the ones listed in
 Section~\ref{arr_ssec:traverse}:
@@ -143,95 +269,46 @@ comprise only fictitious halfedge in case the arrangement contains
 only bounded curves).
 \end{itemize}
 
-Observe that the \ccc{arr.number_of_vertices()} does not count the
-number of vertices at infinity. Call
-\ccc{arr.number_of_vertices_at_infinity()}, to obtain this number.
-Similarly, \ccc{arr.number_of_edges()} does not count the number of
+We note that \ccc{arr.number_of_edges()} does not count the number of
 fictitious edges, (which is always
-\ccc{arr.number_of_vertices_at_infinity() + 4}), and
-\ccc{arr.number_of_faces()} does not count the number of fictitious
-faces. The vertex, halfedge, edge, and face iterators defined by the
-\ccc{Arrangement_2} class only iterate over true features of the
-arrangement. Namely, vertices at infinity and fictitious halfedges
-and faces are ignored. On the other hand, the
-\ccc{Ccb_halfedge_circulator} of the outer boundary of an unbounded
-face or the \ccc{Halfegde_around_vertex_circulator} of a vertex at
-infinity do traverse fictitious halfegdes.
+\ccc{arr.number_of_vertices_at_infinity() + 4}), and the iterators
+returned by \ccc{arr.edges_begin()} and \ccc{arr.edges_end()} specify
+a range of valid edges. Similarly, \ccc{arr.number_of_faces()} does not
+count the fictitious face.
 
+However, the \ccc{Ccb_halfedge_circulator} of the outer boundary of an
+unbounded face or the \ccc{Halfegde_around_vertex_circulator} of a vertex
+at infinity do traverse fictitious halfegdes. For example, it is possible
+to traverse the outer boundaries of the unbounded arrangement edges
+using the following procedure:
+\begin{alltt}
+  Arrangement_2::Unbounded_face_const_iterator  fit;
+  Arrangement_2::Ccb_halfedge_const_circulator  first, curr;
+  Arrangement_2::Halfedge_const_handle          he;
+  int                                           k = 1;
 
-\begin{figure}[t]
-\begin{ccTexOnly}
-  \begin{center}
-  \includegraphics{Arrangement_2/fig/ex_unb1}
-  \end{center}
-\end{ccTexOnly}
-\begin{ccHtmlOnly}
-  <p><center>
-  <img src="./fig/ex_unb1.gif" border=0 alt="Unbounded example 1">
-  </center>
-\end{ccHtmlOnly}
-\caption{An arrangement of unbounded linear objects, as constructed
-in \ccc{ex_unbounded_non_intersecting.cpp}.\label{arr_fig:ex_unb1}}
-\end{figure}
+  for (fit = arr.unbounded_faces_begin();
+       fit != arr.unbounded_faces_end(); ++fit, k++)
+  \{
+    std::cout << "Unbounded face no. " << k << ": ";
+    curr = first = fit->outer_ccb();
+    if (! curr->source()->is_at_infinity())
+      std::cout << "(" << curr->source()->point() << ")";
+    do
+    \{
+      he = curr;
+      if (! he->is_fictitious())
+        std::cout << "   [" << he->curve() << "]   ";
+      else
+        std::cout << "   [ ... ]   ";
 
-The following example demonstrates the use of the insertion function
-for pairwise interior-disjoint unbounded curves. In this example
-we use the traits class \ccc{Arr_linear_traits_2<Kernel>} to
-instantiate the \ccc{Arrangement_2} template. This traits class is
-capable of representing line segments as well as unbounded linear
-curves (namely lines and rays). Observe that objects of the
-\ccc{X_monotone_curve_2} type defined by this traits class are
-constructible from \ccc{Line_2}, \ccc{Ray_2}, and \ccc{Segment_2}
-objects, as defined in the kernel.
+      if (! he->target()->is_at_infinity())
+        std::cout << "(" << he->target()->point() << ")";
 
-The first three curves are inserted using the special insertion
-functions for $x$-monotone curves whose location in the arrangement
-is known. Notice that inserting an unbounded curve in the interior
-of an unbounded face, or from an existing vertex that represents the
-bounded end of the curve, may cause an unbounded face to split (this
-is never the case when inserting a bounded curve --- compare with
-Section~\ref{arr_sssec:mf_insert_cv}). Then, three additional rays are 
-inserted incrementally, using the insertion function for $x$-monotone
-curves whose interior is disjoint from all arrangement features.
-Finally, the program prints the size of the arrangement (compare to
-the the illustration in Figure~\ref{arr_fig:ex_unb1}) and the outer
-boundaries of its six unbounded faces:
+      ++curr;
+    \} while (curr != first);
+    std::cout << std::endl;
+  \}
+\end{alltt}
 
-\ccIncludeExampleCode{Arrangement_2/ex_unbounded_non_intersecting.cpp}
-
-\subsection{Free Functions\label{arr_ssec:unb_global}}
-%---------------------------
-
-In principle, all queries and operations that relate to arrangements
-of bounded curves can also be applied to arrangements of unbounded
-curves. For example, it is possible to issue point-location and
-vertical ray-shooting queries (see also Section~\ref{arr_sec:queries})
-on arrangements of lines, where the only restriction is that the query
-point has finite coordinates.\footnote{Currently, all point-location
-strategies except the trapezoidal RIC point-location strategy is
-capable of handling arrangements of unbounded curves.} 
-
-In the following example we show how an arrangement of unbounded lines
-is utilized to solve the following problem: Given a set of points, does
-the set contain at least three collinear points? In this example a set
-of input points is read from a file. The file  \ccc{points.dat} is
-used by default. It contains definitions of $100$ points randomly
-selected on the grid $[-10000,10000]\times[-10000,10000]$. We
-construct an arrangement of the dual lines, where the line $p^{*}$
-dual to the point $p = (p_x, p_y)$ is given by the equation
-$y = p_x*x - p_y$, and check whether three (or more) of the dual lines
-intersect at a common point, by searching for a (dual) vertex, whose
-degree is greater than $4$. If such a vertex exists, then there are at
-least three dual lines that intersect at a common point, which implies
-that there are at least three collinear points.
-
-\ccIncludeExampleCode{Arrangement_2/ex_dual_lines.cpp}
-
-Note that there are no three collinear points among the points defined
-in the input file \ccc{points.dat}. In the second part of the example
-the existance of collinearity is forced and verified as follows. A line
-dual to the midpoint of two randomly selected points is introduced,
-and inserted into the arrangement. This operation is followed by a
-test that verifies that a vertex of degree greater than $4$
-exists. This implied that collinearity indeed exists as explained above.
-
+\end{ccAdvanced}
