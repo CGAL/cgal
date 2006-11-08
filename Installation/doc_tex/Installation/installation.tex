@@ -1123,6 +1123,15 @@ You can disable the building of shared libraries (e.g.,
 \mbox{``\texttt{--disable-shared}''\TTindex{disable-shared}}. This
 way, only static libraries (object file archives) are built.
 
+\subsection{Disable Static Archives\label{sec:disable-static-setup}}
+\index{compilers!disabling static archives building}
+
+You can disable the building of static archives (e.g.,
+\texttt{libCGAL.a}) using the option
+\mbox{``\texttt{--disable-static}''\TTindex{disable-static}}. This
+way, only shared libraries are built. Do not disable shared libraries if
+you use this option.
+
 \subsection{Other Options\label{sec:other-options}}
 
 Some less important features of the install script are summarized
