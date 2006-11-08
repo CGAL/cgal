@@ -1,16 +1,16 @@
 \section{Arrangements of Unbounded Curves\label{arr_sec:unbounded}}
 %========================================
 
-Previous chapters dealt only with arrangements of line segments,
+Previous sections dealt only with arrangements of line segments,
 namely of bounded curves. Such arrangements always have one unbounded
-face that contains all other arrangement features. In this section
+face that contains all other arrangement features. This section
 explains how to construct arrangements of unbounded curves, such as
 lines and rays.
 
 \subsection{Basic Manipulation and Traversal Methods\label{arr_ssec:unb_basic}}
 %--------------------------------------------
 
-Let us consider the arrangement induced by the two lines $y = x$ and
+Consider the arrangement induced by the two lines $y = x$ and
 $y = -x$. These two line intersect at the origin, such that the
 arrangement contains a single vertex $v = (0,0)$, with four infinite
 rays emanating from it. Each ray corresponds to an arrangement edge,
@@ -23,34 +23,33 @@ If \ccc{e} is an object of the nested type
 \ccc{Arrangement_2::Halfedge}, then the predicates
 \ccc{e.source_at_infinity()} and \ccc{e.target_at_infinity()} indicate
 whether the halfedge represents a curve with an infinite end.
-In general we do not have to access the source (or the target) of
+In general there is no need to access the source (or the target) of a
 halfedge if it lies at infinity, since this vertex is not associated
-with any valid point. Similary, calling \ccc{arr.number_of_vertices()}
-for an arrangement instance \ccc{arr} counts only the vertices
-associated with finite points, and disregards vertices at
-infinity (and the range \ccc{[vertices_begin(), vertices_end())}
-contains only finite vertices).
-One can obtain the number of vertices at infinity by
-calling \ccc{arr.number_of_vertices_at_infinity()}.
+with any valid point. Similarly, calling \ccc{arr.number_of_vertices()}
+for an arrangement object \ccc{arr} counts only the vertices
+associated with finite points, and ignores vertices at infinity
+(and the range \ccc{[vertices_begin(), vertices_end())} contains only
+finite vertices). The method \ccc{arr.number_of_vertices_at_infinity()}
+counts the number of vertices at infinity.
 
-As we have already mentioned, arrangements of unbounded curves
-usually have more than one unbounded face. The function
-\ccc{arr.number_of_unbounded_faces()} returns the number of unbounded
-arrangement faces (thus, \ccc{arr.number_of_faces() -
-arr.number_of_unbounded_faces()} is the number of bounded faces).
+As mentioned above, arrangements of unbounded curves usually have more
+than one unbounded face. The function \ccc{arr.number_of_unbounded_faces()}
+returns the number of unbounded arrangement faces
+(Thus, \ccc{arr.number_of_faces() - arr.number_of_unbounded_faces()}
+is the number of bounded faces).
 The functions \ccc{arr.unbounded_faces_begin()} and
 \ccc{arr.unbounded_faces_end()} return iterators of type
 \ccc{Arrangement_2::Unbounded_face_iterator} that specify the range
-of unbounded faces. The value-type of this iterator is of course
+of unbounded faces. Naturally, the value-type of this iterator is
 \ccc{Arrangement_2::Face}.
 
 The specialized insertion functions listed in
 Section~\ref{arr_sssec:mf_insert_cv} can also be used for inserting
-$x$-monotone unbounded curves, provided that they interior-disjoint
+$x$-monotone unbounded curves, provided that they are interior-disjoint
 from any subcurve that already exists in the arrangement. For example,
-if we wish to insert a ray $r$ emanating from $(0,0)$ in the direction
-of $(1,0)$, to the arrangement of $y = -x$ and $y = x$, we can use
-the functions \ccc{arr.insert_from_left_vertex()}, as the left
+if you wish to insert a ray $r$ emanating from $(0,0)$ in the direction
+of $(1,0)$, to the arrangement of $y = -x$ and $y = x$, you can use
+the function \ccc{arr.insert_from_left_vertex()}, as the left
 endpoint of $r$ is already associated with an arrangement vertex.
 Other edge-manipulation functions can also be applied on edges
 associated with unbounded curves.
@@ -75,10 +74,10 @@ for pairwise interior-disjoint unbounded curves. In this example
 we use the traits class \ccc{Arr_linear_traits_2<Kernel>} to
 instantiate the \ccc{Arrangement_2} template. This traits class is
 capable of representing line segments as well as unbounded linear
-curves (namely lines and rays). Observe that objects of the
-\ccc{X_monotone_curve_2} type defined by this traits class are
+curves (namely lines and rays). Observe that objects of the type
+\ccc{X_monotone_curve_2} defined by this traits class are
 constructible from \ccc{Line_2}, \ccc{Ray_2}, and \ccc{Segment_2}
-objects, as defined in the kernel.
+objects, as defined in the instantiated kernel.
 
 The first three curves are inserted using the special insertion
 functions for $x$-monotone curves whose location in the arrangement
@@ -104,7 +103,7 @@ curves. For example, it is possible to issue point-location and
 vertical ray-shooting queries (see also Section~\ref{arr_sec:queries})
 on arrangements of lines, where the only restriction is that the query
 point has finite coordinates.\footnote{Currently, all point-location
-strategies except the trapezoidal RIC point-location strategy is
+strategies except the trapezoidal RIC point-location strategy are
 capable of handling arrangements of unbounded curves.} 
 
 In the following example we show how an arrangement of unbounded lines
@@ -125,7 +124,7 @@ that there are at least three collinear points.
 
 Note that there are no three collinear points among the points defined
 in the input file \ccc{points.dat}. In the second part of the example
-the existance of collinearity is forced and verified as follows. A line
+the existence of collinearity is forced and verified as follows. A line
 dual to the midpoint of two randomly selected points is introduced,
 and inserted into the arrangement. This operation is followed by a
 test that verifies that a vertex of degree greater than $4$
@@ -149,9 +148,9 @@ exists. This implied that collinearity indeed exists as explained above.
 \end{ccHtmlOnly}
 \caption{A \dcel\ representing an arrangement of four lines.
 Halfedges are drawn as thin arrows. The vertices $v_1, \ldots, v_8$
-lie at infinity and are not associated with valid points. The
-halfedges that connect them are fictitious and are not associated
-with concrete curves. The face denoted $\tilde{f}$ (lightly shaded)
+lie at infinity, and are not associated with valid points. The
+halfedges that connect them are fictitious, and are not associated
+with concrete curves. The face denoted $f_0$ (lightly shaded)
 is the fictitious ``unbounded face'' which lies outside the imaginary
 rectangle (dashed) that bounds the actual arrangement. The four
 fictitious vertices $v_{\rm bl}, v_{\rm tl}, v_{\rm br}$ and
@@ -192,7 +191,7 @@ respectively. Similarly, there are fictitious halfedges that lie on
 the top, the bottom, the left, or the right edge of the imaginary
 bounding rectangle. When the arrangement is empty, there are exactly
 four pairs of fictitious halfedges, that divide the plane into two
-faces, namely a fictitous face lying outside of the imaginary bounding
+faces, namely a fictitious face lying outside of the imaginary bounding
 rectangle and a single unbounded face bounded by the imaginary
 bounding rectangle. 
 
@@ -208,7 +207,7 @@ bounding rectangle.
 A vertex that represent an unbounded end of an $x$-monotone curve
 that is defined at $x = -\infty$ or at $x = \infty$. In case of
 a horizontal line or a curve with a horizontal asymptote, the
-$y$-cooridnate of the curve end may be finite (see for example the
+$y$-coordinate of the curve end may be finite (see for example the
 vertices $v_2$ and $v_7$ in Figure~\ref{arr_fig:unb_dcel}), but in
 general the curve end also goes to $y = \pm\infty$ (see for instance
 the vertices $v_1$, $v_3$, $v_6$ and $v_8$ in
@@ -230,7 +229,7 @@ and $v_5$ in Figure~\ref{arr_fig:unb_dcel} are of this type.
 The fictitious vertices that represent the four corners of the
 imaginary bounding rectangle.
 \end{enumerate}
-Note that a vertex at infinity of types 1--3 above always has
+A vertex at infinity of types 1--3 above always has
 three incident edges: one concrete edge that is associated with an
 unbounded portion of an $x$-monotone curve, and two fictitious edges
 connecting the vertex to its neighboring vertices at infinity.
@@ -269,16 +268,15 @@ comprise only fictitious halfedge in case the arrangement contains
 only bounded curves).
 \end{itemize}
 
-We note that \ccc{arr.number_of_edges()} does not count the number of
+The method \ccc{arr.number_of_edges()} does not count the number of
 fictitious edges, (which is always
 \ccc{arr.number_of_vertices_at_infinity() + 4}), and the iterators
 returned by \ccc{arr.edges_begin()} and \ccc{arr.edges_end()} specify
 a range of valid edges. Similarly, \ccc{arr.number_of_faces()} does not
 count the fictitious face.
-
 However, the \ccc{Ccb_halfedge_circulator} of the outer boundary of an
 unbounded face or the \ccc{Halfegde_around_vertex_circulator} of a vertex
-at infinity do traverse fictitious halfegdes. For example, it is possible
+at infinity do traverse fictitious halfedges. For example, it is possible
 to traverse the outer boundaries of the unbounded arrangement edges
 using the following procedure:
 \begin{alltt}
