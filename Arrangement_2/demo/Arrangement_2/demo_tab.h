@@ -48,6 +48,9 @@
 
 #include <vector>
 
+//global variables defined at MyWindow_operations.cpp
+extern bool lower_env;
+extern bool upper_env;
 /*! class Qt_widget_base_tab - inherits from CGAL::Qt_widget
  *  contain all data members that are not part of the traits 
  */
@@ -83,9 +86,7 @@ public:
     read_from_file(false),
     first_time_merge(true),
     draw_vertex(true),
-    fill_face_color(def_bg_color),
-    lower_env(false),
-    upper_env(false)
+    fill_face_color(def_bg_color)
   {
     static_cast<CGAL::Qt_widget&>(*this) << CGAL::LineWidth(2) <<
       CGAL::BackgroundColor (CGAL::BLACK);
@@ -178,13 +179,6 @@ public:
    * color of the tab)
    */
   QColor unbounded_face_color() { return this->backgroundColor(); }
-
-  /*! lower envelope mode */
-  bool lower_env;
-
-   /*! upper envelope mode */
-  bool upper_env;
-
 
   /*! set the colo of the unbounded face (its the same as the background
    * color of the tab)

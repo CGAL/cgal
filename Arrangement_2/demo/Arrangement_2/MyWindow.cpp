@@ -71,7 +71,7 @@
  * \param w - window width
  * \param h - window hight
  */
-MyWindow::MyWindow(int w, int h) : num_of_colors(18)
+MyWindow::MyWindow(int w, int h) : num_of_colors(18)                                   
 {
   myBar = new QTabWidget(this);
   setCentralWidget(myBar);

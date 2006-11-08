@@ -35,6 +35,9 @@
 #include "icons/demo_arrow_down.xpm"
 #include "icons/demo_arrow_up.xpm"
 
+//global variables
+bool lower_env = false;
+bool upper_env = false;
 
 /*! something_changed - change the current page's current_state
  *  and thats makes him redraw
@@ -479,17 +482,13 @@ void MyWindow::openColorDialog()
 
 void MyWindow::lowerEnvelope(bool b)
 {
-  Qt_widget_base_tab    *w_demo_p = 
-    static_cast<Qt_widget_base_tab *> (myBar->currentPage());
-  w_demo_p->lower_env = b;
+  lower_env = b;
   something_changed();
 }
 
 void MyWindow::upperEnvelope(bool b)
 {
-  Qt_widget_base_tab    *w_demo_p = 
-    static_cast<Qt_widget_base_tab *> (myBar->currentPage());
-  w_demo_p->upper_env = b;
+  upper_env = b;
   something_changed();
 }
 
