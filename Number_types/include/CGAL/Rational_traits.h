@@ -25,7 +25,7 @@ CGAL_BEGIN_NAMESPACE
 namespace CGALi{
 
 template <class Rational, bool > 
-class Rational_traits_base
+struct Rational_traits_base
 {
     typedef Rational RT;
     
@@ -37,8 +37,9 @@ class Rational_traits_base
 };
 
 template <class Rational> 
-class Rational_traits_base<Rational, true>
+struct Rational_traits_base<Rational, true>
 {
+private:
     typedef Fraction_traits<Rational> FT;
     typedef typename FT::Decompose Decomose;
     typedef typename FT::Compose Compose;
