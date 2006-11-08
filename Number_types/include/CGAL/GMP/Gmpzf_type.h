@@ -27,7 +27,7 @@
 #include <gmp.h>
 #include <mpfr.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/Gmpz_type.h>
+#include <CGAL/GMP/Gmpz_type.h>
 #include <boost/operators.hpp>
 #include <iostream>
 #include <cmath>

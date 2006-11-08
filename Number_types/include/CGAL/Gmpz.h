@@ -26,7 +26,7 @@
 #define CGAL_GMPZ_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Gmpz_type.h>
+#include <CGAL/GMP/Gmpz_type.h>
 #include <CGAL/Gmp_coercion_traits.h>
 
 #include <CGAL/Quotient.h> // spec of AST for Quotient<Gmpz>
