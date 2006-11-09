@@ -18,8 +18,7 @@
 #ifndef CGAL_LEDA_COERCION_TRAITS_H
 #define CGAL_LEDA_COERCION_TRAITS_H
 
-#include <CGAL/Coercion_traits.h>
-#include <CGAL/basic.h>
+#include <CGAL/number_type_basic.h>
 
 #ifdef CGAL_USE_LEDA
 

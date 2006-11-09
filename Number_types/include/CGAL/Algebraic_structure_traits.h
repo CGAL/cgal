@@ -12,11 +12,7 @@
 #ifndef CGAL_ALGEBRAIC_STRUCTURE_TRAITS_H
 #define CGAL_ALGEBRAIC_STRUCTURE_TRAITS_H
 
-#include <CGAL/basic.h>
-#include <CGAL/Coercion_traits.h>
-#include <CGAL/functional_base.h> // Unary_function, Binary_function
-#include <boost/type_traits/is_same.hpp>
-
+#include <CGAL/number_type_basic.h>
 
 CGAL_BEGIN_NAMESPACE
 

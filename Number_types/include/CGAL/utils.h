@@ -12,15 +12,13 @@
 #ifndef CGAL_UTILS_H
 #define CGAL_UTILS_H
 
-#include <CGAL/basic.h>
-#include <CGAL/utils_classes.h>
+#include <CGAL/number_type_basic.h>
 
 CGAL_BEGIN_NAMESPACE
 
-
-template< class Number_type >
-inline bool is_valid( const Number_type& x ) {
-  return Is_valid< Number_type >()( x );
+template< class T >
+inline bool is_valid( const T& x ) {
+  return Is_valid< T >()( x );
 };
 
 CGAL_END_NAMESPACE

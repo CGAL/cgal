@@ -21,7 +21,7 @@
 #ifndef CGAL_MP_FLOAT_H
 #define CGAL_MP_FLOAT_H
 
-#include <CGAL/basic.h>
+#include <CGAL/number_type_basic.h>
 #include <CGAL/Algebraic_structure_traits.h>
 #include <CGAL/Real_embeddable_traits.h>
 #include <CGAL/Coercion_traits.h>

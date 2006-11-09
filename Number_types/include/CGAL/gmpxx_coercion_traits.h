@@ -18,7 +18,7 @@
 #ifndef CGAL_GMPXX_COERCION_TRAITS_H
 #define CGAL_GMPXX_COERCION_TRAITS_H 1
 
-#include <CGAL/basic.h>
+#include <CGAL/number_type_basic.h>
 #include <CGAL/Coercion_traits.h>
 
 #ifdef CGAL_USE_GMP

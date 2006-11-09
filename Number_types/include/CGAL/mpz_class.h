@@ -24,7 +24,7 @@
 #ifndef CGAL_MPZ_CLASS_H
 #define CGAL_MPZ_CLASS_H
 
-#include <CGAL/basic.h>
+#include <CGAL/number_type_basic.h>
 //#include <gmpxx.h>
 #include <CGAL/gmpxx_coercion_traits.h>
 

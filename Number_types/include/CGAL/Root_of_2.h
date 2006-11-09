@@ -22,7 +22,7 @@
 #define CGAL_ROOT_OF_2_H
 
 #include <iostream>
-#include <CGAL/basic.h>
+#include <CGAL/number_type_basic.h>
 #include <CGAL/Root_of_2_fwd.h>
 #include <CGAL/Root_of_traits.h>
 #include <CGAL/NT_converter.h>

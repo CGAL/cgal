@@ -24,20 +24,13 @@
 #ifndef CGAL_LEDA_INTEGER_H
 #define CGAL_LEDA_INTEGER_H
 
-#include <CGAL/basic.h>
-#include <CGAL/leda_coercion_traits.h>
-#include <CGAL/Number_type_traits.h>
-#include <CGAL/Interval_nt.h>
-#include <CGAL/Algebraic_structure_traits.h>
-#include <CGAL/Real_embeddable_traits.h>
-#include <CGAL/utils.h>
-#include <CGAL/Needs_parens_as_product.h>
-
-#include <CGAL/functional_base.h> // Unary_function, Binary_function
+#include <CGAL/number_type_basic.h>
 
 #include <utility>
 
-#include <CGAL/LEDA_basic.h>
+#include <CGAL/leda_coercion_traits.h>
+#include <CGAL/Interval_nt.h>
+
 #include <CGAL/LEDA_basic.h>
 #if CGAL_LEDA_VERSION < 500
 #include <LEDA/integer.h>

@@ -24,6 +24,12 @@
 #ifndef CGAL_FPU_H
 #define CGAL_FPU_H
 
+#include <CGAL/number_type_basic.h> 
+
+#ifndef __INTEL_COMPILER
+#include <cmath> // for HUGE_VAL 
+#endif
+
 // This file specifies some platform dependant functions, regarding the FPU
 // directed rounding modes.  There is only support for double precision.
 //

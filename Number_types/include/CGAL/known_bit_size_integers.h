@@ -24,7 +24,7 @@
 #ifndef CGAL_KNOWN_BIT_SIZE_INTEGERS_H
 #define CGAL_KNOWN_BIT_SIZE_INTEGERS_H
 
-#include <CGAL/basic.h>
+#include <CGAL/number_type_basic.h>
 #include <boost/mpl/if.hpp>
 
 CGAL_BEGIN_NAMESPACE

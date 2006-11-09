@@ -219,6 +219,30 @@ test_utilities(const NT& x)
   NT zero(0);
   NT one(1);
   NT mone(-one);
+  
+  // Min 
+  std::cout << "  Min()" << std::endl;
+  const CGAL::Min<NT> minf = CGAL::Min<NT>(); 
+  if(minf(mone,one) != mone) return false; // functor
+  if(minf(one,mone) != mone) return false; // functor
+  if(::CGAL::min(one,mone) != mone) return false; // function
+  if(::CGAL::min(mone,one) != mone) return false; // function
+
+
+  // Max 
+  std::cout << "  Max()" << std::endl;
+  const CGAL::Max<NT> maxf = CGAL::Max<NT>(); 
+  if(maxf(mone,one) != one) return false; // functor
+  if(maxf(one,mone) != one) return false; // functor
+  if(::CGAL::max(one,mone) != one) return false; // function
+  if(::CGAL::max(mone,one) != one) return false; // function
+
+
+  // is_valid
+  std::cout << "  is_valid()" << std::endl;
+  const CGAL::Is_valid<NT> is_valid = CGAL::Is_valid<NT>(); 
+  if(!         is_valid(zero)) return false; // functor
+  if(! ::CGAL::is_valid(zero)) return false; // function
 
   // is_zero
   std::cout << "  is_zero()" << std::endl;
@@ -298,15 +322,10 @@ test_utilities(const NT& x)
   // mixed operators +,-,...
   if (!test_mixed_operators(zero)) return false;
 
-  // is_finite, is_valid
+  // is_finite
   std::cout << "  is_finite()" << std::endl;
-  const CGAL::Is_valid<NT> is_valid = CGAL::Is_valid<NT>(); 
-  if(!is_valid(zero)) return false;
-  if(!CGAL:: is_valid(zero)) return false;
-  
   if (! CGAL_NTS is_finite(zero)) return false;
-  std::cout << "  is_valid()" << std::endl;
-  if (! CGAL::is_valid(zero)) return false;
+
 
   // square
   std::cout << "  square()" << std::endl;

@@ -25,13 +25,10 @@
 #ifndef CGAL_FLOAT_H
 #define CGAL_FLOAT_H
 
-#include <CGAL/basic.h>
-#include <CGAL/Algebraic_structure_traits.h>
-#include <CGAL/Real_embeddable_traits.h>
-#include <CGAL/utils.h>
-#include <CGAL/tags.h>
-#include <CGAL/functional_base.h> // Unary_function, Binary_function
-#include <cmath>
+#include <CGAL/number_type_basic.h>
+
+#include <cmath> // std::sqrt, std::pow 
+
 #ifdef CGAL_CFG_IEEE_754_BUG
 #  include <CGAL/IEEE_754_unions.h>
 #endif

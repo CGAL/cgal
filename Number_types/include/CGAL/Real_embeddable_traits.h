@@ -12,9 +12,7 @@
 #ifndef CGAL_REAL_EMBEDDABLE_TRAITS_H
 #define CGAL_REAL_EMBEDDABLE_TRAITS_H
 
-#include <CGAL/basic.h>
-#include <CGAL/functional_base.h> // Unary_function, Binary_function
-#include <CGAL/Algebraic_structure_traits.h> // For Is_zero functor
+#include <CGAL/number_type_basic.h>
 
 CGAL_BEGIN_NAMESPACE
 

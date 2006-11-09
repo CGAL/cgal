@@ -25,7 +25,7 @@
 #ifndef CGAL_GMPZ_H
 #define CGAL_GMPZ_H
 
-#include <CGAL/basic.h>
+#include <CGAL/number_type_basic.h>
 #include <CGAL/GMP/Gmpz_type.h>
 #include <CGAL/Gmp_coercion_traits.h>
 

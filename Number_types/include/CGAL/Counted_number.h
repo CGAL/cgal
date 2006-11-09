@@ -19,16 +19,13 @@
 // $Id$
 // 
 //
-// Author(s)     : Geert-Jan Giezeman
+// Author(s)     : Geert-Jan Giezeman,
+//                 Michael Hemmer <mhemmer@uni-mainz.de>
 
 #ifndef CGAL_COUNTED_NUMBER_H
 #define CGAL_COUNTED_NUMBER_H
 
-#include <CGAL/basic.h>
-#include <CGAL/tags.h>
-#include <CGAL/Algebraic_structure_traits.h>
-#include <CGAL/Real_embeddable_traits.h>
-#include <CGAL/utils.h>
+#include <CGAL/number_type_basic.h>
 #include <boost/iterator/transform_iterator.hpp> // for Root_of_selector
 #include <iostream>
 

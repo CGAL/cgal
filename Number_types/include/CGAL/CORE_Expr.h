@@ -24,13 +24,7 @@
 #ifndef CGAL_CORE_EXPR_H
 #define CGAL_CORE_EXPR_H
 
-#include <CGAL/basic.h>
-#include <CGAL/Number_type_traits.h>
-#include <CGAL/Interval_nt.h>
-#include <CGAL/functional_base.h> // Unary_function, Binary_function
-
-#include <CGAL/Algebraic_structure_traits.h>
-#include <CGAL/Real_embeddable_traits.h>
+#include <CGAL/number_type_basic.h>
 #include <CGAL/CORE_coercion_traits.h>
 
 #include <utility>

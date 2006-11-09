@@ -13,15 +13,12 @@
 #ifndef CGAL_CORE_BIGRAT_H
 #define CGAL_CORE_BIGRAT_H
 
-#include <CGAL/basic.h>
+#include <CGAL/number_type_basic.h>
+#include <CGAL/CORE_coercion_traits.h>
+
 #include <CGAL/CORE_Expr.h> // used for To_interval-functor
 #include <CGAL/CORE_BigInt.h>
-#include <CGAL/Algebraic_structure_traits.h>
-#include <CGAL/Real_embeddable_traits.h>
-#include <CGAL/CORE_coercion_traits.h>
-#include <CGAL/utils.h>
-#include <CGAL/functional_base.h> // Unary_function, Binary_function
-#include <CGAL/Needs_parens_as_product.h>
+
 
 #define CORE_LEVEL 4
 #include <CORE/CORE.h>

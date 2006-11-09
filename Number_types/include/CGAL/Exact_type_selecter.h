@@ -26,7 +26,7 @@
 
 // This is an undocumented private helper for Filtered_kernel.
 
-#include <CGAL/basic.h>
+#include <CGAL/number_type_basic.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Lazy_exact_nt.h>

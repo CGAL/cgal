@@ -24,18 +24,13 @@
 #ifndef CGAL_COERCION_TRAITS_H
 #define CGAL_COERCION_TRAITS_H 1
 
-//#include <NiX/basic.h>
-//#include <NiX/NT_traits.h> 
-#include <CGAL/basic.h>
-//#include <CGAL/LiS/basic.h>
+#include <CGAL/number_type_basic.h>
+
 #include <iterator>
 
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/type_traits/is_base_and_derived.hpp>
 #include <boost/mpl/if.hpp>
-
-//#include <NiX/Polynomial.h>
-//#include <NiX/Sqrt_extension.h>
 
 // Makro to define an additional operator for binary functors which takes
 // two number types as parameters that are interoperable with the
@@ -56,9 +51,9 @@ CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, NT )
 
 #define CGAL_DEFINE_COERCION_TRAITS_FROM_TO(FROM,TO)                    \
     template <>                                                         \
-    struct Coercion_traits< FROM , TO >{                                    \
-        typedef Tag_true  Are_explicit_interoperable;             \
-        typedef Tag_true  Are_implicit_interoperable;             \
+    struct Coercion_traits< FROM , TO >{                                \
+        typedef Tag_true  Are_explicit_interoperable;                   \
+        typedef Tag_true  Are_implicit_interoperable;                   \
         typedef TO Coercion_type;                                       \
         struct Cast{                                                    \
             typedef Coercion_type result_type;                          \
@@ -68,9 +63,9 @@ CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, NT )
         };                                                              \
     };                                                                  \
     template <>                                                         \
-    struct Coercion_traits< TO , FROM >{                                    \
-        typedef Tag_true  Are_explicit_interoperable;             \
-        typedef Tag_true  Are_implicit_interoperable;             \
+    struct Coercion_traits< TO , FROM >{                                \
+        typedef Tag_true  Are_explicit_interoperable;                   \
+        typedef Tag_true  Are_implicit_interoperable;                   \
         typedef TO Coercion_type;                                       \
         struct Cast{                                                    \
             typedef Coercion_type result_type;                          \
@@ -82,9 +77,9 @@ CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, NT )
 
 #define CGAL_DEFINE_COERCION_TRAITS_FROM_TO_TEM(FROM,TO,TEM)            \
     template <TEM>                                                      \
-    struct Coercion_traits< FROM , TO >{                                    \
-        typedef Tag_true  Are_explicit_interoperable;             \
-        typedef Tag_true  Are_implicit_interoperable;             \
+    struct Coercion_traits< FROM , TO >{                                \
+        typedef Tag_true  Are_explicit_interoperable;                   \
+        typedef Tag_true  Are_implicit_interoperable;                   \
         typedef TO Coercion_type;                                       \
         struct Cast{                                                    \
             typedef Coercion_type result_type;                          \
@@ -94,9 +89,9 @@ CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, NT )
         };                                                              \
     };                                                                  \
     template <TEM>                                                      \
-    struct Coercion_traits< TO , FROM >{                                    \
-        typedef Tag_true  Are_explicit_interoperable;             \
-        typedef Tag_true  Are_implicit_interoperable;             \
+    struct Coercion_traits< TO , FROM >{                                \
+        typedef Tag_true  Are_explicit_interoperable;                   \
+        typedef Tag_true  Are_implicit_interoperable;                   \
         typedef TO Coercion_type;                                       \
         struct Cast{                                                    \
             typedef Coercion_type result_type;                          \
@@ -110,9 +105,9 @@ CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, NT )
 
 #define CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(A)                         \
     template <>                                                         \
-    struct Coercion_traits< A , A >{                                        \
-        typedef Tag_true  Are_explicit_interoperable;             \
-        typedef Tag_true  Are_implicit_interoperable;             \
+    struct Coercion_traits< A , A >{                                    \
+        typedef Tag_true  Are_explicit_interoperable;                   \
+        typedef Tag_true  Are_implicit_interoperable;                   \
         typedef A Coercion_type;                                        \
         struct Cast{                                                    \
             typedef Coercion_type result_type;                          \
@@ -122,9 +117,9 @@ CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, NT )
 
 #define CGAL_DEFINE_COERCION_TRAITS_FOR_SELF_TEM(A,TEM)                 \
     template <TEM>                                                      \
-    struct Coercion_traits< A , A >{                                        \
-        typedef Tag_true  Are_explicit_interoperable;             \
-        typedef Tag_true  Are_implicit_interoperable;             \
+    struct Coercion_traits< A , A >{                                    \
+        typedef Tag_true  Are_explicit_interoperable;                   \
+        typedef Tag_true  Are_implicit_interoperable;                   \
         typedef A Coercion_type;                                        \
         struct Cast{                                                    \
             typedef Coercion_type result_type;                          \

@@ -18,7 +18,7 @@
 #ifndef CGAL_GMP_COERCION_TRAITS_H
 #define CGAL_GMP_COERCION_TRAITS_H 1
 
-#include <CGAL/basic.h>
+#include <CGAL/number_type_basic.h>
 #include <CGAL/GMP/Gmpz_type.h>
 #include <CGAL/GMP/Gmpzf_type.h>
 #include <CGAL/GMP/Gmpq_type.h>

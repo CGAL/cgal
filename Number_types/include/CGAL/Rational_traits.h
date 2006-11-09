@@ -17,7 +17,7 @@
 #ifndef CGAL_RATIONAL_TRAITS_H
 #define CGAL_RATIONAL_TRAITS_H 
 
-#include <CGAL/basic.h>
+#include <CGAL/number_type_basic.h>
 #include <CGAL/Fraction_traits.h>
 
 CGAL_BEGIN_NAMESPACE

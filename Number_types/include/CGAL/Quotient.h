@@ -29,7 +29,7 @@
 
 // The include is done before the protect macro on purpose, because
 // of a cyclic dependency.
-#include <CGAL/basic.h>
+#include <CGAL/number_type_basic.h>
 
 #ifndef CGAL_QUOTIENT_H
 #define CGAL_QUOTIENT_H
@@ -44,24 +44,13 @@
 
 #include <CGAL/Quotient_fwd.h>
 
-#include <CGAL/Algebraic_structure_traits.h>
-#include <CGAL/Real_embeddable_traits.h>
-#include <CGAL/Coercion_traits.h>
-#include <CGAL/utils.h>
-
 #include <CGAL/Interval_nt.h>
-#include <CGAL/Number_type_traits.h>
 #include <CGAL/Kernel/mpl.h>
 
 #include <boost/operators.hpp>
-#include <boost/mpl/if.hpp>
 
 #include <CGAL/Root_of_traits.h>
 #include <CGAL/make_root_of_2.h>
-
-#include <CGAL/number_utils.h>
-
-#include <CGAL/functional_base.h> // Unary_function, Binary_function
 
 CGAL_BEGIN_NAMESPACE
 

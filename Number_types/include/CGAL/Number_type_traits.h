@@ -25,10 +25,8 @@
 #ifndef CGAL_NUMBER_TYPE_TRAITS_H
 #define CGAL_NUMBER_TYPE_TRAITS_H
 
-#include <CGAL/basic.h>
+#include <CGAL/number_type_basic.h>
 #include <CGAL/Rational_traits.h>
-
-//#include <CGAL/Algebraic_structure_traits.h>
 
 CGAL_BEGIN_NAMESPACE
 

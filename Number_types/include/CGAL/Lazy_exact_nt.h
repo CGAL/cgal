@@ -26,30 +26,20 @@
 #define CGAL_To_interval(T) To_interval<T>
 
 
-#include <CGAL/basic.h>
-#include <CGAL/tags.h>
-#include <CGAL/number_utils.h>
-#include <CGAL/number_utils_classes.h>
-#include <CGAL/Number_type_traits.h>
+#include <CGAL/number_type_basic.h>
 
-#include <CGAL/Algebraic_structure_traits.h>
-#include <CGAL/Real_embeddable_traits.h>
-#include <CGAL/utils.h>
+#include <boost/iterator/transform_iterator.hpp> // for Root_of functor
+#include <boost/static_assert.hpp>
+#include <boost/operators.hpp>
 
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Handle.h>
-#include <CGAL/Kernel/mpl.h>
 #include <CGAL/NT_converter.h>
-#include <CGAL/Coercion_traits.h>
+
 #include <CGAL/Lazy_exact_nt_fwd.h>
 
 #include <CGAL/Profile_counter.h>
 
-#include <CGAL/functional_base.h> // Unary_function, Binary_function
-#include <boost/iterator/transform_iterator.hpp> // for Root_of functor
-#include <boost/static_assert.hpp>
-
-#include <boost/operators.hpp>
 
 #include <CGAL/Root_of_traits.h>
 

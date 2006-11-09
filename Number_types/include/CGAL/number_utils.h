@@ -24,10 +24,7 @@
 #ifndef CGAL_NUMBER_UTILS_H
 #define CGAL_NUMBER_UTILS_H
 
-#include <CGAL/config.h>
-#include <CGAL/enum.h>
-#include <CGAL/Coercion_traits.h>
-//#include <CGAL/number_utils_fwd.h>
+#include <CGAL/number_type_basic.h>
 
 CGAL_BEGIN_NAMESPACE
 CGAL_NTS_BEGIN_NAMESPACE

@@ -42,10 +42,10 @@
 
 #endif
 
+#include <CGAL/basic.h>
+
 // CGAL uses std::min and std::max
 #include <algorithm>
-
-#include <CGAL/config.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -54,11 +54,14 @@ using std::max;
 
 CGAL_END_NAMESPACE
 
-#include <CGAL/functional_base.h> // Unary_function, Binary_function
+// basic tools needed in several files
+#include <boost/type_traits/is_same.hpp>
 
-#include <CGAL/Kernel/mpl.h>
+#include <CGAL/functional_base.h> // Unary_function, Binary_function
+#include <CGAL/Kernel/mpl.h>      // First_if_different
 #include <CGAL/known_bit_size_integers.h>
-#include <CGAL/enum.h>
+#include <CGAL/enum.h>            // CGAL::Sign etc.  
+#include <CGAL/tags.h>            // Tag_true / Tag_false
 
 #include <CGAL/Coercion_traits.h>
 #include <CGAL/Algebraic_structure_traits.h>
@@ -66,31 +69,32 @@ CGAL_END_NAMESPACE
 #include <CGAL/Number_type_traits.h> 
 
 #include <CGAL/Fraction_traits.h>
-//#include <CGAL/Scalar_factor_traits.h>
+#include <CGAL/Rational_traits.h>
+//#include <CGAL/Scalar_factor_traits.h>    
 //#include <CGAL/Algebraic_number_traits.h>
 
+#include <CGAL/Needs_parens_as_product.h>
 
 #include <CGAL/utils_classes.h>
 #include <CGAL/utils.h>
 #include <CGAL/number_utils.h>
-#include <CGAL/tags.h>
-#include <cmath>
+#include <CGAL/number_utils_classes.h> 
 
-//#include <CGAL/Algebraic_structure_traits.h>
-//#include <CGAL/Real_embeddable_traits.h>
-//#include <CGAL/number_utils_fwd.h>
+
+#include <CGAL/FPU.h>
 
 #include <CGAL/float.h>
 #include <CGAL/double.h>
 #include <CGAL/long_double.h>
 #include <CGAL/int.h>
+
+#include <CGAL/Interval_nt.h> // needed by To_interval(long double)
 #ifdef CGAL_USE_LONG_LONG
 #include <CGAL/long_long.h>
 #endif
 
-#include <CGAL/FPU.h>
 
-#include <CGAL/Interval_nt_fwd.h>
+//#include <CGAL/Interval_nt_fwd.h>
 
 // Including all number type files is necessary for compilers implementing
 // two-stage name lookup (like g++ >= 3.4).
@@ -98,15 +102,9 @@ CGAL_END_NAMESPACE
 
 #ifndef CGAL_CFG_NO_TWO_STAGE_NAME_LOOKUP
 
-#include <CGAL/Interval_nt_fwd.h>
 #include <CGAL/Lazy_exact_nt_fwd.h>
-//#include <CGAL/MP_Float_fwd.h>
 #include <CGAL/Nef_polynomial_fwd.h>
 #include <CGAL/Number_type_checker_fwd.h>
-
-//#ifdef CGAL_USE_GMP
-//#include <CGAL/Gmpzq_fwd.h>
-//#endif
 
 #ifdef CGAL_USE_GMPXX
 #  include <CGAL/gmpxx_fwd.h>
@@ -118,57 +116,7 @@ CGAL_END_NAMESPACE
 
 #include <CGAL/make_root_of_2.h>
 
-// We must also include the following three, because of the overloadings
-// for Quotient<MP_Float> and Quotient<Gmpz/Gmpzf>, which triggers their
-// instantiation, even if only to_double(double) is called, at least
-// when Quotient is defined...
-
-//#include <CGAL/MP_Float.h>
-#ifdef CGAL_USE_GMP
-//#include <CGAL/Gmpz.h>
-//#include <CGAL/Gmpq.h>
-//#include <CGAL/Gmpzf.h>
-#endif
-
 CGAL_BEGIN_NAMESPACE
-
-#if 0
-// Polynomial
-
-template <typename T> class Polynomial;
-
-template <typename ET>
-double to_double(const Polynomial<ET> &);
-
-template <typename ET>
-std::pair<double,double> to_interval(const Polynomial<ET> &);
-
-template <typename ET>
-Sign sign(const Polynomial<ET> &);
-
-
-template <typename ET>
-Polynomial<ET> abs(const Polynomial<ET> &);
-
-template <typename ET>
-bool is_finite(const Polynomial<ET> &);
-
-template <typename ET>
-bool is_valid(const Polynomial<ET> &);
-
-template <typename ET>
-Polynomial<ET> gcd(const Polynomial<ET> &, const Polynomial<ET> &);
-
-// Nef_polynomial
-
-template <typename T> class Nef_polynomial;
-
-template <typename ET>
-double to_double(const Nef_polynomial<ET> &);
-
-template <typename ET>
-Nef_polynomial<ET> gcd(const Nef_polynomial<ET> &, const Nef_polynomial<ET> &);
-#endif
 
 CGAL_END_NAMESPACE
 

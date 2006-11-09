@@ -26,13 +26,9 @@
 #ifndef CGAL_NUMBER_UTILS_CLASSES_H
 #define CGAL_NUMBER_UTILS_CLASSES_H 1
 
-#include <CGAL/basic.h>
-#include <CGAL/config.h>
-
+#include <CGAL/number_type_basic.h>
 #include <algorithm>
 #include <utility>
-#include <CGAL/functional_base.h>
-#include <CGAL/number_utils.h>
 
 CGAL_BEGIN_NAMESPACE
 

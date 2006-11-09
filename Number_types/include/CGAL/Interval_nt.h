@@ -35,18 +35,8 @@
 // towards -infinity, it's enough to take the opposite of some of the operand,
 // and the opposite of the result (see operator+, operator*,...).
 
-#include <CGAL/basic.h>
-#include <iostream>
-#include <CGAL/FPU.h>
+#include <CGAL/number_type_basic.h>
 #include <CGAL/Uncertain.h>
-#include <CGAL/Interval_nt_fwd.h>
-#include <CGAL/functional_base.h> // Unary_function, Binary_function
-
-#include <CGAL/Algebraic_structure_traits.h>
-#include <CGAL/Real_embeddable_traits.h>
-#include <CGAL/Coercion_traits.h>
-#include <CGAL/number_utils.h>
-#include <CGAL/utils.h>
 
 
 CGAL_BEGIN_NAMESPACE

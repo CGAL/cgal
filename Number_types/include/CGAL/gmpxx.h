@@ -24,7 +24,7 @@
 #ifndef CGAL_GMPXX_H
 #define CGAL_GMPXX_H
 
-#include <CGAL/basic.h>
+#include <CGAL/number_type_basic.h>
 
 #include <gmpxx.h>
 #include <utility>

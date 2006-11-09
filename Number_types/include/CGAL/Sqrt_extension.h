@@ -28,9 +28,7 @@
 #ifndef CGAL_SQRT_EXTENSION_H
 #define CGAL_SQRT_EXTENSION_H
 
-#include <CGAL/basic.h>
-#include <CGAL/utils.h>
-#include <CGAL/Needs_parens_as_product.h>
+#include <CGAL/number_type_basic.h>
 
 #include <numeric> // fro std::accumulate
 #include <boost/numeric/interval.hpp> // Needed by To_interval
@@ -38,7 +36,7 @@
 //#include <boost/iterator/transform_iterator.hpp>
 //#include <boost/mpl/if.hpp>
 
-//#include <CGAL/NiX/basic.h>
+//#include <CGAL/NiX/number_type_basic.h>
 
 // We have to define the macros befor including Polynomials, 
 // since they cause a doxygen error otherwise.. (version 1.2.4)

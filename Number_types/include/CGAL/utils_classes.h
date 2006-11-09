@@ -11,8 +11,7 @@
 
 #ifndef CGAL_UTILS_CLASSES_H
 #define CGAL_UTILS_CLASSES_H
-#include <CGAL/basic.h>
-#include <CGAL/functional_base.h> // Unary_function, Binary_function
+#include <CGAL/number_type_basic.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -29,7 +28,7 @@ struct Min :public Binary_function< NT, NT, NT > {
  Min() {}
  Min(const Compare& c_) : c(c_) {}
  NT operator()( const NT& x, const NT& y) const
- { return min BOOST_PREVENT_MACRO_SUBSTITUTION ( x, y, c); }
+    { return (std::min) BOOST_PREVENT_MACRO_SUBSTITUTION ( x, y, c); }
 protected:
  Compare c;
 };

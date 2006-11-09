@@ -26,7 +26,7 @@
 #ifndef CGAL_FRACTION_TRAITS_H
 #define CGAL_FRACTION_TRAITS_H 
 
-#include <CGAL/basic.h>
+#include <CGAL/number_type_basic.h>
 
 CGAL_BEGIN_NAMESPACE
 

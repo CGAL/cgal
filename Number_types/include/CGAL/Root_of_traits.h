@@ -21,7 +21,7 @@
 #ifndef CGAL_ROOT_OF_TRAITS_H
 #define CGAL_ROOT_OF_TRAITS_H
 
-#include <CGAL/basic.h>
+#include <CGAL/number_type_basic.h>
 #include <CGAL/Root_of_2_fwd.h>
 #include <CGAL/Quotient_fwd.h>
 

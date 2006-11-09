@@ -22,7 +22,7 @@
 #define CGAL_GMPZF_H
 
 // includes
-#include <CGAL/basic.h>
+#include <CGAL/number_type_basic.h>
 #include <CGAL/GMP/Gmpzf_type.h>
 #include <CGAL/Gmp_coercion_traits.h>
 #include <CGAL/Gmpz.h>

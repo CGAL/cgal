@@ -25,7 +25,7 @@
 #ifndef CGAL_GMPQ_H
 #define CGAL_GMPQ_H
 
-#include <CGAL/basic.h>
+#include <CGAL/number_type_basic.h>
 #include <CGAL/GMP/Gmpq_type.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmp_coercion_traits.h>

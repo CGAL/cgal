@@ -25,7 +25,7 @@
 #define CGAL_SIMPLEST_RATIONAL_IN_INTERVAL_H
 
 
-#include <CGAL/basic.h>
+#include <CGAL/number_type_basic.h>
 #include <CGAL/to_rational.h>
 #include <cassert>
 #include <climits>
