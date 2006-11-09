@@ -78,7 +78,7 @@ int main () {
 	// find the roots of p
 	std::vector<Algebraic> rootsp (3);
 	std::vector<Algebraic>::iterator p_end =
-		ker.construct_solve_1_object() (p, rootsp.begin (), false);
+		ker.construct_solve_1_object()(p,rootsp.begin());
 	std::vector<Algebraic>::iterator itp;
 	std::cout << "roots of p:" << std::endl;
 	for (itp = rootsp.begin (); itp != p_end; ++itp)
@@ -93,7 +93,7 @@ int main () {
 	// we solve it
 	std::vector<Algebraic> rootsq (1);
 	std::vector<Algebraic>::iterator q_end =
-		ker.construct_solve_1_object() (q, rootsq.begin (), false);
+		ker.construct_solve_1_object()(q,rootsq.begin());
 	std::vector<Algebraic>::iterator itq;
 	std::cout << "roots of q:" << std::endl;
 	for (itq = rootsq.begin (); itq != q_end; ++itq)
@@ -132,8 +132,14 @@ int main () {
 	print_comp (std::cout,
 			ker.construct_compare_1_object()(rootsp[2], rootsq[0]))
 		<< std::endl;
-	show_alg (std::cout, rootsp[2]) << std::endl;
+	show_alg(std::cout<<"\n",rootsp[2])<<std::endl;
 	show_alg (std::cout, rootsq[0]) << std::endl;
+
+	std::vector<Algebraic>rp=p.get_roots();
+	std::cout<<"\np has "<<rp.size()<<" roots, they are:"<<std::endl;
+	std::vector<Algebraic>::iterator roots_it;
+	for(roots_it=rp.begin();roots_it!=rp.end();++roots_it)
+		std::cout<<*roots_it<<std::endl;
 
 	return 0;
 }

@@ -26,8 +26,8 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CGAL_OBJECTS = \
-Gbrs_polynomial_1$(OBJ_EXT) \
 Gbrs_algebraic_1$(OBJ_EXT) \
+Gbrs_polynomial_1$(OBJ_EXT) \
 Gbrs_solve_1$(OBJ_EXT) \
 Gbrs_polynomial_2$(OBJ_EXT)
 

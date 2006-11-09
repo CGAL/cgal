@@ -21,27 +21,30 @@
 #define CGAL_GBRS_POLYNOMIAL_1_H
 
 #include <iostream>
+#include <vector>
 #include <CGAL/assertions.h>
 #include <CGAL/basic.h>
 #include <CGAL/Gmpz.h>
-#include <CGAL/Gbrs_algebraic_1.h>
 #include <gmp.h>
 
 CGAL_BEGIN_NAMESPACE
 
+class Algebraic_1;
+
 class Rational_polynomial_1 {
 	private:
-		int degree;	// degree
-		mpz_t* coef;	// the coefficients
-		inline int calc_index (int) const;	// index of the element
+		int degree;
+		mpz_t* coef;
+		bool solved;
+		std::vector<Algebraic_1>roots;
+
+		int calc_index(int)const;
 	public:
-		// construction and destruction
 		Rational_polynomial_1 ();
 		Rational_polynomial_1 (const Rational_polynomial_1 &);
 		Rational_polynomial_1 (unsigned int);
 		Rational_polynomial_1 (int);
 		~Rational_polynomial_1 ();
-		// init functions
 		void set_degree (int);
 		void set_coef (int, const mpz_t &);
 		void set_coef (int, const CGAL::Gmpz &);
@@ -52,19 +55,20 @@ class Rational_polynomial_1 {
 		void scale (const int);
 		void scale (const mpz_t &);
 		void scale (const CGAL::Gmpz &);
-		// access to the data
 		int get_degree () const;
 		int get_number_of_monomials () const;
 		mpz_t* get_coefs () const;
 		void get_coef (int, mpz_t *) const;
+		void set_solved();
+		void clear_solved();
+		bool get_solved()const;
+		std::vector<Algebraic_1>get_roots()const;
+		void set_root(const Algebraic_1&);
 		//CGAL::Algebraic_1 eval (const CGAL::Algebraic_1 &) const;
 		CGAL::Gmpz eval (const CGAL::Gmpz &) const;
 		Rational_polynomial_1 derive () const;
-		// assignment
 		Rational_polynomial_1& operator= (const Rational_polynomial_1 &);
-		// i/o functions
 		std::ostream& show (std::ostream &) const;
-		// overcharging
 		Rational_polynomial_1 operator- () const;
 		Rational_polynomial_1 operator+ (const Rational_polynomial_1 &) const;
 		Rational_polynomial_1& operator+= (const Rational_polynomial_1 &);
@@ -81,22 +85,15 @@ std::ostream& operator<< (std::ostream &, const Rational_polynomial_1 &);
 
 // /////////////////
 // inline functions
-
-inline int Rational_polynomial_1::calc_index(int pow_x) const{
-	return pow_x;
-};
-
-inline int Rational_polynomial_1::get_degree() const{
-	return (int)degree;
-};
-
-inline int Rational_polynomial_1::get_number_of_monomials() const{
-	return (degree+1);
-};
-
-inline mpz_t* Rational_polynomial_1::get_coefs() const{
-	return coef;
-};
+inline int Rational_polynomial_1::calc_index(int pow_x)const{return pow_x;};
+inline int Rational_polynomial_1::get_degree()const{return(int)degree;};
+inline int Rational_polynomial_1::get_number_of_monomials()const{
+	return(degree+1);};
+inline mpz_t* Rational_polynomial_1::get_coefs()const{return coef;};
+inline bool Rational_polynomial_1::get_solved()const{return solved;};
+inline std::vector<Algebraic_1>Rational_polynomial_1::get_roots()const{return roots;};
+inline void Rational_polynomial_1::set_root(const Algebraic_1 &r){
+	roots.push_back(r);};
 
 CGAL_END_NAMESPACE
 

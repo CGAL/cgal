@@ -37,6 +37,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
+#include <CGAL/Gbrs_polynomial_1.h>
 #include <CGAL/Gbrs_algebraic_1.h>
 #include <iostream>
 #include <mpfi.h>
@@ -136,23 +137,24 @@ Algebraic_1::Algebraic_1 (mpfi_t &i) {
 };
 
 // this is a copy constructor that copies everything, including the mpfi
-Algebraic_1::Algebraic_1 (const Algebraic_1 &i) {
-	mpfi_set (mpfi (), i.mpfi ());
-	set_pol (i.pol ());
-	set_nr (i.nr ());
-	set_mult (i.mult ());
-	set_rsprec (i.rsprec ());
+Algebraic_1::Algebraic_1(const Algebraic_1 &i){
+	mpfi_set(mpfi(),i.mpfi());	// this copies the mpfi
+	//*mpfi()=*(i.mpfi());	// this copies the pointer to the mpfi
+	set_pol(i.pol());
+	set_nr(i.nr());
+	set_mult(i.mult());
+	set_rsprec(i.rsprec());
 };
 
 // interesting constructor
-Algebraic_1::Algebraic_1 (const mpfi_ptr &i, const Rational_polynomial_1 &p,
-		const int n, const int m, const int rsp) {
-	mpfi_clear(mpfi());	// not sure whether this is right...
+Algebraic_1::Algebraic_1(const mpfi_ptr &i,Rational_polynomial_1 &p,
+		const int n,const int m,const int rsp){
 	*mpfi()=*i;
-	set_pol (p);
-	set_nr (n);
-	set_mult (m);
-	set_rsprec (rsp);
+	set_pol(p);
+	set_nr(n);
+	set_mult(m);
+	set_rsprec(rsp);
+	p.set_root(*this);
 };
 
 // destructor

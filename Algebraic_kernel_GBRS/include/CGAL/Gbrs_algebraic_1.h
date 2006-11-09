@@ -25,7 +25,6 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
-#include <CGAL/Gbrs_polynomial_1.h>
 #include <exception>
 #include <iostream>
 #include <mpfi.h>
@@ -43,6 +42,8 @@ class comparison_overlap_exn : public std::exception {
 };
 
 void overlap ();
+
+class Rational_polynomial_1;
 
 // The representation of intervals.
 class Algebraic_1_rep {
@@ -111,7 +112,7 @@ public:
 	Algebraic_1 (const Algebraic_1 &);
 
 	// the only interesting constructor
-	Algebraic_1 (const mpfi_ptr &, const Rational_polynomial_1 &,
+	Algebraic_1(const mpfi_ptr&,Rational_polynomial_1&,
 			const int, const int, const int);
 
 	Algebraic_1& operator= (const long int);

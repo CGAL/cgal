@@ -20,60 +20,67 @@
 #include <CGAL/assertions.h>
 #include <CGAL/basic.h>
 #include <CGAL/Gmpz.h>
-#include <CGAL/Gbrs_algebraic_1.h>
 #include <CGAL/Gbrs_polynomial_1.h>
+#include <CGAL/Gbrs_algebraic_1.h>
 #include <iostream>
 #include <gmp.h>
 
 CGAL_BEGIN_NAMESPACE
 
 // constructors
-Rational_polynomial_1::Rational_polynomial_1 () {
-	degree = 0;
-	coef = (mpz_t*)malloc (sizeof(mpz_t));
-	mpz_init (coef[0]);
+Rational_polynomial_1::Rational_polynomial_1():degree(0),solved(false){
+	coef=(mpz_t*)malloc(sizeof(mpz_t));
+	mpz_init(coef[0]);
+	roots.clear();
 };
 
-Rational_polynomial_1::Rational_polynomial_1 (unsigned int d) {
-	degree = (int)d;
-	coef = (mpz_t*)malloc (sizeof(mpz_t)*(degree+1));
-	for (int i=0; i<degree+1; ++i)
-		mpz_init (coef[i]);
+Rational_polynomial_1::Rational_polynomial_1(unsigned int d):solved(false){
+	degree=(int)d;
+	coef=(mpz_t*)malloc(sizeof(mpz_t)*(degree+1));
+	for(int i=0;i<degree+1;++i)
+		mpz_init(coef[i]);
+	roots.clear();
 };
 
-Rational_polynomial_1::Rational_polynomial_1 (int d) {
-	degree = d<0?0:d;
-	coef = (mpz_t*)malloc (sizeof(mpz_t)*(degree+1));
-	for (int i=0; i<degree+1; ++i)
-		mpz_init (coef[i]);
+Rational_polynomial_1::Rational_polynomial_1(int d):solved(false){
+	degree=d<0?0:d;
+	coef=(mpz_t*)malloc(sizeof(mpz_t)*(degree+1));
+	for(int i=0;i<degree+1;++i)
+		mpz_init(coef[i]);
+	roots.clear();
 };
 
-Rational_polynomial_1::Rational_polynomial_1 (const Rational_polynomial_1 &p) {
-	degree = p.degree;
-	mpz_t *p_coef = p.get_coefs ();
-	coef = (mpz_t*)malloc (sizeof(mpz_t)*(degree+1));
+Rational_polynomial_1::Rational_polynomial_1(const Rational_polynomial_1 &p){
+	degree=p.degree;
+	mpz_t *p_coef=p.get_coefs();
+	coef=(mpz_t*)malloc(sizeof(mpz_t)*(degree+1));
 	// we have to copy the contents, not just the pointer
-	for (int i=0; i<degree+1; ++i) {
-		mpz_init (coef[i]);
-		mpz_set (coef[i], p_coef[i]);
+	for(int i=0;i<degree+1;++i){
+		mpz_init(coef[i]);
+		mpz_set(coef[i],p_coef[i]);
 		}
+	solved=p.get_solved();
+	roots=p.get_roots();
 };
 
 // destructor
 Rational_polynomial_1::~Rational_polynomial_1 () {
-	for (int i=0; i<degree+1; ++i)
-		mpz_clear (coef[i]);
-	free (coef);
+	for(int i=0;i<degree+1;++i)
+		mpz_clear(coef[i]);
+	free(coef);
+	if(solved)
+		roots.clear();
 };
 
-void Rational_polynomial_1::set_degree (int d) {	// noone should call this function
-	for (int i=0; i<degree+1; ++i)	// free the old coefficients
-		mpz_clear (coef[i]);
-	free (coef);
-	degree = d;	// do it again
-	coef = (mpz_t*)malloc (sizeof(mpz_t)*(degree+1));
-	for (int i=0; i<degree+1; ++i)
-		mpz_init (coef[i]);
+void Rational_polynomial_1::set_degree(int d){	// dangerous function!
+	for(int i=0;i<degree+1;++i)	// free the old coefficients
+		mpz_clear(coef[i]);
+	free(coef);
+	degree=d;
+	coef=(mpz_t*)malloc(sizeof(mpz_t)*(degree+1));
+	for(int i=0;i<degree+1;++i)
+		mpz_init(coef[i]);
+	solved=false;
 	return;
 };
 
@@ -134,6 +141,18 @@ void Rational_polynomial_1::get_coef (int pow_x, mpz_t *c) const {
 	return;
 };
 
+void Rational_polynomial_1::set_solved(){
+	solved=true;
+	roots.clear();
+};
+
+void Rational_polynomial_1::clear_solved(){
+	if(solved)
+		roots.clear();
+	solved=false;
+	return;
+};
+
 /*CGAL::Algebraic_1 Rational_polynomial_1::eval (const CGAL::Algebraic_1 &x) const {
 	Algebraic_1 result(0);
 	Algebraic_1 x_pow(1);
@@ -167,7 +186,6 @@ CGAL::Gmpz Rational_polynomial_1::eval (const CGAL::Gmpz &x) const {
 	return ret;
 };
 
-// derive polynomial
 Rational_polynomial_1 Rational_polynomial_1::derive () const {
 	mpz_t coef_old, coef_new, temp_x;
 	mpz_init (coef_old);
@@ -198,6 +216,7 @@ Rational_polynomial_1& Rational_polynomial_1::operator= (const Rational_polynomi
 		mpz_init (coef[i]);
 		mpz_set (coef[i], p.coef[i]);
 		}
+	solved=p.get_solved();
 	return *this;
 };
 
@@ -241,7 +260,6 @@ std::ostream& Rational_polynomial_1::show (std::ostream &s) const {
 	return s;
 };
 
-// overcharging
 Rational_polynomial_1 Rational_polynomial_1::operator- () const {
 	Rational_polynomial_1 opposite (degree);	// the opposite has the same degree
 	mpz_t temp;
@@ -299,16 +317,18 @@ Rational_polynomial_1 Rational_polynomial_1::operator+ (const Rational_polynomia
 Rational_polynomial_1& Rational_polynomial_1::operator+= (const Rational_polynomial_1 &s) {
 	Rational_polynomial_1 aux (*this);
 	*this = aux + s;
+	solved=false;
 	return *this;
 };
 
 Rational_polynomial_1 Rational_polynomial_1::operator- (const Rational_polynomial_1 &s) const {
-	return *this + (-s);
+	return (*this+(-s));
 };
 
 Rational_polynomial_1& Rational_polynomial_1::operator-= (const Rational_polynomial_1 &s) {
 	Rational_polynomial_1 aux (*this);
 	*this = aux - s;
+	solved=false;
 	return *this;
 };
 
@@ -328,6 +348,7 @@ void Rational_polynomial_1::shift (int shiftn) {
 		mpz_init (new_coef[i]);
 	degree += shiftn;
 	coef = new_coef;
+	solved=false;
 	return;
 };
 
@@ -348,6 +369,7 @@ Rational_polynomial_1 Rational_polynomial_1::operator* (const Rational_polynomia
 Rational_polynomial_1& Rational_polynomial_1::operator*= (const Rational_polynomial_1 &f) {
 	Rational_polynomial_1 aux (*this);
 	*this = aux * f;
+	solved=false;
 	return *this;
 };
 

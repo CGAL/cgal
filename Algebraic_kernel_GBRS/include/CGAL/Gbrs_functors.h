@@ -79,15 +79,15 @@ class Solve_1 {
 	typedef typename AK::Polynomial_1	Polynomial_1;
 	public:
 	template <class OutputIterator>
-	OutputIterator operator() (const Polynomial_1 &p,
-			OutputIterator res,
-			bool known_to_be_square_free) const {
+	OutputIterator operator()(Polynomial_1 &p,OutputIterator res,
+			bool known_to_be_square_free=false) const {
 		if (known_to_be_square_free)
 			return res;
 		mpfi_ptr *x;
 		int nr;
 		CGAL_assertion_msg (((nr = solve_1 (x, p)) >= 0),
 				"error in resolution");
+		p.set_solved();
 		if (nr)
 			for (int i=0; i<nr; ++i) {
 				// multiplicity is -1 (we didn't calculate it)
@@ -101,7 +101,7 @@ class Solve_1 {
 	// TODO: how the hell does RS compute the multiplicity???
 	template <class OutputIteratorRoots, class OutputIteratorMult>
 	std::pair<OutputIteratorRoots, OutputIteratorMult>
-	operator() (const Polynomial_1 &p,
+	operator() (Polynomial_1 &p,
 			OutputIteratorRoots roots,
 			OutputIteratorMult mult) const {
 		CGAL_assertion_msg (false, "not implemented yet");

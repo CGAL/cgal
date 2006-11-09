@@ -36,7 +36,7 @@ int init_solver(){
 	return 0;
 }
 
-int affiche_sols_eqs (mpfi_ptr *&x) {
+int affiche_sols_eqs(mpfi_ptr *&x){
 	int ident_sols_eqs,nb_elts,ident_node,ident_vect,i,ident_elt;
 	ident_sols_eqs=rs_get_default_sols_eqs ();
 	nb_elts=rs_export_list_vect_ibfr_nb(ident_sols_eqs);
@@ -110,17 +110,13 @@ void create_rs_uconstr (mpz_t ** list_constr,
 	rs_dappend_list_sup_bz (ident_list, ident_poly);
 }
 
-int solve_1 (mpfi_ptr *&x, const Rational_polynomial_1 &p1, unsigned int prec) {
-	// the solver must be initialized
-	rs_reset_all ();
-	create_rs_upoly
-		(p1.get_coefs (), p1.get_degree (), rs_get_default_up ());
-	set_rs_precisol (prec);
-	set_rs_verbose (CGAL_RS_VERB);
-	rs_run_algo ("UISOLE");
-	// XXX remember to free the results array x and
-	// clear all the mpfi_t elements
-	return affiche_sols_eqs (x);	// return the number of solutions
+int solve_1(mpfi_ptr *&x,Rational_polynomial_1 &p1,unsigned int prec){
+	rs_reset_all();
+	create_rs_upoly(p1.get_coefs(),p1.get_degree(),rs_get_default_up());
+	set_rs_precisol(prec);
+	set_rs_verbose(CGAL_RS_VERB);
+	rs_run_algo("UISOLE");
+	return affiche_sols_eqs(x);
 }
 
 // TODO: when implemented UNDECIDED as a valid CGAL sign type,
