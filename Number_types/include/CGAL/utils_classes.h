@@ -38,7 +38,7 @@ struct Max :public Binary_function< NT, NT, NT > {
  Max() {}
  Max(const Compare& c_) : c(c_) {}
  NT operator()( const NT& x, const NT& y) const
- { return max BOOST_PREVENT_MACRO_SUBSTITUTION ( x, y, c); }
+    { return (std::max) BOOST_PREVENT_MACRO_SUBSTITUTION ( x, y, c); }
 protected:
  Compare c;
 };

@@ -44,16 +44,6 @@
 
 #include <CGAL/basic.h>
 
-// CGAL uses std::min and std::max
-#include <algorithm>
-
-CGAL_BEGIN_NAMESPACE
-
-using std::min;
-using std::max;
-
-CGAL_END_NAMESPACE
-
 // basic tools needed in several files
 #include <boost/type_traits/is_same.hpp>
 

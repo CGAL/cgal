@@ -30,12 +30,12 @@ CGAL_BEGIN_NAMESPACE
 
 template <typename ET> class Lazy_exact_nt;
 
-template <typename ET>
-Lazy_exact_nt<ET> min BOOST_PREVENT_MACRO_SUBSTITUTION 
-(const Lazy_exact_nt<ET> &, const Lazy_exact_nt<ET> &);
-template <typename ET>
-Lazy_exact_nt<ET> max BOOST_PREVENT_MACRO_SUBSTITUTION 
-(const Lazy_exact_nt<ET> &, const Lazy_exact_nt<ET> &);
+// template <typename ET>
+// Lazy_exact_nt<ET> min BOOST_PREVENT_MACRO_SUBSTITUTION 
+// (const Lazy_exact_nt<ET> &, const Lazy_exact_nt<ET> &);
+// template <typename ET>
+// Lazy_exact_nt<ET> max BOOST_PREVENT_MACRO_SUBSTITUTION 
+// (const Lazy_exact_nt<ET> &, const Lazy_exact_nt<ET> &);
 
 //template <typename ET> Lazy_exact_nt<ET> 
 //gcd(const Lazy_exact_nt<ET> &, const Lazy_exact_nt<ET> &);

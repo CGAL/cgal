@@ -587,25 +587,38 @@ operator/ (const Interval_nt<Protected> & a, int b)
 }
 
 // TODO: What about these two guys? Where do they belong to?
-template <bool Protected>
-inline
-Interval_nt<Protected>
-min BOOST_PREVENT_MACRO_SUBSTITUTION (const Interval_nt<Protected> & d, 
-                                      const Interval_nt<Protected> & e)
-{
-  return Interval_nt<Protected>((std::min)(d.inf(), e.inf()),
-		                (std::min)(d.sup(), e.sup()));
-}
+
+
 
 template <bool Protected>
-inline
-Interval_nt<Protected>
-max BOOST_PREVENT_MACRO_SUBSTITUTION (const Interval_nt<Protected> & d, 
-                                      const Interval_nt<Protected> & e)
+struct Min <Interval_nt<Protected> >
+    : public Binary_function<Interval_nt<Protected>,
+                             Interval_nt<Protected>,
+                             Interval_nt<Protected> > 
 {
-  return Interval_nt<Protected>((std::max)(d.inf(), e.inf()),
-		                (std::max)(d.sup(), e.sup()));
-}
+    Interval_nt<Protected> operator()( const Interval_nt<Protected>& d, 
+                                       const Interval_nt<Protected>& e) const
+    {   
+        return Interval_nt<Protected>(
+                (std::min)(d.inf(), e.inf()),
+                (std::min)(d.sup(), e.sup()));
+    }
+};
+
+template <bool Protected>
+struct Max <Interval_nt<Protected> >
+    : public Binary_function<Interval_nt<Protected>,
+                             Interval_nt<Protected>,
+                             Interval_nt<Protected> > 
+{
+    Interval_nt<Protected> operator()( const Interval_nt<Protected>& d, 
+                                       const Interval_nt<Protected>& e) const
+    {   
+        return Interval_nt<Protected>(
+                (std::max)(d.inf(), e.inf()),
+                (std::max)(d.sup(), e.sup()));
+    }
+};
 
 
 // TODO : document, when we are OK with the interface.

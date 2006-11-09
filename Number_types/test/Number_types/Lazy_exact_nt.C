@@ -68,7 +68,7 @@ template <class NT>
 NT
 my_min(const NT& n, const NT& m)
 {
-  return min(n, m);
+    return ::CGAL::min(n, m);
 }
 
 } // namespace CGAL

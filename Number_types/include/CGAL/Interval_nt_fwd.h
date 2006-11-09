@@ -33,14 +33,6 @@ CGAL_BEGIN_NAMESPACE
 
 template <bool> class Interval_nt;
 
-template <bool Protected>
-Interval_nt<Protected>
-min BOOST_PREVENT_MACRO_SUBSTITUTION (const Interval_nt<Protected> &, const Interval_nt<Protected> &);
-
-template <bool Protected>
-Interval_nt<Protected>
-max  BOOST_PREVENT_MACRO_SUBSTITUTION (const Interval_nt<Protected> &, const Interval_nt<Protected> &);
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_INTERVAL_NT_FWD_H

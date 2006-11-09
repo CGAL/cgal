@@ -1608,25 +1608,27 @@ CGAL_COERCION_TRAITS_LAZY_EXACT(double);
 CGAL_COERCION_TRAITS_LAZY_EXACT(float);
 #undef CGAL_COERCION_TRAITS_LAZY_EXACT
 
-template <typename ET>
-inline
-Lazy_exact_nt<ET>
-min BOOST_PREVENT_MACRO_SUBSTITUTION (const Lazy_exact_nt<ET> & a,
-				      const Lazy_exact_nt<ET> & b)
-{
-  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-  return new Lazy_exact_Min<ET>(a, b);
-}
+template < class ET >
+struct Min <Lazy_exact_nt<ET> >
+    : public Binary_function<Lazy_exact_nt<ET>,Lazy_exact_nt<ET>,Lazy_exact_nt<ET> > {
+    
+    Lazy_exact_nt<ET> operator()( const Lazy_exact_nt<ET>& x, const Lazy_exact_nt<ET>& y) const
+    {   
+        CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+        return new Lazy_exact_Min<ET>(x, y);
+    }
+};
 
-template <typename ET>
-inline
-Lazy_exact_nt<ET>
-max BOOST_PREVENT_MACRO_SUBSTITUTION (const Lazy_exact_nt<ET> & a,
-				      const Lazy_exact_nt<ET> & b)
-{
-  CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-  return new Lazy_exact_Max<ET>(a, b);
-}
+template < class ET >
+struct Max <Lazy_exact_nt<ET> >
+    : public Binary_function<Lazy_exact_nt<ET>,Lazy_exact_nt<ET>,Lazy_exact_nt<ET> > {
+    
+    Lazy_exact_nt<ET> operator()( const Lazy_exact_nt<ET>& x, const Lazy_exact_nt<ET>& y) const
+    {   
+        CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+        return new Lazy_exact_Max<ET>(x, y);
+    }
+};
 
 
 template <typename ET>
