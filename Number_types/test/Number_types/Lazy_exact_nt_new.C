@@ -56,9 +56,10 @@ void test_lazy_exact_nt() {
         
         LI  i(4);
         LR  r(4);
-        CGAL_test_assert( typename CT::Cast()((i*i+i)/i-i) == LR(1));
-        CGAL_test_assert( typename CT::Cast()((i*i+r)/i-i) == LR(1));
-        CGAL_test_assert( typename CT::Cast()((i*r+r)/i-i) == LI(1));
+        typename CT::Cast cast;
+        CGAL_test_assert( cast ( (i*i+i) / i-i ) == LR(1));
+        CGAL_test_assert( cast ( (i*i+r) / i-i ) == LR(1));
+        CGAL_test_assert( cast ( (i*r+r) / i-i ) == LI(1));
     }{  // see also  Coercion_traits_test.C
 #ifdef CGAL_USE_LEDA
 #ifdef CGAL_USE_CORE
