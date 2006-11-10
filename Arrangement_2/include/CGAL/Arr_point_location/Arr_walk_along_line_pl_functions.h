@@ -361,7 +361,7 @@ _vertical_ray_shoot (const Point_2& p,
     {
       // Compare the current isolated vertex with the closest halfedge.
       if (closest_he == invalid_he ||
-          closest_he->is_fictitious() || //BZBZ
+          closest_he->is_fictitious() ||
           compare_y_at_x (iso_verts_it->point(),
                           closest_he->curve()) == point_above_under)
       {
