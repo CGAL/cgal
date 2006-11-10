@@ -34,13 +34,6 @@
 #include <CGAL/leda_real.h>
 #endif // CGAL_USE_LEDA
 
-#ifdef CGAL_USE_CORE
-#include <CGAL/CORE_BigFloat.h>
-#include <CGAL/CORE_BigInt.h>
-#include <CGAL/CORE_BigRat.h>
-#include <CGAL/CORE_Expr.h>
-#endif // CGAL_USE_CORE
-
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpzf.h>
@@ -50,6 +43,14 @@
 #include <CGAL/gmpxx.h>
 #endif // CGAL_USE_GMPXX
 #endif // CGAL_USE_GMP
+
+#ifdef CGAL_USE_CORE
+#include <CGAL/CORE_BigFloat.h>
+#include <CGAL/CORE_BigInt.h>
+#include <CGAL/CORE_BigRat.h>
+#include <CGAL/CORE_Expr.h>
+#endif // CGAL_USE_CORE
+
 
 CGAL_BEGIN_NAMESPACE
 

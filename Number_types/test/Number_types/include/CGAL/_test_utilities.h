@@ -22,6 +22,9 @@
 #define CGAL_TEST_UTILITIES_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Testsuite/assert.h>
+#include <iostream>
+#include <sstream> 
 #include <cassert>
 
 CGAL_BEGIN_NAMESPACE
@@ -215,6 +218,17 @@ test_utilities(const NT& x)
   typedef typename CGAL::Number_type_traits<NT>::Has_exact_ring_operations
                                                     Has_exact_ring_operations;
 
+
+  // TEST ioformat 
+  {
+      std::cout << "i/oformat" << std::endl; 
+      NT tmp,x(13);
+      std::ostringstream os;  
+      os << ::CGAL::oformat(x);
+      std::istringstream is(os.str()); 
+      is >> ::CGAL::iformat(tmp);
+      CGAL_test_assert_msg( x == tmp, "IO_TEST failed");
+  }
 
   NT zero(0);
   NT one(1);

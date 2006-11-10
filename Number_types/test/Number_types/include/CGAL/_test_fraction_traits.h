@@ -49,14 +49,15 @@ void test_fraction_traits(){
     CGAL_test_assert(frac == Compose()(num,den));
     
     // almost the same as gcd 
-    CGAL_test_assert(Common_factor()(Den(0),Den(0)) == Den(0));
-    CGAL_test_assert(Common_factor()(Den(1),Den(0)) == Den(1));
-    CGAL_test_assert(Common_factor()(Den(-2),Den(0)) == Den(2));
-    CGAL_test_assert(Common_factor()(Den(0),Den(-2)) == Den(2));
-    CGAL_test_assert(Common_factor()(Den(12),Den(15)) == Den(3));
-    CGAL_test_assert(Common_factor()(Den(-12),Den(15)) == Den(3));
-    CGAL_test_assert(Common_factor()(Den(12),Den(-15)) == Den(3));
-    CGAL_test_assert(Common_factor()(Den(-12),Den(-15)) == Den(3));    
+    Common_factor common_factor;
+    CGAL_test_assert(common_factor(Den(0),Den(0)) == Den(0));
+    CGAL_test_assert(common_factor(Den(1),Den(0)) == Den(1));
+    CGAL_test_assert(common_factor(Den(-2),Den(0)) == Den(2));
+    CGAL_test_assert(common_factor(Den(0),Den(-2)) == Den(2));
+    CGAL_test_assert(common_factor(Den(12),Den(15)) == Den(3));
+    CGAL_test_assert(common_factor(Den(-12),Den(15)) == Den(3));
+    CGAL_test_assert(common_factor(Den(12),Den(-15)) == Den(3));
+    CGAL_test_assert(common_factor(Den(-12),Den(-15)) == Den(3));    
 }
 
 CGAL_END_NAMESPACE
