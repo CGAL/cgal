@@ -29,13 +29,73 @@
 #include <CGAL/IO/io.h>
 #include <CGAL/Testsuite/assert.h>
 #include <iostream>
+#include <sstream> 
 #include <cstdlib>
 
+
+template <class NT>
+void test_io(const NT& x){
+    NT tmp;
+    {
+        std::ostringstream os;  
+        os << x;
+        std::istringstream is(os.str()); 
+        is >> tmp;
+        CGAL_test_assert_msg( x == tmp, "IO_TEST failed");
+    }{
+        std::ostringstream os;  
+        os << ::CGAL::oformat(x);
+        std::istringstream is(os.str()); 
+        is >> ::CGAL::iformat(tmp);
+        CGAL_test_assert_msg( x == tmp, "IO_TEST failed");
+    }{
+        std::ostringstream os;  
+        ::CGAL::write(os,x);
+        std::istringstream is(os.str()); 
+        ::CGAL::read(is,tmp);
+        CGAL_test_assert_msg( x == tmp, "IO_TEST failed");
+    }   
+}
+
 int main() {
-    std::cout << CGAL::oformat(5) << std::endl;
-    std::cout << CGAL::oformat("Ok") << std::endl;
-    int i;
-    std::cin  >> CGAL::iformat(i);
-    CGAL_test_assert( i == 42);
-    return EXIT_SUCCESS;
+    
+    std::cout << "test_io: short "<< std::endl; 
+    test_io<short>(12);
+    test_io<short>(0);
+    test_io<short>(-12);
+
+    std::cout << "test_io: int "<< std::endl; 
+    test_io<int>(12);
+    test_io<int>(0);
+    test_io<int>(-12);
+
+    std::cout << "test_io: long int "<< std::endl; 
+    test_io<long int>(12);
+    test_io<long int>(0);
+    test_io<long int>(-12);
+
+    std::cout << "test_io: long long int "<< std::endl; 
+    test_io<long long int>(12);
+    test_io<long long int>(0);
+    test_io<long long int>(-12);
+
+    std::cout << "test_io: float "<< std::endl; 
+    test_io<float>(12);
+    test_io<float>(0);
+    test_io<float>(-12);
+
+    std::cout << "test_io: double "<< std::endl; 
+    test_io<double>(12);
+    test_io<double>(0);
+    test_io<double>(-12);
+
+    std::cout << "test_io: long double "<< std::endl; 
+    test_io<long double>(12);
+    test_io<long double>(0);
+    test_io<long double>(-12);
+    
+    //TODO: add more 
+    std::cout << "ok" <<std::endl;
+    
+    return true;     
 }
