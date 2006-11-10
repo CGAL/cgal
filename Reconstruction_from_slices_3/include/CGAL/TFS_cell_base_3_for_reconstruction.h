@@ -26,19 +26,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-#define MASK_INTERNAL         1
-#define MASK_EXTERNAL         2
-#define MASK_INTERN_D         4
-#define MASK_INTERN_U         8
-
-#define MASK_NON_SOLID        1
-#define MASK_SOLID_TEST_D     2
-#define MASK_SOLID_TEST_U     4
-#define MASK_H_SOLID_TEST_D   8
-#define MASK_H_SOLID_TEST_U   16
-
-#define MASK_BIFURCATION    128
-
 template < class Cb >
 class TFS_cell_base_3_for_reconstruction
   : public Cb
@@ -62,7 +49,18 @@ class TFS_cell_base_3_for_reconstruction
   /*==================================*/
   /*       Private Member Datas       */
   /*==================================*/
-  
+
+  enum Mask {  MASK_INTERNAL =         1, 
+	       MASK_EXTERNAL =         2,
+	       MASK_INTERN_D =         4,
+	       MASK_INTERN_U =         8,
+	       MASK_NON_SOLID =        1,
+	       MASK_SOLID_TEST_D =     2,
+	       MASK_SOLID_TEST_U  =    4,
+	       MASK_H_SOLID_TEST_D =   8,
+	       MASK_H_SOLID_TEST_U =  16,
+	       MASK_BIFURCATION =    128 };
+
   unsigned char mask_in_out;
   unsigned char mask_solidity;
 
