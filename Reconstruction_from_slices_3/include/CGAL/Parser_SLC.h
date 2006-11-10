@@ -582,7 +582,8 @@ void parser_SLC<handler_SLC>::read_point_set(int num_slice, int & currentVertexN
       currentVertexNumber++;
     }
   ignore_blanks();
-  if(!ifs.eof())
+
+if(!ifs.eof())
     {
       if(ifs.peek() == '}')
 	{

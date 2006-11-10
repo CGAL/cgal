@@ -83,10 +83,10 @@ class TFS_cell_base_3_for_reconstruction
   /*==================================*/
   
   //CHECKING 
-    bool is_Internal()           {return((((mask_in_out & MASK_INTERNAL)!=0)
+    bool is_internal()           {return((((mask_in_out & MASK_INTERNAL)!=0)
 					  ||(((mask_in_out & MASK_INTERN_D)!=0)&&((mask_in_out & MASK_INTERN_U)!=0)))
 					 &&((mask_solidity & MASK_NON_SOLID)==0));} // TO CHANGE FOR SPEED
-    bool is_External()  {return !is_Internal();}
+    bool is_external()  {return !is_internal();}
     bool is_T2_2_down_internal() {return((mask_in_out & MASK_INTERN_D)!=0);}
     bool is_T2_2_up_internal()   {return((mask_in_out & MASK_INTERN_U)!=0);}
     
@@ -104,8 +104,8 @@ class TFS_cell_base_3_for_reconstruction
     bool is_bifurcation_tested() {return((mask_in_out & MASK_BIFURCATION)!= 0) ;}
   
     //SETTING
-    void set_explicit_Internal()   {mask_in_out|= MASK_INTERNAL;}
-    void set_explicit_External()   {mask_in_out &= (~MASK_INTERNAL);
+    void set_explicit_internal()   {mask_in_out|= MASK_INTERNAL;}
+    void set_explicit_external()   {mask_in_out &= (~MASK_INTERNAL);
                                     mask_in_out |= MASK_EXTERNAL;}
     void set_T2_2_down_internal()  {mask_in_out |= MASK_INTERN_D;} 
     void set_T2_2_up_internal()    {mask_in_out |= MASK_INTERN_U;}

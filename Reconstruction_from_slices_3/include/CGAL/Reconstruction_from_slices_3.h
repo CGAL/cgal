@@ -314,14 +314,14 @@ static void tag_inner_outer(const Tr & tr, typename Tr::Facet f_start, bool inte
 
   if(tr.is_infinite(f_start.first))
     {
-      f_start.first->set_explicit_External();
+      f_start.first->set_explicit_external();
       if((tr.slices[slice_down].tetrahedra_type(f_start.first)==3) // on first slice
 	 ||(tr.slices[slice_down+1].tetrahedra_type(f_start.first)==3)) // on last slice
 	{
 	  if(intern_tag)
-	    f_start.first->neighbor(f_start.second)->set_explicit_Internal();
+	    f_start.first->neighbor(f_start.second)->set_explicit_internal();
 	  else
-	    f_start.first->neighbor(f_start.second)->set_explicit_External();	    	
+	    f_start.first->neighbor(f_start.second)->set_explicit_external();	    	
 	}
     }
   else
@@ -331,13 +331,13 @@ static void tag_inner_outer(const Tr & tr, typename Tr::Facet f_start, bool inte
 				   ||(tr.slices[slice_down+1].tetrahedra_type(f_start.first)==3));
       if(intern_tag)
 	{
-	  f_start.first->set_explicit_Internal();
-	  f_start.first->neighbor(f_start.second)->set_explicit_Internal();
+	  f_start.first->set_explicit_internal();
+	  f_start.first->neighbor(f_start.second)->set_explicit_internal();
 	}
       else
 	{
-	  f_start.first->set_explicit_External();
-	  f_start.first->neighbor(f_start.second)->set_explicit_External();
+	  f_start.first->set_explicit_external();
+	  f_start.first->neighbor(f_start.second)->set_explicit_external();
 	}
     } 
   
@@ -512,7 +512,7 @@ template <class Tr, class Iterator>
 static bool test_cluster_solidity(Tr & tr, typename Tr::Cell_handle ch_start, int slice_index, bool & solid, Iterator it, 
 				  int tet, int li, int lj, int other_slice_index, bool heavy_removal)
 {
-  CGAL_triangulation_precondition(ch_start->is_Internal()&&(tr.slices[slice_index].test_tetrahedra_type(ch_start,tet,li,lj,other_slice_index))
+  CGAL_triangulation_precondition(ch_start->is_internal()&&(tr.slices[slice_index].test_tetrahedra_type(ch_start,tet,li,lj,other_slice_index))
 				  &&(((other_slice_index==slice_index+1)&&(!ch_start->is_solid_tested_down()))
 				     ||((other_slice_index==slice_index-1)&&(!ch_start->is_solid_tested_up()))));
   if(tet==3)
@@ -531,7 +531,7 @@ static bool test_cluster_solidity(Tr & tr, typename Tr::Cell_handle ch_start, in
   for(int i=0; i<4; i++)
     {
       next = ch_start->neighbor(i);  
-      if(next->is_Internal()&&((tet=tr.slices[slice_index].tetrahedra_type(next,li,lj,other_slice_index))!=0)) //!tr.is_infinite(next)&&
+      if(next->is_internal()&&((tet=tr.slices[slice_index].tetrahedra_type(next,li,lj,other_slice_index))!=0)) //!tr.is_infinite(next)&&
 	if(((other_slice_index==slice_index+1)&&(!next->is_solid_tested_down()))
 	   ||((other_slice_index==slice_index-1)&&(!next->is_solid_tested_up())))
 	  {
@@ -553,7 +553,7 @@ static bool determine_heavy_solidity(Tr & tr, typename Tr::Cell_handle c,
 				     int slice1, int li1, int lj1,
 				     int slice2, int li2, int lj2)
 {
-  CGAL_triangulation_precondition(c->is_Internal());
+  CGAL_triangulation_precondition(c->is_internal());
   CGAL_triangulation_precondition((c->vertex(li1)->slice()==slice1)&&(c->vertex(lj1)->slice()==slice1));
   CGAL_triangulation_precondition((c->vertex(li2)->slice()==slice2)&&(c->vertex(lj2)->slice()==slice2));
   typedef typename Tr::Cell_handle Cell_handle;
@@ -586,7 +586,7 @@ static bool determine_heavy_solidity(Tr & tr, typename Tr::Cell_handle c,
 	      { 
 		(*hitTet2)->unset_heavy_solid_tested_down();
 		(*hitTet2)->unset_heavy_solid_tested_up();
-/* 		if((*hitTet2)->is_Internal()) */
+/* 		if((*hitTet2)->is_internal()) */
 /* 		  { */
 /* 		    (*hitTet2)->unset_heavy_solid_tested_down(); */
 /* 		    (*hitTet2)->unset_heavy_solid_tested_up(); */
@@ -603,7 +603,7 @@ static void determine_solidity(Tr & tr, typename Tr::Cell_handle c, bool heavy_r
 // Determines the solidity of the cluster of internal cells containing c, with regards to its up and down slices.
 {
   typedef typename Tr::Cell_handle Cell_handle;
-  CGAL_triangulation_precondition(c->is_Internal());//!tr.is_infinite(c)
+  CGAL_triangulation_precondition(c->is_internal());//!tr.is_infinite(c)
 
   if((!c->is_solid_tested_up())||(!c->is_solid_tested_down())) //&&(!c->is_non_solid())
     {
@@ -650,7 +650,7 @@ static bool test_heavy_solidity_around_edge(Tr & tr, typename Tr::Cell_handle ch
 					    int tet, int li, int lj, int lk, int ll, int other_slice_index)
 // Recursively determines a cluster of internal cells having a common edge ch_start->vertex(li), ch_start->vertex(lj) and including ch_start.
 {
-  CGAL_triangulation_precondition(ch_start->is_Internal()&&(tr.slices[slice_index].test_tetrahedra_type(ch_start,tet)));
+  CGAL_triangulation_precondition(ch_start->is_internal()&&(tr.slices[slice_index].test_tetrahedra_type(ch_start,tet)));
   CGAL_triangulation_precondition((ch_start->vertex(li)->slice()==slice_index)&&(ch_start->vertex(lj)->slice()==slice_index)); 
   CGAL_triangulation_precondition((ch_start->vertex(lk)->slice()==other_slice_index)||(ch_start->vertex(ll)->slice()==other_slice_index)); 
   CGAL_triangulation_precondition(((other_slice_index==slice_index+1)&&(!ch_start->is_heavy_solid_tested_down()))
@@ -675,7 +675,7 @@ static bool test_heavy_solidity_around_edge(Tr & tr, typename Tr::Cell_handle ch
   for(int cmpt=0;cmpt<2;cmpt++)
     { 
       next=ch_start->neighbor(lnext); 
-      if (next->is_Internal())
+      if (next->is_internal())
 	{
 	  int ntet=2, nli=-1, nlj=-1, nlk=-1, nll=-1, nother=-1;
 	  for(int i=0; i<4; i++)
@@ -716,7 +716,7 @@ void non_solid_connections_removal(Tr & tr, bool heavy_removal)
        it++)
     {
       typename Tr::Cell_handle c(it);
-      if(c->is_Internal())
+      if(c->is_internal())
 	determine_solidity(tr,c,heavy_removal);
     }
 }
@@ -730,7 +730,7 @@ void non_solid_connections_heavy_removal(Tr & tr)
        it++)
     {
       typename Tr::Cell_handle c(it);
-      if(c->is_Internal())
+      if(c->is_internal())
 	{
 	  int index_slice=c->vertex(0)->slice(), other_slice_index;	  
 	  int tet1, li1, lj1, tet2, li2, lj2, temp;
@@ -759,7 +759,7 @@ void stable_non_solid_connections_heavy_removal(Tr & tr)
 	   it++)
 	{
 	  typename Tr::Cell_handle c(it);
-	  if(c->is_Internal())
+	  if(c->is_internal())
 	    {
 	      int index_slice=c->vertex(0)->slice(), other_slice_index;	  
 	      int tet1, li1, lj1, tet2, li2, lj2, temp;
@@ -772,7 +772,7 @@ void stable_non_solid_connections_heavy_removal(Tr & tr)
 		if (!determine_heavy_solidity(tr,c,index_slice,li1,lj1,other_slice_index,li2,lj2))
 		  {
 		    again=true;
-		    CGAL_triangulation_assertion(!c->is_Internal());
+		    CGAL_triangulation_assertion(!c->is_internal());
 		  }
 	    }
 	}
@@ -783,17 +783,17 @@ void stable_non_solid_connections_heavy_removal(Tr & tr)
 	  {
 	    it->unset_heavy_solid_tested_down();
 	    it->unset_heavy_solid_tested_up();
-/* 	    if(it->is_Internal()) */
+/* 	    if(it->is_internal()) */
 /* 	      {		 */
 /* 		if(it->is_heavy_solid_tested_down()) */
 /* 		  it->unset_heavy_solid_tested_down();  */
 /* 		if(it->is_heavy_solid_tested_up()) */
 /* 		  it->unset_heavy_solid_tested_up();  */
-/* 		CGAL_triangulation_assertion(it->is_Internal()); */
+/* 		CGAL_triangulation_assertion(it->is_internal()); */
 /* 	      } */
 /* 	    else */
 /* 	      {	 */
-/* 		CGAL_triangulation_assertion(!it->is_Internal());		 */
+/* 		CGAL_triangulation_assertion(!it->is_internal());		 */
 /* 		if(it->is_heavy_solid_tested_down()) */
 /* 		  { */
 /* 		    CGAL_triangulation_assertion(it->is_non_solid()); */
@@ -806,7 +806,7 @@ void stable_non_solid_connections_heavy_removal(Tr & tr)
 /* 		    it->unset_heavy_solid_tested_up(); */
 /* 		    CGAL_triangulation_assertion(it->is_non_solid()); */
 /* 		  } */
-/* 		CGAL_triangulation_assertion(!it->is_Internal()); */
+/* 		CGAL_triangulation_assertion(!it->is_internal()); */
 /* 	      } */
 	  }
       std::cout << "Heavy solid removal " << ++cmpt << std::endl;
@@ -839,9 +839,9 @@ void save_in_off_file(const Tr & tr, const char * fname_head_off, const char * f
   for (typename Tr::Cell_iterator it=tr.cells_begin(); it != tr.cells_end(); ++it)
     {
       typename Tr::Cell_handle c(it);
-      if(c->is_External())
+      if(c->is_external())
 	for(int i=0;i<4;i++)
-	  if(c->neighbor(i)->is_Internal())
+	  if(c->neighbor(i)->is_internal())
 	    {  
 	      face_number++;   
 	      oFile << "3";
@@ -892,9 +892,9 @@ void save_in_wrl_file(const Tr & tr, const char * fname_wrl)
   for (typename Tr::Cell_iterator it=tr.cells_begin(); it != tr.cells_end(); ++it)
     {
       typename Tr::Cell_handle c(it);
-      if(c->is_External())
+      if(c->is_external())
 	for(int i=0;i<4;i++)
-	  if(c->neighbor(i)->is_Internal())
+	  if(c->neighbor(i)->is_internal())
 	    {  
 	      face_number++;   
 	      for (int j=0;j<3;j++){
