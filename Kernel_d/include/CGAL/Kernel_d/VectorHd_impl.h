@@ -65,10 +65,6 @@ template <class RT, class LA>
 std::ostream& operator<<(std::ostream& O, const VectorHd<RT,LA>& v)
 { v.ptr()->print(O,"VectorHd"); return O; } 
 
-template <class RT, class LA>
-inline CGAL::io_Operator io_tag(const VectorHd<RT,LA>&) 
-{ return CGAL::io_Operator(); }
-
 #undef PointHd
 CGAL_END_NAMESPACE
 #endif // CGAL_VECTORHD_C

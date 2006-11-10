@@ -210,11 +210,6 @@ public:
     };
 };
 
-inline
-io_Operator
-io_tag(const leda_rational &)
-{ return io_Operator(); }
-
 template <class F>
 class Output_rep< leda_rational, F> {
     const leda_rational& t;

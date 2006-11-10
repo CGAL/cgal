@@ -220,11 +220,6 @@ template <> class Real_embeddable_traits< long double >
     
 };
 
-inline
-io_Read_write
-io_tag(const long double &)
-{ return io_Read_write(); }
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_LONG_DOUBLE_H

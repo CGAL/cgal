@@ -43,12 +43,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-inline
-io_Operator
-io_tag(const Gmpz&)
-{ return io_Operator(); }
-
-
 // Algebraic structure traits
 template <> class Algebraic_structure_traits< Gmpz >
     : public Algebraic_structure_traits_base< Gmpz, 

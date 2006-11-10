@@ -75,10 +75,6 @@ template <class RT, class LA>
 std::ostream& operator<<(std::ostream& O, const DirectionHd<RT,LA>& dir)
 { dir.ptr()->print(O,"DirectionHd"); return O; } 
 
-template <class RT, class LA>
-inline CGAL::io_Operator io_tag(const DirectionHd<RT,LA>&) 
-{ return CGAL::io_Operator(); }
-
 
 //----------------------- end of file ----------------------------------
 

@@ -68,10 +68,6 @@ template <class FT, class LA>
 std::ostream& operator<<(std::ostream& O, const VectorCd<FT,LA>& v)
 { v.ptr()->print(O,"VectorCd"); return O; } 
 
-template <class FT, class LA>
-inline CGAL::io_Operator io_tag(const VectorCd<FT,LA>&) 
-{ return CGAL::io_Operator(); }
-
 #undef PointCd
 CGAL_END_NAMESPACE
 #endif // CGAL_VECTORCD_C

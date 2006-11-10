@@ -1206,11 +1206,6 @@ template <class NT> bool is_finite
   (const Polynomial<NT>& p) 
   { return CGAL::is_finite(p[0]); }
 
-template <class NT> CGAL::io_Operator 
-  io_tag(const Polynomial<NT>&) 
-  { return CGAL::io_Operator(); }
-
-
 template <class NT> 
 inline
 Polynomial<NT> operator - (const Polynomial<NT>& p)

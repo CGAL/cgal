@@ -183,12 +183,6 @@ struct Needs_parens_as_product<leda_integer> {
   } 
 };
 
-
-inline
-io_Operator
-io_tag(const leda_integer &)
-{ return io_Operator(); }
-
 // missing mixed operators
 inline
 bool

@@ -80,11 +80,6 @@ template <class RT, class LA>
 std::ostream& operator<<(std::ostream& O, const PointHd<RT,LA>& p)
 { p.ptr()->print(O,"PointHd"); return O; } 
 
-template <class RT, class LA>
-inline CGAL::io_Operator io_tag(const PointHd<RT,LA>&) 
-{ return CGAL::io_Operator(); }
-
-
 #undef PointHd 
 CGAL_END_NAMESPACE
 #endif // CGAL_POINTHD_C

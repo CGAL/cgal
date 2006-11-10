@@ -195,10 +195,8 @@ template <> class Real_embeddable_traits< CORE::Expr >
     };
 };
 
-inline
-io_Operator
-io_tag(const CORE::Expr &)
-{ return io_Operator(); }
+
+
 
 CGAL_END_NAMESPACE
 

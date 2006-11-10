@@ -217,11 +217,37 @@ template <> class Real_embeddable_traits< leda_real >
         }
     };
 };
+    
 
-inline
-io_Operator
-io_tag(const leda_real &)
-{ return io_Operator(); }
+template <> 
+class Output_rep< ::leda::real > {
+    const ::leda::real& t;
+public:
+    //! initialize with a const reference to \a t.
+    Output_rep( const ::leda::real& tt) : t(tt) {}
+    //! perform the output, calls \c operator\<\< by default.
+    std::ostream& operator()( std::ostream& out) const {
+        out << CGAL_NTS to_double(t);
+        return out;
+    }
+    
+};
+
+template <>
+class Output_rep< ::leda::real, CGAL::Parens_as_product_tag > {
+    const ::leda::real& t;
+public:
+    //! initialize with a const reference to \a t.
+    Output_rep( const ::leda::real& tt) : t(tt) {}
+    //! perform the output, calls \c operator\<\< by default.
+    std::ostream& operator()( std::ostream& out) const {
+        if (t<0) out << "(" << ::CGAL::oformat(t)<<")";
+        else out << ::CGAL::oformat(t);
+        return out;
+    }
+};
+
+
 
 CGAL_END_NAMESPACE
 
@@ -230,6 +256,9 @@ CGAL_END_NAMESPACE
 namespace leda {
     inline real operator+( const real& i) { return i; }
 } // namespace leda
+
+
+
 
 
 #endif // CGAL_LEDA_REAL_H

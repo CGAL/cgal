@@ -32,12 +32,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-inline
-io_Operator
-io_tag(const Gmpq&)
-{ return io_Operator(); }
-
-
 // AST for Gmpq-class
 template <> class Algebraic_structure_traits< Gmpq >
   : public Algebraic_structure_traits_base< Gmpq, Field_tag >  {

@@ -154,11 +154,6 @@ class Is_valid< leda_bigfloat >
     }  
 };
 
-inline
-io_Operator
-io_tag(const leda_bigfloat &)
-{ return io_Operator(); }
-
 CGAL_END_NAMESPACE
 
 // Unary + is missing for leda::bigfloat

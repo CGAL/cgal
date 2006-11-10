@@ -1656,12 +1656,6 @@ class Is_valid< Lazy_exact_nt<ET> >
     }  
 };
 
-template <typename ET>
-inline
-io_Operator
-io_tag (const Lazy_exact_nt<ET>&)
-{ return io_Operator(); }
-
 template < typename ET >
 struct NT_converter < Lazy_exact_nt<ET>, ET >
 {

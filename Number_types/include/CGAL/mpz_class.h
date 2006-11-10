@@ -280,13 +280,6 @@ public:
     };
 };
 
-template <class T, typename U >
-inline
-io_Operator
-io_tag(const ::__gmp_expr< T , U> &)
-{ return io_Operator(); }
-
-
 /* FIX ME: THERE IS NO CONSTRUCTOR FT(x,y)
    AVALIABLE FOR THIS TYPE
 

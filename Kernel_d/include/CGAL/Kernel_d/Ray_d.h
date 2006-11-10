@@ -188,11 +188,6 @@ template <class R>
 std::ostream& operator<<(std::ostream& O, const Ray_d<R>& r)
 { r.ptr()->print(O,"Ray_d"); return O; }
 
-template <class R>
-inline CGAL::io_Operator io_tag(const Ray_d<R>&) 
-{ return CGAL::io_Operator(); }
-
-
 /*{\Mimplementation 
 Rays are implemented by a pair of points as an item type.  All
 operations like creation, initialization, tests, direction

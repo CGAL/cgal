@@ -244,11 +244,6 @@ template <> class Real_embeddable_traits< double >
 };
 
 inline
-io_Read_write
-io_tag(double)
-{ return io_Read_write(); }
-
-inline
 double
 nextafter(double d1, double d2)
 {

@@ -155,13 +155,6 @@ INTERN_QUOTIENT::Real_embeddable_traits_quotient_base< Quotient<Gmpzf> >
     };
 };
 
-
-inline
-io_Operator io_tag(const Gmpzf &)
-{
-  return io_Operator();
-}
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_GMPZF_H

@@ -527,14 +527,6 @@ operator>> (std::istream & is, Number_type_checker<NT1, NT2, Cmp> &b)
   return is;
 }
 
-template < typename NT1, typename NT2, typename Cmp >
-io_Operator
-io_tag(const Number_type_checker<NT1, NT2, Cmp> &)
-{
-  // Not sure what do to here.
-  return io_Operator();
-}
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_NUMBER_TYPE_CHECKER_H

@@ -371,13 +371,6 @@ operator>>(std::istream& in, Quotient<NT>& r)
   return in;
 }
 
-template <class NT>
-inline
-io_Operator
-io_tag(const Quotient<NT>&)
-{ return io_Operator(); }
-
-
 template< class NT >
 inline
 Quotient<NT>

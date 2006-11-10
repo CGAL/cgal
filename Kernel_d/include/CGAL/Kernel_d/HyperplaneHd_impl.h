@@ -101,12 +101,7 @@ std::istream& operator>>(std::istream& I, HyperplaneHd<RT,LA>& h)
 
 template <class RT, class LA>
 std::ostream& operator<<(std::ostream& O, const HyperplaneHd<RT,LA>& h)
-{ h.ptr()->print(O,"HyperplaneHd"); return O; } 
-
-template <class RT, class LA>
-inline CGAL::io_Operator io_tag(const HyperplaneHd<RT,LA>&) 
-{ return CGAL::io_Operator(); }
- 
+{ h.ptr()->print(O,"HyperplaneHd"); return O; }  
 
 CGAL_END_NAMESPACE
 #endif // CGAL_HYPERPLANEHD_C

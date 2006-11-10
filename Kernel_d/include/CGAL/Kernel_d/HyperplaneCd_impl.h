@@ -100,11 +100,6 @@ template <class FT, class LA>
 std::ostream& operator<<(std::ostream& O, const HyperplaneCd<FT,LA>& h)
 { h.ptr()->print(O,"HyperplaneCd"); return O; } 
 
-template <class FT, class LA>
-inline CGAL::io_Operator io_tag(const HyperplaneCd<FT,LA>&) 
-{ return CGAL::io_Operator(); }
- 
-
 CGAL_END_NAMESPACE
 #endif // CGAL_HYPERPLANECD_C
 

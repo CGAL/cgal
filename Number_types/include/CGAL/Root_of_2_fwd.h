@@ -30,9 +30,6 @@ CGAL_BEGIN_NAMESPACE
 template < typename T > class Root_of_2;
 
 template < typename T >
-io_Operator io_tag(const Root_of_2<T>&);
-
-template < typename T >
 Root_of_2<T> inverse(const Root_of_2<T>&);
 
 template < typename T >

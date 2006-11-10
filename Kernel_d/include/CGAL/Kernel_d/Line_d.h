@@ -202,10 +202,6 @@ template <class R>
 std::ostream& operator<<(std::ostream& O, const Line_d<R>& l)
 { l.ptr()->print(O,"Line_d"); return O; }
 
-template <class R>
-inline CGAL::io_Operator io_tag(const Line_d<R>&) 
-{ return CGAL::io_Operator(); }
-
 /*{\Mimplementation 
 Lines are implemented by a pair of points as an item type.  All
 operations like creation, initialization, tests, direction

@@ -701,8 +701,8 @@ class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT> >
                                          x.a1() * x.a1() * COEFF( x.root() ) );
                                          
               Double_interval result( pair_a0.first, pair_a0.second );
-              result += ( Double_interval( int(CGAL_NTS sign(x.a1()))) * 
-                            boost::numeric::sqrt( 
+              result += ( Double_interval( (int) CGAL_NTS sign(x.a1())) * 
+                      ::boost::numeric::sqrt( 
                               Double_interval( pair_a1_root.first,
                                                pair_a1_root.second ) ) ); 
               return std::pair<double, double>(result.lower(), result.upper() );

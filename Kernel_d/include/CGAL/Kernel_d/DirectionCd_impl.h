@@ -73,10 +73,6 @@ template <class FT, class LA>
 std::ostream& operator<<(std::ostream& O, const DirectionCd<FT,LA>& dir)
 { dir.ptr()->print(O,"DirectionCd"); return O; } 
 
-template <class FT, class LA>
-inline CGAL::io_Operator io_tag(const DirectionCd<FT,LA>&) 
-{ return CGAL::io_Operator(); }
-
 CGAL_END_NAMESPACE
 #endif // CGAL_DIRECTIONCD_C
 //----------------------- end of file ----------------------------------

@@ -106,14 +106,6 @@
 
 #include <CGAL/make_root_of_2.h>
 
-CGAL_BEGIN_NAMESPACE
-
-CGAL_END_NAMESPACE
-
 #endif // CGAL_CFG_NO_TWO_STAGE_NAME_LOOKUP
-
-
-#include <CGAL/number_utils.h>
-#include <CGAL/number_utils_classes.h>
 
 #endif // CGAL_NUMBER_TYPE_BASIC_H

@@ -436,21 +436,16 @@ void Counted_number<NT>::report(std::ostream &os)
 }
 
 template <class NT>
-inline io_Operator
-io_tag(Counted_number<NT> const &n)
-{ return io_tag(n.rep());}
-
-template <class NT>
 std::ostream& operator<<(std::ostream &os, Counted_number<NT> const &n)
 {
-    return os << n.rep();
+    return os << ::CGAL::oformat( n.rep() )<< std::endl;
 }
 
 template <class NT>
 std::istream& operator>>(std::istream &is, Counted_number<NT> &n)
 {
     NT num;
-    is >> num;
+    is >> ::CGAL::iformat(num);
     if (is) n = Counted_number<NT>(num);
     return is;
 }

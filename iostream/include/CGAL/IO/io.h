@@ -131,9 +131,6 @@ is_binary(std::ios& i);
 bool
 is_benchmark(std::ios& i);
 
-inline io_Read_write io_tag(char){ return io_Read_write(); }
-
-
 template < class T >
 inline
 void
@@ -166,7 +163,7 @@ inline
 void
 write(std::ostream& os, const T& t)
 {
-    write(os, t, io_tag(t));
+    write(os, t, typename Io_traits<T>::Io_tag());
 }
 
 
@@ -202,7 +199,7 @@ inline
 void
 read(std::istream& is, T& t)
 {
-    read(is, t, io_tag(t));
+    read(is, t, typename Io_traits<T>::Io_tag());
 }
 
 

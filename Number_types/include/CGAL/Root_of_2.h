@@ -64,7 +64,6 @@ namespace CGAL {
 // - .sign_at()
 // - .degree()
 // - .is_valid()
-// - io_tag()
 // - operator<<()
 // - print() ("pretty" printing)
 // - make_root_of_2()
@@ -1384,15 +1383,6 @@ struct Number_type_traits < Root_of_2<RT> >
   typedef Tag_false      Has_exact_division;
   typedef Tag_false      Has_exact_ring_operations;
 };
-
-template < typename RT >
-inline
-io_Operator
-io_tag(const Root_of_2<RT>&)
-{
-  return io_Operator();
-}
-
 
 } // namespace CGAL
 

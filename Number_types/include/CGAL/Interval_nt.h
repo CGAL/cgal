@@ -37,7 +37,7 @@
 
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Uncertain.h>
-
+#include <iostream>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -312,28 +312,42 @@ class Is_valid< Interval_nt<Protected> >
 };
 
 template <bool Protected>
-inline
-io_Operator
-io_tag (const Interval_nt<Protected> &)
-{
-  return io_Operator();
-}
-
-template <bool Protected>
 std::ostream & operator<< (std::ostream &os, const Interval_nt<Protected> & I )
 {
   return os << "[" << I.inf() << ";" << I.sup() << "]";
 }
 
+#define CGAL_SWALLOW(IS,CHAR)                           \
+    {                                                   \
+        char c;                                         \
+        do c = is.get(); while (isspace(c));            \
+        if (c != CHAR) {                                \
+            is.setstate(std::ios_base::failbit);        \
+        }                                               \
+    }                                                   \
+        
 template <bool Protected>
 std::istream & operator>> (std::istream &is, Interval_nt<Protected> & I)
 {
-    double d;
-    is >> d;
-    I = d;
+    char c; 
+    do c = is.get(); while (isspace(c));
+    is.putback(c);
+    if(c == '['){ // read original output from operator << 
+        double inf,sup;
+        CGAL_SWALLOW(is, '[');// read the "["
+        is >> iformat(inf); 
+        CGAL_SWALLOW(is, ';');// read the ";"
+        is >> iformat(sup);
+        CGAL_SWALLOW(is, ']');// read the "]"
+        I = Interval_nt<Protected>(inf,sup);
+    }else{ //read double (backward compatibility)
+        double d;
+        is >> d;
+        I = d;
+    }
     return is;
 }
-
+#undef CGAL_SWALLOW
 
 typedef Interval_nt<false> Interval_nt_advanced;  // for back-compatibility
 
@@ -825,8 +839,8 @@ namespace INTERN_INTERVAL_NT {
     if (d.sup() < 0.0) return true;
     return Uncertain<bool>::indeterminate();
   }
-    
-  // TODO: Whats this for? Why is this in this file??
+
+ // TODO: Whats this for? Why is this in this file??
   inline
   std::pair<double, double>
   to_interval (const long & l)
@@ -898,71 +912,6 @@ namespace INTERN_INTERVAL_NT {
   
 } // namespace INTERN_INTERVAL_NT
 
-
-// Algebraic structure traits
-template< bool B > 
-class Algebraic_structure_traits< Interval_nt<B> >
-  : public Algebraic_structure_traits_base< Interval_nt<B>, 
-                                            Field_with_sqrt_tag >  {
-  public:
-    typedef Interval_nt<B>    Algebraic_structure;
-    typedef Tag_false   Is_exact;
-                
-    class Is_zero 
-      : public Unary_function< Algebraic_structure, Uncertain<bool> > {
-      public:
-        Uncertain<bool> operator()( const Algebraic_structure& x ) const {
-          return INTERN_INTERVAL_NT::is_zero( x );
-        }        
-    };
-    
-    class Is_one
-      : public Unary_function< Algebraic_structure, Uncertain<bool> > {
-      public:
-        Uncertain<bool> operator()( const Algebraic_structure& x ) const {
-          return INTERN_INTERVAL_NT::is_one( x );
-        }
-    };
-
-    class Square
-      : public Unary_function< Algebraic_structure, Algebraic_structure > {
-      public:
-        Algebraic_structure operator()( const Algebraic_structure& x ) const {
-          return INTERN_INTERVAL_NT::square( x );
-        }
-    };
-
-    class Sqrt 
-      : public Unary_function< Algebraic_structure, Algebraic_structure > {
-      public:        
-        Algebraic_structure operator()( const Algebraic_structure& x ) const {
-          return INTERN_INTERVAL_NT::sqrt( x );
-        }
-    };
-    
-    struct Is_square
-        :public Binary_function<Interval_nt<B>,Interval_nt<B>&,Uncertain<bool> >
-    {
-        bool operator()(const Interval_nt<B>& x) const {
-            return INTERN_INTERVAL_NT::is_positive( x );
-        }
-        
-        bool operator()(
-                const Interval_nt<B>& x,
-                Interval_nt<B>      & result) const {
-            Uncertain<bool> is_positive = INTERN_INTERVAL_NT::is_positive( x );
-            if ( is_positive.inf() == true ){
-                typename Algebraic_structure_traits<Interval_nt<B> >::Sqrt sqrt;
-                result = sqrt(x);
-            }else{ 
-                typename Real_embeddable_traits<Interval_nt<B> >::Abs  abs;
-                typename Algebraic_structure_traits<Interval_nt<B> >::Sqrt sqrt;
-                result = sqrt(abs(x));
-            }
-            return is_positive;
-        }
-    };
-};
 
 template< bool B > class Real_embeddable_traits< Interval_nt<B> > 
   : public Real_embeddable_traits_base< Interval_nt<B> > {
@@ -1039,6 +988,72 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     };
 
 };
+
+// Algebraic structure traits
+template< bool B > 
+class Algebraic_structure_traits< Interval_nt<B> >
+  : public Algebraic_structure_traits_base< Interval_nt<B>, 
+                                            Field_with_sqrt_tag >  {
+  public:
+    typedef Interval_nt<B>    Algebraic_structure;
+    typedef Tag_false   Is_exact;
+                
+    class Is_zero 
+      : public Unary_function< Algebraic_structure, Uncertain<bool> > {
+      public:
+        Uncertain<bool> operator()( const Algebraic_structure& x ) const {
+          return INTERN_INTERVAL_NT::is_zero( x );
+        }        
+    };
+    
+    class Is_one
+      : public Unary_function< Algebraic_structure, Uncertain<bool> > {
+      public:
+        Uncertain<bool> operator()( const Algebraic_structure& x ) const {
+          return INTERN_INTERVAL_NT::is_one( x );
+        }
+    };
+
+    class Square
+      : public Unary_function< Algebraic_structure, Algebraic_structure > {
+      public:
+        Algebraic_structure operator()( const Algebraic_structure& x ) const {
+          return INTERN_INTERVAL_NT::square( x );
+        }
+    };
+
+    class Sqrt 
+      : public Unary_function< Algebraic_structure, Algebraic_structure > {
+      public:        
+        Algebraic_structure operator()( const Algebraic_structure& x ) const {
+          return INTERN_INTERVAL_NT::sqrt( x );
+        }
+    };
+    
+    struct Is_square
+        :public Binary_function<Interval_nt<B>,Interval_nt<B>&,Uncertain<bool> >
+    {
+        bool operator()(const Interval_nt<B>& x) const {
+            return INTERN_INTERVAL_NT::is_positive( x );
+        }
+        
+        bool operator()(
+                const Interval_nt<B>& x,
+                Interval_nt<B>      & result) const {
+            Uncertain<bool> is_positive = INTERN_INTERVAL_NT::is_positive( x );
+            if ( is_positive.inf() == true ){
+                typename Algebraic_structure_traits<Interval_nt<B> >::Sqrt sqrt;
+                result = sqrt(x);
+            }else{ 
+                typename Real_embeddable_traits<Interval_nt<B> >::Abs  abs;
+                typename Algebraic_structure_traits<Interval_nt<B> >::Sqrt sqrt;
+                result = sqrt(abs(x));
+            }
+            return is_positive;
+        }
+    };
+};
+
 
 // COERCION_TRAITS BEGIN
 template < class A, class B , int > class Coercion_traits_for_level;

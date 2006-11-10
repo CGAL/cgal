@@ -202,11 +202,6 @@ template <> class Real_embeddable_traits< float >
     
 };
 
-inline
-io_Read_write
-io_tag(float)
-{ return io_Read_write(); }
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_FLOAT_H

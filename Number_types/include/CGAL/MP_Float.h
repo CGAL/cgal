@@ -60,6 +60,7 @@
 CGAL_BEGIN_NAMESPACE
 
 class MP_Float;
+
 template < typename > class Quotient; // Needed for overloaded To_double
 
 namespace INTERN_MP_FLOAT {
@@ -77,27 +78,12 @@ MP_Float div(const MP_Float& n1, const MP_Float& n2);
 MP_Float gcd(const MP_Float& a, const MP_Float& b);
 }
 
-namespace CGALi{
-std::pair<MP_Float, MP_Float> // <quotient, remainder>
-division(const MP_Float & n, const MP_Float & d);
-} // namespace CGALi
-
-MP_Float approximate_sqrt(const MP_Float&);
-
-std::pair<double, int>
+std::pair<double, int> 
 to_double_exp(const MP_Float &b);
 
 // Returns (first * 2^second), an interval surrounding b.
 std::pair<std::pair<double, double>, int>
 to_interval_exp(const MP_Float &b);
-
-
-inline
-io_Operator
-io_tag(const MP_Float &)
-{
-  return io_Operator();
-}
 
 std::ostream &
 operator<< (std::ostream & os, const MP_Float &b);
@@ -108,8 +94,6 @@ print (std::ostream & os, const MP_Float &b);
 
 std::istream &
 operator>> (std::istream & is, MP_Float &b);
-
-
 
 MP_Float operator+(const MP_Float &a, const MP_Float &b);
 MP_Float operator-(const MP_Float &a, const MP_Float &b);
@@ -337,6 +321,11 @@ public:
   exponent_type exp;
 };
 
+namespace CGALi{
+std::pair<MP_Float, MP_Float> // <quotient, remainder>
+division(const MP_Float & n, const MP_Float & d);
+} // naemspace CGALi
+
 inline
 void swap(MP_Float &m, MP_Float &n)
 { m.swap(n); }
@@ -501,9 +490,7 @@ template <> class Real_embeddable_traits< MP_Float >
 };
 
 
-
 namespace CGALi {
-
 // This compares the absolute values of the odd-mantissa.
 // (take the mantissas, get rid of all powers of 2, compare
 // the absolute values)

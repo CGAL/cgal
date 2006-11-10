@@ -228,11 +228,6 @@ template <class R>
 std::ostream& operator<<(std::ostream& O, const Segment_d<R>& s)
 { s.ptr()->print(O,"Segment_d"); return O; }
 
-template <class R>
-inline CGAL::io_Operator io_tag(const Segment_d<R>&) 
-{ return CGAL::io_Operator(); }
-
-
 /*{\Mimplementation 
 Segments are implemented by a pair of points as an item type.  All
 operations like creation, initialization, tests, the calculation of

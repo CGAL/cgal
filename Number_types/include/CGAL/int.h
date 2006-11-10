@@ -85,11 +85,6 @@ template <> class Real_embeddable_traits< int >
                                                                     To_interval;
 };
 
-inline
-io_Read_write
-io_tag(int)
-{ return io_Read_write(); }
-
 // long
 
 template <> struct Number_type_traits<long int> {
@@ -125,11 +120,6 @@ template <> class Real_embeddable_traits< long int >
     typedef INTERN_RET::To_interval_by_conversion< Real_embeddable >
                                                                     To_interval;
 };
-
-inline
-io_Operator
-io_tag(long int)
-{ return io_Operator(); }
 
 // short
 
@@ -261,12 +251,6 @@ template <> class Real_embeddable_traits< short int >
     typedef INTERN_RET::To_interval_by_conversion< Real_embeddable >
                                                                     To_interval;
 };
-
-inline
-io_Operator
-io_tag(short int)
-{ return io_Operator(); }
-
 
 // Note : "long long" support is in <CGAL/long_long.h>
 

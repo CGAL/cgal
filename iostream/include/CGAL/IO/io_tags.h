@@ -31,6 +31,24 @@ struct io_Read_write{};
 struct io_Extract_insert{};
 struct io_Operator{};
 
+template<class T> 
+struct Io_traits{
+    typedef io_Operator Io_tag;
+};
+
+template<> struct Io_traits<char>{ typedef io_Read_write Io_tag; }; 
+
+template<> struct Io_traits<short> { typedef io_Read_write Io_tag; };
+template<> struct Io_traits<int> { typedef io_Read_write Io_tag; };
+template<> struct Io_traits<long> { typedef io_Read_write Io_tag; };
+template<> struct Io_traits<long long> { typedef io_Read_write Io_tag; };
+
+template<> struct Io_traits<float> { typedef io_Read_write Io_tag; };
+template<> struct Io_traits<double> { typedef io_Read_write Io_tag; };
+template<> struct Io_traits<long double> { typedef io_Read_write Io_tag; };
+
+
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_IO_TAGS_H
