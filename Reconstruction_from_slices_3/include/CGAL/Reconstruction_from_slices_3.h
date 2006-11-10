@@ -24,7 +24,7 @@
 
 #include <iostream>
 #include <vector>
-
+#include <CGAL/IO/VRML_2_ostream.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Triangulation_from_slices_3.h>
 #include <CGAL/TFS_polyline_vertex_base_3.h>
@@ -845,8 +845,10 @@ void save_in_off_file(const Tr & tr, const char * fname_head_off, const char * f
 	    {  
 	      face_number++;   
 	      oFile << "3";
-	      for (int j=1;j<4;j++)
-		oFile << " " << c->vertex((i+j)%4)->get_number_id();
+	      //for (int j=1;j<4;j++)
+		//		oFile << " " << c->vertex((i+j)%4)->get_number_id();
+	      for (int j=0;j<3;j++)
+		oFile <<  " " << c->vertex(Tr::vertex_triple_index(i,j))->get_number_id();
 	      oFile << std::endl;
 	    }
     }
@@ -856,6 +858,58 @@ void save_in_off_file(const Tr & tr, const char * fname_head_off, const char * f
   headFile.close();
 }
 
+
+template <class Tr>
+void save_in_wrl_file(const Tr & tr, const char * fname_wrl)
+{
+  std::ofstream oFile(fname_wrl,std::ios::out);
+  VRML_2_ostream vos(oFile);
+
+  
+  std::string s("                Shape {\n"\
+		"                    appearance Appearance { material USE Material }\n"\
+		"                    geometry IndexedFaceSet {\n"\
+		"                        convex FALSE\n"\
+		"                        solid  FALSE\n"\
+		"                        coord  Coordinate {\n"\
+		"                            point [\n");
+  vos << s.c_str() ;  
+  int n=0;
+  typename Tr::Finite_vertices_iterator vit = tr.finite_vertices_begin ();//Vertex_iterator
+  while(vit!=tr.finite_vertices_end())
+    {
+      vit->set_number_id(n++);
+      vos << to_double(vit->point().x()) << " "  << to_double(vit->point().y()) << " " << to_double(vit->point().z()) << ",\n";
+      ++vit;
+    }
+
+  s = std::string("] #point\n"
+		  "   } #coord Coordinate\n"
+		  " coordIndex  [\n");
+  vos << s.c_str() ;  
+  int face_number=0;
+  // write oriented faces (counterclockwise from the outside)
+  for (typename Tr::Cell_iterator it=tr.cells_begin(); it != tr.cells_end(); ++it)
+    {
+      typename Tr::Cell_handle c(it);
+      if(c->is_External())
+	for(int i=0;i<4;i++)
+	  if(c->neighbor(i)->is_Internal())
+	    {  
+	      face_number++;   
+	      for (int j=0;j<3;j++){
+		vos <<  " " << c->vertex(Tr::vertex_triple_index(i,j))->get_number_id() << ", ";
+	      }
+	      vos << "-1,\n";
+	    }
+    }
+
+  s = std::string("        ] #coordIndex\n"
+		  "      } #geometry\n"
+		  "    } #Shape\n");
+  vos << s.c_str() ; 
+  
+}
 CGAL_END_NAMESPACE
 
 #endif //CGAL_RECONSTRUCTION_FROM_SLICES
