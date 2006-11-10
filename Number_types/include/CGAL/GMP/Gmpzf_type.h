@@ -438,23 +438,35 @@ void Gmpzf::align ( const mpz_t*& a_aligned,
   static Gmpz s;
   switch (CGAL_NTS compare (b.exp(), a.exp())) {
   case SMALLER:
-    // leftshift of a to reach b.exp()
-    mpz_mul_2exp (s.mpz(), a.man(), a.exp() - b.exp()); 
-    a_aligned = &s.mpz();  // leftshifted a
-    b_aligned = &b.man();  // b
-    rexp = b.exp();
-    break;
+    {
+      // leftshift of a to reach b.exp()
+      mpz_mul_2exp (s.mpz(), a.man(), a.exp() - b.exp()); 
+      const mpz_t& smpzref = s.mpz();  // leftshifted a
+      a_aligned = &smpzref;  // leftshifted a 
+      const mpz_t& bmanref = b.man();
+      b_aligned = &bmanref;  // b 
+      rexp = b.exp();
+      break;
+    }
   case LARGER:
-    // leftshift of b to reach a.exp()
-    mpz_mul_2exp (s.mpz(), b.man(), b.exp() - a.exp());
-    a_aligned = &a.man(); // a
-    b_aligned = &s.mpz(); // leftshifted b
-    rexp = a.exp();
-    break;
+    {
+      // leftshift of b to reach a.exp()
+      mpz_mul_2exp (s.mpz(), b.man(), b.exp() - a.exp());
+      const mpz_t& amanref = a.man();
+      a_aligned = &amanref; // a
+      const mpz_t& smpzref = s.mpz();  // leftshifted b
+      b_aligned = &smpzref; // leftshifted b 
+      rexp = a.exp();
+      break;
+    }
   case EQUAL:
-    a_aligned = &a.man();
-    b_aligned = &b.man();
-    rexp = a.exp();
+    {
+      const mpz_t& amanref = a.man();
+      a_aligned = &amanref;
+      const mpz_t& bmanref = b.man();
+      b_aligned = &bmanref; 
+      rexp = a.exp();
+    }
   }
 }
 
