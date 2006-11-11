@@ -1,6 +1,7 @@
 #ifndef MY_SEGMENT_2_H
 #define MY_SEGMENT_2_H
 
+#include <boost/config.hpp>
 
 template < class R_ >
 class MySegmentC2
@@ -42,8 +43,8 @@ public:
   const Point_2 &    start() const;
   const Point_2 &    end() const;
 
-  const Point_2 &   min() const;
-  const Point_2 &   max() const;
+  const Point_2 &   min BOOST_PREVENT_MACRO_SUBSTITUTION () const;
+  const Point_2 &   max BOOST_PREVENT_MACRO_SUBSTITUTION () const;
   const Point_2 &   vertex(int i) const;
   const Point_2 &   point(int i) const;
   const Point_2 &   operator[](int i) const;
@@ -85,7 +86,7 @@ MySegmentC2<R>::operator!=(const MySegmentC2<R> &s) const
 template < class R >
 CGAL_KERNEL_INLINE
 const typename MySegmentC2<R>::Point_2 &
-MySegmentC2<R>::min() const
+MySegmentC2<R>::min BOOST_PREVENT_MACRO_SUBSTITUTION () const
 {
   typename R::Less_xy_2 less_xy; 
   return less_xy(source(),target()) ? source() : target();
@@ -94,7 +95,7 @@ MySegmentC2<R>::min() const
 template < class R >
 CGAL_KERNEL_INLINE
 const typename MySegmentC2<R>::Point_2 &
-MySegmentC2<R>::max() const
+MySegmentC2<R>::max BOOST_PREVENT_MACRO_SUBSTITUTION() const
 {
   typename R::Less_xy_2 less_xy; 
   return less_xy(source(),target()) ? target() : source();
