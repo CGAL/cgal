@@ -1,5 +1,4 @@
 //#define MOVE_ALL
-#define NEWTON
 #ifndef NDEBUG
 #define CGAL_CHECK_EXPENSIVE
 #define CGAL_CHECK_EXACTNESS

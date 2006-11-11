@@ -46,6 +46,7 @@ CGAL_BEGIN_NAMESPACE;
 unsigned int stat_interval_certificate_functions_;
 unsigned int stat_interval_certificate_function_evaluations_;
 unsigned int stat_interval_certificate_function_interval_evaluations_;
+unsigned int stat_deriv_filter_calls_;
 unsigned int stat_newton_isolate_calls_;
 unsigned int stat_newton_refine_calls_;
 unsigned int stat_exact_points_;
@@ -484,6 +485,7 @@ public:
     stat_interval_certificate_functions_=0;
     stat_interval_certificate_function_evaluations_=0;
     stat_interval_certificate_function_interval_evaluations_=0;
+    stat_deriv_filter_calls_=0;
     stat_newton_isolate_calls_=0;
     stat_newton_refine_calls_=0;
     stat_exact_points_=0;
@@ -567,6 +569,7 @@ public:
     std::cout << "Point predicate evals " << stat_point_predicate_evaluations_ << std::endl;
     std::cout << "Interval predicate evals " << stat_interval_predicate_evaluations_ << std::endl;
     std::cout << "Interval certificate functions " << stat_interval_certificate_functions_ << std::endl;
+    std::cout << "\t deriv filtered " << stat_deriv_filter_calls_ << std::endl;
     std::cout << "\t newton isolated " << stat_newton_isolate_calls_ << std::endl;
     std::cout << "\t newton refined " << stat_newton_refine_calls_ << std::endl;
     std::cout << "\t evaluations " << stat_interval_certificate_function_evaluations_ << std::endl;
@@ -658,6 +661,7 @@ public:
   */
 
   // assumes a is 0
+  // 16 ops
   template <class CNT>
   CNT  eval_incircle(CNT bx, CNT by, 
 		CNT cx, CNT cy, CNT dx, CNT dy) const {
@@ -724,7 +728,7 @@ public:
     NT t7 = (-by[0]+dy[0]);
     NT ca0 = qx[0]*ty[0]-qy[0]*tx[0];
     NT ca1 = qx[0]*ty[1]+qx[1]*ty[0]-qy[0]*tx[1]-qy[1]*tx[0];
-    NT ca2 = qx[1]*ty[1]-qy[1]*tx[1];
+    NT ca2 = qx[1]*ty[1]-qy[1]*tx[1]; //33
     
     NT cb0 = rx[0]*t0 +  ry[0]*t1;
     NT cb1 = rx[0]*t2 + rx[1]*t0 + ry[0]*t3 + ry[1]*t1;
@@ -1149,11 +1153,38 @@ public:
 
     Newton_search takes the function and two derivitives.
     the goal is to find the closest positive to the left and negative to the right values.
-    eval function at left of interval (possibly update positive) and right (and update negative)
+    eval function at left of interval (possiibly update positive) and right (and update negative)
     find leftmost root of derivitive using newton (when do I stop?--ideally when the signs of f on both ends are the same)
     evaluate there and see if I have a positive and a negative, is so done, otherwise repeat
   
   */
+
+  template <class F, class FP>
+  double derivitive_filter(F f, FP fp, double lb, double ub) {
+    ++stat_deriv_filter_calls_;
+    double clb=lb;
+    INT vp= fp(INT(lb,ub));
+    INT step=0;
+    int nsteps=0;
+    if (vp.inf() < 0) {
+      vp = INT(-vp.inf());
+      do {
+	INT v= f(clb);
+	if (v.inf() <= 0) {
+	  CGAL_UD_DEBUG("Deriv return " << clb << " from " << lb << " with " << nsteps << std::endl);
+	  return clb;
+	}
+	step = v/vp;
+	clb += step.inf();
+      } while (clb < ub && step.inf() > .01);
+      
+    } else {
+      clb=ub;
+    }
+    CGAL_UD_DEBUG("Deriv return " << clb << " from " << lb << " with " << nsteps << std::endl);
+    return clb;
+  }
+
 
 
   template <class F, class FP, bool OPT>
@@ -1354,160 +1385,6 @@ public:
     }
   }
 
-#ifndef NEWTON
-
-  template <class F>
-  Isolate_result isolate_failure(F f, double lb, double ub, 
-				 bool starts_positive, int rem_depth,
-				 int NS,
-				 INT &ret) const {
-
-    //const int NS=10;
-    double ld= lb;
-    //const double growth=1.5;
-    double step= (ub-lb)/(NS-1); //std::pow(growth,NS-1);
-    //if (step <0) std::cerr << "Step is " << step << std::endl;
-    std::pair<double,double> failures(std::numeric_limits<double>::infinity(),
-				      -std::numeric_limits<double>::infinity());
-    bool has_zero=false;
-    //bool has_negative=false;
-    bool has_positive = starts_positive;
-    Isolate_result certain=POSSIBLE_FAILURE;
-      
-    /*if (!has_positive) {
-      CGAL::Sign sn= sign_at(ct[0],ct[1],ct[2],ct[3], INT(lb, lb));
-      if (sn== CGAL::POSITIVE) has_positive=true;
-      }*/
-
-
-    CGAL_UD_DEBUG( "Interval is " << lb << " to " << ub 
-		   << " with initial step " << step << "(" << rem_depth << ")" 
-		   << std::endl);
-
-    for (int i=0; i< NS; ++i) {
-      double nld= std::min(ld+step, ub);
-      if (nld == ld) break;
-
-      //step *= growth;
-
-      CGAL_assertion(i != NS-1 || nld == ub);
-
-      INT ci(ld, nld);
-      ld= nld;
-      CGAL::Sign csn= f(ci);
-      CGAL_UD_DEBUG("Sign on " << ci << " is " << csn << "(" << i << ")" 
-		    << std::endl);
-      if (csn == CGAL::NEGATIVE) {
-	//CGAL_assertion(has_zero); 
-	// could start negative in the (large) initial interval
-	//has_negative=true;
-	if (has_positive) {
-	  certain=CERTAIN_FAILURE;
-	  break;
-	}
-      } else if (csn == CGAL::ZERO) {
-	has_zero=true;
-	//if (has_zero){
-	failures = join(failures, ci);
-	INT ci(nld, nld);
-	CGAL::Sign sn= f(ci);
-	CGAL_UD_DEBUG("Sign at " << ci << " is " << sn << "(" << i << ")" 
-		      << std::endl);
-	if (sn == CGAL::NEGATIVE) {
-	  CGAL_assertion(csn != CGAL::POSITIVE);
-	  if (has_positive) {
-	    certain=CERTAIN_FAILURE;
-	    break;
-	  }
-	} else if (sn == CGAL::POSITIVE) {
-	  CGAL_assertion(csn != CGAL::NEGATIVE);
-	  has_positive=true;
-	}
-	  
-      } else if (csn == CGAL::POSITIVE) {
-	has_positive=true;
-      }
-      //if (i==0) {
-    }
-
-
-
-
-
-
-
-    if ( has_zero) {
-      if ((certain==CERTAIN_FAILURE 
-	   && (lb != failures.first || starts_positive)) 
-	  || rem_depth == 0
-	  || lb == failures.first && ub == failures.second
-	  /* || .9*(ub-lb) < (failures.second - failures.first)*/) {
-	CGAL_UD_DEBUG(  "Not recursing with " 
-			<< failures.first << " " << failures.second 
-			<< " because " << has_zero << has_positive 
-			<< certain << std::endl);
-	ret= failures;
-	return certain;
-      } else {
-	CGAL_UD_DEBUG( "Recursing with " 
-		       << failures.first << " " << failures.second 
-		       << " because " << has_zero << has_positive 
-		       << certain << std::endl);
-	double nwid = failures.second-failures.first;
-	double wid = ub-lb;
-	if (nwid > wid/2.0) NS*=2;
-	if (nwid < wid/4.0) NS/=2;
-	return isolate_failure(f, failures.first, failures.second,
-			       has_positive,
-			       rem_depth-1,
-			       NS, ret);
-      }
-    } else {
-      //ret= std::pair<double,double>(1,-1);
-      return NO_FAILURE;
-    }
-     
-  }
- 
-  Isolate_result isolate_failure(Protected_array_const_pointer<INT, 5> f, double lb, double ub,
-				 bool starts_positive,
-                                 INT &ret) const {
-    //CGAL::Protect_FPU_rounding<true> prot;
-    INT v= evaluate_ipoly(f, lb);
-    double c=lb;
-    CGAL_UD_DEBUG("Const is " << v );
-#ifndef NDEBUG
-    double olb= lb;
-    double oub=ub;
-#endif
-    if (v.inf() >= 0) {
-      INT deriv= INT(0,1)*f[1]+INT(0,2)*f[2]+INT(0,3)*f[3]+INT(0,4)*f[4];
-      CGAL_UD_DEBUG(" and derivitive is "<<  deriv 
-		    << " making the step " << v/CGAL::abs(deriv) << std::endl;);
-      
-      INT slope;
-      if (deriv.inf() >= 0) {
-	return NO_FAILURE;
-      }
-      else slope= -deriv.inf();
-      do {
-        INT step= v/slope;
-        lb=c;
-        c= c+step.inf();
-        if (c >= ub) {
-          return NO_FAILURE;
-        }
-        v= evaluate_ipoly(f,c);
-      } while (v.inf() >0);
-      ub= c;
-    }
-    CGAL_UD_DEBUG("lb changed from " << olb << " to " << lb << std::endl);
-    CGAL_UD_DEBUG("ub changed from " << oub << " to " << lb << std::endl);
-
-    return isolate_failure(Certificate_sign_at<5>(f), lb, ub, starts_positive, 3, 20, ret);
-  }
-
-#endif
 
 #ifndef MOVE_ALL  
   double next_activation() const {

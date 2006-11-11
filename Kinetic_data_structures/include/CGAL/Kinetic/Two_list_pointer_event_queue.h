@@ -544,20 +544,18 @@ public:
     return true;
   }
 
+  void write(const Queue &q, std::ostream& out) const {
+    for (typename Queue::const_iterator it = q.begin(); it != q.end(); ++it) {
+      out << "(" << &*it << ": " << *it << ")";
+      out << std::endl;
+    }
+  }
+
   bool write(std::ostream &out) const
   {
-    for (typename Queue::const_iterator it = front_.begin(); it != front_.end(); ++it) {
-      //out << "[";
-     
-      out << "(" << &*it << ": " << *it << ")";
-      //out << "] ";
-      out << std::endl;
-    }
-    out << "--" << std::endl;
-    for (typename Queue::const_iterator it = back_.begin(); it != back_.end(); ++it) {
-      out << "(" << &*it << ": " << *it << ")";
-      out << std::endl;
-    }
+    write(front_, std::cout);
+    out << "--" << ub_ << "--" << std::endl;
+    write(back_, std::cout);
     out << std::endl;
     return true;
   }
@@ -777,11 +775,19 @@ protected:
 	make_inf(cand, cand.begin(), cand.end());
 	//grow_front(cand, recursive_count+1);
       } else {
-	if (dprint) std::cout << "undershot." << std::endl;
-	NT nstep = step_*2;
+	if (dprint) {
+	  std::cout << "undershot." << std::endl;
+	  write(front_, std::cout);
+	  std::cout << "-- " << ub_ << "--\n";
+	  write(cand, std::cout);
+	  std::cout << "--\n";
+	  write(back_, std::cout);
+	}
+	NT nstep = step_*1.5;
 	CGAL_assertion(nstep > step_);
 	step_=nstep;
 	CGAL_assertion(step_!=0);
+	cand.splice(cand.end(), back_);
 	grow_front(cand, recursive_count+1);
       }
     } else {
@@ -800,7 +806,14 @@ protected:
 	  //ub_=lb_;
 	  ub_-=step_;
 	  //CGAL_assertion(!all_in_front_);
-	  if (dprint) std::cout << "...overshot" << std::endl;
+	  if (dprint) {
+	    std::cout << "...overshot" << std::endl;
+	    write(front_, std::cout);
+	     std::cout << "-- " << ub_ << "--\n";
+	    write(cand, std::cout);
+	    std::cout << "--\n";
+	    write(back_, std::cout);
+	  }
 	  CGAL_assertion(nstep < step_);
 	  step_=nstep;
 	  CGAL_assertion(step_!=0);

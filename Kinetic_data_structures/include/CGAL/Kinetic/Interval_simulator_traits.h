@@ -62,7 +62,7 @@ public:
     return (iv_.first+iv_.second)/2.0;
   }
   const Exact_root& exact_root() const {
-#ifndef NDEBUG
+#if 0
     std::pair<double,double> oiv= iv_;
     Exact_root er=data_.exact_root(iv_);
     if (er < oiv.first || er > oiv.second) {
@@ -73,8 +73,10 @@ public:
     CGAL_precondition(er <= oiv.second);
     //CGAL_precondition(!is_point());
 #endif
-    
-    return data_.exact_root(iv_);
+    if (data_.ensure_exact_root(iv_)) {
+      iv_= to_interval(data_.exact_root());
+    }
+    return data_.exact_root();
   }
 
   bool is_rational() const {
@@ -153,6 +155,10 @@ public:
 
   void set_interval(const std::pair<double,double>& iv) {
     iv_= iv;
+  }
+
+  void refine() const {
+    data_.refine(iv_);
   }
 
 private:

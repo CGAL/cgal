@@ -1,9 +1,8 @@
 //#define CGAL_CHECK_EXPENSIVE
 //#define CGAL_CHECK_EXACTNESS
-#define NEWTON
 #define NDEBUG
 #define CGAL_NO_STATIC_FILTERS
-//#define MOVE_ALL
+#define MOVE_ALL
 
 #include <CGAL/basic.h>
 
@@ -480,7 +479,7 @@ int main(int argc, char *argv[]) {
 		<< " seconds" << std::endl;
     }
   }
-  {
+  if (0){
     UD ud(ipts.begin(), ipts.end());
 
     // moncontrol(1);
