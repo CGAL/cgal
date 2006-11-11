@@ -12,7 +12,7 @@
 // Then the package-specific headers:
 //
 
-// 1.The header defining how a concrete surface type is adapted to the TSM concept.
+// 1.The header defining how a concrete surface type is adapted to the EdgeCollapsableMesh concept.
 #include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
 
 // 2.The header defining the algorithm.
