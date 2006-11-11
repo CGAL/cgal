@@ -42,10 +42,10 @@ typedef CK1_::Line_arc_2                        Line_arc_2_2;
 
 //typedef Circular_k::Circular_arc_2                            Arc;
 //typedef Circular_k::Line_arc_2                                Arc;
-typedef boost::variant< Circular_arc_2, Line_arc_2 >        Arc;
+typedef boost::variant< Circular_arc_2, Line_arc_2 >        Arc1;
 typedef boost::variant< Circular_arc_2_2, Line_arc_2_2 >        Arc2;
 
-typedef std::vector< Arc> ArcContainer;
+typedef std::vector< Arc1> ArcContainer;
 typedef std::vector< Arc2> ArcContainer2;
 
 #ifndef CGAL_CURVED_KERNEL_DEBUG
