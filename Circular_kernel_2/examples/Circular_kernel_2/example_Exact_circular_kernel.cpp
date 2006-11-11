@@ -14,8 +14,8 @@ typedef Circular_k::Circle_2                            Circle_2;
 typedef Circular_k::Circular_arc_2                      Circular_arc_2;
 typedef Circular_k::Line_arc_2                          Line_arc_2;
 
-typedef boost::variant< Circular_arc_2, Line_arc_2>     Arc;
-typedef std::vector< Arc> ArcContainer;
+typedef boost::variant< Circular_arc_2, Line_arc_2>     Arc_2;
+typedef std::vector< Arc_2> ArcContainer;
 
 typedef CGAL::Arr_circular_line_arc_traits
               <Circular_k, Circular_arc_2, Line_arc_2>  Traits;
