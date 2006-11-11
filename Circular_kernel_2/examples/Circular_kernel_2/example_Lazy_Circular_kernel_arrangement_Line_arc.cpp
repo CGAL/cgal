@@ -26,8 +26,8 @@ typedef CGAL::Circular_kernel_2<Linear_k2,Algebraic_k2>      CK2_;
 
 typedef CGAL::Lazy_circular_kernel_2<CK1_,CK2_>              Circular_k;
 
-typedef Circular_k::Line_arc_2                                Arc;
-typedef std::vector<Arc>                                    ArcContainer;
+typedef Circular_k::Line_arc_2                               Arc1;
+typedef std::vector<Arc1>                                    ArcContainer;
 
 typedef CK1_::Line_arc_2                                     Arc2;
 typedef std::vector<Arc2>                                    ArcContainer2;
