@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/graph_traits_Triangulation_2.h>
+#include <CGAL/boost/graph/graph_traits_Triangulation_2.h>
 
 #include <boost/graph/kruskal_min_spanning_tree.hpp>
 #include <boost/graph/filtered_graph.hpp>

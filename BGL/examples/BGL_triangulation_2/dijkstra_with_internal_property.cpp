@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_vertex_base_with_id_2.h>
-#include <CGAL/graph_traits_Triangulation_2.h>
+#include <CGAL/boost/graph/graph_traits_Triangulation_2.h>
 
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/filtered_graph.hpp>
