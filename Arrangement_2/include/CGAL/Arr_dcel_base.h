@@ -1359,6 +1359,8 @@ public:
         dup_h = NULL;
 
       dup_f->set_halfedge (dup_h);
+      dup_f->set_unbounded(f->is_unbounded());//BZBZ!!!
+
 
       // Assign the holes.
       for (holes_it = f->holes_begin();
