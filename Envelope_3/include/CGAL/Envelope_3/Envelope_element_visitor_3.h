@@ -1934,12 +1934,12 @@ protected:
     typedef typename Minimization_diagram_2::Ccb_halfedge_circulator
                                                         Ccb_halfedge_circulator;
 
-    Copy_observer(Minimization_diagram_2& small,
+    Copy_observer(Minimization_diagram_2& small_,
                   Minimization_diagram_2& big,
                   Halfedges_map& map_h,
                   Vertices_map&  map_v,
                   Faces_map&     map_f)
-      : small_arr(small), big_arr(big),
+      : small_arr(small_), big_arr(big),
         big_arr_accessor(big_arr),
         map_halfedges(map_h),
         map_vertices(map_v),
