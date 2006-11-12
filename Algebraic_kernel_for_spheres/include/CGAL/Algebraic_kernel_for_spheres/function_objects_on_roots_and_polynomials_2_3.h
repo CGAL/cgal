@@ -17,8 +17,8 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
 //
 // Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //             Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
@@ -356,7 +356,7 @@ namespace AlgebraicSphereFunctors {
     Comparison_result 
     operator()(const Root_for_spheres_2_3<RT>& r1, 
 	     const Root_for_spheres_2_3<RT>& r2) const
-    { return compare_x<RT>(r1, r2); }
+    { return AlgebraicSphereFunctors::compare_x<RT>(r1, r2); }
 
   };
 
@@ -367,7 +367,7 @@ namespace AlgebraicSphereFunctors {
      Comparison_result 
     operator()(const Root_for_spheres_2_3<RT>& r1, 
 	     const Root_for_spheres_2_3<RT>& r2) const
-    { return compare_y<RT>(r1, r2); }
+    { return AlgebraicSphereFunctors::compare_y<RT>(r1, r2); }
   };
 
   template <typename RT>
@@ -377,7 +377,7 @@ namespace AlgebraicSphereFunctors {
      Comparison_result 
     operator()(const Root_for_spheres_2_3<RT>& r1, 
 	     const Root_for_spheres_2_3<RT>& r2) const
-    { return compare_z<RT>(r1, r2); }
+    { return AlgebraicSphereFunctors::compare_z<RT>(r1, r2); }
   };
 
   template <typename RT>
@@ -387,7 +387,7 @@ namespace AlgebraicSphereFunctors {
     Comparison_result 
     operator()(const Root_for_spheres_2_3<RT>& r1, 
 	     const Root_for_spheres_2_3<RT>& r2) const
-    { return compare_xy<RT>(r1, r2); }
+    { return AlgebraicSphereFunctors::compare_xy<RT>(r1, r2); }
   };
 
    template <typename RT>
@@ -397,7 +397,7 @@ namespace AlgebraicSphereFunctors {
     Comparison_result 
     operator()(const Root_for_spheres_2_3<RT>& r1, 
 	     const Root_for_spheres_2_3<RT>& r2) const
-    { return compare_xyz<RT>(r1, r2); }
+    { return AlgebraicSphereFunctors::compare_xyz<RT>(r1, r2); }
   };
 
 } // namespace AlgebraicSphereFunctors
