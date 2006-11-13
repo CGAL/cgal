@@ -4,11 +4,11 @@
 #include <CGAL/_test_real_embeddable.h>
 #include <CGAL/Uncertain.h>
 
-#define CGAL_catch_error(expr, error)                             \
+#define CGAL_catch_error(expr, error)                            \
     {                                                            \
-    bool b = false;                                              \
-    try{expr;}catch(error){b= true;}                             \
-    if(!b) CGAL_error( "Expr should throw expetion");       \
+        bool b = false;                                          \
+        try{(void) expr;}catch(error){ b = true;}                \
+        if(!b) CGAL_error( "Expr should throw expetion");        \
     }                          
 
 namespace CGAL {
@@ -118,7 +118,7 @@ int main() {
         // OVERLAP
         I=Interval(1,3);
         J=Interval(2,4); // TODO: must explicitly convert to bool to get exception
-        CGAL_catch_error((bool)(I==J) ,CGAL::Uncertain_conversion_exception);
+        CGAL_catch_error((bool)(I==J),CGAL::Uncertain_conversion_exception);
         CGAL_catch_error((bool)(I!=J),CGAL::Uncertain_conversion_exception);
         CGAL_catch_error((bool)(I< J),CGAL::Uncertain_conversion_exception);
         CGAL_catch_error((bool)(I> J),CGAL::Uncertain_conversion_exception);
