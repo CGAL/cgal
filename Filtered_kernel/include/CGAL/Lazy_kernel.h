@@ -62,7 +62,7 @@ public:
   // struct filter_tag{};
   // typedef filter_tag                                     Kernel_tag;
   typedef typename EK::Kernel_tag                       Kernel_tag;
-  // typedef typename CK::Rep_tag                          Rep_tag;
+  typedef typename EK::Rep_tag                          Rep_tag;
 
   // Types
   typedef CGAL::Lazy_exact_nt<typename EK::FT>  FT;
