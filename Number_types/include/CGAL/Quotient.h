@@ -42,15 +42,11 @@
 #  include <cctype>
 #endif
 
-#include <CGAL/Quotient_fwd.h>
 
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Kernel/mpl.h>
 
 #include <boost/operators.hpp>
-
-#include <CGAL/Root_of_traits.h>
-#include <CGAL/make_root_of_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -749,30 +745,6 @@ public:
         }
     };
 };
-
-
-template < class NT >
-inline
-typename Root_of_traits< NT >::RootOf_2
-make_root_of_2(const Quotient< NT > &a, const Quotient< NT > &b,
-               const Quotient< NT > &c, bool d)
-{
-  return CGALi::make_root_of_2_rational< NT, Quotient< NT > >(a,b,c,d);
-}
-
-template < class NT >
-inline
-typename Root_of_traits< NT >::RootOf_2
-make_root_of_2(const Quotient< NT > &a, const Quotient< NT > &b, const Quotient< NT > &c)
-{
-  return typename Root_of_traits< NT >::RootOf_2(a,b,c);
-}
-
-// Quotient<NT> should be the same as Root_of_traits<NT>::RootOf_1
-// i.e the default implementation.
-template < class NT >
-struct Root_of_traits< Quotient< NT > >
-  : public Root_of_traits< NT > {};
 
 CGAL_END_NAMESPACE
 

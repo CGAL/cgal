@@ -22,38 +22,129 @@
 #define CGAL_ROOT_OF_TRAITS_H
 
 #include <CGAL/number_type_basic.h>
-#include <CGAL/Root_of_2_fwd.h>
-#include <CGAL/Quotient_fwd.h>
+#include <CGAL/Root_of_2.h>
+#include <CGAL/Quotient.h>
 
-namespace CGAL {
+CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
+template < typename NT, class Algebraic_structure_tag>
+struct Root_of_traits_helper{
+    typedef Quotient<NT> Root_of_1;
+    typedef Root_of_2<NT> Root_of_2;
+    struct Make_root_of_2{
+        typedef Root_of_2 result_type;
+        NT operator()(const NT& a, const NT& b, const NT& c){
+            return Root_of_2(a,b,c);
+        }
+        Root_of_1 operator()(const Root_of_1& a, const Root_of_1& b, const Root_of_1& c){
+            // dummy, since I'm not sure about the semantic yet.
+            return Root_of_2(a,b,c);
+        }
+    };
+};
+
 // Dispatcher for the case Has_sqrt==Tag_true or not.
-template < typename RT,
-           typename Has_sqrt = typename Number_type_traits<RT>::Has_sqrt >
-struct Root_of_traits_helper
+template < typename FT>
+struct Root_of_traits_helper < FT, Field_tag >
 {
-  typedef Quotient< RT >   RootOf_1;
-  typedef Root_of_2< RT >  RootOf_2;
+    typedef FT               Root_of_1;
+private:
+    typedef Fraction_traits<FT> FrT;
+    typedef typename FrT::Numerator      RT;
+    typedef typename FrT::Decompose Decompose;
+public:
+    typedef Root_of_2< RT >  Root_of_2;
+    
+    struct Make_root_of_2{
+        typedef FT result_type;
+        Root_of_2 operator()(const FT& a, const FT& b, const FT& c){
+            return Root_of_2(a,b,c);
+        }
+        Root_of_2 operator()(const FT& a, const FT& b, const FT& c, bool smaller){
+            Decompose decompose;
+            RT a_num,b_num,c_num;
+            RT a_den,b_den,c_den; // Denomiantor same as RT
+ 
+            decompose(a,a_num,a_den);
+            decompose(b,b_num,b_den);
+            decompose(c,c_num,c_den);
+            
+            RT a_ = a_num * b_den * c_den;
+            RT b_ = b_num * a_den * c_den;
+            RT c_ = c_num * a_den * b_den;
+ 
+            return make_root_of_2(a_,b_,c_,smaller);
+        }
+    };
 };
 
 // Specialization for Has_sqrt==Tag_true.
-template < typename RT >
-struct Root_of_traits_helper < RT, Tag_true >
+template < typename NT >
+struct Root_of_traits_helper < NT, Field_with_sqrt_tag >
 {
-  typedef RT  RootOf_1;
-  typedef RT  RootOf_2;
+    typedef NT  Root_of_1;
+    typedef NT  Root_of_2;
+    
+    struct Make_root_of_2{
+        typedef NT result_type;
+        // just a copy, not sure about the semantic of smaller 
+        NT operator()(const NT& a, const NT& b, const NT& c, bool smaller){
+            // former make_root_of_2_sqrt()
+            CGAL_assertion( a != 0 );
+            NT discriminant = CGAL_NTS square(b) - a*c*4;
+            CGAL_assertion( discriminant >= 0 );
+            NT d = CGAL_NTS sqrt(discriminant);
+            if ((smaller && a>0) || (!smaller && a<0))
+                d = -d;
+            return (d-b)/(a*2);
+        }
+        // it's so easy 
+        NT operator()(const NT& a, const NT& b, const NT& c){
+            return a + b * CGAL_NTS sqrt(c) ;
+        }
+    };
 };
+
+template < typename NT >
+struct Root_of_traits_helper < NT, Field_with_root_of_tag >
+    :public Root_of_traits_helper < NT, Field_with_sqrt_tag>{};
 
 } // namespace CGALi
 
 
-// Default Traits class for RT types
-template < typename RT >
+// Default Traits class for NT types
+template < typename NT >
 struct Root_of_traits
-  : public CGALi::Root_of_traits_helper<RT> {};
+    : public CGALi::Root_of_traits_helper<NT,
+      typename Algebraic_structure_traits<NT>::Algebraic_structure_tag> {
+    typedef CGALi::Root_of_traits_helper<NT,
+      typename Algebraic_structure_traits<NT>::Algebraic_structure_tag> Base;
+    typedef typename Base::Root_of_1 RootOf_1;
+    typedef typename Base::Root_of_2 RootOf_2;    
+};
 
-} // namespace CGAL
+template < class NT >
+inline
+typename Root_of_traits< NT >::Root_of_2
+make_root_of_2(NT a, const NT &b, const NT &c)
+{
+    typename Root_of_traits<NT>::Make_root_of_2 make_root_of_2;
+    return make_root_of_2(a,b,c);
+}
+
+
+template < class NT >
+inline
+typename Root_of_traits< NT >::Root_of_2
+make_root_of_2(NT a, int b_, const NT &c)
+{
+    NT b(b_);
+    typename Root_of_traits<NT>::Make_root_of_2 make_root_of_2;
+    return make_root_of_2(a,b,c);
+}
+
+CGAL_END_NAMESPACE
 
 #endif // CGAL_ROOT_OF_TRAITS_H

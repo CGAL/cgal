@@ -36,12 +36,9 @@
 #include <CGAL/Handle.h>
 #include <CGAL/NT_converter.h>
 
-#include <CGAL/Lazy_exact_nt_fwd.h>
-
 #include <CGAL/Profile_counter.h>
 
-
-#include <CGAL/Root_of_traits.h>
+// #include <CGAL/Root_of_traits.h> // TODO
 
 /*
  * This file contains the definition of the number type Lazy_exact_nt<ET>,
@@ -90,6 +87,8 @@
  */
 
 CGAL_BEGIN_NAMESPACE
+
+template <class NT> class Lazy_exact_nt;
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
 template <class T>

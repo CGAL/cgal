@@ -83,29 +83,6 @@
 #include <CGAL/long_long.h>
 #endif
 
-
-//#include <CGAL/Interval_nt_fwd.h>
-
-// Including all number type files is necessary for compilers implementing
-// two-stage name lookup (like g++ >= 3.4).
-// A nicer solution needs more thought.
-
-#ifndef CGAL_CFG_NO_TWO_STAGE_NAME_LOOKUP
-
-#include <CGAL/Lazy_exact_nt_fwd.h>
-#include <CGAL/Nef_polynomial_fwd.h>
-#include <CGAL/Number_type_checker_fwd.h>
-
-#ifdef CGAL_USE_GMPXX
-#  include <CGAL/gmpxx_fwd.h>
-#endif
-
-
-#include <CGAL/Quotient_fwd.h>
-#include <CGAL/Root_of_2_fwd.h>
-
-#include <CGAL/make_root_of_2.h>
-
-#endif // CGAL_CFG_NO_TWO_STAGE_NAME_LOOKUP
+#include <CGAL/Root_of_traits.h>
 
 #endif // CGAL_NUMBER_TYPE_BASIC_H

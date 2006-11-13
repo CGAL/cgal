@@ -26,6 +26,7 @@
 #include <CGAL/Real_embeddable_traits.h>
 #include <CGAL/Coercion_traits.h>
 #include <CGAL/Quotient.h>
+#include <CGAL/Root_of_2.h>
 
 #include <CGAL/utils.h>
 

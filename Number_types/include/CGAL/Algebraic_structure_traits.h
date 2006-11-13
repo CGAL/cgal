@@ -520,7 +520,84 @@ namespace INTERN_AST {
 
 
 
+namespace CGALi{
 
+#define CGAL_IS_SAME_OR_BASE_OF(BASE,T)                         \
+    (                                                           \
+            ::boost::is_base_and_derived< BASE , T >::value ||  \
+            ::boost::is_same< BASE , T >::value                 \
+    )                                                           \
+        
+
+
+
+template<class AS>
+class Is_integral_domain_without_division {
+    typedef Algebraic_structure_traits<AS> AST;
+    typedef typename AST::Algebraic_structure_tag Tag;
+public :
+    static const bool value 
+    = CGAL_IS_SAME_OR_BASE_OF(Integral_domain_without_division_tag,Tag);  
+};
+
+template<class AS>
+class Is_integral_domain {
+    typedef Algebraic_structure_traits<AS> AST;
+    typedef typename AST::Algebraic_structure_tag Tag;
+public :
+    static const bool value 
+    = CGAL_IS_SAME_OR_BASE_OF(Integral_domain_tag,Tag);  
+};
+
+
+template<class AS>
+class Is_unique_factorization_domain {
+    typedef Algebraic_structure_traits<AS> AST;
+    typedef typename AST::Algebraic_structure_tag Tag;
+public :
+    static const bool value 
+    = CGAL_IS_SAME_OR_BASE_OF(Unique_factorization_domain_tag,Tag);  
+};
+
+template<class AS>
+class Is_euclidean_ring {
+    typedef Algebraic_structure_traits<AS> AST;
+    typedef typename AST::Algebraic_structure_tag Tag;
+public :
+    static const bool value 
+    = CGAL_IS_SAME_OR_BASE_OF(Euclidean_ring_tag,Tag);  
+};
+
+
+template<class AS>
+class Is_field {
+    typedef Algebraic_structure_traits<AS> AST;
+    typedef typename AST::Algebraic_structure_tag Tag;
+public :
+    static const bool value 
+    = CGAL_IS_SAME_OR_BASE_OF(Field_tag,Tag);  
+};
+
+
+template<class AS>
+class Is_field_with_sqrt {
+    typedef Algebraic_structure_traits<AS> AST;
+    typedef typename AST::Algebraic_structure_tag Tag;
+public :
+    static const bool value 
+    = CGAL_IS_SAME_OR_BASE_OF(Field_with_sqrt_tag,Tag);  
+};
+
+template<class AS>
+class Is_field_with_root_of {
+    typedef Algebraic_structure_traits<AS> AST;
+    typedef typename AST::Algebraic_structure_tag Tag;
+public :
+    static const bool value 
+    = CGAL_IS_SAME_OR_BASE_OF(Field_with_root_of_tag,Tag);  
+};
+
+} // namespace CGALi
 
 
 CGAL_END_NAMESPACE

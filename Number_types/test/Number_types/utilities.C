@@ -33,6 +33,8 @@
 #  include <CGAL/long_long.h>
 #endif
 
+#include <CGAL/Number_type_checker.h>
+
 #include <CGAL/_test_utilities.h>
 
 typedef CGAL::Quotient<CGAL::MP_Float>            QMPF;
@@ -94,13 +96,15 @@ int main()
       //TESTIT(CORE::Expr, "CORE::Expr")
 #endif
 
-  // LEDA based NTs
+      // LEDA based NTs
 #ifdef CGAL_USE_LEDA
-  TESTIT(leda_integer, "leda_integer")
-  TESTIT(leda_rational, "leda_rational")
-  TESTIT(leda_bigfloat, "leda_bigfloat")
-  TESTIT(leda_real, "leda_real")
+      TESTIT(leda_integer, "leda_integer")
+      TESTIT(leda_rational, "leda_rational")
+      TESTIT(leda_bigfloat, "leda_bigfloat")
+      TESTIT(leda_real, "leda_real")
+      typedef CGAL::Number_type_checker<leda_rational,leda_real> NT_checker;
+      TESTIT(NT_checker, "NT_checker");
 #endif // CGAL_USE_LEDA
-
+      
   return 0;
 }

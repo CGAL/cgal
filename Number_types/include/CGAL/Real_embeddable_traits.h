@@ -17,7 +17,8 @@
 CGAL_BEGIN_NAMESPACE
 
 
-template< class Real_embeddable_ > 
+template< class Real_embeddable_ , 
+          typename Is_real_embeddable_ = Tag_false > 
 class Real_embeddable_traits {
   public:
     typedef Real_embeddable_  Real_embeddable;

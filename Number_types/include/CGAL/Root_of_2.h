@@ -23,7 +23,6 @@
 
 #include <iostream>
 #include <CGAL/number_type_basic.h>
-#include <CGAL/Root_of_2_fwd.h>
 #include <CGAL/Root_of_traits.h>
 #include <CGAL/NT_converter.h>
 #include <CGAL/Kernel/mpl.h>
@@ -78,6 +77,8 @@ namespace CGAL {
 //   root of degree 1 polynomials.  It would be nice to have a separate
 //   polynomial class which performed this task (and others)...
 // - overloaded versions of make_root_of_2<>() for Lazy_exact_nt<> and others.
+
+template <class RT> class Root_of_traits; 
 
 template < typename RT_ >
 class Root_of_2 {

@@ -38,9 +38,6 @@
 #  include <cctype>
 #endif
 
-//#include <CGAL/Root_of_traits.h>
-//#include <CGAL/Root_of_2_fwd.h>
-
 CGAL_BEGIN_NAMESPACE
 
 // Algebraic structure traits
@@ -169,31 +166,4 @@ template<> class Algebraic_structure_traits< Quotient<Gmpz> >
 };
 
 CGAL_END_NAMESPACE
-
-
-
-#include <CGAL/Root_of_2.h>
-  
-CGAL_BEGIN_NAMESPACE
-  
-class Gmpq;
-
-template <>
-struct Root_of_traits< Gmpz >
-{
-    typedef Gmpq               RootOf_1;
-    typedef Root_of_2< Gmpz >  RootOf_2;
-};
-
-// FIX ME: This not compile
-// inline
-// Root_of_2<Gmpz>
-// make_root_of_2(const Gmpz &a, const Gmpz &b, const Gmpz &c, bool smaller)
-// {
-//   CGAL_assertion( a != 0 );
-//   return Root_of_2<Gmpz>(a, b, c, smaller);
-// }
-CGAL_END_NAMESPACE
-
-
 #endif // CGAL_GMPZ_H

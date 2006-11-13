@@ -136,31 +136,6 @@ public:
     };
 };
 
-
-
-
-
-/* FIX ME: this not compile
-inline
-Root_of_2< Gmpz >
-make_root_of_2(const Gmpq &a, const CGAL::Gmpq &b,
-               const Gmpq &c, bool d)
-{
-  return CGALi::make_root_of_2_rational< Gmpz, CGAL::Gmpq >(a,b,c,d);
-}
-*/
-
-#include <CGAL/make_root_of_2.h>
-#include <CGAL/Root_of_traits.h>
-#include <CGAL/Root_of_2.h>
-// Gmpq is the same as Root_of_traits< CGAL::Gmpz >::RootOf_1
-template <>
-struct Root_of_traits< Gmpq >
-{
-  typedef Gmpq               RootOf_1;
-  typedef Root_of_2< Gmpz >  RootOf_2;
-};
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_GMPQ_H

@@ -20,6 +20,19 @@
 // 
 //
 // Author(s)     : Sylvain Pion
+
+// This file gathers the necessary adaptors so that the following
+// C++ number types that come with GMP can be used by CGAL :
+// - mpz_class (see #include <CGAL/mpz_class.h>)
+// - mpq_class (see #include <CGAL/mpq_class.h>)
+
+// - mpf_class support is commented out until to_interval() is implemented.
+//   It is probably not very useful with CGAL anyway.
+
+// Note that GMP++ use the expression template mechanism, which makes things
+// a little bit complicated in order to make square(x+y) work for example.
+// Reading gmpxx.h shows that ::__gmp_expr<T, T> is the mp[zqf]_class proper,
+// while ::__gmp_expr<T, U> is the others "expressions".
  
 #ifndef CGAL_GMPXX_H
 #define CGAL_GMPXX_H
@@ -32,96 +45,9 @@
 #include <CGAL/mpz_class.h>
 #include <CGAL/mpq_class.h>
 #include <CGAL/gmpxx_coercion_traits.h>
-
-//#include <CGAL/Root_of_traits.h>
-//#include <CGAL/Root_of_2.h>
-
 #include <CGAL/functional_base.h> // Unary_function, Binary_function
 
-// This file gathers the necessary adaptors so that the following
-// C++ number types that come with GMP can be used by CGAL :
-// - mpz_class
-// - mpq_class
-
-// - mpf_class support is commented out until to_interval() is implemented.
-//   It is probably not very useful with CGAL anyway.
-
-// Note that GMP++ use the expression template mechanism, which makes things
-// a little bit complicated in order to make square(x+y) work for example.
-// Reading gmpxx.h shows that ::__gmp_expr<T, T> is the mp[zqf]_class proper,
-// while ::__gmp_expr<T, U> is the others "expressions".
-
 CGAL_BEGIN_NAMESPACE
-
-
-/* FIX ME: THERE IS NO CONSTRUCTOR FT(x,y)
-           AVALIABLE FOR THIS TYPE
-
-namespace CGALi {
-
-inline
-Root_of_2< ::mpz_class >
-make_root_of_2_gmpxx(const ::mpz_class & a,
-                     const ::mpz_class & b,
-                     const ::mpz_class & c,
-                     bool d)
-{
-  return Root_of_2< ::mpz_class >(a, b, c, d);
-}
-
-inline
-Root_of_2< ::mpz_class >
-make_root_of_2_gmpxx(const ::mpq_class & a,
-                     const ::mpq_class & b,
-                     const ::mpq_class & c,
-                     bool d)
-{
-    typedef Rational_traits< ::mpq_class > Rational;
-
-    Rational r;
-    CGAL_assertion( r.denominator(a) > 0 );
-    CGAL_assertion( r.denominator(b) > 0 );
-    CGAL_assertion( r.denominator(c) > 0 );
-*/
-/*   const RT lcm = ( r.denominator(a) * r.denominator(b) * r.denominator(c)          )/
-               ( gcd( r.denominator(a), gcd(r.denominator(b), r.denominator(c)) ) );
-
-      RT a_ = r.numerator(a) * ( lcm / r.denominator(a) );
-      RT b_ = r.numerator(b) * ( lcm / r.denominator(b) );
-      RT c_ = r.numerator(c) * ( lcm / r.denominator(c) );
-*/
-/*    ::mpz_class a_ = r.numerator(a) * r.denominator(b) * r.denominator(c);
-    ::mpz_class b_ = r.numerator(b) * r.denominator(a) * r.denominator(c);
-    ::mpz_class c_ = r.numerator(c) * r.denominator(a) * r.denominator(b);
-
-    return Root_of_2< ::mpz_class >(a, b, c, d);
-}
-
-} // CGALi
-
-template < typename T, typename U1, typename U2, typename U3 >
-inline
-typename Root_of_traits< ::__gmp_expr<T, T> >::RootOf_2
-make_root_of_2(const ::__gmp_expr< T, U1> & a,
-               const ::__gmp_expr< T, U2> & b,
-               const ::__gmp_expr< T, U3> & c,
-               bool d)
-{
-  return CGALi::make_root_of_2_gmpxx(a, b, c, d);
-}
-
-template < typename T, typename U >
-struct Root_of_traits< ::__gmp_expr<T, U> >
-{
-  typedef ::mpq_class               RootOf_1;
-  typedef Root_of_2< ::mpz_class >  RootOf_2;
-};*/
-
-
 CGAL_END_NAMESPACE
-// XXX : These seem necessary.
-// I don't know why doing them in namespace CGAL is not enough.
-// using to_double;
-// using is_valid;
 
 #endif // CGAL_GMPXX_H
