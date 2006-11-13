@@ -196,9 +196,9 @@ typedef CGAL::Sphere_segment<R>     Sphere_segment;
 typedef CGAL::Sphere_circle<R>      Sphere_circle;
 typedef CGAL::Sphere_direction<R>   Sphere_direction;
 typedef CGAL::Sphere_triangle<R>    Sphere_triangle;
-typedef CGAL::Point_3<R>            Point_3;
-typedef CGAL::Plane_3<R>            Plane_3;
-typedef CGAL::Aff_transformation_3<R> Aff_transformation_3;
+typedef typename R::Point_3                  Point_3;
+typedef typename R::Plane_3                  Plane_3;
+typedef typename R::Aff_transformation_3     Aff_transformation_3;
 typedef CGAL::Positive_halfsphere_geometry<R> Positive_halfsphere_geometry;
 typedef CGAL::Negative_halfsphere_geometry<R> Negative_halfsphere_geometry;
 

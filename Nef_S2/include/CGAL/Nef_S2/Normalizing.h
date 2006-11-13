@@ -56,7 +56,7 @@ class Normalizing<Homogeneous_tag> {
     RT z = p.hz()/g;
     RT w = p.hw()/g;
     
-    return CGAL::Point_3<R>(x,y,z,w);
+    return typename R::Point_3(x,y,z,w);
   }
 
   template <typename R> static
@@ -94,13 +94,13 @@ class Normalizing<Homogeneous_tag> {
     RT y = p.hy()/g;
     RT z = p.hz()/g;
     
-    return CGAL::Vector_3<R>(x,y,z);
+    return typename R::Vector_3(x,y,z);
   }
 
   template <typename R> static
   CGAL::Sphere_direction<R> normalized(CGAL::Sphere_direction<R>& c) {
 
-    CGAL::Plane_3<R> h = c.plane();
+    typename R::Plane_3 h = c.plane();
     CGAL_assertion(!(h.a()==0 && h.b()==0 && h.c()==0 && h.d()==0));
     
     typedef typename R::RT     RT;
@@ -125,7 +125,7 @@ class Normalizing<Homogeneous_tag> {
     RT pc = h.c()/x;
     RT pd = h.d()/x;
     
-    return CGAL::Sphere_direction<R>(CGAL::Plane_3<R>(pa,pb,pc,pd));
+    return CGAL::Sphere_direction<R>(typename R::Plane_3(pa,pb,pc,pd));
   }
 
   template <typename R> static
@@ -160,14 +160,14 @@ class Normalizing<Homogeneous_tag> {
     RT pc = h.c()/x;
     RT pd = h.d()/x;
     
-    CGAL_NEF_TRACEN("  after normalizing "  << CGAL::Plane_3<R>(pa,pb,pc,pd));
-    return CGAL::Plane_3<R>(pa,pb,pc,pd);
+    CGAL_NEF_TRACEN("  after normalizing "  << typename R::Plane_3(pa,pb,pc,pd));
+    return typename R::Plane_3(pa,pb,pc,pd);
   }
 
   template <typename R> static
   CGAL::Sphere_circle<R> normalized(CGAL::Sphere_circle<R>& c) { 
 
-    CGAL::Plane_3<R> h = c.plane();
+    typename R::Plane_3 h = c.plane();
     CGAL_assertion(!(h.a()==0 && h.b()==0 && h.c()==0 && h.d()==0));
     
     typedef typename R::RT     RT;
@@ -192,7 +192,7 @@ class Normalizing<Homogeneous_tag> {
     RT pc = h.c()/x;
     RT pd = h.d()/x;
     
-    return CGAL::Sphere_circle<R>(CGAL::Plane_3<R>(pa,pb,pc,pd));
+    return CGAL::Sphere_circle<R>(typename R::Plane_3(pa,pb,pc,pd));
   }
 };
 

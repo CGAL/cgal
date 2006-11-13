@@ -65,7 +65,7 @@ are not opposite on $S_2$.}*/
     *this = Sphere_direction(opposite());
 }
 
-Sphere_direction(const CGAL::Plane_3<R>& h) 
+Sphere_direction(const typename R::Plane_3& h) 
 /*{\Xcreate creates the direction corresponding to the plane |h|.
 \precond |h| contains the origin.}*/
  : Base(h) { CGAL_assertion(h.d() == 0); } 
