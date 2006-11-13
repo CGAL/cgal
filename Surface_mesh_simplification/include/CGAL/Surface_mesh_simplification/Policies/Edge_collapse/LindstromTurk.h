@@ -19,11 +19,6 @@
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_H 1
 
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_params.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Set_no_cache.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Cached_cost.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Cached_placement.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_set_cost_and_placement_cache.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_set_cost_cache.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_cost.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_placement.h>
 

@@ -73,7 +73,7 @@ struct Visitor
   
   void OnStopConditionReached( Polyhedron& ) {} 
   
-  void OnCollected( Halfedge_handle const& aEdge, bool aIsFixed, Polyhedron& )
+  void OnCollected( Halfedge_handle const& aEdge, Polyhedron& )
   {
     CGAL_assertion( ( aEdge->id() % 2 ) == 0 ) ;
     
@@ -131,7 +131,6 @@ char const* matched_alpha ( bool matched )
 }
 
 enum Method { LT, MP } ;
-enum Cache  { None, Cost, CostPlacement } ;
 
 char const* method_to_string( Method aMethod )
 {
@@ -144,39 +143,9 @@ char const* method_to_string( Method aMethod )
   return "<unknown>" ;
 }
 
-char const* cache_to_string( Cache aCache )
-{
-  switch(aCache)
-  {
-    case None          : return "None" ; break ;
-    case Cost          : return "Cost" ; break ;
-    case CostPlacement : return "CostPlacement" ; break ;
-  }
-  
-  return "<unknown>" ;
-}
-
-typedef Cost_cache              <Polyhedron>  P_cost_cache ;
-typedef Cost_and_placement_cache<Polyhedron>  P_cost_and_placement_cache ;
-
-typedef Cached_cost       <Polyhedron>  P_cached_cost ;
-typedef Edge_length_cost  <Polyhedron>  P_MP_cost ;
-typedef LindstromTurk_cost<Polyhedron>  P_LT_cost ; 
-          
-typedef Cached_placement<Polyhedron>        P_cached_placement ;
-typedef Midpoint_placement<Polyhedron>      P_MP_placement ;
-typedef LindstromTurk_placement<Polyhedron> P_LT_placement ;
-
-typedef Set_no_cache<Polyhedron>  P_set_no_cache ;
-
-typedef Set_cost_cache<Polyhedron,P_MP_cost>     P_set_cost_cache_MP ;
-typedef LindstromTurk_set_cost_cache<Polyhedron> P_set_cost_cache_LT ;
-
-typedef Set_cost_and_placement_cache<Polyhedron,P_MP_cost,P_MP_placement> P_set_cost_and_placement_cache_MP ;
-typedef LindstromTurk_set_cost_and_placement_cache<Polyhedron>            P_set_cost_and_placement_cache_LT ;
 
 
-void Simplify ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Method aMethod, Cache aCache )
+void Simplify ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName, Method aMethod )
 {
   string off_name    = aName ;
   string result_name = aName+string(".out.off");
@@ -200,8 +169,7 @@ void Simplify ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName
           else lRequestedEdgeCount = lP.size_of_halfedges() * aStopR / 200 ;
     
           cout << "Testing simplification of surface " << off_name 
-               << " using " << method_to_string(aMethod) << " method" 
-               << " with "  << cache_to_string(aCache) << " cache."  << endl ;
+               << " using " << method_to_string(aMethod) << " method" ;
                
           cout << lP.size_of_facets() << " triangles." << endl 
                << (lP.size_of_halfedges()/2) << " edges." << endl 
@@ -213,22 +181,12 @@ void Simplify ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName
         
           set_halfedgeds_items_id(lP);
           
-          P_cached_cost get_cached_cost ;          
-          P_MP_cost     get_MP_cost;
-          P_LT_cost     get_LT_cost;
+          Edge_length_cost  <Polyhedron>  get_MP_cost ;
+          LindstromTurk_cost<Polyhedron>  get_LT_cost ; 
           
-          P_cached_placement get_cached_placement ;          
-          P_MP_placement     get_MP_placement;
-          P_LT_placement     get_LT_placement;
+          Midpoint_placement<Polyhedron>      get_MP_placement ;
+          LindstromTurk_placement<Polyhedron> get_LT_placement ;
                     
-          P_set_no_cache      set_no_cache ;
-          
-          P_set_cost_cache_MP set_cost_cache_MP(get_MP_cost) ;
-          P_set_cost_cache_LT set_cost_cache_LT ;
-          
-          P_set_cost_and_placement_cache_MP set_cost_and_placement_cache_MP(get_MP_cost,get_MP_placement) ;
-          P_set_cost_and_placement_cache_LT set_cost_and_placement_cache_LT ;
-          
           Count_stop_predicate<Polyhedron> stop(lRequestedEdgeCount);
               
           Visitor lVisitor(lRequestedEdgeCount) ;
@@ -238,88 +196,22 @@ void Simplify ( int aStopA, int aStopR, bool aJustPrintSurfaceData, string aName
           Real_timer t ; t.start();    
           switch( aMethod )
           {
-            case MP:  
-            
-              switch ( aCache )
-              {
-                case None :
-                
-                  r = edge_collapse(lP
-                                   ,stop
-                                   ,set_cache(set_no_cache)
-                                   .get_cost(get_MP_cost)
-                                   .get_placement(get_MP_placement)
-                                   .visitor(&lVisitor)
-                                   );
-                  break ;                 
-                                   
-                case Cost :
-                
-                  r = edge_collapse(lP
-                                   ,stop
-                                   ,set_cache(set_cost_cache_MP)
-                                   .get_cost(get_cached_cost)
-                                   .get_placement(get_MP_placement)
-                                   .visitor(&lVisitor)
-                                   );
-                  break ;                  
-                  
-                case CostPlacement :
-
-                  r = edge_collapse(lP
-                                   ,stop
-                                   ,set_cache(set_cost_and_placement_cache_MP)
-                                   .get_cost(get_cached_cost)
-                                   .get_placement(get_cached_placement)
-                                   .visitor(&lVisitor)
-                                   );
-                  break ;                  
-                                   
-              }
+            case MP: r = edge_collapse(lP
+                                      ,stop
+                                      , get_cost(get_MP_cost)
+                                       .get_placement(get_MP_placement)
+                                       .visitor(&lVisitor)
+                                      );
+              break ;                 
               
-              break ;
-              
-            case LT: 
-            
-              switch ( aCache )
-              {
-                case None :
-                
-                  r = edge_collapse(lP
-                                   ,stop
-                                   ,set_cache(set_no_cache)
-                                   .get_cost(get_LT_cost)
-                                   .get_placement(get_LT_placement)
-                                   .visitor(&lVisitor)
-                                   );
-                  break ;                 
+            case LT: r = edge_collapse(lP
+                                      ,stop
+                                      , get_cost(get_LT_cost)
+                                       .get_placement(get_LT_placement)
+                                       .visitor(&lVisitor)
+                                      );
+              break ;                 
                                    
-                case Cost :
-                
-                  r = edge_collapse(lP
-                                   ,stop
-                                   ,set_cache(set_cost_cache_LT)
-                                   .get_cost(get_cached_cost)
-                                   .get_placement(get_LT_placement)
-                                   .visitor(&lVisitor)
-                                   );
-                  break ;                  
-                  
-                case CostPlacement :
-                
-                  r = edge_collapse(lP
-                                   ,stop
-                                   ,set_cache(set_cost_and_placement_cache_LT)
-                                   .get_cost(get_cached_cost)
-                                   .get_placement(get_cached_placement)
-                                   .visitor(&lVisitor)
-                                   .edge_index_map(get(CGAL::edge_external_index,lP))
-                                   );
-                  break ;                  
-                                   
-              }
-              
-              break ;
           }
           t.stop();
           
@@ -399,7 +291,6 @@ int main( int argc, char** argv )
   int    lStopA = -1 ;
   int    lStopR = 20 ;
   Method lMethod = LT ;
-  Cache  lCache  = CostPlacement ;
   string lFolder =""; 
   vector<string> lCases ;
         
@@ -415,7 +306,6 @@ int main( int argc, char** argv )
         case 'r' : lStopR = lexical_cast<int>(opt.substr(2)); break;
         case 'n' : lJustPrintSurfaceData = true ; break ;
         case 'm' : lMethod = (Method)lexical_cast<int>(opt.substr(2)); break ;
-        case 'c' : lCache  = (Cache)lexical_cast<int>(opt.substr(2)); break ;
         
         default: 
           cerr << "Invalid option: " << opt << endl ;
@@ -457,7 +347,6 @@ int main( int argc, char** argv )
     cout << "edge_collapse_demo <options> file0 file1 ... fileN @response_file" << endl 
          << "  options: " << endl
          << "    -m method                       method: 0=LindstromTurk[default] 1=Midpoint" << endl 
-         << "    -c data_cache_level             level: 0=None 1=Only cost cached 2=Both cost and placement cached[default]" << endl
          << "    -d folder                       Specifies the folder where the files are located. " << endl 
          << "    -a absolute_max_edge_count      Sets the final number of edges as absolute number." << endl
          << "    -r relative_max_edge_count      Sets the final number of edges as a percentage." << endl
@@ -468,7 +357,7 @@ int main( int argc, char** argv )
   else
   {
     for ( vector<string>::const_iterator it = lCases.begin(); it != lCases.end() ; ++ it )
-      Simplify( lStopA, lStopR, lJustPrintSurfaceData, *it, lMethod, lCache) ;
+      Simplify( lStopA, lStopR, lJustPrintSurfaceData, *it, lMethod) ;
       
     return 0 ;
   }

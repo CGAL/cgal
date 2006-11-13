@@ -19,6 +19,7 @@
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_COST_H 1
 
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Detail/Lindstrom_Turk_core.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -47,10 +48,8 @@ public:
 
   LindstromTurk_cost() {}
      
-  template<class Cache>
   result_type operator()( edge_descriptor const& aEdge
                         , ECM&                   aSurface
-                        , Cache const&           aCache
                         , Params const*          aParams
                         ) const
   {

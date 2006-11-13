@@ -71,10 +71,6 @@ if [ $# -ne 0 ] ; then
     compile_and_run $file
   done
 else
-  compile_and_run test_edge_collapse_Polyhedron_3_LT_no_cache
-  compile_and_run test_edge_collapse_Polyhedron_3_LT_cost_cache
-  compile_and_run test_edge_collapse_Polyhedron_3_LT_cost_placement_cache
-  compile_and_run test_edge_collapse_Polyhedron_3_MP_no_cache
-  compile_and_run test_edge_collapse_Polyhedron_3_MP_cost_cache
-  compile_and_run test_edge_collapse_Polyhedron_3_MP_cost_placement_cache
+  compile_and_run test_edge_collapse_Polyhedron_3_LT
+  compile_and_run test_edge_collapse_Polyhedron_3_MP
 fi

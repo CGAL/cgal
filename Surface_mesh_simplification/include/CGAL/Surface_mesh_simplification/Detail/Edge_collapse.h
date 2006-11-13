@@ -40,10 +40,8 @@ namespace Surface_mesh_simplification
 template<class ECM_
         ,class ShouldStop_
         ,class VertexPointMap_
-        ,class VertexIsFixedMap_
         ,class EdgeIndexMap_
         ,class EdgeIsBorderMap_
-        ,class SetCache_
         ,class GetCost_
         ,class GetPlacement_
         ,class CostParams_ 
@@ -57,10 +55,8 @@ public:
   typedef ECM_              ECM ;
   typedef ShouldStop_       ShouldStop ;
   typedef VertexPointMap_   VertexPointMap ;
-  typedef VertexIsFixedMap_ VertexIsFixedMap ;
   typedef EdgeIndexMap_     EdgeIndexMap ;
   typedef EdgeIsBorderMap_  EdgeIsBorderMap ;
-  typedef SetCache_         SetCache ;
   typedef GetCost_          GetCost ;
   typedef GetPlacement_     GetPlacement ;
   typedef CostParams_       CostParams ;
@@ -89,11 +85,9 @@ public:
   typedef typename HalfedgeGraphTraits::undirected_edge_iterator undirected_edge_iterator ;
   typedef typename HalfedgeGraphTraits::Point                    Point ;
 
-  typedef typename GetCost     ::result_type Optional_cost_type ;
-  typedef typename GetPlacement::result_type Optional_placement_type ;
+  typedef typename GetCost     ::result_type Cost_type ;
+  typedef typename GetPlacement::result_type Placement_type ;
   
-  typedef typename SetCache::Cache Cache ;
-
   typedef typename Kernel_traits<Point>::Kernel Kernel ;
   
   typedef typename Kernel::Equal_3 Equal_3 ;
@@ -158,8 +152,8 @@ public:
   
     Edge_data() : mPQHandle() {}
     
-    Cache const& cache() const { return mCache ; }
-    Cache &      cache()       { return mCache ; }
+    Cost_type const& cost() const { return mCost ; }
+    Cost_type      & cost()       { return mCost ; }
     
     pq_handle PQ_handle() const { return mPQHandle ;}
     
@@ -171,7 +165,7 @@ public:
     
   private:  
     
-    Cache     mCache ;
+    Cost_type mCost ;
     pq_handle mPQHandle ;
   } ;
   typedef Edge_data* Edge_data_ptr ;
@@ -183,10 +177,8 @@ public:
   EdgeCollapse( ECM&                    aSurface
               , ShouldStop       const& aShouldStop 
               , VertexPointMap   const& aVertex_point_map 
-              , VertexIsFixedMap const& aVertex_is_fixed_map 
               , EdgeIndexMap     const& aEdge_index_map 
               , EdgeIsBorderMap  const& aEdge_is_border_map 
-              , SetCache         const& aSetCache
               , GetCost          const& aGetCost
               , GetPlacement     const& aGetPlacement
               , CostParams       const* aCostParams       // Can be NULL
@@ -216,8 +208,6 @@ private:
     return is_primary_edge(aEdge) ? aEdge : opposite_edge(aEdge,mSurface) ;
   }  
     
-  bool is_vertex_fixed ( const_vertex_descriptor const& aV ) const { return Vertex_is_fixed_map[aV] ; }
-  
   bool is_border ( const_edge_descriptor const& aEdge ) const { return Edge_is_border_map[aEdge] ; }    
   
   bool is_undirected_edge_a_border ( const_edge_descriptor const& aEdge ) const
@@ -263,14 +253,14 @@ private:
     return boost::str( boost::format("{E%1% %2%->%3%}") % aEdge->ID % vertex_to_string(p) % vertex_to_string(q) ) ;
   }
   
-  Optional_cost_type get_cost ( edge_descriptor const& aEdge ) const
+  Cost_type get_cost ( edge_descriptor const& aEdge ) const
   {
-    return Get_cost(aEdge,mSurface,get_data(aEdge).cache(),mCostParams);
+    return Get_cost(aEdge,mSurface,mCostParams);
   }
   
-  Optional_placement_type get_placement( edge_descriptor const& aEdge ) const
+  Placement_type get_placement( edge_descriptor const& aEdge ) const
   {
-    return Get_placement(aEdge,mSurface,get_data(aEdge).cache(),mPlacementParams);
+    return Get_placement(aEdge,mSurface,mPlacementParams);
   }
   
   void insert_in_PQ( edge_descriptor const& aEdge, Edge_data& aData ) 
@@ -310,10 +300,8 @@ private:
   ECM&                    mSurface ;
   ShouldStop       const& Should_stop ;
   VertexPointMap   const& Vertex_point_map ;
-  VertexIsFixedMap const& Vertex_is_fixed_map ;
   EdgeIndexMap     const& Edge_index_map ;
   EdgeIsBorderMap  const& Edge_is_border_map ;
-  SetCache         const& Set_cache;   
   GetCost          const& Get_cost ;
   GetPlacement     const& Get_placement ;
   CostParams       const* mCostParams ;      // Can be NULL

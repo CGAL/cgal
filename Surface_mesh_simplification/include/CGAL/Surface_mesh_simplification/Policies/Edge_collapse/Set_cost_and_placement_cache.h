@@ -15,8 +15,8 @@
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_SET_COST_AND_PLACEMET_CACHE_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_SET_COST_AND_PLACEMET_CACHE_H
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_SET_FULL_CACHE_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_SET_FULL_CACHE_H
 
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Cost_and_placement_cache.h>
@@ -27,49 +27,39 @@ CGAL_BEGIN_NAMESPACE
 namespace Surface_mesh_simplification
 {
 
-template<class ECM_, class GetCost_, class GetPlacement_>    
-class Set_cost_and_placement_cache
+template<class ECM_, class SetPlan_>    
+class Set_full_cache
 {
 public:
 
-  typedef ECM_          ECM ;
-  typedef GetCost_      GetCost ;
-  typedef GetPlacement_ GetPlacement ;
+  typedef ECM_     ECM ;
+  typedef SetPlan_ SetPlan ;
   
   typedef typename boost::graph_traits<ECM>::edge_descriptor edge_descriptor ;
   
-  typedef Cost_and_placement_cache<ECM> Cache ;
+  typedef typename SetPlan::Params SetPlanParams ;
+  typedef typename SetPlan::Plan   Plan ;
   
-  typedef typename Cache::Optional_cost_type      Optional_cost_type ;
-  typedef typename Cache::Optional_placement_type Optional_placement_type ;
-
-  typedef typename GetCost     ::Params CostParams ;
-  typedef typename GetPlacement::Params PlacementParams ;
+  typedef Plan Cache ;
   
 public :
 
-  Set_cost_and_placement_cache ( GetCost const& aGetCost, GetPlacement const& aGetPlacement ) : get_cost(aGetCost), get_placement(aGetPlacement) 
-  {}
+  Set_full_cache ( SetPlan const& aSetPlan ) : set_plan(aSetPlan) {}
     
   void operator() ( Cache&                 rCache
                   , edge_descriptor const& aEdge
                   , ECM&                   aSurface
-                  , CostParams const*      aCostParams 
-                  , PlacementParams const* aPlacementParams 
+                  , SetPlanParams const*   aSetPlanParams 
                   ) const 
   {
-    CGAL_assertion(aCostParams);
-    CGAL_assertion(aPlacementParams);
     CGAL_assertion( handle_assigned(aEdge) );
 
-    Optional_cost_type      lCost      = get_cost     (aEdge,aSurface,rCache,aCostParams);
-    Optional_placement_type lPlacement = get_placement(aEdge,aSurface,rCache,aPlacementParams);
-    
-    rCache = Cache(lCost,lPlacement);
+    set_plan(rCache,aEdge,aSurface,aSetPlanParams);    
   }                         
   
-  GetCost      get_cost ;
-  GetPlacement get_placement ; 
+private :
+  
+  SetPlan set_plan ;
 };    
 
 } // namespace Surface_mesh_simplification

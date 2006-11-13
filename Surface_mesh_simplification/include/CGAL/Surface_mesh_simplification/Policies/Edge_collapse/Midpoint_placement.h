@@ -47,10 +47,8 @@ public:
 
   Midpoint_placement() {}
   
-  template<class Cache>
   result_type operator()( edge_descriptor const& aEdge
                         , ECM&                   aSurface
-                        , Cache const&         //aCache
                         , Params const*        //aParams
                         ) const
   {

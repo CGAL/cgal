@@ -37,17 +37,11 @@ public:
   
   typedef No_cache Cache ;
   
-  typedef void CostParams ;
-  typedef void PlacementParams ;
+  typedef void SetPlanParams ;
   
 public :
 
-  void operator() ( Cache& aCache          
-                  , edge_descriptor const&  
-                  , ECM&                    
-                  , CostParams const*       
-                  , PlacementParams const* 
-                  ) const 
+  void operator() ( Cache& aCache, edge_descriptor const&, ECM&, SetPlanParams const* ) const 
   {
     aCache = Cache();
   }                         

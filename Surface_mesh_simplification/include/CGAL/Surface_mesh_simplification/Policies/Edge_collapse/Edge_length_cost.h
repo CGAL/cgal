@@ -59,10 +59,8 @@ public:
 
   Edge_length_cost() {}
   
-  template<class Cache>
   result_type operator()( edge_descriptor const& aEdge
                         , ECM&                   aSurface
-                        , Cache const&           //aCache
                         , Params const*          //aParams
                         ) const
   {

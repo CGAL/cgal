@@ -22,11 +22,7 @@
 #include <CGAL/boost/graph/named_function_params.h>
 
 #include <CGAL/Surface_mesh_simplification/Detail/Edge_collapse.h>
-#include <CGAL/Surface_mesh_simplification/Vertex_is_fixed_property_map_always_false.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_params.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_set_cost_cache.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_placement.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Cached_cost.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -69,10 +65,8 @@ namespace Surface_mesh_simplification
 template<class ECM
         ,class ShouldStop
         ,class VertexPointMap
-        ,class VertexIsFixedMap
         ,class EdgeIndexMap
         ,class EdgeIsBorderMap
-        ,class SetCache
         ,class GetCost
         ,class GetPlacement
         ,class CostParams
@@ -84,12 +78,10 @@ int edge_collapse ( ECM&                    aSurface
                   
                   // optional mesh information policies 
                   , VertexPointMap   const& aVertex_point_map     // defaults to get(Vertex_point,aSurface)
-                  , VertexIsFixedMap const& aVertex_is_fixed_map  // defaults to Vertex_is_fixed_map_always_false<ECM>()
                   , EdgeIndexMap     const& aEdge_index_map       // defaults to get(Edge_index,aSurface) 
-                  , EdgeIsBorderMap  const& aEdge_is_border_map   //  defaults to get(Edge_is_border,aSurface) 
+                  , EdgeIsBorderMap  const& aEdge_is_border_map   // defaults to get(Edge_is_border,aSurface) 
                   
                   // optional strategy policies - defaults to LindstomTurk
-                  , SetCache         const& aSet_cache
                   , GetCost          const& aGet_cost 
                   , GetPlacement     const& aGet_placement
                   , CostParams       const* aCostParams       // Can be NULL 
@@ -101,10 +93,8 @@ int edge_collapse ( ECM&                    aSurface
   typedef EdgeCollapse< ECM
                       , ShouldStop
                       , VertexPointMap
-                      , VertexIsFixedMap
                       , EdgeIndexMap
                       , EdgeIsBorderMap
-                      , SetCache
                       , GetCost
                       , GetPlacement
                       , CostParams
@@ -117,10 +107,8 @@ int edge_collapse ( ECM&                    aSurface
   Algorithm algorithm( aSurface
                      , aShould_stop
                      , aVertex_point_map
-                     , aVertex_is_fixed_map
                      , aEdge_index_map
                      , aEdge_is_border_map
-                     , aSet_cache
                      , aGet_cost
                      , aGet_placement
                      , aCostParams
@@ -144,7 +132,7 @@ struct Dummy_visitor
   void OnStopConditionReached( ECM& ) {} 
   
   template<class Edge, class ECM>
-  void OnCollected( Edge const&, bool, ECM& ) {}                
+  void OnCollected( Edge const&, ECM& ) {}                
   
   template<class Edge, class ECM, class OFT, class Size_type>
   void OnSelected( Edge const&, ECM&, OFT const&, Size_type, Size_type ) {}                
@@ -172,16 +160,14 @@ int edge_collapse ( ECM& aSurface
     
   return edge_collapse(aSurface
                       ,aShould_stop
-                      ,choose_const_pmap     (get_param(aParams,vertex_point),aSurface,vertex_point)
-                      ,choose_param          (get_param(aParams,vertex_is_fixed),Vertex_is_fixed_property_map_always_false<ECM>())
-                      ,choose_const_pmap     (get_param(aParams,boost::edge_index),aSurface,boost::edge_index)
-                      ,choose_const_pmap     (get_param(aParams,edge_is_border),aSurface,edge_is_border)
-                      ,choose_param          (get_param(aParams,set_cache_policy), LindstromTurk_set_cost_cache<ECM>())
-                      ,choose_param          (get_param(aParams,get_cost_policy), Cached_cost<ECM>())
-                      ,choose_param          (get_param(aParams,get_placement_policy), LindstromTurk_placement<ECM>())
-                      ,choose_param          (get_param(aParams,get_cost_policy_params), &lPolicyParams)
-                      ,choose_param          (get_param(aParams,get_placement_policy_params), &lPolicyParams)
-                      ,choose_param          (get_param(aParams,vis), ((Dummy_visitor*)0))
+                      ,choose_const_pmap(get_param(aParams,vertex_point),aSurface,vertex_point)
+                      ,choose_const_pmap(get_param(aParams,boost::edge_index),aSurface,boost::edge_index)
+                      ,choose_const_pmap(get_param(aParams,edge_is_border),aSurface,edge_is_border)
+                      ,choose_param     (get_param(aParams,get_cost_policy), LindstromTurk_cost<ECM>())
+                      ,choose_param     (get_param(aParams,get_placement_policy), LindstromTurk_placement<ECM>())
+                      ,choose_param     (get_param(aParams,get_cost_policy_params), &lPolicyParams)
+                      ,choose_param     (get_param(aParams,get_placement_policy_params), &lPolicyParams)
+                      ,choose_param     (get_param(aParams,vis), ((Dummy_visitor*)0))
                       ) ;
 
 }
