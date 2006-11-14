@@ -1,4 +1,3 @@
-
 #ifndef CGAL_GRAPH_TRAITS_DELAUNAY_TRIANGULATION_2_H
 #define CGAL_GRAPH_TRAITS_DELAUNAY_TRIANGULATION_2_H
 
@@ -6,16 +5,13 @@
 #include <boost/iterator_adaptors.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
+#include <CGAL/boost/graph/graph_traits_Triangulation_2.h>
 
 // The functions and classes in this file allows the user to
 // treat a CGAL Delaunay_triangulation_2 object as a boost graph "as is". No
 // wrapper is needed for the Delaunay_triangulation_2 object.
 
-// Warning: this implementation relies on partial specialization
-// for the graph_traits class (so it won't compile with Visual C++)
 
-
- 
 
 namespace boost { 
 
@@ -24,7 +20,8 @@ namespace boost {
 
     struct DT2_graph_traversal_category : 
       public virtual bidirectional_graph_tag,
-      public virtual adjacency_graph_tag,
+      public virtual adjacency_graph_tag,        
+      public virtual edge_list_graph_tag,
       public virtual vertex_list_graph_tag { };
 
     typedef CGAL::Delaunay_triangulation_2<GT,TDS> Delaunay_triangulation;

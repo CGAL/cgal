@@ -11,11 +11,6 @@
 // treat a CGAL Triangulation_2 object as a boost graph "as is". No
 // wrapper is needed for the Triangulation_2 object.
 
-// Warning: this implementation relies on partial specialization
-// for the graph_traits class (so it won't compile with Visual C++)
-
-
- 
 
 namespace CGAL {
 
@@ -177,6 +172,7 @@ namespace boost {
     struct T2_graph_traversal_category : 
       public virtual bidirectional_graph_tag,
       public virtual adjacency_graph_tag,
+      public virtual edge_list_graph_tag,
       public virtual vertex_list_graph_tag { };
 
     typedef CGAL::Triangulation_2<GT,TDS> Triangulation;
