@@ -108,7 +108,7 @@ string edge2str ( E const& e )
   return ss.str(); 
 }
 
-#define ERROR(msg) \
+#define SHOW_ERROR(msg) \
           { \
             cerr << "\nError: " << msg << endl \
                  << "  File:" << __FILE__ << endl \
@@ -116,7 +116,7 @@ string edge2str ( E const& e )
             throw runtime_error("test error"); \
           }
           
-#define CHECK_MSG(pred,msg) if (!(pred)) ERROR(msg) 
+#define CHECK_MSG(pred,msg) if (!(pred)) SHOW_ERROR(msg) 
          
 #define CHECK(pred) CHECK_MSG(pred,#pred)
         

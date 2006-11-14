@@ -101,7 +101,7 @@ private :
             break ;
             
          default :
-           ERROR("Invalid audit line: " << line );
+           SHOW_ERROR("Invalid audit line: " << line );
         }
       }  
     }
@@ -115,7 +115,7 @@ public :
     ifstream in(audit_name.c_str());  
     if ( in )
          ReadAudit(in);
-    else ERROR("Unable to open audit file: " << audit_name);
+    else SHOW_ERROR("Unable to open audit file: " << audit_name);
   }
   
   void OnStarted( Surface& ) { order = 0 ; } 

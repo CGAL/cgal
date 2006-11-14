@@ -52,8 +52,7 @@ int main( int argc, char** argv )
                        
                       ,CGAL::edge_index_map(boost::get(CGAL::edge_external_index,surface))
                       
-                      .set_cache    (SMS::LindstromTurk_set_cost_and_placement_cache<Surface>())
-                      .get_cost     (SMS::Cached_cost     <Surface>())
+                      .get_cost     (SMS::LindsCached_cost     <Surface>())
                       .get_placement(SMS::Cached_placement<Surface>())
                       );
   }

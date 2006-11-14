@@ -51,7 +51,6 @@ struct Visitor
   
   // Called during the collecting phase for each edge collected.
   void OnCollected( Halfedge_handle const& edge
-                  , bool                   is_fixed
                   , Surface&               surface
                   )
   {

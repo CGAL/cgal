@@ -37,7 +37,6 @@ int main( int argc, char** argv )
                              
                             ,CGAL::edge_index_map(boost::get(CGAL::edge_external_index,surface))
                             
-                            .set_cache    (SMS::Set_no_cache      <Surface>())
                             .get_cost     (SMS::Edge_length_cost  <Surface>())
                             .get_placement(SMS::Midpoint_placement<Surface>())
                             );
