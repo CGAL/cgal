@@ -20,7 +20,8 @@
 
 #include <iostream>
 #include <iomanip>
-#include <iostream>
+#include <sstream>
+#include <string>
 #include <fstream>
 
 #define CGAL_CHECK_EXPENSIVE
@@ -75,14 +76,36 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
 
 namespace SMS = CGAL::Surface_mesh_simplification ;
 
-typedef Vertex_is_fixed_property_map_always_false<Surface> Vertex_is_fixed_map ;
-
 template<class T>
 ostream&  operator << ( ostream& os, optional<T> const& o )
 {
   if ( o )
        return os << *o ; 
   else return os << "<null>" ;
+}
+
+template<class P>
+string point2str ( P const& p )
+{
+  ostringstream ss ;
+  ss << "(" << p.x() << "," << p.y() << "," << p.z() << ")" ;
+  return ss.str(); 
+}
+
+template<class V>
+string vertex2str ( V const& v )
+{
+  ostringstream ss ;
+  ss << "[V" << v->id() << point2str(v->point()) << "]" ;
+  return ss.str(); 
+}
+
+template<class E>
+string edge2str ( E const& e )
+{
+  ostringstream ss ;
+  ss << "{E" << e->id() << vertex2str(e->opposite()->vertex()) << "->" << vertex2str(e->vertex()) << "}" ;
+  return ss.str(); 
 }
 
 #define ERROR(msg) \
@@ -137,8 +160,7 @@ bool Test ( string aName )
           Real_timer t ; t.start();    
           edge_collapse(lSurface
                        ,stop
-                       ,set_cache(cache)
-                       .get_cost(cost)
+                       ,get_cost(cost)
                        .get_placement(placement)
                        .visitor(&lVisitor)
                        );
@@ -176,6 +198,8 @@ int main( int argc, char** argv )
 {
   set_error_handler  (error_handler);
   set_warning_handler(error_handler);
+  
+  cerr << setprecision(4);
   
   vector<string> lCases ;
   

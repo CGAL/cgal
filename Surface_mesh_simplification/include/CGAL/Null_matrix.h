@@ -22,7 +22,7 @@ CGAL_BEGIN_NAMESPACE
 
 class Null_matrix {};
 
-static const Null_matrix NULL_MATRIX;
+static const Null_matrix NULL_MATRIX = Null_matrix() ;
 
 CGAL_END_NAMESPACE
 
