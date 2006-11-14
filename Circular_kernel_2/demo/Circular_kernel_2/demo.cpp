@@ -80,8 +80,8 @@ typedef CGAL::Cartesian<NT>                                 Linear_k;
 typedef CGAL::Algebraic_kernel_for_circles_2_2<NT>          Algebraic_k;
 typedef CGAL::Circular_kernel_2<Linear_k,Algebraic_k>       Circular_k;
 
-typedef Circular_k::Circular_arc_2                            Arc;
-typedef std::vector<Arc>                                    ArcContainer;
+typedef Circular_k::Circular_arc_2                            Arc_2;
+typedef std::vector<Arc_2>                                    ArcContainer;
 
 #ifndef CGAL_CURVED_KERNEL_DEBUG
 typedef CGAL::Arr_circular_arc_traits<Circular_k>                  Traits;
@@ -398,7 +398,7 @@ private slots:
 
     std::ifstream in(s);
     CGAL::set_ascii_mode(in);
-    std::istream_iterator<Arc> begin(in), end;
+    std::istream_iterator<Arc_2> begin(in), end;
     ArcContainer arcs(begin, end);
     arc_container().swap(arcs);
 
@@ -436,7 +436,7 @@ private slots:
       std::ofstream out(fileName);
       CGAL::set_ascii_mode(out);
       std::copy(arc_container().begin(), arc_container().end(),
-                std::ostream_iterator<Arc>(out, "\n"));
+                std::ostream_iterator<Arc_2>(out, "\n"));
     }
   }
 
