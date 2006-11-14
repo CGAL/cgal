@@ -88,12 +88,13 @@ class Solve_1 {
 		CGAL_assertion_msg (((nr = solve_1 (x, p)) >= 0),
 				"error in resolution");
 		p.set_solved();
-		if (nr)
+		if (nr) {
 			for (int i=0; i<nr; ++i) {
 				// multiplicity is -1 (we didn't calculate it)
 				Algebraic a (x[i], p, i, -1, CGAL_RS_DEF_PREC);
 				*(res++) = a;
 			}
+		}
 		free (x);
 		return res;
 	};

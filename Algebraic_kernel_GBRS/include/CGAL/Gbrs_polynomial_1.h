@@ -26,17 +26,21 @@
 #include <CGAL/basic.h>
 #include <CGAL/Gmpz.h>
 #include <gmp.h>
+#include <mpfr.h>
+#include <mpfi.h>
 
 CGAL_BEGIN_NAMESPACE
 
 class Algebraic_1;
+
+typedef std::vector<Algebraic_1> rootvector;
 
 class Rational_polynomial_1 {
 	private:
 		int degree;
 		mpz_t* coef;
 		bool solved;
-		std::vector<Algebraic_1>roots;
+		/*rootvector roots;*/
 
 		int calc_index(int)const;
 	public:
@@ -62,10 +66,12 @@ class Rational_polynomial_1 {
 		void set_solved();
 		void clear_solved();
 		bool get_solved()const;
-		std::vector<Algebraic_1>get_roots()const;
-		void set_root(const Algebraic_1&);
+		/*rootvector get_roots()const;
+		void set_root(const Algebraic_1&);*/
 		//CGAL::Algebraic_1 eval (const CGAL::Algebraic_1 &) const;
 		CGAL::Gmpz eval (const CGAL::Gmpz &) const;
+		void eval_mpfr(mpfr_t&,const mpfr_t&,mp_prec_t)const;
+		void eval_mpfi(mpfi_t&,const mpfi_t&)const;
 		Rational_polynomial_1 derive () const;
 		Rational_polynomial_1& operator= (const Rational_polynomial_1 &);
 		std::ostream& show (std::ostream &) const;
@@ -91,9 +97,9 @@ inline int Rational_polynomial_1::get_number_of_monomials()const{
 	return(degree+1);};
 inline mpz_t* Rational_polynomial_1::get_coefs()const{return coef;};
 inline bool Rational_polynomial_1::get_solved()const{return solved;};
-inline std::vector<Algebraic_1>Rational_polynomial_1::get_roots()const{return roots;};
+/*inline rootvector Rational_polynomial_1::get_roots()const{return roots;};
 inline void Rational_polynomial_1::set_root(const Algebraic_1 &r){
-	roots.push_back(r);};
+	roots.push_back(r);};*/
 
 CGAL_END_NAMESPACE
 

@@ -135,11 +135,11 @@ int main () {
 	show_alg(std::cout<<"\n",rootsp[2])<<std::endl;
 	show_alg (std::cout, rootsq[0]) << std::endl;
 
-	std::vector<Algebraic>rp=p.get_roots();
+	/*std::vector<Algebraic>rp=p.get_roots();
 	std::cout<<"\np has "<<rp.size()<<" roots, they are:"<<std::endl;
 	std::vector<Algebraic>::iterator roots_it;
 	for(roots_it=rp.begin();roots_it!=rp.end();++roots_it)
-		std::cout<<*roots_it<<std::endl;
+		std::cout<<*roots_it<<std::endl;*/
 
 	return 0;
 }

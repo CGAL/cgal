@@ -40,9 +40,9 @@
 #include <CGAL/Gbrs_polynomial_1.h>
 #include <CGAL/Gbrs_algebraic_1.h>
 #include <iostream>
+#include <mpfr.h>
 #include <mpfi.h>
 #include <mpfi_io.h>
-#include <mpfr.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -132,7 +132,7 @@ Algebraic_1::Algebraic_1 (const CGAL::Gmpq &l, const CGAL::Gmpq &r) {
 
 // here, the constructor copies the address of the mpfi, not the contents
 Algebraic_1::Algebraic_1 (mpfi_t &i) {
-	mpfi_clear(mpfi());
+	//mpfi_clear(mpfi());
 	*mpfi()=*i;
 };
 
@@ -154,7 +154,7 @@ Algebraic_1::Algebraic_1(const mpfi_ptr &i,Rational_polynomial_1 &p,
 	set_nr(n);
 	set_mult(m);
 	set_rsprec(rsp);
-	p.set_root(*this);
+	//p.set_root(*this);
 };
 
 // destructor
@@ -162,27 +162,132 @@ Algebraic_1::Algebraic_1(const mpfi_ptr &i,Rational_polynomial_1 &p,
 Algebraic_1::~Algebraic_1 () {};
 */
 
-void Algebraic_1::clear_pol () {
-	ptr()->poly = NULL;
-	return;
+void Algebraic_1::get_endpoints(mpfr_t &l,mpfr_t &r)const{
+	mpfi_get_left(l,mpfi());
+	mpfi_get_right(r,mpfi());
 };
 
-void Algebraic_1::set_pol (const Rational_polynomial_1 &p) {
-	// thanks Julien!
-	ptr()->poly = const_cast<Rational_polynomial_1 *>(&p);
-	return;
+bool Algebraic_1::is_point()const{
+	mpfr_t l,r;
+	mpfr_inits(l,r,NULL);
+	get_endpoints(l,r);
+	int comp=mpfr_equal_p(l,r);
+	mpfr_clears(l,r,NULL);
+	return (comp!=0);
 };
 
-void Algebraic_1::set_nr (const int n) {
-	ptr()->nr = n;
+bool Algebraic_1::contains(const int n)const{
+	mpfr_t end;
+	mpfr_init(end);
+	int comp;
+	get_left(end);	// first, we compare the left end
+	comp=mpfr_cmp_si(end,n);
+	if(comp>0){	// n is lower than the left end
+		mpfr_clear(end);
+		return false;
+	}
+	get_right(end);	// now, the right one
+	comp=mpfr_cmp_si(end,n);
+	if(comp<0){	// n is higher than the right end
+		mpfr_clear(end);
+		return false;
+	}
+	return true;
 };
 
-void Algebraic_1::set_mult (const int m) {
-	ptr()->mult = m;
+bool Algebraic_1::contains(const mpfr_t &n)const{
+	mpfr_t end;
+	mpfr_init(end);
+	int comp;
+	get_left(end);	// first, we compare the left end
+	comp=mpfr_cmp(end,n);
+	if(comp>0){	// n is lower than the left end
+		mpfr_clear(end);
+		return false;
+	}
+	get_right(end);	// now, the right one
+	comp=mpfr_cmp(end,n);
+	if(comp<0){	// n is higher than the right end
+		mpfr_clear(end);
+		return false;
+	}
+	return true;
 };
 
-void Algebraic_1::set_rsprec (const int p) {
-	ptr()->rsprec = p;
+bool Algebraic_1::contains(const mpz_t &n)const{
+	mpfr_t end;
+	mpfr_init(end);
+	int comp;
+	get_left(end);	// first, we compare the left end
+	comp=mpfr_cmp_z(end,n);
+	if(comp>0){	// n is lower than the left end
+		mpfr_clear(end);
+		return false;
+	}
+	get_right(end);	// now, the right one
+	comp=mpfr_cmp_z(end,n);
+	if(comp<0){	// n is higher than the right end
+		mpfr_clear(end);
+		return false;
+	}
+	return true;
+};
+
+bool Algebraic_1::contains(const mpq_t &n)const{
+	mpfr_t end;
+	mpfr_init(end);
+	int comp;
+	get_left(end);	// first, we compare the left end
+	comp=mpfr_cmp_q(end,n);
+	if(comp>0){	// n is lower than the left end
+		mpfr_clear(end);
+		return false;
+	}
+	get_right(end);	// now, the right one
+	comp=mpfr_cmp_q(end,n);
+	if(comp<0){	// n is higher than the right end
+		mpfr_clear(end);
+		return false;
+	}
+	return true;
+};
+
+bool Algebraic_1::contains(const Gmpz &n)const{
+	mpfr_t end;
+	mpfr_init(end);
+	int comp;
+	get_left(end);	// first, we compare the left end
+	comp=mpfr_cmp_z(end,n.mpz());
+	if(comp>0){	// n is lower than the left end
+		mpfr_clear(end);
+		return false;
+	}
+	get_right(end);	// now, the right one
+	comp=mpfr_cmp_z(end,n.mpz());
+	if(comp<0){	// n is higher than the right end
+		mpfr_clear(end);
+		return false;
+	}
+	return true;
+};
+
+bool Algebraic_1::contains(const Gmpq &n)const{
+	mpfr_t end;
+	mpfr_init(end);
+	int comp;
+	get_left(end);	// first, we compare the left end
+	comp=mpfr_cmp_q(end,n.mpq());
+	if(comp>0){	// n is lower than the left end
+		mpfr_clear(end);
+		return false;
+	}
+	get_right(end);	// now, the right one
+	comp=mpfr_cmp_q(end,n.mpq());
+	if(comp<0){	// n is higher than the right end
+		mpfr_clear(end);
+		return false;
+	}
+	return true;
 };
 
 // overcharge for assignment

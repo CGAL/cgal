@@ -22,6 +22,7 @@
 // library)
 
 #include <gmp.h>
+#include <mpfr.h>
 #include <mpfi.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Gbrs_algebraic_1.h>
@@ -173,7 +174,7 @@ int get_root (mpfi_ptr x, int n) {
 	return 0;	// false: we couldn't copy the root
 }
 
-int refine_1 (Algebraic_1 &a) {
+int refine_1_rs(Algebraic_1 &a){
 	rs_reset_all ();
 	create_rs_upoly (a.pol().get_coefs (), a.pol().get_degree (),
 			rs_get_default_up ());
@@ -183,6 +184,46 @@ int refine_1 (Algebraic_1 &a) {
 	set_rs_verbose (CGAL_RS_VERB);
 	rs_run_algo ("UISOLE");
 	return get_root (a.mpfi(), a.nr());
+}
+
+// TODO: increase the precision by bigger steps, to avoid creating and erasing
+// many times the mpfrs
+int refine_1(Algebraic_1 &a){
+	mpfr_t left,center,right,eval_l,eval_c,eval_r;
+	mpfr_inits(left,right,eval_l,NULL);
+	a.get_endpoints(left,right);
+	mp_prec_t prec_l=mpfr_get_prec(left);
+	a.pol().eval_mpfr(eval_l,left,prec_l);
+	int sign_l=mpfr_sgn(eval_l);
+	if(sign_l==0){
+		mpfr_clears(left,right,eval_l,NULL);
+		return refine_1_rs(a);
+	}
+	mpfr_init(eval_r);
+	mp_prec_t prec_r=mpfr_get_prec(right);
+	a.pol().eval_mpfr(eval_r,right,prec_r);
+	int sign_r=mpfr_sgn(eval_r);
+	if(sign_r==0){
+		mpfr_clears(left,right,eval_l,eval_r,NULL);
+		return refine_1_rs(a);
+	}
+	CGAL_assertion(sign_l!=sign_r);
+	mp_prec_t prec_c=prec_l<prec_r?prec_r:prec_l;
+	mpfr_inits2(prec_c,center,eval_c,NULL);
+	mpfi_get_fr(center,a.mpfi());
+	a.pol().eval_mpfr(eval_c,center,prec_c);
+	int sign_c=mpfr_sgn(eval_c);
+	if(sign_c==0){
+		mpfr_clears(left,center,right,eval_l,eval_c,eval_r,NULL);
+		return refine_1_rs(a);
+	}
+	if(sign_l==sign_c)
+		mpfi_interv_fr(a.mpfi(),center,right);
+	else
+		mpfi_interv_fr(a.mpfi(),left,center);
+	a.set_rsprec(1+a.rsprec());
+	mpfr_clears(left,center,right,eval_l,eval_c,eval_r,NULL);
+	return 1;
 }
 
 Comparison_result compare_1 (Algebraic_1 &r1, Algebraic_1 &r2) {

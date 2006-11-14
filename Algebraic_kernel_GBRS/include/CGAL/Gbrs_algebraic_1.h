@@ -135,6 +135,7 @@ public:
 	const int nr () const;
 	const int mult () const;
 	const int rsprec () const;
+	void set_mpfi(const mpfi_t&);
 	void clear_pol ();
 	void set_pol (const Rational_polynomial_1 &);
 	void set_nr (const int);
@@ -287,180 +288,26 @@ public:
 
 // //////////////////////////
 // inline functions of the class
-
-inline const mpfi_t & Algebraic_1::mpfi() const{
-	return Ptr()->mpfI;
-};
-
-inline mpfi_t & Algebraic_1::mpfi(){
-	return ptr()->mpfI;
-};
-
+inline const mpfi_t& Algebraic_1::mpfi()const{return Ptr()->mpfI;};
+inline mpfi_t& Algebraic_1::mpfi(){return ptr()->mpfI;};
 inline const Rational_polynomial_1 & Algebraic_1::pol() const{
-	return *(Ptr()->poly);
-};
-
-inline Rational_polynomial_1 & Algebraic_1::pol(){
-	return *(ptr()->poly);
-};
-
-inline const int Algebraic_1::nr() const{
-	return ptr()->nr;
-};
-
-inline const int Algebraic_1::mult() const{
-	return ptr()->mult;
-};
-
-inline const int Algebraic_1::rsprec() const{
-	return ptr()->rsprec;
-};
-
-inline void Algebraic_1::set_prec(mp_prec_t p){
-	mpfi_round_prec(mpfi(),p);
-};
-
-inline mp_prec_t Algebraic_1::get_prec() { return mpfi_get_prec(mpfi()); };
-
-inline void Algebraic_1::get_left(mpfr_t &f) const{
-	mpfi_get_left(f,mpfi());
-}
-
-inline void Algebraic_1::get_right(mpfr_t &f) const{
-	mpfi_get_right(f,mpfi());
-}
-
-inline void Algebraic_1::get_endpoints(mpfr_t &l,mpfr_t &r) const{
-	mpfi_get_left(l,mpfi());
-	mpfi_get_right(r,mpfi());
-}
-
-inline bool Algebraic_1::is_consistent() const{
-	return (ptr()->poly);
-};
-
-inline bool Algebraic_1::is_point() const{
-	mpfr_t l,r;
-	mpfr_inits(l,r,NULL);
-	get_endpoints(l,r);
-	int comp=mpfr_equal_p(l,r);
-	mpfr_clears(l,r,NULL);
-	return (comp!=0);
-}
-
-inline bool Algebraic_1::contains(const int n) const{
-	mpfr_t end;
-	mpfr_init(end);
-	int comp;
-	get_left(end);	// first, we compare the left end
-	comp=mpfr_cmp_si(end,n);
-	if (comp>0){	// n is lower than the left end
-		mpfr_clear(end);
-		return false;
-	}
-	get_right(end);	// now, the right one
-	comp=mpfr_cmp_si(end,n);
-	if (comp<0) {	// n is higher than the right end
-		mpfr_clear(end);
-		return false;
-	}
-	return true;
-}
-
-inline bool Algebraic_1::contains(const mpfr_t &n) const{
-	mpfr_t end;
-	mpfr_init(end);
-	int comp;
-	get_left(end);	// first, we compare the left end
-	comp=mpfr_cmp(end,n);
-	if (comp>0) {	// n is lower than the left end
-		mpfr_clear(end);
-		return false;
-	}
-	get_right(end);	// now, the right one
-	comp=mpfr_cmp(end,n);
-	if (comp<0) {	// n is higher than the right end
-		mpfr_clear(end);
-		return false;
-	}
-	return true;
-}
-
-inline bool Algebraic_1::contains(const mpz_t &n) const{
-	mpfr_t end;
-	mpfr_init(end);
-	int comp;
-	get_left(end);	// first, we compare the left end
-	comp=mpfr_cmp_z(end,n);
-	if (comp>0) {	// n is lower than the left end
-		mpfr_clear(end);
-		return false;
-	}
-	get_right(end);	// now, the right one
-	comp=mpfr_cmp_z(end,n);
-	if (comp<0) {	// n is higher than the right end
-		mpfr_clear(end);
-		return false;
-	}
-	return true;
-}
-
-inline bool Algebraic_1::contains(const mpq_t &n) const{
-	mpfr_t end;
-	mpfr_init(end);
-	int comp;
-	get_left(end);	// first, we compare the left end
-	comp=mpfr_cmp_q(end,n);
-	if (comp>0) {	// n is lower than the left end
-		mpfr_clear(end);
-		return false;
-	}
-	get_right(end);	// now, the right one
-	comp=mpfr_cmp_q(end,n);
-	if (comp<0) {	// n is higher than the right end
-		mpfr_clear(end);
-		return false;
-	}
-	return true;
-}
-
-inline bool Algebraic_1::contains (const Gmpz &n) const{
-	mpfr_t end;
-	mpfr_init(end);
-	int comp;
-	get_left(end);	// first, we compare the left end
-	comp=mpfr_cmp_z(end,n.mpz());
-	if (comp>0) {	// n is lower than the left end
-		mpfr_clear(end);
-		return false;
-	}
-	get_right(end);	// now, the right one
-	comp=mpfr_cmp_z(end,n.mpz());
-	if (comp<0) {	// n is higher than the right end
-		mpfr_clear(end);
-		return false;
-	}
-	return true;
-}
-
-inline bool Algebraic_1::contains (const Gmpq &n) const {
-	mpfr_t end;
-	mpfr_init(end);
-	int comp;
-	get_left(end);	// first, we compare the left end
-	comp=mpfr_cmp_q(end,n.mpq());
-	if (comp>0) {	// n is lower than the left end
-		mpfr_clear(end);
-		return false;
-	}
-	get_right(end);	// now, the right one
-	comp=mpfr_cmp_q(end,n.mpq());
-	if (comp<0) {	// n is higher than the right end
-		mpfr_clear(end);
-		return false;
-	}
-	return true;
-}
+	return *(Ptr()->poly);};
+inline Rational_polynomial_1& Algebraic_1::pol(){return *(ptr()->poly);};
+inline const int Algebraic_1::nr()const{return ptr()->nr;};
+inline const int Algebraic_1::mult()const{return ptr()->mult;};
+inline const int Algebraic_1::rsprec()const{return ptr()->rsprec;};
+inline void Algebraic_1::set_mpfi(const mpfi_t &x){*mpfi()=*x;};
+inline void Algebraic_1::clear_pol(){ptr()->poly=NULL;};
+inline void Algebraic_1::set_pol(const Rational_polynomial_1 &p){
+	ptr()->poly=const_cast<Rational_polynomial_1*>(&p);}; // thanks Julien!
+inline void Algebraic_1::set_nr(const int n){ptr()->nr=n;};
+inline void Algebraic_1::set_mult(const int m){ptr()->mult=m;};
+inline void Algebraic_1::set_rsprec(const int p){ptr()->rsprec=p;};
+inline void Algebraic_1::set_prec(mp_prec_t p){mpfi_round_prec(mpfi(),p);};
+inline mp_prec_t Algebraic_1::get_prec(){return mpfi_get_prec(mpfi());};
+inline void Algebraic_1::get_left(mpfr_t &f)const{mpfi_get_left(f,mpfi());};
+inline void Algebraic_1::get_right(mpfr_t &f)const{mpfi_get_right(f,mpfi());};
+inline bool Algebraic_1::is_consistent()const{return (ptr()->poly);};
 
 // //////////////////////////
 // other functions coded not as class members

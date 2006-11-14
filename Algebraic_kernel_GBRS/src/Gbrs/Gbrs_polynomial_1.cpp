@@ -31,7 +31,7 @@ CGAL_BEGIN_NAMESPACE
 Rational_polynomial_1::Rational_polynomial_1():degree(0),solved(false){
 	coef=(mpz_t*)malloc(sizeof(mpz_t));
 	mpz_init(coef[0]);
-	roots.clear();
+	//roots.clear();
 };
 
 Rational_polynomial_1::Rational_polynomial_1(unsigned int d):solved(false){
@@ -39,7 +39,7 @@ Rational_polynomial_1::Rational_polynomial_1(unsigned int d):solved(false){
 	coef=(mpz_t*)malloc(sizeof(mpz_t)*(degree+1));
 	for(int i=0;i<degree+1;++i)
 		mpz_init(coef[i]);
-	roots.clear();
+	//roots.clear();
 };
 
 Rational_polynomial_1::Rational_polynomial_1(int d):solved(false){
@@ -47,7 +47,7 @@ Rational_polynomial_1::Rational_polynomial_1(int d):solved(false){
 	coef=(mpz_t*)malloc(sizeof(mpz_t)*(degree+1));
 	for(int i=0;i<degree+1;++i)
 		mpz_init(coef[i]);
-	roots.clear();
+	//roots.clear();
 };
 
 Rational_polynomial_1::Rational_polynomial_1(const Rational_polynomial_1 &p){
@@ -60,7 +60,7 @@ Rational_polynomial_1::Rational_polynomial_1(const Rational_polynomial_1 &p){
 		mpz_set(coef[i],p_coef[i]);
 		}
 	solved=p.get_solved();
-	roots=p.get_roots();
+	//roots=p.get_roots();
 };
 
 // destructor
@@ -68,8 +68,8 @@ Rational_polynomial_1::~Rational_polynomial_1 () {
 	for(int i=0;i<degree+1;++i)
 		mpz_clear(coef[i]);
 	free(coef);
-	if(solved)
-		roots.clear();
+	/*if(solved)
+		roots.clear();*/
 };
 
 void Rational_polynomial_1::set_degree(int d){	// dangerous function!
@@ -123,7 +123,9 @@ void Rational_polynomial_1::scale (const mpz_t &s) {
 };
 
 void Rational_polynomial_1::scale (const CGAL::Gmpz &s) {
-	mpz_t temp;
+	for(int i=0;i<=degree;++i)
+		mpz_mul(coef[i],coef[i],s.mpz());
+	/*mpz_t temp;
 	mpz_init (temp);
 	for (int i=0; i<=degree; ++i) {
 		int ind = calc_index (i);
@@ -133,7 +135,7 @@ void Rational_polynomial_1::scale (const CGAL::Gmpz &s) {
 		mpz_set (coef[ind], temp);
 	}
 	mpz_clear(temp);
-	return;
+	return;*/
 };
 
 void Rational_polynomial_1::get_coef (int pow_x, mpz_t *c) const {
@@ -143,12 +145,12 @@ void Rational_polynomial_1::get_coef (int pow_x, mpz_t *c) const {
 
 void Rational_polynomial_1::set_solved(){
 	solved=true;
-	roots.clear();
+	//roots.clear();
 };
 
 void Rational_polynomial_1::clear_solved(){
-	if(solved)
-		roots.clear();
+	/*if(solved)
+		roots.clear();*/
 	solved=false;
 	return;
 };
@@ -164,26 +166,51 @@ void Rational_polynomial_1::clear_solved(){
 	return result;
 };*/
 
-CGAL::Gmpz Rational_polynomial_1::eval (const CGAL::Gmpz &x) const {
-	mpz_t result, x_pow, temp1, temp2;
-	mpz_init (result);	// it's 0 now
-	mpz_init (x_pow);
-	mpz_set_si (x_pow, 1);	// x^0 = 1
-	mpz_init (temp1);
-	mpz_init (temp2);
-	for (int i=0; i<=degree; ++i) {	// invariant: x_pow = x^i
-		mpz_mul (temp1, coef[calc_index (i)], x_pow);
-		mpz_set (temp2, result);
-		mpz_add (result, temp1, temp2);
-		mpz_mul (temp1, x_pow, x.mpz());
-		mpz_set (x_pow, temp1);	// to use it in the next iteration
+CGAL::Gmpz Rational_polynomial_1::eval(const CGAL::Gmpz &x)const{
+	mpz_t result,x_pow,temp;
+	mpz_init(result);	// it's 0 now
+	mpz_init_set_si(x_pow,1);	// x^0 = 1
+	mpz_init(temp);
+	for(int i=0;i<=degree;++i){	// invariant: x_pow = x^i
+		mpz_mul(temp,coef[calc_index(i)],x_pow);
+		mpz_add(result,temp,result);
+		mpz_mul(x_pow,x_pow,x.mpz());	// for the next iteration
 	}
-	mpz_clear (x_pow);
-	mpz_clear (temp1);
-	mpz_clear (temp2);
+	mpz_clear(x_pow);
+	mpz_clear(temp);
 	CGAL::Gmpz ret(result);
-	mpz_clear (result);
+	mpz_clear(result);
 	return ret;
+};
+
+void Rational_polynomial_1::eval_mpfr
+(mpfr_t &result,const mpfr_t &x,mp_prec_t prec)const{
+	mpfr_t x_pow,temp;
+	mp_prec_t prec_r=mpfr_get_prec(result);
+	mpfr_inits2(prec<prec_r?prec_r:prec,x_pow,temp,NULL);
+	mpfr_set_ui(x_pow,1,GMP_RNDN);
+	mpfr_set_ui(result,0,GMP_RNDN);
+	for(int i=0;i<=degree;++i){
+		mpfr_mul_z(temp,x_pow,coef[calc_index(i)],GMP_RNDN);
+		mpfr_add(result,temp,result,GMP_RNDN);
+		mpfr_mul(x_pow,x_pow,x,GMP_RNDN);
+	}
+	mpfr_clears(x_pow,temp,NULL);
+	return;
+};
+
+// I think RS should do this
+void Rational_polynomial_1::eval_mpfi(mpfi_t &result,const mpfi_t &x)const{
+	mpfi_t x_pow,temp;
+	mpfi_init_set_ui(x_pow,1);
+	mpfi_init(temp);
+	mpfi_set_ui(result,0);
+	for(int i=0;i<=degree;++i){
+		mpfi_mul_z(temp,x_pow,coef[calc_index(i)]);
+		mpfi_add(result,temp,result);
+		mpfi_mul(x_pow,x_pow,x);
+	}
+	return;
 };
 
 Rational_polynomial_1 Rational_polynomial_1::derive () const {
