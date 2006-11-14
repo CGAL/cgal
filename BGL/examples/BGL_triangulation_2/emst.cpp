@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/boost/graph/graph_traits_Triangulation_2.h>
+#include <CGAL/boost/graph/graph_traits_Delaunay_triangulation_2.h>
 
 #include <boost/graph/kruskal_min_spanning_tree.hpp>
 #include <boost/graph/filtered_graph.hpp>
@@ -86,9 +86,10 @@ main(int,char*[])
      edge_descriptor ed = *it;
      vertex_descriptor svd = boost::source(ed,t);
      vertex_descriptor tvd = boost::target(ed,t);
-     Triangulation::Vertex_handle sv = *svd;
-     Triangulation::Vertex_handle tv = *tvd;
+     Triangulation::Vertex_handle sv = svd;
+     Triangulation::Vertex_handle tv = tvd;
      std::cout << "[ " << sv->point() << "  |  " << tv->point() << " ] " << std::endl;
    }
+
    return 0;
 }
