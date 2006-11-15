@@ -29,55 +29,6 @@ typedef CGAL::Arr_Bezier_curve_traits_2<Rat_kernel,
 typedef Traits_2::Curve_2                               Bezier_curve_2;
 typedef CGAL::Arrangement_2<Traits_2>                   Arrangement_2;
 
-bool read_Bezier_curves (const char* filename,
-                         std::list<Bezier_curve_2>& curves)
-{
-  // Clear the output list.
-  curves.clear();
-
-  // Open the input file.
-  std::ifstream   in_file (filename);
-
-  if (! in_file.is_open())
-    return (false);
-  
-  // Read the number of curves.
-  int             n_curves = -1;
-
-  in_file >> n_curves;
-  if (n_curves <= 0)
-    return (false);
-
-  // Read the curves one by one. Each curve is given by a number of control
-  // points, followed by a list of the control points (with rational
-  // coordinates).
-  int             n_points;
-  Rational        x, y;
-  int             i, j;
-  
-  for (i = 0; i < n_curves; i++)
-  {
-    // Read the number of control points.
-    in_file >> n_points;
-    if (n_points <= 0)
-      return (false);
-
-    // Read the control points.
-    std::vector<Rat_point_2>    ctrl_pts (n_points);
-
-    for (j = 0; j < n_points; j++)
-    {
-      in_file >> x >> y;
-      ctrl_pts[j] = Rat_point_2 (x, y);
-    }
-
-    // Construct the Bezier curve.
-    curves.push_back (Bezier_curve_2 (ctrl_pts.begin(), ctrl_pts.end()));
-  }
-
-  return (true);
-}
-
 int main (int argc, char **argv)
 {
   // Get the name of the input file from the command line, or use the default
@@ -87,21 +38,30 @@ int main (int argc, char **argv)
   if (argc > 1)
     filename = argv[1];
 
-  // Read the curves from the input file.
-  std::list<Bezier_curve_2>  curves;
+  // Open the input file.
+  std::ifstream   in_file (filename);
 
-  if (! read_Bezier_curves (filename, curves))
+  if (! in_file.is_open())
   {
-    std::cerr << "Failed to read data from " << filename << std::endl;
+    std::cerr << "Failed to open " << filename << std::endl;
     return (1);
   }
 
-  // Print the curves.
-  std::list<Bezier_curve_2>::iterator    cit;
-  unsigned int                           ind = 1;
+  // Read the curves from the input file.
+  unsigned int               n_curves;
+  std::list<Bezier_curve_2>  curves;
+  Bezier_curve_2             B;
+  unsigned int               k;
+  
+  in_file >> n_curves;
+  for (k = 0; k < n_curves; k++)
+  {
+    // Read the current curve (specified by its control points).
+    in_file >> B;
+    curves.push_back (B);
 
-  for (cit = curves.begin(); cit != curves.end(); ++cit, ind++)
-    std::cout << "B_" << ind << " (t) = " << *cit << std::endl;
+    std::cout << "B = {" << B << "}" << std::endl;
+  }
 
   // Construct the arrangement.
   Arrangement_2                     arr;

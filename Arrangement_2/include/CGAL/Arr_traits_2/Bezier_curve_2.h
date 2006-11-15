@@ -620,7 +620,7 @@ operator>> (std::istream& is,
   is >> n;
 
   // Read the control points.
-  std::vector<typename Rat_kernel::Point_2>   ctrl_pts;
+  std::vector<typename Rat_kernel::Point_2>   ctrl_pts (n);
   unsigned int                                k;
 
   for (k = 0; k < n; k++)
