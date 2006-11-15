@@ -255,7 +255,7 @@ private:
   
   Cost_type get_cost ( edge_descriptor const& aEdge ) const
   {
-    return Get_cost(aEdge,mSurface,mCostParams);
+    return Get_cost(aEdge,mSurface,mCostParams, get_placement(aEdge) );
   }
   
   Placement_type get_placement( edge_descriptor const& aEdge ) const

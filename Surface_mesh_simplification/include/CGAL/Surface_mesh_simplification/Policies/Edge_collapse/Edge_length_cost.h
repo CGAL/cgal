@@ -62,6 +62,7 @@ public:
   result_type operator()( edge_descriptor const& aEdge
                         , ECM&                   aSurface
                         , Params const*          //aParams
+                        , optional<Point> const& //aPlacement
                         ) const
   {
     vertex_descriptor vs,vt ; tie(vs,vt) = get_vertices(aEdge,aSurface);

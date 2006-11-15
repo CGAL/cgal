@@ -34,54 +34,44 @@ template<class ECM>
 LindstromTurkCore<ECM>::LindstromTurkCore( Params const&          aParams
                                          , edge_descriptor const& aP_Q
                                          , ECM&                   aSurface 
-                                         , bool                   aComputeCost
                                          )
   :
    mParams(aParams)
   ,mP_Q(aP_Q)
   ,mSurface(aSurface)    
-  ,mComputeCost(aComputeCost)
   
   ,mP  ( source       (aP_Q,aSurface) )
   ,mQ  ( target       (aP_Q,aSurface) )
   ,mQ_P( opposite_edge(aP_Q,aSurface) )
 {
-}
 
-template<class ECM>
-typename LindstromTurkCore<ECM>::result_type LindstromTurkCore<ECM>::compute()
-{
-  Optional_FT    lOptionalCost ;
-  Optional_point lOptionalP ;
-  
-  CGAL_ECMS_LT_TRACE(2,"Computing LT data for E" << mP_Q->ID << " (V" << mP->ID << "->V" << mQ->ID << ")" );
-  
+  mTriangles.clear();
+  mLink     .clear(); 
+  mTriangles.reserve(16);
+  mLink     .reserve(16);
+
   // Volume preservation and optimization constrians are based on the normals to the triangles in the star of the collapsing egde 
   // Triangle shape optimization constrians are based on the link of the collapsing edge (the cycle of vertices around the edge)
-  Triangles lTriangles;
-  Link      lLink;
-  
-  lTriangles.reserve(16);
-  lLink     .reserve(16);
-  
-  Extract_triangles_and_link(lTriangles,lLink);
+  Extract_triangles_and_link();
 
 #ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE
   std::ostringstream ss ; 
-  for( typename Link::const_iterator it = lLink.begin(), eit = lLink.end() ; it != eit ; ++it )
+  for( typename Link::const_iterator it = mLink.begin(), eit = mLink.end() ; it != eit ; ++it )
     ss << "v" << (*it)->ID << " " ;
   std::string s = ss.str(); 
   CGAL_ECMS_LT_TRACE(3,"Link: " << s );
 #endif
   
-  BoundaryEdges lBdry ;
+  Extract_boundary_edges();
+}
+
+template<class ECM>
+typename LindstromTurkCore<ECM>::Optional_point LindstromTurkCore<ECM>::compute_placement()
+{
+  Optional_point  rPlacementP ;
+  Optional_vector lPlacementV ;
   
-  Extract_boundary_edges(lBdry);
-    
-  Point const& lP = get_point(mP) ;
-  Point const& lQ = get_point(mQ) ;
-  
-  Optional_vector lOptionalV ;
+  CGAL_ECMS_LT_TRACE(2,"Computing LT data for E" << mP_Q->ID << " (V" << mP->ID << "->V" << mQ->ID << ")" );
   
   //
   // Each vertex constrian is an equation of the form: Ai * v = bi
@@ -106,17 +96,17 @@ typename LindstromTurkCore<ECM>::result_type LindstromTurkCore<ECM>::compute()
   //
   // A constrian (Ai,bi) must be alpha-compatible with the previously added constrians (see Paper); if it's not, is discarded.
   //
-  if ( lBdry.size() > 0 )
-    Add_boundary_preservation_constrians(lBdry);
+  if ( mBdry.size() > 0 )
+    Add_boundary_preservation_constrians(mBdry);
   
   if ( mConstrians.n < 3 )
-    Add_volume_preservation_constrians(lTriangles);
+    Add_volume_preservation_constrians(mTriangles);
     
   if ( mConstrians.n < 3 )
-    Add_boundary_and_volume_optimization_constrians(lBdry,lTriangles); 
+    Add_boundary_and_volume_optimization_constrians(mBdry,mTriangles); 
     
   if ( mConstrians.n < 3 )
-    Add_shape_optimization_constrians(lLink);
+    Add_shape_optimization_constrians(mLink);
   
   // It might happen that there were not enough alpha-compatible constrians.
   // In that case there is simply no good vertex placement
@@ -128,9 +118,9 @@ typename LindstromTurkCore<ECM>::result_type LindstromTurkCore<ECM>::compute()
     {
       Matrix const& lAi = *lOptional_Ai ;
       
-      lOptionalV = mConstrians.b * lAi ;
+      lPlacementV = mConstrians.b * lAi ;
       
-      CGAL_ECMS_LT_TRACE(1,"New vertex point: " << xyz_to_string(*lOptionalV) );
+      CGAL_ECMS_LT_TRACE(1,"New vertex point: " << xyz_to_string(*lPlacementV) );
     }
     else
       CGAL_ECMS_LT_TRACE(1,"Can't solve optimization, singular system.");
@@ -138,36 +128,47 @@ typename LindstromTurkCore<ECM>::result_type LindstromTurkCore<ECM>::compute()
   else
     CGAL_ECMS_LT_TRACE(1,"Can't solve optimization, not enough alpha-compatible constrians.");
   
-  if ( lOptionalV )
-  {
-    lOptionalP = Optional_point( ORIGIN + (*lOptionalV) );
+  if ( lPlacementV )
+    rPlacementP = Optional_point( ORIGIN + (*lPlacementV) );
     
-    if ( mComputeCost )
-    {
-      FT lSquaredLength = squared_distance(lP,lQ);
-      
-      CGAL_ECMS_LT_TRACE(1,"Squared edge length: " << lSquaredLength ) ;
-      
-      FT lBdryCost   = Compute_boundary_cost(*lOptionalV,lBdry);
-      FT lVolumeCost = Compute_volume_cost  (*lOptionalV,lTriangles);
-      FT lShapeCost  = Compute_shape_cost   (*lOptionalP,lLink);
-      
-      FT lTotalCost =   FT(mParams.VolumeWeight)   * lVolumeCost
-                      + FT(mParams.BoundaryWeight) * lBdryCost   * lSquaredLength
-                      + FT(mParams.ShapeWeight)    * lShapeCost  * lSquaredLength * lSquaredLength ;
-      
-      lOptionalCost = Optional_FT(lTotalCost);
-      
-      CGAL_ECMS_LT_TRACE(1,"\nSquared edge length: " << lSquaredLength 
-                        << "\nBoundary cost: " << lBdryCost 
-                        << "\nVolume cost: " << lVolumeCost 
-                        << "\nShape cost: " << lShapeCost 
-                        << "\nTOTAL COST: " << lTotalCost 
-                        );
-    }
+  return rPlacementP;
+}
+
+template<class ECM>
+typename LindstromTurkCore<ECM>::Optional_FT LindstromTurkCore<ECM>::compute_cost( Optional_point const& aP )
+{
+  Optional_FT rCost ;
+
+  if ( aP )
+  {
+    Point const& lP = get_point(mP) ;
+    Point const& lQ = get_point(mQ) ;
+
+    Vector lV = (*aP) - ORIGIN ;
+
+    FT lSquaredLength = squared_distance(lP,lQ);
+    
+    CGAL_ECMS_LT_TRACE(1,"Squared edge length: " << lSquaredLength ) ;
+    
+    FT lBdryCost   = Compute_boundary_cost(lV ,mBdry);
+    FT lVolumeCost = Compute_volume_cost  (lV ,mTriangles);
+    FT lShapeCost  = Compute_shape_cost   (*aP,mLink);
+    
+    FT lTotalCost =   FT(mParams.VolumeWeight)   * lVolumeCost
+                    + FT(mParams.BoundaryWeight) * lBdryCost   * lSquaredLength
+                    + FT(mParams.ShapeWeight)    * lShapeCost  * lSquaredLength * lSquaredLength ;
+    
+    rCost = Optional_FT(lTotalCost);
+    
+    CGAL_ECMS_LT_TRACE(1,"\nSquared edge length: " << lSquaredLength 
+                      << "\nBoundary cost: " << lBdryCost 
+                      << "\nVolume cost: " << lVolumeCost 
+                      << "\nShape cost: " << lShapeCost 
+                      << "\nTOTAL COST: " << lTotalCost 
+                      );
   }
     
-  return make_tuple(lOptionalCost,lOptionalP);
+  return rCost;
 }
 
 
@@ -175,7 +176,7 @@ typename LindstromTurkCore<ECM>::result_type LindstromTurkCore<ECM>::compute()
 // Caches the "local boundary", that is, the sequence of 3 border edges: o->p, p->q, q->e 
 //
 template<class ECM>
-void LindstromTurkCore<ECM>::Extract_boundary_edge( edge_descriptor edge, BoundaryEdges& rBdry )
+void LindstromTurkCore<ECM>::Extract_boundary_edge( edge_descriptor edge )
 {
   edge_descriptor face_edge = is_border(edge) ? opposite_edge(edge,mSurface) : edge ;
       
@@ -192,15 +193,13 @@ void LindstromTurkCore<ECM>::Extract_boundary_edge( edge_descriptor edge, Bounda
                     << " V:" << xyz_to_string(v) << " N:" << xyz_to_string(n) 
                     ) ;
   
-  rBdry.push_back( BoundaryEdge(sp,tp,v,n) ) ;
-        
+  mBdry.push_back( BoundaryEdge(sp,tp,v,n) ) ;
 }
 
 template<class ECM>
 void LindstromTurkCore<ECM>::Extract_boundary_edges( vertex_descriptor const& v
-                                                  , edge_descriptor_vector&  rCollected
-                                                  , BoundaryEdges&           rBdry
-                                                  )
+                                                   , edge_descriptor_vector&  rCollected
+                                                   )
 {
   in_edge_iterator eb, ee ; 
   for ( tie(eb,ee) = in_edges(v,mSurface) ; eb != ee ; ++ eb )
@@ -209,7 +208,7 @@ void LindstromTurkCore<ECM>::Extract_boundary_edges( vertex_descriptor const& v
     
     if ( is_undirected_edge_a_border(edge) && std::find(rCollected.begin(),rCollected.end(),edge) == rCollected.end() )
     {
-      Extract_boundary_edge(edge,rBdry);
+      Extract_boundary_edge(edge);
       rCollected.push_back(edge);
       rCollected.push_back(opposite_edge(edge,mSurface));
     }  
@@ -217,11 +216,11 @@ void LindstromTurkCore<ECM>::Extract_boundary_edges( vertex_descriptor const& v
 }
 
 template<class ECM>
-void LindstromTurkCore<ECM>::Extract_boundary_edges( BoundaryEdges& rBdry )
+void LindstromTurkCore<ECM>::Extract_boundary_edges()
 {
   edge_descriptor_vector lCollected ;
-  Extract_boundary_edges(mP,lCollected,rBdry);
-  Extract_boundary_edges(mQ,lCollected,rBdry);
+  Extract_boundary_edges(mP,lCollected);
+  Extract_boundary_edges(mQ,lCollected);
 }
 
 //
@@ -258,11 +257,10 @@ typename LindstromTurkCore<ECM>::Triangle LindstromTurkCore<ECM>::Get_triangle( 
 //
 template<class ECM>
 void LindstromTurkCore<ECM>::Extract_triangle( vertex_descriptor const& v0
-                                            , vertex_descriptor const& v1
-                                            , vertex_descriptor const& v2 
-                                            , edge_descriptor   const& e02
-                                            , Triangles&               rTriangles
-                                            )
+                                             , vertex_descriptor const& v1
+                                             , vertex_descriptor const& v2 
+                                             , edge_descriptor   const& e02
+                                             )
 {
   // The 3 vertices are obtained by circulating ccw around v0, that is, e02 = next_ccw(e01).
   // Since these vertices are NOT obtained by circulating the face, the actual triangle orientation is unspecified.
@@ -274,7 +272,7 @@ void LindstromTurkCore<ECM>::Extract_triangle( vertex_descriptor const& v0
     // In this case e02 is an edge of the facet.
     // If this facet edge is a border edge then this triangle is not in the mesh .
     if ( !is_border(e02) )
-      rTriangles.push_back(Get_triangle(v0,v2,v1) ) ;
+      mTriangles.push_back(Get_triangle(v0,v2,v1) ) ;
   }
   else
   {
@@ -282,7 +280,7 @@ void LindstromTurkCore<ECM>::Extract_triangle( vertex_descriptor const& v0
     // In this case, e20 and not e02, is an edge of the facet.
     // If this facet edge is a border edge then this triangle is not in the mesh .
     if ( !is_border(opposite_edge(e02,mSurface)) )
-      rTriangles.push_back(Get_triangle(v0,v1,v2) ) ;
+      mTriangles.push_back(Get_triangle(v0,v1,v2) ) ;
   }
 }
 
@@ -290,7 +288,7 @@ void LindstromTurkCore<ECM>::Extract_triangle( vertex_descriptor const& v0
 // Extract all triangles (its normals) and vertices (the link) around the collpasing edge p_q
 //
 template<class ECM>
-void LindstromTurkCore<ECM>::Extract_triangles_and_link( Triangles& rTriangles, Link& rLink )
+void LindstromTurkCore<ECM>::Extract_triangles_and_link()
 {
   // 
   // Extract around mP, CCW
@@ -308,11 +306,11 @@ void LindstromTurkCore<ECM>::Extract_triangles_and_link( Triangles& rTriangles, 
   
     if ( v2 != mQ )
     {
-      CGAL_expensive_assertion ( std::find(rLink.begin(),rLink.end(),v2) == rLink.end() ) ;
-      rLink.push_back(v2) ;
+      CGAL_expensive_assertion ( std::find(mLink.begin(),mLink.end(),v2) == mLink.end() ) ;
+      mLink.push_back(v2) ;
     }
       
-    Extract_triangle(v0,v1,v2,e02,rTriangles);
+    Extract_triangle(v0,v1,v2,e02);
     
     v1 = v2 ;
   }
@@ -329,8 +327,8 @@ void LindstromTurkCore<ECM>::Extract_triangles_and_link( Triangles& rTriangles, 
   v1 = target(e02,mSurface); 
   
   // This could have been added to the link while circulating around mP
-  if ( v1 != mP && std::find(rLink.begin(),rLink.end(),v1) == rLink.end() )
-    rLink.push_back(v1) ;
+  if ( v1 != mP && std::find(mLink.begin(),mLink.end(),v1) == mLink.end() )
+    mLink.push_back(v1) ;
   
   e02 = next_edge_ccw(e02,mSurface);
   
@@ -339,10 +337,10 @@ void LindstromTurkCore<ECM>::Extract_triangles_and_link( Triangles& rTriangles, 
     vertex_descriptor v2 = target(e02,mSurface);
 
     // Any of the vertices found around mP can be reached again around mQ, but we can't duplicate them here.
-    if ( v2 != mP && std::find(rLink.begin(),rLink.end(),v2) == rLink.end() )
-      rLink.push_back(v2) ;
+    if ( v2 != mP && std::find(mLink.begin(),mLink.end(),v2) == mLink.end() )
+      mLink.push_back(v2) ;
     
-    Extract_triangle(v0,v1,v2,e02,rTriangles);
+    Extract_triangle(v0,v1,v2,e02);
     
     v1 = v2 ;
      

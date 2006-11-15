@@ -40,10 +40,10 @@ public:
   typedef typename Kernel_traits<Point>::Kernel      Kernel ;
   typedef typename Kernel::FT                        FT ;
   
-  typedef LindstromTurk_params Params ;
-    
   typedef optional<FT> result_type ;
   
+  typedef LindstromTurk_params Params ;
+
 public:
 
   LindstromTurk_cost() {}
@@ -51,18 +51,13 @@ public:
   result_type operator()( edge_descriptor const& aEdge
                         , ECM&                   aSurface
                         , Params const*          aParams
+                        , optional<Point> const& aPlacement
                         ) const
   {
     CGAL_assertion(aParams);
     CGAL_assertion( handle_assigned(aEdge) );
     
-    LindstromTurkCore<ECM> core(*aParams,aEdge,aSurface,true);
-
-    optional<FT>    lCost ;
-    optional<Point> lPlacement ;
-    tie(lCost,lPlacement) = core.compute();
-    
-    return lCost ;
+    return LindstromTurkCore<ECM>(*aParams,aEdge,aSurface).compute_cost(aPlacement) ;
   }
   
 };

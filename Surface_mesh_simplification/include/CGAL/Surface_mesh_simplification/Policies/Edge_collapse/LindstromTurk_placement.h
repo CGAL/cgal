@@ -33,21 +33,16 @@ public:
     
   typedef ECM_ ECM ;
   
-  typedef typename boost::graph_traits<ECM>::vertex_descriptor vertex_descriptor ;
-  typedef typename boost::graph_traits<ECM>::edge_descriptor   edge_descriptor ;
-  
+  typedef typename boost::graph_traits<ECM>::edge_descriptor edge_descriptor ;
+
   typedef typename halfedge_graph_traits<ECM>::Point Point ;
-  typedef typename Kernel_traits<Point>::Kernel      Kernel ;
-  typedef typename Kernel::FT                        FT ;
-  
-  typedef LindstromTurk_params Params ;
 
   typedef optional<Point> result_type ;
+
+  typedef LindstromTurk_params Params ;
       
 public:
 
-  LindstromTurk_placement() {}
-  
   result_type operator()( edge_descriptor const& aEdge
                         , ECM&                   aSurface
                         , Params const*          aParams
@@ -56,13 +51,7 @@ public:
     CGAL_assertion(aParams);
     CGAL_assertion( handle_assigned(aEdge) );
     
-    LindstromTurkCore<ECM> core(*aParams,aEdge,aSurface,false);
-
-    optional<FT>    lCost ;
-    optional<Point> lPlacement ;
-    tie(lCost,lPlacement) = core.compute();
-    
-    return lPlacement ;
+    return LindstromTurkCore<ECM>(*aParams,aEdge,aSurface).compute_placement() ;
   }
 };
 

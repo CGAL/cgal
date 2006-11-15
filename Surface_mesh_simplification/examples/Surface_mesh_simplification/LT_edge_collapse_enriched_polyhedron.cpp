@@ -8,24 +8,105 @@
 #include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 
-// === EXAMPLE SPECIFIC HEADERS BEGINS HERE ===
-
 #include <CGAL/Polyhedron_items_with_id_3.h>
 
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
 
-// === EXAMPLE SPECIFIC HEADERS ENDS HERE ===
+// Cost-placement policies
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_and_length.h> 
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 
-// === EXAMPLE SPECIFIC DETAILS BEGINS HERE ===
+typedef Kernel::Point_3 Point ;
 
 //
 // Setup an enriched polyhedron type which stores a ID in the halfedges
 //
 typedef CGAL::Polyhedron_3<Kernel,CGAL::Polyhedron_items_with_id_3> Surface; 
 
-// === EXAMPLE SPECIFIC DETAILS ENDS HERE ===
+typedef Surface::Halfedge_handle Halfedge_handle ;
+
+
+// The following is the Visitor that keeps track of the simplification process.
+// In this example the progress is printed real-time and a few statistics are
+// recorded (and printed in the end).
+//
+struct Visitor
+{
+  Visitor() 
+    : collected(0)
+    , processed(0)
+    , collapsed(0)
+    , non_collapsable(0)
+    , cost_uncomputable(0) 
+    , placement_uncomputable(0) 
+  {} 
+
+  // Called on algorithm entry  
+  void OnStarted( Surface& surface ) {} 
+  
+  // Called on algorithm exit  
+  void OnFinished ( Surface& surface ) { std::cerr << "\n" << std::flush ; } 
+  
+  // Called when the stop condition returned true
+  void OnStopConditionReached( Surface& surface ) {} 
+  
+  // Called during the collecting phase for each edge collected.
+  void OnCollected( Halfedge_handle const& edge
+                  , Surface&               surface
+                  )
+  {
+    ++ collected ;
+    std::cerr << "\rEdges collected: " << collected << std::flush ;
+  }                
+  
+  // Called during the processing phase for each edge selected.
+  // If cost is absent the edge won't be collapsed.
+  void OnSelected(Halfedge_handle const&  edge
+                 ,Surface&                surface
+                 ,boost::optional<double> cost
+                 ,std::size_t             initial
+                 ,std::size_t             current
+                 )
+  {
+    ++ processed ;
+    if ( !cost )
+      ++ cost_uncomputable ;
+      
+    if ( current == initial )
+      std::cerr << "\n" << std::flush ;
+    std::cerr << "\r" << current << std::flush ;
+  }                
+  
+  // Called during the processing phase for each edge being collapsed.
+  // If placement is absent the edge is left uncollapsed.
+  void OnCollapsing(Halfedge_handle const&  edge
+                   ,Surface&                surface
+                   ,boost::optional<Point>  placement
+                   )
+  {
+    if ( placement )
+         ++ collapsed;
+    else ++ placement_uncomputable ;
+  }                
+  
+  // Called for each edge which failed the so called link-condition,
+  // that is, which cannot be collapsed because doing so would
+  // turn the surface into a non-manifold.
+  void OnNonCollapsable( Halfedge_handle const& edge
+                       , Surface&               surface
+                       )
+  {
+    ++ non_collapsable;
+  }                
+  
+  std::size_t  collected
+             , processed
+             , collapsed
+             , non_collapsable
+             , cost_uncomputable  
+             , placement_uncomputable ; 
+} ;
 
 namespace SMS = CGAL::Surface_mesh_simplification ;
 
@@ -35,9 +116,6 @@ int main( int argc, char** argv )
   
   std::ifstream is(argv[1]) ; is >> surface ;
 
-  
-  // === CONCRETE USAGE EXAMPLE BEGINS HERE ===
-  
   // The halfedges in this polyhedron have an "id()" field 
   // which the default "edge_index_map()" uses to get the index
   // of an edge.
@@ -54,10 +132,27 @@ int main( int argc, char** argv )
 
   SMS::Count_stop_predicate<Surface> stop(1000);
      
-  int r = SMS::edge_collapse(surface,stop);
+  Visitor vis ;
   
-  // === CONCRETE USAGE EXAMPLE ENDS HERE ===
-
+  int r = SMS::edge_collapse(surface
+                            ,stop
+                            ,get_cost     (SMS::Edge_length_cost  <Surface>())
+                            .get_placement(SMS::Midpoint_placement<Surface>())
+                            .visitor(&vis)
+                            );
+  
+  std::cout << "\nEdges collected: " << vis.collected
+            << "\nEdges proccessed: " << vis.processed
+            << "\nEdges collapsed: " << vis.collapsed
+            << std::endl
+            << "\nEdges not collapsed due to topological constrians: " 
+            << vis.non_collapsable
+            << "\nEdge not collapsed due to cost computation constrians: " 
+            << vis.cost_uncomputable 
+            << "\nEdge not collapsed due to placement computation constrians: " 
+            << vis.placement_uncomputable 
+            << std::endl ; 
+            
   std::cout << "\nFinished...\n" << r << " edges removed.\n" 
             << (surface.size_of_halfedges()/2) << " final edges.\n" ;
         

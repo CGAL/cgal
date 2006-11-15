@@ -65,17 +65,15 @@ public:
   
   typedef MatrixC33<Kernel> Matrix ;
   
-  typedef tuple<Optional_FT,Optional_point> result_type ;
-    
 public:
   
   LindstromTurkCore( Params const&          aParams
                    , edge_descriptor const& aP_Q
                    , ECM&                   aSurface 
-                   , bool                   aComputeCost
                    ) ;
     
-  result_type compute() ;
+  Optional_point compute_placement() ;
+  Optional_FT    compute_cost( Optional_point const& p ) ;
   
 private :
 
@@ -183,25 +181,19 @@ private :
                        , vertex_descriptor const& v1
                        , vertex_descriptor const& v2 
                        , edge_descriptor   const& e02
-                       , Triangles&               rTriangles
                        ) ;
                        
-  void Extract_triangles_and_link( Triangles& rTriangles, Link& rLink );
+  void Extract_triangles_and_link();
   
-  void Extract_boundary_edge ( edge_descriptor edge, BoundaryEdges& rBdry ) ;
-  void Extract_boundary_edges( vertex_descriptor const& v
-                             , edge_descriptor_vector&  rCollected
-                             , BoundaryEdges&           rBdry
-                             ) ;
-  void Extract_boundary_edges( BoundaryEdges& rBdry ) ;
-
+  void Extract_boundary_edge ( edge_descriptor edge) ;
+  void Extract_boundary_edges( vertex_descriptor const& v, edge_descriptor_vector& rCollected ) ;
+  void Extract_boundary_edges() ;
   
 private:    
 
   Params const&          mParams ; 
   edge_descriptor const& mP_Q ;
   ECM&                   mSurface ;
-  bool                   mComputeCost ;
   
   vertex_descriptor mP ;
   vertex_descriptor mQ ;
@@ -209,10 +201,10 @@ private:
 
 private:    
 
-  Constrians mConstrians ;
-  
-  Point mV ;
-  
+  Triangles     mTriangles;
+  Link          mLink;
+  BoundaryEdges mBdry ;
+  Constrians    mConstrians ;
 };
 
 } // namespace Surface_mesh_simplification
