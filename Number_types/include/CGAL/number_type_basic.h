@@ -56,7 +56,6 @@
 #include <CGAL/Coercion_traits.h>
 #include <CGAL/Algebraic_structure_traits.h>
 #include <CGAL/Real_embeddable_traits.h>
-#include <CGAL/Number_type_traits.h> 
 
 #include <CGAL/Fraction_traits.h>
 #include <CGAL/Rational_traits.h>
@@ -84,5 +83,12 @@
 #endif
 
 #include <CGAL/Root_of_traits.h>
+
+
+#ifdef CGAL_USE_GMP
+#ifdef CGAL_USE_GMPXX
+#include <CGAL/gmpxx.h>
+#endif // CGAL_USE_GMPXX
+#endif // CGAL_USE_GMP
 
 #endif // CGAL_NUMBER_TYPE_BASIC_H

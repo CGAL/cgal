@@ -26,18 +26,6 @@ int main() {
     CGAL::test_fraction_traits<NT>(); 
     // backward compatiblity
     CGAL::test_rational_traits<NT>();  
-
-    // backward compatiblity
-    typedef CGAL::Number_type_traits<NT> NTT;
-    CGAL_test_assert(  CGAL::check_tag(NTT::Has_division()) );
-    CGAL_test_assert(! CGAL::check_tag(NTT::Has_gcd()) );
-    CGAL_test_assert(! CGAL::check_tag(NTT::Has_sqrt()) );
-    CGAL_test_assert(  CGAL::check_tag(NTT::Has_exact_ring_operations()) );
-    CGAL_test_assert(  CGAL::check_tag(NTT::Has_exact_division()) );
-    CGAL_test_assert(! CGAL::check_tag(NTT::Has_exact_sqrt()) );
-    
-     
-
     
   return 0;
 }

@@ -24,7 +24,7 @@
 #ifndef CGAL_TO_RATIONAL_H
 #define CGAL_TO_RATIONAL_H
 
-#include <CGAL/Number_type_traits.h>
+#include <CGAL/number_type_basic.h>
 #include <CGAL/Fraction_traits.h>
 
 #include <cmath>

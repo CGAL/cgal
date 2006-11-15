@@ -39,18 +39,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<> struct Number_type_traits<long double> {
-  typedef Tag_false  Has_gcd;
-  typedef Tag_true   Has_division;
-  typedef Tag_true   Has_sqrt;
-
-  typedef Tag_false  Has_exact_ring_operations;
-  typedef Tag_false  Has_exact_division;
-  typedef Tag_false  Has_exact_sqrt;
-};
-
-
-
 // Is_valid moved to top, since used by is_finite
 #ifdef __sgi
 

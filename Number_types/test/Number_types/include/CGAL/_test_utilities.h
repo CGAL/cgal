@@ -75,18 +75,19 @@ test_gcd(const NT&, CGAL::Tag_true)
   if (CGAL_NTS gcd(x, y) != NT(391)) return false;
   if (gc(x, y) != NT(391)) return false;
 
-  typedef typename CGAL::Number_type_traits<NT>::Has_sqrt Has_sqrt;
-  Has_sqrt has_sqrt = Has_sqrt();
-  return test_sqrt(x, has_sqrt);
+  
+  typedef typename Algebraic_structure_traits<NT>::Sqrt Sqrt;
+  return test_sqrt(x,
+          Boolean_tag< ! ::boost::is_same<Sqrt,Null_functor>::value>());
 }
 
 template < class NT >
 bool
 test_gcd(const NT &x, CGAL::Tag_false)
 {
-  typedef typename CGAL::Number_type_traits<NT>::Has_sqrt Has_sqrt;
-  Has_sqrt has_sqrt = Has_sqrt();
-  return test_sqrt(x, has_sqrt);
+    typedef typename Algebraic_structure_traits<NT>::Sqrt Sqrt;
+    return test_sqrt(x,
+            Boolean_tag< ! ::boost::is_same<Sqrt,Null_functor>::value>());
 }
 
 
@@ -199,26 +200,16 @@ test_mixed_operators(const NT& x)
   if (1 * zero != 0 ) return false;
 
   // Test division (only if supported).
-  typedef typename CGAL::Number_type_traits<NT>::Has_division   Has_division;
-
-  Has_division has_div = Has_division();
-  return test_division (x, has_div);
+  typedef Algebraic_structure_traits<NT> AST;
+  typedef typename AST::Integral_division Integral_division;
+  return test_division(x,
+    Boolean_tag<! ::boost::is_same<Integral_division,Null_functor>::value>());
 }
 
 template < class NT >
 bool
 test_utilities(const NT& x)
 {
-  typedef typename CGAL::Number_type_traits<NT>::Has_division   Has_division;
-  typedef typename CGAL::Number_type_traits<NT>::Has_sqrt       Has_sqrt;
-  typedef typename CGAL::Number_type_traits<NT>::Has_gcd        Has_gcd;
-  typedef typename CGAL::Number_type_traits<NT>::Has_exact_sqrt Has_exact_sqrt;
-  typedef typename CGAL::Number_type_traits<NT>::Has_exact_division
-                                                    Has_exact_division;
-  typedef typename CGAL::Number_type_traits<NT>::Has_exact_ring_operations
-                                                    Has_exact_ring_operations;
-
-
   // TEST ioformat 
   {
       std::cout << "i/oformat" << std::endl; 
@@ -365,10 +356,8 @@ test_utilities(const NT& x)
   if (! CGAL::is_valid(zero+zero)) return false;
   if (CGAL_NTS square(two+two) != NT(16)) return false;
 
-  // gcd
-  typedef typename CGAL::Number_type_traits<NT>::Has_gcd Has_gcd;
-  Has_gcd has_gcd = Has_gcd();
-  //return test_gcd(x, has_gcd);
+  // UFD
+  return test_gcd(x, Boolean_tag<Is_unique_factorization_domain<NT>::value>() );
   return true; 
 }
 

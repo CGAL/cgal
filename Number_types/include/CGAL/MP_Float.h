@@ -74,6 +74,7 @@ double to_double(const MP_Float&);
 double to_double(const Root_of_2<MP_Float> &x);
 double to_double(const Quotient<MP_Float>&);
 std::pair<double,double> to_interval(const MP_Float &);
+// std::pair<double,double> to_interval(const Root_of_2<MP_Float>&); // TODO ?
 std::pair<double,double> to_interval(const Quotient<MP_Float>&);
 MP_Float div(const MP_Float& n1, const MP_Float& n2);
 MP_Float gcd(const MP_Float& a, const MP_Float& b);
@@ -758,6 +759,25 @@ template<> struct Real_embeddable_traits< Quotient<MP_Float> >
         }
     };
 };
+
+// TODO:
+// // specialization of to double functor
+// template<> struct Real_embeddable_traits< Root_of_2<MP_Float> >
+//     : public INTERN_ROOT_OF_2::Real_embeddable_traits_quotient_root_of_2_base< Root_of_2<MP_Float> >{
+//     struct To_double: public Unary_function<Root_of_2<MP_Float>, double>{
+//          inline
+//          double operator()(const Root_of_2<MP_Float>& q) const {
+//             return INTERN_MP_FLOAT::to_double(q);
+//         }
+//     };
+//     struct To_interval
+//         : public Unary_function<Root_of_2<MP_Float>, std::pair<double,double> > {
+//         inline
+//         std::pair<double,double> operator()(const Root_of_2<MP_Float>& q) const {
+//             return INTERN_MP_FLOAT::to_interval(q);
+//         }
+//     };
+// };
 
 // Coercion_traits 
 CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(MP_Float);

@@ -49,19 +49,7 @@ namespace INTERN_INT {
     };
 } // INTERN_INT
 
-
 // int
-
-template <> struct Number_type_traits<int> {
-  typedef Tag_true   Has_gcd;
-  typedef Tag_false  Has_division;
-  typedef Tag_false  Has_sqrt;
-
-  typedef Tag_false  Has_exact_ring_operations;
-  typedef Tag_false  Has_exact_division;
-  typedef Tag_false  Has_exact_sqrt;
-};
-
 template<> class Algebraic_structure_traits< int >
   : public Algebraic_structure_traits_base< int, Euclidean_ring_tag > {
 
@@ -86,16 +74,6 @@ template <> class Real_embeddable_traits< int >
 };
 
 // long
-
-template <> struct Number_type_traits<long int> {
-  typedef Tag_true   Has_gcd;
-  typedef Tag_false  Has_division;
-  typedef Tag_false  Has_sqrt;
-
-  typedef Tag_false  Has_exact_ring_operations;
-  typedef Tag_false  Has_exact_division;
-  typedef Tag_false  Has_exact_sqrt;
-};
 
 template<> class Algebraic_structure_traits< long int >
   : public Algebraic_structure_traits_base< long int, 
@@ -122,16 +100,6 @@ template <> class Real_embeddable_traits< long int >
 };
 
 // short
-
-template <> struct Number_type_traits<short int> {
-  typedef Tag_true   Has_gcd;
-  typedef Tag_false  Has_division;
-  typedef Tag_false  Has_sqrt;
-
-  typedef Tag_false  Has_exact_ring_operations;
-  typedef Tag_false  Has_exact_division;
-  typedef Tag_false  Has_exact_sqrt;
-};
 
 template<> class Algebraic_structure_traits< short int >
   : public Algebraic_structure_traits_base< short int, 

@@ -49,17 +49,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <>
-struct Number_type_traits<leda_rational> {
-  typedef Tag_false Has_gcd;
-  typedef Tag_true  Has_division;
-  typedef Tag_false Has_sqrt;
-
-  typedef Tag_true  Has_exact_ring_operations;
-  typedef Tag_true  Has_exact_division;
-  typedef Tag_false Has_exact_sqrt;
-};
-
 template <> class Algebraic_structure_traits< leda_rational >
   : public Algebraic_structure_traits_base< leda_rational, 
                                             Field_tag >  {

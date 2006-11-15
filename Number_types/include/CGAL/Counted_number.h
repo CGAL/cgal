@@ -217,16 +217,6 @@ class Counted_number {
     inline std::pair<double, double> to_interval() const {
       return CGAL_NTS to_interval( rep() );
     }
-
-  typedef typename Number_type_traits<NT>::Has_gcd       Has_gcd;
-  typedef typename Number_type_traits<NT>::Has_division  Has_division;
-  typedef typename Number_type_traits<NT>::Has_sqrt      Has_sqrt;
-
-  typedef typename Number_type_traits<NT>::Has_exact_sqrt Has_exact_sqrt;
-  typedef typename Number_type_traits<NT>::Has_exact_division
-  Has_exact_division;
-  typedef typename Number_type_traits<NT>::Has_exact_ring_operations
-  Has_exact_ring_operations;
 };
 
 template <class NT>

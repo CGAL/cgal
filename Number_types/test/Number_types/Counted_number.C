@@ -26,22 +26,6 @@ void test_counted_number(T,Tag){
   
 
      CGAL::test_real_embeddable<NT>();
-   
-     // backward compatiblity
-     typedef CGAL::Number_type_traits<T>  NTT1;
-     typedef CGAL::Number_type_traits<NT> NTT2;
-     CGAL_test_assert(  CGAL::check_tag(typename NTT1::Has_division()) 
-             ==CGAL::check_tag(typename NTT2::Has_division()) );
-     CGAL_test_assert( CGAL::check_tag(typename NTT1::Has_gcd())
-             ==CGAL::check_tag(typename NTT2::Has_gcd()) );
-     CGAL_test_assert( CGAL::check_tag(typename NTT1::Has_sqrt())
-             ==CGAL::check_tag(typename NTT2::Has_sqrt()) );
-     CGAL_test_assert(  CGAL::check_tag(typename NTT1::Has_exact_ring_operations())
-             == CGAL::check_tag(typename NTT2::Has_exact_ring_operations()) );
-     CGAL_test_assert( CGAL::check_tag(typename NTT1::Has_exact_division()) 
-             == CGAL::check_tag(typename NTT2::Has_exact_division()) );
-     CGAL_test_assert( CGAL::check_tag(typename NTT1::Has_exact_sqrt())
-             ==CGAL::check_tag(typename NTT2::Has_exact_sqrt()) );
 }
 
 template< class AK >

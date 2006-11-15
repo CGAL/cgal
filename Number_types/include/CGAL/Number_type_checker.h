@@ -59,16 +59,6 @@ public:
 
   typedef Number_type_checker<NT1, NT2, Cmp> Self;
 
-  // What if they differ between NT1 and NT2 ?
-  typedef typename Number_type_traits<NT1>::Has_gcd        Has_gcd;
-  typedef typename Number_type_traits<NT1>::Has_division   Has_division;
-  typedef typename Number_type_traits<NT1>::Has_sqrt       Has_sqrt;
-  typedef typename Number_type_traits<NT1>::Has_exact_ring_operations
-                                            Has_exact_ring_operations;
-  typedef typename Number_type_traits<NT1>::Has_exact_division
-                                                           Has_exact_division;
-  typedef typename Number_type_traits<NT1>::Has_exact_sqrt Has_exact_sqrt;
-
   Number_type_checker() {}
   Number_type_checker(int i)
     : _n1(i), _n2(i) { CGAL_assertion(is_valid()); }

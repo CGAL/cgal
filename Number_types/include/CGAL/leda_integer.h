@@ -42,16 +42,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <> struct Number_type_traits<leda_integer> {
-  typedef Tag_true  Has_gcd;
-  typedef Tag_true  Has_division;
-  typedef Tag_true  Has_sqrt;
-
-  typedef Tag_true  Has_exact_ring_operations;
-  typedef Tag_false Has_exact_division;
-  typedef Tag_false Has_exact_sqrt;
-};
-
 template <> class Algebraic_structure_traits< leda_integer >
   : public Algebraic_structure_traits_base< leda_integer, 
                                             Euclidean_ring_tag >  {
