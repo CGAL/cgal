@@ -489,12 +489,12 @@ public:
       // Precondition: p is contained in s1 or s2. 
       const Segment_2& s1 = is1->first;
       const Segment_2& s2 = is2->first;
-      int s = 0;
-      if ( K.orientation(s1,p) == 0 )      
-	s =   K.orientation(s2,p);
-      else if ( K.orientation(s2,p) == 0 ) 
-	s = - K.orientation(s1,p);
-      else CGAL_assertion_msg(0,"compare error in sweep.");
+
+      CGAL_assertion_msg(( K.orientation(s1,p) == 0 ) ||  ( K.orientation(s2,p) == 0 ) ,"compare error in sweep.");
+
+      int s = - K.orientation(s1,p);
+      if ( s == 0 )      
+	s =  K.orientation(s2,p);
       if ( s || K.is_degenerate(s1) || K.is_degenerate(s2) ) 
 	return ( s < 0 );
       
