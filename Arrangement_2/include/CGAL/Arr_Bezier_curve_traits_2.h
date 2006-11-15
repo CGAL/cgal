@@ -14,8 +14,9 @@
 // $URL$
 // $Id$
 // 
-//
-// Author(s)     : Ron Wein          <wein@post.tau.ac.il>
+// 
+// Author(s)     : Ron Wein     <wein@post.tau.ac.il>
+//                 Iddo Hanniel <iddoh@cs.technion.ac.il>
 
 #ifndef CGAL_ARR_BEZIER_CURVE_TRAITS_2_H
 #define CGAL_ARR_BEZIER_CURVE_TRAITS_2_H
@@ -28,6 +29,8 @@
 #include <CGAL/Arr_traits_2/Bezier_curve_2.h>
 #include <CGAL/Arr_traits_2/Bezier_point_2.h>
 #include <CGAL/Arr_traits_2/Bezier_x_monotone_2.h>
+#include <CGAL/Arr_traits_2/Bezier_cache.h>
+#include <CGAL/Arr_traits_2/Bezier_bounding_rational_traits.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -35,7 +38,7 @@ CGAL_BEGIN_NAMESPACE
  * A traits class for maintaining an arrangement of Bezier curves with
  * rational control points.
  *
- * The class is templated with three parameters: 
+ * The class is templated with four parameters: 
  * Rat_kernel A kernel that defines the type of control points.
  * Alg_kernel A geometric kernel, where Alg_kernel::FT is the number type
  *            for the coordinates of arrangement vertices and is used to
@@ -44,18 +47,23 @@ CGAL_BEGIN_NAMESPACE
  *           number type (should be the same as Rat_kernel::FT) and the
  *           Algebraic number type (should be the same as Alg_kernel::FT)
  *           and supports various operations on them.
+ * Bounding_traits A traits class for filtering the exact computations.
+ *                 By default we use the rational bounding traits.
  */
-template <class Rat_kernel_, class Alg_kernel_, class Nt_traits_>
+template <class RatKernel_, class AlgKernel_, class NtTraits_,
+          class BoundingTraits_ = Bezier_bounding_rational_traits<RatKernel_> >
 class Arr_Bezier_curve_traits_2 
 {
 public:
 
-  typedef Rat_kernel_                            Rat_kernel;
-  typedef Alg_kernel_                            Alg_kernel;
-  typedef Nt_traits_                             Nt_traits;
+  typedef RatKernel_                             Rat_kernel;
+  typedef AlgKernel_                             Alg_kernel;
+  typedef NtTraits_                              Nt_traits;
+  typedef BoundingTraits_                        Bounding_traits;
   typedef Arr_Bezier_curve_traits_2<Rat_kernel,
                                     Alg_kernel,
-                                    Nt_traits>   Self;
+                                    Nt_traits,
+                                    Bounding_traits>   Self;
  
   typedef typename Nt_traits::Integer            Integer;
   typedef typename Rat_kernel::FT                Rational;
@@ -72,26 +80,51 @@ public:
   // Traits-class types:
   typedef _Bezier_curve_2<Rat_kernel,
                           Alg_kernel,
-                          Nt_traits>             Curve_2;
+                          Nt_traits,
+                          Bounding_traits>             Curve_2;
 
   typedef _Bezier_x_monotone_2<Rat_kernel,
                                Alg_kernel,
-                               Nt_traits>        X_monotone_curve_2;
+                               Nt_traits,
+                               Bounding_traits>        X_monotone_curve_2;
 
   typedef _Bezier_point_2<Rat_kernel,
                           Alg_kernel,
-                          Nt_traits>             Point_2;
+                          Nt_traits,
+                          Bounding_traits>             Point_2;
+
+  // Type definition for the vertical-tangnecy and intersection point cache.
+  typedef _Bezier_cache<Nt_traits>                     Bezier_cache;
 
 private:
 
-  // Type definition for the intersection points mapping.
-  typedef typename X_monotone_curve_2::Curve_id           Curve_id;
-  typedef typename X_monotone_curve_2::Intersection_point_2
-                                                          Intersection_point_2;
+  // Type definition for the bounded intersection points mapping.
   typedef typename X_monotone_curve_2::Intersection_map   Intersection_map;
+
+  // Data members:
+  Bezier_cache  _cache;   // Caches vertical tangency points and intersection
+                          // points that have been exactly computed.
 
   Intersection_map  _inter_map;   // Mapping curve pairs to their intersection
                                   // points.
+
+  /*! \struct _Less_vertical_tangency_bounds
+   * Functor used inside Make_x_monotone_2 to sort points by their bounded
+   * t-parameter.
+   */
+  struct _Less_vertical_tangency_bounds
+  {
+    typedef std::pair<typename Bounding_traits::Bez_point_bound,
+                      typename Bounding_traits::Bez_point_bbox>   Tang_bound;
+
+    bool operator() (const Tang_bound& b1,
+                     const Tang_bound& b2) const
+    {
+      // Compare the pairs based on their t_min (this is possible, since the
+      // t-bounds are disjoint).
+      return (b1.first.t_min < b2.first.t_min);
+    }
+  };
 
 public:
 
@@ -104,9 +137,21 @@ public:
   /// \name Functor definitions.
   //@{
 
+  /*! \class Compare_x_2
+   * The Compare_x_2 functor.
+   */
   class Compare_x_2
   {
+  private:
+    const Bezier_cache   *p_cache;
+
   public:
+
+    /*! Constructor. */
+    Compare_x_2 (const Bezier_cache& cache) :
+      p_cache (&cache)
+    {}
+
     /*!
      * Compare the x-coordinates of two points.
      * \param p1 The first point.
@@ -117,22 +162,32 @@ public:
      */
     Comparison_result operator() (const Point_2& p1, const Point_2& p2) const
     {
-      if (p1.is_same (p2))
-        return (EQUAL);
-
-      return (CGAL::compare (p1.x(), p2.x()));
+      return (p1.compare_x (p2,
+                            const_cast<Bezier_cache&> (*p_cache)));
     }
   };
 
   /*! Get a Compare_x_2 functor object. */
   Compare_x_2 compare_x_2_object () const
   {
-    return Compare_x_2();
+    return (Compare_x_2 (_cache));
   }
 
+  /*! \class Compare_xy_2
+   * The Compare_xy_2 functor.
+   */
   class Compare_xy_2
   {
+  private:
+    const Bezier_cache   *p_cache;
+
   public:
+
+    /*! Constructor. */
+    Compare_xy_2 (const Bezier_cache& cache) :
+      p_cache (&cache)
+    {}
+
     /*!
      * Compares two points lexigoraphically: by x, then by y.
      * \param p1 The first point.
@@ -143,32 +198,20 @@ public:
      */
     Comparison_result operator() (const Point_2& p1, const Point_2& p2) const
     {
-      if (p1.is_same (p2))
-        return (EQUAL);
-
-      Comparison_result   res = CGAL::compare (p1.x(), p2.x());
-
-      if (res != EQUAL)
-        return (res);
-
-      res = CGAL::compare (p1.y(), p2.y());
-
-      if (res == EQUAL)
-      {
-        // If the two points are the same, merge their originator lists.
-        p1.merge_originators (p2);
-        p2.merge_originators (p1);
-      }
-      return (res);
+      return (p1.compare_xy (p2,
+                             const_cast<Bezier_cache&> (*p_cache)));
     }
   };
 
   /*! Get a Compare_xy_2 functor object. */
   Compare_xy_2 compare_xy_2_object () const
   {
-    return Compare_xy_2();
+    return (Compare_xy_2 (_cache));
   }
 
+  /*! \class Construct_min_vertex_2
+   * The Construct_min_vertex_2 functor.
+   */
   class Construct_min_vertex_2
   {
   public:
@@ -189,6 +232,9 @@ public:
     return Construct_min_vertex_2();
   }
 
+  /*! \class Construct_max_vertex_2
+   * The Construct_max_vertex_2 functor.
+   */
   class Construct_max_vertex_2
   {
   public:
@@ -209,6 +255,9 @@ public:
     return Construct_max_vertex_2();
   }
 
+  /*! \class Is_vertical_2
+   * The Is_vertical_2 functor.
+   */
   class Is_vertical_2
   {
   public:
@@ -219,7 +268,6 @@ public:
      */
     bool operator() (const X_monotone_curve_2& cv) const
     {
-      // A rational function can never be vertical:
       return (cv.is_vertical());
     }
   };
@@ -230,17 +278,19 @@ public:
     return Is_vertical_2();
   }
 
+  /*! \class Compare_y_at_x_2
+   * The Compare_y_at_x_2 functor.
+   */
   class Compare_y_at_x_2
   {
   private:
-
-    Intersection_map&  _inter_map;       // The map of intersection points.
+    const Bezier_cache   *p_cache;
 
   public:
 
     /*! Constructor. */
-    Compare_y_at_x_2 (const Intersection_map& map) :
-      _inter_map (const_cast<Intersection_map&> (map))
+    Compare_y_at_x_2 (const Bezier_cache& cache) :
+      p_cache (&cache)
     {}
 
     /*!
@@ -255,27 +305,32 @@ public:
     Comparison_result operator() (const Point_2& p,
                                   const X_monotone_curve_2& cv) const
     {
-      return (cv.point_position (p, _inter_map));
+      // Iddo: Need to enhance point_position (maybe in the future we will
+      //       store subdivided subcurves).
+      return (cv.point_position (p, 
+                                 const_cast<Bezier_cache&> (*p_cache)));
     }
   };
 
   /*! Get a Compare_y_at_x_2 functor object. */
   Compare_y_at_x_2 compare_y_at_x_2_object () const
   {
-    return (Compare_y_at_x_2 (_inter_map));
+    return (Compare_y_at_x_2 (_cache));
   }
 
+  /*! \class Compare_y_at_x_left_2
+   * The Compare_y_at_x_left_2 functor.
+   */
   class Compare_y_at_x_left_2
   {
   private:
-
-    Intersection_map&  _inter_map;       // The map of intersection points.
+    const Bezier_cache   *p_cache;
 
   public:
 
     /*! Constructor. */
-    Compare_y_at_x_left_2 (const Intersection_map& map) :
-      _inter_map (const_cast<Intersection_map&> (map))
+    Compare_y_at_x_left_2 (const Bezier_cache& cache) :
+      p_cache (&cache)
     {}
 
     /*!
@@ -293,27 +348,30 @@ public:
                                   const X_monotone_curve_2& cv2,
                                   const Point_2& p) const
     {
-      return (cv1.compare_to_left (cv2, p, _inter_map));
+      return (cv1.compare_to_left (cv2, p,
+                                   const_cast<Bezier_cache&> (*p_cache)));
     }
   };
 
   /*! Get a Compare_y_at_x_left_2 functor object. */
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object () const
   {
-    return (Compare_y_at_x_left_2 (_inter_map));
+    return (Compare_y_at_x_left_2 (_cache));
   }
 
+  /*! \class Compare_y_at_x_right_2
+   * The Compare_y_at_x_right_2 functor.
+   */
   class Compare_y_at_x_right_2
   {
   private:
-
-    Intersection_map&  _inter_map;       // The map of intersection points.
+    const Bezier_cache   *p_cache;
 
   public:
 
     /*! Constructor. */
-    Compare_y_at_x_right_2 (const Intersection_map& map) :
-      _inter_map (const_cast<Intersection_map&> (map))
+    Compare_y_at_x_right_2 (const Bezier_cache& cache) :
+      p_cache (&cache)
     {}
 
     /*!
@@ -331,27 +389,30 @@ public:
                                   const X_monotone_curve_2& cv2,
                                   const Point_2& p) const
     {
-      return (cv1.compare_to_right (cv2, p, _inter_map));
+      return (cv1.compare_to_right (cv2, p,
+                                    const_cast<Bezier_cache&> (*p_cache)));
     }
   };
 
   /*! Get a Compare_y_at_x_right_2 functor object. */
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object () const
   {
-    return (Compare_y_at_x_right_2 (_inter_map));
+    return (Compare_y_at_x_right_2 (_cache));
   }
 
+  /*! \class Equal_2
+   * The Equal_2 functor.
+   */
   class Equal_2
   {
   private:
-
-    Intersection_map&  _inter_map;       // The map of intersection points.
+    const Bezier_cache   *p_cache;
 
   public:
 
     /*! Constructor. */
-    Equal_2 (const Intersection_map& map) :
-      _inter_map (const_cast<Intersection_map&> (map))
+    Equal_2 (const Bezier_cache& cache) :
+      p_cache (&cache)
     {}
 
     /*!
@@ -363,7 +424,8 @@ public:
     bool operator() (const X_monotone_curve_2& cv1,
                      const X_monotone_curve_2& cv2) const
     {
-      return (cv1.equals (cv2, _inter_map));
+      return (cv1.equals (cv2,
+                          const_cast<Bezier_cache&> (*p_cache)));
     }
 
     /*!
@@ -374,28 +436,31 @@ public:
      */
     bool operator() (const Point_2& p1, const Point_2& p2) const
     {
-      bool   eq = p1.equals (p2);
-
-      if (eq)
-      {
-        // If the two points are the same, merge their originator lists.
-        p1.merge_originators (p2);
-        p2.merge_originators (p1);
-      }
-
-      return (eq);
+      return (p1.equals (p2,
+                         const_cast<Bezier_cache&> (*p_cache)));
     }
   };
 
   /*! Get an Equal_2 functor object. */
   Equal_2 equal_2_object () const
   {
-    return (Equal_2 (_inter_map));
+    return (Equal_2 (_cache));
   }
 
+  /*! \class Make_x_monotone_2
+   * The Make_x_monotone_2 functor.
+   */
   class Make_x_monotone_2
   {
+  private:
+    Bezier_cache         *p_cache;
+
   public:
+
+    /*! Constructor. */
+    Make_x_monotone_2 (Bezier_cache& cache) :
+      p_cache (&cache)
+    {}
 
     /*!
      * Cut the given Bezier curve into x-monotone subcurves and insert them
@@ -408,36 +473,128 @@ public:
     template<class OutputIterator>
     OutputIterator operator() (const Curve_2& B, OutputIterator oi)
     {
-      // Compute the t-values where B(t) is a point with a vertical tangent.  
-      std::list<Algebraic>                           ts;
+      // Try to compute the bounds of the vertical tangency points.
+      Bounding_traits                              bound_tr;
+      typename Bounding_traits::Control_point_vec  cpts;
 
-      B.vertical_tangency_points (std::back_inserter (ts));
+      std::copy (B.control_points_begin(), B.control_points_end(),
+                 std::back_inserter(cpts));
+
+      typedef std::pair<typename Bounding_traits::Bez_point_bound,
+                        typename Bounding_traits::Bez_point_bbox>  Tang_pair;
+
+      std::list<Tang_pair>                         tang_bounds;
+
+      bound_tr.vertical_tangency_points (cpts, 0, 1, tang_bounds);
+
+      // Sort the vertical tangency points according to their t parameters.
+      // Ron: Can't the bounding traits return them sorted?
+      tang_bounds.sort (_Less_vertical_tangency_bounds());
+      
+      // Construct Point_2 from bounded tangency points.
+      std::list<Point_2>                            tang_points;
+      bool                                          app_ok = true;
+      typename std::list<Tang_pair>::const_iterator iter;
+
+      for (iter = tang_bounds.begin(); iter != tang_bounds.end(); ++iter)
+      {
+        const typename Bounding_traits::Bez_point_bound& bound = iter->first;
+        const typename Bounding_traits::Bez_point_bbox&  bbox = iter->second;
+
+        if (! bound.can_refine)
+        {
+          // If we cannot refine the vertical-tangency bound anymore, then
+          // we failed to bound the vertical tangency point.
+          // Iddo: In the future, we might want to use the info.
+          app_ok = false;
+          break;
+        }
+
+        // Construct an approximate vertical tangency point.
+        Point_2   pt;
+
+        if (bound.point_type ==
+            Bounding_traits::Bez_point_bound::RATIONAL_PT)
+        {
+          CGAL_assertion (CGAL::compare (bound.t_min, bound.t_max) == EQUAL); 
+          Rational  t0 = bound.t_min;
+
+          pt = Point_2 (B, t0);
+        }
+        else
+        {
+          pt.add_originator (typename Point_2::Originator(B, bound));
+        }
+        pt.set_bbox (bbox);
+
+        tang_points.push_back(pt);
+      }
+
+      // If bounding the approximated vertical-tangency points went fine,
+      // use these points as endpoint for the x-monotone subcurves.
+      if (app_ok)
+      {
+        // Create the x-monotone subcurves with approximate endpoints.
+        typename std::list<Point_2>::const_iterator pit;
+        Point_2    p0(B, Rational(0)); // A rational start point.
+
+        for (pit = tang_points.begin(); pit != tang_points.end(); ++pit)
+        {
+          *oi = CGAL::make_object (X_monotone_curve_2 (B, p0, *pit,
+                                                       *p_cache));
+          ++oi;
+
+          p0 = *pit;
+        }
+
+        Point_2    p1(B, Rational(1)); // A rational end point.
+
+        *oi = CGAL::make_object (X_monotone_curve_2 (B, p0, p1,
+                                                     *p_cache));
+
+        return (oi);
+      }
+
+      // If we reached here then we have to compute the vertical-tangency
+      // points in an exact manner. We do this by considering all t-values
+      // on B(t) = (X(t), Y(t)), such that X'(t) = 0.
+      const typename Bezier_cache::Vertical_tangency_list&
+        vt_list = p_cache->get_vertical_tangencies (B.id(),
+                                                    B.x_polynomial(),
+                                                    B.x_norm());
 
       // Create the x-monotone subcurves.
-      Algebraic                                      t0 = Algebraic (0);
-      typename std::list<Algebraic>::const_iterator  it;
+      Point_2                                        p0 (B, Rational(0));
+      Point_2                                        p1;
+      typename Bezier_cache::Vertical_tangency_iter  it;
 
-      for (it = ts.begin(); it != ts.end(); ++it)
+      for (it = vt_list.begin(); it != vt_list.end(); ++it)
       {
-        *oi = make_object (X_monotone_curve_2 (B, t0, *it));
+        p1 = Point_2 (B, *it);
+        *oi = CGAL::make_object (X_monotone_curve_2 (B, p0, p1,
+                                                     *p_cache));
         ++oi;
-
-        t0 = *it;
+        p0 = p1;
       }
 
       // Create the final subcurve.
-      *oi = make_object (X_monotone_curve_2 (B, t0, Algebraic (1)));
+      p1 = Point_2 (B, Rational(1));
+      *oi = CGAL::make_object (X_monotone_curve_2 (B, p0, p1,
+                                                   *p_cache));
 
       return (oi);
     }
   };
 
   /*! Get a Make_x_monotone_2 functor object. */
-  Make_x_monotone_2 make_x_monotone_2_object () const
+  Make_x_monotone_2 make_x_monotone_2_object ()
   {
-    return Make_x_monotone_2();
+    return (Make_x_monotone_2 (_cache));
   }
 
+  /*! \class Split_2
+   * The Split_2 functor.
+   */
   class Split_2
   {
   public:
@@ -463,23 +620,26 @@ public:
     return Split_2();
   }
 
+  /*! \class Intersect_2
+   * The Intersect_2 functor.
+   */
   class Intersect_2
   {
   private:
-
-    Intersection_map&  _inter_map;       // The map of intersection points.
+    Bezier_cache         *p_cache;
+    Intersection_map     *p_imap;
 
   public:
 
     /*! Constructor. */
-    Intersect_2 (Intersection_map& map) :
-      _inter_map (map)
+    Intersect_2 (Bezier_cache& cache, Intersection_map& imap) :
+      p_cache (&cache),
+      p_imap (&imap)
     {}
 
     /*!
      * Find the intersections of the two given curves and insert them to the
-     * given output iterator. As two segments may itersect only once, only a
-     * single will be contained in the iterator.
+     * given output iterator.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \param oi The output iterator.
@@ -490,16 +650,19 @@ public:
                                const X_monotone_curve_2& cv2,
                                OutputIterator oi)
     {
-      return (cv1.intersect (cv2, _inter_map, oi));
+      return (cv1.intersect (cv2, *p_imap, *p_cache, oi));
     }
   };
 
   /*! Get an Intersect_2 functor object. */
   Intersect_2 intersect_2_object ()
   {
-    return (Intersect_2 (_inter_map));
+    return (Intersect_2 (_cache, _inter_map));
   }
 
+  /*! \class Are_mergeable_2
+   * The Are_mergeable_2 functor.
+   */
   class Are_mergeable_2
   {
   public:
@@ -523,6 +686,9 @@ public:
     return Are_mergeable_2();
   }
 
+  /*! \class Merge_2
+   * The Merge_2 functor.
+   */
   class Merge_2
   {
   public:
@@ -553,7 +719,10 @@ public:
 
   /// \name Functor definitions for the Boolean set-operation traits.
   //@{
- 
+
+  /*! \class Compare_endpoints_xy_2
+   * The Compare_endpoints_xy_2 functor.
+   */
   class Compare_endpoints_xy_2
   {
   public:
@@ -580,6 +749,9 @@ public:
     return Compare_endpoints_xy_2();
   }
 
+  /*! \class Construct_opposite_2
+   * The Construct_opposite_2 functor.
+   */
   class Construct_opposite_2
   {
   public:

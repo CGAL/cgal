@@ -590,7 +590,8 @@ void Sweep_line_2<Traits_,
   if((SweepEvent*)c1->get_left_event() == this->m_currentEvent &&
      (SweepEvent*)c2->get_left_event() == this->m_currentEvent)
   {
-     ++vi;
+    CGAL_PRINT(" [Skipping common left endpoint...]\n";);
+    ++vi;
   }
 
   //BZBZ
@@ -601,6 +602,7 @@ void Sweep_line_2<Traits_,
   if (reinterpret_cast<SweepEvent*>(c1->get_right_event()) ==
       reinterpret_cast<SweepEvent*>(c2->get_right_event()))
   {
+    CGAL_PRINT(" [Skipping common right endpoint...]\n";);
     --vi_end; 
   }  
 
@@ -614,6 +616,7 @@ void Sweep_line_2<Traits_,
           (this->m_currentEvent->get_point(),
            xp_point->first) !=  SMALLER)
       {
+        CGAL_PRINT(" [Skipping an event smaller that the status line...]\n";);
         ++vi;
       }
     }

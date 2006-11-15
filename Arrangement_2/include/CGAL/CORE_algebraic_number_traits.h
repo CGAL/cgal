@@ -24,6 +24,8 @@
  * The number-type traits for CORE algebraic numbers.
  */
 
+//#include <CORE/BigInt.h>
+//#include <CORE/BigRat.h>
 #include <CGAL/CORE_BigInt.h>
 #include <CGAL/CORE_BigRat.h>
 #include <CGAL/CORE_Expr.h>
@@ -122,6 +124,20 @@ public:
     return (Rational (ix1 + ix2, 2*denom));
   }
 
+  /*!
+   * Get a range of double-precision floats that contain the given algebraic
+   * number.
+   * \param x The given number.
+   * \return A pair <x_lo, x_hi> that contain x.
+   */
+  std::pair<double, double> double_interval (const Algebraic& x) const
+  {
+    double      x_lo, x_hi;
+
+    x.doubleInterval (x_lo, x_hi);
+    return (std::make_pair (x_lo, x_hi));
+  }
+  
   /*!
    * Convert a sequence of rational coefficients to an equivalent sequence
    * of integer coefficients. If the input coefficients are q(1), ..., q(k),
@@ -470,7 +486,7 @@ public:
    * \return The scalar multiplication a*P(x).
    */
   Polynomial scale (const Polynomial& poly,
-                    const Integer& a)
+                    const Integer& a) const
   {
     Polynomial   temp = poly;
     return (temp.mulScalar (a));
@@ -529,6 +545,68 @@ public:
     {
       // Get the i'th real-valued root.
       *oi = rootOf(poly, i);
+      ++oi;
+    }
+
+    return (oi);
+  }
+
+  /*!
+   * Compute the real-valued roots of a polynomial with integer coefficients,
+   * within a given interval. The roots are sorted in ascending order.
+   * \param poly The input polynomial.
+   * \param x_min The left bound of the interval.
+   * \param x_max The right bound of the interval.
+   * \param oi An output iterator for the real-valued root of the polynomial.
+   * \return A past-the-end iterator for the output container.
+   * \pre The value type of oi is Algebraic.
+   */
+  template <class OutputIterator>
+  OutputIterator compute_polynomial_roots (const Polynomial& poly,
+                                           double x_min, double x_max,
+					   OutputIterator oi) const
+  {
+    // Get the real degree of the polynomial.
+    int            degree = poly.getTrueDegree();
+    unsigned int   i;
+
+    if (degree <= 0)
+      return (oi);
+
+    // Check if we really have a simple quadratic equation.
+    if (degree <= 2)
+    {
+      Algebraic     alg_min (x_min), alg_max (x_max);
+      Algebraic     buffer[2];
+      Algebraic    *end_buffer =
+        solve_quadratic_equation ((degree == 2 ? poly.getCoeff(2) : 0), 
+                                  poly.getCoeff(1),
+                                  poly.getCoeff(0),
+                                  buffer);
+      unsigned int  num_of_roots = std::distance(buffer, end_buffer);
+
+      for (i = 0; i < num_of_roots; ++i)
+      {
+        if (buffer[i] >= alg_min && buffer[i] <= alg_max)
+        {
+          *oi = buffer[i];
+          ++oi;
+        }
+      }
+      return (oi);
+    }
+
+    // Compute the real-valued roots of the polynomial in [x_min, x_max].
+    CORE::Sturm<Integer>  sturm (poly);
+    CORE::BFVecInterval   root_intervals;
+
+    sturm.isolateRoots (CORE::BigFloat(x_min), CORE::BigFloat(x_max),
+                        root_intervals);
+
+    for (i = 0; i < root_intervals.size(); i++)
+    {
+      // Get the i'th real-valued root.
+      *oi = rootOf(poly, root_intervals[i]);
       ++oi;
     }
 
