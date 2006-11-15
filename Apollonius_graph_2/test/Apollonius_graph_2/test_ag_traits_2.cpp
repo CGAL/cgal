@@ -27,7 +27,7 @@ struct Kernel : public CGAL::Simple_cartesian<number_t> {};
 
 #include <CGAL/Number_type_traits.h>
 
-typedef CGAL::Ring_tag Method_tag;
+typedef CGAL::Integral_domain_without_division_tag Method_tag;
 
 #include "./include/test.h"
 
@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
     assert( ifs_traits );
 
     //  bool is_ok =
-    //    CGAL::test_traits<Kernel,CGAL::Ring_tag,std::ifstream>(ifs_traits);
+    //    CGAL::test_traits<Kernel,CGAL::Integral_domain_without_division_tag,std::ifstream>(ifs_traits);
 
     std::cout << "testing the traits class..." << std::flush;
 

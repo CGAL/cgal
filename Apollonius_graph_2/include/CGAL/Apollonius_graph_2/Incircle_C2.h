@@ -49,7 +49,7 @@ public:
 
   inline Sign
   operator()(const Bitangent_line& bl, const Site_2& q,
-	     const Sqrt_field_tag&) const
+	     const Field_with_sqrt_tag&) const
     {
 #ifdef AG2_PROFILE_PREDICATES
       ag2_predicate_profiler::distance_from_bitangent_counter++;
@@ -63,7 +63,7 @@ public:
 
   inline Sign
   operator()(const Bitangent_line& bl, const Site_2& q,
-	     const Ring_tag&) const
+	     const Integral_domain_without_division_tag&) const
     {
 #ifdef AG2_PROFILE_PREDICATES
       ag2_predicate_profiler::distance_from_bitangent_counter++;
@@ -91,7 +91,7 @@ public:
   inline Sign
   operator()(const Bitangent_line& bl,
 	     const Inverted_weighted_point& v,
-	     const Sqrt_field_tag&) const
+	     const Field_with_sqrt_tag&) const
     {
       FT a = bl.a1() + bl.a2() * CGAL::sqrt(bl.delta());
       FT b = bl.b1() + bl.b2() * CGAL::sqrt(bl.delta());
@@ -103,7 +103,7 @@ public:
   inline Sign
   operator()(const Bitangent_line& bl,
 	     const Inverted_weighted_point& v,
-	     const Ring_tag&) const
+	     const Integral_domain_without_division_tag&) const
     {
       FT A = bl.a1() * v.x() + bl.b1() * v.y() + bl.c1() * v.p()
 	- v.weight() * bl.d();
@@ -158,7 +158,7 @@ public:
 private:
   inline Orientation
   orientation(const Bitangent_line& l, const Point_2& p,
-	      const Sqrt_field_tag&) const
+	      const Field_with_sqrt_tag&) const
     {
       FT A = l.a1() * p.x() + l.b1() * p.y() + l.c1();
       FT B = l.a2() * p.x() + l.b2() * p.y() + l.c2();
@@ -168,7 +168,7 @@ private:
 
   inline Orientation
   orientation(const Bitangent_line& l, const Point_2& p,
-	      const Ring_tag&) const
+	      const Integral_domain_without_division_tag&) const
     {
       FT A = l.a1() * p.x() + l.b1() * p.y() + l.c1();
       FT B = l.a2() * p.x() + l.b2() * p.y() + l.c2();

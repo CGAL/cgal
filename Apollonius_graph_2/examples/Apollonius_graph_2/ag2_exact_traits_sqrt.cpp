@@ -46,7 +46,7 @@ typedef CGAL::Simple_cartesian<NT>  Kernel;
 // the traits class is now going to assume that the operations
 // +,-,*,/ and sqrt are supported exactly
 typedef
-CGAL::Apollonius_graph_traits_2<Kernel,CGAL::Sqrt_field_tag> Traits;
+CGAL::Apollonius_graph_traits_2<Kernel,CGAL::Field_with_sqrt_tag> Traits;
 
 typedef CGAL::Apollonius_graph_2<Traits> Apollonius_graph;
 

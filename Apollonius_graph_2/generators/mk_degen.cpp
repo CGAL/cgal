@@ -13,8 +13,8 @@
 typedef CGAL::Simple_cartesian<double> CK;
 typedef CGAL::Simple_cartesian<CGAL::MP_Float> EK;
 
-typedef CGAL::Sqrt_field_tag  CM;
-typedef CGAL::Ring_tag        EM;
+typedef CGAL::Field_with_sqrt_tag  CM;
+typedef CGAL::Integral_domain_without_division_tag        EM;
 typedef CGAL::Apollonius_graph_filtered_traits_2<CK,CM,EK,EM> Traits;
 
 typedef Traits::Site_2     Site;

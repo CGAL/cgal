@@ -24,7 +24,7 @@
 
 #include <CGAL/enum.h>
 #include <CGAL/Uncertain.h>
-#include <CGAL/Number_type_traits.h>
+#include <CGAL/number_type_basic.h>
 #include <CGAL/Apollonius_graph_2/uncertain/uncertain_functions_on_signs.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -47,7 +47,7 @@ private:
 private:
   Uncertain<Comparison_result>
   compare_distances(const Site_2& p1, const Site_2& p2,
-		    const Point_2& p, const Ring_tag&) const
+		    const Point_2& p, const Integral_domain_without_division_tag&) const
   {
 #ifdef AG2_PROFILE_PREDICATES
     ag2_predicate_profiler::side_of_bisector_counter++;
@@ -98,7 +98,7 @@ private:
 
   Comparison_result
   compare_distances(const Site_2& p1, const Site_2& p2,
-		    const Point_2 &p, const Sqrt_field_tag&) const
+		    const Point_2 &p, const Field_with_sqrt_tag&) const
   {
 #ifdef AG2_PROFILE_PREDICATES
     ag2_predicate_profiler::side_of_bisector_counter++;

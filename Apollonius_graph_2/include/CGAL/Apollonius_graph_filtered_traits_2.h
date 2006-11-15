@@ -72,7 +72,7 @@ namespace CGALi {
 
 
 template<class CK_t,
-	 class CK_MTag = Ring_tag,
+	 class CK_MTag = Integral_domain_without_division_tag,
 	 class EK_t    = Simple_cartesian< MP_Float >,
 	 class EK_MTag = CK_MTag,
 	 class FK_t    = Simple_cartesian< Interval_nt<false> >,

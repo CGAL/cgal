@@ -121,7 +121,7 @@ public:
     }
 
   Sign chi2(const Bitangent_line& bl1,
-	    const Bitangent_line& bl2, Sqrt_field_tag) const
+	    const Bitangent_line& bl2, Field_with_sqrt_tag) const
     {
       FT sigma = bl1.dx() * bl2.dx() + bl1.dy() * bl2.dy();
       FT delta = bl1.dx() * bl2.dy() - bl1.dy() * bl2.dx();
@@ -143,7 +143,7 @@ public:
 
   inline
   Sign chi2(const Bitangent_line& bl1,
-	    const Bitangent_line& bl2, Ring_tag) const
+	    const Bitangent_line& bl2, Integral_domain_without_division_tag) const
     {
       return chi2(bl1.dx(), bl1.dy(), -bl1.dw(), bl1.d(), bl1.delta(),
 		  bl2.dx(), bl2.dy(), -bl2.dw(), bl2.d(), bl2.delta());

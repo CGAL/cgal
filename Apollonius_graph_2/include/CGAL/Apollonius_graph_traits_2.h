@@ -31,7 +31,7 @@
 #include <CGAL/Apollonius_graph_2/Predicates_C2.h>
 #endif
 
-#include <CGAL/Number_type_traits.h>
+#include <CGAL/number_type_basic.h>
 #include <CGAL/Apollonius_graph_2/Kernel_wrapper_2.h>
 
 
@@ -47,7 +47,7 @@ CGAL_BEGIN_NAMESPACE
 //-----------------------------------------------------------------------
 //-----------------------------------------------------------------------
 //-----------------------------------------------------------------------
-template < class Rep, class MTag = Ring_tag >
+template < class Rep, class MTag = Integral_domain_without_division_tag >
 class Apollonius_graph_traits_2
 {
 public:

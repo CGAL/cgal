@@ -56,7 +56,7 @@ private:
 private:
   Orientation vv_orientation(const Voronoi_circle& vc, const Point_2& sp1,
 			     const Point_2& p1,	const Point_2& p2,
-			     const Sqrt_field_tag&) const
+			     const Field_with_sqrt_tag&) const
   {
     FT a = vc.a1() + vc.a2() * CGAL::sqrt(vc.delta());
     FT b = vc.b1() + vc.b2() * CGAL::sqrt(vc.delta());
@@ -69,7 +69,7 @@ private:
 
   Orientation vv_orientation(const Voronoi_circle vc, const Point_2& sp1,
 			     const Point_2& p1, const Point_2& p2,
-			     const Ring_tag&) const
+			     const Integral_domain_without_division_tag&) const
   {
     FT dx = p2.x() - p1.x();
     FT dy = p2.y() - p1.y();

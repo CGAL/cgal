@@ -48,7 +48,7 @@ public:
 
   Orientation
   operator()(const Voronoi_circle& vc, const Point_2& p1,
-	     const Point_2& p2, const Sqrt_field_tag&) const
+	     const Point_2& p2, const Field_with_sqrt_tag&) const
     {
       FT a = vc.a1() + vc.a2() * CGAL::sqrt(vc.delta());
       FT b = vc.b1() + vc.b2() * CGAL::sqrt(vc.delta());
@@ -58,7 +58,7 @@ public:
 
   Orientation
   operator()(const Voronoi_circle& vc, const Point_2& p1,
-	     const Point_2& p2, const Ring_tag&) const
+	     const Point_2& p2, const Integral_domain_without_division_tag&) const
     {
       FT dx = p2.x() - p1.x();
       FT dy = p2.y() - p1.y();
@@ -140,7 +140,7 @@ private:
 public:
   Comparison_result
   operator()(const Voronoi_circle& vc1, const Voronoi_circle& vc2,
-	     const Sqrt_field_tag&) const
+	     const Field_with_sqrt_tag&) const
     {
       FT c1 = (vc1.c1() + vc1.c2() * CGAL::sqrt(vc1.delta())) / vc1.d();
       FT c2 = (vc2.c1() + vc2.c2() * CGAL::sqrt(vc2.delta())) / vc2.d();
@@ -154,7 +154,7 @@ public:
   /*
   Comparison_result
   operator()(const Voronoi_circle& vc1, const Voronoi_circle& vc2,
-	     Ring_tag)
+	     Integral_domain_without_division_tag)
     {
       FT A = vc1.c1() * vc2.d() - vc2.c1() * vc1.d();
       FT B = vc1.c2() * vc2.d();
@@ -171,7 +171,7 @@ public:
 
   Comparison_result
   operator()(const Voronoi_circle& vc1, const Voronoi_circle& vc2,
-	     const Ring_tag&) const
+	     const Integral_domain_without_division_tag&) const
     {
       bool is_first_root1 = vc1.is_first_root();
       bool is_first_root2 = vc2.is_first_root();
@@ -214,7 +214,7 @@ public:
   /*
   Comparison_result
   operator()(const Voronoi_circle& vc1, const Voronoi_circle& vc2,
-	     Ring_tag)
+	     Integral_domain_without_division_tag)
     {
       bool is_first_root1 = vc1.is_first_root();
       bool is_first_root2 = vc2.is_first_root();

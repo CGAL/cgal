@@ -37,7 +37,7 @@ typedef CGAL::Simple_cartesian<double>        Rep;
 #include <CGAL/Apollonius_graph_filtered_traits_2.h>
 
 
-typedef CGAL::Apollonius_graph_filtered_traits_2<Rep,CGAL::Ring_tag>  Gt;
+typedef CGAL::Apollonius_graph_filtered_traits_2<Rep,CGAL::Integral_domain_without_division_tag>  Gt;
 
 typedef Gt::Point_2                           Point_2;
 typedef Rep::Circle_2                         Circle_2;

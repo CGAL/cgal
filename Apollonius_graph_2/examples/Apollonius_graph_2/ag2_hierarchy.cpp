@@ -34,8 +34,8 @@ typedef CGAL::Simple_cartesian<CGAL::MP_Float> EK;
 // constructions (field operations plus square roots) are different
 // from the operations allowed when the exact kernel is used (ring
 // operations).
-typedef CGAL::Sqrt_field_tag  CM;
-typedef CGAL::Ring_tag        EM;
+typedef CGAL::Field_with_sqrt_tag  CM;
+typedef CGAL::Integral_domain_without_division_tag        EM;
 typedef CGAL::Apollonius_graph_filtered_traits_2<CK,CM,EK,EM> Traits;
 
 // Now we use the Apollonius graph hierarchy.

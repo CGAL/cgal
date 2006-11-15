@@ -43,7 +43,7 @@ public:
 public:
 
   inline
-  Sign operator()(const Voronoi_radius& vr, const Sqrt_field_tag&) const
+  Sign operator()(const Voronoi_radius& vr, const Field_with_sqrt_tag&) const
     {
       FT r = vr.c1() + vr.c2() * CGAL::sqrt(vr.delta());
       return CGAL::sign(r);
@@ -51,7 +51,7 @@ public:
 
 
   inline
-  Sign operator()(const Voronoi_radius& vr, const Ring_tag&) const
+  Sign operator()(const Voronoi_radius& vr, const Integral_domain_without_division_tag&) const
     {
       // this is another way of doing this; the degree becomes 10
       // instead of 5 in this case.

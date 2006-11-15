@@ -78,10 +78,10 @@ protected:
 
   inline static
   FT divide(const FT& x, const FT& y) {
-    static typename Number_type_traits<FT>::Has_division has_division;
-    return divide(x, y, has_division);
+      return divide(x, y, 
+      Boolean_tag< ! CGALi::Is_integral_domain_without_division<FT>::value >());
   }
-
+    
   inline static
   FT sqrt(const FT& x, const Tag_false&) {
     return CGAL::sqrt(CGAL::to_double(x));
@@ -94,8 +94,7 @@ protected:
 
   inline static
   FT sqrt(const FT& x) {
-    static typename Number_type_traits<FT>::Has_sqrt has_sqrt;
-    return sqrt(x, has_sqrt);
+      return sqrt(x, Boolean_tag<CGALi::Is_field_with_sqrt<FT>::value >());
   }
 
   inline static

@@ -24,7 +24,7 @@
 
 #include <CGAL/enum.h>
 #include <CGAL/Uncertain.h>
-#include <CGAL/Number_type_traits.h>
+#include <CGAL/number_type_basic.h>
 
 
 CGAL_BEGIN_NAMESPACE
@@ -43,7 +43,7 @@ public:
 
 private:
   Uncertain<bool> is_hidden(const Site_2& p, const Site_2& q,
-			    const Ring_tag&) const
+			    const Integral_domain_without_division_tag&) const
   {
     RT w1 = p.weight();
     RT w2 = q.weight();
@@ -64,7 +64,7 @@ private:
   }
 
   Uncertain<bool> is_hidden(const Site_2& p, const Site_2& q,
-			    const Sqrt_field_tag&) const
+			    const Field_with_sqrt_tag&) const
   {
     RT d = CGAL::sqrt(CGAL::square(p.x() - q.x())
 		      + CGAL::square(p.y() - q.y()));
