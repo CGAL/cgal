@@ -42,9 +42,6 @@
 #include <LEDA/numbers/interval.h>
 #endif
 
-#include <LEDA/rational.h>
-#include <LEDA/interval.h>
-
 #include <CGAL/leda_integer.h> // for GCD in Fraction_traits
 
 CGAL_BEGIN_NAMESPACE
