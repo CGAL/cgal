@@ -7,7 +7,7 @@
 % +------------------------------------------------------------------------+
 
 \ccRefPageBegin
-\begin{ccRefClass}{Arr_Bezier_traits_2<RatKernel,AlgKernel,NtTraits>}
+\begin{ccRefClass}{Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>}
 
 \ccDefinition
 %============
@@ -49,10 +49,10 @@ geometric kernels templated with the \ccc{NtTraits::Rational} and
 instantiate the \ccc{CORE_algebraic_number_traits} class as the \ccc{NtTraits}
 parameter, with \ccc{Cartesian<NtTraits::Rational>} and
 \ccc{Cartesian<NtTraits::Algebraic>} instantiating the two kernel types,
-respectively. The number types in this case are provided by the \core\
+respectively. The number types in this case are provided by the {\sc Core}
 library, with its ability to exactly represent simple algebraic numbers.
 
-\ccInclude{CGAL/Arr_Bezier_traits_2.h}
+\ccInclude{CGAL/Arr_Bezier_curve_traits_2.h}
 
 \ccIsModel
   \ccc{ArrangementTraits_2}
@@ -67,7 +67,7 @@ library, with its ability to exactly represent simple algebraic numbers.
                          (and also the \ccc{AlgKernel::FT} type).}
 
 \subsection*{Class
-         Arr\_Bezier\_traits\_2$<$RatKernel,AlgKernel,NtTraits$>$::Curve\_2}
+         Arr\_Bezier\_curve\_traits\_2$<$RatKernel,AlgKernel,NtTraits$>$::Curve\_2}
 %========================================================================
 
 The \ccc{Curve_2} class nested within the B\'ezier traits class is used
@@ -77,9 +77,9 @@ I/O operators \ccc{operator<<} and \ccc{operator>>} for standard output
 streams are also supported. The copy constructor and assigment operator
 are also supported.
 
-\begin{ccClass}{Arr_Bezier_traits_2<AlgKernel,NtTraits>::Curve_2}
+\begin{ccClass}{Arr_Bezier_curve_traits_2<AlgKernel,NtTraits>::Curve_2}
 %======================================================================
-
+% 
 \ccCreation
 \ccCreationVariable{B}
 %---------------------
@@ -96,13 +96,13 @@ are also supported.
 %-----------------
 
 \ccMethod{size_t number_of_control_point () const;}
-  {returns the number of control points that define \ccVar\.}
+  {returns the number of control points that define \ccVar.}
 
 \ccMethod{typename RatKernel::Point_2 control_point (size_t k) const;}
   {returns the $k$th control point. Note that the first control point equals
    the curve source, while the last control point equals its target. The rest
    of the control points do not lie on the curve.
-   \ccPrecode{$k$ is smaller than the number of control points.}}
+   \ccPrecond{$k$ is smaller than the number of control points.}}
 
 \ccMethod{typename RatKernel::Point_2 operator() (const Rational& t) const;}
   {returns the point $B(t)$ on the curve that corresponds to the given
@@ -116,7 +116,7 @@ are also supported.
 
 
 \subsection*{Class
-         Arr\_Bezier\_traits\_2$<$RatKernel,AlgKernel,NtTraits$>$::Point\_2}
+         Arr\_Bezier\_curve\_traits\_2$<$RatKernel,AlgKernel,NtTraits$>$::Point\_2}
 %========================================================================
 
 The \ccc{Point_2} class nested within the B\'ezier traits class is used
@@ -132,7 +132,7 @@ of a point may only be accessed if it is exactly computed.
 In addition to the methods listed below, the copy constructor and assigment
 operator for \ccc{Point_2} objects are also supported.
 
-\begin{ccClass}{Arr_Bezier_traits_2<AlgKernel,NtTraits>::Point_2}
+\begin{ccClass}{Arr_Bezier_curve_traits_2<AlgKernel,NtTraits>::Point_2}
 %======================================================================
 
 \ccCreation
@@ -170,7 +170,7 @@ operator for \ccc{Point_2} objects are also supported.
 \ccMethod{bool is_rational () const;}
   {returns whether the coordinates of \ccVar\ are rational numbers.}
 
-\ccMethod{operator typename RatKernel::Point_2 () const;)
+\ccMethod{operator typename RatKernel::Point_2 () const;}
   {casts \ccVar\ to a point with rational coordinates.
    \ccPrecond{\ccVar\ has rational coordinates.}}
 
@@ -178,7 +178,7 @@ operator for \ccc{Point_2} objects are also supported.
 
 
 \subsection*{Class 
-Arr\_Bezier\_traits\_2$<$RatKernel,AlgKernel,NtTraits$>$::X\_monotone\_curve\_2}
+Arr\_Bezier\_curve\_traits\_2$<$RatKernel,AlgKernel,NtTraits$>$::X\_monotone\_curve\_2}
 %==============================================================================
 
 The \ccc{X_monotone_curve_2} class nested within the B\'ezier traits is
@@ -193,7 +193,7 @@ It is not possible to construct $x$-monotone subcurves directly. Instead,
 use the \ccc{Make_x_monotone_2} functor supplied by the traits class to
 subdivide a \ccc{Curve_2} object into $x$-monotone cubcurves.
 
-\begin{ccClass}{Arr_Bezier_traits_2<AlgKernel,NtTraits>::X_monotone_curve_2}
+\begin{ccClass}{Arr_Bezier_curve_traits_2<AlgKernel,NtTraits>::X_monotone_curve_2}
 %===========================================================================
 
 \ccCreationVariable{b}
