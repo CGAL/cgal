@@ -98,7 +98,22 @@ struct Coercion_traits< ::leda::bigfloat ,::leda::rational  >{
         typedef Coercion_type result_type; 
         Coercion_type operator()(const ::leda::rational& x)  const { return x;} 
         Coercion_type operator()(const ::leda::bigfloat& x) const { 
-            return x.to_rational();}  
+#if CGAL_LEDA_VERSION < 500
+            ::leda::integer e = x.get_exponent();
+            ::leda::integer s = x.get_significant();
+            if(e<0) {
+                ::leda::bigfloat b_two_to_e = ::leda::ipow2(-e);
+                ::leda::integer two_to_e = ::leda::floor(b_two_to_e);
+                return ::leda::rational(s,two_to_e);
+            }
+            // e >= 0
+            ::leda::bigfloat b_two_to_e = ::leda::ipow2(e);
+            ::leda::integer two_to_e = ::leda::floor(b_two_to_e);
+            return ::leda::rational(s * two_to_e);
+#else
+            return x.to_rational();
+#endif
+        }
     };
 }; 
 template <> struct Coercion_traits< ::leda::rational, ::leda::bigfloat >
