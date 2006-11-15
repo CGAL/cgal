@@ -580,7 +580,7 @@ are rational  numbers. The $x$-values that determine the interval
 over which the arc is defined can however be arbitrary algebraic
 numbers.
 
-Using the \ccc{Arr_rational_traits_2<AlgKernel, NtTraits>} class
+Using the \ccc{Arr_rational_arc_traits_2<AlgKernel, NtTraits>} class
 template it is possible to construct and maintain arrangement of
 rational arcs. The template parameters are very similar to the
 ones used by the \ccc{Arr_conic_traits_2} class template; see
@@ -589,7 +589,7 @@ in this case it is recommended to use the
 \ccc{CORE_algebraic_number_traits} class, with a kernel instantiated
 with the \ccc{Algebraic} type defined by this class.
 
-The \ccc{Arr_rational_traits_2} is a model of the
+The \ccc{Arr_rational_arc_traits_2} is a model of the
 \ccc{ArrangementTraits_2} concept (but not of the
 \ccc{ArrangementLandmarkTraits_2} concept, so it is not possible
 to use the landmark point-location strategy for arrangements of
@@ -652,6 +652,52 @@ they have common vertical and horizontal asymptotes, so very ``thin''
 unbounded faces are created between them:
 
 \ccIncludeExampleCode{Arrangement_2/ex_unbounded_rational_functions.cpp}
+
+\subsection{A Traits Class for Planar B\'ezier Curves\label{arr_ssec:tr_bez}}
+%---------------------------------------------------------
+
+A planar {\em B\'ezier curve} $B$ is a parametric curve defined by a sequence
+of {\em control points} $p_0, \ldots, p_n$ as follows:
+\begin{eqnarray*}
+B(t) = \left(X(t), Y(t)\right)
+  = \sum_{k=0}^{n}{p_k \cdot \frac{n!}{k! (n-k)!} \cdot
+                   t^k (1-t)^{n-k}}\ .
+\end{eqnarray*}
+where $t \in [0, 1]$. The degree of the curve is therefore $n$ ---
+namely, $X(t)$ and $Y(t)$ are polynomials of degree $n$. B\'ezier curves
+have numerous applications in computer graphics and solid modelling. They
+are used, for example, in free-form sketches and for defining the true-type
+fonts.
+
+In our representation, we assume that the coordinates of all control
+points are rational numbers, so both $X(t)$ and $Y(t)$ are polynomials
+with rational coefficients.
+
+\begin{figure}[t]
+\begin{ccTexOnly}
+  \begin{center}
+  \includegraphics{Arrangement_2/fig/Bezier_arr}
+  \end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+  <p><center>
+  <img src="./fig/Bezier_arr.gif" border=0 alt="An arrangement of Beizer curves">
+  </center>
+\end{ccHtmlOnly}
+\caption{An arrangement of ten B\'ezier curves of degree $5$, as
+constructed in \ccc{ex_Bezier_curves.cpp}.\label{arr_fig:ex_bez}}
+\end{figure}
+
+The following example reads a set of B\'ezier curves from an input
+file, where each file is specified by an integer stating its number
+of control points, followed by the sequence of control points, given
+in integer or rational coordinates. By default, the program uses
+the \ccc{Bezier.dat} file, which contains ten curves of degree $5$
+each; their resulting arrangement is depicted in
+Figure~\ref{arr_fig:ex_bez}.
+
+\ccIncludeExampleCode{Arrangement_2/ex_Bezier_curves.cpp}
+
 
 \subsection{Traits-Class Decorators\label{arr_ssec:meta_tr}}
 %-----------------------------------
