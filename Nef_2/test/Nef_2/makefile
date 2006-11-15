@@ -14,10 +14,8 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-           -I../../include \
-           $(TESTSUITE_CXXFLAGS) \
-           $(EXTRA_FLAGS) \
            -Iinclude \
+           -I../../include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
 
@@ -26,11 +24,9 @@ CXXFLAGS = \
 #---------------------------------------------------------------------#
 
 LIBPATH = \
-          $(TESTSUITE_LIBPATH) \
           $(CGAL_LIBPATH)
 
 LDFLAGS = \
-          $(TESTSUITE_LDFLAGS) \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
           $(CGAL_LDFLAGS)
 
@@ -39,9 +35,10 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                EPoint-test \
-                Nef_polyhedron_2-test \
-		point_location
+                EPoint-test$(EXE_EXT) \
+                Nef_polyhedron_2-test$(EXE_EXT) \
+                point_location$(EXE_EXT) \
+                Polynomial-test$(EXE_EXT) 
 
 EPoint-test$(EXE_EXT): EPoint-test$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)EPoint-test EPoint-test$(OBJ_EXT) $(LDFLAGS)
@@ -49,18 +46,30 @@ EPoint-test$(EXE_EXT): EPoint-test$(OBJ_EXT)
 Nef_polyhedron_2-test$(EXE_EXT): Nef_polyhedron_2-test$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Nef_polyhedron_2-test Nef_polyhedron_2-test$(OBJ_EXT) $(LDFLAGS)
 
+PM_decorator-test$(EXE_EXT): PM_decorator-test$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)PM_decorator-test PM_decorator-test$(OBJ_EXT) $(LDFLAGS)
+
 point_location$(EXE_EXT): point_location$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)point_location point_location$(OBJ_EXT) $(LDFLAGS)
 
+Polynomial-test$(EXE_EXT): Polynomial-test$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Polynomial-test Polynomial-test$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
-                EPoint-test.clean \
-                Nef_polyhedron_2-test.clean \
-                point_location.clean
+                   EPoint-test.clean \
+                   Nef_polyhedron_2-test.clean \
+                   PM_decorator-test.clean \
+                   point_location.clean \
+                   Polynomial-test.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
 
 .C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
+
+
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 

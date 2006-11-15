@@ -98,8 +98,8 @@ typename std::iterator_traits<Forward_iterator>::value_type
 gcd_of_range(Forward_iterator its, Forward_iterator ite)
 {
   typedef typename std::iterator_traits<Forward_iterator>::value_type NT;
-  typedef typename Number_type_traits<NT>::Has_gcd Has_gcd;
-  return gcd_of_range(its,ite,Has_gcd());
+  return gcd_of_range(its,ite,
+          Boolean_tag<CGALi::Is_unique_factorization_domain<NT>::value>());
 }
 
 
@@ -247,16 +247,7 @@ template <class pNT> class Polynomial :
   /*{\Mtypes 5}*/
   public:
   typedef pNT NT;
-  typedef typename Number_type_traits<NT>::Has_gcd Has_gcd;
-  typedef CGAL::Tag_false Has_sqrt;
-  typedef CGAL::Tag_true  Has_division;
- 
-  typedef CGAL::Tag_false Has_exact_division;
-  typedef CGAL::Tag_false Has_exact_sqrt;
-  typedef typename Number_type_traits<NT>::Has_exact_ring_operations
-  Has_exact_ring_operations;
-
-
+  
   typedef Handle_for< Polynomial_rep<NT> > Base;
   typedef Polynomial_rep<NT> Rep;
   typedef typename Rep::Vector    Vector;
@@ -594,14 +585,6 @@ class Polynomial<int> :
   typedef int NT;
   /*{\Xtypemember the component type representing the coefficients.}*/
 
-  typedef Number_type_traits<NT>::Has_gcd Has_gcd;
-  typedef CGAL::Tag_false Has_sqrt;
-  typedef CGAL::Tag_true  Has_division;
-
-  typedef CGAL::Tag_false Has_exact_ring_operations;
-  typedef CGAL::Tag_false Has_exact_division;
-  typedef CGAL::Tag_false Has_exact_sqrt;
-
   typedef Handle_for< Polynomial_rep<int> > Base;
   typedef Polynomial_rep<int> Rep;
   typedef  Rep::Vector    Vector;
@@ -904,14 +887,6 @@ determines the sign for the limit process $x \rightarrow \infty$.
   public:
   typedef double NT;
   /*{\Xtypemember the component type representing the coefficients.}*/
-
-  typedef Number_type_traits<NT>::Has_gcd Has_gcd;
-  typedef CGAL::Tag_false Has_sqrt;
-  typedef CGAL::Tag_true  Has_division;
-
-  typedef CGAL::Tag_false Has_exact_ring_operations;
-  typedef CGAL::Tag_false Has_exact_division;
-  typedef CGAL::Tag_false Has_exact_sqrt;
 
   typedef Handle_for< Polynomial_rep<double> > Base;
   typedef Polynomial_rep<double> Rep;
@@ -1274,10 +1249,8 @@ template <class NT> inline
 Polynomial<NT> operator / (const Polynomial<NT>& p1, 
                            const Polynomial<NT>& p2)
 { 
-  typedef Number_type_traits<NT> Traits;
-  typename Traits::Has_gcd has_gcd;
-  
-  return divop(p1,p2, has_gcd);
+    return divop(p1,p2, 
+            Boolean_tag<CGALi::Is_unique_factorization_domain<NT>::value>() );
 }
 
 
@@ -1285,9 +1258,9 @@ template <class NT> inline
 Polynomial<NT> operator % (const Polynomial<NT>& p1,
 			   const Polynomial<NT>& p2)
 { 
-  typedef Number_type_traits<NT> Traits;
-  typename Traits::Has_gcd has_gcd;
-  return modop(p1,p2, has_gcd); }
+    return modop(p1,p2, 
+            Boolean_tag<CGALi::Is_unique_factorization_domain<NT>::value>() ); 
+}
 
 
 template <class NT> 
