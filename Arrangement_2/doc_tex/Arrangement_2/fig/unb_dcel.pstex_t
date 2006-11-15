@@ -50,6 +50,6 @@
 }}}}
 \put(2206,-1366){\makebox(0,0)[lb]{\smash{{\SetFigFont{7}{8.4}{\familydefault}{\mddefault}{\updefault}{\color[rgb]{0,0,0}$v_{\rm tl}$}%
 }}}}
-\put(3286,-916){\makebox(0,0)[lb]{\smash{{\SetFigFont{9}{10.8}{\familydefault}{\mddefault}{\updefault}{\color[rgb]{0,0,1}$\tilde{f}$}%
+\put(3286,-916){\makebox(0,0)[lb]{\smash{{\SetFigFont{9}{10.8}{\familydefault}{\mddefault}{\updefault}{\color[rgb]{0,0,1}$f_0$}%
 }}}}
 \end{picture}%
