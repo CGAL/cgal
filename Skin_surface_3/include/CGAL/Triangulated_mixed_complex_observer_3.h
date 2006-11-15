@@ -35,16 +35,17 @@ struct SS_Dereference_type<T *> {
 };
 
 template <class TriangulatedMixedComplex_3,
-	  class RegularTriangulation_3>
+	  class SkinSurface_3>
 class Triangulated_mixed_complex_observer_3 {
 public:
-  typedef typename RegularTriangulation_3::Geom_traits     Regular_traits;
-  typedef typename TriangulatedMixedComplex_3::Geom_traits Triangulated_mixed_complex_traits;
-  typedef RegularTriangulation_3                     Regular;
+  typedef typename SkinSurface_3::Regular            Regular;
+  typedef typename Regular::Geom_traits              Regular_traits;
   typedef TriangulatedMixedComplex_3                 Triangulated_mixed_complex;
+  typedef typename Triangulated_mixed_complex::Geom_traits
+                                  Triangulated_mixed_complex_traits;
   typedef typename Triangulated_mixed_complex::Triangulation_data_structure
                                                      TMC_TDS;
-  typedef typename SS_Dereference_type<typename TMC_TDS::Cell::Info>::value_type               Quadr_surface; 
+  typedef typename SkinSurface_3::Quadratic_surface  Quadratic_surface;
 
   typedef typename Regular_traits::FT                FT;
 
@@ -63,18 +64,16 @@ public:
   typedef typename Triangulated_mixed_complex::Cell_handle   TMC_Cell_handle;
   
 
-  typedef typename Quadr_surface::K                   Surface_traits;
+  typedef typename Quadratic_surface::K               Surface_traits;
   typedef typename Surface_traits::RT                 Surface_RT;
   typedef Regular_triangulation_euclidean_traits_3<Surface_traits> Surface_regular_traits;
-  typedef typename Quadr_surface::Point               Surface_point;
-  typedef typename Quadr_surface::Vector              Surface_vector;
+  typedef typename Quadratic_surface::Point               Surface_point;
+  typedef typename Quadratic_surface::Vector              Surface_vector;
   typedef Weighted_point<Surface_point,Surface_RT>   Surface_weighted_point;
-
-  typedef Skin_surface_quadratic_surface_3<Surface_traits> Quadratic_surface;
 
   typedef Weighted_converter_3< 
     Cartesian_converter < typename Regular_traits::Bare_point::R, 
-			  typename Quadr_surface::K > >            R2S_converter;
+			  typename Quadratic_surface::K > >            R2S_converter;
   Triangulated_mixed_complex_observer_3(FT shrink) : 
     shrink(shrink) {
   }
@@ -164,13 +163,14 @@ public:
 	}
       }
     }
-    ch->info() = surf;
+    // NGHK: uncomment:
+    //ch->info() = surf;
     //ch->simp = s;
   }
 
   FT shrink;
   Rt_Simplex prev_s;
-  Quadr_surface *surf;
+  Quadratic_surface *surf;
 
   // c is the center of the orthogonal sphere
   // w is the weight of the orthogonal sphere

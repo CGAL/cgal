@@ -17,247 +17,38 @@
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
-#ifndef CGAL_TRIANGULATE_MIXED_COMPLEX_3
-#define CGAL_TRIANGULATE_MIXED_COMPLEX_3
+#ifndef CGAL_TRIANGULATE_MIXED_COMPLEX_3_H
+#define CGAL_TRIANGULATE_MIXED_COMPLEX_3_H
 
 #include <CGAL/Compute_anchor_3.h>
 
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Triangulated_mixed_complex_observer_3.h>
 #include <CGAL/Triangulation_incremental_builder_3.h>
-
-#include <CGAL/Skin_surface_traits_3.h>
-
-#include <CGAL/iterator.h>
+// NGHK: move this one to SkinSurfaceTraits
+#include <CGAL/Compute_anchor_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
-template < class CMCT >
-class CMCT_Cell {
-public:
-  typedef CMCT_Cell<CMCT>                   Self;
-  typedef typename CMCT::Vertex_handle      Vertex_handle;
-  typedef typename CMCT::Rt_Simplex            Rt_Simplex;
 
-  CMCT_Cell() {
-  }
-  CMCT_Cell(Vertex_handle vs[], Rt_Simplex &sim) : sim_(sim) {
-    for (int i=0; i<4; i++) _vs[i] = vs[i];
-  }
-  CMCT_Cell(const Vertex_handle &vh0,
-	    const Vertex_handle &vh1, 
-	    const Vertex_handle &vh2, 
-	    const Vertex_handle &vh3, 
-	    Rt_Simplex &sim) : sim_(sim) 
-  {
-    _vs[0] = vh0;
-    _vs[1] = vh1;
-    _vs[2] = vh2;
-    _vs[3] = vh3;
-  }
-  Vertex_handle operator[](int i) const {
-    CGAL_assertion((0 <= i) && (i<4));
-    return _vs[i];
-  }
-  Vertex_handle vertex(int i) const {
-    CGAL_assertion((0 <= i) && (i<4));
-    return _vs[i];
-  }
-  const Rt_Simplex &mixed_cell() const {
-    return sim_;
-  }
-  bool operator==(const Self &other) const {
-    return ((_vs[0] == other._vs[0]) &&
-	    (_vs[1] == other._vs[1]) &&
-	    (_vs[2] == other._vs[2]) &&
-	    (_vs[3] == other._vs[3]));
-  }
-  bool operator!=(const Self &other) const { return !operator==(other); }
+template < 
+  class RegularTriangulation_3,
+  class TriangulatedMixedComplex_3,
+  class TriangulatedMixedComplexObserver_3 =
+  Triangulated_mixed_complex_observer_3<TriangulatedMixedComplex_3,
+					RegularTriangulation_3> >
+class Mixed_complex_triangulator_3 {
+public:
+  typedef typename RegularTriangulation_3::Geom_traits
+  Regular_traits;
+  typedef typename TriangulatedMixedComplex_3::Geom_traits
+  Triangulated_mixed_complex_traits;
+
+  typedef RegularTriangulation_3                   Regular;
+  typedef TriangulatedMixedComplex_3               Triangulated_mixed_complex;
+  typedef TriangulatedMixedComplexObserver_3
+  Triangulated_mixed_complex_observer;
 private:
-  Vertex_handle _vs[4];
-  Rt_Simplex sim_;
-};
-
-template < class CMCT >
-class CMCT_Cell_iterator {
-public:
-  typedef CMCT_Cell_iterator<CMCT> Self;
-  typedef typename CMCT::Cell Cell;
-  typedef typename CMCT::Rt_Finite_vertices_iterator 
-    Rt_Finite_vertices_iterator;
-  typedef typename CMCT::Rt_Finite_edges_iterator 
-    Rt_Finite_edges_iterator;
-  typedef typename CMCT::Rt_Finite_facets_iterator 
-    Rt_Finite_facets_iterator;
-  typedef typename CMCT::Rt_Finite_cells_iterator 
-    Rt_Finite_cells_iterator;
-
-
-  // types of an iterator:
-  typedef std::forward_iterator_tag iterator_category;
-  typedef Cell                      value_type;
-  typedef std::ptrdiff_t            difference_type;
-  typedef value_type*               pointer;
-  typedef value_type&               reference;
-
-  CMCT_Cell_iterator(const CMCT *cmct_, 
-		int d=0) : dim(d), cmct(cmct_) {
-    if (cmct->regular.number_of_vertices()==0) {
-      dim = 4;
-      return;
-    }
-    vit = cmct->regular.finite_vertices_begin();
-    eit = cmct->regular.finite_edges_begin();
-    fit = cmct->regular.finite_facets_begin();
-    cit = cmct->regular.finite_cells_begin();
-
-    cmct->construct_0_cell(vit, std::back_inserter(cells));
-    vit++;
-    curr = cells.begin();
-  }
-  CMCT_Cell_iterator(const CMCT_Cell_iterator &copy) {
-    dim=copy.dim; cmct = copy.cmct;
-    vit=copy.vit; eit=copy.eit; fit=copy.fit; cit=copy.cit;
-    for (typename std::vector<Cell>::const_iterator it = copy.cells.begin();
-	 it != copy.cells.end(); it++) {
-      cells.push_back(*it);
-    }
-    CGAL_assertion(std::equal(copy.cells.begin(), copy.cells.end(), cells.begin()));
-    int ncells = cells.size()-std::distance
-      ((typename std::vector<Cell>::const_iterator)copy.curr, 
-       (typename std::vector<Cell>::const_iterator)copy.cells.end());
-    CGAL_assertion(ncells >= 0);
-    curr = cells.begin();
-    while (ncells--!=0) curr++;
-    CGAL_assertion
-      (std::distance((typename std::vector<Cell>::const_iterator)curr, 
-		     (typename std::vector<Cell>::const_iterator)cells.end())
-       ==
-       std::distance((typename std::vector<Cell>::const_iterator)copy.curr, 
-		     (typename std::vector<Cell>::const_iterator)copy.cells.end()));
-  }
-  Self &operator=(const CMCT_Cell_iterator &other) {
-    if (&other != this) {
-      dim=other.dim; cmct = other.cmct;
-      vit=other.vit; eit=other.eit; fit=other.fit; cit=other.cit;
-      for (typename std::vector<Cell>::const_iterator 
-	     it = other.cells.begin();
-	   it != other.cells.end(); it++) {
-	cells.push_back(*it);
-      }
-      int ncells = cells.size() - std::distance(other.curr, other.cells.end());
-      CGAL_assertion(ncells > 0);
-      curr = cells.begin();
-      while (ncells--!=0) curr++;
-      CGAL_assertion(std::distance(curr, (typename std::vector<Cell>::const_iterator) cells.end()) ==
-		     std::distance(other.curr, other.cells.end()));
-    }
-    return *this;
-  }
-
-  Self & operator++() { 
-    CGAL_assertion(curr != cells.end());
-    curr++;
-    if (curr != cells.end()) return *this;
-
-    cells.clear();
-    while (cells.empty() && (dim < 4)) {
-      switch (dim) {
-      case 0:
-	{
-	  if (vit == cmct->regular.finite_vertices_end()) {
-	    dim ++;
-	  } else {
-	    cmct->construct_0_cell(vit, std::back_inserter(cells));
-	    vit ++;
-	  }	    
-	  break;
-	}
-      case 1:
-	{
-	  if (eit == cmct->regular.finite_edges_end()) {
-	    dim ++;
-	  } else {
-	    cmct->construct_1_cell(eit, std::back_inserter(cells));
-	    eit ++;
-	  }	    
-	  break;
-	}
-      case 2:
-	{
-	  if (fit == cmct->regular.finite_facets_end()) {
-	    dim ++;
-	  } else {
-	    cmct->construct_2_cell(fit, std::back_inserter(cells));
-	    fit ++;
-	  }	    
-	  break;
-	}
-      case 3:
-	{
-	  if (cit == cmct->regular.finite_cells_end()) {
-	    dim ++;
-	  } else {
-	    cmct->construct_3_cell(cit, std::back_inserter(cells));
-	    cit ++;
-	  }	    
-	  break;
-	}
-      };
-    }
-    curr = cells.begin();
-    return *this; 
-  }
-  CMCT_Cell_iterator & operator++(int i) { 
-    CMCT_Cell_iterator temp = *this;
-    --*this;
-    return temp;
-  }
-
-  Cell & operator*() const { 
-    CGAL_assertion(dim < 4);
-    CGAL_assertion(curr != cells.end());
-    return *curr; 
-  }
-  pointer operator->() const { 
-    CGAL_assertion(dim < 4);
-    CGAL_assertion(curr != cells.end());
-    return &*curr; 
-  }
-
-
-  operator pointer() { return *curr; }
-
-  bool operator==(const CMCT_Cell_iterator &other) const {
-    if ((dim == 4) || (other.dim == 4) )
-      return (dim==other.dim);
-	  
-    return (*curr == *other.curr);
-  }
-  bool operator!=(const CMCT_Cell_iterator &other) const {
-    return !(*this==other);
-  }
-private:
-  int dim;
-  const CMCT *cmct;
-  Rt_Finite_vertices_iterator vit;
-  Rt_Finite_edges_iterator eit;
-  Rt_Finite_facets_iterator fit;
-  Rt_Finite_cells_iterator cit;
-  std::vector<Cell> cells; // Cells in the current mixed cell;
-  //typename std::vector<Cell>::const_iterator curr;
-  typename std::vector<Cell>::iterator curr;
-};
-
-template <class MixedComplexTraits_3>
-class Combinatorial_mixed_complex_triangulator_3 {
-  typedef Combinatorial_mixed_complex_triangulator_3<MixedComplexTraits_3>
-  Self;
-public:
-  typedef MixedComplexTraits_3                   Regular;
-  typedef typename Regular::Geom_traits            Regular_traits;
-
-  // NGHK: Make private again: private:
   typedef typename Regular::Vertex_handle            Rt_Vertex_handle;
   typedef typename Regular::Edge                     Rt_Edge;
   typedef typename Regular::Facet                    Rt_Facet;
@@ -276,22 +67,35 @@ public:
   typedef typename Regular_traits::FT                Rt_FT;
   typedef typename Regular::Weighted_point           Rt_Weighted_point;
 
-  typedef Compute_anchor_3<Regular>                  Compute_anchor;
-  typedef std::pair<Rt_Simplex,Rt_Simplex>           Symb_anchor;
+  typedef typename Triangulated_mixed_complex::Vertex_handle    Tmc_Vertex_handle;
+  typedef typename Triangulated_mixed_complex::Edge             Tmc_Edge;
+  typedef typename Triangulated_mixed_complex::Facet            Tmc_Facet;
+  typedef typename Triangulated_mixed_complex::Cell_handle      Tmc_Cell_handle;
 
-  typedef Symb_anchor                                Vertex;
-  typedef const Vertex *                             Vertex_handle;
+  typedef typename Triangulated_mixed_complex::Finite_vertices_iterator
+  Tmc_Finite_vertices_iterator;
+  typedef typename Triangulated_mixed_complex::Finite_edges_iterator
+  Tmc_Finite_edges_iterator;
+  typedef typename Triangulated_mixed_complex::Finite_facets_iterator
+  Tmc_Finite_facets_iterator;
+  typedef typename Triangulated_mixed_complex::All_cells_iterator
+  Tmc_All_cells_iterator;
+  typedef typename Triangulated_mixed_complex::Finite_cells_iterator
+  Tmc_Finite_cells_iterator;
+  typedef typename Triangulated_mixed_complex::Cell_circulator
+  Tmc_Cell_circulator;
+	
+  typedef typename TriangulatedMixedComplex_3::Geom_traits  Tmc_traits;
+  typedef typename Tmc_traits::Point_3                      Tmc_Point;
+  typedef typename Tmc_traits::RT                           Tmc_RT;
 
-  typedef CMCT_Cell<Self>                            Cell;
-  
-  friend class CMCT_Cell_iterator<Self>;
+  typedef Triangulation_incremental_builder_3<Triangulated_mixed_complex>
+  Triangulation_incremental_builder;
 
-  typedef CMCT_Cell_iterator<Self>                   Cell_iterator;
-  
+  typedef Compute_anchor_3<Regular>                       Compute_anchor;
+  typedef std::pair<Rt_Simplex,Rt_Simplex>                Symb_anchor;
 
   // You might get type differences here:
-  // The map that maps a Rt_Simplex to an iterator of the map 
-  // (used as union_find_structure)
   struct Anchor_map_iterator_tmp;
   typedef std::map<Rt_Simplex, Anchor_map_iterator_tmp>     Anchor_map;
   struct Anchor_map_iterator_tmp : Anchor_map::iterator {
@@ -300,359 +104,168 @@ public:
     Anchor_map_iterator_tmp(typename Anchor_map::iterator const &it) 
       : Anchor_map::iterator(it) {}
   };
-  typedef typename Anchor_map::iterator              Anchor_map_iterator;
-  typedef typename Anchor_map::const_iterator        Anchor_map_const_iterator;
-
-
-
-  typedef std::set<Vertex>                           Vertex_container;
-  typedef typename Vertex_container::iterator        Vertex_container_it;
-  typedef Vertex_container_it                        Vertex_iterator;  
-  
-  typedef std::map<Vertex_handle, Vertex_handle>     Symb_vertex_map;
-  typedef typename Symb_vertex_map::const_iterator   Symb_vertex_map_const_it;
-
-  class Is_no_vertex {
-    const Self *ctmc;
-  public:
-    Is_no_vertex(const Self *ctmc_) : ctmc(ctmc_) {}
-    bool operator()(const Symb_vertex_map_const_it & it) const 
-    {
-      return (it->first != it->second);
-    }
-  };
-
-  //typedef Filter_iterator<Symb_vertex_map_const_it, Is_no_vertex> Vertex_iterator;
-  
-
-//   class Vertex_iterator {
-//     typedef Self Combinatorial_mixed_complex_triangulator_3;
-//   public:
-//     // types of an iterator:
-//     typedef std::forward_iterator_tag iterator_category;
-//     typedef Vertex                    value_type;
-//     typedef std::ptrdiff_t            difference_type;
-//     typedef value_type*               pointer;
-//     typedef value_type&               reference;
-
-//     Vertex_iterator(Symb_vertex_map_const_it it, Symb_vertex_map_const_it end) :
-//       it(it), end(end) {}
-//     Vertex_iterator(Symb_vertex_map_const_it end) :
-//       it(end), end(end) {}
-    
-//     Vertex_iterator& operator++() {
-//       do { ++it; } while (it != end && (it->first != it->second));
-//       return *this;
-//     }
-    
-//     Vertex_iterator operator++(int) {
-//       Vertex_iterator tmp(*this);
-//       ++(*this);
-//       return tmp;
-//     }
-    
-//     reference operator*() const { return (it->first);  }
-//     pointer operator->() const  { return (it->first); }
-
-//     bool operator==(const Vertex_iterator other) {
-//       return (other.it == it);
-//     }
-//     bool operator!=(const Vertex_iterator other) {
-//       return !(other.it == it);
-//     }
-//   private:
-//     Symb_vertex_map_const_it it, end;
-//   };
-
+  typedef typename Anchor_map::iterator                     Anchor_map_iterator;
 public:
-  Combinatorial_mixed_complex_triangulator_3(Regular const &regular,
-					     bool verbose)
-    : regular(regular), verbose(verbose),
-      compute_anchor_obj(regular) {
-    construct_vertices();
+
+  Mixed_complex_triangulator_3(
+			       Regular const &regular,
+			       Triangulated_mixed_complex &triangulated_mixed_complex, 
+			       bool verbose)
+    : regular(regular),
+      _tmc(triangulated_mixed_complex),
+      triangulation_incr_builder(triangulated_mixed_complex), 
+      compute_anchor_obj(regular),
+      verbose(verbose) {
+
+    build();
   }
 
-  void construct_vertices();
-
-  template <class OutputIteratorVertices>
-  void construct_vertices(OutputIteratorVertices vertices);
-
-  Vertex_iterator vertices_begin() {
-    return vertices.begin();
-  }
-  Vertex_iterator vertices_end() {
-    return vertices.end();
-  }
-
-  Cell_iterator cells_begin() {
-    return Cell_iterator(this);
-  }
-  Cell_iterator cells_end() {
-    return Cell_iterator(this, 4);
-  }
-
-  template <class OutputIteratorCells>
-  void construct_0_cell(Rt_Vertex_handle rt_vh, 
-			OutputIteratorCells out) const;
-  template <class OutputIteratorCells>
-  void construct_1_cell(const Rt_Edge &e, 
-			OutputIteratorCells out) const;
-  template <class OutputIteratorCells>
-  void construct_1_cell(Rt_Finite_edges_iterator eit, 
-			OutputIteratorCells out) const {
-    construct_1_cell(*eit, out);
-  }
-  template <class OutputIteratorCells>
-  void construct_2_cell(const Rt_Facet &f, 
-			OutputIteratorCells out) const;
-  template <class OutputIteratorCells>
-  void construct_2_cell(const Rt_Finite_facets_iterator &fit, 
-			OutputIteratorCells out) const {
-    construct_2_cell(*fit, out);
-  }
-  template <class OutputIteratorCells>
-  void construct_3_cell(Rt_Cell_handle rt_ch, 
-			OutputIteratorCells out) const;
-
-  template <class Other_MixedComplexTraits_3> 
-  typename Other_MixedComplexTraits_3::Bare_point
-  location(const Vertex &v,
-	   const Other_MixedComplexTraits_3 &traits) const {
-    typename Other_MixedComplexTraits_3::Bare_point p_del = 
-      orthocenter(v.first, traits);
-    typename Other_MixedComplexTraits_3::Bare_point p_vor = 
-      orthocenter(v.second, traits);
-
-    return traits.construct_anchor_point_3_object()(p_del, p_vor);
-  }
-  template <class Other_MixedComplexTraits_3> 
-  typename Other_MixedComplexTraits_3::Bare_point
-  location(const Vertex_handle vh,
-	   const Other_MixedComplexTraits_3 &traits) const {
-    typename Other_MixedComplexTraits_3::Bare_point p_del = 
-      orthocenter(vh->first, traits);
-    typename Other_MixedComplexTraits_3::Bare_point p_vor = 
-      orthocenter(vh->second, traits);
-
-    typename Other_MixedComplexTraits_3::Bare_point result = 
-      traits.construct_anchor_point_3_object()(p_del, p_vor);
-
-    return result;
-  }
-
-  template <class Other_MixedComplexTraits_3>
-  Bounded_side bounded_side(const typename Regular_traits::Bare_point &p,
-			    const Cell &c,
-			    const Other_MixedComplexTraits_3 &traits) const {
-    typedef Other_MixedComplexTraits_3                          Traits;
-    typedef typename Traits::Bare_point::R::Tetrahedron_3 Tetrahedron;
-    typedef Cartesian_converter<
-      typename Regular_traits::Bare_point::R, 
-      typename Traits::Bare_point::R>                     Converter;
-
-
-    typename Traits::Bare_point pts[5];
-    for (int i=0; i<4; i++) pts[i] = location(c[i], traits);
-    pts[4] = Converter()(p);
-
-    return 
-      Tetrahedron(pts[0],pts[1],pts[2],pts[3]).bounded_side(pts[4]);
+  Mixed_complex_triangulator_3(
+			       Regular &regular,
+			       Triangulated_mixed_complex &triangulated_mixed_complex,
+			       Triangulated_mixed_complex_observer &observer,
+			       bool verbose)
+    : regular(regular),
+      _tmc(triangulated_mixed_complex),
+      observer(observer),
+      triangulation_incr_builder(triangulated_mixed_complex), 
+      compute_anchor_obj(regular),
+      verbose(verbose)  {
+    
+    build();
   }
 
 private:
-  template <class Other_MixedComplexTraits_3> 
-  typename Other_MixedComplexTraits_3::Bare_point
-  orthocenter(const Rt_Simplex &s,
-	      const Other_MixedComplexTraits_3 &traits) const {
-    Weighted_converter_3
-      <Cartesian_converter<typename Regular_traits::Bare_point::R, 
-                           typename Other_MixedComplexTraits_3::K> >
-      converter;
-    switch(s.dimension()) {
-    case 0: 
-      {
-	Rt_Vertex_handle vh = s;
-	return converter(vh->point());
-      }
-    case 1:
-      {
-	Rt_Edge e = s;
-	return traits.construct_weighted_circumcenter_3_object()
-	  (converter(e.first->vertex(e.second)->point()),
-	   converter(e.first->vertex(e.third)->point()));
-      }
-    case 2: 
-      {
-	Rt_Facet f = s;
-	return traits.construct_weighted_circumcenter_3_object()
-	  (converter(f.first->vertex((f.second+1)&3)->point()),
-	   converter(f.first->vertex((f.second+2)&3)->point()),
-	   converter(f.first->vertex((f.second+3)&3)->point()));
-      }
-    case 3: 
-      {
-	Rt_Cell_handle ch = s;
-	return traits.construct_weighted_circumcenter_3_object()
-	  (converter(ch->vertex(0)->point()),
-	   converter(ch->vertex(1)->point()),
-	   converter(ch->vertex(2)->point()),
-	   converter(ch->vertex(3)->point()));
-      }
-    }
-    CGAL_assertion(false);
-    return typename Other_MixedComplexTraits_3::Weighted_point();
+  void build() {
+
+    triangulation_incr_builder.begin_triangulation(3);
+
+    if (verbose) std::cout << "Construct vertices" << std::endl;
+    construct_vertices();
+
+    if (verbose) std::cout << "Construct cells" << std::endl;
+    construct_cells(); // mixed cells corresponding to regular vertices
+
+    triangulation_incr_builder.end_triangulation();
+    
+    anchors.clear();
+
+    CGAL_assertion(_tmc.is_valid());
+
+    //remove_small_edges();
+
   }
 
-  Vertex_handle add_vertex(Symb_anchor anchor); 
-  template <class OutputIteratorCells>
-  void add_cell(Vertex_handle vh[], 
-		int orient, 
-		Rt_Simplex &simplex,
-		OutputIteratorCells cells) const;
+  Tmc_Vertex_handle add_vertex(Rt_Simplex const &anchor); 
+  Tmc_Cell_handle add_cell(Tmc_Vertex_handle vh[], int orient, Rt_Simplex s);
 	
-  Vertex_handle get_vertex(Rt_Simplex &sDel, Rt_Simplex &sVor) const;
+  Tmc_Vertex_handle get_vertex(Rt_Simplex &sVor);
 
 
-  void construct_anchor_del(Rt_Simplex const &sDel);
   void construct_anchor_vor(Rt_Simplex const &sVor);
   void construct_anchors();
-  const Rt_Simplex get_anchor_del(Rt_Simplex const &sDel) const {
-    return find_anchor(anchor_del2, sDel)->first;
-  }
-  const Rt_Simplex get_anchor_vor(Rt_Simplex const &sVor) const {
-    Anchor_map_const_iterator it = find_anchor(anchor_vor2, sVor);
-    return it->first;
+  Rt_Simplex get_anchor_vor(Rt_Simplex const &sVor) {
+    return find_anchor(anchor_vor2, sVor)->first;
   }  
-  Anchor_map_const_iterator find_anchor(const Anchor_map &a_map, 
-					Rt_Simplex const&s) const {
-    Anchor_map_const_iterator it = a_map.find(s);
-    return find_anchor(a_map, it);
-  }
-  Anchor_map_const_iterator find_anchor(const Anchor_map &a_map,
-				  Anchor_map_const_iterator &start) const {
-    CGAL_assertion(start != a_map.end());
-    Anchor_map_const_iterator it = start;
-    while (it != it->second) it = it->second;
-
-    return it;
+  Anchor_map_iterator find_anchor(Anchor_map &a_map, Rt_Simplex const&s) {
+    return find_anchor(a_map, a_map.find(s));
   }
   Anchor_map_iterator find_anchor(Anchor_map &a_map,
-				  Anchor_map_iterator &start) {
-    // do the union-find-trick:
-    CGAL_assertion(start != a_map.end());
-    Anchor_map_iterator it1 = start;
-    Anchor_map_iterator it2 = it1->second;
+				  Anchor_map_iterator const&it) {
+    CGAL_assertion(it != a_map.end());
+    Anchor_map_iterator it2 = it->second;
     while (it2 != it2->second) {
-      it1->second = it2->second;
+      it->second = it2->second;
       // NGHK: changed the type for the map-iterator-hack
-      it2->second = it1;
-      it2 = it1->second;
+      it2->second = it;
+      it2 = it->second;
     }
     return it2;
   }
+  void construct_vertices();
   
+  Tmc_Point get_orthocenter(Rt_Simplex const &s);
+  Tmc_Point get_anchor(Rt_Simplex const &sVor);
+  template <class Point>
+  Point construct_anchor_point(const Point &center_vor) {
+    std::cout << "still union_of_balls" << std::endl;
+//    typename Other_MixedComplexTraits_3::Bare_point p_del =
+//       orthocenter(v.first, traits);
+//     typename Other_MixedComplexTraits_3::Bare_point p_vor =
+//       orthocenter(v.second, traits);
+
+//     return traits.construct_anchor_point_3_object()(p_del, p_vor);
+    return center_vor;
+  }
+  
+  void construct_cells();
+	
+  void remove_small_edges();
+  bool is_collapsible(Tmc_Vertex_handle vh, 
+		      Tmc_Vertex_handle &vh_collapse_to,
+		      Tmc_RT sq_length);
+  void do_collapse(Tmc_Vertex_handle vh, Tmc_Vertex_handle vh_collapse_to);
+  
+
 private:
   Regular const &regular;
+  Triangulated_mixed_complex &_tmc;
+  Triangulated_mixed_complex_observer &observer;
+
+  Triangulation_incremental_builder triangulation_incr_builder;
+
+  Construct_weighted_circumcenter_3<
+    Regular_triangulation_euclidean_traits_3<
+    Triangulated_mixed_complex_traits> >                orthocenter_obj;
+
+  Compute_squared_radius_smallest_orthogonal_sphere_3<
+    Regular_triangulation_euclidean_traits_3<
+    Triangulated_mixed_complex_traits> >       orthoweight_obj;
+  Compute_anchor_3<Regular> compute_anchor_obj;
   bool verbose;
 
-  Compute_anchor compute_anchor_obj;
+  Weighted_converter_3<
+    Cartesian_converter<typename Regular_traits::Bare_point::R, 
+			Triangulated_mixed_complex_traits > >
+  r2t_converter_object;
+    
 
-  Anchor_map             anchor_del2, anchor_vor2;
-  Vertex_container       vertices;
-};
-
-
-
-template < class GT, 
-           class QuadraticSurface_3,
-	   class Cb = Triangulation_cell_base_3<GT> >
-class Triangulated_mixed_complex_cell_3 : public Cb
-{
-public:
-  typedef typename Cb::Triangulation_data_structure            Triangulation_data_structure;
-  typedef typename Triangulation_data_structure::Vertex_handle Vertex_handle;
-  typedef typename Triangulation_data_structure::Cell_handle   Cell_handle;
-
-  typedef QuadraticSurface_3                         Quadratic_surface;
-	
-  template < class TDS2 >
-  struct Rebind_TDS {
-    typedef typename Cb::template Rebind_TDS<TDS2>::Other  Cb2;
-    typedef Triangulated_mixed_complex_cell_3<GT, QuadraticSurface_3, Cb2>
-                                                           Other;
+  const static int edge_index[4][4];
+  struct Index_c4 { Tmc_Vertex_handle V[4]; };
+  struct Index_c6 { Tmc_Vertex_handle V[6]; };
+  struct Index_c44 { Tmc_Vertex_handle V[4][4]; };
+  struct Index_v {
+    Unique_hash_map < Rt_Vertex_handle, Tmc_Vertex_handle > V;
   };
 
-  Triangulated_mixed_complex_cell_3() : Cb() {
-  }
-  Triangulated_mixed_complex_cell_3(Vertex_handle v0, Vertex_handle v1,
-				    Vertex_handle v2, Vertex_handle v3)
-    : Cb(v0, v1, v2, v3) {
-  }
+  // index to vertex
+  Unique_hash_map < Rt_Cell_handle, Index_c4 > index_03;
+  
 
-  Quadratic_surface *surf;
+  Anchor_map                                     anchor_vor2;
+  std::map<Rt_Simplex, Tmc_Vertex_handle>        anchors;
 };
 
-template < class GT, 
-	   class Vb = Triangulation_vertex_base_3<GT> >
-class Triangulated_mixed_complex_vertex_3 : public Vb
-{
-public:
-  typedef typename Vb::Point           Point;
-  typedef typename Vb::Cell_handle     Cell_handle;
+template < 
+  class RegularTriangulation_3,
+  class TriangulatedMixedComplex_3,
+  class TriangulatedMixedComplexObserver_3>
+const int Mixed_complex_triangulator_3<
+  RegularTriangulation_3,
+  TriangulatedMixedComplex_3,
+  TriangulatedMixedComplexObserver_3>::
+edge_index[4][4] = {{-1,0,1,2},{0,-1,3,4},{1,3,-1,5},{2,4,5,-1}};
 
-  template < class TDS2 >
-  struct Rebind_TDS {
-    typedef typename Vb::template Rebind_TDS<TDS2>::Other  Vb2;
-    typedef Triangulated_mixed_complex_vertex_3<GT, Vb2>   Other;
-  };
 
-  Triangulated_mixed_complex_vertex_3() {}
-  Triangulated_mixed_complex_vertex_3(const Point&p)                : Vb(p) {}
-  Triangulated_mixed_complex_vertex_3(const Point&p, Cell_handle c) : Vb(p, c) {}
-
-  Sign sign() const {
-    return Vb::cell()->surf->sign(Vb::point());
-  }
-};
-
-template <class MixedComplexTraits_3>
+template < 
+  class RegularTriangulation_3,
+  class TriangulatedMixedComplex_3,
+  class TriangulatedMixedComplexObserver_3>
 void
-Combinatorial_mixed_complex_triangulator_3<MixedComplexTraits_3>::
-construct_anchor_del(Rt_Simplex const &sDel) {
-  Rt_Simplex s = compute_anchor_obj.anchor_del(sDel);
-  anchor_del2[sDel] = Anchor_map_iterator();
-
-  Anchor_map_iterator it = anchor_del2.find(sDel);
-  Anchor_map_iterator it2 = anchor_del2.find(s);
-  CGAL_assertion(it != anchor_del2.end());
-  CGAL_assertion(it2 != anchor_del2.end());
-  it->second = it2;
-
-  // degenerate simplices:
-  if (compute_anchor_obj.is_degenerate()) {
-    it = find_anchor(anchor_del2, it);
-    typename Compute_anchor::Simplex_iterator degenerate_it;
-    for (degenerate_it = compute_anchor_obj.equivalent_anchors_begin();
-	 degenerate_it != compute_anchor_obj.equivalent_anchors_end(); 
-	 degenerate_it++) {
-      Anchor_map_iterator tmp;
-      it2 = anchor_del2.find(*degenerate_it);
-      CGAL_assertion(it2 != anchor_del2.end());
-      // Merge sets:
-      while (it2 != it2->second) {
-	tmp = it2->second;
-	it2->second = it->second;
-	it2 = tmp;
-	CGAL_assertion(it2 != anchor_del2.end());
-      }
-      it2->second = it->second;
-    }
-  }
-}
-
-template <class MixedComplexTraits_3>
-void
-Combinatorial_mixed_complex_triangulator_3<MixedComplexTraits_3>::
+Mixed_complex_triangulator_3<
+  RegularTriangulation_3,
+  TriangulatedMixedComplex_3,
+  TriangulatedMixedComplexObserver_3>::
 construct_anchor_vor(Rt_Simplex const &sVor) {
   Rt_Simplex s = compute_anchor_obj.anchor_vor(sVor);
   anchor_vor2[sVor] = Anchor_map_iterator();
@@ -690,9 +303,15 @@ construct_anchor_vor(Rt_Simplex const &sVor) {
   }
 }
 
-template <class MixedComplexTraits_3>
+template < 
+  class RegularTriangulation_3,
+  class TriangulatedMixedComplex_3,
+  class TriangulatedMixedComplexObserver_3>
 void
-Combinatorial_mixed_complex_triangulator_3<MixedComplexTraits_3>::
+Mixed_complex_triangulator_3<
+  RegularTriangulation_3,
+  TriangulatedMixedComplex_3,
+  TriangulatedMixedComplexObserver_3>::
 construct_anchors() {
   Rt_Finite_vertices_iterator vit;
   Rt_Finite_edges_iterator eit;
@@ -701,26 +320,9 @@ construct_anchors() {
   Rt_Simplex s;
   
   // Compute anchor points:
-  for (vit=regular.finite_vertices_begin();
-       vit!=regular.finite_vertices_end(); vit++) {
-    construct_anchor_del(Rt_Simplex(vit));
-  }  
-  for (eit=regular.finite_edges_begin();
-       eit!=regular.finite_edges_end(); eit++) {
-    s = Rt_Simplex(*eit);
-    construct_anchor_del(s);
-    CGAL_assertion(s.dimension() == 1);
-  }
-  for (fit=regular.finite_facets_begin();
-       fit!=regular.finite_facets_end(); fit++) {
-    s = Rt_Simplex(*fit);
-    construct_anchor_del(s);
-    CGAL_assertion(s.dimension() == 2);
-  }
   for (cit=regular.finite_cells_begin();
        cit!=regular.finite_cells_end(); cit++) {
     s = Rt_Simplex(cit);
-    construct_anchor_del(s);
     construct_anchor_vor(s);
     CGAL_assertion(s.dimension() == 3);
   }
@@ -747,11 +349,16 @@ construct_anchors() {
 
 
 // Constructs the vertices of the simplicial complex
-template <class MixedComplexTraits_3>
+template < 
+  class RegularTriangulation_3,
+  class TriangulatedMixedComplex_3,
+  class TriangulatedMixedComplexObserver_3>
 void
-Combinatorial_mixed_complex_triangulator_3<MixedComplexTraits_3>::
-construct_vertices()
-{
+Mixed_complex_triangulator_3<
+  RegularTriangulation_3,
+  TriangulatedMixedComplex_3,
+  TriangulatedMixedComplexObserver_3>::
+construct_vertices() {
   Rt_All_cells_iterator acit;
   Rt_Finite_cells_iterator cit;
   Rt_Finite_facets_iterator fit;
@@ -761,389 +368,110 @@ construct_vertices()
   Rt_Vertex_handle v1, v2, v3;
   Rt_Edge e;
   Rt_Cell_handle c1, c2;
-  Rt_Simplex sDel, sVor;
+  Rt_Simplex sVor;
+  Tmc_Vertex_handle vh;
 
   if (verbose) std::cout << "construct_anchors" << std::endl;
   construct_anchors();
 
-  if (verbose) std::cout << "9 ";
+  if (verbose) std::cout << "4 ";
   // anchor dimDel=0, dimVor=3
   for (cit=regular.finite_cells_begin();
        cit!=regular.finite_cells_end(); cit++) {
     sVor = get_anchor_vor(Rt_Simplex(cit));
-    for (int i=0; i<4; i++) {
-      sDel = get_anchor_del(Rt_Simplex(cit->vertex(i)));
-      add_vertex(Symb_anchor(sDel,sVor));
+    if (anchors.find(sVor) == anchors.end()) {
+      vh = add_vertex(sVor);
+      anchors[sVor] = vh;
+      CGAL_assertion(vh == get_vertex(sVor));
     }
   }
-  
-  if (verbose) std::cout << "8 ";
-  // anchor dimDel=1, dimVor=3
-  for (cit = regular.finite_cells_begin(); 
-       cit != regular.finite_cells_end(); cit++) {
-    sVor = get_anchor_vor(Rt_Simplex(cit));
-    for (int i=0; i<3; i++) {
-      for (int j=i+1; j<4; j++) {
-	sDel = get_anchor_del(Rt_Simplex(Rt_Edge(cit,i,j)));
-	add_vertex(Symb_anchor(sDel,sVor));
-      }
-    }
-  }
-  
-  if (verbose) std::cout << "7 ";
+
+  if (verbose) std::cout << "3 ";
   // anchor dimDel=2, dimVor=3 and dimDel=0, dimVor=2
-  for (fit = regular.finite_facets_begin(); 
-       fit != regular.finite_facets_end(); fit++) {
-    // anchor dimDel=2, dimVor=3
-    c1 = fit->first;
-    c2 = c1->neighbor(fit->second);
-    
-    sDel = get_anchor_del(*fit);
-    if (!regular.is_infinite(c1)) {
-      sVor = get_anchor_vor(c1);
-      add_vertex(Symb_anchor(sDel,sVor));
-    }
-    
-    if (!regular.is_infinite(c2)) {
-      sVor = get_anchor_vor(c2);
-      add_vertex(Symb_anchor(sDel,sVor));
-    }
+  for (fit=regular.finite_facets_begin(); fit!=regular.finite_facets_end(); fit++) {
     // anchor dimDel=0, dimVor=2
     sVor = get_anchor_vor(*fit);
-    for (int i=1; i<4; i++) {
-      sDel = get_anchor_del(Rt_Simplex(c1->vertex((fit->second+i)&3)));
-      add_vertex(Symb_anchor(sDel,sVor));
-    }
-  }
-	
-  if (verbose) std::cout << "6 ";
-  // anchor dimDel=0, dimVor=1
-  for (eit=regular.finite_edges_begin(); eit!=regular.finite_edges_end(); eit++) {
-    sVor = get_anchor_vor(*eit);
-    v1 = eit->first->vertex(eit->second);
-    v2 = eit->first->vertex(eit->third);
-    sDel = get_anchor_del(v1);
-    add_vertex(Symb_anchor(sDel,sVor));
-			
-    sDel = get_anchor_del(v2);
-    add_vertex(Symb_anchor(sDel,sVor));
-  }
-	
-  if (verbose) std::cout << "5 ";
-  // anchor dimDel=3, dimVor=3
-  for (cit=regular.finite_cells_begin(); 
-       cit!=regular.finite_cells_end(); cit++) {
-    sDel = get_anchor_del(Rt_Simplex(cit));
-    sVor = get_anchor_vor(Rt_Simplex(cit));
-    add_vertex(Symb_anchor(sDel,sVor));
-  }
-
-
-  if (verbose) std::cout << "4 ";
-  // anchor dimDel=0, dimVor=0
-  for (vit=regular.finite_vertices_begin(); 
-       vit!=regular.finite_vertices_end(); vit++) {
-    sDel = get_anchor_del(Rt_Simplex(vit));
-    sVor = get_anchor_vor(Rt_Simplex(vit));
-    add_vertex(Symb_anchor(sDel,sVor));
-  }
-	
-  if (verbose) std::cout << "3 ";
-  // anchor dimDel=1, dimVor=2
-  for (fit = regular.finite_facets_begin(); 
-       fit != regular.finite_facets_end(); fit++) {
-    c1 = fit->first;
-    c2 = c1->neighbor(fit->second);
-
-    sVor = get_anchor_vor(Rt_Simplex(*fit));
-    for (int i=1; i<3; i++) {
-      for (int j=i+1; j<4; j++) {
-	e.first = c1;
-	e.second = (fit->second+i)&3;
-	e.third = (fit->second+j)&3;
-	sDel = get_anchor_del(Rt_Simplex(e));
-	add_vertex(Symb_anchor(sDel,sVor));
-      }
+    if (anchors.find(sVor) == anchors.end()) {
+      vh = add_vertex(sVor);
+      anchors[sVor] = vh;
+      assert(vh == get_vertex(sVor));
     }
   }
 	
   if (verbose) std::cout << "2 ";
-  // anchor dimDel=2, dimVor=2
-  for (fit=regular.finite_facets_begin(); 
-       fit!=regular.finite_facets_end(); fit++) {
-    c1 = fit->first;
-    c2 = c1->neighbor(fit->second);
-
-    sVor = get_anchor_vor(Rt_Simplex(*fit));
-    sDel = get_anchor_del(Rt_Simplex(*fit));
-    add_vertex(Symb_anchor(sDel,sVor));
+  // anchor dimDel=0, dimVor=1
+  for (eit=regular.finite_edges_begin(); eit!=regular.finite_edges_end(); eit++) {
+    sVor = get_anchor_vor(*eit);
+    if (anchors.find(sVor) == anchors.end()) {
+      vh = add_vertex(sVor);
+      anchors[sVor] = vh;
+      assert(vh == get_vertex(sVor));
+    }
   }
 	
-  if (verbose) std::cout << "1" << std::endl;
-  // anchor dimDel=1, dimVor=1
-  for (eit=regular.finite_edges_begin(); 
-       eit!=regular.finite_edges_end(); eit++) {
-    v1 = eit->first->vertex(eit->second);
-    v2 = eit->first->vertex(eit->third);
-
-    sVor = get_anchor_vor(Rt_Simplex(*eit));
-    sDel = get_anchor_del(Rt_Simplex(*eit));
-    add_vertex(Symb_anchor(sDel,sVor));
+  if (verbose) std::cout << "1 ";
+  // anchor dimDel=0, dimVor=0
+  for (vit=regular.finite_vertices_begin(); vit!=regular.finite_vertices_end(); vit++) {
+    sVor = get_anchor_vor(Rt_Simplex(vit));
+    if (anchors.find(sVor) == anchors.end()) {
+      vh = add_vertex(sVor);
+      anchors[sVor] = vh;
+      assert(vh == get_vertex(sVor));
+    }
   }
 }
-
-// Constructs the vertices of the simplicial complex
-template <class MixedComplexTraits_3>
-  template <class OutputIteratorVertices>
-void
-Combinatorial_mixed_complex_triangulator_3<MixedComplexTraits_3>::
-construct_vertices(OutputIteratorVertices out)
-{
-  for (Vertex_iterator it = vertices.begin();
-       it != vertices.end(); it++) {
-    if (it->first == it->second) *out++ = *it;
-  }
-}
-
 
 // Constructs the cells of the mixed complex corresponding
 // to Regular vertices
-template <class MixedComplexTraits_3>
-template <class OutputIteratorCells>
+template < 
+  class RegularTriangulation_3,
+  class TriangulatedMixedComplex_3,
+  class TriangulatedMixedComplexObserver_3>
 void
-Combinatorial_mixed_complex_triangulator_3<MixedComplexTraits_3>::
-construct_0_cell(Rt_Vertex_handle rt_vh, OutputIteratorCells cells) const
-{
-  Rt_Simplex sDel_v, sVor_v, sVor_e, sVor_f, sVor_c;
-  Vertex_handle vh[4];
+Mixed_complex_triangulator_3<
+  RegularTriangulation_3,
+  TriangulatedMixedComplex_3,
+  TriangulatedMixedComplexObserver_3>::
+construct_cells() {
+  Rt_Simplex sVor_v, sVor_e, sVor_f, sVor_c;
+  Tmc_Vertex_handle vh[4];
   
-  Rt_Simplex simplex(rt_vh);
-  sDel_v = get_anchor_del(Rt_Simplex(rt_vh));
-  sVor_v = get_anchor_vor(Rt_Simplex(rt_vh));
-  vh[0] = get_vertex(sDel_v,sVor_v);
+  for (Rt_Finite_vertices_iterator vit=regular.finite_vertices_begin();
+       vit!=regular.finite_vertices_end(); vit++) {
     
-  std::list<Rt_Cell_handle> adj_cells;
-  typename std::list<Rt_Cell_handle>::iterator adj_cell;
-  regular.incident_cells(rt_vh, std::back_inserter(adj_cells));
+    Rt_Simplex simplex(vit);
+    sVor_v = get_anchor_vor(Rt_Simplex(vit));
+    vh[0] = get_vertex(sVor_v);
     
-  // Construct cells:
-  for (adj_cell = adj_cells.begin();
-       adj_cell != adj_cells.end();
-       adj_cell ++) {
-    if (!regular.is_infinite(*adj_cell)) {
-      sVor_c = get_anchor_vor(Rt_Simplex(*adj_cell));
-      vh[3] = get_vertex(sDel_v,sVor_c);
-      int index = (*adj_cell)->index(rt_vh);
-      for (int i=1; i<4; i++) {
-	sVor_f = get_anchor_vor(Rt_Simplex(Rt_Facet(*adj_cell,(index+i)&3)));
-	vh[2] = get_vertex(sDel_v,sVor_f);
+    std::list<Rt_Cell_handle> adj_cells;
+    typename std::list<Rt_Cell_handle>::iterator adj_cell;
+    regular.incident_cells(vit, std::back_inserter(adj_cells));
+    
+    // Construct cells:
+    for (adj_cell = adj_cells.begin();
+	 adj_cell != adj_cells.end();
+	 adj_cell ++) {
+      if (!regular.is_infinite(*adj_cell)) {
+	sVor_c = get_anchor_vor(Rt_Simplex(*adj_cell));
+	vh[3] = get_vertex(sVor_c);
+	int index = (*adj_cell)->index(vit);
+	for (int i=1; i<4; i++) {
+	  sVor_f = get_anchor_vor(
+				  Rt_Simplex(Rt_Facet(*adj_cell,(index+i)&3)));
+	  vh[2] = get_vertex(sVor_f);
 	  
-	for (int j=1; j<4; j++) {
-	  if (j!=i) {
-	    sVor_e = 
-	      get_anchor_vor(Rt_Simplex(Rt_Edge(*adj_cell,index,(index+j)&3)));
-	    vh[1] = get_vertex(sDel_v,sVor_e);
-	    if ((vh[0] != vh[1]) && (vh[1] != vh[2]) && (vh[2] != vh[3])) {
-	      CGAL_assertion(sVor_v != sVor_e);
-	      CGAL_assertion(sVor_e != sVor_f);
-	      CGAL_assertion(sVor_f != sVor_c);
-	      
-	      add_cell(vh,(index + (j==(i%3+1)? 1:0))&1, 
-		       simplex, cells);
-	    }
-	  }
-	}
-      }
-    }
-  }
-}
-
-// Constructs 1-cells of the mixed complex corresponding to edges
-// of the regular triangulation
-template <class MixedComplexTraits_3>
-template <class OutputIteratorCells>
-void
-Combinatorial_mixed_complex_triangulator_3<MixedComplexTraits_3>::
-construct_1_cell(const Rt_Edge &e,
-		 OutputIteratorCells cells) const {
-  Rt_Simplex sDel_v, sDel_e, sVor_e, sVor_f, sVor_c;
-  Vertex_handle vh[4];
-  Rt_Vertex_handle v[2];
-  
-  Rt_Simplex mixed_cell_simplex(e);
-  sDel_e = get_anchor_del(Rt_Simplex(e));
-  sVor_e = get_anchor_vor(Rt_Simplex(e));
-    
-  v[0] = e.first->vertex(e.second);
-  v[1] = e.first->vertex(e.third);
-    
-  // Construct cells on the side of v[vi]:
-  for (int vi=0; vi<2; vi++) {
-    sDel_v = get_anchor_del(Rt_Simplex(v[vi]));
-    if (!(sDel_v == sDel_e)) {
-      Rt_Cell_circulator ccir, cstart;
-      ccir = cstart = regular.incident_cells(e);
-      do {
-	if (!regular.is_infinite(ccir)) {
-	  int index0 = ccir->index(v[vi]);
-	  int index1 = ccir->index(v[1-vi]);
-
-	  sVor_c = get_anchor_vor(Rt_Simplex(ccir));
-
-	  for (int fi=1; fi<4; fi++) {
-	    if (((index0+fi)&3) != index1) {
-	      sVor_f =
-		get_anchor_vor(Rt_Simplex(Rt_Facet(ccir,(index0+fi)&3)));
-	      if ((sVor_c != sVor_f) && (sVor_f != sVor_e)) {
-		vh[0] = get_vertex(sDel_v, sVor_e);
-		vh[1] = get_vertex(sDel_e, sVor_e);
-		vh[2] = get_vertex(sDel_e, sVor_f);
-		vh[3] = get_vertex(sDel_e, sVor_c);
-		int orient;
-		if (((4+index1-index0)&3) == 1) {
-		  orient = (index1 + (fi==2))&1;
-		} else {
-		  orient = (index1 + (fi==1))&1;
-		}
-		// vh: dimension are (01,11,12,13)
-		add_cell(vh,orient,mixed_cell_simplex,cells);
-									
-		vh[1] = get_vertex(sDel_v, sVor_f);
-		// vh: dimension are (01,02,12,13)
-		add_cell(vh,1-orient,mixed_cell_simplex,cells);
-									
-		vh[2] = get_vertex(sDel_v, sVor_c);
-		// vh: dimension are (01,02,03,13)
-		add_cell(vh,orient,mixed_cell_simplex,cells);
+	  for (int j=1; j<4; j++) {
+	    if (j!=i) {
+	      sVor_e = get_anchor_vor(
+				      Rt_Simplex(Rt_Edge(*adj_cell,index,(index+j)&3)));
+	      vh[1] = get_vertex(sVor_e);
+	      if ((vh[0] != vh[1]) && (vh[1] != vh[2]) && (vh[2] != vh[3])) {
+		CGAL_assertion(sVor_v != sVor_e);
+		CGAL_assertion(sVor_e != sVor_f);
+		CGAL_assertion(sVor_f != sVor_c);
+		Tmc_Cell_handle ch =
+		  add_cell(vh,(index + (j==(i%3+1)? 1:0))&1,simplex);
 	      }
-	    }
-	  }
-	}
-	ccir ++;
-      } while (ccir != cstart);
-    }
-  }
-}
-
-
-// Constructs 2-cells of the mixed complex corresponding to facets
-// of the regular triangulation
-template <class MixedComplexTraits_3>
-template <class OutputIteratorCells>
-void
-Combinatorial_mixed_complex_triangulator_3<MixedComplexTraits_3>::
-construct_2_cell(const Rt_Facet &f,
-		 OutputIteratorCells cells) const {
-  Rt_Simplex sDel_v, sDel_e, sDel_f, sVor_f, sVor_c;
-  Vertex_handle vh[4]; // Implicit function over vLabels is increasing ...
-  Rt_Cell_handle rt_ch;
-  int index;
-	
-  rt_ch = f.first;
-  index = f.second;
-  Rt_Simplex simplex(f);
-  sDel_f = get_anchor_del(Rt_Simplex(f));
-  sVor_f = get_anchor_vor(Rt_Simplex(f));
-		
-  for (int i=0; i<2; i++) { // Do this twice
-    if (!regular.is_infinite(rt_ch)) {
-      sVor_c = get_anchor_vor(Rt_Simplex(rt_ch));
-	
-      vh[3] = get_vertex(sDel_f, sVor_c);
-      Vertex_handle vh2 = get_vertex(sDel_f, sVor_f);
-      if (vh2 != vh[3]) {
-	// Facet and cell do not coincide ..
-	for (int vi=1; vi<4; vi++) {
-	  sDel_v = get_anchor_del(Rt_Simplex(rt_ch->vertex((index+vi)&3)));
-	  //index_02[rt_ch].V[index][(index+vi)&3];
-	  vh[0] = get_vertex(sDel_v, sVor_f);
-	  for (int ei=1; ei<4; ei++) {
-	    if (vi != ei) {
-	      vh[2] = vh2;
-	      int index0 = (index+vi)&3;
-	      int index1 = (index+ei)&3;
-	      int fi = (6+index-vi-ei)&3;//6-index-index0-index1;
-	      sDel_e =
-		get_anchor_del(Rt_Simplex(Rt_Edge(rt_ch, index0, index1)));
-	      vh[1] = get_vertex(sDel_e, sVor_f);
-	      //index_12[rt_ch].V[index][(6+index-vi-ei)&3];
-	      if ((vh[0] != vh[1]) && (vh[1] != vh[2])) {
-		// index0: v0
-		// index1: v1
-		// index0+fi&3 == facet
-		int orient;
-									
-		if (((4+index1-index0)&3) == 3) {
-		  orient = (index1 + (((4+index0-fi)&3)==2))&1;
-		} else {
-		  orient = (index1 + (((4+index0-fi)&3)==1))&1;
-		}
-
-		add_cell(vh,orient,simplex,cells);
-									
-		vh[2] = get_vertex(sDel_e, sVor_c);
-		add_cell(vh,1-orient,simplex,cells);
-									
-		vh[1] = get_vertex(sDel_v, sVor_c);
-		add_cell(vh,orient,simplex,cells);
-	      } 
-	    }
-	  }
-	}
-      }
-    }
-    // swap to the other cell
-    Rt_Cell_handle ch_old = rt_ch;
-    rt_ch = rt_ch->neighbor(index);
-    index = rt_ch->index(ch_old);
-  }
-
-  CGAL_assertion(rt_ch == f.first);
-  CGAL_assertion(index == f.second);
-}
-
-
-// Constructs 3-cells of the mixed complex corresponding to cells
-// of the regular triangulation
-template <class MixedComplexTraits_3>
-template <class OutputIteratorCells>
-void
-Combinatorial_mixed_complex_triangulator_3<MixedComplexTraits_3>::
-construct_3_cell(Rt_Cell_handle rt_ch,
-		 OutputIteratorCells cells) const {
-  Rt_Simplex sDel_v, sDel_e, sDel_f, sDel_c, sVor_c;
-  Vertex_handle vh[4];
-
-  // construct the tetrahedron:
-  //   C[ch], C[Facet(ch,fi)], C[Edge(ch,ei,vi)], C[ch->vertex(vi)]
-  sDel_c = get_anchor_del(Rt_Simplex(rt_ch));
-  sVor_c = get_anchor_vor(Rt_Simplex(rt_ch));
-  Rt_Simplex simplex = Rt_Simplex(rt_ch);
-  vh[0] = get_vertex(sDel_c, sVor_c); 
-  for (int fi=0; fi<4; fi++) {
-    sDel_f = get_anchor_del(Rt_Simplex(Rt_Facet(rt_ch, fi)));
-    vh[1] = get_vertex(sDel_f, sVor_c);
-    if (vh[0] != vh[1]) {
-      for (int vi=1; vi<4; vi++) {
-	int index0 = (fi+vi)&3;
-	sDel_v = get_anchor_del(Rt_Simplex(rt_ch->vertex(index0)));
-	for (int ei=1; ei<4; ei++) {
-	  int index1 = (fi+ei)&3;
-	  if (vi != ei) {
-	    sDel_e = get_anchor_del(Rt_Simplex(Rt_Edge(rt_ch, index0, index1)));
-	    vh[2] = get_vertex(sDel_e, sVor_c);
-	    // index_13[rt_ch].V[edge_index[index0][index1]];
-	    vh[3] = get_vertex(sDel_v, sVor_c);
-	    // index_03[rt_cit].V[index0];
-	    if ((vh[1] != vh[2]) && (vh[2] != vh[3])) {
-	      int orient;
-								
-	      if (((4+index1-index0)&3) == 1) {
-		orient = (index1 + (vi==2))&1;
-	      } else {
-		orient = (index1 + (vi==3))&1;
-	      }
-	      add_cell(vh, orient, simplex, cells);
 	    }
 	  }
 	}
@@ -1153,260 +481,332 @@ construct_3_cell(Rt_Cell_handle rt_ch,
 }
 
 // Adds a vertex to the simplicial complex
-template <class MixedComplexTraits_3>
-typename Combinatorial_mixed_complex_triangulator_3<MixedComplexTraits_3>::
-Vertex_handle
-Combinatorial_mixed_complex_triangulator_3<MixedComplexTraits_3>::
-add_vertex (Symb_anchor anchor)
+template < 
+  class RegularTriangulation_3,
+  class TriangulatedMixedComplex_3,
+  class TriangulatedMixedComplexObserver_3>
+typename Mixed_complex_triangulator_3<
+  RegularTriangulation_3,
+  TriangulatedMixedComplex_3,
+  TriangulatedMixedComplexObserver_3>::Tmc_Vertex_handle
+Mixed_complex_triangulator_3<
+  RegularTriangulation_3,
+  TriangulatedMixedComplex_3,
+  TriangulatedMixedComplexObserver_3>::
+add_vertex (Rt_Simplex const &anchor)
 {
-  Vertex_iterator vit = vertices.find(anchor);
-  if (vit == vertices.end()) 
-    return &*(vertices.insert(anchor).first);
-  return &*vit;
+  Tmc_Vertex_handle vh;
+  vh = triangulation_incr_builder.add_vertex();
+  vh->point() = get_anchor(anchor);
+  observer.after_vertex_insertion(anchor, anchor, vh); 
+
+  return vh;
 }
 
 // Gets a vertex from the simplicial complex based on the anchors
-template <class MixedComplexTraits_3>
-typename Combinatorial_mixed_complex_triangulator_3<MixedComplexTraits_3>::
-Vertex_handle 
-Combinatorial_mixed_complex_triangulator_3<MixedComplexTraits_3>::
-get_vertex (Rt_Simplex &sDel, Rt_Simplex &sVor) const
+template < 
+  class RegularTriangulation_3,
+  class TriangulatedMixedComplex_3,
+  class TriangulatedMixedComplexObserver_3>
+typename Mixed_complex_triangulator_3<
+  RegularTriangulation_3,
+  TriangulatedMixedComplex_3,
+  TriangulatedMixedComplexObserver_3>::Tmc_Vertex_handle
+Mixed_complex_triangulator_3<
+  RegularTriangulation_3,
+  TriangulatedMixedComplex_3,
+  TriangulatedMixedComplexObserver_3>::get_vertex (Rt_Simplex &sVor)
 {
-  Rt_Simplex sDel2 = get_anchor_del(sDel);
   Rt_Simplex sVor2 = get_anchor_vor(sVor);
-  CGAL_assertion(sDel == sDel2);
   CGAL_assertion(sVor == sVor2);
-  Vertex_container_it it = vertices.find(Symb_anchor(sDel2,sVor2));
-//   Symb_vertex_map_const_it it = anchors.find(Symb_anchor(sDel2,sVor2));
-  CGAL_assertion(it != vertices.end());
-  Vertex_handle vh = &*it;
-  CGAL_assertion(*vh != Vertex());
+  Tmc_Vertex_handle vh = anchors[sVor2];
+  CGAL_assertion(vh != Tmc_Vertex_handle());
   return vh;
 }
 
 // Adds a cell to the simplicial complex
-template <class MixedComplexTraits_3>
-template <class OutputIteratorCells>
-void
-Combinatorial_mixed_complex_triangulator_3<MixedComplexTraits_3>::
-add_cell(Vertex_handle vh[], int orient, 
-	 Rt_Simplex &simplex,
-	 OutputIteratorCells cells) const {
+template < 
+  class RegularTriangulation_3,
+  class TriangulatedMixedComplex_3,
+  class TriangulatedMixedComplexObserver_3>
+typename Mixed_complex_triangulator_3<
+  RegularTriangulation_3,
+  TriangulatedMixedComplex_3,
+  TriangulatedMixedComplexObserver_3>::Tmc_Cell_handle
+Mixed_complex_triangulator_3<
+  RegularTriangulation_3,
+  TriangulatedMixedComplex_3,
+  TriangulatedMixedComplexObserver_3>::
+add_cell(Tmc_Vertex_handle vh[], int orient, Rt_Simplex s) {
   assert((orient==0) || (orient==1));
-  assert(*vh[0] != Vertex()); assert(*vh[1] != Vertex());
-  assert(*vh[2] != Vertex()); assert(*vh[3] != Vertex());
-  assert(*vh[0] != *vh[1]); assert(*vh[0] != *vh[2]); assert(*vh[0] != *vh[3]);
-  assert(*vh[1] != *vh[2]); assert(*vh[1] != *vh[3]); assert(*vh[2] != *vh[3]);
+  assert(vh[0] != Tmc_Vertex_handle()); assert(vh[1] != Tmc_Vertex_handle());
+  assert(vh[2] != Tmc_Vertex_handle()); assert(vh[3] != Tmc_Vertex_handle());
+  assert(vh[1] != vh[2]); assert(vh[1] != vh[3]); assert(vh[1] != vh[4]);
+  assert(vh[2] != vh[3]); assert(vh[2] != vh[4]); assert(vh[3] != vh[4]);
+
+  Tmc_Cell_handle ch;
 
   if (orient) {
-    *cells++ = Cell(vh[0], vh[1], vh[2], vh[3], simplex);
+    if (orientation(vh[0]->point(), vh[1]->point(),
+		    vh[2]->point(), vh[3]->point()) != POSITIVE) {
+      std::cout << orientation(vh[0]->point(), vh[1]->point(),
+			       vh[2]->point(), vh[3]->point())<< std::endl;
+    }
+    CGAL_assertion(orientation(
+			       vh[0]->point(), vh[1]->point(),
+			       vh[2]->point(), vh[3]->point()) == POSITIVE);
+    ch = triangulation_incr_builder.add_cell(vh[0], vh[1], vh[2], vh[3]);
   } else {
-    *cells++ = Cell(vh[0], vh[1], vh[3], vh[2], simplex);
+    CGAL_assertion(orientation(
+			       vh[0]->point(), vh[1]->point(),
+			       vh[3]->point(), vh[2]->point()) == POSITIVE);
+    ch = triangulation_incr_builder.add_cell(vh[0], vh[1], vh[3], vh[2]);
   }
+  observer.after_cell_insertion(s, ch);
+  return ch;
 }
 
-template <class MixedComplexTraits_3,
-	  class OutputTriangulation_3,
-	  class TriangulatedMixedComplexObserver_3>
-void 
-triangulate_mixed_complex_3(MixedComplexTraits_3 &rt,
-			    typename MixedComplexTraits_3::Geom_traits::FT
-			    const & shrink_factor,
-			    OutputTriangulation_3 &tmc,
-			    TriangulatedMixedComplexObserver_3 &observer,
-			    bool verbose) 
+template < 
+  class RegularTriangulation_3,
+  class TriangulatedMixedComplex_3,
+  class TriangulatedMixedComplexObserver_3>
+typename TriangulatedMixedComplex_3::Geom_traits::Point_3
+Mixed_complex_triangulator_3<
+  RegularTriangulation_3,
+  TriangulatedMixedComplex_3,
+  TriangulatedMixedComplexObserver_3>::
+get_orthocenter(Rt_Simplex const &s) {
+  Rt_Vertex_handle vh;
+  Rt_Edge           e;
+  Rt_Facet          f;
+  Rt_Cell_handle   ch;
+  
+  Tmc_Point result;
+  switch (s.dimension()) {
+  case 0:
+    vh=s;
+    result = r2t_converter_object(vh->point());
+    break;
+  case 1:
+    e=s;
+    result = orthocenter_obj(
+			     r2t_converter_object(e.first->vertex(e.second)->point()),
+			     r2t_converter_object(e.first->vertex(e.third)->point()));
+    break;
+  case 2:
+    f=s;
+    result = orthocenter_obj(
+			     r2t_converter_object(
+						  f.first->vertex((f.second+1)&3)->point()),
+			     r2t_converter_object(
+						  f.first->vertex((f.second+2)&3)->point()),
+			     r2t_converter_object(
+						  f.first->vertex((f.second+3)&3)->point()));
+    break;
+  case 3:
+    ch=s;
+    result = orthocenter_obj(
+			     r2t_converter_object(ch->vertex(0)->point()),
+			     r2t_converter_object(ch->vertex(1)->point()),
+			     r2t_converter_object(ch->vertex(2)->point()),
+			     r2t_converter_object(ch->vertex(3)->point()));
+    break;
+  }
+  return result;
+}
+
+template < 
+  class RegularTriangulation_3,
+  class TriangulatedMixedComplex_3,
+  class TriangulatedMixedComplexObserver_3>
+typename TriangulatedMixedComplex_3::Geom_traits::Point_3
+Mixed_complex_triangulator_3<
+  RegularTriangulation_3,
+  TriangulatedMixedComplex_3,
+  TriangulatedMixedComplexObserver_3>::
+get_anchor(Rt_Simplex const &sVor)
 {
-  typedef MixedComplexTraits_3            Regular;
-  typedef typename Regular::Finite_vertices_iterator Rt_Vertices_iterator;
-  typedef typename Regular::Finite_edges_iterator    Rt_Edges_iterator;
-  typedef typename Regular::Finite_facets_iterator   Rt_Facets_iterator;
-  typedef typename Regular::Finite_cells_iterator    Rt_Cells_iterator;
-  typedef Triangulation_simplex_3<Regular>           Rt_Simplex;
+  return get_orthocenter(sVor);
+}
 
-  typedef Combinatorial_mixed_complex_triangulator_3<MixedComplexTraits_3>  
-    CMCT;
-  typedef typename CMCT::Vertex          Cmct_Vertex;
-  typedef typename CMCT::Vertex_handle   Cmct_Vertex_handle;
-  typedef typename CMCT::Cell            Cmct_Cell;
-  typedef typename CMCT::Vertex_iterator Cmct_Vertex_iterator;
+template < 
+  class RegularTriangulation_3,
+  class TriangulatedMixedComplex_3,
+  class TriangulatedMixedComplexObserver_3>
+void
+Mixed_complex_triangulator_3<
+  RegularTriangulation_3,
+  TriangulatedMixedComplex_3,
+  TriangulatedMixedComplexObserver_3>::
+remove_small_edges()
+{
+  Bbox_3 bbox;
+  for (Tmc_Finite_vertices_iterator vit = _tmc.finite_vertices_begin();
+       vit != _tmc.finite_vertices_end(); vit++) {
+    bbox = bbox+vit->point().bbox();
+  }
+  // Tmc_RT sq_length = ((bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin()) + 
+  //    (bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin()) + 
+  //    (bbox.zmax()-bbox.zmin())*(bbox.zmax()-bbox.zmin()))/100000000;
 
-  typedef Triangulation_incremental_builder_3<OutputTriangulation_3>
-    Triangulation_incremental_builder;
-  typedef Skin_surface_traits_3<typename OutputTriangulation_3::Geom_traits>
-    Mc_traits;
-
-  typedef typename OutputTriangulation_3::Vertex_handle Out_Vertex_handle;
-  typedef typename OutputTriangulation_3::Cell_handle   Out_Cell_handle;
-
-  CMCT mc_triangulator(rt, verbose);
-  Triangulation_incremental_builder triangulation_incr_builder(tmc);
-
-  std::map <Cmct_Vertex_handle, Out_Vertex_handle> vertex_map;
-
-  triangulation_incr_builder.begin_triangulation(3);
-
-  { // Vertices
-    if (verbose) std::cout << "Construct vertices" << std::endl;
-//     std::list<const Cmct_Vertex_handle> vertices;
-    //std::list<Cmct_Vertex_iterator> v2;
-    //mc_triangulator.construct_vertices(std::back_inserter(vertices));
-//     { // NGHK: DEBUG CODE
-//       Cmct_Vertex_iterator vit = mc_triangulator.vertices_begin();
-//       CGAL_assertion((int)std::distance(mc_triangulator.vertices_begin(), 
-// 					mc_triangulator.vertices_end())==
-// 		     (int)vertices.size());
-//     }
-    for (Cmct_Vertex_iterator vit = mc_triangulator.vertices_begin();
-	 vit != mc_triangulator.vertices_end(); vit++) {
-      Out_Vertex_handle vh = triangulation_incr_builder.add_vertex();
-      vh->point() = mc_triangulator.location(*vit, Mc_traits(shrink_factor));
-      Cmct_Vertex_handle cmct_vh = &*vit;
-      vertex_map[cmct_vh] = vh;
-      observer.after_vertex_insertion((*vit).first, (*vit).second, vh);
+  Tmc_RT sq_length = 1e-6;
+  // NGHK: This may intrudoce rounding errors, since the quadratic surface
+  // may change:
+  Tmc_Vertex_handle vh, vh_collapse_to;
+  Tmc_Finite_vertices_iterator vit = _tmc.finite_vertices_begin();
+  int nCollapsed=0;
+  while (vit != _tmc.finite_vertices_end()) {
+    vh = vit;
+    vit++;
+    if (is_collapsible(vh, vh_collapse_to,sq_length)) {
+      nCollapsed ++;
+      do_collapse(vh,vh_collapse_to);
     }
   }
+  std::cout << "Collapsed: " << nCollapsed << std::endl;
+}
 
-  { // Cells
-    std::vector<Cmct_Cell> cells;
-    int nCells=0, nSimplices=0;
+template < 
+  class RegularTriangulation_3,
+  class TriangulatedMixedComplex_3,
+  class TriangulatedMixedComplexObserver_3>
+bool
+Mixed_complex_triangulator_3<
+  RegularTriangulation_3,
+  TriangulatedMixedComplex_3,
+  TriangulatedMixedComplexObserver_3>::
+is_collapsible(Tmc_Vertex_handle vh,
+	       Tmc_Vertex_handle &vh_collapse_to,
+	       Tmc_RT sq_length)
+{
+  std::vector<Tmc_Cell_handle> incident_cells;
+  CGAL_assertion(_tmc.is_vertex(vh));
+  incident_cells.reserve(64);
+  _tmc.incident_cells(vh, std::back_inserter(incident_cells));
 
-    // mixed cells corresponding to regular vertices
-    if (verbose) std::cout << "Construct 0 cells" << std::endl;
-    for (Rt_Vertices_iterator vit = rt.finite_vertices_begin();
-	 vit != rt.finite_vertices_end(); vit ++) {
-      mc_triangulator.construct_0_cell(vit, std::back_inserter(cells));
-      nCells += cells.size();nSimplices++;
-      Rt_Simplex s(vit);
-      for (typename std::vector<Cmct_Cell>::iterator it = cells.begin();
-	   it != cells.end(); it++) {
-	Out_Cell_handle ch = 
-	  triangulation_incr_builder.add_cell(vertex_map[(it->vertex(0))],
-					      vertex_map[(it->vertex(1))],
-					      vertex_map[(it->vertex(2))],
-					      vertex_map[(it->vertex(3))]);      
-	observer.after_cell_insertion(s, ch);
-      }
-      cells.clear();
-    }
-
-    // mixed cells corresponding to regular edges
-    if (verbose) std::cout << "Construct 1 cells" << std::endl;
-    for (Rt_Edges_iterator eit = rt.finite_edges_begin();
-	 eit != rt.finite_edges_end(); eit ++) {
-      mc_triangulator.construct_1_cell(eit, std::back_inserter(cells));
-      nCells += cells.size();nSimplices++;
-      Rt_Simplex s(*eit);
-      for (typename std::vector<Cmct_Cell>::iterator it = cells.begin();
-	   it != cells.end(); it++) {
-	Out_Cell_handle ch = 
-	  triangulation_incr_builder.add_cell(vertex_map[(it->vertex(0))],
-					      vertex_map[(it->vertex(1))],
-					      vertex_map[(it->vertex(2))],
-					      vertex_map[(it->vertex(3))]);      
-	observer.after_cell_insertion(s, ch);
-      }
-      cells.clear();
-    }
-
-    // mixed cells corresponding to regular facets
-    if (verbose) std::cout << "Construct 2 cells" << std::endl;
-    for (Rt_Facets_iterator fit = rt.finite_facets_begin();
-	 fit != rt.finite_facets_end(); fit ++) {
-      mc_triangulator.construct_2_cell(fit, std::back_inserter(cells));
-      nCells += cells.size();nSimplices++;
-      Rt_Simplex s(*fit);
-      for (typename std::vector<Cmct_Cell>::iterator it = cells.begin();
-	   it != cells.end(); it++) {
-	Out_Cell_handle ch = 
-	  triangulation_incr_builder.add_cell(vertex_map[(it->vertex(0))],
-					      vertex_map[(it->vertex(1))],
-					      vertex_map[(it->vertex(2))],
-					      vertex_map[(it->vertex(3))]);      
-	observer.after_cell_insertion(s, ch);
-      }
-      cells.clear();
-    }
-
-    // mixed cells corresponding to regular cells
-    if (verbose) std::cout << "Construct 3 cells" << std::endl;
-    for (Rt_Cells_iterator cit = rt.finite_cells_begin();
-	 cit != rt.finite_cells_end(); cit ++) {
-      mc_triangulator.construct_3_cell(cit, std::back_inserter(cells));
-      nCells += cells.size();nSimplices++;
-      Rt_Simplex s(cit);
-      for (typename std::vector<Cmct_Cell>::iterator it = cells.begin();
-	   it != cells.end(); it++) {
-	Out_Cell_handle ch = 
-	  triangulation_incr_builder.add_cell(vertex_map[(it->vertex(0))],
-					      vertex_map[(it->vertex(1))],
-					      vertex_map[(it->vertex(2))],
-					      vertex_map[(it->vertex(3))]);      
-	observer.after_cell_insertion(s, ch);
-      }
-      cells.clear();
-    }
-    CGAL_assertion(std::distance(mc_triangulator.cells_begin(), 
-				 mc_triangulator.cells_end()) == nCells);
+  std::set<Tmc_Vertex_handle> incident_vertices;
+  for(typename std::vector<Tmc_Cell_handle>::iterator 
+	cit = incident_cells.begin();
+      cit != incident_cells.end(); ++cit) {
+    // Put all incident vertices in incident_vertices.
+    for (int j=0; j<4; ++j)
+      if ((*cit)->vertex(j) != vh)
+	incident_vertices.insert((*cit)->vertex(j));
   }
   
-  triangulation_incr_builder.end_triangulation();
+  for (typename std::set<Tmc_Vertex_handle>::iterator 
+	 it = incident_vertices.begin(); 
+       it != incident_vertices.end(); it++) {
+    if ((_tmc.geom_traits().compute_squared_distance_3_object()(vh->point(),
+							       (*it)->point())
+	< sq_length) &&
+	(vh->cell()->surf == (*it)->cell()->surf) &&
+	(vh->sign() == (*it)->sign())) {
+      bool ok = true;
+      for (typename std::vector<Tmc_Cell_handle>::iterator 
+	     cit = incident_cells.begin();
+	   ok && (cit != incident_cells.end()); cit++) {
+	if (!(*cit)->has_vertex(*it)) {
+	  const Tmc_Point* pts[4] = { &((*cit)->vertex(0)->point()),
+				      &((*cit)->vertex(1)->point()),
+				      &((*cit)->vertex(2)->point()),
+				      &((*cit)->vertex(3)->point()) };
+	  pts[(*cit)->index(vh)] = &(*it)->point();
+	  
+	  ok = (_tmc.geom_traits().orientation_3_object()
+		(*pts[0],*pts[1],*pts[2],*pts[3]) == CGAL::POSITIVE);
+	}
+      }
+      if (ok) {
+	vh_collapse_to = *it;
+	return true;
+      } 
+    }
+  }
+  return false;
+}
 
-//   // mixed cells corresponding to regular edges
-//   if (verbose) std::cout << "Construct 1 cells" << std::endl;
-//   for (Rt_Finite_edges_iterator eit = regular.finite_edges_begin();
-//        eit != regular.finite_edges_end(); eit ++) {
-//     construct_1_cell(eit, std::back_inserter(cells));
-//   }
+template < 
+  class RegularTriangulation_3,
+  class TriangulatedMixedComplex_3,
+  class TriangulatedMixedComplexObserver_3>
+void
+Mixed_complex_triangulator_3<
+  RegularTriangulation_3,
+  TriangulatedMixedComplex_3,
+  TriangulatedMixedComplexObserver_3>::
+do_collapse(Tmc_Vertex_handle vh, 
+	    Tmc_Vertex_handle vh_collapse_to)
+{
+  std::vector<Tmc_Cell_handle> incident_cells;
+  incident_cells.reserve(32);
+  _tmc.incident_cells(vh, std::back_inserter(incident_cells));
+  int i,i2;
+  for (typename std::vector<Tmc_Cell_handle>::iterator
+	 it = incident_cells.begin(); it != incident_cells.end(); it++) {
+    i = (*it)->index(vh);
+    if ((*it)->has_vertex(vh_collapse_to,i2)) {
+      // This cell is collapsed, set neighbor information of the new facet
+      // and set the cell-pointer of the incident vertices.
+      Tmc_Cell_handle ch1 = (*it)->neighbor(i);
+      Tmc_Cell_handle ch2 = (*it)->neighbor(i2);
+      ch1->set_neighbor(ch1->index((*it)), ch2);
+      ch2->set_neighbor(ch2->index((*it)), ch1);
+      for (int i=0; i<4; i++) {
+	// Try to point to a cell with the same surface:
+	if ((*it)->vertex(i)->cell() == (*it)) {
+	  if ((*it)->surf == ch1->surf) {
+	    (*it)->vertex(i)->set_cell(ch1);
+	  } else {
+	    (*it)->vertex(i)->set_cell(ch2);
+	  }
+	}
+      }
+      _tmc.tds().delete_cell((*it));
+    } else {
+      // This cell is changed, set pointer to the new vertex
+      (*it)->set_vertex(i,vh_collapse_to);
+    }
+  }
+  _tmc.tds().delete_vertex(vh);
+}
 
-//   // mixed cells corresponding to regular facets
-//   if (verbose) std::cout << "Construct 2 cells" << std::endl;
-//   for (Rt_Finite_facets_iterator fit = regular.finite_facets_begin();
-//        fit != regular.finite_facets_end(); fit ++) {
-//     construct_2_cell(fit, std::back_inserter(cells));
-//   }
-    
-//   // mixed cells corresponding to regular cells
-//   if (verbose) std::cout << "Construct 3 cells" << std::endl;
-//   for (Rt_Finite_cells_iterator cit = regular.finite_cells_begin();
-//        cit != regular.finite_cells_end();
-//        cit++) {
-//     construct_3_cell(cit, std::back_inserter(cells));
-//   }
-
-//   triangulation_incr_builder.end_triangulation();
-    
-//   anchors.clear();
-
-//   //remove_small_edges();
-//   { // NGHK: debug code:
-//     CGAL_assertion(_tmc.is_valid());
-//     std::vector<Vertex> ch_vertices;
-//     _tmc.incident_vertices(_tmc.infinite_vertex(), 
-// 			   std::back_inserter(ch_vertices));
-//     for (typename std::vector<Vertex>::iterator
-// 	   vit = ch_vertices.begin(); vit != ch_vertices.end(); vit++) {
-//       CGAL_assertion((*vit)->sign() == POSITIVE);
-//     }
-//   }
+template < 
+  class RegularTriangulation_3,
+  class TriangulatedMixedComplex_3,
+  class TriangulatedMixedComplexObserver_3>
+void 
+triangulate_mixed_complex_3
+(RegularTriangulation_3 &rt,
+ typename RegularTriangulation_3::Geom_traits::FT  shrink,
+ TriangulatedMixedComplex_3 &tmc,
+ TriangulatedMixedComplexObserver_3 &observer,
+ bool verbose) 
+{
+  typedef Mixed_complex_triangulator_3<
+    RegularTriangulation_3,
+    TriangulatedMixedComplex_3,
+    TriangulatedMixedComplexObserver_3>  Mixed_complex_triangulator;
+  Mixed_complex_triangulator(rt, tmc, observer, verbose);
 }
 
 
 template < 
-  class MixedComplexTraits_3,
+  class RegularTriangulation_3,
   class TriangulatedMixedComplex_3>
 void 
-triangulate_mixed_complex_3(MixedComplexTraits_3 const &regular, 
-			    typename MixedComplexTraits_3::Geom_traits::FT
-			    const &shrink_factor,
-			    TriangulatedMixedComplex_3 &tmc,
-			    bool verbose)
+triangulate_mixed_complex_3
+(RegularTriangulation_3 const &regular, 
+ typename RegularTriangulation_3::Geom_Traits::FT shrink,
+ TriangulatedMixedComplex_3 &tmc,
+ bool verbose)
 {
   Triangulated_mixed_complex_observer_3<
-    TriangulatedMixedComplex_3, const MixedComplexTraits_3> 
-    observer(shrink_factor);
-  triangulate_mixed_complex_3(regular, shrink_factor, tmc, observer, verbose);
+    TriangulatedMixedComplex_3, const RegularTriangulation_3> 
+    observer(1);
+  triangulate_mixed_complex_3(regular, shrink, tmc, observer, verbose);
 }
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_TRIANGULATE_MIXED_COMPLEX_H
+#endif // CGAL_TRIANGULATE_MIXED_COMPLEX_3_H

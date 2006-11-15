@@ -81,7 +81,8 @@ public:
   void after_facet_insertion(
     T_Cell_iterator ch,
     Polyhedron_facet_handle fh) {
-    fh->sim = ch->mixed_cell();
+    // NGHK:
+//     fh->sim = ch->mixed_cell();
   }
 
 };
