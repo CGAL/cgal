@@ -669,9 +669,35 @@ have numerous applications in computer graphics and solid modelling. They
 are used, for example, in free-form sketches and for defining the true-type
 fonts.
 
-In our representation, we assume that the coordinates of all control
-points are rational numbers, so both $X(t)$ and $Y(t)$ are polynomials
-with rational coefficients.
+Using the \ccc{Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>}
+class template it is possible to construct and maintain arrangements of
+B\'ezier curves that are given by rational control points (a sequence
+of objects of the \ccc{RatKernel::Point_2} type). The template parameters
+are the same ones used by the \ccc{Arr_conic_traits_2} class template, and
+here it is also recommended to use the \ccc{CORE_algebraic_number_traits}
+class, with Cartesian kernels instantiated
+with the \ccc{Rational} and \ccc{Algebraic} number-types defined by this
+class.
+
+As we have just mentioned, we assume that the coordinates of all control
+points that define a B\'ezier curve are rational numbers, so both $X(t)$
+and $Y(t)$ are polynomials with rational coefficients. The intersection
+points between curves are however algebraic numbers, and their exact
+computation is time-consuming. The traits class therefore contains a layer
+of geometric filtering that performs all computation in an approximate
+manner whenever possible. Thus, it resorts to exact computations only when
+the approximate computation fails to produce an unambiguous result.
+Note that most arrangement vertices are therefore associated with approximated
+points. You cannot access the coordinates of such points and obtain them as
+algebraic numbers, and only access to the approximate coordinates in possible.
+See the Reference Manual for the exact interface of the \ccc{Point_2},
+\ccc{Curve_2} and \ccc{X_monotone_curve_2} defined by the traits class.
+
+The \ccc{Arr_Bezier_curve_traits_2} is a model of the
+\ccc{ArrangementTraits_2} concept (but not of the
+\ccc{ArrangementLandmarkTraits_2} concept, so it is not possible
+to use the landmark point-location strategy for arrangements of
+rational arcs).
 
 \begin{figure}[t]
 \begin{ccTexOnly}
@@ -681,7 +707,7 @@ with rational coefficients.
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
   <p><center>
-  <img src="./fig/Bezier_arr.gif" border=0 alt="An arrangement of Beizer curves">
+  <img src="./fig/Bezier_arr.gif" border=0 alt="An arrangement of Bezier curves">
   </center>
 \end{ccHtmlOnly}
 \caption{An arrangement of ten B\'ezier curves of degree $5$, as
