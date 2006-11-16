@@ -23,10 +23,15 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class T>
-Rational_polynomial_1 Rational_polynomial_1::operator* (const T &n) const {
-	Rational_polynomial_1 r (*this);
-	r.scale (n);
-	return r;
+Rational_polynomial_1 Rational_polynomial_1::operator*(const T &n)const{
+	Rational_polynomial_1 r(*this);
+	return (r*=n);
+};
+
+template<class T>
+Rational_polynomial_1& Rational_polynomial_1::operator*=(const T &s){
+	Gmpz z(s);
+	return (*this*=z);
 };
 
 CGAL_END_NAMESPACE

@@ -58,7 +58,7 @@ Rational_polynomial_1::Rational_polynomial_1(const Rational_polynomial_1 &p){
 	for(int i=0;i<degree+1;++i){
 		mpz_init(coef[i]);
 		mpz_set(coef[i],p_coef[i]);
-		}
+	}
 	solved=p.get_solved();
 	//roots=p.get_roots();
 };
@@ -84,65 +84,6 @@ void Rational_polynomial_1::set_degree(int d){	// dangerous function!
 	return;
 };
 
-// functions for setting polynomial coefficients
-void Rational_polynomial_1::set_coef (int pow_x, const mpz_t &z) {
-	mpz_set (coef[calc_index (pow_x)], z);
-};
-
-void Rational_polynomial_1::set_coef (int pow_x, const CGAL::Gmpz &z) {
-	mpz_set (coef[calc_index (pow_x)], z.mpz());
-};
-
-void Rational_polynomial_1::set_coef (int pow_x, int c) {
-	mpz_set_si (coef[calc_index (pow_x)], (long int)c);
-};
-
-void Rational_polynomial_1::set_coef (int pow_x, unsigned int c) {
-	mpz_set_ui (coef[calc_index (pow_x)], (unsigned long int)c);
-};
-
-void Rational_polynomial_1::set_coef (int pow_x, long int c) {
-	mpz_set_si (coef[calc_index (pow_x)], c);
-};
-
-void Rational_polynomial_1::set_coef (int pow_x, unsigned long int c) {
-	mpz_set_ui (coef[calc_index (pow_x)], c);
-};
-
-// scaling
-void Rational_polynomial_1::scale (const int s) {
-	Gmpz rational (s);
-	scale (rational);
-	return;
-};
-
-void Rational_polynomial_1::scale (const mpz_t &s) {
-	Gmpz rational (s);
-	scale (rational);
-	return;
-};
-
-void Rational_polynomial_1::scale (const CGAL::Gmpz &s) {
-	for(int i=0;i<=degree;++i)
-		mpz_mul(coef[i],coef[i],s.mpz());
-	/*mpz_t temp;
-	mpz_init (temp);
-	for (int i=0; i<=degree; ++i) {
-		int ind = calc_index (i);
-		mpz_mul (temp, coef[ind], s.mpz());
-		mpz_clear (coef[ind]);
-		mpz_init (coef[ind]);
-		mpz_set (coef[ind], temp);
-	}
-	mpz_clear(temp);
-	return;*/
-};
-
-void Rational_polynomial_1::get_coef (int pow_x, mpz_t *c) const {
-	mpz_set (*c, coef[calc_index (pow_x)]);
-	return;
-};
-
 void Rational_polynomial_1::set_solved(){
 	solved=true;
 	//roots.clear();
@@ -160,24 +101,21 @@ void Rational_polynomial_1::clear_solved(){
 	Algebraic_1 x_pow(1);
 	for (int i=0; i<=degree; ++i) {
 		// invariant at this point: x_pow = x^i
-		result += x_pow * coef[calc_index (i)];
+		result+=x_pow*coef[i];
 		x_pow *= x;
 	}
 	return result;
 };*/
 
 CGAL::Gmpz Rational_polynomial_1::eval(const CGAL::Gmpz &x)const{
-	mpz_t result,x_pow,temp;
+	mpz_t result,x_pow;
 	mpz_init(result);	// it's 0 now
 	mpz_init_set_si(x_pow,1);	// x^0 = 1
-	mpz_init(temp);
 	for(int i=0;i<=degree;++i){	// invariant: x_pow = x^i
-		mpz_mul(temp,coef[calc_index(i)],x_pow);
-		mpz_add(result,temp,result);
+		mpz_addmul(result,coef[i],x_pow);
 		mpz_mul(x_pow,x_pow,x.mpz());	// for the next iteration
 	}
 	mpz_clear(x_pow);
-	mpz_clear(temp);
 	CGAL::Gmpz ret(result);
 	mpz_clear(result);
 	return ret;
@@ -190,8 +128,8 @@ void Rational_polynomial_1::eval_mpfr
 	mpfr_inits2(prec<prec_r?prec_r:prec,x_pow,temp,NULL);
 	mpfr_set_ui(x_pow,1,GMP_RNDN);
 	mpfr_set_ui(result,0,GMP_RNDN);
-	for(int i=0;i<=degree;++i){
-		mpfr_mul_z(temp,x_pow,coef[calc_index(i)],GMP_RNDN);
+	for(int i=0;i<=degree;++i){ // mpfr_fma?
+		mpfr_mul_z(temp,x_pow,coef[i],GMP_RNDN);
 		mpfr_add(result,temp,result,GMP_RNDN);
 		mpfr_mul(x_pow,x_pow,x,GMP_RNDN);
 	}
@@ -206,28 +144,18 @@ void Rational_polynomial_1::eval_mpfi(mpfi_t &result,const mpfi_t &x)const{
 	mpfi_init(temp);
 	mpfi_set_ui(result,0);
 	for(int i=0;i<=degree;++i){
-		mpfi_mul_z(temp,x_pow,coef[calc_index(i)]);
+		mpfi_mul_z(temp,x_pow,coef[i]);
 		mpfi_add(result,temp,result);
 		mpfi_mul(x_pow,x_pow,x);
 	}
 	return;
 };
 
-Rational_polynomial_1 Rational_polynomial_1::derive () const {
-	mpz_t coef_old, coef_new, temp_x;
-	mpz_init (coef_old);
-	mpz_init (coef_new);
-	mpz_init (temp_x);
+Rational_polynomial_1 Rational_polynomial_1::derive()const{
 	Rational_polynomial_1 derivative (degree-1);
-	for (int x=1; x<=degree; ++x) {
-		mpz_set_si (temp_x, (long int)x);
-		get_coef (x, &coef_old);
-		mpz_mul (coef_new, coef_old, temp_x);
-		derivative.set_coef (x-1, coef_new);
-	}
-	mpz_clear (coef_old);
-	mpz_clear (coef_new);
-	mpz_clear (temp_x);
+	mpz_t *coef_d=derivative.get_coefs();
+	for(int x=1;x<degree+1;++x)
+		mpz_mul_si(coef_d[x-1],coef[x],x);
 	return derivative;
 };
 
@@ -239,10 +167,8 @@ Rational_polynomial_1& Rational_polynomial_1::operator= (const Rational_polynomi
 	// copy data from p
 	degree = p.degree;
 	coef = (mpz_t*)malloc (sizeof(mpz_t)*(degree+1));
-	for (int i=0; i<degree+1; ++i) {
-		mpz_init (coef[i]);
-		mpz_set (coef[i], p.coef[i]);
-		}
+	for (int i=0; i<degree+1; ++i)
+		mpz_init_set(coef[i],p.coef[i]);
 	solved=p.get_solved();
 	return *this;
 };
@@ -287,18 +213,15 @@ std::ostream& Rational_polynomial_1::show (std::ostream &s) const {
 	return s;
 };
 
-Rational_polynomial_1 Rational_polynomial_1::operator- () const {
-	Rational_polynomial_1 opposite (degree);	// the opposite has the same degree
-	mpz_t temp;
-	mpz_init (temp);
-	for (int i=0; i<degree+1; ++i) {
-		mpz_neg (temp, coef[calc_index (i)]);
-		opposite.set_coef (i, temp);
-	}
-	mpz_clear (temp);
+Rational_polynomial_1 Rational_polynomial_1::operator-()const{
+	Rational_polynomial_1 opposite(degree);
+	mpz_t *coef_o=opposite.get_coefs();
+	for(int i=0;i<degree+1;++i)
+		mpz_neg(coef_o[i],coef[i]);
 	return opposite;
 };
 
+// XXX: maybe it is best to use operator+= to implement this
 Rational_polynomial_1 Rational_polynomial_1::operator+ (const Rational_polynomial_1 &s) const {
 	int sd = s.get_degree ();
 	int minord, majord;	// the minor and major of both degrees
@@ -315,14 +238,14 @@ Rational_polynomial_1 Rational_polynomial_1::operator+ (const Rational_polynomia
 		majord = sd;
 	}
 	
-	Rational_polynomial_1 sum (degree>sd?degree:sd);
+	Rational_polynomial_1 sum(majord);
 
 	mpz_init (temp1);
 	mpz_init (temp2);
 
 	for (int i=0; i<=minord; ++i) {
 		s.get_coef (i, &temp1);
-		mpz_add (temp2, temp1, coef[calc_index (i)]);
+		mpz_add(temp2,temp1,coef[i]);
 		sum.set_coef (i, temp2);
 	}
 
@@ -330,7 +253,7 @@ Rational_polynomial_1 Rational_polynomial_1::operator+ (const Rational_polynomia
 
 	if (am_i_bigger)
 		for (int i=minord+1; i<=majord; ++i)
-			sum.set_coef (i, coef[calc_index (i)]);
+			sum.set_coef(i,coef[i]);
 	else
 		for (int i=minord+1; i<=majord; ++i) {
 			s.get_coef (i, &temp2);
@@ -341,13 +264,30 @@ Rational_polynomial_1 Rational_polynomial_1::operator+ (const Rational_polynomia
 	return sum;
 };
 
-Rational_polynomial_1& Rational_polynomial_1::operator+= (const Rational_polynomial_1 &s) {
-	Rational_polynomial_1 aux (*this);
-	*this = aux + s;
+Rational_polynomial_1& Rational_polynomial_1::operator+=(const Rational_polynomial_1 &s){
+	mpz_t *coef_s=s.get_coefs();
+	int sd;
+	if(degree<(sd=s.get_degree())){
+		mpz_t *coef_sum=(mpz_t*)malloc(sizeof(mpz_t)*(sd+1));
+		for(int i=0;i<degree+1;++i){
+			mpz_init(coef_sum[i]);
+			mpz_add(coef_sum[i],coef_s[i],coef[i]);
+			mpz_clear(coef[i]);
+		}
+		for(int i=degree+1;i<sd+1;++i)
+			mpz_init_set(coef_sum[i],coef_s[i]);
+		free(coef);
+		coef=coef_sum;
+		degree=sd;
+	}else{
+		for(int i=0;i<sd+1;++i)
+			mpz_add(coef[i],coef_s[i],coef[i]);
+	}
 	solved=false;
 	return *this;
 };
 
+// TODO: this function has to be optimized, because we will use it to intersect
 Rational_polynomial_1 Rational_polynomial_1::operator- (const Rational_polynomial_1 &s) const {
 	return (*this+(-s));
 };
@@ -359,36 +299,32 @@ Rational_polynomial_1& Rational_polynomial_1::operator-= (const Rational_polynom
 	return *this;
 };
 
-// multiplies the polynomial by x^shiftn (precondition: shiftn>=0)
-void Rational_polynomial_1::shift (int shiftn) {
-	CGAL_assertion (shiftn>=0);
-	if (shiftn == 0)
-		return;
-	mpz_t *new_coef = (mpz_t*)malloc (sizeof(mpz_t)*(degree+1+shiftn));
-	for (int i=0; i<degree+1; ++i) {
-		mpz_init (new_coef[i]);
-		mpz_set (new_coef[i], coef[i]);
-		mpz_clear (coef[i]);
+// multiplies the polynomial by c*x^shiftn
+Rational_polynomial_1& Rational_polynomial_1::scale_and_shift(const mpz_t &s,int shiftn){
+	mpz_t *new_coef=(mpz_t*)malloc(sizeof(mpz_t)*(degree+shiftn+1));
+	for (int i=0;i<degree+1;++i){
+		mpz_mul(coef[i],coef[i],s);
+		mpz_init_set(new_coef[i+shiftn],coef[i]);
+		mpz_clear(coef[i]);
 	}
-	free (coef);
-	for (int i=degree+1; i<degree+1+shiftn; ++i)
-		mpz_init (new_coef[i]);
-	degree += shiftn;
-	coef = new_coef;
+	degree+=shiftn;
+	free(coef);
+	for(int i=0;i<shiftn;++i)
+		mpz_init(new_coef[i]);
+	coef=new_coef;
 	solved=false;
-	return;
+	return *this;
 };
 
-Rational_polynomial_1 Rational_polynomial_1::operator* (const Rational_polynomial_1 &f) const {
+// TODO: karatsubize this
+Rational_polynomial_1 Rational_polynomial_1::operator*(const Rational_polynomial_1 &f)const{
 	Rational_polynomial_1 product;
 	mpz_t *f_coefs;
-	f_coefs = f.get_coefs ();
-	int df = f.get_degree ();
-	for (int i=0; i<=df; ++i) {
-		Rational_polynomial_1 partial (*this);
-		partial.scale (f_coefs[i]);
-		partial.shift (df-i);
-		product += partial;
+	f_coefs=f.get_coefs();
+	int df=f.get_degree();
+	for(int i=0;i<=df;++i){
+		Rational_polynomial_1 partial(*this);
+		product+=partial.scale_and_shift(f_coefs[i],i);
 	}
 	return product;
 };
@@ -400,17 +336,36 @@ Rational_polynomial_1& Rational_polynomial_1::operator*= (const Rational_polynom
 	return *this;
 };
 
-// TODO: this function returns false if the two polynomials have different
-// degree (it may be the case where the two are equal and one of them has
-// the coefficients of higher degree set to zero)
-bool Rational_polynomial_1::operator== (const Rational_polynomial_1 &p) const {
-	mpz_t *p_coef;
-	if (degree != p.get_degree ())
-		return false;
-	p_coef = p.get_coefs ();
-	for (int i=0; i<=degree; ++i)
-		if (mpz_cmp (coef[i], p_coef[i]) != 0)
-			return false;
+Rational_polynomial_1& Rational_polynomial_1::operator*=(const mpz_t &s){
+	for(int i=0;i<=degree;++i)
+		mpz_mul(coef[i],coef[i],s);
+	return *this;
+};
+
+Rational_polynomial_1& Rational_polynomial_1::operator*=(const CGAL::Gmpz &s){
+	for(int i=0;i<=degree;++i)
+		mpz_mul(coef[i],coef[i],s.mpz());
+	return *this;
+};
+
+bool Rational_polynomial_1::operator==(const Rational_polynomial_1 &p)const{
+	mpz_t *coef_p=p.get_coefs ();
+	int degree_p;
+	if((degree_p=p.get_degree())<degree){
+		for(int i=degree_p+1;i<degree+1;++i)
+			if(mpz_sgn(coef[i]))
+				return false;
+		for(int i=0;i<degree_p+1;++i)
+			if(mpz_cmp(coef[i],coef_p[i]))
+				return false;
+	}else{
+		for (int i=degree+1;i<degree_p+1;++i)
+			if(mpz_sgn(coef_p[i]))
+				return false;
+		for(int i=0;i<degree_p+1;++i)
+			if(mpz_cmp(coef[i],coef_p[i]))
+				return false;
+	}
 	return true;
 };
 

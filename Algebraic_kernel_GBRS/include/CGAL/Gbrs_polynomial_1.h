@@ -33,7 +33,7 @@ CGAL_BEGIN_NAMESPACE
 
 class Algebraic_1;
 
-typedef std::vector<Algebraic_1> rootvector;
+/*typedef std::vector<Algebraic_1> rootvector;*/
 
 class Rational_polynomial_1 {
 	private:
@@ -41,8 +41,6 @@ class Rational_polynomial_1 {
 		mpz_t* coef;
 		bool solved;
 		/*rootvector roots;*/
-
-		int calc_index(int)const;
 	public:
 		Rational_polynomial_1 ();
 		Rational_polynomial_1 (const Rational_polynomial_1 &);
@@ -56,9 +54,6 @@ class Rational_polynomial_1 {
 		void set_coef (int, unsigned int);
 		void set_coef (int, long int);
 		void set_coef (int, unsigned long int);
-		void scale (const int);
-		void scale (const mpz_t &);
-		void scale (const CGAL::Gmpz &);
 		int get_degree () const;
 		int get_number_of_monomials () const;
 		mpz_t* get_coefs () const;
@@ -80,10 +75,13 @@ class Rational_polynomial_1 {
 		Rational_polynomial_1& operator+= (const Rational_polynomial_1 &);
 		Rational_polynomial_1 operator- (const Rational_polynomial_1 &) const;
 		Rational_polynomial_1& operator-= (const Rational_polynomial_1 &);
-		void shift (int);
+		Rational_polynomial_1& scale_and_shift(const mpz_t&,int);
 		Rational_polynomial_1 operator* (const Rational_polynomial_1 &) const;
 		template <class T> Rational_polynomial_1 operator* (const T &) const;
-		Rational_polynomial_1& operator*= (const Rational_polynomial_1 &);
+		Rational_polynomial_1& operator*=(const Rational_polynomial_1 &);
+		Rational_polynomial_1& operator*=(const mpz_t &);
+		Rational_polynomial_1& operator*=(const CGAL::Gmpz &);
+		template<class T>Rational_polynomial_1& operator*=(const T&);
 		bool operator== (const Rational_polynomial_1 &) const;
 };
 
@@ -91,11 +89,24 @@ std::ostream& operator<< (std::ostream &, const Rational_polynomial_1 &);
 
 // /////////////////
 // inline functions
-inline int Rational_polynomial_1::calc_index(int pow_x)const{return pow_x;};
+inline void Rational_polynomial_1::set_coef(int pow_x,const mpz_t &z){
+	mpz_set(coef[pow_x],z);};
+inline void Rational_polynomial_1::set_coef(int pow_x,const CGAL::Gmpz &z){
+	mpz_set(coef[pow_x],z.mpz());};
+inline void Rational_polynomial_1::set_coef(int pow_x,int c){
+	mpz_set_si(coef[pow_x],(long int)c);};
+inline void Rational_polynomial_1::set_coef(int pow_x,unsigned int c){
+	mpz_set_ui(coef[pow_x],(unsigned long int)c);};
+inline void Rational_polynomial_1::set_coef(int pow_x,long int c){
+	mpz_set_si(coef[pow_x],c);};
+inline void Rational_polynomial_1::set_coef(int pow_x,unsigned long int c){
+	mpz_set_ui(coef[pow_x],c);};
 inline int Rational_polynomial_1::get_degree()const{return(int)degree;};
 inline int Rational_polynomial_1::get_number_of_monomials()const{
 	return(degree+1);};
 inline mpz_t* Rational_polynomial_1::get_coefs()const{return coef;};
+inline void Rational_polynomial_1::get_coef(int pow_x,mpz_t *c)const{
+	mpz_set(*c,coef[pow_x]);};
 inline bool Rational_polynomial_1::get_solved()const{return solved;};
 /*inline rootvector Rational_polynomial_1::get_roots()const{return roots;};
 inline void Rational_polynomial_1::set_root(const Algebraic_1 &r){
