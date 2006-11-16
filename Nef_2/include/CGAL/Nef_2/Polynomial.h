@@ -30,7 +30,6 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/number_type_basic.h>
 #include <CGAL/number_utils.h>
-#include <CGAL/Number_type_traits.h>
 #include <CGAL/IO/io.h>
 #include <cstddef>
 #undef CGAL_NEF_DEBUG
