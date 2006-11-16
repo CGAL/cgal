@@ -126,22 +126,42 @@ test_basic_operators(const NT&)
 
 template < class NT >
 bool
-test_division(const NT&, CGAL::Tag_true)
+test_field_division(const NT&, Tag_true )
 {
-  NT zero = 0;
-  NT one  = 1;
+    BOOST_STATIC_ASSERT(CGAL::CGALi::Is_field<NT>::value);
 
-  if (zero / 1 != 0 ) return false;
-  if (1 / one  != 1 ) return false;
+    if ( NT(0) / NT(1) != NT(0) ) return false;
+    if ( NT(1) / NT(1) != NT(1) ) return false;
+    // mixed op with int 
+    if ( NT(0) / 1  != NT(0) ) return false;
+    if ( 1 / NT(1)  != NT(1) ) return false;
 
   return true;
 }
 
 template < class NT >
 bool
-test_division(const NT&, CGAL::Tag_false)
+test_field_division(const NT&, Tag_false)
+{ 
+    return true; 
+}
+
+
+template < class NT >
+bool
+test_integral_division(const NT&, Tag_true)
 {
-  return true;
+    return (CGAL_NTS integral_division(NT(6),NT(3)) == NT(2));
+    //mixed ops with int 
+    return (CGAL_NTS integral_division(6,NT(3)) == NT(2));
+    return (CGAL_NTS integral_division(NT(6),3) == NT(2));
+}
+
+template < class NT >
+bool
+test_integral_division(const NT&, Tag_false)
+{ 
+return true; 
 }
 
 template < class NT >
@@ -200,10 +220,13 @@ test_mixed_operators(const NT& x)
   if (1 * zero != 0 ) return false;
 
   // Test division (only if supported).
-  typedef Algebraic_structure_traits<NT> AST;
-  typedef typename AST::Integral_division Integral_division;
-  return test_division(x,
-    Boolean_tag<! ::boost::is_same<Integral_division,Null_functor>::value>());
+  if (! test_field_division(x, 
+                  Boolean_tag<CGALi::Is_field<NT>::value>() )) 
+      return false;
+  if (! test_integral_division(x, 
+                  Boolean_tag<CGALi::Is_integral_domain<NT>::value>() )) 
+      return false;
+  return true;
 }
 
 template < class NT >
@@ -357,7 +380,8 @@ test_utilities(const NT& x)
   if (CGAL_NTS square(two+two) != NT(16)) return false;
 
   // UFD
-  return test_gcd(x, Boolean_tag<Is_unique_factorization_domain<NT>::value>() );
+  return test_gcd(x, 
+          Boolean_tag<CGALi::Is_unique_factorization_domain<NT>::value>() );
   return true; 
 }
 
