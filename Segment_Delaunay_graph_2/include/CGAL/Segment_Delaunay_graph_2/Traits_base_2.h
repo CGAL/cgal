@@ -34,7 +34,6 @@
 #endif
 
 
-#include <CGAL/Number_type_traits.h>
 #include <CGAL/Segment_Delaunay_graph_2/Kernel_wrapper_2.h>
 
 

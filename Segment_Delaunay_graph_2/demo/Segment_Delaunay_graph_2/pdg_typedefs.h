@@ -48,11 +48,11 @@ namespace CGAL {
 }
 #endif
 
-typedef CGAL::Sqrt_field_tag  MTag;
+typedef CGAL::Field_with_sqrt_tag  MTag;
 #ifdef CGAL_USE_CORE
-typedef CGAL::Sqrt_field_tag  EMTag;
+typedef CGAL::Field_with_sqrt_tag  EMTag;
 #else
-typedef CGAL::Ring_tag        EMTag;
+typedef CGAL::Integral_domain_without_division_tag        EMTag;
 #endif
 
 typedef CGAL::Tag_false      ITag;

@@ -1239,20 +1239,20 @@ protected:
 
   // types
   typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Construct_sdg_circle_2<Gt,Ring_tag>
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Construct_sdg_circle_2<Gt,Integral_domain_without_division_tag>
   Construct_sdg_circle_2;
 
   typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Construct_sdg_bisector_2<Gt,Ring_tag>
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Construct_sdg_bisector_2<Gt,Integral_domain_without_division_tag>
   Construct_sdg_bisector_2;
 
   typedef
-  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Construct_sdg_bisector_ray_2<Gt,Ring_tag>
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Construct_sdg_bisector_ray_2<Gt,Integral_domain_without_division_tag>
   Construct_sdg_bisector_ray_2;
 
   typedef
   CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::
-  Construct_sdg_bisector_segment_2<Gt,Ring_tag>
+  Construct_sdg_bisector_segment_2<Gt,Integral_domain_without_division_tag>
   Construct_sdg_bisector_segment_2;
 
   // access

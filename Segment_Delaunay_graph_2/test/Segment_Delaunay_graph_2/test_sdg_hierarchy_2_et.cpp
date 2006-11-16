@@ -31,7 +31,6 @@ typedef exact_ring_t   ring_number_t;
 typedef exact_field_t  field_number_t;
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Number_type_traits.h>
 
 #include <CGAL/Segment_Delaunay_graph_hierarchy_2.h>
 #include <CGAL/Segment_Delaunay_graph_traits_2.h>
@@ -40,7 +39,7 @@ struct K_ring  : public CGAL::Simple_cartesian<ring_number_t> {};
 struct K_field : public CGAL::Simple_cartesian<field_number_t> {};
 
 typedef CGAL::Field_tag  MTag;
-typedef CGAL::Ring_tag   MTag_wi;
+typedef CGAL::Integral_domain_without_division_tag   MTag_wi;
 
 typedef CGAL::Segment_Delaunay_graph_traits_2<K_field,MTag> Gt;
 

@@ -26,7 +26,6 @@
 
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
 #include <CGAL/enum.h>
-#include <CGAL/Number_type_traits.h>
 #include <CGAL/Segment_Delaunay_graph_2/Sqrt_extension_1.h>
 #include <CGAL/Segment_Delaunay_graph_2/Sqrt_extension_2.h>
 
@@ -58,8 +57,8 @@ public:
   typedef CGAL::Sqrt_extension_2<RT>       Sqrt_2;
   typedef CGAL::Sqrt_extension_2<Sqrt_1>   Sqrt_3;
 
-  typedef typename Number_type_traits<RT>::Has_sqrt  RT_Has_sqrt;
-  typedef typename Number_type_traits<FT>::Has_sqrt  FT_Has_sqrt;
+    typedef Boolean_tag<CGALi::Is_field_with_sqrt<RT>::value>  RT_Has_sqrt;
+    typedef Boolean_tag<CGALi::Is_field_with_sqrt<FT>::value>  FT_Has_sqrt;
 
   static const RT_Has_sqrt& rt_has_sqrt() {
     static RT_Has_sqrt has_sqrt;

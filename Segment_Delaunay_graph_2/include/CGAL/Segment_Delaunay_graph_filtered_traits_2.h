@@ -58,7 +58,7 @@ CGAL_BEGIN_NAMESPACE
 
 // this traits class does support intersecting segments
 template<class CK,
-	 class CK_MTag = Sqrt_field_tag,
+	 class CK_MTag = Field_with_sqrt_tag,
 #ifdef CGAL_USE_GMP
 	 class EK      = Simple_cartesian< Gmpq >,
 #else
@@ -66,7 +66,7 @@ template<class CK,
 #endif
 	 class EK_MTag = Field_tag,
 	 class FK      = Simple_cartesian< Interval_nt<false> >,
-	 class FK_MTag = Sqrt_field_tag,
+	 class FK_MTag = Field_with_sqrt_tag,
 	 class C2E     = Cartesian_converter<CK, EK>,
 #if defined(__sun) && defined(__SUNPRO_CC)
          class C2F     = SDG2_INS::SUNPRO_CC_Interval_converter<CK, FK> >
@@ -83,9 +83,9 @@ struct Segment_Delaunay_graph_filtered_traits_2
 {
 public:
   Segment_Delaunay_graph_filtered_traits_2() {
-    SDG2_INS::Concept_check_tags<Ring_tag,CK_MTag,2>();
-    SDG2_INS::Concept_check_tags<Ring_tag,EK_MTag,4>();
-    SDG2_INS::Concept_check_tags<Ring_tag,FK_MTag,6>();
+    SDG2_INS::Concept_check_tags<Integral_domain_without_division_tag,CK_MTag,2>();
+    SDG2_INS::Concept_check_tags<Integral_domain_without_division_tag,EK_MTag,4>();
+    SDG2_INS::Concept_check_tags<Integral_domain_without_division_tag,FK_MTag,6>();
   }
 };
 
@@ -96,7 +96,7 @@ struct Segment_Delaunay_graph_filtered_traits_2<CK, Field_tag,
 						EK, EK_MTag,
 						FK, FK_MTag,
 						C2E, C2F>
-  : public Segment_Delaunay_graph_filtered_traits_base_2<CK, Ring_tag,
+  : public Segment_Delaunay_graph_filtered_traits_base_2<CK, Integral_domain_without_division_tag,
 							 EK, EK_MTag,
 							 FK, FK_MTag,
 							 C2E, C2F,
@@ -104,8 +104,8 @@ struct Segment_Delaunay_graph_filtered_traits_2<CK, Field_tag,
 {
 public:
   Segment_Delaunay_graph_filtered_traits_2() {
-    SDG2_INS::Concept_check_tags<Ring_tag,EK_MTag,4>();
-    SDG2_INS::Concept_check_tags<Ring_tag,FK_MTag,6>();
+    SDG2_INS::Concept_check_tags<Integral_domain_without_division_tag,EK_MTag,4>();
+    SDG2_INS::Concept_check_tags<Integral_domain_without_division_tag,FK_MTag,6>();
   }
 };
 
@@ -116,15 +116,15 @@ struct Segment_Delaunay_graph_filtered_traits_2<CK, CK_MTag,
 						FK, FK_MTag,
 						C2E, C2F>
   : public Segment_Delaunay_graph_filtered_traits_base_2<CK, CK_MTag,
-							 EK, Ring_tag,
+							 EK, Integral_domain_without_division_tag,
 							 FK, FK_MTag,
 							 C2E, C2F,
 							 Tag_true>
 {
 public:
   Segment_Delaunay_graph_filtered_traits_2() {
-    SDG2_INS::Concept_check_tags<Ring_tag,CK_MTag,2>();
-    SDG2_INS::Concept_check_tags<Ring_tag,FK_MTag,6>();
+    SDG2_INS::Concept_check_tags<Integral_domain_without_division_tag,CK_MTag,2>();
+    SDG2_INS::Concept_check_tags<Integral_domain_without_division_tag,FK_MTag,6>();
   }
 };
 
@@ -136,14 +136,14 @@ struct Segment_Delaunay_graph_filtered_traits_2<CK, CK_MTag,
 						C2E, C2F>
   : public Segment_Delaunay_graph_filtered_traits_base_2<CK, CK_MTag,
 							 EK, EK_MTag,
-							 FK, Ring_tag,
+							 FK, Integral_domain_without_division_tag,
 							 C2E, C2F,
 							 Tag_true>
 {
 public:
   Segment_Delaunay_graph_filtered_traits_2() {
-    SDG2_INS::Concept_check_tags<Ring_tag,CK_MTag,2>();
-    SDG2_INS::Concept_check_tags<Ring_tag,EK_MTag,4>();
+    SDG2_INS::Concept_check_tags<Integral_domain_without_division_tag,CK_MTag,2>();
+    SDG2_INS::Concept_check_tags<Integral_domain_without_division_tag,EK_MTag,4>();
   }
 };
 
@@ -154,14 +154,14 @@ struct Segment_Delaunay_graph_filtered_traits_2<CK, CK_MTag,
 						FK, Field_tag,
 						C2E, C2F>
   : public Segment_Delaunay_graph_filtered_traits_base_2<CK, CK_MTag,
-							 EK, Ring_tag,
-							 FK, Ring_tag,
+							 EK, Integral_domain_without_division_tag,
+							 FK, Integral_domain_without_division_tag,
 							 C2E, C2F,
 							 Tag_true>
 {
 public:
   Segment_Delaunay_graph_filtered_traits_2() {
-    SDG2_INS::Concept_check_tags<Ring_tag,CK_MTag,2>();
+    SDG2_INS::Concept_check_tags<Integral_domain_without_division_tag,CK_MTag,2>();
   }
 };
 
@@ -171,15 +171,15 @@ struct Segment_Delaunay_graph_filtered_traits_2<CK, Field_tag,
 						 EK, EK_MTag,
 						 FK, Field_tag,
 						 C2E, C2F>
-  : public Segment_Delaunay_graph_filtered_traits_base_2<CK, Ring_tag,
+  : public Segment_Delaunay_graph_filtered_traits_base_2<CK, Integral_domain_without_division_tag,
 							 EK, EK_MTag,
-							 FK, Ring_tag,
+							 FK, Integral_domain_without_division_tag,
 							 C2E, C2F,
 							 Tag_true>
 {
 public:
   Segment_Delaunay_graph_filtered_traits_2() {
-    SDG2_INS::Concept_check_tags<Ring_tag,EK_MTag,4>();
+    SDG2_INS::Concept_check_tags<Integral_domain_without_division_tag,EK_MTag,4>();
   }
 };
 
@@ -189,15 +189,15 @@ struct Segment_Delaunay_graph_filtered_traits_2<CK, Field_tag,
 						EK, Field_tag,
 						FK, FK_MTag,
 						C2E, C2F>
-  : public Segment_Delaunay_graph_filtered_traits_base_2<CK, Ring_tag,
-							 EK, Ring_tag,
+  : public Segment_Delaunay_graph_filtered_traits_base_2<CK, Integral_domain_without_division_tag,
+							 EK, Integral_domain_without_division_tag,
 							 FK, FK_MTag,
 							 C2E, C2F,
 							 Tag_true>
 {
 public:
   Segment_Delaunay_graph_filtered_traits_2() {
-    SDG2_INS::Concept_check_tags<Ring_tag,FK_MTag,6>();
+    SDG2_INS::Concept_check_tags<Integral_domain_without_division_tag,FK_MTag,6>();
   }
 };
 
@@ -206,9 +206,9 @@ struct Segment_Delaunay_graph_filtered_traits_2<CK, Field_tag,
 						EK, Field_tag,
 						FK, Field_tag,
 						C2E, C2F>
-  : public Segment_Delaunay_graph_filtered_traits_base_2<CK, Ring_tag,
-							 EK, Ring_tag,
-							 FK, Ring_tag,
+  : public Segment_Delaunay_graph_filtered_traits_base_2<CK, Integral_domain_without_division_tag,
+							 EK, Integral_domain_without_division_tag,
+							 FK, Integral_domain_without_division_tag,
 							 C2E, C2F,
 							 Tag_true>
 {};
@@ -218,15 +218,15 @@ struct Segment_Delaunay_graph_filtered_traits_2<CK, Field_tag,
 
 // this traits class does NOT support intersecting segments
 template<class CK,
-	 class CK_MTag = Sqrt_field_tag,
+	 class CK_MTag = Field_with_sqrt_tag,
 #ifdef CGAL_USE_GMP
 	 class EK      = Simple_cartesian< Gmpq >,
 #else
 	 class EK      = Simple_cartesian< MP_Float >,
 #endif
-	 class EK_MTag = Ring_tag,
+	 class EK_MTag = Integral_domain_without_division_tag,
 	 class FK      = Simple_cartesian< Interval_nt<false> >,
-	 class FK_MTag = Sqrt_field_tag,
+	 class FK_MTag = Field_with_sqrt_tag,
 	 class C2E     = Cartesian_converter<CK, EK>,
 #if defined(__sun) && defined(__SUNPRO_CC)
          class C2F     = SDG2_INS::SUNPRO_CC_Interval_converter<CK, FK> >
@@ -242,9 +242,9 @@ struct Segment_Delaunay_graph_filtered_traits_without_intersections_2
 							 Tag_false>
 {
   Segment_Delaunay_graph_filtered_traits_without_intersections_2() {
-    SDG2_INS::Concept_check_tags_wi<Ring_tag,CK_MTag,2>();
-    SDG2_INS::Concept_check_tags_wi<Ring_tag,EK_MTag,4>();
-    SDG2_INS::Concept_check_tags_wi<Ring_tag,FK_MTag,6>();
+    SDG2_INS::Concept_check_tags_wi<Integral_domain_without_division_tag,CK_MTag,2>();
+    SDG2_INS::Concept_check_tags_wi<Integral_domain_without_division_tag,EK_MTag,4>();
+    SDG2_INS::Concept_check_tags_wi<Integral_domain_without_division_tag,FK_MTag,6>();
   }
 };
 

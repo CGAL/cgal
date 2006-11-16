@@ -25,7 +25,6 @@
 
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
 
-#include <CGAL/Number_type_traits.h>
 #include <CGAL/Segment_Delaunay_graph_2/Traits_base_2.h>
 
 #include <CGAL/Filtered_kernel.h>
@@ -45,26 +44,26 @@ struct Segment_Delaunay_graph_traits_2
 
 template<class R>
 struct Segment_Delaunay_graph_traits_2<R,Field_tag>
-  : public Segment_Delaunay_graph_traits_base_2<R,Ring_tag,Tag_true> {};
+  : public Segment_Delaunay_graph_traits_base_2<R,Integral_domain_without_division_tag,Tag_true> {};
 
 
 // Concept checking
 template<class R>
-struct Segment_Delaunay_graph_traits_2<R,Ring_tag>
-  : public Segment_Delaunay_graph_traits_base_2<R,Ring_tag,Tag_true>
+struct Segment_Delaunay_graph_traits_2<R,Integral_domain_without_division_tag>
+  : public Segment_Delaunay_graph_traits_base_2<R,Integral_domain_without_division_tag,Tag_true>
 {
   Segment_Delaunay_graph_traits_2() {
-    THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag
+    THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Field_with_sqrt_tag
     ( R() );
   }
 };
 
 template<class R>
 struct Segment_Delaunay_graph_traits_2<R,Euclidean_ring_tag>
-  : public Segment_Delaunay_graph_traits_base_2<R,Ring_tag,Tag_true>
+  : public Segment_Delaunay_graph_traits_base_2<R,Integral_domain_without_division_tag,Tag_true>
 {
   Segment_Delaunay_graph_traits_2() {
-    THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Sqrt_field_tag
+    THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Field_tag_OR_Field_with_sqrt_tag
     ( R() );
   }
 };
@@ -77,32 +76,32 @@ struct Segment_Delaunay_graph_traits_2<Filtered_kernel<R>,Field_tag>
 					   typename Filtered_kernel<R>::EK,
 					   Field_tag,
 					   typename Filtered_kernel<R>::FK,
-					   Sqrt_field_tag>
+					   Field_with_sqrt_tag>
 {};
 
 template<class R>
-struct Segment_Delaunay_graph_traits_2<Filtered_kernel<R>,Sqrt_field_tag>
+struct Segment_Delaunay_graph_traits_2<Filtered_kernel<R>,Field_with_sqrt_tag>
   : public
-  Segment_Delaunay_graph_filtered_traits_2<R,Sqrt_field_tag,
+  Segment_Delaunay_graph_filtered_traits_2<R,Field_with_sqrt_tag,
 					   typename Filtered_kernel<R>::EK,
 					   Field_tag,
 					   typename Filtered_kernel<R>::FK,
-					   Sqrt_field_tag>
+					   Field_with_sqrt_tag>
 {};
 
 //=========================================================================
 
 // this traits class does NOT support intersecting segments
-template<class R, class MTag = Ring_tag>
+template<class R, class MTag = Integral_domain_without_division_tag>
 struct Segment_Delaunay_graph_traits_without_intersections_2
   : public Segment_Delaunay_graph_traits_base_2<R,MTag,Tag_false> {};
 
 template<class R>
 struct Segment_Delaunay_graph_traits_without_intersections_2<R,Field_tag>
-  : public Segment_Delaunay_graph_traits_base_2<R,Ring_tag,Tag_false>
+  : public Segment_Delaunay_graph_traits_base_2<R,Integral_domain_without_division_tag,Tag_false>
 {
   Segment_Delaunay_graph_traits_without_intersections_2() {
-    THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag
+    THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Integral_domain_without_division_tag_OR_Field_with_sqrt_tag
     ( R() );
   }
 };
@@ -110,10 +109,10 @@ struct Segment_Delaunay_graph_traits_without_intersections_2<R,Field_tag>
 template<class R>
 struct
 Segment_Delaunay_graph_traits_without_intersections_2<R,Euclidean_ring_tag>
-  : public Segment_Delaunay_graph_traits_base_2<R,Ring_tag,Tag_false>
+  : public Segment_Delaunay_graph_traits_base_2<R,Integral_domain_without_division_tag,Tag_false>
 {
   Segment_Delaunay_graph_traits_without_intersections_2() {
-    THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Ring_tag_OR_Sqrt_field_tag
+    THE_2ND_TEMPLATE_PARAMETER_MUST_EITHER_BE_Integral_domain_without_division_tag_OR_Field_with_sqrt_tag
     ( R() );
   }
 };
@@ -123,26 +122,26 @@ Segment_Delaunay_graph_traits_without_intersections_2<R,Euclidean_ring_tag>
 template<class R>
 struct
 Segment_Delaunay_graph_traits_without_intersections_2<Filtered_kernel<R>,
-						      Ring_tag>
+						      Integral_domain_without_division_tag>
   : public
-  Segment_Delaunay_graph_filtered_traits_without_intersections_2<R,Ring_tag,
+  Segment_Delaunay_graph_filtered_traits_without_intersections_2<R,Integral_domain_without_division_tag,
 					    typename Filtered_kernel<R>::EK,
-					    Ring_tag,
+					    Integral_domain_without_division_tag,
 					    typename Filtered_kernel<R>::FK,
-					    Sqrt_field_tag>
+					    Field_with_sqrt_tag>
 {};
 
 template<class R>
 struct
 Segment_Delaunay_graph_traits_without_intersections_2<Filtered_kernel<R>,
-						      Sqrt_field_tag>
+						      Field_with_sqrt_tag>
   : public
   Segment_Delaunay_graph_filtered_traits_without_intersections_2<R,
-					    Sqrt_field_tag,
+					    Field_with_sqrt_tag,
 					    typename Filtered_kernel<R>::EK,
-					    Ring_tag,
+					    Integral_domain_without_division_tag,
 					    typename Filtered_kernel<R>::FK,
-					    Sqrt_field_tag>
+					    Field_with_sqrt_tag>
 {};
 
 CGAL_END_NAMESPACE

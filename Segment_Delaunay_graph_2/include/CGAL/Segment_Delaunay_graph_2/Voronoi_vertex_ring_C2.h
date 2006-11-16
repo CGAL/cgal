@@ -1379,13 +1379,11 @@ public:
   inline FT y(const Tag_true&) const { return hy() / hw(); }
 
   inline FT x() const {
-    static typename Number_type_traits<FT>::Has_division has_division;
-    return x(has_division);
+    return x(Boolean_tag<CGALi::Is_field<FT>::value>());
   }
 
   inline FT y() const {
-    static typename Number_type_traits<FT>::Has_division has_division;
-    return y(has_division);
+    return y(Boolean_tag<CGALi::Is_field<FT>::value>());
   }
 
   FT hx() const {

@@ -24,7 +24,6 @@
 
 
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
-#include <CGAL/Number_type_traits.h>
 #include <CGAL/Segment_Delaunay_graph_2/Voronoi_vertex_ring_C2.h>
 #include <CGAL/Segment_Delaunay_graph_2/Voronoi_vertex_sqrt_field_C2.h>
 
@@ -38,13 +37,13 @@ namespace Internal {
   template<class K,class M> struct Which_Voronoi_vertex_base_C2;
 
   template<class K>
-  struct Which_Voronoi_vertex_base_C2<K,Ring_tag>
+  struct Which_Voronoi_vertex_base_C2<K,Integral_domain_without_division_tag>
   {
     typedef Voronoi_vertex_ring_C2<K>          Base;
   };
 
   template<class K>
-  struct Which_Voronoi_vertex_base_C2<K,Sqrt_field_tag>
+  struct Which_Voronoi_vertex_base_C2<K,Field_with_sqrt_tag>
   {
     typedef Voronoi_vertex_sqrt_field_C2<K>    Base;
   };

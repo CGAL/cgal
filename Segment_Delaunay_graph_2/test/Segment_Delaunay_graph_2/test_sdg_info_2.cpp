@@ -5,7 +5,6 @@
 #include <iostream>
 #include <fstream>
 #include <cassert>
-
 // choose the kernel
 #include <CGAL/Simple_cartesian.h>
 

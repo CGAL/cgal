@@ -186,8 +186,7 @@ private:
 
   static Point_2 midpoint(const Point_2& p, const Point_2& q) {
     typedef typename Gt::FT  FT;
-    static typename Number_type_traits<FT>::Has_division  has_division;
-    return midpoint(p, q, has_division);
+    return midpoint(p, q, Boolean_tag<CGALi::Is_field<FT>::value>());
   }
 
 public:

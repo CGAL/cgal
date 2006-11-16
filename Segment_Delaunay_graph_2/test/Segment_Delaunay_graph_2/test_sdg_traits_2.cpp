@@ -9,7 +9,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Segment_Delaunay_graph_traits_2.h>
 #include <CGAL/Segment_Delaunay_graph_filtered_traits_2.h>
-#include <CGAL/Number_type_traits.h>
 
 #ifdef CGAL_USE_CORE
 #include <CGAL/CORE_Expr.h>
@@ -32,9 +31,9 @@ typedef CGAL::Simple_cartesian<CGAL::Gmpq>  Gmpq_Kernel;
 typedef CGAL::Simple_cartesian<CGAL::Gmpz>  Gmpz_Kernel;
 #endif
 
-typedef CGAL::Ring_tag        Ring;
+typedef CGAL::Integral_domain_without_division_tag        Ring;
 typedef CGAL::Field_tag       Field;
-typedef CGAL::Sqrt_field_tag  Sqrt;
+typedef CGAL::Field_with_sqrt_tag  Sqrt;
 
 //----------------------------------------------------------------------
 //----------------------------------------------------------------------

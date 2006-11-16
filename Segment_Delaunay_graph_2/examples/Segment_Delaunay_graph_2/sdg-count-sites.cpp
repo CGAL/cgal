@@ -22,7 +22,7 @@ typedef CGAL::Simple_cartesian<ENT>        EK;
 #include <CGAL/Segment_Delaunay_graph_2.h>
 
 typedef CGAL::Segment_Delaunay_graph_filtered_traits_2<CK,
-/* The construction kernel allows for / and sqrt */    CGAL::Sqrt_field_tag,
+/* The construction kernel allows for / and sqrt */    CGAL::Field_with_sqrt_tag,
 						       EK,
 /* The exact kernel supports field ops exactly */      CGAL::Field_tag>  Gt;
 
