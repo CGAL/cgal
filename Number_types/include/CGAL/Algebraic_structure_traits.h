@@ -16,15 +16,15 @@
 
 CGAL_BEGIN_NAMESPACE
 
-//TODO: rm
-struct Ring_tag      {};
-struct Sqrt_field_tag{};
-
 // REMARK: Some of the following comments and references are just copy & pasted
 //         from EXACUS and have to be adapted/removed in the future.
 
 // The tags for Algebra_type corresponding to the number type concepts
 // ===================================================================
+
+//TODO: rm these old tags 
+struct Ring_tag      {};
+struct Sqrt_field_tag{};
 
 //! corresponds to the \c IntegralDomainWithoutDiv concept.
 struct Integral_domain_without_division_tag {};

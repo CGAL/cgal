@@ -30,11 +30,11 @@
 CGAL_BEGIN_NAMESPACE
 
 // Algebraic structure traits
-template <> struct Algebraic_structure_traits< Gmpzf >
+template <> class Algebraic_structure_traits< Gmpzf >
     : public Algebraic_structure_traits_base< Gmpzf, Euclidean_ring_tag >  {
-
+public:
     typedef Tag_true            Is_exact;
-    
+
     struct Is_zero 
         : public Unary_function< Algebraic_structure, bool > {
     public:        
@@ -83,9 +83,10 @@ template <> struct Algebraic_structure_traits< Gmpzf >
 
 
 // Real embeddable traits
-template <> struct Real_embeddable_traits< Gmpzf > 
-  : public Real_embeddable_traits_base< Gmpzf > {
-private:    
+template <> 
+class Real_embeddable_traits< Gmpzf > 
+    : public Real_embeddable_traits_base< Gmpzf > {
+    
     typedef Algebraic_structure_traits<Gmpzf> AST;
 public:
     typedef AST::Is_zero Is_zero;
@@ -129,10 +130,12 @@ public:
 };
 
 // specialization of to double functor
-template<> struct Real_embeddable_traits< Quotient<Gmpzf> >
+template<> 
+class Real_embeddable_traits< Quotient<Gmpzf> >
     : public 
-INTERN_QUOTIENT::Real_embeddable_traits_quotient_base< Quotient<Gmpzf> >
+INTERN_QUOTIENT::Real_embeddable_traits_quotient_base< Quotient<Gmpzf> > 
 {
+public:
     struct To_double: public Unary_function<Quotient<Gmpzf>, double>{
         inline
         double operator()(const Quotient<Gmpzf>& q) const {

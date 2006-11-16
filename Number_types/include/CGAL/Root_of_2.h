@@ -398,8 +398,9 @@ struct NT_converter < Root_of_2<NT1>, Root_of_2<NT1> >
 };
 
 template <class RT>
-struct Algebraic_structure_traits<Root_of_2<RT> >
+class Algebraic_structure_traits<Root_of_2<RT> >
     :public Algebraic_structure_traits_base<Root_of_2<RT> , Null_tag >{
+public:
     
     typedef Root_of_2<RT> Algebraic_structure;
     typedef typename Algebraic_structure_traits<RT>::Is_exact Is_exact;
@@ -426,9 +427,8 @@ struct Algebraic_structure_traits<Root_of_2<RT> >
 
 
 template<class RT>
-struct Real_embeddable_traits<Root_of_2<RT> >
+class Real_embeddable_traits<Root_of_2<RT> >
     :public Real_embeddable_traits_base<Root_of_2<RT> >{
-private:
     typedef Real_embeddable_traits<RT> RET_RT;
     typedef typename Root_of_traits<RT>::RootOf_1 Root_of_1;
 public:

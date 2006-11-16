@@ -1437,9 +1437,10 @@ public:
 
 // <EXT,EXT>
 template <class A_coeff, class B_coeff, class Root>
-class Coercion_traits_for_level<Sqrt_extension<A_coeff, Root>, 
+struct Coercion_traits_for_level<Sqrt_extension<A_coeff, Root>, 
                            Sqrt_extension<B_coeff, Root>,
                            CTL_SQRT_EXT>{
+private:
     typedef Coercion_traits<A_coeff, B_coeff> CT;
     typedef Sqrt_extension<A_coeff,Root> A;
     typedef Sqrt_extension<B_coeff,Root> B;
@@ -1447,9 +1448,8 @@ class Coercion_traits_for_level<Sqrt_extension<A_coeff, Root>,
 public:
     typedef CGAL::Tag_true  Are_explicit_interoperable;
     typedef CGAL::Tag_false Are_implicit_interoperable;
-
     typedef Sqrt_extension<typename CT::Coercion_type, Root> Coercion_type;   
-public: 
+
     struct Cast{  
     private:
         inline Coercion_type cast(const Coercion_type& x) const{ return x; }
@@ -1472,7 +1472,8 @@ public:
 };
 
 template <class Coeff, class Root_1, class Root_2>
-class Coercion_traits_for_level<Sqrt_extension<Sqrt_extension<Coeff,Root_1>, Root_2>, 
+struct Coercion_traits_for_level<Sqrt_extension<Sqrt_extension<Coeff,Root_1>, 
+Root_2>, 
                            Sqrt_extension<Coeff,Root_1>,
                            CTL_SQRT_EXT>{
 private:
@@ -1505,7 +1506,7 @@ struct Coercion_traits_for_level
 {}; 
 
 template <class Coeff, class Root_1>
-class Coercion_traits_for_level
+struct Coercion_traits_for_level
 <
             Sqrt_extension<Sqrt_extension<Coeff,Root_1>, Root_1>, 
             Sqrt_extension<Coeff,Root_1> 
@@ -1549,13 +1550,15 @@ template <class A, class B> class CT_ext_not_to_fwsqrt;
         
 //<EXT,ANY>
 template <class Coeff, class Root, class B>
-class Coercion_traits_for_level<Sqrt_extension<Coeff, Root>, B , CTL_SQRT_EXT> 
+struct Coercion_traits_for_level<Sqrt_extension<Coeff, Root>, B , CTL_SQRT_EXT> 
 :public ::boost::mpl::if_c< 
              // if B is fwsqrt
               ::boost::is_base_and_derived< 
-                  Field_with_sqrt_tag, typename Algebraic_structure_traits<B>::Algebraic_structure_tag >::value || 
+                  Field_with_sqrt_tag, 
+typename Algebraic_structure_traits<B>::Algebraic_structure_tag >::value || 
               ::boost::is_same< 
-                  Field_with_sqrt_tag, typename Algebraic_structure_traits<B>::Algebraic_structure_tag >::value
+                  Field_with_sqrt_tag, 
+typename Algebraic_structure_traits<B>::Algebraic_structure_tag >::value
             ,
             //then take Intern::Coercion_traits for fwsqrt
             INTERN_CT::CT_ext_to_fwsqrt<Sqrt_extension<Coeff,Root>, B>
@@ -1567,7 +1570,7 @@ class Coercion_traits_for_level<Sqrt_extension<Coeff, Root>, B , CTL_SQRT_EXT>
         
 // <ANY,EXT>
 template <class Coeff, class Root, class B>
-class Coercion_traits_for_level
+struct Coercion_traits_for_level
 <B,Sqrt_extension<Coeff, Root>,CTL_SQRT_EXT >
     :public Coercion_traits_for_level<Sqrt_extension<Coeff,Root>,B,CTL_SQRT_EXT>
 {};
@@ -1575,7 +1578,7 @@ class Coercion_traits_for_level
 namespace INTERN_CT{
 // EXT coercion with FieldWithSqrt
 template <class Coeff, class Root, class FieldWithSqrt>
-class CT_ext_to_fwsqrt<Sqrt_extension<Coeff,Root>,
+struct CT_ext_to_fwsqrt<Sqrt_extension<Coeff,Root>,
                                          FieldWithSqrt>{
 private:
     typedef Sqrt_extension<Coeff,Root> A;
@@ -1609,7 +1612,8 @@ public:
     
 // EXT coercion not with FieldWithSqrt
 template <class Coeff, class Root, class B_>
-class CT_ext_not_to_fwsqrt<Sqrt_extension<Coeff,Root>, B_>{
+struct CT_ext_not_to_fwsqrt<Sqrt_extension<Coeff,Root>, B_>{
+private:
     typedef Sqrt_extension<Coeff,Root> A;
     typedef B_ B;
     typedef Coercion_traits<Coeff,B> CT;

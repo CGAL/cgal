@@ -1559,7 +1559,7 @@ public:
 CGAL_DEFINE_COERCION_TRAITS_FOR_SELF_TEM(Lazy_exact_nt<ET>, class ET);
 
 template<class ET1, class ET2 >
-class Coercion_traits< Lazy_exact_nt<ET1>, Lazy_exact_nt<ET2> >
+struct Coercion_traits< Lazy_exact_nt<ET1>, Lazy_exact_nt<ET2> >
     :public Lazy_exact_nt_coercion_traits_base 
            <Lazy_exact_nt<ET1>, Lazy_exact_nt<ET2>, 
             typename Coercion_traits<ET1,ET2>::Are_implicit_interoperable>{};

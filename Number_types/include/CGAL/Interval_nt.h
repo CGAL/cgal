@@ -1056,26 +1056,32 @@ class Algebraic_structure_traits< Interval_nt<B> >
 
 
 // COERCION_TRAITS BEGIN
-template < class A, class B , int > class Coercion_traits_for_level;
-template < class A, class B, class C> class Coercion_traits_interval_nt;
+template < class A, class B , int > struct Coercion_traits_for_level;
+template < class A, class B, class C> struct Coercion_traits_interval_nt;
 
-template<class A ,bool P > class Coercion_traits_for_level<A,Interval_nt<P>,CTL_INTERVAL>
-    :public Coercion_traits_interval_nt<A,Interval_nt<P>, typename Real_embeddable_traits<A>::Is_real_embeddable>{};
+template<class A ,bool P > 
+struct Coercion_traits_for_level<A,Interval_nt<P>,CTL_INTERVAL>
+    :public Coercion_traits_interval_nt<A,Interval_nt<P>, 
+            typename Real_embeddable_traits<A>::Is_real_embeddable>{};
 
-template<class A , bool P> class Coercion_traits_for_level<Interval_nt<P>,A,CTL_INTERVAL>
+template<class A , bool P> 
+struct Coercion_traits_for_level<Interval_nt<P>,A,CTL_INTERVAL>
     :public Coercion_traits_for_level<A,Interval_nt<P>, CTL_INTERVAL>{};
 
-template<class A , bool P > class Coercion_traits_interval_nt<A, Interval_nt<P>,Tag_false>
+template<class A , bool P > 
+struct Coercion_traits_interval_nt<A, Interval_nt<P>,Tag_false>
     :public Coercion_traits_for_level<A,Interval_nt<P>,0>{};
 
-template<class A , bool P> class Coercion_traits_interval_nt<A, Interval_nt<P>, Tag_true>{
-public:
+template<class A , bool P> 
+struct Coercion_traits_interval_nt<A, Interval_nt<P>, Tag_true>{
     typedef Tag_true Are_explicit_interoperable;
     typedef Tag_false Are_implicit_interoperable;
     typedef Interval_nt<P> Coercion_type;
     struct Cast {
         typedef Interval_nt<P> result_type;
-        Interval_nt<P> inline operator()(const Interval_nt<P>& x ) const {return x;}
+        Interval_nt<P> inline operator()(const Interval_nt<P>& x ) const {
+            return x;
+        }
         Interval_nt<P> inline operator()(const A& x ) const {
             return typename Real_embeddable_traits<A>::To_interval()(x);
         }

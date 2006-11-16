@@ -144,8 +144,8 @@ struct Cast_from_to<TO,TO>{
 }
 
 
-template<class A , class B> class Coercion_traits;
-template<class A , class B, int > class Coercion_traits_for_level;
+template<class A , class B> struct Coercion_traits;
+template<class A , class B, int > struct Coercion_traits_for_level;
     
 
 
@@ -207,11 +207,10 @@ enum COERCION_TRAITS_LEVEL {
 };
 
 template <class A, class B, int i > 
-class Coercion_traits_for_level: public Coercion_traits_for_level<A,B,i-1>{};
+struct Coercion_traits_for_level: public Coercion_traits_for_level<A,B,i-1>{};
 
 template <class A, class B> 
-class Coercion_traits_for_level<A,B,0> {
-public:
+struct Coercion_traits_for_level<A,B,0> {
     typedef Tag_false Are_explicit_interoperable;
     typedef Tag_false Are_implicit_interoperable;
     typedef void               Coercion_type;
@@ -219,7 +218,7 @@ public:
 };
 
 template<class A , class B> 
-class Coercion_traits :public Coercion_traits_for_level<A,B,CTL_TOP>{};
+struct Coercion_traits :public Coercion_traits_for_level<A,B,CTL_TOP>{};
 
  
 CGAL_END_NAMESPACE

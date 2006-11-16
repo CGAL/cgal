@@ -366,8 +366,8 @@ approximate_division(const MP_Float &n, const MP_Float &d);
 inline
 MP_Float
 operator/(const MP_Float &a, const MP_Float &b)
-{
-  return approximate_division(a, b);
+{ 
+    return approximate_division(a, b);
 }
 #endif
 
@@ -743,8 +743,11 @@ namespace CGALi {
 
 
 // specialization of to double functor
-template<> struct Real_embeddable_traits< Quotient<MP_Float> >
-    : public INTERN_QUOTIENT::Real_embeddable_traits_quotient_base< Quotient<MP_Float> >{
+template<> 
+class Real_embeddable_traits< Quotient<MP_Float> >
+    : public INTERN_QUOTIENT::Real_embeddable_traits_quotient_base< 
+Quotient<MP_Float> >{
+public:
     struct To_double: public Unary_function<Quotient<MP_Float>, double>{
          inline
          double operator()(const Quotient<MP_Float>& q) const {
@@ -762,8 +765,11 @@ template<> struct Real_embeddable_traits< Quotient<MP_Float> >
 
 // TODO:
 // // specialization of to double functor
-// template<> struct Real_embeddable_traits< Root_of_2<MP_Float> >
-//     : public INTERN_ROOT_OF_2::Real_embeddable_traits_quotient_root_of_2_base< Root_of_2<MP_Float> >{
+// template<> 
+// class Real_embeddable_traits< Root_of_2<MP_Float> >
+//     : public INTERN_ROOT_OF_2::Real_embeddable_traits_quotient_root_of_2_base<
+// Root_of_2<MP_Float> >{
+// public:
 //     struct To_double: public Unary_function<Root_of_2<MP_Float>, double>{
 //          inline
 //          double operator()(const Root_of_2<MP_Float>& q) const {

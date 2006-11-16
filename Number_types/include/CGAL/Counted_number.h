@@ -736,9 +736,8 @@ public:
 };
 
 template <class NT>
-struct Real_embeddable_traits<Counted_number<NT> > 
+class Real_embeddable_traits<Counted_number<NT> > 
     : public Real_embeddable_traits_base <Counted_number<NT> > {
-private:
     typedef Real_embeddable_traits<NT> RET_NT;
 
 public:

@@ -642,20 +642,21 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 } // namespace INTERN_QUOTIENT 
 
 template< class NT > class Algebraic_structure_traits< Quotient<NT> >
-    : public INTERN_QUOTIENT::Algebraic_structure_traits_quotient_base<Quotient<NT> >{};
+    : public INTERN_QUOTIENT::Algebraic_structure_traits_quotient_base<
+Quotient<NT> >{};
 
 template< class NT > class Real_embeddable_traits< Quotient<NT> >
-    : public INTERN_QUOTIENT::Real_embeddable_traits_quotient_base<Quotient<NT> >{};
+    : public INTERN_QUOTIENT::Real_embeddable_traits_quotient_base<
+Quotient<NT> >{};
 
 
-// fwd 
-template <class A, class B> class Coercion_traits;
 // self coercion
 CGAL_DEFINE_COERCION_TRAITS_FOR_SELF_TEM( Quotient<NT>, class NT);
-// from int to Quotient
 
+// from int to Quotient
 template <class NT>                                                      
-struct Coercion_traits<typename First_if_different<int, NT>::Type,Quotient<NT> >{                                    
+struct Coercion_traits<typename First_if_different<int, NT>::Type,Quotient<NT> >
+{                                    
     typedef Tag_true  Are_explicit_interoperable;             
     typedef Tag_true  Are_implicit_interoperable;             
     typedef Quotient<NT> Coercion_type;                                       
@@ -663,18 +664,19 @@ struct Coercion_traits<typename First_if_different<int, NT>::Type,Quotient<NT> >
         typedef Coercion_type result_type;                          
         Coercion_type operator()(const Quotient<NT>& x)   const { return x;}  
         Coercion_type operator()(
-                const typename First_if_different<int, NT>::Type& x) const {             
+                const typename First_if_different<int, NT>::Type& x) const {
             return Coercion_type(x);}                               
     };                                                              
 };                                                                  
 template <class NT>                                                      
 struct Coercion_traits<Quotient<NT>,typename First_if_different<int, NT>::Type>
-    :public Coercion_traits<typename First_if_different<int, NT>::Type,Quotient<NT> >
-{};
+    :public Coercion_traits<typename First_if_different<int, NT>::Type,
+Quotient<NT> >{};
 
 // from double to Quotient
 template <class NT>                                                      
-struct Coercion_traits<typename First_if_different<double, NT>::Type,Quotient<NT> >{                                    
+struct Coercion_traits<typename First_if_different<double, NT>::Type,
+Quotient<NT> >{                                    
     typedef Tag_true  Are_explicit_interoperable;             
     typedef Tag_true  Are_implicit_interoperable;             
     typedef Quotient<NT> Coercion_type;                                       
@@ -687,8 +689,10 @@ struct Coercion_traits<typename First_if_different<double, NT>::Type,Quotient<NT
     };                                                              
 };                                                                  
 template <class NT>                                                      
-struct Coercion_traits<Quotient<NT>,typename First_if_different<double, NT>::Type>
-    :public Coercion_traits<typename First_if_different<double, NT>::Type,Quotient<NT> >
+struct Coercion_traits<Quotient<NT>,
+typename First_if_different<double, NT>::Type>
+    :public Coercion_traits<typename First_if_different<double, NT>::Type,
+Quotient<NT> >
 {};
 
 // from NT to Quotient
