@@ -101,6 +101,7 @@ class Algebraic_structure_traits< ::__gmp_expr< ::__gmpq_value,U> >
             "Algebraic_structure_traits<mpq_class>::Integral_div()(x,y)" );
             return result;         
         }
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
     }; 
     
     class Is_square
