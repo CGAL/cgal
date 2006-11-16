@@ -91,10 +91,10 @@ Sign sign(const NT &nt)
 }
 
 
-typedef ::CGAL::Ring_tag             Ring_tag;
+typedef ::CGAL::Integral_domain_without_division_tag             Integral_domain_without_division_tag;
 typedef ::CGAL::Euclidean_ring_tag   Euclidean_ring_tag;
 typedef ::CGAL::Field_tag            Field_tag;
-typedef ::CGAL::Sqrt_field_tag       Sqrt_field_tag;
+typedef ::CGAL::Field_with_sqrt_tag       Field_with_sqrt_tag;
 
 CGAL_POLYNOMIAL_END_NAMESPACE
 
@@ -127,10 +127,10 @@ Sign sign(const NT &nt)
 }
 
 
-struct Ring_tag {};
+struct Integral_domain_without_division_tag {};
 struct Euclidean_ring_tag {};
 struct Field_tag {};
-struct Sqrt_field_tag {};
+struct Field_with_sqrt_tag {};
 
 CGAL_POLYNOMIAL_END_NAMESPACE
 #endif

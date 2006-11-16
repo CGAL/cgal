@@ -72,7 +72,7 @@ class Standard_sequence : public Sturm_sequence_t
 };
 
 #if 0
-template<class Kernel, class Ret, class M = CGAL::Ring_tag>
+template<class Kernel, class Ret, class M = CGAL::Integral_domain_without_division_tag>
 class Standard_sequence_k
 : public Sturm_sequence_k<Kernel, Ret,M>
 {

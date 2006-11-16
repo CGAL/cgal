@@ -624,7 +624,7 @@ public:
   }
 #if 1
   template<class Child>
-  Polynomial compute_simple(Ring_tag, const Child&) const
+  Polynomial compute_simple(Integral_domain_without_division_tag, const Child&) const
   {
     Polynomial gcd = sseq.exact( sseq.exact_size() - 1 );
     return p_.pseudo_quotient( gcd );
@@ -637,7 +637,7 @@ public:
     return p_ / gcd;
   }
 #endif
-  Polynomial compute_simple(Ring_tag, const Self&) const
+  Polynomial compute_simple(Integral_domain_without_division_tag, const Self&) const
   {
     Polynomial gcd = sseq[sseq.size() - 1];
     return tr_.pseudo_quotient_object()(p_, gcd);

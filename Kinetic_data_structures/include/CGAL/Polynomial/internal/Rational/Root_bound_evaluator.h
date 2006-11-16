@@ -51,7 +51,7 @@ class Root_bound_evaluator
 
         static NT
             compute_bound(const NT& max_abs, const NT& abs_lead_cf,
-        CGAL::Ring_tag) {
+        CGAL::Integral_domain_without_division_tag) {
 #if 1
             double d1 = to_double(max_abs);
             double d2 = to_double(abs_lead_cf);
@@ -128,7 +128,7 @@ class Filtered_root_bound_evaluator
         template <class NTT>
             static NTT
             compute_bound(const NTT& max_abs, const NTT& abs_lead_cf,
-        CGAL::Ring_tag) {
+        CGAL::Integral_domain_without_division_tag) {
 #if 1
             double d1 = CGAL::to_double(max_abs);
             double d2 = CGAL::to_double(abs_lead_cf);

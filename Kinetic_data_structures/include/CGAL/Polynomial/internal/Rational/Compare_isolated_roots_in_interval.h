@@ -25,7 +25,7 @@
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
-template<class Kernel, class M = CGAL::Ring_tag>
+template<class Kernel, class M = CGAL::Integral_domain_without_division_tag>
 class Compare_isolated_roots_in_interval
 {
     protected:
