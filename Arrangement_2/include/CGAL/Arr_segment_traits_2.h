@@ -27,7 +27,6 @@
 #include <CGAL/tags.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/intersections.h>
-#include <CGAL/Number_type_traits.h> 
 #include <CGAL/Arr_traits_2/Segment_assertions.h>
 #include <fstream>
 
@@ -54,9 +53,12 @@ public:
 
   typedef Kernel_                         Kernel;
   typedef typename Kernel::FT             FT;
-
-  typedef typename Number_type_traits<FT>::Has_exact_division 
-                                          Has_exact_division;
+private:
+    typedef Algebraic_structure_traits<FT> AST; 
+    typedef typename AST::Is_exact FT_is_exact; 
+public:
+    typedef Boolean_tag<CGALi::Is_field<FT>::value && FT_is_exact::value>  
+    Has_exact_division;
 
   // Category tags:
   typedef Tag_true                        Has_left_category;
