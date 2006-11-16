@@ -219,7 +219,7 @@ public:
   {
     FT squared_area = Compute_squared_area_3()(p,q,r);
     return cast_sqrt_to_double(squared_area,
-                               typename Number_type_traits<FT>::Has_sqrt());
+            Boolean_tag< CGALi::Is_field_with_sqrt<FT>::value >());
   }
 
 private:

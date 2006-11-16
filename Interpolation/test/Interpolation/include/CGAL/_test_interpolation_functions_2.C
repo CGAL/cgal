@@ -162,13 +162,13 @@ bool test_interpolation(ForwardIterator first, ForwardIterator beyond,
     assert(res.second && (CGAL_NTS abs(res.first-exact_value)<= tolerance));
 
     //with sqrt:
-    assert(_test_sibson_c1_interpolation_sqrt(first, beyond,
-					      norm,p,f, grad_f,
-					      geom_traits, tolerance,
-					      exact_value,
-					      typename CGAL::
-					      Number_type_traits<Value_type>
-					      ::Has_sqrt()));
+    assert(_test_sibson_c1_interpolation_sqrt(
+                   first, beyond, norm,p,f, grad_f, 
+                   geom_traits, tolerance, exact_value,
+                   ::CGAL::Boolean_tag< 
+                   ::CGAL::CGALi::Is_field_with_sqrt<Value_type>::value >()
+		   // typename CGAL::Number_type_traits<Value_type>::Has_sqrt()
+            ));
   }
   res =  CGAL::farin_c1_interpolation(first, beyond, norm,p,f,grad_f,
 				      geom_traits);
