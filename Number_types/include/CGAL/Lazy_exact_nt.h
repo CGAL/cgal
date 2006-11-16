@@ -520,8 +520,11 @@ class Lazy_exact_nt
 {
 public:
 
-  typedef ET_                    ET;
-  typedef Interval_nt_advanced   AT;
+  typedef ET_                    ET; // undocumented
+  typedef Interval_nt<false>     AT; // undocumented
+
+  typedef ET                     Exact_type;
+  typedef AT                     Approximate_type;
 
 private:
   typedef Lazy_exact_nt<ET> Self;
