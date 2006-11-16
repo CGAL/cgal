@@ -90,6 +90,14 @@ Algebraic_foundations/doc_tex/Algebraic_foundations_ref/square.tex -text
 Algebraic_foundations/doc_tex/Algebraic_foundations_ref/to_double.tex -text
 Algebraic_foundations/doc_tex/Algebraic_foundations_ref/to_interval.tex -text
 Algebraic_foundations/doc_tex/Algebraic_foundations_ref/unit_part.tex -text
+Algebraic_foundations/include/CGAL/Algebraic_structure_traits.h -text
+Algebraic_foundations/include/CGAL/Coercion_traits.h -text
+Algebraic_foundations/include/CGAL/Fraction_traits.h -text
+Algebraic_foundations/include/CGAL/Needs_parens_as_product.h -text
+Algebraic_foundations/include/CGAL/Rational_traits.h -text
+Algebraic_foundations/include/CGAL/Real_embeddable_traits.h -text
+Algebraic_foundations/include/CGAL/utils.h -text
+Algebraic_foundations/include/CGAL/utils_classes.h -text
 Algebraic_kernel_GBRS/config/support/S25-MPFI -text
 Algebraic_kernel_GBRS/config/support/S27-RS -text
 Algebraic_kernel_GBRS/config/support/test_MPFI.C -text
@@ -1613,28 +1621,20 @@ Nef_S2/doc_tex/Nef_S2_ref/fig/shalfedge.pdf -text svneol=unset#application/pdf
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.eps -text svneol=unset#application/postscript
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.gif -text svneol=unset#image/gif
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.pdf -text svneol=unset#application/pdf
-Number_types/include/CGAL/Algebraic_structure_traits.h -text
 Number_types/include/CGAL/CORE_BigFloat.h -text
 Number_types/include/CGAL/CORE_BigInt.h -text
 Number_types/include/CGAL/CORE_BigRat.h -text
 Number_types/include/CGAL/CORE_coercion_traits.h -text
-Number_types/include/CGAL/Coercion_traits.h -text
-Number_types/include/CGAL/Fraction_traits.h -text
 Number_types/include/CGAL/GMP/Gmpq_type.h -text
 Number_types/include/CGAL/GMP/Gmpz_type.h -text
 Number_types/include/CGAL/GMP/Gmpzf_type.h -text
 Number_types/include/CGAL/Gmp_coercion_traits.h -text
 Number_types/include/CGAL/Gmpzf.h -text
-Number_types/include/CGAL/Needs_parens_as_product.h -text
-Number_types/include/CGAL/Rational_traits.h -text
-Number_types/include/CGAL/Real_embeddable_traits.h -text
 Number_types/include/CGAL/Sqrt_extension.h -text
 Number_types/include/CGAL/gmpxx_coercion_traits.h -text
 Number_types/include/CGAL/leda_coercion_traits.h -text
 Number_types/include/CGAL/mpq_class.h -text
 Number_types/include/CGAL/mpz_class.h -text
-Number_types/include/CGAL/utils.h -text
-Number_types/include/CGAL/utils_classes.h -text
 Number_types/test/Number_types/CORE_BigFloat.C -text
 Number_types/test/Number_types/CORE_BigInt.C -text
 Number_types/test/Number_types/CORE_BigRat.C -text
