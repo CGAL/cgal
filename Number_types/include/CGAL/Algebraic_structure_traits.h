@@ -22,10 +22,6 @@ CGAL_BEGIN_NAMESPACE
 // The tags for Algebra_type corresponding to the number type concepts
 // ===================================================================
 
-//TODO: rm these old tags 
-struct Ring_tag      {};
-struct Sqrt_field_tag{};
-
 //! corresponds to the \c IntegralDomainWithoutDiv concept.
 struct Integral_domain_without_division_tag {};
 
