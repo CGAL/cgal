@@ -38,14 +38,14 @@ struct Root_of_traits_helper{
         NT operator()(const NT& a, const NT& b, const NT& c){
             return Root_of_2(a,b,c);
         }
-        Root_of_1 operator()(const Root_of_1& a, const Root_of_1& b, const Root_of_1& c){
-            // dummy, since I'm not sure about the semantic yet.
+        Root_of_1 operator()(const Root_of_1& a, 
+                             const Root_of_1& b, 
+                             const Root_of_1& c){
             return Root_of_2(a,b,c);
         }
     };
 };
 
-// Dispatcher for the case Has_sqrt==Tag_true or not.
 template < typename FT>
 struct Root_of_traits_helper < FT, Field_tag >
 {
@@ -59,10 +59,12 @@ public:
     
     struct Make_root_of_2{
         typedef FT result_type;
-        Root_of_2 operator()(const FT& a, const FT& b, const FT& c){
+        Root_of_2 
+        operator()(const FT& a, const FT& b, const FT& c){
             return Root_of_2(a,b,c);
         }
-        Root_of_2 operator()(const FT& a, const FT& b, const FT& c, bool smaller){
+        Root_of_2 
+        operator()(const FT& a, const FT& b, const FT& c, bool smaller){
             Decompose decompose;
             RT a_num,b_num,c_num;
             RT a_den,b_den,c_den; // Denomiantor same as RT
@@ -80,7 +82,6 @@ public:
     };
 };
 
-// Specialization for Has_sqrt==Tag_true.
 template < typename NT >
 struct Root_of_traits_helper < NT, Field_with_sqrt_tag >
 {
