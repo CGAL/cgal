@@ -26,8 +26,6 @@ typedef CGAL::Filtered_exact<inexact_type,exact_type>  number_t;
 struct Kernel : public CGAL::Simple_cartesian<number_t> {};
 #endif
 
-#include <CGAL/Number_type_traits.h>
-
 typedef CGAL::Integral_domain_without_division_tag Method_tag;
 
 #include "./include/test.h"
