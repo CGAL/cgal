@@ -20,36 +20,10 @@
 #ifndef CGAL_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H
 #define CGAL_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H 
 
-
 CGAL_BEGIN_NAMESPACE
 
 template <class K>
-class Alpha_shape_euclidean_traits_3 : public K
-{
-/*  public:  */
-/*   class  Compute_squared_radius_3 { */
-/*     typedef typename K::Point_3                  Point_3; */
-/*     typedef typename K::FT                       FT; */
-/*     typedef typename K::Compute_squared_radius_3 Base; */
-  
-/*   public: */
-/*    FT  operator() (Point_3 p, Point_3 q , Point_3 r, Point_3 s) { */
-/*      return Base()(p,q,r,s); } */
-
-/*    FT  operator() (Point_3 p, Point_3 q , Point_3 r) { */
-/*      return Base()(p,q,r); } */
-
-/*    FT  operator() (Point_3 p, Point_3 q ) { */
-/*      return Base()(p,q); } */
-
-/*    FT operator() (Point_3 p) { */
-/*       return FT(0);} */
-/*   }; */
-
-/*   Compute_squared_radius_3  */
-/*   compute_squared_radius_3_object() const    { */
-/*     return Compute_squared_radius_3();  } */
-};
+class Alpha_shape_euclidean_traits_3 : public K {};
 
 CGAL_END_NAMESPACE
 
