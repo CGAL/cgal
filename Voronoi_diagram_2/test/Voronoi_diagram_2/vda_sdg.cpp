@@ -33,7 +33,7 @@
 #include <CGAL/Segment_Delaunay_graph_adaptation_policies_2.h>
 
 typedef CGAL::MP_Float  NT;
-typedef CGAL::Ring_tag  MTag;
+typedef CGAL::Integral_domain_without_division_tag  MTag;
 
 typedef CGAL::Simple_cartesian<NT>      K;
 typedef CGAL::Simple_cartesian<double>  DK;
