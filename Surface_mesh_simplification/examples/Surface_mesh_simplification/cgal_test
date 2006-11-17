@@ -71,11 +71,6 @@ if [ $# -ne 0 ] ; then
     compile_and_run $file
   done
 else
-  compile_and_run Edge_collapse_fully_cached_polyhedron
-  compile_and_run LT_edge_collapse_enriched_polyhedron
-  compile_and_run LT_edge_collapse_polyhedron
-  compile_and_run LT_edge_collapse_visited_polyhedron
-  compile_and_run LT_edge_collapse_with_fixed_vertices_enriched_polyhedron
-  compile_and_run LT_edge_collapse_with_fixed_vertices_polyhedron
-  compile_and_run MP_edge_collapse_polyhedron
+  compile_and_run edge_collapse_polyhedron
+  compile_and_run edge_collapse_enriched_polyhedron
 fi

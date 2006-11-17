@@ -5,15 +5,14 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
+// Adaptor for Polyhedron_3
 #include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
-#include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 
-// === EXAMPLE SPECIFIC HEADERS BEGINS HERE ===
+// Simplification function
+#include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 
 // Stop-condition policy
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
-
-// === EXAMPLE SPECIFIC HEADERS ENDS HERE ===
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Polyhedron_3<Kernel> Surface; 
@@ -26,8 +25,6 @@ int main( int argc, char** argv )
   
   std::ifstream is(argv[1]) ; is >> surface ;
 
-  // === CONCRETE USAGE EXAMPLE BEGINS HERE ===
-  
   // This is a stop predicate (defines when the algorithm terminates).
   // In this example, the simplification stops when the number of undirected edges
   // left in the surface drops below the specified number (1000)
@@ -40,11 +37,9 @@ int main( int argc, char** argv )
   int r = SMS::edge_collapse(surface
                             ,stop
                             ,CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,surface)) 
-                            ,CGAL::edge_index_map  (boost::get(CGAL::edge_external_index  ,surface)) 
+                                  .edge_index_map  (boost::get(CGAL::edge_external_index  ,surface)) 
                             );
   
-  // === CONCRETE USAGE EXAMPLE ENDS HERE ===
-
   std::cout << "\nFinished...\n" << r << " edges removed.\n" 
             << (surface.size_of_halfedges()/2) << " final edges.\n" ;
         

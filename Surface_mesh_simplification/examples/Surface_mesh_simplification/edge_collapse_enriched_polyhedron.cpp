@@ -5,14 +5,19 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
+// Adaptor for Polyhedron_3
 #include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
+
+// Simplification function
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 
+// Extended polyhedron items which include an id() field
 #include <CGAL/Polyhedron_items_with_id_3.h>
 
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
+// Stop-condition policy
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_predicate.h>
 
-// Cost-placement policies
+// Non-default cost and placement policies
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_and_length.h> 
 
 typedef CGAL::Simple_cartesian<double> Kernel;
@@ -20,14 +25,14 @@ typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point ;
 
 //
-// Setup an enriched polyhedron type which stores a ID in the halfedges
+// Setup an enriched polyhedron type which stores an id() field in the items
 //
 typedef CGAL::Polyhedron_3<Kernel,CGAL::Polyhedron_items_with_id_3> Surface; 
 
 typedef Surface::Halfedge_handle Halfedge_handle ;
 
 
-// The following is the Visitor that keeps track of the simplification process.
+// The following is a Visitor that keeps track of the simplification process.
 // In this example the progress is printed real-time and a few statistics are
 // recorded (and printed in the end).
 //
@@ -52,9 +57,7 @@ struct Visitor
   void OnStopConditionReached( Surface& surface ) {} 
   
   // Called during the collecting phase for each edge collected.
-  void OnCollected( Halfedge_handle const& edge
-                  , Surface&               surface
-                  )
+  void OnCollected( Halfedge_handle const& edge, Surface& surface )
   {
     ++ collected ;
     std::cerr << "\rEdges collected: " << collected << std::flush ;
@@ -93,9 +96,7 @@ struct Visitor
   // Called for each edge which failed the so called link-condition,
   // that is, which cannot be collapsed because doing so would
   // turn the surface into a non-manifold.
-  void OnNonCollapsable( Halfedge_handle const& edge
-                       , Surface&               surface
-                       )
+  void OnNonCollapsable( Halfedge_handle const& edge, Surface& surface )
   {
     ++ non_collapsable;
   }                
@@ -116,9 +117,9 @@ int main( int argc, char** argv )
   
   std::ifstream is(argv[1]) ; is >> surface ;
 
-  // The halfedges in this polyhedron have an "id()" field 
-  // which the default "edge_index_map()" uses to get the index
-  // of an edge.
+  // The items in this polyhedron have an "id()" field 
+  // which the default index maps used in the algorithm
+  // need to get the index of a vertex/edge.
   // However, the Polyhedron_3 class doesn't assign any value to
   // this id(), so we must do it here:
   int index = 0 ;
@@ -130,15 +131,30 @@ int main( int argc, char** argv )
      ) 
     eb->id() = index++;
 
-  SMS::Count_stop_predicate<Surface> stop(1000);
+  index = 0 ;
+  for( Surface::Vertex_iterator vb = surface.vertices_begin()
+     , ve = surface.vertices_end()
+     ; vb != ve
+     ; ++ vb
+     ) 
+    vb->id() = index++;
+    
+  // In this example, the simplification stops when the number of undirected edges
+  // drops below 10% of the initial count
+  SMS::Count_ratio_stop_predicate<Surface> stop(0.1);
      
   Visitor vis ;
   
+  // The index maps are not explicitelty passed as in the previous
+  // example because the surface items have a proper id() field.
+  // On the other hand, we pass here explicit cost and placement
+  // function which differ from the default policies, ommited in
+  // the previous example.
   int r = SMS::edge_collapse(surface
                             ,stop
-                            ,get_cost     (SMS::Edge_length_cost  <Surface>())
-                            .get_placement(SMS::Midpoint_placement<Surface>())
-                            .visitor(&vis)
+                            ,CGAL::get_cost     (SMS::Edge_length_cost  <Surface>())
+                                  .get_placement(SMS::Midpoint_placement<Surface>())
+                                  .visitor(&vis)
                             );
   
   std::cout << "\nEdges collected: " << vis.collected

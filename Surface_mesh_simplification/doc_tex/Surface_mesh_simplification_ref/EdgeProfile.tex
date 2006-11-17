@@ -1,0 +1,89 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+\begin{ccRefConcept}{EdgeProfile}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+
+The concept \ccRefName\ describes the requirements for a data structure that caches the local topology and geometry in the surroundings of an edge.
+
+This profile is used by the cost and placement policies.
+
+\ccTypes
+  \ccNestedType{ECM}{The type of the surface to simplify. Must be a \ccc{EdgeCollapsableMesh}.}{}
+\ccGlue    
+  \ccTypedef{typename boost::graph_traits<ECM>::vertex_descriptor vertex_descriptor;}
+  {A {\sc Bgl} vertex descriptor representing a vertex of the surface.}
+\ccGlue    
+  \ccTypedef{typename boost::graph_traits<ECM>::edge_descriptor edge_descriptor;}
+  {A {\sc Bgl} edge descriptor representing an edge of the surface.}
+\ccGlue    
+  \ccTypedef{typename CGAL::halfedge_graph_traits<ECM>::Point Point;}{The point type for the surface vertex.}
+
+\ccCreation
+\ccCreationVariable{ep}  %% choose variable name
+
+\ccAccessFunctions
+  \ccMethod{vertex_descriptor v0() const;}{The source vertex of the directed edge to be collapsed.}
+\ccGlue    
+  \ccMethod{vertex_descriptor v1() const;}{The target vertex of the directed edge to be collapsed.}
+\ccGlue    
+  \ccMethod{edge_descriptor v0v1() const;}{The directed edge to be collapsed.}
+\ccGlue    
+  \ccMethod{edge_descriptor v1v0() const;}{The opposite of the directed edge to be collapsed.}
+\ccGlue    
+  \ccMethod{Point const& p0() const;}{The point of the source vertex.}
+\ccGlue    
+  \ccMethod{Point const& p1() const;}{The point of the target vertex.}
+\ccGlue    
+  \ccMethod{vertex_descriptor vl() const;}{The vertex to the left of v0v1.}
+\ccGlue    
+  \ccMethod{edge_descriptor v1vl() const;}{The directed edge from v1 to vl.}
+\ccGlue    
+  \ccMethod{edge_descriptor vlv0() const;}{The directed edge from vl to v0l.}
+\ccGlue    
+  \ccMethod{vertex_descriptor vr() const;}{The vertex to the right of v0v1.}
+\ccGlue    
+  \ccMethod{edge_descriptor v0vr() const;}{The directed edge from v0 to vr.}
+\ccGlue    
+  \ccMethod{edge_descriptor vrv1() const;}{The directed edge from vr to v1.}
+\ccGlue    
+  \ccMethod{std::vector<vertex_descriptor> link() const;}{A unique sequence of the vertices around v0v1.}
+\ccGlue    
+  \ccMethod{std::vector<edge_descritor> border_edges() const;}
+  {A unique collection of the boundary edges incident upon v0 ad v1.}
+\ccGlue    
+  \ccMethod{bool left_face_exits() const;}
+  {Indicates if v0v1 is not a border edge thus there is a non-null face to its left.\
+   If there is no left face, vl(),v1vl() and vlv0() return null descriptors.}
+\ccGlue    
+  \ccMethod{bool right_face_exits() const;}
+  {Indicates if v1v0 is not a border edge thus there is a non-null face to its left
+   (which is to the right of v0v1).\
+   If there is no right face, vr(),v0vr() and vrv1() return null descriptors.}
+ 
+\ccHasModels
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Edge_profile<ECM>}.
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

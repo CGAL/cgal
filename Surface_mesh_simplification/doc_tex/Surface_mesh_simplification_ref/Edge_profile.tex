@@ -15,28 +15,25 @@
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
 
-\begin{ccRefClass}{Surface_mesh_simplification::Cost_cache<ECM>}
+\begin{ccRefClass}{Surface_mesh_simplification::Edge_profile<ECM>}
 
 %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
-\ccCreationVariable{d}
+\ccCreationVariable{ep}
 \ccDefinition
 
-The class \ccRefName\ provides a model for the \ccc{CostCache} concept.
+The class \ccRefName\ provides a model for the \ccc{EdgeProfile} concept.
 It has one template argument: the type of surface being simplified,
 which must be a model of the \ccc{EdgeCollapsableMesh} concept.
 
-\ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Cost_cache.h}
+\ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h}
 
 \ccIsModel
-\ccc{CostCache}
+\ccc{EdgeProfile}
 
 \ccSeeAlso
-\ccc{NoCache}\\
-\ccc{FullCache}\\
-\ccc{SetCache}\\
 \ccc{GetCost}\\
 \ccc{GetPlacement}\\
 

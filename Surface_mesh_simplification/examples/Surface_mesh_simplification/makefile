@@ -36,20 +36,20 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                LT_edge_collapse_polyhedron \
-                LT_edge_collapse_enriched_polyhedron \
+                edge_collapse_polyhedron \
+                edge_collapse_enriched_polyhedron \
 
-LT_edge_collapse_polyhedron$(EXE_EXT): LT_edge_collapse_polyhedron$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)LT_edge_collapse_polyhedron \
-        LT_edge_collapse_polyhedron$(OBJ_EXT) $(LDFLAGS)
+edge_collapse_polyhedron$(EXE_EXT): edge_collapse_polyhedron$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)edge_collapse_polyhedron \
+        edge_collapse_polyhedron$(OBJ_EXT) $(LDFLAGS)
         
-LT_edge_collapse_enriched_polyhedron$(EXE_EXT): LT_edge_collapse_enriched_polyhedron$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)LT_edge_collapse_enriched_polyhedron \
-        LT_edge_collapse_enriched_polyhedron$(OBJ_EXT) $(LDFLAGS)
+edge_collapse_enriched_polyhedron$(EXE_EXT): edge_collapse_enriched_polyhedron$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)edge_collapse_enriched_polyhedron \
+        edge_collapse_enriched_polyhedron$(OBJ_EXT) $(LDFLAGS)
         
 clean: \
-                   LT_edge_collapse_polyhedron.clean \
-                   LT_edge_collapse_enriched_polyhedron.clean \
+                   edge_collapse_polyhedron.clean \
+                   edge_collapse_enriched_polyhedron.clean \
 
 #---------------------------------------------------------------------#
 #                    suffix rules
