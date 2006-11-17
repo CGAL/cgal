@@ -313,8 +313,8 @@ namespace QP_solution_detail {
     {
       ET gcd = CGAL::gcd (q.numerator(), q.denominator());
       return CGAL::Quotient<ET> 
-	(CGAL::exact_division (q.numerator(), gcd),
-	 CGAL::exact_division (q.denominator(), gcd));
+	(CGAL::integral_division (q.numerator(), gcd),
+	 CGAL::integral_division (q.denominator(), gcd));
     }  
 
     CGAL::Quotient<ET> normalize 
