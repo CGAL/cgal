@@ -25,6 +25,8 @@ OBJS=Gbrs_polynomial_1 Gbrs_polynomial_2 Gbrs_algebraic_kernel_1
 
 all: ${OBJS}
 
+# TODO: make general rules
+
 Gbrs_polynomial_1: Gbrs_polynomial_1.C
 	${CGAL_CXX} ${MYFLAGS} ${CGAL_CXXFLAGS} ${CGAL_LIBPATHFLAGS} $< ${CGAL_LDFLAGS} -o $@
 

@@ -73,20 +73,22 @@ class Rational_polynomial_2 {
 		void set_coef (int, int, unsigned int);
 		void set_coef (int, int, long int);
 		void set_coef (int, int, unsigned long int);
-		Rational_polynomial_2& operator= (const Rational_polynomial_2 &);
-		Rational_polynomial_2 operator- () const;
-		Rational_polynomial_2 operator+ (const Rational_polynomial_2 &) const;
-		Rational_polynomial_2& operator+= (const Rational_polynomial_2 &);
-		Rational_polynomial_2 operator- (const Rational_polynomial_2 &) const;
-		Rational_polynomial_2& operator-= (const Rational_polynomial_2 &);
-		Rational_polynomial_2& operator*= (const int);
-		Rational_polynomial_2& operator*= (const mpz_t &);
-		Rational_polynomial_2& operator*= (const mpq_t &);
-		Rational_polynomial_2& operator*= (const CGAL::Gmpz &);
-		Rational_polynomial_2& operator*= (const CGAL::Gmpq &);
-		Rational_polynomial_2& shift (int, int);
-		Rational_polynomial_2 operator* (const Rational_polynomial_2 &) const;
-		Rational_polynomial_2& operator*= (const Rational_polynomial_2 &);
+		Rational_polynomial_2& operator=(const Rational_polynomial_2&);
+		Rational_polynomial_2 operator-()const;
+		Rational_polynomial_2 operator+
+			(const Rational_polynomial_2&)const;
+		Rational_polynomial_2& operator+=(const Rational_polynomial_2&);
+		Rational_polynomial_2 operator-
+			(const Rational_polynomial_2&)const;
+		Rational_polynomial_2& operator-=
+			(const Rational_polynomial_2&);
+		Rational_polynomial_2& scale_and_shift(mpq_t&,int,int);
+		Rational_polynomial_2
+			operator*(const Rational_polynomial_2&)const;
+		Rational_polynomial_2& operator*=(const Rational_polynomial_2&);
+		Rational_polynomial_2& operator*=(const mpq_t&);
+		Rational_polynomial_2& operator*=(const CGAL::Gmpq&);
+		template<class T>Rational_polynomial_2& operator*=(const T&);
 		template<class T>Rational_polynomial_2 operator*(const T&)const;
 		bool operator== (const Rational_polynomial_2 &) const;
 		bool operator!= (const Rational_polynomial_2 &) const;
@@ -95,76 +97,34 @@ class Rational_polynomial_2 {
 
 std::ostream& operator<< (std::ostream &, const Rational_polynomial_2 &);
 
+template<class T>
+Rational_polynomial_2 operator*(const T&,const Rational_polynomial_2&);
+
 // ///////////////////////////
 // inline function definitions
-
-inline int Rational_polynomial_2::get_degree_x() const{
-	return degree_x;
-};
-
-inline int Rational_polynomial_2::get_degree_y() const{
-	return degree_y;
-};
-
-inline mpq_t** Rational_polynomial_2::get_coefs() const{
-	return coef;
-};
-
+inline int Rational_polynomial_2::get_degree_x()const{return degree_x;};
+inline int Rational_polynomial_2::get_degree_y()const{return degree_y;};
+inline mpq_t** Rational_polynomial_2::get_coefs()const{return coef;};
 inline void Rational_polynomial_2::set_coef(int pow_x,int pow_y,const mpq_t &q){
-	mpq_set(coef[pow_x][pow_y],q);
-};
-
+	mpq_set(coef[pow_x][pow_y],q);};
 inline void Rational_polynomial_2::set_coef(int pow_x,int pow_y,const mpz_t &z){
-	mpq_set_z(coef[pow_x][pow_y],z);
-};
-
-inline void Rational_polynomial_2::set_coef(int pow_x,int pow_y,const CGAL::Gmpq &q){
-	mpq_set (coef[pow_x][pow_y], q.mpq());
-};
-
-inline void Rational_polynomial_2::set_coef(int pow_x,int pow_y,const CGAL::Gmpz &z){
-	mpq_set_z (coef[pow_x][pow_y], z.mpz());
-};
-
+	mpq_set_z(coef[pow_x][pow_y],z);};
+inline void Rational_polynomial_2::set_coef(int pow_x,int pow_y,
+		const CGAL::Gmpq &q){mpq_set(coef[pow_x][pow_y],q.mpq());};
+inline void Rational_polynomial_2::set_coef(int pow_x,int pow_y,
+		const CGAL::Gmpz &z){mpq_set_z(coef[pow_x][pow_y],z.mpz());};
 inline void Rational_polynomial_2::set_coef(int pow_x,int pow_y,int c){
-	mpq_set_si(coef[pow_x][pow_y],(long int)c,(unsigned long int)1);
-};
-
-inline void Rational_polynomial_2::set_coef(int pow_x,int pow_y,unsigned int c){
-	mpq_set_ui
-		(coef[pow_x][pow_y],(unsigned long int)c,(unsigned long int)1);
-};
-
+	mpq_set_si(coef[pow_x][pow_y],(long int)c,(unsigned long int)1);};
+inline void Rational_polynomial_2::set_coef(int pow_x,int pow_y,
+		unsigned int c){mpq_set_ui(coef[pow_x][pow_y],
+			(unsigned long int)c,(unsigned long int)1);};
 inline void Rational_polynomial_2::set_coef(int pow_x,int pow_y,long int c){
-	mpq_set_si(coef[pow_x][pow_y],c,(unsigned long int)1);
-};
-
-inline void Rational_polynomial_2::set_coef(int pow_x,int pow_y,unsigned long int c){
-	mpq_set_ui(coef[pow_x][pow_y],c,(unsigned long int)1);
-};
-
-inline Rational_polynomial_2& Rational_polynomial_2::operator*=(const int s){
-	return (*this*=Gmpq(s));
-};
-
-inline Rational_polynomial_2& Rational_polynomial_2::operator*=(const mpz_t &s){
-	return (*this*=Gmpq(s));
-};
-
-inline Rational_polynomial_2& Rational_polynomial_2::operator*=(const mpq_t &s){
-	return (*this*=Gmpq(s));
-};
-
-inline Rational_polynomial_2& Rational_polynomial_2::operator*=(const CGAL::Gmpz &s){
-	return (*this*=Gmpq(s.mpz()));
-};
-
-inline bool Rational_polynomial_2::operator!=(const Rational_polynomial_2 &p) const{
-	return !(*this==p);
-};
-
-template <class T>
-Rational_polynomial_2 operator*(const T&,const Rational_polynomial_2&);
+	mpq_set_si(coef[pow_x][pow_y],c,(unsigned long int)1);};
+inline void Rational_polynomial_2::set_coef(int pow_x,int pow_y,
+		unsigned long int c){
+	mpq_set_ui(coef[pow_x][pow_y],c,(unsigned long int)1);};
+inline bool Rational_polynomial_2::operator!=
+(const Rational_polynomial_2 &p)const{return !(*this==p);};
 
 CGAL_END_NAMESPACE
 

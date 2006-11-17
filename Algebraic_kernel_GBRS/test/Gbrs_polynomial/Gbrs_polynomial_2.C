@@ -39,10 +39,12 @@ int main () {
 	Polynomial s (1, 0);
 	s.set_coef (1, 0, 1);	// s = 1 * x^1
 	r = p*s;
-	std::cout << "s = " << s << "\nr = p*s = " << r <<
-		"\np*=(s*2) = " << (p*=(s*2)) << std::endl;
+	std::cout<<"s = "<<s<<std::endl;
+	std::cout<<"r = p*s = "<<r<<std::endl;
+	std::cout<<"p*=(s*2) = "<<(p*=(s*2))<<std::endl;
 	std::cout << "p+s+q = " << (p+s+q) << std::endl;
 	std::cout << "s+p+q = " << (s+p+q) << std::endl;
+	std::cout<<"s-=q = "<<(s-=q)<<std::endl;
 
 	return 0;
 }

@@ -22,14 +22,20 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class T>
+template<class T>
+inline Rational_polynomial_2& Rational_polynomial_2::operator*=(const T &s){
+	return (*this*=Gmpq(s));
+};
+
+template<class T>
 Rational_polynomial_2 Rational_polynomial_2::operator*(const T &n)const{
 	Rational_polynomial_2 r(*this);
 	return (r*=n);
 };
 
-template <class T> inline Rational_polynomial_2 operator*(const T &n,
-		const Rational_polynomial_2 &p){
+template<class T>
+inline Rational_polynomial_2 operator*
+(const T &n,const Rational_polynomial_2 &p){
 	return (p*n);
 };
 
