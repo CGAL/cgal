@@ -97,5 +97,5 @@ int main() {
     //TODO: add more 
     std::cout << "ok" <<std::endl;
     
-    return true;     
+    return 0;     
 }
