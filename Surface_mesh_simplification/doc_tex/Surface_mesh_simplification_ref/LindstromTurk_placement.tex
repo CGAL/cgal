@@ -24,7 +24,8 @@
 \ccDefinition
 
 The class \ccRefName\ provides a model for the \ccc{GetPlacement} concept. 
-It computes the collapse cost following the Lindstrom-Turk strategy
+It computes the placement, that is, the new position for the remaining vertex after
+a halfedge-collapse, following the Lindstrom-Turk strategy
 (Section~\ref{SurfaceMeshSimplification:LindstromTurkStrategy}).
 
 The class \ccRefName\ has one template argument: the type of surface being simplified. 
@@ -37,20 +38,15 @@ It must be a model of the \ccc{EdgeCollapsableMesh} concept.
 
 \ccCreation
 \ccCreationVariable{gp}  %% choose variable name
-\ccConstructor{LindstromTurk_placement<ECM>();}{Default constructor} 
+\ccConstructor{LindstromTurk_placement<ECM>( LindstromTurk_params const& aParams );}
+{Initializes the policy with the given parameters} 
 
 \ccHeading{Methods}
-  \ccMethod{template<class Cache>
-            result_type operator()( edge_descriptor const&      edge
-                                  , ECM&                        surface 
-                                  , Cache const&                cache
-                                  , LindstromTurk_params const* params
-                                  ) const;
-           }
-  {Returns the position of the vertex that replaces the collapsed \ccc{edge}.}
+  \ccMethod{result_type operator()( Profile const& edge_profile ) const;}
+  {Returns the new position for the remaining vertex after collapsing the edge
+  (represented by its profile).}
 
-\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_set_cost_cache<ECM>}\\
-\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_set_cost_and_placement_cache<ECM>}\\
+\ccSeeAlso
 \ccc{CGAL::Surface_mesh_simplification::LindstromTurk_cost<ECM>}\\
 \ccc{CGAL::Surface_mesh_simplification::LindstromTurk_params}\\
 \end{ccRefClass}

@@ -28,6 +28,7 @@
 #include <boost/graph/adjacency_list.hpp>
 
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
+#include <CGAL/Surface_mesh_simplification/Detail/Edge_profile.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -39,13 +40,11 @@ namespace Surface_mesh_simplification
 //
 template<class ECM_
         ,class ShouldStop_
-        ,class VertexPointMap_
+        ,class VertexIndexMap_
         ,class EdgeIndexMap_
         ,class EdgeIsBorderMap_
         ,class GetCost_
         ,class GetPlacement_
-        ,class CostParams_ 
-        ,class PlacementParams_ 
         ,class VisitorT_
         >
 class EdgeCollapse
@@ -54,16 +53,16 @@ public:
 
   typedef ECM_              ECM ;
   typedef ShouldStop_       ShouldStop ;
-  typedef VertexPointMap_   VertexPointMap ;
+  typedef VertexIndexMap_   VertexIndexMap ;
   typedef EdgeIndexMap_     EdgeIndexMap ;
   typedef EdgeIsBorderMap_  EdgeIsBorderMap ;
   typedef GetCost_          GetCost ;
   typedef GetPlacement_     GetPlacement ;
-  typedef CostParams_       CostParams ;
-  typedef PlacementParams_  PlacementParams ;
   typedef VisitorT_         VisitorT ;
   
   typedef EdgeCollapse Self ;
+  
+  typedef Edge_profile<ECM> Profile ;
   
   typedef boost::graph_traits  <ECM>       GraphTraits ;
   typedef boost::graph_traits  <ECM const> ConstGraphTraits ;
@@ -117,7 +116,7 @@ public:
       // NOTE: A cost is an optional<> value.
       // Absent optionals are ordered first; that is, "none < T" and "T > none" for any defined T != none.
       // In consequence, edges with undefined costs will be promoted to the top of the priority queue and poped out first.
-      return mAlgorithm->get_cost(a) < mAlgorithm->get_cost(b);
+      return mAlgorithm->get_data(a).cost() < mAlgorithm->get_data(b).cost();
     }
     
     Self const* mAlgorithm ;
@@ -176,13 +175,11 @@ public:
 
   EdgeCollapse( ECM&                    aSurface
               , ShouldStop       const& aShouldStop 
-              , VertexPointMap   const& aVertex_point_map 
+              , VertexIndexMap   const& aVertex_index_map 
               , EdgeIndexMap     const& aEdge_index_map 
               , EdgeIsBorderMap  const& aEdge_is_border_map 
               , GetCost          const& aGetCost
               , GetPlacement     const& aGetPlacement
-              , CostParams       const* aCostParams       // Can be NULL
-              , PlacementParams  const* aPlacementParams  // Can be NULL
               , VisitorT*               aVisitor          // Can be NULL
               ) ;
   
@@ -192,11 +189,16 @@ private:
   
   void Collect();
   void Loop();
-  bool Is_collapsable( edge_descriptor const& aEdge ) ;
+  bool Is_collapsable( Profile const& aProfile ) ;
   bool Is_tetrahedron( edge_descriptor const& h1 ) ;
   bool Is_open_triangle( edge_descriptor const& h1 ) ;
-  void Collapse( edge_descriptor const& aEdge ) ;
+  void Collapse( Profile const& aProfile ) ;
   void Update_neighbors( vertex_descriptor const& aKeptV ) ;
+  
+  Profile create_profile ( edge_descriptor const& aEdge )
+  { 
+    return Profile(aEdge,mSurface,Vertex_index_map,Edge_index_map,Edge_is_border_map);
+  }  
   
   size_type get_directed_edge_id   ( const_edge_descriptor const& aEdge ) const { return Edge_index_map[aEdge]; }
   size_type get_undirected_edge_id ( const_edge_descriptor const& aEdge ) const { return get_directed_edge_id(aEdge) / 2 ; }
@@ -223,7 +225,10 @@ private:
     return mEdgeDataArray[get_undirected_edge_id(aEdge)];
   }
   
-  Point get_point ( const_vertex_descriptor const aV ) const { return get(Vertex_point_map,aV); }
+  Point const& get_point ( const_vertex_descriptor const& aV ) const
+  {
+    return get(vertex_point,mSurface,aV);
+  }
   
   tuple<const_vertex_descriptor,const_vertex_descriptor> get_vertices( const_edge_descriptor const& aEdge ) const
   {
@@ -253,14 +258,14 @@ private:
     return boost::str( boost::format("{E%1% %2%->%3%}") % aEdge->ID % vertex_to_string(p) % vertex_to_string(q) ) ;
   }
   
-  Cost_type get_cost ( edge_descriptor const& aEdge ) const
+  Cost_type get_cost ( Profile const& aProfile ) const
   {
-    return Get_cost(aEdge,mSurface,mCostParams, get_placement(aEdge) );
+    return Get_cost(aProfile, get_placement(aProfile) );
   }
   
-  Placement_type get_placement( edge_descriptor const& aEdge ) const
+  Placement_type get_placement( Profile const& aProfile ) const
   {
-    return Get_placement(aEdge,mSurface,mPlacementParams);
+    return Get_placement(aProfile);
   }
   
   void insert_in_PQ( edge_descriptor const& aEdge, Edge_data& aData ) 
@@ -299,13 +304,11 @@ private:
 
   ECM&                    mSurface ;
   ShouldStop       const& Should_stop ;
-  VertexPointMap   const& Vertex_point_map ;
+  VertexIndexMap   const& Vertex_index_map ;
   EdgeIndexMap     const& Edge_index_map ;
   EdgeIsBorderMap  const& Edge_is_border_map ;
   GetCost          const& Get_cost ;
   GetPlacement     const& Get_placement ;
-  CostParams       const* mCostParams ;      // Can be NULL
-  PlacementParams  const* mPlacementParams ; // Can be NULL
   VisitorT*               Visitor ;          // Can be NULL
   
 private:

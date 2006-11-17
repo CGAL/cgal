@@ -19,6 +19,7 @@
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_MIDPOINT_PLACEMENT_H 1
 
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
+#include <CGAL/Surface_mesh_simplification/Detail/Edge_profile.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -32,42 +33,21 @@ public:
     
   typedef ECM_ ECM ;
   
-  typedef typename boost::graph_traits<ECM>::edge_descriptor   edge_descriptor ;
-  typedef typename boost::graph_traits<ECM>::vertex_descriptor vertex_descriptor ;
+  typedef Edge_profile<ECM> Profile ;
   
   typedef typename halfedge_graph_traits<ECM>::Point Point ;
-  typedef typename Kernel_traits<Point>::Kernel      Kernel ;
-  typedef typename Kernel::FT                        FT ;
   
   typedef optional<Point> result_type ;
     
-  typedef void Params ;
-  
 public:
 
   Midpoint_placement() {}
   
-  result_type operator()( edge_descriptor const& aEdge
-                        , ECM&                   aSurface
-                        , Params const*        //aParams
-                        ) const
+  result_type operator()( Profile const& aProfile ) const
   {
-    vertex_descriptor vs,vt ; tie(vs,vt) = get_vertices(aEdge,aSurface);
-    
-    Point const& ps = get(vertex_point,aSurface,vs); 
-    Point const& pt = get(vertex_point,aSurface,vt); 
-  
-    return result_type(midpoint(ps,pt));
+    return result_type(midpoint(aProfile.p0(),aProfile.p1()));
   }
-  
-private:
 
-  tuple<vertex_descriptor,vertex_descriptor> get_vertices ( edge_descriptor const& aEdge, ECM& aSurface ) const
-  {
-    vertex_descriptor p = source(aEdge,aSurface);
-    vertex_descriptor q = target(aEdge,aSurface);
-    return make_tuple(p,q);
-  }
 };
 
 } // namespace Surface_mesh_simplification

@@ -37,21 +37,15 @@ It must be a model of the \ccc{EdgeCollapsableMesh} concept.
 
 \ccCreation
 \ccCreationVariable{gc}  %% choose variable name
-\ccConstructor{LindstromTurk_cost<ECM>();}{Default constructor} 
+\ccConstructor{LindstromTurk_cost<ECM>( LindstromTurk_params const& aParams );}
+{Initializes the policy with the given parameters} 
 
 \ccHeading{Methods}
-  \ccMethod{template<class Cache>
-            result_type operator()( edge_descriptor const&      edge
-                                  , ECM&                        surface 
-                                  , Cache const&                cache
-                                  , LindstromTurk_Params const* params
-                                  ) const;
-           }
-  {Returns the cost of collapsing \ccc{edge}.}
+  \ccMethod{result_type operator()( Profile const& profile, optional<Point> const& placement ) const;}
+  {Returns the cost of collapsing the edge (represented by its profile) considering 
+  the new \ccc{placement} computed for it.}
 
 \ccSeeAlso
-\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_set_cost_cache<ECM>}\\
-\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_set_cost_and_placement_cache<ECM>}\\
 \ccc{CGAL::Surface_mesh_simplification::LindstromTurk_placement<ECM>}\\
 \ccc{CGAL::Surface_mesh_simplification::LindstromTurk_params}
 

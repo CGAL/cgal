@@ -22,27 +22,25 @@
 \ccCreationVariable{gc}  %% choose variable name
 \ccDefinition
 
-The concept \ccRefName\ describes the requirements for the {\em policy function object} which gets the {\em collapse cost} of an edge.
+The concept \ccRefName\ describes the requirements for the {\em policy function object} 
+which gets the {\em collapse cost} of an edge.
 
-The cost returned is a \ccc{boost::optional} value (i.e. it can be absent). An {\em absent} cost could be the result of a computational limitation (such as overflow), or can be intentionally returned to prevent the edge from being collapsed.
-
-A model of this concept can simply return the cost stored in the
-passed cache object, if any, or perform the actual computation.
+The cost returned is a \ccc{boost::optional} value (i.e. it can be absent).
+An {\em absent} cost indicates that the edge should not be collapsed.
+This could be the result of a computational limitation (such as overflow),
+or can be intentionally returned to prevent the edge from being collapsed.
 
 \ccRefines
 \ccc{DefaultConstructible}\\
 \ccc{CopyConstructible}
 
 \ccTypes
-  \ccNestedType{ECM}{The type of the surface to simplify.
-   Must be a model of the \ccc{EdgeCollapsableMesh} concept.}{}
-\ccGlue    
-  \ccNestedType{Params}{The type of the model-specific parameters needed. Can be \ccc{void}.}{}
+  \ccNestedType{Profile}
+  {The type of the edge profile cache. Must be a model of the \ccc{EdgeProfile} concept.}{}
 \ccGlue    
   \ccNestedType{FT}{A field type representing the collapse cost}{}
 \ccGlue    
-  \ccTypedef{typename boost::graph_traits<ECM>::edge_descriptor edge_descriptor;}
-  {A {\sc Bgl} edge descriptor representing an edge of the surface.}
+  \ccTypedef{typename CGAL::halfedge_graph_traits<ECM>::Point Point;}{The point type for the surface vertex.}
 \ccGlue    
   \ccTypedef{boost::optional<FT> result_type;}{The type of the result (an optional cost value).}
 
@@ -53,23 +51,12 @@ passed cache object, if any, or perform the actual computation.
 
 \ccOperations
 
-  \ccMethod{template<class Cache>
-            result_type operator()( edge_descriptor const& edge
-                                  , ECM&                   surface 
-                                  , Cache const&           cache
-                                  , Params const*          params
-                                  ) const;
-           }
-  {Computes and returns the cost of collapsing \ccc{edge} using the model-specific \ccc{params}.\\
-   \ccc{edge} is required to be in the \ccc{surface}.\\
-   If \ccc{Cache} is a model of \ccc{CostCache} or \ccc{CostAndPlacementCache},
-   which means that \ccc{cache} stores the cost, a model of this \ccc{GetCost} concept
-   can simply return the cached cost (but is not required to do so).\\
-   \ccc{params} can be a \ccStyle{NULL} pointer.
+  \ccMethod{result_type operator()( Profile const& edge_profile, optional<Point> const& placement ) const;}
+  {Computes and returns the cost of collapsing the edge (represented by its profile),
+   using the calculated placement.\\
   }
   
 \ccHasModels
-\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Cached_cost<ECM>}.
 \ccRefIdfierPage{CGAL::Surface_mesh_simplification::Edge_length_cost<ECM>}.
 \ccRefIdfierPage{CGAL::Surface_mesh_simplification::LindstromTurk_cost<ECM>}.
 

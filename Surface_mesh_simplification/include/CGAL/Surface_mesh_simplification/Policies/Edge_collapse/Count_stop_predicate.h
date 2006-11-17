@@ -19,6 +19,7 @@
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_COUNT_STOP_PREDICATE_H 1
 
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
+#include <CGAL/Surface_mesh_simplification/Detail/Edge_profile.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -43,6 +44,8 @@ public:
 
   typedef ECM_ ECM ;
 
+  typedef Edge_profile<ECM> Profile ;
+  
 private :
 
   typedef typename halfedge_graph_traits<ECM>::Point Point ;
@@ -59,10 +62,10 @@ public :
   
   Count_stop_predicate( size_type aThres ) : mThres(aThres) {}
   
-  bool operator()( FT const&              // aCurrentCost
-                 , edge_descriptor const& //aEdge
-                 , size_type              aInitialCount
-                 , size_type              aCurrentCount
+  bool operator()( FT const&      // aCurrentCost
+                 , Profile const& //aEdgeProfile
+                 , size_type      aInitialCount
+                 , size_type      aCurrentCount
                  ) const 
   {
     return aCurrentCount < mThres ;

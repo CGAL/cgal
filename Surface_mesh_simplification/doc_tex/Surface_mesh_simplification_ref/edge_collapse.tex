@@ -64,43 +64,43 @@ All named parameters have default values and the order of the named parameters
 is irrelevant so you only need to compose those for which the default
 is inappropriate.
 
-\subsubsection*{vertex\_point\_map(VertexPointMap vpm)}
+\subsubsection*{vertex\_index\_map(VertexIndexMap vpm)}
 
-Provides lvalue access to the point of a vertex of the surface.
-\ccc{VertexPointMap} must be an 
-\ccAnchor{http://www.boost.org/libs/property_map/LvaluePropertyMap.html}{LValuePropertyMap} 
+Maps each vertex in the surface into an unsigned integer number
+in the range \ccc{[0,num_vertices(surface))}.
+
+\ccc{VertexIndexMap} must be a
+\ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
 whose \ccc{key_type} is
-\ccc{boost::graph_traits<EdgeCollapsableMesh>::vertex_descriptor}
+\ccc{boost::graph_traits<EdgeCollapsableMesh const>::vertex_descriptor}
 and whose \ccc{value_type} is 
-\ccc{boost::halfedge_graph_traits<EdgeCollapsableMesh>::Point}
+\ccc{boost::graph_traits<EdgeCollapsableMesh>::size_type},
 
-\textbf{Default}: the property map obtained by calling \ccc{get(vertex_point,surface)}.
-
-
+\textbf{Default}: the property map obtained by calling \ccc{get(vertex_index,surface)},
+which requires the surface vertices to have an \ccc{id()} member properly initialized to the 
+required value.\\
+If the verices don't have such id(), you must pass a map explicitely, such as
+the property map obtained by calling \ccc{get(vertex_external_index,surface)},
+which constructs an internal map which non-intrusively associates a proper id with each vertex.
 
 \subsubsection*{edge\_index\_map(EdgeIndexMap eim)} 
 
-Maps each {\em directed} edge in the surface into an integer number
+Maps each {\em directed} edge in the surface into an unsigned integer number
 in the range \ccc{[0,num_edges(surface))}.
 
-\ccc{EdgeIndexMap} must be a either a
+\ccc{EdgeIndexMap} must be a
 \ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
 whose \ccc{key_type} is
 \ccc{boost::graph_traits<EdgeCollapsableMesh const>::edge_descriptor}
 and whose \ccc{value_type} is 
-\ccc{boost::graph_traits<EdgeCollapsableMesh>::size_type},
-or the same as \ccc{EdgeCollapsableMesh}, in which case 
-\ccc{eim} is in fact the surface to be simplified.
+\ccc{boost::graph_traits<EdgeCollapsableMesh>::size_type}
 
-If \ccc{eim} is a valid property map, it is
-passed as the argument, but if it is the surface, a
-temporary property map is passed instead.
-Such temporary map externally relates each edge 
-in the surface (\ccc{eim}) to its index,
-without requiring any user intervention or any special
-provision in the surface edge.
-
-\textbf{Default}: the property map obtained by calling \ccc{get(edge_index,surface)}.
+\textbf{Default}: the property map obtained by calling \ccc{get(edge_index,surface)},
+which requires the surface edges to have an \ccc{id()} member properly initialized to the 
+require value.\\
+If the edges don't have such id(), you must pass a map explicitely, such as
+the property map obtained by calling \ccc{get(edge_external_index,surface)},
+which constructs an internal map which non-intrusively associates a proper id with each edge.
 
 \subsubsection*{edge\_is\_border\_map(EdgeIsBorderMap ebm)} 
 
@@ -115,49 +115,13 @@ and whose \ccc{value_type} is \ccc{bool}.
 
 \textbf{Default}: the property map obtained by calling \ccc{get(edge_is_border,surface)}.
 
-
-\subsubsection*{vertex\_is\_fixed\_map(VertexIsFixedMap vfm)}
-
-
-Maps each vertex in the surface into a boolean value
-which indicates if the vertex is fixed and cannot be modified 
-by the \ccc{edge_collapse} function.\\
-\ccc{VertexIsFixedMap} must be a 
-\ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
-whose \ccc{key_type} is
-\ccc{boost::graph_traits<EdgeCollapsableMesh const>::vertex_descriptor}
-and whose \ccc{value_type} is \ccc{bool}.
-
-\textbf{Default}: 
-\ccc{Vertex_is_fixed_property_map_always_false<EdgeCollapsableMesh>()}.
-
-
-\subsubsection*{set\_cache(SetCache sc)} 
-
-The policy which indicates the caching level used 
-by the \ccc{edge_collapse} function.\\
-The type of \ccc{sc} must be a model of the \ccc{SetCache} concept.
-
-\textbf{Default}: 
-\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_set_cost_cache<EdgeCollapsableMesh>()}
-
-
 \subsubsection*{get\_cost(GetCost gc)}
-
 
 The policy which returns the collapse cost for an edge.\\
 The type of \ccc{gc} must be a model of the \ccc{GetCost} concept.
 
 \textbf{Default}: 
-\ccc{CGAL::Surface_mesh_simplification::Cached_cost<EdgeCollapsableMesh>}.
-
-
-\subsubsection*{get\_cost\_params(GetCost::Params const* gp)}
-
-The model-specific parameters to \ccc{get_cost}.
-
-\textbf{Default}: \ccc{NULL}.
-
+\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_cost<EdgeCollapsableMesh>}.
 
 \subsubsection*{get\_placement(GetPlacement gp)}
 
@@ -167,16 +131,6 @@ The type of \ccc{gp} must be a model of the \ccc{GetPlacement} concept.
 
 \textbf{Default}: 
 \ccc{CGAL::Surface_mesh_simplification::LindstromTurk_placement<EdgeCollapsableMesh>}
-
-
-
-\subsubsection*{get\_placement\_params(GetPlacement::Params const* gpp)}
-
-The model-specific parameters to \ccc{get_placement}.
-
-\textbf{Default}: A pointer to a local default constructed instance of \ccc{CGAL::LindstromTurk_params}.
-
-
 
 \subsubsection*{visitor(EdgeCollapseSimplificationVisitor const* v)}
 
@@ -197,16 +151,9 @@ examples in the user manual.
 The simplification process continues until the \ccc{should_stop} policy returns \ccc{true}
 or the surface cannot be simplified any further due to topological constraints.
 
-\ccc{vertex_is_fixed_map} is used to indicate that some edges should not be
-collapsed: edges incident upon fixed vertices are not collapsed.
-
-\ccc{set_cache}, along with \ccc{get_cost} and \ccc{get_placement},
-are the policies which control the {\em cost-strategy}, that is, 
-the order in which edges are collapsed and the replacement vertex is positioned.\\
-\ccc{get_cost_params} and \ccc{get_placement_params} are the runtime 
-parameters used by the these policies. They can be null pointers
-if the policies do not need them. This strategy is the driving factor that determines the accuracy of the
-simplified surface with respect to the original.
+\ccc{get_cost} and \ccc{get_placement} are the policies which control
+the {\em cost-strategy}, that is, the order in which edges are collapsed 
+and the remaining vertex is re-positioned.
 
 \ccc{visitor} is an optional object (can be null) which can be used
 to keep track of the simplification process.

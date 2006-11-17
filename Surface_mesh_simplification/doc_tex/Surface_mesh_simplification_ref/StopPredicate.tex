@@ -31,8 +31,8 @@ The concept \ccRefName\ describes the requirements for the predicate which indic
 \ccGlue    
   \ccNestedType{size_type}{An integer type representing the number of edges}{}
 \ccGlue    
-  \ccTypedef{typename boost::graph_traits<ECM>::edge_descriptor edge_descriptor;}
-  {A {\sc Bgl} edge descriptor representing an edge of the surface.}
+  \ccNestedType{Profile}
+  {The type of the edge profile cache. Must be a model of the \ccc{EdgeProfile} concept.}{}
 
 \ccCreation
 \ccCreationVariable{should_stop}  %% choose variable name
@@ -40,19 +40,19 @@ The concept \ccRefName\ describes the requirements for the predicate which indic
 \ccOperations
 
   \ccMethod
-    {bool  operator()( FT              current_cost
-                     , edge_descriptor edge
-                     , size_type       initial_count
-                     , size_type       current_count
-                     ) const ;
+    {bool operator()( FT const&       current_cost
+                    , Profile  const& profile
+                    , size_type       initial_count
+                    , size_type       current_count
+                    ) const ;
     }
     {
-    This predicate is called each time an \ccc{edge} is selected for processing,
-     before it is collapsed.\\
+    This predicate is called each time an edge is selected for processing,
+    before it is collapsed.\\
     \ccc{current_cost} is the cost of the selected edge.\\
     \ccc{initial_count} and \ccc{current_count} is the number of initial and current edges.\\
     \\
-    If the return value is \ccc{true} the simplification terminates before processing \ccc{edge},
+    If the return value is \ccc{true} the simplification terminates before processing the edge,
     otherwise it continues normally.
     }
   

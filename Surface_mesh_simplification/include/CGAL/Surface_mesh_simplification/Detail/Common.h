@@ -58,7 +58,6 @@ using boost::addressof ;
 
 using namespace boost::tuples ;
 
-
 template<class Handle>
 inline bool handle_assigned( Handle h ) { Handle null ; return h != null ; }
 
@@ -73,31 +72,6 @@ bool handle_exists ( Iterator begin, Iterator end, Handle h )
  }
  return false ;
 }
-
-
-template<class T, class U> struct ChooseNotVoidType ;
-template<class T>          struct ChooseNotVoidType<T   ,void> { typedef T    type ; } ;
-template<class U>          struct ChooseNotVoidType<void,U   > { typedef U    type ; } ;
-template<>                 struct ChooseNotVoidType<void,void> { typedef void type ; } ;
-
-template<class GetCost, class SetCache>
-struct ExtractCostParamsType
-{
-  typedef typename ChooseNotVoidType< typename GetCost ::Params
-                                    , typename SetCache::CostParams
-                                    >
-                                    ::type type ;
-} ;
-
-template<class GetPlacement, class SetCache>
-struct ExtractPlacementParamsType
-{
-  typedef typename ChooseNotVoidType< typename GetPlacement::Params
-                                    , typename SetCache    ::PlacementParams
-                                    >
-                                    ::type type ;
-} ;
-
 
 } // namespace Surface_mesh_simplification
 

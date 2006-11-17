@@ -31,38 +31,65 @@ namespace Surface_mesh_simplification
 {
 
 template<class ECM>
-LindstromTurkCore<ECM>::LindstromTurkCore( Params const&          aParams
-                                         , edge_descriptor const& aP_Q
-                                         , ECM&                   aSurface 
-                                         )
+LindstromTurkCore<ECM>::LindstromTurkCore( Params const& aParams, Profile const& aProfile )
   :
    mParams(aParams)
-  ,mP_Q(aP_Q)
-  ,mSurface(aSurface)    
-  
-  ,mP  ( source       (aP_Q,aSurface) )
-  ,mQ  ( target       (aP_Q,aSurface) )
-  ,mQ_P( opposite_edge(aP_Q,aSurface) )
+  ,mProfile(aProfile)
 {
+  Extract_triangle_data();
+  Extract_boundary_data();
+}
 
-  mTriangles.clear();
-  mLink     .clear(); 
-  mTriangles.reserve(16);
-  mLink     .reserve(16);
+template<class ECM>
+void LindstromTurkCore<ECM>::Extract_boundary_data()
+{
+  for ( const_border_edge_iterator it = mProfile.border_edges().begin(), eit = mProfile.border_edges().end() ; it != eit ; ++ it )
+  {
+    edge_descriptor border_edge = *it ;
+    
+    edge_descriptor face_edge = opposite_edge(border_edge,surface()) ;
+        
+    vertex_descriptor sv = source(face_edge,surface());
+    vertex_descriptor tv = target(face_edge,surface());
+    
+    Point const& sp = get_point(sv);
+    Point const& tp = get_point(tv);
+    
+    Vector v = tp - sp ;
+    Vector n = Point_cross_product(tp,sp) ;
+    
+    CGAL_ECMS_LT_TRACE(3,"Boundary edge. S:" << xyz_to_string(sp) << " T:" << xyz_to_string(tp)
+                      << " V:" << xyz_to_string(v) << " N:" << xyz_to_string(n) 
+                      ) ;
+    
+    mBdry_data.push_back( Boundary_data(sp,tp,v,n) ) ;
+  }  
+}
 
-  // Volume preservation and optimization constrians are based on the normals to the triangles in the star of the collapsing egde 
-  // Triangle shape optimization constrians are based on the link of the collapsing edge (the cycle of vertices around the edge)
-  Extract_triangles_and_link();
-
-#ifdef CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE
-  std::ostringstream ss ; 
-  for( typename Link::const_iterator it = mLink.begin(), eit = mLink.end() ; it != eit ; ++it )
-    ss << "v" << (*it)->ID << " " ;
-  std::string s = ss.str(); 
-  CGAL_ECMS_LT_TRACE(3,"Link: " << s );
-#endif
-  
-  Extract_boundary_edges();
+template<class ECM>
+void LindstromTurkCore<ECM>::Extract_triangle_data()
+{
+  for ( const_triangle_iterator it = mProfile.triangles().begin(), eit = mProfile.triangles().end() ; it != eit ; ++ it )
+  {
+    Triangle const& tri = *it ;
+    
+    Point const& p0 = get_point(tri.v0);
+    Point const& p1 = get_point(tri.v1);
+    Point const& p2 = get_point(tri.v2);
+    
+    Vector v01 = p1 - p0 ;
+    Vector v02 = p2 - p0 ;
+    
+    Vector lNormalV = cross_product(v01,v02);
+    
+    FT lNormalL = Point_cross_product(p0,p1) * (p2-ORIGIN);
+    
+    CGAL_ECMS_LT_TRACE(3,"Extracting triangle v" << lTri.v0->id() << "->v" << lTri.v1->id() << "->v" << lTri.v2->id()
+                      << " N:" << xyz_to_string(lNormalV) << " L:" << lNormalL
+                      );
+    
+    mTriangle_data.push_back(Triangle_data(lNormalV,lNormalL));
+  }
 }
 
 template<class ECM>
@@ -71,7 +98,7 @@ typename LindstromTurkCore<ECM>::Optional_point LindstromTurkCore<ECM>::compute_
   Optional_point  rPlacementP ;
   Optional_vector lPlacementV ;
   
-  CGAL_ECMS_LT_TRACE(2,"Computing LT data for E" << mP_Q->ID << " (V" << mP->ID << "->V" << mQ->ID << ")" );
+  CGAL_ECMS_LT_TRACE(2,"Computing LT data for E" << mProfile.v0v1()->id() << " (V" << mProfile.v0()->id() << "->V" << mProfile.v1()->id() << ")" );
   
   //
   // Each vertex constrian is an equation of the form: Ai * v = bi
@@ -96,17 +123,17 @@ typename LindstromTurkCore<ECM>::Optional_point LindstromTurkCore<ECM>::compute_
   //
   // A constrian (Ai,bi) must be alpha-compatible with the previously added constrians (see Paper); if it's not, is discarded.
   //
-  if ( mBdry.size() > 0 )
-    Add_boundary_preservation_constrians(mBdry);
+  if ( mBdry_data.size() > 0 )
+    Add_boundary_preservation_constrians(mBdry_data);
   
   if ( mConstrians.n < 3 )
-    Add_volume_preservation_constrians(mTriangles);
+    Add_volume_preservation_constrians(mTriangle_data);
     
   if ( mConstrians.n < 3 )
-    Add_boundary_and_volume_optimization_constrians(mBdry,mTriangles); 
+    Add_boundary_and_volume_optimization_constrians(mBdry_data,mTriangle_data); 
     
   if ( mConstrians.n < 3 )
-    Add_shape_optimization_constrians(mLink);
+    Add_shape_optimization_constrians(mProfile.link());
   
   // It might happen that there were not enough alpha-compatible constrians.
   // In that case there is simply no good vertex placement
@@ -141,18 +168,15 @@ typename LindstromTurkCore<ECM>::Optional_FT LindstromTurkCore<ECM>::compute_cos
 
   if ( aP )
   {
-    Point const& lP = get_point(mP) ;
-    Point const& lQ = get_point(mQ) ;
-
     Vector lV = (*aP) - ORIGIN ;
 
-    FT lSquaredLength = squared_distance(lP,lQ);
+    FT lSquaredLength = squared_distance(mProfile.p0(),mProfile.p1());
     
     CGAL_ECMS_LT_TRACE(1,"Squared edge length: " << lSquaredLength ) ;
     
-    FT lBdryCost   = Compute_boundary_cost(lV ,mBdry);
-    FT lVolumeCost = Compute_volume_cost  (lV ,mTriangles);
-    FT lShapeCost  = Compute_shape_cost   (*aP,mLink);
+    FT lBdryCost   = Compute_boundary_cost(lV ,mBdry_data);
+    FT lVolumeCost = Compute_volume_cost  (lV ,mTriangle_data);
+    FT lShapeCost  = Compute_shape_cost   (*aP,mProfile.link());
     
     FT lTotalCost =   FT(mParams.VolumeWeight)   * lVolumeCost
                     + FT(mParams.BoundaryWeight) * lBdryCost   * lSquaredLength
@@ -172,194 +196,16 @@ typename LindstromTurkCore<ECM>::Optional_FT LindstromTurkCore<ECM>::compute_cos
 }
 
 
-//
-// Caches the "local boundary", that is, the sequence of 3 border edges: o->p, p->q, q->e 
-//
 template<class ECM>
-void LindstromTurkCore<ECM>::Extract_boundary_edge( edge_descriptor edge )
+void LindstromTurkCore<ECM>::Add_boundary_preservation_constrians( Boundary_data_vector const& aBdry )
 {
-  edge_descriptor face_edge = is_border(edge) ? opposite_edge(edge,mSurface) : edge ;
-      
-  vertex_descriptor sv = source(face_edge,mSurface);
-  vertex_descriptor tv = target(face_edge,mSurface);
-  
-  Point const& sp = get_point(sv);
-  Point const& tp = get_point(tv);
-  
-  Vector v = tp - sp ;
-  Vector n = Point_cross_product(tp,sp) ;
-  
-  CGAL_ECMS_LT_TRACE(3,"Boundary edge. S:" << xyz_to_string(sp) << " T:" << xyz_to_string(tp)
-                    << " V:" << xyz_to_string(v) << " N:" << xyz_to_string(n) 
-                    ) ;
-  
-  mBdry.push_back( BoundaryEdge(sp,tp,v,n) ) ;
-}
-
-template<class ECM>
-void LindstromTurkCore<ECM>::Extract_boundary_edges( vertex_descriptor const& v
-                                                   , edge_descriptor_vector&  rCollected
-                                                   )
-{
-  in_edge_iterator eb, ee ; 
-  for ( tie(eb,ee) = in_edges(v,mSurface) ; eb != ee ; ++ eb )
-  {
-    edge_descriptor edge = *eb ;
-    
-    if ( is_undirected_edge_a_border(edge) && std::find(rCollected.begin(),rCollected.end(),edge) == rCollected.end() )
-    {
-      Extract_boundary_edge(edge);
-      rCollected.push_back(edge);
-      rCollected.push_back(opposite_edge(edge,mSurface));
-    }  
-  }
-}
-
-template<class ECM>
-void LindstromTurkCore<ECM>::Extract_boundary_edges()
-{
-  edge_descriptor_vector lCollected ;
-  Extract_boundary_edges(mP,lCollected);
-  Extract_boundary_edges(mQ,lCollected);
-}
-
-//
-// Calculates the normal of the triangle (v0,v1,v2) (both vector and its length as (v0xv1).v2)
-//
-template<class ECM>
-typename LindstromTurkCore<ECM>::Triangle LindstromTurkCore<ECM>::Get_triangle( vertex_descriptor const& v0
-                                                                              , vertex_descriptor const& v1
-                                                                              , vertex_descriptor const& v2 
-                                                                             )
-{
-  Point const& p0 = get_point(v0);
-  Point const& p1 = get_point(v1);
-  Point const& p2 = get_point(v2);
-  
-  Vector v01 = p1 - p0 ;
-  Vector v02 = p2 - p0 ;
-  
-  Vector lNormalV = cross_product(v01,v02);
-  
-  FT lNormalL = Point_cross_product(p0,p1) * (p2-ORIGIN);
-  
-  CGAL_ECMS_LT_TRACE(3,"Extracting triangle v" << v0->ID << "->v" << v1->ID << "->v" << v2->ID 
-                    << " N:" << xyz_to_string(lNormalV) << " L:" << lNormalL
-                    );
-  
-  return Triangle(lNormalV,lNormalL);
-}                              
-
-//
-// If (v0,v1,v2) is a finite triangular facet of the mesh, that is, NONE of these vertices are boundary vertices,
-// the triangle (properly oriented) is added to rTriangles.
-// The triangle is encoded as its normal, calculated using the actual facet orientation [(v0,v1,v2) or (v0,v2,v1)]
-//
-template<class ECM>
-void LindstromTurkCore<ECM>::Extract_triangle( vertex_descriptor const& v0
-                                             , vertex_descriptor const& v1
-                                             , vertex_descriptor const& v2 
-                                             , edge_descriptor   const& e02
-                                             )
-{
-  // The 3 vertices are obtained by circulating ccw around v0, that is, e02 = next_ccw(e01).
-  // Since these vertices are NOT obtained by circulating the face, the actual triangle orientation is unspecified.
-  
-  // The triangle is oriented v0->v2->v1 if the next edge that follows e02 (which is the edge v0->v2) is v2->v1.
-  if ( target(next_edge(e02,mSurface),mSurface) == v1 ) 
-  {
-    // The triangle is oriented v0->v2->v1.
-    // In this case e02 is an edge of the facet.
-    // If this facet edge is a border edge then this triangle is not in the mesh .
-    if ( !is_border(e02) )
-      mTriangles.push_back(Get_triangle(v0,v2,v1) ) ;
-  }
-  else
-  {
-    // The triangle is oriented v0->v1->v2.
-    // In this case, e20 and not e02, is an edge of the facet.
-    // If this facet edge is a border edge then this triangle is not in the mesh .
-    if ( !is_border(opposite_edge(e02,mSurface)) )
-      mTriangles.push_back(Get_triangle(v0,v1,v2) ) ;
-  }
-}
-
-//
-// Extract all triangles (its normals) and vertices (the link) around the collpasing edge p_q
-//
-template<class ECM>
-void LindstromTurkCore<ECM>::Extract_triangles_and_link()
-{
-  // 
-  // Extract around mP, CCW
-  //  
-  vertex_descriptor v0 = mP;
-  vertex_descriptor v1 = mQ;
-  
-  edge_descriptor e02 = mP_Q;
-  
-  do
-  {
-    e02 = next_edge_ccw(e02,mSurface);
-    
-    vertex_descriptor v2 = target(e02,mSurface);
-  
-    if ( v2 != mQ )
-    {
-      CGAL_expensive_assertion ( std::find(mLink.begin(),mLink.end(),v2) == mLink.end() ) ;
-      mLink.push_back(v2) ;
-    }
-      
-    Extract_triangle(v0,v1,v2,e02);
-    
-    v1 = v2 ;
-  }
-  while ( e02 != mP_Q ) ;
-  
-  // 
-  // Extract around mQ, CCW
-  //  
-  
-  v0 = mQ;
-  
-  e02 = next_edge_ccw(mQ_P,mSurface);
-  
-  v1 = target(e02,mSurface); 
-  
-  // This could have been added to the link while circulating around mP
-  if ( v1 != mP && std::find(mLink.begin(),mLink.end(),v1) == mLink.end() )
-    mLink.push_back(v1) ;
-  
-  e02 = next_edge_ccw(e02,mSurface);
-  
-  do
-  {
-    vertex_descriptor v2 = target(e02,mSurface);
-
-    // Any of the vertices found around mP can be reached again around mQ, but we can't duplicate them here.
-    if ( v2 != mP && std::find(mLink.begin(),mLink.end(),v2) == mLink.end() )
-      mLink.push_back(v2) ;
-    
-    Extract_triangle(v0,v1,v2,e02);
-    
-    v1 = v2 ;
-     
-    e02 = next_edge_ccw(e02,mSurface);
-    
-  }
-  while ( e02 != mQ_P ) ;
-}
-
-template<class ECM>
-void LindstromTurkCore<ECM>::Add_boundary_preservation_constrians( BoundaryEdges const& aBdry )
-{
-  
+ 
   if ( aBdry.size() > 0 )
   {
     Vector e1 = NULL_VECTOR ; 
     Vector e2 = NULL_VECTOR ;
     
-    for ( typename BoundaryEdges::const_iterator it = aBdry.begin() ; it != aBdry.end() ; ++ it )
+    for ( typename Boundary_data_vector::const_iterator it = aBdry.begin() ; it != aBdry.end() ; ++ it )
     {
       e1 = e1 + it->v ;
       e2 = e2 + it->n ;
@@ -376,14 +222,14 @@ void LindstromTurkCore<ECM>::Add_boundary_preservation_constrians( BoundaryEdges
 }
 
 template<class ECM>
-void LindstromTurkCore<ECM>::Add_volume_preservation_constrians( Triangles const& aTriangles )
+void LindstromTurkCore<ECM>::Add_volume_preservation_constrians( Triangle_data_vector const& aTriangles )
 {
   CGAL_ECMS_LT_TRACE(2,"Adding volume preservation constrians. " << aTriangles.size() << " triangles.");
   
   Vector lSumV = NULL_VECTOR ;
   FT     lSumL(0) ;
   
-  for( typename Triangles::const_iterator it = aTriangles.begin(), eit = aTriangles.end() ; it != eit ; ++it )
+  for( typename Triangle_data_vector::const_iterator it = aTriangles.begin(), eit = aTriangles.end() ; it != eit ; ++it )
   {
     lSumV = lSumV + it->NormalV ;
     lSumL = lSumL + it->NormalL ;  
@@ -394,7 +240,9 @@ void LindstromTurkCore<ECM>::Add_volume_preservation_constrians( Triangles const
 }
 
 template<class ECM>
-void LindstromTurkCore<ECM>::Add_boundary_and_volume_optimization_constrians( BoundaryEdges const& aBdry, Triangles const& aTriangles )
+void LindstromTurkCore<ECM>::Add_boundary_and_volume_optimization_constrians( Boundary_data_vector const& aBdry
+                                                                            , Triangle_data_vector const& aTriangles
+                                                                            )
 {
   CGAL_ECMS_LT_TRACE(2,"Adding boundary and volume optimization constrians. ");
   
@@ -404,9 +252,9 @@ void LindstromTurkCore<ECM>::Add_boundary_and_volume_optimization_constrians( Bo
   //
   // Volume optimization  
   //
-  for( typename Triangles::const_iterator it = aTriangles.begin(), eit = aTriangles.end() ; it != eit ; ++it )
+  for( typename Triangle_data_vector::const_iterator it = aTriangles.begin(), eit = aTriangles.end() ; it != eit ; ++it )
   {
-    Triangle const& lTri = *it ;
+    Triangle_data const& lTri = *it ;
     
     H += direct_product(lTri.NormalV,lTri.NormalV) ;
     
@@ -424,7 +272,7 @@ void LindstromTurkCore<ECM>::Add_boundary_and_volume_optimization_constrians( Bo
     Matrix Hb = NULL_MATRIX ;
     Vector cb = NULL_VECTOR ;
     
-    for ( typename BoundaryEdges::const_iterator it = aBdry.begin() ; it != aBdry.end() ; ++ it )
+    for ( typename Boundary_data_vector::const_iterator it = aBdry.begin() ; it != aBdry.end() ; ++ it )
     {
       Matrix H = LT_product(it->v);
       Vector c = cross_product(it->v,it->n);
@@ -438,7 +286,7 @@ void LindstromTurkCore<ECM>::Add_boundary_and_volume_optimization_constrians( Bo
     //
     // Weighted average
     //
-    FT lScaledBoundaryWeight = FT(9) * mParams.BoundaryWeight * squared_distance ( get_point(mP), get_point(mQ) )  ;
+    FT lScaledBoundaryWeight = FT(9) * mParams.BoundaryWeight * squared_distance(mProfile.p0(),mProfile.p1())  ;
     
     H *= mParams.VolumeWeight ;
     c = c * mParams.VolumeWeight ;
@@ -454,7 +302,7 @@ void LindstromTurkCore<ECM>::Add_boundary_and_volume_optimization_constrians( Bo
 }
 
 template<class ECM>
-void LindstromTurkCore<ECM>::Add_shape_optimization_constrians( Link const& aLink )
+void LindstromTurkCore<ECM>::Add_shape_optimization_constrians( vertex_descriptor_vector const& aLink )
 {
   FT s(aLink.size());
   
@@ -465,7 +313,7 @@ void LindstromTurkCore<ECM>::Add_shape_optimization_constrians( Link const& aLin
            
   Vector c = NULL_VECTOR ;
   
-  for( typename Link::const_iterator it = aLink.begin(), eit = aLink.end() ; it != eit ; ++it )
+  for( typename vertex_descriptor_vector::const_iterator it = aLink.begin(), eit = aLink.end() ; it != eit ; ++it )
     c = c + (ORIGIN - get_point(*it)) ;  
            
   CGAL_ECMS_LT_TRACE(2,"Adding shape optimization constrians: Shape vector: " << xyz_to_string(c) );
@@ -475,10 +323,10 @@ void LindstromTurkCore<ECM>::Add_shape_optimization_constrians( Link const& aLin
 
 template<class ECM>
 typename LindstromTurkCore<ECM>::FT
-LindstromTurkCore<ECM>::Compute_boundary_cost( Vector const& v, BoundaryEdges const& aBdry )
+LindstromTurkCore<ECM>::Compute_boundary_cost( Vector const& v, Boundary_data_vector const& aBdry )
 {
   FT rCost(0);
-  for ( typename BoundaryEdges::const_iterator it = aBdry.begin() ; it != aBdry.end() ; ++ it )
+  for ( typename Boundary_data_vector::const_iterator it = aBdry.begin() ; it != aBdry.end() ; ++ it )
   {
     Vector u = (it->t - ORIGIN ) - v ;
     Vector c = cross_product(it->v,u);
@@ -489,13 +337,13 @@ LindstromTurkCore<ECM>::Compute_boundary_cost( Vector const& v, BoundaryEdges co
 
 template<class ECM>
 typename LindstromTurkCore<ECM>::FT
-LindstromTurkCore<ECM>::Compute_volume_cost( Vector const& v, Triangles const& aTriangles )
+LindstromTurkCore<ECM>::Compute_volume_cost( Vector const& v, Triangle_data_vector const& aTriangles )
 {
   FT rCost(0);
   
-  for( typename Triangles::const_iterator it = aTriangles.begin(), eit = aTriangles.end() ; it != eit ; ++it )
+  for( typename Triangle_data_vector::const_iterator it = aTriangles.begin(), eit = aTriangles.end() ; it != eit ; ++it )
   {
-    Triangle const& lTri = *it ;
+    Triangle_data const& lTri = *it ;
     
     FT lF = lTri.NormalV * v - lTri.NormalL ;
     
@@ -508,11 +356,11 @@ LindstromTurkCore<ECM>::Compute_volume_cost( Vector const& v, Triangles const& a
 
 template<class ECM>
 typename LindstromTurkCore<ECM>::FT
-LindstromTurkCore<ECM>::Compute_shape_cost( Point const& p, Link const& aLink )
+LindstromTurkCore<ECM>::Compute_shape_cost( Point const& p, vertex_descriptor_vector const& aLink )
 {
   FT rCost(0);
   
-  for( typename Link::const_iterator it = aLink.begin(), eit = aLink.end() ; it != eit ; ++it )
+  for( typename vertex_descriptor_vector::const_iterator it = aLink.begin(), eit = aLink.end() ; it != eit ; ++it )
     rCost += squared_distance(p,get_point(*it)) ;  
     
   return rCost ;

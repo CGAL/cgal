@@ -39,16 +39,10 @@ It computes the collapse cost as the squared length of the edge.
 \ccConstructor{Edge_length_cost<ECM>();}{Default constructor} 
 
 \ccHeading{Methods}
-  \ccMethod{template<class Cache>
-            result_type operator()( edge_descriptor const& edge
-                                  , ECM&                   surface 
-                                  , Cache const&           cache
-                                  , Params const*          params
-                                  ) const;
-           }
+  \ccMethod{result_type operator()( Profile const& profile, optional<Point> const& placement ) const; }
   {Returns the {\em collapse cost} as the squared distance between the points
-  of the source and target vertices of \ccc{edge}. All arguments 
-  except \ccc{edge} and \ccc{surface} are ignored.
+  of the source and target vertices (that is, \ccc{profile.p0()} and \ccc{profile.p1()}.\
+  The \ccc{placement} argument is ignored.
   }
 
 \end{ccRefClass}

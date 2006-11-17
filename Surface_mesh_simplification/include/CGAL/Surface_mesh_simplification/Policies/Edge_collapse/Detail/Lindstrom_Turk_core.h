@@ -21,6 +21,7 @@
 #include <vector>
 
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
+#include <CGAL/Surface_mesh_simplification/Detail/Edge_profile.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_params.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -44,6 +45,8 @@ public:
     
   typedef ECM_ ECM ;
   
+  typedef Edge_profile<ECM> Profile ;
+  
   typedef boost::graph_traits<ECM> GraphTraits ;
   
   typedef typename GraphTraits::vertex_descriptor vertex_descriptor ;
@@ -65,40 +68,37 @@ public:
   
   typedef MatrixC33<Kernel> Matrix ;
   
+  typedef typename Profile::Triangle                 Triangle ;
+  typedef typename Profile::vertex_descriptor_vector vertex_descriptor_vector ;
+  
+  typedef typename Profile::Triangle_vector       ::const_iterator const_triangle_iterator ;
+  typedef typename Profile::edge_descriptor_vector::const_iterator const_border_edge_iterator ;
+  
 public:
   
-  LindstromTurkCore( Params const&          aParams
-                   , edge_descriptor const& aP_Q
-                   , ECM&                   aSurface 
-                   ) ;
+  LindstromTurkCore( Params const& aParams, Profile const& aProfile ) ;
     
   Optional_point compute_placement() ;
   Optional_FT    compute_cost( Optional_point const& p ) ;
   
 private :
 
-  struct Triangle
+  struct Triangle_data
   {
-    Triangle() {}
-    
-    Triangle( Vector const& aNormalV, FT const& aNormalL ) : NormalV(aNormalV), NormalL(aNormalL) {}
+    Triangle_data( Vector const& aNormalV, FT const& aNormalL ) : NormalV(aNormalV), NormalL(aNormalL) {}
     
     Vector NormalV ;
     FT     NormalL ;
   } ;
-  
-  typedef std::vector<Triangle>          Triangles ;
-  typedef std::vector<vertex_descriptor> Link ;
-  typedef std::vector<edge_descriptor>   edge_descriptor_vector ;
-  
-  struct BoundaryEdge
+  struct Boundary_data
   {
-    BoundaryEdge ( Point s_, Point t_, Vector const& v_, Vector const& n_ ) : s(s_), t(t_), v(v_), n(n_) {}
+    Boundary_data ( Point s_, Point t_, Vector const& v_, Vector const& n_ ) : s(s_), t(t_), v(v_), n(n_) {}
 
     Point  s, t ;      
     Vector v, n ;
   } ;
-  typedef std::vector<BoundaryEdge> BoundaryEdges ;
+  typedef std::vector<Triangle_data> Triangle_data_vector ;
+  typedef std::vector<Boundary_data> Boundary_data_vector ;
   
   class Constrians
   {
@@ -123,27 +123,21 @@ private :
   
 private :
     
-  void Add_boundary_preservation_constrians( BoundaryEdges const& aBdry ) ;
-  void Add_volume_preservation_constrians( Triangles const& aTriangles );
-  void Add_boundary_and_volume_optimization_constrians( BoundaryEdges const& aBdry, Triangles const& aTriangles ) ;
-  void Add_shape_optimization_constrians( Link const& aLink ) ;
+  void Extract_triangle_data();
+  void Extract_boundary_data() ;
+  
+  void Add_boundary_preservation_constrians( Boundary_data_vector const& aBdry ) ;
+  void Add_volume_preservation_constrians( Triangle_data_vector const& aTriangles );
+  void Add_boundary_and_volume_optimization_constrians( Boundary_data_vector const& aBdry, Triangle_data_vector const& aTriangles ) ;
+  void Add_shape_optimization_constrians( vertex_descriptor_vector const& aLink ) ;
 
-  FT Compute_boundary_cost( Vector const& v, BoundaryEdges const& aBdry ) ;
-  FT Compute_volume_cost  ( Vector const& v, Triangles const& aTriangles ) ;
-  FT Compute_shape_cost   ( Point const& p, Link const& aLink ) ;
-
-  bool is_border ( edge_descriptor const& edge ) const
-  {
-    return get(edge_is_border,mSurface,edge) ;
-  }    
-  bool is_undirected_edge_a_border ( edge_descriptor const& edge ) const
-  {
-    return is_border(edge) || is_border(opposite_edge(edge,mSurface)) ;
-  }    
+  FT Compute_boundary_cost( Vector const& v, Boundary_data_vector const& aBdry ) ;
+  FT Compute_volume_cost  ( Vector const& v, Triangle_data_vector const& aTriangles ) ;
+  FT Compute_shape_cost   ( Point  const& p, vertex_descriptor_vector const& aLink ) ;
 
   Point const& get_point ( vertex_descriptor const& v ) const 
   {
-    return get(vertex_point,mSurface,v);
+    return get(vertex_point,surface(),v);
   }
 
   static Vector Point_cross_product ( Point const& a, Point const& b ) 
@@ -172,39 +166,19 @@ private :
                  );
   }
     
-  Triangle Get_triangle ( vertex_descriptor const& v0
-                        , vertex_descriptor const& v1
-                        , vertex_descriptor const& v2 
-                        ) ;
-                       
-  void Extract_triangle( vertex_descriptor const& v0
-                       , vertex_descriptor const& v1
-                       , vertex_descriptor const& v2 
-                       , edge_descriptor   const& e02
-                       ) ;
-                       
-  void Extract_triangles_and_link();
-  
-  void Extract_boundary_edge ( edge_descriptor edge) ;
-  void Extract_boundary_edges( vertex_descriptor const& v, edge_descriptor_vector& rCollected ) ;
-  void Extract_boundary_edges() ;
+  ECM& surface() const { return mProfile.surface() ; }
   
 private:    
 
-  Params const&          mParams ; 
-  edge_descriptor const& mP_Q ;
-  ECM&                   mSurface ;
-  
-  vertex_descriptor mP ;
-  vertex_descriptor mQ ;
-  edge_descriptor   mQ_P ;
+  Params const&  mParams ; 
+  Profile const& mProfile ;
 
 private:    
 
-  Triangles     mTriangles;
-  Link          mLink;
-  BoundaryEdges mBdry ;
-  Constrians    mConstrians ;
+  Triangle_data_vector mTriangle_data ;
+  Boundary_data_vector mBdry_data ;
+  
+  Constrians mConstrians ;
 };
 
 } // namespace Surface_mesh_simplification

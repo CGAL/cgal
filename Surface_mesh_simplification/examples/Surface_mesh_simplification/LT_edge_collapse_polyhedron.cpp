@@ -35,9 +35,13 @@ int main( int argc, char** argv )
      
   // This the actual call to the simplification algorithm.
   // The surface and stop conditions are mandatory arguments.
-  // The third argument is needed because the edges on this
-  // surface lack an "id()" field.
-  int r = SMS::edge_collapse(surface, stop, CGAL::edge_index_map(boost::get(CGAL::edge_external_index,surface)) );
+  // The index maps are needed because the vertices and edges
+  // of this surface lack an "id()" field.
+  int r = SMS::edge_collapse(surface
+                            ,stop
+                            ,CGAL::vertex_index_map(boost::get(CGAL::vertex_external_index,surface)) 
+                            ,CGAL::edge_index_map  (boost::get(CGAL::edge_external_index  ,surface)) 
+                            );
   
   // === CONCRETE USAGE EXAMPLE ENDS HERE ===
 

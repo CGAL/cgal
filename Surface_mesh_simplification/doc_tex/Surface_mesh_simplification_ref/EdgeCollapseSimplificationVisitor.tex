@@ -60,14 +60,11 @@ The several callbacks given as member functions in the visitor are called from c
   
   \ccMethod
   {void OnCollected( edge_descriptor const& edge
-                   , bool                   is_fixed
                    , ECM&                   surface
                    );
   }                  
   {Called during the {\em collecting phase} (when a cost is assigned to the edges),
-  for each \ccc{edge} collected.\\
-  \ccc{is_fixed} indicates whether \ccc{edge} is fixed or not.
-  If it is fixed it will not be collapsed.
+  for each \ccc{edge} collected.
   }
   
   \ccMethod

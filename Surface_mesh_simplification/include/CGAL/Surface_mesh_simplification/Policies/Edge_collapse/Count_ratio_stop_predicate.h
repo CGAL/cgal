@@ -19,6 +19,7 @@
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_COUNT_RATIO_STOP_PREDICATE_H 1
 
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
+#include <CGAL/Surface_mesh_simplification/Detail/Edge_profile.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -43,6 +44,8 @@ public:
 
   typedef ECM_ ECM ;
   
+  typedef Edge_profile<ECM> Profile ;
+  
   typedef typename boost::graph_traits<ECM>::edge_descriptor edge_descriptor ;
   typedef typename boost::graph_traits<ECM>::edges_size_type size_type ;
   
@@ -54,10 +57,10 @@ public :
   
   Count_ratio_stop_predicate( double aRatio ) : mRatio(aRatio) {}
   
-  bool operator()( FT const&              // aCurrentCost
-                 , edge_descriptor const& //aEdge
-                 , size_type              aInitialCount
-                 , size_type              aCurrentCount
+  bool operator()( FT const&      // aCurrentCost
+                 , Profile const& //aEdgeProfile
+                 , size_type      aInitialCount
+                 , size_type      aCurrentCount
                  ) const 
   {
     return ( static_cast<double>(aCurrentCount) / static_cast<double>(aInitialCount) ) < mRatio ;

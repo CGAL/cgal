@@ -42,10 +42,10 @@ It returns \ccc{true} when the number of current edges drops below a certain thr
 \ccOperations
 
   \ccMethod
-    {bool operator()( FT const&              current_cost
-                    , edge_descriptor const& edge
-                    , size_type              initial_count
-                    , size_type              current_count
+    {bool operator()( FT const&      current_cost
+                    , Profile const& edge_profile
+                    , size_type      initial_count
+                    , size_type      current_count
                     ) const ;
            }
   {Returns \ccc{current_count < threshold}. All other parameters are ignored.}

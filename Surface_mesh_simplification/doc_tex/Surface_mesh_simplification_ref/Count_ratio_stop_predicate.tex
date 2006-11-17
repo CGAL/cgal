@@ -43,10 +43,10 @@ of edges drops below a certain ratio.
 \ccOperations
 
   \ccMethod
-    {bool operator()( FT const&              current_cost
-                    , edge_descriptor const& edge
-                    , size_type              initial_count
-                    , size_type              current_count
+    {bool operator()( FT const&      current_cost
+                    , Profile const& edge_profile
+                    , size_type      initial_count
+                    , size_type      current_count
                     ) const ;
            }
   {Returns ( \ccc{((double)current_count/ (double)initial_count) < ratio}. All other parameters are ignored.}

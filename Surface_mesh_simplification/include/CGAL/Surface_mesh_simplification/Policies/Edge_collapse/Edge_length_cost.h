@@ -19,6 +19,7 @@
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_EDGE_LENGHT_COST_H
 
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
+#include <CGAL/Surface_mesh_simplification/Detail/Edge_profile.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -36,52 +37,25 @@ public:
     
   typedef ECM_ ECM ;
   
-private :
-    
-  typedef typename boost::graph_traits<ECM>::vertex_descriptor vertex_descriptor ;
+  typedef Edge_profile<ECM> Profile ;
   
   typedef typename halfedge_graph_traits<ECM>::Point Point ;
   
   typedef typename Kernel_traits<Point>::Kernel Kernel ;
 
-public:
-
-  typedef typename boost::graph_traits<ECM>::edge_descriptor edge_descriptor ;
-  
   typedef typename Kernel::FT FT ;
   
   typedef optional<FT> result_type ;
-  
-  typedef void Params ;
-
   
 public:
 
   Edge_length_cost() {}
   
-  result_type operator()( edge_descriptor const& aEdge
-                        , ECM&                   aSurface
-                        , Params const*          //aParams
-                        , optional<Point> const& //aPlacement
-                        ) const
+  result_type operator()( Profile const& aProfile, optional<Point> const& /*aPlacement*/ ) const
   {
-    vertex_descriptor vs,vt ; tie(vs,vt) = get_vertices(aEdge,aSurface);
-    
-    Point const& ps = get(vertex_point,aSurface,vs);
-    Point const& pt = get(vertex_point,aSurface,vt);
-      
-    return result_type(squared_distance(ps,pt));
+    return result_type(squared_distance(aProfile.p0(),aProfile.p1()));
   }
   
-private:
-  
-  tuple<vertex_descriptor,vertex_descriptor> get_vertices ( edge_descriptor const& aEdge, ECM& aSurface ) const
-  {
-    vertex_descriptor p = source(aEdge,aSurface);
-    vertex_descriptor q = target(aEdge,aSurface);
-    return make_tuple(p,q);
-  }
-
 };
 
 
