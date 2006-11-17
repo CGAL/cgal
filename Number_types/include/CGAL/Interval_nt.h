@@ -51,15 +51,6 @@ public:
 
   typedef double      value_type;
 
-  typedef Tag_false   Has_gcd;
-  typedef Tag_true    Has_division;
-  typedef Tag_true    Has_sqrt;
-
-  // We may have to look back at these...
-  typedef Tag_false   Has_exact_ring_operations;
-  typedef Tag_false   Has_exact_division;
-  typedef Tag_false   Has_exact_sqrt;
-
   typedef Uncertain<bool>::Uncertain_conversion_exception  unsafe_comparison;
   typedef Checked_protect_FPU_rounding<Protected>   Internal_protector;
   typedef Protect_FPU_rounding<!Protected>          Protector;
