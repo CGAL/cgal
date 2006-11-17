@@ -73,14 +73,6 @@ class Algebraic_structure_traits  {
   
 };
 
-// Do we need this function? 
-// Currently it causes an error in package Min_sphere_of_spheres
-template< class Algebraic_structure >
-const bool is_exact( const Algebraic_structure& as ) {
-    return check_tag( 
-            typename Algebraic_structure_traits< Algebraic_structure >::Is_exact() );
-}
-
 // The algebraic structure traits base class
 // =========================================================================
 template< class Algebraic_structure, class Algebra_type >
@@ -219,17 +211,20 @@ class Algebraic_structure_traits_base< Algebraic_structure_,
       : public Binary_function< Algebraic_structure, Algebraic_structure,
                                 Algebraic_structure > { 
       public:
-        Algebraic_structure operator()( const Algebraic_structure& x, 
-                                        const Algebraic_structure& y) const { 
-          typename Algebraic_structure_traits<Algebraic_structure>::Div 
-                                                                    actual_div;
-          CGAL_precondition_msg( !is_exact(x) || actual_div( x, y) * y == x,
-            "'x' must be divisible by 'y' in "
-            "Algebraic_structure_traits<...>::Integral_div()(x,y)" );
-          return actual_div( x, y);          
+        Algebraic_structure operator()( 
+                const Algebraic_structure& x, 
+                const Algebraic_structure& y) const { 
+            typedef Algebraic_structure_traits<Algebraic_structure> AST; 
+            typedef typename AST::Is_exact Is_exact;
+            typename AST::Div actual_div;
+            
+            CGAL_precondition_msg( 
+                    !Is_exact::value || actual_div( x, y) * y == x,
+                    "'x' must be divisible by 'y' in "
+                    "Algebraic_structure_traits<...>::Integral_div()(x,y)" );
+            return actual_div( x, y);          
         }
-      
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )  
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )  ;
     };
 
     // Algorithm from NiX/euclids_algorithm.h
@@ -237,60 +232,61 @@ class Algebraic_structure_traits_base< Algebraic_structure_,
       : public Binary_function< Algebraic_structure, Algebraic_structure,
                                 Algebraic_structure > { 
       public:
-        Algebraic_structure operator()( const Algebraic_structure& x, 
-                                        const Algebraic_structure& y) const {
-          typename Algebraic_structure_traits<Algebraic_structure>::Mod mod;
-          typename Algebraic_structure_traits<Algebraic_structure>::Unit_part unit_part;
-          typename Algebraic_structure_traits<Algebraic_structure>::Integral_division integral_div;
-          // First: the extreme cases and negative sign corrections.
-          if (x == Algebraic_structure(0)) {
-              if (y == Algebraic_structure(0))  
-                  return Algebraic_structure(0);
-              return integral_div( y, unit_part(y) );
-          }
-          if (y == Algebraic_structure(0))
-              return integral_div(x, unit_part(x) );
-          Algebraic_structure u = integral_div( x, unit_part(x) );
-          Algebraic_structure v = integral_div( y, unit_part(y) );
-          // Second: assuming mod is the most expensive op here, we don't compute it
-          // unnecessarily if u < v
-          if (u < v) {
-              v = mod(v,u);
-              // maintain invariant of v > 0 for the loop below
-              if ( v == Algebraic_structure(0) )
-                  return u;
-          }
-          // Third: generic case of two positive integer values and u >= v.
-          // The standard loop would be:
-          //      while ( v != 0) {
-          //          int tmp = mod(u,v);
-          //          u = v;
-          //          v = tmp;
-          //      }
-          //      return u;
-          //
-          // But we want to save us all the variable assignments and unroll
-          // the loop. Before that, we transform it into a do {...} while()
-          // loop to reduce branching statements.
-          Algebraic_structure w;
-          do {
-              w = mod(u,v);
-              if ( w == Algebraic_structure(0))
-                  return v;
-              u = mod(v,w);
-              if ( u == Algebraic_structure(0))
-                  return w;
-              v = mod(w,u);
-          } while (v != Algebraic_structure(0));
-          return u;
-        }
-        
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
+        Algebraic_structure operator()( 
+                const Algebraic_structure& x, 
+                const Algebraic_structure& y) const {
+            typedef Algebraic_structure_traits<Algebraic_structure> AST;
+            typename AST::Mod mod;
+            typename AST::Unit_part unit_part;
+            typename AST::Integral_division integral_div;
+            // First: the extreme cases and negative sign corrections.
+            if (x == Algebraic_structure(0)) {
+                if (y == Algebraic_structure(0))  
+                    return Algebraic_structure(0);
+                return integral_div( y, unit_part(y) );
+            }
+            if (y == Algebraic_structure(0))
+                return integral_div(x, unit_part(x) );
+            Algebraic_structure u = integral_div( x, unit_part(x) );
+            Algebraic_structure v = integral_div( y, unit_part(y) );
+            // Second: assuming mod is the most expensive op here, 
+            // we don't compute it unnecessarily if u < v
+            if (u < v) {
+                v = mod(v,u);
+                // maintain invariant of v > 0 for the loop below
+                if ( v == Algebraic_structure(0) )
+                    return u;
+            }
+            // Third: generic case of two positive integer values and u >= v.
+            // The standard loop would be:
+            //      while ( v != 0) {
+            //          int tmp = mod(u,v);
+            //          u = v;
+            //          v = tmp;
+            //      }
+            //      return u;
+            //
+            // But we want to save us all the variable assignments and unroll
+            // the loop. Before that, we transform it into a do {...} while()
+            // loop to reduce branching statements.
+            Algebraic_structure w;
+            do {
+                w = mod(u,v);
+                if ( w == Algebraic_structure(0))
+                    return v;
+                u = mod(v,w);
+                if ( u == Algebraic_structure(0))
+                    return w;
+                v = mod(w,u);
+            } while (v != Algebraic_structure(0));
+            return u;
+        }  
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure );
     };
 
     // based on \c Div and \c Mod.
     class Div_mod { 
-      public:
+    public:
         typedef Algebraic_structure    first_argument_type;
         typedef Algebraic_structure    second_argument_type;
         typedef Algebraic_structure&   third_argument_type;
@@ -298,28 +294,32 @@ class Algebraic_structure_traits_base< Algebraic_structure_,
         typedef Arity_tag< 4 >         Arity;
         typedef void  result_type;
         void operator()( const Algebraic_structure& x, 
-                         const Algebraic_structure& y, 
-                         Algebraic_structure& q, Algebraic_structure& r) const {
-          typedef Algebraic_structure_traits<Algebraic_structure> Traits;
-          typename Traits::Div  actual_div;
-          typename Traits::Mod  actual_mod;
-          q = actual_div( x, y );
-          r = actual_mod( x, y );          
-          return;
+                const Algebraic_structure& y, 
+                Algebraic_structure& q, Algebraic_structure& r) const {
+            typedef Algebraic_structure_traits<Algebraic_structure> Traits;
+            typename Traits::Div  actual_div;
+            typename Traits::Mod  actual_mod;
+            q = actual_div( x, y );
+            r = actual_mod( x, y );          
+            return;
         }
         
         template < class NT1, class NT2 >
-        void operator()( const NT1& x, const NT2& y,
-                         Algebraic_structure& q, Algebraic_structure& r ) const {
-          BOOST_STATIC_ASSERT((::boost::is_same<
-                  typename Coercion_traits< NT1, NT2 >::Coercion_type, Algebraic_structure
-                                               >::value));
-          
-          typename Coercion_traits< NT1, NT2 >::Cast cast;
-          operator()( cast(x), cast(y), q, r );          
+        void operator()( 
+                const NT1& x, 
+                const NT2& y,
+                Algebraic_structure& q, 
+                Algebraic_structure& r ) const {
+            typedef Coercion_traits< NT1, NT2 > CT;
+            typedef typename CT::Coercion_type Coercion_type; 
+            BOOST_STATIC_ASSERT(( 
+              ::boost::is_same<Coercion_type , Algebraic_structure >::value));
+            
+            typename Coercion_traits< NT1, NT2 >::Cast cast;
+            operator()( cast(x), cast(y), q, r );          
         }
     };
-
+    
     // based on \c Div_mod.
     class Div 
       : public Binary_function< Algebraic_structure, Algebraic_structure,
@@ -389,15 +389,15 @@ class Algebraic_structure_traits_base< Algebraic_structure_, Field_tag >
       public:
         Algebraic_structure operator()( const Algebraic_structure& x, 
                                         const Algebraic_structure& y) const { 
-
-          CGAL_precondition_msg( !is_exact(x) || (x / y) * y  == x,
-            "'x' must be divisible by 'y' in "
-            "Algebraic_structure_traits<...>::Integral_div()(x,y)" );
-          return x / y;
+            typedef Algebraic_structure_traits<Algebraic_structure> AST; 
+            typedef typename AST::Is_exact Is_exact;
+            CGAL_precondition_msg( !Is_exact::value || (x / y) * y  == x,
+                    "'x' must be divisible by 'y' in "
+                    "Algebraic_structure_traits<...>::Integral_div()(x,y)" );
+            return x / y;
         }
-        
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
-    };
+            };
 };
 
 

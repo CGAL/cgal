@@ -57,13 +57,14 @@ template< class  AS  >
 bool test_equality_epsilon( const  AS & a,
                             const  AS & b,
                             const  AS & epsilon ) {
-  if( is_exact(a) )
-    return a == b;
-  else {
-     
-    return ( a < (b + epsilon) ) &&
-           ( a > (b - epsilon) );
-  }
+    typedef Algebraic_structure_traits<AS> AST;
+    typedef typename AST::Is_exact Is_exact; 
+    if( Is_exact::value )
+        return a == b;
+    else {
+        return ( a < (b + epsilon) ) &&
+            ( a > (b - epsilon) );
+    }
 }
 
 template< class AS >
@@ -224,7 +225,9 @@ void test_algebraic_structure_intern( const CGAL::Field_tag& ) {
      AS  c = a / b;
     (void)c;  // avoid warnings for unused variables
 
-    CGAL_test_assert( !is_exact(c) || c * b == a );
+    typedef Algebraic_structure_traits<AS> AST;
+    typedef typename AST::Is_exact Is_exact; 
+    CGAL_test_assert( !Is_exact::value || c * b == a );
     a =  AS (1);
     a /=  AS (2);
     a /=  AS (2); // that must work correctly also for float types
@@ -235,6 +238,8 @@ template <class  AS >
 void test_algebraic_structure_intern( const CGAL::Field_with_sqrt_tag& ) {
     test_algebraic_structure_intern< AS >( CGAL::Field_tag());
     typedef CGAL::Algebraic_structure_traits<  AS  > AST;
+    typedef typename AST::Is_exact Is_exact; 
+
     CGAL_SNAP_AST_FUNCTORS(AST);
 
     BOOST_STATIC_ASSERT((!::boost::is_same< Sqrt, Null_functor>::value));
@@ -242,9 +247,9 @@ void test_algebraic_structure_intern( const CGAL::Field_with_sqrt_tag& ) {
     AS  a(4);
    
     AS  c = sqrt( a);
-    CGAL_test_assert( !is_exact(c) || c ==  AS (2) );
+    CGAL_test_assert( !Is_exact::value || c ==  AS (2) );
     c =  AS (5);
-    CGAL_test_assert( !is_exact(c) || sqrt(c) * sqrt(c) == c );
+    CGAL_test_assert( !Is_exact::value || sqrt(c) * sqrt(c) == c );
     (void)c;  // avoid warnings for unused variables
     // #### more involved square root and root tests
 };
@@ -480,7 +485,9 @@ public:
         typedef typename Sqrt::result_type   Result_type;
         BOOST_STATIC_ASSERT(( ::boost::is_same< AS , Argument_type>::value));
         BOOST_STATIC_ASSERT(( ::boost::is_same< AS , Result_type>::value));
-        CGAL_test_assert( !is_exact( AS ()) ||  AS (3) == sqrt( AS (9)));
+        typedef Algebraic_structure_traits<AS> AST;
+        typedef typename AST::Is_exact Is_exact; 
+        CGAL_test_assert( !Is_exact::value ||  AS (3) == sqrt( AS (9)));
     }
 };
 
@@ -569,8 +576,10 @@ void test_Algebraic_structure_functions( const CGAL::Field_tag&) {
 template <class  AS >
 void test_Algebraic_structure_functions( const CGAL::Field_with_sqrt_tag&) {   
    test_Algebraic_structure_functions< AS >(CGAL::Field_tag());  
-    AS  c = CGAL_NTS sqrt( AS (4));
-   CGAL_test_assert( !is_exact(c) || c ==  AS (2) );
+   typedef Algebraic_structure_traits<AS> AST;
+   typedef typename AST::Is_exact Is_exact; 
+   AS  c = CGAL_NTS sqrt( AS (4));
+   CGAL_test_assert( !Is_exact::value || c ==  AS (2) );
 }
 template <class  AS >
 void test_Algebraic_structure_functions( const CGAL::Field_with_root_of_tag&) {

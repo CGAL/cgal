@@ -118,9 +118,9 @@ template<> class Algebraic_structure_traits< short int >
         Algebraic_structure operator()( const Algebraic_structure& x, 
                                         const Algebraic_structure& y) const { 
           Algebraic_structure_traits<Algebraic_structure>::Div actual_div;
-          CGAL_precondition_msg( !is_exact(x) || actual_div( x, y) * y == x,
-            "'x' must be divisible by 'y' in "
-            "Algebraic_structure_traits<...>::Integral_div()(x,y)" );
+          CGAL_precondition_msg( actual_div( x, y) * y == x,
+                  "'x' must be divisible by 'y' in "
+                  "Algebraic_structure_traits<...>::Integral_div()(x,y)" );
           return actual_div( x, y);          
         }      
     };
