@@ -47,7 +47,10 @@ minkowski_sum_2 (const Polygon_2<Kernel,Container>& pgn1,
   Polygon_2<Kernel,Container>                        sum_bound;
   std::list<Polygon_2<Kernel,Container> >            sum_holes;
 
-  mink_sum (pgn1, pgn2, sum_bound, std::back_inserter(sum_holes));
+  if (pgn1.size() > pgn2.size())
+    mink_sum (pgn1, pgn2, sum_bound, std::back_inserter(sum_holes));
+  else
+    mink_sum (pgn2, pgn1, sum_bound, std::back_inserter(sum_holes));
 
   return (Polygon_with_holes_2<Kernel,Container> (sum_bound,
                                                   sum_holes.begin(),
