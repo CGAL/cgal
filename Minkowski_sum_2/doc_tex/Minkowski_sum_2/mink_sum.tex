@@ -303,7 +303,7 @@ If $P$ is not convex, its offset can be obtained by decomposing it
 to convex sub-polygons $P_1, \ldots P_m$ such that
 $\bigcup_{i=1}^{m}{P_i} = P$, computing the offset of each
 sub-polygon and finally calculating the union of these sub-offsets
-(see Figure~\ref{fig:pgn_offset}(b)). However, as was the case with
+(see Figure~\ref{mink_fig:pgn_offset}(b)). However, as was the case with
 the Minkowski sum of a pair of polygons, here it is also more
 efficient to compute the \emph{convolution cycle} of the polygon
 with the disc $B_r$,\footnote{As the disc is convex, it is guaranteed
@@ -311,7 +311,7 @@ that the convolution curve is comprised of a single cycle.} which can be
 constructed by applying the process described in the previous
 paragraph. The only difference is that a circular arc induced by a
 reflex vertex $p_i$ is defined by an angle $540^{\circ} - \angle
-(p_{i-1}, p_i, p_{i+1})$; see Figure~\ref{fig:pgn_offset}(c) for an
+(p_{i-1}, p_i, p_{i+1})$; see Figure~\ref{mink_fig:pgn_offset}(c) for an
 illustration. We finally compute the winding numbers of the faces of the
 arrangement induced by the convolution cycle to obtain the offset
 polygon.
