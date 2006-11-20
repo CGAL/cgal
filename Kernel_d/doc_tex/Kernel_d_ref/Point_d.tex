@@ -45,7 +45,7 @@ the dimension of the point.
   InputIterator first, InputIterator last)}{introduces a variable
   \ccc{p} of type \ccc{Point_d<Kernel>} in dimension \ccc{d}.  If \ccc{size
     [first,last) == d} this creates a point with Cartesian coordinates
-  \ccc{set [first,last)}. If \ccc{size [first,last) == p+1} the range
+  \ccc{set [first,last)}. If \ccc{size [first,last) == d+1} the range
   specifies the homogeneous coordinates $\ccc{H = set [first,last)} =
   (\pm h_0, \pm h_1, \ldots, \pm h_d)$ where the sign chosen is the
   sign of $h_d$.  \ccPrecond \ccc{d} is nonnegative,
