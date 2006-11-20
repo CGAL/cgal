@@ -16,8 +16,8 @@
 \end{figure}
 
 This chapter describes the \cgal's package geared towards the
-estimation of local differential quantities on sampled surfaces, known
-either as a mesh or a point cloud.
+estimation of local differential quantities on sampled surfaces, given
+either as a mesh or as point cloud.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%
@@ -62,13 +62,13 @@ properties, so that any estimation method must come with an
 asymptotic convergence analysis of the results returned. For the
 method developed in this CGAL package, the
 interested will find such an analysis in
-\cite{cgal:cp-edqpf-05}, ---\ it should be stressed 
+\cite{cgal:cp-edqpf-05}, (theorem 3)---\ it should be stressed 
 the error bounds proved therein are optimal.
 
 On the other hand, any estimation method may be applied to arbitrarily
 data ---surface unknown, surface piecewise smooth etc. In such a case,
-no analysis can be carried out, and it is up to the user to check the
-results match his/her needs.
+no analysis can be carried out, and it is up to the users to check the
+results match their needs.
 
 %% and only the user can judge if the results are relevant for its use.
 
@@ -96,7 +96,7 @@ J_{B,d}(x,y)=\sum_{k=0}^{k=d}(\sum_{i=0}^{i=k}
 \frac{B_{k-i,i}x^{k-i}y^{i}}{i!(k-i)!}).
 \end{equation}
 The degree $d$ polynomial $J_{B,d}$ is the Taylor expansion of the
-function $z$, and is called its $d$-jet. Notice that a $d$-jet contains
+function $z$, and is called its {\em $d$-jet}. Notice that a $d$-jet contains
 $N_d=(d+1)(d+2)/2$ coefficients.
 
 Recall that an umbilical point of a surface --- or umbilic for short,
@@ -104,11 +104,12 @@ is a point where both principal curvatures are identical.  At any
 point of the surface which is not an umbilic, principal directions
 $d_1, d_2$ are well defined, and these (non oriented) directions
 together with the normal vector $n$ define two direct orthonormal
-frames. If $v_1$ is a unit vector of direction $d_1$, there exists
-a unique unit vector $v_2$ so that $(v_1,v_2,n)$ is direct; and the
-other possible frame is $(-v_1,-v_2,n)$. In one of these Monge
-coordinate systems, the surface is said to be given in the Monge form
-and its jet has the following canonical form~:
+frames. If $v_1$ is a unit vector of direction $d_1$, there exists a
+unique unit vector $v_2$ so that $(v_1,v_2,n)$ is direct; and the
+other possible frame is $(-v_1,-v_2,n)$.  Both these coordinate
+systems are known as the {\em Monge coordinate systems}. In both these
+systems, the surface is said to be given in the Monge form and its jet
+has the following canonical form~:
 
 \begin{eqnarray}
 \label{eq:monge}
@@ -156,7 +157,7 @@ Finally, we compute the Monge coefficients : $k_i, b_i, c_i$.
 \end{enumerate}
 
 Further details can be found in section \ref{sec:details} and in
-\cite{cgal:cp-edqpf-05}.
+\cite{cgal:cp-edqpf-05} (section 6).
 
 \subsection{Degenerate Cases}
 \label{sec:deg-cases}
@@ -166,16 +167,15 @@ As usual, the  fitting procedure may run into (almost) degenerate
 cases:
 %%
 \begin{itemize}
-\item
-Due to poor sampling, the PCA used to determine a rough normal vector
-may not be good. The nearer this direction to the tangent plane the
-worse the estimation. 
+\item Due to poor sampling, the PCA used to determine a rough normal
+  vector may not be good. The nearer this direction to the tangent
+  plane the worse the estimation.
 
-\item
-As observed in \cite{cgal:cp-edqpf-05}, the interpolating problem is
-not {\em poised} if the points project, into the fitting frame,
-onto an algebraic curve of degree $d$. More generally, the problem is
-ill poised if the condition number is too large.
+\item As observed in \cite{cgal:cp-edqpf-05} (section 3.1), the
+  interpolating problem is not {\em poised} if the points project,
+  into the fitting frame, onto an algebraic curve of degree $d$. More
+  generally, the problem is ill poised if the condition number is too
+  large.
 \end{itemize}
 %%
 In these cases, even if a result is provided, the estimation may not
@@ -367,7 +367,7 @@ provide illustrations of principal directions of curvature.
 %\ccIncludeExampleCode{Jet_fitting_3/blind.cpp} %too long to be included?
 %%%%%%%%%%%%%%%%%%%%%%%
 
-
+ \begin{ccAdvanced} 
 \section{Mathematical and Algorithmic Details}
 %%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:details}
@@ -385,7 +385,7 @@ fitting-basis $(f_x,f_y,f_z)$, the Monge basis $(d_1,d_2,n)$.
 \end{ccTexOnly}
 
 \label{fig:jet_fitting_basis}
-\caption{The three basis involved in the estimation.}
+\caption{The three bases involved in the estimation.}
 
 \begin{ccHtmlOnly}
 <CENTER>
@@ -409,14 +409,13 @@ fitting-basis $(f_x,f_y,f_z)$, the Monge basis $(d_1,d_2,n)$.
 %
 Performing a PCA requires diagonalizing a symmetric matrix.  This
 analysis gives an orthonormal basis whose $z$-axis is provided by the
-eigenvector associated to the smallest eigenvalue.
-\footnote{Another possibility is to choose as z-axis the axis of the
-world-basis with the least angle with the axis determined with the
-PCA. Then the change of basis reduces to a permutation of axis.} Note
-one may have to swap the orientation of a vector to get a direct
-basis.
+eigenvector associated to the smallest eigenvalue.\footnote{Another
+  possibility is to choose as z-axis the axis of the world-basis with
+  the least angle with the axis determined with the PCA. Then the
+  change of basis reduces to a permutation of axis.} Note one may have
+to swap the orientation of a vector to get a direct basis.
 
-Let us note $P_{W\rightarrow F}$ the matrix to change coordinates from the
+Let us denote $P_{W\rightarrow F}$ the matrix that changes coordinates from the
 world-basis $(w_x,w_y,w_z)$ to the fitting-basis $(f_x,f_y,f_z)$. The
 rows of $P_{W\rightarrow F}$ are the coordinates of the vectors
 $(f_x,f_y,f_z)$ in the world-basis. This matrix represents a
@@ -509,8 +508,7 @@ D_r^{-1} & 0_{N_d-r,\ r}\\
 One can provide the condition number of the matrix $M$ (after
 preconditioning) which is the ratio of the maximal and the minimal
 singular values. It is infinite if the system is under constrained,
-that is the smallest singular value is zero. Then, an exception is
-raised.
+that is the smallest singular value is zero.
 
 \paragraph{Implementation details.}
 We assume a \ccc{solve} function is provided by the traits
@@ -530,7 +528,7 @@ definite positive when $M$ has full rank.
 The advantages of the $SVD$
 is that it works directly on the rectangular system and gives the
 condition number of the system. For more on these alternatives, see
-\cite{gl-mc-83}.
+\cite{gl-mc-83} (Chap. 5).
 
 \subsection{Principal  Curvature / Directions}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -554,33 +552,33 @@ A_{0,0}+A_{1,0}x+A_{0,1}y+\frac{1}{2}(A_{2,0}x^2+2A_{1,1}xy+A_{0,2}y^2)
 + \frac{1}{6}(A_{3,0}x^3+3A_{2,1}x^2y+\ldots )+ \ldots 
 \end{eqnarray}
 
-
---- The origin, that is the point of the fitted surface where the
-estimation is performed, is $(0,0,A_{0,0})$. \\
-%%
---- The normal is
-$n=(-A_{1,0},-A_{0,1},1)/\sqrt{A_{1,0}^2+A_{0,1}^2+1}$.\\
-%%
---- Curvature related properties are retrieved resorting to standard
-differential calculus \cite{c-dgcs-76}. More precisely, the Weingarten
-operator $W=-I^{-1}II$ is first computed in the basis of the tangent
-plane $\{ (1,0,A_{1,0}), (0,1,A_{0,1}) \}$. We compute an orthonormal
-basis of the tangent plane using the Gram-Schmidt algorithm, and then
-we compute Weingarten in this basis (applying a change of basis with
-the matrix $W'=P^{-1}WP$). In this orthonormal basis, the matrix of
-the Weingarten map is symmetric and we diagonalize it.  One finally
-gets the principal curvatures which are the eigenvalues of $W$, and
-the associated principal directions. This gives an orthonormal direct
-basis $(d_1,d_2,n)$. Let us note $P_{F
-\rightarrow M}$ the matrix to change coordinates from the
-fitting-basis to the Monge basis. Its rows are the coordinates of the
-vectors $(d_1,d_2,n)$ in the fitting-basis. It is an orthogonal matrix
-$P_{F \rightarrow M}^{-1}=P_{F \rightarrow M}^T$. The Monge basis
-expressed in the world-basis is obtained by multiplying the coordinates
-of $(d_1,d_2,n)$ in the fitting-basis by $P_{W\rightarrow F}^{-1}$,
-(the same holds for the origin point which has in addition to be
-translated by $p$, i.e. the coordinates of the origin point are
-$P_{W\rightarrow F}^{-1} (0,0,A_{0,0}) +p$.
+\begin{itemize}
+\item The origin, that is the point of the fitted surface where the
+  estimation is performed, is $(0,0,A_{0,0})$. 
+\item The normal is
+  $n=(-A_{1,0},-A_{0,1},1)/\sqrt{A_{1,0}^2+A_{0,1}^2+1}$.
+\item Curvature related properties are retrieved resorting to
+  standard differential calculus \cite{c-dgcs-76} (Chap. 3). More precisely, the
+  Weingarten operator $W=-I^{-1}II$ is first computed in the basis of
+  the tangent plane $\{ (1,0,A_{1,0}), (0,1,A_{0,1}) \}$. We compute
+  an orthonormal basis of the tangent plane using the Gram-Schmidt
+  algorithm, and then we compute Weingarten in this basis (applying a
+  change of basis with the matrix $W'=P^{-1}WP$). In this orthonormal
+  basis, the matrix of the Weingarten map is symmetric and we
+  diagonalize it.  One finally gets the principal curvatures which are
+  the eigenvalues of $W$, and the associated principal
+  directions. This gives an orthonormal direct basis
+  $(d_1,d_2,n)$. Let us denote $P_{F \rightarrow M}$ the matrix to
+  change coordinates from the fitting-basis to the Monge basis. Its
+  rows are the coordinates of the vectors $(d_1,d_2,n)$ in the
+  fitting-basis. It is an orthogonal matrix $P_{F \rightarrow
+    M}^{-1}=P_{F \rightarrow M}^T$. The Monge basis expressed in the
+  world-basis is obtained by multiplying the coordinates of
+  $(d_1,d_2,n)$ in the fitting-basis by $P_{W\rightarrow F}^{-1}$,
+  (the same holds for the origin point which has in addition to be
+  translated by $p$, i.e. the coordinates of the origin point are
+  $P_{W\rightarrow F}^{-1} (0,0,A_{0,0}) +p$.
+\end{itemize}
 
 \subsection{Computing  Higher Order Monge Coefficients}
 
@@ -628,3 +626,4 @@ f_{0,0,1} ^{2}}}
 \\
 & .... \\
 \end{eqnarray*} 
+ \end{ccAdvanced} 

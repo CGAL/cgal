@@ -12,21 +12,15 @@
 typedef double                   DFT;
 typedef CGAL::Cartesian<DFT>     Data_Kernel;
 typedef Data_Kernel::Point_3     DPoint;
-
-typedef double                   LFT;
-typedef CGAL::Cartesian<LFT>     Local_Kernel;
 typedef CGAL::Monge_via_jet_fitting<Data_Kernel> My_Monge_via_jet_fitting;
-typedef My_Monge_via_jet_fitting::LMonge_form  My_Monge_form;
+typedef My_Monge_via_jet_fitting::Monge_form     My_Monge_form;
        
 int main(int argc, char *argv[])
 {
   //check command line  
   if (argc<4)
     {
-      std::cout << " Usage : " 
-		<< argv[0]
-		<< " <inputPoints.txt> <d_fitting> <d_monge>" 
-		<< std::endl;
+      std::cout << " Usage : " << argv[0] << " <inputPoints.txt> <d_fitting> <d_monge>" << std::endl;
       exit(-1);
     }
   //open the input file

@@ -70,13 +70,13 @@ public:
   typedef double FT;
   typedef Lapack_vector Vector;
   typedef Lapack_matrix Matrix;
-  //solve MX=B using SVD and give the condition number of M
+  //solve MX=B using SVD and return the condition number of M
   //The solution is stored in B
   static
-    void solve(Matrix& M, Vector& B, FT &cond_nb);
+    FT solve(Matrix& M, Vector& B);
 };
 
-void Lapack_svd::solve(Matrix& M, Vector& B, FT& cond_nb)
+ Lapack_svd::FT Lapack_svd::solve(Matrix& M, Vector& B)
 {
   integer m = M.number_of_rows(),
     n = M.number_of_columns(),
@@ -96,11 +96,13 @@ void Lapack_svd::solve(Matrix& M, Vector& B, FT& cond_nb)
 	  &rcond, &rank, work, &lwork, &info);
   assert(info==0);
 
-  cond_nb = sing_values[0]/sing_values[n-1];
+  FT cond_nb = sing_values[0]/sing_values[n-1];
   
   //clean up 
   free(sing_values);
   free(work);
+
+  return cond_nb;
 }
 
 } // namespace CGAL

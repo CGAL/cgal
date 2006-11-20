@@ -20,12 +20,12 @@
 \ccDefinition
   
 The class \ccRefName\ is designed to perform the estimation of the
-local differential quantities at a given point. Since points are given
-through an iterator ---and its past the end, it is assumed the point
-where the calculation is carried out is the first point provided by
-the iterator.
+local differential quantities at a given point.  The point range is
+given by a pair of input iterators, and it is assumed that the point
+where the calculation is carried out is the point that the begin
+iterator refers to.
 %%
-The results are stored in an instance of the class \ccc{Monge_form},
+The results are stored in an instance of the nested class \ccc{Monge_form},
 the particular information returned depending on the degrees specified
 for the polynomial fitting and for the Monge form.
 
@@ -46,37 +46,37 @@ algebra algorithm required by the fitting method.
 \ccTypes
 
 %\ccNestedType{TYPE}{some nested types}
-\ccTypedef{  typedef DataKernel   Data_Kernel;}{}
+\ccTypedef{  typedef DataKernel   Data_kernel;}{}
 \ccGlue
-\ccTypedef{  typedef LocalKernel  Local_Kernel;}{}
+\ccTypedef{  typedef LocalKernel  Local_kernel;}{}
 \ccGlue
-\ccTypedef{typedef typename Local_Kernel::FT       LFT; }{}
+\ccTypedef{typedef typename Local_kernel::FT       FT; }{}
 \ccGlue
-\ccTypedef{  typedef typename Local_Kernel::Vector_3 LVector;}{}
-\ccGlue
-\ccTypedef{   typedef typename std::vector<typename
-Data_Kernel::Point_3>::iterator Range_Iterator; }{} 
-\ccGlue
-\ccTypedef{  typedef Monge_form<Data_Kernel>   Monge_form;}{}
+\ccTypedef{  typedef typename Local_kernel::Vector_3 Vector_3;}{}
+
+\ccNestedType{Monge_form}{see the page  \ccc{Monge_form} }
 
 \ccCreation
 \ccCreationVariable{monge_fitting}  %% choose variable name, given by \ccVar
 
 \ccConstructor{Monge_via_jet_fitting();} {default constructor} 
 
-\ccOperations
-\ccMethod{Monge_form operator()(Range_Iterator begin, Range_Iterator end,
- 		size_t deg, size_t deg_monge);} {This operator performs
- 		all the computations. The $N$ input points are given
- 		by the \ccc{Range_Iterators}, \ccc{deg} is the degree of
- 		the fitted polynomial, \ccc{deg_monge} is the degree of
- 		the expected Monge coefficients.
-\ccPrecond $N \geq N_{deg}:=(deg+1)(deg+2)/2$, $1 \leq deg_{monge} \leq \min(deg,4)  $ } 
+\ccOperations \ccMethod{ template <class InputIterator> Monge_form
+  operator()(InputIterator begin, InputIterator end, size_t d,
+  size_t d');}
+{This operator performs all the computations. The $N$ input points are
+  given by the \ccc{InputIterator} parameters which value-type are
+  \ccc{Data_kernel::Point_3}, \ccc{d} is the degree of the fitted
+  polynomial, \ccc{d'} is the degree of the expected Monge
+  coefficients.  \ccPrecond $N \geq N_{d}:=(d+1)(d+2)/2$, $1 \leq d'
+  \leq \min(d,4) $ }
 
 
 \ccMethod{LFT condition_number();}{condition number of the linear fitting system.}
 \ccGlue
-\ccMethod{std::pair<LFT, LVector> pca_basis(size_t i);}{pca eigenvalues and eigenvectors.}
+\ccMethod{std::pair<LFT, LVector> pca_basis(size_t i);}
+{pca eigenvalues and eigenvectors, the pca\_basis has always 3 such pairs.
+ Precondition : $i$ ranges from 0 to 2.}
 
 
 \ccSeeAlso

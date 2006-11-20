@@ -66,21 +66,10 @@ typedef std::map<Facet_handle, Vector_3, Facet_cmp> Facet2normal_map_type;
 typedef boost::associative_property_map<Facet2normal_map_type> Facet_PM_type;
 typedef T_PolyhedralSurf_facet_ops<PolyhedralSurf, Facet_PM_type> Poly_facet_ops;
 
-
-
-
-//Kernel for local computations
-// typedef double                LFT;
-// typedef CGAL::Cartesian<LFT>  Local_Kernel;
-// typedef CGAL::Monge_via_jet_fitting<Data_Kernel, Local_Kernel, Lapack> My_Monge_via_jet_fitting;
-// typedef CGAL::Monge_form<Data_Kernel> My_Monge_form;
-// typedef CGAL::Monge_form_condition_numbers<Local_Kernel> My_Monge_form_condition_numbers;
-
-
 typedef double                   LFT;
 typedef CGAL::Cartesian<LFT>     Local_Kernel;
 typedef CGAL::Monge_via_jet_fitting<Data_Kernel> My_Monge_via_jet_fitting;
-typedef My_Monge_via_jet_fitting::LMonge_form My_Monge_form;
+typedef My_Monge_via_jet_fitting::Monge_form My_Monge_form;
 
          
 //Syntax requirred by Options
@@ -282,7 +271,7 @@ int main(int argc, char *argv[])
       (*out_verbose) << "--- vertex " <<  ++nb_vertices_considered 
 		     <<	" : " << v->point() << std::endl
 		     << "number of points used : " << in_points.size() << std::endl
-		     << monge_form;
+	;// << monge_form;
     }
   } //all vertices processed
 
