@@ -75,14 +75,14 @@ class Rational_polynomial_2 {
 		void set_coef (int, int, unsigned long int);
 		Rational_polynomial_2& operator=(const Rational_polynomial_2&);
 		Rational_polynomial_2 operator-()const;
+		Rational_polynomial_2& operator+=(const Rational_polynomial_2&);
 		Rational_polynomial_2 operator+
 			(const Rational_polynomial_2&)const;
-		Rational_polynomial_2& operator+=(const Rational_polynomial_2&);
 		Rational_polynomial_2 operator-
 			(const Rational_polynomial_2&)const;
 		Rational_polynomial_2& operator-=
 			(const Rational_polynomial_2&);
-		Rational_polynomial_2& scale_and_shift(mpq_t&,int,int);
+		/*Rational_polynomial_2& scale_and_shift(mpq_t&,int,int);*/
 		Rational_polynomial_2
 			operator*(const Rational_polynomial_2&)const;
 		Rational_polynomial_2& operator*=(const Rational_polynomial_2&);
@@ -105,6 +105,8 @@ Rational_polynomial_2 operator*(const T&,const Rational_polynomial_2&);
 inline int Rational_polynomial_2::get_degree_x()const{return degree_x;};
 inline int Rational_polynomial_2::get_degree_y()const{return degree_y;};
 inline mpq_t** Rational_polynomial_2::get_coefs()const{return coef;};
+inline void Rational_polynomial_2::get_coef(int pow_x,int pow_y,mpq_t *c)const{
+	mpq_set(*c,coef[pow_x][pow_y]);};
 inline void Rational_polynomial_2::set_coef(int pow_x,int pow_y,const mpq_t &q){
 	mpq_set(coef[pow_x][pow_y],q);};
 inline void Rational_polynomial_2::set_coef(int pow_x,int pow_y,const mpz_t &z){
@@ -123,8 +125,15 @@ inline void Rational_polynomial_2::set_coef(int pow_x,int pow_y,long int c){
 inline void Rational_polynomial_2::set_coef(int pow_x,int pow_y,
 		unsigned long int c){
 	mpq_set_ui(coef[pow_x][pow_y],c,(unsigned long int)1);};
+inline Rational_polynomial_2 Rational_polynomial_2::operator-
+(const Rational_polynomial_2 &s)const{return *this+(-s);};
+inline Rational_polynomial_2& Rational_polynomial_2::operator-=
+(const Rational_polynomial_2 &s){return (*this+=(-s));};
 inline bool Rational_polynomial_2::operator!=
 (const Rational_polynomial_2 &p)const{return !(*this==p);};
+
+inline std::ostream& operator<<(std::ostream &o,const Rational_polynomial_2 &p)
+{return p.show (o);};
 
 CGAL_END_NAMESPACE
 
