@@ -35,14 +35,14 @@ of edges drops below a certain ratio.
 \ccc{StopPredicate}
 
 \ccCreation
-\ccCreationVariable{should_stop}  %% choose variable name
+\ccCreationVariable{sp}  %% choose variable name
 
 \ccConstructor{Count_ratio_stop_predicate<ECM>( double ratio );}
 {Initializes the predicate establishing the \ccc{ratio}.} 
 
 \ccOperations
 
-  \ccMethod
+  \ccMemberFunction
     {bool operator()( FT const&      current_cost
                     , Profile const& edge_profile
                     , size_type      initial_count

@@ -40,25 +40,24 @@ or can be intentionally returned to prevent the edge from being collapsed.
 \ccGlue    
   \ccNestedType{FT}{A field type representing the collapse cost}{}
 \ccGlue    
-  \ccTypedef{typename CGAL::halfedge_graph_traits<ECM>::Point Point;}{The point type for the surface vertex.}
+  \ccTypedef{typename CGAL::halfedge_graph_traits<ECM>::Point Point;}
+  {The point type for the surface vertex.  Must be a model of \ccc{Point_3}.}
 \ccGlue    
   \ccTypedef{boost::optional<FT> result_type;}{The type of the result (an optional cost value).}
 
-\ccCreation
 \ccCreationVariable{gc}  %% choose variable name
-
-\ccConstructor{GetCost();}{Default constructor} 
 
 \ccOperations
 
-  \ccMethod{result_type operator()( Profile const& edge_profile, optional<Point> const& placement ) const;}
+  \ccMemberFunction{result_type operator()( Profile const& edge_profile
+  , boost::optional<Point> const& placement ) const;}
   {Computes and returns the cost of collapsing the edge (represented by its profile),
-   using the calculated placement.\\
+   using the calculated placement.
   }
   
 \ccHasModels
-\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Edge_length_cost<ECM>}.
-\ccRefIdfierPage{CGAL::Surface_mesh_simplification::LindstromTurk_cost<ECM>}.
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Edge_length_cost<ECM>}\\
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::LindstromTurk_cost<ECM>}
 
 \end{ccRefConcept}
 

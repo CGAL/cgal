@@ -211,6 +211,9 @@ are needed becasue the placement (and cost) changes.
 
 \subsection{API Overview}
 
+Sice the algorithm is free from robustness issues there is no need for exact predicates nor constructions and \ccc{Simple_cartesian<double>} can be used safely.
+\footnote{In the current version, 3.3, the LindstromTurk policies are not implemented for homogeneous coordinates, so a cartesian kernel must be used.}
+
 The simplification algorithm is implemented as the free template function 
 \ccc{CGAL::Surface_mesh_simplification::edge_collapse}. The function has two mandatory and several optional parameters.
 
@@ -219,8 +222,8 @@ The simplification algorithm is implemented as the free template function
 There are two main parameters to the algorithm: the surface to be simplified (in-place) and the stop predicate.
 
 The surface to simplify must be a model of the \ccc{EdgeCollapsableMesh} concept. 
-Many concrete surface types, such as \ccc{CGAL::Polyhedron_3}, become models of 
-that concept via a technique known as 
+Many concrete surface types, such as \ccc{CGAL::Polyhedron_3} with only triangular faces,
+become models of that concept via a technique known as 
 {\em external adaptation}, whch is described in \cite{cgal:sll-bgl-02}
 and this {\sc Bgl} web page: \path|http://www.boost.org/libs/graph/doc/leda_conversion.html|
 

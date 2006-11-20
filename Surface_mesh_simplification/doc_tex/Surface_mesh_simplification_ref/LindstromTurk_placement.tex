@@ -38,11 +38,14 @@ It must be a model of the \ccc{EdgeCollapsableMesh} concept.
 
 \ccCreation
 \ccCreationVariable{gp}  %% choose variable name
+\ccConstructor{LindstromTurk_placement<ECM>();}
+{Default constructor} 
+\ccGlue
 \ccConstructor{LindstromTurk_placement<ECM>( LindstromTurk_params const& aParams );}
 {Initializes the policy with the given parameters} 
 
 \ccHeading{Methods}
-  \ccMethod{result_type operator()( Profile const& edge_profile ) const;}
+  \ccMemberFunction{result_type operator()( Profile const& edge_profile ) const;}
   {Returns the new position for the remaining vertex after collapsing the edge
   (represented by its profile).}
 

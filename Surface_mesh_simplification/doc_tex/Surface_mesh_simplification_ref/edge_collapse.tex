@@ -42,10 +42,10 @@ the number of edges effectively removed.
 
 \ccHeading{Non-named parameters}
 
-\ccc{surface} defines the type of the surface. 
+\ccc{surface} is the surface to simplify. 
 It must be a model of the \ccc{EdgeCollapsableMesh} concept.
 
-\ccc{should_stop} defines the type of the stop-condition policy.
+\ccc{should_stop} is the stop-condition policy.
 It must be a model of the \ccc{StopPredicate} concept.
 
 \ccHeading{Named parameters}
@@ -53,16 +53,24 @@ It must be a model of the \ccc{StopPredicate} concept.
 \ccc{named_parameters} holds the list of all the additional parameters 
 used by the \ccc{edge_collapse} function (including default parameters).
 
-The named parameters list is a composition of function calls, whose names corresponds
-to the name of the parameter, separated by a dot ($.$), as in:
+The named parameters list is a composition of function calls separated by a dot ($.$) where
+the name of each function matches the name of an argument and wraps the actual parameter.
 
-\ccc{param0_name(actual_param0).param1_name(actual_param1)}
+This is an example with 2 arguments:
 
-each named parameter function corresponds to one named parameter.
+\ccc{vertex_index_map(the_actual_vertex_index_map).edge_index_map(the_actual_edge_index_map)}
 
-All named parameters have default values and the order of the named parameters 
-is irrelevant so you only need to compose those for which the default
-is inappropriate.
+\ccc{the_actual_vertex_index_map} and \ccc{the_actual_edge_index_map} are
+the actual parameters, while \ccc{vertex_index_map()} and \ccc{the_actual_edge_index_map()}
+are wrapper functions used to designate each formal argument.
+
+Each named parameter is documeted as a helper function. The argument to each helper
+function is the actual parameter to \ccc{edge_collapse()}, while the name of the helper 
+function designates which formal argument is it.
+
+All named parameters have default values so you only need to compose those for which the default
+is inappropriate. Furthermore, since each actual parameter is wrapper in a function whose name
+designates the formal argument, the order of named parameters in the list is totally irrelevant.
 
 \subsubsection*{vertex\_index\_map(VertexIndexMap vpm)}
 

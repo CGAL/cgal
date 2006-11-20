@@ -34,12 +34,11 @@ The concept \ccRefName\ describes the requirements for the predicate which indic
   \ccNestedType{Profile}
   {The type of the edge profile cache. Must be a model of the \ccc{EdgeProfile} concept.}{}
 
-\ccCreation
-\ccCreationVariable{should_stop}  %% choose variable name
+\ccCreationVariable{sp}  %% choose variable name
 
 \ccOperations
 
-  \ccMethod
+  \ccMemberFunction
     {bool operator()( FT const&       current_cost
                     , Profile  const& profile
                     , size_type       initial_count
@@ -50,14 +49,14 @@ The concept \ccRefName\ describes the requirements for the predicate which indic
     This predicate is called each time an edge is selected for processing,
     before it is collapsed.\\
     \ccc{current_cost} is the cost of the selected edge.\\
-    \ccc{initial_count} and \ccc{current_count} is the number of initial and current edges.\\
+    \ccc{initial_count} and \ccc{current_count} are the number of initial and current edges.\\
     \\
     If the return value is \ccc{true} the simplification terminates before processing the edge,
     otherwise it continues normally.
     }
   
 \ccHasModels
-\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Count_stop_predicate<ECM>}
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Count_stop_predicate<ECM>}\\
 \ccRefIdfierPage{CGAL::Surface_mesh_simplification::Count_ratio_stop_predicate<ECM>}
 
 \end{ccRefConcept}

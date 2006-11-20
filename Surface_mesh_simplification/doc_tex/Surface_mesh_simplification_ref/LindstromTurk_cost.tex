@@ -37,11 +37,15 @@ It must be a model of the \ccc{EdgeCollapsableMesh} concept.
 
 \ccCreation
 \ccCreationVariable{gc}  %% choose variable name
+\ccConstructor{LindstromTurk_cost<ECM>();}
+{Default constructor} 
+\ccGlue
 \ccConstructor{LindstromTurk_cost<ECM>( LindstromTurk_params const& aParams );}
 {Initializes the policy with the given parameters} 
 
 \ccHeading{Methods}
-  \ccMethod{result_type operator()( Profile const& profile, optional<Point> const& placement ) const;}
+  \ccMemberFunction{result_type operator()( Profile const& profile
+  , boost::optional<Point> const& placement ) const;}
   {Returns the cost of collapsing the edge (represented by its profile) considering 
   the new \ccc{placement} computed for it.}
 

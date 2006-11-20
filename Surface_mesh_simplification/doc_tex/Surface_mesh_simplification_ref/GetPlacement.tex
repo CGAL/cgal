@@ -39,24 +39,22 @@ must be kept in place, not moved to a new position.
   \ccNestedType{Profile}
   {The type of the edge profile cache. Must be a model of the \ccc{EdgeProfile} concept.}{}
 \ccGlue    
-  \ccTypedef{typename CGAL::halfedge_graph_traits<ECM>::Point Point;}{The point type for the surface vertex.}
+  \ccTypedef{typename CGAL::halfedge_graph_traits<ECM>::Point Point;}
+  {The point type for the surface vertex.  Must be a model of \ccc{Point_3}.}
 \ccGlue    
   \ccTypedef{boost::optional<Point> result_type;}{The type of the result (an optional point).}
 
-\ccCreation
 \ccCreationVariable{gp}  %% choose variable name
-
-\ccConstructor{GetPlacement();}{Default constructor}
 
 \ccOperations
 
-  \ccMethod{ result_type operator()( Profile const& edge_profile ) const; }
+  \ccMemberFunction{ result_type operator()( Profile const& edge_profile ) const; }
   {Computes and returns the placement, that is, the position of the vertex 
-  which replaces the collapsing edge (represented by its profile). }
+  which replaces the collapsing edge (represented by its profile).}
   
 \ccHasModels
-\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Edge_length_placement<ECM>}.
-\ccRefIdfierPage{CGAL::Surface_mesh_simplification::LindstromTurk_placement<ECM>}.
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Edge_length_placement<ECM>}\\
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::LindstromTurk_placement<ECM>}
 
 \end{ccRefConcept}
 

@@ -41,37 +41,36 @@ The mesh simplification algorithm requires the free function \ccc{collapse_trian
   \ccFunction
   {template<class EdgeCollapsableMesh>
   typename boost::graph_traits<EdgeCollapsableMesh>::vertex_descriptor
-  collapse_triangulation_edge(typename boost::graph_traits<EdgeCollapsableMesh>::edge_descriptor ue,
+  halfedege_collapse(typename boost::graph_traits<EdgeCollapsableMesh>::edge_descriptor const& ue,
                              EdgeCollapsableMesh& mesh);}  
-  {Collapses the undirected edge \ccc{ue} replacing it with one single vertex as described in 
-   the following paragraph.}
+  {Collapses the undirected edge \ccc{(v0v1,v1v0)} replacing it with \ccc{v0} or \ccc{v1}
+   , as described in the following paragraph.}
 
     
 
-\ccPrecond This function requires \ccc{mesh} to be an oriented 2-manifold (which can be open). Furthermore
-the undirected edge $ue$ must satisfy the {\em link condition} \cite{degn-tpec-98},
-which guarantees that the surface is also 2-manifold after the edge collapse. 
+\ccPrecond This function requires \ccc{mesh} to be an oriented 2-manifold with or without boundarties. Furthermore, the undirected edge \ccc{v0v1,v1v0} must satisfy the {\em link condition} 
+\cite{degn-tpec-98}, which guarantees that the surface is also 2-manifold after the edge collapse. 
 
 \smallskip
-Let \ccc{v} be the source and \ccc{w} be the target vertices of \ccc{ue}.
+Let \ccc{v0} be the source and \ccc{v1} be the target vertices of \ccc{v0v1}.
 
-For \ccc{e} $\in \{$ \ccc{ue, opposite_edge(ue,mesh)} $\}$, let \ccc{en} and \ccc{ep} be the next and previous 
+For \ccc{e} $\in \{$ \ccc{v0v1,v1v0} $\}$, let \ccc{en} and \ccc{ep} be the next and previous 
 edges, that is \ccc{en = next_edge(e, mesh)}, \ccc{ep = prev_edge(e,mesh)}, and let 
 \ccc{eno} and \ccc{epo} be their opposite edges, that is 
 \ccc{eno = opposite_edge(en, mesh)} and \ccc{epo = opposite_edge(ep,mesh)}.
 
-Then, after the collapse of \ccc{ue} the following holds:
+Then, after the collapse of \ccc{(v0v1,v1v0)} the following holds:
 
 \begin{itemize}
 \item The edge \ccc{e} is no longer in \ccc{mesh}.
-\item One of \ccc{v,w} is no longer in \ccc{mesh} while the other is kept. Let \ccc{r} be the one removed and \ccc{u} be the one kept.
+\item One of $\{$\ccc{v0,v1}$\}$ is no longer in \ccc{mesh} while the other is kept. Let \ccc{vr} be the one removed and \ccc{vk} be the one kept.
 \item If \ccc{e} was a border edge, that is \ccc{get(is_border, e, mesh) == true}, then \ccc{next_edge(ep) == en}, and \ccc{prev_edge(en) == ep}.
 \item If \ccc{e} was not a border edge, that is \ccc{get(is_border, e, mesh) == false}, then \ccc{ep} and \ccc{epo} are no longer in \ccc{mesh} while \ccc{en} and \ccc{eno} are kept in \ccc{mesh}.
-\item For all edges \ccc{ie} in \ccc{in_edges(r,mesh)}, \ccc{target(ie,mesh) == u} and \ccc{source(opposite_edge(ie),mesh) == u}.
+\item For all edges \ccc{ie} in \ccc{in_edges(vr,mesh)}, \ccc{target(ie,mesh) == vk} and \ccc{source(opposite_edge(ie),mesh) == vk}.
 \item No other incidence information has changed in \ccc{mesh}.
 \end{itemize}
 
-The function returns vertex \ccc{u}. 
+The function returns vertex \ccc{vk}. 
 
 \begin{figure}[htbp]
 \begin{ccTexOnly}
@@ -186,7 +185,7 @@ The function returns vertex \ccc{u}.
 
 
 \ccHasModels
-\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>} via external adaptation.
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>} with only triangular faces, via external adaptation.
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::graph_traits< Polyhedron_3<Traits> >}\\

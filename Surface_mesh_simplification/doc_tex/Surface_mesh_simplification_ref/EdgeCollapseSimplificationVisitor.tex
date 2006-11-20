@@ -35,11 +35,10 @@ The several callbacks given as member functions in the visitor are called from c
   {A {\sc Bgl} edge descriptor representing an undirected edge of the surface.}
 \ccGlue    
   \ccTypedef{typename CGAL::halfedge_graph_traits<ECM>::Point Point;}
-  {The point type of the vertex.}
+  {The point type of the vertex. Must be a model of \ccc{Point_3}.}
 \ccGlue    
   \ccNestedType{size_type}{An integer type representing the number of edges}{}
 
-\ccCreation
 \ccCreationVariable{v}  %% choose variable name
 
 \ccOperations
