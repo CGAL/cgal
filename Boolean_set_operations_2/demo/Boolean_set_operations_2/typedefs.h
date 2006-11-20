@@ -24,8 +24,11 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/General_polygon_with_holes_2.h>
 #include <CGAL/General_polygon_set_2.h>
+#include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Gps_circle_segment_traits_2.h>
+#include <CGAL/minkowski_sum_2.h>
+#include <CGAL/approximated_offset_2.h>
 
 #ifdef CGAL_USE_GMP
 
@@ -43,19 +46,22 @@
 #endif
 
 typedef CGAL::Lazy_exact_nt<Base_nt>                  Coord_type;
-typedef CGAL::Cartesian<Coord_type>		      Kernel;
+typedef CGAL::Cartesian<Coord_type>		                Kernel;
 
-typedef Kernel::Segment_2			      Segment;
-typedef Kernel::Point_2				      Point_2;
+typedef Kernel::Segment_2			                        Segment;
+typedef Kernel::Point_2				                        Point_2;
 typedef Kernel::Circle_2                              Circle;
 
 typedef CGAL::Gps_circle_segment_traits_2<Kernel>     Traits;
 typedef Traits::Curve_2                               Curve;
 typedef Traits::X_monotone_curve_2                    XCurve;
+typedef Traits::Point_2                               Circular_point_2;
 typedef Traits::Polygon_2                             Polygon_2;
 typedef CGAL::General_polygon_with_holes_2<Polygon_2> Polygon_with_holes;
 typedef CGAL::General_polygon_set_2<Traits>           Polygon_set;
 typedef Polygon_with_holes::Hole_const_iterator       Hole_const_iterator;
 
 typedef CGAL::Iso_rectangle_2<Kernel>                 Iso_rectangle;
+typedef CGAL::Polygon_2<Kernel>                       Linear_polygon_2;
+typedef CGAL::Polygon_with_holes_2<Kernel>            Linear_polygon_with_holes_2;
 #endif

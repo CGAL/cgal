@@ -37,6 +37,7 @@ int main(int, char*){
 #include <CGAL/IO/Qt_widget.h>
 #include "Qt_widget_circ_polygon.h"
 #include <CGAL/Bbox_2.h> 
+#include <CGAL/iterator.h>  
 
 
 #include <CGAL/IO/Qt_widget_Polygon_2.h> 
@@ -324,6 +325,16 @@ public:
     symm_diff_but->setTextLabel("Symmetric Difference ");
     connect(symm_diff_but, SIGNAL(pressed()),
             this, SLOT(perform_symm_diff()));
+
+     QIconSet set12(QPixmap( (const char**)symm_diff_xpm ),
+                    QPixmap( (const char**)symm_diff_xpm ));
+    bops_toolbar->addSeparator();
+    mink_sum_but = new QToolButton(bops_toolbar, "Boolean operations");
+    mink_sum_but->setAutoRaise(TRUE);
+    mink_sum_but->setIconSet(set12);
+    mink_sum_but->setTextLabel("Minkowski Sum ");
+    connect(mink_sum_but, SIGNAL(pressed()),
+            this, SLOT(perform_mink_sum()));
 
     QIconSet set5(QPixmap( (const char**)comp_P_xpm ),
                  QPixmap( (const char**)comp_P_xpm ));
@@ -801,6 +812,187 @@ public slots:
     something_changed();
   }
 
+  void perform_mink_sum()
+  {
+    if(red_set.number_of_polygons_with_holes() > 1 ||
+       blue_set.number_of_polygons_with_holes() > 1)
+    {
+       mink_wum_warning();
+       return;
+    }
+
+    Polygon_with_holes red_p_wh;
+    CGAL::Oneset_iterator<Polygon_with_holes> oi1(red_p_wh);
+    red_set.polygons_with_holes(oi1);
+    if(red_p_wh.has_holes() || red_p_wh.is_unbounded())
+    {
+      mink_wum_warning();
+      return;
+    }
+    const Polygon_2& red_p = red_p_wh.outer_boundary();
+
+    Polygon_with_holes blue_p_wh;
+    CGAL::Oneset_iterator<Polygon_with_holes> oi2(blue_p_wh);
+    blue_set.polygons_with_holes(oi2);
+    if(blue_p_wh.has_holes() || blue_p_wh.is_unbounded())
+    {
+      mink_wum_warning();
+      return;
+    }
+    QCursor old = widget->cursor();
+    widget->setCursor(Qt::WaitCursor);
+    const Polygon_2& blue_p = blue_p_wh.outer_boundary();
+    if(is_linear(red_p) && is_linear(blue_p))
+    {
+      const Linear_polygon_2& linear_red_p  = circ_2_linear(red_p);
+      const Linear_polygon_2& linear_blue_p = circ_2_linear(blue_p);
+
+      const Linear_polygon_with_holes_2& res_p = 
+        CGAL::minkowski_sum_2(linear_red_p, linear_blue_p);
+
+      Polygon_with_holes res_p_wh  = linear_2_circ(res_p);
+      res_set.clear();
+      res_set.insert(res_p_wh);
+      newtoolbar->reset();
+      std::list<Polygon_with_holes> res_pgns;
+      res_pgns.push_back(res_p_wh);
+      draw_result(res_pgns.begin(), res_pgns.end());
+      widget->setCursor(old);  
+    }
+    else if(is_disc(red_p) && is_linear(blue_p))
+    {
+      const Linear_polygon_2& linear_blue_p = circ_2_linear(blue_p);
+      const Polygon_with_holes& res_p_wh = 
+        CGAL::approximated_offset_2 (linear_blue_p, get_radius(red_p), 0.00001);
+
+      res_set.clear();
+      res_set.insert(res_p_wh);
+      newtoolbar->reset();
+      std::list<Polygon_with_holes> res_pgns;
+      res_pgns.push_back(res_p_wh);
+      draw_result(res_pgns.begin(), res_pgns.end());
+      widget->setCursor(old);  
+    }
+    else if(is_disc(blue_p) && is_linear(red_p))
+    {
+      const Linear_polygon_2& linear_red_p = circ_2_linear(red_p);
+      const Polygon_with_holes& res_p_wh = 
+        CGAL::approximated_offset_2 (linear_red_p, get_radius(blue_p), 0.00001);
+
+      res_set.clear();
+      res_set.insert(res_p_wh);
+      newtoolbar->reset();
+      std::list<Polygon_with_holes> res_pgns;
+      res_pgns.push_back(res_p_wh);
+      draw_result(res_pgns.begin(), res_pgns.end());
+      widget->setCursor(old);  
+    }
+    else
+    {
+      mink_wum_warning();
+      return;
+    }
+  }
+
+  void mink_wum_warning()
+  {
+    QMessageBox::warning(this,
+                         "Minkowski Sum",
+                         QString( "Minkowsky sum can be performed on two linear polygons without holes\n\
+                                   or on a linear polygon without holes and a disc\n" ),
+                         "&Ok");
+    mink_sum_but->setDown(FALSE);
+  }
+
+  bool is_linear(const Polygon_2& pgn)
+  {
+    typedef Polygon_2::Curve_const_iterator    Curve_const_iterator;
+    for(Curve_const_iterator i = pgn.curves_begin();
+        i != pgn.curves_end();
+        ++i)
+    {
+      if(i->is_circular())
+        return false;
+    }
+    return true;
+  }
+
+  bool is_disc(const Polygon_2& pgn)
+  {
+    if(pgn.size() != 2)
+      return false;
+
+    Polygon_2::Curve_const_iterator ci = pgn.curves_begin();
+
+    if(!ci->is_circular())
+      return false;
+
+    const Circle& c1 = ci->supporting_circle();
+    ++ci;
+    if(!ci->is_circular())
+      return false;
+
+    const Circle& c2 = ci->supporting_circle();
+
+    return ((c1.center() == c2.center()) && 
+            (c1.squared_radius() == c2.squared_radius()));
+  }
+
+  Coord_type get_radius(const Polygon_2& pgn)
+  {
+    CGAL_assertion(is_disc(pgn));
+    double r = 
+      CGAL::sqrt(CGAL::to_double(pgn.curves_begin()->supporting_circle().squared_radius()));
+    return (Coord_type(r));
+  }
+
+  Linear_polygon_2 circ_2_linear(const Polygon_2& pgn)
+  {
+    Linear_polygon_2 linear_pgn;
+    typedef Polygon_2::Curve_const_iterator    Curve_const_iterator;
+    for(Curve_const_iterator i = pgn.curves_begin();
+        i != pgn.curves_end();
+        ++i)
+    {
+      const Circular_point_2& circ_p = i->source();
+      linear_pgn.push_back(Point_2(circ_p.x().alpha(),
+                                   circ_p.y().alpha()));
+    }
+
+    return (linear_pgn);
+  }
+
+  Polygon_with_holes linear_2_circ(const Linear_polygon_with_holes_2& pgn)
+  {
+    Polygon_with_holes p(linear_2_circ(pgn.outer_boundary()));
+
+    typedef Linear_polygon_with_holes_2::Hole_const_iterator    
+      Hole_const_iterator;
+    for(Hole_const_iterator hi = pgn.holes_begin();
+        hi != pgn.holes_end();
+        ++hi)
+    {
+      p.add_hole(linear_2_circ(*hi));
+    }
+
+    return (p);
+  }
+
+  Polygon_2 linear_2_circ(const Linear_polygon_2& pgn)
+  {
+    Polygon_2 p;
+    typedef Linear_polygon_2::Edge_const_iterator    Edge_const_iterator;
+    for(Edge_const_iterator ei = pgn.edges_begin();
+        ei != pgn.edges_end();
+        ++ei)
+    {
+      XCurve cv(ei->source(), ei->target());
+      p.push_back(cv);
+    }
+
+    return (p);
+  }
+
   void refresh()
   {
     newtoolbar->reset();
@@ -924,6 +1116,7 @@ private:
   QToolButton *                         diff_but;
   QToolButton *                         diff_but2;
   QToolButton *                         symm_diff_but;
+  QToolButton *                         mink_sum_but;
   QToolButton *                         red_complement_but;
   QToolButton *                         blue_complement_but;
   QToolButton *                         make_res_red_but;
