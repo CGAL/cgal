@@ -90,7 +90,8 @@ void test_algebraic_structure_intern( const CGAL::Integral_domain_tag& ) {
     CGAL_SNAP_AST_FUNCTORS(AST);
     
     using CGAL::Null_functor;
-    BOOST_STATIC_ASSERT((!::boost::is_same< Integral_division, Null_functor >::value));
+    BOOST_STATIC_ASSERT(
+            (!::boost::is_same< Integral_division, Null_functor >::value));
     BOOST_STATIC_ASSERT((!::boost::is_same< Is_zero, Null_functor >::value));
     BOOST_STATIC_ASSERT((!::boost::is_same< Is_one, Null_functor >::value));
     BOOST_STATIC_ASSERT((!::boost::is_same< Square, Null_functor >::value));
@@ -129,7 +130,8 @@ void test_algebraic_structure_intern( const CGAL::Integral_domain_tag& ) {
 };
 	
 template< class  AS  >
-void test_algebraic_structure_intern( const CGAL::Unique_factorization_domain_tag& ) {
+void test_algebraic_structure_intern( 
+        const CGAL::Unique_factorization_domain_tag& ) {
     test_algebraic_structure_intern<  AS  >(CGAL::Integral_domain_tag());
     typedef CGAL::Algebraic_structure_traits<  AS  > AST;
     CGAL_SNAP_AST_FUNCTORS(AST);
@@ -153,31 +155,46 @@ void test_algebraic_structure_intern( const CGAL::Unique_factorization_domain_ta
     CGAL_test_assert( gcd(  AS (-15), AS (-12))  ==  unit_normal( AS (3) ) );
 
     // special test for expression template, e.g. mpz_class 
-    CGAL_test_assert( gcd(AS(-10)+AS(-5),AS(-4)*AS(-3))  ==  unit_normal( AS (3) ) );
+    CGAL_test_assert( gcd(AS(-10)+AS(-5),AS(-4)*AS(-3))  
+            ==  unit_normal( AS (3) ) );
  
 
-    CGAL_test_assert( CGAL_NTS gcd(  AS ( 0), AS ( 0))  ==  unit_normal( AS (0) ) );
-    CGAL_test_assert( CGAL_NTS gcd(  AS ( 7), AS ( 0))  ==  unit_normal( AS (7) ) );
-    CGAL_test_assert( CGAL_NTS gcd(  AS (-7), AS ( 0))  ==  unit_normal( AS (7) ) );
-    CGAL_test_assert( CGAL_NTS gcd(  AS ( 0), AS ( 7))  ==  unit_normal( AS (7) ) );
-    CGAL_test_assert( CGAL_NTS gcd(  AS ( 0), AS (-7))  ==  unit_normal( AS (7) ) );
+    CGAL_test_assert( CGAL_NTS gcd(  AS ( 0), AS ( 0))  
+            ==  unit_normal( AS (0) ) );
+    CGAL_test_assert( CGAL_NTS gcd(  AS ( 7), AS ( 0))  
+            ==  unit_normal( AS (7) ) );
+    CGAL_test_assert( CGAL_NTS gcd(  AS (-7), AS ( 0))  
+            ==  unit_normal( AS (7) ) );
+    CGAL_test_assert( CGAL_NTS gcd(  AS ( 0), AS ( 7))  
+            ==  unit_normal( AS (7) ) );
+    CGAL_test_assert( CGAL_NTS gcd(  AS ( 0), AS (-7))  
+            ==  unit_normal( AS (7) ) );
     
-    CGAL_test_assert( CGAL_NTS gcd(  AS (-7), AS ( 1))  ==  unit_normal( AS (1) ) );
-    CGAL_test_assert( CGAL_NTS gcd(  AS ( 1), AS (-7))  ==  unit_normal( AS (1) ) );
+    CGAL_test_assert( CGAL_NTS gcd(  AS (-7), AS ( 1))  
+            ==  unit_normal( AS (1) ) );
+    CGAL_test_assert( CGAL_NTS gcd(  AS ( 1), AS (-7))  
+            ==  unit_normal( AS (1) ) );
     
-    CGAL_test_assert( CGAL_NTS gcd(  AS ( 15), AS ( 12))  ==  unit_normal( AS (3) ) );
-    CGAL_test_assert( CGAL_NTS gcd(  AS (-15), AS ( 12))  ==  unit_normal( AS (3) ) );
-    CGAL_test_assert( CGAL_NTS gcd(  AS ( 15), AS (-12))  ==  unit_normal( AS (3) ) );
-    CGAL_test_assert( CGAL_NTS gcd(  AS (-15), AS (-12))  ==  unit_normal( AS (3) ) );
+    CGAL_test_assert( CGAL_NTS gcd(  AS ( 15), AS ( 12))  
+            ==  unit_normal( AS (3) ) );
+    CGAL_test_assert( CGAL_NTS gcd(  AS (-15), AS ( 12)) 
+            ==  unit_normal( AS (3) ) );
+    CGAL_test_assert( CGAL_NTS gcd(  AS ( 15), AS (-12))  
+            ==  unit_normal( AS (3) ) );
+    CGAL_test_assert( CGAL_NTS gcd(  AS (-15), AS (-12))  
+            ==  unit_normal( AS (3) ) );
 
 
     // special test for expression template, e.g. mpz_class 
-    CGAL_test_assert( CGAL_NTS gcd(AS(-10)+AS(-5),AS(-4)*AS(-3))  ==  unit_normal( AS (3) ) );
+    CGAL_test_assert( CGAL_NTS gcd(AS(-10)+AS(-5),AS(-4)*AS(-3))  
+            ==  unit_normal( AS (3) ) );
 };
 
 template< class  AS  >
 void test_algebraic_structure_intern( const CGAL::Euclidean_ring_tag&) {
-    test_algebraic_structure_intern<  AS  >( CGAL::Unique_factorization_domain_tag() );
+    test_algebraic_structure_intern<  AS  >
+        ( CGAL::Unique_factorization_domain_tag() );
+
     typedef CGAL::Algebraic_structure_traits<  AS  > AST;
     CGAL_SNAP_AST_FUNCTORS(AST);
     
@@ -189,32 +206,62 @@ void test_algebraic_structure_intern( const CGAL::Euclidean_ring_tag&) {
     const Div     div=Div();
     const Mod     mod=Mod();
     const Div_mod div_mod=Div_mod();
-    // #### more tests for sign semantic once and if we decide such a thing
-    CGAL_test_assert( div(  AS ( 6),  AS (3)) ==  AS (2));
-    CGAL_test_assert( div(  AS ( 8),  AS (3)) ==  AS (2));
-    CGAL_test_assert( div(  AS (-6),  AS (3)) ==  AS (-2));
-    CGAL_test_assert( div(  AS (-8),  AS (3)) ==  AS (-2));
-    // special test for expression template, e.g. mpz_class
+    
+    // Rounding mode for div is: to zero
+    CGAL_test_assert( div(  AS ( 3),  AS (3)) ==  AS (1));
+    CGAL_test_assert( div(  AS ( 2),  AS (3)) ==  AS (0));
+    CGAL_test_assert( div(  AS ( 1),  AS (3)) ==  AS (0));
+    CGAL_test_assert( div(  AS ( 0),  AS (3)) ==  AS (0));
+    CGAL_test_assert( div(  AS (-1),  AS (3)) ==  AS (0));
+    CGAL_test_assert( div(  AS (-2),  AS (3)) ==  AS (0));
+    CGAL_test_assert( div(  AS (-3),  AS (3)) ==  AS (-1));
+
+    CGAL_test_assert( mod(  AS ( 3),  AS (3)) ==  AS (0));
+    CGAL_test_assert( mod(  AS ( 2),  AS (3)) ==  AS (2));
+    CGAL_test_assert( mod(  AS ( 1),  AS (3)) ==  AS (1));
+    CGAL_test_assert( mod(  AS ( 0),  AS (3)) ==  AS (0));
+    CGAL_test_assert( mod(  AS (-1),  AS (3)) ==  AS (-1));
+    CGAL_test_assert( mod(  AS (-2),  AS (3)) ==  AS (-2));
+    CGAL_test_assert( mod(  AS (-3),  AS (3)) ==  AS (0));
+
+    CGAL_test_assert( div(  AS ( 3),  AS(-3)) ==  AS (-1));
+    CGAL_test_assert( div(  AS ( 2),  AS(-3)) ==  AS (0));
+    CGAL_test_assert( div(  AS ( 1),  AS(-3)) ==  AS (0));
+    CGAL_test_assert( div(  AS ( 0),  AS(-3)) ==  AS (0));
+    CGAL_test_assert( div(  AS (-1),  AS(-3)) ==  AS (0));
+    CGAL_test_assert( div(  AS (-2),  AS(-3)) ==  AS (0));
+    CGAL_test_assert( div(  AS (-3),  AS(-3)) ==  AS (1));
+
+    CGAL_test_assert( mod(  AS ( 3),  AS(-3)) ==  AS (0));
+    CGAL_test_assert( mod(  AS ( 2),  AS(-3)) ==  AS (2));
+    CGAL_test_assert( mod(  AS ( 1),  AS(-3)) ==  AS (1));
+    CGAL_test_assert( mod(  AS ( 0),  AS(-3)) ==  AS (0));
+    CGAL_test_assert( mod(  AS (-1),  AS(-3)) ==  AS (-1));
+    CGAL_test_assert( mod(  AS (-2),  AS(-3)) ==  AS (-2));
+    CGAL_test_assert( mod(  AS (-3),  AS(-3)) ==  AS (0));
+
+    for (int i = -12; i <= 12; i++){
+        for (int j = 1; j < 10; j++){
+            AS q,r;
+            {               
+                AS a(i),b(j);
+                div_mod(a,b,q,r);
+                CGAL_test_assert(q == div(a,b));
+                CGAL_test_assert(r == mod(a,b));
+            }{
+                AS a(i),b(-j);
+                div_mod(a,b,q,r);
+                CGAL_test_assert(q == div(a,b));
+                CGAL_test_assert(r == mod(a,b));
+            }
+        }
+    }
+    
+    // special syntax test for expression template, e.g. mpz_class
     CGAL_test_assert( div(AS(-4)+AS(-4),AS(3)*AS(1)) ==  AS (-2));
-    
-
-    CGAL_test_assert( mod(  AS ( 6),  AS (3)) ==  AS (0));
-    CGAL_test_assert( mod(  AS ( 8),  AS (3)) ==  AS (2));
-    CGAL_test_assert( mod(  AS (-6),  AS (3)) ==  AS (0));
-    CGAL_test_assert( mod(  AS (-8),  AS (3)) ==  AS (-2));
-    // special test for expression template, e.g. mpz_class
     CGAL_test_assert( mod(AS(-4)+AS(-4),AS(3)*AS(1)) ==  AS (-2));
-
-    AS q,r,a,b;
-    a= AS(-8); b=AS( 3);
-    div_mod(a,b,q,r);
-    CGAL_test_assert(q == div(a,b));
-    CGAL_test_assert(r == mod(a,b));
-    
-    // special test for expression template, e.g. mpz_class
+    AS q,r;
     div_mod(AS(-4)+AS(-4),AS(3)*AS(1),q,r);
-    CGAL_test_assert(q == div(a,b));
-    CGAL_test_assert(r == mod(a,b));
 };
 
 template< class  AS  >
@@ -257,8 +304,9 @@ void test_algebraic_structure_intern( const CGAL::Field_with_sqrt_tag& ) {
 	
 //semantic test
 template <class  AS >
-void test_algebraic_structure_intern( const  AS & a ,const  AS & b, const  AS & c,
-                              const CGAL::Integral_domain_without_division_tag&) {
+void test_algebraic_structure_intern( 
+        const  AS & a ,const  AS & b, const  AS & c,
+        const CGAL::Integral_domain_without_division_tag&) {
     CGAL_test_assert( a !=  AS (0));
     CGAL_test_assert( b !=  AS (0));
     CGAL_test_assert( c !=  AS (0));
@@ -297,8 +345,9 @@ void test_algebraic_structure_intern( const  AS & a ,const  AS & b, const  AS & 
 };
  
  template <class  AS >
- void test_algebraic_structure_intern( const  AS & a ,const  AS & b, const  AS & c,
-                               const CGAL::Integral_domain_tag&) {
+ void test_algebraic_structure_intern( 
+         const  AS & a ,const  AS & b, const  AS & c,
+         const CGAL::Integral_domain_tag&) {
      CGAL_test_assert( a !=  AS (0));
      CGAL_test_assert( b !=  AS (0));
      CGAL_test_assert( c !=  AS (0));
@@ -357,7 +406,8 @@ void test_algebraic_structure_intern(
     CGAL_test_assert( b !=  AS (0));
     CGAL_test_assert( c !=  AS (0));
     
-    test_algebraic_structure_intern(a,b,c,CGAL::Unique_factorization_domain_tag());
+    test_algebraic_structure_intern(a,b,c,
+            CGAL::Unique_factorization_domain_tag());
     
     typedef CGAL::Algebraic_structure_traits<  AS  > AST;
     CGAL_SNAP_AST_FUNCTORS(AST);    
@@ -452,8 +502,10 @@ class Test_is_square {
         typedef typename Is_square::first_argument_type First_argument_type;
         typedef typename Is_square::second_argument_type Second_argument_type;
         typedef typename Is_square::result_type   Result_type;
-        BOOST_STATIC_ASSERT(( ::boost::is_same< AS , First_argument_type>::value));
-        BOOST_STATIC_ASSERT(( ::boost::is_same< AS& , Second_argument_type>::value));
+        BOOST_STATIC_ASSERT(
+                ( ::boost::is_same< AS , First_argument_type>::value));
+        BOOST_STATIC_ASSERT(
+                ( ::boost::is_same< AS& , Second_argument_type>::value));
         //BOOST_STATIC_ASSERT(( ::boost::is_same< bool , Result_type>::value));
         bool b = Result_type(true); (void) b;
  
@@ -506,9 +558,12 @@ public:
         typedef typename Root::first_argument_type  First_argument_type;
         typedef typename Root::second_argument_type Second_argument_type;
         typedef typename Root::result_type          Result_type;
-        BOOST_STATIC_ASSERT(( ::boost::is_same<int, First_argument_type>::value));
-        BOOST_STATIC_ASSERT(( ::boost::is_same< AS , Second_argument_type>::value));
-        BOOST_STATIC_ASSERT(( ::boost::is_same< AS , Result_type>::value));
+        BOOST_STATIC_ASSERT(
+                ( ::boost::is_same<int, First_argument_type>::value));
+        BOOST_STATIC_ASSERT(
+                ( ::boost::is_same< AS , Second_argument_type>::value));
+        BOOST_STATIC_ASSERT(
+                ( ::boost::is_same< AS , Result_type>::value));
          AS  epsilon(1);
         CGAL_test_assert( test_equality_epsilon(  AS (2),
                                 root( 4,  AS (16) ), epsilon ) );
@@ -525,7 +580,7 @@ public:
     }
 };
     
-// Algebraic_structure_functions --------------------------------------------------------------
+// Algebraic_structure_functions -----------------------------------------------
 template <class  AS >
 void test_Algebraic_structure_functions( 
         const CGAL::Integral_domain_without_division_tag&) {
@@ -540,7 +595,8 @@ void test_Algebraic_structure_functions(
  
 template <class  AS >
 void test_Algebraic_structure_functions( const CGAL::Integral_domain_tag&) {
-    test_Algebraic_structure_functions< AS >(CGAL::Integral_domain_without_division_tag());
+    test_Algebraic_structure_functions< AS >
+        (CGAL::Integral_domain_without_division_tag());
     CGAL_test_assert(CGAL_NTS integral_division( AS (10), AS (2))== AS (5));
 };
     
@@ -653,9 +709,11 @@ void test_algebraic_structure(){
     using CGAL::Integral_domain_without_division_tag; 
     using CGAL::Null_functor;
     // Test for desired exactness
-    BOOST_STATIC_ASSERT(( ::boost::is_same< typename AST::Is_exact, Is_exact >::value));
+    BOOST_STATIC_ASSERT(
+            ( ::boost::is_same< typename AST::Is_exact, Is_exact >::value));
 
-    BOOST_STATIC_ASSERT(( ::boost::is_convertible< Algebra, Integral_domain_without_division_tag >::value ));
+    BOOST_STATIC_ASSERT(( ::boost::is_convertible< Algebra, 
+                    Integral_domain_without_division_tag >::value ));
     BOOST_STATIC_ASSERT(( ::boost::is_same< Algebra, Algebra_type>::value));
     BOOST_STATIC_ASSERT((!::boost::is_same< Simplify, Null_functor>::value));
     BOOST_STATIC_ASSERT((!::boost::is_same< Unit_part, Null_functor>::value));
