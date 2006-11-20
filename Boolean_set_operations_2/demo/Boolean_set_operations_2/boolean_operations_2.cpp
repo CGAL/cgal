@@ -83,6 +83,7 @@ int main(int, char*){
 #include "icons/del_P.xpm"
 #include "icons/del_Q.xpm"
 #include "icons/refresh.xpm"
+#include "icons/mink_sum.xpm"
 
 #include <CGAL/IO/Dxf_bsop_reader.h>
 
@@ -326,8 +327,8 @@ public:
     connect(symm_diff_but, SIGNAL(pressed()),
             this, SLOT(perform_symm_diff()));
 
-     QIconSet set12(QPixmap( (const char**)symm_diff_xpm ),
-                    QPixmap( (const char**)symm_diff_xpm ));
+     QIconSet set12(QPixmap( (const char**)mink_sum_xpm ),
+                    QPixmap( (const char**)mink_sum_xpm ));
     bops_toolbar->addSeparator();
     mink_sum_but = new QToolButton(bops_toolbar, "Boolean operations");
     mink_sum_but->setAutoRaise(TRUE);
