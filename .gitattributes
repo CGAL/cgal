@@ -517,6 +517,7 @@ Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/intersection.bmp -t
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/locate.bmp -text svneol=unset#image/bmp
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/make_P.bmp -text svneol=unset#image/bmp
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/make_Q.bmp -text svneol=unset#image/bmp
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/mink_sum.bmp -text
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/refresh.bmp -text svneol=unset#image/bmp
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/symm_diff.bmp -text svneol=unset#image/bmp
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/union.bmp -text svneol=unset#image/bmp
