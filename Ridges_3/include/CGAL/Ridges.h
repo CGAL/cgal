@@ -22,7 +22,8 @@ enum Ridge_type {NO_RIDGE=0,
 		 RED_ELLIPTIC_RIDGE, RED_HYPERBOLIC_RIDGE, RED_CREST_RIDGE};
 
 //---------------------------------------------------------------------------
-//Ridge_line : a connected sequence of edges of a TriangularPolyhedralSurface crossed by a
+//Ridge_line : a connected sequence of edges of a
+//TriangularPolyhedralSurface crossed by a
 //ridge (with a barycentric coordinate to compute the crossing point),
 //with a Ridge_type and weigths : strength and sharpness. Note
 //sharpness is only available (more precisely only meaningful : for
@@ -36,7 +37,7 @@ public:
   typedef typename TriangularPolyhedralSurface::Traits::Vector_3   Vector_3;
   typedef typename TriangularPolyhedralSurface::Traits::Point_3    Point_3;
   typedef typename TriangularPolyhedralSurface::Halfedge_const_handle Halfedge_const_handle;
-  typedef std::pair< Halfedge_const_handle, FT> Ridge_he; 
+  typedef std::pair< Halfedge_const_handle, FT> ridge_halfhedge; 
 
   const Ridge_type line_type() const {return m_line_type;}
   Ridge_type& line_type() {return m_line_type;}
@@ -47,8 +48,8 @@ public:
   const FT sharpness() const {return m_sharpness;}
   FT& sharpness() {return m_sharpness;}
 
-  const std::list<Ridge_he>* line() const { return &m_line;}
-  std::list<Ridge_he>* line() { return &m_line;}
+  const std::list<ridge_halfhedge>* line() const { return &m_line;}
+  std::list<ridge_halfhedge>* line() { return &m_line;}
 
   //constructor
   Ridge_line();
@@ -63,7 +64,7 @@ protected:
   //one of BLUE_ELLIPTIC_RIDGE, BLUE_HYPERBOLIC_RIDGE, BLUE_CREST_RIDGE,
   //RED_ELLIPTIC_RIDGE, RED_HYPERBOLIC_RIDGE or RED_CREST_RIDGE
   Ridge_type m_line_type;  
-  std::list<Ridge_he> m_line;
+  std::list<ridge_halfhedge> m_line;
   FT m_strength;// = integral of ppal curvature along the line
   FT m_sharpness;// = (integral of second derivative of curvature
 		 // along the line) divided by the size of the model
@@ -89,7 +90,7 @@ dump_4ogl(std::ostream& out_stream) const
 	     << strength() << " "
 	     << sharpness() << " ";
 
-  typename std::list<Ridge_he >::const_iterator
+  typename std::list<ridge_halfhedge >::const_iterator
     iter = line()->begin(), 
     ite =  line()->end();
   for (;iter!=ite;iter++){
@@ -113,7 +114,7 @@ dump_verbose(std::ostream& out_stream) const
 	     << "Sharpness is : " << sharpness() << std::endl
 	     << "Polyline point coordinates are : " << std::endl;
 
-  typename std::list<Ridge_he>::const_iterator
+  typename std::list<ridge_halfhedge>::const_iterator
     iter = line()->begin(), 
     ite =  line()->end();
   for (;iter!=ite;iter++){
@@ -163,7 +164,7 @@ class Vertex2Data_Property_Map_with_std_map
 //---------------------------------------------------------------------------
 //Ridge_approximation
 //--------------------------------------------------------------------------
-template < class TriangularPolyhedralSurface, class OutputIt, 
+template < class TriangularPolyhedralSurface,  
            class Vertex2FTPropertyMap,
            class Vertex2VectorPropertyMap > 
 class Ridge_approximation
@@ -182,7 +183,7 @@ class Ridge_approximation
   BOOST_STATIC_ASSERT((boost::is_same<FT, typename Vertex2FTPropertyMap::value_type>::value));
   BOOST_STATIC_ASSERT((boost::is_same<Vector_3, typename Vertex2VectorPropertyMap::value_type>::value));
 
-  typedef std::pair< Halfedge_const_handle, FT>    Ridge_he;
+  typedef std::pair< Halfedge_const_handle, FT>    Ridge_halfhedge;
   typedef Ridge_line<TriangularPolyhedralSurface>  Ridge_line;
 
   //are ridges tagged as elliptic or hyperbolic using 3rd or 4th order
@@ -199,7 +200,9 @@ class Ridge_approximation
 		      const Vertex2VectorPropertyMap& vertex2d2_pm,
 		      const Vertex2FTPropertyMap& vertex2P1_pm, 
 		      const Vertex2FTPropertyMap& vertex2P2_pm);
-  OutputIt compute_all_ridges(OutputIt it, Tag_order ord = Tag_3);
+ 
+  template <class OutputIterator>
+  OutputIterator compute_all_ridges(OutputIterator it, Tag_order ord = Tag_3);
   
   //Find BLUE_RIDGE, RED_RIDGE or CREST_RIDGE ridges iterate on P facets,
   //find a non-visited, regular (i.e. if there is a coherent
@@ -207,8 +210,9 @@ class Ridge_approximation
   //follow non-visited, regular, 2Xing triangles in both sens to
   //create a Ridge line.  Each time an edge is added the strength and
   //sharpness(if Tag_4) are updated.
-  OutputIt compute_ridges(Ridge_interrogation_type r_type, 
-			  OutputIt ridge_lines_it,
+  template <class OutputIterator>
+  OutputIterator compute_ridges(Ridge_interrogation_type r_type, 
+			  OutputIterator ridge_lines_it,
 			  Tag_order ord = Tag_3);
 
  protected:
@@ -304,11 +308,11 @@ class Ridge_approximation
 
 // IMPLEMENTATION OF Ridge_approximation members
 /////////////////////////////////////////////////////////////////////////////
-//contructor
-template < class TriangularPolyhedralSurface, class OutputIt, 
+ //contructor
+template < class TriangularPolyhedralSurface,  
   class Vertex2FTPropertyMap,
   class Vertex2VectorPropertyMap > 
-  Ridge_approximation< TriangularPolyhedralSurface, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPropertyMap >::
+  Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2VectorPropertyMap >::
   Ridge_approximation(const TriangularPolyhedralSurface &P,
 		      const Vertex2FTPropertyMap& vertex2k1_pm, 
 		      const Vertex2FTPropertyMap& vertex2k2_pm,
@@ -336,11 +340,12 @@ template < class TriangularPolyhedralSurface, class OutputIt,
   tag_order = Tag_3;
 }
 
-template < class TriangularPolyhedralSurface, class OutputIt, 
+template < class TriangularPolyhedralSurface,  
            class Vertex2FTPropertyMap,
            class Vertex2VectorPropertyMap > 
-OutputIt Ridge_approximation< TriangularPolyhedralSurface, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
-compute_all_ridges(OutputIt it, Tag_order ord)
+  template <class OutputIterator>
+  OutputIterator Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
+  compute_all_ridges(OutputIterator it, Tag_order ord)
 {
   compute_ridges(BLUE_RIDGE, it, ord);
   compute_ridges(RED_RIDGE, it, ord);
@@ -348,11 +353,12 @@ compute_all_ridges(OutputIt it, Tag_order ord)
   return it;
 }
 
-template < class TriangularPolyhedralSurface, class OutputIt, 
+template < class TriangularPolyhedralSurface,  
            class Vertex2FTPropertyMap,
            class Vertex2VectorPropertyMap > 
-OutputIt Ridge_approximation< TriangularPolyhedralSurface, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
-compute_ridges(Ridge_interrogation_type r_type, OutputIt ridge_lines_it, Tag_order ord)
+  template <class OutputIterator>
+  OutputIterator Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
+  compute_ridges(Ridge_interrogation_type r_type, OutputIterator ridge_lines_it, Tag_order ord)
 {
   tag_order = ord;
 
@@ -426,10 +432,10 @@ compute_ridges(Ridge_interrogation_type r_type, OutputIt ridge_lines_it, Tag_ord
   return ridge_lines_it;
 }
 
-template < class TriangularPolyhedralSurface, class OutputIt, 
+template < class TriangularPolyhedralSurface,  
            class Vertex2FTPropertyMap,
            class Vertex2VectorPropertyMap > 
-Ridge_type Ridge_approximation< TriangularPolyhedralSurface, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
+Ridge_type Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
 facet_ridge_type(const Facet_const_handle f, Halfedge_const_handle& he1, Halfedge_const_handle&
 		 he2, Ridge_interrogation_type r_type)
 {
@@ -518,10 +524,10 @@ facet_ridge_type(const Facet_const_handle f, Halfedge_const_handle& he1, Halfedg
   return NO_RIDGE;
 }
 
-template < class TriangularPolyhedralSurface, class OutputIt, 
+template < class TriangularPolyhedralSurface,  
            class Vertex2FTPropertyMap,
            class Vertex2VectorPropertyMap > 
-void Ridge_approximation< TriangularPolyhedralSurface, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
+void Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
 xing_on_edge(const Halfedge_const_handle he, bool& is_crossed, Ridge_interrogation_type color)
 {
   is_crossed = false;
@@ -544,10 +550,10 @@ xing_on_edge(const Halfedge_const_handle he, bool& is_crossed, Ridge_interrogati
   if ( sign < 0 ) is_crossed = true;
 }
 
-template < class TriangularPolyhedralSurface, class OutputIt, 
+template < class TriangularPolyhedralSurface,  
            class Vertex2FTPropertyMap,
            class Vertex2VectorPropertyMap > 
-bool Ridge_approximation< TriangularPolyhedralSurface, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
+bool Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
   tag_as_elliptic_hyperbolic(const Ridge_interrogation_type color,
 			     const Halfedge_const_handle he1, 
 			     const Halfedge_const_handle he2)
@@ -598,10 +604,10 @@ bool Ridge_approximation< TriangularPolyhedralSurface, OutputIt, Vertex2FTProper
   }
 }
 
-template < class TriangularPolyhedralSurface, class OutputIt, 
+template < class TriangularPolyhedralSurface,  
            class Vertex2FTPropertyMap,
            class Vertex2VectorPropertyMap > 
-int Ridge_approximation< TriangularPolyhedralSurface, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
+int Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
   b_sign_pointing_to_ridge(const Vertex_const_handle v1, 
 			       const Vertex_const_handle v2,
 			       const Vertex_const_handle v3,
@@ -640,24 +646,24 @@ int Ridge_approximation< TriangularPolyhedralSurface, OutputIt, Vertex2FTPropert
   if (compt > 0) return 1; else return -1;
 }
 
-template < class TriangularPolyhedralSurface, class OutputIt, 
+template < class TriangularPolyhedralSurface,  
            class Vertex2FTPropertyMap,
            class Vertex2VectorPropertyMap > 
-void Ridge_approximation< TriangularPolyhedralSurface, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
+void Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
 init_ridge_line(Ridge_line* ridge_line, 
 		const Halfedge_const_handle h1, 
 		const Halfedge_const_handle h2, 
 		const Ridge_type r_type)
 {
   ridge_line->line_type() = r_type;
-  ridge_line->line()->push_back(Ridge_he(h1, bary_coord(h1,r_type)));
+  ridge_line->line()->push_back(Ridge_halfhedge(h1, bary_coord(h1,r_type)));
   addback(ridge_line, h2, r_type);
 }
 
-template < class TriangularPolyhedralSurface, class OutputIt, 
+template < class TriangularPolyhedralSurface,  
            class Vertex2FTPropertyMap,
            class Vertex2VectorPropertyMap > 
-void Ridge_approximation< TriangularPolyhedralSurface, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
+void Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
 addback(Ridge_line* ridge_line, const Halfedge_const_handle he,
 	const Ridge_type r_type)
 {
@@ -693,13 +699,13 @@ addback(Ridge_line* ridge_line, const Halfedge_const_handle he,
        k_second =CGAL::abs(( CGAL::abs(P2[v_p]) * coord + CGAL::abs(P2[v_q]) * (1-coord) )/(k1x-k2x));
      ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * model_size; }
    } 
-  ridge_line->line()->push_back( Ridge_he(he, coord));
+  ridge_line->line()->push_back( Ridge_halfhedge(he, coord));
 }
 
-template < class TriangularPolyhedralSurface, class OutputIt, 
+template < class TriangularPolyhedralSurface,  
            class Vertex2FTPropertyMap,
            class Vertex2VectorPropertyMap > 
-void Ridge_approximation< TriangularPolyhedralSurface, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
+void Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
 addfront(Ridge_line* ridge_line, 
 	 const Halfedge_const_handle he, 
 	 const Ridge_type r_type)
@@ -736,14 +742,14 @@ addfront(Ridge_line* ridge_line,
        k_second =CGAL::abs(( CGAL::abs(P2[v_p]) * coord + CGAL::abs(P2[v_q]) * (1-coord) )/(k1x-k2x));
      ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * model_size; }
    } 
-  ridge_line->line()->push_front( Ridge_he(he, coord));
+  ridge_line->line()->push_front( Ridge_halfhedge(he, coord));
 }
 
-template < class TriangularPolyhedralSurface, class OutputIt, 
+template < class TriangularPolyhedralSurface,  
            class Vertex2FTPropertyMap,
            class Vertex2VectorPropertyMap > 
 typename TriangularPolyhedralSurface::Traits::FT 
-Ridge_approximation< TriangularPolyhedralSurface, OutputIt, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
+Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
 bary_coord(const Halfedge_const_handle he, const Ridge_type r_type)
 {
   FT b_p, b_q; // extremalities at p and q for he: p->q

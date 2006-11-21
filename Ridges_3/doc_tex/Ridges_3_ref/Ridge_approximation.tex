@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Ridge_approximation<TriangularPolyhedralSurface,OutputIt,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>} 
+\begin{ccRefClass}{Ridge_approximation<TriangularPolyhedralSurface,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>} 
 %% add templatearg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
@@ -19,16 +19,15 @@
 
 \ccDefinition
   
-The class \ccRefName\ is designed to perform the approximation of
+The class \ccRefName\ computes the approximation of
 ridges of a triangular polyhedral surface. 
 
 \ccInclude{CGAL/Ridges.h}
 
 \ccParameters
-The class \ccRefName\ has four template parameters. 
+The class \ccRefName\ has three template parameters. 
 \ccc{TriangularPolyhedralSurface} provides  the surface. 
-Parameter \ccc{OutputIt} is a stl Output Iterator whose
-\ccc{value_type} is \ccc{Ridge_line*}. Parameters  \ccc{Vertex2FTPropertyMap}
+ Parameters  \ccc{Vertex2FTPropertyMap}
 and \ccc{Vertex2VectorPropertyMap} provide the differential properties of
 the surface associated to its vertices.
 
@@ -44,9 +43,10 @@ Requirements (checked at compile time) : the types
 \ccTypes
 
 %\ccNestedType{TYPE}{some nested types}
-\ccEnum{   enum Tag_order {Tag_3, Tag_4};}
-{Order of differential quantities used to distinguish elliptic and
-hyperbolic ridges.}
+\ccEnum{ enum Tag_order {Tag_3, Tag_4};} {Order of differential
+  quantities used to distinguish elliptic and hyperbolic ridges. Third
+  (\ccc{Tag_3}) or fourth (\ccc{Tag_4}) order quantities may be used as
+  explained in section \ref{ridge-mesh} of the user manual.}
 
 
 \ccCreation
@@ -61,8 +61,8 @@ hyperbolic ridges.}
 		      Vertex2VectorPropertyMap& vertex2d2_pm, const
 		      Vertex2FTPropertyMap& vertex2P1_pm, const
 		      Vertex2FTPropertyMap& vertex2P2_pm);}
-		      {Precondition : all faces of P must be
-		      triangular. \\ The two last property maps may
+		      {%Precondition : all faces of P must be triangular. \\
+                        The two last property maps may
 		      not be used if computations are performed with
 		      the parameter \ccc{Tag_3}, in which case these
 		      property maps shall be initialized with their
@@ -70,13 +70,17 @@ hyperbolic ridges.}
 
 %\ccOperations
 
-\ccMethod{  OutputIt compute_all_ridges(OutputIt it, Tag_order ord = Tag_3);}
-{Computes blue, red and crest ridges.}
+\ccMethod{ template <class OutputIterator> OutputIterator compute_all_ridges(OutputIterator it, Tag_order ord = Tag_3);}
+{Computes blue, red and crest ridges. Parameter \ccc{it}
+ is a  {\sc Stl} output iterator whose
+\ccc{value_type} is \ccc{Ridge_line*}.}
 \ccGlue
-\ccMethod{   OutputIt compute_ridges(Ridge_interrogation_type r_type, 
-			  OutputIt ridge_lines_it,
+\ccMethod{ template <class OutputIterator>  OutputIterator compute_ridges(Ridge_interrogation_type r_type, 
+			  OutputIterator ridge_lines_it,
 			  Tag_order ord = Tag_3);}
-{Computes blue, red or crest ridges.}
+{Computes blue, red or crest ridges. Parameter \ccc{it}
+ is a  {\sc Stl} output iterator whose
+\ccc{value_type} is \ccc{Ridge_line*}.}
 
 \ccSeeAlso
 

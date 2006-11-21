@@ -9,7 +9,7 @@
 #include <list>
 
 #include <CGAL/Ridges.h> 
-#include <CGAL/Umbilic.h>
+#include <CGAL/Umbilics.h>
 
 // #include <CGAL/Monge_via_jet_fitting.h> //does not work since not in the release yet
 // #include <CGAL/Lapack/Linear_algebra_lapack.h>
@@ -32,7 +32,6 @@ typedef PolyhedralSurf::Vertex_const_iterator Vertex_const_iterator;
 typedef T_PolyhedralSurf_rings<PolyhedralSurf> Poly_rings;
 typedef CGAL::Monge_via_jet_fitting<Kernel>    Monge_via_jet_fitting;
 typedef Monge_via_jet_fitting::Monge_form      Monge_form;
-typedef Monge_via_jet_fitting::Monge_form_condition_numbers Monge_form_condition_numbers;
       
 typedef CGAL::Vertex2Data_Property_Map_with_std_map<PolyhedralSurf> Vertex2Data_Property_Map_with_std_map;
 typedef Vertex2Data_Property_Map_with_std_map::Vertex2FT_map Vertex2FT_map;
@@ -43,13 +42,11 @@ typedef Vertex2Data_Property_Map_with_std_map::Vertex2Vector_property_map Vertex
 //RIDGES
 typedef CGAL::Ridge_line<PolyhedralSurf> Ridge_line;
 typedef CGAL::Ridge_approximation < PolyhedralSurf,
-				    back_insert_iterator< std::vector<Ridge_line*> >,
 				    Vertex2FT_property_map,
 				    Vertex2Vector_property_map > Ridge_approximation;
 //UMBILICS
 typedef CGAL::Umbilic<PolyhedralSurf> Umbilic;
 typedef CGAL::Umbilic_approximation < PolyhedralSurf,
-				      back_insert_iterator< std::vector<Umbilic*> >, 
 				      Vertex2FT_property_map, 
 				      Vertex2Vector_property_map > Umbilic_approximation;
 
@@ -141,7 +138,7 @@ void compute_differential_quantities(PolyhedralSurf& P, Poly_rings& poly_rings)
     Vertex_const_handle v = vitb;
     in_points.clear();  
     Monge_form monge_form;
-    Monge_form_condition_numbers monge_form_condition_numbers;
+    Monge_via_jet_fitting monge_fit;
       
     //gather points around the vertex using rings
     gather_fitting_points(v, in_points, poly_rings);
@@ -153,17 +150,16 @@ void compute_differential_quantities(PolyhedralSurf& P, Poly_rings& poly_rings)
     //For Ridges we need at least 3rd order info
     assert( d_monge >= 3);
     // run the main fct : perform the fitting
-    Monge_via_jet_fitting do_it(in_points.begin(), in_points.end(),
-				d_fitting, d_monge, 
-				monge_form, monge_form_condition_numbers);
+     monge_form = monge_fit(in_points.begin(), in_points.end(),
+			   d_fitting, d_monge);
     
     //switch min-max ppal curv/dir wrt the mesh orientation
     const Vector_3 normal_mesh = P.computeFacetsAverageUnitNormal(v);
     monge_form.comply_wrt_given_normal(normal_mesh);
        
     //Store monge data needed for ridge computations in property maps
-    vertex2d1_map[v] = monge_form.d1();
-    vertex2d2_map[v] = monge_form.d2();
+    vertex2d1_map[v] = monge_form.maximal_principal_direction();
+    vertex2d2_map[v] = monge_form.minimal_principal_direction();
     vertex2k1_map[v] = monge_form.coefficients()[0];
     vertex2k2_map[v] = monge_form.coefficients()[1];
     vertex2b0_map[v] = monge_form.coefficients()[2];

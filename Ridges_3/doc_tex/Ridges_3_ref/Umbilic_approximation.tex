@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Umbilic_approximation<TriangularPolyhedralSurface,OutputIt,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>} 
+\begin{ccRefClass}{Umbilic_approximation<TriangularPolyhedralSurface,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>} 
  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
@@ -19,19 +19,16 @@
 
 \ccDefinition
   
-The class \ccRefName\ is designed to perform the approximation of
+The class \ccRefName\ computes the approximation of
 umbilics on a triangular polyhedral surface. 
 
 
-\ccInclude{CGAL/Umbilic.h}
+\ccInclude{CGAL/Umbilics.h}
 
-\ccParameters
-The class \ccRefName\ has four template parameters. 
-\ccc{TriangularPolyhedralSurface} provides  the surface. 
-Parameter \ccc{OutputIt} is a stl Output Iterator which
-\ccc{value_type} is \ccc{Umbilic*}. Parameters  \ccc{Vertex2FTPropertyMap}
-and \ccc{Vertex2VectorPropertyMap} provide the differential properties of
-the surface associated to its vertices.
+\ccParameters The class \ccRefName\ has three template parameters.
+\ccc{TriangularPolyhedralSurface} provides the surface. Parameters
+\ccc{Vertex2FTPropertyMap} and \ccc{Vertex2VectorPropertyMap} provide
+the differential properties of the surface associated to its vertices.
 
 Requirements (checked at compile time) : the types
 \ccc{TriangularPolyhedralSurface::Traits::FT} and
@@ -59,11 +56,11 @@ Requirements (checked at compile time) : the types
 
 \ccOperations
 
-\ccMethod{  OutputIt compute(OutputIt it, FT size);}
+\ccMethod{template <class OutputIterator>  OutputIterator compute(OutputIterator it, FT size);}
 {Performs the approximation, \ccc{size} determines the size of the
 patches around vertices, taken as  \ccc{size} times the size of the
-1-ring. Umbilics are output through the \ccc{OutputIt} which is an
-concept of output iterator of the stl with value type \ccc{Umbilic*}.}
+1-ring. Umbilics are output through the \ccc{OutputIterator} which is a
+concept of output iterator of the  {\sc Stl} with value type \ccc{Umbilic*}.}
 
 \ccSeeAlso
 

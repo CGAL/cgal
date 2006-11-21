@@ -66,7 +66,7 @@ operator<<(std::ostream& out_stream, const Umbilic<TriangularPolyhedralSurface>&
 //T_PolyhedralSurf_neighbors to compute topological disk patches
 //around vertices
 //--------------------------------------------------------------------------
-template < class TriangularPolyhedralSurface, class OutputIt, 
+template < class TriangularPolyhedralSurface,  
   class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
   class Umbilic_approximation
 {
@@ -95,7 +95,8 @@ template < class TriangularPolyhedralSurface, class OutputIt,
   //identify umbilics as vertices minimizing the function k1-k2 on
   //their patch and for which the index is not 0. We avoid
   //potential umbilics whose contours touch the border.
-  OutputIt compute(OutputIt it, FT size);
+  template <class OutputIterator>
+  OutputIterator compute(OutputIterator it, FT size);
 
  protected:
   const TriangularPolyhedralSurface& P;
@@ -120,8 +121,8 @@ template < class TriangularPolyhedralSurface, class OutputIt,
   int compute_type(Umbilic& umb);
 };
 
-template < class TriangularPolyhedralSurface, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
-  Umbilic_approximation< TriangularPolyhedralSurface, OutputIt, Vertex2FTPropertyMap, Vertex2VectorPropertyMap >::
+template < class TriangularPolyhedralSurface,  class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
+  Umbilic_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap, Vertex2VectorPropertyMap >::
 Umbilic_approximation(const TriangularPolyhedralSurface& P, 
 		      const Vertex2FTPropertyMap& vertex2k1_pm, 
 		      const Vertex2FTPropertyMap& vertex2k2_pm,
@@ -137,9 +138,10 @@ Umbilic_approximation(const TriangularPolyhedralSurface& P,
   poly_neighbors = new Poly_neighbors(P);
 }
 
-template < class TriangularPolyhedralSurface, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
-  OutputIt Umbilic_approximation< TriangularPolyhedralSurface, OutputIt, Vertex2FTPropertyMap, Vertex2VectorPropertyMap >::
-compute(OutputIt umbilics_it, FT size)
+template < class TriangularPolyhedralSurface,  class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
+  template <class OutputIterator>
+  OutputIterator Umbilic_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap, Vertex2VectorPropertyMap >::
+  compute(OutputIterator umbilics_it, FT size)
 {
   CGAL_precondition( size >= 1 );
   
@@ -191,9 +193,9 @@ compute(OutputIt umbilics_it, FT size)
   return umbilics_it;
 }
 
-template < class TriangularPolyhedralSurface, class OutputIt, class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
-  int Umbilic_approximation< TriangularPolyhedralSurface, OutputIt, Vertex2FTPropertyMap, Vertex2VectorPropertyMap >::
-compute_type(Umbilic& umb)
+template < class TriangularPolyhedralSurface,  class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
+  int Umbilic_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap, Vertex2VectorPropertyMap >::
+  compute_type(Umbilic& umb)
 {
   Vector_3 dir, dirnext, normal;
   double cosinus, angle=0, angleSum=0;

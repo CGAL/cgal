@@ -18,7 +18,11 @@
 
 \ccDefinition
   
-The class \ccRefName\ stores the description of a ridge line.
+The class \ccRefName\ stores the description of a ridge line. The list
+of halfedges defines a connected sequence of edges (but not as
+oriented halfedges). The scalar $b$ paired with a halfedge $pq$ is the
+barycentric coordinate of the crossing point $r$ with the ridge  : 
+$r = b\times p + (1-b)\times q$.
 
 \ccInclude{CGAL/Ridges.h}
 
@@ -29,7 +33,9 @@ The class \ccRefName\ stores the description of a ridge line.
 \ccGlue
 \ccTypedef{typedef typename TriangularPolyhedralSurface::Halfedge_handle  Halfedge_handle;}{}
 \ccGlue
-\ccTypedef{ typedef std::pair< Halfedge_handle, FT>           ridge_he;}{}
+\ccTypedef{ typedef std::pair< Halfedge_handle, FT>           Ridge_halfhedge;}
+{A halfedge crossed by a ridge is paired with the barycentric
+  coordinate of the crossing point.}
 
 
 \ccCreation
@@ -48,9 +54,9 @@ The class \ccRefName\ stores the description of a ridge line.
 \ccMethod{const FT sharpness();}{}
 \ccGlue
 %\ccMethod{FT& sharpness(); }{}
-\ccMethod{const std::list<ridge_he>* line();}{}
+\ccMethod{const std::list<Ridge_halfhedge>* line();}{}
 \ccGlue
-%\ccMethod{std::list<ridge_he>* line();}{}
+%\ccMethod{std::list<ridge_halfhedge>* line();}{}
 
 The opertor $<<$ is overloaded for this class and returns the line
 type, strength, sharpness and coordinates of the points of the

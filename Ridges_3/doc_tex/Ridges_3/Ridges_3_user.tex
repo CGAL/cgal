@@ -27,7 +27,7 @@
 \end{ccHtmlOnly}
 \end{figure}
 
-This chapter describes the \cgal's package for the extraction of
+This chapter describes the \cgal's package for the approximation of
 ridges and umbilics on meshes.  Given a smooth surface, a ridge is a
 curve along which one of the principal curvatures has an extremum
 along its curvature line. An umbilic is a point at which both
@@ -49,7 +49,7 @@ Polynomial Fitting}.
 
 Section \ref{smooth} presents the basics of the theory of ridges and
 umbilics on smooth surfaces. Sections \ref{ridge-mesh} and
-\ref{umbilic-mesh} present algorithms for the extracting ridges and
+\ref{umbilic-mesh} present algorithms for the approximation of ridges and
 umbilics on triangular meshes. Section
 \ref{soft} gives the package specifications, while example calls to
 functions of the package are provided in section \ref{examples}.
@@ -233,7 +233,7 @@ then it is called a
 
 
 
-\section{Extraction of ridges on Triangular Meshes}
+\section{Approximation of ridges on Triangular Meshes}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{ridge-mesh}
 
@@ -330,7 +330,7 @@ ridge line
 
 
 
-\section{Extraction of Umbilics on Triangular Meshes}
+\section{Approximation of Umbilics on Triangular Meshes}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{umbilic-mesh}
 
@@ -369,15 +369,15 @@ $\delta \geq 3\pi/2$ or $\delta \leq -3\pi/2$ then the umbilic is called non-gen
 
 
 \paragraph{Finding patches around vertices.}
-Given a vertex $v$, we aim at defining a collection of triangles
-around $v$ so that this collection defines a topological disk on the
-triangulation $T$. First we collect the 1-ring triangles. We define
-the size $s$ of this 1-ring patch as the (Euclidean) distance from $v$
-to its farthest 1-ring vertex neighbor. We then collect recursively
-adjacent triangles so that the patch remains a topological disk and
-such that these triangles are at distance less than $st$, with $s$ a
-user defined parameter. Parameter $t$ is the only parameter of the
-algorithm.
+Given a vertex $v$ and a parameter $t$, we aim at defining a
+collection of triangles around $v$ so that (i) this collection defines
+a topological disk on the triangulation $T$ and (ii) its size depends
+on $t$. First we collect the 1-ring triangles. We define the size $s$
+of this 1-ring patch as the (Euclidean) distance from $v$ to its
+farthest 1-ring vertex neighbor. We then collect recursively adjacent
+triangles so that the patch remains a topological disk and such that
+these triangles are at distance less than $s\times t$. Parameter $t$
+is the only parameter of the algorithm.
 
 \paragraph{Umbilical patches versus ridges.} On a generic surface,
 generic umbilics are traversed by one or three ridges. For compliant
@@ -393,7 +393,7 @@ more details.
 
 All classes of this package are templated by the parameter
 \ccc{TriangularPolyhedralSurface} which inherits from \ccc{Polyedron_3}
-and defines the mesh on which the extraction algorithms are applied.
+and defines the mesh on which the approximation algorithms are applied.
 
 The differential quantities are provided at vertices of this mesh via
 property maps, a concept commonly used in the Boost library. Scalar
@@ -411,7 +411,7 @@ a \ccc{boost::associative_property_map} to model these concepts.
 
 Output of ridges or umbilics are provided via output iterator.
 
-Extraction of ridges and umbilics are performed by two independent
+Approximation of ridges and umbilics are performed by two independent
 classes, which we now further describe.
 
 \subsection{Ridge Approximation}
@@ -419,7 +419,7 @@ classes, which we now further describe.
 
 
 The main class is
-\ccc{Ridge_approximation<TriangularPolyhedralSurface,OutputIt,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>}.
+\ccc{Ridge_approximation<TriangularPolyhedralSurface,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>}.
 Its construction requires the mesh and the property maps defining the
 differential quantities for principal curvatures $k_1$ and $k_2$, the
 third order extremalities $b_0$ and $b_3$, the principal directions of
@@ -433,7 +433,7 @@ Two functions enable to either compute all ridges
 \ccc{compute_ridges}. 
 These functions allows the user to specify how the elliptic/hyperbolic
 tagging is carried out.  For the second function, one may further
-specify a ridge intersection type, that is an entry in the following
+specify a ridge interrogation type, that is an entry in the following
 enumeration \ccc{ BLUE_RIDGE, RED_RIDGE, CREST_RIDGE}. 
 %%
 Notice the rationale for allowing to specify an entry in this enum is
@@ -445,7 +445,7 @@ intersect over a triangle.
 
 The ridge lines are stored in
 \ccc{Ridge_line} objects and output through an iterator. 
-Each ridge line is represented as a list of half-edges of the mesh it
+Each ridge line is represented as a list of halfedges of the mesh it
 crosses with a scalar defining the barycentric coordinate of the
 crossing point with respect to the half-egde endpoints. Each ridge
 line comes with its type \ccc{Ridge_type}, its strength and sharpness.
@@ -457,11 +457,12 @@ defined.
 \subsection{Umbilic Approximation}
 %%%%%%%%%%%%%%%%%%%%%
 The main class is
-\ccc{Umbilic_approximation<TriangularPolyhedralSurface,OutputIt,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>}.
+\ccc{Umbilic_approximation<TriangularPolyhedralSurface,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>}.
 Its construction requires the mesh and the property maps defining the
 differential quantities for principal curvatures $k_1$ and $k_2$, and
 the principal directions of curvature $d_1$ and $d_2$.  The function
-\ccc{compute} has a parameter to define the size of the neighborhood of the umbilic.
+\ccc{compute} has a parameter to define the size of the neighborhood
+of the umbilic.
 
 Umbilics are stored in \ccc{Umbilic} objects, they come with their
 type, the vertex of the mesh they are associated to and the list of
@@ -511,7 +512,7 @@ u, the parameter for umbilic patch size, $u \geq 1$ (default is 1).
 
 \begin{ccExampleCode} 
 #include <CGAL/Ridges.h> 
-#include <CGAL/Umbilic.h>
+#include <CGAL/Umbilics.h>
 
 #include <CGAL/Monge_via_jet_fitting.h> 
 #include <CGAL/Lapack/Linear_algebra_lapack.h>
@@ -528,9 +529,9 @@ typedef PolyhedralSurf::Vertex_const_handle   Vertex_const_handle;
 typedef PolyhedralSurf::Vertex_const_iterator Vertex_const_iterator;
 
 typedef CGAL::Monge_via_jet_fitting<Kernel>    Monge_via_jet_fitting;
+typedef CGAL::Monge_via_jet_fitting<Kernel>    Monge_via_jet_fitting;
 typedef Monge_via_jet_fitting::Monge_form      Monge_form;
-typedef Monge_via_jet_fitting::Monge_form_condition_numbers Monge_form_condition_numbers;
-      
+    
 typedef CGAL::Vertex2Data_Property_Map_with_std_map<PolyhedralSurf> Vertex2Data_Property_Map_with_std_map;
 typedef Vertex2Data_Property_Map_with_std_map::Vertex2FT_map Vertex2FT_map;
 typedef Vertex2Data_Property_Map_with_std_map::Vertex2Vector_map Vertex2Vector_map;
