@@ -391,7 +391,7 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Collapse( Profile const& aProfile )
     edge_descriptor lV0VL = primary_edge(aProfile.vlv0());
     
     CGAL_ECMS_TRACE(3,"V0VL E" << lV0VL->id()
-                   << "(V" <<  lV0VL->vertex()->id() << "->V" << lV0VL->opposite()->vertex()->id() << ")
+                   << "(V" <<  lV0VL->vertex()->id() << "->V" << lV0VL->opposite()->vertex()->id() << ")"
                    ) ;
                    
     Edge_data& lData = get_data(lV0VL) ;
