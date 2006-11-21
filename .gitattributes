@@ -1667,6 +1667,7 @@ Number_types/test/Number_types/include/CGAL/_test_fraction_traits.h -text
 Number_types/test/Number_types/include/CGAL/_test_rational_traits.h -text
 Number_types/test/Number_types/include/CGAL/_test_real_embeddable.h -text
 Number_types/test/Number_types/int.C -text
+Number_types/test/Number_types/ioformat.C -text
 Number_types/test/Number_types/leda_bigfloat.C -text
 Number_types/test/Number_types/leda_integer.C -text
 Number_types/test/Number_types/leda_rational.C -text

@@ -38,12 +38,18 @@ bool
 test_sqrt(const NT&, CGAL::Tag_true)
 {
   NT sixteen(16);
-  NT four(4);
   std::cout << "  sqrt()" << std::endl;
-  if (CGAL_NTS sqrt(sixteen) != four) return false;
-  CGAL::Sqrt<NT> s;
-  if (s(sixteen) != four) return false;
-
+  typedef typename Algebraic_structure_traits<NT>::Is_exact Is_exact;
+  if(Is_exact::value && CGALi::Is_field_with_sqrt<NT>::value){
+      if (CGAL_NTS sqrt(sixteen)    != NT(4)) return false;
+      if (CGAL::Sqrt<NT>()(sixteen) != NT(4)) return false;
+  }else{
+      // sqrt is inexact
+      if (!( NT(CGAL_NTS sqrt(sixteen) - NT(5)) < NT(0) )) return false;
+      if (!( NT(CGAL_NTS sqrt(sixteen) - NT(3)) > NT(0) )) return false;
+      if (!( NT(CGAL::Sqrt<NT>()(sixteen) - NT(5)) < NT(0) )) return false;
+      if (!( NT(CGAL::Sqrt<NT>()(sixteen) - NT(3)) > NT(0) )) return false;  
+  }
   return true;
 }
 
@@ -233,17 +239,6 @@ template < class NT >
 bool
 test_utilities(const NT& x)
 {
-  // TEST ioformat 
-  {
-      std::cout << "i/oformat" << std::endl; 
-      NT tmp,x(13);
-      std::ostringstream os;  
-      os << ::CGAL::oformat(x);
-      std::istringstream is(os.str()); 
-      is >> ::CGAL::iformat(tmp);
-      CGAL_test_assert_msg( x == tmp, "IO_TEST failed");
-  }
-
   NT zero(0);
   NT one(1);
   NT mone(-one);
