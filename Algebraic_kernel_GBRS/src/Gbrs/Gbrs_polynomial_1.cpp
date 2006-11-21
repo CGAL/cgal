@@ -221,7 +221,7 @@ Rational_polynomial_1 Rational_polynomial_1::operator-()const{
 	return opposite;
 };
 
-// XXX: maybe it is best to use operator+= to implement this
+// XXX: maybe it is better to use operator+= to implement this
 Rational_polynomial_1 Rational_polynomial_1::operator+ (const Rational_polynomial_1 &s) const {
 	int sd = s.get_degree ();
 	int minord, majord;	// the minor and major of both degrees
@@ -300,7 +300,7 @@ Rational_polynomial_1& Rational_polynomial_1::operator-= (const Rational_polynom
 };
 
 // multiplies the polynomial by c*x^shiftn
-Rational_polynomial_1& Rational_polynomial_1::scale_and_shift(const mpz_t &s,int shiftn){
+/*Rational_polynomial_1& Rational_polynomial_1::scale_and_shift(const mpz_t &s,int shiftn){
 	mpz_t *new_coef=(mpz_t*)malloc(sizeof(mpz_t)*(degree+shiftn+1));
 	for (int i=0;i<degree+1;++i){
 		mpz_mul(coef[i],coef[i],s);
@@ -314,17 +314,31 @@ Rational_polynomial_1& Rational_polynomial_1::scale_and_shift(const mpz_t &s,int
 	coef=new_coef;
 	solved=false;
 	return *this;
-};
+};*/
 
 // TODO: karatsubize this
 Rational_polynomial_1 Rational_polynomial_1::operator*(const Rational_polynomial_1 &f)const{
-	Rational_polynomial_1 product;
+	/*Rational_polynomial_1 product;
 	mpz_t *f_coefs;
 	f_coefs=f.get_coefs();
 	int df=f.get_degree();
 	for(int i=0;i<=df;++i){
 		Rational_polynomial_1 partial(*this);
 		product+=partial.scale_and_shift(f_coefs[i],i);
+	}
+	return product;*/
+	// TODO: test this a bit, and correct it if it doesn't work so we can
+	// avoid using the above extra-slow c++ implementation
+	mpz_t *coef_f=f.get_coefs();
+	int degree_f=f.get_degree();
+	int degree_p=degree+degree_f;
+	Rational_polynomial_1 product(degree_p);
+	mpz_t *coef_p=product.get_coefs();
+	for(int c=0;c<degree_p+1;++c){
+		int max=(c<degree?c:degree)+1;
+		for(int i=0;i<max;++i)
+			if(c-i<=degree_f)
+				mpz_addmul(coef_p[c],coef[i],coef_f[c-i]);
 	}
 	return product;
 };
@@ -368,9 +382,5 @@ bool Rational_polynomial_1::operator==(const Rational_polynomial_1 &p)const{
 	}
 	return true;
 };
-
-std::ostream& operator<< (std::ostream &o, const Rational_polynomial_1 &p) {
-	return p.show (o);
-}
 
 CGAL_END_NAMESPACE

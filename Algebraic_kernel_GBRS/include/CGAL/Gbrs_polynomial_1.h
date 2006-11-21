@@ -75,7 +75,7 @@ class Rational_polynomial_1 {
 		Rational_polynomial_1& operator+= (const Rational_polynomial_1 &);
 		Rational_polynomial_1 operator- (const Rational_polynomial_1 &) const;
 		Rational_polynomial_1& operator-= (const Rational_polynomial_1 &);
-		Rational_polynomial_1& scale_and_shift(const mpz_t&,int);
+		/*Rational_polynomial_1& scale_and_shift(const mpz_t&,int);*/
 		Rational_polynomial_1 operator* (const Rational_polynomial_1 &) const;
 		template <class T> Rational_polynomial_1 operator* (const T &) const;
 		Rational_polynomial_1& operator*=(const Rational_polynomial_1 &);
@@ -111,6 +111,9 @@ inline bool Rational_polynomial_1::get_solved()const{return solved;};
 /*inline rootvector Rational_polynomial_1::get_roots()const{return roots;};
 inline void Rational_polynomial_1::set_root(const Algebraic_1 &r){
 	roots.push_back(r);};*/
+
+inline std::ostream& operator<<(std::ostream &o,const Rational_polynomial_1 &p)
+{return p.show (o);}
 
 CGAL_END_NAMESPACE
 
