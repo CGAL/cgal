@@ -49,8 +49,7 @@ typedef CGAL::Quotient<CGAL::MP_Float>            QMPF;
 }
 
 int main()
-{
-  
+{ 
   // builtin NTs
   TESTIT(int, "int")
   TESTIT(long int, "long int")
@@ -78,7 +77,7 @@ int main()
 #ifdef CGAL_USE_GMP
   TESTIT(CGAL::Gmpz, "Gmpz")
   TESTIT(CGAL::Gmpz, "Gmpzf")
-      TESTIT(CGAL::MP_Float, "MP_Float")
+      //TESTIT(CGAL::MP_Float, "MP_Float")
   TESTIT(CGAL::Gmpq, "Gmpq")
 #endif // CGAL_USE_GMP
 #ifdef CGAL_USE_GMPXX
@@ -88,12 +87,11 @@ int main()
 #endif
 
   // CORE
-#ifdef CGAL_USE_CORE
-      //bug in io for CORE. 
-      //TESTIT(CORE::Expr, "CORE::BigInt")
-      //TESTIT(CORE::Expr, "CORE::BigRat")
-      //TESTIT(CORE::Expr, "CORE::BigFloat")
-      //TESTIT(CORE::Expr, "CORE::Expr")
+#ifdef CGAL_USE_CORE 
+      TESTIT(CORE::BigInt, "CORE::BigInt")
+      TESTIT(CORE::BigRat, "CORE::BigRat")
+      TESTIT(CORE::BigFloat, "CORE::BigFloat")
+      TESTIT(CORE::Expr, "CORE::Expr")
 #endif
 
       // LEDA based NTs
