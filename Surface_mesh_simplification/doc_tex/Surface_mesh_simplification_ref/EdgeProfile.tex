@@ -41,11 +41,11 @@ This profile is used by the stop, cost and placement policies.
 \ccCreationVariable{ep}  %% choose variable name
 
 \ccAccessFunctions
-  \ccMethod{vertex_descriptor v0() const;}{The source vertex of the directed edge to be collapsed.}
+  \ccMethod{vertex_descriptor v0() const;}{The source vertex of the edge to be collapsed.}
 \ccGlue    
-  \ccMethod{vertex_descriptor v1() const;}{The target vertex of the directed edge to be collapsed.}
+  \ccMethod{vertex_descriptor v1() const;}{The target vertex of the edge to be collapsed.}
 \ccGlue    
-  \ccMethod{edge_descriptor v0v1() const;}{The directed edge to be collapsed.}
+  \ccMethod{edge_descriptor v0v1() const;}{The directed edge being the primary edgecorrespodingto be collapsed.}
 \ccGlue    
   \ccMethod{edge_descriptor v1v0() const;}{The opposite of the directed edge to be collapsed.}
 \ccGlue    

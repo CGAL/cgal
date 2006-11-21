@@ -26,6 +26,8 @@
 
 #define CGAL_CHECK_EXPENSIVE
 
+//#define TRACE
+
 #include <CGAL/Real_timer.h>
 #include <CGAL/Simple_cartesian.h>
 

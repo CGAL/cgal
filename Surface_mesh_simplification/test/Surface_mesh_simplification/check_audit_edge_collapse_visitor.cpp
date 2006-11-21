@@ -38,7 +38,9 @@ private :
     {
       if ( line.length() > 1 )
       {
-        //std::cerr << "AUDIT: " << line << " (order=" << order << ")" << std::endl ;
+        #ifdef TRACE
+        std::cerr << "AUDIT: " << line << " (order=" << order << ")" << std::endl ;
+        #endif
  
         Tokenizer tk(line,Separator(" "));
         vector<string> tokens(tk.begin(),tk.end());
@@ -111,7 +113,9 @@ public :
   
   Visitor ( string audit_name ) 
   {
-    //std::cerr << "audit_name: " << audit_name << std::endl ;
+    #ifdef TRACE
+    std::cerr << "audit_name: " << audit_name << std::endl ;
+    #endif
     ifstream in(audit_name.c_str());  
     if ( in )
          ReadAudit(in);
@@ -148,13 +152,17 @@ public :
   
   void OnCollected( Halfedge_handle const& aEdge, Surface& )
   {
-    //std::cerr << "ACTUAL: I " << edge2str(aEdge) << std::endl ;
+    #ifdef TRACE
+    std::cerr << "ACTUAL: I " << edge2str(aEdge) << std::endl ;
+    #endif
     actual_table.insert(make_pair(aEdge->id(), Data_ptr( new Data() ) ) ) ;
   }                
   
   void OnSelected( Halfedge_handle const& aEdge, Surface&, optional<double> const& aCost, size_t, size_t )
   {
-    //std::cerr << "ACTUAL: S " << edge2str(aEdge) << " cost:" << aCost << " (order=" << order << ")" << std::endl ;
+    #ifdef TRACE
+    std::cerr << "ACTUAL: S " << edge2str(aEdge) << " cost:" << aCost << " (order=" << order << ")" << std::endl ;
+    #endif
     actual_table[aEdge->id()]->selected = true ;
     actual_table[aEdge->id()]->cost     = aCost ; 
     actual_table[aEdge->id()]->order    = order ++ ; 
@@ -162,14 +170,18 @@ public :
   
   void OnCollapsing(Halfedge_handle const& aEdge, Surface&, optional<Point> const& aPlacement ) 
   {
-    //std::cerr << "ACTUAL: C"  << aEdge->id() << std::endl ;
+    #ifdef TRACE
+    std::cerr << "ACTUAL: C"  << aEdge->id() << std::endl ;
+    #endif
     actual_table[aEdge->id()]->placement      = aPlacement ; 
     actual_table[aEdge->id()]->is_collapsable = true ; 
   }                
   
   void OnNonCollapsable(Halfedge_handle const& aEdge, Surface& ) 
   {
-    //std::cerr << "ACTUAL: N" << aEdge->id() << std::endl ;
+    #ifdef TRACE
+    std::cerr << "ACTUAL: N" << aEdge->id() << std::endl ;
+    #endif
     actual_table[aEdge->id()]->is_collapsable = false ; 
   }                
   
