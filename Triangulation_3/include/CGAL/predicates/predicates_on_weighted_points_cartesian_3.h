@@ -134,7 +134,7 @@ in_smallest_orthogonal_sphereC3(
 // with respect with the tertraedron formed by bare points in p, q,r,s
 template <class FT>
 Bounded_side
-does_simplex_intersect_dual_supportC3(
+does_simplex_intersect_weighted_dual_supportC3(
 		const FT &px, const FT &py, const FT &pz, const FT &pw,
                 const FT &qx, const FT &qy, const FT &qz, const FT &qw,
                 const FT &rx, const FT &ry, const FT &rz, const FT &rw,
@@ -203,7 +203,7 @@ does_simplex_intersect_dual_supportC3(
 // with respect with the triangle  formed by bare points in p, q,r.
 template <class FT>
 Bounded_side
-does_simplex_intersect_dual_supportC3(
+does_simplex_intersect_weighted_dual_supportC3(
 		const FT &px, const FT &py, const FT &pz, const FT &pw,
                 const FT &qx, const FT &qy, const FT &qz, const FT &qw,
                 const FT &rx, const FT &ry, const FT &rz, const FT &rw)
@@ -255,7 +255,7 @@ does_simplex_intersect_dual_supportC3(
 
 template <class FT>
 Bounded_side
-does_simplex_intersect_dual_supportC3(
+does_simplex_intersect_weighted_dual_supportC3(
 		const FT &px, const FT &py, const FT &pz, const FT &pw,
                 const FT &qx, const FT &qy, const FT &qz, const FT &qw)
 {
