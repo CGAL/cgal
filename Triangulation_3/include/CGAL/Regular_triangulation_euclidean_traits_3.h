@@ -200,7 +200,7 @@ public :
 // to the given weighted points 
 // intersect  the simplex formed by the bare points 
 template < typename K >
-class Does_simplex_intersect_dual_support_3
+class Does_simplex_intersect_weighted_dual_support_3
 {
 public:
   typedef typename K::Weighted_point_3               Weighted_point_3;
@@ -408,7 +408,7 @@ public:
                                 In_smallest_orthogonal_sphere_3;
   typedef CGAL::Side_of_bounded_orthogonal_sphere_3<Self>
                                 Side_of_bounded_orthogonal_sphere_3;
-  typedef CGAL::Does_simplex_intersect_dual_support_3<Self>
+  typedef CGAL::Does_simplex_intersect_weighted_dual_support_3<Self>
                                 Does_simplex_intersect_dual_support_3; 
   typedef CGAL::Construct_weighted_circumcenter_3<Self>
                                  Construct_weighted_circumcenter_3;
