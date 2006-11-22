@@ -19,7 +19,7 @@
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_COUNT_STOP_PREDICATE_H 1
 
 #include <CGAL/Surface_mesh_simplification/Detail/Common.h>
-#include <CGAL/Surface_mesh_simplification/Detail/Edge_profile.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
 
 CGAL_BEGIN_NAMESPACE
 

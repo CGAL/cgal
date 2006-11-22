@@ -183,7 +183,7 @@ private:
 
 CGAL_END_NAMESPACE
 
-#include <CGAL/Surface_mesh_simplification/Detail/Edge_profile_impl.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile_impl.h>
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_EDGE_PROFILE_H
 // EOF //
