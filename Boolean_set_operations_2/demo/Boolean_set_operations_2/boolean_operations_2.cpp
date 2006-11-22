@@ -514,13 +514,14 @@ public slots:
     void open_dxf_file()
     {
 
-      QString s = QFileDialog::getOpenFileName("./",
+      QString s = QFileDialog::getOpenFileName(file_name,
                                                QString::null,
                                                this,
                                                "open file dialog",
                                                "Choose a file" );
       if(s==QString::null)
         return;
+      file_name=s;
 
       std::ifstream in_file(s);
       if(!in_file.is_open())
@@ -612,13 +613,14 @@ public slots:
     void open_linear_polygon_file()
     {
 
-      QString s = QFileDialog::getOpenFileName("./",
+      QString s = QFileDialog::getOpenFileName(file_name,
                                                QString::null,
                                                this,
                                                "open file dialog",
                                                "Choose a file" );
       if(s==QString::null)
         return;
+      file_name=s;
 
       std::ifstream in_file(s);
       if(!in_file.is_open())
