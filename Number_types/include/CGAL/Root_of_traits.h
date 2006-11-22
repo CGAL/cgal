@@ -52,6 +52,9 @@ struct Root_of_traits_helper < FT, Field_tag >
     typedef FT               Root_of_1;
 private:
     typedef Fraction_traits<FT> FrT;
+    // Field must be a Fraction (Decomposable)
+    BOOST_STATIC_ASSERT((FrT::Is_fraction::value)); 
+
     typedef typename FrT::Numerator      RT;
     typedef typename FrT::Decompose Decompose;
 public:
