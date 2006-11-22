@@ -19,15 +19,19 @@ Thus, $0$ is divided by every element of the Ring, in particular by itself.
 \ccc{AdaptableBinaryFunction} 
 
 \ccTypes
-
-\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
-\ccTypedef{typedef AlgebraicStructureTraits::Algebraic_structure result_type;}{}\ccGlue
-\ccTypedef{typedef AlgebraicStructureTraits::Algebraic_structure first_argument_type;}{}\ccGlue
-\ccTypedef{typedef AlgebraicStructureTraits::Algebraic_structure second_argument_type;}{}
+\ccNestedType{result_type} 
+        { Is \ccc{AlgebraicStructureTraits::Algebraic_structure}.}
+\ccGlue
+\ccNestedType{first_argument} 
+        { Is \ccc{AlgebraicStructureTraits::Algebraic_structure}.}
+\ccGlue
+\ccNestedType{second_argument} 
+        { Is \ccc{AlgebraicStructureTraits::Algebraic_structure}.}
 
 \ccOperations
-\ccSetThreeColumns{xxxxxxxxxx}{xxxxx}{}
-\ccCreationVariable{operator()}
+\ccCreationVariable{gcd}
+\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+
 \ccMethod{result_type operator()(first_argument_type  x, 
                                  second_argument_type y);}
         { returns  $gcd(x,y)$. }

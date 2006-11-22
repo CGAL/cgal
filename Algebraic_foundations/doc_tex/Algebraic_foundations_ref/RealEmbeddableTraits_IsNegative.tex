@@ -9,15 +9,15 @@
 \ccc{AdaptableUnaryFunction} 
 
 \ccTypes
-\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
-%\ccTypedef{typedef bool                         result_type;}{}\ccGlue
-\ccTypedef{typedef result_type result_type;}
-{The \ccc{result_type} is convertible to \ccc{bool}. 
-}\ccGlue
-\ccTypedef{typedef RealEmbeddableTraits::Real_embeddable argument_type;}{}
+\ccNestedType{result_type} 
+        { Type convertible to \ccc{bool}.}
+\ccNestedType{argument_type}
+        { Is \ccc{RealEmbeddableTraits::Real_embeddable}.}
 
 \ccOperations
-\ccCreationVariable{operator()}
+\ccCreationVariable{is_negative}
+\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+
 \ccMethod{result_type operator()(argument_type x);}
         { returns true in case $x$ is negative. }
 

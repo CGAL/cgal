@@ -58,8 +58,8 @@ doing any computations with the interval class.
 
 \ccTypes
 The class \ccc{Interval_nt} defines the following types:
-\ccThree{typedef std::exception unsafe_comparison;}{Tetrahedronxxxxx}{}
-\ccThreeToTwo
+%Three{typedef std::exception unsafe_comparison;}{Tetrahedronxxxxx}{}
+%ThreeToTwo
 \ccTypedef{typedef double value_type;}{The type of the bounds of the interval.}
 \ccGlue
 \ccTypedef{typedef std::exception unsafe_comparison;}{The type of the
@@ -88,7 +88,7 @@ computations with \ccc{Interval_nt<false>}.  It does nothing for
 
 
 \ccOperations
-\ccSetThreeColumns{Interval_nt}{}{\hspace*{8cm}}
+%SetThreeColumns{Interval_nt}{}{\hspace*{8cm}}
 
 All functions required by a class to be considered as a {\cgal} number type
 (see~\ref{Numbertype}) are present, as well as the utility functions,
@@ -140,7 +140,7 @@ conversion is not certain.  Note that each failed conversion increments
 the counter \ccc{number_of_failures()}, and then throw the exception of
 type \ccc{unsafe_comparison}.
 
-\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}{\hspace*{8cm}}
+%SetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}{\hspace*{8cm}}
 \ccFunction{Uncertain<bool> operator<(Interval_nt i, Interval_nt j);}{}
 \ccGlue
 \ccFunction{Uncertain<bool> operator>(Interval_nt i, Interval_nt j);}{}

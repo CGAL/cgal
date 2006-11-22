@@ -11,13 +11,15 @@ This interval is represented by \ccc{std::pair<double,double>}. %\ccc{CGAL::Inte
 \ccc{AdaptableUnaryFunction} 
 
 \ccTypes
-\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
-\ccTypedef{typedef std::pair<double,double>              result_type;}{}\ccGlue
-\ccTypedef{typedef RealEmbeddableTraits::Real_embeddable argument_type;}{}
+\ccNestedType{result_type} 
+        { Is \ccc{std::pair<double,double>}.}
+\ccNestedType{argument_type}
+        { Is \ccc{RealEmbeddableTraits::Real_embeddable}.}
 
 \ccOperations
+\ccCreationVariable{to_interval}
+\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
 
-\ccCreationVariable{operator()}
 \ccMethod{result_type operator()(argument_type  x);}
         { computes a double interval containing $x$.}
 

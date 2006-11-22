@@ -9,14 +9,17 @@ embeddable number.
 
 \ccc{AdaptableUnaryFunction} 
 
-\ccTypes
 
-\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
-\ccTypedef{typedef double result_type;}{}\ccGlue
-\ccTypedef{typedef RealEmbeddableTraits::Real_embeddable argument_type;}{}
+\ccTypes
+\ccNestedType{result_type} 
+        { Is \ccc{double}.}
+\ccNestedType{argument_type}
+        { Is \ccc{RealEmbeddableTraits::Real_embeddable}.}
 
 \ccOperations
-\ccCreationVariable{operator()}
+\ccCreationVariable{to_double}
+\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+
 \ccMethod{result_type operator()(argument_type x);}
         { computes a double approximation of a real embeddable number. }
 

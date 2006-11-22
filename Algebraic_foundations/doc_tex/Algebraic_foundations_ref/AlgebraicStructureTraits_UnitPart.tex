@@ -22,21 +22,18 @@ associate being one. The unit part of zero is, by convention, one.
 
 \ccc{AdaptableUnaryFunction} 
 
-\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
 \ccTypes
-\ccTypedef{typedef AlgebraicStructureTraits::Algebraic_structure result_type;}{}\ccGlue
-\ccTypedef{typedef AlgebraicStructureTraits::Algebraic_structure argument_type;}{}
-
-%\ccCreation
-%\ccCreationVariable{functor}
-%\ccConstructor{UnitPart();}{Default constructor.}
+\ccNestedType{result_type} 
+        { Is \ccc{AlgebraicStructureTraits::Algebraic_structure}.}
+\ccNestedType{argument_type}
+        { Is \ccc{AlgebraicStructureTraits::Algebraic_structure}.}
 
 \ccOperations
+\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+\ccCreationVariable{unit_part}
 
-\ccSetThreeColumns{xxxxxxxxxx}{xxxxx}{}
-
-\ccCreationVariable{operator()}
-\ccMethod{result_type operator()(argument_type x);}{ returns the unit part of $x$.}
+\ccMethod{result_type operator()(argument_type x);}
+{ returns the unit part of $x$.}
 
 %\ccHasModels
 

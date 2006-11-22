@@ -4,13 +4,7 @@
 
 A model of \ccc{RealEmbeddableTraits} is associated to a number type 
 \ccc{Real_embeddable} and reflects the properties of this type with respect 
-to the concept RealEmbeddable.
-
-Whether a type is a model of RealEmbeddable or not is indicated by the 
-Is\_real\_embeddable\_tag. 
-
-In case \ccc{Real_embeddable} is a model of RealEmbeddable the provided 
-functors are not \ccc{CGAL::Null_functor}. 
+to the concept \ccc{RealEmbeddable}.
 
 \ccTypes
 
@@ -19,87 +13,24 @@ A model of \ccc{RealEmbeddableTraits} is supposed to provide:\\
 \ccNestedType{Real_embeddable}{The associated number type.}
 
 \ccNestedType{Is_real_embeddable}
-        { Tag indicating whether \ccc{Real_embeddable} is real embeddable. \\
+        { Tag indicating whether associated type is real embeddable. \\
           This is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}. }
 
 \ccHeading{Functors}
 
+In case the associated type is \ccc{RealEmbeddable} all functors are provided.\\
+In case a functor is not provided, it is set to \ccc{CGAL::Null_functor}.
 
-\ccNestedType{Is_finite}{ 
-This is either \ccc{CGAL::Null_functor} or a model of 
-\ccc{RealEmbeddableTraits::IsFinite} 
-%In case \ccc{Real_embeddable} is a model of \ccc{RealEmbeddable} 
-%this is not \ccc{CGAL::Null_functor}.
-}
-
-\ccNestedType{Abs}{ 
-This is either \ccc{CGAL::Null_functor} or a model of 
-\ccc{RealEmbeddableTraits::Abs} 
-%In case \ccc{Real_embeddable} is a model of \ccc{RealEmbeddable} 
-%this is not \ccc{CGAL::Null_functor}.
-}
-
-\ccNestedType{Sign}{ 
-This is either \ccc{CGAL::Null_functor} or a model of 
-\ccc{RealEmbeddableTraits::Sign} 
-%In case \ccc{Real_embeddable} is a model of \ccc{RealEmbeddable} 
-%this is not \ccc{CGAL::Null_functor}.
-}
-
-\ccNestedType{Is_positive}{ 
-This is either \ccc{CGAL::Null_functor} or a model of 
-\ccc{RealEmbeddableTraits::IsPositive} 
-%In case \ccc{Real_embeddable} is a model of \ccc{RealEmbeddable} 
-%this is not \ccc{CGAL::Null_functor}.
-}
-
-\ccNestedType{Is_negative}{ 
-This is either \ccc{CGAL::Null_functor} or a model of 
-\ccc{RealEmbeddableTraits::IsNegative} 
-%In case \ccc{Real_embeddable} is a model of \ccc{RealEmbeddable} 
-%this is not \ccc{CGAL::Null_functor}.
-}
-
-
-\ccNestedType{is_zero}{ 
-This is either \ccc{CGAL::Null_functor} or a model of 
-\ccc{RealEmbeddableTraits::IsZero} 
-%In case \ccc{Real_embeddable} is a model of \ccc{RealEmbeddable} 
-%this is not \ccc{CGAL::Null_functor}.
-}
-
-\ccNestedType{Compare}{ 
-This is either \ccc{CGAL::Null_functor} or a model of 
-\ccc{RealEmbeddableTraits::Compare} 
-%In case \ccc{Real_embeddable} is a model of \ccc{RealEmbeddable} 
-%this is not \ccc{CGAL::Null_functor}.
-}
-
-
-\ccNestedType{To_double}{ 
-This is either \ccc{CGAL::Null_functor} or a model of 
-\ccc{RealEmbeddableTraits::ToDouble} 
-%In case \ccc{Real_embeddable} is a model of \ccc{RealEmbeddable} 
-%this is not \ccc{CGAL::Null_functor}.
-}
-
-\ccNestedType{To_interval}{ 
-This is either \ccc{CGAL::Null_functor} or a model of 
-\ccc{RealEmbeddableTraits::ToInterval} 
-%In case \ccc{Real_embeddable} is a model of \ccc{RealEmbeddable} 
-%this is not \ccc{CGAL::Null_functor}.
-}
-
-\begin{ccAdvanced}
-\ccNestedType{To_double_interval}{ 
-This is either \ccc{CGAL::Null_functor} or a model of 
-\ccc{RealEmbeddableTraits::ToDoubleInterval} 
-%In case \ccc{Real_embeddable} is a model of \ccc{RealEmbeddable} 
-%this is not \ccc{CGAL::Null_functor}.
-}
-\end{ccAdvanced}
+\ccNestedType{Is_finite}{ A model of \ccc{RealEmbeddableTraits::IsFinite} } 
+\ccNestedType{Abs}{ A model of \ccc{RealEmbeddableTraits::Abs} }
+\ccNestedType{Sign}{ A model of \ccc{RealEmbeddableTraits::Sign} }
+\ccNestedType{Is_positive}{ A model of \ccc{RealEmbeddableTraits::IsPositive} }
+\ccNestedType{Is_negative}{ A model of \ccc{RealEmbeddableTraits::IsNegative} }
+\ccNestedType{Is_zero}{ A model of \ccc{RealEmbeddableTraits::IsZero} }
+\ccNestedType{Compare}{ A model of \ccc{RealEmbeddableTraits::Compare} }
+\ccNestedType{To_double}{ A model of \ccc{RealEmbeddableTraits::ToDouble} }
+\ccNestedType{To_interval}{ A model of \ccc{RealEmbeddableTraits::ToInterval} }
 
 %\ccHasModels
-
 
 \end{ccRefConcept}

@@ -9,16 +9,15 @@
 \ccc{AdaptableUnaryFunction} 
 
 \ccTypes
-\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxxxxxxxxxxxxxxxxxxxxxx}{}
-
-\ccTypedef{typedef AlgebraicStructureTraits::Algebraic_structure result_type;}{}
-\ccGlue
-\ccTypedef{typedef AlgebraicStructureTraits::Algebraic_structure argument_type;}{}
+\ccNestedType{result_type} 
+        { Is \ccc{AlgebraicStructureTraits::Algebraic_structure}.}
+\ccNestedType{argument_type}
+        { Is \ccc{AlgebraicStructureTraits::Algebraic_structure}.}
 
 \ccOperations
-\ccSetThreeColumns{xxxxxxxxxx}{xxxxx}{}
+\ccCreationVariable{square}
+\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
 
-\ccCreationVariable{operator()}
 \ccMethod{result_type operator()(argument_type x);}{ returns the square of $x$.}
 
 %\ccHasModels

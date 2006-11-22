@@ -53,100 +53,76 @@ A model of \ccc{AlgebraicStructureTraits} is supposed to provide:\\
 
 \ccHeading{Functors}
 
+In case a functor is not provided, it is set to \ccc{CGAL::Null_functor}.
 
 \ccNestedType{Is_zero}{ 
-This is either \ccc{CGAL::Null_functor} or a model of 
-\ccc{AlgebraicStructureTraits::IsZero}.\\
-In case \ccc{Algebraic_structure} is a model of \ccc{IntegralDomainWithoutDivision}
-this is not \ccc{CGAL::Null_functor}.
+A model of \ccc{AlgebraicStructureTraits::IsZero}.\\
+Required by the concept \ccc{IntegralDomainWithoutDivision}.
 }
 
 \ccNestedType{Is_one}{ 
-This is either \ccc{CGAL::Null_functor} or a model of 
-\ccc{AlgebraicStructureTraits::IsOne}.\\
-In case \ccc{Algebraic_structure} is a model of \ccc{IntegralDomainWithoutDivision}
-this is not \ccc{CGAL::Null_functor}.
+A model of \ccc{AlgebraicStructureTraits::IsOne}.\\
+Required by the concept \ccc{IntegralDomainWithoutDivision}.
 }
 
 \ccNestedType{Square}{ 
-This is either \ccc{CGAL::Null_functor} or a model of 
-\ccc{AlgebraicStructureTraits::Square}.\\
-In case \ccc{Algebraic_structure} is a model of \ccc{IntegralDomainWithoutDivision}
-this is not \ccc{CGAL::Null_functor}.
+A model of \ccc{AlgebraicStructureTraits::Square}.\\
+Required by the concept \ccc{IntegralDomainWithoutDivision}.
 }
 
 \ccNestedType{Simplify}{ 
-This is either \ccc{CGAL::Null_functor} or a model of 
-\ccc{AlgebraicStructureTraits::Simplify}.\\
-In case \ccc{Algebraic_structure} is a model of \ccc{IntegralDomainWithoutDivision}
-this is not \ccc{CGAL::Null_functor}.
+A model of \ccc{AlgebraicStructureTraits::Simplify}.\\
+Required by the concept \ccc{IntegralDomainWithoutDivision}.
 }
 
 \ccNestedType{Unit_part}{ 
-This is either \ccc{CGAL::Null_functor} or a model of 
-\ccc{AlgebraicStructureTraits::UnitPart}.\\
-In case \ccc{Algebraic_structure} is a model of \ccc{IntegralDomainWithoutDivision} 
-this is not \ccc{CGAL::Null_functor}.
+A model of \ccc{AlgebraicStructureTraits::UnitPart}.\\
+Required by the concept \ccc{IntegralDomainWithoutDivision}.
 }
 
 \ccNestedType{Integral_division}{ 
-This is either \ccc{CGAL::Null_functor} or a model of 
-\ccc{AlgebraicStructureTraits::IntegralDivision}.\\
-In case \ccc{Algebraic_structure} is a model of \ccc{IntegralDomain} 
-this is not \ccc{CGAL::Null_functor}.
+A model of \ccc{AlgebraicStructureTraits::IntegralDivision}.\\
+Required by the concept \ccc{IntegralDomain}.
 }
 
 \ccNestedType{Is_square}{ 
-This is either \ccc{CGAL::Null_functor} or a model of 
-\ccc{AlgebraicStructureTraits::IsSquare}.
+A model of \ccc{AlgebraicStructureTraits::IsSquare}.
 }
 
 \ccNestedType{Gcd}{ 
-This is either \ccc{CGAL::Null_functor} or a model of 
-\ccc{AlgebraicStructureTraits::Gcd}.\\
-In case \ccc{Algebraic_structure} is a model of \ccc{UniqueFactorizationDomain} 
-this is not \ccc{CGAL::Null_functor}.
+A model of \ccc{AlgebraicStructureTraits::Gcd}.\\
+Required by the concept \ccc{UniqueFactorizationDomain}.
 }
 
 
 \ccNestedType{Mod}{ 
-This is either \ccc{CGAL::Null_functor} or a model of 
-\ccc{AlgebraicStructureTraits::Mod}.\\
-In case \ccc{Algebraic_structure} is a model of \ccc{EuclideanRing} 
-this is not \ccc{CGAL::Null_functor}.
+A model of \ccc{AlgebraicStructureTraits::Mod}.\\
+Required by the concept \ccc{EuclideanRing}.
 }      
 
 \ccNestedType{Div}{ 
-This is either \ccc{CGAL::Null_functor} or a model of 
-\ccc{AlgebraicStructureTraits::Div}.\\
-In case \ccc{Algebraic_structure} is a model of \ccc{EuclideanRing} 
-this is not \ccc{CGAL::Null_functor}.
+A model of \ccc{AlgebraicStructureTraits::Div}.\\
+Required by the concept \ccc{EuclideanRing}.
 }
 \ccNestedType{Div_mod}{ 
-This is either \ccc{CGAL::Null_functor} or a model of 
-\ccc{AlgebraicStructureTraits::DivMod}.\\
-In case \ccc{Algebraic_structure} is a model of \ccc{EuclideanRing} 
-this is not \ccc{CGAL::Null_functor}.
+A model of \ccc{AlgebraicStructureTraits::DivMod}.\\
+Required by the concept \ccc{EuclideanRing}.
 }
 
 \ccNestedType{Sqrt}{ 
-This is either \ccc{CGAL::Null_functor} or a model of 
-\ccc{AlgebraicStructureTraits::Sqrt}.\\
-In case \ccc{Algebraic_structure} is a model of \ccc{FieldWithSqrt} 
-this is not \ccc{CGAL::Null_functor}.
+A model of \ccc{AlgebraicStructureTraits::Sqrt}.\\
+Required by the concept \ccc{FieldWithSqrt}.
 }
 
 %\begin{ccAdvanced}
 \ccNestedType{Kth_root}{ 
-This is either \ccc{CGAL::Null_functor} or a model of 
-\ccc{AlgebraicStructureTraits::KthRoot}.\\
-In case \ccc{Algebraic_structure} is a model of \ccc{FieldWithKthRoot} this is not \ccc{CGAL::Null_functor}.
+A model of \ccc{AlgebraicStructureTraits::KthRoot}.\\
+Required by the concept \ccc{FieldWithKthRoot}.
 }
 
 \ccNestedType{Root_of}{ 
-This is either \ccc{CGAL::Null_functor} or a model of 
-\ccc{AlgebraicStructureTraits::RootOf}.\\
-In case \ccc{Algebraic_structure} is a model of \ccc{FieldWithRootOf} this is not \ccc{CGAL::Null_functor}.
+A model of \ccc{AlgebraicStructureTraits::RootOf}.\\
+Required by the concept \ccc{FieldWithRootOf}.
 }
 %\end{ccAdvanced}
 

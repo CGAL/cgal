@@ -10,17 +10,24 @@ of division with remainder.
 \ccc{AdaptableFunctor} 
 
 \ccTypes
-
-\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
-\ccTypedef{typedef void result_type;}{}\ccGlue
-\ccTypedef{typedef AlgebraicStructureTraits::Algebraic_structure  first_argument_type;}{}\ccGlue
-\ccTypedef{typedef AlgebraicStructureTraits::Algebraic_structure  second_argument_type;}{}\ccGlue
-\ccTypedef{typedef AlgebraicStructureTraits::Algebraic_structure& third_argument_type;}{}\ccGlue
-\ccTypedef{typedef AlgebraicStructureTraits::Algebraic_structure& fourth_argument_type;}{}
+\ccNestedType{result_type}
+        { Is \ccc{AlgebraicStructureTraits::Algebraic_structure}.}
+\ccGlue
+\ccNestedType{first_argument_type}
+        { Is \ccc{AlgebraicStructureTraits::Algebraic_structure}.}
+\ccGlue
+\ccNestedType{second_argument_type}
+        { Is \ccc{AlgebraicStructureTraits::Algebraic_structure}.}
+\ccGlue
+\ccNestedType{third_argument_type}
+        { Is \ccc{AlgebraicStructureTraits::Algebraic_structure&}.}
+\ccGlue
+\ccNestedType{fourth_argument_type}
+        { Is \ccc{AlgebraicStructureTraits::Algebraic_structure&}.}
 
 \ccOperations
-\ccSetThreeColumns{xxxxxxxxxx}{xxxxx}{}
-\ccCreationVariable{operator()}
+\ccCreationVariable{div_mod}
+\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
 \ccMethod{result_type operator()( first_argument_type  x, 
                                   second_argument_type y,
                                   third_argument_type  q,
