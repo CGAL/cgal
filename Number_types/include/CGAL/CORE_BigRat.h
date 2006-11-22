@@ -108,7 +108,45 @@ template <> class Real_embeddable_traits< CORE::BigRat >
     };
 };
 
+/*! \ingroup NiX_Fraction_traits_spec
+ *  \brief Specialization of Fraction_traits for ::leda::rational
+ */
+template <>
+class Fraction_traits< CORE::BigRat > {
+public:
+    typedef CORE::BigRat Fraction;
+    typedef ::CGAL::Tag_true Is_fraction;
+    typedef CORE::BigInt Numerator;
+    typedef Numerator Denominator;
 
+    typedef Algebraic_structure_traits< Numerator >::Gcd Common_factor;
+
+    class Decompose {
+    public:
+        typedef Fraction first_argument_type;
+        typedef Numerator& second_argument_type;
+        typedef Numerator& third_argument_type;
+        void operator () (
+                const Fraction& rat,
+                Numerator& num,
+                Numerator& den) {
+            num = CGAL_CORE_NUMERATOR(rat);
+            den = CGAL_CORE_DENOMINATOR(rat);
+        }
+    };
+    
+    class Compose {
+    public:
+        typedef Numerator first_argument_type;
+        typedef Numerator second_argument_type;
+        typedef Fraction result_type;
+        Fraction operator ()(
+                const Numerator& num , 
+                const Numerator& den ) {
+            return Fraction(num, den);
+        }
+    };
+};
 
 template <class F>
 class Output_rep< ::CORE::BigRat, F> {
