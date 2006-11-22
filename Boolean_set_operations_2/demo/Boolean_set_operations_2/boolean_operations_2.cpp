@@ -111,10 +111,12 @@ public:
   // this method overrides the virtual method 'draw()' of Qt_widget_layer
   void draw()
   {
-    widget->lock(); // widget have to be locked before drawing 
+    widget->lock(); // widget have to be locked before drawing
+    RasterOp old_rasterop = widget->rasterOp();
+    widget->get_painter().setRasterOp(XorROP);
     widget->setFilled (true);
     widget->setFillColor (CGAL::RED);
-    *widget <<  CGAL::RED; // color for the polygons
+    *widget <<  CGAL::BLACK; 
     std::list<Polygon_with_holes> red_pgns_list;
     red_set.polygons_with_holes(std::back_inserter(red_pgns_list));
     std::list<Polygon_with_holes>::iterator itpgn1 = red_pgns_list.begin();
@@ -123,7 +125,6 @@ public:
     {
       const Polygon_with_holes& pgn_with_hole = *itpgn1;
       const Polygon_2& outer_boundary = pgn_with_hole.outer_boundary();
-      widget->setFillColor (CGAL::RED);
       if(outer_boundary.is_empty())
        {
          // no boundary -> unbounded polygon
@@ -133,7 +134,7 @@ public:
        }
        else  
          *widget << outer_boundary;
-      widget->setFillColor (CGAL::BLACK);
+
       for(Hole_const_iterator hit = pgn_with_hole.holes_begin();
           hit != pgn_with_hole.holes_end();
           ++hit)
@@ -146,10 +147,7 @@ public:
     
     widget->setFilled (true);
     widget->setFillColor (CGAL::BLUE);
-    *widget << CGAL::BLUE; // color of polygon
-    RasterOp old_rasterop = widget->rasterOp();
-    widget->get_painter().setRasterOp(XorROP);
-
+  
     std::list<Polygon_with_holes> blue_pgns_list;
     blue_set.polygons_with_holes(std::back_inserter(blue_pgns_list));
     std::list<Polygon_with_holes>::iterator itpgn2 = blue_pgns_list.begin();
@@ -158,7 +156,6 @@ public:
     {
       const Polygon_with_holes& pgn_with_hole = *itpgn2;
       const Polygon_2& outer_boundary = pgn_with_hole.outer_boundary();
-      widget->setFillColor (CGAL::BLUE);
       if(outer_boundary.is_empty())
        {
          // no boundary -> unbounded polygon
@@ -170,8 +167,8 @@ public:
        {
          *widget << outer_boundary;
        }
-      widget->setFillColor ( CGAL::BLUE);
-      for(Hole_const_iterator hit = pgn_with_hole.holes_begin();
+
+       for(Hole_const_iterator hit = pgn_with_hole.holes_begin();
           hit != pgn_with_hole.holes_end();
           ++hit)
       {
@@ -222,7 +219,8 @@ public:
     file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
     file->insertItem("New &Window", this, SLOT(new_window()), CTRL+Key_W);
     file->insertSeparator();
-    file->insertItem("&Open DXF file", this, SLOT(open_file()),CTRL+Key_O);
+    file->insertItem("&Open Linear Polygon file", this, SLOT(open_linear_polygon_file()),CTRL+Key_O);
+    file->insertItem("&Open DXF file", this, SLOT(open_dxf_file()),CTRL+Key_D);
     file->insertSeparator();
     //file->insertItem("&Save",this ,SLOT(save_file()),CTRL+Key_S);
     //file->insertItem("&Save as",this ,SLOT(save_file_as()));
@@ -513,7 +511,7 @@ private:
         
 public slots:
 
-    void open_file()
+    void open_dxf_file()
     {
 
       QString s = QFileDialog::getOpenFileName("./",
@@ -601,6 +599,62 @@ public slots:
         box = box + itr2->outer_boundary().bbox();
       }
        
+      widget->set_window(box.xmin(),
+                         box.xmax(),
+                         box.ymin(),
+                         box.ymax());
+      widget->unlock();
+      newtoolbar->reset();
+      something_changed();
+      widget->setCursor(old);
+    }
+
+    void open_linear_polygon_file()
+    {
+
+      QString s = QFileDialog::getOpenFileName("./",
+                                               QString::null,
+                                               this,
+                                               "open file dialog",
+                                               "Choose a file" );
+      if(s==QString::null)
+        return;
+
+      std::ifstream in_file(s);
+      if(!in_file.is_open())
+      {
+        QMessageBox::warning( widget,"Open","Can't open file");
+        return ;
+      }
+     
+      CGAL::Bbox_2 box = CGAL::Bbox_2 (widget->x_min(), widget->y_min(),
+                                       widget->x_max(), widget->y_max());
+      QCursor old = widget->cursor();
+      widget->setCursor(Qt::WaitCursor);
+      widget->lock();
+      widget->clear_history();
+
+      Linear_polygon_2 pgn;
+      in_file >> pgn;
+      if(pgn.is_empty())
+      {
+         widget->unlock();
+         widget->setCursor(old);
+         return;
+      }
+      if(pgn.orientation() != CGAL::COUNTERCLOCKWISE)
+        pgn.reverse_orientation();
+
+      const Polygon_2& circ_pgn = linear_2_circ(pgn);
+
+      
+      if(red_active)
+        red_set.join(circ_pgn);
+      else  
+        blue_set.join(circ_pgn);
+
+     
+      box = box + circ_pgn.bbox();
       widget->set_window(box.xmin(),
                          box.xmax(),
                          box.ymin(),
@@ -818,7 +872,7 @@ public slots:
     if(red_set.number_of_polygons_with_holes() > 1 ||
        blue_set.number_of_polygons_with_holes() > 1)
     {
-       mink_wum_warning();
+       mink_sum_warning();
        return;
     }
 
@@ -827,7 +881,7 @@ public slots:
     red_set.polygons_with_holes(oi1);
     if(red_p_wh.has_holes() || red_p_wh.is_unbounded())
     {
-      mink_wum_warning();
+      mink_sum_warning();
       return;
     }
     const Polygon_2& red_p = red_p_wh.outer_boundary();
@@ -837,7 +891,7 @@ public slots:
     blue_set.polygons_with_holes(oi2);
     if(blue_p_wh.has_holes() || blue_p_wh.is_unbounded())
     {
-      mink_wum_warning();
+      mink_sum_warning();
       return;
     }
     QCursor old = widget->cursor();
@@ -890,17 +944,18 @@ public slots:
     }
     else
     {
-      mink_wum_warning();
+      mink_sum_warning();
+      widget->setCursor(old); 
       return;
     }
   }
 
-  void mink_wum_warning()
+  void mink_sum_warning()
   {
     QMessageBox::warning(this,
                          "Minkowski Sum",
-                         QString( "Minkowsky sum can be performed on two linear polygons without holes\n\
-                                   or on a linear polygon without holes and a disc\n" ),
+                         QString( "Minkowski sum can be performed on two linear polygons without holes\n\
+ or on a linear polygon without holes and a disc\n" ),
                          "&Ok");
     mink_sum_but->setDown(FALSE);
   }
