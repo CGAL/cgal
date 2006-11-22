@@ -831,7 +831,6 @@ operator/(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
 // Algebraic structure traits
 //
 
-
 namespace INTERN_LAZY_EXACT_NT {
   
 template< class NT, class Functor >
@@ -1092,282 +1091,7 @@ template< class NT >
 struct Div_mod_selector< NT, Null_functor >{
   typedef Null_functor Div_mod;
 };
-  
-  
-  
-/*  template< class ET, class Algebraic_structure_tag >
-  class Lazy_exact_algebraic_structure_traits_base;
-  
-  template< class ET, class Algebraic_structure_tag >
-  struct Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
-                                                    Algebraic_structure_tag >
-    : public Algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
-                                              Algebraic_structure_tag > {
-        typedef Lazy_exact_nt<ET> Algebraic_structure;
-        typedef typename Algebraic_structure_traits<ET>::Is_exact Is_exact; 
-        
-      class Square 
-        : public Unary_function< Algebraic_structure, Algebraic_structure > {
-        public:
-          Algebraic_structure operator()( const Algebraic_structure& x ) const {
-              CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-              return new Lazy_exact_Square<ET>(x);
-          }
-      };    
-  };
-
-  template< class ET >
-  class Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
-                                 Integral_domain_without_division_tag >
-    : public Algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
-                                 Integral_domain_without_division_tag > {
-    public:
-      typedef typename Algebraic_structure_traits<ET>::Is_exact Is_exact; 
-      typedef Lazy_exact_nt<ET> Algebraic_structure;
-      class Unit_part
-        : public Unary_function< Algebraic_structure, Algebraic_structure > {
-        public:
-          Algebraic_structure operator()( const Algebraic_structure& x ) const {
-            return Lazy_exact_nt<ET>( CGAL_NTS unit_part( x.exact() ) );
-          }
-      };
-  
-      class Is_zero
-        : public Unary_function< Algebraic_structure, bool > {
-        public:
-          bool operator()( const Algebraic_structure& x ) const {
-            return CGAL_NTS is_zero( x.exact() );
-          }
-      };
-  
-      class Is_one
-        : public Unary_function< Algebraic_structure, bool > {
-        public:
-          bool operator()( const Algebraic_structure& x ) const {
-            return CGAL_NTS is_one( x.exact() );
-          }
-      };
-  
-      class Square 
-        : public Unary_function< Algebraic_structure, Algebraic_structure > {
-        public:
-          Algebraic_structure operator()( const Algebraic_structure& x ) const {
-              CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-              return new Lazy_exact_Square<ET>(x);
-          }
-      };    
-  };
-  
-  template< class ET >
-  class Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
-                                                    Integral_domain_tag >
-    : public Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
-                                  Integral_domain_without_division_tag > {
-    public:
-      typedef Lazy_exact_nt<ET>          Algebraic_structure;
-      typedef Integral_domain_tag  Algebraic_structure_tag;
-      
-      class Integral_division
-        : public Binary_function< Algebraic_structure, Algebraic_structure,
-                                  Algebraic_structure > {
-        public:
-          Algebraic_structure operator()( const Algebraic_structure& x,
-                                          const Algebraic_structure& y ) const {
-            return Lazy_exact_nt<ET>( CGAL_NTS integral_division( x.exact(), 
-                                                                  y.exact() ) );
-          }
-          
-          CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
-      };
-  };
-
-  template< class ET >
-  class Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
-                                                    Field_tag >
-    : public Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
-                                                  Integral_domain_tag > {
-    public:
-      typedef Lazy_exact_nt<ET>  Algebraic_structure;
-      typedef Field_tag    Algebraic_structure_tag;
-  };
-
-  template< class ET >
-  class Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
-                                                    Field_with_sqrt_tag >
-    : public Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
-                                                         Field_tag > {
-    public:
-      typedef Lazy_exact_nt<ET>          Algebraic_structure;
-      typedef Field_with_sqrt_tag  Algebraic_structure_tag;
-                                                                                   
-      class Sqrt 
-        : public Unary_function< Algebraic_structure, Algebraic_structure > {
-        public:
-          Algebraic_structure operator()( const Algebraic_structure& x ) const {
-            CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-            CGAL_precondition(x >= 0);
-            return new Lazy_exact_Sqrt<ET>(x);
-          }
-      };
-      
-  };
-
-  template< class ET >
-  class Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
-                                                Field_with_kth_root_tag >
-    : public Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
-                                                  Field_with_sqrt_tag > {
-
-    public:
-      typedef Lazy_exact_nt<ET>          Algebraic_structure;
-      typedef Field_with_kth_root_tag  Algebraic_structure_tag;
-                                                                                         
-      class Kth_root
-        : public Binary_function< int, Algebraic_structure, 
-                                  Algebraic_structure > {
-        public:
-          Algebraic_structure operator()( int k, 
-                                          const Algebraic_structure& x ) const {
-            return Lazy_exact_nt<ET>( CGAL_NTS kth_root( k, x.exact() ) );
-          }
-      };
-      
-  };
-
-  template< class ET >
-  class Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
-                                                Field_with_root_of_tag >
-    : public Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
-                                              Field_with_kth_root_tag > {
-    private:
-      struct Cast{                                      
-        typedef ET result_type;                               
-        ET operator()(const Lazy_exact_nt<ET>& lazy_exact) const { 
-          return lazy_exact.exact();
-        }
-      }; 
-
-    public:
-      typedef Lazy_exact_nt<ET>          Algebraic_structure;
-      typedef Field_with_root_of_tag  Algebraic_structure_tag;
-                                                                                         
-      class Root_of {
-        public:
-          typedef Algebraic_structure result_type;
-          typedef Arity_tag< 3 >         Arity;
-
-          template< class Input_iterator >
-          Algebraic_structure operator()( int k, Input_iterator begin,
-                                                 Input_iterator end ) const {
-            Cast cast;
-            return Lazy_exact_nt<ET>( typename Algebraic_structure_traits<ET>::
-                                                  Root_of()( k, 
-                              ::boost::make_transform_iterator( begin, cast ), 
-                              ::boost::make_transform_iterator( end, cast ) ) );
-          }
-      };      
-  };
-
-  template< class ET >
-  class Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
-                                        Unique_factorization_domain_tag >
-    : public Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
-                                              Integral_domain_tag > {
-    public:
-      typedef Lazy_exact_nt<ET>          Algebraic_structure;
-      typedef Unique_factorization_domain_tag  Algebraic_structure_tag;
-
-      // gcd kills filtering.
-      class Gcd 
-        : public Binary_function< Algebraic_structure, Algebraic_structure,
-                                  Algebraic_structure > {
-        public:
-          Algebraic_structure operator()( const Algebraic_structure& x,
-                                         const Algebraic_structure& y ) const {
-              CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-              return Lazy_exact_nt<ET>( CGAL_NTS gcd( x.exact(), y.exact() ) );
-          }
-          
-          CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
-      };                                                                                         
-  };
-
-  template< class ET >
-  class Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
-                                                    Euclidean_ring_tag >
-    : public Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>, 
-                                      Unique_factorization_domain_tag > {
-    public:
-      typedef Lazy_exact_nt<ET>          Algebraic_structure;
-      typedef Euclidean_ring_tag  Algebraic_structure_tag;
-
-      class Div
-        : public Binary_function< Algebraic_structure, Algebraic_structure,
-                                  Algebraic_structure > {
-        public:
-          Algebraic_structure operator()( const Algebraic_structure& x,
-                                         const Algebraic_structure& y ) const {
-            return Lazy_exact_nt<ET>( CGAL_NTS div( x.exact(), y.exact() ) );
-          }
-          
-          CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
-      };                                                                                         
-
-      class Mod
-        : public Binary_function< Algebraic_structure, Algebraic_structure,
-                                  Algebraic_structure > {
-        public:
-          Algebraic_structure operator()( const Algebraic_structure& x,
-                                         const Algebraic_structure& y ) const {
-            return Lazy_exact_nt<ET>( CGAL_NTS mod( x.exact(), y.exact() ) );
-          }
-          
-          CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
-      };
-      
-      class Div_mod {
-        public:
-          typedef void                  result_type;
-          typedef Algebraic_structure   first_argument_type;
-          typedef Algebraic_structure   second_argument_type;
-          typedef Algebraic_structure&  third_arugment_type;
-          typedef Algebraic_structure&  fourth_argument_type;
-          typedef Arity_tag< 4 >         Arity;
-          
-          void operator()( const Algebraic_structure& x, 
-                           const Algebraic_structure& y,
-                           Algebraic_structure& q, 
-                           Algebraic_structure& r ) const {
-            ET q_et;
-            ET r_et;
-            CGAL_NTS div_mod( x.exact(), y.exact(), q_et, r_et );
-            q = Lazy_exact_nt<ET>( q_et );
-            r = Lazy_exact_nt<ET>( r_et );
-          }
-          
-          template< class NT1, class NT2 >
-          void operator()( const NT1& x, const NT2& y,
-                           Algebraic_structure& q, 
-                           Algebraic_structure& r ) const {
-            BOOST_STATIC_ASSERT((::boost::is_same<
-                 typename Coercion_traits< NT1, NT2 >::Coercion_type, Algebraic_structure
-                                                 >::value));
-            
-            typename Coercion_traits< NT1, NT2 >::Cast cast;
-            operator()( cast(x), cast(y), q, r );                      
-          }
-      };
-  };*/  
-} // INTERN_LAZY_EXACT_NT
-
-     
-
-/*template< class ET > class Algebraic_structure_traits< Lazy_exact_nt<ET> >
-  : public INTERN_LAZY_EXACT_NT::
-                Lazy_exact_algebraic_structure_traits_base< Lazy_exact_nt<ET>,
-         typename Algebraic_structure_traits<ET>::Algebraic_structure_tag > {
-};*/
-
+} // namespace INTERN_LAZY_EXACT_NT  
 
 template <class ET>
 class Algebraic_structure_traits< Lazy_exact_nt<ET> >
@@ -1599,6 +1323,64 @@ CGAL_COERCION_TRAITS_LAZY_EXACT(short);
 CGAL_COERCION_TRAITS_LAZY_EXACT(double);
 CGAL_COERCION_TRAITS_LAZY_EXACT(float);
 #undef CGAL_COERCION_TRAITS_LAZY_EXACT
+
+namespace INTERN_LAZY_EXACT_NT {
+
+template < typename NT, typename TAG  > class Fraction_traits_base;
+
+template < class ET >
+class Fraction_traits_base <Lazy_exact_nt<ET> , CGAL::Tag_false>
+    : public Fraction_traits<ET> {
+public:
+    typedef Lazy_exact_nt<ET>  Fraction;
+};
+
+template < class ET >
+class Fraction_traits_base <Lazy_exact_nt<ET> , CGAL::Tag_true>{
+    typedef Fraction_traits<ET> ETT;
+    typedef typename ETT::Numerator ET_numerator;
+    typedef typename ETT::Denominator ET_denominator;
+public:
+    typedef Lazy_exact_nt<ET>  Fraction;
+    typedef Tag_true Is_fraction;
+    typedef Lazy_exact_nt<ET_numerator> Numerator;
+    typedef Lazy_exact_nt<ET_denominator> Denominator;
+    
+    struct Common_factor : Binary_function<Denominator,Denominator,Denominator>{
+        Denominator operator()(const Denominator& a, const Denominator& b) const {
+            typename ETT::Common_factor common_factor;
+            return Denominator(common_factor(a.exact(),b.exact()));
+        }
+    };
+    struct Compose : Binary_function<Fraction,Numerator,Denominator>{
+        Fraction operator()(const Numerator& n, const Denominator& d) const {
+            typename ETT::Compose compose;
+            return Fraction(compose(n.exact(),d.exact()));
+        }
+    };
+    struct Decompose {
+        typedef void result_type;
+        typedef Fraction first_argument_type;
+        typedef Numerator second_argument_type;
+        typedef Denominator third_argument_type;
+        void operator()(const Fraction& f, Numerator& n, Denominator& d) const {
+            typename ETT::Decompose decompose;
+            ET_numerator nn;
+            ET_denominator dd;
+            decompose(f.exact(),nn,dd);
+            n = Numerator(nn);
+            d = Denominator(dd);
+        }
+    };
+};
+} // namespace INTERN_LAZY_EXACT_NT
+
+
+template < class ET >
+class Fraction_traits< Lazy_exact_nt< ET > >
+    :public INTERN_LAZY_EXACT_NT::Fraction_traits_base<Lazy_exact_nt<ET>,
+            typename Fraction_traits<ET>::Is_fraction>
+{};
 
 template < class ET >
 struct Min <Lazy_exact_nt<ET> >

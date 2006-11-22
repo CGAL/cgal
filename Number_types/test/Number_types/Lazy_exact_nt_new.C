@@ -5,16 +5,19 @@
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/_test_algebraic_structure.h>
 #include <CGAL/_test_real_embeddable.h>
+#include <CGAL/_test_fraction_traits.h>
+#include <CGAL/_test_rational_traits.h>
 #include <CGAL/number_utils.h>
 
 template< class AK >
 void test_lazy_exact_nt() {
     {
-        typedef CGAL::Algebraic_structure_traits< typename AK::Field_with_sqrt > AST;
-        
+        typedef typename AK::Field_with_sqrt ET;
+        typedef CGAL::Algebraic_structure_traits< ET > AST;
         typedef typename AST::Algebraic_structure_tag Tag;
-        typedef CGAL::Lazy_exact_nt< typename AK::Field_with_sqrt > NT;
+        typedef CGAL::Lazy_exact_nt< ET > NT;
         typedef typename AST::Is_exact Is_exact;
+
         CGAL::test_algebraic_structure<NT,Tag, Is_exact>();
         CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(4),NT(6),NT(15));
         CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(6),NT(15));
@@ -26,12 +29,36 @@ void test_lazy_exact_nt() {
         CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(-6),NT(-15));
         
         CGAL::test_real_embeddable<NT>();
+    }{
+        typedef typename AK::Rational ET;
+
+        typedef CGAL::Algebraic_structure_traits< ET > AST;
+        typedef typename AST::Algebraic_structure_tag Tag;
+        typedef CGAL::Lazy_exact_nt< ET > NT;
+        typedef typename AST::Is_exact Is_exact;
+
+        CGAL::test_algebraic_structure<NT,Tag, Is_exact>();
+        CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(4),NT(6),NT(15));
+        CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(6),NT(15));
+        CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(4),NT(-6),NT(15));
+        CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(-6),NT(15));
+        CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(4),NT(6),NT(-15));
+        CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(6), NT(15));
+        CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(4),NT(-6),NT(-15));
+        CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(-6),NT(-15));
+        
+        CGAL::test_real_embeddable<NT>();
+
+        CGAL::test_fraction_traits<NT>();
+        CGAL::test_rational_traits<NT>();
     }
     {        
-        typedef CGAL::Euclidean_ring_tag Tag;
-        typedef CGAL::Lazy_exact_nt< typename AK::Integer > NT;
-        typedef typename CGAL::Algebraic_structure_traits< typename AK::Integer >::Is_exact 
-            Is_exact;
+        typedef typename AK::Integer ET;
+
+        typedef CGAL::Algebraic_structure_traits< ET > AST;
+        typedef typename AST::Algebraic_structure_tag Tag;
+        typedef CGAL::Lazy_exact_nt< ET > NT;
+        typedef typename AST::Is_exact Is_exact;
 
         CGAL::test_algebraic_structure<NT,Tag, Is_exact>();
         CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(4),NT(6),NT(15));
@@ -70,9 +97,7 @@ void test_lazy_exact_nt() {
         BOOST_STATIC_ASSERT((boost::is_same< typename CT::Are_explicit_interoperable,CGAL::Tag_false>::value));
 #endif
 #endif
-    }
-
-  
+    }  
 }
 
 int main() {
