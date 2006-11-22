@@ -61,16 +61,16 @@ This is an example with 2 arguments:
 \ccc{vertex_index_map(the_actual_vertex_index_map).edge_index_map(the_actual_edge_index_map)}
 
 \ccc{the_actual_vertex_index_map} and \ccc{the_actual_edge_index_map} are
-the actual parameters, while \ccc{vertex_index_map()} and \ccc{the_actual_edge_index_map()}
+the actual parameters, while \ccc{vertex_index_map()} and \ccc{edge_index_map()}
 are wrapper functions used to designate each formal argument.
 
-Each named parameter is documeted as a helper function. The argument to each helper
-function is the actual parameter to \ccc{edge_collapse()}, while the name of the helper 
-function designates which formal argument is it.
-
 All named parameters have default values so you only need to compose those for which the default
-is inappropriate. Furthermore, since each actual parameter is wrapper in a function whose name
+is inappropriate. Furthermore, since each actual parameter is wrapped in a function whose name
 designates the formal argument, the order of named parameters in the list is totally irrelevant.
+
+In the following subsections, each named parameter is documeted as a helper function. The argument to each helper
+function is the actual parameter to \ccc{edge_collapse()}, while the name of the helper 
+function designates which formal argument it is.
 
 \subsubsection*{vertex\_index\_map(VertexIndexMap vpm)}
 
@@ -87,9 +87,10 @@ and whose \ccc{value_type} is
 \textbf{Default}: the property map obtained by calling \ccc{get(vertex_index,surface)},
 which requires the surface vertices to have an \ccc{id()} member properly initialized to the 
 required value.\\
-If the verices don't have such id(), you must pass a map explicitely, such as
-the property map obtained by calling \ccc{get(vertex_external_index,surface)},
-which constructs an internal map which non-intrusively associates a proper id with each vertex.
+If the verices don't have such an \ccc{id()}, you must pass some property map explicitely.
+An external property map can be easily obtained by calling 
+\ccc{get(vertex_external_index,surface)}. This constructs on the fly, and returns,
+a property map which non-intrusively associates a proper id with each vertex.
 
 \subsubsection*{edge\_index\_map(EdgeIndexMap eim)} 
 
@@ -106,9 +107,10 @@ and whose \ccc{value_type} is
 \textbf{Default}: the property map obtained by calling \ccc{get(edge_index,surface)},
 which requires the surface edges to have an \ccc{id()} member properly initialized to the 
 require value.\\
-If the edges don't have such id(), you must pass a map explicitely, such as
-the property map obtained by calling \ccc{get(edge_external_index,surface)},
-which constructs an internal map which non-intrusively associates a proper id with each edge.
+If the edges don't have such an \ccc{id()}, you must pass some property map explicitely.
+An external property map can be easily obtained by calling 
+\ccc{get(edge_external_index,surface)}. This constructs on the fly, and returns,
+a property map which non-intrusively associates a proper id with each edge.
 
 \subsubsection*{edge\_is\_border\_map(EdgeIsBorderMap ebm)} 
 
@@ -150,9 +152,10 @@ The type of object pointed to by \ccc{v} must be a model of the \ccc{EdgeCollaps
 
 All these functions naming parameters are defined in
 \ccc{namespace CGAL}. Being non-member functions, they could clash
-with equally named functions in some other namespace. If that happens
-simply qualify the named parameter with \ccc{CGAL::} as shown in the
-examples in the user manual.
+with equally named functions in some other namespace. If that happens,
+simply qualify the {\em first} 
+\footnoote{The second and subsequent named parameters shall not be qualified as they are member functions}
+named parameter with \ccc{CGAL::}, as shown in the examples in the user manual.
 
 \ccHeading{Semantics}
 
@@ -164,7 +167,8 @@ the {\em cost-strategy}, that is, the order in which edges are collapsed
 and the remaining vertex is re-positioned.
 
 \ccc{visitor} is an optional object (can be null) which can be used
-to keep track of the simplification process.
+to keep track of the simplification process. It has several member functions which
+are called at certain points in the simplification code.
 
 \end{ccRefFunction}
 
