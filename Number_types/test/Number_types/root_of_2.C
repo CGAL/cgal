@@ -504,11 +504,12 @@ int main(int argc, char **argv) {
            test_root_of<Root_of_2<CGAL::Quotient<CGAL::MP_Float> > >();
   */
  
-  /*
-    std::cout << "Testing Lazy_exact_nt<MP_Float>'s RootOf_2 " << std::endl;
-    result = result &&
-    test_root_of<CGAL::Root_of_traits<CGAL::Lazy_exact_nt<CGAL::MP_Float> >::RootOf_2 >();
-  */
+  
+  std::cout << "Testing Lazy_exact_nt<MP_Float>'s RootOf_2 " << std::endl;
+  result = result &&
+      test_root_of<CGAL::Root_of_traits<CGAL::Lazy_exact_nt<CGAL::MP_Float> >
+        ::RootOf_2 >();
+  
   
 #ifdef CGAL_USE_GMP
   std::cout << "Testing Root_of_2<Gmpz>" << std::endl;
@@ -530,8 +531,8 @@ int main(int argc, char **argv) {
   //std::cout << "Testing Root_of_2<Quotient<mpz_class> >" << std::endl;
   //result = result && test_root_of<Root_of_2<CGAL::Quotient<mpz_class> > >();
 
-  //std::cout << "Testing Root_of_2<mpz_class>" << std::endl;
-  //result = result && test_root_of<Root_of_2<mpz_class> >();
+  std::cout << "Testing Root_of_2<mpz_class>" << std::endl;
+  result = result && test_root_of<Root_of_2<mpz_class> >();
 #endif
 
 #ifdef CGAL_USE_LEDA
