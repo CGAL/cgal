@@ -139,6 +139,12 @@ public:
     return hw();
   }
 
+  typename Qualified_result_of<typename R::Compute_x_3,Point_3>::type
+  operator[](int i) const
+  {
+      return cartesian(i);
+  }
+
   Cartesian_const_iterator cartesian_begin() const
   {
     return typename R::Construct_cartesian_const_iterator_3()(*this);

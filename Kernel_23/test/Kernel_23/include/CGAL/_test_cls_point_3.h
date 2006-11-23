@@ -99,6 +99,9 @@ _test_cls_point_3(const R& )
  assert( p6.cartesian(0) == p6.x() );
  assert( p6.cartesian(1) == p6.y() );
  assert( p6.cartesian(2) == p6.z() );
+ assert( p6[0] == p6.x() );
+ assert( p6[1] == p6.y() );
+ assert( p6[2] == p6.z() );
 
  std::cout << '.';
 

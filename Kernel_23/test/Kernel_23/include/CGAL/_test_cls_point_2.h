@@ -93,6 +93,8 @@ _test_cls_point_2(const R& )
  assert( p3.homogeneous(2) == p3.hw() );
  assert( p6.cartesian(0) == p6.x() );
  assert( p6.cartesian(1) == p6.y() );
+ assert( p6[0] == p6.x() );
+ assert( p6[1] == p6.y() );
 
  std::cout << '.';
 
