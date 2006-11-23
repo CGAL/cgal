@@ -1,0 +1,53 @@
+// Copyright (c) 2003  INRIA Sophia-Antipolis (France) and
+//                     Max-Planck-Institute Saarbruecken (Germany).
+// All rights reserved.
+//
+// Authors : Michael Hemmer <mhemmer@uni-mainz.de>
+// 
+
+// Test program for the CGAL::Root_of_traits 
+
+
+
+#include <CGAL/basic.h>
+#include <CGAL/_test_real_embeddable.h>
+#include <CGAL/Arithmetic_kernel.h>
+
+template <class T, class RootOf1, class RootOf2>
+void test_root_of_traits(){
+    // pure type checking  
+    typedef CGAL::Root_of_traits<T> RoT;
+    typedef typename RoT::Root_of_1 Root_of_1;
+    typedef typename RoT::Root_of_2 Root_of_2;
+    
+    BOOST_STATIC_ASSERT((::boost::is_same<RootOf1,Root_of_1>::value));
+    BOOST_STATIC_ASSERT((::boost::is_same<RootOf2,Root_of_2>::value));
+    
+    typedef typename RoT::Make_root_of_2 Make_root_of_2;
+    typedef typename Make_root_of_2::result_type result_type;
+    BOOST_STATIC_ASSERT((::boost::is_same<Root_of_2,result_type>::value));
+}
+
+int main(){
+    test_root_of_traits< double , double , double >();
+    
+#ifdef CGAL_USE_GMP
+    //TODO: switch to Gmpq
+    {
+        typedef CGAL::Gmpz RT;
+        typedef CGAL::Quotient<CGAL::Gmpz> Root_of_1;
+        typedef CGAL::Root_of_2<CGAL::Gmpz> Root_of_2;
+        
+        test_root_of_traits<RT,Root_of_1,Root_of_2>();
+        test_root_of_traits<Root_of_1,Root_of_1,Root_of_2>();
+    }{
+        typedef CGAL::Lazy_exact_nt<CGAL::Gmpz> RT;
+        typedef CGAL::Quotient<CGAL::Lazy_exact_nt<CGAL::Gmpz> > Root_of_1;
+        typedef CGAL::Root_of_2<CGAL::Lazy_exact_nt<CGAL::Gmpz> > Root_of_2;
+        
+        test_root_of_traits<RT,Root_of_1,Root_of_2>();
+        test_root_of_traits<Root_of_1,Root_of_1,Root_of_2>();
+    }
+#endif
+    return 0;
+}

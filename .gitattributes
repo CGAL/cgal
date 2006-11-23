@@ -1656,6 +1656,7 @@ Number_types/test/Number_types/MP_Float_exact.C -text
 Number_types/test/Number_types/MP_Float_inexact.C -text
 Number_types/test/Number_types/Nef_polynomial.C -text
 Number_types/test/Number_types/Quotient_new.C -text
+Number_types/test/Number_types/Root_of_traits.C -text
 Number_types/test/Number_types/Sqrt_extension.C -text
 Number_types/test/Number_types/double.C -text
 Number_types/test/Number_types/float.C -text

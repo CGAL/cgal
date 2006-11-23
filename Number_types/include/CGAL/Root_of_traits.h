@@ -61,7 +61,7 @@ public:
     typedef Root_of_2< RT >  Root_of_2;
     
     struct Make_root_of_2{
-        typedef FT result_type;
+        typedef Root_of_2 result_type;
         Root_of_2 
         operator()(const FT& a, const FT& b, const FT& c){
             return Root_of_2(a,b,c);
@@ -112,8 +112,13 @@ struct Root_of_traits_helper < NT, Field_with_sqrt_tag >
 };
 
 template < typename NT >
+struct Root_of_traits_helper < NT, Field_with_kth_root_tag >
+    :public Root_of_traits_helper < NT, Field_with_sqrt_tag>{};
+
+template < typename NT >
 struct Root_of_traits_helper < NT, Field_with_root_of_tag >
     :public Root_of_traits_helper < NT, Field_with_sqrt_tag>{};
+
 
 } // namespace CGALi
 
