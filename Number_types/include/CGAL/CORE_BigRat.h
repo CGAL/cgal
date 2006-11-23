@@ -157,11 +157,6 @@ public:
     //! perform the output, calls \c operator\<\< by default.
     std::ostream& operator()( std::ostream& out) const {
         switch (get_mode(out)) {
-        case IO::BENCHMARK:
-            return out << "Rational(" 
-                       << CGAL_CORE_NUMERATOR(t)<< "," 
-                       << CGAL_CORE_DENOMINATOR(t) << ")";
-            break;
         case IO::PRETTY:{
             if(CGAL_CORE_DENOMINATOR(t) == ::CORE::BigRat(1))
                 return out <<CGAL_CORE_NUMERATOR(t);

@@ -48,13 +48,6 @@ void test_io(){
         ss << CGAL::oformat(NT(-2), CGAL::Parens_as_product_tag());
         CGAL_test_assert( ss.str() == "(-2)");
     }
-    //MODE BENCHMARK
-    {
-        std::stringstream ss;
-        CGAL::set_benchmark_mode(ss);
-        ss << CGAL::oformat(NT(-3));
-        CGAL_test_assert( ss.str() == "Rational(-3,1)");
-    }
 }
 
 int main() {

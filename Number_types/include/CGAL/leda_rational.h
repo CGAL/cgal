@@ -205,11 +205,6 @@ public:
     //! perform the output, calls \c operator\<\< by default.
     std::ostream& operator()( std::ostream& out) const {
         switch (get_mode(out)) {
-        case IO::BENCHMARK:
-            return out << "Rational(" 
-                       << t.numerator()<< "," 
-                       << t.denominator() << ")";
-            break;
         case IO::PRETTY:{
             if(t.denominator() == leda_integer(1))
                 return out <<t.numerator();

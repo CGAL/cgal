@@ -36,7 +36,7 @@ CGAL_BEGIN_NAMESPACE
 class IO {
 public:
     static int mode;
-    enum Mode {ASCII = 0, PRETTY, BENCHMARK, BINARY};
+    enum Mode {ASCII = 0, PRETTY, BINARY};
 };
 
 template <class T, class F = ::CGAL::Null_tag >
