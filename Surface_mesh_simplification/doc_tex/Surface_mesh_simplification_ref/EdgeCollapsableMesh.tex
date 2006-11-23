@@ -63,10 +63,12 @@ Then, after the collapse of \ccc{(v0v1,v1v0)} the following holds:
 
 \begin{itemize}
 \item The edge \ccc{e} is no longer in \ccc{mesh}.
-\item One of $\{$\ccc{v0,v1}$\}$ is no longer in \ccc{mesh} while the other is kept. Let \ccc{vr} be the one removed and \ccc{vk} be the one kept.
+\item One of $\{$\ccc{v0,v1}$\}$ is no longer in \ccc{mesh} while the other remains.
+\footnote{Even though it would appear that v0 can always be the vertex being removed, there is one exception case (illustrated in Figure 4) when v1 must be the vertex removed.}
+Let \ccc{vm} be the removed vertex and \ccc{vk} be the remaining vertex.
 \item If \ccc{e} was a border edge, that is \ccc{get(is_border, e, mesh) == true}, then \ccc{next_edge(ep) == en}, and \ccc{prev_edge(en) == ep}.
 \item If \ccc{e} was not a border edge, that is \ccc{get(is_border, e, mesh) == false}, then \ccc{ep} and \ccc{epo} are no longer in \ccc{mesh} while \ccc{en} and \ccc{eno} are kept in \ccc{mesh}.
-\item For all edges \ccc{ie} in \ccc{in_edges(vr,mesh)}, \ccc{target(ie,mesh) == vk} and \ccc{source(opposite_edge(ie),mesh) == vk}.
+\item For all edges \ccc{ie} in \ccc{in_edges(vm,mesh)}, \ccc{target(ie,mesh) == vk} and \ccc{source(opposite_edge(ie),mesh) == vk}.
 \item No other incidence information has changed in \ccc{mesh}.
 \end{itemize}
 
@@ -87,27 +89,10 @@ The function returns vertex \ccc{vk}.
 </TR>
 </TABLE>
 \end{ccHtmlOnly}
-\caption{General edge collapse case: The horizontal dotted line is the collapsing edge. Two of its incident edges are removed (dashed lines). The red and magenta lines are the edges which get re-linked to $u$. Blue and cyan lines are the edges left untouched because they are already linked to $u$.}
+\caption{General case. The following mesh elements are removed: triangles ($v0,v1,vL$) and ($v1,v0,vR$), edges $(e,e')$, $(ep,epo)$ and $(ep',epo')$, and vertex $v0$.}
 \end{figure}
 
 
-\begin{figure}[htbp]
-\begin{ccTexOnly}
-\begin{center}
-\includegraphics[width=17cm]{Surface_mesh_simplification_ref/fig/border_collapse1} % omit suffix .eps to support PS and PDF
-\end{center}
-\end{ccTexOnly}
-\begin{ccHtmlOnly}
-<TABLE CELLSPACING=40>
-<TR>
-<CENTER>
-<IMG BORDER=0 SRC="./fig/border_collapse1.png" ALIGN=center ALT="Simplification illustration">
-</CENTER>
-</TR>
-</TABLE>
-\end{ccHtmlOnly}
-\caption{The case when the collapsing edge is a border. Only one of its incident edges (dashed line) is removed.}
-\end{figure}
 
 \begin{figure}[htbp]
 \begin{ccTexOnly}
@@ -124,7 +109,7 @@ The function returns vertex \ccc{vk}.
 </TR>
 </TABLE>
 \end{ccHtmlOnly}
-\caption{The case when the collapsing edge is not itself a border, but is incident upon a border edge that is removed.}
+\caption{When the collapsing edge is not itself a border, but is incident upon a border edge that is removed, the operation is the same as in the general case.}
 \end{figure}
 
 \begin{figure}[htbp]
@@ -142,7 +127,25 @@ The function returns vertex \ccc{vk}.
 </TR>
 </TABLE>
 \end{ccHtmlOnly}
-\caption{The case when the collapsing edge is not itself a border, but is incident upon a border edge that is {\em not} removed.}
+\caption{When the collapsing edge is not itself a border, but is incident upon a border edge that is {\em not} removed, the operation is still the same as in the general case.}
+\end{figure}
+
+\begin{figure}[htbp]
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics[width=17cm]{Surface_mesh_simplification_ref/fig/border_collapse1} % omit suffix .eps to support PS and PDF
+\end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+<TABLE CELLSPACING=40>
+<TR>
+<CENTER>
+<IMG BORDER=0 SRC="./fig/border_collapse1.png" ALIGN=center ALT="Simplification illustration">
+</CENTER>
+</TR>
+</TABLE>
+\end{ccHtmlOnly}
+\caption{When the collapsing edge is itself a border, only 1 triangle is removed. Thus, even if $(ep',epo')$ exists, it's not removed.}
 \end{figure}
 
 \begin{figure}[htbp]
@@ -160,29 +163,8 @@ The function returns vertex \ccc{vk}.
 </TR>
 </TABLE>
 \end{ccHtmlOnly}
-\caption{The single exceptional case when the vertex w instead of v is removed.}
+\caption{This figures illustrates the single exceptional case when vertex v0 cannot be removed, so v1 is removed instead (which also is a border case hence only 1 triangle is removed).}
 \end{figure}
-
-
-\begin{figure}[htbp]
-\begin{ccTexOnly}
-\begin{center}
-\includegraphics[width=17cm]{Surface_mesh_simplification_ref/fig/collapse1} % omit suffix .eps to support PS and PDF
-\end{center}
-\end{ccTexOnly}
-\begin{ccHtmlOnly}
-<TABLE CELLSPACING=40>
-<TR>
-<CENTER>
-<IMG BORDER=0 SRC="./fig/collapse1.png" ALIGN=center ALT="Simplification illustration">
-</CENTER>
-</TR>
-</TABLE>
-\end{ccHtmlOnly}
-\caption{Detailed diagram of the collapse operation in a border case.}
-\end{figure}
-%% figures of simplified surfaces
-
 
 \ccHasModels
 \ccRefIdfierPage{CGAL::Polyhedron_3<Traits>} with only triangular faces, via external adaptation.
