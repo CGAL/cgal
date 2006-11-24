@@ -47,7 +47,7 @@ class Algebraic_structure_traits< ::__gmp_expr< ::__gmpz_value,U>  >
 public:
     typedef Euclidean_ring_tag  Algebraic_structure_tag;
     typedef Tag_true            Is_exact;
-    typedef mpz_class                 Algebraic_structure;
+    typedef mpz_class                 Type;
     
     struct Is_zero: public Unary_function< mpz_class , bool > {
         template <class U2> 
@@ -95,7 +95,7 @@ public:
             "Algebraic_structure_traits<mpz_class>::Integral_div()(x,y)" );
             return result;         
         } 
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     }; 
     
     struct Gcd : public Binary_function< mpz_class, mpz_class, mpz_class > {
@@ -107,7 +107,7 @@ public:
             mpz_gcd( c.get_mpz_t(), mpz_class(x).get_mpz_t(), mpz_class(y).get_mpz_t() );
             return c;
         } 
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
     
     struct Div : public Binary_function< mpz_class, mpz_class, mpz_class > {
@@ -117,7 +117,7 @@ public:
                 const ::__gmp_expr< ::__gmpz_value,U3>& y) const {
             return x / y; 
         } 
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
     
     struct Mod : public Binary_function< mpz_class, mpz_class, mpz_class > {
@@ -127,7 +127,7 @@ public:
                 const ::__gmp_expr< ::__gmpz_value,U3>& y) const {
             return x % y; 
         }
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
     struct Div_mod {
         typedef mpz_class    first_argument_type;
@@ -184,7 +184,7 @@ class Real_embeddable_traits< ::__gmp_expr< ::__gmpz_value,U>  >
     : public Real_embeddable_traits_base< ::__gmp_expr< ::__gmpz_value,U> > {
 public:
     typedef ::__gmp_expr< ::__gmpz_value, ::__gmpz_value>  mpz_class;
-    typedef mpz_class  Real_embeddable;
+    typedef mpz_class  Type;
 
     struct Is_zero: public Unary_function< mpz_class , bool > {
         template <class U2> 
@@ -238,7 +238,7 @@ public:
             return (Comparison_result) CGAL_NTS sign( ::cmp(x, y) );
         }
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT
-        ( Real_embeddable, Comparison_result);
+        ( Type, Comparison_result);
     };
     
     struct To_double 

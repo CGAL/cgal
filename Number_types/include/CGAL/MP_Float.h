@@ -376,13 +376,13 @@ template <> class Algebraic_structure_traits< MP_Float >
 #endif
                                     
     struct Integral_division
-        : public Binary_function< Algebraic_structure, 
-                                 Algebraic_structure,
-                                 Algebraic_structure > {
+        : public Binary_function< Type, 
+                                 Type,
+                                 Type > {
     public:
-        Algebraic_structure operator()( 
-                const Algebraic_structure& x,
-                const Algebraic_structure& y ) const {
+        Type operator()( 
+                const Type& x,
+                const Type& y ) const {
 #ifdef CGAL_MP_FLOAT_ALLOW_INEXACT // inexact
             return x/y;
 #else // exact
@@ -396,44 +396,44 @@ template <> class Algebraic_structure_traits< MP_Float >
 
 
     class Square 
-      : public Unary_function< Algebraic_structure, Algebraic_structure > {
+      : public Unary_function< Type, Type > {
       public:
-        Algebraic_structure operator()( const Algebraic_structure& x ) const {
+        Type operator()( const Type& x ) const {
           return INTERN_MP_FLOAT::square(x);
         }
     };
 
 #ifdef CGAL_MP_FLOAT_ALLOW_INEXACT  
     class Sqrt 
-      : public Unary_function< Algebraic_structure, Algebraic_structure > {
+      : public Unary_function< Type, Type > {
       public:
-        Algebraic_structure operator()( const Algebraic_structure& x ) const {
+        Type operator()( const Type& x ) const {
           return approximate_sqrt( x );
         }
     };
 #endif
     
     class Gcd
-      : public Binary_function< Algebraic_structure, Algebraic_structure,
-                                Algebraic_structure > {
+      : public Binary_function< Type, Type,
+                                Type > {
       public:
-        Algebraic_structure operator()( const Algebraic_structure& x,
-                                        const Algebraic_structure& y ) const {
+        Type operator()( const Type& x,
+                                        const Type& y ) const {
           return INTERN_MP_FLOAT::gcd( x, y );
         }
     };
     
     class Div
-      : public Binary_function< Algebraic_structure, Algebraic_structure,
-                                Algebraic_structure > {
+      : public Binary_function< Type, Type,
+                                Type > {
       public:
-        Algebraic_structure operator()( const Algebraic_structure& x,
-                                        const Algebraic_structure& y ) const {
+        Type operator()( const Type& x,
+                                        const Type& y ) const {
           return INTERN_MP_FLOAT::div( x, y );
         }
     };
     
-    typedef INTERN_AST::Mod_per_operator< Algebraic_structure > Mod;
+    typedef INTERN_AST::Mod_per_operator< Type > Mod;
 };
 
 
@@ -444,35 +444,35 @@ template <> class Real_embeddable_traits< MP_Float >
   public:
       
     class Sign 
-      : public Unary_function< Real_embeddable, ::CGAL::Sign > {
+      : public Unary_function< Type, ::CGAL::Sign > {
       public:
-        ::CGAL::Sign operator()( const Real_embeddable& x ) const {
+        ::CGAL::Sign operator()( const Type& x ) const {
           return x.sign();
         }        
     };
     
     class Compare 
-      : public Binary_function< Real_embeddable, Real_embeddable,
+      : public Binary_function< Type, Type,
                                 Comparison_result > {
       public:
-        Comparison_result operator()( const Real_embeddable& x, 
-                                            const Real_embeddable& y ) const {
+        Comparison_result operator()( const Type& x, 
+                                            const Type& y ) const {
           return INTERN_MP_FLOAT::compare( x, y );
         }
     };
     
     class To_double 
-      : public Unary_function< Real_embeddable, double > {
+      : public Unary_function< Type, double > {
       public:
-        double operator()( const Real_embeddable& x ) const {
+        double operator()( const Type& x ) const {
           return INTERN_MP_FLOAT::to_double( x );
         }
     };
     
     class To_interval 
-      : public Unary_function< Real_embeddable, std::pair< double, double > > {
+      : public Unary_function< Type, std::pair< double, double > > {
       public:
-        std::pair<double, double> operator()( const Real_embeddable& x ) const {
+        std::pair<double, double> operator()( const Type& x ) const {
           return INTERN_MP_FLOAT::to_interval( x );
         }
     };

@@ -56,18 +56,18 @@ template <> class Algebraic_structure_traits< leda_real >
     typedef Tag_true           Is_exact;
                                                                              
     class Sqrt 
-      : public Unary_function< Algebraic_structure, Algebraic_structure > {
+      : public Unary_function< Type, Type > {
       public:
-        Algebraic_structure operator()( const Algebraic_structure& x ) const {
+        Type operator()( const Type& x ) const {
           return CGAL_LEDA_SCOPE::sqrt( x );
         }
     };
     
     class Kth_root 
-      : public Binary_function<int, Algebraic_structure, Algebraic_structure> {
+      : public Binary_function<int, Type, Type> {
       public:
-        Algebraic_structure operator()( int k, 
-                                        const Algebraic_structure& x) const {
+        Type operator()( int k, 
+                                        const Type& x) const {
             CGAL_precondition_msg(k > 0, "'k' must be positive for k-th roots");
             return CGAL_LEDA_SCOPE::root( x, k);
         }
@@ -77,30 +77,30 @@ template <> class Algebraic_structure_traits< leda_real >
 #if CGAL_LEDA_VERSION >= 500 
     class Root_of {
       public:
-        typedef Algebraic_structure result_type;
+        typedef Type result_type;
         typedef Arity_tag< 3 >         Arity;
 
 //        typedef leda_rational Boundary;
       private:
         template< class ForwardIterator >
         inline 
-        CGAL_LEDA_SCOPE::polynomial<Algebraic_structure>
+        CGAL_LEDA_SCOPE::polynomial<Type>
         make_polynomial(ForwardIterator begin, 
                         ForwardIterator end) const {
-          CGAL_LEDA_SCOPE::growing_array<Algebraic_structure> coeffs;
+          CGAL_LEDA_SCOPE::growing_array<Type> coeffs;
           for(ForwardIterator it = begin; it < end; it++) 
               coeffs.push_back(*it);
-          return CGAL_LEDA_SCOPE::polynomial<Algebraic_structure>(coeffs);
+          return CGAL_LEDA_SCOPE::polynomial<Type>(coeffs);
         }
       public:
         template <class ForwardIterator>
-        Algebraic_structure operator()( int k, 
+        Type operator()( int k, 
                        ForwardIterator begin, 
                        ForwardIterator end) const {
             return CGAL_LEDA_SCOPE::diamond(k,make_polynomial(begin,end));
         };
 /*        template <class ForwardIterator>
-        Algebraic_structure operator()( leda_rational lower,
+        Type operator()( leda_rational lower,
                                         leda_rational upper,
                                         ForwardIterator begin, 
                                         ForwardIterator end) const {
@@ -119,39 +119,39 @@ template <> class Real_embeddable_traits< leda_real >
   public:
       
     class Abs 
-      : public Unary_function< Real_embeddable, Real_embeddable > {
+      : public Unary_function< Type, Type > {
       public:
-        Real_embeddable operator()( const Real_embeddable& x ) const {
+        Type operator()( const Type& x ) const {
             return CGAL_LEDA_SCOPE::abs( x );
         }
     };
     
     class Sign 
-      : public Unary_function< Real_embeddable, ::CGAL::Sign > {
+      : public Unary_function< Type, ::CGAL::Sign > {
       public:
-        ::CGAL::Sign operator()( const Real_embeddable& x ) const {
+        ::CGAL::Sign operator()( const Type& x ) const {
           return (::CGAL::Sign) CGAL_LEDA_SCOPE::sign( x );
         }        
     };
     
     class Compare 
-      : public Binary_function< Real_embeddable, Real_embeddable,
+      : public Binary_function< Type, Type,
                                 Comparison_result > {
       public:
-        Comparison_result operator()( const Real_embeddable& x, 
-                                            const Real_embeddable& y ) const {
+        Comparison_result operator()( const Type& x, 
+                                            const Type& y ) const {
           return (Comparison_result) CGAL_LEDA_SCOPE::compare( x, y );
         }
         
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Real_embeddable,
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type,
                                                       Comparison_result );
         
     };
     
     class To_double 
-      : public Unary_function< Real_embeddable, double > {
+      : public Unary_function< Type, double > {
       public:
-        double operator()( const Real_embeddable& x ) const {
+        double operator()( const Type& x ) const {
           // this call is required to get reasonable values for the double
           // approximation (as of LEDA-4.3.1)
           x.improve_approximation_to(53);
@@ -160,9 +160,9 @@ template <> class Real_embeddable_traits< leda_real >
     };
     
     class To_interval 
-      : public Unary_function< Real_embeddable, std::pair< double, double > > {
+      : public Unary_function< Type, std::pair< double, double > > {
       public:
-        std::pair<double, double> operator()( const Real_embeddable& x ) const {
+        std::pair<double, double> operator()( const Type& x ) const {
 
 #if CGAL_LEDA_VERSION >= 501
             leda_bigfloat bnum = x.to_bigfloat();  
@@ -175,15 +175,15 @@ template <> class Real_embeddable_traits< leda_real >
                                                      CGAL_LEDA_SCOPE::TO_P_INF);
             
             std::pair<double, double> result(low, upp);
-            CGAL_postcondition(Real_embeddable(result.first)<=x);
-            CGAL_postcondition(Real_embeddable(result.second)>=x);
+            CGAL_postcondition(Type(result.first)<=x);
+            CGAL_postcondition(Type(result.second)>=x);
             return result;
 #else
             CGAL_LEDA_SCOPE::interval temp(x); //bug in leda
             std::pair<double, double> result(temp.lower_bound(),temp.upper_bound());
-            CGAL_postcondition_msg(Real_embeddable(result.first)<=x, 
+            CGAL_postcondition_msg(Type(result.first)<=x, 
                                                     "Known bug in LEDA <=5.0");
-            CGAL_postcondition_msg(Real_embeddable(result.first)>=x, 
+            CGAL_postcondition_msg(Type(result.first)>=x, 
                                                     "Known bug in LEDA <=5.0");
             return result;
             // If x is very small and we look closer at x 

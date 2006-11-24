@@ -48,34 +48,34 @@ template <> class Algebraic_structure_traits< leda_integer >
   public:
     typedef Tag_true            Is_exact;
                 
-    typedef INTERN_AST::Is_square_per_sqrt< Algebraic_structure >
+    typedef INTERN_AST::Is_square_per_sqrt< Type >
                                                                  Is_square;
                                                                  
     class Gcd 
-      : public Binary_function< Algebraic_structure, Algebraic_structure,
-                                Algebraic_structure > {
+      : public Binary_function< Type, Type,
+                                Type > {
       public:
-        Algebraic_structure operator()( const Algebraic_structure& x, 
-                                        const Algebraic_structure& y ) const {
+        Type operator()( const Type& x, 
+                                        const Type& y ) const {
           // By definition gcd(0,0) == 0
-          if( x == Algebraic_structure(0) && y == Algebraic_structure(0) )
-            return Algebraic_structure(0);
+          if( x == Type(0) && y == Type(0) )
+            return Type(0);
             
           return CGAL_LEDA_SCOPE::gcd( x, y );
         }
         
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
     
-    typedef INTERN_AST::Div_per_operator< Algebraic_structure > Div;
+    typedef INTERN_AST::Div_per_operator< Type > Div;
     
     class Mod 
-      : public Binary_function< Algebraic_structure, Algebraic_structure,
-                                Algebraic_structure > {
+      : public Binary_function< Type, Type,
+                                Type > {
       public:
-        Algebraic_structure operator()( const Algebraic_structure& x, 
-                                        const Algebraic_structure& y ) const {
-          Algebraic_structure m = x % y;
+        Type operator()( const Type& x, 
+                                        const Type& y ) const {
+          Type m = x % y;
           
           // Fix wrong lede result if first operand is negative
           if( x < 0 && m != 0 )
@@ -84,13 +84,13 @@ template <> class Algebraic_structure_traits< leda_integer >
           return m;
         }
         
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
     
     class Sqrt 
-      : public Unary_function< Algebraic_structure, Algebraic_structure > {
+      : public Unary_function< Type, Type > {
       public:
-        Algebraic_structure operator()( const Algebraic_structure& x ) const {
+        Type operator()( const Type& x ) const {
           return CGAL_LEDA_SCOPE::sqrt( x );
         }
     };        
@@ -101,44 +101,44 @@ template <> class Real_embeddable_traits< leda_integer >
   public:
       
     class Abs 
-      : public Unary_function< Real_embeddable, Real_embeddable > {
+      : public Unary_function< Type, Type > {
       public:
-        Real_embeddable operator()( const Real_embeddable& x ) const {
+        Type operator()( const Type& x ) const {
             return CGAL_LEDA_SCOPE::abs( x );
         }
     };
     
     class Sign 
-      : public Unary_function< Real_embeddable, ::CGAL::Sign > {
+      : public Unary_function< Type, ::CGAL::Sign > {
       public:
-        ::CGAL::Sign operator()( const Real_embeddable& x ) const {
+        ::CGAL::Sign operator()( const Type& x ) const {
             return (::CGAL::Sign) CGAL_LEDA_SCOPE::sign( x );
         }        
     };
     
     class Compare 
-      : public Binary_function< Real_embeddable, Real_embeddable,
+      : public Binary_function< Type, Type,
                                 Comparison_result > {
       public:
-        Comparison_result operator()( const Real_embeddable& x, 
-                                            const Real_embeddable& y ) const {
+        Comparison_result operator()( const Type& x, 
+                                            const Type& y ) const {
           return (Comparison_result) CGAL_LEDA_SCOPE::compare( x, y );
         }
         
     };
     
     class To_double 
-      : public Unary_function< Real_embeddable, double > {
+      : public Unary_function< Type, double > {
       public:
-        double operator()( const Real_embeddable& x ) const {
+        double operator()( const Type& x ) const {
           return x.to_double();
         }
     };
     
     class To_interval 
-      : public Unary_function< Real_embeddable, std::pair< double, double > > {
+      : public Unary_function< Type, std::pair< double, double > > {
       public:
-        std::pair<double, double> operator()( const Real_embeddable& x ) const {
+        std::pair<double, double> operator()( const Type& x ) const {
 
           Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);
           double cn = CGAL_NTS to_double(x);

@@ -21,8 +21,8 @@
 //
 // Author(s)     : Sylvain Pion, Michael Hemmer 
 
-#ifndef CGAL_NUMBER_TYPE_CHECKER_H
-#define CGAL_NUMBER_TYPE_CHECKER_H
+#ifndef CGAL_NUMBER_Type_CHECKER_H
+#define CGAL_NUMBER_Type_CHECKER_H
 
 #include <CGAL/number_type_basic.h>
 
@@ -445,14 +445,14 @@ class NTC_AST_base
 private:
     typedef Algebraic_structure_traits<NT1> AST1;
     typedef Algebraic_structure_traits<NT2> AST2;
-    typedef Number_type_checker<NT1, NT2, Cmp> Algebraic_structure;
+    typedef Number_type_checker<NT1, NT2, Cmp> Type;
     
 public:
     //CGAL::Algebraic_structure_traits<>::Simplify
     class Simplify 
-        : public Unary_function< Algebraic_structure& , void > {
+        : public Unary_function< Type& , void > {
     public:
-        void operator()( Algebraic_structure& a) const {
+        void operator()( Type& a) const {
             typename AST1::Simplify()(a.n1());
             typename AST2::Simplify()(a.n2());
             CGAL_assertion(a.is_valid());
@@ -461,9 +461,9 @@ public:
     
     //CGAL::Algebraic_structure_traits< >::Is_zero
     class Is_zero 
-        : public Unary_function< Algebraic_structure, bool > {
+        : public Unary_function< Type, bool > {
     public:
-        bool operator()(const  Algebraic_structure& a ) const {
+        bool operator()(const  Type& a ) const {
             bool b1 = typename AST1::Is_zero()(a.n1());
             bool b2 = typename AST2::Is_zero()(a.n2());
             CGAL_assertion(b1 == b2 );
@@ -474,9 +474,9 @@ public:
     
     // CGAL::Algebraic_structure_traits< >::Is_one
     class Is_one 
-        : public Unary_function< Algebraic_structure, bool > {
+        : public Unary_function< Type, bool > {
     public:
-        bool operator()(const Algebraic_structure& a) const {
+        bool operator()(const Type& a) const {
             bool b1 = typename AST1::Is_one()(a.n1());
             bool b2 = typename AST2::Is_one()(a.n2());
             CGAL_assertion(b1 == b2 );
@@ -486,10 +486,10 @@ public:
     };
     // CGAL::Algebraic_structure_traits<  >::Square
     class Square 
-        : public Unary_function< Algebraic_structure , Algebraic_structure > {
+        : public Unary_function< Type , Type > {
     public:
-        Algebraic_structure operator()(const Algebraic_structure& a) const {
-            return Algebraic_structure(
+        Type operator()(const Type& a) const {
+            return Type(
                     typename AST1::Square()(a.n1()),
                     typename AST2::Square()(a.n2()));
         }
@@ -498,11 +498,11 @@ public:
 
     // CGAL::Algebraic_structure_traits<  >::Unit_part
     class Unit_part 
-        : public Unary_function< Algebraic_structure , Algebraic_structure > {
+        : public Unary_function< Type , Type > {
     public:
-        Algebraic_structure operator()(const Algebraic_structure& a) const {
+        Type operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("AST::Unit_part");
-            return Algebraic_structure(
+            return Type(
                     typename AST1::Unit_part()(a.n1()),
                     typename AST2::Unit_part()(a.n2()));
         }
@@ -518,21 +518,21 @@ class NTC_AST_base
 private:
     typedef Algebraic_structure_traits<NT1> AST1;
     typedef Algebraic_structure_traits<NT2> AST2;
-    typedef Number_type_checker<NT1, NT2, Cmp> Algebraic_structure;
+    typedef Number_type_checker<NT1, NT2, Cmp> Type;
 
 public:
     
 // CGAL::Algebraic_structure_traits< >::Integral_division
     class Integral_division 
-        : public Binary_function< Algebraic_structure, 
-                                  Algebraic_structure,
-                                  Algebraic_structure > {
+        : public Binary_function< Type, 
+                                  Type,
+                                  Type > {
     public:
-        Algebraic_structure operator()(
-                const Algebraic_structure& a, 
-                const Algebraic_structure& b) const {
+        Type operator()(
+                const Type& a, 
+                const Type& b) const {
             CGAL_NT_CHECK_DEBUG("AST::Integral_division");
-            return Algebraic_structure(
+            return Type(
                     typename AST1::Integral_division()(a.n1(),b.n1()),
                     typename AST2::Integral_division()(a.n2(),b.n2()));
         }
@@ -549,19 +549,19 @@ class NTC_AST_base
 private:
     typedef Algebraic_structure_traits<NT1> AST1;
     typedef Algebraic_structure_traits<NT2> AST2;
-    typedef Number_type_checker<NT1, NT2, Cmp> Algebraic_structure;
+    typedef Number_type_checker<NT1, NT2, Cmp> Type;
 public:
     // CGAL::Algebraic_structure_traits< >::Gcd
     class Gcd 
-        : public Binary_function< Algebraic_structure, 
-                                  Algebraic_structure,
-                                  Algebraic_structure > {
+        : public Binary_function< Type, 
+                                  Type,
+                                  Type > {
     public:
-        Algebraic_structure operator()(
-                const Algebraic_structure& a, 
-                const Algebraic_structure& b) const {
+        Type operator()(
+                const Type& a, 
+                const Type& b) const {
             CGAL_NT_CHECK_DEBUG("AST::Gcd");
-            return Algebraic_structure(
+            return Type(
                     typename AST1::Gcd()(a.n1(),b.n1()),
                     typename AST2::Gcd()(a.n2(),b.n2()));
         }
@@ -577,34 +577,34 @@ class NTC_AST_base
 private:
     typedef Algebraic_structure_traits<NT1> AST1;
     typedef Algebraic_structure_traits<NT2> AST2;
-    typedef Number_type_checker<NT1, NT2, Cmp> Algebraic_structure;
+    typedef Number_type_checker<NT1, NT2, Cmp> Type;
 public:
     // CGAL::Algebraic_structure_traits< >::Div
     class Div 
-        : public Binary_function< Algebraic_structure, 
-                                  Algebraic_structure,
-                                  Algebraic_structure > {
+        : public Binary_function< Type, 
+                                  Type,
+                                  Type > {
     public:
-        Algebraic_structure operator()(
-                const Algebraic_structure& a, 
-                const Algebraic_structure& b) const {
+        Type operator()(
+                const Type& a, 
+                const Type& b) const {
             CGAL_NT_CHECK_DEBUG("AST::Div");
-            return Algebraic_structure(
+            return Type(
                     typename AST1::Div()(a.n1(),b.n1()),
                     typename AST2::Div()(a.n2(),b.n2()));
         }
     };
     // CGAL::Algebraic_structure_traits< >::Mod
     class Mod 
-        : public Binary_function< Algebraic_structure, 
-                                  Algebraic_structure,
-                                  Algebraic_structure > {
+        : public Binary_function< Type, 
+                                  Type,
+                                  Type > {
     public:
-        Algebraic_structure operator()(
-                const Algebraic_structure& a, 
-                const Algebraic_structure& b) const {
+        Type operator()(
+                const Type& a, 
+                const Type& b) const {
             CGAL_NT_CHECK_DEBUG("AST::Mod");
-            return Algebraic_structure(
+            return Type(
                     typename AST1::Mod()(a.n1(),b.n1()),
                     typename AST2::Mod()(a.n2(),b.n2()));
         }
@@ -613,25 +613,25 @@ public:
     // CGAL::Algebraic_structure_traits< >::Div_mod
     class Div_mod {
     public:
-        typedef Algebraic_structure    first_argument_type;
-        typedef Algebraic_structure    second_argument_type;
-        typedef Algebraic_structure&   third_argument_type;
-        typedef Algebraic_structure&   fourth_argument_type;
+        typedef Type    first_argument_type;
+        typedef Type    second_argument_type;
+        typedef Type&   third_argument_type;
+        typedef Type&   fourth_argument_type;
         typedef Arity_tag< 4 >         Arity;
         typedef void  result_type;
 
         void operator()(
-                const Algebraic_structure& a, 
-                const Algebraic_structure& b,
-                Algebraic_structure& q, 
-                Algebraic_structure& r) const {
+                const Type& a, 
+                const Type& b,
+                Type& q, 
+                Type& r) const {
             CGAL_NT_CHECK_DEBUG("AST::Div_mod");
             NT1 q1,r1;
             NT2 q2,r2;
             typename AST1::Div_mod()(a.n1(),b.n1(),q1,r1);
             typename AST1::Div_mod()(a.n2(),b.n2(),q2,r2);
-            q = Algebraic_structure(q1,q2);
-            r = Algebraic_structure(r1,r2);
+            q = Type(q1,q2);
+            r = Type(r1,r2);
         }
     };
 };
@@ -653,17 +653,17 @@ class NTC_AST_base
 private:
     typedef Algebraic_structure_traits<NT1> AST1;
     typedef Algebraic_structure_traits<NT2> AST2;
-    typedef Number_type_checker<NT1, NT2, Cmp> Algebraic_structure;
+    typedef Number_type_checker<NT1, NT2, Cmp> Type;
     
 public:
     
     // CGAL::Algebraic_structure_traits<  >::Sqrt
     class Sqrt 
-        : public Unary_function< Algebraic_structure , Algebraic_structure > {
+        : public Unary_function< Type , Type > {
     public:
-        Algebraic_structure operator()(const Algebraic_structure& a) const {
+        Type operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("AST::Sqrt");
-            return Algebraic_structure(
+            return Type(
                     typename AST1::Sqrt()(a.n1()),
                     typename AST2::Sqrt()(a.n2()));
         }
@@ -681,7 +681,7 @@ class Algebraic_structure_traits <Number_type_checker<NT1, NT2, Cmp> >
 {
     typedef Algebraic_structure_traits<NT1> AST1;
 public:
-    typedef Number_type_checker< NT1, NT2, Cmp> Algebraic_structure;
+    typedef Number_type_checker< NT1, NT2, Cmp> Type;
     typedef typename AST1::Algebraic_structure_tag Algebraic_structure_tag;
     typedef typename AST1::Is_exact Is_exact;
 
@@ -705,16 +705,16 @@ class NTC_RET_base
 private:
     typedef Real_embeddable_traits<NT1> RET1;
     typedef Real_embeddable_traits<NT2> RET2;
-    typedef Number_type_checker<NT1, NT2, Cmp> Real_embeddable;
+    typedef Number_type_checker<NT1, NT2, Cmp> Type;
 public:
 
     // CGAL::Real_embeddable_traits<  >::Abs
     class Abs 
-        : public Unary_function< Real_embeddable , Real_embeddable > {
+        : public Unary_function< Type , Type > {
     public:
-        Real_embeddable operator()(const Real_embeddable& a) const {
+        Type operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("RET::Abs");
-            return Real_embeddable(
+            return Type(
                     typename RET1::Abs()(a.n1()),
                     typename RET2::Abs()(a.n2()));
         }
@@ -722,9 +722,9 @@ public:
 
     // CGAL::Real_embeddable_traits<  >::Sign
     class Sign 
-        : public Unary_function< Real_embeddable , ::CGAL::Sign > {
+        : public Unary_function< Type , ::CGAL::Sign > {
     public:
-        ::CGAL::Sign operator()(const Real_embeddable& a) const {
+        ::CGAL::Sign operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("RET::Sign");
             ::CGAL::Sign r1 =  typename RET1::Sign()(a.n1());
             ::CGAL::Sign r2 =  typename RET2::Sign()(a.n2());
@@ -735,9 +735,9 @@ public:
 
     // CGAL::Real_embeddable_traits<  >::Is_finite
     class Is_finite 
-        : public Unary_function< Real_embeddable , bool > {
+        : public Unary_function< Type , bool > {
     public:
-        bool operator()(const Real_embeddable& a) const {
+        bool operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("RET::Is_finite");
             bool r1 =  typename RET1::Is_finite()(a.n1());
             bool r2 =  typename RET2::Is_finite()(a.n2());
@@ -748,9 +748,9 @@ public:
 
     // CGAL::Real_embeddable_traits<  >::Is_positive
     class Is_positive 
-        : public Unary_function< Real_embeddable , bool > {
+        : public Unary_function< Type , bool > {
     public:
-        bool operator()(const Real_embeddable& a) const {
+        bool operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("RET::Is_positive");
             bool r1 =  typename RET1::Is_positive()(a.n1());
             bool r2 =  typename RET2::Is_positive()(a.n2());
@@ -761,9 +761,9 @@ public:
     
     // CGAL::Real_embeddable_traits<  >::Is_negative
     class Is_negative 
-        : public Unary_function< Real_embeddable , bool > {
+        : public Unary_function< Type , bool > {
     public:
-        bool operator()(const Real_embeddable& a) const {
+        bool operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("RET::Is_negative");
             bool r1 =  typename RET1::Is_negative()(a.n1());
             bool r2 =  typename RET2::Is_negative()(a.n2());
@@ -774,9 +774,9 @@ public:
 
     // CGAL::Real_embeddable_traits<  >::Is_zero
     class Is_zero 
-        : public Unary_function< Real_embeddable , bool > {
+        : public Unary_function< Type , bool > {
     public:
-        bool operator()(const Real_embeddable& a) const {
+        bool operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("RET::Is_zero");
             bool r1 =  typename RET1::Is_zero()(a.n1());
             bool r2 =  typename RET2::Is_zero()(a.n2());
@@ -787,9 +787,9 @@ public:
 
     // CGAL::Real_embeddable_traits<  >::Compare
     class Compare 
-        : public Binary_function< Real_embeddable , Real_embeddable, Comparison_result > {
+        : public Binary_function< Type , Type, Comparison_result > {
     public:
-        Comparison_result operator()(const Real_embeddable& a, const Real_embeddable& b) const {
+        Comparison_result operator()(const Type& a, const Type& b) const {
             CGAL_NT_CHECK_DEBUG("RET::Compare");
             Comparison_result r1 =  typename RET1::Compare()(a.n1(),b.n1());
             Comparison_result r2 =  typename RET2::Compare()(a.n2(),b.n2());
@@ -800,9 +800,9 @@ public:
 
     // CGAL::Real_embeddable_traits<  >::To_double
     class To_double 
-        : public Unary_function< Real_embeddable , double > {
+        : public Unary_function< Type , double > {
     public:
-        double operator()(const Real_embeddable& a) const {
+        double operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("RET::To_double");
             double r1 =  typename RET1::To_double()(a.n1());
             double r2 =  typename RET2::To_double()(a.n2());
@@ -813,9 +813,9 @@ public:
 
     // CGAL::Real_embeddable_traits<  >::To_interval
     class To_interval 
-        : public Unary_function< Real_embeddable , std::pair<double, double> > {
+        : public Unary_function< Type , std::pair<double, double> > {
     public:
-        std::pair<double, double> operator()(const Real_embeddable& a) const {
+        std::pair<double, double> operator()(const Type& a) const {
             CGAL_NT_CHECK_DEBUG("RET::To_interval");
             std::pair<double, double> r1 =  typename RET1::To_interval()(a.n1());
             std::pair<double, double> r2 =  typename RET2::To_interval()(a.n2());
@@ -835,7 +835,7 @@ class Real_embeddable_traits
 {
     typedef Real_embeddable_traits<NT1> RET1;
 public: 
-    typedef Number_type_checker< NT1, NT2, Cmp >  Real_embeddable;
+    typedef Number_type_checker< NT1, NT2, Cmp >  Type;
     typedef typename RET1::Is_real_embeddable     Is_real_embeddable;
 };
 
@@ -844,10 +844,10 @@ struct Coercion_traits< Number_type_checker<NT1,NT2,Cmp>,
                         Number_type_checker<NT1,NT2,Cmp> >{    
     typedef Tag_true  Are_explicit_interoperable;   
     typedef Tag_true  Are_implicit_interoperable;   
-    typedef Number_type_checker<NT1,NT2,Cmp> Coercion_type;    
+    typedef Number_type_checker<NT1,NT2,Cmp> Type;    
     struct Cast{    
-        typedef Coercion_type result_type;  
-        Coercion_type operator()(const Coercion_type& x) const { return x;} 
+        typedef Type result_type;  
+        Type operator()(const Type& x) const { return x;} 
     };      
 };    
 
@@ -855,11 +855,11 @@ template < typename NT1, typename NT2, typename Cmp >
 struct Coercion_traits< Number_type_checker<NT1,NT2,Cmp>, int >{    
     typedef Tag_true  Are_explicit_interoperable;   
     typedef Tag_true  Are_implicit_interoperable;   
-    typedef Number_type_checker<NT1,NT2,Cmp> Coercion_type;    
+    typedef Number_type_checker<NT1,NT2,Cmp> Type;    
     struct Cast{    
-        typedef Coercion_type result_type;  
-        Coercion_type operator()(const Coercion_type& x) const { return x;} 
-        Coercion_type operator()(int x) const { return Coercion_type(x);} 
+        typedef Type result_type;  
+        Type operator()(const Type& x) const { return x;} 
+        Type operator()(int x) const { return Type(x);} 
     };      
 };   
  
@@ -874,7 +874,7 @@ template < typename NT_checker, typename Tag = Tag_false >
 struct Coercion_traits_double{
     typedef Tag_false  Are_explicit_interoperable;   
     typedef Tag_false  Are_implicit_interoperable; 
-    typedef Null_tag Coercion_type;
+    typedef Null_tag Type;
 };
     
 template < typename NT1, typename NT2, typename Cmp>   
@@ -882,12 +882,12 @@ struct Coercion_traits_double< Number_type_checker<NT1,NT2,Cmp> ,
                                Tag_true >{
     typedef Tag_true  Are_explicit_interoperable;   
     typedef Tag_true  Are_implicit_interoperable; 
-    typedef Number_type_checker<NT1,NT2,Cmp> Coercion_type;
+    typedef Number_type_checker<NT1,NT2,Cmp> Type;
      struct Cast{    
-        typedef Coercion_type result_type;  
-         Coercion_type operator()(const Coercion_type& x) const { return x;} 
-         Coercion_type operator()(const double& x) const { 
-             return Coercion_type(x);
+        typedef Type result_type;  
+         Type operator()(const Type& x) const { return x;} 
+         Type operator()(const double& x) const { 
+             return Type(x);
          } 
     };      
 };  
@@ -926,4 +926,4 @@ operator>> (std::istream & is, Number_type_checker<NT1, NT2, Cmp> &b)
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_NUMBER_TYPE_CHECKER_H
+#endif // CGAL_NUMBER_Type_CHECKER_H

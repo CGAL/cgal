@@ -39,27 +39,27 @@ template <> class Algebraic_structure_traits< Gmpq >
     typedef Tag_true            Is_exact;
     
     class Is_square
-      : public Binary_function< Algebraic_structure, Algebraic_structure&, 
+      : public Binary_function< Type, Type&, 
                                 bool > {
       public:
-        bool operator()( const Algebraic_structure& x_, Algebraic_structure& y ) const {
+        bool operator()( const Type& x_, Type& y ) const {
           Gmpq x( x_ );
           mpq_canonicalize( x.mpq() );
           Algebraic_structure_traits< Gmpz >::Sqrt sqrt;
           y = Gmpq( sqrt( x.numerator() ), sqrt( x.denominator() ) );
           return y*y == x;
         }
-        bool operator()( const Algebraic_structure& x) const {
-            Algebraic_structure y;
+        bool operator()( const Type& x) const {
+            Type y;
             return operator()(x,y);
         }
         
     };
 
     class Simplify 
-      : public Unary_function< Algebraic_structure&, void > {
+      : public Unary_function< Type&, void > {
       public:
-        void operator()( Algebraic_structure& x) const {
+        void operator()( Type& x) const {
           mpq_canonicalize( x.mpq() );
         }
     };
@@ -73,25 +73,25 @@ template <> class Real_embeddable_traits< Gmpq >
   public:
 
     class Sign 
-      : public Unary_function< Real_embeddable, ::CGAL::Sign > {
+      : public Unary_function< Type, ::CGAL::Sign > {
       public:
-        ::CGAL::Sign operator()( const Real_embeddable& x ) const {
+        ::CGAL::Sign operator()( const Type& x ) const {
           return x.sign();
         }
     };
           
     class To_double 
-      : public Unary_function< Real_embeddable, double > {
+      : public Unary_function< Type, double > {
       public:        
-        double operator()( const Real_embeddable& x ) const {          
+        double operator()( const Type& x ) const {          
           return x.to_double();
         }
     };
     
     class To_interval 
-      : public Unary_function< Real_embeddable, std::pair< double, double > > {
+      : public Unary_function< Type, std::pair< double, double > > {
       public:
-        std::pair<double, double> operator()( const Real_embeddable& x ) const {
+        std::pair<double, double> operator()( const Type& x ) const {
           mpfr_t y;
           mpfr_init2 (y, 53); /* Assume IEEE-754 */
           mpfr_set_q (y, x.mpq(), GMP_RNDD);
@@ -110,7 +110,7 @@ template <> class Real_embeddable_traits< Gmpq >
 template <>
 class Fraction_traits< Gmpq > {
 public:
-    typedef Gmpq Fraction;
+    typedef Gmpq Type;
     typedef ::CGAL::Tag_true Is_fraction;
     typedef Gmpz Numerator;
     typedef Gmpz Denominator;

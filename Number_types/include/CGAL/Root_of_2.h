@@ -305,12 +305,12 @@ template <class RT>
 struct Coercion_traits< RT , Root_of_2<RT> >{                                    
     typedef Tag_true  Are_explicit_interoperable;             
     typedef Tag_true  Are_implicit_interoperable;             
-    typedef Root_of_2<RT> Coercion_type;                                       
+    typedef Root_of_2<RT> Type;                                       
     struct Cast{                                                    
-        typedef Coercion_type result_type;                          
-        Coercion_type operator()(const Root_of_2<RT>& x)   const { return x;}  
-        Coercion_type operator()(const RT& x) const {             
-            return Coercion_type(x);}                               
+        typedef Type result_type;                          
+        Type operator()(const Root_of_2<RT>& x)   const { return x;}  
+        Type operator()(const RT& x) const {             
+            return Type(x);}                               
     };                                                              
 };   
 
@@ -318,12 +318,12 @@ template <class RT>
 struct Coercion_traits< CGAL_int(RT) , Root_of_2<RT> >{                                    
     typedef Tag_true  Are_explicit_interoperable;             
     typedef Tag_true  Are_implicit_interoperable;             
-    typedef Root_of_2<RT> Coercion_type;                                       
+    typedef Root_of_2<RT> Type;                                       
     struct Cast{                                                    
-        typedef Coercion_type result_type;                          
-        Coercion_type operator()(const Root_of_2<RT>& x)   const { return x;}  
-        Coercion_type operator()(CGAL_int(RT) x) const {             
-            return Coercion_type(x);}                               
+        typedef Type result_type;                          
+        Type operator()(const Root_of_2<RT>& x)   const { return x;}  
+        Type operator()(CGAL_int(RT) x) const {             
+            return Type(x);}                               
     };                                                              
 };   
 
@@ -331,12 +331,12 @@ template <class RT>
 struct Coercion_traits< typename Root_of_traits<RT>::RootOf_1 , Root_of_2<RT> >{                                    
     typedef Tag_true  Are_explicit_interoperable;             
     typedef Tag_true  Are_implicit_interoperable;             
-    typedef Root_of_2<RT> Coercion_type;                                       
+    typedef Root_of_2<RT> Type;                                       
     struct Cast{                                                    
-        typedef Coercion_type result_type;                          
-        Coercion_type operator()(const Root_of_2<RT>& x)   const { return x;}  
-        Coercion_type operator()(const RT& x) const {             
-            return Coercion_type(x);}                               
+        typedef Type result_type;                          
+        Type operator()(const Root_of_2<RT>& x)   const { return x;}  
+        Type operator()(const RT& x) const {             
+            return Type(x);}                               
     };                                                              
 };   
 
@@ -402,7 +402,7 @@ class Algebraic_structure_traits<Root_of_2<RT> >
     :public Algebraic_structure_traits_base<Root_of_2<RT> , Null_tag >{
 public:
     
-    typedef Root_of_2<RT> Algebraic_structure;
+    typedef Root_of_2<RT> Type;
     typedef typename Algebraic_structure_traits<RT>::Is_exact Is_exact;
     struct Square
         : public Unary_function< Root_of_2<RT> , Root_of_2<RT> >{
@@ -433,21 +433,21 @@ class Real_embeddable_traits<Root_of_2<RT> >
     typedef typename Root_of_traits<RT>::RootOf_1 Root_of_1;
 public:
     
-    typedef Root_of_2<RT> Real_embeddable;
+    typedef Root_of_2<RT> Type;
     typedef Tag_true Is_real_embeddable;
 
     class Abs 
-        : public Unary_function< Real_embeddable, Real_embeddable >{
+        : public Unary_function< Type, Type >{
     public:
-        Real_embeddable operator()(const Real_embeddable& x) const {  
+        Type operator()(const Type& x) const {  
             return (x>=0)?x:-x;
         }
     };    
 
     class Sign 
-        : public Unary_function< Real_embeddable, ::CGAL::Sign >{
+        : public Unary_function< Type, ::CGAL::Sign >{
     public:
-        ::CGAL::Sign operator()(const Real_embeddable& a) const {
+        ::CGAL::Sign operator()(const Type& a) const {
             const ::CGAL::Sign sign_alpha = CGAL_NTS sign(a.alpha());
             if (a.is_rational()) return (sign_alpha);
             // If alpha and beta have the same sign, return this sign.
@@ -465,13 +465,13 @@ public:
     };
     
     class Compare 
-        : public Binary_function< Real_embeddable, 
-                                  Real_embeddable, 
+        : public Binary_function< Type, 
+                                  Type, 
                                   Comparison_result >{
     public:
         Comparison_result operator()(
-                const Real_embeddable& a, 
-                const Real_embeddable& b) const{
+                const Type& a, 
+                const Type& b) const{
             typedef typename Root_of_traits< RT >::RootOf_1 FT;
             typedef typename First_if_different<FT, RT>::Type WhatType;
             typedef typename boost::is_same< WhatType, RT > do_not_filter;
@@ -585,7 +585,7 @@ public:
         Comparison_result 
         inline
         operator()(
-                const Real_embeddable& a,
+                const Type& a,
                 const Root_of_1& b 
         ) const{
             typedef typename Root_of_traits< RT >::RootOf_1 FT;
@@ -614,13 +614,13 @@ public:
         inline 
         operator()(
                 const Root_of_1& a, 
-                const Real_embeddable& b
+                const Type& b
         ) const{ return opposite(this->operator()(b,a) ); }
         
         Comparison_result 
         inline 
         operator()(
-                const Real_embeddable& a, 
+                const Type& a, 
                 const RT& b
         ) const{
             typedef typename Root_of_traits< RT >::RootOf_1 FT;
@@ -668,9 +668,9 @@ public:
     };
     
     class To_double 
-        : public Unary_function< Real_embeddable, double >{
+        : public Unary_function< Type, double >{
     public:
-        double operator()(const Real_embeddable& x) const {
+        double operator()(const Type& x) const {
             typedef typename Root_of_traits<RT>::RootOf_1 FT;
             typedef Rational_traits< FT > Rational;
             Rational r;
@@ -692,9 +692,9 @@ public:
     };
     
     class To_interval 
-        : public Unary_function< Real_embeddable, std::pair< double, double > >{
+        : public Unary_function< Type, std::pair< double, double > >{
     public:
-        std::pair<double,double> operator()(const Real_embeddable& x) const {
+        std::pair<double,double> operator()(const Type& x) const {
 
             if(x.is_rational()) return CGAL_NTS to_interval(x.alpha());
 

@@ -56,7 +56,7 @@ void algebraic_real_test()
     typedef REAL real_NT;
     typedef RATIONAL rat_NT;
     typedef Z Integer;
-    typedef typename CGAL::Coercion_traits< Coeff_NT, rat_NT>::Coercion_type Coercion_type;
+    typedef typename CGAL::Coercion_traits< Coeff_NT, rat_NT>::Type Type;
     
     typedef NiX::Algebraic_real<Coeff_NT,real_NT,rat_NT> ALGNUM; 
     typedef NiX::Polynomial<Coeff_NT> Poly;
@@ -123,7 +123,7 @@ void algebraic_real_test()
     // general constructor 
     // tmp = 1 
     tmp = ALGNUM(P_1,-2,+2);
-    if ((LiS::Compare_types< rat_NT, Coercion_type  >::same_type)) {
+    if ((LiS::Compare_types< rat_NT, Type  >::same_type)) {
         NiX_test(tmp.is_rational());
         NiX_test(tmp.type()==NiX::IS_RATIONAL);
         NiX_test(tmp==rat_NT(1));
@@ -138,7 +138,7 @@ void algebraic_real_test()
         NiX_test(tmp.rational()==1);
     }
     tmp = ALGNUM(P_1,1,1);
-    if ((LiS::Compare_types< rat_NT, Coercion_type  >::same_type)) {
+    if ((LiS::Compare_types< rat_NT, Type  >::same_type)) {
         NiX_test(tmp.is_rational());
         NiX_test(tmp.type()==NiX::IS_RATIONAL);
         NiX_test(tmp==rat_NT(1));
@@ -458,7 +458,7 @@ void algebraic_real_test_for_set_rational(bool set_rational)
     typedef REAL real_NT;
     typedef RATIONAL rat_NT;
     typedef Z Integer;
-    typedef typename NiX::Coercion_traits< Coeff_NT, rat_NT>::Coercion_type Coercion_type;
+    typedef typename NiX::Coercion_traits< Coeff_NT, rat_NT>::Type Type;
     
     typedef NiX::Algebraic_real<Coeff_NT,real_NT,rat_NT> ALGNUM; 
     typedef NiX::Polynomial<Coeff_NT> Poly;

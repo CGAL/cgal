@@ -96,57 +96,57 @@ sqrt( const AS& x ) {
 
 template< class A, class B >
 inline
-typename Algebraic_structure_traits< typename Coercion_traits<A,B>::Coercion_type>
+typename Algebraic_structure_traits< typename Coercion_traits<A,B>::Type>
 ::Integral_division::result_type
 integral_division( const A& x, const B& y ) {
-    typedef typename Coercion_traits<A,B>::Coercion_type Coercion_type;
-    typename Algebraic_structure_traits< Coercion_type >::Integral_division 
+    typedef typename Coercion_traits<A,B>::Type Type;
+    typename Algebraic_structure_traits< Type >::Integral_division 
         integral_division;
     return integral_division( x, y );
 }
 
 template< class A, class B >
 inline
-typename Algebraic_structure_traits< typename Coercion_traits<A,B>::Coercion_type >
+typename Algebraic_structure_traits< typename Coercion_traits<A,B>::Type >
 ::Gcd::result_type
 gcd( const A& x, const B& y ) {
-    typedef typename Coercion_traits<A,B>::Coercion_type      Coercion_type;
-    typename Algebraic_structure_traits< Coercion_type >::Gcd gcd;
+    typedef typename Coercion_traits<A,B>::Type      Type;
+    typename Algebraic_structure_traits< Type >::Gcd gcd;
     return gcd( x, y );
 }
 
 
 template< class A, class B >
 inline
-typename Algebraic_structure_traits< typename Coercion_traits<A,B>::Coercion_type >
+typename Algebraic_structure_traits< typename Coercion_traits<A,B>::Type >
 ::Mod::result_type
 mod( const A& x, const B& y ) {
-    typedef typename Coercion_traits<A,B>::Coercion_type Coercion_type;
-    typename Algebraic_structure_traits<Coercion_type >::Mod mod;
+    typedef typename Coercion_traits<A,B>::Type Type;
+    typename Algebraic_structure_traits<Type >::Mod mod;
     return mod( x, y );
 }
 
 template< class A, class B >
 inline
-typename Algebraic_structure_traits< typename Coercion_traits<A,B>::Coercion_type >
+typename Algebraic_structure_traits< typename Coercion_traits<A,B>::Type >
 ::Div::result_type
 div( const A& x, const B& y ) {
-    typedef typename Coercion_traits<A,B>::Coercion_type Coercion_type;
-    typename Algebraic_structure_traits<Coercion_type >::Div div;
+    typedef typename Coercion_traits<A,B>::Type Type;
+    typename Algebraic_structure_traits<Type >::Div div;
     return div( x, y );
 }
 
 template< class A, class B >
 inline 
-typename Algebraic_structure_traits< typename Coercion_traits<A,B>::Coercion_type >
+typename Algebraic_structure_traits< typename Coercion_traits<A,B>::Type >
 ::Div_mod::result_type
 div_mod( 
         const A& x,
         const B& y,
-        typename Coercion_traits<A,B>::Coercion_type& q, 
-        typename Coercion_traits<A,B>::Coercion_type& r ) {
-    typedef typename Coercion_traits<A,B>::Coercion_type Coercion_type;
-    typename Algebraic_structure_traits< Coercion_type >::Div_mod div_mod;
+        typename Coercion_traits<A,B>::Type& q, 
+        typename Coercion_traits<A,B>::Type& r ) {
+    typedef typename Coercion_traits<A,B>::Type Type;
+    typename Algebraic_structure_traits< Type >::Div_mod div_mod;
     div_mod( x, y, q, r );                                                                    
 }
 
@@ -196,12 +196,12 @@ return is_zero( x );
 
 template <class A, class B>
 inline
-typename Real_embeddable_traits< typename Coercion_traits<A,B>::Coercion_type >
+typename Real_embeddable_traits< typename Coercion_traits<A,B>::Type >
 ::Compare::result_type 
 compare(const A& a, const B& b)
 { 
-    typedef typename Coercion_traits<A,B>::Coercion_type Coercion_type;
-    typename Real_embeddable_traits<Coercion_type>::Compare compare;
+    typedef typename Coercion_traits<A,B>::Type Type;
+    typename Real_embeddable_traits<Type>::Compare compare;
     return compare (a,b);
     // return (a < b) ? SMALLER : (b < a) ? LARGER : EQUAL; 
 }

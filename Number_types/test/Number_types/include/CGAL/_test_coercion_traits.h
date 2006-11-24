@@ -22,7 +22,7 @@ CGAL_BEGIN_NAMESPACE
     namespace INTERN_COERCION_TRAITS {
 
 
-template< class A, class B, class Coercion_type, class Compare >
+template< class A, class B, class Type, class Compare >
 class Test_compare {
   public:
     void operator()() {
@@ -30,13 +30,13 @@ class Test_compare {
       A a(4);
       B b(2);
       typename CGAL::Coercion_traits< A, B >::Cast cast;
-      Coercion_type a_ret = cast(a);
-      Coercion_type b_ret = cast(b);
+      Type a_ret = cast(a);
+      Type b_ret = cast(b);
       CGAL_test_assert( compare( a, b ) == CGAL_NTS compare( a_ret, b_ret ) );
     }
 };
 
-template< class A, class B, class Coercion_type, class Integral_division >
+template< class A, class B, class Type, class Integral_division >
 class Test_integral_division {
   public:
     void operator()() {
@@ -44,21 +44,21 @@ class Test_integral_division {
       A a(4);
       B b(2);
       typename CGAL::Coercion_traits< A, B >::Cast cast;
-      Coercion_type a_ret = cast(a);
-      Coercion_type b_ret = cast(b);
+      Type a_ret = cast(a);
+      Type b_ret = cast(b);
       CGAL_test_assert( integral_division( a, b ) == 
                         CGAL_NTS integral_division( a_ret, b_ret ) );
     }
 };
 
-template< class A, class B, class Coercion_type >
-class Test_integral_division< A, B, Coercion_type, CGAL::Null_functor > {
+template< class A, class B, class Type >
+class Test_integral_division< A, B, Type, CGAL::Null_functor > {
   public:
   // Nothing to test
     void operator()(){}
 };
 
-template< class A, class B, class Coercion_type, class Gcd >
+template< class A, class B, class Type, class Gcd >
 class Test_gcd {
   public:
     void operator()() {
@@ -66,21 +66,21 @@ class Test_gcd {
       A a(4);
       B b(2);
       typename CGAL::Coercion_traits< A, B >::Cast cast;
-      Coercion_type a_ret = cast(a);
-      Coercion_type b_ret = cast(b);
+      Type a_ret = cast(a);
+      Type b_ret = cast(b);
       CGAL_test_assert( gcd( a, b ) == 
                         CGAL_NTS gcd( a_ret, b_ret ) );
     }
 };
 
-template< class A, class B, class Coercion_type >
-class Test_gcd< A, B, Coercion_type, CGAL::Null_functor > {
+template< class A, class B, class Type >
+class Test_gcd< A, B, Type, CGAL::Null_functor > {
   public:
   // Nothing to test
     void operator()(){}
 };
 
-template< class A, class B, class Coercion_type, class Div_mod >
+template< class A, class B, class Type, class Div_mod >
 class Test_div_mod {
   public:
     void operator()() {
@@ -88,12 +88,12 @@ class Test_div_mod {
       A a(4);
       B b(2);
       typename CGAL::Coercion_traits< A, B >::Cast cast;
-      Coercion_type a_ret = cast(a);
-      Coercion_type b_ret = cast(b);
-      Coercion_type q;
-      Coercion_type r;
-      Coercion_type q_to_compare;
-      Coercion_type r_to_compare;
+      Type a_ret = cast(a);
+      Type b_ret = cast(b);
+      Type q;
+      Type r;
+      Type q_to_compare;
+      Type r_to_compare;
       div_mod( a, b, q, r );
       CGAL_NTS div_mod( a_ret, b_ret, q_to_compare, r_to_compare );
       CGAL_test_assert( q == q_to_compare );
@@ -101,14 +101,14 @@ class Test_div_mod {
     }
 };
 
-template< class A, class B, class Coercion_type >
-class Test_div_mod< A, B, Coercion_type, CGAL::Null_functor > {
+template< class A, class B, class Type >
+class Test_div_mod< A, B, Type, CGAL::Null_functor > {
   public:
   // Nothing to test
     void operator()(){}
 };
 
-template< class A, class B, class Coercion_type, class Div >
+template< class A, class B, class Type, class Div >
 class Test_div {
   public:
     void operator()() {
@@ -116,21 +116,21 @@ class Test_div {
       A a(4);
       B b(2);
       typename CGAL::Coercion_traits< A, B >::Cast cast;
-      Coercion_type a_ret = cast(a);
-      Coercion_type b_ret = cast(b);
+      Type a_ret = cast(a);
+      Type b_ret = cast(b);
       CGAL_test_assert( div( a, b ) == 
                         CGAL_NTS div( a_ret, b_ret ) );
     }
 };
 
-template< class A, class B, class Coercion_type >
-class Test_div< A, B, Coercion_type, CGAL::Null_functor > {  
+template< class A, class B, class Type >
+class Test_div< A, B, Type, CGAL::Null_functor > {  
   public:
   // Nothing to test
     void operator()(){}  
 };
 
-template< class A, class B, class Coercion_type, class Mod >
+template< class A, class B, class Type, class Mod >
 class Test_mod {
   public:
     void operator()() {
@@ -138,83 +138,82 @@ class Test_mod {
       A a(4);
       B b(2);
       typename CGAL::Coercion_traits< A, B >::Cast cast;
-      Coercion_type a_ret = cast(a);
-      Coercion_type b_ret = cast(b);
+      Type a_ret = cast(a);
+      Type b_ret = cast(b);
       CGAL_test_assert( mod( a, b ) == 
                         CGAL_NTS mod( a_ret, b_ret ) );
     }
 };
 
-template< class A, class B, class Coercion_type >
-class Test_mod< A, B, Coercion_type, CGAL::Null_functor > {
+template< class A, class B, class Type >
+class Test_mod< A, B, Type, CGAL::Null_functor > {
   public:
   // Nothing to test
     void operator()(){}
 };
 
 
-template< class Coercion_type >
-void test_implicit_construction( Coercion_type a ) {
+template< class Type >
+void test_implicit_construction( Type a ) {
   (void)a;
 }
 
-template< class A, class B, class Coercion_type, class Are_implicit_interoperable >
+template< class A, class B, class Type, class Are_implicit_interoperable >
 class Implicit_interoperability_test {
   public:
     void operator()() {
       // test implicit construction
-      typedef Coercion_type Coercion_type_type;
-      // Results in 'no matching function for call to...' compile error, if type Coercion_type
+      // Results in 'no matching function for call to...' compile error, if type Type
       //  is not implicit constructable from A and B (which is part of the concept)
-      test_implicit_construction<Coercion_type>(A(1));
-      test_implicit_construction<Coercion_type>(B(2));
+      test_implicit_construction<Type>(A(1));
+      test_implicit_construction<Type>(B(2));
       
       // test explicit construction
-      Coercion_type_type test_var = Coercion_type(A(1));
-      test_var = Coercion_type(B(2));
+      Type test_var = Type(A(1));
+      test_var = Type(B(2));
     }
 };
 
-template< class A, class B, class Coercion_type >
-class Implicit_interoperability_test<A,B,Coercion_type, CGAL::Tag_false > {
+template< class A, class B, class Type >
+class Implicit_interoperability_test<A,B,Type, CGAL::Tag_false > {
   public:
     void operator()() {}
 };
 
-template< class A, class B, class Coercion_type >
+template< class A, class B, class Type >
 void interoperability_test_one_way() {
   typedef CGAL::Coercion_traits< A, B > CT;
 
   CGAL_test_assert((::boost::is_same< typename CT::Are_implicit_interoperable,
                                       CGAL::Tag_true 
                                     >::value));                                    
-  CGAL_test_assert((::boost::is_same< typename CT::Coercion_type, Coercion_type >::value));
+  CGAL_test_assert((::boost::is_same< typename CT::Type, Type >::value));
   
   // Implicit_interoperability_test
-  Implicit_interoperability_test< A, B, Coercion_type, 
+  Implicit_interoperability_test< A, B, Type, 
         typename CT::Are_implicit_interoperable >()();
   
-  Test_integral_division< A, B, Coercion_type, 
-        typename CGAL::Algebraic_structure_traits<Coercion_type>::Integral_division >()();
+  Test_integral_division< A, B, Type, 
+        typename CGAL::Algebraic_structure_traits<Type>::Integral_division >()();
   
-  Test_gcd< A, B, Coercion_type, 
-        typename CGAL::Algebraic_structure_traits<Coercion_type>::Gcd >()();
+  Test_gcd< A, B, Type, 
+        typename CGAL::Algebraic_structure_traits<Type>::Gcd >()();
 
-  Test_div_mod< A, B, Coercion_type, 
-          typename CGAL::Algebraic_structure_traits<Coercion_type>::Div_mod >()();
+  Test_div_mod< A, B, Type, 
+          typename CGAL::Algebraic_structure_traits<Type>::Div_mod >()();
 
-  Test_div< A, B, Coercion_type, 
-          typename CGAL::Algebraic_structure_traits<Coercion_type>::Div >()();
-  Test_mod< A, B, Coercion_type, 
-          typename CGAL::Algebraic_structure_traits<Coercion_type>::Mod >()();
-  Test_compare< A, B, Coercion_type,
-          typename CGAL::Real_embeddable_traits<Coercion_type>::Compare >()();
+  Test_div< A, B, Type, 
+          typename CGAL::Algebraic_structure_traits<Type>::Div >()();
+  Test_mod< A, B, Type, 
+          typename CGAL::Algebraic_structure_traits<Type>::Mod >()();
+  Test_compare< A, B, Type,
+          typename CGAL::Real_embeddable_traits<Type>::Compare >()();
 }
 
-template< class A, class B, class Coercion_type > 
+template< class A, class B, class Type > 
 void interoperability_test() {
-  interoperability_test_one_way< A, B, Coercion_type >();
-  interoperability_test_one_way< B, A, Coercion_type >();
+  interoperability_test_one_way< A, B, Type >();
+  interoperability_test_one_way< B, A, Type >();
 }
 
 template< class FROM, class TO >
@@ -226,13 +225,13 @@ template <class A, class B, class RT>
 void coercion_traits_test_one_way(){
     typedef CGAL::Coercion_traits<A,B> CT;
     {
-        typedef typename CT::Coercion_type Coercion_type;
+        typedef typename CT::Type Type;
         typename CT::Cast cast;
         CGAL_test_assert((::boost::is_same< 
                                       typename CT::Are_explicit_interoperable,
                                       CGAL::Tag_true 
                                           >::value));
-        CGAL_test_assert((::boost::is_same<Coercion_type,RT>::value));
+        CGAL_test_assert((::boost::is_same<Type,RT>::value));
         A a(3);
         B b(3);
         RT  rt(3);
@@ -241,16 +240,16 @@ void coercion_traits_test_one_way(){
     }
 }
 
-template <class A, class B, class Coercion_type>
+template <class A, class B, class Type>
 void coercion_traits_test(){
-    coercion_traits_test_one_way<A,B,Coercion_type>();
-    coercion_traits_test_one_way<B,A,Coercion_type>();   
+    coercion_traits_test_one_way<A,B,Type>();
+    coercion_traits_test_one_way<B,A,Type>();   
     
     // TODO: Is this here OK?
   if((::boost::is_same< typename CGAL::Coercion_traits< A, B >::Are_implicit_interoperable,
                                       CGAL::Tag_true 
                                     >::value)) {
-    interoperability_test< A, B, Coercion_type >();
+    interoperability_test< A, B, Type >();
   }
   
 }

@@ -13,8 +13,8 @@
 int main(){
     typedef CGAL::Algebraic_structure_traits<void> AST;
     
-    typedef AST::Algebraic_structure Algebraic_structure;
-    BOOST_STATIC_ASSERT((::boost::is_same<void,Algebraic_structure>::value)); 
+    typedef AST::Type Type;
+    BOOST_STATIC_ASSERT((::boost::is_same<void,Type>::value)); 
 
     typedef AST::Algebraic_structure_tag Algebraic_structure_tag;
     BOOST_STATIC_ASSERT((::boost::is_same<CGAL::Null_tag,Algebraic_structure_tag>::value)); 

@@ -19,8 +19,8 @@
 // Author(s)     : Sylvain Pion, Monique Teillaud, Athanasios Kakargias
 //                 Olivier Devillers
 
-#ifndef CGAL_NUMBER_TYPES_ROOT_OF_COMPARISON_FUNCTIONS_22_H
-#define CGAL_NUMBER_TYPES_ROOT_OF_COMPARISON_FUNCTIONS_22_H
+#ifndef CGAL_NUMBER_TypeS_ROOT_OF_COMPARISON_FUNCTIONS_22_H
+#define CGAL_NUMBER_TypeS_ROOT_OF_COMPARISON_FUNCTIONS_22_H
 
 #include <CGAL/enum.h>
 #include <CGAL/kernel_assertions.h>
@@ -221,4 +221,4 @@ inline FT calcD(const FT& A1, const FT& I1, const FT& A2, const FT& I2)
 } // namespace CGALi
 } // namespace CGAL
 
-#endif // CGAL_NUMBER_TYPES_ROOT_OF_COMPARISON_FUNCTIONS_22_H
+#endif // CGAL_NUMBER_TypeS_ROOT_OF_COMPARISON_FUNCTIONS_22_H

@@ -39,21 +39,21 @@ template<> class Algebraic_structure_traits< long long int >
   public:
     typedef Tag_true            Is_exact;
     
-    typedef INTERN_AST::Div_per_operator< Algebraic_structure >  Div;
-    typedef INTERN_AST::Mod_per_operator< Algebraic_structure >  Mod;       
+    typedef INTERN_AST::Div_per_operator< Type >  Div;
+    typedef INTERN_AST::Mod_per_operator< Type >  Mod;       
 
     class Is_square 
-      : public Binary_function< Algebraic_structure, Algebraic_structure&,
+      : public Binary_function< Type, Type&,
                                 bool > {
       public:
-        bool operator()( const Algebraic_structure& x,
-                         Algebraic_structure& y ) const {
-          y = (Algebraic_structure) CGAL_CLIB_STD::sqrt( (double)x );
+        bool operator()( const Type& x,
+                         Type& y ) const {
+          y = (Type) CGAL_CLIB_STD::sqrt( (double)x );
           return x == y * y;
         }
-        bool operator()( const Algebraic_structure& x) const {
-            Algebraic_structure y 
-                = (Algebraic_structure) CGAL_CLIB_STD::sqrt( (double)x );
+        bool operator()( const Type& x) const {
+            Type y 
+                = (Type) CGAL_CLIB_STD::sqrt( (double)x );
           return x == y * y;
         }
     };
@@ -63,13 +63,13 @@ template <> class Real_embeddable_traits< long long int >
   : public Real_embeddable_traits_base< long long int > {
   public:
           
-    typedef INTERN_RET::To_double_by_conversion< Real_embeddable >
+    typedef INTERN_RET::To_double_by_conversion< Type >
                                                                       To_double;
 
     class To_interval 
-      : public Unary_function< Real_embeddable, std::pair< double, double > > {
+      : public Unary_function< Type, std::pair< double, double > > {
       public:
-        std::pair<double, double> operator()( const Real_embeddable& x ) const {
+        std::pair<double, double> operator()( const Type& x ) const {
           Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
           Interval_nt<false> approx ((double) x);
           FPU_set_cw(CGAL_FE_UPWARD);

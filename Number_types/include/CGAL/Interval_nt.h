@@ -907,73 +907,73 @@ namespace INTERN_INTERVAL_NT {
 template< bool B > class Real_embeddable_traits< Interval_nt<B> > 
   : public Real_embeddable_traits_base< Interval_nt<B> > {
   public:
-    typedef Interval_nt<B>  Real_embeddable;
+    typedef Interval_nt<B>  Type;
     
     class Abs 
-      : public Unary_function< Real_embeddable, Real_embeddable > {
+      : public Unary_function< Type, Type > {
       public:        
-        Real_embeddable operator()( const Real_embeddable& x ) const {
+        Type operator()( const Type& x ) const {
             return INTERN_INTERVAL_NT::abs( x );
         }
     };    
 
     class Sign
-        : public Unary_function< Real_embeddable, Uncertain< ::CGAL::Sign > > {
+        : public Unary_function< Type, Uncertain< ::CGAL::Sign > > {
       public:        
-        Uncertain< ::CGAL::Sign > operator()( const Real_embeddable& x ) const {
+        Uncertain< ::CGAL::Sign > operator()( const Type& x ) const {
             return INTERN_INTERVAL_NT::sign( x );
         }
     };    
 
     class Is_positive
-      : public Unary_function< Real_embeddable, Uncertain<bool> > {
+      : public Unary_function< Type, Uncertain<bool> > {
       public:        
-        Uncertain<bool> operator()( const Real_embeddable& x ) const {          
+        Uncertain<bool> operator()( const Type& x ) const {          
           return INTERN_INTERVAL_NT::is_positive( x );
         }
     };    
 
     class Is_negative
-      : public Unary_function< Real_embeddable, Uncertain<bool> > {
+      : public Unary_function< Type, Uncertain<bool> > {
       public:        
-        Uncertain<bool> operator()( const Real_embeddable& x ) const {          
+        Uncertain<bool> operator()( const Type& x ) const {          
           return INTERN_INTERVAL_NT::is_negative( x );
         }
     };    
 
     class Compare
-      : public Binary_function< Real_embeddable, Real_embeddable,
+      : public Binary_function< Type, Type,
                                 Uncertain<Comparison_result> > {
       public:        
         Uncertain<Comparison_result> operator()( 
-                const Real_embeddable& x,
-                const Real_embeddable& y ) const {
+                const Type& x,
+                const Type& y ) const {
             return INTERN_INTERVAL_NT::compare( x, y );
         }
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Real_embeddable,
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type,
                 Comparison_result );
     };    
 
     class To_double
-      : public Unary_function< Real_embeddable, double > {
+      : public Unary_function< Type, double > {
       public:        
-        double operator()( const Real_embeddable& x ) const {
+        double operator()( const Type& x ) const {
             return INTERN_INTERVAL_NT::to_double( x );
         }
     };    
 
     class To_interval
-      : public Unary_function< Real_embeddable, std::pair< double, double > > {
+      : public Unary_function< Type, std::pair< double, double > > {
       public:        
-        std::pair<double, double> operator()( const Real_embeddable& x ) const {
+        std::pair<double, double> operator()( const Type& x ) const {
             return INTERN_INTERVAL_NT::to_interval( x );
         }
     };    
     
     class Is_finite
-      : public Unary_function< Real_embeddable, bool > {
+      : public Unary_function< Type, bool > {
       public :
-        bool operator()( const Real_embeddable& x ) const {
+        bool operator()( const Type& x ) const {
           return CGAL_NTS is_finite( x.inf() ) && CGAL_NTS is_finite( x.sup() );
         }
     };
@@ -986,37 +986,37 @@ class Algebraic_structure_traits< Interval_nt<B> >
   : public Algebraic_structure_traits_base< Interval_nt<B>, 
                                             Field_with_sqrt_tag >  {
   public:
-    typedef Interval_nt<B>    Algebraic_structure;
+    typedef Interval_nt<B>    Type;
     typedef Tag_false   Is_exact;
                 
     class Is_zero 
-      : public Unary_function< Algebraic_structure, Uncertain<bool> > {
+      : public Unary_function< Type, Uncertain<bool> > {
       public:
-        Uncertain<bool> operator()( const Algebraic_structure& x ) const {
+        Uncertain<bool> operator()( const Type& x ) const {
           return INTERN_INTERVAL_NT::is_zero( x );
         }        
     };
     
     class Is_one
-      : public Unary_function< Algebraic_structure, Uncertain<bool> > {
+      : public Unary_function< Type, Uncertain<bool> > {
       public:
-        Uncertain<bool> operator()( const Algebraic_structure& x ) const {
+        Uncertain<bool> operator()( const Type& x ) const {
           return INTERN_INTERVAL_NT::is_one( x );
         }
     };
 
     class Square
-      : public Unary_function< Algebraic_structure, Algebraic_structure > {
+      : public Unary_function< Type, Type > {
       public:
-        Algebraic_structure operator()( const Algebraic_structure& x ) const {
+        Type operator()( const Type& x ) const {
           return INTERN_INTERVAL_NT::square( x );
         }
     };
 
     class Sqrt 
-      : public Unary_function< Algebraic_structure, Algebraic_structure > {
+      : public Unary_function< Type, Type > {
       public:        
-        Algebraic_structure operator()( const Algebraic_structure& x ) const {
+        Type operator()( const Type& x ) const {
           return INTERN_INTERVAL_NT::sqrt( x );
         }
     };
@@ -1067,7 +1067,7 @@ template<class A , bool P>
 struct Coercion_traits_interval_nt<A, Interval_nt<P>, Tag_true>{
     typedef Tag_true Are_explicit_interoperable;
     typedef Tag_false Are_implicit_interoperable;
-    typedef Interval_nt<P> Coercion_type;
+    typedef Interval_nt<P> Type;
     struct Cast {
         typedef Interval_nt<P> result_type;
         Interval_nt<P> inline operator()(const Interval_nt<P>& x ) const {

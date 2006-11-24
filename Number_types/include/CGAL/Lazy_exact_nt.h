@@ -791,39 +791,39 @@ operator==(const Lazy_exact_nt<ET>& a, int b)
 
 
 template <typename ET1, typename ET2>
-Lazy_exact_nt< typename Coercion_traits<ET1, ET2>::Coercion_type >
+Lazy_exact_nt< typename Coercion_traits<ET1, ET2>::Type >
 operator+(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
 {
   CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-  return new Lazy_exact_Add<typename Coercion_traits<ET1, ET2>::Coercion_type,
+  return new Lazy_exact_Add<typename Coercion_traits<ET1, ET2>::Type,
                             ET1, ET2>(a, b);
 }
 
 template <typename ET1, typename ET2>
-Lazy_exact_nt< typename Coercion_traits<ET1, ET2>::Coercion_type >
+Lazy_exact_nt< typename Coercion_traits<ET1, ET2>::Type >
 operator-(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
 {
   CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-  return new Lazy_exact_Sub<typename Coercion_traits<ET1, ET2>::Coercion_type,
+  return new Lazy_exact_Sub<typename Coercion_traits<ET1, ET2>::Type,
                             ET1, ET2>(a, b);
 }
 
 template <typename ET1, typename ET2>
-Lazy_exact_nt< typename Coercion_traits<ET1, ET2>::Coercion_type >
+Lazy_exact_nt< typename Coercion_traits<ET1, ET2>::Type >
 operator*(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
 {
   CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-  return new Lazy_exact_Mul<typename Coercion_traits<ET1, ET2>::Coercion_type,
+  return new Lazy_exact_Mul<typename Coercion_traits<ET1, ET2>::Type,
                             ET1, ET2>(a, b);
 }
 
 template <typename ET1, typename ET2>
-Lazy_exact_nt< typename Coercion_traits<ET1, ET2>::Coercion_type >
+Lazy_exact_nt< typename Coercion_traits<ET1, ET2>::Type >
 operator/(const Lazy_exact_nt<ET1>& a, const Lazy_exact_nt<ET2>& b)
 {
   CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
   CGAL_precondition(b != 0);
-  return new Lazy_exact_Div<typename Coercion_traits<ET1, ET2>::Coercion_type,
+  return new Lazy_exact_Div<typename Coercion_traits<ET1, ET2>::Type,
                             ET1, ET2>(a, b);
 }
 
@@ -1078,7 +1078,7 @@ struct Div_mod_selector {
                      NT& q, 
                      NT& r ) const {
       BOOST_STATIC_ASSERT((::boost::is_same<
-        typename Coercion_traits< NT1, NT2 >::Coercion_type, NT
+        typename Coercion_traits< NT1, NT2 >::Type, NT
                                               >::value));
             
       typename Coercion_traits< NT1, NT2 >::Cast cast;
@@ -1162,21 +1162,21 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
                                 ::Is_real_embeddable, Tag_true >::value));
 
   public:
-    typedef Lazy_exact_nt<ET> Real_embeddable;  
+    typedef Lazy_exact_nt<ET> Type;  
            
     class Abs 
-      : public Unary_function< Real_embeddable, Real_embeddable > {
+      : public Unary_function< Type, Type > {
       public:
-        Real_embeddable operator()( const Real_embeddable& a ) const {
+        Type operator()( const Type& a ) const {
             CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
             return new Lazy_exact_Abs<ET>(a);
         }
     };
     
     class Sign 
-      : public Unary_function< Real_embeddable, ::CGAL::Sign > {
+      : public Unary_function< Type, ::CGAL::Sign > {
       public:
-        ::CGAL::Sign operator()( const Real_embeddable& a ) const {
+        ::CGAL::Sign operator()( const Type& a ) const {
             CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
             Uncertain< ::CGAL::Sign> res = CGAL_NTS sign(a.approx());
             if (is_singleton(res))
@@ -1187,11 +1187,11 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
     };
     
     class Compare 
-      : public Binary_function< Real_embeddable, Real_embeddable,
+      : public Binary_function< Type, Type,
                                 Comparison_result > {
       public:
-        Comparison_result operator()( const Real_embeddable& a, 
-                                            const Real_embeddable& b ) const {
+        Comparison_result operator()( const Type& a, 
+                                            const Type& b ) const {
             CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
             if (a.identical(b))
                 return EQUAL;
@@ -1202,15 +1202,15 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
             return CGAL_NTS compare(a.exact(), b.exact());
         }
         
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Real_embeddable,
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type,
                                                       Comparison_result );
         
     };
     
     class To_double 
-      : public Unary_function< Real_embeddable, double > {
+      : public Unary_function< Type, double > {
       public:
-        double operator()( const Real_embeddable& a ) const {
+        double operator()( const Type& a ) const {
             CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
             
             const Interval_nt<false>& app = a.approx();
@@ -1233,18 +1233,18 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
     };
     
     class To_interval 
-      : public Unary_function< Real_embeddable, std::pair< double, double > > {
+      : public Unary_function< Type, std::pair< double, double > > {
       public:
-        std::pair<double, double> operator()( const Real_embeddable& a ) const {
+        std::pair<double, double> operator()( const Type& a ) const {
             CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
             return a.approx().pair();
         }
     };
     
     class Is_finite
-      : public Unary_function< Real_embeddable, bool > {
+      : public Unary_function< Type, bool > {
       public:
-        bool operator()( const Real_embeddable& x ) const {
+        bool operator()( const Type& x ) const {
           return CGAL_NTS is_finite(x.approx()) || CGAL_NTS is_finite(x.exact());        
         }
     };
@@ -1255,7 +1255,7 @@ template <class ET1, class ET2, class F>
 class Lazy_exact_nt_coercion_traits_base{
     typedef Tag_false Are_explicit_interoperable;
     typedef Tag_false Are_implicit_interoperable;
-    //typedef Null_type    Coercion_type
+    //typedef Null_type    Type
     typedef Null_functor Cast;
 };
 
@@ -1266,19 +1266,19 @@ class Lazy_exact_nt_coercion_traits_base
     typedef Lazy_exact_nt<ET1> A;
     typedef Lazy_exact_nt<ET2> B;
 public:
-    typedef Lazy_exact_nt<typename CT::Coercion_type> Coercion_type;
+    typedef Lazy_exact_nt<typename CT::Type> Type;
     typedef typename CT::Are_implicit_interoperable Are_explicit_interoperable; 
     typedef typename CT::Are_implicit_interoperable Are_implicit_interoperable; 
     
     class Cast{
     private:
         template <class T>
-        inline Coercion_type cast(const T& x) const{ return Coercion_type(x); }
-        inline Coercion_type cast(const Coercion_type& x) const{ return x; }
+        inline Type cast(const T& x) const{ return Type(x); }
+        inline Type cast(const Type& x) const{ return x; }
     public:
-        typedef Coercion_type result_type;       
-        Coercion_type operator()(const A& x) const { return cast(x);}
-        Coercion_type operator()(const B& x) const { return cast(x);}         
+        typedef Type result_type;       
+        Type operator()(const A& x) const { return cast(x);}
+        Type operator()(const B& x) const { return cast(x);}         
     };
 };
 
@@ -1308,7 +1308,7 @@ struct Coercion_traits< Lazy_exact_nt<ET1>, Lazy_exact_nt<ET2> >
         =boost::is_same< Are_implicit_interoperable, Tag_false>::value; \
     public:                                                             \
         typedef typename boost::mpl::if_c <interoperable,Null_tag,NT>   \
-        ::type  Coercion_type;                                          \
+        ::type  Type;                                          \
         typedef typename boost::mpl::if_c <interoperable, Null_functor, \
     INTERN_CT::Cast_from_to<NTX,NT> >::type Cast;                       \
     };                                                                  \
@@ -1332,7 +1332,7 @@ template < class ET >
 class Fraction_traits_base <Lazy_exact_nt<ET> , CGAL::Tag_false>
     : public Fraction_traits<ET> {
 public:
-    typedef Lazy_exact_nt<ET>  Fraction;
+    typedef Lazy_exact_nt<ET>  Type;
 };
 
 template < class ET >
@@ -1341,7 +1341,7 @@ class Fraction_traits_base <Lazy_exact_nt<ET> , CGAL::Tag_true>{
     typedef typename ETT::Numerator ET_numerator;
     typedef typename ETT::Denominator ET_denominator;
 public:
-    typedef Lazy_exact_nt<ET>  Fraction;
+    typedef Lazy_exact_nt<ET>  Type;
     typedef Tag_true Is_fraction;
     typedef Lazy_exact_nt<ET_numerator> Numerator;
     typedef Lazy_exact_nt<ET_denominator> Denominator;
@@ -1352,18 +1352,18 @@ public:
             return Denominator(common_factor(a.exact(),b.exact()));
         }
     };
-    struct Compose : Binary_function<Fraction,Numerator,Denominator>{
-        Fraction operator()(const Numerator& n, const Denominator& d) const {
+    struct Compose : Binary_function<Type,Numerator,Denominator>{
+        Type operator()(const Numerator& n, const Denominator& d) const {
             typename ETT::Compose compose;
-            return Fraction(compose(n.exact(),d.exact()));
+            return Type(compose(n.exact(),d.exact()));
         }
     };
     struct Decompose {
         typedef void result_type;
-        typedef Fraction first_argument_type;
+        typedef Type first_argument_type;
         typedef Numerator second_argument_type;
         typedef Denominator third_argument_type;
-        void operator()(const Fraction& f, Numerator& n, Denominator& d) const {
+        void operator()(const Type& f, Numerator& n, Denominator& d) const {
             typename ETT::Decompose decompose;
             ET_numerator nn;
             ET_denominator dd;

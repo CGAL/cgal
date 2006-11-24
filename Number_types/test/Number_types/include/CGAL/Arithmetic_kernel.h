@@ -139,7 +139,7 @@ typedef LEDA_arithmetic_kernel Arithmetic_kernel;
 #endif // defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
 
 // Macro to snap typedefs in Arithmetic_kernel
-#define CGAL_SNAP_ARITHMETIC_KERNEL_TYPEDEFS(AT) \
+#define CGAL_SNAP_ARITHMETIC_KERNEL_TypeDEFS(AT) \
   typedef typename AT::Integer Integer; \
   typedef typename AT::Rational Rational; \
   typedef typename AT::Field_with_sqrt Field_with_sqrt; 

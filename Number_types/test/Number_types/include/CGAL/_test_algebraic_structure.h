@@ -16,7 +16,7 @@
  *          types.
 */
 
-// within this file AS ^= Algebraic_structure
+// within this file AS ^= Type
 
 #include <CGAL/basic.h>
 #include <CGAL/_test_basic.h>
@@ -580,9 +580,9 @@ public:
     }
 };
     
-// Algebraic_structure_functions -----------------------------------------------
+// Type_functions -----------------------------------------------
 template <class  AS >
-void test_Algebraic_structure_functions( 
+void test_Type_functions( 
         const CGAL::Integral_domain_without_division_tag&) {
      AS  x(-15);
     CGAL_NTS simplify(x);
@@ -594,24 +594,24 @@ void test_Algebraic_structure_functions(
 };
  
 template <class  AS >
-void test_Algebraic_structure_functions( const CGAL::Integral_domain_tag&) {
-    test_Algebraic_structure_functions< AS >
+void test_Type_functions( const CGAL::Integral_domain_tag&) {
+    test_Type_functions< AS >
         (CGAL::Integral_domain_without_division_tag());
     CGAL_test_assert(CGAL_NTS integral_division( AS (10), AS (2))== AS (5));
 };
     
 template <class  AS >
-void test_Algebraic_structure_functions( 
+void test_Type_functions( 
         const CGAL::Unique_factorization_domain_tag&) {
-    test_Algebraic_structure_functions< AS >(CGAL::Integral_domain_tag());
+    test_Type_functions< AS >(CGAL::Integral_domain_tag());
         
     CGAL_test_assert(CGAL_NTS gcd( AS (21), AS (15)) == unit_normal(AS (3)));
     
 };
 
 template <class  AS >
-void test_Algebraic_structure_functions( const CGAL::Euclidean_ring_tag&) {
-    test_Algebraic_structure_functions< AS >(
+void test_Type_functions( const CGAL::Euclidean_ring_tag&) {
+    test_Type_functions< AS >(
             CGAL::Unique_factorization_domain_tag());
     //std::cerr << CGAL_NTS mod( AS(14), AS(5) ) << std::endl;
     CGAL_test_assert(CGAL_NTS mod( AS (14), AS (5))== unit_normal( AS (4) ));
@@ -623,23 +623,23 @@ void test_Algebraic_structure_functions( const CGAL::Euclidean_ring_tag&) {
 };
  
 template <class  AS >
-void test_Algebraic_structure_functions( const CGAL::Field_tag&) {
-    test_Algebraic_structure_functions< AS >(CGAL::Integral_domain_tag());
+void test_Type_functions( const CGAL::Field_tag&) {
+    test_Type_functions< AS >(CGAL::Integral_domain_tag());
     CGAL_test_assert(CGAL_NTS unit_part( AS (-15))== AS (-15));
     CGAL_test_assert(CGAL_NTS unit_part( AS (0  ))== AS (  1));
 };
   
 template <class  AS >
-void test_Algebraic_structure_functions( const CGAL::Field_with_sqrt_tag&) {   
-   test_Algebraic_structure_functions< AS >(CGAL::Field_tag());  
+void test_Type_functions( const CGAL::Field_with_sqrt_tag&) {   
+   test_Type_functions< AS >(CGAL::Field_tag());  
    typedef Algebraic_structure_traits<AS> AST;
    typedef typename AST::Is_exact Is_exact; 
    AS  c = CGAL_NTS sqrt( AS (4));
    CGAL_test_assert( !Is_exact::value || c ==  AS (2) );
 }
 template <class  AS >
-void test_Algebraic_structure_functions( const CGAL::Field_with_root_of_tag&) {
-   test_Algebraic_structure_functions< AS >(CGAL::Field_with_sqrt_tag());  
+void test_Type_functions( const CGAL::Field_with_root_of_tag&) {
+   test_Type_functions< AS >(CGAL::Field_with_sqrt_tag());  
    std::vector< AS > coeffs(4);
    coeffs[0]= AS (-27);
    coeffs[1]= AS (0);
@@ -701,7 +701,7 @@ template <class  AS , class Algebra_type, class Is_exact>
 void test_algebraic_structure(){
   
     test_ast_functor_arity<AS>();
-    test_Algebraic_structure_functions< AS >(Algebra_type());
+    test_Type_functions< AS >(Algebra_type());
     typedef CGAL::Algebraic_structure_traits<  AS  > AST;
     CGAL_SNAP_AST_FUNCTORS(AST);
     typedef typename AST::Algebraic_structure_tag  Algebra;
@@ -850,4 +850,4 @@ void test_algebraic_structure_without_exactness_check(
   
 CGAL_END_NAMESPACE
 
-#endif // CGAL_TEST_NUMBER_TYPE_H
+#endif // CGAL_TEST_NUMBER_Type_H

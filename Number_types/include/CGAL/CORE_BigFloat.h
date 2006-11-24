@@ -32,27 +32,27 @@ template <> class Algebraic_structure_traits< CORE::BigFloat >
     typedef Tag_false            Is_exact;
                           
     class Sqrt 
-      : public Unary_function< Algebraic_structure, Algebraic_structure > {
+      : public Unary_function< Type, Type > {
       public:        
-        Algebraic_structure operator()( const Algebraic_structure& x ) const {
+        Type operator()( const Type& x ) const {
           return CORE::sqrt( x );
         }
     };
     
     class Kth_root 
-      : public Binary_function<int, Algebraic_structure, Algebraic_structure> {
+      : public Binary_function<int, Type, Type> {
       public:
-        Algebraic_structure operator()( int k, 
-                                        const Algebraic_structure& x) const {
+        Type operator()( int k, 
+                                        const Type& x) const {
             CGAL_precondition_msg( k > 0, "'k' must be positive for k-th roots");
             // CORE::radical isn't implemented for negative values of x, so we
             //  have to handle this case separately
             if( x < 0 && k%2 != 0) {
-              return Algebraic_structure(-CORE::radical( -x, k ) );
+              return Type(-CORE::radical( -x, k ) );
             }
   
   
-            return Algebraic_structure( CORE::radical( x, k ) );
+            return Type( CORE::radical( x, k ) );
         }
     };    
 };
@@ -65,35 +65,35 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
   public:
       
     class Abs 
-      : public Unary_function< Real_embeddable, Real_embeddable > {
+      : public Unary_function< Type, Type > {
       public:
-        Real_embeddable operator()( const Real_embeddable& x ) const {
+        Type operator()( const Type& x ) const {
             return CORE::abs( x );
         }
     };
     
     class Sign 
-      : public Unary_function< Real_embeddable, ::CGAL::Sign > {
+      : public Unary_function< Type, ::CGAL::Sign > {
       public:        
-        ::CGAL::Sign operator()( const Real_embeddable& x ) const {
+        ::CGAL::Sign operator()( const Type& x ) const {
             return (::CGAL::Sign) CORE::sign( x );
         }        
     };
     
     class Compare 
-      : public Binary_function< Real_embeddable, Real_embeddable,
+      : public Binary_function< Type, Type,
                                 Comparison_result > {
       public:        
-        Comparison_result operator()( const Real_embeddable& x, 
-                                            const Real_embeddable& y ) const {
+        Comparison_result operator()( const Type& x, 
+                                            const Type& y ) const {
           return (Comparison_result) CORE::cmp( x, y );
         }
     };
     
     class To_double 
-      : public Unary_function< Real_embeddable, double > {
+      : public Unary_function< Type, double > {
       public:        
-        double operator()( const Real_embeddable& x ) const {
+        double operator()( const Type& x ) const {
           // this call is required to get reasonable values for the double
           // approximation 
           return x.doubleValue();
@@ -101,9 +101,9 @@ template <> class Real_embeddable_traits< CORE::BigFloat >
     };
     
     class To_interval 
-      : public Unary_function< Real_embeddable, std::pair< double, double > > {
+      : public Unary_function< Type, std::pair< double, double > > {
       public:
-        std::pair<double, double> operator()( const Real_embeddable& x ) const {
+        std::pair<double, double> operator()( const Type& x ) const {
 
             Real_embeddable_traits<CORE::Expr>::To_interval to_interval;
             CORE::Expr temp(x);

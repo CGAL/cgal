@@ -39,7 +39,7 @@
   template < class NT1, class NT2 >                                        \
   Result_type operator()( const NT1& x, const NT2& y ) const {             \
     BOOST_STATIC_ASSERT((::boost::is_same<                                 \
-          typename Coercion_traits< NT1, NT2 >::Coercion_type, NT          \
+          typename Coercion_traits< NT1, NT2 >::Type, NT          \
                                          >::value));                       \
                                                                            \
     typename Coercion_traits< NT1, NT2 >::Cast cast;                       \
@@ -54,24 +54,24 @@ CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, NT )
     struct Coercion_traits< FROM , TO >{                                \
         typedef Tag_true  Are_explicit_interoperable;                   \
         typedef Tag_true  Are_implicit_interoperable;                   \
-        typedef TO Coercion_type;                                       \
+        typedef TO Type;                                       \
         struct Cast{                                                    \
-            typedef Coercion_type result_type;                          \
-            Coercion_type operator()(const TO& x)   const { return x;}  \
-            Coercion_type operator()(const FROM& x) const {             \
-                return Coercion_type(x);}                               \
+            typedef Type result_type;                          \
+            Type operator()(const TO& x)   const { return x;}  \
+            Type operator()(const FROM& x) const {             \
+                return Type(x);}                               \
         };                                                              \
     };                                                                  \
     template <>                                                         \
     struct Coercion_traits< TO , FROM >{                                \
         typedef Tag_true  Are_explicit_interoperable;                   \
         typedef Tag_true  Are_implicit_interoperable;                   \
-        typedef TO Coercion_type;                                       \
+        typedef TO Type;                                       \
         struct Cast{                                                    \
-            typedef Coercion_type result_type;                          \
-            Coercion_type operator()(const TO& x)   const { return x;}  \
-            Coercion_type operator()(const FROM& x) const {             \
-                return Coercion_type(x);}                               \
+            typedef Type result_type;                          \
+            Type operator()(const TO& x)   const { return x;}  \
+            Type operator()(const FROM& x) const {             \
+                return Type(x);}                               \
         };                                                              \
     };      
 
@@ -80,24 +80,24 @@ CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, NT )
     struct Coercion_traits< FROM , TO >{                                \
         typedef Tag_true  Are_explicit_interoperable;                   \
         typedef Tag_true  Are_implicit_interoperable;                   \
-        typedef TO Coercion_type;                                       \
+        typedef TO Type;                                       \
         struct Cast{                                                    \
-            typedef Coercion_type result_type;                          \
-            Coercion_type operator()(const TO& x)   const { return x;}  \
-            Coercion_type operator()(const FROM& x) const {             \
-                return Coercion_type(x);}                               \
+            typedef Type result_type;                          \
+            Type operator()(const TO& x)   const { return x;}  \
+            Type operator()(const FROM& x) const {             \
+                return Type(x);}                               \
         };                                                              \
     };                                                                  \
     template <TEM>                                                      \
     struct Coercion_traits< TO , FROM >{                                \
         typedef Tag_true  Are_explicit_interoperable;                   \
         typedef Tag_true  Are_implicit_interoperable;                   \
-        typedef TO Coercion_type;                                       \
+        typedef TO Type;                                       \
         struct Cast{                                                    \
-            typedef Coercion_type result_type;                          \
-            Coercion_type operator()(const TO& x)   const { return x;}  \
-            Coercion_type operator()(const FROM& x) const {             \
-                return Coercion_type(x);}                               \
+            typedef Type result_type;                          \
+            Type operator()(const TO& x)   const { return x;}  \
+            Type operator()(const FROM& x) const {             \
+                return Type(x);}                               \
         };                                                              \
     };   
 
@@ -108,10 +108,10 @@ CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, NT )
     struct Coercion_traits< A , A >{                                    \
         typedef Tag_true  Are_explicit_interoperable;                   \
         typedef Tag_true  Are_implicit_interoperable;                   \
-        typedef A Coercion_type;                                        \
+        typedef A Type;                                        \
         struct Cast{                                                    \
-            typedef Coercion_type result_type;                          \
-            Coercion_type operator()(const A& x) const { return x;}     \
+            typedef Type result_type;                          \
+            Type operator()(const A& x) const { return x;}     \
         };                                                              \
     };    
 
@@ -120,10 +120,10 @@ CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( NT, NT )
     struct Coercion_traits< A , A >{                                    \
         typedef Tag_true  Are_explicit_interoperable;                   \
         typedef Tag_true  Are_implicit_interoperable;                   \
-        typedef A Coercion_type;                                        \
+        typedef A Type;                                        \
         struct Cast{                                                    \
-            typedef Coercion_type result_type;                          \
-            Coercion_type operator()(const A& x) const {return x;}      \
+            typedef Type result_type;                          \
+            Type operator()(const A& x) const {return x;}      \
         };                                                              \
     };    
 
@@ -181,10 +181,10 @@ template <class A>
 struct Coercion_traits<A,A>{ 
     typedef Tag_true  Are_explicit_interoperable;
     typedef Tag_false Are_implicit_interoperable;
-    typedef A Coercion_type; 
+    typedef A Type; 
     struct Cast{                                        
-        typedef Coercion_type result_type;                             
-        Coercion_type inline operator()(const A& x) const { 
+        typedef Type result_type;                             
+        Type inline operator()(const A& x) const { 
             return x;
         }       
     };
@@ -213,7 +213,7 @@ template <class A, class B>
 struct Coercion_traits_for_level<A,B,0> {
     typedef Tag_false Are_explicit_interoperable;
     typedef Tag_false Are_implicit_interoperable;
-    typedef void               Coercion_type;
+    typedef void               Type;
     typedef Null_functor Cast;
 };
 

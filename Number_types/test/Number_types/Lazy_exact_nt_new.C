@@ -79,7 +79,7 @@ void test_lazy_exact_nt() {
         typedef CGAL::Coercion_traits<LI,LR> CT;
         BOOST_STATIC_ASSERT((boost::is_same< typename CT::Are_implicit_interoperable,CGAL::Tag_true>::value));
         BOOST_STATIC_ASSERT((boost::is_same< typename CT::Are_explicit_interoperable,CGAL::Tag_true>::value));
-        BOOST_STATIC_ASSERT((boost::is_same< typename CT::Coercion_type,LR>::value));
+        BOOST_STATIC_ASSERT((boost::is_same< typename CT::Type,LR>::value));
         
         LI  i(4);
         LR  r(4);

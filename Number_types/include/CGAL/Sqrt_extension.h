@@ -52,7 +52,7 @@
   template \< class ArithmeticTraitsSqrtExtension \>
   class my_class {
   public:
-      NiX_SNAP_ARITHMETIC_TRAITS_SQRT_EXTENSION_TYPEDEFS(ArithmeticTraitsSqrtExtension);
+      NiX_SNAP_ARITHMETIC_TRAITS_SQRT_EXTENSION_TypeDEFS(ArithmeticTraitsSqrtExtension);
       // ...
   };
   </PRE>
@@ -62,8 +62,8 @@
   of your class and saves typing the lengthy ArithmeticTraits::
   prefix.
 */
-#define CGAL_SNAP_ARITHMETIC_TRAITS_SQRT_EXTENSION_TYPEDEFS(AT) \
-  CGAL_SNAP_ARITHMETIC_TRAITS_TYPEDEFS(AT) \
+#define CGAL_SNAP_ARITHMETIC_TRAITS_SQRT_EXTENSION_TypeDEFS(AT) \
+  CGAL_SNAP_ARITHMETIC_TRAITS_TypeDEFS(AT) \
   typedef typename AT::Extn Extn; \
   typedef typename AT::Nested_extn Nested_extn; \
   typedef typename AT::Poly_extn1 Poly_extn1; \
@@ -558,104 +558,104 @@ template <class NT,class ROOT>    bool operator >=
 { return ( (p-Sqrt_extension<NT,ROOT>(num)).sign() >= 0 );}
 
 // Algebraic structure traits
-template< class Algebraic_structure, class Algebraic_type >
+template< class Type, class Algebraic_type >
 class Sqrt_extension_algebraic_structure_traits_base;
 
-template< class Algebraic_structure >
-class Sqrt_extension_algebraic_structure_traits_base< Algebraic_structure, 
+template< class Type >
+class Sqrt_extension_algebraic_structure_traits_base< Type, 
                                         CGAL::Integral_domain_without_division_tag >
-  : public Algebraic_structure_traits_base< Algebraic_structure,
+  : public Algebraic_structure_traits_base< Type,
                                       CGAL::Integral_domain_without_division_tag > {
   public:
     typedef CGAL::Integral_domain_without_division_tag Algebraic_structure_tag;
     
     class Simplify 
-      : public Unary_function< Algebraic_structure&, void > {
+      : public Unary_function< Type&, void > {
       public:
         typedef void result_type;
-        typedef Algebraic_structure& argument_type;
+        typedef Type& argument_type;
 
-        void operator()( Algebraic_structure& x ) const {
+        void operator()( Type& x ) const {
           x.simplify();
         }
     };
 };
 
-template< class Algebraic_structure >
-class Sqrt_extension_algebraic_structure_traits_base< Algebraic_structure, 
+template< class Type >
+class Sqrt_extension_algebraic_structure_traits_base< Type, 
                                                     CGAL::Integral_domain_tag >
-  : public Sqrt_extension_algebraic_structure_traits_base< Algebraic_structure,
+  : public Sqrt_extension_algebraic_structure_traits_base< Type,
                                       CGAL::Integral_domain_without_division_tag > {
   public:
     typedef CGAL::Integral_domain_tag Algebraic_structure_tag;
     
     class Integral_division 
-      : public Binary_function< Algebraic_structure, Algebraic_structure, 
-                                Algebraic_structure > {
+      : public Binary_function< Type, Type, 
+                                Type > {
       public:
-        Algebraic_structure operator()( const Algebraic_structure& x, 
-                                        const Algebraic_structure& y ) const {
+        Type operator()( const Type& x, 
+                                        const Type& y ) const {
           return x/y;
         }
 
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };                                  
 };
 
-template< class Algebraic_structure >
-class Sqrt_extension_algebraic_structure_traits_base< Algebraic_structure, 
+template< class Type >
+class Sqrt_extension_algebraic_structure_traits_base< Type, 
                                                     CGAL::Unique_factorization_domain_tag >
-  : public Sqrt_extension_algebraic_structure_traits_base< Algebraic_structure,
+  : public Sqrt_extension_algebraic_structure_traits_base< Type,
                                       CGAL::Integral_domain_tag > {
   // Nothing new
 };
 
-template< class Algebraic_structure >
-class Sqrt_extension_algebraic_structure_traits_base< Algebraic_structure, 
+template< class Type >
+class Sqrt_extension_algebraic_structure_traits_base< Type, 
                                                     CGAL::Euclidean_ring_tag >
-  : public Sqrt_extension_algebraic_structure_traits_base< Algebraic_structure,
+  : public Sqrt_extension_algebraic_structure_traits_base< Type,
                                       CGAL::Integral_domain_tag > {
   // Nothing new
 };
 
-template< class Algebraic_structure >
-class Sqrt_extension_algebraic_structure_traits_base< Algebraic_structure, 
+template< class Type >
+class Sqrt_extension_algebraic_structure_traits_base< Type, 
                                                     CGAL::Field_tag >
-  : public Sqrt_extension_algebraic_structure_traits_base< Algebraic_structure,
+  : public Sqrt_extension_algebraic_structure_traits_base< Type,
                                       CGAL::Integral_domain_tag > {
   public:
     typedef Field_tag Algebraic_structure_tag;
     
     class Unit_part 
-      : public Unary_function< Algebraic_structure, Algebraic_structure > {
+      : public Unary_function< Type, Type > {
       public:
-        Algebraic_structure operator()( const Algebraic_structure& x ) const {
-          return( x == Algebraic_structure(0) ? Algebraic_structure(1) : x );
+        Type operator()( const Type& x ) const {
+          return( x == Type(0) ? Type(1) : x );
         }
     };
 };
 
-template< class Algebraic_structure >
-class Sqrt_extension_algebraic_structure_traits_base< Algebraic_structure, 
+template< class Type >
+class Sqrt_extension_algebraic_structure_traits_base< Type, 
                                                     CGAL::Field_with_sqrt_tag >
-  : public Sqrt_extension_algebraic_structure_traits_base< Algebraic_structure,
+  : public Sqrt_extension_algebraic_structure_traits_base< Type,
                                       CGAL::Field_tag > {
   // Nothing new
 };
 
-template< class Algebraic_structure >
-class Sqrt_extension_algebraic_structure_traits_base< Algebraic_structure, 
+template< class Type >
+class Sqrt_extension_algebraic_structure_traits_base< Type, 
                                                 CGAL::Field_with_kth_root_tag >
-  : public Sqrt_extension_algebraic_structure_traits_base< Algebraic_structure,
+  : public Sqrt_extension_algebraic_structure_traits_base< Type,
                                       // TODO: Why not Fiel_tag?
                                       CGAL::Field_with_sqrt_tag > {
   // Nothing new
 };
 
-template< class Algebraic_structure >
-class Sqrt_extension_algebraic_structure_traits_base< Algebraic_structure, 
+template< class Type >
+class Sqrt_extension_algebraic_structure_traits_base< Type, 
                                                 CGAL::Field_with_root_of_tag >
-  : public Sqrt_extension_algebraic_structure_traits_base< Algebraic_structure,
+  : public Sqrt_extension_algebraic_structure_traits_base< Type,
                                       // TODO: Why not Fiel_tag?
                                       CGAL::Field_with_sqrt_tag > {
   // Nothing new
@@ -667,7 +667,7 @@ class Algebraic_structure_traits< Sqrt_extension< COEFF, ROOT > >
       Sqrt_extension< COEFF, ROOT >,
       typename Algebraic_structure_traits< COEFF >::Algebraic_structure_tag > {
   public:
-    typedef Sqrt_extension< COEFF, ROOT > Algebraic_structure;
+    typedef Sqrt_extension< COEFF, ROOT > Type;
     
     // Tag_true if COEFF and ROOT are exact 
     typedef typename ::boost::mpl::if_c< 
@@ -687,14 +687,14 @@ class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT> >
                   Sqrt_extension<COEFF, ROOT>, 
                   typename Real_embeddable_traits<COEFF>::Is_real_embeddable > {
   public:
-    typedef Sqrt_extension<COEFF, ROOT> Real_embeddable;  
+    typedef Sqrt_extension<COEFF, ROOT> Type;  
            
     class To_interval 
-      : public Unary_function< Real_embeddable, std::pair< double, double > > {
+      : public Unary_function< Type, std::pair< double, double > > {
       private:
         typedef boost::numeric::interval<double> Double_interval;
       public:
-        std::pair<double,double> operator()(const Real_embeddable& x) const {
+        std::pair<double,double> operator()(const Type& x) const {
             if(x.is_extended()){
               std::pair<double, double> pair_a0 = CGAL_NTS to_interval( x.a0() );
               std::pair<double, double> pair_a1_root = CGAL_NTS to_interval(
@@ -713,17 +713,17 @@ class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT> >
     };
 
     class To_double 
-      : public Unary_function< Real_embeddable, double > {
+      : public Unary_function< Type, double > {
       public:
         // The main problem here is, that even tough the total 
         // expression fits into double, one of the coefficients 
         // or the root may not. ?? ! 
-        double operator()(const Real_embeddable& x) const {
+        double operator()(const Type& x) const {
             if(x.is_extended()){
                 return CGAL_NTS to_double(x.a0()) 
                     +  int(CGAL_NTS sign(x.a1()))
                     * CGAL_NTS sqrt(CGAL_NTS to_double(x.a1()*x.a1() * 
-                                                    Real_embeddable(x.root()))); 
+                                                    Type(x.root()))); 
             }else{
                 return CGAL_NTS to_double(x.a0());
             }
@@ -737,7 +737,7 @@ class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT> >
 
 
 // ############## initializing for NT_traits_comparable_base 
-/*template <class EXT, class TYPETAG>
+/*template <class EXT, class TypeTAG>
 class Sqrt_ext_NTtr_comp_base;
 
 template <class NT, class ROOT >
@@ -1036,13 +1036,13 @@ Extension to_Sqrt_extension(AlgebraicReal x, bool simplify_radicant = false) {
     switch (p.degree()) {
     case 2: {
         typedef NiX::Coercion_traits< NT, Coefficient > CT;
-        typedef typename CT::Coercion_type Coercion_type;
-        typename CGAL::Algebraic_structure_traits<Coercion_type>::Integral_div idiv;
+        typedef typename CT::Type Type;
+        typename CGAL::Algebraic_structure_traits<Type>::Integral_div idiv;
         typename CT::Cast cast;
     
-        Coercion_type den(Coercion_type(2) * cast(p[2]));
+        Type den(Type(2) * cast(p[2]));
         NiX_assert(NiX::sign(den) == CGAL::POSITIVE);
-        Coercion_type mid = idiv(cast(-p[1]), den);
+        Type mid = idiv(cast(-p[1]), den);
         NiX::simplify(mid);
         ROOT rad = p[1]*p[1] - ROOT(4)*p[0]*p[2];
         NiX_assert(rad != ROOT(0)); // double root of algebraic real polynomial
@@ -1052,7 +1052,7 @@ Extension to_Sqrt_extension(AlgebraicReal x, bool simplify_radicant = false) {
         typename CGAL::Algebraic_structure_traits< ROOT >::Sqrt isqrt;
         ROOT root = isqrt(rad);
         if (root * root == rad) {
-            Coercion_type c = idiv(f, den);
+            Type c = idiv(f, den);
             switch (x.compare(mid)) {
             case CGAL::LARGER:             break;
             case CGAL::SMALLER:    c = -c; break;
@@ -1075,7 +1075,7 @@ Extension to_Sqrt_extension(AlgebraicReal x, bool simplify_radicant = false) {
                     i += 1;
                 }
             }
-            Coercion_type c = idiv(f, den);
+            Type c = idiv(f, den);
             switch (x.compare(mid)) {
             case CGAL::LARGER:             break;
             case CGAL::SMALLER:    c = -c; break;
@@ -1163,7 +1163,7 @@ public:
 
 //################################# NiX::Fraction_traits ##################
 // Select the right alternative as Fraction_traits
-// The actual Fraction traits is Inter::Sqrt_ext_Ftr_base_2
+// The actual Type traits is Inter::Sqrt_ext_Ftr_base_2
 // The selction is done in two steps:
 // 1. Inter::Sqrt_ext_Ftr_base_1 selects by the BOOL_TAG whether the COEFF type
 //    Is_decomposable 
@@ -1284,7 +1284,7 @@ template <class COEFF, class ROOT_NT>
 class Sqrt_ext_Ftr_base_1< Sqrt_extension<COEFF,ROOT_NT >, CGAL::Tag_true >
     : public Sqrt_ext_Ftr_base_2< 
     Sqrt_extension<COEFF,ROOT_NT >, 
-    ::boost::is_same< typename NiX::Coercion_traits<ROOT_NT,typename NiX::Fraction_traits<COEFF>::Numerator>::Coercion_type,
+    ::boost::is_same< typename NiX::Coercion_traits<ROOT_NT,typename NiX::Fraction_traits<COEFF>::Numerator>::Type,
                         typename NiX::Fraction_traits<COEFF>::Numerator>::value >
 {
     //nothing new
@@ -1307,7 +1307,7 @@ namespace Intern{
         typedef SqrtExt          Numerator;
         typedef ::CGAL::Tag_false Is_composable;
         typedef ::LiS::Null_tag Denominator;
-        typedef ::LiS::Null_tag Fraction;
+        typedef ::LiS::Null_tag Type;
         typedef ::LiS::Null_tag Compose;  
     }; 
     template <class SqrtExt>
@@ -1315,13 +1315,13 @@ namespace Intern{
         typedef typename SqrtExt::NT Coeff;
         typedef typename SqrtExt::ROOT Root;
         typedef typename NiX::Cofraction_traits<Coeff> CFT;
-        typedef typename CFT::Fraction Fraction_coeff;
+        typedef typename CFT::Type Type_coeff;
        
     public:
         typedef SqrtExt                                       Numerator;
         typedef ::CGAL::Tag_true                               Is_composable;
         typedef typename CFT::Denominator                Denominator;
-        typedef NiX::Sqrt_extension<Fraction_coeff,Root> Fraction;
+        typedef NiX::Sqrt_extension<Type_coeff,Root> Type;
         
         class Compose {
     public:
@@ -1330,14 +1330,14 @@ namespace Intern{
             //! second argument type
             typedef Denominator second_argument_type;
             //! result type
-            typedef Fraction    result_type;
+            typedef Type    result_type;
             //! Compose fraction
-            Fraction operator() (Numerator   num, 
+            Type operator() (Numerator   num, 
                                       Denominator den){
                 if(num.is_extended()){
                     typename CFT::Compose compose_coeff;
-                    Fraction_coeff a0_new(compose_coeff(num.a0(),den));
-                    Fraction_coeff a1_new(compose_coeff(num.a1(),den));
+                    Type_coeff a0_new(compose_coeff(num.a0(),den));
+                    Type_coeff a1_new(compose_coeff(num.a1(),den));
                     return result_type(a0_new, a1_new, num.root());
                 }else{
                     typename CFT::Compose compose_coeff;
@@ -1386,7 +1386,7 @@ public:
     typedef Arithmetic_traits                                             Base;
     
     // load the typedefs from the base class
-    NiX_SNAP_ARITHMETIC_TRAITS_TYPEDEFS(Arithmetic_traits);
+    NiX_SNAP_ARITHMETIC_TRAITS_TypeDEFS(Arithmetic_traits);
     
     //! a number with one root
     typedef NiX::Sqrt_extension< Extn_NT, Extn_root_NT >                  Extn;
@@ -1448,14 +1448,14 @@ private:
 public:
     typedef CGAL::Tag_true  Are_explicit_interoperable;
     typedef CGAL::Tag_false Are_implicit_interoperable;
-    typedef Sqrt_extension<typename CT::Coercion_type, Root> Coercion_type;   
+    typedef Sqrt_extension<typename CT::Type, Root> Type;   
 
     struct Cast{  
     private:
-        inline Coercion_type cast(const Coercion_type& x) const{ return x; }
+        inline Type cast(const Type& x) const{ return x; }
         
         template <class T>
-        inline Coercion_type cast(const T& x) const{ 
+        inline Type cast(const T& x) const{ 
             typename CT::Cast cast;
             if (x.is_extended()) {
                 return result_type(cast(x.a0()),cast(x.a1()),x.root());
@@ -1464,10 +1464,10 @@ public:
             }
         }
     public:
-        typedef Coercion_type result_type;       
+        typedef Type result_type;       
         // this is in order to allow A and B only 
-        Coercion_type operator()(const A& x) const { return cast(x);}
-        Coercion_type operator()(const B& x) const { return cast(x);}      
+        Type operator()(const A& x) const { return cast(x);}
+        Type operator()(const B& x) const { return cast(x);}      
     };
 };
 
@@ -1483,12 +1483,12 @@ public:
     typedef CGAL::Tag_true  Are_explicit_interoperable;
     typedef CGAL::Tag_false Are_implicit_interoperable;
 
-    // Coercion_type = A 
-    typedef Sqrt_extension<Sqrt_extension<Coeff,Root_1>, Root_2> Coercion_type;
+    // Type = A 
+    typedef Sqrt_extension<Sqrt_extension<Coeff,Root_1>, Root_2> Type;
     struct Cast{                                      
-        typedef Coercion_type result_type;                               
-        Coercion_type operator()(const A& x) const { return x;}
-        Coercion_type operator()(const B& x) const { return Coercion_type(x);} 
+        typedef Type result_type;                               
+        Type operator()(const A& x) const { return x;}
+        Type operator()(const B& x) const { return Type(x);} 
     };  
 };
         
@@ -1518,11 +1518,11 @@ public:
     typedef CGAL::Tag_true  Are_explicit_interoperable;
     typedef CGAL::Tag_false Are_implicit_interoperable;
 
-    typedef  Sqrt_extension<Sqrt_extension<Coeff,Root_1>, Root_1> Coercion_type;
+    typedef  Sqrt_extension<Sqrt_extension<Coeff,Root_1>, Root_1> Type;
     struct Cast{                                      
-        typedef Coercion_type result_type;                               
-        Coercion_type operator()(const A& x) const { return x;} 
-        Coercion_type operator()(const B& x) const { return Coercion_type(x);} 
+        typedef Type result_type;                               
+        Type operator()(const A& x) const { return x;} 
+        Type operator()(const B& x) const { return Type(x);} 
     }; 
 };
         
@@ -1587,17 +1587,17 @@ public:
     typedef CGAL::Tag_true  Are_explicit_interoperable;
     typedef CGAL::Tag_false Are_implicit_interoperable;
 
-    typedef FieldWithSqrt Coercion_type;
+    typedef FieldWithSqrt Type;
     struct Cast{                                      
-        typedef Coercion_type result_type;                               
-        Coercion_type operator()(const A& x) const { 
+        typedef Type result_type;                               
+        Type operator()(const A& x) const { 
             typedef Coercion_traits<Coeff,FieldWithSqrt> CT_coeff;
             typedef Coercion_traits<Root ,FieldWithSqrt> CT_root;
             typename CT_coeff::Cast coeff_cast;
             typename CT_root::Cast root_cast;
             if (x.is_extended()) {   
                 typename CGAL::Algebraic_structure_traits<
-                typename CT_root::Coercion_type>::Sqrt sqrt;
+                typename CT_root::Type>::Sqrt sqrt;
                 return // a0+a1*sqrt(root) 
                     coeff_cast(x.a0())+
                     coeff_cast(x.a1())*
@@ -1606,7 +1606,7 @@ public:
                 return coeff_cast(x.a0());
             }
         } 
-        Coercion_type operator()(const B& x) const { return x;} 
+        Type operator()(const B& x) const { return x;} 
     }; 
 };
     
@@ -1620,20 +1620,20 @@ private:
 public:
     typedef CGAL::Tag_true  Are_explicit_interoperable;
     typedef CGAL::Tag_false Are_implicit_interoperable;
-    typedef Sqrt_extension<typename CT::Coercion_type,Root> Coercion_type;
+    typedef Sqrt_extension<typename CT::Type,Root> Type;
     struct Cast{                                      
-        typedef Coercion_type result_type;                               
-        Coercion_type operator()(const A& x) const { 
+        typedef Type result_type;                               
+        Type operator()(const A& x) const { 
             typename CT::Cast cast;
             if (x.is_extended()) {
-                return Coercion_type(cast(x.a0()),cast(x.a1()),x.root());
+                return Type(cast(x.a0()),cast(x.a1()),x.root());
             } else {
-                return Coercion_type(cast(x.a0()));
+                return Type(cast(x.a0()));
             }
         } 
-        Coercion_type operator()(const B& x) const { 
+        Type operator()(const B& x) const { 
             typename CT::Cast cast;
-            return Coercion_type(cast(x));
+            return Type(cast(x));
         } 
     };   
 };

@@ -44,48 +44,48 @@
 
 CGAL_BEGIN_NAMESPACE
 
-    template<class Real_embeddable, class ToDouble>
+    template<class Type, class ToDouble>
     class Test_to_double {
     public:
         void operator() (const ToDouble& to_double) {
             typedef typename ToDouble::argument_type Argument_type;
             typedef typename ToDouble::result_type   Result_type;
-            BOOST_STATIC_ASSERT(( ::boost::is_same<Real_embeddable, Argument_type>::value));  
+            BOOST_STATIC_ASSERT(( ::boost::is_same<Type, Argument_type>::value));  
             BOOST_STATIC_ASSERT(( ::boost::is_same<double, Result_type>::value));
-            CGAL_test_assert(42.0 == to_double(Real_embeddable(42)));
+            CGAL_test_assert(42.0 == to_double(Type(42)));
         }
     };
 
-    template<class Real_embeddable>
-    class Test_to_double<Real_embeddable, CGAL::Null_tag> {
+    template<class Type>
+    class Test_to_double<Type, CGAL::Null_tag> {
     public:
         void operator() (CGAL::Null_functor) {
             CGAL_error("To_double functor not implemented");
         }
     };
     
-    template<class Real_embeddable, class To_interval>
+    template<class Type, class To_interval>
     class Test_to_interval {
     public:
         void operator() (const To_interval& to_interval) {
             typedef typename To_interval::argument_type Argument_type;
             typedef typename To_interval::result_type   Result_type;
             typedef std::pair<double,double>  Interval_type;
-            BOOST_STATIC_ASSERT(( ::boost::is_same<Real_embeddable, Argument_type>::value));
+            BOOST_STATIC_ASSERT(( ::boost::is_same<Type, Argument_type>::value));
             BOOST_STATIC_ASSERT(( ::boost::is_same<Interval_type, Result_type>::value));
 
-//            CGAL_test_assert(NiX::in(42.0,to_Interval(Real_embeddable(42))));
+//            CGAL_test_assert(NiX::in(42.0,to_Interval(Type(42))));
             // Instead of 'NiX::in':
-            CGAL_test_assert( 42.0 >= to_interval( Real_embeddable(42) ).first );
-            CGAL_test_assert( 42.0 <= to_interval( Real_embeddable(42) ).second );
+            CGAL_test_assert( 42.0 >= to_interval( Type(42) ).first );
+            CGAL_test_assert( 42.0 <= to_interval( Type(42) ).second );
 
-            CGAL_test_assert(to_interval(Real_embeddable(42)).first > 41.99);
-            CGAL_test_assert(to_interval(Real_embeddable(42)).second < 42.01);
+            CGAL_test_assert(to_interval(Type(42)).first > 41.99);
+            CGAL_test_assert(to_interval(Type(42)).second < 42.01);
             
 
 	    /*
-	    Real_embeddable notdouble = ipower(2,60);
-            notdouble = notdouble + Real_embeddable(1);
+	    Type notdouble = ipower(2,60);
+            notdouble = notdouble + Type(1);
             Interval test = to_Interval(notdouble);
             double lower = ipower(2.0,60);
             double upper = ipower(2.0,53);
@@ -98,8 +98,8 @@ CGAL_BEGIN_NAMESPACE
         }
     };
     
-    template< class Real_embeddable >
-    class Test_to_interval< Real_embeddable, CGAL::Null_tag> {
+    template< class Type >
+    class Test_to_interval< Type, CGAL::Null_tag> {
       public:
         void operator() (CGAL::Null_functor) {
             CGAL_assertion_msg(false, "To_Interval not implemented");
@@ -123,17 +123,17 @@ void test_ret_functor_arity() {
 }
 
 
-//! tests if \c Real_embeddable is a model for the \c RealComparable concept
+//! tests if \c Type is a model for the \c RealComparable concept
 //! and terminates the program with an error message if not.
-template <class Real_embeddable>
+template <class Type>
 void test_real_embeddable() {    
-    typedef CGAL::Real_embeddable_traits<Real_embeddable> RET;
+    typedef CGAL::Real_embeddable_traits<Type> RET;
     CGAL_SNAP_RET_FUNCTORS(RET);
     typedef typename RET::Is_real_embeddable Is_real_embeddable;
     using CGAL::Tag_true;
     BOOST_STATIC_ASSERT(( ::boost::is_same< Is_real_embeddable, Tag_true>::value));
 
-    test_ret_functor_arity< Real_embeddable >();
+    test_ret_functor_arity< Type >();
     typename RET::Compare compare;
     const Sign    sign = Sign();
     const Abs     abs=Abs(); 
@@ -142,9 +142,9 @@ void test_real_embeddable() {
     const Is_negative is_negative=Is_negative();
     const Is_zero     is_zero=Is_zero();
 
-    Real_embeddable a(-2);
-    Real_embeddable b(1);
-    Real_embeddable c(0);
+    Type a(-2);
+    Type b(1);
+    Type c(0);
     CGAL_test_assert( is_finite(a) );
     CGAL_test_assert( is_finite(b) );
     CGAL_test_assert( is_finite(c) );
@@ -185,81 +185,81 @@ void test_real_embeddable() {
     CGAL_test_assert( sign(c) >  sign(a));
     CGAL_test_assert( sign(a) <= sign(c));
     CGAL_test_assert( sign(c) >= sign(a));
-    CGAL_test_assert( abs(a) == Real_embeddable(2));
-    CGAL_test_assert( abs(b) == Real_embeddable(1));
-    CGAL_test_assert( abs(c) == Real_embeddable(0));   
+    CGAL_test_assert( abs(a) == Type(2));
+    CGAL_test_assert( abs(b) == Type(1));
+    CGAL_test_assert( abs(c) == Type(0));   
     
     // To_double --------------------------------------------------------------
     const To_double to_double = To_double();
     (void)to_double;
-    Test_to_double<Real_embeddable, To_double> ttd;
+    Test_to_double<Type, To_double> ttd;
     ttd(to_double);
     
     // To_Interval ------------------------------------------------------------
     const To_interval to_interval = To_interval();
     (void)to_interval;
-    Test_to_interval<Real_embeddable, To_interval> tti;
+    Test_to_interval<Type, To_interval> tti;
     tti(to_interval);
     
     // additional functions     
-    CGAL_test_assert( CGAL_NTS is_finite( Real_embeddable(1) ) );
-    CGAL_test_assert( CGAL_NTS sign(Real_embeddable(-5))==CGAL::NEGATIVE);
-    CGAL_test_assert( CGAL_NTS abs(Real_embeddable(-5))==Real_embeddable(5));
-//    CGAL_test_assert(NiX::in(5.0,NiX::to_interval(Real_embeddable(5))));
-    CGAL_test_assert( CGAL_NTS compare(Real_embeddable(-5),Real_embeddable(6))==CGAL::SMALLER);
-    CGAL_test_assert( CGAL_NTS is_positive(Real_embeddable(23)) );
-    CGAL_test_assert( CGAL_NTS is_negative(Real_embeddable(-23)) );
-    CGAL_test_assert( CGAL_NTS is_zero( Real_embeddable(0) ) );
-    CGAL_test_assert( !CGAL_NTS is_zero( Real_embeddable(23) ) );
+    CGAL_test_assert( CGAL_NTS is_finite( Type(1) ) );
+    CGAL_test_assert( CGAL_NTS sign(Type(-5))==CGAL::NEGATIVE);
+    CGAL_test_assert( CGAL_NTS abs(Type(-5))==Type(5));
+//    CGAL_test_assert(NiX::in(5.0,NiX::to_interval(Type(5))));
+    CGAL_test_assert( CGAL_NTS compare(Type(-5),Type(6))==CGAL::SMALLER);
+    CGAL_test_assert( CGAL_NTS is_positive(Type(23)) );
+    CGAL_test_assert( CGAL_NTS is_negative(Type(-23)) );
+    CGAL_test_assert( CGAL_NTS is_zero( Type(0) ) );
+    CGAL_test_assert( !CGAL_NTS is_zero( Type(23) ) );
 
 }
 
-//! tests if \c Real_embeddable says it is not a model for the \c RealComparable 
+//! tests if \c Type says it is not a model for the \c RealComparable 
 //! concept and terminates the program with an error message if it 
 //! actually is.
-template <class Real_embeddable>
+template <class Type>
 void test_not_real_embeddable() {
-    typedef CGAL::Real_embeddable_traits<Real_embeddable> RET;
+    typedef CGAL::Real_embeddable_traits<Type> RET;
     typedef typename RET::Is_real_embeddable Is_real_embeddable;
     using CGAL::Tag_false;
     BOOST_STATIC_ASSERT(( ::boost::is_same< Is_real_embeddable, Tag_false>::value));
 }
 
 
-//template <class Real_embeddable, class CeilLog2Abs>
-//void test_rounded_log2_abs(Real_embeddable zero, CGAL::Null_functor, CeilLog2Abs) {
+//template <class Type, class CeilLog2Abs>
+//void test_rounded_log2_abs(Type zero, CGAL::Null_functor, CeilLog2Abs) {
 //    typedef CGAL::Null_functor Null_functor;
 //    BOOST_STATIC_ASSERT(( ::boost::is_same< CeilLog2Abs, Null_functor>::value));
 //}
 //
-//template <class Real_embeddable, class FloorLog2Abs, class CeilLog2Abs>
-//void test_rounded_log2_abs(Real_embeddable zero, FloorLog2Abs fl_log, CeilLog2Abs cl_log) {
+//template <class Type, class FloorLog2Abs, class CeilLog2Abs>
+//void test_rounded_log2_abs(Type zero, FloorLog2Abs fl_log, CeilLog2Abs cl_log) {
 //    typedef CGAL::Null_functor Null_functor;
 //    BOOST_STATIC_ASSERT((!::boost::is_same< CeilLog2Abs, Null_functor>::value));
 //
-//    CGAL_test_assert( fl_log(Real_embeddable( 7)) == 2 );
-//    CGAL_test_assert( cl_log(Real_embeddable( 7)) == 3 );
-//    CGAL_test_assert( fl_log(Real_embeddable( 8)) == 3 );
-//    CGAL_test_assert( cl_log(Real_embeddable( 8)) == 3 );
-//    CGAL_test_assert( fl_log(Real_embeddable(-9)) == 3 );
-//    CGAL_test_assert( cl_log(Real_embeddable(-9)) == 4 );
+//    CGAL_test_assert( fl_log(Type( 7)) == 2 );
+//    CGAL_test_assert( cl_log(Type( 7)) == 3 );
+//    CGAL_test_assert( fl_log(Type( 8)) == 3 );
+//    CGAL_test_assert( cl_log(Type( 8)) == 3 );
+//    CGAL_test_assert( fl_log(Type(-9)) == 3 );
+//    CGAL_test_assert( cl_log(Type(-9)) == 4 );
 //
-//    CGAL_test_assert( NiX::floor_log2_abs(Real_embeddable(  64)) == 6 );
-//    CGAL_test_assert( NiX::ceil_log2_abs( Real_embeddable(  64)) == 6 );
-//    CGAL_test_assert( NiX::floor_log2_abs(Real_embeddable(-126)) == 6 );
-//    CGAL_test_assert( NiX::ceil_log2_abs( Real_embeddable(-126)) == 7 );
+//    CGAL_test_assert( NiX::floor_log2_abs(Type(  64)) == 6 );
+//    CGAL_test_assert( NiX::ceil_log2_abs( Type(  64)) == 6 );
+//    CGAL_test_assert( NiX::floor_log2_abs(Type(-126)) == 6 );
+//    CGAL_test_assert( NiX::ceil_log2_abs( Type(-126)) == 7 );
 //}
 //
 //
 ////! tests that \c Floor_log2_abs and \c Ceil_log2_abs are
 ////! \c both CGAL::Null_functor or both working properly
 ////! (This is independent of the \c RealComparable concept)
-//template <class Real_embeddable>
+//template <class Type>
 //void test_rounded_log2_abs() {
 //
-//    typedef typename NiX::Real_embeddable_traits<Real_embeddable>::Floor_log2_abs F;
-//    typedef typename NiX::Real_embeddable_traits<Real_embeddable>::Ceil_log2_abs C;
-//    test_rounded_log2_abs(Real_embeddable(0), F(), C());
+//    typedef typename NiX::Real_embeddable_traits<Type>::Floor_log2_abs F;
+//    typedef typename NiX::Real_embeddable_traits<Type>::Ceil_log2_abs C;
+//    test_rounded_log2_abs(Type(0), F(), C());
 //}
 
 CGAL_END_NAMESPACE

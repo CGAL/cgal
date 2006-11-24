@@ -36,48 +36,48 @@ public:
     typedef Tag_true            Is_exact;
 
     struct Is_zero 
-        : public Unary_function< Algebraic_structure, bool > {
+        : public Unary_function< Type, bool > {
     public:        
-        bool operator()( const Algebraic_structure& x ) const {
+        bool operator()( const Type& x ) const {
             return x.is_zero();
         }
     };
     
     struct Integral_division
-        : public Binary_function< Algebraic_structure, 
-                                Algebraic_structure,
-                                Algebraic_structure > {
+        : public Binary_function< Type, 
+                                Type,
+                                Type > {
     public:
-        Algebraic_structure operator()( 
-                const Algebraic_structure& x,
-                const Algebraic_structure& y ) const {
+        Type operator()( 
+                const Type& x,
+                const Type& y ) const {
             return x.integral_division(y);
         }
     };
     
     struct Gcd
-        : public Binary_function< Algebraic_structure, 
-                                Algebraic_structure,
-                                Algebraic_structure > {
+        : public Binary_function< Type, 
+                                Type,
+                                Type > {
     public:
-        Algebraic_structure operator()( 
-                const Algebraic_structure& x,
-                const Algebraic_structure& y ) const {
+        Type operator()( 
+                const Type& x,
+                const Type& y ) const {
             return x.gcd(y);
         }
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR(int);
     };
     
-    typedef INTERN_AST::Div_per_operator< Algebraic_structure > Div;
-    typedef INTERN_AST::Mod_per_operator< Algebraic_structure > Mod;
+    typedef INTERN_AST::Div_per_operator< Type > Div;
+    typedef INTERN_AST::Mod_per_operator< Type > Mod;
 
     struct Sqrt 
-        : public Unary_function< Algebraic_structure, Algebraic_structure > {
-        Algebraic_structure operator()( const Algebraic_structure& x ) const {
+        : public Unary_function< Type, Type > {
+        Type operator()( const Type& x ) const {
             return x.sqrt();
         }
     };       
-    typedef INTERN_AST::Is_square_per_sqrt<Algebraic_structure> Is_square;
+    typedef INTERN_AST::Is_square_per_sqrt<Type> Is_square;
     
 };
 
@@ -92,37 +92,37 @@ public:
     typedef AST::Is_zero Is_zero;
 
     struct Sign 
-        : public Unary_function< Real_embeddable, ::CGAL::Sign > {
+        : public Unary_function< Type, ::CGAL::Sign > {
     public:
-        ::CGAL::Sign operator()( const Real_embeddable& x ) const {
+        ::CGAL::Sign operator()( const Type& x ) const {
             return x.sign();
         }        
     };
     
     struct Compare 
-        : public Binary_function< Real_embeddable, 
-                                  Real_embeddable,
+        : public Binary_function< Type, 
+                                  Type,
                                   Comparison_result > {
     public:
         Comparison_result operator()( 
-                const Real_embeddable& x, 
-                const Real_embeddable& y ) const {
+                const Type& x, 
+                const Type& y ) const {
             return x.compare(y);
         }
     };
     
     struct To_double 
-        : public Unary_function< Real_embeddable, double > {
+        : public Unary_function< Type, double > {
     public:
-        double operator()( const Real_embeddable& x ) const {
+        double operator()( const Type& x ) const {
             return x.to_double();
         }
     };
     
     struct To_interval 
-        : public Unary_function< Real_embeddable, std::pair< double, double > > {
+        : public Unary_function< Type, std::pair< double, double > > {
     public:
-        std::pair<double, double> operator()( const Real_embeddable& x ) const {
+        std::pair<double, double> operator()( const Type& x ) const {
             // dummy
             return std::pair<double,double>(0.0,0.0);
         }

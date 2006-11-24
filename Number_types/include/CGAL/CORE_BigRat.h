@@ -59,36 +59,36 @@ template <> class Real_embeddable_traits< CORE::BigRat >
   public:
       
     class Abs 
-      : public Unary_function< Real_embeddable, Real_embeddable > {
+      : public Unary_function< Type, Type > {
       public:        
-        Real_embeddable operator()( const Real_embeddable& x ) const {
+        Type operator()( const Type& x ) const {
           return CORE::abs( x );
         }
     };
     
     class Sign 
-      : public Unary_function< Real_embeddable, ::CGAL::Sign > {
+      : public Unary_function< Type, ::CGAL::Sign > {
       public:        
-        ::CGAL::Sign operator()( const Real_embeddable& x ) const {
+        ::CGAL::Sign operator()( const Type& x ) const {
           return (::CGAL::Sign) CORE::sign( x );
         }        
     };
     
     class Compare 
-      : public Binary_function< Real_embeddable, Real_embeddable,
+      : public Binary_function< Type, Type,
                                 Comparison_result > {
       public:
-        Comparison_result operator()( const Real_embeddable& x, 
-                                            const Real_embeddable& y ) const {
+        Comparison_result operator()( const Type& x, 
+                                            const Type& y ) const {
           typedef Real_embeddable_traits<int> Int_traits;
           return Int_traits::Sign()( ::CORE::cmp(x,y));
         }
     };
     
     class To_double 
-      : public Unary_function< Real_embeddable, double > {
+      : public Unary_function< Type, double > {
       public:
-        double operator()( const Real_embeddable& x ) const {
+        double operator()( const Type& x ) const {
           // this call is required to get reasonable values for the double
           // approximation 
           return x.doubleValue();
@@ -96,9 +96,9 @@ template <> class Real_embeddable_traits< CORE::BigRat >
     };
     
     class To_interval 
-      : public Unary_function< Real_embeddable, std::pair< double, double > > {
+      : public Unary_function< Type, std::pair< double, double > > {
       public:
-        std::pair<double, double> operator()( const Real_embeddable& x ) const {
+        std::pair<double, double> operator()( const Type& x ) const {
 
           Real_embeddable_traits<CORE::Expr>::To_interval to_interval;
           CORE::Expr temp(x);
@@ -114,7 +114,7 @@ template <> class Real_embeddable_traits< CORE::BigRat >
 template <>
 class Fraction_traits< CORE::BigRat > {
 public:
-    typedef CORE::BigRat Fraction;
+    typedef CORE::BigRat Type;
     typedef ::CGAL::Tag_true Is_fraction;
     typedef CORE::BigInt Numerator;
     typedef Numerator Denominator;
@@ -123,11 +123,11 @@ public:
 
     class Decompose {
     public:
-        typedef Fraction first_argument_type;
+        typedef Type first_argument_type;
         typedef Numerator& second_argument_type;
         typedef Numerator& third_argument_type;
         void operator () (
-                const Fraction& rat,
+                const Type& rat,
                 Numerator& num,
                 Numerator& den) {
             num = CGAL_CORE_NUMERATOR(rat);
@@ -139,11 +139,11 @@ public:
     public:
         typedef Numerator first_argument_type;
         typedef Numerator second_argument_type;
-        typedef Fraction result_type;
-        Fraction operator ()(
+        typedef Type result_type;
+        Type operator ()(
                 const Numerator& num , 
                 const Numerator& den ) {
-            return Fraction(num, den);
+            return Type(num, den);
         }
     };
 };

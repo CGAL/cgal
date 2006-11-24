@@ -53,13 +53,13 @@ template <> class Algebraic_structure_traits< leda_rational >
     typedef Tag_true            Is_exact;
                 
 //    TODO: How to implement this without having sqrt?
-//    typedef INTERN_AST::Is_square_per_sqrt< Algebraic_structure >
+//    typedef INTERN_AST::Is_square_per_sqrt< Type >
 //                                                                 Is_square;
 
     class Simplify 
-      : public Unary_function< Algebraic_structure&, void > {
+      : public Unary_function< Type&, void > {
       public:        
-        void operator()( Algebraic_structure& x) const {
+        void operator()( Type& x) const {
             x.normalize();
         }
     };
@@ -71,50 +71,50 @@ template <> class Real_embeddable_traits< leda_rational >
   public:
       
     class Abs 
-      : public Unary_function< Real_embeddable, Real_embeddable > {
+      : public Unary_function< Type, Type > {
       public:
-        Real_embeddable operator()( const Real_embeddable& x ) const {
+        Type operator()( const Type& x ) const {
             return CGAL_LEDA_SCOPE::abs( x );
         }
     };
     
     class Sign 
-      : public Unary_function< Real_embeddable, ::CGAL::Sign > {
+      : public Unary_function< Type, ::CGAL::Sign > {
       public:
-        ::CGAL::Sign operator()( const Real_embeddable& x ) const {
+        ::CGAL::Sign operator()( const Type& x ) const {
             return (::CGAL::Sign) CGAL_LEDA_SCOPE::sign( x );
         }        
     };
     
     class Compare 
-      : public Binary_function< Real_embeddable, Real_embeddable,
+      : public Binary_function< Type, Type,
                                 Comparison_result > {
       public:
-        Comparison_result operator()( const Real_embeddable& x, 
-                                      const Real_embeddable& y ) const {
+        Comparison_result operator()( const Type& x, 
+                                      const Type& y ) const {
           return (Comparison_result) CGAL_LEDA_SCOPE::compare( x, y );
         }
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT(Real_embeddable,Comparison_result);
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT(Type,Comparison_result);
     };
     
     class To_double 
-      : public Unary_function< Real_embeddable, double > {
+      : public Unary_function< Type, double > {
       public:
-        double operator()( const Real_embeddable& x ) const {
+        double operator()( const Type& x ) const {
           return x.to_double();
         }
     };
     
     class To_interval 
-      : public Unary_function< Real_embeddable, std::pair< double, double > > {
+      : public Unary_function< Type, std::pair< double, double > > {
       public:
-        std::pair<double, double> operator()( const Real_embeddable& x ) const {
+        std::pair<double, double> operator()( const Type& x ) const {
 
 #if CGAL_LEDA_VERSION >= 501
           CGAL_LEDA_SCOPE::interval temp(x);
           std::pair<double, double> result(temp.lower_bound(),temp.upper_bound());
-          CGAL_postcondition(Real_embeddable(result.first)<=x);
-          CGAL_postcondition(Real_embeddable(result.second)>=x);
+          CGAL_postcondition(Type(result.first)<=x);
+          CGAL_postcondition(Type(result.second)>=x);
           return result; 
 #else 
           CGAL_LEDA_SCOPE::bigfloat xnum = x.numerator();
@@ -128,14 +128,14 @@ template <> class Real_embeddable_traits< leda_rational >
           double MinDbl = CGAL_LEDA_SCOPE::fp::compose_parts(0,0,0,1); 
    
           double low = xlow.to_double();
-          while(Real_embeddable(low) > x) low = low - MinDbl;
+          while(Type(low) > x) low = low - MinDbl;
        
           double upp = xupp.to_double();
-          while(Real_embeddable(upp) < x) upp = upp + MinDbl;
+          while(Type(upp) < x) upp = upp + MinDbl;
          
           std::pair<double, double> result(low,upp);
-          CGAL_postcondition(Real_embeddable(result.first)<=x);
-          CGAL_postcondition(Real_embeddable(result.second)>=x);
+          CGAL_postcondition(Type(result.first)<=x);
+          CGAL_postcondition(Type(result.second)>=x);
           return result; 
 #endif
           // Original CGAL to_interval (seemed to be inferior)
@@ -160,7 +160,7 @@ template <> class Real_embeddable_traits< leda_rational >
 template <>
 class Fraction_traits< leda_rational > {
 public:
-    typedef leda_rational Fraction;
+    typedef leda_rational Type;
     typedef ::CGAL::Tag_true Is_fraction;
     typedef leda_integer Numerator;
     typedef Numerator Denominator;
@@ -169,11 +169,11 @@ public:
 
     class Decompose {
     public:
-        typedef Fraction first_argument_type;
+        typedef Type first_argument_type;
         typedef Numerator& second_argument_type;
         typedef Numerator& third_argument_type;
         void operator () (
-                const Fraction& rat,
+                const Type& rat,
                 Numerator& num,
                 Numerator& den) {
             num = rat.numerator();
@@ -185,11 +185,11 @@ public:
     public:
         typedef Numerator first_argument_type;
         typedef Numerator second_argument_type;
-        typedef Fraction result_type;
-        Fraction operator ()(
+        typedef Type result_type;
+        Type operator ()(
                 const Numerator& num , 
                 const Numerator& den ) {
-            Fraction result(num, den);
+            Type result(num, den);
             result.normalize();
             return result;
         }

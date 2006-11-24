@@ -41,18 +41,18 @@ template <> class Algebraic_structure_traits< CORE::Expr >
     typedef Tag_true            Is_exact;
 
     class Sqrt 
-      : public Unary_function< Algebraic_structure, Algebraic_structure > {
+      : public Unary_function< Type, Type > {
       public:
-        Algebraic_structure operator()( const Algebraic_structure& x ) const {
+        Type operator()( const Type& x ) const {
           return CORE::sqrt( x );
         }
     };
     
     class Kth_root 
-      : public Binary_function<int, Algebraic_structure, Algebraic_structure> {
+      : public Binary_function<int, Type, Type> {
       public:
-        Algebraic_structure operator()( int k, 
-                                        const Algebraic_structure& x) const {
+        Type operator()( int k, 
+                                        const Type& x) const {
           CGAL_precondition_msg( k > 0, "'k' must be positive for k-th roots");
           // CORE::radical isn't implemented for negative values of x, so we
           //  have to handle this case separately
@@ -66,7 +66,7 @@ template <> class Algebraic_structure_traits< CORE::Expr >
     class Root_of {
       public:
 //        typedef CORE::BigRat Boundary;
-        typedef Algebraic_structure   result_type;
+        typedef Type   result_type;
 
         typedef Arity_tag< 3 >         Arity;
         
@@ -74,30 +74,30 @@ template <> class Algebraic_structure_traits< CORE::Expr >
         // constructs the kth roots of the polynomial 
         // given by the iterator range, starting from 0. 
         template< class ForwardIterator >
-        Algebraic_structure operator()( int k, 
+        Type operator()( int k, 
                                         ForwardIterator begin, 
                                         ForwardIterator end) const {
-            std::vector<Algebraic_structure> coeffs;
+            std::vector<Type> coeffs;
             for(ForwardIterator it = begin; it != end; it++){
                 coeffs.push_back(*it);
             }
-            CORE::Polynomial<Algebraic_structure> polynomial(coeffs);
-            return Algebraic_structure(polynomial,k);
+            CORE::Polynomial<Type> polynomial(coeffs);
+            return Type(polynomial,k);
         };
         
 // TODO: Need to be fixed: polynomial<CORE::Expr>.eval() cannot return 
 //       CORE::BigFloat, so this does not compile.
 
 /*        template <class ForwardIterator>
-        Algebraic_structure operator()( CORE::BigRat lower,
+        Type operator()( CORE::BigRat lower,
                                         CORE::BigRat upper,
                                         ForwardIterator begin, 
                                         ForwardIterator end) const {
-            std::vector<Algebraic_structure> coeffs;
+            std::vector<Type> coeffs;
             for(ForwardIterator it = begin; it != end; it++){
                  coeffs.push_back(*it);
             }
-            CORE::Polynomial<Algebraic_structure> polynomial(coeffs);
+            CORE::Polynomial<Type> polynomial(coeffs);
             CORE::BigFloat lower_bf, upper_bf;
             CORE::BigFloat eval_at_lower(0), eval_at_upper(0);
             
@@ -119,7 +119,7 @@ template <> class Algebraic_structure_traits< CORE::Expr >
             }  
             CORE::BFInterval interval(lower_bf,upper_bf);
    
-            return Algebraic_structure(polynomial,interval);
+            return Type(polynomial,interval);
         };  */
     };
     
@@ -130,39 +130,39 @@ template <> class Real_embeddable_traits< CORE::Expr >
   public:
       
     class Abs 
-      : public Unary_function< Real_embeddable, Real_embeddable > {
+      : public Unary_function< Type, Type > {
       public:
-        Real_embeddable operator()( const Real_embeddable& x ) const {
+        Type operator()( const Type& x ) const {
             return CORE::abs( x );
         }
     };
     
     class Sign 
-      : public Unary_function< Real_embeddable, ::CGAL::Sign > {
+      : public Unary_function< Type, ::CGAL::Sign > {
       public:
-        ::CGAL::Sign operator()( const Real_embeddable& x ) const {
+        ::CGAL::Sign operator()( const Type& x ) const {
           return (::CGAL::Sign) CORE::sign( x );
         }        
     };
     
     class Compare 
-      : public Binary_function< Real_embeddable, Real_embeddable,
+      : public Binary_function< Type, Type,
                                 Comparison_result > {
       public:
-        Comparison_result operator()( const Real_embeddable& x, 
-                                            const Real_embeddable& y ) const {
+        Comparison_result operator()( const Type& x, 
+                                            const Type& y ) const {
           return (Comparison_result) CORE::cmp( x, y );
         }
         
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Real_embeddable,
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type,
                                                       Comparison_result );
         
     };
     
     class To_double 
-      : public Unary_function< Real_embeddable, double > {
+      : public Unary_function< Type, double > {
       public:
-        double operator()( const Real_embeddable& x ) const {
+        double operator()( const Type& x ) const {
           // this call is required to get reasonable values for the double
           // approximation 
           x.approx( 53, 1 );
@@ -171,9 +171,9 @@ template <> class Real_embeddable_traits< CORE::Expr >
     };
     
     class To_interval 
-      : public Unary_function< Real_embeddable, std::pair< double, double > > {
+      : public Unary_function< Type, std::pair< double, double > > {
       public:
-        std::pair<double, double> operator()( const Real_embeddable& x ) const {
+        std::pair<double, double> operator()( const Type& x ) const {
 
             std::pair<double,double> result;
             x.doubleInterval(result.first, result.second);

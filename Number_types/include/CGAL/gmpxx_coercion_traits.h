@@ -34,11 +34,11 @@ struct Coercion_traits<
   ::__gmp_expr< ::__gmpz_value , U>,::__gmp_expr< ::__gmpz_value , U>  >{                                
     typedef Tag_true  Are_explicit_interoperable;     
     typedef Tag_true  Are_implicit_interoperable;     
-    typedef ::__gmp_expr< ::__gmpz_value , ::__gmpz_value> Coercion_type;                                          
+    typedef ::__gmp_expr< ::__gmpz_value , ::__gmpz_value> Type;                                          
     struct Cast{                                            
-        typedef Coercion_type result_type;  
+        typedef Type result_type;  
         template <class U3>
-        Coercion_type operator()(const ::__gmp_expr< ::__gmpz_value , U3>& x) const { 
+        Type operator()(const ::__gmp_expr< ::__gmpz_value , U3>& x) const { 
             return x;
         }       
     };                                                      
@@ -49,11 +49,11 @@ struct Coercion_traits<
   ::__gmp_expr< ::__gmpz_value , U1>,::__gmp_expr< ::__gmpz_value , U2>  >{                                
     typedef Tag_true  Are_explicit_interoperable;     
     typedef Tag_true  Are_implicit_interoperable;     
-    typedef ::__gmp_expr< ::__gmpz_value , ::__gmpz_value> Coercion_type;                                          
+    typedef ::__gmp_expr< ::__gmpz_value , ::__gmpz_value> Type;                                          
     struct Cast{                                            
-        typedef Coercion_type result_type;  
+        typedef Type result_type;  
         template <class U3>
-        Coercion_type operator()(const ::__gmp_expr< ::__gmpz_value , U3>& x) const { 
+        Type operator()(const ::__gmp_expr< ::__gmpz_value , U3>& x) const { 
             return x;
         }       
     };                                                      
@@ -67,11 +67,11 @@ struct Coercion_traits<
   ::__gmp_expr< ::__gmpq_value , U>,::__gmp_expr< ::__gmpq_value , U>  >{                                
     typedef Tag_true  Are_explicit_interoperable;     
     typedef Tag_true  Are_implicit_interoperable;     
-    typedef ::__gmp_expr< ::__gmpq_value , ::__gmpq_value> Coercion_type;                                          
+    typedef ::__gmp_expr< ::__gmpq_value , ::__gmpq_value> Type;                                          
     struct Cast{                                            
-        typedef Coercion_type result_type;  
+        typedef Type result_type;  
         template <class U3>
-        Coercion_type operator()(const ::__gmp_expr< ::__gmpq_value , U3>& x) const { 
+        Type operator()(const ::__gmp_expr< ::__gmpq_value , U3>& x) const { 
             return x;
         }       
     };                                                      
@@ -82,11 +82,11 @@ struct Coercion_traits<
   ::__gmp_expr< ::__gmpq_value , U1>,::__gmp_expr< ::__gmpq_value , U2>  >{                                
     typedef Tag_true  Are_explicit_interoperable;     
     typedef Tag_true  Are_implicit_interoperable;     
-    typedef ::__gmp_expr< ::__gmpq_value , ::__gmpq_value> Coercion_type;                                          
+    typedef ::__gmp_expr< ::__gmpq_value , ::__gmpq_value> Type;                                          
     struct Cast{                                            
-        typedef Coercion_type result_type;  
+        typedef Type result_type;  
         template <class U3>
-        Coercion_type operator()(const ::__gmp_expr< ::__gmpq_value , U3>& x) const { 
+        Type operator()(const ::__gmp_expr< ::__gmpq_value , U3>& x) const { 
             return x;
         }       
     };                                                      
@@ -100,16 +100,16 @@ struct Coercion_traits<
   ::__gmp_expr< ::__gmpz_value , U1>,::__gmp_expr< ::__gmpq_value , U2>  >{                                
     typedef Tag_true  Are_explicit_interoperable;     
     typedef Tag_true  Are_implicit_interoperable;     
-    typedef ::__gmp_expr< ::__gmpq_value , ::__gmpq_value> Coercion_type;                                          
+    typedef ::__gmp_expr< ::__gmpq_value , ::__gmpq_value> Type;                                          
     struct Cast{                                            
-        typedef Coercion_type result_type;  
+        typedef Type result_type;  
         template <class U3>
-        Coercion_type operator()(const ::__gmp_expr< ::__gmpq_value , U3>& x) const { 
+        Type operator()(const ::__gmp_expr< ::__gmpq_value , U3>& x) const { 
             return x;
         }  
         template <class U3>
-        Coercion_type operator()(const ::__gmp_expr< ::__gmpz_value , U3>& x) const { 
-            return Coercion_type(x);
+        Type operator()(const ::__gmp_expr< ::__gmpz_value , U3>& x) const { 
+            return Type(x);
         }       
     };                                                      
 };    
@@ -124,14 +124,14 @@ struct Coercion_traits<
   ::__gmp_expr< GMPX_VALUE , U1>, int >{                                
     typedef Tag_true  Are_explicit_interoperable;     
     typedef Tag_true  Are_implicit_interoperable;     
-    typedef ::__gmp_expr< GMPX_VALUE , GMPX_VALUE> Coercion_type;                                          
+    typedef ::__gmp_expr< GMPX_VALUE , GMPX_VALUE> Type;                                          
     struct Cast{                                            
-        typedef Coercion_type result_type;  
+        typedef Type result_type;  
         template <class U3>
-        Coercion_type operator()(const ::__gmp_expr< GMPX_VALUE , U3>& x) const { 
+        Type operator()(const ::__gmp_expr< GMPX_VALUE , U3>& x) const { 
             return x;
         }      
-        Coercion_type operator()(int x) const { return Coercion_type(x); }       
+        Type operator()(int x) const { return Type(x); }       
     };                                                      
 };    
 // gmpz_class implicit interoperable with int 

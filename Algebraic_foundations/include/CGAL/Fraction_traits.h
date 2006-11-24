@@ -32,7 +32,7 @@ CGAL_BEGIN_NAMESPACE
 
 /*! \ingroup NiX_Fraction_traits_spec
  *  \brief Traits class for accessing numerator and denominator.\n 
- *  It is a model of the concept FractionTraits. 
+ *  It is a model of the concept TypeTraits. 
  *
  *  This is the default version of NiX::Fraction_traits. 
  *  It typedefs NiX::Fraction_traits::Is_decomposable
@@ -41,10 +41,10 @@ CGAL_BEGIN_NAMESPACE
  *  \see module NiX_Fraction_traits 
  *  \see module NiX_Cofraction_traits
  */
-template <class Fraction_ >
+template <class Type_ >
 class Fraction_traits {
 public:
-    typedef Fraction_ Fraction;
+    typedef Type_ Type;
     typedef Tag_false Is_fraction;
     typedef Null_tag Numerator;
     typedef Null_tag Denominator;

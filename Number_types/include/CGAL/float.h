@@ -116,18 +116,18 @@ template <> class Algebraic_structure_traits< float >
     typedef Tag_false            Is_exact;
             
     class Sqrt 
-      : public Unary_function< Algebraic_structure, Algebraic_structure > {
+      : public Unary_function< Type, Type > {
       public:
-        Algebraic_structure operator()( const Algebraic_structure& x ) const {
+        Type operator()( const Type& x ) const {
           return CGAL_CLIB_STD::sqrt( x );
         }
     };
     
     class Kth_root 
-      : public Binary_function<int, Algebraic_structure, Algebraic_structure> {
+      : public Binary_function<int, Type, Type> {
       public:
-        Algebraic_structure operator()( int k, 
-                                        const Algebraic_structure& x) const {
+        Type operator()( int k, 
+                                        const Type& x) const {
           CGAL_precondition_msg( k > 0, "'k' must be positive for k-th roots");
           return CGAL_CLIB_STD::pow(double(x), 1.0 / double(k));
         };
@@ -139,17 +139,17 @@ template <> class Real_embeddable_traits< float >
   : public Real_embeddable_traits_base< float > {
   public:
 
-    typedef INTERN_RET::To_double_by_conversion< Real_embeddable >
+    typedef INTERN_RET::To_double_by_conversion< Type >
                                                                   To_double;      
-    typedef INTERN_RET::To_interval_by_conversion< Real_embeddable >
+    typedef INTERN_RET::To_interval_by_conversion< Type >
                                                                   To_interval;
 // Is_finite depends on platform
 #ifdef __sgi
 
     class Is_finite
-      : public Unary_function< Real_embeddable, bool > {
+      : public Unary_function< Type, bool > {
       public:
-        bool operator()( const Real_embeddable& x ) const {
+        bool operator()( const Type& x ) const {
           switch (fp_class_f(x)) {
           case FP_POS_NORM:
           case FP_NEG_NORM:
@@ -171,19 +171,19 @@ template <> class Real_embeddable_traits< float >
 #elif defined CGAL_CFG_IEEE_754_BUG
 
     class Is_finite
-      : public Unary_function< Real_embeddable, bool > {
+      : public Unary_function< Type, bool > {
       public:
-        bool operator()( const Real_embeddable& x ) const {
-          Real_embeddable f = x;
+        bool operator()( const Type& x ) const {
+          Type f = x;
           IEEE_754_float* p = reinterpret_cast<IEEE_754_float*>(&f);
           return is_finite_by_mask_float( p->c );
         }
     };
 #else
     class Is_finite
-      : public Unary_function< Real_embeddable, bool > {
+      : public Unary_function< Type, bool > {
       public:
-        bool operator()( const Real_embeddable& x ) const {
+        bool operator()( const Type& x ) const {
           return (x == x) && (is_valid(x-x));        
         }
     };

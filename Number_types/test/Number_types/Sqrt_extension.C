@@ -15,8 +15,8 @@ template <class NT , class RT>
 inline 
 void convert_to(const NT& x, RT& r){ 
     typedef CGAL::Coercion_traits<NT,RT> CT;
-    typedef typename CT::Coercion_type Coercion_type;
-    BOOST_STATIC_ASSERT((::boost::is_same<Coercion_type,RT>::value));
+    typedef typename CT::Type Type;
+    BOOST_STATIC_ASSERT((::boost::is_same<Type,RT>::value));
     r = typename CT::Cast()(x);
 }
 CGAL_END_NAMESPACE
@@ -446,7 +446,7 @@ void scalar_factor_traits_test(){
 // TODO: No to_Sqrt_extension available in CGAL.
 /*template <class AT>
 void to_Sqrt_extension_test() {
-//    CGAL_SNAP_ARITHMETIC_KERNEL_TYPEDEFS(AT);
+//    CGAL_SNAP_ARITHMETIC_KERNEL_TypeDEFS(AT);
     typedef leda_integer Integer;
     typedef leda_rational Rational;
     typedef CGAL::Sqrt_extension<Rational,Integer> EXT;
@@ -480,7 +480,7 @@ void to_Sqrt_extension_test() {
 // TODO: Adapt when fraction_traits are available
 /*template <class AT>
 void fraction_traits_test(){
-    //TEST Fraction traits ROOT of type INT 
+    //TEST Type traits ROOT of type INT 
     typedef typename AT::Integer  INT;
     typedef typename AT::Rational RAT;
     
@@ -742,7 +742,7 @@ void polynom_test(){
 }*/
 template <class AT>
 void sqrt_extension_test(){
-    CGAL_SNAP_ARITHMETIC_KERNEL_TYPEDEFS(AT);
+    CGAL_SNAP_ARITHMETIC_KERNEL_TypeDEFS(AT);
    
     general_test<Integer,Integer,CGAL::Integral_domain_tag>();        
     general_test<Rational,Integer,CGAL::Field_tag>(); 

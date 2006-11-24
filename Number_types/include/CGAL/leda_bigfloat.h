@@ -51,18 +51,18 @@ template <> class Algebraic_structure_traits< leda_bigfloat >
     typedef Tag_false           Is_exact;
                                          
     class Sqrt 
-      : public Unary_function< Algebraic_structure, Algebraic_structure > {
+      : public Unary_function< Type, Type > {
       public:
-        Algebraic_structure operator()( const Algebraic_structure& x ) const {
+        Type operator()( const Type& x ) const {
           return CGAL_LEDA_SCOPE::sqrt( x );
         }
     };
     
     class Kth_root 
-      : public Binary_function<int, Algebraic_structure, Algebraic_structure> {
+      : public Binary_function<int, Type, Type> {
       public:
-        Algebraic_structure operator()( int k, 
-                                        const Algebraic_structure& x) const {
+        Type operator()( int k, 
+                                        const Type& x) const {
             CGAL_precondition_msg(k > 0, "'k' must be positive for k-th roots");
             // heuristic: we ask for as many precision as the argument has
             long d = x.get_significant_length();
@@ -79,43 +79,43 @@ template <> class Real_embeddable_traits< leda_bigfloat >
   public:
       
     class Abs 
-      : public Unary_function< Real_embeddable, Real_embeddable > {
+      : public Unary_function< Type, Type > {
       public:
-        Real_embeddable operator()( const Real_embeddable& x ) const {
+        Type operator()( const Type& x ) const {
             return CGAL_LEDA_SCOPE::abs( x );
         }
     };
     
     class Sign 
-      : public Unary_function< Real_embeddable, ::CGAL::Sign > {
+      : public Unary_function< Type, ::CGAL::Sign > {
       public:
-        ::CGAL::Sign operator()( const Real_embeddable& x ) const {
+        ::CGAL::Sign operator()( const Type& x ) const {
           return (::CGAL::Sign) CGAL_LEDA_SCOPE::sign( x );
         }        
     };
     
     class Compare 
-      : public Binary_function< Real_embeddable, Real_embeddable,
+      : public Binary_function< Type, Type,
                                 Comparison_result > {
       public:
-        Comparison_result operator()( const Real_embeddable& x, 
-                                            const Real_embeddable& y ) const {
+        Comparison_result operator()( const Type& x, 
+                                            const Type& y ) const {
           return (Comparison_result) CGAL_LEDA_SCOPE::compare( x, y );
         }
     };
     
     class To_double 
-      : public Unary_function< Real_embeddable, double > {
+      : public Unary_function< Type, double > {
       public:
-        double operator()( const Real_embeddable& x ) const {
+        double operator()( const Type& x ) const {
           return x.to_double();
         }
     };
     
     class To_interval 
-      : public Unary_function< Real_embeddable, std::pair< double, double > > {
+      : public Unary_function< Type, std::pair< double, double > > {
       public:
-        std::pair<double, double> operator()( const Real_embeddable& x ) const {
+        std::pair<double, double> operator()( const Type& x ) const {
 
           // assuming leda_bigfloat guarantee 1 bit error max
           Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);
@@ -127,9 +127,9 @@ template <> class Real_embeddable_traits< leda_bigfloat >
     };
     
     class Is_finite
-      : public Unary_function< Real_embeddable, bool > {
+      : public Unary_function< Type, bool > {
       public:
-        bool operator()( const Real_embeddable& x )  const {
+        bool operator()( const Type& x )  const {
           return !( CGAL_LEDA_SCOPE::isInf(x) || CGAL_LEDA_SCOPE::isNaN(x) ); 
         }
     };

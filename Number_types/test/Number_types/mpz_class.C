@@ -11,13 +11,13 @@
 template <class A, class B>
 inline
 typename CGAL::Algebraic_structure_traits<
-typename CGAL::Coercion_traits<A,B>::Coercion_type
+typename CGAL::Coercion_traits<A,B>::Type
 >::Integral_division::result_type
 integral_division(const A& a, const B& b){
     typedef CGAL::Coercion_traits<A,B> CT;
-    typedef typename CT::Coercion_type Coercion_type;
+    typedef typename CT::Type Type;
     typename CGAL::Algebraic_structure_traits<
-    typename CGAL::Coercion_traits<A,B>::Coercion_type
+    typename CGAL::Coercion_traits<A,B>::Type
         >::Integral_division integral_division;
     return integral_division(a,b);
 }
@@ -28,12 +28,12 @@ int
 test_coercion(const A& a, const B& b){
     std::cout << "START TEST" << std::endl;
     typedef CGAL::Coercion_traits<A,B> CT;
-    typedef typename CT::Coercion_type Coercion_type;
+    typedef typename CT::Type Type;
     typename CT::Cast cast;
-    Coercion_type x = cast(a);
+    Type x = cast(a);
 
     typename CGAL::Algebraic_structure_traits<
-    typename CGAL::Coercion_traits<A,B>::Coercion_type
+    typename CGAL::Coercion_traits<A,B>::Type
         >::Integral_division integral_division;
     
     return 1;

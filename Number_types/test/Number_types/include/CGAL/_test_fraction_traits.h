@@ -24,7 +24,7 @@ template <class T>
 void test_fraction_traits(){
 
     typedef CGAL::Fraction_traits<T> FT;    
-    typedef typename FT::Fraction Fraction;
+    typedef typename FT::Type Type;
     typedef typename FT::Is_fraction  Is_fraction;
     typedef typename FT::Numerator  Num;
     typedef typename FT::Denominator Den;
@@ -32,7 +32,7 @@ void test_fraction_traits(){
     typedef typename FT::Decompose Decompose;
     typedef typename FT::Compose   Compose;
 
-    BOOST_STATIC_ASSERT( (::boost::is_same<Fraction,T>::value));
+    BOOST_STATIC_ASSERT( (::boost::is_same<Type,T>::value));
     BOOST_STATIC_ASSERT( (::boost::is_same<Is_fraction,Tag_true>::value));
     BOOST_STATIC_ASSERT(!(::boost::is_same<Common_factor,Null_functor>::value));
     BOOST_STATIC_ASSERT(!(::boost::is_same<Decompose,Null_functor>::value));
@@ -40,7 +40,7 @@ void test_fraction_traits(){
     
     
     // Decompose
-    Fraction frac = Fraction(7) / Fraction (5);
+    Type frac = Type(7) / Type (5);
     Num num; 
     Den den;
     Decompose()(frac,num,den);

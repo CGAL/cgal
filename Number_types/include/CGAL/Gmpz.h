@@ -47,14 +47,14 @@ template <> class Algebraic_structure_traits< Gmpz >
 public:
     typedef Tag_true            Is_exact;
                 
-    typedef INTERN_AST::Is_square_per_sqrt< Algebraic_structure >
+    typedef INTERN_AST::Is_square_per_sqrt< Type >
     Is_square;
     class Integral_division 
-        : public Binary_function< Algebraic_structure, Algebraic_structure,
-                                Algebraic_structure > {
+        : public Binary_function< Type, Type,
+                                Type > {
     public:
-        Algebraic_structure operator()( const Algebraic_structure& x,
-                const Algebraic_structure& y ) const {
+        Type operator()( const Type& x,
+                const Type& y ) const {
             Gmpz result;
             mpz_divexact(result.mpz(), x.mpz(), y.mpz());
             CGAL_postcondition_msg(result * y == x, "exact_division failed\n");
@@ -63,18 +63,18 @@ public:
     };
                                                                  
     class Gcd 
-        : public Binary_function< Algebraic_structure, Algebraic_structure, 
-                                Algebraic_structure > {
+        : public Binary_function< Type, Type, 
+                                Type > {
     public:
-        Algebraic_structure operator()( const Algebraic_structure& x, 
-                const Algebraic_structure& y ) const {
+        Type operator()( const Type& x, 
+                const Type& y ) const {
             Gmpz result;
             mpz_gcd(result.mpz(), x.mpz(), y.mpz());
             return result;
 
         }
         
-        Algebraic_structure operator()( const Algebraic_structure& x,
+        Type operator()( const Type& x,
                                         const int& y ) const {
           if (y > 0)
           {
@@ -85,19 +85,19 @@ public:
           return CGAL_NTS gcd(x, Gmpz(y));                                          
         }
         
-        Algebraic_structure operator()( const int& x,
-                                        const Algebraic_structure& y ) const {
+        Type operator()( const int& x,
+                                        const Type& y ) const {
           return CGAL_NTS gcd(Gmpz(x), y );
         }
     };
     
-    typedef INTERN_AST::Div_per_operator< Algebraic_structure > Div;
-    typedef INTERN_AST::Mod_per_operator< Algebraic_structure > Mod;
+    typedef INTERN_AST::Div_per_operator< Type > Div;
+    typedef INTERN_AST::Mod_per_operator< Type > Mod;
     
     class Sqrt 
-        : public Unary_function< Algebraic_structure, Algebraic_structure > {
+        : public Unary_function< Type, Type > {
     public:
-        Algebraic_structure operator()( const Algebraic_structure& x ) const {
+        Type operator()( const Type& x ) const {
             Gmpz result;
             mpz_sqrt(result.mpz(), x.mpz());
             return result;
@@ -110,25 +110,25 @@ template <> class Real_embeddable_traits< Gmpz >
 public:
           
     class Sign 
-        : public Unary_function< Real_embeddable, ::CGAL::Sign > {
+        : public Unary_function< Type, ::CGAL::Sign > {
     public:
-        ::CGAL::Sign operator()( const Real_embeddable& x ) const {
+        ::CGAL::Sign operator()( const Type& x ) const {
             return x.sign();
         }        
     };
         
     class To_double 
-        : public Unary_function< Real_embeddable, double > {
+        : public Unary_function< Type, double > {
     public:
-        double operator()( const Real_embeddable& x ) const {
+        double operator()( const Type& x ) const {
             return x.to_double();
         }
     };
     
     class To_interval 
-        : public Unary_function< Real_embeddable, std::pair< double, double > > {
+        : public Unary_function< Type, std::pair< double, double > > {
     public:
-        std::pair<double, double> operator()( const Real_embeddable& x ) const {
+        std::pair<double, double> operator()( const Type& x ) const {
 
             mpfr_t y;
             mpfr_init2 (y, 53); /* Assume IEEE-754 */
@@ -145,7 +145,7 @@ public:
 template<> class Algebraic_structure_traits< Quotient<Gmpz> >
     : public INTERN_QUOTIENT::Algebraic_structure_traits_quotient_base<Quotient<Gmpz> >{
     // specialization of to double functor
-    typedef Quotient<Gmpz> Algebraic_structure;
+    typedef Quotient<Gmpz> Type;
     
     struct To_double: public Unary_function<Quotient<Gmpz>, double>{
         double operator()(const Quotient<Gmpz>& quot){

@@ -140,18 +140,18 @@ template <> class Algebraic_structure_traits< double >
     typedef Tag_false            Is_exact;
             
     class Sqrt 
-      : public Unary_function< Algebraic_structure, Algebraic_structure > {
+      : public Unary_function< Type, Type > {
       public:
-        Algebraic_structure operator()( const Algebraic_structure& x ) const {
+        Type operator()( const Type& x ) const {
           return CGAL_CLIB_STD::sqrt( x );
         }
     };
     
     class Kth_root 
-      : public Binary_function<int, Algebraic_structure, Algebraic_structure> {
+      : public Binary_function<int, Type, Type> {
       public:
-        Algebraic_structure operator()( int k, 
-                                        const Algebraic_structure& x) const {
+        Type operator()( int k, 
+                                        const Type& x) const {
           CGAL_precondition_msg( k > 0, "'k' must be positive for k-th roots");
           return CGAL_CLIB_STD::pow(x, 1.0 / double(k));
         }
@@ -166,25 +166,25 @@ template <> class Real_embeddable_traits< double >
 // GCC is faster with std::fabs().
 #ifdef __GNUG__
     class Abs 
-      : public Unary_function< Real_embeddable, Real_embeddable > {
+      : public Unary_function< Type, Type > {
       public:        
-        Real_embeddable operator()( const Real_embeddable& x ) const {
+        Type operator()( const Type& x ) const {
           return CGAL_CLIB_STD::fabs( x );
         }
     };    
 #endif
 
-    typedef INTERN_RET::To_double_by_conversion< Real_embeddable >
+    typedef INTERN_RET::To_double_by_conversion< Type >
                                                                   To_double;      
-    typedef INTERN_RET::To_interval_by_conversion< Real_embeddable >
+    typedef INTERN_RET::To_interval_by_conversion< Type >
                                                                   To_interval;    
                                                                   
 // Is_finite depends on platform
 #ifdef __sgi
     class Is_finite
-      : public Unary_function< Real_embeddable, bool > {
+      : public Unary_function< Type, bool > {
       public :
-        bool operator()( const Real_embeddable& x ) const {
+        bool operator()( const Type& x ) const {
           switch (fp_class_d(x)) {
           case FP_POS_NORM:
           case FP_NEG_NORM:
@@ -205,29 +205,29 @@ template <> class Real_embeddable_traits< double >
 
 #elif defined CGAL_CFG_IEEE_754_BUG
     class Is_finite
-      : public Unary_function< Real_embeddable, bool > {
+      : public Unary_function< Type, bool > {
       public :
-        bool operator()( const Real_embeddable& x ) const {
-          Real_embeddable d = x;
+        bool operator()( const Type& x ) const {
+          Type d = x;
           IEEE_754_double* p = reinterpret_cast<IEEE_754_double*>(&d);
           return is_finite_by_mask_double( p->c.H );
         }
     };                                                                      
 #elif defined CGAL_CFG_NUMERIC_LIMITS_BUG
     class Is_finite
-      : public Unary_function< Real_embeddable, bool > {
+      : public Unary_function< Type, bool > {
       public :
-        bool operator()( const Real_embeddable& x ) const {
+        bool operator()( const Type& x ) const {
            return (x == x) && (is_valid(x-x));
         }
     };                                                                      
 #else
     class Is_finite
-      : public Unary_function< Real_embeddable, bool > {
+      : public Unary_function< Type, bool > {
       public :
-        bool operator()( const Real_embeddable& x ) const {
-          return (x != std::numeric_limits<Real_embeddable>::infinity()) 
-              && (-x != std::numeric_limits<Real_embeddable>::infinity())
+        bool operator()( const Type& x ) const {
+          return (x != std::numeric_limits<Type>::infinity()) 
+              && (-x != std::numeric_limits<Type>::infinity())
               && is_valid(x);
       }
     };                                                                      

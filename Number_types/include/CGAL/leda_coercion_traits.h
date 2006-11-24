@@ -93,11 +93,11 @@ template <>
 struct Coercion_traits< ::leda::bigfloat ,::leda::rational  >{  
     typedef Tag_true  Are_explicit_interoperable; 
     typedef Tag_false Are_implicit_interoperable; 
-    typedef ::leda::rational Coercion_type;  
+    typedef ::leda::rational Type;  
     struct Cast{
-        typedef Coercion_type result_type; 
-        Coercion_type operator()(const ::leda::rational& x)  const { return x;} 
-        Coercion_type operator()(const ::leda::bigfloat& x) const { 
+        typedef Type result_type; 
+        Type operator()(const ::leda::rational& x)  const { return x;} 
+        Type operator()(const ::leda::bigfloat& x) const { 
 #if CGAL_LEDA_VERSION < 500
             ::leda::integer e = x.get_exponent();
             ::leda::integer s = x.get_significant();

@@ -27,7 +27,7 @@
 #include <CGAL/number_type_basic.h>
 //#include <gmpxx.h>
 #include <CGAL/gmpxx_coercion_traits.h>
-#include <CGAL/mpz_class.h> // for GCD in Fraction traits
+#include <CGAL/mpz_class.h> // for GCD in Type traits
 
 
 // This file gathers the necessary adaptors so that the following
@@ -51,7 +51,7 @@ class Algebraic_structure_traits< ::__gmp_expr< ::__gmpq_value,U> >
   public:
     typedef Field_tag           Algebraic_structure_tag;
     typedef Tag_true            Is_exact;
-    typedef mpq_class                 Algebraic_structure;
+    typedef mpq_class                 Type;
 
     struct Is_zero: public Unary_function< mpq_class , bool > {
         template <class U2> 
@@ -101,7 +101,7 @@ class Algebraic_structure_traits< ::__gmp_expr< ::__gmpq_value,U> >
             "Algebraic_structure_traits<mpq_class>::Integral_div()(x,y)" );
             return result;         
         }
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     }; 
     
     class Is_square
@@ -131,7 +131,7 @@ template < class U >
 class Real_embeddable_traits< ::__gmp_expr< ::__gmpq_value,U> > 
   : public Real_embeddable_traits_base< ::__gmp_expr< ::__gmpq_value,U> > {
   public:
-    typedef mpq_class  Real_embeddable;
+    typedef mpq_class  Type;
       
     struct Is_zero: public Unary_function< mpq_class , bool > {
         template <class U2> 
@@ -188,7 +188,7 @@ class Real_embeddable_traits< ::__gmp_expr< ::__gmpq_value,U> >
             return (Comparison_result) CGAL_NTS sign( ::cmp(x, y) );
         }
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT
-        ( Real_embeddable, Comparison_result);
+        ( Type, Comparison_result);
     };
     
     struct To_double 
@@ -224,7 +224,7 @@ class Real_embeddable_traits< ::__gmp_expr< ::__gmpq_value,U> >
 template <>
 class Fraction_traits< mpq_class > {
 public:
-    typedef mpq_class Fraction;
+    typedef mpq_class Type;
     
     typedef ::CGAL::Tag_true Is_fraction;
     typedef mpz_class Numerator;

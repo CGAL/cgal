@@ -13,8 +13,8 @@
 int main(){
     typedef CGAL::Real_embeddable_traits<void> RET;
     
-    typedef RET::Real_embeddable Real_embeddable;
-    BOOST_STATIC_ASSERT((::boost::is_same<void,Real_embeddable>::value)); 
+    typedef RET::Type Type;
+    BOOST_STATIC_ASSERT((::boost::is_same<void,Type>::value)); 
 
     typedef RET::Is_real_embeddable Is_real_embeddable;
     BOOST_STATIC_ASSERT((::boost::is_same<CGAL::Tag_false,Is_real_embeddable>::value)); 

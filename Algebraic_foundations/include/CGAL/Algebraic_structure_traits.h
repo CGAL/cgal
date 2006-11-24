@@ -49,10 +49,10 @@ struct Field_with_root_of_tag : public Field_with_kth_root_tag {};
 
 // The algebraic structure traits template
 // =========================================================================
-template< class Algebraic_structure_ > 
+template< class Type_ > 
 class Algebraic_structure_traits  {
   public:
-    typedef Algebraic_structure_  Algebraic_structure;
+    typedef Type_  Type;
     typedef Null_tag       Algebraic_structure_tag;
     typedef Null_tag       Is_exact;
 
@@ -75,24 +75,24 @@ class Algebraic_structure_traits  {
 
 // The algebraic structure traits base class
 // =========================================================================
-template< class Algebraic_structure, class Algebra_type >
+template< class Type, class Algebra_type >
 class Algebraic_structure_traits_base;
 
 //! The template specialization that can be used for types that are not any
 //! of the number type concepts. All functors are set to \c Null_functor
 //! or suitable defaults. The \c Simplify functor does nothing by default.
-template< class Algebraic_structure_ >
-class Algebraic_structure_traits_base< Algebraic_structure_, Null_tag > {
+template< class Type_ >
+class Algebraic_structure_traits_base< Type_, Null_tag > {
   public:
-    typedef Algebraic_structure_  Algebraic_structure;
+    typedef Type_  Type;
     typedef Null_tag       Algebraic_structure_tag;
     typedef Tag_false       Is_exact;
 
     // does nothing by default
     class Simplify 
-      : public Unary_function< Algebraic_structure&, void > {
+      : public Unary_function< Type&, void > {
       public:
-        void operator()( Algebraic_structure& ) const {}
+        void operator()( Type& ) const {}
     };
 
     typedef Null_functor Unit_part;
@@ -113,48 +113,48 @@ class Algebraic_structure_traits_base< Algebraic_structure_, Null_tag > {
 //! The template specialization that is used if the number type is
 //! a model of the \c IntegralDomainWithoutDiv concept. The \c Simplify
 //! does nothing by default and the \c Unit_part is equal to
-//! \c Algebraic_structure(-1) for negative numbers and 
-//! \c Algebraic_structure(1) otherwise
-template< class Algebraic_structure_ >
-class Algebraic_structure_traits_base< Algebraic_structure_, 
+//! \c Type(-1) for negative numbers and 
+//! \c Type(1) otherwise
+template< class Type_ >
+class Algebraic_structure_traits_base< Type_, 
                                        Integral_domain_without_division_tag > 
-    : public Algebraic_structure_traits_base< Algebraic_structure_, 
+    : public Algebraic_structure_traits_base< Type_, 
                                               Null_tag > {
   public:
-    typedef Algebraic_structure_                   Algebraic_structure;
+    typedef Type_                   Type;
     typedef Integral_domain_without_division_tag  Algebraic_structure_tag;
 
-    // returns Algebraic_structure(1) by default
+    // returns Type(1) by default
     class Unit_part 
-      : public Unary_function< Algebraic_structure, Algebraic_structure > { 
+      : public Unary_function< Type, Type > { 
       public:
-        Algebraic_structure operator()( const Algebraic_structure& x ) const {
-          return( x < Algebraic_structure(0)) ? 
-                  Algebraic_structure(-1) : Algebraic_structure(1); 
+        Type operator()( const Type& x ) const {
+          return( x < Type(0)) ? 
+                  Type(-1) : Type(1); 
         }
     };
     
     class Square 
-      : public Unary_function< Algebraic_structure, Algebraic_structure > {
+      : public Unary_function< Type, Type > {
       public:        
-        Algebraic_structure operator()( const Algebraic_structure& x ) const {
+        Type operator()( const Type& x ) const {
           return x*x;
         }
     };
     
     class Is_zero 
-      : public Unary_function< Algebraic_structure, bool > {
+      : public Unary_function< Type, bool > {
       public:        
-        bool operator()( const Algebraic_structure& x ) const {
-          return x == Algebraic_structure(0);
+        bool operator()( const Type& x ) const {
+          return x == Type(0);
         }
     };
 
     class Is_one 
-      : public Unary_function< Algebraic_structure, bool > {
+      : public Unary_function< Type, bool > {
       public:        
-        bool operator()( const Algebraic_structure& x ) const {
-          return x == Algebraic_structure(1);
+        bool operator()( const Type& x ) const {
+          return x == Type(1);
         }
     };
 
@@ -167,13 +167,13 @@ class Algebraic_structure_traits_base< Algebraic_structure_,
 //! for the \c IntegralDomainWithoutDiv concept. The additionally required 
 //! \c Integral_division functor needs to be implemented in the 
 //! \c Algebraic_structure_traits itself.
-template< class Algebraic_structure_ >
-class Algebraic_structure_traits_base< Algebraic_structure_, 
+template< class Type_ >
+class Algebraic_structure_traits_base< Type_, 
                                        Integral_domain_tag >
-    : public Algebraic_structure_traits_base< Algebraic_structure_, 
+    : public Algebraic_structure_traits_base< Type_, 
                                        Integral_domain_without_division_tag > {
   public:
-    typedef Algebraic_structure_       Algebraic_structure;
+    typedef Type_       Type;
     typedef Integral_domain_tag  Algebraic_structure_tag;
 };
 
@@ -184,37 +184,37 @@ class Algebraic_structure_traits_base< Algebraic_structure_,
 //! \c Integral_div functor
 //! and \c Gcd functor need to be implemented in the 
 //! \c Algebraic_structure_traits itself.
-template< class Algebraic_structure_ >
-class Algebraic_structure_traits_base< Algebraic_structure_, 
+template< class Type_ >
+class Algebraic_structure_traits_base< Type_, 
                                        Unique_factorization_domain_tag >
-    : public Algebraic_structure_traits_base< Algebraic_structure_, 
+    : public Algebraic_structure_traits_base< Type_, 
                                               Integral_domain_tag > {
   public:
-    typedef Algebraic_structure_  Algebraic_structure;
+    typedef Type_  Type;
     typedef Unique_factorization_domain_tag    Algebraic_structure_tag;
 };
 
 
 //! The template specialization that is used if the number type is
 //! a model of the \c EuclideanRing concept.
-template< class Algebraic_structure_ >
-class Algebraic_structure_traits_base< Algebraic_structure_, 
+template< class Type_ >
+class Algebraic_structure_traits_base< Type_, 
                                        Euclidean_ring_tag >
-    : public Algebraic_structure_traits_base< Algebraic_structure_, 
+    : public Algebraic_structure_traits_base< Type_, 
                                               Unique_factorization_domain_tag > {
   public:
-    typedef Algebraic_structure_        Algebraic_structure;
+    typedef Type_        Type;
     typedef Euclidean_ring_tag    Algebraic_structure_tag;
 
     // maps to \c Div by default.
     class Integral_division 
-      : public Binary_function< Algebraic_structure, Algebraic_structure,
-                                Algebraic_structure > { 
+      : public Binary_function< Type, Type,
+                                Type > { 
       public:
-        Algebraic_structure operator()( 
-                const Algebraic_structure& x, 
-                const Algebraic_structure& y) const { 
-            typedef Algebraic_structure_traits<Algebraic_structure> AST; 
+        Type operator()( 
+                const Type& x, 
+                const Type& y) const { 
+            typedef Algebraic_structure_traits<Type> AST; 
             typedef typename AST::Is_exact Is_exact;
             typename AST::Div actual_div;
             
@@ -224,37 +224,37 @@ class Algebraic_structure_traits_base< Algebraic_structure_,
                     "Algebraic_structure_traits<...>::Integral_div()(x,y)" );
             return actual_div( x, y);          
         }
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )  ;
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )  ;
     };
 
     // Algorithm from NiX/euclids_algorithm.h
     class Gcd 
-      : public Binary_function< Algebraic_structure, Algebraic_structure,
-                                Algebraic_structure > { 
+      : public Binary_function< Type, Type,
+                                Type > { 
       public:
-        Algebraic_structure operator()( 
-                const Algebraic_structure& x, 
-                const Algebraic_structure& y) const {
-            typedef Algebraic_structure_traits<Algebraic_structure> AST;
+        Type operator()( 
+                const Type& x, 
+                const Type& y) const {
+            typedef Algebraic_structure_traits<Type> AST;
             typename AST::Mod mod;
             typename AST::Unit_part unit_part;
             typename AST::Integral_division integral_div;
             // First: the extreme cases and negative sign corrections.
-            if (x == Algebraic_structure(0)) {
-                if (y == Algebraic_structure(0))  
-                    return Algebraic_structure(0);
+            if (x == Type(0)) {
+                if (y == Type(0))  
+                    return Type(0);
                 return integral_div( y, unit_part(y) );
             }
-            if (y == Algebraic_structure(0))
+            if (y == Type(0))
                 return integral_div(x, unit_part(x) );
-            Algebraic_structure u = integral_div( x, unit_part(x) );
-            Algebraic_structure v = integral_div( y, unit_part(y) );
+            Type u = integral_div( x, unit_part(x) );
+            Type v = integral_div( y, unit_part(y) );
             // Second: assuming mod is the most expensive op here, 
             // we don't compute it unnecessarily if u < v
             if (u < v) {
                 v = mod(v,u);
                 // maintain invariant of v > 0 for the loop below
-                if ( v == Algebraic_structure(0) )
+                if ( v == Type(0) )
                     return u;
             }
             // Third: generic case of two positive integer values and u >= v.
@@ -269,34 +269,34 @@ class Algebraic_structure_traits_base< Algebraic_structure_,
             // But we want to save us all the variable assignments and unroll
             // the loop. Before that, we transform it into a do {...} while()
             // loop to reduce branching statements.
-            Algebraic_structure w;
+            Type w;
             do {
                 w = mod(u,v);
-                if ( w == Algebraic_structure(0))
+                if ( w == Type(0))
                     return v;
                 u = mod(v,w);
-                if ( u == Algebraic_structure(0))
+                if ( u == Type(0))
                     return w;
                 v = mod(w,u);
-            } while (v != Algebraic_structure(0));
+            } while (v != Type(0));
             return u;
         }  
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure );
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type );
     };
 
     // based on \c Div and \c Mod.
     class Div_mod { 
     public:
-        typedef Algebraic_structure    first_argument_type;
-        typedef Algebraic_structure    second_argument_type;
-        typedef Algebraic_structure&   third_argument_type;
-        typedef Algebraic_structure&   fourth_argument_type;
+        typedef Type    first_argument_type;
+        typedef Type    second_argument_type;
+        typedef Type&   third_argument_type;
+        typedef Type&   fourth_argument_type;
         typedef Arity_tag< 4 >         Arity;
         typedef void  result_type;
-        void operator()( const Algebraic_structure& x, 
-                const Algebraic_structure& y, 
-                Algebraic_structure& q, Algebraic_structure& r) const {
-            typedef Algebraic_structure_traits<Algebraic_structure> Traits;
+        void operator()( const Type& x, 
+                const Type& y, 
+                Type& q, Type& r) const {
+            typedef Algebraic_structure_traits<Type> Traits;
             typename Traits::Div  actual_div;
             typename Traits::Mod  actual_mod;
             q = actual_div( x, y );
@@ -308,12 +308,12 @@ class Algebraic_structure_traits_base< Algebraic_structure_,
         void operator()( 
                 const NT1& x, 
                 const NT2& y,
-                Algebraic_structure& q, 
-                Algebraic_structure& r ) const {
+                Type& q, 
+                Type& r ) const {
             typedef Coercion_traits< NT1, NT2 > CT;
-            typedef typename CT::Coercion_type Coercion_type; 
+            typedef typename CT::Type Type; 
             BOOST_STATIC_ASSERT(( 
-              ::boost::is_same<Coercion_type , Algebraic_structure >::value));
+              ::boost::is_same<Type , Type >::value));
             
             typename Coercion_traits< NT1, NT2 >::Cast cast;
             operator()( cast(x), cast(y), q, r );          
@@ -322,38 +322,38 @@ class Algebraic_structure_traits_base< Algebraic_structure_,
     
     // based on \c Div_mod.
     class Div 
-      : public Binary_function< Algebraic_structure, Algebraic_structure,
-                                Algebraic_structure > {
+      : public Binary_function< Type, Type,
+                                Type > {
       public:
-        Algebraic_structure operator()( const Algebraic_structure& x, 
-                                        const Algebraic_structure& y) const {
-          typename Algebraic_structure_traits<Algebraic_structure>
+        Type operator()( const Type& x, 
+                                        const Type& y) const {
+          typename Algebraic_structure_traits<Type>
                                                     ::Div_mod actual_div_mod;
-          Algebraic_structure q;     
-          Algebraic_structure r;
+          Type q;     
+          Type r;
           actual_div_mod( x, y, q, r );
           return q;
         };
         
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
 
     // based on \c Div_mod.
     class Mod 
-      : public Binary_function< Algebraic_structure, Algebraic_structure,
-                                Algebraic_structure > { 
+      : public Binary_function< Type, Type,
+                                Type > { 
       public:
-        Algebraic_structure operator()( const Algebraic_structure& x, 
-                                        const Algebraic_structure& y) const {
-          typename Algebraic_structure_traits<Algebraic_structure>
+        Type operator()( const Type& x, 
+                                        const Type& y) const {
+          typename Algebraic_structure_traits<Type>
                                                     ::Div_mod actual_div_mod;
-          Algebraic_structure q;     
-          Algebraic_structure r;
+          Type q;     
+          Type r;
           actual_div_mod( x, y, q, r );
           return r;
         };
         
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
 };
 
@@ -366,37 +366,37 @@ class Algebraic_structure_traits_base< Algebraic_structure_,
 //! See also \link NiX_NT_traits_functors concept NT_traits \endlink .
 //! \ingroup NiX_NT_traits_bases
 //
-template< class Algebraic_structure_ >
-class Algebraic_structure_traits_base< Algebraic_structure_, Field_tag >
-    : public Algebraic_structure_traits_base< Algebraic_structure_, 
+template< class Type_ >
+class Algebraic_structure_traits_base< Type_, Field_tag >
+    : public Algebraic_structure_traits_base< Type_, 
                                               Integral_domain_tag > {
   public:
-    typedef Algebraic_structure_        Algebraic_structure;
+    typedef Type_        Type;
     typedef Field_tag             Algebraic_structure_tag;
 
     // returns the argument \a a by default
     class Unit_part 
-      : public Unary_function< Algebraic_structure, Algebraic_structure > { 
+      : public Unary_function< Type, Type > { 
       public:
-        Algebraic_structure operator()( const Algebraic_structure& x ) const {
-            return( x == Algebraic_structure(0)) ? Algebraic_structure(1) : x;
+        Type operator()( const Type& x ) const {
+            return( x == Type(0)) ? Type(1) : x;
         }
     };
     // maps to \c operator/ by default.
     class Integral_division 
-      : public Binary_function< Algebraic_structure, Algebraic_structure,
-                                Algebraic_structure > { 
+      : public Binary_function< Type, Type,
+                                Type > { 
       public:
-        Algebraic_structure operator()( const Algebraic_structure& x, 
-                                        const Algebraic_structure& y) const { 
-            typedef Algebraic_structure_traits<Algebraic_structure> AST; 
+        Type operator()( const Type& x, 
+                                        const Type& y) const { 
+            typedef Algebraic_structure_traits<Type> AST; 
             typedef typename AST::Is_exact Is_exact;
             CGAL_precondition_msg( !Is_exact::value || (x / y) * y  == x,
                     "'x' must be divisible by 'y' in "
                     "Algebraic_structure_traits<...>::Integral_div()(x,y)" );
             return x / y;
         }
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
             };
 };
 
@@ -408,23 +408,23 @@ class Algebraic_structure_traits_base< Algebraic_structure_, Field_tag >
 //! implemented in the \c NT_traits itself.
 //! \ingroup NiX_NT_traits_bases
 //
-template< class Algebraic_structure_ >
-class Algebraic_structure_traits_base< Algebraic_structure_, 
+template< class Type_ >
+class Algebraic_structure_traits_base< Type_, 
                                        Field_with_sqrt_tag>
-    : public Algebraic_structure_traits_base< Algebraic_structure_, 
+    : public Algebraic_structure_traits_base< Type_, 
                                               Field_tag> {
   public:
-    typedef Algebraic_structure_        Algebraic_structure;
+    typedef Type_        Type;
     typedef Field_with_sqrt_tag   Algebraic_structure_tag;
 
     struct Is_square
-        :public Binary_function<Algebraic_structure,Algebraic_structure&,bool>
+        :public Binary_function<Type,Type&,bool>
     {
-        bool operator()(const Algebraic_structure& x) const {return true;}
+        bool operator()(const Type& x) const {return true;}
         bool operator()(
-                const Algebraic_structure& x,
-                Algebraic_structure      & result) const {
-            typename Algebraic_structure_traits<Algebraic_structure>::Sqrt sqrt;
+                const Type& x,
+                Type      & result) const {
+            typename Algebraic_structure_traits<Type>::Sqrt sqrt;
             result = sqrt(x);
             return true;
         }
@@ -438,16 +438,16 @@ class Algebraic_structure_traits_base< Algebraic_structure_,
 //! implemented in the \c Algebraic_structure_traits itself.
 //! \ingroup NiX_NT_traits_bases
 //
-template< class Algebraic_structure_ >
-class Algebraic_structure_traits_base< Algebraic_structure_, 
+template< class Type_ >
+class Algebraic_structure_traits_base< Type_, 
                                        Field_with_kth_root_tag>
-    : public Algebraic_structure_traits_base< Algebraic_structure_, 
+    : public Algebraic_structure_traits_base< Type_, 
                                               Field_with_sqrt_tag> {
     
     
     
   public:
-    typedef Algebraic_structure_        Algebraic_structure;
+    typedef Type_        Type;
     typedef Field_with_kth_root_tag   Algebraic_structure_tag;
 };
 
@@ -461,58 +461,58 @@ class Algebraic_structure_traits_base< Algebraic_structure_,
 //! implemented in the \c NT_traits itself.
 //! \ingroup NiX_NT_traits_bases
 //
-template< class Algebraic_structure_ >
-class Algebraic_structure_traits_base< Algebraic_structure_, 
+template< class Type_ >
+class Algebraic_structure_traits_base< Type_, 
                                        Field_with_root_of_tag >
-    : public Algebraic_structure_traits_base< Algebraic_structure_, 
+    : public Algebraic_structure_traits_base< Type_, 
                                               Field_with_kth_root_tag > {
   public:
-    typedef Algebraic_structure_           Algebraic_structure;
+    typedef Type_           Type;
     typedef Field_with_root_of_tag   Algebraic_structure_tag;
 };
 
 // Some common functors to be used by AST specializations
 namespace INTERN_AST {
-  template< class Algebraic_structure >
+  template< class Type >
   class Div_per_operator 
-    : public Binary_function< Algebraic_structure, Algebraic_structure, 
-                              Algebraic_structure > {
+    : public Binary_function< Type, Type, 
+                              Type > {
     public:      
-      Algebraic_structure operator()( const Algebraic_structure& x, 
-                                      const Algebraic_structure& y ) const {
+      Type operator()( const Type& x, 
+                                      const Type& y ) const {
         return x / y;
       }
       
-      CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
+      CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
   };
   
-  template< class Algebraic_structure >
+  template< class Type >
   class Mod_per_operator 
-    : public Binary_function< Algebraic_structure, Algebraic_structure,
-                              Algebraic_structure > {
+    : public Binary_function< Type, Type,
+                              Type > {
     public:
-      Algebraic_structure operator()( const Algebraic_structure& x, 
-                                      const Algebraic_structure& y ) const {
+      Type operator()( const Type& x, 
+                                      const Type& y ) const {
         return x % y;
       }
       
-      CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
+      CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
   };
   
-  template< class Algebraic_structure >
+  template< class Type >
   class Is_square_per_sqrt
-    : public Binary_function< Algebraic_structure, Algebraic_structure&,
+    : public Binary_function< Type, Type&,
                               bool > {
     public:      
-      bool operator()( const Algebraic_structure& x, 
-                       Algebraic_structure& y ) const {
-          typename Algebraic_structure_traits< Algebraic_structure >::Sqrt
+      bool operator()( const Type& x, 
+                       Type& y ) const {
+          typename Algebraic_structure_traits< Type >::Sqrt
               actual_sqrt;
           y = actual_sqrt( x );
           return y * y == x;
       }
-      bool operator()( const Algebraic_structure& x) const {
-          Algebraic_structure dummy;
+      bool operator()( const Type& x) const {
+          Type dummy;
           return operator()(x,dummy);
       }
   };
