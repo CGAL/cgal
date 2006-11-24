@@ -67,13 +67,6 @@ set_pretty_mode(std::ios& i)
 }
 
 IO::Mode
-set_benchmark_mode(std::ios& i)
-{
-    return set_mode( i, IO::BENCHMARK );
-}
-
-
-IO::Mode
 set_mode(std::ios& i, IO::Mode m)
 {
     IO::Mode old = get_mode(i);
@@ -100,14 +93,8 @@ is_binary(std::ios& i)
     return i.iword(IO::mode) == IO::BINARY;
 }
 
-bool
-is_benchmark(std::ios& i)
-{
-    return i.iword(IO::mode) == IO::BENCHMARK;
-}
-
 const char* mode_name( IO::Mode m) {
-    static const char* const names[] = {"ASCII", "PRETTY", "BENCHMARK", "BINARY" };
+    static const char* const names[] = {"ASCII", "PRETTY", "BINARY" };
     CGAL_assertion( IO::ASCII <= m && m <= IO::BINARY );
     return names[m];
 }
