@@ -11,19 +11,19 @@ of division with remainder.
 
 \ccTypes
 \ccNestedType{result_type}
-        { Is \ccc{AlgebraicStructureTraits::Algebraic_structure}.}
+        { Is \ccc{AlgebraicStructureTraits::Type}.}
 \ccGlue
 \ccNestedType{first_argument_type}
-        { Is \ccc{AlgebraicStructureTraits::Algebraic_structure}.}
+        { Is \ccc{AlgebraicStructureTraits::Type}.}
 \ccGlue
 \ccNestedType{second_argument_type}
-        { Is \ccc{AlgebraicStructureTraits::Algebraic_structure}.}
+        { Is \ccc{AlgebraicStructureTraits::Type}.}
 \ccGlue
 \ccNestedType{third_argument_type}
-        { Is \ccc{AlgebraicStructureTraits::Algebraic_structure&}.}
+        { Is \ccc{AlgebraicStructureTraits::Type&}.}
 \ccGlue
 \ccNestedType{fourth_argument_type}
-        { Is \ccc{AlgebraicStructureTraits::Algebraic_structure&}.}
+        { Is \ccc{AlgebraicStructureTraits::Type&}.}
 
 \ccOperations
 \ccCreationVariable{div_mod}
@@ -34,12 +34,12 @@ of division with remainder.
                                   fourth_argument_type r);}{ 
         computes the quotient $q$ and remainder $r$, such that $x = q*y + r$ 
         and $r$ minimal with respect to the Euclidean Norm on   
-        \ccc{Algebraic_structure}. }
+        \ccc{Type}. }
 
 \ccMethod{template <class NT1, class NT2> result_type 
         operator()(NT1  x, NT2  y, third_argument_type q, fourth_argument_type r);}
          {This operator is well defined if \ccc{NT1} and \ccc{NT2} are \ccc{ExplicitInteroperable} 
-          with coercion type \ccc{AlgebraicStructureTraits::Algebraic_structure}. }
+          with coercion type \ccc{AlgebraicStructureTraits::Type}. }
 
 %\ccHasModels
 

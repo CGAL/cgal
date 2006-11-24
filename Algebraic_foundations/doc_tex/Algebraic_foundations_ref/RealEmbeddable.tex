@@ -6,19 +6,39 @@ A model of this concepts represents numbers that are embeddable on the real
 axis. The type obeys the algebraic structure and compares two values according 
 to the total order of the real numbers.
 
+Moreover, \ccc{CGAL::Real_embeddable_traits< RealEmebddable >} is a model of 
+\ccc{AlgebraicStructureTraits}\\
+with:\\ 
+- \ccc{CGAL::Real_embeddable_traits< RealEmebddable >::Is_real_embeddable} set to \ccc{Tag_true} \\
+and functors :\\
+- \ccc{CGAL::Real_embeddable_traits< RealEmebddable >::Is_zero}  \\
+- \ccc{CGAL::Real_embeddable_traits< RealEmebddable >::Abs}  \\
+- \ccc{CGAL::Real_embeddable_traits< RealEmebddable >::Sign}  \\
+- \ccc{CGAL::Real_embeddable_traits< RealEmebddable >::Is_positive}  \\
+- \ccc{CGAL::Real_embeddable_traits< RealEmebddable >::Is_negative}  \\
+- \ccc{CGAL::Real_embeddable_traits< RealEmebddable >::Compare}  \\
+- \ccc{CGAL::Real_embeddable_traits< RealEmebddable >::To_double}  \\
+- \ccc{CGAL::Real_embeddable_traits< RealEmebddable >::To_interval}  \\
+- \ccc{CGAL::Real_embeddable_traits< RealEmebddable >::Is_finite}  \\
 
 Remark:\\
 If a number type is a model of both IntegralDomainWithoutDivision and 
-RealComparable, the number an object of that type represents for the 
-algebraic operations must be the same real number it represents for 
-comparison. It follows that the ring represented by such a number type 
-is a sub-ring of the real numbers and hence has characteristic zero 
-( see http://mathworld.wolfram.com/CharacteristicField.html ).
+RealComparable, it follows that the ring represented by such a number type 
+is a sub-ring of the real numbers and hence has characteristic zero.
+%( see http://mathworld.wolfram.com/CharacteristicField.html ).
 
 \ccRefines
+\ccc{Equality Comparable}\\
 \ccc{LessThanComparable}
 
 \ccOperations
+
+\ccFunction{bool operator==(const RealEmbeddable &a, 
+                            const RealEmbeddable &b);}{}
+\ccGlue
+\ccFunction{bool operator!=(const RealEmbeddable &a, 
+                            const RealEmbeddable &b);}{}
+
 \ccFunction{bool operator< (const RealEmbeddable &a, 
                             const RealEmbeddable &b);}{}
 \ccGlue
@@ -38,6 +58,6 @@ is a sub-ring of the real numbers and hence has characteristic zero
 
 \ccRefIdfierPage{RealEmbeddableTraits}\\
 
-\ccHasModels
+%\ccHasModels
 
 \end{ccRefConcept}

@@ -27,12 +27,12 @@ Moreover, \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >
 - \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Unit_part} \\
 
 
-{ \em \small FROM EXACUS: \\
-It is permissible for the constructor 
-to convert from another built-in type than int, provided ints are
-automatically converted to this type. It is not permissible to 
-rely in a similar fashion on a chain of user-defined conversions.
-}
+%{ \em \small FROM EXACUS: \\
+%It is permissible for the constructor 
+%to convert from another built-in type than int, provided ints are
+%automatically converted to this type. It is not permissible to 
+%rely in a similar fashion on a chain of user-defined conversions.
+%}
 
 
 
@@ -45,7 +45,8 @@ rely in a similar fashion on a chain of user-defined conversions.
 
 \ccOperations
 
-%SetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccTwo{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}
+\ccThree{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxxxxxxxxxxxx}{}
 \ccFunction{IntegralDomainWithoutDivision 
             operator+(const IntegralDomainWithoutDivision &a, 
                       const IntegralDomainWithoutDivision &b);}{}
@@ -104,34 +105,34 @@ Equality comparable:
 \ccRefIdfierPage{FieldWithRootOf}\\
 \ccRefIdfierPage{AlgebraicStructureTraits}\\
 
-\ccHasModels
-\CC\ built-in number types \\
-\ccc{CGAL::Gmpq} \\
-\ccc{CGAL::Gmpz} \\
-\ccc{CGAL::Gmpzf} \\
+%\ccHasModels
+%\CC\ built-in number types \\
+%\ccc{CGAL::Gmpq} \\
+%\ccc{CGAL::Gmpz} \\
+%\ccc{CGAL::Gmpzf} \\
 
-\ccc{mpz_class} \\
-\ccc{mpq_class} \\
-%\ccc{mpf_class} \\
+%\ccc{mpz_class} \\
+%\ccc{mpq_class} \\
+%%\ccc{mpf_class} \\
 
-\ccc{leda_integer} \\
-\ccc{leda_rational} \\
-\ccc{leda_bigfloat} \\
-\ccc{leda_real} \\
+%\ccc{leda_integer} \\
+%\ccc{leda_rational} \\
+%\ccc{leda_bigfloat} \\
+%\ccc{leda_real} \\
 
-\ccc{CORE::BigInt} \\
-\ccc{CORE::BigRat} \\
-%\ccc{CORE::BigFloat} \\
-\ccc{CORE::Expr} \\
+%\ccc{CORE::BigInt} \\
+%\ccc{CORE::BigRat} \\
+%%\ccc{CORE::BigFloat} \\
+%\ccc{CORE::Expr} \\
 
-%\ccc{CGAL::Interval_nt} \\
-%\ccc{CGAL::Interval_nt_advanced} \\
+%%\ccc{CGAL::Interval_nt} \\
+%%\ccc{CGAL::Interval_nt_advanced} \\
 
-\ccc{CGAL::MP_Float} \\
-\ccc{CGAL::Lazy_exact_nt< NT >} (depends on NT) \\
-\ccc{CGAL::Quotient< NT >} \\
+%\ccc{CGAL::MP_Float} \\
+%\ccc{CGAL::Lazy_exact_nt< NT >} (depends on NT) \\
+%\ccc{CGAL::Quotient< NT >} \\
 
-\ccc{CGAL::Sqrt_extension< NT, Root >} \\
-%\ccc{CGAL::Polynomial< T >} \\
+%\ccc{CGAL::Sqrt_extension< NT, Root >} \\
+%%\ccc{CGAL::Polynomial< T >} \\
 
 \end{ccRefConcept}

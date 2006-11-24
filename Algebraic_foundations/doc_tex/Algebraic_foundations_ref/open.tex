@@ -22,17 +22,17 @@ Note that Polynomials are not part of this package.
 
 TODO: (after merge) 
 \begin{itemize}
-\item add static const bool to \ccc{Tag_true}  \ccc{Tag_false}. 
 \item add concept \ccc{FromDoubleConstructible}
 \item find a place for basic stuff. see section remarks
-\item revise doc of NTs
 \item add links in \ccc{IsZero}s
 \item 'built-in' types -> 'fundamental' types 
 \item add a new entry in the globally maintained Bib file.
-\item check footnotes in pdf/ps (bug in manual tools? -> Andreas Meyer)
 \item there is a problem with io stream operators for CORE types \\
       This may also be related to the problem that gmpxx.h must be included 
       befor CORE types. 
+\item document \ccc{Boolean_tag}, rm function \ccc{check_tag}?.
+\item document rounding mode for Div/Mod. 
+\item revise doc of NTs
 \end{itemize}
 
 DONE:
@@ -45,11 +45,12 @@ DONE:
 \item rm global function \ccc{is_exact(AS())}\\
       use \ccc{Algebraic_structure_traits<AS>::Is_exact::value}.
 \item rm all fwd.h files    
+\item Introduced \ccc{Boolean_tag} with static const bool. \\
+      typedef \ccc{Tag_true}, \ccc{Tag_false}. 
 \end{itemize}
 
 CONJECTURE:
 \begin{itemize}
-\item fix rounding mode in Div/Mod ? see remarks
 \item rm \ccc{IsFinite} from Real Embeddable (after merge)
 \item keep name \ccc{IntegralDomainWithoutDivision} and \ccc{IntegralDomain}.
 \item consider \ccc{Interval_nt} as exact 

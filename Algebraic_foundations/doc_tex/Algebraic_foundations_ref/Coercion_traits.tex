@@ -19,11 +19,11 @@ An instance of \ccClassTemplateName\ reflects the type coercion of the types
         { Tag indicating whether the two types A and B are a model of \ccc{ImplicitInteroperable} \\
           This is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}. }
 
-\ccNestedType{Coercion_type}
+\ccNestedType{Type}
         {The coercion type of \ccc{ A} and \ccc{ B}. \\
         In case A and B are not \ccc{ExplicitInteroperable} this is undefined.  }
 \ccNestedType{Cast}
-        {A model of the \ccc{AdaptableFunctor} concept, providing the conversion of \ccc{ A} or \ccc{ B} to \ccc{ Coercion_type}. \\
+        {A model of the \ccc{AdaptableFunctor} concept, providing the conversion of \ccc{ A} or \ccc{ B} to \ccc{ Type}. \\
         In case A and B are not \ccc{ExplicitInteroperable} this is undefined.  }
 
 

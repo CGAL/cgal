@@ -3,14 +3,14 @@
 \ccDefinition
 
 A model of \ccc{RealEmbeddableTraits} is associated to a number type 
-\ccc{Real_embeddable} and reflects the properties of this type with respect 
+\ccc{Type} and reflects the properties of this type with respect 
 to the concept \ccc{RealEmbeddable}.
 
 \ccTypes
 
 A model of \ccc{RealEmbeddableTraits} is supposed to provide:\\
 
-\ccNestedType{Real_embeddable}{The associated number type.}
+\ccNestedType{Type}{The associated number type.}
 
 \ccNestedType{Is_real_embeddable}
         { Tag indicating whether associated type is real embeddable. \\
@@ -21,15 +21,15 @@ A model of \ccc{RealEmbeddableTraits} is supposed to provide:\\
 In case the associated type is \ccc{RealEmbeddable} all functors are provided.\\
 In case a functor is not provided, it is set to \ccc{CGAL::Null_functor}.
 
-\ccNestedType{Is_finite}{ A model of \ccc{RealEmbeddableTraits::IsFinite} } 
+\ccNestedType{Is_zero}{ A model of \ccc{RealEmbeddableTraits::IsZero} }
 \ccNestedType{Abs}{ A model of \ccc{RealEmbeddableTraits::Abs} }
 \ccNestedType{Sign}{ A model of \ccc{RealEmbeddableTraits::Sign} }
 \ccNestedType{Is_positive}{ A model of \ccc{RealEmbeddableTraits::IsPositive} }
 \ccNestedType{Is_negative}{ A model of \ccc{RealEmbeddableTraits::IsNegative} }
-\ccNestedType{Is_zero}{ A model of \ccc{RealEmbeddableTraits::IsZero} }
 \ccNestedType{Compare}{ A model of \ccc{RealEmbeddableTraits::Compare} }
 \ccNestedType{To_double}{ A model of \ccc{RealEmbeddableTraits::ToDouble} }
 \ccNestedType{To_interval}{ A model of \ccc{RealEmbeddableTraits::ToInterval} }
+\ccNestedType{Is_finite}{ A model of \ccc{RealEmbeddableTraits::IsFinite} } 
 
 %\ccHasModels
 

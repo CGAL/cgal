@@ -5,7 +5,7 @@
 \ccc{AdaptableBinaryFunction}, finds great common factor of denominators.
 
 This can be considered as a relaxed version of \ccc{AlgebraicStructureTraits::Gcd}, 
-this is needed because it is not guaranteed that \ccc{FractionTraits::Denominator} is a model of 
+this is needed because it is not guaranteed that \ccc{FractionTraits::Denominator_type} is a model of 
 \ccc{UniqueFactorizationDomain}. 
 
 
@@ -16,9 +16,9 @@ this is needed because it is not guaranteed that \ccc{FractionTraits::Denominato
 \ccTypes
 %SetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxxxxxxxxxxxxxxxxxxxxxx}{}
 
-\ccTypedef{typedef FractionTraits::Denominator result_type;}{}
-\ccTypedef{typedef FractionTraits::Denominator first_argument_type;}{}
-\ccTypedef{typedef FractionTraits::Denominator second_argument_type;}{}
+\ccTypedef{typedef FractionTraits::Denominator_type result_type;}{}
+\ccTypedef{typedef FractionTraits::Denominator_type first_argument_type;}{}
+\ccTypedef{typedef FractionTraits::Denominator_type second_argument_type;}{}
 
 \ccOperations
 %SetThreeColumns{xxxxxxxxxx}{xxxxx}{}

@@ -4,10 +4,10 @@
 \ccDefinition
 
 A model of \ccc{AlgebraicStructureTraits} reflects the algebraic structure
-of an associated type \ccc{Algebraic_structure}. 
+of an associated type \ccc{Type}. 
 
 
-Depending on the concepts that \ccc{Algebraic_structure} fulfills, 
+Depending on the concepts that \ccc{Type} fulfills, 
 it contains various functors and descriptive tags. 
 Moreover it gives access to the several possible 
 algebraic operations within that structure.
@@ -18,7 +18,7 @@ algebraic operations within that structure.
 \ccSetTwoColumns{xxxxxxxxxxxxxx}{}
 A model of \ccc{AlgebraicStructureTraits} is supposed to provide:\\
 
-\ccNestedType{Algebraic_structure}
+\ccNestedType{Type}
         {The associated algebraic structure.}
 
 \ccNestedType{Algebraic_structure_tag}
@@ -26,7 +26,7 @@ A model of \ccc{AlgebraicStructureTraits} is supposed to provide:\\
 
         \begin{tabular}{|l|l|}
         \hline
-        Tag is: & \ccc{Algebraic_structure} is model of:\\
+        Tag is: & \ccc{Type} is model of:\\
         \hline
           \ccc{CGAL::Null_tag}                       & no algebraic concept\\
           \ccc{CGAL::Integral_domain_without_division_tag}& \ccc{IntegralDomainWithoutDivision}\\     
@@ -42,7 +42,7 @@ A model of \ccc{AlgebraicStructureTraits} is supposed to provide:\\
         }
 
 \ccNestedType{Is_exact}
-        { Tag indicating whether \ccc{Algebraic_structure} is an exact type. \\
+        { Tag indicating whether \ccc{Type} is an exact type. \\
           This is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}.\\
           The exactness covers only those operations that are required by 
           the algebraic structure concept. \\

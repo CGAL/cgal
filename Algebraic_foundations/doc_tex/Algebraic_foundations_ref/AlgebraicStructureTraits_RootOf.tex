@@ -12,7 +12,7 @@ polynomial.
 
 \ccTypes
 \ccNestedType{result_type} 
-        { Is \ccc{AlgebraicStructureTraits::Algebraic_structure}.}
+        { Is \ccc{AlgebraicStructureTraits::Type}.}
 
 \ccOperations
 \ccCreationVariable{root_of}
@@ -24,22 +24,22 @@ result_type operator() (int k, InputIterator begin, InputIterator end);}
         which is defined by the iterator range,
         where begin refers to the constant term.
         \ccPrecond The polynomial is square-free.
-        \ccPrecond The value type of the InputIterator is \ccc{AlgebraicStructureTraits::Algebraic_structure}\\ }
+        \ccPrecond The value type of the InputIterator is \ccc{AlgebraicStructureTraits::Type}\\ }
 
-\begin{ccAdvanced}
-\ccMethod{
-template<class InputIterator>
-result_type operator()(const Algebraic_structure& lower,
-                       const Algebraic_structure& upper,
-                       InputIterator begin,
-                       InputIterator end);}
-        {returns the only real root within the interval [lower,upper]
-        of the univariate polynomial, which is defined by the iterator
-        range, where begin refers to the constant term.
-        \ccPrecond The polynomial is square-free.
-        \ccPrecond The value type of the InputIterator is \ccc{AlgebraicStructureTraits::Algebraic_structure}\\
-}
-\end{ccAdvanced}
+%\begin{ccAdvanced}
+%\ccMethod{
+%template<class InputIterator>
+%result_type operator()(const Type& lower,
+%                       const Type& upper,
+%                       InputIterator begin,
+%                       InputIterator end);}
+%        {returns the only real root within the interval [lower,upper]
+%        of the univariate polynomial, which is defined by the iterator
+%        range, where begin refers to the constant term.
+%        \ccPrecond The polynomial is square-free.
+%        \ccPrecond The value type of the InputIterator is \ccc{AlgebraicStructureTraits::Type}\\
+%}
+%\end{ccAdvanced}
 
 %\ccHasModels
 

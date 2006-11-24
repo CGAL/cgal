@@ -1,18 +1,17 @@
 \begin{ccRefConcept}{ImplicitInteroperable}
-\begin{ccAdvanced}
 \ccDefinition
 
-The types \ccc{A} and \ccc{B} are a model of the concept 
+Two types \ccc{A} and \ccc{B} are a model of the concept 
 \ccc{ImplicitInteroperable}, if there is a superior type, such that 
 binary arithmetic operations involving \ccc{A} and \ccc{B} result in 
-this type. This type is \ccc{Coercion_traits<A,B>::Coercion_type}. 
+this type. This type is \ccc{Coercion_traits<A,B>::Type}. 
 
-The type \ccc{Coercion_traits<A,B>::Coercion_type} is required to be 
+The type \ccc{Coercion_traits<A,B>::Type} is required to be 
 implicit constructible from \ccc{A} and \ccc{B}. 
 
 %From this it follows that all binary functors (and their global functions)
-%provided by \ccc{Algebraic_structure_traits< Coercion_traits<A,B> :: Coercion_type> }  
-%and \ccc{Real_embeddable_traits< Coercion_traits<A,B> :: Coercion_type> } also 
+%provided by \ccc{Algebraic_structure_traits< Coercion_traits<A,B> :: Type> }  
+%and \ccc{Real_embeddable_traits< Coercion_traits<A,B> :: Type> } also 
 %support \ccc{A} and \ccc{B} as argument type. However, they may also 
 %provide a more efficient specialization for \ccc{A}, \ccc{B} or both. 
 %\\ 
@@ -20,7 +19,7 @@ implicit constructible from \ccc{A} and \ccc{B}.
 In this case \ccc{Coercion_traits<A,B>::Are_implicit_interoperable} 
 is \ccc{Tag_true}.
 
-%Note that \ccc{Coercion_traits<A,B>::Coercion_type} may be equal to \ccc{A} or \ccc{B}.\\
+%Note that \ccc{Coercion_traits<A,B>::Type} may be equal to \ccc{A} or \ccc{B}.\\
 
 \ccRefines
  \ccc{ExplicitInteroperable}
@@ -31,5 +30,4 @@ is \ccc{Tag_true}.
 \ccRefConceptPage{AlgebraicStructureTraits}\\
 \ccRefConceptPage{RealEmbeddableTraits}\\
 
-\end{ccAdvanced}
 \end{ccRefConcept}
