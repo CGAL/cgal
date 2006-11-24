@@ -14,7 +14,7 @@
 %%
 %% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
 
-\begin{ccRefConcept}{StopPredicate}
+\begin{ccRefFunctionObjectConcept}{StopPredicate}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[concept]{} %% add further index entries
@@ -34,10 +34,12 @@ The concept \ccRefName\ describes the requirements for the predicate which indic
   \ccNestedType{Profile}
   {The type of the edge profile cache. Must be a model of the \ccc{EdgeProfile} concept.}{}
 
+\ccOperations
 \ccCreationVariable{sp}  %% choose variable name
 
-\ccOperations
-
+  \ccMemberFunction
+    {bool operator()( int a ) const ;}{works?}
+  \ccGlue  
   \ccMemberFunction
     {bool operator()( FT const&       current_cost
                     , Profile  const& profile
@@ -59,7 +61,7 @@ The concept \ccRefName\ describes the requirements for the predicate which indic
 \ccRefIdfierPage{CGAL::Surface_mesh_simplification::Count_stop_predicate<ECM>}\\
 \ccRefIdfierPage{CGAL::Surface_mesh_simplification::Count_ratio_stop_predicate<ECM>}
 
-\end{ccRefConcept}
+\end{ccRefFunctionObjectConcept}
 
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of footer

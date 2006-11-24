@@ -45,9 +45,11 @@ This profile is used by the stop, cost and placement policies.
 \ccGlue    
   \ccMethod{vertex_descriptor v1() const;}{The target vertex of the edge to be collapsed.}
 \ccGlue    
-  \ccMethod{edge_descriptor v0v1() const;}{The directed edge being the primary edgecorrespodingto be collapsed.}
+  \ccMethod{edge_descriptor v0v1() const;}{One of the directed edges corresponding to the undirected
+   edge being collapsed.}
 \ccGlue    
-  \ccMethod{edge_descriptor v1v0() const;}{The opposite of the directed edge to be collapsed.}
+  \ccMethod{edge_descriptor v1v0() const;}{The other directed edge corresponding to the undirected
+  edge being collapsed.}
 \ccGlue    
   \ccMethod{Point const& p0() const;}{The point of the source vertex.}
 \ccGlue    
@@ -67,17 +69,16 @@ This profile is used by the stop, cost and placement policies.
 \ccGlue    
   \ccMethod{std::vector<vertex_descriptor> link() const;}{A unique sequence of the vertices around v0v1.}
 \ccGlue    
-  \ccMethod{std::vector<edge_descritor> border_edges() const;}
-  {A unique collection of the boundary edges incident upon v0 ad v1.}
+  \ccMethod{std::vector<edge_descriptor> border_edges() const;}
+  {A unique collection of the border directed edges incident upon v0 ad v1.}
 \ccGlue    
   \ccMethod{bool left_face_exits() const;}
-  {Indicates if v0v1 is not a border edge thus there is a non-null face to its left.\
-   If there is no left face, vl(),v1vl() and vlv0() return null descriptors.}
+  {Indicates if there is a face to the left of \ccc{v0v1} (i.e, it is not a border edge).\
+   If there is no left face, \ccc{vl(),v1vl() and vlv0()} return null descriptors.}
 \ccGlue    
   \ccMethod{bool right_face_exits() const;}
-  {Indicates if v1v0 is not a border edge thus there is a non-null face to its left
-   (which is to the right of v0v1).\
-   If there is no right face, vr(),v0vr() and vrv1() return null descriptors.}
+  {Indicates if there is a face to the right of \ccc{v0v1} (i.e, \ccc{v1v0} is not a border edge).\
+   If there is no right face, \ccc{vr(),v1vr() and vrv0()} return null descriptors.}
  
 \ccHasModels
 \ccRefIdfierPage{CGAL::Surface_mesh_simplification::Edge_profile<ECM>}

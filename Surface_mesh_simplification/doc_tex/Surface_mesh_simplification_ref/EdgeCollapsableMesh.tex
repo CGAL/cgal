@@ -41,14 +41,14 @@ The mesh simplification algorithm requires the free function \ccc{collapse_trian
   \ccFunction
   {template<class EdgeCollapsableMesh>
   typename boost::graph_traits<EdgeCollapsableMesh>::vertex_descriptor
-  halfedege_collapse(typename boost::graph_traits<EdgeCollapsableMesh>::edge_descriptor const& ue,
+  halfedge_collapse(typename boost::graph_traits<EdgeCollapsableMesh>::edge_descriptor const& ue,
                              EdgeCollapsableMesh& mesh);}  
   {Collapses the undirected edge \ccc{(v0v1,v1v0)} replacing it with \ccc{v0} or \ccc{v1}
    , as described in the following paragraph.}
 
     
 
-\ccPrecond This function requires \ccc{mesh} to be an oriented 2-manifold with or without boundarties. Furthermore, the undirected edge \ccc{v0v1,v1v0} must satisfy the {\em link condition} 
+\ccPrecond This function requires \ccc{mesh} to be an oriented 2-manifold with or without boundaries. Furthermore, the undirected edge \ccc{v0v1,v1v0} must satisfy the {\em link condition} 
 \cite{degn-tpec-98}, which guarantees that the surface is also 2-manifold after the edge collapse. 
 
 \smallskip
@@ -74,7 +74,7 @@ Let \ccc{vm} be the removed vertex and \ccc{vk} be the remaining vertex.
 
 The function returns vertex \ccc{vk}. 
 
-\begin{figure}[htbp]
+\begin{figure}[htpb]
 \begin{ccTexOnly}
 \begin{center}
 \includegraphics[width=17cm]{Surface_mesh_simplification_ref/fig/general_collapse} % omit suffix .eps to support PS and PDF

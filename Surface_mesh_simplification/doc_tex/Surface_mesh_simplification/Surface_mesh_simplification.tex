@@ -51,7 +51,7 @@ is met, such as reaching the desired number of edges.
 
 The algorithm implemented here is generic in the sense that it does not require the surface 
 to be of a particular type. Instead, it defines the concept of a \ccc{EdgeCollapsableMesh},
-which presents the surface as beinhg a halfedge data structure, and any surface that 
+which presents the surface as being a halfedge data structure, and any surface that 
 is a model of that concept can be simplified.\
 The concept is defined not in terms of a monolithic class, but in terms of a set 
 of functions and traits, making it easy to adapt any concrete surface type, 
@@ -126,7 +126,7 @@ and geometric conditions.
 The algorithm presented in \cite{gh-ssqem-97} contracts (collapses) arbitrary vertex pairs and not 
 only edges by considering certain vertex pairs as forming a pseudo-edge and proceeding to collapse
 both edges and pseudo-edges in the same way as in \cite{cgal:lt-fmeps-98,cgal:lt-ems-99} ( 
-which is the algorithm implemented here). However, contracting an aribtrary vertex-pair may result in a non-manifold surface, but the current state of this package can only deal with manifold surfaces, thus, it can only collapse edges. That is, this package cannot be used as a framework for vertex contraction.
+which is the algorithm implemented here). However, contracting an arbitrary vertex-pair may result in a non-manifold surface, but the current state of this package can only deal with manifold surfaces, thus, it can only collapse edges. That is, this package cannot be used as a framework for vertex contraction.
 
 \section{Cost Strategy}
 
@@ -140,6 +140,7 @@ two strategies: the Lindstrom-Turk strategy, which is the default, and
 a strategy consisting of an edge-length cost with an optional
 midpoint placement (much faster but less accurate).
 
+\begin{ccAdvanced}
 \subsection{Lindstrom-Turk Cost and Placement Strategy\label{SurfaceMeshSimplification:LindstromTurkStrategy}}
 
 The main characteristic of the strategy presented in
@@ -153,17 +154,34 @@ At each step, all remaining edges are potential candidates for
 collapsing and the one with the lowest cost is selected.
 
 The cost of collapsing an edge is given by the position chosen for the
-vertex that replaces it. From all the potential vertex positions, the
-one that minimizes the local change in each of the relevant surface
-features (volume, area, boundary shape and triangles shape) is
-chosen. The cost is then a weighted sum of that minimal change in each
-of the relevant features.
+vertex that replaces it. 
+
+The replacement vertex position is computed as
+the solution to a system of 3 linearly-independent linear equality constraints.
+Each constraint is obtained by minimizing a quadratic objective function
+subject to the previously computed constraints.\\
+There are several possible candidate constraints and each is considered in order of importance.
+A candidate constraint might be {\em incompatible} with the previously accepted constraints,
+in which case it's rejected and the next constraint is considered.\\
+Once 3 constrains have been accepted, the system is solved for the vertex position.
+
+The first constraints considered preserves the shape of the surface boundaries 
+(in case the edge profile has boundary edges).
+The next constraints preserve the total volume of the surface.
+The next constraints, if needed, optimize the local changes in volume and boundary shape.
+Lastly, if a constraint is still needed (because the ones previously computed were incompatible),
+a third (and last) constraint is added to favor equilateral triangles over elongated triangles.
+
+The cost is then a convex combination of the volume and boundary optimization terms.
+The weighting factor, defaulted to $1/2$, can be specified by the user to favor volume over
+boundary, or the opposite.
 
 The local changes are computed independently for each edge using only
 the triangles currently adjacent to it at the time when the edge 
 is about to be collapsed, that is, after all previous collapses.
 Thus, the transitive path of minimal local changes yields at
 the end a global change reasonably close to the absolute minimum.
+\end{ccAdvanced}
 
 \subsection{Cost Strategy Policies}
 
@@ -171,7 +189,7 @@ The cost strategy used by the algorithm is selected by means of two policies:
 \ccc{GetPlacement} and \ccc{GetCost}. 
 
 The \ccc{GetPlacement} policy is called to compute the new position
-for the remaining vertex after the halfege-collapse. It returns
+for the remaining vertex after the halfedge-collapse. It returns
 an optional value, which can be absent, in which case the 
 remaining vertex is kept in its place.
 
@@ -188,8 +206,8 @@ simplifying a surface of 1 million edges (a normal size) requires 1 million time
 of additional storage. Thus, to minimize the amount of additional memory required to
 simplify a surface only the cost is attached to each edge and nothing else.
 
-But this is a tradeoff: the cost of a collapse is a function of the placment
-(the new position choosen for the remaining vertex) so before \ccc{GetCost}
+But this is a tradeoff: the cost of a collapse is a function of the placement
+(the new position chosen for the remaining vertex) so before \ccc{GetCost}
 is called for each and every edge, \ccc{GetPlacement} must also be called to obtain
 the placement parameter to the cost function.
 But that placement, which is a 3D Point, is not attached to each and every edge since
@@ -205,13 +223,13 @@ impact on the total running time. This is because the cost of an each edge is no
 computed once but changes several times during the process so the placement function
 must be called several times just as well. Caching the placement can only avoid the 
 very last call, when the edge is collapsed, but not all the previous calls which
-are needed becasue the placement (and cost) changes.
+are needed because the placement (and cost) changes.
 
 \section{API}
 
 \subsection{API Overview}
 
-Sice the algorithm is free from robustness issues there is no need for exact predicates nor constructions and \ccc{Simple_cartesian<double>} can be used safely.
+Since the algorithm is free from robustness issues there is no need for exact predicates nor constructions and \ccc{Simple_cartesian<double>} can be used safely.
 \footnote{In the current version, 3.3, the LindstromTurk policies are not implemented for homogeneous coordinates, so a cartesian kernel must be used.}
 
 The simplification algorithm is implemented as the free template function 
@@ -224,7 +242,7 @@ There are two main parameters to the algorithm: the surface to be simplified (in
 The surface to simplify must be a model of the \ccc{EdgeCollapsableMesh} concept. 
 Many concrete surface types, such as \ccc{CGAL::Polyhedron_3} with only triangular faces,
 become models of that concept via a technique known as 
-{\em external adaptation}, whch is described in \cite{cgal:sll-bgl-02}
+{\em external adaptation}, which is described in \cite{cgal:sll-bgl-02}
 and this {\sc Bgl} web page: \path|http://www.boost.org/libs/graph/doc/leda_conversion.html|
 
 External adaptation is a way to add an interface to an 
@@ -234,7 +252,7 @@ implements the simplification is the concrete surface object itself, not an adap
 which delegates the functionality to the concrete type.
 
 The stop predicate is called after each edge is selected for processing, {\em before} 
-it is classified as collapsable or not (thus before it is collapsed). If the stop predicate 
+it is classified as collapsible or not (thus before it is collapsed). If the stop predicate 
 returns \ccc{true} the algorithm terminates.
 
 \subsubsection{Optional Named Parameters}
@@ -275,11 +293,11 @@ is equivalent to this:
 
 \ccc{f(age(a).gender(g).name(n))}
 
-And you can just ommit any named parameter that has a default value.
+And you can just omit any named parameter that has a default value.
 
 \subsubsection{Sample call}
 
-\begin{cprog}
+\begin{ccExampleCode}
 /*
 surface                  : the surface to simplify
 stop_predicate           : policy indicating when the simplification must finish 
@@ -299,7 +317,7 @@ int r = edge_collapse(surface
                        .get_placement(pf)
                        .visitor(vis)
                      );
-\end{cprog}
+\end{ccExampleCode}
 
 
 
@@ -317,7 +335,7 @@ The unspecified cost strategy defaults to Lindstrom-Turk.
 The following example is equivalent to the previous example but using an
 enriched polyhedron whose halfedges support an \ccc{id} field to
 store the edge index needed by the algorithm. It also shows how to
-explicitely specify a cost strategy (other than the default)
+explicitly specify a cost strategy (other than the default)
 and how to use a visitor policy to track the simplification process.
 
 \ccIncludeExampleCode{Surface_mesh_simplification/edge_collapse_enriched_polyhedron.cpp}
