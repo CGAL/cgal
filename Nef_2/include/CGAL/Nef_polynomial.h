@@ -143,68 +143,66 @@ template <class NT> class Algebraic_structure_traits< Nef_polynomial<NT> >
 {
     typedef Algebraic_structure_traits<NT> AST_NT;
 public:
-    typedef Nef_polynomial<NT> Algebraic_structure;
+    typedef Nef_polynomial<NT> Type;
     typedef typename AST_NT::Is_exact            Is_exact;                                                           
     class Gcd 
-      : public Binary_function< Algebraic_structure, Algebraic_structure,
-                                Algebraic_structure > {
+      : public Binary_function< Type, Type, Type > {
     public:
-        Algebraic_structure operator()( const Algebraic_structure& x, 
-                                        const Algebraic_structure& y ) const {
+        Type operator()( const Type& x, const Type& y ) const {
             // By definition gcd(0,0) == 0
-          if( x == Algebraic_structure(0) && y == Algebraic_structure(0) )
-            return Algebraic_structure(0);
+          if( x == Type(0) && y == Type(0) )
+            return Type(0);
             
           return CGAL::Nef::gcd( x, y );
         }
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Algebraic_structure )
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
 };
 
 template <class NT> class Real_embeddable_traits< Nef_polynomial<NT> > 
   : public Real_embeddable_traits_base< Nef_polynomial<NT> > {
   public:
-    typedef Nef_polynomial<NT> Real_embeddable;
+    typedef Nef_polynomial<NT> Type;
     class Abs 
-        : public Unary_function< Real_embeddable, Real_embeddable> {
+        : public Unary_function< Type, Type> {
     public:
-        Real_embeddable inline operator()( const Real_embeddable& x ) const {
+        Type inline operator()( const Type& x ) const {
             return (CGAL::Nef::sign( x ) == CGAL::NEGATIVE)? -x : x;
         }        
     };
 
     class Sign 
-      : public Unary_function< Real_embeddable, CGAL::Sign > {
+      : public Unary_function< Type, CGAL::Sign > {
       public:
-        CGAL::Sign inline operator()( const Real_embeddable& x ) const {
+        CGAL::Sign inline operator()( const Type& x ) const {
             return CGAL::Nef::sign( x );
         }        
     };
     
     class Compare 
-      : public Binary_function< Real_embeddable, Real_embeddable,
+      : public Binary_function< Type, Type,
                                 CGAL::Comparison_result > {
       public:
         CGAL::Comparison_result inline operator()( 
-                const Real_embeddable& x, 
-                const Real_embeddable& y ) const {
+                const Type& x, 
+                const Type& y ) const {
             return (CGAL::Comparison_result) CGAL::Nef::sign( x - y );
         }
     };
     
     class To_double 
-      : public Unary_function< Real_embeddable, double > {
+      : public Unary_function< Type, double > {
       public:
-        double inline operator()( const Real_embeddable& p ) const {
+        double inline operator()( const Type& p ) const {
             return CGAL::to_double(
                     p.eval_at(Nef_polynomial<NT>::infi_maximal_value()));
         }
     };
     
     class To_interval 
-      : public Unary_function< Real_embeddable, std::pair< double, double > > {
+      : public Unary_function< Type, std::pair< double, double > > {
       public:
-        std::pair<double, double> operator()( const Real_embeddable& p ) const {
+        std::pair<double, double> operator()( const Type& p ) const {
             return CGAL::to_interval(p.eval_at(Nef_polynomial<NT>::infi_maximal_value()));
         }
     };
