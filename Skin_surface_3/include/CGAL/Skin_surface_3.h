@@ -96,7 +96,9 @@ private:
   typedef Triangulation_cell_base_with_info_3<
     std::pair<Simplex, Quadratic_surface *>, FK>                       Cb;
   typedef Triangulation_data_structure_3<Vb,Cb>                        Tds;
+public:
   typedef Triangulation_3<FK, Tds>                                     TMC;
+private:
   typedef typename TMC::Vertex_iterator TMC_Vertex_iterator;
   typedef typename TMC::Cell_iterator   TMC_Cell_iterator;
   typedef typename TMC::Vertex_handle   TMC_Vertex_handle;
@@ -104,19 +106,19 @@ private:
 public:
   template < class WP_iterator >
   Skin_surface_3(WP_iterator begin, WP_iterator end, 
-		 FT shrink_factor,
+		 FT shrink,
 		 bool grow_balls = true,
 		 Gt gt_ = Gt(),
 		 bool _verbose = false
 		 ) 
     : gt(gt_), verbose(_verbose) {
 
-    gt.set_shrink(shrink_factor);
+    gt.set_shrink(shrink);
     CGAL_assertion(begin != end);
 
     if (grow_balls) {
       for (; begin != end; begin++) {
-	regular.insert(Weighted_point(*begin, begin->weight()/gt.get_shrink()));
+	regular.insert(Weighted_point(*begin, begin->weight()/shrink_factor()));
       }
     } else {
       regular.insert(begin, end);
@@ -131,8 +133,8 @@ public:
     
 
     // Construct the Triangulated_mixed_complex:
-    Triangulated_mixed_complex_observer_3<TMC, Self> observer(shrink_factor);
-    triangulate_mixed_complex_3(regular, shrink_factor, tmc, observer, true);
+    Triangulated_mixed_complex_observer_3<TMC, Self> observer(shrink_factor());
+    triangulate_mixed_complex_3(regular, shrink_factor(), tmc, observer, true);
 
     { // NGHK: debug code:
       CGAL_assertion(tmc.is_valid());
@@ -186,7 +188,7 @@ public:
 		  std::string(CGAL_PRETTY_FUNCTION));
     Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
     typedef Exact_predicates_exact_constructions_kernel EK;
-    Skin_surface_traits_3<EK> exact_traits(gt.get_shrink());
+    Skin_surface_traits_3<EK> exact_traits(shrink_factor());
 
     typename Skin_surface_traits_3<EK>::Bare_point p_exact =
       get_anchor_point(vit->info(), exact_traits);
@@ -291,7 +293,7 @@ private:
   }
 //   CMCT_Cell locate_tet(const Bare_point &p, const Simplex &s) const {
 //     Skin_surface_traits_3<Exact_predicates_exact_constructions_kernel> 
-//       traits(gt.get_shrink());
+//       traits(shrink_factor());
     
 //     std::vector<CMCT_Cell> cells;
 
@@ -350,7 +352,7 @@ public:
   // exact computation of the sign on a vertex of the TMC
 //   Sign sign(const CMCT_Vertex_handle vh) const {
 //     typedef Exact_predicates_exact_constructions_kernel K;
-//     Skin_surface_traits_3<K> traits(gt.get_shrink());
+//     Skin_surface_traits_3<K> traits(shrink_factor());
     
 //     typename K::Point_3 p = mc_triangulator->location(vh, traits);
 
@@ -476,14 +478,17 @@ public:
     p = midpoint(p1, p2);
   }
 
-  void intersect(const TMC_Vertex_handle &p1, 
-		 const TMC_Vertex_handle &p2, 
-		 Quadratic_surface *surf,
+  void intersect(TMC_Cell_handle ch, int i, int j,
+		 //TMC_Vertex_handle p2, 
 		 Bare_point &p) const {
     typedef typename Bare_point::R  Traits;
     typedef typename Traits::FT FT;
-    Cartesian_converter<Traits, 
+    Cartesian_converter<FK, 
                         typename Geometric_traits::Bare_point::R> converter;
+
+    Quadratic_surface *surf = ch->info().second;
+    Bare_point p1 = converter(ch->vertex(i)->point());
+    Bare_point p2 = converter(ch->vertex(j)->point());
 
     FT sq_dist = squared_distance(p1,p2);
     // Use value to make the computation robust (endpoints near the surface)
@@ -592,7 +597,7 @@ public:
     case 0:
       {
 	Vertex_handle vh = sim;
-	return Quadratic_surface(conv(vh->point()), gt.get_shrink());
+	return Quadratic_surface(conv(vh->point()), shrink_factor());
 	break;
       }
     case 1:
@@ -600,7 +605,7 @@ public:
 	Edge e = sim;
 	Weighted_point p0 = conv(e.first->vertex(e.second)->point());
 	Weighted_point p1 = conv(e.first->vertex(e.third)->point());
-	return Quadratic_surface(p0, p1, gt.get_shrink());
+	return Quadratic_surface(p0, p1, shrink_factor());
 	break;
       }
     case 2:
@@ -609,7 +614,7 @@ public:
 	Weighted_point p0 = conv(f.first->vertex((f.second+1)&3)->point());
 	Weighted_point p1 = conv(f.first->vertex((f.second+2)&3)->point());
 	Weighted_point p2 = conv(f.first->vertex((f.second+3)&3)->point());
-	return Quadratic_surface(p0,p1,p2, gt.get_shrink());
+	return Quadratic_surface(p0,p1,p2, shrink_factor());
 	break;
       }
     case 3:
@@ -619,7 +624,7 @@ public:
 	Weighted_point p1 = conv(ch->vertex(1)->point());
 	Weighted_point p2 = conv(ch->vertex(2)->point());
 	Weighted_point p3 = conv(ch->vertex(3)->point());
-	return Quadratic_surface(p0,p1,p2,p3, gt.get_shrink());
+	return Quadratic_surface(p0,p1,p2,p3, shrink_factor());
 	break;
       }
     }
@@ -662,7 +667,7 @@ public:
   const Regular &get_regular_triangulation() const {
     return regular;
   }
-  FT get_shrink_factor() const {
+  FT shrink_factor() const {
     return gt.get_shrink();
   }
 

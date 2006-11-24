@@ -107,9 +107,8 @@ private:
   typedef typename Anchor_map::iterator                     Anchor_map_iterator;
 public:
 
-  Mixed_complex_triangulator_3(
-			       Regular const &regular,
-			       Triangulated_mixed_complex &triangulated_mixed_complex, 
+  Mixed_complex_triangulator_3(Regular const &regular,
+			       Triangulated_mixed_complex const &triangulated_mixed_complex, 
 			       bool verbose)
     : regular(regular),
       _tmc(triangulated_mixed_complex),
@@ -120,8 +119,7 @@ public:
     build();
   }
 
-  Mixed_complex_triangulator_3(
-			       Regular &regular,
+  Mixed_complex_triangulator_3(Regular const&regular,
 			       Triangulated_mixed_complex &triangulated_mixed_complex,
 			       Triangulated_mixed_complex_observer &observer,
 			       bool verbose)
@@ -777,7 +775,7 @@ template <
   class TriangulatedMixedComplexObserver_3>
 void 
 triangulate_mixed_complex_3
-(RegularTriangulation_3 &rt,
+(RegularTriangulation_3 const &rt,
  typename RegularTriangulation_3::Geom_traits::FT  shrink,
  TriangulatedMixedComplex_3 &tmc,
  TriangulatedMixedComplexObserver_3 &observer,
@@ -791,21 +789,21 @@ triangulate_mixed_complex_3
 }
 
 
-template < 
-  class RegularTriangulation_3,
-  class TriangulatedMixedComplex_3>
-void 
-triangulate_mixed_complex_3
-(RegularTriangulation_3 const &regular, 
- typename RegularTriangulation_3::Geom_Traits::FT shrink,
- TriangulatedMixedComplex_3 &tmc,
- bool verbose)
-{
-  Triangulated_mixed_complex_observer_3<
-    TriangulatedMixedComplex_3, const RegularTriangulation_3> 
-    observer(1);
-  triangulate_mixed_complex_3(regular, shrink, tmc, observer, verbose);
-}
+// template < 
+//   class RegularTriangulation_3,
+//   class TriangulatedMixedComplex_3>
+// void 
+// triangulate_mixed_complex_3
+// (RegularTriangulation_3 const &regular, 
+//  typename RegularTriangulation_3::Geom_Traits::FT shrink,
+//  TriangulatedMixedComplex_3 &tmc,
+//  bool verbose)
+// {
+//   Triangulated_mixed_complex_observer_3<
+//     TriangulatedMixedComplex_3, const RegularTriangulation_3> 
+//     observer(1);
+//   triangulate_mixed_complex_3(regular, shrink, tmc, observer, verbose);
+// }
 
 CGAL_END_NAMESPACE
 
