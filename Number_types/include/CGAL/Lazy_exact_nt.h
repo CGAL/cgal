@@ -1338,22 +1338,22 @@ public:
 template < class ET >
 class Fraction_traits_base <Lazy_exact_nt<ET> , CGAL::Tag_true>{
     typedef Fraction_traits<ET> ETT;
-    typedef typename ETT::Numerator ET_numerator;
-    typedef typename ETT::Denominator ET_denominator;
+    typedef typename ETT::Numerator_type ET_numerator;
+    typedef typename ETT::Denominator_type ET_denominator;
 public:
     typedef Lazy_exact_nt<ET>  Type;
     typedef Tag_true Is_fraction;
-    typedef Lazy_exact_nt<ET_numerator> Numerator;
-    typedef Lazy_exact_nt<ET_denominator> Denominator;
+    typedef Lazy_exact_nt<ET_numerator> Numerator_type;
+    typedef Lazy_exact_nt<ET_denominator> Denominator_type;
     
-    struct Common_factor : Binary_function<Denominator,Denominator,Denominator>{
-        Denominator operator()(const Denominator& a, const Denominator& b) const {
+    struct Common_factor : Binary_function<Denominator_type,Denominator_type,Denominator_type>{
+        Denominator_type operator()(const Denominator_type& a, const Denominator_type& b) const {
             typename ETT::Common_factor common_factor;
-            return Denominator(common_factor(a.exact(),b.exact()));
+            return Denominator_type(common_factor(a.exact(),b.exact()));
         }
     };
-    struct Compose : Binary_function<Type,Numerator,Denominator>{
-        Type operator()(const Numerator& n, const Denominator& d) const {
+    struct Compose : Binary_function<Type,Numerator_type,Denominator_type>{
+        Type operator()(const Numerator_type& n, const Denominator_type& d) const {
             typename ETT::Compose compose;
             return Type(compose(n.exact(),d.exact()));
         }
@@ -1361,15 +1361,15 @@ public:
     struct Decompose {
         typedef void result_type;
         typedef Type first_argument_type;
-        typedef Numerator second_argument_type;
-        typedef Denominator third_argument_type;
-        void operator()(const Type& f, Numerator& n, Denominator& d) const {
+        typedef Numerator_type second_argument_type;
+        typedef Denominator_type third_argument_type;
+        void operator()(const Type& f, Numerator_type& n, Denominator_type& d) const {
             typename ETT::Decompose decompose;
             ET_numerator nn;
             ET_denominator dd;
             decompose(f.exact(),nn,dd);
-            n = Numerator(nn);
-            d = Denominator(dd);
+            n = Numerator_type(nn);
+            d = Denominator_type(dd);
         }
     };
 };

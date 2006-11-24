@@ -46,8 +46,8 @@ class Fraction_traits {
 public:
     typedef Type_ Type;
     typedef Tag_false Is_fraction;
-    typedef Null_tag Numerator;
-    typedef Null_tag Denominator;
+    typedef Null_tag Numerator_type;
+    typedef Null_tag Denominator_type;
     typedef Null_functor Common_factor;
     typedef Null_functor Decompose;
     typedef Null_functor Compose;

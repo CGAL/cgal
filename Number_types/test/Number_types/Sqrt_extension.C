@@ -506,19 +506,19 @@ void fraction_traits_test(){
               CGAL::Tag_true>::value));
     CGAL_test_assert((boost::is_same< typename RAT_FT3::Is_decomposable, 
               CGAL::Tag_true>::value));  
-    // RAT_FTi Numerator == INTi_EXT
-    CGAL_test_assert((boost::is_same< typename RAT_FT1::Numerator, 
+    // RAT_FTi Numerator_type == INTi_EXT
+    CGAL_test_assert((boost::is_same< typename RAT_FT1::Numerator_type, 
               INT1_EXT>::value));
-    CGAL_test_assert((boost::is_same< typename RAT_FT2::Numerator, 
+    CGAL_test_assert((boost::is_same< typename RAT_FT2::Numerator_type, 
               INT2_EXT>::value));
-    CGAL_test_assert((boost::is_same< typename RAT_FT3::Numerator, 
+    CGAL_test_assert((boost::is_same< typename RAT_FT3::Numerator_type, 
                INT3_EXT>::value));
     // RAT_FTi Denomiantor == INT
-    CGAL_test_assert((boost::is_same< typename RAT_FT1::Denominator, 
+    CGAL_test_assert((boost::is_same< typename RAT_FT1::Denominator_type, 
               INT>::value));
-    CGAL_test_assert((boost::is_same< typename RAT_FT2::Denominator, 
+    CGAL_test_assert((boost::is_same< typename RAT_FT2::Denominator_type, 
               INT>::value));
-    CGAL_test_assert((boost::is_same< typename RAT_FT3::Denominator, 
+    CGAL_test_assert((boost::is_same< typename RAT_FT3::Denominator_type, 
               INT>::value));
  
     // INT_FTs not decomposable 
@@ -544,18 +544,18 @@ void fraction_traits_test(){
         // Semantic for RAT1_EXT
         RAT1_EXT a(RAT(3)/RAT(10),RAT(4)/RAT(15),INT(5));
         typename RAT_FT1::Decompose decompose;
-        typename RAT_FT1::Numerator  num;
-        typename RAT_FT1::Denominator den;
+        typename RAT_FT1::Numerator_type  num;
+        typename RAT_FT1::Denominator_type den;
         decompose(a,num,den);
-        CGAL_test_assert(num==typename RAT_FT1::Numerator(INT(9),INT(8),INT(5)));
-        CGAL_test_assert(den==typename RAT_FT1::Denominator(INT(30)));
+        CGAL_test_assert(num==typename RAT_FT1::Numerator_type(INT(9),INT(8),INT(5)));
+        CGAL_test_assert(den==typename RAT_FT1::Denominator_type(INT(30)));
         typename RAT_FT1::Compose compose;
         CGAL_test_assert(a==compose(num,den));
         {
             RAT1_EXT a(RAT(3)/RAT(10));
             decompose(a,num,den);
-            CGAL_test_assert(num==typename RAT_FT1::Numerator(INT(3)));
-            CGAL_test_assert(den==typename RAT_FT1::Denominator(INT(10)));
+            CGAL_test_assert(num==typename RAT_FT1::Numerator_type(INT(3)));
+            CGAL_test_assert(den==typename RAT_FT1::Denominator_type(INT(10)));
             CGAL_test_assert(!num.is_extended());
         }
     }
@@ -565,13 +565,13 @@ void fraction_traits_test(){
         RAT1_EXT a1(RAT(7)/RAT(3),RAT(5)/RAT(7),INT(5));
         RAT2_EXT a(a0,a1,INT(7));
         typename RAT_FT2::Decompose decompose;
-        typename RAT_FT2::Numerator   num;
-        typename RAT_FT2::Denominator den;
+        typename RAT_FT2::Numerator_type   num;
+        typename RAT_FT2::Denominator_type den;
         decompose(a,num,den);
         CGAL_test_assert(num==INT2_EXT(INT1_EXT(INT(63),INT(56),INT(5)),
                                INT1_EXT(INT(490),INT(150),INT(5)),
                                INT(7)));
-        CGAL_test_assert(den==typename RAT_FT2::Denominator(INT(210)));
+        CGAL_test_assert(den==typename RAT_FT2::Denominator_type(INT(210)));
         typename RAT_FT2::Compose compose;
         CGAL_test_assert(a==compose(num,den));
     }    
@@ -643,7 +643,7 @@ void test_algebraic_number_traits(){
         typedef typename AT::Integer  Integer;
         typedef CGAL::Sqrt_extension<Integer,Integer> Extn_1;
         typedef CGAL::Algebraic_number_traits<Extn_1> ANT;
-        typename ANT::Denominator_for_algebraic_integers dfai;
+        typename ANT::Denominator_type_for_algebraic_integers dfai;
         Extn_1 ext(1,2,5);
         CGAL_test_assert(dfai(ext)==Extn_1(20));
     }{
@@ -651,7 +651,7 @@ void test_algebraic_number_traits(){
         typedef CGAL::Sqrt_extension<Integer,Integer> Extn_1;
         typedef CGAL::Sqrt_extension<Extn_1, Integer> Extn_2;
         typedef CGAL::Algebraic_number_traits<Extn_2> ANT;
-        typename ANT::Denominator_for_algebraic_integers dfai;
+        typename ANT::Denominator_type_for_algebraic_integers dfai;
         {
             Extn_1 a0(1);
             Extn_1 a1(2);
@@ -671,7 +671,7 @@ void test_algebraic_number_traits(){
         typedef CGAL::Sqrt_extension<Integer,Integer>  Extn_1;
         typedef CGAL::Sqrt_extension<Extn_1, Extn_1>   Extn_2;
         typedef CGAL::Algebraic_number_traits<Extn_2> ANT;
-        typename ANT::Denominator_for_algebraic_integers dfai;
+        typename ANT::Denominator_type_for_algebraic_integers dfai;
         {
             Extn_1 a0(1);
             Extn_1 a1(2);

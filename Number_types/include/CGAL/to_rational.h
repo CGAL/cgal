@@ -37,14 +37,14 @@ to_rational(double x)
 { 
     typedef Fraction_traits<Rational> FT;
     typedef typename FT::Is_fraction Is_fraction;
-    typedef typename FT::Numerator Numerator;
-    typedef typename FT::Denominator Denominator;
+    typedef typename FT::Numerator_type Numerator_type;
+    typedef typename FT::Denominator_type Denominator_type;
     typename FT::Compose compose;
     
     BOOST_STATIC_ASSERT((::boost::is_same<Is_fraction,Tag_true>::value));
-    BOOST_STATIC_ASSERT((::boost::is_same<Numerator,Denominator>::value));
+    BOOST_STATIC_ASSERT((::boost::is_same<Numerator_type,Denominator_type>::value));
      
-    Numerator num(0),den(1); 
+    Numerator_type num(0),den(1); 
 
     if (x != 0.0)
         { bool neg = (x < 0);
@@ -71,8 +71,8 @@ to_rational(double x)
                 }
             int expsign = (exponent>0 ? +1 : (exponent<0 ? -1 : 0));
             exponent *= expsign;
-            Numerator twopot(2);
-            Numerator exppot(1);
+            Numerator_type twopot(2);
+            Numerator_type exppot(1);
             while (exponent!=0) {
                 if (exponent & 1)
                     exppot *= twopot;

@@ -162,20 +162,20 @@ class Fraction_traits< leda_rational > {
 public:
     typedef leda_rational Type;
     typedef ::CGAL::Tag_true Is_fraction;
-    typedef leda_integer Numerator;
-    typedef Numerator Denominator;
+    typedef leda_integer Numerator_type;
+    typedef Numerator_type Denominator_type;
 
-    typedef Algebraic_structure_traits< Numerator >::Gcd Common_factor;
+    typedef Algebraic_structure_traits< Numerator_type >::Gcd Common_factor;
 
     class Decompose {
     public:
         typedef Type first_argument_type;
-        typedef Numerator& second_argument_type;
-        typedef Numerator& third_argument_type;
+        typedef Numerator_type& second_argument_type;
+        typedef Numerator_type& third_argument_type;
         void operator () (
                 const Type& rat,
-                Numerator& num,
-                Numerator& den) {
+                Numerator_type& num,
+                Numerator_type& den) {
             num = rat.numerator();
             den = rat.denominator();
         }
@@ -183,12 +183,12 @@ public:
     
     class Compose {
     public:
-        typedef Numerator first_argument_type;
-        typedef Numerator second_argument_type;
+        typedef Numerator_type first_argument_type;
+        typedef Numerator_type second_argument_type;
         typedef Type result_type;
         Type operator ()(
-                const Numerator& num , 
-                const Numerator& den ) {
+                const Numerator_type& num , 
+                const Numerator_type& den ) {
             Type result(num, den);
             result.normalize();
             return result;

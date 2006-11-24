@@ -112,8 +112,8 @@ class Fraction_traits< Gmpq > {
 public:
     typedef Gmpq Type;
     typedef ::CGAL::Tag_true Is_fraction;
-    typedef Gmpz Numerator;
-    typedef Gmpz Denominator;
+    typedef Gmpz Numerator_type;
+    typedef Gmpz Denominator_type;
     typedef Algebraic_structure_traits< Gmpz >::Gcd Common_factor;
     class Decompose {
     public:

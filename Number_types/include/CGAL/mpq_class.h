@@ -227,8 +227,8 @@ public:
     typedef mpq_class Type;
     
     typedef ::CGAL::Tag_true Is_fraction;
-    typedef mpz_class Numerator;
-    typedef mpz_class Denominator;
+    typedef mpz_class Numerator_type;
+    typedef mpz_class Denominator_type;
 
     typedef Algebraic_structure_traits< mpz_class >::Gcd Common_factor;
 

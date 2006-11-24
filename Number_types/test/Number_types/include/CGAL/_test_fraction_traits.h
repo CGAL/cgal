@@ -26,8 +26,8 @@ void test_fraction_traits(){
     typedef CGAL::Fraction_traits<T> FT;    
     typedef typename FT::Type Type;
     typedef typename FT::Is_fraction  Is_fraction;
-    typedef typename FT::Numerator  Num;
-    typedef typename FT::Denominator Den;
+    typedef typename FT::Numerator_type  Num;
+    typedef typename FT::Denominator_type Den;
     typedef typename FT::Common_factor Common_factor;
     typedef typename FT::Decompose Decompose;
     typedef typename FT::Compose   Compose;

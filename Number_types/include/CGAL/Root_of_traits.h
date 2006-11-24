@@ -55,7 +55,7 @@ private:
     // Field must be a Type (Decomposable)
     BOOST_STATIC_ASSERT((FrT::Is_fraction::value)); 
 
-    typedef typename FrT::Numerator      RT;
+    typedef typename FrT::Numerator_type      RT;
     typedef typename FrT::Decompose Decompose;
 public:
     typedef Root_of_2< RT >  Root_of_2;

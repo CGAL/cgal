@@ -706,23 +706,23 @@ class Fraction_traits< Quotient<NT> > {
 public:
     typedef Quotient<NT> Type;
     typedef ::CGAL::Tag_true Is_fraction;
-    typedef NT Numerator;
-    typedef Numerator Denominator;
+    typedef NT Numerator_type;
+    typedef Numerator_type Denominator_type;
 
-    //TODO: check whether Numerator has a GCD.
+    //TODO: check whether Numerator_type has a GCD.
     //will use Scalar_factor from Scalar_factor_traits (not implemented yet)
     //for more details see EXACUS:NumeriX/include/NiX/Scalar_factor_traits.h
-    typedef typename Algebraic_structure_traits< Numerator >::Gcd Common_factor;
+    typedef typename Algebraic_structure_traits< Numerator_type >::Gcd Common_factor;
 
     class Decompose {
     public:
         typedef Type first_argument_type;
-        typedef Numerator& second_argument_type;
-        typedef Numerator& third_argument_type;
+        typedef Numerator_type& second_argument_type;
+        typedef Numerator_type& third_argument_type;
         void operator () (
                 const Type& rat,
-                Numerator& num,
-                Numerator& den) {
+                Numerator_type& num,
+                Numerator_type& den) {
             num = rat.numerator();
             den = rat.denominator();
         }
@@ -730,12 +730,12 @@ public:
     
     class Compose {
     public:
-        typedef Numerator first_argument_type;
-        typedef Numerator second_argument_type;
+        typedef Numerator_type first_argument_type;
+        typedef Numerator_type second_argument_type;
         typedef Type result_type;
         Type operator ()(
-                const Numerator& num , 
-                const Numerator& den ) {
+                const Numerator_type& num , 
+                const Numerator_type& den ) {
             Type result(num, den);
             return result;
         }

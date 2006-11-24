@@ -1206,8 +1206,8 @@ class Sqrt_ext_Ftr_base_2< NT_, false > {
 public:
     typedef NT_ NT;
     typedef ::CGAL::Tag_false Is_decomposable;
-    typedef ::LiS::Null_tag Numerator;
-    typedef ::LiS::Null_tag Denominator;
+    typedef ::LiS::Null_tag Numerator_type;
+    typedef ::LiS::Null_tag Denominator_type;
     typedef ::LiS::Null_tag Common_factor;
     typedef ::LiS::Null_tag Decompose;
     typedef ::LiS::Null_tag Compose;
@@ -1220,22 +1220,22 @@ private:
 public:
     typedef Sqrt_extension<COEFF,ROOT_NT> NT;
     typedef CGAL::Tag_true Is_decomposable;
-    typedef Sqrt_extension<typename CFT::Numerator,ROOT_NT> Numerator;
-    typedef typename CFT::Denominator Denominator;
-    typedef typename NT_traits<Denominator>::Gcd Common_factor;
+    typedef Sqrt_extension<typename CFT::Numerator_type,ROOT_NT> Numerator;
+    typedef typename CFT::Denominator_type Denominator;
+    typedef typename NT_traits<Denominator_type>::Gcd Common_factor;
 
     class Decompose {
     public:
         typedef NT first_argument_type;
-        typedef Numerator second_argument_type;
-        typedef Denominator& third_argument_type;
+        typedef Numerator_type second_argument_type;
+        typedef Denominator_type& third_argument_type;
         void operator () (const NT& ext,
-                          Numerator&   num,
-                          Denominator& den){
+                          Numerator_type&   num,
+                          Denominator_type& den){
             typename CFT::Decompose decompose;
             typename CFT::Common_factor common_factor;
-            typedef typename CFT::Numerator NUM;
-            typedef typename CFT::Denominator DEN;
+            typedef typename CFT::Numerator_type NUM;
+            typedef typename CFT::Denominator_type DEN;
             
             if(ext.is_extended()){
                 NUM a0_num, a1_num;
@@ -1248,21 +1248,21 @@ public:
                 a0_num = a0_num*NiX::integral_div(a1_den,common_den);
                 a1_num = a1_num*NiX::integral_div(a0_den,common_den);
                 den = NiX::integral_div(a0_den,common_den)*a1_den;
-                num = Numerator(a0_num,a1_num,ext.root());
+                num = Numerator_type(a0_num,a1_num,ext.root());
             }else{
                 NUM a0_num;
                 decompose(ext.a0(),a0_num,den);
-                num = Numerator(a0_num);
+                num = Numerator_type(a0_num);
             }
         }
     };
     class Compose {
     public:
-        typedef Numerator first_argument_type;
-        typedef Denominator second_argument_type;
+        typedef Numerator_type first_argument_type;
+        typedef Denominator_type second_argument_type;
         typedef NT result_type;
-        NT operator () (const Numerator&   num,
-                        const Denominator& den){
+        NT operator () (const Numerator_type&   num,
+                        const Denominator_type& den){
             if(num.is_extended()){
                 typename CFT::Compose compose;
                 COEFF a0=compose(num.a0(),den);
@@ -1284,8 +1284,8 @@ template <class COEFF, class ROOT_NT>
 class Sqrt_ext_Ftr_base_1< Sqrt_extension<COEFF,ROOT_NT >, CGAL::Tag_true >
     : public Sqrt_ext_Ftr_base_2< 
     Sqrt_extension<COEFF,ROOT_NT >, 
-    ::boost::is_same< typename NiX::Coercion_traits<ROOT_NT,typename NiX::Fraction_traits<COEFF>::Numerator>::Type,
-                        typename NiX::Fraction_traits<COEFF>::Numerator>::value >
+    ::boost::is_same< typename NiX::Coercion_traits<ROOT_NT,typename NiX::Fraction_traits<COEFF>::Numerator_type>::Type,
+                        typename NiX::Fraction_traits<COEFF>::Numerator_type>::value >
 {
     //nothing new
 };
@@ -1304,9 +1304,9 @@ namespace Intern{
     template <class SqrtExt>
     class Sqrt_ext_Coftr_base_1< SqrtExt, CGAL::Tag_false >{
     public:
-        typedef SqrtExt          Numerator;
+        typedef SqrtExt          Numerator_type;
         typedef ::CGAL::Tag_false Is_composable;
-        typedef ::LiS::Null_tag Denominator;
+        typedef ::LiS::Null_tag Denominator_type;
         typedef ::LiS::Null_tag Type;
         typedef ::LiS::Null_tag Compose;  
     }; 
@@ -1318,22 +1318,22 @@ namespace Intern{
         typedef typename CFT::Type Type_coeff;
        
     public:
-        typedef SqrtExt                                       Numerator;
+        typedef SqrtExt                                       Numerator_type;
         typedef ::CGAL::Tag_true                               Is_composable;
-        typedef typename CFT::Denominator                Denominator;
+        typedef typename CFT::Denominator_type                Denominator;
         typedef NiX::Sqrt_extension<Type_coeff,Root> Type;
         
         class Compose {
     public:
             //! first argument type
-            typedef Numerator   first_argument_type;
+            typedef Numerator_type   first_argument_type;
             //! second argument type
-            typedef Denominator second_argument_type;
+            typedef Denominator_type second_argument_type;
             //! result type
             typedef Type    result_type;
             //! Compose fraction
-            Type operator() (Numerator   num, 
-                                      Denominator den){
+            Type operator() (Numerator_type   num, 
+                                      Denominator_type den){
                 if(num.is_extended()){
                     typename CFT::Compose compose_coeff;
                     Type_coeff a0_new(compose_coeff(num.a0(),den));
@@ -1719,7 +1719,7 @@ public:
     //! returns the extension factor needed for the gcd_utcf computation 
     //! for more details see ... TODO!!
     //!
-    class Denominator_for_algebraic_integers {
+    class Denominator_type_for_algebraic_integers {
     public:
         //! argument type
         typedef NT argument_type;
@@ -1729,7 +1729,7 @@ public:
     public:
         NT operator () (const NT& a) const {
             typedef Algebraic_number_traits<COEFF> ANT;
-            typename ANT::Denominator_for_algebraic_integers dfai;
+            typename ANT::Denominator_type_for_algebraic_integers dfai;
 
             Standardise<COEFF> standardise;
             if (a.a1() != COEFF(0)) {

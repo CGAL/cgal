@@ -45,7 +45,7 @@ private:
     typedef typename FT::Compose Compose;
 
 public:
-    typedef typename FT::Numerator RT;
+    typedef typename FT::Numerator_type RT;
     
     RT numerator (const Rational& r) const {
         RT num,den; 
@@ -73,8 +73,8 @@ class Rational_traits
 ::boost::is_same<typename Fraction_traits<T>::Is_fraction,Tag_true>::value 
 &&
 ::boost::is_same<
-typename Fraction_traits<T>::Numerator,
-typename Fraction_traits<T>::Denominator
+typename Fraction_traits<T>::Numerator_type,
+typename Fraction_traits<T>::Denominator_type
 >::value >
 {};
 
