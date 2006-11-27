@@ -37,6 +37,7 @@ Algebraic_foundations/doc_tex/Algebraic_foundations_ref/FractionTraits_CommonFac
 Algebraic_foundations/doc_tex/Algebraic_foundations_ref/FractionTraits_Compose.tex -text
 Algebraic_foundations/doc_tex/Algebraic_foundations_ref/FractionTraits_Decompose.tex -text
 Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Fraction_traits.tex -text
+Algebraic_foundations/doc_tex/Algebraic_foundations_ref/FromDoubleConstructible.tex -text
 Algebraic_foundations/doc_tex/Algebraic_foundations_ref/FromSmallIntConstructible.tex -text
 Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Gmpzf.tex -text
 Algebraic_foundations/doc_tex/Algebraic_foundations_ref/ImplicitInteroperable.tex -text

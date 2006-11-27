@@ -1,0 +1,27 @@
+\begin{ccRefConcept}{FromDoubleConstructible}
+
+\ccDefinition
+  
+%A type is a model of the concept \ccc{FromDoubleConstructible} in case 
+%it is constructible from the type \ccc{double}.  
+
+A model of the concept \ccc{FromDoubleConstructible} is required 
+to be constructible from the type \ccc{double}.  
+
+In case the type is a model of \ccc{RealEmbeddable} too, for any double d
+the identity: \ccc{ d == CGAL::to_double(T(d))}, is guaranteed.  
+
+
+
+\ccCreation
+\ccCreationVariable{type}  %% choose variable name
+
+\ccConstructor{FromDoubleConstructible(const double& d);}{
+conversion constructor from double.
+} 
+
+%\ccHasModels
+%\ccc{double}\\
+
+
+\end{ccRefConcept}
