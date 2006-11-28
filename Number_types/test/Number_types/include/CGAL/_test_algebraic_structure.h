@@ -699,10 +699,13 @@ void test_ast_functor_arity() {
 
 template <class  AS , class Algebraic_category, class Is_exact>
 void test_algebraic_structure(){
-  
+   
     test_ast_functor_arity<AS>();
     test_Type_functions< AS >(Algebraic_category());
+  
     typedef CGAL::Algebraic_structure_traits<  AS  > AST;
+    BOOST_STATIC_ASSERT((::boost::is_same<AS,typename AST::Type>::value));
+
     CGAL_SNAP_AST_FUNCTORS(AST);
     typedef typename AST::Algebraic_category  Tag;
     
@@ -830,22 +833,6 @@ void test_algebraic_structure( const  AS & a, const  AS & b, const  AS & c) {
     CGAL_test_assert( c !=  AS (0));
     test_algebraic_structure< AS ,Algebraic_category, Is_exact>();
     test_algebraic_structure_intern(a,b,c,Algebraic_category());
-}
-
-// TODO: "default template arguments may not be used in function templates"
-template< class  AS , class Algebraic_category >
-void test_algebraic_structure_without_exactness_check() {
-  test_algebraic_structure<  AS , Algebraic_category, 
-        typename CGAL::Algebraic_structure_traits< AS >::Is_exact >();
-}
-
-template< class  AS , class Algebraic_category >
-void test_algebraic_structure_without_exactness_check( 
-        const  AS & a, 
-        const  AS & b, 
-        const  AS & c) {
-  test_algebraic_structure<  AS , Algebraic_category, 
-        typename CGAL::Algebraic_structure_traits< AS >::Is_exact >( a, b, c );
 }
   
 CGAL_END_NAMESPACE

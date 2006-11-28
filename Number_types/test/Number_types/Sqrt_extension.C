@@ -345,25 +345,27 @@ void to_double_test(){
 }
 template <class NT, class ROOT, class Algebraic_type>
 void general_test(){
+    typedef typename CGAL::Algebraic_structure_traits<NT>::Is_exact Is_exact; 
+    
     typedef CGAL::Sqrt_extension<NT,ROOT> EXT1;
     EXT1 a1((NT)3 ,(NT)5  ,(ROOT)17);
     EXT1 b1((NT)-2,(NT)3  ,(ROOT)17);
     EXT1 c1((NT)7 ,(NT)-11,(ROOT)17);
-    CGAL::test_algebraic_structure_without_exactness_check<EXT1,Algebraic_type>(a1,b1,c1);
+    CGAL::test_algebraic_structure<EXT1,Algebraic_type,Is_exact>(a1,b1,c1);
     CGAL::test_real_embeddable<EXT1>();
 
     typedef CGAL::Sqrt_extension<EXT1,ROOT> EXT2;
     EXT2 a2(b1 ,a1  ,(ROOT)19);
     EXT2 b2(c1,(EXT1)0 ,(ROOT)19);
     EXT2 c2((EXT1)0 ,(EXT1)-11,(ROOT)19);
-    CGAL::test_algebraic_structure_without_exactness_check<EXT2,Algebraic_type>(a2,b2,c2);
+    CGAL::test_algebraic_structure<EXT2,Algebraic_type,Is_exact>(a2,b2,c2);
     CGAL::test_real_embeddable<EXT2>();
  
     typedef CGAL::Sqrt_extension<EXT2,ROOT> EXT3;
     EXT3 a3(b2 ,a2  ,(ROOT)23);
     EXT3 b3(c2,(EXT2)0 ,(ROOT)23);
     EXT3 c3((EXT2)0 ,(EXT2)-11,(ROOT)23);
-    CGAL::test_algebraic_structure_without_exactness_check<EXT3,Algebraic_type>(a3,b3,c3);
+    CGAL::test_algebraic_structure<EXT3,Algebraic_type,Is_exact>(a3,b3,c3);
     CGAL::test_real_embeddable<EXT3>();
 
     constructor_test<EXT1>();
@@ -743,7 +745,7 @@ void polynom_test(){
 template <class AT>
 void sqrt_extension_test(){
     CGAL_SNAP_ARITHMETIC_KERNEL_TYPEDEFS(AT);
-   
+  
     general_test<Integer,Integer,CGAL::Integral_domain_tag>();        
     general_test<Rational,Integer,CGAL::Field_tag>(); 
  
