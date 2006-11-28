@@ -280,40 +280,39 @@ public slots:
 
     void open_triangles_file()
     {
-      tri_diag.clear();
-      sphere_diag.clear();
-      plane_diag.clear();
+      clear_all_diags();
       open_file(tri_diag);
     }
 
     void open_spheres_file()
     {
-      tri_diag.clear();
-      sphere_diag.clear();
-      plane_diag.clear();
+      clear_all_diags();
       open_file(sphere_diag);
     }
 
     void open_planes_file()
     {
-      tri_diag.clear();
-      sphere_diag.clear();
-      plane_diag.clear();
+      clear_all_diags();
       open_file(plane_diag);
     }
 
   void new_instance()
   {
     widget->lock();
-    
-    tri_diag.clear();
-    sphere_diag.clear();
+    clear_all_diags();
     widget->clear_history();
     widget->set_window(-1.1, 1.1, -1.1, 1.1);
         // set the Visible Area to the Interval
     widget->unlock();
     
     something_changed(); 
+  }
+
+  void clear_all_diags()
+  {
+    tri_diag.clear();
+    sphere_diag.clear();
+    plane_diag.clear();
   }
 
 private slots:
