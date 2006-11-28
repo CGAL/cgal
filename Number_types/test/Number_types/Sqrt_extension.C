@@ -446,7 +446,7 @@ void scalar_factor_traits_test(){
 // TODO: No to_Sqrt_extension available in CGAL.
 /*template <class AT>
 void to_Sqrt_extension_test() {
-//    CGAL_SNAP_ARITHMETIC_KERNEL_TypeDEFS(AT);
+//    CGAL_SNAP_ARITHMETIC_KERNEL_TYPEDEFS(AT);
     typedef leda_integer Integer;
     typedef leda_rational Rational;
     typedef CGAL::Sqrt_extension<Rational,Integer> EXT;
@@ -742,7 +742,7 @@ void polynom_test(){
 }*/
 template <class AT>
 void sqrt_extension_test(){
-    CGAL_SNAP_ARITHMETIC_KERNEL_TypeDEFS(AT);
+    CGAL_SNAP_ARITHMETIC_KERNEL_TYPEDEFS(AT);
    
     general_test<Integer,Integer,CGAL::Integral_domain_tag>();        
     general_test<Rational,Integer,CGAL::Field_tag>(); 

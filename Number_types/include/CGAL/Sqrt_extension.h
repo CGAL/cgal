@@ -52,7 +52,7 @@
   template \< class ArithmeticTraitsSqrtExtension \>
   class my_class {
   public:
-      NiX_SNAP_ARITHMETIC_TRAITS_SQRT_EXTENSION_TypeDEFS(ArithmeticTraitsSqrtExtension);
+      NiX_SNAP_ARITHMETIC_TRAITS_SQRT_EXTENSION_TYPEDEFS(ArithmeticTraitsSqrtExtension);
       // ...
   };
   </PRE>
@@ -62,8 +62,8 @@
   of your class and saves typing the lengthy ArithmeticTraits::
   prefix.
 */
-#define CGAL_SNAP_ARITHMETIC_TRAITS_SQRT_EXTENSION_TypeDEFS(AT) \
-  CGAL_SNAP_ARITHMETIC_TRAITS_TypeDEFS(AT) \
+#define CGAL_SNAP_ARITHMETIC_TRAITS_SQRT_EXTENSION_TYPEDEFS(AT) \
+  CGAL_SNAP_ARITHMETIC_TRAITS_TYPEDEFS(AT) \
   typedef typename AT::Extn Extn; \
   typedef typename AT::Nested_extn Nested_extn; \
   typedef typename AT::Poly_extn1 Poly_extn1; \
@@ -1386,7 +1386,7 @@ public:
     typedef Arithmetic_traits                                             Base;
     
     // load the typedefs from the base class
-    NiX_SNAP_ARITHMETIC_TRAITS_TypeDEFS(Arithmetic_traits);
+    NiX_SNAP_ARITHMETIC_TRAITS_TYPEDEFS(Arithmetic_traits);
     
     //! a number with one root
     typedef NiX::Sqrt_extension< Extn_NT, Extn_root_NT >                  Extn;
