@@ -45,7 +45,7 @@ template <class U>
 class Algebraic_structure_traits< ::__gmp_expr< ::__gmpz_value,U>  >
     :public Algebraic_structure_traits_base<  ::__gmp_expr< ::__gmpz_value,U>  , Null_tag > {
 public:
-    typedef Euclidean_ring_tag  Algebraic_structure_tag;
+    typedef Euclidean_ring_tag  Algebraic_category;
     typedef Tag_true            Is_exact;
     typedef mpz_class                 Type;
     

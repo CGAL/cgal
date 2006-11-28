@@ -14,7 +14,7 @@ void test_lazy_exact_nt() {
     {
         typedef typename AK::Field_with_sqrt ET;
         typedef CGAL::Algebraic_structure_traits< ET > AST;
-        typedef typename AST::Algebraic_structure_tag Tag;
+        typedef typename AST::Algebraic_category Tag;
         typedef CGAL::Lazy_exact_nt< ET > NT;
         typedef typename AST::Is_exact Is_exact;
 
@@ -33,7 +33,7 @@ void test_lazy_exact_nt() {
         typedef typename AK::Rational ET;
 
         typedef CGAL::Algebraic_structure_traits< ET > AST;
-        typedef typename AST::Algebraic_structure_tag Tag;
+        typedef typename AST::Algebraic_category Tag;
         typedef CGAL::Lazy_exact_nt< ET > NT;
         typedef typename AST::Is_exact Is_exact;
 
@@ -56,7 +56,7 @@ void test_lazy_exact_nt() {
         typedef typename AK::Integer ET;
 
         typedef CGAL::Algebraic_structure_traits< ET > AST;
-        typedef typename AST::Algebraic_structure_tag Tag;
+        typedef typename AST::Algebraic_category Tag;
         typedef CGAL::Lazy_exact_nt< ET > NT;
         typedef typename AST::Is_exact Is_exact;
 

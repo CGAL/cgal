@@ -49,7 +49,7 @@ class Algebraic_structure_traits< ::__gmp_expr< ::__gmpq_value,U> >
   : public Algebraic_structure_traits_base< ::__gmp_expr< ::__gmpq_value,U>, 
                                             Null_tag >  {
   public:
-    typedef Field_tag           Algebraic_structure_tag;
+    typedef Field_tag           Algebraic_category;
     typedef Tag_true            Is_exact;
     typedef mpq_class                 Type;
 

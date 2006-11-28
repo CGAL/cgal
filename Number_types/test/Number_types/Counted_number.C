@@ -35,7 +35,7 @@ void call_tests_with_types_from_ak() {
   test_counted_number( typename AK::Field_with_sqrt(), 
                        typename CGAL::Algebraic_structure_traits< 
                                                     typename AK::Field_with_sqrt
-                                                 >::Algebraic_structure_tag() );  
+                                                 >::Algebraic_category() );  
 }
 
 int main() {

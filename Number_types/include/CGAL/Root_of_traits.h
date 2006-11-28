@@ -29,7 +29,7 @@ CGAL_BEGIN_NAMESPACE
 
 namespace CGALi {
 
-template < typename NT, class Algebraic_structure_tag>
+template < typename NT, class Algebraic_category>
 struct Root_of_traits_helper{
     typedef Quotient<NT> Root_of_1;
     typedef Root_of_2<NT> Root_of_2;
@@ -127,9 +127,9 @@ struct Root_of_traits_helper < NT, Field_with_root_of_tag >
 template < typename NT >
 struct Root_of_traits
     : public CGALi::Root_of_traits_helper<NT,
-      typename Algebraic_structure_traits<NT>::Algebraic_structure_tag> {
+      typename Algebraic_structure_traits<NT>::Algebraic_category> {
     typedef CGALi::Root_of_traits_helper<NT,
-      typename Algebraic_structure_traits<NT>::Algebraic_structure_tag> Base;
+      typename Algebraic_structure_traits<NT>::Algebraic_category> Base;
     typedef typename Base::Root_of_1 RootOf_1;
     typedef typename Base::Root_of_2 RootOf_2;    
 };

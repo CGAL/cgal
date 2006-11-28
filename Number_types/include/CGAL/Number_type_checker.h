@@ -432,7 +432,7 @@ namespace NTC_INTERN{
 // -----------------------------
 
 // fwd 
-template < typename Number_type_checker, typename Algebraic_structure_tag>
+template < typename Number_type_checker, typename Algebraic_category>
 class NTC_AST_base
     :public Algebraic_structure_traits_base< Number_type_checker , Null_tag>{
 };
@@ -677,12 +677,12 @@ template < typename NT1, typename NT2, typename Cmp >
 class Algebraic_structure_traits <Number_type_checker<NT1, NT2, Cmp> >   
     :public NTC_INTERN::NTC_AST_base 
       < Number_type_checker< NT1, NT2, Cmp> , 
-        typename Algebraic_structure_traits<NT1>::Algebraic_structure_tag >
+        typename Algebraic_structure_traits<NT1>::Algebraic_category >
 {
     typedef Algebraic_structure_traits<NT1> AST1;
 public:
     typedef Number_type_checker< NT1, NT2, Cmp> Type;
-    typedef typename AST1::Algebraic_structure_tag Algebraic_structure_tag;
+    typedef typename AST1::Algebraic_category Algebraic_category;
     typedef typename AST1::Is_exact Is_exact;
 
 };

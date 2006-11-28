@@ -567,7 +567,7 @@ class Sqrt_extension_algebraic_structure_traits_base< Type,
   : public Algebraic_structure_traits_base< Type,
                                       CGAL::Integral_domain_without_division_tag > {
   public:
-    typedef CGAL::Integral_domain_without_division_tag Algebraic_structure_tag;
+    typedef CGAL::Integral_domain_without_division_tag Algebraic_category;
     
     class Simplify 
       : public Unary_function< Type&, void > {
@@ -587,7 +587,7 @@ class Sqrt_extension_algebraic_structure_traits_base< Type,
   : public Sqrt_extension_algebraic_structure_traits_base< Type,
                                       CGAL::Integral_domain_without_division_tag > {
   public:
-    typedef CGAL::Integral_domain_tag Algebraic_structure_tag;
+    typedef CGAL::Integral_domain_tag Algebraic_category;
     
     class Integral_division 
       : public Binary_function< Type, Type, 
@@ -624,7 +624,7 @@ class Sqrt_extension_algebraic_structure_traits_base< Type,
   : public Sqrt_extension_algebraic_structure_traits_base< Type,
                                       CGAL::Integral_domain_tag > {
   public:
-    typedef Field_tag Algebraic_structure_tag;
+    typedef Field_tag Algebraic_category;
     
     class Unit_part 
       : public Unary_function< Type, Type > {
@@ -665,7 +665,7 @@ template< class COEFF, class ROOT>
 class Algebraic_structure_traits< Sqrt_extension< COEFF, ROOT > >
   : public Sqrt_extension_algebraic_structure_traits_base< 
       Sqrt_extension< COEFF, ROOT >,
-      typename Algebraic_structure_traits< COEFF >::Algebraic_structure_tag > {
+      typename Algebraic_structure_traits< COEFF >::Algebraic_category > {
   public:
     typedef Sqrt_extension< COEFF, ROOT > Type;
     
@@ -1555,10 +1555,10 @@ struct Coercion_traits_for_level<Sqrt_extension<Coeff, Root>, B , CTL_SQRT_EXT>
              // if B is fwsqrt
               ::boost::is_base_and_derived< 
                   Field_with_sqrt_tag, 
-typename Algebraic_structure_traits<B>::Algebraic_structure_tag >::value || 
+typename Algebraic_structure_traits<B>::Algebraic_category >::value || 
               ::boost::is_same< 
                   Field_with_sqrt_tag, 
-typename Algebraic_structure_traits<B>::Algebraic_structure_tag >::value
+typename Algebraic_structure_traits<B>::Algebraic_category >::value
             ,
             //then take Intern::Coercion_traits for fwsqrt
             INTERN_CT::CT_ext_to_fwsqrt<Sqrt_extension<Coeff,Root>, B>

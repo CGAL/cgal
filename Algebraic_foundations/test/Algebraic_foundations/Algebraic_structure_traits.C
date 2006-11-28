@@ -16,8 +16,8 @@ int main(){
     typedef AST::Type Type;
     BOOST_STATIC_ASSERT((::boost::is_same<void,Type>::value)); 
 
-    typedef AST::Algebraic_structure_tag Algebraic_structure_tag;
-    BOOST_STATIC_ASSERT((::boost::is_same<CGAL::Null_tag,Algebraic_structure_tag>::value)); 
+    typedef AST::Algebraic_category Algebraic_category;
+    BOOST_STATIC_ASSERT((::boost::is_same<CGAL::Null_tag,Algebraic_category>::value)); 
 
     typedef AST::Is_exact Is_exact;
     BOOST_STATIC_ASSERT((::boost::is_same<CGAL::Null_tag,Is_exact>::value)); 

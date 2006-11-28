@@ -40,7 +40,7 @@
     typedef typename AST::Unit_part Unit_part;                 \
     typedef typename AST::Integral_division Integral_division; \
     typedef typename AST::Is_square Is_square;                 \
-    typedef typename AST::Gcd Gcd;                            \
+    typedef typename AST::Gcd Gcd;                             \
     typedef typename AST::Div_mod Div_mod;                     \
     typedef typename AST::Div Div;                             \
     typedef typename AST::Mod Mod;                             \
@@ -697,14 +697,14 @@ void test_ast_functor_arity() {
   Test_functor_arity< typename AST::Div_mod >()(4);
 }
 
-template <class  AS , class Algebra_type, class Is_exact>
+template <class  AS , class Algebraic_category, class Is_exact>
 void test_algebraic_structure(){
   
     test_ast_functor_arity<AS>();
-    test_Type_functions< AS >(Algebra_type());
+    test_Type_functions< AS >(Algebraic_category());
     typedef CGAL::Algebraic_structure_traits<  AS  > AST;
     CGAL_SNAP_AST_FUNCTORS(AST);
-    typedef typename AST::Algebraic_structure_tag  Algebra;
+    typedef typename AST::Algebraic_category  Tag;
     
     using CGAL::Integral_domain_without_division_tag; 
     using CGAL::Null_functor;
@@ -712,9 +712,9 @@ void test_algebraic_structure(){
     BOOST_STATIC_ASSERT(
             ( ::boost::is_same< typename AST::Is_exact, Is_exact >::value));
 
-    BOOST_STATIC_ASSERT(( ::boost::is_convertible< Algebra, 
+    BOOST_STATIC_ASSERT(( ::boost::is_convertible< Tag, 
                     Integral_domain_without_division_tag >::value ));
-    BOOST_STATIC_ASSERT(( ::boost::is_same< Algebra, Algebra_type>::value));
+    BOOST_STATIC_ASSERT(( ::boost::is_same< Tag, Algebraic_category>::value));
     BOOST_STATIC_ASSERT((!::boost::is_same< Simplify, Null_functor>::value));
     BOOST_STATIC_ASSERT((!::boost::is_same< Unit_part, Null_functor>::value));
     const Simplify   simplify=Simplify();;
@@ -783,7 +783,7 @@ void test_algebraic_structure(){
     simplify(c);
     CGAL_test_assert( c ==  AS (10));
     unit_part( c);
-    test_algebraic_structure_intern< AS >( Algebra());
+    test_algebraic_structure_intern< AS >( Tag());
     Test_sqrt< AS , typename AST::Sqrt> tsr;
     tsr(sqrt);
     Test_root< AS , typename AST::Kth_root> trt;
@@ -823,28 +823,28 @@ void test_algebraic_structure(){
     } 
 }
 
-template <class  AS , class Algebra_type, class Is_exact >
+template <class  AS , class Algebraic_category, class Is_exact >
 void test_algebraic_structure( const  AS & a, const  AS & b, const  AS & c) {    
     CGAL_test_assert( a !=  AS (0));
     CGAL_test_assert( b !=  AS (0));
     CGAL_test_assert( c !=  AS (0));
-    test_algebraic_structure< AS ,Algebra_type, Is_exact>();
-    test_algebraic_structure_intern(a,b,c,Algebra_type());
+    test_algebraic_structure< AS ,Algebraic_category, Is_exact>();
+    test_algebraic_structure_intern(a,b,c,Algebraic_category());
 }
 
 // TODO: "default template arguments may not be used in function templates"
-template< class  AS , class Algebra_type >
+template< class  AS , class Algebraic_category >
 void test_algebraic_structure_without_exactness_check() {
-  test_algebraic_structure<  AS , Algebra_type, 
+  test_algebraic_structure<  AS , Algebraic_category, 
         typename CGAL::Algebraic_structure_traits< AS >::Is_exact >();
 }
 
-template< class  AS , class Algebra_type >
+template< class  AS , class Algebraic_category >
 void test_algebraic_structure_without_exactness_check( 
         const  AS & a, 
         const  AS & b, 
         const  AS & c) {
-  test_algebraic_structure<  AS , Algebra_type, 
+  test_algebraic_structure<  AS , Algebraic_category, 
         typename CGAL::Algebraic_structure_traits< AS >::Is_exact >( a, b, c );
 }
   

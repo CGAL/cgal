@@ -684,11 +684,11 @@ template <class NT>
 class Algebraic_structure_traits<Counted_number<NT> >
     :public Algebraic_structure_traits_base
       <Counted_number<NT>, 
-       typename Algebraic_structure_traits<NT>::Algebraic_structure_tag >
+       typename Algebraic_structure_traits<NT>::Algebraic_category >
 {
 private:
     typedef Algebraic_structure_traits<NT> AST_NT;
-    typedef typename AST_NT::Algebraic_structure_tag NT_as_tag;
+    typedef typename AST_NT::Algebraic_category NT_as_tag;
 public:
     typedef typename Algebraic_structure_traits<NT>::Is_exact Is_exact;
 

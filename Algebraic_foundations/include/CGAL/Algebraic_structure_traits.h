@@ -53,7 +53,7 @@ template< class Type_ >
 class Algebraic_structure_traits  {
   public:
     typedef Type_  Type;
-    typedef Null_tag       Algebraic_structure_tag;
+    typedef Null_tag       Algebraic_category;
     typedef Null_tag       Is_exact;
 
     typedef Null_functor Simplify;
@@ -85,7 +85,7 @@ template< class Type_ >
 class Algebraic_structure_traits_base< Type_, Null_tag > {
   public:
     typedef Type_  Type;
-    typedef Null_tag       Algebraic_structure_tag;
+    typedef Null_tag       Algebraic_category;
     typedef Tag_false       Is_exact;
 
     // does nothing by default
@@ -122,7 +122,7 @@ class Algebraic_structure_traits_base< Type_,
                                               Null_tag > {
   public:
     typedef Type_                   Type;
-    typedef Integral_domain_without_division_tag  Algebraic_structure_tag;
+    typedef Integral_domain_without_division_tag  Algebraic_category;
 
     // returns Type(1) by default
     class Unit_part 
@@ -174,7 +174,7 @@ class Algebraic_structure_traits_base< Type_,
                                        Integral_domain_without_division_tag > {
   public:
     typedef Type_       Type;
-    typedef Integral_domain_tag  Algebraic_structure_tag;
+    typedef Integral_domain_tag  Algebraic_category;
 };
 
 
@@ -191,7 +191,7 @@ class Algebraic_structure_traits_base< Type_,
                                               Integral_domain_tag > {
   public:
     typedef Type_  Type;
-    typedef Unique_factorization_domain_tag    Algebraic_structure_tag;
+    typedef Unique_factorization_domain_tag    Algebraic_category;
 };
 
 
@@ -204,7 +204,7 @@ class Algebraic_structure_traits_base< Type_,
                                               Unique_factorization_domain_tag > {
   public:
     typedef Type_        Type;
-    typedef Euclidean_ring_tag    Algebraic_structure_tag;
+    typedef Euclidean_ring_tag    Algebraic_category;
 
     // maps to \c Div by default.
     class Integral_division 
@@ -372,7 +372,7 @@ class Algebraic_structure_traits_base< Type_, Field_tag >
                                               Integral_domain_tag > {
   public:
     typedef Type_        Type;
-    typedef Field_tag             Algebraic_structure_tag;
+    typedef Field_tag             Algebraic_category;
 
     // returns the argument \a a by default
     class Unit_part 
@@ -415,7 +415,7 @@ class Algebraic_structure_traits_base< Type_,
                                               Field_tag> {
   public:
     typedef Type_        Type;
-    typedef Field_with_sqrt_tag   Algebraic_structure_tag;
+    typedef Field_with_sqrt_tag   Algebraic_category;
 
     struct Is_square
         :public Binary_function<Type,Type&,bool>
@@ -448,7 +448,7 @@ class Algebraic_structure_traits_base< Type_,
     
   public:
     typedef Type_        Type;
-    typedef Field_with_kth_root_tag   Algebraic_structure_tag;
+    typedef Field_with_kth_root_tag   Algebraic_category;
 };
 
 
@@ -468,7 +468,7 @@ class Algebraic_structure_traits_base< Type_,
                                               Field_with_kth_root_tag > {
   public:
     typedef Type_           Type;
-    typedef Field_with_root_of_tag   Algebraic_structure_tag;
+    typedef Field_with_root_of_tag   Algebraic_category;
 };
 
 // Some common functors to be used by AST specializations
@@ -534,7 +534,7 @@ namespace CGALi{
 template<class AS>
 class Is_integral_domain_without_division {
     typedef Algebraic_structure_traits<AS> AST;
-    typedef typename AST::Algebraic_structure_tag Tag;
+    typedef typename AST::Algebraic_category Tag;
 public :
     static const bool value 
     = CGAL_IS_SAME_OR_BASE_OF(Integral_domain_without_division_tag,Tag);  
@@ -543,7 +543,7 @@ public :
 template<class AS>
 class Is_integral_domain {
     typedef Algebraic_structure_traits<AS> AST;
-    typedef typename AST::Algebraic_structure_tag Tag;
+    typedef typename AST::Algebraic_category Tag;
 public :
     static const bool value 
     = CGAL_IS_SAME_OR_BASE_OF(Integral_domain_tag,Tag);  
@@ -553,7 +553,7 @@ public :
 template<class AS>
 class Is_unique_factorization_domain {
     typedef Algebraic_structure_traits<AS> AST;
-    typedef typename AST::Algebraic_structure_tag Tag;
+    typedef typename AST::Algebraic_category Tag;
 public :
     static const bool value 
     = CGAL_IS_SAME_OR_BASE_OF(Unique_factorization_domain_tag,Tag);  
@@ -562,7 +562,7 @@ public :
 template<class AS>
 class Is_euclidean_ring {
     typedef Algebraic_structure_traits<AS> AST;
-    typedef typename AST::Algebraic_structure_tag Tag;
+    typedef typename AST::Algebraic_category Tag;
 public :
     static const bool value 
     = CGAL_IS_SAME_OR_BASE_OF(Euclidean_ring_tag,Tag);  
@@ -572,7 +572,7 @@ public :
 template<class AS>
 class Is_field {
     typedef Algebraic_structure_traits<AS> AST;
-    typedef typename AST::Algebraic_structure_tag Tag;
+    typedef typename AST::Algebraic_category Tag;
 public :
     static const bool value 
     = CGAL_IS_SAME_OR_BASE_OF(Field_tag,Tag);  
@@ -582,7 +582,7 @@ public :
 template<class AS>
 class Is_field_with_sqrt {
     typedef Algebraic_structure_traits<AS> AST;
-    typedef typename AST::Algebraic_structure_tag Tag;
+    typedef typename AST::Algebraic_category Tag;
 public :
     static const bool value 
     = CGAL_IS_SAME_OR_BASE_OF(Field_with_sqrt_tag,Tag);  
@@ -591,7 +591,7 @@ public :
 template<class AS>
 class Is_field_with_root_of {
     typedef Algebraic_structure_traits<AS> AST;
-    typedef typename AST::Algebraic_structure_tag Tag;
+    typedef typename AST::Algebraic_category Tag;
 public :
     static const bool value 
     = CGAL_IS_SAME_OR_BASE_OF(Field_with_root_of_tag,Tag);  

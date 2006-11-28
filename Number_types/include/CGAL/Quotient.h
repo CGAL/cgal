@@ -516,7 +516,7 @@ namespace INTERN_QUOTIENT {
       typedef Null_functor Sqrt;
   };
 
-// TODO: Algebraic_structure_tag could be Field_with_sqrt_tag, if NT
+// TODO: Algebraic_category could be Field_with_sqrt_tag, if NT
 //       is INEXACT (because Sqrt can be inexact) and has a Sqrt-functor.
 template<class NT> class Algebraic_structure_traits_quotient_base;
 

@@ -1097,11 +1097,11 @@ template <class ET>
 class Algebraic_structure_traits< Lazy_exact_nt<ET> >
     :public Algebraic_structure_traits_base
       < Lazy_exact_nt<ET>, 
-       typename Algebraic_structure_traits<ET>::Algebraic_structure_tag >
+       typename Algebraic_structure_traits<ET>::Algebraic_category >
 {
 private:
     typedef Algebraic_structure_traits<ET> AST_ET;
-    typedef typename AST_ET::Algebraic_structure_tag ET_as_tag;
+    typedef typename AST_ET::Algebraic_category ET_as_tag;
 public:
     typedef typename AST_ET::Is_exact Is_exact;
 
