@@ -60,6 +60,9 @@ int main(int, char*){
 #include <qpainter.h> 
 #include <qpushbutton.h> 
 #include "typedefs.h"
+#include "icons/vertices.xpm"
+#include "icons/edges.xpm"
+#include "icons/faces.xpm"
 
 
 //The envelope diagram
@@ -67,6 +70,9 @@ Envelope_tri_diagram_2    tri_diag;
 Envelope_sphere_diagram_2 sphere_diag;
 Envelope_plane_diagram_2  plane_diag;
 int current_state;
+bool draw_v;
+bool draw_e;
+bool draw_f;
 
 const QString my_title_string("Envelopes of 3D surfaces");
 
@@ -84,17 +90,51 @@ public:
     widget->lock(); // widget have to be locked before drawing
 
     if(!tri_diag.is_empty())
-      draw_arr(widget, tri_diag);
+      draw_arr(widget, tri_diag, draw_v, draw_e, draw_f);
     else if(!sphere_diag.is_empty())
-      draw_arr(widget, sphere_diag);
+      draw_arr(widget, sphere_diag, draw_v, draw_e, draw_f);
     else
-      draw_arr(widget, plane_diag);
+      draw_arr(widget, plane_diag, draw_v, draw_e, draw_f);
     
     widget->unlock(); // widget have to be unlocked when finished drawing
   };    
   
 };//end class 
 
+class Qt_layer_show_statitics : public CGAL::Qt_widget_layer
+{
+public:
+    // default constructor
+  Qt_layer_show_statitics(){};
+
+  void mousePressEvent(QMouseEvent *e)
+  {
+    QString s("|V|=%1 |E|=%2 |F|=%3");
+    unsigned int n_v = 0,
+                 n_e = 0,
+                 n_f = 0;
+    if(!tri_diag.is_empty())
+    {
+      n_v = tri_diag.number_of_vertices();
+      n_e = tri_diag.number_of_edges();
+      n_f = tri_diag.number_of_faces();
+    }
+    else if(!sphere_diag.is_empty())
+    {
+      n_v = sphere_diag.number_of_vertices();
+      n_e = sphere_diag.number_of_edges();
+      n_f = sphere_diag.number_of_faces();
+    }
+    else if(!plane_diag.is_empty())
+    {
+      n_v = plane_diag.number_of_vertices();
+      n_e = plane_diag.number_of_edges();
+      n_f = plane_diag.number_of_faces();
+    }
+    QMessageBox:: information ( widget,"Diagram size",s.arg(n_v).arg(n_e).arg(n_f));
+  }
+         
+};//end class
 
 /* The QMainWindow class provides a main application window, 
  *  with a menu bar, dock windows (e.g. for toolbars), and a status bar
@@ -155,23 +195,62 @@ public:
     //the standard toolbar
     stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this, "ST");
 
+    show_toolbar = new QToolBar(this, "Show features");
+    QIconSet set0(QPixmap( (const char**)vertices ),
+                  QPixmap( (const char**)vertices ));
+
+    QIconSet set1(QPixmap( (const char**)edges ),
+                  QPixmap( (const char**)edges ));
+    
+    QIconSet set2(QPixmap( (const char**)faces ),
+                  QPixmap( (const char**)faces ));
+    
+    show_v_button = new QToolButton(show_toolbar, "Show Vertices");
+    show_v_button->setToggleButton(TRUE);
+    show_v_button->setTextLabel("Show Vertices ");
+    connect(show_v_button,SIGNAL(pressed()),
+            this, SLOT(show_v_pressed()));
+    show_v_button->setIconSet(set0);
+    
+
+    show_toolbar->addSeparator();
+    show_e_button = new QToolButton(show_toolbar, "Show Edges");
+    show_e_button->setToggleButton(TRUE);
+    show_e_button->setTextLabel("Show Edges ");
+    connect(show_e_button,SIGNAL(pressed()),
+            this, SLOT(show_e_pressed()));
+    show_e_button->setIconSet(set1);
+    
+
+    show_toolbar->addSeparator();
+    show_f_button = new QToolButton(show_toolbar, "Show Faces");
+    show_f_button->setToggleButton(TRUE);
+    show_f_button->toggle();
+        show_f_button->setTextLabel("Show Faces ");
+    connect(show_f_button,SIGNAL(pressed()),
+            this, SLOT(show_f_pressed()));
+    show_f_button->setIconSet(set2);
+    
+
     //layers
-    widget->attach(&testlayer);  
+    widget->attach(&testlayer); 
+    widget->attach(&show_stat_layer);
     *widget <<CGAL::BackgroundColor (CGAL::BLACK);
   
     resize(w,h);
     widget->set_window(-1, 1, -1, 1);
-    widget->setMouseTracking(FALSE);
+    widget->setMouseTracking(TRUE);
     
     //application flag stuff
     old_state = 0;
   };
 
 private:
+
   void something_changed(){current_state++;};
 
    template<class Arrangement>
-    void open_file(Arrangement &arr)
+    bool open_file(Arrangement &arr)
     {
       typedef typename Arrangement::Traits_3    Traits_3;
       typedef typename Traits_3::Surface_3      Surface_3;
@@ -183,14 +262,14 @@ private:
                                                "open file dialog",
                                                "Choose a file" );
       if(s==QString::null)
-        return;
+        return false;
       curr_dir = s;
       
       std::ifstream in_file(s);
       if(!in_file.is_open())
       {
         QMessageBox::warning( widget,"Open","Can't open file");
-        return ;
+        return false;
       }
      
       QCursor old = widget->cursor();
@@ -251,8 +330,8 @@ private:
         widget->set_window(x_min - w, x_max + w, y_min - h, y_max + h);
       }
       widget->unlock();
-      something_changed();
       widget->setCursor(old);
+      return true;
     }
 
 
@@ -280,20 +359,32 @@ public slots:
 
     void open_triangles_file()
     {
-      clear_all_diags();
-      open_file(tri_diag);
+      if(open_file(tri_diag))
+      {
+        sphere_diag.clear();
+        plane_diag.clear();
+        something_changed();
+      }
     }
 
     void open_spheres_file()
     {
-      clear_all_diags();
-      open_file(sphere_diag);
+      if(open_file(sphere_diag))
+      {
+        tri_diag.clear();
+        plane_diag.clear();
+        something_changed();
+      }
     }
 
     void open_planes_file()
     {
-      clear_all_diags();
-      open_file(plane_diag);
+      if(open_file(plane_diag))
+      {
+         tri_diag.clear();
+         sphere_diag.clear();
+         something_changed();
+      }
     }
 
   void new_instance()
@@ -313,6 +404,24 @@ public slots:
     tri_diag.clear();
     sphere_diag.clear();
     plane_diag.clear();
+  }
+
+  void show_v_pressed()
+  {
+    draw_v = !draw_v;
+    something_changed();
+  }
+
+  void show_e_pressed()
+  {
+    draw_e = !draw_e;
+    something_changed();
+  }
+
+  void show_f_pressed()
+  {
+    draw_f = !draw_f;
+    something_changed();
   }
 
 private slots:
@@ -367,7 +476,12 @@ private slots:
 private:
   CGAL::Qt_widget*                     widget;
   CGAL::Qt_widget_standard_toolbar*    stoolbar;
+  QToolBar*                            show_toolbar;
+  QToolButton*                         show_v_button;
+  QToolButton*                         show_e_button;
+  QToolButton*                         show_f_button;
   Qt_layer_show_diag                   testlayer;
+  Qt_layer_show_statitics              show_stat_layer;
   int                                  old_state;
   QString                              curr_dir;
 };
@@ -385,6 +499,9 @@ int main(int argc, char **argv)
   widget.setIcon(cgal_icon);
   widget.show();
   current_state = -1;
+  draw_v = false;
+  draw_e = false;
+  draw_f = true;
   return app.exec();   
 }
 

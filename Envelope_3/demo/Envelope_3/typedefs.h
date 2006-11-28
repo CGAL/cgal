@@ -405,38 +405,47 @@ void draw_face(CGAL::Qt_widget* w, typename Arr::Face_const_iterator f)
 
 
 template <class Arrangement>
-void draw_arr(CGAL::Qt_widget* w, const Arrangement& arr)
+void draw_arr(CGAL::Qt_widget* w, const Arrangement& arr, bool draw_v, bool draw_e, bool draw_f)
 {
-  *w <<  CGAL::BLACK;
   typedef typename Arrangement::Face_const_iterator     Face_const_iterator;
   typedef typename Arrangement::Edge_const_iterator     Edge_const_iterator;
   typedef typename Arrangement::Vertex_const_iterator   Vertex_const_iterator;
+  if(draw_f)
+  {
+    *w <<  CGAL::BLACK;
 
-   for(Face_const_iterator fit = arr.faces_begin();
-        fit != arr.faces_end();
-        ++fit)
-    {
-      if(! fit->number_of_surfaces())
-        continue;
+    for(Face_const_iterator fit = arr.faces_begin();
+          fit != arr.faces_end();
+          ++fit)
+      {
+        if(! fit->number_of_surfaces())
+          continue;
 
-      draw_face<Arrangement>(w, fit);
-    }
+        draw_face<Arrangement>(w, fit);
+      }
+  }
 
-    /**w <<  CGAL::BLUE; 
+  if(draw_e)
+  {
+    *w <<  CGAL::BLUE; 
     for(Edge_const_iterator eit = arr.edges_begin();
         eit != arr.edges_end();
         ++eit)
     {
       *w << eit->curve();
     }
-   
+  }
+  
+  if(draw_v)
+  {
     *w <<  CGAL::RED; 
     for(Vertex_const_iterator vit = arr.vertices_begin();
         vit != arr.vertices_end();
         ++vit)
     {
       *w << vit->point();
-    }*/
+    }
+  }
 }
 
 #endif
