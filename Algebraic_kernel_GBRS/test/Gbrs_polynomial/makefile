@@ -17,25 +17,31 @@
 #
 # Author(s)     : Luis Peñaranda <penarand@loria.fr>
 
-include ${CGAL_MAKEFILE}
+include $(CGAL_MAKEFILE)
 
+EXE_EXT=
+LIBMPFI=$(MPFI_LIB)/libmpfi.a
+LIBRS=$(RS_LIB)/librs.a
+LIBRSE=$(RS_LIB)/librsexport.a
+LIBCGALGBRS=$(CGAL_LIB_DESTINATION)/libCGALGbrs.a
+LIBS_FLAGS=-lmpfi -lrs -lrsexport -lCGALGbrs
 MYFLAGS=-g #-DCGAL_RS_DEBUG -DCGAL_RS_VERB=0
 
-OBJS=Gbrs_polynomial_1 Gbrs_polynomial_2 Gbrs_algebraic_kernel_1
+OBJS= \
+      Gbrs_polynomial_1$(EXE_EXT) \
+      Gbrs_polynomial_2$(EXE_EXT) \
+      Gbrs_algebraic_kernel_1$(EXE_EXT)
 
-all: ${OBJS}
+outside: OUTSIDEPARS=-I$(PWD)/../../include -I$(RS_INCL) -L$(RS_LIB)
+outside: $(OBJS)
 
-# TODO: make general rules
-
-Gbrs_polynomial_1: Gbrs_polynomial_1.C
-	${CGAL_CXX} ${MYFLAGS} ${CGAL_CXXFLAGS} ${CGAL_LIBPATHFLAGS} $< ${CGAL_LDFLAGS} -o $@
-
-Gbrs_polynomial_2: Gbrs_polynomial_2.C
-	${CGAL_CXX} ${MYFLAGS} ${CGAL_CXXFLAGS} ${CGAL_LIBPATHFLAGS} $< ${CGAL_LDFLAGS} -o $@
-
-Gbrs_algebraic_kernel_1: Gbrs_algebraic_kernel_1.C
-	${CGAL_CXX} ${MYFLAGS} ${CGAL_CXXFLAGS} ${CGAL_LIBPATHFLAGS} $< ${CGAL_LDFLAGS} -o $@
+all: $(OBJS)
 
 clean:
-	rm -f ${OBJS}
+	rm -f $(OBJS)
+
+.SUFFIXES: .C $(EXE_EXT) $(SUFFIXES)
+
+.C$(EXE_EXT):
+	$(CGAL_CXX) $(MYFLAGS) $(OUTSIDEPARS) $(CGAL_CXXFLAGS) $(CGAL_LIBPATHFLAGS) $< $(CGAL_LDFLAGS) $(LIBS_FLAGS) $(LIBMPFI) $(LIBRSE) $(LIBRS) $(LIBCGALGBRS) -o $@
 
