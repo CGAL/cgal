@@ -322,7 +322,7 @@ private slots:
   void about()
   {
     QMessageBox::about( this, my_title_string,
-        "This is a demo for 3d envelopes of triangles\n");
+        "This is a demo for 3D envelopes of surfaces\n");
           
   }
 
