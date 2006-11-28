@@ -133,9 +133,9 @@ public:
     file->insertSeparator();
     file->insertItem("&Open Triangles File", this, SLOT(open_triangles_file()),CTRL+Key_O);
     file->insertSeparator();
-    file->insertItem("&Open Spheres File", this, SLOT(open_spheres_file()),CTRL+Key_O);
+    file->insertItem("&Open Spheres File", this, SLOT(open_spheres_file()),CTRL+Key_S);
     file->insertSeparator();
-    file->insertItem("&Open Planes File", this, SLOT(open_planes_file()),CTRL+Key_O);
+    file->insertItem("&Open Planes File", this, SLOT(open_planes_file()),CTRL+Key_H);
     file->insertSeparator();
     
     file->insertSeparator();
