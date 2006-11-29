@@ -525,6 +525,9 @@ when \ccVar.\ccc{dimension()}~$<3$.}
 
 \ccThree{Facet_circulator}{tds.inciden__cells}{}
 
+\ccHeading{Cell and facet circulators}
+\ccThree{Facet_circulator}{tds.incident_facets(Cell_handle c, int i, int j)x}{}
+
 \ccMethod{Cell_circulator incident_cells(const Edge & e) const;}
 {Starts at an arbitrary cell incident to \ccc{e}.
 \ccPrecond{\ccVar.\ccc{dimension()}~$=3$}}
@@ -599,6 +602,9 @@ nothing.  Returns the resulting output iterator.
 \ccMethod{size_type degree(Vertex_handle v) const;}
 {Returns the degree of a vertex, that is, the number of incident vertices.
 \ccPrecond{\ccc{v} $\neq$ \ccc{Vertex_handle()}, \ccVar.\ccc{is_vertex(v)}.}}
+
+\ccHeading{Traversal between adjacent cells}
+\ccThree{Vertex_handle}{mirror_vertex(Cell_handle c, int i)x}{}
 
 \ccMethod{int mirror_index(Cell_handle c, int i) const;}
 {Returns the index of \ccc{c} in its $i^{th}$ neighbor.

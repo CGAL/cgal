@@ -1,3 +1,7 @@
+29 November 2006 Laurent Rineau
+- reorganize the documentation of mirror_index, mirror_vertex and
+mirror_facet in the ref pages of Triangulation_3 and the concept TDS_3.
+
 September 2006 Nico Kruithof
 - Combined find_conflicts_2 and find_conflicts_3 to find_conflicts
   with the dimension as a template argument

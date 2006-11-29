@@ -845,6 +845,16 @@ a clockwise traversal of the convex hull.
 \ccGlue
 \ccMethod{Vertex_circulator incident_vertices(t.infinite_vertex(), Face_handle f) ;}{}
 
+\ccHeading{Traversal between adjacent faces}
+\ccMethod{Vertex_handle  mirror_vertex(Face_handle f, int i) const;}
+{returns the vertex of the $i^{th}$ neighbor of \ccc{f} that is
+  opposite to \ccc{f}.
+  \ccPrecond $0\leq i \leq 2$.}
+
+\ccMethod{int   mirror_index(Face_handle f, int i) const;}
+{returns the index of \ccc{f} in its $i^{th}$ neighbor.
+  \ccPrecond $0\leq i \leq 2$.}
+
 
 
 \ccHeading{Miscellaneous}

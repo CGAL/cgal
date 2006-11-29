@@ -1,3 +1,6 @@
+29 November 2006 Laurent Rineau
+- add mirror_vertex and mirror_index in the ref page of Triangulation_2.
+
 2 august 2006 MY
 - rename global function  power_test into power_test_2
  to avoid clash with Triangulation_3
