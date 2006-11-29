@@ -82,7 +82,7 @@ public:
   // if z=g(x,y) in the basis (d1,d2,n) then in the basis (d2,d1,-n)
   // z=h(x,y)=-g(y,x)
   void comply_wrt_given_normal(const Vector_3 given_normal);
-  void dump_verbose(std::ostream& out_stream);
+  void dump_verbose(std::ostream& out_stream) const;
   void dump_4ogl(std::ostream& out_stream, const FT scale);
 };
 //////////////////////end nested CLASS Monge_form /////////////////////
@@ -165,6 +165,14 @@ public:
   //for a trihedron (v1,v2,v3) switches v1 to -v1 if det(v1,v2,v3) < 0
   void switch_to_direct_orientation(Vector_3& v1, const Vector_3& v2,
 				   const Vector_3& v3);
+
+    friend
+    std::ostream&
+    operator<<(std::ostream& out_stream, 
+	       const typename Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::Monge_form& monge){
+      monge.dump_verbose(out_stream);
+      return out_stream;
+    }
 };
 
 //-------------------------------------------------------------------
@@ -206,7 +214,7 @@ comply_wrt_given_normal(const Vector_3 given_normal)
 
 template < class DataKernel, class LocalKernel, class SvdTraits>  
 void Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::Monge_form::
-dump_verbose(std::ostream& out_stream)
+dump_verbose(std::ostream& out_stream) const
 {
   out_stream << "origin : " << origin() << std::endl
 	     << "n : " << normal_direction() << std::endl;
@@ -717,14 +725,14 @@ switch_to_direct_orientation(Vector_3& v1, const Vector_3& v2,
 }
 
 
-template < class DataKernel, class LocalKernel, class SvdTraits>  
-std::ostream&
-operator<<(std::ostream& out_stream, 
-	  const typename Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::Monge_form& monge)
-{
-  monge.dump_verbose(out_stream);
-  return out_stream;
-}
+// template < class DataKernel, class LocalKernel, class SvdTraits>  
+// std::ostream&
+// operator<<(std::ostream& out_stream, 
+// 	  const typename Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::Monge_form& monge)
+// {
+//   monge.dump_verbose(out_stream);
+//   return out_stream;
+// }
 
 CGAL_END_NAMESPACE
 
