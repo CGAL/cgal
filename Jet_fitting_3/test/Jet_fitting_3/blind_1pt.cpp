@@ -12,12 +12,8 @@
 typedef double                   DFT;
 typedef CGAL::Cartesian<DFT>     Data_Kernel;
 typedef Data_Kernel::Point_3     DPoint;
-typedef Data_Kernel::Vector_3    DVector;
-
-typedef double                   LFT;
-typedef CGAL::Cartesian<LFT>     Local_Kernel;
 typedef CGAL::Monge_via_jet_fitting<Data_Kernel> My_Monge_via_jet_fitting;
-typedef My_Monge_via_jet_fitting::LMonge_form  My_Monge_form;
+typedef My_Monge_via_jet_fitting::Monge_form     My_Monge_form;
 
 int main()
 {
