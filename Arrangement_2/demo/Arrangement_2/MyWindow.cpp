@@ -56,8 +56,8 @@
 #include "icons/demo_conic_segment.xpm"
 #include "icons/demo_rayshoot_down.xpm"
 #include "icons/demo_rayshoot_up.xpm"
-//#include "icons/demo_arrow_down.xpm"
-//#include "icons/demo_arrow_up.xpm"
+#include "icons/lower_env_xpm.xpm"
+#include "icons/upper_env_xpm.xpm"
 #include "icons/demo_fill.xpm"
 #include "icons/demo_colors.xpm"
 
@@ -178,11 +178,11 @@ MyWindow::MyWindow(int w, int h) : num_of_colors(18)
   color_dialog_bt = new QAction("Choose color", QPixmap( (const char**)demo_colors_xpm ),
                          "&choose color", 0 , this, "choose color" );
 
-  lower_env_dialog_bt = new QAction("Lower envelope", QPixmap( (const char**)demo_colors_xpm ),
+  lower_env_dialog_bt = new QAction("Lower envelope", QPixmap( (const char**)lower_env_xpm ),
                              "&lower envelope", 0, this, "Lower envelop" );
   lower_env_dialog_bt->setToggleAction( TRUE );
 
-  upper_env_dialog_bt = new QAction("Upper envelope", QPixmap( (const char**)demo_colors_xpm ),
+  upper_env_dialog_bt = new QAction("Upper envelope", QPixmap( (const char**)upper_env_xpm ),
                              "&upper envelope", 0, this, "Upper envelop" );
   upper_env_dialog_bt->setToggleAction( TRUE );
   
@@ -448,7 +448,7 @@ int main(int argc, char **argv)
 {
   const QString my_title_string("Arrangement Demo with CGAL Qt_widget");
   QApplication app( argc, argv );
-  MyWindow widget(700,700); // physical window size
+  MyWindow widget(707,707); // physical window size
   app.setMainWidget(&widget);
   widget.setCaption(my_title_string);
   widget.setMouseTracking(TRUE);
