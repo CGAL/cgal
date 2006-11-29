@@ -46,6 +46,7 @@ class Rational_polynomial_1 {
 		Rational_polynomial_1 (const Rational_polynomial_1 &);
 		Rational_polynomial_1 (unsigned int);
 		Rational_polynomial_1 (int);
+		Rational_polynomial_1(const mpq_t&);
 		~Rational_polynomial_1 ();
 		void set_degree (int);
 		void set_coef (int, const mpz_t &);

@@ -87,6 +87,8 @@ public:
 	typedef CGAL::Tag_false	Has_exact_sqrt;
 
 	// constructors I
+	// these constructors create an algebraic number which is a point; they
+	// will also create a polynomial of which they are the only root
 	Algebraic_1 ();
 	Algebraic_1 (int);
 	Algebraic_1 (unsigned int);
@@ -241,7 +243,7 @@ public:
 	// 8
 	Algebraic_1 sqrt () const;
 	// 9
-	std::ostream& show (std::ostream &);
+	std::ostream& show(std::ostream&,int=0);
 	// 10
 	// (the other comparison cases for mp[zq]_t should be covered by the
 	// template functions)
@@ -332,6 +334,25 @@ double to_double(const Algebraic_1&);
 std::pair<double, double> to_interval(const Algebraic_1&);
 
 Algebraic_1 sqrt(const Algebraic_1&);
+
+// //////////////////////////
+// inline functions outside the class
+/*1.5*/inline bool operator!=(const Algebraic_1 &n1,const Algebraic_1 &n2){
+	return !(n1==n2);}
+inline bool operator>(const Algebraic_1 &n1,const Algebraic_1 &n2){
+	return(n2<n1);}
+inline bool operator<=(const Algebraic_1 &n1,const Algebraic_1 &n2){
+	return((n1==n2)||(n1<n2));}
+inline bool operator>=(const Algebraic_1 &n1,const Algebraic_1 &n2){
+	return((n1==n2)||(n1>n2));}
+/*5.5*/inline bool is_valid(const Algebraic_1 &n){return n.is_valid();};
+inline bool is_finite(const Algebraic_1 &n){return n.is_finite();};
+inline double to_double(const Algebraic_1 &n){return n.to_double();};
+inline std::pair<double,double>to_interval(const Algebraic_1 &n){
+	return n.to_interval();};
+/*8.5*/inline Algebraic_1 sqrt(const Algebraic_1 &ntval){return ntval.sqrt();};
+/*9.5*/inline std::ostream& operator<<(std::ostream &o,Algebraic_1 &n){
+	return n.show(o);};
 
 CGAL_END_NAMESPACE
 

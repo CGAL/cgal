@@ -64,6 +64,10 @@ int main () {
 	std::cout<<"\np*=q = "<<(p*=q);
 	std::cout<<"\nq*=2 = "<<(q*=2)<<std::endl;
 
+	double aaa=8.5;
+	Algebraic alg(aaa);
+	std::cout<<"alg="<<alg<<" is root of "<<alg.pol()<<std::endl;
+
 	return 0;
 }
 

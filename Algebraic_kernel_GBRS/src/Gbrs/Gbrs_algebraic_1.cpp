@@ -57,43 +57,89 @@ void overlap () {
 // constructors of a "point" interval
 Algebraic_1::Algebraic_1 () {};
 
-Algebraic_1::Algebraic_1 (int i) {
-	mpfi_set_si (mpfi (), (long int)i);
+Algebraic_1::Algebraic_1(int i){
+	mpq_t temp;
+	mpfi_set_si(mpfi(),(long int)i);
+	mpq_init(temp);
+	mpq_set_si(temp,(long int)i,1);
+	Rational_polynomial_1 *p=new Rational_polynomial_1(temp);
+	mpq_clear(temp);
+	set_pol(*p);
 };
 
-Algebraic_1::Algebraic_1 (unsigned int i) {
-	mpfi_set_ui (mpfi (), i);
+Algebraic_1::Algebraic_1(unsigned int i){
+	mpq_t temp;
+	mpfi_set_ui(mpfi(),i);
+	mpq_init(temp);
+	mpq_set_ui(temp,(unsigned int)i,1);
+	Rational_polynomial_1 *p=new Rational_polynomial_1(temp);
+	mpq_clear(temp);
+	set_pol(*p);
 };
 
-Algebraic_1::Algebraic_1 (long int i) {
-	mpfi_set_si (mpfi (), i);
+Algebraic_1::Algebraic_1(long int i){
+	mpq_t temp;
+	mpfi_set_si(mpfi(),i);
+	mpq_init(temp);
+	mpq_set_si(temp,i,1);
+	Rational_polynomial_1 *p=new Rational_polynomial_1(temp);
+	mpq_clear(temp);
+	set_pol(*p);
 };
 
-Algebraic_1::Algebraic_1 (unsigned long int i) {
-	mpfi_set_ui (mpfi (), i);
+Algebraic_1::Algebraic_1(unsigned long int i){
+	mpq_t temp;
+	mpfi_set_ui(mpfi(),i);
+	mpq_init(temp);
+	mpq_set_ui(temp,i,1);
+	Rational_polynomial_1 *p=new Rational_polynomial_1(temp);
+	mpq_clear(temp);
+	set_pol(*p);
 };
 
-Algebraic_1::Algebraic_1 (double d) {
-	mpfi_set_d (mpfi (), d);
+Algebraic_1::Algebraic_1(double d){
+	mpq_t temp;
+	mpfi_set_d(mpfi(),d);
+	mpq_init(temp);
+	mpq_set_d(temp,d);
+	Rational_polynomial_1 *p=new Rational_polynomial_1(temp);
+	mpq_clear(temp);
+	set_pol(*p);
 };
 
-Algebraic_1::Algebraic_1 (const mpz_t &z) {
-	mpfi_set_z (mpfi (), z);
+Algebraic_1::Algebraic_1(const mpz_t &z){
+	mpq_t temp;
+	mpfi_set_z(mpfi(),z);
+	mpq_init(temp);
+	mpq_set_z(temp,z);
+	Rational_polynomial_1 *p=new Rational_polynomial_1(temp);
+	mpq_clear(temp);
+	set_pol(*p);
 };
 
-Algebraic_1::Algebraic_1 (const mpq_t &q) {
-	mpfi_set_q (mpfi (), q);
+Algebraic_1::Algebraic_1(const mpq_t &q){
+	mpfi_set_q(mpfi(),q);
+	Rational_polynomial_1 *p=new Rational_polynomial_1(q);
+	set_pol(*p);
 };
 
-Algebraic_1::Algebraic_1 (const CGAL::Gmpz &z) {
-	mpfi_set_z (mpfi (), z.mpz());
+Algebraic_1::Algebraic_1(const CGAL::Gmpz &z){
+	mpq_t temp;
+	mpfi_set_z(mpfi(),z.mpz());
+	mpq_init(temp);
+	mpq_set_z(temp,z.mpz());
+	Rational_polynomial_1 *p=new Rational_polynomial_1(temp);
+	mpq_clear(temp);
+	set_pol(*p);
 };
 
-Algebraic_1::Algebraic_1 (const CGAL::Gmpq &q) {
-	mpfi_set_q (mpfi (), q.mpq());
+Algebraic_1::Algebraic_1(const CGAL::Gmpq &q){
+	mpfi_set_q(mpfi(),q.mpq());
+	Rational_polynomial_1 *p=new Rational_polynomial_1(q.mpq());
+	set_pol(*p);
 };
 
-// constructors of a "proper" interval
+// constructors of a "proper" interval (these aren't interesting at all)
 Algebraic_1::Algebraic_1 (int l, int r) {
 	mpfi_interv_si (mpfi (), (long int)l, (long int)r);
 };
@@ -291,33 +337,50 @@ bool Algebraic_1::contains(const Gmpq &n)const{
 };
 
 // overcharge for assignment
-Algebraic_1& Algebraic_1::operator= (const long int i) {
-	mpfi_set_si (mpfi (), i);
-	clear_pol ();
+Algebraic_1& Algebraic_1::operator=(const long int i){
+	mpq_t temp;
+	mpfi_set_si(mpfi(),(long int)i);
+	mpq_init(temp);
+	mpq_set_si(temp,(long int)i,1);
+	Rational_polynomial_1 *p=new Rational_polynomial_1(temp);
+	mpq_clear(temp);
+	set_pol(*p);
 	return *this;
 };
 
-Algebraic_1& Algebraic_1::operator= (const mpz_t &z) {
-	mpfi_set_z (mpfi (), z);
-	clear_pol ();
+Algebraic_1& Algebraic_1::operator=(const mpz_t &z){
+	mpq_t temp;
+	mpfi_set_z(mpfi(),z);
+	mpq_init(temp);
+	mpq_set_z(temp,z);
+	Rational_polynomial_1 *p=new Rational_polynomial_1(temp);
+	mpq_clear(temp);
+	set_pol(*p);
 	return *this;
 };
 
-Algebraic_1& Algebraic_1::operator= (const mpq_t &q) {
-	mpfi_set_q (mpfi (), q);
-	clear_pol ();
+Algebraic_1& Algebraic_1::operator=(const mpq_t &q){
+	mpfi_set_q(mpfi(),q);
+	Rational_polynomial_1 *p=new Rational_polynomial_1(q);
+	set_pol(*p);
 	return *this;
 };
 
-Algebraic_1& Algebraic_1::operator= (const CGAL::Gmpz &z) {
-	mpfi_set_z (mpfi (), z.mpz());
-	clear_pol ();
+Algebraic_1& Algebraic_1::operator=(const CGAL::Gmpz &z){
+	mpq_t temp;
+	mpfi_set_z(mpfi(),z.mpz());
+	mpq_init(temp);
+	mpq_set_z(temp,z.mpz());
+	Rational_polynomial_1 *p=new Rational_polynomial_1(temp);
+	mpq_clear(temp);
+	set_pol(*p);
 	return *this;
 };
 
-Algebraic_1& Algebraic_1::operator= (const CGAL::Gmpq &q) {
-	mpfi_set_q (mpfi (), q.mpq());
-	clear_pol ();
+Algebraic_1& Algebraic_1::operator=(const CGAL::Gmpq &q){
+	mpfi_set_q(mpfi(),q.mpq());
+	Rational_polynomial_1 *p=new Rational_polynomial_1(q.mpq());
+	set_pol(*p);
 	return *this;
 };
 
@@ -573,18 +636,6 @@ Algebraic_1& Algebraic_1::operator*= (const CGAL::Gmpq &n2) {
 // 5
 
 // 6
-bool Algebraic_1::is_valid () const {
-	return (mpfi_nan_p (mpfi ()) == 0);
-};
-
-bool Algebraic_1::is_finite () const {
-	return (mpfi_inf_p (mpfi ()) == 0);
-};
-
-double Algebraic_1::to_double () const {
-	return mpfi_get_d (mpfi ());
-};
-
 std::pair <double, double> Algebraic_1::to_interval () const {
 	mpfr_t temp;
 	double left, right;
@@ -632,8 +683,7 @@ Algebraic_1 Algebraic_1::sqrt () const {
 };
 
 // 9
-// TODO: rewrite this to better show the results
-std::ostream& Algebraic_1::show (std::ostream &o) {
+std::ostream& Algebraic_1::show(std::ostream &o,int digits){
 	char *str1, *str2;
 	mpfr_t op1, op2;
 	mp_exp_t *expptr1, *expptr2;
@@ -646,8 +696,8 @@ std::ostream& Algebraic_1::show (std::ostream &o) {
 	mpfi_get_left (op1, mpfi ());
 	mpfi_get_right (op2, mpfi ());
 
-	str1 = mpfr_get_str (NULL, expptr1, 10, 0, op1, GMP_RNDN);
-	str2 = mpfr_get_str (NULL, expptr2, 10, 0, op2, GMP_RNDN);
+	str1=mpfr_get_str(NULL,expptr1,10,digits,op1,GMP_RNDN);
+	str2=mpfr_get_str(NULL,expptr2,10,digits,op2,GMP_RNDN);
 
 	if (str1[0] == '-')
 		o << "[-." << str1+sizeof(char) << "e" << *expptr1;
@@ -775,6 +825,8 @@ Algebraic_1& Algebraic_1::operator*= (const mpq_t &n2) {
 // 11. all the functions with mpfr_t that need to be inside the class
 
 // constructor I
+// we can't convert an mpfr_t to a rational easily, so calling this
+// constructor isn't a good idea
 Algebraic_1::Algebraic_1 (const mpfr_t &r) {
 	mpfi_set_fr (mpfi (), r);
 };
@@ -785,6 +837,7 @@ Algebraic_1::Algebraic_1 (const mpfr_t &l, const mpfr_t &r) {
 };
 
 // assigning: mpfi = mpfr
+// big problem: the same that the constructor I above
 Algebraic_1& Algebraic_1::operator= (const mpfr_t &r) {
 	mpfi_set_fr (mpfi (), r);
 	return *this;
@@ -886,6 +939,7 @@ Algebraic_1& Algebraic_1::operator/= (const mpfr_t &f) {
 	overlap ();
 	return false;	// this never occurs
 }*/
+
 bool operator== (const Algebraic_1 &n1, const Algebraic_1 &n2) {
 	mpfr_t n1_l,n1_r,n2_l,n2_r;
 	mpfr_inits(n1_l,n1_r,n2_l,n2_r,NULL);
@@ -902,10 +956,6 @@ bool operator== (const Algebraic_1 &n1, const Algebraic_1 &n2) {
 	mpfr_clears (n1_l, n1_r, n2_l, n2_r, NULL);
 	overlap();
 	return false;
-}
-
-bool operator!= (const Algebraic_1 &n1, const Algebraic_1 &n2) {
-	return !(n1 == n2);
 }
 
 bool operator< (const Algebraic_1 &n1, const Algebraic_1 &n2) {
@@ -931,36 +981,9 @@ bool operator< (const Algebraic_1 &n1, const Algebraic_1 &n2) {
 	return false;	// this never occurs
 }
 
-bool operator> (const Algebraic_1 &n1, const Algebraic_1 &n2) {
-	return (n2 < n1);
-}
-
-bool operator<= (const Algebraic_1 &n1, const Algebraic_1 &n2) {
-	return ((n1 == n2) || (n1 < n2));
-}
-
-bool operator>= (const Algebraic_1 &n1, const Algebraic_1 &n2) {
-	return ((n1 == n2) || (n1 > n2));
-}
-
 // 2.5
 // comparison between int|mpfr_t|mp[zq]_t|Gmp[zq] and intervals
 // 5.5
-bool is_valid (const Algebraic_1 &n) {
-	return n.is_valid ();
-};
-
-bool is_finite (const Algebraic_1 &n) {
-	return n.is_finite ();
-};
-
-double to_double (const Algebraic_1 &n) {
-	return n.to_double ();
-};
-
-std::pair<double, double> to_interval (const Algebraic_1 &n) {
-	return n.to_interval ();
-};
 
 // 7.5
 // anything / interval
@@ -972,15 +995,7 @@ std::pair<double, double> to_interval (const Algebraic_1 &n) {
 //-------------------------------------------------- 
 
 // 8.5
-Algebraic_1 sqrt (const Algebraic_1 &ntval) {
-	return ntval.sqrt ();
-};
-
 // 9.5
-std::ostream& operator<< (std::ostream &o, Algebraic_1 &n) {
-	return n.show(o);
-};
-
 // 11.5
 // all the mpfr functions that can't be inside the class (and aren't covered
 // by the template functions

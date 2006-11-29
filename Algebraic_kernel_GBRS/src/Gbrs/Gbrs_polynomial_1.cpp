@@ -63,6 +63,18 @@ Rational_polynomial_1::Rational_polynomial_1(const Rational_polynomial_1 &p){
 	//roots=p.get_roots();
 };
 
+// construct a polynomial whose root is the given rational
+Rational_polynomial_1::Rational_polynomial_1(const mpq_t &r){
+	degree=1;
+	coef=(mpz_t*)malloc(sizeof(mpz_t)*2);
+	mpz_init(coef[0]);
+	mpz_neg(coef[0],mpq_numref(r));
+	mpz_init(coef[1]);
+	mpz_set(coef[1],mpq_denref(r));
+	solved=false;
+	//roots.clear();
+};
+
 // destructor
 Rational_polynomial_1::~Rational_polynomial_1 () {
 	for(int i=0;i<degree+1;++i)
