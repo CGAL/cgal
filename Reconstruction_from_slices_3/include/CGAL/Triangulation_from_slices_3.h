@@ -1,4 +1,4 @@
-// Copyright (c) 1998, 2001, 2003  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2005, 2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -11,27 +11,26 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
 //
 // Author(s)     : Raphaelle Chaine (Raphaelle.Chaine@sophia.inria.fr, raphaelle.chaine@liris.cnrs.fr)
+//                 Andreas Fabri (GeometryFactory)
 //   
 //===============================================================================================
               
-#ifndef CGAL_TRIANGULATION_FROM_SLICES
-#define CGAL_TRIANGULATION_FROM_SLICES
+#ifndef CGAL_TRIANGULATION_FROM_SLICES_3_H
+#define CGAL_TRIANGULATION_FROM_SLICES_3_H
 
-//#include <CGAL/basic.h>
-
-#include <iostream>
-#include <vector>
-//#include <set>
-//#include <map> 
-#include <utility> 
-
-#include <CGAL/utility.h> //Triple
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 // Equivalent to Filtered_kernel<Cartesian<Lazy_exact_nt<quotient<mp_float > > > >
 
+#include <iostream>
+#include <vector>
+#include <utility> 
+
+#include <CGAL/utility.h>
 #include <CGAL/Triangulation_short_names_3.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_utils_3.h>
@@ -42,11 +41,6 @@
 #include <CGAL/TFS_vertex_base_3.h>
 
 #include <CGAL/Triangulation_3.h>
-
-//#include <CGAL/iterator.h>
-//#include <CGAL/function_objects.h>
-//#include <CGAL/Iterator_project.h>
-
 #include <CGAL/Parser_SLC.h>
 
 #ifdef GEOMVIEW
@@ -852,8 +846,8 @@ is_valid(bool verbose, int level) const
 	  {
 	    is_valid_finite(it);
 	    int li,lj,other_slice,num,ty,w=-1;
-	    num=it->vertex(0)->slice;
-	    ty=slices[num]->tetrahedra_type(*it,li,lj,other_slice);
+	    num=it->vertex(0)->slice();
+	    ty=slices[num].tetrahedra_type(*it,li,lj,other_slice);
 	    CGAL_triangulation_assertion(ty!=0);
 	    if((ty==1)||(ty==3))
 	      w=li;	    
@@ -1000,7 +994,7 @@ typename Triangulation_from_slices_3<Gt,Tds>::Cell_handle Triangulation_from_sli
 		  cres=*cit;
 		  lt=Tr_Base::OUTSIDE_CONVEX_HULL;
 		  //li=cres->index(t->infinite_vertex()); 
-#ifdef DUMP
+#ifdef CGAL_DUMP
 		  std::cout << "Tr_Base::OUTSIDE_CONVEX_HULL (modifie)" << std::endl;	
 #endif	    
 		  break;
@@ -1014,10 +1008,10 @@ typename Triangulation_from_slices_3<Gt,Tds>::Cell_handle Triangulation_from_sli
 	  cres=t->locate(p, lt, li, lj, s);
 	  if((t->dimension()==3)&&(lt==Tr_Base::OUTSIDE_CONVEX_HULL)&&(tetrahedra_type(cres)==0))
 	    {
-	      std::cout << " Case that should not happen thanks to vert_start but to be handled by the author " << std::endl;
+	      std::cerr << "Error: Case that should not happen thanks to vert_start but to be handled by the author " << std::endl;
 	      //TO DO : Visit infinite cells having a vertex in *this to find a good candidate		
 	    }
-#ifdef DUMP
+#ifdef CGAL_DUMP
 	  if (lt==Tr_Base::OUTSIDE_CONVEX_HULL)
 	    std::cout << "Tr_Base::OUTSIDE_CONVEX_HULL" << std::endl;	
 	  else if (lt==Tr_Base::VERTEX)
@@ -1362,4 +1356,4 @@ operator<<( CGAL::Geomview_stream &gv, const Triangulation_from_slices_3<Gt,Tds>
 
 CGAL_END_NAMESPACE
 
-#endif //CGAL_TRIANGULATION_FROM_SLICES
+#endif //CGAL_TRIANGULATION_FROM_SLICES_3_H

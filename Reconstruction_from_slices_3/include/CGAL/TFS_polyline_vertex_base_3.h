@@ -1,4 +1,4 @@
-// Copyright (c) 1998, 2001, 2003  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2005, 2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -11,12 +11,15 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// $URL$
+// $Id$
 //
 // Author(s)     : Raphaelle Chaine  (Raphaelle.Chaine@sophia.inria.fr, raphaelle.chaine@liris.cnrs.fr)
-//                 
+//                 Andreas Fabri (GeometryFactory)
 
-#ifndef CGAL_POLYLINE_VERTEX_BASE_3
-#define CGAL_POLYLINE_VERTEX_BASE_3
+
+#ifndef CGAL_POLYLINE_VERTEX_BASE_3_H
+#define CGAL_POLYLINE_VERTEX_BASE_3_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Triangulation_short_names_3.h>
@@ -73,4 +76,4 @@ public :
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_POLYLINE_VERTEX_BASE_3
+#endif // CGAL_POLYLINE_VERTEX_BASE_3_H

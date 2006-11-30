@@ -1,26 +1,26 @@
-// Copyright (c) 1999 The CGAL Consortium
+// Copyright (c) 2005, 2006  INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
-// This software and related documentation is part of an INTERNAL release
-// of the Computational Geometry Algorithms Library (CGAL). It is not
-// intended for general use.
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
 //
-// ----------------------------------------------------------------------
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
 //
-// release       :
-// release_date  :
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// file          : Reconstruction_from_slices.h
-// package       : Reconstruction_from_slices
-// maintainer    : 
-// revision      :
+// $URL$
+// $Id$
+// 
 // author(s)     : Raphaelle Chaine (Raphaelle.Chaine@sophia.inria.fr, raphaelle.chaine@liris.cnrs.fr)
 //                 Jerome Piovano
-//
-//
-// ======================================================================
+//                 Andreas Fabri (GeometryFactory)
 
-#ifndef CGAL_RECONSTRUCTION_FROM_SLICES
-#define CGAL_RECONSTRUCTION_FROM_SLICES
+
+#ifndef CGAL_RECONSTRUCTION_FROM_SLICES_3_H
+#define CGAL_RECONSTRUCTION_FROM_SLICES_3_H
 
 #include <iostream>
 #include <vector>
@@ -167,8 +167,10 @@ bool check_polylines_respect(const Tr & tr)
       Cell_handle ctemp;
       int i,j;
       Vertex_handle vh1(it),vh2(it->get_next());
-      if (!tr.is_edge(vh1,vh2,ctemp,i,j))
-	return false;
+      if (!tr.is_edge(vh1,vh2,ctemp,i,j)){
+	std::cerr << "Error: Cannot find constraint edge " << vh1->point() << " [" << vh1->slice() << "]   " << vh2->point() << " [" << vh1->slice() << "]" << std::endl;
+	//	return false;
+      }
     }
   return true;
 }
@@ -194,7 +196,7 @@ void check_and_conform_polylines(Tr & tr)
 	      if (!tr.is_edge(vh1,vh2,ctemp,ci,cj))
 		{ //The polyline going through vh1 and vh2 is not conform
 		  conform=false;
-#ifdef DUMP
+#ifdef CGAL_DUMP
 		  std::cout<<"Slice " << i << "is not conformal"<< std::endl;
 		  std::cout<<"Do you want to conform it?"<< std::endl;		  
 		  std::getchar();
@@ -207,7 +209,7 @@ void check_and_conform_polylines(Tr & tr)
 		      vstep2=vstep1->get_next();
 		      if (!tr.is_edge(vstep1,vstep2,ctemp,ci,cj))
 			{
-#ifdef DUMP		  
+#ifdef CGAL_DUMP		  
 			  std::cout << "Conform an edge by midpoint insertion" << std::endl;
 #endif
 			  typename Tr::Point P;
@@ -224,7 +226,7 @@ void check_and_conform_polylines(Tr & tr)
 		}
 	    }//for each vertex
 	}while(!conform); 
-#ifdef DUMP
+#ifdef CGAL_DUMP
       std::cout << "Slice is conformed" << std::endl;      
 #endif
     }
@@ -257,7 +259,7 @@ void tag_inner_outer(const Tr & tr)
 #endif // GEOMVIEW_DUMP TO RM
   //--------------------------------------------------------------------------
   typename Tr::Facet f_infinite=get_facet_towards_external_infinite_cell(tr); 
-#ifdef DUMP 
+#ifdef CGAL_DUMP 
   std::cout << "first facet_towards_external_infinite_cell found" << std::endl;
 #endif
   typename Tr::Facet f_infinite_next(NULL,0);
@@ -278,9 +280,9 @@ void tag_inner_outer(const Tr & tr)
       std::cout << " ...from an infinite exterior cell" << std::endl;
 #endif // GEOMVIEW_DUMP TO RM
       tag_inner_outer(tr,f_infinite,false,in,f_infinite_next);
-#ifdef DUMP 
+#ifdef CGAL_DUMP 
       std::cout << "IN/OUT Tagging slice" << in << " over" << std::endl;
-#endif // DUMP
+#endif // CGAL_DUMP
       f_infinite=f_infinite_next;
       f_infinite_next.first=NULL;
       in++;
@@ -375,9 +377,9 @@ static void tag_inner_outer(const Tr & tr, typename Tr::Facet f_start, bool inte
 		      if((for_next_slice.first==NULL)&&(sindex==slice_down+1)&&(slice_down!=other_slice)) //&&(tr.slices[slice_down].tetrahedra_type(c)==0))
 			{
 			  for_next_slice=Facet(c,c->index(tr.infinite_vertex()));
-#ifdef DUMP 
+#ifdef CGAL_DUMP 
 			  std::cout << "A for_next_slice candidate has been found"<< std::endl;
-#endif //DUMP
+#endif //CGAL_DUMP
 			}
 		    }
 		  else if (intern_tag||boundary)
@@ -809,7 +811,7 @@ void stable_non_solid_connections_heavy_removal(Tr & tr)
 /* 		CGAL_triangulation_assertion(!it->is_internal()); */
 /* 	      } */
 	  }
-      std::cout << "Heavy solid removal " << ++cmpt << std::endl;
+      std::cerr << "Info: Heavy solid removal " << ++cmpt << std::endl;
     }while(again);
 }
 /*===========================================================================*/
@@ -860,7 +862,7 @@ void save_in_off_file(const Tr & tr, const char * fname_head_off, const char * f
 
 
 template <class Tr>
-void save_in_wrl_file(const Tr & tr, const char * fname_wrl)
+void save_in_wrl_file(const Tr & tr, const char * fname_wrl, bool outputContours)
 {
   std::ofstream oFile(fname_wrl,std::ios::out);
   VRML_2_ostream vos(oFile);
@@ -871,7 +873,7 @@ void save_in_wrl_file(const Tr & tr, const char * fname_wrl)
 		"                    geometry IndexedFaceSet {\n"\
 		"                        convex FALSE\n"\
 		"                        solid  FALSE\n"\
-		"                        coord  Coordinate {\n"\
+		"                        coord DEF TheCoordinates Coordinate {\n"\
 		"                            point [\n");
   vos << s.c_str() ;  
   int n=0;
@@ -879,7 +881,7 @@ void save_in_wrl_file(const Tr & tr, const char * fname_wrl)
   while(vit!=tr.finite_vertices_end())
     {
       vit->set_number_id(n++);
-      vos << to_double(vit->point().x()) << " "  << to_double(vit->point().y()) << " " << to_double(vit->point().z()) << ",\n";
+      vos << to_double(vit->point().x()) << " "  << to_double(vit->point().y()) << " " << 10*to_double(vit->point().z()) << ",\n";
       ++vit;
     }
 
@@ -907,9 +909,39 @@ void save_in_wrl_file(const Tr & tr, const char * fname_wrl)
   s = std::string("        ] #coordIndex\n"
 		  "      } #geometry\n"
 		  "    } #Shape\n");
-  vos << s.c_str() ; 
+  vos << s.c_str() ;
+
+  if(outputContours){
+    vit = tr.finite_vertices_begin ();//Vertex_iterator
+    while(vit!=tr.finite_vertices_end()){
+      Vertex_handle_3 vh = vit;
+      if(vh->get_number_id() != -1){
+	
+	
+	s = std::string("     Shape {\n"
+			"       geometry IndexedLineSet {\n"
+			"         coord USE TheCoordinates\n"
+			"         coordIndex [\n");
+	vos << s.c_str() ;
+	
+	int start = vh->get_number_id();
+	do {
+	  vos << vh->get_number_id() << " ";
+	  vh->set_number_id(-1);
+	  vh = vh->get_next();
+	}while(vh->get_number_id() != -1);
+	vos << start ;
+	
+	s = std::string("         ]\n"
+			"       }\n"
+			"     } #Shape\n");
+	vos << s.c_str() ;
+      }
+      vit++;
+    }
+  }
   
 }
 CGAL_END_NAMESPACE
 
-#endif //CGAL_RECONSTRUCTION_FROM_SLICES
+#endif //CGAL_RECONSTRUCTION_FROM_SLICES_3_H

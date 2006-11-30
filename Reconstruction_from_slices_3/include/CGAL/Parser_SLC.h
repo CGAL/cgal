@@ -1,7 +1,19 @@
-// ======================================================================
+// Copyright (c) 2006, 2007  INRIA Sophia-Antipolis (France).
+// All rights reserved.
 //
-// file          : include/CGAL/Parser_SLC.h
-// package       : Reconstruction_from_slices
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// 
 //
 // author(s)     : Bastien Manuel
 //                 Laurent Rincon
@@ -188,11 +200,11 @@ template<class handler_SLC>
 void parser_SLC<handler_SLC>::parse() throw (Parse_exception)
 {
   status = PARSING;
-#ifdef DUMP
+#ifdef CGAL_DUMP
   std::cout<<std::endl<<"\tParsing header..."<<std::endl;
 #endif
   read_header();
-#ifdef DUMP
+#ifdef CGAL_DUMP
   std::cout<<"\tHeader successfully parsed"<<std::endl; 
   std::cout<<"\t=>Slice type = ";
   if(parallel)
@@ -205,7 +217,7 @@ void parser_SLC<handler_SLC>::parse() throw (Parse_exception)
   std::cout<<"\tParsing body..."<<std::endl;
 #endif
   read_body();
-#ifdef DUMP
+#ifdef CGAL_DUMP
   std::cout<<"\tBody successfully parsed"<<std::endl;
   std::cout<<std::endl;
 #endif
@@ -241,17 +253,17 @@ std::ostream & operator <<(std::ostream & os, const parser_SLC<handler_SLC> & pa
 template<class handler_SLC>
 void parser_SLC<handler_SLC>::read_header() throw (Parse_exception)
 {
-#ifdef DUMP
+#ifdef CGAL_DUMP
   std::cout<<"\t\tParsing slice style..."<<std::endl;
 #endif
   read_slice_style();
-#ifdef DUMP
+#ifdef CGAL_DUMP
   std::cout<<"\t\tSlice style parsed"<<std::endl;
   std::cout<<std::endl;
   std::cout<<"\t\tParsing slices number..."<<std::endl;
 #endif
   read_slices_number();
-#ifdef DUMP
+#ifdef CGAL_DUMP
   std::cout<<"\t\tSlices number parsed"<<std::endl;
   std::cout<<std::endl;
 #endif
@@ -341,12 +353,12 @@ void parser_SLC<handler_SLC>::read_body() throw (Parse_exception)
   while((current_slice < nb_slices)
 	&& (!ifs.eof()))
     {
-#ifdef DUMP
+#ifdef CGAL_DUMP
       std::cout<<"\t\tParsing slice n°"<<current_slice<<"..."<<std::endl;
 #endif
       read_slice(current_slice);
       current_slice++;
-#ifdef DUMP
+#ifdef CGAL_DUMP
       std::cout<<"\t\tSlice n°"<<current_slice<< "/" << nb_slices <<" parsed successfully"<<std::endl;
 #endif
     }
@@ -375,21 +387,21 @@ void parser_SLC<handler_SLC>::read_slice(int current_slice) throw (Parse_excepti
 {
   int verticesNumber;
   Plane pl;
-#ifdef DUMP
+#ifdef CGAL_DUMP
   std::cout<<"\t\t\tParsing slice header..."<<std::endl;
 #endif
   read_slice_header(current_slice,verticesNumber,pl);
-#ifdef DUMP
+#ifdef CGAL_DUMP
   std::cout<<"\t\t\tSlice header parsed successfully"<<std::endl;
   std::cout<<"\t\t=>Vertices number = "<<verticesNumber<<std::endl;
   std::cout<<"\t\t=>Plane = "<<pl<<std::endl;
 #endif
   slch->insert_slice(current_slice,pl);
-#ifdef DUMP
+#ifdef CGAL_DUMP
   std::cout<<"\t\t\tParsing slice body..."<<std::endl;
 #endif
   read_slice_body(current_slice,verticesNumber,pl);
-#ifdef DUMP
+#ifdef CGAL_DUMP
   std::cout<<"\t\t\tSlice body parsed successfully"<<std::endl;  
 #endif
 }
@@ -398,11 +410,11 @@ void parser_SLC<handler_SLC>::read_slice(int current_slice) throw (Parse_excepti
 template<class handler_SLC>
 void parser_SLC<handler_SLC>::read_slice_header(int current_slice, int & verticesNumber, typename handler_SLC::Plane & pl) throw (Parse_exception)
 {
-#ifdef DUMP
+#ifdef CGAL_DUMP
   std::cout<<"\t\t\t\tParsing vertices number..."<<std::endl;
 #endif
   verticesNumber = read_vertices_number();
-#ifdef DUMP
+#ifdef CGAL_DUMP
   std::cout<<"\t\t\t\tVertices number parsed successfully"<<std::endl;
   std::cout<<"\t\t\t\tParsing slice plane"<<std::endl;
 #endif
@@ -413,7 +425,7 @@ void parser_SLC<handler_SLC>::read_slice_header(int current_slice, int & vertice
     }
   else
     pl=read_slice_plane();
-#ifdef DUMP
+#ifdef CGAL_DUMP
   std::cout<<"\t\t\t\tSlice plane parsed successfully"<<std::endl;
 #endif
 }
@@ -554,11 +566,11 @@ void parser_SLC<handler_SLC>::read_slice_body(int num_slice, int verticesNumber,
       if(ifs.peek() == '{')
 	{
 	  ifs.get(c);
-#ifdef DUMP
+#ifdef CGAL_DUMP
 	  std::cout<<"\t\t\t\tParsing vertices set..."<<std::endl;
 #endif
 	  read_point_set(num_slice,i,verticesNumber,pl);
-#ifdef DUMP
+#ifdef CGAL_DUMP
 	  std::cout<<"\t\t\t\tPoint set parsed successfully"<<std::endl;
 #endif
 	}
@@ -572,11 +584,11 @@ void parser_SLC<handler_SLC>::read_point_set(int num_slice, int & currentVertexN
   char c;
   while(!ifs.eof() && (ifs.peek() != '}') && (currentVertexNumber < verticesNumber))
     {
-#ifdef DUMP
+#ifdef CGAL_DUMP
       std::cout<<"\t\t\t\t\tParsing vertex n°"<< currentVertexNumber+1 << "/" << verticesNumber << "..."<<std::endl;
 #endif
       read_point(num_slice,pl);
-#ifdef DUMP
+#ifdef CGAL_DUMP
       std::cout<<"\t\t\t\t\tVertex parsed successfully"<<std::endl;
 #endif
       currentVertexNumber++;
@@ -648,7 +660,7 @@ typename parser_SLC<handler_SLC>::Vertex_handle parser_SLC<handler_SLC>::read_po
 	  z = read_double();
 	  ignore_blanks();
 	}      
-#ifdef DUMP
+#ifdef CGAL_DUMP
       std::cout<<"\t\t\t\t\tx = "<<x<<" y = "<<y<<" z = "<<z<<std::endl;
       std::cout<<"\t\t\t\t\t "<<pl.projection(Point(x,y,z))<<std::endl;
 #endif
