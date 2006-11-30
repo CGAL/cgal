@@ -54,7 +54,7 @@ int affiche_sols_eqs(mpfi_ptr *&x){
 	return nb_elts;
 }
 
-int affiche_sols_constr (const Algebraic_1 &a) {
+Sign affiche_sols_constr(const Algebraic_1 &a){
 	int ident_sols_eqs,nb_elts,ident_node,ident_vect, nb, ident_elt;
 	mpfi_t tmp;
 	mpfi_init(tmp);
@@ -76,16 +76,25 @@ int affiche_sols_constr (const Algebraic_1 &a) {
 	/*std::cout << "\nreturned value: ";
 	mpfi_out_str(stdout,10,0,tmp);
 	std::cout << std::endl;*/
-	// XXX: mpfi_is_strictly_pos (tmp) doesn't seem to work
-	if (mpfi_cmp_ui (tmp, 0) > 0)
-		return 1;
-	if (mpfi_is_strictly_neg (tmp))
-		return -1;
-	if (mpfi_is_zero (tmp))
-		return 0;
-	// the interval contains 0 and it isn't a point:
-	// we have to refine the result
-	return -2;
+	// mpfi_is_zero(tmp) doesn't work. The reason is that MPFR_SIGN in the
+	// mpfi code returns 1 when applied to the left and right zeros. This
+	// is not surprising, because zero is signed in IEEE 754-1985, and MPFR
+	// adopts it. Nevertheless, mpfr_sgn returns 0, but mpfi doesn't use
+	// it to implement mpfi_is_zero.
+	// Here is the difference (from MPFR source code):
+	// #define mpfr_sgn(_x)      (mpfr_zero_p(_x) ? 0 : MPFR_SIGN(_x))
+	// Why? zeros are signed in IEEE-754.
+	if(mpfr_zero_p(&(tmp->right))&&mpfr_zero_p(&(tmp->left)))
+		return ZERO;
+	// the same holds for mpfi_is_pos and mpfi_is_neg
+	if((mpfr_sgn(&(tmp->left))>=0)&&(mpfr_sgn(&(tmp->right)))>0)
+		return POSITIVE;
+	if((mpfr_sgn(&(tmp->left))<0)&&(mpfr_sgn(&(tmp->right))<=0))
+		return NEGATIVE;
+	// if we arrive here, it is because the signs of the endpoints are -
+	// and +, and (I think) RS guarantees that this never happen
+	CGAL_assertion_msg(false,"error in sign calculation");
+	return ZERO;
 }
 
 void create_rs_upoly (mpz_t *poly, const int deg, const int ident_pol) {
@@ -120,10 +129,9 @@ int solve_1(mpfi_ptr *&x,Rational_polynomial_1 &p1,unsigned int prec){
 	return affiche_sols_eqs(x);
 }
 
-// TODO: when implemented UNDECIDED as a valid CGAL sign type,
-// the return type will change to "Sign"
-int sign_1 (const Rational_polynomial_1 &p1, const Algebraic_1 &a,
-		unsigned int prec) {
+Sign sign_1(const Rational_polynomial_1 &p1,const Algebraic_1 &a,
+		unsigned int prec){
+	CGAL_assertion(a.is_consistent());
 	mpz_t **constr;
 	int *degs;
 	// XXX: is this always necessary? can I do it just once?
@@ -141,21 +149,6 @@ int sign_1 (const Rational_polynomial_1 &p1, const Algebraic_1 &a,
 	set_rs_verbose (CGAL_RS_VERB);
 	rs_run_algo ("UISOLES");
 	return affiche_sols_constr (a);
-}
-
-Sign sign_1 (const Rational_polynomial_1 &p1, const Algebraic_1 &a) {
-	CGAL_assertion_msg (a.is_consistent (),
-			"this number was not calculated as a root");
-	for (unsigned int prec = CGAL_RS_MIN_PREC;;)
-		switch (sign_1 (p1, a, prec)) {
-			case -1: return NEGATIVE;
-			case 0: return ZERO;
-			case 1: return POSITIVE;
-			default:
-				if ((prec *= CGAL_RS_PREC_FACTOR) >
-						CGAL_RS_MAX_PREC)
-					return ZERO;	// TODO: UNDECIDED
-		}
 }
 
 int get_root (mpfi_ptr x, int n) {
