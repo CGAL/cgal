@@ -112,10 +112,10 @@ namespace Mesh_2 {
       const Vertex_handle& mvi = fh->mirror_vertex(i);
 
       return( ( ct.is_infinite(vi) || 
-                angle(a, vi->point(), b) != OBTUSE)
+                angle(a, vi->point(), b) == ACUTE)
               &&
               ( ct.is_infinite(mvi) || 
-                angle(a, mvi->point(), b) != OBTUSE)
+                angle(a, mvi->point(), b) == ACUTE)
               );
     }
 
@@ -164,7 +164,7 @@ namespace Mesh_2 {
         const Point& a = va->point();
         const Point& b = vb->point();
 
-        return( angle(a, p, b) != OBTUSE );
+        return( angle(a, p, b) == ACUTE );
       }
   };
 
