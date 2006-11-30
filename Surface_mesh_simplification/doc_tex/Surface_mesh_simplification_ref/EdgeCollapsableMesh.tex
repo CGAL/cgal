@@ -36,15 +36,15 @@ It can have any number of connected components, boundaries
 \ccHeading{Valid Expressions}
 
 The mesh simplification algorithm requires the free function \ccc{collapse_triangulation_edge}.
-
+\ccTagFullDeclarations
 
   \ccFunction
   {template<class EdgeCollapsableMesh>
   typename boost::graph_traits<EdgeCollapsableMesh>::vertex_descriptor
   halfedge_collapse(typename boost::graph_traits<EdgeCollapsableMesh>::edge_descriptor const& ue,
                              EdgeCollapsableMesh& mesh);}  
-  {Collapses the undirected edge \ccc{(v0v1,v1v0)} replacing it with \ccc{v0} or \ccc{v1}
-   , as described in the following paragraph.}
+  {Collapses the undirected edge \ccc{(v0v1,v1v0)} replacing it with \ccc{v0} or \ccc{v1},
+   as described in the following paragraph.}
 
     
 
