@@ -63,7 +63,6 @@ static_lib_no_install: $(CGAL_OBJECTS)
 	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
 		$(CGAL_LIB_LDFLAGS)
 	$(RANLIB) $(CGAL_GBRS_LIB)
-	rm $(CGAL_OBJECTS)
 
 clean:
 	rm -f $(CGAL_GBRS_LIB) $(CGAL_OBJECTS)
