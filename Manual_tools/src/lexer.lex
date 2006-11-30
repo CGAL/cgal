@@ -974,7 +974,7 @@ bool skipspaces_eof() {
 	printErrorMessage( EOFInMacroExpansionError);
 	return true;    
     } 
-    unput( c);
+    yyunput( c, yytext );
     return false;
 }
 
@@ -988,7 +988,7 @@ bool skipseparator_eof() {
 	printErrorMessage( EOFInMacroExpansionError);
 	return true;    
     } 
-    unput( c);
+    yyunput( c, yytext );
     return false;
 }
 
@@ -1001,8 +1001,8 @@ bool skiplimitedspaces_eof() {
     while( c != EOF && isspace(c) && c != SEPARATOR) {
 	if ( c == '\n') {
 	    if ( nl_count > 0) {
-		unput( c);
-		unput( c);
+		yyunput( c, yytext );
+		yyunput( c, yytext );
 		return false;
 	    } else
 		nl_count++;
@@ -1015,7 +1015,7 @@ bool skiplimitedspaces_eof() {
 	printErrorMessage( EOFInMacroExpansionError);
 	return true;    
     } 
-    unput( c);
+    yyunput( c, yytext );
     return false;
 }
 
@@ -1027,8 +1027,8 @@ int skiplimitedspaces_param() {
     while( c != EOF && isspace(c) && c != SEPARATOR) {
 	if ( c == '\n') {
 	    if ( nl_count > 0) {
-		unput( c);
-		unput( c);
+		yyunput( c, yytext );
+		yyunput( c, yytext );
 		return '\n';
 	    } else
 		nl_count++;
@@ -1041,7 +1041,7 @@ int skiplimitedspaces_param() {
 	printErrorMessage( EOFInMacroExpansionError);
 	return c;
     } 
-    unput( c);
+    yyunput( c, yytext );
     return c;
 }
 
@@ -1054,8 +1054,8 @@ bool skiplimitedsepspaces_eof() {
     while( c != EOF && (isspace(c) || c == SEPARATOR)) {
 	if ( c == '\n') {
 	    if ( nl_count > 0) {
-		unput( c);
-		unput( c);
+		yyunput( c, yytext );
+		yyunput( c, yytext );
 		return false;
 	    } else
 		nl_count++;
@@ -1068,7 +1068,7 @@ bool skiplimitedsepspaces_eof() {
 	printErrorMessage( EOFInMacroExpansionError);
 	return true;    
     } 
-    unput( c);
+    yyunput( c, yytext );
     return false;
 }
 
@@ -1082,7 +1082,7 @@ bool skipnonspaces_eof() {
 	printErrorMessage( EOFInMacroExpansionError);
 	return true;    
     } 
-    unput( c);
+    yyunput( c, yytext );
     return false;
 }
 
@@ -1195,7 +1195,7 @@ bool expand_macro() {
 		BeginParameterMode();
 	    } else {
 		if (c != EOF)
-		    unput( c);
+		    yyunput( c, yytext );
 		include_stack.push_string( s + " in " + item.filename,
 					   item.body, item.line);
 	    }
