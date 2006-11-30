@@ -589,6 +589,13 @@ void remove_own_classname/*_exact*/( char* s, const string& classname) {
             return;
         if ( i > 0  && ( isalnum( s[-1]) || s[-1] == '_'))
             return;
+        // avoid replacing template parameters
+        for( int j = 0; j < i; ++j ) {
+          if( s[-j] == '<' )
+            return;
+          if( isspace(s[-j]) )
+            break;
+        }
         // Classname found. Test non-empty result.
         char* p = s + l2;
         while ( *p) {
