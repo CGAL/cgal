@@ -21,7 +21,6 @@
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
-\ccCreationVariable{d}
 \ccDefinition
 
 The class \ccRefName\ provides a model for the \ccc{GetCost} concept.
@@ -35,10 +34,12 @@ It computes the collapse cost as the squared length of the edge.
 \ccc{GetCost}
 
 \ccCreation
-\ccCreationVariable{gc}  %% choose variable name
+\ccCreationVariable{gc}  
 \ccConstructor{Edge_length_cost<ECM>();}{Default constructor} 
 
 \ccHeading{Methods}
+\ccTagFullDeclarations
+\ccCreationVariable{gc}
   \ccMemberFunction{result_type operator()( Profile const& profile
   , boost::optional<Point> const& placement ) const; }
   {Returns the {\em collapse cost} as the squared distance between the points

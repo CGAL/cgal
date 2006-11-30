@@ -35,11 +35,9 @@ The concept \ccRefName\ describes the requirements for the predicate which indic
   {The type of the edge profile cache. Must be a model of the \ccc{EdgeProfile} concept.}{}
 
 \ccOperations
-\ccCreationVariable{sp}  %% choose variable name
+\ccTagFullDeclarations
+\ccCreationVariable{sp}
 
-  \ccMemberFunction
-    {bool operator()( int a ) const ;}{works?}
-  \ccGlue  
   \ccMemberFunction
     {bool operator()( FT const&       current_cost
                     , Profile  const& profile

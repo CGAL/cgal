@@ -173,8 +173,8 @@ Lastly, if a constraint is still needed (because the ones previously computed we
 a third (and last) constraint is added to favor equilateral triangles over elongated triangles.
 
 The cost is then a convex combination of the volume and boundary optimization terms.
-The weighting factor, defaulted to $1/2$, can be specified by the user to favor volume over
-boundary, or the opposite.
+A {\em weighting unit factor}, $w$, defaulted to $1/2$, can be specified by the user to favor volume over
+boundary, or the opposite. (the forumla has the form: $(w*volume+(1-w)*boundary)$)
 
 The local changes are computed independently for each edge using only
 the triangles currently adjacent to it at the time when the edge 

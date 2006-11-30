@@ -36,10 +36,12 @@ It be a model of the \ccc{EdgeCollapsableMesh} concept.
 \ccc{GetPlacement}
 
 \ccCreation
-\ccCreationVariable{gp}  %% choose variable name
+\ccCreationVariable{gp}  
 \ccConstructor{Midpoint_placement<ECM>();}{Default constructor} 
 
 \ccHeading{Methods}
+\ccTagFullDeclarations
+\ccCreationVariable{gp}  
   \ccMemberFunction{result_type operator()( Profile const& edge_profile ) const; }
   {Returns the {\em placement} (vertex position) as the midpoint between 
   the points of the source and target vertices

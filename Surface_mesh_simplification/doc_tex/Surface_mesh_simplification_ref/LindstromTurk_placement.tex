@@ -37,21 +37,20 @@ It must be a model of the \ccc{EdgeCollapsableMesh} concept.
 \ccc{GetPlacement}
 
 \ccCreation
-\ccCreationVariable{gp}  %% choose variable name
-\ccConstructor{LindstromTurk_placement<ECM>();}
-{Default constructor} 
-\ccGlue
-\ccConstructor{LindstromTurk_placement<ECM>( LindstromTurk_params const& aParams );}
-{Initializes the policy with the given parameters} 
+\ccCreationVariable{gp} 
+\ccConstructor{LindstromTurk_placement<ECM>( FT const& factor = FT(0.5) );}
+{Initializes the policy with the given {\em weighting unit factor}.
+See \ref{SurfaceMeshSimplification:LindstromTurkStrategy} for details on the meaning of this factor.} 
 
 \ccHeading{Methods}
+\ccTagFullDeclarations
+\ccCreationVariable{gp} 
   \ccMemberFunction{result_type operator()( Profile const& edge_profile ) const;}
   {Returns the new position for the remaining vertex after collapsing the edge
   (represented by its profile).}
 
 \ccSeeAlso
-\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_cost<ECM>}\\
-\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_params}\\
+\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_cost<ECM>}
 \end{ccRefFunctionObjectClass}
 
 % +------------------------------------------------------------------------+

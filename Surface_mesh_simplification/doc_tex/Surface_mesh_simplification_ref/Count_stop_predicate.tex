@@ -34,12 +34,14 @@ It returns \ccc{true} when the number of current edges drops below a certain thr
 \ccc{StopPredicate}
 
 \ccCreation
-\ccCreationVariable{sp}  %% choose variable name
+\ccCreationVariable{sp}  
 
 \ccConstructor{Count_stop_predicate<ECM>( size_type threshold );}
 {Initializes the predicate establishing the \ccc{threshold} value.} 
 
+\ccTagFullDeclarations
 \ccOperations
+\ccCreationVariable{sp}
 
   \ccMemberFunction
     {bool operator()( FT const&      current_cost
