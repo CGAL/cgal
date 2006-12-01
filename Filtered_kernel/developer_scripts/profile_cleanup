@@ -13,6 +13,7 @@
 cat $@ | sed -e 's/CGAL:://g' \
              -e 's/typename Type_mapper<typename AC::result_type, typename LK::AK, LK>::type Lazy_construction<LK, AC, EC>::operator()//g' \
              -e 's/Simple_cartesian<Interval_nt_advanced>/IK/g' \
+             -e 's/Simple_cartesian<Interval_nt<false> >/IK/g' \
              -e 's/Cartesian<Gmpq>/EK/g' \
              -e 's/Lazy_kernel<EK, IK, Cartesian_converter<EK, IK, To_interval<Gmpq> > >/LK/g' \
              -e 's/CommonKernelFunctors:://g' \
