@@ -1,3 +1,12 @@
+1 December 2006 Laurent Rineau
+- the Gabriel criteria is now *strict*: no point can ly on the diametral
+sphere.
+- refactoring of <CGAL/Mesh_2/Refine_edges.h>:
+    - factorize code in Is_locally_conforming_Gabriel and
+    Is_locally_conforming_Delaunay.
+    - all triangulation references are now named "tr" (instead of "ct").
+
+
 25 July 2006 Laurent Rineau
 - fix a Rebind bug in <CGAL/Delaunay_mesh_face_base_2.h>, reported by
   "Mike A. Harris" <mharris@mharris.ca> on the cgal-discuss mailing list.
