@@ -48,7 +48,6 @@ namespace Mesh_2 {
     struct Refine_edges_base_types
     {
       typedef typename Tr::Vertex_handle Vertex_handle;
-      typedef typename Tr::Face_handle Face_handle;
 
       typedef std::pair<Vertex_handle,
                         Vertex_handle> Constrained_edge;
@@ -64,7 +63,7 @@ namespace Mesh_2 {
 
         bool operator()(const Constrained_edge& ce) const
         {
-          Face_handle fh;
+          typename Tr::Face_handle fh;
           int i;
           return tr.is_edge(ce.first, ce.second, fh,i) &&
             fh->is_constrained(i);
@@ -80,10 +79,10 @@ namespace Mesh_2 {
 
 
   /**
-   * Predicate class that verifies that an edge is locally conforming
-   * Gabriel. Moreover, This classes defines a predicate that test if an
-   * edge is encroached by a given point.
-   * \param Tr The type of the trianglation.
+   * Predicate class that verifies that an edge is strictly locally
+   * conforming Gabriel. Moreover, This classes defines a predicate that
+   * test if an edge is encroached by a given point.
+   * \param Tr The type of the triangulation.
    */
   template <typename Tr>
   struct Is_locally_conforming_Gabriel
@@ -94,57 +93,50 @@ namespace Mesh_2 {
     typedef typename Tr::Geom_traits Geom_traits;
 
     /** Operator that takes an edge (\c fh, \c index). */
-    bool operator()(Tr& ct,
+    bool operator()(Tr& tr,
                     const Face_handle& fh,
                     const int i) const
     {
-      typedef typename Geom_traits::Angle_2 Angle_2;
-      
-      const Angle_2 angle = ct.geom_traits().angle_2_object();
-
-      const Vertex_handle& va = fh->vertex(ct. cw(i));
-      const Vertex_handle& vb = fh->vertex(ct.ccw(i));
-
-      const Point& a = va->point();
-      const Point& b = vb->point();
+      const Vertex_handle& va = fh->vertex(tr. cw(i));
+      const Vertex_handle& vb = fh->vertex(tr.ccw(i));
 
       const Vertex_handle& vi = fh->vertex(i);
-      const Vertex_handle& mvi = fh->mirror_vertex(i);
+      const Vertex_handle& mvi = tr.tds().mirror_vertex(fh, i);
 
-      return( ( ct.is_infinite(vi) || 
-                angle(a, vi->point(), b) == ACUTE)
+      return( ( tr.is_infinite(vi) || 
+                this->operator()(tr, va, vb, vi->point()) )
               &&
-              ( ct.is_infinite(mvi) || 
-                angle(a, mvi->point(), b) == ACUTE)
+              ( tr.is_infinite(mvi) || 
+                this->operator()(tr, va, vb, mvi->point()) )
               );
     }
 
     /** Operator that takes an edge (\c va, \c vb). */
-    bool operator()(Tr& ct,
+    bool operator()(Tr& tr,
                     const Vertex_handle& va,
                     const Vertex_handle& vb) const
     {
       Face_handle fh;
       int i;
       CGAL_assertion_code( bool should_be_true = )
-      ct.is_edge(va, vb, fh, i);
+      tr.is_edge(va, vb, fh, i);
       CGAL_assertion( should_be_true == true );
       
-      return this->operator()(ct, fh, i);
+      return this->operator()(tr, fh, i);
     }
 
     /**
      * Operator that takes an edge (\c fh, \c index) and a point \c p.
      * Tests if the point encroached the edge.
      */
-    bool operator()(Tr& ct,
+    bool operator()(Tr& tr,
                     const Face_handle& fh,
                     const int i,
                     const Point& p) const
     {
-      return this->operator()(ct,
-                              fh->vertex(ct. cw(i)),
-                              fh->vertex(ct.ccw(i)),
+      return this->operator()(tr,
+                              fh->vertex(tr. cw(i)),
+                              fh->vertex(tr.ccw(i)),
                               p);
     }
 
@@ -152,14 +144,14 @@ namespace Mesh_2 {
      * Operator that takes an edge (\c va, \c vb) and a point \c p.
      * Tests if the point encroached the edge.
      */
-    bool operator()(Tr& ct,
+    bool operator()(Tr& tr,
                     const Vertex_handle& va,
                     const Vertex_handle& vb,
                     const Point& p) const
       {
         typedef typename Geom_traits::Angle_2 Angle_2;
 
-        const Angle_2 angle = ct.geom_traits().angle_2_object();
+        const Angle_2 angle = tr.geom_traits().angle_2_object();
 
         const Point& a = va->point();
         const Point& b = vb->point();
@@ -169,9 +161,9 @@ namespace Mesh_2 {
   };
 
   /**
-   * Predicate class that verifies that an edge is locally conforming
-   * Delaunay.
-   * \param Tr The type of the trianglation.
+   * Predicate class that verifies that an edge is strictly locally
+   * conforming Delaunay.
+   * \param Tr The type of the triangulation.
    */
   template <typename Tr>
   struct Is_locally_conforming_Delaunay
@@ -182,63 +174,86 @@ namespace Mesh_2 {
     typedef typename Tr::Geom_traits Geom_traits;
 
     /** Operator that takes an edge (\c fh, \c index). */
-    bool operator()(Tr& ct,
+    bool operator()(Tr& tr,
                     const Face_handle& fh,
                     const int i) const
     {
-      typedef typename Geom_traits::Side_of_oriented_circle_2
-        Side_of_oriented_circle_2;
+      Vertex_handle vi;
+      Vertex_handle mvi;
 
-      Side_of_oriented_circle_2 in_circle =
-        ct.geom_traits().side_of_oriented_circle_2_object();
-      
-      const Vertex_handle& vi = fh->vertex(i);
-      const Vertex_handle& mvi = fh->mirror_vertex(i);
-
-      if(ct.is_infinite(vi) || ct.is_infinite(mvi)){
+      if(aux_get_vi_mvi(tr, fh, i, vi, mvi)) {
         return true;
       }
 
-      const Point& a = fh->vertex(ct. cw(i))->point();
-      const Point& b = fh->vertex(ct.ccw(i))->point();
-      const Point& c = vi->point();
-      const Point& d = mvi->point();
+      const Vertex_handle& va = fh->vertex(tr. cw(i));
+      const Vertex_handle& vb = fh->vertex(tr.ccw(i));
 
-      return( in_circle(c, b, a, d) == ON_NEGATIVE_SIDE );
+      return aux_outside_of_circle(tr, vi, vb, va, mvi);
     }
 
     /** Operator that takes an edge (\c va, \c vb). */
-    bool operator()(Tr& ct,
+    bool operator()(Tr& tr,
                     const Vertex_handle& va,
                     const Vertex_handle& vb) const
+    {
+      Face_handle fh;
+      int i;
+      CGAL_assertion_code( bool test = )
+        tr.is_edge(va, vb, fh, i);
+      CGAL_assertion( test == true );
+
+      Vertex_handle vi;
+      Vertex_handle mvi;
+
+      if(aux_get_vi_mvi(tr, fh, i, vi, mvi)) {
+        return true;
+      }
+
+      return aux_outside_of_circle(tr, vi, vb, va, mvi);
+    }
+
+  private:
+    /** Private function that computes the two vertex vi and mvi that are
+	one each side of the edge (fh, i) (vi is in fh and mvi is in
+	fh->neighbor(i)) and return true if one of them is infinite.
+    */
+    bool
+    aux_get_vi_mvi(Tr& tr,
+		   const Face_handle& fh,
+		   const int i,
+		   Vertex_handle& vi,
+		   Vertex_handle& mvi) const
+    {
+      vi = fh->vertex(i);
+      mvi = tr.tds().mirror_vertex(fh, i);
+
+      return ( tr.is_infinite(vi) || tr.is_infinite(mvi) );
+    }
+
+    /** Private function that returns true if the vertex vs is outside the
+	oriented circle passing through vp, vq and vr.
+    */
+    bool
+    aux_outside_of_circle(Tr& tr,
+			  const Vertex_handle& vp,
+			  const Vertex_handle& vq,
+			  const Vertex_handle& vr,
+			  const Vertex_handle& vs) const
     {
       typedef typename Geom_traits::Side_of_oriented_circle_2
         Side_of_oriented_circle_2;
 
       Side_of_oriented_circle_2 in_circle =
-        ct.geom_traits().side_of_oriented_circle_2_object();
+        tr.geom_traits().side_of_oriented_circle_2_object();
+      
+      const Point& p = vp->point();
+      const Point& q = vq->point();
+      const Point& r = vr->point();
+      const Point& s = vs->point();
 
-      Face_handle fh;
-      int i;
-      CGAL_assertion_code( bool test = )
-        ct.is_edge(va, vb, fh, i);
-      CGAL_assertion( test == true );
-
-      const Vertex_handle& vi = fh->vertex(i);
-      const Vertex_handle& mvi = fh->mirror_vertex(i);
-
-      if(ct.is_infinite(vi) || ct.is_infinite(mvi)){
-        return true;
-      }
-
-      const Point& a = va->point();
-      const Point& b = vb->point();
-      const Point& c = vi->point();
-      const Point& d = mvi->point();
-
-      return( in_circle(c, b, a, d) == ON_NEGATIVE_SIDE );
+      return ( in_circle(p, q, r, s) == ON_NEGATIVE_SIDE );
     }
-  };
+  }; // end of struct Is_locally_conforming_Delaunay
 
 /**
  * This class is the base for the first level of Mesh_2: the edge
@@ -346,7 +361,7 @@ public:
     *faces_out++ = f;
     const Face_handle n = f->neighbor(i);
     *faces_out++ = n;
-    const int ni = f->mirror_index(i);
+    const int ni = triangulation_ref_impl().tds().mirror_index(f, i);
     std::pair<OutputItFaces,OutputItEdges>
     pit = std::make_pair(faces_out,edges_out);
     pit = triangulation_ref_impl().propagate_conflicts(p,f,Tr::ccw(i),pit);
@@ -476,7 +491,7 @@ public:
     const int& i = e.second;
 
     f->set_constraint(i, false);
-    (f->neighbor(i))->set_constraint(f->mirror_index(i), false);
+    (f->neighbor(i))->set_constraint(triangulation_ref_impl().tds().mirror_index(f, i), false);
   }
 
   /**
@@ -512,15 +527,15 @@ public:
     tr.is_edge(va, v, fh, index);
     CGAL_assertion(should_be_true == true);
 
-    fh->set_constraint(index,true);
-    fh->neighbor(index)->set_constraint(fh->mirror_index(index),true);
+    fh->set_constraint(index, true);
+    fh->neighbor(index)->set_constraint(triangulation_ref_impl().tds().mirror_index(fh, index), true);
 
     CGAL_assertion_code( should_be_true = )
     tr.is_edge(vb, v, fh, index);
     CGAL_assertion(should_be_true == true);
 
-    fh->set_constraint(index,true);
-    fh->neighbor(index)->set_constraint(fh->mirror_index(index),true);
+    fh->set_constraint(index, true);
+    fh->neighbor(index)->set_constraint(triangulation_ref_impl().tds().mirror_index(fh, index), true);
 
     if(!is_locally_conform(tr, va, v))
       add_constrained_edge_to_be_conformed(va, v);
