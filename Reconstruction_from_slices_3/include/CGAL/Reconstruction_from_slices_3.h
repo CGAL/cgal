@@ -831,7 +831,7 @@ void save_in_off_file(const Tr & tr, const char * fname_head_off, const char * f
   typename Tr::Finite_vertices_iterator vit = tr.finite_vertices_begin ();//Vertex_iterator
   while(vit!=tr.finite_vertices_end())
     {
-      vit->set_number_id(n++);
+      vit->set_index(n++);
       oFile << *vit << std::endl;
       ++vit;
     }
@@ -848,9 +848,9 @@ void save_in_off_file(const Tr & tr, const char * fname_head_off, const char * f
 	      face_number++;   
 	      oFile << "3";
 	      //for (int j=1;j<4;j++)
-		//		oFile << " " << c->vertex((i+j)%4)->get_number_id();
+		//		oFile << " " << c->vertex((i+j)%4)->index();
 	      for (int j=0;j<3;j++)
-		oFile <<  " " << c->vertex(Tr::vertex_triple_index(i,j))->get_number_id();
+		oFile <<  " " << c->vertex(Tr::vertex_triple_index(i,j))->index();
 	      oFile << std::endl;
 	    }
     }
@@ -880,7 +880,7 @@ void save_in_wrl_file(const Tr & tr, const char * fname_wrl, bool outputContours
   typename Tr::Finite_vertices_iterator vit = tr.finite_vertices_begin ();//Vertex_iterator
   while(vit!=tr.finite_vertices_end())
     {
-      vit->set_number_id(n++);
+      vit->set_index(n++);
       vos << to_double(vit->point().x()) << " "  << to_double(vit->point().y()) << " " << 10*to_double(vit->point().z()) << ",\n";
       ++vit;
     }
@@ -900,7 +900,7 @@ void save_in_wrl_file(const Tr & tr, const char * fname_wrl, bool outputContours
 	    {  
 	      face_number++;   
 	      for (int j=0;j<3;j++){
-		vos <<  " " << c->vertex(Tr::vertex_triple_index(i,j))->get_number_id() << ", ";
+		vos <<  " " << c->vertex(Tr::vertex_triple_index(i,j))->index() << ", ";
 	      }
 	      vos << "-1,\n";
 	    }
@@ -915,7 +915,7 @@ void save_in_wrl_file(const Tr & tr, const char * fname_wrl, bool outputContours
     vit = tr.finite_vertices_begin ();//Vertex_iterator
     while(vit!=tr.finite_vertices_end()){
       Vertex_handle_3 vh = vit;
-      if(vh->get_number_id() != -1){
+      if(vh->index() != -1){
 	
 	
 	s = std::string("     Shape {\n"
@@ -924,12 +924,12 @@ void save_in_wrl_file(const Tr & tr, const char * fname_wrl, bool outputContours
 			"         coordIndex [\n");
 	vos << s.c_str() ;
 	
-	int start = vh->get_number_id();
+	int start = vh->index();
 	do {
-	  vos << vh->get_number_id() << " ";
-	  vh->set_number_id(-1);
+	  vos << vh->index() << " ";
+	  vh->set_index(-1);
 	  vh = vh->get_next();
-	}while(vh->get_number_id() != -1);
+	}while(vh->index() != -1);
 	vos << start ;
 	
 	s = std::string("         ]\n"

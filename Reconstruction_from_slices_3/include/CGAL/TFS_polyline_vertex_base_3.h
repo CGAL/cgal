@@ -53,7 +53,7 @@ public:
     : Base(p), slice_index(num), next(NULL) {}
 
   int slice() const { return slice_index; }
-  void set_slice_index(int num)   { slice_index=num; }
+  void set_slice(int num)   { slice_index=num; }
 
   Vertex_handle get_next() {return next;}
   void set_next(Vertex_handle v) {next=v;}
@@ -66,10 +66,10 @@ private:
 private:
   int number_id;
 public :
-  int get_number_id() const
+  int index() const
    { return number_id;}
 
-  void set_number_id(int n)
+  void set_index(int n)
     { number_id=n; }
 
 };

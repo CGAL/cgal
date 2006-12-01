@@ -53,7 +53,7 @@ public:
     : Base(p), slice_index(num) {}
 
   int slice() const { return slice_index; }
-  void set_slice_index(int num)   { slice_index=num; }
+  void set_slice(int num)   { slice_index=num; }
 
 private:
   int slice_index;

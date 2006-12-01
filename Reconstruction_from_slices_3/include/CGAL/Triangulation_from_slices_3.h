@@ -338,7 +338,7 @@ class Triangulation_from_slices_3<Gt,Tds>::Slice
       CGAL_triangulation_precondition(vh->slice()==slice_index);
       vert_start=vh;
     }       
-    void set_slice_index(int num) {slice_index=num;}
+    void set_index(int num) {slice_index=num;}
     int get_index() const {return slice_index;}
     void set_plane(const Plane & p) {slice_equation=p;}
     const Plane & get_plane() const {return slice_equation;}
@@ -808,7 +808,7 @@ insert(const Point & p, int slice, Locate_type lt, Cell_handle c, int li, int)
       v=Tr_Base::insert(p, c);
       break;
     }  
-  v->set_slice_index(slice);
+  v->set_slice(slice);
   if(slices[slice].vertex_number==0)
     represented_slices_number++;
   slices[slice].vertex_number++;
