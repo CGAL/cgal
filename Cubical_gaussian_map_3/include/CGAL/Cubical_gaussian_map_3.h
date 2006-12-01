@@ -603,7 +603,8 @@ protected:
       if (proj_normal1.is_real()) v1->set_is_real(true);
       if (proj_normal2.is_real()) v2->set_is_real(true);     
     } else {
-      //! \todo use a default point location
+      //! \todo parse the polyhedron vertices in such a way that we always
+      // start with a known vertex except for the first time
       edge = insert_non_intersecting_curve(m_cgm.m_arrangements[id], cv);
       const Arr_vertex_handle & v1 = edge->source();
       const Arr_vertex_handle & v2 = edge->target();
