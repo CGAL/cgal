@@ -313,7 +313,7 @@ public:
 namespace CGALi{
 std::pair<MP_Float, MP_Float> // <quotient, remainder>
 division(const MP_Float & n, const MP_Float & d);
-} // naemspace CGALi
+} // namespace CGALi
 
 inline
 void swap(MP_Float &m, MP_Float &n)
