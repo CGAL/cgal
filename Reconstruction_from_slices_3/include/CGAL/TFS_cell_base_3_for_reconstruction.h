@@ -86,25 +86,25 @@ class TFS_cell_base_3_for_reconstruction
   /*==================================*/
   
   //CHECKING 
-    bool is_internal()           {return((((mask_in_out & MASK_INTERNAL)!=0)
-					  ||(((mask_in_out & MASK_INTERN_D)!=0)&&((mask_in_out & MASK_INTERN_U)!=0)))
+    bool is_internal()           {return(((mask_in_out & MASK_INTERNAL)
+					  ||((mask_in_out & MASK_INTERN_D)&&(mask_in_out & MASK_INTERN_U)))
 					 &&((mask_solidity & MASK_NON_SOLID)==0));} // TO CHANGE FOR SPEED
     bool is_external()  {return !is_internal();}
-    bool is_T2_2_down_internal() {return((mask_in_out & MASK_INTERN_D)!=0);}
-    bool is_T2_2_up_internal()   {return((mask_in_out & MASK_INTERN_U)!=0);}
+    bool is_T2_2_down_internal() {return(mask_in_out & MASK_INTERN_D);}
+    bool is_T2_2_up_internal()   {return(mask_in_out & MASK_INTERN_U);}
     
-    bool is_explicit_in_out_tagged() {return(((mask_in_out & MASK_INTERNAL) 
-					      | (mask_in_out & MASK_EXTERNAL) )!= 0);} 
+    bool is_explicit_in_out_tagged() {return((mask_in_out & MASK_INTERNAL) 
+					      | (mask_in_out & MASK_EXTERNAL) );} 
                                       //| (mask_in_out & MASK_INTERN_D) | (mask_in_out & MASK_INTERN_U)
 
     bool is_non_solid()          {return((mask_solidity & MASK_NON_SOLID)!=0);}
 
-    bool is_solid_tested_down()  {return((mask_solidity & MASK_SOLID_TEST_D)!=0);}
-    bool is_solid_tested_up()    {return((mask_solidity & MASK_SOLID_TEST_U)!=0);}
-    bool is_heavy_solid_tested_down()  {return((mask_solidity & MASK_H_SOLID_TEST_D)!=0);}
-    bool is_heavy_solid_tested_up()    {return((mask_solidity & MASK_H_SOLID_TEST_U)!=0);}
+    bool is_solid_tested_down()  {return(mask_solidity & MASK_SOLID_TEST_D);}
+    bool is_solid_tested_up()    {return(mask_solidity & MASK_SOLID_TEST_U);}
+    bool is_heavy_solid_tested_down()  {return(mask_solidity & MASK_H_SOLID_TEST_D);}
+    bool is_heavy_solid_tested_up()    {return(mask_solidity & MASK_H_SOLID_TEST_U);}
 
-    bool is_bifurcation_tested() {return((mask_in_out & MASK_BIFURCATION)!= 0) ;}
+    bool is_bifurcation_tested() {return (mask_in_out & MASK_BIFURCATION) ;}
   
     //SETTING
     void set_explicit_internal()   {mask_in_out|= MASK_INTERNAL;}
