@@ -93,7 +93,7 @@ int main()
   make_conforming_Gabriel_2(cdt2);
   std::cout << "Number of vertices after make_conforming_Gabriel_2: "
             << cdt2.number_of_vertices() << "\n";
-  CGAL_assertion( cdt2.number_of_vertices() == 29 );
+  CGAL_assertion( cdt2.number_of_vertices() == 45 );
 
   // check that numbers of vertices are the same in cdt and cdt2
   CGAL_assertion( cdt2.number_of_vertices() ==
