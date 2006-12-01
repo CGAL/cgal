@@ -131,6 +131,12 @@ public:
                                  // measuring the number of digits
                                  // of the Gmpz
 #endif 
+
+  // Gives the memory size in bytes. (not documented yet)
+  std::size_t size() const
+  {
+    return mpz_size(mpz()) / (mp_bits_per_limb/8);
+  }
 };
 
 
