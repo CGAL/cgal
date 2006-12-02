@@ -141,8 +141,8 @@ public:
   // Gives the memory size in bytes. (not documented yet)
   std::size_t size() const
   {
-    std::size_t s_num = mpz_size(mpq_numref(mpq())) / (mp_bits_per_limb/8);
-    std::size_t s_den = mpz_size(mpq_denref(mpq())) / (mp_bits_per_limb/8);
+    std::size_t s_num = mpz_size(mpq_numref(mpq())) * (mp_bits_per_limb/8);
+    std::size_t s_den = mpz_size(mpq_denref(mpq())) * (mp_bits_per_limb/8);
     return s_num + s_den;
   }
 
