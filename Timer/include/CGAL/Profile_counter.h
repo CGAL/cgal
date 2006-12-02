@@ -25,8 +25,13 @@
 // of a number, and prints a message in the destructor.
 // Typically, it can be used as a profile counter in a static variable.
 
+// It also provides the class Profile_histogram_counter which is similar,
+// but the counter is indexed by a value (unsigned int), and the final dump
+// is the histogram of the non-zero counters.  [TODO : to be documented]
+
 #include <CGAL/basic.h>
 #include <string>
+#include <map>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -49,10 +54,42 @@ private:
     const std::string s;
 };
 
+
+
+struct Profile_histogram_counter
+{
+    Profile_histogram_counter(const std::string & ss)
+      : s(ss) {}
+
+    void operator()(unsigned i) { ++counters[i]; }
+
+    ~Profile_histogram_counter()
+    {
+        std::cerr << "[CGAL::Profile_histogram_counter] " << s << std::endl;
+        for (Counters::const_iterator it=counters.begin(), end=counters.end();
+             it != end; ++it) {
+            std::cerr << "[ ";
+            std::cerr.width(10);
+            std::cerr << it->first << " : ";
+            std::cerr.width(10);
+            std::cerr << it->second << " ]" << std::endl;
+        }
+    }
+
+private:
+    typedef std::map<unsigned, unsigned>  Counters;
+    Counters  counters;
+    const std::string s;
+};
+
 #ifdef CGAL_PROFILE
-#  define CGAL_PROFILER(Y) { static CGAL::Profile_counter tmp(Y); ++tmp; }
+#  define CGAL_PROFILER(Y) \
+   { static CGAL::Profile_counter tmp(Y); ++tmp; }
+#  define CGAL_HISTOGRAM_PROFILER(Y,Z) \
+   { static CGAL::Profile_histogram_counter tmp(Y); tmp(Z); }
 #else
 #  define CGAL_PROFILER(Y)
+#  define CGAL_HISTOGRAM_PROFILER(Y,Z)
 #endif
 
 CGAL_END_NAMESPACE

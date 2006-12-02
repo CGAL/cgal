@@ -1,4 +1,4 @@
-// examples/Timer/Profile_counter.C
+// examples/Timer/Profile_counter.cpp
 
 #define CGAL_PROFILE
 
