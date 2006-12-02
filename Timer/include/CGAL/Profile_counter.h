@@ -30,6 +30,7 @@
 // is the histogram of the non-zero counters.  [TODO : to be documented]
 
 #include <CGAL/basic.h>
+#include <iomanip>
 #include <string>
 #include <map>
 
@@ -44,9 +45,8 @@ struct Profile_counter
 
     ~Profile_counter()
     {
-        std::cerr << "[CGAL::Profile_counter] ";
-        std::cerr.width(10);
-        std::cerr << i << " " << s << std::endl;
+        std::cerr << "[CGAL::Profile_counter] "
+                  << std::setw(10) << i << " " << s << std::endl;
     }
 
 private:
@@ -65,15 +65,17 @@ struct Profile_histogram_counter
 
     ~Profile_histogram_counter()
     {
+        unsigned total=0;
         std::cerr << "[CGAL::Profile_histogram_counter] " << s << std::endl;
         for (Counters::const_iterator it=counters.begin(), end=counters.end();
              it != end; ++it) {
-            std::cerr << "[ ";
-            std::cerr.width(10);
-            std::cerr << it->first << " : ";
-            std::cerr.width(10);
-            std::cerr << it->second << " ]" << std::endl;
+            std::cerr << "[ " << std::setw(10) << it->first << " : "
+                              << std::setw(10) << it->second << " ]"
+                              << std::endl;
+            total += it->second;
         }
+        std::cerr << "[ " << std::setw(10) << "Total" << " : "
+                          << std::setw(10) << total << " ]" << std::endl;
     }
 
 private:
