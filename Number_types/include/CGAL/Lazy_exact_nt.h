@@ -246,7 +246,7 @@ public:
 
   bool is_lazy() const { return et == NULL; }
   virtual void update_exact() = 0;
-  virtual int depth() const  { return 1; }
+  virtual unsigned depth() const = 0;
   virtual ~Lazy_construct_rep () { delete et; };
 };
 
@@ -282,6 +282,8 @@ struct Lazy_exact_Int_Cst : public Lazy_exact_rep<ET>
 
   void update_exact()  { this->et = new ET((int)this->approx().inf()); }
 
+  unsigned depth() const { return 0; }
+
 };
 
 // double constant
@@ -292,6 +294,8 @@ struct Lazy_exact_Cst : public Lazy_exact_rep<ET>
       : Lazy_exact_rep<ET>(d) {}
 
   void update_exact()  { this->et = new ET(this->approx().inf()); }
+
+  unsigned depth() const { return 0; }
 };
 
 // Exact constant
@@ -305,6 +309,8 @@ struct Lazy_exact_Ex_Cst : public Lazy_exact_rep<ET>
   }
 
   void update_exact()  { CGAL_assertion(false); }
+
+  unsigned depth() const { return 0; }
 };
 
 // Construction from a Lazy_exact_nt<ET1> (which keeps the lazyness).
@@ -324,7 +330,9 @@ public:
     this->approx() = l.approx();
     prune_dag();
   }
-  int depth() const { return l.depth() + 1; }
+
+  unsigned depth() const { return l.depth() + 1; }
+
   void prune_dag() { l = Lazy_exact_nt<ET1>::zero(); }
 };
 
@@ -341,7 +349,8 @@ struct Lazy_exact_unary : public Lazy_exact_rep<ET>
   Lazy_exact_unary (const Interval_nt<false> &i, const Lazy_exact_nt<ET> &a)
       : Lazy_exact_rep<ET>(i), op1(a) {}
 
-  int depth() const { return op1.depth() + 1; }
+  unsigned depth() const { return op1.depth() + 1; }
+
   void prune_dag() { op1 = Lazy_exact_nt<ET>::zero(); }
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
@@ -368,7 +377,8 @@ struct Lazy_exact_binary : public Lazy_exact_rep<ET>
 		     const Lazy_exact_nt<ET1> &a, const Lazy_exact_nt<ET2> &b)
       : Lazy_exact_rep<ET>(i), op1(a), op2(b) {}
 
-  int depth() const { return (std::max)(op1.depth(), op2.depth()) + 1; }
+  unsigned depth() const { return (std::max)(op1.depth(), op2.depth()) + 1; }
+
   void prune_dag()
   {
     op1 = Lazy_exact_nt<ET1>::zero();
@@ -638,7 +648,7 @@ public :
   const ET & exact() const
   { return ptr()->exact(); }
 
-  int depth() const
+  unsigned depth() const
   { return ptr()->depth(); }
 
   void

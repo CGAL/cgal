@@ -28,6 +28,7 @@
 #include <CGAL/Kernel/Type_mapper.h>
 #include <CGAL/Profile_counter.h>
 #include <CGAL/Kernel/Return_base_tag.h>
+#include <CGAL/min_max_n.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -42,6 +43,7 @@ approx(const Lazy<AT,ET, EFT, E2A>& l)
   return l.approx();
 }
 
+// Where is this one (non-const) needed ?  Is it ?
 template <typename AT, typename ET, typename EFT, typename E2A>
 inline
 AT&
@@ -58,89 +60,6 @@ approx(const Lazy_exact_nt<ET>& l)
   return l.approx();
 }
 
-inline
-const Return_base_tag &
-approx(const Return_base_tag& d)
-{
-  return d;
-}
-
-inline
-const double&
-approx(const double& d)
-{
-  return d;
-}
-
-inline
-const float&
-approx(const float& f)
-{
-  return f;
-}
-
-inline
-const int&
-approx(const int& i)
-{
-  return i;
-}
-
-inline
-const unsigned int&
-approx(const unsigned int& i)
-{
-  return i;
-}
-
-inline
-const Null_vector&
-approx(const Null_vector& nv)
-{
-  return nv;
-}
-
-inline
-const Null_vector&
-exact(const Null_vector& nv)
-{
-  return nv;
-}
-
-inline
-const Return_base_tag &
-exact(const Return_base_tag& d)
-{
-  return d;
-}
-
-inline
-const Origin&
-approx(const Origin& nv)
-{
-  return nv;
-}
-
-inline
-const Origin&
-exact(const Origin& nv)
-{
-  return nv;
-}
-
-inline
-const Orientation&
-approx(const Orientation& nv)
-{
-  return nv;
-}
-
-inline
-const Orientation&
-exact(const Orientation& nv)
-{
-  return nv;
-}
 
 template <typename AT, typename ET, typename EFT, typename E2A>
 inline
@@ -149,7 +68,6 @@ exact(const Lazy<AT,ET,EFT,E2A>& l)
 {
   return l.exact();
 }
-
 
 template <typename ET>
 inline
@@ -160,35 +78,39 @@ exact(const Lazy_exact_nt<ET>& l)
 }
 
 
-
-
+template <typename AT, typename ET, typename EFT, typename E2A>
 inline
-const double&
-exact(const double& d)
+unsigned
+depth(const Lazy<AT,ET,EFT,E2A>& l)
 {
-  return d;
+  return l.depth();
 }
 
+template <typename ET>
 inline
-const float&
-exact(const float& f)
+unsigned
+depth(const Lazy_exact_nt<ET>& l)
 {
-  return f;
+  return l.depth();
 }
 
-inline
-const int&
-exact(const int& i)
-{
-  return i;
-}
 
-inline
-const unsigned int&
-exact(const unsigned int& i)
-{
-  return i;
-}
+#define CGAL_LAZY_FORWARD(T) \
+  inline const T & approx(const T& d) { return d; } \
+  inline const T & exact (const T& d) { return d; } \
+  inline unsigned  depth (const T&  ) { return 0; }
+
+
+CGAL_LAZY_FORWARD(double)
+CGAL_LAZY_FORWARD(float)
+CGAL_LAZY_FORWARD(int)
+CGAL_LAZY_FORWARD(unsigned)
+CGAL_LAZY_FORWARD(Return_base_tag)
+CGAL_LAZY_FORWARD(Null_vector)
+CGAL_LAZY_FORWARD(Origin)
+CGAL_LAZY_FORWARD(Orientation)
+
+
 
 template <typename AT, typename ET, typename EFT, typename E2A>
 inline
@@ -233,6 +155,8 @@ public:
   {
     this->print_at_et(os, level);
   }
+
+  unsigned depth() const { return 0; }
 };
 
 
@@ -280,6 +204,8 @@ public:
   }
 #endif
 
+  unsigned depth() const { return CGAL::depth(l1_) + 1; }
+
 };
 
 
@@ -288,7 +214,7 @@ public:
 
 template <typename AC, typename EC, typename E2A, typename L1, typename L2>
 class Lazy_construct_rep_2
-  : public Lazy_construct_rep<typename AC::result_type , typename EC::result_type, E2A>
+  : public Lazy_construct_rep<typename AC::result_type, typename EC::result_type, E2A>
   , private EC
 {
   typedef typename AC::result_type AT;
@@ -313,7 +239,8 @@ public:
   }
 
   Lazy_construct_rep_2(const AC& ac, const EC& ec, const L1& l1, const L2& l2)
-    : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2))), l1_(l1), l2_(l2)
+    : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2))),
+      l1_(l1), l2_(l2)
   {}
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
@@ -328,12 +255,15 @@ public:
     }
   }
 #endif
+
+  unsigned depth() const { return max_n(CGAL::depth(l1_), CGAL::depth(l2_)) + 1; }
 };
 
 
 //____________________________________________________________
 
-template <typename AC, typename EC, typename E2A, typename L1, typename L2, typename L3>
+template <typename AC, typename EC, typename E2A,
+          typename L1, typename L2, typename L3>
 class Lazy_construct_rep_3
   : public Lazy_construct_rep<typename AC::result_type, typename EC::result_type, E2A>
   , private EC
@@ -353,7 +283,8 @@ public:
   void
   update_exact()
   {
-    this->et = new ET(ec()(CGAL::exact(l1_), CGAL::exact(l2_), CGAL::exact(l3_)));
+    this->et = new ET(ec()(CGAL::exact(l1_), CGAL::exact(l2_),
+                           CGAL::exact(l3_)));
     this->at = E2A()(*(this->et));
     // Prune lazy tree
     l1_ = L1();
@@ -361,8 +292,11 @@ public:
     l3_ = L3();
   }
 
-  Lazy_construct_rep_3(const AC& ac, const EC& ec, const L1& l1, const L2& l2, const L3& l3)
-    : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2), CGAL::approx(l3))), l1_(l1), l2_(l2), l3_(l3)
+  Lazy_construct_rep_3(const AC& ac, const EC& ec,
+                       const L1& l1, const L2& l2, const L3& l3)
+    : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2),
+                                       CGAL::approx(l3))),
+      l1_(l1), l2_(l2), l3_(l3)
   {}
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
@@ -378,14 +312,19 @@ public:
     }
   }
 #endif
+
+  unsigned depth() const { return max_n(CGAL::depth(l1_),
+                                        CGAL::depth(l2_),
+                                        CGAL::depth(l3_)) + 1; }
 };
 
 
 //____________________________________________________________
 
-template <typename AC, typename EC, typename E2A, typename L1, typename L2, typename L3, typename L4>
+template <typename AC, typename EC, typename E2A,
+          typename L1, typename L2, typename L3, typename L4>
 class Lazy_construct_rep_4
-  : public Lazy_construct_rep<typename AC::result_type , typename EC::result_type, E2A>
+  : public Lazy_construct_rep<typename AC::result_type, typename EC::result_type, E2A>
   , private EC
 {
   typedef typename AC::result_type AT;
@@ -404,7 +343,8 @@ public:
   void
   update_exact()
   {
-    this->et = new ET(ec()(CGAL::exact(l1_), CGAL::exact(l2_), CGAL::exact(l3_), CGAL::exact(l4_)));
+    this->et = new ET(ec()(CGAL::exact(l1_), CGAL::exact(l2_),
+                           CGAL::exact(l3_), CGAL::exact(l4_)));
     this->at = E2A()(*(this->et));
     // Prune lazy tree
     l1_ = L1();
@@ -413,9 +353,11 @@ public:
     l4_ = L4();
   }
 
-  Lazy_construct_rep_4(const AC& ac, const EC& ec, const L1& l1, const L2& l2, const L3& l3, const L4& l4)
-   : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2), CGAL::approx(l3), CGAL::approx(l4))),
-                                   l1_(l1), l2_(l2), l3_(l3), l4_(l4)
+  Lazy_construct_rep_4(const AC& ac, const EC& ec,
+                       const L1& l1, const L2& l2, const L3& l3, const L4& l4)
+   : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2),
+                                      CGAL::approx(l3), CGAL::approx(l4))),
+     l1_(l1), l2_(l2), l3_(l3), l4_(l4)
   {}
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
@@ -433,14 +375,20 @@ public:
     }
   }
 #endif
+
+  unsigned depth() const { return max_n(CGAL::depth(l1_),
+                                        CGAL::depth(l2_),
+                                        CGAL::depth(l3_),
+                                        CGAL::depth(l4_)) + 1; }
 };
 
 //____________________________________________________________
 
 
-template <typename AC, typename EC, typename E2A, typename L1, typename L2, typename L3, typename L4, typename L5>
+template <typename AC, typename EC, typename E2A,
+          typename L1, typename L2, typename L3, typename L4, typename L5>
 class Lazy_construct_rep_5
-  : public Lazy_construct_rep<typename AC::result_type , typename EC::result_type, E2A>
+  : public Lazy_construct_rep<typename AC::result_type, typename EC::result_type, E2A>
   , private EC
 {
   typedef typename AC::result_type AT;
@@ -460,7 +408,9 @@ public:
   void
   update_exact()
   {
-    this->et = new ET(ec()(CGAL::exact(l1_), CGAL::exact(l2_), CGAL::exact(l3_), CGAL::exact(l4_), CGAL::exact(l5_)));
+    this->et = new ET(ec()(CGAL::exact(l1_), CGAL::exact(l2_),
+                           CGAL::exact(l3_), CGAL::exact(l4_),
+                           CGAL::exact(l5_)));
     this->at = E2A()(*(this->et));
     // Prune lazy tree
     l1_ = L1();
@@ -470,9 +420,13 @@ public:
     l5_ = L5();
   }
 
- Lazy_construct_rep_5(const AC& ac, const EC& ec, const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5)
-    : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2), CGAL::approx(l3), CGAL::approx(l4), CGAL::approx(l5))),
-                                    l1_(l1), l2_(l2), l3_(l3), l4_(l4), l5_(l5)
+ Lazy_construct_rep_5(const AC& ac, const EC& ec,
+                      const L1& l1, const L2& l2, const L3& l3, const L4& l4,
+                      const L5& l5)
+    : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2),
+                                       CGAL::approx(l3), CGAL::approx(l4),
+                                       CGAL::approx(l5))),
+      l1_(l1), l2_(l2), l3_(l3), l4_(l4), l5_(l5)
   {}
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
@@ -491,11 +445,19 @@ public:
     }
   }
 #endif
+
+  unsigned depth() const { return max_n(CGAL::depth(l1_),
+                                        CGAL::depth(l2_),
+                                        CGAL::depth(l3_),
+                                        CGAL::depth(l4_),
+                                        CGAL::depth(l5_)) + 1; }
 };
 
-template <typename AC, typename EC, typename E2A, typename L1, typename L2, typename L3, typename L4, typename L5, typename L6>
+template <typename AC, typename EC, typename E2A,
+          typename L1, typename L2, typename L3, typename L4,
+          typename L5, typename L6>
 class Lazy_construct_rep_6
-  : public Lazy_construct_rep<typename AC::result_type , typename EC::result_type, E2A>
+  : public Lazy_construct_rep<typename AC::result_type, typename EC::result_type, E2A>
   , private EC
 {
   typedef typename AC::result_type AT;
@@ -516,7 +478,9 @@ public:
   void
   update_exact()
   {
-    this->et = new ET(ec()(CGAL::exact(l1_), CGAL::exact(l2_), CGAL::exact(l3_), CGAL::exact(l4_), CGAL::exact(l5_), CGAL::exact(l6_)));
+    this->et = new ET(ec()(CGAL::exact(l1_), CGAL::exact(l2_),
+                           CGAL::exact(l3_), CGAL::exact(l4_),
+                           CGAL::exact(l5_), CGAL::exact(l6_)));
     this->at = E2A()(*(this->et));
     // Prune lazy tree
     l1_ = L1();
@@ -527,9 +491,13 @@ public:
     l6_ = L6();
   }
 
- Lazy_construct_rep_6(const AC& ac, const EC& ec, const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5, const L6& l6)
-    : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2), CGAL::approx(l3), CGAL::approx(l4), CGAL::approx(l5), CGAL::approx(l6))),
-                                    l1_(l1), l2_(l2), l3_(l3), l4_(l4), l5_(l5), l6_(l6)
+ Lazy_construct_rep_6(const AC& ac, const EC& ec,
+                      const L1& l1, const L2& l2, const L3& l3, const L4& l4,
+                      const L5& l5, const L6& l6)
+    : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2),
+                                       CGAL::approx(l3), CGAL::approx(l4),
+                                       CGAL::approx(l5), CGAL::approx(l6))),
+      l1_(l1), l2_(l2), l3_(l3), l4_(l4), l5_(l5), l6_(l6)
   {}
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
@@ -549,11 +517,20 @@ public:
     }
   }
 #endif
+
+  unsigned depth() const { return max_n(CGAL::depth(l1_),
+                                        CGAL::depth(l2_),
+                                        CGAL::depth(l3_),
+                                        CGAL::depth(l4_),
+                                        CGAL::depth(l5_),
+                                        CGAL::depth(l6_)) + 1; }
 };
 
-template <typename AC, typename EC, typename E2A, typename L1, typename L2, typename L3, typename L4, typename L5, typename L6, typename L7>
+template <typename AC, typename EC, typename E2A,
+          typename L1, typename L2, typename L3, typename L4,
+          typename L5, typename L6, typename L7>
 class Lazy_construct_rep_7
-  : public Lazy_construct_rep<typename AC::result_type , typename EC::result_type, E2A>
+  : public Lazy_construct_rep<typename AC::result_type, typename EC::result_type, E2A>
   , private EC
 {
   typedef typename AC::result_type AT;
@@ -575,7 +552,10 @@ public:
   void
   update_exact()
   {
-    this->et = new ET(ec()(CGAL::exact(l1_), CGAL::exact(l2_), CGAL::exact(l3_), CGAL::exact(l4_), CGAL::exact(l5_), CGAL::exact(l6_), CGAL::exact(l7_)));
+    this->et = new ET(ec()(CGAL::exact(l1_), CGAL::exact(l2_),
+                           CGAL::exact(l3_), CGAL::exact(l4_),
+                           CGAL::exact(l5_), CGAL::exact(l6_),
+                           CGAL::exact(l7_)));
     this->at = E2A()(*(this->et));
     // Prune lazy tree
     l1_ = L1();
@@ -587,9 +567,14 @@ public:
     l7_ = L7();
   }
 
- Lazy_construct_rep_7(const AC& ac, const EC& ec, const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5, const L6& l6, const L7& l7)
-    : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2), CGAL::approx(l3), CGAL::approx(l4), CGAL::approx(l5), CGAL::approx(l6), CGAL::approx(l7))),
-                                    l1_(l1), l2_(l2), l3_(l3), l4_(l4), l5_(l5), l6_(l6), l7_(l7)
+ Lazy_construct_rep_7(const AC& ac, const EC& ec,
+                      const L1& l1, const L2& l2, const L3& l3, const L4& l4,
+                      const L5& l5, const L6& l6, const L7& l7)
+    : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2),
+                                       CGAL::approx(l3), CGAL::approx(l4),
+                                       CGAL::approx(l5), CGAL::approx(l6),
+                                       CGAL::approx(l7))),
+      l1_(l1), l2_(l2), l3_(l3), l4_(l4), l5_(l5), l6_(l6), l7_(l7)
   {}
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
@@ -610,9 +595,19 @@ public:
     }
   }
 #endif
+
+  unsigned depth() const { return max_n(CGAL::depth(l1_),
+                                        CGAL::depth(l2_),
+                                        CGAL::depth(l3_),
+                                        CGAL::depth(l4_),
+                                        CGAL::depth(l5_),
+                                        CGAL::depth(l6_),
+                                        CGAL::depth(l7_)) + 1; }
 };
 
-template <typename AC, typename EC, typename E2A, typename L1, typename L2, typename L3, typename L4, typename L5, typename L6, typename L7, typename L8>
+template <typename AC, typename EC, typename E2A,
+          typename L1, typename L2, typename L3, typename L4,
+          typename L5, typename L6, typename L7, typename L8>
 class Lazy_construct_rep_8
   : public Lazy_construct_rep<typename AC::result_type, typename EC::result_type, E2A>
   , private EC
@@ -637,7 +632,10 @@ public:
   void
   update_exact()
   {
-    this->et = new ET(ec()(CGAL::exact(l1_), CGAL::exact(l2_), CGAL::exact(l3_), CGAL::exact(l4_), CGAL::exact(l5_), CGAL::exact(l6_), CGAL::exact(l7_), CGAL::exact(l8_)));
+    this->et = new ET(ec()(CGAL::exact(l1_), CGAL::exact(l2_),
+                           CGAL::exact(l3_), CGAL::exact(l4_),
+                           CGAL::exact(l5_), CGAL::exact(l6_),
+                           CGAL::exact(l7_), CGAL::exact(l8_)));
     this->at = E2A()(*(this->et));
     // Prune lazy tree
     l1_ = L1();
@@ -650,9 +648,14 @@ public:
     l8_ = L8();
   }
 
- Lazy_construct_rep_8(const AC& ac, const EC& ec, const L1& l1, const L2& l2, const L3& l3, const L4& l4, const L5& l5, const L6& l6, const L7& l7, const L8& l8)
-    : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2), CGAL::approx(l3), CGAL::approx(l4), CGAL::approx(l5), CGAL::approx(l6), CGAL::approx(l7), CGAL::approx(l8))),
-                                    l1_(l1), l2_(l2), l3_(l3), l4_(l4), l5_(l5), l6_(l6), l7_(l7), l8_(l8)
+ Lazy_construct_rep_8(const AC& ac, const EC& ec,
+                      const L1& l1, const L2& l2, const L3& l3, const L4& l4,
+                      const L5& l5, const L6& l6, const L7& l7, const L8& l8)
+    : Lazy_construct_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2),
+                                       CGAL::approx(l3), CGAL::approx(l4),
+                                       CGAL::approx(l5), CGAL::approx(l6),
+                                       CGAL::approx(l7), CGAL::approx(l8))),
+       l1_(l1), l2_(l2), l3_(l3), l4_(l4), l5_(l5), l6_(l6), l7_(l7), l8_(l8)
   {}
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
@@ -674,6 +677,15 @@ public:
     }
   }
 #endif
+
+  unsigned depth() const { return max_n(CGAL::depth(l1_),
+                                        CGAL::depth(l2_),
+                                        CGAL::depth(l3_),
+                                        CGAL::depth(l4_),
+                                        CGAL::depth(l5_),
+                                        CGAL::depth(l6_),
+                                        CGAL::depth(l7_),
+                                        CGAL::depth(l8_)) + 1; }
 };
 
 
@@ -717,7 +729,7 @@ struct Exact_converter
 
 template <typename AC, typename EC, typename E2A, typename L1>
 class Lazy_construct_rep_with_vector_1
-  : public Lazy_construct_rep<std::vector<Object> , std::vector<Object>, E2A>
+  : public Lazy_construct_rep<std::vector<Object>, std::vector<Object>, E2A>
   , private EC
 {
   typedef std::vector<Object> AT;
@@ -769,7 +781,7 @@ public:
 
 template <typename AC, typename EC, typename E2A, typename L1, typename L2>
 class Lazy_construct_rep_with_vector_2
-  : public Lazy_construct_rep<std::vector<Object> , std::vector<Object>, E2A>
+  : public Lazy_construct_rep<std::vector<Object>, std::vector<Object>, E2A>
   , private EC
 {
   typedef std::vector<Object> AT;
@@ -819,7 +831,7 @@ public:
 
 template <typename AC, typename EC, typename E2A, typename L1, typename L2, typename R1>
 class Lazy_construct_rep_2_1
-  : public Lazy_construct_rep<typename R1::AT , typename R1::ET, E2A>
+  : public Lazy_construct_rep<typename R1::AT, typename R1::ET, E2A>
   , private EC
 {
   typedef typename R1::AT AT;
@@ -871,7 +883,7 @@ public:
 
 template <typename AC, typename EC, typename E2A, typename L1, typename L2, typename R1, typename R2>
 class Lazy_construct_rep_2_2
-  : public Lazy_construct_rep<std::pair<typename R1::AT,typename R2::AT> , std::pair<typename R1::ET, typename R2::ET>, E2A>
+  : public Lazy_construct_rep<std::pair<typename R1::AT,typename R2::AT>, std::pair<typename R1::ET, typename R2::ET>, E2A>
   , private EC
 {
   typedef std::pair<typename R1::AT, typename R2::AT> AT;
@@ -972,7 +984,7 @@ public:
   ET& exact()
   { return ptr()->exact(); }
 
-  int depth() const
+  unsigned depth() const
   {
     return ptr()->depth();
   }
@@ -1147,7 +1159,7 @@ struct Ith {
   typedef T2 result_type;
 
   // We keep a Sign member object
-  // for future utilisation , in case
+  // for future utilisation, in case
   // we have pairs of 2 T2 objects e.g.
   // for a numeric_point vector returned
   // from a construction of a possible
@@ -1329,7 +1341,7 @@ public:
     try {
       CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<Protection> P;
-      typedef Lazy<std::pair<typename R1::AT, typename R2::AT> , std::pair<typename R1::ET, typename R2::ET> , EFT, E2A> Lazy_pair;
+      typedef Lazy<std::pair<typename R1::AT, typename R2::AT>, std::pair<typename R1::ET, typename R2::ET>, EFT, E2A> Lazy_pair;
       Lazy_pair lv(new Lazy_construct_rep_2_2<AC, EC, E2A, L1, L2, R1, R2>(ac, ec, l1, l2));
       // lv->approx() is a std::pair<R1::AT, R2::AT>;
       r1 = R1(new Lazy_construct_rep_1<First<std::pair<typename R1::AT, typename R2::AT> >, First<std::pair<typename R1::ET, typename R2::ET> >, E2A, Lazy_pair>(First<std::pair<typename R1::AT, typename R2::AT> >(), First<std::pair<typename R1::ET, typename R2::ET> >(), lv));
