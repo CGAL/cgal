@@ -82,7 +82,7 @@ clean:
 .cpp$(OBJ_EXT):
 	$(CGAL_CXX)  $(CXXFLAGS) -c $<
 
-LEX ?=flex
+FLEX ?=flex
 BISON ?=bison
 
 # Apparently, old versions of bison (e.g., 1.28) name the generated definion
@@ -99,4 +99,4 @@ ifeq ($(OLD_BISON_VERSION), 1)
 endif
 
 %.cpp : %.l
-	$(LEX) -8 -o$@ $<
+	$(FLEX) -8 -o$@ $<
