@@ -15,6 +15,7 @@ cat $@ | sed -e 's/CGAL:://g' \
              -e 's/Simple_cartesian<Interval_nt_advanced>/IK/g' \
              -e 's/Simple_cartesian<Interval_nt<false> >/IK/g' \
              -e 's/Cartesian<Gmpq>/EK/g' \
+             -e 's/Simple_cartesian<Gmpq>/EK/g' \
              -e 's/Lazy_kernel<EK, IK, Cartesian_converter<EK, IK, To_interval<Gmpq> > >/LK/g' \
              -e 's/CommonKernelFunctors:://g' \
              -e 's/CartesianKernelFunctors:://g' \
@@ -29,6 +30,13 @@ cat $@ | sed -e 's/CGAL:://g' \
              -e 's/with //g' \
              -e 's/Lazy_exact_nt<EC::result_type> Lazy_construction_nt<LK, AC, EC>::operator()//g' \
              -e 's/Lazy_exact_nt<Binary_operator_result<T1, T2>::type> //g' \
+             -e 's/Lazy_exact_nt<Gmpq>/NT/g' \
+             -e 's/Lazy_exact_nt<ET>/NT/g' \
+             -e 's/Lazy_exact_nt<ET1>/NT/g' \
+             -e 's/Lazy_exact_nt<ET2>/NT/g' \
+             -e 's/double Real_embeddable_traits<NT, Boolean_tag<false> >::To_double::operator()/to_double/g' \
+             -e 's/Sign Real_embeddable_traits<NT, Boolean_tag<false> >::Sign::operator()/sign/g' \
+             -e 's/NT INTERN_LAZY_EXACT_NT::Square_selector<NT, Functor>::Square::operator()/square/g' \
              -e 's/Object Lazy_construction_object<LK, AC, EC>::operator()//g' \
              -e 's/Lazy_curved_kernel<CircularKernel, CK3_, Circular_kernel_converter<CircularKernel, CK3_, Cartesian_converter<CircularKernel, CK3_, To_interval<NT1> >, Algebraic_kernel_converter<Algebraic_k1, Algebraic_k3, To_interval<NT1>, To_interval<Root_of_2<MP_Float> > > > >/Lazy_CK/g' \
              -e 's/, LK = LK//g' \
