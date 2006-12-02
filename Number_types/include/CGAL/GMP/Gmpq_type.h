@@ -35,6 +35,7 @@
 
 #include <boost/operators.hpp>
 #include <CGAL/Handle_for.h>
+#include <CGAL/Profile_counter.h>
 
 
 CGAL_BEGIN_NAMESPACE
@@ -165,6 +166,12 @@ public:
 
   const mpq_t & mpq() const { return Ptr()->mpQ; }
   mpq_t & mpq() { return ptr()->mpQ; }
+
+  ~Gmpq()
+  {
+     CGAL_HISTOGRAM_PROFILER("Counter for Gmpq sizes [log2 scale]",
+                             (unsigned) ::log2(double(size())));
+  }
 };
 
 
