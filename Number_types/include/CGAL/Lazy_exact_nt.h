@@ -37,6 +37,7 @@
 #include <CGAL/NT_converter.h>
 
 #include <CGAL/Profile_counter.h>
+#include <CGAL/Lazy.h>
 
 // #include <CGAL/Root_of_traits.h> // TODO
 
@@ -51,7 +52,7 @@
  * The exactness is provided when needed by ET.
  *
  * Lazy_exact_nt<ET> is just a handle to the abstract base class
- * Lazy_exact_rep which has pure virtual methods .approx() and .exact().
+ * Lazy_exact_nt_rep which has pure virtual methods .approx() and .exact().
  * From this class derives one class per operation, with one constructor.
  *
  * The DAG is managed by :
@@ -90,174 +91,14 @@ CGAL_BEGIN_NAMESPACE
 
 template <class NT> class Lazy_exact_nt;
 
-#ifdef CGAL_LAZY_KERNEL_DEBUG
-template <class T>
-void
-print_at(std::ostream& os, const T& at)
-{
-  os << at;
-}
-
-template <class T>
-void
-print_at(std::ostream& os, const std::vector<T>& at)
-{
-  os << "std::vector";
-}
-
-template <>
-void
-print_at(std::ostream& os, const Object& o)
-{
-  os << "Object";
-}
-
-template <class T1, class T2>
-void
-print_at(std::ostream& os, const std::pair<T1,T2> & at)
-{
-  os << "[ " << at.first << " | " << at.second << " ]" << std::endl ;
-}
-
-
-template <class ET>
-class Lazy_exact_nt;
-
-template <typename ET>
-inline
-void
-print_dag(const Lazy_exact_nt<ET>& l, std::ostream& os, int level=0)
-{
-  l.print_dag(os, level);
-}
-
-inline
-void
-print_dag(double d, std::ostream& os, int level)
-{
-  for(int i = 0; i < level; i++){
-    os << "    ";
-  }
-  os << d << std::endl;
-}
-
-
-void
-msg(std::ostream& os, int level, char* s)
-  {
-    int i;
-    for(i = 0; i < level; i++){
-      os << "    ";
-    }
-    os << s << std::endl;
-  }
-
-inline
-void
-print_dag(const Null_vector& nv, std::ostream& os, int level)
-{
-  for(int i = 0; i < level; i++){
-    os << "    ";
-  }
-  os << "Null_vector" << std::endl;
-}
-
-inline
-void
-print_dag(const Origin& nv, std::ostream& os, int level)
-{
-  for(int i = 0; i < level; i++){
-    os << "    ";
-  }
-  os << "Origin" << std::endl;
-}
-
-#endif
-
-// Abstract base class for lazy numbers and lazy objects
-template <typename AT_, typename ET, typename E2A>
-struct Lazy_construct_rep : public Rep
-{
-  typedef AT_ AT;
-
-  AT at;
-  mutable ET *et;
-
-  Lazy_construct_rep ()
-      : at(), et(NULL) {}
-
-  Lazy_construct_rep (const AT& a)
-      : at(a), et(NULL)
-  {}
-
-  Lazy_construct_rep (const AT& a, const ET& e)
-      : at(a), et(new ET(e))
-  {}
-
-private:
-  Lazy_construct_rep (const Lazy_construct_rep&) { std::abort(); } // cannot be copied.
-public:
-
-  const AT& approx() const
-  {
-      return at;
-  }
-
-  AT& approx()
-  {
-      return at;
-  }
-
-  const ET & exact() const
-  {
-    if (et==NULL)
-      update_exact();
-    return *et;
-  }
-
-  ET & exact()
-  {
-    if (et==NULL)
-      update_exact();
-    return *et;
-  }
-
-#ifdef CGAL_LAZY_KERNEL_DEBUG
-  void print_at_et(std::ostream& os, int level) const
-  {
-    for(int i = 0; i < level; i++){
-      os << "    ";
-    }
-    os << "Approximation: ";
-    print_at(os, at);
-    os << std::endl;
-    if(! is_lazy()){
-      for(int i = 0; i < level; i++){
-	os << "    ";
-      }
-      os << "Exact: ";
-      print_at(os, *et);
-      os << std::endl;
-    }
-  }
-
-  virtual void print_dag(std::ostream& os, int level) const {}
-#endif
-
-  bool is_lazy() const { return et == NULL; }
-  virtual void update_exact() = 0;
-  virtual unsigned depth() const = 0;
-  virtual ~Lazy_construct_rep () { delete et; };
-};
 
 // Abstract base representation class for lazy numbers
 template <typename ET>
-struct Lazy_exact_rep : public Lazy_construct_rep<Interval_nt<false>,
-                                                  ET, CGAL_To_interval(ET) >
+struct Lazy_exact_nt_rep : public Lazy_exact_nt<ET>::Self_rep
 {
-  typedef Lazy_construct_rep<Interval_nt<false>, ET, CGAL_To_interval(ET) > Base;
+  typedef typename Lazy_exact_nt<ET>::Self_rep  Base;
 
-  Lazy_exact_rep (const Interval_nt<false> & i)
+  Lazy_exact_nt_rep (const Interval_nt<false> & i)
       : Base(i) {}
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
@@ -269,16 +110,16 @@ struct Lazy_exact_rep : public Lazy_construct_rep<Interval_nt<false>,
 #endif
 
 private:
-  Lazy_exact_rep (const Lazy_exact_rep&) { std::abort(); } // cannot be copied.
+  Lazy_exact_nt_rep (const Lazy_exact_nt_rep&) { std::abort(); } // cannot be copied.
 
 };
 
 // int constant
 template <typename ET>
-struct Lazy_exact_Int_Cst : public Lazy_exact_rep<ET>
+struct Lazy_exact_Int_Cst : public Lazy_exact_nt_rep<ET>
 {
   Lazy_exact_Int_Cst (int i)
-      : Lazy_exact_rep<ET>(double(i)) {}
+      : Lazy_exact_nt_rep<ET>(double(i)) {}
 
   void update_exact()  { this->et = new ET((int)this->approx().inf()); }
 
@@ -288,10 +129,10 @@ struct Lazy_exact_Int_Cst : public Lazy_exact_rep<ET>
 
 // double constant
 template <typename ET>
-struct Lazy_exact_Cst : public Lazy_exact_rep<ET>
+struct Lazy_exact_Cst : public Lazy_exact_nt_rep<ET>
 {
   Lazy_exact_Cst (double d)
-      : Lazy_exact_rep<ET>(d) {}
+      : Lazy_exact_nt_rep<ET>(d) {}
 
   void update_exact()  { this->et = new ET(this->approx().inf()); }
 
@@ -300,10 +141,10 @@ struct Lazy_exact_Cst : public Lazy_exact_rep<ET>
 
 // Exact constant
 template <typename ET>
-struct Lazy_exact_Ex_Cst : public Lazy_exact_rep<ET>
+struct Lazy_exact_Ex_Cst : public Lazy_exact_nt_rep<ET>
 {
   Lazy_exact_Ex_Cst (const ET & e)
-      : Lazy_exact_rep<ET>(CGAL_NTS to_interval(e))
+      : Lazy_exact_nt_rep<ET>(CGAL_NTS to_interval(e))
   {
     this->et = new ET(e);
   }
@@ -315,14 +156,14 @@ struct Lazy_exact_Ex_Cst : public Lazy_exact_rep<ET>
 
 // Construction from a Lazy_exact_nt<ET1> (which keeps the lazyness).
 template <typename ET, typename ET1>
-class Lazy_lazy_exact_Cst : public Lazy_exact_rep<ET>
+class Lazy_lazy_exact_Cst : public Lazy_exact_nt_rep<ET>
 {
   Lazy_exact_nt<ET1> l;
 
 public:
 
   Lazy_lazy_exact_Cst (const Lazy_exact_nt<ET1> &x)
-      : Lazy_exact_rep<ET>(x.approx()), l(x) {}
+      : Lazy_exact_nt_rep<ET>(x.approx()), l(x) {}
 
   void update_exact()
   {
@@ -333,7 +174,7 @@ public:
 
   unsigned depth() const { return l.depth() + 1; }
 
-  void prune_dag() { l = Lazy_exact_nt<ET1>::zero(); }
+  void prune_dag() { l = Lazy_exact_nt<ET1>(); }
 };
 
 
@@ -342,16 +183,16 @@ public:
 
 // Base unary operation
 template <typename ET>
-struct Lazy_exact_unary : public Lazy_exact_rep<ET>
+struct Lazy_exact_unary : public Lazy_exact_nt_rep<ET>
 {
   Lazy_exact_nt<ET> op1;
 
   Lazy_exact_unary (const Interval_nt<false> &i, const Lazy_exact_nt<ET> &a)
-      : Lazy_exact_rep<ET>(i), op1(a) {}
+      : Lazy_exact_nt_rep<ET>(i), op1(a) {}
 
   unsigned depth() const { return op1.depth() + 1; }
 
-  void prune_dag() { op1 = Lazy_exact_nt<ET>::zero(); }
+  void prune_dag() { op1 = Lazy_exact_nt<ET>(); }
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
   void
@@ -368,21 +209,21 @@ struct Lazy_exact_unary : public Lazy_exact_rep<ET>
 
 // Base binary operation
 template <typename ET, typename ET1 = ET, typename ET2 = ET>
-struct Lazy_exact_binary : public Lazy_exact_rep<ET>
+struct Lazy_exact_binary : public Lazy_exact_nt_rep<ET>
 {
   Lazy_exact_nt<ET1> op1;
   Lazy_exact_nt<ET2> op2;
 
   Lazy_exact_binary (const Interval_nt<false> &i,
 		     const Lazy_exact_nt<ET1> &a, const Lazy_exact_nt<ET2> &b)
-      : Lazy_exact_rep<ET>(i), op1(a), op2(b) {}
+      : Lazy_exact_nt_rep<ET>(i), op1(a), op2(b) {}
 
   unsigned depth() const { return (std::max)(op1.depth(), op2.depth()) + 1; }
 
   void prune_dag()
   {
-    op1 = Lazy_exact_nt<ET1>::zero();
-    op2 = Lazy_exact_nt<ET2>::zero();
+    op1 = Lazy_exact_nt<ET1>();
+    op2 = Lazy_exact_nt<ET2>();
   }
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
@@ -521,48 +362,48 @@ struct Lazy_exact_Max : public Lazy_exact_binary<ET>
   }
 };
 
+
 // The real number type, handle class
 template <typename ET_>
 class Lazy_exact_nt
-  : public Handle
+  : public Lazy<Interval_nt<false>, ET_, Lazy_exact_nt<ET_>, To_interval<ET_> >
   , boost::ordered_euclidian_ring_operators2< Lazy_exact_nt<ET_>, int >
   , boost::ordered_euclidian_ring_operators2< Lazy_exact_nt<ET_>, double >
 {
 public:
 
-  typedef ET_                    ET; // undocumented
-  typedef Interval_nt<false>     AT; // undocumented
+  typedef Lazy_exact_nt<ET_> Self;
+  typedef Lazy<Interval_nt<false>, ET_, Self, To_interval<ET_> > Base;
+  typedef typename Base::Self_rep  Self_rep;
 
-  typedef ET                     Exact_type;
-  typedef AT                     Approximate_type;
+  typedef typename Base::ET ET; // undocumented
+  typedef typename Base::AT AT; // undocumented
 
-private:
-  typedef Lazy_exact_nt<ET> Self;
-  typedef Lazy_construct_rep< Interval_nt<false>, ET, To_interval<ET> > Self_rep;
+  typedef typename Base::Exact_type        Exact_type;
+  typedef typename Base::Approximate_type  Approximate_type;
 
 public :
 
-  Lazy_exact_nt (Self_rep *r)
-  { PTR = r; }
+  Lazy_exact_nt () {}
 
-  Lazy_exact_nt ()
-    : Handle(zero()) {}
+  Lazy_exact_nt (Self_rep *r)
+    : Base(r) {}
 
   Lazy_exact_nt (const CGAL_int(ET) & i)
-  { PTR = new Lazy_exact_Int_Cst<ET>(i); }
+    : Base(new Lazy_exact_Int_Cst<ET>(i)) {}
 
   Lazy_exact_nt (unsigned i)
-  { PTR = new Lazy_exact_Cst<ET>(i); }
+    : Base(new Lazy_exact_Cst<ET>(i)){}
 
   Lazy_exact_nt (const CGAL_double(ET) & d)
-  { PTR = new Lazy_exact_Cst<ET>(d); }
+    : Base(new Lazy_exact_Cst<ET>(d)){}
 
   Lazy_exact_nt (const ET & e)
-  { PTR = new Lazy_exact_Ex_Cst<ET>(e); }
+    : Base(new Lazy_exact_Ex_Cst<ET>(e)){}
 
   template <class ET1>
   Lazy_exact_nt (const Lazy_exact_nt<ET1> &x)
-  { PTR = new Lazy_lazy_exact_Cst<ET, ET1>(x); }
+    : Base(new Lazy_lazy_exact_Cst<ET, ET1>(x)){}
 
   Self operator+ () const
   { return *this; }
@@ -620,7 +461,7 @@ public :
   Self & operator%=(const Self& b)
   {
     CGAL_precondition(b != 0);
-    ET res = exact();
+    ET res = this->exact();
     res %= b.exact();
     return *this = Lazy_exact_nt<ET>(res);
   }
@@ -628,34 +469,19 @@ public :
   Self & operator%=(int b)
   {
     CGAL_precondition(b != 0);
-    ET res = exact();
+    ET res = this->exact();
     res %= b;
     return *this = Lazy_exact_nt<ET>(res);
   }
 
   Interval_nt<true> interval() const
   {
-    const Interval_nt<false>& i = approx();
+    const Interval_nt<false>& i = this->approx();
     return Interval_nt<true>(i.inf(), i.sup());
   }
 
-  const Interval_nt<false>& approx() const
-  { return ptr()->approx(); }
-
   Interval_nt_advanced approx_adv() const
-  { return ptr()->approx(); }
-
-  const ET & exact() const
-  { return ptr()->exact(); }
-
-  unsigned depth() const
-  { return ptr()->depth(); }
-
-  void
-  print_dag(std::ostream& os, int level) const
-  {
-    ptr()->print_dag(os, level);
-  }
+  { return this->ptr()->approx(); }
 
   static const double & get_relative_precision_of_to_double()
   {
@@ -679,16 +505,7 @@ public :
   bool identical(const T&) const
   { return false; }
 
-  // We have a static variable for optimizing zero and default constructor.
-  static const Self & zero()
-  {
-    static const Self z = new Lazy_exact_Int_Cst<ET>(0);
-    return z;
-  }
-
 private:
-  Self_rep * ptr() const { return (Self_rep*) PTR; }
-
   static double relative_precision_of_to_double;
 };
 
@@ -1461,10 +1278,10 @@ fit_in_double(const Lazy_exact_nt<ET>& l, double& r)
 #if 0 // To be finished
 template <typename ET >
 struct Lazy_exact_ro2
-  : public Lazy_exact_rep< typename Root_of_traits<ET>::RootOf_2 >
+  : public Lazy_exact_nt_rep< typename Root_of_traits<ET>::RootOf_2 >
 {
     typedef typename Root_of_traits<ET>::RootOf_2   RO2;
-    typedef Lazy_exact_rep<RO2>                     Base;
+    typedef Lazy_exact_nt_rep<RO2>                     Base;
     typedef typename Base::AT::Protector            P;
 
 
@@ -1500,7 +1317,7 @@ struct Lazy_exact_ro2
 
     void prune_dag() const
     {
-        op1 = op2 = op3 = Lazy_exact_nt<ET>::zero();
+        op1 = op2 = op3 = Lazy_exact_nt<ET>();
     }
 };
 

@@ -24,7 +24,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/Handle.h>
 #include <CGAL/Object.h>
-#include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Kernel/Type_mapper.h>
 #include <CGAL/Profile_counter.h>
 #include <CGAL/Kernel/Return_base_tag.h>
@@ -34,6 +33,8 @@ CGAL_BEGIN_NAMESPACE
 
 template <typename AT, typename ET, typename EFT, typename E2A> class Lazy;
 
+template <typename ET_>
+class Lazy_exact_nt;
 
 template <typename AT, typename ET, typename EFT, typename E2A>
 inline
@@ -52,14 +53,6 @@ approx(Lazy<AT,ET, EFT, E2A>& l)
   return l.approx();
 }
 
-template <typename ET>
-inline
-const Interval_nt<false>&
-approx(const Lazy_exact_nt<ET>& l)
-{
-  return l.approx();
-}
-
 
 template <typename AT, typename ET, typename EFT, typename E2A>
 inline
@@ -69,27 +62,11 @@ exact(const Lazy<AT,ET,EFT,E2A>& l)
   return l.exact();
 }
 
-template <typename ET>
-inline
-const ET&
-exact(const Lazy_exact_nt<ET>& l)
-{
-  return l.exact();
-}
-
 
 template <typename AT, typename ET, typename EFT, typename E2A>
 inline
 unsigned
 depth(const Lazy<AT,ET,EFT,E2A>& l)
-{
-  return l.depth();
-}
-
-template <typename ET>
-inline
-unsigned
-depth(const Lazy_exact_nt<ET>& l)
 {
   return l.depth();
 }
@@ -112,6 +89,37 @@ CGAL_LAZY_FORWARD(Orientation)
 
 
 
+
+#ifdef CGAL_LAZY_KERNEL_DEBUG
+template <class T>
+void
+print_at(std::ostream& os, const T& at)
+{
+  os << at;
+}
+
+template <class T>
+void
+print_at(std::ostream& os, const std::vector<T>& at)
+{
+  os << "std::vector";
+}
+
+template <>
+void
+print_at(std::ostream& os, const Object& o)
+{
+  os << "Object";
+}
+
+template <class T1, class T2>
+void
+print_at(std::ostream& os, const std::pair<T1,T2> & at)
+{
+  os << "[ " << at.first << " | " << at.second << " ]" << std::endl ;
+}
+
+
 template <typename AT, typename ET, typename EFT, typename E2A>
 inline
 void
@@ -119,6 +127,121 @@ print_dag(const Lazy<AT,ET,EFT,E2A>& l, std::ostream& os, int level = 0)
 {
   l.print_dag(os, level);
 }
+
+inline
+void
+print_dag(double d, std::ostream& os, int level)
+{
+  for(int i = 0; i < level; i++)
+    os << "    ";
+  os << d << std::endl;
+}
+
+inline
+void
+msg(std::ostream& os, int level, char* s)
+{
+    for(int i = 0; i < level; i++)
+      os << "    ";
+    os << s << std::endl;
+}
+
+inline
+void
+print_dag(const Null_vector& nv, std::ostream& os, int level)
+{
+  for(int i = 0; i < level; i++)
+    os << "    ";
+  os << "Null_vector" << std::endl;
+}
+
+inline
+void
+print_dag(const Origin& nv, std::ostream& os, int level)
+{
+  for(int i = 0; i < level; i++)
+    os << "    ";
+  os << "Origin" << std::endl;
+}
+#endif
+
+
+
+// Abstract base class for lazy numbers and lazy objects
+template <typename AT_, typename ET, typename E2A>
+struct Lazy_construct_rep : public Rep
+{
+  typedef AT_ AT;
+
+  AT at;
+  mutable ET *et;
+
+  Lazy_construct_rep ()
+      : at(), et(NULL) {}
+
+  Lazy_construct_rep (const AT& a)
+      : at(a), et(NULL)
+  {}
+
+  Lazy_construct_rep (const AT& a, const ET& e)
+      : at(a), et(new ET(e))
+  {}
+
+private:
+  Lazy_construct_rep (const Lazy_construct_rep&) { std::abort(); } // cannot be copied.
+public:
+
+  const AT& approx() const
+  {
+      return at;
+  }
+
+  AT& approx()
+  {
+      return at;
+  }
+
+  const ET & exact() const
+  {
+    if (et==NULL)
+      update_exact();
+    return *et;
+  }
+
+  ET & exact()
+  {
+    if (et==NULL)
+      update_exact();
+    return *et;
+  }
+
+#ifdef CGAL_LAZY_KERNEL_DEBUG
+  void print_at_et(std::ostream& os, int level) const
+  {
+    for(int i = 0; i < level; i++){
+      os << "    ";
+    }
+    os << "Approximation: ";
+    print_at(os, at);
+    os << std::endl;
+    if(! is_lazy()){
+      for(int i = 0; i < level; i++){
+	os << "    ";
+      }
+      os << "Exact: ";
+      print_at(os, *et);
+      os << std::endl;
+    }
+  }
+
+  virtual void print_dag(std::ostream& os, int level) const {}
+#endif
+
+  bool is_lazy() const { return et == NULL; }
+  virtual void update_exact() = 0;
+  virtual unsigned depth() const = 0;
+  virtual ~Lazy_construct_rep() { delete et; }
+};
 
 
 //____________________________________________________________
@@ -936,10 +1059,15 @@ template <typename AT_, typename ET_, typename EFT, typename E2A>
 class Lazy : public Handle
 {
 public :
-  typedef AT_ AT;
-  typedef ET_ ET;
-  typedef Lazy<AT, ET, EFT, E2A> Self;
-  typedef Lazy_construct_rep<AT, ET, E2A> Self_rep;
+
+  typedef Lazy<AT_, ET_, EFT, E2A>           Self;
+  typedef Lazy_construct_rep<AT_, ET_, E2A>  Self_rep;
+
+  typedef AT_ AT; // undocumented
+  typedef ET_ ET; // undocumented
+
+  typedef AT  Approximate_type;
+  typedef ET  Exact_type;
 
   typedef Self Rep;
 
@@ -993,6 +1121,16 @@ public:
   {
     ptr()->print_dag(os, level);
   }
+
+#if 0
+  ~Lazy()
+  {
+    if (this->refs() == 1) // it's uniquely pointed to, so it'll be destroyed.
+      CGAL_HISTOGRAM_PROFILER(std::string("DAG depths of : ") +
+                              std::string(CGAL_PRETTY_FUNCTION),
+                              depth()); //(unsigned) ::log2(double(depth())));
+  }
+#endif
 
 private:
 
