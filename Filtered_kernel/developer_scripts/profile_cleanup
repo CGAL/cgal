@@ -37,6 +37,7 @@ cat $@ | sed -e 's/CGAL:://g' \
              -e 's/double Real_embeddable_traits<NT, Boolean_tag<false> >::To_double::operator()/to_double/g' \
              -e 's/Sign Real_embeddable_traits<NT, Boolean_tag<false> >::Sign::operator()/sign/g' \
              -e 's/NT INTERN_LAZY_EXACT_NT::Square_selector<NT, Functor>::Square::operator()/square/g' \
+             -e 's/std::pair<double, double> Real_embeddable_traits<NT, Boolean_tag<false> >::To_interval::operator()/to_interval/g' \
              -e 's/Object Lazy_construction_object<LK, AC, EC>::operator()//g' \
              -e 's/Lazy_curved_kernel<CircularKernel, CK3_, Circular_kernel_converter<CircularKernel, CK3_, Cartesian_converter<CircularKernel, CK3_, To_interval<NT1> >, Algebraic_kernel_converter<Algebraic_k1, Algebraic_k3, To_interval<NT1>, To_interval<Root_of_2<MP_Float> > > > >/Lazy_CK/g' \
              -e 's/, LK = LK//g' \
