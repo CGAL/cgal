@@ -169,7 +169,7 @@ print_dag(const Origin& nv, std::ostream& os, int level)
 struct Depth_base {
 #ifdef CGAL_PROFILE
   unsigned depth_;
-  Depth_base() : depth_(0) {}
+  Depth_base() { set_depth(0); }
   unsigned depth() const { return depth_; }
   void set_depth(unsigned i)
   {
