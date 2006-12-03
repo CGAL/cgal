@@ -1083,9 +1083,14 @@ public :
   Lazy()
     : Handle(zero()) {}
 
-  Lazy (Self_rep *r)
+  Lazy(Self_rep *r)
   {
     PTR = r;
+  }
+
+  Lazy(const ET& e)
+  {
+    PTR = new Lazy_rep_0<AT,ET,E2A>(e);
   }
 
   const AT& approx() const
