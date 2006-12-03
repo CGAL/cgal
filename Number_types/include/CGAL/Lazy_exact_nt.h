@@ -108,10 +108,6 @@ struct Lazy_exact_nt_rep : public Lazy_exact_nt<ET>::Self_rep
     this->print_at_et(os, level);
   }
 #endif
-
-private:
-  Lazy_exact_nt_rep (const Lazy_exact_nt_rep&) { std::abort(); } // cannot be copied.
-
 };
 
 // int constant
@@ -124,7 +120,6 @@ struct Lazy_exact_Int_Cst : public Lazy_exact_nt_rep<ET>
   void update_exact()  { this->et = new ET((int)this->approx().inf()); }
 
   unsigned depth() const { return 0; }
-
 };
 
 // double constant

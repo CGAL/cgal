@@ -169,8 +169,12 @@ print_dag(const Origin& nv, std::ostream& os, int level)
 
 // Abstract base class for lazy numbers and lazy objects
 template <typename AT_, typename ET, typename E2A>
-struct Lazy_rep : public Rep
+class Lazy_rep : public Rep
 {
+  Lazy_rep (const Lazy_rep&) { std::abort(); } // cannot be copied.
+
+public:
+
   typedef AT_ AT;
 
   AT at;
@@ -186,10 +190,6 @@ struct Lazy_rep : public Rep
   Lazy_rep (const AT& a, const ET& e)
       : at(a), et(new ET(e))
   {}
-
-private:
-  Lazy_rep (const Lazy_rep&) { std::abort(); } // cannot be copied.
-public:
 
   const AT& approx() const
   {
@@ -309,11 +309,9 @@ public:
     l1_ = L1();
   }
 
-
   Lazy_rep_1(const AC& ac, const EC& ec, const L1& l1)
     : Lazy_rep<AT,ET, E2A>(ac(CGAL::approx(l1))), EC(ec), l1_(l1)
   {}
-
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
   void
@@ -328,7 +326,6 @@ public:
 #endif
 
   unsigned depth() const { return CGAL::depth(l1_) + 1; }
-
 };
 
 
@@ -416,9 +413,9 @@ public:
   }
 
   Lazy_rep_3(const AC& ac, const EC& ec,
-                       const L1& l1, const L2& l2, const L3& l3)
+             const L1& l1, const L2& l2, const L3& l3)
     : Lazy_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2),
-                                       CGAL::approx(l3))),
+                             CGAL::approx(l3))),
       l1_(l1), l2_(l2), l3_(l3)
   {}
 
@@ -477,9 +474,9 @@ public:
   }
 
   Lazy_rep_4(const AC& ac, const EC& ec,
-                       const L1& l1, const L2& l2, const L3& l3, const L4& l4)
+             const L1& l1, const L2& l2, const L3& l3, const L4& l4)
    : Lazy_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2),
-                                      CGAL::approx(l3), CGAL::approx(l4))),
+                            CGAL::approx(l3), CGAL::approx(l4))),
      l1_(l1), l2_(l2), l3_(l3), l4_(l4)
   {}
 
@@ -544,11 +541,11 @@ public:
   }
 
  Lazy_rep_5(const AC& ac, const EC& ec,
-                      const L1& l1, const L2& l2, const L3& l3, const L4& l4,
-                      const L5& l5)
+            const L1& l1, const L2& l2, const L3& l3, const L4& l4,
+            const L5& l5)
     : Lazy_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2),
-                                       CGAL::approx(l3), CGAL::approx(l4),
-                                       CGAL::approx(l5))),
+                             CGAL::approx(l3), CGAL::approx(l4),
+                             CGAL::approx(l5))),
       l1_(l1), l2_(l2), l3_(l3), l4_(l4), l5_(l5)
   {}
 
@@ -615,11 +612,11 @@ public:
   }
 
  Lazy_rep_6(const AC& ac, const EC& ec,
-                      const L1& l1, const L2& l2, const L3& l3, const L4& l4,
-                      const L5& l5, const L6& l6)
+            const L1& l1, const L2& l2, const L3& l3, const L4& l4,
+            const L5& l5, const L6& l6)
     : Lazy_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2),
-                                       CGAL::approx(l3), CGAL::approx(l4),
-                                       CGAL::approx(l5), CGAL::approx(l6))),
+                             CGAL::approx(l3), CGAL::approx(l4),
+                             CGAL::approx(l5), CGAL::approx(l6))),
       l1_(l1), l2_(l2), l3_(l3), l4_(l4), l5_(l5), l6_(l6)
   {}
 
@@ -691,12 +688,12 @@ public:
   }
 
  Lazy_rep_7(const AC& ac, const EC& ec,
-                      const L1& l1, const L2& l2, const L3& l3, const L4& l4,
-                      const L5& l5, const L6& l6, const L7& l7)
+            const L1& l1, const L2& l2, const L3& l3, const L4& l4,
+            const L5& l5, const L6& l6, const L7& l7)
     : Lazy_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2),
-                                       CGAL::approx(l3), CGAL::approx(l4),
-                                       CGAL::approx(l5), CGAL::approx(l6),
-                                       CGAL::approx(l7))),
+                             CGAL::approx(l3), CGAL::approx(l4),
+                             CGAL::approx(l5), CGAL::approx(l6),
+                             CGAL::approx(l7))),
       l1_(l1), l2_(l2), l3_(l3), l4_(l4), l5_(l5), l6_(l6), l7_(l7)
   {}
 
@@ -772,12 +769,12 @@ public:
   }
 
  Lazy_rep_8(const AC& ac, const EC& ec,
-                      const L1& l1, const L2& l2, const L3& l3, const L4& l4,
-                      const L5& l5, const L6& l6, const L7& l7, const L8& l8)
+            const L1& l1, const L2& l2, const L3& l3, const L4& l4,
+            const L5& l5, const L6& l6, const L7& l7, const L8& l8)
     : Lazy_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2),
-                                       CGAL::approx(l3), CGAL::approx(l4),
-                                       CGAL::approx(l5), CGAL::approx(l6),
-                                       CGAL::approx(l7), CGAL::approx(l8))),
+                             CGAL::approx(l3), CGAL::approx(l4),
+                             CGAL::approx(l5), CGAL::approx(l6),
+                             CGAL::approx(l7), CGAL::approx(l8))),
        l1_(l1), l2_(l2), l3_(l3), l4_(l4), l5_(l5), l6_(l6), l7_(l7), l8_(l8)
   {}
 
@@ -1060,8 +1057,8 @@ class Lazy : public Handle
 {
 public :
 
-  typedef Lazy<AT_, ET_, EFT, E2A>           Self;
-  typedef Lazy_rep<AT_, ET_, E2A>  Self_rep;
+  typedef Lazy<AT_, ET_, EFT, E2A>  Self;
+  typedef Lazy_rep<AT_, ET_, E2A>   Self_rep;
 
   typedef AT_ AT; // undocumented
   typedef ET_ ET; // undocumented
@@ -1069,6 +1066,7 @@ public :
   typedef AT  Approximate_type;
   typedef ET  Exact_type;
 
+/*
   typedef Self Rep;
 
   const Rep& rep() const
@@ -1080,17 +1078,7 @@ public :
   {
     return *this;
   }
-
-private:
-
-  struct dummy_zero_tag{};
-
-  Lazy(dummy_zero_tag)
-  {
-    PTR = new Lazy_rep_0<AT,ET, E2A>();
-  }
-
-public:
+*/
 
   Lazy()
     : Handle(zero()) {}
@@ -1138,12 +1126,11 @@ private:
   // which is in particular heavily used for pruning DAGs.
   static const Self & zero()
   {
-    static const Self z = Lazy(dummy_zero_tag());
+    static const Self z = new Lazy_rep_0<AT, ET, E2A>();
     return z;
   }
 
   Self_rep * ptr() const { return (Self_rep*) PTR; }
-
 };
 
 
