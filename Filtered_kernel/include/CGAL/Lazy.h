@@ -174,7 +174,7 @@ struct Depth_base {
   void set_depth(unsigned i)
   {
     depth_ = i;
-    CGAL_HISTOGRAM_PROFILER(std::string("DAG depths : "), i);
+    CGAL_HISTOGRAM_PROFILER(std::string("[Lazy_kernel DAG depths]"), i);
                             //(unsigned) ::log2(double(i)));
   }
 #else

@@ -169,7 +169,7 @@ public:
 
   ~Gmpq()
   {
-     CGAL_HISTOGRAM_PROFILER("Counter for Gmpq sizes [log2 scale]",
+     CGAL_HISTOGRAM_PROFILER("[Gmpq sizes in log2 scale]",
                              (unsigned) ::log2(double(size())));
   }
 };

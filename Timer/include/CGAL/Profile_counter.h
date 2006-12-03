@@ -66,18 +66,17 @@ struct Profile_histogram_counter
     ~Profile_histogram_counter()
     {
         unsigned total=0;
-        std::cerr << "[CGAL::Profile_histogram_counter] " << s << std::endl;
         for (Counters::const_iterator it=counters.begin(), end=counters.end();
              it != end; ++it) {
-            std::cerr << "[CGAL::Profile_histogram_counter] ";
-            std::cerr << "[ " << std::setw(10) << it->first << " : "
-                              << std::setw(10) << it->second << " ]"
-                              << std::endl;
+            std::cerr << "[CGAL::Profile_histogram_counter] " << s;
+            std::cerr << " [ " << std::setw(10) << it->first << " : "
+                               << std::setw(10) << it->second << " ]"
+                               << std::endl;
             total += it->second;
         }
-        std::cerr << "[CGAL::Profile_histogram_counter] ";
-        std::cerr << "[ " << std::setw(10) << "Total" << " : "
-                          << std::setw(10) << total << " ]" << std::endl;
+        std::cerr << "[CGAL::Profile_histogram_counter] " << s;
+        std::cerr << " [ " << std::setw(10) << "Total" << " : "
+                           << std::setw(10) << total << " ]" << std::endl;
     }
 
 private:
