@@ -118,8 +118,6 @@ struct Lazy_exact_Int_Cst : public Lazy_exact_nt_rep<ET>
       : Lazy_exact_nt_rep<ET>(double(i)) {}
 
   void update_exact()  { this->et = new ET((int)this->approx().inf()); }
-
-  unsigned depth() const { return 0; }
 };
 
 // double constant
@@ -130,8 +128,6 @@ struct Lazy_exact_Cst : public Lazy_exact_nt_rep<ET>
       : Lazy_exact_nt_rep<ET>(d) {}
 
   void update_exact()  { this->et = new ET(this->approx().inf()); }
-
-  unsigned depth() const { return 0; }
 };
 
 // Exact constant
@@ -145,8 +141,6 @@ struct Lazy_exact_Ex_Cst : public Lazy_exact_nt_rep<ET>
   }
 
   void update_exact()  { CGAL_assertion(false); }
-
-  unsigned depth() const { return 0; }
 };
 
 // Construction from a Lazy_exact_nt<ET1> (which keeps the lazyness).
@@ -158,7 +152,10 @@ class Lazy_lazy_exact_Cst : public Lazy_exact_nt_rep<ET>
 public:
 
   Lazy_lazy_exact_Cst (const Lazy_exact_nt<ET1> &x)
-      : Lazy_exact_nt_rep<ET>(x.approx()), l(x) {}
+      : Lazy_exact_nt_rep<ET>(x.approx()), l(x)
+  {
+    this->set_depth(l.depth() + 1);
+  }
 
   void update_exact()
   {
@@ -166,8 +163,6 @@ public:
     this->approx() = l.approx();
     prune_dag();
   }
-
-  unsigned depth() const { return l.depth() + 1; }
 
   void prune_dag() { l = Lazy_exact_nt<ET1>(); }
 };
@@ -183,9 +178,10 @@ struct Lazy_exact_unary : public Lazy_exact_nt_rep<ET>
   Lazy_exact_nt<ET> op1;
 
   Lazy_exact_unary (const Interval_nt<false> &i, const Lazy_exact_nt<ET> &a)
-      : Lazy_exact_nt_rep<ET>(i), op1(a) {}
-
-  unsigned depth() const { return op1.depth() + 1; }
+      : Lazy_exact_nt_rep<ET>(i), op1(a)
+  {
+    this->set_depth(op1.depth() + 1);
+  }
 
   void prune_dag() { op1 = Lazy_exact_nt<ET>(); }
 
@@ -211,9 +207,10 @@ struct Lazy_exact_binary : public Lazy_exact_nt_rep<ET>
 
   Lazy_exact_binary (const Interval_nt<false> &i,
 		     const Lazy_exact_nt<ET1> &a, const Lazy_exact_nt<ET2> &b)
-      : Lazy_exact_nt_rep<ET>(i), op1(a), op2(b) {}
-
-  unsigned depth() const { return (std::max)(op1.depth(), op2.depth()) + 1; }
+      : Lazy_exact_nt_rep<ET>(i), op1(a), op2(b)
+  {
+    this->set_depth((std::max)(op1.depth(), op2.depth()) + 1);
+  }
 
   void prune_dag()
   {

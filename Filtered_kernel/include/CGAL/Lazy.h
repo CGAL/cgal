@@ -166,10 +166,27 @@ print_dag(const Origin& nv, std::ostream& os, int level)
 #endif
 
 
+struct Depth_base {
+#ifdef CGAL_PROFILE
+  unsigned depth_;
+  Depth_base() : depth_(0) {}
+  unsigned depth() const { return depth_; }
+  void set_depth(unsigned i)
+  {
+    depth_ = i;
+    CGAL_HISTOGRAM_PROFILER(std::string("DAG depths : "), i);
+                            //(unsigned) ::log2(double(i)));
+  }
+#else
+  unsigned depth() const { return 0; }
+  void set_depth(unsigned) {}
+#endif
+};
+
 
 // Abstract base class for lazy numbers and lazy objects
 template <typename AT_, typename ET, typename E2A>
-class Lazy_rep : public Rep
+class Lazy_rep : public Rep, public Depth_base
 {
   Lazy_rep (const Lazy_rep&) { std::abort(); } // cannot be copied.
 
@@ -181,15 +198,13 @@ public:
   mutable ET *et;
 
   Lazy_rep ()
-      : at(), et(NULL) {}
+    : at(), et(NULL) {}
 
   Lazy_rep (const AT& a)
-      : at(a), et(NULL)
-  {}
+      : at(a), et(NULL) {}
 
   Lazy_rep (const AT& a, const ET& e)
-      : at(a), et(new ET(e))
-  {}
+      : at(a), et(new ET(e)) {}
 
   const AT& approx() const
   {
@@ -239,7 +254,6 @@ public:
 
   bool is_lazy() const { return et == NULL; }
   virtual void update_exact() = 0;
-  virtual unsigned depth() const = 0;
   virtual ~Lazy_rep() { delete et; }
 };
 
@@ -278,8 +292,6 @@ public:
   {
     this->print_at_et(os, level);
   }
-
-  unsigned depth() const { return 0; }
 };
 
 
@@ -311,7 +323,9 @@ public:
 
   Lazy_rep_1(const AC& ac, const EC& ec, const L1& l1)
     : Lazy_rep<AT,ET, E2A>(ac(CGAL::approx(l1))), EC(ec), l1_(l1)
-  {}
+  {
+    this->set_depth(CGAL::depth(l1_) + 1);
+  }
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
   void
@@ -324,8 +338,6 @@ public:
     }
   }
 #endif
-
-  unsigned depth() const { return CGAL::depth(l1_) + 1; }
 };
 
 
@@ -361,7 +373,9 @@ public:
   Lazy_rep_2(const AC& ac, const EC& ec, const L1& l1, const L2& l2)
     : Lazy_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2))),
       l1_(l1), l2_(l2)
-  {}
+  {
+    this->set_depth(max_n(CGAL::depth(l1_), CGAL::depth(l2_)) + 1);
+  }
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
   void
@@ -375,8 +389,6 @@ public:
     }
   }
 #endif
-
-  unsigned depth() const { return max_n(CGAL::depth(l1_), CGAL::depth(l2_)) + 1; }
 };
 
 
@@ -417,7 +429,11 @@ public:
     : Lazy_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2),
                              CGAL::approx(l3))),
       l1_(l1), l2_(l2), l3_(l3)
-  {}
+  {
+    this->set_depth(max_n(CGAL::depth(l1_),
+                          CGAL::depth(l2_),
+                          CGAL::depth(l3_)) + 1);
+  }
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
   void
@@ -432,10 +448,6 @@ public:
     }
   }
 #endif
-
-  unsigned depth() const { return max_n(CGAL::depth(l1_),
-                                        CGAL::depth(l2_),
-                                        CGAL::depth(l3_)) + 1; }
 };
 
 
@@ -478,7 +490,12 @@ public:
    : Lazy_rep<AT,ET,E2A>(ac(CGAL::approx(l1), CGAL::approx(l2),
                             CGAL::approx(l3), CGAL::approx(l4))),
      l1_(l1), l2_(l2), l3_(l3), l4_(l4)
-  {}
+  {
+    this->set_depth(max_n(CGAL::depth(l1_),
+                          CGAL::depth(l2_),
+                          CGAL::depth(l3_),
+                          CGAL::depth(l4_)) + 1);
+  }
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
   void
@@ -495,11 +512,6 @@ public:
     }
   }
 #endif
-
-  unsigned depth() const { return max_n(CGAL::depth(l1_),
-                                        CGAL::depth(l2_),
-                                        CGAL::depth(l3_),
-                                        CGAL::depth(l4_)) + 1; }
 };
 
 //____________________________________________________________
@@ -547,7 +559,13 @@ public:
                              CGAL::approx(l3), CGAL::approx(l4),
                              CGAL::approx(l5))),
       l1_(l1), l2_(l2), l3_(l3), l4_(l4), l5_(l5)
-  {}
+  {
+    this->set_depth(max_n(CGAL::depth(l1_),
+                          CGAL::depth(l2_),
+                          CGAL::depth(l3_),
+                          CGAL::depth(l4_),
+                          CGAL::depth(l5_)) + 1);
+  }
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
   void
@@ -565,12 +583,6 @@ public:
     }
   }
 #endif
-
-  unsigned depth() const { return max_n(CGAL::depth(l1_),
-                                        CGAL::depth(l2_),
-                                        CGAL::depth(l3_),
-                                        CGAL::depth(l4_),
-                                        CGAL::depth(l5_)) + 1; }
 };
 
 template <typename AC, typename EC, typename E2A,
@@ -618,7 +630,14 @@ public:
                              CGAL::approx(l3), CGAL::approx(l4),
                              CGAL::approx(l5), CGAL::approx(l6))),
       l1_(l1), l2_(l2), l3_(l3), l4_(l4), l5_(l5), l6_(l6)
-  {}
+  {
+    this->set_depth(max_n(CGAL::depth(l1_),
+                          CGAL::depth(l2_),
+                          CGAL::depth(l3_),
+                          CGAL::depth(l4_),
+                          CGAL::depth(l5_),
+                          CGAL::depth(l6_)) + 1);
+  }
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
   void
@@ -637,13 +656,6 @@ public:
     }
   }
 #endif
-
-  unsigned depth() const { return max_n(CGAL::depth(l1_),
-                                        CGAL::depth(l2_),
-                                        CGAL::depth(l3_),
-                                        CGAL::depth(l4_),
-                                        CGAL::depth(l5_),
-                                        CGAL::depth(l6_)) + 1; }
 };
 
 template <typename AC, typename EC, typename E2A,
@@ -695,7 +707,15 @@ public:
                              CGAL::approx(l5), CGAL::approx(l6),
                              CGAL::approx(l7))),
       l1_(l1), l2_(l2), l3_(l3), l4_(l4), l5_(l5), l6_(l6), l7_(l7)
-  {}
+  {
+    this->set_depth(max_n(CGAL::depth(l1_),
+                          CGAL::depth(l2_),
+                          CGAL::depth(l3_),
+                          CGAL::depth(l4_),
+                          CGAL::depth(l5_),
+                          CGAL::depth(l6_),
+                          CGAL::depth(l7_)) + 1);
+  }
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
   void
@@ -715,14 +735,6 @@ public:
     }
   }
 #endif
-
-  unsigned depth() const { return max_n(CGAL::depth(l1_),
-                                        CGAL::depth(l2_),
-                                        CGAL::depth(l3_),
-                                        CGAL::depth(l4_),
-                                        CGAL::depth(l5_),
-                                        CGAL::depth(l6_),
-                                        CGAL::depth(l7_)) + 1; }
 };
 
 template <typename AC, typename EC, typename E2A,
@@ -776,7 +788,16 @@ public:
                              CGAL::approx(l5), CGAL::approx(l6),
                              CGAL::approx(l7), CGAL::approx(l8))),
        l1_(l1), l2_(l2), l3_(l3), l4_(l4), l5_(l5), l6_(l6), l7_(l7), l8_(l8)
-  {}
+  {
+    this->set_depth(max_n(CGAL::depth(l1_),
+                          CGAL::depth(l2_),
+                          CGAL::depth(l3_),
+                          CGAL::depth(l4_),
+                          CGAL::depth(l5_),
+                          CGAL::depth(l6_),
+                          CGAL::depth(l7_),
+                          CGAL::depth(l8_)) + 1);
+  }
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
   void
@@ -797,15 +818,6 @@ public:
     }
   }
 #endif
-
-  unsigned depth() const { return max_n(CGAL::depth(l1_),
-                                        CGAL::depth(l2_),
-                                        CGAL::depth(l3_),
-                                        CGAL::depth(l4_),
-                                        CGAL::depth(l5_),
-                                        CGAL::depth(l6_),
-                                        CGAL::depth(l7_),
-                                        CGAL::depth(l8_)) + 1; }
 };
 
 
@@ -1114,16 +1126,6 @@ public :
   {
     ptr()->print_dag(os, level);
   }
-
-#if 0
-  ~Lazy()
-  {
-    if (this->refs() == 1) // it's uniquely pointed to, so it'll be destroyed.
-      CGAL_HISTOGRAM_PROFILER(std::string("DAG depths of : ") +
-                              std::string(CGAL_PRETTY_FUNCTION),
-                              depth()); //(unsigned) ::log2(double(depth())));
-  }
-#endif
 
 private:
 
