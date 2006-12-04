@@ -28,6 +28,7 @@
 #include <CGAL/Profile_counter.h>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/min_max_n.h>
+#include <CGAL/Origin.h>
 
 CGAL_BEGIN_NAMESPACE
 
