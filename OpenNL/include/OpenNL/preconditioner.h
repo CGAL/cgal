@@ -69,8 +69,7 @@ public:
     void mult_upper_inverse(const FullVector<T>& x, FullVector<T>& y) const ;
 
     /**
-     * To use this function, the matrix A should be symmetric and
-     * should have been constructed with the flag store_transpose.
+     * To use this function, the matrix A should be symmetric.
      */
     void mult_lower_inverse(const FullVector<T>& x, FullVector<T>& y) const ;
 
@@ -181,8 +180,7 @@ public:
 
 public:
     /**
-     * The matrix A should have been constructed with
-     * the flag set_transpose.
+     * The matrix A should be symmetric.
      */
     SSOR_Preconditioner(
         const SparseMatrix<T>& A, CoeffType omega = 1.0
