@@ -27,6 +27,7 @@ do
     # Find executable name (different on Windows and Unix)
     [ -f ./release/$TST.exe ] && PARAM_APPLICATION="./release/$TST.exe"
     [ -x ./$TST ] && PARAM_APPLICATION="./$TST"
-
-    $PARAM_APPLICATION `cat $TST.cmd` 2>&1
+    
+    COMMAND="$PARAM_APPLICATION `cat $TST.cmd | tr '\n' ' ' | tr '\r' ' '`"
+    eval $COMMAND 2>&1
 done
