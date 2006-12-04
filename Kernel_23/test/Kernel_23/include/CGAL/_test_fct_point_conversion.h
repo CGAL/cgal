@@ -128,12 +128,8 @@ template <class NT>
 bool
 _test_fct_point_conversion (const NT& x)
 {
-    typedef ::CGAL::Algebraic_structure_traits<NT> AST; 
-    static const bool has_division  = 
-        ::boost::is_base_and_derived< ::CGAL::Field_tag , typename AST::Algebraic_structure_tag>::value 
-        ||  
-        ::boost::is_same< ::CGAL::Field_tag, typename AST::Algebraic_structure_tag>::value ;
-    return _test_fct_point_conversion (x, ::CGAL::Boolean_tag<has_division>());
+    return _test_fct_point_conversion (x, 
+            ::CGAL::Boolean_tag< ::CGAL::CGALi::Is_field<NT>::value >() );
 };
 
 #endif // CGAL__TEST_FCT_POINT_CONVERSION_H
