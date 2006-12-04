@@ -269,6 +269,9 @@
 				RelativePath="..\..\..\OpenNL\include\OpenNL\linear_solver.h">
 			</File>
 			<File
+				RelativePath="..\..\..\OpenNL\include\OpenNL\preconditioner.h">
+			</File>
+			<File
 				RelativePath="..\..\..\OpenNL\include\OpenNL\sparse_matrix.h">
 			</File>
 		</Filter>

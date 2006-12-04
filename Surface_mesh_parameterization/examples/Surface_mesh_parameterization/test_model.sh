@@ -4,19 +4,31 @@
 # Usage: test_model.sh source-file-root
 # Example: test_model.sh rotor
 
+echo ""
 echo "                    ************************"
+echo ""
 
 ./test.sh barycentric square opennl eps "$1"
 echo "                                -"
+./test.sh barycentric circle taucs obj "$1"
+echo "                                -"
 ./test.sh floater circle opennl obj "$1"
+echo "                                -"
+./test.sh floater square taucs eps "$1"
 echo "                                -"
 ./test.sh conformal circle taucs obj "$1"
 echo "                                -"
+./test.sh conformal square opennl eps "$1"
+echo "                                -"
 ./test.sh authalic square taucs obj "$1"
+echo "                                -"
+./test.sh authalic circle opennl eps "$1"
 echo "                                -"
 ./test.sh lscm 2pts opennl obj "$1"
 echo "                                -"
 ./test.sh lscm 2pts taucs eps "$1"
 
+echo ""
 echo "                    ************************"
+echo ""
 

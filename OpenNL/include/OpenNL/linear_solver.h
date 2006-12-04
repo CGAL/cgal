@@ -30,6 +30,7 @@
  *      - Added OpenNL namespace
  *      - DefaultLinearSolverTraits is now a model of the SparseLinearAlgebraTraits_d concept
  *      - Added SymmetricLinearSolverTraits
+ *      - copied Jacobi preconditioner from Graphite 1.9 code
  */
 
 
@@ -38,6 +39,7 @@
 
 #include <OpenNL/conjugate_gradient.h>
 #include <OpenNL/bicgstab.h>
+#include <OpenNL/preconditioner.h>
 #include <OpenNL/sparse_matrix.h>
 #include <OpenNL/full_vector.h>
 
@@ -52,19 +54,15 @@ namespace OpenNL {
 
 // Class DefaultLinearSolverTraits
 // is a traits class for solving general sparse linear systems.
-// By default, it uses OpenNL BICGSTAB general purpose solver.
-//
-// TODO: Add to OpenNL a BICGSTAB general purpose solver
-// with Jacobi preconditioner to increase speed and support larger systems.
+// It uses BICGSTAB solver with Jacobi preconditioner.
 //
 // Concept: Model of the SparseLinearAlgebraTraits_d concept.
 
 template
 <
-    class COEFFTYPE,                            // type of matrix and vector coefficients
-    class MATRIX = SparseMatrix<COEFFTYPE>,     // model of SparseLinearSolverTraits_d::Matrix
-    class VECTOR = FullVector<COEFFTYPE>,       // model of SparseLinearSolverTraits_d::Vector
-    class SOLVER = Solver_BICGSTAB<MATRIX,VECTOR>// BICGSTAB general purpose solver
+    class COEFFTYPE,                        // type of matrix and vector coefficients
+    class MATRIX = SparseMatrix<COEFFTYPE>, // model of SparseLinearSolverTraits_d::Matrix
+    class VECTOR = FullVector<COEFFTYPE>    // model of SparseLinearSolverTraits_d::Vector
 >
 class DefaultLinearSolverTraits
 {
@@ -74,11 +72,17 @@ public:
     typedef COEFFTYPE                       NT;
     typedef MATRIX                          Matrix ;
     typedef VECTOR                          Vector ;
-    typedef SOLVER                          Solver ;
+    
+// Private types
+private:
+    typedef Jacobi_Preconditioner<NT>       Preconditioner ;
+    typedef Solver_preconditioned_BICGSTAB<Matrix, Preconditioner, Vector>  
+                                            Preconditioned_solver ;
+    typedef Solver_BICGSTAB<Matrix, Vector> Solver ;
 
 // Public operations
 public:
-    // Default constructor, copy constructor, operator=() and destructor are fine
+    // Default contructor, copy constructor, operator=() and destructor are fine
 
     // Solve the sparse linear system "A*X = B"
     // Return true on success. The solution is then (1/D) * X.
@@ -90,7 +94,19 @@ public:
     {
         D = 1;              // OpenNL does not support homogeneous coordinates
         
-        // Solve
+        // Solve using BICGSTAB solver with preconditioner
+        Preconditioned_solver preconditioned_solver ;
+        NT omega = 1.5;
+        Preconditioner C(A, omega);
+        X = B;  
+        if (preconditioned_solver.solve(A, C, B, X))
+            return true;
+
+        // On error, solve using BICGSTAB solver without preconditioner
+#ifndef NDEBUG
+        std::cerr << "Failure of BICGSTAB solver with Jacobi preconditioner. "
+                  << "Trying BICGSTAB." << std::endl;
+#endif
         Solver solver ;
         X = B;  
         return solver.solve(A, B, X) ;
@@ -99,22 +115,17 @@ public:
 
 // Class SymmetricLinearSolverTraits
 // is a traits class for solving symmetric positive definite sparse linear systems.
-// By default, it uses OpenNL Conjugate Gradient solver without preconditioner.
-//
-// TODO: Add to OpenNL a Conjugate Gradient solver
-// with Jacobi preconditioner to increase speed and support larger systems.
+// It uses Conjugate Gradient solver with Jacobi preconditioner.
 //
 // Concept: Model of the SparseLinearAlgebraTraits_d concept.
 
 template
 <
-    class COEFFTYPE,                            // type of matrix and vector coefficients
-    class MATRIX = SparseMatrix<COEFFTYPE>,     // model of SparseLinearSolverTraits_d::Matrix
-    class VECTOR = FullVector<COEFFTYPE>,       // model of SparseLinearSolverTraits_d::Vector
-    class SOLVER = Solver_CG<MATRIX, VECTOR>    // Conjugate Gradient solver
+    class COEFFTYPE,                        // type of matrix and vector coefficients
+    class MATRIX = SparseMatrix<COEFFTYPE>, // model of SparseLinearSolverTraits_d::Matrix
+    class VECTOR = FullVector<COEFFTYPE>    // model of SparseLinearSolverTraits_d::Vector
 >
 class SymmetricLinearSolverTraits
-    : public DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>
 {
 // Public types
 public:
@@ -122,11 +133,45 @@ public:
     typedef COEFFTYPE                       NT;
     typedef MATRIX                          Matrix ;
     typedef VECTOR                          Vector ;
-    typedef SOLVER                          Solver ;
+    
+// Private types
+private:
+    typedef Jacobi_Preconditioner<NT>       Preconditioner ;
+    typedef Solver_preconditioned_CG<Matrix, Preconditioner, Vector>  
+                                            Preconditioned_solver ;
+    typedef Solver_CG<Matrix, Vector>       Solver ;
 
 // Public operations
 public:
-    // Default constructor, copy constructor, operator=() and destructor are fine
+    // Default contructor, copy constructor, operator=() and destructor are fine
+
+    // Solve the sparse linear system "A*X = B"
+    // Return true on success. The solution is then (1/D) * X.
+    //
+    // Preconditions:
+    // - A.row_dimension()    == B.dimension()
+    // - A.column_dimension() == X.dimension()
+    bool linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D)
+    {
+        D = 1;              // OpenNL does not support homogeneous coordinates
+        
+        // Solve using Conjugate Gradient solver with preconditioner
+        Preconditioned_solver preconditioned_solver ;
+        NT omega = 1.5;
+        Preconditioner C(A, omega);
+        X = B;  
+        if (preconditioned_solver.solve(A, C, B, X))
+            return true;
+
+        // On error, solve using Conjugate Gradient solver without preconditioner
+#ifndef NDEBUG
+        std::cerr << "Failure of Conjugate Gradient solver with Jacobi preconditioner. "
+                  << "Trying Conjugate Gradient." << std::endl;
+#endif
+        Solver solver ;
+        X = B;  
+        return solver.solve(A, B, X) ;
+    }
 };
 
 
