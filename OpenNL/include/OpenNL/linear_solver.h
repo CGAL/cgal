@@ -26,7 +26,7 @@
  *    URL=http://www.loria.fr/~levy/php/article.php?pub=../publications/papers/2005/Numerics
  * }
  *
- *  Laurent Saboret 01/2005-04/2005: Change for CGAL:
+ *  Laurent Saboret 2005-2006: Changes for CGAL:
  *      - Added OpenNL namespace
  *      - DefaultLinearSolverTraits is now a model of the SparseLinearAlgebraTraits_d concept
  *      - Added SymmetricLinearSolverTraits
@@ -70,56 +70,35 @@ class DefaultLinearSolverTraits
 {
 // Public types
 public:
-    // For SparseLinearAlgebraTraits_d concept
+    typedef COEFFTYPE                       CoeffType ;
     typedef COEFFTYPE                       NT;
     typedef MATRIX                          Matrix ;
     typedef VECTOR                          Vector ;
-
-    typedef COEFFTYPE                       CoeffType ;
-
-// Private types
-public:
     typedef SOLVER                          Solver ;
 
 // Public operations
 public:
-    // Default contructor and destructor are fine
+    // Default constructor, copy constructor, operator=() and destructor are fine
 
     // Solve the sparse linear system "A*X = B"
     // Return true on success. The solution is then (1/D) * X.
-    // (modified for SparseLinearAlgebraTraits_d concept)
     //
     // Preconditions:
     // - A.row_dimension()    == B.dimension()
     // - A.column_dimension() == X.dimension()
     bool linear_solver (const Matrix& A, const Vector& B, Vector& X, NT& D)
     {
+        D = 1;              // OpenNL does not support homogeneous coordinates
+        
+        // Solve
         Solver solver ;
-        D = 1;              // Solver_BICGSTAB does not support homogeneous coordinates
-        X = B;              // mandatory
+        X = B;  
         return solver.solve(A, B, X) ;
-    }
-
-    // Indicate if the linear system can be solved and if the matrix conditioning is good.
-    // (added for SparseLinearAlgebraTraits_d concept)
-    //
-    // Preconditions:
-    // A.row_dimension() == B.dimension()
-    //
-    // TODO: Implement DefaultLinearSolverTraits::is_solvable() by solving the system,
-    // then checking that | ||A*X||/||B|| - 1 | < epsilon
-    bool is_solvable (const Matrix& A, const Vector& B)
-    {
-        // This feature is not implemented in Solver_BICGSTAB => we do only basic checking
-        if (A.row_dimension() != B.dimension())
-            return false;
-
-        return true;
     }
 } ;
 
 // Class SymmetricLinearSolverTraits
-// is a traits class for solving SYMMETRIC DEFINITE POSITIVE sparse linear systems.
+// is a traits class for solving symmetric positive definite sparse linear systems.
 // By default, it uses OpenNL Conjugate Gradient solver without preconditioner.
 //
 // TODO: Add to OpenNL a Conjugate Gradient solver
@@ -137,6 +116,17 @@ template
 class SymmetricLinearSolverTraits
     : public DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>
 {
+// Public types
+public:
+    typedef COEFFTYPE                       CoeffType ;
+    typedef COEFFTYPE                       NT;
+    typedef MATRIX                          Matrix ;
+    typedef VECTOR                          Vector ;
+    typedef SOLVER                          Solver ;
+
+// Public operations
+public:
+    // Default constructor, copy constructor, operator=() and destructor are fine
 };
 
 
