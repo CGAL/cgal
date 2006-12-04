@@ -41,7 +41,9 @@ void predicates()
   Point B(NT(2.0)/NT(3),NT(3.0)/NT(3));
   Point C(NT(3.0)/NT(3),NT(4.0)/NT(3));
   Point D(NT(4.0)/NT(3),NT(3.0)/NT(3));
-  assert(A.x().depth() == 2);
+#ifdef CGAL_PROFILE
+  assert(A.x().depth() == 1);
+#endif
   std::cout << "A : " << A << std::endl;
   std::cout << "B : " << B << std::endl;
   std::cout << "C : " << C << std::endl;
@@ -159,7 +161,9 @@ int main ()
   zwei = eins + eins;
   CGAL::Lazy_exact_nt<CGAL::Quotient<CGAL::MP_Float> > deux(two);
   assert(zwei == deux);
-  assert(zwei.depth() == 2);
+#ifdef CGAL_PROFILE
+  assert(zwei.depth() == 1);
+#endif
 
   test_to_double();
 
