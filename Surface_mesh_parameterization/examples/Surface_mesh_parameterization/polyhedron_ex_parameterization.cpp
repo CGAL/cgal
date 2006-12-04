@@ -64,6 +64,9 @@
 #include <ctype.h>
 #include <fstream>
 #include <cassert>
+#ifdef WIN32
+    #include <Windows.h>
+#endif
 
 
 // ----------------------------------------------------------------------------
@@ -179,14 +182,18 @@ static Seam cut_mesh(Parameterization_polyhedron_adaptor& mesh_adaptor)
     return seam;
 }
 
-// Call appropriate parameterization method based on application parameters
-template<class ParameterizationMesh_3,       // 3D surface
-         class SparseLinearAlgebraTraits_d>
-                                    // Traits class to solve a sparse linear system
+// Call appropriate parameterization method based on command line parameters
+template<
+    class ParameterizationMesh_3,   // 3D surface
+    class GeneralSparseLinearAlgebraTraits_d,
+                                    // Traits class to solve a general sparse linear system
+    class SymmetricSparseLinearAlgebraTraits_d
+                                    // Traits class to solve a symmetric sparse linear system
+>
 typename CGAL::Parameterizer_traits_3<ParameterizationMesh_3>::Error_code
-parameterize(ParameterizationMesh_3& mesh,   // Mesh parameterization adaptor
-             const char *type,      // type of parameterization (see usage)
-             const char *border)    // type of border parameterization (see usage)
+parameterize(ParameterizationMesh_3& mesh,  // Mesh parameterization adaptor
+             const char *type,              // type of parameterization (see usage)
+             const char *border)            // type of border parameterization (see usage)
 {
     typename CGAL::Parameterizer_traits_3<ParameterizationMesh_3>::Error_code err;
 
@@ -197,7 +204,7 @@ parameterize(ParameterizationMesh_3& mesh,   // Mesh parameterization adaptor
             CGAL::Mean_value_coordinates_parameterizer_3<
                 ParameterizationMesh_3,
                 CGAL::Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>,
-                SparseLinearAlgebraTraits_d
+                GeneralSparseLinearAlgebraTraits_d
             >());
     }
     else if ( (CGAL_CLIB_STD::strcmp(type,"floater") == 0) && (CGAL_CLIB_STD::strcmp(border,"square") == 0) )
@@ -207,7 +214,7 @@ parameterize(ParameterizationMesh_3& mesh,   // Mesh parameterization adaptor
             CGAL::Mean_value_coordinates_parameterizer_3<
                 ParameterizationMesh_3,
                 CGAL::Square_border_arc_length_parameterizer_3<ParameterizationMesh_3>,
-                SparseLinearAlgebraTraits_d
+                GeneralSparseLinearAlgebraTraits_d
             >());
     }
     else if ( (CGAL_CLIB_STD::strcmp(type,"barycentric") == 0) && (CGAL_CLIB_STD::strcmp(border,"circle") == 0) )
@@ -217,7 +224,7 @@ parameterize(ParameterizationMesh_3& mesh,   // Mesh parameterization adaptor
             CGAL::Barycentric_mapping_parameterizer_3<
                 ParameterizationMesh_3,
                 CGAL::Circular_border_uniform_parameterizer_3<ParameterizationMesh_3>,
-                SparseLinearAlgebraTraits_d
+                GeneralSparseLinearAlgebraTraits_d
             >());
     }
     else if ( (CGAL_CLIB_STD::strcmp(type,"barycentric") == 0) && (CGAL_CLIB_STD::strcmp(border,"square") == 0) )
@@ -227,7 +234,7 @@ parameterize(ParameterizationMesh_3& mesh,   // Mesh parameterization adaptor
             CGAL::Barycentric_mapping_parameterizer_3<
                 ParameterizationMesh_3,
                 CGAL::Square_border_uniform_parameterizer_3<ParameterizationMesh_3>,
-                SparseLinearAlgebraTraits_d
+                GeneralSparseLinearAlgebraTraits_d
             >());
     }
     else if ( (CGAL_CLIB_STD::strcmp(type,"conformal") == 0) && (CGAL_CLIB_STD::strcmp(border,"circle") == 0) )
@@ -237,7 +244,7 @@ parameterize(ParameterizationMesh_3& mesh,   // Mesh parameterization adaptor
             CGAL::Discrete_conformal_map_parameterizer_3<
                 ParameterizationMesh_3,
                 CGAL::Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>,
-                SparseLinearAlgebraTraits_d
+                GeneralSparseLinearAlgebraTraits_d
             >());
     }
     else if ( (CGAL_CLIB_STD::strcmp(type,"conformal") == 0) && (CGAL_CLIB_STD::strcmp(border,"square") == 0) )
@@ -247,7 +254,7 @@ parameterize(ParameterizationMesh_3& mesh,   // Mesh parameterization adaptor
             CGAL::Discrete_conformal_map_parameterizer_3<
                 ParameterizationMesh_3,
                 CGAL::Square_border_arc_length_parameterizer_3<ParameterizationMesh_3>,
-                SparseLinearAlgebraTraits_d
+                GeneralSparseLinearAlgebraTraits_d
             >());
     }
     else if ( (CGAL_CLIB_STD::strcmp(type,"authalic") == 0) && (CGAL_CLIB_STD::strcmp(border,"circle") == 0) )
@@ -257,7 +264,7 @@ parameterize(ParameterizationMesh_3& mesh,   // Mesh parameterization adaptor
             CGAL::Discrete_authalic_parameterizer_3<
                 ParameterizationMesh_3,
                 CGAL::Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>,
-                SparseLinearAlgebraTraits_d
+                GeneralSparseLinearAlgebraTraits_d
             >());
     }
     else if ( (CGAL_CLIB_STD::strcmp(type,"authalic") == 0) && (CGAL_CLIB_STD::strcmp(border,"square") == 0) )
@@ -267,7 +274,7 @@ parameterize(ParameterizationMesh_3& mesh,   // Mesh parameterization adaptor
             CGAL::Discrete_authalic_parameterizer_3<
                 ParameterizationMesh_3,
                 CGAL::Square_border_arc_length_parameterizer_3<ParameterizationMesh_3>,
-                SparseLinearAlgebraTraits_d
+                GeneralSparseLinearAlgebraTraits_d
             >());
     }
     else if ( (CGAL_CLIB_STD::strcmp(type,"lscm") == 0) && (CGAL_CLIB_STD::strcmp(border,"2pts") == 0) )
@@ -277,7 +284,7 @@ parameterize(ParameterizationMesh_3& mesh,   // Mesh parameterization adaptor
             CGAL::LSCM_parameterizer_3<
                 ParameterizationMesh_3,
                 CGAL::Two_vertices_parameterizer_3<ParameterizationMesh_3>,
-                SparseLinearAlgebraTraits_d
+                SymmetricSparseLinearAlgebraTraits_d
             >());
     }
     else
@@ -341,6 +348,14 @@ where type is:   floater (default), conformal, barycentric, authalic or lscm\n\
 
 int main(int argc, char * argv[])
 {
+#if _WIN32_WINNT >= 0x0400
+    // Trick to be prompted by VisualC++ debugger when an assertion
+    // fails even though we use NON debug runtime libraries
+    // (the only ones compatible with TAUCS)
+    if (IsDebuggerPresent())
+        _set_error_mode(_OUT_TO_MSGBOX);
+#endif
+
     CGAL::Timer total_timer;
     total_timer.start();
 
@@ -495,7 +510,9 @@ int main(int argc, char * argv[])
     if (CGAL_CLIB_STD::strcmp(solver,"opennl") == 0)
     {
         err = parameterize<Mesh_patch_polyhedron,
-                           OpenNL::DefaultLinearSolverTraits<double> >(mesh_patch, type, border);
+                           OpenNL::DefaultLinearSolverTraits<double>,
+                           OpenNL::SymmetricLinearSolverTraits<double> 
+                          >(mesh_patch, type, border);
         if (err != Parameterizer::OK)
             std::cerr << "FATAL ERROR: " << Parameterizer::get_error_message(err) << std::endl;
     }
@@ -503,7 +520,9 @@ int main(int argc, char * argv[])
     {
 #ifdef CGAL_USE_TAUCS
         err = parameterize<Mesh_patch_polyhedron,
-                           CGAL::Taucs_solver_traits<double> >(mesh_patch, type, border);
+                           CGAL::Taucs_solver_traits<double>,
+                           CGAL::Taucs_symmetric_solver_traits<double> 
+                          >(mesh_patch, type, border);
         if (err != Parameterizer::OK)
             std::cerr << "FATAL ERROR: " << Parameterizer::get_error_message(err) << std::endl;
 #else
