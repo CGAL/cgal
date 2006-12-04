@@ -26,11 +26,11 @@
  *    URL=http://www.loria.fr/~levy/php/article.php?pub=../publications/papers/2005/Numerics
  * }
  *
- *  Laurent Saboret 01/2005-04/2005: Changes for CGAL:
+ *  Laurent Saboret 2005-2006: Changes for CGAL:
  *      - Added OpenNL namespace
  *      - solve() returns true on success
  *      - test divisions by zero with IsZero() method
- *      - added comments and traces
+ *      - added comments
  */
 
 #ifndef __OPENNL_CONJUGATE_GRADIENT__
@@ -63,46 +63,46 @@ namespace OpenNL {
  * by Christian Badura, available from:
  * http://www.mathematik.uni-freiburg.de/IAM/Research/projectskr/lin_solver/
  *
- * @param A generic matrix, a function
+ * @param A generic square matrix; a function
  *   mult(const MATRIX& M, const double* x, double* y)
- *   needs to be defined.
+ * and a member function 
+ *   int dimension() const
+ * must to be defined.
  * @param b right hand side of the system.
  * @param x initial value.
  * @param eps threshold for the residual.
  * @param max_iter maximum number of iterations.
  */
 
-template< class MATRIX, class VECTOR > class Solver_CG {
+template<class MATRIX, class VECTOR> class Solver_CG {
 public:
     typedef MATRIX Matrix ;
     typedef VECTOR Vector ;
     typedef typename Vector::CoeffType CoeffType ;
 
+public:
     Solver_CG() {
         epsilon_ = 1e-6 ;
         max_iter_ = 0 ;
     }
 
+    // Default copy constructor, operator =() and destructor are fine
+
     void set_epsilon(CoeffType eps) { epsilon_ = eps ; }
     void set_max_iter(unsigned int max_iter) { max_iter_ = max_iter ; }
 
-    // Solve the sparse linear system "A*x = b" for A SYMMETRIC POSITIVE
+    // Solve the sparse linear system "A*x = b" for A symmetric positive definite
     // Return true on success
-    //
-    // Preconditions:
-    // * A.dimension() == b.dimension()
-    // * A.dimension() == x.dimension()
-    bool solve(const MATRIX &A, const VECTOR& b, VECTOR& x) {
-        assert(A.dimension() == b.dimension()) ;
-        assert(A.dimension() == x.dimension()) ;
-        assert (A.dimension() > 0);
-
+    bool solve(const MATRIX &A, const VECTOR& b, VECTOR& x) 
+    {
+        assert(A.dimension() > 0);
         unsigned int n = A.dimension() ;                        // (Square) matrix dimension
 
         unsigned int max_iter = max_iter_ ;                     // Max number of iterations
         if(max_iter == 0) {
             max_iter = 5 * n ;
         }
+
         Vector g(n) ;
         Vector r(n) ;
         Vector p(n) ;
@@ -116,10 +116,9 @@ public:
         BLAS<Vector>::scal(-1,g);
         // Initially, r=g=b-A*x
         BLAS<Vector>::copy(g,r);                                // r = g
-        CoeffType gg=BLAS<Vector>::dot(g,g);                    // Current error gg = (g|g)
 
-        while ( gg>err && its < max_iter)
-        {
+        CoeffType gg=BLAS<Vector>::dot(g,g);                    // Current error gg = (g|g)
+        while ( gg>err && its < max_iter) {
             mult(A,r,p);
             rho=BLAS<Vector>::dot(p,p);
             sig=BLAS<Vector>::dot(r,p);
@@ -134,8 +133,8 @@ public:
             gam=(t*t*rho-tau)/tau;
             BLAS<Vector>::scal(gam,r);
             BLAS<Vector>::axpy(1,g,r);
-            gg=BLAS<Vector>::dot(g,g);                          // Current error gg = (g|g)
-            its++;
+            gg=BLAS<Vector>::dot(g,g);                          // Update error gg = (g|g)
+            ++its;
         }
 
         bool success = (gg <= err);
@@ -152,7 +151,7 @@ public:
 
 private:
     // Test if a floating point number is (close to) 0.0
-    static inline bool IsZero(CoeffType a)
+    static bool IsZero(CoeffType a)
     {
         return (fabs(a) < 10.0 * (std::numeric_limits<CoeffType>::min)());
     }
