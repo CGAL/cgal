@@ -52,7 +52,7 @@ TXN="$2"
 
 # Make sure that the log message contains some text.
 SVNLOOK=/usr/bin/svnlook
-$SVNLOOK log -t "$TXN" "$REPOS" | grep "[a-zA-Z0-9]" >/dev/null
+$SVNLOOK log -t "$TXN" "$REPOS" | /bin/grep "[a-zA-Z0-9]" >/dev/null
 if [[ $? != 0 ]]; then
     echo "" >&2
     echo "Invalid commit message" >&2
