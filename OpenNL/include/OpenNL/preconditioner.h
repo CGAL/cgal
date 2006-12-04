@@ -98,9 +98,9 @@ void Preconditioner<T>::mult_lower_inverse(
     int n = A_.dimension() ;
     for(int i=0; i<n; i++) {
         double S = 0 ;
-        const SparseMatrix<T>::Row& Ri = A_.row(i) ;
+        const typename SparseMatrix<T>::Row& Ri = A_.row(i) ;
         for(int ij=0; ij < Ri.size(); ij++) {
-            const SparseMatrix<T>::Coeff& c = Ri[ij] ;
+            const typename SparseMatrix<T>::Coeff& c = Ri[ij] ;
             if (c.index < i) // traverse only lower half matrix
                 S += c.a * y[c.index] ;
         }
@@ -116,9 +116,9 @@ void Preconditioner<T>::mult_upper_inverse(
     int n = A_.dimension() ;
     for(int i=n-1; i>=0; i--) {
         double S = 0 ;
-        const SparseMatrix<T>::Row& Ci = A_.row(i) ; // column i == row i
+        const typename SparseMatrix<T>::Row& Ci = A_.row(i) ; // column i == row i
         for(int ij=0; ij < Ci.size(); ij++) {
-            const SparseMatrix<T>::Coeff& c = Ci[ij] ;
+            const typename SparseMatrix<T>::Coeff& c = Ci[ij] ;
             if(c.index > i) // traverse only upper half matrix
                 S += c.a * y[c.index] ;
         }
