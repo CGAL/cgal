@@ -25,7 +25,7 @@
 #define CGAL_MSVC_STANDARD_HEADER_FIXES_H
 
 #pragma warning(once: 4291)
-#pragma warning(once:4503)
+#pragma warning(disable: 4503)
 
 #include <cmath>
 namespace std {
