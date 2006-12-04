@@ -54,7 +54,7 @@ CGAL_BEGIN_NAMESPACE
 /// - They may implement an optimized version of is_one_to_one_mapping().
 ///
 /// @todo Fixed_border_parameterizer_3 should remove border vertices
-/// from the linear systems in order to have a symmetric definite positive
+/// from the linear systems in order to have a symmetric positive definite
 /// matrix for Tutte Barycentric Mapping and Discrete Conformal Map algorithms.
 ///
 /// Concept:
@@ -301,7 +301,7 @@ parameterize(Adaptor& mesh)
     // "u = constant" and "v = constant"
     //
     // @todo Fixed_border_parameterizer_3 should remove border vertices
-    // from the linear systems in order to have a symmetric definite positive
+    // from the linear systems in order to have a symmetric positive definite
     // matrix for Tutte Barycentric Mapping and Discrete Conformal Map algorithms.
     initialize_system_from_mesh_border (A, Bu, Bv, mesh);
 

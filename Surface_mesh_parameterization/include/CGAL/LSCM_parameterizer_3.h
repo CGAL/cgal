@@ -64,7 +64,7 @@ template
     class SparseLinearAlgebraTraits_d
                 = OpenNL::SymmetricLinearSolverTraits<typename ParameterizationMesh_3::NT>
                                       ///< Traits class to solve a sparse linear system.
-                                      ///< We may use a symmetric solver because LSCM
+                                      ///< We may use a symmetric definite positive solver because LSCM
                                       ///< solves the system in the least squares sense.
 >
 class LSCM_parameterizer_3

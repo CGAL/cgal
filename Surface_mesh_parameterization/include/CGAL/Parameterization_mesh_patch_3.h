@@ -566,7 +566,7 @@ public:
 // Private operations
 private:
 
-    /// Default copy constructor and operator =() are not (yet) implemented.
+    /// Copy constructor and operator =() are not implemented.
     Parameterization_mesh_patch_3(const Parameterization_mesh_patch_3& toCopy);
     Parameterization_mesh_patch_3& operator =(const Parameterization_mesh_patch_3& toCopy);
 

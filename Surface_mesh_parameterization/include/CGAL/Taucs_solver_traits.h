@@ -32,7 +32,7 @@ CGAL_BEGIN_NAMESPACE
 
 
 /// The class Taucs_symmetric_solver_traits
-/// is a traits class for solving SYMMETRIC DEFINITE POSITIVE sparse linear systems
+/// is a traits class for solving symmetric positive definite sparse linear systems
 /// using TAUCS solvers family.
 /// The default solver is the Multifrontal Supernodal Cholesky Factorization.
 ///
@@ -52,7 +52,7 @@ public:
 // Public operations
 public:
 
-    /// Create a TAUCS sparse linear solver for SYMMETRIC DEFINITE POSITIVE matrices.
+    /// Create a TAUCS sparse linear solver for symmetric positive definite matrices.
     /// The default solver is the Multifrontal Supernodal Cholesky Factorization.
     /// See taucs_linsolve() documentation for the meaning of the
     /// 'options' and 'arguments' parameters.
@@ -78,11 +78,11 @@ public:
     {
         D = 1;          // TAUCS does not support homogeneous coordinates
 
-#ifdef DEBUG_TRACE
-       // Turn on TAUCS trace
-       std::cerr.flush();
-       taucs_logfile("stderr");
-#endif
+//#ifdef DEBUG_TRACE
+//       // Turn on TAUCS trace
+//       std::cerr.flush();
+//       taucs_logfile("stderr");
+//#endif
 
 //#ifdef DEBUG_TRACE
 //        // Debug trace
@@ -189,11 +189,11 @@ public:
     {
         D = 1;          // TAUCS does not support homogeneous coordinates
 
-#ifdef DEBUG_TRACE
-       // Turn on TAUCS trace
-       std::cerr.flush();
-       taucs_logfile("stderr");
-#endif
+//#ifdef DEBUG_TRACE
+//       // Turn on TAUCS trace
+//       std::cerr.flush();
+//       taucs_logfile("stderr");
+//#endif
 
 //#ifdef DEBUG_TRACE
 //        // Debug trace
