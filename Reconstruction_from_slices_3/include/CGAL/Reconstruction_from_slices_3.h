@@ -166,7 +166,7 @@ bool check_polylines_respect(const Tr & tr)
     {
       Cell_handle ctemp;
       int i,j;
-      Vertex_handle vh1(it),vh2(it->get_next());
+      Vertex_handle vh1(it),vh2(it->next());
       if (!tr.is_edge(vh1,vh2,ctemp,i,j)){
 	std::cerr << "Error: Cannot find constraint edge " << vh1->point() << " [" << vh1->slice() << "]   " << vh2->point() << " [" << vh1->slice() << "]" << std::endl;
 	//	return false;
@@ -192,7 +192,7 @@ void check_and_conform_polylines(Tr & tr)
 	    {
 	      Cell_handle ctemp;
 	      int ci,cj; 
-	      Vertex_handle vh1(*it),vh2(vh1->get_next());
+	      Vertex_handle vh1(*it),vh2(vh1->next());
 	      if (!tr.is_edge(vh1,vh2,ctemp,ci,cj))
 		{ //The polyline going through vh1 and vh2 is not conform
 		  conform=false;
@@ -206,7 +206,7 @@ void check_and_conform_polylines(Tr & tr)
 		  Vertex_handle vstep2;
 		  do //circulate over the polyline between vh1 and vh2
 		    {
-		      vstep2=vstep1->get_next();
+		      vstep2=vstep1->next();
 		      if (!tr.is_edge(vstep1,vstep2,ctemp,ci,cj))
 			{
 #ifdef CGAL_DUMP		  
@@ -247,8 +247,8 @@ void tag_inner_outer(const Tr & tr)
 
   for (Finite_edges_iterator it=tr.finite_edges_begin(); it != tr.finite_edges_end(); ++it)
     {
-      if (((*it).first->vertex((*it).second)->get_next()==(*it).first->vertex((*it).third))
-	  ||((*it).first->vertex((*it).third)->get_next()==(*it).first->vertex((*it).second)))
+      if (((*it).first->vertex((*it).second)->next()==(*it).first->vertex((*it).third))
+	  ||((*it).first->vertex((*it).third)->next()==(*it).first->vertex((*it).second)))
 	gv.set_edge_color (CGAL::Color(0,0,180));
       else
 	gv.set_edge_color (CGAL::Color(0,0,0));
@@ -351,8 +351,8 @@ static void tag_inner_outer(const Tr & tr, typename Tr::Facet f_start, bool inte
       bool boundary=false;
       if (edge.first->vertex(edge.second)->slice()==edge.first->vertex(edge.third)->slice())
 	{
-	  boundary=((edge.first->vertex(edge.second)->get_next()==edge.first->vertex(edge.third))
-		    ||(edge.first->vertex(edge.third)->get_next()==edge.first->vertex(edge.second)));
+	  boundary=((edge.first->vertex(edge.second)->next()==edge.first->vertex(edge.third))
+		    ||(edge.first->vertex(edge.third)->next()==edge.first->vertex(edge.second)));
 	  int sindex=edge.first->vertex(edge.second)->slice();
 	  Cell_circulator circ = tr.incident_cells(edge,f_start.first),endcirc(circ);
 	  ++circ;
@@ -928,7 +928,7 @@ void save_in_wrl_file(const Tr & tr, const char * fname_wrl, bool outputContours
 	do {
 	  vos << vh->index() << " ";
 	  vh->set_index(-1);
-	  vh = vh->get_next();
+	  vh = vh->next();
 	}while(vh->index() != -1);
 	vos << start ;
 	
