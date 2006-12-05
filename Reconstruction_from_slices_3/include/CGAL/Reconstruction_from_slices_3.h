@@ -28,7 +28,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Triangulation_from_slices_3.h>
 #include <CGAL/TFS_polyline_vertex_base_3.h>
-#include <CGAL/TFS_cell_base_3_for_reconstruction.h>
+#include <CGAL/TFS_cell_base_3.h>
 
 #ifdef GEOMVIEW_DUMP //TO RM
 #include <CGAL/IO/Geomview_stream.h>
@@ -39,11 +39,11 @@ CGAL_BEGIN_NAMESPACE
 typedef Exact_predicates_exact_constructions_kernel default_Gt;
 typedef Triangulation_from_slices_3<default_Gt, 
                                   Triangulation_data_structure_3< TFS_polyline_vertex_base_3< Triangulation_vertex_base_3<default_Gt> >, 
-                                                                  TFS_cell_base_3_for_reconstruction<Triangulation_cell_base_3<default_Gt> > > > default_Tr;
+                                                                  TFS_cell_base_3<Triangulation_cell_base_3<default_Gt> > > > default_Tr;
 
 // template < class Tr >   = Triangulation_from_slices_3< Gt, 
                         //           Triangulation_data_structure_3< TFS_polyline_vertex_base_3< Triangulation_vertex_base_3<Gt> >, 
-                        //                                           TFS_cell_base_3_for_reconstruction<Triangulation_cell_base_3<Gt> > > 
+                        //                                           TFS_cell_base_3<Triangulation_cell_base_3<Gt> > > 
                         // Gt (default) = Exact_predicates_exact_constructions_kernel
 
 

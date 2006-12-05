@@ -5,7 +5,8 @@
 #                    include platform specific settings
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
-
+CGAL_MAKEFILE = c:/cgal/CGAL-3.2.1/make/makefile_i686_CYGWINNT-5.2-WOW64_CL.EXE-1400
+#CGAL_MAKEFILE = /cygdrive/c/cgal/CGAL-3.3-I-120/make/makefile_i686_CYGWINNT-5.1_CL.EXE-1310
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
@@ -41,13 +42,16 @@ all:            \
 	test_triangulation_points_in_slices$(EXE_EXT) test_triangulation_points_in_polylines$(EXE_EXT) test_reconstruction_from_slices$(EXE_EXT)
 
 test_triangulation_points_in_slices$(EXE_EXT): test_triangulation_points_in_slices$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT) bin/test_triangulation_points_in_slices$(EXE_EXT) obj/test_triangulation_points_in_slices$(OBJ_EXT) $(LDFLAGS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_triangulation_points_in_slices$(EXE_EXT) test_triangulation_points_in_slices$(OBJ_EXT) $(LDFLAGS)
 
 test_triangulation_points_in_polylines$(EXE_EXT): test_triangulation_points_in_polylines$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT) bin/test_triangulation_points_in_polylines$(EXE_EXT) obj/test_triangulation_points_in_polylines$(OBJ_EXT) $(LDFLAGS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_triangulation_points_in_polylines$(EXE_EXT) test_triangulation_points_in_polylines$(OBJ_EXT) $(LDFLAGS)
 
 test_reconstruction_from_slices$(EXE_EXT): test_reconstruction_from_slices$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT) bin/test_reconstruction_from_slices$(EXE_EXT) obj/test_reconstruction_from_slices$(OBJ_EXT) $(LDFLAGS)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test_reconstruction_from_slices$(EXE_EXT) test_reconstruction_from_slices$(OBJ_EXT) $(LDFLAGS)
+
+reconstruct$(EXE_EXT): reconstruct$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)reconstruct$(EXE_EXT) reconstruct$(OBJ_EXT) $(LDFLAGS)
 
 test_triangulation_points_in_slices$(OBJ_EXT): test_triangulation_points_in_slices.cpp ../../include/CGAL/Parser_SLC.h ../../include/CGAL/Triangulation_from_slices_3.h ../../include/CGAL/TFS_vertex_base_3.h
 

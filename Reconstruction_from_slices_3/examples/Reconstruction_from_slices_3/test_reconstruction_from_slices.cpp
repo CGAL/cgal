@@ -139,9 +139,10 @@ int main (int argc , char ** argv)
      stable_non_solid_connections_heavy_removal(tpis);
      std::cout << "Only non heavy solid connections remain" << std::endl;
     }
-  save_in_off_file(tpis,head,body);
-  std::system(system_command);
-  std::cout << "Off file over" << std::endl; 
+  //save_in_off_file(tpis,head,body);
+  //std::system(system_command);
+  //std::cout << "Off file over" << std::endl; 
+  save_in_wrl_file(tpis, "hello.wrl");
 }
 // else
 //   std::cout << "Non conformal polylines" << std::endl;
@@ -169,9 +170,9 @@ int main (int argc , char ** argv)
       for (Cell_iterator it=tpis.cells_begin(); it != tpis.cells_end(); ++it)
 	{
 	  Cell_handle c(it);
-	  if(c->is_External())
+	  if(c->is_external())
 	    for(int i=0;i<4;i++)
-	      if(c->neighbor(i)->is_Internal()&&!c->neighbor(i)->is_non_solid())
+	      if(c->neighbor(i)->is_internal()&&!c->neighbor(i)->is_non_solid())
 		{
 		  //gvv << Triangle(c->vertex((i+1)%4)->point(),c->vertex((i+2)%4)->point(),c->vertex((i+3)%4)->point());
 		  gvv << Segment(c->vertex((i+1)%4)->point(),c->vertex((i+2)%4)->point());

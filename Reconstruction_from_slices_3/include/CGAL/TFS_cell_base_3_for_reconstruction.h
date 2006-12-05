@@ -21,8 +21,8 @@
 //                 Andreas Fabri (GeometryFactory)
 //                 
 
-#ifndef CGAL_TFS_CELL_BASE_3_FOR_RECONSTRUCTION_3
-#define CGAL_TFS_CELL_BASE_3_FOR_RECONSTRUCTION_3
+#ifndef CGAL_TFS_CELL_BASE_3_H
+#define CGAL_TFS_CELL_BASE_3_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Triangulation_short_names_3.h>
@@ -30,7 +30,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class Cb >
-class TFS_cell_base_3_for_reconstruction
+class TFS_cell_base_3
   : public Cb
 {
  public :
@@ -44,7 +44,7 @@ class TFS_cell_base_3_for_reconstruction
   template < typename TDS2 >
   struct Rebind_TDS {
     typedef typename Cb::template Rebind_TDS<TDS2>::Other      Cb2;
-    typedef TFS_cell_base_3_for_reconstruction<Cb2>          Other;
+    typedef TFS_cell_base_3<Cb2>          Other;
   };
 
  private :
@@ -68,17 +68,17 @@ class TFS_cell_base_3_for_reconstruction
   unsigned char mask_solidity;
 
  public :
-  TFS_cell_base_3_for_reconstruction()
+  TFS_cell_base_3()
     : Base(), mask_in_out(0), mask_solidity(0) {}
 
-  TFS_cell_base_3_for_reconstruction(const Vertex_handle& v0, const Vertex_handle& v1,
-				       const Vertex_handle& v2, const Vertex_handle& v3)
+  TFS_cell_base_3(const Vertex_handle& v0, const Vertex_handle& v1,
+		  const Vertex_handle& v2, const Vertex_handle& v3)
     : Base(v0, v1, v2, v3), mask_in_out(0), mask_solidity(0) {}
 
-  TFS_cell_base_3_for_reconstruction(const Vertex_handle& v0, const Vertex_handle& v1,
-				       const Vertex_handle& v2, const Vertex_handle& v3,
-				       const Cell_handle&   n0, const Cell_handle&   n1,
-				       const Cell_handle&   n2, const Cell_handle&   n3)
+  TFS_cell_base_3(const Vertex_handle& v0, const Vertex_handle& v1,
+		  const Vertex_handle& v2, const Vertex_handle& v3,
+		  const Cell_handle&   n0, const Cell_handle&   n1,
+		  const Cell_handle&   n2, const Cell_handle&   n3)
     : Base(v0, v1, v2, v3, n0, n1, n2, n3), mask_in_out(0), mask_solidity(0) {}
   
   /*==================================*/
@@ -129,4 +129,4 @@ class TFS_cell_base_3_for_reconstruction
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_TFS_CELL_BASE_3_FOR_RECONSTRUCTION
+#endif // CGAL_TFS_CELL_BASE_3_H

@@ -33,7 +33,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-//!  A test class. 
 /*!
   This vertex class stores additional data needed by the reconstruction algorithm.
 */
@@ -88,11 +87,14 @@ private:
 public :
 
 /**
- * The next vertex on a polygonal contour.
+ * Obtain the index of a vertex. It is in the user responsibility to intialize the index.
  */
   int index() const
    { return m_index;}
 
+/**
+ * Set the index of a vertex.
+ */
   void set_index(int n)
     { m_index = n; }
 
