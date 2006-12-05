@@ -20,6 +20,9 @@
 //                 Jerome Piovano
 //                 Andreas Fabri (GeometryFactory)
 //                 
+/*! \file TFS_cell_base_3.h
+    \brief Cell base class for the triangulation from slices.
+*/
 
 #ifndef CGAL_TFS_CELL_BASE_3_H
 #define CGAL_TFS_CELL_BASE_3_H
@@ -28,7 +31,9 @@
 #include <CGAL/Triangulation_short_names_3.h>
 
 CGAL_BEGIN_NAMESPACE
-
+/*!
+  This cell class stores additional data needed by the reconstruction algorithm.
+*/
 template < class Cb >
 class TFS_cell_base_3
   : public Cb
@@ -85,11 +90,17 @@ class TFS_cell_base_3
   /*     Public Members Functions     */
   /*==================================*/
   
-  //CHECKING 
+  //CHECKING
+/**
+ *  Returns true, iff the cell is internal.
+ */ 
     bool is_internal()           {return(((mask_in_out & MASK_INTERNAL)
 					  ||((mask_in_out & MASK_INTERN_D)&&(mask_in_out & MASK_INTERN_U)))
 					 &&((mask_solidity & MASK_NON_SOLID)==0));} // TO CHANGE FOR SPEED
-    bool is_external()  {return !is_internal();}
+/**
+ *  Returns true, iff the cell is external.
+ */ 
+      bool is_external()  {return !is_internal();}
     bool is_T2_2_down_internal() {return(mask_in_out & MASK_INTERN_D);}
     bool is_T2_2_up_internal()   {return(mask_in_out & MASK_INTERN_U);}
     

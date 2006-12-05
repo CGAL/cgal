@@ -19,10 +19,6 @@
 
 /*! \file TFS_polyline_vertex_base_3.h
     \brief Vertex class for the triangulation from slices.
-    
-
-
-
 */
 
 #ifndef CGAL_POLYLINE_VERTEX_BASE_3_H

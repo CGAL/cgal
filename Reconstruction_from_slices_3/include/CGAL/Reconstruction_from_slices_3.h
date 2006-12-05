@@ -175,6 +175,7 @@ bool check_polylines_respect(const Tr & tr)
   return true;
 }
 
+#ifdef CGAL_RFS_CONFORM
 template < class Tr >
 void check_and_conform_polylines(Tr & tr)
 {  
@@ -231,6 +232,7 @@ void check_and_conform_polylines(Tr & tr)
 #endif
     }
 }
+#endif // CGAL_RFS_CONFORM
 
 template < class Tr > 
 void tag_inner_outer(const Tr & tr)

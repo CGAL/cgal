@@ -18,7 +18,10 @@
 //                 Andreas Fabri (GeometryFactory)
 //   
 //===============================================================================================
-              
+
+/*! \file Triangulation_from_slices_3.h
+    \brief A triangulation class that
+*/         
 #ifndef CGAL_TRIANGULATION_FROM_SLICES_3_H
 #define CGAL_TRIANGULATION_FROM_SLICES_3_H
 
@@ -52,6 +55,11 @@ CGAL_BEGIN_NAMESPACE
 
 std::pair<int,int> get_opposite_index_pair(int i,int j);//i et j in O..3
 
+/*!
+ * In this triangulation the points are in layers and cells only have
+ * vertices in neighboring layers.
+ * 
+*/
 
 template < class Gt = Exact_predicates_exact_constructions_kernel, 
            class Tds = Triangulation_data_structure_3 < TFS_vertex_base_3 <Triangulation_vertex_base_3<Gt> >,
@@ -241,15 +249,28 @@ class Triangulation_from_slices_3 : public Triangulation_3<Gt,Tds>
     /*     nearest_vertex(const Point &p, Vertex_handle v, Vertex_handle w) const; */
 
 
-    // SLICE AND POINT INSERTION  
-    void insert_slice(int slice_num,const Plane & equ);
+/**
+ * Starts a new slice in the triangulation
+ * @param slice is the index of the slice
+ * @param plane is the plane of the slice.
+ * Currently the slices must be inserted in ascending order and all points
+ * of a slice must be inserted before the next slice is inserted.
+ */
+    void insert_slice(int slice, const Plane & plane);
 
     template < class InputIterator >
     // Iterator on std::pair<Point,int>
     int
     insert(InputIterator first, InputIterator last);
-
+/**
+ * Inserts a point in a specific slice of the triangulation
+ * @param p the point to insert
+ * @param slice is where p gets inserted.
+ * Currently the slices must be inserted in ascending order and all points
+ * of a slice must be inserted before the next slice is inserted.
+ */
     Vertex_handle insert(const Point & p, int slice, Cell_handle cstart = NULL);
+
     Vertex_handle insert(const std::pair<Point,int> & pt_s, Cell_handle cstart = NULL);
     Vertex_handle insert(const Point & p, int slice, Locate_type lt,
 			 Cell_handle c, int li, int);
@@ -325,10 +346,14 @@ class Triangulation_from_slices_3<Gt,Tds>::Slice
   int vertex_number;
   const Self *t;  
   Vertex_handle vert_start; // To fasten locate operations (Easier to maintain than a Cell_handle)
+
+#ifdef CGAL_RFS_CONFORM
  public : 
   std::vector<Vertex_handle> set_of_vertices; //Is just here to fasten conform operations
                                             //TO DO This container could be a template parameter 
                                             //      that could be set to EmptySet by default
+#endif
+
   // Construction------------------------------------------------------------------------------
  public :    
   Slice(const Self *tr=NULL, int num=-1) 
@@ -692,6 +717,7 @@ template <class Conflict_test,
   return it;      
 }
 
+
 template < class Gt, class Tds >
 void Triangulation_from_slices_3<Gt,Tds>::insert_slice(int slice_num,const Plane & equ)
 {  
@@ -775,7 +801,9 @@ insert(const Point & p, int slice, Locate_type lt, Cell_handle c, int li, int)
 	// TEST call insert_conflicts_3 (Triangulation_3.h) with redefined find_conflicts_3
 	Conflict_tester_3 tester(p,slice,this);
 	v = insert_conflict_3(c, tester);
+#ifdef CGAL_RFS_CONFORM
 	slices[slice].set_of_vertices.push_back(v);
+#endif
 	v->set_point(p);
 	break;// dim 3 
       }
@@ -789,7 +817,9 @@ insert(const Point & p, int slice, Locate_type lt, Cell_handle c, int li, int)
 	  {
 	    Conflict_tester_2 tester(p,slice,this);
 	    v = insert_conflict_2(c, tester);
+#ifdef CGAL_RFS_CONFORM
 	    slices[slice].set_of_vertices.push_back(v);
+#endif
 	    v->set_point(p); 
 	    break;
 	  }
