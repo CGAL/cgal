@@ -70,16 +70,19 @@ Requirements (checked at compile time) : the types
 
 %\ccOperations
 
-\ccMethod{ template <class OutputIterator> OutputIterator compute_all_ridges(OutputIterator it, Tag_order ord = Tag_3);}
-{Computes blue, red and crest ridges. Parameter \ccc{it}
- is a  {\sc Stl} output iterator whose
+\ccMethod{ template <class OutputIterator> OutputIterator compute_max_ridges(OutputIterator it, Tag_order ord = Tag_3);}
+{Outputs ridges of types \ccc{MAX_ELLIPTIC_RIDGE} and \ccc{MAX_HYPERBOLIC_RIDGE}.
+ Parameter \ccc{it} is a  {\sc Stl} output iterator whose
 \ccc{value_type} is \ccc{Ridge_line*}.}
 \ccGlue
-\ccMethod{ template <class OutputIterator>  OutputIterator compute_ridges(Ridge_interrogation_type r_type, 
-			  OutputIterator ridge_lines_it,
-			  Tag_order ord = Tag_3);}
-{Computes blue, red or crest ridges. Parameter \ccc{it}
- is a  {\sc Stl} output iterator whose
+\ccMethod{ template <class OutputIterator> OutputIterator compute_min_ridges(OutputIterator it, Tag_order ord = Tag_3);}
+{Outputs ridges of types \ccc{MIN_ELLIPTIC_RIDGE} and \ccc{MIN_HYPERBOLIC_RIDGE}.
+ Parameter \ccc{it} is a  {\sc Stl} output iterator whose
+\ccc{value_type} is \ccc{Ridge_line*}.}
+\ccGlue
+\ccMethod{ template <class OutputIterator> OutputIterator compute_crest_ridges(OutputIterator it, Tag_order ord = Tag_3);}
+{Outputs ridges of types \ccc{MAX_CREST_RIDGE} and \ccc{MIN_CREST_RIDGE}.
+ Parameter \ccc{it} is a  {\sc Stl} output iterator whose
 \ccc{value_type} is \ccc{Ridge_line*}.}
 
 \ccSeeAlso

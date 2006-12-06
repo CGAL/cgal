@@ -15,11 +15,11 @@
 
 CGAL_BEGIN_NAMESPACE
  
-enum Ridge_interrogation_type {BLUE_RIDGE, RED_RIDGE, CREST_RIDGE};
+enum Ridge_interrogation_type {MAX_RIDGE, MIN_RIDGE, CREST_RIDGE};
 
 enum Ridge_type {NO_RIDGE=0, 
-		 BLUE_ELLIPTIC_RIDGE, BLUE_HYPERBOLIC_RIDGE, BLUE_CREST_RIDGE, 
-		 RED_ELLIPTIC_RIDGE, RED_HYPERBOLIC_RIDGE, RED_CREST_RIDGE};
+		 MAX_ELLIPTIC_RIDGE, MAX_HYPERBOLIC_RIDGE, MAX_CREST_RIDGE, 
+		 MIN_ELLIPTIC_RIDGE, MIN_HYPERBOLIC_RIDGE, MIN_CREST_RIDGE};
 
 //---------------------------------------------------------------------------
 //Ridge_line : a connected sequence of edges of a
@@ -61,8 +61,8 @@ public:
   void dump_verbose(std::ostream& out_stream) const ;
 
 protected:
-  //one of BLUE_ELLIPTIC_RIDGE, BLUE_HYPERBOLIC_RIDGE, BLUE_CREST_RIDGE,
-  //RED_ELLIPTIC_RIDGE, RED_HYPERBOLIC_RIDGE or RED_CREST_RIDGE
+  //one of MAX_ELLIPTIC_RIDGE, MAX_HYPERBOLIC_RIDGE, MAX_CREST_RIDGE,
+  //MIN_ELLIPTIC_RIDGE, MIN_HYPERBOLIC_RIDGE or MIN_CREST_RIDGE
   Ridge_type m_line_type;  
   std::list<ridge_halfhedge> m_line;
   FT m_strength;// = integral of ppal curvature along the line
@@ -202,9 +202,13 @@ class Ridge_approximation
 		      const Vertex2FTPropertyMap& vertex2P2_pm);
  
   template <class OutputIterator>
-  OutputIterator compute_all_ridges(OutputIterator it, Tag_order ord = Tag_3);
+  OutputIterator compute_max_ridges(OutputIterator it, Tag_order ord = Tag_3);
+  template <class OutputIterator>
+  OutputIterator compute_min_ridges(OutputIterator it, Tag_order ord = Tag_3);
+  template <class OutputIterator>
+  OutputIterator compute_crest_ridges(OutputIterator it, Tag_order ord = Tag_3);
   
-  //Find BLUE_RIDGE, RED_RIDGE or CREST_RIDGE ridges iterate on P facets,
+  //Find MAX_RIDGE, MIN_RIDGE or CREST_RIDGE ridges iterate on P facets,
   //find a non-visited, regular (i.e. if there is a coherent
   //orientation of ppal dir at the facet vertices), 2Xing triangle,
   //follow non-visited, regular, 2Xing triangles in both sens to
@@ -235,16 +239,16 @@ class Ridge_approximation
   const Vertex2VectorPropertyMap &d1, &d2;
 
   //is a facet crossed by a BLUE, RED or CREST_RIDGE ridge? if so, return
-  //the crossed edges and more precise type from BLUE_ELLIPTIC_RIDGE,
-  //BLUE_HYPERBOLIC_RIDGE, BLUE_CREST_RIDGE, RED_ELLIPTIC_RIDGE,
-  //RED_HYPERBOLIC_RIDGE, RED_CREST_RIDGE or NO_RIDGE
+  //the crossed edges and more precise type from MAX_ELLIPTIC_RIDGE,
+  //MAX_HYPERBOLIC_RIDGE, MAX_CREST_RIDGE, MIN_ELLIPTIC_RIDGE,
+  //MIN_HYPERBOLIC_RIDGE, MIN_CREST_RIDGE or NO_RIDGE
   Ridge_type facet_ridge_type(const Facet_const_handle f, 
 			      Halfedge_const_handle& he1, 
 			      Halfedge_const_handle& he2,
 			      Ridge_interrogation_type r_type);
   
-  //is an edge crossed by a BLUE/RED ridge? (color is BLUE_RIDGE or
-  //RED_RIDGE ).  As we only test edges of regular triangles, the ppal
+  //is an edge crossed by a BLUE/RED ridge? (color is MAX_RIDGE or
+  //MIN_RIDGE ).  As we only test edges of regular triangles, the ppal
   //direction at endpoints d_p and d_q cannot be orthogonal. If both
   //extremalities vanish, we consider no crossing occurs. If only one
   //of them vanishes, we consider it as an positive infinitesimal and
@@ -271,11 +275,11 @@ class Ridge_approximation
   //of b, for a ppal direction pointing to the ridge segment,
   //appearing at least at two vertices of the facet.
   //
-  // for color = BLUE_RIDGE, sign = 1 if BLUE_ELLIPTIC_RIDGE, -1 if
-  // BLUE_HYPERBOLIC_RIDGE 
+  // for color = MAX_RIDGE, sign = 1 if MAX_ELLIPTIC_RIDGE, -1 if
+  // MAX_HYPERBOLIC_RIDGE 
   //
-  // for color = RED_RIDGE, sign = -1 if RED_ELLIPTIC_RIDGE, 1 if
-  // RED_HYPERBOLIC_RIDGE
+  // for color = MIN_RIDGE, sign = -1 if MIN_ELLIPTIC_RIDGE, 1 if
+  // MIN_HYPERBOLIC_RIDGE
   int b_sign_pointing_to_ridge(const Vertex_const_handle v1, 
 			       const Vertex_const_handle v2,
 			       const Vertex_const_handle v3,
@@ -345,10 +349,28 @@ template < class TriangularPolyhedralSurface,
            class Vertex2VectorPropertyMap > 
   template <class OutputIterator>
   OutputIterator Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
-  compute_all_ridges(OutputIterator it, Tag_order ord)
+  compute_max_ridges(OutputIterator it, Tag_order ord)
 {
-  compute_ridges(BLUE_RIDGE, it, ord);
-  compute_ridges(RED_RIDGE, it, ord);
+  compute_ridges(MAX_RIDGE, it, ord);
+  return it;
+}
+template < class TriangularPolyhedralSurface,  
+           class Vertex2FTPropertyMap,
+           class Vertex2VectorPropertyMap > 
+  template <class OutputIterator>
+  OutputIterator Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
+  compute_min_ridges(OutputIterator it, Tag_order ord)
+{
+  compute_ridges(MIN_RIDGE, it, ord);
+  return it;
+}
+template < class TriangularPolyhedralSurface,  
+           class Vertex2FTPropertyMap,
+           class Vertex2VectorPropertyMap > 
+  template <class OutputIterator>
+  OutputIterator Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
+  compute_crest_ridges(OutputIterator it, Tag_order ord)
+{
   compute_ridges(CREST_RIDGE, it, ord);
   return it;
 }
@@ -375,9 +397,9 @@ template < class TriangularPolyhedralSurface,
       Halfedge_const_handle h1, h2, curhe1, curhe2, curhe;
       
       //h1 h2 are the hedges crossed if any, r_type should be
-      //BLUE_RIDGE, RED_RIDGE or CREST_RIDGE ; cur_ridge_type should be
-      //BLUE_ELLIPTIC_RIDGE, BLUE_HYPERBOLIC_RIDGE, BLUE_CREST_RIDGE,
-      //RED_ELLIPTIC_RIDGE, RED_HYPERBOLIC_RIDGE, RED_CREST_RIDGE or NO_RIDGE
+      //MAX_RIDGE, MIN_RIDGE or CREST_RIDGE ; cur_ridge_type should be
+      //MAX_ELLIPTIC_RIDGE, MAX_HYPERBOLIC_RIDGE, MAX_CREST_RIDGE,
+      //MIN_ELLIPTIC_RIDGE, MIN_HYPERBOLIC_RIDGE, MIN_CREST_RIDGE or NO_RIDGE
       Ridge_type cur_ridge_type = facet_ridge_type(f,h1,h2,r_type);
       if ( cur_ridge_type == NO_RIDGE ) continue;
       
@@ -405,8 +427,8 @@ template < class TriangularPolyhedralSurface,
 	    }
 	  //exit from the while if
 	  //1. border or already visited (this is a ridge loop)
-	  //2. not same type, then do not set visisted cause a BLUE_ELLIPTIC_RIDGE
-	  //	  follows a BLUE_HYPERBOLIC_RIDGE
+	  //2. not same type, then do not set visisted cause a MAX_ELLIPTIC_RIDGE
+	  //	  follows a MAX_HYPERBOLIC_RIDGE
 	}
 
       //next triangle adjacent to h2 (push_back)
@@ -454,32 +476,32 @@ facet_ridge_type(const Facet_const_handle f, Halfedge_const_handle& he1, Halfedg
     return NO_RIDGE;
    
   //determine potential crest color
-  //BLUE_CREST_RIDGE if |sum(k1)|>|sum(k2)| sum over facet vertices vi
-  //RED_CREST_RIDGE if |sum(k1)|<|sum(k2)|
+  //MAX_CREST_RIDGE if |sum(k1)|>|sum(k2)| sum over facet vertices vi
+  //MIN_CREST_RIDGE if |sum(k1)|<|sum(k2)|
   Ridge_type crest_color = NO_RIDGE;
   if (r_type == CREST_RIDGE) 
     {
       if ( CGAL::abs(k1[v1]+k1[v2]+k1[v3]) > CGAL::abs(k2[v1]+k2[v2]+k2[v3]) ) 
-	crest_color = BLUE_CREST_RIDGE; 
+	crest_color = MAX_CREST_RIDGE; 
       if ( CGAL::abs(k1[v1]+k1[v2]+k1[v3]) < CGAL::abs(k2[v1]+k2[v2]+k2[v3]) ) 
-	crest_color = RED_CREST_RIDGE;
+	crest_color = MIN_CREST_RIDGE;
       if ( CGAL::abs(k1[v1]+k1[v2]+k1[v3]) == CGAL::abs(k2[v1]+k2[v2]+k2[v3]) ) 
 	return NO_RIDGE;
     }
   
   //compute Xing on the 3 edges
   bool h1_is_crossed = false, h2_is_crossed = false, h3_is_crossed = false;
-  if ( r_type == BLUE_RIDGE || crest_color == BLUE_CREST_RIDGE ) 
+  if ( r_type == MAX_RIDGE || crest_color == MAX_CREST_RIDGE ) 
     {
-      xing_on_edge(h1, h1_is_crossed, BLUE_RIDGE);
-      xing_on_edge(h2, h2_is_crossed, BLUE_RIDGE);
-      xing_on_edge(h3, h3_is_crossed, BLUE_RIDGE);
+      xing_on_edge(h1, h1_is_crossed, MAX_RIDGE);
+      xing_on_edge(h2, h2_is_crossed, MAX_RIDGE);
+      xing_on_edge(h3, h3_is_crossed, MAX_RIDGE);
     }
-  if ( r_type == RED_RIDGE || crest_color == RED_CREST_RIDGE ) 
+  if ( r_type == MIN_RIDGE || crest_color == MIN_CREST_RIDGE ) 
     {
-      xing_on_edge(h1, h1_is_crossed, RED_RIDGE);
-      xing_on_edge(h2, h2_is_crossed, RED_RIDGE);
-      xing_on_edge(h3, h3_is_crossed, RED_RIDGE);
+      xing_on_edge(h1, h1_is_crossed, MIN_RIDGE);
+      xing_on_edge(h2, h2_is_crossed, MIN_RIDGE);
+      xing_on_edge(h3, h3_is_crossed, MIN_RIDGE);
     }
 
   //there are either 0 or 2 crossed edges
@@ -507,19 +529,19 @@ facet_ridge_type(const Facet_const_handle f, Halfedge_const_handle& he1, Halfedg
 
   //There is a ridge segment in the triangle, determine its type elliptic/hyperbolic
   bool is_elliptic;  
-  if ( r_type == BLUE_RIDGE || crest_color == BLUE_CREST_RIDGE ) 
-    is_elliptic = tag_as_elliptic_hyperbolic(BLUE_RIDGE, he1, he2);
-  else is_elliptic = tag_as_elliptic_hyperbolic(RED_RIDGE, he1, he2);
+  if ( r_type == MAX_RIDGE || crest_color == MAX_CREST_RIDGE ) 
+    is_elliptic = tag_as_elliptic_hyperbolic(MAX_RIDGE, he1, he2);
+  else is_elliptic = tag_as_elliptic_hyperbolic(MIN_RIDGE, he1, he2);
   
-  if (r_type == BLUE_RIDGE) 
-    if (is_elliptic) return BLUE_ELLIPTIC_RIDGE;
-    else return BLUE_HYPERBOLIC_RIDGE; 
-  if (crest_color == BLUE_CREST_RIDGE && is_elliptic) return BLUE_CREST_RIDGE;
+  if (r_type == MAX_RIDGE) 
+    if (is_elliptic) return MAX_ELLIPTIC_RIDGE;
+    else return MAX_HYPERBOLIC_RIDGE; 
+  if (crest_color == MAX_CREST_RIDGE && is_elliptic) return MAX_CREST_RIDGE;
 
-  if (r_type == RED_RIDGE) 
-    if (is_elliptic) return RED_ELLIPTIC_RIDGE;
-    else return RED_HYPERBOLIC_RIDGE; 
-  if (crest_color == RED_CREST_RIDGE && is_elliptic) return RED_CREST_RIDGE;
+  if (r_type == MIN_RIDGE) 
+    if (is_elliptic) return MIN_ELLIPTIC_RIDGE;
+    else return MIN_HYPERBOLIC_RIDGE; 
+  if (crest_color == MIN_CREST_RIDGE && is_elliptic) return MIN_CREST_RIDGE;
   
   return NO_RIDGE;
 }
@@ -535,7 +557,7 @@ xing_on_edge(const Halfedge_const_handle he, bool& is_crossed, Ridge_interrogati
   FT b_p, b_q; // extremalities at p and q for he: p->q
   Vector_3  d_p = d1[he->opposite()->vertex()],
     d_q = d1[he->vertex()]; //ppal dir
-  if ( color == BLUE_RIDGE ) {
+  if ( color == MAX_RIDGE ) {
     b_p = b0[he->opposite()->vertex()];
     b_q = b0[he->vertex()];
   }
@@ -562,7 +584,7 @@ bool Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Ve
     v_p2 = he2->opposite()->vertex(), v_q2 = he2->vertex(); // hei: pi->qi
 
   FT coord1, coord2;
-  if (color == BLUE_RIDGE) 
+  if (color == MAX_RIDGE) 
     {
       coord1 = CGAL::abs(b0[v_q1]) / ( CGAL::abs(b0[v_p1]) + CGAL::abs(b0[v_q1]) );
       coord2 = CGAL::abs(b0[v_q2]) / ( CGAL::abs(b0[v_p2]) + CGAL::abs(b0[v_q2]) ); 
@@ -585,7 +607,7 @@ bool Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Ve
 
     int b_sign = b_sign_pointing_to_ridge(v_p1, v_q1, v3, r1, r2, color); 
 
-    if (color == BLUE_RIDGE) 
+    if (color == MAX_RIDGE) 
       if (b_sign == 1) return true; 
       else return false;
     else if (b_sign == -1) return true; 
@@ -594,7 +616,7 @@ bool Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Ve
   else {//tag_order == Tag_4, check the sign of the meanvalue of the signs
     //      of Pi at the two crossing points
     FT sign_P;
-    if (color == BLUE_RIDGE) 
+    if (color == MAX_RIDGE) 
       sign_P =  P1[v_p1]*coord1 + P1[v_q1]*(1-coord1) 
 	+ P1[v_p2]*coord2 + P1[v_q2]*(1-coord2);
     else sign_P =  P2[v_p1]*coord1 + P2[v_q1]*(1-coord1) 
@@ -616,7 +638,7 @@ int Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Ver
 {
   Vector_3 r = r2 - r1, dv1, dv2, dv3;
   FT bv1, bv2, bv3;
-  if ( color == BLUE_RIDGE ) {
+  if ( color == MAX_RIDGE ) {
     bv1 = b0[v1];
     bv2 = b0[v2];
     bv3 = b0[v3];
@@ -681,18 +703,18 @@ addback(Ridge_line* ridge_line, const Halfedge_const_handle he,
   k1x = CGAL::abs(k1[v_p]) * coord + CGAL::abs(k1[v_q]) * (1-coord) ;   
   k2x = CGAL::abs(k2[v_p]) * coord + CGAL::abs(k2[v_q]) * (1-coord) ;   
 
-  if ( (ridge_line->line_type() == BLUE_ELLIPTIC_RIDGE) 
-       || (ridge_line->line_type() == BLUE_HYPERBOLIC_RIDGE) 
-       || (ridge_line->line_type() == BLUE_CREST_RIDGE) ) {
+  if ( (ridge_line->line_type() == MAX_ELLIPTIC_RIDGE) 
+       || (ridge_line->line_type() == MAX_HYPERBOLIC_RIDGE) 
+       || (ridge_line->line_type() == MAX_CREST_RIDGE) ) {
     ridge_line->strength() += k1x * CGAL::sqrt(segment * segment); 
     if (tag_order == Tag_4) { 
       if (k1x != k2x) 
 	k_second =CGAL::abs(( CGAL::abs(P1[v_p]) * coord + CGAL::abs(P1[v_q]) * (1-coord) )/(k1x-k2x));
       ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * model_size; }
   }
-  if ( (ridge_line->line_type() == RED_ELLIPTIC_RIDGE) 
-       || (ridge_line->line_type() == RED_HYPERBOLIC_RIDGE) 
-       || (ridge_line->line_type() == RED_CREST_RIDGE) ) {
+  if ( (ridge_line->line_type() == MIN_ELLIPTIC_RIDGE) 
+       || (ridge_line->line_type() == MIN_HYPERBOLIC_RIDGE) 
+       || (ridge_line->line_type() == MIN_CREST_RIDGE) ) {
    ridge_line->strength() += k2x * CGAL::sqrt(segment * segment); 
    if (tag_order == Tag_4) {
      if (k1x != k2x) 
@@ -724,18 +746,18 @@ addfront(Ridge_line* ridge_line,
   k1x = CGAL::abs(k1[v_p]) * coord + CGAL::abs(k1[v_q]) * (1-coord) ;   
   k2x = CGAL::abs(k2[v_p]) * coord + CGAL::abs(k2[v_q]) * (1-coord) ;   
 
-  if ( (ridge_line->line_type() == BLUE_ELLIPTIC_RIDGE) 
-       || (ridge_line->line_type() == BLUE_HYPERBOLIC_RIDGE) 
-       || (ridge_line->line_type() == BLUE_CREST_RIDGE) ) {
+  if ( (ridge_line->line_type() == MAX_ELLIPTIC_RIDGE) 
+       || (ridge_line->line_type() == MAX_HYPERBOLIC_RIDGE) 
+       || (ridge_line->line_type() == MAX_CREST_RIDGE) ) {
     ridge_line->strength() += k1x * CGAL::sqrt(segment * segment); 
    if (tag_order == Tag_4) {
      if (k1x != k2x) 
        k_second =CGAL::abs(( CGAL::abs(P1[v_p]) * coord + CGAL::abs(P1[v_q]) * (1-coord) )/(k1x-k2x));
      ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * model_size; }
   }
-  if ( (ridge_line->line_type() == RED_ELLIPTIC_RIDGE) 
-       || (ridge_line->line_type() == RED_HYPERBOLIC_RIDGE) 
-       || (ridge_line->line_type() == RED_CREST_RIDGE) ) {
+  if ( (ridge_line->line_type() == MIN_ELLIPTIC_RIDGE) 
+       || (ridge_line->line_type() == MIN_HYPERBOLIC_RIDGE) 
+       || (ridge_line->line_type() == MIN_CREST_RIDGE) ) {
    ridge_line->strength() += k2x * CGAL::sqrt(segment * segment); 
    if (tag_order == Tag_4) {
      if (k1x != k2x) 
@@ -753,15 +775,15 @@ Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2
 bary_coord(const Halfedge_const_handle he, const Ridge_type r_type)
 {
   FT b_p, b_q; // extremalities at p and q for he: p->q
-  if ( (r_type == BLUE_ELLIPTIC_RIDGE) 
-       || (r_type == BLUE_HYPERBOLIC_RIDGE) 
-       || (r_type == BLUE_CREST_RIDGE) ) {
+  if ( (r_type == MAX_ELLIPTIC_RIDGE) 
+       || (r_type == MAX_HYPERBOLIC_RIDGE) 
+       || (r_type == MAX_CREST_RIDGE) ) {
     b_p = b0[he->opposite()->vertex()];
     b_q = b0[he->vertex()];    
   }
-  if ( (r_type == RED_ELLIPTIC_RIDGE) 
-       || (r_type == RED_HYPERBOLIC_RIDGE) 
-       || (r_type == RED_CREST_RIDGE) ) {
+  if ( (r_type == MIN_ELLIPTIC_RIDGE) 
+       || (r_type == MIN_HYPERBOLIC_RIDGE) 
+       || (r_type == MIN_CREST_RIDGE) ) {
     b_p = b3[he->opposite()->vertex()];
     b_q = b3[he->vertex()];    
   }

@@ -252,7 +252,7 @@ int main(int argc, char *argv[])
   std::ifstream stream(if_name.c_str());
   stream >> P;
   fprintf(stderr, "loadMesh %d Ves %d Facets\n",
-	  P.size_of_vertices(), P.size_of_facets());
+	  (int)P.size_of_vertices(), (int)P.size_of_facets());
   if(verbose) 
     out_verb << "Polysurf with " << P.size_of_vertices()
 	     << " vertices and " << P.size_of_facets()
@@ -284,11 +284,10 @@ int main(int argc, char *argv[])
   std::vector<Ridge_line*> ridge_lines;
   back_insert_iterator<std::vector<Ridge_line*> > ii(ridge_lines);
   
-  //Find BLUE_RIDGE, RED_RIDGE, CREST or all ridges
-  //   ridge_approximation.compute_ridges(CGAL::BLUE_RIDGE, ii, tag_order);  
-  //   ridge_approximation.compute_ridges(CGAL::RED_RIDGE, ii, tag_order);  
-  ridge_approximation.compute_ridges(CGAL::CREST_RIDGE, ii, tag_order);  
-  // ridge_approximation.compute_all_ridges(ii, tag_order);  
+  //Find MAX_RIDGE, MIN_RIDGE, CREST or all ridges
+  //   ridge_approximation.compute_max_ridges(ii, tag_order);  
+  //   ridge_approximation.compute_min_ridges(ii, tag_order);  
+  ridge_approximation.compute_crest_ridges(ii, tag_order);  
  
   std::vector<Ridge_line*>::iterator iter_lines = ridge_lines.begin(), 
     iter_end = ridge_lines.end();
