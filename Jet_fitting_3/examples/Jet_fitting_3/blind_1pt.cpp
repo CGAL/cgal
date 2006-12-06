@@ -20,7 +20,8 @@ int main(int argc, char *argv[])
   //check command line  
   if (argc<4)
     {
-      std::cout << " Usage : " << argv[0] << " <inputPoints.txt> <d_fitting> <d_monge>" << std::endl;
+      std::cout << " Usage : " << argv[0] 
+                << " <inputPoints.txt> <d_fitting> <d_monge>" << std::endl;
       exit(-1);
     }
   //open the input file
