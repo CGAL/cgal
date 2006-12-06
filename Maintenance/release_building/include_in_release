@@ -37,6 +37,7 @@ Intersections_3
 Interval_skip_list
 Inventor
 iostream
+Jet_fitting_3
 kdtree
 Kernel_23
 Kernel_d
@@ -75,6 +76,7 @@ Principal_component_analysis
 QP_solver
 Qt_widget
 Random_numbers
+Ridges_3
 Robustness
 Scripts
 SearchStructures
