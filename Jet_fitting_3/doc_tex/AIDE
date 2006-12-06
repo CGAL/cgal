@@ -1,8 +1,7 @@
 ~/devc/svn-cgal/Manual/developer_scripts/cgal_manual -ps Jet_fitting_3 (or _ref)
 
 
-
-create manual with cgal_manual from here
+create manual with cgal_manual from the doc_tex dir
 
 create templates for ref_man_pages with cc_refe_wizard + type + name,
 update data for the packge in ${HOME}\cc_ref_wizard_rc
