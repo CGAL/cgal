@@ -452,7 +452,7 @@ public:
     return midpoint(va->point(), vb->point());
   }
 
-  /** Store the edge. */
+  /** Does nothing. */
   void before_conflicts_impl(const Edge&, const Point&)
   {
   }
@@ -463,12 +463,12 @@ public:
    */
   Mesher_level_conflict_status
   test_point_conflict_from_superior_impl(const Point& p,
-					 Zone& z)
+					 Zone& zone)
   {
     Mesher_level_conflict_status status = NO_CONFLICT;
     
-    for(typename Zone::Edges_iterator eit = z.boundary_edges.begin();
-        eit != z.boundary_edges.end(); ++eit)
+    for(typename Zone::Edges_iterator eit = zone.boundary_edges.begin();
+        eit != zone.boundary_edges.end(); ++eit)
       { 
         const Face_handle& fh = eit->first;
         const int& i = eit->second;
@@ -523,16 +523,16 @@ public:
     Face_handle fh;
     int index;
 
-    CGAL_assertion_code(bool should_be_true = )
+    CGAL_assertion_code(bool is_edge = )
     tr.is_edge(va, v, fh, index);
-    CGAL_assertion(should_be_true == true);
+    CGAL_assertion(is_edge == true);
 
     fh->set_constraint(index, true);
     fh->neighbor(index)->set_constraint(triangulation_ref_impl().tds().mirror_index(fh, index), true);
 
-    CGAL_assertion_code( should_be_true = )
+    CGAL_assertion_code( is_edge = )
     tr.is_edge(vb, v, fh, index);
-    CGAL_assertion(should_be_true == true);
+    CGAL_assertion(is_edge == true);
 
     fh->set_constraint(index, true);
     fh->neighbor(index)->set_constraint(triangulation_ref_impl().tds().mirror_index(fh, index), true);
