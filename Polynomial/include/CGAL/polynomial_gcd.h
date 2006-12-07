@@ -57,7 +57,7 @@ template <class NT> inline
 Polynomial<NT> gcd_(
     const Polynomial<NT>& p1, const Polynomial<NT>& p2
 ) {
-    typedef typename Polynomial_traits<NT>::Innermost_coefficient Innermost_coefficient;
+    typedef typename Polynomial_traits_d<NT>::Innermost_coefficient Innermost_coefficient;
     typedef typename Algebraic_structure_traits<Innermost_coefficient>::Algebraic_category Algebraic_category;
 
     // dispatch 1a) innermost coefficients algebra type is field or UFD
@@ -953,11 +953,11 @@ int square_free_factorization_utcf_(
     // see [Geddes et al, 1992], Algorithm 8.2
 
     typedef Polynomial<NT> POLY;
-    typedef typename Polynomial_traits<POLY>::Innermost_coefficient IC;
-    typename Polynomial_traits<POLY>::Innermost_leading_coefficient ilcoeff;
-    typename Polynomial_traits<POLY>::Innermost_coefficient_to_polynomial ictp;
-    typename Polynomial_traits<POLY>::Innermost_coefficient_begin begin;
-    typename Polynomial_traits<POLY>::Innermost_coefficient_end end;
+    typedef typename Polynomial_traits_d<POLY>::Innermost_coefficient IC;
+    typename Polynomial_traits_d<POLY>::Innermost_leading_coefficient ilcoeff;
+    //typename Polynomial_traits_d<POLY>::Innermost_coefficient_to_polynomial ictp;
+    typename Polynomial_traits_d<POLY>::Innermost_coefficient_begin begin;
+    typename Polynomial_traits_d<POLY>::Innermost_coefficient_end end;
     typename Algebraic_extension_traits<IC>::Denominator_for_algebraic_integers dfai;
     typename Algebraic_extension_traits<IC>::Normalization_factor nfac;
     typename Scalar_factor_traits<POLY>::Scalar_factor sfac;  
@@ -984,8 +984,8 @@ int square_free_factorization_utcf_(
     IC lcoeff = ilcoeff(c);
     IC denom = dfai(begin(c), end(c));
     lcoeff *= denom * nfac(denom);
-    POLY w = (a * ictp(lcoeff)) / c;
-    POLY y = (b * ictp(lcoeff)) / c;
+    POLY w = (a * POLY(lcoeff)) / c;
+    POLY y = (b * POLY(lcoeff)) / c;
 
     // extracting a common scalar factor out of w=a/c and y=b/c simultaneously,
     // such that the parts in z=y-w' are canceled out as they should
@@ -1007,8 +1007,8 @@ int square_free_factorization_utcf_(
         lcoeff = ilcoeff(g); // same as above
         denom =dfai(begin(c), end(c)); 
         lcoeff *= denom * nfac(denom);
-        w = (w * ictp(lcoeff)) / g;
-        y = (z * ictp(lcoeff)) / g;
+        w = (w * POLY(lcoeff)) / g;
+        y = (z * POLY(lcoeff)) / g;
         Scalar sfactor = sfac(y,sfac(w));
         sdiv(w, sfactor); 
         sdiv(y, sfactor);

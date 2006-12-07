@@ -1793,8 +1793,15 @@ Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text svneol=unset#app
 Polyhedron/examples/Polyhedron/cross.off -text svneol=unset#application/octet-stream
 Polynomial/include/CGAL/Exponent_vector.h -text
 Polynomial/include/CGAL/Polynomial.h -text
+Polynomial/include/CGAL/Polynomial/Algebraic_structure_traits.h -text
+Polynomial/include/CGAL/Polynomial/Fraction_traits.h -text
+Polynomial/include/CGAL/Polynomial/Modular_traits.h -text
+Polynomial/include/CGAL/Polynomial/Polynomial_type.h -text
+Polynomial/include/CGAL/Polynomial/Real_embeddable_traits.h -text
+Polynomial/include/CGAL/Polynomial/Scalar_factor_traits.h -text
 Polynomial/include/CGAL/Polynomial_traits_d.h -text
 Polynomial/include/CGAL/polynomial_gcd.h -text
+Polynomial/include/CGAL/polynomial_utils.h -text
 Polynomial/include/CGAL/prs_resultant.h -text
 Polynomial/test/Polynomial/Polynomial.C -text
 Polynomial/test/Polynomial/Polynomial_traits_d.C -text

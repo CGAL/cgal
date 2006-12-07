@@ -308,7 +308,7 @@ void io() {
         std::ostringstream os;
         CGAL::set_pretty_mode(os);
         os << oformat(POLY(NT(-3),NT(4)));
-        if( CGAL::Polynomial_traits<POLY>::poly_nesting_depth == 1)
+        if( CGAL::Polynomial_traits_d<POLY>::d == 1)
             CGAL_test_assert( os.str() == "4*x + (-3)" );
         else
             CGAL_test_assert( os.str() == "4*y + (-3)" );
@@ -317,7 +317,7 @@ void io() {
         CGAL::set_pretty_mode(os);
         os << oformat(POLY(NT(-3),NT(4)), CGAL::Parens_as_product_tag());
         
-        if( CGAL::Polynomial_traits<POLY>::poly_nesting_depth == 1)
+        if( CGAL::Polynomial_traits_d<POLY>::d == 1)
             CGAL_test_assert( os.str() == "(4*x + (-3))" );
         else
             CGAL_test_assert( os.str() == "(4*y + (-3))" ); 
@@ -789,9 +789,9 @@ void flat_iterator_tests() {
 
     POLY3 r(q1, q2, q3);
 
-    typedef CGAL::Polynomial_traits<POLY1> PT1;
-    typedef CGAL::Polynomial_traits<POLY2> PT2;
-    typedef CGAL::Polynomial_traits<POLY3> PT3;
+    typedef CGAL::Polynomial_traits_d<POLY1> PT1;
+    typedef CGAL::Polynomial_traits_d<POLY2> PT2;
+    typedef CGAL::Polynomial_traits_d<POLY3> PT3;
 
     int i;
     typename PT1::Innermost_coefficient_iterator it1;
