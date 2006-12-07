@@ -1791,6 +1791,7 @@ Polyhedron/examples/Polyhedron/corner.off -text svneol=unset#application/octet-s
 Polyhedron/examples/Polyhedron/corner_with_hole.off -text svneol=unset#application/octet-stream
 Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text svneol=unset#application/octet-stream
 Polyhedron/examples/Polyhedron/cross.off -text svneol=unset#application/octet-stream
+Polynomial/description.txt -text
 Polynomial/doc_tex/Polynomial_ref/Exponent_vector.tex -text
 Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d.tex -text
 Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_Canonicalize.tex -text
