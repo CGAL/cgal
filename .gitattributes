@@ -1842,6 +1842,7 @@ Polynomial/include/CGAL/Polynomial_traits_d.h -text
 Polynomial/include/CGAL/polynomial_gcd.h -text
 Polynomial/include/CGAL/polynomial_utils.h -text
 Polynomial/include/CGAL/prs_resultant.h -text
+Polynomial/maintainer -text
 Polynomial/test/Polynomial/Polynomial.C -text
 Polynomial/test/Polynomial/Polynomial_traits_d.C -text
 Polynomial/test/Polynomial/makefile -text
