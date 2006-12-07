@@ -74,7 +74,7 @@
 
 ## Set global-ignores to a set of whitespace-delimited globs
 ## which Subversion will ignore in its 'status' output.
-global-ignores = .*~ *~ .#* *.bak *.old .DS_Store *.a *.o *.lib *.dll *.exe *.so debug release *.blg *.cgallog *.aux *.hax *.hlg *.ilg *.pdflg *.log ProgramOutput.* error.txt *.ncb *.suo contents.obv .xvpics semantic.cache doc_ps doc_html doc_pdf
+global-ignores = .*~ *~ .#* *.bak *.old .DS_Store *.a *.o *.lib *.dll *.exe *.so debug release *.blg *.cgallog *.aux *.hax *.hlg *.ilg *.pdflg *.log ProgramOutput.* error.txt *.ncb *.suo contents.obv .xvpics semantic.cache doc_ps doc_html doc_pdf *.moc
 
 ### Set log-encoding to the default encoding for log messages
 # log-encoding = latin1
@@ -179,7 +179,6 @@ run_testsuite = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;sv
 *.ipp = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.tcc = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.f = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
-*.moc = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.m = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.mema = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.y = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
