@@ -1791,6 +1791,14 @@ Polyhedron/examples/Polyhedron/corner.off -text svneol=unset#application/octet-s
 Polyhedron/examples/Polyhedron/corner_with_hole.off -text svneol=unset#application/octet-stream
 Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text svneol=unset#application/octet-stream
 Polyhedron/examples/Polyhedron/cross.off -text svneol=unset#application/octet-stream
+Polynomial/include/CGAL/Exponent_vector.h -text
+Polynomial/include/CGAL/Polynomial.h -text
+Polynomial/include/CGAL/Polynomial_traits_d.h -text
+Polynomial/include/CGAL/polynomial_gcd.h -text
+Polynomial/include/CGAL/prs_resultant.h -text
+Polynomial/test/Polynomial/Polynomial.C -text
+Polynomial/test/Polynomial/Polynomial_traits_d.C -text
+Polynomial/test/Polynomial/makefile -text
 Polytope_distance_d/test/Polytope_distance_d/create_test_PD_cin -text
 Polytope_distance_d/test/Polytope_distance_d/test_PD.cin -text
 Polytope_distance_d/test/Polytope_distance_d/test_PD_data/intersecting_segments.data -text
