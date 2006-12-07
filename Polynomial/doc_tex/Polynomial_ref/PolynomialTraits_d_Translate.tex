@@ -1,0 +1,37 @@
+\begin{ccRefConcept}{PolynomialTraits_d::Translate}
+\ccDefinition
+
+This \ccc{AdaptableFunctor} translate a 
+\ccc{PolynomialTraits_d::Polynomial_d} with respect to one variable. 
+
+\ccRefines 
+\ccc{AdaptableFunctor}
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   first_argument_type;}{}\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Coefficient    second_argument_type;}{}\ccGlue
+\ccTypedef{typedef int                                third_argument_type;}{}
+
+\ccOperations
+\ccMethod{result_type operator()(first_argument_type  p,
+                                 second_argument_type c);}
+         { return $p(x+c)$, with respect to the outermost variable. }
+\ccMethod{result_type operator()(first_argument_type  p,
+                                 second_argument_type c,
+                                 third_argument_type i);}
+         { return $p(x+c)$, with respect to variable $x_i$. 
+           \ccPrecond $0<i \leq d$
+         }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+
+\end{ccRefConcept}
+

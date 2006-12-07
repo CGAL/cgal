@@ -1,0 +1,38 @@
+\begin{ccRefConcept}{PolynomialTraits_d::Canonicalize}
+
+\ccDefinition
+
+This \ccc{AdaptableUnaryFunction} computes a unique representative from the set: 
+$\{ q | \lambda * q = p with \lambda \in R  \}$, where $p$ is the given polynomial and 
+$R$ the base of the polynomial ring. 
+In particular, the computed polynomial has the same zero set as the given one.
+
+\footnote{In case \ccc{PolynomialTraits::Innermost_coefficient} is a model of \ccc{Field}, 
+the computed polynomial is {\em monic}. (Innermost leading coefficient is one.)}
+
+\ccRefines 
+
+\ccc{AdaptableUnaryFunction}
+
+\ccTypes
+
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   argument_type;}{}
+
+\ccOperations
+
+\ccCreationVariable{canonicalize}
+\ccMethod{result_type operator()(first_argument_type  f);}{}
+
+
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+
+\end{ccRefConcept}

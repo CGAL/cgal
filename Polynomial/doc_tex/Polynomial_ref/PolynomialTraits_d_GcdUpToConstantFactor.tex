@@ -1,0 +1,49 @@
+\begin{ccRefConcept}{PolynomialTraits_d::GcdUpToConstantFactor}
+
+\ccDefinition
+
+This \ccc{AdaptableBinaryFunction} computes the $gcd$  
+{\em up to a constant factor (utcf)} of two polynomials of type 
+\ccc{PolynomialTraits_d::Polynomial_d}. 
+
+In case the base ring $R$, \ccc{PolynomialTraits_d::Innermost_coefficient}, 
+is not a \ccc{UFDomain} or not a \ccc{Field} the polynomial ring 
+$R[x_1,\dots,x_d]$ ,\ccc{PolynomialTraits_d::Polynomial_d}, may not 
+possess greatest common divisor. However, since the $R$ is an integral 
+domain one can consider its quotient field $Q(R)$ for which gcds of 
+polynomials exist. A $gcd\_up_to_constant_factor(f,g)$ is a denominator-free 
+constant multiple of $gcd(f,g)$ in $Q(R)[x_1,\dots,x_d]$. 
+
+{\bf Note:} It may not be a divisor of $f$ and $g$ in $R[x_1,\dots,x_d]$.
+
+\ccRefines 
+
+\ccc{AdaptableBinaryFunction}
+
+\ccTypes
+
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   first_argument_type;}{}\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   second_argument_type;}{}
+
+\ccOperations
+
+\ccMethod{result_type operator()(first_argument_type  f,
+                                 second_argument_type g);}
+                {return a denominator-free, constant multiple of $gcd(f,g)$}
+
+
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+\ccRefIdfierPage{PolynomialTraits_d::IntegralDivisionUpToConstantFactor}\\
+\ccRefIdfierPage{PolynomialTraits_d::UnivariateContentUpToConstantFactor}\\
+\ccRefIdfierPage{PolynomialTraits_d::SquareFreeFactorizationUpToConstantFactor}\\
+
+\end{ccRefConcept}

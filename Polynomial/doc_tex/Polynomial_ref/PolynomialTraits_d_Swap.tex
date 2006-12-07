@@ -1,0 +1,34 @@
+\begin{ccRefConcept}{PolynomialTraits_d::Swap}
+
+\ccDefinition
+
+
+
+\ccRefines 
+
+\ccc{AdaptableFunctor}
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}\ccGlue
+
+\ccOperations
+
+\ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d,
+                                 int i, int j);}
+                { return polynomial with interchanged variables $x_i$,$x_j$. 
+                  \ccPrecond 0 < i <= d   
+                  \ccPrecond 0 < j <= d                       
+                }       
+
+
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+
+\end{ccRefConcept}

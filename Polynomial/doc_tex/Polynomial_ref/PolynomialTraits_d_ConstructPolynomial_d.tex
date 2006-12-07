@@ -1,0 +1,58 @@
+\begin{ccRefConcept}{PolynomialTraits_d::ConstructPolynomial_d}
+
+\ccDefinition
+
+This \ccc{Functor} provides several operators 
+to construct objects of type \ccc{PolynomialTraits_d::Polynomial_d}.
+
+\ccRefines 
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d result_type;}{}
+
+\ccCreationVariable{poly}
+\ccOperations
+\ccMethod{result_type operator()();}
+         {Construct the zero polynomial.}
+
+\ccMethod{result_type operator()(int i);}
+         {Construct the constant polynomial equal to $i$. }
+
+\ccMethod{template < class InputIterator >
+        result_type operator()(InputIterator begin, InputIterator end);}
+        {\ccPrecond \ccc{InputIterator} must allow the value type 
+        \ccc{PolynomialTraits_d::Coefficient}. \\
+        
+        The operator constructs the a polynomial from the iterator range, 
+        with respect to the outermost variable, $x_d$. \\
+        The range starts with the coefficient for $x_d^0$. \\
+        In case the range is empty, the zero polynomial is constructed. 
+        }
+
+
+\ccMethod{template < class InputIterator >
+        result_type operator()(InputIterator begin, InputIterator end, bool is_sorted= false);}{
+        %result_type operator()(InputIterator begin, InputIterator end, bool is_sorted = false);}{  
+   
+        Constructs a \ccc{Polynomial_d} from a given iterator range of 
+        \ccc{std::pair<Exponent_vector, PolynomialTraits_d::Innermost_coefficient>}. 
+
+
+        \ccPrecond value type of \ccc{InputIterator} is
+        \ccc{std::pair<Exponent_vector, 
+        PolynomialTraits_d::Innermost_coefficient>}.    
+        \ccPrecond Each \ccc{Exponent_vector} must have size $d$.
+        \ccPrecond All appearing \ccc{Exponent_vector}s are different.  
+        }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+\ccRefIdfierPage{PolynomialTraits_d::TotalDegree}
+
+\end{ccRefConcept}
