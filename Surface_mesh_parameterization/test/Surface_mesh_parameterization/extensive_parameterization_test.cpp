@@ -13,12 +13,6 @@
 // extensive_parameterization_test mesh1.off mesh2.off...
 
 
-//#ifdef _MSC_VER
-//    // Turn off silly warnings before we #include anything
-//    #include <CGAL/MSVC_standard_header_fixes.h>
-//    #pragma warning(disable: 4503)
-//#endif
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/Timer.h>
 #include <CGAL/parameterize.h>
@@ -207,14 +201,14 @@ int main(int argc, char * argv[])
 
         // Read the mesh
         std::ifstream stream(input_filename);
-        if(!stream)
+        Polyhedron mesh;
+        stream >> mesh;
+        if(!stream || !mesh.is_valid() || mesh.empty())
         {
-            std::cerr << "FATAL ERROR: cannot open file " << input_filename << std::endl;
+            std::cerr << "FATAL ERROR: cannot read OFF file " << input_filename << std::endl;
             accumulated_fatal_err = EXIT_FAILURE;
             continue;
         }
-        Polyhedron mesh;
-        stream >> mesh;
         std::cerr << "Read file " << input_filename << ": "
                   << task_timer.time() << " seconds "
                   << "(" << mesh.size_of_facets() << " facets, "
@@ -242,6 +236,11 @@ int main(int argc, char * argv[])
         //
         // 2) Create adaptor that virtually "cuts" a patch in a Polyhedron_ex mesh
         Mesh_patch_polyhedron   mesh_patch(mesh_adaptor, seam.begin(), seam.end());
+        if (!mesh_patch.is_valid())
+        {
+            std::cerr << "Minor error: non manifold shape or invalid cutting" << std::endl;
+            continue;
+        }
 
         std::cerr << "Mesh cutting: " << task_timer.time() << " seconds." << std::endl;
         std::cerr << std::endl;
