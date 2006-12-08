@@ -200,7 +200,10 @@ int main(int argc, char* argv[]) {
 
   Reflex_edge_searcher res;
   N.delegate(res,false,false);
-  
+
+  std::cerr << "polyhedron has " << std::distance(res.reflex_edges_begin(),res.reflex_edges_end())
+	    << " reflex edges." << std::endl;
+
   //  std::cerr << "size before sorting " << res.get_container().size() << std::endl;
 
   Reflex_edge_iterator rei;
@@ -275,17 +278,31 @@ int main(int argc, char* argv[]) {
 
   Edge_sorter2 es2(res2.get_container());
   N.delegate(es2);
+  
+  /*
+  QApplication b(argc, argv);
+  CGAL::Qt_widget_Nef_3<Nef_polyhedron>* wb = 
+    new CGAL::Qt_widget_Nef_3<Nef_polyhedron>(N);
+  b.setMainWidget(wb);
+  wb->show();
+  b.exec();
+  */
+
+
+
+  //  CGAL_NEF_SETDTHREAD(229*233);
 
   rei=res2.reflex_edges_end();
-
   if(rei!=res2.reflex_edges_begin())
     do {
       --rei;
       Halfedge_handle e = *rei;
-      //    std::cerr << "handle reflex edge " << e->source()->point() << "->" 
-      //	      << e->twin()->source()->point() << std::endl;
+      //      std::cerr << "handle reflex edge " << e->source()->point() << "->" 
+		//		<< e->twin()->source()->point() << std::endl;
       if(e->point().hx() < 0)
 	e = e->twin();
+      //      std::cerr << "handle reflex edge " << e->source()->point() << "->" 
+      //		<< e->twin()->source()->point() << std::endl;
       Single_wall W(e,Vector_3(1,0,0));
       N.delegate(W);
     } while(rei!=res2.reflex_edges_begin());
@@ -465,6 +482,7 @@ int main(int argc, char* argv[]) {
     convert_volume2polyhedron(N,c,P);
     Nef_polyhedron NP(P);
     Gausian_map G(NP,--NP.volumes_end());
+    //    Gausian_map G(N, c);
     Gausian_map GcG;
     GcG.minkowski_sum(GC,G);
 
