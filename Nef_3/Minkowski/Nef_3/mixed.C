@@ -21,7 +21,7 @@ typedef CGAL::Polyhedron_3<R>                                 Polyhedron;
 typedef Polyhedron::Point_3                                   Point;
 typedef CGAL::Nef_polyhedron_3<R>                             Nef_polyhedron;
 
-void read( const char* name, Polyhedron& poly) {
+void read( const char* name, Polyhedron_3& poly) {
     ifstream in( name);
     if ( ! in) { 
         cerr << "minkowsky_sum: error: cannot open file '"<< name
