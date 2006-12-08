@@ -51,12 +51,12 @@ void SketchSample::buildDisplayList(GLuint surf) {
 
 void SketchSample::draw_one_ridge(data_line* line)
 {
-  if (line->ridge_type == CGAL::BLUE_ELLIPTIC_RIDGE)   glColor3f(0.,0.,1.);
-  if (line->ridge_type == CGAL::BLUE_HYPERBOLIC_RIDGE) glColor3f(0.,1.,0.);
-  if (line->ridge_type == CGAL::BLUE_CREST_RIDGE)            glColor3f(0.,0.,1.);
-  if (line->ridge_type == CGAL::RED_ELLIPTIC_RIDGE)    glColor3f(1.,0.,0.);
-  if (line->ridge_type == CGAL::RED_HYPERBOLIC_RIDGE)  glColor3f(1.,1.,0.);
-  if (line->ridge_type == CGAL::RED_CREST_RIDGE)             glColor3f(1.,0.,0.);
+  if (line->ridge_type == CGAL::MAX_ELLIPTIC_RIDGE)   glColor3f(0.,0.,1.);
+  if (line->ridge_type == CGAL::MAX_HYPERBOLIC_RIDGE) glColor3f(0.,1.,0.);
+  if (line->ridge_type == CGAL::MAX_CREST_RIDGE)            glColor3f(0.,0.,1.);
+  if (line->ridge_type == CGAL::MIN_ELLIPTIC_RIDGE)    glColor3f(1.,0.,0.);
+  if (line->ridge_type == CGAL::MIN_HYPERBOLIC_RIDGE)  glColor3f(1.,1.,0.);
+  if (line->ridge_type == CGAL::MIN_CREST_RIDGE)             glColor3f(1.,0.,0.);
   
   std::vector<Point>::iterator iter = line->ridge_points.begin(), 
     ite = line->ridge_points.end();

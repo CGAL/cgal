@@ -37,7 +37,7 @@ therefore encode important informations used in segmentation,
 registration, matching and surface analysis.  Based on the results of
 the article \cite{cgal:cp-tdare-05}, we propose algorithms to identify
 and extract different parts of this singular ridge curve as well as
-umbilics on a surface given as a triangular mesh. Differential
+umbilics on a surface given as a triangulated surface mesh. Differential
 quantities associated to the mesh vertices are assumed to be given for
 these algorithms; such quantities may be computed by the package {\em
 Estimation of Local Differential Properties of Sampled Surfaces via
@@ -50,12 +50,12 @@ Polynomial Fitting}.
 Section \ref{smooth} presents the basics of the theory of ridges and
 umbilics on smooth surfaces. Sections \ref{ridge-mesh} and
 \ref{umbilic-mesh} present algorithms for the approximation of ridges and
-umbilics on triangular meshes. Section
+umbilics on triangulated surface meshes. Section
 \ref{soft} gives the package specifications, while example calls to
 functions of the package are provided in section \ref{examples}.
 
 
-\section{Ridges and umbilics of a smooth surface}
+\section{Ridges and Umbilics of a Smooth Surface}
 \label{smooth}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -221,7 +221,7 @@ then it is called a
 
 
 
-\section{Approximation of ridges on Triangular Meshes}
+\section{Approximation of Ridges on Triangulated Surface Meshes}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{ridge-mesh}
 
@@ -318,7 +318,7 @@ ridge line
 
 
 
-\section{Approximation of Umbilics on Triangular Meshes}
+\section{Approximation of Umbilics on Triangulated Surface Meshes}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{umbilic-mesh}
 
@@ -461,7 +461,7 @@ type, the vertex of the mesh they are associated to and the list of
 half-edges representing the contour of the neighborhood.
 
 
-\subsection{Models for the property map concepts}
+\subsection{Models for the Property Map Concepts}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The class
 \ccc{Vertex2Data_Property_Map_with_std_map<TriangularPolyhedralSurface>}
