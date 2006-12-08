@@ -1573,6 +1573,7 @@ Nef_3/Minkowski/Nef_3/trunk_tester.C -text
 Nef_3/Minkowski/include/CGAL/Nef_3/Nary_union_by_pq.h -text
 Nef_3/Minkowski/include/CGAL/Nef_3/Nary_union_by_queue.h -text
 Nef_3/Minkowski/include/CGAL/Nef_3/Nary_union_strategy.h -text
+Nef_3/Minkowski/include/CGAL/Nef_3/Relabel_volume.h -text
 Nef_3/Minkowski/include/CGAL/Nef_3/trunk_offset.h -text
 Nef_3/Minkowski/include/CGAL/Nef_3/trunk_offset2.h -text
 Nef_3/Visual_hull/Nef_3/corner.off -text svneol=unset#application/octet-stream
