@@ -1568,6 +1568,11 @@ Nef_2/doc_tex/Nef_2/halfplane.ps -text svneol=unset#application/postscript
 Nef_2/doc_tex/Nef_2_ref/extsegs.eps -text svneol=unset#application/postscript
 Nef_2/doc_tex/Nef_2_ref/extsegs.gif -text svneol=unset#image/gif
 Nef_2/doc_tex/Nef_2_ref/extsegs.pdf -text svneol=unset#application/pdf
+Nef_3/Minkowski/include/CGAL/Nef_3/Nary_union_by_pq.h -text
+Nef_3/Minkowski/include/CGAL/Nef_3/Nary_union_by_queue.h -text
+Nef_3/Minkowski/include/CGAL/Nef_3/Nary_union_strategy.h -text
+Nef_3/Minkowski/include/CGAL/Nef_3/trunk_offset.h -text
+Nef_3/Minkowski/include/CGAL/Nef_3/trunk_offset2.h -text
 Nef_3/Visual_hull/Nef_3/corner.off -text svneol=unset#application/octet-stream
 Nef_3/Visual_hull/Nef_3/hole.off -text svneol=unset#application/octet-stream
 Nef_3/Visual_hull/Nef_3/mpi.off -text svneol=unset#application/octet-stream
