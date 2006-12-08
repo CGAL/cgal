@@ -1,7 +1,12 @@
 GNUmakefile
-demo_elias.C
 bench
 Benchmarks
 include/CGAL/Filtered_hexagon_circular_kernel_2.h
 include/CGAL/Filtered_hexagon_circular_kernel_2/
-
+example_Lazy_Circular_kernel_arrangement.cpp
+example_Lazy_Circular_kernel_arrangement_Line_arc.cpp
+example_Lazy_Circular_kernel_arrangement_Line_Circular.cpp
+test_Lazy_circular_kernel.C
+test_Lazy_Line_arc.C
+demo_Lazy_line_circle.cpp
+demo_elias.C

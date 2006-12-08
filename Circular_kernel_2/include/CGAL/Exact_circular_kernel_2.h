@@ -43,7 +43,8 @@ TODO: CORRECT THE MAKE_ROOT_OF_2 of GMPq GMPz
 */
 
 // maybe it is better to change to the bbox filtered one
-#include <CGAL/Lazy_circular_kernel_2.h>
+//#include <CGAL/Lazy_circular_kernel_2.h>
+#include <CGAL/Filtered_bbox_circular_kernel_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -60,12 +61,14 @@ CGAL_BEGIN_NAMESPACE
   typedef CGAL::Algebraic_kernel_for_circles_2_2<NT1>          Algebraic_k1;
   typedef CGAL::Circular_kernel_2<Linear_k1,Algebraic_k1>      CK1;
 
-  typedef CGAL::Interval_nt_advanced                           NT2;
-  typedef CGAL::Cartesian<NT2>                                 Linear_k2;
-  typedef CGAL::Algebraic_kernel_for_circles_2_2<NT2>          Algebraic_k2;
-  typedef CGAL::Circular_kernel_2<Linear_k2,Algebraic_k2>      CK2;
+//   typedef CGAL::Interval_nt_advanced                           NT2;
+//   typedef CGAL::Cartesian<NT2>                                 Linear_k2;
+//   typedef CGAL::Algebraic_kernel_for_circles_2_2<NT2>          Algebraic_k2;
+//   typedef CGAL::Circular_kernel_2<Linear_k2,Algebraic_k2>      CK2;
 
-  typedef CGAL::Lazy_circular_kernel_2<CK1,CK2>        Exact_circular_kernel_2;
+//  typedef CGAL::Lazy_circular_kernel_2<CK1,CK2>
+//  Exact_circular_kernel_2;
+  typedef CGAL::Filtered_bbox_circular_kernel_2<CK1> Exact_circular_kernel_2;
 
 CGAL_END_NAMESPACE
 
