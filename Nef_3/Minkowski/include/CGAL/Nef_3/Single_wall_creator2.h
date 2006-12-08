@@ -66,7 +66,7 @@ class Single_wall_creator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
     
     SHalfedge_around_svertex_circulator svc(ein->out_sedge()), send(svc);
     CGAL_For_all(svc,send) {
-      std::cerr << " " << svc->circle() << std::endl;
+      //      std::cerr << " " << svc->circle() << std::endl;
       if(normalized(svc->circle()) == c)
 	return false;
     }
