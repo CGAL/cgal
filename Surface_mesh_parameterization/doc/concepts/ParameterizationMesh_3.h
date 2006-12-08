@@ -106,6 +106,9 @@ public:
     // Construction and destruction are undefined.
 
     // MESH INTERFACE
+    
+    /// Indicate if the mesh matches the ParameterizationMesh_3 concept.
+    bool is_valid() const;
 
     /// Get iterator over first vertex of mesh.
     Vertex_iterator  mesh_vertices_begin ();

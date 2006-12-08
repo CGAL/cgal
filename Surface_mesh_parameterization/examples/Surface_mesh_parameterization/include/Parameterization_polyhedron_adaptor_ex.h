@@ -213,6 +213,11 @@ public:
 
     // MESH INTERFACE
 
+    /// Indicate if the mesh matches the ParameterizationMesh_3 concept.
+    bool is_valid() const {
+        return m_polyhedron.is_valid();
+    }
+
     // Get iterator over first vertex of mesh
     Vertex_iterator  mesh_vertices_begin() {
         return m_polyhedron.vertices_begin();
@@ -240,19 +245,25 @@ public:
     // Index vertices of the mesh from 0 to count_mesh_vertices()-1
     void  index_mesh_vertices ()
     {
-        //fprintf(stderr,"  index Parameterization_polyhedron_adaptor vertices:\n");
+#ifdef DEBUG_TRACE
+        fprintf(stderr,"  index Parameterization_polyhedron_adaptor vertices:\n");
+#endif
         int index = 0;
         for (Vertex_iterator it=mesh_vertices_begin(); it!=mesh_vertices_end(); it++)
         {
             Point_3 position = get_vertex_position(it);
-            //fprintf(stderr, "    %d=(%f,%f,%f)\n",
-            //                index,
-            //                (float)position.x(),
-            //                (float)position.y(),
-            //                (float)position.z());
+#ifdef DEBUG_TRACE
+            fprintf(stderr, "    %d=(%f,%f,%f)\n",
+                            index,
+                            (float)position.x(),
+                            (float)position.y(),
+                            (float)position.z());
+#endif
             set_vertex_index(it, index++);
         }
-        //fprintf(stderr,"    ok\n");
+#ifdef DEBUG_TRACE
+        fprintf(stderr,"    ok\n");
+#endif
     }
 
     // Get iterator over first vertex of mesh's main border
@@ -303,7 +314,6 @@ public:
         border.push_back(seed_vertex);
 
         // fill border
-        int size = 1;
         Halfedge_handle current_halfedge = seed_halfedge;
         do
         {
@@ -317,7 +327,6 @@ public:
             border.push_back(next_vertex);
 
             current_halfedge = next_halfedge;
-            size++;
         }
         while(1);
 

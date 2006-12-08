@@ -22,7 +22,7 @@
 				Optimization="0"
 				ImproveFloatingPointConsistency="TRUE"
 				AdditionalIncludeDirectories=".\include;..\..\include;..\..\..\OpenNL\include"
-				PreprocessorDefinitions="WIN32;_CONSOLE;CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE;CGAL_USE_TAUCS;_WIN32_WINNT= 0x0400"
+				PreprocessorDefinitions="WIN32;_CONSOLE;CGAL_SURFACE_MESH_PARAMETERIZATION_CHECK_EXPENSIVE;CGAL_USE_TAUCS;_WIN32_WINNT= 0x0400;DEBUG_TRACE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="2"
@@ -239,6 +239,9 @@
 			</File>
 			<File
 				RelativePath="..\..\include\Cgal\Parameterization_mesh_patch_3.h">
+			</File>
+			<File
+				RelativePath="..\..\include\CGAL\Parameterization_polyhedron_adaptor_3.h">
 			</File>
 			<File
 				RelativePath="..\..\include\Cgal\parameterize.h">

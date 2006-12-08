@@ -445,8 +445,6 @@ int main(int argc, char * argv[])
     const char* output_filename = (CGAL_CLIB_STD::strlen(output) > 0) ? argv[first_file_arg+1]
                                                                       : NULL;
 
-    std::cerr << std::endl;
-
     //***************************************
     // Read the mesh
     //***************************************
@@ -456,13 +454,13 @@ int main(int argc, char * argv[])
 
     // Read the mesh
     std::ifstream stream(input_filename);
-    if(!stream)
-    {
-        std::cerr << "FATAL ERROR: cannot open file " << input_filename << std::endl;
-        return EXIT_FAILURE;
-    }
     Polyhedron mesh;
     stream >> mesh;
+    if(!stream || !mesh.is_valid() || mesh.empty())
+    {
+        std::cerr << "FATAL ERROR: cannot read OFF file " << input_filename << std::endl;
+        return EXIT_FAILURE;
+    }
 
     std::cerr << "Read file " << input_filename << ": "
               << task_timer.time() << " seconds "
@@ -490,9 +488,12 @@ int main(int argc, char * argv[])
     }
     //
     // 2) Create adaptor that virtually "cuts" a patch in a Polyhedron_ex mesh
-    Mesh_patch_polyhedron   mesh_patch(mesh_adaptor,
-                                       seam.begin(),
-                                       seam.end());
+    Mesh_patch_polyhedron   mesh_patch(mesh_adaptor, seam.begin(), seam.end());
+    if (!mesh_patch.is_valid())
+    {
+        std::cerr << "FATAL ERROR: non manifold shape or invalid cutting" << std::endl;
+        return EXIT_FAILURE;
+    }
 
     std::cerr << "Mesh cutting: " << task_timer.time() << " seconds." << std::endl;
     task_timer.reset();

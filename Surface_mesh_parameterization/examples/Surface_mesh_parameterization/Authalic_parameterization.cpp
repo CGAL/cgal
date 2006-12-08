@@ -51,13 +51,13 @@ int main(int argc, char * argv[])
 
     // Read the mesh
     std::ifstream stream(input_filename);
-    if(!stream) 
-    {
-        std::cerr << "FATAL ERROR: cannot open file " << input_filename << std::endl;
-        return EXIT_FAILURE;
-    }
     Polyhedron mesh;
     stream >> mesh;
+    if(!stream || !mesh.is_valid() || mesh.empty())
+    {
+        std::cerr << "FATAL ERROR: cannot read OFF file " << input_filename << std::endl;
+        return EXIT_FAILURE;
+    }
 
     //***************************************
     // Create Polyhedron adaptor

@@ -175,7 +175,7 @@ private:
         // #borders
         m_nb_borders = m_skeleton.size();
 
-        // put longest border first if required
+        // put longest border first
         if (m_nb_borders>1)
         {
             int index = get_index_longest_border();

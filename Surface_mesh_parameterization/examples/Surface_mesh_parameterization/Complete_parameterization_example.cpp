@@ -210,13 +210,13 @@ int main(int argc, char * argv[])
 
     // Read the mesh
     std::ifstream stream(input_filename);
-    if(!stream)
-    {
-        std::cerr << "FATAL ERROR: cannot open file " << input_filename << std::endl;
-        return EXIT_FAILURE;
-    }
     Polyhedron mesh;
     stream >> mesh;
+    if(!stream || !mesh.is_valid() || mesh.empty())
+    {
+        std::cerr << "FATAL ERROR: cannot read OFF file " << input_filename << std::endl;
+        return EXIT_FAILURE;
+    }
 
     //***************************************
     // Create Polyhedron adaptor
@@ -242,6 +242,11 @@ int main(int argc, char * argv[])
     typedef CGAL::Parameterization_mesh_patch_3<Parameterization_polyhedron_adaptor>
                                             Mesh_patch_polyhedron;
     Mesh_patch_polyhedron   mesh_patch(mesh_adaptor, seam.begin(), seam.end());
+    if (!mesh_patch.is_valid())
+    {
+        std::cerr << "FATAL ERROR: non manifold shape or invalid cutting" << std::endl;
+        return EXIT_FAILURE;
+    }
 
     //***************************************
     // Discrete Authalic Parameterization (square border)
