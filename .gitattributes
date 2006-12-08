@@ -1569,6 +1569,7 @@ Nef_2/doc_tex/Nef_2_ref/extsegs.eps -text svneol=unset#application/postscript
 Nef_2/doc_tex/Nef_2_ref/extsegs.gif -text svneol=unset#image/gif
 Nef_2/doc_tex/Nef_2_ref/extsegs.pdf -text svneol=unset#application/pdf
 Nef_3/Minkowski/Nef_3/trunk_configuration_space.C -text
+Nef_3/Minkowski/Nef_3/trunk_tester.C -text
 Nef_3/Minkowski/include/CGAL/Nef_3/Nary_union_by_pq.h -text
 Nef_3/Minkowski/include/CGAL/Nef_3/Nary_union_by_queue.h -text
 Nef_3/Minkowski/include/CGAL/Nef_3/Nary_union_strategy.h -text
