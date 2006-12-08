@@ -69,9 +69,9 @@ class YVertical_wall_builder : public Modifier_base<typename Nef_::SNC_structure
       vec2 = se2->circle().orthogonal_vector();
       Sphere_point sp2 = CGAL::ORIGIN + cross_product(vec2,vec1);
       Sphere_segment s(sp1, sp2, Sphere_circle(sp2,sp1));
-      std::cerr << "e:" << e->source()->point() 
-		<< "->" << e->twin()->source()->point() << std::endl;
-      std::cerr << "s:" << sp1 << "->" << sp2 << std::endl;
+      //      std::cerr << "e:" << e->source()->point() 
+      //		<< "->" << e->twin()->source()->point() << std::endl;
+      //      std::cerr << "s:" << sp1 << "->" << sp2 << std::endl;
       CGAL_assertion(s.is_long());
 
       Sphere_point sp(0,1,0);
