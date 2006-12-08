@@ -20,8 +20,12 @@ fi
 # Create test folder (if needed)
 [ -d test ] || mkdir test
 
+# Remove destination file (if needed)
+DESTINATION_FILE="test/test_$5_$1_$2.$4"
+[ -f $DESTINATION_FILE ] && rm -f $DESTINATION_FILE
+
 # echo on
 set -x
 
-$PARAM_APPLICATION -t "$1" -b "$2" -s "$3" -o "$4" $SOURCE_FILE test/test_"$5"_"$1"_"$2"."$4" 2>&1
+$PARAM_APPLICATION -t "$1" -b "$2" -s "$3" -o "$4" $SOURCE_FILE $DESTINATION_FILE 2>&1
 
