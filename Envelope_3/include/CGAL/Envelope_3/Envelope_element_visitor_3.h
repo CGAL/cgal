@@ -57,7 +57,7 @@ public:
   typedef MinimizationDiagram_2                        Minimization_diagram_2;
   typedef typename Traits::Point_2                     Point_2;
   typedef typename Traits::X_monotone_curve_2          X_monotone_curve_2;
-  typedef typename Traits::Has_infinite_category       Has_infinite_category;
+  typedef typename Traits::Has_boundary_category       Has_boundary_category;
 
 protected:
 
@@ -539,16 +539,16 @@ public:
             // we will add the *icv end points to the split_points, unless
             // but we should be carefull with infinite curves.
             Arr_traits_adaptor_2<Traits> tr_adaptor(*traits);
-            if(tr_adaptor.infinite_in_y_2_object()(*icv, MIN_END) == FINITE &&
-                tr_adaptor.infinite_in_x_2_object()(*icv, MIN_END) == FINITE)
+            if(tr_adaptor.boundary_in_y_2_object()(*icv, MIN_END) == NO_BOUNDARY &&
+                tr_adaptor.boundary_in_x_2_object()(*icv, MIN_END) == NO_BOUNDARY)
                 split_points.push_back(Point_2_with_info(
                                         traits->construct_min_vertex_2_object()(*icv),
                                         true, false));
             else
               is_min_end_at_inf = true;
 
-            if(tr_adaptor.infinite_in_y_2_object()(*icv, MAX_END) == FINITE &&
-                tr_adaptor.infinite_in_x_2_object()(*icv, MAX_END) == FINITE)
+            if(tr_adaptor.boundary_in_y_2_object()(*icv, MAX_END) == NO_BOUNDARY &&
+                tr_adaptor.boundary_in_x_2_object()(*icv, MAX_END) == NO_BOUNDARY)
                 split_points.push_back(Point_2_with_info(
                                         traits->construct_max_vertex_2_object()(*icv),
                                         false, true));
@@ -815,7 +815,7 @@ protected:
         else
         {
           //two infinite surfaces, no outer boundary or holes. 
-          res = compare_distance_to_envelope(surf1,surf2, Has_infinite_category());
+          res = compare_distance_to_envelope(surf1,surf2, Has_boundary_category());
         }
       }
       
@@ -1962,15 +1962,15 @@ protected:
       // and is also no isolated)
       new_vertices.push_back(v);
     }
-    void before_create_vertex_at_infinity(Infinity_type inf_x,
-                                          Infinity_type inf_y)
+    void before_create_vertex_at_infinity(Boundary_type inf_x,
+                                          Boundary_type inf_y)
     {}
 
     void after_create_vertex_at_infinity(Vertex_handle v)
     {
       Vertex_handle new_v = 
-        big_arr_accessor.create_vertex_at_infinity(v->infinite_in_x(),
-                                                   v->infinite_in_y());
+        big_arr_accessor.create_vertex_at_infinity(v->boundary_in_x(),
+                                                   v->boundary_in_y());
       map_vertices[v] = new_v;
     }
 

@@ -10,7 +10,7 @@ operations needed to compute the envelope of a set of arbitrary
 surfaces in $\reals^3$. It refines the 
 \ccc{ArrangementXMonotoneTraits_2} concept. In addition to the
 \ccc{Point_2} and \ccc{X_monotone_curve_2} types and the
-\ccc{Has_infinite_category} category tag listed in the base concept,
+\ccc{Has_boundary_category} category tag listed in the base concept,
 it also lists the \ccc{Surface_3} and  \ccc{Xy_monotone_surface_3}
 types, which represent arbitrary surfaces and $xy$-monotone surfaces,
 respectively, and some constructions and predicates on these types.
@@ -118,7 +118,7 @@ Note however, that these operations usually involve the projection of
  at all.
  The functor should therefore return the comparison result of
  $s_1(p)$ and $s_2(p)$ for some planar point $p \in \reals^2$.
- This operator is required iff the category tag \ccc{Has_infinite_category} 
+ This operator is required iff the category tag \ccc{Has_boundary_category} 
  is defined as \ccc{Tag_true}.
  \end{itemize}}
 

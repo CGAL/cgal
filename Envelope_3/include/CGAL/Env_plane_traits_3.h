@@ -54,7 +54,7 @@ class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel_>
   typedef typename Kernel::Object_3            Object_3;
   typedef std::pair<Curve_2, 
                     Multiplicity>              Intersection_curve;
-  typedef Tag_true                             Has_infinite_category;
+  typedef Tag_true                             Has_boundary_category;
   
 
   class Is_vertical_3
