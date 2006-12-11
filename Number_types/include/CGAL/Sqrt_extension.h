@@ -17,8 +17,8 @@
 //         they may be wrong now.
 
 
-/*! \file NiX/Sqrt_extension.h
-    \brief Defines class NiX::Sqrt_extension. 
+/*! \file CGAL/Sqrt_extension.h
+    \brief Defines class CGAL::Sqrt_extension. 
     
     Provides the Number type Sqrt_extension that extends a given number type  
     \c NT by a square root. One can add several square roots recursively.
@@ -36,13 +36,13 @@
 //#include <boost/iterator/transform_iterator.hpp>
 //#include <boost/mpl/if.hpp>
 
-//#include <CGAL/NiX/number_type_basic.h>
+//#include <CGAL/CGAL/number_type_basic.h>
 
 // We have to define the macros befor including Polynomials, 
 // since they cause a doxygen error otherwise.. (version 1.2.4)
 // the error does not appear for doxygen version 1.2.6
 /*! 
-  \ingroup NiX_Arithmetic_traits
+  \ingroup CGAL_Arithmetic_traits
   \brief locally define names from \c Arithmetic_traits_sqrt_extension
   
   This macro helps to keep your source code readable if used in the
@@ -52,7 +52,7 @@
   template \< class ArithmeticTraitsSqrtExtension \>
   class my_class {
   public:
-      NiX_SNAP_ARITHMETIC_TRAITS_SQRT_EXTENSION_TYPEDEFS(ArithmeticTraitsSqrtExtension);
+      CGAL_SNAP_ARITHMETIC_TRAITS_SQRT_EXTENSION_TYPEDEFS(ArithmeticTraitsSqrtExtension);
       // ...
   };
   </PRE>
@@ -74,19 +74,19 @@
   typedef typename AT::Poly_nested_extn3 Poly_nested_extn3; \
 
 
-/*#include <NiX/NT_traits.h>
-#include <NiX/Scalar_factor_traits.h>
-#include <NiX/Cofraction_traits.h>
-#include <NiX/number_type_utils.h>
-#include <NiX/Modular.h>
+/*#include <CGAL/Algebraic_structure_traits.h>
+#include <CGAL/Scalar_factor_traits.h>
+#include <CGAL/Cofraction_traits.h>
+#include <CGAL/number_type_utils.h>
+#include <CGAL/Modular.h>
 #include <functional> // only for conversion function at the end
-#include <NiX/Coercion_traits.h>
-#include <NiX/Polynomial.h>
-#include <NiX/Arithmetic_traits.h>
-#include <NiX/Algebraic_number_traits.h>*/
+#include <CGAL/Coercion_traits.h>
+#include <CGAL/Polynomial.h>
+#include <CGAL/Arithmetic_traits.h>
+#include <CGAL/Algebraic_extension_traits.h>*/
 //#include <CGAL/LiS/Mapping_iterator.h> // only for conversion function at the end
 //#include <functional>
-//#include <numeric> // only for Algebraic_number_traits (std::accumulate)
+//#include <numeric> // only for Algebraic_extension_traits (std::accumulate)
 
 CGAL_BEGIN_NAMESPACE
 
@@ -121,7 +121,7 @@ std::ostream& operator << (std::ostream& os, const Sqrt_extension<NT,ROOT>& p);
 template <class NT,class ROOT>  
 std::istream& operator >> (std::istream& is, Sqrt_extension<NT,ROOT>& p);
 
-/*! \ingroup NiX_Sqrt_extension
+/*! \ingroup CGAL_Sqrt_extension
 \brief represents an extension of a number type by one square root. 
 
  An instance of this class
@@ -131,7 +131,7 @@ NT must be constructible from ROOT.  The number type NT
 must be at least a model of the IntegralDomainWithoutDiv concept. 
 
 An Sqrt_extension is a model of RealComparable if NT is RealComparable.\n  
-The <B>algebraic type</B> of NiX::Sqrt_extension depends on the algebraic type 
+The <B>algebraic type</B> of CGAL::Sqrt_extension depends on the algebraic type 
 of NT: 
 - IntegralDomainWithoutDiv -> IntegralDomainWithoutDiv
 - IntegralDomain           -> IntegralDomain
@@ -142,7 +142,7 @@ of NT:
 
 
 Note that NT and ROOT can themselves be an instance of
-NiX::Sqrt_extension, yielding a nested extension.\n
+CGAL::Sqrt_extension, yielding a nested extension.\n
 Note that the extension of an UFDomain or EuclideanRing is just an 
 IntegralDomain, since the extension in general destroys the unique 
 factorization property. 
@@ -248,7 +248,7 @@ public:
         if (s1 == CGAL::POSITIVE)
             return CGAL_NTS sign(r);
         else
-            return -CGAL_NTS sign(r); // TODO: Is this valid??? Was: -NiX::sign(..)
+            return -CGAL_NTS sign(r); // TODO: Is this valid??? Was: -CGAL::sign(..)
     }
   
 
@@ -260,7 +260,7 @@ public:
     }
     bool is_zero_(const CGAL::Tag_false) const {
         // Is_real_comparable == CGAL::Tag_false
-        // i.e. NiX::Modular
+        // i.e. CGAL::Modular
         if(is_extended()){
             if(a0() == (NT)0 && a1()== (NT)0) {
                 return true;
@@ -274,7 +274,7 @@ public:
 
     //! returns \a true if xx is zero 
     bool is_zero() const { 
-//        typedef typename NT_traits_nt::Is_real_comparable Is_real_comparable;
+//        typedef typename Algebraic_structure_traits_nt::Is_real_comparable Is_real_comparable;
       typedef typename Real_embeddable_traits_nt::Is_real_embeddable 
                                                              Is_real_embeddable;
         return is_zero_(Is_real_embeddable());
@@ -347,7 +347,7 @@ public:
    void output_ascii(std::ostream& os) const{
        os<<"EXT["<<a0()<<","<<a1()<<","<<root()<<"]";
    }
-    /*! \relates NiX::Sqrt_extension
+    /*! \relates CGAL::Sqrt_extension
      *  \brief read a Sqrt_extension from \c is
      *
      * The expected format is:
@@ -357,7 +357,7 @@ public:
      * The format of the coefficients must be understandable for
      * <TT> is >> iformat(ai) </TT>.
      *
-     * Example: A \c NiX::Sqrt_extension<int,Root<1,int> > with a value of
+     * Example: A \c CGAL::Sqrt_extension<int,Root<1,int> > with a value of
      * 4-2*sqrt(5) has to be written as
      * \c <TT>Self[4,-2,5]</TT> for this function.
      */
@@ -733,16 +733,16 @@ class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT> >
 
 
 
-//##########################NT_traits<Sqrt_extension>######################
+//##########################Algebraic_structure_traits<Sqrt_extension>######################
 
 
-// ############## initializing for NT_traits_comparable_base 
+// ############## initializing for Algebraic_structure_traits_comparable_base 
 /*template <class EXT, class TypeTAG>
 class Sqrt_ext_NTtr_comp_base;
 
 template <class NT, class ROOT >
 class Sqrt_ext_NTtr_comp_base<Sqrt_extension<NT,ROOT> , CGAL::Tag_true >
-    :public NT_traits_comparable_base <Sqrt_extension<NT,ROOT> > {
+    :public Algebraic_structure_traits_comparable_base <Sqrt_extension<NT,ROOT> > {
     typedef Sqrt_extension<NT,ROOT> EXT;
 public:
     class To_Interval {
@@ -754,11 +754,11 @@ public:
         //! the function call.
         Interval operator()(const EXT& a) const {
             if(a.is_extended()){               
-                return NiX::to_Interval(a.a0())
-                    + Interval(int(NiX::sign(a.a1())))
-                    * NiX::sqrt(NiX::to_Interval(a.a1()*a.a1()*NT(a.root()))); 
+                return CGAL::to_Interval(a.a0())
+                    + Interval(int(CGAL::sign(a.a1())))
+                    * CGAL::sqrt(CGAL::to_Interval(a.a1()*a.a1()*NT(a.root()))); 
             }else{
-                return NiX::to_Interval(a.a0());
+                return CGAL::to_Interval(a.a0());
             }
         }
     };
@@ -773,11 +773,11 @@ public:
         // or the root may not. ?? ! 
         double operator()(const EXT& a) const {
             if(a.is_extended()){
-                return NiX::to_double(a.a0()) 
-                    +  int(NiX::sign(a.a1()))
-                    *sqrt(NiX::to_double(a.a1()*a.a1()*NT(a.root()))); 
+                return CGAL::to_double(a.a0()) 
+                    +  int(CGAL::sign(a.a1()))
+                    *sqrt(CGAL::to_double(a.a1()*a.a1()*NT(a.root()))); 
             }else{
-                return NiX::to_double(a.a0());
+                return CGAL::to_double(a.a0());
             }
         }
     };
@@ -785,25 +785,25 @@ public:
 };
 template <class EXT>
 class Sqrt_ext_NTtr_comp_base<EXT,CGAL::Tag_false>
-    :public NT_traits_comparable_base < LiS::Null_tag > {
+    :public Algebraic_structure_traits_comparable_base < LiS::Null_tag > {
 // nothing new
 };*/
 
 
-// ############### actual NT_traits for Sqrt_extension
+// ############### actual Algebraic_structure_traits for Sqrt_extension
 
-/*! \ingroup NiX_Sqrt_extension
-    \ingroup NiX_NT_traits_spec
+/*! \ingroup CGAL_Sqrt_extension
+    \ingroup CGAL_Algebraic_structure_traits_spec
   
-    \brief Specialization of CGAL::Algebraic_structure_traits for NiX::Sqrt_extension. 
+    \brief Specialization of CGAL::Algebraic_structure_traits for CGAL::Sqrt_extension. 
 */
 /*template < class COEFF, class ROOT >
-class NT_traits< Sqrt_extension< COEFF, ROOT > > 
+class Algebraic_structure_traits< Sqrt_extension< COEFF, ROOT > > 
     : public Sqrt_extension_NTtr_base< Sqrt_extension< COEFF, ROOT >, 
-                             typename NT_traits< COEFF >::Algebra_type>,
+                             typename Algebraic_structure_traits< COEFF >::Algebra_type>,
       public Sqrt_ext_NTtr_comp_base< Sqrt_extension< COEFF, ROOT >, 
-                             typename NT_traits<COEFF>::Is_real_comparable>,
-      public NT_traits_log2_null_base
+                             typename Algebraic_structure_traits<COEFF>::Is_real_comparable>,
+      public Algebraic_structure_traits_log2_null_base
 {
 public:
     typedef Sqrt_extension< COEFF, ROOT > NT;  
@@ -855,7 +855,7 @@ Sqrt_extension<NT,ROOT>::input_ascii(std::istream& is){
 // ##################### OUTPUT
 //! write Sqrt_extension to \c os in \c LiS::IO::PRETTY format
 /*! The output is intended to be Maple-readable; see module
- *  \link NiX_io NiX I/O Support \endlink.
+ *  \link CGAL_io CGAL I/O Support \endlink.
  */
 template<class NT, class ROOT> 
 void 
@@ -884,7 +884,7 @@ Sqrt_extension<NT,ROOT>::output_maple(std::ostream& os) const{
     return;
 }
  
-/*! \relates NiX::Sqrt_extension
+/*! \relates CGAL::Sqrt_extension
  *  \brief output \c ext to \c os
  *
  *  Output \c ext in a format as specified by
@@ -904,10 +904,10 @@ std::ostream& operator << (std::ostream& os,
     return os;
 }
 
-/*! \relates NiX::Sqrt_extension
- *  \brief try to read a NiX::Sqrt_extension from \c is into \c ext
+/*! \relates CGAL::Sqrt_extension
+ *  \brief try to read a CGAL::Sqrt_extension from \c is into \c ext
  *
- *  \c is must be in a mode that supports input of NiX::Sqrt_extension
+ *  \c is must be in a mode that supports input of CGAL::Sqrt_extension
  *  (\c LiS::IO::ASCII or \c LiS::IO::BINARY) and the input from
  *  \c is must have the format of output to a stream of the same mode.
  */
@@ -920,14 +920,14 @@ std::istream& operator >> (std::istream& is, Sqrt_extension<NT,ROOT>& ext) {
 // ################################ IO END ###############################
 
 /*!
-  \ingroup NiX_Sqrt_extension
-  \ingroup NiX_Modular_traits_spec
-  \brief Specialization of NiX::Modular_traits for \c NiX::Sqrt_extension.
+  \ingroup CGAL_Sqrt_extension
+  \ingroup CGAL_Modular_traits_spec
+  \brief Specialization of CGAL::Modular_traits for \c CGAL::Sqrt_extension.
   
   A model of the concept ModularTraits.
  
-  NiX::Modular_traits::Modular_image maps the coefficients of a  
-  NiX::Sqrt_extension to their Modular_image and returns the resulting 
+  CGAL::Modular_traits::Modular_image maps the coefficients of a  
+  CGAL::Sqrt_extension to their Modular_image and returns the resulting 
   compound type.  
 */
 /*template< class COEFF, class ROOT>
@@ -960,7 +960,7 @@ public:
     };
 };*/
 
-/*! \relates NiX::Sqrt_extension
+/*! \relates CGAL::Sqrt_extension
  *  \brief convert Sqrt_extension to root expression in a FieldWithSqrt
  *
  *  If \c NT is a type from which numbers of type \c FieldWithSqrt
@@ -979,7 +979,7 @@ FieldWithSqrt to_rootexp(Sqrt_extension<NT, ROOT> x) {
     }
 };*/
 
-/*! \relates NiX::Sqrt_extension
+/*! \relates CGAL::Sqrt_extension
  *  \brief convert coefficients of univariate Polynomial
  *
  *  Convert a polynomial from \c Sqrt_extension to \c FieldWithSqrt by
@@ -997,14 +997,14 @@ Polynomial<FieldWithSqrt> to_rootexp(Polynomial< Sqrt_extension<NT, ROOT> > p) {
     );
 };*/
 
-/*! \relates NiX::Sqrt_extension
- *  \brief convert \c NiX::Algebraic_real into \c Sqrt_extension
+/*! \relates CGAL::Sqrt_extension
+ *  \brief convert \c CGAL::Algebraic_real into \c Sqrt_extension
  *
- *  Let \c x be an NiX::Algebraic_real with defining \c x.polynomial()
+ *  Let \c x be an CGAL::Algebraic_real with defining \c x.polynomial()
  *  of degree at most 2. Then \c x can be written as a one-root
  *  expression. This function converts it to a one-root expression,
  *  represented by an object of class \c Sqrt_extension (which is expected
- *  to be a specialization of \c NiX::Sqrt_extension<> ).
+ *  to be a specialization of \c CGAL::Sqrt_extension<> ).
  *
  *  It is the caller's responsibility to take care of the problem
  *  that an algebraic real with defining polynomial of degree 2
@@ -1012,14 +1012,14 @@ Polynomial<FieldWithSqrt> to_rootexp(Polynomial< Sqrt_extension<NT, ROOT> > p) {
  *
  *  This function is designed for cases where \c Sqrt_extension::NT models
  *  the rationals, \c Sqrt_extension::ROOT models is integer 
- *  and \c NiX::Algebraic_real<>::Coefficient is integer
+ *  and \c CGAL::Algebraic_real<>::Coefficient is integer
  *  or rational. (You may get away in other cases if you know
  *  what you are doing). If parameter \c simplify_radicant is set to \c true
  *  the function tries to extract square parts out of the root. Note that the
  *  current method is really slow at the moment.
  *
  *  \pre Sqrt_extension::NT must have a constructor from \c Coefficient.
- *  \pre It must be possible to call \c NiX::Algebraic_real<>.compare()
+ *  \pre It must be possible to call \c CGAL::Algebraic_real<>.compare()
  *  with an argument of type \c NT .
  */
  // TODO: No Coercion_traits available yet.
@@ -1032,20 +1032,20 @@ Extension to_Sqrt_extension(AlgebraicReal x, bool simplify_radicant = false) {
     typedef typename Extension::NT NT;
     typedef typename Extension::ROOT ROOT;
     
-    Polynomial< Coefficient > p = NiX::canonicalize_polynomial(x.polynomial());
+    Polynomial< Coefficient > p = CGAL::canonicalize_polynomial(x.polynomial());
     switch (p.degree()) {
     case 2: {
-        typedef NiX::Coercion_traits< NT, Coefficient > CT;
+        typedef CGAL::Coercion_traits< NT, Coefficient > CT;
         typedef typename CT::Type Type;
-        typename CGAL::Algebraic_structure_traits<Type>::Integral_div idiv;
+        typename CGAL::Algebraic_structure_traits<Type>::integral_division idiv;
         typename CT::Cast cast;
     
         Type den(Type(2) * cast(p[2]));
-        NiX_assert(NiX::sign(den) == CGAL::POSITIVE);
+        CGAL_assert(CGAL::sign(den) == CGAL::POSITIVE);
         Type mid = idiv(cast(-p[1]), den);
-        NiX::simplify(mid);
+        CGAL::simplify(mid);
         ROOT rad = p[1]*p[1] - ROOT(4)*p[0]*p[2];
-        NiX_assert(rad != ROOT(0)); // double root of algebraic real polynomial
+        CGAL_assert(rad != ROOT(0)); // double root of algebraic real polynomial
         ROOT f = 1;
         Extension e;
         // is radicant a square number?
@@ -1056,7 +1056,7 @@ Extension to_Sqrt_extension(AlgebraicReal x, bool simplify_radicant = false) {
             switch (x.compare(mid)) {
             case CGAL::LARGER:             break;
             case CGAL::SMALLER:    c = -c; break;
-            default:               NiX_error("bogus comparison result");
+            default:               CGAL_error("bogus comparison result");
             }
             e = Extension(mid + c * NT(root));
         } else {
@@ -1064,7 +1064,7 @@ Extension to_Sqrt_extension(AlgebraicReal x, bool simplify_radicant = false) {
                 // root out square parts of radicant -> very slow!!!
                 ROOT s = 4;
                 ROOT i = 2;
-                while (NiX::compare(s,rad) == CGAL::SMALLER) {
+                while (CGAL::compare(s,rad) == CGAL::SMALLER) {
                     typename CGAL::Algebraic_structure_traits< ROOT >::Mod mod;
                     while (mod(rad, s) == ROOT(0)) {
                         typename CGAL::Algebraic_structure_traits< ROOT >::Div div;
@@ -1079,35 +1079,36 @@ Extension to_Sqrt_extension(AlgebraicReal x, bool simplify_radicant = false) {
             switch (x.compare(mid)) {
             case CGAL::LARGER:             break;
             case CGAL::SMALLER:    c = -c; break;
-            default:             NiX_error("bogus comparison result");
+            default:             CGAL_error("bogus comparison result");
             }
-            NiX::simplify(c);
+            CGAL::simplify(c);
             e = Extension(mid, c, rad);
         }
-        NiX_postcond(p.evaluate(e) == Extension(0));
-        NiX_postcond_code(
+        CGAL_postcond(p.evaluate(e) == Extension(0));
+        CGAL_postcond_code(
                 typename AlgebraicReal::Field_with_sqrt x0;
-                NiX::convert_to(e,x0);
+                CGAL::convert_to(e,x0);
         );
-        NiX_postcond(x.real() == x0);
+        CGAL_postcond(x.real() == x0);
         return e; 
     }
     case 1:
-        NiX_assert(x.is_rational());
+        CGAL_assert(x.is_rational());
         // warning: Extension::ROOT::root is not set!
         return Extension(x.rational());
     default:
-        NiX_error("NiX::to_Extension(x) called with x.poly.degree != 1, 2");
+        CGAL_error("CGAL::to_Extension(x) called with x.poly.degree != 1, 2");
         // NOT REACHED 
         return Extension();
     }
 };*/
 
-/*! \ingroup NiX_Sqrt_extension
-    \ingroup NiX_Scalar_factor_traits_spec
-    \brief specialization of NiX::Scalar_factor_traits for NiX::Sqrt_extension
+
+//################################# CGAL::Scalar_factor_traits ##################
+/*! \ingroup CGAL_Sqrt_extension
+    \ingroup CGAL_Scalar_factor_traits_spec
+    \brief specialization of CGAL::Scalar_factor_traits for CGAL::Sqrt_extension
  */
-#if 0 // Scalar_factor_traits no supported yet
 template <class COEFF, class INTERNAL>
 class Scalar_factor_traits< Sqrt_extension<COEFF, INTERNAL> > {
 public:
@@ -1159,58 +1160,58 @@ public:
         }
     };
 };
-#endif // Scalar_factor_traits no supported yet
 
-//################################# NiX::Fraction_traits ##################
+//################################# CGAL::Fraction_traits ##################
 // Select the right alternative as Fraction_traits
-// The actual Type traits is Inter::Sqrt_ext_Ftr_base_2
+// The actual Type traits is Intern::Sqrt_ext_Ftr_base_2
 // The selction is done in two steps:
 // 1. Inter::Sqrt_ext_Ftr_base_1 selects by the BOOL_TAG whether the COEFF type
-//    Is_decomposable 
+//    Is_fraction 
 // 2. Intern::Sqrt_ext_Ftr_base_2 checks whether the internal type of the ROOT
 //    is still implicite convertible to the new COEFF type. 
 //    since the ROOT type it self can not be converted.
-/*namespace Intern{ 
+namespace Intern{ 
     template <class EXT, bool> class Sqrt_ext_Ftr_base_2;
     template <class EXT, class BOOL_TAG> class Sqrt_ext_Ftr_base_1;
-} */   
+} 
 
-/*! \ingroup NiX_Sqrt_extension
-    \ingroup NiX_Fraction_traits_spec
-    \brief Specialisation of NiX::Fraction_traits for NiX::Sqrt_extension.  
+/*! \ingroup CGAL_Sqrt_extension
+    \ingroup CGAL_Fraction_traits_spec
+    \brief Specialisation of CGAL::Fraction_traits for CGAL::Sqrt_extension.  
  *
- *  Extensions provide suitable specializations of \c NiX::Fraction_traits.
+ *  Extensions provide suitable specializations of \c CGAL::Fraction_traits.
  *  They are decomposable iff their coefficient type is.
  *  The denominator \e d of a Extension \e ext is a low common multiple
- *  (see \c NiX::Fraction_traits::Common_factor for details) of the
+ *  (see \c CGAL::Fraction_traits::Common_factor for details) of the
  *  denominators of its coefficients.  The numerator is the Extenion
  *  \e d*ext with a fraction-free coefficient type.
  *
  *  This works for nested Sqrt_extensions, too.
  */
-/*template <class COEFF, class ROOT_NT >
+
+template <class COEFF, class ROOT_NT >
 class Fraction_traits< Sqrt_extension<COEFF,ROOT_NT > >
     : public Intern::Sqrt_ext_Ftr_base_1< 
     Sqrt_extension<COEFF,ROOT_NT >, 
-    typename NiX::Fraction_traits<COEFF>::Is_decomposable >              
+    typename CGAL::Fraction_traits<COEFF>::Is_fraction >              
 {
     // nothing new
 };
 
 namespace Intern {
 
-// Use this if the coefficients cannot be decomposed
+// Use this if the coefficients cannot be decomposed 
 // into numerator and denominator
-template <class NT_ >
+template <class NT_ > 
 class Sqrt_ext_Ftr_base_2< NT_, false > {
 public:
     typedef NT_ NT;
-    typedef ::CGAL::Tag_false Is_decomposable;
-    typedef ::LiS::Null_tag Numerator_type;
-    typedef ::LiS::Null_tag Denominator_type;
-    typedef ::LiS::Null_tag Common_factor;
-    typedef ::LiS::Null_tag Decompose;
-    typedef ::LiS::Null_tag Compose;
+    typedef ::CGAL::Tag_false Is_fraction;
+    typedef ::CGAL::Null_tag Numerator_type;
+    typedef ::CGAL::Null_tag Denominator_type;
+    typedef ::CGAL::Null_tag Common_factor;
+    typedef ::CGAL::Null_tag Decompose;
+    typedef ::CGAL::Null_tag Compose;
 };
 
 template <class COEFF, class ROOT_NT>
@@ -1219,10 +1220,10 @@ private:
     typedef Fraction_traits<COEFF> CFT;
 public:
     typedef Sqrt_extension<COEFF,ROOT_NT> NT;
-    typedef CGAL::Tag_true Is_decomposable;
-    typedef Sqrt_extension<typename CFT::Numerator_type,ROOT_NT> Numerator;
-    typedef typename CFT::Denominator_type Denominator;
-    typedef typename NT_traits<Denominator_type>::Gcd Common_factor;
+    typedef CGAL::Tag_true Is_fraction;
+    typedef Sqrt_extension<typename CFT::Numerator_type,ROOT_NT> Numerator_type;
+    typedef typename CFT::Denominator_type Denominator_type;
+    typedef typename Algebraic_structure_traits<Denominator_type>::Gcd Common_factor;
 
     class Decompose {
     public:
@@ -1245,9 +1246,9 @@ public:
                 decompose(ext.a1(),a1_num,a1_den);
                 common_den=common_factor(a0_den,a1_den);
                 
-                a0_num = a0_num*NiX::integral_div(a1_den,common_den);
-                a1_num = a1_num*NiX::integral_div(a0_den,common_den);
-                den = NiX::integral_div(a0_den,common_den)*a1_den;
+                a0_num = a0_num*CGAL::integral_division(a1_den,common_den);
+                a1_num = a1_num*CGAL::integral_division(a0_den,common_den);
+                den = CGAL::integral_division(a0_den,common_den)*a1_den;
                 num = Numerator_type(a0_num,a1_num,ext.root());
             }else{
                 NUM a0_num;
@@ -1284,8 +1285,8 @@ template <class COEFF, class ROOT_NT>
 class Sqrt_ext_Ftr_base_1< Sqrt_extension<COEFF,ROOT_NT >, CGAL::Tag_true >
     : public Sqrt_ext_Ftr_base_2< 
     Sqrt_extension<COEFF,ROOT_NT >, 
-    ::boost::is_same< typename NiX::Coercion_traits<ROOT_NT,typename NiX::Fraction_traits<COEFF>::Numerator_type>::Type,
-                        typename NiX::Fraction_traits<COEFF>::Numerator_type>::value >
+    ::boost::is_same< typename CGAL::Coercion_traits<ROOT_NT,typename CGAL::Fraction_traits<COEFF>::Numerator_type>::Type,
+                        typename CGAL::Fraction_traits<COEFF>::Numerator_type>::value >
 {
     //nothing new
 };
@@ -1299,6 +1300,7 @@ class Sqrt_ext_Ftr_base_1< Sqrt_extension<COEFF,ROOT_NT >, CGAL::Tag_true >
 } // namespace Intern
 
 
+/*
 namespace Intern{
     template <class SqrtExt,class BoolTag> class Sqrt_ext_Coftr_base_1;
     template <class SqrtExt>
@@ -1306,29 +1308,29 @@ namespace Intern{
     public:
         typedef SqrtExt          Numerator_type;
         typedef ::CGAL::Tag_false Is_composable;
-        typedef ::LiS::Null_tag Denominator_type;
-        typedef ::LiS::Null_tag Type;
-        typedef ::LiS::Null_tag Compose;  
+        typedef ::CGAL::Null_tag Denominator_type;
+        typedef ::CGAL::Null_tag Type;
+        typedef ::CGAL::Null_tag Compose;  
     }; 
     template <class SqrtExt>
     class Sqrt_ext_Coftr_base_1< SqrtExt, CGAL::Tag_true >{
         typedef typename SqrtExt::NT Coeff;
         typedef typename SqrtExt::ROOT Root;
-        typedef typename NiX::Cofraction_traits<Coeff> CFT;
+        typedef typename CGAL::Cofraction_traits<Coeff> CFT;
         typedef typename CFT::Type Type_coeff;
        
     public:
         typedef SqrtExt                                       Numerator_type;
         typedef ::CGAL::Tag_true                               Is_composable;
         typedef typename CFT::Denominator_type                Denominator;
-        typedef NiX::Sqrt_extension<Type_coeff,Root> Type;
+        typedef CGAL::Sqrt_extension<Type_coeff,Root> Type;
         
         class Compose {
     public:
             //! first argument type
             typedef Numerator_type   first_argument_type;
-            //! second argument type
-            typedef Denominator_type second_argument_type;
+            //! second argument type 
+            typedef Denominator_type second_argument_type; 
             //! result type
             typedef Type    result_type;
             //! Compose fraction
@@ -1352,66 +1354,11 @@ template <class Coeff, class Root>
 class Cofraction_traits<Sqrt_extension<Coeff,Root> >
     :public Intern::Sqrt_ext_Coftr_base_1< 
     Sqrt_extension<Coeff,Root>, 
-    typename NiX::Cofraction_traits<Coeff>::Is_composable>{
+    typename CGAL::Cofraction_traits<Coeff>::Is_composable>{
     //nothing new;
-};*/
-
-
-//##########################NiX::Arithmetic_traits#############################
-/*! \ingroup NiX_Arithmetic_traits
- * \brief The Arithmetic_traits_sqrt_extension traits class extents an existing
- * Arithmetic_traits class by the number type Sqrt_extension. For extensions
- * one 
- * has to choose the coefficient- and the root-number-type. These can be 
- * choosen via the second and the third template parameter. By default the
- * coefficient- and the root-number-type will be the Rational from the 
- * super-class.
- */
-/*template < class ArithmeticTraits, 
-class ExtnNT = typename ArithmeticTraits::Integer,
-class ExtnRootNT = typename ArithmeticTraits::Integer >
-class Arithmetic_traits_sqrt_extension 
-    : public ArithmeticTraits {
-public:
-    //! this instance's first template parameter
-    typedef ArithmeticTraits Arithmetic_traits;
-    //! this instance's second template parameter
-    typedef ExtnNT           Extn_NT;
-    //! this instance's third template parameter
-    typedef ExtnRootNT       Extn_root_NT;
-    
-    //! the class itself
-    typedef Arithmetic_traits_sqrt_extension                              Self;
-    //! the Base class
-    typedef Arithmetic_traits                                             Base;
-    
-    // load the typedefs from the base class
-    NiX_SNAP_ARITHMETIC_TRAITS_TYPEDEFS(Arithmetic_traits);
-    
-    //! a number with one root
-    typedef NiX::Sqrt_extension< Extn_NT, Extn_root_NT >                  Extn;
-
-    //! a number with two roots
-    typedef NiX::Sqrt_extension< Extn   , Extn_root_NT >           Nested_extn;
-    
-    //! univariate polynomial type with coefficients that have one root
-    typedef NiX::Polynomial< Extn >                                 Poly_extn1;
-    //! bivariate polynomial type with coefficients that have one root
-    typedef NiX::Polynomial< Poly_extn1 >                           Poly_extn2;
-    //! trivariate polynomial type with coefficients that have one root
-    typedef NiX::Polynomial< Poly_extn2 >                           Poly_extn3;
-    
-    //! univariate polynomial type with coefficients that have two roots
-    typedef NiX::Polynomial< Nested_extn >                   Poly_nested_extn1;
-    //! bivariate polynomial type with coefficients that have two roots
-    typedef NiX::Polynomial< Poly_nested_extn1 >             Poly_nested_extn2;
-    //! trivariate polynomial type with coefficients that have two roots
-    typedef NiX::Polynomial< Poly_nested_extn2 >             Poly_nested_extn3; 
 };
-
-} // namespace NiX
-
 */
+
 
 template <class COEFF, class ROOT>
 class Needs_parens_as_product< Sqrt_extension<COEFF,ROOT> >{
@@ -1641,10 +1588,10 @@ public:
 
 /////////// COERCION_TRAITS END 
 
-#if 0 // Algebraic_number_traits not supported yet 
+#if 1 // Algebraic_extension_traits not supported yet 
 /////////// ALGEBRAIC_NUMER_TRAITS BEGIN
 template <class COEFF, class ROOT >
-class Algebraic_number_traits<Sqrt_extension<COEFF,ROOT> > {
+class Algebraic_extension_traits<Sqrt_extension<COEFF,ROOT> > {
 // needed to 'add up' sqrt_extensions in iterator range such that all roots are 
 //   collected in order to keep operation time minimal all scalar coeffs are set 
 //   to 1 by standardise. 
@@ -1677,9 +1624,6 @@ public:
 };
 
 public:
-    static const int nesting_depth =
-        Algebraic_number_traits<COEFF>::nesting_depth + 1;
-
     //! \name Typedefs 
     //! the number type for which this instance has been instantiated
     typedef Sqrt_extension<COEFF,ROOT> NT;
@@ -1697,7 +1641,7 @@ public:
         typedef NT result_type;
         //! determine normalization factor
         NT operator () (const NT& a) const {
-            typedef Algebraic_number_traits<COEFF> SET;
+            typedef Algebraic_extension_traits<COEFF> SET;
             typename  SET::Normalization_factor normalization_factor;
             CGAL_precondition(a != NT(0));
 
@@ -1719,7 +1663,7 @@ public:
     //! returns the extension factor needed for the gcd_utcf computation 
     //! for more details see ... TODO!!
     //!
-    class Denominator_type_for_algebraic_integers {
+    class Denominator_for_algebraic_integers {
     public:
         //! argument type
         typedef NT argument_type;
@@ -1728,8 +1672,8 @@ public:
         //! determine denominator for algebraic integers
     public:
         NT operator () (const NT& a) const {
-            typedef Algebraic_number_traits<COEFF> ANT;
-            typename ANT::Denominator_type_for_algebraic_integers dfai;
+            typedef Algebraic_extension_traits<COEFF> ANT;
+            typename ANT::Denominator_for_algebraic_integers dfai;
 
             Standardise<COEFF> standardise;
             if (a.a1() != COEFF(0)) {
