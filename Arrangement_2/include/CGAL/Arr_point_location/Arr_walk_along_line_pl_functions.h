@@ -53,7 +53,7 @@ Object Arr_walk_along_line_point_location<Arrangement>::locate
     // Go over the holes in the current face.
     found_containing_hole = false;
     for (holes_it = face->holes_begin();
-         holes_it != face->holes_end() && !found_containing_hole;
+         !found_containing_hole && holes_it != face->holes_end();
          ++holes_it)
     {
       // Check if the point is inside the current hole.
@@ -231,7 +231,7 @@ _vertical_ray_shoot (const Point_2& p,
     // Go over the holes in the current face.
     found_containing_hole = false;
     for (holes_it = face->holes_begin();
-         holes_it != face->holes_end() && !found_containing_hole;
+         !found_containing_hole && holes_it != face->holes_end();
          ++holes_it)
     {
       // Check if the point is inside the current hole.
