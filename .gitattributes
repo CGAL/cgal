@@ -101,6 +101,7 @@ Algebraic_foundations/include/CGAL/Real_embeddable_traits.h -text
 Algebraic_foundations/include/CGAL/Scalar_factor_traits.h -text
 Algebraic_foundations/include/CGAL/utils.h -text
 Algebraic_foundations/include/CGAL/utils_classes.h -text
+Algebraic_foundations/test/Algebraic_foundations/Algebraic_extension_traits.C -text
 Algebraic_foundations/test/Algebraic_foundations/Algebraic_structure_traits.C -text
 Algebraic_foundations/test/Algebraic_foundations/Coercion_traits.C -text
 Algebraic_foundations/test/Algebraic_foundations/Real_embeddable_traits.C -text
