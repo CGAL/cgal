@@ -1528,6 +1528,25 @@ Modifier/doc_tex/Modifier/idraw/modifier.eps -text svneol=unset#application/post
 Modifier/doc_tex/Modifier/idraw/modifier.pdf -text svneol=unset#application/pdf
 Modifier/doc_tex/Modifier/modifier.gif -text svneol=unset#image/gif
 Modifier/doc_tex/Modifier/modifier_small.gif -text svneol=unset#image/gif
+Modular_arithmetic/description.txt -text
+Modular_arithmetic/include/CGAL/Chinese_remainder_traits.h -text
+Modular_arithmetic/include/CGAL/Modular.h -text
+Modular_arithmetic/include/CGAL/Modular_traits.h -text
+Modular_arithmetic/include/CGAL/Modular_type.h -text
+Modular_arithmetic/include/CGAL/chinese_remainder.h -text
+Modular_arithmetic/include/CGAL/euclidean_algorithm.h -text
+Modular_arithmetic/include/CGAL/extended_euclidean_algorithm.h -text
+Modular_arithmetic/include/CGAL/modular_gcd.h -text
+Modular_arithmetic/maintainer -text
+Modular_arithmetic/src/CGAL/Modular_type.cpp -text
+Modular_arithmetic/test/Modular_arithmetic/Chinese_remainder_traits.C -text
+Modular_arithmetic/test/Modular_arithmetic/Modular.C -text
+Modular_arithmetic/test/Modular_arithmetic/chinese_remainder.C -text
+Modular_arithmetic/test/Modular_arithmetic/euclidean_algorithm.C -text
+Modular_arithmetic/test/Modular_arithmetic/extended_euclidean_algorithm.C -text
+Modular_arithmetic/test/Modular_arithmetic/makefile -text
+Modular_arithmetic/test/Modular_arithmetic/modular_gcd.C -text
+Modular_arithmetic/test/Modular_arithmetic/src_Modular.C -text
 Nef_2/demo/Nef_2/filtered_homogeneous_data/complex.nef -text svneol=native#application/octet-stream
 Nef_2/demo/Nef_2/filtered_homogeneous_data/symmdif.nef -text svneol=native#application/octet-stream
 Nef_2/demo/Nef_2/help/index.html svneol=native#text/html
