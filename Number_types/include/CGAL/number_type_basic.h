@@ -59,8 +59,8 @@
 
 #include <CGAL/Fraction_traits.h>
 #include <CGAL/Rational_traits.h>
-//#include <CGAL/Scalar_factor_traits.h>    
-//#include <CGAL/Algebraic_number_traits.h>
+#include <CGAL/Scalar_factor_traits.h>    
+#include <CGAL/Algebraic_extension_traits.h>
 
 #include <CGAL/Needs_parens_as_product.h>
 
