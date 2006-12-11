@@ -39,11 +39,11 @@ CGAL_BEGIN_NAMESPACE
  *  This is the default implementation of NiX::Scalar_factor_traits. 
  *  It is valid for most basic number types as Integer, Rational etc. 
  */
-template< class NT_ >
+template< class NT >
 class Scalar_factor_traits {
-  public:
+public:
     // the supported number type
-    typedef NT_ NT;
+    typedef NT Type;
     // NT is also 
     typedef NT Scalar;
 
@@ -90,7 +90,7 @@ class Scalar_factor_traits {
         // determine extractable scalar factor
         Scalar operator () (const NT& a) {
             BOOST_STATIC_ASSERT(( ::boost::is_same< NT,Scalar >::value));  
-            typedef typename Algebraic_structure_traits<NT>::Algebraic_categrory SAT;
+            typedef typename Algebraic_structure_traits<NT>::Algebraic_category SAT;
             return scalar_factor(a, SAT());
         }
         // determine extractable scalar factor
