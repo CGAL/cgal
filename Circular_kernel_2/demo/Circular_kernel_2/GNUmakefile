@@ -39,8 +39,8 @@ all:            \
                 demo$(EXE_EXT) \
 		demo_viewer$(EXE_EXT)\
 		demo_line$(EXE_EXT) \
-		demo_line_circle$(EXE_EXT)\
-		demo_Lazy_line_circle$(EXE_EXT)
+		demo_line_circle$(EXE_EXT)#\
+#		demo_Lazy_line_circle$(EXE_EXT)
 
 demo.moc: demo.cpp
 	${QT_MOC} -o demo.moc $<
@@ -54,8 +54,8 @@ demo_line.moc: demo_line.cpp
 demo_line_circle.moc: demo_line_circle.cpp
 	${QT_MOC} -o demo_line_circle.moc $<
 
-demo_Lazy_line_circle.moc: demo_Lazy_line_circle.cpp
-	${QT_MOC} -o demo_Lazy_line_circle.moc $<
+#demo_Lazy_line_circle.moc: demo_Lazy_line_circle.cpp
+#	${QT_MOC} -o demo_Lazy_line_circle.moc $<
 
 Qt_widget_get_arc.moc: Qt_widget_get_arc.h
 	$(QT_MOC) -o Qt_widget_get_arc.moc $<
@@ -76,8 +76,8 @@ demo_line$(EXE_EXT): demo_line.moc demo_line$(OBJ_EXT) Qt_widget_get_segment$(OB
 demo_line_circle$(EXE_EXT): demo_line_circle.moc demo_line_circle$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_line_circle demo_line_circle$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT) $(LDFLAGS)
 
-demo_Lazy_line_circle$(EXE_EXT): demo_Lazy_line_circle.moc demo_Lazy_line_circle$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_Lazy_line_circle demo_Lazy_line_circle$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT) $(LDFLAGS)
+#demo_Lazy_line_circle$(EXE_EXT): demo_Lazy_line_circle.moc demo_Lazy_line_circle$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT)
+#	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_Lazy_line_circle demo_Lazy_line_circle$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT) $(LDFLAGS)
 
 Qt_widget_get_arc$(OBJ_EXT): Qt_widget_get_arc.cpp Qt_widget_get_arc.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_get_arc.cpp
@@ -91,9 +91,9 @@ clean: \
 		demo_viewer.clean\
 		demo_line.clean \
 		demo_line_circle.clean \
-		demo_Lazy_line_circle.clean\
                 Qt_widget_get_arc.clean \
-		Qt_widget_get_segment.clean 
+		Qt_widget_get_segment.clean #\
+#		demo_Lazy_line_circle.clean
 
 #---------------------------------------------------------------------#
 #                    suffix rules
