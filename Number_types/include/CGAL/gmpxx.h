@@ -48,6 +48,16 @@
 #include <CGAL/functional_base.h> // Unary_function, Binary_function
 
 CGAL_BEGIN_NAMESPACE
+
+
+template < typename T, typename U > 
+class Algebraic_structure_traits< ::__gmp_expr<T,U> > 
+    : public Algebraic_structure_traits< ::__gmp_expr<T,T> >{};
+
+template < typename T, typename U > 
+class Real_embeddable_traits< ::__gmp_expr<T,U> > 
+    : public Real_embeddable_traits< ::__gmp_expr<T,T> >{};
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_GMPXX_H

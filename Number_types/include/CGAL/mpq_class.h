@@ -25,10 +25,8 @@
 #define CGAL_MPQ_CLASS_H
 
 #include <CGAL/number_type_basic.h>
-//#include <gmpxx.h>
 #include <CGAL/gmpxx_coercion_traits.h>
 #include <CGAL/mpz_class.h> // for GCD in Type traits
-
 
 // This file gathers the necessary adaptors so that the following
 // C++ number types that come with GMP can be used by CGAL :
@@ -39,62 +37,76 @@
 // Reading gmpxx.h shows that ::__gmp_expr<T, T> is the mp[zqf]_class proper,
 // while ::__gmp_expr<T, U> is the others "expressions".
 
-
-
+#define CGAL_CHECK_GMP_EXPR                                             \
+    BOOST_STATIC_ASSERT(                                                \
+            (::boost::is_same< ::__gmp_expr< T , T >,Type>::value ));   
+    
 CGAL_BEGIN_NAMESPACE
 
+
 // AST for mpq_class
-template <class U> 
-class Algebraic_structure_traits< ::__gmp_expr< ::__gmpq_value,U> >
-  : public Algebraic_structure_traits_base< ::__gmp_expr< ::__gmpq_value,U>, 
-                                            Null_tag >  {
+template<>
+class Algebraic_structure_traits< mpq_class  >
+  : public Algebraic_structure_traits_base< mpq_class , Null_tag >  {
   public:
     typedef Field_tag           Algebraic_category;
     typedef Tag_true            Is_exact;
-    typedef mpq_class                 Type;
+    typedef mpq_class           Type;
 
     struct Is_zero: public Unary_function< mpq_class , bool > {
-        template <class U2> 
-        bool operator()( const ::__gmp_expr< ::__gmpq_value,U2>& x) const {
+        template <class T, class U> 
+        bool operator()( const ::__gmp_expr< T , U >& x) const {
+            CGAL_CHECK_GMP_EXPR;
             return ::sgn(x) == 0;
         }
     };  
 
     struct Is_one: public Unary_function< mpq_class , bool > {
-        template <class U2> 
-        bool operator()( const ::__gmp_expr< ::__gmpq_value,U2>& x) const {
+        template <typename T, typename U> 
+        bool operator()( const ::__gmp_expr< T , U >& x) const {
+            CGAL_CHECK_GMP_EXPR;
             return x == 1;
         }
     }; 
 
     struct Simplify: public Unary_function< mpq_class , void > {
-        template <class U2> 
-        void operator()( ::__gmp_expr< ::__gmpq_value,U2>& x) const {
+        template <typename T, typename U> 
+        void operator()( ::__gmp_expr< T, U>& x) const {
+            CGAL_CHECK_GMP_EXPR;
           //TODO: cast x to (mpq_class)??
           x.canonicalize();
+        }
+
+        template <class T, class U> 
+        bool operator()( const ::__gmp_expr< T ,U >& x) const {
+            CGAL_CHECK_GMP_EXPR;
+            return x.canonicalize();
         }
     }; 
     
     struct Square: public Unary_function< mpq_class , mpq_class > {
-        template <class U2> 
-        mpq_class operator()( const ::__gmp_expr< ::__gmpq_value,U2>& x) const {
+        template <typename T, typename U> 
+        mpq_class operator()( const ::__gmp_expr< T , U >& x) const {
+            CGAL_CHECK_GMP_EXPR;
             return x*x;
         }
     }; 
 
     struct Unit_part: public Unary_function< mpq_class , mpq_class > {
-        template <class U2> 
-        mpq_class operator()( const ::__gmp_expr< ::__gmpq_value,U2>& x) const {
+        template <typename T, typename U> 
+        mpq_class operator()( const ::__gmp_expr< T , U >& x) const {
+            CGAL_CHECK_GMP_EXPR;
             return( x == mpq_class(0)) ? mpq_class(1) : x;
         }
     }; 
 
     struct Integral_division
         : public Binary_function< mpq_class , mpq_class, mpq_class > {
-        template <class U2, class U3> 
+        template <typename T,  typename U1, typename U2>
         mpq_class operator()( 
-                const ::__gmp_expr< ::__gmpq_value,U2>& x,
-                const ::__gmp_expr< ::__gmpq_value,U3>& y) const {
+                const ::__gmp_expr< T , U1 >& x,
+                const ::__gmp_expr< T , U2 > & y) const {
+            CGAL_CHECK_GMP_EXPR;
             mpq_class result = x / y;
             CGAL_precondition_msg( result * y == x,
             "'x' must be divisible by 'y' in "
@@ -107,18 +119,20 @@ class Algebraic_structure_traits< ::__gmp_expr< ::__gmpq_value,U> >
     class Is_square
         : public Binary_function< mpq_class, mpq_class&, bool > {
     public:
-        template <class U2>
+        template <typename T , typename U >
         bool operator()( 
-                const ::__gmp_expr< ::__gmpq_value,U2>& x_, 
+                const ::__gmp_expr< T , U >& x_, 
                 mpq_class& y ) const {
+            CGAL_CHECK_GMP_EXPR;
             mpq_class x( x_ );
             y = mpq_class (::sqrt( x.get_num() ), ::sqrt( x.get_den() )) ;
             
             return y*y == x;
         }
         
-        template <class U2>
-        bool operator()( const ::__gmp_expr< ::__gmpq_value,U2>& x ) const {
+        template < typename T, typename U >
+        bool operator()( const ::__gmp_expr< T , U >& x ) const {
+            CGAL_CHECK_GMP_EXPR;
             mpq_class y;
             return operator()(x,y);
         }
@@ -127,42 +141,47 @@ class Algebraic_structure_traits< ::__gmp_expr< ::__gmpq_value,U> >
 
 // RET for mpq_class
 
-template < class U > 
-class Real_embeddable_traits< ::__gmp_expr< ::__gmpq_value,U> > 
-  : public Real_embeddable_traits_base< ::__gmp_expr< ::__gmpq_value,U> > {
+template < > 
+class Real_embeddable_traits< mpq_class > 
+  : public Real_embeddable_traits_base< mpq_class > {
   public:
     typedef mpq_class  Type;
       
     struct Is_zero: public Unary_function< mpq_class , bool > {
-        template <class U2> 
-        bool operator()( const ::__gmp_expr< ::__gmpq_value,U2>& x) const {
+        template <typename T, typename U> 
+        bool operator()( const ::__gmp_expr< T , U >& x) const {
+            CGAL_CHECK_GMP_EXPR;
             return ::sgn(x) == 0;
         }
     }; 
     struct Is_finite: public Unary_function<mpq_class,bool> {
-        template <class U2> 
-        bool operator()( const ::__gmp_expr< ::__gmpq_value,U2>& x) const {
+        template <typename T, typename U> 
+        bool operator()( const ::__gmp_expr< T , U >& x) const {
+            CGAL_CHECK_GMP_EXPR;
             return true;
         }
     };
 
     struct Is_positive: public Unary_function< mpq_class , bool > {
-        template <class U2> 
-        bool operator()( const ::__gmp_expr< ::__gmpq_value,U2>& x) const {
+        template <typename T, typename U> 
+        bool operator()( const ::__gmp_expr< T , U >& x) const {
+            CGAL_CHECK_GMP_EXPR;
             return ::sgn(x) > 0;
         }
     }; 
   
     struct Is_negative: public Unary_function< mpq_class , bool > {
-        template <class U2> 
-        bool operator()( const ::__gmp_expr< ::__gmpq_value,U2>& x) const {
+        template <typename T, typename U> 
+        bool operator()( const ::__gmp_expr< T , U >& x) const {
+            CGAL_CHECK_GMP_EXPR;
             return ::sgn(x) < 0;
         }
     };
 
     struct Abs: public Unary_function< mpq_class , mpq_class > {
-        template <class U2> 
-        mpq_class operator()( const ::__gmp_expr< ::__gmpq_value,U2>& x) const {
+        template <typename T, typename U> 
+        mpq_class operator()( const ::__gmp_expr< T , U >& x) const {
+            CGAL_CHECK_GMP_EXPR;
             return ::abs(x);
         }
     };
@@ -170,9 +189,10 @@ class Real_embeddable_traits< ::__gmp_expr< ::__gmpq_value,U> >
     struct Sign 
         : public Unary_function< mpq_class, ::CGAL::Sign > {
     public:
-        template <class U2> 
+        template <typename T, typename U> 
         ::CGAL::Sign 
-        operator()( const ::__gmp_expr< ::__gmpq_value,U2>& x ) const {
+        operator()( const ::__gmp_expr< T , U >& x ) const {
+            CGAL_CHECK_GMP_EXPR;
             return (::CGAL::Sign) ::sgn( x );
         }        
     };
@@ -180,10 +200,11 @@ class Real_embeddable_traits< ::__gmp_expr< ::__gmpq_value,U> >
     struct Compare 
         : public Binary_function< mpq_class, mpq_class, Comparison_result>
     {
-        template <class U2, class U3>
+        template <typename T, typename U1, typename U2>
         Comparison_result operator()( 
-                const ::__gmp_expr< ::__gmpq_value,U2>& x, 
-                const ::__gmp_expr< ::__gmpq_value,U3>& y ) const {
+                const ::__gmp_expr< T , U1 >& x, 
+                const ::__gmp_expr< T , U2 >& y ) const {
+            CGAL_CHECK_GMP_EXPR;
             // cmp returns any int value, not just -1/0/1...
             return (Comparison_result) CGAL_NTS sign( ::cmp(x, y) );
         }
@@ -193,8 +214,9 @@ class Real_embeddable_traits< ::__gmp_expr< ::__gmpq_value,U> >
     
     struct To_double 
         : public Unary_function< mpq_class, double > {
-        template <class U2>
-        double operator()( const ::__gmp_expr< ::__gmpq_value,U2>& x ) const {
+        template < typename T , typename U >
+        double operator()( const ::__gmp_expr< T , U >& x ) const {
+            CGAL_CHECK_GMP_EXPR;
             return mpq_class(x).get_d();
         }
     };
@@ -202,9 +224,10 @@ class Real_embeddable_traits< ::__gmp_expr< ::__gmpq_value,U> >
     struct To_interval 
     
         : public Unary_function< mpq_class, std::pair< double, double > > {
-        template <class U2>
+        template < typename T, typename U >
         std::pair<double, double> 
-        operator()( const ::__gmp_expr< ::__gmpq_value,U2>& x_ ) const {
+        operator()( const ::__gmp_expr< T , U >& x_ ) const {
+            CGAL_CHECK_GMP_EXPR;
             mpq_class x = mpq_class(x_);
             mpfr_t y;
             mpfr_init2 (y, 53); /* Assume IEEE-754 */
@@ -261,7 +284,8 @@ public:
     };
 };
 
-
 CGAL_END_NAMESPACE
+
+#undef CGAL_CHECK_GMP_EXPR 
 
 #endif // CGAL_MPQ_CLASS_H
