@@ -135,8 +135,8 @@ interest, it is sufficient to override just \ccc{before_split_face()}
      Note that the vertex still has no incident edges and is not connected
      to any other vertex.}
 
-\ccMethod{virtual void before_create_vertex_at_infinity (Infinity_type inf_x,
-                                                         Infinity_type inf_y);}
+\ccMethod{virtual void before_create_vertex_at_infinity (Boundary_type inf_x,
+                                                         Boundary_type inf_y);}
     {issued just before a new vertex at infinity is created, with the
      indication whether this vertex lies at $x = \pm\infty$ and/or
      $y = \pm\infty$.}

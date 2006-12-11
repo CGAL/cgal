@@ -244,8 +244,8 @@ Section~\ref{arr_ssec:traverse}:
 \begin{itemize}
 \item
 The \ccc{Vertex} class provides three-valued predicates
-\ccc{infinite_in_x()} and \ccc{infinite_in_y()}, which
-return \ccc{FINITE} if the vertex has a finite $x$-coordinate (or
+\ccc{boundary_in_x()} and \ccc{boundary_in_y()}, which
+return \ccc{NO_BOUNDARY} if the vertex has a finite $x$-coordinate (or
 $y$-coordinate) and \ccc{MINUS_INFINITY} or \ccc{PLUS_INFINITY} if
 the vertex lies at infinity. The Boolean predicate
 \ccc{is_at_infinity()} is also supported, where we can access the

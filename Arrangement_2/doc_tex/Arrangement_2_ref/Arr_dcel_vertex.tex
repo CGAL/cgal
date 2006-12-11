@@ -71,10 +71,10 @@ pointers or references:
     {returns the associated point.
      \ccPrecond{\ccVar() is associated with a valid point.}}
 
-\ccMethod{Infinity_type infinite_in_x () const;}
+\ccMethod{Boundary_type boundary_in_x () const;}
     {return whether the vertex has an infinite $x$-coordinate.}
 
-\ccMethod{Infinity_type infinite_in_y () const;}
+\ccMethod{Boundary_type boundary_in_y () const;}
     {return whether the vertex has an infinite $y$-coordinate.}
 
 \ccModifiers
@@ -90,9 +90,9 @@ pointers or references:
 \ccMethod{void set_point (Point* p);}
     {sets the associated point.}
 
-\ccMethod{void set_at_infinity (Infinity_type inf_x, Infinity_type inf_y);}
+\ccMethod{void set_boundary (Boundary_type inf_x, Boundary_type inf_y);}
     {sets \ccVar{} as a vertex at infinity.
-     \ccPrecond{Either \ccc{inf_x} or \ccc{inf_y} is not \ccc{FINITE}.}}
+     \ccPrecond{Either \ccc{inf_x} or \ccc{inf_y} is not \ccc{NO_BOUNDARY}.}}
 
 } % ccHtmlNoLinksFrom
 

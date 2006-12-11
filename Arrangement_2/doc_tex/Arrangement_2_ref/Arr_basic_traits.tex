@@ -51,7 +51,7 @@ overlap.
   {indicates whether the nested functor \ccc{Compare_at_x_left_2} is
   provided.} 
 
-\ccNestedType{Has_infinite_category}
+\ccNestedType{Has_boundary_category}
   {indicates whether the traits class supports unbounded curves.}
 
 \ccHeading{Functor Types}
@@ -61,20 +61,20 @@ overlap.
 \ccNestedType{Compare_x_2}
   {models the concept \ccc{ArrTraits::CompareX_2}.
   If the traits class supports unbounded curves (i.e., the
-  \ccc{Has_infinite_category} tag is defined as \ccc{Tag_true}), then
+  \ccc{Has_boundary_category} tag is defined as \ccc{Tag_true}), then
   the type models the concept \ccc{ArrTraits::UnboundedCompareX_2}.}
 \ccGlue
 \ccNestedType{Compare_xy_2}{models the concept \ccc{ArrTraits::CompareXy_2}.}
 \ccGlue
-\ccNestedType{Infinite_in_x_2}
+\ccNestedType{Boundary_in_x_2}
   {models the concept \ccc{ArrTraits::InfiniteInX_2}.
   Required only if the traits class supports unbounded curves
-  (the \ccc{Has_infinite_category} tag is defined as \ccc{Tag_true}).}
+  (the \ccc{Has_boundary_category} tag is defined as \ccc{Tag_true}).}
 \ccGlue
-\ccNestedType{Infinite_in_y_2}
+\ccNestedType{Boundary_in_y_2}
   {models the concept \ccc{ArrTraits::InfiniteInY_2}.
   Required only if the traits class supports unbounded curves
-  (the \ccc{Has_infinite_category} tag is defined as \ccc{Tag_true}).}
+  (the \ccc{Has_boundary_category} tag is defined as \ccc{Tag_true}).}
 \ccGlue
 \ccNestedType{Construct_min_vertex_2}
   {models the concept \ccc{ArrTraits::ConstructMinVertex_2}.}
@@ -87,7 +87,7 @@ overlap.
 \ccNestedType{Compare_y_at_x_2}
   {models the concept \ccc{ArrTraits::CompareYAtX_2}.
   If the traits class supports unbounded curves (i.e., the
-  \ccc{Has_infinite_category} tag is defined as \ccc{Tag_true}), then
+  \ccc{Has_boundary_category} tag is defined as \ccc{Tag_true}), then
   the type models the concept \ccc{ArrTraits::UnboundedCompareYAtX_2}.}
 \ccGlue
 \ccNestedType{Compare_y_at_x_left_2}
@@ -112,9 +112,9 @@ overlap.
 \ccGlue
 \ccMethod{Compare_xy_2 compare_xy_2_object() const;}{}
 \ccGlue
-\ccMethod{Infinite_in_x_2 infinite_in_x_2_object() const;}{}
+\ccMethod{Boundary_in_x_2 boundary_in_x_2_object() const;}{}
 \ccGlue
-\ccMethod{Infinite_in_y_2 infinite_in_y_2_object() const;}{}
+\ccMethod{Boundary_in_y_2 boundary_in_y_2_object() const;}{}
 \ccGlue
 \ccMethod{Construct_min_vertex_2 construct_min_vertex_2_object() const;}{}
 \ccGlue
@@ -250,15 +250,15 @@ Represents a planar (weakly) $x$-monotone curve.
 \begin{ccRefConcept}{ArrTraits::InfiniteInX_2}
 \ccRefines{Functor}
 
-\ccHasModels\ccc{ArrangementBasicTraits_2::Infinite_in_x_2}
+\ccHasModels\ccc{ArrangementBasicTraits_2::Boundary_in_x_2}
 
 \ccCreationVariable{fo}
-\ccMethod{Infinity_type operator()(ArrTraits::X_monotone_curve_2 xc,
+\ccMethod{Boundary_type operator()(ArrTraits::X_monotone_curve_2 xc,
                                    Curve_end ce);}
   {determines if the $x$-coordinate of the minimal end (or maximal
   end) of \ccc{xc} is infinite. It returns \ccc{MINUS_INFINITY} or
   \ccc{PLUS_INFINITY} if the curve end is infinite in $x$, and
-  \ccc{FINITE} if it has a finite $x$-coordinate.}
+  \ccc{NO_BOUNDARY} if it has a finite $x$-coordinate.}
 \end{ccRefConcept}
 \ccRefPageEnd
 
@@ -268,15 +268,15 @@ Represents a planar (weakly) $x$-monotone curve.
 \begin{ccRefConcept}{ArrTraits::InfiniteInY_2}
 \ccRefines{Functor}
 
-\ccHasModels\ccc{ArrangementBasicTraits_2::Infinite_in_y_2}
+\ccHasModels\ccc{ArrangementBasicTraits_2::Boundary_in_y_2}
 
 \ccCreationVariable{fo}
-\ccMethod{Infinity_type operator()(ArrTraits::X_monotone_curve_2 xc,
+\ccMethod{Boundary_type operator()(ArrTraits::X_monotone_curve_2 xc,
                                    Curve_end ce);}
   {determines if the $y$-coordinate of the minimal end (or 
   maximal end) of \ccc{xc} is infinite. It returns \ccc{MINUS_INFINITY}
   or \ccc{PLUS_INFINITY} if the curve end is infinite in $y$, and 
-  \ccc{FINITE} if it has a finite $y$-coordinate.}
+  \ccc{NO_BOUNDARY} if it has a finite $y$-coordinate.}
 \end{ccRefConcept}
 \ccRefPageEnd
 
