@@ -91,6 +91,7 @@ Algebraic_foundations/doc_tex/Algebraic_foundations_ref/square.tex -text
 Algebraic_foundations/doc_tex/Algebraic_foundations_ref/to_double.tex -text
 Algebraic_foundations/doc_tex/Algebraic_foundations_ref/to_interval.tex -text
 Algebraic_foundations/doc_tex/Algebraic_foundations_ref/unit_part.tex -text
+Algebraic_foundations/include/CGAL/Algebraic_extension_traits.h -text
 Algebraic_foundations/include/CGAL/Algebraic_structure_traits.h -text
 Algebraic_foundations/include/CGAL/Coercion_traits.h -text
 Algebraic_foundations/include/CGAL/Fraction_traits.h -text
