@@ -388,7 +388,7 @@ void general_test(){
     to_double_test<EXT1>();
 }
 
-/*
+
 template <class AT>
 void scalar_factor_traits_test(){
     {
@@ -443,44 +443,9 @@ void scalar_factor_traits_test(){
             CGAL_test_assert((sfac(EXT1(18,9,2),Integer(15)))==Integer(3));
         }
     }
-    }*/
+}
 
-// TODO: No to_Sqrt_extension available in CGAL.
-/*template <class AT>
-void to_Sqrt_extension_test() {
-//    CGAL_SNAP_ARITHMETIC_KERNEL_TYPEDEFS(AT);
-    typedef leda_integer Integer;
-    typedef leda_rational Rational;
-    typedef CGAL::Sqrt_extension<Rational,Integer> EXT;
-    
-    EXT e1(4);
-    
-    CGAL_test_assert(e1 == CGAL::to_Sqrt_extension< EXT >(ar1,true));
-    
-    Poly_int1 p2(Integer(-2), Integer(0), Integer(1));
-    Algebraic_real ar2m(p2, Rational(-2), Rational(0));
-    Algebraic_real ar2p(p2, Rational(0), Rational(2));
-    
-    EXT e2m(0,-1,2);
-    EXT e2p(0, 1,2);
-    
-    CGAL_test_assert(e2m == CGAL::to_Sqrt_extension< EXT >(ar2m, true));
-    CGAL_test_assert(e2p == CGAL::to_Sqrt_extension< EXT >(ar2p, true));
-
-    Poly_int1 p3(Integer(-1), Integer(4), Integer(5));
-    Algebraic_real arat1(p3, Rational(-2), Rational(0));
-    Algebraic_real arat2(p3, Rational(0), Rational(1));
-                       
-    EXT erat1(Rational(-1));
-    EXT erat2((Rational(1)/Rational(5)));
-    
-    CGAL_test_assert(erat1 == CGAL::to_Sqrt_extension< EXT >(arat1,true));
-    CGAL_test_assert(erat2 == CGAL::to_Sqrt_extension< EXT >(arat2,true));
-}*/
-
-
-// TODO: Adapt when fraction_traits are available
-/*template <class AT>
+template <class AT>
 void fraction_traits_test(){
     //TEST Type traits ROOT of type INT 
     typedef typename AT::Integer  INT;
@@ -502,11 +467,11 @@ void fraction_traits_test(){
     typedef CGAL::Fraction_traits<INT3_EXT> INT_FT3;
         
     // RAT_FTs decomposable
-    CGAL_test_assert((boost::is_same< typename RAT_FT1::Is_decomposable, 
+    CGAL_test_assert((boost::is_same< typename RAT_FT1::Is_fraction, 
               CGAL::Tag_true>::value)); 
-    CGAL_test_assert((boost::is_same< typename RAT_FT2::Is_decomposable, 
+    CGAL_test_assert((boost::is_same< typename RAT_FT2::Is_fraction, 
               CGAL::Tag_true>::value));
-    CGAL_test_assert((boost::is_same< typename RAT_FT3::Is_decomposable, 
+    CGAL_test_assert((boost::is_same< typename RAT_FT3::Is_fraction, 
               CGAL::Tag_true>::value));  
     // RAT_FTi Numerator_type == INTi_EXT
     CGAL_test_assert((boost::is_same< typename RAT_FT1::Numerator_type, 
@@ -524,21 +489,21 @@ void fraction_traits_test(){
               INT>::value));
  
     // INT_FTs not decomposable 
-    CGAL_test_assert((boost::is_same< typename INT_FT1::Is_decomposable, 
+    CGAL_test_assert((boost::is_same< typename INT_FT1::Is_fraction, 
               CGAL::Tag_false>::value));  
-    CGAL_test_assert((boost::is_same< typename INT_FT2::Is_decomposable, 
+    CGAL_test_assert((boost::is_same< typename INT_FT2::Is_fraction, 
               CGAL::Tag_false>::value));    
-    CGAL_test_assert((boost::is_same< typename INT_FT2::Is_decomposable, 
+    CGAL_test_assert((boost::is_same< typename INT_FT2::Is_fraction, 
               CGAL::Tag_false>::value)); 
     {
         typedef CGAL::Sqrt_extension<RAT,RAT>   RAT_RAT_EXT;
         typedef CGAL::Fraction_traits<RAT_RAT_EXT> RAT_RAT_FT;
-        CGAL_test_assert((boost::is_same< typename RAT_RAT_FT::Is_decomposable, 
+        CGAL_test_assert((boost::is_same< typename RAT_RAT_FT::Is_fraction, 
                   CGAL::Tag_false>::value));  
     }{
         typedef CGAL::Sqrt_extension<INT1_EXT,INT1_EXT> INT_nEXT; 
         typedef CGAL::Fraction_traits<INT_nEXT> INT_nEXT_FT;
-        CGAL_test_assert((boost::is_same< typename INT_nEXT_FT::Is_decomposable, 
+        CGAL_test_assert((boost::is_same< typename INT_nEXT_FT::Is_fraction, 
                   CGAL::Tag_false>::value));     
     } 
   
@@ -579,11 +544,11 @@ void fraction_traits_test(){
     }    
     
 
-}*/
+}
 
-/*
+
 template <class AT>
-void test_algebraic_number_traits(){
+void test_algebraic_extension_traits(){
     typedef typename AT::Integer  INT;
     typedef typename AT::Rational RAT;
     
@@ -593,10 +558,10 @@ void test_algebraic_number_traits(){
     typedef CGAL::Sqrt_extension<INT1_EXT,INT> INT2_EXT;
     
     // normalisation factor
-    typedef CGAL::Algebraic_number_traits<RAT1_EXT> RAT1_EXT_ANT;
-    typedef CGAL::Algebraic_number_traits<INT1_EXT> INT1_EXT_ANT;
-    typedef CGAL::Algebraic_number_traits<RAT2_EXT> RAT2_EXT_ANT;
-    typedef CGAL::Algebraic_number_traits<INT2_EXT> INT2_EXT_ANT;
+    typedef CGAL::Algebraic_extension_traits<RAT1_EXT> RAT1_EXT_ANT;
+    typedef CGAL::Algebraic_extension_traits<INT1_EXT> INT1_EXT_ANT;
+    typedef CGAL::Algebraic_extension_traits<RAT2_EXT> RAT2_EXT_ANT;
+    typedef CGAL::Algebraic_extension_traits<INT2_EXT> INT2_EXT_ANT;
     
     {
         INT1_EXT a(INT(3),INT(5),INT(7));
@@ -644,16 +609,16 @@ void test_algebraic_number_traits(){
     {
         typedef typename AT::Integer  Integer;
         typedef CGAL::Sqrt_extension<Integer,Integer> Extn_1;
-        typedef CGAL::Algebraic_number_traits<Extn_1> ANT;
-        typename ANT::Denominator_type_for_algebraic_integers dfai;
+        typedef CGAL::Algebraic_extension_traits<Extn_1> ANT;
+        typename ANT::Denominator_for_algebraic_integers dfai;
         Extn_1 ext(1,2,5);
         CGAL_test_assert(dfai(ext)==Extn_1(20));
     }{
         typedef typename AT::Integer  Integer;
         typedef CGAL::Sqrt_extension<Integer,Integer> Extn_1;
         typedef CGAL::Sqrt_extension<Extn_1, Integer> Extn_2;
-        typedef CGAL::Algebraic_number_traits<Extn_2> ANT;
-        typename ANT::Denominator_type_for_algebraic_integers dfai;
+        typedef CGAL::Algebraic_extension_traits<Extn_2> ANT;
+        typename ANT::Denominator_for_algebraic_integers dfai;
         {
             Extn_1 a0(1);
             Extn_1 a1(2);
@@ -672,8 +637,8 @@ void test_algebraic_number_traits(){
         typedef typename AT::Integer  Integer;
         typedef CGAL::Sqrt_extension<Integer,Integer>  Extn_1;
         typedef CGAL::Sqrt_extension<Extn_1, Extn_1>   Extn_2;
-        typedef CGAL::Algebraic_number_traits<Extn_2> ANT;
-        typename ANT::Denominator_type_for_algebraic_integers dfai;
+        typedef CGAL::Algebraic_extension_traits<Extn_2> ANT;
+        typename ANT::Denominator_for_algebraic_integers dfai;
         {
             Extn_1 a0(1);
             Extn_1 a1(2);
@@ -708,40 +673,8 @@ void test_algebraic_number_traits(){
         
     }
     
-    }*/
-
-/*template <class AT>
-void polynom_test(){
-    typedef typename AT::Integer Integer;
-    typedef CGAL::Sqrt_extension<Integer,Integer> EXT;
-    typedef CGAL::Polynomial<EXT> Poly_extn1;
-    {
-    Poly_extn1 pr1=Poly_extn1(EXT(3),EXT(2),EXT(1));
-    Poly_extn1 pr2=Poly_extn1(EXT(-3),EXT(-2),EXT(-1));
-   
-    Poly_extn1 pr3 = Poly_extn1(0);
-
-    CGAL_test_assert(pr1+pr2 == pr3);
-    CGAL_test_assert(pr1+pr3 == pr1);
-    CGAL_test_assert(pr2+pr3 == pr2);
-
-    // here pr3==0 !!!
-   // if (pr1==pr3)
-//    {
-//        if (pr2!=pr3)
-//            pr3 = pr2;
-//    }
-//    else if (pr2==pr3)
-//        pr3 = pr1;
-//    else
-//    pr3 = pr1 + pr2;
-    // canonicalize_polynomial
-    }{
-        Poly_extn1 p1(EXT(3),EXT(2),EXT(1));
-        Poly_extn1 p3(CGAL::canonicalize_polynomial((p1 *EXT(4,5,7))));
-        CGAL_test_assert(p1==p3);
     }
-}*/
+
 template <class AT>
 void sqrt_extension_test(){
     CGAL_SNAP_ARITHMETIC_KERNEL_TYPEDEFS(AT);
@@ -752,25 +685,11 @@ void sqrt_extension_test(){
     is_exact_test();    
     convert_to_real<Integer,Integer,Field_with_sqrt>();
 
-// TODO: Polynomial number type is not available
-//    convert_to_polynomial<Integer,Integer>();
- 
     sqrt_ext_pretty_output_test<AT>();
+    scalar_factor_traits_test<AT>();
+    fraction_traits_test<AT>();
+    test_algebraic_extension_traits<AT>();
 
-// TODO: No Scalar_factor_traits available
-//    scalar_factor_traits_test<AT>();
-
-// TODO: No CGAL::to_sqrt_extension() available
-//    to_Sqrt_extension_test<AT>();
-
-// TODO: No Fraction_traits available yet.
-//    fraction_traits_test<AT>();
-
-// TODO: No Algebraic_number_traits available.
-//test_algebraic_number_traits<AT>();
-
-// TODO: Polynomials not working yet.
-//    polynom_test<AT>();
 }
 
 int main(){ 
