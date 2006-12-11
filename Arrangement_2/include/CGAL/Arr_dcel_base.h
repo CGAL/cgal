@@ -140,31 +140,31 @@ public:
   }
 
   /*! Check if the vertex is infinite at x. */
-  Infinity_type infinite_in_x () const
+  Boundary_type boundary_in_x () const
   {
     if ((infty & X_MINUS_INFTY) != 0)
       return (MINUS_INFINITY);
     else if ((infty & X_PLUS_INFTY) != 0)
       return (PLUS_INFINITY);
     
-    return (FINITE);
+    return (NO_BOUNDARY);
   }
 
   /*! Check if the vertex is infinite at y. */
-  Infinity_type infinite_in_y () const
+  Boundary_type boundary_in_y () const
   {
     if ((infty & Y_MINUS_INFTY) != 0)
       return (MINUS_INFINITY);
     else if ((infty & Y_PLUS_INFTY) != 0)
       return (PLUS_INFINITY);
     
-    return (FINITE);
+    return (NO_BOUNDARY);
   }
 
   /*! Set a vertex at infinity (which is not associated with a point). */
-  void set_at_infinity (Infinity_type inf_x, Infinity_type inf_y)
+  void set_boundary (Boundary_type inf_x, Boundary_type inf_y)
   {
-    CGAL_precondition (inf_x != FINITE || inf_y != FINITE);
+    CGAL_precondition (inf_x != NO_BOUNDARY || inf_y != NO_BOUNDARY);
 
     p_pt = NULL;
     infty = 0;

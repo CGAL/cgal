@@ -108,8 +108,8 @@ public:
   {
     m_red_th = 
       m_red_arr_accessor.bottom_left_fictitious_vertex()->incident_halfedges();
-    if(m_red_th->source()->infinite_in_x() == FINITE ||
-       m_red_th->source()->infinite_in_x() == PLUS_INFINITY)
+    if(m_red_th->source()->boundary_in_x() == NO_BOUNDARY ||
+       m_red_th->source()->boundary_in_x() == PLUS_INFINITY)
       m_red_th = m_red_th->next()->twin();
 
      if(m_red_th->source() == 
@@ -118,8 +118,8 @@ public:
   
     m_blue_th = 
       m_blue_arr_accessor.bottom_left_fictitious_vertex()->incident_halfedges();
-    if(m_blue_th->source()->infinite_in_x() == FINITE ||
-       m_blue_th->source()->infinite_in_x() == PLUS_INFINITY)
+    if(m_blue_th->source()->boundary_in_x() == NO_BOUNDARY ||
+       m_blue_th->source()->boundary_in_x() == PLUS_INFINITY)
       m_blue_th = m_blue_th->next()->twin();
 
     if(m_blue_th->source() == 
@@ -137,8 +137,8 @@ public:
     if(e->is_finite())
       return;
 
-    if((e->is_minus_infinite_in_x()) || 
-       (e->is_finite_in_x() && e->is_plus_infinite_in_y()))
+    if((e->is_minus_boundary_in_x()) || 
+       (e->is_finite_in_x() && e->is_plus_boundary_in_y()))
     {
       switch(e->get_unbounded_curve().get_color())
       {
@@ -385,7 +385,7 @@ public:
       // halfedge
       bool special_case = 
         (this->current_event()->is_finite_in_x() && 
-         this->current_event()->is_plus_infinite_in_y());
+         this->current_event()->is_plus_boundary_in_y());
 
       // get the new face
       Face_handle new_face = (special_case ? res->twin()->face() : res->face());

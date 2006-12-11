@@ -496,18 +496,18 @@ public:
       (ind == MIN_END) ? Base_event::LEFT_END : Base_event::RIGHT_END;
     Point_2 end_point;
 
-    Infinity_type inf_x = m_traits->infinite_in_x_2_object()(cv, ind);
-    Infinity_type inf_y = m_traits->infinite_in_y_2_object()(cv, ind);
+    Boundary_type inf_x = m_traits->boundary_in_x_2_object()(cv, ind);
+    Boundary_type inf_y = m_traits->boundary_in_y_2_object()(cv, ind);
     
     std::pair<Event*, bool> pair_res;
-    if(inf_x != FINITE)
+    if(inf_x != NO_BOUNDARY)
     {
       pair_res =
         push_event(cv, end_attr , inf_x, inf_y, ind, sc);
     }
     else
     {
-      if(inf_y != FINITE)
+      if(inf_y != NO_BOUNDARY)
       {
         pair_res =
           push_event(cv, end_attr , inf_x, inf_y, ind, sc);
@@ -615,14 +615,14 @@ public:
      }
         
     // its an event at infinity
-    Infinity_type inf_x = m_currentEvent->infinity_at_x();
+    Boundary_type inf_x = m_currentEvent->infinity_at_x();
     if(inf_x == MINUS_INFINITY)
       m_status_line_insert_hint = m_statusLine.end();
     else
     {
       CGAL_assertion(inf_x != PLUS_INFINITY); //event at plus infinity x
                                               // must have left curve
-      Infinity_type inf_y = m_currentEvent->infinity_at_y();
+      Boundary_type inf_y = m_currentEvent->infinity_at_y();
       if(inf_y == MINUS_INFINITY)
         m_status_line_insert_hint = m_statusLine.begin();
       else
@@ -748,7 +748,7 @@ public:
   void PrintEventQueue();
   void PrintSubCurves();
   void PrintStatusLine();
-  void PrintInfinityType(Infinity_type x, Infinity_type y);
+  void PrintInfinityType(Boundary_type x, Boundary_type y);
   void PrintEvent(const Event* e);
 #endif
 
@@ -878,15 +878,15 @@ protected:
   /*! Push an event at infinity to x-structure (m_queue) iff it doesnt exist (overlap) */
   std::pair<Event*, bool> push_event(const X_monotone_curve_2& cv,
                                      Attribute type,
-                                     Infinity_type x_inf,
-                                     Infinity_type y_inf = FINITE,
+                                     Boundary_type x_inf,
+                                     Boundary_type y_inf = NO_BOUNDARY,
                                      Curve_end     ind = MIN_END,
                                      Subcurve* sc = NULL)
   {
     Event*    e;  
     
-    m_queueEventLess.set_infinite_in_x(x_inf);
-    m_queueEventLess.set_infinite_in_y(y_inf);
+    m_queueEventLess.set_boundary_in_x(x_inf);
+    m_queueEventLess.set_boundary_in_y(y_inf);
     m_queueEventLess.set_index(ind);
 
     const std::pair<EventQueueIter, bool>& pair_res =
@@ -939,8 +939,8 @@ protected:
   }
 
   void _set_attributes_of_infinity(Event* e,
-                                   Infinity_type x_inf,
-                                   Infinity_type y_inf)
+                                   Boundary_type x_inf,
+                                   Boundary_type y_inf)
   {
     if(x_inf == MINUS_INFINITY)
       e->set_minus_infinite_x();

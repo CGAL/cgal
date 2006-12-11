@@ -49,8 +49,8 @@ public:
   typedef typename Traits_2::Equal_2               Base_Equal_2;
   typedef typename Traits_2::Compare_x_2           Base_Compare_x_2;
   typedef typename Traits_2::Is_vertical_2         Base_Is_vertical_2;
-  typedef typename Traits_2::Has_infinite_category Base_has_infinite_category;
-  typedef Tag_true                                 Has_infinite_category;
+  typedef typename Traits_2::Has_boundary_category Base_has_boundary_category;
+  typedef Tag_true                                 Has_boundary_category;
   typedef typename Traits_2::Has_left_category     Has_left_category;
 
 protected:
@@ -191,73 +191,73 @@ public:
 
 
   /*! \class
-   * The Infinite_in_x_2 functor.
+   * The Boundary_in_x_2 functor.
    */
-  class Infinite_in_x_2
+  class Boundary_in_x_2
   {
   public:
 
-    Infinity_type operator() (const X_monotone_curve_2& cv,
+    Boundary_type operator() (const X_monotone_curve_2& cv,
                               Curve_end ind) const
     {
-      return _infinite_in_x_imp (cv, ind, Base_has_infinite_category());
+      return _boundary_in_x_imp (cv, ind, Base_has_boundary_category());
     }
 
   private:
 
-    Infinity_type _infinite_in_x_imp (const X_monotone_curve_2& cv,
+    Boundary_type _boundary_in_x_imp (const X_monotone_curve_2& cv,
                                       Curve_end ind,
                                       Tag_true) const
     {
       Traits_2                    tr;
-      return (tr.infinite_in_x_2_object() (cv.base(), ind));
+      return (tr.boundary_in_x_2_object() (cv.base(), ind));
     }
 
-    Infinity_type _infinite_in_x_imp (const X_monotone_curve_2& , Curve_end ,
+    Boundary_type _boundary_in_x_imp (const X_monotone_curve_2& , Curve_end ,
                                       Tag_false) const
     {
-      return (FINITE);
+      return (NO_BOUNDARY);
     }
   };
 
-  Infinite_in_x_2 infinite_in_x_2_object () const
+  Boundary_in_x_2 boundary_in_x_2_object () const
   {
-    return Infinite_in_x_2();
+    return Boundary_in_x_2();
   }
 
   /*! \class
-   * The Infinite_in_y_2 functor.
+   * The Boundary_in_y_2 functor.
    */
-  class Infinite_in_y_2
+  class Boundary_in_y_2
   {
   public:
 
-    Infinity_type operator() (const X_monotone_curve_2& cv,
+    Boundary_type operator() (const X_monotone_curve_2& cv,
                               Curve_end ind) const
     {
-      return _infinite_in_y_imp (cv, ind, Base_has_infinite_category());
+      return _boundary_in_y_imp (cv, ind, Base_has_boundary_category());
     }
 
   private:
 
-    Infinity_type _infinite_in_y_imp (const X_monotone_curve_2& cv,
+    Boundary_type _boundary_in_y_imp (const X_monotone_curve_2& cv,
                                       Curve_end ind,
                                       Tag_true) const
     {
       Traits_2                    tr;
-      return (tr.infinite_in_y_2_object() (cv.base(), ind));
+      return (tr.boundary_in_y_2_object() (cv.base(), ind));
     }
 
-    Infinity_type _infinite_in_y_imp (const X_monotone_curve_2& , Curve_end ,
+    Boundary_type _boundary_in_y_imp (const X_monotone_curve_2& , Curve_end ,
                                       Tag_false) const
     {
-      return (FINITE);
+      return (NO_BOUNDARY);
     }
   };
 
-  Infinite_in_y_2 infinite_in_y_2_object () const
+  Boundary_in_y_2 boundary_in_y_2_object () const
   {
-    return Infinite_in_y_2();
+    return Boundary_in_y_2();
   }
 
   /*! \class
@@ -377,7 +377,7 @@ public:
       // If the traits class does not support unbounded curves, we just
       // return EQUAL, as this comparison will not be invoked anyway.
       return _comp_y_at_infinity_imp (cv1, cv2, ind, 
-                                      Base_has_infinite_category());
+                                      Base_has_boundary_category());
     }
 
   private:
@@ -489,7 +489,7 @@ public:
                                   Curve_end ind) const
     {
       return (_compare_point_curve_imp (p, cv, ind,
-                                        Base_has_infinite_category()));
+                                        Base_has_boundary_category()));
     }
 
     Comparison_result operator() (const X_monotone_curve_2& cv1,
@@ -498,7 +498,7 @@ public:
                                   Curve_end ind2) const
     {
       return (_compare_curves_imp (cv1, ind1, cv2, ind2,
-                                   Base_has_infinite_category()));
+                                   Base_has_boundary_category()));
     }
 
   private:

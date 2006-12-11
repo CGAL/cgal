@@ -328,13 +328,13 @@ insert_non_intersecting_curve (Arrangement_2<Traits,Dcel>& arr,
 
   // Check whether the left end of c lies at infinity, or whether it is a
   // normal endpoint, and locate it in the arrangement accordingly.
-  const Infinity_type  inf_x1 = traits->infinite_in_x_2_object() (c, MIN_END);
-  const Infinity_type  inf_y1 = traits->infinite_in_y_2_object() (c, MIN_END);
+  const Boundary_type  inf_x1 = traits->boundary_in_x_2_object() (c, MIN_END);
+  const Boundary_type  inf_y1 = traits->boundary_in_y_2_object() (c, MIN_END);
   CGAL::Object         obj1;
   const Halfedge_const_handle *fict_hh1 = NULL;
   const Vertex_const_handle   *vh1 = NULL;
 
-  if (inf_x1 == FINITE && inf_y1 == FINITE)
+  if (inf_x1 == NO_BOUNDARY && inf_y1 == NO_BOUNDARY)
   {
     // We have a normal left endpoint.
     obj1 = pl.locate (arr.get_traits()->construct_min_vertex_2_object() (c));
@@ -363,13 +363,13 @@ insert_non_intersecting_curve (Arrangement_2<Traits,Dcel>& arr,
 
   // Check whether the right end of c lies at infinity, or whether it is a
   // normal endpoint, and locate it in the arrangement accordingly.
-  const Infinity_type  inf_x2 = traits->infinite_in_x_2_object() (c, MAX_END);
-  const Infinity_type  inf_y2 = traits->infinite_in_y_2_object() (c, MAX_END);
+  const Boundary_type  inf_x2 = traits->boundary_in_x_2_object() (c, MAX_END);
+  const Boundary_type  inf_y2 = traits->boundary_in_y_2_object() (c, MAX_END);
   CGAL::Object         obj2;
   const Halfedge_const_handle *fict_hh2 = NULL;
   const Vertex_const_handle   *vh2 = NULL;
 
-  if (inf_x2 == FINITE && inf_y2 == FINITE)
+  if (inf_x2 == NO_BOUNDARY && inf_y2 == NO_BOUNDARY)
   {
     // We have a normal right endpoint.
     obj2 = pl.locate (arr.get_traits()->construct_max_vertex_2_object() (c));

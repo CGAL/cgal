@@ -164,8 +164,8 @@ protected:
 
     // Write the vertex.
     formatter.write_vertex_begin();
-    formatter.write_vertex_index (static_cast<int> (v->infinite_in_x()));
-    formatter.write_vertex_index (static_cast<int> (v->infinite_in_y()));
+    formatter.write_vertex_index (static_cast<int> (v->boundary_in_x()));
+    formatter.write_vertex_index (static_cast<int> (v->boundary_in_y()));
     if (! v->is_at_infinity())
       formatter.write_point (v->point()); // Write the associated point.
     formatter.write_vertex_data (v);    // Write additional user-defined data.

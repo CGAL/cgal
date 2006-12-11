@@ -80,14 +80,14 @@ public:
     Vertex_const_handle   v_tl = arr_access.top_left_fictitious_vertex();
     
     m_top_he = v_tl->incident_halfedges();
-    if (m_top_he->source()->infinite_in_y() != PLUS_INFINITY)
+    if (m_top_he->source()->boundary_in_y() != PLUS_INFINITY)
       m_top_he = m_top_he->next()->twin();
 
     // Get a fictitious halfedge on the bottom edge of the bounding rectangle.
     Vertex_const_handle   v_bl = arr_access.bottom_left_fictitious_vertex();
     
     m_bottom_he = v_bl->incident_halfedges();
-    if (m_bottom_he->source()->infinite_in_y() != MINUS_INFINITY)
+    if (m_bottom_he->source()->boundary_in_y() != MINUS_INFINITY)
       m_bottom_he = m_bottom_he->next()->twin();
   }
 
@@ -113,10 +113,10 @@ public:
     if (! event->is_finite())
     {
       // We only need to consider events with a finite x-cooridinates.
-      if (event->infinity_at_x() != FINITE)
+      if (event->infinity_at_x() != NO_BOUNDARY)
         return (true);
 
-      Infinity_type y_inf = event->infinity_at_y();
+      Boundary_type y_inf = event->infinity_at_y();
       
       if (y_inf == PLUS_INFINITY)
       {

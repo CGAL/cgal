@@ -53,6 +53,7 @@ public:
 
   typedef Kernel_                         Kernel;
   typedef typename Kernel::FT             FT;
+
 private:
     typedef Algebraic_structure_traits<FT> AST; 
     typedef typename AST::Is_exact FT_is_exact; 
@@ -63,7 +64,7 @@ public:
   // Category tags:
   typedef Tag_true                        Has_left_category;
   typedef Tag_true                        Has_merge_category;
-  typedef Tag_false                       Has_infinite_category;
+  typedef Tag_false                       Has_boundary_category;
 
   typedef typename Kernel::Line_2         Line_2;
   typedef CGAL::Segment_assertions<Arr_segment_traits_2<Kernel> >

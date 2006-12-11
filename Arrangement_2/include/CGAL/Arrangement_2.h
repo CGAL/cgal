@@ -698,7 +698,7 @@ public:
     // Blocking access to inherited functions from the Dcel::Vertex.
     bool has_null_point () const;
     void set_point (Point_2* );
-    void set_at_infinity (Infinity_type inf_x, Infinity_type inf_y);
+    void set_boundary (Boundary_type inf_x, Boundary_type inf_y);
     const DHalfedge* halfedge () const;
     DHalfedge* halfedge ();
     void set_halfedge (DHalfedge* );
@@ -1731,7 +1731,7 @@ protected:
    */
   bool _is_on_fictitious_edge (const X_monotone_curve_2& cv,
                                Curve_end ind,
-                               Infinity_type inf_x, Infinity_type inf_y,
+                               Boundary_type inf_x, Boundary_type inf_y,
                                const DHalfedge *he,
                                bool& eq_source, bool& eq_target) const;
   
@@ -1748,8 +1748,8 @@ protected:
   DHalfedge* _locate_along_ccb (DFace *f,
                                 const X_monotone_curve_2& cv,
                                 Curve_end ind,
-                                Infinity_type inf_x,
-                                Infinity_type inf_y) const;
+                                Boundary_type inf_x,
+                                Boundary_type inf_y) const;
   
   /*!
    * Locate the place for the given curve around the given vertex.
@@ -1804,7 +1804,7 @@ protected:
                                 const DVertex* v) const
   {
     return (_compare_x_imp (p, v,
-                            typename Traits_2::Has_infinite_category()));
+                            typename Traits_2::Has_boundary_category()));
   }
 
   Comparison_result _compare_x_imp (const Point_2& p,
@@ -1834,7 +1834,7 @@ protected:
                                  const DVertex* v) const
   {
     return (_compare_xy_imp (p, v,
-                             typename Traits_2::Has_infinite_category()));
+                             typename Traits_2::Has_boundary_category()));
   }
 
   Comparison_result _compare_xy_imp (const Point_2& p,
@@ -1865,16 +1865,16 @@ protected:
                                      const DHalfedge* he) const
   {
     return (_compare_y_at_x_imp (p, he,
-                                 typename Traits_2::Has_infinite_category()));
+                                 typename Traits_2::Has_boundary_category()));
   }
 
   Comparison_result _compare_y_at_x_imp (const Point_2& p,
                                          const DHalfedge* he,
                                          Tag_false) const
   {
-    const Infinity_type       inf_y = he->vertex()->infinite_in_y();
+    const Boundary_type       inf_y = he->vertex()->boundary_in_y();
 
-    CGAL_assertion (inf_y == he->opposite()->vertex()->infinite_in_y());
+    CGAL_assertion (inf_y == he->opposite()->vertex()->boundary_in_y());
     if (inf_y == MINUS_INFINITY)
       return (LARGER);
     else if (inf_y == PLUS_INFINITY)
@@ -1939,14 +1939,14 @@ protected:
    * Create a new vertex at infinity.
    * \param inf_x MINUS_INFINITY if this vertex lies at x = -oo;
    *              PLUS_INFINITY if this vertex lies at x = +oo;
-   *              FINITE if the vertex has a finite x-coordinate.
+   *              NO_BOUNDARY if the vertex has a finite x-coordinate.
    * \param inf_y MINUS_INFINITY if this vertex lies at y = -oo;
    *              PLUS_INFINITY if this vertex lies at y = +oo;
-   *              FINITE if the vertex has a finite y-coordinate.
+   *              NO_BOUNDARY if the vertex has a finite y-coordinate.
    * \return A pointer to the newly created vertex.
    */
-  DVertex* _create_vertex_at_infinity (Infinity_type inf_x,
-                                       Infinity_type inf_y);
+  DVertex* _create_vertex_at_infinity (Boundary_type inf_x,
+                                       Boundary_type inf_y);
   
   /*!
    * Insert an x-monotone curve into the arrangement, such that both its
@@ -2025,7 +2025,7 @@ protected:
   {
     return
       (_is_face_unbounded_imp (he, 
-                               typename Traits_2::Has_infinite_category()));
+                               typename Traits_2::Has_boundary_category()));
   }
   
   std::pair<bool, bool> _is_face_unbounded_imp (DHalfedge *he,
@@ -2144,7 +2144,7 @@ protected:
    *         source of e, and whose target is v.
    */
   DHalfedge* _split_fictitious_edge (DHalfedge *e,
-                                     Infinity_type inf_x, Infinity_type inf_y);
+                                     Boundary_type inf_x, Boundary_type inf_y);
 
   /*!
    * Split a given fictitious edge into two, at a given vertex at infinity.
@@ -2330,8 +2330,8 @@ private:
       (*iter)->after_create_vertex (v);
   }
 
-  void _notify_before_create_vertex_at_infinity (Infinity_type inf_x,
-                                                 Infinity_type inf_y)
+  void _notify_before_create_vertex_at_infinity (Boundary_type inf_x,
+                                                 Boundary_type inf_y)
   {
     Observers_iterator   iter;
     Observers_iterator   end = observers.end();

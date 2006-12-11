@@ -49,6 +49,7 @@ public:
 
   typedef Kernel_                         Kernel;
   typedef typename Kernel::FT             FT;
+
 private:
     typedef Algebraic_structure_traits<FT> AST; 
     typedef typename AST::Is_exact FT_is_exact; 
@@ -59,7 +60,7 @@ public:
   // Category tags:
   typedef Tag_true                        Has_left_category;
   typedef Tag_true                        Has_merge_category;
-  typedef Tag_true                        Has_infinite_category;
+  typedef Tag_true                        Has_boundary_category;
 
   typedef typename Kernel::Line_2         Line_2;
   typedef typename Kernel::Ray_2          Ray_2;
@@ -248,40 +249,40 @@ public:
     /*!
      * Check if the x-coordinate of the left point is infinite.
      * \return MINUS_INFINITY if the left point is at x = -oo;
-     *         FINITE if the x-coordinate is finite.
+     *         NO_BOUNDARY if the x-coordinate is finite.
      */
-    Infinity_type left_infinite_in_x () const
+    Boundary_type left_boundary_in_x () const
     {
       if (is_vert || is_degen)
-        return (FINITE);
+        return (NO_BOUNDARY);
 
       if (is_right)
-        return (has_source ? FINITE : MINUS_INFINITY);
+        return (has_source ? NO_BOUNDARY : MINUS_INFINITY);
       else
-        return (has_target ? FINITE : MINUS_INFINITY);
+        return (has_target ? NO_BOUNDARY : MINUS_INFINITY);
     }
 
     /*!
      * Check if the y-coordinate of the left point is infinite.
      * \return MINUS_INFINITY if the left point is at y = -oo;
      *         PLUS_INFINITY if the left point is at y = -oo;
-     *         FINITE if the y-coordinate is finite.
+     *         NO_BOUNDARY if the y-coordinate is finite.
      */
-    Infinity_type left_infinite_in_y () const
+    Boundary_type left_boundary_in_y () const
     {
       if (is_horiz || is_degen)
-        return (FINITE);
+        return (NO_BOUNDARY);
 
       if (is_vert)
       {
         if (is_right)
-          return (has_source ? FINITE : MINUS_INFINITY);
+          return (has_source ? NO_BOUNDARY : MINUS_INFINITY);
         else
-          return (has_target ? FINITE : MINUS_INFINITY);
+          return (has_target ? NO_BOUNDARY : MINUS_INFINITY);
       }
 
       if ((is_right && has_source) || (! is_right && has_target))
-          return (FINITE);
+          return (NO_BOUNDARY);
 
       return (has_pos_slope ? MINUS_INFINITY : PLUS_INFINITY);
     }
@@ -353,40 +354,40 @@ public:
     /*!
      * Check if the x-coordinate of the right point is infinite.
      * \return MINUS_INFINITY if the left point is at x = +oo;
-     *         FINITE if the x-coordinate is finite.
+     *         NO_BOUNDARY if the x-coordinate is finite.
      */
-    Infinity_type right_infinite_in_x () const
+    Boundary_type right_boundary_in_x () const
     {
       if (is_vert || is_degen)
-        return (FINITE);
+        return (NO_BOUNDARY);
 
       if (is_right)
-        return (has_target ? FINITE : PLUS_INFINITY);
+        return (has_target ? NO_BOUNDARY : PLUS_INFINITY);
       else
-        return (has_source ? FINITE : PLUS_INFINITY);
+        return (has_source ? NO_BOUNDARY : PLUS_INFINITY);
     }
 
     /*!
      * Check if the y-coordinate of the right point is infinite.
      * \return MINUS_INFINITY if the right point is at y = -oo;
      *         PLUS_INFINITY if the right point is at y = -oo;
-     *         FINITE if the y-coordinate is finite.
+     *         NO_BOUNDARY if the y-coordinate is finite.
      */
-    Infinity_type right_infinite_in_y () const
+    Boundary_type right_boundary_in_y () const
     {
       if (is_horiz || is_degen)
-        return (FINITE);
+        return (NO_BOUNDARY);
 
       if (is_vert)
       {
         if (is_right)
-          return (has_target ? FINITE : PLUS_INFINITY);
+          return (has_target ? NO_BOUNDARY : PLUS_INFINITY);
         else
-          return (has_source ? FINITE : PLUS_INFINITY);
+          return (has_source ? NO_BOUNDARY : PLUS_INFINITY);
       }
 
       if ((is_right && has_target) || (! is_right && has_source))
-          return (FINITE);
+          return (NO_BOUNDARY);
 
       return (has_pos_slope ? PLUS_INFINITY : MINUS_INFINITY);
     }
@@ -499,9 +500,9 @@ public:
       typename Kernel_::Compare_x_2   compare_x = kernel.compare_x_2_object();
       Comparison_result               res1;
 
-      if (left_infinite_in_x() == FINITE)
+      if (left_boundary_in_x() == NO_BOUNDARY)
       {
-        if (left_infinite_in_y() != FINITE)
+        if (left_boundary_in_y() != NO_BOUNDARY)
           // Compare with some point on the curve.
           res1 = compare_x (p, ps);
         else
@@ -520,9 +521,9 @@ public:
 
       Comparison_result               res2;
 
-      if (right_infinite_in_x() == FINITE)
+      if (right_boundary_in_x() == NO_BOUNDARY)
       {
-        if (right_infinite_in_y() != FINITE)
+        if (right_boundary_in_y() != NO_BOUNDARY)
           // Compare with some point on the curve.
           res2 = compare_x (p, ps);
         else
@@ -549,11 +550,11 @@ public:
 
       Kernel                          kernel;
       typename Kernel_::Compare_y_2   compare_y = kernel.compare_y_2_object();
-      Infinity_type                   inf = left_infinite_in_y();
+      Boundary_type                   inf = left_boundary_in_y();
       Comparison_result               res1;
 
       CGAL_assertion (inf != PLUS_INFINITY);
-      if (inf == FINITE)
+      if (inf == NO_BOUNDARY)
         res1 = compare_y (p, left());
       else
         res1 = LARGER;           // p is obviously above.
@@ -565,9 +566,9 @@ public:
 
       Comparison_result               res2;
 
-      inf = right_infinite_in_y();
+      inf = right_boundary_in_y();
       CGAL_assertion (inf != MINUS_INFINITY);
-      if (inf == FINITE)
+      if (inf == NO_BOUNDARY)
         res2 = compare_y (p, right());
       else
         res2 = SMALLER;          // p is obviously below.
@@ -716,7 +717,7 @@ public:
     return Compare_xy_2();
   }
 
-  class Infinite_in_x_2
+  class Boundary_in_x_2
   {
   public:
     /*!
@@ -725,26 +726,26 @@ public:
      * \param ind MIN_END if we refer to cv's minimal end,
      *            MAX_END if we refer to its maximal end.
      * \return MINUS_INFINITY if the curve end lies at x = -oo;
-     *         FINITE if the curve end has a finite x-coordinate;
+     *         NO_BOUNDARY if the curve end has a finite x-coordinate;
      *         PLUS_INFINITY if the curve end lies at x = +oo.
      */
-    Infinity_type operator() (const X_monotone_curve_2& cv,
+    Boundary_type operator() (const X_monotone_curve_2& cv,
                               Curve_end ind) const
     {
       if (ind == MIN_END)
-        return (cv.left_infinite_in_x());
+        return (cv.left_boundary_in_x());
       else
-        return (cv.right_infinite_in_x());
+        return (cv.right_boundary_in_x());
     }
   };
 
-  /*! Get an Infinite_in_x_2 functor object. */
-  Infinite_in_x_2 infinite_in_x_2_object () const
+  /*! Get an Boundary_in_x_2 functor object. */
+  Boundary_in_x_2 boundary_in_x_2_object () const
   {
-    return Infinite_in_x_2();
+    return Boundary_in_x_2();
   }
 
-  class Infinite_in_y_2
+  class Boundary_in_y_2
   {
   public:
     /*!
@@ -753,23 +754,23 @@ public:
      * \param ind MIN_END if we refer to cv's minimal end,
      *            MAX_END if we refer to its maximal end.
      * \return MINUS_INFINITY if the curve end lies at y = -oo;
-     *         FINITE if the curve end has a finite y-coordinate;
+     *         NO_BOUNDARY if the curve end has a finite y-coordinate;
      *         PLUS_INFINITY if the curve end lies at y = +oo.
      */
-    Infinity_type operator() (const X_monotone_curve_2& cv,
+    Boundary_type operator() (const X_monotone_curve_2& cv,
                               Curve_end ind) const
     {
       if (ind == MIN_END)
-        return (cv.left_infinite_in_y());
+        return (cv.left_boundary_in_y());
       else
-        return (cv.right_infinite_in_y());
+        return (cv.right_boundary_in_y());
     }
   };
 
-  /*! Get an Infinite_in_y_2 functor object. */
-  Infinite_in_y_2 infinite_in_y_2_object () const
+  /*! Get an Boundary_in_y_2 functor object. */
+  Boundary_in_y_2 boundary_in_y_2_object () const
   {
-    return Infinite_in_y_2();
+    return Boundary_in_y_2();
   }
 
   class Construct_min_vertex_2
@@ -895,11 +896,11 @@ public:
     {
       // Make sure both curves are defined at x = -oo (or at x = +oo).
       CGAL_precondition ((ind == MIN_END &&
-                          cv1.left_infinite_in_x() == MINUS_INFINITY &&
-                          cv2.left_infinite_in_x() == MINUS_INFINITY) ||
+                          cv1.left_boundary_in_x() == MINUS_INFINITY &&
+                          cv2.left_boundary_in_x() == MINUS_INFINITY) ||
                          (ind == MAX_END &&
-                          cv1.right_infinite_in_x() == PLUS_INFINITY &&
-                          cv2.right_infinite_in_x() == PLUS_INFINITY));
+                          cv1.right_boundary_in_x() == PLUS_INFINITY &&
+                          cv2.right_boundary_in_x() == PLUS_INFINITY));
 
       // Compare the slopes of the two supporting lines.
       Kernel                    kernel;

@@ -311,7 +311,7 @@ public:
     Halfedge_handle res;
     bool flip_res = false;
     if(this->current_event()->is_finite_in_x() && 
-       this->current_event()->is_plus_infinite_in_y())
+       this->current_event()->is_plus_boundary_in_y())
     {
       res = m_arr_access.insert_at_vertices_ex(_curve(cv),
                                                prev,
@@ -463,8 +463,8 @@ public:
       return;
 
      // if it is an event at infinity, split the corresponding fictitious edge.
-    Infinity_type inf_x = event->infinity_at_x();
-    Infinity_type inf_y = event->infinity_at_y();
+    Boundary_type inf_x = event->infinity_at_x();
+    Boundary_type inf_y = event->infinity_at_y();
 
     Vertex_handle v_at_inf = 
       m_arr_access.create_vertex_at_infinity(inf_x, inf_y);
@@ -484,7 +484,7 @@ public:
       m_rh = m_rh->next();
       return;
 
-    case FINITE:
+    case NO_BOUNDARY:
     default:
       break;
     }
@@ -511,7 +511,7 @@ public:
         }
         return;
 
-      case FINITE:
+      case NO_BOUNDARY:
       default:
         // doesn't suppose to reach here at all.
         CGAL_assertion(false);
@@ -560,7 +560,7 @@ private:
 
   void set_prev_inf_event_to_null(Event* e)
   {
-    CGAL_assertion(!this->current_event()->is_minus_infinite_in_x());    
+    CGAL_assertion(!this->current_event()->is_minus_boundary_in_x());    
     if(e == m_prev_plus_inf_y_event)
       m_prev_plus_inf_y_event = NULL;
   }

@@ -40,7 +40,7 @@ public:
   typedef typename Base::Halfedge_handle           Halfedge_handle;
   typedef typename Base::Base_point_2              Base_point_2;
   typedef typename Base::Point_2                   Point_2;
-  typedef typename Base::Has_infinite_category     Has_infinite_category;
+  typedef typename Base::Has_boundary_category     Has_boundary_category;
   typedef typename Base::Has_left_category Has_left_category;
 
 public:

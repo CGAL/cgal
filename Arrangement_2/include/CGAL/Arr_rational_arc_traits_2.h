@@ -55,7 +55,7 @@ public:
   // Category tags:
   typedef Tag_true                        Has_left_category;
   typedef Tag_true                        Has_merge_category;
-  typedef Tag_true                        Has_infinite_category;
+  typedef Tag_true                        Has_boundary_category;
 
   // Traits objects:
   typedef _Rational_arc_2<Alg_kernel, Nt_traits>     Curve_2;
@@ -163,7 +163,7 @@ public:
     return Compare_xy_2();
   }
 
-  class Infinite_in_x_2
+  class Boundary_in_x_2
   {
   public:
     /*!
@@ -172,26 +172,26 @@ public:
      * \param ind MIN_END if we refer to cv's minimal end,
      *            MIN_END if we refer to its maximal end.
      * \return MINUS_INFINITY if the curve end lies at x = -oo;
-     *         FINITE if the curve end has a finite x-coordinate;
+     *         NO_BOUNDARY if the curve end has a finite x-coordinate;
      *         PLUS_INFINITY if the curve end lies at x = +oo.
      */
-    Infinity_type operator() (const X_monotone_curve_2& cv,
+    Boundary_type operator() (const X_monotone_curve_2& cv,
                               Curve_end ind) const
     {
       if (ind == MIN_END)
-        return (cv.left_infinite_in_x());
+        return (cv.left_boundary_in_x());
       else
-        return (cv.right_infinite_in_x());
+        return (cv.right_boundary_in_x());
     }
   };
 
-  /*! Get an Infinite_in_x_2 functor object. */
-  Infinite_in_x_2 infinite_in_x_2_object () const
+  /*! Get an Boundary_in_x_2 functor object. */
+  Boundary_in_x_2 boundary_in_x_2_object () const
   {
-    return Infinite_in_x_2();
+    return Boundary_in_x_2();
   }
 
-  class Infinite_in_y_2
+  class Boundary_in_y_2
   {
   public:
     /*!
@@ -200,23 +200,23 @@ public:
      * \param ind MIN_END if we refer to cv's minimal end,
      *            MIN_END if we refer to its maximal end.
      * \return MINUS_INFINITY if the curve end lies at y = -oo;
-     *         FINITE if the curve end has a finite y-coordinate;
+     *         NO_BOUNDARY if the curve end has a finite y-coordinate;
      *         PLUS_INFINITY if the curve end lies at y = +oo.
      */
-    Infinity_type operator() (const X_monotone_curve_2& cv,
+    Boundary_type operator() (const X_monotone_curve_2& cv,
                               Curve_end ind) const
     {
       if (ind == MIN_END)
-        return (cv.left_infinite_in_y());
+        return (cv.left_boundary_in_y());
       else
-        return (cv.right_infinite_in_y());
+        return (cv.right_boundary_in_y());
     }
   };
 
-  /*! Get an Infinite_in_y_2 functor object. */
-  Infinite_in_y_2 infinite_in_y_2_object () const
+  /*! Get an Boundary_in_y_2 functor object. */
+  Boundary_in_y_2 boundary_in_y_2_object () const
   {
-    return Infinite_in_y_2();
+    return Boundary_in_y_2();
   }
 
   class Construct_min_vertex_2
@@ -352,12 +352,12 @@ public:
       CGAL_precondition_code (
         Alg_kernel   ker;
       );
-      CGAL_precondition ((cv1.left_infinite_in_x() != FINITE ||
-                          cv1.left_infinite_in_y() != FINITE ||
+      CGAL_precondition ((cv1.left_boundary_in_x() != NO_BOUNDARY ||
+                          cv1.left_boundary_in_y() != NO_BOUNDARY ||
                           ker.compare_xy_2_object() (p, 
                                                      cv1.left()) == LARGER) &&
-                         (cv2.left_infinite_in_x() != FINITE ||
-                          cv2.left_infinite_in_y() != FINITE ||
+                         (cv2.left_boundary_in_x() != NO_BOUNDARY ||
+                          cv2.left_boundary_in_y() != NO_BOUNDARY ||
                           ker.compare_xy_2_object() (p,
                                                      cv2.left()) == LARGER));
 
@@ -413,12 +413,12 @@ public:
       CGAL_precondition_code (
         Alg_kernel   ker;
       );
-      CGAL_precondition((cv1.right_infinite_in_x() != FINITE ||
-                         cv1.right_infinite_in_y() != FINITE ||
+      CGAL_precondition((cv1.right_boundary_in_x() != NO_BOUNDARY ||
+                         cv1.right_boundary_in_y() != NO_BOUNDARY ||
                          ker.compare_xy_2_object() (p, 
                                                     cv1.right()) == SMALLER) &&
-                        (cv2.right_infinite_in_x() != FINITE ||
-                         cv2.right_infinite_in_y() != FINITE ||
+                        (cv2.right_boundary_in_x() != NO_BOUNDARY ||
+                         cv2.right_boundary_in_y() != NO_BOUNDARY ||
                          ker.compare_xy_2_object() (p,
                                                     cv2.right()) == SMALLER));
 

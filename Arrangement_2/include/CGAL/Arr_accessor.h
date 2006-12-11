@@ -120,12 +120,12 @@ public:
    *                     (-oo, +oo) is the top-left vertex.
    *                     (+oo, -oo) is the bottom-right vertex.
    *                     (+oo, +oo) is the top-right vertex.
-   * \pre inf_x and inf_y are not FINITE. 
+   * \pre inf_x and inf_y are not NO_BOUNDARY. 
    */
-  Vertex_handle fictitious_vertex (Infinity_type inf_x,
-                                   Infinity_type inf_y)
+  Vertex_handle fictitious_vertex (Boundary_type inf_x,
+                                   Boundary_type inf_y)
   {
-    CGAL_precondition (inf_x != FINITE && inf_y != FINITE);
+    CGAL_precondition (inf_x != NO_BOUNDARY && inf_y != NO_BOUNDARY);
 
     DVertex      *v;
 
@@ -144,12 +144,12 @@ public:
    *                     (-oo, +oo) is the top-left vertex.
    *                     (+oo, -oo) is the bottom-right vertex.
    *                     (+oo, +oo) is the top-right vertex.
-   * \pre inf_x and inf_y are not FINITE. 
+   * \pre inf_x and inf_y are not NO_BOUNDARY. 
    */
-  Vertex_const_handle fictitious_vertex (Infinity_type inf_x,
-                                         Infinity_type inf_y) const
+  Vertex_const_handle fictitious_vertex (Boundary_type inf_x,
+                                         Boundary_type inf_y) const
   {
-    CGAL_precondition (inf_x != FINITE && inf_y != FINITE);
+    CGAL_precondition (inf_x != NO_BOUNDARY && inf_y != NO_BOUNDARY);
 
     const DVertex      *v;
 
@@ -339,11 +339,11 @@ public:
     // Check whether the relevant end of cv lies at infinity.
     const Traits_adaptor_2  *traits =
                    static_cast<const Traits_adaptor_2*> (p_arr->get_traits());
-    const Infinity_type  inf_x = traits->infinite_in_x_2_object() (cv, ind);
-    const Infinity_type  inf_y = traits->infinite_in_y_2_object() (cv, ind);
+    const Boundary_type  inf_x = traits->boundary_in_x_2_object() (cv, ind);
+    const Boundary_type  inf_y = traits->boundary_in_y_2_object() (cv, ind);
     bool                 eq_source, eq_target;
 
-    CGAL_precondition (inf_x != FINITE || inf_y != FINITE);
+    CGAL_precondition (inf_x != NO_BOUNDARY || inf_y != NO_BOUNDARY);
 
     return (p_arr->_is_on_fictitious_edge (cv, ind,
                                            inf_x, inf_y,
@@ -374,10 +374,10 @@ public:
     // Check whether the relevant end of cv lies at infinity.
     const Traits_adaptor_2  *traits =
                    static_cast<const Traits_adaptor_2*> (p_arr->get_traits());
-    const Infinity_type  inf_x = traits->infinite_in_x_2_object() (cv, ind);
-    const Infinity_type  inf_y = traits->infinite_in_y_2_object() (cv, ind);
+    const Boundary_type  inf_x = traits->boundary_in_x_2_object() (cv, ind);
+    const Boundary_type  inf_y = traits->boundary_in_y_2_object() (cv, ind);
 
-    CGAL_precondition (inf_x != FINITE || inf_y != FINITE);
+    CGAL_precondition (inf_x != NO_BOUNDARY || inf_y != NO_BOUNDARY);
 
     DHalfedge*  p_he = p_arr->_locate_along_ccb (p_arr->_face (fh),
                                                  cv, ind,
@@ -407,10 +407,10 @@ public:
     // Check whether the relevant end of cv lies at infinity.
     const Traits_adaptor_2  *traits =
                    static_cast<const Traits_adaptor_2*> (p_arr->get_traits());
-    const Infinity_type  inf_x = traits->infinite_in_x_2_object() (cv, ind);
-    const Infinity_type  inf_y = traits->infinite_in_y_2_object() (cv, ind);
+    const Boundary_type  inf_x = traits->boundary_in_x_2_object() (cv, ind);
+    const Boundary_type  inf_y = traits->boundary_in_y_2_object() (cv, ind);
 
-    CGAL_precondition (inf_x != FINITE || inf_y != FINITE);
+    CGAL_precondition (inf_x != NO_BOUNDARY || inf_y != NO_BOUNDARY);
 
     // Traverse the inner boundary of the fictitious face of the arrangement.
     const DHalfedge   *first = *(p_arr->un_face->holes_begin());
@@ -476,8 +476,8 @@ public:
                    static_cast<const Traits_adaptor_2*> (p_arr->get_traits());
     Curve_end                ind = MIN_END;
 
-    if (traits->infinite_in_x_2_object() (cv, MAX_END) == FINITE &&
-        traits->infinite_in_y_2_object() (cv, MAX_END) == FINITE &&
+    if (traits->boundary_in_x_2_object() (cv, MAX_END) == NO_BOUNDARY &&
+        traits->boundary_in_y_2_object() (cv, MAX_END) == NO_BOUNDARY &&
         traits->equal_2_object()
         (vh->point(),
          p_arr->get_traits()->construct_max_vertex_2_object()(cv)))
@@ -658,14 +658,14 @@ public:
    * Create a new vertex at infinity.
    * \param inf_x MINUS_INFINITY if this vertex lies at x = -oo;
    *              PLUS_INFINITY if this vertex lies at x = +oo;
-   *              FINITE if the vertex has a finite x-coordinate.
+   *              NO_BOUNDARY if the vertex has a finite x-coordinate.
    * \param inf_y MINUS_INFINITY if this vertex lies at y = -oo;
    *              PLUS_INFINITY if this vertex lies at y = +oo;
-   *              FINITE if the vertex has a finite y-coordinate.
+   *              NO_BOUNDARY if the vertex has a finite y-coordinate.
    * \return A pointer to the newly created vertex.
    */
-  Vertex_handle create_vertex_at_infinity (Infinity_type inf_x,
-                                           Infinity_type inf_y)
+  Vertex_handle create_vertex_at_infinity (Boundary_type inf_x,
+                                           Boundary_type inf_y)
   {
     DVertex   *v = p_arr->_create_vertex_at_infinity (inf_x, inf_y);
 
@@ -956,13 +956,13 @@ public:
    * \param he The edge to split (one of the pair of twin halfegdes).
    * \param inf_x Is the x-coordinate of the new vertex at infinity.
    * \param inf_y Is the y-coordinate of the new vertex at infinty.
-   * \pre inf_x and inf_y cannot be both FINITE.
+   * \pre inf_x and inf_y cannot be both NO_BOUNDARY.
    * \return A pointer to the first split halfedge, whose source equals the
    *         source of e, and whose target is the newly created vertex.
    */
   Halfedge_handle split_fictitious_edge (Halfedge_handle he,
-                                         Infinity_type inf_x,
-                                         Infinity_type inf_y)
+                                         Boundary_type inf_x,
+                                         Boundary_type inf_y)
   {
     DVertex    *p_he = p_arr->_split_fictitious_edge (p_arr->_halfedge (he),
                                                       inf_x, inf_y);
@@ -1058,12 +1058,12 @@ public:
    * \param inf_y The infinity type in y.
    * \return A pointer to the created DCEL vertex.
    */
-  Dcel_vertex* new_vertex_at_infinity (Infinity_type inf_x,
-                                       Infinity_type inf_y)
+  Dcel_vertex* new_vertex_at_infinity (Boundary_type inf_x,
+                                       Boundary_type inf_y)
   {
     Dcel_vertex                             *new_v = p_arr->dcel.new_vertex();
 
-    new_v->set_at_infinity (inf_x, inf_y);
+    new_v->set_boundary (inf_x, inf_y);
     return (new_v);
   }
 

@@ -514,8 +514,8 @@ Arrangement_zone_2<Arrangement,ZoneVisitor>::_compute_next_intersection
 	icv = object_cast<X_monotone_curve_2> (&(inter_list.front()));
 	CGAL_assertion (icv != NULL);
 
-        if (traits->infinite_in_x_2_object() (*icv, MIN_END) == FINITE &&
-            traits->infinite_in_y_2_object() (*icv, MIN_END) == FINITE)
+        if (traits->boundary_in_x_2_object() (*icv, MIN_END) == NO_BOUNDARY &&
+            traits->boundary_in_y_2_object() (*icv, MIN_END) == NO_BOUNDARY)
         {
           // The curve has a valid left point - make sure it lies to the
           // right of left_pt.
@@ -585,8 +585,8 @@ Arrangement_zone_2<Arrangement,ZoneVisitor>::_compute_next_intersection
       icv = object_cast<X_monotone_curve_2> (&(inter_list.front()));
       CGAL_assertion (icv != NULL);
       
-      if (traits->infinite_in_x_2_object() (*icv, MIN_END) == FINITE &&
-          traits->infinite_in_y_2_object() (*icv, MIN_END) == FINITE)
+      if (traits->boundary_in_x_2_object() (*icv, MIN_END) == NO_BOUNDARY &&
+          traits->boundary_in_y_2_object() (*icv, MIN_END) == NO_BOUNDARY)
       {
         // The curve has a valid left point - make sure it lies to the
         // right of left_pt.
@@ -1289,12 +1289,12 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_overlap ()
 {
   // Check if the right end of overlap_cv is bounded. If so, compute its
   // right endpoint.
-  const Infinity_type  cv_inf_x = 
-    traits->infinite_in_x_2_object() (overlap_cv, MAX_END);
-  const Infinity_type  cv_inf_y =
-    traits->infinite_in_y_2_object() (overlap_cv, MAX_END);
-  const bool           cv_has_right_pt = (cv_inf_x == FINITE && 
-                                          cv_inf_y == FINITE);
+  const Boundary_type  cv_inf_x = 
+    traits->boundary_in_x_2_object() (overlap_cv, MAX_END);
+  const Boundary_type  cv_inf_y =
+    traits->boundary_in_y_2_object() (overlap_cv, MAX_END);
+  const bool           cv_has_right_pt = (cv_inf_x == NO_BOUNDARY && 
+                                          cv_inf_y == NO_BOUNDARY);
   Point_2              cv_right_pt;
 
   if (cv_has_right_pt)
@@ -1320,8 +1320,8 @@ bool Arrangement_zone_2<Arrangement,ZoneVisitor>::_zone_in_overlap ()
   // well.
   if (! cv_has_right_pt)
   {
-    CGAL_assertion (he_right_v->infinite_in_x() == cv_inf_x &&
-                    he_right_v->infinite_in_y() == cv_inf_y);
+    CGAL_assertion (he_right_v->boundary_in_x() == cv_inf_x &&
+                    he_right_v->boundary_in_y() == cv_inf_y);
 
     right_v = he_right_v;
   }

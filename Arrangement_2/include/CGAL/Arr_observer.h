@@ -239,13 +239,13 @@ public:
    * Notification before the creation of a new vertex at infinity.
    * \param inf_x MINUS_INFINITY if this vertex lies at x = -oo;
    *              PLUS_INFINITY if this vertex lies at x = +oo;
-   *              FINITE if the vertex has a finite x-coordinate.
+   *              NO_BOUNDARY if the vertex has a finite x-coordinate.
    * \param inf_y MINUS_INFINITY if this vertex lies at y = -oo;
    *              PLUS_INFINITY if this vertex lies at y = +oo;
-   *              FINITE if the vertex has a finite y-coordinate.
+   *              NO_BOUNDARY if the vertex has a finite y-coordinate.
    */
-  virtual void before_create_vertex_at_infinity (Infinity_type /* inf_x */,
-                                                 Infinity_type /* inf_y */)
+  virtual void before_create_vertex_at_infinity (Boundary_type /* inf_x */,
+                                                 Boundary_type /* inf_y */)
   {}
 
   /*!

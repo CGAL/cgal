@@ -482,8 +482,8 @@ _is_in_connected_component (const Point_2& p,
     // skip it.
     if (first->is_fictitious())
     {
-      if (first->source()->infinite_in_y() != FINITE &&
-          first->target()->infinite_in_y() != FINITE)
+      if (first->source()->boundary_in_y() != NO_BOUNDARY &&
+          first->target()->boundary_in_y() != NO_BOUNDARY)
       {
         found_non_vertical = true;
         break;
@@ -743,8 +743,8 @@ _is_in_connected_component (const Point_2& p,
           } while ((! next_non_vert->is_fictitious() &&
                     is_vertical (next_non_vert->curve())) ||
                    (next_non_vert->is_fictitious() &&
-                    next_non_vert->source()->infinite_in_x() != 
-                    next_non_vert->target()->infinite_in_x()));
+                    next_non_vert->source()->boundary_in_x() != 
+                    next_non_vert->target()->boundary_in_x()));
 
           // In case the source of the current curve and the target of
           // the next non-vertical curve lie on opposite sides of the

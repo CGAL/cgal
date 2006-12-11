@@ -30,10 +30,10 @@ enum Curve_end
   MAX_END
 };
 
-enum Infinity_type
+enum Boundary_type
 {
   MINUS_INFINITY = -1,
-  FINITE,
+  NO_BOUNDARY,
   PLUS_INFINITY
 };
 

@@ -132,12 +132,12 @@ public:
     Arr_accessor<Arrangement_2>    arr_access (*p_arr);
 
     // Check if the left end of cv is bounded of not.
-    const Infinity_type inf_x_left = 
-      traits->infinite_in_x_2_object()(cv, MIN_END);
-    const Infinity_type inf_y_left =
-      traits->infinite_in_y_2_object()(cv, MIN_END);
-    const bool          left_bounded = (inf_x_left == FINITE &&
-                                        inf_y_left == FINITE);
+    const Boundary_type inf_x_left = 
+      traits->boundary_in_x_2_object()(cv, MIN_END);
+    const Boundary_type inf_y_left =
+      traits->boundary_in_y_2_object()(cv, MIN_END);
+    const bool          left_bounded = (inf_x_left == NO_BOUNDARY &&
+                                        inf_y_left == NO_BOUNDARY);
 
     // Check if the left and the right endpoints of cv should be associated
     // with arrangement vertices.
@@ -296,12 +296,12 @@ public:
       if (! vertex_for_right)
       {
         // Check if the right end is also unbounded.
-        const Infinity_type inf_x_right = 
-          traits->infinite_in_x_2_object()(cv, MAX_END);
-        const Infinity_type inf_y_right = 
-          traits->infinite_in_y_2_object()(cv, MAX_END);
+        const Boundary_type inf_x_right = 
+          traits->boundary_in_x_2_object()(cv, MAX_END);
+        const Boundary_type inf_y_right = 
+          traits->boundary_in_y_2_object()(cv, MAX_END);
 
-        if (inf_x_right == FINITE && inf_y_right == FINITE)
+        if (inf_x_right == NO_BOUNDARY && inf_y_right == NO_BOUNDARY)
         {
           // The right end is bounded - we should insert the curve in the
           // interior of the unbounded face incident to prev_he_left.

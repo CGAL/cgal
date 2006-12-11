@@ -60,19 +60,19 @@ public:
   {
     this->m_lh = 
       this->m_arr_access.bottom_left_fictitious_vertex()->incident_halfedges();
-    if (this->m_lh->source()->infinite_in_x() != MINUS_INFINITY)
+    if (this->m_lh->source()->boundary_in_x() != MINUS_INFINITY)
       this->m_lh = this->m_lh->next()->twin();
    
     this->m_bh = this->m_lh->next();
    
     this->m_th = 
       this->m_arr_access.top_left_fictitious_vertex()->incident_halfedges();
-    if(this->m_th->source()->infinite_in_x() == MINUS_INFINITY)
+    if(this->m_th->source()->boundary_in_x() == MINUS_INFINITY)
       this->m_th = this->m_th->next()->twin();
 
     this->m_rh = 
       this->m_arr_access.bottom_right_fictitious_vertex()->incident_halfedges();
-    if (this->m_rh->source()->infinite_in_x() == PLUS_INFINITY)
+    if (this->m_rh->source()->boundary_in_x() == PLUS_INFINITY)
       this->m_rh = this->m_rh->twin();
     else
       this->m_rh = this->m_rh->next();
@@ -111,7 +111,7 @@ public:
          Base::before_handle_event(event);
        else
        {
-         Infinity_type x_inf = event->infinity_at_x();
+         Boundary_type x_inf = event->infinity_at_x();
          if(x_inf == MINUS_INFINITY)
          {
            this->m_lh = this->m_lh->twin()->next()->twin();
@@ -122,7 +122,7 @@ public:
              this->m_rh = this->m_rh->twin()->prev()->twin();
            else
            {
-             Infinity_type y_inf = event->infinity_at_y();
+             Boundary_type y_inf = event->infinity_at_y();
              if(y_inf == MINUS_INFINITY)
                this->m_bh = this->m_bh->twin()->prev()->twin();
              else

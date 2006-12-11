@@ -93,7 +93,7 @@ PrintStatusLine()
     std::cout << m_currentEvent->get_point() << ")" << std::endl;
   else
   {
-    Infinity_type x = m_currentEvent->infinity_at_x(),
+    Boundary_type x = m_currentEvent->infinity_at_x(),
                   y = m_currentEvent->infinity_at_y();
 
     PrintInfinityType(x, y);
@@ -118,7 +118,7 @@ Basic_sweep_line_2<Traits_,
                    CurveWrap,
                    SweepEvent,
                    Allocator>::
-PrintInfinityType(Infinity_type x, Infinity_type y)
+PrintInfinityType(Boundary_type x, Boundary_type y)
 {
   switch(x)
   {
@@ -128,7 +128,7 @@ PrintInfinityType(Infinity_type x, Infinity_type y)
   case PLUS_INFINITY:
     std::cout<<" X = +00 ";
     return;
-  case FINITE:
+  case NO_BOUNDARY:
     break;
   }
 
@@ -140,7 +140,7 @@ PrintInfinityType(Infinity_type x, Infinity_type y)
   case PLUS_INFINITY:
     std::cout<<" Y = +00 ";
     return;
-  case FINITE:
+  case NO_BOUNDARY:
     CGAL_assertion(false);
   }
 }
@@ -162,7 +162,7 @@ PrintEvent(const Event* e)
     std::cout<< e->get_point();
   else
   {
-    Infinity_type x = e->infinity_at_x(),
+    Boundary_type x = e->infinity_at_x(),
                   y = e->infinity_at_y();
     PrintInfinityType(x, y);
     std::cout<<" with unbounded curve: " <<e->get_unbounded_curve();

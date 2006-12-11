@@ -72,7 +72,7 @@ public:
   typedef typename Base_traits_2::Point_2             Point_2;
 
   typedef typename Base_traits_2::Has_left_category      Has_left_category;
-  typedef typename Base_traits_2::Has_infinite_category  Has_infinite_category;
+  typedef typename Base_traits_2::Has_boundary_category  Has_boundary_category;
 
   typedef typename Base_traits_2::Has_merge_category  Base_has_merge_category;
   typedef Tag_true                                    Has_merge_category;

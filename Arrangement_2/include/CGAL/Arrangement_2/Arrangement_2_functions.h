@@ -115,16 +115,16 @@ void Arrangement_2<Traits,Dcel>::assign (const Self& arr)
   typename Dcel::Vertex_iterator       vit;
   Point_2                             *dup_p;
   DVertex                             *p_v;
-  Infinity_type                        inf_x, inf_y;
+  Boundary_type                        inf_x, inf_y;
   const DHalfedge                     *first_he, *next_he;
 
   for (vit = dcel.vertices_begin(); vit != dcel.vertices_end(); ++vit)
   {
     p_v = &(*vit);
-    inf_x = p_v->infinite_in_x();
-    inf_y = p_v->infinite_in_y();
+    inf_x = p_v->boundary_in_x();
+    inf_y = p_v->boundary_in_y();
 
-    if (inf_x == FINITE && inf_y == FINITE)
+    if (inf_x == NO_BOUNDARY && inf_y == NO_BOUNDARY)
     {
       // Normal vertex (not at inifinity): Create the duplicate point and
       // store it in the points container.
@@ -309,12 +309,12 @@ Arrangement_2<Traits,Dcel>::insert_in_face_interior
 
   // Check if cv's left end lies at infinity, and create a vertex v1 that
   // corresponds to this end.
-  const Infinity_type  inf_x1 = traits->infinite_in_x_2_object()(cv, MIN_END);
-  const Infinity_type  inf_y1 = traits->infinite_in_y_2_object()(cv, MIN_END);
+  const Boundary_type  inf_x1 = traits->boundary_in_x_2_object()(cv, MIN_END);
+  const Boundary_type  inf_y1 = traits->boundary_in_y_2_object()(cv, MIN_END);
   DVertex             *v1 = NULL;
   DHalfedge           *fict_prev1 = NULL;
 
-  if (inf_x1 == FINITE && inf_y1 == FINITE)
+  if (inf_x1 == NO_BOUNDARY && inf_y1 == NO_BOUNDARY)
   {
     // The curve has a valid left endpoint: Create a new vertex associated
     // with the curve's left endpoint.
@@ -339,12 +339,12 @@ Arrangement_2<Traits,Dcel>::insert_in_face_interior
 
   // Check if cv's right end lies at infinity, and create a vertex v2 that
   // corresponds to this end.
-  const Infinity_type  inf_x2 = traits->infinite_in_x_2_object()(cv, MAX_END);
-  const Infinity_type  inf_y2 = traits->infinite_in_y_2_object()(cv, MAX_END);
+  const Boundary_type  inf_x2 = traits->boundary_in_x_2_object()(cv, MAX_END);
+  const Boundary_type  inf_y2 = traits->boundary_in_y_2_object()(cv, MAX_END);
   DVertex             *v2 = NULL;
   DHalfedge           *fict_prev2 = NULL;
 
-  if (inf_x2 == FINITE && inf_y2 == FINITE)
+  if (inf_x2 == NO_BOUNDARY && inf_y2 == NO_BOUNDARY)
   {
     // The curve has a valid right endpoint: Create a new vertex associated
     // with the curve's right endpoint.
@@ -435,13 +435,13 @@ Arrangement_2<Traits,Dcel>::insert_in_face_interior
                          "The given halfedge(s) must be fictitious.");
 
   // Check which one of cv's ends lie at infinity (both may lie there).
-  const Infinity_type   inf_x1 = traits->infinite_in_x_2_object()(cv, MIN_END);
-  const Infinity_type   inf_y1 = traits->infinite_in_y_2_object()(cv, MIN_END);
-  const Infinity_type   inf_x2 = traits->infinite_in_x_2_object()(cv, MAX_END);
-  const Infinity_type   inf_y2 = traits->infinite_in_y_2_object()(cv, MAX_END);
+  const Boundary_type   inf_x1 = traits->boundary_in_x_2_object()(cv, MIN_END);
+  const Boundary_type   inf_y1 = traits->boundary_in_y_2_object()(cv, MIN_END);
+  const Boundary_type   inf_x2 = traits->boundary_in_x_2_object()(cv, MAX_END);
+  const Boundary_type   inf_y2 = traits->boundary_in_y_2_object()(cv, MAX_END);
   DHalfedge            *new_he;
 
-  if (inf_x1 != FINITE || inf_y1 != FINITE)
+  if (inf_x1 != NO_BOUNDARY || inf_y1 != NO_BOUNDARY)
   {
     // Split the fictitious edge and create a vertex at infinity that
     // represents cv's left end.
@@ -458,7 +458,7 @@ Arrangement_2<Traits,Dcel>::insert_in_face_interior
        "The given halfedge must contain the unbounded left end.");
 
     CGAL_precondition_msg 
-      ((inf_x2 == FINITE && inf_y2 == FINITE && 
+      ((inf_x2 == NO_BOUNDARY && inf_y2 == NO_BOUNDARY && 
         fict_he2 == Halfedge_handle()) ||
        _is_on_fictitious_edge (cv, MAX_END, inf_x2, inf_y2,
                                _halfedge (fict_he2),
@@ -469,7 +469,7 @@ Arrangement_2<Traits,Dcel>::insert_in_face_interior
     fict_prev1 = _split_fictitious_edge (fict_prev1,
                                          inf_x1, inf_y1);
 
-    if (inf_x2 != FINITE || inf_y2 != FINITE)
+    if (inf_x2 != NO_BOUNDARY || inf_y2 != NO_BOUNDARY)
     {
       // Split the fictitious edge and create a vertex at infinity that
       // represents cv's right end.
@@ -528,7 +528,7 @@ Arrangement_2<Traits,Dcel>::insert_in_face_interior
   else
   {
     // In this case only the right end of cv is unbounded.
-    CGAL_precondition_msg (inf_x2 != FINITE || inf_y2 != FINITE,
+    CGAL_precondition_msg (inf_x2 != NO_BOUNDARY || inf_y2 != NO_BOUNDARY,
                            "The inserted curve must be unbounded.");
 
     // Create a new vertex that corresponds to cv's left endpoint.
@@ -589,12 +589,12 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
 
   // Check if cv's right end lies at infinity. In case it is a regular
   // point, create a normal vertex that correspond to this point.
-  const Infinity_type  inf_x2 = traits->infinite_in_x_2_object()(cv, MAX_END);
-  const Infinity_type  inf_y2 = traits->infinite_in_y_2_object()(cv, MAX_END);
+  const Boundary_type  inf_x2 = traits->boundary_in_x_2_object()(cv, MAX_END);
+  const Boundary_type  inf_y2 = traits->boundary_in_y_2_object()(cv, MAX_END);
   DVertex             *v2 = NULL;
   DHalfedge           *fict_prev2 = NULL;
 
-  if (inf_x2 == FINITE && inf_y2 == FINITE)
+  if (inf_x2 == NO_BOUNDARY && inf_y2 == NO_BOUNDARY)
   {
     // The curve has a valid right endpoint: Create a new vertex associated
     // with the curve's right endpoint.
@@ -741,13 +741,13 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
 
   // Check if cv's right end lies at infinity, and create a vertex v2 that
   // corresponds to this end.
-  const Infinity_type  inf_x2 = traits->infinite_in_x_2_object()(cv, MAX_END);
-  const Infinity_type  inf_y2 = traits->infinite_in_y_2_object()(cv, MAX_END);
+  const Boundary_type  inf_x2 = traits->boundary_in_x_2_object()(cv, MAX_END);
+  const Boundary_type  inf_y2 = traits->boundary_in_y_2_object()(cv, MAX_END);
   DVertex             *v2 = NULL;
   DHalfedge           *fict_prev2 = NULL;
   DHalfedge           *prev1 = _halfedge (prev);
 
-  if (inf_x2 == FINITE && inf_y2 == FINITE)
+  if (inf_x2 == NO_BOUNDARY && inf_y2 == NO_BOUNDARY)
   {
     // The curve has a valid right endpoint: Create a new vertex associated
     // with the curve's right endpoint.
@@ -833,8 +833,8 @@ Arrangement_2<Traits,Dcel>::insert_from_left_vertex
 
   // Check that cv's right end lies at infinity, and create a vertex v2 that
   // corresponds to this end.
-  const Infinity_type  inf_x2 = traits->infinite_in_x_2_object()(cv, MAX_END);
-  const Infinity_type  inf_y2 = traits->infinite_in_y_2_object()(cv, MAX_END);
+  const Boundary_type  inf_x2 = traits->boundary_in_x_2_object()(cv, MAX_END);
+  const Boundary_type  inf_y2 = traits->boundary_in_y_2_object()(cv, MAX_END);
   DHalfedge           *fict_prev2 = _halfedge (fict_he);
 
   CGAL_precondition_code (
@@ -890,12 +890,12 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
 
   // Check if cv's left end lies at infinity. In case it is a regular
   // point, create a normal vertex that correspond to this point.
-  const Infinity_type  inf_x1 = traits->infinite_in_x_2_object()(cv, MIN_END);
-  const Infinity_type  inf_y1 = traits->infinite_in_y_2_object()(cv, MIN_END);
+  const Boundary_type  inf_x1 = traits->boundary_in_x_2_object()(cv, MIN_END);
+  const Boundary_type  inf_y1 = traits->boundary_in_y_2_object()(cv, MIN_END);
   DVertex             *v1 = NULL;
   DHalfedge           *fict_prev1 = NULL;
 
-  if (inf_x1 == FINITE && inf_y1 == FINITE)
+  if (inf_x1 == NO_BOUNDARY && inf_y1 == NO_BOUNDARY)
   {
     // The curve has a valid left endpoint: Create a new vertex associated
     // with the curve's left endpoint.
@@ -1042,13 +1042,13 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
 
   // Check if cv's left end lies at infinity, and create a vertex v1 that
   // corresponds to this end.
-  const Infinity_type  inf_x1 = traits->infinite_in_x_2_object()(cv, MIN_END);
-  const Infinity_type  inf_y1 = traits->infinite_in_y_2_object()(cv, MIN_END);
+  const Boundary_type  inf_x1 = traits->boundary_in_x_2_object()(cv, MIN_END);
+  const Boundary_type  inf_y1 = traits->boundary_in_y_2_object()(cv, MIN_END);
   DVertex             *v1 = NULL;
   DHalfedge           *fict_prev1 = NULL;
   DHalfedge           *prev2 = _halfedge (prev);
 
-  if (inf_x1 == FINITE && inf_y1 == FINITE)
+  if (inf_x1 == NO_BOUNDARY && inf_y1 == NO_BOUNDARY)
   {
     // The curve has a valid left endpoint: Create a new vertex associated
     // with the curve's left endpoint.
@@ -1134,8 +1134,8 @@ Arrangement_2<Traits,Dcel>::insert_from_right_vertex
 
   // Check that cv's left end lies at infinity, and create a vertex v1 that
   // corresponds to this end.
-  const Infinity_type  inf_x1 = traits->infinite_in_x_2_object()(cv, MIN_END);
-  const Infinity_type  inf_y1 = traits->infinite_in_y_2_object()(cv, MIN_END);
+  const Boundary_type  inf_x1 = traits->boundary_in_x_2_object()(cv, MIN_END);
+  const Boundary_type  inf_y1 = traits->boundary_in_y_2_object()(cv, MIN_END);
   DHalfedge           *fict_prev1 = _halfedge (fict_he);
 
   CGAL_precondition_code (
@@ -1607,13 +1607,13 @@ Arrangement_2<Traits,Dcel>::split_edge (Halfedge_handle e,
   const X_monotone_curve_2  *p_cv1 = NULL;
   const X_monotone_curve_2  *p_cv2 = NULL;
 
-  if (traits->infinite_in_x_2_object()(cv1, MAX_END) == FINITE &&
-      traits->infinite_in_y_2_object()(cv1, MAX_END) == FINITE)
+  if (traits->boundary_in_x_2_object()(cv1, MAX_END) == NO_BOUNDARY &&
+      traits->boundary_in_y_2_object()(cv1, MAX_END) == NO_BOUNDARY)
   {
     const Point_2&  cv1_right = traits->construct_max_vertex_2_object() (cv1);
 
-    if (traits->infinite_in_x_2_object()(cv2, MIN_END) == FINITE &&
-        traits->infinite_in_y_2_object()(cv2, MIN_END) == FINITE &&
+    if (traits->boundary_in_x_2_object()(cv2, MIN_END) == NO_BOUNDARY &&
+        traits->boundary_in_y_2_object()(cv2, MIN_END) == NO_BOUNDARY &&
         traits->equal_2_object()(traits->construct_min_vertex_2_object()(cv2),
                                  cv1_right))
     {
@@ -1645,13 +1645,13 @@ Arrangement_2<Traits,Dcel>::split_edge (Halfedge_handle e,
   }
 
   if (p_cv1 == NULL && p_cv2 == NULL &&
-      traits->infinite_in_x_2_object()(cv1, MIN_END) == FINITE &&
-      traits->infinite_in_y_2_object()(cv1, MIN_END) == FINITE)
+      traits->boundary_in_x_2_object()(cv1, MIN_END) == NO_BOUNDARY &&
+      traits->boundary_in_y_2_object()(cv1, MIN_END) == NO_BOUNDARY)
   {
     const Point_2&  cv1_left = traits->construct_min_vertex_2_object() (cv1);
 
-    if (traits->infinite_in_x_2_object()(cv2, MAX_END) == FINITE &&
-        traits->infinite_in_y_2_object()(cv2, MAX_END) == FINITE &&
+    if (traits->boundary_in_x_2_object()(cv2, MAX_END) == NO_BOUNDARY &&
+        traits->boundary_in_y_2_object()(cv2, MAX_END) == NO_BOUNDARY &&
         traits->equal_2_object()(traits->construct_max_vertex_2_object()(cv2),
                                  cv1_left))
     {
@@ -1960,16 +1960,16 @@ void Arrangement_2<Traits,Dcel>::_construct_empty_arrangement ()
   // Create the four fictitious vertices corresponding to corners of the
   // bounding rectangle.
   v_bl = dcel.new_vertex();
-  v_bl->set_at_infinity (MINUS_INFINITY, MINUS_INFINITY);
+  v_bl->set_boundary (MINUS_INFINITY, MINUS_INFINITY);
 
   v_tl = dcel.new_vertex();
-  v_tl->set_at_infinity (MINUS_INFINITY, PLUS_INFINITY);
+  v_tl->set_boundary (MINUS_INFINITY, PLUS_INFINITY);
 
   v_br = dcel.new_vertex();
-  v_br->set_at_infinity (PLUS_INFINITY, MINUS_INFINITY);
+  v_br->set_boundary (PLUS_INFINITY, MINUS_INFINITY);
 
   v_tr = dcel.new_vertex();
-  v_tr->set_at_infinity (PLUS_INFINITY, PLUS_INFINITY);
+  v_tr->set_boundary (PLUS_INFINITY, PLUS_INFINITY);
 
   // Create a four pairs of twin halfedges connecting the two vertices,
   // and link them together to form the bounding rectangle, forming a hole
@@ -2079,7 +2079,7 @@ Arrangement_2<Traits,Dcel>::_get_curve (const DVertex *v,
 template<class Traits, class Dcel>
 bool Arrangement_2<Traits,Dcel>::_is_on_fictitious_edge
     (const X_monotone_curve_2& cv, Curve_end ind,
-     Infinity_type inf_x, Infinity_type inf_y,
+     Boundary_type inf_x, Boundary_type inf_y,
      const DHalfedge *he,
      bool& eq_source, bool& eq_target) const
 {
@@ -2089,13 +2089,13 @@ bool Arrangement_2<Traits,Dcel>::_is_on_fictitious_edge
   // Get the end-vertices of the edge.
   const DVertex     *v1 = he->opposite()->vertex();
   const DVertex     *v2 = he->vertex();
-  Infinity_type      he_inf;
+  Boundary_type      he_inf;
   Comparison_result  res1, res2;
   Curve_end          v_ind;
 
   // Check if this is a "vertical" ficitious edge.
-  if ((he_inf = v1->infinite_in_x()) != FINITE &&
-      he_inf == v2->infinite_in_x())
+  if ((he_inf = v1->boundary_in_x()) != NO_BOUNDARY &&
+      he_inf == v2->boundary_in_x())
   {
     // If the edge lies on x = +/- oo, the curve endpoint must also lie there.
     if (he_inf != inf_x)
@@ -2155,13 +2155,13 @@ bool Arrangement_2<Traits,Dcel>::_is_on_fictitious_edge
   else
   {
     // If we reched here, we have a "horizontal" fictitious halfedge.
-    he_inf = v1->infinite_in_y();
+    he_inf = v1->boundary_in_y();
 
-    CGAL_assertion (he_inf != FINITE && he_inf == v2->infinite_in_y());
+    CGAL_assertion (he_inf != NO_BOUNDARY && he_inf == v2->boundary_in_y());
 
     // If the edge lies on y = +/- oo, the curve endpoint must also lie there
     // (and must not lies at x = +/- oo.
-    if (inf_x != FINITE || he_inf != inf_y)
+    if (inf_x != NO_BOUNDARY || he_inf != inf_y)
       return (false);
 
     // Compare the x-position of the curve end to the source vertex.
@@ -2223,7 +2223,7 @@ typename Arrangement_2<Traits,Dcel>::DHalfedge*
 Arrangement_2<Traits,Dcel>::_locate_along_ccb
     (DFace *f,
      const X_monotone_curve_2& cv, Curve_end ind,
-     Infinity_type inf_x, Infinity_type inf_y) const
+     Boundary_type inf_x, Boundary_type inf_y) const
 {
   // Get a halfedge on the outer CCB of f and start traversing the CCB.
   DHalfedge         *first = f->halfedge();
@@ -2450,7 +2450,7 @@ Arrangement_2<Traits,Dcel>::_compare_x_imp (const Point_2& p,
 {
   // First check if the vertex v lies at x = -oo (then it is obviously smaller
   // than p), or at x = +oo (then it is obviously larger).
-  const Infinity_type          inf_x = v->infinite_in_x();
+  const Boundary_type          inf_x = v->boundary_in_x();
 
   if (inf_x == MINUS_INFINITY)
     return (LARGER);
@@ -2458,9 +2458,9 @@ Arrangement_2<Traits,Dcel>::_compare_x_imp (const Point_2& p,
     return (SMALLER);
 
   // Check if the vertex lies at y = +/- oo.
-  const Infinity_type          inf_y = v->infinite_in_y();
+  const Boundary_type          inf_y = v->boundary_in_y();
 
-  if (inf_y != FINITE)
+  if (inf_y != NO_BOUNDARY)
   {
     // Compare the x-position of the vertical asymptote of the curve incident
     // to v with the x-coodinate of p.
@@ -2485,7 +2485,7 @@ Arrangement_2<Traits,Dcel>::_compare_xy_imp (const Point_2& p,
 {
   // First check if the vertex v lies at x = -oo (then it is obviously smaller
   // than p), or at x = +oo (then it is obviously larger).
-  const Infinity_type          inf_x = v->infinite_in_x();
+  const Boundary_type          inf_x = v->boundary_in_x();
 
   if (inf_x == MINUS_INFINITY)
     return (LARGER);
@@ -2493,9 +2493,9 @@ Arrangement_2<Traits,Dcel>::_compare_xy_imp (const Point_2& p,
     return (SMALLER);
 
   // Check if the vertex lies at y = +/- oo.
-  const Infinity_type          inf_y = v->infinite_in_y();
+  const Boundary_type          inf_y = v->boundary_in_y();
 
-  if (inf_y != FINITE)
+  if (inf_y != NO_BOUNDARY)
   {
     // Compare the x-position of the vertical asymptote of the curve incident
     // to v with the x-coodinate of p.
@@ -2535,14 +2535,14 @@ Arrangement_2<Traits,Dcel>::_compare_y_at_x_imp (const Point_2& p,
   // Otherwise, determine on which edge of the bounding rectangle does he lie.
   // Note this can be either the top edge or the bottom edge (and not the
   // left or the right edge), as p must lie in its x-range.
-  CGAL_assertion ((he->vertex()->infinite_in_x() == FINITE) ||
-                  (he->vertex()->infinite_in_x() != 
-                   he->opposite()->vertex()->infinite_in_x()));
-  CGAL_assertion ((he->vertex()->infinite_in_y() != FINITE) &&
-                  (he->vertex()->infinite_in_y() == 
-                   he->opposite()->vertex()->infinite_in_y()));
+  CGAL_assertion ((he->vertex()->boundary_in_x() == NO_BOUNDARY) ||
+                  (he->vertex()->boundary_in_x() != 
+                   he->opposite()->vertex()->boundary_in_x()));
+  CGAL_assertion ((he->vertex()->boundary_in_y() != NO_BOUNDARY) &&
+                  (he->vertex()->boundary_in_y() == 
+                   he->opposite()->vertex()->boundary_in_y()));
 
-  if (he->vertex()->infinite_in_y() == MINUS_INFINITY)
+  if (he->vertex()->boundary_in_y() == MINUS_INFINITY)
     // he lies on the bottom edge, so p is obviously above it.
     return (LARGER);
   else
@@ -2761,8 +2761,8 @@ Arrangement_2<Traits,Dcel>::_create_vertex (const Point_2& p)
 //
 template<class Traits, class Dcel>
 typename Arrangement_2<Traits,Dcel>::DVertex*
-Arrangement_2<Traits,Dcel>::_create_vertex_at_infinity (Infinity_type inf_x,
-                                                        Infinity_type inf_y)
+Arrangement_2<Traits,Dcel>::_create_vertex_at_infinity (Boundary_type inf_x,
+                                                        Boundary_type inf_y)
 {
   // Notify the observers that we are about to create a new vertex at infinity.
   _notify_before_create_vertex_at_infinity (inf_x, inf_y);
@@ -2770,7 +2770,7 @@ Arrangement_2<Traits,Dcel>::_create_vertex_at_infinity (Infinity_type inf_x,
   // Create a new vertex and associate it with the given point.
   DVertex         *v = dcel.new_vertex();
 
-  v->set_at_infinity (inf_x, inf_y);
+  v->set_boundary (inf_x, inf_y);
 
   // Increment the number of vertices at infinity.
   n_inf_verts++;
@@ -3363,13 +3363,13 @@ bool Arrangement_2<Traits,Dcel>::_are_equal (const DVertex *v,
 {
   // Check if cv's end is finite and make sure that the infinity signs match
   // those of the vertex v.
-  const Infinity_type    inf_x = traits->infinite_in_x_2_object() (cv, ind);
-  const Infinity_type    inf_y = traits->infinite_in_y_2_object() (cv, ind);
+  const Boundary_type    inf_x = traits->boundary_in_x_2_object() (cv, ind);
+  const Boundary_type    inf_y = traits->boundary_in_y_2_object() (cv, ind);
 
-  if (inf_x != v->infinite_in_x() || inf_y != v->infinite_in_y())
+  if (inf_x != v->boundary_in_x() || inf_y != v->boundary_in_y())
     return (false);
 
-  if (inf_x != FINITE)
+  if (inf_x != NO_BOUNDARY)
   {
     // The curve end lies at x = +/- oo and so does v. Make sure the curve
     // overlaps with the curve that currently induces v.
@@ -3380,7 +3380,7 @@ bool Arrangement_2<Traits,Dcel>::_are_equal (const DVertex *v,
                                                v_ind) == EQUAL);
   }
   
-  if (inf_y != FINITE)
+  if (inf_y != NO_BOUNDARY)
   {
     // The curve end lies at y = +/- oo and so does v. Make sure the curve
     // overlaps with the curve that currently induces v.
@@ -3442,8 +3442,8 @@ Arrangement_2<Traits,Dcel>::_compare_vertices_xy (const DVertex *v1,
   }
 
   // In this case both vertices lie at infinity.
-  const Infinity_type   inf_x1 = v1->infinite_in_x();
-  const Infinity_type   inf_x2 = v2->infinite_in_x();
+  const Boundary_type   inf_x1 = v1->boundary_in_x();
+  const Boundary_type   inf_x2 = v2->boundary_in_x();
 
   if (inf_x1 != inf_x2)
   {
@@ -3495,8 +3495,8 @@ Arrangement_2<Traits,Dcel>::_compare_vertices_xy (const DVertex *v1,
   if (res != EQUAL)
     return (res);
 
-  const Infinity_type           inf_y1 = v1->infinite_in_y();
-  const Infinity_type           inf_y2 = v2->infinite_in_y();
+  const Boundary_type           inf_y1 = v1->boundary_in_y();
+  const Boundary_type           inf_y2 = v2->boundary_in_y();
 
   if (inf_y1 != inf_y2)
     return ((inf_y1 == MINUS_INFINITY) ? SMALLER : LARGER);
@@ -3622,8 +3622,8 @@ Arrangement_2<Traits,Dcel>::_split_edge (DHalfedge *e,
 template<class Traits, class Dcel>
 typename Arrangement_2<Traits,Dcel>::DHalfedge*
 Arrangement_2<Traits,Dcel>::_split_fictitious_edge (DHalfedge *e,
-                                                    Infinity_type inf_x,
-                                                    Infinity_type inf_y)
+                                                    Boundary_type inf_x,
+                                                    Boundary_type inf_y)
 {
   // Allocate a new vertex at infinity.
   DVertex         *v = _create_vertex_at_infinity (inf_x, inf_y);

@@ -172,8 +172,8 @@ public:
     // Set the curve and check whether its ends are bounded.
     cv = _cv;
 
-    if (traits->infinite_in_x_2_object() (cv, MIN_END) == FINITE &&
-        traits->infinite_in_y_2_object() (cv, MIN_END) == FINITE)
+    if (traits->boundary_in_x_2_object() (cv, MIN_END) == NO_BOUNDARY &&
+        traits->boundary_in_y_2_object() (cv, MIN_END) == NO_BOUNDARY)
     {
       // The left endpoint is bounded - locate it in the arrangement.
       has_left_pt = true;
@@ -189,8 +189,8 @@ public:
       obj = arr_access.locate_unbounded_end (cv, MIN_END);
     }
 
-    if (traits->infinite_in_x_2_object() (cv, MAX_END) == FINITE &&
-        traits->infinite_in_y_2_object() (cv, MAX_END) == FINITE)
+    if (traits->boundary_in_x_2_object() (cv, MAX_END) == NO_BOUNDARY &&
+        traits->boundary_in_y_2_object() (cv, MAX_END) == NO_BOUNDARY)
     {
       // The right endpoint is bounded.
       has_right_pt = true;
@@ -216,14 +216,14 @@ public:
   {
     // Set the curve and check whether its ends are bounded.
     cv = _cv;
-    has_left_pt = (traits->infinite_in_x_2_object() (cv, MIN_END) == FINITE &&
-                   traits->infinite_in_y_2_object() (cv, MIN_END) == FINITE);
+    has_left_pt = (traits->boundary_in_x_2_object() (cv, MIN_END) == NO_BOUNDARY &&
+                   traits->boundary_in_y_2_object() (cv, MIN_END) == NO_BOUNDARY);
 
     if (has_left_pt)
       left_pt = traits->construct_min_vertex_2_object() (cv);
 
-    has_right_pt = (traits->infinite_in_x_2_object() (cv, MAX_END) == FINITE &&
-                    traits->infinite_in_y_2_object() (cv, MAX_END) == FINITE);
+    has_right_pt = (traits->boundary_in_x_2_object() (cv, MAX_END) == NO_BOUNDARY &&
+                    traits->boundary_in_y_2_object() (cv, MAX_END) == NO_BOUNDARY);
 
     if (has_right_pt)
       right_pt = traits->construct_max_vertex_2_object() (cv);

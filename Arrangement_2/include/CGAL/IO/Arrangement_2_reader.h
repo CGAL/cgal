@@ -166,11 +166,11 @@ protected:
     formatter.read_vertex_begin();
 
     // Read the infinity types.
-    Infinity_type   inf_x = Infinity_type (formatter.read_vertex_index());
-    Infinity_type   inf_y = Infinity_type (formatter.read_vertex_index());
+    Boundary_type   inf_x = Boundary_type (formatter.read_vertex_index());
+    Boundary_type   inf_y = Boundary_type (formatter.read_vertex_index());
     DVertex        *new_v;
 
-    if (inf_x == FINITE && inf_y == FINITE)
+    if (inf_x == NO_BOUNDARY && inf_y == NO_BOUNDARY)
     {
       // Read the point associated with the vertex.
       formatter.read_point (m_point);

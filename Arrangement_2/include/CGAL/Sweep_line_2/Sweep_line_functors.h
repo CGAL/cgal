@@ -36,7 +36,7 @@ public:
   typedef SweepLineTraits_2                      Traits;
   typedef typename Traits::Point_2               Point_2;
   typedef typename Traits::X_monotone_curve_2    X_monotone_curve_2;
-  typedef typename Traits::Has_infinite_category Has_infinite_category;
+  typedef typename Traits::Has_boundary_category Has_boundary_category;
   
   Event_less_functor(Traits * t) : m_traits(t)
   {}
@@ -72,7 +72,7 @@ public:
       // e2 is also a normal event, use compare_xy.
       return (m_traits->compare_xy_2_object()(pt, e2->get_point()));
 
-    Infinity_type e2_x = e2->infinity_at_x();
+    Boundary_type e2_x = e2->infinity_at_x();
     switch (e2_x)
     {
     case MINUS_INFINITY :
@@ -94,7 +94,7 @@ public:
     if(res != EQUAL)
       return res;
 
-    Infinity_type e2_y = e2->infinity_at_y();
+    Boundary_type e2_y = e2->infinity_at_y();
     switch (e2_y)
     {
     case MINUS_INFINITY :
@@ -105,7 +105,7 @@ public:
     
     default:
       // doesnt suppose to reach here at all
-      CGAL_assertion(e2_y != FINITE);
+      CGAL_assertion(e2_y != NO_BOUNDARY);
       return SMALLER;
     }
   }
@@ -114,8 +114,8 @@ public:
   {
     return compare_unbounded_curve_and_event(cv,
                                              e2,
-                                             m_infinite_in_x,
-                                             m_infinite_in_y,
+                                             m_boundary_in_x,
+                                             m_boundary_in_y,
                                              m_index);
   }
 
@@ -123,11 +123,11 @@ public:
   Comparison_result 
     compare_unbounded_curve_and_event(const X_monotone_curve_2& cv,
                                       const Event* e2,
-                                      Infinity_type infinite_in_x,
-                                      Infinity_type infinite_in_y,
+                                      Boundary_type boundary_in_x,
+                                      Boundary_type boundary_in_y,
                                       Curve_end index) const
   {
-    switch(infinite_in_x)
+    switch(boundary_in_x)
     {
     case MINUS_INFINITY:
       if(e2->infinity_at_x() == MINUS_INFINITY)
@@ -143,21 +143,21 @@ public:
                                                     MAX_END));
       return LARGER;
 
-    case FINITE:
+    case NO_BOUNDARY:
     default:
       break;
     }
 
     //if we have reached here, then e1 is event at y=+-oo
-    CGAL_assertion(infinite_in_y == MINUS_INFINITY ||
-                   infinite_in_y == PLUS_INFINITY);
+    CGAL_assertion(boundary_in_y == MINUS_INFINITY ||
+                   boundary_in_y == PLUS_INFINITY);
     switch(e2->infinity_at_x())
     {
     case MINUS_INFINITY:
       return LARGER;
     case PLUS_INFINITY:
       return SMALLER;
-    case FINITE:
+    case NO_BOUNDARY:
     default:
       break;
     }
@@ -174,7 +174,7 @@ public:
       if(res != EQUAL)
         return res;
       
-      if(infinite_in_y == MINUS_INFINITY)
+      if(boundary_in_y == MINUS_INFINITY)
         return EQUAL;
 
       return LARGER;
@@ -187,21 +187,21 @@ public:
        if(res != EQUAL)
          return res;
        
-       if(infinite_in_y == PLUS_INFINITY)
+       if(boundary_in_y == PLUS_INFINITY)
         return EQUAL;
 
       return SMALLER;
 
-    case FINITE:
+    case NO_BOUNDARY:
       // e2 is a normal event
       res = m_traits->compare_x_2_object()(e2->get_point(), cv, index);
       if(res != EQUAL)
         return CGAL::opposite(res);
 
-      if(infinite_in_y == MINUS_INFINITY)
+      if(boundary_in_y == MINUS_INFINITY)
         return SMALLER;
 
-      CGAL_assertion(infinite_in_y == PLUS_INFINITY);
+      CGAL_assertion(boundary_in_y == PLUS_INFINITY);
       return LARGER;      
     }
 
@@ -210,14 +210,14 @@ public:
     return SMALLER;
   }
 
-  void set_infinite_in_x(Infinity_type s)
+  void set_boundary_in_x(Boundary_type s)
   {
-    m_infinite_in_x = s;
+    m_boundary_in_x = s;
   }
 
-  void set_infinite_in_y(Infinity_type s)
+  void set_boundary_in_y(Boundary_type s)
   {
-    m_infinite_in_y = s;
+    m_boundary_in_y = s;
   }
 
   void set_index(Curve_end index)
@@ -238,8 +238,8 @@ private:
   Traits*        m_traits;
   
   // when comparing using operator()(cv, e) we store here information 
-  Infinity_type     m_infinite_in_x;
-  Infinity_type     m_infinite_in_y;
+  Boundary_type     m_boundary_in_x;
+  Boundary_type     m_boundary_in_y;
   Curve_end         m_index;
 };
 
@@ -281,12 +281,12 @@ public:
      return m_traits->compare_y_at_x_right_2_object()
        (c1->get_last_curve(), c2->get_last_curve(), (*m_curr_event)->get_point());
 
-    Infinity_type x_inf_c1 =
-      m_traits->infinite_in_x_2_object()(c1->get_last_curve(), MIN_END);
-    Infinity_type y_inf_c1 =
-      m_traits->infinite_in_y_2_object()(c1->get_last_curve(), MIN_END);
+    Boundary_type x_inf_c1 =
+      m_traits->boundary_in_x_2_object()(c1->get_last_curve(), MIN_END);
+    Boundary_type y_inf_c1 =
+      m_traits->boundary_in_y_2_object()(c1->get_last_curve(), MIN_END);
 
-    if(x_inf_c1 == FINITE && y_inf_c1 == FINITE)
+    if(x_inf_c1 == NO_BOUNDARY && y_inf_c1 == NO_BOUNDARY)
       return m_traits->compare_y_at_x_2_object()
         (m_traits->construct_min_vertex_2_object()(c1->get_last_curve()),
                                                    c2->get_last_curve());

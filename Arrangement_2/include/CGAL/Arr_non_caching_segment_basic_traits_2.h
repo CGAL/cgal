@@ -53,6 +53,7 @@ public:
   typedef T_Kernel                              Kernel;
 
   typedef typename Kernel::FT                   FT;
+
 private:
     typedef Algebraic_structure_traits<FT> AST; 
     typedef typename AST::Is_exact FT_is_exact; 
@@ -66,7 +67,7 @@ public:
 
   // Categories:
   typedef Tag_true                              Has_left_category;
-  typedef Tag_false                             Has_infinite_category;
+  typedef Tag_false                             Has_boundary_category;
     
   /*! Default Constructor */
   Arr_non_caching_segment_basic_traits_2()

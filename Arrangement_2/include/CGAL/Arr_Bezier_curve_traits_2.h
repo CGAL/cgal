@@ -75,7 +75,7 @@ public:
   // Category tags:
   typedef Tag_true                               Has_left_category;
   typedef Tag_true                               Has_merge_category;
-  typedef Tag_false                              Has_infinite_category;
+  typedef Tag_false                              Has_boundary_category;
 
   // Traits-class types:
   typedef _Bezier_curve_2<Rat_kernel,

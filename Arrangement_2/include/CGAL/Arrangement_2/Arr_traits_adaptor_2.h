@@ -53,7 +53,7 @@ public:
 
   // Tags.
   typedef typename Base::Has_left_category      Has_left_category;
-  typedef typename Base::Has_infinite_category  Has_infinite_category;
+  typedef typename Base::Has_boundary_category  Has_boundary_category;
 
   /// \name Construction.
   //@{
@@ -113,7 +113,7 @@ public:
                                   Curve_end ind) const
     {
       return (_compare_point_curve_imp (p, cv, ind,
-                                        Has_infinite_category()));
+                                        Has_boundary_category()));
     }
 
     /*!
@@ -135,7 +135,7 @@ public:
                                   Curve_end ind2) const
     {
       return (_compare_curves_imp (cv1, ind1, cv2, ind2,
-                                   Has_infinite_category()));
+                                   Has_boundary_category()));
     }
 
   private:
@@ -234,7 +234,7 @@ public:
       // If the traits class does not support unbounded curves, we just
       // return EQUAL, as this comparison will not be invoked anyway.
       return _comp_y_at_infinity_imp (cv1, cv2, ind, 
-                                      Has_infinite_category());
+                                      Has_boundary_category());
     }
 
   private:
@@ -325,21 +325,21 @@ public:
                                                 const Point_2& p,
                                                 Tag_false) const
     {
-      Infinite_in_x_2      infinite_x = m_self->infinite_in_x_2_object();
-      Infinite_in_y_2      infinite_y = m_self->infinite_in_y_2_object();
+      Boundary_in_x_2      infinite_x = m_self->boundary_in_x_2_object();
+      Boundary_in_y_2      infinite_y = m_self->boundary_in_y_2_object();
       Construct_min_vertex_2 min_vertex =
         m_self->construct_min_vertex_2_object();
       Equal_2              equal = m_self->equal_2_object();
 
       // Check if the left ends of the curves are bounded endpoints.
-      const Infinity_type  inf_x1 = infinite_x (cv1, MIN_END);
-      const Infinity_type  inf_y1 = (inf_x1 != FINITE ? 
-                                     FINITE : infinite_y (cv1, MIN_END));
-      const bool           has_left1 = (inf_x1 == FINITE && inf_y1 == FINITE);
-      const Infinity_type  inf_x2 = infinite_x (cv2, MIN_END);
-      const Infinity_type  inf_y2 = (inf_x2 != FINITE ? 
-                                     FINITE : infinite_y (cv2, MIN_END));
-      const bool           has_left2 = (inf_x2 == FINITE && inf_y2 == FINITE);
+      const Boundary_type  inf_x1 = infinite_x (cv1, MIN_END);
+      const Boundary_type  inf_y1 = (inf_x1 != NO_BOUNDARY ? 
+                                     NO_BOUNDARY : infinite_y (cv1, MIN_END));
+      const bool           has_left1 = (inf_x1 == NO_BOUNDARY && inf_y1 == NO_BOUNDARY);
+      const Boundary_type  inf_x2 = infinite_x (cv2, MIN_END);
+      const Boundary_type  inf_y2 = (inf_x2 != NO_BOUNDARY ? 
+                                     NO_BOUNDARY : infinite_y (cv2, MIN_END));
+      const bool           has_left2 = (inf_x2 == NO_BOUNDARY && inf_y2 == NO_BOUNDARY);
 
       CGAL_assertion (inf_x1 != PLUS_INFINITY && inf_x2 != PLUS_INFINITY);
 
@@ -404,14 +404,14 @@ public:
   }
 
 
-  class Infinite_in_x_2
+  class Boundary_in_x_2
   {
   public:
     /*! Constructor
      * \param self the traits class. It must be passed, to handle the case
      * it is not stateless (e.g., it stores data)
      */
-    Infinite_in_x_2 (const Base * base) : m_base (base) {}
+    Boundary_in_x_2 (const Base * base) : m_base (base) {}
 
     /*!
      * Check if an end of a given x-monotone curve is infinite at x.
@@ -419,16 +419,16 @@ public:
      * \param ind MIN_END if we refer to cv's minimal end,
      *            MAX_END if we refer to its maximal end.
      * \return MINUS_INFINITY if the curve end lies at x = -oo;
-     *         FINITE if the curve end has a finite x-coordinate;
+     *         NO_BOUNDARY if the curve end has a finite x-coordinate;
      *         PLUS_INFINITY if the curve end lies at x = +oo.
      */
-    Infinity_type operator() (const X_monotone_curve_2& cv,
+    Boundary_type operator() (const X_monotone_curve_2& cv,
                               Curve_end ind) const
     {
       // The function is implemented based on the Has_infinite category.
       // If the traits class does not support unbounded curves, we just
-      // return FINITE to mark the curve is bounded.
-      return _infinite_in_x_imp (cv, ind, Has_infinite_category());
+      // return NO_BOUNDARY to mark the curve is bounded.
+      return _boundary_in_x_imp (cv, ind, Has_boundary_category());
     }
 
   private:
@@ -438,38 +438,38 @@ public:
     /*!
      * Implementation of the operator() in case the HasInfinite tag is true.
      */
-    Infinity_type _infinite_in_x_imp (const X_monotone_curve_2& cv,
+    Boundary_type _boundary_in_x_imp (const X_monotone_curve_2& cv,
                                       Curve_end ind,
                                       Tag_true) const
     {
-      return (m_base->infinite_in_x_2_object() (cv, ind));
+      return (m_base->boundary_in_x_2_object() (cv, ind));
     }
 
     /*!
      * Implementation of the operator() in case the HasInfinite tag is false.
      */
-    Infinity_type _infinite_in_x_imp (const X_monotone_curve_2& , Curve_end ,
+    Boundary_type _boundary_in_x_imp (const X_monotone_curve_2& , Curve_end ,
                                       Tag_false) const
     {
-      return (FINITE);
+      return (NO_BOUNDARY);
     }
   };
 
-  /*! Get an Infinite_in_x_2 functor object. */
-  Infinite_in_x_2 infinite_in_x_2_object () const
+  /*! Get an Boundary_in_x_2 functor object. */
+  Boundary_in_x_2 boundary_in_x_2_object () const
   {
-    return Infinite_in_x_2(this);
+    return Boundary_in_x_2(this);
   }
 
 
-  class Infinite_in_y_2
+  class Boundary_in_y_2
   {
   public:
     /*! Constructor
      * \param self the traits class. It must be passed, to handle the case
      * it is not stateless (e.g., it stores data)
      */
-    Infinite_in_y_2(const Base * base) : m_base (base) {}
+    Boundary_in_y_2(const Base * base) : m_base (base) {}
 
     /*!
      * Check if an end of a given x-monotone curve is infinite at y.
@@ -477,16 +477,16 @@ public:
      * \param ind MIN_END if we refer to cv's minimal end,
      *            MAX_END if we refer to its maximal end.
      * \return MINUS_INFINITY if the curve end lies at y = -oo;
-     *         FINITE if the curve end has a finite y-coordinate;
+     *         NO_BOUNDARY if the curve end has a finite y-coordinate;
      *         PLUS_INFINITY if the curve end lies at y = +oo.
      */
-    Infinity_type operator() (const X_monotone_curve_2& cv,
+    Boundary_type operator() (const X_monotone_curve_2& cv,
                               Curve_end ind) const
     {
       // The function is implemented based on the Has_infinite category.
       // If the traits class does not support unbounded curves, we just
-      // return FINITE to mark the curve is finite.
-      return _infinite_in_y_imp (cv, ind, Has_infinite_category());
+      // return NO_BOUNDARY to mark the curve is finite.
+      return _boundary_in_y_imp (cv, ind, Has_boundary_category());
     }
 
   private:
@@ -496,27 +496,27 @@ public:
     /*!
      * Implementation of the operator() in case the HasInfinite tag is true.
      */
-    Infinity_type _infinite_in_y_imp (const X_monotone_curve_2& cv,
+    Boundary_type _boundary_in_y_imp (const X_monotone_curve_2& cv,
                                       Curve_end ind,
                                       Tag_true) const
     {
-      return (m_base->infinite_in_y_2_object() (cv, ind));
+      return (m_base->boundary_in_y_2_object() (cv, ind));
     }
 
     /*!
      * Implementation of the operator() in case the HasInfinite tag is false.
      */
-    Infinity_type _infinite_in_y_imp (const X_monotone_curve_2& , Curve_end ,
+    Boundary_type _boundary_in_y_imp (const X_monotone_curve_2& , Curve_end ,
                                       Tag_false) const
     {
-      return (FINITE);
+      return (NO_BOUNDARY);
     }
   };
 
-  /*! Get an Infinite_in_y_2 functor object. */
-  Infinite_in_y_2 infinite_in_y_2_object () const
+  /*! Get an Boundary_in_y_2 functor object. */
+  Boundary_in_y_2 boundary_in_y_2_object () const
   {
-    return Infinite_in_y_2(this);
+    return Boundary_in_y_2(this);
   }
   //@}
 
@@ -540,23 +540,23 @@ public:
      */
     bool operator() (const X_monotone_curve_2& cv, const Point_2& p) const
     {
-      Infinite_in_x_2     infinite_x = m_self->infinite_in_x_2_object();
-      Infinite_in_y_2     infinite_y = m_self->infinite_in_y_2_object();
+      Boundary_in_x_2     infinite_x = m_self->boundary_in_x_2_object();
+      Boundary_in_y_2     infinite_y = m_self->boundary_in_y_2_object();
       Compare_x_2         compare_x =  m_self->compare_x_2_object();
 
       // Compare p to the position of the left end of the curve.
       // Note that if the left end of cv lies at x = -oo, p is obviously to
       // its right.
-      Infinity_type           inf_x, inf_y;
+      Boundary_type           inf_x, inf_y;
       Comparison_result       res;
 
       inf_x = infinite_x (cv, MIN_END);
 
-      if (inf_x == FINITE)
+      if (inf_x == NO_BOUNDARY)
       {
         inf_y = infinite_y (cv, MIN_END);
 
-        if (inf_y == FINITE)
+        if (inf_y == NO_BOUNDARY)
         {
           // The left endpoint of cv is a normal point.
           res = compare_x (p, m_self->construct_min_vertex_2_object() (cv));
@@ -577,12 +577,12 @@ public:
       // Note that if this end lies at x = +oo, p is obviously to its left.
       inf_x = infinite_x (cv, MAX_END);
 
-      if (inf_x != FINITE)
+      if (inf_x != NO_BOUNDARY)
         return (true);
       
       inf_y = infinite_y (cv, MAX_END);
 
-      if (inf_y == FINITE)
+      if (inf_y == NO_BOUNDARY)
       {
         // The right endpoint of cv is a normal point.
         res = compare_x (p, m_self->construct_max_vertex_2_object() (cv));
@@ -606,8 +606,8 @@ public:
     bool operator() (const X_monotone_curve_2& cv1,
                      const X_monotone_curve_2& cv2) const
     {
-      Infinite_in_x_2         infinite_x = m_self->infinite_in_x_2_object();
-      Infinite_in_y_2         infinite_y = m_self->infinite_in_y_2_object();
+      Boundary_in_x_2         infinite_x = m_self->boundary_in_x_2_object();
+      Boundary_in_y_2         infinite_y = m_self->boundary_in_y_2_object();
       Compare_x_2             compare_x = m_self->compare_x_2_object();
       Construct_min_vertex_2  min_vertex =
         m_self->construct_min_vertex_2_object();
@@ -616,20 +616,20 @@ public:
 
       // Locate the rightmost of the two left endpoints of the two curves.
       // Note that we guard for curves with infinite ends.
-      Infinity_type             inf_x1, inf_y1;
-      Infinity_type             inf_x2, inf_y2;
+      Boundary_type             inf_x1, inf_y1;
+      Boundary_type             inf_x2, inf_y2;
       const X_monotone_curve_2 *cv_l;
-      Infinity_type             inf_yl;
+      Boundary_type             inf_yl;
       Comparison_result         res;
 
       inf_x1 = infinite_x (cv1, MIN_END);
       inf_x2 = infinite_x (cv2, MIN_END);
 
-      if (inf_x1 != FINITE)
+      if (inf_x1 != NO_BOUNDARY)
       {
         // If both curves are defined at x = -oo, they obviously overlap in
         // their x-ranges.
-        if (inf_x2 != FINITE)
+        if (inf_x2 != NO_BOUNDARY)
           return (true);
 
         // As cv2 is not defined at x = -oo, take its left end as the
@@ -637,7 +637,7 @@ public:
         cv_l = &cv2;
         inf_yl = infinite_y (cv2, MIN_END);
       }
-      else if (inf_x2 != FINITE)
+      else if (inf_x2 != NO_BOUNDARY)
       {
         // As cv1 is not defined at x = -oo, take its left end as the
         // rightmost.
@@ -650,9 +650,9 @@ public:
         inf_y1 = infinite_y (cv1, MIN_END);
         inf_y2 = infinite_y (cv2, MIN_END);
 
-        if (inf_y1 == FINITE)
+        if (inf_y1 == NO_BOUNDARY)
         {
-          if (inf_y2 == FINITE)
+          if (inf_y2 == NO_BOUNDARY)
           {
             res = compare_x (min_vertex (cv1), min_vertex (cv2));
           }
@@ -663,7 +663,7 @@ public:
         }
         else
         {
-          if (inf_y2 == FINITE)
+          if (inf_y2 == NO_BOUNDARY)
           {
             res = compare_x (min_vertex (cv2), cv1, MIN_END);
             if (res != EQUAL)
@@ -691,16 +691,16 @@ public:
       // Locate the leftmost of the two right endpoints of the two curves.
       // Note that we guard for curves with infinite ends.
       const X_monotone_curve_2 *cv_r;
-      Infinity_type             inf_yr;
+      Boundary_type             inf_yr;
 
       inf_x1 = infinite_x (cv1, MAX_END);
       inf_x2 = infinite_x (cv2, MAX_END);
 
-      if (inf_x1 != FINITE)
+      if (inf_x1 != NO_BOUNDARY)
       {
         // If both curves are defined at x = +oo, they obviously overlap in
         // their x-ranges.
-        if (inf_x2 != FINITE)
+        if (inf_x2 != NO_BOUNDARY)
           return (true);
 
         // As cv2 is not defined at x = +oo, take its right end as the
@@ -708,7 +708,7 @@ public:
         cv_r = &cv2;
         inf_yr = infinite_y (cv2, MAX_END);
       }
-      else if (inf_x2 != FINITE)
+      else if (inf_x2 != NO_BOUNDARY)
       {
         // As cv1 is not defined at x = +oo, take its right end as the
         // leftmost.
@@ -721,9 +721,9 @@ public:
         inf_y1 = infinite_y (cv1, MAX_END);
         inf_y2 = infinite_y (cv2, MAX_END);
 
-        if (inf_y1 == FINITE)
+        if (inf_y1 == NO_BOUNDARY)
         {
-          if (inf_y2 == FINITE)
+          if (inf_y2 == NO_BOUNDARY)
           {
             res = compare_x (max_vertex (cv1), max_vertex (cv2));
           }
@@ -734,7 +734,7 @@ public:
         }
         else
         {
-          if (inf_y2 == FINITE)
+          if (inf_y2 == NO_BOUNDARY)
           {
             res = compare_x (max_vertex (cv2), cv1, MAX_END);
             if (res != EQUAL)
@@ -760,9 +760,9 @@ public:
           
       // Now compare the (finite) x-coordiates of the left end of cv_l and
       // the right end of cv_r.
-      if (inf_yl == FINITE)
+      if (inf_yl == NO_BOUNDARY)
       {
-        if (inf_yr == FINITE)
+        if (inf_yr == NO_BOUNDARY)
         {
           res = compare_x (min_vertex (*cv_l), max_vertex (*cv_r));
         }
@@ -773,7 +773,7 @@ public:
       }
       else
       {
-        if (inf_yr == FINITE)
+        if (inf_yr == NO_BOUNDARY)
         {
           res = compare_x (max_vertex (*cv_r), *cv_l, MIN_END);
           if (res != EQUAL)
@@ -828,28 +828,28 @@ public:
       );
       CGAL_precondition (is_in_x_range (cv1, cv2));
 
-      Infinite_in_x_2         infinite_x = m_self->infinite_in_x_2_object();
-      Infinite_in_y_2         infinite_y = m_self->infinite_in_y_2_object();
+      Boundary_in_x_2         infinite_x = m_self->boundary_in_x_2_object();
+      Boundary_in_y_2         infinite_y = m_self->boundary_in_y_2_object();
       Compare_y_at_x_2        compare_y_at_x =
         m_self->compare_y_at_x_2_object();
       Construct_min_vertex_2  min_vertex =
         m_self->construct_min_vertex_2_object();
  
       // First check whether any of the curves is defined at x = -oo.
-      const Infinity_type     inf_x1 = infinite_x (cv1, MIN_END);
-      const Infinity_type     inf_x2 = infinite_x (cv2, MIN_END);
+      const Boundary_type     inf_x1 = infinite_x (cv1, MIN_END);
+      const Boundary_type     inf_x2 = infinite_x (cv2, MIN_END);
       Comparison_result       res;
 
-      if (inf_x1 != FINITE)
+      if (inf_x1 != NO_BOUNDARY)
       {
-        if (inf_x2 != FINITE)
+        if (inf_x2 != NO_BOUNDARY)
         {
           // Compare the relative position of the curve at x = -oo.
           return (compare_y_at_x (cv1, cv2, MIN_END));
         }
         
         // Check if the left end of cv2 lies at y = +/- oo.
-        const Infinity_type    inf_y2 = infinite_y (cv2, MIN_END);
+        const Boundary_type    inf_y2 = infinite_y (cv2, MIN_END);
 
         if (inf_y2 == MINUS_INFINITY)
           return (LARGER);          // cv2 is obviously below cv1.
@@ -866,10 +866,10 @@ public:
 
         return ((res == SMALLER) ? LARGER : SMALLER);
       }
-      else if (inf_x2 != FINITE)
+      else if (inf_x2 != NO_BOUNDARY)
       {
         // Check if the left end of cv1 lies at y = +/- oo.
-        const Infinity_type    inf_y1 = infinite_y (cv1, MIN_END);
+        const Boundary_type    inf_y1 = infinite_y (cv1, MIN_END);
 
         if (inf_y1 == MINUS_INFINITY)
           return (SMALLER);         // cv1 is obviously below cv2.
@@ -884,13 +884,13 @@ public:
       }
       
       // Check if the left curve end lie at y = +/- oo.
-      const Infinity_type     inf_y1 = infinite_y (cv1, MIN_END);
-      const Infinity_type     inf_y2 = infinite_y (cv2, MIN_END);
+      const Boundary_type     inf_y1 = infinite_y (cv1, MIN_END);
+      const Boundary_type     inf_y2 = infinite_y (cv2, MIN_END);
       Comparison_result       l_res;
 
-      if (inf_y1 != FINITE)
+      if (inf_y1 != NO_BOUNDARY)
       {
-        if (inf_y2 != FINITE)
+        if (inf_y2 != NO_BOUNDARY)
         {
           // If one curve has a left end at y = -oo and the other at y = +oo,
           // we readily know their relative position (recall that they do not
@@ -938,7 +938,7 @@ public:
             return (LARGER);           // cv2 is obviously above cv1.
         }
       }
-      else if (inf_y2 != FINITE)
+      else if (inf_y2 != NO_BOUNDARY)
       {
         // cv2 has a vertical asymptote and cv1 has a normal left endpoint.
         // Compare the x-positions of this endpoint and the asymptote.

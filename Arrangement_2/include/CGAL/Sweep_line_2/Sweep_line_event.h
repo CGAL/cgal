@@ -64,7 +64,7 @@ public:
  
   typedef std::pair<bool, SubCurveIter>                    Pair;
 
-  typedef typename Traits::Has_infinite_category           Has_infinite_category;
+  typedef typename Traits::Has_boundary_category           Has_boundary_category;
 
 
   /*! The type of the event */
@@ -86,17 +86,17 @@ public:
                            //of another curve (also may indicate overlap)
     OVERLAP = 64, // end-point of an overlap subcurve
 
-    MINUS_INFINITE_X = 128,
+    MINUS_INNO_BOUNDARY_X = 128,
 
-    FINITE_X = 256,
+    NO_BOUNDARY_X = 256,
 
-    PLUS_INFINITE_X = 512,
+    PLUS_INNO_BOUNDARY_X = 512,
 
-    MINUS_INFINITE_Y = 1024,
+    MINUS_INNO_BOUNDARY_Y = 1024,
 
-    FINITE_Y = 2048,
+    NO_BOUNDARY_Y = 2048,
 
-    PLUS_INFINITE_Y = 4096
+    PLUS_INNO_BOUNDARY_Y = 4096
 
   }Attribute;
 
@@ -405,48 +405,48 @@ public:
 
   void set_minus_infinite_x()
   {
-    m_type |= MINUS_INFINITE_X;
+    m_type |= MINUS_INNO_BOUNDARY_X;
   }
 
   void set_plus_infinite_x()
   {
-    m_type |= PLUS_INFINITE_X;
+    m_type |= PLUS_INNO_BOUNDARY_X;
   }
 
   void set_finite_x()
   {
-    m_type |= FINITE_X;
+    m_type |= NO_BOUNDARY_X;
   }
 
   void set_finite_y()
   {
-    m_type |= FINITE_Y;
+    m_type |= NO_BOUNDARY_Y;
   }
 
   void set_finite()
   {
-    m_type |= FINITE_X;
-    m_type |= FINITE_Y;
+    m_type |= NO_BOUNDARY_X;
+    m_type |= NO_BOUNDARY_Y;
 
   }
 
   void set_minus_infinite_y()
   {
-    m_type |= MINUS_INFINITE_Y;
+    m_type |= MINUS_INNO_BOUNDARY_Y;
   }
 
   void set_plus_infinite_y()
   {
-    m_type |= PLUS_INFINITE_Y;
+    m_type |= PLUS_INNO_BOUNDARY_Y;
   }
 
   inline bool is_finite() const
   {
-    return ((m_type & FINITE_X ) != 0) && ((m_type & FINITE_Y ) != 0);
+    return ((m_type & NO_BOUNDARY_X ) != 0) && ((m_type & NO_BOUNDARY_Y ) != 0);
   }
   /*inline bool is_finite() const
   {
-    return is_finite_impl(Has_infinite_category());
+    return is_finite_impl(Has_boundary_category());
   }
   inline bool is_finite_impl(Tag_false) const
   {
@@ -455,61 +455,61 @@ public:
 
   inline bool is_finite_impl(Tag_true) const
   {
-    return ((m_type & FINITE_X ) != 0) && ((m_type & FINITE_Y ) != 0);
+    return ((m_type & NO_BOUNDARY_X ) != 0) && ((m_type & NO_BOUNDARY_Y ) != 0);
   }*/
 
-  bool is_minus_infinite_in_x() const
+  bool is_minus_boundary_in_x() const
   {
-    return ((m_type & MINUS_INFINITE_X ) != 0);
+    return ((m_type & MINUS_INNO_BOUNDARY_X ) != 0);
   }
 
-  bool is_plus_infinite_in_x() const
+  bool is_plus_boundary_in_x() const
   {
-    return ((m_type & PLUS_INFINITE_X ) != 0);
+    return ((m_type & PLUS_INNO_BOUNDARY_X ) != 0);
   }
 
   bool is_finite_in_x() const
   {
-    return ((m_type & FINITE_X ) != 0);
+    return ((m_type & NO_BOUNDARY_X ) != 0);
   }
 
   bool is_finite_in_y() const
   {
-    return ((m_type & FINITE_Y ) != 0);
+    return ((m_type & NO_BOUNDARY_Y ) != 0);
   }
 
-  bool is_minus_infinite_in_y() const
+  bool is_minus_boundary_in_y() const
   {
-    return ((m_type & MINUS_INFINITE_Y ) != 0);
+    return ((m_type & MINUS_INNO_BOUNDARY_Y ) != 0);
   }
 
-  bool is_plus_infinite_in_y() const
+  bool is_plus_boundary_in_y() const
   {
-    return ((m_type & PLUS_INFINITE_Y ) != 0);
+    return ((m_type & PLUS_INNO_BOUNDARY_Y ) != 0);
   }
 
-  Infinity_type infinity_at_x() const
+  Boundary_type infinity_at_x() const
   {
-    if((m_type & MINUS_INFINITE_X ) != 0)
+    if((m_type & MINUS_INNO_BOUNDARY_X ) != 0)
       return MINUS_INFINITY;
 
-    if((m_type & PLUS_INFINITE_X ) != 0)
+    if((m_type & PLUS_INNO_BOUNDARY_X ) != 0)
       return PLUS_INFINITY;
 
-    CGAL_assertion((m_type & FINITE_X ) != 0);
-    return FINITE;
+    CGAL_assertion((m_type & NO_BOUNDARY_X ) != 0);
+    return NO_BOUNDARY;
   }
 
-  Infinity_type infinity_at_y() const
+  Boundary_type infinity_at_y() const
   {
-    if((m_type & MINUS_INFINITE_Y ) != 0)
+    if((m_type & MINUS_INNO_BOUNDARY_Y ) != 0)
       return MINUS_INFINITY;
 
-    if((m_type & PLUS_INFINITE_Y ) != 0)
+    if((m_type & PLUS_INNO_BOUNDARY_Y ) != 0)
       return PLUS_INFINITY;
 
-    CGAL_assertion((m_type & FINITE_Y ) != 0);
-    return FINITE;
+    CGAL_assertion((m_type & NO_BOUNDARY_Y ) != 0);
+    return NO_BOUNDARY;
   }
 
   
@@ -620,7 +620,7 @@ Print()
   else
   {
     std::cout << "\t";
-    Infinity_type x = this->infinity_at_x(),
+    Boundary_type x = this->infinity_at_x(),
                   y = this->infinity_at_y();
     switch(x)
     {
@@ -630,7 +630,7 @@ Print()
     case PLUS_INFINITY:
       std::cout<<" X = +00 ";
       break;
-    case FINITE:
+    case NO_BOUNDARY:
       {
         switch(y)
         {
@@ -640,7 +640,7 @@ Print()
         case PLUS_INFINITY:
           std::cout<<" Y = +00 ";
           break;
-        case FINITE:
+        case NO_BOUNDARY:
           CGAL_assertion(false);
         }
       } 
