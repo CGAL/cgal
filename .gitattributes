@@ -98,6 +98,7 @@ Algebraic_foundations/include/CGAL/Fraction_traits.h -text
 Algebraic_foundations/include/CGAL/Needs_parens_as_product.h -text
 Algebraic_foundations/include/CGAL/Rational_traits.h -text
 Algebraic_foundations/include/CGAL/Real_embeddable_traits.h -text
+Algebraic_foundations/include/CGAL/Scalar_factor_traits.h -text
 Algebraic_foundations/include/CGAL/utils.h -text
 Algebraic_foundations/include/CGAL/utils_classes.h -text
 Algebraic_foundations/test/Algebraic_foundations/Algebraic_structure_traits.C -text
