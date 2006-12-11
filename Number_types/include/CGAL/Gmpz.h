@@ -145,6 +145,7 @@ public:
 template<> class Algebraic_structure_traits< Quotient<Gmpz> >
     : public INTERN_QUOTIENT::Algebraic_structure_traits_quotient_base<Quotient<Gmpz> >{
     // specialization of to double functor
+public:
     typedef Quotient<Gmpz> Type;
     
     struct To_double: public Unary_function<Quotient<Gmpz>, double>{
