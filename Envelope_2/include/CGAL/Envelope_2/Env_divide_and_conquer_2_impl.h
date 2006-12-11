@@ -115,9 +115,9 @@ _construct_singleton_diagram (const X_monotone_curve_2& cv,
   CGAL_assertion (out_d.leftmost()->is_empty());
   
   // Check if the given curve is bounded from the left and from the right.
-  if (traits->infinite_in_x_2_object() (cv, MIN_END) != FINITE)
+  if (traits->boundary_in_x_2_object() (cv, MIN_END) != NO_BOUNDARY)
   {
-    if (traits->infinite_in_x_2_object() (cv, MAX_END) != FINITE)
+    if (traits->boundary_in_x_2_object() (cv, MAX_END) != NO_BOUNDARY)
     {
       // The curve is defined over (-oo, oo), so its diagram contains
       // only a single edge.
@@ -129,7 +129,7 @@ _construct_singleton_diagram (const X_monotone_curve_2& cv,
     // The curve is defined over (-oo, x], where x is finite.
     // Create a vertex and associate it with the right endpoint of cv.
     CGAL_precondition
-      (traits->infinite_in_y_2_object() (cv, MAX_END) == FINITE);
+      (traits->boundary_in_y_2_object() (cv, MAX_END) == NO_BOUNDARY);
     
     Vertex_handle  v = 
       out_d.new_vertex (traits->construct_max_vertex_2_object() (cv));
@@ -149,12 +149,12 @@ _construct_singleton_diagram (const X_monotone_curve_2& cv,
     return;
   }
   
-  if (traits->infinite_in_x_2_object() (cv, MAX_END) != FINITE)
+  if (traits->boundary_in_x_2_object() (cv, MAX_END) != NO_BOUNDARY)
   {
     // The curve is defined over [x, +oo), where x is finite.
     // Create a vertex and associate it with the left endpoint of cv.
     CGAL_precondition
-      (traits->infinite_in_y_2_object() (cv, MIN_END) == FINITE);
+      (traits->boundary_in_y_2_object() (cv, MIN_END) == NO_BOUNDARY);
     
     Vertex_handle  v = 
       out_d.new_vertex (traits->construct_min_vertex_2_object() (cv));
@@ -181,9 +181,9 @@ _construct_singleton_diagram (const X_monotone_curve_2& cv,
   //      -oo -------------(+)============(+)------------ +oo
   //
   CGAL_precondition
-    (traits->infinite_in_y_2_object() (cv, MIN_END) == FINITE);
+    (traits->boundary_in_y_2_object() (cv, MIN_END) == NO_BOUNDARY);
   CGAL_precondition
-    (traits->infinite_in_y_2_object() (cv, MAX_END) == FINITE);
+    (traits->boundary_in_y_2_object() (cv, MAX_END) == NO_BOUNDARY);
   
   Vertex_handle  v1 = 
     out_d.new_vertex (traits->construct_min_vertex_2_object() (cv));
@@ -595,9 +595,9 @@ _merge_two_intervals (Edge_const_handle e1, bool is_leftmost1,
 
       // Get the endpoints of the overlapping curves.
       const bool  has_left = 
-        (traits->infinite_in_x_2_object() (icv, MIN_END) == FINITE);
+        (traits->boundary_in_x_2_object() (icv, MIN_END) == NO_BOUNDARY);
       const bool  has_right = 
-        (traits->infinite_in_x_2_object() (icv, MAX_END) == FINITE);
+        (traits->boundary_in_x_2_object() (icv, MAX_END) == NO_BOUNDARY);
       Point_2     p1, p2;
       
       if (has_left)
