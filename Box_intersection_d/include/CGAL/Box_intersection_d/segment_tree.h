@@ -37,7 +37,7 @@ CGAL_BEGIN_NAMESPACE
 
 namespace Box_intersection_d {
 
-#define BOX_INTERSECTION_DEBUG 0
+#define CGAL_BOX_INTERSECTION_DEBUG 0
 
 
 template< class ForwardIter1, class ForwardIter2,
@@ -241,7 +241,7 @@ split_points( RandomAccessIter begin, RandomAccessIter end,
 }
 
 
-#if BOX_INTERSECTION_DEBUG
+#if CGAL_BOX_INTERSECTION_DEBUG
  static int level = -1;
  #define CGAL_BOX_INTERSECTION_DUMP(msg) { \
    for( unsigned int i = level; i; --i ) \
@@ -305,7 +305,7 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
     const T inf = box_limits< T >::inf();
     const T sup = box_limits< T >::sup();
 
-#if BOX_INTERSECTION_DEBUG
+#if CGAL_BOX_INTERSECTION_DEBUG
     Counter<int> bla( level );
     CGAL_BOX_INTERSECTION_DUMP("range: [" << lo << "," << hi << ") dim " 
                                           << dim << std::endl )
@@ -317,7 +317,7 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
     dump_points( p_begin, p_end, traits, dim );
 #endif
 
-#if SEGMENT_TREE_CHECK_INVARIANTS
+#if CGAL_SEGMENT_TREE_CHECK_INVARIANTS
     {
         // first: each point is inside segment [lo,hi)
         for( RandomAccessIter1 it = p_begin; it != p_end; ++it ) {
@@ -390,7 +390,10 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
                   callback, traits, cutoff, dim, in_order );
 }
 
-#undef BOX_INTERSECTION_DEBUG
+#if CGAL_BOX_INTERSECTION_DEBUG
+ #undef CGAL_BOX_INTERSECTION_DUMP
+#endif
+#undef CGAL_BOX_INTERSECTION_DEBUG
 
 } // end namespace Box_intersection_d
 

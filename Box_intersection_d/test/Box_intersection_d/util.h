@@ -1,5 +1,5 @@
-#ifndef BOX_INTERSECTION_D_UTIL_H
-#define BOX_INTERSECTION_D_UTIL_H
+#ifndef CGAL_BOX_INTERSECTION_D_UTIL_H
+#define CGAL_BOX_INTERSECTION_D_UTIL_H
 
 #include <vector>
 #include <algorithm> // for pair

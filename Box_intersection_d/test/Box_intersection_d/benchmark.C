@@ -20,7 +20,7 @@
 
 
 // enable invariant checking
-#define SEGMENT_TREE_CHECK_INVARIANTS 1
+#define CGAL_SEGMENT_TREE_CHECK_INVARIANTS 1
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/Timer.h>
 #include <iostream>
