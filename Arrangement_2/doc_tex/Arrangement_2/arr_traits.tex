@@ -9,6 +9,14 @@ mention throughout the chapter that there are different levels of
 requirements from the traits class, namely the traits class can model
 different concept refinement-levels.
 
+\subsection{The Hierarchy of Traits-Class Concepts
+\label{arr_sssec:tr_concepts}}
+%--------------------------------------------------
+
+\subsubsection{The Basic Concept
+\label{arr_sssec:tr_basic_concept}}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 A model of the basic concept, \ccc{ArrangementBasicTraits_2},
 needs to define the types \ccc{Point_2} and
 \ccc{X_monotone_curve_2}, where objects of the first type are
@@ -17,23 +25,92 @@ latter type are the geometric mapping of edges. In addition, it has to
 support the following set of predicates:
 \begin{itemize}
 \item Compare the $x$-coordinates of two points $p$ and $q$.
+%
 \item Compare two points $p$ and $q$ lexicographically, by their
-$x$-coordinates then by their $y$-coordinates.
+$x$-coordinates and then (in case of equality) by their
+$y$-coordinates.
+%
 \item Return the left endpoint (similarly, the right endpoint) of
 an $x$-monotone curve $c$.
+%
 \item Given an $x$-monotone curve $c$ and a point $p$ that lies in its
 $x$-range, determine whether $p$ lies below, above or on $c$.
+%
 \item Given two $x$-monotone curves $c_1$ and $c_2$ that share a
-common left endpoint (similarly, right endpoint) $p$, determine
-whether $c_1$ lies above or under $c_2$ immediately to the right
-(to the left) of $p$, or whether the two curves coincide there.
+common left endpoint $p$, determine whether $c_1$ lies above or under
+$c_2$ immediately to the right of $p$, or whether the two curves coincide
+there.
 \item Check two curves for equality (two curves are equal if their
 graph is the same).
 \end{itemize}
+
 This basic set of predicates is sufficient for constructing
-arrangements of $x$-monotone curves and points that are pairwise
-disjoint in their interiors and for performing point-location
-queries and vertical ray-shooting queries.
+arrangements of bounded $x$-monotone curves and points that
+are pairwise disjoint in their interiors and for answering
+point-location queries and vertical ray-shooting queries.
+In order to support unbounded curves we add the following
+predicates, involving curve-ends that coincide with the imaginary
+boundaries of the arrangement. We say that such curves have
+{\em boundary conditions} in $x$ or in $y$: 
+\begin{itemize}
+\item
+Determine if the left end (similarly, the right end) of an
+$x$-monotone curve $c$ has a boundary condition in $x$. Namely,
+we say that its boundary condition is \ccc{MINUS_INFINITY} if
+it lies at $x = -\infty$, \ccc{PLUS_INFINITY} if it lies at
+$x = +\infty$, and \ccc{NO_BOUNDARY} otherwise.
+
+Similarly, we need a predicate for determining whether a given
+curve-end (the left end or the right end of a given $x$-monotone
+curve) has a boundary condition in $y$, namely whether it lies
+at $y = \pm\infty$. Note that we can construct the left endpoint
+(or the right endpoint) of $c$ only if the corresponding curve-end
+is bounded (i.e., has no boundary conditions in $x$ or in $y$).
+%
+\item
+Given two $x$-monotone curve $c_1$ and $c_2$, both defined at $x =
+-\infty$, determine whether $c_1$ lies above or under $c_2$ at $x =
+-\infty$ (similarly, at $x = \infty$).
+%
+\item
+Compare the $x$-position of an unbounded curve-end with a
+finite $x$-coordinate and an infinite $y$-coordinate with a
+vertical line that passes through a given query point.
+%
+\item
+Compare the $x$-position of two unbounded curve-ends with finite
+$x$-coordinates and infinite $y$-coordinates.
+\end{itemize}
+Each model of the concept \ccc{ArrangementBasicTraits_2}
+needs to define a tag named \ccc{Has_boundary_category},
+which should be either \ccc{Tag_true} or \ccc{Tag_false}.
+In the latter case, the tag marks the fact that the traits
+class does not support unbounded curves (for example, the
+\ccc{Arr_segment_traits_2} class we have encountered in the
+previous sections), and it does not have to provide the
+predicates listed above.
+
+An additional tag, named \ccc{Has_left_category}, determines
+whether the traits class supports the following predicate:
+\begin{itemize}
+\item
+Given two $x$-monotone curves $c_1$ and $c_2$ that share a common
+right endpoint $p$, determine whether $c_1$ lies above or under
+$c_2$ immediately to the left of $p$, or whether the two curves
+coincide there.
+\end{itemize}
+This predicate is optional, as it can be answered using the
+other traits-class primitives, and we wish to alleviate the
+need to implement an extra method that is not absolutely
+necessary. However, as implementing the predicate directly
+may prove to be more efficient, the traits-class
+implementer may choose to provide it. As we will see, the
+usage of tags makes it easier to implement new traits
+classes and allows for more flexibility in their design.
+
+\subsubsection{The Landmarks Concept
+\label{arr_sssec:tr_lanmarks_concept}}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The landmark point-location strategy (see
 Section~\ref{arr_ssec:pl}) needs its associated arrangement to be
@@ -46,10 +123,15 @@ concept must define a fixed precision number type (typically
 of \ccc{p} using the fixed precision number type. We use this operation
 for approximate computations --- there are certain operations in the
 search for the location of the point that need not be exact and we can
-perform them faster than other operations. 
+perform them faster than other operations.
+%
 \item Given two points $p_1$ and $p_2$, construct an $x$-monotone
 curve connecting $p_1$ and $p_2$.
 \end{itemize}
+
+\subsubsection{Supporting Interesecting $x$-Monotone Curves
+\label{arr_sssec:tr_xmon_concept}}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A traits class that models the \ccc{ArrangementXMonotoneTraits_2}
 concept, which refines the \ccc{ArrangementBasicTraits_2}
@@ -63,18 +145,25 @@ is of multiplicity 1. If the tangents are also equal but the their
 curvatures are not the same, $p$ is of multiplicity 2, etc.}
 Knowing the multiplicity of an intersection point is not required,
 but it can speed up the arrangement construction.
+%
 \item Split an $x$-monotone curve $c$ into two subcurves at a point
 $p$ lying in the interior of $c$.
+%
 \item Given two $x$-monotone curve $c_1$ and $c_2$ that share a
 common endpoint, determine whether $c_1$ and $c_2$ are {\em
 mergeable}, that is, whether they can be merged to form a
 single continuous $x$-monotone curve of the type supported by the
 traits class.
+%
 \item Merge two mergeable $x$-monotone curve $c_1$ and $c_2$.
 \end{itemize}
 Using a model of the \ccc{ArrangementXMonotoneTraits_2}, it is
 possible to construct arrangements of sets of $x$-monotone curves
 (and points) that may intersect one another.
+
+\subsubsection{Supporting Arbitrary Curves
+\label{arr_sssec:tr_full_concept}}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The concept \ccc{ArrangementTraits_2} refines the
 \ccc{ArrangementXMonotoneTraits_2} concept by adding the notion
@@ -104,7 +193,8 @@ decorators for geometric traits classes distributed with \cgal,
 which extend other geometric traits-class by attaching auxiliary
 data with the geometric objects.
 
-\subsection{Traits Classes for Line Segments and Linear Objects\label{arr_ssec:tr_segs}}
+\subsection{Traits Classes for Line Segments and Linear Objects
+\label{arr_ssec:tr_segs}}
 %--------------------------------------------------------------
 
 The \ccc{Arr_segment_traits_2<Kernel>} class used so far

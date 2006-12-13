@@ -62,7 +62,7 @@ overlap.
   {models the concept \ccc{ArrTraits::CompareX_2}.
   If the traits class supports unbounded curves (i.e., the
   \ccc{Has_boundary_category} tag is defined as \ccc{Tag_true}), then
-  the type models the concept \ccc{ArrTraits::UnboundedCompareX_2}.}
+  the type models the concept \ccc{ArrTraits::BoundaryCompareX_2}.}
 \ccGlue
 \ccNestedType{Compare_xy_2}{models the concept \ccc{ArrTraits::CompareXy_2}.}
 \ccGlue
@@ -88,7 +88,7 @@ overlap.
   {models the concept \ccc{ArrTraits::CompareYAtX_2}.
   If the traits class supports unbounded curves (i.e., the
   \ccc{Has_boundary_category} tag is defined as \ccc{Tag_true}), then
-  the type models the concept \ccc{ArrTraits::UnboundedCompareYAtX_2}.}
+  the type models the concept \ccc{ArrTraits::BoundaryCompareYAtX_2}.}
 \ccGlue
 \ccNestedType{Compare_y_at_x_left_2}
   {models the concept \ccc{ArrTraits::CompareYAtXLeft_2}.
@@ -194,10 +194,10 @@ Represents a planar (weakly) $x$-monotone curve.
 \end{ccRefConcept}
 \ccRefPageEnd
 
-%%%%%%%% UnboundedCompareX_2
+%%%%%%%% BoundaryCompareX_2
 % ==========================
 \ccRefPageBegin
-\begin{ccRefConcept}{ArrTraits::UnboundedCompareX_2}
+\begin{ccRefConcept}{ArrTraits::BoundaryCompareX_2}
 \ccRefines\ccc{ArrTraits::CompareX_2}
 
 \ccHasModels\ccc{ArrangementBasicTraits_2::Compare_x_2}
@@ -339,10 +339,10 @@ Represents a planar (weakly) $x$-monotone curve.
 \end{ccRefConcept}
 \ccRefPageEnd
 
-%%%%%%%% UnboundedCompareYAtX_2
+%%%%%%%% BoundaryCompareYAtX_2
 % =============================
 \ccRefPageBegin
-\begin{ccRefConcept}{ArrTraits::UnboundedCompareYAtX_2}
+\begin{ccRefConcept}{ArrTraits::BoundaryCompareYAtX_2}
 \ccRefines\ccc{CompareYAtX_2}
 
 \ccHasModels\ccc{ArrangementBasicTraits_2::Compare_y_at_x_2}
