@@ -1,4 +1,4 @@
-# Created by the script create_makefile
+# Created by the script cgal_create_makefile
 # This is the makefile for compiling a CGAL application.
 
 #---------------------------------------------------------------------#
@@ -14,9 +14,7 @@ include $(CGAL_MAKEFILE)
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
-           -I../../include\
-	       -I/user/pmachado/home/freeglut-2.4.0/include \
-	       -Winline \
+           -I../../include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
 
@@ -25,40 +23,39 @@ CXXFLAGS = \
 #---------------------------------------------------------------------#
 
 LIBPATH = \
-          $(CGAL_LIBPATH) \
-	  -L/usr/X11R6/lib \
-	  -L/user/pmachado/home/freeglut-2.4.0/src/.libs/
+          $(CGAL_LIBPATH)
 
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_LDFLAGS) \
-	  $(CGAL_QT_LDFLAGS) \
+          $(CGAL_QT_LDFLAGS) \
 	   -lgmpxx -lmpfr -lX11 -lXi -lXmu -lglut -lGL -lGLU -lm 
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
-all: \
-	demo_circle$(EXE_EXT) 
+all:            \
+                demo_circle$(EXE_EXT) 
 
+demo_circle.moc:  demo_circle.h
+	$(QT_MOC) -o demo_circle.moc  demo_circle.h
 
-%.moc : %.h
-	${QT_MOC} -o $@ $<;
+demo_circle$(OBJ_EXT): demo_circle.moc
 
-demo_circle.o : demo_circle.C demo_circle.h demo_circle.moc
+demo_circle$(EXE_EXT): demo_circle$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_circle demo_circle$(OBJ_EXT) $(LDFLAGS)
 
-% : %.o %.moc
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT) $@ $< $(LDFLAGS)
-
-clean : \
-	demo_circle.clean
-
+clean: \
+                   demo_circle.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
 
 .C$(OBJ_EXT):
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
+
+
+.cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 

@@ -17,14 +17,15 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
 //
 // Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //             Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
 //             Julien Hazebrouck
 //             Damien Leroy
 
+// moc_source_file: demo_circle.h
 #include "demo_circle.moc"
 
 int main (int argc, char** argv) {
