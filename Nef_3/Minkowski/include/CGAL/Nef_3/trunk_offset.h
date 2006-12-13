@@ -42,12 +42,12 @@ struct Callback {
 };
 
 
-template<typename Kernel>
+template<typename Nef_polyhedron>
 class Trunk_offset {
   
+  typedef typename Nef_polyhedron::Kernel Kernel;
   typedef typename Kernel::Point_3 Point;
   typedef Polyhedron_3<Kernel> Polyhedron;
-  typedef Nef_polyhedron_3<Kernel> Nef_polyhedron;
   typedef typename Polyhedron::Facet_const_iterator Facet_const_iterator;
   typedef typename Polyhedron::Facet_const_handle Facet_const_handle;
   typedef typename Polyhedron::Halfedge_around_facet_const_circulator
