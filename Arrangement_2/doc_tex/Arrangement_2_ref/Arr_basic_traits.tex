@@ -67,12 +67,12 @@ overlap.
 \ccNestedType{Compare_xy_2}{models the concept \ccc{ArrTraits::CompareXy_2}.}
 \ccGlue
 \ccNestedType{Boundary_in_x_2}
-  {models the concept \ccc{ArrTraits::InfiniteInX_2}.
+  {models the concept \ccc{ArrTraits::BoundaryInX_2}.
   Required only if the traits class supports unbounded curves
   (the \ccc{Has_boundary_category} tag is defined as \ccc{Tag_true}).}
 \ccGlue
 \ccNestedType{Boundary_in_y_2}
-  {models the concept \ccc{ArrTraits::InfiniteInY_2}.
+  {models the concept \ccc{ArrTraits::BoundaryInY_2}.
   Required only if the traits class supports unbounded curves
   (the \ccc{Has_boundary_category} tag is defined as \ccc{Tag_true}).}
 \ccGlue
@@ -244,10 +244,10 @@ Represents a planar (weakly) $x$-monotone curve.
 \end{ccRefConcept}
 \ccRefPageEnd
 
-%%%%%%%% InfiniteInX_2
+%%%%%%%% BoundaryInX_2
 % ====================
 \ccRefPageBegin
-\begin{ccRefConcept}{ArrTraits::InfiniteInX_2}
+\begin{ccRefConcept}{ArrTraits::BoundaryInX_2}
 \ccRefines{Functor}
 
 \ccHasModels\ccc{ArrangementBasicTraits_2::Boundary_in_x_2}
@@ -262,10 +262,10 @@ Represents a planar (weakly) $x$-monotone curve.
 \end{ccRefConcept}
 \ccRefPageEnd
 
-%%%%%%%% InfiniteInY_2
+%%%%%%%% BoundaryInY_2
 % ====================
 \ccRefPageBegin
-\begin{ccRefConcept}{ArrTraits::InfiniteInY_2}
+\begin{ccRefConcept}{ArrTraits::BoundaryInY_2}
 \ccRefines{Functor}
 
 \ccHasModels\ccc{ArrangementBasicTraits_2::Boundary_in_y_2}
