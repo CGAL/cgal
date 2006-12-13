@@ -1,5 +1,5 @@
 FileFormat( "AcsBenchmark", 0, 1 )
-BenchmarkName( "all" ) 
+BenchmarkName( "all" )
 Classification( "Arrangement", "Cubics", "FullCurves", " ", " ", " " )
 
 LineSegment_2(Point_2(Rational(4,5),Rational(2,3)),Point_2(5,6))
@@ -29,3 +29,5 @@ Translate_2(Vector_2(Rational(1,2), Rational(3,4)), Conic_2(1,2,3,4,5,6))
 Rotate_2(Degree(30), Point_2(Rational(1,2), Rational(3,4)), Rotate_2(Degree(30), Point_2(Rational(1,2), Rational(3,4)), Translate_2(Vector_2(Rational(1,2), Rational(3,4)), Conic_2(1,2,3,4,5,6))))
 
 Conic_2(1,2,3,4,5,6)
+
+Polynomial<2>((1,(2,3)),(4,(5,6)))

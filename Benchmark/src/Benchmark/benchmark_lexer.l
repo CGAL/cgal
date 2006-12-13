@@ -61,15 +61,15 @@ struct Include_stack_item {
 typedef std::list<Include_stack_item> Include_stack;
 
 // We have one static global variable for the stack and some static functions.
-// The include stack is except for the trace() debug function not 
-// accessible from other files (is not polluting namespaces) since 
+// The include stack is except for the trace() debug function not
+// accessible from other files (is not polluting namespaces) since
 // the Include() function and the <<EOF>> condition are all handled here.
 // The function implementations are at the end of this file.
 static Include_stack include_stack;
 
 // Push current state on include_stack, initializes lexer with new file
 // input stream, name, and linenumber.
-static void open_include_stream( 
+static void open_include_stream(
     std::istream *in, std::string name, int linenumber = 1);
 
 // Shortcut for open file with name and then call open_include_stream.
@@ -123,7 +123,7 @@ spcnl           [\t \n\r]*
 integer         [+-]?[0-9]+
 /* An fnumber consists of up to three parts:
  *  1) a sign [+-]
- *  2) a mantissa (digits [0-9] with at most one dot in between) 
+ *  2) a mantissa (digits [0-9] with at most one dot in between)
  *  3) an exponent [eE]{integer}
  *
  *  Part 1) is optional.
@@ -140,6 +140,9 @@ filename        [^ \t\n\r\\\{\}\[\]()]+
 void            VOID
 counterclockwise COUNTERCLOCKWISE
 clockwise       CLOCKWISE
+/*string_literal  [\"][^"]*[\"]*/
+ST              [<]
+GT              [>]
 
 %%
  /* Tokens    */
@@ -150,13 +153,14 @@ clockwise       CLOCKWISE
 "List"                          { return List; }
 "Rational"                      { return Rational; }
 "Polynomial_1"                  { return Polynomial_1; }
+"Polynomial"                    { return Polynomial; }
 "Point_2"                       { return Point_2; }
 "AlgebraicReal"                 { return AlgebraicReal; }
 "Degree"                        { return Degree; }
 "Vector_2"                      { return Vector_2; }
 
 
-"ConicPoint_2"                  { return ConicPoint_2; } 
+"ConicPoint_2"                  { return ConicPoint_2; }
 "Conic_2"                       { return Conic_2; }
 
 
@@ -168,7 +172,7 @@ clockwise       CLOCKWISE
 "Circle_2"                      { return Circle_2; }
 "LineSegment_2"                 { return LineSegment_2; }
 "Cubic_2"                       { return Cubic_2; }
- 
+
 
 "Quadric_3"                     { return Quadric_3; }
 
@@ -178,11 +182,13 @@ clockwise       CLOCKWISE
 
  /* Integer numbers and float numbers */
  /* --------------------------------- */
-{integer}                       { yylval = std::string( yytext); 
-                                  return INTEGER; 
+{ST}                            { return ST; }
+{GT}                            { return GT; }
+{integer}                       { yylval = std::string( yytext);
+                                  return INTEGER;
                                 }
-{fnumber}                       { yylval = std::string( yytext); 
-                                  return FNUMBER; 
+{fnumber}                       { yylval = std::string( yytext);
+                                  return FNUMBER;
                                 }
 {minus_infty}                   { yylval = std::string( yytext);
                                   return MINUS_INFTY;
@@ -199,12 +205,18 @@ clockwise       CLOCKWISE
 {clockwise}                     { yylval = std::string( yytext);
                                   return CLOCKWISE;
                                 }
+ /*
+{string_literal}                { yylval = std::string( yytext );
+                                  yylval = yylval.substr( 1, yylval.length() - 2 );
+                                  std::cout << "received string literal [" << yylval << "]" << std::endl;
+                                  return STRING_LITERAL;
+                                } */
 
 
  /* Non-recognized tokens are errors */
  /* -------------------------------- */
-{idfier}                        { yylval = std::string( yytext); 
-                                  return UNKNOWN_TOKEN; 
+{idfier}                        { yylval = std::string( yytext);
+                                  return UNKNOWN_TOKEN;
                                 }
 
  /* Handle include files      */
@@ -223,8 +235,8 @@ clockwise       CLOCKWISE
                                   BEGIN( INITIAL);
                                   if ( c == EOF) {
                                       yylval = std::string( "Reached EOF while"
-                                          " parsing include filename '") + 
-                                          std::string( yytext) + 
+                                          " parsing include filename '") +
+                                          std::string( yytext) +
                                           std::string( "'.");
                                       return ERROR;
                                   }
@@ -236,7 +248,7 @@ clockwise       CLOCKWISE
  /* ------------------------------ */
 <INITIAL,CommentMode>"\""       { int c = yyinput();
                                   yylval = std::string("");
-                                  bool quoted_char = false; 
+                                  bool quoted_char = false;
                                   while (c != EOF && (c!='"' || quoted_char)){
                                       if ( c == '\n')
                                           ++benchmark_linenumber;
@@ -250,7 +262,7 @@ clockwise       CLOCKWISE
                                   }
                                   if ( c == EOF) {
                                       yylval = std::string( "Reached EOF while"
-                                          " parsing string constant '") + 
+                                          " parsing string constant '") +
                                           yylval + std::string( "'.");
                                       BEGIN( INITIAL);
                                       return ERROR;
@@ -330,11 +342,11 @@ CGAL_BENCHMARK_BEGIN_NAMESPACE
 
 // Push current state on include_stack, initializes lexer with new file
 // input stream, name, and linenumber.
-static void open_include_stream( std::istream *in, std::string name, 
-                                 int linenumber) 
+static void open_include_stream( std::istream *in, std::string name,
+                                 int linenumber)
 {
-    include_stack.push_front( Include_stack_item( 
-        benchmark_in, benchmark_linenumber, benchmark_filename, 
+    include_stack.push_front( Include_stack_item(
+        benchmark_in, benchmark_linenumber, benchmark_filename,
         YY_CURRENT_BUFFER));
     benchmark_in = in;
     benchmark_linenumber = linenumber;
@@ -374,10 +386,10 @@ static bool close_include_stream() {
 // ---------------------------------------
 
 // Initialize lexer to scan from input stream with name and linenumber.
-// The caller is responsible for the lifetime of 'in' that must last 
+// The caller is responsible for the lifetime of 'in' that must last
 // during the scan.
-void benchmark_init_lexer( 
-    std::istream& in, std::string name, int linenumber) 
+void benchmark_init_lexer(
+    std::istream& in, std::string name, int linenumber)
 {
     benchmark_reset_lexer();
     benchmark_in = & in;
@@ -400,16 +412,16 @@ void benchmark_reset_lexer() {
 // Writes a trace of the current include file nesting to the 'out' stream.
 void benchmark_include_file_trace( std::ostream& out, std::string fill) {
     std::size_t n = include_stack.size();
-    for ( Include_stack::const_iterator i = include_stack.begin(); 
-          i != include_stack.end(); ++i) 
+    for ( Include_stack::const_iterator i = include_stack.begin();
+          i != include_stack.end(); ++i)
     {
-	out << std::setw(3) << n-- << ": '" << i->filename << "' line " 
+	out << std::setw(3) << n-- << ": '" << i->filename << "' line "
             << i->linenumber << fill << std::endl;
     }
 }
 
-// This summy function is only here to suppress a warning for 
-// an unused yyunput function 
+// This dummy function is only here to suppress a warning for
+// an unused yyunput function
 void benchmark_parser_dummy_no_warn_() {
     yyunput( 1, 0);
 }
