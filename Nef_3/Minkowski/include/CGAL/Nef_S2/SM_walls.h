@@ -31,11 +31,16 @@ class SM_walls : SM_decorator<SMap> {
   typedef typename Sphere_point::FT             FT;
 
 
-  typedef typename SMap::SHalfedge_around_svertex_circulator 
+  typedef typename Base::SHalfedge_around_svertex_circulator 
     SHalfedge_around_svertex_circulator ;
+  typedef typename Base::SFace_cycle_iterator
+    SFace_cycle_iterator;
   
  public:
-  SM_walls(Sphere_map* M) : Base(M) {}
+  SM_walls(Sphere_map* M) : Base(M) {
+//   SM_decorator SD(sphere_map());
+//   SM_io_parser<SM_decorator>::dump(SD,std::cerr);
+  }
 
   SHalfedge_handle find_cap(SVertex_handle sv, Sphere_point sp, Sphere_circle c) {
 
@@ -270,8 +275,8 @@ class SM_walls : SM_decorator<SMap> {
 
     SM_point_locator P(sphere_map());
 
-    //    SM_decorator SD(sphere_map());
-    //    SM_io_parser<SM_decorator>::dump(SD,std::cerr);
+//    SM_decorator SD(sphere_map());
+//    SM_io_parser<SM_decorator>::dump(SD,std::cerr);
 
     Object_handle o = P.locate(sp);
 
@@ -282,13 +287,13 @@ class SM_walls : SM_decorator<SMap> {
 
     CGAL_NEF_TRACEN( "add_svertex_into_object " << sp );
 
-    //    SM_decorator SD(sphere_map());
-    //    SM_io_parser<SM_decorator>::dump(SD,std::cerr);
+//    SM_decorator SD(sphere_map());
+//    SM_io_parser<SM_decorator>::dump(SD,std::cerr);
 
     SVertex_handle sv;
     SFace_handle sf;
     if(assign(sf, o)) {
-      CGAL_NEF_TRACEN( "  found sface" );
+      CGAL_NEF_TRACEN( "  found sface with mark " << sf->mark());
       sv = new_svertex(sp);
       sv->incident_sface() = sf;
       link_as_isolated_vertex(sv,sf);
@@ -413,12 +418,16 @@ class SM_walls : SM_decorator<SMap> {
 		   sv1->point().antipode() == sv2->point());
     */
 
+    bool split_sface = true;
+
     if(is_isolated(sv1)) {
+      split_sface = false;
       if(!is_sm_boundary_object(sv1))
 	CGAL_NEF_TRACEN( "error " << sv1->point() << "at " << sv1->source()->point() );
       unlink_as_isolated_vertex(sv1);
     }
     if(is_isolated(sv2)) {
+      split_sface = false;
       if(!is_sm_boundary_object(sv2))
 	CGAL_NEF_TRACEN( "error " << sv2->point() << "at " << sv2->source()->point() );
       unlink_as_isolated_vertex(sv2);
@@ -462,7 +471,17 @@ class SM_walls : SM_decorator<SMap> {
     se_new->circle() = c;
     se_new->twin()->circle() = c.opposite();
 
-    // does the new sedge split a facet ?
+    if(split_sface) {
+      SFace_handle sf_new = new_sface();
+      SFace_handle sf_old = cap1->incident_sface();
+      sf_new->mark() = sf_old->mark();
+      SFace_cycle_iterator sfi = sf_old->sface_cycles_begin();
+      unlink_as_face_cycle(sfi);
+      link_as_face_cycle(se_new, sf_new);
+      link_as_face_cycle(se_new->twin(), sf_old);
+    }
+
+    // TODO: handle inner face cycles
   }    
 };
 

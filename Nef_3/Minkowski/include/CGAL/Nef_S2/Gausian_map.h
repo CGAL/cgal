@@ -124,7 +124,7 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
     }
 
   public:
-      void visit(Vertex_const_handle v) {}
+      void visit(Vertex_const_handle v) {	CGAL_NEF_TRACEN( "Vertices " << v->point() );}
       void visit(Halfedge_const_handle e) {}
       void visit(SHalfedge_const_handle se) {}
       void visit(SHalfloop_const_handle sl) {}
@@ -208,6 +208,7 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
 	  sv->mark() = Mark(Point_3(0,0,0));
 	} else {
 	  omit_facet[f] = true;
+          CGAL_NEF_TRACEN("omit facet " << f->plane());
 	}
 	Facet2SVertex[f] = sv;
       }
@@ -291,20 +292,24 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
       
       SHalfedge_handle thetwin;
       do {
-	CGAL_NEF_TRACEN( "edge " << hc->source()->source()->point() 
-		  << ":" << hc->source()->point() );
+///	CGAL_NEF_TRACEN( "edge " << hc->source()->source()->point() 
+//		  << ":" << hc->source()->point() );
 	Halfedge_const_handle e = hc->twin()->source();
 	if(e->point() != last->point()) {
 	  Edge2SEdge[hc->source()] = thetwin;
 	  SHalfedge_handle set = Edge2SEdge[e];
-	  if(set == SHalfedge_handle())
+	  if(set == SHalfedge_handle()) {
 	    thetwin = SM.new_shalfedge_pair_at_source(Facet2SVertex[f],1);
-	  else {	
+            CGAL_NEF_TRACEN("add stub " << Facet2SVertex[f]->point()
+                            << "->" << hc->twin()->snext()->twin()->facet()->plane().orthogonal_vector());
+	  } else {	
 	    SM.link_as_target_and_append(Facet2SVertex[f], set);
 	    set->mark() = set->twin()->mark() = Mark(Point_3(0,0,0));
 	    set->circle() = Sphere_circle(set->source()->point(), set->twin()->source()->point());
 	    set->twin()->circle() = set->circle().opposite();
 	    thetwin = set->twin();
+            CGAL_NEF_TRACEN("complete edge " << set->source()->point()
+                            << "->" << set->twin()->source()->point());
 	  } 
 	  last = hc->twin()->source();
 	} else CGAL_NEF_TRACEN( "omit " );
@@ -380,16 +385,16 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
 	  return;
 	}
 
-	//        CGAL::SM_io_parser<SM_decorator> O(std::cerr,SM); 
-	//        O.print();
+//        CGAL::SM_io_parser<SM_decorator> O(std::cerr,SM); 
+//        O.print();
 
         typename Nef_polyhedron_3::Nef_polyhedron_S2 SD(N3.get_sphere_map(v));
    
-	/*
+        /*
 	typename Nef_polyhedron_3::SFace_const_iterator sf = SD.sfaces_begin();
 	while(sf != SD.sfaces_end() && !Shell[sf]) ++sf;
         CGAL_assertion(sf != SD.sfaces_end());
-	*/
+        */
 
 	typename Nef_polyhedron_3::Halfedge_const_iterator ei(SD.svertices_begin());
 	SHalfedge_handle se = Edge2SEdge[ei];
@@ -535,6 +540,8 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
 
     N3.visit_shell_objects(sf, create_svertices);
     N3.visit_shell_objects(sf, create_sedges);
+//    CGAL::SM_io_parser<SM_decorator> O(std::cerr,*this); 
+//    O.print();
     N3.visit_shell_objects(sf, create_sfaces);
 
     //    CGAL::SM_io_parser<SM_decorator> O(std::cerr,*this); 

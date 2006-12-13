@@ -40,8 +40,10 @@ class YVertical_wall_builder : public Modifier_base<typename Nef_::SNC_structure
 
     Edge_list& pos;
     Edge_list& neg;
+    Sphere_point dir;
 
-    Reflex_edge_visitor(Edge_list& p, Edge_list& n) : pos(p), neg(n) {}
+    Reflex_edge_visitor(Edge_list& p, Edge_list& n, Sphere_point dir_in) 
+        : pos(p), neg(n), dir(dir_in) {}
     
     void visit(Vertex_handle v) const {}
     void visit(Halfedge_handle e) const {}
@@ -74,7 +76,7 @@ class YVertical_wall_builder : public Modifier_base<typename Nef_::SNC_structure
       //      std::cerr << "s:" << sp1 << "->" << sp2 << std::endl;
       CGAL_assertion(s.is_long());
 
-      Sphere_point sp(0,1,0);
+      Sphere_point sp(dir);
       if(s.has_on(sp) && s.source() != sp && s.target() != sp)
 	pos.push_back(e);
       
@@ -85,15 +87,17 @@ class YVertical_wall_builder : public Modifier_base<typename Nef_::SNC_structure
     }
   };
   
+  Sphere_point dir;
   Edge_list pos;
   Edge_list neg;
 
  public:
-    YVertical_wall_builder() {}
+    YVertical_wall_builder(Sphere_point dir_in = Sphere_point(0,1,0)) 
+        : dir (dir_in) {}
 
   void operator()(SNC_structure& snc) {
     SNC_decorator D(snc);
-    Reflex_edge_visitor rev(pos,neg);
+    Reflex_edge_visitor rev(pos,neg,dir);
     Volume_iterator ci;
     for(ci=snc.volumes_begin(); ci!=snc.volumes_end(); ++ci)
       if(ci->mark())

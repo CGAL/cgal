@@ -58,8 +58,8 @@ typedef CGAL::Single_wall_creator<Nef_polyhedron>  Single_wall;
 typedef CGAL::Single_wall_creator2<Nef_polyhedron> Single_wall2;
 typedef CGAL::YVertical_wall_builder<Nef_polyhedron> YVertical_wall_builder;
 typedef CGAL::Reflex_edge_searcher<Nef_polyhedron> Reflex_edge_searcher;
-typedef Reflex_edge_searcher::Reflex_edge_iterator Reflex_edge_iterator;
-typedef Reflex_edge_searcher::Container            Container;
+typedef Reflex_edge_searcher::Reflex_sedge_iterator Reflex_sedge_iterator;
+typedef Reflex_edge_searcher::Container             Container;
 typedef CGAL::Ray_hit_generator<Nef_polyhedron> Ray_hit;
 typedef CGAL::Ray_hit_generator2<Nef_polyhedron> Ray_hit2;
 typedef CGAL::External_structure_builder<Nef_polyhedron> External_structure_builder;
@@ -198,105 +198,103 @@ int main(int argc, char* argv[]) {
 
   //  CGAL_NEF_SETDTHREAD(227*229*233);
 
-  Reflex_edge_searcher res;
+  External_structure_builder esb;
+
+  Reflex_edge_searcher res(Sphere_point(1,0,0));
   N.delegate(res,false,false);
 
-  std::cerr << "polyhedron has " << std::distance(res.reflex_edges_begin(),res.reflex_edges_end())
-	    << " reflex edges." << std::endl;
+  std::cerr << "number of reflex sedges" 
+            << std::distance(res.positive_rsedges_begin(), 
+                             res.positive_rsedges_end())
+            << ","
+            << std::distance(res.negative_rsedges_begin(), 
+                             res.negative_rsedges_end())
+            << std::endl;
 
-  //  std::cerr << "size before sorting " << res.get_container().size() << std::endl;
+  Reflex_sedge_iterator rei;
 
-  Reflex_edge_iterator rei;
-  for(rei=res.reflex_edges_begin(); rei!=res.reflex_edges_end(); ++rei) {
-    Halfedge_handle e(*rei), split_edge;
-    Ray_hit2 rh2a(Vector_3(-1,0,0),e->source());
+  while(res.negative_rsedges_begin() != res.negative_rsedges_end()) {
+  for(rei=res.negative_rsedges_begin(); rei!=res.negative_rsedges_end(); ++rei)
+      CGAL_assertion(res.is_reflex_sedge(*rei));
+
+
+  for(rei=res.negative_rsedges_begin(); rei!=res.negative_rsedges_end(); ++rei) {
+      SHalfedge_handle se(*rei);
+      Halfedge_handle split_edge;
+    Ray_hit2 rh2a(Vector_3(-1,0,0),se->source()->source());
     N.delegate(rh2a);
     if(rh2a.split_edge(split_edge))
-      res.append(split_edge);
-    Ray_hit2 rh2b(Vector_3(-1,0,0),e->twin()->source());
+      res.handle_new_edge(split_edge);
+    Ray_hit2 rh2b(Vector_3(-1,0,0),se->source()->twin()->source());
     N.delegate(rh2b);
     if(rh2b.split_edge(split_edge))
-      res.append(split_edge);
+      res.handle_new_edge(split_edge);
   }
   
-  Edge_sorter es(res.get_container());
+  Edge_sorter es(res.get_negative_rsedges());
   N.delegate(es);
 
   //  CGAL_NEF_SETDTHREAD(227*229*47);
-
-  for(rei=res.reflex_edges_begin(); rei!=res.reflex_edges_end(); ++rei) {
-    Halfedge_handle e = *rei;
-    //    std::cerr << "handle reflex edge " << e->source()->point() << "->" 
-    //	      << e->twin()->source()->point() << std::endl;
+//  CGAL_NEF_SETDTHREAD(233*229*227);
+  for(rei=res.negative_rsedges_begin(); rei!=res.negative_rsedges_end(); ++rei) {
+    Halfedge_handle e = (*rei)->source();
+//    std::cerr << "handle reflex edge " << e->source()->point() << "->" 
+//    	      << e->twin()->source()->point() << std::endl;
+    CGAL_assertion(res.is_reflex_sedge(*rei));    
     if(e->point().hx() > 0)
       e = e->twin();
     Single_wall W(e,Vector_3(-1,0,0));
     N.delegate(W);
   }    
 
-  /*
-  Ray_hit rha(Vector_3(-1,0,0));
-  N.delegate(rha);
-
-  for(Halfedge_iterator ei = D.halfedges_begin();
-      ei != D.halfedges_end(); ++ei) {
-    if(ei->is_twin() && ei->twin() != Halfedge_handle()) {
-
-      //      std::cerr << "edge: " << ei->source()->point();
-      //      std::cerr << "->" << ei->twin()->source()->point() << std::endl;
-
-      if(ei->point().hx() > 0) {
-	Single_wall W(ei->twin(),Vector_3(-1,0,0));
-	N.delegate(W);
-      } else {
-	Single_wall W(ei,Vector_3(-1,0,0));
-	N.delegate(W);
-      }
-    }
-  }
-  */
-
-  External_structure_builder esb;
   N.delegate(esb);
 
   //  std::cerr << N;
 
-  Reflex_edge_searcher res2;
-  N.delegate(res2, false, false);
+//  Reflex_edge_searcher res2;
+  N.delegate(res, false, false);
 
-  for(rei=res2.reflex_edges_begin(); rei!=res2.reflex_edges_end(); ++rei) {
-    Halfedge_handle e(*rei), split_edge;
-    Ray_hit2 rh2a(Vector_3(1,0,0),e->source());
+  std::cerr << "number of reflex sedges" 
+            << std::distance(res.positive_rsedges_begin(), 
+                             res.positive_rsedges_end())
+            << ","
+            << std::distance(res.negative_rsedges_begin(), 
+                             res.negative_rsedges_end())
+            << std::endl;
+  }
+  
+  for(rei=res.positive_rsedges_begin(); rei!=res.positive_rsedges_end(); ++rei) {
+      SHalfedge_handle se(*rei);
+      Halfedge_handle split_edge;
+    Ray_hit2 rh2a(Vector_3(1,0,0),se->source()->source());
     N.delegate(rh2a);
     if(rh2a.split_edge(split_edge))
-      res2.append(split_edge);
-    Ray_hit2 rh2b(Vector_3(1,0,0),e->twin()->source());
+      res.handle_new_edge(split_edge);
+    Ray_hit2 rh2b(Vector_3(1,0,0),se->source()->twin()->source());
     N.delegate(rh2b);
     if(rh2b.split_edge(split_edge))
-      res2.append(split_edge);
+      res.handle_new_edge(split_edge);
   }
 
-  Edge_sorter2 es2(res2.get_container());
+  Edge_sorter2 es2(res.get_positive_rsedges());
   N.delegate(es2);
   
-  /*
-  QApplication b(argc, argv);
-  CGAL::Qt_widget_Nef_3<Nef_polyhedron>* wb = 
-    new CGAL::Qt_widget_Nef_3<Nef_polyhedron>(N);
-  b.setMainWidget(wb);
-  wb->show();
-  b.exec();
-  */
 
+//  QApplication b(argc, argv);
+//  CGAL::Qt_widget_Nef_3<Nef_polyhedron>* wb = 
+//    new CGAL::Qt_widget_Nef_3<Nef_polyhedron>(N);
+//  b.setMainWidget(wb);
+//  wb->show();
+//  b.exec();
 
 
   //  CGAL_NEF_SETDTHREAD(229*233);
 
-  rei=res2.reflex_edges_end();
-  if(rei!=res2.reflex_edges_begin())
+  rei=res.positive_rsedges_end();
+  if(rei!=res.positive_rsedges_begin())
     do {
       --rei;
-      Halfedge_handle e = *rei;
+      Halfedge_handle e = (*rei)->source();
       //      std::cerr << "handle reflex edge " << e->source()->point() << "->" 
 		//		<< e->twin()->source()->point() << std::endl;
       if(e->point().hx() < 0)
@@ -305,48 +303,20 @@ int main(int argc, char* argv[]) {
       //		<< e->twin()->source()->point() << std::endl;
       Single_wall W(e,Vector_3(1,0,0));
       N.delegate(W);
-    } while(rei!=res2.reflex_edges_begin());
+    } while(rei!=res.positive_rsedges_begin());
 
-  /*
-  Ray_hit rhb(Vector_3(1,0,0));
-  N.delegate(rhb);
-
-  for(Halfedge_iterator ei=D.halfedges_end();
-     ei!=D.halfedges_begin();--ei) {
-    if(ei->is_twin() && ei->twin() != Halfedge_handle()) {
-
-      //      std::cerr << "edge: " << ei->source()->point();
-      //      std::cerr << "->" << ei->twin()->source()->point() << std::endl;
-
-      if(ei->point().hx() < 0) {
-	Single_wall W(ei->twin(),Vector_3(1,0,0));
-	N.delegate(W);
-      } else {
-	Single_wall W(ei,Vector_3(1,0,0));
-	N.delegate(W);
-      }
-    }
-  }    
-  */
-  
   N.delegate(esb);
-  /*
-  Reflex_edge_searcher res4;
-  N.delegate(res4,false,false);  
 
-  int wrong4 = 0;
-  //  std::cerr << "tescht: only vertical reflex edges" << std::endl;
-  for(rei = res4.reflex_edges_begin(); rei != res4.reflex_edges_end(); ++rei) {
-    if((*rei)->point().y() != 0 || (*rei)->point().z() != 0) {
-      ++wrong4;
-    }
-    std::cerr << normalized((*rei)->source()->point()) << "->" 
-	      << normalized((*rei)->twin()->source()->point()) << std::endl;
-  }
-  std::cerr << "wrong " << wrong4
-	    << ", " << distance(res4.reflex_edges_begin(),res4.reflex_edges_end()) << std::endl;
-  CGAL_assertion(wrong4==0);
-  */
+  N.delegate(res, false, false);
+  std::cerr << "number of reflex sedges" 
+            << std::distance(res.positive_rsedges_begin(), 
+                             res.positive_rsedges_end())
+            << ","
+            << std::distance(res.negative_rsedges_begin(), 
+                             res.negative_rsedges_end())
+            << std::endl;
+
+
   YVertical_wall_builder Y;
   N.delegate(Y,false,false);
 
@@ -364,91 +334,30 @@ int main(int argc, char* argv[]) {
     N.delegate(W);
   }      
 
-  /*
-  SHalfedge_iterator se;
-  for(se=D.shalfedges_begin();se!=D.shalfedges_end();++se) {
-    Sphere_segment s(se->source()->point(), se->twin()->source()->point(), se->circle());
-    if(se->incident_sface()->mark() == true && s.is_long() && se->circle().a() != 0) {
-  */
-
-    /*
-      std::cerr << "sedge at " << normalized(se->source()->source()->point()) 
-      << " in plane " << normalized(se->circle()) << std::endl;
-      std::cerr << "sedge " << se->source()->point()
-      << "->" << se->twin()->source()->point() << std::endl;   
-    */
-    /*
-    Plane_3 pl1(se->circle()), pl2(0,0,1,0);
-    Line_3 l;
-      CGAL::Object result = intersection(pl1,pl2);
-      CGAL_assertion(assign(l,result));
-    
-      //      std::cerr << "intersection line " << l << std::endl;
-
-      Vector_3 vec(l.to_vector());
-      Sphere_point ip(CGAL::ORIGIN+vec);
-      if(ip.hy() < 0) ip = ip.antipode();
-
-      SHalfedge_handle sec = se;
-      do {
-	sec = sec->snext();
-	vec = sec->source()->point() - CGAL::ORIGIN;
-      } while(sec!=se && vec != Vector_3(1,0,0) && vec != Vector_3(-1,0,0));
-      
-      //      std::cerr << "senkrecht " << vec << std::endl;
-      //      std::cerr << "sec " << sec->source()->point()
-      //		<< "->" << sec->twin()->source()->point() << std::endl;
-
-      if(s.has_on(ip) && s.source() != ip && s.target() != ip) {
-	//	std::cerr << "intersection point " << ip << std::endl;
-
-	Single_wall2 W(sec->source(), ip);
-	N.delegate(W);
-      }
-     
-      if(s.has_on(ip.antipode()) && 
-	 s.source() != ip.antipode() && 
-	 s.target() != ip.antipode()) {
-	//	std::cerr << "antipode intersection point " << ip.antipode() << std::endl;
-	Single_wall2 W(sec->source(), ip.antipode());
-	N.delegate(W);
-      }
-    }
-  }
-    */
-
   N.delegate(esb);
-  /*
-  Reflex_edge_searcher res3;
-  N.delegate(res3,false,false);  
 
-  int wrong = 0;
-  //  std::cerr << "tescht: only vertical reflex edges" << std::endl;
-  for(rei = res3.reflex_edges_begin(); rei != res3.reflex_edges_end(); ++rei) {
-    if((*rei)->point().y() != 0 || (*rei)->point().z() != 0) {
-      ++wrong;
-    }
-    std::cerr << normalized((*rei)->source()->point()) << "->" 
-	      << normalized((*rei)->twin()->source()->point()) << std::endl;
-  }
-  std::cerr << "wrong " << wrong
-	    << ", " << distance(res3.reflex_edges_begin(),res3.reflex_edges_end()) << std::endl;
-  CGAL_assertion(wrong==0);
-  */
   t2.stop();
+
+  N.delegate(res, false, false);
+  std::cerr << "number of reflex sedges" 
+            << std::distance(res.positive_rsedges_begin(), 
+                             res.positive_rsedges_end())
+            << ","
+            << std::distance(res.negative_rsedges_begin(), 
+                             res.negative_rsedges_end())
+            << std::endl;
 
   //  CGAL_NEF_SETDTHREAD(293);
   //  std::cerr << N;
   CGAL_assertion(N.is_valid());
 
-  /*
-  QApplication b(argc, argv);
-  CGAL::Qt_widget_Nef_3<Nef_polyhedron>* wb = 
-    new CGAL::Qt_widget_Nef_3<Nef_polyhedron>(N);
-  b.setMainWidget(wb);
-  wb->show();
-  b.exec();
-  */
+
+//  QApplication b(argc, argv);
+//  CGAL::Qt_widget_Nef_3<Nef_polyhedron>* wb = 
+//    new CGAL::Qt_widget_Nef_3<Nef_polyhedron>(N);
+//  b.setMainWidget(wb);
+//  wb->show();
+//  b.exec();
 
   typedef CGAL::Gausian_map<Kernel> Gausian_map;
 
@@ -475,6 +384,7 @@ int main(int argc, char* argv[]) {
   ++c;
   for(;c!=N.volumes_end();++c) {
     std::cerr << "noch " << --shells << " shells" << std::endl;
+//    if(shells == 805) CGAL_NEF_SETDTHREAD(223);
     //    if(skip_shells > 0) { --skip_shells; continue;}
     if(c->mark() == false) continue;
 

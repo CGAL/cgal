@@ -58,7 +58,7 @@ class Ray_hit_generator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
 
     Vertex_handle v;
     if(assign(v, o)) {
-      //      std::cerr << "Found vertex " << v->point() << std::endl;
+//      std::cerr << "Found vertex " << v->point() << std::endl;
       return v;
     }
 
@@ -68,15 +68,15 @@ class Ray_hit_generator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
 
     Halfedge_handle e;
     if(assign(e, o)) {
-      //      std::cerr << "Found edge " << e->source()->point() 
-      //		<< "->" << e->twin()->source()->point() << std::endl;
+//      std::cerr << "Found edge " << e->source()->point() 
+//                << "->" << e->twin()->source()->point() << std::endl;
       Segment_3 seg(e->source()->point(), e->twin()->source()->point());
       I.does_intersect_internally(r, seg, ip);
       ip = normalized(ip);
       v = C.create_from_edge(e,ip);
       pl->add_vertex(v);
 
-      //      std::cerr << "new vertex " << ip << std::endl;
+      //    std::cerr << "new vertex " << ip << std::endl;
 
       SVertex_iterator svi = v->svertices_begin();
       SVertex_handle svf = svi;
@@ -111,7 +111,7 @@ class Ray_hit_generator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
 
     Halffacet_handle f;
     if(assign(f, o)) {
-      //      std::cerr << "Found facet " << std::endl;
+//      std::cerr << "Found facet " << std::endl;
       I.does_intersect_internally(r, f, ip);
       ip = normalized(ip);
       v = C.create_from_facet(f,ip);

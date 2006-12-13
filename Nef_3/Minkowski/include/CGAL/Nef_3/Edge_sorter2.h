@@ -21,6 +21,7 @@ class Edge_sorter2 : public Modifier_base<typename Nef_::SNC_and_PL> {
   typedef typename SNC_structure::Halfedge_handle   SVertex_handle;
   typedef typename SNC_structure::Halfedge_iterator SVertex_iterator;
   typedef typename SNC_structure::Halfedge_handle   Halfedge_handle;
+  typedef typename SNC_structure::SHalfedge_handle   SHalfedge_handle;
   typedef typename SNC_structure::Segment_3 Segment_3;
   typedef typename SNC_structure::Point_3 Point_3;
   typedef typename SNC_structure::Plane_3 Plane_3;
@@ -29,9 +30,9 @@ class Edge_sorter2 : public Modifier_base<typename Nef_::SNC_and_PL> {
   typedef typename Container::iterator Iterator;
 
   struct sort_edges {
-    bool operator()(Halfedge_handle e1, Halfedge_handle e2) {
-      return CGAL::lexicographically_xyz_smaller(e1->twin()->source()->point(),
-						 e2->twin()->source()->point());
+    bool operator()(SHalfedge_handle e1, SHalfedge_handle e2) {
+      return CGAL::lexicographically_xyz_smaller(e1->source()->twin()->source()->point(),
+						 e2->source()->twin()->source()->point());
     }
   };
 
@@ -78,18 +79,18 @@ class Edge_sorter2 : public Modifier_base<typename Nef_::SNC_and_PL> {
       if(esi2==c.end()) continue;
       //      std::cerr << "2: " << (*esi2)->source()->point() << "->" << (*esi2)->twin()->source()->point() << std::endl;
 
-      while((*esi1)->source()->point().x() >
-	    (*esi2)->twin()->source()->point().x()) {
+      while((*esi1)->source()->source()->point().x() >
+	    (*esi2)->source()->twin()->source()->point().x()) {
 	Point_3 ip;
-	bool b = split_at(Segment_3((*esi1)->source()->point(),
-				    (*esi1)->twin()->source()->point()), 
-			  Segment_3((*esi2)->source()->point(),
-				    (*esi2)->twin()->source()->point()),ip);
+	bool b = split_at(Segment_3((*esi1)->source()->source()->point(),
+				    (*esi1)->source()->twin()->source()->point()), 
+			  Segment_3((*esi2)->source()->source()->point(),
+				    (*esi2)->source()->twin()->source()->point()),ip);
 	//	std::cerr << "split " << b << std::endl;
 	if(b) {
 	  //	  std::cerr << ip << std::endl;
 	  Vertex_handle v;
-	  Halfedge_handle e = (*esi2);
+	  Halfedge_handle e = (*esi2)->source();
 	  v = C.create_from_edge(e,ip);
 	  pl->add_vertex(v);
 
@@ -118,11 +119,15 @@ class Edge_sorter2 : public Modifier_base<typename Nef_::SNC_and_PL> {
 	  esi3 = esi2;
 	  ++esi3;
 	  while(esi3 != c.end() && 
-		(*esi3)->twin()->source()->point() < 
+		(*esi3)->source()->twin()->source()->point() < 
 		svf->twin()->source()->point())
 	    ++esi3;
 	  //	  std::cerr << "insert " << std::endl;
-	  c.insert(esi3, svf);
+
+          SHalfedge_handle se_new = svf->out_sedge();
+          while(se_new->circle() != (*esi2)->circle())
+            se_new = se_new->sprev()->twin();
+	  c.insert(esi3, se_new);
 	}
 
 	++esi2;
