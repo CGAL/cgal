@@ -83,9 +83,11 @@ void test_point_generators_2() {
     // Check perturbation. Make sure that the result stays within
     // the 100 x 100 square. 10 pixel perturbation allowed.
     Random_points_in_square_2<Point_2,Creator>   g6( 90.0);
-    std::vector<Point_2>::iterator i1 = points.end();
-    CGAL::copy_n( g6, 100, std::back_inserter(points));
+    int count = 100 ;
+    CGAL::copy_n( g6, count, std::back_inserter(points));
     std::vector<Point_2>::iterator i2 = points.end();
+    std::vector<Point_2>::iterator i1 = i2 ;
+    std::advance(i1,-count);
     perturb_points_2( i1, i2, 10.0);
 
     // Create a random permutation.
