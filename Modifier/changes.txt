@@ -54,5 +54,3 @@ Modifier Package: Release changes:
      1.18 (19 Jan 1999). The Modifier_base class is here separated 
      in its own package to reflect that it has its own chapter in 
      the manual.
-
-
