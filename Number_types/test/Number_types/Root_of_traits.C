@@ -13,6 +13,13 @@
 #include <CGAL/_test_real_embeddable.h>
 #include <CGAL/Arithmetic_kernel.h>
 
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Root_of_2.h>
+#include <CGAL/IO/io_tags.h>
+#include <CGAL/Lazy_exact_nt.h>  
+
+
+
 template <class T, class RootOf1, class RootOf2>
 void test_root_of_traits(){
     // pure type checking  
@@ -26,6 +33,15 @@ void test_root_of_traits(){
     typedef typename RoT::Make_root_of_2 Make_root_of_2;
     typedef typename Make_root_of_2::result_type result_type;
     BOOST_STATIC_ASSERT((::boost::is_same<Root_of_2,result_type>::value));
+
+    Root_of_2 r = CGAL::make_root_of_2(T(0),T(-1),T(2)); //-sqrt(2)
+    Root_of_2 rl = CGAL::make_root_of_2(T(1),T(0),T(-2),true); //-sqrt(2);
+    Root_of_2 rr = CGAL::make_root_of_2(T(1),T(0),T(-2),false); //+sqrt(2)
+    CGAL_test_assert(r == rl);
+    CGAL_test_assert(rl != rr);
+    
+    CGAL_test_assert( r * Root_of_1(2) == CGAL::make_root_of_2(T(0),T(-2),T(2)));
+    CGAL_test_assert( r * T(2) == CGAL::make_root_of_2(T(0),T(-2),T(2)));
 }
 
 int main(){

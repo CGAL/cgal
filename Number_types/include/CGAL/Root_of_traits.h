@@ -35,13 +35,22 @@ struct Root_of_traits_helper{
     typedef Root_of_2<NT> Root_of_2;
     struct Make_root_of_2{
         typedef Root_of_2 result_type;
-        NT operator()(const NT& a, const NT& b, const NT& c){
+        Root_of_2 operator()(const NT& a, const NT& b, const NT& c){
             return Root_of_2(a,b,c);
         }
-        Root_of_1 operator()(const Root_of_1& a, 
+        Root_of_2 operator()(const NT& a, const NT& b, const NT& c, bool s){
+            return Root_of_2(a,b,c,s);
+        }
+        Root_of_2 operator()(const Root_of_1& a, 
                              const Root_of_1& b, 
                              const Root_of_1& c){
             return Root_of_2(a,b,c);
+        }
+        Root_of_2 operator()(const Root_of_1& a, 
+                             const Root_of_1& b, 
+                             const Root_of_1& c,
+                             bool s){
+            return Root_of_2(a,b,c,s);
         }
     };
 };
