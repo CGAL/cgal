@@ -52,7 +52,7 @@ TXN="$2"
 
 # Make sure that the log message contains some text.
 SVNLOOK=/usr/bin/svnlook
-$SVNLOOK log -t "$TXN" "$REPOS" | /bin/grep "[a-zA-Z0-9]" >/dev/null
+$SVNLOOK log -t "$TXN" "$REPOS" | /usr/bin/perl -e 'while(<>) { /[a-zA-Z0-9]/ && exit 0 }; exit 1' > /dev/null
 if [[ $? != 0 ]]; then
     echo "" >&2
     echo "Invalid commit message" >&2
@@ -65,14 +65,14 @@ fi
 
 # Check that transaction will not create files/folders
 # whose name differ only by case (illegal on Windows).
-/svn/cgal/hooks/check-case-insensitive.pl "$REPOS" "$TXN" || exit 1
+/home/groups/cgal/hooks/check-case-insensitive.pl "$REPOS" "$TXN" || exit 1
 
 # Ensure that the repository accepts only file/folder names
 # compatible with Windows/Unix/Mac file systems (plus SVN own requirements).
-/svn/cgal/hooks/check-characters.pl "$REPOS" "$TXN" || exit 1
+/home/groups/cgal/hooks/check-characters.pl "$REPOS" "$TXN" || exit 1
 
 # Reject Unix symbolic links, which are not valid (in fact: ignored) on Windows.
-/svn/cgal/hooks/check-symlinks.pl "$REPOS" "$TXN" || exit 1
+/home/groups/cgal/hooks/check-symlinks.pl "$REPOS" "$TXN" || exit 1
 
 # All checks passed, so allow the commit.
 exit 0
