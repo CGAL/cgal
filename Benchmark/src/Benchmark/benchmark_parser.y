@@ -205,14 +205,18 @@ stmt: /* */
 
 polynomial: /* */
     // directly encoding '<' does not work, interestingly ...
-    Polynomial ST INTEGER GT     { polynom_varcount = atoi( $3.c_str() );
-                                   visitor->begin_polynomial( polynom_varcount,"int" );
+    Polynomial ST INTEGER optional_typename GT
+                                 { polynom_varcount = atoi( $3.c_str() );
+                                   visitor->begin_polynomial( polynom_varcount, $4 );
                                    numbertype = "int"; }
-    '(' monom_list ')'
-                                 { visitor->end_polynomial(); }
-   | Polynomial_1                 { visitor->begin_polynomial_1(); }
-                                 '(' integer_sequence1 ')'
-                                 { visitor->end_polynomial_1(); }
+      '(' monom_list ')'         { visitor->end_polynomial(); }
+   | Polynomial_1                { visitor->begin_polynomial_1(); }
+      '(' integer_sequence1 ')'  { visitor->end_polynomial_1(); }
+  ;
+
+optional_typename :
+    /* empty */                  { $$ = "int"; }
+  | ',' UNKNOWN_TOKEN            { $$ = $2;    }
   ;
 
 monom_list:
