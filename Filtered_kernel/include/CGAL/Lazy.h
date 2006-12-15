@@ -29,6 +29,7 @@
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/min_max_n.h>
 #include <CGAL/Origin.h>
+#include <vector>
 
 CGAL_BEGIN_NAMESPACE
 
