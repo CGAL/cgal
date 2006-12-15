@@ -50,9 +50,10 @@ template<>
 class Algebraic_structure_traits< mpz_class >
     :public Algebraic_structure_traits_base<  mpz_class , Null_tag > {
 public:
+    typedef mpz_class           Type;
     typedef Euclidean_ring_tag  Algebraic_category;
     typedef Tag_true            Is_exact;
-    typedef mpz_class           Type;
+    typedef Tag_false           Is_numerical_sensitive;
     
     struct Is_zero: public Unary_function< mpz_class , bool > {
         template <typename T, typename U> 

@@ -54,6 +54,7 @@ template <> class Algebraic_structure_traits< leda_real >
 
   public:
     typedef Tag_true           Is_exact;
+    typedef Tag_true           Is_numerical_sensitive;
                                                                              
     class Sqrt 
       : public Unary_function< Type, Type > {

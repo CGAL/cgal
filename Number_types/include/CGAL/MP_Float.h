@@ -374,6 +374,7 @@ template <> class Algebraic_structure_traits< MP_Float >
 #else // !CGAL_MP_FLOAT_ALLOW_INEXACT
     typedef Tag_true            Is_exact;
 #endif
+    typedef Tag_true            Is_numerical_sensitive;
                                     
     struct Integral_division
         : public Binary_function< Type, 

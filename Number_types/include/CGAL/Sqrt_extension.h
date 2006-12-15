@@ -674,7 +674,9 @@ class Algebraic_structure_traits< Sqrt_extension< COEFF, ROOT > >
        bool( ::boost::is_same<typename CGAL::Algebraic_structure_traits<ROOT >::Is_exact,::CGAL::Tag_true>::value )&&
        bool( ::boost::is_same<typename CGAL::Algebraic_structure_traits<COEFF>::Is_exact,::CGAL::Tag_true>::value )
            ,::CGAL::Tag_true,::CGAL::Tag_false>::type Is_exact;
-//    typedef CGAL::Tag_false Is_exact;
+    
+    typedef typename Algebraic_structure_traits<COEFF>::Is_numerical_sensitive 
+    Is_numerical_sensitive;
 };
 
 //

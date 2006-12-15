@@ -922,7 +922,8 @@ private:
     typedef Algebraic_structure_traits<ET> AST_ET;
     typedef typename AST_ET::Algebraic_category ET_as_tag;
 public:
-    typedef typename AST_ET::Is_exact Is_exact;
+    typedef typename AST_ET::Is_exact               Is_exact;
+    typedef typename AST_ET::Is_numerical_sensitive Is_numerical_sensitive;
 
     typedef typename INTERN_LAZY_EXACT_NT::Simplify_selector
     <Lazy_exact_nt<ET>, typename AST_ET::Simplify > ::Simplify Simplify;

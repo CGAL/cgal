@@ -42,6 +42,7 @@ template <> class Algebraic_structure_traits< CORE::BigRat >
                                             Field_tag >  {
   public:
     typedef Tag_true            Is_exact;
+    typedef Tag_false           Is_numerical_sensitive;
 
     // BigRat are always normalized, so no special simplify-functor is needed
     

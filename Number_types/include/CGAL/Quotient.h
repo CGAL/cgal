@@ -522,10 +522,12 @@ template<class NT> class Algebraic_structure_traits_quotient_base;
 
 template< class NT > class Algebraic_structure_traits_quotient_base< Quotient<NT> >
   : public Algebraic_structure_traits_base< Quotient<NT>, Field_tag >  {
+    
 public:
     typedef Quotient<NT> Type;  
  
     typedef typename Algebraic_structure_traits<NT>::Is_exact        Is_exact;
+    typedef Tag_false Is_numerical_sensitive; 
     
 
     

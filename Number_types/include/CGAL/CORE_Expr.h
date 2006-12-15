@@ -39,7 +39,8 @@ template <> class Algebraic_structure_traits< CORE::Expr >
                                             Field_with_root_of_tag >  {
   public:
     typedef Tag_true            Is_exact;
-
+    typedef Tag_true            Is_numerical_sensitive;
+    
     class Sqrt 
       : public Unary_function< Type, Type > {
       public:

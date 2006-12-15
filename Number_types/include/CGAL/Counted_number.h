@@ -689,8 +689,10 @@ class Algebraic_structure_traits<Counted_number<NT> >
 private:
     typedef Algebraic_structure_traits<NT> AST_NT;
     typedef typename AST_NT::Algebraic_category NT_as_tag;
+
 public:
     typedef typename Algebraic_structure_traits<NT>::Is_exact Is_exact;
+    typedef typename AST_NT::Is_numerical_sensitive Is_numerical_sensitive;
 
     typedef typename INTERN_COUNTED_NUMBER::Simplify_selector
     <Counted_number<NT>, typename AST_NT::Simplify > ::Simplify Simplify;

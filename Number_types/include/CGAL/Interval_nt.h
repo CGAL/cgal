@@ -986,8 +986,9 @@ class Algebraic_structure_traits< Interval_nt<B> >
   : public Algebraic_structure_traits_base< Interval_nt<B>, 
                                             Field_with_sqrt_tag >  {
   public:
-    typedef Interval_nt<B>    Type;
-    typedef Tag_false   Is_exact;
+    typedef Interval_nt<B>      Type;
+    typedef Tag_false           Is_exact;
+    typedef Tag_true            Is_numerical_sensitive;
                 
     class Is_zero 
       : public Unary_function< Type, Uncertain<bool> > {

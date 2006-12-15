@@ -51,6 +51,7 @@ template <> class Algebraic_structure_traits< leda_rational >
                                             Field_tag >  {
   public:
     typedef Tag_true            Is_exact;
+    typedef Tag_false           Is_numerical_sensitive;
                 
 //    TODO: How to implement this without having sqrt?
 //    typedef INTERN_AST::Is_square_per_sqrt< Type >

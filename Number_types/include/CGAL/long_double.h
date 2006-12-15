@@ -119,6 +119,7 @@ template <> class Algebraic_structure_traits< long double >
                                             Field_with_kth_root_tag >  {
   public:
     typedef Tag_false            Is_exact;
+    typedef Tag_true             Is_numerical_sensitive;
                 
     class Sqrt 
       : public Unary_function< Type, Type > {

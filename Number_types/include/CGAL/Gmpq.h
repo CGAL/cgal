@@ -37,6 +37,7 @@ template <> class Algebraic_structure_traits< Gmpq >
   : public Algebraic_structure_traits_base< Gmpq, Field_tag >  {
   public:
     typedef Tag_true            Is_exact;
+    typedef Tag_false            Is_numerical_sensitive;
     
     class Is_square
       : public Binary_function< Type, Type&, 

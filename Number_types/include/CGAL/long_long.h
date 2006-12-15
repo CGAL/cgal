@@ -38,6 +38,7 @@ template<> class Algebraic_structure_traits< long long int >
 
   public:
     typedef Tag_true            Is_exact;
+    typedef Tag_false           Is_numerical_sensitive;
     
     typedef INTERN_AST::Div_per_operator< Type >  Div;
     typedef INTERN_AST::Mod_per_operator< Type >  Mod;       

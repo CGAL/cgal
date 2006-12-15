@@ -833,6 +833,11 @@ void test_algebraic_structure( const  AS & a, const  AS & b, const  AS & c) {
     CGAL_test_assert( c !=  AS (0));
     test_algebraic_structure< AS ,Algebraic_category, Is_exact>();
     test_algebraic_structure_intern(a,b,c,Algebraic_category());
+    
+    typedef CGAL::Algebraic_structure_traits<AS> AST;
+    typedef typename AST::Is_numerical_sensitive Is_numerical_sensitive;
+    BOOST_STATIC_ASSERT(
+            !(::boost::is_same<Is_numerical_sensitive, CGAL::Null_tag>::value));
 }
   
 CGAL_END_NAMESPACE

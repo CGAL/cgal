@@ -55,6 +55,7 @@ template<> class Algebraic_structure_traits< int >
 
   public:
     typedef Tag_true            Is_exact;
+    typedef Tag_false           Is_numerical_sensitive;
     
     typedef INTERN_AST::Div_per_operator< Type >  Div;
     typedef INTERN_AST::Mod_per_operator< Type >  Mod;
@@ -81,6 +82,7 @@ template<> class Algebraic_structure_traits< long int >
 
   public:
     typedef Tag_true            Is_exact;
+    typedef Tag_false           Is_numerical_sensitive;
     
     typedef INTERN_AST::Div_per_operator< Type >  Div;
     typedef INTERN_AST::Mod_per_operator< Type >  Mod;       
@@ -107,6 +109,7 @@ template<> class Algebraic_structure_traits< short int >
 
   public:
     typedef Tag_true            Is_exact;
+    typedef Tag_false           Is_numerical_sensitive;
 
     // Explicitly defined functors which have no support for implicit
     //  interoperability. This is nescessary because of the implicit conversion

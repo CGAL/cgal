@@ -47,6 +47,7 @@ template <> class Algebraic_structure_traits< leda_integer >
                                             Euclidean_ring_tag >  {
   public:
     typedef Tag_true            Is_exact;
+    typedef Tag_false           Is_numerical_sensitive;
                 
     typedef INTERN_AST::Is_square_per_sqrt< Type >
                                                                  Is_square;

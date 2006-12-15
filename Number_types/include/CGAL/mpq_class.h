@@ -49,9 +49,10 @@ template<>
 class Algebraic_structure_traits< mpq_class  >
   : public Algebraic_structure_traits_base< mpq_class , Null_tag >  {
   public:
+    typedef mpq_class           Type;
     typedef Field_tag           Algebraic_category;
     typedef Tag_true            Is_exact;
-    typedef mpq_class           Type;
+    typedef Tag_false           Is_numerical_sensitive;
 
     struct Is_zero: public Unary_function< mpq_class , bool > {
         template <class T, class U> 
