@@ -162,16 +162,6 @@ make_root_of_2(const NT &a, const NT &b, const NT &c,const bool smaller)
     return make_root_of_2(a,b,c,smaller);
 }
 
-template < class NT >
-inline
-typename Root_of_traits< NT >::Root_of_2
-make_root_of_2(const NT &a, int b_, const NT &c)
-{
-    NT b(b_);
-    typename Root_of_traits<NT>::Make_root_of_2 make_root_of_2;
-    return make_root_of_2(a,b,c);
-}
-
 CGAL_END_NAMESPACE
 
 #endif // CGAL_ROOT_OF_TRAITS_H

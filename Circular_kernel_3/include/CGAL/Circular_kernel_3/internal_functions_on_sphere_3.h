@@ -17,8 +17,8 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
 //
 // Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //             Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
@@ -289,9 +289,9 @@ namespace CGAL {
                   CGAL::square(dz);
       const FT sq_r1r2 = s1.squared_radius()*s2.squared_radius();
       const FT sq_r1_p_sq_r2 = s1.squared_radius() + s2.squared_radius();
-      Root_of_2 left_1 = make_root_of_2(d2,-2,sq_r1r2);
+      Root_of_2 left_1 = make_root_of_2(d2,FT(-2),sq_r1r2);
       if(left_1 > sq_r1_p_sq_r2) return false;
-      Root_of_2 left_2 = make_root_of_2(d2,2,sq_r1r2);
+      Root_of_2 left_2 = make_root_of_2(d2,FT(2),sq_r1r2);
       if(left_2 < sq_r1_p_sq_r2) return false;
       return true;
     }  
