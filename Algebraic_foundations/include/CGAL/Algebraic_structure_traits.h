@@ -55,6 +55,7 @@ class Algebraic_structure_traits  {
     typedef Type_  Type;
     typedef Null_tag       Algebraic_category;
     typedef Null_tag       Is_exact;
+    typedef Null_tag       Is_numerical_sensitive;
 
     typedef Null_functor Simplify;
     typedef Null_functor Unit_part;
@@ -86,7 +87,8 @@ class Algebraic_structure_traits_base< Type_, Null_tag > {
   public:
     typedef Type_  Type;
     typedef Null_tag       Algebraic_category;
-    typedef Tag_false       Is_exact;
+    typedef Tag_false      Is_exact;
+    typedef Null_tag       Is_numerical_sensitive;
 
     // does nothing by default
     class Simplify 

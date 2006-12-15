@@ -21,6 +21,8 @@ int main(){
 
     typedef AST::Is_exact Is_exact;
     BOOST_STATIC_ASSERT((::boost::is_same<CGAL::Null_tag,Is_exact>::value)); 
+    typedef AST::Is_numerical_sensitive Is_sensitive;
+    BOOST_STATIC_ASSERT((::boost::is_same<CGAL::Null_tag,Is_sensitive>::value)); 
     
     CGAL_IS_AST_NULL_FUNCTOR (  Simplify);
     CGAL_IS_AST_NULL_FUNCTOR (  Unit_part);
