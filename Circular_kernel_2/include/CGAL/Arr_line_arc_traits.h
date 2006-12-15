@@ -53,6 +53,7 @@ public:
   typedef CGAL::Tag_false                        Has_left_category;
   typedef CGAL::Tag_false 			 Has_merge_category;
   typedef CGAL::Tag_false                        Has_infinite_category;
+  typedef CGAL::Tag_false                        Has_boundary_category;
 
   Arr_line_arc_traits(const CircularKernel &k = CircularKernel())
     : ck(k) {}
