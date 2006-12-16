@@ -18,39 +18,69 @@
 CGAL_BEGIN_NAMESPACE
 
 template <class K>
-class PointMark : public K::Point_3 {
+class PointMark { // : public K::Point_3 {
 
   typedef typename K::Point_3 Point_3;
   typedef PointMark<K> Self;
 
+  Point_3 p;
+
  public:
-  PointMark() : Point_3(0,0,0) {}
-  PointMark(const Self& pm) : Point_3(pm) {}
-  PointMark(const Point_3& p) : Point_3(p) {}
+  PointMark() : p(0,0,0) {}
+  PointMark(const Self& pm) { p = pm.p; }
+  PointMark(const Point_3& pin) : p(pin) {}
 
   Self& operator=(const Self& pm) {
-    (Point_3) *this = (Point_3) pm;
+    p = pm.p;
+    if( pm.p != Point_3(0,0,0)) 
+      //      std::cerr << "PM::op=" << p << "==" << pm.p << std::endl;
     return *this;
   }
 
-  operator bool() const {
-    if((Point_3) *this != Point_3(0,0,0))
-      return true;
-    return false;
+  Self& operator=(const Point_3& pin) {
+    p = pin;
+    //    std::cerr << "op=" << (Point_3) *this << "==" << p << std::endl;
+    return *this;
   }
 
+  PointMark operator+(const Self& pm) const {
+    return PointMark(p+(pm.p-CGAL::ORIGIN));
+  }
+
+  Point_3 point() const {
+    return p;
+  }
+
+  /*
+    operator bool() const {
+    if((Point_3) *this != Point_3(0,0,0))
+    return true;
+    return false;
+    }
+  */
 };
 
-template <class K> // , class Mark_ = PointMark<K> >
+template <typename Kernel>
+std::ostream& operator<<(std::ostream& out, 
+			 const PointMark<Kernel>& pm) {
+  return out;
+}
+
+template <typename Kernel>
+bool operator==(const PointMark<Kernel>& pm1,
+		const PointMark<Kernel>& pm2) {
+  return pm1.point() == pm2.point();
+}
+
+template <class K, class Mark_ = PointMark<K> >
 class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geometry<K>,
-  CGAL::SM_items, typename K::Point_3> > {
-		    //  CGAL::SM_items, Mark_> > {
+  CGAL::SM_items, Mark_> > {
 
   typedef CGAL::Sphere_geometry<K>                        Kernel;
   typedef typename K::Point_3                             Point_3;
   typedef typename K::Vector_3                            Vector_3;
-  //  typedef Mark_                                           Mark;
-  typedef Point_3                                         Mark;
+  typedef Mark_                                           Mark;
+  //  typedef Point_3                                         Mark;
   typedef CGAL::Sphere_map<Kernel,CGAL::SM_items,Mark>    Sphere_map;
   typedef CGAL::SM_decorator<Sphere_map>                  SM_decorator;
   typedef SM_decorator                                    Base;
@@ -406,30 +436,39 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
 	CGAL_assertion(ei != SD.svertices_end());
 
 	SFace_handle sf_new = SM.new_sface();
+	sf_new->mark() = Mark(v->point());
+	//	std::cerr << sf_new->mark() << "==" <<v->point() << std::endl;
 	sf_new->mark() = v->point();
+	//	std::cerr << sf_new->mark() << "==" <<v->point() << std::endl;
 	SM.link_as_face_cycle(se,sf_new);
       }
   };
 
 
-  struct VECTOR_ADDITION { 
-    Mark operator()(const Mark& b1, const Mark& b2) const {
-      return b1+(b2-CGAL::ORIGIN); 
-    } 
-  };
+  //  struct VECTOR_ADDITION { 
+  //    Mark operator()(const Mark& b1, const Mark& b2) const {
+  //      return b1+(b2-CGAL::ORIGIN); 
+  //    } 
+  //  };
   
+  struct VECTOR_ADDITION {
+    Mark operator()(const Mark& b1, const Mark& b2) const {
+      return b1+b2;
+    }
+  };
+
   Object_handle top;
   Object_handle bottom;
 
   void locate_top_and_bottom() {
     std::vector<SFace_iterator> topSF;
     std::vector<SFace_iterator> bottomSF;
-    SFace_iterator sfi = sfaces_begin();
+    SFace_iterator sfi = this->sfaces_begin();
     topSF.push_back(sfi);
     bottomSF.push_back(sfi);
 
     Comparison_result cr;
-    for(++sfi;sfi != sfaces_end(); ++sfi) {
+    for(++sfi;sfi != this->sfaces_end(); ++sfi) {
       cr = compare_z(sfi->mark(), (*topSF.begin())->mark());
       if(cr != CGAL::SMALLER) {
 	if(cr == CGAL::LARGER)
@@ -534,9 +573,9 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
 
     SFace_const_handle sf = c->shells_begin();
 
-    SVertex_creator<Nef_polyhedron_3> create_svertices(sphere_map(), Facet2SVertex, Facet2bool, SEdge2SEdge, Vertex2bool, Edge2bool, Shell);
-    SEdge_creator<Nef_polyhedron_3>   create_sedges(sphere_map(), Edge2SEdge, Facet2SVertex, SEdge2SEdge, Facet2bool, Edge2bool);
-    SFace_creator<Nef_polyhedron_3>   create_sfaces(N3, sphere_map(), Edge2SEdge, Vertex2bool, Shell);
+    SVertex_creator<Nef_polyhedron_3> create_svertices(this->sphere_map(), Facet2SVertex, Facet2bool, SEdge2SEdge, Vertex2bool, Edge2bool, Shell);
+    SEdge_creator<Nef_polyhedron_3>   create_sedges(this->sphere_map(), Edge2SEdge, Facet2SVertex, SEdge2SEdge, Facet2bool, Edge2bool);
+    SFace_creator<Nef_polyhedron_3>   create_sfaces(N3, this->sphere_map(), Edge2SEdge, Vertex2bool, Shell);
 
     N3.visit_shell_objects(sf, create_svertices);
     N3.visit_shell_objects(sf, create_sedges);
@@ -612,8 +651,11 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
       typename Nef_polyhedron_3::Nef_polyhedron_S2 SD(N3.get_sphere_map(v));
       Halfedge_const_handle e(SD.svertices_begin());
       SHalfedge_handle se = Edge2SEdge[e];
-      SFace_handle sf = new_sface();
+      SFace_handle sf = this->new_sface();
+      sf->mark() = Mark(v->point());
+      //      std::cerr << sf->mark() << "==" <<v->point() << std::endl;
       sf->mark() = v->point();
+      //      std::cerr << sf->mark() << "==" <<v->point() << std::endl;
       link_as_face_cycle(se,sf);
     }
   }
@@ -665,8 +707,11 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
     for(v = P.vertices_begin(); v != P.vertices_end(); ++v) {
       Halfedge_const_handle e(v->halfedge());
       SHalfedge_handle se = Edge2SEdge[e];
-      SFace_handle sf = new_sface();
+      SFace_handle sf = this->new_sface();
+      sf->mark() = Mark(v->point());
+      //      std::cerr << sf->mark() << "==" <<v->point() << std::endl;
       sf->mark() = v->point();
+      //      std::cerr << sf->mark() << "==" <<v->point() << std::endl;
       link_as_face_cycle(se,sf);
     }
   }
@@ -737,7 +782,7 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
     
     void minkowski_sum(const Gausian_map& G1, const Gausian_map& G2) {
       //      CGAL_NEF_SETDTHREAD(131);
-      SM_overlayer O(sphere_map());
+      SM_overlayer O(this->sphere_map());
 #ifdef CGAL_NEF3_TIMER_OVERLAY
       CGAL::Timer t;
       t.start();
@@ -761,11 +806,11 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
 
     Object_handle locate_top() {
       std::vector<SFace_iterator> topSF;
-      SFace_iterator sfi = sfaces_begin();
+      SFace_iterator sfi = this->sfaces_begin();
       topSF.push_back(sfi);
       
       Comparison_result cr;
-      for(++sfi;sfi != sfaces_end(); ++sfi) {
+      for(++sfi;sfi != this->sfaces_end(); ++sfi) {
 	cr = compare_z(sfi->mark(), (*topSF.begin())->mark());
 	if(cr != CGAL::SMALLER) {
 	  if(cr == CGAL::LARGER)
@@ -804,11 +849,11 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
     
     Object_handle locate_bottom() {
       std::vector<SFace_iterator> bottomSF;
-      SFace_iterator sfi = sfaces_begin();
+      SFace_iterator sfi = this->sfaces_begin();
       bottomSF.push_back(sfi);
       
       Comparison_result cr;
-      for(++sfi;sfi != sfaces_end(); ++sfi) {
+      for(++sfi;sfi != this->sfaces_end(); ++sfi) {
 	cr = compare_z(sfi->mark(), (*bottomSF.begin())->mark());
 	if(cr != CGAL::LARGER) {
 	  if(cr == CGAL::SMALLER)
@@ -855,7 +900,7 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
       argv[0] = "Gaussian Map Viewer";
 
       typedef typename CGAL::Nef_polyhedron_S2<K,CGAL::SM_items,Mark> Nef_polyhedron_S2;      
-      Nef_polyhedron_S2 NS2(*sphere_map());
+      Nef_polyhedron_S2 NS2(*this->sphere_map());
       
       QApplication a(argc, argv);
       CGAL::Qt_widget_Nef_S2<Nef_polyhedron_S2>* w = 
