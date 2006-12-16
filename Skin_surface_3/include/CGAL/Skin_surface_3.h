@@ -89,20 +89,22 @@ private:
   typedef Exact_predicates_inexact_constructions_kernel  Mesher_Gt;
   typedef Skin_surface_mesher_oracle_3<Mesher_Gt,Self> Surface_mesher_traits_3;
 
+public:
+  typedef Anchor_point                                  Vertex_info;
+  typedef std::pair<Simplex, Quadratic_surface *>       Cell_info;
 private:
   // Triangulated_mixed_complex:
   typedef Simple_cartesian<Interval_nt_advanced>                       FK;
-  typedef Triangulation_vertex_base_with_info_3<Anchor_point, FK>      Vb;
-  typedef Triangulation_cell_base_with_info_3<
-    std::pair<Simplex, Quadratic_surface *>, FK>                       Cb;
+  typedef Triangulation_vertex_base_with_info_3<Vertex_info, FK>       Vb;
+  typedef Triangulation_cell_base_with_info_3<Cell_info, FK>           Cb;
   typedef Triangulation_data_structure_3<Vb,Cb>                        Tds;
 public:
   typedef Triangulation_3<FK, Tds>                                     TMC;
 private:
-  typedef typename TMC::Vertex_iterator TMC_Vertex_iterator;
-  typedef typename TMC::Cell_iterator   TMC_Cell_iterator;
-  typedef typename TMC::Vertex_handle   TMC_Vertex_handle;
-  typedef typename TMC::Cell_handle     TMC_Cell_handle;
+  typedef typename TMC::Finite_vertices_iterator TMC_Vertex_iterator;
+  typedef typename TMC::Finite_cells_iterator    TMC_Cell_iterator;
+  typedef typename TMC::Vertex_handle            TMC_Vertex_handle;
+  typedef typename TMC::Cell_handle              TMC_Cell_handle;
 public:
   template < class WP_iterator >
   Skin_surface_3(WP_iterator begin, WP_iterator end, 
@@ -136,6 +138,7 @@ public:
     Triangulated_mixed_complex_observer_3<TMC, Self> observer(shrink_factor());
     triangulate_mixed_complex_3(regular, shrink_factor(), tmc, observer, true);
 
+    CGAL_assertion(tmc.dimension() == 3);
     { // NGHK: debug code:
       CGAL_assertion(tmc.is_valid());
       std::vector<TMC_Vertex_handle> ch_vertices;
@@ -171,8 +174,19 @@ public:
     return get_sign(locate_mixed(p,start), p);
   }
   Sign sign(TMC_Vertex_handle vit) const {
-    CGAL_assertion(!tmc.is_infinite(vit->cell()));
-    
+    CGAL_assertion(!tmc.is_infinite(vit));
+    TMC_Cell_handle ch = vit->cell();
+    if (tmc.is_infinite(ch)) {
+      std::vector<TMC_Cell_handle> nbs;
+      tmc.incident_cells(vit, std::back_inserter(nbs));
+      for (typename std::vector<TMC_Cell_handle>::iterator it = nbs.begin();
+	   tmc.is_infinite(ch) && (it != nbs.end());
+	   it++) {
+	ch = *it;
+      }
+    }
+    CGAL_assertion(!tmc.is_infinite(ch));
+  
     // don't use get_sign, since the point is constructed:
     try
       {
@@ -364,13 +378,16 @@ public:
 //     Simple_cartesian<Interval_nt_advanced> > previous_sign_surface;
 //   mutable Simplex                            previous_sign_simplex;
 
-  Sign get_sign(const TMC_Cell_handle &ch, const Bare_point &p) const {
+  Sign sign(const TMC_Cell_handle &ch, const Bare_point &p) const {
+    return sign(ch->info(), p);
+  }
+  Sign sign(Cell_info &info, const Bare_point &p) const {
     try
     {
       CGAL_PROFILER(std::string("NGHK: calls to    : ") + 
 		    std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<true> P;
-      Sign result = ch->info().second->sign(p);
+      Sign result = info.second->sign(p);
       if (! is_indeterminate(result))
         return result;
     }
@@ -379,8 +396,35 @@ public:
 		  std::string(CGAL_PRETTY_FUNCTION));
     Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
     return construct_surface
-      (ch->info().first, 
+      (info.first, 
        Exact_predicates_exact_constructions_kernel()).sign(p);
+  }
+  FT
+  less(Cell_info &info,
+       const Bare_point &p1,
+       const Bare_point &p2) const {
+    try
+    {
+      CGAL_PROFILER(std::string("NGHK: calls to    : ") + 
+		    std::string(CGAL_PRETTY_FUNCTION));
+      Protect_FPU_rounding<true> P;
+      Sign result = CGAL_NTS sign(info.second->value(p2) -
+				  info.second->value(p1));
+      if (! is_indeterminate(result))
+        return result==POSITIVE;
+    }
+    catch (Interval_nt_advanced::unsafe_comparison) {}
+    CGAL_PROFILER(std::string("NGHK: failures of : ") + 
+		  std::string(CGAL_PRETTY_FUNCTION));
+    Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
+      
+    return 
+      CGAL_NTS sign(construct_surface(info.first,
+				      Exact_predicates_exact_constructions_kernel()
+				      ).value(p2) -
+		    construct_surface(info.first,
+				      Exact_predicates_exact_constructions_kernel()
+				      ).value(p1));
   }
   FT
   value(const Bare_point &p) const {
@@ -397,7 +441,7 @@ public:
   value(TMC_Cell_handle ch, const Bare_point &p) const {
     CGAL_assertion(!tmc.is_infinite(ch));
     
-    return ch->info().second->value(p);
+    return value(ch->info(), p);
   }
   Vector
   get_normal(const Simplex &mc, const Bare_point &p) const {
@@ -486,16 +530,16 @@ public:
     Cartesian_converter<FK, 
                         typename Geometric_traits::Bare_point::R> converter;
 
-    Quadratic_surface *surf = ch->info().second;
+    Cell_info &cell_info = ch->info();
     Bare_point p1 = converter(ch->vertex(i)->point());
     Bare_point p2 = converter(ch->vertex(j)->point());
 
     FT sq_dist = squared_distance(p1,p2);
     // Use value to make the computation robust (endpoints near the surface)
-    if (value(surf, p1) > value(surf, p2)) std::swap(p1, p2);
+    if (less(cell_info, p2, p1)) std::swap(p1, p2);
     while (sq_dist > 1e-8) {
       p = midpoint(p1, p2);
-      if (get_sign(surf, p) == NEGATIVE) { p1 = p; }
+      if (sign(cell_info, p) == NEGATIVE) { p1 = p; }
       else { p2 = p; }
       sq_dist *= .25;
     }
@@ -633,22 +677,14 @@ public:
   }
 
   // Access to the implicit triangulated mixed complex:
-//   CMCT_Vertex_iterator cmct_vertices_begin() const
-//   { return mc_triangulator->vertices_begin(); }
-//   CMCT_Vertex_iterator cmct_vertices_end() const
-//   { return mc_triangulator->vertices_end(); }
-//   CMCT_Cell_iterator cmct_cells_begin() const
-//   { return mc_triangulator->cells_begin(); }
-//   CMCT_Cell_iterator cmct_cells_end() const
-//   { return mc_triangulator->cells_end(); }
   TMC_Vertex_iterator tmc_vertices_begin() const 
-  { return tmc.vertices_begin(); }
+  { return tmc.finite_vertices_begin(); }
   TMC_Vertex_iterator tmc_vertices_end() const 
-  { return tmc.vertices_end(); }
+  { return tmc.finite_vertices_end(); }
   TMC_Cell_iterator tmc_cells_begin() const 
-  { return tmc.cells_begin(); }
+  { return tmc.finite_cells_begin(); }
   TMC_Cell_iterator tmc_cells_end() const
-  { return tmc.cells_end(); }
+  { return tmc.finite_cells_end(); }
 
   // NGHK: added for the (Delaunay) surface mesher, document
   Sphere bounding_sphere() const {

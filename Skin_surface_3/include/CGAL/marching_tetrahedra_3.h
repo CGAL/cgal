@@ -133,13 +133,19 @@ public:
 
 
   bool is_inside(T_Cell_iterator ch, int i) {
+    CGAL_assertion(&*ch != NULL);
     //return (traits.sign(ch,i) == POSITIVE);
-    T_vertex_map_it it = triang_vertex_signs.find(ch->vertex(i));
+    T_vertex_map_it it = triang_vertex_signs.find((ch->vertex(i)));
     
     if (it == triang_vertex_signs.end()) {
       bool side = (traits.sign(ch,i) == POSITIVE);
-      triang_vertex_signs[&*ch->vertex(i)] = side;
-      CGAL_assertion(triang_vertex_signs[&*ch->vertex(i)] == side);
+      CGAL_assertion(triang_vertex_signs.find((ch->vertex(i))) ==
+		     triang_vertex_signs.end());
+      CGAL_assertion(&*ch != NULL);
+      triang_vertex_signs[(ch->vertex(i))] = side;
+      CGAL_assertion(triang_vertex_signs.find((ch->vertex(i))) !=
+		     triang_vertex_signs.end());
+      CGAL_assertion(triang_vertex_signs[(ch->vertex(i))] == side);
       return side;
     } else {
       return it->second;
@@ -245,10 +251,10 @@ template <class Vertex_iterator,
 	  class MarchingTetrahedraTraits_3,
 	  class MarchingTetrahedraObserver_3>
 void marching_tetrahedra_3(
-  Vertex_iterator vertices_begin,
-  Vertex_iterator vertices_end,
-  Cell_iterator cells_begin,
-  Cell_iterator cells_end,
+  Vertex_iterator finite_vertices_begin,
+  Vertex_iterator finite_vertices_end,
+  Cell_iterator finite_cells_begin,
+  Cell_iterator finite_cells_end,
   Polyhedron_3 &polyhedron,
   const MarchingTetrahedraTraits_3 &traits,
   MarchingTetrahedraObserver_3 &observer) {
@@ -258,8 +264,8 @@ void marching_tetrahedra_3(
     Vertex_iterator, Cell_iterator, HDS,
     MarchingTetrahedraTraits_3, MarchingTetrahedraObserver_3> Builder;
   
-  Builder builder(vertices_begin, vertices_end,
-		  cells_begin, cells_end,
+  Builder builder(finite_vertices_begin, finite_vertices_end,
+		  finite_cells_begin, finite_cells_end,
 		  traits, observer);
   polyhedron.delegate(builder);
 }

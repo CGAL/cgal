@@ -82,6 +82,7 @@ public:
     			      Rt_Simplex const &sVor, 
 			      TMC_Vertex_handle &vh) 
   {
+    vh->info() = typename SkinSurface_3::Vertex_info(sDel, sVor);
   }
 
   void after_cell_insertion(Rt_Simplex const &s, TMC_Cell_handle &ch)  
@@ -164,7 +165,7 @@ public:
       }
     }
     // NGHK: uncomment:
-    //ch->info() = surf;
+    ch->info() = typename SkinSurface_3::Cell_info(s,surf);
     //ch->simp = s;
   }
 
