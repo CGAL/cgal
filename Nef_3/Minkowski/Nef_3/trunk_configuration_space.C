@@ -1,16 +1,18 @@
 //#include <CGAL/leda_integer.h>
-#include <CGAL/leda_rational.h>
+//#include <CGAL/leda_rational.h>
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Lazy_kernel.h>
-//#include <CGAL/Fractional_traits.h>
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
+#include <CGAL/Nef_3/SNC_indexed_items.h>
 
+#include <CGAL/convex_hull_3.h>
+#include <CGAL/Nef_3/convex_decomposition_3.h> 
 #include <CGAL/convexity_check_3.h>
 
 #include <CGAL/Nef_3/trunk_offset.h>
@@ -21,17 +23,71 @@
 #include <fstream>
 #include <sstream>
 
-//typedef CGAL::Gmpq FT;
-typedef leda_rational FT;
-//typedef CGAL::Gmpz NT;
-//typedef CGAL::Homogeneous<NT> Kernel;
-typedef CGAL::Lazy_kernel<CGAL::Simple_cartesian<FT> > Kernel;
-//typedef Fractional_traits<Kernel::FT> FracTraits;
+#ifdef CGAL_WITH_LAZY_KERNEL
+typedef CGAL::Gmpq NT;
+//typedef leda_rational NT;
+typedef CGAL::Lazy_kernel<CGAL::Simple_cartesian<NT> > Kernel;
+#else
+typedef CGAL::Gmpz NT;
+typedef CGAL::Homogeneous<NT> Kernel;
+#endif
+typedef Kernel::RT RT;
 typedef Kernel::Point_3 Point_3;
+typedef Kernel::Plane_3 Plane_3;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron_3;
-typedef Polyhedron_3::Vertex_const_iterator Vertex_const_iterator;
-typedef CGAL::Nef_polyhedron_3<Kernel> Nef_polyhedron_3;
-typedef CGAL::Trunk_offset<Kernel> TO;
+//typedef Polyhedron_3::Vertex_const_iterator Vertex_const_iterator;
+#ifdef CGAL_NEF_INDEXED_ITEMS
+typedef CGAL::Nef_polyhedron_3<Kernel,CGAL::SNC_indexed_items>     Nef_polyhedron_3;
+#else
+typedef CGAL::Nef_polyhedron_3<Kernel>     Nef_polyhedron_3;
+#endif
+typedef Nef_polyhedron_3::Vertex_const_iterator Vertex_const_iterator;
+typedef Nef_polyhedron_3::Vertex_const_handle Vertex_const_handle;
+typedef Nef_polyhedron_3::Halfedge_const_handle Halfedge_const_handle;
+typedef Nef_polyhedron_3::Halffacet_const_handle Halffacet_const_handle;
+typedef Nef_polyhedron_3::Volume_const_iterator Volume_const_iterator;
+typedef Nef_polyhedron_3::SHalfedge_const_handle SHalfedge_const_handle;
+typedef Nef_polyhedron_3::SHalfloop_const_handle SHalfloop_const_handle;
+typedef Nef_polyhedron_3::SFace_const_handle SFace_const_handle;
+typedef CGAL::Trunk_offset<Nef_polyhedron_3> TO;
+
+class Facet_counter {
+  int counter;
+public:
+  Facet_counter() : counter(0) {}
+  void visit(Halffacet_const_handle f) {
+    ++counter;
+  }
+  void visit(SFace_const_handle s) {}
+  void visit(Halfedge_const_handle e) {}
+  void visit(Vertex_const_handle v) {}
+  void visit(SHalfedge_const_handle se) {}
+  void visit(SHalfloop_const_handle sl) {}
+  int get_counter() const { return counter; }
+  void reset_counter() { counter=0; }
+};
+
+class Volume_output {
+public:
+  Volume_output() {}
+  void visit(Halffacet_const_handle f) {
+    /*
+#ifdef CGAL_WITH_LAZY_KERNEL
+    Plane_3 p = f->twin()->plane();
+    std::cout << p.a().exact() 
+	      << p.b().exact()
+	      << p.c().exact() << std::endl;
+#else
+    */
+    std::cout << f->twin()->plane() << std::endl;
+    //#endif
+  }
+  void visit(SFace_const_handle s) {}
+  void visit(Halfedge_const_handle e) {}
+  void visit(Vertex_const_handle v) {}
+  void visit(SHalfedge_const_handle se) {}
+  void visit(SHalfloop_const_handle sl) {}
+};
 
 void read( const char* name, Polyhedron_3& poly) {
   std::ifstream in( name);
@@ -81,7 +137,7 @@ int main(int argc, char* argv[]) {
   for(int i=0;i<nv;++i) {
     double a,b,c;
     trunk >> a >> b >> c;
-    FT x(round(a)), y(round(b)), z(round(c));
+    RT x(round(a)), y(round(b)), z(round(c));
     //    FT x(a), y(b), z(c);
 /*
     Point_3 p(x.numerator()   * y.denominator() * z.denominator(),
@@ -117,12 +173,62 @@ int main(int argc, char* argv[]) {
   CGAL::Timer t;
   t.start();
   TO to(mod, suf);
-  Nef_polyhedron_3 result = to(points.begin(), points.end(),
-			       facets.begin(), facets.end(), P);
+  Nef_polyhedron_3 CSP = to(points.begin(), points.end(),
+			    facets.begin(), facets.end(), P);
+
+  CSP = !CSP;
 
   t.stop();
-  std::cerr << "Runtime Boundary Offset: " << t.time() << std::endl;
+  std::cerr << "Runtime CSP: " << t.time() << std::endl;
+  std::ofstream outCSP("csp.nef3");
+  outCSP << CSP;
+  t.start();
 
+  points.clear();
+  Vertex_const_iterator v;
+  for(v = CSP.vertices_begin(); v != CSP.vertices_end(); ++v)
+    points.push_back(v->point());
+
+  Polyhedron_3 CV;
+  convex_hull_3( points.begin(), points.end(), CV);
+
+  Nef_polyhedron_3 NCV(CV);
+  Nef_polyhedron_3 DIFF = NCV-CSP;
+
+  t.stop();
+  std::cerr << "Runtime CSP,CV,(CV-CSP): " << t.time() << std::endl;
+  std::ofstream outNCV("ncv.nef3");
+  std::ofstream outDIFF("diff.nef3");
+  outNCV << NCV;
+  outDIFF << DIFF;
+  t.start();
+  
+  convex_decomposition_3<Nef_polyhedron_3>(DIFF);
+
+  t.stop();
+  std::cerr << "Runtime CSP,CV,(CV-CSP),Decomposition: " 
+	    << t.time() << std::endl;
+  t.start();
+
+  Facet_counter fc;
+  Volume_output vout;
+  Volume_const_iterator c;
+
+  std::cout << DIFF.number_of_volumes() << std::endl;
+  std::cout << NCV.number_of_facets() << std::endl;
+  NCV.visit_shell_objects(NCV.volumes_begin()->shells_begin(), vout);
+  for(c=++(DIFF.volumes_begin()); c!=DIFF.volumes_end(); ++c) {
+    fc.reset_counter();
+    DIFF.visit_shell_objects(c->shells_begin(), fc);
+    std::cout << fc.get_counter() << std::endl;
+    DIFF.visit_shell_objects(c->shells_begin(), vout);
+  }
+
+  t.stop();
+  std::cerr << "Runtime CSP,CV,(CV-CSP),Decomposition,Output: " 
+	    << t.time() << std::endl;    
+
+  /*
   std::ofstream out("temp.nef3");
   out << result;
 
@@ -132,4 +238,5 @@ int main(int argc, char* argv[]) {
   a.setMainWidget(w);
   w->show();
   a.exec();
+  */
 }
