@@ -54,10 +54,17 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
   Vector_3 dir;
   SNC_structure* sncp;
   SNC_point_locator* pl;
+#ifdef CGAL_NEF_INDEXED_ITEMS
+  int index1, index2;
+#endif
   
  public:
   Single_wall_creator(SVertex_handle e, Vector_3 d)
-    : ein(e), dir(d) {}
+    : ein(e), dir(d) 
+#ifdef CGAL_NEF_INDEXED_ITEMS
+    , index1(0), index2(0)
+#endif
+{}
 
  private:
   bool need_to_create_wall() const {
@@ -149,7 +156,12 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
 
     Sphere_segment sphere_ray(estart->point(), estart->twin()->point(), c);
     SVertex_handle lateral_svertex = SMW.add_lateral_svertex(sphere_ray);
+#ifdef CGAL_NEF_INDEXED_ITEMS
+    SMW.add_sedge_between(estart, lateral_svertex, index1, index2, c);
+#else
     SMW.add_sedge_between(estart, lateral_svertex, c);
+#endif
+
 
     Ray_hit rh(sncp, pl, 3);
     Ray_3 r(lateral_svertex->source()->point(), lateral_svertex->point()-CGAL::ORIGIN);
@@ -169,6 +181,10 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
       SM_walls smwt(&*v);
       opp->twin() = lateral_svertex;
       lateral_svertex->twin() = opp;
+#ifdef CGAL_NEF_INDEXED_ITEMS
+      opp->set_index();
+      lateral_svertex->set_index(opp->get_index());
+#endif
       pl->add_edge(lateral_svertex);
 
       CGAL_NEF_TRACEN( "twins " << lateral_svertex->source()->point() 
@@ -178,7 +194,11 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
 				  lateral_svertex->point(), c);
       lateral_svertex = smw.add_lateral_svertex(sphere_ray);
       SM_walls smwx(&*v);
-      smw.add_sedge_between(opp, lateral_svertex, c);
+#ifdef CGAL_NEF_INDEXED_ITEMS
+    smw.add_sedge_between(opp, lateral_svertex, index1, index2, c);
+#else
+    smw.add_sedge_between(opp, lateral_svertex, c);
+#endif
       SM_walls smwz(&*v);
       // TODO: make use of existing edges along ray
 
@@ -195,9 +215,17 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
     SVertex_handle opp = smw.add_ray_svertex(lateral_svertex->point().antipode());    
     opp->twin() = lateral_svertex;
     lateral_svertex->twin() = opp;
+#ifdef CGAL_NEF_INDEXED_ITEMS
+      opp->set_index();
+      lateral_svertex->set_index(opp->get_index());
+#endif
     pl->add_edge(lateral_svertex);
 
+#ifdef CGAL_NEF_INDEXED_ITEMS
+    smw.add_sedge_between(opp, estart->twin(), index1, index2, c);
+#else
     smw.add_sedge_between(opp, estart->twin(), c);
+#endif
 
     CGAL_NEF_TRACEN( "final twins " << lateral_svertex->source()->point() 
 		     << " + " << opp->source()->point() );
@@ -223,6 +251,10 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
       SVertex_handle opp = smw.add_ray_svertex(lateral_svertex->point().antipode());
       opp->twin() = lateral_svertex;
       lateral_svertex->twin() = opp;
+#ifdef CGAL_NEF_INDEXED_ITEMS
+      opp->set_index();
+      lateral_svertex->set_index(opp->get_index());
+#endif
       pl->add_edge(lateral_svertex);
 
       CGAL_NEF_TRACEN( "twins " << lateral_svertex->source()->point() 
@@ -231,7 +263,11 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
       Sphere_segment sphere_ray = Sphere_segment(lateral_svertex->point().antipode(), 
 				  lateral_svertex->point(), c);
       lateral_svertex = smw.add_lateral_svertex(sphere_ray);
-      smw.add_sedge_between(opp, lateral_svertex, c);
+#ifdef CGAL_NEF_INDEXED_ITEMS
+    smw.add_sedge_between(opp, lateral_svertex, index1, index2, c);
+#else
+    smw.add_sedge_between(opp, lateral_svertex, c);
+#endif
 
       // TODO: make use of existing edges along ray
 
@@ -248,6 +284,10 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
     SVertex_handle opp = smw.add_ray_svertex(lateral_svertex->point().antipode());    
     opp->twin() = lateral_svertex;
     lateral_svertex->twin() = opp;
+#ifdef CGAL_NEF_INDEXED_ITEMS
+      opp->set_index();
+      lateral_svertex->set_index(opp->get_index());
+#endif
     pl->add_edge(lateral_svertex);
 
     //    smw.add_sedge_between(opp, estart->twin(), c);
@@ -268,6 +308,10 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
     sncp = sncpl.sncp;
     pl = sncpl.pl;
 
+    //    SNC_io_parser<SNC_structure> O0(std::cerr,*sncp);
+    //    O0.print();
+
+    //    CGAL_NEF_SETDTHREAD(229);
     SVertex_handle target_svertex = ein->twin();
     Sphere_circle c(ein->point(), Sphere_point(dir));
     c = normalized(c);
@@ -275,8 +319,11 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
     do {
       ein = target_svertex->twin(); // for subsequent runs of the loop
       SVertex_handle svopen = create_new_outer_cycle(ein, c);
-      
+#ifdef CGAL_NEF_INDEXED_ITEMS
+
+#endif
       if(ein->twin() != target_svertex) {
+	// TODO: what indexes are needed here?
 	SHalfedge_handle seopen = svopen->out_sedge();
 	while(seopen->circle() == c || seopen->circle() == c.opposite())
 	  seopen = seopen->sprev()->twin();

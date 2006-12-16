@@ -52,10 +52,16 @@ class Single_wall_creator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
 
   Halfedge_handle ein;
   Sphere_point spin;
-  
+#ifdef CGAL_NEF_INDEXED_ITEMS
+  int index1, index2;
+#endif  
  public:
   Single_wall_creator2(Halfedge_handle e, Sphere_point sp)
-    : ein(e), spin(sp) {}
+    : ein(e), spin(sp) 
+#ifdef CGAL_NEF_INDEXED_ITEMS
+    , index1(0), index2(0)
+#endif
+    {}
 
  private:
   bool need_to_create_wall() const {
@@ -97,9 +103,13 @@ class Single_wall_creator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
     
     CGAL_assertion(sphere_ray_src.sphere_circle() == sphere_ray_tgt.sphere_circle().opposite());
 
+#ifdef CGAL_NEF_INDEXED_ITEMS
+    SMW_src.add_sedge_between(ein, lateral_sv_tgt[0], index1, index2, sphere_ray_src.sphere_circle());
+    SMW_tgt.add_sedge_between(ein->twin(), lateral_sv_tgt[1], index1, index2, sphere_ray_tgt.sphere_circle());
+#else 
     SMW_src.add_sedge_between(ein, lateral_sv_tgt[0], sphere_ray_src.sphere_circle());
     SMW_tgt.add_sedge_between(ein->twin(), lateral_sv_tgt[1], sphere_ray_tgt.sphere_circle());
-
+#endif
     Sphere_circle c(sphere_ray_src.sphere_circle());
     CGAL_assertion(c.a()==0 && c.b()==0);
     Ray_hit rh(sncp, pl);
@@ -120,6 +130,10 @@ class Single_wall_creator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
       if(v == lateral_sv_tgt[1]->source()) {
 	lateral_sv_tgt[0]->twin() = lateral_sv_tgt[1];
 	lateral_sv_tgt[1]->twin() = lateral_sv_tgt[0];
+#ifdef CGAL_NEF_INDEXED_ITEMS
+	lateral_sv_tgt[0]->set_index();
+	lateral_sv_tgt[1]->set_index(lateral_sv_tgt[0]->get_index());
+#endif
 	return;
       }
 
@@ -127,11 +141,18 @@ class Single_wall_creator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
 	SVertex_handle opp = SMW_tgt.add_ray_svertex(lateral_sv_tgt[0]->point().antipode());
 	opp->twin() = lateral_sv_tgt[0];
 	lateral_sv_tgt[0]->twin() = opp;
-
+#ifdef CGAL_NEF_INDEXED_ITEMS
+	opp->set_index();
+	lateral_sv_tgt[0]->set_index(opp->get_index());
+#endif
 	lateral_sv_tgt[0] = 
 	  SMW_tgt.add_lateral_svertex(Sphere_segment(lateral_sv_tgt[0]->point().antipode(), 
 						     lateral_sv_tgt[0]->point(),c));
+#ifdef CGAL_NEF_INDEXED_ITEMS
+	SMW_tgt.add_sedge_between(opp, lateral_sv_tgt[0], index1, index2, c);	
+#else
 	SMW_tgt.add_sedge_between(opp, lateral_sv_tgt[0], c);	
+#endif
 
     } while(true);
   }
