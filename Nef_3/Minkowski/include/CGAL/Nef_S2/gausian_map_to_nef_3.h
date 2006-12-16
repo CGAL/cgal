@@ -46,7 +46,7 @@ template<typename Kernel_, typename Items_, typename Mark_>
 
     SFace_const_iterator sfi;
     for(sfi = G.sfaces_begin(); sfi != G.sfaces_end(); ++sfi) {
-      sface2vertex[sfi] = snc.new_vertex(sfi->mark(),true);
+      sface2vertex[sfi] = snc.new_vertex(sfi->mark().point(),true);
     }
 
     for(sfi = G.sfaces_begin(); sfi != G.sfaces_end(); ++sfi) {
