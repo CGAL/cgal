@@ -87,11 +87,21 @@ class Ray_hit_generator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
 	svf->twin() = e->twin();
 	e->twin()->twin() = svf;
 	e->twin() = svb;
+#ifdef CGAL_NEF_INDEXED_ITEMS
+	svb->set_index(e->get_index());
+	svf->set_index();
+	svf->twin()->set_index(svf->get_index());
+#endif
       } else {
 	svf->twin() = e;
 	svb->twin() = e->twin();
 	e->twin()->twin() = svb;
 	e->twin() = svf;
+#ifdef CGAL_NEF_INDEXED_ITEMS
+	svf->set_index(e->get_index());
+	svb->set_index();
+	svb->twin()->set_index(svb->get_index());
+#endif
       }
 
       pl->add_edge(svf);
@@ -102,7 +112,7 @@ class Ray_hit_generator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
 	second_half = svf;
       else
 	second_half = svb;
-      
+
       //      std::cerr << "new edge " << e->source()->point() << "->" << e->twin()->source()->point() << std::endl;
       //      std::cerr << "new edge " << svf->source()->point() << "->" << svf->twin()->source()->point() << std::endl;
 
@@ -133,11 +143,16 @@ class Ray_hit_generator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
     edge_splitted = false;
 
     SM_walls smw(&*vs);
-    if(smw.need_to_shoot(Sphere_point(dir))) {
+    SVertex_handle sv1, sv2;
+    if(smw.need_to_shoot(Sphere_point(dir),sv1)) {
       Ray_3 r(vs->point(), dir);
       Vertex_handle v_new = create_vertex_on_first_hit(r);
       SM_walls smw(&*v_new);
-      smw.add_ray_svertex(Sphere_point(-dir));
+      sv2 = smw.add_ray_svertex(Sphere_point(-dir));
+#ifdef CGAL_NEF_INDEXED_ITEMS
+      sv1->set_index();
+      sv2->set_index(sv1->get_index());
+#endif      
     }
   }
 
