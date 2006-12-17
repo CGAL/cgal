@@ -44,6 +44,7 @@ rational_rotation_approximation( const NT &  dirx,     // dir.x()
   const NT& d   = eps_den;
   const NT  NT0 = NT(0)  ;
   const NT  NT1 = NT(1)  ;
+  CGAL_kernel_precondition( (dirx != NT0) ||  (diry != NT0));
   CGAL_kernel_precondition( n > NT0 );
   CGAL_kernel_precondition( d > NT0 );
   NT & sin = sin_num;
