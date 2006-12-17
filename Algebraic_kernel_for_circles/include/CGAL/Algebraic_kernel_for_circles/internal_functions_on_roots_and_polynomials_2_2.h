@@ -174,7 +174,7 @@ namespace CGAL {
     typedef typename AK::FT                   FT;
     typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
 
-    const Root_of_2 a1 = make_root_of_2(c.a(),i?-1:1,c.r_sq());
+    const Root_of_2 a1 = make_root_of_2(c.a(),FT(i?-1:1),c.r_sq());
     return Root_for_circles_2_2(a1, c.b());
   }
 
@@ -204,7 +204,7 @@ namespace CGAL {
     typedef typename AK::FT                   FT;
     typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
 
-    const Root_of_2 b1 = make_root_of_2(c.b(),i?-1:1,c.r_sq());
+    const Root_of_2 b1 = make_root_of_2(c.b(),FT(i?-1:1),c.r_sq());
     return Root_for_circles_2_2(c.a(),b1);
   }
   

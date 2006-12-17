@@ -53,9 +53,9 @@ namespace CGAL {
                                  Root_of_2(hy)), 2u);
 	return res;
       }
-      const Root_of_2 x_res1 = make_root_of_2(e2.a(),-1,hdisc);
-      const Root_of_2 x_res2 = make_root_of_2(e2.a(),1,hdisc);
-      const Root_of_2 y_res = Root_of_2(hy); 
+      const Root_of_2 x_res1 = make_root_of_2(e2.a(),FT(-1),hdisc);
+      const Root_of_2 x_res2 = make_root_of_2(e2.a(),FT(1),hdisc);
+      const Root_of_2 y_res = Root_of_2(hy);  
       *res++ = std::make_pair
 	( Root_for_circles_2_2(x_res1, y_res), 1u);
       *res++ = std::make_pair
@@ -77,8 +77,8 @@ namespace CGAL {
       }
       
       const Root_of_2 x_res = Root_of_2(vx); 
-      const Root_of_2 y_res1 = make_root_of_2(e2.b(),-1,vdisc);
-      const Root_of_2 y_res2 = make_root_of_2(e2.b(),1,vdisc);
+      const Root_of_2 y_res1 = make_root_of_2(e2.b(),FT(-1),vdisc);
+      const Root_of_2 y_res2 = make_root_of_2(e2.b(),FT(1),vdisc);
 
       *res++ = std::make_pair
 	( Root_for_circles_2_2(x_res, y_res1), 1u);

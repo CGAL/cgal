@@ -230,9 +230,9 @@ namespace CGAL {
                   CGAL::square(dz);
       const FT sq_r1r2 = s1.squared_radius()*s2.squared_radius();
       const FT sq_r1_p_sq_r2 = s1.squared_radius() + s2.squared_radius();
-      Root_of_2 left_1 = make_root_of_2(d2,-2,sq_r1r2);
+      Root_of_2 left_1 = make_root_of_2(d2,FT(-2),sq_r1r2);
       if(left_1 > sq_r1_p_sq_r2) return false;
-      Root_of_2 left_2 = make_root_of_2(d2,2,sq_r1r2);
+      Root_of_2 left_2 = make_root_of_2(d2,FT(2),sq_r1r2);
       if(left_2 < sq_r1_p_sq_r2) return false;
       return true;
     }  

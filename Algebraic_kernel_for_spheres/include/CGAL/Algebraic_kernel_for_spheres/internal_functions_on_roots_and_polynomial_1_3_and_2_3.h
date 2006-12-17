@@ -17,8 +17,8 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
 //
 // Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //             Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
@@ -122,9 +122,9 @@ namespace CGAL {
     const FT sq_r1r2 = s1.r_sq()*s2.r_sq();
     const FT sq_r1_p_sq_r2 = s1.r_sq() + s2.r_sq();
   
-    Root_of_2 left_1 = make_root_of_2(d2,-2,sq_r1r2);
+    Root_of_2 left_1 = make_root_of_2(d2,FT(-2),sq_r1r2);
     if(left_1 > sq_r1_p_sq_r2) return false;
-    Root_of_2 left_2 = make_root_of_2(d2,2,sq_r1r2);
+    Root_of_2 left_2 = make_root_of_2(d2,FT(2),sq_r1r2);
     if(left_2 < sq_r1_p_sq_r2) return false;
     return true;
   }
@@ -155,9 +155,9 @@ namespace CGAL {
     const RT sq_r1r2 = s1.r_sq()*s2.r_sq();
     const RT sq_r1_p_sq_r2 = s1.r_sq() + s2.r_sq();
   
-    Root_of_2 left_1 = make_root_of_2(d2,-2,sq_r1r2);
+    Root_of_2 left_1 = make_root_of_2(d2,RT(-2),sq_r1r2);
     if(left_1 == sq_r1_p_sq_r2) return true;
-    Root_of_2 left_2 = make_root_of_2(d2,2,sq_r1r2);
+    Root_of_2 left_2 = make_root_of_2(d2,RT(2),sq_r1r2);
     if(left_2 == sq_r1_p_sq_r2) return true;
     return false;
   }
@@ -241,8 +241,8 @@ namespace CGAL {
       return res;
     }
 
-    const Root_of_2 t1 = make_root_of_2(alpha,-1,gama);
-    const Root_of_2 t2 = make_root_of_2(alpha,1,gama);
+    const Root_of_2 t1 = make_root_of_2(alpha,FT(-1),gama);
+    const Root_of_2 t2 = make_root_of_2(alpha,FT(1),gama);
 
     bool first_t1 = true;
     Sign sign_a1 = sign(p.a1());

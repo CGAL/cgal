@@ -17,8 +17,8 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
 //
 // Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //             Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
@@ -302,9 +302,11 @@ void _test_solve(AK ak)
 	   std::back_inserter(res_cc_3));
   assert(res_cc_3.size() == 2);
   assert(res_cc_3[0].second == 1u);
-  assert(res_cc_3[0].first == Root_for_spheres_2_3(1, 0, make_root_of_2(FT(0),-1,FT(3))));
+  assert(res_cc_3[0].first == 
+          Root_for_spheres_2_3(1, 0, make_root_of_2(FT(0),FT(-1),FT(3))));
   assert(res_cc_3[1].second == 1u);
-  assert(res_cc_3[1].first == Root_for_spheres_2_3(1, 0, make_root_of_2(FT(0),1,FT(3))));
+  assert(res_cc_3[1].first == 
+          Root_for_spheres_2_3(1, 0, make_root_of_2(FT(0),FT(1),FT(3))));
  
   // A QUESTION: WHAT IS THE MULTIPLICITY OF A CIRCLE vs CIRCLE SOLUTION?
   // FOR NOW, IF THE NUMBER OF SOLUTION IS 1, THE MULTIPLICITY IS 2
@@ -317,9 +319,11 @@ void _test_solve(AK ak)
 	   std::back_inserter(res_cc_4)); 
   assert(res_cc_4.size() == 2);
   assert(res_cc_4[0].second == 1u);
-  assert(res_cc_4[0].first == Root_for_spheres_2_3(1, 0, make_root_of_2(FT(0),-1,FT(3))));
+  assert(res_cc_4[0].first == 
+          Root_for_spheres_2_3(1, 0, make_root_of_2(FT(0),FT(-1),FT(3))));
   assert(res_cc_4[1].second == 1u);
-  assert(res_cc_4[1].first == Root_for_spheres_2_3(1, 0, make_root_of_2(FT(0),1,FT(3))));
+  assert(res_cc_4[1].first == 
+          Root_for_spheres_2_3(1, 0, make_root_of_2(FT(0),FT(1),FT(3))));
 
   std::vector< std::pair<Root_for_spheres_2_3, size_t> > res_cc_5;
   theSolve(std::make_pair(theConstruct_2_3(0,0,0,169),
