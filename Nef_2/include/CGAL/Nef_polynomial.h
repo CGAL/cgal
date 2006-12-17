@@ -144,7 +144,8 @@ template <class NT> class Algebraic_structure_traits< Nef_polynomial<NT> >
     typedef Algebraic_structure_traits<NT> AST_NT;
 public:
     typedef Nef_polynomial<NT> Type;
-    typedef typename AST_NT::Is_exact            Is_exact;                                                           
+    typedef typename AST_NT::Is_exact            Is_exact;
+    typedef Tag_false                            Is_numerical_sensitive;                                                           
     class Gcd 
       : public Binary_function< Type, Type, Type > {
     public:
