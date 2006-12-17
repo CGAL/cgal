@@ -15,15 +15,6 @@
 // Author(s)     : Marcel Janer <marcel_janer@terra.es> 
 //                 Ron Wein <wein@post.tau.ac.il>
 
-// TODO: real -> integer value.
-//       absolute value of integer.
-//       construction of rational from two integers.
-//       real -> to double interval.
-//       Check the return type of leda::sign
-//       Get a coefficient from a polynomial.
-//       Check the evaluate() function of a polynomial.
-//       How to divide two polynomials? 
-
 #ifndef CGAL_LEDA_ALGEBRAIC_NUMBER_TRAITS_2_H
 #define CGAL_LEDA_ALGEBRAIC_NUMBER_TRAITS_2_H
 
@@ -525,8 +516,8 @@ public:
                      const Polynomial& polyB,
                      Polynomial& rem) const
   {
-    rem = polyA;
-    return (rem.pseudoRemainder (polyB));     // RWRW!
+    rem = polyA % polyB;                      // ???
+    return (polyA / polyB);                   // ???
   }
 
   /*!
