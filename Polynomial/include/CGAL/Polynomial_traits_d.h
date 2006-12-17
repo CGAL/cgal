@@ -95,6 +95,15 @@ class Polynomial_traits_d_base {
         :public Unary_function <ICoeff, ICoeff>{
         ICoeff operator()(const ICoeff& x){return x;}
     };
+    struct Degree_vector{
+        typedef std::vector<int>        result_type;
+        typedef Coefficient             argument_type;
+        
+        // returns the exponent vector of inner_most_lcoeff. 
+        result_type operator()(const Coefficient& constant){
+            return std::vector<int>();
+        }
+    };
 };
 
 } // namespace CGALi
@@ -478,6 +487,23 @@ public:
             typename PTC::Innermost_leading_coefficient ilcoeff;
             typename PT::Leading_coefficient lcoeff;
             return ilcoeff(lcoeff(p));
+        }
+    };
+    // returns the Exponten_vector of the innermost leading coefficient 
+    // TODO use Exponent vector 
+    // TODO document 
+    struct Degree_vector{
+        typedef std::vector<int>        result_type;
+        typedef Polynomial_d              argument_type;
+        
+        // returns the exponent vector of inner_most_lcoeff. 
+        result_type operator()(const Polynomial_d& polynomial){
+            
+            typename PTC::Degree_vector degree_vector;
+            
+            std::vector<int> result = degree_vector(polynomial.lcoeff());
+            result.insert(result.begin(),polynomial.degree());
+            return result;
         }
     };
     
