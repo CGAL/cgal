@@ -24,8 +24,6 @@
  * The number-type traits for CORE algebraic numbers.
  */
 
-//#include <CORE/BigInt.h>
-//#include <CORE/BigRat.h>
 #include <CGAL/CORE_BigInt.h>
 #include <CGAL/CORE_BigRat.h>
 #include <CGAL/CORE_Expr.h>
@@ -448,6 +446,8 @@ public:
 
   /*!
    * Get the coefficient of the monomial x^i in the given polynomial.
+   * \param poly The polynomial.
+   * \param i The coefficient index.
    */
   Integer get_coefficient (const Polynomial& poly, unsigned int i) const
   {
