@@ -126,7 +126,7 @@ Polynomial<Coeff> algorithm_x(
     int prime_index = -1;
     int n = 0; // number of lucky primes 
     std::vector<int> dv_F1 = degree_vector(F1);
-    std::vector<int> dv_F2 = degree_vector(F1);
+    std::vector<int> dv_F2 = degree_vector(F2);
     std::vector<int> dv_e = min(dv_F1,dv_F2);;
  
     MScalar mg_;
