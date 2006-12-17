@@ -124,14 +124,19 @@ class Polynomial_algebraic_structure_traits_base< POLY, Unique_factorization_dom
       : public Binary_function< POLY, POLY, POLY > {
       public:
         POLY operator()( const POLY& x, const POLY& y ) const {
+            typedef Algebraic_structure_traits<POLY> AST;
+            typename AST::Integral_division idiv;
+            typename AST::Unit_part upart; 
+
           // First: the extreme cases and negative sign corrections.          
           if (x == POLY(0)) {
               if (y == POLY(0))  
                   return POLY(0);
-              return y.abs(); // TODO: Is this correct?
+              return idiv(y,upart(y));
           }
           if (y == POLY(0))
-              return x.abs(); // TODO: Is this correct?
+              return idiv(x,upart(x));
+          
           return INTERN_POLYNOMIAL_GCD::gcd(x,y);
         }
         
