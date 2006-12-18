@@ -950,10 +950,8 @@ a precise indication of the kind of invalidity encountered.}
 
 \ccHeading{I/O}
 
-\cgal\ provides an interface to Geomview for a 3D-triangulation. 
-See the chapter on Geomview in the Support Library manual.
-% Cross referencing to other manuals is not (yet) possible
-%See Chapter~\ref{ChapterGeomview}. 
+\cgal\ provides an interface to Geomview for a 3D-triangulation,
+see Chapter~\ref{ChapterGeomview} on \ccc{Geomview_stream}.
 \ccInclude{CGAL/IO/Triangulation_geomview_ostream_3.h}
 
 \ccFunction{istream& operator>> (istream& is, Triangulation_3 &t);}
@@ -961,7 +959,9 @@ See the chapter on Geomview in the Support Library manual.
 calling the corresponding input operator of the triangulation data
 structure class, and the non-combinatorial information by calling the
 corresponding input operators of the vertex and the cell
-classes. Assigns the resulting triangulation to \ccc{t}.}
+classes (such as point coordinates), which are provided by overloading
+the stream operators of the vertex and cell types.
+Assigns the resulting triangulation to \ccc{t}.}
 
 \ccFunction{ostream& operator<< (ostream& os, const Triangulation_3 &t);}
 {Writes the triangulation \ccc{t} into \ccc{os}.}
