@@ -154,16 +154,16 @@ CHANGES = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.fwi = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 
 # Script formats
-*.sh = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;svn:executable
-*.csh = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;svn:executable
-*.bat = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.sh = svn:eol-style=LF;svn:keywords=Author Date Id Revision URL;svn:executable
+*.csh = svn:eol-style=LF;svn:keywords=Author Date Id Revision URL;svn:executable
+*.bat = svn:eol-style=CRLF;svn:keywords=Author Date Id Revision URL
 *.run = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;svn:executable
 *.pl = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;svn:executable
 *.pm = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;svn:executable
 *.py = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;svn:executable
-cgal_test = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;svn:executable
-run_testsuite = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;svn:executable
-*.cmd = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+cgal_test = svn:eol-style=LF;svn:keywords=Author Date Id Revision URL;svn:executable
+run_testsuite = svn:eol-style=LF;svn:keywords=Author Date Id Revision URL;svn:executable
+*.cmd = svn:eol-style=LF;svn:keywords=Author Date Id Revision URL
 *.dpatch = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;svn:executable
 
 # Code formats
@@ -198,11 +198,11 @@ Makefilevc = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.kdevelop.filelist = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.kdevses = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.kdevelop.pcs = svn:mime-type=application/octet-stream
-*.dsp = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
-*.dsw = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
-*.vcproj = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.dsp = svn:eol-style=CRLF;svn:keywords=Author Date Id Revision URL
+*.dsw = svn:eol-style=CRLF;svn:keywords=Author Date Id Revision URL
+*.vcproj = svn:eol-style=CRLF;svn:keywords=Author Date Id Revision URL
 *.vc = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
-*.sln = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.sln = svn:eol-style=CRLF;svn:keywords=Author Date Id Revision URL
 *.suo = svn:mime-type=application/octet-stream
 *.def = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
 *.rc = svn:eol-style=native;svn:keywords=Author Date Id Revision URL

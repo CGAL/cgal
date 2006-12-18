@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://mkaravel@scm.gforge.inria.fr/svn/cgal/trunk/Apollonius_graph_2/include/CGAL/new_traits/Vertex_conflict_2.h $
-// $Id: Vertex_conflict_2.h 32559 2006-07-17 14:08:26Z mkaravel $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@tem.uoc.gr>

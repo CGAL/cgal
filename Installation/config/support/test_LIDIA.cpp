@@ -15,8 +15,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk/Installation/config/support/test_BOOST.C $
-// $Id: test_BOOST.C 30642 2006-04-18 12:42:52Z lsaboret $
+// $URL$
+// $Id$
 //
 //
 // Author(s)     : Andreas Meyer

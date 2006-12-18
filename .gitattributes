@@ -1,151 +1,21 @@
 * text=auto !eol
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/AdaptableBinaryFunction.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/AdaptableUnaryFunction.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/AlgebraicStructureTraits.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/AlgebraicStructureTraits_Div.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/AlgebraicStructureTraits_DivMod.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/AlgebraicStructureTraits_Gcd.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/AlgebraicStructureTraits_IntegralDivision.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/AlgebraicStructureTraits_IsOne.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/AlgebraicStructureTraits_IsSquare.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/AlgebraicStructureTraits_IsZero.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/AlgebraicStructureTraits_KthRoot.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/AlgebraicStructureTraits_Mod.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/AlgebraicStructureTraits_RootOf.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/AlgebraicStructureTraits_Simplify.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/AlgebraicStructureTraits_Sqrt.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/AlgebraicStructureTraits_Square.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/AlgebraicStructureTraits_UnitPart.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Algebraic_structure_traits.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/CORE_BigInt.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/CORE_BigRat.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Coercion_traits.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Counted_number.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/EuclideanRing.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Euclidean_ring_tag.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/ExplicitInteroperable.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Field.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/FieldWithKthRoot.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/FieldWithRootOf.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/FieldWithSqrt.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Field_tag.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Field_with_kth_root_tag.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Field_with_root_of_tag.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Field_with_sqrt_tag.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/FractionTraits.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/FractionTraits_CommonFactor.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/FractionTraits_Compose.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/FractionTraits_Decompose.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Fraction_traits.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/FromDoubleConstructible.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/FromSmallIntConstructible.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Gmpzf.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/ImplicitInteroperable.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/IntegralDomain.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/IntegralDomainWithoutDivision.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Integral_domain_tag.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Integral_domain_without_division_tag.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Is_valid_functor.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Null_functor.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Null_tag.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/RealEmbeddable.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/RealEmbeddableTraits.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/RealEmbeddableTraits_Abs.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/RealEmbeddableTraits_Compare.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/RealEmbeddableTraits_IsFinite.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/RealEmbeddableTraits_IsNegative.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/RealEmbeddableTraits_IsPositive.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/RealEmbeddableTraits_IsZero.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/RealEmbeddableTraits_Sign.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/RealEmbeddableTraits_ToDouble.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/RealEmbeddableTraits_ToDoubleInterval.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/RealEmbeddableTraits_ToInterval.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Real_embeddable_traits.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Sqrt_extension.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/UniqueFactorizationDomain.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Unique_factorization_domain_tag.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/abs.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/compare.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/div.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/div_mod.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/gcd.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/integral_division.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/is_finite.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/is_negative.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/is_one.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/is_positive.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/is_square.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/is_valid.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/is_zero.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/kth_root.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/leda_bigfloat.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/leda_rational.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/leda_real.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/mod.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/open.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/root_of.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/sign.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/simplify.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/sqrt.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/square.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/to_double.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/to_interval.tex -text
-Algebraic_foundations/doc_tex/Algebraic_foundations_ref/unit_part.tex -text
-Algebraic_foundations/include/CGAL/Algebraic_extension_traits.h -text
-Algebraic_foundations/include/CGAL/Algebraic_structure_traits.h -text
-Algebraic_foundations/include/CGAL/Coercion_traits.h -text
-Algebraic_foundations/include/CGAL/Fraction_traits.h -text
-Algebraic_foundations/include/CGAL/Needs_parens_as_product.h -text
-Algebraic_foundations/include/CGAL/Rational_traits.h -text
-Algebraic_foundations/include/CGAL/Real_embeddable_traits.h -text
-Algebraic_foundations/include/CGAL/Scalar_factor_traits.h -text
-Algebraic_foundations/include/CGAL/utils.h -text
-Algebraic_foundations/include/CGAL/utils_classes.h -text
-Algebraic_foundations/test/Algebraic_foundations/Algebraic_extension_traits.C -text
-Algebraic_foundations/test/Algebraic_foundations/Algebraic_structure_traits.C -text
-Algebraic_foundations/test/Algebraic_foundations/Coercion_traits.C -text
-Algebraic_foundations/test/Algebraic_foundations/Real_embeddable_traits.C -text
-Algebraic_foundations/test/Algebraic_foundations/Scalar_factor_traits.C -text
 Algebraic_kernel_GBRS/config/support/S25-MPFI -text
 Algebraic_kernel_GBRS/config/support/S27-RS -text
-Algebraic_kernel_GBRS/config/support/test_MPFI.C -text
-Algebraic_kernel_GBRS/config/support/test_RS.C -text
-Algebraic_kernel_GBRS/doc_tex/MpfiInterval/MpfiInterval.tex -text
-Algebraic_kernel_GBRS/doc_tex/MpfiInterval/main.tex -text
-Algebraic_kernel_GBRS/doc_tex/MpfiInterval_ref/MpfiInterval_ref.tex -text
-Algebraic_kernel_GBRS/doc_tex/MpfiInterval_ref/main.tex -text
-Algebraic_kernel_GBRS/include/CGAL/Gbrs_algebraic_1.h -text
-Algebraic_kernel_GBRS/include/CGAL/Gbrs_algebraic_1_impl.h -text
-Algebraic_kernel_GBRS/include/CGAL/Gbrs_algebraic_kernel.h -text
-Algebraic_kernel_GBRS/include/CGAL/Gbrs_functors.h -text
-Algebraic_kernel_GBRS/include/CGAL/Gbrs_polynomial_1.h -text
-Algebraic_kernel_GBRS/include/CGAL/Gbrs_polynomial_1_impl.h -text
-Algebraic_kernel_GBRS/include/CGAL/Gbrs_polynomial_2.h -text
-Algebraic_kernel_GBRS/include/CGAL/Gbrs_polynomial_2_impl.h -text
-Algebraic_kernel_GBRS/include/CGAL/Gbrs_solve_1.h -text
 Algebraic_kernel_GBRS/install_cgal -text
-Algebraic_kernel_GBRS/readme.txt -text
-Algebraic_kernel_GBRS/src/Gbrs/Gbrs_algebraic_1.cpp -text
-Algebraic_kernel_GBRS/src/Gbrs/Gbrs_polynomial_1.cpp -text
-Algebraic_kernel_GBRS/src/Gbrs/Gbrs_polynomial_2.cpp -text
-Algebraic_kernel_GBRS/src/Gbrs/Gbrs_solve_1.cpp -text
-Algebraic_kernel_GBRS/src/Gbrs/makefile -text
-Algebraic_kernel_GBRS/test/Gbrs_polynomial/Gbrs_algebraic_kernel_1.C -text
-Algebraic_kernel_GBRS/test/Gbrs_polynomial/Gbrs_polynomial_1.C -text
-Algebraic_kernel_GBRS/test/Gbrs_polynomial/Gbrs_polynomial_2.C -text
-Algebraic_kernel_GBRS/test/Gbrs_polynomial/makefile -text
-Algebraic_kernel_GBRS/test/MpfiInterval/Mpfi.C -text
-Algebraic_kernel_GBRS/test/MpfiInterval/makefile -text
 Algebraic_kernel_d/doc_tex/Curve_and_curve_pair_analysis_2_ref/figures/cpvl.eps -text svneol=unset#application/postscript
 Algebraic_kernel_d/doc_tex/Curve_and_curve_pair_analysis_2_ref/figures/cpvl.fig -text svneol=unset#application/octet-stream
+Alpha_shapes_2/demo/Alpha_shapes_2/alpha_shapes_2.vcproj eol=crlf
 Alpha_shapes_2/demo/Alpha_shapes_2/data/m30f.jpg -text svneol=unset#image/jpeg
 Alpha_shapes_2/demo/Alpha_shapes_2/help/index.html svneol=native#text/html
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.eps -text svneol=unset#application/postscript
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.gif -text svneol=unset#image/gif
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.pdf -text svneol=unset#application/pdf
+Alpha_shapes_3/demo/Alpha_shapes_3/alpha_shapes_3.vcproj eol=crlf
+Alpha_shapes_3/demo/Alpha_shapes_3/weighted_alpha_shapes_3.vcproj eol=crlf
 Alpha_shapes_3/doc_tex/Alpha_shapes_3/alphashape.eps -text svneol=unset#application/postscript
 Alpha_shapes_3/doc_tex/Alpha_shapes_3/alphashape.gif -text svneol=unset#image/gif
 Alpha_shapes_3/doc_tex/Alpha_shapes_3/alphashape.pdf -text svneol=unset#application/pdf
+Apollonius_graph_2/demo/Apollonius_graph_2/apollonius_graph_2.vcproj eol=crlf
 Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-both_vertices.eps -text svneol=unset#application/postscript
 Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-both_vertices.gif -text svneol=unset#image/gif
 Apollonius_graph_2/doc_tex/Apollonius_graph_2/apollonius-both_vertices_bw.eps -text svneol=unset#application/postscript
@@ -190,14 +60,10 @@ Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.eps -text svne
 Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.fig -text svneol=unset#application/octet-stream
 Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.gif -text svneol=unset#image/gif
 Apollonius_graph_2/doc_tex/Apollonius_graph_2_ref/insert_degree_2.png -text svneol=unset#image/png
-Apollonius_graph_2/include/CGAL/Apollonius_graph_2/new_traits/Apollonius_graph_new_filtered_traits_2.h -text
-Apollonius_graph_2/include/CGAL/Apollonius_graph_2/new_traits/Apollonius_graph_new_traits_2.h -text
-Apollonius_graph_2/include/CGAL/Apollonius_graph_2/uncertain/Apollonius_graph_uncertain_filtered_traits_2.h -text
-Apollonius_graph_2/include/CGAL/Apollonius_graph_2/uncertain/Uncertain_vertex_conflict_2.h -text
-Apollonius_graph_2/test/Apollonius_graph_2/test_ag_new_traits_2.cpp -text
 Approximate_min_ellipsoid_d/documentation/boundingbox.mw -text svneol=native#application/octet-stream
 Arrangement_2/bench/data/benchArrPolylines.xml svneol=native#text/xml
 Arrangement_2/bench/data/benchArrSegments.xml svneol=native#text/xml
+Arrangement_2/demo/Arrangement_2/arrangement_2.vcproj eol=crlf
 Arrangement_2/demo/Arrangement_2/help/index.html svneol=native#text/html
 Arrangement_2/demo/Arrangement_2/icons/demo_delete.bmp -text svneol=unset#image/bmp
 Arrangement_2/demo/Arrangement_2/icons/demo_insert.bmp -text svneol=unset#image/bmp
@@ -209,10 +75,8 @@ Arrangement_2/demo/Arrangement_2/icons/demo_snapvertex.bmp -text svneol=unset#im
 Arrangement_2/demo/Arrangement_2/icons/demo_split.bmp -text svneol=unset#image/bmp
 Arrangement_2/demo/Arrangement_2/icons/demo_zoomin.bmp -text svneol=unset#image/bmp
 Arrangement_2/demo/Arrangement_2/icons/demo_zoomout.bmp -text svneol=unset#image/bmp
-Arrangement_2/demo/Arrangement_2/icons/lower_env_xpm.bmp -text
-Arrangement_2/demo/Arrangement_2/icons/lower_env_xpm.xpm -text
-Arrangement_2/demo/Arrangement_2/icons/upper_env_xpm.bmp -text
-Arrangement_2/demo/Arrangement_2/icons/upper_env_xpm.xpm -text
+Arrangement_2/demo/Arrangement_2/icons/lower_env_xpm.bmp -text svneol=unset#image/bmp
+Arrangement_2/demo/Arrangement_2/icons/upper_env_xpm.bmp -text svneol=unset#image/bmp
 Arrangement_2/doc_tex/Arrangement_2/fig/Bezier_arr.eps -text svneol=unset#application/postscript
 Arrangement_2/doc_tex/Arrangement_2/fig/Bezier_arr.gif -text svneol=unset#image/gif
 Arrangement_2/doc_tex/Arrangement_2/fig/Bezier_arr.pdf -text svneol=unset#application/pdf
@@ -423,7 +287,10 @@ Arrangement_2/doc_tex/Sweep_line_2/sl_simple.ps -text svneol=unset#application/p
 Arrangement_2/examples/Arrangement_2/Bezier.dat -text
 Arrangement_2/examples/Arrangement_2/coll_points.dat -text
 Arrangement_2/examples/Arrangement_2/points.dat -text
-Arrangement_2/include/CGAL/IO/Qt_widget_Linear_object_2.h -text
+Arrangement_2/test/Arrangement_2/cgal_test eol=lf
+Arrangement_2/test/Arrangement_2/point_location.cmd eol=lf
+Arrangement_2/test/Arrangement_2/test_construction.cmd eol=lf
+Arrangement_2/test/Sweep_line_2/cgal_test eol=lf
 Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/1GWB.spheres -text svneol=unset#application/octet-stream
 Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/degen.spheres -text svneol=unset#application/octet-stream
 Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/degen2.spheres -text svneol=unset#application/octet-stream
@@ -438,73 +305,25 @@ Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/problem.spheres -tex
 Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/really_simple.spheres -text svneol=unset#application/octet-stream
 Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/simple.spheres -text svneol=unset#application/octet-stream
 Arrangement_of_spheres_3/demo/Arrangement_of_spheres_3/data/two.spheres -text svneol=unset#application/octet-stream
-Arrangement_of_spheres_3/src/CGAL/Arrangement_of_spheres_3.C -text
-Arrangement_of_spheres_3/src/CGAL/Combinatorial_stuff.C -text
-Arrangement_of_spheres_3/src/CGAL/Slice_kds.C -text
-Arrangement_of_spheres_3/src/CGAL/Sphere_3_table.C -text
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/data/random_point_locate.spheres -text svneol=unset#application/octet-stream
 Arrangement_of_spheres_3/test/Arrangement_of_spheres_3/the_plan -text
-BGL/doc_tex/BGL.tex -text
-BGL/doc_tex/BGL/BGL.tex -text
-BGL/doc_tex/BGL/PkgDescription.tex -text
-BGL/doc_tex/BGL/fig/ex_bgl.eps -text
-BGL/doc_tex/BGL/fig/ex_bgl.fig -text
-BGL/doc_tex/BGL/fig/ex_bgl.gif -text
-BGL/doc_tex/BGL/fig/ex_bgl.pdf -text
-BGL/doc_tex/BGL/fig/ex_bgl.pstex -text
-BGL/doc_tex/BGL/fig/ex_bgl.pstex_t -text
-BGL/doc_tex/BGL/main.tex -text
-BGL/doc_tex/BGL_ref/Edge_index_property_map_external.tex -text
-BGL/doc_tex/BGL_ref/Edge_index_property_map_stored.tex -text
-BGL/doc_tex/BGL_ref/Edge_index_t_enum.tex -text
-BGL/doc_tex/BGL_ref/Edge_is_border_t_enum.tex -text
-BGL/doc_tex/BGL_ref/HalfedgeDS_face_max_base_with_id.tex -text
-BGL/doc_tex/BGL_ref/HalfedgeDS_halfedge_max_base_with_id.tex -text
-BGL/doc_tex/BGL_ref/HalfedgeDS_vertex_max_base_with_id.tex -text
-BGL/doc_tex/BGL_ref/HalfedgeGraph.tex -text
-BGL/doc_tex/BGL_ref/Polyhedron_edge_is_border_map.tex -text
-BGL/doc_tex/BGL_ref/Polyhedron_items_with_id_3.tex -text
-BGL/doc_tex/BGL_ref/Polyhedron_vertex_point_const_map.tex -text
-BGL/doc_tex/BGL_ref/Polyhedron_vertex_point_map.tex -text
-BGL/doc_tex/BGL_ref/Vertex_is_border_t_enum.tex -text
-BGL/doc_tex/BGL_ref/Vertex_point_t_enum.tex -text
-BGL/doc_tex/BGL_ref/graph_traits_Polyhedron_3.tex -text
-BGL/doc_tex/BGL_ref/halfedge_graph_traits_Polyhedron_3.tex -text
-BGL/doc_tex/BGL_ref/intro.tex -text
-BGL/doc_tex/BGL_ref/main.tex -text
-BGL/examples/BGL_arrangement_2/arr_print.h -text
-BGL/examples/BGL_arrangement_2/makefile -text
-BGL/examples/BGL_polyhedron_3/kruskal_with_stored_id.cpp -text
-BGL/examples/BGL_polyhedron_3/makefile -text
-BGL/examples/BGL_triangulation_2/makefile -text
-BGL/include/CGAL/HalfedgeDS_face_max_base_with_id.h -text
-BGL/include/CGAL/HalfedgeDS_halfedge_max_base_with_id.h -text
-BGL/include/CGAL/HalfedgeDS_vertex_max_base_with_id.h -text
-BGL/include/CGAL/Polyhedron_items_with_id_3.h -text
-BGL/include/CGAL/boost/graph/graph_traits_HalfedgeDS.h -text
-BGL/include/CGAL/boost/graph/graph_traits_Polyhedron_3.h -text
-BGL/include/CGAL/boost/graph/halfedge_graph_traits.h -text
-BGL/include/CGAL/boost/graph/halfedge_graph_traits_HalfedgeDS.h -text
-BGL/include/CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h -text
-BGL/include/CGAL/boost/graph/named_function_params.h -text
-BGL/include/CGAL/boost/graph/properties.h -text
-BGL/include/CGAL/boost/graph/properties_Polyhedron_3.h -text
-BGL/test/BGL/cgal_test -text
-BGL/test/BGL/data/7_faces_traingle.off -text
-BGL/test/BGL/data/genus3.off -text
-BGL/test/BGL/data/head.off -text
-BGL/test/BGL/data/hedra.off -text
-BGL/test/BGL/data/hedra_open.off -text
-BGL/test/BGL/data/open_cube.off -text
-BGL/test/BGL/data/rombus.off -text
-BGL/test/BGL/data/tetrahedron.off -text
-BGL/test/BGL/data/triangle.off -text
-BGL/test/BGL/data/triangular_hole.off -text
-BGL/test/BGL/halfedge_graph_traits_Polyhedron_3.cpp -text
-BGL/test/BGL/makefile -text
-BGL/test/BGL/properties_Polyhedron_3.cpp -text
-BGL/test/BGL/test_prefix_Polyhedron_3.cpp -text
-BGL/test/BGL/test_suffix_Polyhedron_3.cpp -text
+BGL/doc_tex/BGL/fig/ex_bgl.eps -text svneol=unset#application/postscript
+BGL/doc_tex/BGL/fig/ex_bgl.fig -text svneol=unset#application/octet-stream
+BGL/doc_tex/BGL/fig/ex_bgl.gif -text svneol=unset#image/gif
+BGL/doc_tex/BGL/fig/ex_bgl.pdf -text svneol=unset#application/pdf
+BGL/doc_tex/BGL/fig/ex_bgl.pstex -text svneol=unset#application/postscript
+BGL/doc_tex/BGL/fig/ex_bgl.pstex_t -text svneol=unset#application/postscript
+BGL/test/BGL/cgal_test eol=lf
+BGL/test/BGL/data/7_faces_traingle.off -text svneol=unset#application/octet-stream
+BGL/test/BGL/data/genus3.off -text svneol=unset#application/octet-stream
+BGL/test/BGL/data/head.off -text svneol=unset#application/octet-stream
+BGL/test/BGL/data/hedra.off -text svneol=unset#application/octet-stream
+BGL/test/BGL/data/hedra_open.off -text svneol=unset#application/octet-stream
+BGL/test/BGL/data/open_cube.off -text svneol=unset#application/octet-stream
+BGL/test/BGL/data/rombus.off -text svneol=unset#application/octet-stream
+BGL/test/BGL/data/tetrahedron.off -text svneol=unset#application/octet-stream
+BGL/test/BGL/data/triangle.off -text svneol=unset#application/octet-stream
+BGL/test/BGL/data/triangular_hole.off -text svneol=unset#application/octet-stream
 Benchmark/doc_tex/Benchmark/Conics_14_1.arr -text
 Benchmark/doc_tex/Benchmark/fig/Conics_14_1.eps -text svneol=unset#application/postscript
 Benchmark/doc_tex/Benchmark/fig/Conics_14_1.gif -text svneol=unset#image/gif
@@ -513,6 +332,7 @@ Benchmark/doc_tex/Benchmark/fig/classification.eps -text svneol=unset#applicatio
 Benchmark/doc_tex/Benchmark/fig/classification.gif -text svneol=unset#image/gif
 Benchmark/doc_tex/Benchmark/fig/classification.pdf -text svneol=unset#application/pdf
 Benchmark/src/Benchmark/benchmark_lexer.l -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2/boolean_operations.vcproj eol=crlf
 Boolean_set_operations_2/demo/Boolean_set_operations_2/data/vlsi_1.dxf -text svneol=unset#application/octet-stream
 Boolean_set_operations_2/demo/Boolean_set_operations_2/data/vlsi_2.dxf -text svneol=unset#application/octet-stream
 Boolean_set_operations_2/demo/Boolean_set_operations_2/help/index.html svneol=native#text/html
@@ -528,8 +348,7 @@ Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/intersection.bmp -t
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/locate.bmp -text svneol=unset#image/bmp
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/make_P.bmp -text svneol=unset#image/bmp
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/make_Q.bmp -text svneol=unset#image/bmp
-Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/mink_sum.bmp -text
-Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/mink_sum.xpm -text
+Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/mink_sum.bmp -text svneol=unset#image/bmp
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/refresh.bmp -text svneol=unset#image/bmp
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/symm_diff.bmp -text svneol=unset#image/bmp
 Boolean_set_operations_2/demo/Boolean_set_operations_2/icons/union.bmp -text svneol=unset#image/bmp
@@ -571,6 +390,8 @@ Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/unique.eps -text s
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/unique.gif -text svneol=unset#image/gif
 Boolean_set_operations_2/doc_tex/Boolean_set_operations_2/fig/unique.pdf -text svneol=unset#application/pdf
 Boolean_set_operations_2/examples/Boolean_set_operations_2/test.dxf -text svneol=unset#application/octet-stream
+Boolean_set_operations_2/test/Boolean_set_operations_2/test_agg_op.cmd eol=lf
+Boolean_set_operations_2/test/Boolean_set_operations_2/test_bop.cmd eol=lf
 Box_intersection_d/doc_tex/Box_intersection_d/fig/benchmark.eps -text svneol=unset#application/postscript
 Box_intersection_d/doc_tex/Box_intersection_d/fig/benchmark.gif -text svneol=unset#image/gif
 Box_intersection_d/doc_tex/Box_intersection_d/fig/benchmark.pdf -text svneol=unset#application/pdf
@@ -582,36 +403,31 @@ Circular_kernel_2/Benchmarks/parser/Report.pdf -text svneol=unset#application/pd
 Circular_kernel_2/Benchmarks/readme.doc -text svneol=unset#application/msword
 Circular_kernel_2/Benchmarks/readme.pdf -text svneol=unset#application/pdf
 Circular_kernel_2/Benchmarks/readme.sxw -text
+Circular_kernel_2/demo/Circular_kernel_2/demo.vcproj eol=crlf
 Circular_kernel_2/demo/Circular_kernel_2/help/get_arc.jpeg -text svneol=unset#image/jpeg
 Circular_kernel_2/demo/Circular_kernel_2/help/index.html svneol=native#text/html
 Circular_kernel_2/demo/Circular_kernel_2/help/planar_map_icon.jpeg -text svneol=unset#image/jpeg
 Circular_kernel_2/demo/Circular_kernel_2/help/sweeper.jpeg -text svneol=unset#image/jpeg
 Circular_kernel_2/demo/Circular_kernel_2/help/trash.jpeg -text svneol=unset#image/jpeg
-Circular_kernel_3/TODO -text
-Circular_kernel_3/demo/Circular_kernel_3/images/arrow_01_down.xpm -text
-Circular_kernel_3/demo/Circular_kernel_3/images/arrow_01_left.xpm -text
-Circular_kernel_3/demo/Circular_kernel_3/images/arrow_01_right.xpm -text
-Circular_kernel_3/demo/Circular_kernel_3/images/arrow_01_up.xpm -text
-Circular_kernel_3/demo/Circular_kernel_3/images/button_axis.gif -text
-Circular_kernel_3/demo/Circular_kernel_3/images/button_light.gif -text
-Circular_kernel_3/demo/Circular_kernel_3/images/button_line.gif -text
-Circular_kernel_3/demo/Circular_kernel_3/images/button_pivot.gif -text
-Circular_kernel_3/demo/Circular_kernel_3/images/button_solid.gif -text
-Circular_kernel_3/demo/Circular_kernel_3/images/button_solid.xpm -text
-Circular_kernel_3/demo/Circular_kernel_3/images/button_texture.gif -text
-Circular_kernel_3/demo/Circular_kernel_3/images/button_wire.gif -text
-Circular_kernel_3/demo/Circular_kernel_3/images/button_wire.xpm -text
-Circular_kernel_3/demo/Circular_kernel_3/images/d_solid_b.gif -text
-Circular_kernel_3/demo/Circular_kernel_3/images/d_solid_b.xpm -text
-Circular_kernel_3/demo/Circular_kernel_3/images/d_wire_b.gif -text
-Circular_kernel_3/demo/Circular_kernel_3/images/d_wire_b.xpm -text
-Circular_kernel_3/demo/Circular_kernel_3/images/zoom_in.xpm -text
-Circular_kernel_3/demo/Circular_kernel_3/images/zoom_out.xpm -text
+Circular_kernel_3/demo/Circular_kernel_3/images/button_axis.gif -text svneol=unset#image/gif
+Circular_kernel_3/demo/Circular_kernel_3/images/button_light.gif -text svneol=unset#image/gif
+Circular_kernel_3/demo/Circular_kernel_3/images/button_line.gif -text svneol=unset#image/gif
+Circular_kernel_3/demo/Circular_kernel_3/images/button_pivot.gif -text svneol=unset#image/gif
+Circular_kernel_3/demo/Circular_kernel_3/images/button_solid.gif -text svneol=unset#image/gif
+Circular_kernel_3/demo/Circular_kernel_3/images/button_texture.gif -text svneol=unset#image/gif
+Circular_kernel_3/demo/Circular_kernel_3/images/button_wire.gif -text svneol=unset#image/gif
+Circular_kernel_3/demo/Circular_kernel_3/images/d_solid_b.gif -text svneol=unset#image/gif
+Circular_kernel_3/demo/Circular_kernel_3/images/d_wire_b.gif -text svneol=unset#image/gif
 Circular_kernel_3/examples/Circular_kernel_3/example_Circular_kernel_3 -text
+Circulator/examples/Circulator/cgal_test eol=lf
+Convex_hull_2/demo/Convex_hull_2/convex_hull_2.vcproj eol=crlf
 Convex_hull_2/demo/Convex_hull_2/help/index.html svneol=native#text/html
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.eps -text svneol=unset#application/postscript
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.gif -text svneol=unset#image/gif
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.pdf -text svneol=unset#application/pdf
+Convex_hull_2/examples/Convex_hull_2/ch_example_timing.cmd eol=lf
+Core/src/Core/Core.sln eol=crlf
+Core/src/Core/Core.vcproj eol=crlf
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_ipoint.gif -text svneol=unset#image/gif
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_orientation.gif -text svneol=unset#image/gif
 Developers_manual/doc_tex/Developers_manual/fig/Object.eps -text svneol=unset#application/postscript
@@ -639,6 +455,8 @@ Developers_manual/doc_tex/Developers_manual/fig/reference_counting.pdf -text svn
 Developers_manual/doc_tex/Developers_manual/fig/use_real.eps -text svneol=unset#application/postscript
 Developers_manual/doc_tex/Developers_manual/fig/use_real.gif -text svneol=unset#image/gif
 Developers_manual/doc_tex/Developers_manual/fig/use_real.pdf -text svneol=unset#application/pdf
+Distance_2/test/Distance_2/cgal_test eol=lf
+Distance_3/test/Distance_3/cgal_test eol=lf
 Envelope_2/doc_tex/Envelope_2/fig/ex_circle.eps -text svneol=unset#application/postscript
 Envelope_2/doc_tex/Envelope_2/fig/ex_circle.fig -text svneol=unset#application/octet-stream
 Envelope_2/doc_tex/Envelope_2/fig/ex_circle.gif -text svneol=unset#image/gif
@@ -651,38 +469,15 @@ Envelope_2/doc_tex/Envelope_2/fig/min_diag.fig -text svneol=unset#application/oc
 Envelope_2/doc_tex/Envelope_2/fig/min_diag.gif -text svneol=unset#image/gif
 Envelope_2/doc_tex/Envelope_2/fig/min_diag.pdf -text svneol=unset#application/pdf
 Envelope_2/examples/Envelope_2/ch_points.dat -text
-Envelope_2/examples/Envelope_2/ex_envelope_segments.cpp -text
+Envelope_2/test/Envelope_2/cgal_test eol=lf
 Envelope_2/test/Envelope_2/data/Europe.dat -text
 Envelope_2/test/Envelope_2/data/onebig_100.dat -text
 Envelope_2/test/Envelope_2/data/random_500.dat -text
 Envelope_2/test/Envelope_2/data/segs_4.dat -text
-Envelope_3/demo/Envelope_3/data/planes/plane1.txt eol=lf
-Envelope_3/demo/Envelope_3/data/planes/plane2.txt eol=lf
-Envelope_3/demo/Envelope_3/data/planes/plane3.txt eol=lf
-Envelope_3/demo/Envelope_3/data/planes/plane4.txt eol=lf
-Envelope_3/demo/Envelope_3/data/planes/plane5.txt eol=lf
-Envelope_3/demo/Envelope_3/data/planes/plane6.txt -text
-Envelope_3/demo/Envelope_3/data/planes/plane7.txt -text
-Envelope_3/demo/Envelope_3/data/planes/plane8.txt -text
-Envelope_3/demo/Envelope_3/data/spheres/sphere1.txt eol=lf
-Envelope_3/demo/Envelope_3/data/spheres/sphere2.txt eol=lf
-Envelope_3/demo/Envelope_3/data/spheres/sphere3.txt eol=lf
-Envelope_3/demo/Envelope_3/data/triangles/triangle1.txt eol=lf
-Envelope_3/demo/Envelope_3/data/triangles/triangle2.txt eol=lf
-Envelope_3/demo/Envelope_3/data/triangles/triangle3.txt eol=lf
-Envelope_3/demo/Envelope_3/data/triangles/triangle4.txt eol=lf
-Envelope_3/demo/Envelope_3/data/triangles/triangle5.txt eol=lf
-Envelope_3/demo/Envelope_3/data/triangles/triangle6.txt eol=lf
-Envelope_3/demo/Envelope_3/envelope_3.cpp eol=lf
-Envelope_3/demo/Envelope_3/help/index.html eol=lf
-Envelope_3/demo/Envelope_3/icons/edges.bmp -text
-Envelope_3/demo/Envelope_3/icons/edges.xpm -text
-Envelope_3/demo/Envelope_3/icons/faces.bmp -text
-Envelope_3/demo/Envelope_3/icons/faces.xpm -text
-Envelope_3/demo/Envelope_3/icons/vertices.bmp -text
-Envelope_3/demo/Envelope_3/icons/vertices.xpm -text
-Envelope_3/demo/Envelope_3/makefile -text
-Envelope_3/demo/Envelope_3/typedefs.h eol=lf
+Envelope_3/demo/Envelope_3/help/index.html svneol=native#text/html
+Envelope_3/demo/Envelope_3/icons/edges.bmp -text svneol=unset#image/bmp
+Envelope_3/demo/Envelope_3/icons/faces.bmp -text svneol=unset#image/bmp
+Envelope_3/demo/Envelope_3/icons/vertices.bmp -text svneol=unset#image/bmp
 Envelope_3/doc_tex/Envelope_3/fig/compare_over_curve.eps -text svneol=unset#application/postscript
 Envelope_3/doc_tex/Envelope_3/fig/compare_over_curve.fig -text svneol=unset#application/octet-stream
 Envelope_3/doc_tex/Envelope_3/fig/compare_over_curve.gif -text svneol=unset#image/gif
@@ -707,12 +502,7 @@ Envelope_3/doc_tex/Envelope_3/fig/ex_triangles.eps -text svneol=unset#applicatio
 Envelope_3/doc_tex/Envelope_3/fig/ex_triangles.fig -text svneol=unset#application/octet-stream
 Envelope_3/doc_tex/Envelope_3/fig/ex_triangles.gif -text svneol=unset#image/gif
 Envelope_3/doc_tex/Envelope_3/fig/ex_triangles.pdf -text svneol=unset#application/pdf
-Envelope_3/doc_tex/Envelope_3_ref/lower_envelope_xy_monotone_3.tex -text
-Envelope_3/doc_tex/Envelope_3_ref/upper_envelope_xy_monotone_3.tex -text
-Envelope_3/examples/Envelope_3/ex_envelope_planes.cpp eol=lf
 Envelope_3/examples/Envelope_3/spheres.dat -text
-Envelope_3/include/CGAL/Env_plane_traits_3.h -text
-Envelope_3/include/CGAL/Envelope_3/Env_plane_traits_3_functions.h eol=lf
 Envelope_3/test/Envelope_3/data/spheres/stest.cin -text
 Envelope_3/test/Envelope_3/data/spheres/stest10.cin -text
 Envelope_3/test/Envelope_3/data/spheres/stest11.cin -text
@@ -769,11 +559,10 @@ Envelope_3/test/Envelope_3/data/triangles/test_random2.cin -text
 Envelope_3/test/Envelope_3/data/triangles/test_slow.cin -text
 Envelope_3/test/Envelope_3/data/triangles/test_w_overlap.cin -text
 Envelope_3/test/Envelope_3/data/triangles/test_w_vertical.cin -text
-Envelope_3/test/Envelope_3/spheres_test.C -text
 Envelope_3/test/Envelope_3/spheres_test.cmd eol=lf
-Envelope_3/test/Envelope_3/triangles_test.C -text
 Envelope_3/test/Envelope_3/triangles_test.cmd eol=lf
 Filtered_kernel/developer_scripts/profile_cleanup -text
+Generator/demo/Generator/generator.vcproj eol=crlf
 Generator/demo/Generator/help/index.html svneol=native#text/html
 Generator/doc_tex/Generator/Segment_generator_prog1.gif -text svneol=unset#image/gif
 Generator/doc_tex/Generator/Segment_generator_prog1.pdf -text svneol=unset#application/pdf
@@ -816,6 +605,9 @@ HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.eps -text svneol=unset#applic
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.gif -text svneol=unset#image/gif
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.pdf -text svneol=unset#application/pdf
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional_small.gif -text svneol=unset#image/gif
+HalfedgeDS/examples/HalfedgeDS/cgal_test eol=lf
+HalfedgeDS/test/HalfedgeDS/cgal_test eol=lf
+Hash_map/test/Hash_map/cgal_test eol=lf
 Installation/LICENSE.FREE_USE -text
 Installation/config/support/S05-BOOST -text
 Installation/config/support/S06-BOOST_PROGRAM_OPTIONS -text
@@ -849,14 +641,14 @@ Installation/config/support/S96-TAUCSDARWIN -text
 Installation/config/support/S97-TAUCSGCCMKL -text
 Installation/config/support/S98-TAUCSIRIXCC32 -text
 Installation/config/support/S99-TAUCSIRIXCC64 -text
-Installation/config/support/test_LIDIA.cpp -text
 Interpolation/doc_tex/Interpolation/nn_coords.eps -text svneol=unset#application/postscript
 Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#image/gif
 Interpolation/doc_tex/Interpolation/nn_coords.ipe -text svneol=unset#application/postscript
 Interpolation/doc_tex/Interpolation/nn_coords.pdf -text svneol=unset#application/pdf
 Interpolation/doc_tex/Interpolation/nn_coords.xml svneol=native#text/xml
-Interpolation/test/Interpolation/include/CGAL/_test_natural_neighbors_2.C -text
-Interpolation/test/Interpolation/test_natural_neighbors_2.C -text
+Intersections_2/test/Intersections_2/cgal_test eol=lf
+Intersections_3/test/Intersections_3/cgal_test eol=lf
+Jet_fitting_3/clean_tree.csh eol=lf
 Jet_fitting_3/demo/Jet_fitting_3/README_visu -text
 Jet_fitting_3/demo/Jet_fitting_3/data/ellipe0.003.off -text svneol=unset#application/octet-stream
 Jet_fitting_3/doc_tex/AIDE -text
@@ -899,6 +691,9 @@ Kernel_23/doc_tex/Kernel_23_ref/fig/compare_x_at_y.gif -text svneol=unset#image/
 Kernel_23/doc_tex/Kernel_23_ref/fig/compare_x_at_y.pdf -text svneol=unset#application/pdf
 Kernel_23/doc_tex/Kernel_23_ref/fig/transvecthree.gif -text svneol=unset#image/gif
 Kernel_23/doc_tex/Kernel_23_ref/fig/transvectwo.gif -text svneol=unset#image/gif
+Kernel_23/test/Kernel_23/cgal_test eol=lf
+Kernel_d/test/Kernel_d/Linear_algebra-test.cmd eol=lf
+Kinetic_data_structures/demo/Kinetic_data_structures/Delaunay_triangulation_2.vcproj eol=crlf
 Kinetic_data_structures/demo/Kinetic_data_structures/data/after002 -text
 Kinetic_data_structures/demo/Kinetic_data_structures/data/after010 -text
 Kinetic_data_structures/demo/Kinetic_data_structures/data/after088 -text
@@ -958,12 +753,6 @@ Kinetic_data_structures/doc_tex/Kinetic_framework/architecture_pct.gif -text svn
 Kinetic_data_structures/doc_tex/Kinetic_framework/architecture_pct.pdf -text svneol=unset#application/pdf
 Kinetic_data_structures/doc_tex/Kinetic_framework/sort_usage_pct.gif -text svneol=unset#image/gif
 Kinetic_data_structures/doc_tex/Kinetic_framework_ref/#Time.tex# -text
-Kinetic_data_structures/examples/Kinetic_data_structures/update_Delaunay_triangulation_2.cpp -text
-Kinetic_data_structures/include/CGAL/Indirect_point_2_kernel.h -text
-Kinetic_data_structures/include/CGAL/Kinetic/Free_event_base.h -text
-Kinetic_data_structures/include/CGAL/Kinetic/Interval_simulator_traits.h -text
-Kinetic_data_structures/include/CGAL/Kinetic/Triangulation_2.h -text
-Kinetic_data_structures/include/CGAL/Updatable_Delaunay_triangulation_table_2.h -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=1,n -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=3 -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=3,n -text
@@ -973,6 +762,8 @@ Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=100,d=1 -te
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=100,d=3,n -text
 Kinetic_data_structures/todo -text
 Largest_empty_rect_2/demo/Largest_empty_rect_2/help/index.html svneol=native#text/html
+Largest_empty_rect_2/demo/Largest_empty_rect_2/largest_empty_rect_2.vcproj eol=crlf
+Largest_empty_rect_2/test/Largest_empty_rect_2/cgal_test eol=lf
 MacOSX/auxiliary/cgal_app.icns -text
 Maintenance/MacOSX_Installer/CGAL-3.2-absolute.pmproj -text
 Maintenance/MacOSX_Installer/CGAL-3.2.pmproj -text
@@ -1075,6 +866,7 @@ Manual_tools/image_makers/old_gifs/cc_Macro.gif -text svneol=unset#image/gif
 Manual_tools/image_makers/old_gifs/cc_Variable.gif -text svneol=unset#image/gif
 Manual_tools/image_makers/old_gifs/cc_advanced_begin.gif -text svneol=unset#image/gif
 Manual_tools/image_makers/old_gifs/cc_advanced_end.gif -text svneol=unset#image/gif
+Manual_tools/install.sh eol=lf
 Manual_tools/src/latex_converter_config/gif/cc_Box.gif -text svneol=unset#image/gif
 Manual_tools/src/latex_converter_config/gif/cc_Class.gif -text svneol=unset#image/gif
 Manual_tools/src/latex_converter_config/gif/cc_Concept.gif -text svneol=unset#image/gif
@@ -1396,9 +1188,12 @@ Manual_tools/sty/eps_tabs_grey/cc_FunctionObjectClass.eps -text svneol=unset#app
 Manual_tools/sty/eps_tabs_grey/cc_FunctionObjectConcept.eps -text svneol=unset#application/postscript
 Manual_tools/sty/eps_tabs_grey/cc_Macro.eps -text svneol=unset#application/postscript
 Manual_tools/sty/eps_tabs_grey/cc_Variable.eps -text svneol=unset#application/postscript
+Manual_tools/test/Manual_tools/cgal_test eol=lf
 Manual_tools/test/Manual_tools/html.orig.tgz -text svneol=unset#application/gzip
 Matrix_search/demo/Matrix_search/help/index.html svneol=native#text/html
 Matrix_search/demo/Matrix_search/help/rindex.html svneol=native#text/html
+Matrix_search/demo/Matrix_search/max_k-gon.vcproj eol=crlf
+Matrix_search/demo/Matrix_search/rectangular_p_center_2.vcproj eol=crlf
 Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_pcenter1.gif -text svneol=unset#image/gif
 Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_pcenter2.gif -text svneol=unset#image/gif
 Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_pcenter3.gif -text svneol=unset#image/gif
@@ -1412,11 +1207,17 @@ Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon2.gif -text svneol=uns
 Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon3.gif -text svneol=unset#image/gif
 Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon4.gif -text svneol=unset#image/gif
 Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon5.gif -text svneol=unset#image/gif
+Matrix_search/examples/Matrix_search/cgal_test eol=lf
+Matrix_search/test/Matrix_search/cgal_test eol=lf
+Matrix_search/test/Matrix_search/rectangular_p_center_2_random1_test.cmd eol=lf
+Matrix_search/test/Matrix_search/rectangular_p_center_2_random2_test.cmd eol=lf
+Matrix_search/test/Matrix_search/sorted_matrix_search_test.cmd eol=lf
 Mesh_2/bench/data/square-deforme.poly -text svneol=unset#application/octet-stream
 Mesh_2/bench/data/square.poly -text svneol=unset#application/octet-stream
 Mesh_2/demo/Mesh_2/data/clusters.poly -text svneol=unset#application/octet-stream
 Mesh_2/demo/Mesh_2/data/fish.poly -text svneol=unset#application/octet-stream
 Mesh_2/demo/Mesh_2/data/trivial.poly -text svneol=unset#application/octet-stream
+Mesh_2/demo/Mesh_2/mesh_demo.vcproj eol=crlf
 Mesh_2/doc_tex/Mesh_2/domain-mesh.eps -text svneol=unset#application/postscript
 Mesh_2/doc_tex/Mesh_2/domain-mesh.png -text svneol=unset#image/png
 Mesh_2/doc_tex/Mesh_2/domain-seeds-mesh.eps -text svneol=unset#application/postscript
@@ -1437,17 +1238,28 @@ Mesh_2/stylesheet.css svneol=native#text/css
 Mesh_2/test/Mesh_2/fish-and-rectangle.poly -text svneol=unset#application/octet-stream
 Mesh_2/test/Mesh_2/fish.edg -text
 Mesh_2/test/Mesh_2/fish.poly -text svneol=unset#application/octet-stream
-Mesh_3/applications/libmesh.c -text
-Mesh_3/applications/libmesh.h -text
-Mesh_3/applications/nb2mesh.c -text
 Mesh_3/examples/Mesh_3/inputs/cube.mesh -text svneol=unset#application/octet-stream
 Mesh_3/examples/Mesh_3/inputs/cube.off -text svneol=unset#application/octet-stream
 Mesh_3/examples/Mesh_3/inputs/tangle.mesh -text svneol=unset#application/octet-stream
 Mesh_3/examples/Mesh_3/inputs/tangle.off -text svneol=unset#application/octet-stream
 Mesh_3/stylesheet.css svneol=native#text/css
+Mesh_3/test/Mesh_3/cgal_test eol=lf
+Min_annulus_d/test/Min_annulus_d/test_Min_annulus_d_2.cmd eol=lf
+Min_annulus_d/test/Min_annulus_d/test_Min_annulus_d_3.cmd eol=lf
+Min_annulus_d/test/Min_annulus_d/test_Min_annulus_d_d.cmd eol=lf
 Min_circle_2/demo/Min_circle_2/help/index.html svneol=native#text/html
+Min_circle_2/demo/Min_circle_2/min_circle_2.vcproj eol=crlf
+Min_circle_2/test/Min_circle_2/test_Min_circle_2.cmd eol=lf
 Min_ellipse_2/demo/Min_ellipse_2/help/index.html svneol=native#text/html
+Min_ellipse_2/demo/Min_ellipse_2/min_ellipse_2.vcproj eol=crlf
+Min_ellipse_2/test/Min_ellipse_2/test_Min_ellipse_2.cmd eol=lf
 Min_quadrilateral_2/demo/Min_quadrilateral_2/help/index.html svneol=native#text/html
+Min_quadrilateral_2/demo/Min_quadrilateral_2/min_quadrilateral_2.vcproj eol=crlf
+Min_quadrilateral_2/test/Min_quadrilateral_2/cgal_test eol=lf
+Min_sphere_d/test/Min_sphere_d/cgal_test eol=lf
+Min_sphere_d_new/test/Min_sphere_d_new/test_Min_sphere_d_2.cmd eol=lf
+Min_sphere_d_new/test/Min_sphere_d_new/test_Min_sphere_d_3.cmd eol=lf
+Min_sphere_d_new/test/Min_sphere_d_new/test_Min_sphere_d_d.cmd eol=lf
 Min_sphere_of_spheres_d/test_extensive/stability/maple/balls-on-boundary-2.mws -text svneol=unset#application/octet-stream
 Min_sphere_of_spheres_d/test_extensive/stability/maple/balls-on-boundary-3.mws -text svneol=unset#application/octet-stream
 Min_sphere_of_spheres_d/web/figs/heuristic/excess.eps -text svneol=unset#application/postscript
@@ -1511,6 +1323,7 @@ Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/tight.pstex -text svneol=unset#appli
 Minkowski_sum_2/doc_tex/Minkowski_sum_2/fig/tight.pstex_t -text svneol=unset#application/postscript
 Minkowski_sum_2/examples/Minkowski_sum_2/rooms_star.dat -text
 Minkowski_sum_2/examples/Minkowski_sum_2/spiked.dat -text
+Minkowski_sum_2/test/Minkowski_sum_2/cgal_test eol=lf
 Minkowski_sum_2/test/Minkowski_sum_2/data/comb_part1.dat -text
 Minkowski_sum_2/test/Minkowski_sum_2/data/comb_part2.dat -text
 Minkowski_sum_2/test/Minkowski_sum_2/data/fork_part1.dat -text
@@ -1529,25 +1342,6 @@ Modifier/doc_tex/Modifier/idraw/modifier.eps -text svneol=unset#application/post
 Modifier/doc_tex/Modifier/idraw/modifier.pdf -text svneol=unset#application/pdf
 Modifier/doc_tex/Modifier/modifier.gif -text svneol=unset#image/gif
 Modifier/doc_tex/Modifier/modifier_small.gif -text svneol=unset#image/gif
-Modular_arithmetic/description.txt -text
-Modular_arithmetic/include/CGAL/Chinese_remainder_traits.h -text
-Modular_arithmetic/include/CGAL/Modular.h -text
-Modular_arithmetic/include/CGAL/Modular_traits.h -text
-Modular_arithmetic/include/CGAL/Modular_type.h -text
-Modular_arithmetic/include/CGAL/chinese_remainder.h -text
-Modular_arithmetic/include/CGAL/euclidean_algorithm.h -text
-Modular_arithmetic/include/CGAL/extended_euclidean_algorithm.h -text
-Modular_arithmetic/include/CGAL/modular_gcd.h -text
-Modular_arithmetic/maintainer -text
-Modular_arithmetic/src/CGAL/Modular_type.cpp -text
-Modular_arithmetic/test/Modular_arithmetic/Chinese_remainder_traits.C -text
-Modular_arithmetic/test/Modular_arithmetic/Modular.C -text
-Modular_arithmetic/test/Modular_arithmetic/chinese_remainder.C -text
-Modular_arithmetic/test/Modular_arithmetic/euclidean_algorithm.C -text
-Modular_arithmetic/test/Modular_arithmetic/extended_euclidean_algorithm.C -text
-Modular_arithmetic/test/Modular_arithmetic/makefile -text
-Modular_arithmetic/test/Modular_arithmetic/modular_gcd.C -text
-Modular_arithmetic/test/Modular_arithmetic/src_Modular.C -text
 Nef_2/demo/Nef_2/filtered_homogeneous_data/complex.nef -text svneol=native#application/octet-stream
 Nef_2/demo/Nef_2/filtered_homogeneous_data/symmdif.nef -text svneol=native#application/octet-stream
 Nef_2/demo/Nef_2/help/index.html svneol=native#text/html
@@ -1560,6 +1354,7 @@ Nef_2/demo/Nef_2/homogeneous_data/mpii.nef -text svneol=native#application/octet
 Nef_2/demo/Nef_2/homogeneous_data/star.nef -text svneol=native#application/octet-stream
 Nef_2/demo/Nef_2/homogeneous_data/symmdiff.nef -text svneol=native#application/octet-stream
 Nef_2/demo/Nef_2/homogeneous_data/triangle.nef -text svneol=native#application/octet-stream
+Nef_2/demo/Nef_2/nef_2.vcproj eol=crlf
 Nef_2/demo/Nef_2/xpms/basic.gif -text svneol=unset#image/gif
 Nef_2/demo/Nef_2/xpms/basic.pcx -text
 Nef_2/demo/Nef_2/xpms/basic2.pcx -text
@@ -1590,14 +1385,7 @@ Nef_2/doc_tex/Nef_2/halfplane.ps -text svneol=unset#application/postscript
 Nef_2/doc_tex/Nef_2_ref/extsegs.eps -text svneol=unset#application/postscript
 Nef_2/doc_tex/Nef_2_ref/extsegs.gif -text svneol=unset#image/gif
 Nef_2/doc_tex/Nef_2_ref/extsegs.pdf -text svneol=unset#application/pdf
-Nef_3/Minkowski/Nef_3/trunk_configuration_space.C -text
-Nef_3/Minkowski/Nef_3/trunk_tester.C -text
-Nef_3/Minkowski/include/CGAL/Nef_3/Nary_union_by_pq.h -text
-Nef_3/Minkowski/include/CGAL/Nef_3/Nary_union_by_queue.h -text
-Nef_3/Minkowski/include/CGAL/Nef_3/Nary_union_strategy.h -text
-Nef_3/Minkowski/include/CGAL/Nef_3/Relabel_volume.h -text
-Nef_3/Minkowski/include/CGAL/Nef_3/trunk_offset.h -text
-Nef_3/Minkowski/include/CGAL/Nef_3/trunk_offset2.h -text
+Nef_2/test/Nef_2/cgal_test eol=lf
 Nef_3/Visual_hull/Nef_3/corner.off -text svneol=unset#application/octet-stream
 Nef_3/Visual_hull/Nef_3/hole.off -text svneol=unset#application/octet-stream
 Nef_3/Visual_hull/Nef_3/mpi.off -text svneol=unset#application/octet-stream
@@ -1605,6 +1393,10 @@ Nef_3/Visual_hull/Nef_3/mpi_triang.off -text svneol=unset#application/octet-stre
 Nef_3/Visual_hull/Nef_3/octahedron.off -text svneol=unset#application/octet-stream
 Nef_3/demo/Nef_3/cube.off -text svneol=unset#application/octet-stream
 Nef_3/demo/Nef_3/mpi.vsh -text
+Nef_3/demo/Nef_3/nef_3.vcproj eol=crlf
+Nef_3/demo/Nef_3/visual_hull.vcproj eol=crlf
+Nef_3/demo/Nef_3/visualization_SM.vcproj eol=crlf
+Nef_3/demo/Nef_3/visualization_SNC.vcproj eol=crlf
 Nef_3/doc_tex/Nef_3/fig/closeup.eps -text svneol=unset#application/postscript
 Nef_3/doc_tex/Nef_3/fig/closeup.gif -text svneol=unset#image/gif
 Nef_3/doc_tex/Nef_3/fig/closeup.pdf -text svneol=unset#application/pdf
@@ -1656,6 +1448,7 @@ Nef_3/test/Nef_3/data/cube.off -text svneol=unset#application/octet-stream
 Nef_3/test/Nef_3/data/nine_planes.off -text svneol=unset#application/octet-stream
 Nef_3/test/Nef_3/data/octa.off -text svneol=unset#application/octet-stream
 Nef_3/test/Nef_3/data/star.off -text svneol=unset#application/octet-stream
+Nef_S2/demo/Nef_S2/visualization.vcproj eol=crlf
 Nef_S2/doc_tex/Nef_S2/fig/complex.gif -text svneol=unset#image/gif
 Nef_S2/doc_tex/Nef_S2/fig/complex.pdf -text svneol=unset#application/pdf
 Nef_S2/doc_tex/Nef_S2/fig/complex.ps -text svneol=unset#application/postscript
@@ -1673,56 +1466,7 @@ Nef_S2/doc_tex/Nef_S2_ref/fig/shalfedge.pdf -text svneol=unset#application/pdf
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.eps -text svneol=unset#application/postscript
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.gif -text svneol=unset#image/gif
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.pdf -text svneol=unset#application/pdf
-Number_types/include/CGAL/CORE_BigFloat.h -text
-Number_types/include/CGAL/CORE_BigInt.h -text
-Number_types/include/CGAL/CORE_BigRat.h -text
-Number_types/include/CGAL/CORE_coercion_traits.h -text
-Number_types/include/CGAL/GMP/Gmpq_type.h -text
-Number_types/include/CGAL/GMP/Gmpz_type.h -text
-Number_types/include/CGAL/GMP/Gmpzf_type.h -text
-Number_types/include/CGAL/Gmp_coercion_traits.h -text
-Number_types/include/CGAL/Gmpzf.h -text
-Number_types/include/CGAL/Sqrt_extension.h -text
-Number_types/include/CGAL/gmpxx_coercion_traits.h -text
-Number_types/include/CGAL/leda_coercion_traits.h -text
-Number_types/include/CGAL/mpq_class.h -text
-Number_types/include/CGAL/mpz_class.h -text
-Number_types/test/Number_types/CORE_BigFloat.C -text
-Number_types/test/Number_types/CORE_BigInt.C -text
-Number_types/test/Number_types/CORE_BigRat.C -text
-Number_types/test/Number_types/CORE_Expr.C -text
-Number_types/test/Number_types/Coercion_traits.C -text
-Number_types/test/Number_types/Counted_number.C -text
-Number_types/test/Number_types/Gmpq_new.C -text
-Number_types/test/Number_types/Gmpz.C -text
-Number_types/test/Number_types/Gmpzf_new.C -text
-Number_types/test/Number_types/Interval_nt_new.C -text
-Number_types/test/Number_types/Lazy_exact_nt_new.C -text
-Number_types/test/Number_types/MP_Float_exact.C -text
-Number_types/test/Number_types/MP_Float_inexact.C -text
-Number_types/test/Number_types/Nef_polynomial.C -text
-Number_types/test/Number_types/Quotient_new.C -text
-Number_types/test/Number_types/Root_of_traits.C -text
-Number_types/test/Number_types/Sqrt_extension.C -text
-Number_types/test/Number_types/double.C -text
-Number_types/test/Number_types/float.C -text
-Number_types/test/Number_types/include/CGAL/Arithmetic_kernel.h -text
-Number_types/test/Number_types/include/CGAL/_test_algebraic_structure.h -text
-Number_types/test/Number_types/include/CGAL/_test_basic.h -text
-Number_types/test/Number_types/include/CGAL/_test_coercion_traits.h -text
-Number_types/test/Number_types/include/CGAL/_test_fraction_traits.h -text
-Number_types/test/Number_types/include/CGAL/_test_rational_traits.h -text
-Number_types/test/Number_types/include/CGAL/_test_real_embeddable.h -text
-Number_types/test/Number_types/int.C -text
-Number_types/test/Number_types/ioformat.C -text
-Number_types/test/Number_types/leda_bigfloat.C -text
-Number_types/test/Number_types/leda_integer.C -text
-Number_types/test/Number_types/leda_rational.C -text
-Number_types/test/Number_types/leda_real.C -text
-Number_types/test/Number_types/long_double.C -text
-Number_types/test/Number_types/long_long.C -text
-Number_types/test/Number_types/mpq_class.C -text
-Number_types/test/Number_types/mpz_class.C -text
+Nef_S2/test/Nef_S2/cgal_test eol=lf
 Optimisation_doc/doc_tex/Optimisation/annulus.eps -text svneol=unset#application/postscript
 Optimisation_doc/doc_tex/Optimisation/annulus.gif -text svneol=unset#image/gif
 Optimisation_doc/doc_tex/Optimisation/annulus.pdf -text svneol=unset#application/pdf
@@ -1742,6 +1486,7 @@ Optimisation_doc/doc_tex/Optimisation/polydist.eps -text svneol=unset#applicatio
 Optimisation_doc/doc_tex/Optimisation/polydist.gif -text svneol=unset#image/gif
 Optimisation_doc/doc_tex/Optimisation/polydist.pdf -text svneol=unset#application/pdf
 Partition_2/demo/Partition_2/help/index.html svneol=native#text/html
+Partition_2/demo/Partition_2/partition_2.vcproj eol=crlf
 Partition_2/doc_tex/Partition_2/Idar-Oberstein_appx_cvx.gif -text svneol=unset#image/gif
 Partition_2/doc_tex/Partition_2/Idar-Oberstein_appx_cvx.pdf -text svneol=unset#application/pdf
 Partition_2/doc_tex/Partition_2/Idar-Oberstein_appx_cvx.ps -text svneol=unset#application/postscript
@@ -1750,7 +1495,9 @@ Partition_2/doc_tex/Partition_2/Trier_opt_cvx.pdf -text svneol=unset#application
 Partition_2/doc_tex/Partition_2/Trier_opt_cvx.ps -text svneol=unset#application/postscript
 Partition_2/doc_tex/Partition_2/teaser-small.png -text svneol=unset#image/png
 Partition_2/doc_tex/Partition_2/teaser.png -text svneol=unset#image/png
+Point_set_2/test/Point_set_2/cgal_test eol=lf
 Polygon/demo/Polygon/help/index.html svneol=native#text/html
+Polygon/demo/Polygon/polygon_2.vcproj eol=crlf
 Polygon/doc_tex/Polygon/pgn_algos.eps -text svneol=unset#application/postscript
 Polygon/doc_tex/Polygon/pgn_algos.gif -text svneol=unset#image/gif
 Polygon/doc_tex/Polygon/pgn_algos.ipe -text svneol=unset#application/postscript
@@ -1821,63 +1568,6 @@ Polyhedron/examples/Polyhedron/corner.off -text svneol=unset#application/octet-s
 Polyhedron/examples/Polyhedron/corner_with_hole.off -text svneol=unset#application/octet-stream
 Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text svneol=unset#application/octet-stream
 Polyhedron/examples/Polyhedron/cross.off -text svneol=unset#application/octet-stream
-Polynomial/description.txt -text
-Polynomial/doc_tex/Polynomial_ref/Exponent_vector.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_Canonicalize.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_Compare.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_ConstructPolynomial_d.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_Degree.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_Differentiate.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_Evaluate.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_EvaluateHomogeneous.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_GcdUpToConstantFactor.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_GcdUtcf.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_IntegralDivisionUpToConstantFactor.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_IntegralDivisionUtcf.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_Invert.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_LeadingCoefficient.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_MakeSquareFree.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_MakeSquareFreeUtcf.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_MultivariateContent.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_Negate.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_PseudoDivision.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_PseudoDivisionQuotient.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_PseudoDivisionRemainder.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_Resultant.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_Scale.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_ScaleHomogeneous.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_Shift.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_SquareFreeFactorization.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_SquareFreeFactorizationUpToConstantFactor.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_SquareFreeFactorizationUtcf.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_Swap.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_TotalDegree.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_Translate.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_TranslateHomogeneous.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_UnivariateContent.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_UnivariateContentUpToConstantFactor.tex -text
-Polynomial/doc_tex/Polynomial_ref/PolynomialTraits_d_UnivariateContentUtcf.tex -text
-Polynomial/doc_tex/Polynomial_ref/Polynomial_d.tex -text
-Polynomial/doc_tex/Polynomial_ref/intro.tex -text
-Polynomial/doc_tex/Polynomial_ref/main.tex -text
-Polynomial/doc_tex/Polynomial_ref/open.tex -text
-Polynomial/include/CGAL/Exponent_vector.h -text
-Polynomial/include/CGAL/Polynomial.h -text
-Polynomial/include/CGAL/Polynomial/Algebraic_structure_traits.h -text
-Polynomial/include/CGAL/Polynomial/Fraction_traits.h -text
-Polynomial/include/CGAL/Polynomial/Modular_traits.h -text
-Polynomial/include/CGAL/Polynomial/Polynomial_type.h -text
-Polynomial/include/CGAL/Polynomial/Real_embeddable_traits.h -text
-Polynomial/include/CGAL/Polynomial/Scalar_factor_traits.h -text
-Polynomial/include/CGAL/Polynomial_traits_d.h -text
-Polynomial/include/CGAL/polynomial_gcd.h -text
-Polynomial/include/CGAL/polynomial_utils.h -text
-Polynomial/include/CGAL/prs_resultant.h -text
-Polynomial/maintainer -text
-Polynomial/test/Polynomial/Polynomial.C -text
-Polynomial/test/Polynomial/Polynomial_traits_d.C -text
-Polynomial/test/Polynomial/makefile -text
 Polytope_distance_d/test/Polytope_distance_d/create_test_PD_cin -text
 Polytope_distance_d/test/Polytope_distance_d/test_PD.cin -text
 Polytope_distance_d/test/Polytope_distance_d/test_PD_data/intersecting_segments.data -text
@@ -1890,8 +1580,16 @@ Polytope_distance_d/test/Polytope_distance_d/test_PD_data/two_cubes_nested.data 
 Polytope_distance_d/test/Polytope_distance_d/test_PD_data/two_cubes_shifted.data -text
 Polytope_distance_d/test/Polytope_distance_d/test_PD_data/two_numbers.data -text
 Polytope_distance_d/test/Polytope_distance_d/test_PD_data/two_squares.data -text
+Polytope_distance_d/test/Polytope_distance_d/test_Polytope_distance_d_2.cmd eol=lf
+Polytope_distance_d/test/Polytope_distance_d/test_Polytope_distance_d_3.cmd eol=lf
+Polytope_distance_d/test/Polytope_distance_d/test_Polytope_distance_d_d.cmd eol=lf
 Principal_component_analysis/demo/Principal_component_analysis/help/index.html svneol=native#text/html
+Principal_component_analysis/demo/Principal_component_analysis/linear_least_squares_fitting.vcproj eol=crlf
+Principal_component_analysis/demo/Principal_component_analysis/windows/2d/pca.sln eol=crlf
+Principal_component_analysis/demo/Principal_component_analysis/windows/2d/pca.vcproj eol=crlf
 Principal_component_analysis/demo/Principal_component_analysis/windows/2d/res/pca.ico -text svneol=unset#image/x-icon
+Principal_component_analysis/demo/Principal_component_analysis/windows/3d/Mesh.sln eol=crlf
+Principal_component_analysis/demo/Principal_component_analysis/windows/3d/Mesh.vcproj eol=crlf
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/Mesh.ico -text svneol=unset#image/x-icon
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/MeshDoc.ico -text svneol=unset#image/x-icon
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/Toolbar.bmp -text svneol=unset#image/bmp
@@ -1906,73 +1604,36 @@ Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/id
 Principal_component_analysis/demo/Principal_component_analysis/windows/3d/res/idb8.bmp -text svneol=unset#image/bmp
 Principal_component_analysis/doc_tex/Principal_component_analysis/fit.eps -text svneol=unset#application/postscript
 Principal_component_analysis/doc_tex/Principal_component_analysis/fit.png -text svneol=unset#image/png
-QP_solver/doc_tex/QP_solver/closest_point.eps -text
-QP_solver/doc_tex/QP_solver/closest_point.fig -text
-QP_solver/doc_tex/QP_solver/closest_point.gif -text
-QP_solver/doc_tex/QP_solver/closest_point.pdf -text
-QP_solver/doc_tex/QP_solver/first_lp.eps -text
-QP_solver/doc_tex/QP_solver/first_lp.fig -text
-QP_solver/doc_tex/QP_solver/first_lp.gif -text
-QP_solver/doc_tex/QP_solver/first_lp.pdf -text svneol=unset#unset
-QP_solver/doc_tex/QP_solver/first_nonnegative_qp.eps -text
-QP_solver/doc_tex/QP_solver/first_nonnegative_qp.fig -text
-QP_solver/doc_tex/QP_solver/first_nonnegative_qp.gif -text
-QP_solver/doc_tex/QP_solver/first_nonnegative_qp.pdf -text
-QP_solver/doc_tex/QP_solver/first_qp.eps -text
-QP_solver/doc_tex/QP_solver/first_qp.fig -text
-QP_solver/doc_tex/QP_solver/first_qp.gif -text
-QP_solver/doc_tex/QP_solver/first_qp.pdf -text
-QP_solver/doc_tex/QP_solver/main.tex -text
-QP_solver/doc_tex/QP_solver_ref/LinearProgramInterface.tex -text
-QP_solver/doc_tex/QP_solver_ref/NonnegativeLinearProgramInterface.tex -text
-QP_solver/doc_tex/QP_solver_ref/NonnegativeQuadraticProgramInterface.tex -text
-QP_solver/doc_tex/QP_solver_ref/QuadraticProgramInterface.tex -text
-QP_solver/doc_tex/QP_solver_ref/Quadratic_program_from_iterators.tex -text
-QP_solver/examples/QP_solver/convex_hull_containment.cpp -text
-QP_solver/examples/QP_solver/convex_hull_containment2.cpp -text
+QP_solver/doc_tex/QP_solver/closest_point.eps -text svneol=unset#application/postscript
+QP_solver/doc_tex/QP_solver/closest_point.fig -text svneol=unset#application/octet-stream
+QP_solver/doc_tex/QP_solver/closest_point.gif -text svneol=unset#image/gif
+QP_solver/doc_tex/QP_solver/closest_point.pdf -text svneol=unset#application/pdf
+QP_solver/doc_tex/QP_solver/first_lp.eps -text svneol=unset#application/postscript
+QP_solver/doc_tex/QP_solver/first_lp.fig -text svneol=unset#application/octet-stream
+QP_solver/doc_tex/QP_solver/first_lp.gif -text svneol=unset#image/gif
+QP_solver/doc_tex/QP_solver/first_lp.pdf -text svneol=unset#application/pdf
+QP_solver/doc_tex/QP_solver/first_nonnegative_qp.eps -text svneol=unset#application/postscript
+QP_solver/doc_tex/QP_solver/first_nonnegative_qp.fig -text svneol=unset#application/octet-stream
+QP_solver/doc_tex/QP_solver/first_nonnegative_qp.gif -text svneol=unset#image/gif
+QP_solver/doc_tex/QP_solver/first_nonnegative_qp.pdf -text svneol=unset#application/pdf
+QP_solver/doc_tex/QP_solver/first_qp.eps -text svneol=unset#application/postscript
+QP_solver/doc_tex/QP_solver/first_qp.fig -text svneol=unset#application/octet-stream
+QP_solver/doc_tex/QP_solver/first_qp.gif -text svneol=unset#image/gif
+QP_solver/doc_tex/QP_solver/first_qp.pdf -text svneol=unset#application/pdf
 QP_solver/examples/QP_solver/data_to_mps.cin -text
 QP_solver/examples/QP_solver/double_qp_solver.cin -text
 QP_solver/examples/QP_solver/double_qp_solver.data -text
-QP_solver/examples/QP_solver/first_lp.cpp -text
-QP_solver/examples/QP_solver/first_nonnegative_lp.cpp -text
-QP_solver/examples/QP_solver/first_nonnegative_qp.cpp -text
-QP_solver/examples/QP_solver/first_qp.cpp -text
-QP_solver/examples/QP_solver/important_variables.cpp -text
 QP_solver/examples/QP_solver/integer_qp_solver.cin -text
 QP_solver/examples/QP_solver/integer_qp_solver.data -text
 QP_solver/examples/QP_solver/rational_qp_solver.cin -text
 QP_solver/examples/QP_solver/rational_qp_solver.data -text
-QP_solver/examples/QP_solver/shortest_vector.cpp -text
-QP_solver/examples/QP_solver/solve_convex_hull_containment_lp.h -text
-QP_solver/examples/QP_solver/solve_convex_hull_containment_lp2.h -text
-QP_solver/include/CGAL/QP_functions.h -text
-QP_solver/include/CGAL/QP_models.h -text
-QP_solver/include/CGAL/QP_solution.h -text
-QP_solver/include/CGAL/QP_solver/QP_exact_bland_pricing.h -text
-QP_solver/include/CGAL/QP_solver/QP_functions_impl.h -text
-QP_solver/include/CGAL/QP_solver/QP_models_impl.h -text
 QP_solver/test/QP_solver/create_test_solver_cin -text
 QP_solver/test/QP_solver/data_to_mps.cin -text
 QP_solver/test/QP_solver/test_solver.cout -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/HS118_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/HS118_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/QPTEST_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/QPTEST_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/ZECEVIC2_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/ZECEVIC2_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/b_float_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/b_float_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/b_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/b_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/mps_features_free.mps -text
-QP_solver/test/QP_solver/test_solver_data/derivatives/mps_features_shifted.mps -text
-QP_solver/test/QP_solver/test_solver_data/masters/cgal/HS118.mps -text
-QP_solver/test/QP_solver/test_solver_data/masters/cgal/PRIMALC1.mps -text
-QP_solver/test/QP_solver/test_solver_data/masters/cgal/QPTEST.mps -text
-QP_solver/test/QP_solver/test_solver_data/masters/cgal/ZECEVIC2.mps -text
-QP_solver/test/QP_solver/test_solver_data/masters/cgal/b.mps -text
-QP_solver/test/QP_solver/test_solver_data/masters/cgal/b_float.mps -text
-QP_solver/test/QP_solver/test_solver_data/masters/cgal/mps_features.mps -text
+Qt_widget/demo/Qt_widget/hellosegment.vcproj eol=crlf
+Qt_widget/demo/Qt_widget/layer.vcproj eol=crlf
+Qt_widget/demo/Qt_widget/standard_toolbar.vcproj eol=crlf
+Qt_widget/demo/Qt_widget/tutorial2.vcproj eol=crlf
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.eps -text svneol=unset#application/postscript
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.gif -text svneol=unset#image/gif
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.pdf -text svneol=unset#application/pdf
@@ -1980,6 +1641,8 @@ Qt_widget/doc_tex/Qt_widget/standard_toolbar.png -text svneol=unset#image/png
 Qt_widget/doc_tex/Qt_widget/triangulation.eps -text svneol=unset#application/postscript
 Qt_widget/doc_tex/Qt_widget/triangulation.gif -text svneol=unset#image/gif
 Qt_widget/doc_tex/Qt_widget/triangulation.pdf -text svneol=unset#application/pdf
+Qt_widget/src/CGALQt/CGALQt.sln eol=crlf
+Qt_widget/src/CGALQt/CGALQt.vcproj eol=crlf
 Ridges_3/doc_tex/Ridges_3/david_crest.eps -text svneol=unset#application/postscript
 Ridges_3/doc_tex/Ridges_3/david_crest.png -text svneol=unset#image/png
 Ridges_3/doc_tex/Ridges_3/david_eye_crest.eps -text svneol=unset#application/postscript
@@ -1999,10 +1662,14 @@ Ridges_3/doc_tex/Ridges_3/mecanic-sub1_crestTweight1Tsharp7-jpg.png -text svneol
 Ridges_3/doc_tex/Ridges_3/star.eps -text svneol=unset#application/postscript
 Ridges_3/doc_tex/Ridges_3/star.png -text svneol=unset#image/png
 Ridges_3/examples/Ridges_3/data/bezierpb3-0.007812.off -text svneol=unset#application/octet-stream
-Ridges_3/examples/Ridges_3/data/ellipsoid_u_0.02.off -text
+Ridges_3/examples/Ridges_3/data/ellipsoid_u_0.02.off -text svneol=unset#application/octet-stream
 Ridges_3/examples/Ridges_3/data/mecanic.off -text svneol=unset#application/octet-stream
-Ridges_3/examples/Ridges_3/data/poly2x^2+y^2-0.062500.off -text
+Ridges_3/examples/Ridges_3/data/poly2x^2+y^2-0.062500.off -text svneol=unset#application/octet-stream
 Robustness/demo/Robustness/help/index.html svneol=native#text/html
+Robustness/demo/Robustness/robustness.vcproj eol=crlf
+STL_Extension/examples/STL_Extension/cgal_test eol=lf
+STL_Extension/test/STL_Extension/cgal_test eol=lf
+Scripts/developer_scripts/create_assertions.sh eol=lf
 Scripts/developer_scripts/create_macosx_installer -text
 SearchStructures/doc_tex/SearchStructures/d-range.eps -text svneol=unset#application/postscript
 SearchStructures/doc_tex/SearchStructures/d-range.gif -text svneol=unset#image/gif
@@ -2033,6 +1700,8 @@ SearchStructures/doc_tex/SearchStructures_ref/segment_ex2.pdf -text svneol=unset
 SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.eps -text svneol=unset#application/postscript
 SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.gif -text svneol=unset#image/gif
 SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.pdf -text svneol=unset#application/pdf
+Segment_Delaunay_graph_2/demo/Segment_Delaunay_graph_2/polygon_delaunay_graph_2.vcproj eol=crlf
+Segment_Delaunay_graph_2/demo/Segment_Delaunay_graph_2/segment_delaunay_graph_2.vcproj eol=crlf
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/sdg-rep.eps -text svneol=unset#application/postscript
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/sdg-rep.fig -text svneol=unset#application/octet-stream
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/sdg-rep.gif -text svneol=unset#image/gif
@@ -2068,12 +1737,10 @@ Skin_surface_3/doc_tex/Skin_surface_3/molecule.eps -text svneol=unset#applicatio
 Skin_surface_3/doc_tex/Skin_surface_3/molecule.png -text svneol=unset#image/png
 Skin_surface_3/doc_tex/Skin_surface_3/skinTwoPoints.eps -text svneol=unset#application/postscript
 Skin_surface_3/doc_tex/Skin_surface_3/skinTwoPoints.png -text svneol=unset#image/png
-Skin_surface_3/doc_tex/Skin_surface_3_ref/Skin_surface_traits_3.tex -text
 Skin_surface_3/examples/Skin_surface_3/data/1IYE.pdb -text
 Skin_surface_3/examples/Skin_surface_3/data/molecule_tunnel.cin -text
 Skin_surface_3/examples/Skin_surface_3/dsrpdb/doc/doc_footer -text
 Skin_surface_3/examples/Skin_surface_3/dsrpdb/doc/main_doc -text
-Skin_surface_3/include/CGAL/make_skin_surface_mesh_3.h -text
 Skin_surface_3/test/Skin_surface_3/data/inexact_tmc_fails.cin -text
 Skin_surface_3/test/Skin_surface_3/data/test1.cin -text
 Skin_surface_3/test/Skin_surface_3/data/test10.cin -text
@@ -2087,29 +1754,18 @@ Skin_surface_3/test/Skin_surface_3/data/test7.cin -text
 Skin_surface_3/test/Skin_surface_3/data/test8.cin -text
 Skin_surface_3/test/Skin_surface_3/data/test9.cin -text
 Snap_rounding_2/demo/Snap_rounding_2/help/index.html svneol=native#text/html
+Snap_rounding_2/demo/Snap_rounding_2/snap_rounding_2.vcproj eol=crlf
 Snap_rounding_2/doc_tex/Snap_rounding_2/isr_vs_sr.gif -text svneol=unset#image/gif
 Snap_rounding_2/doc_tex/Snap_rounding_2/isr_vs_sr.pdf -text svneol=unset#application/pdf
 Snap_rounding_2/doc_tex/Snap_rounding_2/isr_vs_sr.ps -text svneol=unset#application/postscript
 Snap_rounding_2/doc_tex/Snap_rounding_2/sr1.gif -text svneol=unset#image/gif
 Snap_rounding_2/doc_tex/Snap_rounding_2/sr1.pdf -text svneol=unset#application/pdf
 Snap_rounding_2/doc_tex/Snap_rounding_2/sr1.ps -text svneol=unset#application/postscript
+Snap_rounding_2/test/Snap_rounding_2/cgal_test eol=lf
 Spatial_searching/demo/Spatial_searching/help/index.html svneol=native#text/html
+Spatial_searching/demo/Spatial_searching/spatial_searching.vcproj eol=crlf
 Spatial_searching/doc_tex/Spatial_searching/Fig1.gif -text svneol=unset#image/gif
 Spatial_searching/doc_tex/Spatial_searching/Fig1.ps -text svneol=unset#application/postscript
-Spatial_sorting/doc_tex/Spatial_sorting/PkgDescription.tex -text
-Spatial_sorting/doc_tex/Spatial_sorting/main.tex -text
-Spatial_sorting/doc_tex/Spatial_sorting/spatial_sorting.tex -text
-Spatial_sorting/doc_tex/Spatial_sorting/spatial_sorting_def.tex -text
-Spatial_sorting/doc_tex/Spatial_sorting_ref/Hilbert_sort_2.tex -text
-Spatial_sorting/doc_tex/Spatial_sorting_ref/Hilbert_sort_3.tex -text
-Spatial_sorting/doc_tex/Spatial_sorting_ref/Multiscale_sort.tex -text
-Spatial_sorting/doc_tex/Spatial_sorting_ref/SpatialSortingTraits_2.tex -text
-Spatial_sorting/doc_tex/Spatial_sorting_ref/SpatialSortingTraits_3.tex -text
-Spatial_sorting/doc_tex/Spatial_sorting_ref/hilbert_sort.tex -text
-Spatial_sorting/doc_tex/Spatial_sorting_ref/intro.tex -text
-Spatial_sorting/doc_tex/Spatial_sorting_ref/main.tex -text
-Spatial_sorting/doc_tex/Spatial_sorting_ref/spatial_sort.tex -text
-Spatial_sorting/examples/Spatial_sorting/example_delaunay_2.cpp -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_0.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_1.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_2.poly -text svneol=unset#application/octet-stream
@@ -2117,11 +1773,10 @@ Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_3.poly -text svneol=un
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_4.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_5.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/help/index.html svneol=native#text/html
-Straight_skeleton_2/dll/Straight_skeleton_2/A.poly -text
-Straight_skeleton_2/dll/Straight_skeleton_2/StraightSkeleton.cpp -text
-Straight_skeleton_2/dll/Straight_skeleton_2/ex1.poly -text
-Straight_skeleton_2/dll/Straight_skeleton_2/input.poly -text
-Straight_skeleton_2/dll/Straight_skeleton_2/makefile -text
+Straight_skeleton_2/demo/Straight_skeleton_2/straight_skeleton_2.vcproj eol=crlf
+Straight_skeleton_2/dll/Straight_skeleton_2/A.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/dll/Straight_skeleton_2/ex1.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/dll/Straight_skeleton_2/input.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/complex_offset.eps -text svneol=unset#application/postscript
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/complex_offset.pdf -text svneol=unset#application/pdf
 Straight_skeleton_2/doc_tex/Straight_skeleton_2/complex_offset.png -text svneol=unset#image/png
@@ -2174,35 +1829,35 @@ Straight_skeleton_2/test/Straight_skeleton_2/data/consecutive_coincident_vertice
 Straight_skeleton_2/test/Straight_skeleton_2/data/consecutive_coincident_vertices_3.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/consecutive_coincident_vertices_4.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate0.poly -text svneol=unset#application/octet-stream
-Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate0a.poly -text
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate0a.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate1.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate10.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate11.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate12.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate13.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate2.poly -text svneol=unset#application/octet-stream
-Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate20.poly -text
-Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate21.poly -text
-Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate22.poly -text
-Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate22b.poly -text
-Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate22c.poly -text
-Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate24.poly -text
-Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate25.poly -text
-Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate26.poly -text
-Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate27.poly -text
-Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate27b.poly -text
-Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate27c.poly -text
-Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate27d.poly -text
-Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate27e.poly -text
-Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate28a.poly -text
-Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate28aa.poly -text
-Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate28b.poly -text
-Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate28c.poly -text
-Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate28x.poly -text
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate20.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate21.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate22.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate22b.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate22c.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate24.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate25.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate26.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate27.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate27b.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate27c.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate27d.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate27e.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate28a.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate28aa.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate28b.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate28c.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate28x.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate3.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate4.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate5.poly -text svneol=unset#application/octet-stream
-Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate5a.poly -text
+Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate5a.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate6.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate7.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/degenerate8.poly -text svneol=unset#application/octet-stream
@@ -2217,7 +1872,7 @@ Straight_skeleton_2/test/Straight_skeleton_2/data/many_holes.poly -text svneol=u
 Straight_skeleton_2/test/Straight_skeleton_2/data/masked_double_split.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/multinode0.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/multinode1.poly -text svneol=unset#application/octet-stream
-Straight_skeleton_2/test/Straight_skeleton_2/data/near_degenerate_1.poly -text
+Straight_skeleton_2/test/Straight_skeleton_2/data/near_degenerate_1.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/parallels0.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/parallels0_b.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/pseudo_split_0.poly -text svneol=unset#application/octet-stream
@@ -2268,6 +1923,9 @@ Straight_skeleton_2/test/Straight_skeleton_2/data/split_at_zero_0.poly -text svn
 Straight_skeleton_2/test/Straight_skeleton_2/data/square.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/star.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/test/Straight_skeleton_2/data/triangle.poly -text svneol=unset#application/octet-stream
+Straight_skeleton_2/test/Straight_skeleton_2/test_offset_builder.cmd eol=lf
+Straight_skeleton_2/test/Straight_skeleton_2/test_sls_builder.cmd eol=lf
+Stream_lines_2/demo/Stream_lines_2/streamlines.vcproj eol=crlf
 Stream_lines_2/doc_tex/Stream_lines_2/1.eps -text svneol=unset#application/postscript
 Stream_lines_2/doc_tex/Stream_lines_2/1.gif -text svneol=unset#image/gif
 Stream_lines_2/doc_tex/Stream_lines_2/1.jpeg -text svneol=unset#image/jpeg
@@ -2288,6 +1946,7 @@ Stream_lines_2/doc_tex/Stream_lines_2/runge_kutta_integrator.gif -text svneol=un
 Stream_lines_2/doc_tex/Stream_lines_2/runge_kutta_integrator.pdf -text svneol=unset#application/pdf
 Stream_lines_2/test/Stream_lines_2/data/datap.tri.cin -text
 Stream_lines_2/test/Stream_lines_2/data/datav.tri.cin -text
+Stream_support/test/Stream_support/cgal_test eol=lf
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/CCSubdivision.png -text svneol=unset#image/png
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/PQQStencil.eps -text svneol=unset#application/postscript
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/PQQStencil.fig -text svneol=unset#application/octet-stream
@@ -2396,134 +2055,98 @@ Surface_mesh_parameterization/test/Surface_mesh_parameterization/extensive_param
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/extensive_parameterization_test.vcproj eol=crlf
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/test_all.bat eol=crlf
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/test_all.sh eol=lf
-Surface_mesh_simplification/demo/Surface_mesh_simplification/edge_collapse_demo.cpp -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification.tex -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/PkgDescription.tex -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/Surface_mesh_simplification.tex -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.eps -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.pdf -text svneol=unset#unset
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.png -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/main.tex -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/Count_ratio_stop_predicate.tex -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/Count_stop_predicate.tex -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/EdgeCollapsableMesh.tex -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/EdgeCollapseSimplificationVisitor.tex -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/EdgeProfile.tex -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/Edge_length_cost.tex -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/Edge_profile.tex -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/GetCost.tex -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/GetPlacement.tex -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/LindstromTurk_cost.tex -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/LindstromTurk_placement.tex -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/Midpoint_placement.tex -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/StopPredicate.tex -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/edge_collapse.tex -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse1.eps -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse1.pdf -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse1.png -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse2.eps -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse2.pdf -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse2.png -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse3.eps -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse3.pdf -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse3.png -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse4.eps -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse4.pdf -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse4.png -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/collapse0.eps -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/collapse0.pdf -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/collapse0.png -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/collapse1.eps -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/collapse1.pdf -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/collapse1.png -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/general_collapse.eps -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/general_collapse.pdf -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/general_collapse.png -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/intro.tex -text
-Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/main.tex -text
-Surface_mesh_simplification/examples/Surface_mesh_simplification/cgal_test -text
-Surface_mesh_simplification/examples/Surface_mesh_simplification/cube.off -text
-Surface_mesh_simplification/examples/Surface_mesh_simplification/edge_collapse_enriched_polyhedron.cmd -text
-Surface_mesh_simplification/examples/Surface_mesh_simplification/edge_collapse_enriched_polyhedron.cpp -text
-Surface_mesh_simplification/examples/Surface_mesh_simplification/edge_collapse_polyhedron.cmd -text
-Surface_mesh_simplification/examples/Surface_mesh_simplification/edge_collapse_polyhedron.cpp -text
-Surface_mesh_simplification/examples/Surface_mesh_simplification/makefile -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile_impl.h -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_params.h -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_and_length.h -text
-Surface_mesh_simplification/include/CGAL/Surface_mesh_simplification/halfedge_collapse_Polyhedron_3.h -text
-Surface_mesh_simplification/include/CGAL/boost_relaxed_heap.hpp -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/LT_strategy.cpp -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/MP_strategy.cpp -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/aux_edge_collapse_test_Polyhedron_3.cpp -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/cgal_test -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/check_audit_edge_collapse_visitor.cpp -text
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.eps -text svneol=unset#application/postscript
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.pdf -text svneol=unset#application/pdf
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification/fig/Illustration-Simplification-ALL.png -text svneol=unset#image/png
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse1.eps -text svneol=unset#application/postscript
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse1.pdf -text svneol=unset#application/pdf
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse1.png -text svneol=unset#image/png
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse2.eps -text svneol=unset#application/postscript
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse2.pdf -text svneol=unset#application/pdf
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse2.png -text svneol=unset#image/png
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse3.eps -text svneol=unset#application/postscript
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse3.pdf -text svneol=unset#application/pdf
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse3.png -text svneol=unset#image/png
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse4.eps -text svneol=unset#application/postscript
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse4.pdf -text svneol=unset#application/pdf
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/border_collapse4.png -text svneol=unset#image/png
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/collapse0.eps -text svneol=unset#application/postscript
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/collapse0.pdf -text svneol=unset#application/pdf
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/collapse0.png -text svneol=unset#image/png
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/collapse1.eps -text svneol=unset#application/postscript
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/collapse1.pdf -text svneol=unset#application/pdf
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/collapse1.png -text svneol=unset#image/png
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/general_collapse.eps -text svneol=unset#application/postscript
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/general_collapse.pdf -text svneol=unset#application/pdf
+Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/general_collapse.png -text svneol=unset#image/png
+Surface_mesh_simplification/examples/Surface_mesh_simplification/cgal_test eol=lf
+Surface_mesh_simplification/examples/Surface_mesh_simplification/cube.off -text svneol=unset#application/octet-stream
+Surface_mesh_simplification/examples/Surface_mesh_simplification/edge_collapse_enriched_polyhedron.cmd eol=lf
+Surface_mesh_simplification/examples/Surface_mesh_simplification/edge_collapse_polyhedron.cmd eol=lf
+Surface_mesh_simplification/test/Surface_mesh_simplification/cgal_test eol=lf
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/MODELS -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/cube.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/cube.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/cube_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/cube_MP.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/cube_open.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/cube_open.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/cube_open_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/cube_open_MP.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/eight.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/eight.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/eight_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/eight_MP.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/genus1.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/genus1.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/genus1_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/genus1_MP.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/head_open_with_holes.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/head_open_with_holes.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/head_open_with_holes_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/head_open_with_holes_MP.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/hedra.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/hedra.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/hedra_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/hedra_MP.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/hedra_open.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/hedra_open.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/hedra_open_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/hedra_open_MP.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/helmet.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/helmet.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/helmet_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/helmet_MP.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/hexagon_open.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/hexagon_open.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/hexagon_open_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/hexagon_open_MP.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/list.txt -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/oct.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/oct.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/oct_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/oct_MP.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/oni.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/oni.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/oni_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/oni_MP.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/square_open.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/square_open.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/square_open_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/square_open_MP.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/star.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/star.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/star_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/star_MP.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/tetra.off -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/tetra_12f.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/tetra.off -text svneol=unset#application/octet-stream
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/tetra_12f.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/tetra_12f_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/tetra_12f_MP.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/tetra_6f.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/tetra_6f.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/tetra_6f_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/tetra_6f_MP.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/tetra_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/tetra_MP.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/triangle_7f_open.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/triangle_7f_open.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/triangle_7f_open_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/triangle_7f_open_MP.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/triangle_open.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/triangle_open.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/triangle_open_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/triangle_open_MP.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/data/triangle_open_with_hole.off -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/data/triangle_open_with_hole.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/triangle_open_with_hole_LT.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/triangle_open_with_hole_MP.audit -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/test_edge_collapse_Polyhedron_3_LT.cmd -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/test_edge_collapse_Polyhedron_3_LT.cpp -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/test_edge_collapse_Polyhedron_3_MP.cmd -text
-Surface_mesh_simplification/test/Surface_mesh_simplification/test_edge_collapse_Polyhedron_3_MP.cpp -text
+Surface_mesh_simplification/test/Surface_mesh_simplification/test_edge_collapse_Polyhedron_3_LT.cmd eol=lf
+Surface_mesh_simplification/test/Surface_mesh_simplification/test_edge_collapse_Polyhedron_3_MP.cmd eol=lf
+Surface_mesher/demo/Surface_mesher/windows/Mesh.sln eol=crlf
 Surface_mesher/demo/Surface_mesher/windows/Mesh.suo -text
+Surface_mesher/demo/Surface_mesher/windows/Mesh.vcproj eol=crlf
 Surface_mesher/demo/Surface_mesher/windows/res/Mesh.ico -text svneol=unset#image/x-icon
 Surface_mesher/demo/Surface_mesher/windows/res/MeshDoc.ico -text svneol=unset#image/x-icon
 Surface_mesher/demo/Surface_mesher/windows/res/Toolbar.bmp -text svneol=unset#image/bmp
@@ -2541,12 +2164,18 @@ Surface_mesher/doc_tex/Surface_mesher/skull-surface.png -text svneol=unset#image
 Surface_mesher/doc_tex/Surface_mesher/sphere-surface.eps -text svneol=unset#application/postscript
 Surface_mesher/doc_tex/Surface_mesher/sphere-surface.png -text svneol=unset#image/png
 Surface_mesher/examples/Surface_mesher/ImageIO/data/skull_2.9.inr.gz -text svneol=unset#application/gzip
+Surface_mesher/examples/Surface_mesher/cgal_test eol=lf
 Surface_mesher/examples/Surface_mesher/inputs/ALSTOM_TEST4.off -text svneol=unset#application/octet-stream
 Surface_mesher/examples/Surface_mesher/inputs/boeing.off -text svneol=unset#application/octet-stream
 Surface_mesher/examples/Surface_mesher/inputs/geosphere.off -text svneol=unset#application/octet-stream
 Surface_mesher/examples/Surface_mesher/inputs/triceratops.off -text svneol=unset#application/octet-stream
+Surface_mesher/examples/Surface_mesher/mesh_a_3d_gray_image.vcproj eol=crlf
 Surface_mesher/find_debug_macros -text
 Surface_mesher/find_non_debug_macros -text
+Testsuite/test/run_testsuite eol=lf
+Timer/test/Timer/cgal_test eol=lf
+Triangulation_2/demo/Triangulation_2/constrained_delaunay_triangulation_2.vcproj eol=crlf
+Triangulation_2/demo/Triangulation_2/delaunay_triangulation_2.vcproj eol=crlf
 Triangulation_2/demo/Triangulation_2/help/cindex.html svneol=native#text/html
 Triangulation_2/demo/Triangulation_2/help/cinput_point_layer.gif -text svneol=unset#image/gif
 Triangulation_2/demo/Triangulation_2/help/conflict_zone.gif -text svneol=unset#image/gif
@@ -2558,6 +2187,7 @@ Triangulation_2/demo/Triangulation_2/help/input_line_layer.gif -text svneol=unse
 Triangulation_2/demo/Triangulation_2/help/input_point_layer.gif -text svneol=unset#image/gif
 Triangulation_2/demo/Triangulation_2/help/movedelete_point_layer.gif -text svneol=unset#image/gif
 Triangulation_2/demo/Triangulation_2/help/rindex.html svneol=native#text/html
+Triangulation_2/demo/Triangulation_2/regular_triangulation_2.vcproj eol=crlf
 Triangulation_2/doc_tex/TDS_2/Flip.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/TDS_2/Three.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/TDS_2/flip.ltex -text svneol=unset#application/octet-stream
@@ -2680,6 +2310,7 @@ Triangulation_2/doc_tex/Triangulation_2_ref/insert3.gif -text svneol=unset#image
 Triangulation_2/doc_tex/Triangulation_2_ref/neighbors.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2_ref/remove.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2_ref/walk.gif -text svneol=unset#image/gif
+Triangulation_2/test/run_testsuite eol=lf
 Triangulation_3/doc_tex/TriangulationDS_3/comborient.eps -text svneol=unset#application/postscript
 Triangulation_3/doc_tex/TriangulationDS_3/comborient.gif -text svneol=unset#image/gif
 Triangulation_3/doc_tex/TriangulationDS_3/comborient.pdf -text svneol=unset#application/pdf
@@ -2778,6 +2409,7 @@ Triangulation_3/doc_tex/Triangulation_3_ref/insert_outside_convex_hull.pdf -text
 Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.eps -text svneol=unset#application/postscript
 Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.gif -text svneol=unset#image/gif
 Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.pdf -text svneol=unset#application/pdf
+Union_find/test/Union_find/cgal_test eol=lf
 Visibility_complex/doc_tex/Visibility_complex/fig/bitangent.gif -text svneol=unset#image/gif
 Visibility_complex/doc_tex/Visibility_complex/fig/configuration.gif -text svneol=unset#image/gif
 Visibility_complex/doc_tex/Visibility_complex/fig/constraint-edge.gif -text svneol=unset#image/gif
@@ -2825,4 +2457,21 @@ Visibility_complex/doc_tex/fig/points.gif -text svneol=unset#image/gif
 Visibility_complex/doc_tex/fig/vis-complex.eps -text svneol=unset#application/postscript
 Visibility_complex/doc_tex/fig/vis-complex.fig -text svneol=unset#application/octet-stream
 Visibility_complex/doc_tex/fig/vis-complex.gif -text svneol=unset#image/gif
+Voronoi_diagram_2/demo/Voronoi_diagram_2/voronoi_diagram_2.vcproj eol=crlf
 iostream/test/iostream/data/io.cin -text
+window/test/WindowStream/cgal_test eol=lf
+window/test/WindowStream/manual_example_ps.cmd eol=lf
+window/test/WindowStream/test_window_stream_xy_3.cmd eol=lf
+wininst/cgal_config.bat eol=crlf
+wininst/developer_scripts/examples/master.dsp eol=crlf
+wininst/developer_scripts/examples/master.dsw eol=crlf
+wininst/developer_scripts/examples/master.vcproj eol=crlf
+wininst/src/CGAL/cgallib.vcproj eol=crlf
+wininst/winutils/make/bcc/leda/demo.bat eol=crlf
+wininst/winutils/make/bcc/leda/ex.bat eol=crlf
+wininst/winutils/make/bcc/noleda/demo.bat eol=crlf
+wininst/winutils/make/bcc/noleda/ex.bat eol=crlf
+wininst/winutils/make/msvc/leda/demo.bat eol=crlf
+wininst/winutils/make/msvc/leda/ex.bat eol=crlf
+wininst/winutils/make/msvc/noleda/demo.bat eol=crlf
+wininst/winutils/make/msvc/noleda/ex.bat eol=crlf

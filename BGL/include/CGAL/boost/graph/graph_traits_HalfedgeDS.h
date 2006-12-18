@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://fcacciola@scm.gforge.inria.fr/svn/cgal/trunk/Surface_mesh_simplification/include/CGAL/HalfedgeDS_BGL_aux.h $
-// $Id: HalfedgeDS_BGL_aux.h 32048 2006-06-23 13:59:36Z lsaboret $
+// $URL$
+// $Id$
 // 
 //
 // Author(s): Fernando Cacciola <fernando.cacciola@gmail.com>, Andreas Fabri <andreas.fabri@geometryfactory.com>

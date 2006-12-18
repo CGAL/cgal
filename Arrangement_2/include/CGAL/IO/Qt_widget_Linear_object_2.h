@@ -11,9 +11,9 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://baruchzu@scm.gforge.inria.fr/svn/cgal/trunk/Arrangement_2/include/CGAL/IO/Qt_widget_Polyline_2.h $
-// $Id: Qt_widget_Polyline_2.h 28489 2006-02-14 10:08:15Z lsaboret $
-// $Date: 2006-02-14 12:08:15 +0200 (ג, 14 פברואר 2006) $
+// $URL$
+// $Id$
+// $Date$
 // 
 //
 // Author(s)     : Ron Wein  <wein@post.tau.ac.il>

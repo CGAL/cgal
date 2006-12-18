@@ -15,8 +15,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://hemmer@scm.gforge.inria.fr/svn/cgal/branches/CGAL_with_EXACUS/Algebraic_foundations/include/CGAL/gmpxx.h $
-// $Id: gmpxx.h 34439 2006-09-21 08:56:06Z slimbach $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Sylvain Pion

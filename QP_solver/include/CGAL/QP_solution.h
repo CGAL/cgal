@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://gaertner@scm.gforge.inria.fr/svn/cgal/trunk/QP_solver/include/CGAL/QP_solution.h $
-// $Id: QP_solution.h 34216 2006-09-13 21:10:11Z gaertner $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>

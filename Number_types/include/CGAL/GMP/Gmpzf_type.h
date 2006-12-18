@@ -12,8 +12,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://gaertner@scm.gforge.inria.fr/svn/cgal/trunk/Number_types/include/CGAL/Gmpzf.h $
-// $Id: Gmpzf.h 33782 2006-08-25 14:06:31Z gaertner $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Bernd Gaertner <gaertner@inf.ethz.ch>

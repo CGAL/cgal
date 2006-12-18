@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://nmeskini@scm.gforge.inria.fr/svn/cgal/trunk/Interpolation/test/Interpolation/include/CGAL/_test_regular_neighbors_2.C $
-// $Id: _test_regular_neighbors_2.C 28567 2006-02-16 14:30:13Z lsaboret $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Naceur MESKINI.

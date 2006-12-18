@@ -15,8 +15,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://hemmer@scm.gforge.inria.fr/svn/cgal/branches/CGAL_with_EXACUS/Algebraic_foundations/include/CGAL/Gmpz.h $
-// $Id: Gmpz.h 34517 2006-09-25 14:49:22Z hemmer $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra, Sylvain Pion
