@@ -1,19 +1,11 @@
 #include <CGAL/basic.h>
 #include <CGAL/Homogeneous.h>
-#include <CGAL/leda_integer.h>
+#include <CGAL/Gmpz.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
+#include <CGAL/Nef_3/SNC_indexed_items.h>
 #include <CGAL/IO/Qt_widget_Nef_3.h>
 #include <qapplication.h>
-#include <CGAL/Nef_3/Single_wall_creator.h>
-#include <CGAL/Nef_3/Single_wall_creator2.h>
-#include <CGAL/Nef_3/YVertical_wall_builder.h>
-#include <CGAL/Nef_3/Reflex_edge_searcher.h>
-#include <CGAL/Nef_3/Ray_hit_generator.h>
-#include <CGAL/Nef_3/Ray_hit_generator2.h>
-#include <CGAL/Nef_3/External_structure_builder.h>
-#include <CGAL/Nef_3/Edge_sorter.h>
-#include <CGAL/Nef_3/Edge_sorter2.h>
 #include <CGAL/Nef_3/SNC_io_parser.h>
 #include <CGAL/Nef_2/Object_index.h>
 #include <fstream>
@@ -25,12 +17,25 @@
 #include <CGAL/Nef_S2/Gausian_map.h>
 #include <CGAL/Nef_S2/gausian_map_to_polyhedron_3.h>
 #include <CGAL/Nef_S2/gausian_map_to_nef_3.h>
-
+#include <CGAL/Nef_3/convex_decomposition_3.h> 
 #include <CGAL/convexity_check_3.h>
 
-typedef leda_integer NT;
+#include <CGAL/Nef_3/Nary_union_by_queue.h>
+#include <CGAL/Nef_3/Nary_union_by_pq.h>
+
+#ifdef CGAL_WITH_LAZY_KERNEL
+typedef CGAL::Gmpq NT;
+//typedef leda_rational NT;
+typedef CGAL::Lazy_kernel<CGAL::Simple_cartesian<NT> > Kernel;
+#else
+typedef CGAL::Gmpz NT;
 typedef CGAL::Homogeneous<NT> Kernel;
+#endif
+#ifdef CGAL_NEF_INDEXED_ITEMS
+typedef CGAL::Nef_polyhedron_3<Kernel,CGAL::SNC_indexed_items>     Nef_polyhedron;
+#else
 typedef CGAL::Nef_polyhedron_3<Kernel>     Nef_polyhedron;
+#endif
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef Nef_polyhedron::SNC_structure  SNC_structure;
 typedef CGAL::SNC_decorator<SNC_structure>  SNC_decorator;
@@ -54,18 +59,9 @@ typedef Kernel::Plane_3            Plane_3;
 typedef Kernel::Line_3             Line_3;
 typedef Kernel::Point_3            Point_3;
 
-typedef CGAL::Single_wall_creator<Nef_polyhedron>  Single_wall;
-typedef CGAL::Single_wall_creator2<Nef_polyhedron> Single_wall2;
-typedef CGAL::YVertical_wall_builder<Nef_polyhedron> YVertical_wall_builder;
-typedef CGAL::Reflex_edge_searcher<Nef_polyhedron> Reflex_edge_searcher;
-typedef Reflex_edge_searcher::Reflex_sedge_iterator Reflex_sedge_iterator;
-typedef Reflex_edge_searcher::Container             Container;
-typedef CGAL::Ray_hit_generator<Nef_polyhedron> Ray_hit;
-typedef CGAL::Ray_hit_generator2<Nef_polyhedron> Ray_hit2;
-typedef CGAL::External_structure_builder<Nef_polyhedron> External_structure_builder;
-typedef CGAL::Edge_sorter<Nef_polyhedron, Container> Edge_sorter;
-typedef CGAL::Edge_sorter2<Nef_polyhedron, Container> Edge_sorter2;
-
+typedef CGAL::Nary_union_by_queue<Nef_polyhedron> NUBQ;
+typedef CGAL::Nary_union_by_pq<Nef_polyhedron> NUBPQ;
+typedef CGAL::Nary_union_by_summup<Nef_polyhedron> NUBPS;
 
 template <class HDS, class Const_decorator>
 class Build_polyhedron : public CGAL::Modifier_base<HDS> {
@@ -195,169 +191,12 @@ int main(int argc, char* argv[]) {
   SNC_decorator D(*const_cast<SNC_structure*>(N.sncp()));
 
   t2.start();
-
   //  CGAL_NEF_SETDTHREAD(227*229*233);
-
-  External_structure_builder esb;
-
-  Reflex_edge_searcher res(Sphere_point(1,0,0));
-  N.delegate(res,false,false);
-
-  std::cerr << "number of reflex sedges" 
-            << std::distance(res.positive_rsedges_begin(), 
-                             res.positive_rsedges_end())
-            << ","
-            << std::distance(res.negative_rsedges_begin(), 
-                             res.negative_rsedges_end())
-            << std::endl;
-
-  Reflex_sedge_iterator rei;
-
-  while(res.negative_rsedges_begin() != res.negative_rsedges_end()) {
-  for(rei=res.negative_rsedges_begin(); rei!=res.negative_rsedges_end(); ++rei)
-      CGAL_assertion(res.is_reflex_sedge(*rei));
-
-
-  for(rei=res.negative_rsedges_begin(); rei!=res.negative_rsedges_end(); ++rei) {
-      SHalfedge_handle se(*rei);
-      Halfedge_handle split_edge;
-    Ray_hit2 rh2a(Vector_3(-1,0,0),se->source()->source());
-    N.delegate(rh2a);
-    if(rh2a.split_edge(split_edge))
-      res.handle_new_edge(split_edge);
-    Ray_hit2 rh2b(Vector_3(-1,0,0),se->source()->twin()->source());
-    N.delegate(rh2b);
-    if(rh2b.split_edge(split_edge))
-      res.handle_new_edge(split_edge);
-  }
-  
-  Edge_sorter es(res.get_negative_rsedges());
-  N.delegate(es);
-
-  //  CGAL_NEF_SETDTHREAD(227*229*47);
-//  CGAL_NEF_SETDTHREAD(233*229*227);
-  for(rei=res.negative_rsedges_begin(); rei!=res.negative_rsedges_end(); ++rei) {
-    Halfedge_handle e = (*rei)->source();
-//    std::cerr << "handle reflex edge " << e->source()->point() << "->" 
-//    	      << e->twin()->source()->point() << std::endl;
-    CGAL_assertion(res.is_reflex_sedge(*rei));    
-    if(e->point().hx() > 0)
-      e = e->twin();
-    Single_wall W(e,Vector_3(-1,0,0));
-    N.delegate(W);
-  }    
-
-  N.delegate(esb);
-
-  //  std::cerr << N;
-
-//  Reflex_edge_searcher res2;
-  N.delegate(res, false, false);
-
-  std::cerr << "number of reflex sedges" 
-            << std::distance(res.positive_rsedges_begin(), 
-                             res.positive_rsedges_end())
-            << ","
-            << std::distance(res.negative_rsedges_begin(), 
-                             res.negative_rsedges_end())
-            << std::endl;
-  }
-  
-  for(rei=res.positive_rsedges_begin(); rei!=res.positive_rsedges_end(); ++rei) {
-      SHalfedge_handle se(*rei);
-      Halfedge_handle split_edge;
-    Ray_hit2 rh2a(Vector_3(1,0,0),se->source()->source());
-    N.delegate(rh2a);
-    if(rh2a.split_edge(split_edge))
-      res.handle_new_edge(split_edge);
-    Ray_hit2 rh2b(Vector_3(1,0,0),se->source()->twin()->source());
-    N.delegate(rh2b);
-    if(rh2b.split_edge(split_edge))
-      res.handle_new_edge(split_edge);
-  }
-
-  Edge_sorter2 es2(res.get_positive_rsedges());
-  N.delegate(es2);
-  
-
-//  QApplication b(argc, argv);
-//  CGAL::Qt_widget_Nef_3<Nef_polyhedron>* wb = 
-//    new CGAL::Qt_widget_Nef_3<Nef_polyhedron>(N);
-//  b.setMainWidget(wb);
-//  wb->show();
-//  b.exec();
-
-
-  //  CGAL_NEF_SETDTHREAD(229*233);
-
-  rei=res.positive_rsedges_end();
-  if(rei!=res.positive_rsedges_begin())
-    do {
-      --rei;
-      Halfedge_handle e = (*rei)->source();
-      //      std::cerr << "handle reflex edge " << e->source()->point() << "->" 
-		//		<< e->twin()->source()->point() << std::endl;
-      if(e->point().hx() < 0)
-	e = e->twin();
-      //      std::cerr << "handle reflex edge " << e->source()->point() << "->" 
-      //		<< e->twin()->source()->point() << std::endl;
-      Single_wall W(e,Vector_3(1,0,0));
-      N.delegate(W);
-    } while(rei!=res.positive_rsedges_begin());
-
-  N.delegate(esb);
-
-  N.delegate(res, false, false);
-  std::cerr << "number of reflex sedges" 
-            << std::distance(res.positive_rsedges_begin(), 
-                             res.positive_rsedges_end())
-            << ","
-            << std::distance(res.negative_rsedges_begin(), 
-                             res.negative_rsedges_end())
-            << std::endl;
-
-
-  YVertical_wall_builder Y;
-  N.delegate(Y,false,false);
-
-  YVertical_wall_builder::Vertical_redge_iterator vri=Y.pos_begin();
-  for(; vri != Y.pos_end(); ++vri) {
-    //    std::cerr << "pos: " << (*vri)->source()->point()
-    //	      << "->" << (*vri)->twin()->source()->point() << std::endl;
-    Single_wall2 W((*vri),Sphere_point(0,1,0));
-    N.delegate(W);
-  }
-  for(vri = Y.neg_begin(); vri != Y.neg_end(); ++vri) {
-    //    std::cerr << "neg: " << (*vri)->source()->point()
-    //	      << "->" << (*vri)->twin()->source()->point() << std::endl;
-    Single_wall2 W((*vri),Sphere_point(0,-1,0));
-    N.delegate(W);
-  }      
-
-  N.delegate(esb);
+  convex_decomposition_3<Nef_polyhedron>(N);
 
   t2.stop();
 
-  N.delegate(res, false, false);
-  std::cerr << "number of reflex sedges" 
-            << std::distance(res.positive_rsedges_begin(), 
-                             res.positive_rsedges_end())
-            << ","
-            << std::distance(res.negative_rsedges_begin(), 
-                             res.negative_rsedges_end())
-            << std::endl;
-
-  //  CGAL_NEF_SETDTHREAD(293);
-  //  std::cerr << N;
   CGAL_assertion(N.is_valid());
-
-
-//  QApplication b(argc, argv);
-//  CGAL::Qt_widget_Nef_3<Nef_polyhedron>* wb = 
-//    new CGAL::Qt_widget_Nef_3<Nef_polyhedron>(N);
-//  b.setMainWidget(wb);
-//  wb->show();
-//  b.exec();
 
   typedef CGAL::Gausian_map<Kernel> Gausian_map;
 
@@ -367,13 +206,11 @@ int main(int argc, char* argv[]) {
   Gausian_map GC(NC, --NC.volumes_end());
 
 #ifdef CGAL_NEF3_NARY_UNION_VIA_SUMMUP
-  std::list<Nef_polyhedron> queue;
-#elif defined CGAL_NEF3_NARY_UNION_VIA_QUEUE
-  std::list<Nef_polyhedron> queue;
+  NUBS nary_union;
+#elif defined CGAL_NEF3_NARY_UNION_VIA_PQ
+  NUBPQ nary_union;
 #else
-  typedef std::multimap<Nef_polyhedron::Size_type,Nef_polyhedron> PQ;
-  typedef PQ::iterator      PQ_iterator;
-  PQ pq;
+  NUBQ nary_union;
 #endif
 
   t3.start();
@@ -391,6 +228,7 @@ int main(int argc, char* argv[]) {
     Polyhedron P;
     convert_volume2polyhedron(N,c,P);
     Nef_polyhedron NP(P);
+
     Gausian_map G(NP,--NP.volumes_end());
     //    Gausian_map G(N, c);
     Gausian_map GcG;
@@ -402,65 +240,12 @@ int main(int argc, char* argv[]) {
     CGAL_assertion(is_strongly_convex_3(tmp));
     Nef_polyhedron Ntmp(tmp);
     CGAL_assertion(Ntmp.is_valid());
-
-#ifdef CGAL_NEF3_NARY_UNION_VIA_SUMMUP
-    queue.push_back(Ntmp);
-#elif defined CGAL_NEF3_NARY_UNION_VIA_QUEUE
-    queue.push_back(Ntmp);
-#else
-    pq.insert(make_pair(Ntmp.number_of_vertices(),Ntmp));
-#endif
+    nary_union.add_polyhedron(Ntmp);
   }
   
   t3.stop();
   t4.start();
-#ifdef CGAL_NEF3_NARY_UNION_VIA_SUMMUP
-  Nef_polyhedron result(Nef_polyhedron::EMPTY);
-  std::list<Nef_polyhedron>::iterator i1;
-  for(i1=queue.begin(); i1!=queue.end(); ++i1) {
-    std::cerr << queue.size() << " polyhedra in the queue (SUMMUP)" << std::endl;
-    result += *i1;
-  }
-#elif defined CGAL_NEF3_NARY_UNION_VIA_QUEUE
-  std::list<Nef_polyhedron>::iterator i1,i2;
-  while(queue.size() > 1) {
-    std::cerr << queue.size() << " polyhedra in the queue" << std::endl;
-
-    i1 = i2 = queue.begin();
-    ++i2;
-
-    Nef_polyhedron Ntmp(*i1 + *i2);
-    
-    //    CGAL_assertion(Ntmp.is_valid());
-    queue.pop_front();
-    queue.pop_front();
-    queue.push_back(Ntmp);
-  }
-
-  Nef_polyhedron result = *queue.begin();
-#else
-  PQ_iterator i1, i2; 
-  while(pq.size() > 1) {
-    i1 = i2 = pq.begin();
-    ++i2;
-
-    std::cerr << pq.size() << " polyhedra in the priority queue " << i1->first << "," << i2->first << std::endl;
-
-    Nef_polyhedron N1(i1->second);
-    Nef_polyhedron N2(i2->second);
-
-    Nef_polyhedron Ntmp(N1 + N2);
- 
-    //    CGAL_assertion(Ntmp.is_valid());
-    pq.erase(i1);
-    pq.erase(i2);
-    pq.insert(make_pair(Ntmp.number_of_vertices(),Ntmp));
-  }
-
-  Nef_polyhedron result = pq.begin()->second;
-
-#endif
-
+  Nef_polyhedron result = nary_union.get_union();
   t4.stop();
   t1.stop();
 
@@ -471,11 +256,13 @@ int main(int argc, char* argv[]) {
   std::cout << "Sum of convex Minkowski sums : " << t3.time() << std::endl;
   std::cout << "Union of subpolyhedra: " << t4.time() << std::endl;
 
+  /*
   QApplication a(argc, argv);
   CGAL::Qt_widget_Nef_3<Nef_polyhedron>* w = 
     new CGAL::Qt_widget_Nef_3<Nef_polyhedron>(result);
   a.setMainWidget(w);
   w->show();
   a.exec();
+*/
 
 }
