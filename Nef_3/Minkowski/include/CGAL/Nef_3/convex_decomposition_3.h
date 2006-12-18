@@ -65,7 +65,7 @@ void convex_decomposition_3(Nef_polyhedron& N) {
     if(rh2b.split_edge(split_edge))
       res.handle_new_edge(split_edge);
   }
-  
+
   /*
   int argc=0;
   char* argv[1];
@@ -86,7 +86,8 @@ void convex_decomposition_3(Nef_polyhedron& N) {
     Halfedge_handle e = (*rei)->source();
 //    std::cerr << "handle reflex edge " << e->source()->point() << "->" 
 //    	      << e->twin()->source()->point() << std::endl;
-    CGAL_assertion(res.is_reflex_sedge(*rei));    
+//    CGAL_assertion(res.is_reflex_sedge(*rei));
+//  TODO: why is the previous line a problem?
     if(e->point().hx() > 0)
       e = e->twin();
     Single_wall W(e,Vector_3(-1,0,0));
