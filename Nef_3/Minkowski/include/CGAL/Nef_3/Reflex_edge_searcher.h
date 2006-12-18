@@ -167,6 +167,11 @@ class Reflex_edge_searcher : public Modifier_base<typename Nef_::SNC_structure> 
   }
 
   void handle_new_edge(Halfedge_handle e) { 
+    if(e->point() == dir || e->twin()->point() == dir) {
+      CGAL_assertion_msg(false, "should not happen");
+      return;
+    }
+
     if(e->twin()->source()->point() < e->source()->point())
       e = e->twin();
     SHalfedge_around_svertex_circulator svc(e->out_sedge()), send(svc);
