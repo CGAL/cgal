@@ -25,7 +25,8 @@ class gausian_map_to_polyhedron_3 : public CGAL::Modifier_base<HDS> {
 	int i = 0;
 	SFace_const_iterator fi;
 	for(fi = G.sfaces_begin(); fi != G.sfaces_end(); ++fi) {
-	  B.add_vertex(fi->mark().point());
+	  //	  B.add_vertex(fi->mark().point());
+	  B.add_vertex(fi->mark());
 	  SFace2int[fi] = i++;
 	}
 

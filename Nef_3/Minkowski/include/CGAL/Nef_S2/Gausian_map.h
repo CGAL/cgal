@@ -72,15 +72,15 @@ bool operator==(const PointMark<Kernel>& pm1,
   return pm1.point() == pm2.point();
 }
 
-template <class K, class Mark_ = PointMark<K> >
+template <class K> // , class Mark_ = Point_3> // PointMark<K> >
 class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geometry<K>,
-  CGAL::SM_items, Mark_> > {
+  CGAL::SM_items, typename K::Point_3> > {
 
   typedef CGAL::Sphere_geometry<K>                        Kernel;
   typedef typename K::Point_3                             Point_3;
   typedef typename K::Vector_3                            Vector_3;
-  typedef Mark_                                           Mark;
-  //  typedef Point_3                                         Mark;
+  //  typedef Mark_                                           Mark;
+  typedef Point_3                                         Mark;
   typedef CGAL::Sphere_map<Kernel,CGAL::SM_items,Mark>    Sphere_map;
   typedef CGAL::SM_decorator<Sphere_map>                  SM_decorator;
   typedef SM_decorator                                    Base;
@@ -445,18 +445,19 @@ class Gausian_map : public CGAL::SM_decorator<CGAL::Sphere_map<CGAL::Sphere_geom
   };
 
 
-  //  struct VECTOR_ADDITION { 
-  //    Mark operator()(const Mark& b1, const Mark& b2) const {
-  //      return b1+(b2-CGAL::ORIGIN); 
-  //    } 
-  //  };
+  struct VECTOR_ADDITION { 
+    Mark operator()(const Mark& b1, const Mark& b2) const {
+      return b1+(b2-CGAL::ORIGIN); 
+    } 
+  };
   
+  /*
   struct VECTOR_ADDITION {
     Mark operator()(const Mark& b1, const Mark& b2) const {
       return b1+b2;
     }
   };
-
+  */
   Object_handle top;
   Object_handle bottom;
 
