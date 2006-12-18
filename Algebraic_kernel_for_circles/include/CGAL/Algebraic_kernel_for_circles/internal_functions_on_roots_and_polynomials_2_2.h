@@ -188,9 +188,9 @@ namespace CGAL {
     typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
 
     *res++ =  Root_for_circles_2_2(
-      make_root_of_2(c.a(),-1,c.r_sq()), c.b());
+            make_root_of_2(c.a(),FT(-1),c.r_sq()), c.b());
     *res++ =  Root_for_circles_2_2(
-      make_root_of_2(c.a(),1,c.r_sq()), c.b());
+            make_root_of_2(c.a(),FT(1),c.r_sq()), c.b());
     
     return res;
   }
