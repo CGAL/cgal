@@ -149,6 +149,8 @@ class Ray_hit_generator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
       Vertex_handle v_new = create_vertex_on_first_hit(r);
       SM_walls smw(&*v_new);
       sv2 = smw.add_ray_svertex(Sphere_point(-dir));
+      sv1->twin() = sv2; // TODO: why is this necessary?
+      sv2->twin() = sv1; // these edges should not go into the Edge_sorter
 #ifdef CGAL_NEF_INDEXED_ITEMS
       sv1->set_index();
       sv2->set_index(sv1->get_index());
