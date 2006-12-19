@@ -22,6 +22,7 @@
  * The number-type traits for LEDA algebraic numbers.
  */
 
+#include <CGAL/leda_real.h>
 #include <LEDA/numbers/integer.h>
 #include <LEDA/numbers/rational.h> 
 #include <LEDA/numbers/real.h> 
@@ -270,7 +271,7 @@ public:
       degree--;
 
     LEDA_VECTOR<Integer>  cp (degree + 1);
-    const unsigned int    i;
+    unsigned int    i;
 
     for (i = 0; i <= degree; i++ )
       cp[i] = coeffs[i];
@@ -372,11 +373,11 @@ public:
                               Polynomial& p_poly, Polynomial& q_poly) const
   {
     // Compute the true degrees for both polynomials.
-    p_deg = p_degree;
+    unsigned int p_deg = p_degree;
     while (p_deg >= 0 && leda::sign (p_coeffs[p_deg]) == 0)
       p_deg--;
 
-    q_deg = q_degree;
+    unsigned int q_deg = q_degree;
     while (q_deg >= 0 && leda::sign (q_coeffs[q_deg]) == 0)
       q_deg--;
 
@@ -398,7 +399,7 @@ public:
     // Construct two rational polynomials.
     LEDA_VECTOR<Rational> cp_rat(p_deg + 1);
     LEDA_VECTOR<Rational> cq_rat(q_deg + 1);
-    int                   i;
+    unsigned int                   i;
 
     for (i = 0; i <= p_deg; i++)
       cp_rat[i] = p_coeffs[i];
@@ -450,7 +451,7 @@ public:
   /*!
    * Compute the degree of a polynomial.
    */
-  int degree (Polynomial& poly) const
+  int degree (const Polynomial& poly) const
   {
     return (poly.degree());
   }
@@ -516,8 +517,9 @@ public:
                      const Polynomial& polyB,
                      Polynomial& rem) const
   {
-    rem = polyA % polyB;                      // ???
-    return (polyA / polyB);                   // ???
+      Polynomial q;
+      polyA.euclidean_division(polyB, q, rem);
+      return q;
   }
 
   /*!
