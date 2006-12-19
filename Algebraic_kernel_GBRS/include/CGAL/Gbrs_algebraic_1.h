@@ -58,7 +58,6 @@ public:
 	~Algebraic_1_rep () {}
 
 private:
-	// Make sure it does not get accidentally copied.
 	Algebraic_1_rep (const Algebraic_1_rep &);
 	Algebraic_1_rep & operator= (const Algebraic_1_rep &);
 };
@@ -66,15 +65,14 @@ private:
 // The class of the MPFI intervals. It's a model of the RingNumberType concept
 class Algebraic_1
 : Handle_for<Algebraic_1_rep>,
-	/*boost::field_operators1<Algebraic_1,*/
-		boost::field_operators2<Algebraic_1, int,
-		boost::field_operators2<Algebraic_1, mpz_t,
-		boost::field_operators2<Algebraic_1, mpq_t,
-		boost::field_operators2<Algebraic_1, Gmpz,
-		boost::field_operators2<Algebraic_1, Gmpq,
-		boost::field_operators2<Algebraic_1, mpfr_t > > > > > > /*>*/ {
-			// XXX: the functions provided by BOOST (or supposed
-			// to be) are commented
+	boost::field_operators2<Algebraic_1, int,
+	boost::field_operators2<Algebraic_1, mpz_t,
+	boost::field_operators2<Algebraic_1, mpq_t,
+	boost::field_operators2<Algebraic_1, Gmpz,
+	boost::field_operators2<Algebraic_1, Gmpq,
+	boost::field_operators2<Algebraic_1, mpfr_t > > > > > > {
+		// XXX: the functions provided by BOOST (or supposed
+		// to be) are commented
 
 	typedef Handle_for<Algebraic_1_rep> Base;
 public:
@@ -85,6 +83,10 @@ public:
 	typedef CGAL::Tag_true	Has_exact_ring_operations;
 	typedef CGAL::Tag_true	Has_exact_division;
 	typedef CGAL::Tag_false	Has_exact_sqrt;
+
+	// copy constructor and copy assignement operator
+	Algebraic_1(const Algebraic_1&);
+	Algebraic_1& operator=(const Algebraic_1&);
 
 	// constructors I
 	// these constructors create an algebraic number which is a point; they
@@ -110,8 +112,7 @@ public:
 	Algebraic_1 (const mpq_t &, const mpq_t &);
 	Algebraic_1 (const CGAL::Gmpq &, const CGAL::Gmpq &);
 	Algebraic_1 (const CGAL::Gmpz &, const CGAL::Gmpz &);
-	Algebraic_1 (mpfi_t &);
-	Algebraic_1 (const Algebraic_1 &);
+	Algebraic_1 (mpfi_srcptr);
 
 	// the only interesting constructor
 	Algebraic_1(const mpfi_ptr&,Rational_polynomial_1&,
@@ -122,7 +123,6 @@ public:
 	Algebraic_1& operator= (const mpq_t &);
 	Algebraic_1& operator= (const CGAL::Gmpz &);
 	Algebraic_1& operator= (const CGAL::Gmpq &);
-	Algebraic_1& operator= (const Algebraic_1 &);
 
 	// destructor
 	/* not needed
@@ -131,25 +131,27 @@ public:
 
 	// functions related to the member data
 	const mpfi_t & mpfi () const;
-	mpfi_t & mpfi ();
+	mpfi_ptr mpfi();
 	const Rational_polynomial_1 & pol () const;
-	Rational_polynomial_1 & pol ();
+	//Rational_polynomial_1 & pol ();
 	const int nr () const;
 	const int mult () const;
 	const int rsprec () const;
-	void set_mpfi(const mpfi_t&);
+	void set_mpfi(mpfi_srcptr);
+	void set_mpfi_ptr(mpfi_srcptr);
 	void clear_pol ();
 	void set_pol (const Rational_polynomial_1 &);
 	void set_nr (const int);
 	void set_mult (const int);
 	void set_rsprec (const int);
 	void set_prec (mp_prec_t);
-	mp_prec_t get_prec ();
+	mp_prec_t get_prec()const;
 	void get_left (mpfr_t &) const;
 	void get_right (mpfr_t &) const;
 	void get_endpoints (mpfr_t &, mpfr_t &) const;
 	bool is_consistent () const;
 	bool is_point () const;	// are endpoints equal?
+	bool overlaps(const Algebraic_1&)const;
 	bool contains (const int n) const;
 	bool contains (const mpfr_t &n) const;
 	bool contains (const mpz_t &n) const;
@@ -243,7 +245,7 @@ public:
 	// 8
 	Algebraic_1 sqrt () const;
 	// 9
-	std::ostream& show(std::ostream&,int=0);
+	std::ostream& show(std::ostream&,int=0)const;
 	// 10
 	// (the other comparison cases for mp[zq]_t should be covered by the
 	// template functions)
@@ -291,14 +293,22 @@ public:
 // //////////////////////////
 // inline functions of the class
 inline const mpfi_t& Algebraic_1::mpfi()const{return Ptr()->mpfI;};
-inline mpfi_t& Algebraic_1::mpfi(){return ptr()->mpfI;};
+inline mpfi_ptr Algebraic_1::mpfi(){return ptr()->mpfI;};
 inline const Rational_polynomial_1 & Algebraic_1::pol() const{
 	return *(Ptr()->poly);};
-inline Rational_polynomial_1& Algebraic_1::pol(){return *(ptr()->poly);};
+//inline Rational_polynomial_1& Algebraic_1::pol(){return *(ptr()->poly);};
 inline const int Algebraic_1::nr()const{return ptr()->nr;};
 inline const int Algebraic_1::mult()const{return ptr()->mult;};
-inline const int Algebraic_1::rsprec()const{return ptr()->rsprec;};
-inline void Algebraic_1::set_mpfi(const mpfi_t &x){*mpfi()=*x;};
+inline const int Algebraic_1::rsprec()const{
+	int p1,p2;
+	if((p1=ptr()->rsprec)>(p2=get_prec()))
+		return p1;
+	else
+		return p2;
+	};
+inline void Algebraic_1::set_mpfi(mpfi_srcptr x){
+	mpfi_set(mpfi(),x);};
+inline void Algebraic_1::set_mpfi_ptr(mpfi_srcptr x){/**mpfi()=*x;*/mpfi_set(mpfi(),x);};
 inline void Algebraic_1::clear_pol(){ptr()->poly=NULL;};
 inline void Algebraic_1::set_pol(const Rational_polynomial_1 &p){
 	ptr()->poly=const_cast<Rational_polynomial_1*>(&p);}; // thanks Julien!
@@ -306,14 +316,36 @@ inline void Algebraic_1::set_nr(const int n){ptr()->nr=n;};
 inline void Algebraic_1::set_mult(const int m){ptr()->mult=m;};
 inline void Algebraic_1::set_rsprec(const int p){ptr()->rsprec=p;};
 inline void Algebraic_1::set_prec(mp_prec_t p){mpfi_round_prec(mpfi(),p);};
-inline mp_prec_t Algebraic_1::get_prec(){return mpfi_get_prec(mpfi());};
+inline mp_prec_t Algebraic_1::get_prec()const{return mpfi_get_prec(mpfi());};
 inline void Algebraic_1::get_left(mpfr_t &f)const{mpfi_get_left(f,mpfi());};
 inline void Algebraic_1::get_right(mpfr_t &f)const{mpfi_get_right(f,mpfi());};
-inline bool Algebraic_1::is_consistent()const{return (ptr()->poly);};
+inline bool Algebraic_1::is_consistent()const{
+	return(&pol()==NULL?false:true);};
+inline bool Algebraic_1::is_point()const{
+	return(mpfr_equal_p(&(mpfi()->left),&(mpfi()->right)));};
+inline bool Algebraic_1::contains(const int n)const{
+	return((mpfr_cmp_si(&(mpfi()->left),n)<=0)&&
+			(mpfr_cmp_si(&(mpfi()->right),n)>=0));};
+inline bool Algebraic_1::contains(const mpfr_t &n)const{
+	return((mpfr_lessequal_p(&(mpfi()->left),n))&&
+			(mpfr_greaterequal_p(&(mpfi()->right),n)));};
+inline bool Algebraic_1::contains(const mpz_t &n)const{
+	return((mpfr_cmp_z(&(mpfi()->left),n)<=0)&&
+			(mpfr_cmp_z(&(mpfi()->right),n)>=0));};
+inline bool Algebraic_1::contains(const mpq_t &n)const{
+	return((mpfr_cmp_q(&(mpfi()->left),n)<=0)&&
+			(mpfr_cmp_q(&(mpfi()->right),n)>=0));};
+inline bool Algebraic_1::contains(const Gmpz &n)const{
+	return((mpfr_cmp_z(&(mpfi()->left),n.mpz())<=0)&&
+			(mpfr_cmp_z(&(mpfi()->right),n.mpz())>=0));};
+inline bool Algebraic_1::contains(const Gmpq &n)const{
+	return((mpfr_cmp_q(&(mpfi()->left),n.mpq())<=0)&&
+			(mpfr_cmp_q(&(mpfi()->right),n.mpq())>=0));};
 
 // //////////////////////////
 // other functions coded not as class members
 std::ostream& operator<<(std::ostream&,Algebraic_1&);
+std::ostream& operator<<(std::ostream&,const Algebraic_1&);
 
 bool operator==(const Algebraic_1&,const Algebraic_1&);
 bool operator!=(const Algebraic_1&,const Algebraic_1&);
@@ -321,7 +353,7 @@ bool operator<(const Algebraic_1&,const Algebraic_1&);
 bool operator>(const Algebraic_1&,const Algebraic_1 &n2);
 bool operator<=(const Algebraic_1&,const Algebraic_1&);
 bool operator>=(const Algebraic_1&,const Algebraic_1&);
-template <class T> bool operator==(const T&,const Algebraic_1&);
+//template <class T> bool operator==(const T&,const Algebraic_1&);
 template <class T> bool operator!=(const T&,const Algebraic_1&);
 template <class T> bool operator<(const T&,const Algebraic_1&);
 template <class T> bool operator>(const T&,const Algebraic_1&);
@@ -352,6 +384,8 @@ inline std::pair<double,double>to_interval(const Algebraic_1 &n){
 	return n.to_interval();};
 /*8.5*/inline Algebraic_1 sqrt(const Algebraic_1 &ntval){return ntval.sqrt();};
 /*9.5*/inline std::ostream& operator<<(std::ostream &o,Algebraic_1 &n){
+	return n.show(o);};
+inline std::ostream& operator<<(std::ostream &o,const Algebraic_1 &n){
 	return n.show(o);};
 
 CGAL_END_NAMESPACE

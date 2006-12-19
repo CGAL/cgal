@@ -33,16 +33,20 @@
 CGAL_BEGIN_NAMESPACE
 
 int init_solver(){
-	rs_init_rs ();
+	static unsigned int rs_inits=0;
+	if (!rs_inits) {
+		rs_init_rs();
+		++rs_inits;
+	}
 	return 0;
 }
 
-int affiche_sols_eqs(mpfi_ptr *&x){
-	int ident_sols_eqs,nb_elts,ident_node,ident_vect,i,ident_elt;
+int affiche_sols_eqs(mpfi_ptr *x){
+	int ident_sols_eqs,nb_elts,ident_node,ident_vect,ident_elt,i;
 	ident_sols_eqs=rs_get_default_sols_eqs ();
 	nb_elts=rs_export_list_vect_ibfr_nb(ident_sols_eqs);
 	ident_node=rs_export_list_vect_ibfr_firstnode(ident_sols_eqs);
-	x=(mpfi_ptr*)malloc(nb_elts*sizeof(mpfi_ptr));
+	//x=(mpfi_ptr*)malloc(nb_elts*sizeof(mpfi_ptr));
 	for (i=0; i<nb_elts; ++i) {
 		ident_vect=rs_export_list_vect_ibfr_monnode(ident_node);
 		CGAL_assertion_msg(rs_export_dim_vect_ibfr(ident_vect)==1,
@@ -54,7 +58,26 @@ int affiche_sols_eqs(mpfi_ptr *&x){
 	return nb_elts;
 }
 
-Sign affiche_sols_constr(const Algebraic_1 &a){
+void affiche_sols_constr(int nr,mpfi_ptr p){
+	int ident_sols_eqs,nb_elts,ident_node,ident_vect,nb,ident_elt;
+	ident_sols_eqs=rs_get_default_sols_ineqs();
+	nb_elts=rs_export_list_vect_ibfr_nb(ident_sols_eqs);
+	ident_node=rs_export_list_vect_ibfr_firstnode(ident_sols_eqs);
+	for(int i=0;i<nb_elts;++i){
+		ident_vect=rs_export_list_vect_ibfr_monnode(ident_node);
+		nb=rs_export_dim_vect_ibfr(ident_vect);
+		CGAL_assertion_msg((nb==1),
+				"the vector must contain one element");
+		ident_elt=rs_export_elt_vect_ibfr(ident_vect,0);
+		if(i==nr){
+			mpfi_set(p,(mpfi_ptr)rs_export_ibfr_mpfi(ident_elt));
+			//break;
+		}
+		ident_node=rs_export_list_vect_ibfr_nextnode(ident_node);
+	}
+}
+
+Sign affiche_signs_constr(const Algebraic_1 &a){
 	int ident_sols_eqs,nb_elts,ident_node,ident_vect, nb, ident_elt;
 	mpfi_t tmp;
 	mpfi_init(tmp);
@@ -76,14 +99,14 @@ Sign affiche_sols_constr(const Algebraic_1 &a){
 	/*std::cout << "\nreturned value: ";
 	mpfi_out_str(stdout,10,0,tmp);
 	std::cout << std::endl;*/
-	// mpfi_is_zero(tmp) doesn't work. The reason is that MPFR_SIGN in the
-	// mpfi code returns 1 when applied to the left and right zeros. This
-	// is not surprising, because zero is signed in IEEE 754-1985, and MPFR
-	// adopts it. Nevertheless, mpfr_sgn returns 0, but mpfi doesn't use
-	// it to implement mpfi_is_zero.
-	// Here is the difference (from MPFR source code):
-	// #define mpfr_sgn(_x)      (mpfr_zero_p(_x) ? 0 : MPFR_SIGN(_x))
-	// Why? zeros are signed in IEEE-754.
+	/* mpfi_is_zero(tmp) doesn't work. The reason is that MPFR_SIGN in
+	   the mpfi code returns 1 when applied to the left and right zeros.
+	   This is not surprising because zero is signed in IEEE 754, and MPFR
+	   adopts it. Nevertheless, mpfr_sgn returns 0, but mpfi doesn't use
+	   it to implement mpfi_is_zero.
+	   Here is the difference (from MPFR source code):
+	    define mpfr_sgn(_x)      (mpfr_zero_p(_x) ? 0 : MPFR_SIGN(_x))
+	*/
 	if(mpfr_zero_p(&(tmp->right))&&mpfr_zero_p(&(tmp->left)))
 		return ZERO;
 	// the same holds for mpfi_is_pos and mpfi_is_neg
@@ -120,13 +143,32 @@ void create_rs_uconstr (mpz_t ** list_constr,
 	rs_dappend_list_sup_bz (ident_list, ident_poly);
 }
 
-int solve_1(mpfi_ptr *&x,Rational_polynomial_1 &p1,unsigned int prec){
+int solve_1(mpfi_ptr *x,Rational_polynomial_1 &p1,unsigned int prec){
 	rs_reset_all();
 	create_rs_upoly(p1.get_coefs(),p1.get_degree(),rs_get_default_up());
 	set_rs_precisol(prec);
 	set_rs_verbose(CGAL_RS_VERB);
 	rs_run_algo("UISOLE");
 	return affiche_sols_eqs(x);
+}
+
+// y=p1(a)
+void eval_1(const Rational_polynomial_1 &p1,const Algebraic_1 &a,mpfi_ptr y){
+	CGAL_assertion((a.is_consistent())/*&&(a.nr()>=0)*/);
+	mpz_t **constr;
+	int *degs;
+	rs_reset_all();
+	create_rs_upoly(a.pol().get_coefs(),a.pol().get_degree(),
+			rs_get_default_up());
+	constr=(mpz_t**)malloc(sizeof(mpz_t*));
+	*constr=p1.get_coefs();
+	degs=(int*)malloc(sizeof(int));
+	*degs=p1.get_degree();
+	create_rs_uconstr(constr,degs,rs_get_default_ineqs_u());
+	set_rs_precisol(a.rsprec());
+	set_rs_verbose(CGAL_RS_VERB);
+	rs_run_algo("UISOLES");
+	affiche_sols_constr(a.nr(),y);
 }
 
 Sign sign_1(const Rational_polynomial_1 &p1,const Algebraic_1 &a,
@@ -148,7 +190,10 @@ Sign sign_1(const Rational_polynomial_1 &p1,const Algebraic_1 &a,
 	set_rs_precisol (prec);
 	set_rs_verbose (CGAL_RS_VERB);
 	rs_run_algo ("UISOLES");
-	return affiche_sols_constr (a);
+	Sign s=affiche_signs_constr(a);
+	//std::cout<<"sign of "<<p1<<" in the root of "<<a.pol()<<" = "<<s<<std::endl;
+	return s;
+	//return affiche_signs_constr (a);
 }
 
 int get_root (mpfi_ptr x, int n) {
@@ -207,6 +252,7 @@ Comparison_result refine_and_compare_1(Algebraic_1 &r1,Algebraic_1 &r2){
 		int sr1=mpfr_sgn(evalr1);
 		// if the following assertion fails, it means that the
 		// precision of the mpfr's was not correctly calculated
+		//std::cout<<"sl1="<<sl1<<", sr1="<<sr1<<std::endl;
 		CGAL_assertion(sl1&&sr1&&(sl1!=sr1));
 		int sc1=mpfr_sgn(evalc1);
 		while(r1.rsprec()<(int)prec){
@@ -301,14 +347,22 @@ Comparison_result refine_and_compare_1(Algebraic_1 &r1,Algebraic_1 &r2){
 }
 
 Comparison_result compare_1(Algebraic_1 &r1,Algebraic_1 &r2){
-	try {return((r1==r2)?EQUAL:((r1<r2)?SMALLER:LARGER));}
+	// there is a strange RS result where (r1<r2)&&(r2<r1)&&(r1!=r2)
+	try{
+		if((r1==r2)/*||((r1<r2)&&(r2<r1))*/)
+			return EQUAL;
+	}
 	catch(CGAL::comparison_overlap_exn &o){
-		CGAL_assertion(r1.is_consistent()&&r2.is_consistent());
-		if(sign_1(r2.pol(),r1)==ZERO)
+		if((r1.pol()==r2.pol())||(sign_1(r2.pol(),r1)==ZERO))
+			return EQUAL;
+	}
+	if(r1.overlaps(r2))
+		if((r1.pol()==r2.pol())||(sign_1(r2.pol(),r1)==ZERO))
 			return EQUAL;
 		else
 			return refine_and_compare_1(r1,r2);
-	}
+	// at this point, we know the intervals aren't equal
+	return(r1<r2?SMALLER:LARGER);
 }
 
 CGAL_END_NAMESPACE

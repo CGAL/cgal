@@ -25,12 +25,14 @@ LIBRS=$(RS_LIB)/librs.a
 LIBRSE=$(RS_LIB)/librsexport.a
 LIBCGALGBRS=$(CGAL_LIB_DESTINATION)/libCGALGbrs.a
 LIBS_FLAGS=-lmpfi -lrs -lrsexport -lCGALGbrs
-MYFLAGS=-g #-DCGAL_RS_DEBUG -DCGAL_RS_VERB=0
+MYFLAGS=-g -O0 #-DCGAL_RS_DEBUG -DCGAL_RS_VERB=0
 
 OBJS= \
       Gbrs_polynomial_1$(EXE_EXT) \
       Gbrs_polynomial_2$(EXE_EXT) \
-      Gbrs_algebraic_kernel_1$(EXE_EXT)
+      Gbrs_algebraic_kernel_1$(EXE_EXT) \
+      Arr_poly_traits_1$(EXE_EXT) \
+      Arrangement$(EXE_EXT)
 
 outside: OUTSIDEPARS=-I$(PWD)/../../include -I$(RS_INCL) -L$(RS_LIB)
 outside: $(OBJS)

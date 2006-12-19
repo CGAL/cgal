@@ -40,7 +40,7 @@ include $(CGAL_MAKEFILE)
 CGAL_OBJECTS = \
 Gbrs_algebraic_1$(OBJ_EXT) \
 Gbrs_polynomial_1$(OBJ_EXT) \
-Gbrs_solve_1$(OBJ_EXT) \
+Gbrs_solve_1$(OBJ_EXT) #\
 Gbrs_polynomial_2$(OBJ_EXT)
 
 #---------------------------------------------------------------------#
@@ -50,7 +50,7 @@ Gbrs_polynomial_2$(OBJ_EXT)
 all: outside
 
 outside: CGAL_GBRS_LIB=libCGALGbrs.a
-outside: CXXFLAGS=$(CGAL_CXXFLAGS)
+outside: CXXFLAGS=-g -O0 $(CGAL_CXXFLAGS)
 outside: OUTSIDEPARS=-I$(PWD)/../../include -I$(MPFI_INCL) -I$(RS_INCL)
 outside: static_lib_no_install
 	mv $(CGAL_GBRS_LIB) $(CGAL_LIB_DESTINATION)
@@ -63,6 +63,7 @@ static_lib_no_install: $(CGAL_OBJECTS)
 	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
 		$(CGAL_LIB_LDFLAGS)
 	$(RANLIB) $(CGAL_GBRS_LIB)
+	rm $(CGAL_OBJECTS)
 
 clean:
 	rm -f $(CGAL_GBRS_LIB) $(CGAL_OBJECTS)

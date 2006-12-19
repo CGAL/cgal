@@ -22,9 +22,6 @@
 //	becomes more readable (someone, someday, will do this)
 //	-think about precision propagation in arithmetic functions (MPFI is
 //	supposed to do this)
-//	-enhance the exception mechanism (when comparison between intervals is
-//	not known)
-//	-add interfaces to more CGAL number types
 //	-avoid the use of BOOST, because the operators that it provides here
 //	are not correct (note that alg += non_alg will need to clear its
 //	pointer to the polynomial, while alg + non_alg won't)
@@ -54,6 +51,54 @@ void overlap () {
 	throw exn_overlap;
 }
 
+// ////////////////////
+// Algebraic_1_rep member functions
+// ////////////////////
+// copy constructor
+Algebraic_1_rep::Algebraic_1_rep(const Algebraic_1_rep &a){
+	mpfi_set(mpfI,a.mpfI);
+	poly=a.poly;
+	nr=a.nr;
+	mult=a.mult;
+	rsprec=a.rsprec;
+};
+// copy assignement operator
+Algebraic_1_rep& Algebraic_1_rep::operator=(const Algebraic_1_rep &a){
+	mpfi_set(mpfI,a.mpfI);
+	poly=a.poly;
+	nr=a.nr;
+	mult=a.mult;
+	rsprec=a.rsprec;
+	return *this;
+};
+
+// ////////////////////
+// Algebraic_1 member functions
+// ////////////////////
+
+// XXX: are copy constructor and copy assignement operator really needed?
+
+// copy constructor
+Algebraic_1::Algebraic_1(const Algebraic_1 &i){
+	//set_mpfi(mpfi(),i.mpfi());	// this copies the mpfi
+	set_mpfi_ptr(i.mpfi());	// this copies the pointer to the mpfi
+	set_pol(i.pol());
+	set_nr(i.nr());
+	set_mult(i.mult());
+	set_rsprec(i.rsprec());
+};
+
+// copy assignement operator
+Algebraic_1& Algebraic_1::operator=(const Algebraic_1 &i){
+	//mpfi_set(mpfi(),i.mpfi());
+	set_mpfi(i.mpfi());
+	set_pol(i.pol());
+	set_nr(i.nr());
+	set_mult(i.mult());
+	set_rsprec(i.rsprec());
+	return *this;
+};
+
 // constructors of a "point" interval
 Algebraic_1::Algebraic_1 () {};
 
@@ -65,6 +110,7 @@ Algebraic_1::Algebraic_1(int i){
 	Rational_polynomial_1 *p=new Rational_polynomial_1(temp);
 	mpq_clear(temp);
 	set_pol(*p);
+	set_nr(0);
 };
 
 Algebraic_1::Algebraic_1(unsigned int i){
@@ -75,6 +121,7 @@ Algebraic_1::Algebraic_1(unsigned int i){
 	Rational_polynomial_1 *p=new Rational_polynomial_1(temp);
 	mpq_clear(temp);
 	set_pol(*p);
+	set_nr(0);
 };
 
 Algebraic_1::Algebraic_1(long int i){
@@ -85,6 +132,7 @@ Algebraic_1::Algebraic_1(long int i){
 	Rational_polynomial_1 *p=new Rational_polynomial_1(temp);
 	mpq_clear(temp);
 	set_pol(*p);
+	set_nr(0);
 };
 
 Algebraic_1::Algebraic_1(unsigned long int i){
@@ -95,6 +143,7 @@ Algebraic_1::Algebraic_1(unsigned long int i){
 	Rational_polynomial_1 *p=new Rational_polynomial_1(temp);
 	mpq_clear(temp);
 	set_pol(*p);
+	set_nr(0);
 };
 
 Algebraic_1::Algebraic_1(double d){
@@ -105,6 +154,7 @@ Algebraic_1::Algebraic_1(double d){
 	Rational_polynomial_1 *p=new Rational_polynomial_1(temp);
 	mpq_clear(temp);
 	set_pol(*p);
+	set_nr(0);
 };
 
 Algebraic_1::Algebraic_1(const mpz_t &z){
@@ -115,12 +165,14 @@ Algebraic_1::Algebraic_1(const mpz_t &z){
 	Rational_polynomial_1 *p=new Rational_polynomial_1(temp);
 	mpq_clear(temp);
 	set_pol(*p);
+	set_nr(0);
 };
 
 Algebraic_1::Algebraic_1(const mpq_t &q){
 	mpfi_set_q(mpfi(),q);
 	Rational_polynomial_1 *p=new Rational_polynomial_1(q);
 	set_pol(*p);
+	set_nr(0);
 };
 
 Algebraic_1::Algebraic_1(const CGAL::Gmpz &z){
@@ -131,12 +183,14 @@ Algebraic_1::Algebraic_1(const CGAL::Gmpz &z){
 	Rational_polynomial_1 *p=new Rational_polynomial_1(temp);
 	mpq_clear(temp);
 	set_pol(*p);
+	set_nr(0);
 };
 
 Algebraic_1::Algebraic_1(const CGAL::Gmpq &q){
 	mpfi_set_q(mpfi(),q.mpq());
 	Rational_polynomial_1 *p=new Rational_polynomial_1(q.mpq());
 	set_pol(*p);
+	set_nr(0);
 };
 
 // constructors of a "proper" interval (these aren't interesting at all)
@@ -176,26 +230,12 @@ Algebraic_1::Algebraic_1 (const CGAL::Gmpq &l, const CGAL::Gmpq &r) {
 	mpfi_interv_q (mpfi (), l.mpq(), r.mpq());
 };
 
-// here, the constructor copies the address of the mpfi, not the contents
-Algebraic_1::Algebraic_1 (mpfi_t &i) {
-	//mpfi_clear(mpfi());
-	*mpfi()=*i;
-};
-
-// this is a copy constructor that copies everything, including the mpfi
-Algebraic_1::Algebraic_1(const Algebraic_1 &i){
-	mpfi_set(mpfi(),i.mpfi());	// this copies the mpfi
-	//*mpfi()=*(i.mpfi());	// this copies the pointer to the mpfi
-	set_pol(i.pol());
-	set_nr(i.nr());
-	set_mult(i.mult());
-	set_rsprec(i.rsprec());
-};
+inline Algebraic_1::Algebraic_1 (mpfi_srcptr i) {set_mpfi(i);};
 
 // interesting constructor
 Algebraic_1::Algebraic_1(const mpfi_ptr &i,Rational_polynomial_1 &p,
 		const int n,const int m,const int rsp){
-	*mpfi()=*i;
+	set_mpfi_ptr(i);
 	set_pol(p);
 	set_nr(n);
 	set_mult(m);
@@ -213,130 +253,14 @@ void Algebraic_1::get_endpoints(mpfr_t &l,mpfr_t &r)const{
 	mpfi_get_right(r,mpfi());
 };
 
-bool Algebraic_1::is_point()const{
-	mpfr_t l,r;
-	mpfr_inits(l,r,NULL);
-	get_endpoints(l,r);
-	int comp=mpfr_equal_p(l,r);
-	mpfr_clears(l,r,NULL);
-	return (comp!=0);
+bool Algebraic_1::overlaps(const Algebraic_1&a)const{
+	return (((mpfr_lessequal_p(&(mpfi()->left),&(a.mpfi()->left)))&&
+		  (mpfr_lessequal_p(&(a.mpfi()->left),&(mpfi()->right))))||
+		 ((mpfr_lessequal_p(&(a.mpfi()->left),&(mpfi()->left)))&&
+		  (mpfr_lessequal_p(&(mpfi()->left),&(a.mpfi()->right)))));
 };
 
-bool Algebraic_1::contains(const int n)const{
-	mpfr_t end;
-	mpfr_init(end);
-	int comp;
-	get_left(end);	// first, we compare the left end
-	comp=mpfr_cmp_si(end,n);
-	if(comp>0){	// n is lower than the left end
-		mpfr_clear(end);
-		return false;
-	}
-	get_right(end);	// now, the right one
-	comp=mpfr_cmp_si(end,n);
-	if(comp<0){	// n is higher than the right end
-		mpfr_clear(end);
-		return false;
-	}
-	return true;
-};
-
-bool Algebraic_1::contains(const mpfr_t &n)const{
-	mpfr_t end;
-	mpfr_init(end);
-	int comp;
-	get_left(end);	// first, we compare the left end
-	comp=mpfr_cmp(end,n);
-	if(comp>0){	// n is lower than the left end
-		mpfr_clear(end);
-		return false;
-	}
-	get_right(end);	// now, the right one
-	comp=mpfr_cmp(end,n);
-	if(comp<0){	// n is higher than the right end
-		mpfr_clear(end);
-		return false;
-	}
-	return true;
-};
-
-bool Algebraic_1::contains(const mpz_t &n)const{
-	mpfr_t end;
-	mpfr_init(end);
-	int comp;
-	get_left(end);	// first, we compare the left end
-	comp=mpfr_cmp_z(end,n);
-	if(comp>0){	// n is lower than the left end
-		mpfr_clear(end);
-		return false;
-	}
-	get_right(end);	// now, the right one
-	comp=mpfr_cmp_z(end,n);
-	if(comp<0){	// n is higher than the right end
-		mpfr_clear(end);
-		return false;
-	}
-	return true;
-};
-
-bool Algebraic_1::contains(const mpq_t &n)const{
-	mpfr_t end;
-	mpfr_init(end);
-	int comp;
-	get_left(end);	// first, we compare the left end
-	comp=mpfr_cmp_q(end,n);
-	if(comp>0){	// n is lower than the left end
-		mpfr_clear(end);
-		return false;
-	}
-	get_right(end);	// now, the right one
-	comp=mpfr_cmp_q(end,n);
-	if(comp<0){	// n is higher than the right end
-		mpfr_clear(end);
-		return false;
-	}
-	return true;
-};
-
-bool Algebraic_1::contains(const Gmpz &n)const{
-	mpfr_t end;
-	mpfr_init(end);
-	int comp;
-	get_left(end);	// first, we compare the left end
-	comp=mpfr_cmp_z(end,n.mpz());
-	if(comp>0){	// n is lower than the left end
-		mpfr_clear(end);
-		return false;
-	}
-	get_right(end);	// now, the right one
-	comp=mpfr_cmp_z(end,n.mpz());
-	if(comp<0){	// n is higher than the right end
-		mpfr_clear(end);
-		return false;
-	}
-	return true;
-};
-
-bool Algebraic_1::contains(const Gmpq &n)const{
-	mpfr_t end;
-	mpfr_init(end);
-	int comp;
-	get_left(end);	// first, we compare the left end
-	comp=mpfr_cmp_q(end,n.mpq());
-	if(comp>0){	// n is lower than the left end
-		mpfr_clear(end);
-		return false;
-	}
-	get_right(end);	// now, the right one
-	comp=mpfr_cmp_q(end,n.mpq());
-	if(comp<0){	// n is higher than the right end
-		mpfr_clear(end);
-		return false;
-	}
-	return true;
-};
-
-// overcharge for assignment
+// assignment
 Algebraic_1& Algebraic_1::operator=(const long int i){
 	mpq_t temp;
 	mpfi_set_si(mpfi(),(long int)i);
@@ -381,15 +305,6 @@ Algebraic_1& Algebraic_1::operator=(const CGAL::Gmpq &q){
 	mpfi_set_q(mpfi(),q.mpq());
 	Rational_polynomial_1 *p=new Rational_polynomial_1(q.mpq());
 	set_pol(*p);
-	return *this;
-};
-
-Algebraic_1& Algebraic_1::operator= (const Algebraic_1 &i) {
-	mpfi_set (mpfi (), i.mpfi ());
-	set_pol (i.pol ());
-	set_nr (i.nr ());
-	set_mult (i.mult ());
-	set_rsprec (i.rsprec ());
 	return *this;
 };
 
@@ -683,8 +598,14 @@ Algebraic_1 Algebraic_1::sqrt () const {
 };
 
 // 9
-std::ostream& Algebraic_1::show(std::ostream &o,int digits){
-	char *str1, *str2;
+std::ostream& Algebraic_1::show(std::ostream &o,int digits)const{
+	if(is_point())
+		return(o<<mpfi_get_d(mpfi()));
+	return(o<<"["<<mpfr_get_d(&(mpfi()->left),GMP_RNDN)<<","<<
+		mpfr_get_d(&(mpfi()->right),GMP_RNDN)<<"]");
+
+	// this is to exactly display the interval
+	/*char *str1, *str2;
 	mpfr_t op1, op2;
 	mp_exp_t *expptr1, *expptr2;
 
@@ -712,7 +633,7 @@ std::ostream& Algebraic_1::show(std::ostream &o,int digits){
 	mpfr_free_str (str2);
 	mpfr_clears (op1, op2, NULL);
 
-	return o;
+	return o;*/
 };
 
 // 10
@@ -722,30 +643,16 @@ bool Algebraic_1::operator< (const mpz_t &n2) const {
 			return false;
 		else
 			overlap ();
-	mpfr_t end;
-	mpfr_init (end);
-	get_right (end);	// end is the right endpoint
-	int comp1 = mpfr_cmp_z (end, n2);
-	if (comp1 < 0) {
-		mpfr_clear (end);
+	if(mpfr_cmp_z(&(mpfi()->right),n2)<0)
 		return true;
-	}
-	mpfr_clear (end);
 	return false;
 };
 
 bool Algebraic_1::operator> (const mpz_t &n2) const {
 	if (contains (n2))
 		overlap ();
-	mpfr_t end;
-	mpfr_init (end);
-	get_left (end);	// end is the left endpoint
-	int comp1 = mpfr_cmp_z (end, n2);
-	if (comp1 > 0) {
-		mpfr_clear (end);
+	if(mpfr_cmp_z(&(mpfi()->left),n2)>0)
 		return true;
-	}
-	mpfr_clear (end);
 	return false;
 };
 
@@ -755,15 +662,8 @@ bool Algebraic_1::operator< (const mpq_t &n2) const {
 			return false;
 		else
 			overlap ();
-	mpfr_t end;
-	mpfr_init (end);
-	get_right (end);	// end is the right endpoint
-	int comp1 = mpfr_cmp_q (end, n2);
-	if (comp1 < 0) {
-		mpfr_clear (end);
+	if(mpfr_cmp_q (&(mpfi()->right),n2)<0)
 		return true;
-	}
-	mpfr_clear (end);
 	return false;
 };
 
@@ -773,12 +673,8 @@ bool Algebraic_1::operator> (const mpq_t &n2) const {
 	mpfr_t end;
 	mpfr_init (end);
 	get_left (end);	// end is the left endpoint
-	int comp1 = mpfr_cmp_q (end, n2);
-	if (comp1 > 0) {
-		mpfr_clear (end);
+	if(mpfr_cmp_q(&(mpfi()->left),n2)>0)
 		return true;
-	}
-	mpfr_clear (end);
 	return false;
 };
 
@@ -796,6 +692,11 @@ Algebraic_1& Algebraic_1::operator+= (const mpz_t &n2) {
 
 Algebraic_1& Algebraic_1::operator-= (const mpz_t &n2) {
 	mpfi_sub_z (mpfi (), mpfi (), n2);
+	return *this;
+};
+
+Algebraic_1& Algebraic_1::operator*=(const mpz_t &n2){
+	mpfi_mul_z(mpfi(),mpfi(),n2);
 	return *this;
 };
 
@@ -852,16 +753,7 @@ bool Algebraic_1::operator< (const mpfr_t &n2) const {
 			return false;
 		else
 			overlap ();
-	mpfr_t end;
-	mpfr_init (end);
-	get_right (end);	// end is the right endpoint
-	int comp1 = mpfr_cmp (end, n2);
-	if (comp1 < 0) {
-		mpfr_clear (end);
-		return true;
-	}
-	mpfr_clear (end);
-	return false;
+	return(mpfr_less_p(&(mpfi()->right),n2));
 };
 
 bool Algebraic_1::operator> (const mpfr_t &n2) const {
@@ -870,13 +762,7 @@ bool Algebraic_1::operator> (const mpfr_t &n2) const {
 	mpfr_t end;
 	mpfr_init (end);
 	get_left (end);	// end is the left endpoint
-	int comp1 = mpfr_cmp (end, n2);
-	if (comp1 > 0) {
-		mpfr_clear (end);
-		return true;
-	}
-	mpfr_clear (end);
-	return false;
+	return(mpfr_greater_p(&(mpfi()->left),n2));
 };
 
 // arithmetics: mpfi (op) mpfr
@@ -920,64 +806,25 @@ Algebraic_1& Algebraic_1::operator/= (const mpfr_t &f) {
 // These functions are required, but they need to be coded outside the class:
 
 // 1.5
-/*bool operator== (const Algebraic_1 &n1, const Algebraic_1 &n2) {
-	mpfr_t n1_l, n1_r, n2_l, n2_r;
-	mpfr_inits (n1_l, n1_r, n2_l, n2_r, NULL);
-	n1.get_endpoints (n1_l, n1_r);
-	n2.get_endpoints (n2_l, n2_r);
-	// we assume here that the left endpoint is lesser or equal than the
-	// right one (it is responsibility of the user to assure that)
-	if ((mpfr_cmp (n1_l, n2_l) == 0) && (mpfr_cmp (n1_r, n2_r) == 0)) {
-		mpfr_clears (n1_l, n1_r, n2_l, n2_r, NULL);
-		return true;
-	}
-	if ((mpfr_cmp (n1_r, n2_l) < 0) || (mpfr_cmp (n2_r, n1_l) < 0)) {
-		mpfr_clears (n1_l, n1_r, n2_l, n2_r, NULL);
-		return false;
-	}
-	mpfr_clears (n1_l, n1_r, n2_l, n2_r, NULL);
-	overlap ();
-	return false;	// this never occurs
-}*/
-
 bool operator== (const Algebraic_1 &n1, const Algebraic_1 &n2) {
-	mpfr_t n1_l,n1_r,n2_l,n2_r;
-	mpfr_inits(n1_l,n1_r,n2_l,n2_r,NULL);
-	n1.get_endpoints(n1_l,n1_r);
-	n2.get_endpoints(n2_l,n2_r);
-	if (n1.is_point() && n2.is_point() && (mpfr_cmp(n1_l,n2_l)==0)) {
-		mpfr_clears (n1_l,n1_r,n2_l,n2_r,NULL);
+	if(n1.is_point()&&n2.is_point()&&
+			(!mpfr_cmp(&(n1.mpfi()->left),&(n2.mpfi()->left))))
 		return true;
-	}
-	if ((mpfr_cmp(n1_r,n2_l)<0) || (mpfr_cmp(n2_r,n1_l)<0)) {
-		mpfr_clears (n1_l,n1_r,n2_l,n2_r,NULL);
+	if((mpfr_less_p(&(n1.mpfi()->right),&(n2.mpfi()->left)))
+			||(mpfr_less_p(&(n2.mpfi()->right),&(n1.mpfi()->left))))
 		return false;
-	}
-	mpfr_clears (n1_l, n1_r, n2_l, n2_r, NULL);
+	// if intervals are not points and they have the same bounds, they are
+	// not necessarily equal
 	overlap();
-	return false;
+	return false;	// never reached
 }
 
-bool operator< (const Algebraic_1 &n1, const Algebraic_1 &n2) {
-	mpfr_t n1_r, n2_l;
-	mpfr_inits (n1_r, n2_l, NULL);
-	n1.get_right (n1_r);
-	n2.get_left (n2_l);
-	if (mpfr_cmp (n1_r, n2_l) < 0) {
-		mpfr_clears (n1_r, n2_l, NULL);
+bool operator<(const Algebraic_1 &n1,const Algebraic_1 &n2){
+	if(mpfr_less_p(&(n1.mpfi()->right),&(n2.mpfi()->left)))
 		return true;
-	}
-	mpfr_clears (n1_r, n2_l, NULL);
-	mpfr_t n1_l, n2_r;
-	mpfr_inits (n1_l, n2_r, NULL);
-	n1.get_left (n1_l);
-	n2.get_right (n2_r);
-	if (mpfr_cmp (n2_r, n1_l) < 0) {
-		mpfr_clears (n1_l, n2_r, NULL);
+	if(mpfr_less_p(&(n2.mpfi()->right),&(n1.mpfi()->left)))
 		return false;
-	}
-	mpfr_clears (n1_l, n2_r, NULL);
-	overlap ();
+	overlap();
 	return false;	// this never occurs
 }
 

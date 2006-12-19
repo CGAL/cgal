@@ -83,19 +83,18 @@ class Solve_1 {
 			bool known_to_be_square_free=false) const {
 		if (known_to_be_square_free)
 			return res;
-		mpfi_ptr *x;
+		//mpfi_ptr *x;
+		mpfi_ptr x[p.get_degree()];	// TODO: get_number_of_sols()
 		int nr;
 		CGAL_assertion_msg (((nr = solve_1 (x, p)) >= 0),
 				"error in resolution");
 		p.set_solved();
-		if (nr) {
-			for (int i=0; i<nr; ++i) {
-				// multiplicity is -1 (we didn't calculate it)
-				Algebraic a (x[i], p, i, -1, CGAL_RS_DEF_PREC);
-				*(res++) = a;
-			}
-		}
-		free (x);
+		if(nr)
+			for(int i=0;i<nr;++i)
+				// multiplicity is 0 (we didn't calculate it)
+				*res++=*new Algebraic(x[i],p,i,0,
+						CGAL_RS_DEF_PREC);
+		//free (x);
 		return res;
 	};
 

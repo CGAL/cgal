@@ -103,7 +103,7 @@ int main () {
 	print_sign (std::cout, ker.construct_signat_1_object()(p, rootsq[0]));
 	std::cout << std::endl;
 
-	std::cout << "sign of q evaluated at the root 2 of p: ";
+	std::cout << "sign of q evaluated at the root 2 of p: "<<std::endl;
 	print_sign (std::cout, ker.construct_signat_1_object()(q, rootsp[2]));
 	std::cout << std::endl;
 

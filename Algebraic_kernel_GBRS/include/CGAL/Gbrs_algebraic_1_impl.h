@@ -43,9 +43,9 @@ template<class T>bool Algebraic_1::operator>=(const T &n2)const{
 	return ((operator==(n2))||(operator>(n2)));
 };
 
-template<class T>bool operator==(const T &n1,const Algebraic_1 &n2){
+/*template<class T>bool operator==(const T &n1,const Algebraic_1 &n2){
 	return (n2==n1);
-}
+}*/
 
 template<class T>bool operator!=(const T &n1,const Algebraic_1 &n2){
 	return (n2!=n1);

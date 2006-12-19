@@ -42,12 +42,16 @@ class Rational_polynomial_1 {
 		bool solved;
 		/*rootvector roots;*/
 	public:
+		// copy constructor and copy assignement operator
+		Rational_polynomial_1(const Rational_polynomial_1&);
+		Rational_polynomial_1& operator=(const Rational_polynomial_1&);
+		// other constructors and destructor
 		Rational_polynomial_1 ();
-		Rational_polynomial_1 (const Rational_polynomial_1 &);
 		Rational_polynomial_1 (unsigned int);
 		Rational_polynomial_1 (int);
 		Rational_polynomial_1(const mpq_t&);
 		~Rational_polynomial_1 ();
+		// member functions
 		void set_degree (int);
 		void set_coef (int, const mpz_t &);
 		void set_coef (int, const CGAL::Gmpz &);
@@ -64,12 +68,11 @@ class Rational_polynomial_1 {
 		bool get_solved()const;
 		/*rootvector get_roots()const;
 		void set_root(const Algebraic_1&);*/
-		//CGAL::Algebraic_1 eval (const CGAL::Algebraic_1 &) const;
+		//CGAL::Algebraic_1 eval_alg(const CGAL::Algebraic_1&)const;
 		CGAL::Gmpz eval (const CGAL::Gmpz &) const;
 		void eval_mpfr(mpfr_t&,const mpfr_t&,mp_prec_t)const;
-		void eval_mpfi(mpfi_t&,const mpfi_t&)const;
+		void eval_mpfi(mpfi_ptr,mpfi_srcptr)const;
 		Rational_polynomial_1 derive () const;
-		Rational_polynomial_1& operator= (const Rational_polynomial_1 &);
 		std::ostream& show (std::ostream &) const;
 		Rational_polynomial_1 operator- () const;
 		Rational_polynomial_1 operator+ (const Rational_polynomial_1 &) const;
