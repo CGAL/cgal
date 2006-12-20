@@ -51,42 +51,45 @@ typedef Nef_polyhedron_3::SHalfloop_const_handle SHalfloop_const_handle;
 typedef Nef_polyhedron_3::SFace_const_handle SFace_const_handle;
 typedef CGAL::Trunk_offset<Nef_polyhedron_3> TO;
 
-class Facet_counter {
-  int counter;
-public:
-  Facet_counter() : counter(0) {}
-  void visit(Halffacet_const_handle f) {
-    ++counter;
-  }
-  void visit(SFace_const_handle s) {}
-  void visit(Halfedge_const_handle e) {}
-  void visit(Vertex_const_handle v) {}
-  void visit(SHalfedge_const_handle se) {}
-  void visit(SHalfloop_const_handle sl) {}
-  int get_counter() const { return counter; }
-  void reset_counter() { counter=0; }
-};
-
 class Volume_output {
+  bool twin;
+  std::vector<Plane_3> planes;
+  typedef std::vector<Plane_3>::const_iterator CI;
 public:
-  Volume_output() {}
+  Volume_output(bool twin_ = true) : twin(twin_){}
+  bool is_in(const Plane_3 p) {
+    for(CI ci = planes.begin(); ci != planes.end(); ++ci)
+      if(*ci == p)
+	return true;
+    return false;
+  }
+
   void visit(Halffacet_const_handle f) {
-    /*
-#ifdef CGAL_WITH_LAZY_KERNEL
+    if(twin) f = f->twin();
     Plane_3 p = f->twin()->plane();
-    std::cout << p.a().exact() 
-	      << p.b().exact()
-	      << p.c().exact() << std::endl;
-#else
-    */
-    std::cout << f->twin()->plane() << std::endl;
-    //#endif
+    if(!is_in(p))
+      planes.push_back(p);
   }
   void visit(SFace_const_handle s) {}
   void visit(Halfedge_const_handle e) {}
   void visit(Vertex_const_handle v) {}
   void visit(SHalfedge_const_handle se) {}
   void visit(SHalfloop_const_handle sl) {}
+
+  void dump() const {
+    std::cout << planes.size() << std::endl;
+    for(CI ci = planes.begin(); ci != planes.end(); ++ci) {
+#ifdef CGAL_WITH_LAZY_KERNEL
+      std::cout << CGAL::to_double(ci->a().exact()) << " " 
+		<< CGAL::to_double(ci->b().exact()) << " "
+		<< CGAL::to_double(ci->c().exact()) << " "
+		<< CGAL::to_double(ci->d().exact()) << std::endl;
+#else
+      std::cout << *ci << std::endl;
+#endif
+    }
+  }
+
 };
 
 void read( const char* name, Polyhedron_3& poly) {
@@ -210,18 +213,23 @@ int main(int argc, char* argv[]) {
 	    << t.time() << std::endl;
   t.start();
 
-  Facet_counter fc;
-  Volume_output vout;
-  Volume_const_iterator c;
 
-  std::cout << DIFF.number_of_volumes() << std::endl;
-  std::cout << NCV.number_of_facets() << std::endl;
-  NCV.visit_shell_objects(NCV.volumes_begin()->shells_begin(), vout);
+  int nov = 1;
+  Volume_const_iterator c;
+  for(c=++(DIFF.volumes_begin()); c!=DIFF.volumes_end(); ++c)
+    if(c->mark()) ++nov;
+  std::cout << nov << std::endl;
+
+  Volume_output vout_ncv;
+  NCV.visit_shell_objects(NCV.volumes_begin()->shells_begin(), vout_ncv);
+  vout_ncv.dump();
+
   for(c=++(DIFF.volumes_begin()); c!=DIFF.volumes_end(); ++c) {
-    fc.reset_counter();
-    DIFF.visit_shell_objects(c->shells_begin(), fc);
-    std::cout << fc.get_counter() << std::endl;
-    DIFF.visit_shell_objects(c->shells_begin(), vout);
+    if(c->mark()) {
+      Volume_output vout(true);
+      DIFF.visit_shell_objects(c->shells_begin(), vout);
+      vout.dump();
+    }
   }
 
   t.stop();
