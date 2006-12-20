@@ -213,7 +213,7 @@ template <class A, class B>
 struct Coercion_traits_for_level<A,B,0> {
     typedef Tag_false Are_explicit_interoperable;
     typedef Tag_false Are_implicit_interoperable;
-    typedef void               Type;
+//    typedef Null_type               Type;
     typedef Null_functor Cast;
 };
 
