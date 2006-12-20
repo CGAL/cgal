@@ -51,7 +51,7 @@ int main(){
     //TODO: switch to Gmpq
     {
         typedef CGAL::Gmpz RT;
-        typedef CGAL::Quotient<CGAL::Gmpz> Root_of_1;
+        typedef CGAL::Gmpq Root_of_1;
         typedef CGAL::Root_of_2<CGAL::Gmpz> Root_of_2;
         
         test_root_of_traits<RT,Root_of_1,Root_of_2>();
