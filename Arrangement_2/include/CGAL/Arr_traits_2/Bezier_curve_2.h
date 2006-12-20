@@ -347,9 +347,9 @@ public:
   /*!
    * Get a unique curve ID (based on the actual representation pointer).
    */
-  unsigned int id () const
+  size_t id () const
   {
-    return (reinterpret_cast<unsigned int> (this->ptr()));
+    return (reinterpret_cast<size_t> (this->ptr()));
   }
 
   /*!

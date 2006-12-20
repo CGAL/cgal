@@ -47,7 +47,7 @@ public:
 
   /// \name Type definitions for the vertical tangency-point mapping.
   //@{
-  typedef unsigned int                               Curve_id;
+  typedef size_t                                     Curve_id;
   typedef std::list<Algebraic>                       Vertical_tangency_list;
   typedef
     typename Vertical_tangency_list::const_iterator  Vertical_tangency_iter;
