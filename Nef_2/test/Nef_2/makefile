@@ -46,9 +46,6 @@ EPoint-test$(EXE_EXT): EPoint-test$(OBJ_EXT)
 Nef_polyhedron_2-test$(EXE_EXT): Nef_polyhedron_2-test$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Nef_polyhedron_2-test Nef_polyhedron_2-test$(OBJ_EXT) $(LDFLAGS)
 
-PM_decorator-test$(EXE_EXT): PM_decorator-test$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)PM_decorator-test PM_decorator-test$(OBJ_EXT) $(LDFLAGS)
-
 point_location$(EXE_EXT): point_location$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)point_location point_location$(OBJ_EXT) $(LDFLAGS)
 
@@ -58,7 +55,6 @@ Polynomial-test$(EXE_EXT): Polynomial-test$(OBJ_EXT)
 clean: \
                    EPoint-test.clean \
                    Nef_polyhedron_2-test.clean \
-                   PM_decorator-test.clean \
                    point_location.clean \
                    Polynomial-test.clean 
 

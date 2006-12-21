@@ -73,7 +73,6 @@ if [ $# -ne 0 ] ; then
 else
   compile_and_run EPoint-test
   compile_and_run Nef_polyhedron_2-test
-  compile_and_run PM_decorator-test
   compile_and_run point_location
   compile_and_run Polynomial-test
 fi
