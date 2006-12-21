@@ -57,11 +57,10 @@ int main(){
         test_root_of_traits<RT,Root_of_1,Root_of_2>();
         test_root_of_traits<Root_of_1,Root_of_1,Root_of_2>();
     }{
-        typedef CGAL::Lazy_exact_nt<CGAL::Gmpz> RT;
-        typedef CGAL::Quotient<CGAL::Lazy_exact_nt<CGAL::Gmpz> > Root_of_1;
-        typedef CGAL::Root_of_2<CGAL::Lazy_exact_nt<CGAL::Gmpz> > Root_of_2;
-        
-        test_root_of_traits<RT,Root_of_1,Root_of_2>();
+        typedef CGAL::Lazy_exact_nt<CGAL::Gmpq> RT;
+        typedef CGAL::Lazy_exact_nt<CGAL::Gmpq> Root_of_1;
+        typedef CGAL::Lazy_exact_nt<CGAL::Root_of_2<CGAL::Gmpz> > Root_of_2;
+        test_root_of_traits<RT,Root_of_1,Root_of_2>(); 
         test_root_of_traits<Root_of_1,Root_of_1,Root_of_2>();
     }
 #endif

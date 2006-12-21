@@ -992,7 +992,7 @@ Root_of_2<RT> make_sqrt(const RT& r)
 }
 
 template < typename RT >
-Root_of_2<RT> make_sqrt(const typename Root_of_traits< RT >::RootOf_1 r) 
+Root_of_2<RT> make_sqrt(const typename Root_of_traits< RT >::RootOf_1& r) 
 {
   CGAL_assertion(r >= 0); 
   if(CGAL_NTS is_zero(r)) return Root_of_2<RT>();

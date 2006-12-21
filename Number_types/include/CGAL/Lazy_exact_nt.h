@@ -1246,7 +1246,7 @@ class Is_valid< Lazy_exact_nt<ET> >
   : public Unary_function< Lazy_exact_nt<ET>, bool > {
   public :
     bool operator()( const Lazy_exact_nt<ET>& x ) const {
-      return is_valid(x.approx()) || is_valid(x.exact());
+      return is_valid(x.approx());
     }  
 };
 
@@ -1268,7 +1268,6 @@ fit_in_double(const Lazy_exact_nt<ET>& l, double& r)
 // We create a type of new node in Lazy_exact_nt's DAG
 // for the make_root_of_2() operation.
 
-#if 0 // To be finished
 template <typename ET >
 struct Lazy_exact_ro2
   : public Lazy_exact_nt_rep< typename Root_of_traits<ET>::RootOf_2 >
@@ -1314,27 +1313,48 @@ struct Lazy_exact_ro2
     }
 };
 
-template < typename ET >
-inline
-Lazy_exact_nt< typename Root_of_traits<ET>::RootOf_2 >
-make_root_of_2( const Lazy_exact_nt<ET> &a,
-                const Lazy_exact_nt<ET> &b,
-                const Lazy_exact_nt<ET> &c, bool d)
-{
-    return new Lazy_exact_ro2<ET>(a, b, c, d);
-}
-
 template <typename NT >
 struct Root_of_traits< Lazy_exact_nt < NT > >
 {
 private:
     typedef Root_of_traits<NT> T;
 public:
+    typedef Root_of_traits< Lazy_exact_nt < NT > > Base;
     typedef Lazy_exact_nt< typename T::RootOf_1 > RootOf_1;
     typedef Lazy_exact_nt< typename T::RootOf_2 > RootOf_2;
+    typedef RootOf_2 Root_of_2;
+    typedef RootOf_1 Root_of_1;
+    struct Make_root_of_2{
+        typedef RootOf_2 result_type;
+        Root_of_2
+        operator()(const Lazy_exact_nt<NT>& a, const Lazy_exact_nt<NT>& b, const Lazy_exact_nt<NT>& c) const{
+            return new Lazy_exact_ro2<NT>(a, b, c, true);
+        };
+        RootOf_2
+        operator()(const Lazy_exact_nt<NT>& a, const Lazy_exact_nt<NT>& b, const Lazy_exact_nt<NT>& c, bool smaller) const{
+          return new Lazy_exact_ro2<NT>(a, b, c, smaller);
+        };
+    };
+
 };
 
-#endif // 0
+
+//these two functions for test suite requirement
+template < typename RT >
+typename CGAL::Root_of_traits<CGAL::Lazy_exact_nt<RT> >::RootOf_2 make_sqrt(const CGAL::Lazy_exact_nt< RT> & r) 
+{
+  typedef Lazy_exact_nt< RT> TT;
+  CGAL_assertion(r >= 0); 
+  if(CGAL_NTS is_zero(r)) return make_root_of_2((TT) 1,(TT) 0,(TT) 0);
+  return make_root_of_2((TT) 1,(TT) 0,-r,false);
+}
+
+template < typename RT >
+void
+print(std::ostream &os, const CGAL::Lazy_exact_nt< Root_of_2<RT> > &r)
+{
+  print(os,r.exact());
+}
 
 #undef CGAL_double
 #undef CGAL_int
