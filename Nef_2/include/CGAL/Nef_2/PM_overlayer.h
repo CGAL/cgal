@@ -727,9 +727,15 @@ void create_face_objects(const Below_info& D) const
           p2 = point(target(e)), 
           p3 = point(target(next(e)));
     if ( K.left_turn(p1,p2,p3) ) { // left_turn => outer face cycle
-        CGAL_NEF_TRACEN("  creating new face object");
-      Face_handle f = this->new_face();
-      link_as_outer_face_cycle(f,e);
+      CGAL_NEF_TRACEN("  creating new face object");
+      Halfedge_around_face_circulator hfc(e),hend(hfc);
+      CGAL_For_all(hfc,hend) {      
+	if(FaceCycle[twin(hfc)] != j) {
+	  Face_handle f = this->new_face();
+	  link_as_outer_face_cycle(f,e);
+	  break;
+	}
+      }
     }
   }
 
@@ -790,9 +796,15 @@ void create_face_objects_pl(const Below_info& D) const
           p2 = point(target(e)), 
           p3 = point(target(next(e)));
     if ( K.left_turn(p1,p2,p3) ) { // left_turn => outer face cycle
-        CGAL_NEF_TRACEN("  creating new face object");
-      Face_handle f = this->new_face();
-      link_as_outer_face_cycle(f,e);
+      CGAL_NEF_TRACEN("  creating new face object");
+      Halfedge_around_face_circulator hfc(e),hend(hfc);
+      CGAL_For_all(hfc,hend) {      
+	if(FaceCycle[twin(hfc)] != j) {
+	  Face_handle f = this->new_face();
+	  link_as_outer_face_cycle(f,e);
+	  break;
+	}
+      }
     }
   }
 
