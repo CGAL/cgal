@@ -105,6 +105,7 @@ private:
   typedef typename TMC::Finite_cells_iterator    TMC_Cell_iterator;
   typedef typename TMC::Vertex_handle            TMC_Vertex_handle;
   typedef typename TMC::Cell_handle              TMC_Cell_handle;
+  typedef typename TMC::Point                    TMC_Point;
 public:
   template < class WP_iterator >
   Skin_surface_3(WP_iterator begin, WP_iterator end, 
@@ -170,8 +171,13 @@ public:
   template <class Polyhedron_3>
   void subdivide_skin_surface_mesh_3(Polyhedron_3 &p) const;
   
-  Sign sign(const Bare_point &p, const Simplex &start = Simplex()) const {
-    return get_sign(locate_mixed(p,start), p);
+  Sign sign(const Bare_point &p, 
+	    const TMC_Cell_handle start = TMC_Cell_handle()) const {
+    if (start == TMC_Cell_handle()) {
+      return sign(locate_mixed(p,start), p);
+    } else {
+      return sign(start, p);
+    }
   }
   Sign sign(TMC_Vertex_handle vit) const {
     CGAL_assertion(!tmc.is_infinite(vit));
@@ -187,7 +193,7 @@ public:
     }
     CGAL_assertion(!tmc.is_infinite(ch));
   
-    // don't use get_sign, since the point is constructed:
+    // don't use sign, since the point is constructed:
     try
       {
 	CGAL_PROFILER(std::string("NGHK: calls to    : ") + 
@@ -210,8 +216,13 @@ public:
 			     EK() ).sign(p_exact);
   }
   Vector
-  normal(const Bare_point &p, const Simplex &start = Simplex()) const {
-    return get_normal(locate_mixed(p,start), p);
+  normal(const Bare_point &p, 
+	 const TMC_Cell_handle start = TMC_Cell_handle()) const {
+    if (start == TMC_Cell_handle()) {
+      return get_normal(locate_mixed(p,start), p);
+    } else {
+      return get_normal(start, p);
+    }
   }
 
   template <class Gt2>
@@ -361,7 +372,7 @@ private:
 public:
   TMC_Cell_handle
   locate_mixed(const Bare_point &p, 
-	       const TMC_Cell_handle &start = TMC_Cell_handle()) const;
+	       TMC_Cell_handle start = TMC_Cell_handle()) const;
   
   // exact computation of the sign on a vertex of the TMC
 //   Sign sign(const CMCT_Vertex_handle vh) const {
@@ -427,9 +438,37 @@ public:
 				      ).value(p1));
   }
   FT
+  less(Cell_info &info1,
+       const Bare_point &p1,
+       Cell_info &info2,
+       const Bare_point &p2) const {
+    try
+    {
+      CGAL_PROFILER(std::string("NGHK: calls to    : ") + 
+		    std::string(CGAL_PRETTY_FUNCTION));
+      Protect_FPU_rounding<true> P;
+      Sign result = CGAL_NTS sign(info2.second->value(p2) -
+				  info1.second->value(p1));
+      if (! is_indeterminate(result))
+        return result==POSITIVE;
+    }
+    catch (Interval_nt_advanced::unsafe_comparison) {}
+    CGAL_PROFILER(std::string("NGHK: failures of : ") + 
+		  std::string(CGAL_PRETTY_FUNCTION));
+    Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
+      
+    return 
+      CGAL_NTS sign(construct_surface(info2.first,
+				      Exact_predicates_exact_constructions_kernel()
+				      ).value(p2) -
+		    construct_surface(info1.first,
+				      Exact_predicates_exact_constructions_kernel()
+				      ).value(p1));
+  }
+  FT
   value(const Bare_point &p) const {
-    Simplex sim = locate_mixed(p);
-    return value(sim,p);
+    TMC_Cell_handle ch = locate_mixed(p);
+    return value(Simplex(ch),p);
   }
 
   FT
@@ -444,31 +483,36 @@ public:
     return value(ch->info(), p);
   }
   Vector
-  get_normal(const Simplex &mc, const Bare_point &p) const {
-    return construct_surface(mc).gradient(p);
+  get_normal(TMC_Cell_handle ch, const Bare_point &p) const {
+    CGAL_assertion(!tmc.is_infinite(ch));
+    
+    return ch->info().second->gradient(p);
   }
 
   // Move the point in the direction of the gradient
   void to_surface(Bare_point &p,
-		  const Simplex &start = Simplex()) const {
+		  const TMC_Cell_handle &start = TMC_Cell_handle()) const {
     Bare_point p1 = p;
-    Simplex s1 = locate_mixed(p,start);
-    Sign sign1 = get_sign(s1, p1);
+    TMC_Cell_handle ch1 = start;
+    if (start != TMC_Cell_handle()) {
+      ch1 = locate_mixed(p,ch1);
+    }
+    Sign sign1 = sign(ch1, p1);
 
-    Vector n = get_normal(s1,p);
-    if (sign1 == POSITIVE) n = -value(s1,p)*n;
+    Vector n = get_normal(ch1,p);
+    if (sign1 == POSITIVE) n = -value(ch1,p)*n;
 
     int k=2;
     Bare_point p2 = p+k*n;
-    Simplex s2 = locate_mixed(p2, s1);
-    while (get_sign(s2,p2) == sign1) {
+    TMC_Cell_handle ch2 = locate_mixed(p2, ch1);
+    while (sign(ch2,p2) == sign1) {
       k++;
       p1 = p2;
-      s1 = s2;
+      ch1 = ch2;
       p2 = p+k*n;
-      s2 = locate_mixed(p2, s2);
+      ch2 = locate_mixed(p2, ch2);
     }
-    intersect(p1,p2, s1,s2, p);
+    intersect(p1,p2, ch1,ch2, p);
   }
 //   void intersect(const CMCT_Vertex_handle vh1,
 // 		 const CMCT_Vertex_handle vh2,
@@ -500,21 +544,21 @@ public:
 
     FT sq_dist = squared_distance(p1,p2);
     // Use value to make the computation robust (endpoints near the surface)
-    if (value(s1, p1) > value(s2, p2)) std::swap(p1, p2);
+    if (less(s2->info(), p2, s1->info(), p1)) std::swap(p1, p2);
     TMC_Cell_handle sp = s1;
 
     while ((s1 != s2) && (sq_dist > 1e-8)) {
       p = midpoint(p1, p2);
       sp = locate_mixed(converter(p), sp);
 
-      if (get_sign(sp, p) == NEGATIVE) { p1 = p; s1 = sp; }
+      if (sign(sp, p) == NEGATIVE) { p1 = p; s1 = sp; }
       else { p2 = p; s2 = sp; }
 
       sq_dist *= .25;
     }
     while (sq_dist > 1e-8) {
       p = midpoint(p1, p2);
-      if (get_sign(s1, p) == NEGATIVE) { p1 = p; }
+      if (sign(s1, p) == NEGATIVE) { p1 = p; }
       else { p2 = p; }
       sq_dist *= .25;
     }
@@ -581,7 +625,7 @@ public:
     if (nIn==1) {
       p1 = tet_pts[sortedV[0]];
       obj = CGAL::intersection(Plane(tet_pts[sortedV[1]],
-				     tet_pts[sortedV[3]],
+				     tet_pts[sortedV[2]],
 				     tet_pts[sortedV[3]]),
 			       Line(p1, p));
       if ( !assign(p2, obj) ) {
@@ -614,6 +658,7 @@ public:
         CGAL_assertion_msg(false,"intersection: no intersection.");
       }
     } else {
+      std::cout << "nIn == " << nIn << std::endl;
       CGAL_assertion(false);
     }
 
@@ -706,6 +751,9 @@ public:
   FT shrink_factor() const {
     return gt.get_shrink();
   }
+  const TMC &triangulated_mixed_complex() const {
+    return tmc;
+  }
 
 private:
   void construct_bounding_box(Regular &regular);
@@ -772,12 +820,86 @@ construct_bounding_box(Regular &regular)
 template <class MixedComplexTraits_3> 
 typename Skin_surface_3<MixedComplexTraits_3>::TMC_Cell_handle
 Skin_surface_3<MixedComplexTraits_3>::
-locate_mixed(const Bare_point &p, 
-	     const TMC_Cell_handle &start) const {
-  Cartesian_converter<typename Geometric_traits::Bare_point::R, FK> converter;
-  
-  // NGHK: add a try ... catch? 
-  return tmc.locate(converter(p));
+locate_mixed(const Bare_point &p0, 
+	     TMC_Cell_handle start) const {
+  typedef Exact_predicates_exact_constructions_kernel EK;
+  Cartesian_converter<typename Geometric_traits::Bare_point::R, EK> converter;
+  Skin_surface_traits_3<EK> exact_traits(shrink_factor());
+
+  typename EK::Point_3 p = converter(p0);
+
+  Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
+
+  typename EK::Point_3 e_pts[4];
+  const typename EK::Point_3 *pts[4];
+
+  // Make sure we continue from here with a finite cell.
+  if ( start == TMC_Cell_handle() )
+    start = tmc.infinite_cell();
+
+  int ind_inf;
+  if (start->has_vertex(tmc.infinite_vertex(), ind_inf) )
+    start = start->neighbor(ind_inf);
+
+  CGAL_triangulation_precondition(start != TMC_Cell_handle());
+  CGAL_triangulation_precondition(!start->has_vertex(tmc.infinite_vertex()));
+
+  // We implement the remembering visibility/stochastic walk.
+
+  // Remembers the previous cell to avoid useless orientation tests.
+  TMC_Cell_handle previous = TMC_Cell_handle();
+  TMC_Cell_handle c = start;
+
+  // Stores the results of the 4 orientation tests.  It will be used
+  // at the end to decide if p lies on a face/edge/vertex/interior.
+  Orientation o[4];
+
+  // Now treat the cell c.
+	     try_next_cell:
+
+  // We know that the 4 vertices of c are positively oriented.
+  // So, in order to test if p is seen outside from one of c's facets,
+  // we just replace the corresponding point by p in the orientation
+  // test.  We do this using the array below.
+  for (int j=0; j<4; j++) {
+    e_pts[j] = get_anchor_point(c->vertex(j)->info(), exact_traits);
+    pts[j] = &e_pts[j];
+  }
+
+  // For the remembering stochastic walk,
+  // we need to start trying with a random index :
+  int i = rng.template get_bits<2>();
+  // For the remembering visibility walk (Delaunay only), we don't :
+  // int i = 0;
+
+  for (int j=0; j != 4; ++j, i = (i+1)&3) {
+    TMC_Cell_handle next = c->neighbor(i);
+    if (previous == next) {
+      o[i] = POSITIVE;
+      continue;
+    }
+    // We temporarily put p at i's place in pts.
+    const typename EK::Point_3* backup = pts[i];
+    pts[i] = &p;
+    try {
+      o[i] = orientation(*pts[0], *pts[1], *pts[2], *pts[3]);
+    } catch (Interval_nt_advanced::unsafe_comparison) {
+    }
+    if ( o[i] != NEGATIVE ) {
+      pts[i] = backup;
+      continue;
+    }
+    if ( next->has_vertex(tmc.infinite_vertex()) ) {
+      // We are outside the convex hull.
+      return next;
+    }
+    previous = c;
+    c = next;
+    goto try_next_cell;
+  }
+
+  return c;
+}
   
 //   Simplex prev, s;
 //   if (start == Simplex()) {
@@ -957,15 +1079,12 @@ locate_mixed(const Bare_point &p,
 // //   std::cout << "]";
 
 //   return s;
-}
+// }
 
 template <class MixedComplexTraits_3> 
 template <class Polyhedron_3>
 void
 Skin_surface_3<MixedComplexTraits_3>::mesh_skin_surface_3(Polyhedron_3 &p) const {
-  std::cout << "Mesh_Skin_Surface_3" << std::endl;
-  std::cout << "  TODO" << std::endl;
-
   typedef Polyhedron_3 Polyhedron;
 
   typedef Marching_tetrahedra_traits_skin_surface_3<

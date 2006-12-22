@@ -13,7 +13,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -g \
+CXXFLAGS = \
            -I.\
            -Idsrpdb/include\
            -I../../include \

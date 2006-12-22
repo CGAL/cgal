@@ -17,9 +17,10 @@
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
-#ifndef CGAL_TRIANGULATE_MIXED_COMPLEX_3_H
-#define CGAL_TRIANGULATE_MIXED_COMPLEX_3_H
+#ifndef CGAL_TRIANGULATE_MIXED_COMPLEX_3
+#define CGAL_TRIANGULATE_MIXED_COMPLEX_3
 
+// #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Compute_anchor_3.h>
 
 #include <CGAL/Triangulation_data_structure_3.h>
@@ -96,6 +97,8 @@ private:
   typedef std::pair<Rt_Simplex,Rt_Simplex>                Symb_anchor;
 
   // You might get type differences here:
+  // The map that maps a Rt_Simplex to an iterator of the map 
+  // (used as union_find_structure)
   struct Anchor_map_iterator_tmp;
   typedef std::map<Rt_Simplex, Anchor_map_iterator_tmp>     Anchor_map;
   struct Anchor_map_iterator_tmp : Anchor_map::iterator {
@@ -105,12 +108,15 @@ private:
       : Anchor_map::iterator(it) {}
   };
   typedef typename Anchor_map::iterator                     Anchor_map_iterator;
-public:
 
+public:
   Mixed_complex_triangulator_3(Regular const &regular,
-			       Triangulated_mixed_complex const &triangulated_mixed_complex, 
+			       Rt_FT const &shrink,
+			       Triangulated_mixed_complex
+			       &triangulated_mixed_complex, 
 			       bool verbose)
     : regular(regular),
+      shrink(shrink),
       _tmc(triangulated_mixed_complex),
       triangulation_incr_builder(triangulated_mixed_complex), 
       compute_anchor_obj(regular),
@@ -119,11 +125,14 @@ public:
     build();
   }
 
-  Mixed_complex_triangulator_3(Regular const&regular,
-			       Triangulated_mixed_complex &triangulated_mixed_complex,
+  Mixed_complex_triangulator_3(Regular &regular,
+			       Rt_FT const &shrink,
+			       Triangulated_mixed_complex
+			       &triangulated_mixed_complex,
 			       Triangulated_mixed_complex_observer &observer,
 			       bool verbose)
     : regular(regular),
+      shrink(shrink),
       _tmc(triangulated_mixed_complex),
       observer(observer),
       triangulation_incr_builder(triangulated_mixed_complex), 
@@ -141,27 +150,64 @@ private:
     if (verbose) std::cout << "Construct vertices" << std::endl;
     construct_vertices();
 
-    if (verbose) std::cout << "Construct cells" << std::endl;
-    construct_cells(); // mixed cells corresponding to regular vertices
+    // mixed cells corresponding to regular vertices
+    if (verbose) std::cout << "Construct 0 cells" << std::endl;
+    for (Rt_Finite_vertices_iterator vit = regular.finite_vertices_begin();
+	 vit != regular.finite_vertices_end(); vit ++) {
+      construct_0_cell(vit);
+    }
+
+    // mixed cells corresponding to regular edges
+    if (verbose) std::cout << "Construct 1 cells" << std::endl;
+    for (Rt_Finite_edges_iterator eit = regular.finite_edges_begin();
+	 eit != regular.finite_edges_end(); eit ++) {
+      construct_1_cell(eit);
+    }
+
+    // mixed cells corresponding to regular facets
+    if (verbose) std::cout << "Construct 2 cells" << std::endl;
+    for (Rt_Finite_facets_iterator fit = regular.finite_facets_begin();
+	 fit != regular.finite_facets_end(); fit ++) {
+      construct_2_cell(fit);
+    }
+    
+    // mixed cells corresponding to regular cells
+    if (verbose) std::cout << "Construct 3 cells" << std::endl;
+    for (Rt_Finite_cells_iterator cit = regular.finite_cells_begin();
+	 cit != regular.finite_cells_end();
+	 cit++) {
+      construct_3_cell(cit);
+    }
 
     triangulation_incr_builder.end_triangulation();
     
     anchors.clear();
 
-    CGAL_assertion(_tmc.is_valid());
-
     //remove_small_edges();
-
+//     { // NGHK: debug code:
+//       CGAL_assertion(_tmc.is_valid());
+//       std::vector<Tmc_Vertex_handle> ch_vertices;
+//       _tmc.incident_vertices(_tmc.infinite_vertex(), 
+// 			     std::back_inserter(ch_vertices));
+//       for (typename std::vector<Tmc_Vertex_handle>::iterator
+// 	     vit = ch_vertices.begin(); vit != ch_vertices.end(); vit++) {
+// 	CGAL_assertion((*vit)->sign() == POSITIVE);
+//       }
+//     }
   }
 
-  Tmc_Vertex_handle add_vertex(Rt_Simplex const &anchor); 
+  Tmc_Vertex_handle add_vertex(Symb_anchor const &anchor); 
   Tmc_Cell_handle add_cell(Tmc_Vertex_handle vh[], int orient, Rt_Simplex s);
 	
-  Tmc_Vertex_handle get_vertex(Rt_Simplex &sVor);
+  Tmc_Vertex_handle get_vertex(Rt_Simplex &sDel, Rt_Simplex &sVor);
 
 
+  void construct_anchor_del(Rt_Simplex const &sDel);
   void construct_anchor_vor(Rt_Simplex const &sVor);
   void construct_anchors();
+  Rt_Simplex get_anchor_del(Rt_Simplex const &sDel) {
+    return find_anchor(anchor_del2, sDel)->first;
+  }
   Rt_Simplex get_anchor_vor(Rt_Simplex const &sVor) {
     return find_anchor(anchor_vor2, sVor)->first;
   }  
@@ -183,20 +229,17 @@ private:
   void construct_vertices();
   
   Tmc_Point get_orthocenter(Rt_Simplex const &s);
-  Tmc_Point get_anchor(Rt_Simplex const &sVor);
+  Tmc_Point get_anchor(Rt_Simplex const &sDel, Rt_Simplex const &sVor);
   template <class Point>
-  Point construct_anchor_point(const Point &center_vor) {
-    std::cout << "still union_of_balls" << std::endl;
-//    typename Other_MixedComplexTraits_3::Bare_point p_del =
-//       orthocenter(v.first, traits);
-//     typename Other_MixedComplexTraits_3::Bare_point p_vor =
-//       orthocenter(v.second, traits);
-
-//     return traits.construct_anchor_point_3_object()(p_del, p_vor);
-    return center_vor;
+  Point construct_anchor_point(const Point &center_del, 
+			       const Point &center_vor) {
+    return center_del + shrink*(center_vor-center_del);
   }
   
-  void construct_cells();
+  void construct_0_cell(Rt_Vertex_handle rt_vh);
+  void construct_1_cell(const Rt_Finite_edges_iterator &eit);
+  void construct_2_cell(const Rt_Finite_facets_iterator &fit);
+  void construct_3_cell(Rt_Cell_handle rt_ch);
 	
   void remove_small_edges();
   bool is_collapsible(Tmc_Vertex_handle vh, 
@@ -207,6 +250,7 @@ private:
 
 private:
   Regular const &regular;
+  Rt_FT const &shrink;
   Triangulated_mixed_complex &_tmc;
   Triangulated_mixed_complex_observer &observer;
 
@@ -240,8 +284,8 @@ private:
   Unique_hash_map < Rt_Cell_handle, Index_c4 > index_03;
   
 
-  Anchor_map                                     anchor_vor2;
-  std::map<Rt_Simplex, Tmc_Vertex_handle>        anchors;
+  Anchor_map                                     anchor_del2, anchor_vor2;
+  std::map<Symb_anchor, Tmc_Vertex_handle>        anchors;
 };
 
 template < 
@@ -254,6 +298,47 @@ const int Mixed_complex_triangulator_3<
   TriangulatedMixedComplexObserver_3>::
 edge_index[4][4] = {{-1,0,1,2},{0,-1,3,4},{1,3,-1,5},{2,4,5,-1}};
 
+
+template < 
+  class RegularTriangulation_3,
+  class TriangulatedMixedComplex_3,
+  class TriangulatedMixedComplexObserver_3>
+void
+Mixed_complex_triangulator_3<
+  RegularTriangulation_3,
+  TriangulatedMixedComplex_3,
+  TriangulatedMixedComplexObserver_3>::
+construct_anchor_del(Rt_Simplex const &sDel) {
+  Rt_Simplex s = compute_anchor_obj.anchor_del(sDel);
+  anchor_del2[sDel] = Anchor_map_iterator();
+
+  Anchor_map_iterator it = anchor_del2.find(sDel);
+  Anchor_map_iterator it2 = anchor_del2.find(s);
+  CGAL_assertion(it != anchor_del2.end());
+  CGAL_assertion(it2 != anchor_del2.end());
+  it->second = it2;
+
+  // degenerate simplices:
+  if (compute_anchor_obj.is_degenerate()) {
+    it = find_anchor(anchor_del2, it);
+    typename Compute_anchor::Simplex_iterator degenerate_it;
+    for (degenerate_it = compute_anchor_obj.equivalent_anchors_begin();
+	 degenerate_it != compute_anchor_obj.equivalent_anchors_end(); 
+	 degenerate_it++) {
+      Anchor_map_iterator tmp;
+      it2 = anchor_del2.find(*degenerate_it);
+      CGAL_assertion(it2 != anchor_del2.end());
+      // Merge sets:
+      while (it2 != it2->second) {
+	tmp = it2->second;
+	it2->second = it->second;
+	it2 = tmp;
+	CGAL_assertion(it2 != anchor_del2.end());
+      }
+      it2->second = it->second;
+    }
+  }
+}
 
 template < 
   class RegularTriangulation_3,
@@ -318,9 +403,26 @@ construct_anchors() {
   Rt_Simplex s;
   
   // Compute anchor points:
+  for (vit=regular.finite_vertices_begin();
+       vit!=regular.finite_vertices_end(); vit++) {
+    construct_anchor_del(Rt_Simplex(vit));
+  }  
+  for (eit=regular.finite_edges_begin();
+       eit!=regular.finite_edges_end(); eit++) {
+    s = Rt_Simplex(*eit);
+    construct_anchor_del(s);
+    CGAL_assertion(s.dimension() == 1);
+  }
+  for (fit=regular.finite_facets_begin();
+       fit!=regular.finite_facets_end(); fit++) {
+    s = Rt_Simplex(*fit);
+    construct_anchor_del(s);
+    CGAL_assertion(s.dimension() == 2);
+  }
   for (cit=regular.finite_cells_begin();
        cit!=regular.finite_cells_end(); cit++) {
     s = Rt_Simplex(cit);
+    construct_anchor_del(s);
     construct_anchor_vor(s);
     CGAL_assertion(s.dimension() == 3);
   }
@@ -366,55 +468,178 @@ construct_vertices() {
   Rt_Vertex_handle v1, v2, v3;
   Rt_Edge e;
   Rt_Cell_handle c1, c2;
-  Rt_Simplex sVor;
+  Rt_Simplex sDel, sVor;
   Tmc_Vertex_handle vh;
 
   if (verbose) std::cout << "construct_anchors" << std::endl;
   construct_anchors();
 
-  if (verbose) std::cout << "4 ";
+  if (verbose) std::cout << "9 ";
   // anchor dimDel=0, dimVor=3
   for (cit=regular.finite_cells_begin();
        cit!=regular.finite_cells_end(); cit++) {
     sVor = get_anchor_vor(Rt_Simplex(cit));
-    if (anchors.find(sVor) == anchors.end()) {
-      vh = add_vertex(sVor);
-      anchors[sVor] = vh;
-      CGAL_assertion(vh == get_vertex(sVor));
+    for (int i=0; i<4; i++) {
+      sDel = get_anchor_del(Rt_Simplex(cit->vertex(i)));
+      if (anchors.find(Symb_anchor(sDel,sVor)) == anchors.end()) {
+	vh = add_vertex(Symb_anchor(sDel,sVor));
+	anchors[Symb_anchor(sDel,sVor)] = vh;
+	CGAL_assertion(vh == get_vertex(sDel, sVor));
+      }
     }
   }
 
-  if (verbose) std::cout << "3 ";
+  if (verbose) std::cout << "8 ";
+  // anchor dimDel=1, dimVor=3
+  for (cit=regular.finite_cells_begin(); cit!=regular.finite_cells_end(); cit++) {
+    sVor = get_anchor_vor(Rt_Simplex(cit));
+    for (int i=0; i<3; i++) {
+      for (int j=i+1; j<4; j++) {
+	sDel = get_anchor_del(Rt_Simplex(Rt_Edge(cit,i,j)));
+	if (anchors.find(Symb_anchor(sDel,sVor)) == anchors.end()) {
+	  vh = add_vertex(Symb_anchor(sDel,sVor));
+	  anchors[Symb_anchor(sDel,sVor)] = vh;
+	  assert(vh == get_vertex(sDel, sVor));
+	}
+      }
+    }
+  }
+
+  if (verbose) std::cout << "7 ";
   // anchor dimDel=2, dimVor=3 and dimDel=0, dimVor=2
   for (fit=regular.finite_facets_begin(); fit!=regular.finite_facets_end(); fit++) {
+    // anchor dimDel=2, dimVor=3
+    c1 = fit->first;
+    c2 = c1->neighbor(fit->second);
+
+    sDel = get_anchor_del(*fit);
+    if (!regular.is_infinite(c1)) {
+      sVor = get_anchor_vor(c1);
+      if (anchors.find(Symb_anchor(sDel,sVor)) == anchors.end()) {
+	vh = add_vertex(Symb_anchor(sDel,sVor));
+	anchors[Symb_anchor(sDel,sVor)] = vh;
+	assert(vh == get_vertex(sDel, sVor));
+      }
+    }
+    if (!regular.is_infinite(c2)) {
+      sVor = get_anchor_vor(c2);
+      if (anchors.find(Symb_anchor(sDel,sVor)) == anchors.end()) {
+	vh = add_vertex(Symb_anchor(sDel,sVor));
+	anchors[Symb_anchor(sDel,sVor)] = vh;
+	assert(vh == get_vertex(sDel, sVor));
+      }
+    }
     // anchor dimDel=0, dimVor=2
     sVor = get_anchor_vor(*fit);
-    if (anchors.find(sVor) == anchors.end()) {
-      vh = add_vertex(sVor);
-      anchors[sVor] = vh;
-      assert(vh == get_vertex(sVor));
+    for (int i=1; i<4; i++) {
+      sDel = get_anchor_del(Rt_Simplex(c1->vertex((fit->second+i)&3)));
+      if (anchors.find(Symb_anchor(sDel,sVor)) == anchors.end()) {
+	vh = add_vertex(Symb_anchor(sDel,sVor));
+	anchors[Symb_anchor(sDel,sVor)] = vh;
+	assert(vh == get_vertex(sDel, sVor));
+      } else {
+        vh = get_vertex(sDel, sVor);
+      }
+    }
+  }
+	
+  if (verbose) std::cout << "6 ";
+  // anchor dimDel=0, dimVor=1
+  for (eit=regular.finite_edges_begin(); eit!=regular.finite_edges_end(); eit++) {
+    sVor = get_anchor_vor(*eit);
+
+    v1 = eit->first->vertex(eit->second);
+    v2 = eit->first->vertex(eit->third);
+    sDel = get_anchor_del(v1);
+    if (anchors.find(Symb_anchor(sDel,sVor)) == anchors.end()) {
+      vh = add_vertex(Symb_anchor(sDel,sVor));
+      anchors[Symb_anchor(sDel,sVor)] = vh;
+      assert(vh == get_vertex(sDel, sVor));
+    }
+			
+    sDel = get_anchor_del(v2);
+    if (anchors.find(Symb_anchor(sDel,sVor)) == anchors.end()) {
+      vh = add_vertex(Symb_anchor(sDel,sVor));
+      anchors[Symb_anchor(sDel,sVor)] = vh;
+      assert(vh == get_vertex(sDel, sVor));
+    }
+  }
+	
+  if (verbose) std::cout << "5 ";
+  // anchor dimDel=3, dimVor=3
+  for (cit=regular.finite_cells_begin(); cit!=regular.finite_cells_end(); cit++) {
+    sDel = get_anchor_del(Rt_Simplex(cit));
+    sVor = get_anchor_vor(Rt_Simplex(cit));
+    if (anchors.find(Symb_anchor(sDel,sVor)) == anchors.end()) {
+      vh = add_vertex(Symb_anchor(sDel,sVor));
+      anchors[Symb_anchor(sDel,sVor)] = vh;
+      assert(vh == get_vertex(sDel, sVor));
+    }
+  }
+
+
+  if (verbose) std::cout << "4 ";
+  // anchor dimDel=0, dimVor=0
+  for (vit=regular.finite_vertices_begin(); vit!=regular.finite_vertices_end(); vit++) {
+    sDel = get_anchor_del(Rt_Simplex(vit));
+    sVor = get_anchor_vor(Rt_Simplex(vit));
+    if (anchors.find(Symb_anchor(sDel,sVor)) == anchors.end()) {
+      vh = add_vertex(Symb_anchor(sDel,sVor));
+      anchors[Symb_anchor(sDel,sVor)] = vh;
+      assert(vh == get_vertex(sDel, sVor));
+    }
+  }
+	
+  if (verbose) std::cout << "3 ";
+  // anchor dimDel=1, dimVor=2
+  for (fit=regular.finite_facets_begin(); fit!=regular.finite_facets_end(); fit++) {
+    c1 = fit->first;
+    c2 = c1->neighbor(fit->second);
+
+    sVor = get_anchor_vor(Rt_Simplex(*fit));
+    for (int i=1; i<3; i++) {
+      for (int j=i+1; j<4; j++) {
+        e.first = c1;
+        e.second = (fit->second+i)&3;
+        e.third = (fit->second+j)&3;
+        sDel = get_anchor_del(Rt_Simplex(e));
+	if (anchors.find(Symb_anchor(sDel,sVor)) == anchors.end()) {
+	  vh = add_vertex(Symb_anchor(sDel,sVor));
+	  anchors[Symb_anchor(sDel,sVor)] = vh;
+	  assert(vh == get_vertex(sDel, sVor));
+	}
+      }
     }
   }
 	
   if (verbose) std::cout << "2 ";
-  // anchor dimDel=0, dimVor=1
-  for (eit=regular.finite_edges_begin(); eit!=regular.finite_edges_end(); eit++) {
-    sVor = get_anchor_vor(*eit);
-    if (anchors.find(sVor) == anchors.end()) {
-      vh = add_vertex(sVor);
-      anchors[sVor] = vh;
-      assert(vh == get_vertex(sVor));
+  // anchor dimDel=2, dimVor=2
+  for (fit=regular.finite_facets_begin(); fit!=regular.finite_facets_end(); fit++) {
+    c1 = fit->first;
+    c2 = c1->neighbor(fit->second);
+
+    sVor = get_anchor_vor(Rt_Simplex(*fit));
+    sDel = get_anchor_del(Rt_Simplex(*fit));
+    if (anchors.find(Symb_anchor(sDel,sVor)) == anchors.end()) {
+      vh = add_vertex(Symb_anchor(sDel,sVor));
+      anchors[Symb_anchor(sDel,sVor)] = vh;
+      assert(vh == get_vertex(sDel, sVor));
     }
   }
 	
-  if (verbose) std::cout << "1 ";
-  // anchor dimDel=0, dimVor=0
-  for (vit=regular.finite_vertices_begin(); vit!=regular.finite_vertices_end(); vit++) {
-    sVor = get_anchor_vor(Rt_Simplex(vit));
-    if (anchors.find(sVor) == anchors.end()) {
-      vh = add_vertex(sVor);
-      anchors[sVor] = vh;
-      assert(vh == get_vertex(sVor));
+  if (verbose) std::cout << "1" << std::endl;
+  // anchor dimDel=1, dimVor=1
+  for (eit=regular.finite_edges_begin(); eit!=regular.finite_edges_end(); eit++) {
+    v1 = eit->first->vertex(eit->second);
+    v2 = eit->first->vertex(eit->third);
+
+    sVor = get_anchor_vor(Rt_Simplex(*eit));
+    sDel = get_anchor_del(Rt_Simplex(*eit));
+
+    if (anchors.find(Symb_anchor(sDel,sVor)) == anchors.end()) {
+      vh = add_vertex(Symb_anchor(sDel,sVor));
+      anchors[Symb_anchor(sDel,sVor)] = vh;
+      assert(vh == get_vertex(sDel, sVor));
     }
   }
 }
@@ -430,46 +655,250 @@ Mixed_complex_triangulator_3<
   RegularTriangulation_3,
   TriangulatedMixedComplex_3,
   TriangulatedMixedComplexObserver_3>::
-construct_cells() {
-  Rt_Simplex sVor_v, sVor_e, sVor_f, sVor_c;
+construct_0_cell(Rt_Vertex_handle rt_vh) {
+  Rt_Simplex sDel_v, sVor_v, sVor_e, sVor_f, sVor_c;
   Tmc_Vertex_handle vh[4];
   
-  for (Rt_Finite_vertices_iterator vit=regular.finite_vertices_begin();
-       vit!=regular.finite_vertices_end(); vit++) {
+  Rt_Simplex simplex(rt_vh);
+  sDel_v = get_anchor_del(Rt_Simplex(rt_vh));
+  sVor_v = get_anchor_vor(Rt_Simplex(rt_vh));
+  vh[0] = get_vertex(sDel_v,sVor_v);
     
-    Rt_Simplex simplex(vit);
-    sVor_v = get_anchor_vor(Rt_Simplex(vit));
-    vh[0] = get_vertex(sVor_v);
+  std::list<Rt_Cell_handle> adj_cells;
+  typename std::list<Rt_Cell_handle>::iterator adj_cell;
+  regular.incident_cells(rt_vh, std::back_inserter(adj_cells));
     
-    std::list<Rt_Cell_handle> adj_cells;
-    typename std::list<Rt_Cell_handle>::iterator adj_cell;
-    regular.incident_cells(vit, std::back_inserter(adj_cells));
-    
-    // Construct cells:
-    for (adj_cell = adj_cells.begin();
-	 adj_cell != adj_cells.end();
-	 adj_cell ++) {
-      if (!regular.is_infinite(*adj_cell)) {
-	sVor_c = get_anchor_vor(Rt_Simplex(*adj_cell));
-	vh[3] = get_vertex(sVor_c);
-	int index = (*adj_cell)->index(vit);
-	for (int i=1; i<4; i++) {
-	  sVor_f = get_anchor_vor(
-				  Rt_Simplex(Rt_Facet(*adj_cell,(index+i)&3)));
-	  vh[2] = get_vertex(sVor_f);
+  // Construct cells:
+  for (adj_cell = adj_cells.begin();
+       adj_cell != adj_cells.end();
+       adj_cell ++) {
+    if (!regular.is_infinite(*adj_cell)) {
+      sVor_c = get_anchor_vor(Rt_Simplex(*adj_cell));
+      vh[3] = get_vertex(sDel_v,sVor_c);
+      int index = (*adj_cell)->index(rt_vh);
+      for (int i=1; i<4; i++) {
+	sVor_f = get_anchor_vor(Rt_Simplex(Rt_Facet(*adj_cell,(index+i)&3)));
+	vh[2] = get_vertex(sDel_v,sVor_f);
 	  
-	  for (int j=1; j<4; j++) {
-	    if (j!=i) {
-	      sVor_e = get_anchor_vor(
-				      Rt_Simplex(Rt_Edge(*adj_cell,index,(index+j)&3)));
-	      vh[1] = get_vertex(sVor_e);
-	      if ((vh[0] != vh[1]) && (vh[1] != vh[2]) && (vh[2] != vh[3])) {
-		CGAL_assertion(sVor_v != sVor_e);
-		CGAL_assertion(sVor_e != sVor_f);
-		CGAL_assertion(sVor_f != sVor_c);
-		Tmc_Cell_handle ch =
-		  add_cell(vh,(index + (j==(i%3+1)? 1:0))&1,simplex);
+	for (int j=1; j<4; j++) {
+	  if (j!=i) {
+	    sVor_e = get_anchor_vor(
+				    Rt_Simplex(Rt_Edge(*adj_cell,index,(index+j)&3)));
+	    vh[1] = get_vertex(sDel_v,sVor_e);
+	    if ((vh[0] != vh[1]) && (vh[1] != vh[2]) && (vh[2] != vh[3])) {
+	      CGAL_assertion(sVor_v != sVor_e);
+	      CGAL_assertion(sVor_e != sVor_f);
+	      CGAL_assertion(sVor_f != sVor_c);
+	      Tmc_Cell_handle ch =
+		add_cell(vh,(index + (j==(i%3+1)? 1:0))&1,simplex);
+	    }
+	  }
+	}
+      }
+    }
+  }
+}
+
+// Constructs 1-cells of the mixed complex corresponding to edges
+// of the regular triangulation
+template < 
+  class RegularTriangulation_3,
+  class TriangulatedMixedComplex_3,
+  class TriangulatedMixedComplexObserver_3>
+void
+Mixed_complex_triangulator_3<
+  RegularTriangulation_3,
+  TriangulatedMixedComplex_3,
+  TriangulatedMixedComplexObserver_3>::
+construct_1_cell(const Rt_Finite_edges_iterator &e) {
+  Rt_Simplex sDel_v, sDel_e, sVor_e, sVor_f, sVor_c;
+  Tmc_Vertex_handle vh[4];
+  Rt_Vertex_handle v[2];
+  Tmc_Cell_handle ch;
+  
+  Rt_Simplex mixed_cell_simplex(*e);
+  sDel_e = get_anchor_del(Rt_Simplex(*e));
+  sVor_e = get_anchor_vor(Rt_Simplex(*e));
+    
+  v[0] = e->first->vertex(e->second);
+  v[1] = e->first->vertex(e->third);
+    
+  // Construct cells on the side of v[vi]:
+  for (int vi=0; vi<2; vi++) {
+    sDel_v = get_anchor_del(Rt_Simplex(v[vi]));
+    if (!(sDel_v == sDel_e)) {
+      Rt_Cell_circulator ccir, cstart;
+      ccir = cstart = regular.incident_cells(*e);
+      do {
+	if (!regular.is_infinite(ccir)) {
+	  int index0 = ccir->index(v[vi]);
+	  int index1 = ccir->index(v[1-vi]);
+
+	  sVor_c = get_anchor_vor(Rt_Simplex(ccir));
+
+	  for (int fi=1; fi<4; fi++) {
+	    if (((index0+fi)&3) != index1) {
+	      sVor_f =
+		get_anchor_vor(Rt_Simplex(Rt_Facet(ccir,(index0+fi)&3)));
+	      if ((sVor_c != sVor_f) && (sVor_f != sVor_e)) {
+		vh[0] = get_vertex(sDel_v, sVor_e);
+		vh[1] = get_vertex(sDel_e, sVor_e);
+		vh[2] = get_vertex(sDel_e, sVor_f);
+		vh[3] = get_vertex(sDel_e, sVor_c);
+		int orient;
+		if (((4+index1-index0)&3) == 1) {
+		  orient = (index1 + (fi==2))&1;
+		} else {
+		  orient = (index1 + (fi==1))&1;
+		}
+		// vh: dimension are (01,11,12,13)
+		ch = add_cell(vh,orient,mixed_cell_simplex);
+									
+		vh[1] = get_vertex(sDel_v, sVor_f);
+		// vh: dimension are (01,02,12,13)
+		ch = add_cell(vh,1-orient,mixed_cell_simplex);
+									
+		vh[2] = get_vertex(sDel_v, sVor_c);
+		// vh: dimension are (01,02,03,13)
+		ch = add_cell(vh,orient,mixed_cell_simplex);
 	      }
+	    }
+	  }
+	}
+	ccir ++;
+      } while (ccir != cstart);
+    }
+  }
+}
+
+
+// Constructs 2-cells of the mixed complex corresponding to facets
+// of the regular triangulation
+template < 
+  class RegularTriangulation_3,
+  class TriangulatedMixedComplex_3,
+  class TriangulatedMixedComplexObserver_3>
+void
+Mixed_complex_triangulator_3<
+  RegularTriangulation_3,
+  TriangulatedMixedComplex_3,
+  TriangulatedMixedComplexObserver_3>::
+construct_2_cell(const Rt_Finite_facets_iterator &fit) {
+  Rt_Simplex sDel_v, sDel_e, sDel_f, sVor_f, sVor_c;
+  Tmc_Vertex_handle vh[4]; // Implicit function over vLabels is increasing ...
+  Rt_Cell_handle rt_ch;
+  int index;
+	
+  rt_ch = fit->first;
+  index = fit->second;
+  Rt_Simplex simplex(*fit);
+  sDel_f = get_anchor_del(Rt_Simplex(*fit));
+  sVor_f = get_anchor_vor(Rt_Simplex(*fit));
+		
+  for (int i=0; i<2; i++) { // Do this twice
+    if (!regular.is_infinite(rt_ch)) {
+      sVor_c = get_anchor_vor(Rt_Simplex(rt_ch));
+	
+      vh[3] = get_vertex(sDel_f, sVor_c);
+      Tmc_Vertex_handle vh2 = get_vertex(sDel_f, sVor_f);
+      if (vh2 != vh[3]) {
+	// Facet and cell do not coincide ..
+	for (int vi=1; vi<4; vi++) {
+	  sDel_v = get_anchor_del(Rt_Simplex(rt_ch->vertex((index+vi)&3)));
+	  //index_02[rt_ch].V[index][(index+vi)&3];
+	  vh[0] = get_vertex(sDel_v, sVor_f);
+	  for (int ei=1; ei<4; ei++) {
+	    if (vi != ei) {
+	      vh[2] = vh2;
+	      int index0 = (index+vi)&3;
+	      int index1 = (index+ei)&3;
+	      int fi = (6+index-vi-ei)&3;//6-index-index0-index1;
+	      sDel_e =
+		get_anchor_del(Rt_Simplex(Rt_Edge(rt_ch, index0, index1)));
+	      vh[1] = get_vertex(sDel_e, sVor_f);
+	      //index_12[rt_ch].V[index][(6+index-vi-ei)&3];
+	      if ((vh[0] != vh[1]) && (vh[1] != vh[2])) {
+		// index0: v0
+		// index1: v1
+		// index0+fi&3 == facet
+		int orient;
+									
+		if (((4+index1-index0)&3) == 3) {
+		  orient = (index1 + (((4+index0-fi)&3)==2))&1;
+		} else {
+		  orient = (index1 + (((4+index0-fi)&3)==1))&1;
+		}
+
+		add_cell(vh,orient,simplex);
+									
+		vh[2] = get_vertex(sDel_e, sVor_c);
+		add_cell(vh,1-orient,simplex);
+									
+		vh[1] = get_vertex(sDel_v, sVor_c);
+		add_cell(vh,orient,simplex);
+	      } 
+	    }
+	  }
+	}
+      }
+    }
+    // swap to the other cell
+    Rt_Cell_handle ch_old = rt_ch;
+    rt_ch = rt_ch->neighbor(index);
+    index = rt_ch->index(ch_old);
+  }
+
+  CGAL_assertion(rt_ch == fit->first);
+  CGAL_assertion(index == fit->second);
+}
+
+
+// Constructs 3-cells of the mixed complex corresponding to cells
+// of the regular triangulation
+template < 
+  class RegularTriangulation_3,
+  class TriangulatedMixedComplex_3,
+  class TriangulatedMixedComplexObserver_3>
+void
+Mixed_complex_triangulator_3<
+  RegularTriangulation_3,
+  TriangulatedMixedComplex_3,
+  TriangulatedMixedComplexObserver_3>::
+construct_3_cell(Rt_Cell_handle rt_ch) {
+  Rt_Simplex sDel_v, sDel_e, sDel_f, sDel_c, sVor_c;
+  Tmc_Vertex_handle vh[4];
+  Tmc_Cell_handle ch;
+
+  // construct the tetrahedron:
+  //   C[ch], C[Facet(ch,fi)], C[Edge(ch,ei,vi)], C[ch->vertex(vi)]
+  sDel_c = get_anchor_del(Rt_Simplex(rt_ch));
+  sVor_c = get_anchor_vor(Rt_Simplex(rt_ch));
+  Rt_Simplex simplex = Rt_Simplex(rt_ch);
+  vh[0] = get_vertex(sDel_c, sVor_c); 
+  for (int fi=0; fi<4; fi++) {
+    sDel_f = get_anchor_del(Rt_Simplex(Rt_Facet(rt_ch, fi)));
+    vh[1] = get_vertex(sDel_f, sVor_c);
+    if (vh[0] != vh[1]) {
+      for (int vi=1; vi<4; vi++) {
+	int index0 = (fi+vi)&3;
+	sDel_v = get_anchor_del(Rt_Simplex(rt_ch->vertex(index0)));
+	for (int ei=1; ei<4; ei++) {
+	  int index1 = (fi+ei)&3;
+	  if (vi != ei) {
+	    sDel_e = get_anchor_del(Rt_Simplex(Rt_Edge(rt_ch, index0, index1)));
+	    vh[2] = get_vertex(sDel_e, sVor_c);
+	    // index_13[rt_ch].V[edge_index[index0][index1]];
+	    vh[3] = get_vertex(sDel_v, sVor_c);
+	    // index_03[rt_cit].V[index0];
+	    if ((vh[1] != vh[2]) && (vh[2] != vh[3])) {
+	      int orient;
+								
+	      if (((4+index1-index0)&3) == 1) {
+		orient = (index1 + (vi==2))&1;
+	      } else {
+		orient = (index1 + (vi==3))&1;
+	      }
+	      ch = add_cell(vh, orient, simplex);
 	    }
 	  }
 	}
@@ -491,12 +920,12 @@ Mixed_complex_triangulator_3<
   RegularTriangulation_3,
   TriangulatedMixedComplex_3,
   TriangulatedMixedComplexObserver_3>::
-add_vertex (Rt_Simplex const &anchor)
+add_vertex (Symb_anchor const &anchor)
 {
   Tmc_Vertex_handle vh;
   vh = triangulation_incr_builder.add_vertex();
-  vh->point() = get_anchor(anchor);
-  observer.after_vertex_insertion(anchor, anchor, vh); 
+  vh->point() = get_anchor(anchor.first, anchor.second);
+  observer.after_vertex_insertion(anchor.first, anchor.second, vh); 
 
   return vh;
 }
@@ -513,11 +942,14 @@ typename Mixed_complex_triangulator_3<
 Mixed_complex_triangulator_3<
   RegularTriangulation_3,
   TriangulatedMixedComplex_3,
-  TriangulatedMixedComplexObserver_3>::get_vertex (Rt_Simplex &sVor)
+  TriangulatedMixedComplexObserver_3>::get_vertex (
+						   Rt_Simplex &sDel, Rt_Simplex &sVor)
 {
+  Rt_Simplex sDel2 = get_anchor_del(sDel);
   Rt_Simplex sVor2 = get_anchor_vor(sVor);
+  CGAL_assertion(sDel == sDel2);
   CGAL_assertion(sVor == sVor2);
-  Tmc_Vertex_handle vh = anchors[sVor2];
+  Tmc_Vertex_handle vh = anchors[Symb_anchor(sDel2,sVor2)];
   CGAL_assertion(vh != Tmc_Vertex_handle());
   return vh;
 }
@@ -622,9 +1054,12 @@ Mixed_complex_triangulator_3<
   RegularTriangulation_3,
   TriangulatedMixedComplex_3,
   TriangulatedMixedComplexObserver_3>::
-get_anchor(Rt_Simplex const &sVor)
+get_anchor(Rt_Simplex const &sDel, Rt_Simplex const &sVor)
 {
-  return get_orthocenter(sVor);
+  Tmc_Point dfoc = get_orthocenter(sDel);
+  Tmc_Point vfoc = get_orthocenter(sVor);
+	
+  return construct_anchor_point(dfoc, vfoc);
 }
 
 template < 
@@ -651,17 +1086,14 @@ remove_small_edges()
   // NGHK: This may intrudoce rounding errors, since the quadratic surface
   // may change:
   Tmc_Vertex_handle vh, vh_collapse_to;
-  Tmc_Finite_vertices_iterator vit = _tmc.finite_vertices_begin();
-  int nCollapsed=0;
-  while (vit != _tmc.finite_vertices_end()) {
+  for (Tmc_Finite_vertices_iterator vit = _tmc.finite_vertices_begin();
+       vit != _tmc.finite_vertices_end(); ) {
     vh = vit;
     vit++;
     if (is_collapsible(vh, vh_collapse_to,sq_length)) {
-      nCollapsed ++;
       do_collapse(vh,vh_collapse_to);
     }
   }
-  std::cout << "Collapsed: " << nCollapsed << std::endl;
 }
 
 template < 
@@ -696,8 +1128,8 @@ is_collapsible(Tmc_Vertex_handle vh,
 	 it = incident_vertices.begin(); 
        it != incident_vertices.end(); it++) {
     if ((_tmc.geom_traits().compute_squared_distance_3_object()(vh->point(),
-							       (*it)->point())
-	< sq_length) &&
+								(*it)->point())
+	 < sq_length) &&
 	(vh->cell()->surf == (*it)->cell()->surf) &&
 	(vh->sign() == (*it)->sign())) {
       bool ok = true;
@@ -774,37 +1206,37 @@ template <
   class TriangulatedMixedComplex_3,
   class TriangulatedMixedComplexObserver_3>
 void 
-triangulate_mixed_complex_3
-(RegularTriangulation_3 const &rt,
- typename RegularTriangulation_3::Geom_traits::FT  shrink,
- TriangulatedMixedComplex_3 &tmc,
- TriangulatedMixedComplexObserver_3 &observer,
- bool verbose) 
+triangulate_mixed_complex_3(RegularTriangulation_3 &rt,
+			    typename RegularTriangulation_3::Geom_traits::FT
+			    const & shrink_factor,
+			    TriangulatedMixedComplex_3 &tmc,
+			    TriangulatedMixedComplexObserver_3 &observer,
+			    bool verbose) 
 {
   typedef Mixed_complex_triangulator_3<
     RegularTriangulation_3,
     TriangulatedMixedComplex_3,
     TriangulatedMixedComplexObserver_3>  Mixed_complex_triangulator;
-  Mixed_complex_triangulator(rt, tmc, observer, verbose);
+  Mixed_complex_triangulator(rt, shrink_factor, tmc, observer, verbose);
 }
 
 
-// template < 
-//   class RegularTriangulation_3,
-//   class TriangulatedMixedComplex_3>
-// void 
-// triangulate_mixed_complex_3
-// (RegularTriangulation_3 const &regular, 
-//  typename RegularTriangulation_3::Geom_Traits::FT shrink,
-//  TriangulatedMixedComplex_3 &tmc,
-//  bool verbose)
-// {
-//   Triangulated_mixed_complex_observer_3<
-//     TriangulatedMixedComplex_3, const RegularTriangulation_3> 
-//     observer(1);
-//   triangulate_mixed_complex_3(regular, shrink, tmc, observer, verbose);
-// }
+template < 
+  class RegularTriangulation_3,
+  class TriangulatedMixedComplex_3>
+void 
+triangulate_mixed_complex_3(RegularTriangulation_3 const &regular, 
+			    typename RegularTriangulation_3::Geom_traits::FT
+			    const &shrink_factor,
+			    TriangulatedMixedComplex_3 &tmc,
+			    bool verbose)
+{
+  Triangulated_mixed_complex_observer_3<
+    TriangulatedMixedComplex_3, const RegularTriangulation_3> 
+    observer(shrink_factor);
+  triangulate_mixed_complex_3(regular, shrink_factor, tmc, observer, verbose);
+}
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_TRIANGULATE_MIXED_COMPLEX_3_H
+#endif // CGAL_TRIANGULATE_MIXED_COMPLEX_H

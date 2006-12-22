@@ -95,78 +95,76 @@ public:
       Rt_Cell_handle   ch;
       
       switch (s.dimension()) {
-      case 0:
-	{
-	  vh = s;
-	  create_sphere(r2s_converter(vh->point().point()),
-			-r2s_converter(vh->point().weight()),
-			shrink,
-			1);
-	  break;
-	}
-      case 1:
-	{
-	  e = s;
-	  Surface_weighted_point p0 = 
-	    r2s_converter(e.first->vertex(e.second)->point());
-	  Surface_weighted_point p1 = 
-	    r2s_converter(e.first->vertex(e.third)->point());
-	  
-	  create_hyperboloid
-	    (typename Surface_regular_traits::
-	     Construct_weighted_circumcenter_3()(p0,p1),
-	     typename Surface_regular_traits::
-	     Compute_squared_radius_smallest_orthogonal_sphere_3()(p0,p1),
-	     p0 - p1,
-	     shrink,
-	     1);
-	  break;
-	}
-      case 2:
-	{
-	  f = s;
-	  Surface_weighted_point p0 = 
-	    r2s_converter(f.first->vertex((f.second+1)&3)->point());
-	  Surface_weighted_point p1 = 
-	    r2s_converter(f.first->vertex((f.second+2)&3)->point());
-	  Surface_weighted_point p2 = 
-	    r2s_converter(f.first->vertex((f.second+3)&3)->point());
-	  
-	  create_hyperboloid
-	    (typename Surface_regular_traits::
-	     Construct_weighted_circumcenter_3()(p0,p1,p2),
-	     typename Surface_regular_traits::
-	     Compute_squared_radius_smallest_orthogonal_sphere_3()(p0,p1,p2),
-	     typename Surface_regular_traits::
-	     Construct_orthogonal_vector_3()(p0,p1,p2),
-	     1-shrink,
-	     -1);
-	  break;
-	}
-      case 3:
-	{
-	  ch = s;
-	  create_sphere
-	    (typename Surface_regular_traits::
-	     Construct_weighted_circumcenter_3()
-	     (r2s_converter(ch->vertex(0)->point()),
-	      r2s_converter(ch->vertex(1)->point()),
-	      r2s_converter(ch->vertex(2)->point()),
-	      r2s_converter(ch->vertex(3)->point())),
-	     typename Surface_regular_traits::
-	     Compute_squared_radius_smallest_orthogonal_sphere_3()
-	     (r2s_converter(ch->vertex(0)->point()),
-	      r2s_converter(ch->vertex(1)->point()),
-	      r2s_converter(ch->vertex(2)->point()),
-	      r2s_converter(ch->vertex(3)->point())),
-	     1-shrink,
-	     -1);
-	}
+        case 0:
+      	{
+      	  vh = s;
+      	  create_sphere(r2s_converter(vh->point().point()),
+      			-r2s_converter(vh->point().weight()),
+      			shrink,
+      			1);
+      	  break;
+      	}
+        case 1:
+      	{
+      	  e = s;
+      	  Surface_weighted_point p0 = 
+      	    r2s_converter(e.first->vertex(e.second)->point());
+      	  Surface_weighted_point p1 = 
+      	    r2s_converter(e.first->vertex(e.third)->point());
+      	  
+      	  create_hyperboloid
+      	    (typename Surface_regular_traits::
+      	     Construct_weighted_circumcenter_3()(p0,p1),
+      	     typename Surface_regular_traits::
+      	     Compute_squared_radius_smallest_orthogonal_sphere_3()(p0,p1),
+      	     p0 - p1,
+      	     shrink,
+      	     1);
+      	  break;
+      	}
+        case 2:
+      	{
+      	  f = s;
+      	  Surface_weighted_point p0 = 
+      	    r2s_converter(f.first->vertex((f.second+1)&3)->point());
+      	  Surface_weighted_point p1 = 
+      	    r2s_converter(f.first->vertex((f.second+2)&3)->point());
+      	  Surface_weighted_point p2 = 
+      	    r2s_converter(f.first->vertex((f.second+3)&3)->point());
+      	  
+      	  create_hyperboloid
+      	    (typename Surface_regular_traits::
+      	     Construct_weighted_circumcenter_3()(p0,p1,p2),
+      	     typename Surface_regular_traits::
+      	     Compute_squared_radius_smallest_orthogonal_sphere_3()(p0,p1,p2),
+      	     typename Surface_regular_traits::
+      	     Construct_orthogonal_vector_3()(p0,p1,p2),
+      	     1-shrink,
+      	     -1);
+      	  break;
+      	}
+        case 3:
+      	{
+      	  ch = s;
+      	  create_sphere
+      	    (typename Surface_regular_traits::
+      	     Construct_weighted_circumcenter_3()
+      	     (r2s_converter(ch->vertex(0)->point()),
+      	      r2s_converter(ch->vertex(1)->point()),
+      	      r2s_converter(ch->vertex(2)->point()),
+      	      r2s_converter(ch->vertex(3)->point())),
+      	     typename Surface_regular_traits::
+      	     Compute_squared_radius_smallest_orthogonal_sphere_3()
+      	     (r2s_converter(ch->vertex(0)->point()),
+      	      r2s_converter(ch->vertex(1)->point()),
+      	      r2s_converter(ch->vertex(2)->point()),
+      	      r2s_converter(ch->vertex(3)->point())),
+      	     1-shrink,
+      	     -1);
+      	}
       }
     }
-    // NGHK: uncomment:
     ch->info() = typename SkinSurface_3::Cell_info(s,surf);
-    //ch->simp = s;
   }
 
   FT shrink;
