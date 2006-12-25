@@ -412,12 +412,17 @@ public:
 
     // Compute the GCD of the two polynomials and normalize them.
     leda::polynomial<Rational>    g = leda::poly_gcd (P, Q);
-    
+
     if (g.degree() > 0)
     {
-      P = P / g;                   // ???
+      leda::polynomial<Rational>    quon1, quon2, rem;
+
+      P.euclidean_division (g, quon1, rem);      
+      P = quon1;
       p_deg -= g.degree();
-      Q = Q / g;                   // ???
+
+      Q.euclidean_division (g, quon2, rem);      
+      Q = quon2;
       q_deg -= g.degree();
     }
 
@@ -517,9 +522,9 @@ public:
                      const Polynomial& polyB,
                      Polynomial& rem) const
   {
-      Polynomial q;
-      polyA.euclidean_division(polyB, q, rem);
-      return q;
+    Polynomial q;
+    polyA.euclidean_division(polyB, q, rem);
+    return (q);
   }
 
   /*!
