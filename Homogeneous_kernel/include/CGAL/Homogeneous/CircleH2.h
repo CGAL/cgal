@@ -81,9 +81,6 @@ public:
       base = Rep(cp, squared_radius, o);
     }
 
-    Bbox_2
-    bbox() const;
-
     const Point_2 &
     center() const;
 
@@ -237,26 +234,6 @@ inline
 bool
 CircleH2<R>::is_degenerate() const
 { return ( squared_radius() == FT(0) ); }
-
-template <class R>
-CGAL_KERNEL_MEDIUM_INLINE
-Bbox_2
-CircleH2<R>::bbox() const
-{
-  Bbox_2 b = center().bbox();
-
-  Interval_nt<> x (b.xmin(), b.xmax());
-  Interval_nt<> y (b.ymin(), b.ymax());
-
-  Interval_nt<> sqr = CGAL_NTS to_interval(squared_radius());
-  Interval_nt<> r = CGAL::sqrt(sqr);
-  Interval_nt<> minx = x-r;
-  Interval_nt<> maxx = x+r;
-  Interval_nt<> miny = y-r;
-  Interval_nt<> maxy = y+r;
-
-  return Bbox_2(minx.inf(), miny.inf(), maxx.sup(), maxy.sup());
-}
 
 template <class R>
 CGAL_KERNEL_INLINE
