@@ -17,16 +17,17 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 #ifndef CGAL_ISO_CUBOID_3_H
 #define CGAL_ISO_CUBOID_3_H
 
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
+#include <CGAL/Bbox_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -73,7 +74,7 @@ public:
                                                     top, far_, close)) {}
 
   Iso_cuboid_3(const RT& min_hx, const RT& min_hy, const RT& min_hz,
-               const RT& max_hx, const RT& max_hy, const RT& max_hz, 
+               const RT& max_hx, const RT& max_hy, const RT& max_hz,
                const RT& hw)
    : Rep(typename R::Construct_iso_cuboid_3()(Return_base_tag(), min_hx, min_hy, min_hz,
 				     max_hx, max_hy, max_hz, hw)) {}
@@ -83,7 +84,7 @@ public:
    : Rep(typename R::Construct_iso_cuboid_3()(Return_base_tag(), min_hx, min_hy, min_hz,
 					     max_hx, max_hy, max_hz)) {}
 
-// TODO FIXME : why is Qrt not working here ? 
+// TODO FIXME : why is Qrt not working here ?
 // TODO       : the Cartesian and Homogeneous functors should be split here
 //              given that the Qrt differs.
 //              (or is the Homogeneous optimization simply not worth it ?)
@@ -159,7 +160,7 @@ public:
        return xmin();
     else if (i == 1)
        return ymin();
-    else 
+    else
        return zmin();
   }
 
@@ -171,7 +172,7 @@ public:
        return xmax();
     else if (i == 1)
        return ymax();
-    else 
+    else
        return zmax();
   }
 
@@ -215,6 +216,12 @@ public:
   volume() const
   {
     return R().compute_volume_3_object()(*this);
+  }
+
+  Bbox_3
+  bbox() const
+  {
+    return R().construct_bbox_3_object()(*this);
   }
 
 };

@@ -22,6 +22,8 @@
 #ifndef CGAL__TEST_CLS_TETRAHEDRON_3_H
 #define CGAL__TEST_CLS_TETRAHEDRON_3_H
 
+#include <CGAL/Bbox_3.h>
+
 template <class R>
 bool
 _test_cls_tetrahedron_3(const R& )
@@ -46,7 +48,7 @@ _test_cls_tetrahedron_3(const R& )
  RT n9 =  8;
 
  CGAL::Point_3<R> p1( n1, n2, n3, n4);  // (6, 8, -2)
- CGAL::Point_3<R> p2( n2, n9, n3,-n3);  // (4, -2, -1)
+ CGAL::Point_3<R> p2( n2, n9, n3,-n3);  // (4, 2, -1)
  CGAL::Point_3<R> p3( n5, n6, n1, n5);  // (1, 10, 4)
  CGAL::Point_3<R> p4( n7, n7, n8, n5);  // (3, 3, 8)
 
@@ -55,7 +57,7 @@ _test_cls_tetrahedron_3(const R& )
  CGAL::Point_3<R> ps1( n7, n0, n0, n5); // (3, 0, 0)
  CGAL::Point_3<R> ps0( CGAL::ORIGIN );  // (0, 0, 0)
 
- CGAL::Tetrahedron_3<R> t1(p1,p2,p3,p4);
+ const CGAL::Tetrahedron_3<R> t1(p1,p2,p3,p4);
  CGAL::Tetrahedron_3<R> t2(p2,p1,p3,p4);
  CGAL::Tetrahedron_3<R> t3(ps0,ps1,ps2,ps3); // positive oriented
  CGAL::Tetrahedron_3<R> t4(ps0,ps1,ps3,ps2); // negative oriented
@@ -169,7 +171,18 @@ _test_cls_tetrahedron_3(const R& )
  assert ( t9.volume() == FT(-288) );
  assert ( CGAL::volume(ps0,p10,p11,p12) == FT(-288) );
 
+ std::cout << '.';
+
+ CGAL::Bbox_3 bb = t1.bbox();
+ assert(bb.xmin() <= 1.0);
+ assert(bb.xmax() >= 6.0);
+ assert(bb.ymin() <= 2.0);
+ assert(bb.ymax() >= 10.0);
+ assert(bb.zmin() <= -2.0);
+ assert(bb.zmax() >= 8.0);
+
  std::cout << "done" << std::endl;
  return true;
 }
+
 #endif // CGAL__TEST_CLS_TETRAHEDRON_3_H

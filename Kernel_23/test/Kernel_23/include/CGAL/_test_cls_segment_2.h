@@ -22,6 +22,8 @@
 #ifndef CGAL__TEST_CLS_SEGMENT_2_H
 #define CGAL__TEST_CLS_SEGMENT_2_H
 
+#include <CGAL/Bbox_2.h>
+
 template <class R>
 bool
 _test_cls_segment_2(const R& )
@@ -121,7 +123,16 @@ _test_cls_segment_2(const R& )
 
  assert( CGAL::Segment_2<R>( p3, p3).is_degenerate() );
 
+ std::cout << '.';
+
+ CGAL::Bbox_2 bb = s1.bbox();
+ assert(bb.xmin() <= 1.0);
+ assert(bb.xmax() >= 5.0);
+ assert(bb.ymin() <= 2.0);
+ assert(bb.ymax() >= 4.0);
+
  std::cout << "done" << std::endl;
  return true;
 }
+
 #endif // CGAL__TEST_CLS_SEGMENT_2_H

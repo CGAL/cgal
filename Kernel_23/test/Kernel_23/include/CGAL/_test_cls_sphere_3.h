@@ -22,6 +22,8 @@
 #ifndef CGAL__TEST_CLS_SPHERE_3_H
 #define CGAL__TEST_CLS_SPHERE_3_H
 
+#include <CGAL/Bbox_3.h>
+
 template <class R>
 bool
 _test_cls_sphere_3(const R& )
@@ -61,7 +63,7 @@ _test_cls_sphere_3(const R& )
  CGAL::Sphere_3<R> c1( p0, p1, p2, p4);
  CGAL::Sphere_3<R> c2( p0, p1, p3, p5);
  CGAL::Sphere_3<R> c3( p1, p0, p2, p4);
- CGAL::Sphere_3<R> c4( p3, FT( n9 ));    // n9 = (n6)^2
+ const CGAL::Sphere_3<R> c4( p3, FT( n9 ));    // n9 = (n6)^2
  CGAL::Vector_3<R> vx6 = vx * n6;
  CGAL::Vector_3<R> vy6 = vy * n6;
  CGAL::Sphere_3<R> c5( p3 - vx6, p3 + vx6, p3 + vy6);
@@ -227,6 +229,16 @@ _test_cls_sphere_3(const R& )
  assert( c11.is_degenerate() );
  assert( c12.is_degenerate() );
  assert( c13.is_degenerate() );
+
+ std::cout << '.';
+
+ CGAL::Bbox_3 bb = c4.bbox();
+ assert(bb.xmin() <= -4.0);
+ assert(bb.xmax() >= 8.0);
+ assert(bb.ymin() <= -4.0);
+ assert(bb.ymax() >= 8.0);
+ assert(bb.zmin() <= -4.0);
+ assert(bb.zmax() >= 8.0);
 
  std::cout << "done" << std::endl;
  return true;

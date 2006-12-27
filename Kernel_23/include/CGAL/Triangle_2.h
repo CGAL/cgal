@@ -17,7 +17,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -27,6 +27,7 @@
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
+#include <CGAL/Bbox_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -70,7 +71,7 @@ public:
   {
     return R().compute_area_2_object()(vertex(0), vertex(1), vertex(2));
   }
-  
+
   Orientation
   orientation() const
   {
@@ -83,96 +84,85 @@ public:
     return R().bounded_side_2_object()(*this,p);
   }
 
-
   Oriented_side
   oriented_side(const Point_2 &p) const
   {
     return R().oriented_side_2_object()(*this,p);
   }
 
-
   bool
   operator==(const Triangle_2 &t) const
   {
     return R().equal_2_object()(*this,t);
   }
-  
-  
+
   bool
   operator!=(const Triangle_2 &t) const
   {
     return !(*this == t);
   }
-  
+
   typename Qualified_result_of<typename R::Construct_vertex_2, Triangle_2, int>::type
   vertex(int i) const
   {
     return R().construct_vertex_2_object()(*this,i);
   }
-  
+
   typename Qualified_result_of<typename R::Construct_vertex_2, Triangle_2, int>::type
   operator[](int i) const
   {
     return vertex(i);
   }
-  
-  
+
   bool
   has_on_bounded_side(const Point_2 &p) const
   {
     return bounded_side(p) == ON_BOUNDED_SIDE;
   }
-  
-  
+
   bool
   has_on_unbounded_side(const Point_2 &p) const
   {
     return bounded_side(p) == ON_UNBOUNDED_SIDE;
   }
-  
-  
+
   bool
   has_on_boundary(const Point_2 &p) const
   {
     return bounded_side(p) == ON_BOUNDARY;
   }
-  
-  
+
   bool
   has_on_negative_side(const Point_2 &p) const
   {
     return oriented_side(p) == ON_NEGATIVE_SIDE;
   }
-  
-  
+
   bool
   has_on_positive_side(const Point_2 &p) const
   {
     return oriented_side(p) == ON_POSITIVE_SIDE;
   }
-  
-  
+
   bool
   is_degenerate() const
   {
     return R().collinear_2_object()(vertex(0), vertex(1), vertex(2));
   }
-  
-  
+
   Bbox_2
   bbox() const
   {
     return R().construct_bbox_2_object()(*this);
   }
-  
-  
+
   Triangle_2
   opposite() const
   {
     return R().construct_opposite_triangle_2_object()(*this);
   }
-  
-  Triangle_2           
+
+  Triangle_2
   transform(const Aff_transformation_2 &t) const
   {
     return Triangle_2(t.transform(vertex(0)),

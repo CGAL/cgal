@@ -17,7 +17,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra
 
@@ -27,6 +27,7 @@
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
+#include <CGAL/Bbox_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -96,6 +97,12 @@ public:
   bool is_degenerate() const
   {
     return R().is_degenerate_3_object()(*this);
+  }
+
+  Bbox_3
+  bbox() const
+  {
+    return R().construct_bbox_3_object()(*this);
   }
 
   FT squared_area() const // TODO : use Qrt

@@ -27,6 +27,7 @@
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
+#include <CGAL/Bbox_2.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -118,14 +119,16 @@ public:
 
   bool        is_degenerate() const;
 
-  Bbox_2      bbox() const;
+  Bbox_2      bbox() const
+  {
+    return R().construct_bbox_2_object()(*this);
+  }
 
   bool
   operator==(const Segment_2 &s) const
   {
     return R().equal_2_object()(*this, s);
   }
-
 
   bool
   operator!=(const Segment_2 &s) const
@@ -268,14 +271,6 @@ Segment_2<R_>::is_degenerate() const
   return R().is_degenerate_2_object()(*this);
 }
 
-
-template < class R_ >
-CGAL_KERNEL_INLINE
-Bbox_2
-Segment_2<R_>::bbox() const
-{
-  return R().construct_bbox_2_object()(*this);
-}
 
 
 template < class R >

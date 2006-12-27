@@ -14,13 +14,15 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL__TEST_CLS_ISO_RECTANGLE_2_H
 #define CGAL__TEST_CLS_ISO_RECTANGLE_2_H
+
+#include <CGAL/Bbox_2.h>
 
 template <class R>
 bool
@@ -54,7 +56,7 @@ _test_cls_iso_rectangle_2(const R& )
  CGAL::Point_2<R> p8( n4, n6, n2);    // ( 2, 3)
  CGAL::Point_2<R> p9(-n3, n7);        // (-3, 7)
 
- CGAL::Iso_rectangle_2<R> r1( p1, p3);
+ const CGAL::Iso_rectangle_2<R> r1( p1, p3);
  CGAL::Iso_rectangle_2<R> r1_( p1, p3, 0);
  CGAL::Iso_rectangle_2<R> r2( p3, p1);
  CGAL::Iso_rectangle_2<R> r3( p2, p5);
@@ -109,7 +111,7 @@ _test_cls_iso_rectangle_2(const R& )
  assert( (r2.max)() == p3 );
 
  std::cout << '.';
- 
+
  assert ( r1.min_coord(0) == r1.xmin() );
  assert ( r1.min_coord(1) == r1.ymin() );
  assert ( r2.max_coord(0) == r2.xmax() );
@@ -144,6 +146,14 @@ _test_cls_iso_rectangle_2(const R& )
  assert( CGAL::Iso_rectangle_2<R>( p3, p1 ).area() == FT(9) );
  assert( CGAL::Iso_rectangle_2<R>( p1, p7 ).area() == FT(1) );
  assert( CGAL::Iso_rectangle_2<R>( p9, p3 ).area() == FT(21) );
+
+ std::cout << '.';
+
+ CGAL::Bbox_2 bb = r1.bbox();
+ assert(bb.xmin() <= 1.0);
+ assert(bb.xmax() >= 4.0);
+ assert(bb.ymin() <= 1.0);
+ assert(bb.ymax() >= 4.0);
 
  std::cout << "done" << std::endl;
  return true;

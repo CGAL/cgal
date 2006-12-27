@@ -104,6 +104,16 @@ _test_cls_segment_3(const R& )
  assert( sdeg.is_degenerate() );
  assert( CGAL::parallel(sdeg, sdeg) );
 
+ std::cout << '.';
+
+ CGAL::Bbox_3 bb = s2.bbox();
+ assert(bb.xmin() <= -2.0);
+ assert(bb.xmax() >= 1.0);
+ assert(bb.ymin() <= 1.0);
+ assert(bb.ymax() >= 3.0);
+ assert(bb.zmin() <= 2.0);
+ assert(bb.zmax() >= 4.0);
+
  std::cout << "done" << std::endl;
  return true;
 }

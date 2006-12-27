@@ -14,13 +14,15 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL__TEST_CLS_ISO_CUBOID_3_H
 #define CGAL__TEST_CLS_ISO_CUBOID_3_H
+
+#include <CGAL/Bbox_3.h>
 
 template <class R>
 bool
@@ -60,7 +62,7 @@ _test_cls_iso_cuboid_3(const R& )
  CGAL::Point_3<R> p12(n1, n1, n3 );       // ( 1, 1, 3)
  CGAL::Point_3<R> p13(n4, n1, n3 );       // ( 4, 1, 3)
 
- CGAL::Iso_cuboid_3<R> r1( p1, p3);
+ const CGAL::Iso_cuboid_3<R> r1( p1, p3);
  CGAL::Iso_cuboid_3<R> r1_( p1, p3, 0);
  CGAL::Iso_cuboid_3<R> r2( p3, p1);
  CGAL::Iso_cuboid_3<R> r3( p2, p5);
@@ -161,6 +163,16 @@ _test_cls_iso_cuboid_3(const R& )
  assert( r1.volume() == r2.volume() );
  assert( r3.volume() == r4.volume() );
  assert( r5.volume() == FT(84) );
+
+ std::cout << '.';
+
+ CGAL::Bbox_3 bb = r1.bbox();
+ assert(bb.xmin() <= 1.0);
+ assert(bb.xmax() >= 4.0);
+ assert(bb.ymin() <= 1.0);
+ assert(bb.ymax() >= 4.0);
+ assert(bb.zmin() <= 1.0);
+ assert(bb.zmax() >= 3.0);
 
  std::cout << "done" << std::endl;
  return true;

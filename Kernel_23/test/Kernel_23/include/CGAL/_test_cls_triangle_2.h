@@ -22,6 +22,8 @@
 #ifndef CGAL__TEST_CLS_TRIANGLE_2_H
 #define CGAL__TEST_CLS_TRIANGLE_2_H
 
+#include <CGAL/Bbox_2.h>
+
 template <class R>
 bool
 _test_cls_triangle_2(const R& )
@@ -139,6 +141,14 @@ _test_cls_triangle_2(const R& )
  assert ( t1.area() == t4.area() );
  assert ( t2.area() == -t5.area() );
  assert ( t3.area() == FT(5) );
+
+ std::cout << '.';
+
+ CGAL::Bbox_2 bb = t1.bbox();
+ assert(bb.xmin() <= 1.0);
+ assert(bb.xmax() >= 7.0);
+ assert(bb.ymin() <= 1.0);
+ assert(bb.ymax() >= 5.0);
 
  std::cout << "done" << std::endl;
  return true;

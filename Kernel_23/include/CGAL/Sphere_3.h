@@ -27,6 +27,7 @@
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
+#include <CGAL/Bbox_3.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -159,6 +160,12 @@ public:
   {
     return R().is_degenerate_3_object()(*this);
     //return CGAL_NTS is_zero(squared_radius());
+  }
+
+  Bbox_3
+  bbox() const
+  {
+    return R().construct_bbox_3_object()(*this);
   }
 
 };

@@ -21,6 +21,8 @@ CXXFLAGS = \
            -I../../../Filtered_kernel/include \
            -I../../../Cartesian_kernel/include \
            -I../../../Homogeneous_kernel/include \
+           -I../../../STL_Extension/include \
+           -I../../../Timer/include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \

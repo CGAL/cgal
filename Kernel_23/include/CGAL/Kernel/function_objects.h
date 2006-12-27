@@ -1703,45 +1703,6 @@ namespace CommonKernelFunctors {
     { return t.rep().vertex(i); }
   };
 
-
-  template <typename K>
-  class Construct_bbox_3
-  {
-    typedef typename K::Point_3          Point_3;
-    typedef typename K::Segment_3        Segment_3;
-    typedef typename K::Iso_cuboid_3     Iso_cuboid_3;
-    typedef typename K::Triangle_3       Triangle_3;
-    typedef typename K::Tetrahedron_3    Tetrahedron_3;
-    typedef typename K::Sphere_3         Sphere_3;
-  public:
-    typedef Bbox_3          result_type;
-    typedef Arity_tag< 1 >   Arity;
-
-    Bbox_3
-    operator()( const Point_3& p) const
-    { return p.bbox(); }
-
-    Bbox_3
-    operator()( const Segment_3& s) const
-    { return s.bbox(); }
-
-    Bbox_3
-    operator()( const Triangle_3& t) const
-    { return t.bbox(); }
-
-    Bbox_3
-    operator()( const Iso_cuboid_3& r) const
-    { return r.bbox(); }
-
-    Bbox_3
-    operator()( const Tetrahedron_3& t) const
-    { return t.bbox(); }
-
-    Bbox_3
-    operator()( const Sphere_3& s) const
-    { return s.bbox(); }
-  };
-
   template <typename K>
   class Construct_cartesian_const_iterator_2
   {

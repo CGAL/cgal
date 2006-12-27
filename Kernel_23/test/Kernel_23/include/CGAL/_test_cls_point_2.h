@@ -22,6 +22,8 @@
 #ifndef CGAL__TEST_CLS_POINT_2_H
 #define CGAL__TEST_CLS_POINT_2_H
 
+#include <CGAL/Bbox_2.h>
+
 template <class R>
 bool
 _test_cls_point_2(const R& )
@@ -157,6 +159,14 @@ _test_cls_point_2(const R& )
   it2 = it - 1;
   it2++;
   assert(it == it2);
+
+ std::cout << '.';
+
+ CGAL::Bbox_2 bb = p3.bbox();
+ assert(bb.xmin() <= -35.0);
+ assert(bb.xmax() >= -35.0);
+ assert(bb.ymin() <= 50.0);
+ assert(bb.ymax() >= 50.0);
 
  std::cout << "done" << std::endl;
  return true;
