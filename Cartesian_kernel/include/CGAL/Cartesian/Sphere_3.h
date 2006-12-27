@@ -137,8 +137,6 @@ public:
   // Returns R::ON_BOUNDED_SIDE, R::ON_BOUNDARY or R::ON_UNBOUNDED_SIDE
   bool has_on_bounded_side(const Point_3 &p) const;
   bool has_on_unbounded_side(const Point_3 &p) const;
-
-  Bbox_3 bbox() const;
 };
 
 template < class R >
@@ -262,31 +260,6 @@ SphereC3<R>::opposite() const
 {
   return SphereC3<R>(center(), squared_radius(),
                                CGAL::opposite(orientation()) );
-}
-
-template < class R >
-CGAL_KERNEL_INLINE
-Bbox_3
-SphereC3<R>::bbox() const
-{ 
-  typename R::Construct_bbox_3 construct_bbox_3;
-  Bbox_3 b = construct_bbox_3(center());
-
-  Interval_nt<> x (b.xmin(), b.xmax());
-  Interval_nt<> y (b.ymin(), b.ymax());
-  Interval_nt<> z (b.zmin(), b.zmax());
-
-  Interval_nt<> sqr = CGAL_NTS to_interval(squared_radius());
-  Interval_nt<> r = CGAL::sqrt(sqr);
-  Interval_nt<> minx = x-r;
-  Interval_nt<> maxx = x+r;
-  Interval_nt<> miny = y-r;
-  Interval_nt<> maxy = y+r;
-  Interval_nt<> minz = z-r;
-  Interval_nt<> maxz = z+r;
-
-  return Bbox_3(minx.inf(), miny.inf(), minz.inf(), 
-		maxx.sup(), maxy.sup(), maxz.sup());
 }
 
 CGAL_END_NAMESPACE

@@ -1505,36 +1505,35 @@ namespace CartesianKernelFunctors {
     typedef Arity_tag< 1 >               Arity;
 
     result_type
-    operator()( const Point_2& p) const
+    operator()(const Point_2& p) const
     {
-      typename K::Compute_x_2 x;// = K().compute_x_2_object();
-      std::pair<double,double> xp = CGAL_NTS to_interval(x(p));
+      std::pair<double,double> xp = CGAL_NTS to_interval(p.x());
       std::pair<double,double> yp = CGAL_NTS to_interval(p.y());
-      return Bbox_2(xp.first, yp.first,  xp.second, yp.second);
+      return Bbox_2(xp.first, yp.first, xp.second, yp.second);
     }
 
     result_type
-    operator()( const Segment_2& s) const
+    operator()(const Segment_2& s) const
     { return s.source().bbox() + s.target().bbox(); }
 
     result_type
-    operator()( const Triangle_2& t) const
+    operator()(const Triangle_2& t) const
     {
       typename K::Construct_bbox_2 construct_bbox_2;
       return construct_bbox_2(t.vertex(0))
-	+ construct_bbox_2(t.vertex(1))
-	+ construct_bbox_2(t.vertex(2));
+	   + construct_bbox_2(t.vertex(1))
+	   + construct_bbox_2(t.vertex(2));
     }
 
     result_type
-    operator()( const Iso_rectangle_2& r) const
+    operator()(const Iso_rectangle_2& r) const
     {
       typename K::Construct_bbox_2 construct_bbox_2;
       return construct_bbox_2((r.min)()) + construct_bbox_2((r.max)());
     }
 
     result_type
-    operator()( const Circle_2& c) const
+    operator()(const Circle_2& c) const
     {
       typename K::Construct_bbox_2 construct_bbox_2;
       Bbox_2 b = construct_bbox_2(c.center());
@@ -1552,6 +1551,83 @@ namespace CartesianKernelFunctors {
       return Bbox_2(minx.inf(), miny.inf(), maxx.sup(), maxy.sup());
     }
   };
+
+
+  template <typename K>
+  class Construct_bbox_3
+  {
+    typedef typename K::Point_3          Point_3;
+    typedef typename K::Segment_3        Segment_3;
+    typedef typename K::Iso_cuboid_3     Iso_cuboid_3;
+    typedef typename K::Triangle_3       Triangle_3;
+    typedef typename K::Tetrahedron_3    Tetrahedron_3;
+    typedef typename K::Sphere_3         Sphere_3;
+  public:
+    typedef Bbox_3          result_type;
+    typedef Arity_tag< 1 >  Arity;
+
+    Bbox_3
+    operator()(const Point_3& p) const
+    {
+      std::pair<double,double> xp = CGAL_NTS to_interval(p.x());
+      std::pair<double,double> yp = CGAL_NTS to_interval(p.y());
+      std::pair<double,double> zp = CGAL_NTS to_interval(p.z());
+      return Bbox_3(xp.first, yp.first, zp.first,
+                    xp.second, yp.second, zp.second);
+    }
+
+    Bbox_3
+    operator()(const Segment_3& s) const
+    { return s.source().bbox() + s.target().bbox(); }
+
+    Bbox_3
+    operator()(const Triangle_3& t) const
+    {
+      typename K::Construct_bbox_3 construct_bbox_3;
+      return construct_bbox_3(t.vertex(0))
+	   + construct_bbox_3(t.vertex(1))
+	   + construct_bbox_3(t.vertex(2));
+    }
+
+    Bbox_3
+    operator()(const Iso_cuboid_3& r) const
+    {
+      typename K::Construct_bbox_3 construct_bbox_3;
+      return construct_bbox_3((r.min)()) + construct_bbox_3((r.max)());
+    }
+
+    Bbox_3
+    operator()(const Tetrahedron_3& t) const
+    {
+      typename K::Construct_bbox_3 construct_bbox_3;
+      return construct_bbox_3(t.vertex(0)) + construct_bbox_3(t.vertex(1))
+           + construct_bbox_3(t.vertex(2)) + construct_bbox_3(t.vertex(3));
+    }
+
+    Bbox_3
+    operator()(const Sphere_3& s) const
+    {
+      typename K::Construct_bbox_3 construct_bbox_3;
+      Bbox_3 b = construct_bbox_3(s.center());
+
+      Interval_nt<> x (b.xmin(), b.xmax());
+      Interval_nt<> y (b.ymin(), b.ymax());
+      Interval_nt<> z (b.zmin(), b.zmax());
+
+      Interval_nt<> sqr = CGAL_NTS to_interval(s.squared_radius());
+      Interval_nt<> r = CGAL::sqrt(sqr);
+      Interval_nt<> minx = x-r;
+      Interval_nt<> maxx = x+r;
+      Interval_nt<> miny = y-r;
+      Interval_nt<> maxy = y+r;
+      Interval_nt<> minz = z-r;
+      Interval_nt<> maxz = z+r;
+
+      return Bbox_3(minx.inf(), miny.inf(), minz.inf(), 
+		    maxx.sup(), maxy.sup(), maxz.sup());
+    }
+  };
+
 
   template <typename K>
   class Construct_bisector_2

@@ -81,7 +81,6 @@ public:
   Segment_3   opposite() const;
 
   bool        is_degenerate() const;
-  Bbox_3      bbox() const;
 };
 
 template < class R >
@@ -196,15 +195,6 @@ bool
 SegmentC3<R>::is_degenerate() const
 {
   return source() == target();
-}
-
-template < class R >
-inline
-Bbox_3
-SegmentC3<R>::bbox() const
-{
-  typename R::Construct_bbox_3 construct_bbox_3;
-  return construct_bbox_3(source()) + construct_bbox_3(target());
 }
 
 template < class R >

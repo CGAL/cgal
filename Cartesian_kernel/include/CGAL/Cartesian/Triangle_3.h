@@ -62,8 +62,6 @@ public:
   const Point_3 & vertex(int i) const;
   const Point_3 & operator[](int i) const;
 
-  Bbox_3     bbox() const;
-  
   FT         squared_area() const;
 };
 
@@ -123,16 +121,6 @@ typename TriangleC3<R>::Plane_3
 TriangleC3<R>::supporting_plane() const
 {
   return Plane_3(vertex(0), vertex(1), vertex(2));
-}
-
-template < class R >
-Bbox_3
-TriangleC3<R>::bbox() const
-{
-  typename R::Construct_bbox_3 construct_bbox_3;
-  return construct_bbox_3(vertex(0)) 
-    + construct_bbox_3(vertex(1)) 
-    + construct_bbox_3(vertex(2));
 }
 
 template < class R >

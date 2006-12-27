@@ -27,7 +27,6 @@
 #include <CGAL/Threetuple.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/Origin.h>
-#include <CGAL/Bbox_3.h>
 #include <CGAL/constant.h>
 
 CGAL_BEGIN_NAMESPACE
@@ -128,7 +127,6 @@ public:
   {
       return 3;
   }
-  Bbox_3 bbox() const;
 
   Point_3 transform(const Aff_transformation_3 &t) const
   {
@@ -161,16 +159,6 @@ PointC3<R>::homogeneous(int i) const
   CGAL_kernel_precondition(i>=0 && i<=3);
   if (i<3) return cartesian(i);
   return hw();
-}
-
-template < class R >
-Bbox_3
-PointC3<R>::bbox() const
-{
-  std::pair<double,double> xp = CGAL_NTS to_interval(x());
-  std::pair<double,double> yp = CGAL_NTS to_interval(y());
-  std::pair<double,double> zp = CGAL_NTS to_interval(z());
-  return Bbox_3(xp.first, yp.first, zp.first, xp.second, yp.second, zp.second);
 }
 
 CGAL_END_NAMESPACE

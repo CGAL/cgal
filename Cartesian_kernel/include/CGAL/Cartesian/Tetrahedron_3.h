@@ -59,8 +59,6 @@ public:
   bool       operator==(const TetrahedronC3 &t) const;
   bool       operator!=(const TetrahedronC3 &t) const;
 
-  Bbox_3     bbox() const;
-
   Orientation    orientation() const;
   Oriented_side  oriented_side(const Point_3 &p) const;
   Bounded_side   bounded_side(const Point_3 &p) const;
@@ -217,16 +215,6 @@ bool
 TetrahedronC3<R>::is_degenerate() const
 {
   return orientation() == COPLANAR;
-}
-
-template < class R >
-inline
-Bbox_3
-TetrahedronC3<R>::bbox() const
-{
-  typename R::Construct_bbox_3 construct_bbox_3;
-  return construct_bbox_3(vertex(0)) + construct_bbox_3(vertex(1))
-       + construct_bbox_3(vertex(2)) + construct_bbox_3(vertex(3));
 }
 
 CGAL_END_NAMESPACE

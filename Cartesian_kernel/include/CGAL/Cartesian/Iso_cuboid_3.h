@@ -130,7 +130,6 @@ public:
   bool         has_on_bounded_side(const Point_3& p) const;
   bool         has_on_unbounded_side(const Point_3& p) const;
   bool         is_degenerate() const;
-  Bbox_3       bbox() const;
   const FT &   xmin() const;
   const FT &   ymin() const;
   const FT &   zmin() const;
@@ -331,15 +330,6 @@ Iso_cuboidC3<R>::is_degenerate() const
   return (this->min)().hx() == (this->max)().hx()
       || (this->min)().hy() == (this->max)().hy()
       || (this->min)().hz() == (this->max)().hz();
-}
-
-template < class R >
-inline
-Bbox_3
-Iso_cuboidC3<R>::bbox() const
-{
-  typename R::Construct_bbox_3 construct_bbox_3;
-  return construct_bbox_3((this->min)()) + construct_bbox_3((this->max)());
 }
 
 CGAL_END_NAMESPACE
