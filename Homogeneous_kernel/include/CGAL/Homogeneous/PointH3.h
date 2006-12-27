@@ -25,7 +25,6 @@
 #define CGAL_HOMOGENEOUS_POINT_3_H
 
 #include <CGAL/Origin.h>
-#include <CGAL/Bbox_3.h>
 #include <CGAL/Fourtuple.h>
 #include <CGAL/Kernel/Cartesian_coordinate_iterator_3.h>
 
@@ -111,7 +110,6 @@ public:
 
   Direction_3 direction() const;
   Point_3     transform( const Aff_transformation_3 & t) const;
-  Bbox_3      bbox() const;
 
   bool  operator==( const PointH3<R>& p) const;
   bool  operator!=( const PointH3<R>& p) const;
@@ -229,23 +227,6 @@ inline
 typename R::Point_3
 PointH3<R>::transform(const typename PointH3<R>::Aff_transformation_3& t) const
 { return t.transform(static_cast<const Point_3&>(*this)); }
-
-template < class R >
-CGAL_KERNEL_LARGE_INLINE
-Bbox_3
-PointH3<R>::bbox() const
-{
-   Interval_nt<> ihx = CGAL_NTS to_interval(hx());
-   Interval_nt<> ihy = CGAL_NTS to_interval(hy());
-   Interval_nt<> ihz = CGAL_NTS to_interval(hz());
-   Interval_nt<> ihw = CGAL_NTS to_interval(hw());
-
-   Interval_nt<> ix = ihx/ihw;
-   Interval_nt<> iy = ihy/ihw;
-   Interval_nt<> iz = ihz/ihw;
-
-   return Bbox_3(ix.inf(), iy.inf(), iz.inf(), ix.sup(), iy.sup(), iz.sup());
-}
 
 CGAL_END_NAMESPACE
 

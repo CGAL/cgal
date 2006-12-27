@@ -17,7 +17,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Stefan Schirra
 
@@ -79,8 +79,6 @@ public:
       bool is_degenerate() const;
 
       SphereH3<R> opposite() const;
-
-      Bbox_3 bbox() const;
 
       Oriented_side oriented_side(const Point_3& p) const;
 
@@ -224,31 +222,6 @@ SphereH3<R>::opposite() const
 {
   return SphereH3<R>(center(), squared_radius(),
                          CGAL::opposite(orientation()) );
-}
-
-template <class R>
-CGAL_KERNEL_INLINE
-Bbox_3
-SphereH3<R>::bbox() const
-{
-
-  Bbox_3 b = center().bbox();
-
-  Interval_nt<> x (b.xmin(), b.xmax());
-  Interval_nt<> y (b.ymin(), b.ymax());
-  Interval_nt<> z (b.zmin(), b.zmax());
-
-  Interval_nt<> sqr = CGAL_NTS to_interval(squared_radius());
-  Interval_nt<> r = CGAL::sqrt(sqr);
-  Interval_nt<> minx = x-r;
-  Interval_nt<> maxx = x+r;
-  Interval_nt<> miny = y-r;
-  Interval_nt<> maxy = y+r;
-  Interval_nt<> minz = z-r;
-  Interval_nt<> maxz = z+r;
-
-  return Bbox_3(minx.inf(), miny.inf(), minz.inf(), 
-		maxx.sup(), maxy.sup(), maxz.sup());
 }
 
 CGAL_END_NAMESPACE
