@@ -167,7 +167,7 @@ public:
                 q = actual_div( x, y );
                 r = actual_mod( x, y );          
                 return;
-            };  
+            }  
     };
     
     
