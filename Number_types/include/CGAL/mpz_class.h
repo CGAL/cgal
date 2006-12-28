@@ -264,7 +264,7 @@ public:
             return (Comparison_result) CGAL_NTS sign( ::cmp(x, y) );
         }
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT
-        ( Type, Comparison_result);
+        ( Type, Comparison_result)
     };
     
     struct To_double 
