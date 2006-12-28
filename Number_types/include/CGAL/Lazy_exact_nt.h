@@ -1023,7 +1023,7 @@ template < typename ET > class Real_embeddable_traits< Lazy_exact_nt<ET> >
         }
         
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type,
-                                                      Comparison_result );
+                                                      Comparison_result )
         
     };
     

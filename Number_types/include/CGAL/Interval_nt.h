@@ -951,7 +951,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
             return INTERN_INTERVAL_NT::compare( x, y );
         }
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type,
-                Comparison_result );
+                Comparison_result )
     };    
 
     class To_double

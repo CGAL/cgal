@@ -156,7 +156,7 @@ template <> class Real_embeddable_traits< CORE::Expr >
         }
         
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type,
-                                                      Comparison_result );
+                                                      Comparison_result )
         
     };
     

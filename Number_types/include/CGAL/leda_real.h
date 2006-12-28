@@ -145,7 +145,7 @@ template <> class Real_embeddable_traits< leda_real >
         }
         
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type,
-                                                      Comparison_result );
+                                                      Comparison_result )
         
     };
     
