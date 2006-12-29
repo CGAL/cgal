@@ -138,7 +138,7 @@ class Real_embeddable_traits_base {
         }
         
         CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type,
-                                                      Comparison_result );
+                                                      Comparison_result )
     };
 
     typedef Null_functor To_double;

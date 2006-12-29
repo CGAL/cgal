@@ -3,8 +3,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL:$
-// $Id:$
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Michael Hemmer  <mhemmer@uni-mainz.de>
@@ -226,7 +226,7 @@ class Algebraic_structure_traits_base< Type_,
                     "Algebraic_structure_traits<...>::Integral_div()(x,y)" );
             return actual_div( x, y);          
         }
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )  ;
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
 
     // Algorithm from NiX/euclids_algorithm.h
@@ -283,7 +283,7 @@ class Algebraic_structure_traits_base< Type_,
             } while (v != Type(0));
             return u;
         }  
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type );
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
 
     // based on \c Div and \c Mod.
