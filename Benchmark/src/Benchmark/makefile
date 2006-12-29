@@ -87,7 +87,7 @@ BISON ?=bison
 
 # Apparently, old versions of bison (e.g., 1.28) name the generated definion
 # header file <base>.cpp.h. The file must be renamed to <base>.hpp 
-BISON_VERSION_CMD =expr match "$$(bison --version)" '.*\([1-9]\.[0-9]*\)'
+BISON_VERSION_CMD =expr match "`bison --version`" '.*\([1-9]\.[0-9]*\)'
 BISON_VERSION =$(shell $(BISON_VERSION_CMD))
 OLD_BISON_VERSION_CMD =expr "$(BISON_VERSION)" \<= 1.28
 OLD_BISON_VERSION =$(shell $(OLD_BISON_VERSION_CMD))
