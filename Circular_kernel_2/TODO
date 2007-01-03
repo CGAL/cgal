@@ -3,10 +3,13 @@ manual calculs aires, longueurs, etc
 manual bounded_side etc
 manual orientation: NO (only when points have same delta, so don't document)
 
+add Do_intersect_2
+
 clean demos
 
 clean manual AK (concepts like Polynomial_1_2, access to a() b() c() ?
 used in solve to check that solutions are the same)
+clean/update manual Ro2
 
 rendre Bbox filtered kernel completement generique -> 
 	utilisation dans linear kernel aussi
