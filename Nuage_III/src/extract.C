@@ -20,11 +20,13 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_hierarchy_3.h>
 
-#include <NUAGE/Local_selection_vertex_base_with_id_3.h>
+#include <CGAL/AFSR_vertex_base_with_id_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
-#include <NUAGE/Local_selection_cell_base_3.h>
-#include <NUAGE/Extract_surface.h>
-#include <NUAGE/Options.h>
+#include <CGAL/AFSR_cell_base_3.h>
+#include <CGAL/Advancing_front_surface_reconstruction.h>
+#include <CGAL/AFSR_options.h>
+#include <CGAL/IO/Advancing_front_surface_reconstruction.h>
+
 
 
 
@@ -36,11 +38,11 @@ typedef Kernel::Point_3  Point;
 typedef Kernel::Vector_3 Vector;
 typedef Kernel::Point_2  Point_2;
 
-typedef NUAGE::Local_selection_vertex_base_with_id_3<Kernel> LVb;
+typedef CGAL::AFSR_vertex_base_with_id_3<Kernel> LVb;
 typedef CGAL::Triangulation_hierarchy_vertex_base_3<LVb> HVb;
 
 typedef CGAL::Triangulation_cell_base_3<Kernel> Cb;
-typedef NUAGE::Local_selection_cell_base_3<Cb> LCb;
+typedef CGAL::AFSR_cell_base_3<Cb> LCb;
 
 
 typedef CGAL::Triangulation_data_structure_3<HVb,LCb> Tds;
@@ -50,17 +52,14 @@ typedef CGAL::Delaunay_triangulation_3<Kernel,Tds> Delaunay_Triangulation_3;
 typedef CGAL::Triangulation_hierarchy_3<Delaunay_Triangulation_3> Triangulation_3;
 typedef Triangulation_3::Vertex_handle Vertex_handle;
 
-typedef NUAGE::Extract_surface<Triangulation_3,Kernel> Surface;
-
-
-
-#include <NUAGE/iofile_manipulator.h>
+typedef CGAL::Advancing_front_surface_reconstruction<Kernel,Triangulation_3> Surface;
+typedef CGAL::AFSR_options Options;
 
 
 //---------------------------------------------------------------------
 
 bool
-file_input(const NUAGE::Options& opt, std::vector<Point>& points)
+file_input(const Options& opt, std::vector<Point>& points)
 {
   const char* finput = opt.finname;
   int number_of_points =  opt.number_of_points;
@@ -140,14 +139,16 @@ void usage(char* program)
             << "     -rgb r g b     : color of the surface" << std::endl
             << "     -no_header     : The Vrml header and footer are not written" << std::endl	    
 	    << "     -area  a       : set the area threshold: No faces larger than area * average_area" << std::endl
-	    << "     -perimeter  p  : set the perimeter threshold: No faces larger than perometer * average_perimeter" << std::endl
+	    << "     -perimeter  p  : set the perimeter threshold: No faces larger than perimeter * average_perimeter" << std::endl   
+	    << "     -abs_area  a       : set the absolute area threshold: No faces larger than abs_area" << std::endl
+	    << "     -abs_perimeter  l  : set the absolute perimeter threshold: No faces with perimeter longer than abs_perimeter" << std::endl
 	    << "     All options can be abbreviated by their first character" << std::endl;
 }
 
 
 
 bool
-parse(int argc, char* argv[], NUAGE::Options &opt)
+parse(int argc, char* argv[], Options &opt)
 {
   std::strcpy(opt.program, argv[0]);
   --argc;
@@ -225,6 +226,24 @@ parse(int argc, char* argv[], NUAGE::Options &opt)
       argv += 2;
       argc -= 2;
       std::cout << "-perimeter " << opt.perimeter << " "; 
+    }    
+    else if ((!std::strcmp(argv[0], "-aa")) || (!std::strcmp(argv[0], "-abs_area"))){
+      if (CGAL_CLIB_STD::sscanf(argv[1], "%lf", &opt.abs_area) != 1) {
+	std::cerr << "Argument for abs_area must be a number"
+		  << std::endl;
+      }
+      argv += 2;
+      argc -= 2;
+      std::cout << "-abs_area " << opt.abs_area << " "; 
+    }     
+    else if ((!std::strcmp(argv[0], "-ae")) || (!std::strcmp(argv[0], "-abs_perimeter"))){
+      if (CGAL_CLIB_STD::sscanf(argv[1], "%lf", &opt.abs_perimeter) != 1) {
+	std::cerr << "Argument for abs_perimeter must be a number"
+		  << std::endl;
+      }
+      argv += 2;
+      argc -= 2;
+      std::cout << "-abs_perimeter " << opt.abs_perimeter << " "; 
     }  
     else if ((!std::strcmp(argv[0], "-ki"))){
       if ((CGAL_CLIB_STD::sscanf(argv[1], "%lf", &opt.K_init) != 1)||
@@ -374,7 +393,7 @@ int main(int argc,  char* argv[])
 
   timer.start();
   //parse command line
-  NUAGE::Options opt;
+  Options opt;
   std::cout << "Option line for this execution is :" << std::endl;
   if (!parse(argc, argv, opt))
     CGAL_CLIB_STD::exit(0);
@@ -423,7 +442,6 @@ int main(int argc,  char* argv[])
   Surface S(dt, opt);
 
   const Surface::TDS_2&  tds_2 = S.tds_2();
-  std::cout << "s2: " << tds_2.number_of_vertices() << std::endl;
 
   for(Surface::TDS_2::Face_iterator fit = tds_2.faces_begin(); fit != tds_2.faces_end(); ++fit){
     if( fit->is_on_surface()){
@@ -460,7 +478,7 @@ int main(int argc,  char* argv[])
   
 
   std::cout << "Total time: " << timer.time() << " sec." << std::endl; 
-  write_in_file_selected_facets(opt.foutname, S, opt.contour, opt.out_format, opt.red, opt.green, opt.blue, opt.no_header);
+  write_to_file_vrml2(opt.foutname, S, opt.contour, opt.red, opt.green, opt.blue, opt.no_header);
 
 
   std::cout << "   "  << S.number_of_outliers()
