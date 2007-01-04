@@ -1,0 +1,18 @@
+\begin{ccRefFunction}{write_to_file_vrml2}
+
+\ccDefinition
+  
+The function \ccRefName\ writes the reconstructed surface to a file.
+
+\ccInclude{CGAL/IO/Advancing_front_surface_reconstruction.h}
+
+\ccFunction{template <class Surface>
+void
+write_to_file_vrml2(char* foutput, const Surface& S,
+				  bool boundary, double red, double green, double blue, bool no_header);}
+{Opens a file with the basename \ccc{foutput} and the file extension \ccc{.wrl}, and writes the
+reconstructed surface to this file. If \ccc{boundary} is \ccc{true} the boundary is drawn.
+The color of the facets is defined by \ccc{red}, \ccc{green}, and \ccc{blue}. If \ccc{no_header} is
+\ccc{true}, the VRML header is not written.}
+
+\end{ccRefFunction}

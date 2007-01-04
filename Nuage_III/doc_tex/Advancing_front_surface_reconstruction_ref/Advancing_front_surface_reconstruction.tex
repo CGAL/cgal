@@ -1,0 +1,71 @@
+\begin{ccRefClass}{Advancing_front_surface_reconstruction<Kernel,Delaunay_3>}
+
+\ccDefinition
+  
+The class \ccRefName\ extracts a surface from a 3D Delaunay triangulation.
+
+\ccInclude{CGAL/Advancing_front_surface_reconstruction.h}
+
+\ccParameters
+
+The parameter for \ccc{Delaunay_3} must be a 3D Delaunay triangulation where \ccc{CGAL::AFSR_vertex_base_3}
+or \ccc{CGAL::AFSR_vertex_base_with_id_3} and \ccc{CGAL::AFSR_cell_base_3} must be blended in the vertex and face class. 
+
+
+
+\ccTypes
+
+\ccTypedef{typedef Delaunay_3 Triangulation_3;}{}
+\ccTypedef{typedef CGAL::Triple<Cell_handle, int,int> Edge;}{For \ccc{(ch,i,j)}, this is the edge between vertices \ccc{i} and \ccc{j} in cell \ccc{*ch}.}
+
+\ccTypedef{typedef std::pair<Edge,int> Edge_incident_facet;}{For \ccc{((ch,i,j),k)}, this is the facet adjacent to the edge \ccc{(,i,j)}, and
+                                                             opposite to vertex \ccc{k}, in the cell \ccc{*ch}.}
+\ccGlue
+\ccNestedType{TDS_2}{The type of the 2D triangulation data structure describing the reconstructed surface.}
+\ccNestedType{TDS_2::Vertex}{It is model of the concept \ccc{TriangulationDataStructure_2::Vertex} and has additionally the 
+                             method \ccc{vertex_3()} that returns a \ccc{Triangulation_3::Vertex_handle} to the associated 3D vertex.}
+\ccNestedType{TDS_2::Face}{It is model of the concept \ccc{TriangulationDataStructure_2::Face} and  has additionally the
+                            method \ccc{facet()} that returns the associated \ccc{Triangulation_3::Facet}.}
+
+\ccNestedType{Boundary_iterator}{This forward iterator allows to visit all contours. It 
+                                  visits the entry point of the contour twice. This allows to
+                                  detect that the traversal of the border is finished. One more increment
+                                  brings us to the vertex on the next boundary. The value type of the iterator is \ccc{Triangulation_3::Vertex}.} 
+
+\ccNestedType{Outlier_iterator}{This bidirectional iterator allows to enumerate all points that were removed
+                                from the 3D Delaunay triangulation during the surface reconstruction. The value type
+                                of the iterator is \ccc{Kernel::Point_3}.}
+  
+\ccCreation
+\ccCreationVariable{es}
+
+\ccConstructor{Advancing_front_surface_reconstruction(Delaunay_3& del, AFSR_options opt);}{}
+
+\ccOperations
+
+\ccMemberFunction{const TDS_2& tds_2() const;}{Returns a const reference to the reconstructed surface. }
+\ccMemberFunction{bool is_on_surface(TDS_2::Vertex_handle vh;}{Returns true, iff the vertex is on the reconstructed surface.}
+
+
+\ccMemberFunction{const Triangulation_3& triangulation() const;}{Returns a const reference to the 3D Delaunay triangulation.}
+
+\ccMemberFunction{Boundary_iterator boundaries_begin() const;}{}
+\ccMemberFunction{Boundary_iterator boundaries_end() const;}{}
+
+\ccMemberFunction{Outlier_iterator outliers_begin() const;}{}
+\ccMemberFunction{Outlier_iterator outliers_end() const;}{}
+
+\ccMemberFunction{bool has_on_surface(Triangulation_3::Facet f) const;}
+                 {Returns \ccc{true}, iff the facet is on the reconstructed surface.}
+
+\ccMemberFunction{Edge_incident_facet next(const Edge_incident_facet& f) const;}{returns the next facet around the edge.}
+\ccMemberFunction{Edge_incident_facet previous(const Edge_incident_facet& f) const;}{returns the previous facet around the edge.}
+
+\ccMemberFunction{Facet next_surface_facet(const Edge_incident_facet& f) const}{returns the next facet ariund the edge,
+                                           which is on the reconstructed surface.}
+
+%\ccSeeAlso
+
+%\ccRefIdfierPage{}  
+
+\end{ccRefClass}
