@@ -708,6 +708,11 @@ private:
 
   Alpha_shape_2& operator=(const Alpha_shape_2& A);
 
+
+public:
+  // to debug
+  void print_edge_map();
+
 };
 
 
@@ -828,8 +833,11 @@ Alpha_shape_2<Dt>::initialize_interval_edge_map()
       _interval_edge_map.insert(Interval_edge(interval, edge));
       
       // cross-links
-      
       (edge.first)->set_ranges(edge.second,interval);
+      // MY : to fix a bug I store the interval of the edge in both faces 
+      Face_handle neighbor = (edge.first)->neighbor(edge.second);
+      int ni = neighbor->index(edge.first);
+      neighbor->set_ranges( ni, interval);
 
     }
 
@@ -1796,6 +1804,23 @@ Alpha_shape_2<Dt>::Output ()
     }
   return L;
 }
+
+template < class Dt >
+void 
+Alpha_shape_2<Dt>::print_edge_map() {
+  for (typename Interval_edge_map::iterator iemapit= _interval_edge_map.begin();
+	 iemapit != _interval_edge_map.end(); ++iemapit) {
+    Interval3 interval = (*iemapit).first;
+    Edge    edge = (*iemapit).second;
+    Point p1 = edge.first->vertex(cw(edge.second))->point();
+    Point p2 = edge.first->vertex(ccw(edge.second))->point();
+      std::cout << "[ (" <<	p1 << ") - (" << p2 << ") ] :            " 
+		<< interval.first << " " 
+		<< interval.second << " " << interval.third << std::endl;
+    }
+}
+
+
 
 CGAL_END_NAMESPACE
 

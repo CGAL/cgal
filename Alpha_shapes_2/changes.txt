@@ -1,3 +1,7 @@
+4 January 2007
+- fixed a bug in initialize_interval_edge_map() : 
+  interval edges have to be stored in both incident facets
+
 9 March 2006 Andreas Fabri
 - Changed names of examples
 
