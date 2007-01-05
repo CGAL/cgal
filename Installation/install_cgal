@@ -4166,7 +4166,7 @@ _do_compile()
 
     case "$2" in
 	static)
-	    if ! [ -n "${ENABLE_STATIC}" ]; then
+	    if [ -z "${ENABLE_STATIC}" ]; then
 	        ${_printf} "%s\n" " skipped."
 		return 0
 	    fi
@@ -4181,7 +4181,7 @@ _do_compile()
 			return 0
 		    fi;;
 	    esac
-	    if ! [ -n "${ENABLE_SHARED}" ]; then
+	    if [ -z "${ENABLE_SHARED}" ]; then
 	        ${_printf} "%s\n" " skipped."
 		return 0
 	    fi
