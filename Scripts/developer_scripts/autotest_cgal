@@ -232,8 +232,8 @@ test_script()
         else
 	  MAKE_OPTS="-j ${NUMBER_OF_PROCESSORS}"
         fi
-        
-       cat  > ${TEST_DIR_ROOT}/localtestscript.${1} <<EOF
+
+        cat > ${CGAL_TEST_DIR}/localtestscript.${1} <<EOF
 CGAL_MAKEFILE=${CGAL_MAKE_DIR}/makefile_${2};
 CGAL_TESTER=${CGAL_TESTER};
 CGAL_TESTER_NAME='${CGAL_TESTER_NAME}';
@@ -252,8 +252,8 @@ echo 'REMOVING LOCAL_TEST_DIR';
 cd ..;
 rm -rf ${LOCAL_TEST_DIR}
 EOF
-        chmod ugo+x ${TEST_DIR_ROOT}/localtestscript.${1}
-        remote_command ${1}  "${TEST_DIR_ROOT}/localtestscript.${1}" >> ${ACTUAL_LOGFILE}.${1} 2>&1
+        chmod ugo+x ${CGAL_TEST_DIR}/localtestscript.${1}
+        remote_command ${1} "${CGAL_TEST_DIR}/localtestscript.${1}" >> ${ACTUAL_LOGFILE}.${1} 2>&1
 	log_done ${ACTUAL_LOGFILE}.${1}
     #PLATFORM=`basename $CGAL_MAKEFILE | sed -e "s/makefile_//g"`
 	#
