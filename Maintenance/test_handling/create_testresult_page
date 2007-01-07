@@ -390,8 +390,8 @@ sub result_filename($)
 
 sub print_little_header(){
     print OUTPUT<<"EOF";
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
-<HTML>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">  
+<html lang="en-US">
 <HEAD><TITLE>${release_name} Test Results</TITLE>
 <link rel="shortcut icon" href="http://www.cgal.org/cgal.ico" />
 <LINK REL=stylesheet HREF="testresult.sty">
