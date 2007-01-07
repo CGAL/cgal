@@ -60,7 +60,7 @@ For the web pages:
              Web_pages/in_progress.html
              Web_pages/download/download.html
              Web_pages/download/license.html
-             Web_pages/home.html
+             Web_pages/index.html
              Web_pages/releases.html
              Web_pages/platforms.html
            change release number in:
