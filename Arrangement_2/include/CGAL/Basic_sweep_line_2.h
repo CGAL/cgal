@@ -124,8 +124,8 @@ public:
   typedef Status_line_curve_less_functor<Traits,
                                          Base_subcurve>  StatusLineCurveLess;
   typedef Multiset<Base_subcurve*,
-                   StatusLineCurveLess, 
-			             Allocator>                            StatusLine;
+                   StatusLineCurveLess,
+                   Allocator>                            StatusLine;
   typedef typename StatusLine::iterator                  StatusLineIter;
 
   typedef typename Allocator::template rebind<Event>     EventAlloc_rebind;
@@ -134,7 +134,24 @@ public:
   typedef typename Allocator::template rebind<Subcurve>  SubcurveAlloc_rebind;
   typedef typename SubcurveAlloc_rebind::other           SubCurveAlloc;
 
- 
+protected:
+
+  struct CompEventPtr
+  {
+    Comparison_result operator() (Event *e1, Event *e2) const
+    {
+      if (e1 < e2)
+        return (SMALLER);
+      if (e1 > e2)
+        return (LARGER);
+      return (EQUAL);
+    }
+  };
+
+  typedef Multiset<Event*, CompEventPtr>           Alloacted_events_set;
+  typedef typename Alloacted_events_set::iterator  Alloacted_events_iterator;
+
+public:
 
   /*!
    * Constructor.
@@ -180,10 +197,19 @@ public:
     if(m_traitsOwner)
       delete m_traits;
     delete m_queue;
-  }
 
-  
-  
+    // Free all the event that have not been de-allocated so far.
+    Alloacted_events_iterator      iter;
+    Event                         *p_event;
+
+    for (iter = m_allocated_events.begin();
+         iter != m_allocated_events.end(); ++iter)
+    {
+      p_event = *iter;
+      m_eventAlloc.destroy(p_event);
+      m_eventAlloc.deallocate(p_event,1);
+    }
+  }
 
   /*!
    * Run the sweep-line with a range of curves.
@@ -323,6 +349,8 @@ public:
     */
   void deallocate_event(Event* event)
   {
+    m_allocated_events.erase (event);
+
     m_eventAlloc.destroy(event);
     m_eventAlloc.deallocate(event,1);
   }
@@ -767,8 +795,11 @@ protected:
   StatusLineCurveLess m_statusLineCurveLess;
 
   EventLess   m_queueEventLess;
-  /*! the queue of events (intersection points) to handle */
+  /*! The queue of events (intersection points) to handle */
   EventQueue *m_queue;
+
+  /*! The events that have been allocated (an not freed). */
+  Alloacted_events_set    m_allocated_events;
 
   /*! The subcurves array */
   Subcurve *m_subCurves;
@@ -812,6 +843,9 @@ protected:
     Event *e =  m_eventAlloc.allocate(1); 
     m_eventAlloc.construct(e, m_masterEvent);
     e->init(pt, type);
+
+    m_allocated_events.insert(e);
+
     return e;
   }
 
