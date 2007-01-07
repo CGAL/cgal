@@ -58,8 +58,7 @@ For the web pages:
       1.  edit the following web pages (at least)
              Web_pages/news.html
              Web_pages/in_progress.html
-             Web_pages/download/download.html
-             Web_pages/download/license.html
+             Web_pages/download/index.html
              Web_pages/index.html
              Web_pages/releases.html
              Web_pages/platforms.html
