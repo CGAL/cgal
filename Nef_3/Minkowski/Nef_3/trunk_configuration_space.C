@@ -116,16 +116,22 @@ int main(int argc, char* argv[]) {
 
   std::ifstream trunk( argv[2] );
   char buffer[80];
-  int nv,nf,nc,col,man;
+  int nv,nf,nc,nfl,col,man;
   std::vector<Point_3> points;
   std::list<std::pair<int*, int*> > facets;
 
   trunk.getline(buffer,80);
+  int version = std::atoi(buffer+10);
   trunk.getline(buffer,80);
   trunk >> nv;
   trunk.getline(buffer,80);
   trunk.getline(buffer,80);
   trunk >> nf;
+  if(version > 3) {
+    trunk.getline(buffer,80);
+    trunk.getline(buffer,80);
+    trunk >> nfl;
+  }
   trunk.getline(buffer,80);
   trunk.getline(buffer,80);
   trunk >> nc;
