@@ -8,10 +8,9 @@
 CGAL_BEGIN_NAMESPACE
 
 template<typename Nef_>
-class SFace_separator : public Modifier_base<typename Nef_::SNC_and_PL> {
+class SFace_separator : public Modifier_base<typename Nef_::SNC_structure> {
   
   typedef Nef_                                   Nef_polyhedron;
-  typedef typename Nef_polyhedron::SNC_and_PL    SNC_and_PL;
   typedef typename Nef_polyhedron::SNC_structure SNC_structure;
   typedef CGAL::SNC_decorator<SNC_structure>     Base;
   typedef CGAL::SNC_point_locator<Base>          SNC_point_locator;
@@ -32,13 +31,13 @@ class SFace_separator : public Modifier_base<typename Nef_::SNC_and_PL> {
  public:
   SFace_separator() {}
 
-  void operator()(SNC_and_PL& sncpl) {
+  void operator()(SNC_structure& snc) {
 
-    SNC_structure* sncp(sncpl.sncp);
-    SNC_point_locator* pl(sncpl.pl);
+    //    SNC_structure* sncp(sncpl.sncp);
+    //    SNC_point_locator* pl(sncpl.pl);
 
     SFace_iterator sf;
-    CGAL_forall_sfaces(sf, *sncp) {
+    CGAL_forall_sfaces(sf, snc) {
       if(!sf->mark() ||
 	 sf->sface_cycles_begin() == 
 	 sf->sface_cycles_end()) continue;
