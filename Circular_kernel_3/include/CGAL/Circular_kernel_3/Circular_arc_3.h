@@ -17,8 +17,8 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
 //
 // Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //             Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
@@ -269,7 +269,7 @@ namespace CGAL {
     };
 
     template < class SK >
-    double Circular_arc_3<SK>::pi = (std::acos(-1));
+    double Circular_arc_3<SK>::pi = (std::acos(-1.));
 
     template < class SK >
     CGAL_KERNEL_INLINE
