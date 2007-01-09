@@ -1,3 +1,5 @@
+remplacer les std::acos(-1.) par CGAL_PI
+
 filtered bbox kernel (voir TODO CK2)
 Exact_circular_kernel_3
 Lazy
