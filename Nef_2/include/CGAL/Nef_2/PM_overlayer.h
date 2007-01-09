@@ -711,7 +711,13 @@ void create_face_objects(const Below_info& D) const
     CGAL_NEF_TRACE("face cycle "<<i<<"\n");
     CGAL_For_all(hfc,hend) {
       FaceCycle[hfc]=i; // assign face cycle number
-      if ( K.compare_xy(point(target(hfc)), point(target(e_min))) < 0 )
+      if(target(hfc) == target(e_min)) {
+	Point p1 = point(source(hfc)), 
+          p2 = point(target(hfc)), 
+          p3 = point(target(next(hfc)));
+	if (!K.left_turn(p1,p2,p3) )
+	  e_min = hfc;
+      } else if ( K.compare_xy(point(target(hfc)), point(target(e_min))) < 0 )
         e_min = hfc;
       CGAL_NEF_TRACE(PE(hfc));
     } 
@@ -728,14 +734,8 @@ void create_face_objects(const Below_info& D) const
           p3 = point(target(next(e)));
     if ( K.left_turn(p1,p2,p3) ) { // left_turn => outer face cycle
       CGAL_NEF_TRACEN("  creating new face object");
-      Halfedge_around_face_circulator hfc(e),hend(hfc);
-      CGAL_For_all(hfc,hend) {      
-	if(FaceCycle[twin(hfc)] != j) {
-	  Face_handle f = this->new_face();
-	  link_as_outer_face_cycle(f,e);
-	  break;
-	}
-      }
+      Face_handle f = this->new_face();
+      link_as_outer_face_cycle(f,e);
     }
   }
 
@@ -772,16 +772,14 @@ void create_face_objects_pl(const Below_info& D) const
     CGAL_NEF_TRACE("face cycle "<<i<<"\n");
     CGAL_For_all(hfc,hend) {
       FaceCycle[hfc]=i; // assign face cycle number
-      int comp = K.compare_xy(point(target(hfc)), point(target(e_min)));
-      if ( comp < 0 )
+      if(target(hfc) == target(e_min)) {
+	Point p1 = point(source(hfc)), 
+          p2 = point(target(hfc)), 
+          p3 = point(target(next(hfc)));
+	if (!K.left_turn(p1,p2,p3) )
+	  e_min = hfc;
+      } else if ( K.compare_xy(point(target(hfc)), point(target(e_min))) < 0 )
         e_min = hfc;
-      else if(comp == 0) {
-	Point p1 = point(source(e_min)), 
-          p2 = point(target(e_min)), 
-          p3 = point(target(next(e_min)));
-	if(K.left_turn(p1,p2,p3))
-	   e_min = hfc;
-      }
       CGAL_NEF_TRACE(PE(hfc));
     } 
     CGAL_NEF_TRACEN("");
@@ -798,13 +796,8 @@ void create_face_objects_pl(const Below_info& D) const
     if ( K.left_turn(p1,p2,p3) ) { // left_turn => outer face cycle
       CGAL_NEF_TRACEN("  creating new face object");
       Halfedge_around_face_circulator hfc(e),hend(hfc);
-      CGAL_For_all(hfc,hend) {      
-	if(FaceCycle[twin(hfc)] != j) {
-	  Face_handle f = this->new_face();
-	  link_as_outer_face_cycle(f,e);
-	  break;
-	}
-      }
+      Face_handle f = this->new_face();
+      link_as_outer_face_cycle(f,e);
     }
   }
 
