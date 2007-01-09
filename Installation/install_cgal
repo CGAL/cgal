@@ -3954,7 +3954,7 @@ create_include_makefile()
   # suffixes and rules
   #
   makefile_header "suffixes and rules" >> ${FILE}
-  ${_printf} "%s\n" ".SUFFIXES:  ${SUFFIX_LIST} .clean" >> ${FILE}
+  ${_printf} "%s\n" ".SUFFIXES:  ${SUFFIX_LIST} .cpp .clean" >> ${FILE}
   if [ -n "${EXE_EXT}" ]; then
     case ${CGAL_OS_COMPILER} in
 	*CYGWIN*g++*) ${_printf} "\n.o:\n" >> ${FILE};;
