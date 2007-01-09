@@ -17,8 +17,8 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
 //
 // Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //             Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
@@ -158,7 +158,7 @@ void _test_spherical_kernel_compute(SK sk)
     cp[i] = theConstruct_circular_arc_point_3(rt[i]);
   }
 
-  const double pi = std::acos(-1);
+  const double pi = std::acos(-1.);
 
   const Polynomials_for_circle_3 pcc_test = 
       std::make_pair(Polynomial_for_spheres_2_3(0,0,0,1),
