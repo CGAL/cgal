@@ -25,16 +25,14 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/circulator.h> 
 #include <CGAL/Boolean_set_operations_2/Gps_bfs_scanner.h>
+#include <CGAL/Boolean_set_operations_2/Gps_dcel.h>
 #include <CGAL/Arr_accessor.h>
 #include <queue>
 
-
-
-template <class Traits_>
- void General_polygon_set_2<Traits_>::
-  construct_polygon(Ccb_halfedge_const_circulator ccb,
-                    Polygon_2&              pgn,
-                    Traits_*                tr)
+template <class Traits_, class Dcel_>
+void General_polygon_set_2<Traits_, Dcel_>::
+construct_polygon(Ccb_halfedge_const_circulator ccb, Polygon_2 & pgn,
+                  Traits_ * tr)
 {
   typedef CGAL::Ccb_curve_iterator<Arrangement_2>    Ccb_curve_iterator;
   Ccb_curve_iterator begin(ccb, false);
@@ -48,15 +46,15 @@ template <class Arrangement, class OutputIterator>
 class Arr_bfs_scanner
 {
 public:
-
-  typedef typename Arrangement::Traits_2             Gps_traits;
-  typedef typename Gps_traits::Polygon_2             Polygon_2;
-  typedef typename Gps_traits::Polygon_with_holes_2  Polygon_with_holes_2;
+  typedef typename Arrangement::Traits_2                Gps_traits;
+  typedef typename Arrangement::Dcel                    My_gps_dcel;
+  typedef typename Gps_traits::Polygon_2                Polygon_2;
+  typedef typename Gps_traits::Polygon_with_holes_2     Polygon_with_holes_2;
   typedef typename Arrangement::Ccb_halfedge_const_circulator 
-                                                     Ccb_halfedge_const_circulator;
-  typedef typename Arrangement::Face_const_iterator        Face_const_iterator;
-  typedef typename Arrangement::Halfedge_const_iterator    Halfedge_const_iterator;
-  typedef typename Arrangement::Hole_const_iterator       Hole_const_iterator;
+    Ccb_halfedge_const_circulator;
+  typedef typename Arrangement::Face_const_iterator     Face_const_iterator;
+  typedef typename Arrangement::Halfedge_const_iterator Halfedge_const_iterator;
+  typedef typename Arrangement::Hole_const_iterator     Hole_const_iterator;
 
 
 protected:
@@ -79,7 +77,7 @@ public:
     Hole_const_iterator  holes_it;
     Face_const_iterator   fit;
 
-    if(!ubf->contained())
+    if (!ubf->contained())
     {
       ubf->set_visited(true);
       for (holes_it = ubf->holes_begin();
@@ -123,13 +121,14 @@ public:
   void scan_ccb(Ccb_halfedge_const_circulator ccb)
   {
     Polygon_2 pgn_boundary;
-    General_polygon_set_2<Gps_traits>::construct_polygon(ccb, pgn_boundary, m_traits);
+    General_polygon_set_2<Gps_traits, My_gps_dcel>::
+      construct_polygon(ccb, pgn_boundary, m_traits);
 
     Ccb_halfedge_const_circulator ccb_end = ccb;
     do
     {
       Halfedge_const_iterator he = ccb;
-      if(!he->twin()->face()->visited())
+      if (!he->twin()->face()->visited())
         all_incident_faces(he->twin()->face());
       ++ccb;
     }
@@ -161,12 +160,13 @@ public:
   {
     CGAL_assertion(!f->visited());
     f->set_visited(true);
-    if(!f->is_unbounded())
+    if (!f->is_unbounded())
     {
-      if(!f->contained())
+      if (!f->contained())
       {
         m_pgn_holes.push_back(Polygon_2());
-        General_polygon_set_2<Gps_traits>::construct_polygon(f->outer_ccb(), m_pgn_holes.back(), m_traits);
+        General_polygon_set_2<Gps_traits, My_gps_dcel>::
+          construct_polygon(f->outer_ccb(), m_pgn_holes.back(), m_traits);
         m_holes_q.push(f);
       }
 
@@ -178,7 +178,7 @@ public:
         //get the current halfedge on the face boundary
         Halfedge_const_iterator he  = ccb_circ;
         Face_const_iterator new_f = he->twin()->face();
-        if(!new_f->visited())
+        if (!new_f->visited())
         {
           all_incident_faces(new_f);
         }
@@ -187,20 +187,21 @@ public:
       while(ccb_circ != ccb_end);
     }
 
-    if(f->contained())
+    if (f->contained())
     {
       Hole_const_iterator hit;
       for(hit = f->holes_begin(); hit != f->holes_end(); ++hit)
       {
         Ccb_halfedge_const_circulator ccb_of_hole = *hit;
         Halfedge_const_iterator he = ccb_of_hole;
-        if(is_single_face(ccb_of_hole))
+        if (is_single_face(ccb_of_hole))
         {
           CGAL_assertion(!he->twin()->face()->contained());
          
           m_pgn_holes.push_back(Polygon_2());
-          General_polygon_set_2<Gps_traits>::construct_polygon
-            (he->twin()->face()->outer_ccb(), m_pgn_holes.back(), m_traits);
+          General_polygon_set_2<Gps_traits, My_gps_dcel>::
+            construct_polygon(he->twin()->face()->outer_ccb(),
+                              m_pgn_holes.back(), m_traits);
           m_holes_q.push(he->twin()->face());
          
         }
@@ -210,7 +211,7 @@ public:
           do
           {
             Halfedge_const_iterator he = ccb_of_hole;
-            if(!he->twin()->face()->visited())
+            if (!he->twin()->face()->visited())
               all_incident_faces(he->twin()->face());
             ++ccb_of_hole;
           }
@@ -230,9 +231,9 @@ public:
     { 
       //get the current halfedge on the face boundary
       Halfedge_const_iterator he  = ccb_circ;
-      if(he->twin()->face() != curr_f)
+      if (he->twin()->face() != curr_f)
         return false;
-      if(he->twin()->target()->degree() != 2)
+      if (he->twin()->target()->degree() != 2)
         return false;
       ++ccb_circ;
     }
@@ -242,7 +243,7 @@ public:
 };
 
 
-template<class Arrangement>
+template <class Arrangement>
 class Init_faces_visitor
 {
   typedef typename Arrangement::Face_iterator             Face_iterator;
@@ -256,28 +257,27 @@ public:
   }
 };
   
-template < class Traits_>
-void General_polygon_set_2<Traits_>::_insert(const Polygon_2& pgn, Arrangement_2& arr)
+template <class Traits_, class Dcel_>
+void General_polygon_set_2<Traits_, Dcel_>::
+_insert(const Polygon_2& pgn, Arrangement_2 & arr)
 {
   CGAL_precondition(m_traits->is_valid_2_object()(pgn));
   typedef Arr_accessor<Arrangement_2>                  Arr_accessor;
 
   Arr_accessor  accessor(arr);
-  Compare_endpoints_xy_2  cmp_ends = 
-    m_traits->compare_endpoints_xy_2_object();
+  Compare_endpoints_xy_2  cmp_ends = m_traits->compare_endpoints_xy_2_object();
 
-  std::pair<Curve_const_iterator,
-            Curve_const_iterator> itr_pair =
+  std::pair<Curve_const_iterator, Curve_const_iterator> itr_pair =
     m_traits->construct_curves_2_object()(pgn);
 
-  if(itr_pair.first == itr_pair.second)
+  if (itr_pair.first == itr_pair.second)
     return;
 
   Curve_const_iterator curr = itr_pair.first;
   Curve_const_iterator end  = itr_pair.second;
 
   Face_iterator f;
-  if(arr.is_empty())
+  if (arr.is_empty())
   {
     f = arr.unbounded_face();
   }
@@ -298,7 +298,7 @@ void General_polygon_set_2<Traits_>::_insert(const Polygon_2& pgn, Arrangement_2
   //first_he is directed from left to right (see insert_in_face_interior)
   
   Halfedge_handle curr_he;
-  if(cmp_ends(*curr) == CGAL::SMALLER)
+  if (cmp_ends(*curr) == CGAL::SMALLER)
   {
     // curr curve and first_he have the same direction
     curr_he = first_he;
@@ -313,7 +313,7 @@ void General_polygon_set_2<Traits_>::_insert(const Polygon_2& pgn, Arrangement_2
 
   Curve_const_iterator temp = curr;
   ++temp;
-  if(temp == end) // a polygon with circular arcs may have only
+  if (temp == end) // a polygon with circular arcs may have only
                   // two edges (full circle for example)
   {
     /*Halfedge_handle he = 
@@ -338,7 +338,7 @@ void General_polygon_set_2<Traits_>::_insert(const Polygon_2& pgn, Arrangement_2
   for(++curr ; curr != last; ++curr)
   {
     const X_monotone_curve_2& curr_cv = *curr;
-    if(cmp_ends(curr_cv) == CGAL::SMALLER)
+    if (cmp_ends(curr_cv) == CGAL::SMALLER)
       curr_he = arr.insert_from_left_vertex(curr_cv, curr_he);
     else
     {
@@ -365,21 +365,20 @@ void General_polygon_set_2<Traits_>::_insert(const Polygon_2& pgn, Arrangement_2
 }
 
 
-template < class Traits_ >
-  template< class PolygonIter >
-void General_polygon_set_2<Traits_>::insert(PolygonIter      p_begin,
-                                            PolygonIter      p_end)
+template <class Traits_, class Dcel_>
+template<class PolygonIter >
+void General_polygon_set_2<Traits_, Dcel_>::
+insert(PolygonIter p_begin, PolygonIter p_end)
 {
   typename std::iterator_traits<PolygonIter>::value_type pgn;
   _insert(p_begin, p_end, pgn);
 }
 
-template < class Traits_ >
-  template< class PolygonIter, class PolygonWithHolesIter>
-void General_polygon_set_2<Traits_>::insert(PolygonIter          p_begin,
-                                            PolygonIter          p_end,
-                                            PolygonWithHolesIter pwh_begin,
-                                            PolygonWithHolesIter pwh_end)
+template <class Traits_, class Dcel_>
+template<class PolygonIter, class PolygonWithHolesIter>
+void General_polygon_set_2<Traits_, Dcel_>::
+insert(PolygonIter p_begin, PolygonIter p_end,
+       PolygonWithHolesIter pwh_begin, PolygonWithHolesIter pwh_end)
 {
   typedef std::list<X_monotone_curve_2>                  XCurveList;
   typedef Init_faces_visitor<Arrangement_2>              My_visitor;
@@ -402,7 +401,7 @@ void General_polygon_set_2<Traits_>::insert(PolygonIter          p_begin,
   }
   insert_non_intersecting_curves(*m_arr, xcurve_list.begin(), xcurve_list.end());
 
-  if(is_unbounded)
+  if (is_unbounded)
     m_arr->unbounded_face()->set_contained(true);
 
   My_visitor v;
@@ -412,11 +411,10 @@ void General_polygon_set_2<Traits_>::insert(PolygonIter          p_begin,
 }
 
 //insert a range of simple polygons to the arrangement
-template < class Traits_ >
-  template< class PolygonIter >
-void General_polygon_set_2<Traits_>::_insert(PolygonIter      p_begin,
-                                             PolygonIter      p_end,
-                                             Polygon_2&       /*pgn*/)
+template <class Traits_, class Dcel_>
+template<class PolygonIter>
+void General_polygon_set_2<Traits_, Dcel_>::
+_insert(PolygonIter p_begin, PolygonIter p_end, Polygon_2 & /*pgn*/)
 {  
   for(PolygonIter pitr = p_begin; pitr != p_end; ++pitr)
   {
@@ -425,11 +423,10 @@ void General_polygon_set_2<Traits_>::_insert(PolygonIter      p_begin,
   }
 }
 
-template < class Traits_ >
-  template< class PolygonIter >
-void General_polygon_set_2<Traits_>::_insert(PolygonIter            p_begin,
-                                             PolygonIter            p_end,
-                                             Polygon_with_holes_2&  /*pgn*/)
+template <class Traits_, class Dcel_>
+template<class PolygonIter>
+void General_polygon_set_2<Traits_, Dcel_>::
+_insert(PolygonIter p_begin, PolygonIter p_end, Polygon_with_holes_2 & /*pgn*/)
 {  
   typedef std::list<X_monotone_curve_2>                  XCurveList;
   typedef Init_faces_visitor<Arrangement_2>              My_visitor;
@@ -446,7 +443,7 @@ void General_polygon_set_2<Traits_>::_insert(PolygonIter            p_begin,
   }
   insert_non_intersecting_curves(*m_arr, xcurve_list.begin(), xcurve_list.end());
 
-  if(is_unbounded)
+  if (is_unbounded)
     m_arr->unbounded_face()->set_contained(true);
 
   My_visitor v;
@@ -460,8 +457,9 @@ void General_polygon_set_2<Traits_>::_insert(PolygonIter            p_begin,
 
  //insert non-sipmle poloygons with holes (non incident edges may have
 // common vertex,  but they dont intersect at their interior
-template <class Traits_>
-void General_polygon_set_2<Traits_>::_insert (const Polygon_with_holes_2& pgn, Arrangement_2& arr)
+template <class Traits_, class Dcel_>
+void General_polygon_set_2<Traits_, Dcel_>::
+_insert(const Polygon_with_holes_2 & pgn, Arrangement_2 & arr)
 {
   CGAL_precondition(m_traits->is_valid_2_object()(pgn));
   typedef std::list<X_monotone_curve_2>                  XCurveList;
@@ -472,7 +470,7 @@ void General_polygon_set_2<Traits_>::_insert (const Polygon_with_holes_2& pgn, A
   _construct_curves(pgn, std::back_inserter(xcurve_list));
   insert_non_intersecting_curves(arr, xcurve_list.begin(), xcurve_list.end());
 
-  if(pgn.is_unbounded())
+  if (pgn.is_unbounded())
     arr.unbounded_face()->set_contained(true);
 
   My_visitor v;
@@ -481,11 +479,11 @@ void General_polygon_set_2<Traits_>::_insert (const Polygon_with_holes_2& pgn, A
   _reset_faces(&arr);
 }
 
-template <class Traits_>
-  template <class OutputIterator>
+template <class Traits_, class Dcel_>
+template <class OutputIterator>
 void 
-  General_polygon_set_2<Traits_>::_construct_curves(const Polygon_2& pgn,
-                                                    OutputIterator oi)
+General_polygon_set_2<Traits_, Dcel_>::
+_construct_curves(const Polygon_2 & pgn, OutputIterator oi)
 {
     std::pair<Curve_const_iterator,
               Curve_const_iterator> itr_pair =
@@ -493,13 +491,13 @@ void
     std::copy (itr_pair.first, itr_pair.second, oi);
 }
 
-template <class Traits_>
-  template <class OutputIterator>
+template <class Traits_, class Dcel_>
+template <class OutputIterator>
 void 
-General_polygon_set_2<Traits_>::_construct_curves(const Polygon_with_holes_2& pgn,
-                                                  OutputIterator oi)
+General_polygon_set_2<Traits_, Dcel_>::
+_construct_curves(const Polygon_with_holes_2 & pgn, OutputIterator oi)
 {
-  if(!pgn.is_unbounded())
+  if (!pgn.is_unbounded())
   {
     const Polygon_2& pgn_boundary = pgn.outer_boundary();
     std::pair<Curve_const_iterator,
@@ -519,10 +517,11 @@ General_polygon_set_2<Traits_>::_construct_curves(const Polygon_with_holes_2& pg
   }
 }
 
-template <class Traits_>
-  template< class OutputIterator >
-  OutputIterator
-  General_polygon_set_2<Traits_>::polygons_with_holes(OutputIterator out) const
+template <class Traits_, class Dcel_>
+template <class OutputIterator>
+OutputIterator
+General_polygon_set_2<Traits_, Dcel_>::
+polygons_with_holes(OutputIterator out) const
 {
   typedef Arr_bfs_scanner<Arrangement_2, OutputIterator>     Arr_bfs_scanner;
   Arr_bfs_scanner scanner(this->m_traits, out);
@@ -531,35 +530,38 @@ template <class Traits_>
 }
 
 
-template < class Traits_ >
-typename  General_polygon_set_2<Traits_>::Size 
-General_polygon_set_2<Traits_>::number_of_polygons_with_holes() const
+template <class Traits_, class Dcel_>
+typename General_polygon_set_2<Traits_, Dcel_>::Size 
+General_polygon_set_2<Traits_, Dcel_>::
+number_of_polygons_with_holes() const
 {
-  typedef Arr_bfs_scanner<Arrangement_2, Counting_output_iterator>     Arr_bfs_scanner;
+  typedef Arr_bfs_scanner<Arrangement_2, Counting_output_iterator>
+    Arr_bfs_scanner;
   Counting_output_iterator coi;
   Arr_bfs_scanner scanner(this->m_traits, coi);
   scanner.scan(*(this->m_arr));
   return (scanner.output_iterator().current_counter());
 }
 
-template < class Traits_ >
-bool General_polygon_set_2<Traits_>::locate(const Point_2& q, Polygon_with_holes_2& pgn) const
+template <class Traits_, class Dcel_>
+bool General_polygon_set_2<Traits_, Dcel_>::
+locate(const Point_2& q, Polygon_with_holes_2& pgn) const
 {
   Walk_pl pl(*m_arr);
 
   Object obj = pl.locate(q);
   Face_const_iterator f;
-  if(CGAL::assign(f, obj))
+  if (CGAL::assign(f, obj))
   {
-    if(!f->contained())
+    if (!f->contained())
       return false;
   }
   else
   {
     Halfedge_const_handle he;
-    if(CGAL::assign(he, obj))
+    if (CGAL::assign(he, obj))
     {
-      if(he->face()->contained())
+      if (he->face()->contained())
         f = he->face();
       else
       {
@@ -574,7 +576,7 @@ bool General_polygon_set_2<Traits_>::locate(const Point_2& q, Polygon_with_holes
       CGAL::assign(v, obj);
       Halfedge_around_vertex_const_circulator hav = v->incident_halfedges();
       Halfedge_const_handle he = hav;
-      if(he->face()->contained())
+      if (he->face()->contained())
         f = he->face();
       else
       {
@@ -593,7 +595,7 @@ bool General_polygon_set_2<Traits_>::locate(const Point_2& q, Polygon_with_holes
   
   Ccb_halfedge_const_circulator ccb_of_pgn = get_boundary_of_polygon(f);
   this->_reset_faces();
-  if(ccb_of_pgn == Ccb_halfedge_const_circulator()) // the polygon has no boundary
+  if (ccb_of_pgn == Ccb_halfedge_const_circulator()) // the polygon has no boundary
   {
     // f is unbounded 
     scanner.scan_contained_ubf(m_arr->unbounded_face());
@@ -610,14 +612,15 @@ bool General_polygon_set_2<Traits_>::locate(const Point_2& q, Polygon_with_holes
   return true;
 }
 
-template < class Traits_ >
-typename General_polygon_set_2<Traits_>::Ccb_halfedge_const_circulator
-  General_polygon_set_2<Traits_>::get_boundary_of_polygon(Face_const_iterator f) const
+template <class Traits_, class Dcel_>
+typename General_polygon_set_2<Traits_, Dcel_>::Ccb_halfedge_const_circulator
+General_polygon_set_2<Traits_, Dcel_>::
+get_boundary_of_polygon(Face_const_iterator f) const
 {
   CGAL_assertion(!f->visited());
   f->set_visited(true);
   
-  if(f->is_unbounded())
+  if (f->is_unbounded())
   {
     return Ccb_halfedge_const_circulator();
   }
@@ -628,9 +631,9 @@ typename General_polygon_set_2<Traits_>::Ccb_halfedge_const_circulator
     //get the current halfedge on the face boundary
     Halfedge_const_iterator he  = ccb_circ;
     Face_const_iterator new_f = he->twin()->face();
-    if(!new_f->visited())
+    if (!new_f->visited())
     {
-      if(is_hole_of_face(new_f, he) && !new_f->contained())
+      if (is_hole_of_face(new_f, he) && !new_f->contained())
         return (he->twin());
       return (get_boundary_of_polygon(new_f));
     }
@@ -642,10 +645,9 @@ typename General_polygon_set_2<Traits_>::Ccb_halfedge_const_circulator
   
 }
 
-template < class Traits_ >
-bool General_polygon_set_2<Traits_>::
-  is_hole_of_face(Face_const_handle f,
-                  Halfedge_const_handle he) const
+template <class Traits_, class Dcel_>
+bool General_polygon_set_2<Traits_, Dcel_>::
+is_hole_of_face(Face_const_handle f, Halfedge_const_handle he) const
 {
   Hole_const_iterator   holes_it;
   for (holes_it = f->holes_begin(); holes_it != f->holes_end(); ++holes_it)
@@ -656,7 +658,7 @@ bool General_polygon_set_2<Traits_>::
     {
       Halfedge_const_handle he_inside_hole = ccb;
       he_inside_hole = he_inside_hole->twin();
-      if(he == he_inside_hole)
+      if (he == he_inside_hole)
         return true;
 
       ++ccb;

@@ -16,6 +16,7 @@
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_POLYGON_SET_2_H
 #define CGAL_POLYGON_SET_2_H
@@ -23,19 +24,22 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/General_polygon_set_2.h>
 #include <CGAL/Gps_segment_traits_2.h>
+#include <CGAL/Boolean_set_operations_2/Gps_dcel.h>
+
 #include <vector>
 
 CGAL_BEGIN_NAMESPACE
 
 template <class Kernel,
-          class Containter = std::vector<typename Kernel::Point_2> >
+          typename Containter = std::vector<typename Kernel::Point_2>,
+          class Dcel_ = Gps_dcel<Gps_segment_traits_2<Kernel, Containter> > >
 class Polygon_set_2 :
-  public General_polygon_set_2<Gps_segment_traits_2<Kernel, Containter> >
+  public General_polygon_set_2<Gps_segment_traits_2<Kernel, Containter>, Dcel_>
 {  
 private:
-  typedef General_polygon_set_2<Gps_segment_traits_2<Kernel, Containter> >                 
+  typedef General_polygon_set_2<Gps_segment_traits_2<Kernel, Containter>, Dcel_>
                                                           Base;
-  typedef Polygon_set_2<Kernel, Containter>               Self;
+  typedef Polygon_set_2<Kernel, Containter, Dcel_>        Self;
 
 public:
   typedef  typename Base::Traits_2                        Traits_2;    
@@ -97,10 +101,8 @@ public:
   }
 
   template <class InputIterator1, class InputIterator2>
-  inline void intersection(InputIterator1 begin1,
-                           InputIterator1 end1,
-                           InputIterator2 begin2,
-                           InputIterator2 end2)
+  inline void intersection(InputIterator1 begin1, InputIterator1 end1,
+                           InputIterator2 begin2, InputIterator2 end2)
   {
     Base::intersection(begin1, end1, begin2, end2);
   }
@@ -132,10 +134,8 @@ public:
   }
 
   template <class InputIterator1, class InputIterator2>
-  inline void join(InputIterator1 begin1,
-                   InputIterator1 end1,
-                   InputIterator2 begin2,
-                   InputIterator2 end2)
+  inline void join(InputIterator1 begin1, InputIterator1 end1,
+                   InputIterator2 begin2, InputIterator2 end2)
   {
     Base::join(begin1, end1, begin2, end2);
   }
@@ -167,10 +167,8 @@ public:
   }
 
   template <class InputIterator1, class InputIterator2>
-  inline void difference(InputIterator1 begin1,
-                         InputIterator1 end1,
-                         InputIterator2 begin2,
-                         InputIterator2 end2)
+  inline void difference(InputIterator1 begin1, InputIterator1 end1,
+                         InputIterator2 begin2, InputIterator2 end2)
   {
     Base::difference(begin1, end1, begin2, end2);
   }
@@ -202,10 +200,8 @@ public:
   }
 
   template <class InputIterator1, class InputIterator2>
-  inline void symmetric_difference(InputIterator1 begin1,
-                                   InputIterator1 end1,
-                                   InputIterator2 begin2,
-                                   InputIterator2 end2)
+  inline void symmetric_difference(InputIterator1 begin1, InputIterator1 end1,
+                                   InputIterator2 begin2, InputIterator2 end2)
   {
     Base::symmetric_difference(begin1, end1, begin2, end2);
   }
@@ -232,20 +228,18 @@ public:
   }
 
   template <class InputIterator1, class InputIterator2>
-  inline bool do_intersect(InputIterator1 begin1,
-                           InputIterator1 end1,
-                           InputIterator2 begin2,
-                           InputIterator2 end2)
+  inline bool do_intersect(InputIterator1 begin1, InputIterator1 end1,
+                           InputIterator2 begin2, InputIterator2 end2)
   {
     return (Base::do_intersect(begin1, end1, begin2, end2));
   }
 
-  private:
+private:
 
-    inline const Base& base(const Self& other) const
-    {
-      return (static_cast<const Base&>(other));
-    }
+  inline const Base& base(const Self& other) const
+  {
+    return (static_cast<const Base&>(other));
+  }
 
 };
 
