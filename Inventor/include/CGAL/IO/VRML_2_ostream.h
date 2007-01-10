@@ -17,14 +17,11 @@
 //
 // $URL$
 // $Id$
-// 
 //
 // Author(s)     : Andreas Fabri
 //                 Lutz Kettner <kettner@inf.ethz.ch>
 //                 Herve Bronnimann
 //                 Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
-
-
 
 #ifndef CGAL_IO_VRML_2_OSTREAM_H
 #define CGAL_IO_VRML_2_OSTREAM_H
@@ -88,6 +85,7 @@ private:
     std::ostream*  m_os;
 };
 
+inline
 VRML_2_ostream&
 operator<<(VRML_2_ostream& os,
            const char* s)
@@ -96,6 +94,7 @@ operator<<(VRML_2_ostream& os,
   return os;
 }
 
+inline
 VRML_2_ostream&
 operator<<(VRML_2_ostream& os,
            const double& d)

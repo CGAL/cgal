@@ -18,29 +18,19 @@
 // $URL$
 // $Id$
 // 
-//
 // Author(s)     : Andreas Fabri
 //                 Lutz Kettner <kettner@inf.ethz.ch>
 //                 Herve Bronnimann <Herve.Bronnimann@sophia.inria.fr>
 //                 Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 
-
-
 #ifndef CGAL_IO_VRML_1_OSTREAM_H
 #define CGAL_IO_VRML_1_OSTREAM_H
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif // CGAL_BASIC_H
-#ifndef CGAL_PROTECT_IOSTREAM_H
 #include <iostream>
-#define CGAL_PROTECT_IOSTREAM_H
-#endif // CGAL_PROTECT_IOSTREAM_H
 
 // Declare the common base class for OpenInventor and VRML 1.0 format.
-#ifndef CGAL_IO_INVENTOR_OSTREAM_H
 #include <CGAL/IO/Inventor_ostream.h>
-#endif // CGAL_IO_INVENTOR_OSTREAM_H
 
 // OpenInventor and VRML 1.0 are quite similar formats, so
 // output operators could be shared if they use the common

@@ -17,7 +17,6 @@
 //
 // $URL$
 // $Id$
-// 
 //
 // Author(s)     : Andreas Fabri
 
@@ -101,4 +100,3 @@ CGAL_END_NAMESPACE
 #endif // CGAL_ALPHA_SHAPE_3_H
 
 #endif CGAL_ALPHA_SHAPE_3_VRML_2_OSTREAM_H
-
