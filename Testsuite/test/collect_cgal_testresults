@@ -3,7 +3,7 @@
 # ========================
 # collect all files to generate the html page
 # containing the testsuite results
-# 
+#
 # to be run in the CGAL/test directory or a local test directory.
 # $CGAL_MAKEFILE is used to find out $CGAL_DIR.
 # CGAL_TESTER, CGAL_TESTER_NAME, CGAL_TESTER_ADDRESS are also used as
@@ -68,6 +68,20 @@ do_platform()
 
   cat "${CGAL_DIR}/config/install/${PLATFORM}" >> $RESULT_FILE
   echo "------------" >> $RESULT_FILE
+
+  if [ -f install.log.${1} ] ; then
+    grep -e "Compilation of .\+ ${2}" install.log.${1} \
+    | awk '{ print $3 " " $4 " " $6; }' \
+    | sed -e 's/succeeded\.$/y/' -e 's/failed\.$/n/' \
+    | while read libname shared_or_static y_or_no; do
+      mkdir "${libname}_${shared_or_static}"
+      _buildlog_marker="build log for ${libname} ${shared_or_static} shown"
+      cat install.log.$1 \
+      | sed -n "/${_buildlog_marker} below/,/${_buildlog_marker} above/ p" \
+      > ${libname}_${shared_or_static}/$TEST_REPORT
+      echo ${libname}_${shared_or_static} $y_or_no >> $RESULT_FILE
+    done
+  fi
 
   for DIR in $TEST_DIRECTORIES ; do
     if [ -d $DIR ] ; then

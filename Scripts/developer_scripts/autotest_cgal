@@ -5,7 +5,7 @@
 #   test internal CGAL releases
 # $Id$
 # ----------------------------------------------------
-# You will need 
+# You will need
 #  * GNU wget and ftp
 #  * or alternatively curl
 #
@@ -13,7 +13,7 @@
 # cutomize it for your environment.
 # In particular you have to change the BUILHOSTS
 # variable to contain the names of your hosts and
-# set the COMPILERS_<hostname> variables to the 
+# set the COMPILERS_<hostname> variables to the
 # os-compilers descriptions on which you want to run
 # the testsuite.
 # ----------------------------------------------------
@@ -180,21 +180,22 @@ remote_command()
 build_cgal_libs()
 {
     if [ -z "`value_of BUILD_ON_${1}`" ]; then
-	eval BUILD_ON_${1}="`value_of COMPILERS_${1}`"
+        eval "BUILD_ON_${1}=\"`value_of COMPILERS_${1}`\""
     fi
     if [ "`value_of BUILD_ON_${1}`" = "all" ]; then
-	remote_command ${1} \
-	    "cd ${CGAL_DIR};
+        remote_command ${1} \
+            "cd ${CGAL_DIR};
             ${CGAL_DIR}/install_cgal --CGAL_DIR ${CGAL_DIR} --rebuild-all" \
-		>> ${ACTUAL_LOGFILE} 2>&1 
+              >> ${ACTUAL_LOGFILE} 2>&1
     else
-	for j in `value_of BUILD_ON_${1}`; do
-	    remote_command ${1} \
-		"cd ${CGAL_DIR};
+        for j in `value_of BUILD_ON_${1}`; do
+            remote_command ${1} \
+                "cd ${CGAL_DIR};
                 ${CGAL_DIR}/install_cgal --CGAL_DIR ${CGAL_DIR} --rebuild ${j}" \
-		    >> ${ACTUAL_LOGFILE} 2>&1 
-	done
+                  >> ${ACTUAL_LOGFILE} 2>&1
+        done
     fi
+    cp ${CGAL_DIR}/install.log* ${CGAL_TEST_DIR}/
 }
 
 #-----------------------------------------------
@@ -205,7 +206,7 @@ build_cgal_libs()
 run_testsuite()
 {
     for i in ${2}; do
-	test_script ${1} ${i} 
+	test_script ${1} ${i}
     done
 }
 
@@ -214,8 +215,8 @@ run_testsuite()
 # test script NEW
 # create additional directories to test in parallel
 # on multiple platforms
-# the variable PROCESSORS_electra, where electra is the 
-# name of the machine, is used to specify the number of 
+# the variable PROCESSORS_electra, where electra is the
+# name of the machine, is used to specify the number of
 # processors to use
 # ---------------------------------------------------
 # $1 = HOST
@@ -232,7 +233,6 @@ test_script()
         else
 	  MAKE_OPTS="-j ${NUMBER_OF_PROCESSORS}"
         fi
-
         cat > ${CGAL_TEST_DIR}/localtestscript.${1} <<EOF
 CGAL_MAKEFILE=${CGAL_MAKE_DIR}/makefile_${2};
 CGAL_TESTER=${CGAL_TESTER};
@@ -242,6 +242,7 @@ export CGAL_MAKEFILE;
 export CGAL_TESTER CGAL_TESTER_NAME CGAL_TESTER_ADDRESS;
 rm -rf ${LOCAL_TEST_DIR};
 cp -r ${CGAL_TEST_DIR} ${LOCAL_TEST_DIR};
+cp install.log* ${LOCAL_TEST_DIR}
 cd ${LOCAL_TEST_DIR};
 nice ${NICE_OPTIONS} make ${MAKE_OPTS};
 echo 'COLLECTING RESULTS';
@@ -274,7 +275,7 @@ EOF
 	    ${FILENAME}
 
     #
-    # notify the CGAL world 
+    # notify the CGAL world
     #
     if [ ! "${MAIL_ADDRESS}" = "must_be_set_in_.autocgalrc" ]; then
       for i in ${MAIL_ADDRESS}; do
@@ -289,7 +290,7 @@ EOF
 # get CGAL
 #
 
-get_cgal() 
+get_cgal()
 {
     log ${ACTUAL_LOGFILE} "getting CGAL"
     rm -f ${CGAL_ZIPFILE}
@@ -339,7 +340,7 @@ copy_old_stuff()
 
     cd ${CGAL_DIR}
     ./install_cgal --upgrade ${OLD_CGAL_DIR} >> ${ACTUAL_LOGFILE}
-    
+
     # update symbolic links
     rm ${OLD_CGAL_DIR}
     ln -s `basename ${CGAL_DIR}` ${OLD_CGAL_DIR}
@@ -363,7 +364,7 @@ build_cgal()
     log_done ${ACTUAL_LOGFILE}
     ${COMPRESSOR} -9f ${ACTUAL_LOGFILE}
     mv ${ACTUAL_LOGFILE}.gz \
-	${LOGS_DIR}/${CGAL_RELEASE_ID}-log`datestr`.gz 
+	${LOGS_DIR}/${CGAL_RELEASE_ID}-log`datestr`.gz
 }
 
 
@@ -375,7 +376,7 @@ run_test()
 {
     log ${ACTUAL_LOGFILE} "running the testsuites"
     if [ -n "${CONSOLE_OUTPUT}" ]; then
-	printf "\n-------------------------------------------------------\n" 
+	printf "\n-------------------------------------------------------\n"
     fi
     for i in ${BUILD_HOSTS}; do
 	run_testsuite ${i} "`value_of COMPILERS_${i}`" &

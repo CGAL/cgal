@@ -721,7 +721,8 @@ set_dirs_dependant_on_cgal_dir()
     # ---------------------------------------------
 
     # installation logfile (verbose)
-    INSTALL_LOGFILE="${CGAL_DIR}/install.log"
+    INSTALL_LOGFILE_BASE="${CGAL_DIR}/install.log"
+    INSTALL_LOGFILE=${INSTALL_LOGFILE_BASE}
 
     # installation logfile (only completed compile/test runs)
     # (Really Important Stuff)
@@ -887,7 +888,7 @@ set_compiler_flags()
 	    EXE_EXT=".exe"
 	    CGAL_LIBNAME="CGAL.lib"
 	    CGAL_QT_LIBNAME="CGALQt.lib"
-            CGAL_BENCHMARK_LIBNAME="CGALBenchmark.lib"	    
+            CGAL_BENCHMARK_LIBNAME="CGALBenchmark.lib"
 	    CORE_LIBNAME="core++.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    MATH_LIB=
@@ -4176,7 +4177,7 @@ _do_compile()
 	    # only libCGAL can be compiled as a shared lib.
 	    case ${CGAL_OS_COMPILER} in
 		*Darwin*)
-		    if [ "$1" != "libCGAL" ]; then 
+		    if [ "$1" != "libCGAL" ]; then
 			${_printf} "%s\n" " skipped."
 			return 0
 		    fi;;
@@ -4443,11 +4444,14 @@ install_menu()
 # USES: ii
 _build_one()
 {
+    # use platform specific logfile
+    CONFIG_BASENAME="`${_basename} \"$1\"`"
+    INSTALL_LOGFILE="${INSTALL_LOGFILE_BASE}.${CONFIG_BASENAME}"
     log_to_file_and_screen
     log_print
     log_print \
 	    "--------------------------------------------------------"
-    log_print "Build on `${_basename} \"$1\"`:"
+    log_print "Build on ${CONFIG_BASENAME}:"
     log_print \
 	    "--------------------------------------------------------"
     log_to_file
@@ -4482,12 +4486,15 @@ _build_one()
         log_print "Cannot rebuild the library."
         print_filled_line
         print_empty_line
-        print_headline "Cannot build on `${_basename} \"$1\"` !"
+        print_headline "Cannot build on ${CONFIG_BASENAME} !"
         print_headline "No COMPILER defined in config/install/..."
         print_filled_line
         write_buffer "\n"
         flush_buffer
     fi
+    # restore main logfile
+    INSTALL_LOGFILE=${INSTALL_LOGFILE_BASE}
+    log_to_file
 }
 
 
