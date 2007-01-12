@@ -148,8 +148,8 @@ protected:
     }
   };
 
-  typedef Multiset<Event*, CompEventPtr>           Alloacted_events_set;
-  typedef typename Alloacted_events_set::iterator  Alloacted_events_iterator;
+  typedef Multiset<Event*, CompEventPtr>           Allocated_events_set;
+  typedef typename Allocated_events_set::iterator  Allocated_events_iterator;
 
 public:
 
@@ -199,7 +199,7 @@ public:
     delete m_queue;
 
     // Free all the event that have not been de-allocated so far.
-    Alloacted_events_iterator      iter;
+    Allocated_events_iterator      iter;
     Event                         *p_event;
 
     for (iter = m_allocated_events.begin();
@@ -799,7 +799,7 @@ protected:
   EventQueue *m_queue;
 
   /*! The events that have been allocated (an not freed). */
-  Alloacted_events_set    m_allocated_events;
+  Allocated_events_set    m_allocated_events;
 
   /*! The subcurves array */
   Subcurve *m_subCurves;
