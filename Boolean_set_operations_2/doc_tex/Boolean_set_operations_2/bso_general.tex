@@ -86,17 +86,26 @@ In Section~\ref{bso_sec:bso_lin} we introduce the classes
 respectively. In this section we introduce other models of these two
 concepts.
 
-The central class-template \ccc{General_polygon_set_2<Traits>} is used to
-represent point sets that are comprised of a finite number of general
-polygons with holes that are pairwise disjoint, and provides various Boolean
-set-operations on such sets. It is parameterized by a {\em traits}
-class that defines the type of points used to represent polygon
-vertices and the type of $x$-monotone curves that represent the
-polygon edges. The traits class also provides primitive geometric
-operations that operate on objects of these types. An instatiated
+The central class-template \ccc{General_polygon_set_2<Traits,Dcel>} is 
+used to represent point sets that are comprised of a finite number of 
+pairwise disjoint general polygons with holes, and provides various 
+Boolean set-operations on such sets. It is parameterized by a {\em traits}
+class and a \dcel{} class. The former defines the type of points used 
+to represent polygon vertices and the type of $x$-monotone curves that 
+represent the polygon edges. The traits class also provides primitive 
+geometric operations that operate on objects of these types. 
+The \dcel{} class is used to represent the undelying internal 
+\ccc{Arrangement_2} data structure. The instantiated \ccc{Dcel} type is 
+used to represent the underlying internal arrangement. It must model the 
+concept \ccc{GeneralPolygonSetDcel}, and defaults to \ccc{Gps_default_dcel}.
+You can override this default, with a different {\sc Dcel} class, typically
+an extension of the default. Overriding the default is necessary only if 
+you intend to obtain the undelying internal arrangement and process it further.
+
+An instatiated
 \ccc{General_polygon_set_2} class defines the nested types 
-\ccc{General_polygon_set_2<Traits>::Polygon_2} and
-\ccc{General_polygon_set_2<Traits>::Polygon_with_holes_2}, which model
+\ccc{General_polygon_set_2<Traits,Dcel>::Polygon_2} and
+\ccc{General_polygon_set_2<Traits,Dcel>::Polygon_with_holes_2}, which model
 the concepts \ccc{GeneralPolygon_2} and
 \ccc{GeneralPolygonWithHoles_2} respectively.
 

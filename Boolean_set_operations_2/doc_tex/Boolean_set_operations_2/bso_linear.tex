@@ -299,11 +299,16 @@ operate on the set resulting from computing, for example, $P \setminus
 Q$.
 
 A central component in the Boolean set-operations package is the
-\ccc{Polygon_set_2<Kernel, Container>} class-template. An instance of this
-class represents a point set formed by the collection of several disconnected
-polygons with holes. It employs the \ccc{Arrangement_2} class to represent
-this point set in the plane as a planar arrangement; see
-Chapter~\ref{chapterArrangement_2}. 
+\ccc{Polygon_set_2<Kernel, Container, Dcel>} class-template. An instance of 
+this class represents a point set formed by the collection of several 
+disconnected polygons with holes. It employs the \ccc{Arrangement_2} class 
+to represent this point set in the plane as a planar arrangement; see 
+Chapter~\ref{chapterArrangement_2}. The instantiated \ccc{Dcel} type is 
+used to represent the underlying internal arrangement. It must model the 
+concept \ccc{GeneralPolygonSetDcel}, and defaults to \ccc{Gps_default_dcel}. 
+You can override this default, with a different {\sc Dcel} class, typically
+an extension of the default. Overriding the default is necessary only if 
+you intend to obtain the undelying internal arrangement and process it further.
 
 An instance $S$ of a \ccc{Polygon_set_2} class usually represents
 the result of a sequence of operations that were applied on some input
