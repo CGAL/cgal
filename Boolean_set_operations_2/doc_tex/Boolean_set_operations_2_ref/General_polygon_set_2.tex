@@ -2,7 +2,7 @@
 
 \begin{ccRefClass}{General_polygon_set_2<Traits>}
 
-\ccThree{General_polygon_set_2<Traits>}{Polygon_2}{}
+\ccThree{General_polygon_set_2<Traits,Dcel>}{Polygon_2}{}
 \ccThreeToTwo
     
 \ccDefinition
@@ -12,7 +12,8 @@ point set in the plane bounded by $x$ monotone curves. Points in the set
 lie on the boundary or on the positive side of the curves. This class 
 template provides methods to apply regularized Boolean set-operations and 
 few other utility methods. An \ccc{Arrangement_2} data structure is 
-internally used to represent the point set. 
+internally used to represent the point set. The arrangement is
+represented as a doubly-connected edge-list ({\sc Dcel}).
 
 The \ccc{Traits} template-parameter should be instantiated with a
 model of the concept \ccc{GeneralPolygonSetTraits_2}. The traits class
@@ -25,6 +26,14 @@ be the type of the endpoints of \ccc{Traits::X_monotone_curve_2}, and
 the boundaries of the general polygons. The traits class supports geometric 
 operations on the types above. We sometimes use the term {\em polygon} instead
 of general polygon for simplicity hereafter.
+
+The \ccc{Dcel} template-parameter should be instantiated with a
+model of the concept \ccc{GeneralPolygonSetDcel_2}. It is instantiated
+by default with the type \ccc{Gps_dcel<Traits>}. You can override this
+default, with a {\sc Dcel} class you provide, typically an extension
+of the \ccc{Gps_dcel} class template. Overriding the default is needed
+only if you intend to obtain the undelying arrangement and process it
+further.
 
 The input and output of the Boolean set-operations methods consist of one 
 or more general polygons, some of which may have holes. In particular, 
