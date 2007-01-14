@@ -803,7 +803,6 @@ Maintenance/deb/sid/debian/libcgal1.shlibs -text
 Maintenance/deb/sid/debian/misc/adjust-default-makefile.sed -text
 Maintenance/deb/sid/debian/misc/adjust-demo-examples-makefiles.sed -text
 Maintenance/deb/sid/debian/misc/cgal_create_makefile.1 -text
-Maintenance/deb/sid/debian/misc/linda-override -text
 Maintenance/deb/sid/debian/patches/00list -text
 Maintenance/deb/sid/debian/rules -text
 Maintenance/public_release/announcement/CGAL-3.2 -text

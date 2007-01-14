@@ -1,3 +1,0 @@
-# override bogus warning caused by #369977
-Tag: exec-not-elf-or-script
-Data: /usr/bin/cgal_create_makefile

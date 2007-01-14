@@ -4,6 +4,7 @@ Priority: optional
 Maintainer: Joachim Reichel <joachim.reichel@gmx.de>
 Build-Depends: debhelper (>= 5), dpatch, libgmp3-dev, libmpfr-dev, libcore++-dev, libqt3-mt-dev, libqt3-compat-headers, libboost-dev, libboost-graph-dev, libboost-program-options-dev, zlib1g-dev
 Standards-Version: 3.7.2
+XS-Autobuild: yes
 
 Package: libcgal1
 Section: non-free/libs
@@ -31,7 +32,7 @@ Description: C++ library for computational geometry
 Package: libcgal-dev
 Section: non-free/libdevel
 Architecture: any
-Depends: libcgal1 (= ${Source-Version}), libgmp3-dev, libmpfr-dev,
+Depends: libcgal1 (= ${binary:Version}), libgmp3-dev, libmpfr-dev,
  libcore++-dev, libqt3-mt-dev, libqt3-compat-headers,
  libboost-dev, libboost-graph-dev, libboost-program-options-dev,
  zlib1g-dev
@@ -46,7 +47,7 @@ Description: C++ library for computational geometry (development files)
 Package: libcgal-demo
 Section: non-free/devel
 Architecture: all
-Depends: libcgal-dev (= ${Source-Version}), libcgal1 (= ${Source-Version})
+Depends: libcgal-dev (>= ${binary:Version}), libcgal1 (>= ${binary:Version})
 Suggests: geomview
 Description: C++ library for computational geometry (demos)
  CGAL (Computational Geometry Algorithms Library) makes the most important

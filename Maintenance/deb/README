@@ -11,3 +11,7 @@ backport for sarge:
   * adjust version suffix from -X to -0sargeY
   * adjust suite from unstable to stable
   * maintain other differences
+
+tagging:
+svn copy $SVNROOT/trunk/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.2.1-1
+svn copy $SVNROOT/trunk/Maintenance/deb/sarge/debian $SVNROOT/tags/debian/3.2.1-0sarge1

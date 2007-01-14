@@ -1,3 +1,12 @@
+cgal (3.2.99.210-1) unstable; urgency=low
+
+  * New upstream release.
+  * Make package binNMU-safe.
+  * Handle new shared library libCGALQt.
+  * Remove linda override for bug #369977 (no longer needed).
+
+ -- Joachim Reichel <joachim.reichel@gmx.de>  Sun, 14 Jan 2007 21:41:37 +0100
+
 cgal (3.2.1-1) unstable; urgency=low
 
   * New upstream release.
