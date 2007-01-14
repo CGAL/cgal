@@ -30,7 +30,7 @@
 #include <CGAL/Arr_walk_along_line_point_location.h>
 
 #include <CGAL/Arr_overlay.h>
-#include <CGAL/Boolean_set_operations_2/Gps_dcel.h>
+#include <CGAL/Boolean_set_operations_2/Gps_default_dcel.h>
 #include <CGAL/Boolean_set_operations_2/Gps_do_intersect_functor.h>
 #include <CGAL/Boolean_set_operations_2/Gps_intersection_functor.h>
 #include <CGAL/Boolean_set_operations_2/Gps_join_functor.h>
@@ -43,7 +43,7 @@
 CGAL_BEGIN_NAMESPACE
 
 // General_polygon_set_2
-template <class Traits_, class Dcel_ = Gps_dcel<Traits_> >
+template <class Traits_, class Dcel_ = Gps_default_dcel<Traits_> >
 class General_polygon_set_2 
 {
 public:

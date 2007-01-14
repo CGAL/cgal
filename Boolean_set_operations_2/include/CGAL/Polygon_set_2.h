@@ -24,7 +24,7 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/General_polygon_set_2.h>
 #include <CGAL/Gps_segment_traits_2.h>
-#include <CGAL/Boolean_set_operations_2/Gps_dcel.h>
+#include <CGAL/Boolean_set_operations_2/Gps_default_dcel.h>
 
 #include <vector>
 
@@ -32,7 +32,8 @@ CGAL_BEGIN_NAMESPACE
 
 template <class Kernel,
           typename Containter = std::vector<typename Kernel::Point_2>,
-          class Dcel_ = Gps_dcel<Gps_segment_traits_2<Kernel, Containter> > >
+          class Dcel_ =
+            Gps_default_dcel<Gps_segment_traits_2<Kernel, Containter> > >
 class Polygon_set_2 :
   public General_polygon_set_2<Gps_segment_traits_2<Kernel, Containter>, Dcel_>
 {  

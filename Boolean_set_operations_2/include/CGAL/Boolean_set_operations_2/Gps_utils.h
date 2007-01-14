@@ -16,6 +16,7 @@
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 
 #ifndef CGAL_GPS_UTILS_H
 #define CGAL_GPS_UTILS_H
@@ -25,8 +26,8 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/circulator.h> 
 #include <CGAL/Boolean_set_operations_2/Gps_bfs_scanner.h>
-#include <CGAL/Boolean_set_operations_2/Gps_dcel.h>
 #include <CGAL/Arr_accessor.h>
+
 #include <queue>
 
 template <class Traits_, class Dcel_>
@@ -47,7 +48,7 @@ class Arr_bfs_scanner
 {
 public:
   typedef typename Arrangement::Traits_2                Gps_traits;
-  typedef typename Arrangement::Dcel                    My_gps_dcel;
+  typedef typename Arrangement::Dcel                    Gps_dcel;
   typedef typename Gps_traits::Polygon_2                Polygon_2;
   typedef typename Gps_traits::Polygon_with_holes_2     Polygon_with_holes_2;
   typedef typename Arrangement::Ccb_halfedge_const_circulator 
@@ -121,7 +122,7 @@ public:
   void scan_ccb(Ccb_halfedge_const_circulator ccb)
   {
     Polygon_2 pgn_boundary;
-    General_polygon_set_2<Gps_traits, My_gps_dcel>::
+    General_polygon_set_2<Gps_traits, Gps_dcel>::
       construct_polygon(ccb, pgn_boundary, m_traits);
 
     Ccb_halfedge_const_circulator ccb_end = ccb;
@@ -165,7 +166,7 @@ public:
       if (!f->contained())
       {
         m_pgn_holes.push_back(Polygon_2());
-        General_polygon_set_2<Gps_traits, My_gps_dcel>::
+        General_polygon_set_2<Gps_traits, Gps_dcel>::
           construct_polygon(f->outer_ccb(), m_pgn_holes.back(), m_traits);
         m_holes_q.push(f);
       }
@@ -199,7 +200,7 @@ public:
           CGAL_assertion(!he->twin()->face()->contained());
          
           m_pgn_holes.push_back(Polygon_2());
-          General_polygon_set_2<Gps_traits, My_gps_dcel>::
+          General_polygon_set_2<Gps_traits, Gps_dcel>::
             construct_polygon(he->twin()->face()->outer_ccb(),
                               m_pgn_holes.back(), m_traits);
           m_holes_q.push(he->twin()->face());

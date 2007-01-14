@@ -16,18 +16,24 @@
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//                 Efi Fogel <efif@post.tau.ac.il>
 
-#ifndef CGAL_GPS_DCEL_H
-#define CGAL_GPS_DCEL_H
+#ifndef CGAL_GPS_DEFAULT_DCEL_H
+#define CGAL_GPS_DEFAULT_DCEL_H
+
+/*! \file
+ * This class is the default \dcel{} class used by the General_polygon_set_2
+ * and Polygon_set_2} class-templates to represent the undelying internal
+ * Arrangement_2 data structure.
+ */
 
 #include <CGAL/Arr_default_dcel.h>
 
 CGAL_BEGIN_NAMESPACE
 
-
-class Gps_face : public Arr_face_base
+class Gps_face_base : public Arr_face_base
 {
-  protected:
+protected:
   mutable char m_info;
   
   enum
@@ -38,11 +44,10 @@ class Gps_face : public Arr_face_base
 
 
 public:
-
-  
   //Constructor
-  Gps_face() : Arr_face_base(),
-               m_info(0)
+  Gps_face_base() :
+    Arr_face_base(),
+    m_info(0)
   {}
 
    /*! Assign from another face. */
@@ -50,7 +55,7 @@ public:
   {
     Arr_face_base::assign (f);
 
-    const Gps_face&  ex_f = static_cast<const Gps_face&>(f);
+    const Gps_face_base & ex_f = static_cast<const Gps_face_base&>(f);
     m_info = ex_f.m_info;
   }
   
@@ -61,7 +66,7 @@ public:
 
   void set_contained(bool b)
   {
-    if(b)
+    if (b)
       m_info |= CONTAINED;
     else
       m_info &= ~CONTAINED;
@@ -74,7 +79,7 @@ public:
 
   void set_visited(bool b) const
   {
-    if(b)
+    if (b)
       m_info |= VISITED;
     else
       m_info &= ~VISITED;
@@ -84,16 +89,14 @@ public:
 
 
 template <class Traits_>
-class Gps_dcel :
+class Gps_default_dcel :
   public Arr_dcel_base<Arr_vertex_base<typename Traits_::Point_2>,
                        Arr_halfedge_base<typename Traits_::X_monotone_curve_2>,
-                       Gps_face>
+                       Gps_face_base>
 {
 public:
-
   /*! Default constructor. */
-  Gps_dcel()
-  {}
+  Gps_default_dcel() {}
 };
 
 
