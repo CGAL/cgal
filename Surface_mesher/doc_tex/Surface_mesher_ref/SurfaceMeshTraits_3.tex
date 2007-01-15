@@ -57,13 +57,12 @@ with an object of type \ccc{Type1} which may  be
 
 \ccNestedType{Construct_initial_points}
 {A model of this type provides the following operators
-to construct initial points on the surface \\
-\ccc{template <class OutputIteratorPoints> \\
-OutputIteratorPoints operator()(OutputIteratorPoints pts);}\\
-which outputs a set of points on the surface.
-\\
-\ccc{template <class OutputIteratorPoints>\\
-OutputIteratorPoints operator() (OutputIteratorPoints pts, int n);} \\
+to construct initial points on the surface: \\
+\ccc{template <class OutputIteratorPoints>}\\
+\ccc{OutputIteratorPoints operator()(OutputIteratorPoints pts)}\\
+which outputs a set of points on the surface,\\
+\ccc{template <class OutputIteratorPoints>}\\
+\ccc{OutputIteratorPoints operator() (OutputIteratorPoints pts, int n)} \\
 which outputs a set of \ccc{n} points on the surface.}
 
 
