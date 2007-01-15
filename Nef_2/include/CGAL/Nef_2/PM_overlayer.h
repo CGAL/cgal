@@ -544,7 +544,7 @@ avoid the simplification for edge pairs referenced by |e|.}*/
       delete_halfedge_pair(e);
     }
   }
-
+  
   CGAL::Unique_hash_map<Halfedge_handle,bool> linked(false);
   for (e = this->halfedges_begin(); e != eend; ++e) {
     if ( linked[e] ) continue;
@@ -553,7 +553,13 @@ avoid the simplification for edge pairs referenced by |e|.}*/
     Face_handle f = *(unify_faces.find(Pitem[face(e)]));
     CGAL_For_all(hfc,hend) {
       set_face(hfc,f);
-      if ( K.compare_xy(point(target(hfc)), point(target(e_min))) < 0 )
+      if(target(hfc) == target(e_min)) {
+	Point p1 = point(source(hfc)), 
+          p2 = point(target(hfc)), 
+          p3 = point(target(next(hfc)));
+	if (!K.left_turn(p1,p2,p3) )
+	  e_min = hfc;
+      } else if ( K.compare_xy(point(target(hfc)), point(target(e_min))) < 0 )
         e_min = hfc;
       linked[hfc]=true;
     }
