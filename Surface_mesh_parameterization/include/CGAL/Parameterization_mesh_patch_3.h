@@ -169,7 +169,7 @@ public:
     /// - first_seam_vertex -> end_seam_vertex defines the outer seam,
     ///   ie Parameterization_mesh_patch_3 will export the "right" of the seam.
     /// - The "seam" is given as a container of Adaptor::Vertex_handle elements.
-    /// - The "seam" is implicitely a loop. The first vertex should *not* be 
+    /// - The "seam" is implicitely a loop. The first vertex should *not* be
     ///   duplicated at the end.
     template<class InputIterator>
     Parameterization_mesh_patch_3(Adaptor& mesh,
@@ -191,6 +191,7 @@ public:
         set_mesh_seaming(first_seam_vertex, end_seam_vertex);
 
         // Check that the cut mesh is 2-manifold
+        m_is_valid = true;
         CGAL_surface_mesh_parameterization_expensive_precondition_code( \
             m_is_valid = mesh.is_valid() && check_seam(first_seam_vertex, end_seam_vertex); \
         );
@@ -619,7 +620,7 @@ private:
     /// - first_seam_vertex -> end_seam_vertex defines the outer seam,
     ///   ie Parameterization_mesh_patch_3 will export the "right" of the seam.
     /// - The "seam" is given as a container of Adaptor::Vertex_handle elements.
-    /// - The "seam" is implicitely a loop. The first vertex should *not* be 
+    /// - The "seam" is implicitely a loop. The first vertex should *not* be
     ///   duplicated at the end.
     template<class InputIterator>
     void set_mesh_seaming(InputIterator first_seam_vertex,
@@ -765,7 +766,7 @@ private:
     /// - first_seam_vertex -> end_seam_vertex defines the outer seam,
     ///   ie Parameterization_mesh_patch_3 will export the "right" of the seam.
     /// - The "seam" is given as a container of Adaptor::Vertex_handle elements.
-    /// - The "seam" is implicitely a loop. The first vertex should *not* be 
+    /// - The "seam" is implicitely a loop. The first vertex should *not* be
     ///   duplicated at the end.
     /// - The seaming flag of all vertices and edges to INNER, BORDER or OUTER
     ///   wrt the first_seam_vertex -> end_seam_vertex border is set
@@ -774,15 +775,15 @@ private:
     bool check_seam(InputIterator first_seam_vertex,
                     InputIterator end_seam_vertex) const
     {
-        // The input vertices list can be either a "seam along a line"   
+        // The input vertices list can be either a "seam along a line"
         // (that virtually cut the mesh along a line) or a "cut-out seam"
         // (loop that cuts out a part of the mesh).
         // A "seam along a line" is given as a 2-ways list of vertices.
         InputIterator second_seam_vertex = first_seam_vertex; second_seam_vertex++;
-        bool is_seam_along_a_line 
+        bool is_seam_along_a_line
             = (m_mesh_adaptor.get_halfedge_seaming(*second_seam_vertex,
                                                    *first_seam_vertex) == BORDER);
-                                                   
+
         // One cannot mix "seam along a line" and "cut-out seam"
         int seam_length = 0;
         for (InputIterator border_it = first_seam_vertex;
@@ -790,21 +791,21 @@ private:
              border_it++)
         {
             seam_length++;  // compute seam length
-            
+
             // Get next iterator (looping)
             InputIterator next_border_it = border_it;
             next_border_it++;
             if (next_border_it == end_seam_vertex)
                 next_border_it = first_seam_vertex;
 
-            // Opposite halfedges are on seam iff this is a "seam along a line" 
+            // Opposite halfedges are on seam iff this is a "seam along a line"
             if ( is_seam_along_a_line !=
                  (m_mesh_adaptor.get_halfedge_seaming(*next_border_it,
                                                       *border_it) == BORDER) )
             {
                 return false;
             }
-            
+
             // In a "cut-out seam", a vertex cannot belong twice to the seam
             // (see e.g. "8" shape seam)
             if (!is_seam_along_a_line)
@@ -824,7 +825,7 @@ private:
             if (seam_length < 3)
                 return false;
         }
-        
+
         // else: ok
         return true;
     }
