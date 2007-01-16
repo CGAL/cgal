@@ -6,7 +6,7 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+CGAL_MAKEFILE=/user/teillaud/home/CGAL/install/CGAL-I/make/makefile_i686_Linux-2.6_g++-4.1.0
 include $(CGAL_MAKEFILE)
 
 #---------------------------------------------------------------------#
@@ -15,7 +15,6 @@ include $(CGAL_MAKEFILE)
 
 CXXFLAGS = \
            -I../../include \
-           -Iinclude \
            -I../../../Algebraic_kernel_for_circles/include \
            -I../../../Number_types/ include \
 	   $(CGAL_CXXFLAGS) \
