@@ -31,7 +31,8 @@
 
 namespace CGAL {
 
-/// Traits class for CGAL::Arrangement_2 (and similar) based on a CircularKernel.
+// Traits class for CGAL::Arrangement_2 (and similar) based on a 
+// CircularKernel.
 
 template < typename CircularKernel >
 class Arr_circular_arc_traits {
