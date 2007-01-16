@@ -462,7 +462,7 @@ private:
   CGAL::Qt_widget_get_arc<Circular_k>     *get_arc_layer;
 };
 
-#include "demo.moc"
+#include "demo.circle.moc"
 
 int
 main(int argc, char **argv)

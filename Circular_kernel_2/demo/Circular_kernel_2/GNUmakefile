@@ -16,7 +16,6 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = \
            -I../../include \
            -I../../../Algebraic_kernel_for_circles/include \
-           -I../../../Number_types/ include \
 	   $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) #\
 #           -fmessage-length=0

@@ -508,7 +508,7 @@ private:
   CGAL::Qt_widget_get_arc<Circular_k>     *get_arc_layer;
 };
 
-#include "demo_line_circle.moc"
+#include "demo.moc"
 
 int
 main(int argc, char **argv)
