@@ -1,5 +1,4 @@
-// Copyright (c) 2003  INRIA Sophia-Antipolis (France) and
-//                     Max-Planck-Institute Saarbruecken (Germany).
+// Copyright (c) 2003  INRIA Sophia-Antipolis (France) 
 // All rights reserved.
 //
 // Authors : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
@@ -68,7 +67,6 @@ int main() {
 
 #include <CGAL/Circular_kernel_2.h>
 #include <CGAL/Arr_circular_line_arc_traits.h>
-#include <CGAL/Arr_circular_arc_traits_tracer.h>
 
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
@@ -86,26 +84,17 @@ typedef CGAL::Circular_kernel_2<Linear_k,Algebraic_k>       Circular_k;
 typedef Circular_k::Line_arc_2                              Line_arc_2;
 typedef Circular_k::Segment_2                               Segment;
 typedef Circular_k::Circular_arc_2                          Circular_arc_2;
-typedef boost::variant< Circular_arc_2, Line_arc_2 >        Arc_2;
-typedef std::vector<Arc_2>                                    ArcContainer;
 
-#ifndef CGAL_CURVED_KERNEL_DEBUG
-typedef CGAL::Arr_circular_line_arc_traits
-<Circular_k, Circular_arc_2, Line_arc_2>                    Traits;
-#else
-typedef CGAL::Arr_circular_line_arc_traits
-<Circular_k, Circular_arc_2, Line_arc_2>                    Traits0;
-typedef CGAL::Circular_arc_traits_tracer<Traits0>           Traits;
-#endif
+typedef CGAL::Arr_circular_line_arc_traits<Circular_k, 
+					   Circular_arc_2, 
+					   Line_arc_2>      Traits;
 
 typedef Traits::Point_2                             Point_2;
-typedef Traits::Curve_2                             Conic_arc_2;
+typedef Traits::Curve_2                             Curve_2;
+typedef std::vector<Curve_2>                        ArcContainer;
+
 typedef CGAL::Arrangement_2<Traits>                 Pmwx;
 typedef CGAL::Arr_naive_point_location<Pmwx>        Point_location;
-
-typedef Traits::X_monotone_curve_2                  X_monotone_curve_2;
-
-
 
 const QString my_title_string("CGAL :: "
                               "Planar Map of Intersecting Circular Arcs");
@@ -138,18 +127,15 @@ public:
 
      *widget << CGAL::GREEN;
      for (Pmwx::Halfedge_const_iterator ei = pm().halfedges_begin();
-          ei != pm().halfedges_end (); ++ei){
-       if(const Line_arc_2* line = boost::get<Line_arc_2>( &(ei->curve()))){
+          ei != pm().halfedges_end (); ++ei) {
+       if(const Line_arc_2* line = boost::get<Line_arc_2>( &(ei->curve()))) {
 	 *widget << Segment(Circular_k::Point_2(to_double(line->source().x()),
 					      to_double(line->source().y())),
 			    Circular_k::Point_2(to_double(line->target().x()),
 					      to_double(line->target().y())));
        }
-       else if (const Circular_arc_2* arc = boost::get<Circular_arc_2>( &(ei->curve()))){
-	// std::cout << arc->source().x() << std::endl
-	//	  << arc->source().y() << std::endl
-	//	  << arc->target().x() << std::endl
-	//	  << arc->target().y() << std::endl;
+       else if (const Circular_arc_2* arc 
+		= boost::get<Circular_arc_2>( &(ei->curve()))) {
 	 *widget << *arc;
        }
      }
@@ -194,11 +180,8 @@ public:
 			   Circular_k::Point_2(to_double(line->target().x()),
 					     to_double(line->target().y())));
       }
-      else if (const Circular_arc_2* arc = boost::get<Circular_arc_2>( &(*cit))){
-//	std::cout << arc->source().x() << std::endl
-//		  << arc->source().y() << std::endl
-//		  << arc->target().x() << std::endl
-//		  << arc->target().y() << std::endl;
+      else if (const Circular_arc_2* arc 
+	       = boost::get<Circular_arc_2>( &(*cit))) {
 	*widget << *arc;
       }
     }
@@ -285,13 +268,13 @@ public:
 
     // the button controlling if we show the planar map
     QToolButton * show_pmwx_button =
-                       new QToolButton(QPixmap((const char**)::planar_map_icon),
-                                       "Show Computed Planar Map",
-                                       0,
-                                       this,
-                                       SLOT(show_pmwx_arcs()),
-                                       layers_toolbar,
-                                       "Show Computed Planar Map");
+      new QToolButton(QPixmap((const char**)::planar_map_icon),
+		      "Show Computed Planar Map",
+		      0,
+		      this,
+		      SLOT(show_pmwx_arcs()),
+		      layers_toolbar,
+		      "Show Computed Planar Map");
     show_pmwx_button->setToggleButton(true);
 
     show_pmwx_button->toggle();
@@ -340,7 +323,8 @@ public:
     get_segment_layer =  new CGAL::Qt_widget_get_segment<Circular_k>;
     widget->attach(get_arc_layer);
     connect(get_arc_layer, SIGNAL(new_object_time()), this, SLOT(get_arc()));
-    connect(get_segment_layer, SIGNAL(new_object_time()), this, SLOT(get_arc()));
+    connect(get_segment_layer, SIGNAL(new_object_time()), 
+	    this, SLOT(get_arc()));
   }
 
 public slots:
@@ -357,7 +341,7 @@ public slots:
 
   void get_arc()
   {
-    X_monotone_curve_2 v;
+    Curve_2 v;
     if (arc_circle){
       v = get_arc_layer->get_circular_arc();
     }
