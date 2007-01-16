@@ -73,10 +73,6 @@ public:
   typedef typename CircularKernel::Is_vertical_2        Is_vertical_2;
   typedef typename CircularKernel::Intersect_2          Intersect_2;
 
-
- 
-
-  
   Compare_x_2 compare_x_2_object() const
   { return ck.compare_x_2_object(); }
 

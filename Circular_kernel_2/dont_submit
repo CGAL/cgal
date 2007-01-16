@@ -3,6 +3,8 @@ bench
 Benchmarks
 include/CGAL/Filtered_hexagon_circular_kernel_2.h
 include/CGAL/Filtered_hexagon_circular_kernel_2/
+Arr_circular_arc_traits_checker.h
+Arr_circular_arc_traits_tracer.h  
 example_Lazy_Circular_kernel_arrangement.cpp
 example_Lazy_Circular_kernel_arrangement_Line_arc.cpp
 example_Lazy_Circular_kernel_arrangement_Line_Circular.cpp
