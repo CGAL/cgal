@@ -320,7 +320,7 @@ namespace CGAL {
 	  if ( const Arc1* arc2 = boost::get<Arc1>( &c2 ) ){
 	    std::vector<CGAL::Object> container;
 	    CircularKernel()
-	      .intersect_2_object()(*arc1e,*arc2,std::back_inserter(container);
+	      .intersect_2_object()(*arc1e,*arc2,std::back_inserter(container));
 	    return object_to_object_variant<CircularKernel, Arc1, Arc2>
                                            (container, res);
 	  }
