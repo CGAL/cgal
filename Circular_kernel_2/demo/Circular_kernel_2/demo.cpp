@@ -66,6 +66,7 @@ int main() {
 #include <CGAL/intersections.h>
 
 #include <CGAL/Circular_kernel_2.h>
+// #include <CGAL/Exact_circular_kernel_2.h>
 #include <CGAL/Arr_circular_line_arc_traits.h>
 
 #include <CGAL/Arrangement_2.h>
@@ -75,11 +76,14 @@ int main() {
 typedef CGAL::Quotient<CGAL::MP_Float>                       NT; 
 //typedef CGAL::Quotient<CGAL::MP_Float> NT;
 //typedef CGAL::Lazy_exact_nt<CGAL::Gmpq>  NT;
+//typedef boost::variant< Circular_arc_2, Line_arc_2 >        Arc_2;
+//typedef std::vector<Arc_2>  
 
 typedef CGAL::Cartesian<NT>                                 Linear_k;
 
 typedef CGAL::Algebraic_kernel_for_circles_2_2<NT>          Algebraic_k;
 typedef CGAL::Circular_kernel_2<Linear_k,Algebraic_k>       Circular_k;
+// typedef CGAL::Exact_circular_kernel_2                       Circular_k;
 
 typedef Circular_k::Line_arc_2                              Line_arc_2;
 typedef Circular_k::Segment_2                               Segment;
@@ -91,6 +95,8 @@ typedef CGAL::Arr_circular_line_arc_traits<Circular_k,
 
 typedef Traits::Point_2                             Point_2;
 typedef Traits::Curve_2                             Curve_2;
+//typedef boost::variant< Circular_arc_2, Line_arc_2 >        Arc_2;
+//typedef std::vector<Arc_2>  
 typedef std::vector<Curve_2>                        ArcContainer;
 
 typedef CGAL::Arrangement_2<Traits>                 Pmwx;

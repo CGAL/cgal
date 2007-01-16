@@ -5,7 +5,8 @@ manual orientation: NO (only when points have same delta, so don't document)
 
 add Do_intersect_2
 
-clean demos
+add Qt output for bbox objects -> demo with Exact_ck
+also, check that examples use Exact_CK
 
 clean manual AK (concepts like Polynomial_1_2, access to a() b() c() ?
 used in solve to check that solutions are the same)
