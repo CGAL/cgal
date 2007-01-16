@@ -10,3 +10,6 @@ test_Lazy_circular_kernel.C
 test_Lazy_Line_arc.C
 demo_Lazy_line_circle.cpp
 demo_elias.C
+demo_circle.cpp
+demo_line.cpp
+demo_viewer.cpp

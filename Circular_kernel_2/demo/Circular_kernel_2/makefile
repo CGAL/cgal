@@ -36,22 +36,10 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                demo$(EXE_EXT) \
-		demo_viewer$(EXE_EXT)\
-		demo_line$(EXE_EXT) \
-		demo_line_circle$(EXE_EXT)
+                demo$(EXE_EXT) 
 
 demo.moc: demo.cpp
 	${QT_MOC} -o demo.moc $<
-
-demo_viewer.moc: demo_viewer.cpp
-	${QT_MOC} -o demo_viewer.moc $<
-
-demo_line.moc: demo_line.cpp
-	${QT_MOC} -o demo_line.moc $<
-
-demo_line_circle.moc: demo_line_circle.cpp
-	${QT_MOC} -o demo_line_circle.moc $<
 
 Qt_widget_get_arc.moc: Qt_widget_get_arc.h
 	$(QT_MOC) -o Qt_widget_get_arc.moc $<
@@ -59,18 +47,9 @@ Qt_widget_get_arc.moc: Qt_widget_get_arc.h
 Qt_widget_get_segment.moc: Qt_widget_get_segment.h
 	$(QT_MOC) -o Qt_widget_get_segment.moc $<
 
-
 demo$(EXE_EXT): demo.moc demo$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo demo$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT) $(LDFLAGS)
 
-demo_viewer$(EXE_EXT): demo_viewer.moc demo_viewer$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_viewer demo_viewer$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT) $(LDFLAGS)
-
-demo_line$(EXE_EXT): demo_line.moc demo_line$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_line demo_line$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) $(LDFLAGS)
-
-demo_line_circle$(EXE_EXT): demo_line_circle.moc demo_line_circle$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo_line_circle demo_line_circle$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT) $(LDFLAGS)
 
 Qt_widget_get_arc$(OBJ_EXT): Qt_widget_get_arc.cpp Qt_widget_get_arc.moc
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) Qt_widget_get_arc.cpp
@@ -81,9 +60,6 @@ Qt_widget_get_segment$(OBJ_EXT): Qt_widget_get_segment.cpp Qt_widget_get_segment
 
 clean: \
                 demo.clean \
-		demo_viewer.clean\
-		demo_line.clean \
-		demo_line_circle.clean \
                 Qt_widget_get_arc.clean \
 		Qt_widget_get_segment.clean 
 
