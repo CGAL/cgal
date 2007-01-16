@@ -47,8 +47,8 @@ Qt_widget_get_arc.moc: Qt_widget_get_arc.h
 Qt_widget_get_segment.moc: Qt_widget_get_segment.h
 	$(QT_MOC) -o Qt_widget_get_segment.moc $<
 
-demo$(EXE_EXT): demo.moc demo$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo demo$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT) $(LDFLAGS)
+demo$(EXE_EXT): demo.moc demo$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)demo demo$(OBJ_EXT) Qt_widget_get_arc$(OBJ_EXT) Qt_widget_get_segment$(OBJ_EXT) $(LDFLAGS)
 
 
 Qt_widget_get_arc$(OBJ_EXT): Qt_widget_get_arc.cpp Qt_widget_get_arc.moc
