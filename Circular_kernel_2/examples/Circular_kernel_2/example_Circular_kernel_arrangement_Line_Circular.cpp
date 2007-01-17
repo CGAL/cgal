@@ -25,13 +25,8 @@ typedef Circular_k::Line_arc_2                              Line_arc_2;
 typedef boost::variant< Circular_arc_2, Line_arc_2>         Arc_2;
 typedef std::vector< Arc_2>                                 ArcContainer;
 
-#ifndef CGAL_CURVED_KERNEL_DEBUG
-typedef CGAL::Arr_circular_line_arc_traits<Circular_k, Circular_arc_2, Line_arc_2>  Traits;
-#else
-typedef CGAL::Arr_circular_line_arc_traits<Circular_k, Circular_arc_2, Line_arc_2>  Traits0;
-typedef CGAL::Variant_traits_tracer<Traits0>                                        Traits;
-#endif
-
+typedef CGAL::Arr_circular_line_arc_traits<Circular_k, 
+					   Circular_arc_2, Line_arc_2>  Traits;
 
 typedef CGAL::Arrangement_2<Traits>                         Arrangement;
 typedef CGAL::Arr_naive_point_location<Arrangement>         Point_location;

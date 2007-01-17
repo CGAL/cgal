@@ -6,7 +6,6 @@
 #include <CGAL/intersections.h>
 #include <CGAL/Circular_kernel_2.h>
 #include <CGAL/Arr_circular_arc_traits.h>
-#include <CGAL/Arr_circular_arc_traits_tracer.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>
 #include <CGAL/Random.h>
@@ -20,12 +19,7 @@ typedef CGAL::Circular_kernel_2<Linear_k,Algebraic_k>   Circular_k;
 typedef Circular_k::Circular_arc_2                      Arc_2;
 typedef std::vector<Arc_2>                              ArcContainer;
 
-#ifndef CGAL_CURVED_KERNEL_DEBUG
 typedef CGAL::Arr_circular_arc_traits<Circular_k>       Traits;
-#else
-typedef CGAL::Arr_circular_arc_traits<Circular_k>       Traits0;
-typedef CGAL::Circular_arc_traits_tracer<Traits0>       Traits;
-#endif
 
 typedef CGAL::Arrangement_2<Traits>                     Arrangement;
 typedef CGAL::Arr_naive_point_location<Arrangement>     Point_location;
