@@ -199,6 +199,13 @@ class Triangulation_from_slices_3 : public Triangulation_3<Gt,Tds>
       CGAL_triangulation_postcondition( is_valid() );
     }
 
+    void clear()
+    {
+      Tr_Base::clear();
+      slices.clear();
+    }
+
+
     template <class Parser>
     void load(const char* slc_file_name);
     //Precondition : the triangulation must contain no points */
