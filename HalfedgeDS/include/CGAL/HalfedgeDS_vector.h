@@ -612,8 +612,16 @@ public:
                 update_opposite( rr);
                 std::swap( *rrhv, *(rrhv+1));
             }
-            -- --rr;
-            -- --rrhv;
+
+            // This guard is needed here because, rr==ll==begin, might be true
+            // at this point, causing the decrement to result in undefined
+            // behaviour.
+            // [Fernando Cacciola]
+            if ( ll < rr )
+            {
+              -- --rr;
+              -- --rrhv;
+            }
                               // Elements in [rr+1..end) >= pivot
                               // Pivot is in *ll
         }
