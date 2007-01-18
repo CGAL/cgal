@@ -115,6 +115,10 @@ assertion_fail( const char* expr,
         ;
     }
 }
+void assertion_fail( const char* expr, const char* file, int line )
+{
+  assertion_fail(expr,file,line,"");
+}
 
 void
 precondition_fail( const char* expr,
@@ -136,6 +140,10 @@ precondition_fail( const char* expr,
         ;
     }
 }
+void precondition_fail( const char* expr, const char* file, int line )
+{
+  precondition_fail(expr,file,line,"");
+}
 
 void
 postcondition_fail(const char* expr,
@@ -156,6 +164,10 @@ postcondition_fail(const char* expr,
     case CONTINUE:
         ;
     }
+}
+void postcondition_fail( const char* expr, const char* file, int line )
+{
+  postcondition_fail(expr,file,line,"");
 }
 
 
@@ -180,6 +192,10 @@ warning_fail( const char* expr,
     case CONTINUE:
         ;
     }
+}
+void warning_fail( const char* expr, const char* file, int line )
+{
+  warning_fail(expr,file,line,"");
 }
 
 
