@@ -367,9 +367,9 @@ void SM_io_parser<Decorator_>::read()
   if ( !(check_sep("faces") && (in >> fn)) )
     CGAL_assertion_msg(0,"SM_io_parser::read: wrong face line.");
 
-  SVertex_of.reserve(vn);
-  Edge_of.reserve(en);
-  SFace_of.reserve(fn);
+  SVertex_of.resize(vn);
+  Edge_of.resize(en);
+  SFace_of.resize(fn);
   for(i=0; i<vn; i++)  SVertex_of[i] =   this->new_vertex();
   for(i=0; i<en; i++) 
     if (i%2==0) Edge_of[i] = this->new_edge_pair_without_vertices();
