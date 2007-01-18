@@ -83,8 +83,8 @@ protected:
     // the halfedge pointer in the vertices (if supported).
     // ----------------------------------------------------
     void initialize_vertex_to_edge_map( size_type  n, bool mode, Tag_true) {
-        vertex_to_edge_map = std::vector< Halfedge_handle>();
-        vertex_to_edge_map.reserve(n);
+        vertex_to_edge_map.clear();
+        vertex_to_edge_map.resize(n);
         if ( mode) {
             // go through all halfedges and keep a halfedge for each
             // vertex found in a hashmap.
@@ -98,8 +98,8 @@ protected:
         }
     }
     void initialize_vertex_to_edge_map( size_type n, bool mode, Tag_false){
-        vertex_to_edge_map = std::vector< Halfedge_handle>();
-        vertex_to_edge_map.reserve(n);
+        vertex_to_edge_map.clear();
+        vertex_to_edge_map.resize(n);
         if ( mode) {
             // go through all halfedges and keep a halfedge for each
             // vertex found in a hashmap.
@@ -152,6 +152,7 @@ protected:
     }
     void set_vertex_to_edge_map( int i, Halfedge_handle h, Tag_false) {
         // Use the self-managed array vertex_to_edge_map.
+        CGAL_assertion(i>=0 && i < vertex_to_edge_map.size());
         vertex_to_edge_map[i] = h;
     }
     void set_vertex_to_edge_map( int i, Halfedge_handle h) {
