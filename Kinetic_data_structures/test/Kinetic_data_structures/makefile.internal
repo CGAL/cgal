@@ -44,6 +44,7 @@ LDFLAGS =  ../../src/CGAL/libCGAL.a \
 #---------------------------------------------------------------------#
 
 all:            \
+		quick_test$(EXE_EXT)\
 		active_objects_tables$(EXE_EXT)\
                 Delaunay_triangulation_2$(EXE_EXT) \
                 Delaunay_triangulation_3$(EXE_EXT) \
@@ -58,8 +59,8 @@ all:            \
 		active_objects_tables$(EXE_EXT)\
 		test$(EXE_EXT)
 
-test$(EXE_EXT): test$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)test test$(OBJ_EXT) $(LDFLAGS)
+quick_test$(EXE_EXT): quick_test$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)quick_test quick_test$(OBJ_EXT) $(LDFLAGS)
 
 
 Delaunay_triangulation_2$(EXE_EXT): Delaunay_triangulation_2$(OBJ_EXT)
@@ -71,8 +72,8 @@ active_objects_tables$(EXE_EXT): active_objects_tables$(OBJ_EXT)
 Delaunay_triangulation_3$(EXE_EXT): Delaunay_triangulation_3$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay_triangulation_3 Delaunay_triangulation_3$(OBJ_EXT) $(LDFLAGS)
 
-Delaunay_triangulation_3_timing$(EXE_EXT): Delaunay_triangulation_3_timing$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay_triangulation_3_timing Delaunay_triangulation_3_timing$(OBJ_EXT) $(LDFLAGS)
+Delaunay_triangulation_3_timing$(EXE_EXT):
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)Delaunay_triangulation_3_timing Delaunay_triangulation_3_timing.cpp $(LDFLAGS) -O3 -DNDEBUG
 
 exact_kds$(EXE_EXT): exact_kds$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)exact_kds exact_kds$(OBJ_EXT) $(LDFLAGS)

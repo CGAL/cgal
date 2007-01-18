@@ -33,14 +33,16 @@ namespace pixmaps {
 #include "Kinetic_reverse.xpm"
 #include "Kinetic_faster.xpm"
 #include "Kinetic_slower.xpm"
-            }
-            const char ** play_xpm= pixmaps::play_xpm;
-            const char ** faster_xpm= pixmaps::faster_xpm;
-            const char ** play_through_xpm= pixmaps::play_through_xpm;
-            const char ** slower_xpm= pixmaps::slower_xpm;
-            const char ** pause_xpm= pixmaps::pause_xpm;
-            const char ** play_to_xpm= pixmaps::play_to_xpm;
-            const char ** reverse_xpm= pixmaps::reverse_xpm;
-            const char ** stop_xpm= pixmaps::stop_xpm;
+#include "Kinetic_print.xpm"
+}
+const char ** play_xpm= pixmaps::play_xpm;
+const char ** faster_xpm= pixmaps::faster_xpm;
+const char ** play_through_xpm= pixmaps::play_through_xpm;
+const char ** slower_xpm= pixmaps::slower_xpm;
+const char ** pause_xpm= pixmaps::pause_xpm;
+const char ** play_to_xpm= pixmaps::play_to_xpm;
+const char ** reverse_xpm= pixmaps::reverse_xpm;
+const char ** stop_xpm= pixmaps::stop_xpm;
+const char ** print_xpm= pixmaps::print_xpm;
 
 CGAL_KINETIC_END_INTERNAL_NAMESPACE

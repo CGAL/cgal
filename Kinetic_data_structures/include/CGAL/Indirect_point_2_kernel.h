@@ -71,6 +71,12 @@ class Indirect_point_2_kernel: public SK
     }
     
     typedef CGAL::Counter<int, Key> Key_iterator;
+    Key_iterator begin() const {
+      return Key_iterator(0);
+    }
+    Key_iterator end() const {
+      return Key_iterator(points_.size());
+    }
     
     typedef std::pair<Key_iterator, Key_iterator> KP;
     
@@ -177,6 +183,11 @@ public:
  
   typedef Key Point_2;
   typedef typename SK::Point_2 Geometric_point_2;
+  typedef SK Direct_kernel;
+
+  const Direct_kernel direct_kernel_object() const {
+    return static_cast<Direct_kernel>(*this);
+  }
 
   struct Current_coordinates {
     Current_coordinates(typename Rep::Handle rep): rep_(rep){}
@@ -205,6 +216,14 @@ public:
   typedef typename Rep::Key_iterator Key_iterator;
   typedef typename Rep::KP Key_range;
   
+  Key_iterator point_2s_begin() const {
+    return rep_->begin();
+  }
+
+  Key_iterator point_2s_end() const {
+    return rep_->end();
+  }
+
   template <class It>
   Key_range new_point_2s(It b, It e) const {
     return rep_->new_points(b,e);

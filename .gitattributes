@@ -758,6 +758,7 @@ Kinetic_data_structures/doc_tex/Kinetic_framework/architecture_pct.gif -text svn
 Kinetic_data_structures/doc_tex/Kinetic_framework/architecture_pct.pdf -text svneol=unset#application/pdf
 Kinetic_data_structures/doc_tex/Kinetic_framework/sort_usage_pct.gif -text svneol=unset#image/gif
 Kinetic_data_structures/doc_tex/Kinetic_framework_ref/#Time.tex# -text
+Kinetic_data_structures/src/CGALQt/Kinetic_print.xpm -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=1,n -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=3 -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=3,n -text

@@ -37,6 +37,10 @@ data structures can listen for that event, and when it is made, they
 can call \ccc{Kinetic::Simulator::audit_time()} to get the time value and
 then verify that their structure is correct.
 
+In addition, at such a time, the \ccc{Event::audit(Key)} is called on
+each event. This allows kinetic data structures to check that the
+event should be in the queue.
+
 Typically, the simulator is created by the Kinetic:SimulationTraits
 class and kinetic data structures request a handle to it from there.
 
@@ -91,7 +95,7 @@ Returns true if the current time is a rational number and there are no events at
 
 \ccMethod{Time end_time() const;} { Return the time the simulation will end. If time is running backwards, then this returns \ccc{Time::infinity()}.}
 
-\ccMethod{void set_end_time(Time t);}{Advance the end time to \ccc{t}. This is not generally a safe operation as all the kinetic data structures must rebuild their certificates at this time.}
+\ccMethod{void set_interval(Time t_cur, Time t_end);}{Set the current time to $t_{cur}$ and the end time to $t_{end}$. The event queue must be empty. Use this method if you want to reset or extend the simulation.}
 
 \ccMethod{ template <class Event> Event_key new_event(Time t, const Event event);}{Schedule a new event at time \ccc{t}. The object \ccc{event} must implement the concept \ccc{Event}. The \ccc{Event_key} returned can be used to access or deschedule the event.}
 

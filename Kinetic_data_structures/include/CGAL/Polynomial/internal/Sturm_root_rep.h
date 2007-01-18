@@ -623,12 +623,12 @@ public:
 #endif
   }
 #if 1
-  template<class Child>
+    template<class Child>
   Polynomial compute_simple(Integral_domain_without_division_tag, const Child&) const
   {
     Polynomial gcd = sseq.exact( sseq.exact_size() - 1 );
     return p_.pseudo_quotient( gcd );
-  }
+    }
 
   template<class Child>
   Polynomial compute_simple(Field_tag, const Child&) const
@@ -637,13 +637,13 @@ public:
     return p_ / gcd;
   }
 #endif
-  Polynomial compute_simple(Integral_domain_without_division_tag, const Self&) const
+  /*Polynomial compute_simple(Integral_domain_without_division_tag, const Self&) const
   {
     Polynomial gcd = sseq[sseq.size() - 1];
     return tr_.pseudo_quotient_object()(p_, gcd);
-  }
-
-  Polynomial compute_simple(Field_tag, const Self&) const
+    }*/
+  template <class S>
+  Polynomial compute_simple(S /*Field_tag*/, const Self&) const
   {
     Polynomial gcd = sseq[sseq.size() - 1];
     return tr_.quotient_object()(p_, gcd);

@@ -50,6 +50,13 @@ The \ccc{Kinetic::SortVisitor} can be used to monitor what is happening.
 
 \ccMethod{Traits& traits();}{Access the traits.}
 
+\ccMethod{Vertex_handle insert(Point_key k);}{Insert the point.}
+
+\ccMethod{void erase(Vertex_handle k);}{Erase the point.}
+
+\ccMethod{Iterator begin();}{Begin iterating through the ordered \ccc{Vertex_handle}s (the iterator is convertible to \ccc{Vertex_handle}.}
+\ccMethod{Iterator end();}{End iterating through the ordered \ccc{Vertex_handle}s (the iterator is convertible to \ccc{Vertex_handle}.}
+
 \ccSeeAlso
 
 \ccc{Kinetic::Ref_counted<T>}

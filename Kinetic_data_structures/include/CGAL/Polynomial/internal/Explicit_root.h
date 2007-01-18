@@ -214,23 +214,18 @@ std::ostream &operator<<(std::ostream &out, const Explicit_root<NT> &r)
   return out;
 }
 
-
-/*
-  template <class NT>
-  double to_double(const Explicit_root<NT> &r){
-  return r.to_double();
-  }
-
-  template <class NT>
-  std::pair<double, double>  to_interval(const Explicit_root<NT> &r){
-  return r.to_interval();
-  }
-*/
-
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
 
 CGAL_BEGIN_NAMESPACE
 
+template <class NT>
+class Algebraic_structure_traits<POLYNOMIAL_NS::Explicit_root<NT> >:
+  public Algebraic_structure_traits_base<POLYNOMIAL_NS::Explicit_root<NT>,
+					 typename Algebraic_structure_traits_base<NT>::Algebraic_category> {
+  
+}
+
+/*
 template <class NT>
 double to_double(const CGAL_POLYNOMIAL_NS::internal::Explicit_root<NT> &r)
 {
@@ -242,7 +237,7 @@ template <class NT>
 std::pair<double, double> to_interval(const CGAL_POLYNOMIAL_NS::internal::Explicit_root<NT> &r)
 {
   return r.compute_interval();
-}
+  }*/
 
 
 CGAL_END_NAMESPACE

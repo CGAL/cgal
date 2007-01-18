@@ -110,5 +110,14 @@ Qt_window_2::Qt_window_2(int xmin, int xmax, int ymin, int ymax) {
 				   _std_toolbar,
 				   "Slower");
 
+  QToolButton *filePrintAction;
+  filePrintAction = new QToolButton(QPixmap( (const char**)print_xpm ),
+				    "Print", 0,
+				    widget_,
+				    SLOT(print_to_ps()),
+				    _std_toolbar,
+				    "Print");
+
+
 }
 CGAL_KINETIC_END_INTERNAL_NAMESPACE

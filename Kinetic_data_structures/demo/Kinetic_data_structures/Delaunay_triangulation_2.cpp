@@ -1,5 +1,5 @@
 #define CGAL_CHECK_EXPENSIVE
-
+#define CGAL_CHECK_EXACTNESS
 
 #include <CGAL/basic.h>
 

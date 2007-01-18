@@ -42,6 +42,8 @@ scheduling events which will in turn pass them to the
 
 \ccMethod{bool merge_concurrent(Key a, Key b);}{ The two events \ccc{a} and \ccc{b} occur at the same time (\ccc{this} has key \ccc{a}) and cannot be perturbed to be unequal. This event  allows the KDS to merge event \ccc{b} with \ccc{a}. If it returns \ccc{true} then \ccc{b} is dropped from the event queue.}
 
+\ccMethod{void audit(Key this_key);}{Audit that this is a valid event.}
+
 \ccMethod{std::ostream& write(std::ostream&) const;}{Write the event to a stream.}
 
 %\ccMethod{void degenerate_events(Event_key this_event, Event_key other_event);}{This event and the event referenced by \ccc{k} belong to the same KDS and occur simultaneously. This function call gives the KDS a chance to handle } 

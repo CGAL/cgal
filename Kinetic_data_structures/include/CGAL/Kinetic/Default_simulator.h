@@ -223,6 +223,9 @@ public:
   //! Not clear if I want two methods
   void set_interval(const Time &ts, const Time &te) {
     //CGAL_precondition(t <=cur_time_);
+    if (!queue_.empty()) {
+      std::cerr << queue_ << std::endl;
+    }
     CGAL_precondition(queue_.empty());
     cur_time_=ts;
     //last_event_time_=ts;
@@ -434,6 +437,15 @@ public:
     return queue_.template get<Event_type>(k);
   }
 
+
+  template <class Event_type>
+  Event_type& event(const Event_key &k){
+    CGAL_precondition(k != Event_key());
+    CGAL_precondition(k != null_event());
+    //CGAL_KINETIC_LOG(LOG_LOTS, "Accessing event for key " << k << std::endl);
+    return queue_.template get<Event_type>(k);
+  }
+
   /*template <class Event_type>
     const Event_type& event(const Event_key &k, const Event_type&) const {
     CGAL_KINETIC_LOG(LOG_LOTS, "Accessing event for key " << k << std::endl);
@@ -551,6 +563,14 @@ protected:
   
     queue_.process_front();
    
+#ifdef CGAL_KINETIC_ENABLE_AUDITING
+    if (queue_.empty() && compare(current_time(), end_time()) != CGAL::EQUAL) {
+      audit_time_= mp_(current_time(), end_time());
+      CGAL_KINETIC_LOG(LOG_SOME, "Audit is at time " << audit_time_ << std::endl);
+      //if (current_time() < audit_time_ && t >= audit_time_) {
+      audit_all_kdss();
+    }
+#endif
 
     ++number_of_events_;
    

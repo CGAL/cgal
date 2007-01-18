@@ -47,6 +47,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 //#include <CGAL/Kinetic/Heap_pointer_event_queue.h>
 
+
 CGAL_KINETIC_BEGIN_NAMESPACE
 
 template <class StaticKernel,

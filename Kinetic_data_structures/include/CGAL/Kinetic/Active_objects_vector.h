@@ -316,10 +316,8 @@ public:
 
 private:
   friend class Multi_listener<Listener_core>;
+
   //! listen for changes
-  /*!
-    This method alerts the subscribe to all exising objects.
-  */
   void new_listener(Listener *sub) const
   {
     subscribers_.insert(sub);

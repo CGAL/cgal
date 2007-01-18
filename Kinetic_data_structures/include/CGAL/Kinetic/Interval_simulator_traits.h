@@ -26,6 +26,7 @@ public:
   template <class NT>
   Interval_root(NT a) {
     iv_= CGAL::to_interval(a);
+    CGAL_precondition(iv_.first == iv_.second);
   }
 
   Interval_root(): iv_(1,-1){
@@ -73,8 +74,10 @@ public:
     CGAL_precondition(er <= oiv.second);
     //CGAL_precondition(!is_point());
 #endif
-    if (data_.ensure_exact_root(iv_)) {
-      iv_= to_interval(data_.exact_root());
+    if (data_.ensure_exact_root(iv_) && iv_.first != iv_.second) {
+      std::pair<double,double> niv= to_interval(data_.exact_root());
+      iv_.first = std::max(niv.first, iv_.first);
+      iv_.second = std::min(niv.second, iv_.second);
     }
     return data_.exact_root();
   }

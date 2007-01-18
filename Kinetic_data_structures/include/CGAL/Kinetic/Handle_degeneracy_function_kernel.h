@@ -43,11 +43,18 @@ template <class Traits_t, bool SLOPPY>
 	 const Root& ub, const Traits_t& k): solver_(k.root_stack_object(uf, lb, ub)),
 					     iem_(k.is_even_multiplicity_object(uf)) {
       CGAL_expensive_precondition(solver_.top() > lb);
+#ifndef NDEBUG
+      std::cout << "Function= " << uf << std::endl;
+#endif
       CGAL::POLYNOMIAL::Sign sn= k.sign_between_roots_object(lb, solver_.top())(uf);
       if (sn == CGAL::NEGATIVE) {
 	if (!SLOPPY) {
-	  std::cout << "Invalid certificate constructed for function " << uf << " between " << lb 
-		    << " and " << ub << " will fail immediately." << std::endl;
+#ifndef NDEBUG
+	  if (k.sign_at_object(uf)(lb) == CGAL::NEGATIVE) {
+	    CGAL_KINETIC_ERROR( "Invalid certificate constructed for function " << uf << " between " << lb 
+				<< " and " << ub << " will fail immediately." << std::endl);
+	  }
+#endif
 	  extra_root_=lb;
 	  has_extra_=true;
 	} else {

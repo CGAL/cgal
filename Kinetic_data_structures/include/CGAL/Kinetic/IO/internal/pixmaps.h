@@ -34,6 +34,7 @@ namespace CGAL
             extern const char ** play_to_xpm;
             extern const char ** reverse_xpm;
             extern const char ** stop_xpm;
+	    extern const char ** print_xpm;
         }
     }
 }

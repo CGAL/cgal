@@ -30,10 +30,11 @@ This class provides a base to use for implementing events. The base provides def
 
 \ccMethod{KDS* kds();}{Returns the stored pointer to the KDS.}
 
-
 \ccMethod{CGAL::Comparison_result compare_concurrent(Key a, Key b) const;}{This returns \ccc{CGAL::compare(a,b)}.}
 
 \ccMethod{bool merge_concurrent(Key a, Key b);}{ This does nothing and returns false.}
+
+\ccMethod{void audit(Key this_key);}{Audit that this is a valid event.}
 
 \ccMethod{std::ostream& write(std::ostream&) const;}{Write ``Event base'' to the stream.}
 

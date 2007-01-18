@@ -1,8 +1,10 @@
 //#define MOVE_ALL
+//#define HYBRID
+
 #ifndef NDEBUG
 #define CGAL_CHECK_EXPENSIVE
 #define CGAL_CHECK_EXACTNESS
-#define CGAL_KINETIC_DISABLE_AUDITING
+//#define CGAL_KINETIC_DISABLE_AUDITING
 #endif
 
 #include <CGAL/basic.h>
@@ -34,6 +36,10 @@ int main(int argc, char *argv[]) {
   boost::program_options::options_description desc("Allowed options");
   desc.add_options()
     ("help", boost::program_options::bool_switch(&print_help), "produce help message")
+    ("disable-0,0", boost::program_options::bool_switch(&CGAL::disable_filter_0_), "Disable filter 0")
+    ("disable-1,1", boost::program_options::bool_switch(&CGAL::disable_filter_1_), "Disable filter 1")
+    ("disable-2,2", boost::program_options::bool_switch(&CGAL::disable_filter_2_), "Disable filter 2")
+    ("disable-3,3", boost::program_options::bool_switch(&CGAL::disable_filter_3_), "Disable filter 3")
     ("exact", boost::program_options::bool_switch(&exact), "Run an exact simulation")
     ("num-points,n", boost::program_options::value<int>(&n), "Number of points to use.")
     ("random-seed,s", boost::program_options::value<int>(&seed), "The value to use for the random seed.")

@@ -60,14 +60,14 @@ CGAL_POLYNOMIAL_END_NAMESPACE
 
 CGAL_POLYNOMIAL_BEGIN_NAMESPACE
 
-/*typedef CGAL::Sign Sign;
+typedef CGAL::Sign Sign;
 static const Sign ZERO= CGAL::ZERO;
 static const Sign POSITIVE= CGAL::POSITIVE;
-static const Sign NEGATIVE= CGAL::NEGATIVE;*/
-typedef int Sign;
+static const Sign NEGATIVE= CGAL::NEGATIVE;
+/*typedef int Sign;
 static const int ZERO =CGAL::ZERO;
 static const int POSITIVE=CGAL::POSITIVE;
-static const int NEGATIVE=CGAL::NEGATIVE;
+static const int NEGATIVE=CGAL::NEGATIVE;*/
 typedef int Comparison_result;
 static const int EQUAL= CGAL::EQUAL;
 static const int SMALLER= CGAL::SMALLER;
@@ -91,10 +91,10 @@ Sign sign(const NT &nt)
 }
 
 
-typedef ::CGAL::Integral_domain_without_division_tag             Integral_domain_without_division_tag;
+/*typedef ::CGAL::Integral_domain_without_division_tag             Integral_domain_without_division_tag;
 typedef ::CGAL::Euclidean_ring_tag   Euclidean_ring_tag;
 typedef ::CGAL::Field_tag            Field_tag;
-typedef ::CGAL::Field_with_sqrt_tag       Field_with_sqrt_tag;
+typedef ::CGAL::Field_with_sqrt_tag       Field_with_sqrt_tag;*/
 
 CGAL_POLYNOMIAL_END_NAMESPACE
 

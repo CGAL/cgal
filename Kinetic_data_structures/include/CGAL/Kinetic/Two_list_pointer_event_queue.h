@@ -239,6 +239,12 @@ public:
   {
     return event_;
   }
+
+ // Access the actual event
+  Event &event()
+  {
+    return event_;
+  }
   
   virtual ~Two_list_event_queue_item_rep(){}
 
@@ -432,6 +438,11 @@ public:
   template <class E>
   const E& get(const Key &item) const
   {
+    return reinterpret_cast<internal::Two_list_event_queue_item_rep<Priority, E>*>( item.get())->event();
+  }
+
+  template <class E>
+  E& get(const Key &item)  {
     return reinterpret_cast<internal::Two_list_event_queue_item_rep<Priority, E>*>( item.get())->event();
   }
 

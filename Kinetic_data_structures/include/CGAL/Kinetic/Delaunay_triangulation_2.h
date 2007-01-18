@@ -192,7 +192,7 @@ public:
     }
     init_data(false);
   
-    set_has_certificates(false);
+    set_has_certificates(false, 0);
   }
 
   Delaunay_triangulation_2(Simulation_traits st,
@@ -201,7 +201,7 @@ public:
     watcher_(w),
     del_(traits_.instantaneous_kernel_object()) {
     init_data(true);
-    set_has_certificates(true);
+    set_has_certificates(true, 0);
   }
 
 
@@ -315,17 +315,20 @@ public:
     }
   }
 
-  void set_has_certificates(bool tf, bool no_failures=false, bool no_structure_changes=false) {
+  enum New_certificate_state {HAD_NO_FAILURES=1, HAS_NO_FAILURES = 2, NO_STRUCTURE_CHANGES = 4};
+
+  void set_has_certificates(bool tf, int state) {
     if (tf == has_certificates_){
 
     } else {
       if (tf==true && del_.dimension()==2) {
 	CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, "DELAUNAY2: Creating certificates."<< std::endl);
-	if (!no_structure_changes) {
+	if (!(state & NO_STRUCTURE_CHANGES)) {
 	  set_neighbors_initialized(true);
 	}
-	if (no_failures) {
+	if (state & HAS_NO_FAILURES && !(state & HAD_NO_FAILURES)) {
 	  for (Face_iterator f = del_.all_faces_begin(); f != del_.all_faces_end(); ++f) {
+	    
 	    set_directed_edge_label(Edge(f,0), traits_.simulator_handle()->null_event());
 	    set_directed_edge_label(Edge(f,1), traits_.simulator_handle()->null_event());
 	    set_directed_edge_label(Edge(f,2), traits_.simulator_handle()->null_event());
@@ -343,6 +346,8 @@ public:
 	    }
 
 	  }
+	} else if (state & HAD_NO_FAILURES  && state & HAS_NO_FAILURES)  {
+	  // nothing to do, yeah!!!
 	} else {
 	  for (Edge_iterator eit = del_.all_edges_begin(); eit != del_.all_edges_end(); ++eit) {
 	    set_undirected_edge_label(*eit, Event_key());
@@ -352,7 +357,7 @@ public:
 
 	watcher_.create_faces(del_.all_faces_begin(), del_.all_faces_end());
       } else if (tf==false) { 
-	if (!no_failures) {
+	if (!(state & HAD_NO_FAILURES)) {
 	  for (Face_iterator f = del_.all_faces_begin(); f != del_.all_faces_end(); ++f) {
 	    for(unsigned int i=0; i< 3; ++i) {
 	      Edge e(f,i);
@@ -518,7 +523,7 @@ public:
       if (!was_2d && del_.dimension()==2) {
 	vh->set_neighbors(vh->degree());
 	has_certificates_=false;
-	set_has_certificates(true); 
+	set_has_certificates(true, 0); 
       } else if (del_.dimension() == 2) {
 	update_neighbors(vh);
 	update_vertex(vh);

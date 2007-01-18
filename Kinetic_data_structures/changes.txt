@@ -10,14 +10,19 @@ July 2006 Daniel Russel
 
 August 2006 Daniel Russel
 - added set_has_certificates to Delaunay_2
-- added degeneracy handling to Event
+- added degeneracy handling to Event (a set of new, optional methods)
 - infinity is not needed for roots any more
 
 - to_static replaced with Current_coordinates functor in instantaneous kernel
 - the Delaunay_triangulation_2 doesn't require that the Triangulation use an Instantaneous_kernel (if you don't insert or erase)
 - removed set_end_time/set_end_priority replaced with set_interval
 
+September 2006 Daniel Russel
+- added event auditing
+- sorting modified to support general objects (added template arguments)
+
 Future Daniel Russel
 - change non-failing root to be NaN or Root() rather than infinity?
 - when using numeric solvers, evaluate the static predicates first before solving?
 - add doc of to_index
+- change KDS interfaces to not automaticall add points to the KDSs--add insert methods
