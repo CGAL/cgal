@@ -85,7 +85,7 @@ public:
     
   pointer ptr () const
   {
-    return (reinterpret_cast<value_type *> (*iter));
+    return (static_cast<value_type *> (*iter));
   }
 
   reference operator* () const
@@ -199,7 +199,7 @@ public:
     
   pointer ptr () const
   {
-    return (reinterpret_cast<const value_type *> (*iter));
+    return (static_cast<const value_type *> (*iter));
   }
 
   reference operator* () const
@@ -283,11 +283,13 @@ public:
 
   /*! Constructors. */
   I_Filtered_iterator()
-  {}
+  {
+  }
 
   I_Filtered_iterator (Iterator it) :
-    nt (it)
-  {}
+    nt (it), iend(it)
+  {
+  }
 
   I_Filtered_iterator (Iterator it, Iterator end) :
     nt (it),
@@ -325,7 +327,7 @@ public:
 
   pointer ptr() const
   {
-    return (pointer)(&(*nt));
+    return static_cast<pointer>(&(*nt));
   }
 
   /*! Equality operators. */
@@ -385,6 +387,7 @@ public:
     --(*this);
     return tmp;
   }
+
 };
 
 /*!
@@ -429,11 +432,13 @@ public:
 
   /*! Constructors. */
   I_Filtered_const_iterator()
-  {}
+  {
+  }
 
   I_Filtered_const_iterator (Iterator it) :
-    nt (it)
-  {}
+    nt (it), iend(it)
+  {
+  }
 
   I_Filtered_const_iterator (Iterator it, Iterator end) :
     nt (it),
@@ -457,7 +462,8 @@ public:
     nt (it.current_iterator()),
     iend (it.past_the_end()),
     filt (it.filter())
-  {}
+  {
+  }
 
   /*! Access operations. */
   Iterator current_iterator() const
@@ -477,7 +483,7 @@ public:
 
   pointer ptr() const
   {
-    return (pointer)(&(*nt));
+    return static_cast<pointer>(&(*nt));
   }
 
   /*! Equality operators. */
@@ -537,6 +543,7 @@ public:
     --(*this);
     return tmp;
   }
+
 };
 
 CGAL_END_NAMESPACE

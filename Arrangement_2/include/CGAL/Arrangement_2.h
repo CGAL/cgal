@@ -41,6 +41,10 @@
 #include <vector>
 #include <algorithm>
 
+#include <CGAL/function_objects.h>
+#include <CGAL/Iterator_project.h>
+#include <CGAL/Iterator_transform.h>
+
 CGAL_BEGIN_NAMESPACE
 
 /*! \class
@@ -353,28 +357,50 @@ public:
      Halfedge_const_iterator,
      Bidirectional_circulator_tag>    Ccb_halfedge_const_circulator;
   
-  typedef I_HalfedgeDS_iterator
-    <DHoles_iter, Ccb_halfedge_circulator,
-     DDifference,
-     DIterator_category>              Hole_iterator;
+private:
+                                                 
+  struct HalfedgePtrToCirculator
+  {
+     typedef DHalfedge*              argument_type ;
+     typedef Ccb_halfedge_circulator result_type ;
+
+     result_type operator() ( argument_type const& s ) const
+     {
+       return Ccb_halfedge_circulator( Halfedge_iterator(s) ) ;
+     }
+  } ;
+
+  struct HalfedgeConstPtrToConstCirculator
+  {
+     typedef DHalfedge const*              argument_type ;
+     typedef Ccb_halfedge_const_circulator result_type ;
+
+     result_type operator() ( argument_type const& s ) const
+     {
+       return Ccb_halfedge_const_circulator( Halfedge_const_iterator(s) ) ;
+     }
+  } ;
+
+  typedef Cast_function_object<DVertex,Vertex> DVertexToVertexCast ;
   
-  typedef I_HalfedgeDS_const_iterator
-    <DHoles_const_iter, DHoles_iter,
-     Ccb_halfedge_const_circulator,
-     DDifference,
-     DIterator_category>              Hole_const_iterator;
+  typedef Iterator_project<DIsolated_vertices_iter      ,DVertexToVertexCast> Isolated_vertex_iterator_base ;
+  typedef Iterator_project<DIsolated_vertices_const_iter,DVertexToVertexCast> Isolated_vertex_const_iterator_base ;
+  
+public :
+
+  typedef Iterator_transform<DHoles_iter      ,HalfedgePtrToCirculator          > Hole_iterator ;
+  typedef Iterator_transform<DHoles_const_iter,HalfedgeConstPtrToConstCirculator> Hole_const_iterator ;
+  
+  
 
   /*! \class
    * Isolated vertices iterator - defined as a class to make it assignable
    * to the vertex iterator type.
    */
-  class Isolated_vertex_iterator :
-    public I_HalfedgeDS_iterator<DIsolated_vertices_iter,                                 Vertex, DDifference,
-                                 DIterator_category>
+   
+  class Isolated_vertex_iterator : public Isolated_vertex_iterator_base
   {
-    typedef I_HalfedgeDS_iterator<DIsolated_vertices_iter,
-                                  Vertex, DDifference,
-                                  DIterator_category>         Base;
+    typedef Isolated_vertex_iterator_base Base ;
 
   public:
 
@@ -397,16 +423,9 @@ public:
     }
   };
   
-  class Isolated_vertex_const_iterator :
-    public I_HalfedgeDS_const_iterator <DIsolated_vertices_const_iter,
-                                        DIsolated_vertices_iter,
-                                        Vertex, DDifference,
-                                        DIterator_category>
+  class Isolated_vertex_const_iterator : public Isolated_vertex_const_iterator_base
   {
-    typedef I_HalfedgeDS_const_iterator <DIsolated_vertices_const_iter,
-                                         DIsolated_vertices_iter,
-                                         Vertex, DDifference,
-                                         DIterator_category>            Base;
+    typedef Isolated_vertex_const_iterator_base Base ;
 
   public:
 
@@ -532,16 +551,21 @@ protected:
     }
   };
 
-  /*! \class
-   * An iterator for traversing all arrangement edges (including the
-   * fictitious ones).
-   */
-  class _All_edge_iterator :
-    public I_HalfedgeDS_iterator<DEdge_iter, Halfedge,
-                                 DDifference, DIterator_category>
+  
+
+  typedef Cast_function_object<DHalfedge,Halfedge> DHalfedgeToHalfedgeCast ;
+  
+  typedef Iterator_project<DEdge_iter      ,DHalfedgeToHalfedgeCast>  _All_edge_iterator_base;
+  typedef Iterator_project<DEdge_const_iter,DHalfedgeToHalfedgeCast>  _All_edge_const_iterator_base;
+
+  
+  //! \class
+  //! An iterator for traversing all arrangement edges (including the fictitious ones).
+  //!
+
+  class _All_edge_iterator : public _All_edge_iterator_base
   {
-    typedef I_HalfedgeDS_iterator<DEdge_iter, Halfedge,
-                                  DDifference, DIterator_category>   Base;
+    typedef _All_edge_iterator_base Base;
 
   public:
  
@@ -565,14 +589,9 @@ protected:
     }    
   };
 
-  class _All_edge_const_iterator :
-    public I_HalfedgeDS_const_iterator<DEdge_iter, DEdge_const_iter,
-                                       Halfedge, DDifference,
-                                       DIterator_category>
+  class _All_edge_const_iterator : public _All_edge_const_iterator_base
   {
-    typedef I_HalfedgeDS_const_iterator<DEdge_iter, DEdge_const_iter,
-                                        Halfedge, DDifference,
-                                        DIterator_category>        Base;
+    typedef _All_edge_const_iterator_base Base;
 
   public:
  
@@ -586,6 +605,11 @@ protected:
     _All_edge_const_iterator (DEdge_const_iter iter) :
       Base (iter)
     {}
+    
+    _All_edge_const_iterator ( _All_edge_iterator const& iter) :
+      Base (iter)
+    {}
+    
 
     // Casting to a halfedge iterator.
     operator Halfedge_const_iterator () const
@@ -595,6 +619,7 @@ protected:
     }
   };
 
+  
 public:
 
   // Definition of handles (equivalent to iterators):

@@ -33,6 +33,8 @@
 #include <CGAL/In_place_list.h>
 #include <CGAL/HalfedgeDS_iterator.h>
 #include <CGAL/Arrangement_2/Arrangement_2_iterators.h>
+#include <CGAL/function_objects.h>
+#include <CGAL/Iterator_project.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -59,6 +61,7 @@ inline bool _is_lsb_set (const void* p)
 
   return ((val & mask) != 0); 
 }
+
 
 /*! \class
  * Base vertex class. 
@@ -297,6 +300,7 @@ public:
                                             Isolated_vertex_const_iterator;
 
 protected:
+public:
 
   void           *p_he;        // An incident halfedge along the face boundary.
                                // The LSB of the pointer indicates whether
@@ -637,19 +641,11 @@ public:
     return;
   }
 
-  // Define the hole iterators:
-  typedef I_HalfedgeDS_iterator<
-    typename F::Hole_iterator,
-    Halfedge*,
-    typename F::Hole_iterator::difference_type,
-    typename F::Hole_iterator::iterator_category>       Hole_iterator;
-
-  typedef I_HalfedgeDS_const_iterator<
-    typename F::Hole_const_iterator,
-    typename F::Hole_iterator,
-    const Halfedge*,
-    typename F::Hole_const_iterator::difference_type,
-    typename F::Hole_const_iterator::iterator_category> Hole_const_iterator;
+  typedef Cast_function_object<void*,Halfedge*> HolePtr2HalfedgePtrCast ;
+  
+  typedef Iterator_project<typename F::Hole_iterator      , HolePtr2HalfedgePtrCast> Hole_iterator ;
+  typedef Iterator_project<typename F::Hole_const_iterator, HolePtr2HalfedgePtrCast> Hole_const_iterator ;
+  
 
   /*! Get the number of holes inside the face. */
   size_t number_of_holes() const
