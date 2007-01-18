@@ -23,6 +23,8 @@
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
 #include <list>
+#include <boost/optional.hpp>
+#include <boost/none.hpp>
 
 namespace CGAL {
 
@@ -65,20 +67,20 @@ public:
 
     typedef typename std::list<Vertex_handle>::iterator iv_iterator;
 private:
-    Halfedge_handle _h;
-    Face_handle     _f;
-    Point           _p;
-    iv_iterator     _ivit;
-    Mark            _m;
-    GenPtr          _i;
+    Halfedge_handle              _h;
+    Face_handle                  _f;
+    Point                        _p;
+    boost::optional<iv_iterator> _ivit;
+    Mark                         _m;
+    GenPtr                       _i;
 public:
 
-    Nef_vertex_2() : _h(),_f(),_ivit(nil_),_m(0),_i((GenPtr)0xABCD) {}
+    Nef_vertex_2() : _h(),_f(),_ivit(),_m(0),_i((GenPtr)0xABCD) {}
     // constructs an uninitialized vertex concerning embedding 
     // and mark. All links are initialized by their default value.
 
     Nef_vertex_2( const Point& p) : 
-        _h(),_f(),_p(p),_ivit(nil_),_m(0),_i((GenPtr)0xABCD) {}
+        _h(),_f(),_p(p),_ivit(),_m(0),_i((GenPtr)0xABCD) {}
     // constructs a vertex with embedding |p| and mark |m|.
     //  All links are initialized by their default value.
 
@@ -112,11 +114,9 @@ public:
     /*{\Mop returns a generic information slot of |\Mvar|.}*/
     const GenPtr& info() const { return _i; }
 
-    iv_iterator ivit() const { return _ivit; }
+    iv_iterator ivit() const { return *_ivit; }
     void set_ivit(iv_iterator it) { _ivit = it; }
-    static iv_iterator nil_;
-    /* stl iterators have default construction but are only equal 
-       comparable when copy constructed, what a mess in the specification */
+    void reset_ivit() { _ivit = boost::none; }
 };
 
 
@@ -144,16 +144,16 @@ public:
     typedef typename Traits::Mark  Mark;  // information 
 
 protected:
-    Halfedge_handle  opp, prv, nxt;
-    Vertex_handle    _v;
-    Face_handle      _f;    
-    fc_iterator      _fcit;
-    Mark             _m;
-    GenPtr           _i;
+    Halfedge_handle              opp, prv, nxt;
+    Vertex_handle                _v;
+    Face_handle                  _f;    
+    boost::optional<fc_iterator> _fcit;
+    Mark                         _m;
+    GenPtr                       _i;
 public:
        
     Nef_halfedge_2() : 
-        opp(),prv(),nxt(),_v(),_f(),_fcit(nil_),_m(0),_i((GenPtr)0xABCD) {}
+        opp(),prv(),nxt(),_v(),_f(),_fcit(),_m(0),_i((GenPtr)0xABCD) {}
     /*{\Mcreate constructs an uninitialized halfedge concerning embedding 
       and mark. All links are initialized by their default value.}*/   
 
@@ -202,17 +202,14 @@ public:
     /*{\Mop returns a generic information slot of |\Mvar|.}*/
     const GenPtr& info() const { return _i; }
 
-    fc_iterator fcit() const      { return _fcit; }
-    void set_fcit(fc_iterator it) { _fcit=it; }
+    fc_iterator fcit() const      { return *_fcit; }
+    void set_fcit(fc_iterator it) { _fcit = it; }
+    void reset_fcit()             { _fcit = boost::none; }
 
     bool is_hole_entry() const 
         /*{\Mop returns true iff |\Mvar| is entry point into a hole face
           cycle of |\Mvar.face()|.}*/
-        { return _fcit != nil_; }
-
-    static fc_iterator nil_;
-    /* stl iterators have default construction but are only equal comparable
-       when copy constructed, what a mess in the specification */
+        { return !!_fcit; }
 };
 
 template <typename Refs, typename Traits>
@@ -320,7 +317,7 @@ public:
           face cycle list of |\Mvar|.
           Postcondition: |!h->is_hole_entry()|.}*/
         { CGAL_assertion(h->is_hole_entry());
-        FC.erase(h->fcit()); h->set_fcit(Halfedge::nil_); }
+        FC.erase(h->fcit()); h->reset_fcit(); }
 
     void store_iv(Vertex_handle v)
         /*{\Mop stores vertex |v| as an isolated vertex of |\Mvar|.}*/
@@ -332,7 +329,7 @@ public:
           isolated vertices list of |\Mvar|. 
           Postcondition: |!v->is_isolated()|.}*/
         { CGAL_assertion(v->is_isolated()); 
-        IV.erase(v->ivit()); v->set_ivit(Vertex::nil_); }
+        IV.erase(v->ivit()); v->reset_ivit(); }
       
     /*{\Mtext\setopdims{4cm}{0cm}}*/
 
@@ -353,9 +350,9 @@ public:
     void clear_all_entries()
         {
         for (Hole_iterator hit = fc_begin(); hit!=fc_end(); ++hit) 
-            hit->set_fcit(Halfedge::nil_);
+            hit->reset_fcit();
         for (Isolated_vertex_iterator vit = iv_begin(); vit!=iv_end(); ++vit) 
-            vit->set_ivit(Vertex::nil_);
+            vit->reset_ivit();
         FC.clear(); IV.clear(); }
 
     /*{\Mtext There are the same iterator ranges defined for the const
@@ -381,15 +378,6 @@ public:
     /*{\Mop returns a generic information slot of |\Mvar|.}*/
     const GenPtr& info() const { return _i; }
 };
-
-
-template <typename R,class T> 
-typename Nef_vertex_2<R,T>::iv_iterator    Nef_vertex_2<R,T>::nil_;
-
-template <typename R,class T> 
-typename Nef_halfedge_2<R,T>::fc_iterator  Nef_halfedge_2<R,T>::nil_;
-
-
 
 class HDS_items {
 public:
