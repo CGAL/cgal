@@ -34,9 +34,9 @@ namespace Surface_mesh_simplification
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::vertex_descriptor
-collapse_triangulation_edge( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edge_descriptor const& pq
-                           , Polyhedron_3<Gt,I,HDS,A>& aSurface
-                           )     
+halfedge_collapse( typename boost::graph_traits< Polyhedron_3<Gt,I,HDS,A> >::edge_descriptor const& pq
+                 , Polyhedron_3<Gt,I,HDS,A>& aSurface
+                 )     
 {
   typedef Polyhedron_3<Gt,I,HDS,A> Surface ;
   

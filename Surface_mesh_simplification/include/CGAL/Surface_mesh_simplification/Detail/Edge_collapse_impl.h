@@ -428,7 +428,7 @@ void EdgeCollapse<M,SP,VIM,EIM,EBM,CF,PF,V>::Collapse( Profile const& aProfile )
   // It's REQUIRED to remove ONLY 1 vertex (P or Q) and edges PQ,PT and QB (PT and QB are removed if they are not null).
   // All other edges must be kept.
   // All directed edges incident to vertex removed are relink to the vertex kept.
-  rResult = collapse_triangulation_edge(aProfile.v0v1(),mSurface);
+  rResult = halfedge_collapse(aProfile.v0v1(),mSurface);
   
   CGAL_ECMS_TRACE(1,"V" << rResult->ID << " kept." ) ;
                  
