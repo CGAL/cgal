@@ -165,6 +165,8 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
   typedef typename Cell_container::iterator         Cell_iterator;
   typedef typename Cell_container::reverse_iterator Cell_reverse_iterator;
   
+  typedef typename Cell_container::size_type size_type ;
+  
   Cell_container active_cells;
   
   // set of input matrices must not be empty:
@@ -197,6 +199,7 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
   // now start the search:
 
   for (;;) {
+  
     if ( ccd > 1) {
       // ------------------------------------------------------
       // divide cells:
@@ -207,12 +210,16 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
       // otherwise one of the insert operations might cause
       // a reallocation invalidating j
       // (should typically result in a segfault)
-      active_cells.reserve( 4 * active_cells.size());
-    
-      for ( Cell_reverse_iterator j( active_cells.rbegin());
-            j != active_cells.rend();
-            ++j) {
-    
+      // active_cells.reserve( 4 * active_cells.size());
+  
+      for ( int j = active_cells.size() - 1 ; j >= 0 ; -- j )
+      {
+      //for ( Cell_reverse_iterator j( active_cells.rbegin());
+      //      j != active_cells.rend();
+      //      ++j) {
+
+        Cell lRefCell = active_cells.at(j) ;
+        
         // upper-left quarter:
         // Cell( (*j).matrix(),
         //       (*j).x_min(),
@@ -221,27 +228,27 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
     
         // lower-left quarter:
         active_cells.push_back(
-          Cell( (*j).matrix(),
-                (*j).x_min(),
-                (*j).y_min() + ccd));
+          Cell( lRefCell.matrix(),
+                lRefCell.x_min(),
+                lRefCell.y_min() + ccd));
     
         // upper-right quarter:
         active_cells.push_back(
-          Cell( (*j).matrix(),
-                (*j).x_min() + ccd,
-                (*j).y_min()));
+          Cell( lRefCell.matrix(),
+                lRefCell.x_min() + ccd,
+                lRefCell.y_min()));
     
         // lower-right quarter:
         active_cells.push_back(
-          Cell( (*j).matrix(),
-                (*j).x_min() + ccd,
-                (*j).y_min() + ccd));
+          Cell( lRefCell.matrix(),
+                lRefCell.x_min() + ccd,
+                lRefCell.y_min() + ccd));
     
       } // for all active cells
     } // if ( ccd > 1)
     else if ( active_cells.size() <= 1) //!!! maybe handle <= 3
       break;
-    
+      
     // there has to be at least one cell left:
     CGAL_optimisation_assertion( active_cells.size() > 0);
     
@@ -252,6 +259,7 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
     int lower_median_rank = (active_cells.size() - 1) >> 1;
     int upper_median_rank = (active_cells.size() >> 1);
     
+
     // compute upper median of cell's minima:
     nth_element(active_cells.begin(),
                 active_cells.begin() + upper_median_rank,
