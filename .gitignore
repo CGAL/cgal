@@ -299,6 +299,7 @@ Random_numbers/doc_ps
 Skin_surface_3/.cdtproject
 Skin_surface_3/.project
 Skin_surface_3/.settings
+Skin_surface_3/test/Skin_surface_3/*.off
 Skin_surface_3/test/Skin_surface_3/ProgramOutput*
 Skin_surface_3/test/Skin_surface_3/cgal_test
 Skin_surface_3/test/Skin_surface_3/err.txt

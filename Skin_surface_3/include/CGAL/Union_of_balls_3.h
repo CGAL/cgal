@@ -29,48 +29,104 @@
 // Contains the weighted converter:
 #include <CGAL/Regular_triangulation_filtered_traits_3.h>
 
+#include <CGAL/Triangulation_vertex_base_with_info_3.h>
+#include <CGAL/Triangulation_cell_base_with_info_3.h>
 #include <CGAL/triangulate_power_diagram_3.h>
 
 // Contains the cell base of the triangulated mixed complex (and VD)
 #include <CGAL/Skin_surface_3.h>
+#include <CGAL/Triangulation_simplex_3.h>
 
 CGAL_BEGIN_NAMESPACE 
 
 template <class UnionOfBallsTraits_3> 
 class Union_of_balls_3 {
+  typedef UnionOfBallsTraits_3            Gt;
+  typedef Union_of_balls_3<Gt>            Self;
 public:
-  typedef UnionOfBallsTraits_3           Gt;
-  typedef typename Gt::Weighted_point   Weighted_point;
-  typedef typename Gt::Bare_point       Bare_point;
-  typedef typename Gt::RT               RT;
+  typedef UnionOfBallsTraits_3            Geometric_traits;
+  typedef typename Gt::Weighted_point     Weighted_point;
+  typedef typename Gt::Bare_point         Bare_point;
+  typedef typename Gt::FT                 FT;
+  // NGHK:: added for the Delaunay mesher
+  typedef typename Gt::Sphere_3           Sphere;
+  typedef typename Gt::Vector_3           Vector;
   
   typedef Regular_triangulation_3<Gt>     Regular;
-//   typedef Triangulation_data_structure_3 <
-//     Triangulation_vertex_base_3<GT>,
-//     Triangulated_mixed_complex_cell_3<GT, PolyhedronKernel_3> >
-//                                           Triangulated_mixed_complex_tds;
 
-  // defining the triangulated mixed complex:
-  typedef Exact_predicates_inexact_constructions_kernel    TMC_Traits;
+private:
+  typedef Exact_predicates_inexact_constructions_kernel     Filtered_kernel;
 public:
-
-#ifdef CGAL_SKIN_SURFACE_USE_EXACT_IMPLICIT_SURFACE
-  typedef Skin_surface_quadratic_surface_3<TMC_Traits>   Quadratic_surface;
-#else
-  typedef Skin_surface_quadratic_surface_3<Simple_cartesian<double> > 
+  typedef Skin_surface_quadratic_surface_3<Filtered_kernel> 
                                                          Quadratic_surface;
-#endif // CGAL_SKIN_SURFACE_USE_EXACT_IMPLICIT_SURFACE
+public:
+  typedef typename Regular::Vertex_handle                Vertex_handle;
+  typedef typename Regular::Edge                         Edge;
+  typedef typename Regular::Facet                        Facet;
+  typedef typename Regular::Facet_circulator             Facet_circulator;
+  typedef typename Regular::Cell_handle                  Cell_handle;
+  typedef Triangulation_simplex_3<Regular>               Simplex;
 
-  typedef Triangulation_3<
-    TMC_Traits,
-    Triangulation_data_structure_3
-    < Triangulated_mixed_complex_vertex_3<TMC_Traits>,
-      Triangulated_mixed_complex_cell_3<TMC_Traits,Quadratic_surface> > 
-  >                                                   Triangulated_mixed_complex;
-  typedef typename Triangulated_mixed_complex::Vertex_handle TMC_Vertex_handle;
-  typedef typename Triangulated_mixed_complex::Cell_handle   TMC_Cell_handle;
-  typedef typename TMC_Traits::Point_3                       TMC_Point;
-  
+  // pair of a del- and vor-simplex
+  typedef std::pair<Simplex,Simplex>                     Anchor_point;
+
+  //private:
+  typedef typename Regular::Finite_vertices_iterator     Finite_vertices_iterator;
+  typedef typename Regular::Finite_edges_iterator        Finite_edges_iterator;
+  typedef typename Regular::Finite_facets_iterator       Finite_facets_iterator;
+  typedef typename Regular::Finite_cells_iterator        Finite_cells_iterator;
+
+public:
+  typedef Anchor_point                                  Vertex_info;
+  typedef std::pair<Simplex, Quadratic_surface *>       Cell_info;
+private:
+  // Triangulated_mixed_complex:
+  typedef Simple_cartesian<Interval_nt_advanced>                       FK;
+  typedef Triangulation_vertex_base_with_info_3<Vertex_info, FK>       Vb;
+  typedef Triangulation_cell_base_with_info_3<Cell_info, FK>           Cb;
+  typedef Triangulation_data_structure_3<Vb,Cb>                        Tds;
+public:
+  typedef Triangulation_3<FK, Tds>                                     TMC;
+private:
+  typedef typename TMC::Finite_vertices_iterator TMC_Vertex_iterator;
+  typedef typename TMC::Finite_cells_iterator    TMC_Cell_iterator;
+  typedef typename TMC::Vertex_handle            TMC_Vertex_handle;
+  typedef typename TMC::Cell_handle              TMC_Cell_handle;
+  typedef typename TMC::Point                    TMC_Point;
+////public:
+////  typedef UnionOfBallsTraits_3           Gt;
+////  typedef typename Gt::Weighted_point   Weighted_point;
+////  typedef typename Gt::Bare_point       Bare_point;
+////  typedef typename Gt::RT               RT;
+////  
+////  typedef Regular_triangulation_3<Gt>     Regular;
+//////   typedef Triangulation_data_structure_3 <
+//////     Triangulation_vertex_base_3<GT>,
+//////     Triangulated_mixed_complex_cell_3<GT, PolyhedronKernel_3> >
+//////                                           Triangulated_mixed_complex_tds;
+////
+////  // defining the triangulated mixed complex:
+////  typedef Exact_predicates_inexact_constructions_kernel    TMC_Traits;
+////public:
+////
+////#ifdef CGAL_SKIN_SURFACE_USE_EXACT_IMPLICIT_SURFACE
+////  typedef Skin_surface_quadratic_surface_3<TMC_Traits>   Quadratic_surface;
+////#else
+////  typedef Skin_surface_quadratic_surface_3<Simple_cartesian<double> > 
+////                                                         Quadratic_surface;
+////#endif // CGAL_SKIN_SURFACE_USE_EXACT_IMPLICIT_SURFACE
+////
+////  typedef Triangulation_3<
+////    TMC_Traits,
+////    Triangulation_data_structure_3
+////    < Triangulated_mixed_complex_vertex_3<TMC_Traits>,
+////      Triangulated_mixed_complex_cell_3<TMC_Traits,Quadratic_surface> > 
+////  >                                                   Triangulated_mixed_complex;
+////  typedef typename Triangulated_mixed_complex::Vertex_handle TMC_Vertex_handle;
+////  typedef typename Triangulated_mixed_complex::Cell_handle   TMC_Cell_handle;
+////  typedef typename TMC_Traits::Point_3                       TMC_Point;
+
+public:  
   template < class WP_iterator >
   Union_of_balls_3(WP_iterator begin, WP_iterator end, 
 		 Gt gt = Gt(),
@@ -107,7 +163,7 @@ public:
 //       out << sqrt(_tmc.segment(eit).squared_length()) << std::endl;
 //     }
   }
-  const Triangulated_mixed_complex &triangulated_mixed_complex() const {
+  const TMC &triangulated_mixed_complex() const {
     return _tmc;
   }
   
@@ -118,7 +174,7 @@ private:
   void construct_bounding_box(Regular &regular);
 
   Gt &gt;
-  Triangulated_mixed_complex _tmc;
+  TMC _tmc;
   bool verbose;
 };
 
