@@ -658,7 +658,6 @@ public:
         CGAL_assertion_msg(false,"intersection: no intersection.");
       }
     } else {
-      std::cout << "nIn == " << nIn << std::endl;
       CGAL_assertion(false);
     }
 
@@ -822,16 +821,10 @@ typename Skin_surface_3<MixedComplexTraits_3>::TMC_Cell_handle
 Skin_surface_3<MixedComplexTraits_3>::
 locate_mixed(const Bare_point &p0, 
 	     TMC_Cell_handle start) const {
-  typedef Exact_predicates_exact_constructions_kernel EK;
-  Cartesian_converter<typename Geometric_traits::Bare_point::R, EK> converter;
-  Skin_surface_traits_3<EK> exact_traits(shrink_factor());
-
-  typename EK::Point_3 p = converter(p0);
+  Cartesian_converter<typename Geometric_traits::Bare_point::R, FK> converter_fk;
+  typename FK::Point_3 p_inexact = converter_fk(p0);
 
   Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
-
-  typename EK::Point_3 e_pts[4];
-  const typename EK::Point_3 *pts[4];
 
   // Make sure we continue from here with a finite cell.
   if ( start == TMC_Cell_handle() )
@@ -850,21 +843,13 @@ locate_mixed(const Bare_point &p0,
   TMC_Cell_handle previous = TMC_Cell_handle();
   TMC_Cell_handle c = start;
 
-  // Stores the results of the 4 orientation tests.  It will be used
-  // at the end to decide if p lies on a face/edge/vertex/interior.
-  Orientation o[4];
-
   // Now treat the cell c.
-	     try_next_cell:
+  try_next_cell:
 
-  // We know that the 4 vertices of c are positively oriented.
-  // So, in order to test if p is seen outside from one of c's facets,
-  // we just replace the corresponding point by p in the orientation
-  // test.  We do this using the array below.
-  for (int j=0; j<4; j++) {
-    e_pts[j] = get_anchor_point(c->vertex(j)->info(), exact_traits);
-    pts[j] = &e_pts[j];
-  }
+  const typename FK::Point_3* pts[4] = { &(c->vertex(0)->point()),
+                                         &(c->vertex(1)->point()),
+                                         &(c->vertex(2)->point()),
+                                         &(c->vertex(3)->point()) };
 
   // For the remembering stochastic walk,
   // we need to start trying with a random index :
@@ -872,31 +857,56 @@ locate_mixed(const Bare_point &p0,
   // For the remembering visibility walk (Delaunay only), we don't :
   // int i = 0;
 
+  Orientation o;
   for (int j=0; j != 4; ++j, i = (i+1)&3) {
     TMC_Cell_handle next = c->neighbor(i);
     if (previous == next) {
-      o[i] = POSITIVE;
       continue;
     }
     // We temporarily put p at i's place in pts.
-    const typename EK::Point_3* backup = pts[i];
-    pts[i] = &p;
+    const typename FK::Point_3* backup = pts[i];
+    pts[i] = &p_inexact;
     try {
-      o[i] = orientation(*pts[0], *pts[1], *pts[2], *pts[3]);
+      o = orientation(*pts[0], *pts[1], *pts[2], *pts[3]);
     } catch (Interval_nt_advanced::unsafe_comparison) {
+	  typedef Exact_predicates_exact_constructions_kernel EK;
+	  Cartesian_converter<typename Geometric_traits::Bare_point::R, EK> converter_ek;
+
+      Skin_surface_traits_3<EK> exact_traits(shrink_factor());
+	  
+      typename EK::Point_3 pts[4];
+
+	  // We know that the 4 vertices of c are positively oriented.
+	  // So, in order to test if p is seen outside from one of c's facets,
+	  // we just replace the corresponding point by p in the orientation
+	  // test.  We do this using the array below.
+	  for (int j=0; j<4; j++) {
+	  	if (j != i) {
+          pts[j] = get_anchor_point(c->vertex(j)->info(), exact_traits);
+	  	} else {
+	  	  pts[j] = converter_ek(p0);
+	  	}
+	  }
+	
+
     }
-    if ( o[i] != NEGATIVE ) {
+    if ( o != NEGATIVE ) {
       pts[i] = backup;
       continue;
     }
     if ( next->has_vertex(tmc.infinite_vertex()) ) {
-      // We are outside the convex hull.
+      std::cout << "We are outside the convex hull." << std::endl;
       return next;
     }
     previous = c;
     c = next;
     goto try_next_cell;
   }
+  
+  CGAL_assertion(c->vertex(0) != tmc.infinite_vertex());
+  CGAL_assertion(c->vertex(1) != tmc.infinite_vertex());
+  CGAL_assertion(c->vertex(2) != tmc.infinite_vertex());
+  CGAL_assertion(c->vertex(3) != tmc.infinite_vertex());
 
   return c;
 }

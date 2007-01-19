@@ -43,7 +43,7 @@ public:
 
   Skin_surface_subdivision_policy_with_face_info_3(Skin_surface const& skin)
     : ss_3(skin) {
-    
+  	std::cout << "refinement+" << std::endl;
   }
 
   P_point to_surface(P_vertex_handle vh) const {

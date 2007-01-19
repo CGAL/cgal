@@ -71,7 +71,7 @@ public:
   Skin_surface_refinement_policy_3(Skin_surface const& skin)
     : ss_3(skin)
   {
-    
+  	std::cout << "refinement" << std::endl;
   }
     
   P_point to_surface(P_vertex_handle vh) const

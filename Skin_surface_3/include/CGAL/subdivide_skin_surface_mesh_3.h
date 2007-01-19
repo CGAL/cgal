@@ -151,16 +151,6 @@ void subdivide_skin_surface_mesh_3(
     skin.subdivide_skin_surface_mesh_3(p);
     nSubdiv--;
   }
-//   typedef Skin_surface_subdivision_policy_default_3<Polyhedron_3,
-//                                                     SkinSurface_3> Policy;
-//   typedef Skin_surface_sqrt3<Polyhedron_3, 
-//                              SkinSurface_3, 
-//                              Policy>                            Subdivider;
-
-  
-//   Policy policy(skin);
-//   Subdivider subdivider(p, skin, policy);
-//   subdivider.subdivide(nSubdiv);
 }
 
 CGAL_END_NAMESPACE

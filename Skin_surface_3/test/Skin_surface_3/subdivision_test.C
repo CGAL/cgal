@@ -67,19 +67,19 @@ int main(int argc, char *argv[]) {
 
   std::vector<char *> filenames;
   filenames.push_back("data/caffeine.cin");
-//   filenames.push_back("data/ball.cin");
-//   filenames.push_back("data/degenerate.cin");
-//   filenames.push_back("data/test1.cin");
-//   filenames.push_back("data/test2.cin");
-//   filenames.push_back("data/test3.cin");
-//   filenames.push_back("data/test4.cin");
-//   filenames.push_back("data/test5.cin");
-//   filenames.push_back("data/test6.cin");
-//   filenames.push_back("data/test7.cin");
-//   filenames.push_back("data/test8.cin");
-//   filenames.push_back("data/test9.cin");
-//   filenames.push_back("data/test10.cin");
-//   filenames.push_back("data/test11.cin");
+  filenames.push_back("data/ball.cin");
+  filenames.push_back("data/degenerate.cin");
+  filenames.push_back("data/test1.cin");
+  filenames.push_back("data/test2.cin");
+  filenames.push_back("data/test3.cin");
+  filenames.push_back("data/test4.cin");
+  filenames.push_back("data/test5.cin");
+  filenames.push_back("data/test6.cin");
+  filenames.push_back("data/test7.cin");
+  filenames.push_back("data/test8.cin");
+  filenames.push_back("data/test9.cin");
+  filenames.push_back("data/test10.cin");
+  filenames.push_back("data/test11.cin");
 
   for_each(filenames.begin(), filenames.end(), Test_file(.5));
   for_each(filenames.begin(), filenames.end(), Test_file(.25));
