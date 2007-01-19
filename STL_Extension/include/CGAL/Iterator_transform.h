@@ -50,7 +50,7 @@ public:
 
 
   // This iterator returns rvalues by design (allowing the conversion function to return new objects)
-  typedef typename value_type reference;
+  typedef value_type reference;
 
   // Use I_TYPE_MATCH_IF to find correct pointer type.
   typedef I_TYPE_MATCH_IF< base_pointer, const base_value_type *,
