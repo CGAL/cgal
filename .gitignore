@@ -296,6 +296,16 @@ Random_numbers/.tmp
 Random_numbers/Makefile
 Random_numbers/bin
 Random_numbers/doc_ps
+Skin_surface_3/.cdtproject
+Skin_surface_3/.project
+Skin_surface_3/.settings
+Skin_surface_3/test/Skin_surface_3/ProgramOutput*
+Skin_surface_3/test/Skin_surface_3/cgal_test
+Skin_surface_3/test/Skin_surface_3/err.txt
+Skin_surface_3/test/Skin_surface_3/error.txt
+Skin_surface_3/test/Skin_surface_3/makefile
+Skin_surface_3/test/Skin_surface_3/msgs.txt
+Skin_surface_3/test/Skin_surface_3/subdivision_test
 Surface_mesh_parameterization/doc_doxygen
 Surface_mesh_parameterization/doc_html
 Surface_mesh_parameterization/doc_pdf
