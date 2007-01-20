@@ -39,10 +39,16 @@ public:
   }
   Certificate(){}
 
+  bool will_fail() const {
+    return !rs_.empty();
+  }
+
   const Time &failure_time() const {
-    static Time inf= std::numeric_limits<Time>::infinity();
-    if (rs_.empty()) return inf;
-    else return rs_.top();
+    if (rs_.empty()) {
+      static Time inf= std::numeric_limits<Time>::has_infinity?std::numeric_limits<Time>::infinity():Time(1e34);
+      CGAL_KINETIC_ERROR("Not checking for failure is deprecated.");
+      return inf;
+    } else return rs_.top();
   }
   void pop_failure_time() {
     if (!rs_.empty()) rs_.pop();

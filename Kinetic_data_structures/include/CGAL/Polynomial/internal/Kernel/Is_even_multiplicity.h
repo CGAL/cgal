@@ -22,6 +22,7 @@
 #define CGAL_POLYNOMIAL_INTERNAL_EVEN_MULTIPLICITY_H
 
 #include <CGAL/Polynomial/basic.h>
+#include <CGAL/CORE_Expr.h>
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
@@ -49,6 +50,10 @@ public:
     return false;
   }
   bool operator()(Interval_nt) const
+  {
+    return false;
+  }
+  bool operator()(::CORE::Expr) const
   {
     return false;
   }

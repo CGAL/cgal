@@ -47,7 +47,7 @@ protected:
   typedef std::vector<Interval_info> Intervals;
   typedef typename Traits_t::Sturm_root_count Sturm_root_counter;
   typedef typename Traits_t::Function Polynomial;
-  typedef typename Traits_t::NT NT;
+  typedef typename Traits_t::FT FT;
   enum Interval_classification {GOOD, EMPTY, SOME};
 public:
   typedef Traits_t Traits;
@@ -144,7 +144,7 @@ public:
       && intervals_.back().right_sign != intervals_.back().left_sign;*/
   }
 
-  bool refine_top(NT ub) {
+  bool refine_top(FT ub) {
     while (!intervals_.empty() && intervals_.back().interval.contains(ub) < ub) {
       Interval_classification c=classify_top();
       if (c==GOOD) {
@@ -237,7 +237,7 @@ public:
 
   /*void compute_estimate(const Root &lb) {
     Interval_arithmetic_guard gd;
-    Polynomial_converter<Polynomial, Interval_polynomial,  To_interval<NT> > pc;
+    Polynomial_converter<Polynomial, Interval_polynomial,  To_interval<FT> > pc;
     Interval_polynomial ip= pc(f_);
     Interval_nt iv(CGAL::to_interval(lb_));
     if (iv.inf()==iv.sup()) {
@@ -302,7 +302,7 @@ protected:
     if (f_.is_constant()) return;
 
     typename Traits::Root_bound rbe= kernel_.root_bound_object();
-    NT rb; if (lb_==-Root::infinity() || ub_== Root::infinity()) rb= rbe(f_);
+    FT rb; if (lb_==-Root::infinity() || ub_== Root::infinity()) rb= rbe(f_);
     Interval lbi, ubi;
     if (lb_ == -Root::infinity()) {
       lbi= Interval(-rb);
@@ -334,15 +334,15 @@ protected:
     const Interval uh= ii.interval.second_half();
     const Interval mi= uh.lower_endpoint_interval();
     const Interval lh= ii.interval.first_half();
-    CGAL_POLYNOMIAL_NS::Sign sm= uh.apply_to_endpoint(kernel_.sign_at_object(f_), Interval::LOWER);
+    CGAL::Sign sm= uh.apply_to_endpoint(kernel_.sign_at_object(f_), Interval::LOWER);
 
-    bool mid_is_root=(sm == CGAL_POLYNOMIAL_NS::ZERO);
+    bool mid_is_root=(sm == CGAL::ZERO);
 
     CGAL_DSPRINT(std::cout << "Produced u interval of " << uh << std::endl);
     intervals_.push_back(Interval_info(uh, sm, ii.right_sign));
     //}
     if (mid_is_root) {
-      intervals_.push_back(Interval_info(mi, CGAL_POLYNOMIAL_NS::ZERO, CGAL_POLYNOMIAL_NS::ZERO));
+      intervals_.push_back(Interval_info(mi, CGAL::ZERO, CGAL::ZERO));
     }
 
     intervals_.push_back(Interval_info(lh, ii.left_sign, sm));
@@ -434,8 +434,8 @@ protected:
   }
 
   Root_count compute_root_count(const Interval &ii,
-				CGAL_POLYNOMIAL_NS::Sign sl,
-				CGAL_POLYNOMIAL_NS::Sign sr) {
+				CGAL::Sign sl,
+				CGAL::Sign sr) {
     return Root_count(ii.apply_to_interval(rc_, sl, sr));
   }
 
@@ -462,10 +462,10 @@ protected:
   struct Interval_info
   {
     Root_count num_roots;
-    CGAL_POLYNOMIAL_NS::Sign left_sign;
-    CGAL_POLYNOMIAL_NS::Sign right_sign;
-    Interval_info(Interval in, /*Root_count num,*/ CGAL_POLYNOMIAL_NS::Sign ls,
-		  CGAL_POLYNOMIAL_NS::Sign rs):
+    CGAL::Sign left_sign;
+    CGAL::Sign right_sign;
+    Interval_info(Interval in, /*Root_count num,*/ CGAL::Sign ls,
+		  CGAL::Sign rs):
       num_roots(Root_count::UNKNOWN), left_sign(ls), right_sign(rs), interval(in){}
     Interval interval;
   };

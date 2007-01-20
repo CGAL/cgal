@@ -16,7 +16,7 @@ int main(int, char *[])
   typedef CGAL::Kinetic::Delaunay_triangulation_event_log_visitor_3 Visitor;
   typedef CGAL::Kinetic::Delaunay_triangulation_3<Simulation_traits, Visitor> KDel;
 
-  Simulation_traits simtr;
+  Simulation_traits simtr(0,100000);
   Simulation_traits::Simulator::Handle sp= simtr.simulator_handle();
 
   KDel kdel(simtr);

@@ -60,18 +60,14 @@ CGAL_POLYNOMIAL_END_NAMESPACE
 
 CGAL_POLYNOMIAL_BEGIN_NAMESPACE
 
-typedef CGAL::Sign Sign;
+/*typedef CGAL::Sign Sign;
 static const Sign ZERO= CGAL::ZERO;
 static const Sign POSITIVE= CGAL::POSITIVE;
-static const Sign NEGATIVE= CGAL::NEGATIVE;
-/*typedef int Sign;
-static const int ZERO =CGAL::ZERO;
-static const int POSITIVE=CGAL::POSITIVE;
-static const int NEGATIVE=CGAL::NEGATIVE;*/
-typedef int Comparison_result;
+static const Sign NEGATIVE= CGAL::NEGATIVE;*/
+/*typedef int Comparison_result;
 static const int EQUAL= CGAL::EQUAL;
 static const int SMALLER= CGAL::SMALLER;
-static const int LARGER = CGAL::LARGER;
+static const int LARGER = CGAL::LARGER;*/
 static const int UNKNOWN = -3;
 typedef int Order;
 static const int STRICTLY_BELOW = -3;
@@ -84,11 +80,11 @@ static const int STRICTLY_ABOVE=3;
 
 //typedef CGAL::Comparison_result Comparison_result;
 
-template <class NT>
+/*template <class NT>
 Sign sign(const NT &nt)
 {
     return CGAL::sign(nt);
-}
+    }*/
 
 
 /*typedef ::CGAL::Integral_domain_without_division_tag             Integral_domain_without_division_tag;
@@ -160,7 +156,7 @@ template <class NT>
 inline Extended_sign extended_sign(const NT &nt)
 {
   // for VC
-  switch(CGAL::POLYNOMIAL::sign(nt)) {
+  switch(CGAL::sign(nt)) {
         case ZERO: return EXTENDED_ZERO;
         case POSITIVE: return EXTENDED_POSITIVE;
         default: return EXTENDED_NEGATIVE;

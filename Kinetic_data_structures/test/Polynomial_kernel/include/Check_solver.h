@@ -51,8 +51,8 @@ public:
 
   template <class It>
   void check_polynomial(const Fn &q, It roots_b, It roots_e,
-			const Rt& start = -std::numeric_limits<Rt>::infinity(),
-			const Rt& end = std::numeric_limits<Rt>::infinity() ) {
+			const Rt& start = Rt(-1000.0),
+			const Rt& end = Rt(1000.0) ) {
 
     CGAL::Timer timer;
 
@@ -87,7 +87,7 @@ public:
     int total_roots=0;
     do {
       Root_stack s= k_.root_stack_object(q, start, end);
-      Rt last_root= -std::numeric_limits<Rt>::infinity();
+      Rt last_root= -Rt(1000.0);
       while (!s.empty()) {
 	if (reps==0  && verbose) {
 	  //comp.push_back(CGAL::to_double(r));
@@ -98,7 +98,7 @@ public:
 	  CGAL_assertion(last_root<= s.top());
 	  last_root=s.top();
 	  Rt cur= s.top();
-	  if (cur != std::numeric_limits<Rt>::infinity()) {
+	  //if (cur != std::numeric_limits<Rt>::infinity()) {
 	    /*if (cur == std::numeric_limits<Rt>::infinity() || cur > 10000){
 	      int i=0;
 	      }*/
@@ -107,10 +107,10 @@ public:
 	    std::cout << "<" << CGAL::to_double(s.top());
 	    if (iem(s.top())) { std::cout <<"E";}
 	    std::cout << "> " << std::flush;
-	  }
+	    /*}
 	  else {
 
-	  }
+	  }*/
 	}
 	s.pop();
 	++total_roots;
@@ -386,7 +386,6 @@ public:
   }
 
   void all() {
-    roots();
     square_free();
     wilkinson();
     mignotte();
@@ -414,8 +413,8 @@ public:
       a.push_back(478.0766178);
       check_polynomial(q, a.begin(), a.end());
       Root_container s=
-	k_.root_container_object(q, -std::numeric_limits<Rt>::infinity(),
-				 std::numeric_limits<Rt>::infinity());
+	k_.root_container_object(q, Rt(-10000.0),
+				 Rt(10000.0));
 
       std::vector<Rt> roots;
       std::copy(s.begin(), s.end(), std::back_inserter(roots));
@@ -443,8 +442,8 @@ public:
       a.push_back(1.602781661);
       check_polynomial(q, a.begin(), a.end(), 0);
       Root_container s=
-	k_.root_container_object(q, -std::numeric_limits<Rt>::infinity(),
-				 std::numeric_limits<Rt>::infinity());
+	k_.root_container_object(q, -Rt(10000.0),
+				 Rt(100000.0));
 
       std::vector<Rt> roots;
       std::copy(s.begin(), s.end(), std::back_inserter(roots));

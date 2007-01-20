@@ -36,7 +36,7 @@ int run(int argc, char *argv[], int n, int d, int seed, std::string file) {
 
   CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_SOME);
 
-  Traits tr;
+  Traits tr(0, 10000000);
   typename Box::Handle box= new Box(tr);
   typename KDel::Handle kdel= new KDel(tr);
 

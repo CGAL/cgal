@@ -30,8 +30,9 @@ CGAL_POLYNOMIAL_BEGIN_NAMESPACE
 
 
 
-
-class CORE_kernel: public Kernel<internal::CORE_polynomial, CORE_Expr_root_stack, CORE::Expr>
+// CORE_Expr_root_stack::FT
+class CORE_kernel: public Kernel<internal::CORE_polynomial, CORE_Expr_root_stack,
+				 CORE::Expr >
 {
   typedef CORE_kernel This;
   typedef Kernel<internal::CORE_polynomial, CORE_Expr_root_stack, CORE::Expr> P;

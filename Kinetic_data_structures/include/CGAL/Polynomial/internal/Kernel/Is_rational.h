@@ -32,22 +32,26 @@ CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 template <class K>
 class Is_rational
 {
-    public:
-        Is_rational(){  }
+public:
+  Is_rational(){  }
 
-        typedef bool result_type;
-        typedef typename K::Root argument_type;
+  typedef bool result_type;
+  typedef typename K::Root argument_type;
 
-        template <class T>
-            result_type operator()(const T &v) const
-        {
-	  return v.is_rational();
-        }
+  template <class T>
+  result_type operator()(const T &v) const
+  {
+    return v.is_rational();
+  }
 
-        bool operator()(double) const
-        {
-            return true;
-        }
+  bool operator()(double) const
+  {
+    return true;
+  }
+  bool operator()(const CORE::Expr) const
+  {
+    return false;
+  }
 };
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE

@@ -19,7 +19,4 @@
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
 #define CGAL_POLYNOMIAL_USE_CGAL
-#ifdef CGAL_USE_CORE
-#define CGAL_POLYNOMIAL_USE_CORE
-#endif
 //#define POLYNOMIAL_USE_GSL

@@ -82,11 +82,9 @@ order amongst themselves).
 
 \ccMethod{void set_current_time(Time t);}{Set the current time to \ccc{t}, which cannot be less than \ccc{current_time}. Any events in the queue before time \ccc{t} are processed.}
 
-\ccMethod{NT current_time_nt() const;}{ This returns a ration
-  number representing the current time. This only returns a valid time
-  if \ccc{has_current_time_nt()} is true.}
+\ccMethod{NT next_time_reprsentable_as_nt() const;}{ This function returns a time which can be represented using an instance of type \ccc{NT} which is shortly after the current time. You can then advance the current time to this one and act on the data structure using the return nt.}
 
-\ccMethod{bool has_rational_current_time() const;}{ Return true if there is a rational number which is equivalent to the current time. Equivalent means that it has the same ordering relation to all previous and scheduled events.}
+\ccMethod{bool has_current_time_as_nt() const;}{ Return true if there is a rational number which is equivalent to the current time. Equivalent means that it has the same ordering relation to all previous and scheduled events.}
 
 \ccMethod{bool has_audit_time() const;}{
 Returns true if the current time is a rational number and there are no events at the current time. This means that the simulation can be audited at this time.}

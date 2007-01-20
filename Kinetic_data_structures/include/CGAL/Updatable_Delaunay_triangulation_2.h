@@ -75,11 +75,15 @@ struct Updatable_Delaunay_triangulation_2 {
   typedef CGAL::Interval_nt_advanced INT;
   
 
-  typedef CGAL::Gmpq NT;
+  /*typedef CGAL::Gmpq NT;
   typedef CGAL::POLYNOMIAL::Polynomial<NT> Function;
   typedef CGAL::POLYNOMIAL::Sturm_root_stack_traits<Function> Root_stack_traits;
   typedef CGAL::POLYNOMIAL::Sturm_root_stack<Root_stack_traits> Root_stack;
-  typedef CGAL::POLYNOMIAL::Kernel<Function, Root_stack> Function_kernel;
+  typedef CGAL::POLYNOMIAL::Kernel<Function, Root_stack> Function_kernel;*/
+  typedef CGAL::POLYNOMIAL::CORE_kernel Function_kernel;
+  typedef typename Function_kernel::Root_stack Root_stack;
+  typedef typename Function_kernel::Function Function;
+  typedef typename Function_kernel::FT NT;
 
 
   typedef typename CGAL::Kinetic::Handle_degeneracy_function_kernel<Function_kernel, true>  KK_function_kernel;
@@ -261,7 +265,7 @@ struct Updatable_Delaunay_triangulation_2 {
     }
 #endif
     
-    void point_changed(Point_key k){
+    void point_changed(Point_key ){
       //ui()->point_changed(k);
     }
 
@@ -319,7 +323,7 @@ struct Updatable_Delaunay_triangulation_2 {
       return et;
     }
 
-    bool internal_certificate_failure_time(typename Default_traits::Edge e, Point_key pks[4],
+    bool internal_certificate_failure_time(typename Default_traits::Edge , Point_key pks[4],
 					   Time &rett, Certificate_data) {
       ++stat_certificate_computations_;
 
@@ -894,7 +898,7 @@ struct Updatable_Delaunay_triangulation_2 {
 
 
   
-    void after_flip(Edge e) {
+    void after_flip(Edge ) {
 
     }
 

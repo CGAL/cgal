@@ -57,12 +57,12 @@ public:
     
   };
 
-  typedef internal::Explicit_root<CORE::Expr> Root;
+  typedef CORE::Expr Root;
 
   CORE_Expr_root_stack(const Function &f,
 		       const Root &lb,
 		       const Root &ub,
-		       const Traits &tr): f_(f), ub_(ub), cur_(Root::infinity_rep()), tr_(tr){
+		       const Traits &tr): f_(f), ub_(ub), tr_(tr), one_even_left_(false){
     initialize(lb);
   }
 
@@ -70,17 +70,22 @@ public:
 
   const Root& top() const
   {
+    CGAL_precondition(!empty());
     return cur_;
   }
   void pop() {
-    --num_roots_;
-    CGAL_precondition(num_roots_>=0);
-    if (num_roots_==0) {
-      no_roots();
-    }
-    else {
-      make_root();
-      enforce_upper_bound();
+    if (!one_even_left_) {
+      --num_roots_;
+      CGAL_precondition(num_roots_>=0);
+      if (num_roots_==0) {
+	no_roots();
+      }
+      else {
+	make_root();
+	enforce_upper_bound();
+      }
+    } else {
+      one_even_left_=false;
     }
   }
 
@@ -89,6 +94,10 @@ public:
     return num_roots_==0;
   }
 
+
+  std::ostream &write(std::ostream &out) const {
+    return out << f_ << ": " << cur_ << std::endl;
+  }
 protected:
   Function f_;
   CORE_Sturm sturm_;
@@ -97,36 +106,37 @@ protected:
   int num_roots_;
   CORE::BigFloat bflb_, bfub_;
   Traits tr_;
+  bool one_even_left_;
 
   void initialize(const Root& lb) {
     if (f_.degree()<0) {
       no_roots();
       return;
     } else {
-      //std::cout << f_ << std::endl;
+      std::cout <<"solving " << f_ << std::endl;
       //std::cout << f_.core_polynomial() << std::endl;
       sturm_= CORE_Sturm(f_.core_polynomial()/*, false*/); //BigInt to BigRat
       
 
       CORE::BigFloat bflb, bfub;
       
-      if (lb == -std::numeric_limits<Root>::infinity()){
+      /*if (lb == -std::numeric_limits<Root>::infinity()){
 	bflb_= -f_.core_polynomial().CauchyUpperBound();
-      } else {
-	bflb_= bf_lower_bound(lb.representation());
-      }
+	} else {*/
+      bflb_= bf_lower_bound(lb);
+	//}
 
-      if (ub_ == std::numeric_limits<Root>::infinity()){
+	/*if (ub_ == std::numeric_limits<Root>::infinity()){
 	bfub_=  f_.core_polynomial().CauchyUpperBound();
-      } else {
-	bfub_= bf_upper_bound(ub_.representation());
-      }
+	} else {*/
+	bfub_= bf_upper_bound(ub_);
+	//}
       if (bflb_ > bfub_) {
 	no_roots();
       } else {
-	//std::cout << f_ << ": " << bflb_ << " " << bfub_ << std::endl;
+	std::cout << " in interval: " << bflb_ << " " << bfub_ << std::endl;
 	num_roots_= sturm_.numberOfRoots(bflb_, bfub_);
-	//std::cout << "nr= " << num_roots_ << std::endl;
+	std::cout << "nr= " << num_roots_ << std::endl;
 	//CORE::Expr testr;
 	++num_roots_;
 	do {
@@ -140,7 +150,7 @@ protected:
 	} while (cur_ <= lb);
 	//make_cur_root(testr);
       }
-      //std::cout << "There are " << num_roots_ << " roots.\n";
+      std::cout << "There are " << num_roots_ << " roots.\n";
       enforce_upper_bound();
     }
   }
@@ -155,16 +165,20 @@ protected:
 
   void make_root() {
     CGAL_precondition(num_roots_!=0);
-    //std::cout << bflb_ << " " << bfub_ << std::endl;
+    std::cout << "making root: " << bflb_ << " " << bfub_ << std::endl;
     CORE::BFInterval bfi= sturm_.isolateRoot(1, bflb_, bfub_);
+    std::cout << "got: " << bfi.first << " " << bfi.second << std::endl;
     //int nr= sturm_.numberOfRoots(bfi.first, bfi.second);
-    int nr=1;
+    //int nr=1;
     if (CGAL::sign(f_.core_polynomial().eval(bfi.first)) 
-	== CGAL::sign(f_.core_polynomial().eval(bfi.second))) ++nr;
+	== CGAL::sign(f_.core_polynomial().eval(bfi.second))) {
+      one_even_left_=true;
+      std::cout << "it is even" << std::endl;
+    }
     //std::cout << nr << " " << bfi.first << " " << bfi.second <<  std::endl;
     bflb_= bfi.second;
-    CORE::Expr e(f_.core_polynomial(), bfi);
-    cur_ =Root(e/*/f_.scale()*/, nr);
+    cur_= CORE::Expr(f_.core_polynomial(), bfi);
+    //cur_ =Root(e/*/f_.scale()*/, nr);
     //std::cout << "root= " << cur_ <<  " " << e << std::endl;
   }
 
@@ -172,6 +186,7 @@ protected:
     ub_= CORE::Expr(0);
     cur_= infinity<Root>();
     num_roots_=0;
+    one_even_left_=false;
   }
 
   /*void initialize_counters(const Root &lb) {
@@ -215,6 +230,10 @@ protected:
     return Coef(ub);
   }
 };
+
+std::ostream &operator<<(std::ostream &out, const CORE_Expr_root_stack &o) {
+  return o.write(out);
+}
 
 CGAL_POLYNOMIAL_END_NAMESPACE;
 #endif

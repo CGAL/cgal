@@ -141,8 +141,8 @@ public:
     CGAL::Comparison_result c= CGAL::compare(time(), o.time());
     if (c != CGAL::EQUAL) return c== CGAL::SMALLER;
     else {
-      CGAL::Comparison_result c= CGAL::compare(kds(), o.kds());
-      if (c != CGAL::EQUAL) return c==CGAL::SMALLER;
+      if (kds() < o.kds()) return true;
+      else if (kds() > o.kds()) return false;
       else {
 	CGAL::Comparison_result c= compare_concurrent(Key((This*) this),Key((This*) &o));
 	return c==CGAL::SMALLER;
@@ -308,7 +308,7 @@ template <class FK, bool INF=false, unsigned int TARGET=8>
 class Two_list_pointer_event_queue
 {
   typedef typename FK::Root PriorityT;
-  typedef typename FK::NT NT;
+  typedef typename FK::FT NT;
   typedef Two_list_pointer_event_queue<FK, TARGET> This;
   typedef typename internal::Two_list_event_queue_item<PriorityT> Item;
 
@@ -387,7 +387,7 @@ public:
     }  else if (front_.empty()) {
       CGAL_assertion(back_.empty());
       CGAL_assertion(INF || CGAL::compare(t, end_priority()) != CGAL::LARGER);
-      CGAL_assertion(INF || CGAL::compare(end_priority(), std::numeric_limits<Priority>::infinity()) == CGAL::SMALLER);
+      //CGAL_assertion(INF || CGAL::compare(end_priority(), std::numeric_limits<Priority>::infinity()) == CGAL::SMALLER);
       if (true){
 	//++queue_front_insertions__;
 	front_.push_back(*ni);
@@ -781,7 +781,7 @@ protected:
 	// do something
 	std::cerr << "Too many recursions " << std::endl;
 	//all_in_front_=true;
-	ub_=std::numeric_limits<double>::infinity();
+	ub_=CGAL::to_interval(end_time_).second*2;// std::numeric_limits<double>::infinity();
 	/*unsigned int num=*/ select(cand, front_, ub_/*, all_in_front_*/);
 	make_inf(cand, cand.begin(), cand.end());
 	//grow_front(cand, recursive_count+1);
@@ -850,7 +850,7 @@ protected:
     grow_front(cand);
     set_front(front_.begin(), front_.end(), Item::FRONT);
     front_.sort();
-
+    
     // hmmmm, now I should make a second pass to merge. Ick.
 
     CGAL_assertion(sz==front_.size()+back_.size() + inf_.size());
@@ -867,13 +867,15 @@ protected:
       ++it;
     }
 
+    // use tii_ so that it does not subdivide
+
     NT split =  NT(to_interval(tii_(it->time()).second).second+.00001);
     if (!INF && (CGAL::compare(end_priority(), it->time())==CGAL::SMALLER
 		 || CGAL::compare(end_priority(), Priority(split))==CGAL::SMALLER)) {
       std::cout << "Past end in Queue " << end_priority() << ", "
 		<< it->time() << ", " << Priority(split) << std::endl;
       //all_in_front_=true;
-      ub_= std::numeric_limits<double>::infinity();
+      ub_= CGAL::to_interval(end_time_).second*2; //std::numeric_limits<double>::infinity();
       set_front(back_.begin(), back_.end(), Item::FRONT);
       front_.splice(front_.end(), back_);
 

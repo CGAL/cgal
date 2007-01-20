@@ -29,7 +29,7 @@ int main(int, char *[])
   check_nt(CGAL::Kinetic::Default_field_nt(1));
   
   typedef CGAL::Kinetic::Exact_simulation_traits_1 Tr;
-  Tr tr;
+  Tr tr(0,1000000);
   Tr::Simulator::Function_kernel::Function fn= tr.kinetic_kernel_object().function_kernel_object().construct_function_object()(1,0,-2);
   check_nt(Tr::Simulator::Time(-1));
  

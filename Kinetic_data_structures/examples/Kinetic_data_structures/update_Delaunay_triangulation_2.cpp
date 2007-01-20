@@ -5,7 +5,7 @@
 //#define MOVE_ALL
 
 #include <CGAL/basic.h>
-
+#include <CGAL/Polynomial/CORE_kernel.h>
 
 #include <CGAL/Random.h>
 

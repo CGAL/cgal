@@ -23,7 +23,7 @@
 
 #include <CGAL/Polynomial/basic.h>
 
-#ifdef CGAL_POLYNOMIAL_USE_CORE
+#ifdef CGAL_USE_CORE
 #include <CGAL/CORE_BigRat.h>
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/Polynomial/internal/Explicit_root.h>
@@ -41,7 +41,7 @@ class To_rational
 public:
   To_rational(){  }
 
-  typedef typename K::NT result_type;
+  typedef typename K::FT result_type;
   typedef typename K::Root argument_type;
 
   template <class T>
@@ -49,15 +49,17 @@ public:
   {
     return v.to_rational();
   }
-#ifdef CGAL_POLYNOMIAL_USE_CORE
-  CORE::BigRat operator()(const Explicit_root<CORE::Expr> &r) const {
-    return r.representation().BigRatValue();
-  }
-#endif
+
   double operator()(double v) const
   {
     return v;
   }
+#ifdef CGAL_USE_CORE
+  CORE::BigRat operator()(const CORE::Expr &) const
+  {
+    return 0;
+  }
+#endif
 };
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE

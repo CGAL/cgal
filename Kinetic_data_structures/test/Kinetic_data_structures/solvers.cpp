@@ -18,7 +18,7 @@ struct Sest_types
   typedef CGAL::POLYNOMIAL::Upper_bound_root_stack_Descartes_traits<Function> Root_stack_traits;
   typedef CGAL::POLYNOMIAL::Upper_bound_root_stack<Root_stack_traits> Root_stack;
   typedef CGAL::POLYNOMIAL::Kernel<Function, Root_stack> Function_kernel;
-  typedef CGAL::Kinetic::Handle_degeneracy_function_kernel<Function_kernel> Simulator_function_kernel;
+  typedef CGAL::Kinetic::Handle_degeneracy_function_kernel<Function_kernel, false> Simulator_function_kernel;
   typedef CGAL::Kinetic::Cartesian_kinetic_kernel<Simulator_function_kernel> Kinetic_kernel;
   typedef typename Simulator_function_kernel::Root Time;
   typedef CGAL::Kinetic::Two_list_pointer_event_queue<Function_kernel> Queue_base;
@@ -99,7 +99,7 @@ int main(int, char *[])
     }
     }*/
 
-  {
+  /* {
     typedef Exact_simulation_traits<false> Traits;
     Traits tr;
     typedef Traits::Simulator::Time Root;
@@ -128,7 +128,7 @@ int main(int, char *[])
       Traits::Simulator::Function_kernel::Function f= -cf(0,1)*cf(1,-1);
       check_one(tr,f , zero, rts);
     }
-  }
+    }*/
 
   if (CGAL::Kinetic::internal::fail__) return EXIT_FAILURE;
   else return EXIT_SUCCESS;

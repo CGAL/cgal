@@ -249,7 +249,7 @@ CGAL_KINETIC_BEGIN_NAMESPACE
 template <class Data>
 struct Interval_simulator_traits {
   typedef Interval_root<Data> Root;
-  typedef double NT;
+  typedef double FT;
   struct Is_rational {
     typedef bool result_type;
     typedef Root argument_type;

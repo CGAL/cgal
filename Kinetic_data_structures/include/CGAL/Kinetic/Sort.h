@@ -53,12 +53,14 @@ template <class Traits, class Visitor=Sort_visitor_base> class Sort:
 {
   // for later, please ignore
   typedef typename Traits::Active_points_1_table TTable;
-  typedef typename Traits::Kinetic_kernel::Less_x_1 KLess;
+  typedef typename Traits::Kinetic_kernel::Is_less_x_1 KLess;
   typedef typename Traits::Instantaneous_kernel::Less_x_1 ILess;
 
   typedef Sort<Traits, Visitor> This;
   // The way the Simulator represents time.
   typedef typename Traits::Simulator::Time Time;
+  // The way the Simulator represents time.
+  typedef typename Traits::Simulator::NT NT;
   // A label for a moving primitive in the MovingObjectTable
   typedef typename TTable::Key Object_key;
   // A label for a certificate so it can be descheduled.
@@ -74,11 +76,11 @@ template <class Traits, class Visitor=Sort_visitor_base> class Sort:
     OD(Object_key k): key_(k){}
     Object_key object() const {return key_;}
     Event_key event() const {return event_;}
-    void set_event(Event_key k) const {
-      key_= k;
+    void set_event(Event_key k) {
+      event_= k;
     }
-    void set_data(const Data &data) const {
-      data_= data;
+    operator Object_key() const {
+      return key_;
     }
     Object_key key_;
     Event_key event_;
@@ -95,7 +97,7 @@ template <class Traits, class Visitor=Sort_visitor_base> class Sort:
     Less less_;
     }*/
   
-  typedef Swap_event<This,iterator,typename Less::result_type> Event;
+  typedef Swap_event<This,iterator, typename KLess::result_type> Event;
   // Redirects the Simulator notifications to function calls
   typedef typename CGAL::Kinetic::
   Simulator_kds_listener<typename Traits::Simulator::Listener,
@@ -105,18 +107,18 @@ template <class Traits, class Visitor=Sort_visitor_base> class Sort:
   Active_objects_listener_helper<typename Active_objects_table::Listener,
 				 This> MOT_listener;
 public:
-  typedef DT Data;
+  
   // Register this KDS with the MovingObjectTable and the Simulator
   Sort(Traits tr, Visitor v=Visitor()/*, 
        typedef Active_objects_table::Handle aot,
        Kinetic_less kless=tr.kinetic_kernel_object().is_less_x_1_object(),
-       Instantaneous_less iless*/): less_(kless),
-				  ik_(tr.instantaneous_kernel_object()),
-				  iless_(ik_.less_x_1_object()), v_(v),
-				  aot_(tr.active_points_1_table()),
-				  simulator_(tr.simulator_handle()){
+       Instantaneous_less iless*/): less_(tr.kinetic_kernel_object().is_less_x_1_object()),
+				    ik_(tr.instantaneous_kernel_object()),
+				    iless_(ik_.less_x_1_object()), v_(v),
+				    aot_(tr.active_points_1_table_handle()),
+				    simulator_(tr.simulator_handle()){
     sim_listener_= Sim_listener(simulator_, this);
-    mot_listener_= MOT_listener(aot, this);
+    mot_listener_= MOT_listener(aot_, this);
     wrote_objects_= false;
   }
 
@@ -127,12 +129,12 @@ public:
     return v_;
   }
 
-  Traits &traits() {
+  /* Traits &traits() {
     return tr_;
   }
   const Traits &traits() const {
     return tr_;
-  }
+    }*/
 
   typedef iterator Vertex_handle;
 
@@ -141,7 +143,9 @@ public:
      list. Called by the MOT_listener.*/
   iterator insert(Object_key k) {
     //std::cout << "Inserting " << k <<std::endl;
-    ik_.set_time(simulator_->rational_current_time());
+    NT nt= simulator_->next_time_representable_as_nt();
+    simulator_->set_current_time(nt);
+    ik_.set_time(nt);
     iterator it = std::upper_bound(sorted_.begin(), sorted_.end(),
 				   k, iless_);
     /*if (it != sorted_.end()) {
@@ -164,19 +168,20 @@ public:
      If there is a previous certificate there, deschedule it.*/
   void rebuild_certificate(const iterator it) {
     CGAL_precondition(it != sorted_.end());
-    if (it->event() != Event()) {
-      simulator_->delete_event(it->event()); it->set_event(Event());
+    if (it->event() != Event_key()) {
+      simulator_->delete_event(it->event());
+      it->set_event(Event_key());
     }
     if (next(it)== sorted_.end()) return;
     //Less less=kk_.less_x_1_object();
-    typename Less::result_type s
-      = less_(object(*(it)), object(*next(it)), simulator_->current_time(),
+    typename KLess::result_type s
+      = less_(aot_->at(it->object()), aot_->at(next(it)->object()), simulator_->current_time(),
 	      simulator_->end_time());
     // the Simulator will detect if the failure time is at infinity
     Time t= s.failure_time();
     s.pop_failure_time();
     Event e(it, this,s);
-    events_[*it]= simulator_->new_event(t, e);
+    it->set_event( simulator_->new_event(t, e));
     //} else events_[*it]= simulator_->null_event();
   }
 
@@ -185,12 +190,13 @@ public:
   /* Swap the pair of objects with *it as the first element.  The old
      solver is used to compute the next root between the two points
      being swapped. This method is called by an Event object.*/
-  void swap(iterator it, typename Less::result_type &s) {
+  void swap(iterator it, typename KLess::result_type &s) {
     v_.before_swap(it, next(it));
-    events_.erase(*it);
+    //events_.erase(*it);
+    it->set_event(Event_key());
     iterator n= next(it);
-    if (*n!= sorted_.back()) simulator_->delete_event(n->event());
-    next(it)->set_event(Event());
+    if (n!= sorted_.end()) simulator_->delete_event(n->event());
+    next(it)->set_event(Event_key());
 
     std::swap(*it, *next(it));
     if (next(it) != sorted_.end()) {
@@ -217,17 +223,17 @@ public:
 
     if (sorted_.size() <2) return;
 
-    ik_.set_time(simulator_->rational_current_time());
-    typename Instantaneous_kernel::Less_x_1 less= ik_.less_x_1_object();
+    ik_.set_time(simulator_->audit_time());
+    //typename Instantaneous_kernel::Less_x_1 less= ik_.less_x_1_object();
     
-    for (typename std::list<Object_key>::const_iterator it
-	   = sorted_.begin(); *it != sorted_.back(); ++it) {
+    for (typename std::list<OD>::const_iterator it
+	   = sorted_.begin(); it->object() != sorted_.back().object(); ++it) {
 #ifdef CGAL_KINETIC_CHECK_EXACTNESS
-      if (!less(*it, *next(it))) {
-	std::cerr << "ERROR: objects " << *it << " and "
-		  << *next(it) << " are out of order.\n";
-	std::cerr << object(*it) << " and " << object(*next(it)) << std::endl;
-	std::cerr << "Time is " <<simulator_->rational_current_time() << std::endl; 
+      if (!iless_(*it, *next(it))) {
+	std::cerr << "ERROR: objects " << it->object() << " and "
+		  << next(it)->object() << " are out of order.\n";
+	std::cerr << aot_->at(it->object()) << " and " << aot_->at(*next(it)) << std::endl;
+	std::cerr << "Time is " <<simulator_->audit_time() << std::endl; 
 	std::cerr << "ERROR: order is ";
 	write(std::cerr);
 	std::cerr << std::endl;
@@ -236,26 +242,26 @@ public:
 	if (!wrote_objects_) {
 	  wrote_objects_=true;
 	  std::cerr << "Objects are: ";
-	  for (typename Active_objects_table::Keys_iterator kit= mot_listener_.notifier()->keys_begin();
+	  for (typename Active_objects_table::Key_iterator kit= mot_listener_.notifier()->keys_begin();
 	       kit != mot_listener_.notifier()->keys_end(); ++kit){
 	    std::cerr <<  mot_listener_.notifier()->at(*kit) << std::endl;
 	  }
 	}
       }
 #else
-      if (!less(*it, *next(it))) {
+      if (!iless_(*it, *next(it))) {
 	if (warned_.find(*it) == warned_.end() ||
 	    warned_[*it].find(*next(it)) == warned_[*it].end()) {
-	  std::cerr << "WARNING: objects " << *it << " and "
-		    << *next(it) << " are out of order.\n";
-	  std::cerr << object(*it) << " and " << object(*next(it)) << std::endl;
-	  std::cerr << "Time is " <<simulator_->rational_current_time() << std::endl; 
+	  std::cerr << "WARNING: objects " << it->object() << " and "
+		    << next(it)->object() << " are out of order.\n";
+	  std::cerr << aot_->at(it->object()) << " and " << aot_->at(next(it)->object()) << std::endl;
+	  std::cerr << "Time is " <<simulator_->audit_time() << std::endl; 
 	  std::cerr << "WARNING: order is ";
 	  write(std::cerr);
 	  if (!wrote_objects_) {
 	    wrote_objects_=true;
 	    std::cerr << "Objects are: ";
-	    for (typename Traits::Active_points_1_table::Key_iterator kit= mot_listener_.notifier()->keys_begin();
+	    for (typename Active_objects_table::Key_iterator kit= mot_listener_.notifier()->keys_begin();
 		 kit != mot_listener_.notifier()->keys_end(); ++kit){
 	      std::cerr <<  mot_listener_.notifier()->at(*kit) << std::endl;
 	    }
@@ -272,7 +278,11 @@ public:
      the MOT_listener. std::equal_range finds all items equal
      to a key in a sorted list (there can only be one).*/
   void set(Object_key k) {
-    iterator it =  std::equal_range(sorted_.begin(), sorted_.end(),k).first;
+    typename std::list<OD>::iterator it;
+    for (it = sorted_.begin(); it != sorted_.end(); ++it){
+      if (it->object()==k) break;
+    }
+    CGAL_assertion(it != sorted_.end());
     v_.modify_vertex(it);
     rebuild_certificate(it);
     if (it != sorted_.begin()) rebuild_certificate(--it);
@@ -283,32 +293,28 @@ public:
   void erase(Object_key k) {
     iterator it;
     for (it = sorted_.begin(); it != sorted_.end(); ++it){
-      if (*it==k) break;
+      if (it->object()==k) break;
     }
     //iterator it =  std::equal_range(sorted_.begin(), sorted_.end(),k).first;
     CGAL_precondition(it != sorted_.end());
-    CGAL_precondition(*it == k);
+    CGAL_precondition(it->object() == k);
     iterator p= it; --p;
     v_.remove_vertex(it);
+    simulator_->delete_event(it->event());
+    it->set_event(Event_key());
     sorted_.erase(it);
     if (p != sorted_.end()) {
       rebuild_certificate(p);
     }
-    simulator_->delete_event(k->event());
-    k->set_event(Event_key());
+  
   }
   template <class It> static It next(It it){ return ++it;}
   template <class It> static It prior(It it){ return --it;}
-  typename Traits::Active_points_1_table::Data object(Object_key k) const
-  {
-    return mot_listener_.notifier()->at(k);
-  }
 
-  void write(std::ostream &out) const
-  {
-    for (typename std::list<Object_key>::const_iterator it
-	   = sorted_.begin(); it != sorted_.end(); ++it) {
-      out << *it << " ";
+  void write(std::ostream &out) const {
+    for (typename std::list<OD>::const_iterator it
+	   = sorted_.begin(); it->object() != sorted_.back().object(); ++it) {
+      out << it->object() << " ";
     }
     out << std::endl;
   }
@@ -330,7 +336,7 @@ public:
   // events_[k] is the certificates between k and the object after it
   //std::map<Object_key, Event_key > events_;
   Kinetic_less less_;
-  Instantaneous_kernel
+  Instantaneous_kernel ik_;
   Instantaneous_less iless_;
   //#ifndef NDEBUG
   mutable bool wrote_objects_;
@@ -341,8 +347,8 @@ public:
   //#endif
 };
 
-template <class Traits, class Visitor, class DT>
-std::ostream &operator<<(std::ostream &out, const Sort<Traits, Visitor, DT> &s) {
+template <class Traits, class Visitor>
+std::ostream &operator<<(std::ostream &out, const Sort<Traits, Visitor> &s) {
   s.write(out);
   return out;
 }
@@ -360,7 +366,7 @@ public:
     Event_base<Sort*>::kds()->swap(left_object_, s_);
   }
   void write(std::ostream &out) const {
-    out << *left_object_ << "X" << *Sort::next(left_object_);
+    out << left_object_->object() << "X" << Sort::next(left_object_)->object();
   }
   Id left_object_; Solver s_;
 };

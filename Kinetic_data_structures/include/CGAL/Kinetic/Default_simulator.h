@@ -139,7 +139,7 @@ public:
     #endif*/
 
   //! The basic number type
-  typedef typename Function_kernel::NT NT;
+  typedef typename Function_kernel::FT NT;
 
   //! Create a simulator passing the start time and the end time.
   Default_simulator(const Time &start_time,
@@ -148,8 +148,8 @@ public:
 							  cur_time_(start_time),
 							  //last_event_time_(start_time),
 							  mp_(fk.rational_between_roots_object()),
-							  ir_(fk.is_rational_object()),
-							  tr_(fk.to_rational_object()),
+							  //ir_(fk.is_rational_object()),
+							  //tr_(fk.to_rational_object()),
 							  is_forward_(true) {
     number_of_events_=0;
 #ifdef CGAL_KINETIC_ENABLE_AUDITING
@@ -165,8 +165,8 @@ public:
 							  cur_time_(start_time),
 							  //last_event_time_(start_time),
 							  mp_(fk.rational_between_roots_object()),
-							  ir_(fk.is_rational_object()),
-							  tr_(fk.to_rational_object()),
+							  //ir_(fk.is_rational_object()),
+							  //tr_(fk.to_rational_object()),
 							  is_forward_(true) {
     number_of_events_=0;
 #ifdef CGAL_KINETIC_ENABLE_AUDITING
@@ -237,33 +237,19 @@ public:
     time. This only returns a valid time if
     has_rational_current_time() is true.
   */
-  NT rational_current_time() const
+  NT next_time_representable_as_nt() const
   {
     // why did I have this? "&& cur_time_ != end_time()"
-    if (ir_(cur_time_)) {
-      return tr_(cur_time_);
+    double ub= to_interval(current_time()).second;
+    if (CGAL::compare(Time(ub), next_event_time()) == CGAL::SMALLER) {
+      return NT(ub);
     }
     else {
-      double ub= to_interval(current_time()).second;
-      if (CGAL::compare(Time(ub), next_event_time()) == CGAL::SMALLER) {
-	return NT(ub);
-      }
-      else {
-	//typename Function_kernel::Rational_between_roots bet= kernel_.rational_between_roots_object();
-	return mp_(current_time(), next_event_time());
-      }
+      //typename Function_kernel::Rational_between_roots bet= kernel_.rational_between_roots_object();
+      return mp_(current_time(), next_event_time());
     }
-
-    //}
   }
 
-  //! Return true if the current time is a rational number.
-  /*!
-   */
-  bool has_rational_current_time() const
-  {
-    return CGAL::compare(current_time(), next_event_time()) != CGAL::EQUAL;
-  }
 
   //! Returns true if the current time is a rational number and there are no events at the current time
   /*!
@@ -387,7 +373,7 @@ public:
     CGAL_precondition(k != Event_key());
     //if (k== final_event()) return;
     //#ifdef NDEBUG
-    if (k== null_event()) {
+    if (k== null_event() || k== Event_key()) {
       return;
     }
     //#endif
@@ -438,13 +424,13 @@ public:
   }
 
 
-  template <class Event_type>
+   template <class Event_type>
   Event_type& event(const Event_key &k){
     CGAL_precondition(k != Event_key());
     CGAL_precondition(k != null_event());
     //CGAL_KINETIC_LOG(LOG_LOTS, "Accessing event for key " << k << std::endl);
     return queue_.template get<Event_type>(k);
-  }
+   }
 
   /*template <class Event_type>
     const Event_type& event(const Event_key &k, const Event_type&) const {
@@ -619,8 +605,8 @@ protected:
   Time cur_time_; //,  last_event_time_;
   unsigned int number_of_events_;
   typename Function_kernel::Rational_between_roots mp_;
-  typename Function_kernel::Is_rational ir_;
-  typename Function_kernel::To_rational tr_;
+  //  typename Function_kernel::Is_rational ir_;
+  //  typename Function_kernel::To_rational tr_;
   bool is_forward_;
 #ifdef CGAL_KINETIC_ENABLE_AUDITING
   NT audit_time_;
@@ -691,7 +677,7 @@ void Default_simulator<S, PQ>::audit_all_kdss()
 {
 #ifdef CGAL_KINETIC_ENABLE_AUDITING
   cur_time_= Time(audit_time_);
-  CGAL_KINETIC_LOG(LOG_SOME, "Auditing KDSs at time " << rational_current_time() << std::endl);
+  CGAL_KINETIC_LOG(LOG_SOME, "Auditing KDSs at time " << audit_time() << std::endl);
   for (typename std::vector<Listener*>::iterator it= kdss_.begin(); it != kdss_.end(); ++it) {
     //CGAL_exactness_postcondition_code((*it)->new_notification(Listener::HAS_VERIFICATION_TIME));
     CGAL_postcondition_code((*it)->new_notification(Listener::HAS_AUDIT_TIME));

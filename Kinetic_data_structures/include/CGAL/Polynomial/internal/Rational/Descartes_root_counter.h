@@ -44,8 +44,8 @@ class Descartes_root_counter
 //! Note, the result is an upper bound
         template <class NTT>
             result_type operator()(const NTT &lb, const NTT &ub,
-            CGAL_POLYNOMIAL_NS::Sign=CGAL_POLYNOMIAL_NS::ZERO,
-            CGAL_POLYNOMIAL_NS::Sign=CGAL_POLYNOMIAL_NS::ZERO) const
+				   CGAL::Sign=CGAL::ZERO,
+				   CGAL::Sign=CGAL::ZERO) const
         {
             typename Kernel::Function mf= map_(lb, ub);
 

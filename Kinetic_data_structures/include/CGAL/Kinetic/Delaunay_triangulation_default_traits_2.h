@@ -51,8 +51,10 @@ public:
   }
 
 
-  NT rational_current_time() const {
-    return st_.simulator_handle()->rational_current_time();
+  NT rational_current_time() {
+    NT nt= st_.simulator_handle()->next_time_representable_as_nt();
+    st_.simulator_handle()->set_current_time(nt);
+    return nt;
   }
 
   const Point_2& point(Point_key k) const {
@@ -67,7 +69,10 @@ public:
 					     Edge ,
 					     typename Simulator::Event_key b,
 					     Edge ) const {
-    return CGAL::compare(a,b);
+    if (a < b) return CGAL::SMALLER;
+    else if (b < a) return CGAL::LARGER;
+    else return CGAL::EQUAL;
+    //return CGAL::compare(a,b);
   }
  
 
@@ -98,9 +103,13 @@ public:
   }
 
   bool return_certificate_failure_time(Edge , Time &t, Certificate_data &s ) {
-    t= s.failure_time();
-    s.pop_failure_time();
-    return t < st_.simulator_handle()->end_time();
+    if (s.will_fail()) {
+      t= s.failure_time();
+      s.pop_failure_time();
+      return true;
+    } else {
+      return false;
+    }
   }
 
   SOC positive_side_of_oriented_circle_2_object() const {

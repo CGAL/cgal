@@ -4,6 +4,7 @@
 #include <CGAL/Kinetic/Exact_simulation_traits_2.h>
 #include <CGAL/Kinetic/Inexact_simulation_traits_2.h>
 #include <CGAL/Kinetic/Two_list_pointer_event_queue.h>
+#include <CGAL/Kinetic/Event_base.h>
 #include <CGAL/Timer.h>
 #include <algorithm>
 #include <map>
@@ -12,7 +13,7 @@
 const int num_events=200;
 
 template <class T, class Time>
-struct Test_event
+struct Test_event: public CGAL::Kinetic::Event_base<void*>
 {
   Time t_;
   T *tt_;
@@ -39,14 +40,10 @@ struct Test_event
   {
     return t_== o.t_&& tt_==o.tt_;
   }
+  std::ostream &write(std::ostream &out) const {
+    return out << t_;
+  }
 };
-
-template <class T, class Time>
-std::ostream& operator<<(std::ostream &out, const Test_event<T, Time> &e)
-{
-  return out << e.t_;
-}
-
 
 template <class Sim>
 struct Test

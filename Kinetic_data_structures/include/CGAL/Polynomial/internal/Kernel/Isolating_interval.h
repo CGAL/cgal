@@ -23,7 +23,7 @@
 
 #include <CGAL/Polynomial/basic.h>
 
-#ifdef CGAL_POLYNOMIAL_USE_CORE
+#ifdef CGAL_USE_CORE
 #include <CGAL/Polynomial/internal/Explicit_root.h>
 #include <CGAL/CORE_BigRat.h>
 #include <CGAL/CORE_Expr.h>
@@ -41,7 +41,7 @@ class To_isolating_interval
 public:
   To_isolating_interval(){  }
 
-  typedef typename std::pair<typename K::NT, typename K::NT> result_type;
+  typedef typename std::pair<typename K::FT, typename K::FT> result_type;
   typedef typename K::Root argument_type;
 
   template <class T>
@@ -50,11 +50,11 @@ public:
     return v.isolating_interval();
   }
 
-#ifdef CGAL_POLYNOMIAL_USE_CORE
-  result_type operator()(const Explicit_root<CORE::Expr> &r) const {
+#ifdef CGAL_USE_CORE
+  result_type operator()(const CORE::Expr &r) const {
     double a,b;
-    r.representation().doubleInterval(a,b); // do something
-    return std::make_pair(typename K::NT(a), typename K::NT(b));
+    r.doubleInterval(a,b); // do something
+    return std::make_pair(typename K::FT(a), typename K::FT(b));
   }
 #endif
   std::pair<double, double> operator()(double v) const

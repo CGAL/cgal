@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
     }
 #endif
 
-
+#if 0
     
     {
         if (verbose) std::cout <<"Descartes_exact_____________________________\n";
@@ -160,6 +160,7 @@ int main(int argc, char* argv[])
         std::cout << std::endl;
     }
     
+#endif
 #ifdef CGAL_USE_CORE
     {
       

@@ -6,8 +6,8 @@
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-TESTSUITE_LDFLAGS =  -O3
-TESTSUITE_CXXFLAGS = -Wall -O3 -DNDEBUG
+TESTSUITE_LDFLAGS =  
+TESTSUITE_CXXFLAGS = -Wall
 # -g -O3 -DNDEBUG
 
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
@@ -53,11 +53,12 @@ all:            \
                 exact_kds$(EXE_EXT) \
                 numbers$(EXE_EXT) \
                 numeric_kds$(EXE_EXT) \
-                solvers$(EXE_EXT) \
                 simulator$(EXE_EXT) \
 		timings$(EXE_EXT)\
 		active_objects_tables$(EXE_EXT)\
 		test$(EXE_EXT)
+
+#       solvers$(EXE_EXT) \
 
 quick_test$(EXE_EXT): quick_test$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)quick_test quick_test$(OBJ_EXT) $(LDFLAGS)

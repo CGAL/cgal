@@ -55,6 +55,7 @@ public:
   virtual void write(std::ostream &out) const =0;
   const Priority& time() const {return time_;};
   virtual void process() =0;
+  virtual void audit(Key) const=0;
   virtual void *kds() const =0;
   virtual CGAL::Comparison_result compare_concurrent(Key a, Key b) const =0;
   void set_bin(int bin) const { bin_=bin;}
@@ -89,11 +90,17 @@ public:
   virtual void *kds() const {return NULL;}
   virtual CGAL::Comparison_result compare_concurrent(typename P::Key a, 
 						     typename P::Key b) const {
-    return CGAL::compare(a,b);
+    if (a < b) return CGAL::SMALLER;
+    else if (b < a) return CGAL::LARGER;
+    else return CGAL::EQUAL;
+    //return CGAL::compare(a,b);
   }
   virtual void write(std::ostream &out) const
   {
     out << "Never.";
+  }
+  virtual void audit(typename P::Key) const {
+    std::cout << "Auditing a dummy event" << std::endl;
   }
   virtual ~Heap_pointer_event_queue_dummy_item(){}
 };
@@ -123,6 +130,9 @@ public:
   virtual CGAL::Comparison_result compare_concurrent(typename P::Key a, 
 						     typename P::Key b) const {
     return event_.compare_concurrent(a,b);
+  }
+  virtual void audit(typename P::Key k) const {
+    event_.audit(k);
   }
   virtual void write(std::ostream &out) const
   {
@@ -187,9 +197,8 @@ public:
       if (cr == CGAL::SMALLER) return true;
       else if (cr == CGAL::LARGER) return false; 
       else {
-	cr= CGAL::compare(i0->kds(), i1->kds());
-	if (cr == CGAL::SMALLER) return true;
-	else if (cr == CGAL::LARGER) return false;
+	if (i0->kds() < i1->kds()) return true;
+	else if (i0->kds() > i1->kds()) return false;
 	else {
 	  cr= i0->compare_concurrent(Key(i0), Key(i1));
 	  if (cr == CGAL::SMALLER) return true;
@@ -247,7 +256,12 @@ public:
     if (INF) return false;
     else return  CGAL::compare(t,end_priority()) == CGAL::LARGER;
   }
-
+  void audit_events() const {
+    for (typename  std::vector<Item_handle>::const_iterator it= queue_.begin(); 
+	 it != queue_.end(); ++it) {
+      (* it)->audit(Key(*it));
+    }
+  }
 
   //! insert value_type into the queue and return a reference to it
   /*!
@@ -317,6 +331,14 @@ public:
 
   template <class E>
   const E& get(const Key &item) const
+  {
+    CGAL_precondition(item && item != null_event_);
+    return reinterpret_cast<internal::Heap_pointer_event_queue_item_rep<Priority, E>*>( item.get())->event();
+  }
+
+
+  template <class E>
+  E& get(const Key &item)
   {
     CGAL_precondition(item && item != null_event_);
     return reinterpret_cast<internal::Heap_pointer_event_queue_item_rep<Priority, E>*>( item.get())->event();

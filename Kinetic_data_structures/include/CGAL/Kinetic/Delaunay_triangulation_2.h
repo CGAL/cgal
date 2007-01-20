@@ -1049,7 +1049,7 @@ void Delaunay_triangulation_2<Sim, Del, W, T>::audit() const
     }
     if (del_.dimension() != 2) return;
     Basic_Delaunay sdel(traits_.instantaneous_kernel_object());
-    sdel.geom_traits().set_time(traits_.rational_current_time());
+    sdel.geom_traits().set_time(traits_.simulator_handle()->audit_time());
     for (typename Triangulation::Finite_vertices_iterator cit= del_.finite_vertices_begin();
 	 cit != del_.finite_vertices_end(); ++cit){
       sdel.insert(cit->point());
@@ -1108,7 +1108,7 @@ void Delaunay_triangulation_2<Sim, Del, W, T>::audit() const
   
 
     typename Simulation_traits::Instantaneous_kernel ik= traits_.instantaneous_kernel_object();
-    ik.set_time(traits_.rational_current_time());
+    ik.set_time(traits_.simulator_handle()->audit_time());
 
     typename Simulation_traits::Instantaneous_kernel::Side_of_oriented_circle_2 ic2
       = ik.side_of_oriented_circle_2_object();

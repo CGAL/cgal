@@ -26,8 +26,7 @@ CGAL_KINETIC_BEGIN_NAMESPACE;
 
 
 template <class Traits_t, bool SLOPPY>
-  class HDRS
-  {
+class HDRS{
   private:
     typedef typename Traits_t::Root_stack Wrapped_solver;
     typedef typename Traits_t::Function Function;
@@ -40,13 +39,17 @@ template <class Traits_t, bool SLOPPY>
 
     */
     HDRS(const Function &uf, const Root& lb,
-	 const Root& ub, const Traits_t& k): solver_(k.root_stack_object(uf, lb, ub)),
-					     iem_(k.is_even_multiplicity_object(uf)) {
-      CGAL_expensive_precondition(solver_.top() > lb);
+	 const Root& ub, const Traits_t& k): solver_(k.root_stack_object(uf, lb, ub)) {
+      CGAL_expensive_precondition(solver_.empty() || solver_.top() > lb);
 #ifndef NDEBUG
       std::cout << "Function= " << uf << std::endl;
 #endif
-      CGAL::POLYNOMIAL::Sign sn= k.sign_between_roots_object(lb, solver_.top())(uf);
+      CGAL::Sign sn;
+      if (solver_.empty()) {
+	sn = k.sign_above_object(uf)(lb);
+      } else {
+	sn = k.sign_between_roots_object(lb, solver_.top())(uf);
+      }
       if (sn == CGAL::NEGATIVE) {
 	if (!SLOPPY) {
 #ifndef NDEBUG
@@ -58,14 +61,13 @@ template <class Traits_t, bool SLOPPY>
 	  extra_root_=lb;
 	  has_extra_=true;
 	} else {
-	  solver_.pop();
+	  if (!solver_.empty()) solver_.pop();
 	  has_extra_=false;
 	}
       }
       else {
 	has_extra_=false;
       }
-      one_even_=false;
     }
 
     HDRS(){}
@@ -81,13 +83,8 @@ template <class Traits_t, bool SLOPPY>
       if (has_extra_) {
 	extra_root_=Root();
 	has_extra_=false;
-      }
-      else if (!one_even_ && iem_(solver_.top())) {
-	one_even_=true;
-      }
-      else {
+      } else {
 	solver_.pop();
-	one_even_=false;
       }
     }
 
@@ -107,9 +104,7 @@ template <class Traits_t, bool SLOPPY>
   protected:
     Wrapped_solver solver_;
     Root extra_root_;
-    bool one_even_;
     bool has_extra_;
-    typename Traits::Is_even_multiplicity iem_;
   };
 
 template <class Traits_t, bool SLOPPY>

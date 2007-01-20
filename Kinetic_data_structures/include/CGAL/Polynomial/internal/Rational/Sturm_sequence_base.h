@@ -45,8 +45,8 @@ class Sturm_sequence_base
 
         typedef std::vector<Polynomial>            Container;
 
-        typedef CGAL_POLYNOMIAL_NS::Sign                Sign;
-        typedef CGAL_POLYNOMIAL_NS::Comparison_result   Comparison_result;
+  typedef CGAL::Sign                Sign;
+        typedef CGAL::Comparison_result   Comparison_result;
 
         template<class Iterator>
             static

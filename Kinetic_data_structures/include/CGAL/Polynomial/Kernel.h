@@ -77,7 +77,7 @@ public:
   typedef Root_stack_t Root_stack;
   typedef typename Root_stack_t::Root Root;
   typedef Polynomial_t Function;
-  typedef NT_t NT;
+  typedef NT_t FT;
   typedef typename Root_stack_t::Traits Root_stack_traits;
 
   //! \todo do something with tr
@@ -169,8 +169,8 @@ public:
   typedef internal::Root_container<This> Root_container;
   friend class internal::Root_container<This>;
   Root_container root_container_object(const Function &f,
-				       const Root &lb=-std::numeric_limits<Root>::infinity(),
-				       const Root &ub= std::numeric_limits<Root>::infinity()) const
+				       const Root &lb,
+				       const Root &ub) const
   {
     return Root_container(f, lb, ub, root_stack_traits_object());
   }
@@ -180,8 +180,8 @@ public:
     \todo make sure that the iterator has all the right types.
   */
   Root_stack root_stack_object(const Function &f,
-			       const Root &lb=-std::numeric_limits<Root>::infinity(),
-			       const Root &ub= std::numeric_limits<Root>::infinity()) const
+			       const Root &lb,
+			       const Root &ub) const
   {
     return Root_stack(f, lb, ub, root_stack_traits_object());
   }

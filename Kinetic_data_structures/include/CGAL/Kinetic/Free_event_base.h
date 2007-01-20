@@ -15,7 +15,9 @@ public:
   template <class Key>
   CGAL::Comparison_result compare_concurrent(Key a,
 					     Key b) const {
-    return CGAL::compare(a,b);
+    if (a < b) return CGAL::SMALLER;
+    else if (b < a) return CGAL::LARGER;
+    else return CGAL::EQUAL;
   }	
   template <class Key>
   bool merge_concurrent(Key,

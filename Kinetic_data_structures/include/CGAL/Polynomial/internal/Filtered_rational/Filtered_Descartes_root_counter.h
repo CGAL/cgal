@@ -156,8 +156,8 @@ class Filtered_Descartes_root_counter
 
         template <class NTT>
             result_type operator()(const NTT &begin, const NTT &end,
-            CGAL_POLYNOMIAL_NS::Sign,
-            CGAL_POLYNOMIAL_NS::Sign) const
+				   CGAL::Sign,
+				   CGAL::Sign) const
         {
             return filtered_Descartes_root_counter(h_, begin, end, true, kernel_);
         }

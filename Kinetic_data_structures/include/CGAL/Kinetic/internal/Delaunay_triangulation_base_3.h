@@ -422,7 +422,7 @@ public:
   */
   Vertex_handle change_vertex(Point_key k, bool clean=false) {
     if (!has_certificates()) return NULL;
-    triangulation_.geom_traits().set_time(simulator()->rational_current_time());
+    //triangulation_.geom_traits().set_time(simulator()->current_time_as_nt());
     std::vector<Cell_handle> incident_cells;
     triangulation_.incident_cells(vertex_handle(k), back_inserter(incident_cells));
     if (!clean) {
@@ -506,7 +506,9 @@ public:
   }
 
   typename Triangulation::Vertex_handle new_vertex(Point_key k) {
-    triangulation_.geom_traits().set_time(simulator()->rational_current_time());
+    /* NT nt= simulator()->next_time_representable_as_nt();
+    simulator()->set_current_time(nt);
+    triangulation_.geom_traits().set_time(nt);*/
     Cell_handle h= triangulation_.locate(k);
     return new_vertex(k,h);
   }
@@ -554,9 +556,11 @@ public:
       return;*/
 
     Vertex_handle vh;
-
+    typename Simulator::NT nt= simulator()->next_time_representable_as_nt();
+    simulator()->set_current_time(nt);
+    triangulation_.geom_traits().set_time(nt);
     if (has_certificates_) {
-      triangulation_.geom_traits().set_time(simulator()->rational_current_time());
+      //triangulation_.geom_traits().set_time(simulator()->current_time_as_nt());
       if (h==NULL) {
 	h= triangulation_.locate(k);
       }
@@ -690,7 +694,6 @@ public:
     }
     else {
       // if low dimensional
-      triangulation_.geom_traits().set_time(simulator()->rational_current_time());
       vh=triangulation_.insert(k, h);
     }
 
@@ -1050,7 +1053,7 @@ public:
   void audit() const
   {
     CGAL_KINETIC_LOG(LOG_SOME, "Verifying at time " << simulator()->audit_time() << ".\n");
-    triangulation_.geom_traits().set_time(simulator()->rational_current_time());
+    triangulation_.geom_traits().set_time(simulator()->audit_time());
     //CGAL_precondition(triangulation_.geom_traits().time()== simulator()->audit_time());
     //triangulation_.geom_traits().set_time(simulator().rational_current_time());
     audit_structure();
@@ -1104,7 +1107,7 @@ public:
   }
 
   void set_vertex_handle(Point_key k, Vertex_handle vh) {
-    CGAL_precondition(k.to_index() >=0);
+    CGAL_precondition(k != Point_key());
     unsigned int bin= k.to_index();
     while (vhs_.size() <= bin) {
       vhs_.push_back(NULL);

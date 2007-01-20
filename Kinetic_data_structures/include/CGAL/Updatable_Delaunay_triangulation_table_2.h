@@ -581,11 +581,11 @@ public:
           c[0]=NT(fp[i])-c[1];
           mf[i]=MF(c, c+2);
         }
-	CGAL_postcondition(mf[0](start_time) == NT(ip[0]));
-	CGAL_postcondition(mf[1](start_time) == NT(ip[1]));
+	CGAL_postcondition(mf[0](NT(start_time)) == NT(ip[0]));
+	CGAL_postcondition(mf[1](NT(start_time)) == NT(ip[1]));
       } else {
-        mf[0] = MF(ip.x());
-        mf[1] = MF(ip.y());
+        mf[0] = MF(NT(ip.x()));
+        mf[1] = MF(NT(ip.y()));
       }
 #endif
 
@@ -941,7 +941,7 @@ public:
     return coef_cache_[k.to_index()].start_time() == next_activation_;
     }*/
 
-  void activate(double t, Key k) {
+  void activate(double, Key k) {
 
     ++stat_number_of_activated_vertices_;
     //CGAL_precondition(t.inf() == t.sup());

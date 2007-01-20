@@ -17,13 +17,13 @@ int main(int, char *[])
   typedef CGAL::Kinetic::Delaunay_triangulation_event_log_visitor_2 Visitor;
   typedef CGAL::Kinetic::Delaunay_triangulation_2<Simulation_traits, Visitor> KDel;
 
-  Simulation_traits simtr;
+  Simulation_traits simtr(0,10000000);
   Simulation_traits::Simulator::Handle sp= simtr.simulator_handle();
 
   KDel kdel(simtr);
   kdel.triangulation(3).finite_vertices_begin();
   
-  //CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
+  CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
  
   std::ifstream in("data/Delaunay_triangulation_2.input");
   if (!in) {

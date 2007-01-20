@@ -36,7 +36,7 @@ class Root_stack_traits_base: public Rational_traits_base<Poly>
         typedef Rational_traits_base<Poly> P;
 
     public:
-        typedef CGAL_POLYNOMIAL_NS::internal::Isolating_interval<typename P::NT> Isolating_interval;
+  typedef CGAL_POLYNOMIAL_NS::internal::Isolating_interval<typename P::FT> Isolating_interval;
 };
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE

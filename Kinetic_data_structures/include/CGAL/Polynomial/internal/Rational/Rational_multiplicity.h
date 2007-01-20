@@ -44,19 +44,19 @@ class Rational_multiplicity
 
         result_type operator()(const argument_type &t) const
         {
-            CGAL_Polynomial_exactness_assertion(k_.sign_at_object(h_.front())( t)== CGAL_POLYNOMIAL_NS::ZERO);
+            CGAL_Polynomial_exactness_assertion(k_.sign_at_object(h_.front())( t)== CGAL::ZERO);
 //POLYNOMIAL_NS::Sign sn;
 //if ( k.sign_at_object(fh)(t) != POLYNOMIAL_NS::ZERO ) return 0;
             unsigned int deg=1;
             unsigned int mdegree= h_.front().degree();
-            while (sign_at_of(t,deg)==CGAL_POLYNOMIAL_NS::ZERO && deg <mdegree) {
+            while (sign_at_of(t,deg)==CGAL::ZERO && deg <mdegree) {
                 ++deg;
             }
             return deg;
         }
 
     protected:
-        CGAL_POLYNOMIAL_NS::Sign sign_at_of(const argument_type &t, unsigned int i) const
+        CGAL::Sign sign_at_of(const argument_type &t, unsigned int i) const
         {
             if (i >= h_.size()) {
                 h_.push_back(d_(h_.back()));

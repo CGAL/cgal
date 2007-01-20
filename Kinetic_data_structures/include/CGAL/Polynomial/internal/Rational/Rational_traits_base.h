@@ -52,7 +52,7 @@ struct Rational_traits_base
 {
     typedef Rational_traits_base<Poly> This;
     typedef Poly Function;
-    typedef typename Function::NT NT;
+    typedef typename Function::NT FT;
 
 //! The sign of a polynomial at a rational
   typedef Sign_at_rational<Function> Sign_at;
@@ -186,14 +186,14 @@ struct Rational_traits_base
 
 //! Map an interval to positive reals
     typedef CGAL::POLYNOMIAL::internal::Map_rational_interval_to_positive_2<This> Map_rational_interval_to_positive_2;
-    Map_rational_interval_to_positive_2 map_rational_interval_to_positive_2_object(const NT &a, const NT &b) const
+  Map_rational_interval_to_positive_2 map_rational_interval_to_positive_2_object(const FT &a, const FT &b) const
     {
         return Map_rational_interval_to_positive_2(a,b, *this);
     }
 
 //! Translates zero by a rational number
     typedef CGAL::POLYNOMIAL::internal::Rational_translate_zero<Function> Rational_translate_zero;
-    Rational_translate_zero rational_translate_zero_object(const NT &p) const
+    Rational_translate_zero rational_translate_zero_object(const FT &p) const
     {
         return Rational_translate_zero(p);
     }

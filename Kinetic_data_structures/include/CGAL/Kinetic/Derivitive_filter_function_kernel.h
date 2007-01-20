@@ -73,7 +73,7 @@ struct Derivitive_filter_function_kernel: public Traits
   using Traits::to_rational_object;
   using Traits::Root_stack_traits;
   using Traits::root_stack_traits_object;
-  using Traits::NT;
+  using Traits::FT;
   using Traits::differentiate_object;
   using Traits::Differentiate;
   using Traits::Negate_variable;

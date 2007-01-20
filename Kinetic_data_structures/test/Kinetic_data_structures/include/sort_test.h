@@ -49,29 +49,29 @@ bool sort_test(Traits &tr, double max_events=std::numeric_limits<double>::infini
   bool eret=false;
   CGAL_exactness_assertion_code(eret=true);
  
-  typedef typename Sort::Key_iterator Kit;
+  typedef typename Sort::Iterator Kit;
   Kit c= sort.begin();
   Kit b=c;
   ++c;
   typename Traits::NT ratt;
-  if (tr.simulator_handle()->has_rational_current_time()) {
-    ratt=tr.simulator_handle()->rational_current_time();
-  } else {
+  //if (tr.simulator_handle()->next_time_representable_as_nt()) {
+    ratt=tr.simulator_handle()->next_time_representable_as_nt();
+    /*} else {
     std::cerr << etag << "Out of events, but the time is not rational." << std::endl;
     std::cerr << "Current time is " << tr.simulator_handle()->current_time()
 	      << " the end time is " << tr.simulator_handle()->end_time() << std::endl;
     CGAL::Kinetic::internal::fail__|= fail;
     ratt= CGAL::to_interval(tr.simulator_handle()->end_time()).second;
     error=eret;
-  }
+    }*/
 
   std::cout << "End time is " << tr.simulator_handle()->end_time() << std::endl;
 
   while (c != sort.end()) {
     typename Traits::Simulator::Function_kernel::Function f= tr.active_points_1_table_handle()->at(*c).x() - tr.active_points_1_table_handle()->at(*b).x();
     if ( f(ratt) < 0 ) {
-      std::cerr << etag << "Objects " << *c << " = " << tr.active_points_1_table_handle()->at(*c).x() << " and "
-                << *b << " = " << tr.active_points_1_table_handle()->at(*b).x() << " out of order at end of time "
+      std::cerr << etag << "Objects " << c->object() << " = " << tr.active_points_1_table_handle()->at(*c).x() << " and "
+                << b->object() << " = " << tr.active_points_1_table_handle()->at(*b).x() << " out of order at end of time "
                 <<ratt << std::endl;
       CGAL::Kinetic::internal::fail__|= fail;
       error=eret;

@@ -26,27 +26,27 @@
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
 template <class Kernel>
-CGAL_POLYNOMIAL_NS::Sign sign_below(const typename Kernel::Function &p,
+CGAL::Sign sign_below(const typename Kernel::Function &p,
 const typename Kernel::NT &nt, const Kernel &k)
 {
 //CGAL_exactness_precondition(k.sign_at_object(p)(nt)==CGAL::ZERO);
-    CGAL_POLYNOMIAL_NS::Sign sn= k.sign_at_object(p)(nt);
-    if (sn != CGAL_POLYNOMIAL_NS::ZERO) return sn;
+    CGAL::Sign sn= k.sign_at_object(p)(nt);
+    if (sn != CGAL::ZERO) return sn;
     typename Kernel::Function pcur=k.differentiate_object()(p);
     int count=1;
     do {
-        CGAL_POLYNOMIAL_NS::Sign sn= k.sign_at_object(pcur)(nt);
-        if (sn != CGAL_POLYNOMIAL_NS::ZERO) {
-            if ((count %2==1 && sn== CGAL_POLYNOMIAL_NS::POSITIVE)
-            || (count%2==0 && sn==CGAL_POLYNOMIAL_NS::NEGATIVE)) {
-                return CGAL_POLYNOMIAL_NS::NEGATIVE;
+        CGAL::Sign sn= k.sign_at_object(pcur)(nt);
+        if (sn != CGAL::ZERO) {
+            if ((count %2==1 && sn== CGAL::POSITIVE)
+            || (count%2==0 && sn==CGAL::NEGATIVE)) {
+                return CGAL::NEGATIVE;
             }
             else {
-                return CGAL_POLYNOMIAL_NS::POSITIVE;
+                return CGAL::POSITIVE;
             }
         }
 	pcur= k.differentiate_object()(pcur);
-	if (pcur.degree() <0) return  CGAL_POLYNOMIAL_NS::ZERO;
+	if (pcur.degree() <0) return  CGAL::ZERO;
     } while (1);
     //return CGAL_POLYNOMIAL_NS::ZERO;
 }
@@ -61,7 +61,7 @@ class Sign_below_rational
         typedef typename Kernel::NT argument_type;
 //  typedef typename POLYNOMIAL_NS::Sign result_type;
 // g++ 3.4 does not like the above typedef
-        typedef CGAL_POLYNOMIAL_NS::Sign result_type;
+        typedef CGAL::Sign result_type;
         result_type operator()(const argument_type &n) const
         {
             return sign_below(p_,n, k_);

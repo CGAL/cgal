@@ -98,9 +98,9 @@ r = r * v[n];
   return r;
   }*/
 
-        CGAL_POLYNOMIAL_NS::Sign s_vn = CGAL_POLYNOMIAL_NS::sign(v[n]);
+        CGAL::Sign s_vn = CGAL::sign(v[n]);
 
-        if ( (divdeg % 2 == 0) && s_vn == CGAL_POLYNOMIAL_NS::NEGATIVE ) {
+        if ( (divdeg % 2 == 0) && s_vn == CGAL::NEGATIVE ) {
             r = -r;
         }
 

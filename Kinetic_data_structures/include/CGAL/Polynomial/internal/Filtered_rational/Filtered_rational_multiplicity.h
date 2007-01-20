@@ -85,7 +85,7 @@ public:
 	typename Kernel::Exact_traits::NT vale= h_[deg].exact_function()(e);
 	// catch up exact and evaluate
 
-	if (CGAL_POLYNOMIAL_NS::sign(vale) == CGAL_POLYNOMIAL_NS::ZERO) {
+	if (CGAL::sign(vale) == CGAL::ZERO) {
 
 	}
 	else {

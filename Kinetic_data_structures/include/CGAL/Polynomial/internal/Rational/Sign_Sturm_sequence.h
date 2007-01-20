@@ -38,7 +38,7 @@ class Sign_Sturm_sequence : public Sturm_sequence_t
 
     protected:
         typedef Sturm_sequence                         Base;
-        typedef CGAL_POLYNOMIAL_NS::Sign                    Sign;
+        typedef CGAL::Sign                    Sign;
         typedef typename Kernel::Sign_at               Sign_at;
 
     public:

@@ -20,9 +20,18 @@ August 2006 Daniel Russel
 September 2006 Daniel Russel
 - added event auditing
 - sorting modified to support general objects (added template arguments)
+- change has_rational_current_time to has_current_time_as_nt() to one function next_time_representable_as_nt
+- changed some NT to FT to be consistent with CGAL
+- collapsed polynomial_NS::Sign into CGAL::Sign
+- you must check if a certificate fails or not
 
 Future Daniel Russel
 - change non-failing root to be NaN or Root() rather than infinity?
 - when using numeric solvers, evaluate the static predicates first before solving?
 - add doc of to_index
 - change KDS interfaces to not automaticall add points to the KDSs--add insert methods
+- move table to a list and make key the same as object (i.e. the key is the Point_2) this will help filtering and things and mean the table can be ignored if desired. 
+- have Sturm first try to prove there are no roots-- say Descartes once
+
+known bugs:
+If, on insertion into a Del_3 the current time must be advanced past an event which invalidates the cell handle that is used to insert the vertex, then there is a problem. To fix this check all the paths for insert and protect this method behind ones which set the time before locate. Make that IK and S times are equal a precondition. 

@@ -651,7 +651,10 @@ public:
 	  || !redundant_points_[k].is_valid() ) {
 	// error handling code, this should not happen
 	std::cerr << "Hack in handling lost point.\n";
-	triangulation().geom_traits().set_time(kdel_.simulator()->rational_current_time());
+	typename Simulator::NT nt= kdel_.simulator()->next_time_representable_as_nt();
+	kdel_.simulator()->set_current_time(nt);
+	triangulation().geom_traits().set_time(nt);
+	//triangulation().geom_traits().set_time(kdel_.simulator()->rational_current_time());
 	typename Delaunay::Cell_handle h= triangulation().locate(k);
 	redundant_points_[k]= make_certificate(k, h);
       }
@@ -668,7 +671,10 @@ public:
   void insert(Point_key k) {
     bool had_certificates= has_certificates();
     set_has_certificates(false);
-    kdel_.triangulation().geom_traits().set_time(kdel_.simulator()->rational_current_time());
+    typename Simulator::NT nt= kdel_.simulator()->next_time_representable_as_nt();
+    kdel_.simulator()->set_current_time(nt);
+    kdel_.triangulation().geom_traits().set_time(nt);
+    //kdel_.triangulation().geom_traits().set_time(kdel_.simulator()->current_time_as_nt());
     typename Triangulation::Cell_handle h= kdel_.triangulation().locate(k);
     typename KDel::Triangulation::Vertex_handle vh= kdel_.new_vertex_regular(k, h);
     if (vh==NULL) {
@@ -870,7 +876,7 @@ protected:
 
 	typename Base_traits::Kinetic_kernel::Function_kernel::Sign_at sar
 	  = kdel_.simulation_traits_object().kinetic_kernel_object().function_kernel_object().sign_at_object(cf);
-	CGAL::Sign sn = CGAL::sign(sar(kdel_.simulator()->current_time()));
+	CGAL::Sign sn = sar(kdel_.simulator()->current_time());
 
 #ifndef NDEBUG
 	{
