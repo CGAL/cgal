@@ -24,7 +24,7 @@
 //#include <CGAL/Kinetic/internal/Kernel/Certificate.h>
 CGAL_KINETIC_BEGIN_NAMESPACE
 template <class KK_t, class Generator>
-struct Certificate_generator: public Generator {
+struct Certificate_generator {
   typedef typename KK_t::Certificate result_type;
   typedef typename KK_t::Function_kernel::Root Time;
   Certificate_generator(typename KK_t::Function_kernel fk): fk_(fk){}
@@ -33,30 +33,30 @@ struct Certificate_generator: public Generator {
 
   template <class A, class B, class C, class D, class E>
   result_type operator()(const A &a, const B &b, const C &c, const D &d, const E &e, const Time &begin, const Time &end) const {
-    return result_type(Generator::operator()(a, b, c, d, e), fk_, begin, end);
+    return result_type(gen_(a, b, c, d, e), fk_, begin, end);
   }
   template <class A, class B, class C, class D>
   result_type operator()(const A &a, const B &b, const C &c, const D &d, const Time &begin, const Time &end) const {
-    return result_type(Generator::operator()(a, b, c, d), fk_, begin, end);
+    return result_type(gen_(a, b, c, d), fk_, begin, end);
   }
   template <class A, class B, class C>
   result_type operator()(const A &a, const B &b, const C &c, const Time &begin, const Time &end) const {
-    return result_type(Generator::operator()(a, b, c), fk_, begin, end);
+    return result_type(gen_(a, b, c), fk_, begin, end);
   }
   template <class A, class B>
   result_type operator()(const A &a, const B &b, const Time &begin, const Time &end) const {
-    return result_type(Generator::operator()(a, b), fk_, begin, end);
+    return result_type(gen_(a, b), fk_, begin, end);
   }
   template <class A>
   result_type operator()(const A &a, const Time &begin, const Time &end) const {
-    return result_type(Generator::operator()(a), fk_,begin,end);
+    return result_type(gen_(a), fk_,begin,end);
   }
 
   
 
 
   
-
+  Generator gen_;
   typename KK_t::Function_kernel fk_;
 };
 

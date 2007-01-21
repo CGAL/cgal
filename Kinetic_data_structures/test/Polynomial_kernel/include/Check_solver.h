@@ -60,7 +60,7 @@ public:
     //int current_root=0;
     if (verbose) {
       std::cout << "Polynomial: " << q << std::endl;
-      std::cout << "Window: (";
+      std::cout << "Window: [";
 
       std::cout<< CGAL::to_double(start);
       std::cout << ", ";
@@ -97,20 +97,20 @@ public:
 	  }
 	  CGAL_assertion(last_root<= s.top());
 	  last_root=s.top();
-	  Rt cur= s.top();
+	  //Rt cur= s.top();
 	  //if (cur != std::numeric_limits<Rt>::infinity()) {
-	    /*if (cur == std::numeric_limits<Rt>::infinity() || cur > 10000){
-	      int i=0;
-	      }*/
-	    roots.push_back(s.top());
-
-	    std::cout << "<" << CGAL::to_double(s.top());
-	    if (iem(s.top())) { std::cout <<"E";}
-	    std::cout << "> " << std::flush;
-	    /*}
-	  else {
-
-	  }*/
+	  /*if (cur == std::numeric_limits<Rt>::infinity() || cur > 10000){
+	    int i=0;
+	    }*/
+	  roots.push_back(s.top());
+	  
+	  std::cout << "<" << CGAL::to_double(s.top());
+	  //if (iem(s.top())) { std::cout <<"E";}
+	  std::cout << "> " << std::flush;
+	  /*}
+	    else {
+	    
+	    }*/
 	}
 	s.pop();
 	++total_roots;
@@ -120,9 +120,9 @@ public:
 	std::vector<bool> taken_maple(roots_e-roots_b, false), taken_solver(roots.size(), false);
 	for (unsigned int i=0; i< roots.size(); ++i) {
 	  double rd= CGAL::to_double(roots[i]);
-	  bool ie= iem(roots[i]);
+	  //bool ie= iem(roots[i]);
 	  int mult=1;
-	  if (ie) mult=2;
+	  //if (ie) mult=2;
 	  for (int k=0; k<mult; ++k) {
 	    int mm=-1;
 	    double md=.5;
@@ -361,8 +361,8 @@ public:
       check_polynomial(q,a.begin(), a.end());
       check_polynomial(q,a.begin()+2, a.end()-2, Rt(-4), Rt(9));
       check_polynomial(q,a.begin()+2, a.end()-4, Rt(-4), Rt(7));
-      check_polynomial(q,a.begin()+4, a.end()-2, Rt(-3), Rt(9));
-      check_polynomial(q,a.begin()+4, a.end()-4, Rt(-3), Rt(7));
+      check_polynomial(q,a.begin()+2, a.end()-2, Rt(-3), Rt(9));
+      check_polynomial(q,a.begin()+2, a.end()-4, Rt(-3), Rt(7));
     }
     write_timings();
   }
@@ -421,7 +421,7 @@ public:
 
       //typename Root_container::iterator it=s.begin();
       for (unsigned int offset=0; offset < roots.size()-1; ++offset) {
-	check_polynomial(q, a.begin()+offset+1, a.end(), roots[offset]);
+	check_polynomial(q, a.begin()+offset, a.end(), roots[offset]);
       }
     }
 

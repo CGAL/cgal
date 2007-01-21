@@ -19,10 +19,7 @@
 \ccDefinition
   
 The concept \ccRefName\ enumerates through roots of a function
-contained in a certain interval. They may return one extra root which
-has value \ccc{std::numeric_limits<Root>::infinity()}, as this allows
-the root stacks to delay isolating roots until the isolation is needed
-to properly evaluate comparisons.
+contained in a half open interval [lb\dots ub).
 
 \ccTypes
 
@@ -34,7 +31,7 @@ to properly evaluate comparisons.
 
 \ccConstructor{RootStack();}{default constructor.}
 
-\ccConstructor{RootStack(Function f, Root lb, Root ub, Traits tr);}{Construct a \ccRefName\ over the roots of \ccc{f} in the open interval \ccc{lb} to \ccc{ub}.}
+\ccConstructor{RootStack(Function f, Root lb, Root ub, Traits tr);}{Construct a \ccRefName\ over the roots of \ccc{f} in the half open interval [\ccc{lb} to \ccc{ub}).}
 
 \ccOperations
 

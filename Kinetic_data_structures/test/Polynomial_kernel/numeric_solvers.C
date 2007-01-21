@@ -4,8 +4,8 @@
 #include <CGAL/Polynomial/Numeric_root_stack.h>
 #include <CGAL/Polynomial/Polynomial.h>
 #include <CGAL/Polynomial/Root_stack_default_traits.h>
-#include <CGAL/Polynomial/Upper_bound_root_stack_Descartes_traits.h>
-#include <CGAL/Polynomial/Upper_bound_root_stack.h>
+//#include <CGAL/Polynomial/Upper_bound_root_stack_Descartes_traits.h>
+//#include <CGAL/Polynomial/Upper_bound_root_stack.h>
 #include <CGAL/Polynomial/internal/numeric_solvers.h>
 
 #ifdef CGAL_POLYNOMIAL_USE_GSL

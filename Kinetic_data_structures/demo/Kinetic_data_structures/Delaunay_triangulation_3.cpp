@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
     typedef CGAL::Kinetic::SoQt_moving_points_3<Traits, Qt_gui> Qt_mpt;
     typedef CGAL::Kinetic::SoQt_triangulation_3<KDel, Qt_gui, Qt_mpt> Qt_del;
 
-    Traits tr;
+    Traits tr(0,100000);
     Qt_gui::Handle qtsim= new Qt_gui(argc, argv, tr.simulator_handle());
     Qt_mpt::Handle qtmpt= new Qt_mpt(tr, qtsim);
     KDel::Handle kdel= new KDel(tr);

@@ -400,6 +400,14 @@ struct Cartesian_less_x_3
   {
     return b.x() - a.x();
   }
+  typedef typename KK::Motion_function::NT NT;  
+  result_type operator()(const first_argument_type &a, const NT &c) const {
+    return result_type(c) - a.x();
+  }
+
+  result_type operator()(const NT &c, const second_argument_type &b) const {
+    return b.x() - result_type(c);
+  }
 };
 
 template <class KK>
@@ -414,6 +422,14 @@ struct Cartesian_less_y_3
 			 const second_argument_type &b) const
   {
     return b.y() - a.y();
+  }
+  typedef typename KK::Motion_function::NT NT;  
+  result_type operator()(const first_argument_type &a, const NT &c) const {
+    return result_type(c) - a.y();
+  }
+
+  result_type operator()(const NT &c, const second_argument_type &b) const {
+    return b.y() - result_type(c);
   }
 };
 
@@ -430,6 +446,15 @@ struct Cartesian_less_z_3
   {
     return b.z() - a.z();
   }
+  typedef typename KK::Motion_function::NT NT;  
+  result_type operator()(const first_argument_type &a, const NT &c) const {
+    return result_type(c) - a.z();
+  }
+
+  result_type operator()(const NT &c, const second_argument_type &b) const {
+    return b.z() - result_type(c);
+  }
+
 };
 
 /*PREDICATE_2_BEGIN(Point_sphere_orientation_3){

@@ -22,6 +22,7 @@
 #define CGAL_KINETIC_CARTESIAN_MOVING_POINT_2_H_
 #include <CGAL/Kinetic/basic.h>
 #include <iostream>
+#include <CGAL/Point_2.h>
 
 CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE;
 
@@ -44,8 +45,8 @@ public:
   }
 
   //! initialize it from a still point
-  template <class Static_point>
-  Cartesian_moving_point_2(const Static_point &pt) {
+  template <class R>
+  Cartesian_moving_point_2(const CGAL::Point_2<R> &pt) {
     _coords[0]=Coordinate(pt.x());
     _coords[1]=Coordinate(pt.y());
 

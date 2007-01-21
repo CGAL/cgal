@@ -879,11 +879,15 @@ public:
     }
 
     //if (!ore.empty()) {
-    typename Simulator::Time t= ore.failure_time();
-    ore.pop_failure_time();
-    typename Simulator::Event_key k= simulator()->new_event(t, Facet_flip_event(ore, middle_facet, tr_.wrapper_handle()));
-    
-    triangulation_.set_label(middle_facet, k);
+    if (ore.will_fail()) {
+      typename Simulator::Time t= ore.failure_time();
+      ore.pop_failure_time();
+      typename Simulator::Event_key k= simulator()->new_event(t, Facet_flip_event(ore, middle_facet, tr_.wrapper_handle()));
+      
+      triangulation_.set_label(middle_facet, k);
+    } else {
+      triangulation_.set_label(middle_facet, simulator()->null_event());
+    }
     /*}
       else {
       triangulation_.set_label(middle_facet, simulator()->null_event());
@@ -923,7 +927,11 @@ public:
     Event_key failed_key= triangulation_.label(flip_facet);
 
     Certificate ore= extract_root_stack(failed_key);
-    CGAL_KINETIC_LOG(LOG_LOTS, "Next root of solver is " << ore.failure_time() << std::endl);
+    if (ore.will_fail()) {
+      CGAL_KINETIC_LOG(LOG_LOTS, "Next root of certificate is " << ore.failure_time() << std::endl);
+    } else {
+      CGAL_KINETIC_LOG(LOG_LOTS, "Certificate will never fail" << std::endl);
+    }
 
     //typename P::Event_key index= triangulation_.label(flip_facet);
 
@@ -1024,10 +1032,14 @@ public:
 
     //typename Simulator::Time t= s.next_time_negative();
     //if (!ore.empty()) {
-    typename Simulator::Time t= ore.failure_time();
-    ore.pop_failure_time();
-    typename Simulator::Event_key k= simulator()->new_event(t, Edge_flip_event(ore, central_edge, tr_.wrapper_handle()));
-    triangulation_.set_label(central_edge, k);
+    if (ore.will_fail()) {
+      typename Simulator::Time t= ore.failure_time();
+      ore.pop_failure_time();
+      typename Simulator::Event_key k= simulator()->new_event(t, Edge_flip_event(ore, central_edge, tr_.wrapper_handle()));
+      triangulation_.set_label(central_edge, k);
+    } else {
+      triangulation_.set_label(central_edge, simulator()->null_event());
+    }
     /*}
       else {
       triangulation_.set_label(central_edge, simulator()->null_event());
@@ -1156,12 +1168,17 @@ public:
     
     Certificate s= root_stack(e, st);
    
-    CGAL_KINETIC_LOG(LOG_LOTS,"Failure time is " << s.failure_time() << std::endl);
-    typename Simulator::Time t= s.failure_time();
-    s.pop_failure_time();
-    CGAL_KINETIC_LOG(LOG_LOTS, "Next root of this cert is " << s.failure_time() << std::endl);
-    typename Simulator::Event_key k=  simulator()->new_event(t, Edge_flip_event(s, e, tr_.wrapper_handle()));
-    triangulation_.set_label(e, k);
+    if (s.will_fail()) {
+      CGAL_KINETIC_LOG(LOG_LOTS,"Failure time is " << s.failure_time() << std::endl);
+      typename Simulator::Time t= s.failure_time();
+      s.pop_failure_time();
+      CGAL_KINETIC_LOG(LOG_LOTS, "Next root of this cert is " << s.failure_time() << std::endl);
+      typename Simulator::Event_key k=  simulator()->new_event(t, Edge_flip_event(s, e, tr_.wrapper_handle()));
+      triangulation_.set_label(e, k);
+    } else {
+      CGAL_KINETIC_LOG(LOG_LOTS,"Certificate will not fail "<< std::endl);
+      triangulation_.set_label(e, simulator()->null_event());
+    }
   }
   void make_certificate( const Edge &e) {
     make_certificate(e, simulation_traits_object().simulator_handle()->current_time());
@@ -1178,12 +1195,16 @@ public:
       CGAL_precondition(!triangulation_.label(triangulation_.edge(e, i)).is_valid());
     }
     Certificate s= root_stack(e, st);
-   
-    typename Simulator::Time t= s.failure_time();
-    s.pop_failure_time();
-    CGAL_KINETIC_LOG(LOG_LOTS, "Next root of this cert is " << s.failure_time() << std::endl);
-    typename Simulator::Event_key k= simulator()->new_event(t, Facet_flip_event(s, e, tr_.wrapper_handle()));
-    triangulation_.set_label(e, k);
+    if (s.will_fail()) {
+      typename Simulator::Time t= s.failure_time();
+      s.pop_failure_time();
+      CGAL_KINETIC_LOG(LOG_LOTS, "Next root of this cert is " << s.failure_time() << std::endl);
+      typename Simulator::Event_key k= simulator()->new_event(t, Facet_flip_event(s, e, tr_.wrapper_handle()));
+      triangulation_.set_label(e, k);
+    } else {
+      CGAL_KINETIC_LOG(LOG_LOTS, "Certificate will not fail" << std::endl);
+      triangulation_.set_label(e, simulator()->null_event());
+    }
   }
 
    void make_certificate( const Facet &e) {

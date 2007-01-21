@@ -105,10 +105,10 @@ public:
     CGAL_assertion(ymin<ymax);
     bounds_[LEFT]=xmin;
     bounds_[RIGHT]=xmax;
-    bounds_[TOP]=ymin;
-    bounds_[BOTTOM]=ymax;
-    bounds_[FRONT]=zmin;
-    bounds_[BACK]=zmax;
+    bounds_[TOP]=ymax;
+    bounds_[BOTTOM]=ymin;
+    bounds_[FRONT]=zmax;
+    bounds_[BACK]=zmin;
   };
 
   ~Enclosing_box_3() {
@@ -200,27 +200,42 @@ protected:
   {
     Coordinate nf;
     NT bound=bounds_[try_side];
+   typename Kinetic_kernel::Certificate re;
     if (try_side== TOP || try_side==BOTTOM) {
-      nf=traits_.active_points_3_table_handle()->at(k).y()-Fn(bound);
-    }
-    else if (try_side == LEFT || try_side == RIGHT) {
-      nf=traits_.active_points_3_table_handle()->at(k).x()-Fn(bound);
-    }
-    else {
-      nf=traits_.active_points_3_table_handle()->at(k).z()-Fn(bound);
-    }
-    if (try_side == BOTTOM || try_side == RIGHT || try_side == BACK) {
-      nf=-nf;
+      typename Kinetic_kernel::Is_less_y_3 ily = traits_.kinetic_kernel_object().is_less_y_3_object();     
+      if (try_side== TOP) {
+	re= ily(traits_.active_points_3_table_handle()->at(k), bound,
+		traits_.simulator_handle()->current_time(), traits_.simulator_handle()->end_time());
+      } else {
+	re= ily(bound, traits_.active_points_3_table_handle()->at(k),
+		traits_.simulator_handle()->current_time(), traits_.simulator_handle()->end_time());
+      }
+
+    } else if (try_side == LEFT || try_side == RIGHT) {
+      typename Kinetic_kernel::Is_less_x_3 ily = traits_.kinetic_kernel_object().is_less_x_3_object();
+      if (try_side== RIGHT) {
+	re= ily(traits_.active_points_3_table_handle()->at(k), bound,
+		traits_.simulator_handle()->current_time(), traits_.simulator_handle()->end_time());
+      } else {
+	re= ily(bound, traits_.active_points_3_table_handle()->at(k),
+		traits_.simulator_handle()->current_time(), traits_.simulator_handle()->end_time());
+      }
+    } else {
+      typename Kinetic_kernel::Is_less_z_3 ily = traits_.kinetic_kernel_object().is_less_z_3_object();
+      if (try_side== FRONT) {
+	re= ily(traits_.active_points_3_table_handle()->at(k), bound,
+		traits_.simulator_handle()->current_time(), traits_.simulator_handle()->end_time());
+      } else {
+	re= ily(bound, traits_.active_points_3_table_handle()->at(k),
+		traits_.simulator_handle()->current_time(), traits_.simulator_handle()->end_time());
+      }
     }
 
-    typename Kinetic_kernel::Function_kernel::Root_stack re
-      = traits_.kinetic_kernel_object().function_kernel_object().root_stack_object(nf,
-										   traits_.simulator_handle()->current_time(),
-										   traits_.simulator_handle()->end_time());
-
-    double dv = std::numeric_limits<double>::infinity();
-    if (!re.empty()) {
-      dv= CGAL::to_interval(re.top()).first;
+    double dv;
+    if (re.will_fail()) {
+      dv= CGAL::to_interval(re.failure_time()).first;
+    } else {
+      dv= std::numeric_limits<double>::has_infinity?std::numeric_limits<double>::infinity(): std::numeric_limits<double>::max();
     }
 
     /*while (!re.finished()) {

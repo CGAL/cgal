@@ -1040,9 +1040,13 @@ protected:
 				  kdel_.simulator()->current_time(),
 				  kdel_.simulator()->end_time());
     //if (!s.empty()) {
-    Time t= s.failure_time();
-    s.pop_failure_time();
-    return kdel_.simulator()->new_event(t, Pop_event(s, vh, this));
+    if (s.will_fail()) {
+      Time t= s.failure_time();
+      s.pop_failure_time();
+      return kdel_.simulator()->new_event(t, Pop_event(s, vh, this));
+    } else {
+      return kdel_.simulator()->null_event();
+    }
     /*}
       else {
       return kdel_.simulator()->null_event();
@@ -1063,7 +1067,11 @@ protected:
     Time pst;
     /*if (!ps.empty()) pst = ps.top();
       else pst= std::numeric_limits<Time>::infinity();*/
-    pst=ps.failure_time();
+    if (pst.will_fail()) {
+      pst=ps.failure_time();
+    } else {
+      pst= kdel_.simulator().end_time();
+    }
 
     int first=0;
     for (unsigned int i=0; i< 4; ++i) {
@@ -1076,13 +1084,13 @@ protected:
 				     point(k),
 				     kdel_.simulator()->current_time(),
 				     kdel_.simulator()->end_time());
-      if (cs.failure_time() < pst) {
+      if (cs.will_fail() && cs.failure_time() < pst) {
 	pst= cs.failure_time();
 	ps=cs;
 	first= i+1;
       }
     }
-    if (pst != std::numeric_limits<Time>::infinity()) {
+    if (pst < kdel_.simulator()->end_time()) {
       if (first==0 ) {
 	CGAL_KINETIC_LOG(LOG_LOTS, "Making push certificate for " << k << std::endl);
 	ps.pop_failure_time();

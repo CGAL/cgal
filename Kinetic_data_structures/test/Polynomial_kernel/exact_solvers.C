@@ -5,15 +5,15 @@
 #include <cstdlib>
 
 #include <CGAL/Polynomial/Kernel.h>
-#include <CGAL/Polynomial/Filtered_kernel.h>
+//#include <CGAL/Polynomial/Filtered_kernel.h>
 #include <CGAL/Polynomial/Polynomial.h>
 #include <CGAL/Polynomial/internal/Filtered_function.h>
 #include <CGAL/Polynomial/Root_stack_default_traits.h>
-#include <CGAL/Polynomial/Upper_bound_root_stack.h>
-#include <CGAL/Polynomial/Upper_bound_root_stack_Descartes_traits.h>
-#include <CGAL/Polynomial/Upper_bound_root_stack_filtered_Descartes_traits.h>
+//#include <CGAL/Polynomial/Upper_bound_root_stack.h>
+//#include <CGAL/Polynomial/Upper_bound_root_stack_Descartes_traits.h>
+//#include <CGAL/Polynomial/Upper_bound_root_stack_filtered_Descartes_traits.h>
 #include <CGAL/Polynomial/Sturm_root_stack.h>
-#include <CGAL/Polynomial/Default_filtering_traits.h>
+//#include <CGAL/Polynomial/Default_filtering_traits.h>
 #include <CGAL/Polynomial/Sturm_root_stack_traits.h>
 
 #if 0
@@ -146,7 +146,7 @@ int main(int argc, char* argv[])
         cg.exact();
         std::cout << std::endl;
 	}*/
-
+#endif
     {
         if (verbose) std::cout <<"Sturm_exact_________________________________\n";
         else std::cout << "Sturm&\t";
@@ -160,7 +160,7 @@ int main(int argc, char* argv[])
         std::cout << std::endl;
     }
     
-#endif
+
 #ifdef CGAL_USE_CORE
     {
       
