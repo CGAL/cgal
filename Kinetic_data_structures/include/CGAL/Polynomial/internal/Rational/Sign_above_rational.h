@@ -58,7 +58,7 @@ public:
       else {
 	pcur=d(pcur);
       }
-    } while (!pcur.is_zero());
+    } while (pcur.degree()>=0);
     return CGAL::ZERO;
   }
 protected:

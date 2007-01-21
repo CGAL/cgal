@@ -208,55 +208,12 @@ public:
     s_lower = s_upper = CGAL::ZERO;
   }
 
-#if 0
-  void set_lower(const Self& r, typename Interval::Endpoint b,
-		 const Sign& s_l ) const
-  {
-    typename Interval::NT l;
-    if ( b == Interval::LOWER ) {
-      l = r.ivl.lower_bound();
-    }
-    else {
-      l = r.ivl.upper_bound();
-    }
 
-    ivl.set_lower(l);
-    s_lower = s_l;
-  }
-
-  void set_upper(const Self& r, typename Interval::Endpoint b,
-		 const Sign& s_u) const
-  {
-    typename Interval::NT u;
-    if ( b == Interval::LOWER ) {
-      u = r.ivl.lower_bound();
-    }
-    else {
-      u = r.ivl.upper_bound();
-    }
-
-    ivl.set_upper(u);
-    s_upper = s_u;
-  }
-
-  void set_interval(const Self& r, typename Interval::Endpoint b) const
-  {
-    typename Interval::NT x;
-    if ( b == Interval::LOWER ) {
-      x = r.ivl.lower_bound();
-    }
-    else {
-      x = r.ivl.upper_bound();
-    }
-    ivl = Interval(x);
-    s_lower = s_upper = CGAL::ZERO;
-  }
-#endif
 
   template <class This>
   Comparison_result
   compare_finite(const This &r, bool subdiv=true) const {
-      // consider the cases that the root is known exactly;
+    // consider the cases that the root is known exactly;
     // this is equivalent to saying that the two endpoints for the
     // interval containing the root are the same;
     // moreover if the two interval endpoints are not the same we
@@ -580,7 +537,7 @@ public:
       //std::cout << "Refining " << *this << " " << std::endl;
     }
 
-#if 1
+
     Interval_pair ivl_pair = ivl.split();
     Interval first_half  = ivl_pair.first;
     Interval second_half = ivl_pair.second;
@@ -601,34 +558,9 @@ public:
     else {
       ivl = second_half;
     }
-#else
-    typename Interval::NT mid = ivl.middle();
-
-    Sign_at_functor sign_at_f(this);
-
-    Sign s_mid = apply(sign_at_f, mid);
-
-    if ( s_mid == CGAL::ZERO ) {
-      ivl.set_lower(mid);
-      ivl.set_upper(mid);
-      return;
-    }
-
-    if ( s_mid == sign_upper() ) {
-      ivl.set_upper(mid);
-    }
-    else {
-      ivl.set_lower(mid);
-    }
-#endif
   }
-#if 1
-    template<class Child>
-  Polynomial compute_simple(Integral_domain_without_division_tag, const Child&) const
-  {
-    Polynomial gcd = sseq.exact( sseq.exact_size() - 1 );
-    return p_.pseudo_quotient( gcd );
-    }
+
+  
 
   template<class Child>
   Polynomial compute_simple(Field_tag, const Child&) const
@@ -636,14 +568,14 @@ public:
     Polynomial gcd = sseq.exact( sseq.exact_size() - 1 );
     return p_ / gcd;
   }
-#endif
+
   /*Polynomial compute_simple(Integral_domain_without_division_tag, const Self&) const
-  {
+    {
     Polynomial gcd = sseq[sseq.size() - 1];
     return tr_.pseudo_quotient_object()(p_, gcd);
     }*/
-  template <class S>
-  Polynomial compute_simple(S /*Field_tag*/, const Self&) const
+  
+  Polynomial compute_simple(Field_tag, const Self&) const
   {
     Polynomial gcd = sseq[sseq.size() - 1];
     return tr_.quotient_object()(p_, gcd);
@@ -842,9 +774,9 @@ public:
     if ( idx < 0 ) { return 0; }
     if ( multiplicity_ == 0 ) {
       compute_multiplicity();
-    }
-
-    return multiplicity_;
+    }last_zero_=false;
+    if (multiplicity_%2==0) return multiplicity_/2;
+    else return multiplicity_;
   }
 
   //====================
@@ -852,7 +784,8 @@ public:
   //====================
   bool is_even_multiplicity() const
   {
-    if ( idx < 0 ) { return false; }
+    return false;
+    /*if ( idx < 0 ) { return false; }
 
     if ( is_exact() ) {
       return (multiplicity() % 2 == 0);
@@ -863,7 +796,7 @@ public:
       Sign sl = apply(sign_at_f, ivl.lower_bound());
       Sign su = apply(sign_at_f, ivl.upper_bound());
       return (sl == su);
-    }
+      }*/
   }
 
   //==========================
@@ -886,15 +819,15 @@ public:
   //======================
   double compute_double(double acc = 1e-10) const
   {
-          if (idx < 0) {
-                        double inf=std::numeric_limits<double>::has_infinity? std::numeric_limits<double>::infinity() : (std::numeric_limits<double>::max)();
-    if ( idx == -1 ){
-                return inf;
-    } else return -inf;
-          }
+    if (idx < 0) {
+      double inf=std::numeric_limits<double>::has_infinity? std::numeric_limits<double>::infinity() : (std::numeric_limits<double>::max)();
+      if ( idx == -1 ){
+	return inf;
+      } else return -inf;
+    }
     /*if ( idx == -2 ) {
       return -DBL_MAX * DBL_MAX;
-    }*/
+      }*/
 
     if ( is_exact() ) {
       return CGAL_POLYNOMIAL_TO_DOUBLE(lower_bound());
@@ -902,20 +835,7 @@ public:
 
     Exact_nt xacc(acc);
 
-#if 0
-    if ( ivl.is_double() ) {
-      while ( ivl.middle().is_double() ) {
-	subdivide();
-	if ( is_exact() ) { break; }
-      }
-    }
-    else {
-      while ( ivl.width() > xacc ) {
-	subdivide();
-	if ( is_exact() ) { break; }
-      }
-    }
-#else
+
     while ( ivl.approximate_width() > acc ) {
       subdivide();
       /*if (!refined_) {
@@ -925,7 +845,6 @@ public:
 	}*/
       if ( is_exact() ) { break; }
     }
-#endif
 
     return CGAL_POLYNOMIAL_TO_DOUBLE( lower_bound() );
   }
@@ -982,6 +901,8 @@ public:
   }
 
 protected:
+  bool is_up_;
+  int  
   int                    idx;
   mutable Interval       ivl;
   Polynomial             p_;
@@ -1010,20 +931,77 @@ CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
 
 CGAL_BEGIN_NAMESPACE
 
-template<class S, class I>
-double
-to_double(const CGAL_POLYNOMIAL_NS::internal::Sturm_root_rep<S,I>& r)
-{
+/*template<class S, class I>
+  double
+  to_double(const CGAL_POLYNOMIAL_NS::internal::Sturm_root_rep<S,I>& r)
+  {
   return r.compute_double();
-}
+  }
 
 
-template<class S, class I>
-std::pair<double,double>
-to_interval(const CGAL_POLYNOMIAL_NS::internal::Sturm_root_rep<S,I>& r)
-{
+  template<class S, class I>
+  std::pair<double,double>
+  to_interval(const CGAL_POLYNOMIAL_NS::internal::Sturm_root_rep<S,I>& r)
+  {
   return r.compute_interval();
-}
+  }*/
+
+
+template <class T, class I>
+class Real_embeddable_traits< CGAL::POLYNOMIAL::internal::Sturm_root_rep<T,I> > 
+  : public Real_embeddable_traits_base< CGAL::POLYNOMIAL::internal::Sturm_root_rep<T,I> > {
+public:
+  typedef CGAL::POLYNOMIAL::internal::Sturm_root_rep<T,I>  Type;
+  class Abs 
+    : public Unary_function< Type, Type > {
+  public:
+    Type operator()( const Type& x ) const {
+      if (x < Type(0)) return -x;
+      else return x;
+    }
+  };
+    
+  class Sign 
+    : public Unary_function< Type, ::CGAL::Sign > {
+  public:
+    ::CGAL::Sign operator()( const Type& x ) const {
+      return static_cast<CGAL::Sign>(x.compare(0));
+    }        
+  };
+    
+  class Compare 
+    : public Binary_function< Type, Type,
+			      Comparison_result > {
+  public:
+    Comparison_result operator()( const Type& x, 
+				  const Type& y ) const {
+      return x.compare(y);
+    }
+        
+    CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type,
+							 Comparison_result )
+        
+      };
+    
+  class To_double 
+    : public Unary_function< Type, double > {
+  public:
+    double operator()( const Type& x ) const {
+      // this call is required to get reasonable values for the double
+      // approximation
+      return x.compute_double();
+    }
+  };
+    
+  class To_interval 
+    : public Unary_function< Type, std::pair< double, double > > {
+  public:
+    std::pair<double, double> operator()( const Type& x ) const {
+
+      return x.compute_interval();
+    }          
+  };
+};
 
 
 CGAL_END_NAMESPACE
@@ -1035,7 +1013,7 @@ namespace std
     public numeric_limits<typename CGAL_POLYNOMIAL_NS::internal::Sturm_root_rep<S,I>::NT >
   {
   public:
-          typedef numeric_limits<typename CGAL_POLYNOMIAL_NS::internal::Sturm_root_rep<S,I>::NT > P;
+    typedef numeric_limits<typename CGAL_POLYNOMIAL_NS::internal::Sturm_root_rep<S,I>::NT > P;
     typedef CGAL_POLYNOMIAL_NS::internal::Sturm_root_rep<S,I> T;
     static const bool is_specialized = true;
     static T min BOOST_PREVENT_MACRO_SUBSTITUTION () throw() {return T((P::min)());}

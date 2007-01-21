@@ -28,41 +28,41 @@ CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 template<class Kernel, class M = CGAL::Integral_domain_without_division_tag>
 class Compare_isolated_roots_in_interval
 {
-    protected:
-        typedef M                        Method_tag;
-        typedef typename Kernel::NT  NT;
+protected:
+  typedef M                        Method_tag;
+  typedef typename Kernel::FT  NT;
 
-        typedef typename
-            Kernel::Sign_Sturm_sequence Sign_Sturm_sequence;
+  typedef typename
+  Kernel::Sign_Sturm_sequence Sign_Sturm_sequence;
 
-    public:
-        Compare_isolated_roots_in_interval(const typename Kernel::Function& p,
-            const typename Kernel::Function& q,
-            Kernel k): kernel_(k),q(q), seq(kernel_.sign_Sturm_sequence_object(p, q)) {}
+public:
+  Compare_isolated_roots_in_interval(const typename Kernel::Function& p,
+				     const typename Kernel::Function& q,
+				     Kernel k): kernel_(k),q(q), seq(kernel_.sign_Sturm_sequence_object(p, q)) {}
 
-        Compare_isolated_roots_in_interval(){}
+  Compare_isolated_roots_in_interval(){}
 
-        typedef CGAL::Comparison_result  result_type;
-        typedef NT                       argument_type;
-        typedef NT                       first_argument_type;
-        typedef NT                       second_argument_type;
+  typedef CGAL::Comparison_result  result_type;
+  typedef NT                       argument_type;
+  typedef NT                       first_argument_type;
+  typedef NT                       second_argument_type;
 
-        result_type operator()(const NT& a, const NT& b) const
-        {
-            int sgn = seq.sum_of_signs(a, b);
+  result_type operator()(const NT& a, const NT& b) const
+  {
+    int sgn = seq.sum_of_signs(a, b);
 
-            if ( sgn == CGAL::ZERO ) { return CGAL::EQUAL; }
+    if ( sgn == CGAL::ZERO ) { return CGAL::EQUAL; }
 
-            int s_a = static_cast<int>(  kernel_.sign_at_object(q)(a) );
+    int s_a = static_cast<int>(  kernel_.sign_at_object(q)(a) );
 
-            if ( sgn == s_a ) { return CGAL::SMALLER; }
-            return CGAL::LARGER;
-        }
+    if ( sgn == s_a ) { return CGAL::SMALLER; }
+    return CGAL::LARGER;
+  }
 
-    protected:
-        Kernel kernel_;
-        typename Kernel::Function          q;
-        Sign_Sturm_sequence seq;
+protected:
+  Kernel kernel_;
+  typename Kernel::Function          q;
+  Sign_Sturm_sequence seq;
 };
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE

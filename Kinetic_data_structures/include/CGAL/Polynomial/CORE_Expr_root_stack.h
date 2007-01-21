@@ -22,7 +22,6 @@
 #define CGAL_POLYNOMIAL_CORE_SOLVER_H
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/CORE_Expr.h>
-#include <CGAL/Polynomial/internal/Explicit_root.h>
 #include <CGAL/Polynomial/internal/CORE_polynomial.h>
 #include <CGAL/Polynomial/internal/Root_stack_traits_base.h>
 #include <CGAL/CORE_BigInt.h>
@@ -107,52 +106,55 @@ protected:
   CORE::BigFloat bflb_, bfub_;
   Traits tr_;
   bool one_even_left_;
+  int offset_in_interval_;
+  CGAL::Sign last_sign_;
 
   void initialize(const Root& lb) {
-    if (f_.degree()<0) {
+    if (f_.degree()<=0) {
       no_roots();
       return;
     } else {
-      std::cout <<"solving " << f_ << std::endl;
+      //std::cout <<"solving " << f_ << std::endl;
       //std::cout << f_.core_polynomial() << std::endl;
       sturm_= CORE_Sturm(f_.core_polynomial()/*, false*/); //BigInt to BigRat
       
-
-      CORE::BigFloat bflb, bfub;
+      offset_in_interval_=0;
+      //CORE::BigFloat bflb, bfub;
       
       /*if (lb == -std::numeric_limits<Root>::infinity()){
 	bflb_= -f_.core_polynomial().CauchyUpperBound();
 	} else {*/
+      CORE::BigFloat offset(.5);
+      CGAL_postcondition(offset.isExact());
       bflb_= bf_lower_bound(lb);
-	//}
+      CGAL_postcondition(bflb_.isExact());
+      do {
+	bflb_ -= offset; // hack to get around assuming core is consistent with 0 endpoint
+	last_sign_=CGAL::sign(f_.core_polynomial().eval(bflb_));
+      } while (last_sign_==CGAL::ZERO);
+      CGAL_postcondition(bflb_.isExact());
 
-	/*if (ub_ == std::numeric_limits<Root>::infinity()){
-	bfub_=  f_.core_polynomial().CauchyUpperBound();
-	} else {*/
-	bfub_= bf_upper_bound(ub_);
-	//}
-      if (bflb_ > bfub_) {
-	no_roots();
-      } else {
-	std::cout << " in interval: " << bflb_ << " " << bfub_ << std::endl;
-	num_roots_= sturm_.numberOfRoots(bflb_, bfub_);
-	std::cout << "nr= " << num_roots_ << std::endl;
-	//CORE::Expr testr;
-	++num_roots_;
-	do {
-	  --num_roots_;
-	  if ( num_roots_ == 0) {
-	    no_roots();
-	    return;
-	  }
-	  make_root();
-	  
-	} while (cur_ <= lb);
-	//make_cur_root(testr);
-      }
-      std::cout << "There are " << num_roots_ << " roots.\n";
-      enforce_upper_bound();
+      bfub_= bf_upper_bound(ub_);
+      CGAL_precondition(bflb_ < bfub_);
+      
+      
+      //std::cout << " in interval: " << bflb_ << " " << bfub_ << std::endl;
+      num_roots_= sturm_.numberOfRoots(bflb_, bfub_);
+      //std::cout << "nr= " << num_roots_ << std::endl;
+      //CORE::Expr testr;
+      ++num_roots_;
+      do {
+	--num_roots_;
+	if ( num_roots_ == 0) {
+	  no_roots();
+	  return;
+	}
+	make_root();
+      } while (cur_ < lb);
+      //make_cur_root(testr);
     }
+    //std::cout << "There are " << num_roots_ << " roots.\n";
+    enforce_upper_bound();
   }
 
   void enforce_upper_bound() {
@@ -165,18 +167,33 @@ protected:
 
   void make_root() {
     CGAL_precondition(num_roots_!=0);
-    std::cout << "making root: " << bflb_ << " " << bfub_ << std::endl;
-    CORE::BFInterval bfi= sturm_.isolateRoot(1, bflb_, bfub_);
-    std::cout << "got: " << bfi.first << " " << bfi.second << std::endl;
+    //std::cout << "making root: " << CGAL::to_double(bflb_) << " " << CGAL::to_double(bfub_) << std::endl;
+  
+    CORE::BFInterval bfi;
+    bfi= sturm_.isolateRoot(1+offset_in_interval_, bflb_, bfub_);
+   
+    //std::cout << "got: " << CGAL::to_double(bfi.first) << " " << CGAL::to_double(bfi.second) << std::endl;
     //int nr= sturm_.numberOfRoots(bfi.first, bfi.second);
     //int nr=1;
-    if (CGAL::sign(f_.core_polynomial().eval(bfi.first)) 
-	== CGAL::sign(f_.core_polynomial().eval(bfi.second))) {
-      one_even_left_=true;
-      std::cout << "it is even" << std::endl;
+    CGAL::Sign cur_sign=CGAL::sign(f_.core_polynomial().eval(bfi.second));
+    if (cur_sign==0) {
+      Traits::Sign_above sa(f_);
+      cur_sign= sa(bfi.second);
+      ++offset_in_interval_;
+    } else {
+      offset_in_interval_=0;
+      bflb_= bfi.second;
     }
+    CGAL_precondition(cur_sign!= CGAL::ZERO);
+    CGAL_precondition(last_sign_ != CGAL::ZERO);
+    if (last_sign_== cur_sign) {
+      one_even_left_=true;
+      //std::cout << "it is even" << std::endl;
+    } else {
+      one_even_left_=false;
+    }
+    last_sign_= cur_sign;
     //std::cout << nr << " " << bfi.first << " " << bfi.second <<  std::endl;
-    bflb_= bfi.second;
     cur_= CORE::Expr(f_.core_polynomial(), bfi);
     //cur_ =Root(e/*/f_.scale()*/, nr);
     //std::cout << "root= " << cur_ <<  " " << e << std::endl;

@@ -58,31 +58,13 @@ protected:
     if (ub== CGAL::to_interval(r).second) ub= ub*2;
     typename K::Root_stack rc=  k_.root_stack_object(p_, r, ub);
     if (rc.empty()) {
-      return CGAL::sign(p_(typename Poly::NT(ub)));
+      return k_.sign_at_object(p_)(typename Poly::NT(ub));
     } else {
       typename K::Root rr=rc.top();
       typename K::Sign_between_roots sb= k_.sign_between_roots_object(r, rr);
       return sb(p_);
     }
   }
-
-#if 0
-  template <class RT>
-  CGAL::Sign eval(const Explicit_root<RT> &r) {
-    typedef  Explicit_root<RT> R;
-    typename R::Representation rep= r.representation();
-    CGAL_POLYNOMIAL_NS::Polynomial_converter<typename K::Polynomial, Polynomial<typename R::Representation> > pc;
-    CGAL::Sign sn=  CGAL::sign(pc(p_)(rep));
-    if (sn==CGAL::ZERO) {
-      typename K::Root rr= k_.solver_object(p_, r).next_root();
-      typename R::Representation mr= .5*(rr+r);
-      return CGAL::sign(pc(p_)(mr));
-    }
-    else {
-      return sn;
-    }
-  }
-#endif
   Poly p_;
   K k_;
 };
@@ -91,7 +73,7 @@ protected:
 /*!
   This evaluates the polynomials at the root and takes the sign. Much faster for doubles at least.
 */
-template <class RNT, class Kernel>
+/*template <class RNT, class Kernel>
 class Sign_above<CGAL_POLYNOMIAL_NS::internal::Explicit_root<RNT>, Kernel>
 {
   typedef Evaluate_polynomial<Kernel, RNT> Eval;
@@ -129,7 +111,7 @@ protected:
 
   mutable std::vector<Eval> fns_;
   mutable typename Kernel::Function last_;
-};
+  };*/
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
 #endif

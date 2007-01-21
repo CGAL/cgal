@@ -22,7 +22,6 @@
 #define CGAL_POLYNOMIAL_INTERNAL_SIGN_AT_ROOT_H
 
 #include <CGAL/Polynomial/basic.h>
-#include <CGAL/Polynomial/internal/Explicit_root.h>
 #include <CGAL/Polynomial/Polynomial.h>
 #include <CGAL/Polynomial/polynomial_converters.h>
 #include <CGAL/Polynomial/internal/Rational/Sign_at_rational.h>

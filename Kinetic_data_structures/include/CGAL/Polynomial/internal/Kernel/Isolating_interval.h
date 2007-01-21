@@ -24,7 +24,6 @@
 #include <CGAL/Polynomial/basic.h>
 
 #ifdef CGAL_USE_CORE
-#include <CGAL/Polynomial/internal/Explicit_root.h>
 #include <CGAL/CORE_BigRat.h>
 #include <CGAL/CORE_Expr.h>
 #endif
@@ -32,9 +31,7 @@
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
 //! Compute the sign after a root.
-/*!
-  This has specializations for Explicit_roots.
-*/
+
 template <class K>
 class To_isolating_interval
 {
