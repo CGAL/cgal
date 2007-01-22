@@ -59,6 +59,9 @@ struct My_simulation_traits:
   {
     return Instantaneous_kernel(ap_, static_kernel_object());
     }
+  bool is_exact() const{
+    return true;
+  }
 protected:
   Active_points_2_table::Handle ap_;
 };

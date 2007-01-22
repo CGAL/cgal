@@ -31,6 +31,9 @@ public:
   }
   template <class K>
   void audit(K ) const {}
+  std::ostream &write(std::ostream &out) const {
+    return out << "Event does not implement write";
+  }
 protected:
   KDS_handle kds_;
 };

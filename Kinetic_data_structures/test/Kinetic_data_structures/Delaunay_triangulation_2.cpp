@@ -42,8 +42,9 @@ int main(int, char *[])
     simtr.active_points_2_table_handle()->insert(p);
     ++nread;
   }
-
-  kdel.audit();
+  if (simtr.simulator_handle()->has_audit_time()) {
+    kdel.audit();
+  }
 
   while (simtr.simulator_handle()->next_event_time()
 	 < simtr.simulator_handle()->end_time()) {

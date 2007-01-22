@@ -10,7 +10,7 @@ July 2006 Daniel Russel
 
 August 2006 Daniel Russel
 - added set_has_certificates to Delaunay_2
-- added degeneracy handling to Event (a set of new, optional methods)
+- added degeneracy handling to Event (a set of new, optional methods)--All events should inherit from Event_base
 - infinity is not needed for roots any more
 
 - to_static replaced with Current_coordinates functor in instantaneous kernel
@@ -24,6 +24,7 @@ September 2006 Daniel Russel
 - changed some NT to FT to be consistent with CGAL
 - collapsed polynomial_NS::Sign into CGAL::Sign
 - you must check if a certificate fails or not
+- added example for defining a simulation_traits class
 
 Future Daniel Russel
 - change non-failing root to be NaN or Root() rather than infinity?

@@ -156,7 +156,7 @@ public:
     // make it less than the current time.
     //std::pair<double, double> ival= to_interval(cur_time_);
     //audit_time_=NT(ival.first-10.0);
-    audit_time_= CGAL::to_interval(start_time).first-1;
+    audit_time_= CGAL::to_interval(start_time).second;
 #endif
   };
 
@@ -173,7 +173,7 @@ public:
     // make it less than the current time.
     //std::pair<double, double> ival= to_interval(cur_time_);
     //audit_time_=NT(ival.first-10.0);
-    audit_time_= CGAL::to_interval(start_time).first-1;
+    audit_time_= CGAL::to_interval(start_time).second;
 #endif
   };
 
@@ -264,6 +264,7 @@ public:
   const NT& audit_time() const
   {
     CGAL_precondition(has_audit_time());
+    CGAL_precondition(audit_time_ < next_event_time());
 #ifdef CGAL_KINETIC_ENABLE_AUDITING
     return audit_time_;
 #else
@@ -338,6 +339,12 @@ public:
     CGAL_KINETIC_LOG(LOG_SOME, "Created event " << key << std::endl);
     CGAL_KINETIC_LOG(LOG_SOME, *this << std::endl);
     //if (log()->is_output(Log::LOTS)) write(log()->stream(Log::LOTS));
+
+#ifdef CGAL_KINETIC_ENABLE_AUDITING
+    if (audit_time_ >= t && has_audit_time() ) {
+      audit_time_= mp_(current_time(), next_event_time());
+    }
+#endif
 
     return key;
     //}
@@ -527,10 +534,9 @@ protected:
       audit_all_kdss();
       }
       #endif*/
-#ifdef CGAL_KINETIC_ENABLE_AUDITING
+    /*#ifdef CGAL_KINETIC_ENABLE_AUDITING
     if (CGAL::compare(next_event_time(), current_time()) != CGAL::EQUAL) {
       //typename Function_kernel::Rational_between_roots bet= kernel_.rational_between_roots_object();
-      audit_time_= mp_(current_time(), next_event_time());
       CGAL_KINETIC_LOG(LOG_SOME, "Audit is at time " << audit_time_ << std::endl);
       //if (current_time() < audit_time_ && t >= audit_time_) {
       audit_all_kdss();
@@ -538,7 +544,7 @@ protected:
     } else {
       CGAL_KINETIC_LOG(LOG_SOME, "Can't audit between events.\n");
     }
-#endif
+    #endif*/
 
 
     CGAL_exactness_precondition(CGAL::compare(next_event_time(),current_time())
@@ -550,8 +556,11 @@ protected:
     queue_.process_front();
    
 #ifdef CGAL_KINETIC_ENABLE_AUDITING
-    if (queue_.empty() && compare(current_time(), end_time()) != CGAL::EQUAL) {
-      audit_time_= mp_(current_time(), end_time());
+    if (has_audit_time()) {
+      audit_time_= CGAL::to_interval(current_time()).second;
+      if (audit_time_ >=  next_event_time() && next_event_time() != current_time()) {
+	audit_time_= mp_(current_time(), next_event_time());
+      }
       CGAL_KINETIC_LOG(LOG_SOME, "Audit is at time " << audit_time_ << std::endl);
       //if (current_time() < audit_time_ && t >= audit_time_) {
       audit_all_kdss();

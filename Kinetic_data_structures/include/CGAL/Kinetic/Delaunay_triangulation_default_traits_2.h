@@ -53,7 +53,11 @@ public:
 
   NT rational_current_time() {
     NT nt= st_.simulator_handle()->next_time_representable_as_nt();
-    st_.simulator_handle()->set_current_time(nt);
+    std::cout << "Next time is " << nt << " " << CGAL::to_double(nt) << std::endl;
+    std::cout << "Current time is " << st_.simulator_handle()->current_time() << " "
+	      << CGAL::to_double(st_.simulator_handle()->current_time()) << std::endl;
+    CGAL_assertion(st_.simulator_handle()->current_time()== nt);
+    //st_.simulator_handle()->set_current_time(nt);
     return nt;
   }
 

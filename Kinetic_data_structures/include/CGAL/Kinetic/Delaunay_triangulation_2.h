@@ -317,7 +317,7 @@ public:
 
   enum New_certificate_state {HAD_NO_FAILURES=1, HAS_NO_FAILURES = 2, NO_STRUCTURE_CHANGES = 4};
 
-  void set_has_certificates(bool tf, int state) {
+  void set_has_certificates(bool tf, int state=0) {
     if (tf == has_certificates_){
 
     } else {

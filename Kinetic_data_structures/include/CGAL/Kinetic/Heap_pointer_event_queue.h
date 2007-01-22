@@ -148,6 +148,10 @@ public:
   {
     return event_;
   }
+  Event &event()
+  {
+    return event_;
+  }
   void set_event(const Event &e) {
     event_=e;
   }
@@ -338,10 +342,13 @@ public:
 
 
   template <class E>
-  E& get(const Key &item)
+  E& get(Key item)
   {
     CGAL_precondition(item && item != null_event_);
-    return reinterpret_cast<internal::Heap_pointer_event_queue_item_rep<Priority, E>*>( item.get())->event();
+    typename internal::Heap_pointer_event_queue_item<Priority> *ptr= item.get();
+    typename internal::Heap_pointer_event_queue_item_rep<Priority, E>* nptr
+      = reinterpret_cast<internal::Heap_pointer_event_queue_item_rep<Priority, E>*>(ptr);
+    return nptr->event();
   }
 
   //! Replace the event referenced by item with a new event referenced by ne

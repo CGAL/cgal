@@ -2,20 +2,25 @@
 #include <CGAL/Kinetic/Exact_simulation_traits_1.h>
 #include <CGAL/Kinetic/Active_objects_listener_helper.h>
 #include <CGAL/Kinetic/Simulator_kds_listener.h>
+#include <CGAL/Kinetic/Event_base.h>
 #include <iostream>
 #include <set>
 #include <vector>
 
 // This must be external since operator<< has to be defined
 template <class Object, class Time, class KDS>
-struct Trivial_event
+struct Trivial_event: public CGAL::Kinetic::Event_base<KDS*>
 {
+  typedef CGAL::Kinetic::Event_base<KDS*> P;
   Trivial_event(){}
   template <class It, class Map>
-  Trivial_event(It beg, It end, const Map &m, KDS* kds): kds_(kds) {
+  Trivial_event(It beg, It end, const Map &m, KDS *kds): P(kds) {
     for (; beg != end; ++beg) {
       objects_.push_back(m[*beg]);
     }
+  }
+  void write(std::ostream &out) const {
+    out << "An event";
   }
   void process() const
   {
@@ -26,20 +31,12 @@ struct Trivial_event
       std::cout << *cit << " ";
     }
     std::cout << std::endl;
-    kds_->set_processed(true);
+    P::kds()->set_processed(true);
   }
 
   std::vector<Object> objects_;
-  typename KDS::Handle kds_;
 };
 
-template <class Object, class Time, class KDS>
-std::ostream &operator<<(std::ostream &out,
-			 const Trivial_event<Object, Time, KDS> &)
-{
-  out << "\"An event\"";
-  return out;
-}
 
 
 /*!  This is a trivial kinetic data structure which doesn't actually

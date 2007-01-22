@@ -1067,10 +1067,10 @@ protected:
     Time pst;
     /*if (!ps.empty()) pst = ps.top();
       else pst= std::numeric_limits<Time>::infinity();*/
-    if (pst.will_fail()) {
+    if (ps.will_fail()) {
       pst=ps.failure_time();
     } else {
-      pst= kdel_.simulator().end_time();
+      pst= kdel_.simulator()->end_time();
     }
 
     int first=0;

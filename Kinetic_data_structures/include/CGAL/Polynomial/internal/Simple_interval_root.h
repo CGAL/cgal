@@ -22,7 +22,7 @@
 #define CGAL_POLYNOMIAL_SIMPLE_INTERVAL_ROOT_H
 #include <CGAL/Polynomial/basic.h>
 #include <CGAL/Polynomial/internal/interval_arithmetic.h>
-
+#include <vector>
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE;
 
 //! A root represented as a bounding interval and a polynomial.

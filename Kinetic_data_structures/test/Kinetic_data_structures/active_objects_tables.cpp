@@ -1,5 +1,5 @@
 #include <CGAL/Kinetic/Active_objects_vector.h>
-#include <CGAL/Kinetic/Active_objects_set.h>
+//#include <CGAL/Kinetic/Active_objects_set.h>
 
 template <class AOT>
 void test_erase(AOT &aot, CGAL::Tag_true) {
@@ -50,13 +50,13 @@ void test(AOT &aot, Erase_tag et) {
 
 int main(int, char *[]) {
   typedef CGAL::Kinetic::Active_objects_vector<int> AOV;
-  typedef CGAL::Kinetic::Active_objects_set<int> AOS;
+  // typedef CGAL::Kinetic::Active_objects_set<int> AOS;
   
   AOV aov;
   test(aov, CGAL::Tag_true());
   
-  AOS aos;
-  test(aos, CGAL::Tag_true());
+  /*AOS aos;
+    test(aos, CGAL::Tag_true());*/
 
   return EXIT_SUCCESS;
 }

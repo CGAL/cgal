@@ -1,6 +1,7 @@
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Kinetic/Heap_pointer_event_queue.h>
 #include <CGAL/Kinetic/Inexact_simulation_traits_1.h>
+#include <CGAL/Kinetic/Event_base.h>
 #include <cstdlib>
 
 typedef double Time;
@@ -8,7 +9,7 @@ typedef double Time;
 Time proc_time_=-1;
 
 
-class Event
+class Event: public CGAL::Kinetic::Event_base<void*>
 {
 public:
   Event(double i): i_(i) {

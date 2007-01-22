@@ -98,6 +98,71 @@ used by all the kinetic data structures.}
 
 \end{ccRefConcept}
 
+
+\ccExample
+
+The simulation traits class is simply there for convenience in order to bundle a set of related typedefs and create a few objects. As a resulting, creating your own requires little though, and just copying and changing a few lines. An example is below which sets up to use the CORE Sturm sequences to solve polynomials rather than our own (faster) solvers. It can be found in examples/Kinetic\_framework/defining\_a\_simulation\_traits.cpp.
+
+\begin{ccExampleCode}
+#include <CGAL/Polynomial/CORE_kernel.h>
+#include <CGAL/Filtered_kernel.h>
+#include <CGAL/Kinetic/Active_objects_vector.h>
+#include <CGAL/Kinetic/Cartesian_instantaneous_kernel.h>
+#include <CGAL/Kinetic/Cartesian_kinetic_kernel.h>
+#include <CGAL/Kinetic/Handle_degeneracy_function_kernel.h>
+#include <CGAL/Kinetic/Default_simulator.h>
+#include <CGAL/Kinetic/Two_list_pointer_event_queue.h>
+#include <CGAL/Kinetic/Active_objects_vector.h>
+#include <CGAL/Kinetic/Delaunay_triangulation_2.h>
+#include <CGAL/Cartesian.h>
+
+
+
+struct My_simulation_traits {
+  typedef CGAL::POLYNOMIAL::CORE_kernel Function_kernel;
+
+  typedef CGAL::Filtered_kernel<CGAL::Cartesian<Function_kernel::FT> > Static_kernel;
+
+  typedef CGAL::Kinetic::Handle_degeneracy_function_kernel<Function_kernel>  Simulator_function_kernel;
+  typedef CGAL::Kinetic::Cartesian_kinetic_kernel<Simulator_function_kernel> Kinetic_kernel;
+  typedef Simulator_function_kernel::Root Time;
+  typedef CGAL::Kinetic::Two_list_pointer_event_queue<Function_kernel> Event_queue;
+  typedef CGAL::Kinetic::Default_simulator<Simulator_function_kernel, Event_queue > Simulator;
+  typedef Static_kernel::FT NT;
+  typedef CGAL::Kinetic::Active_objects_vector<Kinetic_kernel::Point_2> Active_points_2_table;
+  typedef CGAL::Kinetic::Cartesian_instantaneous_kernel<Active_points_2_table, Static_kernel>  Instantaneous_kernel;
+
+  My_simulation_traits(const Time &lb, const Time &ub): sp_(new Simulator(lb, ub, kk_.function_kernel_object())),
+    aot_(new Active_points_2_table()){
+  }
+
+  Simulator* simulator_handle(){ return sp_.get();}
+  const Simulator* simulator_handle() const { return sp_.get();}
+  Active_points_2_table* active_points_2_table_handle(){ return aot_.get();}
+  const Active_points_2_table* active_points_2_table_handle() const { return aot_.get();}
+  const Static_kernel& static_kernel_object(){return k_;}
+  const Kinetic_kernel& kinetic_kernel_object(){return kk_;}
+
+  const Static_kernel& static_kernel_object() const {return k_;}
+  const Kinetic_kernel& kinetic_kernel_object() const {return kk_;}
+  Instantaneous_kernel instantaneous_kernel_object() const {return Instantaneous_kernel( aot_, k_);}
+
+  bool is_exact() const {
+    return true;
+  }
+
+
+protected:
+  Static_kernel k_;
+  Kinetic_kernel kk_;
+  Function_kernel fk_;
+  Simulator::Handle sp_;
+  Active_points_2_table::Handle aot_;
+};
+
+
+\end{ccExampleCode}
+
 % +------------------------------------------------------------------------+
 %%RefPage: end of main body, begin of footer
 % EOF

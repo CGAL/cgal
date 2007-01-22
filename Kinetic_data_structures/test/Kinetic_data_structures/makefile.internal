@@ -7,7 +7,7 @@
 # Choose the right include file from the <cgalroot>/make directory.
 
 TESTSUITE_LDFLAGS =  
-TESTSUITE_CXXFLAGS = -Wall
+TESTSUITE_CXXFLAGS = 
 # -g -O3 -DNDEBUG
 
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
