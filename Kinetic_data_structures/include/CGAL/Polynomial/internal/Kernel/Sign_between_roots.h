@@ -29,23 +29,24 @@ template <class K>
 struct Sign_between_roots
 {
   typedef CGAL::Sign result_type;
-  typedef typename K::Function argument_type;
+  typedef typename K::Root second_argument_type;
+  typedef typename K::Root third_argument_type;
+  typedef typename K::Function first_argument_type;
 
   Sign_between_roots(){}
-  Sign_between_roots(const typename K::Root &r0,
-		     const typename K::Root &r1,
-		     const K &k): k_(k) {
-    typename K::Rational_between_roots rbr= k.rational_between_roots_object();
-    rat_= rbr(r0,r1);
+  Sign_between_roots(const K &k): k_(k) {
+  
   }
 
-  result_type operator()(const argument_type &f) const
+  result_type operator()(const first_argument_type &f,
+			 const second_argument_type &r0,
+			 const third_argument_type &r1) const
   {
-    typename K::Sign_at sa= k_.sign_at_object(f);
-    return sa(rat_);
+    typename K::Rational_between_roots rbr= k_.rational_between_roots_object();
+    typename K::FT rat= rbr(r0,r1);
+    return k_.sign_at_object()(f, rat);
   }
 protected:
-  typename K::FT rat_;
   K k_;
 };
 

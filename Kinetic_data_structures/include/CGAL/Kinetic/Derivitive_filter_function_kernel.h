@@ -67,10 +67,10 @@ struct Derivitive_filter_function_kernel: public Traits
 
   using Traits::Rational_between_roots;
   using Traits::rational_between_roots_object;
-  using Traits::Is_rational;
-  using Traits::is_rational_object;
-  using Traits::To_rational;
-  using Traits::to_rational_object;
+  //  using Traits::Is_rational;
+  //using Traits::is_rational_object;
+  //using Traits::To_rational;
+  //using Traits::to_rational_object;
   using Traits::Root_stack_traits;
   using Traits::root_stack_traits_object;
   using Traits::FT;

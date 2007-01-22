@@ -53,7 +53,7 @@ template <class Traits, class Visitor=Sort_visitor_base> class Sort:
 {
   // for later, please ignore
   typedef typename Traits::Active_points_1_table TTable;
-  typedef typename Traits::Kinetic_kernel::Is_less_x_1 KLess;
+  typedef typename Traits::Kinetic_kernel::Less_x_1 KLess;
   typedef typename Traits::Instantaneous_kernel::Less_x_1 ILess;
 
   typedef Sort<Traits, Visitor> This;
@@ -112,7 +112,7 @@ public:
   Sort(Traits tr, Visitor v=Visitor()/*, 
        typedef Active_objects_table::Handle aot,
        Kinetic_less kless=tr.kinetic_kernel_object().is_less_x_1_object(),
-       Instantaneous_less iless*/): less_(tr.kinetic_kernel_object().is_less_x_1_object()),
+       Instantaneous_less iless*/): less_(tr.kinetic_kernel_object().less_x_1_object()),
 				    ik_(tr.instantaneous_kernel_object()),
 				    iless_(ik_.less_x_1_object()), v_(v),
 				    aot_(tr.active_points_1_table_handle()),
@@ -129,7 +129,7 @@ public:
     return v_;
   }
 
-  /* Traits &traits() {
+  /*Traits &traits() {
     return tr_;
   }
   const Traits &traits() const {

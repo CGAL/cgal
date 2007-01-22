@@ -38,80 +38,40 @@ class Sign_above: Sign_above_rational<K>
   typedef typename K::Function Poly;
   typedef Sign_above_rational<K> P;
 public:
-  Sign_above(const Poly &p, K k):P(p,k) {
+  Sign_above( K k):P(k) {
   }
   Sign_above(){}
 
   using P::operator();
 
-  typename P::result_type operator()(const typename K::Root &v) const
+  typedef CGAL::Sign result_type;
+  typedef Poly first_argument_type;
+  typedef typename K::Root second_argument_type;
+  typename P::result_type operator()(const first_argument_type &f,
+				     const second_argument_type &v) const
   {
     CGAL_Polynomial_expensive_precondition(k_.sign_at_root_object(p_)(v)==CGAL::ZERO);
-    return eval(v);
+    return eval(f, v);
   }
 protected:
 
   template <class R>
-  CGAL::Sign eval(const R &r) const
+  CGAL::Sign eval(const Poly &p, const R &r) const
   {
     double ub= CGAL::to_interval(r).second+.00001;
     if (ub== CGAL::to_interval(r).second) ub= ub*2;
-    typename K::Root_stack rc=  k_.root_stack_object(p_, r, ub);
+    typename K::Root_stack rc=  k_.root_stack_object(p, r, ub);
     if (rc.empty()) {
-      return k_.sign_at_object(p_)(typename Poly::NT(ub));
+      return k_.sign_at_object()(p,typename Poly::NT(ub));
     } else {
       typename K::Root rr=rc.top();
-      typename K::Sign_between_roots sb= k_.sign_between_roots_object(r, rr);
-      return sb(p_);
+      typename K::Sign_between_roots sb= k_.sign_between_roots_object();
+      return sb(p, r, rr);
     }
   }
-  Poly p_;
   K k_;
 };
 
-//! An explicit instantiation with Explicit_root
-/*!
-  This evaluates the polynomials at the root and takes the sign. Much faster for doubles at least.
-*/
-/*template <class RNT, class Kernel>
-class Sign_above<CGAL_POLYNOMIAL_NS::internal::Explicit_root<RNT>, Kernel>
-{
-  typedef Evaluate_polynomial<Kernel, RNT> Eval;
-public:
-  Sign_above(const typename Kernel::Function &fn, Kernel ) {
-    fns_.push_back(Eval(fn));
-    last_= fn;
-  }
-  Sign_above(){}
-
-  typedef CGAL_POLYNOMIAL_NS::internal::Explicit_root<RNT> argument_type;
-  typedef CGAL::Sign result_type;
-
-  result_type operator()(const argument_type &v) const
-  {
-    RNT rep= v.representation();
-
-    CGAL::Sign sn;
-    unsigned int i=0;
-    while ((sn=tsign(i, rep)) == CGAL::ZERO) {
-      ++i;
-    }
-    return sn;
-  }
-
-protected:
-  CGAL::Sign tsign(unsigned int i, const RNT &rnt) const
-  {
-    while  (i >= fns_.size()) {
-      last_= last_.derivative();
-      fns_.push_back(Eval(last_));;
-    }
-    return CGAL::sign(fns_[i](rnt));
-  }
-
-  mutable std::vector<Eval> fns_;
-  mutable typename Kernel::Function last_;
-  };*/
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
 #endif

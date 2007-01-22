@@ -25,7 +25,7 @@ int main(int argc, char*argv[])
   typedef CGAL::Kinetic::Insert_event<Traits::Active_points_2_table> Insert_event;
   typedef Traits::Kinetic_kernel::Point_2 Moving_point;
   typedef CGAL::Kinetic::Enclosing_box_2<Traits> Box;
-  Traits tr;
+  Traits tr(0,100000);
 
   Gui::Handle qtsim=new Gui(argc, argv, tr.simulator_handle());
   Qt_moving_points::Handle qtmptp= new Qt_moving_points(qtsim, tr);

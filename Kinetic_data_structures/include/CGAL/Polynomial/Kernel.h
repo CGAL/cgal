@@ -85,9 +85,9 @@ public:
     solver_traits_(tr){}
 
   typedef internal::Sign_at<Root, This> Sign_at;
-  Sign_at sign_at_object(const Function &p) const
+  Sign_at sign_at_object() const
   {
-    return Sign_at(p);
+    return Sign_at(*this);
   }
 
   //! Compute the multiplicity of a zero.
@@ -104,16 +104,16 @@ public:
 
   //! Compute the sign of p immediately after a root of another function (or of p)
   typedef internal::Sign_above<Root, This> Sign_above;
-  Sign_above sign_above_object(const Function &p) const
+  Sign_above sign_above_object() const
   {
-    return Sign_above(p, *this);
+    return Sign_above(*this);
   }
 
   //! Compute the sign of p immediately after a root of another function (or of p)
   typedef internal::Sign_below<Root, This> Sign_below;
-  Sign_below sign_below_object(const Function &p) const
+  Sign_below sign_below_object() const
   {
-    return Sign_below(p, *this);
+    return Sign_below(*this);
   }
 
   //! Find a rational number between two non-equal roots
@@ -125,30 +125,29 @@ public:
 
   //! Compute the sign between two roots
   typedef internal::Sign_between_roots<This> Sign_between_roots;
-  Sign_between_roots sign_between_roots_object(const Root &r0,
-					       const Root &r1) const
+  Sign_between_roots sign_between_roots_object() const
   {
-    return Sign_between_roots(r0, r1, *this);
+    return Sign_between_roots(*this);
   }
 
   //! Return true if the root has even multiplicity
-  typedef internal::Is_even_multiplicity<This> Is_even_multiplicity;
+  /*typedef internal::Is_even_multiplicity<This> Is_even_multiplicity;
   Is_even_multiplicity is_even_multiplicity_object(const Function &) const
   {
     return Is_even_multiplicity();
-  }
+    }*/
 
   //! Return true if the root is an exact rational
-  typedef internal::Is_rational<This> Is_rational;
+  /*typedef internal::Is_rational<This> Is_rational;
   Is_rational is_rational_object() const
   {
     return Is_rational();
-  }
+    }*/
 
-  typedef internal::Lower_bound_root<This> Lower_bound_root;
+  /*typedef internal::Lower_bound_root<This> Lower_bound_root;
   Lower_bound_root lower_bound_root_object() const {
     return Lower_bound_root();
-  }
+    }*/
 
   //! Return the rational value of the root, assuming it is rational
   typedef internal::To_rational<This> To_rational;

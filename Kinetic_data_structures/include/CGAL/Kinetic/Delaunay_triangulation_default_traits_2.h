@@ -11,8 +11,8 @@ protected:
   typedef Simulation_traits_t ST;
 
 public:
-  typedef typename ST::Kinetic_kernel::Positive_side_of_oriented_circle_2 SOC;
-  typedef typename ST::Kinetic_kernel::Positive_orientation_2 O2;
+  typedef typename ST::Kinetic_kernel::Side_of_oriented_circle_2 SOC;
+  typedef typename ST::Kinetic_kernel::Orientation_2 O2;
   typedef typename Triangulation_t::Edge Edge;
 
 
@@ -33,8 +33,8 @@ public:
  
   
   Delaunay_triangulation_default_traits_2(ST st): st_(st){
-    soc_= st_.kinetic_kernel_object().positive_side_of_oriented_circle_2_object();
-    o2_= st_.kinetic_kernel_object().positive_orientation_2_object();
+    soc_= st_.kinetic_kernel_object().side_of_oriented_circle_2_object();
+    o2_= st_.kinetic_kernel_object().orientation_2_object();
   }
   
   typename Simulator::Handle simulator_handle() {

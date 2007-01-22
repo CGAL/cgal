@@ -55,20 +55,19 @@ const typename Kernel::NT &nt, const Kernel &k)
 template <class Kernel>
 class Sign_below_rational
 {
-    public:
-        Sign_below_rational(){}
-        Sign_below_rational(const typename Kernel::Function &p, Kernel k= Kernel()):p_(p), k_(k){}
-        typedef typename Kernel::NT argument_type;
-//  typedef typename POLYNOMIAL_NS::Sign result_type;
-// g++ 3.4 does not like the above typedef
-        typedef CGAL::Sign result_type;
-        result_type operator()(const argument_type &n) const
-        {
-            return sign_below(p_,n, k_);
-        }
-    protected:
-        typename Kernel::Function p_;
-        Kernel k_;
+public:
+  Sign_below_rational(){}
+  Sign_below_rational(Kernel k= Kernel()):k_(k){}
+  typedef typename Kernel::Function first_argument_type;
+  typedef typename Kernel::NT second_argument_type;
+  //  typedef typename POLYNOMIAL_NS::Sign result_type;
+  // g++ 3.4 does not like the above typedef
+  typedef CGAL::Sign result_type;
+  result_type operator()(const first_argument_type &f, const second_argument_type &n) const {
+    return sign_below(f,n, k_);
+  }
+protected:
+  Kernel k_;
 };
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE

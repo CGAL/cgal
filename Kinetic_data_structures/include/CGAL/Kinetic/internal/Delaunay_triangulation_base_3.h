@@ -199,7 +199,7 @@ public:
   typedef typename Moving_object_table::Key Point_key;
   typedef typename Moving_object_table::Data Point;
   typedef typename Simulator::Event_key Event_key;
-  typedef typename TraitsT::Positive_side_of_oriented_sphere_3::result_type Certificate;
+  typedef typename TraitsT::Side_of_oriented_sphere_3::result_type Certificate;
   //typedef typename Simulator::NT NT;
 
   // Delaunay typedefs
@@ -229,8 +229,8 @@ public:
 
   Delaunay_triangulation_base_3(TraitsT tr, Visitor v): tr_(tr),
 							triangulation_(tr.instantaneous_kernel_object()),
-							soc_(tr.positive_side_of_oriented_sphere_3_object()),
-							o3_(tr.positive_orientation_3_object()),
+							soc_(tr.side_of_oriented_sphere_3_object()),
+							o3_(tr.orientation_3_object()),
 							v_(v) {
     if (0) print();
     has_certificates_=false;
@@ -1130,11 +1130,11 @@ public:
     vhs_[k.to_index()]=vh;
   }
 
-  typename TraitsT::Positive_side_of_oriented_sphere_3 power_test_object() const
+  typename TraitsT::Side_of_oriented_sphere_3 power_test_object() const
   {
     return soc_;
   };
-  typename TraitsT::Positive_orientation_3 orientation_object() const
+  typename TraitsT::Orientation_3 orientation_object() const
   {
     return o3_;
   }
@@ -1775,8 +1775,8 @@ private:
   TraitsT tr_;
   Triangulation triangulation_;
   std::vector<Vertex_handle> vhs_;
-  typename TraitsT::Positive_side_of_oriented_sphere_3 soc_;
-  typename TraitsT::Positive_orientation_3 o3_;
+  typename TraitsT::Side_of_oriented_sphere_3 soc_;
+  typename TraitsT::Orientation_3 o3_;
   bool has_certificates_;
   Visitor v_;
 };

@@ -52,7 +52,7 @@ class Sign_Sturm_sequence : public Sturm_sequence_t
         template<class NTRep>
             unsigned int sign_variations_base(const NTRep& x) const
         {
-            Sign s0 = Sign_at( this->seq_[0] )(x);
+	  Sign s0 = Sign_at( )(this->seq_[0] , x);
 
             CGAL_Polynomial_precondition( s0 != CGAL::ZERO );
 
@@ -60,13 +60,13 @@ class Sign_Sturm_sequence : public Sturm_sequence_t
             signs[0] = s0;
 
             if ( this->size_ > 1 ) {
-                Sign s1 = Sign_at( pder_ )(x);
-                Sign s2 = Sign_at( q_ )(x);
+	      Sign s1 = Sign_at(  )(pder_, x);
+	      Sign s2 = Sign_at( )(q_,  x);
                 signs[1] = Sign(s1 * s2);
             }
 
             for (unsigned int i = 2; i < this->size_; i++) {
-                signs[i] = Sign_at( this->seq_[i] )(x);
+	      signs[i] = Sign_at( )(this->seq_[i] , x);
             }
             return Sign_variations_counter::sign_variations(signs.begin(), signs.end());
         }

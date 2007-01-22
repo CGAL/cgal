@@ -9,7 +9,7 @@ int main(int , char *[])
     typedef CGAL::Kinetic::Delaunay_triangulation_3<Traits,
     CGAL::Kinetic::Delaunay_triangulation_event_log_visitor_3> KDel;
 
-    Traits tr;
+    Traits tr(0,10000);
     KDel kdel(tr);
 
     Traits::Simulator::Handle sp= tr.simulator_handle();

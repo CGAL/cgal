@@ -34,21 +34,21 @@ public:
   typedef typename Fn::NT   NT;
 
   typedef Sign                 result_type;
-  typedef NT                   argument_type;
+  typedef Fn                   first_argument_type;
+  typedef NT                   second_argument_type;
 
   Sign_at_rational(){}
-  Sign_at_rational(const Fn& p) : p(p) {}
 
   //! Evaluate the sign of the value of the polynomial at x
   template <class TNT>
-  Sign operator()(const TNT& t) const
+  Sign operator()(const first_argument_type &p, const TNT& t) const
   {
     return CGAL::sign( p(t) );
   }
 
   //! Evaluate the sign of the value of the polynomial
   //  at n/d without any divisions
-  Sign operator()(const NT &n, const NT& d) const
+  Sign operator()(const first_argument_type &p, const NT &n, const NT& d) const
   {
     Sign s_n = CGAL::sign(n);
     Sign s_d = CGAL::sign(d);
@@ -84,9 +84,6 @@ public:
 
     return Sign(CGAL::sign(result) * s_d);
   }
-
-protected:
-  Fn p;
 };
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE

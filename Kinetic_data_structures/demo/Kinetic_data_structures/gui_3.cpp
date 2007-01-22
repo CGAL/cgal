@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
     typedef CGAL::Kinetic::SoQt_widget_3<Traits::Simulator> Qt_gui;
     typedef CGAL::Kinetic::SoQt_moving_points_3<Traits, Qt_gui> Qt_mpt;
 
-    Traits tr;
+    Traits tr(0,100000);
     Qt_gui::Handle qtsim= new Qt_gui(argc, argv, tr.simulator_handle());
     Qt_mpt::Handle qtmpt= new Qt_mpt(tr, qtsim);
 

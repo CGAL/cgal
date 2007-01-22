@@ -29,46 +29,41 @@ CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 template <class K>
 class Rational_multiplicity
 {
-    public:
-        Rational_multiplicity(){}
+public:
+  Rational_multiplicity(){}
 
-        Rational_multiplicity(const typename K::Function &fh, const K &k): d_(k.differentiate_object()),
-        k_(k) {
-            CGAL_Polynomial_precondition(fh.degree() != -1);
-            h_.push_back(fh);
-        }
+  Rational_multiplicity(const K &k):d_(k.differentiate_object()),
+				   k_(k) {
+  }
 
-        typedef unsigned int result_type;
-//typedef Bound_type argument_type;
-        typedef typename K::Function::NT argument_type;
+  typedef unsigned int result_type;
+  //typedef Bound_type argument_type;
+  typedef typename K::Function first_argument_type;
+  typedef typename K::Function::NT second_argument_type;
 
-        result_type operator()(const argument_type &t) const
-        {
-            CGAL_Polynomial_exactness_assertion(k_.sign_at_object(h_.front())( t)== CGAL::ZERO);
-//POLYNOMIAL_NS::Sign sn;
-//if ( k.sign_at_object(fh)(t) != POLYNOMIAL_NS::ZERO ) return 0;
-            unsigned int deg=1;
-            unsigned int mdegree= h_.front().degree();
-            while (sign_at_of(t,deg)==CGAL::ZERO && deg <mdegree) {
-                ++deg;
-            }
-            return deg;
-        }
+  result_type operator()(const first_argument_type &f, const second_argument_type &t) const
+  {
+    CGAL_precondition(f.degree() > -1);
+    typename K::Function h=f;
+    //CGAL_Polynomial_exactness_assertion(k_.sign_at_object(h)( t)== CGAL::ZERO);
+    //POLYNOMIAL_NS::Sign sn;
+    //if ( k.sign_at_object(fh)(t) != POLYNOMIAL_NS::ZERO ) return 0;
+    unsigned int deg=0;
+    
+    typename K::Sign_at sa= k_.sign_at_object();
+    
+    //unsigned int mdegree= h.degree();
+    while (sa(h, t) ==CGAL::ZERO) {
+      ++deg;
+      h= d_(h);
+    }
+    return deg;
+  }
 
-    protected:
-        CGAL::Sign sign_at_of(const argument_type &t, unsigned int i) const
-        {
-            if (i >= h_.size()) {
-                h_.push_back(d_(h_.back()));
-            }
-            CGAL_Polynomial_postcondition(i < h_.size());
-            typename K::Sign_at sa= k_.sign_at_object(h_[i]);
-            return sa(t);
-        }
+protected:
 
-        mutable std::vector<typename K::Function> h_;
-        typename K::Differentiate d_;
-        K k_;
+  typename K::Differentiate d_;
+  K k_;
 };
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE

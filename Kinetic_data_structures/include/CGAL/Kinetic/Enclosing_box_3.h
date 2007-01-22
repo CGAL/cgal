@@ -202,7 +202,7 @@ protected:
     NT bound=bounds_[try_side];
    typename Kinetic_kernel::Certificate re;
     if (try_side== TOP || try_side==BOTTOM) {
-      typename Kinetic_kernel::Is_less_y_3 ily = traits_.kinetic_kernel_object().is_less_y_3_object();     
+      typename Kinetic_kernel::Less_y_3 ily = traits_.kinetic_kernel_object().less_y_3_object();     
       if (try_side== TOP) {
 	re= ily(traits_.active_points_3_table_handle()->at(k), bound,
 		traits_.simulator_handle()->current_time(), traits_.simulator_handle()->end_time());
@@ -212,7 +212,7 @@ protected:
       }
 
     } else if (try_side == LEFT || try_side == RIGHT) {
-      typename Kinetic_kernel::Is_less_x_3 ily = traits_.kinetic_kernel_object().is_less_x_3_object();
+      typename Kinetic_kernel::Less_x_3 ily = traits_.kinetic_kernel_object().less_x_3_object();
       if (try_side== RIGHT) {
 	re= ily(traits_.active_points_3_table_handle()->at(k), bound,
 		traits_.simulator_handle()->current_time(), traits_.simulator_handle()->end_time());
@@ -221,7 +221,7 @@ protected:
 		traits_.simulator_handle()->current_time(), traits_.simulator_handle()->end_time());
       }
     } else {
-      typename Kinetic_kernel::Is_less_z_3 ily = traits_.kinetic_kernel_object().is_less_z_3_object();
+      typename Kinetic_kernel::Less_z_3 ily = traits_.kinetic_kernel_object().less_z_3_object();
       if (try_side== FRONT) {
 	re= ily(traits_.active_points_3_table_handle()->at(k), bound,
 		traits_.simulator_handle()->current_time(), traits_.simulator_handle()->end_time());

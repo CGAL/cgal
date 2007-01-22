@@ -33,7 +33,7 @@ class Sign_at
   typedef typename K::Function Poly;
   typedef typename K::FT FT;
 public:
-  Sign_at(const Poly &p, K k=K()): p_(p), k_(k) {
+  Sign_at(K k=K()): k_(k) {
   }
   Sign_at(){}
   typedef typename K::Root argument_type;
@@ -43,10 +43,10 @@ public:
 protected:
  
   template <class MRT>
-  CGAL::Sign eval(const MRT &r) const {
+  CGAL::Sign eval(const Poly&p, const MRT &r) const {
     std::pair<double,double> di= CGAL::to_interval(r);
  
-    typename K::Root_stack s= k_.root_stack_object(p_,
+    typename K::Root_stack s= k_.root_stack_object(p,
 						   typename K::Root(di.first),
 						   typename K::Root(di.second));
     while (!s.empty() && s.top() < r) {
@@ -65,14 +65,14 @@ protected:
   }
 
 
-  CGAL::Sign eval(const FT &r) const {
+  CGAL::Sign eval(const Poly&p, const FT &r) const {
     //typedef typename K::Root_stack_traits::Sign_at SA;
-    return eval_ft(r);
+    return eval_ft(p, r);
   }
 
-  CGAL::Sign eval_ft(const FT &r) const {
+  CGAL::Sign eval_ft(const Poly&p, const FT &r) const {
     //typedef typename K::Root_stack_traits::Sign_at SA;
-    return k_.root_stack_traits_object().sign_at_object(p_)(r);
+    return k_.root_stack_traits_object().sign_at_object()(p, r);
   }
   
 
@@ -84,23 +84,13 @@ protected:
     typename CGAL_POLYNOMIAL_NS::Polynomial_converter<typename K::Polynomial, Rep_poly> pc;
     return CGAL::sign(pc(p_)(rep));
     }*/
-
-  Poly p_;
   K k_;
 public:
   template <class T>
-  result_type operator()(const T &v) const
+  result_type operator()(const Poly &p, const T &v) const
   {
-    return eval(v);
+    return eval(p, v);
   }
-  /*result_type operator()(const typename K::NT &nt) const {
-    return eval(nt);
-    }*/
-
-  /* CGAL_POLYNOMIAL_NS::Sign eval(const typename Poly::NT &nt) const
-  {
-   
-  }*/
 
 
 };

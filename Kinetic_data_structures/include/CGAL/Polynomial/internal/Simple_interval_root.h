@@ -461,7 +461,7 @@ protected:
 
   CGAL::Sign sign_at(const NT &nt) const
   {
-    return kernel_.sign_at_object(function_)(nt);
+    return kernel_.sign_at_object()(function_, nt);
   }
 
   //! The representation of negative infinity

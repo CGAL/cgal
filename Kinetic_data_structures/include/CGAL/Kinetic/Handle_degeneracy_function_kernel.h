@@ -46,14 +46,14 @@ class HDRS{
 #endif
       CGAL::Sign sn;
       if (solver_.empty()) {
-	sn = k.sign_between_roots_object(lb, ub)(uf);
+	sn = k.sign_between_roots_object()(uf, lb, ub);
       } else {
-	sn = k.sign_between_roots_object(lb, solver_.top())(uf);
+	sn = k.sign_between_roots_object()(uf, lb, solver_.top());
       }
       if (sn == CGAL::NEGATIVE) {
 	if (!SLOPPY) {
 #ifndef NDEBUG
-	  if (k.sign_at_object(uf)(lb) == CGAL::NEGATIVE) {
+	  if (k.sign_at_object()(uf, lb) == CGAL::NEGATIVE) {
 	    CGAL_KINETIC_ERROR( "Invalid certificate constructed for function " << uf << " between " << lb 
 				<< " and " << ub << " will fail immediately." << std::endl);
 	    CGAL_exactness_assertion(sn != CGAL::NEGATIVE);

@@ -310,17 +310,17 @@ protected:
     typedef TriangulationT Triangulation;
     typedef typename This::Edge_flip Edge_flip;
     typedef typename This::Facet_flip Facet_flip;
-    typedef typename TraitsT::Kinetic_kernel::Positive_power_test_3 Positive_side_of_oriented_sphere_3;
-    typedef typename TraitsT::Kinetic_kernel::Weighted_positive_orientation_3 Positive_orientation_3;
+    typedef typename TraitsT::Kinetic_kernel::Power_test_3 Side_of_oriented_sphere_3;
+    typedef typename TraitsT::Kinetic_kernel::Weighted_orientation_3 Orientation_3;
 
-    Positive_side_of_oriented_sphere_3 positive_side_of_oriented_sphere_3_object() const
+    Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object() const
     {
-      return TraitsT::kinetic_kernel_object().positive_power_test_3_object();
+      return TraitsT::kinetic_kernel_object().power_test_3_object();
     }
 
-    Positive_orientation_3 positive_orientation_3_object() const
+    Orientation_3 orientation_3_object() const
     {
-      return TraitsT::kinetic_kernel_object().weighted_positive_orientation_3_object();
+      return TraitsT::kinetic_kernel_object().weighted_orientation_3_object();
     }
 
     Base_traits(This *t, const TraitsT &tr): TraitsT(tr), wr_(t) {}
@@ -872,7 +872,8 @@ protected:
 	typename Base_traits::Kinetic_kernel::Certificate_function cf= kdel_.simulation_traits_object().kinetic_kernel_object().weighted_orientation_3_object()(point(internal::vertex_of_facet(f,0)->point()),
 																				point(internal::vertex_of_facet(f,1)->point()),
 																				point(internal::vertex_of_facet(f,2)->point()),
-																				point(k));
+																				point(k), CGAL::to_interval(kdel_.simulation_traits_object().simulator_handle()->current_time()).first-.00001,
+																				CGAL::to_interval(kdel_.simulation_traits_object().simulator_handle()->current_time()).second+.00001);
 
 	typename Base_traits::Kinetic_kernel::Function_kernel::Sign_at sar
 	  = kdel_.simulation_traits_object().kinetic_kernel_object().function_kernel_object().sign_at_object(cf);

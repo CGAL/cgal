@@ -14,7 +14,7 @@ int main(int, char *[])
     typedef CGAL::Kinetic::Sort<Traits> Sort;
     typedef Traits::Simulator::Time Time;
 
-    Traits tr;
+    Traits tr(0,100000);
     Sort sort(tr);
     Traits::Simulator::Handle sp= tr.simulator_handle();
 

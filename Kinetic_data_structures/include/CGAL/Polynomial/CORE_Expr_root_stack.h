@@ -177,8 +177,8 @@ protected:
     //int nr=1;
     CGAL::Sign cur_sign=CGAL::sign(f_.core_polynomial().eval(bfi.second));
     if (cur_sign==0) {
-      Traits::Sign_above sa(f_);
-      cur_sign= sa(bfi.second);
+      Traits::Sign_after sa= tr_.sign_after_object();
+      cur_sign= sa(f_, bfi.second);
       ++offset_in_interval_;
     } else {
       offset_in_interval_=0;

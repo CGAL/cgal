@@ -58,7 +58,7 @@ class Sturm_sequence_base
         template<class NTRep>
             unsigned int sign_variations_base(const NTRep& x) const
         {
-            Sign s0 = k_.sign_at_object( seq_[0] )(x);
+	  Sign s0 = k_.sign_at_object( )( seq_[0], x);
 
             CGAL_exactness_precondition( s0 != CGAL::ZERO );
 
@@ -66,7 +66,7 @@ class Sturm_sequence_base
             signs[0] = s0;
 
             for (unsigned int i = 1; i < size_; i++) {
-                signs[i] = k_.sign_at_object( seq_[i] )(x);
+	      signs[i] = k_.sign_at_object(  )(seq_[i], x);
             }
 
             return sign_variations(signs.begin(), signs.end());

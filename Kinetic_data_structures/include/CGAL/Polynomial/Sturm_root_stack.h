@@ -38,8 +38,10 @@ CGAL_POLYNOMIAL_BEGIN_NAMESPACE
 //================================================================
 //================================================================
 
-#define CGAL_KINETIC_STURM_DEBUG(x) std::cout << x << std::endl;
-#define CGAL_KINETIC_STURM_DEBUG_WRITE(x) x << std::endl;
+#define CGAL_KINETIC_STURM_DEBUG(x) 
+//std::cout << x << std::endl;
+#define CGAL_KINETIC_STURM_DEBUG_WRITE(x) 
+//x << std::endl;
 
 template<class T>
 class Sturm_root_stack
@@ -252,7 +254,7 @@ protected:
 	CGAL_KINETIC_STURM_DEBUG("Out of roots");
 	current_= Root();
       } else if (current_.isolating_interval().first == current_.isolating_interval().second ) {
-	int mult = traits_.multiplicity_object(non_square_free_part_)(current_.isolating_interval().first);
+	int mult = traits_.multiplicity_object()(non_square_free_part_, current_.isolating_interval().first);
 	CGAL_KINETIC_STURM_DEBUG("Rational multiplicity of " << mult);
 	if (mult%2 ==1) another_even_=true; // +1 for the original function
       } else {
@@ -317,7 +319,7 @@ public:
 
 protected:
   CGAL::Sign sign_at(const Polynomial &p, const NT &nt) const {
-    return traits_.sign_at_object(p)(nt);
+    return traits_.sign_at_object()(p, nt);
   }
 
   Root                             start_, finish_;

@@ -53,7 +53,7 @@ public:
 
     if ( sgn == CGAL::ZERO ) { return CGAL::EQUAL; }
 
-    int s_a = static_cast<int>(  kernel_.sign_at_object(q)(a) );
+    int s_a = static_cast<int>(  kernel_.sign_at_object()(q, a) );
 
     if ( sgn == s_a ) { return CGAL::SMALLER; }
     return CGAL::LARGER;

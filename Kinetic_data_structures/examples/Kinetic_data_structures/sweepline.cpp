@@ -55,7 +55,7 @@ public:
   typedef typename Sort::Vertex_handle Vertex_handle; 
 
   // Register this KDS with the MovingObjectTable and the Simulator
-  Planar_arrangement(Traits tr): Sort(tr, Visitor(this)) {}
+  Planar_arrangement(Traits tr): Sort(tr, Visitor(this)), tr_(tr) {}
 
   Approximate_point vertex(int i) const
   {
@@ -94,8 +94,8 @@ public:
   }
 
   int new_point(typename Traits::Active_points_1_table::Key k) {
-    double tv= CGAL::to_double(Sort::traits().simulator_handle()->current_time());
-    double dv= CGAL::to_double(Sort::traits().active_points_1_table_handle()->at(k).x()(tv));
+    double tv= CGAL::to_double(tr_.simulator_handle()->current_time());
+    double dv= CGAL::to_double(tr_.active_points_1_table_handle()->at(k).x()(tv));
     approx_coords_.push_back(Approximate_point(tv, dv));
     return approx_coords_.size()-1;
   }
@@ -103,7 +103,7 @@ public:
   std::vector<Approximate_point > approx_coords_;
   std::map<Key, int> last_points_;
   std::vector<Edge> edges_;
-
+  Traits tr_;
 };
 
 template <class NT>

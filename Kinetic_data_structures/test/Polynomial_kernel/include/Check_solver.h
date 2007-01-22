@@ -56,7 +56,7 @@ public:
 
     CGAL::Timer timer;
 
-    typename K::Is_even_multiplicity iem = k_.is_even_multiplicity_object(q);
+    //typename K::Is_even_multiplicity iem = k_.is_even_multiplicity_object(q);
     //int current_root=0;
     if (verbose) {
       std::cout << "Polynomial: " << q << std::endl;

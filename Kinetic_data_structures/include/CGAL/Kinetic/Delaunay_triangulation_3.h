@@ -82,22 +82,22 @@ private:
   struct Base_traits: public TraitsT {
     typedef This Wrapper;
     typedef TriangulationT Triangulation;
-    typedef typename TraitsT::Kinetic_kernel::Positive_side_of_oriented_sphere_3 Positive_side_of_oriented_sphere_3;
-    typedef typename TraitsT::Kinetic_kernel::Positive_orientation_3 Positive_orientation_3;
+    typedef typename TraitsT::Kinetic_kernel::Side_of_oriented_sphere_3 Side_of_oriented_sphere_3;
+    typedef typename TraitsT::Kinetic_kernel::Orientation_3 Orientation_3;
     typedef internal::Delaunay_3_edge_flip_event<This,
-						 typename Positive_side_of_oriented_sphere_3::result_type,
+						 typename Side_of_oriented_sphere_3::result_type,
 						 typename TriangulationT::Edge> Edge_flip;
-    typedef typename internal::Delaunay_3_facet_flip_event<This, typename Positive_side_of_oriented_sphere_3::result_type,
+    typedef typename internal::Delaunay_3_facet_flip_event<This, typename Side_of_oriented_sphere_3::result_type,
 							   typename TriangulationT::Facet> Facet_flip;
 
-    Positive_side_of_oriented_sphere_3 positive_side_of_oriented_sphere_3_object() const
+    Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object() const
     {
-      return TraitsT::kinetic_kernel_object().positive_side_of_oriented_sphere_3_object();
+      return TraitsT::kinetic_kernel_object().side_of_oriented_sphere_3_object();
     }
 
-    Positive_orientation_3 positive_orientation_3_object() const
+    Orientation_3 orientation_3_object() const
     {
-      return TraitsT::kinetic_kernel_object().positive_orientation_3_object();
+      return TraitsT::kinetic_kernel_object().orientation_3_object();
     }
 
     Base_traits(This *t, const TraitsT &tr): TraitsT(tr), wr_(t) {}
@@ -114,11 +114,11 @@ private:
   };
   
   friend class internal::Delaunay_3_edge_flip_event<This,
-						    typename Base_traits::Positive_side_of_oriented_sphere_3::result_type,
+						    typename Base_traits::Side_of_oriented_sphere_3::result_type,
 						    typename TriangulationT::Edge>;
 
 friend class  internal::Delaunay_3_facet_flip_event<This,
-						    typename Base_traits::Positive_side_of_oriented_sphere_3::result_type,
+						    typename Base_traits::Side_of_oriented_sphere_3::result_type,
 						    typename TriangulationT::Facet>;
 
 
