@@ -30,7 +30,7 @@
 #include <CGAL/Kinetic/internal/To_static.h>
 //#include <CGAL/Kinetic/Cartesian_static_converter.h>
 
-#define CGAL_MSA(Pred, pred, d) typedef Instantaneous_adaptor<typename Static_kernel::Pred##_##d, Current_coordinates, Point_2> Pred##_##d; \
+#define CGAL_MSA(Pred, pred, Arg, d) typedef Instantaneous_adaptor<typename Static_kernel::Pred##_##d, Current_coordinates, Arg> Pred##_##d; \
   Pred##_##d pred##_##d##_object() const				\
   {									\
     typename Static_kernel::Pred##_##d sp= rep_->static_kernel().pred##_##d##_object();	\
@@ -41,40 +41,41 @@
 
 CGAL_KINETIC_BEGIN_NAMESPACE
 
-template <class MovingObjectTable, class StaticKernel>
-class Cartesian_instantaneous_kernel_rep: public Ref_counted<Cartesian_instantaneous_kernel_rep<MovingObjectTable, StaticKernel> >
+template <class CIK>
+class Cartesian_instantaneous_kernel_rep: public Ref_counted<Cartesian_instantaneous_kernel_rep<CIK> >
 {
 public:
-  typedef StaticKernel Static_kernel;
-  typedef To_static<typename MovingObjectTable::Data, StaticKernel> Converter;
-  typedef MovingObjectTable Object_table;
-  typedef typename StaticKernel::FT Time;
-  Cartesian_instantaneous_kernel_rep(typename Object_table::Const_handle mot,
-				     Static_kernel sk): skernel_(sk),
-							convert_(sk),
-							mot_(mot) {
-#ifndef NDEBUG
+  typedef typename CIK::Traits::Static_kernel Static_kernel;
+  typedef typename CIK::Traits::Kinetic_kernel Kinetic_kernel;
+
+  typedef typename Kinetic_kernel::Point_1::template Static_traits<Static_kernel> Static_traits_point_1;
+  typedef typename Kinetic_kernel::Point_2::template Static_traits<Static_kernel> Static_traits_point_2;
+  typedef typename Kinetic_kernel::Point_3::template Static_traits<Static_kernel> Static_traits_point_3;
+  typedef typename Kinetic_kernel::Weighted_point_3::template Static_traits<Static_kernel> Static_traits_weighted_point_3;
+
+  typedef typename Static_kernel::FT Time;
+
+  Cartesian_instantaneous_kernel_rep(typename CIK::Traits tr): tr_(tr) {
     initialized_=false;
-#endif
   }
   
-  void set_time(const Time &t) const
+  void set_time(const Time &t)
   {
-    if (t != convert_.time()) {
-      convert_.set_time(t);
-      cache_.clear();
-#ifndef NDEBUG
+    if (t != time_ || !initialized_) {
+      time_=t;
+      cache_1_.clear();
+      cache_2_.clear();
+      cache_3_.clear();
+      cache_w3_.clear();
       initialized_=true;
-#endif
     }
   }
   const Time & time() const
   {
-    return convert_.time();
+    return time_;
   }
   
-  const typename Converter::result_type& static_object(typename Object_table::Key k) const
-  {
+  void check_static_object() const {
 #ifndef NDEBUG
     if (!initialized_) {
       std::cerr << "The InstantaneousKernel (or one of its predicates) was\n";
@@ -83,27 +84,69 @@ public:
       std::cerr << "from the SimulatorTraits and get predicates from it.\n";
     }
 #endif
-    if (cache_.find(k) == cache_.end()) {
-      cache_.insert(std::pair<typename Object_table::Key,
-                    typename Converter::result_type>(k, convert_(mot_->at(k))));
-      //std::cout << "Object " << k << " is " << cache_[k] << std::endl;
-    }
-    return cache_[k];
   }
+
+  const typename Static_kernel::FT&
+  static_object(typename CIK::Point_1 k) const {
+    check_static_object();
+    if (cache_1_.find(k) == cache_1_.end()) {
+      cache_1_[k]= tr_.active_points_1_table_handle()->at(k).x(time_);
+    }
+    return cache_1_[k];
+  }
+
+  const typename Static_kernel::Point_2&
+  static_object(typename CIK::Point_2 k) const {
+    check_static_object();
+    if (cache_2_.find(k) == cache_2_.end()) {
+      cache_2_[k]= typename Static_kernel::Point_2(tr_.active_points_2_table_handle()->at(k).x()(time_),
+						   tr_.active_points_2_table_handle()->at(k).y()(time_));
+    }
+    return cache_2_[k];
+  }
+
+  const typename Static_kernel::Point_3&
+  static_object(typename CIK::Point_3 k) const {
+    check_static_object();
+    if (cache_3_.find(k) == cache_3_.end()) {
+      cache_3_[k]= typename Static_kernel::Point_3(tr_.active_points_3_table_handle()->at(k).x()(time_),
+						   tr_.active_points_3_table_handle()->at(k).y()(time_),
+						   tr_.active_points_3_table_handle()->at(k).z()(time_));
+    }
+    return cache_3_[k];
+  }
+
+
+  const typename Static_kernel::Weighted_point_3&
+  static_object(typename CIK::Weighted_point_3 k) const {
+    check_static_object();
+    if (cache_w3_.find(k) == cache_w3_.end()) {
+      const typename Kinetic_kernel::Weighted_point_3 &wp= tr_.active_weighted_points_3_table_handle()->at(k);
+      cache_w3_[k]= typename Static_kernel::Weighted_point_2(Static_kernel::Point_2(wp.point().x()(time_),
+										    wp.point().y()(time_),
+										    wp.point().z()(time_)),
+							     wp.weight()(time_));
+    }
+    return cache_w3_[k];
+  }
+
   
   const Static_kernel& static_kernel() const
   {
-    return skernel_;
+    return tr_.static_kernel_object();
   }
 protected:
-#ifndef NDEBUG
   mutable bool initialized_;
-#endif
-  mutable Static_kernel skernel_;
-  mutable Converter convert_;
-  typename Object_table::Const_handle mot_;
-  mutable std::map<typename Object_table::Key,
-		   typename Converter::result_type> cache_;
+  typename CIK::Traits tr_;
+  mutable std::map<typename CIK::Point_1,
+		   typename Static_kernel::FT> cache_1_;
+  mutable std::map<typename CIK::Point_2,
+		   typename Static_kernel::Point_2> cache_2_;
+  mutable std::map<typename CIK::Point_3,
+		   typename Static_kernel::Point_3> cache_3_;
+  mutable std::map<typename CIK::Weighted_point_3,
+		   typename Static_kernel::Weighted_point_3> cache_w3_;
+  Time time_;
 };
 
 //! A Kernel that makes a snapshot of a Kinetic motion look like a normal Kernel
@@ -114,64 +157,54 @@ protected:
 
   This currently only supports operations involving points.
 */
-template <class MPT, class SK/* = CGAL::Simple_cartesian<typename MPT::Data::Coordinate::NT>*/ >
+template <class Traitst >
 class Cartesian_instantaneous_kernel
 {
-  typedef Cartesian_instantaneous_kernel<MPT, SK> This;
-  typedef Cartesian_instantaneous_kernel_rep< MPT, SK>  Rep;
-  typedef typename Rep::Handle  Rep_pointer;
+  typedef Cartesian_instantaneous_kernel<Traitst> This;
 public:
-  //! The table of the objects
-  typedef MPT Object_table;
-  //! The CGAL kernel
-  typedef SK Static_kernel;
-  //! The type used to represent time.
-  typedef typename SK::FT Time;
+  typedef Traitst Traits;
+  typedef Cartesian_instantaneous_kernel_rep< This>  Rep;
+  typedef typename Traits::Static_kernel Static_kernel;
+  typedef typename Static_kernel::FT Time;
 
-  Cartesian_instantaneous_kernel(typename Object_table::Const_handle mot,
-				 const Static_kernel &sk= Static_kernel()):
-    rep_(new Rep(mot, sk)) {
+  Cartesian_instantaneous_kernel(const Traits &tr):
+    rep_(new Rep(tr)) {
   }
-  //! To get around the last of non-const geom_traits() function in triangulation
+ 
   void set_time(const Time &cur_time) const
   {
     rep_->set_time(cur_time);
-    //Ptr()->cache_.clear();
   }
 
-  //! The current time.
   const Time &time() const
   {
     return rep_->time();
   }
 
-  /*const Static_kernel &static_kernel() const {
-    return rep_->skernel_;
-    }*/
+ 
+  typedef typename Static_kernel::RT RT;
+  typedef typename Static_kernel::FT FT;
 
-  //! The CGAL Kernel RT
-  typedef typename SK::RT RT;
-  //! The CGAL Kernel FT
-  typedef typename SK::FT FT;
-
-  typedef typename Object_table::Key Point_1;
-
-  //! 2D point
-  /*!  Only one of this or Point_3 really works for a given
-    instantiation.
-  */
-  typedef typename Object_table::Key Point_2;
-  //! 3D point
-  /*!  Only one of this or Point_2 really works for a given
-    instantiation.
-  */
-  typedef typename Object_table::Key Point_3;
+  typedef typename Traits::Active_points_1_table::Key Point_1;
+  typedef typename Traits::Active_points_2_table::Key Point_2;
+  typedef typename Traits::Active_points_3_table::Key Point_3;
+  typedef typename Traits::Active_points_3_table::Key Bare_point;
+  typedef typename Traits::Active_weighted_points_3_table::Key Weighted_point_3;
 
   struct Current_coordinates {
     Current_coordinates(typename Rep::Handle rep): rep_(rep){}
-    typedef typename Rep::Converter::result_type result_type;
-    typedef typename Object_table::Key argument_type;
-    const result_type  & operator()(argument_type k) const {
+    //typedef typename Rep::Converter::result_type result_type;
+    //typedef typename Object_table::Key argument_type;
+    const FT  & operator()(Point_1 k) const {
+      return rep_->static_object(k);
+    }
+    const typename Static_kernel::Point_2  & operator()(Point_2 k) const {
+      return rep_->static_object(k);
+    }
+    const typename Static_kernel::Point_3  & operator()(Point_3 k) const {
+      return rep_->static_object(k);
+    }
+    const typename Static_kernel::Weighted_point_3  & operator()(Weighted_point_3 k) const {
       return rep_->static_object(k);
     }
     typename Rep::Handle rep_;
@@ -189,29 +222,31 @@ public:
     return Less_x_1(current_coordinates_object(), sp);
   }
 
-  CGAL_MSA(Side_of_oriented_circle,side_of_oriented_circle, 2);
-  CGAL_MSA(Orientation,orientation, 2);
-  CGAL_MSA(Compare_x, compare_x, 2);
-  CGAL_MSA(Compare_y,compare_y, 2);
-  CGAL_MSA(Less_x, less_x, 2);
-  CGAL_MSA(Less_y, less_y, 2);
-  CGAL_MSA(Compare_distance, compare_distance, 2);
-  CGAL_MSA(Compare_distance, compare_distance, 3);
+  CGAL_MSA(Side_of_oriented_circle,side_of_oriented_circle, Point_2, 2);
+  CGAL_MSA(Orientation,orientation, Point_2, 2);
+  CGAL_MSA(Compare_x, compare_x, Point_2, 2);
+  CGAL_MSA(Compare_y,compare_y, Point_2, 2);
+  CGAL_MSA(Less_x, less_x, Point_2, 2);
+  CGAL_MSA(Less_y, less_y, Point_2, 2);
+  CGAL_MSA(Compare_distance, compare_distance, Point_2, 2);
+  CGAL_MSA(Compare_distance, compare_distance, Point_3, 3);
   CGAL_TSO(Segment_2);
   CGAL_TSO(Triangle_2);
 
-  CGAL_MSA(Side_of_oriented_sphere,side_of_oriented_sphere, 3);
-  CGAL_MSA(Orientation,orientation, 3);
-  //CGAL_MSA(Power_test,power_test, 3);
-  CGAL_MSA(Compare_x,compare_x, 3);
-  CGAL_MSA(Compare_y,compare_y, 3);
-  CGAL_MSA(Compare_z,compare_z, 3);
-  CGAL_MSA(Compare_xyz,compare_xyz, 3);
-  CGAL_MSA(Less_x, less_x, 3);
-  CGAL_MSA(Less_y, less_y, 3);
-  CGAL_MSA(Less_z, less_z, 3);
-  CGAL_MSA(Coplanar_orientation, coplanar_orientation, 3);
-  CGAL_MSA(Coplanar_side_of_bounded_circle, coplanar_side_of_bounded_circle, 3);
+  CGAL_MSA(Side_of_oriented_sphere,side_of_oriented_sphere, Point_3, 3);
+  CGAL_MSA(Orientation,orientation, Point_3, 3);
+  CGAL_MSA(Compare_x,compare_x, Point_3, 3);
+  CGAL_MSA(Compare_y,compare_y, Point_3, 3);
+  CGAL_MSA(Compare_z,compare_z, Point_3, 3);
+  CGAL_MSA(Compare_xyz,compare_xyz, Point_3, 3);
+  CGAL_MSA(Less_x, less_x, Point_3, 3);
+  CGAL_MSA(Less_y, less_y, Point_3, 3);
+  CGAL_MSA(Less_z, less_z, Point_3, 3);
+  CGAL_MSA(Coplanar_orientation, coplanar_orientation, Point_3, 3);
+  CGAL_MSA(Coplanar_side_of_bounded_circle, coplanar_side_of_bounded_circle, Point_3, 3);
+  CGAL_MSA(Power_test,power_test, Weighted_point_3, 3);
+
+
   
   CGAL_TSO(Segment_3);
   CGAL_TSO(Triangle_3);
@@ -221,7 +256,7 @@ public:
   CGAL_TSO(Object_3);
   CGAL_TSO(Plane_3);
 protected:
-  Rep_pointer rep_;
+  typename Rep::Handle rep_;
 };
 #undef CGAL_MSA
 #undef CGAL_TSO
