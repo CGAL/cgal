@@ -31,8 +31,8 @@ template <class SimulationTraits,
 class Vertex_base= CGAL::Triangulation_vertex_base_3<typename SimulationTraits::Instantaneous_kernel> >
 class Regular_triangulation_vertex_base_3:
 public CGAL::Triangulation_vertex_base_with_info_3<typename SimulationTraits::Simulator::Event_key,
-typename SimulationTraits::Instantaneous_kernel,
-Vertex_base>
+						   typename SimulationTraits::Instantaneous_kernel,
+						   Vertex_base>
 {
     private:
         typedef CGAL::Triangulation_vertex_base_with_info_3<typename SimulationTraits::Simulator::Event_key,

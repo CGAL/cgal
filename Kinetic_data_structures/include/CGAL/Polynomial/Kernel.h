@@ -103,18 +103,18 @@ public:
   }
 
   //! Compute the sign of p immediately after a root of another function (or of p)
-  typedef internal::Sign_above<Root, This> Sign_above;
-  Sign_above sign_above_object() const
+  typedef internal::Sign_above<Root, This> Sign_after;
+  Sign_after sign_after_object() const
   {
-    return Sign_above(*this);
+    return Sign_after(*this);
   }
 
   //! Compute the sign of p immediately after a root of another function (or of p)
-  typedef internal::Sign_below<Root, This> Sign_below;
-  Sign_below sign_below_object() const
+  /*typedef internal::Sign_below<Root, This> Sign_below;
+  Sign_below sign_be_object() const
   {
     return Sign_below(*this);
-  }
+    }*/
 
   //! Find a rational number between two non-equal roots
   typedef internal::Rational_between_roots<This> Rational_between_roots;

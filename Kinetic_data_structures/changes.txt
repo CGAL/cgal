@@ -28,6 +28,7 @@ September 2006 Daniel Russel
 - standardized look of functionkernel predicates to take all arguments at once
 - changed Sign_above to Sign_after
 - computation of the sign after the current time is now exposed through the kinetic predicates
+- traits classes are now dimension independent
 
 Future Daniel Russel
 - when using numeric solvers, evaluate the static predicates first before solving?
@@ -37,9 +38,7 @@ Future Daniel Russel
 - link kinetic and instantnaeous predicates-how?
 - make sorting general- solve linking first
 - times can generate certificate func and solve. Queue checks if they are dirty (a point changed--when check? that is hard--maybe collapse to front of interval if need exact and is dirty) and reinserts them if they are. Points are ref counted pointers. With interval rep and way to generate exact. Then just insert notifications. Dirty is keept by generation count per point. Time is k ints, k points, inexact func, interval--broken-what if time moves up? Need linear scans.
-- create tables in all dimensions and remove dimensional dep-DEFINITELY
 
 known bugs:
 - If, on insertion into a Del_3 the current time must be advanced past an event which invalidates the cell handle that is used to insert the vertex, then there is a problem. To fix this check all the paths for insert and protect this method behind ones which set the time before locate. Make that IK and S times are equal a precondition. 
-- regular triangulatin handling of redundant points is a bit lame and currently doesn't compile. The right solution is to make the IK work at roots, which is doable, just I haven't done so yet. 
 - Two list queue should make sure it steps off the dividing element. 

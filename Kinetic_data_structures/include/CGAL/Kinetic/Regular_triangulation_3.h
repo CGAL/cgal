@@ -211,9 +211,9 @@ std::ostream& operator<<(std::ostream &out, const Regular_3_push_event<K,S,KK,C>
 template <class Traits>
 struct Regular_triangulation_3_types
 {
-  typedef typename Traits::Active_points_3_table MPT;
+  typedef typename Traits::Active_points_3_table MPT; // here
   typedef typename Traits::Kinetic_kernel KK;
-  typedef CGAL::Triangulation_cell_base_3<typename Traits::Instantaneous_kernel> CFB;
+  // typedef CGAL::Triangulation_cell_base_3<typename Traits::Instantaneous_kernel> CFB;
 
   /*typedef CGAL::Triangulation_cell_base_with_info_3<Delaunay_cache_3<MPT, KK>,
     typename Traits::Instantaneous_kernel, CFB> CFBI;*/
@@ -255,10 +255,10 @@ private:
 
 public:
   typedef TraitsT Traits;
-  typedef typename Traits::Active_weighted_points_3_table::Key Point_key;
+  typedef typename Traits::Active_points_3_table::Key Point_key; //here
 
 protected:
-  typedef typename Traits::Active_points_3_table MPT;
+  typedef typename Traits::Active_points_3_table MPT; // here
   typedef typename Traits::Simulator Simulator;
   typedef typename Traits::Simulator::Event_key Event_key;
   typedef typename Traits::Simulator::Time Time;
@@ -312,6 +312,7 @@ protected:
     typedef typename This::Facet_flip Facet_flip;
     typedef typename TraitsT::Kinetic_kernel::Power_test_3 Side_of_oriented_sphere_3;
     typedef typename TraitsT::Kinetic_kernel::Weighted_orientation_3 Orientation_3;
+    typedef typename TraitsT::Active_points_3_table Active_points_3_table; // here
 
     Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object() const
     {
@@ -333,6 +334,10 @@ protected:
       return wr_;
     }
 
+    Active_points_3_table* active_points_3_table_handle() const {
+      return TraitsT::active_points_3_table_handle(); // here
+    }
+
     Wrapper *wr_;
   };
 
@@ -340,8 +345,8 @@ protected:
 
   typedef typename CGAL::Kinetic::Simulator_kds_listener<typename TraitsT::Simulator::Listener, This> Simulator_listener;
   friend  class CGAL::Kinetic::Simulator_kds_listener<typename TraitsT::Simulator::Listener, This>;
-  typedef typename CGAL::Kinetic::Active_objects_listener_helper<typename TraitsT::Active_points_3_table::Listener, This> Moving_point_table_listener;
-  friend class CGAL::Kinetic::Active_objects_listener_helper<typename TraitsT::Active_points_3_table::Listener, This>;
+typedef typename CGAL::Kinetic::Active_objects_listener_helper<typename TraitsT::Active_points_3_table::Listener, This> Moving_point_table_listener;// here
+friend class CGAL::Kinetic::Active_objects_listener_helper<typename TraitsT::Active_points_3_table::Listener, This>; // here
 
 public:
   typedef VisitorT Visitor;
@@ -349,7 +354,7 @@ public:
   Regular_triangulation_3(Traits tr, Visitor v= Visitor()): kdel_(Base_traits(this, tr), v),
 							    listener_(NULL) {
     siml_= Simulator_listener(tr.simulator_handle(), this);
-    motl_= Moving_point_table_listener(tr.active_points_3_table_handle(), this);
+    motl_= Moving_point_table_listener(tr.active_points_3_table_handle(), this); // here
   }
 
 
@@ -721,7 +726,7 @@ public:
 	    vit->info()= make_certificate(vit);
 	  }
 	}
-	for (typename Base_traits::Active_points_3_table::Key_iterator kit= kdel_.moving_object_table()->keys_begin();
+	for (typename Base_traits::Active_points_3_table::Key_iterator kit= kdel_.moving_object_table()->keys_begin(); // here
 	     kit != kdel_.moving_object_table()->keys_end(); ++kit) {
 	  typename Triangulation::Vertex_handle vh= kdel_.vertex_handle(*kit);
 	  if (vh == NULL) {
