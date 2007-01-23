@@ -22,7 +22,6 @@
 #define CGAL_KINETIC_TESTING_SORT_H
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Kinetic/Active_objects_listener_helper.h>
-#include <CGAL/Kinetic/Cartesian_instantaneous_kernel.h>
 #include <CGAL/Kinetic/Ref_counted.h>
 #include <CGAL/Kinetic/Simulator_kds_listener.h>
 #include <CGAL/Kinetic/Sort_visitor_base.h>

@@ -265,7 +265,7 @@ public:
   {
     CGAL_precondition(has_audit_time());
 #ifdef CGAL_KINETIC_ENABLE_AUDITING
-    CGAL_precondition(audit_time_ < next_event_time());
+    CGAL_precondition(Time(audit_time_) < next_event_time());
     return audit_time_;
 #else
     CGAL_precondition(0);
@@ -341,7 +341,7 @@ public:
     //if (log()->is_output(Log::LOTS)) write(log()->stream(Log::LOTS));
 
 #ifdef CGAL_KINETIC_ENABLE_AUDITING
-    if (audit_time_ >= t && has_audit_time() ) {
+    if (CGAL::compare(Time(audit_time_), t) != CGAL::SMALLER && has_audit_time() ) {
       audit_time_= mp_(current_time(), next_event_time());
     }
 #endif
@@ -558,7 +558,8 @@ protected:
 #ifdef CGAL_KINETIC_ENABLE_AUDITING
     if (has_audit_time()) {
       audit_time_= CGAL::to_interval(current_time()).second;
-      if (audit_time_ >=  next_event_time() && next_event_time() != current_time()) {
+      if (CGAL::compare(Time(audit_time_),  next_event_time()) != CGAL::SMALLER 
+	  && CGAL::compare(next_event_time(), current_time()) != CGAL::EQUAL) {
 	audit_time_= mp_(current_time(), next_event_time());
       }
       CGAL_KINETIC_LOG(LOG_SOME, "Audit is at time " << audit_time_ << std::endl);

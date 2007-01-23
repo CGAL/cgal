@@ -55,12 +55,12 @@ protected:
     if (s.empty()) {
       // there are no roots
       FT mid= (FT(di.first) + FT(di.second))*FT(.5);
-      return eval_ft(mid);
+      return eval_ft(p, mid);
     } else if (s.top()==r) {
       return CGAL::ZERO;
     } else {
       FT ft= k_.rational_between_roots_object()(r, s.top());
-      return eval_ft(ft);
+      return eval_ft(p, ft);
     }
   }
 

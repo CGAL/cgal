@@ -122,22 +122,6 @@ public:
     return x().degree()<1 && y().degree() <1;
   }
 
-
-#if 0
-  //! Returns the value at time t.
-  /*!
-   */
-  Static_point operator()(const NT &t) const
-  {
-    return Static_point(x()(t), y()(t));
-  }
-
-  //! Non-operator version of operator()
-  Static_point value_at( NT time) {
-    return operator()(time);
-  }
-#endif
-
   template <class SK>
   struct Static_traits
   {
@@ -149,8 +133,7 @@ public:
   };
 
   template <class Converter>
-  struct Coordinate_converter
-  {
+  struct Coordinate_converter {
     Coordinate_converter(const Converter &c): c_(c){}
     typedef Cartesian_moving_point_2<typename Converter::argument_type> argument_type;
     typedef Cartesian_moving_point_2<typename Converter::result_type> result_type;

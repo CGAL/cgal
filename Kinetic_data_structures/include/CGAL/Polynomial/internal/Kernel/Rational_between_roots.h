@@ -44,11 +44,11 @@ struct Rational_between_roots
 
 
 protected:
-  template <class Rt, class Result> 
-  Result compute(const Rt &r0, const Rt &r1)const  {
+  template <class Rt> 
+  result_type compute(const Rt &r0, const Rt &r1)const  {
   CGAL_exactness_precondition(r0<r1);
     if (r0 > r1) return operator()(r1, r0);
-    typedef std::pair<Result, Result> Ival;
+    typedef std::pair<result_type, result_type> Ival;
     //Ival i0= to_interval(r0);
     //Ival i1= to_interval(r1);
     Ival i0= tii_(r0);
@@ -74,7 +74,7 @@ protected:
     }
     else if (second_argument_type(i0.second) < r1) {
       //std::cout << "Returning "<< i0.second << " between " << r0 << " and " << r1 << std::endl;
-      return Result(i0.second);
+      return result_type(i0.second);
     }
     else {
       result_type lb = i0.first;
@@ -82,10 +82,10 @@ protected:
       result_type mid;
       while (true) {
 	mid = result_type(.5)*(lb+ub);
-	if (RT(mid) < r0) {
+	if (Rt(mid) < r0) {
 	  lb= mid;
 	}
-	else if (RT(mid) > r1) {
+	else if (Rt(mid) > r1) {
 	  ub= mid;
 	}
 	else {
@@ -95,13 +95,13 @@ protected:
       }
     }
     CGAL_Polynomial_postcondition(0);
-    return Result(0);
+    return result_type(0);
   }
 
-  template <class OT>
-  OT compute(const OT &r0, const OT &r1) const {
-    if (std::numeric_limits<OT>::has_infinity 
-	&& r1 == std::numeric_limits<OT>::infinity()) {
+  
+  result_type compute(const result_type &r0, const result_type &r1) const {
+    if (std::numeric_limits<result_type>::has_infinity
+	&& r1 == std::numeric_limits<result_type>::infinity()) {
       return 2*r0;
     } else {
       return (r0+r1)/2.0;
@@ -114,7 +114,7 @@ public:
 
   result_type operator()(const first_argument_type &r0, const second_argument_type &r1) const
   {
-    return compute<result_type>(r0, r1);
+    return compute(r0, r1);
   }
 
 };

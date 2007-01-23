@@ -109,16 +109,6 @@ namespace internal
 
 CGAL_POLYNOMIAL_END_NAMESPACE
 
-CGAL_BEGIN_NAMESPACE
-
-template <class Traits>
-std::pair<double,double> to_interval(const typename CGAL_POLYNOMIAL_NS::internal::Simple_interval_root<Traits> &r);
-template <class R1, class R2>
-std::pair<double,double> to_interval(const typename CGAL_POLYNOMIAL_NS::internal::Lazy_upper_bound_root_stack_root<R1, R2> &lr);
-template <class R>
-std::pair<double,double> to_interval(const typename CGAL_POLYNOMIAL_NS::internal::Explicit_root<R> &r);
-
-CGAL_END_NAMESPACE
 
 #elif POLYNOMIAL_USE_BOOST_INTERVAL
 

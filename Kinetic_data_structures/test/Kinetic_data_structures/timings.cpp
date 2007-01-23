@@ -5,10 +5,8 @@
 #include <CGAL/Polynomial/internal/Isolating_interval.h>
 #include <CGAL/Polynomial/internal/Simple_interval_root.h>
 //#include <CGAL/Polynomial/Lazy_upper_bound_root_stack.h>
-#include <CGAL/Kinetic/Inexact_simulation_traits_1.h>
-#include <CGAL/Kinetic/Inexact_simulation_traits_3.h>
-#include <CGAL/Kinetic/Exact_simulation_traits_1.h>
-#include <CGAL/Kinetic/Exact_simulation_traits_3.h>
+#include <CGAL/Kinetic/Inexact_simulation_traits.h>
+#include <CGAL/Kinetic/Exact_simulation_traits.h>
 #include <CGAL/Kinetic/Delaunay_triangulation_3.h>
 #include <CGAL/Kinetic/Sort.h>
 #include <CGAL/Random.h>
@@ -189,7 +187,7 @@ int main(int argc, char *argv[])
   //std::cout << "Delaunay\n";
     //test_del < CGAL::Kinetic::Inexact_simulation_traits_3 > ("Numeric");
     std::cout << "Sort\n";
-    test_sort < CGAL::Kinetic::Exact_simulation_traits_1 > ("Upper bound");
+    test_sort < CGAL::Kinetic::Exact_simulation_traits > ("Upper bound");
    
     if (CGAL::Kinetic::internal::fail__) return EXIT_FAILURE;
     else return EXIT_SUCCESS;

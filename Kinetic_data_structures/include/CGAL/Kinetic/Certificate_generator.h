@@ -52,8 +52,33 @@ struct Certificate_generator {
     return result_type(gen_(a), fk_,begin,end);
   }
 
-  
 
+  template <class A, class B, class C, class D, class E>
+  CGAL::Sign operator()(const A &a, const B &b, const C &c, const D &d, const E &e, const Time &begin) const {
+    return sign_after(gen_(a, b, c, d, e), begin);
+  }
+  template <class A, class B, class C, class D>
+  CGAL::Sign operator()(const A &a, const B &b, const C &c, const D &d, const Time &begin) const {
+    return sign_after(gen_(a, b, c, d), begin);
+  }
+  template <class A, class B, class C>
+  CGAL::Sign operator()(const A &a, const B &b, const C &c, const Time &begin) const {
+    return sign_after(gen_(a, b, c), begin);
+  }
+  template <class A, class B>
+  CGAL::Sign operator()(const A &a, const B &b, const Time &begin) const {
+    return sign_after(gen_(a, b), begin);
+  }
+  template <class A>
+  CGAL::Sign operator()(const A &a, const Time &begin) const {
+    return sign_after(gen_(a), begin);
+  }
+
+protected:
+  CGAL::Sign sign_after(const typename KK_t::Function_kernel::Function &f,
+			const Time &t) const {
+    return fk_.sign_after_object()(f,t);
+  }
 
   
   Generator gen_;

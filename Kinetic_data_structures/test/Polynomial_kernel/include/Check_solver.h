@@ -66,7 +66,7 @@ public:
       std::cout << ", ";
       std::cout << CGAL::to_double(end);
       std::cout << ")" << std::endl;
-      std::cout << "Maple: ";
+      std::cout << "Solution: ";
       for (It c= roots_b; c!= roots_e; ++c) {
 	/*if (CGAL::to_double(start) >= a[i]-.00001){
 	  ++current_root;
@@ -450,7 +450,7 @@ public:
 
       //typename Root_container::iterator it=s.begin();
       for (unsigned int offset=0; offset < roots.size()-1; ++offset) {
-	check_polynomial(q, a.begin()+offset+1, a.end(), roots[offset]);
+	check_polynomial(q, a.begin()+offset, a.end(), roots[offset]);
       }
 
     }

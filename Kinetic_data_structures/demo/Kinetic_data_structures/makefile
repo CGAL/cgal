@@ -45,7 +45,6 @@ DEPS_3D =  SoQt_examiner_viewer.moc SoQt_examiner_viewer$(OBJ_EXT)
 #                    target entries
 #---------------------------------------------------------------------#
 2d:          \
-	        update_Delaunay_triangulation_2$(EXE_EXT) \
                 Delaunay_triangulation_2$(EXE_EXT) \
                 gui_2$(EXE_EXT) \
                 generate_data$(EXE_EXT) \

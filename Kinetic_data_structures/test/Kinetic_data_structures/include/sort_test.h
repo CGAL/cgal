@@ -53,7 +53,7 @@ bool sort_test(Traits &tr, double max_events=std::numeric_limits<double>::infini
   Kit c= sort.begin();
   Kit b=c;
   ++c;
-  typename Traits::NT ratt;
+  typename Traits::Simulator::NT ratt;
   //if (tr.simulator_handle()->next_time_representable_as_nt()) {
     ratt=tr.simulator_handle()->next_time_representable_as_nt();
     /*} else {

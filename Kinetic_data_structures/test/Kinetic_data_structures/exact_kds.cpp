@@ -3,7 +3,7 @@
 
 #include <CGAL/Kinetic/Sort.h>
 #include <CGAL/Kinetic/Insert_event.h>
-#include <CGAL/Kinetic/Exact_simulation_traits_1.h>
+#include <CGAL/Kinetic/Exact_simulation_traits.h>
 #include <cstdlib>
 #include "include/sort_test.h"
 
@@ -16,7 +16,8 @@ int main(int argc, char *argv[]) {
   }
   std::cout << "Using " << num_points  << " degree " << degree << " points.\n";
   CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
-  typedef CGAL::Kinetic::Exact_simulation_traits_1 Tr;
+
+  typedef CGAL::Kinetic::Exact_simulation_traits Tr;
   Tr tr(0,1000000);
   typedef Tr::Simulator::Time Time;
 

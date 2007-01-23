@@ -4,7 +4,7 @@
 #include <CGAL/Kinetic/basic.h>
 
 #include <CGAL/Kinetic/Regular_triangulation_3.h>
-#include <CGAL/Kinetic/Regular_triangulation_exact_simulation_traits_3.h>
+#include <CGAL/Kinetic/Regular_triangulation_exact_simulation_traits.h>
 #include <CGAL/Kinetic/Regular_triangulation_event_log_visitor_3.h>
 #include <algorithm>
 #include <iterator>
@@ -12,11 +12,11 @@
 int main(int, char *[])
 {
 
-  typedef CGAL::Kinetic::Regular_triangulation_exact_simulation_traits_3 Simulation_traits;
+  typedef CGAL::Kinetic::Regular_triangulation_exact_simulation_traits Simulation_traits;
   typedef CGAL::Kinetic::Regular_triangulation_event_log_visitor_3 Visitor;
   typedef CGAL::Kinetic::Regular_triangulation_3<Simulation_traits, Visitor> KDel;
 
-  Simulation_traits simtr;
+  Simulation_traits simtr(0,100000);
   Simulation_traits::Simulator::Handle sp= simtr.simulator_handle();
 
   KDel kdel(simtr);
@@ -35,7 +35,7 @@ int main(int, char *[])
     Simulation_traits::Kinetic_kernel::Weighted_point_3 p;
     il >> p;
     //std::cout << p << std::endl;
-    simtr.active_points_3_table_handle()->insert(p);
+    simtr.active_weighted_points_3_table_handle()->insert(p);
     ++nread;
   }
   kdel.set_has_certificates(true);

@@ -1,8 +1,8 @@
 #define CGAL_CHECK_EXACTNESS
 #define CGAL_CHECK_EXPENSIVE
 
-#include <CGAL/Kinetic/Exact_simulation_traits_2.h>
-#include <CGAL/Kinetic/Inexact_simulation_traits_2.h>
+#include <CGAL/Kinetic/Exact_simulation_traits.h>
+#include <CGAL/Kinetic/Inexact_simulation_traits.h>
 #include <CGAL/Kinetic/Two_list_pointer_event_queue.h>
 #include <CGAL/Kinetic/Event_base.h>
 #include <CGAL/Timer.h>
@@ -102,9 +102,9 @@ struct Test
     FK fk;
     for (unsigned int i=0; i<num-3; ++i) {
       typename FK::Function f= cf(CGAL::abs(coef()), coef(), coef(), coef(), coef());
-      if (fk.sign_at_object(f)(sim->current_time()) == CGAL::NEGATIVE) {
+      if (fk.sign_at_object()(f, sim->current_time()) == CGAL::NEGATIVE) {
 	f=-f;
-	assert(fk.sign_at_object(f)(sim->current_time()) != CGAL::NEGATIVE);
+	assert(fk.sign_at_object()(f, sim->current_time()) != CGAL::NEGATIVE);
       }
 
       typename FK::Root_stack s= fk.root_stack_object(f, 
@@ -235,7 +235,7 @@ int main(int, char *[])
  {
     timer.reset();
 
-    typedef CGAL::Kinetic::Inexact_simulation_traits_2::Kinetic_kernel::Function_kernel FK;
+    typedef CGAL::Kinetic::Inexact_simulation_traits::Kinetic_kernel::Function_kernel FK;
     typedef CGAL::Kinetic::Default_simulator<FK,
      CGAL::Kinetic::Two_list_pointer_event_queue<FK> > Sim2;
 
@@ -249,7 +249,7 @@ int main(int, char *[])
 
   {
     timer.start();
-    Test<CGAL::Kinetic::Exact_simulation_traits_2::Simulator> ts;
+    Test<CGAL::Kinetic::Exact_simulation_traits::Simulator> ts;
     //ts.run();
     timer.stop();
     //std::cout << "Bin heap time " << timer.time() << std::endl;
@@ -257,7 +257,7 @@ int main(int, char *[])
 
   {
     timer.start();
-    Test<CGAL::Kinetic::Inexact_simulation_traits_2::Simulator> ts;
+    Test<CGAL::Kinetic::Inexact_simulation_traits::Simulator> ts;
     //ts.run();
     timer.stop();
     //std::cout << "Bin heap time " << timer.time() << std::endl;

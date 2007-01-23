@@ -31,7 +31,7 @@ CGAL_KINETIC_BEGIN_NAMESPACE;
 
   Look at the source to figure out how it works.
 */
-template <class Predicate, class Curcoord, class Object>
+template <class Predicate, class Curcoord, class Argument>
 class Instantaneous_adaptor
 {
 public:
@@ -40,7 +40,7 @@ public:
   }
 
   typedef typename Predicate::result_type result_type;
-  typedef Object argument_type;
+  typedef Argument argument_type;
   typedef argument_type first_argument_type;
   typedef argument_type second_argument_type;
   typedef argument_type third_argument_type;

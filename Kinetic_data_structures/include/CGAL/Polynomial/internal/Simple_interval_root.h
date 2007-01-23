@@ -21,7 +21,7 @@
 #ifndef CGAL_POLYNOMIAL_SIMPLE_INTERVAL_ROOT_H
 #define CGAL_POLYNOMIAL_SIMPLE_INTERVAL_ROOT_H
 #include <CGAL/Polynomial/basic.h>
-#include <CGAL/Polynomial/internal/interval_arithmetic.h>
+#include <CGAL/Real_embeddable_traits.h>
 #include <vector>
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE;
 
@@ -274,7 +274,38 @@ public:
       else return compare_finite(o);
     }
   }
+ std::pair<double, double> compute_interval(double accuracy=.0001) const
+  {
+    if (type_&INF) {
+      if (is_up()) {
+	return std::pair<double, double>(double_inf_rep(), double_inf_rep());
+      }
+      else {
+	return std::pair<double, double>(-double_inf_rep(), -double_inf_rep());
+      }
+    }
 
+    //double oaw;                           //= ii_.approximate_width();
+    while (ii_.second-ii_.first > NT(accuracy)) {
+      refine();
+    }
+    return std::make_pair(CGAL::to_interval(ii_.first).first, CGAL::to_interval(ii_.second).second);
+  }
+
+  double compute_double(double accuracy) const
+  {
+    if (is_infinite()) {
+      if (is_up()) {
+	return double_inf_rep();
+      }
+      else {
+	return -double_inf_rep();
+      }
+    }
+    //This t= *this;
+    std::pair<double, double> i= compute_interval(accuracy);
+    return (i.first+i.second)/2.0;
+  }
 protected:
 
   void write_internal(std::ostream &o) const
@@ -308,39 +339,6 @@ protected:
   bool is_neg_inf() const
   {
     return (type_&INF) && !(type_&UP);
-  }
-
-  std::pair<double, double> compute_interval(double accuracy) const
-  {
-    if (type_&INF) {
-      if (is_up()) {
-	return std::pair<double, double>(double_inf_rep(), double_inf_rep());
-      }
-      else {
-	return std::pair<double, double>(-double_inf_rep(), -double_inf_rep());
-      }
-    }
-
-    //double oaw;                           //= ii_.approximate_width();
-    while (ii_.second-ii_.first > NT(accuracy)) {
-      refine();
-    }
-    return std::make_pair(CGAL::to_interval(ii_.first).first, CGAL::to_interval(ii_.second).second);
-  }
-
-  double compute_double(double accuracy) const
-  {
-    if (is_infinite()) {
-      if (is_up()) {
-	return double_inf_rep();
-      }
-      else {
-	return -double_inf_rep();
-      }
-    }
-    //This t= *this;
-    std::pair<double, double> i= compute_interval(accuracy);
-    return (i.first+i.second)/2.0;
   }
 
   bool contains_root(Sign ls, Sign us) const
@@ -542,7 +540,7 @@ std::ostream &operator<<(std::ostream &out, const Simple_interval_root<F> &f)
   return out;
 }
 
-
+/*
 template <class F>
 bool root_is_even_multiplicity(const Simple_interval_root<F> &f)
 {
@@ -561,7 +559,7 @@ template <class F>
 bool is_rational(const Simple_interval_root<F> &f)
 {
   return f.is_rational();
-}
+  }*/
 
 
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE

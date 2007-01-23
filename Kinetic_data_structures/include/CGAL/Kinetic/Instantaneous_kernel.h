@@ -42,7 +42,7 @@
 CGAL_KINETIC_BEGIN_NAMESPACE
 
 template <class CIK>
-class Cartesian_instantaneous_kernel_rep: public Ref_counted<Cartesian_instantaneous_kernel_rep<CIK> >
+class Instantaneous_kernel_rep: public Ref_counted<Instantaneous_kernel_rep<CIK> >
 {
 public:
   typedef typename CIK::Traits::Static_kernel Static_kernel;
@@ -55,7 +55,7 @@ public:
 
   typedef typename Static_kernel::FT Time;
 
-  Cartesian_instantaneous_kernel_rep(typename CIK::Traits tr): tr_(tr) {
+  Instantaneous_kernel_rep(typename CIK::Traits tr): tr_(tr) {
     initialized_=false;
   }
   
@@ -66,7 +66,7 @@ public:
       cache_1_.clear();
       cache_2_.clear();
       cache_3_.clear();
-      cache_w3_.clear();
+      //cache_w3_.clear();
       initialized_=true;
     }
   }
@@ -90,7 +90,7 @@ public:
   static_object(typename CIK::Point_1 k) const {
     check_static_object();
     if (cache_1_.find(k) == cache_1_.end()) {
-      cache_1_[k]= tr_.active_points_1_table_handle()->at(k).x(time_);
+      cache_1_[k]= tr_.active_points_1_table_handle()->at(k).x()(time_);
     }
     return cache_1_[k];
   }
@@ -117,7 +117,7 @@ public:
   }
 
 
-  const typename Static_kernel::Weighted_point_3&
+  /*const typename Static_kernel::Weighted_point_3&
   static_object(typename CIK::Weighted_point_3 k) const {
     check_static_object();
     if (cache_w3_.find(k) == cache_w3_.end()) {
@@ -128,7 +128,7 @@ public:
 							     wp.weight()(time_));
     }
     return cache_w3_[k];
-  }
+    }*/
 
   
   const Static_kernel& static_kernel() const
@@ -144,30 +144,23 @@ protected:
 		   typename Static_kernel::Point_2> cache_2_;
   mutable std::map<typename CIK::Point_3,
 		   typename Static_kernel::Point_3> cache_3_;
-  mutable std::map<typename CIK::Weighted_point_3,
-		   typename Static_kernel::Weighted_point_3> cache_w3_;
+  /*mutable std::map<typename CIK::Weighted_point_3,
+    typename Static_kernel::Weighted_point_3> cache_w3_;*/
   Time time_;
 };
 
-//! A Kernel that makes a snapshot of a Kinetic motion look like a normal Kernel
-/*!  Unfortunately, you have to pick a particular sort of object to
-  use and pass a MovingObjectTable of that type of object to the
-  Kernel. This is due to the need for caching which is hard to do
-  efficiently otherwise.
 
-  This currently only supports operations involving points.
-*/
 template <class Traitst >
-class Cartesian_instantaneous_kernel
+class Instantaneous_kernel
 {
-  typedef Cartesian_instantaneous_kernel<Traitst> This;
+  typedef Instantaneous_kernel<Traitst> This;
 public:
   typedef Traitst Traits;
-  typedef Cartesian_instantaneous_kernel_rep< This>  Rep;
+  typedef Instantaneous_kernel_rep< This>  Rep;
   typedef typename Traits::Static_kernel Static_kernel;
   typedef typename Static_kernel::FT Time;
 
-  Cartesian_instantaneous_kernel(const Traits &tr):
+  Instantaneous_kernel(const Traits &tr):
     rep_(new Rep(tr)) {
   }
  
@@ -188,13 +181,12 @@ public:
   typedef typename Traits::Active_points_1_table::Key Point_1;
   typedef typename Traits::Active_points_2_table::Key Point_2;
   typedef typename Traits::Active_points_3_table::Key Point_3;
-  typedef typename Traits::Active_points_3_table::Key Bare_point;
-  typedef typename Traits::Active_weighted_points_3_table::Key Weighted_point_3;
+  //typedef typename Traits::Active_points_3_table::Key Bare_point;
+  //typedef typename Traits::Active_weighted_points_3_table::Key Weighted_point_3;
 
   struct Current_coordinates {
     Current_coordinates(typename Rep::Handle rep): rep_(rep){}
-    //typedef typename Rep::Converter::result_type result_type;
-    //typedef typename Object_table::Key argument_type;
+   
     const FT  & operator()(Point_1 k) const {
       return rep_->static_object(k);
     }
@@ -204,9 +196,9 @@ public:
     const typename Static_kernel::Point_3  & operator()(Point_3 k) const {
       return rep_->static_object(k);
     }
-    const typename Static_kernel::Weighted_point_3  & operator()(Weighted_point_3 k) const {
+    /*const typename Static_kernel::Weighted_point_3  & operator()(Weighted_point_3 k) const {
       return rep_->static_object(k);
-    }
+      }*/
     typename Rep::Handle rep_;
   };
 
@@ -244,7 +236,7 @@ public:
   CGAL_MSA(Less_z, less_z, Point_3, 3);
   CGAL_MSA(Coplanar_orientation, coplanar_orientation, Point_3, 3);
   CGAL_MSA(Coplanar_side_of_bounded_circle, coplanar_side_of_bounded_circle, Point_3, 3);
-  CGAL_MSA(Power_test,power_test, Weighted_point_3, 3);
+  //CGAL_MSA(Power_test,power_test, Weighted_point_3, 3);
 
 
   

@@ -1120,16 +1120,16 @@ void Delaunay_triangulation_2<Sim, Del, W, T>::audit() const
       Point_key k1= TDS_helper::third_vertex(*fit)->point();
       if (k1== Point_key() || k3== Point_key()) continue;
       typename Triangulation::Geom_traits::Current_coordinates cc= del_.geom_traits().current_coordinates_object();
-      typedef typename Triangulation::Geom_traits::Current_coordinates::result_type P2;
+      /*typedef typename Triangulation::Geom_traits::Current_coordinates::result_type P2;
       P2 p0= cc(k0);
       P2 p1= cc(k1);
       P2 p2= cc(k2);
-      P2 p3= cc(k3);
+      P2 p3= cc(k3);*/
       if (ic2(k0, k1, k2, k3) != CGAL::ON_POSITIVE_SIDE) {
 	CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_NONE, "AUDIT FAILURE Failed certificate: " << k0 << " " << k1 << " " 
 			 << k2 << " " << k3 << std::endl);
-	CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_NONE, "AUDIT FAILURE Points are: " << p0 << ": " << p1 << ": " << p2 
-			 << ": " << p3 << std::endl);
+	CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_NONE, "AUDIT FAILURE Points are: " << cc(k0) << ": " << cc(k1) << ": " << cc(k2) 
+			 << ": " << cc(k3) << std::endl);
       }
       CGAL_exactness_assertion(ic2(k0, k1, k2, k3) == CGAL::ON_POSITIVE_SIDE);
       
