@@ -393,10 +393,7 @@ The inputs points are kept in a vector to have random access to them.
 Their dimension is stored separately.
 
 @macro <Min_annulus_d standard includes> += @begin
-    #ifndef CGAL_PROTECT_VECTOR
-    #  include <vector>
-    #  define CGAL_PROTECT_VECTOR
-    #endif
+    #include <vector>
 @end
 
 @macro <Min_annulus_d private types> += @begin
@@ -450,10 +447,7 @@ Two constructors are provided. If the user wants to get some verbose output
 \ccc{verbose} and \ccc{stream}.
 
 @macro <Min_annulus_d standard includes> += @begin
-    #ifndef CGAL_PROTECT_IOSTREAM
-    #  include <iostream>
-    #  define CGAL_PROTECT_IOSTREAM
-    #endif
+    #include <iostream>
 @end
 
 @macro <Min_annulus_d member functions> += @begin
@@ -545,10 +539,7 @@ following function class.
 Another function class is used to divide the index by 2.
 
 @macro <Min_annulus_d standard includes> += @begin
-    #ifndef CGAL_PROTECT_FUNCTIONAL_H
-    #  include <functional>
-    #  define CGAL_PROTECT_FUNCTIONAL_H
-    #endif
+    #include <functional>
 @end
 
 @macro<Min_annulus_d private types> += @begin

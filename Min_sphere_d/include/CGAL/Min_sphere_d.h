@@ -37,15 +37,9 @@
 #  include <CGAL/Min_sphere_d/Optimisation_sphere_d.h>
 
 
-#ifndef CGAL_PROTECT_LIST
-#  include <list>
-#  define CGAL_PROTECT_LIST
-#endif
+#include <list>
 
-#ifndef CGAL_PROTECT_IOSTREAM
-#  include <iostream>
-#  define CGAL_PROTECT_IOSTREAM
-#endif
+#include <iostream>
 
 CGAL_BEGIN_NAMESPACE
 

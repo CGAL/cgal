@@ -23,17 +23,10 @@
 
 #ifndef CGAL_IO_FILE_WRITER_WAVEFRONT_H
 #define CGAL_IO_FILE_WRITER_WAVEFRONT_H 1
-#ifndef CGAL_IO_BINARY_FILE_IO_H
+
 #include <CGAL/IO/binary_file_io.h>
-#endif // CGAL_IO_BINARY_FILE_IO_H
-#ifndef CGAL_PROTECT_IOSTREAM
 #include <iostream>
-#define CGAL_PROTECT_IOSTREAM
-#endif
-#ifndef CGAL_PROTECT_CSTDDEF
 #include <cstddef>
-#define CGAL_PROTECT_CSTDDEF
-#endif
 
 CGAL_BEGIN_NAMESPACE
 

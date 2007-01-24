@@ -279,10 +279,7 @@ The inputs points are kept in a vector to have random access to them.
 Their dimension is stored separately.
 
 @macro <Min_sphere_d standard includes> += @begin
-    #ifndef CGAL_PROTECT_VECTOR
-    #  include <vector>
-    #  define CGAL_PROTECT_VECTOR
-    #endif
+    #include <vector>
 @end
 
 @macro <Min_sphere_d private types> += @begin
@@ -335,10 +332,7 @@ Two constructors are provided. If the user wants to get some verbose output
 \ccc{verbose} and \ccc{stream}.
 
 @macro <Min_sphere_d standard includes> += @begin
-    #ifndef CGAL_PROTECT_IOSTREAM
-    #  include <iostream>
-    #  define CGAL_PROTECT_IOSTREAM
-    #endif
+    #include <iostream>
 @end
 
 @macro <Min_sphere_d member functions> += @begin

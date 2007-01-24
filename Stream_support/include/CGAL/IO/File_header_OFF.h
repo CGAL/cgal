@@ -24,13 +24,9 @@
 
 #ifndef CGAL_IO_FILE_HEADER_OFF_H
 #define CGAL_IO_FILE_HEADER_OFF_H 1
-#ifndef CGAL_IO_FILE_HEADER_EXTENDED_OFF_H
+
 #include <CGAL/IO/File_header_extended_OFF.h>
-#endif // CGAL_IO_FILE_HEADER_EXTENDED_OFF_H
-#ifndef CGAL_PROTECT_IOSTREAM
 #include <iostream>
-#define CGAL_PROTECT_IOSTREAM
-#endif
 
 CGAL_BEGIN_NAMESPACE
 

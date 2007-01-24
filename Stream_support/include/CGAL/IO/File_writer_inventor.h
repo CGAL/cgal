@@ -23,17 +23,10 @@
 
 #ifndef CGAL_IO_FILE_WRITER_INVENTOR_H
 #define CGAL_IO_FILE_WRITER_INVENTOR_H 1
-#ifndef CGAL_BASIC_H
+
 #include <CGAL/basic.h>
-#endif // CGAL_BASIC_H
-#ifndef CGAL_PROTECT_IOSTREAM
 #include <iostream>
-#define CGAL_PROTECT_IOSTREAM
-#endif
-#ifndef CGAL_PROTECT_CSTDDEF
 #include <cstddef>
-#define CGAL_PROTECT_CSTDDEF
-#endif
 
 CGAL_BEGIN_NAMESPACE
 

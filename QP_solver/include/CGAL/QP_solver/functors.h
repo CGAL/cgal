@@ -23,22 +23,10 @@
 #ifndef CGAL_QP_SOLVER_FUNCTORS_H
 #define CGAL_QP_SOLVER_FUNCTORS_H
 
-// includes
-#ifndef CGAL_QP_SOLVER_BASIC_H
-#  include <CGAL/QP_solver/basic.h>
-#endif
-#ifndef CGAL_FUNCTION_OBJECTS_H
-#  include <CGAL/function_objects.h>
-#endif
-
-#ifndef CGAL_PROTECT_FUNCTIONAL
-#  define CGAL_PROTECT_FUNCTIONAL
-#  include <functional>
-#endif
-#ifndef CGAL_PROTECT_ITERATOR
-#  define CGAL_PROTECT_ITERATOR
-#  include <iterator>
-#endif
+#include <CGAL/QP_solver/basic.h>
+#include <CGAL/function_objects.h>
+#include <functional>
+#include <iterator>
 
 CGAL_BEGIN_NAMESPACE
 

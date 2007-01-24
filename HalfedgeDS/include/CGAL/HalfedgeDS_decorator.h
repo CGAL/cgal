@@ -24,20 +24,10 @@
 #ifndef CGAL_HALFEDGEDS_DECORATOR_H
 #define CGAL_HALFEDGEDS_DECORATOR_H 1
 
-#ifndef CGAL_HALFEDGEDS_ITEMS_DECORATOR_H
 #include <CGAL/HalfedgeDS_items_decorator.h>
-#endif
-#ifndef CGAL_HALFEDGEDS_CONST_DECORATOR_H
 #include <CGAL/HalfedgeDS_const_decorator.h>
-#endif
-#ifndef CGAL_PROTECT_VECTOR
 #include <vector>
-#define CGAL_PROTECT_VECTOR
-#endif
-
-#ifndef CGAL_IO_VERBOSE_OSTREAM_H
 #include <CGAL/IO/Verbose_ostream.h>
-#endif // CGAL_IO_VERBOSE_OSTREAM_H
 
 CGAL_BEGIN_NAMESPACE
 

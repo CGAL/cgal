@@ -2787,29 +2787,12 @@ end of each file.
     #ifndef CGAL_MIN_CIRCLE_2_H
     #define CGAL_MIN_CIRCLE_2_H
 
-    // includes
-    #ifndef CGAL_OPTIMISATION_BASIC_H
-    #  include <CGAL/Optimisation/basic.h>
-    #endif
-    #ifndef CGAL_RANDOM_H
-    #  include <CGAL/Random.h>
-    #endif
-    #ifndef CGAL_PROTECT_LIST
-    #  include <list>
-    #  define CGAL_PROTECT_LIST
-    #endif
-    #ifndef CGAL_PROTECT_VECTOR
-    #  include <vector>
-    #  define CGAL_PROTECT_VECTOR
-    #endif
-    #ifndef CGAL_PROTECT_ALGORITHM
-    #  include <algorithm>
-    #  define CGAL_PROTECT_ALGORITHM
-    #endif
-    #ifndef CGAL_PROTECT_IOSTREAM
-    #  include <iostream>
-    #  define CGAL_PROTECT_IOSTREAM
-    #endif
+    #include <CGAL/Optimisation/basic.h>
+    #include <CGAL/Random.h>
+    #include <list>
+    #include <vector>
+    #include <algorithm>
+    #include <iostream>
 
     @<namespace begin>("CGAL")
     

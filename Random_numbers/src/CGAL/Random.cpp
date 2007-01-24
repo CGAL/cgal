@@ -22,12 +22,7 @@
 // Author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 
 #include <CGAL/Random.h>
-
-// additional includes
-#ifndef CGAL_PROTECT_CTIME
-#  include <ctime>
-#  define CGAL_PROTECT_CTIME
-#endif
+#include <ctime>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -63,5 +58,3 @@ Random( unsigned int  seed)
 Random  default_random;
 
 CGAL_END_NAMESPACE
-
-// ===== EOF ==================================================================

@@ -21,38 +21,15 @@
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif // CGAL_BASIC_H
-#ifndef CGAL_KNOWN_BIT_SIZE_INTEGERS_H
 #include <CGAL/known_bit_size_integers.h>
-#endif
-#ifndef CGAL_PROTECT_CSTDLIB
 #include <cstdlib>
-#define CGAL_PROTECT_CSTDLIB
-#endif
-#ifndef CGAL_PROTECT_CCTYPE
 #include <cctype>
-#define CGAL_PROTECT_CCTYPE
-#endif
-#ifndef CGAL_PROTECT_CSTRING
 #include <cstring>
-#define CGAL_PROTECT_CSTRING
-#endif
-#ifndef CGAL_PROTECT_IOSTREAM
 #include <iostream>
-#define CGAL_PROTECT_IOSTREAM
-#endif
-#ifndef CGAL_IO_BINARY_FILE_IO_H
 #include <CGAL/IO/binary_file_io.h>
-#endif // CGAL_IO_BINARY_FILE_IO_H
-#ifndef CGAL_IO_FILE_HEADER_OFF_H
 #include <CGAL/IO/File_header_OFF.h>
-#endif // CGAL_IO_FILE_HEADER_OFF_H
-#ifndef CGAL_PROTECT_ALGORITHM
 #include <algorithm>
-#define CGAL_PROTECT_ALGORITHM
-#endif
 
 CGAL_BEGIN_NAMESPACE
 

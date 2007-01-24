@@ -24,22 +24,10 @@
 #ifndef CGAL_OPTIMISATION_CONSTRUCT_POINT_3_H
 #define CGAL_OPTIMISATION_CONSTRUCT_POINT_3_H
 
-// includes
-#ifndef CGAL_POINT_3_H
-#  include <CGAL/Point_3.h>
-#endif
-#ifndef CGAL_PROTECT_VECTOR
-#  include <vector>
-#  define CGAL_PROTECT_VECTOR
-#endif
-#ifndef CGAL_PROTECT_FUNCTIONAL
-#  include <functional>
-#  define CGAL_PROTECT_FUNCTIONAL
-#endif
-#ifndef CGAL_PROTECT_ITERATOR
-#  include <iterator>
-#  define CGAL_PROTECT_ITERATOR
-#endif
+#include <CGAL/Point_3.h>
+#include <vector>
+#include <functional>
+#include <iterator>
 
 CGAL_BEGIN_NAMESPACE
 

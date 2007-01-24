@@ -21,16 +21,9 @@
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif // CGAL_BASIC_H
-#ifndef CGAL_PROTECT_IOSTREAM
 #include <iostream>
-#define CGAL_PROTECT_IOSTREAM
-#endif
-#ifndef CGAL_IO_FILE_WRITER_WAVEFRONT_H
 #include <CGAL/IO/File_writer_wavefront.h>
-#endif // CGAL_IO_FILE_WRITER_WAVEFRONT_H
 
 CGAL_BEGIN_NAMESPACE
 

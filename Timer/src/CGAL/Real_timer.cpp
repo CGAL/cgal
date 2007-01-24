@@ -25,37 +25,26 @@
 #include <CGAL/Real_timer.h>
 
 #if defined (_MSC_VER)
-#define CGAL_PROTECT_SYS_TIME_H
-#include <sys/timeb.h>
-#include <sys/types.h>
-#endif
+#  include <sys/timeb.h>
+#  include <sys/types.h>
 
-#if defined (__BORLANDC__)
-#define CGAL_PROTECT_SYS_TIME_H
-#include <sys/timeb>
-#include <ctype> 
-#endif
+#elif defined (__BORLANDC__)
+#  include <sys/timeb>
+#  include <ctype> 
 
-#if defined (__MWERKS__)
-#define CGAL_PROTECT_SYS_TIME_H
-#include <ctime>
-#endif
+#elif defined (__MWERKS__)
+#  include <ctime>
 
-#if defined (__MINGW32__)
-#define CGAL_PROTECT_SYS_TIME_H
-  #include <sys/timeb.h>
-  #include <sys/types.h>
-#endif 
+#elif defined (__MINGW32__)
+#  include <sys/timeb.h>
+#  include <sys/types.h>
 
+#else
 // If none of the above PC compilers, use POSIX fct. gettimeofday()
-#ifndef CGAL_PROTECT_SYS_TIME_H
-#include <sys/time.h>
-#define CGAL_PROTECT_SYS_TIME_H
-#endif // CGAL_PROTECT_SYS_TIME_H
-
+#  include <sys/time.h>
+#endif
 
 CGAL_BEGIN_NAMESPACE
-
 
 // Static member variable for Real_timer
 // =====================================
@@ -147,5 +136,3 @@ double Real_timer::precision() const {
 }
 
 CGAL_END_NAMESPACE
-
-// EOF //

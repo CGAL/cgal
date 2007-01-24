@@ -23,23 +23,12 @@
 
 #ifndef CGAL_IO_GENERIC_COPY_OFF_H
 #define CGAL_IO_GENERIC_COPY_OFF_H 1
-#ifndef CGAL_BASIC_H
+
 #include <CGAL/basic.h>
-#endif
-#ifndef CGAL_PROTECT_CSTDDEF
 #include <cstddef>
-#define CGAL_PROTECT_CSTDDEF
-#endif
-#ifndef CGAL_IO_FILE_HEADER_OFF_H
 #include <CGAL/IO/File_header_OFF.h>
-#endif // CGAL_IO_FILE_HEADER_OFF_H
-#ifndef CGAL_IO_FILE_SCANNER_OFF_H
 #include <CGAL/IO/File_scanner_OFF.h>
-#endif // CGAL_IO_FILE_SCANNER_OFF_H
-#ifndef CGAL_PROTECT_IOSTREAM
 #include <iostream>
-#define CGAL_PROTECT_IOSTREAM
-#endif
 
 CGAL_BEGIN_NAMESPACE
 

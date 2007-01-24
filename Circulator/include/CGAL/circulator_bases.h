@@ -24,14 +24,8 @@
 #ifndef CGAL_CIRCULATOR_BASES_H
 #define CGAL_CIRCULATOR_BASES_H 1
 
-#ifndef CGAL_PROTECT_CSTDDEF
 #include <cstddef>
-#define CGAL_PROTECT_CSTDDEF
-#endif
-#ifndef CGAL_PROTECT_ITERATOR
 #include <iterator>
-#define CGAL_PROTECT_ITERATOR
-#endif
 
 CGAL_BEGIN_NAMESPACE
 

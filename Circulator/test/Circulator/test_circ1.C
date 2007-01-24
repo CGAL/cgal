@@ -2244,10 +2244,8 @@ void test_container_from_circulator() {
   delete_nodes(data_struct);
   delete[] my_C_array;
 }
-#ifndef CGAL_PROTECT_ALGORITHM
+
 #include <algorithm>
-#define CGAL_PROTECT_ALGORITHM
-#endif
 
 void test_circulator_from_iterator() {
   int* my_C_array  = new_C_array();

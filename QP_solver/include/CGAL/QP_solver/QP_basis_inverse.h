@@ -23,19 +23,10 @@
 #ifndef CGAL_QP_SOLVER_QP_BASIS_INVERSE_H
 #define CGAL_QP_SOLVER_QP_BASIS_INVERSE_H
 
-// includes
-#ifndef CGAL_QP_SOLVER_BASIC_H
-#  include <CGAL/QP_solver/basic.h>
-#endif
-#ifndef CGAL_IO_VERBOSE_OSTREAM_H
-#  include <CGAL/IO/Verbose_ostream.h>
-#endif
-      
-#ifndef CGAL_PROTECT_VECTOR
-#  define CGAL_PROTECT_VECTOR
-#  include <vector>
-#endif
-      
+#include <CGAL/QP_solver/basic.h>
+#include <CGAL/IO/Verbose_ostream.h>
+#include <vector>
+
 CGAL_BEGIN_NAMESPACE
                     
 // =================

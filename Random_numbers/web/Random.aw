@@ -467,10 +467,7 @@ numbers.
     // Class implementation (inline functions)
     // =======================================
     // includes
-    #ifndef CGAL_PROTECT_CSTDLIB
-    #  include <cstdlib>
-    #  define CGAL_PROTECT_CSTDLIB
-    #endif
+    #include <cstdlib>
 
     @<namespace begin>("CGAL")
 
@@ -498,14 +495,8 @@ numbers.
     #include <CGAL/Random.h>
 
     // additional includes
-    #ifndef CGAL_PROTECT_CTIME
-    #  include <ctime>
-    #  define CGAL_PROTECT_CTIME
-    #endif
-    #ifndef CGAL_PROTECT_SYS_TIME_H
-    #  include <sys/time.h>
-    #  define CGAL_PROTECT_SYS_TIME_H
-    #endif
+    #include <ctime>
+    #include <sys/time.h>
 
     @<namespace begin>("CGAL")
 

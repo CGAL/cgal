@@ -23,13 +23,9 @@
 
 #ifndef CGAL_IO_GENERIC_WRITER_H
 #define CGAL_IO_GENERIC_WRITER_H 1
-#ifndef CGAL_BASIC_H
+
 #include <CGAL/basic.h>
-#endif
-#ifndef CGAL_PROTECT_ITERATOR
 #include <iterator>
-#define CGAL_PROTECT_ITERATOR
-#endif
 
 CGAL_BEGIN_NAMESPACE
 

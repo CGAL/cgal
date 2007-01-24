@@ -33,22 +33,11 @@
 
 #include <CGAL/algorithm.h>
 
-#ifndef CGAL_IO_VERBOSE_OSTREAM_H
 #include <CGAL/IO/Verbose_ostream.h>
-#endif
 
-#ifndef CGAL_PROTECT_VECTOR
-#  define CGAL_PROTECT_VECTOR
-#  include <vector>
-#endif
-#ifndef CGAL_PROTECT_NUMERIC
-#  define CGAL_PROTECT_NUMERIC
-#  include <numeric>
-#endif
-#ifndef CGAL_PROTECT_ALGORITHM
-#  define CGAL_PROTECT_ALGORITHM
-#  include <algorithm>
-#endif
+#include <vector>
+#include <numeric>
+#include <algorithm>
 
 CGAL_BEGIN_NAMESPACE
 

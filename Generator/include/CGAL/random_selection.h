@@ -23,17 +23,10 @@
 
 #ifndef CGAL_RANDOM_SELECTION_H
 #define CGAL_RANDOM_SELECTION_H 1
-#ifndef CGAL_PROTECT_CSTDDEF
+
 #include <cstddef>
-#define CGAL_PROTECT_CSTDDEF
-#endif
-#ifndef CGAL_PROTECT_ITERATOR
 #include <iterator>
-#define CGAL_PROTECT_ITERATOR
-#endif
-#ifndef CGAL_RANDOM_H
 #include <CGAL/Random.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 
@@ -67,5 +60,5 @@ OutputIterator random_selection( RandomAccessIterator first,
 }
 
 CGAL_END_NAMESPACE    
+
 #endif // CGAL_RANDOM_SELECTION_H //
-// EOF //

@@ -24,22 +24,10 @@
 #ifndef CGAL_OPTIMISATION_CONSTRUCT_POINT_2_H
 #define CGAL_OPTIMISATION_CONSTRUCT_POINT_2_H
 
-// includes
-#ifndef CGAL_POINT_2_H
-#  include <CGAL/Point_2.h>
-#endif
-#ifndef CGAL_PROTECT_VECTOR
-#  include <vector>
-#  define CGAL_PROTECT_VECTOR
-#endif
-#ifndef CGAL_PROTECT_FUNCTIONAL
-#  include <functional>
-#  define CGAL_PROTECT_FUNCTIONAL
-#endif
-#ifndef CGAL_PROTECT_ITERATOR
-#  include <iterator>
-#  define CGAL_PROTECT_ITERATOR
-#endif
+#include <CGAL/Point_2.h>
+#include <vector>
+#include <functional>
+#include <iterator>
 
 CGAL_BEGIN_NAMESPACE
 
