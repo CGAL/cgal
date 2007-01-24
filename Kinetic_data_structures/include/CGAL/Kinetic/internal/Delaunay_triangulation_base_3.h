@@ -741,8 +741,8 @@ public:
     v_.before_edge_flip(edge);
     if (true) {
       CGAL_KINETIC_LOG(LOG_LOTS,"\n\nFlipping edge ");
-      //triangulation_.write_labeled_edge(edge, log_lots());
-      CGAL_KINETIC_LOG(LOG_LOTS,std::endl);
+      CGAL_KINETIC_LOG(LOG_LOTS,edge.first->vertex(edge.second)->point() << "--" 
+		       << edge.first->vertex(edge.third)->point() << std::endl);
     }
     CGAL_assertion(triangulation_.tds().is_edge(edge.first, edge.second, edge.third) || print());
 
@@ -918,6 +918,9 @@ public:
 
     if (true) {
       CGAL_KINETIC_LOG(LOG_LOTS,"\n\nFlipping facet ");
+      CGAL_KINETIC_LOG(LOG_LOTS,flip_facet.first->vertex((flip_facet.second+1)%4)->point() << "--"
+		       << flip_facet.first->vertex((flip_facet.second+2)%4)->point() << "--"
+		       << flip_facet.first->vertex((flip_facet.second+3)%4)->point() << std::endl);
       //triangulation_.write_labeled_facet(flip_facet, log_lots() );
       CGAL_KINETIC_LOG(LOG_LOTS," with poles " << poles[0]->point() << ", " << poles[1]->point());
       CGAL_KINETIC_LOG(LOG_LOTS,std::endl);

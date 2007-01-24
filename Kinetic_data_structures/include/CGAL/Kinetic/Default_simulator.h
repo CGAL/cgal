@@ -258,14 +258,15 @@ public:
   bool has_audit_time() const
   {
     //CGAL_precondition(has_rational_current_time());
-    return CGAL::compare(current_time(), next_event_time()) != CGAL::EQUAL;
+    if (queue_.empty()) return true;
+    else return CGAL::compare(current_time(), next_event_time()) != CGAL::EQUAL;
   }
 
   const NT& audit_time() const
   {
     CGAL_precondition(has_audit_time());
 #ifdef CGAL_KINETIC_ENABLE_AUDITING
-    CGAL_precondition(Time(audit_time_) < next_event_time());
+    CGAL_precondition(queue_.empty() || Time(audit_time_) < next_event_time());
     return audit_time_;
 #else
     CGAL_precondition(0);
@@ -555,24 +556,33 @@ protected:
       
   
     queue_.process_front();
-   
+    ++number_of_events_;
+      
+    CGAL_KINETIC_LOG(LOG_LOTS, *this);
+
 #ifdef CGAL_KINETIC_ENABLE_AUDITING
     if (has_audit_time()) {
-      audit_time_= CGAL::to_interval(current_time()).second;
-      if (CGAL::compare(Time(audit_time_),  next_event_time()) != CGAL::SMALLER 
-	  && CGAL::compare(next_event_time(), current_time()) != CGAL::EQUAL) {
-	audit_time_= mp_(current_time(), next_event_time());
+      if (queue_.empty()) {
+	if (cur_time_ != end_time()) {
+	  std::pair<double,double> ei= CGAL::to_interval(end_time());
+	  CGAL_precondition(ei.first==ei.second); // I should figure out how to deal in the other case
+	  audit_time_ = ei.first;
+	} else {
+	  // bad form to just return like that
+	  return;
+	}
+      } else {
+	audit_time_= CGAL::to_interval(current_time()).second;
+	if (CGAL::compare(Time(audit_time_),  next_event_time()) != CGAL::SMALLER 
+	    && CGAL::compare(next_event_time(), current_time()) != CGAL::EQUAL) {
+	  audit_time_= mp_(current_time(), next_event_time());
+	}
       }
       CGAL_KINETIC_LOG(LOG_SOME, "Audit is at time " << audit_time_ << std::endl);
       //if (current_time() < audit_time_ && t >= audit_time_) {
       audit_all_kdss();
     }
 #endif
-
-    ++number_of_events_;
-   
-    CGAL_KINETIC_LOG(LOG_LOTS, *this);
-
   }
 
   void audit_all_kdss() ;

@@ -1,15 +1,12 @@
 //#define NDEBUG
 #include <CGAL/Kinetic/basic.h>
-#include <CGAL/Kinetic/Cartesian_instantaneous_kernel.h>
-#include <CGAL/Kinetic/Cartesian_kinetic_kernel.h>
+#include <CGAL/Kinetic/Instantaneous_kernel.h>
+#include <CGAL/Kinetic/Cartesian.h>
 #include <CGAL/Kinetic/Active_objects_vector.h>
-#include <CGAL/Kinetic/Simulation_traits.h>
-#include <CGAL/Kinetic/Default_simulator.h>
-#include <CGAL/Kinetic/Heap_pointer_event_queue.h>
 #include <CGAL/Polynomial/Kernel.h>
 #include <CGAL/Simple_cartesian.h>
 
-template <bool Skip>
+/*template <bool Skip>
 struct Sest_types
 {
   typedef CGAL::Simple_cartesian<CGAL::Kinetic::Default_field_nt> Static_kernel;
@@ -33,15 +30,15 @@ struct Sest_types
   typedef CGAL::Kinetic::Cartesian_instantaneous_kernel<Active_objects_table,
                                                         Static_kernel> Instantaneous_kernel;
 
-};
+							};*/
 
-template <bool Skip>
+ /*template <bool Skip>
 struct Exact_simulation_traits:
   public CGAL::Kinetic::Simulation_traits<typename Sest_types<Skip>::Static_kernel,
 					  typename Sest_types<Skip>::Kinetic_kernel,
 					  typename Sest_types<Skip>::Simulator >
 {
-};
+};*/
 
 template <class Traits, class Fn, class Rt>
 void check_one(const Traits &tr, const Fn &fn, const Rt &lb, const Rt* rt)

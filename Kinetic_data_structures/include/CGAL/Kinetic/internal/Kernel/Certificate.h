@@ -45,10 +45,10 @@ public:
 
   const Time &failure_time() const {
     if (rs_.empty()) {
-      static Time inf= std::numeric_limits<Time>::has_infinity?std::numeric_limits<Time>::infinity():Time(1e34);
-      CGAL_KINETIC_ERROR("Not checking for failure is deprecated.");
-      return inf;
-    } else return rs_.top();
+      std::cerr << "You now must check if the certificate will fail before calling top.\n";
+      CGAL_assertion(0);
+    }
+    return rs_.top();
   }
   void pop_failure_time() {
     if (!rs_.empty()) rs_.pop();

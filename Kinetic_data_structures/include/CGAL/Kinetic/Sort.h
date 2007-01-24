@@ -177,10 +177,14 @@ public:
       = less_(aot_->at(it->object()), aot_->at(next(it)->object()), simulator_->current_time(),
 	      simulator_->end_time());
     // the Simulator will detect if the failure time is at infinity
-    Time t= s.failure_time();
-    s.pop_failure_time();
-    Event e(it, this,s);
-    it->set_event( simulator_->new_event(t, e));
+    if (s.will_fail()) {
+      Time t= s.failure_time();
+      s.pop_failure_time();
+      Event e(it, this,s);
+      it->set_event( simulator_->new_event(t, e));
+    } else {
+      it->set_event( simulator_->null_event());
+    }
     //} else events_[*it]= simulator_->null_event();
   }
 
@@ -202,8 +206,12 @@ public:
       rebuild_certificate(next(it));
       //v_.create_edge(next(it)), next(next(it));
     }
-    Time t= s.failure_time(); s.pop_failure_time();
-    it->set_event(simulator_->new_event(t, Event(it, this,s)));
+    if (!s.will_fail()) {
+      Time t= s.failure_time(); s.pop_failure_time();
+      it->set_event(simulator_->new_event(t, Event(it, this,s)));
+    } else {
+      it->set_event(simulator_->null_event());
+    }
     
     v_.after_swap(it, next(it));
     if (it != sorted_.begin()) {

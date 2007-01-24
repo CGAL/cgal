@@ -1,0 +1,95 @@
+#define CGAL_CHECK_EXPENSIVE
+#define CGAL_CHECK_EXACTNESS
+
+#include <CGAL/Kinetic/Exact_simulation_traits.h>
+#include <CGAL/Kinetic/Regular_triangulation_exact_simulation_traits.h>
+#include <CGAL/Kinetic/Sort.h>
+#include <CGAL/Kinetic/Delaunay_triangulation_2.h>
+#include <CGAL/Kinetic/Delaunay_triangulation_3.h>
+#include <CGAL/Kinetic/Regular_triangulation_3.h>
+#include <CGAL/Random.h>
+
+template <class P>
+P rp(CGAL::Random &rand, int deg) {
+  std::vector<typename P::NT> coefs(deg+1);
+  for (int i=0; i< deg+1; ++i){
+    double mag= 10.0/(i+1);
+    coefs[i]= rand.get_double(-mag, mag);
+  }
+  return P(coefs.begin(), coefs.end());
+}
+
+int main(int, char *[]) {
+
+  CGAL::Random r(time(NULL));
+
+  int which = r.get_int(0,4);
+  int nump= r.get_int(10,20);
+  double end_time= r.get_double(10,100);
+  if (which ==0) {
+    std::cout << "Checking Delaunay_2" << std::endl;
+    typedef CGAL::Kinetic::Exact_simulation_traits Traits;
+    typedef CGAL::Kinetic::Delaunay_triangulation_2<Traits> DS;
+    typedef Traits::Kinetic_kernel::Motion_function F;
+    typedef Traits::Kinetic_kernel::Point_2 Point;
+    Traits tr(0, end_time);
+    DS ds(tr);
+    for (int i=0; i< nump; ++i){
+      tr.active_points_2_table_handle()->insert(Point(rp<F>(r, r.get_int(0,5)),
+						      rp<F>(r, r.get_int(0,5))));
+    }
+    std::cout << "Points are:\n";
+    std::cout << *tr.active_points_2_table_handle() << std::endl;
+    ds.set_has_certificates(true);
+    ds.audit();
+    tr.simulator_handle()->set_current_time(tr.simulator_handle()->end_time());
+    ds.audit();
+    std::cout << "Processed " << tr.simulator_handle()->current_event_number() << " events"<<std::endl;
+  } else if (which ==1) {
+    std::cout << "Checking Sort" << std::endl;
+
+    typedef CGAL::Kinetic::Exact_simulation_traits Traits;
+    typedef CGAL::Kinetic::Sort<Traits> DS;
+    typedef Traits::Kinetic_kernel::Motion_function F;
+    typedef Traits::Kinetic_kernel::Point_1 Point;
+    Traits tr(0, end_time);
+    DS ds(tr);
+    for (int i=0; i< nump; ++i){
+      tr.active_points_1_table_handle()->insert(Point(rp<F>(r, r.get_int(0,5))));
+    }
+    std::cout << "Points are:\n";
+    std::cout << *tr.active_points_1_table_handle() << std::endl;
+    ds.audit();
+    //ds.set_has_certificates(true);
+    tr.simulator_handle()->set_current_time(tr.simulator_handle()->end_time());
+    ds.audit();
+    std::cout << "Processed " << tr.simulator_handle()->current_event_number() << " events"<<std::endl;
+
+  } else if (which == 2) {
+    std::cout << "Checking Delaunay_3" << std::endl;
+    typedef CGAL::Kinetic::Exact_simulation_traits Traits;
+    typedef CGAL::Kinetic::Delaunay_triangulation_3<Traits> DS;
+    typedef Traits::Kinetic_kernel::Motion_function F;
+    typedef Traits::Kinetic_kernel::Point_3 Point;
+    Traits tr(0, end_time);
+    DS ds(tr);
+    for (int i=0; i< nump; ++i){
+      tr.active_points_3_table_handle()->insert(Point(rp<F>(r, r.get_int(0,5)),
+						      rp<F>(r, r.get_int(0,5)),
+						      rp<F>(r, r.get_int(0,5))));
+    }
+    std::cout << "Points are:\n";
+    std::cout << *tr.active_points_3_table_handle() << std::endl;
+    ds.set_has_certificates(true);
+    ds.audit();
+    tr.simulator_handle()->set_current_time(tr.simulator_handle()->end_time());
+    ds.audit();
+    std::cout << "Processed " << tr.simulator_handle()->current_event_number() << " events"<<std::endl;
+    
+  } else {
+    std::cout << "Checking regular_3" << std::endl;
+
+  }
+  
+  return EXIT_SUCCESS;
+}

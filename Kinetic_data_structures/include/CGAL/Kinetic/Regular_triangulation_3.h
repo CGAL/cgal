@@ -316,6 +316,7 @@ protected:
 
     Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object() const
     {
+      //std::cout << "Getting power test" << std::endl;
       return TraitsT::kinetic_kernel_object().power_test_3_object();
     }
 
@@ -682,6 +683,7 @@ public:
     //kdel_.triangulation().geom_traits().set_time(kdel_.simulator()->current_time_as_nt());
     typename Triangulation::Cell_handle h= kdel_.triangulation().locate(k);
     typename KDel::Triangulation::Vertex_handle vh= kdel_.new_vertex_regular(k, h);
+    CGAL_KINETIC_LOG(LOG_LOTS, "Inserting vertex " << k << " at time " << nt << std::endl);
     if (vh==NULL) {
       //if (redundant_points_.size() <= k.index()) redudant_points_.resize(k.index()+1);
       //redundant_points[k]=Event_key::null();

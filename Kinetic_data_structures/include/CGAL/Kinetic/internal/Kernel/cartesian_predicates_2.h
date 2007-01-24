@@ -51,7 +51,7 @@ struct Cartesian_orientation_2
     const FT m12 = a10*a21 - a20*a11;
     // Now compute the minors of rank 3
     const FT m012 =  m01 - m02 + m12;
-    std::cout << "Orientation 2 is " << m012 << std::endl;
+    //std::cout << "Orientation 2 is " << m012 << std::endl;
     return m012;
   }
 };
