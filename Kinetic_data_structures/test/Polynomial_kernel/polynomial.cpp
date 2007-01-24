@@ -7,8 +7,8 @@
 #include <CGAL/Polynomial/Fixed_polynomial.h>
 #include <CGAL/Polynomial/internal/Rational/Rational_traits_base.h>
 
-#include <CGAL/Polynomial/internal/Filtered_rational/Filtered_rational_traits.h>
-#include <CGAL/Polynomial/Default_filtering_traits.h>
+//#include <CGAL/Polynomial/internal/Filtered_rational/Filtered_rational_traits.h>
+//#include <CGAL/Polynomial/Default_filtering_traits.h>
 #include <CGAL/Polynomial/CORE_kernel.h>
 
 #include <vector>
@@ -109,10 +109,9 @@ void test_polynomial(const Traits &tr)
   write("subs(t=-t, p)", tr.negate_variable_object()(p) );
   check_equal<Traits>(tr.negate_variable_object()(p) , cf( -1, -2, 27, 17));
 
-  write("t^degree(p) * subs(t=(1/t), p)", tr.invert_variable_object()(p) );
-  check_equal<Traits>( tr.invert_variable_object()(p) , cf(-17, 27, 2, -1));
+  /*write("t^degree(p) * subs(t=(1/t), p)", tr.invert_variable_object()(p) );
+    check_equal<Traits>( tr.invert_variable_object()(p) , cf(-17, 27, 2, -1));*/
 
-  //write("diff(p,t)", tr.differentiate_object()(p) );
 
   NT v1[] = {-1, 1};
   NT v2[] = {-2, 1};
@@ -168,11 +167,11 @@ void test_polynomial(const Traits &tr)
         tr.pseudo_quotient_object()(p,q) );
   check_equal<Traits>(tr.pseudo_quotient_object()(p,q) , cf(-4, 8, -5, 1));
 
-  int shift = 6;
+  /*  int shift = 6;
 
   write("p * t^6", tr.shift_power_object(shift)(p) );
   check_equal<Traits>(tr.shift_power_object(shift)(p)
-		 , cf(0,0,0,0,0,0,-8, 28, -38, 25, -8, 1));
+  , cf(0,0,0,0,0,0,-8, 28, -38, 25, -8, 1));*/
 
   NT v3[] = {0, 1};
 
@@ -181,10 +180,10 @@ void test_polynomial(const Traits &tr)
 
   write_variable( "p", p);
 
-  NT new_zero = NT(-1);
+  /*NT new_zero = NT(-1);
   write("subs(t=t-1,p)", tr.rational_translate_zero_object(new_zero)(p));
   check_equal<Traits>(tr.rational_translate_zero_object(new_zero)(p)
-		 , cf(1, -2, 1));
+  , cf(1, -2, 1));*/
 }
 
 
@@ -235,14 +234,14 @@ int main(int argc, char* argv[])
 
   std::cout <<"\n\n\n\n\n";
 
-  {
+  /*{
     std::cout << "Testing filtered poly.\n";
     typedef CGAL::POLYNOMIAL::Default_field_nt NT;
     typedef CGAL_POLYNOMIAL_NS::Default_filtering_traits<NT> FT;
     typedef CGAL_POLYNOMIAL_NS::internal::Filtered_rational_traits<FT> Tr;
     Tr tr;
     test_polynomial(tr);
-  }
+    }*/
   std::cout <<"\n\n\n\n\n";
   {
     std::cout << "Testing core poly.\n";
