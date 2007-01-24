@@ -42,3 +42,7 @@ Future Daniel Russel
 known bugs:
 - If, on insertion into a Del_3 the current time must be advanced past an event which invalidates the cell handle that is used to insert the vertex, then there is a problem. To fix this check all the paths for insert and protect this method behind ones which set the time before locate. Make that IK and S times are equal a precondition. 
 - Two list queue should make sure it steps off the dividing element. 
+
+
+make core_traits and test them
+make regular_inexact

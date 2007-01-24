@@ -21,7 +21,6 @@
 #ifndef CGAL_KINETIC_QT_MOVING_WEIGHTED_POINT_TABLE_3_H
 #define CGAL_KINETIC_QT_MOVING_WEIGHTED_POINT_TABLE_3_H
 #include <CGAL/Kinetic/basic.h>
-#include <CGAL/Kinetic/Regular_triangulation_instantaneous_traits_3.h>
 #include <CGAL/Kinetic/Ref_counted.h>
 #include <CGAL/Kinetic/Simulator_objects_listener.h>
 #include "SoQt_handle.h"

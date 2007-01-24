@@ -40,35 +40,29 @@ class HDRS{
     */
     HDRS(const Function &uf, const Root& lb,
 	 const Root& ub, const Traits_t& k): solver_(k.root_stack_object(uf, lb, ub)) {
+      CGAL_KINETIC_LOG(LOG_LOTS, "Function= " << uf << std::endl);
       CGAL_expensive_precondition(solver_.empty() || solver_.top() > lb);
+  
 #ifndef NDEBUG
-      std::cout << "Function= " << uf << std::endl;
+      if (!SLOPPY && k.sign_at_object()(uf, lb) == CGAL::NEGATIVE) {
+	CGAL_KINETIC_ERROR( "Invalid certificate constructed for function " << uf << " between " << lb 
+			    << " and " << ub << " will fail immediately." << std::endl);
+      }
 #endif
-      CGAL::Sign sn;
+      CGAL_exactness_precondition(SLOPPY || k.sign_at_object()(uf, lb) != CGAL::NEGATIVE);
       if (solver_.empty()) {
-	sn = k.sign_between_roots_object()(uf, lb, ub);
-      } else {
-	sn = k.sign_between_roots_object()(uf, lb, solver_.top());
-      }
-      if (sn == CGAL::NEGATIVE) {
-	if (!SLOPPY) {
-#ifndef NDEBUG
-	  if (k.sign_at_object()(uf, lb) == CGAL::NEGATIVE) {
-	    CGAL_KINETIC_ERROR( "Invalid certificate constructed for function " << uf << " between " << lb 
-				<< " and " << ub << " will fail immediately." << std::endl);
-	    CGAL_exactness_assertion(sn != CGAL::NEGATIVE);
-	  }
-#endif
-	  extra_root_=lb;
-	  has_extra_=true;
+	 CGAL_KINETIC_LOG(LOG_LOTS, "No failure" << std::endl);
+	 //sn = k.sign_between_roots_object()(uf, lb, ub);
+      } else if (solver_.top() == lb) {
+	CGAL_KINETIC_LOG(LOG_LOTS, "Degeneracy at " << solver_.top() << std::endl);
+	CGAL::Sign sn = k.sign_after_object()(uf, lb);
+	if (sn == CGAL::NEGATIVE) {
+	  CGAL_KINETIC_LOG(LOG_LOTS, "Extra root at lower bound of " << lb << std::endl);
 	} else {
-	  if (!solver_.empty()) solver_.pop();
-	  has_extra_=false;
+	  CGAL_KINETIC_LOG(LOG_LOTS, "Popping extra root at lower bound of " << lb << std::endl);
+	  solver_.pop();
 	}
-      }
-      else {
-	has_extra_=false;
-      }
+      } 
     }
 
     HDRS(){}
@@ -76,26 +70,20 @@ class HDRS{
     //! Drop even roots
     const Root& top() const
     {
-      if (has_extra_) return extra_root_;
-      else return solver_.top();
+      return solver_.top();
     }
 
     void pop() {
-      if (has_extra_) {
-	extra_root_=Root();
-	has_extra_=false;
-      } else {
-	solver_.pop();
-      }
+      solver_.pop();
     }
 
     bool empty() const
     {
-      return !has_extra_ && solver_.empty();
+      return solver_.empty();
     }
-    double estimate() const {
+  /*double estimate() const {
       return solver_.estimate();
-    }
+      }*/
 
     std::ostream &write(std::ostream& out) const {
       out << solver_;
@@ -104,8 +92,6 @@ class HDRS{
 
   protected:
     Wrapped_solver solver_;
-    Root extra_root_;
-    bool has_extra_;
   };
 
 template <class Traits_t, bool SLOPPY>

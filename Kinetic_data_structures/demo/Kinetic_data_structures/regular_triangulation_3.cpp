@@ -1,5 +1,5 @@
 #include <CGAL/Kinetic/Regular_triangulation_3.h>
-#include <CGAL/Kinetic/Regular_triangulation_exact_simulation_traits_3.h>
+#include <CGAL/Kinetic/Regular_triangulation_exact_simulation_traits.h>
 
 //#ifdef CGAL_USE_SOQT
 #include "include/SoQt_moving_points_3.h"
@@ -12,14 +12,14 @@
 int main(int argc, char *argv[])
 {
   //#ifdef CGAL_USE_SOQT
-    typedef CGAL::Kinetic::Regular_triangulation_exact_simulation_traits_3 Traits;
+    typedef CGAL::Kinetic::Regular_triangulation_exact_simulation_traits Traits;
     typedef CGAL::Kinetic::SoQt_widget_3<Traits::Simulator> Qt_gui;
     typedef CGAL::Kinetic::SoQt_moving_points_3<Traits, Qt_gui> Qt_mpt;
     typedef Traits::Kinetic_kernel::Motion_function MF;
     typedef Traits::Kinetic_kernel::Weighted_point_3 MP;
     typedef Traits::Kinetic_kernel::Point_3 MPP;
 
-    Traits tr;
+    Traits tr(0,100000);
 
     CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_NONE);
 

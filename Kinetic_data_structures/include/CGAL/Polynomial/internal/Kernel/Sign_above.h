@@ -53,6 +53,7 @@ public:
     CGAL_Polynomial_expensive_precondition(k_.sign_at_root_object(p_)(v)==CGAL::ZERO);
     return eval(f, v);
   }
+
 protected:
 
   template <class R>
@@ -61,12 +62,16 @@ protected:
     double ub= CGAL::to_interval(r).second+.00001;
     if (ub== CGAL::to_interval(r).second) ub= ub*2;
     typename K::Root_stack rc=  k_.root_stack_object(p, r, ub);
-    if (rc.empty()) {
-      return k_.sign_at_object()(p,typename Poly::NT(ub));
-    } else {
-      typename K::Root rr=rc.top();
-      typename K::Sign_between_roots sb= k_.sign_between_roots_object();
-      return sb(p, r, rr);
+    while (true) {
+      if (rc.empty()) {
+	return k_.sign_at_object()(p,typename Poly::NT(ub));
+      } else if (rc.top() != r) {
+	typename K::Root rr=rc.top();
+	typename K::Sign_between_roots sb= k_.sign_between_roots_object();
+	return sb(p, r, rr);
+      } else {
+	rc.pop();
+      }
     }
   }
   K k_;

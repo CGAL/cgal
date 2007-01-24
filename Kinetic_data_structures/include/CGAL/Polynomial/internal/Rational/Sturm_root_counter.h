@@ -76,13 +76,15 @@ struct Sturm_root_counter
 
             std::vector<Sign> signs(sseq.size());
 
+	    //typename K::Sign_at sa= k_.sign_at_object();
             for (unsigned int i = 0; i < sseq.size(); i++) {
-                if (above) {
-                    signs[i] = k_.sign_above_object( sseq[i] )(x);
-                }
-                else {
-                    signs[i] = k_.sign_below_object( sseq[i] )(x);
-                }
+	      if (above) {
+		signs[i] = k_.sign_above_object( sseq[i] )(x);
+	      }
+	      else {
+		signs[i] = k_.sign_below_object( sseq[i] )(x);
+	      }
+		//signs[i]= sa(sseq[i], x);
             }
 
             return sign_variations(signs.begin(), signs.end());

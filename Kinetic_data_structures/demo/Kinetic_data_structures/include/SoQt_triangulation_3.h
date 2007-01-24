@@ -96,7 +96,7 @@ protected:
     Color_id;
 
   typename KDel::Triangulation::Vertex_handle facet_vertex(typename KDel::Triangulation::Facet f, int i) {
-    return vertex_of_facet(f, i);
+    return internal::vertex_of_facet(f, i);
   }
 
   typename KDel::Triangulation::Vertex_handle edge_vertex(typename KDel::Triangulation::Edge f, int i) {

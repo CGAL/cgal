@@ -4,8 +4,8 @@
 #include <CGAL/basic.h>
 
 #ifdef CGAL_USE_QT
-#include <CGAL/Kinetic/Inexact_simulation_traits_2.h>
-#include <CGAL/Kinetic/Exact_simulation_traits_2.h>
+#include <CGAL/Kinetic/Inexact_simulation_traits.h>
+#include <CGAL/Kinetic/Exact_simulation_traits.h>
 #include <CGAL/Kinetic/Delaunay_triangulation_2.h>
 #include <CGAL/Kinetic/Delaunay_triangulation_vertex_base_2.h>
 #include <CGAL/Kinetic/Delaunay_triangulation_recent_edges_visitor_2.h>
@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
 #endif
   
   if (true) {
-    return run<CGAL::Kinetic::Exact_simulation_traits_2>(argc, argv, n,d,seed, file);
+    return run<CGAL::Kinetic::Exact_simulation_traits>(argc, argv, n,d,seed, file);
   } else {
     //return run<CGAL::Kinetic::Inexact_simulation_traits_2>(argc, argv, n,d,seed, file);
   }

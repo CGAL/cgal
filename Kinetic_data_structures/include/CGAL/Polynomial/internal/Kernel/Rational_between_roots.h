@@ -22,8 +22,8 @@
 #define CGAL_POLYNOMIAL_KERNEL_RATIONAL_BETWEEN_ROOTS_H
 
 #include <CGAL/Polynomial/basic.h>
-#include <CGAL/Polynomial/internal/interval_arithmetic.h>
-#include <CGAL/Polynomial/internal/nt_converters.h>
+#include <CGAL/CORE_Expr.h>
+#include <CGAL/Polynomial/internal/Simple_interval_root.h>
 
 CGAL_POLYNOMIAL_BEGIN_INTERNAL_NAMESPACE
 
@@ -34,7 +34,7 @@ struct Rational_between_roots
   typedef typename K::Root first_argument_type;
   typedef typename K::Root second_argument_type;
 
-  Rational_between_roots(const K& k): tii_(k.to_isolating_interval_object()){}
+  Rational_between_roots(const K& ){}
 
   template <class T>
   static bool is_minf(T r){
@@ -44,72 +44,37 @@ struct Rational_between_roots
 
 
 protected:
-  template <class Rt> 
-  result_type compute(const Rt &r0, const Rt &r1)const  {
-  CGAL_exactness_precondition(r0<r1);
-    if (r0 > r1) return operator()(r1, r0);
-    typedef std::pair<result_type, result_type> Ival;
-    //Ival i0= to_interval(r0);
-    //Ival i1= to_interval(r1);
-    Ival i0= tii_(r0);
-    if (is_minf(i0.second)) {
-      result_type ret(-33554432);
-      while (r1 <= second_argument_type(ret)) {
-	ret= ret*1024;
-      }
-      //std::cout << "Returning "<< ret << " between " << r0 << " and " << r1 << std::endl;
-      return ret;
-    }
-
-    if (i0.second == i0.first) {
-      result_type ret= i0.second;
-      //2^-24
-      result_type incr=.0000000596046447753906250000000;
-      CGAL_Polynomial_postcondition(incr!=0);
-      while (second_argument_type(ret+incr) >= r1) {
-	incr=incr/2;
-      }
-      //std::cout << "Returning "<< ret+incr << " between " << r0 << " and " << r1 << std::endl;
-      return ret+incr;
-    }
-    else if (second_argument_type(i0.second) < r1) {
-      //std::cout << "Returning "<< i0.second << " between " << r0 << " and " << r1 << std::endl;
-      return result_type(i0.second);
-    }
-    else {
-      result_type lb = i0.first;
-      result_type ub = i0.second;
-      result_type mid;
-      while (true) {
-	mid = result_type(.5)*(lb+ub);
-	if (Rt(mid) < r0) {
-	  lb= mid;
-	}
-	else if (Rt(mid) > r1) {
-	  ub= mid;
-	}
-	else {
-	  //std::cout << "Returning "<< mid << " between " << r0 << " and " << r1 << std::endl;
-	  return mid;
-	}
-      }
-    }
-    CGAL_Polynomial_postcondition(0);
-    return result_type(0);
+  template <class TK>
+  result_type compute(const Simple_interval_root<TK> &r0, const Simple_interval_root<TK> &r1)const  {
+    return r0.rational_between(r1);
   }
 
   
-  result_type compute(const result_type &r0, const result_type &r1) const {
-    if (std::numeric_limits<result_type>::has_infinity
-	&& r1 == std::numeric_limits<result_type>::infinity()) {
+  result_type compute(const double &r0, const double &r1) const {
+    if (std::numeric_limits<double>::has_infinity
+	&& r1 == std::numeric_limits<double>::infinity()) {
       return 2*r0;
     } else {
       return (r0+r1)/2.0;
     }
   }
   
-  typename K::To_isolating_interval tii_;
-
+  result_type compute(const CORE::Expr &r0, CORE::Expr &r1) const {
+    result_type ret= CGAL::to_interval(r0).second;
+    result_type step=.0000000596046447753906250000000;
+    do {
+      while (ret >= r1) {
+	ret-= step;
+      }
+      while (ret <= r0) {
+	ret += step;
+      }
+      step/= 2.0;
+    } while (ret >= r1 || ret <= r0);
+    return ret;
+  }
+  
+  
 public:
 
   result_type operator()(const first_argument_type &r0, const second_argument_type &r1) const

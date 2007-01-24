@@ -40,26 +40,16 @@ class Simple_interval_root
   typedef unsigned char Type;
   typedef typename Traits::Function Polynomial;
   typedef typename Traits::FT NT;
-  typedef typename Traits::Isolating_interval Interval;
-  //typedef internal::Isolating_interval_tools<Polynomial, NT, Interval> IIT;
 public:
   Simple_interval_root(){
     set_type(INVALID);
     CGAL_Polynomial_assertion(is_null());
   }
-  /*template <class RNT>
-    Simple_interval_root(const RNT &nt): ii_(nt){
-    bool is_this_used;
-    set_type(CONST_VAL);
-    audit();
-    compute_approximation();
-    }*/
 
-  template <class CNT>
-  Simple_interval_root(CNT nt): function_(0) {
-    if (std::numeric_limits<CNT>::has_infinity && (nt == std::numeric_limits<CNT>::infinity()
-						   || -nt == std::numeric_limits<CNT>::infinity())) {
-      if (nt == std::numeric_limits<CNT>::infinity() ) {
+  Simple_interval_root(double nt): function_(0) {
+    if (std::numeric_limits<double>::has_infinity && (nt == std::numeric_limits<double>::infinity()
+						   || -nt == std::numeric_limits<double>::infinity())) {
+      if (nt == std::numeric_limits<double>::infinity() ) {
 	set_type(INF|UP);
       }
       else {
@@ -67,16 +57,26 @@ public:
       }
     } else {
       set_type(0);
-      ii_= std::make_pair(nt,nt);
+      ii_= std::make_pair(NT(nt),NT(nt));
     }
     audit();
     compute_approximation();
   }
 
-  Simple_interval_root(Type t): type_(t) {
+  Simple_interval_root(const Simple_interval_root<Traits> &o):ii_(o.ii_), type_(o.type_), 
+							      function_(o.function_),
+							      kernel_(o.kernel_)
+#ifndef NDEBUG
+							     , approximation_(o.approximation_)
+#endif
+  {
+    
+  }
+
+  /*Simple_interval_root(Type t): type_(t) {
     audit();
     compute_approximation();
-  };
+    };*/
 
   //! represent a rational root
   Simple_interval_root(const NT &nt): ii_(std::make_pair(nt,nt)), function_(0) {
@@ -104,7 +104,7 @@ public:
   }
 
   static This infinity() {
-    This ret(Type(UP|INF));
+    static This ret(std::numeric_limits<double>::infinity());
     CGAL_Polynomial_postcondition(ret.is_infinite());
     //ret.compute_approximation();
     return ret;
@@ -160,51 +160,12 @@ public:
     return r==EQUAL;
   }
 
-  //! Compute a value as a double
-  /*!
-    This currently does not compute the closest double. I should figure out what value to use
-    for accuracy to make the result be the closest double.
-    \todo compute closest double rather than stupid approximation
-  */
-  double double_approximation(double accuracy=.000001) const
-  {
-    CGAL_Polynomial_expensive_precondition(!is_null());
-    return compute_double(accuracy);
-  }
-
-  //! Represent an interval by an exact number type.
-  /*!
-    I forget why I use this.
-  */
+ 
   const std::pair<NT, NT>& isolating_interval() const
   {
     CGAL_Polynomial_precondition(!is_infinite());
     CGAL_Polynomial_expensive_precondition(!is_null());
     return ii_;
-  }
-
-  Interval isolating_interval_object() const
-  {
-    CGAL_Polynomial_precondition(!is_infinite());
-    CGAL_Polynomial_expensive_precondition(!is_null());
-    return ii_;
-  }
-
-  /*std::pair<NT, NT> isolating_interval() const {
-    bool do_not_use;
-    CGAL_Polynomial_precondition(!is_infinite());
-    CGAL_Polynomial_expensive_precondition(!is_null());
-    return interval().to_exact_interval();
-    }*/
-
-  //! To use for interval arithmetic
-  /*!
-    This refines the current interval too.
-  */
-  std::pair<double, double> double_interval(double accuracy=.001) const
-  {
-    CGAL_Polynomial_expensive_precondition(!is_null());
-    return compute_interval(accuracy);
   }
 
   //! Write lots of info about the interval
@@ -249,11 +210,7 @@ public:
     return type_&INF;
   }
  
-  //! This is needed by the solvers
-  /*Interval interval() const {
-    return ii_;
-    }*/
-
+  
   Comparison_result compare(const This &o) const
   {
     audit();
@@ -268,27 +225,18 @@ public:
 	CGAL_Polynomial_assertion(0); return EQUAL;
       }
     } else {
-      if (ii_.first == ii_.second && ii_.first == o.ii_.first && ii_.first == o.ii_.second) return CGAL::EQUAL;
-      if (ii_.second <= o.ii_.first) return CGAL::SMALLER;
-      else if (ii_.first >= o.ii_.second) return CGAL::LARGER;
+      CGAL::Comparison_result cmp;
+      if (try_compare(o, cmp)) return cmp;
       else return compare_finite(o);
     }
   }
  std::pair<double, double> compute_interval(double accuracy=.0001) const
   {
-    if (type_&INF) {
-      if (is_up()) {
-	return std::pair<double, double>(double_inf_rep(), double_inf_rep());
-      }
-      else {
-	return std::pair<double, double>(-double_inf_rep(), -double_inf_rep());
-      }
-    }
-
-    //double oaw;                           //= ii_.approximate_width();
-    while (ii_.second-ii_.first > NT(accuracy)) {
-      refine();
-    }
+    std::cout << "Computing interval of ";
+    write_raw(std::cout) << std::endl;
+    std::pair<double,double> r= internal_compute_interval(accuracy);
+    std::cout << "Got " << CGAL::to_interval(ii_.first).first << "..." 
+	      << CGAL::to_interval(ii_.second).second << std::endl;
     return std::make_pair(CGAL::to_interval(ii_.first).first, CGAL::to_interval(ii_.second).second);
   }
 
@@ -306,9 +254,56 @@ public:
     std::pair<double, double> i= compute_interval(accuracy);
     return (i.first+i.second)/2.0;
   }
-protected:
 
-  void write_internal(std::ostream &o) const
+
+  NT rational_between(const This &o) const {
+    CGAL_precondition(CGAL::compare(*this,o) == CGAL::SMALLER);
+    CGAL_precondition(ii_.first != ii_.second || ii_.second != o.ii_.first || o.ii_.first != o.ii_.second);
+    compare(o);
+    CGAL_precondition(ii_.first != ii_.second || ii_.second != o.ii_.first || o.ii_.first != o.ii_.second);
+    write_internal(std::cout) << std::endl;
+    write_internal(std::cout) << std::endl;
+    if (is_neg_inf()) return o.ii_.first -1;
+        
+    // hopefully disjoint
+    NT ret = ii_.second;
+    NT step= NT(.0000000596046447753906250000000);
+    
+    do {
+      while (This(ret) <= *this) {
+	ret+= step;
+      }
+      while (This(ret) >= o) {
+	ret -= step;
+      }
+      step= step/2.0;
+      std::cout << ret << "  (" << step << ")" 
+		<< o.ii_.first - ii_.second 
+		<< " " << o.ii_.second- ii_.first << std::endl;
+    } while (This(ret) >= o || This(ret) <= *this);
+    return ret;
+  }
+
+protected:
+  std::pair<double, double> internal_compute_interval(double accuracy) const
+  {
+ 
+    if (type_&INF) {
+      if (is_up()) {
+	return std::pair<double, double>(double_inf_rep(), double_inf_rep());
+      }
+      else {
+	return std::pair<double, double>(-double_inf_rep(), -double_inf_rep());
+      }
+    }
+
+    //double oaw;                           //= ii_.approximate_width();
+    while (ii_.second-ii_.first > NT(accuracy)) {
+      refine();
+    }
+    return std::make_pair(CGAL::to_interval(ii_.first).first, CGAL::to_interval(ii_.second).second);
+  }
+  std::ostream& write_internal(std::ostream &o) const
   {
     if (is_pos_inf()) {
       o << "inf";
@@ -321,9 +316,29 @@ protected:
 	o << ii_.first;
       } else {
 	o << function_ << " in [" << ii_.first << "," << ii_.second << "]";
-	o<< " = " << immutable_double_approximation();
+	o << " = " << internal_compute_interval(.00001).first 
+	  << "..." << internal_compute_interval(.00001).second;
       }
     }
+    return o;
+  }
+
+  std::ostream & write_raw(std::ostream &o) const
+  {
+    if (is_pos_inf()) {
+      o << "inf";
+    }
+    else if (is_neg_inf()) {
+      o << "-inf";
+    }
+    else {
+      if (ii_.first == ii_.second) {
+	o << ii_.first;
+      } else {
+	o << function_ << " in [" << ii_.first << "," << ii_.second << "]";
+      }
+    }
+    return o;
   }
 
   void set_type(Type t)
@@ -367,28 +382,42 @@ protected:
     if (ii_.first== ii_.second) return;
     std::vector<NT > plist;
     plist.push_back(ii_.first);
-    if (o.first < ii_.second) {
+    if (o.first < ii_.second && o.first > ii_.first) {
       plist.push_back(o.first);
     }
-    if (o.second < ii_.second) {
+    if (o.first != o.second && o.second < ii_.second && o.second > ii_.first) {
       plist.push_back(o.second);
     }
+    plist.push_back(ii_.second);
+
+    for (unsigned int i=0; i< plist.size(); ++i) {
+      std::cout << plist[i] << "   ";
+    }
+    std::cout << std::endl;
 
     if (plist.size()==2) return;
     
     CGAL::Sign ps= lower_sign();
+    std::cout << "ps is " << ps << std::endl;
+    CGAL_assertion(ps != CGAL::ZERO);
     for (unsigned int i=1; i< plist.size()-1; ++i) {
       CGAL::Sign sn= sign_at(plist[i]);
+      std::cout << "sn is " << ps << std::endl;
       if (sn==0) {
 	ii_= std::make_pair(plist[i], plist[i]);
+	audit();
 	return;
       } else if (sn != ps) {
 	ii_= std::make_pair(plist[i-1], plist[i]);
+	audit();
 	return;
       }
     }
 
     ii_= std::make_pair(plist[plist.size()-2], plist[plist.size()-1]);
+    CGAL_postcondition(sign_at(plist[plist.size()-2]) == ps);
+    CGAL_postcondition(sign_at(plist[plist.size()-1]) == CGAL::Sign(-ps));
+    audit();
   }
 
   Comparison_result compare_finite(const This &o) const
@@ -402,9 +431,8 @@ protected:
     do {
       audit(); o.audit();
 
-      if (ii_.first == ii_.second && ii_.first == o.ii_.first && ii_.first == o.ii_.second) return CGAL::EQUAL;
-      if (ii_.second <= o.ii_.first) return CGAL::SMALLER;
-      else if (ii_.first >= o.ii_.second) return CGAL::LARGER;
+      CGAL::Comparison_result cmp;
+      if (try_compare(o, cmp)) return cmp;
     
       refine();
       o.refine();
@@ -447,15 +475,7 @@ protected:
 #endif
   }
 
-  //! Is this used?
-  /*Simple_interval_root(Interval ii, Type type, Polynomial sign, bool mult): ii_(ii), type_(type),
-    function_(sign), is_odd_(mult){
-    bool is_this_used;
-    negated_=false;
-    audit();
-    compute_approximation();
-    bool is_this_used;
-    }*/
+
 
   CGAL::Sign sign_at(const NT &nt) const
   {
@@ -469,6 +489,45 @@ protected:
     //ret.compute_approximation();
     return ret;
     }*/
+
+  bool try_compare(const This &o, CGAL::Comparison_result &cmp) const {
+    if (ii_.first == ii_.second){
+      if (o.ii_.first == o.ii_.second) {
+	cmp= CGAL::compare(ii_.first, o.ii_.second);
+	return true;
+      } else {
+	if (o.ii_.first < ii_.first && o.ii_.second > ii_.first) {
+	  return false;
+	} else {
+	  cmp= CGAL::compare(ii_.first, o.ii_.first);
+	  if (cmp == CGAL::EQUAL){
+	    cmp=  CGAL::compare(ii_.first, o.ii_.second);
+	  }
+	  //CGAL_assertion(CGAL::compare(ii_.second, o.ii_.second) == cmp);
+	  return true;
+	}
+      }
+    } else if (o.ii_.first == o.ii_.second) {
+      if (ii_.first < o.ii_.first && ii_.second > o.ii_.first) {
+	  return false;
+	} else {
+	  cmp= CGAL::compare(ii_.first, o.ii_.first);
+	  if (cmp == CGAL::EQUAL) {
+	    cmp=  CGAL::compare(ii_.second, o.ii_.first);
+	  }
+	  //CGAL_assertion(CGAL::compare(ii_.second, o.ii_.second) == cmp);
+	  return true;
+	}
+    } else {
+      if (ii_.first >= o.ii_.second) {
+	cmp= CGAL::LARGER;
+	return true;
+      } else if (ii_.second <= o.ii_.first) {
+	cmp= CGAL::SMALLER;
+	return true;
+      } else return false;
+    }
+  }
 
   bool is_up() const
   {
@@ -503,7 +562,7 @@ protected:
   {
     CGAL_Polynomial_expensive_precondition(!is_null());
     This temp = *this;
-    return temp.compute_double(accuracy);
+    return temp.internal_compute_interval(accuracy).first;
   }
 
   //! return true if the this is uninitialized
@@ -609,7 +668,7 @@ public:
     double operator()( const Type& x ) const {
       // this call is required to get reasonable values for the double
       // approximation
-      return x.double_approximation();
+      return x.compute_double(.00000001);
     }
   };
     
@@ -618,7 +677,7 @@ public:
   public:
     std::pair<double, double> operator()( const Type& x ) const {
 
-      return x.compute_interval();
+      return x.compute_interval(.00001);
     }          
   };
 };

@@ -103,6 +103,7 @@ public:
 													motl_(tr.active_points_3_table_handle(), this) {
     CGAL_assertion(xmin<xmax);
     CGAL_assertion(ymin<ymax);
+    CGAL_assertion(zmin<zmax);
     bounds_[LEFT]=xmin;
     bounds_[RIGHT]=xmax;
     bounds_[TOP]=ymax;
@@ -193,7 +194,7 @@ protected:
 
   typename Simulator::Function_kernel function_kernel_object() const
   {
-    return traits_.function_kernel_object();
+    return traits_.kinetic_kernel_object().function_kernel_object();
   }
 
   Side try_bound(Side try_side, Point_key k,Side old_side,  double& old_time) const
@@ -230,34 +231,16 @@ protected:
 		traits_.simulator_handle()->current_time(), traits_.simulator_handle()->end_time());
       }
     }
-
-    double dv;
     if (re.will_fail()) {
-      dv= CGAL::to_interval(re.failure_time()).first;
-    } else {
-      dv= std::numeric_limits<double>::has_infinity?std::numeric_limits<double>::infinity(): std::numeric_limits<double>::max();
-    }
-
-    /*while (!re.finished()) {
-      CGAL_assertion(!function_kernel_object().is_even_multiplicity_object(nf)(re.current()));
-      dv= CGAL::to_interval(re.current()).second;
-      if (!re.finished()) {
-      re.advance();
-      if (!re.finished()){
-      CGAL_assertion(!function_kernel_object().is_even_multiplicity_object(nf)(re.current()));
-      if (dv < CGAL::to_interval(re.current()).first) {
-      break;
+      CGAL_KINETIC_LOG(LOG_LOTS, "Side fails at " << re.failure_time() << std::endl);
+      double dv= CGAL::to_interval(re.failure_time()).first;
+      if (dv < old_time) {
+	old_time=dv;
+	return try_side;
       } else {
-      re.advance();
+	return old_side;
       }
-      }
-      }
-      }*/
-    if (dv < old_time) {
-      old_time=dv;
-      return try_side;
-    }
-    else {
+    } else {
       return old_side;
     }
   }
@@ -297,8 +280,8 @@ protected:
       }*/
 
     CGAL_exactness_assertion_code(Coordinate ft(out.begin(), out.end()););
-    CGAL_exactness_assertion(ft(time) == f(time));
-    CGAL_exactness_assertion(cd(ft)(time) == -cd(f)(time));
+    CGAL_exactness_assertion(ft(t) == f(t));
+    CGAL_exactness_assertion(cd(ft)(t) == -cd(f)(t));
   }
 
   NT bounds_[6];

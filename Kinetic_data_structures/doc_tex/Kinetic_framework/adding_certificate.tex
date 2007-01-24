@@ -49,8 +49,7 @@ struct My_st_types: public CGAL::Kinetic::Suggested_exact_simulation_traits_type
   typedef CGAL::Kinetic::Suggested_exact_simulation_traits_types P;
   typedef My_kinetic_kernel<P::Function_kernel>::Point_2 Active_object;
   typedef CGAL::Kinetic::Active_objects_vector<Active_object> Active_objects_table;
-  typedef CGAL::Kinetic::Cartesian_instantaneous_kernel< Active_objects_table,
-							 Static_kernel> Instantaneous_kernel;
+  typedef CGAL::Kinetic::Instantaneous_kernel< My_st_types> Instantaneous_kernel;
 };
 
 struct My_simulation_traits:

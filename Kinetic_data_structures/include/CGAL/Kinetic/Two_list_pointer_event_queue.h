@@ -119,7 +119,7 @@ class Two_list_event_queue_item:
   }
 public:
   typedef Two_list_pointer_event_queue_key<This> Key;
-  Two_list_event_queue_item(): time_(-666){ /*++two_list_remaining;*/}
+  Two_list_event_queue_item() { /*++two_list_remaining;*/}
   Two_list_event_queue_item(const Priority &t): time_(t){/*++two_list_remaining;*/}
   virtual ~Two_list_event_queue_item(){/*--two_list_remaining;*/}
 
@@ -369,12 +369,12 @@ public:
 
     //CGAL_exactness_assertion(t >= lbs_);
     //lb_=(std::min)(t, lb_);
-    if ( is_after_end(t)){
+    if ( is_after_end(ni->time())){
       return end_key();
     } 
 
 
-    if (leq_ub(t)) {
+    if (leq_ub(ni->time())) {
       ni->set_in_list(Item::FRONT);
       typename Queue::iterator iit=std::upper_bound(front_.begin(), front_.end(), *ni);
    
@@ -494,7 +494,7 @@ public:
   /*!  It is OK to call this if the queue is empty. In that case it
     will just return infinity.
   */
-  Priority front_priority() const
+  const Priority& front_priority() const
   {
     CGAL_precondition(!front_.empty());
     return front_.front().time();

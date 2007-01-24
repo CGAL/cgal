@@ -1,5 +1,8 @@
+#define CGAL_CHECK_EXPENSIVE
+#define CGAL_CHECK_EXACTNESS
+
 #include <CGAL/Kinetic/Insert_event.h>
-#include <CGAL/Kinetic/Exact_simulation_traits_3.h>
+#include <CGAL/Kinetic/Exact_simulation_traits.h>
 #include <algorithm>
 #include <CGAL/Kinetic/Delaunay_triangulation_3.h>
 
@@ -44,7 +47,7 @@ int main(int argc, char *argv[])
     }
 #endif
 
-    typedef CGAL::Kinetic::Exact_simulation_traits_3 Traits;
+    typedef CGAL::Kinetic::Exact_simulation_traits Traits;
     typedef CGAL::Kinetic::Delaunay_triangulation_3<Traits> KDel;
     typedef Traits::Simulator::Time Time;
     typedef CGAL::Kinetic::Insert_event<Traits::Active_points_3_table> IE;

@@ -44,6 +44,7 @@ struct Sign_between_roots
   {
     typename K::Rational_between_roots rbr= k_.rational_between_roots_object();
     typename K::FT rat= rbr(r0,r1);
+    CGAL_postcondition(second_argument_type(rat) > r0 && second_argument_type(rat) < r1);
     return k_.sign_at_object()(f, rat);
   }
 protected:

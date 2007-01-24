@@ -83,12 +83,14 @@ protected:
     if (intervals_.empty() ) { return; }
 
     while ( intervals_.back().lbc_ - intervals_.back().ubc_!=1  ) {
+      int num_roots= intervals_.back().lbc_ - intervals_.back().ubc_;
       CGAL_KINETIC_STURM_DEBUG("Next interval has " << intervals_.back().lbc_ - intervals_.back().ubc_ << " roots");
       CGAL_precondition( intervals_.back().lbc_ - intervals_.back().ubc_ >1);
       ID ivl = intervals_.back();
       intervals_.pop_back();
       NT mp= (ivl.interval_.first+ ivl.interval_.second)/NT(2.0);
-
+      CGAL_precondition(sign_at(p_, ivl.interval_.first) != CGAL::ZERO);
+      CGAL_precondition(sign_at(p_, ivl.interval_.second) != CGAL::ZERO);
       CGAL::Sign mps= sign_at(p_, mp);
       if (mps==0) {
 	CGAL_KINETIC_STURM_DEBUG("Hit root at " << CGAL::to_double(mp));
@@ -108,17 +110,27 @@ protected:
 	  intervals_.push_back(ID(std::make_pair(mp+offset, ivl.interval_.second), muc, ivl.ubc_));
 	  CGAL_KINETIC_STURM_DEBUG("Adding interval of ");
 	  CGAL_KINETIC_STURM_DEBUG_WRITE(intervals_.back().write(std::cout)); 
+	  num_roots -= (muc- ivl.ubc_);
 	}
 	CGAL_assertion(mlc-muc == 1);
 	intervals_.push_back(ID(std::make_pair(mp, mp), mlc, muc));
+	--num_roots;
 	CGAL_KINETIC_STURM_DEBUG("Adding interval of ");
 	CGAL_KINETIC_STURM_DEBUG_WRITE(intervals_.back().write(std::cout)); 
 	CGAL_assertion(ivl.lbc_ >= mlc);
 	if (ivl.lbc_ - mlc >0) {
 	  intervals_.push_back(ID(std::make_pair(ivl.interval_.first, mp-offset),ivl.lbc_, mlc));
 	  CGAL_KINETIC_STURM_DEBUG("Adding interval of ");
-	  CGAL_KINETIC_STURM_DEBUG_WRITE(intervals_.back().write(std::cout)); 
+	  CGAL_KINETIC_STURM_DEBUG_WRITE(intervals_.back().write(std::cout));
+	  num_roots -= (ivl.lbc_ - mlc ); 
 	}
+	
+	if (num_roots != 0) {
+	  std::cerr << "Initial interval is " << ivl.interval_.first  << ", " << ivl.interval_.second << std::endl;
+	  std::cerr << "Midpoint interval is is " << mp-offset << ", " << mp+offset << std::endl;
+	  std::cerr << "Counts are " << ivl.lbc_ << " " << mlc << " " << muc << " " << ivl.ubc_ << std::endl;
+	}
+	CGAL_postcondition(!intervals_.empty() && num_roots==0);
       } else {
 	unsigned int mpc= root_counter_(mp);
 	CGAL_precondition( ivl.ubc_ <=mpc);
@@ -126,13 +138,21 @@ protected:
 	  intervals_.push_back(ID(std::make_pair(mp, ivl.interval_.second), mpc, ivl.ubc_));
 	  CGAL_KINETIC_STURM_DEBUG(std::cout << "Adding interval of ");
 	  CGAL_KINETIC_STURM_DEBUG_WRITE(intervals_.back().write(std::cout)); 
+	  num_roots -= (mpc-ivl.ubc_);
 	}
 	CGAL_precondition(mpc <= ivl.lbc_);
 	if ( ivl.lbc_-mpc != 0) {
 	  intervals_.push_back(ID(std::make_pair( ivl.interval_.first, mp), ivl.lbc_, mpc));
 	  CGAL_KINETIC_STURM_DEBUG(std::cout << "Adding interval of ");
 	  CGAL_KINETIC_STURM_DEBUG_WRITE(intervals_.back().write(std::cout)); 
+	  num_roots -= ivl.lbc_-mpc;
 	}
+	if (num_roots != 0) {
+	  std::cerr << "Initial interval is " << ivl.interval_.first  << ", " << ivl.interval_.second << std::endl;
+	  std::cerr << "Midpoint is " << mp << std::endl;
+	  std::cerr << "Counts are " << ivl.lbc_ << " " << mpc << ivl.ubc_ << std::endl;
+	}
+	CGAL_postcondition(!intervals_.empty() && num_roots==0);
       }
     }                                     // end-while
   }                                         // end subdivide method
@@ -141,6 +161,11 @@ protected:
     if ( p_.is_zero() )  { 
       CGAL_KINETIC_STURM_DEBUG("Zero polynomial ");
       return; 
+    }
+    if (p_.degree() == 1) {
+      NT v= -p_[0]/p_[1];
+      CGAL_assertion(p_(v) == 0);
+      intervals_.push_back(ID(std::make_pair(v,v), 1,0));
     }
     if (start_==finish_) {
       CGAL_KINETIC_STURM_DEBUG("Empty interval ");
@@ -153,15 +178,14 @@ protected:
       CGAL_KINETIC_STURM_DEBUG("Empty interval " << start_ << " to " << finish_);
       return;
     }
-
-    sseq_ = Standard_sequence(p_);
-    CGAL_postcondition(sseq_[sseq_.size()-1].degree() > -1);
-    if (sseq_[sseq_.size()-1].degree() > 0) {
-      CGAL_KINETIC_STURM_DEBUG("Non-square free: " << sseq_[sseq_.size()-1]);
-      non_square_free_part_= sseq_[sseq_.size()-1];
+    Standard_sequence sseq = Standard_sequence(p_);
+    CGAL_postcondition(sseq[sseq.size()-1].degree() > -1);
+    if (sseq[sseq.size()-1].degree() > 0) {
+      CGAL_KINETIC_STURM_DEBUG("Non-square free: " << sseq[sseq.size()-1]);
+      non_square_free_part_= sseq[sseq.size()-1];
       typename Traits::Quotient quo= traits_.quotient_object();
       p_= quo(p_,non_square_free_part_);
-      sseq_ = Standard_sequence(p_);
+      sseq = Standard_sequence(p_);
     } else {
       non_square_free_part_=NT(1);
     }
@@ -194,11 +218,11 @@ protected:
     CGAL_KINETIC_STURM_DEBUG("initial interval is " << lb << "..." << ub << " which is " 
 			     << CGAL::to_double(lb) << " to " << CGAL::to_double(ub));
     
-    for (unsigned int i=0; i< sseq_.size(); ++i){
-      CGAL_KINETIC_STURM_DEBUG(sseq_[i]);
+    for (unsigned int i=0; i< sseq.size(); ++i){
+      CGAL_KINETIC_STURM_DEBUG(sseq[i]);
     }
 
-    root_counter_ = Root_count(sseq_, traits_);
+    root_counter_ = Root_count(sseq, traits_);
     unsigned int lc= root_counter_(lb);
     unsigned int uc= root_counter_(ub);
     CGAL_KINETIC_STURM_DEBUG("There are " << lc-uc << " roots");
@@ -248,7 +272,14 @@ protected:
 	CGAL_postcondition(iv.first == iv.second || sign_at(p_, iv.first) != sign_at(p_, iv.second));
 	if (iv.first == iv.second) current_= Root(iv.first);
 	else current_ = Root(iv, p_, sign_at(p_, iv.first), /*sign_at(p_, iv.second)*/ CGAL::ZERO, traits_);
-      } while ( first && current_ < start_);
+	if (first && current_ < start_) {
+	  current_= Root();
+	  if (intervals_.empty()) return;
+	  else continue;
+	} else {
+	  break;
+	}
+      } while ( true);
       CGAL_KINETIC_STURM_DEBUG("Returning " << current_);
       if (current_>= finish_) {
 	CGAL_KINETIC_STURM_DEBUG("Out of roots");
@@ -307,7 +338,7 @@ public:
       os << ", " << nr << "} ";
       }
       os << std::endl;*/
-    os << sseq_[0] << "->" ;
+    os << p_ << "(" << non_square_free_part_ << ")" << "->" ;
     os << top();
 	  
     return os;
@@ -327,7 +358,6 @@ protected:
   Root_count                       root_counter_;
   Polynomial                       p_;
   Polynomial                       non_square_free_part_;
-  Standard_sequence                sseq_;
   Root                             current_;
   bool                             another_even_;
   std::vector<ID>                  intervals_;

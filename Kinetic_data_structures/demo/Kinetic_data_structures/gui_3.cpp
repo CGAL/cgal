@@ -1,5 +1,5 @@
-#include <CGAL/Kinetic/Exact_simulation_traits_3.h>
-#include <CGAL/Kinetic/Regular_triangulation_exact_simulation_traits_3.h>
+#include <CGAL/Kinetic/Exact_simulation_traits.h>
+#include <CGAL/Kinetic/Regular_triangulation_exact_simulation_traits.h>
 #include <boost/program_options.hpp>
 #include <CGAL/Kinetic/Enclosing_box_3.h>
 #include <CGAL/Random.h>
@@ -46,11 +46,11 @@ int main(int argc, char *argv[])
   }
 
   if (weighted) {
-    typedef CGAL::Kinetic::Regular_triangulation_exact_simulation_traits_3 Traits;
+    typedef CGAL::Kinetic::Regular_triangulation_exact_simulation_traits Traits;
     typedef CGAL::Kinetic::SoQt_widget_3<Traits::Simulator> Qt_gui;
     typedef CGAL::Kinetic::SoQt_moving_weighted_points_3<Traits, Qt_gui> Qt_mpt;
 
-    Traits tr;
+    Traits tr(0,1000000);
     Qt_gui::Handle qtsim= new Qt_gui(argc, argv, tr.simulator_handle());
     Qt_mpt::Handle qtmpt= new Qt_mpt(tr, qtsim);
 
@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
     return qtsim->begin_event_loop();
   }
   else {
-    typedef CGAL::Kinetic::Exact_simulation_traits_3 Traits;
+    typedef CGAL::Kinetic::Exact_simulation_traits Traits;
     typedef CGAL::Kinetic::SoQt_widget_3<Traits::Simulator> Qt_gui;
     typedef CGAL::Kinetic::SoQt_moving_points_3<Traits, Qt_gui> Qt_mpt;
 

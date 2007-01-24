@@ -1,17 +1,17 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: Cartesian_instantaneous_kernel.tex
+% | Reference manual page: Instantaneous_kernel.tex
 % +------------------------------------------------------------------------+
 % | 20.03.2005   Author
 % | Package: Kinetic_data_structures
 % | 
-\RCSdef{\RCSCartesianinstantaneouskernelRev}{$Id$}
-\RCSdefDate{\RCSCartesianinstantaneouskernelDate}{$Date$}
+\RCSdef{\RCSInstantaneouskernelRev}{$Id$}
+\RCSdefDate{\RCSInstantaneouskernelDate}{$Date$}
 % |
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Kinetic::Cartesian_instantaneous_kernel<ActiveObjectsTable, StaticKernel>}  %% add template arg's if necessary
+\begin{ccRefClass}{Kinetic::Instantaneous_kernel<SimulationTraits>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -22,14 +22,7 @@ This class provides a model of the \ccc{Kinetic::InstantaneousKernel} for
 use with general Cartesian Geometry. It provides all the predicates
 needed for Delaunay triangulations and regular triangulations.
 
-For technical reasons, the user must pick out one particular type of
-primitive to use when instantiating a model. For example, if the user
-passes a model of \ccc{Kinetic::Active_objects_vector<Data, Object>} with a
-\ccc{Kinetic::Kernel::Point_2} as the kinetic primitive, then the type
-\ccc{Point_2} will be properly defined and the predicates on it will
-work properly, but the other predicates will not work.
-
-\ccInclude{CGAL/Kinetic/Cartesian_instantaneous_kernel.h}
+\ccInclude{CGAL/Kinetic/Instantaneous_kernel.h}
 
 \ccIsModel
 

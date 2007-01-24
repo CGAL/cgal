@@ -21,8 +21,6 @@
 #ifndef CGAL_KINETIC_IO_MOVING_POINT_SET_2_H
 #define CGAL_KINETIC_IO_MOVING_POINT_SET_2_H
 #include <CGAL/Kinetic/basic.h>
-//#include <CGAL/Kinetic/Moving_object_table.h>
-#include <CGAL/Kinetic/Cartesian_instantaneous_kernel.h>
 #include <CGAL/IO/Qt_widget.h>
 #include <CGAL/Kinetic/Ref_counted.h>
 #include <CGAL/Kinetic/Simulator_objects_listener.h>
