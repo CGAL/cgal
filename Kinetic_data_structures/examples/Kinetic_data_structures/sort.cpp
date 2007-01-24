@@ -1,13 +1,13 @@
 #include <CGAL/Kinetic/basic.h>
 
-#include <CGAL/Kinetic/Exact_simulation_traits_1.h>
+#include <CGAL/Kinetic/Exact_simulation_traits.h>
 #include <CGAL/Kinetic/Insert_event.h>
 #include <CGAL/Kinetic/Sort.h>
 
 int main(int, char *[])
 {
 
-    typedef CGAL::Kinetic::Exact_simulation_traits_1 Traits;
+    typedef CGAL::Kinetic::Exact_simulation_traits Traits;
 
     typedef CGAL::Kinetic::Insert_event<Traits::Active_points_1_table> Insert_event;
     typedef Traits::Active_points_1_table::Data Moving_point;

@@ -1,11 +1,11 @@
-#include <CGAL/Kinetic/Regular_triangulation_exact_simulation_traits_3.h>
+#include <CGAL/Kinetic/Regular_triangulation_exact_simulation_traits.h>
 #include <CGAL/Kinetic/Regular_triangulation_3.h>
 
 int main(int, char *[]) {
-    typedef CGAL::Kinetic::Regular_triangulation_exact_simulation_traits_3 Traits;
+    typedef CGAL::Kinetic::Regular_triangulation_exact_simulation_traits Traits;
     typedef CGAL::Kinetic::Regular_triangulation_3<Traits> KDel;
 
-    Traits tr;
+    Traits tr(0,100000.0);
     KDel kdel(tr);
 
     Traits::Simulator::Handle sp= tr.simulator_handle();

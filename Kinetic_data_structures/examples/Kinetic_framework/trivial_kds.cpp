@@ -1,5 +1,5 @@
 #include <CGAL/Kinetic/Ref_counted.h>
-#include <CGAL/Kinetic/Exact_simulation_traits_1.h>
+#include <CGAL/Kinetic/Exact_simulation_traits.h>
 #include <CGAL/Kinetic/Active_objects_listener_helper.h>
 #include <CGAL/Kinetic/Simulator_kds_listener.h>
 #include <CGAL/Kinetic/Event_base.h>
@@ -159,7 +159,7 @@ protected:
 
 int main(int, char *[])
 {
-  typedef CGAL::Kinetic::Exact_simulation_traits_1 Traits;
+  typedef CGAL::Kinetic::Exact_simulation_traits Traits;
   typedef Trivial_kds<Traits> TKDS;
 
   Traits tr(1,100);

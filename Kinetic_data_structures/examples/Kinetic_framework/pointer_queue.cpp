@@ -1,6 +1,6 @@
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Kinetic/Heap_pointer_event_queue.h>
-#include <CGAL/Kinetic/Inexact_simulation_traits_1.h>
+#include <CGAL/Kinetic/Inexact_simulation_traits.h>
 #include <CGAL/Kinetic/Event_base.h>
 #include <cstdlib>
 
@@ -40,7 +40,7 @@ std::ostream &operator<<(std::ostream &out, Event e)
 
 int main(int, char *[])
 {
-  typedef CGAL::Kinetic::Inexact_simulation_traits_1::Kinetic_kernel::Function_kernel FK;
+  typedef CGAL::Kinetic::Inexact_simulation_traits::Kinetic_kernel::Function_kernel FK;
   typedef CGAL::Kinetic::Heap_pointer_event_queue<FK> Q;
   Q pq(0, 10000, FK());
   typedef Q::Key Key;

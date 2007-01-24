@@ -29,5 +29,6 @@ September 2006 Daniel Russel
 - changed Sign_above to Sign_after
 - computation of the sign after the current time is now exposed through the kinetic predicates
 - traits classes are now dimension independent
-
+- Kinetic_kernel now called Kinetic::Cartesian to be consistent with the
+  static one
 

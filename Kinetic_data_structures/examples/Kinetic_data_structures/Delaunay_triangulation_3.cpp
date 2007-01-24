@@ -1,11 +1,11 @@
-#include <CGAL/Kinetic/Exact_simulation_traits_3.h>
+#include <CGAL/Kinetic/Exact_simulation_traits.h>
 #include <CGAL/Kinetic/Delaunay_triangulation_3.h>
 #include <CGAL/Kinetic/Delaunay_triangulation_event_log_visitor_3.h>
 
 int main(int , char *[])
 {
 
-    typedef CGAL::Kinetic::Exact_simulation_traits_3 Traits;
+    typedef CGAL::Kinetic::Exact_simulation_traits Traits;
     typedef CGAL::Kinetic::Delaunay_triangulation_3<Traits,
     CGAL::Kinetic::Delaunay_triangulation_event_log_visitor_3> KDel;
 

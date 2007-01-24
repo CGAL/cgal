@@ -1,8 +1,7 @@
 #include <CGAL/Kinetic/basic.h>
-#include <CGAL/Kinetic/Cartesian_instantaneous_kernel.h>
 #include <CGAL/Kinetic/Active_objects_listener_helper.h>
 #include <CGAL/Kinetic/Erase_event.h>
-#include <CGAL/Kinetic/Inexact_simulation_traits_1.h>
+#include <CGAL/Kinetic/Inexact_simulation_traits.h>
 #include <CGAL/Kinetic/Insert_event.h>
 #include <CGAL/Kinetic/Ref_counted.h>
 #include <CGAL/Kinetic/Simulator_kds_listener.h>
@@ -117,17 +116,17 @@ double snap(NT v) {
 
 int main(int, char *[])
 {
-  typedef CGAL::Kinetic::Inexact_simulation_traits_1 Traits;
+  typedef CGAL::Kinetic::Inexact_simulation_traits Traits;
   typedef Traits::Kinetic_kernel::Point_1 Point;
   typedef Traits::Simulator::Time Time;
   typedef CGAL::Kinetic::Insert_event<Traits::Active_points_1_table> Insert_event;
   typedef CGAL::Kinetic::Erase_event<Traits::Active_points_1_table> Erase_event;
   typedef Planar_arrangement<Traits> Arrangement;
 
-  Traits tr;
+  Traits tr(0,1000000.0);
   Arrangement sort(tr);
 
-  typedef Traits::NT NT;
+  typedef Traits::Kinetic_kernel::Function_kernel::FT NT;
 
   Traits::Simulator::Handle sp= tr.simulator_handle();
 
