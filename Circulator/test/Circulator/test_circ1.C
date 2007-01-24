@@ -3608,10 +3608,7 @@ void test_circulator_from_iterator() {
     assert( W.begin()[2] == 9);
   }
 }
-#ifndef CGAL_PROTECT_ALGORITHM
 #include <algorithm>
-#define CGAL_PROTECT_ALGORITHM
-#endif
 
 void test_circulator_from_container() {
   {
