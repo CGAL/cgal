@@ -25,7 +25,7 @@
 #include <CGAL/Polynomial/Root_stack_default_traits.h>
 #include <CGAL/Kinetic/Active_objects_vector.h>
 #include <CGAL/Kinetic/Regular_triangulation_instantaneous_kernel.h>
-#include <CGAL/Kinetic/Cartesian_kinetic_kernel.h>
+#include <CGAL/Kinetic/Cartesian.h>
 #include <CGAL/Kinetic/Handle_degeneracy_function_kernel.h>
 #include <CGAL/Kinetic/Default_simulator.h>
 #include <CGAL/Kinetic/Two_list_pointer_event_queue.h>
@@ -48,7 +48,7 @@ struct Regular_triangulation_inexact_simulation_traits {
   struct Simulator_function_kernel: public Simulator_function_kernel_base{};
 
 
-  typedef Cartesian_kinetic_kernel<Simulator_function_kernel> Kinetic_kernel;
+  typedef Cartesian<Simulator_function_kernel> Kinetic_kernel;
   typedef Two_list_pointer_event_queue<Function_kernel> Event_queue;
   typedef Default_simulator<Simulator_function_kernel, Event_queue > Simulator;
 

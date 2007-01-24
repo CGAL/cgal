@@ -29,7 +29,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Kinetic/Active_objects_vector.h>
 #include <CGAL/Kinetic/Instantaneous_kernel.h>
-#include <CGAL/Kinetic/Cartesian_kinetic_kernel.h>
+#include <CGAL/Kinetic/Cartesian.h>
 #include <CGAL/Kinetic/Derivitive_filter_function_kernel.h>
 #include <CGAL/Kinetic/Default_simulator.h>
 #include <CGAL/Kinetic/Heap_pointer_event_queue.h>
@@ -47,7 +47,7 @@ struct Inexact_simulation_traits {
   typedef CGAL::Kinetic::Derivitive_filter_function_kernel<Function_kernel> Simulator_function_kernel_base;
   struct Simulator_function_kernel: public Simulator_function_kernel_base{};
 
-  typedef Cartesian_kinetic_kernel<Simulator_function_kernel> Kinetic_kernel;
+  typedef Cartesian<Simulator_function_kernel> Kinetic_kernel;
   typedef Heap_pointer_event_queue<Function_kernel> Event_queue;
   typedef Default_simulator<Simulator_function_kernel, Event_queue > Simulator;
 

@@ -12,35 +12,36 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/trunk/Kinetic_data_structures/include/CGAL/Kinetic/Exact_simulation_traits_2.h $
-// $Id: Exact_simulation_traits_2.h 35766 2007-01-20 21:39:01Z drussel $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
-#ifndef CGAL_KINETIC_EXACT_SIMULATION_H
-#define CGAL_KINETIC_EXACT_SIMULATION_H
+#ifndef CGAL_KINETIC_REGULAR_EXACT_SIMULATION_H
+#define CGAL_KINETIC_REGULAR_EXACT_SIMULATION_H
 #include <CGAL/Kinetic/basic.h>
 
 #include <CGAL/Polynomial/Sturm_root_stack_traits.h>
 #include <CGAL/Polynomial/Sturm_root_stack.h>
 #include <CGAL/Kinetic/Active_objects_vector.h>
-#include <CGAL/Kinetic/Instantaneous_kernel.h>
+#include <CGAL/Kinetic/Regular_triangulation_instantaneous_kernel.h>
 #include <CGAL/Kinetic/Cartesian.h>
 #include <CGAL/Kinetic/Handle_degeneracy_function_kernel.h>
 #include <CGAL/Kinetic/Default_simulator.h>
 #include <CGAL/Kinetic/Two_list_pointer_event_queue.h>
+#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 //#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
 CGAL_KINETIC_BEGIN_NAMESPACE
 
-struct Exact_simulation_traits {
-  typedef Exact_simulation_traits This;
+struct Regular_triangulation_exact_simulation_traits {
+  typedef Regular_triangulation_exact_simulation_traits This;
 
-  typedef CGAL::Exact_predicates_exact_constructions_kernel Static_kernel;
-  //typedef CGAL::Regular_triangulation_euclidean_traits_3<Static_kernel_base> Static_kernel;
+  typedef CGAL::Exact_predicates_exact_constructions_kernel Static_kernel_base;
+  typedef CGAL::Regular_triangulation_euclidean_traits_3<Static_kernel_base> Static_kernel;
   typedef CGAL::POLYNOMIAL::Polynomial<Static_kernel::FT> Function;
   typedef CGAL::POLYNOMIAL::Sturm_root_stack_traits<Function> Root_stack_traits;
   typedef CGAL::POLYNOMIAL::Sturm_root_stack<Root_stack_traits> Root_stack;
@@ -55,10 +56,10 @@ struct Exact_simulation_traits {
 
   typedef Active_objects_vector<Kinetic_kernel::Point_1> Active_points_1_table;
   typedef Active_objects_vector<Kinetic_kernel::Point_2> Active_points_2_table;
-  typedef Active_objects_vector<Kinetic_kernel::Point_3> Active_points_3_table;
-  // typedef Active_objects_vector<Kinetic_kernel::Weighted_point_3> Active_weighted_points_3_table;
+  typedef Active_objects_vector<Kinetic_kernel::Weighted_point_3> Active_points_3_table;
+  //typedef Active_objects_vector<Kinetic_kernel::Weighted_point_3> Active_weighted_points_3_table;
  
-  typedef Instantaneous_kernel<This> Instantaneous_kernel;
+  typedef Regular_triangulation_instantaneous_kernel<This> Instantaneous_kernel;
 
   Active_points_1_table* active_points_1_table_handle() const { return ap1_.get();}
   Active_points_2_table* active_points_2_table_handle() const {return ap2_.get();}
@@ -73,12 +74,12 @@ struct Exact_simulation_traits {
     return Instantaneous_kernel(*this);
   }
 
-  Exact_simulation_traits(const Simulator::Time &lb,
-			  const Simulator::Time &ub): sim_(new Simulator(lb, ub)),
-						      ap1_(new Active_points_1_table()),
-						      ap2_(new Active_points_2_table()),
-						      ap3_(new Active_points_3_table())
-						      //awp3_(new Active_weighted_points_3_table())
+  Regular_triangulation_exact_simulation_traits(const Simulator::Time &lb,
+						const Simulator::Time &ub): sim_(new Simulator(lb, ub)),
+									    ap1_(new Active_points_1_table()),
+									    ap2_(new Active_points_2_table()),
+									    ap3_(new Active_points_3_table())
+									    //awp3_(new Active_weighted_points_3_table())
 {}
  
   
