@@ -391,7 +391,7 @@ public:
       if (true){
 	//++queue_front_insertions__;
 	front_.push_back(*ni);
-	ub_= NT(to_interval(tii_(t).second).second);
+	ub_= NT(tii_(t).second);
 	ni->set_in_list(Item::FRONT);
       } 
     } else {

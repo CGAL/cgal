@@ -59,7 +59,7 @@ protected:
     }
   }
   
-  result_type compute(const CORE::Expr &r0, CORE::Expr &r1) const {
+  result_type compute(const CORE::Expr &r0, const CORE::Expr &r1) const {
     result_type ret= CGAL::to_interval(r0).second;
     result_type step=.0000000596046447753906250000000;
     do {

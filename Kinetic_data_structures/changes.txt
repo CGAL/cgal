@@ -44,5 +44,5 @@ known bugs:
 - Two list queue should make sure it steps off the dividing element. 
 
 
-make core_traits and test them
-make regular_inexact
+make core_traits and test them and regular inexact
+

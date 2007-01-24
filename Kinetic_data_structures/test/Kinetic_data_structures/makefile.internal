@@ -44,7 +44,7 @@ LDFLAGS =  ../../src/CGAL/libCGAL.a \
 #---------------------------------------------------------------------#
 
 all: quick_test$(EXE_EXT) active_objects_tables$(EXE_EXT) exact_kds$(EXE_EXT) Delaunay_triangulation_2$(EXE_EXT)\
-Delaunay_triangulation_3$(EXE_EXT)  Delaunay_triangulation_3_timing$(EXE_EXT) numbers$(EXE_EXT) \
+Delaunay_triangulation_3$(EXE_EXT) numbers$(EXE_EXT) \
                 numeric_kds$(EXE_EXT) \
                 simulator$(EXE_EXT) \
 		timings$(EXE_EXT)\

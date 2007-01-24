@@ -18,35 +18,31 @@
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
-#ifndef CGAL_KINETIC_REGULAR_INEXACT_SIMULATION_H
-#define CGAL_KINETIC_REGULAR_INEXACT_SIMULATION_H
+#ifndef CGAL_KINETIC_CORE_EXACT_SIMULATION_H
+#define CGAL_KINETIC_CORE_EXACT_SIMULATION_H
 #include <CGAL/Kinetic/basic.h>
-#include <CGAL/Polynomial/Numeric_root_stack.h>
-#include <CGAL/Polynomial/Root_stack_default_traits.h>
+
+#include <CGAL/Polynomial/CORE_kernel.h>
 #include <CGAL/Kinetic/Active_objects_vector.h>
-#include <CGAL/Kinetic/Regular_triangulation_instantaneous_kernel.h>
+#include <CGAL/Kinetic/Instantaneous_kernel.h>
 #include <CGAL/Kinetic/Cartesian_kinetic_kernel.h>
 #include <CGAL/Kinetic/Handle_degeneracy_function_kernel.h>
 #include <CGAL/Kinetic/Default_simulator.h>
 #include <CGAL/Kinetic/Two_list_pointer_event_queue.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
-#include <CGAL/Kinetic/Derivitive_filter_function_kernel.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
+
+#include <CGAL/Cartesian.h>
+//#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
 CGAL_KINETIC_BEGIN_NAMESPACE
 
-struct Regular_triangulation_inexact_simulation_traits {
-  typedef Regular_triangulation_inexact_simulation_traits This;
+struct CORE_Expr_exact_simulation_traits {
+  typedef CORE_Expr_exact_simulation_traits This;
+  typedef CGAL::Cartesian<CORE::Expr> Static_kernel;
+   //typedef CGAL::Regular_triangulation_euclidean_traits_3<Static_kernel_base> Static_kernel;
+  typedef CGAL::POLYNOMIAL::CORE_kernel Function_kernel;
 
-  typedef CGAL::Regular_triangulation_euclidean_traits_3<CGAL::Exact_predicates_inexact_constructions_kernel> Static_kernel;
-  typedef CGAL::POLYNOMIAL::Polynomial<Static_kernel::FT> Function;
-  typedef CGAL::POLYNOMIAL::Root_stack_default_traits<Function> Root_stack_traits;
-  typedef CGAL::POLYNOMIAL::Numeric_root_stack<Root_stack_traits> Root_stack;
-  typedef CGAL::POLYNOMIAL::Kernel<Function, Root_stack> Function_kernel;
-  typedef CGAL::Kinetic::Derivitive_filter_function_kernel<Function_kernel> Simulator_function_kernel_base;
+  typedef CGAL::Kinetic::Handle_degeneracy_function_kernel<Function_kernel, false>  Simulator_function_kernel_base;
   struct Simulator_function_kernel: public Simulator_function_kernel_base{};
-
 
   typedef Cartesian_kinetic_kernel<Simulator_function_kernel> Kinetic_kernel;
   typedef Two_list_pointer_event_queue<Function_kernel> Event_queue;
@@ -54,10 +50,10 @@ struct Regular_triangulation_inexact_simulation_traits {
 
   typedef Active_objects_vector<Kinetic_kernel::Point_1> Active_points_1_table;
   typedef Active_objects_vector<Kinetic_kernel::Point_2> Active_points_2_table;
-  typedef Active_objects_vector<Kinetic_kernel::Weighted_point_3> Active_points_3_table;
-  //typedef Active_objects_vector<Kinetic_kernel::Weighted_point_3> Active_weighted_points_3_table;
+  typedef Active_objects_vector<Kinetic_kernel::Point_3> Active_points_3_table;
+  // typedef Active_objects_vector<Kinetic_kernel::Weighted_point_3> Active_weighted_points_3_table;
  
-  typedef Regular_triangulation_instantaneous_kernel<This> Instantaneous_kernel;
+  typedef Instantaneous_kernel<This> Instantaneous_kernel;
 
   Active_points_1_table* active_points_1_table_handle() const { return ap1_.get();}
   Active_points_2_table* active_points_2_table_handle() const {return ap2_.get();}
@@ -72,13 +68,13 @@ struct Regular_triangulation_inexact_simulation_traits {
     return Instantaneous_kernel(*this);
   }
 
-  Regular_triangulation_inexact_simulation_traits(const Simulator::Time &lb,
-						const Simulator::Time &ub): sim_(new Simulator(lb, ub)),
-									    ap1_(new Active_points_1_table()),
-									    ap2_(new Active_points_2_table()),
-									    ap3_(new Active_points_3_table())
-									    //awp3_(new Active_weighted_points_3_table())
-{}
+  CORE_Expr_exact_simulation_traits(const Simulator::Time &lb,
+				    const Simulator::Time &ub): sim_(new Simulator(lb, ub)),
+								ap1_(new Active_points_1_table()),
+								ap2_(new Active_points_2_table()),
+								ap3_(new Active_points_3_table())
+				   //awp3_(new Active_weighted_points_3_table())
+  {}
  
   
   bool is_exact() const {
