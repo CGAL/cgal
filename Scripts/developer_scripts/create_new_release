@@ -78,11 +78,12 @@ TMPDIR="`pwd`"
 
 LOGFILE="${TMPDIR}/create_release.log.`date -I`.$$"
 
+exec >> ${LOGFILE} 2>&1
 
 cd ${TMPDIR} || return
 
 # Update the working copy
-svn update ${SOURCES_DIR} >> ${LOGFILE} 2>&1
+svn update ${SOURCES_DIR}
 CGAL_SVN_REVISION=`svn info ${SOURCES_DIR} | grep Revision | cut -d' ' -f2`
 
 # Set the major/minor/bugfix release numbers
@@ -108,25 +109,25 @@ else
     BUGFIX_STRING=""
 fi
 release_name="CGAL-${MAJOR_NUMBER}.${MINOR_NUMBER}${BUGFIX_STRING}${INTERNAL_STRING}"
-echo "${release_name}" >> ${LOGFILE} 2>&1
+echo "${release_name}"
 major_nr=`printf "%2s" "${MAJOR_NUMBER}" | sed "y/ /0/"`
 minor_nr=`printf "%2s" "${MINOR_NUMBER}" | sed "y/ /0/"`
 bugfix_nr=`printf "%1s" "${BUGFIX_NUMBER}" | sed "y/ /0/"`
 release_number="1${major_nr}${minor_nr}${bugfix_nr}${internal_nr}"
-echo "Release number is ${release_number}" >> ${LOGFILE} 2>&1
+echo "Release number is ${release_number}"
 
 # Create the release
-${SOURCES_DIR}/Scripts/developer_scripts/create_internal_release -a ${TMPDIR}/${SOURCES_DIR} -r ${release_name} -n ${release_number} >> ${LOGFILE} 2>&1
+${SOURCES_DIR}/Scripts/developer_scripts/create_internal_release -a ${TMPDIR}/${SOURCES_DIR} -r ${release_name} -n ${release_number}
 # Add the SVN revision to version.h
-cd "${release_name}" >> ${LOGFILE} 2>&1
-mv include/CGAL/version.h include/CGAL/version.h.internal >> ${LOGFILE} 2>&1
-sed -e "s/define CGAL_SVN_REVISION .*/define CGAL_SVN_REVISION $CGAL_SVN_REVISION/" include/CGAL/version.h.internal > include/CGAL/version.h 2>> ${LOGFILE}
-rm include/CGAL/version.h.internal >> ${LOGFILE} 2>&1
+cd "${release_name}"
+mv include/CGAL/version.h include/CGAL/version.h.internal
+sed -e "s/define CGAL_SVN_REVISION .*/define CGAL_SVN_REVISION $CGAL_SVN_REVISION/" include/CGAL/version.h.internal > include/CGAL/version.h
+rm include/CGAL/version.h.internal
 cd ..
 # Make the release tarball
-tar -cf "${release_name}.tar" "${release_name}" >> ${LOGFILE} 2>&1
-gzip "${release_name}.tar" >> ${LOGFILE} 2>&1
-cp "${release_name}.tar.gz" "${HTML_DIR}" >> ${LOGFILE} 2>&1
+tar -cf "${release_name}.tar" "${release_name}"
+gzip "${release_name}.tar"
+cp "${release_name}.tar.gz" "${HTML_DIR}"
 echo "${release_name}.tar.gz" > "${HTML_DIR}/LATEST"
 
 # Send mail and tag
@@ -139,59 +140,59 @@ if [ "$DO_IT" ]; then
 #EOF
 
     # Now we tag.
-    echo "Tagging ${SOURCES_DIR} with $release_name" >> ${LOGFILE} 2>&1
-    svn cp -m "Internal release tag for $release_name" ${SOURCES_DIR} $SVNCGAL/tags/internal-releases/$release_name >> ${LOGFILE} 2>&1
+    echo "Tagging ${SOURCES_DIR} with $release_name"
+    svn cp -m "Internal release tag for $release_name" ${SOURCES_DIR} $SVNCGAL/tags/internal-releases/$release_name
 fi
 
 # Build the SRPM
 if [ "$DO_RPM" ]; then
-    echo "Making the SRPM file" >> ${LOGFILE} 2>&1
-    rm -rf rpm >> ${LOGFILE} 2>&1
-    cp -r ${SOURCES_DIR}/Maintenance/rpm . >> ${LOGFILE} 2>&1
-    cp ${release_name}.tar.gz rpm/SOURCES/ >> ${LOGFILE} 2>&1
-    make -C rpm CGAL.src CGAL_INTERNAL_RELEASE=${RELEASE_NUMBER} >> ${LOGFILE} 2>&1
-    echo "`basename rpm/SRPMS/*.src.rpm`" > "${HTML_DIR}/LATEST_SRPM" 2>> ${LOGFILE}
-    mv rpm/SRPMS/*.src.rpm "${HTML_DIR}" >> ${LOGFILE} 2>&1
-    rm -rf rpm >> ${LOGFILE} 2>&1
+    echo "Making the SRPM file"
+    rm -rf rpm
+    cp -r ${SOURCES_DIR}/Maintenance/rpm .
+    cp ${release_name}.tar.gz rpm/SOURCES/
+    make -C rpm CGAL.src CGAL_INTERNAL_RELEASE=${RELEASE_NUMBER}
+    echo "`basename rpm/SRPMS/*.src.rpm`" > "${HTML_DIR}/LATEST_SRPM"
+    mv rpm/SRPMS/*.src.rpm "${HTML_DIR}"
+    rm -rf rpm
 fi
 
 # Build public release version
 if [ "$DO_PUBLIC" ]; then
-    echo "Making the public version of the tarball" >> ${LOGFILE} 2>&1
+    echo "Making the public version of the tarball"
     public_release_number="1${major_nr}${minor_nr}${bugfix_nr}1000"
     public_release_version="${MAJOR_NUMBER}.${MINOR_NUMBER}${BUGFIX_STRING}"
     public_release_name="CGAL-${public_release_version}"
-    mv ${release_name} $public_release_name >> ${LOGFILE} 2>&1
+    mv ${release_name} $public_release_name
 
-    cd ${public_release_name} >> ${LOGFILE} 2>&1
-    rm -rf test Packages developer_scripts doc_tex winutils >> ${LOGFILE} 2>&1
-    rm -f examples/*/cgal_test demo/*/cgal_test >> ${LOGFILE} 2>&1
-    mv include/CGAL/version.h include/CGAL/version.h.internal >> ${LOGFILE} 2>&1
-    sed -e "s/define CGAL_VERSION .*/define CGAL_VERSION $public_release_version/" -e "s/define CGAL_VERSION_NR .*/define CGAL_VERSION_NR $public_release_number/" include/CGAL/version.h.internal > include/CGAL/version.h 2>> ${LOGFILE}
-    rm include/CGAL/version.h.internal >> ${LOGFILE} 2>&1
+    cd ${public_release_name}
+    rm -rf test Packages developer_scripts doc_tex winutils
+    rm -f examples/*/cgal_test demo/*/cgal_test
+    mv include/CGAL/version.h include/CGAL/version.h.internal
+    sed -e "s/define CGAL_VERSION .*/define CGAL_VERSION $public_release_version/" -e "s/define CGAL_VERSION_NR .*/define CGAL_VERSION_NR $public_release_number/" include/CGAL/version.h.internal > include/CGAL/version.h
+    rm include/CGAL/version.h.internal
     echo -n $public_release_number > VERSION 2>&1
-    cd .. >> ${LOGFILE} 2>&1
-    tar -cf "${public_release_name}.tar" "${public_release_name}" >> ${LOGFILE} 2>&1
-    gzip "${public_release_name}.tar" >> ${LOGFILE} 2>&1
-    mkdir "${HTML_DIR}/${release_name}-public" >> ${LOGFILE} 2>&1
-    cp "${public_release_name}.tar.gz" "${HTML_DIR}/${release_name}-public/" >> ${LOGFILE} 2>&1
+    cd ..
+    tar -cf "${public_release_name}.tar" "${public_release_name}"
+    gzip "${public_release_name}.tar"
+    mkdir "${HTML_DIR}/${release_name}-public"
+    cp "${public_release_name}.tar.gz" "${HTML_DIR}/${release_name}-public/"
     # Do a Zip file as well for the public version.
-    zip -q -r ${public_release_name}.zip ${public_release_name} >> ${LOGFILE} 2>&1
-    cp "${public_release_name}.zip" "${HTML_DIR}/${release_name}-public/" >> ${LOGFILE} 2>&1
+    zip -q -r ${public_release_name}.zip ${public_release_name}
+    cp "${public_release_name}.zip" "${HTML_DIR}/${release_name}-public/"
 fi
 
 # Build the SRPM of the public version
 if [ -n "$DO_RPM" -a -n "$DO_PUBLIC" ]; then
-    echo "Making the SRPM public file" >> ${LOGFILE} 2>&1
-    rm -rf rpm >> ${LOGFILE} 2>&1
-    cp -r ${SOURCES_DIR}/Maintenance/rpm . >> ${LOGFILE} 2>&1
-    cp ${public_release_name}.tar.gz rpm/SOURCES/ >> ${LOGFILE} 2>&1
-    make -C rpm CGAL.src >> ${LOGFILE} 2>&1
-    # echo "`basename rpm/SRPMS/*.src.rpm`" > "${HTML_DIR}/LATEST_SRPM" 2>> ${LOGFILE}
-    mv rpm/SRPMS/*.src.rpm "${HTML_DIR}/${release_name}-public/" >> ${LOGFILE} 2>&1
-    rm -rf rpm >> ${LOGFILE} 2>&1
+    echo "Making the SRPM public file"
+    rm -rf rpm
+    cp -r ${SOURCES_DIR}/Maintenance/rpm .
+    cp ${public_release_name}.tar.gz rpm/SOURCES/
+    make -C rpm CGAL.src
+    # echo "`basename rpm/SRPMS/*.src.rpm`" > "${HTML_DIR}/LATEST_SRPM"
+    mv rpm/SRPMS/*.src.rpm "${HTML_DIR}/${release_name}-public/"
+    rm -rf rpm
 fi
 
 # Remove local directory and tarball
-rm -rf ${release_name} ${public_release_name} >> ${LOGFILE} 2>&1
-rm ${release_name}.tar.gz ${public_release_name}.tar.gz ${public_release_name}.zip >> ${LOGFILE} 2>&1
+rm -rf ${release_name} ${public_release_name}
+rm ${release_name}.tar.gz ${public_release_name}.tar.gz ${public_release_name}.zip
