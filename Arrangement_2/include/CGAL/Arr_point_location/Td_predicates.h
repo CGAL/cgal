@@ -20,9 +20,7 @@
 #ifndef CGAL_TD_PREDICATES_H
 #define CGAL_TD_PREDICATES_H
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif
 
 #include <functional>
 

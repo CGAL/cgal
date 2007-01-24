@@ -18,9 +18,7 @@
 // Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>, Bernd Gaertner
 
 // includes
-#ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #  include <CGAL/Optimisation/assertions.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 

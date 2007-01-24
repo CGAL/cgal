@@ -72,19 +72,13 @@
 #if defined(CGAL_LINE_3_H) || defined(CGAL_RAY_3_H) \
     || defined(CGAL_SEGMENT_3_H) || defined(CGAL_TRIANGLE_3_H) \
     || defined(CGAL_TETRAHEDRON_3_H)
-#ifndef CGAL_POINT_2_H
 #include <CGAL/Point_2.h>
-#endif
-#ifndef CGAL_POINT_3_H
 #include <CGAL/Point_3.h>
-#endif
 #endif
 
 // Define necessary 2d stream operators.
 // -------------------------------------
-#ifndef CGAL_IO_WINDOW_STREAM_H
 #include <CGAL/IO/Window_stream.h>
-#endif // CGAL_IO_WINDOW_STREAM_H
 
 CGAL_BEGIN_NAMESPACE
 

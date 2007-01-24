@@ -103,9 +103,7 @@ void test_HalfedgeDS_default() {
     CGAL_assertion(!(i == hds.halfedges_end()));
 }
 
-#ifndef CGAL_HALFEDGEDS_VECTOR_H
 #include <CGAL/HalfedgeDS_vector.h>
-#endif
 
 void test_HalfedgeDS_vector() {
     // Instantiation of the halfedge data structure using vector

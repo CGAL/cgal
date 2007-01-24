@@ -22,12 +22,8 @@
 
 // includes
 
-#ifndef CGAL_BASIC_CONSTRUCTIONS_2_H
 #  include <CGAL/basic_constructions_2.h>
-#endif
-#ifndef CGAL_SQUARED_DISTANCE_2_H
 #  include <CGAL/squared_distance_2.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 

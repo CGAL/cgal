@@ -25,15 +25,9 @@
 #define CGAL_OPTIMISATION_D_TRAITS_2_H
 
 // includes
-#ifndef CGAL_OPTIMISATION_ACCESS_DIMENSION_2_H
 #  include <CGAL/Optimisation/Access_dimension_2.h>
-#endif
-#ifndef CGAL_OPTIMISATION_ACCESS_COORDINATES_BEGIN_2_H
 #  include <CGAL/Optimisation/Access_coordinates_begin_2.h>
-#endif
-#ifndef CGAL_OPTIMISATION_CONSTRUCT_POINT_2_H
 #  include <CGAL/Optimisation/Construct_point_2.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 

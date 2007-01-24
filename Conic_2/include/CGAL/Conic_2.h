@@ -25,9 +25,7 @@
 #ifndef CGAL_CONIC_2_H
 #define CGAL_CONIC_2_H
 
-#ifndef CGAL_IO_FORWARD_DECL_WINDOW_STREAM_H
 #include <CGAL/IO/forward_decl_window_stream.h>
-#endif
 
 #include <CGAL/Conic_misc.h>
 

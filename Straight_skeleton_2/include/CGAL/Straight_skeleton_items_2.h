@@ -18,17 +18,11 @@
 #ifndef CGAL_STRAIGHT_SKELETON_ITEMS_2_H
 #define CGAL_STRAIGHT_SKELETON_ITEMS_2_H 1
 
-#ifndef CGAL_STRAIGHT_SKELETON_VERTEX_BASE_2_H
 #include <CGAL/Straight_skeleton_vertex_base_2.h>
-#endif
 
-#ifndef CGAL_STRAIGHT_SKELETON_HALFEDGE_BASE_2_H
 #include <CGAL/Straight_skeleton_halfedge_base_2.h>
-#endif
 
-#ifndef CGAL_HALFEDGEDS_FACE_BASE_H
 #include <CGAL/HalfedgeDS_face_base.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 

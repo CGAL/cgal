@@ -21,9 +21,7 @@
 #ifndef CGAL_TREE_ASSERTIONS_H
 #define CGAL_TREE_ASSERTIONS_H
 
-#ifndef CGAL_ASSERTIONS_H
 #  include <CGAL/assertions.h>
-#endif
 
 
 // macro definitions

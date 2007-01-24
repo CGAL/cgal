@@ -29,9 +29,7 @@
 #define CGAL_TEST_MIN_SPHERE_D_H
 
 // includes
-#ifndef CGAL_IO_VERBOSE_OSTREAM_H
 #  include <CGAL/IO/Verbose_ostream.h>
-#endif
 #include <cassert>
 
 CGAL_BEGIN_NAMESPACE

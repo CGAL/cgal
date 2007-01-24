@@ -23,15 +23,9 @@
 
 #ifndef CGAL_HALFEDGEDS_MIN_ITEMS_H
 #define CGAL_HALFEDGEDS_MIN_ITEMS_H 1
-#ifndef CGAL_HALFEDGEDS_VERTEX_MIN_BASE_H
 #include <CGAL/HalfedgeDS_vertex_min_base.h>
-#endif
-#ifndef CGAL_HALFEDGEDS_HALFEDGE_MIN_BASE_H
 #include <CGAL/HalfedgeDS_halfedge_min_base.h>
-#endif
-#ifndef CGAL_HALFEDGEDS_FACE_MIN_BASE_H
 #include <CGAL/HalfedgeDS_face_min_base.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 

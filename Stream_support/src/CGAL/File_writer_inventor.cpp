@@ -21,9 +21,7 @@
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
-#ifndef CGAL_IO_FILE_WRITER_INVENTOR_H
 #include <CGAL/IO/File_writer_inventor.h>
-#endif // CGAL_IO_FILE_WRITER_INVENTOR_H
 
 CGAL_BEGIN_NAMESPACE
 

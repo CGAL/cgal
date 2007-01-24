@@ -18,13 +18,9 @@
 #ifndef CGAL_STRAIGHT_SKELETON_VERTEX_BASE_2_H
 #define CGAL_STRAIGHT_SKELETON_VERTEX_BASE_2_H 1
 
-#ifndef CGAL_STRAIGHT_SKELETON_HALFEDGE_BASE_2_H
 #include <CGAL/Straight_skeleton_halfedge_base_2.h>
-#endif
 
-#ifndef CGAL_CIRCULATOR_H
 #include <CGAL/circulator.h>
-#endif
 
 #include <boost/iterator/iterator_facade.hpp>
 

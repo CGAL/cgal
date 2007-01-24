@@ -25,12 +25,8 @@
 // ============================================================================
 
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif // CGAL_BASIC_H
-#ifndef CGAL_MODIFIER_BASE_H
 #include <CGAL/Modifier_base.h>
-#endif // CGAL_MODIFIER_BASE_H
 
 using CGAL::Modifier_base;
 

@@ -24,9 +24,7 @@
 
 #ifndef CGAL_IO_FILE_HEADER_EXTENDED_OFF_H
 #define CGAL_IO_FILE_HEADER_EXTENDED_OFF_H 1
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif
 
 #include <iostream>
 #include <string>

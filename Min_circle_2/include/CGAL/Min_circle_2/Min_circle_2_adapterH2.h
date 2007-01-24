@@ -21,9 +21,7 @@
 #define CGAL_MIN_CIRCLE_2_ADAPTERH2_H
 
 // includes
-#ifndef CGAL_OPTIMISATION_BASIC_H
 #  include <CGAL/Optimisation/basic.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 

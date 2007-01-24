@@ -20,9 +20,7 @@
 #ifndef CGAL_VISIBILITY_COMPLEX_ITERATORS_H
 #define CGAL_VISIBILITY_COMPLEX_ITERATORS_H
 
-#ifndef CGAL_BASIC_H
 #include <CGAL/basic.h>
-#endif
 
 #include <list>
 

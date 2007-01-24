@@ -22,13 +22,9 @@
 
 // includes
 // --------
-#ifndef CGAL_OPTIMISATION_BASIC_H
 #  include <CGAL/Optimisation/basic.h>
-#endif
 
-#ifndef CGAL_FUNCTION_OBJECTS_H
 #  include <CGAL/function_objects.h>
-#endif
 
 #include <CGAL/QP_solver.h>
 #include <CGAL/QP_solver/QP_partial_filtered_pricing.h>

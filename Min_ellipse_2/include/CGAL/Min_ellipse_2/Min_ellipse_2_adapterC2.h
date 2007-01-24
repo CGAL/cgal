@@ -21,12 +21,8 @@
 #define CGAL_MIN_ELLIPSE_2_ADAPTERC2_H
 
 // includes
-#ifndef CGAL_CONICCPA2_H
 #  include <CGAL/ConicCPA2.h>
-#endif
-#ifndef CGAL_OPTIMISATION_ASSERTIONS_H
 #  include <CGAL/Optimisation/assertions.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 

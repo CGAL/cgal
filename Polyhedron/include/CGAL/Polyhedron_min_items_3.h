@@ -19,15 +19,9 @@
 
 #ifndef CGAL_POLYHEDRON_MIN_ITEMS_3_H
 #define CGAL_POLYHEDRON_MIN_ITEMS_3_H 1
-#ifndef CGAL_HALFEDGEDS_VERTEX_BASE_H
 #include <CGAL/HalfedgeDS_vertex_base.h>
-#endif
-#ifndef CGAL_HALFEDGEDS_HALFEDGE_BASE_H
 #include <CGAL/HalfedgeDS_halfedge_base.h>
-#endif
-#ifndef CGAL_HALFEDGEDS_FACE_BASE_H
 #include <CGAL/HalfedgeDS_face_base.h>
-#endif
 
 CGAL_BEGIN_NAMESPACE
 

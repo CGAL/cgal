@@ -28,9 +28,7 @@
 #define CGAL_TEST_POLYTOPE_DISTANCE_D_H
 
 // includes
-#ifndef CGAL_IO_VERBOSE_OSTREAM_H
 #  include <CGAL/IO/Verbose_ostream.h>
-#endif
 #include <cassert>
 
 CGAL_BEGIN_NAMESPACE
