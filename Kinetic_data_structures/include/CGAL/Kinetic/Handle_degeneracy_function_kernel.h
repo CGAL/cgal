@@ -41,7 +41,7 @@ class HDRS{
     HDRS(const Function &uf, const Root& lb,
 	 const Root& ub, const Traits_t& k): solver_(k.root_stack_object(uf, lb, ub)) {
       CGAL_KINETIC_LOG(LOG_LOTS, "Function= " << uf << std::endl);
-      CGAL_expensive_precondition(solver_.empty() || solver_.top() > lb);
+      CGAL_expensive_precondition(solver_.empty() || solver_.top() >= lb);
   
 #ifndef NDEBUG
       if (!SLOPPY && k.sign_at_object()(uf, lb) == CGAL::NEGATIVE) {

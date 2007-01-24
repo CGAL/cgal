@@ -53,7 +53,7 @@ public:
   }
 
   void process() {
-    P::kdel()->pop(vh_);
+    P::kdel()->pop(vh_, P::root_stack());
   }
 
   VH vertex() const
@@ -81,8 +81,8 @@ protected:
 };
 
 /*template <class K, class S, class VH>
-std::ostream& operator<<(std::ostream &out, const Regular_3_pop_event<K,S,VH> &e)
-{
+  std::ostream& operator<<(std::ostream &out, const Regular_3_pop_event<K,S,VH> &e)
+  {
   e.write(out);
   return out;
   }*/
@@ -139,7 +139,7 @@ public:
   }
 
   void process() {
-    P::kdel()->move(P::k_, P::cell_, dir_);
+    P::kdel()->move(P::k_, P::cell_, dir_, P::root_stack());
   }
 
   std::ostream& write(std::ostream &out) const
@@ -162,8 +162,8 @@ protected:
 };
 
 /*template <class K,  class S, class KK, class C>
-std::ostream& operator<<(std::ostream &out, const Regular_3_move_event<K,S,KK,C> &e)
-{
+  std::ostream& operator<<(std::ostream &out, const Regular_3_move_event<K,S,KK,C> &e)
+  {
   e.write(out);
   return out;
   }*/
@@ -182,7 +182,7 @@ public:
   }
 
   void process() {
-    P::kdel()->push(P::k_, P::cell_);
+    P::kdel()->push(P::k_, P::cell_, P::root_stack());
   }
 
   std::ostream& write(std::ostream &out) const
@@ -201,8 +201,8 @@ public:
 };
 
 /*template <class K, class S, class KK, class C>
-std::ostream& operator<<(std::ostream &out, const Regular_3_push_event<K,S,KK,C> &e)
-{
+  std::ostream& operator<<(std::ostream &out, const Regular_3_push_event<K,S,KK,C> &e)
+  {
   e.write(out);
   return out;
   }*/
@@ -345,8 +345,8 @@ protected:
 
   typedef typename CGAL::Kinetic::Simulator_kds_listener<typename TraitsT::Simulator::Listener, This> Simulator_listener;
   friend  class CGAL::Kinetic::Simulator_kds_listener<typename TraitsT::Simulator::Listener, This>;
-typedef typename CGAL::Kinetic::Active_objects_listener_helper<typename TraitsT::Active_points_3_table::Listener, This> Moving_point_table_listener;// here
-friend class CGAL::Kinetic::Active_objects_listener_helper<typename TraitsT::Active_points_3_table::Listener, This>; // here
+  typedef typename CGAL::Kinetic::Active_objects_listener_helper<typename TraitsT::Active_points_3_table::Listener, This> Moving_point_table_listener;// here
+  friend class CGAL::Kinetic::Active_objects_listener_helper<typename TraitsT::Active_points_3_table::Listener, This>; // here
 
 public:
   typedef VisitorT Visitor;
@@ -514,7 +514,7 @@ public:
     out << std::endl;
   }
 
-  void push(Point_key k, typename Triangulation::Cell_handle h) {
+  void push(Point_key k, typename Triangulation::Cell_handle h, const Root_stack &rs) {
     kdel_.visitor().pre_push(k,h);
     CGAL_KINETIC_LOG(LOG_LOTS, "Pushing " << k << " into cell ");
     CGAL_KINETIC_LOG_WRITE(LOG_LOTS, internal::write_cell(h, LOG_STREAM));
@@ -541,13 +541,13 @@ public:
 	handle_redundant(redundant[i], ic.begin(), ic.end());
       }
     }
-    vh->info()= make_certificate(vh);
+    vh->info()= make_certificate(vh, rs);
 
     on_geometry_changed();
     kdel_.visitor().post_push(vh);
   }
 
-  void pop(typename Triangulation::Vertex_handle vh) {
+  void pop(typename Triangulation::Vertex_handle vh, const Root_stack &rs) {
     kdel_.visitor().pre_pop(vh);
     CGAL_KINETIC_LOG(LOG_LOTS, "Popping " << vh->point() << std::endl);
     std::vector<Point_key> redundant;
@@ -569,17 +569,17 @@ public:
 	redundant_points_[k]=kdel_.simulator()->null_event();
       }
     }
-    bool success=handle_redundant(k, h, true);
-    if (!success) {
+    handle_redundant(k, h, rs);
+    /*if (!success) {
       std::cerr << "dropped a vertex when popped.\n";
       redundant_points_[k]=kdel_.simulator()->null_event();
-    }
-    CGAL_postcondition(success);
+      }*/
+    //CGAL_postcondition(success);
     on_geometry_changed();
     kdel_.visitor().post_pop(k,h);
   }
 
-  void move(Point_key k, typename Triangulation::Cell_handle h, int dir) {
+  void move(Point_key k, typename Triangulation::Cell_handle h, int dir, const Root_stack &rs) {
     kdel_.visitor().pre_move(k,h);
     CGAL_KINETIC_LOG(LOG_LOTS, "Moving " << k << " from ");
     CGAL_KINETIC_LOG_WRITE(LOG_LOTS, internal::write_cell(h, LOG_STREAM));
@@ -601,7 +601,7 @@ public:
       }
     }
     if (hinf) {
-      push(k, neighbor);
+      push(k, neighbor, rs);
     }
     else {
       bool success= handle_redundant(k, neighbor, true);
@@ -866,6 +866,16 @@ protected:
     on_geometry_changed();
   }
 
+  void handle_redundant(Point_key k, typename Triangulation::Cell_handle h, Root_stack rs) {
+    CGAL_KINETIC_LOG(LOG_LOTS, "Handle redundant " << k << " ") ;
+    CGAL_KINETIC_LOG_WRITE(LOG_LOTS, internal::write_cell( h, LOG_STREAM));
+    CGAL_KINETIC_LOG(LOG_LOTS, std::endl);
+
+    redundant_points_[k]=make_certificate(k, h, rs);
+    redundant_cells_.insert(typename RCMap::value_type(h, k));
+    //return true;
+  }
+
   bool handle_redundant(Point_key k, typename Triangulation::Cell_handle h, bool must_handle=false) {
     CGAL_KINETIC_LOG(LOG_LOTS, "Handle redundant " << k << " ") ;
     CGAL_KINETIC_LOG_WRITE(LOG_LOTS, internal::write_cell( h, LOG_STREAM));
@@ -1041,6 +1051,9 @@ protected:
 				  point(vh->point()),
 				  kdel_.simulator()->current_time(),
 				  kdel_.simulator()->end_time());
+    return make_certificate(vh,s);
+  }
+  Event_key make_certificate(typename Triangulation::Vertex_handle vh, Root_stack s) {
     //if (!s.empty()) {
     if (s.will_fail()) {
       Time t= s.failure_time();
@@ -1066,6 +1079,10 @@ protected:
 				  point(k),
 				  kdel_.simulator()->current_time(),
 				  kdel_.simulator()->end_time());
+    return make_certificate(k, h, ps);
+    
+  }
+  Event_key make_certificate(Point_key k, typename Triangulation::Cell_handle h, Root_stack ps) {
     Time pst;
     /*if (!ps.empty()) pst = ps.top();
       else pst= std::numeric_limits<Time>::infinity();*/
@@ -1074,7 +1091,6 @@ protected:
     } else {
       pst= kdel_.simulator()->end_time();
     }
-
     int first=0;
     for (unsigned int i=0; i< 4; ++i) {
       typename Triangulation::Facet f(h, i);
