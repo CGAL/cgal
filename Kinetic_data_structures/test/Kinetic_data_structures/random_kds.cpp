@@ -24,7 +24,7 @@ int main(int, char *[]) {
   CGAL::Random r(time(NULL));
 
   int which = r.get_int(0,4);
-  int nump= r.get_int(10,20);
+  double nump= r.get_int(25,50);
   double end_time= r.get_double(10,100);
   if (which ==0) {
     std::cout << "Checking Delaunay_2" << std::endl;
@@ -34,7 +34,7 @@ int main(int, char *[]) {
     typedef Traits::Kinetic_kernel::Point_2 Point;
     Traits tr(0, end_time);
     DS ds(tr);
-    for (int i=0; i< nump; ++i){
+    for (int i=0; i< nump/1.5; ++i){
       tr.active_points_2_table_handle()->insert(Point(rp<F>(r, r.get_int(0,5)),
 						      rp<F>(r, r.get_int(0,5))));
     }
@@ -73,7 +73,7 @@ int main(int, char *[]) {
     typedef Traits::Kinetic_kernel::Point_3 Point;
     Traits tr(0, end_time);
     DS ds(tr);
-    for (int i=0; i< nump; ++i){
+    for (int i=0; i< nump/2; ++i){
       tr.active_points_3_table_handle()->insert(Point(rp<F>(r, r.get_int(0,5)),
 						      rp<F>(r, r.get_int(0,5)),
 						      rp<F>(r, r.get_int(0,5))));
@@ -88,7 +88,26 @@ int main(int, char *[]) {
     
   } else {
     std::cout << "Checking regular_3" << std::endl;
-
+    typedef CGAL::Kinetic::Regular_triangulation_exact_simulation_traits Traits;
+    typedef CGAL::Kinetic::Regular_triangulation_3<Traits> DS;
+    typedef Traits::Kinetic_kernel::Motion_function F;
+    typedef Traits::Kinetic_kernel::Point_3 Bare_point;
+    typedef Traits::Kinetic_kernel::Weighted_point_3 Point;
+    Traits tr(0, end_time);
+    DS ds(tr);
+    for (int i=0; i< nump/2.5; ++i){
+      tr.active_points_3_table_handle()->insert(Point(Bare_point(rp<F>(r, r.get_int(0,5)),
+								 rp<F>(r, r.get_int(0,5)),
+								 rp<F>(r, r.get_int(0,5))),
+						      rp<F>(r, r.get_int(0,5))));
+    }
+    std::cout << "Points are:\n";
+    std::cout << *tr.active_points_3_table_handle() << std::endl;
+    ds.set_has_certificates(true);
+    ds.audit();
+    tr.simulator_handle()->set_current_time(tr.simulator_handle()->end_time());
+    ds.audit();
+    std::cout << "Processed " << tr.simulator_handle()->current_event_number() << " events"<<std::endl;
   }
   
   return EXIT_SUCCESS;
