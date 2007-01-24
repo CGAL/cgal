@@ -23,7 +23,7 @@ int main(int, char *[])
   KDel kdel(simtr);
   kdel.triangulation(3).finite_vertices_begin();
   
-  CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
+  CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_NONE);
  
   std::ifstream in("data/Delaunay_triangulation_2.input");
   if (!in) {

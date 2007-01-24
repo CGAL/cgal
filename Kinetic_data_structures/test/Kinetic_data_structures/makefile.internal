@@ -99,7 +99,6 @@ clean: \
 		active_objects_tables.clean\
                    Delaunay_triangulation_2.clean \
                    Delaunay_triangulation_3.clean \
-                   Delaunay_triangulation_3_timing.clean \
                    exact_kds.clean \
                    regular_triangulation_3.clean \
                    numbers.clean \

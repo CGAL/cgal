@@ -46,7 +46,7 @@ public:
     CGAL_Polynomial_assertion(is_null());
   }
 
-  Simple_interval_root(double nt): function_(0) {
+  Simple_interval_root(double nt): function_(0), interval_(nt,nt) {
     if (std::numeric_limits<double>::has_infinity && (nt == std::numeric_limits<double>::infinity()
 						   || -nt == std::numeric_limits<double>::infinity())) {
       if (nt == std::numeric_limits<double>::infinity() ) {
@@ -65,7 +65,7 @@ public:
 
   Simple_interval_root(const Simple_interval_root<Traits> &o):ii_(o.ii_), type_(o.type_), 
 							      function_(o.function_),
-							      kernel_(o.kernel_)
+							      kernel_(o.kernel_), interval_(o.interval_)
 #ifndef NDEBUG
 							     , approximation_(o.approximation_)
 #endif
@@ -79,7 +79,7 @@ public:
     };*/
 
   //! represent a rational root
-  Simple_interval_root(const NT &nt): ii_(std::make_pair(nt,nt)), function_(0) {
+  Simple_interval_root(const NT &nt): ii_(std::make_pair(nt,nt)), function_(0), interval_(0,-1) {
     set_type(0);
     audit();
     compute_approximation();
@@ -91,7 +91,7 @@ public:
 		       const Polynomial &sa,
 		       Sign slb, Sign,
 		       Traits k): ii_(ii), function_(sa),
-				  kernel_(k) {
+				  kernel_(k), interval_(0,-1){
     //CGAL_Polynomial_precondition(!ii_.is_singular());
     //Sign slb= sign_(ii_.lower_bound());
     if (slb == CGAL::NEGATIVE) {
@@ -232,12 +232,15 @@ public:
   }
  std::pair<double, double> compute_interval(double accuracy=.0001) const
   {
-    std::cout << "Computing interval of ";
-    write_raw(std::cout) << std::endl;
-    std::pair<double,double> r= internal_compute_interval(accuracy);
-    std::cout << "Got " << CGAL::to_interval(ii_.first).first << "..." 
-	      << CGAL::to_interval(ii_.second).second << std::endl;
-    return std::make_pair(CGAL::to_interval(ii_.first).first, CGAL::to_interval(ii_.second).second);
+    if (interval_.first > interval_.second) {
+      //std::cout << "Computing interval for ";
+      //write_raw(std::cout) << std::endl;
+      std::pair<double,double> r= internal_compute_interval(accuracy);
+      /*std::cout << "Got " << CGAL::to_interval(ii_.first).first << "..." 
+	<< CGAL::to_interval(ii_.second).second << std::endl;*/
+      interval_=std::make_pair(CGAL::to_interval(ii_.first).first, CGAL::to_interval(ii_.second).second);
+    } 
+    return interval_;
   }
 
   double compute_double(double accuracy) const
@@ -261,8 +264,8 @@ public:
     CGAL_precondition(ii_.first != ii_.second || ii_.second != o.ii_.first || o.ii_.first != o.ii_.second);
     compare(o);
     CGAL_precondition(ii_.first != ii_.second || ii_.second != o.ii_.first || o.ii_.first != o.ii_.second);
-    write_internal(std::cout) << std::endl;
-    write_internal(std::cout) << std::endl;
+    //write_internal(std::cout) << std::endl;
+    //write_internal(std::cout) << std::endl;
     if (is_neg_inf()) return o.ii_.first -1;
         
     // hopefully disjoint
@@ -277,9 +280,9 @@ public:
 	ret -= step;
       }
       step= step/2.0;
-      std::cout << ret << "  (" << step << ")" 
+      /*std::cout << ret << "  (" << step << ")" 
 		<< o.ii_.first - ii_.second 
-		<< " " << o.ii_.second- ii_.first << std::endl;
+		<< " " << o.ii_.second- ii_.first << std::endl;*/
     } while (This(ret) >= o || This(ret) <= *this);
     return ret;
   }
@@ -390,19 +393,19 @@ protected:
     }
     plist.push_back(ii_.second);
 
-    for (unsigned int i=0; i< plist.size(); ++i) {
+    /*for (unsigned int i=0; i< plist.size(); ++i) {
       std::cout << plist[i] << "   ";
     }
-    std::cout << std::endl;
+    std::cout << std::endl;*/
 
     if (plist.size()==2) return;
     
     CGAL::Sign ps= lower_sign();
-    std::cout << "ps is " << ps << std::endl;
+    //std::cout << "ps is " << ps << std::endl;
     CGAL_assertion(ps != CGAL::ZERO);
     for (unsigned int i=1; i< plist.size()-1; ++i) {
       CGAL::Sign sn= sign_at(plist[i]);
-      std::cout << "sn is " << ps << std::endl;
+      //std::cout << "sn is " << ps << std::endl;
       if (sn==0) {
 	ii_= std::make_pair(plist[i], plist[i]);
 	audit();
@@ -576,6 +579,7 @@ protected:
   Type type_;
   Polynomial function_;
   Traits kernel_;
+  mutable std::pair<double,double> interval_;
 #ifndef NDEBUG
   double approximation_;
 #endif

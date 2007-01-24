@@ -30,19 +30,4 @@ September 2006 Daniel Russel
 - computation of the sign after the current time is now exposed through the kinetic predicates
 - traits classes are now dimension independent
 
-Future Daniel Russel
-- when using numeric solvers, evaluate the static predicates first before solving?
-- make adding points to table optional, they just control notification. Keys are the same as points (so points are ref counted pointers. 
-- move table to a list and make key the same as object (i.e. the key is the Point_2) this will help filtering and things and mean the table can be ignored if desired. Make the tables simply an event manager rather than owning the points (so points have internal pointer which can be used in a map and copied cheaply). Need easy mapping of point to data--property maps?
-- have Sturm first try to prove there are no roots-- say Descartes once or interval
-- link kinetic and instantnaeous predicates-how?
-- make sorting general- solve linking first
-- times can generate certificate func and solve. Queue checks if they are dirty (a point changed--when check? that is hard--maybe collapse to front of interval if need exact and is dirty) and reinserts them if they are. Points are ref counted pointers. With interval rep and way to generate exact. Then just insert notifications. Dirty is keept by generation count per point. Time is k ints, k points, inexact func, interval--broken-what if time moves up? Need linear scans.
-
-known bugs:
-- If, on insertion into a Del_3 the current time must be advanced past an event which invalidates the cell handle that is used to insert the vertex, then there is a problem. To fix this check all the paths for insert and protect this method behind ones which set the time before locate. Make that IK and S times are equal a precondition. 
-- Two list queue should make sure it steps off the dividing element. 
-
-
-make core_traits and test them and regular inexact
 
