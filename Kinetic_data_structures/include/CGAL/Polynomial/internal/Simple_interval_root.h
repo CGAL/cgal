@@ -188,8 +188,11 @@ public:
   This operator-() const
   {
     CGAL_Polynomial_expensive_precondition(!is_null());
-    if (is_pos_inf()) return This(Type(INF));
-    else if (is_neg_inf()) return infinity();
+    if (is_pos_inf()) {
+      This ret;
+      ret.type_=INF;
+      return ret;
+    } else if (is_neg_inf()) return infinity();
     else {
       This copy= *this;
       copy.ii_= std::make_pair(-ii_.second, -ii_.first);
