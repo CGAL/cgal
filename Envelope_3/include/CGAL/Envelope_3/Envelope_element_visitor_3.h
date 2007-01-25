@@ -298,8 +298,9 @@ public:
     {
       Halfedge_handle new_he = (*new_edge_it).first;
       Halfedge_handle new_he_twin = new_he->twin();
+      #ifdef CGAL_ENVELOPE_SAVE_COMPARISONS
       Multiplicity itype = (*new_edge_it).second;
-
+      #endif
       // set sources of the new edge
       new_he->set_aux_source(0, face->get_aux_source(0));
       new_he->set_aux_source(1, face->get_aux_source(1));
