@@ -406,7 +406,7 @@ protected:
     }
 
   }
-
+public:
   void audit() const
   {
     CGAL_KINETIC_LOG(LOG_LOTS, "Verifying regular.\n");
@@ -490,7 +490,7 @@ protected:
       }
     }
   }
-public:
+
   void write(std::ostream &out) const
   {
     if (triangulation().dimension() != 3) return;

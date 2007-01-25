@@ -25,7 +25,7 @@
 #include <CGAL/Polynomial/CORE_kernel.h>
 #include <CGAL/Kinetic/Active_objects_vector.h>
 #include <CGAL/Kinetic/Instantaneous_kernel.h>
-#include <CGAL/Kinetic/Cartesian_kinetic_kernel.h>
+#include <CGAL/Kinetic/Cartesian.h>
 #include <CGAL/Kinetic/Handle_degeneracy_function_kernel.h>
 #include <CGAL/Kinetic/Default_simulator.h>
 #include <CGAL/Kinetic/Two_list_pointer_event_queue.h>
@@ -44,7 +44,7 @@ struct CORE_Expr_exact_simulation_traits {
   typedef CGAL::Kinetic::Handle_degeneracy_function_kernel<Function_kernel, false>  Simulator_function_kernel_base;
   struct Simulator_function_kernel: public Simulator_function_kernel_base{};
 
-  typedef Cartesian_kinetic_kernel<Simulator_function_kernel> Kinetic_kernel;
+  typedef Cartesian<Simulator_function_kernel> Kinetic_kernel;
   typedef Two_list_pointer_event_queue<Function_kernel> Event_queue;
   typedef Default_simulator<Simulator_function_kernel, Event_queue > Simulator;
 
