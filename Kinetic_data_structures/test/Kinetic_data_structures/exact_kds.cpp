@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
     degree= std::atoi(argv[2]);
   }
   std::cout << "Using " << num_points  << " degree " << degree << " points.\n";
-  CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_SOME);
+  CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_NONE);
   bool error=false;
   {
     
