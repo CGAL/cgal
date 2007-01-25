@@ -325,7 +325,7 @@ public:
   */
   template <class E>
   Event_key new_event(const Time &t, const E& cert) {
-    CGAL_precondition(t != Time());
+    //CGAL_precondition(t != Time());
     //CGAL_exactness_precondition(!(t < current_time()));
     //if (cert.time() == Time::infinity()) return final_event();
     //CGAL_assertion(cert.time() < end_time());
