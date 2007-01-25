@@ -70,8 +70,8 @@ Delaunay_triangulation_2$(EXE_EXT): Delaunay_triangulation_2$(OBJ_EXT)
 triangulation_2$(EXE_EXT): triangulation_2$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)triangulation_2 triangulation_2$(OBJ_EXT) $(QT_LDFLAGS) 
 
-update_Delaunay_triangulation_2$(EXE_EXT): update_Delaunay_triangulation_2$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)update_Delaunay_triangulation_2 update_Delaunay_triangulation_2$(OBJ_EXT) $(QT_LDFLAGS) 
+#update_Delaunay_triangulation_2$(EXE_EXT): update_Delaunay_triangulation_2$(OBJ_EXT)
+#	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)update_Delaunay_triangulation_2 update_Delaunay_triangulation_2$(OBJ_EXT) $(QT_LDFLAGS) 
 
 
 
@@ -105,7 +105,6 @@ clean: \
                   gui_3.clean \
                    generate_data.clean \
                    Delaunay_triangulation_2.clean \
-                   update_Delaunay_triangulation_2.clean \
                    Delaunay_triangulation_3.clean \
                    Delaunay_triangulation_stable_subset_2.clean \
 		   SoQt_examiner_viewer.clean\
