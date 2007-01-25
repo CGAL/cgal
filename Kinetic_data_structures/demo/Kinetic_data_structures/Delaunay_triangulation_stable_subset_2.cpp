@@ -3,8 +3,8 @@
 #include <CGAL/Kinetic/Delaunay_triangulation_2.h>
 #include <CGAL/Kinetic/Insert_event.h>
 #include <CGAL/Random.h>
-#include <CGAL/Kinetic/Exact_simulation_traits_2.h>
-#include <CGAL/Kinetic/Inexact_simulation_traits_2.h>
+#include <CGAL/Kinetic/Exact_simulation_traits.h>
+#include <CGAL/Kinetic/Inexact_simulation_traits.h>
 #include "Qt_Delaunay_stable_subset_2.h"
 #include <CGAL/Kinetic/IO/Qt_widget_2.h>
 #include <CGAL/Kinetic/IO/Qt_moving_points_2.h>
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
   }
 #endif
 
-  typedef CGAL::Kinetic::Inexact_simulation_traits_2 Traits;
+  typedef CGAL::Kinetic::Inexact_simulation_traits Traits;
   typedef CGAL::Triangulation_data_structure_2<
   CGAL::Kinetic::Delaunay_triangulation_vertex_base_2<Traits::Instantaneous_kernel>,
     CGAL::Kinetic::Delaunay_triangulation_face_base_2<Traits> > TDS;
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
   typedef CGAL::Kinetic::Qt_moving_points_2<Traits, Qt_gui> Qt_mps;
   typedef CGAL::Kinetic::Qt_Delaunay_stable_subset_2<KDel, Qt_gui, Qt_mps> Qt_triangulation;
 
-  Traits tr;
+  Traits tr(0,100000.0);
 
   KDel::Handle kdel= new KDel(tr);
   EB::Handle eb= new EB(tr,-10,10,-10,10);
