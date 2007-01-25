@@ -388,9 +388,9 @@ public:
     out << left_object_->object() << "X" << Sort::next(left_object_)->object();
   }
   void audit(typename Sort::Event_key tk) const {
-    std::cout << "Auditing event ";
-    write(std::cout);
-    std::cout << std::endl;
+    //std::cout << "Auditing event ";
+    //write(std::cout);
+    //std::cout << std::endl;
     CGAL_assertion(left_object_->event() == tk);
   }
   Id left_object_; Solver s_;
