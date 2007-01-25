@@ -55,16 +55,16 @@ bool sort_test(Traits &tr, double max_events=std::numeric_limits<double>::infini
   ++c;
   typename Traits::Simulator::NT ratt;
   //if (tr.simulator_handle()->next_time_representable_as_nt()) {
-    ratt=tr.simulator_handle()->next_time_representable_as_nt();
-    /*} else {
+  ratt=tr.simulator_handle()->next_time_representable_as_nt();
+  /*} else {
     std::cerr << etag << "Out of events, but the time is not rational." << std::endl;
     std::cerr << "Current time is " << tr.simulator_handle()->current_time()
-	      << " the end time is " << tr.simulator_handle()->end_time() << std::endl;
+    << " the end time is " << tr.simulator_handle()->end_time() << std::endl;
     CGAL::Kinetic::internal::fail__|= fail;
     ratt= CGAL::to_interval(tr.simulator_handle()->end_time()).second;
     error=eret;
     }*/
-
+  
   std::cout << "End time is " << tr.simulator_handle()->end_time() << std::endl;
 
   while (c != sort.end()) {

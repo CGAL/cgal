@@ -246,7 +246,20 @@ public:
     }
     else {
       //typename Function_kernel::Rational_between_roots bet= kernel_.rational_between_roots_object();
-      return mp_(current_time(), next_event_time());
+      if (current_time() == end_time()) {
+	// really, I do want last_event, but I removed it :-(
+	std::pair<double,double> ti= CGAL::to_interval(end_time());
+	if (ti.first == ti.second) {
+	  return NT(ti.first);
+	} else {
+	  std::cerr << "You cannot currently call this function at the end of time if the end time is not"
+	    "exactly representable as a double. Sorry. This is fixable, so complain to me--Daniel" << std::endl;
+	  CGAL_assertion(0);
+	  return NT(ti.first);
+	}
+      } else {
+	return mp_(current_time(), next_event_time());
+      }
     }
   }
 
