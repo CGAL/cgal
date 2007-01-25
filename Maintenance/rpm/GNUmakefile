@@ -99,8 +99,6 @@ CGAL_VERSION:=$(shell rpm --specfile SPECS/CGAL.spec -q --qf '%{version}\n' | he
 
 RPM_OPTIONS += --define "cgal_version $(CGAL_VERSION)"
 
-CGAL_INTERNAL_RELEASE:=
-
 ifdef CGAL_INTERNAL_RELEASE
 RPM_OPTIONS += --define "internal_release $(CGAL_INTERNAL_RELEASE)"
 endif
