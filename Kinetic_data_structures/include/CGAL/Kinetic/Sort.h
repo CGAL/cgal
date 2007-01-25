@@ -97,6 +97,7 @@ template <class Traits, class Visitor=Sort_visitor_base> class Sort:
     }*/
   
   typedef Swap_event<This,iterator, typename KLess::result_type> Event;
+  friend class Swap_event<This,iterator, typename KLess::result_type>;
   // Redirects the Simulator notifications to function calls
   typedef typename CGAL::Kinetic::
   Simulator_kds_listener<typename Traits::Simulator::Listener,
@@ -171,7 +172,7 @@ public:
       simulator_->delete_event(it->event());
       it->set_event(Event_key());
     }
-    if (next(it)== sorted_.end()) return;
+    if (next(it) == sorted_.end()) return;
     //Less less=kk_.less_x_1_object();
     typename KLess::result_type s
       = less_(aot_->at(it->object()), aot_->at(next(it)->object()), simulator_->current_time(),
@@ -198,15 +199,17 @@ public:
     //events_.erase(*it);
     it->set_event(Event_key());
     iterator n= next(it);
-    if (n!= sorted_.end()) simulator_->delete_event(n->event());
-    next(it)->set_event(Event_key());
+    if (n->event() != Event_key()) {
+      simulator_->delete_event(n->event());
+      n->set_event(Event_key());
+    }
 
     std::swap(*it, *next(it));
     if (next(it) != sorted_.end()) {
       rebuild_certificate(next(it));
       //v_.create_edge(next(it)), next(next(it));
     }
-    if (!s.will_fail()) {
+    if (s.will_fail()) {
       Time t= s.failure_time(); s.pop_failure_time();
       it->set_event(simulator_->new_event(t, Event(it, this,s)));
     } else {
@@ -231,8 +234,17 @@ public:
     if (sorted_.size() <2) return;
 
     ik_.set_time(simulator_->audit_time());
-    //typename Instantaneous_kernel::Less_x_1 less= ik_.less_x_1_object();
+    write(std::cout);
+    std::cout << std::endl;
+
     
+    //typename Instantaneous_kernel::Less_x_1 less= ik_.less_x_1_object();
+    for (typename std::list<OD>::const_iterator it
+	   = sorted_.begin(); it->object() != sorted_.back().object(); ++it) {
+      CGAL_assertion(it->event() != Event_key());
+    }
+    CGAL_assertion(sorted_.back().event()==Event_key());
+
     for (typename std::list<OD>::const_iterator it
 	   = sorted_.begin(); it->object() != sorted_.back().object(); ++it) {
 #ifdef CGAL_KINETIC_CHECK_EXACTNESS
@@ -320,8 +332,8 @@ public:
 
   void write(std::ostream &out) const {
     for (typename std::list<OD>::const_iterator it
-	   = sorted_.begin(); it->object() != sorted_.back().object(); ++it) {
-      out << it->object() << " ";
+	   = sorted_.begin(); it != sorted_.end(); ++it) {
+      out << it->object() << "(" << it->event() << ") ";
     }
     out << std::endl;
   }
@@ -374,6 +386,12 @@ public:
   }
   void write(std::ostream &out) const {
     out << left_object_->object() << "X" << Sort::next(left_object_)->object();
+  }
+  void audit(typename Sort::Event_key tk) const {
+    std::cout << "Auditing event ";
+    write(std::cout);
+    std::cout << std::endl;
+    CGAL_assertion(left_object_->event() == tk);
   }
   Id left_object_; Solver s_;
 };
