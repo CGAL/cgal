@@ -1,16 +1,16 @@
 #include <CGAL/Kinetic/Sort.h>
 #include <CGAL/Kinetic/Insert_event.h>
-#include <CGAL/Kinetic/Exact_simulation_traits_1.h>
+#include <CGAL/Kinetic/Exact_simulation_traits.h>
 
 int main(int, char *[])
 {
 
-    typedef CGAL::Kinetic::Exact_simulation_traits_1 Simulation_traits;
+    typedef CGAL::Kinetic::Exact_simulation_traits Simulation_traits;
     typedef Simulation_traits::Kinetic_kernel::Point_1 Moving_point_1;
     typedef CGAL::Kinetic::Insert_event<Simulation_traits::Active_points_1_table> Insert_event;
     typedef CGAL::Kinetic::Sort<Simulation_traits> KDS;
 
-    Simulation_traits tr;
+    Simulation_traits tr(0, 10000.0);
     Simulation_traits::Simulator::Handle sp= tr.simulator_handle();
 
     KDS kds(tr);
