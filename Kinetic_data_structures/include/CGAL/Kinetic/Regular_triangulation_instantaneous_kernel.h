@@ -61,7 +61,7 @@ public:
   
   void set_time(const Time &t)
   {
-    if (t != time_ || !initialized_) {
+    if (!initialized_ || t != time_ ) {
       time_=t;
       cache_1_.clear();
       cache_2_.clear();
