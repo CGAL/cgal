@@ -269,7 +269,7 @@ public:
 
     This res;
     unsigned int deg = degree();
-    res.coefs_.resize(deg + 1);
+    res.coefs_.resize(deg + 1, NT(0));
     for (unsigned int i = 0; i <= deg; i++) {
       res.coefs_[i] = coefs_[i] * a;
     }
@@ -353,7 +353,15 @@ public:
       NT coef;
       // eat
       in >> coef;
-      if (in.fail()) return;
+      if (in.fail()) {
+	//std::cout << "Read ";
+	//write(std::cout);
+	//std::cout << std::endl;
+	return;
+      }
+      //std::cout << "Read " << coef << std::endl;
+
+      //NT cp1= coef+NT(1);
       unsigned int pow;
       char p= in.peek();
       if (in.peek() =='*') {
@@ -383,11 +391,13 @@ public:
       }
 
       if (coefs_.size() <=pow) {
-	coefs_.resize(pow+1);
+	coefs_.resize(pow+1, NT(0));
       }
 
       if (!pos) coef=-coef;
+      //std::cout << "Read 2 " << coef << "*t^" << pow << std::endl;
       coefs_[pow]=coef;
+      //std::cout << "Read " << coefs_[pow] << std::endl;
 
       char n= in.peek();
       if (n=='+' || n=='-') {
@@ -480,6 +490,7 @@ inline std::istream &operator>>(std::basic_istream<C, Tr> &in,
 				Polynomial_impl<T, NT> &poly)
 {
   poly.read(in);
+  //std::cout << "Read " << poly << std::endl;
   return in;
 }
 

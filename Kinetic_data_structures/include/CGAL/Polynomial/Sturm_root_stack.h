@@ -38,10 +38,10 @@ CGAL_POLYNOMIAL_BEGIN_NAMESPACE
 //================================================================
 //================================================================
 
-#define CGAL_KINETIC_STURM_DEBUG(x) 
-//std::cout << x << std::endl;
-#define CGAL_KINETIC_STURM_DEBUG_WRITE(x) 
-//x << std::endl;
+#define CGAL_KINETIC_STURM_DEBUG(x)
+// std::cout << x << std::endl;
+#define CGAL_KINETIC_STURM_DEBUG_WRITE(x)
+// x << std::endl;
 
 template<class T>
 class Sturm_root_stack
@@ -157,7 +157,7 @@ protected:
     }                                     // end-while
   }                                         // end subdivide method
 
-  void initialize() {
+  void initialize(const Root &start) {
     if ( p_.is_zero() )  { 
       CGAL_KINETIC_STURM_DEBUG("Zero polynomial ");
       return; 
@@ -165,19 +165,18 @@ protected:
     if (p_.degree() == 1) {
       NT v= -p_[0]/p_[1];
       CGAL_assertion(p_(v) == 0);
+      CGAL_KINETIC_STURM_DEBUG("Linear solution of " << v);
       intervals_.push_back(ID(std::make_pair(v,v), 1,0));
+      non_square_free_part_= Polynomial(1);
+      return;
     }
-    if (start_==finish_) {
+    if (start==finish_) {
       CGAL_KINETIC_STURM_DEBUG("Empty interval ");
       return;
     }
 
     Root ninf= -Root::infinity();
-    
-    if ( finish_ == ninf || start_ == Root::infinity() ) {
-      CGAL_KINETIC_STURM_DEBUG("Empty interval " << start_ << " to " << finish_);
-      return;
-    }
+
     Standard_sequence sseq = Standard_sequence(p_);
     CGAL_postcondition(sseq[sseq.size()-1].degree() > -1);
     if (sseq[sseq.size()-1].degree() > 0) {
@@ -196,10 +195,10 @@ protected:
     RBE rbe = traits_.root_bound_object(false);
     
     NT lb, ub;
-    if (start_== -Root::infinity()) {
+    if (start== -Root::infinity()) {
       lb= -rbe(p_);
     } else {
-      lb= start_.isolating_interval().first;
+      lb= start.isolating_interval().first;
       while (sign_at(p_, lb) == CGAL::ZERO) {
 	//std::cout << "Having to step off start from " << ub << " to ";
 	lb -= .000000001;
@@ -242,15 +241,16 @@ public:
 		   const Root& start = -Root::infinity(),
 		   const Root& end = Root::infinity(),
 		   const Traits& tr = Traits())
-    : start_(start), finish_(end), traits_(tr), root_counter_(),
+    : finish_(end), traits_(tr), root_counter_(),
       p_(p), another_even_(false) {
-    initialize();
-    if (!intervals_.empty()) {
-      do_pop(true);
-    } else {
-      current_= Root();
+    CGAL_precondition(start <= end);
+    initialize(start);
+    done_=false;
+    do_pop();
+    while (!empty() && current_ < start) {
+      CGAL_KINETIC_STURM_DEBUG("Dropping root " << current_ << " because of " << start);
+      do_pop();
     }
-    start_=Root();
   }
  
   //=============
@@ -258,36 +258,32 @@ public:
   //=============
 protected:
 
-
-  void do_pop(bool first=false) {
+  void do_pop() {
+    CGAL_precondition(!done_);
     if (intervals_.empty()) {
-      CGAL_precondition(current_ != Root());
-      current_=Root();
+      CGAL_KINETIC_STURM_DEBUG("No more roots" << std::endl);
+      clean();
     } else {
       CGAL_precondition(!intervals_.empty());
-      do {
-	subdivide( );
-	std::pair<NT, NT> iv= intervals_.back().interval_;
-	intervals_.pop_back();
-	CGAL_postcondition(iv.first == iv.second || sign_at(p_, iv.first) != sign_at(p_, iv.second));
-	if (iv.first == iv.second) current_= Root(iv.first);
-	else current_ = Root(iv, p_, sign_at(p_, iv.first), /*sign_at(p_, iv.second)*/ CGAL::ZERO, traits_);
-	if (first && current_ < start_) {
-	  current_= Root();
-	  if (intervals_.empty()) return;
-	  else continue;
-	} else {
-	  break;
-	}
-      } while ( true);
-      CGAL_KINETIC_STURM_DEBUG("Returning " << current_);
+      
+      subdivide( );
+      std::pair<NT, NT> iv= intervals_.back().interval_;
+      intervals_.pop_back();
+      CGAL_postcondition(iv.first == iv.second || sign_at(p_, iv.first) != sign_at(p_, iv.second));
+      if (iv.first == iv.second) current_= Root(iv.first);
+      else current_ = Root(iv, p_, sign_at(p_, iv.first), /*sign_at(p_, iv.second)*/ CGAL::ZERO, traits_);
+      
+      CGAL_KINETIC_STURM_DEBUG("Created root " << current_);
       if (current_>= finish_) {
-	CGAL_KINETIC_STURM_DEBUG("Out of roots");
-	current_= Root();
+	CGAL_KINETIC_STURM_DEBUG("Root past end: " << current_);
+	clean();
       } else if (current_.isolating_interval().first == current_.isolating_interval().second ) {
-	int mult = traits_.multiplicity_object()(non_square_free_part_, current_.isolating_interval().first);
+	int mult = 1+traits_.multiplicity_object()(non_square_free_part_, current_.isolating_interval().first);
 	CGAL_KINETIC_STURM_DEBUG("Rational multiplicity of " << mult);
-	if (mult%2 ==1) another_even_=true; // +1 for the original function
+	if (mult%2 ==0) {
+	  CGAL_KINETIC_STURM_DEBUG("Created even rational root" << current_);
+	  another_even_=true; 
+	} 
       } else {
 	CGAL_postcondition(sign_at(non_square_free_part_, current_.isolating_interval().first)  != CGAL::ZERO);
 	CGAL_postcondition(sign_at(non_square_free_part_, current_.isolating_interval().second)  != CGAL::ZERO);
@@ -301,20 +297,30 @@ protected:
     }
   }
 
+  void clean() {
+    current_=Root();
+    finish_=Root();
+    p_=Polynomial();
+    root_counter_=Root_count();
+    done_=true;
+  }
+
 
 public:
   const Root& top() const
   {
+    CGAL_precondition(!empty());
     return current_;
   }
 
   bool empty() const
   {
-    return current_ == Root();
+    return done_;
   }
 
   void pop()
   {
+    CGAL_precondition(!empty());
     if (another_even_) {
       another_even_=false;
     } else {
@@ -353,13 +359,14 @@ protected:
     return traits_.sign_at_object()(p, nt);
   }
 
-  Root                             start_, finish_;
+  Root                             finish_;
   Traits                           traits_;
   Root_count                       root_counter_;
   Polynomial                       p_;
   Polynomial                       non_square_free_part_;
   Root                             current_;
   bool                             another_even_;
+  bool                             done_;
   std::vector<ID>                  intervals_;
 
 };

@@ -1,3 +1,6 @@
+#define CGAL_CHECK_EXPENSIVE
+#define CGAL_CHECK_EXACTNESS
+
 #include <CGAL/Kinetic/Sort.h>
 #include <CGAL/Kinetic/Insert_event.h>
 #include <CGAL/Kinetic/Exact_simulation_traits.h>
@@ -15,9 +18,11 @@ int main(int, char *[])
 
     KDS kds(tr);
   
+   
+    //CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
     std::ifstream in("data/points_1");
     in >> *tr.active_points_1_table_handle();
-
+    std::cout << *tr.active_points_1_table_handle();
     sp->new_event(Simulation_traits::Simulator::Time(3), 
 		  Insert_event(Moving_point_1(Moving_point_1::Coordinate(0)),
 			       tr.active_points_1_table_handle()));

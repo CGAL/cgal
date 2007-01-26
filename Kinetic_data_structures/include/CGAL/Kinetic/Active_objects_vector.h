@@ -304,9 +304,10 @@ public:
       Data d; 
       iss >> d;
       if (!iss) {
-	std::cerr << "ERROR reading object from line " << buf << std::endl;
+	CGAL_KINETIC_ERROR("ERROR reading object from line " << buf);
 	internal::fail__=true;
       } else {
+	//CGAL_KINETIC_LOG(LOG_LOTS, "Read " << d << std::endl);
 	insert(d);
       }
     } while (true);

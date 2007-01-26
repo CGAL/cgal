@@ -81,6 +81,9 @@ template <class Traits, class Visitor=Sort_visitor_base> class Sort:
     operator Object_key() const {
       return key_;
     }
+    void swap(OD &o) {
+      std::swap(key_, o.key_);
+    }
     Object_key key_;
     Event_key event_;
   };
@@ -142,12 +145,17 @@ public:
      returns the first place where an item can be inserted in a sorted
      list. Called by the MOT_listener.*/
   iterator insert(Object_key k) {
-    //std::cout << "Inserting " << k <<std::endl;
     NT nt= simulator_->next_time_representable_as_nt();
     simulator_->set_current_time(nt);
     ik_.set_time(nt);
     iterator it = std::upper_bound(sorted_.begin(), sorted_.end(),
 				   k, iless_);
+    CGAL_KINETIC_LOG(LOG_LOTS, "\nInserting " << k);
+    if (it != sorted_.end()) {
+      CGAL_KINETIC_LOG(LOG_LOTS, " after " << it->object() <<std::endl;); 
+    } else {
+      CGAL_KINETIC_LOG(LOG_LOTS, " at end" <<std::endl;); 
+    }
     /*if (it != sorted_.end()) {
       v_.remove_edge(prior(it), it);
       }*/
@@ -160,6 +168,8 @@ public:
       rebuild_certificate(prior(prior(it)));
       //v_.create_edge(prior(prior(it)), prior(it));
     }
+    CGAL_KINETIC_LOG_WRITE(LOG_LOTS, write(LOG_STREAM));
+    CGAL_KINETIC_LOG(LOG_LOTS, std::endl);
     return it;
     //write(std::cout);
   }
@@ -167,6 +177,7 @@ public:
   /* Rebuild the certificate for the pair of points *it and *(++it).
      If there is a previous certificate there, deschedule it.*/
   void rebuild_certificate(const iterator it) {
+    CGAL_KINETIC_LOG(LOG_LOTS, "Building certifiate for " << it->object() << " and " << next(it)->object()<< std::endl);
     CGAL_precondition(it != sorted_.end());
     if (it->event() != Event_key()) {
       simulator_->delete_event(it->event());
@@ -195,20 +206,23 @@ public:
      solver is used to compute the next root between the two points
      being swapped. This method is called by an Event object.*/
   void swap(iterator it, typename KLess::result_type &s) {
+    CGAL_KINETIC_LOG(LOG_LOTS, "Swapping " << it->object() << " and " << next(it)->object() << std::endl);
+    CGAL_KINETIC_LOG_WRITE(LOG_LOTS, write(LOG_STREAM));
     v_.before_swap(it, next(it));
-    //events_.erase(*it);
     it->set_event(Event_key());
     iterator n= next(it);
     if (n->event() != Event_key()) {
       simulator_->delete_event(n->event());
       n->set_event(Event_key());
     }
-
-    std::swap(*it, *next(it));
-    if (next(it) != sorted_.end()) {
-      rebuild_certificate(next(it));
-      //v_.create_edge(next(it)), next(next(it));
+    
+    it->swap(*n);
+    
+    CGAL_KINETIC_LOG(LOG_LOTS, "Updating next certificate " << std::endl);
+    if (n != sorted_.end()) {
+      rebuild_certificate(n);
     }
+    CGAL_KINETIC_LOG(LOG_LOTS, "Updating middle certificate " << std::endl);
     if (s.will_fail()) {
       Time t= s.failure_time(); s.pop_failure_time();
       it->set_event(simulator_->new_event(t, Event(it, this,s)));
@@ -216,14 +230,14 @@ public:
       it->set_event(simulator_->null_event());
     }
     
-    v_.after_swap(it, next(it));
+   
+    CGAL_KINETIC_LOG(LOG_LOTS, "Updating prev certificate " << std::endl);
     if (it != sorted_.begin()) {
-      rebuild_certificate(--it);
-      //v_.create_edge(it, next(it));
+      rebuild_certificate(prior(it));
     }
+    v_.after_swap(it, n);
     
-    //write(std::cout);
-    //std::cout << "At time " << simulator_->current_time() << std::endl;
+    CGAL_KINETIC_LOG_WRITE(LOG_LOTS, write(LOG_STREAM));
   }
 
   /* Verify the structure by checking that the current coordinates are
@@ -248,11 +262,13 @@ public:
     for (typename std::list<OD>::const_iterator it
 	   = sorted_.begin(); it->object() != sorted_.back().object(); ++it) {
 #ifdef CGAL_KINETIC_CHECK_EXACTNESS
-      if (!iless_(*it, *next(it))) {
+      if (iless_(*next(it), *it)) {
 	std::cerr << "ERROR: objects " << it->object() << " and "
 		  << next(it)->object() << " are out of order.\n";
-	std::cerr << aot_->at(it->object()) << " and " << aot_->at(*next(it)) << std::endl;
+	std::cerr << "Kinetic are " << aot_->at(it->object()) << " and " << aot_->at(*next(it)) << std::endl;
 	std::cerr << "Time is " <<simulator_->audit_time() << std::endl; 
+	std::cerr << "Static are " << ik_.current_coordinates_object()(it->object()) << " and " 
+		  << ik_.current_coordinates_object()(next(it)->object()) << std::endl;
 	std::cerr << "ERROR: order is ";
 	write(std::cerr);
 	std::cerr << std::endl;
@@ -268,7 +284,7 @@ public:
 	}
       }
 #else
-      if (!iless_(*it, *next(it))) {
+      if (iless_(*next(it), *it)) {
 	if (warned_.find(*it) == warned_.end() ||
 	    warned_[*it].find(*next(it)) == warned_[*it].end()) {
 	  std::cerr << "WARNING: objects " << it->object() << " and "
@@ -331,11 +347,12 @@ public:
   template <class It> static It prior(It it){ return --it;}
 
   void write(std::ostream &out) const {
+    out << "Sort:\n";
     for (typename std::list<OD>::const_iterator it
 	   = sorted_.begin(); it != sorted_.end(); ++it) {
-      out << it->object() << "(" << it->event() << ") ";
+      out << it->object() << " with event (" << it->event() << ")\n";
     }
-    out << std::endl;
+    out << std::endl << std::endl;;
   }
 
   typedef typename std::list<OD>::const_iterator Iterator;
@@ -386,6 +403,8 @@ public:
   }
   void write(std::ostream &out) const {
     out << left_object_->object() << "X" << Sort::next(left_object_)->object();
+    if (s_.will_fail()) out <<  " next is " << s_.failure_time();
+    else out << " out of failures";
   }
   void audit(typename Sort::Event_key tk) const {
     //std::cout << "Auditing event ";

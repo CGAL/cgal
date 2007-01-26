@@ -43,13 +43,13 @@ class HDRS{
       CGAL_KINETIC_LOG(LOG_LOTS, "Function= " << uf << std::endl);
       CGAL_expensive_precondition(solver_.empty() || solver_.top() >= lb);
   
-#ifndef NDEBUG
+#if 0
       if (!SLOPPY && k.sign_at_object()(uf, lb) == CGAL::NEGATIVE) {
 	CGAL_KINETIC_ERROR( "Invalid certificate constructed for function " << uf << " between " << lb 
 			    << " and " << ub << " will fail immediately." << std::endl);
+	CGAL_exactness_precondition(k.sign_at_object()(uf, lb) != CGAL::NEGATIVE);
       }
 #endif
-      CGAL_exactness_precondition(SLOPPY || k.sign_at_object()(uf, lb) != CGAL::NEGATIVE);
       if (solver_.empty()) {
 	 CGAL_KINETIC_LOG(LOG_LOTS, "No failure" << std::endl);
 	 //sn = k.sign_between_roots_object()(uf, lb, ub);

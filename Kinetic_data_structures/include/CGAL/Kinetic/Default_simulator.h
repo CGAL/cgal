@@ -156,7 +156,7 @@ public:
     // make it less than the current time.
     //std::pair<double, double> ival= to_interval(cur_time_);
     //audit_time_=NT(ival.first-10.0);
-    audit_time_= CGAL::to_interval(start_time).second;
+    audit_time_= CGAL::to_interval(start_time).second+10;
 #endif
   };
 
@@ -242,7 +242,9 @@ public:
     // why did I have this? "&& cur_time_ != end_time()"
     double ub= to_interval(current_time()).second;
     if (CGAL::compare(Time(ub), next_event_time()) == CGAL::SMALLER) {
-      return NT(ub);
+      NT ret(ub);
+      CGAL_postcondition(CGAL::to_interval(ret).first==ub);
+      return ret;
     }
     else {
       //typename Function_kernel::Rational_between_roots bet= kernel_.rational_between_roots_object();
@@ -270,9 +272,11 @@ public:
   */
   bool has_audit_time() const
   {
-    //CGAL_precondition(has_rational_current_time());
-    if (queue_.empty()) return true;
-    else return CGAL::compare(current_time(), next_event_time()) != CGAL::EQUAL;
+#ifdef CGAL_KINETIC_ENABLE_AUDITING
+    return CGAL::compare(Time(audit_time_), current_time()) != CGAL::SMALLER;
+#else 
+    return false;
+#endif
   }
 
   const NT& audit_time() const
@@ -357,7 +361,7 @@ public:
 
 #ifdef CGAL_KINETIC_ENABLE_AUDITING
     if (CGAL::compare(Time(audit_time_), t) != CGAL::SMALLER && has_audit_time() ) {
-      audit_time_= mp_(current_time(), next_event_time());
+      compute_audit_time(current_time());
     }
 #endif
 
@@ -535,6 +539,54 @@ public:
 
 protected:
 
+  template <class Root>
+  bool compute_audit_time(const Root &) {
+#ifdef CGAL_KINETIC_ENABLE_AUDITING
+    if (queue_.empty()) {
+      if (cur_time_ != end_time()) {
+	std::pair<double,double> ei= CGAL::to_interval(end_time());
+	CGAL_precondition(ei.first==ei.second); // I should figure out how to deal in the other case
+	audit_time_ = ei.first;
+	return true;
+      } else {
+	// bad form to just return like that
+	audit_time_= NT(CGAL::to_interval(current_time()).first-10.0);
+	return false;
+      }
+    } else {
+      audit_time_= CGAL::to_interval(current_time()).second;
+      if (CGAL::compare(Time(audit_time_),  next_event_time()) != CGAL::SMALLER) {
+	if(CGAL::compare(next_event_time(), current_time()) != CGAL::EQUAL) {
+	  audit_time_= mp_(current_time(), next_event_time());
+	  return true;	  
+	} else {
+	  audit_time_= CGAL::to_interval(current_time()).first -10;
+	  return false;
+	}
+      } else {
+	return true;
+      }
+    }
+#else
+    return false;
+#endif
+  }
+
+
+  
+  void compute_audit_time(double) {
+#ifdef CGAL_KINETIC_ENABLE_AUDITING
+    bool audit_on_doubles;
+    if (next_event_time()-current_time() < .1) return false;
+    else {
+      audit_time_= (current_time()+ next_event_time())/2.0;
+      return audit_time_ > current_time() && audit_time_ < next_event_time();
+    }
+#else
+    return false;
+#endif
+  }
+
   //! Return a time between the current and the next event to use for validating
   /*!  This is a time between the last certificate failure time and
     the next.  Return true if there is such a time.
@@ -574,23 +626,7 @@ protected:
     CGAL_KINETIC_LOG(LOG_LOTS, *this);
 
 #ifdef CGAL_KINETIC_ENABLE_AUDITING
-    if (has_audit_time()) {
-      if (queue_.empty()) {
-	if (cur_time_ != end_time()) {
-	  std::pair<double,double> ei= CGAL::to_interval(end_time());
-	  CGAL_precondition(ei.first==ei.second); // I should figure out how to deal in the other case
-	  audit_time_ = ei.first;
-	} else {
-	  // bad form to just return like that
-	  return;
-	}
-      } else {
-	audit_time_= CGAL::to_interval(current_time()).second;
-	if (CGAL::compare(Time(audit_time_),  next_event_time()) != CGAL::SMALLER 
-	    && CGAL::compare(next_event_time(), current_time()) != CGAL::EQUAL) {
-	  audit_time_= mp_(current_time(), next_event_time());
-	}
-      }
+    if (compute_audit_time(current_time())) {
       CGAL_KINETIC_LOG(LOG_SOME, "Audit is at time " << audit_time_ << std::endl);
       //if (current_time() < audit_time_ && t >= audit_time_) {
       audit_all_kdss();
