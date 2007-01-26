@@ -304,8 +304,15 @@ protected:
     }
 
     //double oaw;                           //= ii_.approximate_width();
-    while (ii_.second-ii_.first > NT(accuracy)) {
+    int ct=0;
+    while (ii_.second != ii_.first && ii_.second-ii_.first > NT(accuracy)) {
       refine();
+      ++ct;
+      if (ct== 30) {
+	std::cerr << "Error subdividing ";
+	write_internal(std::cerr) << std::endl;
+	break;
+      }
     }
     return std::make_pair(CGAL::to_interval(ii_.first).first, CGAL::to_interval(ii_.second).second);
   }

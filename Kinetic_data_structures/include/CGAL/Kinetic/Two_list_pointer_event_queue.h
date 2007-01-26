@@ -391,7 +391,7 @@ public:
       if (true){
 	//++queue_front_insertions__;
 	front_.push_back(*ni);
-	ub_= NT(tii_(t).second);
+	ub_= Priority(tii_(t).second);
 	ni->set_in_list(Item::FRONT);
       } 
     } else {
@@ -606,7 +606,7 @@ public:
 
 protected:
   void initialize(const Priority &start_time, const Priority &end_time) {
-    ub_=to_interval(tii_(start_time).second).second;
+    ub_=Priority(tii_(start_time).second);
     // should be nextafter
     step_=1;
     //all_in_front_= false;
@@ -615,7 +615,7 @@ protected:
 
  void initialize(const Priority &start_time) {
    CGAL_precondition(INF);
-    ub_=to_interval(tii_(start_time).second).second;
+   ub_=Priority(tii_(start_time).second);
     // should be nextafter
     step_=1;
     //all_in_front_= false;
@@ -623,7 +623,7 @@ protected:
   bool leq_ub(const Priority &t) const {
     //if (all_in_front_) return true;
     //else 
-    return (CGAL::compare(t, Priority(ub_)) != CGAL::LARGER);
+    return (CGAL::compare(t, ub_) != CGAL::LARGER);
   }
 
  
@@ -698,7 +698,7 @@ protected:
     return false;
   }
 
-  unsigned int select(Queue &source, Queue &target, NT b/*, bool binf*/) {
+  unsigned int select(Queue &source, Queue &target, const Priority & b/*, bool binf*/) {
     unsigned int sz= source.size() + target.size();if (sz);
     int count=0;
     Iterator it= source.begin();
@@ -764,7 +764,11 @@ protected:
 			  << step_ << "(" << recursive_count << ") ";
 
     //CGAL_assertion(ub_<end_split());
-    ub_+= step_;
+    if (cand.size() + front_.size() < max_front_size()) {
+      ub_= end_time_;
+    } else {
+      ub_= tii_(ub_).second+step_;
+    }
     //CGAL_assertion(!too_big(ub_));
 
     /*if ( CGAL::compare(end_priority(), Priority(ub_)) == CGAL::SMALLER) {
@@ -781,7 +785,7 @@ protected:
 	// do something
 	std::cerr << "Too many recursions " << std::endl;
 	//all_in_front_=true;
-	ub_=CGAL::to_interval(end_time_).second*2;// std::numeric_limits<double>::infinity();
+	ub_=end_time_; //CGAL::to_interval(end_time_).second*2;// std::numeric_limits<double>::infinity();
 	/*unsigned int num=*/ select(cand, front_, ub_/*, all_in_front_*/);
 	make_inf(cand, cand.begin(), cand.end());
 	//grow_front(cand, recursive_count+1);
@@ -815,7 +819,7 @@ protected:
 	  CGAL_assertion(nstep >0);
 	  cand.swap(front_);
 	  //ub_=lb_;
-	  ub_-=step_;
+	  ub_= tii_(ub_).first - step_;
 	  //CGAL_assertion(!all_in_front_);
 	  if (dprint) {
 	    std::cout << "...overshot" << std::endl;
@@ -875,7 +879,7 @@ protected:
       std::cout << "Past end in Queue " << end_priority() << ", "
 		<< it->time() << ", " << Priority(split) << std::endl;
       //all_in_front_=true;
-      ub_= CGAL::to_interval(end_time_).second*2; //std::numeric_limits<double>::infinity();
+      ub_= end_time_;
       set_front(back_.begin(), back_.end(), Item::FRONT);
       front_.splice(front_.end(), back_);
 
@@ -906,12 +910,12 @@ protected:
 	
 	set_front(it, front_.end(), Item::BACK);
 	back_.splice(back_.begin(), front_, it, front_.end());
-	NT oub=ub_;
+	NT oub=tii_(ub_).second;
 	//all_in_front_=false;
-	ub_ = NT(split);
+	ub_ = Priority(split);
 	//CGAL_assertion(!too_big(ub_));
 	//CGAL_assertion(ub_ <= end_split());
-	step_= oub-ub_;
+	step_= oub-tii_(ub_).second;
 	//CGAL_assertion(!all_in_front_);
 	CGAL_postcondition_code(if (step_<0) std::cerr << step_ << std::endl;);
 	CGAL_postcondition_code(if (step_<0) std::cerr << ub_ << std::endl;);
@@ -944,7 +948,8 @@ protected:
 #ifndef NDEBUG
   std::vector<Key> inf_;
 #endif
-  NT ub_, step_;
+  Priority ub_;
+  NT step_;
   //bool all_in_front_;
   Priority end_time_;
   Key null_event_;

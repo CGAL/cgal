@@ -213,6 +213,10 @@ struct Test
     delete_events();
 
     sim->set_current_time(sim->end_time());
+    CGAL_precondition(inf_events_.size() != 0);
+    while (!sim->empty()) {
+      sim->set_current_event_number(sim->current_event_number()+1);
+    }
 
     std::cout << "Done checking simulator.\n" << std::endl;
 
