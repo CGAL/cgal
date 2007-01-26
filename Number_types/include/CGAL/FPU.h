@@ -1,4 +1,4 @@
-// Copyright (c) 1998-2004  Utrecht University (The Netherlands),
+// Copyright (c) 1998-2007  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -40,8 +40,7 @@
 extern "C" {
 #  include <fenv.h>
 }
-#elif defined __linux__ && !defined __PGI && !defined __ia64__ \
-  && !defined __x86_64__
+#elif defined __powerpc__
 #  include <fpu_control.h>
 #elif defined __SUNPRO_CC || (defined __KCC && defined __sun)
 #  include <ieeefp.h>
@@ -54,22 +53,12 @@ extern "C" {
 #  endif
 #elif defined __BORLANDC__
 #  include <float.h>
-#elif defined __sgi
-#  include <sys/fpu.h>
 #elif defined _MSC_VER || defined __sparc__ || \
      (defined __i386__ && !defined __PGI)
    // Nothing to include.
 #else
    // By default we use the ISO C99 version.
 #  include <fenv.h>
-#endif
-
-
-// GCC 3.0.0 has some bugs, which can be worked around, but it's
-// not worth maintaining them anymore.
-#if defined __GNUG__ && !defined __INTEL_COMPILER && \
-    (__GNUG__ == 3 && __GNUC_MINOR__ == 0 && __GNUC_PATCHLEVEL__ == 0)
-#  error GCC 3.0.0 is buggy, use at your own risk.
 #endif
 
 
@@ -154,19 +143,9 @@ inline double IA_force_to_double(double x)
 
 // We sometimes need to stop constant propagation,
 // because operations are done with a wrong rounding mode at compile time.
-// G++ also uses __builtin_constant_p().
 #ifndef CGAL_IA_DONT_STOP_CONSTANT_PROPAGATION
-#  if defined __GNUG__ && __GNUG__ < 3
-	// Note : GCC 3 doesn't guarantee __builtin_constant_p to return false
-	// when he will not do cprop :(.
-#    define CGAL_IA_STOP_CPROP(x) \
-            (__builtin_constant_p (x) ? IA_force_to_double(x) : (x) )
-#    define CGAL_IA_STOP_CPROP2(x,y) \
-            (__builtin_constant_p (y) ? CGAL_IA_STOP_CPROP(x) : (x) )
-#  else
-#    define CGAL_IA_STOP_CPROP(x)    IA_force_to_double(x)
-#    define CGAL_IA_STOP_CPROP2(x,y) IA_force_to_double(x)
-#  endif
+#  define CGAL_IA_STOP_CPROP(x)    IA_force_to_double(x)
+#  define CGAL_IA_STOP_CPROP2(x,y) IA_force_to_double(x)
 #else
 #  define CGAL_IA_STOP_CPROP(x)    (x)
 #  define CGAL_IA_STOP_CPROP2(x,y) (x)
@@ -270,33 +249,7 @@ typedef unsigned int FPU_CW_t;
 #define CGAL_FE_UPWARD       (0x80000000 | 0x20000000 | 0x1f)
 #define CGAL_FE_DOWNWARD     (0xc0000000 | 0x20000000 | 0x1f)
 
-#elif defined __sgi
-typedef unsigned int FPU_CW_t;
-
-inline FPU_CW_t sgi_get_fpu_cw()
-{
-  fpc_csr csr;
-  csr.fc_word = get_fpc_csr();
-  return csr.fc_struct.rounding_mode;
-}
-
-inline void sgi_set_fpu_cw(FPU_CW_t cw)
-{
-  fpc_csr csr;
-  csr.fc_word = get_fpc_csr();
-  csr.fc_struct.rounding_mode = cw;
-  csr.fc_struct.flush = 0; // By default, denormals are flushed to zero !
-  set_fpc_csr(csr.fc_word);
-}
-
-#define CGAL_IA_SETFPCW(CW)  sgi_set_fpu_cw(CW)
-#define CGAL_IA_GETFPCW(CW)  CW = sgi_get_fpu_cw()
-#define CGAL_FE_TONEAREST    ROUND_TO_NEAREST
-#define CGAL_FE_TOWARDZERO   ROUND_TO_ZERO
-#define CGAL_FE_UPWARD       ROUND_TO_PLUS_INFINITY
-#define CGAL_FE_DOWNWARD     ROUND_TO_MINUS_INFINITY
-
-#elif defined __mips__ // && !defined __sgi
+#elif defined __mips__
 #define CGAL_IA_SETFPCW(CW) asm volatile ("ctc1 %0,$31" : :"r" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("cfc1 %0,$31" : "=r" (CW))
 typedef unsigned int FPU_CW_t;
