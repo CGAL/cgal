@@ -248,7 +248,7 @@ public:
     if (sorted_.size() <2) return;
 
     ik_.set_time(simulator_->audit_time());
-    write(std::cout);
+    CGAL_KINETIC_LOG_WRITE(LOG_LOTS, write(std::cout));
     std::cout << std::endl;
 
     
