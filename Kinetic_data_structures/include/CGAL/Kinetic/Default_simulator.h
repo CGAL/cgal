@@ -574,9 +574,9 @@ protected:
 
 
   
-  void compute_audit_time(double) {
+  bool compute_audit_time(double) {
 #ifdef CGAL_KINETIC_ENABLE_AUDITING
-    bool audit_on_doubles;
+    //bool audit_on_doubles;
     if (next_event_time()-current_time() < .1) return false;
     else {
       audit_time_= (current_time()+ next_event_time())/2.0;
