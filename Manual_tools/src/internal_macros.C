@@ -857,6 +857,19 @@ substring( const string&, string param[], size_t n, size_t opt) {
 }
 
 
+string
+remove_newlines( const string&, string param[], size_t n, size_t opt) {
+    NParamCheck( 1, 0 );
+    string s  = param[0];
+    string::size_type pos = 0, nl;
+    while( ( nl=s.find( '\n' ) ) != string::npos ) {
+      s.replace( nl, 1, " "  );
+      pos = nl;
+    }
+    return s;
+}
+
+
 // Some special characters hard to print otherwise
 // ======================================================================
 
@@ -1462,6 +1475,7 @@ void init_internal_macros() {
     insertInternalGlobalMacro( "\\lciToAlpha",      int_to_alpha, 1);
     insertInternalGlobalMacro( "\\lciToAlphaUpper", int_to_alpha_upper, 1);
     insertInternalGlobalMacro( "\\lciSubstring",    substring, 3);
+    insertInternalGlobalMacro( "\\lciRemoveNewlinesX",remove_newlines, 1);
 
     insertInternalGlobalMacro( "\\lciFormatChapterAuthor",
                                                    format_chapter_author, 1);

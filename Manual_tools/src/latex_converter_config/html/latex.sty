@@ -110,7 +110,6 @@
 
 \lcRegexRegister{checkforlabel}@(.+)(\\label[^\}]+\})(.*)@
 
-
 \newcommand{\lciCheckForLabelInsideHeading}[3]{%
   \lcRegexDoesMatch{checkforlabel}{#1}{%
     % xdef doesnt work, either ..
@@ -125,6 +124,7 @@
   }%
 }%
 
+\newcommand{\lciRemoveNewlines}[1]{\lciRemoveNewlinesX{#X1}}
 
 % Load latex_to_html.sty that provides the basic converter capabilities.
 % redefined in latex_to_html.sty
@@ -1163,7 +1163,7 @@ td.TocChapter          { font-weight: normal; }
     \lcRawHtml{	<div class="NavNext"><hr> Next chapter: <a href="}%
     \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
     \lcRawHtmlExpanded{\lciOutputBasename}%
-    \lcRawHtml{">}\lciLocalVariableChapterNameTOC\lcRawHtml{</a></div>
+    \lcRawHtml{">}\lciRemoveNewlines{\lciLocalVariableChapterNameTOC}\lcRawHtml{</a></div>
 }%
     \lcRawHtml{i Up_chapter_link_}\value{part}\_\value{createdfiles}%
     \lcRawHtml{	<a href="}%
@@ -1231,7 +1231,7 @@ td.TocChapter          { font-weight: normal; }
     \lcRawHtml{	<div class="NavNext"><hr> Next: <a href="}%
     \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
     \lcRawHtmlExpanded{\lciOutputBasename}%
-    \lcRawHtml{">}#1\lcRawHtml{</a></div>
+    \lcRawHtml{">}\lciRemoveNewlines{#1}\lcRawHtml{</a></div>
 }%
     \lcRawHtml{i Up_chapter_link_}\value{part}\_\value{createdfiles}%
     \lcRawHtml{	<a href="}%
