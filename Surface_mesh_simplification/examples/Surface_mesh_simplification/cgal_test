@@ -42,7 +42,7 @@ compile_and_run()
     fi
     echo "Executing $1 ... "
     echo
-    ulimit -t 1200 2> /dev/null
+    ulimit -t 3600
     if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
       echo "   succesful execution   of $1" >> $ERRORFILE
     else
@@ -71,6 +71,7 @@ if [ $# -ne 0 ] ; then
     compile_and_run $file
   done
 else
-  compile_and_run edge_collapse_polyhedron
   compile_and_run edge_collapse_enriched_polyhedron
+  compile_and_run edge_collapse_polyhedron
 fi
+

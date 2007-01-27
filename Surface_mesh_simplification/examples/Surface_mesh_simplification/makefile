@@ -13,43 +13,45 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-CXXFLAGS = -I../../include/ \
-           -I../../../BGL/include/ \
-           $(TESTSUITE_CXXFLAGS) \
-           $(EXTRA_FLAGS) \
-           $(CGAL_CXXFLAGS) 
+CXXFLAGS = \
+           -I../../include \
+           $(CGAL_CXXFLAGS) \
+           $(LONG_NAME_PROBLEM_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    linker flags
 #---------------------------------------------------------------------#
 
 LIBPATH = \
-          $(TESTSUITE_LIBPATH) \
           $(CGAL_LIBPATH)
 
 LDFLAGS = \
-          $(TESTSUITE_LDFLAGS) \
-          $(CGAL_LDFLAGS) 
+          $(LONG_NAME_PROBLEM_LDFLAGS) \
+          $(CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
 all:            \
-                edge_collapse_polyhedron \
-                edge_collapse_enriched_polyhedron \
+                edge_collapse_enriched_polyhedron$(EXE_EXT) \
+                edge_collapse_polyhedron$(EXE_EXT) 
+
+edge_collapse_enriched_polyhedron$(OBJ_EXT): edge_collapse_enriched_polyhedron.cpp
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) edge_collapse_enriched_polyhedron.cpp
+
+edge_collapse_enriched_polyhedron$(EXE_EXT): edge_collapse_enriched_polyhedron$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)edge_collapse_enriched_polyhedron edge_collapse_enriched_polyhedron$(OBJ_EXT) $(LDFLAGS)
+
+edge_collapse_polyhedron$(OBJ_EXT): edge_collapse_polyhedron.cpp
+	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) edge_collapse_polyhedron.cpp
 
 edge_collapse_polyhedron$(EXE_EXT): edge_collapse_polyhedron$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)edge_collapse_polyhedron \
-        edge_collapse_polyhedron$(OBJ_EXT) $(LDFLAGS)
-        
-edge_collapse_enriched_polyhedron$(EXE_EXT): edge_collapse_enriched_polyhedron$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)edge_collapse_enriched_polyhedron \
-        edge_collapse_enriched_polyhedron$(OBJ_EXT) $(LDFLAGS)
-        
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)edge_collapse_polyhedron edge_collapse_polyhedron$(OBJ_EXT) $(LDFLAGS)
+
 clean: \
-                   edge_collapse_polyhedron.clean \
                    edge_collapse_enriched_polyhedron.clean \
+                   edge_collapse_polyhedron.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
@@ -57,6 +59,7 @@ clean: \
 
 .C$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
+
 
 .cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
