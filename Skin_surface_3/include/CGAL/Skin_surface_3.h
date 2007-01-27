@@ -66,7 +66,7 @@ private:
   typedef Exact_predicates_inexact_constructions_kernel     Filtered_kernel;
 public:
   typedef Skin_surface_quadratic_surface_3<Filtered_kernel> 
-                                                         Quadratic_surface;
+  Quadratic_surface;
 public:
   typedef typename Regular::Vertex_handle                Vertex_handle;
   typedef typename Regular::Edge                         Edge;
@@ -109,56 +109,16 @@ private:
 public:
   template < class WP_iterator >
   Skin_surface_3(WP_iterator begin, WP_iterator end, 
-		 FT shrink,
-		 bool grow_balls = true,
-		 Gt gt_ = Gt(),
-		 bool _verbose = false
-		 ) 
-    : gt(gt_), verbose(_verbose) {
-
-    gt.set_shrink(shrink);
-    CGAL_assertion(begin != end);
-
-    if (grow_balls) {
-      for (; begin != end; begin++) {
-	regular.insert(Weighted_point(*begin, begin->weight()/shrink_factor()));
-      }
-    } else {
-      regular.insert(begin, end);
-    }
-    construct_bounding_box(regular);
-  
-    if (verbose) {
-      std::cerr << "Triangulation ready" << std::endl;
-      std::cerr << "Vertices: " << regular.number_of_vertices() << std::endl;
-      std::cerr << "Cells:    " << regular.number_of_cells() << std::endl;
-    }
-    
-
-    // Construct the Triangulated_mixed_complex:
-    Triangulated_mixed_complex_observer_3<TMC, Self> observer(shrink_factor());
-    triangulate_mixed_complex_3(regular, shrink_factor(), tmc, observer, true);
-
-    CGAL_assertion(tmc.dimension() == 3);
-    { // NGHK: debug code:
-      CGAL_assertion(tmc.is_valid());
-      std::vector<TMC_Vertex_handle> ch_vertices;
-      tmc.incident_vertices(tmc.infinite_vertex(), 
-			    std::back_inserter(ch_vertices));
-      for (typename std::vector<TMC_Vertex_handle>::iterator
-	     vit = ch_vertices.begin(); vit != ch_vertices.end(); vit++) {
-	CGAL_assertion(sign(*vit) == POSITIVE);
-      }
-    }
-				
-//     mc_triangulator = new CMCT(regular, verbose);
-
-  }
+                 FT shrink,
+                 bool grow_balls = true,
+                 Gt gt_ = Gt(),
+                 bool _verbose = false
+                 );
 
   // This class has to be a friend:
   template <class SkinSurface_3, 
-	    class Vertex_iterator, class Cell_iterator, 
-	    class HalfedgeDS>
+            class Vertex_iterator, class Cell_iterator, 
+            class HalfedgeDS>
   friend class Marching_tetrahedra_traits_skin_surface_3;
 
   template <class Polyhedron_3>
@@ -171,14 +131,14 @@ public:
   template <class Polyhedron_3>
   void subdivide_skin_surface_mesh_3(Polyhedron_3 &p) const;
   
-  Sign sign(const Bare_point &p, 
-	    const TMC_Cell_handle start = TMC_Cell_handle()) const {
-    if (start == TMC_Cell_handle()) {
-      return sign(locate_mixed(p,start), p);
-    } else {
-      return sign(start, p);
-    }
-  }
+//  Sign sign(const Bare_point &p, 
+//            const TMC_Cell_handle start = TMC_Cell_handle()) const {
+//    if (start == TMC_Cell_handle()) {
+//      return sign(locate_mixed(p,start), p);
+//    } else {
+//      return sign(start, p);
+//    }
+//  }
   Sign sign(TMC_Vertex_handle vit) const {
     CGAL_assertion(!tmc.is_infinite(vit));
     TMC_Cell_handle ch = vit->cell();
@@ -186,9 +146,9 @@ public:
       std::vector<TMC_Cell_handle> nbs;
       tmc.incident_cells(vit, std::back_inserter(nbs));
       for (typename std::vector<TMC_Cell_handle>::iterator it = nbs.begin();
-	   tmc.is_infinite(ch) && (it != nbs.end());
-	   it++) {
-	ch = *it;
+           tmc.is_infinite(ch) && (it != nbs.end());
+           it++) {
+        ch = *it;
       }
     }
     CGAL_assertion(!tmc.is_infinite(ch));
@@ -196,16 +156,16 @@ public:
     // don't use sign, since the point is constructed:
     try
       {
-	CGAL_PROFILER(std::string("NGHK: calls to    : ") + 
-		      std::string(CGAL_PRETTY_FUNCTION));
-	Protect_FPU_rounding<true> P;
-	Sign result = vit->cell()->info().second->sign(vit->point());
-	if (! is_indeterminate(result))
-	  return result;
+        CGAL_PROFILER(std::string("NGHK: calls to    : ") + 
+                      std::string(CGAL_PRETTY_FUNCTION));
+        Protect_FPU_rounding<true> P;
+        Sign result = vit->cell()->info().second->sign(vit->point());
+        if (! is_indeterminate(result))
+          return result;
       }
     catch (Interval_nt_advanced::unsafe_comparison) {}
     CGAL_PROFILER(std::string("NGHK: failures of : ") + 
-		  std::string(CGAL_PRETTY_FUNCTION));
+                  std::string(CGAL_PRETTY_FUNCTION));
     Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
     typedef Exact_predicates_exact_constructions_kernel EK;
     Skin_surface_traits_3<EK> exact_traits(shrink_factor());
@@ -213,11 +173,11 @@ public:
     typename Skin_surface_traits_3<EK>::Bare_point p_exact =
       get_anchor_point(vit->info(), exact_traits);
     return construct_surface(vit->cell()->info().first, 
-			     EK() ).sign(p_exact);
+                             EK() ).sign(p_exact);
   }
   Vector
   normal(const Bare_point &p, 
-	 const TMC_Cell_handle start = TMC_Cell_handle()) const {
+         const TMC_Cell_handle start = TMC_Cell_handle()) const {
     if (start == TMC_Cell_handle()) {
       return get_normal(locate_mixed(p,start), p);
     } else {
@@ -233,33 +193,33 @@ public:
     switch(s.dimension()) {
     case 0: 
       {
-	Vertex_handle vh = s;
-	typename Gt::Weighted_point wp = vh->point();
-	return converter(wp.point());
+        Vertex_handle vh = s;
+        typename Gt::Weighted_point wp = vh->point();
+        return converter(wp.point());
       }
     case 1:
       {
-	Edge e = s;
-	return traits.construct_weighted_circumcenter_3_object()
-	  (converter(e.first->vertex(e.second)->point()),
-	   converter(e.first->vertex(e.third)->point()));
+        Edge e = s;
+        return traits.construct_weighted_circumcenter_3_object()
+          (converter(e.first->vertex(e.second)->point()),
+           converter(e.first->vertex(e.third)->point()));
       }
     case 2: 
       {
-	Facet f = s;
-	return traits.construct_weighted_circumcenter_3_object()
-	  (converter(f.first->vertex((f.second+1)&3)->point()),
-	   converter(f.first->vertex((f.second+2)&3)->point()),
-	   converter(f.first->vertex((f.second+3)&3)->point()));
+        Facet f = s;
+        return traits.construct_weighted_circumcenter_3_object()
+          (converter(f.first->vertex((f.second+1)&3)->point()),
+           converter(f.first->vertex((f.second+2)&3)->point()),
+           converter(f.first->vertex((f.second+3)&3)->point()));
       }
     case 3: 
       {
-	Cell_handle ch = s;
-	return traits.construct_weighted_circumcenter_3_object()
-	  (converter(ch->vertex(0)->point()),
-	   converter(ch->vertex(1)->point()),
-	   converter(ch->vertex(2)->point()),
-	   converter(ch->vertex(3)->point()));
+        Cell_handle ch = s;
+        return traits.construct_weighted_circumcenter_3_object()
+          (converter(ch->vertex(0)->point()),
+           converter(ch->vertex(1)->point()),
+           converter(ch->vertex(2)->point()),
+           converter(ch->vertex(3)->point()));
       }
     }
     CGAL_assertion(false);
@@ -279,132 +239,132 @@ private:
     switch (s.dimension()) {
     case 0:
       {
-	Vertex_handle vh = s;
-	std::list<Vertex_handle> nbs;
-	regular.incident_vertices(vh, std::back_inserter(nbs));
-	for (typename std::list<Vertex_handle>::iterator it = nbs.begin();
-	     it != nbs.end(); it ++) {
-	  if (regular.is_infinite(*it)) return true;
-	}
-	return false;
+        Vertex_handle vh = s;
+        std::list<Vertex_handle> nbs;
+        regular.incident_vertices(vh, std::back_inserter(nbs));
+        for (typename std::list<Vertex_handle>::iterator it = nbs.begin();
+             it != nbs.end(); it ++) {
+          if (regular.is_infinite(*it)) return true;
+        }
+        return false;
       }
     case 1:
       {
-	Edge e = s;
-	Facet_circulator fcir, fstart;
-	fcir = fstart = regular.incident_facets(e);
-	do {
-	  if (regular.is_infinite(*fcir)) return true;
-	} while (++fcir != fstart);
-	return false;
+        Edge e = s;
+        Facet_circulator fcir, fstart;
+        fcir = fstart = regular.incident_facets(e);
+        do {
+          if (regular.is_infinite(*fcir)) return true;
+        } while (++fcir != fstart);
+        return false;
       }
     case 2:
       {
-	Facet f = s;
-	return (regular.is_infinite(f.first) ||
-		regular.is_infinite(f.first->neighbor(f.second)));
+        Facet f = s;
+        return (regular.is_infinite(f.first) ||
+                regular.is_infinite(f.first->neighbor(f.second)));
       }
     case 3:
       {
-	return false;
+        return false;
       }
     default:
       {
-	CGAL_assertion(false);
+        CGAL_assertion(false);
       }
     }
     CGAL_assertion(false);
     return false;
   }
-//   CMCT_Cell locate_tet(const Bare_point &p, const Simplex &s) const {
-//     Skin_surface_traits_3<Exact_predicates_exact_constructions_kernel> 
-//       traits(shrink_factor());
+  //   CMCT_Cell locate_tet(const Bare_point &p, const Simplex &s) const {
+  //     Skin_surface_traits_3<Exact_predicates_exact_constructions_kernel> 
+  //       traits(shrink_factor());
     
-//     std::vector<CMCT_Cell> cells;
+  //     std::vector<CMCT_Cell> cells;
 
-//     switch (s.dimension()) {
-//     case 0:
-//       {
-// 	Vertex_handle vh = s;
-// 	CGAL_assertion(!regular.is_infinite(vh));
-// 	mc_triangulator->construct_0_cell(vh, std::back_inserter(cells));
-// 	break;
-//       }
-//     case 1:
-//       {
-// 	Edge e = s;
-// 	CGAL_assertion(!regular.is_infinite(e));
-// 	mc_triangulator->construct_1_cell(e, std::back_inserter(cells));
-// 	break;
-//       }
-//     case 2:
-//       {
-// 	Facet f = s;
-// 	CGAL_assertion(!regular.is_infinite(f));
-// 	mc_triangulator->construct_2_cell(f, std::back_inserter(cells));
-// 	break;
-//       }
-//     case 3:
-//       {
-// 	Cell_handle ch = s;
-// 	CGAL_assertion(!regular.is_infinite(ch));
-// 	mc_triangulator->construct_3_cell(ch, std::back_inserter(cells));
-// 	break;
-//       }
-//     default:
-//       {
-// 	CGAL_assertion(false);
-//       }
-//     }
+  //     switch (s.dimension()) {
+  //     case 0:
+  //       {
+  //  Vertex_handle vh = s;
+  //  CGAL_assertion(!regular.is_infinite(vh));
+  //  mc_triangulator->construct_0_cell(vh, std::back_inserter(cells));
+  //  break;
+  //       }
+  //     case 1:
+  //       {
+  //  Edge e = s;
+  //  CGAL_assertion(!regular.is_infinite(e));
+  //  mc_triangulator->construct_1_cell(e, std::back_inserter(cells));
+  //  break;
+  //       }
+  //     case 2:
+  //       {
+  //  Facet f = s;
+  //  CGAL_assertion(!regular.is_infinite(f));
+  //  mc_triangulator->construct_2_cell(f, std::back_inserter(cells));
+  //  break;
+  //       }
+  //     case 3:
+  //       {
+  //  Cell_handle ch = s;
+  //  CGAL_assertion(!regular.is_infinite(ch));
+  //  mc_triangulator->construct_3_cell(ch, std::back_inserter(cells));
+  //  break;
+  //       }
+  //     default:
+  //       {
+  //  CGAL_assertion(false);
+  //       }
+  //     }
 
 
-//     bool found = false;
+  //     bool found = false;
 
-//     for (typename std::vector<CMCT_Cell>::iterator it = cells.begin();
-// 	 ((!found)&&(it != cells.end())); it++) {
-//       if (mc_triangulator->bounded_side(p, *it, traits) != ON_UNBOUNDED_SIDE) {
-// 	return *it;
-//       }
-//     }
+  //     for (typename std::vector<CMCT_Cell>::iterator it = cells.begin();
+  //   ((!found)&&(it != cells.end())); it++) {
+  //       if (mc_triangulator->bounded_side(p, *it, traits) != ON_UNBOUNDED_SIDE) {
+  //  return *it;
+  //       }
+  //     }
 
-//     return CMCT_Cell();
-//   }
+  //     return CMCT_Cell();
+  //   }
 public:
   TMC_Cell_handle
   locate_mixed(const Bare_point &p, 
-	       TMC_Cell_handle start = TMC_Cell_handle()) const;
+               TMC_Cell_handle start = TMC_Cell_handle()) const;
   
   // exact computation of the sign on a vertex of the TMC
-//   Sign sign(const CMCT_Vertex_handle vh) const {
-//     typedef Exact_predicates_exact_constructions_kernel K;
-//     Skin_surface_traits_3<K> traits(shrink_factor());
+  //   Sign sign(const CMCT_Vertex_handle vh) const {
+  //     typedef Exact_predicates_exact_constructions_kernel K;
+  //     Skin_surface_traits_3<K> traits(shrink_factor());
     
-//     typename K::Point_3 p = mc_triangulator->location(vh, traits);
+  //     typename K::Point_3 p = mc_triangulator->location(vh, traits);
 
-//     return construct_surface(vh->first, K()).sign(p);
-//   }
+  //     return construct_surface(vh->first, K()).sign(p);
+  //   }
 
   // Trivial caching: check wether the surface is the same as the previous:
-//   mutable Skin_surface_quadratic_surface_3<
-//     Simple_cartesian<Interval_nt_advanced> > previous_sign_surface;
-//   mutable Simplex                            previous_sign_simplex;
+  //   mutable Skin_surface_quadratic_surface_3<
+  //     Simple_cartesian<Interval_nt_advanced> > previous_sign_surface;
+  //   mutable Simplex                            previous_sign_simplex;
 
   Sign sign(const TMC_Cell_handle &ch, const Bare_point &p) const {
     return sign(ch->info(), p);
   }
   Sign sign(Cell_info &info, const Bare_point &p) const {
     try
-    {
-      CGAL_PROFILER(std::string("NGHK: calls to    : ") + 
-		    std::string(CGAL_PRETTY_FUNCTION));
-      Protect_FPU_rounding<true> P;
-      Sign result = info.second->sign(p);
-      if (! is_indeterminate(result))
-        return result;
-    }
+      {
+        CGAL_PROFILER(std::string("NGHK: calls to    : ") + 
+                      std::string(CGAL_PRETTY_FUNCTION));
+        Protect_FPU_rounding<true> P;
+        Sign result = info.second->sign(p);
+        if (! is_indeterminate(result))
+          return result;
+      }
     catch (Interval_nt_advanced::unsafe_comparison) {}
     CGAL_PROFILER(std::string("NGHK: failures of : ") + 
-		  std::string(CGAL_PRETTY_FUNCTION));
+                  std::string(CGAL_PRETTY_FUNCTION));
     Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
     return construct_surface
       (info.first, 
@@ -415,27 +375,27 @@ public:
        const Bare_point &p1,
        const Bare_point &p2) const {
     try
-    {
-      CGAL_PROFILER(std::string("NGHK: calls to    : ") + 
-		    std::string(CGAL_PRETTY_FUNCTION));
-      Protect_FPU_rounding<true> P;
-      Sign result = CGAL_NTS sign(info.second->value(p2) -
-				  info.second->value(p1));
-      if (! is_indeterminate(result))
-        return result==POSITIVE;
-    }
+      {
+        CGAL_PROFILER(std::string("NGHK: calls to    : ") + 
+                      std::string(CGAL_PRETTY_FUNCTION));
+        Protect_FPU_rounding<true> P;
+        Sign result = CGAL_NTS sign(info.second->value(p2) -
+                                    info.second->value(p1));
+        if (! is_indeterminate(result))
+          return result==POSITIVE;
+      }
     catch (Interval_nt_advanced::unsafe_comparison) {}
     CGAL_PROFILER(std::string("NGHK: failures of : ") + 
-		  std::string(CGAL_PRETTY_FUNCTION));
+                  std::string(CGAL_PRETTY_FUNCTION));
     Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
       
     return 
       CGAL_NTS sign(construct_surface(info.first,
-				      Exact_predicates_exact_constructions_kernel()
-				      ).value(p2) -
-		    construct_surface(info.first,
-				      Exact_predicates_exact_constructions_kernel()
-				      ).value(p1));
+                                      Exact_predicates_exact_constructions_kernel()
+                                      ).value(p2) -
+                    construct_surface(info.first,
+                                      Exact_predicates_exact_constructions_kernel()
+                                      ).value(p1));
   }
   FT
   less(Cell_info &info1,
@@ -443,27 +403,27 @@ public:
        Cell_info &info2,
        const Bare_point &p2) const {
     try
-    {
-      CGAL_PROFILER(std::string("NGHK: calls to    : ") + 
-		    std::string(CGAL_PRETTY_FUNCTION));
-      Protect_FPU_rounding<true> P;
-      Sign result = CGAL_NTS sign(info2.second->value(p2) -
-				  info1.second->value(p1));
-      if (! is_indeterminate(result))
-        return result==POSITIVE;
-    }
+      {
+        CGAL_PROFILER(std::string("NGHK: calls to    : ") + 
+                      std::string(CGAL_PRETTY_FUNCTION));
+        Protect_FPU_rounding<true> P;
+        Sign result = CGAL_NTS sign(info2.second->value(p2) -
+                                    info1.second->value(p1));
+        if (! is_indeterminate(result))
+          return result==POSITIVE;
+      }
     catch (Interval_nt_advanced::unsafe_comparison) {}
     CGAL_PROFILER(std::string("NGHK: failures of : ") + 
-		  std::string(CGAL_PRETTY_FUNCTION));
+                  std::string(CGAL_PRETTY_FUNCTION));
     Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
       
     return 
       CGAL_NTS sign(construct_surface(info2.first,
-				      Exact_predicates_exact_constructions_kernel()
-				      ).value(p2) -
-		    construct_surface(info1.first,
-				      Exact_predicates_exact_constructions_kernel()
-				      ).value(p1));
+                                      Exact_predicates_exact_constructions_kernel()
+                                      ).value(p2) -
+                    construct_surface(info1.first,
+                                      Exact_predicates_exact_constructions_kernel()
+                                      ).value(p1));
   }
   FT
   value(const Bare_point &p) const {
@@ -491,7 +451,7 @@ public:
 
   // Move the point in the direction of the gradient
   void to_surface(Bare_point &p,
-		  const TMC_Cell_handle &start = TMC_Cell_handle()) const {
+                  const TMC_Cell_handle &start = TMC_Cell_handle()) const {
     Bare_point p1 = p;
     TMC_Cell_handle ch1 = start;
     if (start != TMC_Cell_handle()) {
@@ -514,33 +474,33 @@ public:
     }
     intersect(p1,p2, ch1,ch2, p);
   }
-//   void intersect(const CMCT_Vertex_handle vh1,
-// 		 const CMCT_Vertex_handle vh2,
-// 		 Bare_point &p) const {
-//     Bare_point p1 = mc_triangulator->location(vh1, gt);
-//     Bare_point p2 = mc_triangulator->location(vh2, gt);
-//     Simplex s1 = vh1->first;
-//     Simplex s2 = vh2->first;
-//     intersect(p1,p2, s1,s2, p);
-//   }
+  //   void intersect(const CMCT_Vertex_handle vh1,
+  //    const CMCT_Vertex_handle vh2,
+  //    Bare_point &p) const {
+  //     Bare_point p1 = mc_triangulator->location(vh1, gt);
+  //     Bare_point p2 = mc_triangulator->location(vh2, gt);
+  //     Simplex s1 = vh1->first;
+  //     Simplex s2 = vh2->first;
+  //     intersect(p1,p2, s1,s2, p);
+  //   }
 
-//   void intersect(const CMCT_Vertex_handle vh1,
-// 		 const CMCT_Vertex_handle vh2,
-// 		 const Simplex &s,
-// 		 Bare_point &p) const {
-//     Bare_point p1 = mc_triangulator->location(vh1, gt);
-//     Bare_point p2 = mc_triangulator->location(vh2, gt);
-//     Simplex sp = s;
-//     intersect(p1,p2, sp,sp, p);
-//   }
+  //   void intersect(const CMCT_Vertex_handle vh1,
+  //    const CMCT_Vertex_handle vh2,
+  //    const Simplex &s,
+  //    Bare_point &p) const {
+  //     Bare_point p1 = mc_triangulator->location(vh1, gt);
+  //     Bare_point p2 = mc_triangulator->location(vh2, gt);
+  //     Simplex sp = s;
+  //     intersect(p1,p2, sp,sp, p);
+  //   }
 
   void intersect(Bare_point &p1, Bare_point &p2, 
-		 TMC_Cell_handle &s1, TMC_Cell_handle &s2,
-		 Bare_point &p) const {
+                 TMC_Cell_handle &s1, TMC_Cell_handle &s2,
+                 Bare_point &p) const {
     typedef typename Bare_point::R  Traits;
     typedef typename Traits::FT FT;
     Cartesian_converter<Traits, 
-                        typename Geometric_traits::Bare_point::R> converter;
+      typename Geometric_traits::Bare_point::R> converter;
 
     FT sq_dist = squared_distance(p1,p2);
     // Use value to make the computation robust (endpoints near the surface)
@@ -567,12 +527,12 @@ public:
   }
 
   void intersect(TMC_Cell_handle ch, int i, int j,
-		 //TMC_Vertex_handle p2, 
-		 Bare_point &p) const {
+                 //TMC_Vertex_handle p2, 
+                 Bare_point &p) const {
     typedef typename Bare_point::R  Traits;
     typedef typename Traits::FT FT;
     Cartesian_converter<FK, 
-                        typename Geometric_traits::Bare_point::R> converter;
+      typename Geometric_traits::Bare_point::R> converter;
 
     Cell_info &cell_info = ch->info();
     Bare_point p1 = converter(ch->vertex(i)->point());
@@ -592,78 +552,8 @@ public:
   }
 
   void intersect_with_transversal_segment
-  (Bare_point &p,
-   const TMC_Cell_handle &start = TMC_Cell_handle()) const 
-  {
-
-    typedef typename Geometric_traits::Kernel::Plane_3 Plane;
-    typedef typename Geometric_traits::Kernel::Line_3  Line;
-
-    TMC_Cell_handle tet = locate_mixed(p, start);
-    
-    // get transversal segment:
-    Bare_point p1, p2;
-
-    // Compute signs on vertices and sort them:
-    int nIn = 0;
-    int sortedV[4];
-    for (int i=0; i<4; i++) {
-      if (sign(tet->vertex(i))==POSITIVE) {
-        sortedV[nIn] = i; nIn++;
-      } else {
-        sortedV[3-i+nIn] = i;
-      }
-    }
-
-    Cartesian_converter<FK, typename Geometric_traits::Bare_point::R> converter;
-    Object obj;
-    typename FK::Point_3 tmc_point;
-    Bare_point tet_pts[4];
-    for (int i=0; i<4; i++) {
-      tet_pts[i] = converter(tet->vertex(i)->point());
-    }
-    if (nIn==1) {
-      p1 = tet_pts[sortedV[0]];
-      obj = CGAL::intersection(Plane(tet_pts[sortedV[1]],
-				     tet_pts[sortedV[2]],
-				     tet_pts[sortedV[3]]),
-			       Line(p1, p));
-      if ( !assign(p2, obj) ) {
-        CGAL_assertion_msg(false,"intersection: no intersection.");
-      }
-    } else if (nIn==2) {
-      obj = CGAL::intersection(Plane(tet_pts[sortedV[2]],
-				     tet_pts[sortedV[3]],
-				     p),
-			       Line(tet_pts[sortedV[0]],
-				    tet_pts[sortedV[1]]));
-      if ( !assign(p1, obj) ) {
-        CGAL_assertion_msg(false,"intersection: no intersection.");
-      }
-      obj = CGAL::intersection(Plane(tet_pts[sortedV[0]],
-				     tet_pts[sortedV[1]],
-				     p),
-			       Line(tet_pts[sortedV[2]],
-				    tet_pts[sortedV[3]]));
-      if ( !assign(p2, obj) ) {
-        CGAL_assertion_msg(false,"intersection: no intersection.");
-      }
-    } else if (nIn==3) {
-      p2 = tet_pts[sortedV[3]];
-      obj = CGAL::intersection(Plane(tet_pts[sortedV[0]],
-				     tet_pts[sortedV[1]],
-				     tet_pts[sortedV[2]]),
-			       Line(p2, p));
-      if ( !assign(p1, obj) ) {
-        CGAL_assertion_msg(false,"intersection: no intersection.");
-      }
-    } else {
-      CGAL_assertion(false);
-    }
-
-    // Find the intersection:
-    intersect(p1, p2, tet, tet, p);
-  }
+    (Bare_point &p,
+     const TMC_Cell_handle &start = TMC_Cell_handle()) const;
 
   Quadratic_surface
   construct_surface(const Simplex &sim) const {
@@ -671,55 +561,8 @@ public:
   }
   template< class Traits >
   Skin_surface_quadratic_surface_3<Traits> 
-  construct_surface(const Simplex &sim, const Traits &traits) const {
-    typedef Skin_surface_quadratic_surface_3<Traits>      Quadratic_surface;
-    typedef Weighted_converter_3<Cartesian_converter<
-      typename Geometric_traits::Bare_point::R, Traits> > Converter;
-    typedef typename Traits::Point_3                      Point;
-    typedef typename Traits::FT                           FT;
-    typedef CGAL::Weighted_point<Point,FT>                Weighted_point;
-
-    Converter conv;
-
-    switch (sim.dimension()) {
-    case 0:
-      {
-	Vertex_handle vh = sim;
-	return Quadratic_surface(conv(vh->point()), shrink_factor());
-	break;
-      }
-    case 1:
-      {
-	Edge e = sim;
-	Weighted_point p0 = conv(e.first->vertex(e.second)->point());
-	Weighted_point p1 = conv(e.first->vertex(e.third)->point());
-	return Quadratic_surface(p0, p1, shrink_factor());
-	break;
-      }
-    case 2:
-      {
-	Facet f = sim;
-	Weighted_point p0 = conv(f.first->vertex((f.second+1)&3)->point());
-	Weighted_point p1 = conv(f.first->vertex((f.second+2)&3)->point());
-	Weighted_point p2 = conv(f.first->vertex((f.second+3)&3)->point());
-	return Quadratic_surface(p0,p1,p2, shrink_factor());
-	break;
-      }
-    case 3:
-      {
-	Cell_handle ch = sim;
-	Weighted_point p0 = conv(ch->vertex(0)->point());
-	Weighted_point p1 = conv(ch->vertex(1)->point());
-	Weighted_point p2 = conv(ch->vertex(2)->point());
-	Weighted_point p3 = conv(ch->vertex(3)->point());
-	return Quadratic_surface(p0,p1,p2,p3, shrink_factor());
-	break;
-      }
-    }
-    CGAL_assertion(false);
-    return Quadratic_surface();
-  }
-
+  construct_surface(const Simplex &sim, const Traits &traits) const;
+  
   // Access to the implicit triangulated mixed complex:
   TMC_Vertex_iterator tmc_vertices_begin() const 
   { return tmc.finite_vertices_begin(); }
@@ -730,19 +573,6 @@ public:
   TMC_Cell_iterator tmc_cells_end() const
   { return tmc.finite_cells_end(); }
 
-  // NGHK: added for the (Delaunay) surface mesher, document
-  Sphere bounding_sphere() const {
-    return _bounding_sphere;
-  }
-  FT squared_error_bound() const {
-    return .01;
-  }
-
-  typename Mesher_Gt::FT 
-  get_density(const typename Mesher_Gt::Point_3 &p) const {
-    // NGHK: Make adaptive
-    return 1;
-  }
 public:
   const Regular &get_regular_triangulation() const {
     return regular;
@@ -765,9 +595,103 @@ private:
 
   // Triangulated mixed complex:
   TMC tmc;
-  // We want to construct this object later (the pointer):
-//   CMCT *mc_triangulator;
 };
+
+template <class MixedComplexTraits_3> 
+template < class WP_iterator >
+Skin_surface_3<MixedComplexTraits_3>::
+Skin_surface_3(WP_iterator begin, WP_iterator end, 
+               FT shrink,
+               bool grow_balls,
+               Gt gt_,
+               bool _verbose) 
+  : gt(gt_), verbose(_verbose) {
+
+  gt.set_shrink(shrink);
+  CGAL_assertion(begin != end);
+
+  if (grow_balls) {
+    for (; begin != end; begin++) {
+      regular.insert(Weighted_point(*begin, begin->weight()/shrink_factor()));
+    }
+  } else {
+    regular.insert(begin, end);
+  }
+
+  construct_bounding_box(regular);
+  
+  if (verbose) {
+    std::cerr << "Triangulation ready" << std::endl;
+    std::cerr << "Vertices: " << regular.number_of_vertices() << std::endl;
+    std::cerr << "Cells:    " << regular.number_of_cells() << std::endl;
+  }
+    
+
+  // Construct the Triangulated_mixed_complex:
+  Triangulated_mixed_complex_observer_3<TMC, Self> observer(shrink_factor());
+  triangulate_mixed_complex_3(regular, shrink_factor(), tmc, observer, true);
+
+  CGAL_assertion(tmc.dimension() == 3);
+  { // NGHK: debug code:
+    CGAL_assertion(tmc.is_valid());
+    std::vector<TMC_Vertex_handle> ch_vertices;
+    tmc.incident_vertices(tmc.infinite_vertex(), 
+                          std::back_inserter(ch_vertices));
+    for (typename std::vector<TMC_Vertex_handle>::iterator
+           vit = ch_vertices.begin(); vit != ch_vertices.end(); vit++) {
+      CGAL_assertion(sign(*vit) == POSITIVE);
+    }
+  }
+}
+
+template <class MixedComplexTraits_3> 
+template< class Traits >
+Skin_surface_quadratic_surface_3<Traits> 
+Skin_surface_3<MixedComplexTraits_3>::
+construct_surface(const Simplex &sim, const Traits &traits) const {
+  typedef Skin_surface_quadratic_surface_3<Traits>      Quadratic_surface;
+  typedef Weighted_converter_3<Cartesian_converter<
+    typename Geometric_traits::Bare_point::R, Traits> > Converter;
+  typedef typename Traits::Point_3                      Point;
+  typedef typename Traits::FT                           FT;
+  typedef CGAL::Weighted_point<Point,FT>                Weighted_point;
+
+  Converter conv;
+
+  switch (sim.dimension()) {
+    case 0: {
+      Vertex_handle vh = sim;
+      return Quadratic_surface(conv(vh->point()), shrink_factor());
+      break;
+    }
+    case 1: {
+      Edge e = sim;
+      Weighted_point p0 = conv(e.first->vertex(e.second)->point());
+      Weighted_point p1 = conv(e.first->vertex(e.third)->point());
+      return Quadratic_surface(p0, p1, shrink_factor());
+      break;
+    }
+    case 2: {
+      Facet f = sim;
+      Weighted_point p0 = conv(f.first->vertex((f.second+1)&3)->point());
+      Weighted_point p1 = conv(f.first->vertex((f.second+2)&3)->point());
+      Weighted_point p2 = conv(f.first->vertex((f.second+3)&3)->point());
+      return Quadratic_surface(p0,p1,p2, shrink_factor());
+      break;
+    }
+    case 3: {
+      Cell_handle ch = sim;
+      Weighted_point p0 = conv(ch->vertex(0)->point());
+      Weighted_point p1 = conv(ch->vertex(1)->point());
+      Weighted_point p2 = conv(ch->vertex(2)->point());
+      Weighted_point p3 = conv(ch->vertex(3)->point());
+      return Quadratic_surface(p0,p1,p2,p3, shrink_factor());
+      break;
+    }
+  }
+  CGAL_assertion(false);
+  return Quadratic_surface();
+}
 
 template <class MixedComplexTraits_3> 
 void 
@@ -787,7 +711,7 @@ construct_bounding_box(Regular &regular)
     while (++vit != regular.finite_vertices_end()) {
       bbox = bbox + vit->point().bbox();
       if (max_weight < vit->point().weight())
-	max_weight = vit->point().weight();
+        max_weight = vit->point().weight();
     }
 
     // add a bounding octahedron:
@@ -799,17 +723,17 @@ construct_bounding_box(Regular &regular)
     FT dr = sqrt(CGAL::to_double(max_weight)) + .001;
   
     regular.insert(Weighted_point(
-      Bare_point(bbox.xmax()+(dy+dz+dr)/gt.get_shrink(),mid.y(),mid.z()),-1));
+                                  Bare_point(bbox.xmax()+(dy+dz+dr)/gt.get_shrink(),mid.y(),mid.z()),-1));
     regular.insert(Weighted_point(
-      Bare_point(bbox.xmin()-(dy+dz+dr)/gt.get_shrink(),mid.y(),mid.z()),-1));
+                                  Bare_point(bbox.xmin()-(dy+dz+dr)/gt.get_shrink(),mid.y(),mid.z()),-1));
     regular.insert(Weighted_point(
-      Bare_point(mid.x(),bbox.ymax()+(dx+dz+dr)/gt.get_shrink(),mid.z()),-1));
+                                  Bare_point(mid.x(),bbox.ymax()+(dx+dz+dr)/gt.get_shrink(),mid.z()),-1));
     regular.insert(Weighted_point(
-      Bare_point(mid.x(),bbox.ymin()-(dx+dz+dr)/gt.get_shrink(),mid.z()),-1));
+                                  Bare_point(mid.x(),bbox.ymin()-(dx+dz+dr)/gt.get_shrink(),mid.z()),-1));
     regular.insert(Weighted_point(
-      Bare_point(mid.x(),mid.y(),bbox.zmax()+(dx+dy+dr)/gt.get_shrink()),-1));
+                                  Bare_point(mid.x(),mid.y(),bbox.zmax()+(dx+dy+dr)/gt.get_shrink()),-1));
     regular.insert(Weighted_point(
-      Bare_point(mid.x(),mid.y(),bbox.zmin()-(dx+dy+dr)/gt.get_shrink()),-1));
+                                  Bare_point(mid.x(),mid.y(),bbox.zmin()-(dx+dy+dr)/gt.get_shrink()),-1));
 
     // Set the bounding sphere for the Delaunay mesher
     _bounding_sphere = Sphere(mid, dr*dr+1);
@@ -820,7 +744,7 @@ template <class MixedComplexTraits_3>
 typename Skin_surface_3<MixedComplexTraits_3>::TMC_Cell_handle
 Skin_surface_3<MixedComplexTraits_3>::
 locate_mixed(const Bare_point &p0, 
-	     TMC_Cell_handle start) const {
+             TMC_Cell_handle start) const {
   Cartesian_converter<typename Geometric_traits::Bare_point::R, FK> converter_fk;
   typename FK::Point_3 p_inexact = converter_fk(p0);
 
@@ -844,7 +768,7 @@ locate_mixed(const Bare_point &p0,
   TMC_Cell_handle c = start;
 
   // Now treat the cell c.
-  try_next_cell:
+             try_next_cell:
 
   const typename FK::Point_3* pts[4] = { &(c->vertex(0)->point()),
                                          &(c->vertex(1)->point()),
@@ -869,25 +793,25 @@ locate_mixed(const Bare_point &p0,
     try {
       o = orientation(*pts[0], *pts[1], *pts[2], *pts[3]);
     } catch (Interval_nt_advanced::unsafe_comparison) {
-	  typedef Exact_predicates_exact_constructions_kernel EK;
-	  Cartesian_converter<typename Geometric_traits::Bare_point::R, EK> converter_ek;
+      typedef Exact_predicates_exact_constructions_kernel EK;
+      Cartesian_converter<typename Geometric_traits::Bare_point::R, EK> converter_ek;
 
       Skin_surface_traits_3<EK> exact_traits(shrink_factor());
-	  
+   
       typename EK::Point_3 pts[4];
 
-	  // We know that the 4 vertices of c are positively oriented.
-	  // So, in order to test if p is seen outside from one of c's facets,
-	  // we just replace the corresponding point by p in the orientation
-	  // test.  We do this using the array below.
-	  for (int j=0; j<4; j++) {
-	  	if (j != i) {
+      // We know that the 4 vertices of c are positively oriented.
+      // So, in order to test if p is seen outside from one of c's facets,
+      // we just replace the corresponding point by p in the orientation
+      // test.  We do this using the array below.
+      for (int j=0; j<4; j++) {
+        if (j != i) {
           pts[j] = get_anchor_point(c->vertex(j)->info(), exact_traits);
-	  	} else {
-	  	  pts[j] = converter_ek(p0);
-	  	}
-	  }
-	
+        } else {
+          pts[j] = converter_ek(p0);
+        }
+      }
+ 
 
     }
     if ( o != NEGATIVE ) {
@@ -909,6 +833,84 @@ locate_mixed(const Bare_point &p0,
   CGAL_assertion(c->vertex(3) != tmc.infinite_vertex());
 
   return c;
+}
+
+
+template <class MixedComplexTraits_3> 
+void
+Skin_surface_3<MixedComplexTraits_3>::
+intersect_with_transversal_segment(
+  Bare_point &p,
+  const TMC_Cell_handle &start) const 
+{
+
+  typedef typename Geometric_traits::Kernel::Plane_3 Plane;
+  typedef typename Geometric_traits::Kernel::Line_3  Line;
+
+  TMC_Cell_handle tet = locate_mixed(p, start);
+  
+  // get transversal segment:
+  Bare_point p1, p2;
+
+  // Compute signs on vertices and sort them:
+  int nIn = 0;
+  int sortedV[4];
+  for (int i=0; i<4; i++) {
+    if (sign(tet->vertex(i))==POSITIVE) {
+      sortedV[nIn] = i; nIn++;
+    } else {
+      sortedV[3-i+nIn] = i;
+    }
+  }
+
+  Cartesian_converter<FK, typename Geometric_traits::Bare_point::R> converter;
+  Object obj;
+  typename FK::Point_3 tmc_point;
+  Bare_point tet_pts[4];
+  for (int i=0; i<4; i++) {
+    tet_pts[i] = converter(tet->vertex(i)->point());
+  }
+  if (nIn==1) {
+    p1 = tet_pts[sortedV[0]];
+    obj = CGAL::intersection(Plane(tet_pts[sortedV[1]],
+                                   tet_pts[sortedV[2]],
+                                   tet_pts[sortedV[3]]),
+                             Line(p1, p));
+    if ( !assign(p2, obj) ) {
+      CGAL_assertion_msg(false,"intersection: no intersection.");
+    }
+  } else if (nIn==2) {
+    obj = CGAL::intersection(Plane(tet_pts[sortedV[2]],
+                                   tet_pts[sortedV[3]],
+                                   p),
+                             Line(tet_pts[sortedV[0]],
+                                  tet_pts[sortedV[1]]));
+    if ( !assign(p1, obj) ) {
+      CGAL_assertion_msg(false,"intersection: no intersection.");
+    }
+    obj = CGAL::intersection(Plane(tet_pts[sortedV[0]],
+                                   tet_pts[sortedV[1]],
+                                   p),
+                             Line(tet_pts[sortedV[2]],
+                                  tet_pts[sortedV[3]]));
+    if ( !assign(p2, obj) ) {
+      CGAL_assertion_msg(false,"intersection: no intersection.");
+    }
+  } else if (nIn==3) {
+    p2 = tet_pts[sortedV[3]];
+    obj = CGAL::intersection(Plane(tet_pts[sortedV[0]],
+                                   tet_pts[sortedV[1]],
+                                   tet_pts[sortedV[2]]),
+                             Line(p2, p));
+    if ( !assign(p1, obj) ) {
+      CGAL_assertion_msg(false,"intersection: no intersection.");
+    }
+  } else {
+    CGAL_assertion(false);
+  }
+
+  // Find the intersection:
+  intersect(p1, p2, tet, tet, p);
 }
   
 //   Simplex prev, s;
@@ -945,16 +947,16 @@ locate_mixed(const Bare_point &p0,
 //       int index = rng.get_int(0,nrNbs);
 
 //       for (int i=0; i<nrNbs; i++, index = (index+1)%nrNbs) {
-// 	if (!regular.is_infinite(nbs[index])) {
-// 	  if (prev != Simplex(nbs[index])) {
-// 	    if (side_tester(vh->point(), nbs[index]->point(), p) == POSITIVE) {
-// 	      prev = s;
-// 	      regular.is_edge(vh, nbs[index], ch, i1, i2);
-// 	      s = Edge(ch,i1,i2);
-// 	      goto try_next_cell;
-// 	    }
-// 	    }
-// 	}
+//  if (!regular.is_infinite(nbs[index])) {
+//    if (prev != Simplex(nbs[index])) {
+//      if (side_tester(vh->point(), nbs[index]->point(), p) == POSITIVE) {
+//        prev = s;
+//        regular.is_edge(vh, nbs[index], ch, i1, i2);
+//        s = Edge(ch,i1,i2);
+//        goto try_next_cell;
+//      }
+//      }
+//  }
 //       }
 //       break;
 //     }
@@ -973,43 +975,43 @@ locate_mixed(const Bare_point &p0,
 //       if (index < nrFacets-1) for (int i=0; i<index; i++) fcir++;
 
 //       for (int i=0; i<nrFacets+2; i++, index = (index+1)%(nrFacets+2)) {
-// 	if (index < nrFacets) {
-// 	  // Check incident facets:
-// 	  if (!regular.is_infinite(*fcir)) {
-// 	    if (prev != Simplex(fcir)) {
-// 	      i1 = (*fcir).first->index(vh1);
-// 	      i2 = (*fcir).first->index(vh2);
-// 	      Vertex_handle vh3 = (*fcir).first->vertex(6-(*fcir).second-i1-i2);
+//  if (index < nrFacets) {
+//    // Check incident facets:
+//    if (!regular.is_infinite(*fcir)) {
+//      if (prev != Simplex(fcir)) {
+//        i1 = (*fcir).first->index(vh1);
+//        i2 = (*fcir).first->index(vh2);
+//        Vertex_handle vh3 = (*fcir).first->vertex(6-(*fcir).second-i1-i2);
 
-// 	      if (side_tester(vh1->point(), vh2->point(), vh3->point(),
-// 			      p) == POSITIVE) {
-// 		prev = s;
-// 		s = fcir;
-// 		goto try_next_cell;
-// 	      }
-// 	      }
-// 	  }
-// 	  fcir++;
-// 	} else {
-// 	  // Check incident vertices:
-// 	  if (index==nrFacets) {
-// 	    if (prev != Simplex(vh1)) {
-// 	      if (side_tester(vh1->point(), vh2->point(), p) == NEGATIVE) {
-// 		prev = s;
-// 		s = vh1;
-// 		goto try_next_cell;
-// 	      }
-// 	      }
-// 	  } else {
-// 	    if (prev != Simplex(vh2)) {
-// 	      if (side_tester(vh2->point(), vh1->point(), p) == NEGATIVE) {
-// 		prev = s;
-// 		s = vh2;
-// 		goto try_next_cell;
-// 	      }
-// 	      }
-// 	  }
-// 	}
+//        if (side_tester(vh1->point(), vh2->point(), vh3->point(),
+//          p) == POSITIVE) {
+//   prev = s;
+//   s = fcir;
+//   goto try_next_cell;
+//        }
+//        }
+//    }
+//    fcir++;
+//  } else {
+//    // Check incident vertices:
+//    if (index==nrFacets) {
+//      if (prev != Simplex(vh1)) {
+//        if (side_tester(vh1->point(), vh2->point(), p) == NEGATIVE) {
+//   prev = s;
+//   s = vh1;
+//   goto try_next_cell;
+//        }
+//        }
+//    } else {
+//      if (prev != Simplex(vh2)) {
+//        if (side_tester(vh2->point(), vh1->point(), p) == NEGATIVE) {
+//   prev = s;
+//   s = vh2;
+//   goto try_next_cell;
+//        }
+//        }
+//    }
+//  }
 //       }
 //       break;
 //     }
@@ -1019,47 +1021,47 @@ locate_mixed(const Bare_point &p0,
 //       // 3x towards edge, 2x towards cell
 //       int index = rng.get_int(0,5); 
 //       for (int i=0; i<5; i++, index = (index+1)%5) {
-// 	if (index > 2) {
-// 	  // Check incident cells
-// 	  ch = f.first;
-// 	  i1 = f.second;
-// 	  if (index == 3) {
-// 	    ch = ch->neighbor(i1);
-// 	    i1 = ch->index(f.first);
-// 	  }
-// 	  CGAL_assertion(!regular.has_vertex(f, ch->vertex(i1)));
-// 	  if (!regular.is_infinite(ch->vertex(i1))) {
-// 	    if (prev != Simplex(ch)) {
-// 	      if (side_tester(ch->vertex((i1+1)&3)->point(),
-// 			      ch->vertex((i1+2)&3)->point(),
-// 			      ch->vertex((i1+3)&3)->point(),
-// 			      ch->vertex(i1)->point(), p) == POSITIVE) {
-// 		prev = s;
-// 		s = ch;
-// 		goto try_next_cell;
-// 	      }
-// 	      }
-// 	  }
-// 	} else {
-// 	  // Check incident edges (index = 0,1,2)
-// 	  i1 = (f.second+1)&3;
-// 	  i2 = (f.second+2)&3;
-// 	  int i3 = (f.second+3)&3;
-// 	  if (index == 1) std::swap(i1,i3);
-// 	  if (index == 2) std::swap(i2,i3);
-// 	  Vertex_handle vh1 = f.first->vertex(i1);
-// 	  Vertex_handle vh2 = f.first->vertex(i2);
-// 	  Vertex_handle vh3 = f.first->vertex(i3);
-	  
-// 	  if (prev != Simplex(Edge(f.first,i1,i2))) {
-// 	    if (side_tester(vh1->point(), vh2->point(), vh3->point(), 
-// 			    p) == NEGATIVE) {
-// 	      prev = s;
-// 	      s = Edge(f.first,i1,i2);
-// 	      goto try_next_cell;
-// 	    }
-// 	    }
-// 	}
+//  if (index > 2) {
+//    // Check incident cells
+//    ch = f.first;
+//    i1 = f.second;
+//    if (index == 3) {
+//      ch = ch->neighbor(i1);
+//      i1 = ch->index(f.first);
+//    }
+//    CGAL_assertion(!regular.has_vertex(f, ch->vertex(i1)));
+//    if (!regular.is_infinite(ch->vertex(i1))) {
+//      if (prev != Simplex(ch)) {
+//        if (side_tester(ch->vertex((i1+1)&3)->point(),
+//          ch->vertex((i1+2)&3)->point(),
+//          ch->vertex((i1+3)&3)->point(),
+//          ch->vertex(i1)->point(), p) == POSITIVE) {
+//   prev = s;
+//   s = ch;
+//   goto try_next_cell;
+//        }
+//        }
+//    }
+//  } else {
+//    // Check incident edges (index = 0,1,2)
+//    i1 = (f.second+1)&3;
+//    i2 = (f.second+2)&3;
+//    int i3 = (f.second+3)&3;
+//    if (index == 1) std::swap(i1,i3);
+//    if (index == 2) std::swap(i2,i3);
+//    Vertex_handle vh1 = f.first->vertex(i1);
+//    Vertex_handle vh2 = f.first->vertex(i2);
+//    Vertex_handle vh3 = f.first->vertex(i3);
+   
+//    if (prev != Simplex(Edge(f.first,i1,i2))) {
+//      if (side_tester(vh1->point(), vh2->point(), vh3->point(), 
+//        p) == NEGATIVE) {
+//        prev = s;
+//        s = Edge(f.first,i1,i2);
+//        goto try_next_cell;
+//      }
+//      }
+//  }
 //       }
 //       break;
 //     }
@@ -1068,16 +1070,16 @@ locate_mixed(const Bare_point &p0,
 //       Cell_handle ch = s;
 //       int index = rng.get_int(0,4); 
 //       for (int i=0; i<4; i++, index = (index+1)&3) {
-// 	if (prev != Simplex(Facet(ch, index))) {
-// 	  if (side_tester(ch->vertex((index+1)&3)->point(),
-// 			  ch->vertex((index+2)&3)->point(),
-// 			  ch->vertex((index+3)&3)->point(),
-// 			  ch->vertex(index)->point(), p) == NEGATIVE) {
-// 	    prev = s;
-// 	    s = Facet(ch, index);
-// 	    goto try_next_cell;
-// 	  }
-// 	  }
+//  if (prev != Simplex(Facet(ch, index))) {
+//    if (side_tester(ch->vertex((index+1)&3)->point(),
+//      ch->vertex((index+2)&3)->point(),
+//      ch->vertex((index+3)&3)->point(),
+//      ch->vertex(index)->point(), p) == NEGATIVE) {
+//      prev = s;
+//      s = Facet(ch, index);
+//      goto try_next_cell;
+//    }
+//    }
 //       }
 //       break;
 //     }
@@ -1111,12 +1113,12 @@ Skin_surface_3<MixedComplexTraits_3>::mesh_skin_surface_3(Polyhedron_3 &p) const
   Traits   marching_traits(*this);
   Observer marching_observer;
   marching_tetrahedra_3(tmc_vertices_begin(), 
-			tmc_vertices_end(), 
-			tmc_cells_begin(), 
-			tmc_cells_end(), 
-			p, 
-			marching_traits,
-			marching_observer);
+                        tmc_vertices_end(), 
+                        tmc_cells_begin(), 
+                        tmc_cells_end(), 
+                        p, 
+                        marching_traits,
+                        marching_observer);
 }
 
 template <class MixedComplexTraits_3> 

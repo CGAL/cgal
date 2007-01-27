@@ -35,7 +35,7 @@ struct SS_Dereference_type<T *> {
 };
 
 template <class TriangulatedMixedComplex_3,
-	  class SkinSurface_3>
+          class SkinSurface_3>
 class Triangulated_mixed_complex_observer_3 {
 public:
   typedef typename SkinSurface_3::Regular            Regular;

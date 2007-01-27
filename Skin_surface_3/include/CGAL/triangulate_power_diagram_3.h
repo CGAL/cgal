@@ -154,16 +154,16 @@ private:
 
     //remove_small_edges();
 
-    { // NGHK: debug code:
-      CGAL_assertion(_tmc.is_valid());
-      std::vector<Tmc_Vertex_handle> ch_vertices;
-      _tmc.incident_vertices(_tmc.infinite_vertex(), 
-			     std::back_inserter(ch_vertices));
-      for (typename std::vector<Tmc_Vertex_handle>::iterator
-	     vit = ch_vertices.begin(); vit != ch_vertices.end(); vit++) {
-	CGAL_assertion((*vit)->sign() == POSITIVE);
-      }
-    }
+//     { // NGHK: debug code:
+//       CGAL_assertion(_tmc.is_valid());
+//       std::vector<Tmc_Vertex_handle> ch_vertices;
+//       _tmc.incident_vertices(_tmc.infinite_vertex(), 
+// 			     std::back_inserter(ch_vertices));
+//       for (typename std::vector<Tmc_Vertex_handle>::iterator
+// 	     vit = ch_vertices.begin(); vit != ch_vertices.end(); vit++) {
+// 	CGAL_assertion((*vit)->sign() == POSITIVE);
+//       }
+//     }
   }
 
   Tmc_Vertex_handle add_vertex(Rt_Simplex const &anchor); 

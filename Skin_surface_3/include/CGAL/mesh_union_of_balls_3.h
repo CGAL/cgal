@@ -24,10 +24,10 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template <class SkinSurface_3, class Polyhedron>
-void mesh_union_of_balls_3(SkinSurface_3 const &skin_surface, Polyhedron &p)
+template <class UnionOfBalls_3, class Polyhedron>
+void mesh_union_of_balls_3(UnionOfBalls_3 const &union_of_balls, Polyhedron &p)
 {
-  mesh_skin_surface_3(skin_surface, p);
+  union_of_balls.mesh_union_of_balls_3(p);
 }
 
 CGAL_END_NAMESPACE
