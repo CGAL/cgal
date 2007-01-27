@@ -89,5 +89,5 @@ realclean: clean
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.C.o:
+.cpp.o:
 	$(CGAL_CXX)  $(CXXFLAGS) -c $<
