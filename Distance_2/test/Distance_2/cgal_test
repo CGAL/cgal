@@ -91,13 +91,13 @@ if [ $# -ne 0 ]
 then
     sourcefiles="$*"
 else
-    sourcefiles="tst*.C"
+    sourcefiles="tst*.cpp"
 fi
 
 
 for file in ${sourcefiles}
 do
-    base=`basename ${file} .C`
+    base=`basename ${file} .cpp`
     datafiles="ls  DATA/${base}/ix.*"
     if [  "${datafiles}" ]
     then
