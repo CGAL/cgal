@@ -1960,7 +1960,6 @@ Stream_lines_2/doc_tex/Stream_lines_2/streamlines-small.jpg -text svneol=unset#i
 Stream_lines_2/doc_tex/Stream_lines_2/streamlines-teaser.jpg -text svneol=unset#image/jpeg
 Stream_lines_2/test/Stream_lines_2/data/datap.tri.cin -text
 Stream_lines_2/test/Stream_lines_2/data/datav.tri.cin -text
-Stream_support/test/Stream_support/cgal_test eol=lf
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/CCSubdivision.png -text svneol=unset#image/png
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/PQQStencil.eps -text svneol=unset#application/postscript
 Subdivision_method_3/doc_tex/Subdivision_method_3/FIG/PQQStencil.fig -text svneol=unset#application/octet-stream
