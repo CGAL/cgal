@@ -2098,7 +2098,6 @@ Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/collapse
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/general_collapse.eps -text svneol=unset#application/postscript
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/general_collapse.pdf -text svneol=unset#application/pdf
 Surface_mesh_simplification/doc_tex/Surface_mesh_simplification_ref/fig/general_collapse.png -text svneol=unset#image/png
-Surface_mesh_simplification/examples/Surface_mesh_simplification/cgal_test eol=lf
 Surface_mesh_simplification/examples/Surface_mesh_simplification/cube.off -text svneol=unset#application/octet-stream
 Surface_mesh_simplification/examples/Surface_mesh_simplification/edge_collapse_enriched_polyhedron.cmd eol=lf
 Surface_mesh_simplification/examples/Surface_mesh_simplification/edge_collapse_polyhedron.cmd eol=lf
