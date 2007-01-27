@@ -2,11 +2,8 @@ TODO
 ====
 
 next revision:
-- check if linda override for #369977 is still needed [done]
-- use binNMU-safe version dependencies: s/=/>=/ fuer all -> any [done]
-- incorporate changes for non-free buildd network:
-  http://lists.debian.org/debian-devel-announce/2006/11/msg00012.html [done]
 - update list of authors in debian/copyright
 
 CGAL 3.3:
 - SONAME issue
+- -D_REENTRANT

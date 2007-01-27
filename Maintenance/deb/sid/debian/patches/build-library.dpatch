@@ -5,21 +5,21 @@
 ## DP: No description.
 
 @DPATCH@
-diff -urNad cgal-3.2.99.210~/install_cgal cgal-3.2.99.210/install_cgal
---- cgal-3.2.99.210~/install_cgal	2007-01-14 22:20:07.000000000 +0100
-+++ cgal-3.2.99.210/install_cgal	2007-01-14 22:20:08.000000000 +0100
-@@ -4189,7 +4189,7 @@
+diff -urNad cgal/install_cgal cgal/install_cgal
+--- cgal/install_cgal	2006-04-17 22:33:03.000000000 +0200
++++ cgal/install_cgal	2006-04-17 22:33:06.000000000 +0200
+@@ -4156,7 +4156,7 @@
  	    MAKE_OPTION="${MAKE_OPTION} CXXFLAGS=\$(CGAL_SHARED_LIB_CXXFLAGS) shared_lib";;
      esac
  
 -    if make ${MAKE_OPTION} >"${COMPILE_LOGFILE}" 2>&1; then
 +    if make ${MAKE_OPTION} | tee "${COMPILE_LOGFILE}" 2>&1; then
  	log_print "Compilation of $1 $2 ${_libname} succeeded."
- 	log_print "vvvvvvvvvvvv build log for $1 $2 shown below vvvvvvvvvvvv"
- 	eval ${_cat} \"${COMPILE_LOGFILE}\" ${INSTALL_LOGFILE_REDIRECTION}
-diff -urNad cgal-3.2.99.210~/src/CGAL/makefile cgal-3.2.99.210/src/CGAL/makefile
---- cgal-3.2.99.210~/src/CGAL/makefile	2007-01-14 22:20:07.000000000 +0100
-+++ cgal-3.2.99.210/src/CGAL/makefile	2007-01-14 22:20:08.000000000 +0100
+ 	${_printf} "%s\n" " done."
+ 	ANY_LIB_COMPILED='y'
+diff -urNad cgal/src/CGAL/makefile cgal/src/CGAL/makefile
+--- cgal/src/CGAL/makefile	2006-04-17 22:33:03.000000000 +0200
++++ cgal/src/CGAL/makefile	2006-04-17 22:33:28.000000000 +0200
 @@ -74,11 +74,14 @@
  #                    target entries
  #---------------------------------------------------------------------#
@@ -37,35 +37,18 @@ diff -urNad cgal-3.2.99.210~/src/CGAL/makefile cgal-3.2.99.210/src/CGAL/makefile
  	rm $(CGAL_OBJECTS)
  
  static_lib: static_lib_no_install
-@@ -101,5 +104,5 @@
- .SUFFIXES: .cpp $(SUFFIXES)
+@@ -99,5 +102,5 @@
+ #---------------------------------------------------------------------#
  
  .cpp$(OBJ_EXT):
 -	$(CGAL_CXX)  $(CXXFLAGS)  -c $<
 +	$(CGAL_CXX)  $(CXXFLAGS) -D_REENTRANT -c $<
  
-diff -urNad cgal-3.2.99.210~/src/CGALQt/makefile cgal-3.2.99.210/src/CGALQt/makefile
---- cgal-3.2.99.210~/src/CGALQt/makefile	2007-01-14 22:20:07.000000000 +0100
-+++ cgal-3.2.99.210/src/CGALQt/makefile	2007-01-14 22:21:31.000000000 +0100
-@@ -64,11 +64,14 @@
- #                    target entries
- #---------------------------------------------------------------------#
- 
-+SOVERSION=1.0.1
-+SOMAJOR=1
-+
- shared_lib: $(CGAL_OBJECTS)
--	$(CGAL_SHARED_LIB_CREATE)$(CGAL_QT_SHARED_LIB) -Wl,-soname,$(CGAL_QT_SHARED_LIB) \
-+	$(CGAL_SHARED_LIB_CREATE)$(CGAL_QT_SHARED_LIB).$(SOVERSION) -Wl,-soname,$(CGAL_QT_SHARED_LIB).${SOMAJOR} \
- 	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
- 		$(CGAL_SHARED_LIB_LDFLAGS) $(OPENGL_LIBS)
--	mv $(CGAL_QT_SHARED_LIB) '$(CGAL_LIB_DESTINATION)'
-+	mv $(CGAL_QT_SHARED_LIB).$(SOVERSION) '$(CGAL_LIB_DESTINATION)'
- 	rm $(CGAL_OBJECTS)
- 
- static_lib: lib
-@@ -129,5 +132,5 @@
- .SUFFIXES: .cpp $(SUFFIXES)
+diff -urNad cgal/src/CGALQt/makefile cgal/src/CGALQt/makefile
+--- cgal/src/CGALQt/makefile	2006-04-17 21:00:25.000000000 +0200
++++ cgal/src/CGALQt/makefile	2006-04-17 22:33:53.000000000 +0200
+@@ -125,5 +125,5 @@
+ 	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget_OpenGL.cpp
  
  .cpp$(OBJ_EXT):
 -	$(CGAL_CXX)  $(CXXFLAGS) -c $<

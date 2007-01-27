@@ -33,7 +33,7 @@ clean: clean-patched unpatch
 clean-patched: patch
 	dh_testdir
 	dh_testroot
-	rm -f build-stamp
+	rm -f build-stamp configure-stamp
 	cd src/CGAL && OBJ_EXT=.o $(MAKE) clean
 	cd src/CGALQt && OBJ_EXT=.o $(MAKE) clean
 	-rm -f compile.log install.{log,completed}
@@ -71,11 +71,9 @@ install: build
 	rm debian/tmp/usr/include/OpenNL/LICENSE.OPENNL
 
 	cp -a lib/*/libCGAL.{so.$(SOVERSION),a} debian/tmp/usr/lib
-	cp -a lib/*/libCGALQt.{so.$(SOVERSION),a} debian/tmp/usr/lib
+	cp -a lib/*/libCGALQt.a debian/tmp/usr/lib
 	cd debian/tmp/usr/lib && ln -s libCGAL.so.$(SOVERSION) libCGAL.so.$(SOMAJOR)
 	cd debian/tmp/usr/lib && ln -s libCGAL.so.$(SOVERSION) libCGAL.so
-	cd debian/tmp/usr/lib && ln -s libCGALQt.so.$(SOVERSION) libCGALQt.so.$(SOMAJOR)
-	cd debian/tmp/usr/lib && ln -s libCGALQt.so.$(SOVERSION) libCGALQt.so
 
 	cat make/makefile_* | sed -f debian/misc/adjust-default-makefile.sed >debian/tmp/usr/share/cgal/makefile
 

@@ -1,2 +1,3 @@
 build-library.dpatch
 cgal-create-makefile.dpatch
+fix-ftbfs-fpu-rounding-modes.dpatch

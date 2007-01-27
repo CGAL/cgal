@@ -812,6 +812,7 @@ Maintenance/deb/sid/debian/misc/adjust-demo-examples-makefiles.sed -text
 Maintenance/deb/sid/debian/misc/cgal_create_makefile.1 -text
 Maintenance/deb/sid/debian/patches/00list -text
 Maintenance/deb/sid/debian/rules -text
+Maintenance/deb/sid/debian/watch -text
 Maintenance/public_release/announcement/CGAL-3.2 -text
 Maintenance/release_building/BUGFIX_NUMBER -text
 Maintenance/release_building/MAJOR_NUMBER -text
