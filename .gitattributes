@@ -2182,7 +2182,6 @@ Surface_mesher/doc_tex/Surface_mesher/skull-surface.png -text svneol=unset#image
 Surface_mesher/doc_tex/Surface_mesher/sphere-surface.eps -text svneol=unset#application/postscript
 Surface_mesher/doc_tex/Surface_mesher/sphere-surface.png -text svneol=unset#image/png
 Surface_mesher/examples/Surface_mesher/ImageIO/data/skull_2.9.inr.gz -text svneol=unset#application/gzip
-Surface_mesher/examples/Surface_mesher/cgal_test eol=lf
 Surface_mesher/examples/Surface_mesher/inputs/ALSTOM_TEST4.off -text svneol=unset#application/octet-stream
 Surface_mesher/examples/Surface_mesher/inputs/boeing.off -text svneol=unset#application/octet-stream
 Surface_mesher/examples/Surface_mesher/inputs/geosphere.off -text svneol=unset#application/octet-stream
