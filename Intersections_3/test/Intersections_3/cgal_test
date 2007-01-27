@@ -116,13 +116,13 @@ if [ $# -ne 0 ]
 then
      sourcefiles="$*"
 else
-     sourcefiles="*.C"
+     sourcefiles="*.cpp"
 fi
 
 
 for file in ${sourcefiles}
 do
-     base=`basename ${file} .C`
+     base=`basename ${file} .cpp`
      rm -f ProgramOutput.${base}.$PLATFORM
      touch -f ProgramOutput.${base}.$PLATFORM
      xdatafiles="DATA/${base}.x.*"
