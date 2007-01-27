@@ -2188,7 +2188,6 @@ Surface_mesher/examples/Surface_mesher/mesh_a_3d_gray_image.vcproj eol=crlf
 Surface_mesher/find_debug_macros -text
 Surface_mesher/find_non_debug_macros -text
 Testsuite/test/run_testsuite eol=lf
-Timer/test/Timer/cgal_test eol=lf
 Triangulation_2/demo/Triangulation_2/constrained_delaunay_triangulation_2.vcproj eol=crlf
 Triangulation_2/demo/Triangulation_2/delaunay_triangulation_2.vcproj eol=crlf
 Triangulation_2/demo/Triangulation_2/help/cindex.html svneol=native#text/html
