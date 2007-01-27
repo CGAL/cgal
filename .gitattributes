@@ -610,7 +610,6 @@ HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.eps -text svneol=unset#applic
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.gif -text svneol=unset#image/gif
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.pdf -text svneol=unset#application/pdf
 HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional_small.gif -text svneol=unset#image/gif
-HalfedgeDS/examples/HalfedgeDS/cgal_test eol=lf
 HalfedgeDS/test/HalfedgeDS/cgal_test eol=lf
 Hash_map/test/Hash_map/cgal_test eol=lf
 Installation/LICENSE.FREE_USE -text
