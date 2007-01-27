@@ -2415,7 +2415,6 @@ Triangulation_3/doc_tex/Triangulation_3_ref/insert_outside_convex_hull.pdf -text
 Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.eps -text svneol=unset#application/postscript
 Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.gif -text svneol=unset#image/gif
 Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.pdf -text svneol=unset#application/pdf
-Union_find/test/Union_find/cgal_test eol=lf
 Visibility_complex/doc_tex/Visibility_complex/fig/bitangent.gif -text svneol=unset#image/gif
 Visibility_complex/doc_tex/Visibility_complex/fig/configuration.gif -text svneol=unset#image/gif
 Visibility_complex/doc_tex/Visibility_complex/fig/constraint-edge.gif -text svneol=unset#image/gif
