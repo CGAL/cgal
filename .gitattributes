@@ -2464,7 +2464,6 @@ Visibility_complex/doc_tex/fig/vis-complex.fig -text svneol=unset#application/oc
 Visibility_complex/doc_tex/fig/vis-complex.gif -text svneol=unset#image/gif
 Voronoi_diagram_2/demo/Voronoi_diagram_2/voronoi_diagram_2.vcproj eol=crlf
 iostream/test/iostream/data/io.cin -text
-window/test/WindowStream/cgal_test eol=lf
 window/test/WindowStream/manual_example_ps.cmd eol=lf
 window/test/WindowStream/test_window_stream_xy_3.cmd eol=lf
 wininst/cgal_config.bat eol=crlf
