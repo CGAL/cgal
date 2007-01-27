@@ -1213,7 +1213,6 @@ Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon2.gif -text svneol=uns
 Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon3.gif -text svneol=unset#image/gif
 Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon4.gif -text svneol=unset#image/gif
 Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon5.gif -text svneol=unset#image/gif
-Matrix_search/test/Matrix_search/cgal_test eol=lf
 Matrix_search/test/Matrix_search/rectangular_p_center_2_random1_test.cmd eol=lf
 Matrix_search/test/Matrix_search/rectangular_p_center_2_random2_test.cmd eol=lf
 Matrix_search/test/Matrix_search/sorted_matrix_search_test.cmd eol=lf
