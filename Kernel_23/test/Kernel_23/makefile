@@ -16,13 +16,6 @@ include $(CGAL_MAKEFILE)
 CXXFLAGS = \
            -Iinclude \
            -I../../include \
-           -I../../../Installation/include \
-           -I../../../Number_types/include \
-           -I../../../Filtered_kernel/include \
-           -I../../../Cartesian_kernel/include \
-           -I../../../Homogeneous_kernel/include \
-           -I../../../STL_Extension/include \
-           -I../../../Timer/include \
            $(TESTSUITE_CXXFLAGS) \
            $(EXTRA_FLAGS) \
            $(CGAL_CXXFLAGS) \
