@@ -183,17 +183,6 @@ private:
     
     anchors.clear();
 
-    //remove_small_edges();
-//     { // NGHK: debug code:
-//       CGAL_assertion(_tmc.is_valid());
-//       std::vector<Tmc_Vertex_handle> ch_vertices;
-//       _tmc.incident_vertices(_tmc.infinite_vertex(), 
-// 			     std::back_inserter(ch_vertices));
-//       for (typename std::vector<Tmc_Vertex_handle>::iterator
-// 	     vit = ch_vertices.begin(); vit != ch_vertices.end(); vit++) {
-// 	CGAL_assertion((*vit)->sign() == POSITIVE);
-//       }
-//     }
   }
 
   Tmc_Vertex_handle add_vertex(Symb_anchor const &anchor); 
@@ -1036,10 +1025,10 @@ get_orthocenter(Rt_Simplex const &s) {
   case 3:
     ch=s;
     result = orthocenter_obj(
-			     r2t_converter_object(ch->vertex(0)->point()),
-			     r2t_converter_object(ch->vertex(1)->point()),
-			     r2t_converter_object(ch->vertex(2)->point()),
-			     r2t_converter_object(ch->vertex(3)->point()));
+           r2t_converter_object(ch->vertex(0)->point()),
+           r2t_converter_object(ch->vertex(1)->point()),
+           r2t_converter_object(ch->vertex(2)->point()),
+           r2t_converter_object(ch->vertex(3)->point()));
     break;
   }
   return result;
@@ -1056,6 +1045,8 @@ Mixed_complex_triangulator_3<
   TriangulatedMixedComplexObserver_3>::
 get_anchor(Rt_Simplex const &sDel, Rt_Simplex const &sVor)
 {
+  Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
+
   Tmc_Point dfoc = get_orthocenter(sDel);
   Tmc_Point vfoc = get_orthocenter(sVor);
 	

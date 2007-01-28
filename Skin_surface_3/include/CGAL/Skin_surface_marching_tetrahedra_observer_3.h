@@ -20,6 +20,7 @@
 #ifndef CGAL_SKIN_SURFACE_MARCHING_TETRAHEDRA_OBSERVER_3_H
 #define CGAL_SKIN_SURFACE_MARCHING_TETRAHEDRA_OBSERVER_3_H
 
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Marching_tetrahedra_observer_default_3.h>
 #include <CGAL/Skin_surface_polyhedral_items_3.h>
 
@@ -44,15 +45,14 @@ public:
 
 };
 
-
 template <class Vertex_iterator,
-	  class Cell_iterator,
-	  class P_Traits,
-	  class SkinSurface_3>
+    class Cell_iterator,
+    class P_Traits,
+    class SkinSurface_3>
 class Skin_surface_marching_tetrahedra_observer_3
 <Vertex_iterator, Cell_iterator, 
  Polyhedron_3<P_Traits, 
-	      Skin_surface_polyhedral_items_3<SkinSurface_3> > >
+        Skin_surface_polyhedral_items_3<SkinSurface_3> > >
   : public Marching_tetrahedra_observer_default_3
   <Vertex_iterator, Cell_iterator, 
    Polyhedron_3<P_Traits, 
@@ -81,8 +81,8 @@ public:
   void after_facet_insertion(
     T_Cell_iterator ch,
     Polyhedron_facet_handle fh) {
-    // NGHK:
-//     fh->sim = ch->mixed_cell();
+
+    fh->tmc_ch = ch;
   }
 
 };

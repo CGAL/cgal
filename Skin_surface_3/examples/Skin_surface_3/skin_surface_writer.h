@@ -4,6 +4,7 @@
 #include <fstream>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/subdivide_skin_surface_mesh_3.h>
+#include <CGAL/Skin_surface_refinement_policy_3.h>
 
 template <class SkinSurface, class Polyhedron>
 /// Write polyhedron with normals:
@@ -16,24 +17,24 @@ void write_polyhedron_with_normals(SkinSurface &skin,
   typedef typename Polyhedron::Halfedge_around_facet_circulator HFC;
   typedef typename Polyhedron::Vertex_handle                    Vertex_handle;
   typedef typename Polyhedron::Traits::Vector_3                 Vector;
-  //typedef typename SkinSurface::Vector                          Vector;
+
+  CGAL::Skin_surface_refinement_policy_3<SkinSurface, Polyhedron> policy(skin);
+
   // Write header
   out << "NOFF " << p.size_of_vertices ()
       << " " << p.size_of_facets()
       << " " << p.size_of_halfedges()
       << std::endl;
+
+  
   
   // Write vertices
-//   typedef CGAL::Skin_surface_subdivision_policy_default_3<Polyhedron, SkinSurface> 
-//     Subdivision_policy;
-//   Subdivision_policy *policy = get_subdivision_policy(p, skin);
+  int i=p.size_of_vertices ();
   for (Vertex_iterator vit = p.vertices_begin();
        vit != p.vertices_end(); vit ++) {
-    Vector n = skin.normal(vit->point());
+    Vector n = policy.normal(vit);
     n = n/sqrt(n*n);
-    out << vit->point() << " "
- 	<< n
-	<< std::endl;
+    out << vit->point() << " " << n << std::endl;
   }
 
   // Write faces

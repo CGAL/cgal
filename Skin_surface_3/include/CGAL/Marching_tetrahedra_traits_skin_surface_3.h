@@ -49,8 +49,7 @@ public:
   HDS_point intersection(Cell_iterator const ch, int i, int j) const {
     // Precondition: ch is not an infinite cell: their surface is not set
     Skin_point p;
-    ss_3.intersect(ch, i, j, //->vertex(i), ch->vertex(j), //ch->info(), 
-		   p);
+    ss_3.intersect(ch, i, j, p);
     
     return 
       Cartesian_converter<typename Skin_point::R, typename HDS_point::R>()(p);

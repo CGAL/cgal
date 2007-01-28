@@ -148,7 +148,7 @@ void subdivide_skin_surface_mesh_3(
           Polyhedron_3 &p, 
           int nSubdiv = 1) {
   while (nSubdiv > 0) {
-    skin.subdivide_skin_surface_mesh_3(p);
+    skin.subdivide_mesh_3(p);
     nSubdiv--;
   }
 }

@@ -1758,6 +1758,8 @@ Skin_surface_3/examples/Skin_surface_3/data/molecule_tunnel.cin -text
 Skin_surface_3/examples/Skin_surface_3/dsrpdb/doc/doc_footer -text
 Skin_surface_3/examples/Skin_surface_3/dsrpdb/doc/main_doc -text
 Skin_surface_3/examples/Skin_surface_3/union_of_balls_subdiv.cpp -text
+Skin_surface_3/include/CGAL/Skin_surface_base_3.h -text
+Skin_surface_3/include/CGAL/make_union_of_balls_3.h -text
 Skin_surface_3/include/CGAL/subdivide_union_of_balls_mesh_3.h -text
 Skin_surface_3/test/Skin_surface_3/data/inexact_tmc_fails.cin -text
 Skin_surface_3/test/Skin_surface_3/data/test1.cin -text

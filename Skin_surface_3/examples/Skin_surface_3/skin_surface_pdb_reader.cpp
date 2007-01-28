@@ -19,7 +19,7 @@ typedef CGAL::Polyhedron_3<K,
 
 #include <list>
 #include <fstream>
-//#include "skin_surface_writer.h"
+#include "skin_surface_writer.h"
 
 
 int main(int argc, char *argv[]) {
@@ -41,8 +41,8 @@ int main(int argc, char *argv[]) {
   Polyhedron p;
   CGAL::mesh_skin_surface_3(skin_surface, p);
 
-//  std::ofstream out("mesh.off");
-//  write_polyhedron_with_normals(p, skin_surface, out);
+  std::ofstream out("mesh_PDB.off");
+  write_polyhedron_with_normals(skin_surface, p, out);
 
   return 0;
 }

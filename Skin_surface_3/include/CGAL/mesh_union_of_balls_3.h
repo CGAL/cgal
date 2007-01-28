@@ -27,7 +27,7 @@ CGAL_BEGIN_NAMESPACE
 template <class UnionOfBalls_3, class Polyhedron>
 void mesh_union_of_balls_3(UnionOfBalls_3 const &union_of_balls, Polyhedron &p)
 {
-  union_of_balls.mesh_union_of_balls_3(p);
+  union_of_balls.mesh_surface_3(p);
 }
 
 CGAL_END_NAMESPACE

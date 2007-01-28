@@ -10,7 +10,7 @@
 #include <list>
 
 #include <fstream>
-//#include "skin_surface_writer.h"
+#include "skin_surface_writer.h"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Skin_surface_traits_3<K>                      Traits;
@@ -24,19 +24,22 @@ typedef CGAL::Polyhedron_3<
   >   Polyhedron;
 
 int main(int argc, char *argv[]) {
+  char *filename;
   if (argc < 2) {
-    std::cout << "Usage: " << argv[0] << " <cin-file>" << std::endl;
-    return 0;
+    filename = "data/caffeine.cin";
+  } else {
+    filename = argv[1];
   }
 
   std::list<Weighted_point> l;
   FT                        shrinkfactor = 0.5;
 
   Weighted_point wp;
-  std::ifstream in(argv[1]);
+  std::ifstream in(filename);
   while (in >> wp) l.push_back(wp);
 
-  Skin_surface_3 skin_surface(l.begin(), l.end(), shrinkfactor, false);
+  Skin_surface_3 skin_surface(l.begin(), l.end(), shrinkfactor, 
+                              false, Traits(), false);
 
   Polyhedron p;
 

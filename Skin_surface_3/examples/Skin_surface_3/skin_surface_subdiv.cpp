@@ -4,7 +4,9 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/mesh_skin_surface_3.h>
 #include <CGAL/subdivide_skin_surface_mesh_3.h>
+#include "skin_surface_writer.h"
 #include <list>
+#include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Skin_surface_traits_3<K>                      Traits;
@@ -26,12 +28,13 @@ int main(int argc, char *argv[]) {
 
   Polyhedron p;
 
-  // NGHK: uncomment:
-//   Skin_surface_3 skin_surface(l.begin(), l.end(), shrinkfactor);
-//   CGAL::mesh_skin_surface_3(skin_surface, p);
+  Skin_surface_3 skin_surface(l.begin(), l.end(), shrinkfactor);
+  CGAL::mesh_skin_surface_3(skin_surface, p);
 
-  // NGHK: uncomment:
-//   CGAL::subdivide_skin_surface_mesh_3(skin_surface, p);
+  CGAL::subdivide_skin_surface_mesh_3(skin_surface, p);
+
+  std::ofstream out("output.txt");
+  out << p;
 
   return 0;
 }

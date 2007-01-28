@@ -1,5 +1,5 @@
 // examples/Skin_surface_3/NGHK_skin_surface_subdiv.C
-#define CGAL_PROFILE
+//#define CGAL_PROFILE
 //#define CGAL_NO_ASSERTIONS
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -18,20 +18,23 @@ typedef CGAL::Skin_surface_3<Traits>                        Skin_surface_3;
 typedef Skin_surface_3::FT                                  FT;
 typedef Skin_surface_3::Weighted_point                      Weighted_point;
 typedef Weighted_point::Point                               Bare_point;
-typedef CGAL::Polyhedron_3<K,
-  CGAL::Skin_surface_polyhedral_items_3<Skin_surface_3> >   Polyhedron;
+//typedef CGAL::Polyhedron_3<K,
+//  CGAL::Skin_surface_polyhedral_items_3<Skin_surface_3> >   Polyhedron;
+typedef CGAL::Polyhedron_3<K>                               Polyhedron;
 
 int main(int argc, char *argv[]) {
+  char *filename;
   if (argc < 2) {
-    std::cout << "Usage: " << argv[0] << " <cin-file>" << std::endl;
-    return 0;
+    filename = "data/caffeine.cin";
+  } else {
+    filename = argv[1];
   }
 
   std::list<Weighted_point> l;
   FT                        shrinkfactor = 0.5;
 
   Weighted_point wp;
-  std::ifstream in(argv[1]);
+  std::ifstream in(filename);
   while (in >> wp) l.push_back(wp);
 
   Skin_surface_3 skin_surface(l.begin(), l.end(), shrinkfactor, false);

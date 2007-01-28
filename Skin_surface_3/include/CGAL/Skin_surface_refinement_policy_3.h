@@ -20,39 +20,14 @@
 #ifndef CGAL_SKIN_SURFACE_REFINEMENT_POLICY_3_H
 #define CGAL_SKIN_SURFACE_REFINEMENT_POLICY_3_H
 
+#include <CGAL/Polyhedron_3.h>
+
 #include <CGAL/intersection_3_1.h>
 CGAL_BEGIN_NAMESPACE
 
-// template <class Polyhedron_3, class SkinSurface_3>
-// class Skin_surface_refinement_policy_3 {
-// public:
-//   typedef Polyhedron_3                            Polyhedron;
-//   typedef SkinSurface_3                           Skin_surface;
-//   typedef typename Polyhedron::Policy             P_policy;
-
-//   typedef typename Polyhedron::Vertex_handle      P_vertex_handle;
-
-//   typedef typename P_policy::RT          P_rt;
-//   typedef typename P_policy::Point_3     P_point;
-//   typedef typename P_policy::Segment_3   P_segment;
-//   typedef typename P_policy::Line_3      P_line;
-//   typedef typename P_policy::Vector_3    P_vector;
-//   typedef typename P_policy::Plane_3     P_plane;
-
-//   Skin_surface_refinement_policy_base_3(Skin_surface const& skin)
-//     : ss_3(skin)
-//   {}
-    
-//   virtual P_point to_surface(P_vertex_handle vh) const = 0;
-
-//   virtual P_vector normal(P_vertex_handle vh) const = 0;
-
-// protected:
-//   Skin_surface const &ss_3;
-// };
 
 template <class SkinSurface_3, class Polyhedron_3>
-class Skin_surface_refinement_policy_3 
+class Skin_surface_refinement_policy_3
 {
 public:
   typedef SkinSurface_3                           Skin_surface;
@@ -68,11 +43,7 @@ public:
   typedef typename P_traits::Vector_3    P_vector;
   typedef typename P_traits::Plane_3     P_plane;
 
-  Skin_surface_refinement_policy_3(Skin_surface const& skin)
-    : ss_3(skin)
-  {
-  	std::cout << "refinement" << std::endl;
-  }
+  Skin_surface_refinement_policy_3(Skin_surface const& skin) : ss_3(skin) {}
     
   P_point to_surface(P_vertex_handle vh) const
   {
@@ -88,44 +59,67 @@ public:
   P_vector normal(P_vertex_handle vh) const
   {
     // Convert to and from the skin surface kernel
-    return 
-      Cartesian_converter
-      <typename Skin_surface::Geometric_traits::Kernel, 
-      P_traits>()( ss_3.normal
-		    (Cartesian_converter<P_traits, 
-		     typename Skin_surface::Geometric_traits::Kernel>()
-		     (vh->point())));
+    typename Skin_surface::Bare_point p =
+      Cartesian_converter<P_traits, 
+         typename Skin_surface::Geometric_traits::Kernel>()(vh->point());
+    return  Cartesian_converter<typename Skin_surface::Geometric_traits::Kernel, 
+                                P_traits>()( ss_3.normal(p));
   }
 
 protected:
   Skin_surface const &ss_3;
 };
 
-// CGAL_END_NAMESPACE
+template <class SkinSurface_3, class P_Traits>
+class Skin_surface_refinement_policy_3<
+  SkinSurface_3,
+  Polyhedron_3<P_Traits, 
+    Skin_surface_polyhedral_items_3<SkinSurface_3> > > 
+{
+public:
+  typedef SkinSurface_3                              Skin_surface;
+  typedef Polyhedron_3<P_Traits, 
+    Skin_surface_polyhedral_items_3<SkinSurface_3> > Polyhedron;
+  typedef typename Polyhedron::Traits                P_traits;
 
-// // Partial specialisation for Skin_surface_polyhedral_items_3
-// #include <CGAL/Skin_surface_polyhedral_items_3.h>
-// #include <CGAL/Skin_surface_refinement_policy_with_face_info_3.h>
+  typedef typename Polyhedron::Vertex_handle      P_vertex_handle;
 
-// CGAL_BEGIN_NAMESPACE
+  typedef typename P_traits::RT          P_rt;
+  typedef typename P_traits::Point_3     P_point;
+  typedef typename P_traits::Segment_3   P_segment;
+  typedef typename P_traits::Line_3      P_line;
+  typedef typename P_traits::Vector_3    P_vector;
+  typedef typename P_traits::Plane_3     P_plane;
 
-// template <class P_Policy,
-// 	  class SkinSurface_3>
-// Skin_surface_refinement_policy_base_3<Polyhedron_3<P_Policy, 
-// 			 Skin_surface_polyhedral_items_3<SkinSurface_3> >, SkinSurface_3> *
-// get_refinement_policy(Polyhedron_3<P_Policy, 
-// 			 Skin_surface_polyhedral_items_3<SkinSurface_3> > &p,
-// 		       const SkinSurface_3 &skinsurface) 
-// {
-//   typedef Polyhedron_3<P_Policy, 
-//     Skin_surface_polyhedral_items_3<SkinSurface_3> >           Polyhedron;
+  Skin_surface_refinement_policy_3(Skin_surface const& skin) : ss_3(skin) {}
 
-//   typedef
-//     Skin_surface_refinement_policy_with_face_info_3<Polyhedron, SkinSurface_3>
-//     Policy;
-  
-//   return new Policy(skinsurface);
-// }
+  P_point to_surface(P_vertex_handle vh) const {
+    typename Skin_surface::Bare_point result =
+      Cartesian_converter<P_traits, 
+      typename Skin_surface::Geometric_traits::Kernel>()(vh->point());
+
+     ss_3.intersect_with_transversal_segment(result,
+              vh->halfedge()->facet()->tmc_ch);
+
+    return 
+      Cartesian_converter
+      <typename Skin_surface::Geometric_traits::Kernel, P_traits>()( result );
+  }
+
+  P_vector normal(P_vertex_handle vh) const {
+    // Convert to and from the skin surface kernel
+    typename Skin_surface::Bare_point p =
+      Cartesian_converter<P_traits, 
+         typename Skin_surface::Geometric_traits::Kernel>()(vh->point());
+    return 
+      Cartesian_converter
+      <typename Skin_surface::Geometric_traits::Kernel, 
+       P_traits>()( ss_3.normal(p, vh->halfedge()->facet()->tmc_ch) );
+  }
+    
+protected:
+  Skin_surface const &ss_3;
+};
 
 CGAL_END_NAMESPACE
 

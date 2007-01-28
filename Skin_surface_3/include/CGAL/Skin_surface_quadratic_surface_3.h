@@ -20,6 +20,8 @@
 #ifndef CGAL_SKIN_SURFACE_QUADRATIC_SURFACE_H
 #define CGAL_SKIN_SURFACE_QUADRATIC_SURFACE_H
 
+#include <CGAL/Skin_surface_traits_3.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template < class SkinSurfaceQuadraticSurfaceTraits_3 >

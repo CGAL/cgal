@@ -31,7 +31,7 @@ void subdivide_union_of_balls_mesh_3(
           Polyhedron_3 &p, 
           int nSubdiv = 1) {
   while (nSubdiv > 0) {
-    skin.subdivide_union_of_balls_mesh_3(p);
+    skin.subdivide_mesh_3(p);
     nSubdiv--;
   }
 }

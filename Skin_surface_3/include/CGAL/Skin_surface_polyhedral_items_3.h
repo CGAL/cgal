@@ -28,9 +28,11 @@ CGAL_BEGIN_NAMESPACE
 template <class Refs, class SkinSurface3>
 struct Skin_Surface_polyhedral_face : public CGAL::HalfedgeDS_face_base<Refs> {
   typedef SkinSurface3                                      Skin_surface;
-  typedef typename SkinSurface3::Simplex                    Simplex;
+  typedef typename SkinSurface3::TMC::Cell_handle           TMC_Cell_handle;
+  //typedef typename SkinSurface3::Simplex                    Simplex;
 
-  Simplex sim;
+  //Simplex sim;
+  TMC_Cell_handle tmc_ch;
 };
 
 template < class SkinSurface3 >
