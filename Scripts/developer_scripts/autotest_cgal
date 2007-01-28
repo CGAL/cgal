@@ -115,7 +115,7 @@ put_on_web()
         $CURL --upload-file ${1} --user anonymous:${MAIL_ADDRESS} \
               ftp://${FTP_SERVER}/${FTP_STORE_DIR}/${2} >> ${ACTUAL_LOGFILE} 2>&1
     else
-	$FTP -v -n $FTP_SERVER >> ${ACTUAL_LOGFILE} 2>&1 <<EOF
+	$FTP -p -v -n $FTP_SERVER >> ${ACTUAL_LOGFILE} 2>&1 <<EOF
 quote USER anonymous
 quote PASS ${MAIL_ADDRESS}
 binary
