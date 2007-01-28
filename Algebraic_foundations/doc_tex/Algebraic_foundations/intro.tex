@@ -1,6 +1,49 @@
 
-\ccChapterAuthor{Michael Hemmer \ and Who Sovever}
-
 \section{Introduction}
 
-The algebraix foundations...
+\cgal ~is targeting towards exact computation with non-linear objects, 
+in particular objects defined on algebraic curves and surfaces. 
+As a consequence types representing polynomials, algebraic extensions and 
+finite fields play a more important role in related implementations. 
+This package has been introduced to stay abreast of these changes. 
+Since in particular polynomials must be supported by the introduces framework
+the package avoids the term {\em number type}. Instead the package distinguishes 
+between the {\em algebraic structure} of a type and whether a type is embeddable on 
+the real axis, or {\em real embeddable} for short. 
+Moreover, the package introduces the notion of {\em interoperable} types which 
+allows an explicit handling of mixed operations. 
+%In particular it is possible to access the result type of a binary operation. 
+ 
+
+\ignore{ 
+Moreover, the package takes care of the problematic of mixed operations by 
+introducing the notion of {\em interoperable types}. 
+
+The later is gathered by the concept \ccc{RealEmbeddable}
+
+Instead the concepts 
+introduced within this package reflect the {\em algebraic structure} of a type. 
+
+Instead it introduces a 
+concept hierarchy for {\em algebraic structures} and an orthogonal concept
+\ccc{RealEmbeddable}. 
+
+The most important change is, that the new concept \ccc{RealEmbeddable} is now 
+orthogonal to the old {\em number type} concepts which are now called {\em algebraic structures}. 
+
+The package avoids the term {\em number type} and introduces the  notion of an 
+{\em algebraic structure}, i.e. it introduces an concepts hierarchy 
+of algebraic structures such as  \ccc{IntegralDomain}, 
+\ccc{UniqueFactorizationDomain}, \ccc{EuclideanRing}, \ccc{Field} etc. 
+Orthogonal to these concepts it introduces the concept \ccc{RealEmbeddable}
+for number types that are embeddable on the real axis. 
+This allows type representing polynomials, finite fields, complex numbers etc.
+to be valid models of algebraic structure concepts. 
+
+The package also introduces the notion of interoperability of types, 
+by introducing the concepts \ccc{ExplicitInteroperable} and 
+\ccc{ImplictInteroparable}. 
+}
+
+
+
