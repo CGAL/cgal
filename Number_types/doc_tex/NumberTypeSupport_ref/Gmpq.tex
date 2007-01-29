@@ -9,7 +9,8 @@ number based on the {\sc Gnu} Multiple Precision Arithmetic Library.
 \ccInclude{CGAL/Gmpq.h}
 
 \ccIsModel
-FieldNumberType
+\ccc{Field}\\
+\ccc{RealEmbeddable}
 
 \ccTypes
 
@@ -61,12 +62,12 @@ FieldNumberType
              \ccStyle{str}.}
 
 %\ccSetTwoOfThreeColumns{5cm}{4cm}
-\ccSetThreeColumns{std::ostream& }{}{\hspace*{8cm}}
+%SetThreeColumns{std::ostream& }{}{\hspace*{8cm}}
 
 \ccOperations
 
 There are two access functions, namely to the
-numerator and the denominator of a ratioanal.
+numerator and the denominator of a rational.
 Note that these values are not uniquely defined. 
 It is guaranteed that \ccStyle{q.numerator()} and 
 \ccStyle{q.denominator()} return values \ccStyle{nt_num} and
