@@ -1,73 +1,12 @@
 
-\cgal\ kernel classes are parameterized by number types.  
-Depending on the problem and the input data that have to be handled,
-one has to make a trade-off between efficiency and accuracy in 
-order to select an appropriate number type and kernel class.
-
-In homogeneous representation, two number types are involved,
-although only one of them appears as a template parameter in
-the homogeneous kernel classes.
-This type, for the sake of simplicity and readability called ring type, is
-used for the representation of homogeneous coordinates and all 
-internal computations. 
-If it is assured that the second operand divides the first one, these 
-internal computations are basically division-free.
-The ring type is a placeholder for an integer type (or an integral 
-domain type) rather than for elements of arbitrary rings. 
-The name should remind you that the division operation is not
-needed for this number type.
-Of course, also more general number types can be used as a ring type 
-in a homogeneous kernel class. In some computations, e.g.\ accessing 
-Cartesian coordinates, divisions cannot be avoided. In these computations a 
-second number type, the field type, is used. \cgal\ automatically generates 
-this number type as a \ccStyle{Quotient}\ccTexHtml{, 
-cf.\ Subsection~\ref{Quotient}}{}. For the Cartesian kernels 
-there is only one number type that is used for all calculations.
-
-The kernel classes provide access to the number types 
-involved in the representation, although it is not expected that
-such access is needed at this level, since low-level geometric 
-operations are wrapped in geometric primitives provided by \cgal.
-This access can be useful if appropriate primitives are missing.
-In a homogeneous kernel class \ccStyle{K}, ring type and field
-type can be accessed as \ccStyle{K::RT} and \ccStyle{K::FT}, respectively.
-The number type used in Cartesian kernels is considered as 
-ring type or as field type depending on the context.
-If can be accessed as \ccStyle{K::RT} and \ccStyle{K::FT}, according
-to the use of number types used in the homogeneous counterpart.
-
-\section{Required Functionality of Number Types\label{nt-requirements}}
-
-Number types must fulfill certain requirements, such that they can
-be successfully used in \cgal\ code.  The syntacitical requirements of
-number types are described in
-the concepts RingNumberType and FieldNumberType included in the 
-kernel reference manual.
-Of course, number types also
-have evident semantic constraints. They should be meaningful in the
-sense that they approximate the integers or the rationals 
-or some other subfield of the real numbers.
-
-\section{Utility Routines}
-
-The number type concepts mentioned in the previous section list all 
-the required functionality.
-For the user of a number type it is handy to have a larger set of
-operations available. \cgal\ defines a number of such operations,
-to compute, for example, the minimum or maximum of two numbers, and the
-absolute value, square, sign or square root of a number.  These are
-available both as global functions and as functors.  See the reference
-manual for more details.
-
-Those routines are implemented using the required operations from the
-number type concepts. They are defined by means of templates, so you do not
-have to supply all those operations when you write  a new number type.
-But if you have a better implementation for any of them, you can provide a 
-corresponding overloading function with the same name for your number types,
-which will get preference over the template functions listed above.
-
-For the number types \ccc{int} and \ccc{double} there is
-also a random numbers generator \ccc{CGAL::Random}.
+This chapter gives an overview of the number types supported by 
+\cgal. Number types must fulfill certain syntacitical and semantic
+requirements, such that they can be successfully used in \cgal\ code.
+In genreal they are expected to be a model of an algebraic structure 
+concepts and in case they model a subring of the real numbers they are 
+also a model of \ccc{RealEmebeddable}. For an overview of the algebraic 
+structure concepts see section \ref{caf_ref::algebraic_structure_hierarchy} 
+in the reference manual.
 
 \section{Built-in Number Types}
 
@@ -99,11 +38,13 @@ With the built-in integer types overflow might occur.
 %\newpage
 \section{Number Types Provided by \cgal}
 
-\cgal\ provides several number types that are that can be used for 
+%CGAL::Quotient
+\cgal\ provides several number types that can be used for 
 exact computation.  These include the \ccc{Quotient} class that can
 be used to create, for example, a number type that behaves like a rational
 number when parameterized with a number type which can represent integers.
 
+%CGAL::MP_float
 The number type \ccc{MP_Float} is able to represent multi-precision floating
 point values, a generalization of integers scaled by a (potentially negative)
 power of 2.  It allows to deal with ring operations over floating-point values
@@ -113,38 +54,25 @@ integer types provided by \ccc{GMP} or \ccc{LEDA}, but it has the advantage
 to make more parts of \cgal\ independent on these external libraries for
 handling robustness issues.
 
+%CGAL::Lazy_exact_nt
 The templated number type \ccc{Lazy_exact_nt<NT>} is able to represent any
 number that \ccc{NT} is able to represent, but because it first tries to use an
 approximate value to perform computations it can be faster than \ccc{NT}.
 
+%CGAL::Interval_nt
 A number type for doing interval arithmetic, \ccc{Interval_nt}, is provided.
 This number type helps in doing arithmetic filtering in many places such
 as \ccc{Filtered_predicate}.
 
+%CGAL::Root_of_2
 \ccc{CGAL::Root_of_2} is a number type that allows to represent algebraic
 numbers of degree up to~2 over a \ccc{RingNumberType}.  A generic function
 \ccc{CGAL::make_root_of_2} allows to build this type generically.
 
+%CGAL::Number_type_checker 
 A debugging helper \ccc{Number_type_checker<NT1,NT2,Comparator>} is also
 provided which allows to compare the behavior of operations over two number
 types.
-
-\section{Number Type Provided by {\sc Core}}
-\label{CORE}
-
-\cgal\ defines the functions needed to use the number type \ccc{CORE::Expr}
-provided by {\sc Core}~\cite{klpy-clp-99}.  To use {\sc Core} with \cgal, just
-install \cgal\ with {\sc Core} support, and include the file
-\ccc{CGAL/CORE_Expr.h}.  {\sc Core} version 1.7 or later is required.
-
-\ccc{CORE::Expr}s are a subset of real algebraic numbers.  Any integer is a
-\ccc{CORE::Expr} and \ccc{CORE::Expr}s are closed under the operations
-$+,-,\times,/$ and $\sqrt{}$.  \ccc{CORE::Expr}s guarantee that all
-comparisons between expressions involving \ccc{CORE::Expr}s produce the exact
-result.
-
-This number type provides an equivalent functionality to \ccc{leda_real}.
-
 
 \section{Number Types Provided by {\sc Gmp}}
 
@@ -154,8 +82,7 @@ The file {\tt  CGAL/Gmpz.h} provides the class \ccStyle{Gmpz},
 a wrapper class for the integer type \ccc{mpz_t}, that is compliant with the
 \cgal\ number type requirements. The file {\tt  CGAL/Gmpq.h} provides the class \ccStyle{Gmpq},
 a wrapper class for the rational type \ccc{mpq_t}, that is compliant
-with the
-\cgal\ number type requirements.
+with the \cgal\ number type requirements.
 
 In addition, it is possible to directly use the C++ number types provided by
 {\sc Gmp}~: \ccc{mpz_class}, \ccc{mpq_class} (note that support for
@@ -192,17 +119,109 @@ floating-point numbers, the name \ccc{leda_real} does not describe the
 number type precisely, but intentionally.  
 \ccc{leda_real}s are a subset of real algebraic
 numbers.  Any integer is \ccc{leda_real} and \ccc{leda_real}s are closed under
-the operations $+,-,*,/$ and $k$-th root computation. 
+the operations $+,-,*,/$ and $k$-th root computation. For \leda\ version 5.0 and
+or later \ccc{leda_real} is also able to represent real roots of polynomials.  
 %\ccTexHtml{$\sqrt[k]{\ }$}{k-th root computation}. 
 \ccc{leda_real}s guarantee that
 all comparisons between expressions involving \ccc{leda_real}s produce the
 exact result.
 
+\section{Number Types Provided by {\sc Core}}
+\label{CORE}
+
+\newcommand{\core}{{\sc Core}}
+
+In prinziple \core~\cite{klpy-clp-99} provides the same set of number types as \leda. 
+The type \ccc{CORE::BigInt} represent integers and \ccc{CORE::BigRat} 
+represent rationals of arbitrary length. The number type \ccc{CORE::BigFloat} is 
+a varibale precision floating-point type. It is also possbible to interprete it as an
+interval type, since it also carries the error of a computed value.
+As for \leda, the most sophisticated number type in \core\ is \ccc{CORE::Expr}, 
+which is in its functionality equivalent to \ccc{leda_real}.  
+%\ccc{CORE::Expr}s are a subset of real algebraic numbers.  Any integer is a
+%\ccc{CORE::Expr} and \ccc{CORE::Expr}s are closed under the operations
+%$+,-,\times,/$ and $\sqrt{}$.  \ccc{CORE::Expr}s guarantee that all
+%comparisons between expressions involving \ccc{CORE::Expr}s produce the exact
+%result.
+
+To use \core\ with \cgal, just install \cgal\ with \core\ support, 
+and include at least one of {\tt CGAL/CORE\_BigInt.h}, {\tt CGAL/CORE\_BigRat.h},
+{\tt CGAL/CORE\_BigFloat.h}, {\tt CGAL/CORE\_Expr.h}. 
+\core\ version 1.7 or later is required.
 
 \section{User-supplied Number Types}
 
-You can also use your own number type with the \cgal\ kernel classes.
-Depending on the arithmetic operations carried out by the algorithms
-that you are going to use, the number types must fulfill the
-corresponding requirements from Section \ref{nt-requirements}. 
+In order to use your own number type it must be a model of the according
+algebraic structure concept, in particular you must provide a 
+specialization of \ccc{CGAL::Algebraic_structure_traits} and also of
+\ccc{Real_embeddable_traits} in case it is a sub ring of the real numbers. 
+If you even want to provide a related ensemble of number types you should also 
+provide specializations for \ccc{CGAL::Coercion_traits} in order to 
+reflect their interoperatibility. 
+ 
+
+
+% This section has been removed since it is replaced by doc in
+% Algebraic_foundations
+
+%\section{Utility Routines}
+%The number type concepts mentioned in the previous section list all 
+%the required functionality.
+%For the user of a number type it is handy to have a larger set of
+%operations available. \cgal\ defines a number of such operations,
+%to compute, for example, the minimum or maximum of two numbers, and the
+%absolute value, square, sign or square root of a number.  These are
+%available both as global functions and as functors.  See the reference
+%manual for more details.
+%
+%Those routines are implemented using the required operations from the
+%number type concepts. They are defined by means of templates, so you do not
+%have to supply all those operations when you write  a new number type.
+%But if you have a better implementation for any of them, you can provide a 
+%corresponding overloading function with the same name for your number types,
+%which will get preference over the template functions listed above.
+%
+%For the number types \ccc{int} and \ccc{double} there is
+%also a random numbers generator \ccc{CGAL::Random}.
+
+
+TODO: move this part to chaper: kernel 
+
+
+\cgal\ kernel classes are parameterized by number types.  
+Depending on the problem and the input data that have to be handled,
+one has to make a trade-off between efficiency and accuracy in 
+order to select an appropriate number type and kernel class.
+
+In homogeneous representation, two number types are involved,
+although only one of them appears as a template parameter in
+the homogeneous kernel classes.
+This type, for the sake of simplicity and readability called ring type, is
+used for the representation of homogeneous coordinates and all 
+internal computations. 
+If it is assured that the second operand divides the first one, these 
+internal computations are basically division-free.
+The ring type is a placeholder for an integer type (or an integral 
+domain type) rather than for elements of arbitrary rings. 
+The name should remind you that the division operation is not
+needed for this number type.
+Of course, also more general number types can be used as a ring type 
+in a homogeneous kernel class. In some computations, e.g.\ accessing 
+Cartesian coordinates, divisions cannot be avoided. In these computations a 
+second number type, the field type, is used. \cgal\ automatically generates 
+this number type as a \ccStyle{Quotient}\ccTexHtml{, 
+cf.\ Subsection~\ref{Quotient}}{}. For the Cartesian kernels 
+there is only one number type that is used for all calculations.
+
+The kernel classes provide access to the number types 
+involved in the representation, although it is not expected that
+such access is needed at this level, since low-level geometric 
+operations are wrapped in geometric primitives provided by \cgal.
+This access can be useful if appropriate primitives are missing.
+In a homogeneous kernel class \ccStyle{K}, ring type and field
+type can be accessed as \ccStyle{K::RT} and \ccStyle{K::FT}, respectively.
+The number type used in Cartesian kernels is considered as 
+ring type or as field type depending on the context.
+If can be accessed as \ccStyle{K::RT} and \ccStyle{K::FT}, according
+to the use of number types used in the homogeneous counterpart.
 
