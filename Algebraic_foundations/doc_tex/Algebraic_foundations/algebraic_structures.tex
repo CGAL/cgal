@@ -41,6 +41,13 @@ corresponds to integral domains in the algebraic sense, the
 distinction results from the fact that some implementations of
 integral domains lack the (algebraically always well defined) integral 
 division.
+Note that \ccc{Field} refines \ccc{IntegralDomain}. This is because 
+most ring-theoretic notions like greatest common divisors become trivial for 
+\ccc{Field}s. Hence we see \ccc{Field} as a refinement of 
+\ccc{IntegralDomain} and not as a 
+refinement of one of the more advanced types of ring. 
+If an algorithm wants to rely on gcd or remainder computation, it is trying 
+to do things it shouldn't do with a \ccc{Field} in the first place. 
 
 
 The main properties of an algebraic structure are collected in the class   
