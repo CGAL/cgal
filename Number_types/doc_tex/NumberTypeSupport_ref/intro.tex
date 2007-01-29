@@ -5,79 +5,47 @@
 
 \section{Classified Reference Pages}
 
-\subsection*{Global Functions}
+\subsection*{Number Type Classes} 
 
-\ccRefIdfierPage{CGAL::abs} \\
-\ccRefIdfierPage{CGAL::compare} \\
-\ccRefIdfierPage{CGAL::div} \\
-\ccRefIdfierPage{CGAL::is_negative} \\
-\ccRefIdfierPage{CGAL::is_one} \\
-\ccRefIdfierPage{CGAL::is_positive} \\
-\ccRefIdfierPage{CGAL::is_zero} \\
-\ccRefIdfierPage{CGAL::make_root_of_2} \\
-\ccRefIdfierPage{CGAL::max} \\
-\ccRefIdfierPage{CGAL::min} \\
-\ccRefIdfierPage{CGAL::sign} \\
-\ccRefIdfierPage{CGAL::sqrt} \\
-\ccRefIdfierPage{CGAL::square} \\
+\subsubsection{CORE}
+\ccRefConceptPage{CORE::BigInt}\\
+\ccRefConceptPage{CORE::BigRat}\\
+\ccRefConceptPage{CORE::BigFloat}\\
+\ccRefConceptPage{CORE::Expr}\\
 
-\subsection*{Function Object Classes}
+\subsubsection{LEDA}
+\ccRefConceptPage{leda_integer}\\
+\ccRefConceptPage{leda_rational}\\
+\ccRefConceptPage{leda_bigfloat}\\
+\ccRefConceptPage{leda_real}\\
 
-\ccRefIdfierPage{CGAL::Abs<NT>} \\
-\ccRefIdfierPage{CGAL::Compare<NT>} \\
-\ccRefIdfierPage{CGAL::Gcd<NT>} \\
-\ccRefIdfierPage{CGAL::Div<NT>} \\
-\ccRefIdfierPage{CGAL::Is_negative<NT>} \\
-\ccRefIdfierPage{CGAL::Is_one<NT>} \\
-\ccRefIdfierPage{CGAL::Is_positive<NT>} \\
-\ccRefIdfierPage{CGAL::Is_zero<NT>} \\
-\ccRefIdfierPage{CGAL::Max<NT,Compare>} \\
-\ccRefIdfierPage{CGAL::Min<NT,Compare>} \\
-\ccRefIdfierPage{CGAL::Sgn<NT>} \\
-\ccRefIdfierPage{CGAL::Sqrt<NT>} \\
-\ccRefIdfierPage{CGAL::Square<NT>} \\
-\ccRefIdfierPage{CGAL::To_double<NT>} \\
-\ccRefIdfierPage{CGAL::To_interval<NT>} \\
-\def\ccRefPageBreak{\ccTrue}
+\subsubsection{GMP}
+\ccRefConceptPage{mpz_class}\\
+\ccRefConceptPage{mpq_class}\\
+%\ccRefConceptPage{mpf_class} \dots \ not support yet \\
 
-\subsection*{Tags}
+\ccRefConceptPage{CGAL::Gmpz}\\
+\ccRefConceptPage{CGAL::Gmpq}\\
+\ccRefConceptPage{CGAL::Gmpzf}\\
 
-\ccRefIdfierPage{CGAL::Ring_tag} \\
-\ccRefIdfierPage{CGAL::Euclidean_ring_tag} \\
-\ccRefIdfierPage{CGAL::Field_tag} \\
-\ccRefIdfierPage{CGAL::Sqrt_field_tag} \\
+\subsubsection{CGAL}
+\ccRefConceptPage{CGAL::MP_Float}\\
+\ccRefConceptPage{CGAL::Interval_nt<Protected>}\\
+\ccRefConceptPage{CGAL::Lazy_exact_nt<NT>}\\
+\ccRefConceptPage{CGAL::Quotient<NT>}\\
+\ccRefConceptPage{CGAL::Counted_number<NT>}\\
+\ccRefConceptPage{CGAL::Number_type_checker<NT1,NT2,Comperator>}\\
+
+\ccRefIdfierPage{CGAL::Sqrt_extension<NT,ROOT>}\\
+
 
 \subsection*{Traits Classes}
 
-\ccRefIdfierPage{CGAL::Number_type_traits<NT>} \\
 \ccRefIdfierPage{CGAL::Rational_traits<NT>} \\
 \ccRefIdfierPage{CGAL::Root_of_traits_2<RT>}\\
 
 \subsection*{Number Type Concepts} 
 
-\ccRefIdfierPage{EuclideanRingNumberType}\\
-\ccRefIdfierPage{FieldNumberType}\\
-\ccRefIdfierPage{RingNumberType}\\
 \ccRefIdfierPage{RootOf_2}\\
-\ccRefIdfierPage{SqrtFieldNumberType}\\
-
-\subsection*{Number Type Classes} 
-
-\ccRefIdfierPage{CGAL::Gmpq} \\
-\ccRefIdfierPage{CGAL::Gmpz} \\
-\ccRefIdfierPage{CGAL::Interval_nt<Protected>} \\
-\ccRefIdfierPage{CGAL::Lazy_exact_nt<NT>} \\
-\ccRefIdfierPage{CGAL::MP_Float} \\
-\ccRefIdfierPage{CGAL::Number_type_checker<NT1,NT2,Comparator>} \\
-\ccRefIdfierPage{CGAL::Quotient<NT>} \\
-\ccRefIdfierPage{CGAL::Root_of_2<RT>}\\
-\ccRefIdfierPage{CORE::Expr} \\
-\ccRefIdfierPage{leda_bigfloat} \\
-\ccRefIdfierPage{leda_integer} \\
-\ccRefIdfierPage{leda_rational} \\
-\ccRefIdfierPage{leda_real} \\
-%\ccRefIdfierPage{mpf_class} \\
-\ccRefIdfierPage{mpq_class} \\
-\ccRefIdfierPage{mpz_class} \\
 
 %% EOF
