@@ -9,13 +9,13 @@ which may decompose into a (scalar)
 denominator and a compound numerator with a simpler coefficient type 
 (e.g. integer instead of rational). Often operations can be performed faster on 
 these denominator-free multiples. In case a type is a \ccc{Fraction} 
-the relevant functionaly as well as the numerator and demoninator 
+the relevant functionality as well as the numerator and denominator 
 type are provided by \ccc{CGAL::Fraction_traits}. In particular  
 \ccc{CGAL::Fraction_traits} provides a tag \ccc{Is_fraction} that can be
 used for dispatching.
 
-An related class is \ccc{CGAL::Rational_traits} wich has been kept for backward 
-compatibility reasons. However, we recommmend to use \ccc{Fraction_traits} since
+An related class is \ccc{CGAL::Rational_traits} which has been kept for backward 
+compatibility reasons. However, we recommend to use \ccc{Fraction_traits} since
 it is more general and offers dispatching functionality. 
 
 
