@@ -18,11 +18,14 @@ types, in particular polynomials, that are valid algebraic structures,
 but should not be considered as a number type.\\
 Note that Polynomials are not part of this package. 
 
-\subsubsection{for Release 3.4}
+\subsubsection{for Release 3.3}
 
-TODO: (after merge) 
+TODO:
 \begin{itemize}
 \item find a place for basic stuff. see section remarks
+\item what about old concepts and functors that we keep for back ward 
+      compatibility, do we need a documentation for them ? \\
+      they can be found in {\tt Algebraic\_foundations\_ref/Deprecated}
 \item add links in \ccc{IsZero}s
 \item 'built-in' types -> 'fundamental' types 
 \item add a new entry in the globally maintained Bib file.
@@ -32,6 +35,8 @@ TODO: (after merge)
 \item document \ccc{Boolean_tag}, rm function \ccc{check_tag}?.
 \item document rounding mode for Div/Mod. 
 \item revise doc of NTs
+\item No proper documentation of \ccc{Root_of_2} and related traits class 
+      and functions. 
 \end{itemize}
 
 DONE:
@@ -47,6 +52,7 @@ DONE:
 \item Introduced \ccc{Boolean_tag} with static const bool. \\
       typedef \ccc{Tag_true}, \ccc{Tag_false}. 
 \item added concept \ccc{FromDoubleConstructible}
+\item rm support for io mode: BENCHMARK 
 \end{itemize}
 
 CONJECTURE:
@@ -62,7 +68,6 @@ OPEN:
 \item split \ccc{MP_float} into two types. 
 \item What about the Small in \ccc{FromSmallIntConstructible}?
 \item Should we add Ipower? motivation see introduction of Square.
-\item rm support for io mode BENCHMARK ?
 \item rm \ccc{Output_rep} etc. ? 
 \end{itemize}
 
