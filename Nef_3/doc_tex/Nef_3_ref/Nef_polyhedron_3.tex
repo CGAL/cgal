@@ -160,10 +160,10 @@ template parameters.
   and to the whole space if \ccc{space == COMPLETE}.}
 
 \ccConstructor{Nef_polyhedron_3(const Plane_3& p, 
-                                Boundary b = INCLUDED);}{
-  creates a Nef polyhedron containing the halfspace left of
-  \ccc{p} including \ccc{p} if \ccc{b==INCLUDED}, excluding \ccc{p}
-  if \ccc{b==EXCLUDED}.}
+                                Boundary b = INCLUDED);}{ creates a
+  Nef polyhedron containing the halfspace on the negative side of
+  \ccc{p} including \ccc{p} if \ccc{b==INCLUDED}, excluding \ccc{p} if
+  \ccc{b==EXCLUDED}.}
 
 \ccConstructor{Nef_polyhedron_3(Polyhedron& P);}{
   creates a Nef polyhedron, which represents the same point set as 
