@@ -9,8 +9,6 @@
 \ccDefinition
 An object of the class \ccc{Lazy_exact_nt<NT>} is able to represent any 
 real embeddable number which \ccc{NT} is able to represent.
-The arithmetic operations it can do are those guaranteed by the algebraic 
-concept \ref{af:algebraic_structure_concepts} of \ccc{NT}. 
 The idea is that \ccc{Lazy_exact_nt<NT>} works exactly like \ccc{NT}, except
 that it is expected to be faster because it tries to only compute an 
 approximation of the value, and only refers to \ccc{NT} when needed.  
