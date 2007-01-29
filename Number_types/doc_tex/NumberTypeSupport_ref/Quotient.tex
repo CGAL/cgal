@@ -13,10 +13,17 @@ has been the basis for \ccStyle{Quotient<NT>}.
 A \ccStyle{Quotient<NT>} \ccStyle{q} is represented as a pair of 
 \ccStyle{NT}s, representing numerator and denominator.
 
+\ccc{NT} must be at least model of concept \ccc{IntegralDomainWithoutDivision}.\\
+\ccc{NT} must be a model of concept \ccc{RealEmbeddable}. \\
+
+
 \ccInclude{CGAL/Quotient.h}
 
 \ccIsModel
-FieldNumberType
+
+\ccc{Field}\\
+\\
+\ccc{RealEmbeddable}
 
 \ccCreation
 \ccCreationVariable{q}
@@ -41,7 +48,7 @@ NT needs to have a constructor from T.}
 \ccOperations
 
 %\ccSetTwoOfThreeColumns{5cm}{4cm}
-\ccSetThreeColumns{std::ostream& }{}{\hspace*{8cm}}
+%SetThreeColumns{std::ostream& }{}{\hspace*{8cm}}
 
 There are two access functions, namely to the
 numerator and the denominator of a quotient.
