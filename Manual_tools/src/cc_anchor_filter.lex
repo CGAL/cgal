@@ -200,6 +200,11 @@ LT              "&lt;"
 GT              "&gt;"
 CCidfier        ({CCletter}({CCletter}|{digit})*)
 CCidfier1       {CCidfier}({CCidfier}|[ ]?({LT}[ ]?)+{CCidfier}|([ ]?{GT})*[ ]?"::"[ ]?{CCidfier}|[ ]?[,][ ]?{CCidfier})*([ ]?{GT})*
+intsign         "signed "|"unsigned "
+intsize         "long long "|"long "|"short "
+inttype         ({intsign}?{intsize}?"int")|({intsign}?"char")
+floattype       "float"|"double"|"long double"
+CCidfier2       {CCidfier1}|{inttype}|{floattype}
 ws              [ \t\n\r]*
 par             {ws}("<"[pP]">"{ws})*
 glue            {ws}("<"[pP]">"{ws})*"<!GLUE>"{ws}("<"[pP]">"{ws})*
@@ -308,7 +313,7 @@ cccend          "[cccend]"
      output_file  << dict_internal[ my_yytext ];
 }
 
-<CROSSLINKMODE>{CCidfier1} {
+<CROSSLINKMODE>{CCidfier2} {
   //output_file << "matched [" << yytext << "] as ccidfieR" << std::endl;
   match_cc_idfier( yytext, &output_file );
 }
