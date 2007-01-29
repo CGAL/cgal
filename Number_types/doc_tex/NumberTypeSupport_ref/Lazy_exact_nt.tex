@@ -25,10 +25,11 @@ using \ccc{Filtered_predicate} and \ccc{Filtered_kernel}.
 \ccInclude{CGAL/Lazy_exact_nt.h}
 
 \ccIsModel
-\ccc{IntegralDomainWithoutDivision} depends on \ccc{NT} \\
-\\
-\ccc{RealEmbeddable}
-        
+\begin{tabular}{ll}
+\ccc{IntegralDomainWithoutDivision} & same as \ccc{NT}\\
+\ccc{RealEmbeddable}&\\
+\ccc{Fraction} & if \ccc{NT} is a \ccc{Fraction}\\
+\end{tabular}       
         
 
 \ccCreation

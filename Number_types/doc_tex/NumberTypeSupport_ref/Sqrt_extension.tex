@@ -59,28 +59,30 @@ In contrast, an object of \ccc{Sqrt_extension} represents an extension
 by one square root only, which is defined at construction time. As a consequence
 two objects of this type are interoperable if and only if they are defined 
 within the same extension
-%\footnote{It is also possible to leave the extension undefined, in particular \ccc{Sqrt_extension} is constructible from \ccc{int}}.
+%\footnote{It is also possible to leave the extension undefined, in particular 
+%\ccc{Sqrt_extension} is constructible from \ccc{int}}.
 The type \ccc{Sqrt_extension} is thus predestinated to be used as the 
-coefficient type of 
-polynomials defined over a particular algebraic extension of degree 2 or nested forms,  
+coefficient type of polynomials defined over a particular algebraic extension 
+of degree 2 or nested forms,  
 %optional remark 
 %in particular it is possible to use it as the coefficient type of an 
 %\ccc{NiX::Algebraic\_real}.
 \\
 
-\ccc{Sqrt_extension} is \ccc{RealComparable} if \ccc{NT} is \ccc{RealComparable}.
 
-\begin{ccAdvanced}
-\ccc{Sqrt_extension} is \ccc{Modularizable} in case \ccc{NT} is \ccc{Modularizable}.
-\end{ccAdvanced}
+%\begin{ccAdvanced}
+%\ccc{Sqrt_extension} is \ccc{Modularizable} in case \ccc{NT} is 
+%\ccc{Modularizable}.
+%\end{ccAdvanced}
 
 \ccIsModel
 \begin{tabular}{ll}
-\ccc{IntegralDomainWithoutDivision}& if \ccc{NT} is 
+\ccc{IntegralDomainWithoutDivision}& if \ccc{NT} is an
         \ccc{IntegralDomainWithoutDivision}\\
-\ccc{IntegralDomain} &if \ccc{NT} is \ccc{IntegralDomain}\\
-\ccc{Field} &if \ccc{NT} is \ccc{Field}\\
+\ccc{IntegralDomain} &if \ccc{NT} is an \ccc{IntegralDomain}\\
+\ccc{Field} &if \ccc{NT} is a \ccc{Field}\\
 \\ \ccc{RealEmbeddable} &if \ccc{NT} is \ccc{RealEmbeddable}\\
+\\ \ccc{Fraction} &if \ccc{NT} is a \ccc{Fraction}\\
 \end{tabular}
 
 \ccCreation
