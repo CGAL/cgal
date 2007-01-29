@@ -7,14 +7,19 @@
 \label{lazy_exact_nt}
 
 \ccDefinition
-An object of the class \ccc{Lazy_exact_nt<NT>} is able to represent any number
-which \ccc{NT} is able to represent.  The arithmetic operations it can do are
-those \ccc{NT} can do, limited to the 4 basic operations, the square root and
-the comparisons.
+An object of the class \ccc{Lazy_exact_nt<NT>} is able to represent any 
+real embeddable number which \ccc{NT} is able to represent.
+The arithmetic operations it can do are those guaranteed by the algebraic 
+concept \ref{af:algebraic_structure_concepts} of \ccc{NT}. 
 The idea is that \ccc{Lazy_exact_nt<NT>} works exactly like \ccc{NT}, except
-that it is faster because it tries to only compute an approximation of the
-value, and only refers to \ccc{NT} when needed.  The goal is to speed up exact
-computations done by any exact but slow number type \ccc{NT}.
+that it is expected to be faster because it tries to only compute an 
+approximation of the value, and only refers to \ccc{NT} when needed.  
+The goal is to speed up exact computations done by any exact but slow 
+number type \ccc{NT}.\\
+
+\ccc{NT} must be a model of concept \ccc{RealEmbeddable}. \\
+\ccc{NT} must be at least model of concept \ccc{IntegralDomainWithoutDivision}.\\
+
 
 Note that some filtering mechanism is available at the predicate level
 using \ccc{Filtered_predicate} and \ccc{Filtered_kernel}.
@@ -22,15 +27,11 @@ using \ccc{Filtered_predicate} and \ccc{Filtered_kernel}.
 \ccInclude{CGAL/Lazy_exact_nt.h}
 
 \ccIsModel
-FieldNumberType
-
-\ccTypes
-%\ccThreeToTwo
-
-\ccTypedef{typedef NT                   Exact_type;}{}
-\ccGlue
-\ccTypedef{typedef Interval_nt<false>   Approximate_type;}{}
-
+\ccc{IntegralDomainWithoutDivision} depends on \ccc{NT} \\
+\\
+\ccc{RealEmbeddable}
+        
+        
 
 \ccCreation
 \ccCreationVariable{m}
