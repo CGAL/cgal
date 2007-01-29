@@ -100,30 +100,30 @@ include kds_deps.makefile
 #---------------------------------------------------------------------#
 
 Qt_widget$(OBJ_EXT):
-	$(QT_MOC) $(CGAL_INCL_DIR)/CGAL/IO/Qt_widget.h -o Qt_widget.moc
+	$(QT_MOC) '$(CGAL_INCL_DIR)/CGAL/IO/Qt_widget.h' -o Qt_widget.moc
 	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget.cpp
 
 Qt_widget_layer$(OBJ_EXT):
-	$(QT_MOC) $(CGAL_INCL_DIR)/CGAL/IO/Qt_widget_layer.h -o Qt_widget_layer.moc
+	$(QT_MOC) '$(CGAL_INCL_DIR)/CGAL/IO/Qt_widget_layer.h' -o Qt_widget_layer.moc
 	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget_layer.cpp
 
 Qt_widget_standard_toolbar$(OBJ_EXT):
-	$(QT_MOC) $(CGAL_INCL_DIR)/CGAL/IO/Qt_widget_standard_toolbar.h -o Qt_widget_standard_toolbar.moc
+	$(QT_MOC) '$(CGAL_INCL_DIR)/CGAL/IO/Qt_widget_standard_toolbar.h' -o Qt_widget_standard_toolbar.moc
 	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget_standard_toolbar.cpp
 
 Qt_help_window$(OBJ_EXT):
-	$(QT_MOC) $(CGAL_INCL_DIR)/CGAL/IO/Qt_help_window.h -o Qt_help_window.moc
+	$(QT_MOC) '$(CGAL_INCL_DIR)/CGAL/IO/Qt_help_window.h' -o Qt_help_window.moc
 	$(CGAL_CXX) $(CXXFLAGS) -c Qt_help_window.cpp
 
 Qt_widget_history$(OBJ_EXT):
-	$(QT_MOC) $(CGAL_INCL_DIR)/CGAL/IO/Qt_widget_history.h -o Qt_widget_history.moc
+	$(QT_MOC) '$(CGAL_INCL_DIR)/CGAL/IO/Qt_widget_history.h' -o Qt_widget_history.moc
 	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget_history.cpp
 
 Qt_widget_xpm_icons$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget_xpm_icons.cpp
 
 Qt_widget_OpenGL$(OBJ_EXT):
-	$(QT_MOC) $(CGAL_INCL_DIR)/CGAL/IO/Qt_widget_OpenGL.h -o Qt_widget_OpenGL.moc
+	$(QT_MOC) '$(CGAL_INCL_DIR)/CGAL/IO/Qt_widget_OpenGL.h' -o Qt_widget_OpenGL.moc
 	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget_OpenGL.cpp
 
 .SUFFIXES: .cpp $(SUFFIXES)
