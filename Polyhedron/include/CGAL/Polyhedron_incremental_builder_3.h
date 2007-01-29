@@ -133,29 +133,29 @@ protected:
     void push_back_vertex_to_edge_map( Halfedge_handle h) {
         push_back_vertex_to_edge_map( h, Supports_vertex_halfedge());
     }
-    Halfedge_handle get_vertex_to_edge_map( int i, Tag_true) {
+    Halfedge_handle get_vertex_to_edge_map( size_type i, Tag_true) {
         // Use the halfedge pointer within the vertex.
         //CGAL_assertion( index_to_vertex_map[i]->halfedge() == get_vertex_to_edge_map(i, Tag_false()));
         return index_to_vertex_map[i]->halfedge();
     }
-    Halfedge_handle get_vertex_to_edge_map( int i, Tag_false) {
+    Halfedge_handle get_vertex_to_edge_map( size_type i, Tag_false) {
         // Use the self-managed array vertex_to_edge_map.
         return vertex_to_edge_map[i];
     }
-    Halfedge_handle get_vertex_to_edge_map( int i) {
+    Halfedge_handle get_vertex_to_edge_map( size_type i) {
         return get_vertex_to_edge_map( i, Supports_vertex_halfedge());
     }
-    void set_vertex_to_edge_map( int i, Halfedge_handle h, Tag_true) {
+    void set_vertex_to_edge_map( size_type i, Halfedge_handle h, Tag_true) {
         set_vertex_to_edge_map( i, h, Tag_false());
         // Use the halfedge pointer within the vertex.
         index_to_vertex_map[i]->VBase::set_halfedge(h);
     }
-    void set_vertex_to_edge_map( int i, Halfedge_handle h, Tag_false) {
+    void set_vertex_to_edge_map( size_type i, Halfedge_handle h, Tag_false) {
         // Use the self-managed array vertex_to_edge_map.
         CGAL_assertion(i>=0 && i < vertex_to_edge_map.size());
         vertex_to_edge_map[i] = h;
     }
-    void set_vertex_to_edge_map( int i, Halfedge_handle h) {
+    void set_vertex_to_edge_map( size_type i, Halfedge_handle h) {
         set_vertex_to_edge_map( i, h, Supports_vertex_halfedge());
     }
 
