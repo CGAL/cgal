@@ -41,12 +41,23 @@ A model of \ccc{AlgebraicStructureTraits} is supposed to provide:\\
         }
 
 \ccNestedType{Is_exact}
-        { Tag indicating whether \ccc{Type} is an exact type. \\
+        { Tag indicating whether \ccc{Type} is exact. \\
           This is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}.\\
+          An algebraic structure is considered exact, if all operations 
+          required by its concept are computed such that a comparison 
+          of two algebraic expressions is always correct.
           The exactness covers only those operations that are required by 
           the algebraic structure concept. \\
           e.g. an exact \ccc{Field} may have a \ccc{Sqrt} functor that 
           is not exact. \\   
+        }
+
+\ccNestedType{Is_numerical_sensitive}
+        { Tag indicating whether \ccc{Type} is numerical sensitive. \\
+          This is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}.\\
+          An algebraic structure is  considered as numerically sensitive,
+          if the performance of the type is sensitive to the condition 
+          number of an algorithm.
         }
 
 
