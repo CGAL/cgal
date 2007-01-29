@@ -4,21 +4,9 @@
 
 A model of \ccRefName\ is associated with a type \ccc{Type}.
 
-It first of all indicates whether the associated type can be considered as 
-a fraction. In this case it provides a generic mechanism to access numerator and 
-denominator of this type. 
-
-
-Motivation: Beyond the need for performing algebraic operations on objects as a 
-whole, there are also number types which one would like to decompose into 
-numerator and denominator. This does not only hold for rational numbers 
-as \ccc{Quotient}, \ccc{Gmpq}, \ccc{mpq_class} or \ccc{leda_rational}, but 
-also compound objects as \ccc{Sqrt_extension} or \ccc{Polynomial} 
-which may decompose into a (scalar) 
-denominator and a compound numerator with a simpler coefficient type 
-(e.g. integer instead of rational). Often operations can be performed faster on 
-these denominator-free multiples. \\
-
+In case the associated type is a \ccc{Fraction}, a model of \ccRefName\
+provides the relevant functionality for decomposing and re-composing as well
+as the numerator and denominator type.
 
 \ccInclude{CGAL/Fraction_traits.h}
 
@@ -36,15 +24,18 @@ these denominator-free multiples. \\
 
 \ccHeading{Functors}
 
-\ccNestedType{Decompose}{If \ccc{Type} is decomposable this is a model of \ccc{FractionTraits::Decompose} otherwise this is \ccc{CGAL::Null_functor}.}
-\ccNestedType{Compose}{If \ccc{Type} is decomposable this is a model of \ccc{FractionTraits::Compose} otherwise this is \ccc{CGAL::Null_functor}.}
-\ccNestedType{Common_factor}{If \ccc{Type} is decomposable this is a model of \ccc{FractionTraits::CommonFactor} otherwise this is \ccc{CGAL::Null_functor}.}
+In case \ccc{Type} is not a \ccc{Fraction} all functors are \ccc{Null_functor}.
+
+\ccNestedType{Decompose}{A model of \ccc{FractionTraits::Decompose}.}
+\ccNestedType{Compose}{A model of \ccc{FractionTraits::Compose}.}
+\ccNestedType{Common_factor}{A model of \ccc{FractionTraits::CommonFactor}.}
 
 
 \ccSeeAlso
-\ccRefIdfierPage{CGAL::Fraction_traits<Type>}\\
+\ccRefConceptPage{Fraction}\\
 \ccRefConceptPage{FractionTraits::Decompose}\\
 \ccRefConceptPage{FractionTraits::Compose}\\
 \ccRefConceptPage{FractionTraits::CommonFactor}\\
+\ccRefIdfierPage{CGAL::Fraction_traits<Type>}\\
 
 \end{ccRefConcept}
