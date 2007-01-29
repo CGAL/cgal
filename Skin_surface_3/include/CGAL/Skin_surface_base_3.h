@@ -630,8 +630,6 @@ locate_in_tmc(const Bare_point &p0,
   Cartesian_converter<typename Bare_point::R, TMC_Geom_traits> converter_fk;
   TMC_Point p_inexact = converter_fk(p0);
 
-  Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
-
   // Make sure we continue from here with a finite cell.
   if ( start == TMC_Cell_handle() )
     start = _tmc.infinite_cell();
@@ -673,9 +671,17 @@ locate_in_tmc(const Bare_point &p0,
     const TMC_Point* backup = pts[i];
     pts[i] = &p_inexact;
     try {
+      Protect_FPU_rounding<true> P;
+
       o = TMC_Geom_traits().orientation_3_object()(*pts[0], *pts[1], *pts[2], *pts[3]);
 
+      Skin_surface_traits_3<TMC_Geom_traits> filtered_traits(shrink_factor());
+      std::cout << *pts[i==0?1:0] << " == " 
+                << get_anchor_point(c->vertex(i==0?1:0)->info(), 
+                                    filtered_traits)
+                << std::endl;
 
+      Protect_FPU_rounding<false> P2(CGAL_FE_TONEAREST);
       typedef Exact_predicates_exact_constructions_kernel EK;
       Cartesian_converter<typename Geometric_traits::Bare_point::R, EK> converter_ek;
 
@@ -695,11 +701,11 @@ locate_in_tmc(const Bare_point &p0,
         }
       }
 
-      std::cout << *pts[i==0?1:0] << " == " << e_pts[i==0?1:0] << std::endl;
-
+      
       //CGAL_assertion(o == orientation(e_pts[0], e_pts[1], e_pts[2], e_pts[3]));
 
     } catch (Interval_nt_advanced::unsafe_comparison) {
+      Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
       std::cout << "exact" << std::endl;
       typedef Exact_predicates_exact_constructions_kernel EK;
       Cartesian_converter<typename Geometric_traits::Bare_point::R, EK> converter_ek;

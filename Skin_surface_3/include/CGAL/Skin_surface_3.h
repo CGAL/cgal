@@ -106,16 +106,16 @@ Skin_surface_3(WP_iterator begin, WP_iterator end,
                               observer, verbose);
 
   CGAL_assertion(tmc().dimension() == 3);
-  { // NGHK: debug code:
-    CGAL_assertion(tmc().is_valid());
-    std::vector<TMC_Vertex_handle> ch_vertices;
-    tmc().incident_vertices(tmc().infinite_vertex(), 
-                          std::back_inserter(ch_vertices));
-    for (typename std::vector<TMC_Vertex_handle>::iterator
-           vit = ch_vertices.begin(); vit != ch_vertices.end(); vit++) {
-      CGAL_assertion(sign(*vit) == POSITIVE);
-    }
-  }
+//  { // NGHK: debug code:
+//    CGAL_assertion(tmc().is_valid());
+//    std::vector<TMC_Vertex_handle> ch_vertices;
+//    tmc().incident_vertices(tmc().infinite_vertex(), 
+//                          std::back_inserter(ch_vertices));
+//    for (typename std::vector<TMC_Vertex_handle>::iterator
+//           vit = ch_vertices.begin(); vit != ch_vertices.end(); vit++) {
+//      CGAL_assertion(sign(*vit) == POSITIVE);
+//    }
+//  }
 }
 
 CGAL_END_NAMESPACE

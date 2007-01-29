@@ -79,8 +79,8 @@ public:
   }
 
   void after_vertex_insertion(Rt_Simplex const &sDel, 
-    			      Rt_Simplex const &sVor, 
-			      TMC_Vertex_handle &vh) 
+                              Rt_Simplex const &sVor, 
+                              TMC_Vertex_handle &vh) 
   {
     vh->info() = typename SkinSurface_3::Vertex_info(sDel, sVor);
   }

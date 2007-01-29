@@ -29,7 +29,6 @@ void write_polyhedron_with_normals(SkinSurface &skin,
   
   
   // Write vertices
-  int i=p.size_of_vertices ();
   for (Vertex_iterator vit = p.vertices_begin();
        vit != p.vertices_end(); vit ++) {
     Vector n = policy.normal(vit);

@@ -137,6 +137,7 @@ public:
       observer(observer),
       triangulation_incr_builder(triangulated_mixed_complex), 
       compute_anchor_obj(regular),
+      construct_anchor_point_3_obj(shrink),
       verbose(verbose)  {
     
     build();
@@ -217,14 +218,14 @@ private:
   }
   void construct_vertices();
   
-  Tmc_Point get_orthocenter(Rt_Simplex const &s);
+  Tmc_Point get_weighted_circumcenter(Rt_Simplex const &s);
   Tmc_Point get_anchor(Rt_Simplex const &sDel, Rt_Simplex const &sVor);
   template <class Point>
   Point construct_anchor_point(const Point &center_del, 
-			       const Point &center_vor) {
-    return center_del + shrink*(center_vor-center_del);
+                               const Point &center_vor) {
+    return construct_anchor_point_3_obj(center_del,center_vor);
   }
-  
+ 
   void construct_0_cell(Rt_Vertex_handle rt_vh);
   void construct_1_cell(const Rt_Finite_edges_iterator &eit);
   void construct_2_cell(const Rt_Finite_facets_iterator &fit);
@@ -247,7 +248,11 @@ private:
 
   Construct_weighted_circumcenter_3<
     Regular_triangulation_euclidean_traits_3<
-    Triangulated_mixed_complex_traits> >                orthocenter_obj;
+    Triangulated_mixed_complex_traits> >                weighted_circumcenter_obj;
+
+  Construct_anchor_point_3<
+    Regular_triangulation_euclidean_traits_3<
+    Triangulated_mixed_complex_traits> >                construct_anchor_point_3_obj;
 
   Compute_squared_radius_smallest_orthogonal_sphere_3<
     Regular_triangulation_euclidean_traits_3<
@@ -994,7 +999,7 @@ Mixed_complex_triangulator_3<
   RegularTriangulation_3,
   TriangulatedMixedComplex_3,
   TriangulatedMixedComplexObserver_3>::
-get_orthocenter(Rt_Simplex const &s) {
+get_weighted_circumcenter(Rt_Simplex const &s) {
   Rt_Vertex_handle vh;
   Rt_Edge           e;
   Rt_Facet          f;
@@ -1008,13 +1013,13 @@ get_orthocenter(Rt_Simplex const &s) {
     break;
   case 1:
     e=s;
-    result = orthocenter_obj(
+    result = weighted_circumcenter_obj(
 			     r2t_converter_object(e.first->vertex(e.second)->point()),
 			     r2t_converter_object(e.first->vertex(e.third)->point()));
     break;
   case 2:
     f=s;
-    result = orthocenter_obj(
+    result = weighted_circumcenter_obj(
 			     r2t_converter_object(
 						  f.first->vertex((f.second+1)&3)->point()),
 			     r2t_converter_object(
@@ -1024,7 +1029,7 @@ get_orthocenter(Rt_Simplex const &s) {
     break;
   case 3:
     ch=s;
-    result = orthocenter_obj(
+    result = weighted_circumcenter_obj(
            r2t_converter_object(ch->vertex(0)->point()),
            r2t_converter_object(ch->vertex(1)->point()),
            r2t_converter_object(ch->vertex(2)->point()),
@@ -1045,10 +1050,10 @@ Mixed_complex_triangulator_3<
   TriangulatedMixedComplexObserver_3>::
 get_anchor(Rt_Simplex const &sDel, Rt_Simplex const &sVor)
 {
-  Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
+  Protect_FPU_rounding<true> P;
 
-  Tmc_Point dfoc = get_orthocenter(sDel);
-  Tmc_Point vfoc = get_orthocenter(sVor);
+  Tmc_Point dfoc = get_weighted_circumcenter(sDel);
+  Tmc_Point vfoc = get_weighted_circumcenter(sVor);
 	
   return construct_anchor_point(dfoc, vfoc);
 }
