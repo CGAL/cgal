@@ -34,17 +34,17 @@ Kinetic_pixmaps$(OBJ_EXT): Kinetic_*.xpm
 #CGAL_KDS_INCL_DIR := $(CGAL_INCL_DIR)/CGAL/Kinetic/IO/internal
 
 
-Kinetic_Qt_core.moc: ../../CGAL/Kinetic/IO/internal/Qt_core.h
-	$(QT_MOC) ../../CGAL/Kinetic/IO/internal/Qt_core.h -o Kinetic_Qt_core.moc
+Kinetic_Qt_core.moc: ../../include/CGAL/Kinetic/IO/internal/Qt_core.h
+	$(QT_MOC) ../../include/CGAL/Kinetic/IO/internal/Qt_core.h -o Kinetic_Qt_core.moc
 
 
-Kinetic_Qt_timer.moc: ../../CGAL/Kinetic/IO/internal/Qt_timer.h
-	$(QT_MOC) ../../CGAL/Kinetic/IO/internal/Qt_timer.h -o Kinetic_Qt_timer.moc
+Kinetic_Qt_timer.moc: ../../include/CGAL/Kinetic/IO/internal/Qt_timer.h
+	$(QT_MOC) ../../include/CGAL/Kinetic/IO/internal/Qt_timer.h -o Kinetic_Qt_timer.moc
 
 
-Kinetic_Qt_widget_2_core.moc: ../../CGAL/Kinetic/IO/internal/Qt_widget_2_core.h
-	$(QT_MOC) ../../CGAL/Kinetic/IO/internal/Qt_widget_2_core.h -o Kinetic_Qt_widget_2_core.moc
+Kinetic_Qt_widget_2_core.moc: ../../include/CGAL/Kinetic/IO/internal/Qt_widget_2_core.h
+	$(QT_MOC) ../../include/CGAL/Kinetic/IO/internal/Qt_widget_2_core.h -o Kinetic_Qt_widget_2_core.moc
 
 
-Kinetic_Qt_window_2.moc: ../../CGAL/Kinetic/IO/internal/Qt_window_2.h
-	$(QT_MOC)  ../../CGAL/Kinetic/IO/internal/Qt_window_2.h -o Kinetic_Qt_window_2.moc
+Kinetic_Qt_window_2.moc: ../../include/CGAL/Kinetic/IO/internal/Qt_window_2.h
+	$(QT_MOC)  ../../include/CGAL/Kinetic/IO/internal/Qt_window_2.h -o Kinetic_Qt_window_2.moc
