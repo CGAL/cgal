@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
 
   CGAL::subdivide_skin_surface_mesh_3(skin_surface, p);
 
-  std::ofstream out("output.txt");
+  std::ofstream out("mesh.off");
   out << p;
 
   return 0;

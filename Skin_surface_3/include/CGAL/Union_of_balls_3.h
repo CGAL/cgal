@@ -66,7 +66,7 @@ private:
   using Base::shrink_factor;
   using Base::geometric_traits;
   using Base::regular;
-  using Base::tmc;
+  using Base::triangulated_mixed_complex;
 public:
   template < class WP_iterator >
   Union_of_balls_3(WP_iterator begin, WP_iterator end, 
@@ -96,19 +96,19 @@ Union_of_balls_3(WP_iterator begin, WP_iterator end,
     
   // Construct the Triangulated_mixed_complex:
   Triangulated_mixed_complex_observer_3<TMC, Self> observer(shrink_factor());
-  triangulate_power_diagram_3(regular(), tmc(), observer, verbose);
+  triangulate_power_diagram_3(regular(), triangulated_mixed_complex(), observer, verbose);
 
-  CGAL_assertion(tmc().dimension() == 3);
-  { // NGHK: debug code:
-    CGAL_assertion(tmc().is_valid());
-    std::vector<TMC_Vertex_handle> ch_vertices;
-    tmc().incident_vertices(tmc().infinite_vertex(), 
-                          std::back_inserter(ch_vertices));
-    for (typename std::vector<TMC_Vertex_handle>::iterator
-           vit = ch_vertices.begin(); vit != ch_vertices.end(); vit++) {
-      CGAL_assertion(sign(*vit) == POSITIVE);
-    }
-  }
+  CGAL_assertion(triangulated_mixed_complex().dimension() == 3);
+//   { // NGHK: debug code:
+//     CGAL_assertion(triangulated_mixed_complex().is_valid());
+//     std::vector<TMC_Vertex_handle> ch_vertices;
+//     triangulated_mixed_complex().incident_vertices(triangulated_mixed_complex().infinite_vertex(), 
+//                           std::back_inserter(ch_vertices));
+//     for (typename std::vector<TMC_Vertex_handle>::iterator
+//            vit = ch_vertices.begin(); vit != ch_vertices.end(); vit++) {
+//       CGAL_assertion(sign(*vit) == POSITIVE);
+//     }
+//   }
 }
   
 

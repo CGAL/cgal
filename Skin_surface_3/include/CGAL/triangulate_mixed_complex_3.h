@@ -918,8 +918,18 @@ add_vertex (Symb_anchor const &anchor)
 {
   Tmc_Vertex_handle vh;
   vh = triangulation_incr_builder.add_vertex();
-  vh->point() = get_anchor(anchor.first, anchor.second);
   observer.after_vertex_insertion(anchor.first, anchor.second, vh); 
+  
+  Protect_FPU_rounding<true> P;
+  vh->point() = get_anchor(anchor.first, anchor.second);
+
+//   std::cout << "@ [" 
+//             << vh->info().first << " - " 
+//             << vh->info().second << "] -- [" 
+//             << vh->point() << "] -- ["
+//             << get_weighted_circumcenter(vh->info().first) << " - "
+//             << get_weighted_circumcenter(vh->info().second) 
+//             << "]" << std::endl;
 
   return vh;
 }
@@ -1020,12 +1030,9 @@ get_weighted_circumcenter(Rt_Simplex const &s) {
   case 2:
     f=s;
     result = weighted_circumcenter_obj(
-			     r2t_converter_object(
-						  f.first->vertex((f.second+1)&3)->point()),
-			     r2t_converter_object(
-						  f.first->vertex((f.second+2)&3)->point()),
-			     r2t_converter_object(
-						  f.first->vertex((f.second+3)&3)->point()));
+			     r2t_converter_object(f.first->vertex((f.second+1)&3)->point()),
+			     r2t_converter_object(f.first->vertex((f.second+2)&3)->point()),
+			     r2t_converter_object(f.first->vertex((f.second+3)&3)->point()));
     break;
   case 3:
     ch=s;
@@ -1035,6 +1042,8 @@ get_weighted_circumcenter(Rt_Simplex const &s) {
            r2t_converter_object(ch->vertex(2)->point()),
            r2t_converter_object(ch->vertex(3)->point()));
     break;
+  default:
+    CGAL_assertion(false);
   }
   return result;
 }

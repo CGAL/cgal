@@ -26,6 +26,9 @@
 
 #include <CGAL/Regular_triangulation_3.h>
 
+// For the Weighted_converter
+#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
+
 // Used for the triangulated mixed complex / Voronoi diagram
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <CGAL/Triangulation_cell_base_with_info_3.h>
@@ -114,7 +117,7 @@ public:
   // Access functions:    
   const FT shrink_factor() const { return shrink; }
   Geometric_traits &geometric_traits() const { return gt; }
-  TMC &tmc() { return _tmc; }
+  TMC &triangulated_mixed_complex() { return _tmc; }
   Regular &regular() { return _regular; }
 
   // Predicates and constructions
@@ -675,38 +678,53 @@ locate_in_tmc(const Bare_point &p0,
 
       o = TMC_Geom_traits().orientation_3_object()(*pts[0], *pts[1], *pts[2], *pts[3]);
 
-      Skin_surface_traits_3<TMC_Geom_traits> filtered_traits(shrink_factor());
-      std::cout << *pts[i==0?1:0] << " == " 
-                << get_anchor_point(c->vertex(i==0?1:0)->info(), 
-                                    filtered_traits)
-                << std::endl;
+//       Skin_surface_traits_3<TMC_Geom_traits> filtered_traits(shrink_factor());
+//       std::cout << "* [" 
+//                 << c->vertex(i==0?1:0)->info().first << " - " 
+//                 << c->vertex(i==0?1:0)->info().second << "] -- [" 
+//                 << c->vertex(i==0?1:0)->point() << "]" << std::endl;
+//       std::cout << "# [" 
+//                 << c->vertex(i==0?1:0)->info().first << " - " 
+//                 << c->vertex(i==0?1:0)->info().second << "] -- [" 
+//                 << get_anchor_point(c->vertex(i==0?1:0)->info(),filtered_traits) << "] -- ["
+//                 << get_weighted_circumcenter(c->vertex(i==0?1:0)->info().first, filtered_traits) << " - "
+//                 << get_weighted_circumcenter(c->vertex(i==0?1:0)->info().second, filtered_traits) 
+//                 << "]" << std::endl;
 
-      Protect_FPU_rounding<false> P2(CGAL_FE_TONEAREST);
-      typedef Exact_predicates_exact_constructions_kernel EK;
-      Cartesian_converter<typename Geometric_traits::Bare_point::R, EK> converter_ek;
+//       Protect_FPU_rounding<false> P2(CGAL_FE_TONEAREST);
+//       typedef Exact_predicates_exact_constructions_kernel EK;
+//       Cartesian_converter<typename Geometric_traits::Bare_point::R, EK> converter_ek;
 
-      Skin_surface_traits_3<EK> exact_traits(shrink_factor());
+//       Skin_surface_traits_3<EK> exact_traits(shrink_factor());
    
-      typename EK::Point_3 e_pts[4];
+//       typename EK::Point_3 e_pts[4];
 
-      // We know that the 4 vertices of c are positively oriented.
-      // So, in order to test if p is seen outside from one of c's facets,
-      // we just replace the corresponding point by p in the orientation
-      // test.  We do this using the array below.
-      for (int k=0; k<4; k++) {
-        if (k != i) {
-          e_pts[k] = get_anchor_point(c->vertex(k)->info(), exact_traits);
-        } else {
-          e_pts[k] = converter_ek(p0);
-        }
-      }
+//       // We know that the 4 vertices of c are positively oriented.
+//       // So, in order to test if p is seen outside from one of c's facets,
+//       // we just replace the corresponding point by p in the orientation
+//       // test.  We do this using the array below.
+//       for (int k=0; k<4; k++) {
+//         if (k != i) {
+//           e_pts[k] = get_anchor_point(c->vertex(k)->info(), exact_traits);
+//         } else {
+//           e_pts[k] = converter_ek(p0);
+//         }
+//       }
 
-      
-      //CGAL_assertion(o == orientation(e_pts[0], e_pts[1], e_pts[2], e_pts[3]));
+
+// //       std::cout << "% [" 
+// //                 << c->vertex(i==0?1:0)->info().first << " - " 
+// //                 << c->vertex(i==0?1:0)->info().second << "] -- [" 
+// //                 << get_anchor_point(c->vertex(i==0?1:0)->info(),exact_traits) << "] -- ["
+// //                 << get_weighted_circumcenter(c->vertex(i==0?1:0)->info().first, exact_traits) << " - "
+// //                 << get_weighted_circumcenter(c->vertex(i==0?1:0)->info().second, exact_traits) 
+// //                 << "]" << std::endl;
+
+//       CGAL_assertion(o == orientation(e_pts[0], e_pts[1], e_pts[2], e_pts[3]));
 
     } catch (Interval_nt_advanced::unsafe_comparison) {
       Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
-      std::cout << "exact" << std::endl;
+//       std::cout << "exact" << std::endl;
       typedef Exact_predicates_exact_constructions_kernel EK;
       Cartesian_converter<typename Geometric_traits::Bare_point::R, EK> converter_ek;
 
@@ -753,42 +771,56 @@ template <class Gt2>
 typename Gt2::Bare_point
 Skin_surface_base_3<MixedComplexTraits_3>::
 get_weighted_circumcenter(const Simplex &s, Gt2 &traits) const {
-  Cartesian_converter<typename Gt::Bare_point::R, 
-    typename Gt2::Bare_point::R> converter;
+  Vertex_handle vh;
+  Edge           e;
+  Facet          f;
+  Cell_handle   ch;
+
+  Weighted_converter_3<
+    Cartesian_converter<typename Gt::Bare_point::R, 
+                        typename Gt2::Bare_point::R> > converter;
+
+  typename Gt2::Bare_point result;
   switch(s.dimension()) {
   case 0: 
     {
-      Vertex_handle vh = s;
-      typename Gt::Weighted_point wp = vh->point();
-      return converter(wp.point());
+      vh = s;
+      result = converter(vh->point());
+      break;
     }
   case 1:
     {
-      Edge e = s;
-      return traits.construct_weighted_circumcenter_3_object()
+      e = s;
+      result = traits.construct_weighted_circumcenter_3_object()
         (converter(e.first->vertex(e.second)->point()),
          converter(e.first->vertex(e.third)->point()));
+      break;
     }
   case 2: 
     {
-      Facet f = s;
-      return traits.construct_weighted_circumcenter_3_object()
+      f = s;
+      result = traits.construct_weighted_circumcenter_3_object()
         (converter(f.first->vertex((f.second+1)&3)->point()),
          converter(f.first->vertex((f.second+2)&3)->point()),
          converter(f.first->vertex((f.second+3)&3)->point()));
+      break;
     }
   case 3: 
     {
-      Cell_handle ch = s;
-      return traits.construct_weighted_circumcenter_3_object()
+      ch = s;
+      result = traits.construct_weighted_circumcenter_3_object()
         (converter(ch->vertex(0)->point()),
          converter(ch->vertex(1)->point()),
          converter(ch->vertex(2)->point()),
          converter(ch->vertex(3)->point()));
+      break;
+    }
+  default:
+    {
+      CGAL_assertion(false);
     }
   }
-  CGAL_assertion(false);
-  return typename Gt2::Point_3();
+  return result;
 }
 
 CGAL_END_NAMESPACE 

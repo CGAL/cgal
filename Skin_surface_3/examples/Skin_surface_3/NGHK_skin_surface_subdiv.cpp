@@ -18,9 +18,9 @@ typedef CGAL::Skin_surface_3<Traits>                        Skin_surface_3;
 typedef Skin_surface_3::FT                                  FT;
 typedef Skin_surface_3::Weighted_point                      Weighted_point;
 typedef Weighted_point::Point                               Bare_point;
-//typedef CGAL::Polyhedron_3<K,
-//  CGAL::Skin_surface_polyhedral_items_3<Skin_surface_3> >   Polyhedron;
-typedef CGAL::Polyhedron_3<K>                               Polyhedron;
+typedef CGAL::Polyhedron_3<K,
+  CGAL::Skin_surface_polyhedral_items_3<Skin_surface_3> >   Polyhedron;
+//typedef CGAL::Polyhedron_3<K>                               Polyhedron;
 
 int main(int argc, char *argv[]) {
   char *filename;
