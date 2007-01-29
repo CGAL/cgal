@@ -1485,6 +1485,7 @@ Nuage_III/examples/Advancing_front_surface_reconstruction/makefile -text
 Nuage_III/include/CGAL/AFSR/CVS/Entries -text
 Nuage_III/include/CGAL/AFSR/CVS/Repository -text
 Nuage_III/include/CGAL/AFSR/CVS/Root -text
+Number_types/doc_tex/NumberTypeSupport_ref/CORE_BigFloat.tex -text
 Optimisation_doc/doc_tex/Optimisation/annulus.eps -text svneol=unset#application/postscript
 Optimisation_doc/doc_tex/Optimisation/annulus.gif -text svneol=unset#image/gif
 Optimisation_doc/doc_tex/Optimisation/annulus.pdf -text svneol=unset#application/pdf
