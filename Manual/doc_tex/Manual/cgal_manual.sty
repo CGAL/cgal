@@ -170,6 +170,12 @@
 % ---------------------------------------------------------------
 \newcommand{\cgaltitlepage}[1]{%
   \pagestyle{empty}
+  % prevent pdf warning:
+  % ! pdfTeX warning (ext4): destination with the same identifier 
+  % switching to alph pagenumbering does not affect the visual formatting 
+  % as the page number does not appear on the title page, but it will yield 
+  % unique identifiers (given that in our document, we only use roman and arabic)
+  \pagenumbering{alph} 
   \begin{titlepage}\mbox{}\vspace{3cm}
   \lcTex{\centerline{%
       \includegraphics[scale=0.25]{Manual/fig/c-simp}~
