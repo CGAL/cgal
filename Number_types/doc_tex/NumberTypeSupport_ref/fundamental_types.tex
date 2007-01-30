@@ -12,6 +12,17 @@ Due to overflow \ccRefName\ is considered as not exact.
 \end{ccRefClass}
 
 
+\begin{ccRefClass}{short int}
+\ccDefinition
+The fundamental type \ccRefName\ is an \ccc{RealEmbeddable} 
+\ccc{EuclideanRing}. Due to overflow \ccRefName\ is considered as not exact.
+ 
+\ccInclude{CGAL/int.h}
+\ccIsModel
+\ccc{EuclideanRing}\\
+\ccc{RealEmbeddable}
+\end{ccRefClass}
+
 \begin{ccRefClass}{long int}
 \ccDefinition
 The fundamental type \ccRefName\ is an \ccc{RealEmbeddable} 
@@ -24,29 +35,31 @@ The fundamental type \ccRefName\ is an \ccc{RealEmbeddable}
 \end{ccRefClass}
 
 
-\begin{ccRefClass}{short int}
-\ccDefinition
-The fundamental type \ccRefName\ is an \ccc{RealEmbeddable} 
-\ccc{EuclideanRing}. Due to overflow \ccRefName\ is considered as not exact.
- 
-\ccInclude{CGAL/int.h}
-\ccIsModel
-\ccc{EuclideanRing}\\
-\ccc{RealEmbeddable}
-\end{ccRefClass}
-
-
 \begin{ccRefClass}{long long int}
 \ccDefinition
 The fundamental type \ccRefName\ is an \ccc{RealEmbeddable} 
 \ccc{EuclideanRing}. Due to overflow \ccRefName\ is considered as not exact.
  
-\ccInclude{CGAL/int.h}
+\ccInclude{CGAL/long_long.h}
 \ccIsModel
 \ccc{EuclideanRing}\\
 \ccc{RealEmbeddable}
 \end{ccRefClass}
 
+
+\begin{ccRefClass}{float}
+\ccDefinition
+The fundamental type \ccRefName\ is an \ccc{RealEmbeddable} 
+\ccc{Field}. Due to rounding errors and overflow \ccRefName\ is 
+considered as not exact.
+ 
+\ccInclude{CGAL/float.h}
+\ccIsModel
+\ccc{EuclideanRing}\\
+\ccc{RealEmbeddable}
+\end{ccRefClass}
+
+\ccDefGlobalScope{CGAL::}
 
 \begin{ccRefClass}{double}
 \ccDefinition
@@ -54,7 +67,7 @@ The fundamental type \ccRefName\ is an \ccc{RealEmbeddable}
 \ccc{Field}. Due to rounding errors and overflow \ccRefName\ is 
 considered as not exact.
  
-\ccInclude{CGAL/int.h}
+\ccInclude{CGAL/double.h}
 \ccIsModel
 \ccc{EuclideanRing}\\
 \ccc{RealEmbeddable}
