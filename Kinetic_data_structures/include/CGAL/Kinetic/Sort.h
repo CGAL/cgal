@@ -23,6 +23,7 @@
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Kinetic/Active_objects_listener_helper.h>
 #include <CGAL/Kinetic/Ref_counted.h>
+#include <CGAL/Kinetic/internal/debug_counters.h>
 #include <CGAL/Kinetic/Simulator_kds_listener.h>
 #include <CGAL/Kinetic/Sort_visitor_base.h>
 #include <CGAL/Kinetic/Event_base.h>
@@ -272,7 +273,7 @@ public:
 	std::cerr << "ERROR: order is ";
 	write(std::cerr);
 	std::cerr << std::endl;
-	CGAL::Kinetic::internal::fail__=true;
+	++internal::audit_failures__;
 
 	if (!wrote_objects_) {
 	  wrote_objects_=true;
@@ -408,7 +409,11 @@ public:
     if (s_.will_fail()) out <<  " next is " << s_.failure_time();
     else out << " out of failures";
   }
-  void audit(typename Sort::Event_key tk) const {
+  void audit(typename Sort::Event_key 
+#ifndef NDEBUG
+	     tk
+#endif
+) const {
     //std::cout << "Auditing event ";
     //write(std::cout);
     //std::cout << std::endl;

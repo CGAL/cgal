@@ -22,6 +22,7 @@
 #define CGAL_KINETIC_BIN_QUEUE_H
 #include <CGAL/Kinetic/basic.h>
 #include <iostream>
+#include <CGAL/Kinetic/internal/debug_counters.h>
 #include <CGAL/In_place_list.h>
 #include <functional>
 #include <CGAL/assertions.h>
@@ -31,6 +32,7 @@
 #include <algorithm>
 #include <boost/utility.hpp>
 #include <boost/type_traits/remove_const.hpp>
+#include <CGAL/Kinetic/internal/debug_counters.h>
 
 //int two_list_remaining=0;
 
@@ -668,7 +670,7 @@ protected:
 #ifndef NDEBUG
 	if (CGAL::compare(tc, tp) == CGAL::SMALLER) {
 	  std::cout << "ERROR: Out of order " << tc << std::endl << tp << std::endl << std::endl;
-	  CGAL::Kinetic::internal::fail__= true;
+	  ++internal::audit_failures__;
 	}
 #endif
 	//CGAL_assertion(tc >= tp);

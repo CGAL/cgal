@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
   }
   
  
-  if (error || CGAL::Kinetic::internal::fail__) {
+  if (error || CGAL::Kinetic::internal::audit_failures__ != 0) {
     return EXIT_FAILURE;
   }
   else {

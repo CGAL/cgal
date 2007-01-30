@@ -24,6 +24,7 @@
 #include <CGAL/Tools/Label.h>
 #include <CGAL/Kinetic/Ref_counted.h>
 #include <CGAL/Tools/Counter.h>
+#include <CGAL/Kinetic/internal/debug_counters.h>
 #include <iostream>
 #include <CGAL/Kinetic/Multi_listener.h>
 #include <set>
@@ -305,7 +306,7 @@ public:
       iss >> d;
       if (!iss) {
 	CGAL_KINETIC_ERROR("ERROR reading object from line " << buf);
-	internal::fail__=true;
+	++internal::io_errors__;
       } else {
 	//CGAL_KINETIC_LOG(LOG_LOTS, "Read " << d << std::endl);
 	insert(d);

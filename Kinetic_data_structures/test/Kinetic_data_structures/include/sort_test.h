@@ -28,7 +28,7 @@ bool sort_test(Traits &tr, double max_events=std::numeric_limits<double>::infini
 #ifndef NDEBUG
     if (tr.simulator_handle()->current_event_number() > max_events){
       std::cerr << "ERROR too many events" << std::endl;
-      CGAL::Kinetic::internal::fail__=true;
+      ++CGAL::Kinetic::internal::audit_failures__;
       std::cerr << *tr.active_points_1_table_handle() << std::endl;
     }
 #endif
@@ -73,7 +73,7 @@ bool sort_test(Traits &tr, double max_events=std::numeric_limits<double>::infini
       std::cerr << etag << "Objects " << c->object() << " = " << tr.active_points_1_table_handle()->at(*c).x() << " and "
                 << b->object() << " = " << tr.active_points_1_table_handle()->at(*b).x() << " out of order at end of time "
                 <<ratt << std::endl;
-      CGAL::Kinetic::internal::fail__|= fail;
+      ++CGAL::Kinetic::internal::audit_failures__;
       error=eret;
     }
 

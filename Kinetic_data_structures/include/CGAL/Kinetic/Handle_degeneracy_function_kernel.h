@@ -21,6 +21,7 @@
 #ifndef CGAL_KINETIC_ROOT_DEGEN_FK_H
 #define CGAL_KINETIC_ROOT_DEGEN_FK_H
 #include <CGAL/Kinetic/basic.h>
+#include <CGAL/Kinetic/internal/debug_counters.h>
 
 CGAL_KINETIC_BEGIN_NAMESPACE;
 
@@ -43,7 +44,7 @@ class HDRS{
       CGAL_KINETIC_LOG(LOG_LOTS, "Function= " << uf << std::endl);
       CGAL_expensive_precondition(solver_.empty() || solver_.top() >= lb);
   
-#if 0
+#ifndef NDEBUG
       if (!SLOPPY && k.sign_at_object()(uf, lb) == CGAL::NEGATIVE) {
 	CGAL_KINETIC_ERROR( "Invalid certificate constructed for function " << uf << " between " << lb 
 			    << " and " << ub << " will fail immediately." << std::endl);
@@ -57,6 +58,7 @@ class HDRS{
 	CGAL_KINETIC_LOG(LOG_LOTS, "Degeneracy at " << solver_.top() << std::endl);
 	CGAL::Sign sn = k.sign_after_object()(uf, lb);
 	if (sn == CGAL::NEGATIVE) {
+	  ++internal::function_degeneracies__;
 	  CGAL_KINETIC_LOG(LOG_LOTS, "Extra root at lower bound of " << lb << std::endl);
 	} else {
 	  CGAL_KINETIC_LOG(LOG_LOTS, "Popping extra root at lower bound of " << lb << std::endl);

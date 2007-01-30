@@ -27,8 +27,6 @@
 
 CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
 
-extern bool fail__;
-
 class Logs
 {
 public:
