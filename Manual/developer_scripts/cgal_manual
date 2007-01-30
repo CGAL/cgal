@@ -628,12 +628,13 @@ cleanup_latex() {
 
 check_latex_warn() {
     if [ $MakePackage -eq 0 ]; then
-        if egrep -v "((Rerun to get cross-references right)|(warning[$]))" \
+        if egrep -v "((Rerun to get cross-references right)|(warning[$])|(destination with the same identifier))" \
             $1.log | grep -i warn > /dev/null ; then
             return 0
         fi
     else # for CGAL Packages, also ignore warnings of undef. references
-        if egrep -v "((Rerun to get cross-references right)|(warning[$])|(LaTeX Warning: Reference)|(undefined references))" $1.log | grep -i warn > /dev/null ; then
+        if egrep -v "((Rerun to get cross-references right)|(warning[$])|(LaTeX Warning: Reference)|(undefined references))" $1.log | \
+           egrep -v "destination with the same identifier" | grep -i warn > /dev/null ; then
             return 0
         fi
     fi
@@ -910,8 +911,8 @@ report_pdflatex() {
         echo "Since this is a CGAL Package manual, one can probably ignore "
         echo "warnings about undefined references."
     fi
-    egrep -i '((error)|(^[!]))' $1.log | grep -v "operatorerror"
-    grep -i warn $1.log
+    egrep -i '((error)|(^[!]))' $1.log | grep -v "operatorerror" | grep -v "destination with the same identifier"
+    grep -i warn $1.log | grep -v "destination with the same identifier"
     if [ $MakeTestSuiteResult -eq 1 ]; then mv $1.log testsuite/$1.pdflg.txt ; fi
     if [[ ${MakePS} -eq 0 && -r $1.blg ]]; then
         echo ""
@@ -1604,7 +1605,7 @@ TD.error A:link {color: rgb(0%,0%,100%)}
 TD.error A:visited {color: rgb(80%,0%,100%)}
 EOF
     cat > testsuite/index.html <<EOF
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">  
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en-US">
 <head><title>CGAL Manual Test-Suite Results</title>
 <link href="testresult.css" rel="stylesheet"></head>
