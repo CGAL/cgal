@@ -1,20 +1,20 @@
 
 This chapter gives an overview of the number types supported by 
-\cgal. Number types must fulfill certain syntacitical and semantic
+\cgal. Number types must fulfill certain syntactical and semantic
 requirements, such that they can be successfully used in \cgal\ code.
-In genreal they are expected to be a model of an algebraic structure 
+In general they are expected to be a model of an algebraic structure 
 concepts and in case they model a subring of the real numbers they are 
-also a model of \ccc{RealEmebeddable}. For an overview of the algebraic 
-structure concepts see section \ref{caf_ref::algebraic_structure_hierarchy} 
-in the reference manual.
+also a model of \ccc{RealEmbeddable}. For an overview of the algebraic 
+structure concepts see section~\ref{caf_ref::algebraic_structures}.
 
 \section{Built-in Number Types}
 
 The built-in number types \ccc{float}, \ccc{double} and \ccc{long double} have
 the required arithmetic and comparison operators. They lack some required
 routines though which are automatically included by \cgal.
-\ccTexHtml{\footnote{ The functions can be found in the header files 
-\ccc{<CGAL/float.h>}, \ccc{<CGAL/double.h>} and \ccc{<CGAL/long_double.h>}.}}{}
+\footnote{ The functions can be found in the header files 
+{\tt CGAL/int.h}, {\tt CGAL/float.h}, {\tt CGAL/double.h} and {\tt CGAL/long\_long.h}.}
+
 
 All built-in number types of \CC\ can represent a discrete (bounded)
 subset of the rational numbers only.  We assume that the
@@ -36,7 +36,8 @@ roundoff errors may cause the answer of the check to be \ccc{false}.
 With the built-in integer types overflow might occur.
 
 %\newpage
-\section{Number Types Provided by \cgal}
+\section[Number Types Provided by CGAL]{Number Types Provided by \cgal}
+\label{cgal-nt}
 
 %CGAL::Quotient
 \cgal\ provides several number types that can be used for 
@@ -50,7 +51,7 @@ point values, a generalization of integers scaled by a (potentially negative)
 power of 2.  It allows to deal with ring operations over floating-point values
 with requiring rational numbers.  By plugging it in \ccc{Quotient}, one obtains
 rational numbers.  Note that \ccc{MP_Float} may not be as efficient as the
-integer types provided by \ccc{GMP} or \ccc{LEDA}, but it has the advantage
+integer types provided by \gmp\  or \leda, but it has the advantage
 to make more parts of \cgal\ independent on these external libraries for
 handling robustness issues.
 
@@ -74,26 +75,27 @@ A debugging helper \ccc{Number_type_checker<NT1,NT2,Comparator>} is also
 provided which allows to compare the behavior of operations over two number
 types.
 
-\section{Number Types Provided by {\sc Gmp}}
+\section[Number Types Provided by GMP]{Number Types Provided by \gmp} 
+\label{gmp-nt}
 
 \cgal\ provides wrapper classes for number types defined in the
 {\sc Gnu} Multiple Precision arithmetic library~\cite{g-ggmpa-}.
-The file {\tt  CGAL/Gmpz.h} provides the class \ccStyle{Gmpz},
+The file {\tt  CGAL/Gmpz.h} provides the class \ccc{Gmpz},
 a wrapper class for the integer type \ccc{mpz_t}, that is compliant with the
-\cgal\ number type requirements. The file {\tt  CGAL/Gmpq.h} provides the class \ccStyle{Gmpq},
+\cgal\ number type requirements. The file {\tt  CGAL/Gmpq.h} provides the class \ccc{Gmpq},
 a wrapper class for the rational type \ccc{mpq_t}, that is compliant
 with the \cgal\ number type requirements.
 
 In addition, it is possible to directly use the C++ number types provided by
-{\sc Gmp}~: \ccc{mpz_class}, \ccc{mpq_class} (note that support for
+\gmp~: \ccc{mpz_class}, \ccc{mpq_class} (note that support for
 \ccc{mpf_class} is incomplete).  The file {\tt CGAL/gmpxx.h} provides the
 necessary functions to make these classes compliant to the \cgal\ number type
 requirements.
 
-To use this, {\sc Gmp} must be installed.
+To use this, \gmp\ must be installed.
 
 
-\section{Number Types Provided by \leda}
+\section[Number Types Provided by LEDA] {Number Types Provided by \leda}
 \label{leda-nt}
 
 \leda\ provides number types that can be used for exact computation 
@@ -126,15 +128,18 @@ or later \ccc{leda_real} is also able to represent real roots of polynomials.
 all comparisons between expressions involving \ccc{leda_real}s produce the
 exact result.
 
-\section{Number Types Provided by {\sc Core}}
-\label{CORE}
+The files {\tt CGAL/leda\_integer.h}, {\tt CGAL/leda\_rational.h},
+{ \tt CGAL/leda\_bigfloat.h} and {\tt CGAL/leda\_real.h} provide the
+necessary functions to make these classes compliant to the \cgal\ number type
+requirements.
 
-\newcommand{\core}{{\sc Core}}
+\section[Number Types Provided by CORE]{Number Types Provided by \core}
+\label{core-nt}
 
-In prinziple \core~\cite{klpy-clp-99} provides the same set of number types as \leda. 
+In principle \core~\cite{klpy-clp-99} provides the same set of number types as \leda. 
 The type \ccc{CORE::BigInt} represent integers and \ccc{CORE::BigRat} 
 represent rationals of arbitrary length. The number type \ccc{CORE::BigFloat} is 
-a varibale precision floating-point type. It is also possbible to interprete it as an
+a variable precision floating-point type. It is also possible to interpret it as an
 interval type, since it also carries the error of a computed value.
 As for \leda, the most sophisticated number type in \core\ is \ccc{CORE::Expr}, 
 which is in its functionality equivalent to \ccc{leda_real}.  
@@ -144,9 +149,11 @@ which is in its functionality equivalent to \ccc{leda_real}.
 %comparisons between expressions involving \ccc{CORE::Expr}s produce the exact
 %result.
 
-To use \core\ with \cgal, just install \cgal\ with \core\ support, 
-and include at least one of {\tt CGAL/CORE\_BigInt.h}, {\tt CGAL/CORE\_BigRat.h},
-{\tt CGAL/CORE\_BigFloat.h}, {\tt CGAL/CORE\_Expr.h}. 
+The files {\tt CGAL/CORE\_BigInt.h}, {\tt CGAL/CORE\_BigRat.h},
+{\tt CGAL/CORE\_BigFloat.h} and {\tt CGAL/CORE\_Expr.h} provide the
+necessary functions to make these classes compliant to the \cgal\ number type
+requirements.
+
 \core\ version 1.7 or later is required.
 
 \section{User-supplied Number Types}
@@ -157,7 +164,7 @@ specialization of \ccc{CGAL::Algebraic_structure_traits} and also of
 \ccc{Real_embeddable_traits} in case it is a sub ring of the real numbers. 
 If you even want to provide a related ensemble of number types you should also 
 provide specializations for \ccc{CGAL::Coercion_traits} in order to 
-reflect their interoperatibility. 
+reflect their interoperability. 
  
 
 
@@ -185,8 +192,8 @@ reflect their interoperatibility.
 %also a random numbers generator \ccc{CGAL::Random}.
 
 
-TODO: move this part to chaper: kernel 
-
+{\em \small 
+TODO: move this part to chapter: kernel 
 
 \cgal\ kernel classes are parameterized by number types.  
 Depending on the problem and the input data that have to be handled,
@@ -224,4 +231,4 @@ The number type used in Cartesian kernels is considered as
 ring type or as field type depending on the context.
 If can be accessed as \ccStyle{K::RT} and \ccStyle{K::FT}, according
 to the use of number types used in the homogeneous counterpart.
-
+}
