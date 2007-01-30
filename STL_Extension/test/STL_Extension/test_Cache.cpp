@@ -51,6 +51,11 @@ struct Int_t : public CGAL::Handle_with_policy< Int_rep, Unify > {
         // test initialize_with
         this->initialize_with( i, j + k);
     }
+    
+    // This is needed to prevent VC7.1 and VC8 to call 
+    // the explicit templated constructor in Base instead of its copy-ctor.
+    Int_t( Int_t const& rhs ) : Base( static_cast<Base const&>(rhs) ) {}
+
     int  value() const { return this->ptr()->val; }
     void set_value( int i) {
         this->copy_on_write();
