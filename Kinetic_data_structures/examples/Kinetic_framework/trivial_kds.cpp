@@ -127,13 +127,13 @@ struct Trivial_kds: CGAL::Kinetic::Ref_counted<Trivial_kds<Traits> >
   }
 
   void set(Point_key k) {
-    std::cout << "An object changed, but we shouldn't every update"
-	      << " structure when an object changes."<< std::endl;
     if (has_certificates_) {
       std::cout << "Updating all certificates which depend on "
                 << k << "." << std::endl;
       set_has_certificates(false);
       set_has_certificates(true);
+    } else {
+      std::cout << "An object changed, but there was no certificate."<< std::endl;
     }
   }
 

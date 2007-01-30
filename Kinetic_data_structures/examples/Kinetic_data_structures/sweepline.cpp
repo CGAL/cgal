@@ -1,7 +1,11 @@
+#define CGAL_CHECK_EXACTNESS
+#define CGAL_CHECK_EXPENSIVE
+
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Kinetic/Active_objects_listener_helper.h>
 #include <CGAL/Kinetic/Erase_event.h>
 #include <CGAL/Kinetic/Inexact_simulation_traits.h>
+#include <CGAL/Kinetic/Exact_simulation_traits.h>
 #include <CGAL/Kinetic/Insert_event.h>
 #include <CGAL/Kinetic/Ref_counted.h>
 #include <CGAL/Kinetic/Simulator_kds_listener.h>
@@ -116,7 +120,7 @@ double snap(NT v) {
 
 int main(int, char *[])
 {
-  typedef CGAL::Kinetic::Inexact_simulation_traits Traits;
+  typedef CGAL::Kinetic::Exact_simulation_traits Traits;
   typedef Traits::Kinetic_kernel::Point_1 Point;
   typedef Traits::Simulator::Time Time;
   typedef CGAL::Kinetic::Insert_event<Traits::Active_points_1_table> Insert_event;

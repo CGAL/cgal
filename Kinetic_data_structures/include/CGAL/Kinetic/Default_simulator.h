@@ -241,12 +241,10 @@ public:
   {
     // why did I have this? "&& cur_time_ != end_time()"
     double ub= to_interval(current_time()).second;
-    if (CGAL::compare(Time(ub), next_event_time()) == CGAL::SMALLER) {
-      NT ret(ub);
-      CGAL_postcondition(CGAL::to_interval(ret).first==ub);
-      return ret;
-    }
-    else {
+    if (CGAL::compare(current_time(), next_event_time()) == CGAL::EQUAL
+	|| CGAL::compare(Time(ub), next_event_time()) == CGAL::SMALLER) {
+      return NT(ub);
+    } else {
       //typename Function_kernel::Rational_between_roots bet= kernel_.rational_between_roots_object();
       if (current_time() == end_time()) {
 	// really, I do want last_event, but I removed it :-(

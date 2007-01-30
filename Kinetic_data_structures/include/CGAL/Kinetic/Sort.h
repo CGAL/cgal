@@ -248,8 +248,8 @@ public:
     if (sorted_.size() <2) return;
 
     ik_.set_time(simulator_->audit_time());
-    CGAL_KINETIC_LOG_WRITE(LOG_LOTS, write(std::cout));
-    std::cout << std::endl;
+    CGAL_KINETIC_LOG_WRITE(LOG_LOTS, write(LOG_STREAM));
+    CGAL_KINETIC_LOG(LOG_LOTS, std::endl);
 
     
     //typename Instantaneous_kernel::Less_x_1 less= ik_.less_x_1_object();
@@ -333,10 +333,12 @@ public:
     //iterator it =  std::equal_range(sorted_.begin(), sorted_.end(),k).first;
     CGAL_precondition(it != sorted_.end());
     CGAL_precondition(it->object() == k);
-    iterator p= it; --p;
+    iterator p= prior(it);
     v_.remove_vertex(it);
-    simulator_->delete_event(it->event());
-    it->set_event(Event_key());
+    if (next(it) != end()) {
+      simulator_->delete_event(it->event());
+      it->set_event(Event_key());
+    }
     sorted_.erase(it);
     if (p != sorted_.end()) {
       rebuild_certificate(p);
