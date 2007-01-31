@@ -11,7 +11,7 @@ This level of interoperability is reflected by the concept
 \ccc{ImplicitInteroperable}. But within template code the result type, 
 or so called coercion type, of an mixed arithmetic operation may be unclear.
 Therefore, the package introduces \ccc{CGAL::Coercion_traits}
-giving access to the coercion type via \ccc{CGAL::Coercion_traits<A,B>::type}
+giving access to the coercion type via \ccc{CGAL::Coercion_traits<A,B>::Type}
 for two interoperable types \ccc{A} and \ccc{B}. 
 
 %Examples for \ccc{ImplicitInteroperable} types are: \\
@@ -22,14 +22,14 @@ for two interoperable types \ccc{A} and \ccc{B}.
 % \ccc{int}& \ccc{double} & \ccc{double} \\
 %  \ccc{leda_integer}& \ccc{leda_rational}& \ccc{leda_rational}\\
 %  \ccc{CORE::BigInt} & \ccc{CORE::BigRat} & \ccc{CORE::BigRat}\\
-%  \ccc{Gmpz}& \ccc{Gmpq}& \ccc{Gmpq}\\
+%  \ccc{CGAL::Gmpz}& \ccc{CGAL::Gmpq}& \ccc{CGAL::Gmpq}\\
 %\hline
 %\end{tabular}
 
-Some trivial examples are \ccc{int} and \ccc{double}, where \ccc{double}
-is the coercion type or \ccc{Gmpz} and \ccc{Gmpq}, where \ccc{Gmpq} is the 
-coercion type. But it is not required that the coercion type is one of 
-the input types, e.g. the coercion type of a polynomial 
+Some trivial example are \ccc{int} and \ccc{double} with coercion type double 
+or \ccc{CGAL::Gmpz} and \ccc{CGAL::Gmpq} with coercion type \ccc{CGAL::Gmpq}.
+But the coercion type is not necessarily one of the input types,
+e.g. the coercion type of a polynomial 
 with integer coefficients that is multiplied by a rational type 
 is supposed to be a polynomial with rational coefficients.
 
@@ -42,6 +42,25 @@ for which it is hard or impossible to guarantee implicit interoperability.
 Note that this functor can be useful for \ccc{ImplicitInteroperable} types 
 as well, since it can be used to void redundant type conversions.  
 
+In case two types \ccc{A} and \ccc{B} are \ccc{ExplicitInteroperable} with 
+coercion type \ccc{C} they are valid argument types for all binary functors 
+provided by \ccc{Algebraic_structure_traits} and \ccc{Real_embeddable_traits} of
+\ccc{C}. This is also true for the according global functions. 
+
+\subsection{Examples}
+
+The following example illustrates how two write code for 
+\ccc{ExplicitInteroperable} types.
+
+\ccIncludeExampleCode{Algebraic_foundations/interoperable.cpp}
+
+The following example illustrates a dispatch for \ccc{ImplicitInteroperable} and 
+\ccc{ExplicitInteroperable} types. 
+The binary function (that just multiplies its two arguments) is supposed to 
+take two \ccc{ExplicitInteroperable} arguments. For \ccc{ImplicitInteroperable}
+types a variant that avoids the explicit cast is selected. 
+
+\ccIncludeExampleCode{Algebraic_foundations/implicit_interoperable_dispatch.cpp}
 
 \ignore{
 A frequent problem in generic programming is how to handle mixed operations
@@ -55,7 +74,7 @@ But in case of template code, the
 result type, or so called coercion type, of an mixed operation can be unclear. 
 For these cases the package provides the class 
 \ccc{CGAL::Coercion_traits}, which gives access to the coercion type via
-\ccc{CGAL::Coercion_traits<A,B>::type} for two \ccc{ImplicitInteroperable} 
+\ccc{CGAL::Coercion_traits<A,B>::Type} for two \ccc{ImplicitInteroperable} 
 types \ccc{A} and \ccc{B}.
 
 
