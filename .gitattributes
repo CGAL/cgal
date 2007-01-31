@@ -8,6 +8,10 @@ Algebraic_foundations/doc_tex/Algebraic_foundations/fractions.tex -text
 Algebraic_foundations/doc_tex/Algebraic_foundations/interoperability.tex -text
 Algebraic_foundations/doc_tex/Algebraic_foundations/real_embeddable.tex -text
 Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Fraction.tex -text
+Algebraic_foundations/examples/Algebraic_foundations/fraction_traits.cpp -text
+Algebraic_foundations/examples/Algebraic_foundations/implicit_interoperable_dispatch.cpp -text
+Algebraic_foundations/examples/Algebraic_foundations/integralize.cpp -text
+Algebraic_foundations/examples/Algebraic_foundations/interoperable.cpp -text
 Algebraic_kernel_GBRS/config/support/S25-MPFI -text
 Algebraic_kernel_GBRS/config/support/S27-RS -text
 Algebraic_kernel_GBRS/include/CGAL/Arr_poly_traits_1.h -text
