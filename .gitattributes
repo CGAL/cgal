@@ -779,6 +779,7 @@ Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=6 -tex
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=6,n -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=100,d=1 -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=100,d=3,n -text
+Kinetic_data_structures/test/Kinetic_data_structures/instantaneous_kernel.cpp -text
 Kinetic_data_structures/todo -text
 Largest_empty_rect_2/demo/Largest_empty_rect_2/help/index.html svneol=native#text/html
 Largest_empty_rect_2/demo/Largest_empty_rect_2/largest_empty_rect_2.vcproj eol=crlf
