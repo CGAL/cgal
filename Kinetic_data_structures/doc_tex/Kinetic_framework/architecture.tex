@@ -241,32 +241,6 @@ easily handled in a similar manner (in the case of Delaunay
 triangulations by simply calling the \ccc{verify()} method after
 setting the time).
 
-Internally, in order to evaluate a static predicate, our model of the
-\ccc{Kinetic::InstantaneousKernel} computes the current instantaneous
-coordinates of the involved primitives and then passes them to a
-static predicate. The static primitive coordinates are cached since
-they are likely to be involved in other static predicates evaluated at
-the same time.
-
-
-Note that the time used in the \ccc{Kinetic::InstantaneousKernel} must
-be an arithmetic type that fully supports ring and possibly field
-operations.  These are much more stringent requirements than for
-\ccc{Kinetic::Simulator::Time} objects in the simulator, where we only require
-comparisons. These requirements currently rule out our algebraic
-kernels' \ccc{Root} objects (see Section \ref{sec:kds_algebraic_kernel}),
-since they only support comparisons and some limited arithmetic
-operations. In practice this is not a strong limitation since we can
-almost always find a time that is representable by a rational number
-type (such as \ccc{Gmpq}) which is close to the current time and such
-that the combinatorial structure has not changed. Alternatively, if a
-real number type such as \ccc{CORE::Expr} is used for time, then
-computation can, of course, be performed at any time, although
-computations will be significantly slower.  It is the job of the
-\ccc{Kinetic::Simulator} to determine an appropriate time to perform
-operations.
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Miscellaneous: notification and reference management\label{sec:kds_misc}}
 
