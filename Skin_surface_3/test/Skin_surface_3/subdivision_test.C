@@ -52,8 +52,8 @@ public:
     Skin_surface_3 skin_surface = create_skin_surface(filename, .5);
     
     Polyhedron p;
-    construct_and_subdivide_mesh(skin_surface, p);
-    p.clear();
+    //construct_and_subdivide_mesh(skin_surface, p);
+    //p.clear();
     
     Polyhedron_skin p_skin;
     construct_and_subdivide_mesh(skin_surface, p_skin);

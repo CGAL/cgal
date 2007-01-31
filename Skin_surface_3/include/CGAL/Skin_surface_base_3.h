@@ -113,11 +113,13 @@ public:
   template <class Polyhedron_3>
   void subdivide_mesh_3(Polyhedron_3 &p) const;
   
-  
+
+
   // Access functions:    
+  TMC &triangulated_mixed_complex();
   const FT shrink_factor() const { return shrink; }
   Geometric_traits &geometric_traits() const { return gt; }
-  TMC &triangulated_mixed_complex() { return _tmc; }
+  //  TMC &triangulated_mixed_complex() { return _tmc; }
   Regular &regular() { return _regular; }
 
   // Predicates and constructions
@@ -251,6 +253,14 @@ subdivide_mesh_3(Polyhedron_3 &p) const {
   subdivider.subdivide();
 }
 
+
+template <class MixedComplexTraits_3>
+typename Skin_surface_base_3<MixedComplexTraits_3>::TMC &
+Skin_surface_base_3<MixedComplexTraits_3>::
+triangulated_mixed_complex() {
+  return _tmc;
+}
+
 template <class MixedComplexTraits_3> 
 typename Skin_surface_base_3<MixedComplexTraits_3>::Vector
 Skin_surface_base_3<MixedComplexTraits_3>::
@@ -347,22 +357,10 @@ intersect(TMC_Cell_handle ch, int i, int j,
   Cartesian_converter<FK, 
     typename Geometric_traits::Bare_point::R> converter;
 
-  Cell_info &cell_info = ch->info();
   Bare_point p1 = converter(ch->vertex(i)->point());
   Bare_point p2 = converter(ch->vertex(j)->point());
 
   return intersect(p1, p2, ch, ch, p); 
-//  FT sq_dist = squared_distance(p1,p2);
-//  // Use value to make the computation robust (endpoints near the surface)
-//  if (compare(cell_info, p1, p2) == LARGER) std::swap(p1, p2);
-//  while (sq_dist > 1e-8) {
-//    p = midpoint(p1, p2);
-//    if (sign(p, cell_info) == NEGATIVE) { p1 = p; }
-//    else { p2 = p; }
-//    sq_dist *= .25;
-//  }
-//
-//  p = midpoint(p1, p2);
 }
 
 template <class MixedComplexTraits_3> 

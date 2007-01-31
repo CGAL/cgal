@@ -51,7 +51,7 @@ public:
     
     Skin_surface skin_surface(l.begin(), l.end(), s);
     
-    const TMC &tmc = skin_surface.triangulated_mixed_complex();
+    TMC &tmc = skin_surface.triangulated_mixed_complex();
 //     CGAL::Triangulated_mixed_complex_observer_3<TMC, Skin_surface> 
 //       observer(skin_surface.shrink_factor());
 //     triangulate_mixed_complex_3(skin_surface.get_regular_triangulation(),
