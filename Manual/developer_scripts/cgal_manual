@@ -1131,8 +1131,13 @@ run_html() {
         return $RetCode
     fi
     if [ $RetCode -eq 0 ] ; then
-        if grep -v 'lines written' $1.hlg | \
-            grep -i warn > /dev/null ; then RetCode=2; fi
+        if [ $MakePackage -eq 0 ]; then
+            if grep -v 'lines written' $1.hlg | grep -i warn > /dev/null ; then RetCode=2; fi
+        else # for CGAL Packages, also ignore warnings of undef. references
+            if grep -v 'lines written' $1.hlg | egrep -v "[!][!] Warning: undefined label" | \
+               grep -i warn > /dev/null ;
+            then RetCode=2; fi
+        fi
     fi
     report_html $1
     cleanup_html $1
