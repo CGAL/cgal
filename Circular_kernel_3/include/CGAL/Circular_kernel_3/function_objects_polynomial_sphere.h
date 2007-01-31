@@ -17,8 +17,8 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
 //
 // Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //             Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
@@ -243,8 +243,15 @@ namespace SphericalFunctors {
 
   template < class SK >
   class Equal_3
+ #ifndef CGAL_CFG_MATCHING_BUG_6
     : public SK::Linear_kernel::Equal_3
+#endif
   {
+    typedef typename CK::Linear_kernel LK;
+    typedef typename LK::Equal_3 LK_Equal_3;
+
+    typedef typename LK::Point_3 Point_3;
+
     typedef typename SK::Circular_arc_point_3     Circular_arc_point_3;
     typedef typename SK::Circle_3                 Circle_3;
     typedef typename SK::Line_arc_3               Line_arc_3;
@@ -253,8 +260,15 @@ namespace SphericalFunctors {
   public:
     typedef bool result_type;
     typedef Arity_tag<2>             Arity;
-    
+     
+#ifndef CGAL_CFG_MATCHING_BUG_6
     using SK::Linear_kernel::Equal_3::operator();
+#else  
+    result_type
+    operator() (const Point_3 &p0,
+                const Point_3 &p1) const
+    { return LK_Equal_3()(p0,p1); }
+#endif
 
     // Our Circle_3 dont have orientation
     result_type
