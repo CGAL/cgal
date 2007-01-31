@@ -91,5 +91,6 @@ CGAL_KINETIC_END_NAMESPACE
 #define CGAL_KINETIC_LOG_WRITE(level, expr) if (CGAL::Kinetic::internal::Logs::get().is_output(level))\
 {std::ostream &LOG_STREAM= CGAL::Kinetic::internal::Logs::get().stream(level); expr;}
 #define CGAL_KINETIC_ERROR(expr) std::cerr << expr << std::endl;
+#define CGAL_KINETIC_ERROR_WRITE(expr) {std::ostream &LOG_STREAM= std::cerr; expr; std::cerr << std::endl;}
 #define CGAL_KINETIC_SET_LOG_LEVEL(level) CGAL::Kinetic::internal::Logs::get().set_level(level);
 #endif

@@ -117,9 +117,9 @@ private:
 						    typename Base_traits::Side_of_oriented_sphere_3::result_type,
 						    typename TriangulationT::Edge>;
 
-friend class  internal::Delaunay_3_facet_flip_event<This,
-						    typename Base_traits::Side_of_oriented_sphere_3::result_type,
-						    typename TriangulationT::Facet>;
+  friend class  internal::Delaunay_3_facet_flip_event<This,
+						      typename Base_traits::Side_of_oriented_sphere_3::result_type,
+						      typename TriangulationT::Facet>;
 
 
 

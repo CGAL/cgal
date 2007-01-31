@@ -491,6 +491,10 @@ public:
     return null_event_;
   }
 
+  bool is_in_queue(Key k) const {
+    return is_in_heap(k);
+  }
+
 protected:
   //! Stores the priorities and data and a refersence back to the _queue
   std::vector<Item_handle> queue_;

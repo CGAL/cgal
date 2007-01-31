@@ -107,7 +107,7 @@ public:
   {
     out << "Flip ";
     internal::write_edge(e_, out);
-#ifndef NDEBUG
+#if 0
     out << "(" << o_ << d_<<")" << std::flush;
     CGAL_postcondition(o_== vertex_of_edge(e_,static_cast<int>(0))->point());
     CGAL_postcondition(d_== vertex_of_edge(e_,1)->point());
@@ -117,6 +117,13 @@ public:
   const Root_stack& root_stack() const
   {
     return P::s_;
+  }
+  template <class K>
+  void audit(K k) const {
+    if (e_.first->edge_label(e_.second,e_.third) != k) {
+      CGAL_KINETIC_ERROR("Mismatch, for label " << k << " had event " << e_.first->edge_label(e_.second,e_.third));
+    }
+    CGAL_assertion(e_.first->edge_label(e_.second,e_.third) == k);
   }
 protected:
   const Edge e_;
@@ -154,13 +161,20 @@ public:
   {
     out << "Flip ";
     write_facet(e_, out);
-#ifndef NDEBUG
+#if 0
     out << "(" << a_ << b_<<c_ << ")";
     CGAL_postcondition(a_== vertex_of_facet(e_,0)->point());
     CGAL_postcondition(b_== vertex_of_facet(e_,1)->point());
     CGAL_postcondition(c_== vertex_of_facet(e_,2)->point());
 #endif
     return out;
+  }
+  template <class K>
+  void audit(K k) const {
+    if (e_.first->facet_label(e_.second) != k) {
+      CGAL_KINETIC_ERROR("Mismatch, for label " << k << " had event " << e_.first->facet_label(e_.second));
+    }
+    CGAL_assertion(e_.first->facet_label(e_.second) == k);
   }
 protected:
   const Facet e_;
@@ -177,19 +191,19 @@ std::ostream& operator<<(std::ostream &out, const Delaunay_3_facet_flip_event<T,
   }*/
 
 
-template <class TraitsT, class Visitor, bool LAZY>
+template <class TraitsT, class Visitor>
 class Delaunay_triangulation_base_3;
 
-template <class TraitsT, class Visitor, bool LAZY>
+template <class TraitsT, class Visitor>
 std::ostream &operator<<(std::ostream &out,
-			 const Delaunay_triangulation_base_3<TraitsT, Visitor, LAZY> &dt);
+			 const Delaunay_triangulation_base_3<TraitsT, Visitor> &dt);
 
 // Common base class for Delaunay and regular triangulations
-template <class TraitsT, class Visitor, bool LAZY=false>
+template <class TraitsT, class Visitor>
 class Delaunay_triangulation_base_3
 {
 public:
-  typedef Delaunay_triangulation_base_3<TraitsT, Visitor, LAZY> This;
+  typedef Delaunay_triangulation_base_3<TraitsT, Visitor> This;
 
   // KDS typedefs
   typedef typename TraitsT::Simulator Simulator;
@@ -267,7 +281,7 @@ public:
     }
     for (All_edges_iterator eit = triangulation_.all_edges_begin(); eit != triangulation_.all_edges_end(); ++eit) {
       triangulation_.write_labeled_edge(*eit, out);
-      if (triangulation_.has_degree_3(*eit)) {
+      if (is_degree_3(*eit)) {
 	//out << " " << triangulation_.label(*eit);
       }
       else {
@@ -280,7 +294,7 @@ public:
     }
     for (All_facets_iterator eit = triangulation_.all_facets_begin(); eit != triangulation_.all_facets_end(); ++eit) {
       triangulation_.write_labeled_facet(*eit, out);
-      if (!triangulation_.has_degree_3(*eit)) {
+      if (!has_degree_3_edge(*eit)) {
 	//out << " " << triangulation_.label(*eit);
       }
       else {
@@ -305,20 +319,7 @@ public:
     Set edges to never fails. Set outside facets.
   */
   Vertex_handle push_vertex(Point_key k, Cell_handle c) {
-    for (unsigned int i=0; i< 4; ++i) {
-      Facet f(c, i);
-      if (has_event(f)) {
-	delete_event(triangulation_.label(f));
-	triangulation_.set_label(f, Event_key());
-      }
-      for (unsigned int j=0; j<i; ++j) {
-	Edge e(c, i, j);
-	if (has_event(e)) {
-	  make_not_edge_flip(e, c);
-	}
-      }
-    }
-    handle_delete_cell(c);
+    clean_cell(c);
     v_.remove_cells(&c, &c+1);
     // into max dim simplex?
     Vertex_handle vh=triangulation_.tds().insert_in_cell( c);
@@ -326,78 +327,32 @@ public:
     set_vertex_handle(k, vh);
     std::vector<Cell_handle> ics;
     triangulation_.incident_cells(vh, std::back_insert_iterator<std::vector<Cell_handle> >(ics));
+    CGAL_postcondition(ics.size() == 4);
     for (unsigned int j=0; j< ics.size(); ++j) {
       Cell_handle cc= ics[j];
       handle_new_cell(cc);
     }
     v_.create_cells(ics.begin(), ics.end());
-    for (unsigned int j=0; j< ics.size(); ++j) {
-      Cell_handle cc= ics[j];
-      for (int i=0; i< 3; ++i) {
-	Edge e= triangulation_.edge_around_vertex(cc, vh, i);
-	if (internal::edge_label(e)== typename Simulator::Event_key()) {
-	  internal::set_edge_label(triangulation(), e, simulator()->null_event());
-	}
-      }
-      for (int i=0; i< 4; ++i) {
-	Facet f(cc, i);
-	if (i== cc->index(vh)) {
-	  make_certificate(f);
-	}
-	else if (!has_event(f)) {
-	  internal::set_facet_label(triangulation(), f, typename Simulator::Event_key());
-	}
-      }
-    }
     v_.create_vertex(vh);
     return vh;
   }
 
   Cell_handle pop_vertex(Vertex_handle v) {
     v_.remove_vertex(v);
-    CGAL_precondition(triangulation_.degree(v)==4);
+    CGAL_precondition(is_degree_4(v));
     std::vector<Cell_handle> ics;
     triangulation_.incident_cells(v, std::back_insert_iterator<std::vector<Cell_handle> >(ics));
 
     for (unsigned int j=0; j< ics.size(); ++j) {
-      Cell_handle cc= ics[j];
-      for (unsigned int i=0; i< 4; ++i) {
-	Facet f(cc, i);
-	if (has_event(f)) {
-	  delete_event(triangulation_.label(f));
-	  triangulation_.set_label(f, Event_key());
-	}
-	for (unsigned int j=0; j<i; ++j) {
-	  Edge e(cc, i,j);
-	  if (has_event(e)) {
-	    delete_event(triangulation_.label(e));
-	    triangulation_.set_label(e, Event_key());
-	  }
-	}
-      }
+      clean_cell(ics[j]);
     }
-    for (unsigned int j=0; j< ics.size(); ++j) {
-      Cell_handle cc= ics[j];
-      handle_delete_cell(cc);
-    }
+   
     v_.remove_cells(ics.begin(), ics.end());
     set_vertex_handle(v->point(), NULL);
 
     Cell_handle h= triangulation_.tds().remove_from_maximal_dimension_simplex(v);
     handle_new_cell(h);
     v_.create_cells(&h, &h+1);
-    for (unsigned int i=0; i< 4; ++i) {
-      for (unsigned int j=0; j< i; ++j) {
-	Edge e(h, i, j);
-	if (triangulation_.has_degree_3(e)) {
-	  make_edge_flip(e);
-	}
-      }
-      Facet f(h, i);
-      if (!triangulation_.has_degree_3(f)) {
-	make_certificate(f);
-      }
-    }
 
     return h;
   }
@@ -406,93 +361,21 @@ public:
     CGAL_assertion(0);
   }
 
-  //! dangerous
-  /*void suppress_event(const Edge &e) {
-    if (triangulation_.label(e) != Simulator::Event_key::null()){
-    delete_event(triangulation_.label(e) );
-    triangulation_.set_label(e, simulator()->null_event());
-    }
-    }*/
 
-  //! The assertion will catch that the object is in the same sorted order
-  /*!
-    \todo make this faster.
-    This is currently highly suboptimal. Each edge is checked repeatedly if it is degree 3.
-    One posibility would be to track for each edge if it is degree 3 and has a certificate.
-  */
-  Vertex_handle change_vertex(Point_key k, bool clean=false) {
+  Vertex_handle change_vertex(Point_key k) {
     if (!has_certificates()) return NULL;
     //triangulation_.geom_traits().set_time(simulator()->current_time_as_nt());
     std::vector<Cell_handle> incident_cells;
     triangulation_.incident_cells(vertex_handle(k), back_inserter(incident_cells));
-    if (!clean) {
-      for (typename std::vector<Cell_handle>::iterator it= incident_cells.begin(); it != incident_cells.end();
-	   ++it) {
-	for (unsigned int i=0; i<4; ++i) {
-	  Facet f(*it,i);
-	  if (!triangulation_.has_degree_3(f) ) {
-	    Event_key k= triangulation_.label(f);
-	    if (has_event(f)) delete_event(k);
-	    triangulation_.set_label(f, Event_key());
-	  }
-
-	  for (unsigned int j=0; j< i; ++j) {
-	    Edge e(*it, i, j);
-	    if (triangulation_.has_degree_3(e) ) {
-	      Event_key k= triangulation_.label(e);
-	      if (has_event(e)) delete_event(k);
-	      triangulation_.set_label(e, Event_key());
-	    }
-	  }
-
-	}
-      }
-      for (typename std::vector<Cell_handle>::iterator it= incident_cells.begin();
-	   it != incident_cells.end(); ++it) {
-	handle_changed_cell(*it);
-      }
-    }
-    else {
-#ifndef NDEBUG
-      for (typename std::vector<Cell_handle>::iterator it= incident_cells.begin();
-	   it != incident_cells.end(); ++it) {
-	for (unsigned int i=0; i<4; ++i) {
-	  Facet f(*it,i);
-	  CGAL_precondition(!triangulation_.label(f).is_valid());
-
-	  for (unsigned int j=0; j< i; ++j) {
-	    Edge e(*it, i, j);
-	    CGAL_precondition(!triangulation_.label(e).is_valid());
-	  }
-
-	}
-      }
-#endif
-      for (typename std::vector<Cell_handle>::iterator it= incident_cells.begin();
-	   it != incident_cells.end(); ++it) {
-	handle_new_cell(*it);
-      }
-      v_.create_cells(incident_cells.begin(), incident_cells.end());
-    }
-
-    for (typename std::vector<Cell_handle>::iterator it= incident_cells.begin(); it != incident_cells.end();
+    for (typename std::vector<Cell_handle>::iterator it= incident_cells.begin(); 
+	 it != incident_cells.end();
 	 ++it) {
-      for (unsigned int i=0; i<4; ++i) {
-	Facet f(*it,i);
-	if (!has_event(f)&& !triangulation_.has_degree_3(f)) {
-	  Event_key k= triangulation_.label(f);
-	  make_certificate(f);
-	}
+      clean_cell(*it);
+    }
 
-	for (unsigned int j=0; j< i; ++j) {
-	  Edge e(*it, i, j);
-	  if ( !has_event(e) && triangulation_.has_degree_3(e)) {
-	    Event_key k= triangulation_.label(e);
-	    make_certificate(e);
-	  }
-	}
-
-      }
+    for (typename std::vector<Cell_handle>::iterator it= incident_cells.begin();
+	 it != incident_cells.end(); ++it) {
+      handle_new_cell(*it);
     }
     v_.modify_vertex(vertex_handle(k));
     return vertex_handle(k);
@@ -500,6 +383,10 @@ public:
 
   typename Triangulation::Vertex_handle new_vertex_regular(Point_key k, Cell_handle h=NULL) {
     CGAL_precondition(!has_certificates_);
+    typename Simulator::NT nt= simulator()->next_time_representable_as_nt();
+    CGAL_precondition(simulator()->current_time() == nt);
+    //simulator()->set_current_time(nt);
+    triangulation_.geom_traits().set_time(nt);
     typename Triangulation::Vertex_handle vh= triangulation_.insert(k, h);
     v_.create_vertex(vh);
     return vh;
@@ -509,6 +396,8 @@ public:
     /* NT nt= simulator()->next_time_representable_as_nt();
     simulator()->set_current_time(nt);
     triangulation_.geom_traits().set_time(nt);*/
+    typename Simulator::NT nt= simulator()->next_time_representable_as_nt();
+    simulator()->set_current_time(nt);
     Cell_handle h= triangulation_.locate(k);
     return new_vertex(k,h);
   }
@@ -525,178 +414,39 @@ public:
     with degree 3.
   */
   typename Triangulation::Vertex_handle new_vertex(Point_key k, Cell_handle h) {
-    /*if (triangulation_.dimension()==3){
-      for (All_edges_iterator eit = triangulation_.all_edges_begin();
-      eit != triangulation_.all_edges_end(); ++eit){
-      if (triangulation_.has_degree_3(*eit)) {
-      Event_key k= triangulation_.label(*eit);
-      if ( k != Event_key::null()){
-      delete_event(k);
-      triangulation_.set_label(*eit,Event_key::null());
-      }
-      }
-      }
-      for (All_facets_iterator eit = triangulation_.all_facets_begin();
-      eit != triangulation_.all_facets_end(); ++eit){
-      if (!triangulation_.has_degree_3(*eit)) {
-      Event_key k= triangulation_.label(*eit);
-      if ( k != Event_key::null()){
-      delete_event(k);
-      triangulation_.set_label(*eit,Event_key::null());
-      }
-      }
-      }
-      }
+    //CGAL_precondition(h != NULL);
 
-      vhs_[k]= triangulation_.insert(k);
-      if (triangulation_.dimension()==3){
-      initialize_from_scratch();
-      }
-
-      return;*/
-
-    Vertex_handle vh;
+    std::vector<Facet> bfacets;
+    std::vector<Cell_handle> cells;
+    std::vector<Facet> ifacets;
     typename Simulator::NT nt= simulator()->next_time_representable_as_nt();
-    simulator()->set_current_time(nt);
+    CGAL_precondition(simulator()->current_time() == nt);
     triangulation_.geom_traits().set_time(nt);
-    if (has_certificates_) {
-      //triangulation_.geom_traits().set_time(simulator()->current_time_as_nt());
-      if (h==NULL) {
-	h= triangulation_.locate(k);
-      }
-      std::vector<Facet> bfacets;
-      std::vector<Cell_handle> cells;
-      std::vector<Facet> ifacets;
-
-      triangulation_.find_conflicts(k, h, back_inserter(bfacets), back_inserter(cells),back_inserter(ifacets));
-
-      /*CGAL_KINETIC_LOG(LOG_LOTS, "Boundary: ");
-	for (unsigned int i=0; i< bfacets.size(); ++i){
-	triangulation_.write_labeled_facet(bfacets[i], log_lots() );
+    Vertex_handle vh;
+    if (triangulation_.dimension() == 3) {
+      triangulation_.find_conflicts(k, h, back_inserter(bfacets), 
+				    back_inserter(cells),back_inserter(ifacets));
+      if (has_certificates_) {
+	for (unsigned int i=0; i < cells.size(); ++i) {
+	  clean_cell(cells[i]);
 	}
-	CGAL_KINETIC_LOG(LOG_LOTS,std::endl);
-	CGAL_KINETIC_LOG(LOG_LOTS,"Internal: ");
-	for (unsigned int i=0; i< ifacets.size(); ++i){
-	triangulation_.write_labeled_facet(ifacets[i], log_lots() );
-	}
-	log_lots()  << std::endl;*/
-
-      CGAL_KINETIC_LOG(LOG_LOTS, "Cells: ");
-      for (unsigned int i=0; i< cells.size(); ++i) {
-	CGAL_KINETIC_LOG(LOG_LOTS, "[");
-	Cell_handle h= cells[i];
-	for (unsigned int j=0; j<4; ++j) {
-	  CGAL_KINETIC_LOG(LOG_LOTS, h->vertex(j)->point() << " ");
-	}
-	CGAL_KINETIC_LOG(LOG_LOTS, "]  ");
+	v_.remove_cells(cells.begin(), cells.end());
       }
-      CGAL_KINETIC_LOG(LOG_LOTS,std::endl);
-
-      //std::sort(ifacets.begin(), ifacets.end());
-      //std::sort(bfacets.begin(), bfacets.end());
-
-      /* find boundary edges with degree 3 and propogate their certificate.
-	 This may do extra work, so check if the remaining facet is in the interior.
-      */
-      // propogate it to the facet which will not be destroyed.
-      //#if 0
-      //std::cout << "ifacets is " << ifacets.size() << " bfacets is " << bfacets.size() << std::endl;
-      for (typename std::vector<Facet>::iterator bit = bfacets.begin(); bit != bfacets.end(); ++bit) {
-	for (unsigned int i=0; i< 3; ++i) {
-	  //! \todo clean up this mess
-	  Edge e= triangulation_.edge(*bit, i);
-	  // see if the edges has degree 3
-	  if (triangulation_.has_degree_3(e) && has_event(e)) {
-	    // for simplicity don't try to the push the edge events to facets
-	    //delete_event(triangulation_.label(e));
-	    //triangulation_.set_label(e,  Event_key::null());
-	    Facet_circulator fc= triangulation_.incident_facets(e, *bit), fe=fc;
-	    ++fc;                 // to skip the first facet
-	    // two facets to look at
-	    for (; fc != fe; ++fc) {
-	      if (!contains(bfacets.begin(), bfacets.end(), *fc)
-		  && !contains(ifacets.begin(), ifacets.end(), *fc)) {
-		// we have a facet to repair which is not obsolete, and not on the boundary
-		// must check if another edge is degree 3
-		bool d3=false;
-		for (int k=0; k<3; ++k) {
-		  Edge e2= triangulation_.edge(*fc, k);
-		  // have to make sure that the other edge has not gone away with this
-		  if (triangulation_.equal(e, e2)) continue;
-		  // !! is because vc complains about ambiguity otherwise
-		  else if ( triangulation_.has_degree_3(e2)
-			    && triangulation_.label(e2).is_valid() ) {
-		    d3= true;
-		    break;
-		  }
-		}
-		if (!d3) {
-		  CGAL_KINETIC_LOG(LOG_LOTS,"Handled lost edge: was ");
-		  //triangulation_.write_labeled_edge(e, log_lots());
-		  CGAL_KINETIC_LOG(LOG_LOTS, " moves to facet ");
-		  //triangulation_.write_facet(*fc, log_lots());
-		  CGAL_KINETIC_LOG(LOG_LOTS,std::endl);
-
-		  typename Simulator::Event_key key= triangulation_.label(e);
-		  Event_key k= change_to_facet_flip(*fc, key);
-
-		  CGAL_KINETIC_LOG(LOG_LOTS, "Event is " << k << std::endl);
-
-		  //triangulation_.set_label(e, P::Event_key::null());
-		  //typename P::Event_key k=simulator()->new_event();
-		  triangulation_.set_label(*fc, k);
-
-		  triangulation_.set_label(e, typename Simulator::Event_key());
-		}
-		else {
-		  typename Simulator::Event_key k= triangulation_.label(e);
-		  delete_event(k);
-		  triangulation_.set_label(e, typename Simulator::Event_key());
-		}
-		break;        // only can have one to deal with
-	      }
-	    }
-	  }
-	}
-      }
-      //#endif
-
-      /* have to delete all facet and edge certificates
-	 Could use the other lists, but the easiest for the edges is to just use the cells
-      */
-      for (typename std::vector<Cell_handle>::iterator cit= cells.begin(); cit != cells.end(); ++cit) {
-	for (unsigned int i=0; i< 4; ++i) {
-	  if (has_event(Facet(*cit, i))) {
-	    typename Simulator::Event_key k= triangulation_.label(Facet(*cit,i));
-	    delete_event(k);
-	    triangulation_.set_label(Facet(*cit, i), typename Simulator::Event_key());
-	  }
-	  for (unsigned int j=0; j<i; ++j) {
-	    Edge e(*cit, i,j);
-	    if (has_event(e)) {
-	      typename Simulator::Event_key k= triangulation_.label(e);
-	      delete_event(k);
-	      triangulation_.set_label(e, typename Simulator::Event_key());
-	    }
-	  }
-	}
-      }
-
-      for (typename std::vector<Cell_handle>::iterator cit= cells.begin(); cit != cells.end(); ++cit) {
-	handle_delete_cell(*cit);
-      }
-      v_.remove_cells(cells.begin(), cells.end());
+      
+   
       //! \todo replace by insert_in_hole
-      CGAL_KINETIC_LOG(LOG_LOTS, "Inserting.\n");
-      vh=triangulation_.insert(k, h);
-      set_vertex_handle(k,vh);
-      change_vertex(k, true);
-    }
-    else {
-      // if low dimensional
-      vh=triangulation_.insert(k, h);
-    }
 
+      CGAL_KINETIC_LOG(LOG_LOTS, "Inserting.\n");
+       vh=triangulation_.insert_in_hole(k, cells.begin(), cells.end(), 
+						     bfacets.front().first, bfacets.front().second);
+    } else {
+      vh= triangulation_.insert(k,h);
+    }
+    set_vertex_handle(k,vh);
+    if (triangulation_.dimension() == 3) {
+      change_vertex(k);
+    }
+    
     CGAL_expensive_postcondition(audit_structure());
     v_.create_vertex(vh);
     return vh;
@@ -710,40 +460,75 @@ public:
   void set_has_certificates(bool b) {
     if (!has_certificates_ && b) {
       if (triangulation().dimension() == 3) {
-	before_create_certificates();
+	v_.create_cells(triangulation_.all_cells_begin(),
+			triangulation_.all_cells_end());
+
+	for (All_edges_iterator eit = triangulation_.all_edges_begin();
+	     eit != triangulation_.all_edges_end(); ++eit) {
+	  CGAL_assertion(!has_event(*eit));
+	}
+	for (All_facets_iterator eit = triangulation_.all_facets_begin();
+	     eit != triangulation_.all_facets_end(); ++eit) {
+	  CGAL_assertion(!has_event(*eit));
+	}
 	create_all_certificates();
-	after_create_certificates();
+	has_certificates_=true;
       }
     } else if (has_certificates_ && !b) {
       destroy_all_certificates();
+      has_certificates_=false;
     }
   }
 
-  void before_create_certificates(){
-    for (All_cells_iterator eit = triangulation_.all_cells_begin();
-	 eit != triangulation_.all_cells_end(); ++eit) {
-      handle_new_cell(eit);
+ void create_all_certificates() {
+    CGAL_precondition(!has_certificates_);
+ 
+    for (All_edges_iterator eit = triangulation_.all_edges_begin();
+	 eit != triangulation_.all_edges_end(); ++eit) {
+      if (is_degree_3(*eit) && !has_degree_4_vertex(*eit)) {
+	make_certificate(*eit);
+      }
     }
-    v_.create_cells(triangulation_.all_cells_begin(),
-		    triangulation_.all_cells_end());
-  }  
-
-  void after_create_certificates(){
-    for (Finite_vertices_iterator vit = triangulation_.finite_vertices_begin(); 
-	 vit != triangulation_.finite_vertices_end(); ++vit) {
-      set_vertex_handle(vit->point(), vit);
+    for (All_facets_iterator eit = triangulation_.all_facets_begin();
+	 eit != triangulation_.all_facets_end(); ++eit) {
+      if (!has_degree_3_edge(*eit)) {
+	make_certificate(*eit);
+      }
     }
-    has_certificates_=true;
   }
+
+
+  void destroy_all_certificates() {
+    //vhs_.clear();
+    CGAL_precondition(has_certificates_);
+    for (All_edges_iterator eit = triangulation_.all_edges_begin();
+	 eit != triangulation_.all_edges_end(); ++eit) {
+      Event_key k= triangulation_.label(*eit);
+      if ( k != Event_key() ) {
+	simulator()->delete_event(k);
+	triangulation_.set_label(*eit,Event_key());
+      }
+    }
+    for (All_facets_iterator eit = triangulation_.all_facets_begin();
+	 eit != triangulation_.all_facets_end(); ++eit) {
+      Event_key k= triangulation_.label(*eit);
+      if (k != Event_key() ) {
+	simulator()->delete_event(k);
+	triangulation_.set_label(*eit,Event_key());
+      }
+      //}
+    }
+    v_.remove_cells(triangulation_.all_cells_begin(), triangulation_.all_cells_end());
+  }
+ 
 
 
   Facet flip(const Edge &edge) {
     v_.before_edge_flip(edge);
-    if (true) {
-      CGAL_KINETIC_LOG(LOG_LOTS,"\n\nFlipping edge ");
-      CGAL_KINETIC_LOG(LOG_LOTS,edge.first->vertex(edge.second)->point() << "--" 
-		       << edge.first->vertex(edge.third)->point() << std::endl);
-    }
+    
+    CGAL_KINETIC_LOG(LOG_LOTS,"\n\nFlipping edge ");
+    CGAL_KINETIC_LOG(LOG_LOTS,edge.first->vertex(edge.second)->point() << "--" 
+		     << edge.first->vertex(edge.third)->point() << std::endl);
     CGAL_assertion(triangulation_.tds().is_edge(edge.first, edge.second, edge.third) || print());
 
     Vertex_handle poles[2];
@@ -756,7 +541,7 @@ public:
     typename Simulator::Event_key failed_key = triangulation_.label(edge);
     CGAL_precondition(failed_key.is_valid());
     Certificate ore= extract_root_stack(failed_key);
-
+   
     Facet neighboring_facet= triangulation_.opposite(Facet(edge.first, polesi[0]));
 
     triangulation_.set_label(edge, typename Simulator::Event_key());
@@ -765,57 +550,10 @@ public:
     {
       Cell_circulator cc= triangulation_.incident_cells(edge), ce= cc;
       do {
-	Cell_handle cell=cc;
-	Edge eic= triangulation_.edge_in_cell(edge, cell);
-	Edge xe= triangulation_.cross(eic);
-	if (triangulation_.has_degree_3(xe)) {
-	  make_not_edge_flip(xe, cc);
-	}
-	// Just try them all
-	for (unsigned int i=0; i<4; ++i) {
-	  Facet f(cc, i);
-	  if (has_event(f)) {
-	    delete_event(triangulation_.label(f));
-	    triangulation_.set_label(f, typename Simulator::Event_key());
-	  }
-
-	  // hack for recently redundant vertices
-	  for (unsigned int j=0; j<i; ++j) {
-	    Edge e(cell, i,j);
-	    if (has_event(e)) {
-	      delete_event(triangulation_.label(e));
-	      triangulation_.set_label(e, typename Simulator::Event_key());
-	    }
-	  }
-	}
+	Cell_handle h=cc;
+	clean_cell(h);
+	v_.remove_cells(&h, &h+1);
       } while (++cc != ce);
-    }
-#ifndef NDEBUG
-    {
-      Cell_circulator cc= triangulation_.incident_cells(edge), ce= cc;
-      do {
-	Cell_handle cell=cc;
-	for (unsigned int i=0; i<4; ++i) {
-	  Facet f(cell, i);
-	  CGAL_assertion(!has_event(f));
-	  for (unsigned int j=0; j<i; ++j) {
-	    Edge e(cell, i,j);
-	    if (has_event(e)) {
-	      triangulation_.write_labeled_edge(e, std::cerr);
-	    }
-	    CGAL_assertion(!has_event(e));
-	  }
-	}
-      } while (++cc != ce);
-    }
-#endif
-    {
-      Cell_circulator cc= triangulation_.incident_cells(edge), ce= cc;
-      do {
-	handle_delete_cell(cc);
-	v_.remove_cells(&cc, &cc+1);
-      } while (++cc != ce);
-
     }
 
     triangulation_.tds().flip_flippable(edge);
@@ -837,62 +575,21 @@ public:
     triangulation_.clear_cell_labels(middle_facet.first);
     triangulation_.clear_cell_labels(triangulation_.opposite(middle_facet).first);
 
-    if (true) {
-      CGAL_KINETIC_LOG(LOG_LOTS, "Created facet ");
-      //triangulation_.write_labeled_facet(Facet(cells[0], polesi[0]), log_lots());
-      CGAL_KINETIC_LOG(LOG_LOTS, std::endl);
+    if (ore.will_fail()) {
+      typename Simulator::Time t= ore.failure_time();
+      ore.pop_failure_time();
+      typename Simulator::Event_key k= simulator()->new_event(t, 
+							      Facet_flip_event(ore, middle_facet, tr_.wrapper_handle()));
+      
+      triangulation_.set_label(middle_facet, k);
+    } else {
+      triangulation_.set_label(middle_facet, simulator()->null_event());
     }
 
     for (int c=0; c<2; ++c) {
       handle_new_cell(cells[c]);
     }
     v_.create_cells(&cells[0], &cells[0]+2);
-
-    bool id3[2][3];
-    // do certifcates for d3 edges
-    for (int c=0; c<2; ++c) {
-      for (int i=0; i<3; ++i) {
-	Edge e= triangulation_.edge_around_vertex(cells[c], poles[c], i);
-	if (triangulation_.has_degree_3(e)) {
-	  make_edge_flip(e);
-	  id3[c][i]=true;
-	}
-	else {
-	  id3[c][i]=false;
-	}
-      }
-    }
-
-    // build certificates for faces
-    //! \todo make this more efficient
-    /*!
-      Edges are checked too many times to see if they are degree 3
-    */
-    for (int c=0; c<2; ++c) {
-      for (int i=0; i<3; ++i) {
-	Facet f= triangulation_.facet_around_vertex(cells[c], poles[c], i);
-	CGAL_assertion(f.second != cells[c]->index(poles[c]));
-	bool hd3= (id3[c][(i+1)%3] || id3[c][(i+2)%3]);
-	CGAL_assertion(hd3== triangulation_.has_degree_3(f));
-	if (!hd3) make_certificate(f);
-      }
-    }
-
-    //if (!ore.empty()) {
-    if (ore.will_fail()) {
-      typename Simulator::Time t= ore.failure_time();
-      ore.pop_failure_time();
-      typename Simulator::Event_key k= simulator()->new_event(t, Facet_flip_event(ore, middle_facet, tr_.wrapper_handle()));
-      
-      triangulation_.set_label(middle_facet, k);
-    } else {
-      triangulation_.set_label(middle_facet, simulator()->null_event());
-    }
-    /*}
-      else {
-      triangulation_.set_label(middle_facet, simulator()->null_event());
-      }*/
-    //generate_geometry();
 
     CGAL_postcondition(audit_structure());
     v_.after_edge_flip(middle_facet);
@@ -915,26 +612,25 @@ public:
     Facet other_flip_facet= triangulation_.opposite(flip_facet);
     poles[0]= flip_facet.first->vertex(flip_facet.second);
     poles[1]= other_flip_facet.first->vertex(other_flip_facet.second);
-
-    if (true) {
-      CGAL_KINETIC_LOG(LOG_LOTS,"\n\nFlipping facet ");
-      CGAL_KINETIC_LOG(LOG_LOTS,flip_facet.first->vertex((flip_facet.second+1)%4)->point() << "--"
-		       << flip_facet.first->vertex((flip_facet.second+2)%4)->point() << "--"
-		       << flip_facet.first->vertex((flip_facet.second+3)%4)->point() << std::endl);
-      //triangulation_.write_labeled_facet(flip_facet, log_lots() );
-      CGAL_KINETIC_LOG(LOG_LOTS," with poles " << poles[0]->point() << ", " << poles[1]->point());
-      CGAL_KINETIC_LOG(LOG_LOTS,std::endl);
-    }
+    
+    CGAL_KINETIC_LOG(LOG_LOTS,"\n\nFlipping facet ");
+    CGAL_KINETIC_LOG(LOG_LOTS,flip_facet.first->vertex((flip_facet.second+1)%4)->point() << "--"
+		     << flip_facet.first->vertex((flip_facet.second+2)%4)->point() << "--"
+		     << flip_facet.first->vertex((flip_facet.second+3)%4)->point() << std::endl);
+    //triangulation_.write_labeled_facet(flip_facet, log_lots() );
+    CGAL_KINETIC_LOG(LOG_LOTS," with poles " << poles[0]->point() << ", " << poles[1]->point());
+    CGAL_KINETIC_LOG(LOG_LOTS,std::endl);
+    
     CGAL_assertion(triangulation_.tds().is_facet(flip_facet.first, flip_facet.second) || print());
 
     Event_key failed_key= triangulation_.label(flip_facet);
-
     Certificate ore= extract_root_stack(failed_key);
     if (ore.will_fail()) {
       CGAL_KINETIC_LOG(LOG_LOTS, "Next root of certificate is " << ore.failure_time() << std::endl);
     } else {
       CGAL_KINETIC_LOG(LOG_LOTS, "Certificate will never fail" << std::endl);
     }
+    triangulation_.set_label(flip_facet, Event_key());
 
     //typename P::Event_key index= triangulation_.label(flip_facet);
 
@@ -945,30 +641,11 @@ public:
 
     // go around and change the handler for each edge if it is degree 3. Don't have to look off cell
     for (int c=0; c<2; ++c) {
-      for (int i=0; i<3; ++i) {
-	Edge e= triangulation_.edge_around_vertex(cells[c], poles[c], i);
-	if (triangulation_.has_degree_3(e)) {
-	  make_not_edge_flip(e, cells[c]);
-	}
-
-	Facet f = triangulation_.facet_around_vertex(cells[c], poles[c],i);
-	if (has_event(f)) {
-	  Event_key k= triangulation_.label(f);
-	  CGAL_KINETIC_LOG(LOG_LOTS,"Cleaning facet ");
-	  //triangulation_.write_labeled_facet(f, log_lots() );
-	  CGAL_KINETIC_LOG(LOG_LOTS,std::endl);
-	  triangulation_.set_label(f, typename Simulator::Event_key());
-	  delete_event(k);
-	}
-      }
+      clean_cell(cells[c]);
     }
-    for (int c=0; c<2; ++c) {
-      handle_delete_cell(cells[c]);
-    }
+   
     v_.remove_cells(&cells[0], &cells[0]+2);
-#ifndef NDEBUG
-    CGAL_KINETIC_LOG(LOG_LOTS, *this);
-#endif
+
     triangulation_.tds().flip_flippable(flip_facet);
 
     CGAL_assertion(triangulation_.tds().is_facet(neighbor_facet.first, neighbor_facet.second));
@@ -976,65 +653,14 @@ public:
     Facet a_facet= triangulation_.opposite(neighbor_facet);
     Cell_handle a_cell= a_facet.first;
 
-#ifndef NDEBUG
-    if (!a_cell->has_vertex(poles[0]) || !a_cell->has_vertex(poles[1])) {
-      CGAL_KINETIC_LOG(LOG_LOTS, "Cell: ");
-      for (int i=0; i<4; ++i) {
-	CGAL_KINETIC_LOG(LOG_LOTS, a_cell->vertex(i)->point() << " ");
-      }
-      //triangulation_.write_labeled_facet(a_facet, log_lots());
-      CGAL_KINETIC_LOG(LOG_LOTS,std::endl);
-      //triangulation_.write_labeled_facet(neighbor_facet, log_lots());
-      CGAL_KINETIC_LOG(LOG_LOTS, std::endl);
-      CGAL_assertion_code(print());
-      CGAL_assertion(0);
-    }
-#endif
-
     Edge central_edge(a_cell, a_cell->index(poles[0]), a_cell->index(poles[1]));
 
     Cell_circulator cc= triangulation_.incident_cells(central_edge), ce=cc;
     do {
       triangulation_.clear_cell_labels(cc);
     } while (++cc != ce);
-#ifndef NDEBUG
-    CGAL_KINETIC_LOG(LOG_LOTS, *this);
-#endif
-    CGAL_expensive_assertion(labeling_is_valid());
 
-    if (true) {
-      CGAL_KINETIC_LOG(LOG_LOTS, "Created edge ");
-      //triangulation_.write_labeled_edge(central_edge, log_lots() );
-      CGAL_KINETIC_LOG(LOG_LOTS,std::endl);
-    }
-    {
-      Cell_circulator cc= triangulation_.incident_cells(central_edge), ce=cc;
-      do {
-	handle_new_cell(cc);
-	v_.create_cells(&cc, &cc+1);
-      } while (++cc != ce);
-    }
-    // fix the cross edges, must make them non facet flip if necessary
-    {
-      Cell_circulator cc= triangulation_.incident_cells(central_edge), ce=cc;
-      do {
-	Edge eic= triangulation_.edge_in_cell(central_edge, cc);
-	Edge xe= triangulation_.cross(eic);
-	bool d3= triangulation_.has_degree_3(xe);
-	if (d3) {
-	  make_no_events(xe);
-	  make_certificate(xe);
-	}
-	else {
-	  // check adjacent facets
-	  make_certificate(Facet(cc, eic.second));
-	  make_certificate(Facet(cc, eic.third));
-	}
-      } while (++cc != ce);
-    }
 
-    //typename Simulator::Time t= s.next_time_negative();
-    //if (!ore.empty()) {
     if (ore.will_fail()) {
       typename Simulator::Time t= ore.failure_time();
       ore.pop_failure_time();
@@ -1043,12 +669,16 @@ public:
     } else {
       triangulation_.set_label(central_edge, simulator()->null_event());
     }
-    /*}
-      else {
-      triangulation_.set_label(central_edge, simulator()->null_event());
-      }*/
     
-    //generate_geometry();
+    CGAL_expensive_assertion(labeling_is_valid());
+
+    {
+      Cell_circulator cc= triangulation_.incident_cells(central_edge), ce=cc;
+      do {
+	handle_new_cell(cc);
+	v_.create_cells(&cc, &cc+1);
+      } while (++cc != ce);
+    }
 
     CGAL_postcondition(audit_structure());
     v_.after_facet_flip(central_edge);
@@ -1168,6 +798,10 @@ public:
 			   CGAL_precondition_code(++fc);
 			   CGAL_precondition_code(
 						  }while(fc != fe));
+
+    CGAL_precondition(is_degree_3(e));
+    CGAL_precondition(!has_degree_4_vertex(e));
+    CGAL_precondition(!has_event(e));
     
     Certificate s= root_stack(e, st);
    
@@ -1175,7 +809,9 @@ public:
       CGAL_KINETIC_LOG(LOG_LOTS,"Failure time is " << s.failure_time() << std::endl);
       typename Simulator::Time t= s.failure_time();
       s.pop_failure_time();
-      CGAL_KINETIC_LOG(LOG_LOTS, "Next root of this cert is " << s.failure_time() << std::endl);
+      if (s.will_fail()) {
+	CGAL_KINETIC_LOG(LOG_LOTS, "Next root of this cert is " << s.failure_time() << std::endl);
+      }
       typename Simulator::Event_key k=  simulator()->new_event(t, Edge_flip_event(s, e, tr_.wrapper_handle()));
       triangulation_.set_label(e, k);
     } else {
@@ -1189,19 +825,22 @@ public:
 
   void make_certificate( const Facet &e,
 			 const typename Simulator::Time &st) {
+    CGAL_precondition(!has_event(e));
     CGAL_KINETIC_LOG(LOG_LOTS, "making certificate for facet ");
     //triangulation_.write_facet(e, log_lots());
     CGAL_KINETIC_LOG(LOG_LOTS,  std::endl);
 
-    CGAL_precondition(!triangulation_.has_degree_3(e));
+    CGAL_precondition(!has_degree_3_edge(e));
     for (int i=0; i<3; ++i) {
-      CGAL_precondition(!triangulation_.label(triangulation_.edge(e, i)).is_valid());
+      CGAL_precondition(triangulation_.label(triangulation_.edge(e, i)) == Event_key());
     }
     Certificate s= root_stack(e, st);
     if (s.will_fail()) {
       typename Simulator::Time t= s.failure_time();
       s.pop_failure_time();
-      CGAL_KINETIC_LOG(LOG_LOTS, "Next root of this cert is " << s.failure_time() << std::endl);
+      if (s.will_fail()) {
+	CGAL_KINETIC_LOG(LOG_LOTS, "Next root of this cert is " << s.failure_time() << std::endl);
+      }
       typename Simulator::Event_key k= simulator()->new_event(t, Facet_flip_event(s, e, tr_.wrapper_handle()));
       triangulation_.set_label(e, k);
     } else {
@@ -1215,34 +854,7 @@ public:
 		      simulation_traits_object().simulator_handle()->current_time());
    }
 
-  void create_all_certificates() {
-    CGAL_precondition(!has_certificates_);
  
-    for (All_edges_iterator eit = triangulation_.all_edges_begin();
-	 eit != triangulation_.all_edges_end(); ++eit) {
-      
-      if (triangulation_.has_degree_3(*eit)) {
-	//CGAL_KINETIC_LOG(LOG_LOTS,"initializing [");
-	//triangulation_.write_labeled_edge(*eit, log_lots() );
-	//CGAL_KINETIC_LOG(LOG_LOTS, "]\n");
-	make_certificate(*eit);
-      }
-    }
-    for (All_facets_iterator eit = triangulation_.all_facets_begin();
-	 eit != triangulation_.all_facets_end(); ++eit) {
-      if (!triangulation_.has_degree_3(*eit)) {
-	//CGAL_KINETIC_LOG(LOG_LOTS, "initializing [");
-	//triangulation_.write_labeled_facet(*eit, log_lots() );
-	//CGAL_KINETIC_LOG(LOG_LOTS, "]\n");
-	make_certificate(*eit);
-      }
-    }
-    //CGAL_precondition(vhs_.empty());
-    /*for (Finite_vertices_iterator vit = triangulation_.finite_vertices_begin(); vit != triangulation_.finite_vertices_end(); ++vit) {
-      set_vertex_handle(vit->point(), vit);
-      }
-      has_certificates_=true;*/
-  }
 
   template <class Oit>
   void point_keys(const Facet &f, Oit out) const
@@ -1312,33 +924,7 @@ private:
     return root_stack(*triangulation_.incident_facets(e), st);
   }
 
-  void destroy_all_certificates() {
-    //vhs_.clear();
-    CGAL_precondition(has_certificates_);
-    for (All_edges_iterator eit = triangulation_.all_edges_begin();
-	 eit != triangulation_.all_edges_end(); ++eit) {
-      Event_key k= triangulation_.label(*eit);
-      if ( k.is_valid() ) {
-	delete_event(k);
-	triangulation_.set_label(*eit,Event_key());
-      }
-    }
-    for (All_facets_iterator eit = triangulation_.all_facets_begin();
-	 eit != triangulation_.all_facets_end(); ++eit) {
-      Event_key k= triangulation_.label(*eit);
-      if ( k.is_valid() ) {
-	delete_event(k);
-	triangulation_.set_label(*eit,Event_key());
-      }
-      //}
-    }
-    for (All_cells_iterator eit = triangulation_.all_cells_begin();
-	 eit != triangulation_.all_cells_end(); ++eit) {
-      handle_delete_cell(eit);
-    }
-    v_.remove_cells(triangulation_.all_cells_begin(), triangulation_.all_cells_end());
-    has_certificates_=false;
-  }
+  
 
   void make_no_events(const Edge &e) {
     CGAL_precondition(triangulation_.has_degree_3(e));
@@ -1347,7 +933,7 @@ private:
     do {
       if (has_event(*fc)) {
 	Event_key k= triangulation_.label(*fc);
-	delete_event(k);
+	simulator()->delete_event(k);
 	triangulation_.set_label(*fc, Event_key());
       }
     } while(++fc != fe);
@@ -1357,15 +943,38 @@ private:
 
   bool has_event(const Edge &e) const
   {
-    return triangulation_.label(e).is_valid();
+    return triangulation_.label(e) != Event_key();
   }
 
   bool has_event(const Facet &e) const
   {
-    return triangulation_.label(e).is_valid();
+    
+    return triangulation_.label(e) != Event_key();
   }
 
 
+  bool is_degree_3(const Edge &e) const {
+    return triangulation_.has_degree_3(e);
+  }
+
+  bool is_degree_4(Vertex_handle vh) const {
+    return triangulation_.degree(vh) == 4;
+  }
+
+  bool has_degree_3_edge(const Facet& f) const {
+    return triangulation_.has_degree_3(f);
+  }
+
+  bool has_degree_4_vertex(const Facet& f) const {
+    return is_degree_4(triangulation_.vertex(f,0))
+      || is_degree_4(triangulation_.vertex(f,1))
+      || is_degree_4(triangulation_.vertex(f,2));
+  }
+
+  bool has_degree_4_vertex(const Edge& f) const {
+    return is_degree_4(triangulation_.vertex(f,0))
+      || is_degree_4(triangulation_.vertex(f,1));
+  }
 
  
   void make_edge_flip(Edge &edge) {
@@ -1377,84 +986,49 @@ private:
     Facet_circulator fc= triangulation_.incident_facets(edge), fe=fc;
     do {
       if (has_event(*fc)) {
-	CGAL_assertion( !k.is_valid() );
+	CGAL_assertion( k == Event_key() );
 	k=triangulation_.label(*fc);
 	triangulation_.set_label(*fc, typename Simulator::Event_key());
-#ifdef NDEBUG
-	break;
-#endif
+	Event_key kk=change_to_edge_flip(edge, k);
+	triangulation_.set_label(edge, kk);
+	simulator()->audit_event(kk);
+	return;
       }
     } while (++fc != fe);
 
-    //CGAL_assertion(k!= Event_key::null());
-    /*if (k== Simulator::Event_key::null()){
-      log_lots()  << "Non failing certificate on edge ";
-      triangulation_.write_labeled_edge(edge, log_lots() );
-      log_lots()  << std::endl;
-      }*/
-    if ( k.is_valid() ) {
-      /*if (triangulation_.degree(triangulation_.vertex(edge,0))==4
-	|| triangulation_.degree(triangulation_.vertex(edge,1))==4){
-	triangulation_.set_label(edge, simulator()->null_event());
-	} else {*/
-      Event_key kk=change_to_edge_flip(edge, k);
-      triangulation_.set_label(edge, kk);
-      //}
-    }
-    else {
-      CGAL_KINETIC_LOG(LOG_LOTS, "Making up edge event.\n");
-      make_certificate(edge);
-    }
-  }
 
-  void make_not_edge_flip(Edge &edge, Cell_handle cell) {
+    CGAL_KINETIC_LOG(LOG_LOTS, "Making up edge event.\n");
+    make_certificate(edge);
+    }
+
+  void make_not_edge_flip(Edge &edge, Cell_handle h) {
     if (true) {
       CGAL_KINETIC_LOG(LOG_LOTS, "Making edge ");
       //triangulation_.write_labeled_edge(edge, log_lots() );
       CGAL_KINETIC_LOG(LOG_LOTS, " not an edge flip.\n");
     }
-    CGAL_assertion(triangulation_.has_degree_3(edge) || print());
+    CGAL_assertion(is_degree_3(edge) || print());
     typename Simulator::Event_key index = triangulation_.label(edge);
-    CGAL_precondition(LAZY ||  index.is_valid() );
+    CGAL_precondition( index != Event_key() );
 
     triangulation_.set_label(edge, typename Simulator::Event_key());
 
-    Facet_circulator fc=triangulation_.incident_facets(edge), ef= fc;
+    Cell_circulator fc=triangulation_.incident_cells(edge), pfc=fc, ef;
+    ++fc;
+    ef=fc;
     do {
-      Facet cf= *fc;
-      if (cf.first == cell || triangulation_.opposite(cf).first == cell) {
-	CGAL_assertion( !triangulation_.label(cf).is_valid() );
-      }
-      else {
-	bool hd3=false;
-	for (int i=0; i< 3; ++i) {
-	  Edge ec= triangulation_.edge(cf, i);
-	  if (triangulation_.equal(ec, edge)) continue;
-	  else {
-	    if (triangulation_.has_degree_3(ec)) {
-	      hd3=true;
-	      break;
-	    }
-	  }
-	}
-
-	if (!hd3) {
-	  Event_key k= change_to_facet_flip(cf, index);
-	  triangulation_.set_label(cf, k);
-	  CGAL_KINETIC_LOG(LOG_LOTS,"put cert on ");
-	  CGAL_KINETIC_LOG_WRITE(LOG_LOTS, triangulation_.write_facet(cf,LOG_STREAM  ));
-	  CGAL_KINETIC_LOG(LOG_LOTS, std::endl);
-	}
-	else {
-	  delete_event(index);
-	  if (true) {
-	    CGAL_KINETIC_LOG(LOG_LOTS, "Facet ");
-	    CGAL_KINETIC_LOG_WRITE(LOG_LOTS, triangulation_.write_labeled_facet(cf, LOG_STREAM) );
-	    CGAL_KINETIC_LOG(LOG_LOTS, " has another degree three edge, deleting certificate.\n");
+      if (fc != h && pfc != h) {
+	for (unsigned int i=0; i< 4; ++i) {
+	  if (pfc->neighbor(i) == fc){
+	    Facet f(pfc, i);
+	    CGAL_precondition(!has_event(f));
+	    triangulation_.set_label(f, change_to_facet_flip(f, index));
+	    simulator()->audit_event(triangulation_.label(f));
 	  }
 	}
       }
-    } while (ef != ++fc);
+      ++pfc; ++fc;
+    } while (ef != fc);
   }
 
   template <class C>
@@ -1497,75 +1071,84 @@ private:
     return true;
   }
 
-  void delete_event(typename Simulator::Event_key k) {
-#if 0
-    if (k && k != simulator()->null_event()) {
-      //CGAL_precondition(estimates_.find(k) != estimates_.end());
 
-      double bound= extract_root_stack(k).lower_bound(); 
-      //HERE
-      if ( simulator()->current_time() > bound) {
-        /*std::cout << "Too late by " << to_interval(simulator()->current_time()).first -bound 
-	  << " on " 
-	  << to_interval(simulator()->event_time(k)).first - to_interval(simulator()->current_time()).first
-	  << std::endl;*/
-        ++too_late__;
-      } else {
-        //std::cout << "Filtered" << std::endl;
-        ++filtered__;
-      }
-    }
-#endif
-    simulator()->delete_event(k);
-  }
 
   bool audit_structure() const
   {
     if (triangulation_.dimension() != 3) return true;
-    //print();
 
-    for (All_edges_iterator eit = triangulation_.all_edges_begin();
-	 eit != triangulation_.all_edges_end(); ++eit) {
-      if (!triangulation_.has_degree_3(*eit)) {
-	if (has_event(*eit)) {
-	  triangulation_.write_labeled_edge(*eit, std::cerr);
-	}
+    if (!has_certificates()) {
+      for (All_edges_iterator eit = triangulation_.all_edges_begin();
+	   eit != triangulation_.all_edges_end(); ++eit) {
 	CGAL_assertion(!has_event(*eit));
       }
-      else {
-	if (has_certificates_ && !has_event(*eit)) {
-	  triangulation_.write_labeled_edge(*eit, std::cerr);
-	}
-	CGAL_assertion(!has_certificates_ || has_event(*eit));
-	//CGAL_assertion(triangulation_.label(*eit)!= Simulator::Event_key::null());
-      }
-    }
-    for (All_facets_iterator eit = triangulation_.all_facets_begin();
-	 eit != triangulation_.all_facets_end(); ++eit) {
-      if (triangulation_.has_degree_3(*eit)) {
-	if (has_event(*eit)) {
-	  triangulation_.write_labeled_facet(*eit, std::cerr);
-	}
+      for (All_facets_iterator eit = triangulation_.all_facets_begin();
+	   eit != triangulation_.all_facets_end(); ++eit) {
 	CGAL_assertion(!has_event(*eit));
       }
-      else {
-	if (has_certificates_ && !has_event(*eit)) {
-	  triangulation_.write_labeled_facet(*eit, std::cerr);
+    } else {
+      CGAL_KINETIC_LOG(LOG_SOME, "Auditing structure" << std::endl);
+      //print();
+      
+      for (All_edges_iterator eit = triangulation_.all_edges_begin();
+	   eit != triangulation_.all_edges_end(); ++eit) {
+	bool isd3= is_degree_3(*eit);
+	bool hd4= has_degree_4_vertex(*eit);
+	if (!isd3 || hd4) {
+	  if (has_event(*eit)) {
+	    std::cerr << "Edge should not have certificate ";
+	    triangulation_.write_labeled_edge(*eit, std::cerr);
+	    std::cerr << std::endl;
+	    simulator()->audit_event(triangulation_.label(*eit));
+	    CGAL_assertion(0);
+	  }
+	} else if (isd3) {
+	  if (!has_event(*eit)) {
+	    std::cerr << "Edge should have certificate ";
+	    triangulation_.write_labeled_edge(*eit, std::cerr);
+	    std::cerr << std::endl;
+	    CGAL_assertion(0);
+	  } else {
+	    simulator()->audit_event(triangulation_.label(*eit));
+	  }
 	}
-	CGAL_assertion(!has_certificates_|| has_event(*eit));
+      }
+
+      for (All_facets_iterator eit = triangulation_.all_facets_begin();
+	   eit != triangulation_.all_facets_end(); ++eit) {
+	bool hsd3= has_degree_3_edge(*eit);
+	bool hd4= has_degree_4_vertex(*eit);
+	if (hsd3 || hd4) {
+	  if (has_event(*eit)) {
+	    std::cerr << "Facet should not have certificate ";
+	    triangulation_.write_labeled_facet(*eit, std::cerr);
+	    std::cerr << std::endl;
+	    simulator()->audit_event(triangulation_.label(*eit));
+	    CGAL_assertion(0);
+	  }
+	} else {
+	  if (!has_event(*eit)) {
+	    std::cerr << "Facet should have certificate ";
+	    triangulation_.write_labeled_facet(*eit, std::cerr);
+	    std::cerr << std::endl;
+	    CGAL_assertion(0);
+	  } else {
+	    simulator()->audit_event(triangulation_.label(*eit));
+	  }
+	}
       }
     }
     return true;
   }
 
   Event_key change_to_edge_flip(const Edge &e, Event_key k) {
-    if (k== simulator()->null_event() || LAZY && !k.is_valid()) return k;
+    if (k== simulator()->null_event()) return k;
     Certificate s= extract_root_stack(k);
     return simulator()->set_event(k, Edge_flip_event(s, e, tr_.wrapper_handle()));
   }
 
   Event_key change_to_facet_flip(const Facet &f, Event_key k) {
-    if (k== simulator()->null_event() || LAZY && !k.is_valid()) return k;
+    if (k== simulator()->null_event()) return k;
     Certificate s= extract_root_stack(k);
     return simulator()->set_event(k, Facet_flip_event(s, f, tr_.wrapper_handle()));
   }
@@ -1574,146 +1157,50 @@ private:
     return mpt_.pointer();
     }*/
 
-#ifdef DELAUNAY_CACHING
-  void handle_delete_cell(Cell_handle h) {
-    h->info().clear();
-  }
 
-  void handle_new_cell(Cell_handle) {
-    //h->info().update(h, moving_object_table());
-  }
-  void handle_changed_cell(Cell_handle h) {
-    h->info().clear();
-    handle_new_cell(h);
-  }
-
-  struct Full_certificate
-  {
-    Full_certificate(Cell_handle h, Point pt): h_(h), pt_(pt){}
-    template <class CC>
-    typename CC::result_type operator()(const CC &cc) const
-    {
-
-      CGAL_KINETIC_LOG_MAPLE( std::endl << std::endl);
-      CGAL_KINETIC_LOG_MAPLE("(" << cc(CGAL::Kinetic::internal::point(pt_).x())<< ")*(" << h_->info().x());
-      CGAL_KINETIC_LOG_MAPLE(")+ (" << cc(CGAL::Kinetic::internal::point(pt_).y()) << ")*(" << h_->info().y());
-      CGAL_KINETIC_LOG_MAPLE(")+ (" << cc(CGAL::Kinetic::internal::point(pt_).z())<< ")*("<< h_->info().z());
-      CGAL_KINETIC_LOG_MAPLE(")+(" <<CGAL::Kinetic::internal::lift(pt_, cc)<<")*("<<h_->info().l());
-      CGAL_KINETIC_LOG_MAPLE(")+(" << h_->info().o() << ");\n");
-      return
-	cc(CGAL::Kinetic::internal::point(pt_).x())*h_->info().x()
-	+cc(CGAL::Kinetic::internal::point(pt_).y())*h_->info().y()
-	+cc(CGAL::Kinetic::internal::point(pt_).z())*h_->info().z()
-	+CGAL::Kinetic::internal::lift(pt_, cc)*h_->info().l()
-	+h_->info().o();
-    }
-    Cell_handle h_;
-    Point pt_;
-  };
-
-  struct Hull_certificate
-  {
-    Hull_certificate(Cell_handle h, Point pt): h_(h), pt_(pt) {
-    }
-    template <class CC>
-    typename CC::result_type operator()(const CC &cc) const
-    {
-      CGAL_KINETIC_LOG_MAPLE(std::endl << std::endl);
-      CGAL_KINETIC_LOG_MAPLE("("<< cc(CGAL::Kinetic::internal::point(pt_).x()) << ")*(" << h_->info().x());
-      CGAL_KINETIC_LOG_MAPLE(")+(" << cc(CGAL::Kinetic::internal::point(pt_).y())<<")*("<<h_->info().y());
-      CGAL_KINETIC_LOG_MAPLE(")+("<<cc(CGAL::Kinetic::internal::point(pt_).z())<<")*("<<h_->info().z());
-      CGAL_KINETIC_LOG_MAPLE(")+("<<h_->info().o()<<");\n");
-      return
-	cc(CGAL::Kinetic::internal::point(pt_).x())*h_->info().x()
-	+cc(CGAL::Kinetic::internal::point(pt_).y())*h_->info().y()
-	+cc(CGAL::Kinetic::internal::point(pt_).z())*h_->info().z()
-	+h_->info().o();
-    }
-    Cell_handle h_;
-    Point pt_;
-  };
-
-  Certificate root_stack(const Facet &f,
-			 const typename Simulator::Time &st) const
-  {
-    Certificate s;
-#ifndef NDEBUG
-    root_stack_nc(f);
-#endif
-    if ( !f.first->vertex(f.second)->point() ) {
-      // this is inf
-      Point_key mv= triangulation_.mirror_vertex(f.first, f.second)->point();
-      if (!f.first->info().set()) {
-	f.first->info().update(f.first, moving_object_table());
-      }
-      s= simulator()->root_stack_object(Hull_certificate(f.first,
-							 moving_object_table()->at(mv)));
-    }
-    else {
-      bool hinf=false;
-      Cell_handle nc= f.first->neighbor(f.second);
-      for (unsigned int i=0; i<4; ++i) {
-	if ( !nc->vertex(i)->point() ) {
-	  hinf=true;
-	  break;
-	}
-      }
-
-      if (hinf) {
-	Point_key mv= f.first->vertex(f.second)->point();
-	Cell_handle h= f.first->neighbor(f.second);
-	if (!h->info().set()) {
-	  h->info().update(h, moving_object_table());
-	}
-
-	s= simulator()->root_stack_object(Hull_certificate(h,
-							   moving_object_table()->at(mv)));
-      }
-      else {
-	Cell_handle h= f.first;
-	if (h->info().set()) {
-	  Point_key mv= triangulation_.mirror_vertex(f.first, f.second)->point();
-
-	  s= simulator()->root_stack_object(Full_certificate(h,
-							     moving_object_table()->at(mv)));
-	}
-	else {
-	  Cell_handle h= f.first->neighbor(f.second);
-	  if (!h->info().set()) {
-	    h->info().update(h, moving_object_table());
-	  }
-	  Vertex_handle v= f.first->vertex(f.second);
-
-	  s= simulator()->root_stack_object(Full_certificate(h,
-							     moving_object_table()->at(v->point())));
+  void clean_cell(Cell_handle h) {
+    CGAL_precondition(has_certificates_);
+    for (unsigned int i=0; i< 4; ++i) {
+      for (unsigned int j=0; j<i; ++j) {
+	Edge e(h, i, j);
+	if (has_event(e)) {
+	  make_not_edge_flip(e, h);
+	  //delete_event(triangulation_.label(e));
+	  //triangulation_.set_label(e, Event_key());
 	}
       }
     }
-
-    //typename Simulator::Root_stack snc= root_stack_nc(f);
-
-    return s;
-
+    for (unsigned int i=0; i< 4; ++i) {
+      Facet f(h, i);
+      if (has_event(f)) {
+	simulator()->delete_event(triangulation_.label(f));
+	triangulation_.set_label(f, Event_key());
+      }
+    }
   }
-#else
-  void handle_delete_cell(Cell_handle) {
-  }
 
-  void handle_new_cell(Cell_handle) {
+  void handle_new_cell(Cell_handle h) {
+    CGAL_precondition(has_certificates_);
+    for (unsigned int i=0; i<4; ++i) {
+      for (unsigned int j=0; j< i; ++j) {
+	Edge e(h, i, j);
+	if (is_degree_3(e) && !has_event(e) && !has_degree_4_vertex(e)) {
+	  make_edge_flip(e);
+	}
+      }
+      Facet f(h, i);
+      if (!has_event(f) && !has_degree_3_edge(f)) {
+	make_certificate(f);
+      }
+     
+    }
   }
   void handle_changed_cell(Cell_handle) {
-
+    
   }
 
   Certificate root_stack(const Facet &f,
 			 const typename Simulator::Time &st) const
-  {
-    return root_stack_nc(f, st);
-  }
-#endif
-
-  Certificate root_stack_nc(const Facet &f,
-			    const typename Simulator::Time &st) const
   {
     std::vector<Point_key> ids;
     point_keys(f, back_inserter(ids));
@@ -1784,9 +1271,9 @@ private:
   Visitor v_;
 };
 
-template <class TraitsT, class Visitor, bool LAZY>
+template <class TraitsT, class Visitor>
 inline std::ostream &operator<<(std::ostream &out,
-				const Delaunay_triangulation_base_3<TraitsT, Visitor, LAZY> &dt)
+				const Delaunay_triangulation_base_3<TraitsT, Visitor> &dt)
 {
   dt.write(out);
   return out;

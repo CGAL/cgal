@@ -415,7 +415,7 @@ public:
     if (item== end_key()) return;
 #ifndef NDEBUG
     if (!is_in_queue(item)) {
-      std::cerr << "Eraseing event not in queue ";
+      std::cerr << "Erasing event not in queue ";
       item->write(std::cerr);
       std::cerr << std::endl;
     }
@@ -678,7 +678,7 @@ protected:
     }
     return true;
   }
-
+public:
   bool is_in_queue(const Key k) const
   {
     //if (k.pointer()->time() == std::numeric_limits<Priority>::infinity()) return true;
@@ -699,7 +699,7 @@ protected:
 #endif
     return false;
   }
-
+protected:
   unsigned int select(Queue &source, Queue &target, const Priority & b/*, bool binf*/) {
     unsigned int sz= source.size() + target.size();if (sz);
     int count=0;

@@ -19,11 +19,11 @@ int main(int, char *[])
     typedef CGAL::Kinetic::Regular_triangulation_inexact_simulation_traits Simulation_traits;
     typedef CGAL::Kinetic::Regular_triangulation_event_log_visitor_3 Visitor;
     typedef CGAL::Kinetic::Regular_triangulation_3<Simulation_traits, Visitor> KDel;
-    Simulation_traits simtr(0,100000);
+    Simulation_traits simtr(1,1000);
     Simulation_traits::Simulator::Handle sp= simtr.simulator_handle();
       
     KDel kdel(simtr);
-    //CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
+    CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
     std::ifstream in("data/regular_triangulation_3.input");
     if (!in) {
       std::cerr << "Error opening input file: " << "data/regular_triangulation_3.input" << std::endl;
@@ -37,7 +37,7 @@ int main(int, char *[])
       std::istringstream il(buf);
       Simulation_traits::Kinetic_kernel::Weighted_point_3 p;
       il >> p;
-      //std::cout << p << std::endl;
+      std::cout << p << std::endl;
       simtr.active_points_3_table_handle()->insert(p); // here 
       ++nread;
     }
@@ -51,11 +51,11 @@ int main(int, char *[])
     typedef CGAL::Kinetic::Regular_triangulation_CORE_exact_simulation_traits Simulation_traits;
     typedef CGAL::Kinetic::Regular_triangulation_event_log_visitor_3 Visitor;
     typedef CGAL::Kinetic::Regular_triangulation_3<Simulation_traits, Visitor> KDel;
-    Simulation_traits simtr(0,100000);
+    Simulation_traits simtr(1,1000);
     Simulation_traits::Simulator::Handle sp= simtr.simulator_handle();
 
     KDel kdel(simtr);
-    //CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
+    CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
     std::ifstream in("data/regular_triangulation_3.input");
     if (!in) {
       std::cerr << "Error opening input file: " << "data/regular_triangulation_3.input" << std::endl;
@@ -74,7 +74,7 @@ int main(int, char *[])
       ++nread;
     }
     kdel.set_has_certificates(true);
-
+    kdel.audit();
     while (sp->next_event_time()
 	   < sp->end_time()) {
       sp->set_current_event_number(sp->current_event_number()+1);
@@ -89,26 +89,62 @@ int main(int, char *[])
       return EXIT_FAILURE;
     }
 
-    int error_count=0;
-    for (CGAL::Kinetic::Delaunay_triangulation_event_log_visitor_3::Event_iterator it = kdel.visitor().events_begin();
-	 it != kdel.visitor().events_end(); ++it) {
+    std::vector<std::string> expected;
+    while (true) {
       char buf[1000];
       out.getline(buf, 1000);
-      if (*it != buf) {
-	std::cerr << "ERROR Got event: " << *it << std::endl;
-	std::cerr << "      Expected event: " << buf << std::endl;
+      if (!out) break;
+      expected.push_back(buf);
+    }
+
+    int error_count=0;
+    unsigned int line=0;
+    for (CGAL::Kinetic::Delaunay_triangulation_event_log_visitor_3::Event_iterator it = kdel.visitor().events_begin();
+	 it != kdel.visitor().events_end(); ++it) {
+      if (expected.size() <= line || *it != expected[line]) {
+	//std::cerr << "ERROR Got event: " << *it << std::endl;
+	//std::cerr << "      Expected event: " << buf << std::endl;
+	++error_count;
+      }
+      ++line;
+    }
+    if (error_count != 0) {
+      line=0;
+      error_count=0;
+      for (CGAL::Kinetic::Delaunay_triangulation_event_log_visitor_3::Event_iterator it = kdel.visitor().events_begin();
+	 it != kdel.visitor().events_end(); ++it) {
+	if (expected.size() <= line || *it != expected[line]) {
+	  int found_line=-1;
+	  for (unsigned int i=line; i < expected.size(); ++i) {
+	    if (expected[i] == *it) {
+	      found_line=i;
+	      break;
+	    }
+	  }
+	  if (found_line != -1) {
+	    for (int i=line; i< found_line; ++i) {
+	      std::cerr << "ERROR Missing event: " << expected[i] << std::endl;
+	      ++error_count;
+	    }
+	    CGAL_assertion(*it == expected[found_line]);
+	    std::cerr << "Matched Event: " << *it << std::endl;
+	    line=found_line+1; 
+	  } else {
+	    std::cerr << "ERROR Extra event: " << *it << std::endl;
+	    ++error_count;
+	  }
+	} else {
+	  std::cerr << "Matched event: " << *it << std::endl;
+	  ++line;
+	}
+      }
+      for (; line != expected.size(); ++line) {
+	std::cerr << "ERROR Missing event: " << expected[line] << std::endl;
 	++error_count;
       }
     }
 
-    while (out) {
-      char buf[1000];
-      out.getline(buf, 1000);
-      if (out) {
-	std::cerr << "ERROR Missing event: " << buf << std::endl;
-	++error_count;
-      }
-    }
+  
 
     if (error_count != 0) {
       std::cerr << "ERROR " << error_count << " errors in " << kdel.visitor().size() << " events.\n";

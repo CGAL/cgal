@@ -17,7 +17,7 @@ August 2006 Daniel Russel
 - the Delaunay_triangulation_2 doesn't require that the Triangulation use an Instantaneous_kernel (if you don't insert or erase)
 - removed set_end_time/set_end_priority replaced with set_interval
 
-September 2006 Daniel Russel
+January 2007 Daniel Russel
 - added event auditing
 - change has_rational_current_time to has_current_time_as_nt() to one function next_time_representable_as_nt
 - changed some NT to FT to be consistent with CGAL

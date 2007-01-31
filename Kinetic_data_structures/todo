@@ -1,7 +1,5 @@
 Future Daniel Russel
-- check insert for assertion failure
 - move rbr for doubles to the middle, what it is.
-- sort appears to be broken
 - when using numeric solvers, evaluate the static predicates first before solving?
 - make adding points to table optional, they just control notification. Keys are the same as points (so points are ref counted pointers.
 - move table to a list and make key the same as object (i.e. the key is the Point_2) this will help filtering and things and mean the table can be ignored if de
@@ -11,11 +9,9 @@ sired. Make the tables simply an event manager rather than owning the points (so
 - make sorting general- solve linking first
 - times can generate certificate func and solve. Queue checks if they are dirty (a point changed--when check? that is hard--maybe collapse to front of interval if need exact and is dirty) and reinserts them if they are. Points are ref counted pointers. With interval rep and way to generate exact. Then just insert notifications. Dirty is keept by generation count per point. Time is k ints, k points, inexact func, interval--broken-what if time moves up? Need linear scans.
 
+Easy:
+- document audit_event and is_in_queue (rename this to contains)
+
 known bugs:
-- If, on insertion into a Del_3 the current time must be advanced past an event which invalidates the cell handle that is used to insert the vertex, then thereis a problem. To fix this check all the paths for insert and protect this method behind ones which set the time before locate. Make that IK and S times are equal a precondition.
 - Two list queue should make sure it steps off the dividing element.
-
-
-make core_traits and test them and regular inexact
-
 

@@ -43,7 +43,10 @@ class HDRS{
 	 const Root& ub, const Traits_t& k): solver_(k.root_stack_object(uf, lb, ub)) {
       CGAL_KINETIC_LOG(LOG_LOTS, "Function= " << uf << std::endl);
       CGAL_expensive_precondition(solver_.empty() || solver_.top() >= lb);
-  
+      if (uf.degree() == -1) {
+	CGAL_KINETIC_LOG(LOG_SOME, "Zero function found at time " << lb << std::endl);	
+	++ internal::zero_certificates__;
+      }
 #ifndef NDEBUG
       if (!SLOPPY && k.sign_at_object()(uf, lb) == CGAL::NEGATIVE) {
 	CGAL_KINETIC_ERROR( "Invalid certificate constructed for function " << uf << " between " << lb 

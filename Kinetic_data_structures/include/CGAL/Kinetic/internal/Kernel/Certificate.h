@@ -47,6 +47,8 @@ public:
     if (rs_.empty()) {
       std::cerr << "You now must check if the certificate will fail before calling top.\n";
       CGAL_assertion(0);
+      static Time t(1000000);
+      return t;
     }
     return rs_.top();
   }
