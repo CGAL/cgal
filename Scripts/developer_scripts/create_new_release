@@ -17,6 +17,7 @@ DO_RPM=""           # Also build RPMs (no RPMs by default)
 DO_PUBLIC=""        # Also build the public versions
 DO_IT=""            # Real mode (svn tag, mail, copy to HTTP server), versus local testing
 SOURCES_DIR="trunk" # SVN working copy directory, default is "trunk"
+VERBOSE=""          # Verbose mode (displays log to standard err)
 
 # Parsing command-line
 while [ $1 ]; do
@@ -24,12 +25,13 @@ while [ $1 ]; do
         -h|-help|--h|--help)
             echo 'Usage : create_new_release [--help] [--rpm] [--public] [--do-it] <packages directory>'
             echo
-            echo '    --help   : prints this usage help'
-            echo '    --rpm    : also build the corresponding SRPMs'
-            echo '    --public : also build the corresponding public versions'
-            echo '    --do-it  : the real thing (NOT for local tests!  Only for the release master!),'
-            echo '               does write operations (updating the version_number, svn tag,'
-            echo '               sending mail, copying on the web server...)'
+            echo '    --help    : prints this usage help'
+            echo '    --rpm     : also build the corresponding SRPMs'
+            echo '    --public  : also build the corresponding public versions'
+            echo '    --do-it   : the real thing (NOT for local tests!  Only for the release master!),'
+            echo '                does write operations (updating the version_number, svn tag,'
+            echo '                sending mail, copying on the web server...)'
+	    echo '    --verbose : print log to standard output, instead of the log file'
             echo '    <packages directory> : the directory containing the packages [default is trunk]'
             exit
         ;;
@@ -43,6 +45,10 @@ while [ $1 ]; do
         ;;
         --do-it)
             DO_IT="y"
+            shift; continue
+        ;;
+        --verbose)
+            VERBOSE="y"
             shift; continue
         ;;
         -*)
@@ -78,7 +84,14 @@ TMPDIR="`pwd`"
 
 LOGFILE="${TMPDIR}/create_release.log.`date -I`.$$"
 
-exec >> ${LOGFILE} 2>&1
+if [ -z "$VERBOSE" ]; then
+  # Redirect standard out and standard err to $LOGFILE
+  exec >> ${LOGFILE} 2>&1
+fi
+
+# Verbose: displays all executed commands 
+#PS4='[${LINENO}]+ '
+set -x
 
 cd ${TMPDIR} || return
 
@@ -150,7 +163,7 @@ if [ "$DO_RPM" ]; then
     rm -rf rpm
     cp -r ${SOURCES_DIR}/Maintenance/rpm .
     cp ${release_name}.tar.gz rpm/SOURCES/
-    make -C rpm CGAL.src CGAL_INTERNAL_RELEASE=${RELEASE_NUMBER}
+    make -C rpm CGAL.src CGAL_INTERNAL_RELEASE=${INTERNAL_NUMBER}
     echo "`basename rpm/SRPMS/*.src.rpm`" > "${HTML_DIR}/LATEST_SRPM"
     mv rpm/SRPMS/*.src.rpm "${HTML_DIR}"
     rm -rf rpm
@@ -194,5 +207,9 @@ if [ -n "$DO_RPM" -a -n "$DO_PUBLIC" ]; then
 fi
 
 # Remove local directory and tarball
-rm -rf ${release_name} ${public_release_name}
-rm ${release_name}.tar.gz ${public_release_name}.tar.gz ${public_release_name}.zip
+rm -rf ${release_name}
+rm ${release_name}.tar.gz
+if [ "$DO_PUBLIC" ]; then
+  rm -rf  ${public_release_name}
+  rm  ${public_release_name}.tar.gz ${public_release_name}.zip
+fi
