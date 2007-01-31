@@ -25,13 +25,14 @@ int main(int, char *[])
   {
     CGAL::Delaunay_triangulation_2<Traits::Instantaneous_kernel> del(tr.instantaneous_kernel_object());
     del.geom_traits().set_time(Traits::Instantaneous_kernel::FT(0));
-    
+    CGAL_postcondition(del.geom_traits().time_is_nt());
     for (Traits::Active_points_2_table::Key_iterator kit= tr.active_points_2_table_handle()->keys_begin();
 	 kit !=  tr.active_points_2_table_handle()->keys_end(); ++kit) {
       del.insert(*kit);
+      del.is_valid(true);
     }
     
-    del.is_valid(true);
+  
     std::cout << "Triangulation has " << del.number_of_vertices() << " vertices and "
 	      << del.number_of_faces() << " faces.\n";
   }
@@ -39,13 +40,14 @@ int main(int, char *[])
   {
     CGAL::Delaunay_triangulation_2<Traits::Instantaneous_kernel> del(tr.instantaneous_kernel_object());
     del.geom_traits().set_time(Traits::Instantaneous_kernel::Time(0));
-    
+    CGAL_postcondition(!del.geom_traits().time_is_nt());
     for (Traits::Active_points_2_table::Key_iterator kit= tr.active_points_2_table_handle()->keys_begin();
 	 kit !=  tr.active_points_2_table_handle()->keys_end(); ++kit) {
       del.insert(*kit);
+      del.is_valid(true);
     }
     
-    del.is_valid(true);
+   
     std::cout << "Triangulation has " << del.number_of_vertices() << " vertices and "
 	      << del.number_of_faces() << " faces.\n";
   }

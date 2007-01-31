@@ -125,6 +125,43 @@ struct Cartesian_side_of_oriented_circle_2
   }
 };
 
+
+template <class KK>
+struct Cartesian_compare_distance_2
+{
+  typedef typename KK::Certificate_function result_type;
+  typedef typename KK::Point_2 first_argument_type;
+  typedef typename KK::Point_2 second_argument_type;
+  typedef typename KK::Point_2 third_argument_type;
+  result_type operator()(const first_argument_type &a,
+			 const second_argument_type &b,
+			 const second_argument_type &c) const
+  {
+    typename KK::Motion_function db= CGAL::square(b.x()-a.x()) + CGAL::square(b.y()-a.y());
+    typename KK::Motion_function dc= CGAL::square(c.x()-a.x()) + CGAL::square(c.y()-a.y());
+    return dc-db;
+  }
+};
+
+template <class KK>
+struct Cartesian_compare_distance_3
+{
+  typedef typename KK::Certificate_function result_type;
+  typedef typename KK::Point_3 first_argument_type;
+  typedef typename KK::Point_3 second_argument_type;
+  typedef typename KK::Point_3 third_argument_type;
+  result_type operator()(const first_argument_type &a,
+			 const second_argument_type &b,
+			 const second_argument_type &c) const
+  {
+    typename KK::Motion_function db= CGAL::square(b.x()-a.x()) + CGAL::square(b.y()-a.y()) 
+      + CGAL::square(b.z()-a.z());
+    typename KK::Motion_function dc= CGAL::square(c.x()-a.x()) + CGAL::square(c.y()-a.y())
+      + CGAL::square(c.z()-a.z());
+    return dc-db;
+  }
+};
+
 template <class KK>
 struct Cartesian_less_x_1
 {

@@ -143,30 +143,77 @@ public:
     return Weighted_orientation_3();
     }*/
 
+  template <class Arg>
+  struct Null_generator {
+    typedef Arg argument_type;
+    typedef Arg first_argument_type;
+    typedef Arg second_argument_type;
+    typedef Arg third_argument_type;
+    typedef Arg fourth_argument_type;
+    typedef Certificate_function result_type;
+    
+    result_type operator()(const argument_type &) const {
+      CGAL_assertion(0);
+      return result_type(0);
+    }
+    result_type operator()(const first_argument_type &, const second_argument_type &) const {
+      CGAL_assertion(0);
+      return result_type(0);
+    }
+    result_type operator()(const first_argument_type &, const second_argument_type &,
+			   const third_argument_type &) const {
+      CGAL_assertion(0);
+      return result_type(0);
+    }
+    result_type operator()(const first_argument_type &, const second_argument_type &,
+			   const third_argument_type &, const fourth_argument_type &) const {
+      CGAL_assertion(0);
+      return result_type(0);
+    }
+
+  };
+
+  typedef Certificate_generator<This, Null_generator<Point_3> > Compare_xyz_3;
+  Compare_xyz_3 compare_xyz_3_object() const {return Compare_xyz_3();}
+
+  typedef Certificate_generator<This, Null_generator<Point_3> > Coplanar_orientation_3;
+  Coplanar_orientation_3 coplanar_orientation_3_object() const {return Coplanar_orientation_3();}
+
+  typedef Certificate_generator<This, Null_generator<Point_3> > Coplanar_side_of_bounded_circle_3;
+  Coplanar_side_of_bounded_circle_3 coplanar_side_of_bounded_circle_3_object() const {return Coplanar_side_of_bounded_circle_3();}
+  
 
   //! Compare the x coordinates of two points
-  typedef Certificate_generator<This, Cartesian_less_x_1<This> > Less_x_1;
-  Less_x_1 less_x_1_object() const {return Less_x_1(k_);}
+  typedef Certificate_generator<This, Cartesian_compare_distance_2<This> > Compare_distance_2;
+  Compare_distance_2 compare_distance_2_object() const {return Compare_distance_2();}
 
   //! Compare the x coordinates of two points
-  typedef Certificate_generator<This, Cartesian_less_x_2<This> > Less_x_2;
-  Less_x_2 less_x_2_object() const {return Less_x_2(k_);}
+  typedef Certificate_generator<This, Cartesian_compare_distance_3<This> > Compare_distance_3;
+  Compare_distance_3 compare_distance_3_object() const {return Compare_distance_3();}
+
+  //! Compare the x coordinates of two points
+  typedef Certificate_generator<This, Cartesian_less_x_1<This> > Compare_x_1;
+  Compare_x_1 compare_x_1_object() const {return Compare_x_1(k_);}
+
+  //! Compare the x coordinates of two points
+  typedef Certificate_generator<This, Cartesian_less_x_2<This> > Compare_x_2;
+  Compare_x_2 compare_x_2_object() const {return Compare_x_2(k_);}
 
   //! Compare the y coordinate of two points
-  typedef Certificate_generator<This, Cartesian_less_y_2<This> > Less_y_2;
-  Less_y_2 less_y_2_object() const {return Less_y_2(k_);}
+  typedef Certificate_generator<This, Cartesian_less_y_2<This> > Compare_y_2;
+  Compare_y_2 compare_y_2_object() const {return Compare_y_2(k_);}
 
   //! Compare the x coordinate of two points
-  typedef Certificate_generator<This, Cartesian_less_x_3<This> > Less_x_3;
-  Less_x_3 less_x_3_object() const {return Less_x_3(k_);}
+  typedef Certificate_generator<This, Cartesian_less_x_3<This> > Compare_x_3;
+  Compare_x_3 compare_x_3_object() const {return Compare_x_3(k_);}
 
   //! Compare the y coordinate of two points
-  typedef Certificate_generator<This, Cartesian_less_y_3<This> > Less_y_3;
-  Less_y_3 less_y_3_object() const {return Less_y_3(k_);}
+  typedef Certificate_generator<This, Cartesian_less_y_3<This> > Compare_y_3;
+  Compare_y_3 compare_y_3_object() const {return Compare_y_3(k_);}
 
   //! Compare the z coordinate of two points
-  typedef Certificate_generator<This, Cartesian_less_z_3<This> > Less_z_3;
-  Less_z_3 less_z_3_object() const {return Less_z_3(k_);}
+  typedef Certificate_generator<This, Cartesian_less_z_3<This> > Compare_z_3;
+  Compare_z_3 compare_z_3_object() const {return Compare_z_3(k_);}
 
   //! computes the lifted coordinate under the lifting map
   typedef Delaunay_lifting<This> Delaunay_lifting_3;
