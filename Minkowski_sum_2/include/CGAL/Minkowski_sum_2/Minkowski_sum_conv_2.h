@@ -169,28 +169,12 @@ public:
     CGAL_precondition (pgn1.is_simple());
     CGAL_precondition (pgn2.is_simple());
 
-#ifdef RWRW_STATS
-    CGAL::Timer      _timer;
-    _timer.start();
-#endif // RWRW_STATS
-
     // Prepare the vector of directions for the first polygon.
     const unsigned int    n1 = pgn1.size();
     const bool            forward1 = (pgn1.orientation() == COUNTERCLOCKWISE);
     std::vector<Direction_2>  dirs1 (n1);
     Vertex_circulator         curr1, next1;
     unsigned int              k1;
-
-#ifdef RWRW_STATS
-    Vertex_circulator     prev1 = pgn1.vertices_circulator();
-    unsigned int          ref1 = 0, ref2 = 0;
-
-    if (forward1)
-      --prev1;
-    else
-      ++prev1;
-#endif // RWRW_STATS
-
 
     next1 = curr1 = pgn1.vertices_circulator();
     for (k1 = 0; k1 < n1; k1++)
@@ -200,14 +184,6 @@ public:
       else
         --next1;
 
-#ifdef RWRW_STATS
-      if (f_orientation (*prev1, *curr1, *next1) == RIGHT_TURN)
-      {
-	ref1++;
-      }
-      prev1 = curr1;
-#endif // RWRW_STATS
-      
       dirs1[k1] = f_direction (f_vector (*curr1, *next1));
       curr1 = next1;
     }
@@ -253,12 +229,6 @@ public:
       prev2 = curr2;
       curr2 = next2;
     }
-
-#ifdef RWRW_STATS
-
-    ref2 = reflex_vertices.size();
-
-#endif // RWRW_STATS
 
     // Add the bottom-left vertex of the second polygon to the reflex vertices.
     typename std::list<Vertex_ref>::iterator  reflex_it;
@@ -348,31 +318,11 @@ public:
             }
           }
 	  cycles++;
-
-#ifdef RWRW_STATS
-
-          std::cout << "Cycle no. " << cycles
-                    << " containing " << conv_segments.size()
-                    << " segments (in " << loops << " loops)." << std::endl;
-
-#endif // RWRW_STATS
         }
 
         curr1 = next1;
       }
     }
-
-#ifdef RWRW_STATS
-
-    std::cout << "|P| = " << n1 << " (" << ref1
-	      << ")   |Q| = " << n2 << " (" << ref2 << ")" << std::endl;
-    _timer.stop();
-    std::cout << cycles << " cycles, "
-	      << conv_segments.size() << " segments" << std::endl;
-    std::cout << "Computing the convolution took "
-	      << _timer.time() << " seconds. " << std::endl;
-
-#endif // RWRW_STATS
 
     // Compute the union of the cycles that represent the Minkowski sum.
     Union_2     unite;
@@ -639,9 +589,63 @@ private:
       reduced_cycle = true;
     }
 
+    // Eliminate "antenna"s that occur in the cycle.
+    typename std::list<Labeled_segment_2>::iterator  next, after_next;
+    bool                                             found_antenna;
+
+    next = curr = cycle.begin();
+    ++next;
+
+    while (curr != cycle.end())
+    {
+      // If the current segment is the last one in the cycle, its next segment
+      // (in cyclic order) is the first one.
+      if (next == cycle.end())
+      {
+        found_antenna = f_equal (curr->source(), cycle.begin()->target());
+        if (found_antenna)
+        {
+          next = cycle.begin();
+          after_next = cycle.end();
+        }
+      }
+      else
+      {
+        found_antenna = f_equal (curr->source(), next->target());
+        if (found_antenna)
+        {
+          after_next = next;
+          ++after_next;
+        }
+      }
+
+      // We know that curr's target and next's source is the same point.
+      // If they also share their other endpoint, then these two segments
+      // form an antenna and should threrefore be removed from the cycle.
+      if (found_antenna)
+      {
+        cycle.erase (curr);
+        cycle.erase (next);
+        curr = after_next;
+
+        if (after_next != cycle.end())
+        {
+          next = curr;
+          ++next;
+        }
+
+        reduced_cycle = true;
+      }
+      else
+      {
+        curr = next;
+        ++next;
+      }
+    }
+
+    // In case we have reduced the cycle, re-number the segments in it.
     if (reduced_cycle)
     {
-      // In case we have reduced the cycle, re-number the segments in it.
       seg_index = 0;
       for (curr = cycle.begin(); curr != cycle.end(); ++curr, ++seg_index)
         cycle.back().label().set_index (seg_index);

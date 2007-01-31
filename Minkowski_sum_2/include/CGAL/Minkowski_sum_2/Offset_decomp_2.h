@@ -23,9 +23,6 @@
 #include <CGAL/Minkowski_sum_2/Union_of_curve_cycles_2.h>
 #include <list>
 
-// RWRW:
-#include <CGAL/Timer.h>
-
 CGAL_BEGIN_NAMESPACE
 
 /*! \class
@@ -91,11 +88,6 @@ public:
   {
     CGAL_precondition (pgn.is_simple());
 
-#ifdef RWRW_STATS
-    CGAL::Timer      _timer;
-    _timer.start();
-#endif // RWRW_STATS
-
     // Decompose the input polygon into convex sub-polygons.
     Decomposition_strategy  decomp_strat;
     Polygons_list           sub_pgns;
@@ -114,16 +106,6 @@ public:
                        std::back_inserter(boundary_curves));
       pgn_id++;
     }
-
-#ifdef RWRW_STATS
-
-    _timer.stop();
-    std::cout << sub_pgns.size() << " polygons, " 
-	      << boundary_curves.size() << " curves." << std::endl;
-    std::cout << "Computing the decomposition took "
-	      << _timer.time() << " seconds. " << std::endl;
-
-#endif // RWRW_STATS
 
     // Compute the union of the cycles that represent the offset polygon.
     Union_2     unite;

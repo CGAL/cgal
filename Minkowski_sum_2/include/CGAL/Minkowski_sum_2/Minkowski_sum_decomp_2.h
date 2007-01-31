@@ -124,11 +124,6 @@ public:
     CGAL_precondition (pgn1.is_simple());
     CGAL_precondition (pgn2.is_simple());
 
-#ifdef RWRW_STATS
-    CGAL::Timer      _timer;
-    _timer.start();
-#endif // RWRW_STATS
-
     // Decompose both input polygons to convex sub-polygons.
     Decomposition_strategy  decomp_strat;
     Polygons_list           sub_pgns1;
@@ -156,17 +151,6 @@ public:
                                 std::back_inserter (boundary_segments));
       }
     }
-
-#ifdef RWRW_STATS
-
-    _timer.stop();
-    std::cout << sub_pgns1.size()*sub_pgns2.size() << " polygons (" 
-	      << sub_pgns1.size() << " * " << sub_pgns2.size()
-	      << "), " << boundary_segments.size() << " segments" << std::endl;
-    std::cout << "Computing the decomposition took "
-	      << _timer.time() << " seconds. " << std::endl;
-
-#endif // RWRW_STATS
 
     // Compute the union of the polygons that represent the Minkowski sums
     // of all sub-polygon pairs.

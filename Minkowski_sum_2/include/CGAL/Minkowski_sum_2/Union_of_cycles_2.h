@@ -87,34 +87,6 @@ protected:
     // Construct the arrangement of the curves.
     insert_x_monotone_curves (arr, begin, end);
 
-#ifdef RWRW_STATS
-
-    std::cout << "Arrangement size: "
-	      << " V = " << arr.number_of_vertices()
-	      << " E = " << arr.number_of_edges()
-	      << " F = " << arr.number_of_faces() << std::endl;
-
-    unsigned int                     sum_deg = 0;
-    unsigned int                     sum_ovl = 0;
-    Vertex_iterator                  _vit;
-    Edge_iterator                    _eit;
-
-    for (_vit = arr.vertices_begin(); _vit != arr.vertices_end(); ++_vit)
-      sum_deg += _vit->degree();
-
-    for (_eit = arr.edges_begin(); _eit != arr.edges_end(); ++_eit)
-      sum_ovl += (_eit->curve().label().right_count() +
-                  _eit->curve().label().left_count());
-
-    std::cout << "> Average vertex degree: "
-	      << static_cast<double>(sum_deg) / 
-                 static_cast<double>(arr.number_of_vertices()) << std::endl;
-    std::cout << "> Average edge overlaps: "
-	      << static_cast<double>(sum_ovl) / 
-                 static_cast<double>(arr.number_of_edges()) << std::endl;
-
-#endif // RWRW_STATS
-
     // Go over all faces and mark them as unvisited, by setting their inside
     // count to (-1).
     Face_iterator                    fit;
@@ -177,19 +149,18 @@ protected:
       {
         he = circ;
         f_next = he->twin()->face();
-      
+
         if (f_next->data() == UNVISITED)
         {
           next_count = curr_count + _boundary_count (he->twin());
           f_next->set_data (next_count);
           queue.push_back (f_next);
         }
-        else
+        else if (f_curr != f_next)
         {
           CGAL_assertion (f_next->data() == 
                           curr_count + _boundary_count (he->twin()));
         }
-
         ++circ;
       
       } while (circ != first);

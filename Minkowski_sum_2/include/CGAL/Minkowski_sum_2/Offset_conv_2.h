@@ -23,9 +23,6 @@
 #include <CGAL/Minkowski_sum_2/Union_of_curve_cycles_2.h>
 #include <list>
 
-// RWRW:
-#include <CGAL/Timer.h>
-
 CGAL_BEGIN_NAMESPACE
 
 /*! \class
@@ -86,11 +83,6 @@ public:
   {
     CGAL_precondition (pgn.is_simple());
 
-#ifdef RWRW_STATS
-    CGAL::Timer      _timer;
-    _timer.start();
-#endif // RWRW_STATS
-
     // Compute the curves that form the single convolution cycle for the
     // given polygon.
     Curves_list                     cycle;
@@ -98,17 +90,6 @@ public:
     _offset_polygon (pgn, r,
                      1,                       // The ID of the single cycle.
                      std::back_inserter (cycle));
-
-#ifdef RWRW_STATS
-
-    _timer.stop();
-    std::cout << "|P| = " << pgn.size() << std::endl;
-    std::cout << "1 cycle, "
-	      << cycle.size() << " arcs" << std::endl;
-    std::cout << "Computing the convolution took "
-	      << _timer.time() << " seconds. " << std::endl;
-
-#endif // RWRW_STATS
 
     // Compute the union of the cycles that represent the offset polygon.
     Union_2     unite;
