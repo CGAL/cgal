@@ -9,46 +9,24 @@
 % |
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
-\begin{ccRefConcept}{Kinetic::RegularTriangulationVisitor3}
+\begin{ccRefConcept}{Kinetic::RegularTriangulationVisitor_3}
 
 \ccDefinition
 
-This concept is for proxy objects which get notified when a kinetic regular triangulation changes.
+This concept is for proxy objects which get notified when a kinetic regular triangulation changes. It inherits all the methods of \ccc{DelaunayTriangulationVisitor_3}.
+
+\ccIsModel
+
+\ccc{Kinetic::DelaunayTriangulationVisitor_3}
+
 
 \ccCreationVariable{v}
 
 \ccOperations
 
-\ccMethod{void remove_vertex(Vertex_handle);}{The vertex is about to be deleted.}
-
-\ccMethod{void create_vertex(Vertex_handle);}{The vertex was just created.}
-
-\ccMethod{void modify_vertex(Vertex_handle);}{The trajectory of the vertex just changed.}
-
-\ccMethod{template <class It>  void create_cells(It begin, It end);}{New faces have just been made. The iterator \ccc{value_type} is a \ccc{TriangulationDataStructure_3::Cell_handle}.}
- 
-\ccMethod{template <class It> void remove_cells(It, It);}{The faces in the range are about to be deleted.  The \ccc{value_type} of the iterator is a \ccc{TriangulationDataStructure_3::Cell_handle}.}
-
-\ccMethod{void before_edge_flip(Edge);}{The edge is about to be flipped.}
-
-\ccMethod{void after_edge_flip(Facet);}{The facet was just created with a flip.}
-
-\ccMethod{void before_facet_flip(Facet);}{The facet is about to be flipped.}
-
-\ccMethod{void after_facet_flip(Edge);}{The edge was just created with a flip.}
-
 \ccMethod{void pre_move(Key, Cell);}{The point defined by \ccc{Key} is about to move from the cell.}
 
 \ccMethod{void post_move(Key, Cell);}{The point defined by \ccc{Key} just moved to the cell.}
-
-\ccMethod{void pre_push(Key, Cell);}{The point defined by the key is about to be inserted into the cell.}
-
-\ccMethod{void post_push(Vertex_handle);}{The point referred to by the vertex handle was just added to the triangulation, it previously was redundant.}
-
-\ccMethod{void pre_pop(Vertex_handle);}{The vertex is about to be removed from the triangulation since its weight is too small.}
-
-\ccMethod{void post_pop(Key, Cell);}{The point was just removed from the triangulation.}
-
 
 \ccHasModels 
 

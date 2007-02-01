@@ -50,13 +50,13 @@ instantaneous kernel to the time value gotten from the
 \ccc{Kinetic::Simulator::current_time_nt()} method. This method
 returns a field number type that is between the previous and next
 event, as discussed in the introduction. An instance of the
-\ccc{Kinetic::InstantaneousKernel::Less_x_1} predicate and the STL
+\ccc{Kinetic::InstantaneousKernel::Compare_x_1} predicate (wrapped in order to make it return \ccc{less}) and the STL
 function \ccc{std::upper_bound()} are then used to insert the new
 point in the sorted list. For each inserted object, the kinetic data
 structure removes the no longer relevant certificate from the event
 queue by calling the \ccc{Kinetic::Simulator::delete_event(Key)}
 function and creates two new certificates using a
-\ccc{Kinetic::Kernel::Is_less_x_1} certificate functor. The new
+\ccc{Kinetic::Kernel::Compare_x_1} certificate functor. The new
 certificates are inserted in the event queue by calling the
 \ccc{Kinetic::Simulator::new_event(Time, Event)} method where
 \ccc{Kinetic::Simulator::Event} is a proxy object which instructs the sort
