@@ -247,10 +247,12 @@ namespace SphericalFunctors {
     : public SK::Linear_kernel::Equal_3
 #endif
   {
-    typedef typename CK::Linear_kernel LK;
+    typedef typename SK::Linear_kernel LK;
     typedef typename LK::Equal_3 LK_Equal_3;
 
     typedef typename LK::Point_3 Point_3;
+    typedef typename LK::Direction_3 Direction_3;
+    typedef typename LK::Line_3 Line_3;
 
     typedef typename SK::Circular_arc_point_3     Circular_arc_point_3;
     typedef typename SK::Circle_3                 Circle_3;
@@ -268,6 +270,17 @@ namespace SphericalFunctors {
     operator() (const Point_3 &p0,
                 const Point_3 &p1) const
     { return LK_Equal_3()(p0,p1); }
+
+    result_type
+    operator() (const Direction_3 &d0,
+                const Direction_3 &d1) const
+    { return LK_Equal_3()(d0,d1); }
+
+    result_type
+    operator() (const Line_3 &l0,
+                const Line_3 &l1) const
+    { return LK_Equal_3()(l0,l1); }
+
 #endif
 
     // Our Circle_3 dont have orientation
