@@ -1924,12 +1924,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Bool_type     result_type;
     typedef Arity_tag< 2 >            Arity;
 
-    // template to replace n different versions
-    template <typename T>
-    result_type
-    operator()(const T& p, const T& q) const
-    { return p == q; }
-
     // Point_3 is special case since the global operator== would recurse.
     result_type
     operator()(const Point_3 &p, const Point_3 &q) const
