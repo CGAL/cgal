@@ -232,7 +232,7 @@ protected:
   }
 
 public:
-  Sturm_root_stack() {}
+  Sturm_root_stack(): done_(true) {}
 
   //==============
   // CONSTRUCTORS
