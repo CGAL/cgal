@@ -64,10 +64,11 @@ private:
   typedef typename Base::TMC_Cell_handle       TMC_Cell_handle;
   typedef typename Base::TMC_Point             TMC_Point;
 
+public:
   using Base::shrink_factor;
   using Base::geometric_traits;
   using Base::regular;
-  //  using Base::triangulated_mixed_complex;
+  using Base::triangulated_mixed_complex;
 public:
   template < class WP_iterator >
   Skin_surface_3(WP_iterator begin, WP_iterator end, 
@@ -102,10 +103,10 @@ Skin_surface_3(WP_iterator begin, WP_iterator end,
     
   // Construct the Triangulated_mixed_complex:
   Triangulated_mixed_complex_observer_3<TMC, Self> observer(shrink_factor());
-  triangulate_mixed_complex_3(regular(), shrink_factor(), Base::triangulated_mixed_complex(),
+  triangulate_mixed_complex_3(regular(), shrink_factor(), triangulated_mixed_complex(),
                               observer, verbose);
 
-  CGAL_assertion(Base::triangulated_mixed_complex().dimension() == 3);
+  CGAL_assertion(triangulated_mixed_complex().dimension() == 3);
 //  { // NGHK: debug code:
 //    CGAL_assertion(triangulated_mixed_complex().is_valid());
 //    std::vector<TMC_Vertex_handle> ch_vertices;
