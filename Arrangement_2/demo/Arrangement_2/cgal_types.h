@@ -96,9 +96,10 @@ typedef CGAL::Polygon_2<Coord_kernel> My_polygon;
   typedef CGAL::Quotient<CGAL::MP_Float>                     NT;
 
 #endif
-
-typedef CGAL::Cartesian<NT>                                Kernel;
-
+// instead of
+//typedef CGAL::Cartesian<NT>                                Kernel;
+// workaround for VC++ 
+struct Kernel : public CGAL::Cartesian<NT> {};
 
 class Face_with_color : public CGAL::Arr_face_base 
 {
