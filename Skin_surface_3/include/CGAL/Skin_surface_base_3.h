@@ -130,6 +130,10 @@ public:
   
   Sign sign(const Bare_point &p, 
             const Cell_info &info) const;
+
+  // Uses inexact computations to compute the sign
+  Sign sign_inexact(const Bare_point &p, 
+                    const Cell_info &info) const;
   
   void intersect(TMC_Cell_handle ch, int i, int j, Bare_point &p) const;
   void intersect(Bare_point &p1, Bare_point &p2, 
@@ -334,7 +338,7 @@ sign(const Bare_point &p, const Cell_info &info) const {
       CGAL_PROFILER(std::string("NGHK: calls to    : ") + 
                     std::string(CGAL_PRETTY_FUNCTION));
       Protect_FPU_rounding<true> P;
-      Sign result = info.second->sign(p);
+      Sign result = sign_inexact(p,info);
       if (! is_indeterminate(result))
         return result;
     }
@@ -345,6 +349,13 @@ sign(const Bare_point &p, const Cell_info &info) const {
   return construct_surface
     (info.first, 
      Exact_predicates_exact_constructions_kernel()).sign(p);
+}
+
+template <class MixedComplexTraits_3> 
+Sign 
+Skin_surface_base_3<MixedComplexTraits_3>::
+sign_inexact(const Bare_point &p, const Cell_info &info) const {
+  return info.second->sign(p);
 }
 
 template <class MixedComplexTraits_3> 
@@ -386,14 +397,14 @@ intersect(Bare_point &p1, Bare_point &p2,
     p = midpoint(p1, p2);
     sp = locate_in_tmc(converter(p), sp);
 
-    if (sign(p, sp) == NEGATIVE) { p1 = p; s1 = sp; }
+    if (sign_inexact(p, sp->info()) == NEGATIVE) { p1 = p; s1 = sp; }
     else { p2 = p; s2 = sp; }
 
     sq_dist *= .25;
   }
   while (sq_dist > 1e-8) {
     p = midpoint(p1, p2);
-    if (sign(p, s1) == NEGATIVE) { p1 = p; }
+    if (sign_inexact(p, s1->info()) == NEGATIVE) { p1 = p; }
     else { p2 = p; }
     sq_dist *= .25;
   }

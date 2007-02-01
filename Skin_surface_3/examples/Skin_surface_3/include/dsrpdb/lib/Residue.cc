@@ -30,7 +30,7 @@ Suite 330, Boston, MA 02111-1307, USA. */
 namespace dsrpdb {
   
 
-  static Atom dummy_atom_;
+  static Atom dummy_atom__;
 
   void Residue::set_has_bonds(bool tf) {
     typedef Residue_data::Possible_bond Possible_bond;
@@ -90,7 +90,7 @@ namespace dsrpdb {
     //int fa= find_atom(al);
     if (atoms_.find(fal) != atoms_.end()) return atoms_.find(fal)->second;
     else {
-      return dummy_atom_;
+      return dummy_atom__;
     }
   }
     

@@ -12,8 +12,7 @@ typedef CGAL::Skin_surface_3<Traits>                        Skin_surface_3;
 typedef Skin_surface_3::FT                                  FT;
 typedef Skin_surface_3::Weighted_point                      Weighted_point;
 typedef Weighted_point::Point                               Bare_point;
-typedef CGAL::Polyhedron_3<K,
-  CGAL::Skin_surface_polyhedral_items_3<Skin_surface_3> >   Polyhedron;
+typedef CGAL::Polyhedron_3<K>                               Polyhedron;
 
 #include <extract_balls_from_pdb.h>
 
@@ -23,16 +22,18 @@ typedef CGAL::Polyhedron_3<K,
 
 
 int main(int argc, char *argv[]) {
-  if (argc < 2) {
-    std::cout << "Usage: " << argv[0] << " <pdb-file>" << std::endl;
-    return 0;
+  char *filename;
+  if (argc == 2) {
+    filename = argv[1];
+  } else {
+    filename = "data/1IYE.pdb";
   }
 
   std::list<Weighted_point> l;
   double                    shrinkfactor = 0.5;
 
   // Retrieve input balls:
-  extract_balls_from_pdb(argv[1], K(), std::back_inserter(l));
+  extract_balls_from_pdb(filename, K(), std::back_inserter(l));
 
   // Construct skin surface:
   Skin_surface_3 skin_surface(l.begin(), l.end(), shrinkfactor);
@@ -40,9 +41,6 @@ int main(int argc, char *argv[]) {
   // Extract mesh from the skin surface:
   Polyhedron p;
   CGAL::mesh_skin_surface_3(skin_surface, p);
-
-  std::ofstream out("mesh_PDB.off");
-  write_polyhedron_with_normals(skin_surface, p, out);
 
   return 0;
 }
