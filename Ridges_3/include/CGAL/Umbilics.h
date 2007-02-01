@@ -9,7 +9,7 @@
 
 CGAL_BEGIN_NAMESPACE
 
-enum Umbilic_type { UMBILIC_NON_GENERIC = 0, UMBILIC_WEDGE, UMBILIC_TRISECTOR};
+enum Umbilic_type { NON_GENERIC_UMBILIC = 0, ELLIPTIC_UMBILIC, HYPERBOLIC_UMBILIC};
 
 //-------------------------------------------------------------------
 //Umbilic : stores umbilic data, its location given by a vertex, its
@@ -50,12 +50,12 @@ template <class TriangularPolyhedralSurface>
 std::ostream& 
 operator<<(std::ostream& out_stream, const Umbilic<TriangularPolyhedralSurface>& umbilic)
 {
-  out_stream << "Umbilic at location (" << umbilic.vertex()->point() << ") of type " ;
+  out_stream << "Umbilic at location (" << umbilic.vertex()->point() << ") of type ";
   switch (umbilic.umbilic_type())
     {
-    case CGAL::UMBILIC_NON_GENERIC: out_stream << "non generic" << std::endl; break;
-    case CGAL::UMBILIC_WEDGE: out_stream << "wedge" << std::endl; break;
-    case CGAL::UMBILIC_TRISECTOR: out_stream << "trisector" << std::endl; break;
+    case CGAL::NON_GENERIC_UMBILIC: out_stream << "non generic" << std::endl; break;
+    case CGAL::ELLIPTIC_UMBILIC: out_stream << "elliptic" << std::endl; break;
+    case CGAL::HYPERBOLIC_UMBILIC: out_stream << "hyperbolic" << std::endl; break;
     default : out_stream << "Something wrong occured for sure..." << std::endl; break;
     }
   return out_stream;
@@ -235,10 +235,10 @@ template < class TriangularPolyhedralSurface,  class Vertex2FTPropertyMap, class
   else angle = -acos(cosinus);
   angleSum += angle;
 
-  if ((angleSum > (pi/2)) && (angleSum < (3*pi/2))) umb.umbilic_type() = UMBILIC_TRISECTOR ;
-  else if ((angleSum < (-pi/2)) && (angleSum > (-3*pi/2))) umb.umbilic_type() = UMBILIC_WEDGE;
+  if ((angleSum > (pi/2)) && (angleSum < (3*pi/2))) umb.umbilic_type() = HYPERBOLIC_UMBILIC ;
+  else if ((angleSum < (-pi/2)) && (angleSum > (-3*pi/2))) umb.umbilic_type() = ELLIPTIC_UMBILIC;
   else if ((angleSum <= (pi/2)) && (angleSum >= (-pi/2))) return 0;//is not considered as an umbilic
-  else umb.umbilic_type() = UMBILIC_NON_GENERIC;
+  else umb.umbilic_type() = NON_GENERIC_UMBILIC;
   return 1;
 }
 

@@ -84,10 +84,9 @@ A non umbilical point is called
 a max ridge point if the {\em extremality coefficient} $b_0=\langle
 dk_1,d_1 \rangle$ vanishes, i.e. $b_0=0$.
 
-\item
-a min ridge point if the {\em extremality coefficient} $b_3=\langle
-dk_2,d_2 \rangle$ vanishes, i.e. $b_3=0$.
-
+\item a min ridge point if the {\em extremality coefficient}
+  $b_3=\langle dk_2,d_2 \rangle$ vanishes, i.e. $b_3=0$
+  \footnote{Notations $b_0, b_3$ comes from equation \ref{eq:monge} }.
 \end{itemize}
 \end{definition}
 
@@ -127,7 +126,8 @@ directions $d_1, d_2$ are well defined, and these (non oriented)
 directions together with the normal vector $n$ define two direct
 orthonormal frames. If $v_1$ is a unit vector of direction $d_1$ then
 there exists a unique unit vector $v_2$ so that $(v_1,v_2,n)$ is
-direct (and the other possible frame is $(-v_1,-v_2,n)$). In the
+direct, that is has the same orientation as the canonical basis of the
+3 space (and the other possible frame is $(-v_1,-v_2,n)$). In the
 coordinate systems $(v_1,v_2,n)$, the surface has the following
 canonical form, known as the Monge form~:
 %
@@ -143,13 +143,13 @@ z(x,y) =  & \frac{1}{2}(k_1x^2 + k_2y^2)+
 by $x$ (resp. $y$) are:
 \begin{equation}
 \label{eq:taylor_along_line}
-k_1(x) = k_1 + b_0x + \frac{P_1}{2(k_1-k_2)}x^2 +\hot \quad \quad \quad,
+k_1(x) = k_1 + b_0x + \frac{P_1}{2(k_1-k_2)}x^2 +\hot , \quad \quad \quad
 P_1= 3b_1^2+(k_1-k_2)(c_0-3k_1^3).
 \end{equation}
 %
 \begin{equation}
 \label{eq:taylor_along_red_line}
-k_2(y) = k_2 + b_3y + \frac{P_2}{2(k_2-k_1)}y^2 +\hot \quad \quad \quad,
+k_2(y) = k_2 + b_3y + \frac{P_2}{2(k_2-k_1)}y^2 +\hot , \quad \quad \quad
 P_2= 3b_2^2+(k_2-k_1)(c_4-3k_2^3).
 \end{equation}
 
@@ -185,9 +185,9 @@ normalized by $2\pi$. On our example, the index is thus 1/2.
 
 If the index of the principal direction field is $1/2$
 then it is called a
-\ccc{UMBILIC_WEDGE}, if it is $-1/2$ it is called a \ccc{UMBILIC_TRISECTOR}.
+\ccc{ELLIPTIC_UMBILIC}, if it is $-1/2$ it is called a \ccc{HYPERBOLIC_UMBILIC}.
  Otherwise the umbilic is qualified
-\ccc{UMBILIC_NON_GENERIC}.
+\ccc{NON_GENERIC_UMBILIC}.
 
 
 \begin{figure}[!ht]
@@ -195,7 +195,7 @@ then it is called a
 \centerline{
 \includegraphics[width=.5\linewidth]{Ridges_3/index_umbilic}}
 \end{ccTexOnly}
-\caption{Index $1/2$ umbilic.}
+\caption{Index $1/2$ umbilic or elliptic umbilic.}
 \label{index_umbilic}
 \begin{ccHtmlOnly}
 <CENTER> <img border=0 src="./index_umbilic.png" width=200>
@@ -210,7 +210,7 @@ then it is called a
 \includegraphics[width=.5\linewidth]{Ridges_3/lemon}
 \includegraphics[width=.5\linewidth]{Ridges_3/star}}
 \end{ccTexOnly}
-\caption{Wedge and trisector umbilics.}
+\caption{Elliptic and hyperbolic umbilics.}
 \label{umbilics}
 \begin{ccHtmlOnly}
 <CENTER> <img border=0 src="./lemon.png" width=300>
@@ -225,20 +225,34 @@ then it is called a
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{ridge-mesh}
 
+Our method aims at reporting ridges as polygonal lines living on the
+mesh. It assumes differential quantities are available for each vertex
+of the mesh (principal curvatures and directions together with third
+order quantities $b_0, b_3$ and optionally fourth order quantities
+$P_1, P_2$). These differential quantities may be computed
+analytically from the smooth surface the mesh is inscribed in or
+estimated for a mesh given without reference to a known smooth
+surface.  In both cases the method of approximation is the same, but
+the certification of the results cannot be the same. This is why we
+distinguish compliant and non compliant meshes in the following.
+
+
 \paragraph{Compliant meshes.}
 Ridges of a smooth surface are points with prescribed differential
-properties, and reporting them from a mesh requires delicate
-hypothesis on the geometry of that mesh so as to get a certified
-result. In this paragraph, we assume the mesh provided complies with a
-number of hypothesis, which guarantee the topology of the ridges
-reported matches that of the ridges on the smooth surface. See
-\cite{cgal:cp-tdare-05} for a detailed discussion of {\em compliant} meshes.
-\medskip
+properties, and reporting them from a mesh inscribed in the surface
+requires delicate hypothesis on the geometry of that mesh so as to get
+a certified result. In this paragraph, we assume the mesh provided
+complies with a number of hypothesis, which guarantee the topology of
+the ridges reported matches that of the ridges on the smooth
+surface. See \cite{cgal:cp-tdare-05} for a detailed discussion of {\em
+  compliant} meshes.  \medskip
 
 As 0-level set of the extremality coefficients $b_0$ and $b_3$, ridges
 are extracted by a marching triangles algorithm \footnote{A marching
-triangles algorithm is similar to a marching cubes algorithm, excepted
-that a one-manifold is reported on a two-manifold.}.
+  triangles algorithm is similar to a 2d marching cubes algorithm (or
+  marching rectangles algorithm), excepted that a one-manifold is
+  reported on a two-manifold tesselated by triangles instead of
+  rectangles.}.
 %%
 %%on the surface.  
 %%
@@ -322,6 +336,9 @@ ridge line
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{umbilic-mesh}
 
+The method aims at identifying some vertices of a mesh as umbilics. It
+assumes principal curvatures and directions are given at each vertex
+on the mesh.
 %The detection of umbilics is based upon a two stages methods, which
 %both require finding a topological disk around the umbilic.
 %
@@ -347,9 +364,9 @@ properties:
 %%
 \begin{itemize}
 \item
-$\delta \in ]\pi/2,3\pi/2[$, then the umbilic is called a wedge,
+$\delta \in ]\pi/2,3\pi/2[$, then the umbilic is called elliptic,
 \item
-$\delta \in ]-3\pi/2,-\pi/2[$, then the umbilic is called a trisector,
+$\delta \in ]-3\pi/2,-\pi/2[$, then the umbilic is called a hyperbolic,
 \item
 $\delta \geq 3\pi/2$ or $\delta \leq -3\pi/2$ then the umbilic is called non-generic.
 \end{itemize}
@@ -380,7 +397,7 @@ more details.
 \label{soft}
 
 All classes of this package are templated by the parameter
-\ccc{TriangularPolyhedralSurface} which inherits from \ccc{Polyedron_3}
+\ccc{TriangularPolyhedralSurface} which inherits from \ccc{Polyhedron_3}
 and defines the mesh on which the approximation algorithms are applied.
 
 The differential quantities are provided at vertices of this mesh via
@@ -393,7 +410,7 @@ The rationale for introducing these concepts is that properties are
 used independently from the way they are stored. This enables the user
 to store them {\em internally} in extended vertices or {\em externally}
 with maps. We provide a class
-\ccc{Vertex2Data_Property_Map_with_std_map} to adapt \ccc{std::maps} with 
+\ccc{Vertex2Data_Property_Map_with_std_map} to adapt \ccc{std::map} with 
 a \ccc{boost::associative_property_map} to model these concepts.
 
 
@@ -443,7 +460,7 @@ crossing point with respect to the half-egde endpoints. Each ridge
 line comes with its type \ccc{Ridge_type}, its strength and sharpness.
 
 If one chooses to use only third order quantities, the quantities
-$P_i$ does not have to be defined. Then the sharpness will not be
+$P_i$ do not have to be defined. Then the sharpness will not be
 defined.
 
 \subsection{Umbilic Approximation}
@@ -506,9 +523,6 @@ u, the parameter for umbilic patch size, $u \geq 1$ (default is 1).
 #include <CGAL/Ridges.h> 
 #include <CGAL/Umbilics.h>
 
-#include <CGAL/Monge_via_jet_fitting.h> 
-#include <CGAL/Lapack/Linear_algebra_lapack.h>
- 
 //this is an enriched Polyhedron with facets' normal
 #include "PolyhedralSurf.h"
 
@@ -519,10 +533,6 @@ typedef Kernel::Vector_3                Vector_3;
 
 typedef PolyhedralSurf::Vertex_const_handle   Vertex_const_handle;
 typedef PolyhedralSurf::Vertex_const_iterator Vertex_const_iterator;
-
-typedef CGAL::Monge_via_jet_fitting<Kernel>    Monge_via_jet_fitting;
-typedef CGAL::Monge_via_jet_fitting<Kernel>    Monge_via_jet_fitting;
-typedef Monge_via_jet_fitting::Monge_form      Monge_form;
     
 typedef CGAL::Vertex2Data_Property_Map_with_std_map<PolyhedralSurf> Vertex2Data_Property_Map_with_std_map;
 typedef Vertex2Data_Property_Map_with_std_map::Vertex2FT_map Vertex2FT_map;
@@ -536,8 +546,6 @@ typedef CGAL::Ridge_approximation < PolyhedralSurf,
 				    back_insert_iterator< std::vector<Ridge_line*> >,
 				    Vertex2FT_property_map,
 				    Vertex2Vector_property_map > Ridge_approximation;
-  
-
 //UMBILICS
 typedef CGAL::Umbilic<PolyhedralSurf> Umbilic;
 typedef CGAL::Umbilic_approximation < PolyhedralSurf,
@@ -578,16 +586,6 @@ int main(int argc, char *argv[])
   ridge_approximation.compute_min_ridges(ii, tag_order);  
   ridge_approximation.compute_crest_ridges(ii, tag_order);  
 
-  std::vector<Ridge_line*>::iterator iter_lines = ridge_lines.begin(), 
-    iter_end = ridge_lines.end();
-  //OpenGL output
-  for (;iter_lines!=iter_end;iter_lines++) (*iter_lines)->dump_4ogl(out_4ogl);
-    
-  //verbose txt output 
-  if (verbose) 
-    for (iter_lines = ridge_lines.begin();iter_lines!=iter_end;iter_lines++) 
-      out_verb <<  **iter_lines;  
-
   //---------------------------------------------------------------------------
   // UMBILICS
   //--------------------------------------------------------------------------
@@ -597,13 +595,7 @@ int main(int argc, char *argv[])
   std::vector<Umbilic*> umbilics;
   back_insert_iterator<std::vector<Umbilic*> > umb_it(umbilics);
   umbilic_approximation.compute(umb_it, umb_size);
-
-  std::vector<Umbilic*>::iterator iter_umb = umbilics.begin(), 
-    iter_umb_end = umbilics.end();
-  // output
-  std::cout << "nb of umbilics " << umbilics.size() << std::endl;
-  for (;iter_umb!=iter_umb_end;iter_umb++) std::cout << **iter_umb;
-}
+ }
 \end{ccExampleCode}
 
 For figure \ref{ellipsoid-ridges-example}, the data are computed with
@@ -615,13 +607,13 @@ and the visualization with
 \begin{ccExampleCode}
  ../../demo/Ridges_3/introspect-qt data/ellipsoid_u_0.02.off data/data_ellipsoid_u_0.02.offRIDGES-d4-m4-t4-a3-p0.4ogl.txt 0 0
 \end{ccExampleCode}
-In addition, the four wedge umbilics are detected, the standart output is 
+In addition, the four elliptic umbilics are detected, the standard output is 
 \begin{ccExampleCode}
 nb of umbilics 4
-Umbilic at location (-0.80899 0.00426003 0.293896) of type wedge
-Umbilic at location (-0.811197 0.0122098 -0.292259) of type wedge
-Umbilic at location (0.808372 -0.00551307 -0.29431) of type wedge
-Umbilic at location (0.81413 0.0018689 0.290339) of type wedge
+Umbilic at location (-0.80899 0.00426003 0.293896) of type elliptic
+Umbilic at location (-0.811197 0.0122098 -0.292259) of type elliptic
+Umbilic at location (0.808372 -0.00551307 -0.29431) of type elliptic
+Umbilic at location (0.81413 0.0018689 0.290339) of type elliptic
 \end{ccExampleCode}
 
 

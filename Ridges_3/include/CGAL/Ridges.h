@@ -67,7 +67,8 @@ protected:
   std::list<ridge_halfhedge> m_line;
   FT m_strength;// = integral of ppal curvature along the line
   FT m_sharpness;// = (integral of second derivative of curvature
-		 // along the line) divided by the size of the model
+		 // along the line) multiplied by the squared of 
+                 // the size of the model
 		 // (which is the radius of the smallest enclosing
 		 // ball)
 };
@@ -221,7 +222,7 @@ class Ridge_approximation
 
  protected:
   const TriangularPolyhedralSurface& P;
-  FT model_size;//radius of the smallest enclosing sphere of the TriangularPolyhedralSurface
+  FT squared_model_size;//squared radius of the smallest enclosing sphere of the TriangularPolyhedralSurface
 		//used to make the sharpness scale independant and iso indep
   Tag_order tag_order;
 
@@ -338,7 +339,7 @@ template < class TriangularPolyhedralSurface,
 
   CGAL::Min_sphere_d<CGAL::Optimisation_d_traits_3<typename TriangularPolyhedralSurface::Traits> > 
     min_sphere(P.points_begin(), P.points_end());
-  model_size = min_sphere.squared_radius();
+  squared_model_size = min_sphere.squared_radius();
   //maybe better to use CGAL::Min_sphere_of_spheres_d ?? but need to create spheres?
 
   tag_order = Tag_3;
@@ -710,7 +711,7 @@ addback(Ridge_line* ridge_line, const Halfedge_const_handle he,
     if (tag_order == Tag_4) { 
       if (k1x != k2x) 
 	k_second =CGAL::abs(( CGAL::abs(P1[v_p]) * coord + CGAL::abs(P1[v_q]) * (1-coord) )/(k1x-k2x));
-      ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * model_size; }
+      ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * squared_model_size; }
   }
   if ( (ridge_line->line_type() == MIN_ELLIPTIC_RIDGE) 
        || (ridge_line->line_type() == MIN_HYPERBOLIC_RIDGE) 
@@ -719,7 +720,7 @@ addback(Ridge_line* ridge_line, const Halfedge_const_handle he,
    if (tag_order == Tag_4) {
      if (k1x != k2x) 
        k_second =CGAL::abs(( CGAL::abs(P2[v_p]) * coord + CGAL::abs(P2[v_q]) * (1-coord) )/(k1x-k2x));
-     ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * model_size; }
+     ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * squared_model_size; }
    } 
   ridge_line->line()->push_back( Ridge_halfhedge(he, coord));
 }
@@ -753,7 +754,7 @@ addfront(Ridge_line* ridge_line,
    if (tag_order == Tag_4) {
      if (k1x != k2x) 
        k_second =CGAL::abs(( CGAL::abs(P1[v_p]) * coord + CGAL::abs(P1[v_q]) * (1-coord) )/(k1x-k2x));
-     ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * model_size; }
+     ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * squared_model_size; }
   }
   if ( (ridge_line->line_type() == MIN_ELLIPTIC_RIDGE) 
        || (ridge_line->line_type() == MIN_HYPERBOLIC_RIDGE) 
@@ -762,7 +763,7 @@ addfront(Ridge_line* ridge_line,
    if (tag_order == Tag_4) {
      if (k1x != k2x) 
        k_second =CGAL::abs(( CGAL::abs(P2[v_p]) * coord + CGAL::abs(P2[v_q]) * (1-coord) )/(k1x-k2x));
-     ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * model_size; }
+     ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * squared_model_size; }
    } 
   ridge_line->line()->push_front( Ridge_halfhedge(he, coord));
 }
