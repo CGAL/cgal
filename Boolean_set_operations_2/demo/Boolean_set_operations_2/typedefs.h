@@ -46,7 +46,11 @@
 #endif
 
 typedef CGAL::Lazy_exact_nt<Base_nt>                  Coord_type;
-typedef CGAL::Cartesian<Coord_type>		                Kernel;
+
+// instead of
+//typedef CGAL::Cartesian<Coord_type>		                Kernel;
+// workaround for VC++ 
+struct Kernel : public CGAL::Cartesian<Coord_type> {};
 
 typedef Kernel::Segment_2			                        Segment;
 typedef Kernel::Point_2				                        Point_2;
