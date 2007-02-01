@@ -8,8 +8,6 @@
 
 include $(CGAL_MAKEFILE)
 
-PROFOPT= -g  
-CFLAGS=${PROFOPT} 
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
@@ -19,8 +17,7 @@ CXXFLAGS = \
            -I../../include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
-           $(LAPACK_INCDIRS) \
-           ${CFLAGS} 
+           $(LAPACK_INCDIRS) 
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -45,10 +42,10 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                blind_1pt 
+                blind_1pt$(EXE_EXT) 
 
-blind_1pt: blind_1pt.o
-	$(CGAL_CXX) $(LIBPATH) -o blind_1pt blind_1pt.o \
+blind_1pt$(EXE_EXT) : blind_1pt$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) -o blind_1pt blind_1pt$(OBJ_EXT) \
 	$(LDFLAGS) 
 
 clean: \

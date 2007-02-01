@@ -7,8 +7,6 @@
 # Choose the right include file from the <cgalroot>/make directory.
 include $(CGAL_MAKEFILE)
 
-PROFOPT= -g -fpermissive
-CFLAGS=${PROFOPT} 
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
@@ -19,7 +17,7 @@ CXXFLAGS = \
            -I../../include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
-	   ${CFLAGS}  $(INTROSPEC_INC)
+	   $(INTROSPEC_INC)
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -57,8 +55,8 @@ visu: 	SketchSample$(OBJ_EXT) visu$(OBJ_EXT)
 	SketchSample$(OBJ_EXT) visu$(OBJ_EXT) \
 	$(QTLDFLAGS) $(INTRO_LD_FLAGS)
 
-clean: 
-	SketchSample.clean visu.clean
+clean: 	SketchSample.clean \
+	visu.clean
 
 depend: 
 	makedepend *.[Ch]

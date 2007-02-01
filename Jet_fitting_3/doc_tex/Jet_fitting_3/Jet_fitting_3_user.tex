@@ -258,10 +258,9 @@ the coordinate system of the PCA (in which the fitting is performed).
 
 This concept provides the types for the input sample points, together
 with $3d$ vectors and a number type. It is used as template for the
-classes
-\ccc{Monge_form<DataKernel>} and 
-\ccc{Monge_via_jet_fitting<DataKernel, LocalKernel = Cartesian<double>, SvdTraits = lapack_svd>} 
-. Typically, one can use \ccc{CGAL::Cartesian<double>}.
+classe \ccc{Monge_via_jet_fitting<DataKernel, LocalKernel =
+  Cartesian<double>, SvdTraits = lapack_svd>} . Typically, one can use
+\ccc{CGAL::Cartesian<double>}.
 
 \subsubsection{Template parameter \ccc{LocalKernel}}
 %%%%%%%%%%%
@@ -367,7 +366,7 @@ provide illustrations of principal directions of curvature.
 
 %\ccIncludeExampleCode{Jet_fitting_3/blind.cpp} %too long to be included?
 %%%%%%%%%%%%%%%%%%%%%%%
-
+  
  \begin{ccAdvanced} 
 \section{Mathematical and Algorithmic Details}
 %%%%%%%%%%%%%%%%%%%%%%%

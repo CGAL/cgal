@@ -7,19 +7,15 @@
 # Choose the right include file from the <cgalroot>/make directory.
 include $(CGAL_MAKEFILE)
 
-PROFOPT= -g #-O3 #-g
-CFLAGS=${PROFOPT} 
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
 LAPACK_INCDIRS = -I$(LAPACK_DIR)/SRC -I$(LAPACK_DIR)
 
-CXXFLAGS = \
-           -I../../include \
+CXXFLAGS = -I../../include \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
-	   $(LAPACK_INCDIRS) \
-	   ${CFLAGS} 
+	   $(LAPACK_INCDIRS)
 
 #---------------------------------------------------------------------#
 #                    linker flags
@@ -35,7 +31,6 @@ LAPACK_LDLIBS  = $(LAPACK_DIR)/lapack_LINUX.a \
            $(LAPACK_DIR)/blas_LINUX.a \
            $(F2CDIR)/libF77.a $(F2CDIR)/libI77.a -lm -lc
 
-## it should not be needed $(LAPACK_DIR)/tmglib_LINUX.a \
 LIBPATH = \
           $(CGAL_LIBPATH)
 
@@ -50,15 +45,15 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                blind blind_1pt
+                blind$(EXE_EXT) blind_1pt$(EXE_EXT)
 
-BLIND_OBJS=options.o PolyhedralSurf.o blind.o
-blind: $(BLIND_OBJS)
+BLIND_OBJS=options$(OBJ_EXT) PolyhedralSurf$(OBJ_EXT) blind$(OBJ_EXT)
+blind$(EXE_EXT): $(BLIND_OBJS)
 	$(CGAL_CXX) $(LIBPATH) -g -o blind $(BLIND_OBJS) \
 	$(LDFLAGS) 
 
-blind_1pt: blind_1pt.o
-	$(CGAL_CXX) $(LIBPATH) -o blind_1pt blind_1pt.o \
+blind_1pt$(EXE_EXT): blind_1pt$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) -o blind_1pt blind_1pt$(OBJ_EXT) \
 	$(LDFLAGS) 
 
 clean: \
