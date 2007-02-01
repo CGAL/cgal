@@ -27,7 +27,10 @@
 #include <iostream>
 #include <fstream>
 
-typedef CGAL::Simple_cartesian<Number_type>            Kernel;
+// instead of
+//typedef CGAL::Simple_cartesian<Number_type>            Kernel;
+// workaround for VC++ 
+struct Kernel : public CGAL::Simple_cartesian<Number_type> {};
 
 typedef CGAL::Polygon_2<Kernel>                        Polygon_2;
 typedef CGAL::Polygon_with_holes_2<Kernel>             Polygon_with_holes_2;
