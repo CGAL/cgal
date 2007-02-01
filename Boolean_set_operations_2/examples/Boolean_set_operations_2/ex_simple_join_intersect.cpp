@@ -6,7 +6,11 @@
 #include <CGAL/Boolean_set_operations_2.h>
 #include <list>
 
+// instead of
 typedef CGAL::Cartesian<Number_type>               Kernel;
+// workaround for VC++ 
+struct Kernel : public CGAL::Cartesian<Number_type> {};
+
 typedef Kernel::Point_2                            Point_2;
 typedef CGAL::Polygon_2<Kernel>                    Polygon_2;
 typedef CGAL::Polygon_with_holes_2<Kernel>         Polygon_with_holes_2;

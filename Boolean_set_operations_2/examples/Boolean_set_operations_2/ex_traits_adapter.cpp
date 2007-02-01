@@ -24,8 +24,14 @@ int main ()
 typedef CGAL::CORE_algebraic_number_traits              Nt_traits;
 typedef Nt_traits::Rational                             Rational;
 typedef Nt_traits::Algebraic                            Algebraic;
-typedef CGAL::Cartesian<Rational>                       Rat_kernel;
-typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
+
+// instead of
+//typedef CGAL::Cartesian<Rational>                       Rat_kernel;
+//typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
+
+struct Rat_kernel  : public CGAL::Cartesian<Rational> {};
+struct Alg_kernel  : public CGAL::Cartesian<Algebraic> {};
+
 typedef CGAL::Arr_conic_traits_2<Rat_kernel,
                                  Alg_kernel,Nt_traits>  Conic_traits_2;
 typedef CGAL::General_polygon_2<Conic_traits_2>         Polygon_2;
