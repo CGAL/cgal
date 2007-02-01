@@ -65,5 +65,6 @@ int main()
 	      << " not all function_gradients are provided."  << std::endl 
 	      << " You may resort to linear interpolation." << std::endl;
   
+  std::cout << "done" << std::endl;
   return 0; 
 };

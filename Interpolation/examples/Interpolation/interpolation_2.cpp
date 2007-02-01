@@ -210,6 +210,7 @@ int main()
 	    << CGAL::to_double(ssquare_total)/n << "  max " 
 	    << CGAL::to_double(ssquare_max)  << std::endl;  
   
+  std::cout << "done" << std::endl;
   return 0; 
 }
 //end of file

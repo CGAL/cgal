@@ -41,5 +41,7 @@ int main()
   
   std::cout << "   Tested interpolation on " << p << " interpolation: " 
 	    << res << " exact: " << a + bx* p.x()+ by* p.y()<< std::endl;
+
+  std::cout << "done" << std::endl;
   return 0; 
 }

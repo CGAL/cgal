@@ -93,6 +93,8 @@ int main()
 						   norm_coeff_sibson) 
 		<< std::endl;      
     } 
+
+  std::cout << "done" << std::endl;
   return 0;
 }
 

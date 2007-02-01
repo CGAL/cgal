@@ -34,6 +34,6 @@ int main()
   K::FT  norm = result.second;
   std::cout << "Coordinate computation successful." << std::endl;
   std::cout << "Normalization factor: " <<norm << std::endl; 
-  
+  std::cout << "done" << std::endl;
   return 0; 
 }

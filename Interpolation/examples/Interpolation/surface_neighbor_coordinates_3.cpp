@@ -56,5 +56,7 @@ int main()
   std::cout <<"    weighted barycenter: " << b <<std::endl;
   std::cout << "    squared distance: " << 
     CGAL::squared_distance(p,b) <<std::endl;
+
+  std::cout << "done" << std::endl;
   return 0; 
 }
