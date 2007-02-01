@@ -1,20 +1,62 @@
+%OPEN: new name for template argument ROOT ?
+%But this will cause changes in the interface  i.e. root() should change too.
 
 \begin{ccRefClass}{Sqrt_extension<NT,ROOT>}
 
 \ccDefinition
 
 An instance of this class represents an extension of the type \ccc{NT} by a 
-square root of the type \ccc{ROOT}. \\
+square root of the type \ccc{ROOT}. 
 In case \ccc{NT} and \ccc{ROOT} do not coincide, 
-\ccc{NT} must be constructible from \ccc{ROOT}. \\
+\ccc{NT} must be constructible from \ccc{ROOT}. 
 The type \ccc{NT} must be at least a model of the concept 
-\ccc{IntegralDomainWithoutDivision}.\\
+\ccc{IntegralDomainWithoutDivision}. 
+In case \ccc{NT} is a model of \ccc{RealEmbeddable} the instance is also 
+\ccc{RealEmbeddable}.
 
-The table below shows the resulting algebraic type 
-with respect to the algebraic type of \ccc{NT}.
-Both \ccc{NT} and \ccc{ROOT} can themselves be an instance of
-\ccc{Sqrt_extension}, yielding a nested extension.
-        
+For example let \ccc{Integer} be some type representing $\Z$, then 
+\ccc{Sqrt_extension<Integer,Integer>} is able to represent $\Z[\sqrt{discr}]$
+for some arbitrary value $discr$. The value of $discr$ is set at 
+construction time, or left open if $discr$ is not specified.
+Unfortunately, it is not possible
+to interoperate two values from two different extensions $\Z[\sqrt{a}]$ and 
+$\Z[\sqrt{b}]$,
+since the result is in $\Z[\sqrt{a},\sqrt{b}]$, which is not representable by 
+\ccc{Sqrt_extension<Integer,Integer>}. 
+However, both \ccc{NT} and \ccc{ROOT} can themselves be an instance of
+\ccc{Sqrt_extension}, yielding a nested extension,
+e.g. \ccc{Sqrt_extension<Sqrt_extension<Integer,Integer>,Integer>} is able to represent 
+$\Z[\sqrt{a}][\sqrt{b}]$ form some integers $a$ and $b$. 
+
+
+We recommend to use this type for lengthy computations over one (or a few) quadratic 
+extension, e.g. it can be used as coefficient type for polynomials, 
+vectors or matrices. In particular it is preferable to use 
+\ccc{Sqrt_extension} in place of \ccc{leda_real} or \ccc{CORE::Expr}, 
+since it does not suffer from growing expression trees.
+
+
+%motivate the type , with respect to leda:real 
+%\ccc{Sqrt_extension} is motivated due to the fact that
+%number types such as \ccc{leda_real} or \ccc{CORE::Expr} 
+%\footnote{ For a details discussion on these types see 
+%\cite{mn-lpcgc-00, klpy-clp-99}} 
+%being a model of the superior concept \ccc{FieldWithSqrt} should 
+%avoid to many arithmetic operations. As a consequence they should
+%not be use as the coefficient type of polynomials, since e.g. an polynomial gcd 
+%operation would cause large and thus slow expression trees.  
+%On the other hand, an object of \ccc{Sqrt_extension} represents an extension 
+%by one square root only.  
+%The type \ccc{Sqrt_extension} is thus predestinated to be used as the 
+%coefficient type of polynomials defined over a particular algebraic extension 
+%of degree 2 or nested forms,  
+%optional remark 
+%in particular it is possible to use it as the coefficient type of an 
+%\ccc{NiX::Algebraic\_real}.
+
+The table below shows the resulting algebraic category
+with respect to the algebraic category of \ccc{NT}.
+
   \label{sqrt_extension:tabular_1}       
   \begin{tabular}{|l|l|}
         \hline
@@ -41,33 +83,9 @@ For example take $\Z[\sqrt{10}]$:
 %as indicated by \cite{e-eacfcc-03} referring to \cite{hardy-wright,hasse}:
 For the fact that $2$, $5$, and $\sqrt{10}$ are irreducible elements 
 of $\Z[\sqrt{10}]$. It follows immediately that $\Z[\sqrt{10}]$ is not a 
-\ccc{UniqueFactorizationDomain},
+\ccc{UniqueFactorizationDomain}, 
 because \[10 = \sqrt{10} \cdot \sqrt{10} = 2 \cdot 5\] factors in two essentially
 different ways. \\
-
-%motivate the type , with respect to leda:real 
-\ccc{Sqrt_extension} is motivated due to the fact that
- number types such as \ccc{leda_real}
-or \ccc{CORE::Expr} 
-%\footnote{ For a details discussion on these types see 
-%\cite{mn-lpcgc-00, klpy-clp-99}} 
-being a model of the superior \ccc{FieldWithSqrt} concept should 
-%avoid to many arithmetic operations. As a consequence they should
-not be use as the coefficient type of polynomials, since e.g. an polynomial gcd 
-operation would cause large and thus slow expression trees.  
-In contrast, an object of \ccc{Sqrt_extension} represents an extension 
-by one square root only, which is defined at construction time. As a consequence
-two objects of this type are interoperable if and only if they are defined 
-within the same extension
-%\footnote{It is also possible to leave the extension undefined, in particular 
-%\ccc{Sqrt_extension} is constructible from \ccc{int}}.
-The type \ccc{Sqrt_extension} is thus predestinated to be used as the 
-coefficient type of polynomials defined over a particular algebraic extension 
-of degree 2 or nested forms,  
-%optional remark 
-%in particular it is possible to use it as the coefficient type of an 
-%\ccc{NiX::Algebraic\_real}.
-\\
 
 
 %\begin{ccAdvanced}
@@ -81,8 +99,8 @@ of degree 2 or nested forms,
         \ccc{IntegralDomainWithoutDivision}\\
 \ccc{IntegralDomain} &if \ccc{NT} is an \ccc{IntegralDomain}\\
 \ccc{Field} &if \ccc{NT} is a \ccc{Field}\\
-\\ \ccc{RealEmbeddable} &if \ccc{NT} is \ccc{RealEmbeddable}\\
-\\ \ccc{Fraction} &if \ccc{NT} is a \ccc{Fraction}\\
+\ccc{RealEmbeddable} &if \ccc{NT} is \ccc{RealEmbeddable}\\
+\ccc{Fraction} &if \ccc{NT} is a \ccc{Fraction}\\
 \end{tabular}
 
 \ccCreation
@@ -144,7 +162,7 @@ Member functions:\\
         {returns true if \ccVar\ represents the value zero.}
 
 \ccMethod{CGAL::Sign sign () const;}
-        {Determines sign of \ccVar\ by repeated squaring.
+        {Determines sign of \ccVar\ by (repeated) squaring.
         \ccPrecond\\ \ccc{Sqrt_extension} is \ccc{RealEmbeddable}.}
 \ccMethod{Sqrt_extension abs () const;}
  	{returns the absolute value of \ccVar. 
