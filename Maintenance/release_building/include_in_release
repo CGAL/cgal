@@ -69,7 +69,6 @@ Point_set_2
 Polygon
 Polyhedron
 Polyhedron_IO
-Polynomial
 Polytope_distance_d
 Principal_component_analysis
 QP_solver
