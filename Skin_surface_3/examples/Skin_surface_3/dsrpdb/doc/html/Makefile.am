@@ -1,1 +1,0 @@
-CLEANFILES = *.html *.css *.gif 

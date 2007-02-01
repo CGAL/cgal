@@ -1,3 +1,10 @@
+// AUTHOR: Daniel Russel drussel@graphics.stanford.edu
+
+// See http://graphics.stanford.edu/~drussel/pdb for documentation.
+// 
+// Feel free to contact me (Daniel, drussel@graphics.stanford.edu) 
+// if you have any suggestions or patches. Thanks.
+
 #ifndef EXTRACT_BALLS_FROM_PDB_H
 #define EXTRACT_BALLS_FROM_PDB_H
 
