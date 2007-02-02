@@ -1,5 +1,6 @@
 //file: examples/Algebraic_foundations/implicit_interoperable_dispatch.cpp
  
+#include <CGAL/basic.h>
 #include <CGAL/Coercion_traits.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Sqrt_extension.h>

@@ -1,5 +1,6 @@
 //file: examples/Algebraic_foundations/interoperable.cpp
- 
+
+#include <CGAL/basic.h> 
 #include <CGAL/Coercion_traits.h>
 #include <CGAL/IO/io.h>
 

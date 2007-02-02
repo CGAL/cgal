@@ -1,5 +1,6 @@
 //file: examples/Algebraic_foundations/fraction_traits.cpp
 
+#include <CGAL/basic.h>
 #include <CGAL/Fraction_traits.h>
 #include <CGAL/IO/io.h>
 
