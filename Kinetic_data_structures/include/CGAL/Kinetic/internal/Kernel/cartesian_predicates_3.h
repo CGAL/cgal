@@ -130,6 +130,28 @@ struct Cartesian_power_test_3
 				     drx, dry, drz, drt,
 				     dsx, dsy, dsz, dst);
   }
+
+ result_type operator()(const first_argument_type &a,
+			const second_argument_type &,
+			const third_argument_type &,
+			const fourth_argument_type &)const
+  {
+    CGAL_assertion(0);
+    return a.x();
+  }
+  result_type operator()(const first_argument_type &a,
+			 const second_argument_type &,
+			 const third_argument_type &)const
+  {
+    CGAL_assertion(0);
+    return a.x();
+  }
+  result_type operator()(const first_argument_type &a,
+			 const second_argument_type &)const
+  {
+    CGAL_assertion(0);
+    return a.x();
+  }
 };
 
 // Works for unweighted points.
@@ -398,14 +420,14 @@ struct Cartesian_less_x_3
   result_type operator()(const first_argument_type &a,
 			 const second_argument_type &b) const
   {
-    return b.x() - a.x();
+    return a.x() - b.x();
   }
   typedef typename KK::Motion_function::NT NT;  
-  result_type operator()(const first_argument_type &a, const NT &c) const {
+  result_type operator()( const NT &c, const first_argument_type &a) const {
     return result_type(c) - a.x();
   }
 
-  result_type operator()(const NT &c, const second_argument_type &b) const {
+  result_type operator()(const second_argument_type &b, const NT &c ) const {
     return b.x() - result_type(c);
   }
 };
@@ -421,14 +443,14 @@ struct Cartesian_less_y_3
   result_type operator()(const first_argument_type &a,
 			 const second_argument_type &b) const
   {
-    return b.y() - a.y();
+    return a.y() - b.y();
   }
   typedef typename KK::Motion_function::NT NT;  
-  result_type operator()(const first_argument_type &a, const NT &c) const {
+  result_type operator()(const NT &c, const first_argument_type &a) const {
     return result_type(c) - a.y();
   }
 
-  result_type operator()(const NT &c, const second_argument_type &b) const {
+  result_type operator()( const second_argument_type &b, const NT &c) const {
     return b.y() - result_type(c);
   }
 };
@@ -444,14 +466,14 @@ struct Cartesian_less_z_3
   result_type operator()(const first_argument_type &a,
 			 const second_argument_type &b) const
   {
-    return b.z() - a.z();
+    return a.z() - b.z();
   }
   typedef typename KK::Motion_function::NT NT;  
-  result_type operator()(const first_argument_type &a, const NT &c) const {
+  result_type operator()(const NT &c, const first_argument_type &a) const {
     return result_type(c) - a.z();
   }
 
-  result_type operator()(const NT &c, const second_argument_type &b) const {
+  result_type operator()( const second_argument_type &b, const NT &c) const {
     return b.z() - result_type(c);
   }
 

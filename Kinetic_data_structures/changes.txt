@@ -31,4 +31,5 @@ January 2007 Daniel Russel
 - traits classes are now dimension independent
 - Kinetic_kernel now called Kinetic::Cartesian to be consistent with the
   static one
+- Instantaneous_kernel now can work at with the current time being a Time, rather than just an NT
 

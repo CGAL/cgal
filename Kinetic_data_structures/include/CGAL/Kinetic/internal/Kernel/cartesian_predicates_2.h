@@ -172,7 +172,8 @@ struct Cartesian_less_x_1
   result_type operator()(const first_argument_type &a,
 			 const second_argument_type &b) const
   {
-    return b.x() - a.x();
+    //std::cout << "Evaluating compare of " << a << " and " << b << std::endl;
+    return a.x() - b.x();
   }
 };
 
@@ -187,12 +188,12 @@ struct Cartesian_less_x_2
   result_type operator()(const first_argument_type &a,
 			 const second_argument_type &b) const
   {
-    return b.x() - a.x();
+    return a.x() - b.x();
   }
-  result_type operator()(const first_argument_type &a, const typename result_type::NT &c) const {
+  result_type operator()(const typename result_type::NT &c, const second_argument_type &a ) const {
     return result_type(c) - a.x();
   }
-  result_type operator()(const typename result_type::NT &c, const first_argument_type &b) const {
+  result_type operator()( const first_argument_type &b, const typename result_type::NT &c) const {
     return b.x() - result_type(c);
   }
 };
@@ -206,18 +207,18 @@ struct Cartesian_less_y_2
   typedef typename KK::Point_2 second_argument_type;
   typedef typename KK::Motion_function::NT NT;
  
-  result_type operator()(const first_argument_type &a, const NT &c) const {
+  result_type operator()(const NT &c, const first_argument_type &a) const {
     return result_type(c) - a.y();
   }
 
-  result_type operator()(const NT &c, const second_argument_type &b) const {
+  result_type operator()(const second_argument_type &b, const NT &c) const {
     return b.y() - result_type(c);
   }
 
-  result_type operator()(const first_argument_type &a,
-			 const second_argument_type &b) const
+  result_type operator()(const second_argument_type &a,
+			 const first_argument_type &b) const
   {
-    return b.y() - a.y();
+    return a.y() - b.y();
   }
 
 };

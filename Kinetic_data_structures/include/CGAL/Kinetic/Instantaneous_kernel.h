@@ -62,25 +62,8 @@ public:
     time_is_nt_=false;
   }
   
-  void set_time(const NT &t)
-  {
-    if (!initialized_) {
-      time_is_nt_=true;
-      time_nt_=t;
-    } else {
-      if (time_is_nt_ && time_nt_ != t || !time_is_nt_) {
-	time_is_nt_=true;
-	time_= Time(t);
-	time_nt_=t;
-	cache_1_.clear();
-	cache_2_.clear();
-	cache_3_.clear();
-      }
-    }
-    initialized_=true;
-  }
-
-  void set_time(const Time &t) {
+  template <class T>
+  void set_time(const T &t) {
     if (!initialized_) {
       time_is_nt_=false;
       time_=t;
@@ -96,6 +79,25 @@ public:
     initialized_=true;
   }
 
+ void set_time(const NT &t)
+  {
+    if (!initialized_) {
+      time_is_nt_=true;
+      time_nt_=t;
+      time_= Time(t);
+    } else {
+      if (time_is_nt_ && time_nt_ != t || !time_is_nt_) {
+	time_is_nt_=true;
+	time_= Time(t);
+	time_nt_=t;
+	cache_1_.clear();
+	cache_2_.clear();
+	cache_3_.clear();
+      }
+    }
+    initialized_=true;
+  }
+
 
   bool time_is_nt() const {
     return time_is_nt_;
@@ -103,12 +105,14 @@ public:
 
   const NT & time_as_nt() const
   {
+    CGAL_precondition(initialized_);
     CGAL_precondition(time_is_nt());
     return time_nt_;
   }
   
   const Time &time() const
   {
+    CGAL_precondition(initialized_);
     return time_;
   }
   
@@ -128,36 +132,42 @@ public:
     }
   }
 
-  const typename Static_kernel::FT&
+  typedef typename CIK::Traits::Active_points_1_table::Data::template Static_traits<Static_kernel> Static_traits_1;
+
+  const typename Static_traits_1::Static_type&
   static_object(typename CIK::Point_1 k) const {
     check_static_object();
     if (cache_1_.find(k) == cache_1_.end()) {
-      cache_1_[k]= tr_.active_points_1_table_handle()->at(k).x()(time_nt_);
+      cache_1_[k]= Static_traits_1::to_static(tr_.active_points_1_table_handle()->at(k), 
+					      time_nt_, static_kernel());
+      std::cout << "Point " << k << " is " << cache_1_[k] << std::endl;
     }
     return cache_1_[k];
   }
 
-  const typename Static_kernel::Point_2&
+  typedef typename CIK::Traits::Active_points_2_table::Data::template Static_traits<Static_kernel> Static_traits_2;
+
+  const typename Static_traits_2::Static_type&
   static_object(typename CIK::Point_2 k) const {
     check_static_object();
     if (cache_2_.find(k) == cache_2_.end()) {
-      cache_2_[k]= typename Static_kernel::Point_2(tr_.active_points_2_table_handle()->at(k).x()(time_nt_),
-						   tr_.active_points_2_table_handle()->at(k).y()(time_nt_));
+      cache_2_[k]= Static_traits_2::to_static(tr_.active_points_2_table_handle()->at(k), 
+					      time_nt_, static_kernel());
     }
     return cache_2_[k];
   }
 
-  const typename Static_kernel::Point_3&
+  typedef typename CIK::Traits::Active_points_3_table::Data::template Static_traits<Static_kernel> Static_traits_3;
+
+  const typename Static_traits_3::Static_type&
   static_object(typename CIK::Point_3 k) const {
     check_static_object();
     if (cache_3_.find(k) == cache_3_.end()) {
-      cache_3_[k]= typename Static_kernel::Point_3(tr_.active_points_3_table_handle()->at(k).x()(time_nt_),
-						   tr_.active_points_3_table_handle()->at(k).y()(time_nt_),
-						   tr_.active_points_3_table_handle()->at(k).z()(time_nt_));
+      cache_3_[k]= Static_traits_3::to_static(tr_.active_points_3_table_handle()->at(k), 
+					      time_nt_, static_kernel());
     }
     return cache_3_[k];
   }
-
 
   /*const typename Static_kernel::Weighted_point_3&
   static_object(typename CIK::Weighted_point_3 k) const {
@@ -172,18 +182,18 @@ public:
     return cache_w3_[k];
     }*/
 
-  const typename Kinetic_kernel::Motion_function::NT&
+  const typename CIK::Traits::Active_points_1_table::Data&
   kinetic_object(typename CIK::Point_1 k) const {
     return tr_.active_points_1_table_handle()->at(k);
     
   }
 
-  const typename Kinetic_kernel::Point_2&
+  const typename CIK::Traits::Active_points_2_table::Data&
   kinetic_object(typename CIK::Point_2 k) const {
     return tr_.active_points_2_table_handle()->at(k);
   }
 
-  const typename Kinetic_kernel::Point_3&
+  const typename CIK::Traits::Active_points_3_table::Data&
   kinetic_object(typename CIK::Point_3 k) const {
     return tr_.active_points_3_table_handle()->at(k);
   }
@@ -204,11 +214,11 @@ protected:
   bool time_is_nt_;
   typename CIK::Traits tr_;
   mutable std::map<typename CIK::Point_1,
-		   typename Static_kernel::FT> cache_1_;
+		   typename Static_traits_1::Static_type> cache_1_;
   mutable std::map<typename CIK::Point_2,
-		   typename Static_kernel::Point_2> cache_2_;
+		   typename Static_traits_2::Static_type> cache_2_;
   mutable std::map<typename CIK::Point_3,
-		   typename Static_kernel::Point_3> cache_3_;
+		   typename Static_traits_3::Static_type> cache_3_;
   /*mutable std::map<typename CIK::Weighted_point_3,
     typename Static_kernel::Weighted_point_3> cache_w3_;*/
   NT time_nt_;
@@ -231,8 +241,8 @@ public:
   Instantaneous_kernel(const Traits &tr):
     rep_(new Rep(tr)) {
   }
- 
-  void set_time(const NT &cur_time) const
+  template <class N>
+  void set_time(const N &cur_time) const
   {
     rep_->set_time(cur_time);
   }
@@ -291,16 +301,20 @@ public:
   template <class T>
   class Compare_static {
   public:
-    CGAL::Comparison_result operator()(const T &a, const T&b) const {
+    typedef CGAL::Comparison_result result_type;
+    typedef T first_argument_type;
+    typedef T second_argument_type;
+    typedef typename Arity_traits<typename Static_kernel::Compare_x_2>::Arity Arity;
+    result_type operator()(const T &a, const T&b) const {
       return CGAL::compare(a,b);
     }
   };
 
-  typedef Instantaneous_adaptor<Compare_static<RT>, typename Kinetic_kernel::Compare_x_1, Current_coordinates, Point_1> Compare_x_1;
+  typedef Instantaneous_adaptor<Compare_static<RT>, typename Kinetic_kernel::Compare_x_1, Rep, Point_1> Compare_x_1;
   Compare_x_1 compare_x_1_object() const
   {
     Compare_static<NT> sp;
-    return Compare_x_1(rep_, sp, rep_->kinetic_kernel_object().compare_x_1_object());
+    return Compare_x_1(rep_, sp, rep_->kinetic_kernel().compare_x_1_object());
   }
 
   CGAL_MSA(Side_of_oriented_circle,side_of_oriented_circle, Point_2, 2);

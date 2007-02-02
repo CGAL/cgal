@@ -344,7 +344,7 @@ public:
 	      set_directed_edge_label(Edge(f,1), Event_key()); 
 	      set_directed_edge_label(Edge(f,0), Event_key()); 
 	    }
-
+	    watcher_.create_face(f);
 	  }
 	} else if (state & HAD_NO_FAILURES  && state & HAS_NO_FAILURES)  {
 	  // nothing to do, yeah!!!
@@ -354,8 +354,6 @@ public:
 	    update_edge(*eit);
 	  }
 	}
-
-	watcher_.create_faces(del_.all_faces_begin(), del_.all_faces_end());
       } else if (tf==false) { 
 	if (!(state & HAD_NO_FAILURES)) {
 	  for (Face_iterator f = del_.all_faces_begin(); f != del_.all_faces_end(); ++f) {
@@ -363,6 +361,7 @@ public:
 	      Edge e(f,i);
 	      delete_certificate(e);
 	    }
+	    watcher_.destroy_face(f);
 	  }
 	}
       } 
@@ -382,7 +381,7 @@ public:
       CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, "Point " << k << " is not in triangulation on removal."<< std::endl);
       return;
     }
-    watcher_.remove_vertex(vh);
+    watcher_.pre_remove_vertex(vh);
     if (has_certificates_) {
       Face_circulator fc= vh->incident_faces(), fe=fc;
       if (fc != NULL) {
@@ -422,10 +421,11 @@ public:
 	  update_edge(e);
 	  //new_edges_.insert(e);
 	}
+	watcher_.create_face(faces[i]);
       }
-      watcher_.create_faces(faces.begin(), faces.end());
+      
     }
-
+    watcher_.pre_remove_vertex(k);
   }
 
   //! The assertion will catch that the object is in the same sorted order
@@ -462,7 +462,7 @@ public:
     }
 
    
-    watcher_.modify_vertex(vh);
+    watcher_.change_vertex(vh);
 
     /*if (has_certificates_) {
       Face_handle f= vh->face(), fe= vh->face();
@@ -499,14 +499,15 @@ public:
 	  Event_key k= get_undirected_edge_label(e);
 	  delete_certificate(e);
 	}
+	watcher_.destroy_face(faces[i]);
       }
-      watcher_.remove_faces(faces.begin(), faces.end());
 
       if (faces.empty()) {
 	CGAL_KINETIC_LOG(CGAL::Kinetic::LOG_SOME, "DELAUNAY vertex not successfully inserted " << k << std::endl);
 	return;
       }
     }
+    watcher_.pre_insert_vertex(k);
     Vertex_handle vh= del_.insert(k);
     set_vertex_handle(k, vh);
     
@@ -514,7 +515,7 @@ public:
     
     CGAL_DELAUNAY_2_DEBUG(std::cout << "Vertex " << vertex_handle(k)->point() 
 			  << " has " << vertex_handle(k)->neighbors() << std::endl);
-    watcher_.create_vertex(vertex_handle(k));
+   
 
     // now have to update
     if (has_certificates_) {
@@ -565,6 +566,7 @@ public:
     } else {
       vertex_handle(k)->set_neighbors(vh->degree());
     }
+    watcher_.post_insert_vertex(vh);
     //write(std::cout);
     //if (del_.dimension()==2) audit();
   }
@@ -646,7 +648,7 @@ public:
     delete_certificate(Edge(mirror_face, (mirror_index+2)%3));
 
    
-    watcher_.before_flip(e);
+    watcher_.pre_flip(e);
     del_.tds().flip(face,index);
    
     // we also know that CGAL preserves the edge index of the flipped edge
@@ -661,7 +663,7 @@ public:
     CGAL_assertion(mirror_index == face->mirror_index(index));
     CGAL_assertion(mirror_face == face->neighbor(index));
 
-    watcher_.after_flip(flipped_edge);
+    watcher_.post_flip(flipped_edge);
 
     decrease_neighbors(flipped_edge.first->vertex(flipped_edge.second));
     increase_neighbors(flipped_edge.first->vertex((flipped_edge.second+1)%3));

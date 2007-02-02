@@ -33,14 +33,14 @@ struct Delaunay_triangulation_recent_edges_visitor_2: public Delaunay_triangulat
   typedef typename Triangulation::Vertex_handle VH;
   Delaunay_triangulation_recent_edges_visitor_2(){}
 
-  void remove_vertex(VH) {
+  void pre_remove_vertex(VH) {
     recent_.clear();
   }
-  void create_vertex(VH) {
+  void post_insert_vertex(VH) {
     recent_.clear();
   }
 
-  void modify_vertex(VH vh) {
+  void change_vertex(VH vh) {
     recent_.clear();
     typename Triangulation::Edge_circulator ec= vh->incident_edges(), ef=ec;
     if (ec != NULL) {
@@ -51,18 +51,10 @@ struct Delaunay_triangulation_recent_edges_visitor_2: public Delaunay_triangulat
     }
   }
 
-  template <class It>
-  void create_faces(It, It) {
-  }
-
-  template <class It>
-  void remove_faces(It, It) {
-  }
-
-  void before_flip(Edge) {
+  void pre_flip(Edge) {
     recent_.clear();
   }
-  void after_flip(Edge e) {
+  void post_flip(Edge e) {
     recent_.insert(e);
   }
 

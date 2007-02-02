@@ -52,7 +52,7 @@ public Delaunay_triangulation_event_log_visitor_3
         CGAL_KINETIC_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
     }
 
-    template <class Key, class Cell>
+  template <class Key, class Cell>
     void post_move(Key k, Cell c) {
         std::ostringstream out;
         out << "Moved " << k << " from ";
@@ -61,7 +61,7 @@ public Delaunay_triangulation_event_log_visitor_3
         CGAL_KINETIC_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
     }
 
-    template <class Key, class Cell>
+  /*template <class Key, class Cell>
     void pre_push(Key k, Cell c) {
         std::ostringstream out;
         out << "Pushing " << k << " into ";
@@ -93,7 +93,7 @@ public Delaunay_triangulation_event_log_visitor_3
         log_cell(c, out);
         log_.push_back(out.str());
         CGAL_KINETIC_LOG(LOG_LOTS, "Logging: " << out.str() << std::endl);
-    }
+	}*/
 };
 
 CGAL_KINETIC_END_NAMESPACE

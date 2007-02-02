@@ -51,20 +51,29 @@ public:
 
   result_type operator()(const first_argument_type &arg0) const
   {
+    result_type ret;
+    //bool check;
     if (rep_->time_is_nt()) {
-      return pred_(rep_->static_object(arg0));
+      ret= pred_(rep_->static_object(arg0));
+      //check= kpred_(rep_->kinetic_object(arg0), rep_->time());
     } else {
-      return kpred_(rep_->kinetic_object(arg0), rep_->time());
+      ret= kpred_(rep_->kinetic_object(arg0), rep_->time());
     }
+    return ret;
   }
 
   result_type operator()(const first_argument_type &arg0,
 			 const second_argument_type &arg1) const
   {
-  if (rep_->time_is_nt()) {
-    return pred_(rep_->static_object(arg0), rep_->static_object(arg1));
-  } else {
-    return kpred_(rep_->kinetic_object(arg0), rep_->kinetic_object(arg1), rep_->time());
+    if (rep_->time_is_nt()) {
+      //std::cout << "Comparing " << arg0 << " and " << arg1 << " at time " << rep_->time() << std::endl;
+      result_type ret= pred_(rep_->static_object(arg0), rep_->static_object(arg1));
+      //std::cout << "Got " << ret << std::endl;
+      //result_type check= kpred_(rep_->kinetic_object(arg0), rep_->kinetic_object(arg1), rep_->time());
+      //CGAL_assertion(ret==check || ret== CGAL::ZERO);
+      return ret;
+    } else {
+      return kpred_(rep_->kinetic_object(arg0), rep_->kinetic_object(arg1), rep_->time());
     }
   }
 
@@ -90,8 +99,8 @@ public:
       return pred_(rep_->static_object(arg0), rep_->static_object(arg1),
 		   rep_->static_object(arg2), rep_->static_object(arg3));
     } else {
-      return kpred_(rep_->kinetic_object(arg0),rep_->kinetic_object(arg1),
-		    rep_->kinetic_object(arg2), rep_->kinetic_object(arg3), rep_->time());
+      return result_type(kpred_(rep_->kinetic_object(arg0),rep_->kinetic_object(arg1),
+				rep_->kinetic_object(arg2), rep_->kinetic_object(arg3), rep_->time()));
     }
   }
 

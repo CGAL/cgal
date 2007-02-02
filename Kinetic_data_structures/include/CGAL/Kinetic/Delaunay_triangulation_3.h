@@ -78,17 +78,14 @@ private:
   typedef Delaunay_triangulation_3<TraitsT, Visitor, TriangulationT> This;
   
 
- 
+
   struct Base_traits: public TraitsT {
     typedef This Wrapper;
     typedef TriangulationT Triangulation;
     typedef typename TraitsT::Kinetic_kernel::Side_of_oriented_sphere_3 Side_of_oriented_sphere_3;
     typedef typename TraitsT::Kinetic_kernel::Orientation_3 Orientation_3;
-    typedef internal::Delaunay_3_edge_flip_event<This,
-						 typename Side_of_oriented_sphere_3::result_type,
-						 typename TriangulationT::Edge> Edge_flip;
-    typedef typename internal::Delaunay_3_facet_flip_event<This, typename Side_of_oriented_sphere_3::result_type,
-							   typename TriangulationT::Facet> Facet_flip;
+    typedef internal::Delaunay_3_edge_flip_event<This> Edge_flip;
+    typedef typename internal::Delaunay_3_facet_flip_event<This> Facet_flip;
 
     Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object() const
     {
@@ -112,16 +109,18 @@ private:
 
     Wrapper *wr_;
   };
-  
-  friend class internal::Delaunay_3_edge_flip_event<This,
-						    typename Base_traits::Side_of_oriented_sphere_3::result_type,
-						    typename TriangulationT::Edge>;
 
-  friend class  internal::Delaunay_3_facet_flip_event<This,
-						      typename Base_traits::Side_of_oriented_sphere_3::result_type,
-						      typename TriangulationT::Facet>;
+  typedef typename TraitsT::Simulator::Event_key Event_key;
 
+  friend class internal::Delaunay_event_base_3<This>;  
 
+  friend class internal::Delaunay_3_edge_flip_event<This>;
+
+  friend class internal::Delaunay_3_facet_flip_event<This>;
+
+  typedef typename TraitsT::Kinetic_kernel::Side_of_oriented_sphere_3::result_type Root_stack;
+  typedef typename TriangulationT::Facet Facet;
+  typedef typename TriangulationT::Edge Edge;
 
   typedef internal::Delaunay_triangulation_base_3<Base_traits, Visitor> KDel;
   typedef typename TraitsT::Active_points_3_table::Key Point_key;
@@ -207,7 +206,7 @@ public:
   }
 
   void insert(Point_key k) {
-    kdel_.new_vertex(k);
+    kdel_.insert(k);
     /*if (kdel_.triangulation()->dimension() ==3){
       kdel_.set_has_certificates(true);
       }*/

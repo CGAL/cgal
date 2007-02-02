@@ -39,12 +39,12 @@
 
 CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
 
-template <class KD, class Root_stack>
+template <class KD>
 class Delaunay_event_base_3: public Event_base<KD*>
 {
   typedef Event_base<KD*> P;
 public:
-  Delaunay_event_base_3(const Root_stack &s,
+  Delaunay_event_base_3(const typename KD::Root_stack &s,
 			KD *kdel):P(kdel), s_(s){
   }
   //! Default constructor
@@ -58,7 +58,7 @@ public:
     // for some reason VC insists that this be there
     CGAL_assertion(0 && "Process called in Delaunay_event_base_3");
   }
-  const Root_stack& root_stack() const
+  const typename KD::Root_stack& root_stack() const
   {
     return s_;
   }
@@ -67,11 +67,11 @@ public:
     out << "Delaunay_event";
     return out;
   }
-  KD* kdel() {
+  KD* kdel() const {
     return P::kds();
   }
 protected:
-  const Root_stack s_;
+  const typename KD::Root_stack s_;
 };
 
 /*template <class K, class R>
@@ -82,14 +82,14 @@ std::ostream& operator<<(std::ostream &out, const Delaunay_event_base_3<K, R> &e
   }*/
 
 
-template <class KD, class Root_stack, class Edge>
-class Delaunay_3_edge_flip_event: public Delaunay_event_base_3<KD, Root_stack>
+template <class KD>
+class Delaunay_3_edge_flip_event: public Delaunay_event_base_3<KD>
 {
 public:
-  typedef Delaunay_event_base_3<KD, Root_stack>   P;
-  Delaunay_3_edge_flip_event(const Root_stack &s,
-			     const Edge &e,
-			     KD *kdel):Delaunay_event_base_3<KD, Root_stack>(s, kdel), e_(e) {
+  typedef Delaunay_event_base_3<KD>   P;
+  Delaunay_3_edge_flip_event(const typename KD::Root_stack &s,
+			     const typename KD::Edge &e,
+			     KD *kdel):P(s, kdel), e_(e) {
 #ifndef NDEBUG
     o_= edge_point(e_,0);
     d_= edge_point(e_,1);
@@ -99,7 +99,7 @@ public:
     P::kdel()->flip(e_);
   }
 
-  static typename KD::Point_key edge_point(const Edge &e, int i) {
+  static typename KD::Point_key edge_point(const typename KD::Edge &e, int i) {
     return vertex_of_edge(e, i)->point();
   }
 
@@ -114,19 +114,16 @@ public:
 #endif
     return out;
   }
-  const Root_stack& root_stack() const
-  {
-    return P::s_;
-  }
-  template <class K>
-  void audit(K k) const {
+ 
+
+  void audit(typename KD::Event_key k) const {
     if (e_.first->edge_label(e_.second,e_.third) != k) {
       CGAL_KINETIC_ERROR("Mismatch, for label " << k << " had event " << e_.first->edge_label(e_.second,e_.third));
     }
     CGAL_assertion(e_.first->edge_label(e_.second,e_.third) == k);
   }
 protected:
-  const Edge e_;
+  const typename KD::Edge e_;
 #ifndef NDEBUG
   typename KD::Point_key o_, d_;
 #endif
@@ -140,14 +137,14 @@ std::ostream& operator<<(std::ostream &out, const Delaunay_3_edge_flip_event<B, 
   }*/
 
 
-template <class KD, class Root_stack, class Facet>
-class Delaunay_3_facet_flip_event:  public Delaunay_event_base_3<KD, Root_stack>
+template <class KD>
+class Delaunay_3_facet_flip_event:  public Delaunay_event_base_3<KD>
 {
 public:
-  typedef Delaunay_event_base_3<KD, Root_stack>   P;
-  Delaunay_3_facet_flip_event(const Root_stack &s,
-			      const Facet &e,
-			      KD *kdel):  Delaunay_event_base_3<KD, Root_stack>(s, kdel),e_(e) {
+  typedef Delaunay_event_base_3<KD>   P;
+  Delaunay_3_facet_flip_event(const typename KD::Root_stack &s,
+			      const typename KD::Facet &e,
+			      KD *kdel):  P(s, kdel),e_(e) {
 #ifndef NDEBUG
     a_= vertex_of_facet(e_,0)->point();
     b_= vertex_of_facet(e_,1)->point();
@@ -169,15 +166,15 @@ public:
 #endif
     return out;
   }
-  template <class K>
-  void audit(K k) const {
+ 
+  void audit(typename KD::Event_key k) const {
     if (e_.first->facet_label(e_.second) != k) {
       CGAL_KINETIC_ERROR("Mismatch, for label " << k << " had event " << e_.first->facet_label(e_.second));
     }
     CGAL_assertion(e_.first->facet_label(e_.second) == k);
   }
 protected:
-  const Facet e_;
+  const typename KD::Facet e_;
 #ifndef NDEBUG
   typename KD::Point_key a_, b_, c_;
 #endif
@@ -306,6 +303,28 @@ public:
       out << std::endl;
     }
   }
+  bool is_degree_3(const Edge &e) const {
+    return triangulation_.has_degree_3(e);
+  }
+
+  bool is_degree_4(Vertex_handle vh) const {
+    return triangulation_.degree(vh) == 4;
+  }
+
+  bool has_degree_3_edge(const Facet& f) const {
+    return triangulation_.has_degree_3(f);
+  }
+
+  bool has_degree_4_vertex(const Facet& f) const {
+    return is_degree_4(triangulation_.vertex(f,0))
+      || is_degree_4(triangulation_.vertex(f,1))
+      || is_degree_4(triangulation_.vertex(f,2));
+  }
+
+  bool has_degree_4_vertex(const Edge& f) const {
+    return is_degree_4(triangulation_.vertex(f,0))
+      || is_degree_4(triangulation_.vertex(f,1));
+  }
 
   bool print() const
   {
@@ -320,7 +339,7 @@ public:
   */
   Vertex_handle push_vertex(Point_key k, Cell_handle c) {
     clean_cell(c);
-    v_.remove_cells(&c, &c+1);
+    v_.pre_insert_vertex(k);
     // into max dim simplex?
     Vertex_handle vh=triangulation_.tds().insert_in_cell( c);
     vh->set_point(k);
@@ -332,27 +351,25 @@ public:
       Cell_handle cc= ics[j];
       handle_new_cell(cc);
     }
-    v_.create_cells(ics.begin(), ics.end());
-    v_.create_vertex(vh);
+    v_.post_insert_vertex(vh);
     return vh;
   }
 
   Cell_handle pop_vertex(Vertex_handle v) {
-    v_.remove_vertex(v);
+    v_.pre_remove_vertex(v);
     CGAL_precondition(is_degree_4(v));
     std::vector<Cell_handle> ics;
     triangulation_.incident_cells(v, std::back_insert_iterator<std::vector<Cell_handle> >(ics));
-
+    Point_key k= v->point();
     for (unsigned int j=0; j< ics.size(); ++j) {
       clean_cell(ics[j]);
     }
    
-    v_.remove_cells(ics.begin(), ics.end());
     set_vertex_handle(v->point(), NULL);
 
     Cell_handle h= triangulation_.tds().remove_from_maximal_dimension_simplex(v);
     handle_new_cell(h);
-    v_.create_cells(&h, &h+1);
+    v_.post_remove_vertex(k);
 
     return h;
   }
@@ -377,11 +394,11 @@ public:
 	 it != incident_cells.end(); ++it) {
       handle_new_cell(*it);
     }
-    v_.modify_vertex(vertex_handle(k));
+    v_.change_vertex(vertex_handle(k));
     return vertex_handle(k);
   }
 
-  typename Triangulation::Vertex_handle new_vertex_regular(Point_key k, Cell_handle h=NULL) {
+  /*typename Triangulation::Vertex_handle new_vertex_regular(Point_key k, Cell_handle h=NULL) {
     CGAL_precondition(!has_certificates_);
     typename Simulator::NT nt= simulator()->next_time_representable_as_nt();
     CGAL_precondition(simulator()->current_time() == nt);
@@ -390,16 +407,16 @@ public:
     typename Triangulation::Vertex_handle vh= triangulation_.insert(k, h);
     v_.create_vertex(vh);
     return vh;
-  }
+    }*/
 
-  typename Triangulation::Vertex_handle new_vertex(Point_key k) {
+  typename Triangulation::Vertex_handle insert(Point_key k) {
     /* NT nt= simulator()->next_time_representable_as_nt();
     simulator()->set_current_time(nt);
     triangulation_.geom_traits().set_time(nt);*/
     typename Simulator::NT nt= simulator()->next_time_representable_as_nt();
     simulator()->set_current_time(nt);
     Cell_handle h= triangulation_.locate(k);
-    return new_vertex(k,h);
+    return insert(k,h);
   }
 
   //!
@@ -413,7 +430,7 @@ public:
     This occurs when a degree 3 edges has a facet added but none destroyed--i.e. a boundary edge
     with degree 3.
   */
-  typename Triangulation::Vertex_handle new_vertex(Point_key k, Cell_handle h) {
+  typename Triangulation::Vertex_handle insert(Point_key k, Cell_handle h) {
     //CGAL_precondition(h != NULL);
 
     std::vector<Facet> bfacets;
@@ -423,6 +440,7 @@ public:
     CGAL_precondition(simulator()->current_time() == nt);
     triangulation_.geom_traits().set_time(nt);
     Vertex_handle vh;
+    v_.pre_insert_vertex(k,h);
     if (triangulation_.dimension() == 3) {
       triangulation_.find_conflicts(k, h, back_inserter(bfacets), 
 				    back_inserter(cells),back_inserter(ifacets));
@@ -430,25 +448,24 @@ public:
 	for (unsigned int i=0; i < cells.size(); ++i) {
 	  clean_cell(cells[i]);
 	}
-	v_.remove_cells(cells.begin(), cells.end());
       }
       
    
       //! \todo replace by insert_in_hole
 
       CGAL_KINETIC_LOG(LOG_LOTS, "Inserting.\n");
-       vh=triangulation_.insert_in_hole(k, cells.begin(), cells.end(), 
+      vh=triangulation_.insert_in_hole(k, cells.begin(), cells.end(), 
 						     bfacets.front().first, bfacets.front().second);
     } else {
       vh= triangulation_.insert(k,h);
     }
     set_vertex_handle(k,vh);
-    if (triangulation_.dimension() == 3) {
+    if (triangulation_.dimension() == 3 && vh != Vertex_handle()) {
       change_vertex(k);
     }
     
     CGAL_expensive_postcondition(audit_structure());
-    v_.create_vertex(vh);
+    v_.post_insert_vertex(vh);
     return vh;
   }
 
@@ -460,9 +477,6 @@ public:
   void set_has_certificates(bool b) {
     if (!has_certificates_ && b) {
       if (triangulation().dimension() == 3) {
-	v_.create_cells(triangulation_.all_cells_begin(),
-			triangulation_.all_cells_end());
-
 	for (All_edges_iterator eit = triangulation_.all_edges_begin();
 	     eit != triangulation_.all_edges_end(); ++eit) {
 	  CGAL_assertion(!has_event(*eit));
@@ -495,6 +509,10 @@ public:
 	make_certificate(*eit);
       }
     }
+    for (All_cells_iterator cit= triangulation_.all_cells_begin(); 
+	 cit != triangulation_.all_cells_end(); ++cit) {
+      v_.create_cell(cit);
+    }
   }
 
 
@@ -518,13 +536,16 @@ public:
       }
       //}
     }
-    v_.remove_cells(triangulation_.all_cells_begin(), triangulation_.all_cells_end());
+    for (All_cells_iterator cit= triangulation_.all_cells_begin(); 
+	 cit != triangulation_.all_cells_end(); ++cit) {
+      v_.destroy_cell(cit);
+    }
   }
  
 
 
   Facet flip(const Edge &edge) {
-    v_.before_edge_flip(edge);
+    v_.pre_edge_flip(edge);
     
     CGAL_KINETIC_LOG(LOG_LOTS,"\n\nFlipping edge ");
     CGAL_KINETIC_LOG(LOG_LOTS,edge.first->vertex(edge.second)->point() << "--" 
@@ -552,7 +573,6 @@ public:
       do {
 	Cell_handle h=cc;
 	clean_cell(h);
-	v_.remove_cells(&h, &h+1);
       } while (++cc != ce);
     }
 
@@ -589,10 +609,9 @@ public:
     for (int c=0; c<2; ++c) {
       handle_new_cell(cells[c]);
     }
-    v_.create_cells(&cells[0], &cells[0]+2);
 
     CGAL_postcondition(audit_structure());
-    v_.after_edge_flip(middle_facet);
+    v_.post_edge_flip(middle_facet);
     return middle_facet;
   }
 
@@ -607,7 +626,7 @@ public:
 
 
   Edge flip(const Facet &flip_facet) {
-    v_.before_facet_flip(flip_facet);
+    v_.pre_facet_flip(flip_facet);
     Vertex_handle poles[2];
     Facet other_flip_facet= triangulation_.opposite(flip_facet);
     poles[0]= flip_facet.first->vertex(flip_facet.second);
@@ -644,8 +663,7 @@ public:
       clean_cell(cells[c]);
     }
    
-    v_.remove_cells(&cells[0], &cells[0]+2);
-
+   
     triangulation_.tds().flip_flippable(flip_facet);
 
     CGAL_assertion(triangulation_.tds().is_facet(neighbor_facet.first, neighbor_facet.second));
@@ -676,12 +694,11 @@ public:
       Cell_circulator cc= triangulation_.incident_cells(central_edge), ce=cc;
       do {
 	handle_new_cell(cc);
-	v_.create_cells(&cc, &cc+1);
       } while (++cc != ce);
     }
 
     CGAL_postcondition(audit_structure());
-    v_.after_facet_flip(central_edge);
+    v_.post_facet_flip(central_edge);
     return central_edge;
   }
 
@@ -953,28 +970,6 @@ private:
   }
 
 
-  bool is_degree_3(const Edge &e) const {
-    return triangulation_.has_degree_3(e);
-  }
-
-  bool is_degree_4(Vertex_handle vh) const {
-    return triangulation_.degree(vh) == 4;
-  }
-
-  bool has_degree_3_edge(const Facet& f) const {
-    return triangulation_.has_degree_3(f);
-  }
-
-  bool has_degree_4_vertex(const Facet& f) const {
-    return is_degree_4(triangulation_.vertex(f,0))
-      || is_degree_4(triangulation_.vertex(f,1))
-      || is_degree_4(triangulation_.vertex(f,2));
-  }
-
-  bool has_degree_4_vertex(const Edge& f) const {
-    return is_degree_4(triangulation_.vertex(f,0))
-      || is_degree_4(triangulation_.vertex(f,1));
-  }
 
  
   void make_edge_flip(Edge &edge) {
@@ -1177,6 +1172,7 @@ private:
 	triangulation_.set_label(f, Event_key());
       }
     }
+    v_.destroy_cell(h);
   }
 
   void handle_new_cell(Cell_handle h) {
@@ -1194,6 +1190,7 @@ private:
       }
      
     }
+    v_.create_cell(h);
   }
   void handle_changed_cell(Cell_handle) {
     
