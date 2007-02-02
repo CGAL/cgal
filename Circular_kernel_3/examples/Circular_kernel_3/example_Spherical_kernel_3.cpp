@@ -24,10 +24,9 @@
 //             Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
 //             Pedro Machado    <tashimir@gmail.com>
 
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Spherical_kernel_3.h>
 #include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
+#include <CGAL/Spherical_kernel_3.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Random.h>
