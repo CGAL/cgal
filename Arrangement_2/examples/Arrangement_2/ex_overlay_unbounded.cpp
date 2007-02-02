@@ -22,7 +22,7 @@ struct Overlay_label
 };
 
 // instead of
-typedef CGAL::Cartesian<Number_type>                     Kernel;
+//typedef CGAL::Cartesian<Number_type>                     Kernel;
 // workaround for VC++ 
 struct Kernel : public CGAL::Cartesian<Number_type> {};
 
