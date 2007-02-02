@@ -17,31 +17,6 @@ struct ILess {
 template <class Traits>
 bool sort_test(Traits &tr, double max_events=std::numeric_limits<double>::infinity())
 {
-  if (0) {
-    typedef typename Traits::Kinetic_kernel::Point_1 MP;
-    for (unsigned int i=0; i< 50; ++i) {
-      std::vector<double> coefs;
-      for (unsigned int j=0; j<= 4; ++j) {
-	coefs.push_back(static_cast<double>(std::rand())/static_cast<double>(RAND_MAX));
-      }
-      MP mp(typename Traits::Kinetic_kernel::Motion_function(coefs.begin(), coefs.end()));
-      std::cout << mp << std::endl;
-      tr.active_points_1_table_handle()->insert(mp);
-    }
-
-    std::vector<typename Traits::Active_points_1_table::Key> keys;
-    keys.insert(keys.end(), tr.active_points_1_table_handle()->keys_begin(),  tr.active_points_1_table_handle()->keys_end());
-    
-    std::copy(keys.begin(), keys.end(), std::ostream_iterator<typename Traits::Active_points_1_table::Key>(std::cout, " "));
-    std::cout << std::endl;
-    
-    typename Traits::Instantaneous_kernel ik = tr.instantaneous_kernel_object();
-    ik.set_time(typename Traits::Instantaneous_kernel::NT(0));
-    std::sort(keys.begin(), keys.end(), ILess<typename Traits::Instantaneous_kernel::Compare_x_1>(ik.compare_x_1_object()));
-    
-    std::copy(keys.begin(), keys.end(), std::ostream_iterator<typename Traits::Active_points_1_table::Key>(std::cout, " "));
-    std::cout << std::endl;
-  }
 
   std::string etag="WARNING: ";
   CGAL_exactness_assertion_code(bool fail=false);
