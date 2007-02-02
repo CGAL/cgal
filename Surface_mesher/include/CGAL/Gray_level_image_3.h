@@ -21,7 +21,7 @@
 #define CGAL_MESH_3_GRAY_LEVEL_IMAGE_3_H
 
 #include <CGAL/basic.h>
-#include "imageio/ImageIO.h"
+#include "CGAL/imageio/ImageIO.h"
 
 namespace CGAL {
 

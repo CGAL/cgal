@@ -1,7 +1,7 @@
 #ifndef IRIS_H
 #define IRIS_H
 
-#include <imageio/ImageIO.h>
+#include <CGAL/imageio/ImageIO.h>
 
 
 #ifdef __cplusplus

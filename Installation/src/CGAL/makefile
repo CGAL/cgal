@@ -20,6 +20,7 @@
 #
 # Author(s)     : Radu Ursu
 #                 Sylvain Pion
+#                 Laurent Rineau
 
 # This is the makefile for compiling static and shared libraries in CGAL.
 

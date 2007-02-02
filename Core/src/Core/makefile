@@ -39,7 +39,7 @@ GmpIO$(OBJ_EXT)
 # - The Darwin install_name is buggy (it's libCGAL)
 
 shared_lib: $(CGAL_OBJECTS)
-	$(CGAL_SHARED_LIB_CREATE)$(CGAL_CORE_SHARED_LIB) \
+	$(CGAL_CORE_SHARED_LIB_CREATE)$(CGAL_CORE_SHARED_LIB) \
 	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
 		$(CGAL_SHARED_LIB_LDFLAGS) $(GMP_LIBPATHFLAGS) $(MPFR_LIBPATHFLAGS) $(GMP_LDFLAGS)
 	mv $(CGAL_CORE_SHARED_LIB) '$(CGAL_LIB_DESTINATION)'

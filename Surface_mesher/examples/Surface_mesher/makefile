@@ -9,25 +9,12 @@
 # CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
 include $(CGAL_MAKEFILE)
 
-default-rule: all
-
-.PHONY: default-rule
-
-#---------------------------------------------------------------------#
-#                    ImageIO files
-#---------------------------------------------------------------------#
-
-IMAGEIO_PATH = ImageIO/
-
-include $(IMAGEIO_PATH)/imageio.mk
-
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
 
 CXXFLAGS = \
            -I../../include \
-	   -I$(IMAGEIO_PATH) \
            $(OTHER_INCLUDES) \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS) \
@@ -53,16 +40,15 @@ TARGETS = mesh_a_3d_gray_image$(EXE_EXT) \
 
 all: $(TARGETS)
 
-mesh_a_3d_gray_image$(EXE_EXT): mesh_a_3d_gray_image$(OBJ_EXT) $(IMAGEIO_OBJECTS)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)mesh_a_3d_gray_image mesh_a_3d_gray_image$(OBJ_EXT) $(IMAGEIO_OBJECTS) $(LDFLAGS)
+mesh_a_3d_gray_image$(EXE_EXT): mesh_a_3d_gray_image$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)mesh_a_3d_gray_image mesh_a_3d_gray_image$(OBJ_EXT) $(LDFLAGS)
 
 mesh_an_implicit_function$(EXE_EXT): mesh_an_implicit_function$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)mesh_an_implicit_function mesh_an_implicit_function$(OBJ_EXT) $(LDFLAGS)
 
 clean: \
                    mesh_a_3d_gray_image.clean \
-                   mesh_an_implicit_function.clean \
-		   imageio-clean
+                   mesh_an_implicit_function.clean
 
 
 

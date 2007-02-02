@@ -10,7 +10,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#include <imageio/ImageIO.h>
+#include <CGAL/imageio/ImageIO.h>
 
 /* read analyse format header
 

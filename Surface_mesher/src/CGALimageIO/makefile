@@ -1,5 +1,8 @@
-# Copyright (c) 2006 Tel-Aviv University (Israel).
-# All rights reserved.
+# Copyright (c) 1997-2006  Utrecht University (The Netherlands),
+# ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
+# INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+# (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
+# and Tel-Aviv University (Israel).  All rights reserved.
 #
 # This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public License as
@@ -15,95 +18,81 @@
 # $URL$
 # $Id$
 #
-# Author(s): Efi Fogel         <efif@post.tau.ac.il>
+# Author(s)     : Radu Ursu
+#                 Sylvain Pion
 
-# This is the makefile for compiling the Benchmark support library libCGALBenchmark.
+# This is the makefile for compiling static and shared libraries in CGAL.
 
 #---------------------------------------------------------------------#
 #                    include platform specific settings
 #---------------------------------------------------------------------#
 # Choose the right include file from the <cgalroot>/make directory.
 
-# CGAL_MAKEFILE = SHOULD_BE_SET_BY_COMMAND_LINE
-
+# The following line should better be passed as command line argument.
+# CGAL_MAKEFILE = SHOULD_BE_SET_BY_INSTALL_CGAL
 include $(CGAL_MAKEFILE)
-
-# defaut rule
-all: lib
 
 #---------------------------------------------------------------------#
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-# CXXFLAGS must be provided on the make command-line.
-# CXXFLAGS = -I"../../include" $(CGAL_WINLIB_CXXFLAGS) -DCGAL_USE_BENCHMARK
+# CXXFLAGS needs to be passed as command line argument
+# CXXFLAGS = $(CGAL_SHARED_LIB_CXXFLAGS)
 
 #---------------------------------------------------------------------#
-# Object files
+#                    object files
 #---------------------------------------------------------------------#
 
 CGAL_OBJECTS = \
-Benchmark$(OBJ_EXT) \
-benchmark_parser$(OBJ_EXT) \
-benchmark_lexer$(OBJ_EXT) \
-Benchmark_visitor$(OBJ_EXT) \
-Option_parser$(OBJ_EXT)
+  ImageIO$(OBJ_EXT) \
+  analyze$(OBJ_EXT) \
+  bmp$(OBJ_EXT) \
+  bmpendian$(OBJ_EXT) \
+  bmpread$(OBJ_EXT) \
+  convert$(OBJ_EXT) \
+  gif$(OBJ_EXT) \
+  gis$(OBJ_EXT) \
+  inr$(OBJ_EXT) \
+  iris$(OBJ_EXT) \
+  mincio$(OBJ_EXT) \
+  pnm$(OBJ_EXT) \
+  recbuffer$(OBJ_EXT) \
+  recline$(OBJ_EXT) \
+  reech4x4$(OBJ_EXT)
 
 #---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
-# TODO : shared_lib !
-
-static_lib: lib
-
 shared_lib: $(CGAL_OBJECTS)
-	$(CGAL_BENCHMARK_SHARED_LIB_CREATE)$(CGAL_BENCHMARK_SHARED_LIB) \
+	$(CGAL_IMAGEIO_SHARED_LIB_CREATE)$(CGAL_IMAGEIO_SHARED_LIB) \
 	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
 		$(CGAL_SHARED_LIB_LDFLAGS)
-	mv $(CGAL_BENCHMARK_SHARED_LIB) '$(CGAL_LIB_DESTINATION)'
+	mv $(CGAL_IMAGEIO_SHARED_LIB) '$(CGAL_LIB_DESTINATION)'
 	rm $(CGAL_OBJECTS)
 
-lib: lib_no_install
-	mv $(CGAL_BENCHMARK_LIB) $(CGAL_LIB_DESTINATION)
+static_lib: static_lib_no_install
+	mv $(CGAL_IMAGEIO_LIB) $(CGAL_LIB_DESTINATION)
 
-lib_no_install: $(CGAL_OBJECTS) 
-	$(CGAL_LIB_CREATE)$(CGAL_BENCHMARK_LIB) \
+static_lib_no_install: $(CGAL_OBJECTS)
+	$(CGAL_LIB_CREATE)$(CGAL_IMAGEIO_LIB) \
 	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
 		$(CGAL_LIB_LDFLAGS)
-	$(RANLIB) $(CGAL_BENCHMARK_LIB)
-	rm $(CGAL_OBJECTS) 
+	$(RANLIB) $(CGAL_IMAGEIO_LIB)
+	rm $(CGAL_OBJECTS)
 
 clean:
-	rm -f $(CGAL_BENCHMARK_LIB) $(CGAL_BENCHMARK_SHARED_LIB) $(CGAL_OBJECTS)
+	rm -f $(CGAL_IMAGEIO_LIB) $(CGAL_IMAGEIO_SHARED_LIB) $(CGAL_OBJECTS)
 
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-%$(OBJ_EXT): %.cpp
-	$(CGAL_CXX) $(CXXFLAGS) -c $<
-
 .SUFFIXES: .cpp $(SUFFIXES)
 
 .cpp$(OBJ_EXT):
-	$(CGAL_CXX)  $(CXXFLAGS) -c $<
+	$(CGAL_CXX)  $(CXXFLAGS)  -c $<
 
-FLEX ?=flex
-BISON ?=bison
+.c$(OBJ_EXT):
+	$(CGAL_CXX)  $(CXXFLAGS)  -c $<
 
-# Apparently, old versions of bison (e.g., 1.28) name the generated definion
-# header file <base>.cpp.h. The file must be renamed to <base>.hpp 
-BISON_VERSION_CMD =expr match "`bison --version`" '.*\([1-9]\.[0-9]*\)'
-BISON_VERSION =$(shell $(BISON_VERSION_CMD))
-OLD_BISON_VERSION_CMD =expr "$(BISON_VERSION)" \<= 1.28
-OLD_BISON_VERSION =$(shell $(OLD_BISON_VERSION_CMD))
-
-%.cpp %.hpp : %.y
-	$(BISON) -d $< -o $*.cpp
-ifeq ($(OLD_BISON_VERSION), 1)
-	mv $*.cpp.h $*.hpp
-endif
-
-%.cpp : %.l
-	$(FLEX) -8 -o$@ $<
