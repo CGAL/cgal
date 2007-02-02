@@ -59,13 +59,13 @@ int main(int, char*){
 #include <qpixmap.h> 
 #include <qpainter.h> 
 #include <qpushbutton.h> 
+
 #include "typedefs.h"
 #include "icons/vertices.xpm"
 #include "icons/edges.xpm"
 #include "icons/faces.xpm"
 
-
-//The envelope diagram
+// The envelope diagram
 Envelope_tri_diagram_2    tri_diag;
 Envelope_sphere_diagram_2 sphere_diag;
 Envelope_plane_diagram_2  plane_diag;
@@ -76,9 +76,7 @@ bool draw_f;
 
 const QString my_title_string("Envelopes of 3D surfaces");
 
-
-class Qt_layer_show_diag : public CGAL::Qt_widget_layer
-{
+class Qt_layer_show_diag : public CGAL::Qt_widget_layer {
 public:
     
     // default constructor
@@ -113,97 +111,94 @@ public:
     unsigned int n_v = 0,
                  n_e = 0,
                  n_f = 0;
-    if(!tri_diag.is_empty())
-    {
+    if (!tri_diag.is_empty()) {
       n_v = tri_diag.number_of_vertices();
       n_e = tri_diag.number_of_edges();
       n_f = tri_diag.number_of_faces();
     }
-    else if(!sphere_diag.is_empty())
-    {
+    else if(!sphere_diag.is_empty()) {
       n_v = sphere_diag.number_of_vertices();
       n_e = sphere_diag.number_of_edges();
       n_f = sphere_diag.number_of_faces();
     }
-    else if(!plane_diag.is_empty())
-    {
+    else if(!plane_diag.is_empty()) {
       n_v = plane_diag.number_of_vertices();
       n_e = plane_diag.number_of_edges();
       n_f = plane_diag.number_of_faces();
     }
-    QMessageBox:: information ( widget,"Diagram size",s.arg(n_v).arg(n_e).arg(n_f));
+    QMessageBox::information(widget, "Diagram size",
+                             s.arg(n_v).arg(n_e).arg(n_f));
   }
-         
-};//end class
+};
 
 /* The QMainWindow class provides a main application window, 
- *  with a menu bar, dock windows (e.g. for toolbars), and a status bar
+ * with a menu bar, dock windows (e.g. for toolbars), and a status bar
  */
-class MyWindow : public QMainWindow
-{
+class MyWindow : public QMainWindow {
   Q_OBJECT
-public:
 
-    // constructor
+public:
+  // constructor
   MyWindow(int w, int h) 
   {
-    widget = new CGAL::Qt_widget(this); //Constructs a widget which is a child of this window
-    
+    // Constructs a widget which is a child of this window
+    widget = new CGAL::Qt_widget(this);
 
     /* Sets the central widget for this main window to w. 
-     * The central widget is surrounded by the left, top, right and bottom dock areas.
-     * The menu bar is above the top dock area
+     * The central widget is surrounded by the left, top, right and bottom
+     * dock areas. The menu bar is above the top dock area
      */
     setCentralWidget(widget);
 
     curr_dir= QString::null;
     
-    //create a timer for checking if somthing changed
-    QTimer *timer = new QTimer( this ); // constructs a timer whose parent is this window
-    
-    connect( timer, SIGNAL(timeout()),
-           this, SLOT(timer_done()) );  // connects the timer to the window
-    timer->start( 200, FALSE ); // Starts the timer with a msec milliseconds timeout
+    // create a timer for checking if somthing changed
+    // constructs a timer whose parent is this window
+    QTimer *timer = new QTimer(this);
+
+    // connects the timer to the window
+    connect(timer, SIGNAL(timeout()), this, SLOT(timer_done()));
+    timer->start(200, FALSE);         // starts the timer with a timeout
 
     // file menu
-    QPopupMenu * file = new QPopupMenu( this ); 
-    menuBar()->insertItem( "&File", file );  
+    QPopupMenu * file = new QPopupMenu(this); 
+    menuBar()->insertItem("&File", file);  
     file->insertItem("&New", this, SLOT(new_instance()), CTRL+Key_N);
     file->insertItem("New &Window", this, SLOT(new_window()), CTRL+Key_W);
     file->insertSeparator();
-    file->insertItem("&Open Triangles File", this, SLOT(open_triangles_file()),CTRL+Key_O);
+    file->insertItem("&Open Triangles File", this, SLOT(open_triangles_file()),
+                     CTRL+Key_O);
     file->insertSeparator();
-    file->insertItem("&Open Spheres File", this, SLOT(open_spheres_file()),CTRL+Key_S);
+    file->insertItem("&Open Spheres File", this, SLOT(open_spheres_file()),
+                     CTRL+Key_S);
     file->insertSeparator();
-    file->insertItem("&Open Planes File", this, SLOT(open_planes_file()),CTRL+Key_H);
+    file->insertItem("&Open Planes File", this, SLOT(open_planes_file()),
+                     CTRL+Key_H);
     file->insertSeparator();
     
     file->insertSeparator();
     file->insertItem("Print", widget, SLOT(print_to_ps()), CTRL+Key_P);
     file->insertSeparator();
-    file->insertItem( "&Close", this, SLOT(close()), CTRL+Key_X );
-    file->insertItem( "&Quit", qApp, SLOT( closeAllWindows() ), CTRL+Key_Q );
+    file->insertItem("&Close", this, SLOT(close()), CTRL+Key_X);
+    file->insertItem("&Quit", qApp, SLOT(closeAllWindows()), CTRL+Key_Q);
 
     // help menu
-    QPopupMenu * help = new QPopupMenu( this );
-    menuBar()->insertItem( "&Help", help );
+    QPopupMenu * help = new QPopupMenu(this);
+    menuBar()->insertItem("&Help", help);
     help->insertItem("How To", this, SLOT(howto()), Key_F1);
     help->insertSeparator();
-    help->insertItem("&About", this, SLOT(about()), CTRL+Key_A );
-    help->insertItem("About &Qt", this, SLOT(aboutQt()) );
+    help->insertItem("&About", this, SLOT(about()), CTRL+Key_A);
+    help->insertItem("About &Qt", this, SLOT(aboutQt()));
 
     //the standard toolbar
-    stoolbar = new CGAL::Qt_widget_standard_toolbar (widget, this, "ST");
+    stoolbar = new CGAL::Qt_widget_standard_toolbar(widget, this, "ST");
 
     show_toolbar = new QToolBar(this, "Show features");
-    QIconSet set0(QPixmap( (const char**)vertices ),
-                  QPixmap( (const char**)vertices ));
+    QIconSet set0(QPixmap((const char**)vertices),
+                  QPixmap((const char**)vertices));
 
-    QIconSet set1(QPixmap( (const char**)edges ),
-                  QPixmap( (const char**)edges ));
-    
-    QIconSet set2(QPixmap( (const char**)faces ),
-                  QPixmap( (const char**)faces ));
+    QIconSet set1(QPixmap((const char**)edges), QPixmap((const char**)edges));
+    QIconSet set2(QPixmap((const char**)faces), QPixmap((const char**)faces));
     
     show_v_button = new QToolButton(show_toolbar, "Show Vertices");
     show_v_button->setToggleButton(TRUE);
@@ -217,21 +212,17 @@ public:
     show_e_button = new QToolButton(show_toolbar, "Show Edges");
     show_e_button->setToggleButton(TRUE);
     show_e_button->setTextLabel("Show Edges ");
-    connect(show_e_button,SIGNAL(pressed()),
-            this, SLOT(show_e_pressed()));
+    connect(show_e_button,SIGNAL(pressed()), this, SLOT(show_e_pressed()));
     show_e_button->setIconSet(set1);
     
-
     show_toolbar->addSeparator();
     show_f_button = new QToolButton(show_toolbar, "Show Faces");
     show_f_button->setToggleButton(TRUE);
     show_f_button->toggle();
-        show_f_button->setTextLabel("Show Faces ");
-    connect(show_f_button,SIGNAL(pressed()),
-            this, SLOT(show_f_pressed()));
+    show_f_button->setTextLabel("Show Faces ");
+    connect(show_f_button,SIGNAL(pressed()), this, SLOT(show_f_pressed()));
     show_f_button->setIconSet(set2);
     
-
     //layers
     widget->attach(&testlayer); 
     widget->attach(&show_stat_layer);
@@ -246,146 +237,133 @@ public:
   };
 
 private:
-
   void something_changed(){current_state++;};
 
-   template<class Arrangement>
-    bool open_file(Arrangement &arr)
-    {
-      typedef typename Arrangement::Traits_3    Traits_3;
-      typedef typename Traits_3::Surface_3      Surface_3;
-      typedef typename Traits_3::Base_traits_3:: Surface_3     Base_surface_3;
-      typedef typename Arrangement::Vertex_const_iterator  Vertex_const_iterator;
-      QString s = QFileDialog::getOpenFileName(curr_dir,
-                                               QString::null,
-                                               this,
-                                               "open file dialog",
-                                               "Choose a file" );
-      if(s==QString::null)
-        return false;
-      curr_dir = s;
+  template<class Arrangement>
+  bool open_file(Arrangement &arr)
+  {
+    typedef typename Arrangement::Traits_3                      Traits_3;
+    typedef typename Traits_3::Surface_3                        Surface_3;
+    typedef typename Traits_3::Base_traits_3:: Surface_3        Base_surface_3;
+    typedef typename Arrangement::Vertex_const_iterator
+        Vertex_const_iterator;
+    QString s = QFileDialog::getOpenFileName(curr_dir, QString::null, this,
+                                             "open file dialog",
+                                             "Choose a file");
+    if (s == QString::null) return false;
+    curr_dir = s;
       
-      std::ifstream in_file(s);
-      if(!in_file.is_open())
-      {
-        QMessageBox::warning( widget,"Open","Can't open file");
-        return false;
-      }
+    std::ifstream in_file(s);
+    if (!in_file.is_open()) {
+      QMessageBox::warning(widget,"Open","Can't open file");
+      return false;
+    }
      
-      QCursor old = widget->cursor();
-      widget->setCursor(Qt::WaitCursor);
-      widget->lock();
-      widget->clear_history();
+    QCursor old = widget->cursor();
+    widget->setCursor(Qt::WaitCursor);
+    widget->lock();
+    widget->clear_history();
 
-      std::list<Surface_3> surfaces;
-      int num_of_surfaces;
-      in_file >> num_of_surfaces;
-      CGAL::Random rand;
-      for(int i=0 ; i<num_of_surfaces; i++)
-      {
-        int r = rand.get_int(128, 256);
-        int g = rand.get_int(0, 256);
-        int b = rand.get_int(0, 256);
+    std::list<Surface_3> surfaces;
+    int num_of_surfaces;
+    in_file >> num_of_surfaces;
+    CGAL::Random rand;
+    for (int i=0 ; i<num_of_surfaces; i++) {
+      int r = rand.get_int(128, 256);
+      int g = rand.get_int(0, 256);
+      int b = rand.get_int(0, 256);
 
-        Base_surface_3 s;
-        read_surface(in_file, s);
-        surfaces.push_back(Surface_3(s, CGAL::Color(r, g, b)));
-      }
-      arr.clear();
-      CGAL::lower_envelope_3(surfaces.begin(), surfaces.end(), arr);
+      Base_surface_3 s;
+      read_surface(in_file, s);
+      surfaces.push_back(Surface_3(s, CGAL::Color(r, g, b)));
+    }
+    arr.clear();
+    CGAL::lower_envelope_3(surfaces.begin(), surfaces.end(), arr);
 
-      if(arr.number_of_vertices() != 0)
-      {
-        Vertex_const_iterator vit = arr.vertices_begin();
-        double x_min = CGAL::to_double(vit->point().x());
-        double x_max = CGAL::to_double(vit->point().x());
-        double y_min = CGAL::to_double(vit->point().y());
-        double y_max = CGAL::to_double(vit->point().y());
-
+    if (arr.number_of_vertices() != 0) {
+      Vertex_const_iterator vit = arr.vertices_begin();
+      double x_min = CGAL::to_double(vit->point().x());
+      double x_max = CGAL::to_double(vit->point().x());
+      double y_min = CGAL::to_double(vit->point().y());
+      double y_max = CGAL::to_double(vit->point().y());
       
-        for(++vit; vit != arr.vertices_end(); ++vit)
-        {
-          double curr_x = CGAL::to_double(vit->point().x());
-          double curr_y = CGAL::to_double(vit->point().y());
+      for (++vit; vit != arr.vertices_end(); ++vit) {
+        double curr_x = CGAL::to_double(vit->point().x());
+        double curr_y = CGAL::to_double(vit->point().y());
 
-          if(curr_x < x_min)
-            x_min = curr_x;
-          else if(curr_x > x_max)
-            x_max = curr_x;
+        if (curr_x < x_min)
+          x_min = curr_x;
+        else if (curr_x > x_max)
+          x_max = curr_x;
 
-          if(curr_y < y_min)
-            y_min = curr_y;
-          else if(curr_y > y_max)
-            y_max = curr_y;
-
-        }
-        double w = (x_max - x_min)/10;
-        double h = (y_max - y_min)/10;
-
-        // make sure the bbox is not degenerated
-        if(w == 0.0)
-          w+=10.0;
-        if(h == 0.0)
-          h+=10.0;
-        widget->set_window(x_min - w, x_max + w, y_min - h, y_max + h);
+        if (curr_y < y_min)
+          y_min = curr_y;
+        else if (curr_y > y_max)
+          y_max = curr_y;
       }
-      widget->unlock();
-      widget->setCursor(old);
-      return true;
-    }
+      double w = (x_max - x_min)/10;
+      double h = (y_max - y_min)/10;
 
-
-    void read_surface(std::ifstream& is, Base_triangle_3& tri)
-    {
-      is >> tri;
+      // make sure the bbox is not degenerated
+      if (w == 0.0)
+        w+=10.0;
+      if (h == 0.0)
+        h+=10.0;
+      widget->set_window(x_min - w, x_max + w, y_min - h, y_max + h);
     }
+    widget->unlock();
+    widget->setCursor(old);
+    return true;
+  }
 
-    void read_surface(std::ifstream& is, Base_sphere_3& s)
-    {
-      Rat_point_3 a;
-      Rational sr;
-      is >> a >> sr;
-      s = Base_sphere_3(a, sr);
-    }
+  void read_surface(std::ifstream& is, Base_triangle_3& tri)
+  {
+    is >> tri;
+  }
 
-    void read_surface(std::ifstream& is, Base_plane_3& p)
-    {
-      Coord_type a, b, c, d;
-      is >> a >> b >> c >> d;
-      p = Base_plane_3(Plane_3(a, b, c, d));
-    }
+  void read_surface(std::ifstream& is, Base_sphere_3& s)
+  {
+    Rat_point_3 a;
+    Rational sr;
+    is >> a >> sr;
+    s = Base_sphere_3(a, sr);
+  }
+
+  void read_surface(std::ifstream& is, Base_plane_3& p)
+  {
+    Coord_type a, b, c, d;
+    is >> a >> b >> c >> d;
+    p = Base_plane_3(Plane_3(a, b, c, d));
+  }
 
 public slots:
 
-    void open_triangles_file()
-    {
-      if(open_file(tri_diag))
-      {
-        sphere_diag.clear();
-        plane_diag.clear();
-        something_changed();
-      }
+  void open_triangles_file()
+  {
+    if (open_file(tri_diag)) {
+      sphere_diag.clear();
+      plane_diag.clear();
+      something_changed();
     }
+  }
 
-    void open_spheres_file()
-    {
-      if(open_file(sphere_diag))
-      {
-        tri_diag.clear();
-        plane_diag.clear();
-        something_changed();
-      }
+  void open_spheres_file()
+  {
+    if (open_file(sphere_diag)) {
+      tri_diag.clear();
+      plane_diag.clear();
+      something_changed();
     }
+  }
 
-    void open_planes_file()
-    {
-      if(open_file(plane_diag))
-      {
-         tri_diag.clear();
-         sphere_diag.clear();
-         something_changed();
-      }
+  void open_planes_file()
+  {
+    if (open_file(plane_diag)) {
+      tri_diag.clear();
+      sphere_diag.clear();
+      something_changed();
     }
+  }
 
   void new_instance()
   {
@@ -429,14 +407,14 @@ private slots:
 
   void about()
   {
-    QMessageBox::about( this, my_title_string,
+    QMessageBox::about(this, my_title_string,
         "This is a demo for 3D envelopes of surfaces\n");
           
   }
 
   void aboutQt()
   {
-    QMessageBox::aboutQt( this, my_title_string );
+    QMessageBox::aboutQt(this, my_title_string);
   }
 
   void howto()
@@ -454,14 +432,11 @@ private slots:
     MyWindow *ed = new MyWindow(500, 500);
     ed->setCaption("Layer");
     ed->widget->clear_history();
-    ed->widget->set_window(widget->x_min(), 
-                           widget->x_max(),
-                           widget->y_min(),
-                           widget->y_max());
+    ed->widget->set_window(widget->x_min(), widget->x_max(),
+                           widget->y_min(), widget->y_max());
     ed->show();
     something_changed();
   }
-
 
   void timer_done()
   {
@@ -471,7 +446,6 @@ private slots:
       old_state = current_state;
     }
   }    
-
   
 private:
   CGAL::Qt_widget*                     widget;
@@ -490,7 +464,7 @@ private:
 
 int main(int argc, char **argv)
 {
-  QApplication app( argc, argv );
+  QApplication app(argc, argv);
   MyWindow widget(600,400); // physical window size
   app.setMainWidget(&widget);
   widget.setCaption(my_title_string);
