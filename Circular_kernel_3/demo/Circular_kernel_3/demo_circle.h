@@ -17,8 +17,8 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
 //
 // Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //             Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
@@ -63,8 +63,8 @@
 #include <GL/glu.h> // Header File For The GLu32 Library
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/Spherical_kernel_3.h>
 #include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
+#include <CGAL/Spherical_kernel_3.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/IO/Spherical_circle_gl.h>
