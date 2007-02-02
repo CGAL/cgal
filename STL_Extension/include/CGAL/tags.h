@@ -41,6 +41,7 @@ struct Boolean_tag {
 typedef Boolean_tag<true>   Tag_true;
 typedef Boolean_tag<false>  Tag_false; 
 
+// the function check_tag is deprecated since CGAL 3.3
 inline bool check_tag( Tag_true)  {return true;}
 inline bool check_tag( Tag_false) {return false;}
 
