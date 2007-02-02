@@ -42,14 +42,14 @@ LDFLAGS = \
 #---------------------------------------------------------------------#
 
 all:            \
-                example_Circular_kernel_3$(EXE_EXT)
+                spherical_kernel_3$(EXE_EXT)
 
-example_Circular_kernel_3$(EXE_EXT): example_Circular_kernel_3$(OBJ_EXT)
-	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)example_Circular_kernel_3 example_Circular_kernel_3$(OBJ_EXT) $(LDFLAGS)
+spherical_kernel_3$(EXE_EXT): spherical_kernel_3$(OBJ_EXT)
+	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)spherical_kernel_3 spherical_kernel_3$(OBJ_EXT) $(LDFLAGS)
 
 
 clean: \
-                   example_Circular_kernel_3.clean 
+                   spherical_kernel_3.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules
