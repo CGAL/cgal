@@ -491,7 +491,7 @@ public:
     return null_event_;
   }
 
-  bool is_in_queue(Key k) const {
+  bool contains(Key k) const {
     return is_in_heap(k);
   }
 

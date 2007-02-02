@@ -394,7 +394,7 @@ public:
     This is just passed to the event queue.
   */
   void delete_event(const Event_key &k) {
-      audit_event(k);
+    audit_event(k);
     //if (k== final_event()) return;
     //#ifdef NDEBUG
     if (k== null_event() || k== Event_key()) {
@@ -539,11 +539,11 @@ public:
     if (k!= null_event()) {
       CGAL_assertion(k != Event_key());
 #ifndef NDEBUG
-      if (!queue_.is_in_queue(k)) {
+      if (!queue_.contains(k)) {
 	CGAL_KINETIC_ERROR("Event " << k << " is not in queue.");
       }
 #endif
-      CGAL_assertion(queue_.is_in_queue(k));
+      CGAL_assertion(queue_.contains(k));
     }
   }
 

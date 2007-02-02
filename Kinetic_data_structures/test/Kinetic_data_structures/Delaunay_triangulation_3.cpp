@@ -20,7 +20,7 @@ int main(int, char *[])
   Simulation_traits::Simulator::Handle sp= simtr.simulator_handle();
 
   KDel kdel(simtr);
-  CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
+  CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_NONE);
   std::ifstream in("data/Delaunay_triangulation_3.input");
   if (!in) {
     std::cerr << "Error opening input file: " << "data/Delaunay_triangulation_3.input" << std::endl;

@@ -61,6 +61,10 @@ queue must implement the \ccc{Event} concept.
 
 \ccMethod{void set_end_priority();}{Set the priority beyond which to ignore events.}
 
+\ccMethod{bool contains(Key) const;}{Return true if the queue contains
+  the event and false if it does not. This is used for auditing
+  events and can be slow if needed.}
+
 \ccHasModels
 
 \ccc{Kinetic::Two_list_pointer_event_queue<FunctionKernel>},

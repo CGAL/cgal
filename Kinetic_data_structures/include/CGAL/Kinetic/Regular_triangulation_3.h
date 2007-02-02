@@ -533,11 +533,11 @@ public:
     CGAL_KINETIC_LOG_WRITE(LOG_LOTS, internal::write_cell(h, LOG_STREAM));
     CGAL_KINETIC_LOG(LOG_LOTS, std::endl);
     
-    redundant_points_.erase(k);
+    //redundant_points_.erase(k);
 
     remove_redundant(h,k);
     
-    typename Triangulation::Vertex_handle vh= kdel_.insert(k, h);
+    typename Triangulation::Vertex_handle vh= kdel_.push_vertex(k, h);
 
     handle_vertex(vh, rs);
 
@@ -548,6 +548,7 @@ public:
     CGAL_KINETIC_LOG(LOG_LOTS, "Popping " << vh->point() << std::endl);
    
     Point_key k= vh->point();
+    vh->info()= Event_key();
     typename Triangulation::Cell_handle h= kdel_.pop_vertex(vh);
 
     handle_redundant(k, h, rs);
@@ -559,7 +560,7 @@ public:
     on_geometry_changed();
   }
 
-  void move(Point_key k, typename Triangulation::Cell_handle h, int dir, const Root_stack &) {
+  void move(Point_key k, typename Triangulation::Cell_handle h, int dir, const Root_stack &rs) {
     kdel_.visitor().pre_move(k,h);
     CGAL_KINETIC_LOG(LOG_LOTS, "Moving " << k << " from ");
     CGAL_KINETIC_LOG_WRITE(LOG_LOTS, internal::write_cell(h, LOG_STREAM));
@@ -577,7 +578,8 @@ public:
       }
     }
     if (hinf) {
-      insert(k, neighbor);
+      //insert(k, neighbor);
+      push(k, h, rs);
     } else {
       handle_redundant(k, neighbor);
     }
@@ -610,18 +612,21 @@ public:
     }
   }
 
-  void insert(Point_key k, Cell_handle h=Cell_handle()) {
+  void insert(Point_key k, Cell_handle h= Cell_handle()) {
     // almost the same as push
     // if insertion fails, then handle redundant
     CGAL_KINETIC_LOG(LOG_LOTS, "Insert " << k << std::endl);
+    if (h== Cell_handle()) {
+      h = triangulation().locate(k);
+    }
 
     typename Triangulation::Vertex_handle vh= kdel_.insert(k, h);
-    if (vh == typename Triangulation::Vertex_handle()) {
+    if (vh == Vertex_handle()) {
       if (h==Cell_handle()) {
 	h= triangulation().locate(k);
       }
       handle_redundant(k,h);
-    } else {
+    } else if (kdel_.has_certificates() && kdel_.is_degree_4(vh)){
       handle_vertex(vh); 
     }
 
@@ -653,9 +658,10 @@ public:
 	CGAL_KINETIC_LOG(LOG_LOTS, "Setting up certificates.\n");
 	for (typename Triangulation::Finite_vertices_iterator vit= triangulation().finite_vertices_begin();
 	     vit != triangulation().finite_vertices_end(); ++vit) {
-	  if (kdel_.is_degree_4( vit)) {
+	  /*if (kdel_.is_degree_4( vit)) {
 	    handle_vertex(vit);
-	  }
+	    }*/
+	  CGAL_assertion(!kdel_.is_degree_4(vit) || vit->info() != Event_key());
 	}
 	for (typename RCMap::iterator it= redundant_cells_.begin(); it != redundant_cells_.end(); ++it) {
 	  CGAL_KINETIC_LOG(LOG_LOTS, "On init " << it->second << " is redundant" << std::endl);
@@ -801,9 +807,14 @@ protected:
     CGAL_KINETIC_LOG(LOG_LOTS, std::endl);
     CGAL_precondition(orientation(k,h) != CGAL::NEGATIVE);
     CGAL_precondition(redundant_points_[k]==Event_key());
+    for( typename RCMap::iterator it = redundant_cells_.begin();  it != redundant_cells_.end(); ++it) {
+      CGAL_assertion(it->second != k);
+    }
 
-
-   
+    redundant_cells_.insert(typename RCMap::value_type(h, k));
+    redundant_points_[k]= Event_key();
+    if (!kdel_.has_certificates()) return;
+ 
     Time pst;
     /*if (!ps.empty()) pst = ps.top();
       else pst= std::numeric_limits<Time>::infinity();*/
@@ -844,11 +855,7 @@ protected:
       redundant_points_[k]= kdel_.simulator()->null_event();
     }
 
-    for( typename RCMap::iterator it = redundant_cells_.begin();  it != redundant_cells_.end(); ++it) {
-      CGAL_assertion(it->second != k);
-    }
-
-    redundant_cells_.insert(typename RCMap::value_type(h, k));
+   
   }
 
   /*
@@ -987,6 +994,7 @@ protected:
   }
 
   void remove_redundant(typename Triangulation::Cell_handle h, Point_key k) {
+    redundant_points_.erase(k);
     typename RCMap::iterator beg = redundant_cells_.lower_bound(h);
     typename RCMap::iterator end = redundant_cells_.upper_bound(h);
     for (; beg != end; ++beg) {

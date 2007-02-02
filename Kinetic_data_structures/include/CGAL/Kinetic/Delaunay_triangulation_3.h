@@ -206,6 +206,7 @@ public:
   }
 
   void insert(Point_key k) {
+
     kdel_.insert(k);
     /*if (kdel_.triangulation()->dimension() ==3){
       kdel_.set_has_certificates(true);

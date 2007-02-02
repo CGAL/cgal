@@ -339,7 +339,7 @@ public:
   */
   Vertex_handle push_vertex(Point_key k, Cell_handle c) {
     clean_cell(c);
-    v_.pre_insert_vertex(k);
+    v_.pre_insert_vertex(k, c);
     // into max dim simplex?
     Vertex_handle vh=triangulation_.tds().insert_in_cell( c);
     vh->set_point(k);
@@ -436,11 +436,19 @@ public:
     std::vector<Facet> bfacets;
     std::vector<Cell_handle> cells;
     std::vector<Facet> ifacets;
+    //typename Simulator::NT nt= simulator()->next_time_representable_as_nt();
+    //CGAL_precondition(simulator()->current_time() == nt);
+    //triangulation_.geom_traits().set_time(nt);
     typename Simulator::NT nt= simulator()->next_time_representable_as_nt();
-    CGAL_precondition(simulator()->current_time() == nt);
-    triangulation_.geom_traits().set_time(nt);
+    if (simulator()->current_time() == nt) {
+      triangulation_.geom_traits().set_time(nt);
+    } else {
+      CGAL_KINETIC_LOG(LOG_SOME, "Warning, insertion of points at non-rationl times is slow.\n");
+      triangulation_.geom_traits().set_time(simulator()->current_time());
+    }
+    CGAL_precondition(triangulation_.geom_traits().time() == simulator()->current_time());
     Vertex_handle vh;
-    v_.pre_insert_vertex(k,h);
+    v_.pre_insert_vertex(k, h);
     if (triangulation_.dimension() == 3) {
       triangulation_.find_conflicts(k, h, back_inserter(bfacets), 
 				    back_inserter(cells),back_inserter(ifacets));
@@ -551,6 +559,12 @@ public:
     CGAL_KINETIC_LOG(LOG_LOTS,edge.first->vertex(edge.second)->point() << "--" 
 		     << edge.first->vertex(edge.third)->point() << std::endl);
     CGAL_assertion(triangulation_.tds().is_edge(edge.first, edge.second, edge.third) || print());
+    if (has_degree_4_vertex(edge)) {
+      CGAL_KINETIC_LOG(LOG_LOTS,"dropping edge since endpoint is degree 4\n ");
+      triangulation_.set_label(edge, simulator()->null_event());
+      return Facet();
+    }
+    CGAL_assertion(!has_degree_4_vertex(edge));
 
     Vertex_handle poles[2];
     poles[0]= edge.first->vertex(edge.second);
@@ -1089,7 +1103,7 @@ private:
 	   eit != triangulation_.all_edges_end(); ++eit) {
 	bool isd3= is_degree_3(*eit);
 	bool hd4= has_degree_4_vertex(*eit);
-	if (!isd3 || hd4) {
+	if (!isd3/* || hd4*/) {
 	  if (has_event(*eit)) {
 	    std::cerr << "Edge should not have certificate ";
 	    triangulation_.write_labeled_edge(*eit, std::cerr);
@@ -1097,7 +1111,7 @@ private:
 	    simulator()->audit_event(triangulation_.label(*eit));
 	    CGAL_assertion(0);
 	  }
-	} else if (isd3) {
+	} else if (!hd4 && isd3) {
 	  if (!has_event(*eit)) {
 	    std::cerr << "Edge should have certificate ";
 	    triangulation_.write_labeled_edge(*eit, std::cerr);

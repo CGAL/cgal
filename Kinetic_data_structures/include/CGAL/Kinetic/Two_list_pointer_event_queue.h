@@ -401,7 +401,7 @@ public:
       back_.push_back(*ni);
     }
     CGAL_expensive_postcondition(audit());
-    CGAL_expensive_postcondition(is_in_queue(Key(ni)));
+    CGAL_expensive_postcondition(contains(Key(ni)));
     //std::cout << "Made event " << ni << std::endl;
     return Key(ni);
   }
@@ -414,13 +414,13 @@ public:
     //std::cout << "Erase event " << item.pointer() << std::endl;
     if (item== end_key()) return;
 #ifndef NDEBUG
-    if (!is_in_queue(item)) {
+    if (!contains(item)) {
       std::cerr << "Erasing event not in queue ";
       item->write(std::cerr);
       std::cerr << std::endl;
     }
 #endif
-    CGAL_expensive_precondition(is_in_queue(item));
+    CGAL_expensive_precondition(contains(item));
     CGAL_expensive_precondition(audit());
     Item *i=item.get();
     if (item->in_list() == Item::FRONT) {
@@ -454,7 +454,7 @@ public:
   */
   template <class NE>
   Key set(const Key &item, const NE &ne) {
-    CGAL_expensive_precondition(is_in_queue(item));
+    CGAL_expensive_precondition(contains(item));
     CGAL_precondition(item != end_key());
     Item *oi= item.get();
     typename Item::List front= item->in_list();
@@ -679,7 +679,7 @@ protected:
     return true;
   }
 public:
-  bool is_in_queue(const Key k) const
+  bool contains(const Key k) const
   {
     //if (k.pointer()->time() == std::numeric_limits<Priority>::infinity()) return true;
     for (typename Queue::const_iterator it = front_.begin(); it != front_.end(); ++it) {

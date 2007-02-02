@@ -93,17 +93,38 @@ Returns true if the current time is a rational number and there are no events at
 
 \ccMethod{Time end_time() const;} { Return the time the simulation will end. If time is running backwards, then this returns \ccc{Time::infinity()}.}
 
-\ccMethod{void set_interval(Time t_cur, Time t_end);}{Set the current time to $t_{cur}$ and the end time to $t_{end}$. The event queue must be empty. Use this method if you want to reset or extend the simulation.}
+\ccMethod{void set_interval(Time t_cur, Time t_end);}{Set the current
+  time to $t_{cur}$ and the end time to $t_{end}$. The event queue
+  must be empty. Use this method if you want to reset or extend the
+  simulation.}
 
-\ccMethod{ template <class Event> Event_key new_event(Time t, const Event event);}{Schedule a new event at time \ccc{t}. The object \ccc{event} must implement the concept \ccc{Event}. The \ccc{Event_key} returned can be used to access or deschedule the event.}
+\ccMethod{ template <class Event> Event_key new_event(Time t, const
+  Event event);}{Schedule a new event at time \ccc{t}. The object
+  \ccc{event} must implement the concept \ccc{Event}. The
+  \ccc{Event_key} returned can be used to access or deschedule the
+  event.}
 
-\ccMethod{ template <class Event> Event_key new_final_event(const Event event);}{Schedule a new event that will occur at the end of the simulation. This type of event is useful if, for example, you want to run for a while, change all motions, and then run some more.}
+\ccMethod{ template <class Event> Event_key new_final_event(const
+  Event event);}{Schedule a new event that will occur at the end of
+  the simulation. This type of event is useful if, for example, you
+  want to run for a while, change all motions, and then run some
+  more.}
 
-\ccMethod{Event_key null_event() const;}{This method returns an \ccc{Event_key} which is guaranteed never to be assigned to any real event.}
+\ccMethod{Event_key null_event() const;}{This method returns an
+  \ccc{Event_key} which is guaranteed never to be assigned to any real
+  event. This is a very useful placeholder for events which are known
+  never to occur (and allows data structures to differentiate between
+  uninitialized and never failing).}
+
+\ccMethod{void audit_event(Event_key) const}{Performs some checks as
+  to whether the key corresponds to a valid event. Generally, a event
+  is valid if it is not defaultly constructed and either is in the
+  queue or is the \ccc{null_event()}.}
 
 \ccMethod{bool empty() const;}{Return true if there are no more events.}
 
-\ccMethod{void delete_event(const Event_key k);}{Remove the event referenced by \ccc{k} from the event queue.}
+\ccMethod{void delete_event(const Event_key k);}{Remove the event
+  referenced by \ccc{k} from the event queue.}
 
 \ccMethod{template <class Ev> typename
   Queue::Event_handle<Ev>::Handle event(const Event_key k, const Ev

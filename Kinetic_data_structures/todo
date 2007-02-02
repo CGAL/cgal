@@ -8,10 +8,9 @@ sired. Make the tables simply an event manager rather than owning the points (so
 - link kinetic and instantnaeous predicates-how?
 - make sorting general- solve linking first
 - times can generate certificate func and solve. Queue checks if they are dirty (a point changed--when check? that is hard--maybe collapse to front of interval if need exact and is dirty) and reinserts them if they are. Points are ref counted pointers. With interval rep and way to generate exact. Then just insert notifications. Dirty is keept by generation count per point. Time is k ints, k points, inexact func, interval--broken-what if time moves up? Need linear scans.
-- popping too early means that I always isolate one root ahead, stop doing that
+- popping too early means that I always isolate one root ahead, stop doing that or make root stack lazy. This is hard as the end can always kill a root and I need to answer empty() queries accurately
 
 Easy:
-- document audit_event and is_in_queue (rename this to contains)
 - pull static_pred/IP into kinetic pred to get result types right and things
 
 known bugs:

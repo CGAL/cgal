@@ -38,11 +38,24 @@ scheduling events which will in turn pass them to the
   degeneracy.}
 
 
-\ccMethod{CGAL::Comparison_result compare_concurrent(Key a, Key b) const;}{The two events \ccc{a} and \ccc{b} occur at the same time (\ccc{this} has key \ccc{a}). This method returns a \ccc{CGAL::Comparison_result} which is used to order the two equal events. If \ccc{CGAL::EQUAL} is returned then \ccc{merge} will be called.}
 
-\ccMethod{bool merge_concurrent(Key a, Key b);}{ The two events \ccc{a} and \ccc{b} occur at the same time (\ccc{this} has key \ccc{a}) and cannot be perturbed to be unequal. This event  allows the KDS to merge event \ccc{b} with \ccc{a}. If it returns \ccc{true} then \ccc{b} is dropped from the event queue.}
+\ccMethod{CGAL::Comparison_result compare_concurrent(Key a, Key b)
+  const;}{The two events \ccc{a} and \ccc{b} occur at the same time
+  (\ccc{this} has key \ccc{a}). This method returns a
+  \ccc{CGAL::Comparison_result} which is used to order the two equal
+  events. If \ccc{CGAL::EQUAL} is returned then \ccc{merge} will be
+  called.}
 
-\ccMethod{void audit(Key this_key);}{Audit that this is a valid event.}
+\ccMethod{bool merge_concurrent(Key a, Key b);}{ The two events
+  \ccc{a} and \ccc{b} occur at the same time (\ccc{this} has key
+  \ccc{a}) and cannot be perturbed to be unequal. This event allows
+  the KDS to merge event \ccc{b} with \ccc{a}. If it returns
+  \ccc{true} then \ccc{b} is dropped from the event queue.}
+
+\ccMethod{void audit(Key this_key);}{Audit that this is a valid event.
+  To use this, kinetic data structure can check that this event is
+  indeed pointed to by the correct part of the combinatorial
+  structure. }
 
 \ccMethod{std::ostream& write(std::ostream&) const;}{Write the event to a stream.}
 

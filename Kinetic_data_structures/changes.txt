@@ -18,18 +18,15 @@ August 2006 Daniel Russel
 - removed set_end_time/set_end_priority replaced with set_interval
 
 January 2007 Daniel Russel
-- added event auditing
-- change has_rational_current_time to has_current_time_as_nt() to one function next_time_representable_as_nt
-- changed some NT to FT to be consistent with CGAL
-- collapsed polynomial_NS::Sign into CGAL::Sign
-- you must check if a certificate fails or not before accessing the root
-- added example for defining a simulation_traits class
-- standardize names in kinetickernel to be those of the cgal kernels
-- standardized look of functionkernel predicates to take all arguments at once
-- changed Sign_above to Sign_after
-- computation of the sign after the current time is now exposed through the kinetic predicates
-- traits classes are now dimension independent
-- Kinetic_kernel now called Kinetic::Cartesian to be consistent with the
+- Changed how to find and deal with rational times (and made them less necessary). First, the InstantaneousKernel now can use an instance of Time as the current time (in that case it falls back to slower evaluation schemes). Second, in the simulator to figure out when to perform actions that require a rational time you call next_time_representable_as_nt() and then advance the simulator to that time (and use the returned time value to do your work). 
+- Changed most types named NT to FT to be consistent with CGAL
+- Collapsed Polynomial_NS::Sign into CGAL::Sign and elimanated Polynomial_NS::sign and Polynomial_NS::compare
+- You must check if a certificate fails or not before accessing the root by calling the will_fail() method.
+- Added example for defining a simulation_traits class which shows how to add data to a point type.
+- Standardize names in KineticKernel to be those of the cgal kernels. This included removing the Less functors and only having Compare functors.
+- Standardized look of FunctionKernel predicates to take all arguments at once
+- Changed Sign_above to Sign_after
+- Traits classes are now dimension independent.
+- Kinetic::Kinetic_kernel is now called Kinetic::Cartesian to be consistent with the
   static one
-- Instantaneous_kernel now can work at with the current time being a Time, rather than just an NT
-
+- Added auditing for events through the Event::audit method and the Simulator::audit_event method. This means KDSs can check for extra events and for events which the simulator does not know about.

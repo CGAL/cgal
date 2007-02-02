@@ -242,7 +242,7 @@ public:
 		   const Root& end = Root::infinity(),
 		   const Traits& tr = Traits())
     : finish_(end), traits_(tr), root_counter_(),
-      p_(p), another_even_(false) {
+      p_(p), current_ok_(false), another_even_(false) {
     CGAL_precondition(start <= end);
     initialize(start);
     done_=false;
@@ -258,7 +258,7 @@ public:
   //=============
 protected:
 
-  void do_pop() {
+  void do_pop() const {
     CGAL_precondition(!done_);
     if (intervals_.empty()) {
       CGAL_KINETIC_STURM_DEBUG("No more roots" << std::endl);
@@ -270,8 +270,13 @@ protected:
       std::pair<NT, NT> iv= intervals_.back().interval_;
       intervals_.pop_back();
       CGAL_postcondition(iv.first == iv.second || sign_at(p_, iv.first) != sign_at(p_, iv.second));
-      if (iv.first == iv.second) current_= Root(iv.first);
-      else current_ = Root(iv, p_, sign_at(p_, iv.first), /*sign_at(p_, iv.second)*/ CGAL::ZERO, traits_);
+      current_= Root(iv.first);
+      if (iv.first == iv.second) {
+	current_ok_=true;
+      } 
+      else {
+	current_ = Root(iv, p_, sign_at(p_, iv.first), /*sign_at(p_, iv.second)*/ CGAL::ZERO, traits_);
+      }
       
       CGAL_KINETIC_STURM_DEBUG("Created root " << current_);
       if (current_>= finish_) {
@@ -297,7 +302,7 @@ protected:
     }
   }
 
-  void clean() {
+  void clean() const {
     current_=Root();
     finish_=Root();
     p_=Polynomial();
@@ -315,6 +320,9 @@ public:
 
   bool empty() const
   {
+    if (!current_ok_) {
+      do_pop();
+    }
     return done_;
   }
 
@@ -324,7 +332,7 @@ public:
     if (another_even_) {
       another_even_=false;
     } else {
-      do_pop();
+      current_ok_=false;
     }
   }
 
@@ -364,10 +372,11 @@ protected:
   Root_count                       root_counter_;
   Polynomial                       p_;
   Polynomial                       non_square_free_part_;
-  Root                             current_;
-  bool                             another_even_;
-  bool                             done_;
-  std::vector<ID>                  intervals_;
+  mutable Root                             current_;
+  mutable bool                             current_ok_;
+  mutable bool                             another_even_;
+  mutable bool                             done_;
+  mutable std::vector<ID>                  intervals_;
 
 };
 
