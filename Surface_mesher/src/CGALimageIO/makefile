@@ -93,6 +93,4 @@ clean:
 .cpp$(OBJ_EXT):
 	$(CGAL_CXX)  $(CXXFLAGS)  -c $<
 
-.c$(OBJ_EXT):
-	$(CGAL_CXX)  $(CXXFLAGS)  -c $<
 
