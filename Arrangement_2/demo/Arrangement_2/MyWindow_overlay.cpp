@@ -26,7 +26,7 @@
 #include "forms.h"
 #include "qt_layer.h"
 #include "demo_tab.h"
-#include "overlay_fucntor.h"
+#include "overlay_functor.h"
 
 #include <CGAL/Arr_overlay.h>
 

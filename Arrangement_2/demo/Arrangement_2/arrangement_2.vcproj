@@ -262,7 +262,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\overlay_fucntor.h">
+				RelativePath=".\overlay_functor.h">
 			</File>
 			<File
 				RelativePath=".\qt_layer.h">
