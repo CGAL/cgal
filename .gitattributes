@@ -329,6 +329,7 @@ BGL/doc_tex/BGL/fig/ex_bgl.gif -text svneol=unset#image/gif
 BGL/doc_tex/BGL/fig/ex_bgl.pdf -text svneol=unset#application/pdf
 BGL/doc_tex/BGL/fig/ex_bgl.pstex -text svneol=unset#application/postscript
 BGL/doc_tex/BGL/fig/ex_bgl.pstex_t -text svneol=unset#application/postscript
+BGL/examples/BGL_polyhedron_3/kruskal_min_spanning_tree.hpp -text
 BGL/test/BGL/cgal_test eol=lf
 BGL/test/BGL/data/7_faces_traingle.off -text svneol=unset#application/octet-stream
 BGL/test/BGL/data/genus3.off -text svneol=unset#application/octet-stream

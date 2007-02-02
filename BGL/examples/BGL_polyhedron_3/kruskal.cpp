@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <list>
 
-#include <boost/graph/kruskal_min_spanning_tree.hpp>
+#include "kruskal_min_spanning_tree.hpp"
 
 
 typedef CGAL::Cartesian<double>                              Kernel;
@@ -38,10 +38,10 @@ bool operator< ( vertex_const_descriptor const& x, vertex_const_descriptor const
 typedef std::map<vertex_const_descriptor,int> VertexIndexMap;
 VertexIndexMap vertex_id_map;
 
+
 // A std::map is not a property map, because it is not lightweight
 typedef boost::const_associative_property_map<VertexIndexMap> VertexIdPropertyMap;
 VertexIdPropertyMap vertex_index_pmap(vertex_id_map);
-
 
 void
 kruskal(const Polyhedron& P)
@@ -58,15 +58,13 @@ kruskal(const Polyhedron& P)
        vertex_id_map[vd]= index++;
     }
   }  
-
+  
   // We use the default edge weight which is the squared length of the edge
   // This property map is defined in graph_traits_Polyhedron_3.h
 
   // In the function call you can see a named parameter: vertex_index_map
    std::list<edge_const_descriptor> mst;
-   boost::kruskal_minimum_spanning_tree(P, 
-					std::back_inserter(mst), 
-					vertex_index_map(vertex_index_pmap));
+   boost::kruskal_minimum_spanning_tree(P, std::back_inserter(mst), boost::vertex_index_map(vertex_index_pmap) );
 
    vertex_const_iterator vb, ve;
     
