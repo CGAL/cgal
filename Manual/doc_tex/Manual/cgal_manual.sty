@@ -171,11 +171,11 @@
 \newcommand{\cgaltitlepage}[1]{%
   \pagestyle{empty}
   % prevent pdf warning:
-  % ! pdfTeX warning (ext4): destination with the same identifier 
-  % switching to alph pagenumbering does not affect the visual formatting 
-  % as the page number does not appear on the title page, but it will yield 
+  % ! pdfTeX warning (ext4): destination with the same identifier
+  % switching to alph pagenumbering does not affect the visual formatting
+  % as the page number does not appear on the title page, but it will yield
   % unique identifiers (given that in our document, we only use roman and arabic)
-  \pagenumbering{alph} 
+  \pagenumbering{alph}
   \begin{titlepage}\mbox{}\vspace{3cm}
   \lcTex{\centerline{%
       \includegraphics[scale=0.25]{Manual/fig/c-simp}~
@@ -226,6 +226,19 @@
 \newcommand{\ccThirdPartyTaucs}{\ccThirdParty{Taucs}}
 \newcommand{\ccThirdPartyZlib}{\ccThirdParty{zlib}}
 \newcommand{\ccThirdPartyOpenNL}{\ccThirdParty{OpenNL}}
+
+% --------- plain names of thirdparty stuff -------
+
+\newcommand{\gnu}{\textsc{Gnu}}
+\newcommand{\qt}{\textsc{Qt}}
+\newcommand{\gmp}{\textsc{Gmp}}
+\newcommand{\mpfr}{\textsc{Mpfr}}
+\newcommand{\boost}{\textsc{Boost}}
+\newcommand{\core}{\textsc{Core}}
+\newcommand{\taucs}{\textsc{Taucs}}
+\newcommand{\lidia}{\textsc{Lidia}}
+\newcommand{\ntl}{\textsc{Ntl}}
+
 
 
 % Implement the two columns layout for the HTML converted part
