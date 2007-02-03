@@ -23,7 +23,7 @@ int main(int, char *[])
     Simulation_traits::Simulator::Handle sp= simtr.simulator_handle();
       
     KDel kdel(simtr);
-    CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
+    CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_NONE);
     std::ifstream in("data/regular_triangulation_3.input");
     if (!in) {
       std::cerr << "Error opening input file: " << "data/regular_triangulation_3.input" << std::endl;
@@ -55,7 +55,7 @@ int main(int, char *[])
     Simulation_traits::Simulator::Handle sp= simtr.simulator_handle();
 
     KDel kdel(simtr);
-    CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
+    CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_NONE);
     std::ifstream in("data/regular_triangulation_3.input");
     if (!in) {
       std::cerr << "Error opening input file: " << "data/regular_triangulation_3.input" << std::endl;
@@ -80,8 +80,8 @@ int main(int, char *[])
       sp->set_current_event_number(sp->current_event_number()+1);
     }
 
-    /*std::copy(kdel.visitor().begin(), kdel.visitor().end(),
-      std::ostream_iterator<std::string>(std::cout, "\n"));*/
+    std::copy(kdel.visitor().events_begin(), kdel.visitor().events_end(),
+      std::ostream_iterator<std::string>(std::cout, "\n"));
 
     std::ifstream out("data/regular_triangulation_3.output");
     if (!out) {
