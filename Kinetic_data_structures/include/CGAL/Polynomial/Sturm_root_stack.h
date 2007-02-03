@@ -79,7 +79,7 @@ protected:
   //------------------------------------------------------------------
   // the method for subdivision; it guarantees that the first interval
   // contains only one root
-  void subdivide() {
+  void subdivide() const {
     if (intervals_.empty() ) { return; }
 
     while ( intervals_.back().lbc_ - intervals_.back().ubc_!=1  ) {
@@ -304,9 +304,9 @@ protected:
 
   void clean() const {
     current_=Root();
-    finish_=Root();
-    p_=Polynomial();
-    root_counter_=Root_count();
+    //finish_=Root();
+    //p_=Polynomial();
+    //root_counter_=Root_count();
     done_=true;
   }
 

@@ -820,7 +820,7 @@ public:
     CGAL_KINETIC_LOG(LOG_LOTS, "making certificate for edge ");
     CGAL_KINETIC_LOG_WRITE(LOG_LOTS, triangulation_.write_edge(e, LOG_STREAM));
     CGAL_KINETIC_LOG(LOG_LOTS, std::endl);
-    CGAL_precondition(triangulation_.has_degree_3(e));
+    CGAL_precondition(is_degree_3(e));
     CGAL_precondition_code(Facet_circulator fc= triangulation_.incident_facets(e));
     CGAL_precondition_code(Facet_circulator fe= fc);
     CGAL_precondition_code(do {
@@ -854,10 +854,15 @@ public:
     make_certificate(e, simulation_traits_object().simulator_handle()->current_time());
   }
 
+
+
+
+
   void make_certificate( const Facet &e,
 			 const typename Simulator::Time &st) {
     CGAL_precondition(!has_event(e));
     CGAL_KINETIC_LOG(LOG_LOTS, "making certificate for facet ");
+    CGAL_KINETIC_LOG_WRITE(LOG_LOTS, triangulation_.write_facet(e, LOG_STREAM ));
     //triangulation_.write_facet(e, log_lots());
     CGAL_KINETIC_LOG(LOG_LOTS,  std::endl);
 
@@ -984,11 +989,47 @@ private:
   }
 
 
+  void create_edge_flips(Vertex_handle v) {
+    CGAL_precondition(!is_degree_4(v));
+    std::vector<Cell_handle> ics;
+    triangulation().incident_cells(v, std::back_inserter(ics));
+    for (unsigned int i=0; i< ics.size(); ++i) {
+      int j;
+      bool ret=ics[i]->has_vertex(v, j);
+      CGAL_assertion(ret);
+      for (int k=0; k<4 ; ++k) {
+	if (k==j) continue;
+	Edge e(ics[i], j, k);
+	if (is_degree_3(e) && !has_event(e) && !has_degree_4_vertex(e)) {
+	  // rather than make_certificate due to ordering dependencies
+	  make_edge_flip(e);
+	}
+      }
+    }
+  }
 
- 
+  void suppress_edge_flips(Vertex_handle v) {
+    CGAL_precondition(is_degree_4(v));
+    std::vector<Cell_handle> ics;
+    triangulation().incident_cells(v, std::back_inserter(ics));
+    for (unsigned int i=0; i< ics.size(); ++i) {
+      int j;
+      bool ret=ics[i]->has_vertex(v, j);
+      CGAL_assertion(ret);
+      for (int k=0; k<4 ; ++k) {
+	if (k==j) continue;
+	Edge e(ics[i], j, k);
+	if (has_event(e)) {
+	  simulator()->delete_event(triangulation_.label(e));
+	  triangulation().set_label(e, Event_key());
+	}
+      }
+    }
+  }
+
   void make_edge_flip(Edge &edge) {
     CGAL_KINETIC_LOG(LOG_LOTS, "Making edge flip ");
-    //triangulation_.write_edge(edge, log_lots() );
+    CGAL_KINETIC_LOG_WRITE(LOG_LOTS, triangulation_.write_labeled_edge(edge, LOG_STREAM ));
     CGAL_KINETIC_LOG(LOG_LOTS,std::endl);
     CGAL_assertion(triangulation_.has_degree_3(edge));
     typename Simulator::Event_key k= typename Simulator::Event_key();
@@ -1008,12 +1049,12 @@ private:
 
     CGAL_KINETIC_LOG(LOG_LOTS, "Making up edge event.\n");
     make_certificate(edge);
-    }
+  }
 
   void make_not_edge_flip(Edge &edge, Cell_handle h) {
     if (true) {
       CGAL_KINETIC_LOG(LOG_LOTS, "Making edge ");
-      //triangulation_.write_labeled_edge(edge, log_lots() );
+      CGAL_KINETIC_LOG_WRITE(LOG_LOTS, triangulation_.write_labeled_edge(edge, LOG_STREAM ));
       CGAL_KINETIC_LOG(LOG_LOTS, " not an edge flip.\n");
     }
     CGAL_assertion(is_degree_3(edge) || print());
@@ -1086,6 +1127,14 @@ private:
   {
     if (triangulation_.dimension() != 3) return true;
 
+    std::set<Point_key> pks;
+    for (Finite_vertices_iterator eit = triangulation_.finite_vertices_begin();
+	  eit != triangulation_.finite_vertices_end(); ++eit) {
+      CGAL_assertion_code(Point_key k= eit->point());
+      CGAL_assertion(pks.find(k) == pks.end());
+      pks.insert(k);
+    }
+    
     if (!has_certificates()) {
       for (All_edges_iterator eit = triangulation_.all_edges_begin();
 	   eit != triangulation_.all_edges_end(); ++eit) {
@@ -1103,7 +1152,7 @@ private:
 	   eit != triangulation_.all_edges_end(); ++eit) {
 	bool isd3= is_degree_3(*eit);
 	bool hd4= has_degree_4_vertex(*eit);
-	if (!isd3/* || hd4*/) {
+	if (!isd3 || hd4) {
 	  if (has_event(*eit)) {
 	    std::cerr << "Edge should not have certificate ";
 	    triangulation_.write_labeled_edge(*eit, std::cerr);
@@ -1111,7 +1160,7 @@ private:
 	    simulator()->audit_event(triangulation_.label(*eit));
 	    CGAL_assertion(0);
 	  }
-	} else if (!hd4 && isd3) {
+	} else if ( isd3) {
 	  if (!has_event(*eit)) {
 	    std::cerr << "Edge should have certificate ";
 	    triangulation_.write_labeled_edge(*eit, std::cerr);
@@ -1204,6 +1253,15 @@ private:
       }
      
     }
+    for (unsigned int i=0; i<4; ++i) {
+      Vertex_handle vh= h->vertex(i);
+      if (is_degree_4(vh)) {
+	suppress_edge_flips(vh);
+      } else {
+	create_edge_flips(vh);
+      }
+    }
+
     v_.create_cell(h);
   }
   void handle_changed_cell(Cell_handle) {

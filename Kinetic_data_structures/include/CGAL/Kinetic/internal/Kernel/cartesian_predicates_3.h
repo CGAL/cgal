@@ -27,6 +27,8 @@
 
 CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
 
+
+
 template <class KK>
 struct Cartesian_side_of_oriented_sphere_3
 {

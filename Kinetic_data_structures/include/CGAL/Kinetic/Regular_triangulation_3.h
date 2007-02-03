@@ -241,8 +241,46 @@ struct Regular_triangulation_3_types
 
   typedef CGAL::Regular_triangulation_3<typename Traits::Instantaneous_kernel, TDS> Default_triangulation;
 
-  template <class KRT>
-  struct Mirroring_visitor {
+ 
+
+  //friend class CGAL::Delaunay_triangulation_3<typename P::Instantaneous_kernel, TDS>;
+
+};
+
+CGAL_KINETIC_END_INTERNAL_NAMESPACE
+
+CGAL_KINETIC_BEGIN_NAMESPACE
+
+/*!
+  redundant_cells_ maps each cell with redundant points to the ids of the points in that cell
+
+  redundant_points_ maps each redundant point to a certificate
+*/
+template <class TraitsT,
+	  class VisitorT= Regular_triangulation_visitor_base_3,
+	  class TriangulationT= typename internal::Regular_triangulation_3_types<TraitsT>::Default_triangulation>
+class Regular_triangulation_3:
+  public Ref_counted<Regular_triangulation_3<TraitsT, VisitorT, TriangulationT> >
+{
+private:
+  typedef Regular_triangulation_3<TraitsT, VisitorT, TriangulationT> This;
+
+public:
+  typedef TraitsT Traits;
+  typedef typename Traits::Active_points_3_table::Key Point_key; //here
+
+protected:
+  typedef typename Traits::Active_points_3_table MPT; // here
+  typedef typename Traits::Simulator Simulator;
+  typedef typename Traits::Simulator::Event_key Event_key;
+  typedef typename Traits::Simulator::Time Time;
+
+  typedef typename Traits::Kinetic_kernel::Certificate Root_stack;
+  typedef TriangulationT Delaunay;
+
+  typedef internal::Regular_triangulation_3_types<TraitsT> Types;
+
+  struct Delaunay_visitor {
     template <class Point_key, class Cell_handle>
     void pre_insert_vertex(Point_key v, Cell_handle h) {
       v_.pre_insert_vertex(v, h);
@@ -310,51 +348,13 @@ struct Regular_triangulation_3_types
       v_.post_move(k,h);
     }
 
-    Mirroring_visitor(KRT* krt, typename KRT::Visitor v): krt_(krt), v_(v){}
+    Delaunay_visitor(This* krt, VisitorT v): krt_(krt), v_(v){}
 
-    KRT* krt_;
-    typename KRT::Visitor v_;
+    This* krt_;
+    VisitorT v_;
   };
 
-  //friend class CGAL::Delaunay_triangulation_3<typename P::Instantaneous_kernel, TDS>;
-
-};
-
-CGAL_KINETIC_END_INTERNAL_NAMESPACE
-
-CGAL_KINETIC_BEGIN_NAMESPACE
-
-/*!
-  redundant_cells_ maps each cell with redundant points to the ids of the points in that cell
-
-  redundant_points_ maps each redundant point to a certificate
-*/
-template <class TraitsT,
-	  class VisitorT= Regular_triangulation_visitor_base_3,
-	  class TriangulationT= typename internal::Regular_triangulation_3_types<TraitsT>::Default_triangulation>
-class Regular_triangulation_3:
-  public Ref_counted<Regular_triangulation_3<TraitsT, VisitorT, TriangulationT> >
-{
-private:
-  typedef Regular_triangulation_3<TraitsT, VisitorT, TriangulationT> This;
-
-public:
-  typedef TraitsT Traits;
-  typedef typename Traits::Active_points_3_table::Key Point_key; //here
-
-protected:
-  typedef typename Traits::Active_points_3_table MPT; // here
-  typedef typename Traits::Simulator Simulator;
-  typedef typename Traits::Simulator::Event_key Event_key;
-  typedef typename Traits::Simulator::Time Time;
-
-  typedef typename Traits::Kinetic_kernel::Certificate Root_stack;
-  typedef TriangulationT Delaunay;
-
-  typedef internal::Regular_triangulation_3_types<TraitsT> Types;
-
-  typedef typename Types::template Mirroring_visitor<This> Delaunay_visitor;
-  friend class internal::Regular_triangulation_3_types<TraitsT>::Mirroring_visitor<This>;
+  friend class Delaunay_visitor;
 
   typedef typename Delaunay::Facet Facet;
   typedef typename Delaunay::Edge Edge;
@@ -506,6 +506,14 @@ public:
   void write(std::ostream &out) const {
     if (triangulation().dimension() != 3) return;
     kdel_.write(out);
+    for (typename Triangulation::Finite_vertices_iterator vit= triangulation().finite_vertices_begin();
+	 vit != triangulation().finite_vertices_end(); ++vit) {
+      if (kdel_.is_degree_4(vit)) {
+	out << vit->point() << ": " << vit->info() << std::endl;
+      } else if (!kdel_.is_degree_4(vit) && vit->info() != Event_key()) {
+	out << vit->point() << "******: " << vit->info() << std::endl;
+      }
+    }
     out << "Redundant points: ";
     for (typename RPMap::const_iterator it= redundant_points_.begin(); it != redundant_points_.end();
 	 ++it) {
@@ -524,6 +532,7 @@ public:
       out << it->second << " ";
     }
     out << std::endl;
+    
   }
 
 
@@ -728,6 +737,7 @@ protected:
 	  CGAL_assertion(vit->info() != Event_key() || !k.is_valid());
 	}
 	else {
+	  CGAL_assertion_code(Point_key k= vit->point());
 	  CGAL_assertion(vit->info() == Event_key());
 	}
 	CGAL_assertion(redundant_points_.find(vit->point())== redundant_points_.end());
@@ -894,6 +904,7 @@ protected:
   }
 
   void handle_vertex(typename Triangulation::Vertex_handle vh, Root_stack &s) {
+    CGAL_KINETIC_LOG(LOG_LOTS, "Updating vertex " << vh->point() << std::endl);
     if (s.will_fail()) {
       Time t= s.failure_time();
       s.pop_failure_time();
@@ -904,6 +915,7 @@ protected:
   }
 
   void handle_vertex(typename Triangulation::Vertex_handle vh) {
+    CGAL_KINETIC_LOG(LOG_LOTS, "Handling vertex " << vh->point() << std::endl);
     if (vh== triangulation().infinite_vertex()) return;
     CGAL_precondition( internal::has_degree_4(triangulation(), vh));
     CGAL_precondition( vh->info() == Event_key());
@@ -962,10 +974,14 @@ protected:
 
 
   void destroy_cell(typename Triangulation::Cell_handle h) {
+    CGAL_KINETIC_LOG(LOG_LOTS, "Cleaning cell " << h->vertex(0)->point()
+		     << " " << h->vertex(1)->point() << " " << h->vertex(2)->point()
+		     << " " << h->vertex(3)->point() << std::endl);
     for (unsigned int i=0; i<4; ++i) {
       if (h->vertex(i)->info() != Event_key()) {
+	CGAL_KINETIC_LOG(LOG_LOTS, "Cleaning vertex " << h->vertex(i)->point() << std::endl);
 	kdel_.simulator()->delete_event(h->vertex(i)->info());
-	h->vertex(i)->info() == Event_key();
+	h->vertex(i)->info() = Event_key();
       }
     }
     typename RCMap::iterator beg= redundant_cells_.lower_bound(h);
@@ -977,6 +993,9 @@ protected:
   }
 
   void create_cell(typename Triangulation::Cell_handle h) {
+    CGAL_KINETIC_LOG(LOG_LOTS, "Creating cell " << h->vertex(0)->point()
+		     << " " << h->vertex(1)->point() << " " << h->vertex(2)->point()
+		     << " " << h->vertex(3)->point() << std::endl);
     for (unsigned int i=0; i< 4; ++i){
       if (h->vertex(i)->info() == Event_key() && kdel_.is_degree_4(h->vertex(i))){
 	handle_vertex(h->vertex(i));
