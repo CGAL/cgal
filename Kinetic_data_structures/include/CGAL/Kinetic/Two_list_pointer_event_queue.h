@@ -311,7 +311,7 @@ class Two_list_pointer_event_queue
 {
   typedef typename FK::Root PriorityT;
   typedef typename FK::FT NT;
-  typedef Two_list_pointer_event_queue<FK, TARGET> This;
+  typedef Two_list_pointer_event_queue<FK, INF, TARGET> This;
   typedef typename internal::Two_list_event_queue_item<PriorityT> Item;
 
   typedef typename CGAL::In_place_list<Item, false,

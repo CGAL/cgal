@@ -61,7 +61,7 @@ public:
   CORE_Expr_root_stack(const Function &f,
 		       const Root &lb,
 		       const Root &ub,
-		       const Traits &tr): f_(f), ub_(ub), tr_(tr), one_even_left_(false){
+		       const Traits &tr): f_(f), ub_(ub),  cur_valid_(false), tr_(tr), one_even_left_(false){
     initialize(lb);
   }
 
@@ -70,19 +70,14 @@ public:
   const Root& top() const
   {
     CGAL_precondition(!empty());
+    if(!cur_valid_) make_cur_valid();
     return cur_;
   }
   void pop() {
     if (!one_even_left_) {
       --num_roots_;
+      cur_valid_=false;
       CGAL_precondition(num_roots_>=0);
-      if (num_roots_==0) {
-	no_roots();
-      }
-      else {
-	make_root();
-	enforce_upper_bound();
-      }
     } else {
       one_even_left_=false;
     }
@@ -90,6 +85,9 @@ public:
 
   bool empty() const
   {
+    if (num_roots_ != 0 && !cur_valid_) {
+      make_cur_valid();
+    }
     return num_roots_==0;
   }
 
@@ -98,16 +96,27 @@ public:
     return out << f_ << ": " << cur_ << std::endl;
   }
 protected:
+  void make_cur_valid() const {
+    CGAL_precondition(!cur_valid_);
+    if (num_roots_==0) {
+      no_roots();
+    } else {
+      make_root();
+      enforce_upper_bound();
+    }
+  }
+
   Function f_;
   CORE_Sturm sturm_;
   Root  ub_;
-  Root cur_;
-  int num_roots_;
-  CORE::BigFloat bflb_, bfub_;
+  mutable Root cur_;
+  mutable bool cur_valid_;
+  mutable int num_roots_;
+  mutable CORE::BigFloat bflb_, bfub_;
   Traits tr_;
-  bool one_even_left_;
-  int offset_in_interval_;
-  CGAL::Sign last_sign_;
+  mutable bool one_even_left_;
+  mutable int offset_in_interval_;
+  mutable CGAL::Sign last_sign_;
 
   void initialize(const Root& lb) {
     if (f_.degree()<=0) {
@@ -157,7 +166,7 @@ protected:
     enforce_upper_bound();
   }
 
-  void enforce_upper_bound() {
+  void enforce_upper_bound() const {
     if (cur_ < ub_) return;
     else {
       //std::cout << "Rejected " << cur_ << std::endl;
@@ -165,7 +174,7 @@ protected:
     }
   }
 
-  void make_root() {
+  void make_root() const {
     CGAL_precondition(num_roots_!=0);
     //std::cout << "making root: " << CGAL::to_double(bflb_) << " " << CGAL::to_double(bfub_) << std::endl;
   
@@ -195,15 +204,17 @@ protected:
     last_sign_= cur_sign;
     //std::cout << nr << " " << bfi.first << " " << bfi.second <<  std::endl;
     cur_= CORE::Expr(f_.core_polynomial(), bfi);
+    cur_valid_=true;
     //cur_ =Root(e/*/f_.scale()*/, nr);
     //std::cout << "root= " << cur_ <<  " " << e << std::endl;
   }
 
-  void no_roots() {
-    ub_= CORE::Expr(0);
+  void no_roots() const {
+    //ub_= CORE::Expr(0);
     cur_= infinity<Root>();
     num_roots_=0;
     one_even_left_=false;
+    cur_valid_=false;
   }
 
   /*void initialize_counters(const Root &lb) {

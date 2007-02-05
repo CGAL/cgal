@@ -260,6 +260,7 @@ protected:
 
   void do_pop() const {
     CGAL_precondition(!done_);
+    CGAL_precondition(!current_ok_);
     if (intervals_.empty()) {
       CGAL_KINETIC_STURM_DEBUG("No more roots" << std::endl);
       clean();
@@ -270,11 +271,10 @@ protected:
       std::pair<NT, NT> iv= intervals_.back().interval_;
       intervals_.pop_back();
       CGAL_postcondition(iv.first == iv.second || sign_at(p_, iv.first) != sign_at(p_, iv.second));
-      current_= Root(iv.first);
-      if (iv.first == iv.second) {
 	current_ok_=true;
-      } 
-      else {
+      if (iv.first == iv.second) {
+      current_= Root(iv.first);
+      } else {
 	current_ = Root(iv, p_, sign_at(p_, iv.first), /*sign_at(p_, iv.second)*/ CGAL::ZERO, traits_);
       }
       
@@ -320,8 +320,9 @@ public:
 
   bool empty() const
   {
-    if (!current_ok_) {
+    if (!done_ && !current_ok_) {
       do_pop();
+      CGAL_postcondition(done_ || current_ok_);
     }
     return done_;
   }

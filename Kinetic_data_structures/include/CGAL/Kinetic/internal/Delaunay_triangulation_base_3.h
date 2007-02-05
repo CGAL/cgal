@@ -30,6 +30,7 @@
 
 // STL
 #include <map>
+#include <set>
 #include <iterator>
 #include <ostream>
 #include <iostream>
@@ -1132,7 +1133,7 @@ private:
 	  eit != triangulation_.finite_vertices_end(); ++eit) {
       CGAL_assertion_code(Point_key k= eit->point());
       CGAL_assertion(pks.find(k) == pks.end());
-      pks.insert(k);
+      CGAL_assertion_code(pks.insert(k));
     }
     
     if (!has_certificates()) {
