@@ -1673,6 +1673,7 @@ Qt_widget/src/CGALQt/CGALQt.sln eol=crlf
 Qt_widget/src/CGALQt/CGALQt.vcproj eol=crlf
 Ridges_3/doc_tex/Ridges_3/david_crest.eps -text svneol=unset#application/postscript
 Ridges_3/doc_tex/Ridges_3/david_crest.png -text svneol=unset#image/png
+Ridges_3/doc_tex/Ridges_3/david_crest_small.png -text svneol=unset#image/png
 Ridges_3/doc_tex/Ridges_3/david_eye_crest.eps -text svneol=unset#application/postscript
 Ridges_3/doc_tex/Ridges_3/david_eye_crest.png -text svneol=unset#image/png
 Ridges_3/doc_tex/Ridges_3/ellipsoid_ridges.eps -text svneol=unset#application/postscript
