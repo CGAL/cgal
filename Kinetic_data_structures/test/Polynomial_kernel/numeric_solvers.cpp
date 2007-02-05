@@ -186,7 +186,7 @@ int main(int argc, char* argv[])
         std::cout << std::endl;
     }
 #endif
-    {
+    if (0) {
         if (verbose) std::cout <<"Inter______________________________________\n";
         else std::cout << "Interval &\t";
 	typedef CGAL_POLYNOMIAL_NS::Kernel<Pd, Interval_root_stack> K;

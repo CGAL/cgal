@@ -57,7 +57,7 @@ public:
       ret= pred_(rep_->static_object(arg0));
       //check= kpred_(rep_->kinetic_object(arg0), rep_->time());
     } else {
-      ret= kpred_(rep_->kinetic_object(arg0), rep_->time());
+      ret= static_cast<result_type>(kpred_(rep_->kinetic_object(arg0), rep_->time()));
     }
     return ret;
   }
@@ -73,7 +73,7 @@ public:
       //CGAL_assertion(ret==check || ret== CGAL::ZERO);
       return ret;
     } else {
-      return kpred_(rep_->kinetic_object(arg0), rep_->kinetic_object(arg1), rep_->time());
+      return static_cast<result_type>(kpred_(rep_->kinetic_object(arg0), rep_->kinetic_object(arg1), rep_->time()));
     }
   }
 
@@ -85,8 +85,8 @@ public:
     return pred_(rep_->static_object(arg0), rep_->static_object(arg1),
 		 rep_->static_object(arg2));
   } else {
-      return kpred_(rep_->kinetic_object(arg0), rep_->kinetic_object(arg1),
-		    rep_->kinetic_object(arg2), rep_->time());
+      return static_cast<result_type>(kpred_(rep_->kinetic_object(arg0), rep_->kinetic_object(arg1),
+					     rep_->kinetic_object(arg2), rep_->time()));
     }
   }
 
@@ -99,7 +99,7 @@ public:
       return pred_(rep_->static_object(arg0), rep_->static_object(arg1),
 		   rep_->static_object(arg2), rep_->static_object(arg3));
     } else {
-      return result_type(kpred_(rep_->kinetic_object(arg0),rep_->kinetic_object(arg1),
+      return static_cast<result_type>(kpred_(rep_->kinetic_object(arg0),rep_->kinetic_object(arg1),
 				rep_->kinetic_object(arg2), rep_->kinetic_object(arg3), rep_->time()));
     }
   }
@@ -115,9 +115,9 @@ public:
 		   rep_->static_object(arg2), rep_->static_object(arg3),
 		   rep_->static_object(arg4));
     } else {
-      return kpred_(rep_->kinetic_object(arg0),rep_->kinetic_object(arg1),
-		    rep_->kinetic_object(arg2), rep_->kinetic_object(arg3),
-		    rep_->kinetic_object(arg4), rep_->time());
+      return static_cast<result_type>(kpred_(rep_->kinetic_object(arg0),rep_->kinetic_object(arg1),
+					     rep_->kinetic_object(arg2), rep_->kinetic_object(arg3),
+					     rep_->kinetic_object(arg4), rep_->time()));
     }
   }
 
