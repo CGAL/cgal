@@ -25,6 +25,7 @@
 #include <CGAL/config.h>
 #include <stdexcept>
 #include <string>
+#include <boost/lexical_cast.hpp> 
 
 CGAL_BEGIN_NAMESPACE
 
@@ -61,27 +62,6 @@ CGAL_BEGIN_NAMESPACE
 */
 //@{
 
-namespace CGALi {
-// I hope the following will go away at some point.
-inline std::string int_to_string( int i) {
-    // not at all exciting but I don't want to invoke stringstreams for this.
-    std::string s;
-    bool negative = false;
-    if ( i < 0) {
-        negative = true;
-        i = -i;
-    }
-    while ( i != 0 ) {
-        s.append( 1, char( '0' + i % 10));
-        i = i / 10;
-    }
-    if ( negative)
-        s.append( 1, '-');
-    std::reverse( s.begin(), s.end());
-    return s;
-}
-} // CGALi
-
 // Failure types and exceptions
 // ============================
 
@@ -104,7 +84,7 @@ public:
     std::logic_error( lib + std::string( " ERROR: ") + kind + std::string( "!")
         + ((expr.empty()) ? (std::string("")) : (std::string("\nExpr: ")+expr))
         + std::string( "\nFile: ") + file
-        + std::string( "\nLine: ") + CGALi::int_to_string( line)
+        + std::string( "\nLine: ") + boost::lexical_cast<std::string>(line)
         + ((msg.empty()) ? (std::string(""))
                          : (std::string("\nExplanation: ") + msg))),
     m_lib( lib),
