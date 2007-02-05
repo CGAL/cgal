@@ -31,6 +31,10 @@
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/Unique_hash_map.h>
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4355) // complaint about using 'this' to
+#endif                          // initialize a member
 CGAL_BEGIN_NAMESPACE
 
 template < class Gt,
@@ -1849,5 +1853,9 @@ is_valid(bool verbose, int level) const
 }
 
 CGAL_END_NAMESPACE
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
 #endif // CGAL_REGULAR_TRIANGULATION_3_H
