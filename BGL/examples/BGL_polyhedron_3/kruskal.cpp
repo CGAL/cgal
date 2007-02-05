@@ -100,9 +100,17 @@ kruskal(const Polyhedron& P)
 
 
 int main() {
+
     Polyhedron P;
-    std::cin >> P;
- 
+
+    Point a(1,0,0);
+    Point b(0,1,0);
+    Point c(0,0,1);
+    Point d(0,0,0);
+    
+    P.make_tetrahedron(a,b,c,d);
+
     kruskal(P);
+
     return 0;
 }
