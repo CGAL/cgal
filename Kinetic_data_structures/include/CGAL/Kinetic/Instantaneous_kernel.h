@@ -46,8 +46,9 @@ template <class CIK>
 class Instantaneous_kernel_rep: public Ref_counted<Instantaneous_kernel_rep<CIK> >
 {
 public:
-  typedef typename CIK::Traits::Static_kernel Static_kernel;
-  typedef typename CIK::Traits::Kinetic_kernel Kinetic_kernel;
+  typedef typename CIK::Traits Traits;
+  typedef typename Traits::Static_kernel Static_kernel;
+  typedef typename Traits::Kinetic_kernel Kinetic_kernel;
 
   typedef typename Kinetic_kernel::Point_1::template Static_traits<Static_kernel> Static_traits_point_1;
   typedef typename Kinetic_kernel::Point_2::template Static_traits<Static_kernel> Static_traits_point_2;
@@ -57,7 +58,7 @@ public:
   typedef typename Static_kernel::FT NT;
   typedef typename CIK::Traits::Simulator::Time Time;
 
-  Instantaneous_kernel_rep(typename CIK::Traits tr): tr_(tr) {
+  Instantaneous_kernel_rep(Traits tr): tr_(tr) {
     initialized_=false;
     time_is_nt_=false;
   }
