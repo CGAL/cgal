@@ -1,0 +1,54 @@
+\begin{ccRefClass}{Output_rep<T,F>}
+
+\ccDefinition
+
+In some situations, you want to control the output formatting for a type \texttt{T}. For external types (third party libraries etc.), there might be problems if the stream output operator does not honor the CGAL output mode. The purpose of \ccc{Output_rep} is to provide a way to control output formatting that works independently of the object's stream output operator.
+
+\ccc{Output_rep} is used in conjunction with the free function \ccc{oformat}. Both provide an intermediate layer between the actual output stream and the type \texttt{T}. \ccc{Output_rep<T>} can be regarded as a wrapper around \texttt{T} and \ccc{oformat} is just a convenience function to construct an instance of \ccc{Output_rep<T>}.
+
+By default, the object's stream output operator is called. If you want another behaviour for your type \texttt{T}, you have to create a template specialization for that type. Furthermore, you can provide specializations with a second template parameter (a formatting tag). The second template parameter defaults to \ccc{Null_tag}.
+
+Specializations of \ccc{Output_rep} should provide the following features:
+
+\begin{ccExampleCode}
+template< class F >
+struct Output_rep< My_special_type, F > {
+    Output_rep( const My_special_type& t );
+    std::ostream& operator()( std::ostream& out ) const;
+};
+\end{ccExampleCode}
+
+
+
+\ccExample
+For example, if you want special formatting for \ccc{CORE::BigRat}, your \ccc{Output_rep} specialization could look like this:
+\begin{ccExampleCode}
+template <class F>
+class Output_rep< ::CORE::BigRat, F> {
+    const ::CORE::BigRat& t;
+public:
+    Output_rep( const ::CORE::BigRat& tt) : t(tt) {}
+
+    std::ostream& operator()( std::ostream& out) const {
+        switch (get_mode(out)) {
+        case IO::PRETTY:{
+            if(CGAL_CORE_DENOMINATOR(t) == ::CORE::BigRat(1))
+                return out <<CGAL_CORE_NUMERATOR(t);
+            else
+                return out << CGAL_CORE_NUMERATOR(t)
+                           << "/"
+                           << CGAL_CORE_DENOMINATOR(t);
+            break;
+        }
+
+        default:
+            return out << CGAL_CORE_NUMERATOR(t)
+                       << "/"
+                       << CGAL_CORE_DENOMINATOR(t);
+        }
+    }
+};
+\end{ccExampleCode}
+
+
+\end{ccRefClass}
