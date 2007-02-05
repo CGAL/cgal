@@ -4,8 +4,8 @@
 %\subsection{Software Design}
 
 The algebraic structure concepts introduced within this section are 
-motivated by their well known counter parts in traditional algebra, 
-but we also had to pay tribute to existing types an their restrictions. 
+motivated by their well known counterparts in traditional algebra, 
+but we also had to pay tribute to existing types and their restrictions. 
 To keep the interface minimal,
 it was not desirable to cover all known algebraic structures, 
 e.g., we did not introduce concepts for such basic structures as {\em groups} or
@@ -37,7 +37,7 @@ relationship of the algebraic structure concepts.
 \ccc{Field} correspond to the algebraic structures with the
 same name. \ccc{FieldWithSqrt}, \ccc{FieldWithKthRoot} and 
 \ccc{FieldWithRootOf} are fields that in addition are closed under 
-the operations 'sqrt', 'k-th root' and 'real root of a polynomial' 
+the operations 'sqrt', 'k-th root' and 'real root of a polynomial', 
 respectively. The concept \ccc{IntegralDomainWithoutDivision} also
 corresponds to integral domains in the algebraic sense, the
 distinction results from the fact that some implementations of
@@ -49,7 +49,7 @@ most ring-theoretic notions like greatest common divisors become trivial for
 \ccc{IntegralDomain} and not as a 
 refinement of one of the more advanced types of ring. 
 If an algorithm wants to rely on gcd or remainder computation, it is trying 
-to do things it shouldn't do with a \ccc{Field} in the first place. 
+to do things it should not do with a \ccc{Field} in the first place. 
 
 
 The main properties of an algebraic structure are collected in the class   
@@ -99,7 +99,7 @@ of two algebraic expressions is always correct.
 An algebraic structure is  considered as numerically sensitive,
 if the performance of the type is sensitive to the condition number of an algorithm.
 %performance includes both rounding errors or runtime. 
-Note that there is really a difference among this two notions, e.g., the fundamental type \ccc{int} 
+Note that there is really a difference among these two notions, e.g., the fundamental type \ccc{int} 
 is not numerical sensitive but considered inexact due to overflow. 
 Conversely, types as \ccc{leda_real} or \ccc{CORE::Expr} are exact but sensitive 
 to numerical issues due to the internal use of multi precision floating point arithmetic.
