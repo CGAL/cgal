@@ -1,17 +1,14 @@
 \begin{ccRefFunction}{oformat}
 
-\ccc{Output_rep} is used in conjunction with the free function \ccc{oformat}. Both provide an intermediate layer between the actual output stream and the type \texttt{T}. \ccc{Output_rep<T>} can be regarded as a wrapper around \texttt{T} and \ccc{oformat} is just a convenience function to construct an instance of \ccc{Output_rep<T>}.
+\ccDefinition
+
+Convenience function to construct an output representation (\ccc{Output_rep}) for type \texttt{T}.
 
 \ccFunction{template <class T> Output_rep<T> oformat( const T& t);}
-           {generic IO output format manipulator.}
+           {Generic IO for type \ccc{T}.}
 
 \ccFunction{template <class T, typename F> Output_rep<T,F> oformat( const T& t, F );}
-           {generic IO output format manipulator with formatting tag.}
-
-\ccExample
-\begin{ccExampleCode}
-std::cout << CGAL::oformat( myobject );
-\end{ccExampleCode}
+           {Generic IO for type \ccc{T} with formatting tag.}
 
 
 \end{ccRefFunction}

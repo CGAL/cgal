@@ -1,6 +1,7 @@
 
 All classes in the \cgal\ kernel provide input and output operators for
-IO streams.  The basic task of such an operator is to produce a
+IO streams.  Classes external to \cgal\ are also supported, by means of \ccc{oformat} (Section \ref{sec:iofornoncgaltypes}).
+The basic task of such an operator is to produce a
 representation of an object that can be written as a sequence of
 characters on devices as a console, a file, or a pipe. In \cgal\
 we distinguish between  a raw ascii, a raw binary and a
@@ -68,7 +69,7 @@ Let \ccc{os}  be an output stream.
 
 \ccExample
 
-\begin{cprog}
+\begin{ccExampleCode}
 
 #include <CGAL/basic.h>
 #include <iostream>
@@ -94,7 +95,7 @@ int main()
 
     return 1;
 }
-\end{cprog}
+\end{ccExampleCode}
 %\end{ccClass}
 
 
@@ -146,5 +147,60 @@ main()
 \end{ccExampleCode}
 %\end{ccClass}
 
+\section{IO for non-\cgal\ types\label{sec:iofornoncgaltypes}}
 
 
+\subsection{Using output formatting}
+To ensure that non-\cgal\ types are formatted correctly (i.e., respecting \ccc{IO::Mode}), \ccc{oformat} can be used. For types with a \ccc{Output_rep} specialization, the respective output routine of \ccc{Output_rep} will be called by \ccc{oformat}. Otherwise, the stream output operator will be called.
+
+\ccExample
+\begin{ccExampleCode}
+std::cout << CGAL::oformat( myobject );
+\end{ccExampleCode}
+
+Optional, you can provide a second template parameter \texttt{F} as a formatting tag:
+
+\ccExample
+\begin{ccExampleCode}
+std::cout << CGAL::oformat( myobject, My_formatting_tag() );
+\end{ccExampleCode}
+
+For a list of formatting tags supported by the type \texttt{T}, please refer to the documentation of the respective type.
+
+\subsection{Customizing output formatting}
+In some situations, you want to control the output formatting for a type \texttt{T}. For external types (third party libraries etc.), there might be problems if the stream output operator does not honor the CGAL output mode. The purpose of \ccc{Output_rep} is to provide a way to control output formatting that works independently of the object's stream output operator.
+
+Instead of putting \texttt{T} directly into an output stream, \texttt{T} is wrapped into an output representation \ccc{Output_rep}. For convenience, a function \ccc{oformat} exists which constructs an instance of \ccc{Output_rep}.
+
+If you dont specialize \ccc{Output_rep} for \texttt{T}, \texttt{T}'s stream output operator is called from within \ccc{Output_rep}, by default. If you want another behaviour for your type \texttt{T}, you have to provide a specialization for that type. Furthermore, you can provide specializations with a second template parameter (a formatting tag). The second template parameter defaults to \ccc{Null_tag} and means \textsc{default behaviour}.
+
+For example, specializing \ccc{Output_rep} for \ccc{CORE::BigRat} (without a formatting tag parameter) could look like this:
+
+\ccExample
+\begin{ccExampleCode}
+template <class F>
+class Output_rep< ::CORE::BigRat, F> {
+    const ::CORE::BigRat& t;
+public:
+    Output_rep( const ::CORE::BigRat& tt) : t(tt) {}
+
+    std::ostream& operator()( std::ostream& out) const {
+        switch (get_mode(out)) {
+        case IO::PRETTY:{
+            if(CGAL_CORE_DENOMINATOR(t) == ::CORE::BigRat(1))
+                return out <<CGAL_CORE_NUMERATOR(t);
+            else
+                return out << CGAL_CORE_NUMERATOR(t)
+                           << "/"
+                           << CGAL_CORE_DENOMINATOR(t);
+            break;
+        }
+
+        default:
+            return out << CGAL_CORE_NUMERATOR(t)
+                       << "/"
+                       << CGAL_CORE_DENOMINATOR(t);
+        }
+    }
+};
+\end{ccExampleCode}
