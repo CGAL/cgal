@@ -2,6 +2,10 @@
 Surface_mesh_parameterization Package: Release changes
 ------------------------------------------------------
 
+1.1 (12/04/2006)
+    - CGAL 3.3: Added Jacobi and SSOR preconditioners to OpenNL solver. OpenNL is now much faster and more stable.
+
+
 1.0 (05/22/2006)
 
     - CGAL 3.2: first version of the package shipped.
