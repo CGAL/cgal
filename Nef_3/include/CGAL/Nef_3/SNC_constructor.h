@@ -1958,15 +1958,26 @@ public:
 	CGAL_NEF_TRACEN("");
       }
       
+      std::vector<Vertex_iterator> vertices_to_delete ;
       Vertex_iterator v;
       CGAL_forall_vertices(v, *this->sncp())
-	if(erase_vertex[v]) {
-	  CGAL_NEF_TRACEN("erase " << v->point());
-	  if(Infi_box::is_infibox_corner(v->point()))
-	    recreate.push_back(v->point());
-	  this->sncp()->delete_vertex(v);
-	  res = true;
-	}
+      {
+      	if(erase_vertex[v]) 
+        {
+      	  CGAL_NEF_TRACEN("erase " << v->point());
+      	  if(Infi_box::is_infibox_corner(v->point()))
+      	    recreate.push_back(v->point());
+          vertices_to_delete.push_back(v);
+      	  res = true;
+      	}
+      }
+      
+      for( typename std::vector<Vertex_iterator>::iterator vit = vertices_to_delete.begin()
+         ; vit != vertices_to_delete.end()
+         ; ++ vit 
+         )
+        this->sncp()->delete_vertex(*vit);
+         
       
       typename std::list<Point_3>::const_iterator pi;
       for(pi = recreate.begin(); pi != recreate.end(); ++pi)

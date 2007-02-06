@@ -156,29 +156,36 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
       if(fc.is_shalfedge() ) {
 	SHalfedge_handle e(fc);
 	SHalfedge_around_facet_circulator u(e), eend(e);
-	CGAL_For_all(u, eend) {
-	  SFace_handle fu = u->incident_sface(), ftu = u->twin()->incident_sface();
-	  CGAL_NEF_TRACEN("sfUNION of "<<IO->index(fu)<<" & "<<IO->index(ftu));
-	  merge_sets( fu, ftu, hash, uf);
-	  SM_decorator SD(&*u->source()->source());
-	  CGAL_NEF_TRACEN("removing "<<IO->index(u)<<" & "<<IO->index(u->twin()));
-	  Halfedge_handle src(u->source()), tgt(u->target());
-	  if ( SD.is_closed_at_source(u) ) 
-	    SD.set_face( src, fu);
-	  if ( SD.is_closed_at_source( u->twin()) ) 
- 	    SD.set_face( tgt, fu);
+
+	//CGAL_For_all(u, eend) {
+   for ( bool _circ_loop_flag = ! ::CGAL::is_empty_range( u, eend); 
+         _circ_loop_flag; \
+         _circ_loop_flag = ( u != eend ) 
+       )
+   {
+  	  SFace_handle fu = u->incident_sface(), ftu = u->twin()->incident_sface();
+	    CGAL_NEF_TRACEN("sfUNION of "<<IO->index(fu)<<" & "<<IO->index(ftu));
+	    merge_sets( fu, ftu, hash, uf);
+	    SM_decorator SD(&*u->source()->source());
+	    CGAL_NEF_TRACEN("removing "<<IO->index(u)<<" & "<<IO->index(u->twin()));
+	    Halfedge_handle src(u->source()), tgt(u->target());
+	    if ( SD.is_closed_at_source(u) ) 
+	      SD.set_face( src, fu);
+	    if ( SD.is_closed_at_source( u->twin()) ) 
+ 	     SD.set_face( tgt, fu);
 	  /* TO VERIFY: does is_closed_at_source(u) imply is_isolated(src)?
 	     if it is true, the svertex face update is not necesary. */
-	  SD.delete_edge_pair(u); 
-	  if( SD.is_isolated(src))
-	    //	    SD.delete_vertex_only(src);
-	    SD.set_face(src,fu);
-	  SM_decorator SD2(&*tgt->source());
-	  if( SD2.is_isolated(tgt))
-	    // SD.delete_vertex_only(tgt);
-	    SD2.set_face(tgt,fu);
+     SHalfedge_around_facet_circulator next = u ;
+     ++ next ;
+	    SD.delete_edge_pair(u); 
+	    if( SD.is_isolated(src))
+  	    SD.set_face(src,fu);
+  	  SM_decorator SD2(&*tgt->source());
+	    if( SD2.is_isolated(tgt))
+  	    SD2.set_face(tgt,fu);
+     u = next ;
 	  /* TO VERIFY: can both svertices be isolated at the same time? */
-      }
+   }
       }
       else if(fc.is_shalfloop()) {
 	SHalfloop_handle l(fc);
@@ -458,9 +465,10 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
      CGAL_NEF_TRACEN("s2 = " << IO->index(s2));
      if( s1 == s2) {
        CGAL_NEF_TRACEN(IO->index(s1)<<'('<<IO->index(s2->twin())<<") to sloop");
+       Halffacet_handle facet = s1->facet();
        SD.convert_edge_to_loop(s1);
        CGAL_assertion(SD.shalfloop() != SHalfloop_handle());
-       D.add_sloop_to_facet( SD.shalfloop(), s1->facet());
+       D.add_sloop_to_facet( SD.shalfloop(), facet);
        CGAL_NEF_TRACEN(IO->index(s2)<<" removed");
      }
      else {

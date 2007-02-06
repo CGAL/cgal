@@ -1079,13 +1079,13 @@ void SNC_io_parser<EW>::read()
   addInfiBox = (kernel_type == "standard" && Infi_box::extended_kernel());
 
   if(addInfiBox) {
-    Vertex_of.reserve(vn+8);
-    Edge_of.reserve(en+24);
-    Halffacet_of.reserve(fn+12);
-    Volume_of.reserve(cn+1);
-    SEdge_of.reserve(sen+48);
-    SLoop_of.reserve(sln);
-    SFace_of.reserve(sfn+16);
+    Vertex_of.resize(vn+8);
+    Edge_of.resize(en+24);
+    Halffacet_of.resize(fn+12);
+    Volume_of.resize(cn+1);
+    SEdge_of.resize(sen+48);
+    SLoop_of.resize(sln);
+    SFace_of.resize(sfn+16);
     for(i=0; i<vn+8; ++i)   Vertex_of[i] = this->sncp()->new_vertex_only();
     for(i=0; i<en+24; ++i)  Edge_of[i] = this->sncp()->new_halfedge_only();
     for(i=0; i<fn+12; ++i)  Halffacet_of[i] = this->sncp()->new_halffacet_only();
@@ -1095,13 +1095,13 @@ void SNC_io_parser<EW>::read()
     for(i=0; i<sfn+16; ++i) SFace_of[i] = this->sncp()->new_sface_only();
   }
   else {
-    Vertex_of.reserve(vn);
-    Edge_of.reserve(en);
-    Halffacet_of.reserve(fn);
-    Volume_of.reserve(cn);
-    SEdge_of.reserve(sen);
-    SLoop_of.reserve(sln);
-    SFace_of.reserve(sfn);
+    Vertex_of.resize(vn);
+    Edge_of.resize(en);
+    Halffacet_of.resize(fn);
+    Volume_of.resize(cn);
+    SEdge_of.resize(sen);
+    SLoop_of.resize(sln);
+    SFace_of.resize(sfn);
     for(i=0; i<vn; ++i)  Vertex_of[i] = this->sncp()->new_vertex_only();
     for(i=0; i<en; ++i)  Edge_of[i] = this->sncp()->new_halfedge_only();
     for(i=0; i<fn; ++i)  Halffacet_of[i] = this->sncp()->new_halffacet_only();
