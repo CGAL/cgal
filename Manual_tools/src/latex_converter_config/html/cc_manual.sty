@@ -258,6 +258,13 @@
 \ccIncludeVerbatim{#1.noheader}
 }
 
+\newcommand{\ccReferToExampleCode}[1]{%
+\lcRawHtml{<a href="}\lciOutputUppath\lcRawHtml{../../}\input{#1.filename}\lcRawHtml{">}%
+\input{#1.filename}%
+\lcRawHtml{</a>}%
+}
+
+
 % +--------------------------------------------------------------------------
 % | A handy macro to define macros for RCS entries in a TeX file
 % +--------------------------------------------------------------------------
@@ -294,6 +301,7 @@
 \newcommand{\galia}{{\sc Galia}}
 \newcommand{\protocgal}{{\sc C++gal}}
 \newcommand{\plageo}{{\sc Plageo}}
+\newcommand{\bgl}{{\sc BGL}}
 
 % +--------------------------------------------------------------------------
 % | Macros that write the special characters \{} literally to the
@@ -1032,6 +1040,7 @@
       \gdef\lciCurrentPartName{}%
     }%
     \lciPushOutput{packages}%
+    %\lcRawHtml{<tr><td valign="top" width="140" rowspan="2" class="TocGroupOuterTable">}
     \lcRawHtml{<tr><td valign="top" width="140" rowspan="2" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}
     \ccValueofPkgIllustration
     \lcRawHtml{</td><td colspan="3" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}
