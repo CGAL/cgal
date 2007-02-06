@@ -18,7 +18,11 @@
 #include "read_polygon.h"
 #include <list>
 
-typedef CGAL::Cartesian<Rational>                       Kernel;
+
+// instead of
+//typedef CGAL::Cartesian<Rational>                   Kernel;
+// workaround for VC++ 
+struct Kernel : public CGAL::Cartesian<Rational> {};
 
 typedef Kernel::Point_2                                 Point_2;
 typedef CGAL::Polygon_2<Kernel>                         Polygon_2;
