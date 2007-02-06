@@ -32,8 +32,14 @@ typedef Nt_traits::Algebraic                            Algebraic;
 struct Rat_kernel  : public CGAL::Cartesian<Rational> {};
 struct Alg_kernel  : public CGAL::Cartesian<Algebraic> {};
 
-typedef CGAL::Arr_conic_traits_2<Rat_kernel,
-                                 Alg_kernel,Nt_traits>  Conic_traits_2;
+// instead of
+//typedef CGAL::Arr_conic_traits_2<Rat_kernel,
+//                                 Alg_kernel,Nt_traits>  Conic_traits_2;
+// workaround for VC++ 
+struct Conic_traits_2 : public  CGAL::Arr_conic_traits_2<Rat_kernel,
+			                                 Alg_kernel,
+                                                         Nt_traits> {};
+
 typedef CGAL::General_polygon_2<Conic_traits_2>         Polygon_2;
 typedef CGAL::Gps_traits_2<Conic_traits_2, Polygon_2>   Traits_2;
 typedef Traits_2::Polygon_with_holes_2                  Polygon_with_holes_2;
