@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
   if (argc == 2) {
     filename = argv[1];
   } else {
-    filename = "data/1IYE.pdb";
+    filename = "data/1mvm.pdb";
   }
 
   std::list<Weighted_point> l;
@@ -41,6 +41,9 @@ int main(int argc, char *argv[]) {
   // Extract mesh from the skin surface:
   Polyhedron p;
   CGAL::mesh_skin_surface_3(skin_surface, p);
+
+  std::ofstream out("mesh.off");
+  out << p;
 
   return 0;
 }

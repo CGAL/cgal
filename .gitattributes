@@ -1766,6 +1766,7 @@ Skin_surface_3/doc_tex/Skin_surface_3/molecule.png -text svneol=unset#image/png
 Skin_surface_3/doc_tex/Skin_surface_3/skinTwoPoints.eps -text svneol=unset#application/postscript
 Skin_surface_3/doc_tex/Skin_surface_3/skinTwoPoints.png -text svneol=unset#image/png
 Skin_surface_3/examples/Skin_surface_3/data/1IYE.pdb -text
+Skin_surface_3/examples/Skin_surface_3/data/1mvm.pdb -text
 Skin_surface_3/examples/Skin_surface_3/data/molecule_tunnel.cin -text
 Skin_surface_3/examples/Skin_surface_3/union_of_balls_subdiv.cpp -text
 Skin_surface_3/include/CGAL/Skin_surface_base_3.h -text

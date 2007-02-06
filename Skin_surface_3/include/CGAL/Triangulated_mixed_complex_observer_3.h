@@ -98,10 +98,8 @@ public:
         case 0:
       	{
       	  vh = s;
-      	  create_sphere(r2s_converter(vh->point().point()),
-      			-r2s_converter(vh->point().weight()),
-      			shrink,
-      			1);
+          Surface_weighted_point wp = r2s_converter(vh->point());
+      	  create_sphere(wp.point(), -wp.weight(), shrink, 1);
       	  break;
       	}
         case 1:
@@ -146,19 +144,19 @@ public:
         case 3:
       	{
       	  ch = s;
+          const Surface_weighted_point pts[4] = 
+            { r2s_converter(ch->vertex(0)->point()),
+              r2s_converter(ch->vertex(1)->point()),
+              r2s_converter(ch->vertex(2)->point()),
+              r2s_converter(ch->vertex(3)->point()) };
+          
       	  create_sphere
       	    (typename Surface_regular_traits::
-      	     Construct_weighted_circumcenter_3()
-      	     (r2s_converter(ch->vertex(0)->point()),
-      	      r2s_converter(ch->vertex(1)->point()),
-      	      r2s_converter(ch->vertex(2)->point()),
-      	      r2s_converter(ch->vertex(3)->point())),
+      	       Construct_weighted_circumcenter_3()
+                 (pts[0],pts[1],pts[2],pts[3]),
       	     typename Surface_regular_traits::
-      	     Compute_squared_radius_smallest_orthogonal_sphere_3()
-      	     (r2s_converter(ch->vertex(0)->point()),
-      	      r2s_converter(ch->vertex(1)->point()),
-      	      r2s_converter(ch->vertex(2)->point()),
-      	      r2s_converter(ch->vertex(3)->point())),
+      	       Compute_squared_radius_smallest_orthogonal_sphere_3()
+                 (pts[0],pts[1],pts[2],pts[3]),
       	     1-shrink,
       	     -1);
       	}
