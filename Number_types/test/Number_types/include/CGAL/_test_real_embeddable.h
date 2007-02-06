@@ -82,6 +82,14 @@ CGAL_BEGIN_NAMESPACE
             CGAL_test_assert(to_interval(Type(42)).first > 41.99);
             CGAL_test_assert(to_interval(Type(42)).second < 42.01);
             
+	    // test neagtive numbers as well to catch obvious sign
+	    // errors
+	    CGAL_test_assert( -42.0 >= to_interval( -Type(42) ).first );
+            CGAL_test_assert( -42.0 <= to_interval( -Type(42) ).second );
+
+            CGAL_test_assert(to_interval(-Type(42)).first < -41.99);
+            CGAL_test_assert(to_interval(-Type(42)).second > -42.01);
+     
 
 	    /*
 	    Type notdouble = ipower(2,60);

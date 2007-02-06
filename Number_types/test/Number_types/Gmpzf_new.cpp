@@ -13,7 +13,7 @@ int main() {
         typedef CGAL::Tag_true Is_exact;
         
         CGAL::test_algebraic_structure<NT,Tag, Is_exact>();
-        //CGAL::test_real_embeddable<NT>();
+        CGAL::test_real_embeddable<NT>();
         
         CGAL_test_assert(CGAL::sqrt(NT(4)) == NT(2));
         

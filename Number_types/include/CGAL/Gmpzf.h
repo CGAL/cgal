@@ -26,6 +26,7 @@
 #include <CGAL/GMP/Gmpzf_type.h>
 #include <CGAL/Gmp_coercion_traits.h>
 #include <CGAL/Gmpz.h>
+#include <CGAL/Interval_nt.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -123,8 +124,7 @@ public:
         : public Unary_function< Type, std::pair< double, double > > {
     public:
         std::pair<double, double> operator()( const Type& x ) const {
-            // dummy
-            return std::pair<double,double>(0.0,0.0);
+	    return x.to_interval();
         }
     };
 };
@@ -152,8 +152,16 @@ public:
         : public Unary_function<Quotient<Gmpzf>, std::pair<double,double> >{
         inline
         std::pair<double,double> operator()(const Quotient<Gmpzf>& q) const {
-            //dummy 
-            return std::pair<double,double>(0.0,0.0);
+	  // do here as MP_Float does
+	  std::pair<std::pair<double, double>, long> n = 
+	    q.numerator().to_interval_exp();
+	  std::pair<std::pair<double, double>, long> d = 
+	    q.denominator().to_interval_exp();
+
+	  CGAL_assertion_msg(CGAL::abs(1.0*n.second - d.second) < (1<<30)*2.0,
+                     "Exponent overflow in Quotient<MP_Float> to_interval");
+	  return ldexp(Interval_nt<>(n.first) / Interval_nt<>(d.first),
+               n.second - d.second).pair();
         }
     };
 };
