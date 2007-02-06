@@ -10,6 +10,7 @@ Lazy_circular_kernel_constructions.h
 example_Lazy_Circular_kernel_arrangement.cpp
 example_Lazy_Circular_kernel_arrangement_Line_arc.cpp
 example_Lazy_Circular_kernel_arrangement_Line_Circular.cpp
+old_lazy/
 test_Lazy_circular_kernel.C
 test_Lazy_Line_arc.C
 demo_Lazy_line_circle.cpp
