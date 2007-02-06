@@ -1187,7 +1187,7 @@ partition_to_halfsphere(Iterator start, Iterator beyond, Seg_list& L,
 	CGAL_NEF_TRACEN(">1 " << s1.source() << " " << s1.target()); 
       }
       if(added) {
-	itl = it; --it; L.erase(itl); M[itl] = T();
+	itl = it; --it; M[itl] = T(); L.erase(itl); 
       }
       // at least one item was appended
     }
