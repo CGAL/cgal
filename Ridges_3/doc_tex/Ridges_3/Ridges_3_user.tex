@@ -19,15 +19,16 @@
 \centerline{
 \includegraphics[width=.5\linewidth]{Ridges_3/david_crest}}
 \end{ccTexOnly}
-\caption{Crest ridges on the David.}
+
 \label{david-crest}
 \begin{ccHtmlOnly}
 <CENTER> <img border=0 src="./david_crest.png" width=400>
 </CENTER>
 \end{ccHtmlOnly}
+\caption{Crest ridges on the David.}
 \end{figure}
 
-This chapter describes the \cgal's package for the approximation of
+This chapter describes the \cgal\ package for the approximation of
 ridges and umbilics on meshes.  Given a smooth surface, a ridge is a
 curve along which one of the principal curvatures has an extremum
 along its curvature line. An umbilic is a point at which both
@@ -52,7 +53,7 @@ umbilics on smooth surfaces. Sections \ref{ridge-mesh} and
 \ref{umbilic-mesh} present algorithms for the approximation of ridges and
 umbilics on triangulated surface meshes. Section
 \ref{soft} gives the package specifications, while example calls to
-functions of the package are provided in section \ref{examples}.
+functions of the package are provided in Section~\ref{examples}.
 
 
 \section{Ridges and Umbilics of a Smooth Surface}
@@ -110,15 +111,16 @@ of $\max(|k_1|,|k_2|)$. Hence we provide two additional ridge types :
 \centerline{
 \includegraphics[width=.5\linewidth]{Ridges_3/ellipsoid_ridges}}
 \end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<CENTER> <img border=0 src="./ellipsoid_ridges.png" width=400>
+</CENTER>
+\end{ccHtmlOnly}
 \caption{Ridges on the ellipsoid, normals pointing outward.
  Color coding~: \ccc{MAX_ELLIPTIC_RIDGE} are blue,
 \ccc{MAX_HYPERBOLIC_RIDGE} are green, \ccc{MIN_ELLIPTIC_RIDGE} are red and 
 \ccc{MIN_HYPERBOLIC_RIDGE} are yellow.}
 \label{ellipsoid-ridges}
-\begin{ccHtmlOnly}
-<CENTER> <img border=0 src="./ellipsoid_ridges.png" width=400>
-</CENTER>
-\end{ccHtmlOnly}
 \end{figure}
 
 At any point of the surface which is not an umbilic, principal
@@ -195,12 +197,13 @@ then it is called a
 \centerline{
 \includegraphics[width=.5\linewidth]{Ridges_3/index_umbilic}}
 \end{ccTexOnly}
-\caption{Index $1/2$ umbilic or elliptic umbilic.}
-\label{index_umbilic}
+
 \begin{ccHtmlOnly}
 <CENTER> <img border=0 src="./index_umbilic.png" width=200>
 </CENTER>
 \end{ccHtmlOnly}
+\caption{Index $1/2$ umbilic or elliptic umbilic.}
+\label{index_umbilic}
 \end{figure}
 
 
@@ -210,13 +213,14 @@ then it is called a
 \includegraphics[width=.5\linewidth]{Ridges_3/lemon}
 \includegraphics[width=.5\linewidth]{Ridges_3/star}}
 \end{ccTexOnly}
-\caption{Elliptic and hyperbolic umbilics.}
-\label{umbilics}
+
 \begin{ccHtmlOnly}
 <CENTER> <img border=0 src="./lemon.png" width=300>
  <img border=0 src="./star.png" width=300>
 </CENTER>
 \end{ccHtmlOnly}
+\caption{Elliptic and hyperbolic umbilics.}
+\label{umbilics}
 \end{figure}
 
 
@@ -622,15 +626,16 @@ Umbilic at location (0.81413 0.0018689 0.290339) of type elliptic
 \centerline{
 \includegraphics[width=.5\linewidth]{Ridges_3/ellipsoid_ridges}}
 \end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<CENTER> <img border=0 src="./ellipsoid_ridges.png" width=400>
+</CENTER>
+\end{ccHtmlOnly}
 \caption{Ridges on the ellipsoid, normals pointing outward.
  Color coding~: \ccc{MAX_ELLIPTIC_RIDGE} are blue,
 \ccc{MAX_HYPERBOLIC_RIDGE} are green, \ccc{MIN_ELLIPTIC_RIDGE} are red and 
 \ccc{MIN_HYPERBOLIC_RIDGE} are yellow. }
 \label{ellipsoid-ridges-example}
-\begin{ccHtmlOnly}
-<CENTER> <img border=0 src="./ellipsoid_ridges.png" width=400>
-</CENTER>
-\end{ccHtmlOnly}
 \end{figure}
 
 
@@ -651,14 +656,7 @@ different images to be produced with the same data.
 \centerline{
 \includegraphics[width=.6\linewidth]{Ridges_3/mecanic-sub1_crestTweight1Tsharp7-jpg}}
 \end{ccTexOnly}
-\caption{Mechanical part (37k pts): (a) All crest lines, (b) crests filtered
-with the strength threshold 1 and (c) crests filtered with the sharpness threshold 100 000.
-%%
-Notice that any point on a flat or cylindrical part lies on two
-ridges, so that the noise observed on the top two Figs. is
-unavoidable. It is however easily filtered out with the sharpness on
-the bottom figure.}
-\label{fig:mechanical_crest_filtered-intro} 
+
 \begin{ccHtmlOnly}
 <CENTER> <img border=0 src="./mecanic-sub1_crest-jpg.png" width=200>
  <img border=0 src="./mecanic-sub1_crestTweight1-jpg.png" width=200>
@@ -667,4 +665,12 @@ the bottom figure.}
  <img border=0 src="./mecanic-sub1_crestTweight1Tsharp7-jpg.png" width=400>
 </CENTER>
 \end{ccHtmlOnly}
+\caption{Mechanical part (37k pts): (a) All crest lines, (b) crests filtered
+with the strength threshold 1 and (c) crests filtered with the sharpness threshold 100 000.
+%%
+Notice that any point on a flat or cylindrical part lies on two
+ridges, so that the noise observed on the top two Figs. is
+unavoidable. It is however easily filtered out with the sharpness on
+the bottom figure.}
+\label{fig:mechanical_crest_filtered-intro} 
 \end{figure} 
