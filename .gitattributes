@@ -1514,18 +1514,18 @@ Optimisation_doc/doc_tex/Optimisation/pcenter.pdf -text svneol=unset#application
 Optimisation_doc/doc_tex/Optimisation/polydist.eps -text svneol=unset#application/postscript
 Optimisation_doc/doc_tex/Optimisation/polydist.gif -text svneol=unset#image/gif
 Optimisation_doc/doc_tex/Optimisation/polydist.pdf -text svneol=unset#application/pdf
-PDB/example/PDB/pdb_align.cpp -text
-PDB/example/PDB/pdb_align_points.cpp -text
-PDB/example/PDB/pdb_cat.cpp -text
-PDB/example/PDB/pdb_distance.cpp -text
-PDB/example/PDB/pdb_distance_matrix.cpp -text
-PDB/example/PDB/pdb_distances.cpp -text
-PDB/example/PDB/pdb_filter.cpp -text
-PDB/example/PDB/pdb_split.cpp -text
-PDB/example/PDB/pdb_stats.cpp -text
-PDB/example/PDB/pdb_strip_sidechains.cpp -text
-PDB/example/PDB/pdb_to_spheres.cpp -text
-PDB/example/PDB/pdb_transform.cpp -text
+PDB/examples/PDB/pdb_align.cpp -text
+PDB/examples/PDB/pdb_align_points.cpp -text
+PDB/examples/PDB/pdb_cat.cpp -text
+PDB/examples/PDB/pdb_distance.cpp -text
+PDB/examples/PDB/pdb_distance_matrix.cpp -text
+PDB/examples/PDB/pdb_distances.cpp -text
+PDB/examples/PDB/pdb_filter.cpp -text
+PDB/examples/PDB/pdb_split.cpp -text
+PDB/examples/PDB/pdb_stats.cpp -text
+PDB/examples/PDB/pdb_strip_sidechains.cpp -text
+PDB/examples/PDB/pdb_to_spheres.cpp -text
+PDB/examples/PDB/pdb_transform.cpp -text
 PDB/include/CGAL/PDB/Atom.h -text
 PDB/include/CGAL/PDB/Matrix.h -text
 PDB/include/CGAL/PDB/Model.h -text
