@@ -116,7 +116,7 @@ Returns true if the current time is a rational number and there are no events at
   never to occur (and allows data structures to differentiate between
   uninitialized and never failing).}
 
-\ccMethod{void audit_event(Event_key) const}{Performs some checks as
+\ccMethod{void audit_event(Event_key) const;}{Performs some checks as
   to whether the key corresponds to a valid event. Generally, a event
   is valid if it is not defaultly constructed and either is in the
   queue or is the \ccc{null_event()}.}
