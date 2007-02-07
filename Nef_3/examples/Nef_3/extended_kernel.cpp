@@ -6,7 +6,11 @@
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 
 typedef CGAL::Gmpz  NT;
-typedef CGAL::Extended_homogeneous<NT>  Kernel;
+//instead of
+//typedef CGAL::Extended_homogeneous<NT>  Kernel;
+// workaround for V++
+struct Kernel : public CGAL::Extended_homogeneous<NT> {};
+
 typedef CGAL::Nef_polyhedron_3<Kernel>  Nef_polyhedron;
 typedef Nef_polyhedron::RT  RT;
 typedef Nef_polyhedron::Point_3  Point_3;
