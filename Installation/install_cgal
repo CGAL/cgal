@@ -807,7 +807,6 @@ set_compiler_flags()
     CORE_LIBNAME="libcore++.a"
     CGAL_WIN_EXTRA_DIR=x11
     MATH_LIB="m"
-    OPENGL_LIBS="-lGL -lGLU"
     SEPARATE_LIBPATH=""
     START_LD_OPT=""
     CGAL_CXX="`compiler_bin`"
@@ -838,7 +837,6 @@ set_compiler_flags()
 	    CORE_LIBNAME="libcore++.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    MATH_LIB=""
-	    OPENGL_LIBS="Opengl32.lib Glu32.lib"
 	    SEPARATE_LIBPATH="y"
 	    ;;
 	*ICL*|*icl*)
@@ -869,7 +867,6 @@ set_compiler_flags()
 	    CORE_LIBNAME="core++.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    MATH_LIB=
-	    OPENGL_LIBS="Opengl32.lib Glu32.lib"
 	    START_LD_OPT="-link "
 	    ;;
 	*CL*|*cl*)
@@ -900,7 +897,6 @@ set_compiler_flags()
 	    CORE_LIBNAME="core++.lib"
 	    CGAL_WIN_EXTRA_DIR=mswin
 	    MATH_LIB=
-	    OPENGL_LIBS="Opengl32.lib Glu32.lib"
 	    START_LD_OPT="-link "
 	    ;;
 	*IRIX*5.*CC*)
@@ -3836,13 +3832,6 @@ write_linker_flags()
   else
     ${_printf} "%s\n\n" "LONG_NAME_PROBLEM_LDFLAGS =" >> ${FILE}
   fi
-
-  #
-  # OPENGL_LIBS
-  #
-  print_as_shell_comment \
-      "*** the libs to link against when using OpenGL" >> ${FILE}
-  ${_printf} "%s\n\n" "OPENGL_LIBS = ${OPENGL_LIBS}" >> ${FILE}
 
   #
   # CGAL_LIBPATH
