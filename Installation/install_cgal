@@ -841,7 +841,7 @@ set_compiler_flags()
 	    OPENGL_LIBS="Opengl32.lib Glu32.lib"
 	    SEPARATE_LIBPATH="y"
 	    ;;
-	*ICL.*|*icl.*)
+	*ICL*|*icl*)
 	    #### settings Intel C++ compiler
 	    WINDOWS_COMPILER="y"
 	    CYGWIN_COMPILER="y"
@@ -872,7 +872,7 @@ set_compiler_flags()
 	    OPENGL_LIBS="Opengl32.lib Glu32.lib"
 	    START_LD_OPT="-link "
 	    ;;
-	*CL.*|*cl.*)
+	*CL*|*cl*)
 	    #### settings Microsoft Visual C++ compiler
 	    WINDOWS_COMPILER="y"
 	    CYGWIN_COMPILER="y"
@@ -1434,7 +1434,7 @@ os_path_escape()
     if [ -z "${CYGWIN_COMPILER}" ]; then
 	${_printf} "%s" "`escape_special \"${*}\"`"
     else
-	${_printf} "%s" "`${_cygpath} -w \"$*\"`"
+	${_printf} "%s" "`${_cygpath} -m \"$*\"`"
     fi
 }
 
@@ -1443,7 +1443,7 @@ os_path()
     if [ -z "${CYGWIN_COMPILER}" ]; then
 	${_printf} "%s" "${*}"
     else
-	${_printf} "%s" "`${_cygpath} -w \"$*\"`"
+	${_printf} "%s" "`${_cygpath} -m \"$*\"`"
     fi
 }
 
@@ -1452,7 +1452,7 @@ include_dir_option()
     if [ -z "${CYGWIN_COMPILER}" ]; then
 	${_printf} "-I%s " "`escape_special \"${*}\"`"
     else
-	${_printf} "'-I%s' " "`${_cygpath} -w \"${*}\"`"
+	${_printf} "'-I%s' " "`${_cygpath} -m \"${*}\"`"
     fi
 }
 
@@ -1461,7 +1461,7 @@ libpath_option()
     if [ -z "${CYGWIN_COMPILER}" ]; then
 	${_printf} "${LIBPATH_OPT}%s " "`escape_special \"${*}\"`"
     else
-	${_printf} "'${LIBPATH_OPT}%s' " "`${_cygpath} -w \"${*}\"`"
+	${_printf} "'${LIBPATH_OPT}%s' " "`${_cygpath} -m \"${*}\"`"
     fi
 }
 
@@ -1484,7 +1484,7 @@ object_file_name()
     if [ -z "${CYGWIN_COMPILER}" ]; then
 	${_printf} "%s" "`escape_special \"${*}\"`${OBJ_EXT}"
     else
-	${_printf} "%s" "'`${_cygpath} -w \"${*}\"`${OBJ_EXT}'"
+	${_printf} "%s" "'`${_cygpath} -m \"${*}\"`${OBJ_EXT}'"
     fi
 }
 
@@ -1493,7 +1493,7 @@ to_object_file_option()
     if [ -z "${WINDOWS_COMPILER}" ]; then
 	${_printf} "%s" "-o `escape_special \"${*}\"`.o"
     else
-	${_printf} "%s" "'-o`${_cygpath} -w \"${*}\"`'"
+	${_printf} "%s" "'-o`${_cygpath} -m \"${*}\"`'"
     fi
 }
 
@@ -1502,7 +1502,7 @@ output_file_option()
     if [ -z "${WINDOWS_COMPILER}" ]; then
 	${_printf} "%s" "${EXE_OPT}`escape_special \"${*}\"`"
     else
-	${_printf} "%s" "'${EXE_OPT}`${_cygpath} -w \"${*}\"`'"
+	${_printf} "%s" "'${EXE_OPT}`${_cygpath} -m \"${*}\"`'"
     fi
 }
 
@@ -2088,8 +2088,8 @@ EOF4
     case $1 in
   	*bcc32.exe*|*BCC32*)      EXE_OPT="-P -e";;
 	*CL.*-1300*|*cl.*-1300*|*CL.*-1400*|*cl.*-1400*)  EXE_OPT="-TP -GR -nologo -Fe";;
-	*ICL.*|*icl.*)              EXE_OPT="-TP -GR  -nologo -Fe";;
-	*CL.*|*cl.*)              EXE_OPT="-TP -GR  -nologo -Fe";;
+	*ICL*|*icl*)            EXE_OPT="-TP -GR  -nologo -Fe";;
+	*CL*|*cl*)              EXE_OPT="-TP -GR  -nologo -Fe";;
         *mwcc.exe*|*MWCC*) EXE_OPT="-gccincludes -lang c++ -msgstyle gcc -o ";;
         *pgCC*) PGCC_VERSION=`$1 -V | grep pgCC | cut -d' ' -f2`
                 EXE_OPT="-DCGAL_PGCC_VERSION='\"$PGCC_VERSION\"' -o ";;
@@ -4446,8 +4446,10 @@ installation()
     _CGAL_IDIR="${CGAL_INSTALL_DIR}/make"
     _check_dir_exists_create "${_CGAL_IDIR}"
     CGAL_INSTALL_MAKEFILE="${_CGAL_IDIR}/`${_basename} \"${CGAL_MAKEFILE}\"`"
+    OS_CGAL_DIR=`os_path "${CGAL_DIR}"`
+    OS_CGAL_INSTALL_DIR=`os_path "${CGAL_INSTALL_DIR}"`
     _do_command \
-      "(${_sed} \"s${CGAL_DIR}${CGAL_INSTALL_DIR}g\" \"${CGAL_MAKEFILE}\" >\"${CGAL_INSTALL_MAKEFILE}\")" \
+      "(${_sed} \"s${OS_CGAL_DIR}${OS_CGAL_INSTALL_DIR}g\" \"${CGAL_MAKEFILE}\" >\"${CGAL_INSTALL_MAKEFILE}\")" \
       "Install CGAL Makefile"
 
     write_buffer "\n"
