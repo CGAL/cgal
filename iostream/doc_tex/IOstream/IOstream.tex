@@ -168,11 +168,11 @@ std::cout << CGAL::oformat( myobject, My_formatting_tag() );
 For a list of formatting tags supported by the type \texttt{T}, please refer to the documentation of the respective type.
 
 \subsection{Customizing output formatting}
-In some situations, you want to control the output formatting for a type \texttt{T}. For external types (third party libraries etc.), there might be problems if the stream output operator does not honor the CGAL output mode. The purpose of \ccc{Output_rep} is to provide a way to control output formatting that works independently of the object's stream output operator.
+In some situations, you want to control the output formatting for a type \texttt{T}. For external types (third party libraries etc.), there might be problems if their stream output operator does not respect \ccc{IO::Mode}. The purpose of \ccc{Output_rep} is to provide a way to control output formatting that works independently of the object's stream output operator.
 
 Instead of putting \texttt{T} directly into an output stream, \texttt{T} is wrapped into an output representation \ccc{Output_rep}. For convenience, a function \ccc{oformat} exists which constructs an instance of \ccc{Output_rep}.
 
-If you dont specialize \ccc{Output_rep} for \texttt{T}, \texttt{T}'s stream output operator is called from within \ccc{Output_rep}, by default. If you want another behaviour for your type \texttt{T}, you have to provide a specialization for that type. Furthermore, you can provide specializations with a second template parameter (a formatting tag). The second template parameter defaults to \ccc{Null_tag} and means \textsc{default behaviour}.
+If you do not specialize \ccc{Output_rep} for \texttt{T}, \texttt{T}'s stream output operator is called from within \ccc{Output_rep}, by default. If you want another behaviour for your type \texttt{T}, you have to provide a specialization for that type. Furthermore, you can provide specializations with a second template parameter (a formatting tag). The second template parameter defaults to \ccc{Null_tag} and means \textit{default behaviour}.
 
 For example, specializing \ccc{Output_rep} for \ccc{CORE::BigRat} (without a formatting tag parameter) could look like this:
 
