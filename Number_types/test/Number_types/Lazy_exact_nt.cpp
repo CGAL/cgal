@@ -70,7 +70,7 @@ template <class NT>
 NT
 my_min(const NT& n, const NT& m)
 {
-    return ::CGAL::min(n, m);
+    return ::CGAL::min BOOST_PREVENT_MACRO_SUBSTITUTION (n, m);
 }
 
 } // namespace CGAL
