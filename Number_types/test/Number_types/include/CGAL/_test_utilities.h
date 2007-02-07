@@ -248,8 +248,8 @@ test_utilities(const NT& x)
   const CGAL::Min<NT> minf = CGAL::Min<NT>(); 
   if(minf(mone,one) != mone) return false; // functor
   if(minf(one,mone) != mone) return false; // functor
-  if(::CGAL::min(one,mone) != mone) return false; // function
-  if(::CGAL::min(mone,one) != mone) return false; // function
+  if(::CGAL::min BOOST_PREVENT_MACRO_SUBSTITUTION (one,mone) != mone) return false; // function
+  if(::CGAL::min BOOST_PREVENT_MACRO_SUBSTITUTION (mone,one) != mone) return false; // function
 
 
   // Max 
@@ -257,8 +257,8 @@ test_utilities(const NT& x)
   const CGAL::Max<NT> maxf = CGAL::Max<NT>(); 
   if(maxf(mone,one) != one) return false; // functor
   if(maxf(one,mone) != one) return false; // functor
-  if(::CGAL::max(one,mone) != one) return false; // function
-  if(::CGAL::max(mone,one) != one) return false; // function
+  if(::CGAL::max BOOST_PREVENT_MACRO_SUBSTITUTION (one,mone) != one) return false; // function
+  if(::CGAL::max BOOST_PREVENT_MACRO_SUBSTITUTION (mone,one) != one) return false; // function
 
 
   // is_valid
