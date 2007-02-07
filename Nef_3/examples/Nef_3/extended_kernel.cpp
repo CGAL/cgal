@@ -8,7 +8,7 @@
 typedef CGAL::Gmpz  NT;
 //instead of
 //typedef CGAL::Extended_homogeneous<NT>  Kernel;
-// workaround for V++
+// workaround for VC++
 struct Kernel : public CGAL::Extended_homogeneous<NT> {};
 
 typedef CGAL::Nef_polyhedron_3<Kernel>  Nef_polyhedron;

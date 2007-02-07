@@ -5,7 +5,12 @@
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 
-typedef CGAL::Extended_homogeneous<CGAL::Gmpz>  Kernel;
+
+//instead of
+//typedef CGAL::Extended_homogeneous<CGAL::Gmpz>  Kernel;
+// workaround for VC++
+struct Kernel : public CGAL::Extended_homogeneous<CGAL::Gmpz> {};
+
 typedef CGAL::Nef_polyhedron_3<Kernel>  Nef_polyhedron;
 typedef Nef_polyhedron::Plane_3  Plane_3;
 typedef Nef_polyhedron::Vector_3  Vector_3;
