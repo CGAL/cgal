@@ -55,7 +55,7 @@ Model of \ccc{ParameterizationPatchableMesh_3} concept, whose purpose is to allo
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccHeading{Design Pattern})
 
-\ccc{Parameterization_polyhedron_adaptor_3} is an Adaptor [GHJV95]: it changes the Polyhedron interface to match the \ccc{ParameterizationPatchableMesh_3} concept.
+\ccc{Parameterization_polyhedron_adaptor_3} is an Adaptor \cite{cgal:ghjv-dpero-95}: it changes the Polyhedron interface to match the \ccc{ParameterizationPatchableMesh_3} concept.
 
 %END-AUTO(\ccHeading{Design Pattern})
 
@@ -255,6 +255,11 @@ Access to additional info attached to vertices.
 {
 }
 \ccGlue
+\ccMethod{bool is_valid() const;}
+{
+Indicate if the mesh matches the \ccc{ParameterizationMesh_3} concept.
+}
+\ccGlue
 \ccMethod{Vertex_iterator mesh_vertices_begin();}
 {
 Get iterator over first vertex of mesh.
@@ -280,7 +285,6 @@ Count the number of vertices of the mesh.
 \ccGlue
 \ccMethod{void index_mesh_vertices();}
 {
-Index vertices of the mesh from 0 to \ccc{count_mesh_vertices}()-1.
 }
 \ccGlue
 \ccMethod{Border_vertex_iterator mesh_main_border_vertices_begin();}

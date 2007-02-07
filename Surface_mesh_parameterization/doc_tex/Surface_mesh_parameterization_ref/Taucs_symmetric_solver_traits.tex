@@ -23,7 +23,7 @@
 % The section below is automatically generated. Do not edit!
 %START-AUTO(\ccDefinition)
 
-The class \ccc{Taucs_symmetric_solver_traits} is a traits class for solving SYMMETRIC DEFINITE POSITIVE sparse linear systems using TAUCS solvers family. The default solver is the Multifrontal Supernodal Cholesky Factorization.
+The class \ccc{Taucs_symmetric_solver_traits} is a traits class for solving symmetric positive definite sparse linear systems using TAUCS solvers family. The default solver is the Multifrontal Supernodal Cholesky Factorization.
 
 %END-AUTO(\ccDefinition)
 
@@ -83,7 +83,7 @@ class \ccc{Taucs_symmetric_solver_traits};
 
 \ccConstructor{Taucs_symmetric_solver_traits(const char * options[] = NULL, const void * arguments[] = NULL);}
 {
-Create a TAUCS sparse linear solver for SYMMETRIC DEFINITE POSITIVE matrices. The default solver is the Multifrontal Supernodal Cholesky Factorization. See \ccc{taucs_linsolve}() documentation for the meaning of the 'options' and 'arguments' parameters. 
+Create a TAUCS sparse linear solver for symmetric positive definite matrices. The default solver is the Multifrontal Supernodal Cholesky Factorization. See \ccc{taucs_linsolve}() documentation for the meaning of the 'options' and 'arguments' parameters. 
 }
 \ccGlue
 \begin{description}
