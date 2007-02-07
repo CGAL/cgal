@@ -8,7 +8,11 @@
 
 #include "print_utils.h"
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel  Kernel;
+// instead of
+//typedef CGAL::Exact_predicates_exact_constructions_kernel  Kernel;
+// workaround for VC++ 
+struct Kernel : public CGAL::Exact_predicates_exact_constructions_kernel {};
+
 typedef Kernel::Point_2                               Point_2;
 typedef CGAL::Polygon_2<Kernel>                       Polygon_2;
 typedef CGAL::Polygon_with_holes_2<Kernel>            Polygon_with_holes_2;

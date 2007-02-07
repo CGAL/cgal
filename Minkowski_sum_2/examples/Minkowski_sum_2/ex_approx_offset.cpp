@@ -10,7 +10,10 @@
 #include <iostream>
 
 typedef CGAL::Lazy_exact_nt<Number_type>           Lazy_exact_nt;
-typedef CGAL::Cartesian<Lazy_exact_nt>             Kernel;
+
+// instead of
+//typedef CGAL::Cartesian<Lazy_exact_nt>             Kernel;
+struct Kernel : public CGAL::Cartesian<Lazy_exact_nt> {};
 typedef CGAL::Polygon_2<Kernel>                    Polygon_2;
 
 typedef CGAL::Gps_circle_segment_traits_2<Kernel>  Gps_traits_2;
