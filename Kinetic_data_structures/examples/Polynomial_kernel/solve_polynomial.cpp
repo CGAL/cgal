@@ -1,19 +1,12 @@
 #include <CGAL/basic.h>
 
 
-#include <CGAL/Polynomial/Default_filtering_traits.h>
-#include <CGAL/Polynomial/Filtered_kernel.h>
-#include <CGAL/Polynomial/Kernel.h>
 #include <CGAL/Polynomial/Kernel.h>
 #include <CGAL/Polynomial/Numeric_root_stack.h>
 #include <CGAL/Polynomial/Polynomial.h>
 #include <CGAL/Polynomial/Root_stack_default_traits.h>
 #include <CGAL/Polynomial/Sturm_root_stack.h>
 #include <CGAL/Polynomial/Sturm_root_stack_traits.h>
-#include <CGAL/Polynomial/Upper_bound_root_stack.h>
-#include <CGAL/Polynomial/Upper_bound_root_stack_Descartes_traits.h>
-#include <CGAL/Polynomial/Upper_bound_root_stack_filtered_Descartes_traits.h>
-#include <CGAL/Polynomial/internal/Filtered_function.h>
 #include <CGAL/Polynomial/internal/numeric_solvers.h>
 #include <CGAL/Polynomial/polynomial_converters.h>
 
@@ -108,31 +101,6 @@ int main(int argc, char *argv[])
       typedef CGAL_POLYNOMIAL_NS::Kernel<Pd, NRE> K;
       K k;
       solve(k, input, lb, ub, "CleanTurk");
-    }
-    
-    {
-      typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack_Descartes_traits<Polynomial_ft> BIT;
-      typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack<BIT> CRE;
-      typedef CGAL_POLYNOMIAL_NS::Kernel<Polynomial_ft, CRE> K;
-      
-      K k;
-      solve(k, input, lb, ub, "Descartes");
-    }
-    {
-      typedef CGAL_POLYNOMIAL_NS::Default_filtering_traits<CGAL::POLYNOMIAL::Default_field_nt> FT;
-      typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack_filtered_Descartes_traits<FT> DT;
-      typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack<DT> RE;
-      typedef CGAL_POLYNOMIAL_NS::Filtered_kernel<FT, RE> K;
-      K k;
-      solve(k, input, lb, ub, "DescartesFiltered");
-    }
-    {
-      typedef CGAL_POLYNOMIAL_NS::Default_filtering_traits<CGAL::POLYNOMIAL::Default_field_nt> FT;
-      typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack_filtered_Descartes_traits<FT> DT;
-      typedef CGAL_POLYNOMIAL_NS::Upper_bound_root_stack<DT> RE;
-      typedef CGAL_POLYNOMIAL_NS::Filtered_kernel<FT, RE> K;
-      K k;
-      solve(k, input, lb, ub, "SturmFiltered");
     }
 
     {
