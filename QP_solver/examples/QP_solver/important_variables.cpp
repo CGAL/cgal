@@ -3,7 +3,7 @@
 #include <vector>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/MP_Float.h>
-#include "solve_convex_hull_lp2.h"
+#include "solve_convex_hull_containment_lp2.h"
 
 typedef CGAL::Cartesian_d<double> Kernel_d;
 typedef Kernel_d::Point_d Point_d;
@@ -18,7 +18,7 @@ int main()
    
   for (double f=0.5; f<10; ++f) {
     Point_d p (f, 0.0);
-    Solution s = solve_convex_hull_lp 
+    Solution s = solve_convex_hull_containment_lp 
       (p, points.begin(), points.end(), CGAL::MP_Float());
     std::cout << p; 
     if (s.status() == CGAL::QP_INFEASIBLE) 

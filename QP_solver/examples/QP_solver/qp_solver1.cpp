@@ -32,8 +32,8 @@ typedef CGAL::Gmpz ET;
 #endif
 
 // program and solution types
-typedef CGAL::QP_from_pointers<int> Program;
-typedef CGAL::QP_solution<ET> Solution;
+typedef CGAL::Quadratic_program_from_pointers<int> Program;
+typedef CGAL::Quadratic_program_solution<ET> Solution;
 
 int main() {
   int A_col_0[] = {1};

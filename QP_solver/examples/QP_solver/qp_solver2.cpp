@@ -34,8 +34,8 @@ typedef CGAL::Gmpzf ET;
 #endif
 
 // program and solution types
-typedef CGAL::Nonnegative_QP_from_pointers<double> Program; 
-typedef CGAL::QP_solution<ET> Solution;
+typedef CGAL::Nonnegative_quadratic_program_from_pointers<double> Program; 
+typedef CGAL::Quadratic_program_solution<ET> Solution;
 
 int main() {
   // program data

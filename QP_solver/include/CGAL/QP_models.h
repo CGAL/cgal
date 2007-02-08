@@ -1356,8 +1356,8 @@ std::ostream& operator<<(std::ostream& o,
 // Quadratic_program_from_mps, inherits from QP_from_mps
 // -----------------------------------------------------
 template<typename IT_,
-	 typename Sparse_D_,
-	 typename Sparse_A_>
+	 typename Sparse_D_ = Tag_false,
+	 typename Sparse_A_ = Tag_false>
 class Quadratic_program_from_mps : 
   public QP_from_mps <IT_, Tag_false, Sparse_D_, Sparse_A_>
 {
@@ -1376,8 +1376,8 @@ public:
 // Linear_program_from_mps, inherits from QP_from_mps
 // --------------------------------------------------
 template<typename IT_,
-	 typename Sparse_D_,
-	 typename Sparse_A_>
+	 typename Sparse_D_ = Tag_false,
+	 typename Sparse_A_ = Tag_false>
 class Linear_program_from_mps : 
   public QP_from_mps <IT_, Tag_true, Sparse_D_, Sparse_A_>
 {

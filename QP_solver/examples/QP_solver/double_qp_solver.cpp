@@ -54,7 +54,7 @@ int main(const int argNr,const char **args) {
   typedef CGAL::Gmpzf ET;
 #endif
 
-  typedef CGAL::QP_from_mps<IT, CGAL::Tag_false, CGAL::Tag_true, CGAL::Tag_true> QP;
+  typedef CGAL::Quadratic_program_from_mps<IT> QP;
   QP qp(std::cin,true,verbosity);
   // check for format errors in MPS f\ile:
   if (!qp.is_valid()) {
@@ -68,7 +68,7 @@ int main(const int argNr,const char **args) {
 //     cout << std::endl;
 //   }
 
-  typedef CGAL::QP_solution<ET> Solution;
+  typedef CGAL::Quadratic_program_solution<ET> Solution;
   Solution s = CGAL::solve_quadratic_program (qp, ET(0));
 
   if (s.is_valid()) {
