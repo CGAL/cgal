@@ -27,6 +27,7 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/functional.h>
 #include <CGAL/function_objects.h>
+#include <CGAL/Algebraic_structure_traits.h>
 #include <CGAL/QP_solver/iterator.h>
 #include <vector>
 
@@ -303,8 +304,14 @@ namespace QP_solution_detail {
   public:
     typedef CGAL::Quotient<ET> result_type;
     typedef CGAL::Arity_tag<1> Arity;
-    typedef typename ET::Has_gcd Has_gcd; 
-    typedef typename ET::Has_exact_division Has_exact_division;
+    //typedef typename ET::Has_gcd Has_gcd; 
+    typedef 
+    CGAL::Boolean_tag<CGALi::Is_unique_factorization_domain<ET>::value> 
+    Has_gcd;
+    //typedef typename ET::Has_exact_division Has_exact_division;
+    typedef 
+    CGAL::Boolean_tag<CGALi::Is_integral_domain<ET>::value> 
+    Has_exact_division;
 
     CGAL::Quotient<ET> normalize 
     (const CGAL::Quotient<ET>& q, 

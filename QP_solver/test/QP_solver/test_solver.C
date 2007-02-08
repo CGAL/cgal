@@ -324,8 +324,7 @@ CGAL::QP_pricing_strategy<Q, ET, Tags> *
 template<typename Is_linear,
 	 typename Is_in_standard_form,
 	 typename IT,
-	 typename ET,
-	 typename Sparse>
+	 typename ET>
 bool process(const std::string& filename,
 	     const std::map<std::string,int>& options)
 {
@@ -335,13 +334,23 @@ bool process(const std::string& filename,
   // extract verbosity:
   const int verbosity = options.find("Verbosity")->second;
 
-  // read QP instance:
+  // read QP instance, first using dense representation:
   std::ifstream in(filename.c_str());
   if (!in)
     bailout1("could not open file '%'",filename);
-  typedef CGAL::QP_from_mps<IT, Tag_false, Sparse, Sparse> QP_instance;
+  typedef CGAL::Quadratic_program_from_mps
+    <IT, CGAL::Tag_false, CGAL::Tag_false> QP_instance;
   QP_instance qp(in,true,verbosity);
   in.close();
+
+  // then read it again, using sparse representation
+  std::ifstream in2(filename.c_str());
+  if (!in2)
+    bailout1("could not open file '%'",filename);
+  typedef CGAL::Quadratic_program_from_mps
+    <IT, CGAL::Tag_true, CGAL::Tag_true> Sparse_QP_instance;
+  Sparse_QP_instance qp2(in2,true,verbosity);
+  in2.close();
 
   std::string comment = qp.comment();
 
@@ -378,7 +387,7 @@ bool process(const std::string& filename,
 		      (is_rational(ET())? "Gmpq" : "Double"))
 	 << endl;
 
-  // check for format errors in MPS file:
+  // check for format errors in MPS file (dense):
   if (!qp.is_valid()) {
     cout << "Input is not a valid MPS file." << endl
 	 << "Error: " << qp.error() << endl;
@@ -387,6 +396,18 @@ bool process(const std::string& filename,
   if (verbosity > 3)
     cout << endl << qp;
 
+  // check for format errors in MPS file (sparse):
+  if (!qp2.is_valid()) {
+    cout << "Input is not a valid MPS file." << endl
+	 << "Error: " << qp2.error() << endl;
+    return false;
+  }
+
+  // compare qp1, qp2 
+  if (!are_equal_qp (qp, qp2)) {
+    cout << "Dense/Sparse readers disagree.\n" << endl;
+    return false;
+  }
 
   typedef CGAL::QP_solver_impl::QP_tags<Is_linear,Is_in_standard_form> Tags;
 
@@ -420,43 +441,22 @@ bool processType(const std::string& filename,
   // do only this particular value or all possibilities:
   bool success = true;
 
-  // sparse representation 
 #ifdef QP_INT
   if (!processOnlyOneValue || value==Int_type)
     if (!process<Is_linear,Is_in_standard_form,
-	int,Integer, Tag_true>(filename,options))
+	int,Integer>(filename,options))
       success = false;
 #endif
 #ifdef QP_DOUBLE
   if (!processOnlyOneValue || value==Double_type)
     if (!process<Is_linear,Is_in_standard_form,
-	double,Float, Tag_true>(filename,options))
+	double,Float>(filename,options))
       success = false;
 #endif
 #ifdef QP_RATIONAL
   if (!processOnlyOneValue || value==Rational_type)
     if (!process<Is_linear,Is_in_standard_form,
-	Rational,Rational, Tag_true>(filename,options))
-      success = false;
-#endif
-
-  // dense representation 
-#ifdef QP_INT
-  if (!processOnlyOneValue || value==Int_type)
-    if (!process<Is_linear,Is_in_standard_form,
-	int,Integer, Tag_false>(filename,options))
-      success = false;
-#endif
-#ifdef QP_DOUBLE
-  if (!processOnlyOneValue || value==Double_type)
-    if (!process<Is_linear,Is_in_standard_form,
-	double,Float, Tag_false>(filename,options))
-      success = false;
-#endif
-#ifdef QP_RATIONAL
-  if (!processOnlyOneValue || value==Rational_type)
-    if (!process<Is_linear,Is_in_standard_form,
-	Rational,Rational, Tag_false>(filename,options))
+	Rational,Rational>(filename,options))
       success = false;
 #endif
 

@@ -141,6 +141,14 @@ Quadratic_program_solution<ET> solve_nonnegative_linear_program
   const Solver* s = new Solver(qp);
   return Quadratic_program_solution<ET>(s);
 }
+
+// check whether the two qp's have the same data; this is the case iff
+// they agree in n, m, a, b, r, fl, l, fu, u, d, c, c0
+// PRE: qp1, qp2 have the same internal number type
+template <typename Quadratic_program1, typename Quadratic_program2>
+bool are_equal_qp 
+(const Quadratic_program1 &qp1, const Quadratic_program2 &qp2);
+
 CGAL_END_NAMESPACE
 
 #include <CGAL/QP_solver/QP_functions_impl.h>

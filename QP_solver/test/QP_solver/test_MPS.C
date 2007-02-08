@@ -37,6 +37,7 @@
 
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_functions.h>
+#include <CGAL/QP_solution.h>
 
 int main(const int argNr,const char **args) {
   using std::cout;
@@ -69,7 +70,7 @@ int main(const int argNr,const char **args) {
     cout << std::endl;
   }
 
-  typedef CGAL::QP_solution<ET> Solution;
+  typedef CGAL::Quadratic_program_solution<ET> Solution;
   Solution s = CGAL::solve_quadratic_program (qp, ET(0));
 
   if (s.is_valid()) {

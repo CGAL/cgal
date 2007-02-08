@@ -200,7 +200,67 @@ void print_linear_inequality_system
   out << "ENDATA\n";
 }
 
-
+template <typename Quadratic_program1, typename Quadratic_program2>
+bool are_equal_qp 
+(const Quadratic_program1 &qp1, const Quadratic_program2 &qp2)
+{
+  if (qp1.n() != qp2.n()) return false;
+  if (qp1.m() != qp2.m()) return false;
+  int n = qp1.n();
+  int m = qp1.m();
+  // check A
+  typename Quadratic_program1::A_iterator a1 = qp1.a();
+  typename Quadratic_program2::A_iterator a2 = qp2.a();
+  for (int j=0; j<n; ++j, ++a1, ++a2)
+    for (int i=0; i<m; ++i) 
+      if ((*a1)[i] != (*a2)[i]) return false;
+  // check b
+  typename Quadratic_program1::B_iterator b1 = qp1.b();
+  typename Quadratic_program2::B_iterator b2 = qp2.b();
+  for (int i=0; i<m; ++i)
+    if (b1[i] != b2[i]) return false;
+  // check r
+  typename Quadratic_program1::R_iterator r1 = qp1.r();
+  typename Quadratic_program2::R_iterator r2 = qp2.r();
+  for (int i=0; i<m; ++i)
+    if (r1[i] != r2[i]) return false;
+  // check fl
+  typename Quadratic_program1::FL_iterator fl1 = qp1.fl();
+  typename Quadratic_program2::FL_iterator fl2 = qp2.fl();
+  for (int j=0; j<n; ++j)
+    if (fl1[j] != fl2[j]) return false;
+  // check l
+  typename Quadratic_program1::L_iterator l1 = qp1.l();
+  typename Quadratic_program2::L_iterator l2 = qp2.l();
+  for (int j=0; j<n; ++j)
+    if (l1[j] != l2[j]) return false;
+  // check fu
+  typename Quadratic_program1::FU_iterator fu1 = qp1.fu();
+  typename Quadratic_program2::FU_iterator fu2 = qp2.fu();
+  for (int j=0; j<n; ++j)
+    if (fu1[j] != fu2[j]) return false;
+  // check u
+  typename Quadratic_program1::U_iterator u1 = qp1.u();
+  typename Quadratic_program2::U_iterator u2 = qp2.u();
+  for (int j=0; j<n; ++j)
+    if (u1[j] != u2[j]) return false;
+  // check d
+  typename Quadratic_program1::D_iterator d1 = qp1.d();
+  typename Quadratic_program2::D_iterator d2 = qp2.d();
+  for (int j=0; j<n; ++j, ++d1, ++d2)
+    for (int i=0; i<n; ++i) 
+      if ((*d1)[i] != (*d2)[i]) return false;
+  // check c
+  typename Quadratic_program1::C_iterator c1 = qp1.c();
+  typename Quadratic_program2::C_iterator c2 = qp2.c();
+  for (int j=0; j<n; ++j)
+    if (c1[j] != c2[j]) return false;
+  // check c0
+  typename Quadratic_program1::C_entry c01 = qp1.c0();
+  typename Quadratic_program2::C_entry c02 = qp2.c0();
+  if (c01 != c02) return false;
+  return true;
+}
 CGAL_END_NAMESPACE
 
 #endif // CGAL_QP_FUNCTIONS_IMPL_H

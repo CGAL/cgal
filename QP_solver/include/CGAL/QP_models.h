@@ -35,10 +35,14 @@
 // - Quadratic_program_from_pointers
 // - Nonngative_quadratic_program_from_iterators
 // - Nonengative_quadratic_program_from_pointers
+// - Free_quadratic_program_from_iterators
+// - Free_quadratic_program_from_pointers
 // - Linear_program_from_iterators
 // - Linear_program_from_pointers
 // - Nonngative_linear_program_from_iterators
 // - Nonengative_linear_program_from_pointers
+// - Free_linear_program_from_iterators
+// - Free_linear_program_from_pointers
 // - Quadratic_program_from_mps
 // - Linear_program_from_mps
 
@@ -675,7 +679,7 @@ public:
   {}  
 };
 
-// Quadratic_program_from_mps
+// QP_from_mps
 // --------------------------
 namespace QP_from_mps_detail {
 
@@ -762,7 +766,7 @@ template<typename IT_,  // The input number type: the numbers in the
                         // Use a sparse representation for D.
 	 typename Sparse_A_=Tag_false>
                         // Use a sparse representation for A. 
-class Quadratic_program_from_mps {
+class QP_from_mps {
 public:
   typedef IT_ IT;
   typedef Is_linear_ Is_linear;
@@ -815,7 +819,7 @@ public:
 //   <typename D_Matrix::const_iterator, D_Beginner>
 //     D_iterator;
   typedef typename Vector::const_iterator C_iterator;
-
+  typedef typename std::iterator_traits<C_iterator>::value_type C_entry;
 private:
   typedef std::pair<std::string,unsigned int> String_int_pair;
   typedef std::map<std::string,unsigned int> Index_map;
@@ -1113,7 +1117,7 @@ public: // methods:
   // and you set the upper bound of a variable to exactly zero and do
   // not specify a lower bound then the lower bound will be set to
   // -infinity.
-  Quadratic_program_from_mps(std::istream& in,bool use_CPLEX_convention=true,
+  QP_from_mps(std::istream& in,bool use_CPLEX_convention=true,
 		  int verbosity=0);
 
   // Returns true if and only if the instance has been properly
@@ -1345,9 +1349,48 @@ template<typename IT_, typename Is_linear_,
 	 typename Sparse_D_,
 	 typename Sparse_A_>
 std::ostream& operator<<(std::ostream& o,
-			 Quadratic_program_from_mps<IT_, Is_linear_,
+			 QP_from_mps<IT_, Is_linear_,
 			 Sparse_D_,
 			 Sparse_A_>& qp);
+
+// Quadratic_program_from_mps, inherits from QP_from_mps
+// -----------------------------------------------------
+template<typename IT_,
+	 typename Sparse_D_,
+	 typename Sparse_A_>
+class Quadratic_program_from_mps : 
+  public QP_from_mps <IT_, Tag_false, Sparse_D_, Sparse_A_>
+{
+private:
+  typedef QP_from_mps <IT_, Tag_false, Sparse_D_, Sparse_A_>
+  Base;
+public:
+  QP_MODEL_ITERATOR_TYPES;
+  Quadratic_program_from_mps(std::istream& in,bool use_CPLEX_convention=true,
+		  int verbosity=0)
+    : Base (in, use_CPLEX_convention, verbosity)
+  {}
+};
+
+
+// Linear_program_from_mps, inherits from QP_from_mps
+// --------------------------------------------------
+template<typename IT_,
+	 typename Sparse_D_,
+	 typename Sparse_A_>
+class Linear_program_from_mps : 
+  public QP_from_mps <IT_, Tag_true, Sparse_D_, Sparse_A_>
+{
+private:
+  typedef QP_from_mps <IT_, Tag_true, Sparse_D_, Sparse_A_>
+  Base;
+public:
+  QP_MODEL_ITERATOR_TYPES;
+  Linear_program_from_mps(std::istream& in,bool use_CPLEX_convention=true,
+		  int verbosity=0)
+    : Base (in, use_CPLEX_convention, verbosity)
+  {}
+};
 
 
 CGAL_END_NAMESPACE

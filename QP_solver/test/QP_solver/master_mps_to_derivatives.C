@@ -204,7 +204,7 @@ void create_shifted_instance(CGAL::QP_from_mps
 		  "Shifted instance of original file",
 		  "master_mps_to_derivatives-create_shifted_instance",
 		  qp.problem_name(), 
-		  CGAL::make_QP_from_iterators(
+		  CGAL::make_quadratic_program_from_iterators(
      n, 
      m, 
      qp.a(), 
@@ -327,7 +327,7 @@ void create_free_instance(CGAL::QP_from_mps<IT, Is_linear,
 		  "Freed instance of original file",
 		  "master_mps_to_derivatives-create_free_instance",
 		  qp.problem_name(),
-		  CGAL::make_QP_from_iterators (
+		  CGAL::make_quadratic_program_from_iterators (
 		  n, m+nr_of_rows_added,
 		  A_iterator(qp.A_matrix().begin(),A_Beginner()),
 		  b.begin(),

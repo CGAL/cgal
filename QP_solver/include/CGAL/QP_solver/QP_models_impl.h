@@ -31,10 +31,10 @@ CGAL_BEGIN_NAMESPACE
 template<typename IT_, typename Is_linear_,
 	 typename Sparse_D_,
 	 typename Sparse_A_>
-Quadratic_program_from_mps<IT_, Is_linear_,
+QP_from_mps<IT_, Is_linear_,
 		Sparse_D_,
 		Sparse_A_>::
-Quadratic_program_from_mps(std::istream& in,bool use_CPLEX_convention,
+QP_from_mps(std::istream& in,bool use_CPLEX_convention,
 		int verbosity)
   : has_linear_tag (check_tag(Is_linear_())),
     verbosity_(verbosity), from(in),
@@ -92,7 +92,7 @@ Quadratic_program_from_mps(std::istream& in,bool use_CPLEX_convention,
 template<typename IT_, typename Is_linear_,
 	 typename Sparse_D_,
 	 typename Sparse_A_>
-bool Quadratic_program_from_mps<IT_, Is_linear_,
+bool QP_from_mps<IT_, Is_linear_,
 		Sparse_D_,
 		Sparse_A_>::is_valid() const
 {
@@ -102,7 +102,7 @@ bool Quadratic_program_from_mps<IT_, Is_linear_,
 template<typename IT_, typename Is_linear_,
 	 typename Sparse_D_,
 	 typename Sparse_A_>
-const std::string& Quadratic_program_from_mps<IT_, Is_linear_,
+const std::string& QP_from_mps<IT_, Is_linear_,
 		Sparse_D_,
 		Sparse_A_>::error()
 {
@@ -113,7 +113,7 @@ const std::string& Quadratic_program_from_mps<IT_, Is_linear_,
 template<typename IT_, typename Is_linear_,
 	 typename Sparse_D_,
 	 typename Sparse_A_>
-const std::string& Quadratic_program_from_mps<IT_, Is_linear_,
+const std::string& QP_from_mps<IT_, Is_linear_,
 		Sparse_D_,
 		Sparse_A_>::comment()
 {
@@ -123,7 +123,7 @@ const std::string& Quadratic_program_from_mps<IT_, Is_linear_,
 template<typename IT_, typename Is_linear_,
 	 typename Sparse_D_,
 	 typename Sparse_A_>
-bool Quadratic_program_from_mps<IT_, Is_linear_, Sparse_D_, Sparse_A_>
+bool QP_from_mps<IT_, Is_linear_, Sparse_D_, Sparse_A_>
 ::is_symmetric(Tag_false sparse_D, unsigned int&i, unsigned int&j) const
 {
   // only called if we have a qp, i.e. if D is initialized
@@ -138,7 +138,7 @@ bool Quadratic_program_from_mps<IT_, Is_linear_, Sparse_D_, Sparse_A_>
 template<typename IT_, typename Is_linear_,
 	 typename Sparse_D_,
 	 typename Sparse_A_>
-bool Quadratic_program_from_mps<IT_, Is_linear_, Sparse_D_, Sparse_A_>
+bool QP_from_mps<IT_, Is_linear_, Sparse_D_, Sparse_A_>
 ::is_symmetric(Tag_true sparse_D, unsigned int&i, unsigned int&j) const
 {
   // only called if we have a qp, i.e. if D is initialized
@@ -163,7 +163,7 @@ bool Quadratic_program_from_mps<IT_, Is_linear_, Sparse_D_, Sparse_A_>
 template<typename IT_, typename Is_linear_,
 	 typename Sparse_D_,
 	 typename Sparse_A_>
-bool Quadratic_program_from_mps<IT_, Is_linear_,
+bool QP_from_mps<IT_, Is_linear_,
 		Sparse_D_,
 		Sparse_A_>::name_section()
 {
@@ -195,7 +195,7 @@ bool Quadratic_program_from_mps<IT_, Is_linear_,
 template<typename IT_, typename Is_linear_,
 	 typename Sparse_D_,
 	 typename Sparse_A_>
-bool Quadratic_program_from_mps<IT_, Is_linear_,
+bool QP_from_mps<IT_, Is_linear_,
 		Sparse_D_,
 		Sparse_A_>::rows_section()
 {
@@ -245,7 +245,7 @@ bool Quadratic_program_from_mps<IT_, Is_linear_,
 template<typename IT_, typename Is_linear_,
 	 typename Sparse_D_,
 	 typename Sparse_A_>
-bool Quadratic_program_from_mps<IT_, Is_linear_,
+bool QP_from_mps<IT_, Is_linear_,
 		Sparse_D_,
 		Sparse_A_>::columns_section()
 {
@@ -310,7 +310,7 @@ bool Quadratic_program_from_mps<IT_, Is_linear_,
 template<typename IT_, typename Is_linear_,
 	 typename Sparse_D_,
 	 typename Sparse_A_>
-bool Quadratic_program_from_mps<IT_, Is_linear_,
+bool QP_from_mps<IT_, Is_linear_,
 		Sparse_D_,
 		Sparse_A_>::rhs_section()
 {
@@ -379,7 +379,7 @@ bool Quadratic_program_from_mps<IT_, Is_linear_,
 template<typename IT_, typename Is_linear_,
 	 typename Sparse_D_,
 	 typename Sparse_A_>
-bool Quadratic_program_from_mps<IT_, Is_linear_,
+bool QP_from_mps<IT_, Is_linear_,
 		Sparse_D_,
 		Sparse_A_>::ranges_section()
 {
@@ -492,7 +492,7 @@ bool Quadratic_program_from_mps<IT_, Is_linear_,
 template<typename IT_, typename Is_linear_,
 	 typename Sparse_D_,
 	 typename Sparse_A_>
-bool Quadratic_program_from_mps<IT_, Is_linear_,
+bool QP_from_mps<IT_, Is_linear_,
 		Sparse_D_,
 		Sparse_A_>::bounds_section()
 {
@@ -603,7 +603,7 @@ bool Quadratic_program_from_mps<IT_, Is_linear_,
 template<typename IT_, typename Is_linear_,
 	 typename Sparse_D_,
 	 typename Sparse_A_>
-bool Quadratic_program_from_mps<IT_, Is_linear_,
+bool QP_from_mps<IT_, Is_linear_,
 		Sparse_D_,
 		Sparse_A_>::qmatrix_section()
 {
@@ -684,11 +684,11 @@ template<typename IT_, typename Is_linear_,
 	 typename Sparse_D_,
 	 typename Sparse_A_>
 std::ostream& operator<<(std::ostream& o,
-			 Quadratic_program_from_mps<IT_, Is_linear_, 
+			 QP_from_mps<IT_, Is_linear_, 
 			 Sparse_D_,
 			 Sparse_A_>& qp)
 {
-  typedef Quadratic_program_from_mps<IT_, Is_linear_, 
+  typedef QP_from_mps<IT_, Is_linear_, 
     Sparse_D_,
     Sparse_A_> MPS;
   const unsigned int n = qp.n();
