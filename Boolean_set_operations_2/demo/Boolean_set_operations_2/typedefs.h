@@ -52,9 +52,10 @@ typedef CGAL::Lazy_exact_nt<Base_nt>                  Coord_type;
 // workaround for VC++ 
 struct Kernel : public CGAL::Cartesian<Coord_type> {};
 
-typedef Kernel::Segment_2			                        Segment;
-typedef Kernel::Point_2				                        Point_2;
+typedef Kernel::Segment_2			      Segment;
+typedef Kernel::Point_2				      Point_2;
 typedef Kernel::Circle_2                              Circle;
+typedef Kernel::Iso_rectangle_2                       Iso_rectangle;
 
 typedef CGAL::Gps_circle_segment_traits_2<Kernel>     Traits;
 typedef Traits::Curve_2                               Curve;
@@ -65,7 +66,7 @@ typedef CGAL::General_polygon_with_holes_2<Polygon_2> Polygon_with_holes;
 typedef CGAL::General_polygon_set_2<Traits>           Polygon_set;
 typedef Polygon_with_holes::Hole_const_iterator       Hole_const_iterator;
 
-typedef CGAL::Iso_rectangle_2<Kernel>                 Iso_rectangle;
+
 typedef CGAL::Polygon_2<Kernel>                       Linear_polygon_2;
 typedef CGAL::Polygon_with_holes_2<Kernel>            Linear_polygon_with_holes_2;
 #endif
