@@ -249,6 +249,7 @@ public:
     do_pop();
     while (!empty() && current_ < start) {
       CGAL_KINETIC_STURM_DEBUG("Dropping root " << current_ << " because of " << start);
+      current_ok_=false;
       do_pop();
     }
   }
