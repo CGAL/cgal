@@ -83,7 +83,7 @@ template <class K>
 Object
 intersection(const typename CGAL_WRAP(K)::Ray_2 &ray,
 	     const typename CGAL_WRAP(K)::Iso_rectangle_2 &iso,
-	     const K& k)
+	     const K& )
 {
     typedef Ray_2_Iso_rectangle_2_pair<K> is_t;
     is_t ispair(&ray, &iso);
