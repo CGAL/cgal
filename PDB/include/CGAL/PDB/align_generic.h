@@ -294,7 +294,7 @@ double optimal_fixed_matching(It0 b_0, It0 e_0,
       //std::cout << i << " " << j << std::endl;
     }
   }
-  return dp_matrix[d_0+1][d_1+1].first + gap_cost*(std::max(d_0, d_1)- std::min(d_0, d_1));
+  return dp_matrix[d_0+1][d_1+1].first + gap_cost*(std::max  BOOST_PREVENT_MACRO_SUBSTITUTION(d_0, d_1)- std::min  BOOST_PREVENT_MACRO_SUBSTITUTION (d_0, d_1));
 }
 
 
