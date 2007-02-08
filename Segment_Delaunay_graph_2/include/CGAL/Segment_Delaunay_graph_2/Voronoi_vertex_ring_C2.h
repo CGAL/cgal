@@ -820,7 +820,7 @@ private:
 
   //--------------------------------------------------------------------------
 
-  Sign incircle_p_no_easy(const Site_2& st, PPS_Type type) const
+  Sign incircle_p_no_easy(const Site_2& st, PPS_Type ) const
   {
     CGAL_precondition( st.is_point() );
 
@@ -841,7 +841,7 @@ private:
 
   //--------------------------------------------------------------------------
 
-  Sign incircle_p_no_easy(const Site_2& st, PSS_Type type) const
+  Sign incircle_p_no_easy(const Site_2& st, PSS_Type ) const
   {
     CGAL_precondition( st.is_point() );
     Point_2 t = st.point();
@@ -871,7 +871,7 @@ private:
 
   //--------------------------------------------------------------------------
 
-  Sign incircle_p_no_easy(const Site_2& st, SSS_Type type) const
+  Sign incircle_p_no_easy(const Site_2& st, SSS_Type ) const
   {
     CGAL_precondition( st.is_point() );
 

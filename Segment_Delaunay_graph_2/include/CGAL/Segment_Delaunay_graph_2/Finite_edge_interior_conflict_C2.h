@@ -104,7 +104,7 @@ private:
   bool
   is_interior_in_conflict_both_pp(const Site_2& sp, const Site_2& sq,
 				  const Site_2& r, const Site_2& s,
-				  const Site_2& t, Method_tag tag) const
+				  const Site_2& t, Method_tag ) const
   {
     CGAL_precondition( sp.is_point() && sq.is_point() );
 
@@ -165,8 +165,8 @@ private:
 
   bool
   is_interior_in_conflict_both_ss(const Site_2& p, const Site_2& q,
-				  const Site_2& r, const Site_2& s,
-				  const Site_2& t, Method_tag) const
+				  const Site_2& , const Site_2& ,
+				  const Site_2& , Method_tag) const
   {
     CGAL_precondition( p.is_segment() && q.is_segment() );
     return true;
@@ -197,7 +197,7 @@ private:
   bool
   is_interior_in_conflict_both_ps_p(const Site_2& p, const Site_2& q,
 				    const Site_2& r, const Site_2& s,
-				    const Site_2& t, Method_tag tag) const
+				    const Site_2& t, Method_tag ) const
   {
     CGAL_precondition( t.is_point() );
 
@@ -235,7 +235,7 @@ private:
   bool
   is_interior_in_conflict_both_ps_s(const Site_2& sp, const Site_2& sq,
 				    const Site_2& r, const Site_2& s,
-				    const Site_2& st, Method_tag tag) const
+				    const Site_2& st, Method_tag ) const
   {
     CGAL_precondition( st.is_segment() );
     Point_2 p = sp.point();
@@ -457,8 +457,8 @@ private:
 
   bool
   is_interior_in_conflict_none_pp(const Site_2& p, const Site_2& q,
-				  const Site_2& r, const Site_2& s,
-				  const Site_2& t, Method_tag tag) const
+				  const Site_2& , const Site_2& ,
+				  const Site_2& t, Method_tag ) const
   {
     CGAL_precondition( p.is_point() && q.is_point() && t.is_point() );
     return false;
@@ -469,7 +469,7 @@ private:
   bool
   is_interior_in_conflict_none_ps(const Site_2& sp, const Site_2& sq,
 				  const Site_2& r, const Site_2& s,
-				  const Site_2& st, Method_tag tag) const
+				  const Site_2& st, Method_tag ) const
   {
     CGAL_precondition( sp.is_point() && sq.is_segment() && st.is_point() );
 
@@ -522,7 +522,7 @@ private:
   bool
   is_interior_in_conflict_none_ss(const Site_2& p, const Site_2& q,
 				  const Site_2& r, const Site_2& s,
-				  const Site_2& t, Method_tag tag) const
+				  const Site_2& t, Method_tag ) const
   {
     CGAL_precondition( p.is_segment() && q.is_segment() && t.is_point() );
 
@@ -651,7 +651,7 @@ public:
   }
 
 
-  bool operator()(const Site_2& p, const Site_2& q, const Site_2& r,
+  bool operator()(const Site_2& p, const Site_2& q, const Site_2& ,
 		  const Site_2& t, Sign sgn) const
   {
     if ( t.is_point() ) {
@@ -675,7 +675,7 @@ public:
   }
 
   bool operator()(const Site_2& p, const Site_2& q, const Site_2& t,
-		  Sign sgn) const
+		  Sign ) const
   {
     if ( p.is_segment() || q.is_segment()) {
       return false;

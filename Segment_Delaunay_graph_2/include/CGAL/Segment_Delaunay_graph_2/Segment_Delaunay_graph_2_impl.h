@@ -68,7 +68,7 @@ operator=(const Self& other)
 template<class Gt, class ST, class DS, class LTag>
 typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
 Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
-insert_first(const Storage_site_2& ss, const Point_2& p)
+insert_first(const Storage_site_2& ss, const Point_2& )
 {
   CGAL_precondition( number_of_vertices() == 0 );
 
@@ -220,7 +220,7 @@ insert_third(const Site_2& t, const Storage_site_2& ss)
 template<class Gt, class ST, class DS, class LTag>
 typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_handle
 Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
-insert_third(const Storage_site_2& ss, Vertex_handle v0, Vertex_handle v1)
+insert_third(const Storage_site_2& ss, Vertex_handle , Vertex_handle )
 {
   CGAL_precondition( number_of_vertices() == 2 );
 
@@ -607,7 +607,7 @@ insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
 template<class Gt, class ST, class DS, class LTag>
 typename Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::Vertex_triple
 Segment_Delaunay_graph_2<Gt,ST,DS,LTag>::
-insert_point_on_segment(const Storage_site_2& ss, const Site_2& t,
+insert_point_on_segment(const Storage_site_2& ss, const Site_2& ,
 			Vertex_handle v, const Tag_true&)
 {
   // splits the segment site v->site() in two and inserts the point of
