@@ -181,11 +181,11 @@ void Qt_moving_points_2<T,G>::draw() const
   if (numv < 200) {
     *w << CGAL::PointSize(ptsz_) << CGAL::LineWidth(1);
   } else if (numv < 800) {
-    *w << CGAL::PointSize(std::max(1,ptsz_/2)) << CGAL::LineWidth(1);
+    *w << CGAL::PointSize(std::max BOOST_PREVENT_MACRO_SUBSTITUTION(1,ptsz_/2)) << CGAL::LineWidth(1);
   } else if (numv < 2000) {
-    *w << CGAL::PointSize(std::max(1,ptsz_/4)) << CGAL::LineWidth(1);
+    *w << CGAL::PointSize(std::max BOOST_PREVENT_MACRO_SUBSTITUTION(1,ptsz_/4)) << CGAL::LineWidth(1);
   } else {
-    *w << CGAL::PointSize(std::max(ptsz_/8, 1)) << CGAL::LineWidth(1);
+    *w << CGAL::PointSize(std::max BOOST_PREVENT_MACRO_SUBSTITUTION(ptsz_/8, 1)) << CGAL::LineWidth(1);
   }
   //out << C(P2(0,0), 2) << C(P2(0,0), 1);
   //out << CGAL::BackgroundColor(CGAL::Color(125,125,125));

@@ -275,7 +275,8 @@ public:
 	//Point_key s=TDS_helper::origin(batched_certs_[i])->point();
         //Point_key t=TDS_helper::destination(batched_certs_[i])->point();
         
-        //std::cout << std::min(s,t) << "--" << std::max(s,t) << std::endl;
+        //std::cout << std::min(s,t) << "--" << std::max
+		//BOOST_PREVENT_MACRO_SUBSTITUTION(s,t) << std::endl;
         update_face(batched_certs_[i]);
       }
       
@@ -647,7 +648,7 @@ protected:
 
 
   void set_vertex_handle(Point_key k, Vertex_handle vh) {
-    vhs_.resize(std::max(k.to_index()+1, vhs_.size()));
+    vhs_.resize(std::max BOOST_PREVENT_MACRO_SUBSTITUTION(k.to_index()+1, vhs_.size()));
     vhs_[k.to_index()]=vh;
   }
 

@@ -27,7 +27,6 @@ CGAL_KINETIC_BEGIN_INTERNAL_NAMESPACE
 
 Logs kds_logs;
 
-namespace internal {
   unsigned int function_degeneracies__=0;
   unsigned int zero_certificates__=0;
   unsigned int io_errors__=0;
@@ -39,6 +38,5 @@ namespace internal {
     if (io_errors__ != 0) out << "I/O errors " << io_errors__ << std::endl;
     if (audit_failures__ != 0) out << "Audit failures " << audit_failures__ << std::endl;
   }
-}
 
 CGAL_KINETIC_END_INTERNAL_NAMESPACE

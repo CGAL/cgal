@@ -537,5 +537,13 @@ inline T operator-(int a, const Polynomial_impl<T, NT> &poly)
 
 #undef CGAL_EXCESSIVE
 
+/*template <class NT>
+class Input_rep<Polynomial<NT> , CGAL::Maple_format_tag > {
+  Input_rep(Polynomial<NT>& p): p_(p){}
+  std::istream & operator()(std::istream &in) const {
+    
+  }
+  };*/
+
 CGAL_POLYNOMIAL_END_INTERNAL_NAMESPACE
 #endif

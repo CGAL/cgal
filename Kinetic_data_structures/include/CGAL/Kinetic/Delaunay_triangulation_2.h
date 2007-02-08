@@ -755,7 +755,7 @@ protected:
     return vhs_[k.to_index()];
   }
   void set_vertex_handle(Point_key k, Vertex_handle vh) {
-    vhs_.resize(std::max(static_cast<unsigned int>(k.to_index()+1),
+    vhs_.resize(std::max BOOST_PREVENT_MACRO_SUBSTITUTION(static_cast<unsigned int>(k.to_index()+1),
 			 static_cast<unsigned int>(vhs_.size())));
     vhs_[k.to_index()]=vh;
   }
