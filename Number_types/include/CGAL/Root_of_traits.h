@@ -32,7 +32,7 @@ namespace CGALi {
 template < typename NT, class Algebraic_category>
 struct Root_of_traits_helper{
     typedef Quotient<NT> Root_of_1;
-    typedef Root_of_2<NT> Root_of_2;
+    typedef CGAL::Root_of_2<NT> Root_of_2;
     struct Make_root_of_2{
         typedef Root_of_2 result_type;
         Root_of_2 operator()(const NT& a, const NT& b, const NT& c){
