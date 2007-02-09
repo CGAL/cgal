@@ -252,6 +252,7 @@ is_negative( const Real_embeddable& x ) {
     return is_negative( x );
 }
 
+/*
 template< class Real_embeddable >
 inline
 typename Real_embeddable_traits< Real_embeddable >::Compare::result_type
@@ -260,6 +261,7 @@ compare( const Real_embeddable& x, const Real_embeddable& y ) {
     typename Real_embeddable_traits< Real_embeddable >::Compare compare;
     return compare( x, y );
 }
+*/
 
 template< class Real_embeddable >
 inline
