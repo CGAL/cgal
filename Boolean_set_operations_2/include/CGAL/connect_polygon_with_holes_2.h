@@ -214,7 +214,6 @@ OutputIterator connect_polygon_with_holes_2
       // v_top lies below a vertex v_above: Connect these two vertices.
       v_above = arr.non_const_handle (v);
 
-      std::cout << "v = " << v_above->point() << std::endl;
       arr.insert_at_vertices (Segment_2 (v_top->point(), v_above->point()),
                               v_top, v_above);
     }
@@ -232,12 +231,8 @@ OutputIterator connect_polygon_with_holes_2
       assign_success = CGAL::assign (ip, obj);
       CGAL_assertion (assign_success);
 
-      std::cout << "he = " << he_above->source()->point()
-                << " --> " << he_above->target()->point() << std::endl;
-
       if (assign_success)
       {
-        std::cout << "ip = " << ip << std::endl;
         // Split he_above at the computed intersection point.
         arr.split_edge (he_above,
                         Segment_2 (he_above->source()->point(), ip),
@@ -246,9 +241,6 @@ OutputIterator connect_polygon_with_holes_2
         // Now he_above is split such that it becomes the predecessor
         // halfedge for the insertion of the vertical segment connecting
         // v_top and ip.
-        std::cout << "he = " << he_above->source()->point()
-                  << " --> " << he_above->target()->point() << std::endl;
-
         arr.insert_at_vertices (Segment_2 (v_top->point(), ip),
                                 he_above, v_top);
       }
