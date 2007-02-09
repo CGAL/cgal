@@ -70,7 +70,7 @@ do_platform()
   echo "------------" >> $RESULT_FILE
 
   if [ -f install.log.${1} ] ; then
-    grep -e "Compilation of .\+ ${2}" install.log.${1} \
+    grep "Compilation of" install.log.${1} \
     | awk '{ print $3 " " $4 " " $6; }' \
     | sed -e 's/succeeded\.$/y/' -e 's/failed\.$/n/' \
     | while read libname shared_or_static y_or_no; do
