@@ -48,7 +48,7 @@ class Qt_triangulation_2: public Ref_counted<Qt_triangulation_2<KDel, IK, Qt_gui
   typedef typename Qt_gui::Listener QTL;
   class Listener: public QTL
   {
-    typedef This Container;
+    typedef Qt_triangulation_2<KDel, IK, Qt_gui> Container;
     typedef QTL P;
   public:
     Listener(typename Qt_gui::Handle &h, Container *t): P(h), t_(t){}
