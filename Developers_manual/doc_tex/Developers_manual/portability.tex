@@ -115,48 +115,6 @@ with question marks are not decided yet) :
 \end{itemize}
 
 
-\section{Identifying \cgal\ and \leda\ versions}
-\label{sec:which_versions}
-\ccIndexSubitem{version number}{of \cgal}
-\ccIndexSubitem{version number}{of \leda}
-\ccIndexSubitem{macros}{for version numbers}
-
-Every release of \cgal\ defines (in \texttt{<CGAL/version.h>}) two
-macros:
-\begin{description}
-\item[\texttt{CGAL\_VERSION}]
-     \index{CGAL_VERSION macro@{\tt CGAL\_VERSION} macro}
-     -- a textual description of the
-     current release (\eg, or 1.2 or 2.2-I-1 or 3.2.1-I-15), and 
-\item[\texttt{CGAL\_VERSION\_NR}], 
-     \index{CGAL_VERSION_NR macro@{\tt CGAL\_VERSION\_NR} macro}
-     --  a numerical description of
-     the current release such that more recent releases have higher
-     number.
-
-     More precisely, it is defined as \texttt{1MMmmbiiii},
-     where \texttt{MM} is the major release number (e.g. 03),
-     \texttt{mm} is the minor release number (e.g. 02),
-     \texttt{b} is the bug-fix release number (e.g. 0), and
-     \texttt{iiii} is the internal release number (e.g. 0001). For
-     public releases, the latter is defined as 1000.
-     Examples: for the public release 3.2.4 this number is 
-     1030241000; for internal release 3.2-I-1, it is 1030200001.
-     Note that the scheme was modified around 3.2-I-30.
-\item[\texttt{CGAL\_VERSION\_NUMBER(M,m,b)}], 
-     \index{CGAL_VERSION_NUMBER macro@{\tt CGAL\_VERSION\_NUMBER} macro}
-     -- a function macro providing computing the version number macro
-     from the M.m.b release version.  Note that the internal release
-     number is dropped here.  Example: \texttt{CGAL\_VERSION\_NUMBER(3,2,4)}
-     is equal to 1030241000.
-\end{description}
- 
-\noindent \leda\ defines a macro \texttt{\_\_LEDA\_\_}
-\index{LEDA macro@{\tt \_\_LEDA\_\_} macro}
-in
-\texttt{<LEDA/basic.h>} that provides a numerical description of the
-current \leda\ version. Examples: for \leda-3.8, it is 380, for
-\leda-4.1 it is 410.
 
 \section{Using the version-number and configuration macros and flags}
 \label{sec:using_version_macros}
@@ -191,8 +149,6 @@ the following table.
 Borland 5.4     & \texttt{\_\_BORLANDC\_\_}         & 0x540\\
 Borland 5.5     & \texttt{\_\_BORLANDC\_\_}         & 0x550\\
 Borland 5.5.1   & \texttt{\_\_BORLANDC\_\_}         & 0x551\\
-GNU 2.95        & \texttt{\_\_GNUC\_\_}             & 2\\
-GNU 2.95        & \texttt{\_\_GNUC\_MINOR\_\_}      & 95\\
 GNU 3.2.1       & \texttt{\_\_GNUC\_\_}             & 3\\
 GNU 3.2.1       & \texttt{\_\_GNUC\_MINOR\_\_}      & 2\\
 GNU 3.2.1       & \texttt{\_\_GNUC\_PATCHLEVEL\_\_} & 1\\
