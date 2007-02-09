@@ -75,7 +75,10 @@ endif
 $(CGAL_MANUAL_SRC_PACKAGE_PATH): $(CGAL_MANUAL_PACKAGE_DEPS)
 	$(RPMBUILD) $(RPM_OPTIONS) -bs SPECS/CGAL-manual-tools.spec
 
+CGAL-manual-tools.src: $(CGAL_MANUAL_SRC_PACKAGE_PATH)
+
 .PHONY:: CGAL-manual-tools CGAL-manual-tools.install CGAL-manual-tools.rpmlint
+.PHONY:: CGAL-manual-tools.src
 
 CGAL-manual-tools: $(CGAL_MANUAL_PACKAGE_PATH) $(CGAL_MANUAL_SRC_PACKAGE_PATH)
 

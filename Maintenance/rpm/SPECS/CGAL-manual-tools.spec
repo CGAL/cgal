@@ -1,8 +1,8 @@
-%{!?cgal_manual_revision: %define cgal_manual_revision 32190}
+%{!?cgal_manual_revision: %define cgal_manual_revision 36165}
 
 Name:           CGAL-manual-tools
 Version:        %{cgal_manual_revision}
-Release:        1
+Release:        1%{?dist}
 Summary:        CC Manual Style and LaTeX Converter for HTML
 
 Group:          Development/Tools
@@ -71,6 +71,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/CGAL/latex_conv_config
 
 %changelog
+* Sat Feb 10 2007 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 36165-1
+- Updated to revision 36165.
+
 * Tue Jul  4 2006 Laurent Rineau <laurent.rineau__fedora_extras@normalesup.org> - 32190-1
 - Updated to revision 32190.
 - Added an optionnal macro %%cgal_manual_revision, that can be used at compile time, to define another revision. For example:
