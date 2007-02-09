@@ -84,7 +84,7 @@ template <> class Algebraic_structure_traits< CORE::Expr >
             }
             CORE::Polynomial<Type> polynomial(coeffs);
             return Type(polynomial,k);
-        };
+        }
         
 // TODO: Need to be fixed: polynomial<CORE::Expr>.eval() cannot return 
 //       CORE::BigFloat, so this does not compile.
