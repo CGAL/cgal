@@ -38,7 +38,7 @@ class Small_side_angle_bisector_decomposition_2
 public:
 
   typedef Kernel_                                        Kernel;
-  typedef Polygon_2<Kernel, Container_>                  Polygon_2;
+  typedef CGAL::Polygon_2<Kernel, Container_>            Polygon_2;
   typedef typename Kernel::Point_2                       Point_2;
 
 private:
