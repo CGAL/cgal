@@ -287,6 +287,18 @@ contains of five holes:
 
 \ccIncludeExampleCode{Boolean_set_operations_2/ex_symmetric_difference.cpp}
 
+We mention that in some cases it is convinient to connect the outer
+boundary of a polygon with holes with the holes inside it. The
+function \ccc{connect_polygon_with_holes_2()} accepts a polygon with
+holes, and connects the topmost vertex in each hole with the polygon
+feature located directly above it (a vertex or an edge of the outer
+boundary, or of another hole). It produces an output sequence of
+points that match the traversal of all vertices in the connected
+polygon (note that there are additional vertices, induced by the
+vertical walls).
+
+\ccIncludeExampleCode{Boolean_set_operations_2/ex_connect_polygon.cpp}
+
 % ------------------------------------
 \subsection{Operating on Polygon Sets\label{bso_ssec:main_component}}
 % ------------------------------------
