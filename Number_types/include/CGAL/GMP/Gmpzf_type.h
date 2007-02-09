@@ -402,11 +402,11 @@ double Gmpzf::to_double() const
 inline
 std::pair<std::pair<double, double>, long> Gmpzf::to_interval_exp() const
 {
-  // get surrounding interval of the form [l * 2 ^ e, u * 2^ e]
-  // first get mantissa in the form l*2^e, with 0.5 <= d < 1;
+  // get surrounding interval of the form [l * 2 ^ k, u * 2^ k]
+  // first get mantissa in the form l*2^k, with 0.5 <= d < 1;
   // truncation is guaranteed to go towards zero
-  long e = 0;
-  double l = mpz_get_d_2exp (&e, man());
+  long k = 0;
+  double l = mpz_get_d_2exp (&k, man());
   // l = +/- 0.1*...*
   //           ------
   //           53 digits
@@ -418,11 +418,11 @@ std::pair<std::pair<double, double>, long> Gmpzf::to_interval_exp() const
   else
     // l is already the lower bound, increase u to get upper bound
     u += std::ldexp(1.0, -53);
-  // the interval is now [l * 2^(e + exp()), u * 2^(e + exp())]
+  // the interval is now [l * 2^(k + exp()), u * 2^(k + exp())]
   // we may cast the exponents to int, since if that's going to
   // create an overflow, we correctly get infinities
   return std::pair<std::pair<double, double>, long>
-    (std::pair<double, double>(l, u), e + exp());
+    (std::pair<double, double>(l, u), k + exp());
 }
 
 inline 
@@ -431,8 +431,8 @@ std::pair<double, double> Gmpzf::to_interval() const
   std::pair<std::pair<double, double>, long> lue = to_interval_exp();
   double l = lue.first.first;
   double u = lue.first.second;
-  long e = lue.second;
-  return std::pair<double,double> (std::ldexp (l, e), std::ldexp (u, e));
+  long k = lue.second;
+  return std::pair<double,double> (std::ldexp (l, k), std::ldexp (u, k));
 }
 
 inline  
