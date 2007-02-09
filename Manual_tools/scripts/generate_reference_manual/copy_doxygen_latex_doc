@@ -1,0 +1,781 @@
+#!/usr/bin/perl -w
+
+################################################################
+# copy_doxygen_latex_doc
+#
+# Extract documentation from a doxygen-generated latex file
+# and insert it in a CGAL Reference Manual's latex file
+#
+# Laurent Saboret, INRIA, 2005-2006
+
+################################################################
+
+use strict;
+use File::Copy;
+
+
+##################
+# Global variables
+##################
+
+# List of sections in a CGAL Reference Manual latex file.
+# The list order defines the default position when a section is inserted.
+my @section_titles = ('\ccDefinition', '\ccParameters', '\ccInheritsFrom', '\ccRefines',
+'\ccIsModel', '\ccHeading{Design Pattern}', '\ccTypes', '\ccConstants',
+'\ccCreation', '\ccOperations', '\ccHasModels', '\ccImplementation', '\ccSeeAlso');
+
+# Warning sentence before automatically generated sections
+my $warning = "% The section below is automatically generated. Do not edit!";
+
+# Default variable name for \ccMethod
+my $creation_variable = '\ccCreationVariable{a}  %% choose variable name for \ccMethod below';
+
+
+###########
+# Functions
+###########
+
+# Construct a pattern that matches any section title
+sub get_any_section_title_pattern
+{
+    # Match \ccHeading{...}
+    my $pattern = "(\\\\ccHeading\\\{.*?}";
+
+    # Match any title in @section_titles
+    foreach my $t (@section_titles) {
+        $pattern = $pattern . "|\Q$t\E";
+    }
+
+    $pattern = $pattern . ")";
+
+    return $pattern;
+}
+
+
+# Unmangle characters mangled for Latex to get regular C++ code
+# Param: the buffer to format
+# Return value: the formatted buffer
+sub latex_unmangle
+{
+    # Get parameter: buffer containing a doxygen-generated latex file
+    my $buf = shift;
+
+    # Unmangle _, ~, <, >, *, &, [] characters mangled for Latex
+    # to get regular C++ code (mangled back at end of script)
+    $buf =~ s/\\_\\-/_/g;                       # \_\- -> _
+    $buf =~ s/\$\\sim\$/~/g;                    # $\sim$ -> ~
+    $buf =~ s/\$<\$/</g;                        # $<$ -> <
+    $buf =~ s/\$>\$/>/g;                        # $>$ -> >
+    $buf =~ s/\$\\ast\$/\*/g;                   # $\ast$ -> *
+    $buf =~ s/\\&/&/g;                          # \& -> &
+    $buf =~ s/\[\$\\,\$\]/\[\]/g;               # [$\,$] -> []
+
+    # Modify Latex expressions that cgal_manual does not understand in macros:
+    # \-, \char`\"{}, \par, \hspace, \tt, \pageref, \rm, \bf, \em, \label, \index,
+    # \setlength
+    $buf =~ s/\\-//g;                           # remove \-
+    $buf =~ s/\\char`\\"\{\}/"/g;               # \char`\"{} -> "
+    $buf =~ s/\\par\b//g;                       # remove \par (single word)
+    $buf =~ s/\\hspace\{.*?\}//g;               # remove \hspace{...}
+    $buf =~ s/\{\\tt\s+\[.*?\]\}//g;            # remove {\tt [...]}
+    #
+    # loop to remove nested expressions
+    for my $i (1..5) {
+        $buf =~ s/\\pageref\{\w*\}//g;          # remove \pageref{...}
+        $buf =~ s/\{\\rm\s+[^\{]*?\}//smg;      # remove {\rm ...}
+        $buf =~ s/\{\\tt\s+([^\{]*?)\}/$1/smg;  # replace {\tt xxx} by xxx
+        $buf =~ s/\{\\bf\s+([^\{]*?)\}/$1/smg;  # replace {\bf xxx} by xxx
+        $buf =~ s/\{\\em\s+([^\{]*?)\}/$1/smg;  # replace {\em xxx} by xxx
+        $buf =~ s/\\hfill\\label\{\w*\}//g;     # remove \hfill\label{...}
+        $buf =~ s/\\label\{\w*\}//g;            # remove \label{...}
+    }
+    #
+    $buf =~ s/\\index\{[^\\]*\}//g;             # remove \index{...}
+    $buf =~ s/\\setlength\{\\rightskip\}\{0pt plus 5cm\}//g;
+                                                # remove \setlength{\rightskip}{0pt plus 5cm}
+
+    # Return the formatted string
+    return $buf;
+}
+
+
+# Remove formatting specific to doxygen
+# Param: the buffer to format
+# Return value: the formatted buffer
+sub doxygen_latex_to_latex
+{
+    # Get parameter: buffer containing a doxygen-generated latex file
+    my $buf = shift;
+
+    # Remove CGAL_BEGIN_NAMESPACE keyword that doxygen doesn't parse properly
+    $buf =~ s/CGAL_BEGIN_NAMESPACE //g;
+
+    # Remove doxygen comments that are not interesting
+    $buf =~ s/Implements \S*(\.| \.)?//g;       # Remove from "Implements" to end of sentence
+    $buf =~ s/Reimplemented from \S*(\.| \.)?//g; # Same thing with "Reimplemented from"
+    $buf =~ s/Implemented in .*//g;             # Same thing with "Implemented in"
+    $buf =~ s/Reimplemented in .*//g;           # Same thing with "Reimplemented in"
+
+    # "Desc" is a doxygen style based on "description",
+    # "CompactItemize" on "itemize"
+    $buf =~ s/\{Desc\}/\{description\}/g;
+    $buf =~ s/\{CompactItemize\}/\{itemize\}/g;
+
+    # Return the formatted string
+    return $buf;
+}
+
+
+# Remove blank lines in the second curly braces pair of macros,
+# that cgal_manual does not understand
+# Param: the buffer to format
+# Return value: the formatted buffer
+sub remove_blank_lines_in_macros
+{
+    # Get parameter: buffer containing a doxygen-generated latex file
+    my $buf = shift;
+
+    # Remove trailing spaces to improve pattern matching
+    $buf =~ s/ +\n/\n/g;
+
+    # Remove blank lines in the second curly braces pair of macros,
+    # that cgal_manual does not understand
+    if ($buf =~ m/(.*?)\\paragraph(.*)/sm) {    # split $buf in $definition and $macros
+        my $definition = $1;
+        my $macros = $2;
+        $macros =~ s/\n+/\n/g;                  # remove blank lines from $macros
+        $buf = $definition . '\paragraph' . $macros;
+    }                                           # put back in $buf
+
+    # Return the formatted string
+    return $buf;
+}
+
+
+# L. Saboret's formatting extensions:
+# * Extract \ccIsModel, \ccRefines, \ccHasModels and \ccHeading{Design Pattern}
+# titles from \ccDefinition section
+# * Replace double quotes by \em macro
+# Param: the buffer to format
+# Return value: the formatted buffer
+sub extended_formatting
+{
+    # Get parameter: buffer containing a doxygen-generated latex file
+    my $buf = shift;
+
+    # Extract \ccIsModel, \ccRefines and \ccHeading{Design Pattern}
+    # titles from \ccDefinition section
+    $buf =~ s/Concept:\s*/\n\\ccIsModel\n\n/sm;
+    $buf =~ s/Sub[- ][Cc]oncept:\s*/\n\\ccRefines\n\n/sm;
+    $buf =~ s/Design [Pp]attern:\s*/\n\\ccHeading\{Design Pattern\}\n\n/;
+
+    # Extract \ccHasModels title from \ccDefinition section.
+    # If the \ccHasModels section is a list, flatten it
+    # (for compatibility with the rest of CGAL manual).
+    $buf =~ s/(Model|Models):\s*/\n\\ccHasModels\n\n/;
+    if ($buf =~ s/(.*?)\\ccHasModels\s+\\begin\{itemize\}\n(.*?)\\end\{itemize\}(.*)//sm)
+    {
+        # Extract models from \ccHasModels section
+        my $start  = $1;
+        my $models = $2;
+        my $end    = $3;
+
+        # Remove \item list separators and
+        # add \\ at the end of each line to force EOL
+        $models =~ s/\\item\s/  \\\\\n/smg;
+        $models =~ s/^ *\\\\\n//smg;
+
+        # Insert back $models in the buffer
+        $buf = $start . "\\ccHasModels\n\n$models" . $end;
+    }
+
+    # Replace double quotes by \em macro
+    $buf =~ s/"(.*?)"/\{\\em $1\}/smg;
+
+    # Return the formatted string
+    return $buf;
+}
+
+
+# Wrap C++ names (types/functions/variables) by \ccc{}.
+# Mangle C++ code for latex (except in \ccNestedType, \ccEnum, \ccConstructor,
+# \ccMethod & \ccFunction first curly braces pair and in \ccc expressions).
+# Param: the buffer to format
+# Return value: the formatted buffer
+sub latex_mangle
+{
+    # Get parameter: buffer containing a doxygen-generated latex file
+    my $buf = shift;
+
+    # Local variables when parsing buffer line by lines
+    my ($line, @lines);
+
+    # \ccNestedType, \ccEnum, \ccConstructor, \ccMethod & \ccFunction
+    # first curly braces pair must contain plain C++ code.
+    # For the other lines, we wrap C++ types by \ccc{}.
+    @lines = split(/\n/, $buf);
+    $buf = "";
+    foreach $line (@lines) {
+        # if NOT first curly braces pair of a cgal_manual macro
+        unless ($line =~ /\\(ccNestedType|ccEnum|ccConstructor|ccMethod|ccFunction)/) {
+            # Wrap C++ types, including template params, by \ccc{}
+            # We add carriage returns around \ccc{} for next line by line substitution
+            $line =~ s/((\w*(_|::)\w*(<.*?>)?)+)/\n\\ccc{$1\}\n/g;
+        }
+        $buf = $buf . $line . "\n";             # concat lines back to $buf
+    }
+
+    # \ccNestedType, \ccEnum, \ccConstructor, \ccMethod & \ccFunction
+    # first curly braces pair and \ccc expressions must contain plain C++ code.
+    # The other lines must contain regular latex text => we mangle back
+    # _, ~, <, >, *, &, [] characters (see begining of script).
+    @lines = split(/\n/, $buf);
+    $buf = "";
+    foreach $line (@lines) {
+        # if first curly braces pair of a cgal_manual macro or \ccc: plain C++ code
+        if ($line =~ /\\(ccNestedType|ccEnum|ccConstructor|ccMethod|ccFunction)/
+         || $line =~ /\\ccc/)
+        {
+            # Remove extra spaces to please cgal_manual
+            $line =~ s/< (.*?) >/<$1>/g;
+            $line =~ s/ & /& /g;
+            $line =~ s/ \(/\(/g;
+        }
+        # else: wrap C++ code for latex
+        else
+        {
+            # Mangle back special latex characters
+            $line =~ s/~/\$\\sim\$/g;           # ~ -> $\sim$
+            $line =~ s/</\$<\$/g;               # < -> $<$
+            $line =~ s/>/\$>\$/g;               # > -> $>$
+            $line =~ s/\*/\$\\ast\$/g;          # * -> $\ast$
+            $line =~ s/&/\\&/g;                 # & -> \&
+            $line =~ s/\[\]/\[\$\\,\$\]/g;      # [] -> [$\,$]
+        }
+        $buf = $buf . $line . "\n";             # concat lines back to $buf
+    }
+
+    # Remove extra carriage returns around \ccc{} expressions
+    $buf =~ s/\n(\\ccc{.*?\})\n/$1/smg;
+
+    # Return the formatted string
+    return $buf;
+}
+
+
+# Format a buffer containing a doxygen-generated documentation of a class/struct,
+# in latex, to match CGAL Reference Manual's format.
+# Params:
+# - class/struct name (without namespace)
+# - buffer containing a doxygen-generated latex file
+# Return value: the formatted buffer
+sub format_doxygen_class_struct_doc
+{
+    # Get parameters:
+    # - class/struct name (without namespace)
+    my $className = shift;
+    # - buffer containing a doxygen-generated latex file
+    my $buf = shift;
+
+    # Local variables when parsing buffer line by lines
+    my ($line, @lines);
+
+    # Unmangle characters mangled for Latex to get regular C++ code
+    # (mangled back at end of script)
+    $buf = latex_unmangle($buf);
+
+    # Remove formatting specific to doxygen
+    $buf = doxygen_latex_to_latex($buf);
+
+    # Remove blank lines in the second curly braces pair of macros,
+    # that cgal_manual does not understand
+    $buf = remove_blank_lines_in_macros($buf);
+
+    # Remove extra stuff and insert \ccSeeAlso title at the end of the document
+    $buf =~ s/The documentation for this.*/\n\n\\ccSeeAlso\n\n\n/sm;
+
+    # Extract \ccParameters title from \ccDefinition section [L. Saboret extension]
+    # or insert it before \ccSeeAlso
+    unless ($buf =~ s/Template [Pp](arameter|arameters):\s*/\n\\ccParameters\n\n/sm) {
+        $buf =~ s/\\ccSeeAlso/\\ccParameters\n\n\n\\ccSeeAlso/sm;
+    }
+
+    # Insert template params at the beginning of \ccParameters section
+    # (from detailed section)
+    if ($buf =~ s/\\subsubsection\*\{(template.*)\}\n//)
+    {
+        # extract template params from \subsubsection* line
+        my $parameters = $1;
+        $parameters =~ s/((class|struct))/\n$1/g; # add \n before each param
+        $parameters =~ s/((class|struct)) (\w+::)*\Q$className\E.*/$1 $className;/g;
+                                                # keep only class/struct name on last line
+        $parameters =~ s/\n/  \\\\\n/smg;       # add \\ at the end of each line to force EOL
+        $parameters =~ s/^ *\\\\\n//smg;        #                ""
+
+        # Insert template params at the beginning of \ccParameters section
+        $buf =~ s/\\ccParameters\n/\\ccParameters\n\n$parameters\n/;
+    }
+
+    # Copy enumerations values from brief to detailed section
+    @lines = split(/\n/, $buf);
+    $buf = "";
+    foreach $line (@lines) {                    # for each line of buffer
+        # if incomplete enum declaration in detailed section
+        if ($line =~ /\\paragraph\{enum\s+(\w+)\}/) {
+            my $enumName = $1;
+            # Get enum values from brief section
+            my $enumValues = "...";
+            if ($buf =~ m/enum\s+\Q$enumName\E\s+\\\{(.*?)\\\}/sm) {
+                $enumValues = $1;
+                $enumValues =~ s/\n/ /smg;      # Remove carriage returns
+            }
+            # Copy enum values to detailed section
+            $line =~ s/\\paragraph\{enum\s+\Q$enumName\E\}/\\paragraph\{enum $enumName \{$enumValues\};\}/
+        }
+        $buf = $buf . $line . "\n";             # concat line back to $buf
+    }
+
+    # Rename \ccDefinition title
+    $buf =~ s/\\subsubsection\{Detailed Description\}/\\ccDefinition\n/;
+
+    # Rename \ccTypes title
+    $buf =~ s/\\subsubsection\{Member Typedef Documentation\}/\n\n\\ccTypes/;
+
+    # Rename \ccConstants title
+    $buf =~ s/\\subsubsection\{Member Enumeration Documentation\}/\n\n\\ccConstants\n/;
+
+    # Rename \ccCreation title
+    unless ($buf =~ m/\\subsubsection\{Constructor & Destructor Documentation\}/) {
+        $buf =~ s/\\subsubsection\{Member Function Documentation\}/\\subsubsection\{Constructor & Destructor Documentation\}\n\\subsubsection\{Member Function Documentation\}/;
+    }
+    $buf =~ s/\\subsubsection\{Constructor & Destructor Documentation\}/\n\n\\ccCreation\n/;
+
+    # Rename \ccOperations title
+    $buf =~ s/\\subsubsection\{Member Function Documentation\}/\n\n\\ccOperations\n/;
+
+    # Rename \ccNestedType, \ccEnum, \ccConstructor and \ccMethod expressions
+    # and open a curly brace for the expression's comment
+    $buf =~ s/\\paragraph\{typedef.* (\w+)\}/\\ccNestedType\{$1\}\n\{/g;
+    $buf =~ s/\\paragraph\{enum\s(.*)\}/\\ccEnum\{enum $1\}\n\{/g;
+    $buf =~ s/\\item\[Enumerator/\\item\[Enumeration values/g;
+    $buf =~ s/\\paragraph\{\Q$className\E\s+\((.*)\}/\\ccConstructor\{$className \($1;\}\n\{/g;
+    $buf =~ s/\\paragraph\{(.*)\}/\\ccMethod\{$1;\}\n\{/g;
+    #
+    # Remove list brackets: replace \begin{xxx}...\end{xxx} by
+    # \begin((xxx))...\end((xxx)) (restored below)
+    $buf =~ s/\\begin\{(.*?)\}/\\begin\(\($1\)\)/smg;
+    $buf =~ s/\\end\{(.*?)\}/\\end\(\($1\)\)/smg;
+    #
+    # Close curly braces pairs
+    # Note: cgal_manual does not understand lists inside the second curly braces pair
+    # of \ccXXX expressions => we put them after
+    $buf =~ s/\{([^\}]*?)(\\begin\(\(description\)\).*?\\end\(\(description\)\))(\n+)\\cc/\{$1\n\}\n\\ccGlue\n$2\n\\ccGlue$3\\cc/smg;
+    $buf =~ s/\{([^\}]*?)(\n+)\\cc/\{$1\n\}\n\\ccGlue$2\\cc/smg;
+    #
+    # Restore list brackets: replace \begin((xxx))...\end((xxx))
+    # by \begin{xxx}...\end{xxx}
+    $buf =~ s/\\begin\(\((.*?)\)\)/\\begin\{$1\}/smg;
+    $buf =~ s/\\end\(\((.*?)\)\)/\\end\{$1\}/smg;
+    #
+    # \ccMethod does not support destructors and there is no \ccDestructor
+    # macro => remove destructors
+    $buf =~ s/\\ccMethod\{.*?~\Q$className\E\s.*?\}\n\{.*?\}\n\\ccGlue\n//smg;
+    #
+    # Security: remove blank lines in curly braces pairs
+    $buf =~ s/\{(\n)+/\{\n/g;
+    $buf =~ s/(\n)+\}/\n\}/g;
+
+    # L. Saboret's formatting extensions:
+    # * Extract \ccIsModel, \ccRefines, \ccHasModels and \ccHeading{Design Pattern}
+    # titles from \ccDefinition section
+    # * Replace double quotes by \em macro
+    $buf = extended_formatting($buf);
+
+    # Wrap C++ names (types/functions/variables) by \ccc{}.
+    # Mangle C++ code for latex (except in \ccNestedType, \ccEnum, \ccConstructor,
+    # \ccMethod & \ccFunction first curly braces pair and in \ccc expressions).
+    $buf = latex_mangle($buf);
+
+    # Construct a pattern that matches any section title
+    my $all_titles_pattern = get_any_section_title_pattern();
+
+    # Remove brief documentation
+    $buf =~ s/\\subsection.*?($all_titles_pattern)/\n\n$1/sm;
+
+    # Return the formatted string
+    return $buf;
+}
+
+
+# Format a buffer containing a doxygen-generated documentation of
+# a function, in latex, to match CGAL Reference Manual's format.
+# Params:
+# - function name (without namespace)
+# - buffer containing a doxygen-generated latex file
+# Return value: the formatted buffer
+sub format_doxygen_function_doc
+{
+    # Get parameters:
+    # - function name (without namespace)
+    my $functionName = shift;
+    # - buffer containing a doxygen-generated latex file
+    my $buf = shift;
+
+    # Local variables when parsing buffer line by lines
+    my ($line, @lines);
+
+    # Unmangle characters mangled for Latex to get regular C++ code
+    # (mangled back at end of script)
+    $buf = latex_unmangle($buf);
+
+    # Remove formatting specific to doxygen
+    $buf = doxygen_latex_to_latex($buf);
+
+    # Remove blank lines in the second curly braces pair of macros,
+    # that cgal_manual does not understand
+    $buf = remove_blank_lines_in_macros($buf);
+
+    # Insert \ccSeeAlso title at the end of the document
+    $buf = $buf . "\n\n\\ccSeeAlso\n\n\n";
+
+    # Insert \ccParameters section before \ccSeeAlso
+    # (from brief section)
+    if ($buf =~ s/\\subsubsection\*\{Functions\}\n\\begin\{itemize\}\n(.*?)\\end\{itemize\}//sm)
+    {
+        # extract template params from \subsubsection*{Functions} section
+        my $parameters = $1;
+
+        # Keep only lines declaring the $functionName template(s)
+        @lines = ($parameters =~ /^.*\b\Q$functionName\E\b.*$/mg);
+        $parameters = join("\n", @lines);
+
+        # Split template declaration(s) on several lines
+        $parameters =~ s/((class|struct))/\n$1/g; # add \n before each template parameter
+        $parameters =~ s/(template\s*<.*?>)\s*/$1\n/smg;
+                                                # keep return type on separate line
+        $parameters =~ s/\s*\b\Q$functionName\E\b(.*)/\n$functionName$1;\n/g;
+                                                # keep function name on separate line
+        $parameters =~ s/\n/  \\\\\n/smg;       # add \\ at the end of each line to force EOL
+        #$parameters =~ s/^ *\\\\\n//smg;        #                ""
+
+        # insert $parameters before \ccSeeAlso
+        $buf =~ s/\\ccSeeAlso/\\ccParameters\n\n$parameters\n\n\n\\ccSeeAlso/sm;
+    }
+
+    # Rename \ccDefinition title
+    $buf =~ s/\\subsubsection\{Function Documentation\}/\\ccDefinition\n/;
+
+    # Remove declaration of other functions
+    @lines = split(/\n/, $buf);
+    $buf = "";
+    foreach $line (@lines) {                    # for each line of buffer
+        # Remove declaration of other functions
+        if (($line =~ /\\paragraph\{.*\}/) && (not $line =~ /\b\Q$functionName\E\b/)) {
+             $line = "";
+        }
+        $buf = $buf . $line . "\n";             # concat line back to $buf
+    }
+
+    # Rename \ccFunction expressions
+    # and open a curly brace for the expression's comment
+    $buf =~ s/\\paragraph\{(.*)\}/\\ccFunction\{$1;\}\n\{/g;
+    #
+    # Remove list brackets: replace \begin{xxx}...\end{xxx} by
+    # \begin((xxx))...\end((xxx)) (restored below)
+    $buf =~ s/\\begin\{(.*?)\}/\\begin\(\($1\)\)/smg;
+    $buf =~ s/\\end\{(.*?)\}/\\end\(\($1\)\)/smg;
+    #
+    # Close curly braces pairs
+    # Note: cgal_manual does not understand lists inside the second curly braces pair
+    # of \ccXXX expressions => we put them after
+    $buf =~ s/\{([^\}]*?)(\\begin\(\(description\)\).*?\\end\(\(description\)\))(\n+)\\cc/\{$1\n\}\n\\ccGlue\n$2\n\\ccGlue$3\\cc/smg;
+    $buf =~ s/\{([^\}]*?)(\n+)\\cc/\{$1\n\}\n\\ccGlue$2\\cc/smg;
+    #
+    # Restore list brackets: replace \begin((xxx))...\end((xxx))
+    # by \begin{xxx}...\end{xxx}
+    $buf =~ s/\\begin\(\((.*?)\)\)/\\begin\{$1\}/smg;
+    $buf =~ s/\\end\(\((.*?)\)\)/\\end\{$1\}/smg;
+    #
+    # Security: remove blank lines in curly braces pairs
+    $buf =~ s/\{(\n)+/\{\n/g;
+    $buf =~ s/(\n)+\}/\n\}/g;
+
+    # L. Saboret's formatting extensions:
+    # * Extract \ccIsModel, \ccRefines, \ccHasModels and \ccHeading{Design Pattern}
+    # titles from \ccDefinition section
+    # * Replace double quotes by \em macro
+    $buf = extended_formatting($buf);
+
+    # Wrap C++ names (types/functions/variables) by \ccc{}.
+    # Mangle C++ code for latex (except in \ccNestedType, \ccEnum, \ccConstructor,
+    # \ccMethod & \ccFunction first curly braces pair and in \ccc expressions).
+    $buf = latex_mangle($buf);
+
+    # Construct a pattern that matches any section title
+    my $all_titles_pattern = get_any_section_title_pattern();
+
+    # Remove brief documentation
+    $buf =~ s/\\subsection.*?($all_titles_pattern)/\n\n$1/sm;
+
+    # Return the formatted string
+    return $buf;
+}
+
+
+# Insert a section of a doxygen-generated documentation in CGAL Reference Manual's buffer
+# Params:
+# - buffer containing a CGAL Reference Manual template
+# - buffer containing a doxygen-generated latex file reformated for CGAL
+# - section's title
+# - Insert missing %START-AUTO..%END-AUTO sections?
+# Return value: updated CGAL buffer
+sub insert_manual_section
+{
+    # Get parameters:
+    # - buffer containing a CGAL Reference Manual template
+    my $cgal_buf = shift;
+    # - buffer containing a doxygen-generated latex file reformated for CGAL
+    my $doxy_buf = shift;
+    # - section's title
+    my $title = shift;
+    # - Insert missing %START-AUTO..%END-AUTO sections?
+    my $force_copy = shift;
+
+    # Construct a pattern that matches any section title
+    my $all_titles_pattern = get_any_section_title_pattern();
+
+    # Extract $title section from $doxy_buf
+    my $section = "";
+    if ($doxy_buf =~ /^\s*\Q$title\E\s(.*?)\s+$all_titles_pattern\s/sm) {
+        $section = $1;
+        $section =~ s/^\s+//s;                  # Remove heading & trailing spaces
+        $section =~ s/\s+$//s;                  # and extra carriage returns
+    }
+
+    # If $section is not empty, copy it to $cgal_buf
+    # If $cgal_buf doesn't already contain $title, add it
+    # If $cgal_buf doesn't already contain the %START-AUTO($title)..%END-AUTO($title) section, add it
+    if ($section ne "")
+    {
+        # Add $warning\n%START-AUTO($title)..%END-AUTO($title) around $section
+        $section = "$warning\n%START-AUTO($title)\n\n" . $section . "\n\n%END-AUTO($title)";
+
+        # Add \ccCreationVariable after \ccCreation
+        my $title_extra = ($title eq '\ccCreation') ? "\n$creation_variable" : "";
+
+        # If %START-AUTO..%END-AUTO section exists, replace it
+        unless ($cgal_buf =~ s/($warning)*\s*%START-AUTO\(\Q$title\E\).*?%END-AUTO\(\Q$title\E\)/$section/sm)
+        {
+            # Else, insert a new %START-AUTO..%END-AUTO section
+            if ($force_copy)
+            {
+                my $success = 0;                # Successful insertion?
+
+                # If section's title exists, insert %START-AUTO..%END-AUTO section after it
+                if ($cgal_buf =~ s/^(\s*\Q$title\E\b.*?)(\s+$all_titles_pattern\s)/$1\n\n$section$2/sm) {
+                    $success = 1;
+                } else {
+                    # Else, insert title + %START-AUTO..%END-AUTO section before
+                    # the first section that appears after $title in @section_titles.
+                    my $after_title = 0;        # indicate if we passed $title in @section_titles
+                    foreach my $t (@section_titles) {
+                        if ($after_title) {
+                            if ($cgal_buf =~ s/(\s+)(\Q$t\E\b)/$1$title$title_extra\n\n$section$1$2/sm) {
+                                $success = 1;
+                                last;
+                            }
+                        }
+                        if ($t eq $title) { $after_title = 1; }
+                    }
+
+                    # Else, insert title + %START-AUTO..%END-AUTO section
+                    # at the end of the buffer.
+                    unless ($success) {
+                        $success = ($cgal_buf =~ s/(\s+)(\\end\{ccRef)/$1$title$title_extra\n\n$section$1$2/sm);
+                    }
+                }
+
+                # Notify user
+                if ($success) { print "  Insert section $title\n"; }
+                else          { warn  "  Cannot insert section $title"; }
+            }
+            else
+            {
+                print "  Skip section $title. Use --force option.\n";
+            }
+        }
+    }
+    # If $section is empty, empty %START-AUTO($title)..%END-AUTO($title) section in $cgal_buf
+    else
+    {
+        $section = "$warning\n%START-AUTO($title)\n%END-AUTO($title)";
+        $cgal_buf =~ s/($warning)*\s*%START-AUTO\(\Q$title\E\).*?%END-AUTO\(\Q$title\E\)/$section/sm;
+    }
+
+    # Return updated CGAL buffer
+    return $cgal_buf;
+}
+
+
+# Insert doxygen-generated documentation in CGAL Reference Manual's buffer
+# Params:
+# - Concept/struct/class/... to document
+# - buffer containing a CGAL Reference Manual template
+# - buffer containing a doxygen-generated latex file reformated for CGAL
+# - Insert missing %START-AUTO..%END-AUTO sections?
+# Return value: updated CGAL buffer
+sub merge_manuals
+{
+    # Get parameters:
+    # - Concept/struct/class/... to document
+    my $item_to_document = shift;
+    # - buffer containing a CGAL Reference Manual template
+    my $cgal_buf = shift;
+    # - buffer containing a doxygen-generated latex file reformated for CGAL
+    my $doxy_buf = shift;
+    # - Insert missing %START-AUTO..%END-AUTO sections?
+    my $force_copy = shift;
+
+    # Extract from $cgal_buf the part about $item_to_document
+    if ($cgal_buf =~ s/(.*)(^\s*\\begin\{ccRef.*?\s*\{$item_to_document[\s<\}].*?\\end\{ccRef.*?\})(.*)//sm)
+    {
+        my $start            = $1;
+        my $part_to_document = $2;
+        my $end              = $3;
+
+        # Copy each section's documentation
+        foreach my $title (@section_titles) {
+            $part_to_document = insert_manual_section($part_to_document, $doxy_buf, $title, $force_copy);
+        }
+
+        # Insert back $part_to_document in the buffer
+        $cgal_buf = $start . $part_to_document . $end;
+    }
+
+    # Return updated CGAL buffer
+    return $cgal_buf;
+}
+
+
+# Print usage and exit
+sub usage
+{
+print <<"END_USAGE";
+copy_doxygen_latex_doc version 0.7.4.
+
+Extract documentation from a doxygen-generated latex file and insert it in a CGAL Reference Manual's latex file.
+
+Usage:
+copy_doxygen_latex_doc [options] doxygen_generated_documentation.tex template_manual.tex
+    -h, --help      Print this help
+    -f, --force     Insert missing %START-AUTO..%END-AUTO sections
+
+Tips:
+* A comment starting by 'Concept:' will be converted to a \ccIsModel paragraph.
+* A comment starting by 'Sub-concept:' will be converted to a \ccRefines paragraph.
+* A comment starting by 'Models:' will be converted to a \ccHasModels paragraph.
+* A comment starting by 'Design pattern:' will be converted to a \ccHeading{Design Pattern} paragraph.
+* A comment starting by 'Template parameters:' will be converted to \ccParameters paragraph.
+* \"Words surrounded by double quotes\" will be emphasized.
+
+Known bugs:
+* This tool has been tested with doxygen 1.4.4. It is likely that it will *not* work with other versions of doxygen.
+* So far, this tool documents only concepts, classes, structs and functions.
+END_USAGE
+
+exit;
+}
+
+
+#######
+# Main
+#######
+
+# Variables
+my $item_to_document = undef;                   # Concept/struct/class/... to document
+my $doxygen_generated_file = undef;             # Input file
+my $cgal_manual_file = undef;                   # Output file
+my $force_copy = 0;                             # Insert missing %START-AUTO..%END-AUTO sections?
+
+# Decode parameters
+if ($#ARGV == -1) {                             # If no parameter
+    usage();
+}
+foreach my $arg_num (0 .. $#ARGV)
+{
+    my $arg = $ARGV[$arg_num];
+    if ($arg =~ /^(-h|--help)$/) {
+        usage();
+    } elsif ($arg =~ /^(-f|--force)$/) {
+        $force_copy = 1;
+    } elsif ($arg =~ /^-/) {                    # If unknown option
+        usage();
+    } else {                                    # Item to document or input file or output file
+        if (not defined($item_to_document)) {
+            $item_to_document = $arg;
+        } elsif (not defined($doxygen_generated_file)) {
+            $doxygen_generated_file = $arg;
+        } elsif (not defined($cgal_manual_file)) {
+            $cgal_manual_file = $arg;
+        }
+    }
+}
+if (not defined($cgal_manual_file)) {           # If item to document or input file or output file is missing
+    usage();
+}
+
+# Read doxygen-generated documentation
+open(DOXYGEN_DOC, "< $doxygen_generated_file")
+    or die "Can\'t open $doxygen_generated_file: $!";
+undef $/; # set slurp mode
+my $doxygen_generated_buffer = <DOXYGEN_DOC>;
+close(DOXYGEN_DOC)
+    or die "Can\'t close $doxygen_generated_file: $!";
+
+# Format it to match CGAL Reference Manual's format
+my $formated_doxygen_buffer;
+if (($doxygen_generated_file =~ /.*\/class/) or ($doxygen_generated_file =~ /.*\/struct/))
+{
+    $formated_doxygen_buffer = format_doxygen_class_struct_doc($item_to_document,
+                                                               $doxygen_generated_buffer);
+} else {
+    $formated_doxygen_buffer = format_doxygen_function_doc($item_to_document,
+                                                           $doxygen_generated_buffer);
+}
+
+# # Debug stuff: write formated doxygen output to .doxy file
+# my $formated_doxygen_file = "$cgal_manual_file.doxy";
+# open(FORMATED_DOXYGEN_DOC, "> $formated_doxygen_file")
+#     or die "Can\'t open $formated_doxygen_file: $!";
+# (print FORMATED_DOXYGEN_DOC $formated_doxygen_buffer)
+#     or die "Can\'t write to $formated_doxygen_file: $!";
+# close(FORMATED_DOXYGEN_DOC)
+#     or die "Can\'t close $formated_doxygen_file: $!";
+
+# Backup output file to .bak file
+my $backup = "$cgal_manual_file.bak";
+copy($cgal_manual_file, $backup)
+    or die "Can\'t copy $cgal_manual_file to $backup: $!";
+
+# Read CGAL template Reference Manual
+open(CGAL_MANUAL, "< $cgal_manual_file")
+    or die "Can\'t open $cgal_manual_file: $!";
+undef $/; # set slurp mode
+my $cgal_manual_buffer = <CGAL_MANUAL>;
+close(CGAL_MANUAL)
+    or die "Can\'t close $cgal_manual_file: $!";
+
+# Insert formated doxygen output in CGAL Reference Manual's buffer
+$cgal_manual_buffer = merge_manuals($item_to_document,
+                                    $cgal_manual_buffer,
+                                    $formated_doxygen_buffer,
+                                    $force_copy);
+
+# Write CGAL Reference Manual
+open(CGAL_MANUAL, "> $cgal_manual_file")
+    or die "Can\'t open $cgal_manual_file: $!";
+(print CGAL_MANUAL $cgal_manual_buffer)
+    or die "Can\'t write to $cgal_manual_file: $!";
+close(CGAL_MANUAL)
+    or die "Can\'t close $cgal_manual_file: $!";
+

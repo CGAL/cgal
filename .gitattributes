@@ -893,6 +893,9 @@ Manual_tools/image_makers/old_gifs/cc_Variable.gif -text svneol=unset#image/gif
 Manual_tools/image_makers/old_gifs/cc_advanced_begin.gif -text svneol=unset#image/gif
 Manual_tools/image_makers/old_gifs/cc_advanced_end.gif -text svneol=unset#image/gif
 Manual_tools/install.sh eol=lf
+Manual_tools/scripts/generate_reference_manual/copy_doxygen_latex_doc -text
+Manual_tools/scripts/generate_reference_manual/generate_reference_manual -text
+Manual_tools/scripts/generate_reference_manual/generate_reference_manual_Doxyfile -text
 Manual_tools/src/latex_converter_config/gif/cc_Box.gif -text svneol=unset#image/gif
 Manual_tools/src/latex_converter_config/gif/cc_Class.gif -text svneol=unset#image/gif
 Manual_tools/src/latex_converter_config/gif/cc_Concept.gif -text svneol=unset#image/gif
