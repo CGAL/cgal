@@ -203,8 +203,8 @@ protected:
     NT bound=bounds_[try_side];
    typename Kinetic_kernel::Certificate re;
     if (try_side== TOP || try_side==BOTTOM) {
-      typename Kinetic_kernel::Less_y_3 ily = traits_.kinetic_kernel_object().less_y_3_object();     
-      if (try_side== TOP) {
+      typename Kinetic_kernel::Compare_y_3 ily = traits_.kinetic_kernel_object().compare_y_3_object();     
+      if (try_side== BOTTOM) {
 	re= ily(traits_.active_points_3_table_handle()->at(k), bound,
 		traits_.simulator_handle()->current_time(), traits_.simulator_handle()->end_time());
       } else {
@@ -213,8 +213,8 @@ protected:
       }
 
     } else if (try_side == LEFT || try_side == RIGHT) {
-      typename Kinetic_kernel::Less_x_3 ily = traits_.kinetic_kernel_object().less_x_3_object();
-      if (try_side== RIGHT) {
+      typename Kinetic_kernel::Compare_x_3 ily = traits_.kinetic_kernel_object().compare_x_3_object();
+      if (try_side== LEFT) {
 	re= ily(traits_.active_points_3_table_handle()->at(k), bound,
 		traits_.simulator_handle()->current_time(), traits_.simulator_handle()->end_time());
       } else {
@@ -222,8 +222,8 @@ protected:
 		traits_.simulator_handle()->current_time(), traits_.simulator_handle()->end_time());
       }
     } else {
-      typename Kinetic_kernel::Less_z_3 ily = traits_.kinetic_kernel_object().less_z_3_object();
-      if (try_side== FRONT) {
+      typename Kinetic_kernel::Compare_z_3 ily = traits_.kinetic_kernel_object().compare_z_3_object();
+      if (try_side== BACK) {
 	re= ily(traits_.active_points_3_table_handle()->at(k), bound,
 		traits_.simulator_handle()->current_time(), traits_.simulator_handle()->end_time());
       } else {

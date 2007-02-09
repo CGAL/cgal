@@ -41,8 +41,8 @@ struct Delaunay_triangulation_visitor_base_2
     }
 
 
-    template <class Point_key, class Face_handle>
-    void post_remove_vertex(Point_key , Face_handle ) {
+    template <class Point_key>
+    void post_remove_vertex(Point_key ) {
     }
 
     template <class Vertex_handle>

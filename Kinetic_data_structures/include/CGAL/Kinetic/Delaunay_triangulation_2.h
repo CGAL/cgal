@@ -425,7 +425,7 @@ public:
       }
       
     }
-    watcher_.pre_remove_vertex(k);
+    watcher_.post_remove_vertex(k);
   }
 
   //! The assertion will catch that the object is in the same sorted order

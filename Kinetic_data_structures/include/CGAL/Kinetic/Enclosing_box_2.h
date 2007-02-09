@@ -183,17 +183,17 @@ protected:
     NT bound=bounds_[try_side];
     typename Kinetic_kernel::Certificate re;
     if (try_side == TOP || try_side == BOTTOM) {
-      typename Kinetic_kernel::Less_y_2 ily = traits_.kinetic_kernel_object().less_y_2_object();
-      if (try_side== TOP) {
+      typename Kinetic_kernel::Compare_y_2 ily = traits_.kinetic_kernel_object().compare_y_2_object();
+      if (try_side== BOTTOM) {
 	re= ily(traits_.active_points_2_table_handle()->at(k), bound,
 		traits_.simulator_handle()->current_time(), traits_.simulator_handle()->end_time());
-      } else if (try_side == BOTTOM) {
+      } else if (try_side == TOP) {
 	re= ily(bound, traits_.active_points_2_table_handle()->at(k),
 		traits_.simulator_handle()->current_time(), traits_.simulator_handle()->end_time());
       }
     } else {
-      typename Kinetic_kernel::Less_x_2 ily = traits_.kinetic_kernel_object().less_x_2_object();
-      if (try_side== RIGHT) {
+      typename Kinetic_kernel::Compare_x_2 ily = traits_.kinetic_kernel_object().compare_x_2_object();
+      if (try_side== LEFT) {
 	re= ily(traits_.active_points_2_table_handle()->at(k), bound,
 		traits_.simulator_handle()->current_time(), traits_.simulator_handle()->end_time());
       } else {
