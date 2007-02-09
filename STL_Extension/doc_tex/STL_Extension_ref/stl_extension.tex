@@ -2400,6 +2400,64 @@
 
 %% +=========================================================================+
 
+\begin{ccRefClass}{Boolean_tag<bool value>}
+
+\ccDefinition
+
+Depending on \ccc{bool value} the class \ccRefName\ indicates that
+something is \ccc{true} or \ccc{false} respectively.
+
+\ccInclude{CGAL/tags.h}
+
+\ccConstants
+
+\ccVariable{static const bool value;}{}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Tag_true} \\
+\ccRefIdfierPage{CGAL::Tag_false}
+
+\end{ccRefClass}
+
+
+\begin{ccRefClass}{Tag_true}
+
+\ccDefinition
+
+The typedef \ccRefName\ is \ccc{Boolean_tag<true>}.
+It is used to indicate, for example,
+that a certain feature is available in a class.
+
+\ccInclude{CGAL/tags.h}
+
+\ccVariable{static const bool value;}{ is \ccc{true} }
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Boolean_tag<bool value>} \\
+\ccRefIdfierPage{CGAL::Tag_false}
+
+\end{ccRefClass}
+
+
+\begin{ccRefClass}{Tag_false}
+
+\ccDefinition
+
+The typedef \ccRefName\ is \ccc{Boolean_tag<false>}.
+It is used to indicate, for example,
+that a certain feature is not available in a class.
+
+\ccInclude{CGAL/tags.h}
+
+\ccVariable{static const bool value;}{ is \ccc{false} }
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Boolean_tag<bool value>} \\
+\ccRefIdfierPage{CGAL::Tag_true}
+
+\end{ccRefClass}
+
+
 %% +--------------------------------------------------------+
 \ccParDims
 
