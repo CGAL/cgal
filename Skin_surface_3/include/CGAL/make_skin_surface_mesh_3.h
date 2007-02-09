@@ -42,7 +42,11 @@ void make_skin_surface_mesh_3(Polyhedron_3 &p,
     make_union_of_balls_mesh_3(p,begin,end,nSubdivisions);
   }
 
-  typedef Exact_predicates_inexact_constructions_kernel K;
+  typedef typename WP_iterator::value_type              Weighted_point;
+  typedef typename Weighted_point::Point                Point;
+  typedef typename Point::R                             K;
+  
+//   typedef Exact_predicates_inexact_constructions_kernel K;
   typedef Skin_surface_traits_3<K>                      Traits;
   typedef Skin_surface_3<Traits>                        Skin_surface;
   

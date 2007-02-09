@@ -28,6 +28,8 @@
 // NGHK: move this one to SkinSurfaceTraits
 #include <CGAL/Compute_anchor_3.h>
 
+#include <CGAL/Union_find.h>
+
 CGAL_BEGIN_NAMESPACE
 
 
@@ -96,17 +98,21 @@ private:
   typedef std::pair<Rt_Simplex,Rt_Simplex>                Symb_anchor;
 
   // You might get type differences here:
-  struct Anchor_map_iterator_tmp;
-  typedef std::map<Rt_Simplex, Anchor_map_iterator_tmp>     Anchor_map;
-  struct Anchor_map_iterator_tmp : Anchor_map::iterator {
-    Anchor_map_iterator_tmp() 
-      : Anchor_map::iterator() {}
-    Anchor_map_iterator_tmp(typename Anchor_map::iterator const &it) 
-      : Anchor_map::iterator(it) {}
-  };
-  typedef typename Anchor_map::iterator                     Anchor_map_iterator;
-public:
+//  struct Anchor_map_iterator_tmp;
+//  typedef std::map<Rt_Simplex, Anchor_map_iterator_tmp>     Anchor_map;
+//  struct Anchor_map_iterator_tmp : Anchor_map::iterator {
+//    Anchor_map_iterator_tmp() 
+//      : Anchor_map::iterator() {}
+//    Anchor_map_iterator_tmp(typename Anchor_map::iterator const &it) 
+//      : Anchor_map::iterator(it) {}
+//  };
+//  typedef typename Anchor_map::iterator                     Anchor_map_iterator;
 
+  typedef Union_find<Rt_Simplex>                            Union_find_anchor;
+  typedef std::map<Rt_Simplex,
+                   typename Union_find_anchor::handle> Simplex_UF_map;
+                   
+public:
   Power_diagram_triangulator_3(
 			       Regular const &regular,
 			       Triangulated_mixed_complex &triangulated_mixed_complex, 
@@ -175,23 +181,10 @@ private:
   void construct_anchor_vor(Rt_Simplex const &sVor);
   void construct_anchors();
   Rt_Simplex get_anchor_vor(Rt_Simplex const &sVor) {
-    return find_anchor(anchor_vor2, sVor)->first;
+    typename Simplex_UF_map::iterator it = anchor_vor_map.find(sVor);
+    CGAL_assertion(it != anchor_vor_map.end());
+    return *anchor_vor_uf.find(it->second);
   }  
-  Anchor_map_iterator find_anchor(Anchor_map &a_map, Rt_Simplex const&s) {
-    return find_anchor(a_map, a_map.find(s));
-  }
-  Anchor_map_iterator find_anchor(Anchor_map &a_map,
-				  Anchor_map_iterator const&it) {
-    CGAL_assertion(it != a_map.end());
-    Anchor_map_iterator it2 = it->second;
-    while (it2 != it2->second) {
-      it->second = it2->second;
-      // NGHK: changed the type for the map-iterator-hack
-      it2->second = it;
-      it2 = it->second;
-    }
-    return it2;
-  }
   void construct_vertices();
   
   Tmc_Point get_orthocenter(Rt_Simplex const &s);
@@ -245,7 +238,9 @@ private:
   Unique_hash_map < Rt_Cell_handle, Index_c4 > index_03;
   
 
-  Anchor_map                                     anchor_vor2;
+  Union_find_anchor                            anchor_vor_uf;
+  Simplex_UF_map                               anchor_vor_map;
+//  Anchor_map                                     anchor_vor2;
   std::map<Rt_Simplex, Tmc_Vertex_handle>        anchors;
 };
 
@@ -271,36 +266,30 @@ Power_diagram_triangulator_3<
   TriangulatedMixedComplexObserver_3>::
 construct_anchor_vor(Rt_Simplex const &sVor) {
   Rt_Simplex s = compute_anchor_obj.anchor_vor(sVor);
-  anchor_vor2[sVor] = Anchor_map_iterator();
+  
+  typename Union_find_anchor::handle sVor_handle, s_handle;
+  sVor_handle = anchor_vor_uf.make_set(sVor);
+  anchor_vor_map[sVor] = sVor_handle;
+  
+  typename Simplex_UF_map::iterator s_it = anchor_vor_map.find(s); 
+  CGAL_assertion(s_it != anchor_vor_map.end());
 
-  Anchor_map_iterator it = anchor_vor2.find(sVor);
-  Anchor_map_iterator it2 = anchor_vor2.find(s);
-  CGAL_assertion(it != anchor_vor2.end());
-  CGAL_assertion(it2 != anchor_vor2.end());
-  it->second = it2;
+  anchor_vor_uf.unify_sets(sVor_handle, s_it->second);
 
   // degenerate simplices:
   if (compute_anchor_obj.is_degenerate()) {
-    it = find_anchor(anchor_vor2, it);
     typename Compute_anchor::Simplex_iterator degenerate_it;
+    typename Simplex_UF_map::iterator deg_map_it;
     for (degenerate_it = compute_anchor_obj.equivalent_anchors_begin();
-	 degenerate_it != compute_anchor_obj.equivalent_anchors_end(); 
-	 degenerate_it++) {
-      Anchor_map_iterator tmp;
-      it2 = anchor_vor2.find(*degenerate_it);
+         degenerate_it != compute_anchor_obj.equivalent_anchors_end(); 
+         degenerate_it++) {
+      deg_map_it = anchor_vor_map.find(*degenerate_it); 
+      
       // Possibly not found for 2 Voronoi vertices with the same center,
       // If the first vertex is inserted and the second is already found.
       // see compute_anchor_obj.anchor_vor(Cell_handle)
-      if (it2 != anchor_vor2.end()) {
-	CGAL_assertion(it2 != anchor_vor2.end());
-	// Merge sets:
-	while (it2 != it2->second) {
-	  tmp = it2->second;
-	  it2->second = it->second;
-	  it2 = tmp;
-	  CGAL_assertion(it2 != anchor_vor2.end());
-	}
-	it2->second = it->second;
+      if (deg_map_it != anchor_vor_map.end()) {
+        anchor_vor_uf.unify_sets(sVor_handle, deg_map_it->second);
       }
     }
   }

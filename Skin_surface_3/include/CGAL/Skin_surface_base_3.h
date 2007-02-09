@@ -506,11 +506,12 @@ construct_bounding_box()
   Finite_vertices_iterator vit = regular().finite_vertices_begin();
   if (vit != regular().finite_vertices_end()) {
     Bbox_3 bbox = vit->point().bbox();
-    FT max_weight=vit->point().weight();
-    while (++vit != regular().finite_vertices_end()) {
+    FT max_weight=0;
+    for (;vit != regular().finite_vertices_end(); ++vit) {
       bbox = bbox + vit->point().bbox();
-      if (max_weight < vit->point().weight())
+      if (max_weight < vit->point().weight()) {
         max_weight = vit->point().weight();
+      }
     }
 
     // add a bounding octahedron:
@@ -518,21 +519,37 @@ construct_bounding_box()
     FT dy = bbox.ymax() - bbox.ymin();
     FT dz = bbox.zmax() - bbox.zmin();
   
-    Bare_point mid(bbox.xmin() + dx/2, bbox.ymin() + dy/2, bbox.zmin() + dz/2);
-    FT dr = sqrt(CGAL::to_double(max_weight)) + .001;
-  
-    regular().insert(Weighted_point(
-                                  Bare_point(bbox.xmax()+(dy+dz+dr)/gt.get_shrink(),mid.y(),mid.z()),-1));
-    regular().insert(Weighted_point(
-                                  Bare_point(bbox.xmin()-(dy+dz+dr)/gt.get_shrink(),mid.y(),mid.z()),-1));
-    regular().insert(Weighted_point(
-                                  Bare_point(mid.x(),bbox.ymax()+(dx+dz+dr)/gt.get_shrink(),mid.z()),-1));
-    regular().insert(Weighted_point(
-                                  Bare_point(mid.x(),bbox.ymin()-(dx+dz+dr)/gt.get_shrink(),mid.z()),-1));
-    regular().insert(Weighted_point(
-                                  Bare_point(mid.x(),mid.y(),bbox.zmax()+(dx+dy+dr)/gt.get_shrink()),-1));
-    regular().insert(Weighted_point(
-                                  Bare_point(mid.x(),mid.y(),bbox.zmin()-(dx+dy+dr)/gt.get_shrink()),-1));
+    Bare_point mid(bbox.xmin() + dx/2, 
+		   bbox.ymin() + dy/2, 
+		   bbox.zmin() + dz/2);
+    double dr = 
+      (dx+dy+dz+sqrt(CGAL::to_double(max_weight))+.001) / gt.get_shrink();
+
+    Weighted_point wp;
+    wp = Weighted_point(Bare_point(mid.x()+dr,
+				   mid.y(),
+				   mid.z()),-1);
+    regular().insert(wp);
+    wp = Weighted_point(Bare_point(mid.x()-dr,
+				   mid.y(),
+				   mid.z()),-1);
+    regular().insert(wp);
+    wp = Weighted_point(Bare_point(mid.x(),
+				   mid.y()+dr,
+				   mid.z()),-1);
+    regular().insert(wp);
+    wp = Weighted_point(Bare_point(mid.x(),
+				   mid.y()-dr,
+				   mid.z()),-1);
+    regular().insert(wp);
+    wp = Weighted_point(Bare_point(mid.x(),
+				   mid.y(),
+				   mid.z()+dr),-1);
+    regular().insert(wp);
+    wp = Weighted_point(Bare_point(mid.x(),
+				   mid.y(),
+				   mid.z()-dr),-1);
+    regular().insert(wp);
   }
 }
 
