@@ -67,7 +67,7 @@ private:
     typedef typename FrT::Numerator_type      RT;
     typedef typename FrT::Decompose Decompose;
 public:
-    typedef Root_of_2< RT >  Root_of_2;
+    typedef CGAL::Root_of_2< RT >  Root_of_2;
     
     struct Make_root_of_2{
         typedef Root_of_2 result_type;
