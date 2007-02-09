@@ -2,29 +2,15 @@
 
 \ccDefinition
 
-The concept \ccc{Solution_1} is meant to store a coordinate ($x$, or $y$) of
-a point on curve. 
+The concept \ccc{Solution_1} is meant to store a finite 
+coordinate ($x$, or $y$) of a point on curve. 
 
 \ccRefines
- \ccc{DefaultConstructible, Assignable, LessThanComparable, CompactifiedNumber}
+ \ccc{DefaultConstructible, Assignable, LessThanComparable}
 
-The concept \ccc{CompactifiedNumber} has not been introduced so far. Michael
-Hemmer will introduce it as basic tool as soon as possible. For
-now we assume that a number of this type is either finite, and if not,
-we can ask, wether it represents $\pm\infty$.
-
-There are reasons why we introduce \ccc{Solution_1} over 
-\ccc{AlgebraicReal_1}\footnote{Not yet introduced so far}:
-\begin{itemize}
-\item It may suffices to use a simpler number type ($Q[\sqrt{2}]$).
-\item Keep concept minimal, \ccc{AlgebraicReal_1} will quite certainly
-contain more than needed here.
-\item \ccc{AlgebraicReal_1} won't be a refinement of \ccc{CompaticiedNumber}.
-\ccc{double} is.
-\end{itemize}
 
 \begin{ccAdvanced}
-
+  
 \ccTypes
 
 \ccTypedef{typedef typename Solution_1::Boundary Boundary;}{A NT being able
@@ -34,28 +20,33 @@ to represent values between two Solution\_1}
 
 \ccAccessFunctions
 
-Is this type meant to be really abstract (only RealEmbeddable) or 
-do we want to have access
-to certain entries? In general, it should be possible to use an appropriate
-NT here, i.e., a NT that fits the needs of the CA/CPA.
-
-TODO: Defining polynomial?
-
-TODO: For some purposes (e.g., drawing, seperation) it is useful to have the 
-following methods:
+Solution\_1 is required to have some functionality. The final question
+where to put such methods is undecided. Possibilities are
+member functions of AK, or traits like Algebraic\_structure\_traits that 
+either exists in the AK, or outside of it. 
 
 \ccMethod{Boundary between(Solution_1 s);}{
   returns a rational between \ccc{sol1} and \ccc{s}
   \ccPrecond{sol1 != s}
 }
 
-\ccMethod{std::pair<Boundary,Boundary> approximate(int prec);}{
+
+\ccMethod{Boundary lower_bound();}{
+  Gives the lower bound of the number.
+} 
+
+\ccMethod{Boundary upper_bound();}{
+  Gives the upper bound of the number.
+} 
+
+\ccMethod{void refine();}{
+  Refines the representation.
+} 
+
+\ccMethod{void refine(int prec);}{
   Refines the representation to the given precision (binary digits 
   after point). Internally the precision can already be higher.
 } 
-
-The advanced methods can be seen as a refined concept for enabling drawing. 
-Maybe, we can have it orthogonal to the normal concept.
 
 \end{ccAdvanced}
 
@@ -64,6 +55,6 @@ layers. There might be additional requirements for number types to
 implement a model of this concept.
 
 \ccHasModels
-\ccc{double, NiX::Compactified< NiX::Algebraic_real >}
+\ccc{double, NiX::Algebraic_real}
 
 \end{ccRefConcept}

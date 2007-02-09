@@ -105,14 +105,14 @@ information are equal.
   Is a model of the \ccc{AlgebraicCurveKernel_2::Solution_2} concept
 }
 
-\ccNestedType{Polynomial_2}{
-  Is a model of \ccc{AlgebraicCurveKernel_2::Polynomial_2} 
-  concept.\\
-  Especially needed: Canonicalize, GcdUpToConstantFactor, 
-  IntegralDivUpToConstantFactor, 
-  MakeSquareFreeUpToConstantFactor, and 
-  SquareFreeFactorizationUpToConstantFactor
-}
+%\ccNestedType{Polynomial_2}{
+%  Is a model of \ccc{AlgebraicCurveKernel_2::Polynomial_2} 
+%  concept.\\
+%  Especially needed: Canonicalize, GcdUpToConstantFactor, 
+%  IntegralDivUpToConstantFactor, 
+%  MakeSquareFreeUpToConstantFactor, and 
+%  SquareFreeFactorizationUpToConstantFactor
+%}
 
 \ccNestedType{Curve_pair_vertical_line}
 {Is a model of the \ccc{CurvePairAnalysis_2::CurvePairVerticalLine} concept}
@@ -194,7 +194,7 @@ coprime.
 Note that the access methods to vertical lines are not redundant! The ones
 using an id-value are efficient for speed-ups (caching, avoids to search some
 $x$, just one representative vertical line for an interval). The others 
-enables a user to compute vertical lines for given $x$, i.e. also to 
+enables a user to compute vertical lines for given $x$, i.e., also to 
 $y$-coordinates at given $x$.
 
 \ccMethod{Solution_2_const_iterator solve_begin();}{
