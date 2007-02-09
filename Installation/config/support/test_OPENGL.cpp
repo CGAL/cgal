@@ -23,6 +23,11 @@
 
 // Tests if OPEN GL and GLU are available.
 
+#if defined(_MSC_VER)
+#include <wtypes.h>
+#include <wingdi.h>
+#endif
+
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <iostream>
