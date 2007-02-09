@@ -141,7 +141,7 @@ public:
     if (cache_1_.find(k) == cache_1_.end()) {
       cache_1_[k]= Static_traits_1::to_static(tr_.active_points_1_table_handle()->at(k), 
 					      time_nt_, static_kernel());
-      std::cout << "Point " << k << " is " << cache_1_[k] << std::endl;
+      //std::cout << "Point " << k << " is " << cache_1_[k] << std::endl;
     }
     return cache_1_[k];
   }
