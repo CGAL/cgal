@@ -1,8 +1,5 @@
-# Copyright (c) 1997-2006  Utrecht University (The Netherlands),
-# ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-# INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-# (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-# and Tel-Aviv University (Israel).  All rights reserved.
+# Copyright (c) 2007 INRIA Sophia-Antipolis (France).
+# All rights reserved.
 #
 # This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public License as
@@ -18,32 +15,15 @@
 # $URL$
 # $Id$
 #
-# Author(s)     : Radu Ursu
-#                 Sylvain Pion
+# Author(s)     : Laurent Rineau
 
-# This is the makefile for compiling static and shared libraries in CGAL.
 
-#---------------------------------------------------------------------#
-#                    include platform specific settings
-#---------------------------------------------------------------------#
-# Choose the right include file from the <cgalroot>/make directory.
-
-# The following line should better be passed as command line argument.
-# CGAL_MAKEFILE = SHOULD_BE_SET_BY_INSTALL_CGAL
-include $(CGAL_MAKEFILE)
-
-#---------------------------------------------------------------------#
-#                    compiler flags
-#---------------------------------------------------------------------#
-
-# CXXFLAGS needs to be passed as command line argument
-# CXXFLAGS = $(CGAL_SHARED_LIB_CXXFLAGS)
 
 #---------------------------------------------------------------------#
 #                    object files
 #---------------------------------------------------------------------#
 
-CGAL_OBJECTS = \
+OBJECTS = \
   ImageIO$(OBJ_EXT) \
   analyze$(OBJ_EXT) \
   bmp$(OBJ_EXT) \
@@ -61,36 +41,21 @@ CGAL_OBJECTS = \
   reech4x4$(OBJ_EXT)
 
 #---------------------------------------------------------------------#
-#                    target entries
+#                    libCGALimageIO settings
 #---------------------------------------------------------------------#
 
-shared_lib: $(CGAL_OBJECTS)
-	$(CGAL_IMAGEIO_SHARED_LIB_CREATE)$(CGAL_IMAGEIO_SHARED_LIB) \
-	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
-		$(CGAL_SHARED_LIB_LDFLAGS)
-	mv $(CGAL_IMAGEIO_SHARED_LIB) '$(CGAL_LIB_DESTINATION)'
-	rm $(CGAL_OBJECTS)
+SOVERSION=.2.0.0
+SOMAJOR=2
 
-static_lib: static_lib_no_install
-	mv $(CGAL_IMAGEIO_LIB) $(CGAL_LIB_DESTINATION)
+SHARED_LIB_CREATE = $(CGAL_IMAGEIO_SHARED_LIB_CREATE)
+SHARED_LIB        = $(CGAL_IMAGEIO_SHARED_LIB)
+STATIC_LIB        = $(CGAL_IMAGEIO_LIB)
 
-static_lib_no_install: $(CGAL_OBJECTS)
-	$(CGAL_LIB_CREATE)$(CGAL_IMAGEIO_LIB) \
-	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
-		$(CGAL_LIB_LDFLAGS)
-	$(RANLIB) $(CGAL_IMAGEIO_LIB)
-	rm $(CGAL_OBJECTS)
-
-clean:
-	rm -f $(CGAL_IMAGEIO_LIB) $(CGAL_IMAGEIO_SHARED_LIB) $(CGAL_OBJECTS)
+ADDITIONNAL_CXXFLAGS = -I.
 
 #---------------------------------------------------------------------#
-#                    suffix rules
+#                    common rules for all libraries
 #---------------------------------------------------------------------#
-
-.SUFFIXES: .cpp $(SUFFIXES)
-
-.cpp$(OBJ_EXT):
-	$(CGAL_CXX)  $(CXXFLAGS) -I. -c $<
+include ../CGAL/common.mk
 
 

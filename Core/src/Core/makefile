@@ -1,24 +1,27 @@
-# This is the makefile for compiling the Core library within CGAL.
+# Copyright (c) 2007 INRIA Sophia-Antipolis (France).
+# All rights reserved.
+#
+# This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public License as
+# published by the Free Software Foundation; version 2.1 of the License.
+# See the file LICENSE.LGPL distributed with CGAL.
+#
+# Licensees holding a valid commercial license may use this file in
+# accordance with the commercial license agreement provided with the software.
+#
+# This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+# WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+#
+# $URL$
+# $Id$
+#
+# Author(s)     : Laurent Rineau
 
 #---------------------------------------------------------------------#
-#                    include platform specific settings
-#---------------------------------------------------------------------#
-# Choose the right include file from the <cgalroot>/make directory.
-# CGAL_MAKEFILE = SHOULD_BE_SET_BY_COMMAND_LINE
-include $(CGAL_MAKEFILE)
-
-#---------------------------------------------------------------------#
-#                    compiler flags
+#                    object files
 #---------------------------------------------------------------------#
 
-# CXXFLAGS must be set on the make command-line
-# CXXFLAGS = -I../../include  $(CGAL_CXXFLAGS)
-
-#---------------------------------------------------------------------#
-# Object files
-#---------------------------------------------------------------------#
-
-CGAL_OBJECTS = \
+OBJECTS = \
 CoreAux$(OBJ_EXT) \
 extLong$(OBJ_EXT) \
 CoreDefs$(OBJ_EXT) \
@@ -29,41 +32,23 @@ Expr$(OBJ_EXT) \
 GmpIO$(OBJ_EXT)
 
 #---------------------------------------------------------------------#
-#                    target entries
+#                    libCore settings
 #---------------------------------------------------------------------#
+
+SOVERSION=.2.0.0
+SOMAJOR=2
+
+SHARED_LIB_CREATE = $(CGAL_CORE_SHARED_LIB_CREATE)
+SHARED_LIB        = $(CGAL_CORE_SHARED_LIB)
+STATIC_LIB        = $(CGAL_CORE_LIB)
+SHARED_LIB_ADDITIONNAL_LDFLAGS = $(GMP_LIBPATHFLAGS) $(MPFR_LIBPATHFLAGS) $(GMP_LDFLAGS)
 
 # The shared_lib case is still buggy:
 # - Currently MPFR is linked with it (through GMP_LDFLAGS), although it is
 #   not needed, but anyway next Core release will need it...
 # - When GMP or MPFR is a static library on Darwin, it fails because -fno-common is required...
-# - The Darwin install_name is buggy (it's libCGAL)
-
-shared_lib: $(CGAL_OBJECTS)
-	$(CGAL_CORE_SHARED_LIB_CREATE)$(CGAL_CORE_SHARED_LIB) \
-	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
-		$(CGAL_SHARED_LIB_LDFLAGS) $(GMP_LIBPATHFLAGS) $(MPFR_LIBPATHFLAGS) $(GMP_LDFLAGS)
-	mv $(CGAL_CORE_SHARED_LIB) '$(CGAL_LIB_DESTINATION)'
-	rm $(CGAL_OBJECTS)
-
-static_lib: static_lib_no_install
-	mv $(CGAL_CORE_LIB) $(CGAL_LIB_DESTINATION)
-
-static_lib_no_install: $(CGAL_OBJECTS)
-	$(CGAL_LIB_CREATE)$(CGAL_CORE_LIB) \
-	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
-		$(CGAL_LIB_LDFLAGS)
-	$(RANLIB) $(CGAL_CORE_LIB)
-	rm $(CGAL_OBJECTS)
-
-clean:
-	rm -f $(CGAL_CORE_LIB) $(CGAL_CORE_SHARED_LIB) $(CGAL_OBJECTS)
 
 #---------------------------------------------------------------------#
-#                    suffix rules
+#                    common rules for all libraries
 #---------------------------------------------------------------------#
-
-.SUFFIXES: .cpp $(SUFFIXES)
-
-.cpp$(OBJ_EXT):
-	$(CGAL_CXX)  $(CXXFLAGS) -c $<
-
+include ../CGAL/common.mk
