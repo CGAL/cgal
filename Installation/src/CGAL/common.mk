@@ -35,21 +35,22 @@ include $(CGAL_MAKEFILE)
 
 
 #---------------------------------------------------------------------#
-#                    common.mk variables
-#---------------------------------------------------------------------#
-
-COMMON_SHARED_LIB = $(SHARED_LIB)$(SOVERSION)
-
-#---------------------------------------------------------------------#
 #                    target entries
 #---------------------------------------------------------------------#
 
 shared_lib: shared_lib_no_install
-	mv $(COMMON_SHARED_LIB) '$(CGAL_LIB_DESTINATION)'
-
+	mv $(CGAL_SHARED_LIB_WITH_SOVERSION) $(CGAL_LIB_DESTINATION)
+	if [ "$(CGAL_SHARED_LIB_WITH_SOVERSION)" != "$(SHARED_LIB)" ]; then \
+	  rm -f $(CGAL_LIB_DESTINATION)/"$(SHARED_LIB)"; \
+	  ln -s "$(CGAL_SHARED_LIB_WITH_SOVERSION)" $(CGAL_LIB_DESTINATION)/"$(SHARED_LIB)"; \
+	fi
+	if [ "$(CGAL_SHARED_LIB_WITH_SOVERSION)" != "$(CGAL_SHARED_LIB_WITH_SOMAJOR)" ]; then \
+	  rm -f $(CGAL_LIB_DESTINATION)/"$(CGAL_SHARED_LIB_WITH_SOMAJOR)"; \
+	  ln -s "$(CGAL_SHARED_LIB_WITH_SOVERSION)" $(CGAL_LIB_DESTINATION)/"$(CGAL_SHARED_LIB_WITH_SOMAJOR)"; \
+	fi
 
 shared_lib_no_install: $(OBJECTS)
-	$(CGAL_SHARED_LIB_CREATE)$(COMMON_SHARED_LIB) $(CGAL_SHARED_LIB_SONAME) \
+	$(CGAL_SHARED_LIB_CREATE)$(CGAL_SHARED_LIB_WITH_SOVERSION) $(CGAL_SHARED_LIB_SONAME) \
 	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
 		$(CGAL_SHARED_LIB_LDFLAGS) $(SHARED_LIB_ADDITIONNAL_LDFLAGS)
 	rm $(OBJECTS)
@@ -67,7 +68,7 @@ static_lib_no_install: $(OBJECTS)
 .PHONY: clean shared_lib shared_lib_no_install status_lib static_lib_no_install
 
 clean:
-	rm -f $(STATIC_LIB) $(COMMON_SHARED_LIB) $(OBJECTS)
+	rm -f $(STATIC_LIB) $(CGAL_SHARED_LIB_WITH_SOVERSION) $(OBJECTS)
 
 #---------------------------------------------------------------------#
 #                    suffix rules

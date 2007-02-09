@@ -777,6 +777,9 @@ set_compiler_flags()
     CGAL_SHARED_LIB_LDFLAGS=
     CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
     CGAL_SHARED_LIB_INSTALL_NAME=""
+    CGAL_SHARED_LIB_SONAME=""
+    CGAL_SHARED_LIB_WITH_SOVERSION="\$(SHARED_LIB)"
+    CGAL_SHARED_LIB_WITH_SOMAJOR="\$(SHARED_LIB)"
     CGAL_QT_SHARED_LIB_INSTALL_NAME=""
     CGAL_BENCHMARK_SHARED_LIB_INSTALL_NAME=""
     CGAL_IMAGEIO_SHARED_LIB_INSTALL_NAME=""
@@ -958,6 +961,9 @@ set_compiler_flags()
 	    #### settings for gcc on linux
 	    ADDITIONAL_CXXFLAGS="-Wall"
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
+	    CGAL_SHARED_LIB_SONAME="-Wl,-soname,\$(SHARED_LIB).\$(SOMAJOR)"
+	    CGAL_SHARED_LIB_WITH_SOVERSION="\$(SHARED_LIB).\$(SOVERSION)"
+	    CGAL_SHARED_LIB_WITH_SOMAJOR="\$(SHARED_LIB).\$(SOMAJOR)"
 	    ;;
 	*Linux*icc*|*Linux*icpc*)
 	    #### settings for icc on linux
@@ -4134,6 +4140,16 @@ create_include_makefile()
   ${_printf} "%s\n\n" \
     "CGAL_CORE_SHARED_LIB_CREATE = ${CGAL_SHARED_LIB_CREATE} ${CGAL_CORE_SHARED_LIB_INSTALL_NAME} -o ''" \
     >> ${FILE}
+
+  #
+  # CGAL_SHARED_LIB_WITH_SOVERSION, CGAL_SHARED_LIB_WITH_SOMAJOR, and CGAL_SHARED_LIB_SONAME
+  #
+  ${_printf} "\n%s\n" \
+       "CGAL_SHARED_LIB_SONAME = ${CGAL_SHARED_LIB_SONAME}" >> ${FILE}
+  ${_printf} "%s\n\n" \
+       "CGAL_SHARED_LIB_WITH_SOMAJOR = ${CGAL_SHARED_LIB_WITH_SOMAJOR}" >> ${FILE}
+  ${_printf} "%s\n\n" \
+       "CGAL_SHARED_LIB_WITH_SOVERSION = ${CGAL_SHARED_LIB_WITH_SOVERSION}" >> ${FILE}
 
   #
   # PRINT_STACKTRACE_PROGRAM

@@ -53,7 +53,7 @@ Turkowski_numeric_solver$(OBJ_EXT)
 #                    libCGAL settings
 #---------------------------------------------------------------------#
 
-SOVERSION=.2.0.0
+SOVERSION=2.0.0
 SOMAJOR=2
 
 SHARED_LIB_CREATE = $(CGAL_SHARED_LIB_CREATE)

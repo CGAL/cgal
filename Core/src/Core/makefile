@@ -35,7 +35,7 @@ GmpIO$(OBJ_EXT)
 #                    libCore settings
 #---------------------------------------------------------------------#
 
-SOVERSION=.2.0.0
+SOVERSION=2.0.0
 SOMAJOR=2
 
 SHARED_LIB_CREATE = $(CGAL_CORE_SHARED_LIB_CREATE)

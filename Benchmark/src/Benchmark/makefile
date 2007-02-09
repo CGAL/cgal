@@ -1,4 +1,5 @@
-# Copyright (c) 2006 Tel-Aviv University (Israel).
+# Copyright (c) 2006 Tel-Aviv University (Israel)
+# Copyright (c) 2007 INRIA Sophia-Antipolis (France)
 # All rights reserved.
 #
 # This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -16,33 +17,16 @@
 # $Id$
 #
 # Author(s): Efi Fogel         <efif@post.tau.ac.il>
-
-# This is the makefile for compiling the Benchmark support library libCGALBenchmark.
-
-#---------------------------------------------------------------------#
-#                    include platform specific settings
-#---------------------------------------------------------------------#
-# Choose the right include file from the <cgalroot>/make directory.
-
-# CGAL_MAKEFILE = SHOULD_BE_SET_BY_COMMAND_LINE
-
-include $(CGAL_MAKEFILE)
+#            Laurent Rineau
 
 # defaut rule
-all: lib
+all: static_lib
 
 #---------------------------------------------------------------------#
-#                    compiler flags
+#                    object files
 #---------------------------------------------------------------------#
 
-# CXXFLAGS must be provided on the make command-line.
-# CXXFLAGS = -I"../../include" $(CGAL_WINLIB_CXXFLAGS) -DCGAL_USE_BENCHMARK
-
-#---------------------------------------------------------------------#
-# Object files
-#---------------------------------------------------------------------#
-
-CGAL_OBJECTS = \
+OBJECTS = \
 Benchmark$(OBJ_EXT) \
 benchmark_parser$(OBJ_EXT) \
 benchmark_lexer$(OBJ_EXT) \
@@ -50,41 +34,21 @@ Benchmark_visitor$(OBJ_EXT) \
 Option_parser$(OBJ_EXT)
 
 #---------------------------------------------------------------------#
-#                    target entries
+#                    libCGAL settings
 #---------------------------------------------------------------------#
 
-# TODO : shared_lib !
+SOVERSION=
+SOMAJOR=
 
-static_lib: lib
-
-shared_lib: $(CGAL_OBJECTS)
-	$(CGAL_BENCHMARK_SHARED_LIB_CREATE)$(CGAL_BENCHMARK_SHARED_LIB) \
-	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
-		$(CGAL_SHARED_LIB_LDFLAGS)
-	mv $(CGAL_BENCHMARK_SHARED_LIB) '$(CGAL_LIB_DESTINATION)'
-	rm $(CGAL_OBJECTS)
-
-lib: lib_no_install
-	mv $(CGAL_BENCHMARK_LIB) $(CGAL_LIB_DESTINATION)
-
-lib_no_install: $(CGAL_OBJECTS) 
-	$(CGAL_LIB_CREATE)$(CGAL_BENCHMARK_LIB) \
-	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
-		$(CGAL_LIB_LDFLAGS)
-	$(RANLIB) $(CGAL_BENCHMARK_LIB)
-	rm $(CGAL_OBJECTS) 
-
-clean:
-	rm -f $(CGAL_BENCHMARK_LIB) $(CGAL_BENCHMARK_SHARED_LIB) $(CGAL_OBJECTS)
+SHARED_LIB_CREATE = $(CGAL_BENCHMARK_SHARED_LIB_CREATE)
+SHARED_LIB        = $(CGAL_BENCHMARK_SHARED_LIB)
+STATIC_LIB        = $(CGAL_BENCHMARK_LIB)
 
 #---------------------------------------------------------------------#
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-%$(OBJ_EXT): %.cpp
-	$(CGAL_CXX) $(CXXFLAGS) -c $<
-
-.SUFFIXES: .cpp $(SUFFIXES)
+.SUFFIXES: .cpp
 
 .cpp$(OBJ_EXT):
 	$(CGAL_CXX)  $(CXXFLAGS) -c $<
@@ -107,3 +71,9 @@ endif
 
 %.cpp : %.l
 	$(FLEX) -8 -o$@ $<
+
+#---------------------------------------------------------------------#
+#                    common rules for all libraries
+#---------------------------------------------------------------------#
+include ../CGAL/common.mk
+

@@ -88,7 +88,7 @@ Qt_widget_OpenGL$(OBJ_EXT):
 #                    libCGALQt settings
 #---------------------------------------------------------------------#
 
-SOVERSION=.2.0.0
+SOVERSION=2.0.0
 SOMAJOR=2
 
 SHARED_LIB_CREATE = $(CGAL_QT_SHARED_LIB_CREATE)
