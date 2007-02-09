@@ -103,8 +103,8 @@ class CW_indirect_edge_info_compare
 {
 public:
 
-   typedef Vertex_info<Traits> Vertex_info ;
-   typedef Edge_info<Traits>   Edge_info;
+   typedef CGAL::Vertex_info<Traits> Vertex_info ;
+   typedef CGAL::Edge_info<Traits>   Edge_info;
 
    typedef typename Vertex_info::Vertex_iterator Vertex_iterator ;
 
