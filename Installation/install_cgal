@@ -3524,11 +3524,15 @@ compiler_menu()
 	print_multi_line "${CUSTOM_CXXFLAGS:-<none>}"
 	print_line "${_bold_on}<L>${_bold_off}  Set custom linker flags"
 	print_multi_line "${CUSTOM_LDFLAGS:-<none>}"
-	print_line "${_bold_on}<S>${_bold_off}  Toggle shared libraries building"
+	print_line "${_bold_on}<S>${_bold_off}  Toggle shared/static libraries building"
         if [ -n "${ENABLE_SHARED}" ]; then
-	    print_multi_line "<enabled>"
+	    if [ -n "${ENABLE_STATIC}" ]; then 
+		print_multi_line "<shared+static>"
+	    else
+		print_multi_line "<shared>"
+	    fi
         else
-	    print_multi_line "<disabled>"
+	    print_multi_line "<static>"
         fi
 	print_line "${_bold_on}<O>${_bold_off}  Set custom ostype tag"
 	print_multi_line "${CUSTOM_OSTYPE_TAG:-<none>}"
@@ -3560,9 +3564,14 @@ compiler_menu()
 		;;
             s|S)
 		if [ -n "${ENABLE_SHARED}" ]; then
-                    ENABLE_SHARED=''
+		    if [ -n "${ENABLE_STATIC}" ]; then 
+			ENABLE_SHARED=''
+		    else
+			ENABLE_STATIC='y'
+		    fi
                 else
                     ENABLE_SHARED='y'
+		    ENABLE_STATIC=''
                 fi
 		#reset_all_test_variables
 		SETUP_COMPLETE=''

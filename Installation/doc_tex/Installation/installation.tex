@@ -454,10 +454,11 @@ at the error messages from compiler or linker.)
   TAUCS:			supported
 
   Generating Makefiles ... done.
-  Building CGAL_lib ... done.
-  Building CGAL_sharedlib ... done.
-  Building CGAL_Qt ... done.
-  Building CGAL_Core ... done.
+  Building libCGAL static ... done.
+  Building libCGAL shared ... done.
+  Building libCGALQt static ... done.
+  Building libCGALQt shared ... done.
+  <some lines omitted>
 
   ****************************************************************
   **             Please press <ENTER> to continue.              **
@@ -658,7 +659,7 @@ follows.
 
 Here is the place to set compiler specific options, such as the
 compiler to use (if more than one has been detected), custom compiler
-or linker flags, or to decide whether or not to build shared
+or linker flags, or to decide whether or not to build shared and static
 libraries.\bigskip
 
 \fbox{
@@ -677,9 +678,12 @@ libraries.\bigskip
 \item[$<$L$>$] Set custom linker flags. These are the first flags
   given to the linker in every call. Under normal circumstances
   there should be no need to set any such flag.
-\item[$<$S$>$] Toggle shared libraries building.
-  By default, shared libraries are built (e.g. \texttt{libCGAL.so}),
-  but it is possible to only build static libraries using this option.
+\item[$<$S$>$] Toggle shared/static libraries building.
+  By default, shared (e.g. \texttt{libCGAL.so}) and static
+  (e.g. \texttt{libCGAL.a}) libraries are both built,
+  but it is possible to only build shared or static libraries using this
+  option. Press the key once to build only static libraries, and twice to
+  build only shared libraries.
 \item[$<$O$>$] Set custom ostype tag.  Set a tag that is mangled into
   the CGAL-OS-description. This is useful to distinguish \cgal\
   installations with different settings for the same OS-compiler
@@ -1109,8 +1113,8 @@ way, only static libraries (object file archives) are built.
 You can disable the building of static archives (e.g.,
 \texttt{libCGAL.a}) using the option
 \mbox{``\texttt{--disable-static}''\TTindex{disable-static}}. This
-way, only shared libraries are built. Do not disable shared libraries if
-you use this option.
+way, only shared libraries are built. Do not disable shared libraries as
+well if you use this option.
 
 \subsection{Other Options\label{sec:other-options}}
 
