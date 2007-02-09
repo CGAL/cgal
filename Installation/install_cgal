@@ -4221,15 +4221,6 @@ _do_compile()
 	    fi
 	    MAKE_OPTION="${MAKE_OPTION} CXXFLAGS=\$(CGAL_LIB_CXXFLAGS) static_lib";;
 	shared)
-	    # Special treatment for Darwin:
-	    # only libCGAL can be compiled as a shared lib.
-	    case ${CGAL_OS_COMPILER} in
-		*Darwin*)
-		    if [ "$1" != "libCGAL" ]; then
-			${_printf} "%s\n" " skipped."
-			return 0
-		    fi;;
-	    esac
 	    if [ -z "${ENABLE_SHARED}" ]; then
 	        ${_printf} "%s\n" " skipped."
 		return 0
