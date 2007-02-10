@@ -931,6 +931,9 @@ set_compiler_flags()
 	    LONG_NAME_PROBLEM_LDFLAGS="-U -s"
 	    CGAL_SHARED_LIB_LDFLAGS="-lm"
 	    RUNTIME_LINKER_FLAG="-Xlinker -rpath -Xlinker "
+	    CGAL_SHARED_LIB_SONAME="-Wl,-soname,\$(SHARED_LIB).\$(SOMAJOR)"
+	    CGAL_SHARED_LIB_WITH_SOVERSION="\$(SHARED_LIB).\$(SOVERSION)"
+	    CGAL_SHARED_LIB_WITH_SOMAJOR="\$(SHARED_LIB).\$(SOMAJOR)"
 	    ;;
 	*SunOS*5.*CC*)
 	    #### settings for sunpro compiler on solaris
@@ -941,6 +944,10 @@ set_compiler_flags()
 	    WINDOW_INCLUDE="/usr/openwin/include"
 	    RUNTIME_LINKER_FLAG="-R "
 	    PRINT_STACKTRACE_PROGRAM="dbx"
+	    CGAL_SHARED_LIB_SONAME="-Wl,-h,\$(SHARED_LIB).\$(SOMAJOR)"
+	    CGAL_SHARED_LIB_WITH_SOVERSION="\$(SHARED_LIB).\$(SOVERSION)"
+	    CGAL_SHARED_LIB_WITH_SOMAJOR="\$(SHARED_LIB).\$(SOMAJOR)"
+
 	    ;;
 	*SunOS*5.*g++*)
 	    #### settings for gcc on solaris
@@ -950,6 +957,9 @@ set_compiler_flags()
 	    CGAL_WINLIB_CXXFLAGS="-fpermissive"
 	    WINDOW_INCLUDE="/usr/openwin/include"
 	    RUNTIME_LINKER_FLAG="-R "
+	    CGAL_SHARED_LIB_SONAME="-Wl,-h,\$(SHARED_LIB).\$(SOMAJOR)"
+	    CGAL_SHARED_LIB_WITH_SOVERSION="\$(SHARED_LIB).\$(SOVERSION)"
+	    CGAL_SHARED_LIB_WITH_SOMAJOR="\$(SHARED_LIB).\$(SOMAJOR)"
 	    ;;
         *alpha*Linux*g++*)
             #### settings for g++ on alpha-linux (special FPU handling)
