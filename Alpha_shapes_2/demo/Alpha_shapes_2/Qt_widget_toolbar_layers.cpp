@@ -34,7 +34,7 @@
 
 
 /* XPM */
-static char * image_small_xpm[] = {
+static const char * image_small_xpm[] = {
 "16 16 6 1",
 "       c None",
 ".      c #35E8D9",
@@ -62,7 +62,7 @@ static char * image_small_xpm[] = {
 
 
 /* XPM */
-static char * image_xpm[] = {
+static const char * image_xpm[] = {
 "32 32 5 1",
 "       c None",
 ".      c #000000",
