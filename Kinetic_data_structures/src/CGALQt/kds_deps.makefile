@@ -20,6 +20,17 @@
 #
 # Author(s)     : Daniel Russel
 
+#---------------------------------------------------------------------#
+#                    specific rules for kds
+#---------------------------------------------------------------------#
+
+vpath %.h $(CGAL_INCL_DIR)/CGAL/Kinetic/IO/internal
+
+#---------------------------------------------------------------------#
+#                    moc rules
+#---------------------------------------------------------------------#
+
+#KDS_Qt_examiner_viewer$(OBJ_EXT) : KDS_Qt_examiner_viewer.moc
 
 Kinetic_Qt_widget_2_core$(OBJ_EXT): Kinetic_Qt_widget_2_core.moc
 
@@ -31,20 +42,17 @@ Kinetic_Qt_window_2$(OBJ_EXT): Kinetic_Qt_window_2.moc
 
 Kinetic_pixmaps$(OBJ_EXT): Kinetic_*.xpm
 
-#CGAL_KDS_INCL_DIR := $(CGAL_INCL_DIR)/CGAL/Kinetic/IO/internal
+# It would be nice the *.moc file base name is identical to the *.h.
+# In this case the following rules can be removed all together.
 
+Kinetic_Qt_core.moc: Qt_core.h
+	$(QT_MOC) $< -o $@
 
-Kinetic_Qt_core.moc: ../../include/CGAL/Kinetic/IO/internal/Qt_core.h
-	$(QT_MOC) ../../include/CGAL/Kinetic/IO/internal/Qt_core.h -o Kinetic_Qt_core.moc
+Kinetic_Qt_timer.moc: Qt_timer.h
+	$(QT_MOC) $< -o $@
 
+Kinetic_Qt_widget_2_core.moc: Qt_widget_2_core.h
+	$(QT_MOC) $< -o $@
 
-Kinetic_Qt_timer.moc: ../../include/CGAL/Kinetic/IO/internal/Qt_timer.h
-	$(QT_MOC) ../../include/CGAL/Kinetic/IO/internal/Qt_timer.h -o Kinetic_Qt_timer.moc
-
-
-Kinetic_Qt_widget_2_core.moc: ../../include/CGAL/Kinetic/IO/internal/Qt_widget_2_core.h
-	$(QT_MOC) ../../include/CGAL/Kinetic/IO/internal/Qt_widget_2_core.h -o Kinetic_Qt_widget_2_core.moc
-
-
-Kinetic_Qt_window_2.moc: ../../include/CGAL/Kinetic/IO/internal/Qt_window_2.h
-	$(QT_MOC)  ../../include/CGAL/Kinetic/IO/internal/Qt_window_2.h -o Kinetic_Qt_window_2.moc
+Kinetic_Qt_window_2.moc: Qt_window_2.h
+	$(QT_MOC) $< -o $@
