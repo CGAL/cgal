@@ -1,3 +1,5 @@
+Tasks:
+======
 
 - IsCoprime, IsSquareFree, MakeCoprime, MakeSquareFree,
    SquareFreeFactorization - documentation needed as discussed in Inria
@@ -8,27 +10,27 @@
    and/or PolynomialToolBox, what about Construct_polynomial? 
    What about Derivative?
 
-- Is Derivative and XCriticalPoints/YCriticalPoints redundant?
-
-
 - AlgebraicReal_1 - what about the functions upper_bound, lower_bound
    etc. See .tex file!
+
+
+Open questions:
+===============
+
+- Is Derivative and XCriticalPoints/YCriticalPoints redundant?
 
 - AlgebraicReal_2 - Do we provide .x() and .y() method??
 
 - Names of CurveAnalysis_2, CurveVerticalLine_1 and
    CurvePairAnalysis_2, CurvePairVerticalLine_1?
-- Improvements of Interface
-- Improvements on Documentation
 - Use "int" at all places, or stick to distinction of unsigned int + int?
+- Improvements of interface?
+- Improvements on documentation?
 
 
 Notes:
+======
 - CA_2 and CPA_2 require squarefree and coprime input! 
 - Events at infinity are only important for a single curve. Since
-   inf doesn't play a role in CPA_2 we discuss it as a special case in CA_2.
-
-
-
-
-
+   inf doesn't play a role in CPA_2 we discuss it for the sake of
+   simplicity as a special case in CA_2 only.
