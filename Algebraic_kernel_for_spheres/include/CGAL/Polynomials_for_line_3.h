@@ -17,8 +17,8 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
 //
 // Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //             Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
@@ -74,7 +74,7 @@ public:
   const FT & b3() const
   { return rep[5]; }
 
-  const bool degenerated() const {
+  bool degenerated() const {
     return is_zero(a1()) &&
            is_zero(a2()) &&
            is_zero(a3());

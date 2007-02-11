@@ -17,8 +17,8 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
 //
 // Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //             Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
@@ -98,7 +98,7 @@ class Root_for_spheres_2_3 {
   }
 
   // On verifie si (x,y,z) fait partie la ligne donne
-  const bool is_on_line(const Polynomials_for_line_3 &p) const {
+  bool is_on_line(const Polynomials_for_line_3 &p) const {
     Root_of_2 t;
     bool already = false;
     if(!is_zero(p.a1())) {
