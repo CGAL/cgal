@@ -1,20 +1,14 @@
-#include <CGAL/basic.h>
+
 #include <CGAL/Cartesian.h>
-
-#include <cstdio>
-#include <iostream>
-#include <fstream>
-#include <cstdlib>
-#include <vector>
-#include <list>
-
 #include <CGAL/Ridges.h> 
 #include <CGAL/Umbilics.h>
+#include <CGAL/Monge_via_jet_fitting.h>
+#include <CGAL/Lapack/Linear_algebra_lapack.h>
 
-// #include <CGAL/Monge_via_jet_fitting.h> //does not work since not in the release yet
-// #include <CGAL/Lapack/Linear_algebra_lapack.h>
-#include "../../../Jet_fitting_3/include/CGAL/Monge_via_jet_fitting.h" 
-#include "../../../Jet_fitting_3/include/CGAL/Lapack/Linear_algebra_lapack.h" 
+#include <fstream>
+#include <vector>
+
+
  
 //this is an enriched Polyhedron with facets' normal
 #include "PolyhedralSurf.h"

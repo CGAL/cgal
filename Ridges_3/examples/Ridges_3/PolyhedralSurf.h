@@ -1,15 +1,16 @@
 #ifndef _POLYHEDRALSURF_H_
 #define _POLYHEDRALSURF_H_
 
+#include <CGAL/Cartesian.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/IO/Polyhedron_iostream.h>
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <algorithm>
 #include <vector>
 #include <list>
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 
 #include "PolyhedralSurf_operations.h" 
 
