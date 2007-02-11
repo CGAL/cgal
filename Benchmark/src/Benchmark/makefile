@@ -20,7 +20,7 @@
 #            Laurent Rineau
 
 # defaut rule
-all: static_lib
+defaut: static_lib
 
 #---------------------------------------------------------------------#
 #                    object files
@@ -43,34 +43,6 @@ SOMAJOR=
 SHARED_LIB_CREATE = $(CGAL_BENCHMARK_SHARED_LIB_CREATE)
 SHARED_LIB        = $(CGAL_BENCHMARK_SHARED_LIB)
 STATIC_LIB        = $(CGAL_BENCHMARK_LIB)
-
-#---------------------------------------------------------------------#
-#                    suffix rules
-#---------------------------------------------------------------------#
-
-.SUFFIXES: .cpp
-
-.cpp$(OBJ_EXT):
-	$(CGAL_CXX)  $(CXXFLAGS) -c $<
-
-FLEX ?=flex
-BISON ?=bison
-
-# Apparently, old versions of bison (e.g., 1.28) name the generated definion
-# header file <base>.cpp.h. The file must be renamed to <base>.hpp 
-BISON_VERSION_CMD =expr match "`bison --version`" '.*\([1-9]\.[0-9]*\)'
-BISON_VERSION =$(shell $(BISON_VERSION_CMD))
-OLD_BISON_VERSION_CMD =expr "$(BISON_VERSION)" \<= 1.28
-OLD_BISON_VERSION =$(shell $(OLD_BISON_VERSION_CMD))
-
-%.cpp %.hpp : %.y
-	$(BISON) -d $< -o $*.cpp
-ifeq ($(OLD_BISON_VERSION), 1)
-	mv $*.cpp.h $*.hpp
-endif
-
-%.cpp : %.l
-	$(FLEX) -8 -o$@ $<
 
 #---------------------------------------------------------------------#
 #                    common rules for all libraries
