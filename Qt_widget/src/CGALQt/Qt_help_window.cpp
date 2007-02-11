@@ -25,7 +25,7 @@
 /* XPM */
 /* Drawn  by Mark Donohoe for the K Desktop Environment */
 /* See http://www.kde.org */
-static char*backb[]={
+static const char*backb[]={
 "16 16 5 1",
 "# c #000000",
 "a c #ffffff",
@@ -52,7 +52,7 @@ static char*backb[]={
 /* XPM */
 /* Drawn  by Mark Donohoe for the K Desktop Environment */
 /* See http://www.kde.org */
-static char*forwardb[]={
+static const char*forwardb[]={
 "16 16 5 1",
 "# c #000000",
 "a c #ffffff",
@@ -80,7 +80,7 @@ static char*forwardb[]={
 /* XPM */
 /* Drawn  by Mark Donohoe for the K Desktop Environment */
 /* See http://www.kde.org */
-static char*homeb[]={
+static const char*homeb[]={
 "16 16 4 1",
 "# c #000000",
 "a c #ffffff",
