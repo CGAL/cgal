@@ -317,6 +317,6 @@ int main(int argc, char *argv[])
       out_verb << **iter_umb; 
   }
 
-  return 1;
+  return 0;
 }
  
