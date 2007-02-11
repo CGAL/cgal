@@ -557,7 +557,7 @@ namespace CGAL {
 	adjust_bounding_box(x-r,y-r);
 	adjust_bounding_box(x+r,y+r);
 	body << x << ' ' << y << ' ' << r << ' ';
-	char *mode[] = { "ball", "bball", "dball" };
+	const char *mode[] = { "ball", "bball", "dball" };
 	body << mode[static_cast<int>(bm)] << std::endl;
 	
 	// output label:
