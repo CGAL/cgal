@@ -1,0 +1,68 @@
+\begin{ccRefConcept}{AlgebraicKernel_d_1::AlgebraicReal_1}
+
+\footnote{
+  Note that this concept only deals with the interface to upper
+  layers. There might be additional requirements for number types to 
+  implement a model of this concept.
+}
+
+\ccDefinition
+
+Concept to represent the root of a univariate polynomial
+that are models of \ccc{AlgebraicKernel_d_1::Polynomial_1}.
+
+\begin{ccAdvanced}
+  
+TODO
+
+\ccTypes
+
+\ccTypedef{typedef typename AlgebraicReal_1::Boundary Boundary;}{A number type 
+that is able to represent values between two AlgebraicReal\_1}
+
+\ccCreationVariable{ar}
+
+\ccAccessFunctions
+
+AlgebraicReal\_1 is required to have some functionality. The final question
+where to put such methods is undecided. Possibilities are
+member functions of AK, or traits like Algebraic\_structure\_traits that 
+either exists in the AK, or outside of it. 
+
+\ccMethod{Boundary between(AlgebraicReal_1 ar2);}{
+  returns a rational between \ccc{ar} and \ccc{ar2}
+  \ccPrecond{ar != ar2}
+}
+
+\ccMethod{Boundary lower_bound();}{
+  Gives the lower bound of the number.
+} 
+
+\ccMethod{Boundary upper_bound();}{
+  Gives the upper bound of the number.
+} 
+
+\ccMethod{void refine();}{
+  Refines the representation.
+} 
+
+\ccMethod{void refine(int prec);}{
+  Refines the representation to the given precision (binary digits 
+  after point). Internally the precision can already be higher.
+} 
+
+\end{ccAdvanced}
+
+\ccOperations
+
+The comparison operator \ccc{==} must be provided. 
+
+\ccFunction{bool operator ==(
+        const AlgebraicKernel_d_1::Algebraic_real_1 & ar1,
+	const AlgebraicKernel_d_1::Algebraic_real_1 & ar2);}{}
+
+
+\ccHasModels
+%\ccc{double, NiX::Algebraic_real}
+
+\end{ccRefConcept}

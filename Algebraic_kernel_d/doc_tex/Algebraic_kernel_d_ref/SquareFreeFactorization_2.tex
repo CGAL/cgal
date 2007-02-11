@@ -1,0 +1,16 @@
+\begin{ccRefConcept}{AlgebraicKernel_d_2::SquareFreeFactorization_2}
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMethod{template < class OutputIterator1, class OutputIterator2 >
+    void
+    operator()(const AlgebraicKernel_d_2::Polynomial_2 & p1, 
+               OutputIterator oi1
+               OutputIterator oi2);}
+{oi1 returns factors, oi2 returns multiplicities}
+
+\ccSeeAlso
+
+\end{ccRefConcept}

@@ -1,0 +1,222 @@
+\begin{ccRefConcept}{CurvePairAnalysis_2::CurvePairVerticalLine_1}
+
+\ccDefinition
+
+The \ccc{CurvePairVerticalLine_1} concept is meant to provide information
+about the intersections of a pair of curves with a (intended) vertical line 
+(ignoring vertical lines of the curves themselves). Each intersection of a 
+curve with the vertical line defined by some given $x$ induces an event. 
+An event can be asked for its coordinates (\ccc{Algebraic_real_2})
+and the involved curve(s). 
+Note that the involvment also holds for curve ends approaching the 
+vertical asymptote. Again \ccc{CurvePairVerticalLine_1} at $x = \pm\infty$ are 
+not allowed. 
+
+\ccTypes
+
+\ccNestedType{Algebraic_real_1}{Model of the concept
+\ccc{AlgebraicKernel_d_1::AlgebraicReal_1}.}
+
+\ccNestedType{Algebraic_real_2}{Model of the concept
+\ccc{AlgebraicKernel_d_2::AlgebraicReal_2}.}
+  
+
+\ccCreationVariable{cpvl}
+\ccAccessFunctions
+
+\ccMethod{Algebraic_real_1 x();}{
+  returns the $x$-coordinate of the vertical line (always a finite value).
+}
+
+\ccMethod{unsigned int number_of_events();}{
+  returns number of distinct and finite intersections of a pair of 
+  curves with a 
+  (intended) vertical line ignoring a real vertical line component 
+  of the curves at the given $x$-coordinate.
+}
+
+\ccMethod{unsigned int get_event_of_curve(int k, bool c);}{
+  returns the $y$-position of the $k$-th event of the $c$-th
+  (0 or 1) curve in the sequence of events. Note that each event
+  is formed by the first, the second, or both curves.
+  \ccPrecond{$0 \leq k < \mbox{number of arcs defined for the curve at x()}$}
+}
+
+\ccMethod{unsigned int get_multiplicity_of_intersection(int j);}{
+  returns the multiplicity of intersection defined at event with position $j$.
+  May return $0$ in case multiplicity is unknown.
+  \ccPrecond{There is an intersection of both curves at $j$-th event.}
+  \ccPrecond{$0 \leq j < \mbox{num\_events()}$}
+}
+
+\ccMethod{std::pair< int, int > get_curves_at_event(int j);}{
+  returns a pair of int indicating whether event $j$ is formed by 
+  which arc numbers of the first and the second curve, or $-1$, if the 
+  corresponding curve is not involved. 
+  \ccPrecond{$0 \leq j < \mbox{num\_events()}$}
+}
+
+Note that this interface mainly rewrites $\{f,g,x\}^n$ in a different way - 
+using ints. Actually the CPVL has to compute this sequence, but for
+the interface it is nicer to have it already here to avoid conversion objects
+(introducing additional constructor calls, cache-misses, lookup and so on) in
+the next layer on top (CK). Obviously, the ints can be computed in a generic
+way from a sequence, so that it makes sense to offer a default implementation
+providing such conversion. There is no need to document this fact on the 
+conceptual view.
+
+\ccMethod{bool is_event();}{
+  returns \ccc{true} if a curve has an event or in case there is an 
+  intersection of both curves.
+}
+
+\ccMethod{bool is_intersection();}{
+  returns \ccc{true} if there is an intersection of both curves.
+}
+
+\end{ccRefConcept}
+
+\begin{ccRefConcept}{AlgebraicKernel_d_2::CurvePairAnalysis_2}
+
+\ccDefinition
+
+The \ccc{CurvePairAnalysis_2} concept is meant to provide tools to analyse 
+a pair of curves. An analysis is meant to describe the curve pair's 
+interesting points and how they are connected. 
+The analysis searches for {\it events}. Events only
+occur at a finite number of $x$-coordinate. Each such coordinate is
+covered by a \ccc{CurvePairVerticalLine_1}, 
+originated by the events of a single curve
+and also the intersections of two curves.
+These coordinates also define open {\it intervals}
+on the $x$-axis. \ccc{CurvePairVerticalLine_1} 
+at values in between one such interval
+differ only in the values of the \ccc{Algebraic_real_2} entries. Topological 
+information are equal. 
+
+\ccRefines{
+  \ccc{DefaultConstructible, CopyConstructible, Assignable}
+}
+
+\ccTypes
+
+\ccNestedType{Algebraic_real_1}{Model of the concept
+\ccc{AlgebraicKernel_d_1::AlgebraicReal_1}.}
+
+\ccNestedType{Algebraic_real_2}{Model of the concept
+\ccc{AlgebraicKernel_d_2::AlgebraicReal_2}.}
+
+\ccNestedType{Curve_pair_vertical_line_1}{Model of the concept
+\ccc{CurvePairAnalysis_2::CurvePairVerticalLine_1}.}
+
+\ccNestedType{Curve_analysis_2}{Model of the concept 
+\ccc{CurvePairAnalysis::CurveAnalysis_2}.}
+
+\ccCreation
+\ccCreationVariable{cp}
+
+\ccConstructor{CurvePairAnalysis_2(Curve_analysis_2 ca1, Curve_analysis_2 ca2);}
+{constructs an analysis for the curve-pair defined by analyses given by 
+ca1 and ca2. The polynomials defining the analyses must be squarefree and 
+coprime.
+}
+
+\begin{ccAdvanced}
+
+\ccConstructor{template < class InputIterator >
+  CurvePairAnalysis_2(Curve_analysis_2 ca1, Curve_analysis_2 ca2, 
+  InputIterator begin, InputIterator end);}{
+  constructs an analysis for the pair of curves defined by $ca1$ and $ca2$. 
+  The polynomials definining the analyses must be squarefree and coprime. 
+  The iterator range [begin,end) contains factors of $\mbox{resultant}(p,q,y)$,
+  i.e., define $x$-coordinates, 
+  which allows to simplify the real root isolation within this layer.
+  The \ccc{value_type} of InputIterator is \ccc{Polynomial_1}. 
+  This constructor has been introduced to enable an upper layer (CK) to use
+  additional knowledge on the problem.
+}
+
+\end{ccAdvanced}
+
+\ccAccessFunctions
+
+\ccMethod{Curve_analysis_2 get_curve_analysis(bool c);}{
+  returns curve analyis for $c$-''th'' curve (0 or 1)
+}
+
+\ccMethod{unsigned int number_of_vertical_lines_with_event();}{
+  returns number of vertical lines that encode an event
+}
+
+
+\ccMethod{int event_of_curve_analysis(unsigned int i, bool c);}{
+  Given the $i$-th event of the curve pair 
+  this method returns the id of the event of the corresponding curve
+  analysis $c$ (0 or 1), or $-1$, if the curve has no event at this coordinate.
+}
+
+\ccMethod{Curve_pair_vertical_line vertical_line_at_event(int i);}{
+  returns an instance of \ccc{CurvePairVerticalLine_1} at the $i$-th event
+  \ccPrecond{$0 \leq i < \mbox{num\_vertical\_lines\_with\_event()}$}
+}
+
+\ccMethod{Curve_pair_vertical_line vertical_line_of_interval(int i);}{
+  returns an instance of \ccc{CurvePairVerticalLine_1} of the $i$-th interval
+  between $x$-events.
+  \ccPrecond{$0 \leq i leq \mbox{num\_vertical\_lines\_with\_event()}$}
+}
+
+\ccMethod{Curve_pair_vertical_line vertical_line_for_x(Algebraic_real_1 x,
+  CGAL::Sign perturb = CGAL::ZERO);}{
+  returns vertical\_line\_at\_event(i), if $x$ hits $i$-th event, otherwise
+  returns vertical\_line\_of\_interval(i), where $i$ is the id of the interval
+  $x$ lies in. 
+  If $pertub$ is CGAL::NEGATIVE (CGAL::POSITIVE) and $x$ states
+  an event, then vertical\_line\_of\_interval(i) 
+  (vertical\_line\_of\_interval(i+1)) is returned.
+  \ccPrecond{$x$ is finite}
+}
+
+\ccMethod{Curve_pair_vertical_line vertical_line_at_exact_x(Algebraic_real_1 x);}{
+  returns an instance of \ccc{CurvePairVerticalLine_1} at the given $x$
+  \ccPrecond{$x$ is finite}
+}
+
+Note that the access methods to vertical lines are not redundant! The ones
+using an id-value are efficient for speed-ups (caching, avoids to search some
+$x$, or the unique representative vertical line for an interval). The others 
+enable a user to compute vertical lines for given $x$.
+
+\begin{ccAdvanced}
+
+\ccMethod{Algebraic_real_2_const_iterator solve_begin();}{
+  returns iterator running over all finite intersection of the two curves.
+}
+
+\ccMethod{Algebraic_real_2_const_iterator solve_end();}{
+  returns past-end-value for all finite intersections of the two curves.
+}
+
+%\ccMethod{int find(Algebraic_real_2 s);}{
+%  returns the index of the event at the vertical line defined by 
+%  $s$'s $x$-coordinate, or -1 if $s$ is does not lie on any curve.
+%}
+
+\end{ccAdvanced}
+
+
+%Additionally note that we talk about 4 sequences of $x$-critical lines here. 
+%
+%\begin{itemize}
+%\item The sequence of CurveVerticalLine\_1 of $p$ where each CVL has been 
+%converted and merged with $q$ to a CVPL.
+%\item The sequence of CurveVerticalLine\_1 of $q$ where each CVL has been 
+%converted and merged with $p$ to a CPVL.
+%\item The sequence of CurvePairVerticalLine\_1 of the intersections of 
+%$p$ and $q$
+%\item The merged sequence of CurvePairVerticalLine_1 of the former three 
+%sequences. The method event\_id\_of\_x helps to find indeces in the first 
+%three sequences starting from an index in this sequence!
+%\end{itemize}
+
+\end{ccRefConcept}
