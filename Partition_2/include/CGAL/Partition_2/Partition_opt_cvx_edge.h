@@ -66,10 +66,11 @@ public:
       Turn_reverser<Point_2_, Left_turn_2>  right_turn(left_turn);
       if (right_turn(p1, p2, p3))
          _validity = PARTITION_OPT_CVX_START_VALID;
-      if (right_turn(p4, p5, p6))
+      if (right_turn(p4, p5, p6)) {
          if (_validity == PARTITION_OPT_CVX_START_VALID) 
             _validity = PARTITION_OPT_CVX_BOTH_VALID;
          else _validity = PARTITION_OPT_CVX_END_VALID;
+      }
    }
 
    void set_visible(bool vis) { _is_visible = vis; }
