@@ -32,7 +32,7 @@
 #include <qiconset.h>
 
 /* XPM */
-static char *polygon2_xpm[] = {
+static const char *polygon2_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "16 16 5 1",
 "  c black",
