@@ -74,8 +74,24 @@ clean:
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-.SUFFIXES: .cpp
-
-.cpp$(OBJ_EXT):
+%$(OBJ_EXT) : %.cpp
 	$(CGAL_CXX)  $(CXXFLAGS) $(ADDITIONNAL_CXXFLAGS) -c $<
 
+FLEX =flex
+BISON ?=bison
+
+%.cpp : %.l
+	$(FLEX) -8 -o$@ $<
+
+# Apparently, old versions of bison (e.g., 1.28) name the generated definion
+# header file <base>.cpp.h. The file must be renamed to <base>.hpp 
+BISON_VERSION_CMD =expr match "`bison --version`" '.*\([1-9]\.[0-9]*\)'
+BISON_VERSION =$(shell $(BISON_VERSION_CMD))
+OLD_BISON_VERSION_CMD =expr "$(BISON_VERSION)" \<= 1.28
+OLD_BISON_VERSION =$(shell $(OLD_BISON_VERSION_CMD))
+
+%.cpp %.hpp : %.y
+	$(BISON) -d $< -o $*.cpp
+ifeq ($(OLD_BISON_VERSION), 1)
+	mv $*.cpp.h $*.hpp
+endif
