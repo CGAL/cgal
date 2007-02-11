@@ -1,13 +1,9 @@
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
+#include <CGAL/Monge_via_jet_fitting.h>
 
-#include <stdio.h>
-#include <iostream>
 #include <fstream>
 #include <stdlib.h>
-
 #include <vector>
-#include <CGAL/Monge_via_jet_fitting.h>
 
 typedef double                   DFT;
 typedef CGAL::Cartesian<DFT>     Data_Kernel;

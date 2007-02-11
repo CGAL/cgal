@@ -1,16 +1,12 @@
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian.h>
+#include <CGAL/Monge_via_jet_fitting.h>
+#include <CGAL/Lapack/Linear_algebra_lapack.h>
 
-#include <stdio.h>
-#include <iostream>
 #include <fstream>
-#include <stdlib.h>
 #include <vector>
 
 #include <boost/property_map.hpp>
 
-#include <CGAL/Monge_via_jet_fitting.h>
-#include <CGAL/Lapack/Linear_algebra_lapack.h>
  
 #include "PolyhedralSurf.h"
 #include "PolyhedralSurf_operations.h"
@@ -285,6 +281,6 @@ int main(int argc, char *argv[])
     out_verbose->close(); 
     delete out_verbose;
   }
-  return 1;
+  return 0;
 }
  

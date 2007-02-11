@@ -1,12 +1,13 @@
 #ifndef _POLYHEDRALSURF_H_
 #define _POLYHEDRALSURF_H_
 
-#include <boost/property_map.hpp>
-#include <boost/graph/properties.hpp>
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+
+#include <boost/property_map.hpp>
+#include <boost/graph/properties.hpp>
+
 
 #include <algorithm>
 #include <vector>
