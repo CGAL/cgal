@@ -105,8 +105,8 @@ construct_from_points(ForwardIterator first, ForwardIterator last,
     "HyperplaneCd::constructor: cannot use o to determine side.");
 
   ptr()->v = spanning_vecs.column(j);
-  if ( CGAL_NTS sign(sum) > 0 && side == ON_NEGATIVE_SIDE ||
-       CGAL_NTS sign(sum) < 0 && side == ON_POSITIVE_SIDE)
+  if ( ( CGAL_NTS sign(sum) > 0 && side == ON_NEGATIVE_SIDE ) ||
+       ( CGAL_NTS sign(sum) < 0 && side == ON_POSITIVE_SIDE ) )
     invert_rep();
 }
 
