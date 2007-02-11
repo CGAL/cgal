@@ -409,7 +409,7 @@ void Turkowski_polynomial_compute_roots(const double *begin, const double *end,
       double rd[3];
       int numr= FindCubicRoots(begin, rd);
       for (int i=numr-1; i>=0; --i) {
-	if (rd[i] > lb && rd[i] < ub) roots.push_back(rd[i]);
+	if (rd[i] >= lb && rd[i] < ub) roots.push_back(rd[i]);
       }
       std::sort(roots.begin(), roots.end(), std::greater<double>());
       break;
@@ -442,7 +442,7 @@ void Turkowski_polynomial_compute_cleaned_roots(const double *begin, const doubl
       int numr= FindCubicRoots(begin, rd);
       double last=-std::numeric_limits<double>::infinity();
       for (int i=numr-1; i>=0; --i) {
-	if (rd[i]< ub && rd[i] > lb) roots.push_back(rd[i]);
+	if (rd[i]< ub && rd[i] >= lb) roots.push_back(rd[i]);
 	if (rd[i] < lb && rd[i] > last){
 	  last=rd[i];
 	}

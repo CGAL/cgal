@@ -87,7 +87,7 @@ public:
       time_nt_=t;
       time_= Time(t);
     } else {
-      if (time_is_nt_ && time_nt_ != t || !time_is_nt_) {
+      if ((time_is_nt_ && time_nt_ != t) || !time_is_nt_) {
 	time_is_nt_=true;
 	time_= Time(t);
 	time_nt_=t;
