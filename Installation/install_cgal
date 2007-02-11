@@ -957,7 +957,7 @@ set_compiler_flags()
 	    CGAL_WINLIB_CXXFLAGS="-fpermissive"
 	    WINDOW_INCLUDE="/usr/openwin/include"
 	    RUNTIME_LINKER_FLAG="-R "
-	    CGAL_SHARED_LIB_SONAME="-Wl,-h,\$(SHARED_LIB).\$(SOMAJOR)"
+	    CGAL_SHARED_LIB_SONAME="-h \$(SHARED_LIB).\$(SOMAJOR)"
 	    CGAL_SHARED_LIB_WITH_SOVERSION="\$(SHARED_LIB).\$(SOVERSION)"
 	    CGAL_SHARED_LIB_WITH_SOMAJOR="\$(SHARED_LIB).\$(SOMAJOR)"
 	    ;;
