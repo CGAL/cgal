@@ -4254,19 +4254,24 @@ _do_compile()
 	    MAKE_OPTION="${MAKE_OPTION} CXXFLAGS=\$(CGAL_SHARED_LIB_CXXFLAGS) shared_lib";;
     esac
 
+    # Please correct the variable _buildlog_marker in the script
+    # "Testsuite/test/collect_cgal_testresults" if you modify the following
+    # variable _buildlog_marker.
+    _buildlog_marker="log for $1 $2 shown"
+
     if make ${MAKE_OPTION} >"${COMPILE_LOGFILE}" 2>&1; then
 	log_print "Compilation of $1 $2 ${_libname} succeeded."
-	log_print "vvvvvvvvvvvv build log for $1 $2 shown below vvvvvvvvvvvv"
+	log_print "vvvvvvvvvvvv build ${_buildlog_marker} below vvvvvvvvvvvv"
 	eval ${_cat} \"${COMPILE_LOGFILE}\" ${INSTALL_LOGFILE_REDIRECTION}
-	log_print "^^^^^^^^^^^^ build log for $1 $2 shown above ^^^^^^^^^^^^"
+	log_print "^^^^^^^^^^^^ build ${_buildlog_marker} above ^^^^^^^^^^^^"
 	${_printf} "%s\n" " done."
 	ANY_LIB_COMPILED='y'
 	return 0
     else
 	log_print "Compilation of $1 $2 ${_libname} failed."
-	log_print "vvvvvvvvvvvv error messages below vvvvvvvvvvvv"
+	log_print "vvvvvvvvvvvv error ${_buildlog_marker} below vvvvvvvvvvvv"
 	eval ${_cat} \"${COMPILE_LOGFILE}\" ${INSTALL_LOGFILE_REDIRECTION}
-	log_print "^^^^^^^^^^^^ error messages above ^^^^^^^^^^^^"
+	log_print "^^^^^^^^^^^^ error ${_buildlog_marker} above ^^^^^^^^^^^^"
 	${_printf} "\n%s\n" "${_LEFTSPACE}Compilation of $1 $2 failed."
 	${_printf} "%s\n" "${_LEFTSPACE}You will be shown a log now ..."
 	print_filled_line
