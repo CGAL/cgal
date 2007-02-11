@@ -406,7 +406,7 @@ namespace CGALi {
       return _end;
     }
     
-    inline const bool is_full() const {
+    bool is_full() const {
       return flags.is_full == 2;
     }
 
