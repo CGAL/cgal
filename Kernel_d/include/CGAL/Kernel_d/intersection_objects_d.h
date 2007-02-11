@@ -634,10 +634,11 @@ Segment_d_Hyperplane_d_pair<R>::intersection_type()
   if (_known) return _result;
   _known = true;
 
-  if ( _s.is_degenerate() ) 
+  if ( _s.is_degenerate() ) {
     if ( _h.has_on(_s.point(0)) ) 
     { _ip = _s.point(0); return _result = POINT; } 
     else { return _result = NO_INTERSECTION; }
+  }
 
   typedef typename R::Line_hyperplane_intersection_d Int_obj_type;
   Int_obj_type Intersect;
