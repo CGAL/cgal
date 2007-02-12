@@ -183,10 +183,12 @@ is_improving (int j, const NT& mu, const NT& nt0 ) const
       return mu < nt0;
     case QP_solver::UPPER:
       return mu > nt0;
-    case QP_solver::ZERO:	
-      const int where =
+    case QP_solver::ZERO:
+      {
+	const int where =
 	  this->solver().state_of_zero_nonbasic_variable(j);
-      return (where >= 0 && mu > nt0 || where <= 0 && mu < nt0);
+	return (where >= 0 && mu > nt0 || where <= 0 && mu < nt0);
+      }
     case QP_solver::FIXED:
       return false;
     case QP_solver::BASIC:

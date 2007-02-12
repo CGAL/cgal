@@ -803,7 +803,6 @@ public:
   // QP_model types
   typedef CGAL::Join_input_iterator_1
   <typename A_Matrix::const_iterator, A_Beginner > A_iterator;
-  typedef typename A_Matrix::const_iterator A_iterator;
   typedef typename Vector::const_iterator B_iterator;
   typedef typename R_vector::const_iterator R_iterator;
   typedef typename F_vector::const_iterator FL_iterator;

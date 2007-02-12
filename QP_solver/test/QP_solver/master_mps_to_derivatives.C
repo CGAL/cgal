@@ -277,7 +277,7 @@ void create_free_instance(CGAL::QP_from_mps<IT, Is_linear,
   typedef typename QP_MPS::A_Matrix          Matrix;
   typedef typename QP_MPS::A_Beginner        A_Beginner;
   typedef typename QP_MPS::A_iterator        A_iterator;
-  typedef typename CGAL::Comparison_result Row_type;
+  typedef CGAL::Comparison_result Row_type;
   typedef typename QP_MPS::R_vector R_vector;
 
   // copy the qp
