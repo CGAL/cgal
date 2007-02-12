@@ -8,8 +8,7 @@
 #include <CGAL/Monge_via_jet_fitting.h> 
 #include <CGAL/Lapack/Linear_algebra_lapack.h>
 
- 
-//this is an enriched Polyhedron with facets' normal
+//This Is an enriched Polyhedron with facets' normal
 #include "PolyhedralSurf.h"
 #include "PolyhedralSurf_rings.h"
 
@@ -237,6 +236,6 @@ int main()
  
   std::cout << "success\n";
 
-  return 1;
+  return 0;
 }
  
