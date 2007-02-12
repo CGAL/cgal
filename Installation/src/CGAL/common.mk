@@ -77,7 +77,7 @@ clean:
 %$(OBJ_EXT) : %.cpp
 	$(CGAL_CXX)  $(CXXFLAGS) $(ADDITIONNAL_CXXFLAGS) -c $<
 
-FLEX =flex
+FLEX ?=flex
 BISON ?=bison
 
 %.cpp : %.l
