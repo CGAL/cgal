@@ -3,10 +3,12 @@
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 
 #ifdef CGAL_USE_F2C
 #define my_dgelss dgelss_
-#else   my_dgelss dgelss
+#else  
+#define my_dgelss dgelss
 #endif
 
 extern "C" {

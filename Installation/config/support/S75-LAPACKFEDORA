@@ -1,10 +1,10 @@
 # LAPACK is a linear algebra library
 
-DESCRIPTION = LAPACK for gcc/Atlas
+DESCRIPTION = LAPACK for fedora
 PROVIDES = LAPACK
-CXXFLAGS = -DCGAL_USE_F2C
+CXXFLAGS = 
 LDFLAGS = 
-LIBS = lapack f77blas cblas atlas g2c
+LIBS = lapack
 REQUIRES =
 INCOMPATIBLE = DOLLAR_WINDOWS_COMPILER
 STDINCLDIRS =
