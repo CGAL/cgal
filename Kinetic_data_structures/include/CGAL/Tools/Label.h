@@ -63,6 +63,14 @@ public:
   {
     return id_ < o.id_;
   }
+  bool operator>=(const This &o) const
+  {
+    return id_ >= o.id_;
+  }  
+  bool operator<=(const This &o) const
+  {
+    return id_ <= o.id_;
+  }
   bool operator>(const This &o) const
   {
     return id_ > o.id_;
