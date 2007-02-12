@@ -65,7 +65,7 @@ include ../CGAL/common.mk
 %.moc : %.h
 	$(QT_MOC) $< -o $@
 
-vpath %.h $(CGAL_INCL_DIR)/CGAL/IO
+vpath %.h ../../include/CGAL/IO
 
 #---------------------------------------------------------------------#
 #                    moc rules
