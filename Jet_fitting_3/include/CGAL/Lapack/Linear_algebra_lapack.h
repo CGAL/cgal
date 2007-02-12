@@ -1,11 +1,16 @@
 #ifndef CGAL_LAPACK_H
 #define CGAL_LAPACK_H
 
-#include <stdlib.h>
-#include "blaswrap.h"
-#include "f2c.h"
+#ifdef CGAL_USE_F2C
+#define my_dgelss dgelss_
+#else   my_dgelss dgelss
+#endif
+
 extern "C" {
-#include "clapack.h"
+int my_dgelss(int *m, int *n, int *nrhs, 
+		    double *a, int *lda, double *b, int *ldb, double *
+		    s, double *rcond, int *rank, double *work, int *lwork,
+		    int *info); 
 }
 
 namespace CGAL {
@@ -78,7 +83,7 @@ public:
 
  Lapack_svd::FT Lapack_svd::solve(Matrix& M, Vector& B)
 {
-  integer m = M.number_of_rows(),
+  int m = M.number_of_rows(),
     n = M.number_of_columns(),
     nrhs = 1,
     lda = m,
@@ -92,7 +97,7 @@ public:
 
   FT rcond = -1;
 
-  dgelss_(&m, &n, &nrhs, M.matrix(), &lda, B.vector(), &ldb, sing_values, 
+  my_dgelss(&m, &n, &nrhs, M.matrix(), &lda, B.vector(), &ldb, sing_values, 
 	  &rcond, &rank, work, &lwork, &info);
   assert(info==0);
 

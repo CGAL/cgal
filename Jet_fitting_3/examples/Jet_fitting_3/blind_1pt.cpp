@@ -55,5 +55,5 @@ int main(int argc, char *argv[])
     std::cout << monge_fit.pca_basis(i).first << std::endl 
 	      << monge_fit.pca_basis(i).second  << std::endl;
   
-  return 1;
+  return 0;
 }
