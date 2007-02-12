@@ -1,5 +1,3 @@
-#define CGAL_CHECK_EXPENSIVE
-#define CGAL_CHECK_EXACTNESS
 
 #include <CGAL/Kinetic/Insert_event.h>
 #include <CGAL/Kinetic/Exact_simulation_traits.h>

@@ -1,9 +1,5 @@
-#define CGAL_CHECK_EXPENSIVE
-#define CGAL_CHECK_EXACTNESS
 
 #include <CGAL/basic.h>
-
-#ifdef CGAL_USE_QT
 #include <CGAL/Kinetic/Inexact_simulation_traits.h>
 #include <CGAL/Kinetic/Exact_simulation_traits.h>
 #include <CGAL/Kinetic/Delaunay_triangulation_2.h>
@@ -131,9 +127,4 @@ int main(int argc, char *argv[])
   } else {
     //return run<CGAL::Kinetic::Inexact_simulation_traits_2>(argc, argv, n,d,seed, file);
   }
-};
-#else
-int main(int, char *[]){
-  return 0;
 }
-#endif
