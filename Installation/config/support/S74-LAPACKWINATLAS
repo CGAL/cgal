@@ -1,0 +1,15 @@
+# LAPACK is a linear algebra library
+
+DESCRIPTION = LAPACK for Visual C++/Atlas
+PROVIDES = LAPACK
+CXXFLAGS = -DCGAL_USE_F2C
+LDFLAGS = 
+LIBS = liblapack libf77blas libcblas libatlas vcf2c
+REQUIRES =
+INCOMPATIBLE =
+STDINCLDIRS =
+INCLTHING =
+STDLIBDIRS =
+LIBTHING =
+
+# EOF
