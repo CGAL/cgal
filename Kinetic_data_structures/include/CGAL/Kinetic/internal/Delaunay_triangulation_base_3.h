@@ -338,7 +338,7 @@ public:
     Insert point.
     Set edges to never fails. Set outside facets.
   */
-  Vertex_handle push_vertex(Point_key k, Cell_handle c) {
+  /*Vertex_handle push_vertex(Point_key k, Cell_handle c) {
     clean_cell(c);
     v_.pre_insert_vertex(k, c);
     // into max dim simplex?
@@ -354,7 +354,7 @@ public:
     }
     v_.post_insert_vertex(vh);
     return vh;
-  }
+    }*/
 
   Cell_handle pop_vertex(Vertex_handle v) {
     v_.pre_remove_vertex(v);
@@ -1216,7 +1216,7 @@ private:
     return mpt_.pointer();
     }*/
 
-
+public:
   void clean_cell(Cell_handle h) {
     CGAL_precondition(has_certificates_);
     for (unsigned int i=0; i< 4; ++i) {
@@ -1265,6 +1265,7 @@ private:
 
     v_.create_cell(h);
   }
+protected:
   void handle_changed_cell(Cell_handle) {
     
   }

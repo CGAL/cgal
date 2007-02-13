@@ -547,10 +547,24 @@ public:
 
     remove_redundant(h,k);
     
-    typename Triangulation::Vertex_handle vh= kdel_.push_vertex(k, h);
-
+    //typename Triangulation::Vertex_handle vh= kdel_.push_vertex(k, h);
+    kdel_.clean_cell(h);
+    kdel_.visitor().pre_insert_vertex(k, h);
+    // into max dim simplex?
+    Vertex_handle vh=kdel_.triangulation().tds().insert_in_cell( h);
+    vh->set_point(k);
+    kdel_.set_vertex_handle(k, vh);
     handle_vertex(vh, rs);
 
+    std::vector<Cell_handle> ics;
+    triangulation().incident_cells(vh, std::back_insert_iterator<std::vector<Cell_handle> >(ics));
+    CGAL_postcondition(ics.size() == 4);
+    for (unsigned int j=0; j< ics.size(); ++j) {
+      Cell_handle cc= ics[j];
+      kdel_.handle_new_cell(cc);
+    }
+    kdel_.visitor().post_insert_vertex(vh);
+ 
     on_geometry_changed();
   }
 
@@ -906,6 +920,7 @@ protected:
 
   void handle_vertex(typename Triangulation::Vertex_handle vh, Root_stack &s) {
     CGAL_KINETIC_LOG(LOG_LOTS, "Updating vertex " << vh->point() << std::endl);
+    CGAL_precondition(vh->info() == Event_key());
     if (s.will_fail()) {
       Time t= s.failure_time();
       s.pop_failure_time();
