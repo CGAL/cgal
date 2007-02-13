@@ -38,13 +38,13 @@ LDFLAGS = \
 all:            \
                 blind$(EXE_EXT) 
 
-BLIND_OBJS=options$(OBJ_EXT) PolyhedralSurf$(OBJ_EXT) blind$(OBJ_EXT)
+BLIND_OBJS=PolyhedralSurf$(OBJ_EXT) blind$(OBJ_EXT)
 blind$(EXE_EXT): $(BLIND_OBJS)
 	$(CGAL_CXX) $(LIBPATH) -o blind$(EXE_EXT)  $(BLIND_OBJS) \
 	$(LDFLAGS) 
 
 clean: \
-        blind.clean  options.clean PolyhedralSurf.clean 
+        blind.clean PolyhedralSurf.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules

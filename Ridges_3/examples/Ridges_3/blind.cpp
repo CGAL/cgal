@@ -6,14 +6,13 @@
 #include <CGAL/Lapack/Linear_algebra_lapack.h>
 
 #include <fstream>
-#include <vector>
-
-
+#include <boost/program_options.hpp>
+namespace po = boost::program_options;
+using namespace std;
  
 //this is an enriched Polyhedron with facets' normal
 #include "PolyhedralSurf.h"
 #include "PolyhedralSurf_rings.h"
-#include "options.h"//parsing command line
 
 typedef PolyhedralSurf::Traits          Kernel;
 typedef Kernel::FT                      FT;
@@ -55,28 +54,13 @@ Vertex2FT_property_map vertex2k1_pm(vertex2k1_map), vertex2k2_pm(vertex2k2_map),
   vertex2P1_pm(vertex2P1_map), vertex2P2_pm(vertex2P2_map),vertex2P2_p();
 Vertex2Vector_property_map vertex2d1_pm(vertex2d1_map), vertex2d2_pm(vertex2d2_map);
 
-//Syntax requirred by Options
-static const char *const optv[] = {
-  "?|?",
-  "f:fName <string>",	//name of the input off file
-  "d:deg <int>",	//degree of the jet
-  "m:mdegree <int>",	//degree of the Monge rep
-  "a:nrings <int>",	//# rings
-  "p:npoints <int>",	//# points
-  "t:tagorder <int>",   //order of diff quant to compute ridge type :
-                        //  = Tag_3 or Tag_4
-  "u:umb_size  <number>",  //size of umbilic patches (as multiple of 1ring size)
-  "v|",//verbose?
-  NULL
-}; 
-
 // default fct parameter values and global variables
 unsigned int d_fitting = 3;
 unsigned int d_monge = 3;
 unsigned int nb_rings = 0;//seek min # of rings to get the required #pts
 unsigned int nb_points_to_use = 0;//
 Ridge_approximation::Tag_order tag_order = Ridge_approximation::Tag_3;
-double umb_size = 1;
+double umb_size = 2;
 bool verbose = false;
 unsigned int min_nb_points = (d_fitting + 1) * (d_fitting + 2) / 2;
 
@@ -181,33 +165,56 @@ void compute_differential_quantities(PolyhedralSurf& P, Poly_rings& poly_rings)
 int main(int argc, char *argv[])
 {  
   std::string if_name, of_name;// of_name same as if_name with '/' -> '_'
-  int optchar;
-  char *optarg;
-  Options opts(*argv, optv);
-  OptArgvIter iter(--argc, ++argv);
-  int int_tag;
-  
-  while ((optchar = opts(iter, (const char *&) optarg))){
-    switch (optchar){
-    case 'f': if_name = optarg; break;
-    case 'd': d_fitting = atoi(optarg); break;
-    case 'm': d_monge = atoi(optarg); break;
-    case 'a': nb_rings = atoi(optarg); break;
-    case 'p': nb_points_to_use = atoi(optarg); break;
-    case 't': 
-      int_tag = atoi(optarg);
+  unsigned int int_tag;
+ 
+  try {
+    po::options_description desc("Allowed options");
+    desc.add_options()
+      ("help,h", "produce help message.")
+      ("input-file,f", po::value<string>(&if_name)->default_value("data/ellipsoid_u_0.02.off"),
+       "name of the input off file")
+      ("degree-jet,d", po::value<unsigned int>(&d_fitting)->default_value(3),
+       "degree of the jet,  3 <= degre-jet <= 4")
+      ("degree-monge,m", po::value<unsigned int>(&d_monge)->default_value(3),
+       "degree of the Monge rep, 3<= degree-monge <= degree-jet")
+      ("nb-rings,a", po::value<unsigned int>(&nb_rings)->default_value(0),
+       "number of rings to collect neighbors. 0 means collect enough rings to make appro possible a>=1 fixes the nb of rings to be collected")
+      ("nb-points,p", po::value<unsigned int>(&nb_points_to_use)->default_value(0),
+       "number of neighbors to use.  0 means this option is not considered, this is the default p>=1 fixes the nb of points to be used")
+      ("tag_order,t", po::value<unsigned int>(&int_tag)->default_value(3),
+       "Order of differential quantities used, must be 3 or 4")
+      ("umbilic-patch-size,u", po::value<double>(&umb_size)->default_value(2),
+       "size of umbilic patches (as multiple of 1ring size)")
+      ("verbose,v", po::value<bool>(&verbose)->default_value(false),
+       "verbose output on text file")
+      ;
+    
+    po::variables_map vm;        
+    po::store(po::parse_command_line(argc, argv, desc), vm);
+    po::notify(vm);    
+    
+    if (vm.count("help")) {
+      cout << desc << "\n";
+      return 1;
+    }
+
+    if (vm.count("tag_order")){
       if ( int_tag == 3 ) tag_order = Ridge_approximation::Tag_3;
       if ( int_tag == 4 ) tag_order = Ridge_approximation::Tag_4;
       if ( int_tag != 3 && int_tag != 4 ) 
-	{cerr << "tag_order must be 3 or 4";exit(0);}
-      break;
-    case 'v': verbose = true; break;
-    case 'u': umb_size = atof(optarg); break;
-    default:
-      cerr << "Unknown command line option " << optarg;
-      exit(0);
+	{cerr << "tag_order must be 3 or 4";
+	  return 1;}
     }
-  } 
+  }
+    
+    catch(exception& e) {
+    cerr << "error: " << e.what() << "\n";
+    return 1;
+    }
+    catch(...) {
+      cerr << "Exception of unknown type!\n";
+    }
+
   //modify global variables
   min_nb_points = (d_fitting + 1) * (d_fitting + 2) / 2;
 
