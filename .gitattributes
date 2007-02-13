@@ -647,8 +647,8 @@ Installation/config/support/S71-OPENGL_W32 -text
 Installation/config/support/S72-LAPACKGCCATLAS -text
 Installation/config/support/S73-LAPACKWINMKL -text
 Installation/config/support/S74-LAPACKWINATLAS -text
-Installation/config/support/S75-LAPACKFEDORA -text
-Installation/config/support/S76-LAPACKDARWIN -text
+Installation/config/support/S75-LAPACKDARWIN -text
+Installation/config/support/S76-LAPACKFEDORA -text
 Installation/config/support/S80-QT3MT -text
 Installation/config/support/S81-QT3ST -text
 Installation/config/support/S82-QT3MSMT -text
