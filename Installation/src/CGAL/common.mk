@@ -50,7 +50,7 @@ shared_lib: shared_lib_no_install
 	fi
 
 shared_lib_no_install: $(OBJECTS)
-	$(CGAL_SHARED_LIB_CREATE)$(CGAL_SHARED_LIB_WITH_SOVERSION) $(CGAL_SHARED_LIB_SONAME) \
+	$(SHARED_LIB_CREATE)$(CGAL_SHARED_LIB_WITH_SOVERSION) $(CGAL_SHARED_LIB_SONAME) \
 	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
 		$(CGAL_SHARED_LIB_LDFLAGS) $(SHARED_LIB_ADDITIONNAL_LDFLAGS)
 	rm $(OBJECTS)
