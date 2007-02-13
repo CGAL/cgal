@@ -216,7 +216,6 @@ private:
   Value_by_basic_index;
 
   // access values by original index
-  friend class Base::Value_by_index;
   typedef typename Base::Value_by_index Value_by_index;
 
   // access to original problem by basic variable/constraint index:

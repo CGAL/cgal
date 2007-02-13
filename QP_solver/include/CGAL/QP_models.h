@@ -139,16 +139,16 @@ public:
   // access
   int n() const {return n_;}
   int m() const {return m_;}
-  const A_iterator& a() const {return a_it;}
-  const B_iterator& b() const {return b_it;}
-  const R_iterator& r() const {return r_it;}  
-  const FL_iterator& fl() const {return fl_it;}
-  const L_iterator& l() const {return l_it;}
-  const FU_iterator& fu() const {return fu_it;}
-  const U_iterator& u() const {return u_it;}
-  const D_iterator& d() const {return d_it;}
-  const C_iterator& c() const {return c_it;}
-  const C_entry& c0() const {return c_0;}
+  const A_iterator a() const {return a_it;}
+  const B_iterator b() const {return b_it;}
+  const R_iterator r() const {return r_it;}  
+  const FL_iterator fl() const {return fl_it;}
+  const L_iterator l() const {return l_it;}
+  const FU_iterator fu() const {return fu_it;}
+  const U_iterator u() const {return u_it;}
+  const D_iterator d() const {return d_it;}
+  const C_iterator c() const {return c_it;}
+  const C_entry c0() const {return c_0;}
 };
 
 // corresponding global function make_quadratic_program_from_iterators
@@ -1103,10 +1103,6 @@ private: // parsing routines:
   bool bounds_section();
   bool qmatrix_section();
 
-private:
-  D_iterator D(const Tag_true);
-  D_iterator D(const Tag_false);
-
 public: // methods:
   // Create a quadratic program instance from a stream.
   //
@@ -1203,7 +1199,7 @@ public: // methods:
   // passed to the constructor of class QP_solver).
   //
   // Precondition: is_valid()
-  A_iterator a() const
+  const A_iterator a() const
   {
     CGAL_qpe_assertion(is_valid());
     return A_iterator(A_.begin(), A_Beginner());
@@ -1213,7 +1209,7 @@ public: // methods:
   // passed to the constructor of class QP_solver).
   //
   // Precondition: is_valid()
-  B_iterator b() const
+  const B_iterator b() const
   {
     CGAL_qpe_assertion(is_valid());
     return b_.begin();
@@ -1223,7 +1219,7 @@ public: // methods:
   // passed to the constructor of class QP_solver).
   //
   // Precondition: is_valid()
-  C_iterator c() const
+  const C_iterator c() const
   {
     CGAL_qpe_assertion(is_valid());
     return c_.begin();
@@ -1244,17 +1240,17 @@ public: // methods:
   // Precondition: is_valid()
   // it calls one of the following two helpers to decide between
   // the appropriate iterators
-  D_iterator d() const
+  const D_iterator d() const
   {
     return d(Is_linear());
   }
 
 private:
-  D_iterator d (Tag_true is_linear) const {
+  const D_iterator d (Tag_true is_linear) const {
     return D_iterator(it0); 
   }
 
-  D_iterator d(Tag_false is_linear) const {
+  const D_iterator d(Tag_false is_linear) const {
     CGAL_qpe_assertion(is_valid());
     return D_iterator(D_.begin(), D_Beginner());
   }
@@ -1270,7 +1266,7 @@ public:
   // QP_solver).
   //
   // Precondition: is_valid()
-  R_iterator r() const
+  const R_iterator r() const
   {
     CGAL_qpe_assertion(is_valid());
     return row_types_.begin();
@@ -1281,7 +1277,7 @@ public:
   // needs to be passed to the constructor of class QP_solver).
   //
   // Precondition: is_valid()
-  FL_iterator fl() const {
+  const FL_iterator fl() const {
     CGAL_qpe_assertion(is_valid());
     return fl_.begin();
   }
@@ -1291,7 +1287,7 @@ public:
   // needs to be passed to the constructor of class QP_solver).
   //
   // Precondition: is_valid()
-  FU_iterator fu() const {
+  const FU_iterator fu() const {
     CGAL_qpe_assertion(is_valid());
     return fu_.begin();
   }
@@ -1301,7 +1297,7 @@ public:
   // be passed to the constructor of class QP_solver.
   //
   // Precondition: is_valid()
-  U_iterator u() const {
+  const U_iterator u() const {
     CGAL_qpe_assertion(is_valid());
     return u_.begin();
   }
@@ -1311,7 +1307,7 @@ public:
   // be passed to the constructor of class QP_solver.
   //
   // Precondition: is_valid()
-  L_iterator l() const {
+  const L_iterator l() const {
     CGAL_qpe_assertion(is_valid());
     return l_.begin();
   }
