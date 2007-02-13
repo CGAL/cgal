@@ -13,12 +13,10 @@ int main(int, char *[]) {
 
     Traits::Simulator::Handle sp= tr.simulator_handle();
 
-    CGAL_KINETIC_SET_LOG_LEVEL(CGAL::Kinetic::LOG_LOTS);
-
-    //std::ifstream in("data/weighted_points_3");
-    std::ifstream in("../../demo/Kinetic_data_structures/data/problem_weighted");
+     std::ifstream in("data/weighted_points_3");
     CGAL_assertion(in);
     in >> *tr.active_points_3_table_handle();
+ 
     std::cout << *tr.active_points_3_table_handle();
     
     std::cout <<  *tr.active_points_3_table_handle() << std::endl;
