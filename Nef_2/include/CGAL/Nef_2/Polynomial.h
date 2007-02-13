@@ -1932,9 +1932,10 @@ template <class NT>
 Polynomial<NT> Polynomial<NT>::gcd(
   const Polynomial<NT>& p1, const Polynomial<NT>& p2)
 { CGAL_NEF_TRACEN("gcd("<<p1<<" , "<<p2<<")");
-  if ( p1.is_zero() )
+  if ( p1.is_zero() ) {
     if ( p2.is_zero() ) return Polynomial<NT>(NT(1));
     else return p2.abs();
+  }
   if ( p2.is_zero() )
     return p1.abs();
 
