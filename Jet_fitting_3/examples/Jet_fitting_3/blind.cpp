@@ -188,8 +188,10 @@ int main(int argc, char *argv[])
   PolyhedralSurf P;
   std::ifstream stream(if_name);
   stream >> P;
-  fprintf(stderr, "loadMesh %d Ves %d Facets\n",
-	  P.size_of_vertices(), P.size_of_facets());
+  std::cout << "loadMesh...  "<< "Polysurf with " << P.size_of_vertices()
+	    << " vertices and " << P.size_of_facets()
+	    << " facets. " << std::endl;
+
   if(verbose) 
     (*out_verbose) << "Polysurf with " << P.size_of_vertices()
 		   << " vertices and " << P.size_of_facets()
