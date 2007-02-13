@@ -61,7 +61,7 @@ CORE_BEGIN_NAMESPACE
 const double relEps = (1.0 + std::ldexp(1.0, -52));
 
 /// CORE_DIAGFILE is used for all warning and error messages
-extern char* CORE_DIAGFILE;
+extern const char* CORE_DIAGFILE;
 
 /// template function returns the maximum value of two
 template <class T>
