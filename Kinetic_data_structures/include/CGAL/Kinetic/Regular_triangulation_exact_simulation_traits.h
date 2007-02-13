@@ -39,9 +39,12 @@ CGAL_KINETIC_BEGIN_NAMESPACE
 
 struct Regular_triangulation_exact_simulation_traits {
   typedef Regular_triangulation_exact_simulation_traits This;
-
+#ifdef CGAL_KINETIC_DO_NOT_USE_LAZY_EXACT
+  typedef CGAL::Cartesian<CGAL::Gmpq> Static_kernel_base;
+#else
   typedef CGAL::Exact_predicates_exact_constructions_kernel Static_kernel_base;
-  typedef CGAL::Regular_triangulation_euclidean_traits_3<Static_kernel_base> Static_kernel;
+#endif
+   typedef CGAL::Regular_triangulation_euclidean_traits_3<Static_kernel_base> Static_kernel;
   typedef CGAL::POLYNOMIAL::Polynomial<Static_kernel::FT> Function;
   typedef CGAL::POLYNOMIAL::Sturm_root_stack_traits<Function> Root_stack_traits;
   typedef CGAL::POLYNOMIAL::Sturm_root_stack<Root_stack_traits> Root_stack;

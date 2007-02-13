@@ -114,7 +114,7 @@ protected:
 template <class Coordinate>
 std::ostream &operator<<(std::ostream &out, const Cartesian_moving_weighted_point_3<Coordinate> &point)
 {
-  out << point.point() << ":" << point.weight();
+  out << point.point() << ", " << point.weight();
   return out;
 }
 

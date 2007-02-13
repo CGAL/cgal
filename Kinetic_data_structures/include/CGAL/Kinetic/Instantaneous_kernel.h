@@ -69,7 +69,7 @@ public:
       time_is_nt_=false;
       time_=t;
     } else {
-      if (!time_is_nt_ && time_ != t || time_is_nt_) {
+      if ((!time_is_nt_ && time_ != t) || time_is_nt_) {
 	time_is_nt_=false;
 	time_=t;
 	cache_1_.clear();

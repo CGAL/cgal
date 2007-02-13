@@ -1,5 +1,6 @@
 #define CGAL_CHECK_EXPENSIVE
 #define CGAL_CHECK_EXACTNESS
+#define CGAL_KINETIC_DO_NOT_USE_LAZY_EXACT
 
 #include <CGAL/Kinetic/Exact_simulation_traits.h>
 #include <CGAL/Kinetic/Regular_triangulation_exact_simulation_traits.h>

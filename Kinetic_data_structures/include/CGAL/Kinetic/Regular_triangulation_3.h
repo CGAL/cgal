@@ -480,6 +480,7 @@ public:
     CGAL_assertion(redundant_points_.find(pk)->second == k);
   }
   void audit_pop(Event_key k, Vertex_handle vh) const {
+    CGAL_assertion_code(if (vh->info() != k) std::cerr << vh->info() << std::endl << k << std::endl);
     CGAL_assertion(vh->info() == k);
   }
 
@@ -909,6 +910,7 @@ protected:
       Time t= s.failure_time();
       s.pop_failure_time();
       vh->info()= kdel_.simulator()->new_event(t, Pop_event(s, vh, this));
+      CGAL_assertion_code(kdel_.simulator()->template event<Pop_event>(vh->info()).audit(vh->info()));
     } else {
       vh->info()= kdel_.simulator()->null_event();
     }

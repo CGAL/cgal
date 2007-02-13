@@ -376,15 +376,18 @@ public:
     //iterator it =  std::equal_range(sorted_.begin(), sorted_.end(),k).first;
     CGAL_precondition(it != sorted_.end());
     CGAL_precondition(it->object() == k);
-    iterator p= prior(it);
+    
     v_.pre_remove_vertex(it);
     if (next(it) != end()) {
       simulator_->delete_event(it->event());
       it->set_event(Event_key());
     }
-    sorted_.erase(it);
-    if (p != sorted_.end()) {
+    if (it != sorted_.begin()) {
+      iterator p= prior(it);
+      sorted_.erase(it);
       rebuild_certificate(p);
+    } else {
+      sorted_.erase(it);
     }
     v_.post_remove_vertex(k);
   }
