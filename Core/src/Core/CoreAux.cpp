@@ -179,7 +179,7 @@ int IntExponent(double d) {
 }
 
 /// CORE_DIAGFILE is file name for core_error(..) output.
-char* CORE_DIAGFILE = "Core_Diagnostics";  // global file name 
+const char* CORE_DIAGFILE = "Core_Diagnostics";  // global file name 
 
 /// core_error is the method to write Core Library warning or error messages
 /** 	Both warnings and errors are written to a file called CORE_DIAGFILE.
