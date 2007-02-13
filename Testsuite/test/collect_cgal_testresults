@@ -69,13 +69,10 @@ do_platform()
   cat "${CGAL_DIR}/config/install/${PLATFORM}" >> $RESULT_FILE
   echo "------------" >> $RESULT_FILE
 
-  if [ -f install.log.${1} ] ; then
-    if [ ! -d install.log ]; then
-       mkdir install.log
-       cp install.log.${1} install.log/$TEST_REPORT
-       echo install.log y >> $RESULT_FILE
-    fi
-    grep "Compilation of" install.log.${1} \
+  if [ -f install.log.${PLATFORM} ] ; then
+    cp install.log.${PLATFORM} Installation/ProgramOutput.install.log.${PLATFORM}
+
+    grep "Compilation of" install.log.${PLATFORM} \
     | awk '{ print $3 " " $4 " " $6; }' \
     | sed -e 's/succeeded\.$/y/' -e 's/failed\.$/n/' \
     | while read libname shared_or_static y_or_no; do
@@ -85,7 +82,7 @@ do_platform()
       # with the variable _buildlog_marker from the script install_cgal.
       _buildlog_marker="log for ${libname} ${shared_or_static} shown"
 
-      cat install.log.$1 \
+      cat install.log.${PLATFORM} \
       | sed -n "/${_buildlog_marker} below/,/${_buildlog_marker} above/ p" \
       > ${libname}_${shared_or_static}/$TEST_REPORT
 
