@@ -53,9 +53,9 @@ int my_nearbyint(const T& d)
     ++z;
   else if (frac < -0.5)
     --z;
-  else if (frac == 0.5 && z&1 != 0) // NB: We also need the round-to-even rule.
+  else if (frac == 0.5 && (z&1) != 0) // NB: We also need the round-to-even rule.
     ++z;
-  else if (frac == -0.5 && z&1 != 0)
+  else if (frac == -0.5 && (z&1) != 0)
     --z;
 
   CGAL_assertion(CGAL::abs(T(z) - d) < T(0.5) ||
