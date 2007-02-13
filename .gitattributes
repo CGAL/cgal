@@ -1793,6 +1793,7 @@ Ridges_3/examples/Ridges_3/data/bezierpb3-0.007812.off -text svneol=unset#applic
 Ridges_3/examples/Ridges_3/data/ellipsoid_u_0.02.off -text svneol=unset#application/octet-stream
 Ridges_3/examples/Ridges_3/data/mecanic.off -text svneol=unset#application/octet-stream
 Ridges_3/examples/Ridges_3/data/poly2x^2+y^2-0.062500.off -text svneol=unset#application/octet-stream
+Ridges_3/test/Ridges_3/data/ellipsoid.off -text svneol=unset#application/octet-stream
 Robustness/demo/Robustness/help/index.html svneol=native#text/html
 Robustness/demo/Robustness/robustness.vcproj eol=crlf
 STL_Extension/include/CGAL/Iterator_transform.h -text

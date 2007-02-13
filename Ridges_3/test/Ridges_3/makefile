@@ -40,12 +40,6 @@ LDFLAGS = \
 all:            \
                 ridge_test$(EXE_EXT) 
 
-PolyhedralSurf$(OBJ_EXT): PolyhedralSurf.cpp
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) PolyhedralSurf.cpp
-
-ridge_test$(OBJ_EXT): ridge_test.cpp
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) ridge_test.cpp
-
 ridge_test$(EXE_EXT): ridge_test$(OBJ_EXT) PolyhedralSurf$(OBJ_EXT)
 	$(CGAL_CXX) $(LIBPATH) $(EXE_OPT)ridge_test \
 	ridge_test$(OBJ_EXT) PolyhedralSurf$(OBJ_EXT) $(LDFLAGS)
