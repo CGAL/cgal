@@ -83,6 +83,12 @@ do_platform()
       cat install.log.$1 \
       | sed -n "/${_buildlog_marker} below/,/${_buildlog_marker} above/ p" \
       > ${libname}_${shared_or_static}/$TEST_REPORT
+
+      # Test if there is a warning in the build log.
+      if grep -i warning ${libname}_${shared_or_static}/$TEST_REPORT > /dev/null; then
+        y_or_no=w
+      fi
+
       echo ${libname}_${shared_or_static} $y_or_no >> $RESULT_FILE
     done
   fi
