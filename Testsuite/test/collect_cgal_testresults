@@ -70,6 +70,11 @@ do_platform()
   echo "------------" >> $RESULT_FILE
 
   if [ -f install.log.${1} ] ; then
+    if [ ! -d install.log ]; then
+       mkdir install.log
+       cp install.log.${1} install.log/$TEST_REPORT
+       echo install.log y >> $RESULT_FILE
+    fi
     grep "Compilation of" install.log.${1} \
     | awk '{ print $3 " " $4 " " $6; }' \
     | sed -e 's/succeeded\.$/y/' -e 's/failed\.$/n/' \
