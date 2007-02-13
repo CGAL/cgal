@@ -35,7 +35,7 @@ LDFLAGS = \
 all:            \
                 blind$(EXE_EXT) blind_1pt$(EXE_EXT)
 
-BLIND_OBJS=options$(OBJ_EXT) PolyhedralSurf$(OBJ_EXT) blind$(OBJ_EXT)
+BLIND_OBJS=PolyhedralSurf$(OBJ_EXT) blind$(OBJ_EXT)
 blind$(EXE_EXT): $(BLIND_OBJS)
 	$(CGAL_CXX) $(LIBPATH) -g -o blind $(BLIND_OBJS) \
 	$(LDFLAGS) 
@@ -45,10 +45,7 @@ blind_1pt$(EXE_EXT): blind_1pt$(OBJ_EXT)
 	$(LDFLAGS) 
 
 clean: \
-        blind.clean blind_1pt.clean options.clean PolyhedralSurf.clean 
-
-depend: 
-	makedepend *.[Ch]
+        blind.clean blind_1pt.clean PolyhedralSurf.clean 
 
 #---------------------------------------------------------------------#
 #                    suffix rules

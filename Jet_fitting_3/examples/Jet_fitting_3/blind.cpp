@@ -3,15 +3,15 @@
 #include <CGAL/Lapack/Linear_algebra_lapack.h>
 
 #include <fstream>
-#include <vector>
 
 #include <boost/property_map.hpp>
+#include <boost/program_options.hpp>
+namespace po = boost::program_options;
+using namespace std;
 
- 
 #include "PolyhedralSurf.h"
 #include "PolyhedralSurf_operations.h"
 #include "PolyhedralSurf_rings.h"
-#include "options.h"//parsing command line
 
 //Kernel of the PolyhedralSurf
 typedef double                DFT;
@@ -40,7 +40,6 @@ struct Facet_cmp{
   }
 };
 
-
 //Vertex property map, with std::map
 typedef std::map<Vertex*, int> Vertex2int_map_type;
 typedef boost::associative_property_map< Vertex2int_map_type > Vertex_PM_type;
@@ -67,19 +66,7 @@ typedef CGAL::Cartesian<LFT>     Local_Kernel;
 typedef CGAL::Monge_via_jet_fitting<Data_Kernel> My_Monge_via_jet_fitting;
 typedef My_Monge_via_jet_fitting::Monge_form My_Monge_form;
 
-         
-//Syntax requirred by Options
-static const char *const optv[] = {
-  "?|?",
-  "f:fName <string>",	//name of the input off file
-  "d:deg <int>",	//degree of the jet
-  "m:mdegree <int>",	//degree of the Monge rep
-  "a:nrings <int>",	//# rings
-  "p:npoints <int>",	//# points
-  "v|",//verbose?
-  NULL
-};
- 
+
 // default parameter values and global variables
 unsigned int d_fitting = 2;
 unsigned int d_monge = 2;
@@ -128,32 +115,48 @@ void gather_fitting_points(Vertex* v,
 //////////////////////////////MAIN///////////////////////////////////////////////////////
 int main(int argc, char *argv[])
 {
-  
-  char *if_name = NULL, //input file name
-    *w_if_name = NULL;  //as above, but / replaced by _
+  string if_name_string;
+  const char *if_name = NULL; //input file name
+  char *w_if_name = NULL;  //as above, but / replaced by _
   char* res4openGL_fname;
   char* verbose_fname;
   std::ofstream *out_4ogl = NULL, *out_verbose = NULL;
 
-  //parse command line options
-  //--------------------------
-  int optchar;
-  char *optarg;
-  Options opts(*argv, optv);
-  OptArgvIter iter(--argc, ++argv);
-  while ((optchar = opts(iter, (const char *&) optarg))){
-    switch (optchar){
-    case 'f': if_name = optarg; break;
-    case 'd': d_fitting = atoi(optarg); break;
-    case 'm': d_monge = atoi(optarg); break;
-    case 'a': nb_rings = atoi(optarg); break;
-    case 'p': nb_points_to_use = atoi(optarg); break;
-    case 'v': verbose=true; break;
-    default:
-      cerr << "Unknown command line option " << optarg;
-      exit(0);
+  try {
+    po::options_description desc("Allowed options");
+    desc.add_options()
+      ("help,h", "produce help message.")
+      ("input-file,f", po::value<string>(&if_name_string)->default_value("data/ellipe0.003.off"),
+       "name of the input off file")
+      ("degree-jet,d", po::value<unsigned int>(&d_fitting)->default_value(2),
+       "degree of the jet")
+      ("degree-monge,m", po::value<unsigned int>(&d_monge)->default_value(2),
+       "degree of the Monge rep")
+      ("nb-rings,a", po::value<unsigned int>(&nb_rings)->default_value(0),
+       "number of rings to collect neighbors. 0 means collect enough rings to make appro possible a>=1 fixes the nb of rings to be collected")
+      ("nb-points,p", po::value<unsigned int>(&nb_points_to_use)->default_value(0),
+       "number of neighbors to use.  0 means this option is not considered, this is the default p>=1 fixes the nb of points to be used")
+      ("verbose,v", po::value<bool>(&verbose)->default_value(false),
+       "verbose output on text file")
+      ;
+    
+    po::variables_map vm;        
+    po::store(po::parse_command_line(argc, argv, desc), vm);
+    po::notify(vm);    
+    
+    if (vm.count("help")) {
+      cout << desc << "\n";
+      return 1;
     }
   }
+  catch(exception& e) {
+    cerr << "error: " << e.what() << "\n";
+    return 1;
+  }
+  catch(...) {
+    cerr << "Exception of unknown type!\n";
+  }
+
   //modify global variables which are fct of options:
   min_nb_points = (d_fitting + 1) * (d_fitting + 2) / 2;
   if (nb_points_to_use < min_nb_points && nb_points_to_use != 0) 
@@ -161,6 +164,7 @@ int main(int argc, char *argv[])
 
   //prepare output file names
   //--------------------------
+  if_name = if_name_string.data();
   assert(if_name != NULL);
   w_if_name = new char[strlen(if_name)+1];
   strcpy(w_if_name, if_name);

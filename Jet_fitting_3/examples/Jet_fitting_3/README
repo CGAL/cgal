@@ -1,4 +1,4 @@
-To compile, you need clapack : set env variable LAPACK_DIR
+To compile, you need support for lapack
 
 
 Program blind_1pt
@@ -23,24 +23,31 @@ it computes a fitting for each vertex
 it outputs the results in :
 1. filename.off.4ogl.txt  which can be visualized with 
 	the demo program introspect-qt
-2. if option -v, filename.off.verb.txt contains human readable results
+2. if option -vtrue, filename.off.verb.txt contains human readable results
 
-Usage is : blind  with options    
-    "f:fName <string>",	 // filename.off
-    "d:deg <int>",	 // degree of the jet
-    "m:mdegree <int>",	 // degree of the Monge rep
-    "a:nrings <int>",	 // # rings 
-			0 means collect enough rings to make appro possible
-			k>=1 fixes the nb of rings to be collected
-    "p:npoints <int>",   //# points
-			0 means this option is not considered, this is the default
-			n>=1 fixes the nb of points to be used
-    "v|",                // verbose?
- 
+Allowed options:
+  -h [ --help ]                                   produce help message.
+  -f [ --input-file ] arg (=data/ellipe0.003.off) name of the input off file
+  -d [ --degree-jet ] arg (=2)                    degree of the jet
+  -m [ --degree-monge ] arg (=2)                  degree of the Monge rep
+  -a [ --nb-rings ] arg (=0)                      number of rings to collect 
+                                                  neighbors. 0 means collect 
+                                                  enough rings to make appro 
+                                                  possible a>=1 fixes the nb of
+                                                  rings to be collected
+  -p [ --nb-points ] arg (=0)                     number of neighbors to use.  
+                                                  0 means this option is not 
+                                                  considered, this is the 
+                                                  default p>=1 fixes the nb of 
+                                                  points to be used
+  -v [ --verbose ] arg (=0)                       verbose output on text file
+
+
 Note : if the nb of collected points is less than the required min number of 
    points to make the approxiamtion possible (which is constrained by the deg)
    then the vertex is skipped.
 
+./blind
  ./blind -f data/ellipe0.003.off -d2 -m2 -a2 
  ./blind -f data/poly2x\^2+y\^2-0.062500-off -d2 -m2 -a2   
 		
