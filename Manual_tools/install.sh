@@ -1,6 +1,6 @@
 #!/bin/sh
 
-source install.config
+  . ./install.config
 
 install -d $LATEX_CONV_BIN $LATEX_CONV_CONFIG $STYLE_FILES $STYLE_FILES/eps_tabs $STYLE_FILES/eps_tabs_grey
 

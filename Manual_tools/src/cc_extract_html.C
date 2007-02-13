@@ -417,6 +417,7 @@ main( int argc, char **argv) {
 					   macroX( "\\lciContentsFilename"));
     short_contents_stream = open_file_for_write( tmp_path +
 					   macroX( "\\lciShortContentsFilename"));
+    comments_stream = open_file_for_write( tmp_path + "comments.xml" );
     package_overview_stream = open_file_for_write( tmp_path +
                                               macroX( "\\lciPkgOverviewFilename") );
 

@@ -116,6 +116,7 @@ extern ostream* class_stream;
 extern ostream* package_overview_stream;
 extern ostream* contents_stream;
 extern ostream* short_contents_stream;
+extern ostream* comments_stream;
 extern ostream* index_stream;
 extern ostream* HREF_stream;
 extern ostream* HREF_counter_stream;

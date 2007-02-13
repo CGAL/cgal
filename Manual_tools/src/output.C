@@ -53,6 +53,7 @@ ostream* package_overview_stream  = 0;
 ostream* class_stream        = 0;
 ostream* contents_stream     = 0;
 ostream* short_contents_stream = 0;
+ostream* comments_stream = 0;
 ostream* index_stream = 0;
 ostream* HREF_stream = 0;
 ostream* HREF_counter_stream = 0;
@@ -214,6 +215,9 @@ void set_current_output( const string& key) {
         current_output = Output_file( short_contents_stream,
                                       macroX( "\\lciShortContentsFilename") );
         anchor_stream = global_anchor_stream;
+    } else if ( key == "comments") {
+        current_output = Output_file( comments_stream, "comments.xml" );
+        new_filename = false;
     } else if ( key == "index") {
         current_output = Output_file( index_stream,
                                       macroX( "\\lciIndexFilename") );
