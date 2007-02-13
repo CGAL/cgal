@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Umbilic_approximation<TriangularPolyhedralSurface,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>} 
+\begin{ccRefClass}{Umbilic_approximation<TriangulatedSurfaceMesh,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>} 
  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
@@ -26,28 +26,28 @@ umbilics on a triangular polyhedral surface.
 \ccInclude{CGAL/Umbilics.h}
 
 \ccParameters The class \ccRefName\ has three template parameters.
-\ccc{TriangularPolyhedralSurface} provides the surface. Parameters
+\ccc{TriangulatedSurfaceMesh} provides the surface. Parameters
 \ccc{Vertex2FTPropertyMap} and \ccc{Vertex2VectorPropertyMap} provide
 the differential properties of the surface associated to its vertices.
 
 Requirements (checked at compile time) : the types
-\ccc{TriangularPolyhedralSurface::Traits::FT} and
+\ccc{TriangulatedSurfaceMesh::Traits::FT} and
 \ccc{Vertex2FTPropertyMap::value_type} must coincide; the types
-\ccc{TriangularPolyhedralSurface::Traits::Vector_3} and
+\ccc{TriangulatedSurfaceMesh::Traits::Vector_3} and
 \ccc{Vertex2VectorPropertyMap::value_type} must coincide; the types
-\ccc{TriangularPolyhedralSurface::Vertex_handle},
+\ccc{TriangulatedSurfaceMesh::Vertex_handle},
 \ccc{Vertex2FTPropertyMap::key_type} and
 \ccc{Vertex2VectorPropertyMap::key_type} must coincide;
 
 
 \ccTypes
 
-\ccTypedef{  typedef typename TriangularPolyhedralSurface::Traits::FT       FT;}{}
+\ccTypedef{  typedef typename TriangulatedSurfaceMesh::Traits::FT       FT;}{}
 
 \ccCreation
 \ccCreationVariable{umbilic_approximation}  %% choose variable name
 
-\ccConstructor{Umbilic_approximation(const TriangularPolyhedralSurface& P, 
+\ccConstructor{Umbilic_approximation(const TriangulatedSurfaceMesh& P, 
 			const Vertex2FTPropertyMap& vertex2k1_pm, 
 			const Vertex2FTPropertyMap& vertex2k2_pm,
 			const Vertex2VectorPropertyMap& vertex2d1_pm, 
@@ -65,7 +65,7 @@ concept of output iterator of the  {\sc Stl} with value type \ccc{Umbilic*}.}
 \ccSeeAlso
 
 \ccc{Umbilic}
-\ccc{TriangularPolyhedralSurface}
+\ccc{TriangulatedSurfaceMesh}
 \ccc{Vertex2FTPropertyMap}
 \ccc{Vertex2VectorPropertyMap}
 

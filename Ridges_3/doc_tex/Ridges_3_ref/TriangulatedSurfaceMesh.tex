@@ -1,0 +1,189 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: TriangulatedSurfaceMesh.tex
+% +------------------------------------------------------------------------+
+% | 15.09.2006   Marc Pouget and Frédéric Cazals
+% | Package: Ridges_3
+% | 
+\RCSdef{\RCSTriangulatedSurfaceMeshRev}{$Id$}
+\RCSdefDate{\RCSTriangulatedSurfaceMeshDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TriangulatedSurfaceMesh}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes an oriented surface (possibly with
+boundary) embedded in the 3 space. It is combinatorially based on a
+halfedge data structure with triangular faces, geometrically 3d points
+associated to the vertices define the embedding.
+
+\ccTypes
+
+\ccNestedType{Traits}
+{
+geometric Traits, this is a CGAL::Kernel concept.
+}
+\ccGlue
+\ccNestedType{Facet}
+{
+Opaque type representing a facet of the \ccRefName\ .
+}
+\ccGlue
+\ccNestedType{Facet_handle}
+{
+Handle to a facet. Model of the Handle concept.
+}
+\ccGlue
+\ccNestedType{Facet_const_handle}
+{
+}
+\ccGlue
+\ccNestedType{Facet_iterator}
+{
+Iterator over all mesh facets. Model of the ForwardIterator concept.
+}
+\ccGlue
+\ccNestedType{Facet_const_iterator}
+{
+}
+\ccGlue
+\ccNestedType{Vertex}
+{
+Opaque type representing a vertex of the \ccRefName\ .
+}
+\ccGlue
+\ccNestedType{Vertex_handle}
+{
+Handle to a vertex. Model of the Handle concept.
+}
+\ccGlue
+\ccNestedType{Vertex_const_handle}
+{
+}
+\ccGlue
+\ccNestedType{Vertex_iterator}
+{
+Iterator over all vertices of a mesh. Model of the ForwardIterator concept.
+}
+\ccGlue
+\ccNestedType{Vertex_const_iterator}
+{
+}
+\ccGlue
+\ccNestedType{Halfedge}
+{
+Opaque type representing a halfedge of the \ccRefName\ .
+}
+\ccGlue
+\ccNestedType{Halfedge_handle}
+{
+Handle to a halfedge. Model of the Handle concept.
+}
+\ccGlue
+\ccNestedType{Halfedge_const_handle}
+{
+}
+\ccGlue
+\ccNestedType{Halfedge_iterator}
+{
+Iterator over all halfedges of a  \ccRefName\ . Model of the ForwardIterator concept.
+}
+\ccGlue
+\ccNestedType{Halfedge_const_iterator}
+{
+}
+\ccGlue
+\ccNestedType{Point_iterator}
+{
+Iterator over all points of a  \ccRefName\ , its value type is \ccc{Traits::Point_3}. Model of the ForwardIterator concept.
+}
+\ccGlue
+\ccNestedType{Point_const_iterator}
+{
+}
+
+
+\ccCreation
+\ccCreationVariable{mesh}  %% define variable name used by \ccMethod below
+
+Construction and destruction are undefined.
+
+\ccOperations
+
+\ccMethod{Facet_const_iterator     facets_begin();}{iterator over all facets
+  (excluding holes).}
+\ccGlue
+\ccMethod{Facet_const_iterator     facets_end();}{past-the-end iterator.}
+
+\ccMethod{Point_iterator points_begin();}{iterator over all points.}
+\ccGlue
+\ccMethod{Point_iterator points_end();}{past-the-end iterator.}
+
+% \ccMethod{Vertex_const_iterator    vertices_begin();}{iterator over all vertices.}
+% \ccGlue
+% \ccMethod{Vertex_const_iterator    vertices_end();}{past-the-end iterator.}
+
+Methods for the Vertex :
+
+\ccCreationVariable{vertex}  %% define variable name used by \ccMethod below
+
+\ccMethod{Traits::Point_3&       point();}{The point associated to the vertex}
+
+Methods for the Halfedge :
+
+\ccCreationVariable{halfedge}  %% define variable name used by \ccMethod below
+
+% \ccMethod{Halfedge_handle opposite();}{}
+% \ccGlue
+\ccMethod{Halfedge_const_handle opposite() const;}{the opposite halfedge.}
+
+% \ccMethod{Halfedge_handle next();}{}
+% \ccGlue
+\ccMethod{Halfedge_const_handle next() const;}
+    {the next halfedge around the facet.}
+
+% \ccMethod{Halfedge_handle prev();}{}
+% \ccGlue
+\ccMethod{Halfedge_const_handle prev() const;}
+    {the previous halfedge around the facet.}
+\ccGlue
+\ccMethod{bool             is_border_edge() const;}
+    {is true if \ccVar\ or \ccc{halfedge.opposite()} is a border halfedge.}
+% \ccMethod{Vertex_handle       vertex();}{}
+% \ccGlue
+\ccMethod{Vertex_const_handle vertex() const;}{the incident vertex of \ccVar.}
+% \ccMethod{Facet_handle       facet();}{}
+% \ccGlue
+\ccMethod{Facet_const_handle facet() const;}
+    {the incident facet of \ccVar.  If \ccVar\ is a border halfedge 
+      the result is default construction of the handle.}
+
+Methods for the Facet :
+
+\ccCreationVariable{facet}  %% define variable name used by \ccMethod below
+% \ccMethod{Halfedge_handle       halfedge();}{}
+% \ccGlue
+\ccMethod{Halfedge_const_handle halfedge() const;}{
+    an incident halfedge that points to \ccVar.}
+
+\ccGlue
+
+
+
+\ccHasModels
+
+\ccc{CGAL::Polyhedron_3} with the restriction that faces are triangular.
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

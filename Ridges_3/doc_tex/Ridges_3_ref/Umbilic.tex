@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Umbilic<TriangularPolyhedralSurface>}  %% add template arg's if necessary
+\begin{ccRefClass}{Umbilic<TriangulatedSurfaceMesh>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -24,9 +24,9 @@ The class \ccRefName\ stores the description of an umbilic.
 
 \ccTypes
 
-\ccTypedef{  typedef typename TriangularPolyhedralSurface::Vertex_handle    Vertex_handle;}{}
+\ccTypedef{  typedef typename TriangulatedSurfaceMesh::Vertex_handle    Vertex_handle;}{}
 \ccGlue
-\ccTypedef{ typedef typename TriangularPolyhedralSurface::Halfedge_handle  Halfedge_handle;}{}
+\ccTypedef{ typedef typename TriangulatedSurfaceMesh::Halfedge_handle  Halfedge_handle;}{}
 
 \ccCreation
 \ccCreationVariable{umbilic} %hoose variable name
@@ -49,9 +49,9 @@ The class \ccRefName\ stores the description of an umbilic.
 The usual insert operator ($<<$) is overloaded for \ccc{Umbilic}, it
 gives the location (3d coordinates of the vertex) and the type.
 
-%\ccFunction{template <class TriangularPolyhedralSurface>
+%\ccFunction{template <class TriangulatedSurfaceMesh>
 %std::ostream& 
-%operator<<(std::ostream& out_stream, const Umbilic<TriangularPolyhedralSurface>& umbilic);}
+%operator<<(std::ostream& out_stream, const Umbilic<TriangulatedSurfaceMesh>& umbilic);}
 %{Outputs umbilic location and type.}
 
 

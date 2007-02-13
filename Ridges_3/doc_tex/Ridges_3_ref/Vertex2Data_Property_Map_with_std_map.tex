@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Vertex2Data_Property_Map_with_std_map<TriangularPolyhedralSurface>}  %% add template arg's if necessary
+\begin{ccRefClass}{Vertex2Data_Property_Map_with_std_map<TriangulatedSurfaceMesh>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -29,11 +29,11 @@ created with the \ccc{boost::associative_property_map} adaptor from
 
 \ccTypes
 
-\ccTypedef{  typedef typename TriangularPolyhedralSurface::Traits::FT        FT;}{}
+\ccTypedef{  typedef typename TriangulatedSurfaceMesh::Traits::FT        FT;}{}
 \ccGlue
-\ccTypedef{  typedef typename TriangularPolyhedralSurface::Traits::Vector_3  Vector_3;}{}
+\ccTypedef{  typedef typename TriangulatedSurfaceMesh::Traits::Vector_3  Vector_3;}{}
 \ccGlue
-\ccTypedef{  typedef typename TriangularPolyhedralSurface::Vertex_handle     Vertex_handle;}{}
+\ccTypedef{  typedef typename TriangulatedSurfaceMesh::Vertex_handle     Vertex_handle;}{}
 \ccStruct{  struct Vertex_cmp{bool operator();};}{}
 
 \ccTypedef{  typedef std::map<Vertex_handle, FT, Vertex_cmp> Vertex2FT_map;}{}

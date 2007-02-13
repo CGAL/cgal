@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Ridge_line<TriangularPolyhedralSurface>}  %% add template arg's if necessary
+\begin{ccRefClass}{Ridge_line<TriangulatedSurfaceMesh>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -29,9 +29,9 @@ $r = b\times p + (1-b)\times q$.
 
 \ccTypes
 
-\ccTypedef{typedef typename TriangularPolyhedralSurface::Traits::FT  FT;}{}
+\ccTypedef{typedef typename TriangulatedSurfaceMesh::Traits::FT  FT;}{}
 \ccGlue
-\ccTypedef{typedef typename TriangularPolyhedralSurface::Halfedge_handle  Halfedge_handle;}{}
+\ccTypedef{typedef typename TriangulatedSurfaceMesh::Halfedge_handle  Halfedge_handle;}{}
 \ccGlue
 \ccTypedef{ typedef std::pair< Halfedge_handle, FT>           Ridge_halfhedge;}
 {A halfedge crossed by a ridge is paired with the barycentric
