@@ -87,8 +87,10 @@ do_platform()
       > ${libname}_${shared_or_static}/$TEST_REPORT
 
       # Test if there is a warning in the build log.
-      if grep -i warning ${libname}_${shared_or_static}/$TEST_REPORT > /dev/null; then
-        y_or_no=w
+      if [ "$y_or_no" = "y" ]; then
+        if grep -i warning ${libname}_${shared_or_static}/$TEST_REPORT > /dev/null; then
+          y_or_no=w
+        fi
       fi
 
       echo ${libname}_${shared_or_static} $y_or_no >> $RESULT_FILE
