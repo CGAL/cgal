@@ -74,13 +74,13 @@ clean:
 #                    suffix rules
 #---------------------------------------------------------------------#
 
-%$(OBJ_EXT) : %.cpp
+%$(OBJ_EXT): %.cpp
 	$(CGAL_CXX)  $(CXXFLAGS) $(ADDITIONNAL_CXXFLAGS) -c $<
 
 FLEX ?=flex
 BISON ?=bison
 
-%.cpp : %.l
+%.cpp: %.l
 	$(FLEX) -8 -o$@ $<
 
 # Apparently, old versions of bison (e.g., 1.28) name the generated definion
@@ -94,7 +94,7 @@ ifneq ($(strip $(BISON_EXISTS)),)
   OLD_BISON_VERSION =$(shell $(OLD_BISON_VERSION_CMD))
 endif
 
-%.cpp %.hpp : %.y
+%.cpp %.hpp: %.y
 	$(BISON) -d $< -o $*.cpp
 ifeq ($(OLD_BISON_VERSION), 1)
 	mv $*.cpp.h $*.hpp
