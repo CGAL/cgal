@@ -575,6 +575,10 @@
                    \gdef{\lciIfHtmlClassIndex}{\lcTrue}%
                    \gdef{\lciIfHtmlRefLinks}{\lcTrue}%
                    \gdef{\lciIfHtmlRefIndex}{\lcTrue}%
+                   \lciPushOutput{comments}\lcRawHtml{\end
+
+}
+\lciPopOutput
                }
 
 \newcommand{\begin@ccRefDeclaration@mo}{%
@@ -607,6 +611,15 @@
 % #3 = Ref category
 % #4 = global scope (may be empty)
 \newcommand{\lciRefDeclDefFilenameX}[5]{%
+    \lciPushOutput{comments}%
+\lcRawHtml{\localscope@#XC1@}
+\lcRawHtml{\id@#XC2@}
+\lcRawHtml{\refcat@#XC3@}
+\lcRawHtml{\globalscope@#XC4@}
+\lcRawHtml{\other@#XC5@
+}
+\lciPopOutput
+
     \newcommand{\ccPureClassName}{#XC1#C2}%
     \newcommand{\ccClassName}{\ccc{#XC1#C2}}%
     \gdef{\ccIndexClassName}{\ccClassName}%
@@ -851,6 +864,10 @@
     {\lciTwoColsEndEmpty}{\lciTwoColsSecond #C2\lciTwoColsEnd}%
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
     \gdef{\lciIfHtmlIndex}{\lcTrue}%
+    \lciPushOutput{comments}%
+\lcRawHtml{\comment@#C2@
+}
+\lciPopOutput
 }
 
 %% Tricky definition, since we must have % signs in it.
@@ -890,6 +907,10 @@
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
     \gdef{\lciIfHtmlIndex}{\lcTrue}%
     \gdef\ccIsFunctionTemplate{\ccFalse}%
+    \lciPushOutput{comments}%
+\lcRawHtml{\comment@#C2@
+}
+\lciPopOutput
 }
 
 \newcommand{\lciThreeColsEnd}{\lcRawHtml{

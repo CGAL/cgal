@@ -216,7 +216,7 @@ void set_current_output( const string& key) {
                                       macroX( "\\lciShortContentsFilename") );
         anchor_stream = global_anchor_stream;
     } else if ( key == "comments") {
-        current_output = Output_file( comments_stream, "comments.xml" );
+        current_output = Output_file( comments_stream, string("comments.txt") );
         new_filename = false;
     } else if ( key == "index") {
         current_output = Output_file( index_stream,

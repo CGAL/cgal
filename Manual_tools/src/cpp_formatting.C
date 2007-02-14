@@ -1887,24 +1887,30 @@ void handle_two_column_layout( char key, const char* decl) {
         switch ( key) {
         case 'A':
             format_class_declaration( decl);
+            (*comments_stream) << "\\class@";
             break;
         case 'B':
             format_struct( decl);
+            (*comments_stream) << "\\struct@";
             break;
         case 'C':
             format_nested_type( decl);
+            (*comments_stream) << "\\nested_type@";
             break;
         case 'D':
             format_enum( decl);
+            (*comments_stream) << "\\enum@";
             break;
         case 'E':
             format_constructor( decl);
+            (*comments_stream) << "\\constructor@";
             break;
         default:
             printErrorMessage( UnknownKeyError);
         }
         *current_ostream << "[cccend]";
     }
+    (*comments_stream) << decl << "@" << std::endl;
 }
 
 void handle_three_column_layout( char key, const char* decl, bool empty) {
@@ -1914,21 +1920,26 @@ void handle_three_column_layout( char key, const char* decl, bool empty) {
         switch ( key) {
         case 'L':  // member function
             format_function( true, decl, empty);
+            (*comments_stream) << "\\memberfunction@";
             break;
         case 'M':  // function
             format_function( false, decl, empty);
+            (*comments_stream) << "\\function@";
             break;
         case 'N':
             format_variable( decl, empty);
+            (*comments_stream) << "\\variable@";
             break;
         case 'O': // typedef
             format_variable( decl, empty, true);
+            (*comments_stream) << "\\typedef@";
             break;
         default:
             printErrorMessage( UnknownKeyError);
         }
         *current_ostream << "[cccend]";
     }
+    (*comments_stream) << decl << "@" << std::endl;
 }
 
 
