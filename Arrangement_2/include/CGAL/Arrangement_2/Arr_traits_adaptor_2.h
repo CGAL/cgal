@@ -179,10 +179,10 @@ public:
     /*!
      * Implementation of the operator() in case the HasInfinite tag is false.
      */
-    Comparison_result _compare_curves_imp (const X_monotone_curve_2& ,
+    Comparison_result _compare_curves_imp (const X_monotone_curve_2&,
                                            Curve_end,
-                                           const X_monotone_curve_2& , 
-                                           Curve_end ind2,
+                                           const X_monotone_curve_2&, 
+                                           Curve_end,
                                            Tag_false) const
     {
       return (EQUAL);
