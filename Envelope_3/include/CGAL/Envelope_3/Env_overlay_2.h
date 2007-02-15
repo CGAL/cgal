@@ -18,8 +18,8 @@
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
 //                 Baruch Zukerman        <baruchzu@post.tau.ac.il>
 
-#ifndef ENVELOPE_OVERLAY_2_H
-#define ENVELOPE_OVERLAY_2_H
+#ifndef CGAL_ENVELOPE_OVERLAY_2_H
+#define CGAL_ENVELOPE_OVERLAY_2_H
 
 #include <CGAL/Arr_overlay.h>
 #include <CGAL/Envelope_3/Envelope_overlay_functor.h>
