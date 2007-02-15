@@ -17,8 +17,8 @@
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
-#ifndef SKIN_SURFACE_BASE_3_H
-#define SKIN_SURFACE_BASE_3_H
+#ifndef CGAL_SKIN_SURFACE_BASE_3_H
+#define CGAL_SKIN_SURFACE_BASE_3_H
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -851,4 +851,4 @@ get_weighted_circumcenter(const Simplex &s, Gt2 &traits) const {
 
 CGAL_END_NAMESPACE 
 
-#endif // SKIN_SURFACE_BASE_3_H
+#endif // CGAL_SKIN_SURFACE_BASE_3_H
