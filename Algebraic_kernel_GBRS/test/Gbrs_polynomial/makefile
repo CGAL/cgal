@@ -21,18 +21,31 @@ include $(CGAL_MAKEFILE)
 
 EXE_EXT=
 LIBMPFI=$(MPFI_LIB)/libmpfi.a
-LIBRS=$(RS_LIB)/librs.a
+LIBRS=#$(RS_LIB)/librs.a
 LIBRSE=$(RS_LIB)/librsexport.a
 LIBCGALGBRS=$(CGAL_LIB_DESTINATION)/libCGALGbrs.a
-LIBS_FLAGS=-lmpfi -lrs -lrsexport -lCGALGbrs
-MYFLAGS=-g -O0 #-DCGAL_RS_DEBUG -DCGAL_RS_VERB=0
+LIBS_FLAGS=-lmpfi -lrsexport -lCGALGbrs
+MYFLAGS=-g -O0 #-DUSE_FGB #-DCGAL_RS_DEBUG -DCGAL_RS_VERB=0
+
+
+MPFI_INCL=/usr/local/science/Distrib/IBM_INTEL_LINUX.4.2.1/include
+RS_INCL=/usr/local/science/Distrib/IBM_INTEL_LINUX.4.2.1/include
+MPFI_LIB=/usr/local/science/Distrib/IBM_INTEL_LINUX.4.2.1/lib
+RS_LIB=/usr/local/science/Distrib/IBM_INTEL_LINUX.4.2.1/lib
+LIB_STAT_PATH=$(RS_LIB)
+#FGBFLAGS=-DUSE_FGB -L${LIB_STAT_PATH} ${LIB_STAT_PATH}/libfgb2rs.a ${LIB_STAT_PATH}/libfgbexp.a ${LIB_STAT_PATH}/libfgb.a ${LIB_STAT_PATH}/libgbvgf.a ${LIB_STAT_PATH}/libminpolyvgf.a
+#FGBFLAGS=-L${LIB_STAT_PATH} ${LIB_STAT_PATH}/libfgb2rs.a ${LIB_STAT_PATH}/libfgbexp.a ${LIB_STAT_PATH}/libfgb.a ${LIB_STAT_PATH}/libgbvgf.a ${LIB_STAT_PATH}/libminpolyvgf.a
+FGBFLAGS=-L${LIB_STAT_PATH} 
+
 
 OBJS= \
       Gbrs_polynomial_1$(EXE_EXT) \
       Gbrs_polynomial_2$(EXE_EXT) \
+      Gbrs_solve_2$(EXE_EXT) \
       Gbrs_algebraic_kernel_1$(EXE_EXT) \
+      Arrangement$(EXE_EXT) \
+      Parser_polys$(EXE_EXT) #\
       Arr_poly_traits_1$(EXE_EXT) \
-      Arrangement$(EXE_EXT)
 
 outside: OUTSIDEPARS=-I$(PWD)/../../include -I$(RS_INCL) -L$(RS_LIB)
 outside: $(OBJS)
@@ -45,5 +58,5 @@ clean:
 .SUFFIXES: .C $(EXE_EXT) $(SUFFIXES)
 
 .C$(EXE_EXT):
-	$(CGAL_CXX) $(MYFLAGS) $(OUTSIDEPARS) $(CGAL_CXXFLAGS) $(CGAL_LIBPATHFLAGS) $< $(CGAL_LDFLAGS) $(LIBS_FLAGS) $(LIBMPFI) $(LIBRSE) $(LIBRS) $(LIBCGALGBRS) -o $@
+	$(CGAL_CXX) $(MYFLAGS) $(OUTSIDEPARS) $(CGAL_CXXFLAGS) $(CGAL_LIBPATHFLAGS) $< $(CGAL_LDFLAGS) $(LIBMPFI) $(LIBRSE) $(LIBRS) $(LIBCGALGBRS) $(LIBS_FLAGS) $(FGBFLAGS) -o $@
 
