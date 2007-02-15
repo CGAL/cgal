@@ -60,6 +60,7 @@ struct Filtered_kernel_base
     typedef Simple_cartesian<Interval_nt_advanced>   FK;
     typedef Cartesian_converter<CK, EK>              C2E;
     typedef Cartesian_converter<CK, FK>              C2F;
+    typedef FK  AK; // same as for Lazy_kernel
 
     template < typename Kernel2 >
     struct Base {
