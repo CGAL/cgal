@@ -17,8 +17,9 @@
 //
 // Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>)
 
-#ifndef  INCREMENTAL_NEIGHBOR_SEARCH_H
-#define  INCREMENTAL_NEIGHBOR_SEARCH_H
+#ifndef CGAL_INCREMENTAL_NEIGHBOR_SEARCH_H
+#define CGAL_INCREMENTAL_NEIGHBOR_SEARCH_H
+
 #include <cstring>
 #include <list>
 #include <queue>
@@ -504,6 +505,4 @@ namespace CGAL {
 
 } // namespace CGAL
 
-
-#endif  // INCREMENTAL_NEIGHBOR_SEARCH_H
-
+#endif  // CGAL_INCREMENTAL_NEIGHBOR_SEARCH_H

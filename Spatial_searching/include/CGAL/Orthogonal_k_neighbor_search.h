@@ -17,8 +17,9 @@
 //
 // Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>)
 
-#ifndef  ORTHOGONAL_K_NEIGHBOR_SEARCH_H
-#define  ORTHOGONAL_K_NEIGHBOR_SEARCH_H
+#ifndef CGAL_ORTHOGONAL_K_NEIGHBOR_SEARCH_H
+#define CGAL_ORTHOGONAL_K_NEIGHBOR_SEARCH_H
+
 #include <cstring>
 #include <list>
 #include <queue>
@@ -241,15 +242,8 @@ namespace CGAL {
 	}
     }
 
-    
-    
-   
-
   }; // class 
-
-
 
 } // namespace CGAL
 
-
-#endif  // ORTHOGONAL_K_NEIGHBOR_SEARCH
+#endif  // CGAL_ORTHOGONAL_K_NEIGHBOR_SEARCH_H

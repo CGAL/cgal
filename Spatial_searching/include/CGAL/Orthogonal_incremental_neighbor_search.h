@@ -17,8 +17,9 @@
 //
 // Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>)
 
-#ifndef  ORTHOGONAL_INCREMENTAL_NEIGHBOR_SEARCH
-#define  ORTHOGONAL_INCREMENTAL_NEIGHBOR_SEARCH
+#ifndef CGAL_ORTHOGONAL_INCREMENTAL_NEIGHBOR_SEARCH
+#define CGAL_ORTHOGONAL_INCREMENTAL_NEIGHBOR_SEARCH
+
 #include <cstring>
 #include <list>
 #include <queue>
@@ -27,7 +28,6 @@
 #include <CGAL/Euclidean_distance.h>
 
 namespace CGAL {
-
 
   template <class SearchTraits, 
             class Distance_= Euclidean_distance<SearchTraits>,
@@ -499,9 +499,6 @@ namespace CGAL {
     y.Ptr_implementation = tmp;
   }
 
-
-
 } // namespace CGAL
 
-
-#endif  // ORTHOGONAL_INCREMENTAL_NEIGHBOR_SEARCH_H
+#endif // CGAL_ORTHOGONAL_INCREMENTAL_NEIGHBOR_SEARCH_H
