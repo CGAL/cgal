@@ -23,8 +23,8 @@
 //
 // ======================================================================
 
-#ifndef _POLYHEDRON_SUBDIVISION_IMPL_H_02102006
-#define _POLYHEDRON_SUBDIVISION_IMPL_H_02102006
+#ifndef CGAL_POLYHEDRON_SUBDIVISION_IMPL_H_02102006
+#define CGAL_POLYHEDRON_SUBDIVISION_IMPL_H_02102006
 
 #include <CGAL/basic.h>
 
@@ -274,7 +274,7 @@ namespace Subdivision_method_3 {
 
   // ======================================================================
 //#define _EULER_DQQ_SPLITTING
-#define _EULER_DQQ_TILTING   // Tilting is faster
+//#define _EULER_DQQ_TILTING   // Tilting is faster // commented out since unused and not CGAL_ prefixed
   template <class Poly, template <typename> class Mask>
   void DQQ_1step(Poly& p, Mask<Poly> mask) {
 
@@ -566,4 +566,4 @@ namespace Subdivision_method_3 {
 
 CGAL_END_NAMESPACE
 
-#endif //_POLYHEDRON_SUBDIVISION_H_01292002
+#endif //CGAL_POLYHEDRON_SUBDIVISION_H_01292002

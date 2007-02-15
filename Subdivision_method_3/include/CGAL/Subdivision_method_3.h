@@ -23,8 +23,8 @@
 //
 // ======================================================================
 
-#ifndef _POLYHEDRON_SUBDIVISION_H_01292002
-#define _POLYHEDRON_SUBDIVISION_H_01292002
+#ifndef CGAL_POLYHEDRON_SUBDIVISION_H_01292002
+#define CGAL_POLYHEDRON_SUBDIVISION_H_01292002
 
 #include <CGAL/basic.h>
 
@@ -84,4 +84,4 @@ namespace Subdivision_method_3 {
 
 CGAL_END_NAMESPACE
 
-#endif //_POLYHEDRON_SUBDIVISION_H_01292002
+#endif //CGAL_POLYHEDRON_SUBDIVISION_H_01292002

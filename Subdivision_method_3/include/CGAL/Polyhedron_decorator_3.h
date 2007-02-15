@@ -23,8 +23,8 @@
 //
 // ======================================================================
 
-#ifndef _POLYHEDRON_DECORATOR_H_01282002
-#define _POLYHEDRON_DECORATOR_H_01282002
+#ifndef CGAL_POLYHEDRON_DECORATOR_H_01282002
+#define CGAL_POLYHEDRON_DECORATOR_H_01282002
 
 CGAL_BEGIN_NAMESPACE
 
@@ -206,4 +206,4 @@ Polyhedron_decorator_3<Poly>::insert_edge(Polyhedron& p,
 
 CGAL_END_NAMESPACE
 
-#endif //_POLYHEDRON_DECORATOR_H_01282002
+#endif //CGAL_POLYHEDRON_DECORATOR_H_01282002
