@@ -28,10 +28,17 @@ LIBS_FLAGS=-lmpfi -lrsexport -lCGALGbrs
 MYFLAGS=-g -O0 #-DUSE_FGB #-DCGAL_RS_DEBUG -DCGAL_RS_VERB=0
 
 
-MPFI_INCL=/usr/local/science/Distrib/IBM_INTEL_LINUX.4.2.1/include
-RS_INCL=/usr/local/science/Distrib/IBM_INTEL_LINUX.4.2.1/include
-MPFI_LIB=/usr/local/science/Distrib/IBM_INTEL_LINUX.4.2.1/lib
-RS_LIB=/usr/local/science/Distrib/IBM_INTEL_LINUX.4.2.1/lib
+DISTRIB=${HOME}/RS
+MPFI_INCL=/usr/include
+RS_INCL=${DISTRIB}/include
+MPFI_LIB=/usr/lib
+RS_LIB=${DISTRIB}/lib/x86_64_Linux
+#--------------------------------------------------
+# MPFI_INCL=/usr/local/science/Distrib/IBM_INTEL_LINUX.4.2.1/include
+# RS_INCL=/usr/local/science/Distrib/IBM_INTEL_LINUX.4.2.1/include
+# MPFI_LIB=/usr/local/science/Distrib/IBM_INTEL_LINUX.4.2.1/lib
+# RS_LIB=/usr/local/science/Distrib/IBM_INTEL_LINUX.4.2.1/lib
+#-------------------------------------------------- 
 LIB_STAT_PATH=$(RS_LIB)
 #FGBFLAGS=-DUSE_FGB -L${LIB_STAT_PATH} ${LIB_STAT_PATH}/libfgb2rs.a ${LIB_STAT_PATH}/libfgbexp.a ${LIB_STAT_PATH}/libfgb.a ${LIB_STAT_PATH}/libgbvgf.a ${LIB_STAT_PATH}/libminpolyvgf.a
 #FGBFLAGS=-L${LIB_STAT_PATH} ${LIB_STAT_PATH}/libfgb2rs.a ${LIB_STAT_PATH}/libfgbexp.a ${LIB_STAT_PATH}/libfgb.a ${LIB_STAT_PATH}/libgbvgf.a ${LIB_STAT_PATH}/libminpolyvgf.a
