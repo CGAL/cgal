@@ -1349,7 +1349,7 @@ public:
         typedef RootOf_2 result_type;
         Root_of_2
         operator()(const Lazy_exact_nt<NT>& a, const Lazy_exact_nt<NT>& b, const Lazy_exact_nt<NT>& c) const{
-            return new Lazy_exact_ro2<NT>(a, b, c, true);
+            return new Lazy_exact_ro2<NT>(a, b, c);
         };
         RootOf_2
         operator()(const Lazy_exact_nt<NT>& a, const Lazy_exact_nt<NT>& b, const Lazy_exact_nt<NT>& c, bool smaller) const{
