@@ -103,7 +103,6 @@ EOF
     fi
   done
   echo "fi"
-  echo
 }
 
 echo "create_cgal_test version $VERSION"
