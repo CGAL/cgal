@@ -378,13 +378,6 @@ EOF
 }
 
 
-sub CreateConfigurationTestdir(){
-  print "Creating $VERSION/test/Configuration directory ...\n";
-  chdir "$RELEASEDIR/$VERSION" or die;
-  system('cp', '-r', 'config/testfiles', 'test/Configuration');
-}
-
-
 #---------------------------------------------------------------#
 # create cgal_test script in tests
 #---------------------------------------------------------------#
@@ -392,7 +385,6 @@ sub create_test()
 {
     system("$DEVELSCRIPTSDIR/create_cgal_test") == 0 or die "Execution of $DEVELSCRIPTSDIR/create_cgal_test failed";
 }
-
 
 
 #---------------------------------------------------------------#
@@ -623,7 +615,6 @@ lock;
 
 create_packages_dir();
 install_packages();
-CreateConfigurationTestdir();
 CreateDemoTestDirs();
 CreateExampleTestDirs();
 create_version_file();
