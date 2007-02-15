@@ -1,5 +1,5 @@
-#ifndef _PSURF_OPERATIONS_H_
-#define _PSURF_OPERATIONS_H_
+#ifndef CGAL_PSURF_OPERATIONS_H_
+#define CGAL_PSURF_OPERATIONS_H_
 
 using namespace std;
 

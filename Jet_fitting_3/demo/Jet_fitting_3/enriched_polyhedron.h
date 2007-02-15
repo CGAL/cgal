@@ -5,8 +5,8 @@
 //									
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef	_POLYGON_MESH_
-#define	_POLYGON_MESH_
+#ifndef	CGAL_POLYGON_MESH_
+#define	CGAL_POLYGON_MESH_
 
 // CGAL	stuff
 #include <CGAL/Cartesian.h>

@@ -129,9 +129,9 @@ int main(int argc, char *argv[])
       ("input-file,f", po::value<string>(&if_name_string)->default_value("data/ellipe0.003.off"),
        "name of the input off file")
       ("degree-jet,d", po::value<unsigned int>(&d_fitting)->default_value(2),
-       "degree of the jet")
+       "degree of the jet, 1 <= degre-jet <= 4")
       ("degree-monge,m", po::value<unsigned int>(&d_monge)->default_value(2),
-       "degree of the Monge rep")
+       "degree of the Monge rep, 1 <= degree-monge <= degree-jet")
       ("nb-rings,a", po::value<unsigned int>(&nb_rings)->default_value(0),
        "number of rings to collect neighbors. 0 means collect enough rings to make appro possible a>=1 fixes the nb of rings to be collected")
       ("nb-points,p", po::value<unsigned int>(&nb_points_to_use)->default_value(0),
