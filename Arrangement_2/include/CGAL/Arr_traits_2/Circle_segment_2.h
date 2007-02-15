@@ -1508,7 +1508,7 @@ protected:
    * Compare two line segments to the right of their intersection point.
    */
   Comparison_result _lines_compare_to_right (const Self& cv,
-                                             const Point_2& p) const
+                                             const Point_2& /* p */) const
   {
     if (_index() != 0 && _index() == cv._index())
       return (EQUAL);

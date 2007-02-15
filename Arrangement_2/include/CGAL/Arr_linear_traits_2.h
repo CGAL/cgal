@@ -648,7 +648,7 @@ public:
      */
     Comparison_result operator() (const Point_2& p,
                                   const X_monotone_curve_2& cv,
-                                  Curve_end ind) const
+                                  Curve_end /* ind */) const
     {
       CGAL_assertion (! cv.is_degenerate());
       CGAL_assertion (cv.is_vertical());
@@ -671,9 +671,9 @@ public:
      *         EQUAL in case of an overlap.
      */
     Comparison_result operator() (const X_monotone_curve_2& cv1,
-                                  Curve_end ind1,
+                                  Curve_end /* ind1 */,
                                   const X_monotone_curve_2& cv2,
-                                  Curve_end ind2) const
+                                  Curve_end /* ind2 */) const
     {
       CGAL_assertion (! cv1.is_degenerate());
       CGAL_assertion (! cv2.is_degenerate());

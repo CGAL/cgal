@@ -33,7 +33,7 @@ CGAL_BEGIN_NAMESPACE
 template <class TYPE>
 struct _Default_merge_func
 {
-  const TYPE& operator() (const TYPE& obj1, const TYPE& obj2)
+  const TYPE& operator() (const TYPE& obj1, const TYPE& /* obj2 */)
   {
     return (obj1);
   }
