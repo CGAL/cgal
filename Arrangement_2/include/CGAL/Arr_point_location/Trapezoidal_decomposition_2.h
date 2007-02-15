@@ -425,21 +425,22 @@ class Trapezoidal_decomposition_2
 #ifndef CGAL_TD_DEBUG
       
 	  CGAL_precondition(curr);
-	  CGAL_warning(!tr.is_left_unbounded() && traits->equal_2_object()(tr.left(),
-									   fixed) ||
-		       !tr.is_right_unbounded()&& traits->equal_2_object()(tr.right(),
-									   fixed));
+	  CGAL_warning((!tr.is_left_unbounded() &&
+                        traits->equal_2_object()(tr.left(), fixed)) ||
+		       (!tr.is_right_unbounded() &&
+                        traits->equal_2_object()(tr.right(), fixed)));
       
 #else
       
 	  CGAL_precondition(curr);
-	  CGAL_precondition(!tr.is_left_unbounded() &&
-			    traits->equal_2_object()(tr.left(),fixed) ||
-			    !tr.is_right_unbounded() &&
-			    traits->equal_2_object()(tr.right(),fixed));
+	  CGAL_precondition((!tr.is_left_unbounded() &&
+                             traits->equal_2_object()(tr.left(),fixed)) ||
+			    (!tr.is_right_unbounded() &&
+                             traits->equal_2_object()(tr.right(),fixed)));
       
 #endif
-	  if (!tr.is_left_unbounded()&&traits->equal_2_object()(tr.left(),fixed))
+	  if (!tr.is_left_unbounded() &&
+              traits->equal_2_object()(tr.left(),fixed))
 	    tr.set_lb(operator->());
 	  else
 	    tr.set_rt(operator->());
@@ -3440,20 +3441,15 @@ class Trapezoidal_decomposition_2
 	void locate_optimization(const Point& p,pointer& tr,Locate_type& lt) const
 	{
 	  // optimization
-	  if (locate_opt_swap(tr)&&tr->is_active()&&
-	      (traits->is_degenerate_point(*tr)&&
-	       traits->equal_2_object()(tr->left(),p)||
-	       !traits->is_degenerate(*tr)&&
-	       traits->is_inside(*tr,p)
-	       )||
-	      locate_opt_swap(tr)&&tr->is_active()&&
-	      (traits->is_degenerate_point(*tr)&&
-	       traits->equal_2_object()(tr->left(),p)||
-	       !traits->is_degenerate(*tr)&&
-	       traits->is_inside(*tr,p)
-	       )
-	      )
-	    if(traits->is_degenerate_point(*tr)) lt=POINT;
+	  if (locate_opt_swap(tr) && tr->is_active() &&
+	      ((traits->is_degenerate_point(*tr) &&
+                traits->equal_2_object()(tr->left(),p)) ||
+	       (!traits->is_degenerate(*tr) && traits->is_inside(*tr,p))) ||
+	      locate_opt_swap(tr) && tr->is_active() &&
+	      ((traits->is_degenerate_point(*tr) &&
+                traits->equal_2_object()(tr->left(),p)) ||
+	       (!traits->is_degenerate(*tr) && traits->is_inside(*tr,p))))
+	    if (traits->is_degenerate_point(*tr)) lt=POINT;
 	    else lt=tr->is_unbounded()?UNBOUNDED_TRAPEZOID:TRAPEZOID;
 	  else
 	    tr=&locate(p,lt);
