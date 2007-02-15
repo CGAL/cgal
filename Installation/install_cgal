@@ -650,6 +650,18 @@ check_for_utils()
     else
 	PAGER="${_cat}"
     fi
+
+    # Verify that GNU Make exists:
+    WGM=`which gmake`
+    if [[ $WGM == "" ]]; then
+        MAKE=make
+        CGNU=`make -v | grep GNU`
+        if [[ $CGNU == "" ]]; then
+            exit_on_error "GNU Make not found - please install GNU Make"
+        fi
+    else
+        MAKE=gmake
+    fi
 }
 
 # guess operating system, write logs via $1
@@ -4259,7 +4271,7 @@ _do_compile()
     # variable _buildlog_marker.
     _buildlog_marker="log for $1 $2 shown"
 
-    if make ${MAKE_OPTION} >"${COMPILE_LOGFILE}" 2>&1; then
+    if ${MAKE} ${MAKE_OPTION} >"${COMPILE_LOGFILE}" 2>&1; then
 	log_print "Compilation of $1 $2 ${_libname} succeeded."
 	log_print "vvvvvvvvvvvv build ${_buildlog_marker} below vvvvvvvvvvvv"
 	eval ${_cat} \"${COMPILE_LOGFILE}\" ${INSTALL_LOGFILE_REDIRECTION}
