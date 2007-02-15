@@ -17,10 +17,10 @@
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
-#ifndef POLYGON_FUNCTION_OBJECTS_H
-#define POLYGON_FUNCTION_OBJECTS_H
+#ifndef CGAL_POLYGON_FUNCTION_OBJECTS_H
+#define CGAL_POLYGON_FUNCTION_OBJECTS_H
 
-#include<CGAL/is_y_monotone_2.h>
+#include <CGAL/is_y_monotone_2.h>
 
 namespace CGAL {
 
@@ -68,4 +68,4 @@ class Is_y_monotone_2
 
 }
 
-#endif // POLYGON_FUNCTION_OBJECTS_H
+#endif // CGAL_POLYGON_FUNCTION_OBJECTS_H

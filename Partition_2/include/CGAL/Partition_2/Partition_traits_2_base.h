@@ -17,8 +17,8 @@
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
-#ifndef PARTITION_TRAITS_2_BASE_H
-#define PARTITION_TRAITS_2_BASE_H
+#ifndef CGAL_PARTITION_TRAITS_2_BASE_H
+#define CGAL_PARTITION_TRAITS_2_BASE_H
 
 #include <CGAL/Polygon_2.h>
 #include <list>
@@ -69,4 +69,4 @@ class Partition_traits_2_base
 
 }
 
-#endif // PARTITION_TRAITS_2_BASE_H
+#endif // CGAL_PARTITION_TRAITS_2_BASE_H
