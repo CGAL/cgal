@@ -3,7 +3,7 @@
 #define INR_H
 
 
-#include <CGAL/imageio/ImageIO.h>
+#include "imageio/ImageIO.h"
 
 
 #ifdef __cplusplus

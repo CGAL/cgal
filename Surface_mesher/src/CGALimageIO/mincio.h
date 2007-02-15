@@ -3,7 +3,7 @@
 
 #ifdef MINC_FILES
 
-#include <CGAL/imageio/ImageIO.h>
+#include "imageio/ImageIO.h"
 #include <minc.h>
 
 #ifdef __cplusplus

@@ -6,7 +6,7 @@ extern "C" {
 #endif
 #include <stdio.h>
 
-#include <CGAL/imageio/ImageIO.h>
+#include "imageio/ImageIO.h"
 
 
 int readPpmImage(const char *name,_image *im);

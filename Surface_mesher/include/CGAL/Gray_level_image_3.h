@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2006  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2005-2007  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -21,7 +21,14 @@
 #define CGAL_MESH_3_GRAY_LEVEL_IMAGE_3_H
 
 #include <CGAL/basic.h>
-#include "CGAL/imageio/ImageIO.h"
+
+struct _image;
+
+/* Copy-paste from <imageio/ImageIO.h> */
+_image* _readImage(const char *name);
+void convertImageTypeToFloat(_image* image);
+float triLinInterp(_image* image,float posx, float posy, float posz);
+/* End of copy-paste from <imageio/ImageIO.h> */
 
 namespace CGAL {
 
