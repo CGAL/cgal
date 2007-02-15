@@ -1521,7 +1521,6 @@ Nef_S2/doc_tex/Nef_S2_ref/fig/shalfedge.pdf -text svneol=unset#application/pdf
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.eps -text svneol=unset#application/postscript
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.gif -text svneol=unset#image/gif
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.pdf -text svneol=unset#application/pdf
-Nef_S2/test/Nef_S2/cgal_test eol=lf
 Nuage_III/doc_tex/Advancing_front_surface_reconstruction/main.aux -text
 Nuage_III/examples/Advancing_front_surface_reconstruction/makefile -text
 Nuage_III/include/CGAL/AFSR/CVS/Entries -text
