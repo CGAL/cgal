@@ -53,6 +53,7 @@ my (
     $RELEASEDIR,
     $MAINDIR,
     $SCRIPTSDIR,
+    $DEVELSCRIPTSDIR,
     $LOCKCMD,
     $packages_file
 );
@@ -387,98 +388,9 @@ sub CreateConfigurationTestdir(){
 #---------------------------------------------------------------#
 # create cgal_test script in tests
 #---------------------------------------------------------------#
-sub create_test(){
-    open(CGAL_TEST,">cgal_test");
-    print CGAL_TEST <<'EOF';
-#! /bin/sh
-
-# This is a script for the CGAL test suite. Such a script must obey
-# the following rules:
-#
-# - the name of the script is cgal_test
-# - for every target two one line messages are written to the file 'error.txt'
-#     the first one indicates if the compilation was successful
-#     the second one indicates if the execution was successful
-#   if one of the two was not successful, the line should start with 'ERROR:'
-# - running the script should not require any user interaction
-# - the script should clean up object files and executables
-
-ERRORFILE=error.txt
-
-#---------------------------------------------------------------------#
-#                    compile_and_run <target>
-#---------------------------------------------------------------------#
-
-compile_and_run()
+sub create_test()
 {
-  echo "Compiling $1 ... "
-  SUCCES="y"
-  if eval 'make CGAL_MAKEFILE=$CGAL_MAKEFILE \
-           TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
-           TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" $1' ; then
-    echo "   succesful compilation of $1" >> $ERRORFILE
-  else
-    echo "   ERROR:    compilation of $1" >> $ERRORFILE
-    SUCCES=""
-  fi
-
-  if [ -n "${SUCCES}" ] ; then
-     OUTPUTFILE=ProgramOutput.$1.$PLATFORM
-    rm -f $OUTPUTFILE
-    COMMAND="./$1"
-    if [ -f $1.cmd ] ; then
-      COMMAND="$COMMAND `cat $1.cmd`"
-    fi
-    if [ -f $1.cin ] ; then
-      COMMAND="cat $1.cin | $COMMAND"
-    fi
-    echo "Executing $1 ... "
-    echo
-    ulimit -t 3600 2> /dev/null
-    if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
-      echo "   succesful execution   of $1" >> $ERRORFILE
-    else
-      echo "   ERROR:    execution   of $1" >> $ERRORFILE
-    fi
-  else
-    echo   "   ERROR:    not executed   $1" >> $ERRORFILE
-  fi
-
-  eval "make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null 2>&1 "
-}
-
-#---------------------------------------------------------------------#
-#                    remove the previous error file
-#---------------------------------------------------------------------#
-
-rm -f $ERRORFILE
-touch $ERRORFILE
-
-#---------------------------------------------------------------------#
-#                    compile and run the tests
-#---------------------------------------------------------------------#
-
-if [ $# -ne 0 ] ; then
-  for file in $* ; do
-    compile_and_run $file
-  done
-else
-EOF
-    close(CGAL_TEST);
-
-  open(CGAL_TEST,">>cgal_test");
-  my $cfile;
-  foreach $cfile (glob("*.C")) {
-    substr($cfile, -2, 2) = "";
-    print CGAL_TEST "  compile_and_run $cfile\n";
-  }
-  foreach $cfile (glob("*.cpp")) {
-    substr($cfile, -4, 4) = "";
-    print CGAL_TEST "  compile_and_run $cfile\n";
-  }
-  print CGAL_TEST "fi\n";
-    close(CGAL_TEST);
-    chmod 0755, 'cgal_test';
+    system("$DEVELSCRIPTSDIR/create_cgal_test") == 0 or die "Execution of $DEVELSCRIPTSDIR/create_cgal_test failed";
 }
 
 
@@ -688,11 +600,13 @@ if ($::opt_l){
   $LOCKFILE = $::opt_l;
 }
   $SCRIPTSDIR="$ALLPACKAGESDIR/Scripts/scripts";
+  $DEVELSCRIPTSDIR="$ALLPACKAGESDIR/Scripts/developer_scripts";
   $packages_file="$ALLPACKAGESDIR/Maintenance/release_building/include_in_release";
   print "Initializing variables ...\n";
   print "  Release dir: $RELEASEDIR\n";
   print "  All packages dir: $ALLPACKAGESDIR\n";
   print "  Scripts dir: $SCRIPTSDIR\n";
+  print "  Developer Scripts dir: $DEVELSCRIPTSDIR\n";
   print "  Lockfile: $LOCKFILE\n";
   print "  Packages file : $packages_file\n";
   umask(002);
