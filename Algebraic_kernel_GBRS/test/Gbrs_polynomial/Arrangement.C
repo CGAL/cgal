@@ -1,6 +1,10 @@
 #include <CGAL/Arr_poly_traits_1.h>
 #include <CGAL/Arrangement_2.h>
+#ifdef __TEST_ARR
+#include <ctime>
+#else
 #include "../../../../CGAL-3.2.1/examples/Arrangement_2/arr_print.h"
+#endif
 
 typedef CGAL::GBRS_algebraic_kernel<CGAL::Gmpz>	AlgKernel;
 typedef AlgKernel::Coefficient			Coefficient;
@@ -48,13 +52,22 @@ int main()
 	Curve cv2=Curve(r,-6,6);	// x^3+1 [-6,6]
 	Curve cv3=Curve(s,-5,5);	// 2 [-5,5]
 
+#ifdef __TEST_ARR
+	clock_t start,end;
+	start=clock();
+#endif
 	insert_curve(arr,cv0);
 	insert_curve(arr,cv1);
 	insert_curve(arr,cv2);
 	insert_curve(arr,cv3);
 
+#ifdef __TEST_ARR
+	end=clock();
+	std::cout<<"time: "<<((double)(end-start))/CLOCKS_PER_SEC<<" seconds"<<std::endl;
+#else
 	print_arrangement(arr);
 	std::cout<<"is valid? "<<arr.is_valid()<<std::endl;
+#endif
 
 	return (0);
 }
