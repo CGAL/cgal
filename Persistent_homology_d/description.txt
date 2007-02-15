@@ -1,1 +1,0 @@
-Persistence of simplicial complexes in arbitrary dimensions.
