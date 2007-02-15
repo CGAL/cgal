@@ -60,6 +60,30 @@ whole scenery around the y-axis by $\pi$. Then the x-axis points left
 and the z-axis into the equatorial plane. */
 
 template <class R>
+bool is_south(const Sphere_point<R>& p, int axis) {
+  if(axis==1)  
+    return (p.hz() >  0 &&
+	    p.hx() == 0 &&
+	    p.hy() == 0);
+  
+  return (p.hy() <  0 &&
+	  p.hx() == 0 &&
+	  p.hz() == 0);
+}
+
+template <class R>
+bool is_north(const Sphere_point<R>& p, int axis) {
+  if(axis==1)  
+    return (p.hz() <  0 &&
+	    p.hx() == 0 &&
+	    p.hy() == 0);
+  
+  return (p.hy() >  0 &&
+	  p.hx() == 0 &&
+	  p.hz() == 0);
+}
+
+template <class R>
 int spherical_compare(const Sphere_point<R>& p1, 
 		      const Sphere_point<R>& p2,
 		      int axis, int pos) {
@@ -69,24 +93,25 @@ int spherical_compare(const Sphere_point<R>& p1,
   switch(axis) {
   case 0:
     pS=Sphere_point<R>(0,-1,0);
-    pN=Sphere_point<R>(0,1,0);
+    //    pN=Sphere_point<R>(0,1,0);
     break;
   case 1:
     pS=Sphere_point<R>(0,0,1);
-    pN=Sphere_point<R>(0,0,-1);
+    //    pN=Sphere_point<R>(0,0,-1);
     break;
   case 2: 
     pS=Sphere_point<R>(0,-1,0);
-    pN=Sphere_point<R>(0,1,0);
+    //    pN=Sphere_point<R>(0,1,0);
     break;
   }
-  typename R::Direction_3 d1(p1-CGAL::ORIGIN), 
-    d2(p2-CGAL::ORIGIN),
-    dS(pS-CGAL::ORIGIN), 
-    dN(pN-CGAL::ORIGIN);
+  typename R::Direction_3 
+    d1(p1-CGAL::ORIGIN), 
+    d2(p2-CGAL::ORIGIN);
   if (d1 == d2) return 0;
-  if (d1 == dS || d2 == dN) return -1;
-  if (d1 == dN || d2 == dS) return  1;
+  if(is_south(p1,axis) || is_north(p2,axis)) return -1;
+  if(is_south(p2,axis) || is_north(p1,axis)) return 1;
+  //  if (d1 == dS || d2 == dN) return -1;
+  //  if (d1 == dN || d2 == dS) return  1;
   // now no more special cases 
   if (axis==0 && (p1.hx()==static_cast<typename R::RT>(0) && 
 		  p2.hx()==static_cast<typename R::RT>(0))) {

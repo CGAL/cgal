@@ -22,12 +22,13 @@
 #include <CGAL/Nef_S2/Sphere_point.h>
 #include <CGAL/Nef_S2/Sphere_circle.h>
 #include <CGAL/Nef_S2/Sphere_direction.h>
+#include <CGAL/Fraction_traits.h>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 307
 #include <CGAL/Nef_2/debug.h>
 
-#ifdef CGAL_USE_LEDA
+#ifdef CCGAL_USE_LEDA
 #include <CGAL/Cartesian.h>
 #include <CGAL/leda_rational.h>
 #endif
@@ -41,6 +42,25 @@ template<typename Tag> class Normalizing;
 template<>
 class Normalizing<Homogeneous_tag> {
  public:
+
+  template <typename iterator> static
+  void normalized(iterator begin, iterator end) { 
+    typedef typename std::iterator_traits<iterator>::value_type RT;
+
+    iterator i = begin;
+    while(i!=end && *i == RT(0)) ++i;
+    if(i==end)
+      return;
+    
+    RT g = *i;
+    for(iterator j=i+1; j!=end; ++j)
+      g = (*j == 0 ? g : CGAL_NTS gcd(g,*j)); 
+    g=CGAL_NTS abs(g);
+
+    for(; i!=end; ++i)
+      *i/=g;
+  }
+
   template <typename R> static
   CGAL::Point_3<R> normalized(const CGAL::Point_3<R>& p) { 
     
@@ -60,7 +80,7 @@ class Normalizing<Homogeneous_tag> {
   }
 
   template <typename R> static
-  CGAL::Sphere_point<R> normalized(CGAL::Sphere_point<R>& p) {
+  CGAL::Sphere_point<R> normalized(const CGAL::Sphere_point<R>& p) {
 
     typedef typename R::RT     RT;
     
@@ -98,7 +118,7 @@ class Normalizing<Homogeneous_tag> {
   }
 
   template <typename R> static
-  CGAL::Sphere_direction<R> normalized(CGAL::Sphere_direction<R>& c) {
+  CGAL::Sphere_direction<R> normalized(const CGAL::Sphere_direction<R>& c) {
 
     typename R::Plane_3 h = c.plane();
     CGAL_assertion(!(h.a()==0 && h.b()==0 && h.c()==0 && h.d()==0));
@@ -129,7 +149,7 @@ class Normalizing<Homogeneous_tag> {
   }
 
   template <typename R> static
-  CGAL::Plane_3<R> normalized(CGAL::Plane_3<R>& h) { 
+  CGAL::Plane_3<R> normalized(const CGAL::Plane_3<R>& h) { 
   
     CGAL_assertion(!(h.a()==0 && h.b()==0 && h.c()==0 && h.d()==0));
     
@@ -165,7 +185,7 @@ class Normalizing<Homogeneous_tag> {
   }
 
   template <typename R> static
-  CGAL::Sphere_circle<R> normalized(CGAL::Sphere_circle<R>& c) { 
+  CGAL::Sphere_circle<R> normalized(const CGAL::Sphere_circle<R>& c) { 
 
     typename R::Plane_3 h = c.plane();
     CGAL_assertion(!(h.a()==0 && h.b()==0 && h.c()==0 && h.d()==0));
@@ -225,11 +245,11 @@ class Normalizing<Cartesian_tag> {
   }
 
   template <typename R> static
-  CGAL::Sphere_direction<R> normalized(CGAL::Sphere_direction<R>& c) {
+  CGAL::Sphere_direction<R> normalized(const CGAL::Sphere_direction<R>& c) {
     return c;
   }
 
-#ifdef CGAL_USE_LEDA
+#ifdef CCGAL_USE_LEDA
 // specialization: Plane_3 < Cartesian < leda_rational > >
 
   
@@ -264,25 +284,44 @@ class Normalizing<Cartesian_tag> {
 #endif
 
   template <typename R> static
-  CGAL::Plane_3<R> normalized(CGAL::Plane_3<R>& h) { 
-   CGAL_assertion(!(h.a()==0 && h.b()==0 && h.c()==0 && h.d()==0));
+  CGAL::Plane_3<R> normalized(const CGAL::Plane_3<R>& h) { 
+    CGAL_assertion(!(h.a()==0 && h.b()==0 && h.c()==0 && h.d()==0));
+
+    typedef typename R::FT FT;
+    typedef Fraction_traits<FT> FracTraits;
+    typedef std::vector<typename FracTraits::Numerator_type> NV;
+    typedef typename NV::iterator NV_iter;
     
-    typedef typename R::FT     FT;
+    typename FracTraits::Numerator_type num;
+    typename FracTraits::Denominator_type denom;
+    typename FracTraits::Decompose decomposer;   
+    NV vec;
     
-    FT x = (h.a()==0) ? ((h.b()==0) ? ((h.c()==0) ? ((h.d()==0) ? 1 
-						     : h.d())
-				       : h.c())
-			 : h.b())
-      : h.a();
-    x = CGAL_NTS abs(x);
+    decomposer(h.a(),num,denom);
+    vec.push_back(num);
+    vec.push_back(denom);
+    vec.push_back(denom);
+    vec.push_back(denom);
+    decomposer(h.b(),num,denom);
+    vec[0]*=denom;
+    vec[1]*=num;
+    vec[2]*=denom;
+    vec[3]*=denom;
+    decomposer(h.c(),num,denom);
+    vec[0]*=denom;
+    vec[1]*=denom;
+    vec[2]*=num;
+    vec[3]*=denom;
+    decomposer(h.d(),num,denom);
+    vec[0]*=denom;
+    vec[1]*=denom;
+    vec[2]*=denom;
+    vec[3]*=num;
     
-    FT pa = h.a()/x;
-    FT pb = h.b()/x;
-    FT pc = h.c()/x;
-    FT pd = h.d()/x;
-    
-    CGAL_NEF_TRACEN("  after normalizing "  << CGAL::Plane_3<R>(pa,pb,pc,pd));
-    return CGAL::Plane_3<R>(pa,pb,pc,pd);
+    Normalizing<Homogeneous_tag>::
+      normalized(vec.begin(),vec.end());
+    return typename R::Plane_3(FT(vec[0]),FT(vec[1]),
+			       FT(vec[2]),FT(vec[3]));
   }
 
   template <typename R> static
@@ -291,13 +330,20 @@ class Normalizing<Cartesian_tag> {
   }
 };
 
+/*
+template <typename R, typename iterator>
+void normalized(iterator begin, iterator end) {
+  Normalizing<typename R::Kernel_tag>::normalized(begin, end);
+}
+*/
+
 template <typename R>
 CGAL::Point_3<R> normalized(const CGAL::Point_3<R>& p) { 
   return Normalizing<typename R::Kernel_tag>::normalized(p);
 }
 
 template <typename R>
-CGAL::Sphere_point<R> normalized(CGAL::Sphere_point<R>& p) {
+CGAL::Sphere_point<R> normalized(const CGAL::Sphere_point<R>& p) {
   return Normalizing<typename R::Kernel_tag>::normalized(p);
 }
 
@@ -307,17 +353,17 @@ CGAL::Vector_3<R> normalized(const CGAL::Vector_3<R>& p) {
 }
 
 template <typename R>
-CGAL::Sphere_direction<R> normalized(CGAL::Sphere_direction<R>& c) {
+CGAL::Sphere_direction<R> normalized(const CGAL::Sphere_direction<R>& c) {
   return Normalizing<typename R::Kernel_tag>::normalized(c);
 }
 
 template <typename R>
-CGAL::Plane_3<R> normalized(CGAL::Plane_3<R>& h) { 
+CGAL::Plane_3<R> normalized(const CGAL::Plane_3<R>& h) { 
   return Normalizing<typename R::Kernel_tag>::normalized(h);
 }
 
 template <typename R>
-CGAL::Sphere_circle<R> normalized(CGAL::Sphere_circle<R>& c) { 
+CGAL::Sphere_circle<R> normalized(const CGAL::Sphere_circle<R>& c) { 
    return Normalizing<typename R::Kernel_tag>::normalized(c);
 }
 

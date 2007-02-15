@@ -206,6 +206,7 @@ bool is_halfcircle() const { return source().antipode() == target(); }
 
 bool has_on(const Sphere_point<R>& p) const;
 /*{\Mop return true iff |\Mvar| contains |p|.}*/
+bool has_on_after_intersection(const Sphere_point<R>& p) const;
 
 bool has_in_relative_interior(const Sphere_point<R>& p) const;
 /*{\Mop return true iff |\Mvar| contains |p| in
@@ -295,6 +296,19 @@ has_on(const CGAL::Sphere_point<R>& p) const
                        sphere_circle().orthogonal_vector(),p) !=
            CGAL::NEGATIVE;
   }
+}
+
+template <typename R> 
+bool Sphere_segment<R>::
+has_on_after_intersection(const CGAL::Sphere_point<R>& p) const {
+    return orientation(Point_3(0,0,0),
+                       CGAL::ORIGIN + sphere_circle().orthogonal_vector(),
+                       source(),p) !=
+           CGAL::NEGATIVE &&
+           orientation(Point_3(0,0,0),target(),
+                       CGAL::ORIGIN + 
+                       sphere_circle().orthogonal_vector(),p) !=
+           CGAL::NEGATIVE;
 }
 
 template <typename R> 

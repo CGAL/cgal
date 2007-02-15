@@ -148,6 +148,16 @@ bool equal_as_sets(const CGAL::Sphere_circle<R>& c1,
 circles.}*/
 { return c1==c2 || c1==c2.opposite(); }
 
+template <class R>
+bool equal_not_opposite(const CGAL::Sphere_circle<R>& c1, 
+			const CGAL::Sphere_circle<R>& c2) {
+  // function should be called to decide whether two circles
+  // are equal or opposites. returns true iff |c1| and |c2| are equal
+  if(c1.a() != 0) return sign(c1.a()) == sign(c2.a());
+  if(c1.b() != 0) return sign(c1.b()) == sign(c2.b());
+  return sign(c1.c()) == sign(c2.c());
+}
+
 template <typename R>
 Sphere_point<R> intersection(const Sphere_circle<R>& c1, 
                              const Sphere_circle<R>& c2)
