@@ -1279,28 +1279,49 @@ struct Lazy_exact_ro2
 
     mutable Lazy_exact_nt<ET> op1, op2, op3;
     bool smaller;
+    bool old_rep;//if the rep=true then representation with polynomial coeff, else alpha, beta, gamma
+  
 
     Lazy_exact_ro2 (const Lazy_exact_nt<ET> &a,
                     const Lazy_exact_nt<ET> &b,
                     const Lazy_exact_nt<ET> &c, bool s)
 #ifndef CGAL_CFG_COMMA_BUG
       : Base((P(), make_root_of_2(a.approx(), b.approx(), c.approx(), s))),
-        op1(a), op2(b), op3(c), smaller(s) {}
+        op1(a), op2(b), op3(c), smaller(s), old_rep(true) {}
 #else
       : Base(a.approx() /* dummy value */, a),
-        op1(a), op2(b), op3(c), smaller(s)
+        op1(a), op2(b), op3(c), smaller(s), old_rep(true)
   {
     P p;
-    this->approx() = make_root_of_2(a.approx(), b.approx(),
-                                    c.approx(), s);
+      this->approx() = make_root_of_2(a.approx(), b.approx(),
+                                      c.approx(), s);
+  }
+#endif
+ 
+    Lazy_exact_ro2 (const Lazy_exact_nt<ET> &a,
+                    const Lazy_exact_nt<ET> &b,
+                    const Lazy_exact_nt<ET> &c)
+#ifndef CGAL_CFG_COMMA_BUG
+      : Base((P(), make_root_of_2(a.approx(), b.approx(), c.approx()))),
+        op1(a), op2(b), op3(c), smaller(true), old_rep(false) {}
+#else
+      : Base(a.approx() /* dummy value */, a),
+        op1(a), op2(b), op3(c), smaller(true), old_rep(false)
+  {
+    P p;
+      this->approx() = make_root_of_2(a.approx(), b.approx(),
+                                      c.approx());
   }
 #endif
 
     void update_exact()
     {
-        this->et = new RO2(make_root_of_2(op1.exact(), op2.exact(),
-                                          op3.exact(), smaller));
-
+        if (old_rep)
+          this->et = new RO2(make_root_of_2(op1.exact(), op2.exact(),
+                                            op3.exact(), smaller));
+        else 
+          this->et = new RO2(make_root_of_2(op1.exact(), op2.exact(),
+                                            op3.exact()));
         if (!this->approx().is_point())
             this->at = to_interval(*(this->et));
         this->prune_dag();
