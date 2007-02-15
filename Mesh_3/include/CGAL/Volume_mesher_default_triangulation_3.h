@@ -17,8 +17,8 @@
 //
 // Author(s)     : Laurent Rineau
 
-#ifndef VOLUME_MESHER_DEFAULT_TRIANGULATION_3_H
-#define VOLUME_MESHER_DEFAULT_TRIANGULATION_3_H
+#ifndef CGAL_VOLUME_MESHER_DEFAULT_TRIANGULATION_3_H
+#define CGAL_VOLUME_MESHER_DEFAULT_TRIANGULATION_3_H
 
 // traits classes
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -72,4 +72,4 @@ namespace CGAL {
 
 } // end namespace CGAL  
 
-#endif // VOLUME_MESHER_DEFAULT_TRIANGULATION_3_H
+#endif // CGAL_VOLUME_MESHER_DEFAULT_TRIANGULATION_3_H
