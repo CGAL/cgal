@@ -2,7 +2,7 @@
 
 DESCRIPTION = LAPACK for gcc/Intel MKL
 PROVIDES = LAPACK
-CXXFLAGS = 
+CXXFLAGS = -DCGAL_USE_F2C
 LDFLAGS = 
 LIBS = mkl32_lapack mkl32_def mkl32_p3 pthread g2c
 REQUIRES =
