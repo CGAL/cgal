@@ -40,8 +40,16 @@ include $(CGAL_MAKEFILE)
 CGAL_OBJECTS = \
 Gbrs_algebraic_1$(OBJ_EXT) \
 Gbrs_polynomial_1$(OBJ_EXT) \
-Gbrs_solve_1$(OBJ_EXT) #\
+Gbrs_solve_1$(OBJ_EXT) \
+Gbrs_solve_2$(OBJ_EXT) \
 Gbrs_polynomial_2$(OBJ_EXT)
+
+MPFI_INCL=/usr/local/science/Distrib/IBM_INTEL_LINUX.4.2.1/include
+RS_INCL=/usr/local/science/Distrib/IBM_INTEL_LINUX.4.2.1/include
+MPFI_LIB=/usr/local/science/Distrib/IBM_INTEL_LINUX.4.2.1/lib
+RS_LIB=/usr/local/science/Distrib/IBM_INTEL_LINUX.4.2.1/lib
+LIB_STAT_PATH=$(RS_LIB)
+FGBFLAGS=
 
 #---------------------------------------------------------------------#
 #                    target entries
@@ -59,7 +67,7 @@ static_lib: static_lib_no_install
 	mv $(CGAL_GBRS_LIB) $(CGAL_LIB_DESTINATION)
 
 static_lib_no_install: $(CGAL_OBJECTS)
-	$(CGAL_LIB_CREATE)$(CGAL_GBRS_LIB) \
+	$(CGAL_LIB_CREATE)$(CGAL_GBRS_LIB) $(FGBFLAGS)  \
 	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
 		$(CGAL_LIB_LDFLAGS)
 	$(RANLIB) $(CGAL_GBRS_LIB)
@@ -76,4 +84,5 @@ clean:
 
 .cpp$(OBJ_EXT):
 	$(CGAL_CXX)  $(OUTSIDEPARS)  $(CXXFLAGS)  -c $<
+	#$(CGAL_CXX)  -DUSE_FGB  $(OUTSIDEPARS)  $(CXXFLAGS)  -c $<
 
