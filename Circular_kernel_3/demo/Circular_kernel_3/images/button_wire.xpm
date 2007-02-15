@@ -1,5 +1,5 @@
 /* XPM */
-static char * button_wire_xpm[] = {
+static const char * button_wire_xpm[] = {
 "28 27 2 1",
 " 	c None",
 ".	c #000000",

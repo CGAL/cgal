@@ -1,5 +1,5 @@
 /* XPM */
-static char * zoom_in_xpm[] = {
+static const char * zoom_in_xpm[] = {
 "16 16 110 2",
 "  	c None",
 ". 	c #000000",

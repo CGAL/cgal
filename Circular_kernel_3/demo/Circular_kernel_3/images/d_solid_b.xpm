@@ -1,5 +1,5 @@
 /* XPM */
-static char * d_solid_b_xpm[] = {
+static const char * d_solid_b_xpm[] = {
 "36 34 249 2",
 "  	c #000000",
 ". 	c #800000",
