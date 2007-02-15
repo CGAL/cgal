@@ -20,8 +20,9 @@
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
-#ifndef SIMPLE_OBJECTS_H
-#define SIMPLE_OBJECTS_H
+
+#ifndef CGAL_SIMPLE_OBJECTS_H
+#define CGAL_SIMPLE_OBJECTS_H
 
 CGAL_BEGIN_NAMESPACE
 
@@ -49,4 +50,5 @@ struct Eq_from_method {
 };
 
 CGAL_END_NAMESPACE
-#endif //SIMPLE_OBJECTS_H
+
+#endif // CGAL_SIMPLE_OBJECTS_H
