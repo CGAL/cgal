@@ -2197,7 +2197,6 @@ Surface_mesh_parameterization/examples/Surface_mesh_parameterization/test.sh eol
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/test_all.bat eol=crlf
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/test_all.sh eol=lf
 Surface_mesh_parameterization/examples/Surface_mesh_parameterization/test_model.sh eol=lf
-Surface_mesh_parameterization/test/Surface_mesh_parameterization/cgal_test eol=lf
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/aircraft.off -text svneol=unset#application/octet-stream
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/cube.off -text svneol=unset#application/octet-stream
 Surface_mesh_parameterization/test/Surface_mesh_parameterization/data/high_genus.off -text svneol=unset#application/octet-stream
