@@ -365,7 +365,7 @@ std::ostream& Rational_polynomial_2::show (std::ostream &s) const {
 			if(int sgn=mpz_sgn(coef[i][j])){
 				if((sgn==1)&&printed)
 					s<<"+";
-				if (mpz_cmp_ui(coef[i][j],1,1)) {
+				if (mpz_cmp_ui(coef[i][j],1)) {
 					s << coef[i][j];
 					if (i)
 						s<<"*";

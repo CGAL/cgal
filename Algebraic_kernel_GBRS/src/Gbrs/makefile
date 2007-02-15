@@ -44,10 +44,11 @@ Gbrs_solve_1$(OBJ_EXT) \
 Gbrs_solve_2$(OBJ_EXT) \
 Gbrs_polynomial_2$(OBJ_EXT)
 
-MPFI_INCL=/usr/local/science/Distrib/IBM_INTEL_LINUX.4.2.1/include
-RS_INCL=/usr/local/science/Distrib/IBM_INTEL_LINUX.4.2.1/include
-MPFI_LIB=/usr/local/science/Distrib/IBM_INTEL_LINUX.4.2.1/lib
-RS_LIB=/usr/local/science/Distrib/IBM_INTEL_LINUX.4.2.1/lib
+DISTRIB=${HOME}/RS
+MPFI_INCL=/usr/include
+RS_INCL=${DISTRIB}/include
+MPFI_LIB=/usr/lib
+RS_LIB=${DISTRIB}/lib/x86_64_Linux
 LIB_STAT_PATH=$(RS_LIB)
 FGBFLAGS=
 
