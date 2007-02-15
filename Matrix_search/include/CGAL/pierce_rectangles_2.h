@@ -703,7 +703,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
   
     // extract all points which are close enough to this point
     Point_2 corner = d[k];
-    if (j >= 3)
+    if (j >= 3) {
       if (j == 3) {
         Citerator i = d.tlstc_begin();
         while (sdistx(*i, d.minx) > FT(2) * d.r)
@@ -714,7 +714,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
         while (sdisty(d.maxy, *--i) > FT(2) * d.r) {}
         corner = cpbrip(*i, d.maxy, d.r);
       }
-  
+    }
   
     // find first point not covered by the rectangle at d[k]
     Iterator i = find_if(d.begin(), d.end(),
