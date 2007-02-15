@@ -1,13 +1,12 @@
 To compile, you need support for lapack
 
-
 Program blind_1pt
 --------------------- 
 takes as input a <inputPoints.txt> which is a xyz text file 
 it compute the fitting for this single entry and 
 it outputs results in the <output.txt> file and on the standard std::cout
 
-Usage is : main <inputPoints.txt> <d_fitting>, <d_monge>" 
+Usage is : blind_1pt <inputPoints.txt> <d_fitting>, <d_monge>" 
 
 in_points are sampled on 0.1(x²+2y²)
 

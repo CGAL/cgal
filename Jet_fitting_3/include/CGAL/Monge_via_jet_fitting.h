@@ -1,3 +1,6 @@
+// Copyright (c) 2007  INRIA Sophia-Antipolis (France), INRIA Lorraine LORIA.
+// All rights reserved.
+//
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
 // the terms of the Q Public License version 1.0.
 // See the file LICENSE.QPL distributed with CGAL.
