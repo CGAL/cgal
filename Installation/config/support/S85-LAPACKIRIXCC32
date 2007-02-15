@@ -1,10 +1,10 @@
 # LAPACK is a linear algebra library
 
-DESCRIPTION = LAPACK for Linux
+DESCRIPTION = LAPACK for IRIX cc 32 bits
 PROVIDES = LAPACK
 CXXFLAGS = 
 LDFLAGS = 
-LIBS = lapack
+LIBS = complib.sgimath c
 REQUIRES =
 INCOMPATIBLE = DOLLAR_WINDOWS_COMPILER
 STDINCLDIRS =
