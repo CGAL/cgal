@@ -2,7 +2,7 @@
 
 \begin{ccRefClass}{int}
 \ccDefinition
-The fundamental type \ccc{int} is an \ccc{RealEmbeddable} \ccc{EuclideanRing}. 
+The fundamental type \ccRefName\ is an \ccc{RealEmbeddable} \ccc{EuclideanRing}. 
 Due to overflow \ccRefName\ is considered as not exact. 
 
 \ccInclude{CGAL/int.h}
@@ -50,16 +50,19 @@ The fundamental type \ccRefName\ is an \ccc{RealEmbeddable}
 \begin{ccRefClass}{float}
 \ccDefinition
 The fundamental type \ccRefName\ is an \ccc{RealEmbeddable} 
-\ccc{Field}. Due to rounding errors and overflow \ccRefName\ is 
+\ccc{FieldWithSqrt}. Due to rounding errors and overflow \ccRefName\ is 
 considered as not exact.
  
 \ccInclude{CGAL/float.h}
 \ccIsModel
-\ccc{EuclideanRing}\\
+\ccc{FieldWithSqrt}\\
 \ccc{RealEmbeddable}
+
+\ccQueryFunctions
+\ccFunction{bool CGAL::is_finite(float x);}
+        { Determines whether the argument represents a value in $\R$. }
 \end{ccRefClass}
 
-\ccDefGlobalScope{CGAL::}
 
 \begin{ccRefClass}{double}
 \ccDefinition
@@ -69,8 +72,32 @@ considered as not exact.
  
 \ccInclude{CGAL/double.h}
 \ccIsModel
-\ccc{EuclideanRing}\\
+\ccc{FieldWithSqrt}\\
 \ccc{RealEmbeddable}
+
+\ccQueryFunctions
+\ccFunction{bool CGAL::is_finite(double x);}
+        { Determines whether the argument represents a value in $\R$. }
+
+\end{ccRefClass}
+
+
+
+\begin{ccRefClass}{long double}
+\ccDefinition
+The fundamental type \ccRefName\ is an \ccc{RealEmbeddable} 
+\ccc{FieldWithSqrt}. Due to rounding errors and overflow \ccRefName\ is 
+considered as not exact.
+ 
+\ccInclude{CGAL/long_double.h}
+\ccIsModel
+\ccc{FieldWithSqrt}\\
+\ccc{RealEmbeddable}
+
+\ccQueryFunctions
+\ccFunction{bool CGAL::is_finite(long double x);}
+        { Determines whether the argument represents a value in $\R$. }
+
 \end{ccRefClass}
 
 \ccDefGlobalScope{CGAL::}
