@@ -17,8 +17,8 @@
 //
 // Author(s)     : Iddo Hanniel <iddoh@cs.technion.ac.il>
 
-#ifndef BEZIER_BOUNDING_RATIONAL_TRAITS_H
-#define BEZIER_BOUNDING_RATIONAL_TRAITS_H
+#ifndef CGAL_BEZIER_BOUNDING_RATIONAL_TRAITS_H
+#define CGAL_BEZIER_BOUNDING_RATIONAL_TRAITS_H
 
 /*! \file
  * Definition of the Bezier_bounding_rational_traits<Kernel> class.
@@ -1181,4 +1181,4 @@ struct _Bez_point_bbox {
 
 CGAL_END_NAMESPACE
 
-#endif //BEZIER_BOUNDING_RATIONAL_TRAITS_H
+#endif //CGAL_BEZIER_BOUNDING_RATIONAL_TRAITS_H
