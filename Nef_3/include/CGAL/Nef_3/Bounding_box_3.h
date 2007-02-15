@@ -54,7 +54,7 @@ public Handle_for< Bounding_box_rep_3<Traits> >
   typedef typename BBox_handle_3::element_type     BBox_ref_3;
 
   typedef typename Traits::Point_3             Point_3;
-  typedef typename Traits::Vector_3            Vector_3;
+  typedef typename Traits::FT                  FT;
 
 public:
         Bounding_box_3()
@@ -68,23 +68,16 @@ public:
 	const Point_3& get_max() const { return this->Ptr()->max; }
 
 	Bounding_box_3  operator+(const Bounding_box_3& b) const {
-	  Point_3 res_min(b.get_min()), res_max(b.get_max());
+
+	  FT xmin = get_min().x() < b.get_min().x() ? get_min().x() : b.get_min().x();
+	  FT ymin = get_min().y() < b.get_min().y() ? get_min().y() : b.get_min().y();
+	  FT zmin = get_min().z() < b.get_min().z() ? get_min().z() : b.get_min().z();
+	  FT xmax = get_max().x() > b.get_max().x() ? get_max().x() : b.get_max().x();
+	  FT ymax = get_max().y() > b.get_max().y() ? get_max().y() : b.get_max().y();
+	  FT zmax = get_max().z() > b.get_max().z() ? get_max().z() : b.get_max().z();
 	  
-	  if(res_min.x() > get_min().x())
-	    res_min = Point_3(res_min.x(),get_min().y(),get_min().z());
-	  if(res_min.y() > get_min().y()) 
-	    res_min = Point_3(get_min().x(),res_min.y(),get_min().z());
-	  if(res_min.z() > get_min().z())
-	    res_min = Point_3(get_min().x(),get_min().y(),res_min.z());
-	  
-	  if(res_max.x() < get_max().x())
-	    res_max = Point_3(res_max.x(),get_max().y(),get_max().z());
-	  if(res_max.y() < get_max().y())
-	    res_max = Point_3(get_max().x(),res_max.y(),get_max().z());
-	  if(res_max.z() < get_max().z())
-	    res_max = Point_3(get_max().x(),get_max().y(),res_max.z());
-	  
-	  return Bounding_box_3(normalized(res_min),normalized(res_max));
+	  return Bounding_box_3(normalized(Point_3(xmin,ymin,zmin)),
+				normalized(Point_3(xmax,ymax,zmax)));
 	}
 };
 

@@ -22,10 +22,6 @@
 #ifndef CGAL_SNC_DECORATOR_H
 #define CGAL_SNC_DECORATOR_H
 
-//#define CGAL_NEF3_SM_VISUALIZOR
-//#define CGAL_NEF3_DUMP_SPHERE_MAPS
-//#define CGAL_NEF3_DUMP_SNC_OPERATORS
-
 #include <CGAL/basic.h>
 #include <CGAL/Nef_S2/Normalizing.h>
 #include <CGAL/Unique_hash_map.h>
@@ -36,6 +32,7 @@
 #include <CGAL/Nef_3/SNC_SM_overlayer.h>
 #include <CGAL/Nef_S2/SM_io_parser.h>
 #include <CGAL/Nef_3/SNC_constructor.h>
+#include <CGAL/Nef_3/SNC_external_structure.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
 #include <CGAL/Nef_3/SNC_point_locator.h>
 #include <CGAL/Nef_3/SNC_simplify.h>
@@ -84,18 +81,21 @@ template <typename Map>
 class SNC_decorator : public SNC_const_decorator<Map> { 
  public:
   typedef Map SNC_structure;
+  typedef typename SNC_structure::Items                Items;
   typedef typename Map::Sphere_map                     Sphere_map;
   typedef CGAL::SNC_decorator<SNC_structure>           Self;
   typedef CGAL::SNC_const_decorator<SNC_structure>     Base;
   typedef Base                                         SNC_const_decorator;
-  typedef CGAL::SNC_constructor<SNC_structure>         SNC_constructor;
+  typedef CGAL::SNC_constructor<Items, SNC_structure>  SNC_constructor;
+  typedef CGAL::SNC_external_structure<Items, SNC_structure> 
+    SNC_external_structure;
   typedef CGAL::SM_decorator<Sphere_map>               SM_decorator;
   typedef CGAL::SM_const_decorator<Sphere_map>         SM_const_decorator;
-  typedef CGAL::SNC_SM_overlayer<SM_decorator>         SM_overlayer;
+  typedef CGAL::SNC_SM_overlayer<Items, SM_decorator>  SM_overlayer;
   typedef CGAL::SM_point_locator<SM_decorator>         SM_point_locator;
   typedef CGAL::SNC_intersection<SNC_structure>        SNC_intersection;
   typedef CGAL::SNC_point_locator<SNC_decorator>       SNC_point_locator;
-  typedef CGAL::SNC_simplify<SNC_structure>            SNC_simplify;
+  typedef CGAL::SNC_simplify<Items, SNC_structure>     SNC_simplify;
   SNC_structure* sncp_;
 
   typedef SNC_decorator_traits<SNC_structure>  Decorator_traits;
@@ -184,6 +184,8 @@ class SNC_decorator : public SNC_const_decorator<Map> {
                                  SHalfedge_around_svertex_circulator;
   typedef typename SM_decorator::SHalfedge_around_sface_circulator 
                                  SHalfedge_around_sface_circulator;
+
+  typedef ID_support_handler<Items, SNC_decorator> Association;
 
   struct points_lt {
     bool operator()(Point_3& p1, Point_3& p2) const {
@@ -675,28 +677,39 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       return f_visible;
     }
 
-  template <typename Selection>
+  template <typename Selection, typename Association>
     Vertex_handle binop_local_views( Vertex_const_handle v0, Vertex_const_handle v1,
-				     const Selection& BOP, SNC_structure& rsnc)
+				     const Selection& BOP, SNC_structure& rsnc
+				     ,Association& A)
     /*{\opOverlays two spheres maps.}*/ {
   
-#ifdef CGAL_NEF3_DUMP_SPHERE_MAPS
-    typedef SM_io_parser<SM_decorator> SM_io_parser;
-    SM_io_parser IO0( std::cerr, v0);
-    SM_io_parser IO1( std::cerr, v1);
+    //#define CGAL_NEF3_DUMP_SPHERE_MAPS
+#ifdef CGAL_NEF3_DUMP_SPHERE_MAPS    
+    typedef SM_io_parser<SM_const_decorator> SM_io_parser;
+    SM_const_decorator D0(&*v0), D1(&*v1);
+    SM_io_parser IO0( std::cerr, D0);
+    SM_io_parser IO1( std::cerr, D1);
     CGAL_NEF_TRACEN(" sphere maps before local binary operation");
     CGAL_NEF_TRACEN(v0->debug());
     CGAL_NEF_TRACEN(v1->debug());
     IO0.debug();    IO1.debug();
     IO0.print();    IO1.print();
 #endif // CGAL_NEF3_DUMP_SPHERE_MAPS
- 
+#undef CGAL_NEF3_DUMP_SPHERE_MAPS
+
    CGAL_assertion( v0->point() == v1->point());
     Vertex_handle v01 = rsnc.new_vertex( v0->point(), BOP( v0->mark(),v1->mark()));
-    //    cerr<<"BOP Vertex "<<v0->mark()<<" "<<v1->mark()<<std::endl;
+    //    std::cerr <<"BOP Vertex "<< v0->point() << ":" 
+    //       	      << v0->mark()<<" "<<v1->mark()<<std::endl;
     CGAL_NEF_TRACEN("  binop result on vertex "<<&*v01<<" on "<<&*(v01->sncp()));
     SM_overlayer O(&*v01);
-    O.subdivide( &*v0, &*v1);
+    O.subdivide( &*v0, &*v1, A);
+    /*
+    SHalfedge_iterator sei2;
+    CGAL_forall_sedges(sei2, O) {
+      std::cerr << "front " << sei2->get_index() << std::endl;
+      std::cerr << "back  " << sei2->twin()->get_index() << std::endl;
+      } */
     O.select( BOP);
     O.simplify();
 
@@ -727,12 +740,12 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     return v01;
   }
 
-  Vertex_handle create_local_view_on( const Point_3& p, Halfedge_const_handle e) {
+  Vertex_handle create_local_view_on( const Point_3& p, Halfedge_handle e) {
     SNC_constructor C(*sncp());
     return C.create_from_edge( e, p);
   }
   
-  Vertex_handle create_local_view_on( const Point_3& p, Halffacet_const_handle f) {
+  Vertex_handle create_local_view_on( const Point_3& p, Halffacet_handle f) {
     SNC_constructor C(*sncp());
     return C.create_from_facet( f, p);
   }
@@ -804,7 +817,9 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   }
       */
 
-  template <typename SNC_decorator, typename Selection>
+  template <typename SNC_decorator, 
+            typename Selection, 
+            typename Association>
   class Intersection_call_back : 
     public SNC_point_locator::Intersection_call_back 
   {
@@ -815,13 +830,13 @@ class SNC_decorator : public SNC_const_decorator<Map> {
   public:
     Intersection_call_back( SNC_structure& s0, SNC_structure& s1,
 			    const Selection& _bop, SNC_structure& r, 
-			    bool invert_order = false) :
+			    bool invert_order, Association& Ain) :
       snc0(s0), snc1(s1), bop(_bop), result(r),
-      inverse_order(invert_order) {}
+      inverse_order(invert_order), A(Ain) {}
 
       void operator()(Halfedge_handle e0, Object_handle o1, const Point_3& ip)
       const {
-
+          
 #ifdef CGAL_NEF3_DUMP_STATISTICS
       ++number_of_intersections;
 #endif
@@ -849,13 +864,14 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 #endif
 
       if( CGAL::assign( e, o1)) {
+	//	std::cerr << "inverse order " << inverse_order << std::endl;
 	Self D(result);
 	Vertex_handle v0, v1;
 	v0 = D.create_local_view_on( p, e0);
 	v1 = D.create_local_view_on( p, e);
 	if( inverse_order)
 	  std::swap( v0, v1);
-	D.binop_local_views( v0, v1, bop, result);
+	D.binop_local_views( v0, v1, bop, result,A);
 	result.delete_vertex(v0);
 	result.delete_vertex(v1);
       }
@@ -867,15 +883,15 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 	v1 = D.create_local_view_on( p, f);
 	if( inverse_order)
 	  std::swap( v0, v1);
-	D.binop_local_views( v0, v1, bop, result);
+	D.binop_local_views( v0, v1, bop, result,A);
 	result.delete_vertex(v0);
 	result.delete_vertex(v1);	
-#else
+#else // CGAL_NEF3_OVERLAY_BY_HAND_OFF
 	SNC_constructor C(result);
-	Sphere_map* M0 = C.create_edge_facet_overlay(e0, f, p, bop, inverse_order);
+	Sphere_map* M0 = C.create_edge_facet_overlay(e0, f, p, bop, inverse_order, A);
 	SM_overlayer O(M0);
 	O.simplify();
-#endif
+#endif // CGAL_NEF3_OVERLAY_BY_HAND_OFF
       }
       else 
 	CGAL_assertion_msg( 0, "wrong handle");
@@ -891,6 +907,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     const Selection& bop;
     SNC_structure& result;
     bool inverse_order;
+    Association& A;
   };
 
   template <typename Selection>
@@ -904,9 +921,12 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       SNC structures.  The input structures are not modified and the
       result of the operation is stored in |result|.
       \precondition: the structure |result| is empty.}*/ {
+
+    //    std::cerr << "check order " << &snc1 << ", " << &snc2 << std::endl;
+
     CGAL_assertion( sncp()->is_empty());
     CGAL_assertion( pl1 != NULL && pl2 != NULL);
-
+    //    CGAL_NEF_SETDTHREAD(19*131*43);
     //    Progress_indicator_clog v_qualifying
     //      (sncp()->number_of_vertices()+snc1i.number_of_vertices(),
     //       "binary_operator: qualifying vertices...");
@@ -940,14 +960,15 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     Unique_hash_map<Vertex_const_handle, bool> ignore(false);
     Vertex_const_iterator v0;
 
-    //    CGAL_NEF_SETDTHREAD(19*43*131*509);
+    //    CGAL_NEF_SETDTHREAD(19*43*131);
     CGAL_NEF_TRACEN("=> binary operation");
+
 #ifdef CGAL_NEF3_DUMP_SNC_OPERATORS
     CGAL_NEF_TRACEN("=> first operand:");
-    SNC_io_parser<SNC_structure> O0(std::cout, snc1);
+    SNC_io_parser<SNC_structure> O0(std::cout, const_cast<SNC_structure&>(snc1));
     O0.print();
     CGAL_NEF_TRACEN("=> second operand:");
-    SNC_io_parser<SNC_structure> O1(std::cout, snc2);
+    SNC_io_parser<SNC_structure> O1(std::cout, const_cast<SNC_structure&>(snc2));
     O1.print();
 #endif // CGAL_NEF3_DUMP_SNC_OPERATORS
 
@@ -961,8 +982,11 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     CGAL_NEF_TRACEN("\nnumber of vertices (so far...) = "<< sncp()->number_of_vertices());
 
     CGAL_NEF_TRACEN("=> for all v0 in snc1, qualify v0 with respect snc2");
+    //    int i=2;
+    Association A;
+
     CGAL_forall_vertices( v0, snc1) {
-      //      v_qualifying++;
+      //      if(i-- > 0){ std::cerr << "skip" << std::endl; continue;}
       CGAL_assertion(!ignore[v0]);
       Point_3 p0(v0->point());
       Vertex_handle v;
@@ -970,7 +994,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       Halffacet_handle f;
       Volume_handle c;
       CGAL_NEF_TRACEN("Locating point " << p0);
-
+      
 #ifdef CGAL_NEF3_TIMER_POINT_LOCATION
       ++number_of_point_location_queries;
       timer_point_location.start();
@@ -984,23 +1008,27 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       timer_overlay.start();
 #endif
       if( CGAL::assign( v, o)) {
+	//	std::cerr << "v" << std::endl; return;
 	CGAL_NEF_TRACEN("p0 found on vertex");
-	binop_local_views( v0, v, BOP, *sncp());
+	binop_local_views( v0, v, BOP, *sncp(),A);
 	ignore[v] = true;
       }
       else if( CGAL::assign( e, o)) {
+	//	std::cerr << "e" << std::endl;
 	CGAL_NEF_TRACEN("p0 found on edge");
 	Vertex_handle v1 = create_local_view_on( p0, e);
-	binop_local_views( v0, v1, BOP, *sncp());
+	binop_local_views( v0, v1, BOP, *sncp(),A);
 	sncp()->delete_vertex(v1);
       }
       else if( CGAL::assign( f, o)) {
+	//	std::cerr << "f" << std::endl;
 	CGAL_NEF_TRACEN("p0 found on facet" << f->plane());
 	Vertex_handle v1 = create_local_view_on( p0, f);
-	binop_local_views( v0, v1, BOP, *sncp());
+	binop_local_views( v0, v1, BOP, *sncp(),A);
 	sncp()->delete_vertex(v1);
       }
       else if( CGAL::assign( c, o)) {
+	//	std::cerr << "c" << std::endl;
 	CGAL_NEF_TRACEN("p0 found on volume with mark " << c->mark());
 #ifdef CGAL_NEF3_OVERLAY_IF_NEEDED_OFF
         if(true) {
@@ -1009,7 +1037,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 #endif
 #ifdef CGAL_NEF3_OVERLAY_BY_HAND_OFF
 	  Vertex_handle v1 = create_local_view_on( p0, c);
-	  binop_local_views( v0, v1, BOP, *sncp());
+	  binop_local_views( v0, v1, BOP, *sncp(),A);
 	  sncp()->delete_vertex(v1);
 #else
 	  SNC_constructor C(*sncp());
@@ -1030,7 +1058,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 #if defined(CGAL_NEF3_TIMER_OVERLAY)
       timer_overlay.stop();
 #endif
-    }
+      }
     CGAL_NEF_TRACEN("\nnumber of vertices (so far...) = "<< sncp()->number_of_vertices());
 
     CGAL_NEF_TRACEN("=> for all v1 in snc1, qualify v1 with respect snc0");
@@ -1061,13 +1089,13 @@ class SNC_decorator : public SNC_const_decorator<Map> {
       if( CGAL::assign( e, o)) {
 	CGAL_NEF_TRACEN("p1 found on edge");
 	Vertex_handle v1 = create_local_view_on( p1, e);
-	binop_local_views( v1, v0, BOP, *sncp());
+	binop_local_views( v1, v0, BOP, *sncp(),A);
 	sncp()->delete_vertex(v1);
       } 
       else if( CGAL::assign( f, o)) {
 	CGAL_NEF_TRACEN("p1 found on facet");
 	Vertex_handle v1 = create_local_view_on( p1, f);
-	binop_local_views( v1, v0, BOP, *sncp());
+	binop_local_views( v1, v0, BOP, *sncp(),A);
 	sncp()->delete_vertex(v1);
       } 
       else if( CGAL::assign( c, o)) {
@@ -1079,7 +1107,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 #endif
 #ifdef CGAL_NEF3_OVERLAY_BY_HAND_OFF
 	Vertex_handle v1 = create_local_view_on( p1, c);
-	binop_local_views( v1, v0, BOP, *sncp());
+	binop_local_views( v1, v0, BOP, *sncp(),A);
 	sncp()->delete_vertex(v1);	  
 #else
 	  SNC_constructor C(*sncp());
@@ -1100,7 +1128,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 #if defined(CGAL_NEF3_TIMER_OVERLAY)
       timer_overlay.stop();
 #endif
-    }
+      }
 
     CGAL_NEF_TRACEN("\nnumber of vertices (so far...) = "<< sncp()->number_of_vertices());
 
@@ -1118,17 +1146,17 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     //      (sncp()->number_of_edges(),
     //       "binary_operator: finding edge-edge intersections...");
 
-    Intersection_call_back<SNC_decorator, Selection> call_back0
-      ( const_cast<SNC_structure&>(snc1), const_cast<SNC_structure&>(snc2), BOP, *sncp());
-    Intersection_call_back<SNC_decorator, Selection> call_back1 
-      ( const_cast<SNC_structure&>(snc2), const_cast<SNC_structure&>(snc2), BOP, *sncp(), true);
+    Intersection_call_back<SNC_decorator, Selection, Association> call_back0
+      ( const_cast<SNC_structure&>(snc1), const_cast<SNC_structure&>(snc2), BOP, *sncp(), false, A);
+    Intersection_call_back<SNC_decorator, Selection, Association> call_back1 
+      ( const_cast<SNC_structure&>(snc2), const_cast<SNC_structure&>(snc2), BOP, *sncp(), true, A);
 
 #ifdef CGAL_NEF3_TIMER_INTERSECTION
     double split_intersection = timer_overlay.time();
     CGAL::Timer timer_intersection;
     timer_intersection.start();
 #endif
-
+   
     // choose between intersection algorithms
 #ifdef CGAL_NEF3_INTERSECTION_BY_KDTREE
     Halfedge_iterator e0, e1;
@@ -1195,37 +1223,8 @@ class SNC_decorator : public SNC_const_decorator<Map> {
     CGAL_assertion_code(CGAL_forall_vertices( v0, *sncp()) 
 			  CGAL_NEF_TRACEN(&*v0<<" "<<v0->point()));
 
-#ifdef CGAL_NEF3_TIMER_SIMPLIFICATION
-    CGAL::Timer timer_simplification;
-    timer_simplification.start();
-#endif
-
-    SNC_simplify simp(*sncp());
-    simp.vertex_simplification(NO_SNC);
-
-#ifdef CGAL_NEF3_TIMER_SIMPLIFICATION
-    timer_simplification.stop();
-    if(cgal_nef3_timer_on)
-      std::cout << "Runtime_simplification: " 
-		<< timer_simplification.time() << std::endl;
-#endif
-
-    CGAL_NEF_TRACEN("\nnumber of vertices (so far...) = "<< sncp()->number_of_vertices());
-
-    CGAL_NEF_TRACEN("=> resultant vertices (after simplification): ");
-    CGAL_assertion_code(CGAL_forall_vertices( v0, *sncp()) 
-			  CGAL_NEF_TRACEN(&*v0<<" "<<v0->point()));
-#ifdef CGAL_NEF3_DUMP_SNC_OPERATORS
-    CGAL_NEF_TRACEN("=> pre-construction result");
-    SNC_io_parser<SNC_structure> O(std::cerr, *sncp());
-    O.print();
-#endif
-    
-#ifndef CGAL_NEF3_NO_EXTERNAL
-    //    CGAL_assertion( !sncp()->is_empty());
-    SNC_constructor C(*sncp(), pl0);
-    C.build_external_structure();
-#endif
+    SNC_external_structure es(*sncp(), pl0);
+    es.build_after_binary_operation();
 
 #ifdef CGAL_NEF3_DUMP_SNC_OPERATORS
     CGAL_NEF_TRACEN("=> construction completed, result: ");
@@ -1241,10 +1240,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 		<< timer_plane_sweeps.time() << std::endl;
     }
 #endif
-
-    CGAL_assertion(!simp.simplify());
-    CGAL_NEF_TRACEN("=> end binary operation. ");
-
+    
 #ifdef CGAL_NEF3_DUMP_STATISTICS
     if(cgal_nef3_timer_on) {
       std::cout << "Vertices_in_object_A: "
@@ -1459,7 +1455,7 @@ class SNC_decorator : public SNC_const_decorator<Map> {
 
       Shell_entry_iterator si;
       CGAL_forall_shells_of(si,voli) {
-	//valid = valid && (si != Shell_entry_iterator() &&
+	//	valid = valid && (si != Shell_entry_iterator() &&
 	valid = valid && (SFace_handle(si) != SFace_handle() && 
 			  SFace_handle(si) != NULL);
 	valid = valid && (++count <= max);

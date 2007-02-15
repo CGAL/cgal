@@ -29,7 +29,7 @@
 CGAL_BEGIN_NAMESPACE
 
 template < class Node, class Object>
-struct Project_halfedge_point {
+struct Project_shalfedge_point {
   typedef Node         argument_type;
   typedef Object       result_type;
   Object& operator()( Node& x) const   { 
@@ -88,8 +88,9 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
   }
 
   bool does_contain_internally( Halffacet_const_handle f, 
-				const Point_3& p) const {
-    if( !f->plane().has_on(p))
+				const Point_3& p,
+				bool check_has_on = true) const {
+    if(check_has_on && !f->plane().has_on(p))
       return false;
     return (locate_point_in_halffacet( p, f) == CGAL::ON_BOUNDED_SIDE); 
   }
@@ -106,7 +107,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
 #endif
 
   bool does_contain_on_boundary( Halffacet_const_handle f, const Point_3& p) const {
-    typedef Project_halfedge_point
+    typedef Project_shalfedge_point
       < SHalfedge, const Point_3> Project;
     typedef Circulator_project
       < SHalfedge_around_facet_const_circulator, Project, 
@@ -209,7 +210,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
       return false;
     Vector_3 vs1(s1.to_vector()), vs2(s2.to_vector()), 
       vt(cross_product( vs1, vs2)), 
-      ws1(cross_product( vt, vs1)), ws2(cross_product( vt, vs2));
+      ws1(cross_product( vt, vs1)); // , ws2(cross_product( vt, vs2));
     Plane_3 hs1( s1.source(), ws1);
     Object o = intersection(hs1, ls2);
     CGAL_assertion(CGAL::assign( p, o));
@@ -278,7 +279,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
       return false;
     CGAL_NEF_TRACEN( "-> intersection point: " << p );
     CGAL_NEF_TRACEN( "-> point in facet interior? "<<does_contain_internally( f, p));
-    return does_contain_internally( f, p);
+    return does_contain_internally( f, p, false);
   }
 
 #ifdef CGAL_NEF3_FACET_WITH_BOX
@@ -301,7 +302,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
       return false;
     CGAL_NEF_TRACEN( "-> intersection point: " << p );
     //    CGAL_NEF_TRACEN( "-> point in facet interior? "<<does_contain_internally( f, p));
-    return does_contain_internally( pf, p);
+    return does_contain_internally( pf, p, false);
   }
 #endif
 
@@ -319,12 +320,19 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
     if( h.has_on( seg.source()) || h.has_on(seg.target()))
       /* no possible internal intersection */
       return false;
+    return does_intersect(seg, f, p);
+  }
+
+  bool does_intersect(const Segment_3& seg,
+		      Halffacet_const_handle f,
+		      Point_3& p) const {
+    Plane_3 h( f->plane());
     Object o = intersection( h, seg);
     if( !CGAL::assign( p, o))
       return false;
     CGAL_NEF_TRACEN( "-> intersection point: " << p );
     CGAL_NEF_TRACEN( "-> point in facet interior? "<<does_contain_internally( f, p));
-    return( does_contain_internally( f, p));
+    return( does_contain_internally( f, p, false));
   }
 
 #ifdef CGAL_NEF3_FACET_WITH_BOX
@@ -347,13 +355,13 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
       return false;
     CGAL_NEF_TRACEN( "-> intersection point: " << p );
     //    CGAL_NEF_TRACEN( "-> point in facet interior? "<<does_contain_internally( f, p));
-    return( does_contain_internally( pf, p));
+    return( does_contain_internally( pf, p, false));
   }
 #endif
 
   Bounded_side locate_point_in_halffacet( const Point_3& p, 
 					  Halffacet_const_handle f) const {
-    typedef Project_halfedge_point
+    typedef Project_shalfedge_point
       < SHalfedge, const Point_3> Project;
     typedef Circulator_project
       < SHalfedge_around_facet_const_circulator, Project, 
@@ -421,14 +429,12 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
        p.z() < pf.f->b.min_coord(2) || p.z() > pf.f->b.max_coord(2))
       return CGAL::ON_UNBOUNDED_SIDE;
     
-    typedef Project_halfedge_point
+    typedef Project_shalfedge_point
       < SHalfedge, Point_3> Project;
     typedef Circulator_project
       < SHalfedge_around_facet_const_circulator, Project, 
       const Point_3&, const Point_3*> Circulator;
     typedef Container_from_circulator<Circulator> Container;
-    //    typedef Iterator_project
-    //      < SHalfedge_around_facet_const_circulator, Project> Iterator;
 
     typedef typename Partial_facet::Outer_cycle_iterator  Outer_cycle_iterator;
     typedef typename Partial_facet::Inner_cycle_iterator  Inner_cycle_iterator;
@@ -467,7 +473,7 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
 	Circulator c(hfc);
 	Container ct(c);
 	CGAL_assertion( !is_empty_range(ct.begin(), ct.end()));
-	outer_bound_pos = bounded_side_3(ct.begin(), ct.end(), p, h);	
+	inner_bound_pos = bounded_side_3(ct.begin(), ct.end(), p, h);	
       } else {
 	inner_bound_pos = bounded_side_3(Circulator(SHalfedge_around_facet_const_circulator(ic->first)), 
 					 Circulator(SHalfedge_around_facet_const_circulator(ic->second)), p, h);

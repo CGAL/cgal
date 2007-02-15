@@ -177,6 +177,18 @@ public:
     return this->sncp()->volumes_begin(); }
   Volume_const_iterator   volumes_end()   const   { 
     return this->sncp()->volumes_end(); }
+  SHalfedge_const_iterator shalfedges_begin() const {
+    return this->sncp()->shalfedges_begin(); }
+  SHalfedge_const_iterator shalfedges_end() const {
+    return this->sncp()->shalfedges_end(); }
+  SHalfloop_const_iterator shalfloops_begin() const {
+    return this->sncp()->shalfloops_begin(); }
+  SHalfloop_const_iterator shalfloops_end() const {
+    return this->sncp()->shalfloops_end(); }
+  SFace_const_iterator sfaces_begin() const {
+    return this->sncp()->sfaces_begin(); }
+  SFace_const_iterator sfaces_end() const {
+    return this->sncp()->sfaces_end(); }
 
   Shell_entry_const_iterator shells_begin(Volume_const_handle c) const {
     return c->shells_begin();
@@ -197,6 +209,12 @@ public:
   { return this->sncp()->number_of_facets();}
   Size_type number_of_volumes() const   
   { return this->sncp()->number_of_volumes();}
+  Size_type number_of_shalfedges() const
+  { return this->sncp()->number_of_shalfedges();}
+  Size_type number_of_shalfloops() const
+  { return this->sncp()->number_of_shalfloops();}
+  Size_type number_of_sfaces() const
+  { return this->sncp()->number_of_sfaces();}
 
   bool is_bounded() const {
     if(is_standard_kernel())

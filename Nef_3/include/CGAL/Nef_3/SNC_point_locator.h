@@ -585,7 +585,7 @@ public:
         }
       }
       else if( CGAL::assign( f, *o)) {
-        if ( is.does_contain_internally( f, p) ) {
+        if (is.does_contain_internally( f, p) ) {
           _CGAL_NEF_TRACEN("found on facet...");
           result = Object_handle(f);
           found = true;
@@ -671,26 +671,51 @@ public:
     Segment_3 s(p,v->point());
     Point_3 ip;
 
-//    Object_list_iterator ox(o);
+    /*
+    // TODO: das geht effizienter
+    Object_list_iterator of(o);
+    while(of != candidates.end() && assign(e, *of)) ++of;
+    
+    typename SNC_structure::SHalfedge_iterator sei;
+    for(sei=v->shalfedges_begin(); sei!=v->shalfedges_end(); ++sei){      
+      if(sei->is_twin()) continue;
+      Halffacet_handle fout = sei->facet();
+      if(fout->is_twin()) fout = fout->twin();
+      Object_list_iterator ofc(of); 
+      for(;ofc!=candidates.end();++ofc) {
+	if(CGAL::assign(f,*ofc)) {
+	  if(f == fout->twin())
+	    std::cerr << "shit" << std::endl;
+	  if(f == fout) {
+	    Object_list_iterator oe(ofc);
+	    --ofc;
+	    candidates.erase(oe);
+	  }
+	}
+      }
+    }
+    */
     for(;o!=candidates.end();++o) {
       if( CGAL::assign( e, *o)) {
 	Segment_3 ss(e->source()->point(),e->twin()->source()->point());
 	CGAL_NEF_TRACEN("test edge " << e->source()->point() << "->" << e->twin()->source()->point());
-        if(is.does_contain_internally(ss, p) ) {
-          _CGAL_NEF_TRACEN("found on edge "<< ss);
+	  if(is.does_contain_internally(ss, p) ) {
+	_CGAL_NEF_TRACEN("found on edge "<< ss);
           return Object_handle(e);
         }
 	if(is.does_intersect_internally(s, ss, ip)) {
 	  s = Segment_3(p, normalized(ip));
 	  result = Object_handle(e);
         }
-      } else if( CGAL::assign( f, *o)) {
+
+      } else 
+      if( CGAL::assign( f, *o)) {
 	CGAL_NEF_TRACEN("test facet " << f->plane());
         if (is.does_contain_internally(f,p) ) {
           _CGAL_NEF_TRACEN("found on facet...");
           return Object_handle(f);
         }
-        if( is.does_intersect_internally(s,f,ip)) {	
+        if( is.does_intersect_internally(s,f,ip)) {
           s = Segment_3(p, normalized(ip));
 	  result = Object_handle(f);
         }
@@ -732,7 +757,8 @@ public:
       SFace_handle sf;
       if(CGAL::assign(sf,so))
         return sf->volume();
-
+      std::cerr << "Abbruch " << std::endl;
+      return Object_handle();
       CGAL_assertion_msg(false, "wrong handle type");
 /*
       SHalfedge_handle se;

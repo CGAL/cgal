@@ -23,6 +23,7 @@
 #include <CGAL/Nef_2/geninfo.h>
 #include <CGAL/Nef_2/Segment_overlay_traits.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
+#include <CGAL/Lazy_kernel.h>
 #include <list>
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 31
@@ -35,28 +36,52 @@ CGAL_BEGIN_NAMESPACE
    We derive from the point type and add the vertex handle */
 
 template <typename P, typename H>
-class Vertex_point : public P {
-  H v_;
+class Vertex_point : public H {
+  P p_;
 public:
   Vertex_point() {}
-  Vertex_point(const P& p, H v) : P(p)  { v_=v; }
-  Vertex_point(const Vertex_point& vp) : P(vp) { v_=vp.v_; }
+  Vertex_point(const P& p, H v) : H(v), p_(p) {}
+  Vertex_point(const Vertex_point& vp) : H(vp) { p_=vp.p_; }
   Vertex_point& operator=(const Vertex_point& vp)
-  { P::operator=(vp); v_=vp.v_; return *this; } 
-  H vertex() const { return v_; }
+  { H::operator=(vp); p_=vp.p_; return *this; } 
+  H vertex() const { return *this; }
+  P point() const { return p_; } 
 };
+
+/*
+bool operator==(const Vertex_point& vp1, const Vertex_point& vp2) {
+    return vp1.vertex()==vp2.vertex();
+}
+*/
 
 template <typename P, typename H>
 std::ostream& operator<<(std::ostream& os, const Vertex_point<P,H>& p)
-{ os << static_cast<P>(p); return os; }
+{ os << p.point(); return os; }
 
 template <typename P, typename H>
 std::ostream& operator<<(std::ostream& os, 
   const std::pair< Vertex_point<P,H>, Vertex_point<P,H> > & s)
 { os << s.first << s.second; return os; }
 
-template <typename P, typename SE>
+template <typename V, typename SE>
 struct Sort_sedges {
+  bool operator()(SE e1, SE e2) {
+    V v1[2], v2[2];
+    v1[0] = e1->source()->center_vertex();
+    v1[1] = e1->next()->source()->center_vertex();
+    v2[0] = e2->source()->center_vertex();
+    v2[1] = e2->next()->source()->center_vertex();
+    int i1(0), i2(0);
+    if(CGAL::lexicographically_xyz_smaller(v1[1]->point(),v1[0]->point())) i1 = 1;
+    if(CGAL::lexicographically_xyz_smaller(v2[1]->point(),v2[0]->point())) i2 = 1;
+    if(v1[i1] != v2[i2]) return CGAL::lexicographically_xyz_smaller(v1[i1]->point(),v2[i2]->point());
+    if(v1[1-i1] != v2[1-i2]) return CGAL::lexicographically_xyz_smaller(v1[1-i1]->point(),v2[1-i2]->point());
+    return i1<i2;
+  }
+};
+
+template <typename P, typename SE>
+struct Sort_sedges2 {
   bool operator()(SE e1, SE e2) {
     P p1[2], p2[2];
     p1[0] = e1->source()->center_vertex()->point();
@@ -71,6 +96,7 @@ struct Sort_sedges {
     return i1<i2;
   }
 };
+
 
 //--------------------------------------------------------------------------
 /* The following type is an output model for our generic segment
@@ -149,25 +175,33 @@ Halffacet_geometry(const Plane_3& hi) : h(hi) {}
 Point_2 source(const Segment_2& s) const  { return s.first; }
 Point_2 target(const Segment_2& s) const  { return s.second; }
 
-bool is_degenerate(const Segment_2& s) const
-{ return source(s)==target(s); }
+bool is_degenerate(const Segment_2& s) const { 
+  return source(s).vertex()==target(s).vertex();
+}
 
 Segment_2 construct_segment(const Point_2& p1, const Point_2& p2) const
 { return Segment_2(p1,p2); }
 
 int orientation(const Point_2& p1, const Point_2& p2, const Point_2& p3) const
 { return static_cast<int>(
-    CGAL::orientation(p1,p2,p3,above(p1))); }
+    CGAL::orientation(p1.point(),p2.point(),p3.point(),above(p1.point()))); }
 
-int orientation(const Segment_2& s, const Point_2& p) const
-{ return orientation(source(s),target(s),p); }
+int orientation(const Segment_2& s, const Point_2& p) const {
+    if(source(s).vertex() == p.vertex() ||
+       target(s).vertex() == p.vertex())
+        return 0;
+    return orientation(source(s),target(s),p); 
+}
 
-int compare_xy(const Point_2& p1, const Point_2& p2) const
-{ return static_cast<int>(
-    CGAL::compare_xyz(p1,p2)); }
+int compare_xy(const Point_2& p1, const Point_2& p2) const { 
+    if(p1.vertex()==p2.vertex())
+        return 0;
+    return static_cast<int>(
+        CGAL::compare_xyz(p1.point(),p2.point()));
+}
 
 Point_2 intersection(const Segment_2& s1, const Segment_2& s2) const
-{ CGAL_assertion(target(s1)==target(s2)); 
+{ CGAL_assertion(target(s1).vertex()==target(s2).vertex()); 
   return target(s1); }
 
 bool left_turn(const Point_3& p1, const Point_3& p2, const Point_3& p3) const
@@ -175,6 +209,74 @@ bool left_turn(const Point_3& p1, const Point_3& p2, const Point_3& p3) const
 
 }; // Halffacet_geometry
 
+
+template<class K1, class K2, typename SHalfedge_handle> class SmallerXYZ {
+  
+  typedef typename K2::Point_3  Point_3;
+ public:
+  SmallerXYZ() {}
+
+  bool operator()(const SHalfedge_handle se, const Point_3 min, bool init) {
+    return CGAL::lexicographically_xyz_smaller(se->twin()->source()->twin()->source()->point(), min);
+  }
+};
+
+template<class K2, typename SHalfedge_handle> 
+class SmallerXYZ<CGAL::Lazy_kernel<typename K2::EK>, K2, SHalfedge_handle> {
+
+  typedef typename K2::Point_3  Point_3;
+ public:
+  SmallerXYZ() {}
+
+  bool point_in_positive_direction_3(const Point_3& p) const {
+    if(p.x() < 0) return false;
+    if(p.x() > 0) return true;
+    if(p.y() < 0) return false;
+    if(p.y() > 0) return true;
+    return p.z() > 0;
+  }  
+
+  bool operator()(const SHalfedge_handle se, const Point_3 min, bool init) {
+    return 
+      //      (point_in_positive_direction_3(se->next()->source()->point()) &&
+      //	    point_in_positive_direction_3(se->next()->twin()->source()->point()) &&
+      //	    (!init || 
+	     CGAL::lexicographically_xyz_smaller(se->twin()->source()->twin()->source()->point(), 
+						 min);
+  }
+};
+
+/*
+template<class K2, typename SHalfedge_handle> 
+class SmallerXYZ<CGAL::Lazy_kernel<typename K2::EK>, K2, SHalfedge_handle> {
+
+  typedef typename K2::Point_3  Point_3;
+ public:
+  SmallerXYZ() {}
+
+  bool point_in_positive_direction_2(const Point_3& p) const {
+    if(p.y() < 0) return false;
+    if(p.y() > 0) return true;
+    return p.z() > 0;
+  }
+
+  bool point_in_positive_direction_3(const Point_3& p) const {
+    if(p.x() < 0) return false;
+    if(p.x() > 0) return true;
+    if(p.y() < 0) return false;
+    if(p.y() > 0) return true;
+    return p.z() > 0;
+  }  
+
+  bool operator()(const SHalfedge_handle se, const Point_3 min, bool init) {
+    return (point_in_positive_direction_3(se->next()->source()->point()) &&
+	    point_in_positive_direction_3(se->next()->twin()->source()->point()) &&
+	    (!init || 
+	     CGAL::lexicographically_xyz_smaller(se->twin()->source()->twin()->source()->point(), 
+						 min)));
+  }
+};
+*/
 
 //--------------------------------------------------------------------------
 // SNC_FM_decorator
@@ -210,6 +312,7 @@ public:
   typedef typename SNC_structure::Halffacet_cycle_iterator Halffacet_cycle_iterator;
   typedef typename SNC_structure::Shell_entry_iterator Shell_entry_iterator;
   typedef typename SNC_structure::Object_handle Object_handle;
+  typedef typename SNC_structure::Kernel  Kernel;
   typedef typename SNC_structure::Point_3 Point_3;
   typedef typename SNC_structure::Plane_3 Plane_3;
   typedef typename SNC_structure::Mark Mark;
@@ -249,8 +352,8 @@ public:
   void create_facet_objects(const Plane_3& h,
     Object_list_iterator start, Object_list_iterator end) const;
 
-
 protected:
+
 //--------------------------------------------------------------------------
 /* We provide some information on determine_facet. To understand its
    functionality please refer to the Nef_2 implementation report where
@@ -373,27 +476,35 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
      cycle.  After that iteration for an edge |e| the number of its
      facet cycle is |FacetCycle[e]| and for a facet cycle |c| we know
      |MinimalEdge[c]|. */
-
   int i=0; 
-  CGAL_forall_iterators(eit,SHalfedges) { e = *eit;
+  //  bool xyplane = plane_supporting_facet.b() != 0 || plane_supporting_facet.c() != 0;
+  SmallerXYZ<Kernel, Kernel, SHalfedge_handle> smallerXYZ;
+  CGAL_forall_iterators(eit,SHalfedges) { 
+    e = *eit;
     if ( FacetCycle[e] >= 0 ) continue; // already assigned
     SHalfedge_around_facet_circulator hfc(e),hend(hfc);
+    FacetCycle[hfc]=i;
     SHalfedge_handle e_min = e;
-    CGAL_NEF_TRACEN("\n  facet cycle numbering "<<i);
+    bool init=false;
+    CGAL_NEF_TRACEN("\n  facet cycle numbering (up) "<<i);
     CGAL_For_all(hfc,hend) {
       FacetCycle[hfc]=i; // assign face cycle number
-      if ( CGAL::lexicographically_xyz_smaller(hfc->twin()->source()->twin()->source()->point(), 
-					       e_min->twin()->source()->twin()->source()->point()))
+      if(smallerXYZ(hfc, e_min->twin()->source()->twin()->source()->point(), init)) {
+	init = true;
 	e_min = hfc;
+      }
+      
       CGAL_NEF_TRACEN(hfc->twin()->source()->twin()->source()->point() << " lex xyz smaller " << 
 		      e_min->twin()->source()->twin()->source()->point() << "=" << 
 		      CGAL::lexicographically_xyz_smaller(hfc->twin()->source()->twin()->source()->point(), 
 							  e_min->twin()->source()->twin()->source()->point()));
-
+      
     } CGAL_NEF_TRACEN("");
     MinimalEdge.push_back(e_min);
     ++i;
   }
+
+
 
   /* We now know the number of facet cycles |i| and we have a minimal
      edge |e| for each facet cycle. We just check the geometric
@@ -409,6 +520,11 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
     Point_3 p1 = e->source()->source()->point(), 
       p2 = e->twin()->source()->twin()->source()->point(), 
       p3 = e->next()->twin()->source()->twin()->source()->point();
+    
+    //      std::cerr << "minimal shalfedge " << e->source()->source()->point() << ":"
+    //                << e->source()->point() << "->" << e->twin()->source()->point() << std::endl;
+
+
     if ( G.left_turn(p1,p2,p3) ) { 
       Halffacet_handle f = this->sncp()->new_halffacet_pair(plane_supporting_facet);
       link_as_facet_cycle(e,f); link_as_facet_cycle(e->twin(),f->twin()); 
@@ -434,12 +550,17 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
     do_sweep = true;
 
   CGAL_forall_iterators(eit,SHalfedges) { 
+    //    std::cerr << "fc " << FacetCycle[*eit] << std::endl;
     if ( (*eit)->facet() == Halffacet_handle() ) {
+      //      std::cerr << "nicht verlinkte shalfedge " << (*eit)->source()->source()->point() << ":"
+      //                << (*eit)->source()->point() << "->" << (*eit)->twin()->source()->point() << std::endl;
       do_sweep = true;
       break;
     }
   }
-  
+
+
+  //  std::cerr << std::endl;
 #ifndef CGAL_NEF3_PLANE_SWEEP_OPTIMIZATION_OFF
   if(!do_sweep) return; 
 #endif
@@ -454,7 +575,9 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
   //  Insertion of SHalfedges into Segments is shifted below in order
   //  to guarantee that there are no gaps in the overlay.
 
-  SHalfedges.sort(Sort_sedges<Point_3,SHalfedge_handle>());
+
+  //  SHalfedges.sort(Sort_sedges2<Point_3,SHalfedge_handle>());
+  SHalfedges.sort(Sort_sedges<Vertex_handle,SHalfedge_handle>());
   for(eit = SHalfedges.begin();eit != SHalfedges.end();) {
     CGAL_NEF_TRACEN("  appending edge "<< debug(*eit));
     Segments.push_front(segment(*eit)); 
@@ -465,8 +588,8 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
       CGAL_NEF_TRACEN("test " << std::endl << "  " << debug(*epred) 
 	     << std::endl << "  " << debug(*eit));
     if(eit != SHalfedges.end() && 
-       (*epred)->source()->source()->point()==(*eit)->twin()->source()->twin()->source()->point() &&  
-       (*eit)->source()->source()->point()== (*epred)->twin()->source()->twin()->source()->point())
+       (*epred)->source()->source() ==(*eit)->next()->source()->source() &&  
+       (*eit)->source()->source() == (*epred)->next()->source()->source())
       ++eit;
   }
 
@@ -474,7 +597,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
     CGAL_NEF_TRACEN("  appending loop " << (*lit)->incident_sface()->center_vertex()->point()); 
     Segments.push_back(segment(*lit));
   }
-    
+
   std::vector<SHalfedge_handle> Edge_of(Segments.size()+1);
   Halffacet_output O(From,Edge_of);
   Halffacet_sweep FS(typename Halffacet_sweep::INPUT(

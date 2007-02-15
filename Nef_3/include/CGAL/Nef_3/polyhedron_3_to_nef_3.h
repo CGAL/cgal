@@ -25,6 +25,7 @@
 #include <CGAL/Circulator_project.h>
 #include <CGAL/normal_vector_newell_3.h>
 #include <CGAL/Nef_S2/SM_point_locator.h>
+#include <CGAL/Nef_3/SNC_indexed_items.h>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 29
@@ -73,6 +74,70 @@ struct Facet_plane_3 {
   }
 };
 
+template<typename Items, typename Polyhedron, typename SNC_structure>
+class Index_adder {
+  typedef typename SNC_structure::SHalfedge_handle   SHalfedge_handle;
+  
+  typedef typename Polyhedron::Halfedge_around_vertex_const_circulator
+    Halfedge_around_vertex_const_circulator;
+ public:
+  Index_adder(Polyhedron& P_) {}
+  void set_hash(Halfedge_around_vertex_const_circulator evc,
+		SHalfedge_handle se) {}
+  void resolve_indexes() {}
+};
+
+template<typename Polyhedron, typename SNC_structure>
+class Index_adder<CGAL::SNC_indexed_items, Polyhedron, SNC_structure> {
+
+  typedef typename SNC_structure::SHalfedge_handle   SHalfedge_handle;
+  
+  typedef typename Polyhedron::Halfedge_const_handle 
+    Halfedge_const_handle;
+  typedef typename Polyhedron::Facet_const_iterator 
+    Facet_const_iterator;
+  typedef typename Polyhedron::Halfedge_around_vertex_const_circulator
+    Halfedge_around_vertex_const_circulator;
+  typedef typename Polyhedron::Halfedge_around_facet_const_circulator
+    Halfedge_around_facet_const_circulator;
+  typedef typename CGAL::Unique_hash_map<Halfedge_const_handle, 
+                                         SHalfedge_handle> Hash;
+
+  Polyhedron& P;
+  Hash hash;
+
+ public:
+  Index_adder(Polyhedron& P_) : P(P_) {}
+
+  void set_hash(Halfedge_around_vertex_const_circulator evc,
+		SHalfedge_handle se) {
+    hash[evc] = se;
+  }
+  
+  void resolve_indexes() {
+    Facet_const_iterator fi;
+    for(fi = P.facets_begin(); fi != P.facets_end(); ++fi) {
+      Halfedge_around_facet_const_circulator 
+	fc(fi->facet_begin()), end(fc);
+      hash[fc]->set_index();
+      hash[fc]->twin()->set_index();
+      hash[fc]->twin()->source()->set_index();
+      int se  = hash[fc]->get_index();
+      int set = hash[fc]->twin()->get_index();
+      int sv  = hash[fc]->twin()->source()->get_index();
+      
+      ++fc;
+      CGAL_For_all(fc, end) {
+	hash[fc]->set_index(se);
+	hash[fc]->twin()->set_index(set);
+	hash[fc]->source()->set_index(sv);
+	hash[fc]->twin()->source()->set_index();
+	sv = hash[fc]->twin()->source()->get_index();
+      }
+      hash[fc]->source()->set_index(sv);
+    }
+  }
+};
 
 template <class Polyhedron_, class SNC_structure>
 void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
@@ -91,18 +156,16 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
 
   typedef typename Polyhedron::Halfedge_around_vertex_const_circulator
                                Halfedge_around_vertex_const_circulator;
-                                  
+
+  Index_adder<typename SNC_structure::Items,
+    Polyhedron, SNC_structure> index_adder(P);
+
   CGAL_NEF_TRACEN("  calculating facet's planes...");
   std::transform( P.facets_begin(), P.facets_end(),
 		  P.planes_begin(), Facet_plane_3());
 
-  //  Progress_indicator_clog progress
-  //    ( P.size_of_vertices(),
-  //      "polyhedron_3_to_nef_3: constructing local view of vertices...");
-
   typename Polyhedron::Vertex_iterator pvi;
   for( pvi = P.vertices_begin(); pvi != P.vertices_end(); ++pvi ) {
-    //    progress++;
     typename Polyhedron::Vertex pv = *pvi;
     Vertex_handle nv = S.new_vertex();
     nv->point() = pv.point();
@@ -164,7 +227,9 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
       e->circle() = ss_circle;
       e->twin()->circle() = ss_circle.opposite();
       e->mark() = e->twin()->mark() = true;
-	  
+
+      index_adder.set_hash(pe_prev, e);
+
       sv_prev = sv;
       pe_prev = pe;
       pe++;
@@ -193,11 +258,13 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
     CGAL_assertion(ss_plane.has_on(sv_prev->point()));
     CGAL_assertion(ss_circle.has_on(sp_0));
     CGAL_assertion(ss_circle.has_on(sv_prev->point()));
-    
+   
     SHalfedge_handle e = SM.new_shalfedge_pair(sv_prev, sv_0);
     e->circle() = ss_circle;
     e->twin()->circle() = ss_circle.opposite();
     e->mark() = e->twin()->mark() = true;
+
+    index_adder.set_hash(pe_prev, e);
 
     // create faces
     SFace_handle fint = SM.new_sface();
@@ -209,10 +276,9 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
     fint->mark() = true;
     fext->mark() = false;
     SM.check_integrity_and_topological_planarity();   
-
-    //    SM_point_locator L(nv);
-    //    L.init_marks_of_halfspheres(); 
   }
+
+  index_adder.resolve_indexes();
 }
 
 

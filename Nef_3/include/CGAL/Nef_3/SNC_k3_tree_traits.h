@@ -21,11 +21,85 @@
 #define CGAL_NEF_SNC_K3_TREE_TRAITS_H
 
 #include <CGAL/Nef_3/Bounding_box_3.h>
+#include <CGAL/Lazy_kernel.h>
 #include <list>
 
-#define CGAL_for_each( i, C) for( i = C.begin(); i != C.end(); ++i)
+#undef CGAL_NEF_DEBUG
+#define CGAL_NEF_DEBUG 503
+#include <CGAL/Nef_2/debug.h>
 
 CGAL_BEGIN_NAMESPACE
+
+
+template <typename Kernel, typename K2, typename Coordinate>
+class ComparePoints {
+
+  typedef typename K2::Point_3  Point_3;
+ public:
+  ComparePoints(Coordinate c) : coord(c) {
+    CGAL_assertion( c >= 0 && c <=2);
+  }
+  CGAL::Comparison_result operator()(const Point_3 p1, const Point_3& p2) {
+    switch(coord) {
+    case 0: 
+      CGAL_NEF_TRACEN("compare_x " << p1 << ", " << p2 << "=" << (int) CGAL::compare_x(p1, p2));
+      return CGAL::compare_x(p1, p2);
+    case 1: 
+      CGAL_NEF_TRACEN("compare_y " << p1 << ", " << p2 << "=" << (int) CGAL::compare_y(p1, p2));
+      return CGAL::compare_y(p1, p2);
+    case 2: 
+      CGAL_NEF_TRACEN("compare_z " << p1 << ", " << p2 << "=" << (int) CGAL::compare_z(p1, p2));
+      return CGAL::compare_z(p1, p2);
+    default: CGAL_assertion(false);
+    }
+    return CGAL::EQUAL;
+  }
+private:
+  Coordinate coord;
+};
+
+
+template <typename K2, typename Coordinate>
+class ComparePoints<CGAL::Lazy_kernel<typename K2::EK>, K2, Coordinate> {
+
+  typedef typename K2::Point_3  Point_3;
+ public:
+  ComparePoints(Coordinate c) : coord(c) {
+    CGAL_assertion( c >= 0 && c <=2);
+  }
+  CGAL::Comparison_result operator()( const Point_3 p1, const Point_3 p2) {
+    switch(coord) {
+    case 0: 
+      if(CGAL::to_interval(p1.x()).second <
+	 CGAL::to_interval(p2.x()).first)
+	return CGAL::SMALLER;
+      else if(CGAL::to_interval(p2.x()).second <
+	      CGAL::to_interval(p1.x()).first)
+	return CGAL::LARGER;
+      return CGAL::EQUAL;
+    case 1:  
+      if(CGAL::to_interval(p1.y()).second <
+	 CGAL::to_interval(p2.y()).first)
+	return CGAL::SMALLER;
+      else if(CGAL::to_interval(p2.y()).second <
+	      CGAL::to_interval(p1.y()).first)
+	return CGAL::LARGER;
+      return CGAL::EQUAL;
+    case 2: 
+      if(CGAL::to_interval(p1.z()).second <
+	 CGAL::to_interval(p2.z()).first)
+	return CGAL::SMALLER;
+      else if(CGAL::to_interval(p2.z()).second <
+	      CGAL::to_interval(p1.z()).first)
+	return CGAL::LARGER;
+      return CGAL::EQUAL;
+    default: CGAL_assertion(false);
+    }
+    return CGAL::EQUAL;
+  }
+private:
+  Coordinate coord;
+};
 
 template <class SNC_decorator>
 class Side_of_plane {
@@ -60,6 +134,8 @@ public:
   typedef typename Kernel::Vector_3 Vector_3;  
   typedef typename Kernel::RT  RT;
 
+  typedef ComparePoints<Kernel, Kernel, int> ComparePoints_;
+  
   Side_of_plane(bool rc = false)
 #ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING    
     : reference_counted(rc) 
@@ -239,27 +315,13 @@ Side_of_plane<SNC_decorator>::operator()
     return OnSideMapRC[&(v->point().hw())];
   } else {
 #endif
-    if(!OnSideMap.is_defined(v))
-      switch(depth%3) {
-      case 0: 
-        cr = CGAL::compare_x(v->point(), pop);
-        OnSideMap[v] = cr == LARGER ? ON_POSITIVE_SIDE :
-                         cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
-        break;
-      case 1:
-        cr = CGAL::compare_y(v->point(), pop);
-        OnSideMap[v] = cr == LARGER ? ON_POSITIVE_SIDE :
-                         cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
-        break;
-      case 2:
-        cr = CGAL::compare_z(v->point(), pop);
-        OnSideMap[v] = cr == LARGER ? ON_POSITIVE_SIDE :
-                         cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
-        break;
-      default: CGAL_assertion_msg(false, "wrong value");
-      }
-
-     CGAL_NEF_TRACEN("Side_of_plane " << pl << "( " << pop << ")" << pop << ":" 
+    ComparePoints_ compare(depth%3);
+    if(!OnSideMap.is_defined(v)) {
+      cr = compare(v->point(), pop);
+      OnSideMap[v] = cr == LARGER ? ON_POSITIVE_SIDE :
+	cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
+    }
+    CGAL_NEF_TRACEN("Side_of_plane " << pl << " (" << v->point() << "): " 
 	  << OnSideMap[v] << "," << pl.oriented_side(v->point()));  
     CGAL_assertion(OnSideMap[v] == pl.oriented_side(v->point()));
     return OnSideMap[v];

@@ -13,7 +13,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 //                 Micahel Seel <seel@mpi-sb.mpg.de>
@@ -24,9 +24,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
 #include <CGAL/Nef_S2/SM_decorator.h>
-#ifdef CGAL_NEF_DEBUG
-#include <CGAL/Nef_3/SNC_io_parser.h>
-#endif
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 41
@@ -34,17 +31,13 @@
 
 CGAL_BEGIN_NAMESPACE
 
-template<typename SNC_structure>
+template<typename Items, typename SNC_structure>
 class SNC_simplify : public SNC_decorator<SNC_structure> {
   
-  typedef CGAL::SNC_simplify<SNC_structure>             Self;
+  typedef CGAL::SNC_simplify<Items, SNC_structure>      Self;
   typedef CGAL::SNC_decorator<SNC_structure>            SNC_decorator;
-  typedef SNC_decorator                                 Base;
   typedef typename SNC_structure::Sphere_map            Sphere_map;
   typedef CGAL::SM_decorator<Sphere_map>                SM_decorator;
-#ifdef CGAL_NEF_DEBUG
-  typedef CGAL::SNC_io_parser<SNC_structure>            SNC_io_parser;
-#endif
   typedef typename SNC_structure::Vertex_handle Vertex_handle;
   typedef typename SNC_structure::Halfedge_handle Halfedge_handle;
   typedef typename SNC_structure::Halffacet_handle Halffacet_handle;
@@ -75,71 +68,16 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
   typedef typename SNC_structure::SFace_cycle_iterator 
                                   SFace_cycle_iterator;
 
-  typedef typename Base::Sphere_kernel Sphere_kernel;
-  typedef typename Base::Sphere_point Sphere_point;
-  typedef typename Base::Sphere_segment Sphere_segment;
-  typedef typename Base::Sphere_circle Sphere_circle;
-  typedef typename Base::Sphere_direction Sphere_direction;
+  typedef typename SNC_decorator::Sphere_kernel Sphere_kernel;
+  typedef typename SNC_decorator::Sphere_point Sphere_point;
+  typedef typename SNC_decorator::Sphere_segment Sphere_segment;
+  typedef typename SNC_decorator::Sphere_circle Sphere_circle;
+  typedef typename SNC_decorator::Sphere_direction Sphere_direction;
 
-#ifdef CGAL_NEF_DEBUG
-  SNC_io_parser *IO;
-#endif
+  bool simplified;
 
  public:
-  SNC_simplify(SNC_structure& sncs) : Base(sncs), IO(NULL) {}
-
-  char PSE(SHalfedge_handle h)
-    /* prints a sphere segment */ {
-
-    CGAL_NEF_TRACE(IO->index(h)<<" @ "<<IO->index(h->source()->source())<<
-		   " "<<h->source()->source()->point()<<
-		   ", prev " <<IO->index(h->prev())<<
-		   ", next " <<IO->index(h->next())<<
-		   ", sprev "<<IO->index(h->sprev())<<
-		   ", snext "<<IO->index(h->snext())<<
-		   ", twin " <<IO->index(h->twin()));
-    return ' ';
-  }
-
-  char PFC(SHalfedge_handle e)
-    /* prints a facet cycle */ {
-    CGAL_NEF_TRACEN("--> Facet cycle begin");
-    SHalfedge_around_facet_circulator c(e), cend(c);
-    CGAL_For_all(c, cend) {
-      CGAL_NEF_TRACEN(PSE(c));
-    }
-    CGAL_NEF_TRACE("--> Facet cycle end"); 
-    return ' ';
-  }
-
-  char PFB(Halffacet_handle f)
-    /* prints facet boundary entry points */ {
-    Halffacet_cycle_iterator fc;
-    CGAL_forall_facet_cycles_of(fc, f) {
-      if(fc.is_shalfedge()) {
-	SHalfedge_handle(e);
-	CGAL_NEF_TRACE(' '<<IO->index(e)); }
-      else if(fc.is_shalfloop()) {
-	SHalfloop_handle l(fc);
-	CGAL_NEF_TRACE(' '<<IO->index(l)<<"(sl)");
-      }
-    }
-    return '.';
-  }
-
-  char PSFB(SFace_handle f)
-    /* prints sphere face boundary entry points */ {
-    SFace_cycle_iterator it;
-    CGAL_forall_sface_cycles_of(it,f)
-      if ( it.is_shalfedge() ) CGAL_NEF_TRACE(IO->index(SHalfedge_handle(it))<<' ');
-    CGAL_NEF_TRACE(", ");
-    CGAL_forall_sface_cycles_of(it,f)
-      if ( it.is_svertex() ) CGAL_NEF_TRACE(IO->index(SVertex_handle(it))<<' ');
-    CGAL_NEF_TRACE(", ");
-    CGAL_forall_sface_cycles_of(it,f)
-      if ( it.is_shalfloop() ) CGAL_NEF_TRACE(IO->index(SHalfloop_handle(it)));
-    return '.';
-  }
+  SNC_simplify(SNC_structure& sncs) : SNC_decorator(sncs), simplified(false) {}
 
   typedef typename Union_find< Volume_handle>::handle UFH_volume;
   typedef typename Union_find< Halffacet_handle>::handle UFH_facet;
@@ -158,32 +96,33 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
 	SHalfedge_around_facet_circulator u(e), eend(e);
 
 	//CGAL_For_all(u, eend) {
-   for ( bool _circ_loop_flag = ! ::CGAL::is_empty_range( u, eend); 
-         _circ_loop_flag; \
-         _circ_loop_flag = ( u != eend ) 
-       )
-   {
-  	  SFace_handle fu = u->incident_sface(), ftu = u->twin()->incident_sface();
-	    CGAL_NEF_TRACEN("sfUNION of "<<IO->index(fu)<<" & "<<IO->index(ftu));
-	    merge_sets( fu, ftu, hash, uf);
-	    SM_decorator SD(&*u->source()->source());
-	    CGAL_NEF_TRACEN("removing "<<IO->index(u)<<" & "<<IO->index(u->twin()));
-	    Halfedge_handle src(u->source()), tgt(u->target());
-	    if ( SD.is_closed_at_source(u) ) 
-	      SD.set_face( src, fu);
-	    if ( SD.is_closed_at_source( u->twin()) ) 
- 	     SD.set_face( tgt, fu);
+	for ( bool _circ_loop_flag = ! ::CGAL::is_empty_range( u, eend);
+	      _circ_loop_flag;				\
+	      _circ_loop_flag = ( u != eend )
+	      ) {
+
+	  SFace_handle fu = u->incident_sface(), ftu = u->twin()->incident_sface();
+	  //	  CGAL_NEF_TRACEN("sfUNION of "<<IO->index(fu)<<" & "<<IO->index(ftu));
+	  merge_sets( fu, ftu, hash, uf);
+	  SM_decorator SD(&*u->source()->source());
+	  //	  CGAL_NEF_TRACEN("removing "<<IO->index(u)<<" & "<<IO->index(u->twin()));
+	  Halfedge_handle src(u->source()), tgt(u->target());
+	  if ( SD.is_closed_at_source(u) ) 
+	    SD.set_face( src, fu);
+	  if ( SD.is_closed_at_source( u->twin()) ) 
+ 	    SD.set_face( tgt, fu);
 	  /* TO VERIFY: does is_closed_at_source(u) imply is_isolated(src)?
 	     if it is true, the svertex face update is not necesary. */
-     SHalfedge_around_facet_circulator next = u ;
-     ++ next ;
-	    SD.delete_edge_pair(u); 
-	    if( SD.is_isolated(src))
-  	    SD.set_face(src,fu);
-  	  SM_decorator SD2(&*tgt->source());
-	    if( SD2.is_isolated(tgt))
-  	    SD2.set_face(tgt,fu);
-     u = next ;
+
+	  SHalfedge_around_facet_circulator next = u;
+	  ++next;
+	  SD.delete_edge_pair(u); 
+	  if( SD.is_isolated(src))
+	    SD.set_face(src,fu);
+	  SM_decorator SD2(&*tgt->source());
+	  if( SD2.is_isolated(tgt))
+	    SD2.set_face(tgt,fu);
+	  u = next;
 	  /* TO VERIFY: can both svertices be isolated at the same time? */
    }
       }
@@ -193,14 +132,14 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
 	// in the future, e.g for complex marks or a relative interior 
 	// function 
 	SFace_handle fu = l->incident_sface(), ftu = l->twin()->incident_sface();
-	CGAL_NEF_TRACEN("UNION of "<<IO->index(fu)<<" & "<<IO->index(ftu));
+	//	CGAL_NEF_TRACEN("UNION of "<<IO->index(fu)<<" & "<<IO->index(ftu));
 	merge_sets( fu, ftu, hash, uf);
 	SM_decorator SD(&*l->incident_sface()->center_vertex());
-	CGAL_NEF_TRACEN("removing "<<IO->index(l)<<" & "<<IO->index(l->twin()));
+	//	CGAL_NEF_TRACEN("removing "<<IO->index(l)<<" & "<<IO->index(l->twin()));
 	SD.delete_loop_only();
       }
     }
-    CGAL_NEF_TRACEN("removing "<<IO->index(f)<<" & "<<IO->index(f->twin()));
+    //    CGAL_NEF_TRACEN("removing "<<IO->index(f)<<" & "<<IO->index(f->twin()));
     this->sncp()->delete_halffacet_pair(f);
     return;
   }
@@ -253,56 +192,146 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
     return (sp1 == sp2.antipode());
   }
 
-  bool vertex_simplification(bool snc_computed = true) {
-    bool simplified = false;
+  bool simplify_redundant_vertex_in_volume(Vertex_handle v) {
+    if(is_part_of_volume(v)) {
+      //      CGAL_NEF_TRACEN("mark("<<IO->index(v)<<")="<<v->mark()<<", "<<
+      //		      "mark("<<IO->index(v->sfaces_begin()->volume())<<")="<<
+      //		      v->sfaces_begin()->mark());
+      if(v->mark() == v->sfaces_begin()->mark()) {
+	//	CGAL_NEF_TRACEN("removing isolated vertex "<<IO->index(v));
+	this->sncp()->delete_vertex(v);
+	simplified = true;
+      }
+      return true;
+    }
+    return false;
+  }
 
-#ifdef CGAL_NEF_DEBUG
-    //    delete IO;
-    //    IO = new SNC_io_parser(std::cerr, *this->sncp());
-#endif
+  bool simplify_redundant_vertex_on_facet(Vertex_handle v) {
+    if( is_part_of_facet(v)) {
+      if( v->mark() == v->shalfloop()->mark()) {
+	//	CGAL_NEF_TRACEN("removing "<<IO->index(v)<<
+	//			", " << v->point() << " on facet ");
+	this->sncp()->delete_vertex(v);
+	simplified = true;
+      }
+      return true;
+    }
+    return false;
+  }
 
-    SNC_decorator D(*this->sncp());
+  bool simplify_redundant_vertex_on_edge(Vertex_handle v, bool snc_computed) {
+    if( is_part_of_edge(v)) {
+      SVertex_iterator sv(v->svertices_begin());
+      Halfedge_handle e1(sv++), e2(sv++);
+      CGAL_assertion( sv == v->svertices_end());
+      if( e1->mark() == v->mark() && v->mark() == e2->mark()) {
+	//	CGAL_NEF_TRACEN("merging "<<IO->index(e1)<<" & "<<IO->index(e2)<<
+	//			" in "<<IO->index(v));
+	if(snc_computed)
+	  merge_halfedge_pairs( e1, e2);
+	else
+	    this->sncp()->delete_vertex(v);
+	simplified = true;
+      }
+      return true;
+    }
+    return false;
+  }
+
+  bool simplify_redundant_vertex_on_edgeI(Vertex_handle v) {
+    if( is_part_of_edge(v)) {
+      SVertex_iterator sv(v->svertices_begin());
+      Halfedge_handle e1(sv++), e2(sv++);
+      CGAL_assertion( sv == v->svertices_end());
+      if( e1->mark() == v->mark() && v->mark() == e2->mark()) {
+	SHalfedge_around_svertex_circulator 
+	  sec(e1->out_sedge()), send(sec);
+	CGAL_For_all(sec,send) {
+	  sec->next()->prev() = sec->prev();
+	  sec->prev()->next() = sec->next();
+	  sec->twin()->next()->prev() = sec->twin()->prev();
+	  sec->twin()->prev()->next() = sec->twin()->next();
+	}
+	if(e2->get_index() < e1->get_index())
+	  e1->twin()->set_index(e2->twin()->get_index());
+	else
+	  e2->twin()->set_index(e1->twin()->get_index());	
+	e1->twin()->twin() = e2->twin();
+	e2->twin()->twin() = e1->twin();
+	this->sncp()->delete_vertex(v);
+      }
+      return true;
+    }
+    return false;
+  }
+
+  bool vertex_in_volume_simplification() {
+    simplified = false;
 
     Vertex_iterator v = (*this->sncp()).vertices_begin();
     while( v != (*this->sncp()).vertices_end()) {
-      SM_decorator SD(&*v);
       Vertex_iterator v_next(v);
       ++v_next;
-      if( is_part_of_volume(v)) {
-	CGAL_NEF_TRACEN("mark("<<IO->index(v)<<")="<<v->mark()<<", "<<
-			"mark("<<IO->index(SD.sfaces_begin()->volume())<<")="<<
-			SD.sfaces_begin()->mark());
-	if(v->mark() == SD.sfaces_begin()->mark()) {
-	  CGAL_NEF_TRACEN("removing isolated vertex "<<IO->index(v));
-	  this->sncp()->delete_vertex(v);
-	  simplified = true;
-	}
-      }
-      else if( is_part_of_facet(v)) {
-	if( v->mark() == SD.shalfloop()->mark()) {
-	  CGAL_NEF_TRACEN("removing "<<IO->index(v)<<
-		 " on facet ");
-	  this->sncp()->delete_vertex(v);
-	  simplified = true;
-	}
-      }
-      else if( is_part_of_edge(v)) {
-	SVertex_iterator sv(SD.svertices_begin());
-	Halfedge_handle e1(sv++), e2(sv++);
-	CGAL_assertion( sv == SD.svertices_end());
-	if( e1->mark() == v->mark() && v->mark() == e2->mark()) {
-	  CGAL_NEF_TRACEN("merging "<<IO->index(e1)<<" & "<<IO->index(e2)<<
-		 " in "<<IO->index(v));
-	  if(snc_computed)
-	    merge_halfedge_pairs( e1, e2);
-	  else
-	    this->sncp()->delete_vertex(v);
-	  simplified = true;
-	}
-      }
+      simplify_redundant_vertex_in_volume(v);
       v = v_next;
     }
     return simplified;
+  }
+
+  bool vertex_on_facet_simplification() {
+    simplified = false;
+
+    Vertex_iterator v = (*this->sncp()).vertices_begin();
+    while( v != (*this->sncp()).vertices_end()) {
+      Vertex_iterator v_next(v);
+      ++v_next;
+      simplify_redundant_vertex_on_facet(v);
+      v = v_next;
+    }
+    return simplified;
+  }
+
+  bool vertex_on_edge_simplification() {
+    simplified = false;
+
+    Vertex_iterator v = (*this->sncp()).vertices_begin();
+    while( v != (*this->sncp()).vertices_end()) {
+      Vertex_iterator v_next(v);
+      ++v_next;
+      simplify_redundant_vertex_on_edge(v);
+      v = v_next;
+    }
+    return simplified;
+  }
+
+  bool vertex_simplification(bool snc_computed = true) {
+    simplified = false;
+
+    Vertex_iterator v = (*this->sncp()).vertices_begin();
+    while( v != (*this->sncp()).vertices_end()) {
+      Vertex_iterator v_next(v);
+      ++v_next;
+      if(!simplify_redundant_vertex_in_volume(v))
+	if(!simplify_redundant_vertex_on_facet(v))
+	  simplify_redundant_vertex_on_edge(v, snc_computed);
+      v = v_next;
+    }
+    return simplified;
+  }
+
+  void vertex_simplificationI() {
+    simplified = false;
+
+    Vertex_iterator v = (*this->sncp()).vertices_begin();
+    while( v != (*this->sncp()).vertices_end()) {
+      Vertex_iterator v_next(v);
+      ++v_next;
+      if(!simplify_redundant_vertex_in_volume(v))
+	if(!simplify_redundant_vertex_on_facet(v))
+	  simplify_redundant_vertex_on_edgeI(v);
+      v = v_next;
+    }
   }
   
   bool simplify() {
@@ -313,11 +342,6 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
 
     CGAL_NEF_TRACEN(">>> simplifying");
     SNC_decorator D(*this->sncp());
-
-#ifdef CGAL_NEF_DEBUG
-    //    delete IO;
-    //    IO = new SNC_io_parser(std::cerr, *this->sncp());
-#endif
     
     Unique_hash_map< Volume_handle, UFH_volume> hash_volume;
     Unique_hash_map< Halffacet_handle, UFH_facet> hash_facet;
@@ -359,17 +383,17 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
       while( f_next != D.halffacets_end() && f_next->is_twin());
       CGAL_assertion( f != f->twin());
       Volume_handle c1 = f->incident_volume(), c2 = f->twin()->incident_volume();
-      CGAL_NEF_TRACEN(" mark("<<IO->index(c1)<<")="<<c1->mark()<<
-      	     " mark("<<IO->index(f) <<")="<<f->mark() <<
-	     " mark("<<IO->index(c2)<<")="<<c2->mark()<<
-	     " is_f->twin()="<<f->is_twin());
+      CGAL_NEF_TRACEN(" mark(c1)="<<c1->mark()<<
+           	      " mark(f)="<<f->mark() <<
+		      " mark(c2)="<<c2->mark()<<
+      	              " is_f->twin()="<<f->is_twin());
       if( c1->mark() == f->mark() && f->mark() == c2->mark()
 	  && D.is_standard(f)) {
 	merge_sets( c1, c2, hash_volume, uf_volume);
 	remove_f_including_all_edge_uses_in_its_boundary_cycles
 	  (f, hash_sface, uf_sface);
 	update_sfaces = update_volumes = true;
-	CGAL_NEF_TRACEN("UNION of "<<IO->index(c1)<<" & "<<IO->index(c2));
+	CGAL_NEF_TRACEN("UNION of c1 & c2");
       }
       f = f_next;
     }
@@ -395,7 +419,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
       SM_decorator SD(&*e->source());
       if( SD.is_isolated(e)) {
 	if(e->mark() == e->incident_sface()->volume()->mark()) {
-	  CGAL_NEF_TRACEN("removing pair "<<IO->index(e)<<' '<<IO->index(e->twin()));
+	  CGAL_NEF_TRACEN("removing pair ");
 	  this->sncp()->delete_halfedge_pair(e);
 	  update_facets = true;
 	}
@@ -408,15 +432,12 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
 	      e1->mark()==e->mark() && e->mark()==e2->mark()) {
 	    Halffacet_handle f1(e1->facet()); 
 	    Halffacet_handle f2(e2->facet());
-	    CGAL_NEF_TRACEN("UNION of "<<IO->index(f1)<<" & "<<IO->index(f2->twin())<<
-		   " ("<<IO->index(f1->twin())<<" & "<<IO->index(f2)<<")");
+	    CGAL_NEF_TRACEN("UNION of f1 & f2->twin()");
 	    merge_sets( f1, f2->twin(), hash_facet, uf_facet);
 	    merge_sets( f1->twin(), f2, hash_facet, uf_facet);
-	    CGAL_NEF_TRACEN("BEFORE "<<PFC(e1)<<std::endl<<PFC(e2->twin()));
-	    CGAL_NEF_TRACEN("removing "<<IO->index(e));
+	    CGAL_NEF_TRACEN("removing e");
 	    remove_edge_and_merge_facet_cycles(e);
 	    update_facets = true;
-	    // CGAL_NEF_TRACEN("AFTER "<<PFC(e1)); // e1 not valid after sloop creation
 	  }
 	}
       }
@@ -432,27 +453,21 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
     
     CGAL_NEF_TRACEN(">>> simplifying done ");
 
-#ifdef CGAL_NEF_DEBUG
-    //    delete IO;
-#endif
-
     return update_sfaces || update_facets || update_volumes;
   }
    
   void remove_edge_and_merge_facet_cycles( Halfedge_handle e) {
-     SNC_decorator D(*this->sncp());
-     CGAL_assertion( D.has_outdeg_two(e));
-     Halfedge_handle et = e->twin();
-     CGAL_assertion( D.has_outdeg_two(et));
-     SM_decorator SD1(&*e->source());
-     SM_decorator SD2(&*et->source());
-     CGAL_NEF_TRACEN("source " << IO->index(e->source()));
-     CGAL_NEF_TRACEN("target " << IO->index(et->source()));
-     SHalfedge_handle e1 = SD1.first_out_edge(e);
-     SHalfedge_handle e2 = e1->prev()->snext();
-     merge_sedges_at_target_and_remove_svertex( e1->twin(), e);
-     merge_sedges_at_target_and_remove_svertex( e2->twin(), et);
-   }
+    CGAL_assertion_code(SNC_decorator D(*this->sncp()));
+    CGAL_assertion( D.has_outdeg_two(e));
+    Halfedge_handle et = e->twin();
+    CGAL_assertion( D.has_outdeg_two(et));
+    CGAL_NEF_TRACEN("source " << e->source()->point());
+    CGAL_NEF_TRACEN("target " << et->source()->point());
+    SHalfedge_handle e1 = e->out_sedge();
+    SHalfedge_handle e2 = e1->prev()->snext();
+    merge_sedges_at_target_and_remove_svertex( e1->twin(), e);
+    merge_sedges_at_target_and_remove_svertex( e2->twin(), et);
+  }
 
    void merge_sedges_at_target_and_remove_svertex( SHalfedge_handle s1,
 						   SVertex_handle v) {
@@ -461,25 +476,26 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
      CGAL_assertion( s1->twin()->source() == v);
      SHalfedge_handle s2(s1->snext());
      CGAL_assertion( s2->source() == v);
-     CGAL_NEF_TRACEN("s1 = " << IO->index(s1));
-     CGAL_NEF_TRACEN("s2 = " << IO->index(s2));
+     //     CGAL_NEF_TRACEN("s1 = " << IO->index(s1));
+     //     CGAL_NEF_TRACEN("s2 = " << IO->index(s2));
      if( s1 == s2) {
-       CGAL_NEF_TRACEN(IO->index(s1)<<'('<<IO->index(s2->twin())<<") to sloop");
+       //       CGAL_NEF_TRACEN(IO->index(s1)<<'('<<IO->index(s2->twin())<<") to sloop");
+       Halffacet_handle f = s1->facet();
        Halffacet_handle facet = s1->facet();
        SD.convert_edge_to_loop(s1);
        CGAL_assertion(SD.shalfloop() != SHalfloop_handle());
-       D.add_sloop_to_facet( SD.shalfloop(), facet);
-       CGAL_NEF_TRACEN(IO->index(s2)<<" removed");
+       D.add_sloop_to_facet( SD.shalfloop(), f);
+       //       CGAL_NEF_TRACEN(IO->index(s2)<<" removed");
      }
      else {
        CGAL_assertion( D.has_outdeg_two(v));
        D.link_as_prev_next_pair( s1, s2->next());
-       CGAL_NEF_TRACEN(IO->index(s1)<<" "<<IO->index(s2->next())<<" linked.");
+       //       CGAL_NEF_TRACEN(IO->index(s1)<<" "<<IO->index(s2->next())<<" linked.");
        D.link_as_prev_next_pair(s2->next()->twin(), s1->twin());
-       CGAL_NEF_TRACEN(IO->index(s2->next()->twin())<<" "<<
-	      IO->index(s1->twin())<<" linked.");
+       //       CGAL_NEF_TRACEN(IO->index(s2->next()->twin())<<" "<<
+       //	      IO->index(s1->twin())<<" linked.");
        SD.merge_edge_pairs_at_target( s1); // s2 is removed
-       CGAL_NEF_TRACEN(IO->index(s2)<<" removed");
+       //       CGAL_NEF_TRACEN(IO->index(s2)<<" removed");
      }
    }
 
@@ -512,7 +528,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
      std::list<SFace_handle> sflist;
      CGAL_forall_sfaces( sf, *this->sncp()) {
        if( uf_sface.find(hash_sface[sf]) != hash_sface[sf]) {
-	 CGAL_NEF_TRACEN("no find object "<<IO->index(sf));
+	 //	 CGAL_NEF_TRACEN("no find object "<<IO->index(sf));
 	 sflist.push_back(sf);
        }
      }
@@ -526,9 +542,9 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
      Halffacet_iterator f;
      std::list<Halffacet_handle> flist;
      CGAL_forall_facets( f, *this->sncp()) {
-       CGAL_NEF_TRACEN("facet "<<IO->index(f));
+       //       CGAL_NEF_TRACEN("facet "<<IO->index(f));
        if( uf_facet.find(hash_facet[f]) != hash_facet[f]) {
-	 CGAL_NEF_TRACEN("no find object "<<IO->index(f));
+	 //	 CGAL_NEF_TRACEN("no find object "<<IO->index(f));
 	 flist.push_back(f);
        }
      }
@@ -541,7 +557,7 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
      std::list<Volume_handle> clist;
      CGAL_forall_volumes( c, *this->sncp()) {
        if( uf_volume.find(hash_volume[c]) != hash_volume[c]) {
-	 CGAL_NEF_TRACEN("no find object "<<IO->index(c));
+	 //	 CGAL_NEF_TRACEN("no find object "<<IO->index(c));
 	 clist.push_back(c);
        }
      }
@@ -645,27 +661,92 @@ class SNC_simplify : public SNC_decorator<SNC_structure> {
     //   typedef Unique_hash_map< SFace_handle, bool> SFace_map;
     //  SFace_map linked(false);
 
-#ifdef CGAL_NEF_DEBUG
-    //    delete IO;
-    //    IO = new SNC_io_parser(std::cerr, *this->sncp());
-#endif
-
     SNC_decorator D(*this->sncp());
     Volume_setter setter(D);
 
     SFace_iterator sf;
     Volume_handle c;
     CGAL_forall_sfaces(sf, *this->sncp()) {
-      CGAL_NEF_TRACEN("SFace " << IO->index(sf));
+      //      CGAL_NEF_TRACEN("SFace " << IO->index(sf));
       if( setter.is_linked(sf)) continue;
       c = *(uf.find(hash[sf->volume()]));
-      CGAL_NEF_TRACEN("Volume " << IO->index(c));
+      //      CGAL_NEF_TRACEN("Volume " << IO->index(c));
       setter.set_volume(c);
       D.visit_shell_objects( sf, setter );      
       D.store_boundary_object( sf, c);
     }
   }
+};
 
+template<typename SNC_structure>
+class SNC_simplify<SNC_indexed_items, SNC_structure> 
+ : public SNC_simplify<int, SNC_structure> {
+
+  typedef SNC_simplify<int, SNC_structure> Base;
+  typedef CGAL::SNC_decorator<SNC_structure>            SNC_decorator;
+  typedef typename SNC_structure::Sphere_map            Sphere_map;
+  typedef CGAL::SM_decorator<Sphere_map>                SM_decorator;
+  
+  typedef typename SNC_structure::Vertex_handle Vertex_handle;
+  typedef typename SNC_structure::SVertex_handle SVertex_handle;
+  typedef typename SNC_structure::SHalfedge_handle SHalfedge_handle;
+  typedef typename SNC_structure::SHalfloop_handle SHalfloop_handle;
+  typedef typename SNC_structure::Halffacet_iterator Halffacet_iterator; 
+  typedef typename SNC_structure::Halffacet_cycle_iterator 
+                                  Halffacet_cycle_iterator;
+  typedef typename SNC_structure::SHalfedge_around_svertex_circulator 
+                                  SHalfedge_around_svertex_circulator;
+  typedef typename SNC_structure::SHalfedge_around_facet_circulator 
+                                  SHalfedge_around_facet_circulator;
+
+ public:
+  SNC_simplify(SNC_structure& sncs) : Base(sncs) {}
+
+  bool simplify() {
+
+    bool result = Base::simplify();
+
+    Halffacet_iterator fit;
+    CGAL_forall_halffacets(fit, *this) {
+      Halffacet_cycle_iterator fci = fit->facet_cycles_begin();
+      SHalfedge_handle se_first = fci;
+      int index = se_first->get_index();
+      for(; fci!=fit->facet_cycles_end(); ++fci) {
+	if(fci.is_shalfedge()) {
+	  SHalfedge_around_facet_circulator sc1(fci), sc2(sc1);
+	  CGAL_For_all(sc1,sc2)
+	    sc1->set_index(index);
+	} else if(fci.is_shalfloop()) {
+	  SHalfloop_handle sl(fci);
+	  sl->set_index(index);
+	} else
+	  CGAL_assertion_msg(false, "wrong handle");
+      }
+    }
+    
+    return result;
+  }
+
+  void merge_halfedge_pairs( SVertex_handle p, SVertex_handle q) {
+    SNC_decorator D(*this->sncp());
+    CGAL_assertion( p->source() == q->source());
+    Vertex_handle v(p->source()); 
+    CGAL_assertion( is_part_of_edge(v));
+    SM_decorator SD(&*v);
+    SHalfedge_around_svertex_circulator s(SD.first_out_edge(p)), se(s);
+    CGAL_For_all( s, se) {
+      D.link_as_prev_next_pair( s->prev(), s->next());
+      D.link_as_prev_next_pair( s->twin()->prev(), s->twin()->next());
+    }
+    D.make_twins( p->twin(), q->twin());
+    if(q->get_index() < p->get_index())
+      p->twin()->set_index(q->twin()->get_index());
+    else
+      q->twin()->set_index(p->twin()->get_index());
+    SD.delete_vertex(p);
+    SD.delete_vertex(q);
+    this->sncp()->delete_vertex(v);
+  }
 };
 
 CGAL_END_NAMESPACE

@@ -61,7 +61,8 @@ bool projected_vertex_cycle_to_nef_3 (typename Nef_3::SNC_structure &snc,
    typedef CGAL::SNC_point_locator_by_spatial_subdivision
            <CGAL::SNC_decorator<SNC_structure> >    Point_locator;
 
-   typedef CGAL::SNC_constructor<SNC_structure>     SNC_constructor;
+   typedef typename SNC_structure::Items               Items;
+   typedef CGAL::SNC_constructor<Items, SNC_structure> SNC_constructor;
 
    // declarations and defaults
    II v_it, v_pred_it;
