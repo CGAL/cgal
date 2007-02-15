@@ -24,7 +24,7 @@ CGAL_BEGIN_NAMESPACE
 
 template<class T>
 inline Rational_polynomial_2& Rational_polynomial_2::operator*=(const T &s){
-	return (*this*=Gmpq(s));
+	return(*this*=Gmpz(s));
 };
 
 template<class T>
