@@ -18,6 +18,22 @@ types, in particular polynomials, that are valid algebraic structures,
 but should not be considered as a number type.\\
 Note that Polynomials are not part of this package. 
 
+TODO:
+\begin{itemize}
+\item find a place for basic stuff. Max/Min/Is\_valid/Boolean\_tag..
+      basic concepts...
+\item 'built-in' types -> 'fundamental' types 
+\item add a new entry in the globally maintained Bib file.
+\item there is a problem with io stream operators for CORE types \\
+      This may also be related to the problem that gmpxx.h must be included 
+      before CORE types. 
+\item document rounding mode for Div/Mod. 
+\item revise doc of NTs
+\item extra review of \ccc{Sqrt_extension}
+\item extra review of \ccc{Root_of_2}
+\item \ccc{FromSmallIntConstructible} -> FromIntConstructible
+\end{itemize}
+
 DONE:
 
 \begin{itemize}
@@ -39,28 +55,9 @@ DONE:
       function \ccc{CGAL::is_finite} for float, double, long double 
 \end{itemize}
 
-TODO:
-\begin{itemize}
-\item find a place for basic stuff. Max/Min/Is\_valid/Boolean\_tag..
-      basic concepts...
-\item what about old concepts and functors that we keep for back ward 
-      compatibility, do we need a documentation for them ? \\
-      they can be found in {\tt Algebraic\_foundations\_ref/Deprecated}
-\item 'built-in' types -> 'fundamental' types 
-\item add a new entry in the globally maintained Bib file.
-\item there is a problem with io stream operators for CORE types \\
-      This may also be related to the problem that gmpxx.h must be included 
-      before CORE types. 
-\item document rounding mode for Div/Mod. 
-\item revise doc of NTs
-\item extra review of \ccc{Sqrt_extension}
-\item extra review of \ccc{Root_of_2}
-\end{itemize}
-
-
-
 Remarks:
 \begin{itemize}
+\item old functions stay within code (but undocumented)
 \item keep name \ccc{IntegralDomainWithoutDivision} and \ccc{IntegralDomain}.
 \item consider \ccc{Interval_nt} as not exact
 \item io support: keep \ccc{Output_rep} 
@@ -70,7 +67,6 @@ OPEN:
 \begin{itemize}
 \item \ccc{mpf_class} is not supported yet. why not? is it possible?  
 \item split \ccc{MP_float} into two types. 
-\item What about the Small in \ccc{FromSmallIntConstructible}?
 \item Should we add Ipower? motivation see introduction of Square. 
 \end{itemize}
 
@@ -93,7 +89,6 @@ Keep in mind:
 \item may add more fundamental concepts, such as Abelian Group.
 \item second operator for RootOf
 \item can we do better for \ccc{mpz_class}, \ccc{mpq_class }
-\item think about 'hint' tags. e.g. for Horner Scheme. 
 \item ToDoubleInterval etc. 
 \item what about namespace of leda types ? \ccc{leda_integer} vs. \ccc{leda::integer}
 \end{itemize}

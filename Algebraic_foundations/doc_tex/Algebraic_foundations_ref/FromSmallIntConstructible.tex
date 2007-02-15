@@ -1,23 +1,17 @@
-\begin{ccRefConcept}{FromSmallIntConstructible}
-
+\begin{ccRefConcept}{FromIntConstructible}
 
 \ccDefinition
   
-A model of the concept \ccc{FromSmallIntConstructible} is required 
-to be constructible from int, 
-for any int in the range from -128 to 127. 
+A model of the concept \ccc{FromIntConstructible} is required 
+to be constructible from int. 
 
 \ccCreation
 \ccCreationVariable{type}  %% choose variable name
 
-\ccConstructor{FromSmallIntConstructible(int& i);}{
-conversion constructor from int for $-128 \leq n \leq 127$.
-} 
+\ccConstructor{FromIntConstructible(int& i);}{} 
 
 \ccHasModels
 \ccc{int}\\
 \ccc{long}\\
 \ccc{double}\\
-
-
 \end{ccRefConcept}
