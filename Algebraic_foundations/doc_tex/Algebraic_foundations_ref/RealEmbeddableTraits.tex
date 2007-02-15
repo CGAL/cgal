@@ -21,7 +21,10 @@ A model of \ccc{RealEmbeddableTraits} is supposed to provide:\\
 In case the associated type is \ccc{RealEmbeddable} all functors are provided.\\
 In case a functor is not provided, it is set to \ccc{CGAL::Null_functor}.
 
-\ccNestedType{Is_zero}{ A model of \ccc{RealEmbeddableTraits::IsZero} }
+\ccNestedType{Is_zero}{ 
+A model of \ccc{RealEmbeddableTraits::IsZero} 
+In case \ccc{Type} is also model of \ccc{IntegralDomainWithoutDivision} 
+this is a model of \ccc{AlgebraicStructureTraits::IsZero}.}
 \ccNestedType{Abs}{ A model of \ccc{RealEmbeddableTraits::Abs} }
 \ccNestedType{Sign}{ A model of \ccc{RealEmbeddableTraits::Sign} }
 \ccNestedType{Is_positive}{ A model of \ccc{RealEmbeddableTraits::IsPositive} }
@@ -29,7 +32,7 @@ In case a functor is not provided, it is set to \ccc{CGAL::Null_functor}.
 \ccNestedType{Compare}{ A model of \ccc{RealEmbeddableTraits::Compare} }
 \ccNestedType{To_double}{ A model of \ccc{RealEmbeddableTraits::ToDouble} }
 \ccNestedType{To_interval}{ A model of \ccc{RealEmbeddableTraits::ToInterval} }
-\ccNestedType{Is_finite}{ A model of \ccc{RealEmbeddableTraits::IsFinite} } 
+%\ccNestedType{Is_finite}{ A model of \ccc{RealEmbeddableTraits::IsFinite} } 
 
 %\ccHasModels
 

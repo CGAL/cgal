@@ -1,4 +1,4 @@
-\section{Overview - TODO - OPEN Questions}
+\section{Overview - TODO - OPEN Questions for Release 3.3}
 
 \subsection{Overview}
 
@@ -18,27 +18,6 @@ types, in particular polynomials, that are valid algebraic structures,
 but should not be considered as a number type.\\
 Note that Polynomials are not part of this package. 
 
-\subsubsection{for Release 3.3}
-
-TODO:
-\begin{itemize}
-\item find a place for basic stuff. see section remarks
-\item what about old concepts and functors that we keep for back ward 
-      compatibility, do we need a documentation for them ? \\
-      they can be found in {\tt Algebraic\_foundations\_ref/Deprecated}
-\item add links in \ccc{IsZero}s
-\item 'built-in' types -> 'fundamental' types 
-\item add a new entry in the globally maintained Bib file.
-\item there is a problem with io stream operators for CORE types \\
-      This may also be related to the problem that gmpxx.h must be included 
-      befor CORE types. 
-\item document \ccc{Boolean_tag}, rm function \ccc{check_tag}?.
-\item document rounding mode for Div/Mod. 
-\item revise doc of NTs
-\item No proper documentation of \ccc{Root_of_2} and related traits class 
-      and functions. 
-\end{itemize}
-
 DONE:
 
 \begin{itemize}
@@ -53,26 +32,49 @@ DONE:
       typedef \ccc{Tag_true}, \ccc{Tag_false}. 
 \item added concept \ccc{FromDoubleConstructible}
 \item rm support for io mode: BENCHMARK 
+\item added \ccc{Boolean_tag}, rm doc of function \ccc{check_tag}.
+\item added AST tag \ccc{is\_exact}
+\item added AST tag \ccc{is\_numerical\_sensitive}
+\item rm IsFinite from \ccc{RealEmeddable} concept
+      function \ccc{CGAL::is_finite} for float, double, long double 
 \end{itemize}
 
-CONJECTURE:
+TODO:
 \begin{itemize}
-\item rm \ccc{IsFinite} from Real Embeddable (after merge)
-\item keep name \ccc{IntegralDomainWithoutDivision} and \ccc{IntegralDomain}.
-\item consider \ccc{Interval_nt} as exact 
+\item find a place for basic stuff. Max/Min/Is\_valid/Boolean\_tag..
+      basic concepts...
+\item what about old concepts and functors that we keep for back ward 
+      compatibility, do we need a documentation for them ? \\
+      they can be found in {\tt Algebraic\_foundations\_ref/Deprecated}
+\item 'built-in' types -> 'fundamental' types 
+\item add a new entry in the globally maintained Bib file.
+\item there is a problem with io stream operators for CORE types \\
+      This may also be related to the problem that gmpxx.h must be included 
+      before CORE types. 
+\item document rounding mode for Div/Mod. 
+\item revise doc of NTs
+\item extra review of \ccc{Sqrt_extension}
+\item extra review of \ccc{Root_of_2}
 \end{itemize}
 
+
+
+Remarks:
+\begin{itemize}
+\item keep name \ccc{IntegralDomainWithoutDivision} and \ccc{IntegralDomain}.
+\item consider \ccc{Interval_nt} as not exact
+\item io support: keep \ccc{Output_rep} 
+\end{itemize}
 
 OPEN:
 \begin{itemize}
-\item \ccc{mpf_class} is not supported yet. why not? is it possbible?  
+\item \ccc{mpf_class} is not supported yet. why not? is it possible?  
 \item split \ccc{MP_float} into two types. 
 \item What about the Small in \ccc{FromSmallIntConstructible}?
-\item Should we add Ipower? motivation see introduction of Square.
-\item rm \ccc{Output_rep} etc. ? 
+\item Should we add Ipower? motivation see introduction of Square. 
 \end{itemize}
 
-\subsubsection{planed: for Release 3.5}
+\subsubsection{planed: for Release 3.4}
 \begin{itemize}
 \item \ccc{Modular_traits} for concept \ccc{Modularizable}\\
       new package \ccc{Modular_arithmetic}? 
@@ -85,6 +87,7 @@ OPEN:
 
 Keep in mind: 
 \begin{itemize}
+
 \item generic interoperable operators via Coercion Traits
 \item may add arithmetic functors as Add, Sub to Algebraic Structure Traits
 \item may add more fundamental concepts, such as Abelian Group.
