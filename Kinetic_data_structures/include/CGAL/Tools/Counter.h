@@ -18,13 +18,15 @@
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
-#ifndef DSR_COUNTER_H
-#define DSR_COUNTER_H
+#ifndef CGAL_DSR_COUNTER_H
+#define CGAL_DSR_COUNTER_H
+
 #include <iterator>
 #include <CGAL/basic.h>
 #include <CGAL/Tools/Label.h>
 
-CGAL_BEGIN_NAMESPACE;
+CGAL_BEGIN_NAMESPACE
+
 //! An integer iterator
 /*!  It looks like an iterator but just wraps an integer. All the
   expected iterator operations are supported (namely operator* and
@@ -169,6 +171,6 @@ Counter<T> counter(T t)
     return Counter<T>(t);
 }
 
+CGAL_END_NAMESPACE
 
-CGAL_END_NAMESPACE;
 #endif
