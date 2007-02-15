@@ -1,4 +1,3 @@
-
 // Copyright (c) 1999  Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
@@ -18,9 +17,8 @@
 //
 // Author(s)     : Stefan Schirra
  
-
-#ifndef CGAL_CH_MELKMAN_C
-#define CGAL_CH_MELKMAN_C
+#ifndef CGAL_CH_MELKMAN_IMPL_H
+#define CGAL_CH_MELKMAN_IMPL_H
 
 #ifndef CGAL_CH_NO_POSTCONDITIONS
 #include <CGAL/convexity_check_2.h>
@@ -128,5 +126,4 @@ ch_melkman( InputIterator first, InputIterator last,
 
 CGAL_END_NAMESPACE
 
-
-#endif // CGAL_CH_MELKMAN_C
+#endif // CGAL_CH_MELKMAN_IMPL_H
