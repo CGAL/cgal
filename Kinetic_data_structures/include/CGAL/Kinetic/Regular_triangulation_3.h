@@ -266,6 +266,7 @@ private:
   typedef Regular_triangulation_3<TraitsT, VisitorT, TriangulationT> This;
 
 public:
+  typedef This This_RT3;
   typedef TraitsT Traits;
   typedef typename Traits::Active_points_3_table::Key Point_key; //here
 
@@ -392,10 +393,10 @@ protected:
 
   struct Base_traits: public TraitsT
   {
-    typedef This Wrapper;
+    
     typedef TriangulationT Triangulation;
-    typedef typename This::Edge_flip Edge_flip;
-    typedef typename This::Facet_flip Facet_flip;
+    typedef typename This_RT3::Edge_flip Edge_flip;
+    typedef typename This_RT3::Facet_flip Facet_flip;
     typedef typename TraitsT::Kinetic_kernel::Power_test_3 Side_of_oriented_sphere_3;
     typedef typename TraitsT::Kinetic_kernel::Weighted_orientation_3 Orientation_3;
     typedef typename TraitsT::Active_points_3_table Active_points_3_table; // here
@@ -411,12 +412,12 @@ protected:
       return TraitsT::kinetic_kernel_object().weighted_orientation_3_object();
     }
 
-    Base_traits(This *t, const TraitsT &tr): TraitsT(tr), wr_(t) {}
+    Base_traits(This_RT3 *t, const TraitsT &tr): TraitsT(tr), wr_(t) {}
 
-    Wrapper* wrapper_handle() {
+    This_RT3* wrapper_handle() {
       return wr_;
     }
-    const Wrapper* wrapper_handle() const
+    const This_RT3* wrapper_handle() const
     {
       return wr_;
     }
@@ -425,7 +426,7 @@ protected:
       return TraitsT::active_points_3_table_handle(); // here
     }
 
-    Wrapper *wr_;
+    This_RT3 *wr_;
   };
 
   typedef internal::Delaunay_triangulation_base_3<Base_traits, Delaunay_visitor> KDel;

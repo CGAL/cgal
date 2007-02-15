@@ -76,16 +76,16 @@ template <class TraitsT,
 class Delaunay_triangulation_3: public Ref_counted<Delaunay_triangulation_3<TraitsT, Visitor, TriangulationT> > {
 private:
   typedef Delaunay_triangulation_3<TraitsT, Visitor, TriangulationT> This;
+  typedef This This_DT3;
   
 
 
   struct Base_traits: public TraitsT {
-    typedef This Wrapper;
     typedef TriangulationT Triangulation;
     typedef typename TraitsT::Kinetic_kernel::Side_of_oriented_sphere_3 Side_of_oriented_sphere_3;
     typedef typename TraitsT::Kinetic_kernel::Orientation_3 Orientation_3;
-    typedef internal::Delaunay_3_edge_flip_event<This> Edge_flip;
-    typedef typename internal::Delaunay_3_facet_flip_event<This> Facet_flip;
+    typedef internal::Delaunay_3_edge_flip_event<This_DT3> Edge_flip;
+    typedef typename internal::Delaunay_3_facet_flip_event<This_DT3> Facet_flip;
 
     Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object() const
     {
@@ -97,17 +97,17 @@ private:
       return TraitsT::kinetic_kernel_object().orientation_3_object();
     }
 
-    Base_traits(This *t, const TraitsT &tr): TraitsT(tr), wr_(t) {}
+    Base_traits(This_DT3 *t, const TraitsT &tr): TraitsT(tr), wr_(t) {}
 
-    Wrapper* wrapper_handle() {
+    This_DT3* wrapper_handle() {
       return wr_;
     }
-    const Wrapper* wrapper_handle() const
+    const This_DT3* wrapper_handle() const
     {
       return wr_;
     }
 
-    Wrapper *wr_;
+    This_DT3 *wr_;
   };
 
   typedef typename TraitsT::Simulator::Event_key Event_key;
