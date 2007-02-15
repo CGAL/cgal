@@ -1,5 +1,3 @@
-
-
 // Copyright (c) 1997  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
@@ -22,7 +20,6 @@
 // 
 //
 // Author(s)     : script by Geert-Jan Giezeman and Sven Schoenherr 
-
 
 
 // macro definitions
@@ -267,5 +264,4 @@
    ((EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_polygon_expensive_exactness_warning_code(CODE) CODE
 #endif // CGAL_POLYGON_NO_WARNINGS
-
 
