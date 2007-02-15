@@ -17,8 +17,8 @@
 //
 // Author(s)     : Pierre Angelier, Michel Pocchiola
 
-#ifndef SHORTEST_PATH_POLYGON_TRAITS_H
-#define SHORTEST_PATH_POLYGON_TRAITS_H
+#ifndef CGAL_SHORTEST_PATH_POLYGON_TRAITS_H
+#define CGAL_SHORTEST_PATH_POLYGON_TRAITS_H
 
 #include <CGAL/Visibility_complex_polygon_traits.h>
 
@@ -96,4 +96,4 @@ private:
 
 CGAL_END_NAMESPACE
 
-#endif // SHORTEST_PATH_POLYGON_TRAITS_H
+#endif // CGAL_SHORTEST_PATH_POLYGON_TRAITS_H

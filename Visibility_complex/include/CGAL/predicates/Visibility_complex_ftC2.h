@@ -17,8 +17,8 @@
 //
 // Author(s)     : Pierre Angelier, Michel Pocchiola
 
-#ifndef VISIBILITY_COMPLEX_FTC2_H
-#define VISIBILITY_COMPLEX_FTC2_H
+#ifndef CGAL_VISIBILITY_COMPLEX_FTC2_H
+#define CGAL_VISIBILITY_COMPLEX_FTC2_H
 
 #include <CGAL/sign_utils.h>
 #include <CGAL/predicates/kernel_ftC2.h>
@@ -383,4 +383,4 @@ CGAL_END_NAMESPACE
 #endif // CGAL_ARITHMETIC_FILTER_VISIBILITY_COMPLEX_FTC2_H
 #endif
 
-#endif // VISIBILITY_COMPLEX_FTC2_H
+#endif // CGAL_VISIBILITY_COMPLEX_FTC2_H

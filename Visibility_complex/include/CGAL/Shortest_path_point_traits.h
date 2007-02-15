@@ -17,8 +17,8 @@
 //
 // Author(s)     : Pierre Angelier, Michel Pocchiola
 
-#ifndef SHORTEST_PATH_POINT_TRAITS_H
-#define SHORTEST_PATH_POINT_TRAITS_H
+#ifndef CGAL_SHORTEST_PATH_POINT_TRAITS_H
+#define CGAL_SHORTEST_PATH_POINT_TRAITS_H
 
 #include <CGAL/Visibility_complex_point_traits.h>
 
@@ -76,4 +76,4 @@ private:
 
 CGAL_END_NAMESPACE
 
-#endif // SHORTEST_PATH_TRAITS_H
+#endif // CGAL_SHORTEST_PATH_TRAITS_H
