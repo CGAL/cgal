@@ -273,7 +273,7 @@ namespace Subdivision_method_3 {
 
 
   // ======================================================================
-//#define _EULER_DQQ_SPLITTING
+//#define _EULER_DQQ_SPLITTING // should be CGAL_ prefixed
 //#define _EULER_DQQ_TILTING   // Tilting is faster // commented out since unused and not CGAL_ prefixed
   template <class Poly, template <typename> class Mask>
   void DQQ_1step(Poly& p, Mask<Poly> mask) {
