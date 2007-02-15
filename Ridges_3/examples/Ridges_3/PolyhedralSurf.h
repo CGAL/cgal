@@ -1,5 +1,5 @@
-#ifndef _POLYHEDRALSURF_H_
-#define _POLYHEDRALSURF_H_
+#ifndef CGAL_POLYHEDRALSURF_H_
+#define CGAL_POLYHEDRALSURF_H_
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>

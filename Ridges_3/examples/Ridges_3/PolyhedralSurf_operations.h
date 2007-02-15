@@ -1,5 +1,5 @@
-#ifndef _POLY_OP_H_
-#define _POLY_OP_H_
+#ifndef CGAL_POLY_OP_H_
+#define CGAL_POLY_OP_H_
 
 //the facet stores the normal
 struct Facet_unit_normal {

@@ -1,5 +1,5 @@
-#ifndef _VISU_POLY_H_
-#define _VISU_POLY_H_
+#ifndef CGAL_VISU_POLY_H_
+#define CGAL_VISU_POLY_H_
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>

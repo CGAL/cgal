@@ -1,5 +1,5 @@
-#ifndef _PSURF_RINGS_H_
-#define _PSURF_RINGS_H_
+#ifndef CGAL_PSURF_RINGS_H_
+#define CGAL_PSURF_RINGS_H_
 
 using namespace std;
 
