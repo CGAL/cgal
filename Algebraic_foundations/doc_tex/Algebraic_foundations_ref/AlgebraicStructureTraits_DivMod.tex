@@ -4,13 +4,20 @@
 
 \ccc{AdaptableFunctor} computes both integral quotient and remainder
 of division with remainder. The quotient $q$ and remainder $r$ are computed 
-such that $x = q*y + r$ and $|r| < |y|$ with respect to the proper integer norm.
+such that $x = q*y + r$ and $|r| < |y|$ with respect to the proper integer norm of 
+the represented ring.
 \footnote{
 For integers this norm is the absolute value.\\ 
 For univariate polynomials this norm is the degree.} 
 In particular, $r$ is chosen to be $0$ if possible.
-For \ccc{RealEmbeddable} \ccc{EuclideanRing}s we require $q$ to be computed 
-as $x/y$ rounded towards zero. 
+Moreover, we require $q$ to be minimized with respect to the proper integer norm.  
+
+\ignore{
+For types representing \Z, this is round $q$ towards zero.
+For univariat polynomials this has no effect at all.
+MP_Float Z[1/2] is not clear yet.
+}
+
 
 Note that the last condition is needed to ensure a unique computation of the 
 pair $(q,r)$. However, an other option is to require minimality for $|r|$, 
@@ -19,8 +26,7 @@ a {\em mod(x,y)} operation would return the unique representative of the
 residue class of $x$ with respect to $y$, e.g. $mod(2,3)$ should return $-1$. 
 But this conflicts with nearly all current implementation 
 of integer types. From there, we decided to stay conform with common 
-implementations and require $q$ to be computed as $x/y$ rounded towards zero, 
-for \ccc{RealEmbeddable} \ccc{EuclideanRing}s. 
+implementations and require $q$ to be computed as $x/y$ rounded towards zero. 
 
 \ignore{
 Note that in general the above definition does not force a unique computation 
