@@ -28,19 +28,20 @@
 #ifndef CGAL_SPHERICAL_CIRCLE_GL__H
 #define CGAL_SPHERICAL_CIRCLE_GL__H
 
-#include <math.h>
+#include <cmath>
 
-#define ABS(d)                    (((d) > 0) ? (d) : (-d))
-#define COLOR_POINT(p)            glColor3f(ABS(p.x()),ABS(p.y()),ABS(p.z()))
+namespace CGAL {
+
+#define COLOR_POINT(p)            glColor3f(abs(p.x()),abs(p.y()),abs(p.z()))
 #define AFFICHER_POINT_CONTOUR(p) COLOR_POINT(p),glVertex3f(CGAL::to_double(p.x()),CGAL::to_double(p.y()),CGAL::to_double(p.z()))
 #define TRACE_SEGMENT(p1,p2)      AFFICHER_POINT_CONTOUR(p1),AFFICHER_POINT_CONTOUR(p2)
 #define COLOR_ROUGE               glColor3f(1.0, 0.0, 0.0)
-#define COLOR_POINT(p)            glColor3f(ABS(p.x()),ABS(p.y()),ABS(p.z()))
+#define COLOR_POINT(p)            glColor3f(abs(p.x()),abs(p.y()),abs(p.z()))
 #define IMPRIMER_POINT(n,p)       std::cout << n << " = (" << p.x() << ", " << p.y() << ", " << p.z() << ")" << std::endl
 #define VECTOR_LENGTH(v)          sqrt((v.x()*v.x())+(v.y()*v.y())+(v.z()*v.z()))
 
 /**
- * Fonction dessinant le contour du cercle 3D passe en parametre avec la precision voulue.
+ * Function drawing the contour of the 3D circle passed as argument with the desired precision.
  */
 template <class SK>
 void dessiner_spherical_circle (const typename SK::Circle_3& circle, int precision) {
@@ -56,7 +57,7 @@ void dessiner_spherical_circle (const typename SK::Circle_3& circle, int precisi
 	v = v / VECTOR_LENGTH(v);
 	//IMPRIMER_POINT("v", v);
 	double rayon = sqrt(CGAL::to_double(circle.squared_radius()));
-	double pas = 2 * M_PI / precision;
+	double pas = 2 * CGAL_PI / precision;
 	glLineWidth(5.0);
 	glDisable(GL_LIGHTING); // desactive la gestion de la lumiere
 
@@ -64,7 +65,7 @@ void dessiner_spherical_circle (const typename SK::Circle_3& circle, int precisi
 	Point_3 pcour;
 	glBegin(GL_LINES);
 	COLOR_ROUGE;
-	for (double theta = pas; theta < 2 * M_PI + pas; theta = theta + pas) {
+	for (double theta = pas; theta < 2 * CGAL_PI + pas; theta = theta + pas) {
 		pcour = Point_3(
 			centre.x() + rayon * (u.x() * cos(theta) + v.x() * sin(theta)),
 			centre.y() + rayon * (u.y() * cos(theta) + v.y() * sin(theta)),
@@ -74,6 +75,8 @@ void dessiner_spherical_circle (const typename SK::Circle_3& circle, int precisi
 		pprec = pcour;
 	}
 	glEnd();
+}
+
 }
 
 #endif // CGAL_SPHERICAL_CIRCLE_GL__H
