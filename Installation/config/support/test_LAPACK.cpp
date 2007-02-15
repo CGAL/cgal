@@ -22,18 +22,33 @@
 #include <iostream>
 #include <cassert>
 
-#ifdef CGAL_USE_F2C
-#define my_dgelss dgelss_
-#else  
-#define my_dgelss dgelss
-#endif
-
 extern "C" {
-int my_dgelss(int *m, int *n, int *nrhs, 
-		    double *a, int *lda, double *b, int *ldb, double *
-		    s, double *rcond, int *rank, double *work, int *lwork,
-		    int *info); 
+int dgelss(int *m, int *n, int *nrhs,
+                    double *a, int *lda, double *b, int *ldb, double *
+                    s, double *rcond, int *rank, double *work, int *lwork,
+                    int *info);
+int dgelss_(int *m, int *n, int *nrhs,
+                    double *a, int *lda, double *b, int *ldb, double *
+                    s, double *rcond, int *rank, double *work, int *lwork,
+                    int *info);
 }
+
+namespace CGAL { namespace LAPACK {
+
+inline
+int dgelss(int *m, int *n, int *nrhs,
+       double *a, int *lda, double *b, int *ldb, double *
+       s, double *rcond, int *rank, double *work, int *lwork,
+       int *info)
+{
+#ifdef CGAL_USE_F2C
+  return dgelss_(m, n, nrhs, a, lda, b, ldb, s, rcond, rank, work, lwork, info);
+#else
+  return dgelss(m, n, nrhs, a, lda, b, ldb, s, rcond, rank, work, lwork, info);
+#endif
+}
+
+} }
 
 int main()
 {
@@ -52,7 +67,7 @@ int main()
 
   double rcond = -1;
 
-  my_dgelss(&m, &n, &nrhs, &M, &lda, &B, &ldb, sing_values, 
+  CGAL::LAPACK::dgelss(&m, &n, &nrhs, &M, &lda, &B, &ldb, sing_values, 
 	  &rcond, &rank, work, &lwork, &info);
   assert(info==0);
   assert(B==1.);
