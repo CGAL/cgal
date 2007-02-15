@@ -27,6 +27,7 @@
 #include <CGAL/Kinetic/Active_objects_vector.h>
 #include <CGAL/Kinetic/Instantaneous_kernel.h>
 #include <CGAL/Kinetic/Cartesian.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/Kinetic/Handle_degeneracy_function_kernel.h>
 #include <CGAL/Kinetic/Default_simulator.h>
 #include <CGAL/Kinetic/Two_list_pointer_event_queue.h>
