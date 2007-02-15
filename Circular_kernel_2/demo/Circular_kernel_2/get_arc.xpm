@@ -1,5 +1,5 @@
 /* XPM */
-static char *get_arc[] = {
+static const char *get_arc[] = {
 /* width height num_colors chars_per_pixel */
 "    33    33      243            2",
 /* colors */

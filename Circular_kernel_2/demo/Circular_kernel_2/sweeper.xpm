@@ -1,5 +1,5 @@
 /* XPM */
-static char *sweeper_xpm[] = {
+static const char *sweeper_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 240 2",
 "   c #020100",

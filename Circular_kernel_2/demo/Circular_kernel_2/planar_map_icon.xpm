@@ -1,5 +1,5 @@
 /* XPM */
-static char *planar_map_icon[] = {
+static const char *planar_map_icon[] = {
 /* width height num_colors chars_per_pixel */
 "    33    33        3            1",
 /* colors */

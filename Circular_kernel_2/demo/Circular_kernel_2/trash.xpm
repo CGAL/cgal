@@ -1,5 +1,5 @@
 /* XPM */
-static char *trash[] = {
+static const char *trash[] = {
 /* width height num_colors chars_per_pixel */
 "    33    33      154            2",
 /* colors */
