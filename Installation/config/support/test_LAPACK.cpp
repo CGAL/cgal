@@ -1,9 +1,26 @@
+// Copyright (c) 2007  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+// Author(s)     : Marc Pouget
+
 // Test if LAPACK is available
 
 #include <iostream>
-#include <stdlib.h>
-#include <stdio.h>
-#include <assert.h>
+#include <cassert>
 
 #ifdef CGAL_USE_F2C
 #define my_dgelss dgelss_
@@ -16,13 +33,11 @@ int my_dgelss(int *m, int *n, int *nrhs,
 		    double *a, int *lda, double *b, int *ldb, double *
 		    s, double *rcond, int *rank, double *work, int *lwork,
 		    int *info); 
- }
+}
 
-
-int main(int argc, char* argv[])
+int main()
 {
-  double M=1,
-    B=1;
+  double M=1, B=1;
   int m = 1,
     n = 1,
     nrhs = 1,
@@ -32,8 +47,8 @@ int main(int argc, char* argv[])
     lwork = 5*m,
     info;
   //c style
-  double* sing_values = (double*) malloc(n*sizeof(double));
-  double* work = (double*) malloc(lwork*sizeof(double));
+  double * sing_values = new double[n]; // * sing_values = (double*) malloc(n*sizeof(double));
+  double* work = new double[lwork]; // (double*) malloc(lwork*sizeof(double));
 
   double rcond = -1;
 
@@ -42,8 +57,8 @@ int main(int argc, char* argv[])
   assert(info==0);
   assert(B==1.);
   //clean up 
-  free(sing_values);
-  free(work);
+  delete sing_values;
+  delete work;
 
   std::cout << "ok for lapack" << std::endl;
   
