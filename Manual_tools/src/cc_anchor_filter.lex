@@ -103,6 +103,18 @@ const string reference_icon = "<IMG SRC=\"cc_ref_up_arrow.gif\" "
 string   output_path, reftext;
 ofstream output_file;
 
+void compress_spaces_in_string( string& s ) {
+    for ( size_t i = 0; i < s.size(); ++i) {
+    if ( isspace( s[i])) {
+        size_t k = 1;
+        while ( i + k < s.size() && isspace( s[ i + k]))
+        ++k;
+        s.replace( i, k, " ");
+    }
+    }
+}
+
+
 bool
 match_cc_idfier( string s, ostream *out = NULL ) {
   string::size_type begin = 0;
@@ -200,10 +212,10 @@ LT              "&lt;"
 GT              "&gt;"
 CCidfier        ({CCletter}({CCletter}|{digit})*)
 CCidfier1       {CCidfier}({CCidfier}|[ ]?({LT}[ ]?)+{CCidfier}|([ ]?{GT})*[ ]?"::"[ ]?{CCidfier}|[ ]?[,][ ]?{CCidfier})*([ ]?{GT})*
-intsign         "signed "|"unsigned "
-intsize         "long long "|"long "|"short "
+intsign         signed[ ]+|unsigned[ ]+
+intsize         long[ ]+long[ ]+|long[ ]+|short[ ]+
 inttype         ({intsign}?{intsize}?"int")|({intsign}?"char")
-floattype       "float"|"double"|"long double"
+floattype       float|double|long[ ]+double
 CCidfier2       {CCidfier1}|{inttype}|{floattype}
 ws              [ \t\n\r]*
 par             {ws}("<"[pP]">"{ws})*
@@ -306,8 +318,8 @@ cccend          "[cccend]"
 }
 
 [\[]internal[:][^\]]+[\]] {
-   yytext [ yyleng - 1 ] = '\0'; // cut off trailing "]
-   const char *my_yytext = yytext + 10; // skip [internal:"
+   yytext [ yyleng - 1 ] = '\0';    // cut off trailing "]
+   string my_yytext( yytext + 10 ); // skip [internal:"
 
    if( dict_internal.is_defined( my_yytext ) )
      output_file  << dict_internal[ my_yytext ];
@@ -315,7 +327,12 @@ cccend          "[cccend]"
 
 <CROSSLINKMODE>{CCidfier2} {
   //output_file << "matched [" << yytext << "] as ccidfieR" << std::endl;
-  match_cc_idfier( yytext, &output_file );
+  string my_yytext( yytext );
+  // so that "long  long       int" is properly crosslinked
+  compress_spaces_in_string( my_yytext );
+  std::cout << "[" << my_yytext << "]" << std::endl;
+
+  match_cc_idfier( my_yytext, &output_file );
 }
 <CROSSLINKMODE>[<][^>]+[>] { ECHO; } // do not crosslink inside html tags
 <CROSSLINKMODE>.        { ECHO; }
