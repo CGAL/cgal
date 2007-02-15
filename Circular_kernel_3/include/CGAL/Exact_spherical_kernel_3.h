@@ -1,6 +1,3 @@
-#ifndef CGAL_EXACT_SPHERICAL_3_KERNEL_H
-#define CGAL_EXACT_SPHERICAL_3_KERNEL_H
-
 // Copyright (c) 2005-2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
@@ -14,17 +11,19 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: $
-// $Id: $
+// Partially supported by the IST Programme of the EU as a Shared-cost
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
+// (ACS -- Algorithms for Complex Shapes)
+//
+// $URL$
+// $Id$
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion, Pedro Machado
 
-
-// Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
-// (ACS -- Algorithms for Complex Shapes)
+#ifndef CGAL_EXACT_SPHERICAL_3_KERNEL_H
+#define CGAL_EXACT_SPHERICAL_3_KERNEL_H
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
@@ -59,4 +58,4 @@ CGAL_BEGIN_NAMESPACE
 
 CGAL_END_NAMESPACE
 
-#endif /*CGAL_EXACT_SPHERICAL_3_KERNEL_H*/
+#endif // CGAL_EXACT_SPHERICAL_3_KERNEL_H

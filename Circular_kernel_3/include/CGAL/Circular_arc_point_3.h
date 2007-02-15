@@ -17,8 +17,8 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
 //
 // Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //             Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
@@ -28,6 +28,7 @@
 
 #ifndef CGAL_CIRCULAR_ARC_POINT_3_H
 #define CGAL_CIRCULAR_ARC_POINT_3_H
+
 namespace CGAL {
 
 template < typename SphericalKernel >
@@ -215,8 +216,6 @@ operator<<(std::ostream &os, const Circular_arc_point_3<SK> &p)
   return os << p.x() << " " << p.y() << " " << p.z() << " " ;
 }
 
-
-
-
 }
+
 #endif

@@ -17,15 +17,14 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
 //
 // Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //             Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
 //             Pedro Machado    <tashimir@gmail.com>
 //             Julien Hazebrouck
 //             Damien Leroy
-
 
 #ifndef CGAL_SPHERICAL_KERNEL_CIRCULAR_ARC_POINT_3_H
 #define CGAL_SPHERICAL_KERNEL_CIRCULAR_ARC_POINT_3_H

@@ -17,16 +17,16 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
 //
 // Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //             Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
 //             Julien Hazebrouck
 //             Damien Leroy
 
-#ifndef _SPHERICAL_CIRCLE_GL__H_
-#define _SPHERICAL_CIRCLE_GL__H_
+#ifndef CGAL_SPHERICAL_CIRCLE_GL__H
+#define CGAL_SPHERICAL_CIRCLE_GL__H
 
 #include <math.h>
 
@@ -76,5 +76,4 @@ void dessiner_spherical_circle (const typename SK::Circle_3& circle, int precisi
 	glEnd();
 }
 
-#endif // _SPHERICAL_CIRCLE_GL__H_
-
+#endif // CGAL_SPHERICAL_CIRCLE_GL__H

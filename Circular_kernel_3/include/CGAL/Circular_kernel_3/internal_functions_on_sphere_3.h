@@ -651,6 +651,4 @@ namespace CGAL {
   }//SphericalFunctors
 }//CGAL
 
-
-
 #endif //CGAL_SPHERICAL_KERNEL_PREDICATES_ON_SPHERE_3_H

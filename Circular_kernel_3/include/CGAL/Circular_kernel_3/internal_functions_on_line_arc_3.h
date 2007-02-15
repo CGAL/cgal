@@ -17,8 +17,8 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
 //
 // Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //             Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
@@ -296,7 +296,5 @@ namespace CGAL {
 
   }//SphericalFunctors
 }//CGAL
-
-
 
 #endif //CGAL_SPHERICAL_KERNEL_PREDICATES_ON_LINE_ARC_3_H
