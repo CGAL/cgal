@@ -26,18 +26,22 @@
 #include <CGAL/basic.h>
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_integer.h>
-//#include <CGAL/leda_rational.h>
+#include <CGAL/leda_rational.h>
 typedef leda_integer NT;
-//typedef leda_rational FNT;
+typedef leda_rational FNT;
 #else
 #include <CGAL/Gmpz.h>
-//#include <CGAL/Gmpq.h>
+#include <CGAL/Gmpq.h>
 typedef CGAL::Gmpz NT;
-//typedef CGAL::Gmpq FNT;
+typedef CGAL::Gmpq FNT;
 #endif
+#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Extended_cartesian.h>
 #include <CGAL/Homogeneous.h>
-//#include <CGAL/Simple_homogeneous.h>
+#include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Extended_homogeneous.h>
+#include <CGAL/Lazy_kernel.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
@@ -45,13 +49,14 @@ typedef CGAL::Gmpz NT;
 #include <CGAL/Nef_3/SNC_intersection.h>
 #include <CGAL/Nef_S2/SM_point_locator.h>
 #include <CGAL/Nef_3/SNC_items.h>
+#include <CGAL/Nef_3/SNC_indexed_items.h>
 #include <CGAL/Timer.h>
 #include <fstream>
 
-template<typename Kernel>
+template<typename Kernel, typename Items>
 class test {
 
-  typedef CGAL::Nef_polyhedron_3<Kernel>                    Nef_polyhedron;
+  typedef CGAL::Nef_polyhedron_3<Kernel, Items>             Nef_polyhedron;
   typedef typename Nef_polyhedron::Mark                     Mark;
   typedef typename Kernel::RT                               RT;
   typedef typename Kernel::Point_3                          Point_3;
@@ -60,7 +65,8 @@ class test {
   typedef typename Kernel::Segment_3                        Segment_3;
   typedef typename Kernel::Aff_transformation_3             Aff_transformation_3;
   typedef CGAL::Polyhedron_3<Kernel>                        Polyhedron;
-  typedef CGAL::SNC_structure<Kernel,CGAL::SNC_items, Mark> SNC_structure;
+  typedef CGAL::SNC_structure<Kernel, Items, Mark>          SNC_structure;
+
   typedef typename SNC_structure::Vertex_const_iterator     Vertex_const_iterator;
   typedef typename SNC_structure::Vertex_const_handle       Vertex_const_handle;
   typedef typename SNC_structure::Halfedge_const_iterator   Halfedge_const_iterator;
@@ -247,7 +253,6 @@ private:
   }
 
   void newell() {
-
     Nef_polyhedron N = load_off("data/star.off");
     CGAL_assertion(N.is_valid(0,0));    
     CGAL_assertion(does_nef3_equals_file(N,"newell.nef3.SH"));
@@ -298,7 +303,9 @@ private:
 
     if(Infi_box::extended_kernel()) {    
       N = Nef_polyhedron(Plane_3(1,1,0,0));
+      CGAL_assertion(N.is_valid(0,0));      
       Nef_polyhedron N1(Plane_3(1,-2,3,0));
+      CGAL_assertion(N1.is_valid(0,0));
       N = N.join(N1);
       N1 = N;
       N.transform(rotx20);
@@ -1012,7 +1019,7 @@ private:
     N1 = N.symmetric_difference(N1);
     CGAL_assertion(N1.is_valid(0,0));
     CGAL_assertion(does_nef3_equals_file(N1,"cube+plane.nef3.SH"));
- 
+
     N  = C;
     N1 = N;
     N2 = N;
@@ -1238,41 +1245,84 @@ public:
 
 };
 
-template<typename Kernel>
-const char* test<Kernel>::datadir="data/";
+template<typename Kernel, typename Items>
+const char* test<Kernel, Items>::datadir="data/";
 
 int main() {
-  //  typedef CGAL::Cartesian<FNT>               C_kernel;
-  //  typedef CGAL::Simple_cartesian<FNT>       SC_kernel;
-  //  typedef CGAL::Extended_cartesian<FNT>     EC_kernel;
+  typedef CGAL::Cartesian<FNT>               C_kernel;
+  typedef CGAL::Simple_cartesian<FNT>       SC_kernel;
+  typedef CGAL::Lazy_kernel<SC_kernel>      LC_kernel;
+  typedef CGAL::Extended_cartesian<FNT>     EC_kernel;
   typedef CGAL::Homogeneous<NT>              H_kernel;
-  //  typedef CGAL::Simple_homogeneous<NT>      SH_kernel;
+  typedef CGAL::Simple_homogeneous<NT>      SH_kernel;
   typedef CGAL::Extended_homogeneous<NT>    EH_kernel;
   
-  //std::cin>>debugthread;
-
 #ifdef CGAL_CFG_ISTREAM_INT_BUG
   std::locale::global(std::locale("C")); 
 #endif
 
   CGAL::Timer t;
+
+  //  test<C_kernel, CGAL::SNC_indexed_items>  test_C;
+  test<SC_kernel, CGAL::SNC_indexed_items> test_SC;
+  test<LC_kernel, CGAL::SNC_indexed_items> test_LC;
+  //  test<EC_kernel, CGAL::SNC_items> test_EC;
+  test<H_kernel, CGAL::SNC_indexed_items>  test_H;
+  //  test<SH_kernel, CGAL::SNC_indexed_items> test_SH;
+  test<EH_kernel, CGAL::SNC_items> test_EH;
+
+/*
   t.start();
-
-  //  test<C_kernel>  test_C;
-  //  test<SC_kernel> test_SC;
-  //  test<EC_kernel> test_EC;
-  test<H_kernel>  test_H;
-  //  test<SH_kernel> test_SH;
-  test<EH_kernel> test_EH;
-
-  //  test_C.run_test();
-  //  test_SC.run_test();
-  //  test_EC.run_test();
-  test_H.run_test();
-  //  test_SH.run_test();
-  test_EH.run_test();
-
+  test_C.run_test();
   t.stop();
-  std::cout << "Time " << t.time() << std::endl;
+  std::cout << "Cartesian kernel successful in: " << t.time() 
+            << " seconds " << std::endl;
+  t.reset();
+*/
+
+  t.start();
+  test_SC.run_test();
+  t.stop();
+  std::cout << "Simple_cartesian kernel successful in: " << t.time() 
+            << " seconds " << std::endl;
+  t.reset();
+
+  t.start();
+  test_LC.run_test();
+  t.stop();
+  std::cout << "Lazy Simple_cartesain kernel successful in: " << t.time() 
+            << " seconds " << std::endl;
+  t.reset();
+
+/*
+  t.start();
+  test_EC.run_test();
+  t.stop();
+  std::cout << "Extended_cartesian kernel successful in: " << t.time() 
+            << " seconds " << std::endl;
+  t.reset();
+*/
+
+  t.start();
+  test_H.run_test();
+  t.stop();
+  std::cout << "Homogeneous kernel successful in: " << t.time() 
+            << " seconds " << std::endl;
+  t.reset();
+
+/*
+  t.start();
+  test_SH.run_test();
+  t.stop();
+  std::cout << "Simple_homogeneous kernel successful in: " << t.time() 
+            << " seconds " << std::endl;
+  t.reset();
+*/
+  t.start();
+  test_EH.run_test();
+  t.stop();
+  std::cout << "Extended_homogeneous kernel successful in: " << t.time() 
+            << " seconds " << std::endl;
+
 }
 
