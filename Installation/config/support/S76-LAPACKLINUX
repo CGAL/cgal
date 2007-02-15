@@ -1,6 +1,6 @@
 # LAPACK is a linear algebra library
 
-DESCRIPTION = LAPACK for fedora
+DESCRIPTION = LAPACK for Linux
 PROVIDES = LAPACK
 CXXFLAGS = 
 LDFLAGS = 
