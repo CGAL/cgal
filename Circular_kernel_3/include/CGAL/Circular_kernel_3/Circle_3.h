@@ -124,28 +124,28 @@ namespace CGAL {
         return get(base).first;
       }
 
-      const FT area_divided_by_pi() const {
+      FT area_divided_by_pi() const {
         return squared_radius();
       }
 
-      const FT squared_length_divided_by_pi_square() const {
+      FT squared_length_divided_by_pi_square() const {
         return 4 * squared_radius();
       }
 
       static double pi;
 
-      const double approximate_area() const {
+      double approximate_area() const {
         return pi * to_double(squared_radius());
       }
 
-      const double approximate_squared_length() const {
+      double approximate_squared_length() const {
         return pi * pi * 4.0 * to_double(squared_radius());
       }
 
       // this bbox function
       // can be optimize by doing different cases
       // for each variable = 0 (cases with is_zero)
-      const CGAL::Bbox_3 bbox() const {
+      CGAL::Bbox_3 bbox() const {
         typedef CGAL::Interval_nt<false> Interval;
         CGAL::Interval_nt<false>::Protector ip;
         const Plane_3 &plane = supporting_plane();
@@ -180,7 +180,7 @@ namespace CGAL {
     };
 
     template < class SK >
-    double Circle_3<SK>::pi = (std::acos(-1.));
+    double Circle_3<SK>::pi = CGAL_PI;
 
     template < class SK >
     CGAL_KERNEL_INLINE
@@ -204,4 +204,3 @@ namespace CGAL {
 }
 
 #endif
-

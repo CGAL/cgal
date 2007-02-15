@@ -224,17 +224,17 @@ namespace CGAL {
         return supporting_circle().diametral_sphere();
       }
 
-      const bool is_full() const {
+      bool is_full() const {
         return _full;
       }
 
-      const Sign sign_cross_product() const {
+      Sign sign_cross_product() const {
         return _sign_cross_product;
       }
 
       static double pi;
 
-      const double approximate_angle() const {
+      double approximate_angle() const {
         if(is_full()) return 2.0*pi;
         const double x1 = to_double(source().x());
         const double y1 = to_double(source().y());
@@ -252,14 +252,14 @@ namespace CGAL {
         else return ap_ang;
       }
 
-      const double approximate_squared_length() const {
+      double approximate_squared_length() const {
         const double ang = approximate_angle();
         return ang * ang * to_double(squared_radius());
       }
 
       // It is of course possible to increase the precision
       // maybe it will be done after
-      const CGAL::Bbox_3 bbox() const {
+      CGAL::Bbox_3 bbox() const {
         return supporting_circle().bbox();
       }
 
@@ -269,7 +269,7 @@ namespace CGAL {
     };
 
     template < class SK >
-    double Circular_arc_3<SK>::pi = (std::acos(-1.));
+    double Circular_arc_3<SK>::pi = CGAL_PI;
 
     template < class SK >
     CGAL_KERNEL_INLINE

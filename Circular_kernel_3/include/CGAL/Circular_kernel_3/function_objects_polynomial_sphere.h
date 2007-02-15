@@ -1453,7 +1453,7 @@ namespace SphericalFunctors {
 
   public:
 
-    typedef const double result_type;
+    typedef double result_type;
     typedef Arity_tag<1> Arity;
 
     result_type operator() (const Circle_3 & c) const
@@ -1470,7 +1470,7 @@ namespace SphericalFunctors {
 
   public:
 
-    typedef const double result_type;
+    typedef double result_type;
     typedef Arity_tag<1> Arity;
 
     result_type operator() (const Circle_3 & c) const
@@ -1488,7 +1488,7 @@ namespace SphericalFunctors {
 
   public:
 
-    typedef const double result_type;
+    typedef double result_type;
     typedef Arity_tag<1> Arity;
 
     result_type operator() (const Circular_arc_3 & c) const
