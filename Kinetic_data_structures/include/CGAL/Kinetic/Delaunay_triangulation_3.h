@@ -75,8 +75,8 @@ template <class TraitsT,
 	  class TriangulationT=typename internal::Delaunay_triangulation_3_types<TraitsT>::Default_triangulation>
 class Delaunay_triangulation_3: public Ref_counted<Delaunay_triangulation_3<TraitsT, Visitor, TriangulationT> > {
 private:
+  typedef Delaunay_triangulation_3<TraitsT, Visitor, TriangulationT> This_DT3;
   typedef Delaunay_triangulation_3<TraitsT, Visitor, TriangulationT> This;
-  typedef This This_DT3;
   
 
 

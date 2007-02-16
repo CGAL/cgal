@@ -266,7 +266,7 @@ private:
   typedef Regular_triangulation_3<TraitsT, VisitorT, TriangulationT> This;
 
 public:
-  typedef This This_RT3;
+  typedef Regular_triangulation_3<TraitsT, VisitorT, TriangulationT> This_RT3;
   typedef TraitsT Traits;
   typedef typename Traits::Active_points_3_table::Key Point_key; //here
 
