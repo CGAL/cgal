@@ -27,8 +27,7 @@ LIBPATH = \
 
 LDFLAGS = \
           $(LONG_NAME_PROBLEM_LDFLAGS) \
-          $(CGAL_QT_LDFLAGS) \
-	   -lgmpxx -lmpfr -lX11 -lXi -lXmu -lglut -lGL -lGLU -lm 
+          $(CGAL_QT_LDFLAGS)
 
 #---------------------------------------------------------------------#
 #                    target entries
