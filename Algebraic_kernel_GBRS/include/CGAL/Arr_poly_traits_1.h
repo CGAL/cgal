@@ -289,8 +289,10 @@ template<class Kernel_>class Point{
       set_pol(c_.pol());
       if(x_.is_consistent()){
         x=new Algebraic(x_);
-        y=new Algebraic;
-        eval_1(c_.pol(),x_,y->mpfi());
+        // we don't need the y coordinate
+        //y=new Algebraic;
+        //eval_1(c_.pol(),x_,y->mpfi());
+        y=new Algebraic(0);
       }else
         y=NULL;
     };
@@ -302,7 +304,8 @@ template<class Kernel_>class Point{
       p=const_cast<Polynomial*>(&poly);};
     inline const Polynomial& pol()const{return *p;};
     inline std::ostream& show(std::ostream &o)const{
-      return(o<<"("<<get_x()<<","<<get_y()<<")");}
+      //return(o<<"("<<get_x()<<","<<get_y()<<")");
+      return(o<<"(x="<<get_x()<<",y="<<pol()<<")");}
 };
 
 template<class K>
