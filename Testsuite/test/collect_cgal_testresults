@@ -70,7 +70,8 @@ do_platform()
   echo "------------" >> $RESULT_FILE
 
   if [ -f install.log.${PLATFORM} ] ; then
-    cp install.log.${PLATFORM} Installation/ProgramOutput.install.log.${PLATFORM}
+    [ -f install.log ] && cat install.log >> Installation/ProgramOutput.install.log.${PLATFORM}
+    cat install.log.${PLATFORM} >> Installation/ProgramOutput.install.log.${PLATFORM}
 
     grep "Compilation of" install.log.${PLATFORM} \
     | awk '{ print $3 " " $4 " " $6; }' \
