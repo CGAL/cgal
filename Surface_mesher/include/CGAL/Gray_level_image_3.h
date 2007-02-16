@@ -28,6 +28,9 @@ struct _image;
 _image* _readImage(const char *name);
 void convertImageTypeToFloat(_image* image);
 float triLinInterp(_image* image,float posx, float posy, float posz);
+bool _get_image_bounding_box(_image*,
+			     float*, float*, float*,
+			     float*, float*, float*); 
 /* End of copy-paste from <imageio/ImageIO.h> */
 
 namespace CGAL {
@@ -37,22 +40,37 @@ class Gray_level_image_3
 {
   _image *image;
   float isovalue;
+  float min_x, min_y, min_z;
   float max_x, max_y, max_z;
+  bool is_valid;
 
 public:
   Gray_level_image_3(const char* file, float isoval)
+    : image(0),
+      isovalue(isoval),
+      min_x(0.f),
+      min_y(0.f),
+      min_z(0.f),
+      max_x(0.f),
+      max_y(0.f),
+      max_z(0.f),
+      is_valid(false);
   {
     image = ::_readImage(file);
-    ::convertImageTypeToFloat(image);
-    isovalue=isoval;
-    max_x = ((image->xdim) - 1.0)*(image->vx);
-    max_y = ((image->ydim) - 1.0)*(image->vy);
-    max_z = ((image->zdim) - 1.0)*(image->vz);
+    if( image != 0 )
+    {
+      is_valid = true;
+      ::convertImageTypeToFloat(image);
+      isovalue=isoval;
+      ::_get_image_bounding_box(image,
+				&min_x, &min_y, &min_z,
+				&max_x, &max_y, &max_z);
+    }
   }
 
   bool inside(float X, float Y, float Z) const
   {
-    return ( X>=0. && Y>=0. && Z>=0. && 
+    return ( X>=min_x. && Y>=min_y && Z>=min_z && 
              X<=max_x && Y<=max_y && Z<=max_z );
   }
 

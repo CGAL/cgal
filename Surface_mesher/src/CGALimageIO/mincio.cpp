@@ -222,7 +222,7 @@ int readMincHeader(_image *im, const char* filename,
   (void) miicv_detach( minc_icv );
   (void) miicv_free( minc_icv );
 
-  _closeImage(im);
+  ImageIO_closeImage(im);
 
   /* order data in ZYX */
   (void) ncdiminq(fin, dim[0], name, NULL);

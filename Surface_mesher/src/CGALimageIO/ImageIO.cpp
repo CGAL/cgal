@@ -469,7 +469,17 @@ _image *_initImage() {
   return im;
 }
 
-
+/* return the bounding box of the image */
+void _get_image_bounding_box(_image* im,
+			     float* x_min, float* y_min, float* z_min,
+			     float* x_max, float* y_max, float* z_max) {
+  *x_min = im->tx;
+  *y_min = im->ty;
+  *z_min = im->tz;
+  *x_max = (im->xdim - 1.0f)*(im->vx) + *x_min ;
+  *y_max = (im->ydim - 1.0f)*(im->vy) + *y_min ;
+  *z_max = (im->zdim - 1.0f)*(im->vz) + *z_min ;
+}
 
 /* Free an image descriptor */
 void _freeImage(_image *im) {

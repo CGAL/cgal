@@ -420,10 +420,15 @@ void _openWriteImage(_image* im, const char *name) ;
    @param name image file name */
 void _openReadImage(_image *im, const char *name);
 
-/** close an image file descriptor that was opened using _openImage
-    @param im opened image descriptor */
-void _closeImage(_image *im);
+// /** close an image file descriptor that was opened using _openImage
+//     @param im opened image descriptor */
+// void _closeImage(_image *im);
 
+/** return the bounding box of the image
+    @param im opened image descriptor */
+void _get_image_bounding_box(_image* im,
+			     float* x_min, float* y_min, float* z_min,
+			     float* x_max, float* y_max, float* z_max);
 
 /** returns the endianness of the hardware architecture */
 ENDIANNESS  _getEndianness(); 
