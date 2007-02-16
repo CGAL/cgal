@@ -3009,10 +3009,13 @@ set_lib_compiled_flag()
     # does there exist a lib for this os/compiler?
     if [ -r "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libCGAL.a" ]; then
 	LIB_COMPILED='ok'
+        CGAL_LIBNAME=libCGAL.a
     else if [ -r "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libCGAL.so" ]; then
 	LIB_COMPILED='ok'
+        CGAL_LIBNAME=libCGAL.so
     else if [ -r "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/CGAL.lib" ]; then
         LIB_COMPILED='ok'
+        CGAL_LIBNAME=CGAL.lib
     else 
 	LIB_COMPILED=''
     fi; fi; fi
@@ -3721,6 +3724,14 @@ write_compiler_flags()
       fi
   done
 
+  for i in ${SUPPORT_FEATURES}; do
+      if [ -n "`value_of \"PROVIDE_PKG_${i}\"`" ]; then
+	  print_as_shell_comment "*** complete compiler flags for feature ${i} ***" >> ${FILE}
+	  ${_printf} "%s" "ALL_${i}_CXXFLAGS = " >> ${FILE}
+	  ${_printf} "\$(${i}_CXXFLAGS) \$(%s_PKG_CXXFLAGS)\n\n" "`value_of \"PROVIDE_PKG_${i}\"`" >> ${FILE}
+      fi
+  done
+
   #
   # LONG_NAME_PROBLEM_CXXFLAGS
   #
@@ -3848,7 +3859,7 @@ write_linker_flags()
   for i in ${SUPPORT_PKGS}; do
       if [ -n "`value_of \"${i}_SUPPORT\"`" ]; then
 	  print_as_shell_comment "*** linker flags for package ${i} ***" >> ${FILE}
-	  ${_printf} "%s" "${i}_LDFLAGS = " >> ${FILE}
+	  ${_printf} "%s" "${i}_PKG_LDFLAGS = " >> ${FILE}
 	  set_package_ldflags "${i}"
 	  makefile_print_from_var tmp_ldflags >> ${FILE}
 	  ${_printf} "\n\n" >> ${FILE}
@@ -3888,7 +3899,7 @@ write_linker_flags()
   fi
   for i in ${R_SUPPORT_PKGS}; do
       if [ -n "`value_of \"${i}_SUPPORT\"`" ]; then
-	  makefile_print_continuationline "\$(${i}_LDFLAGS)" >> ${FILE}
+	  makefile_print_continuationline "\$(${i}_PKG_LDFLAGS)" >> ${FILE}
       fi
   done
   if [ -n "${CYGWIN_COMPILER}" ]; then
@@ -3905,6 +3916,14 @@ write_linker_flags()
   ${_printf} "%s\n\n" "CGAL_WINDOW_LDFLAGS = \$(CGAL_LDFLAGS)" >> ${FILE}
   ${_printf} "%s\n\n" "CGAL_GEOWIN_LDFLAGS = \$(CGAL_LDFLAGS)" >> ${FILE}
   ${_printf} "%s\n\n" "CGAL_QT_LDFLAGS = \$(CGAL_LDFLAGS)" >> ${FILE}
+
+  for i in ${SUPPORT_FEATURES}; do
+      if [ -n "`value_of \"PROVIDE_PKG_${i}\"`" ]; then
+	  print_as_shell_comment "*** linker flags for feature ${i} ***" >> ${FILE}
+	  ${_printf} "%s" "${i}_LDFLAGS = " >> ${FILE}
+	  ${_printf} "\$(%s_PKG_LDFLAGS)\n\n" "`value_of \"PROVIDE_PKG_${i}\"`" >> ${FILE}
+      fi
+  done
 }
 
 # create the include makefile for current configuration

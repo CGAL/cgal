@@ -51,6 +51,10 @@ SOMAJOR=2
 
 LIB_NAME_BASE = CGALQt
 
+ADDITIONNAL_CXXFLAGS = $(ALL_QT_CXXFLAGS) $(ALL_OPENGL_CXXFLAGS)
+SHARED_LIB_ADDITIONNAL_LDFLAGS = $(QT_LIBPATHFLAGS) $(QT_LDFLAGS) \
+            $(OPENGL_LIBPATHFLAGS) $(OPENGL_LDFLAGS)
+
 #---------------------------------------------------------------------#
 #                    common rules for all libraries
 #---------------------------------------------------------------------#

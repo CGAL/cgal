@@ -40,11 +40,11 @@ SOMAJOR=2
 
 LIB_NAME_BASE = core++
 
-SHARED_LIB_ADDITIONNAL_LDFLAGS = $(GMP_LIBPATHFLAGS) $(MPFR_LIBPATHFLAGS) $(GMP_LDFLAGS)
+ADDITIONNAL_CXXFLAGS = $(ALL_GMP_CXXFLAGS) $(ALL_MPFR_CXXFLAGS)
+SHARED_LIB_ADDITIONNAL_LDFLAGS = $(GMP_LIBPATHFLAGS) $(GMP_LDFLAGS) \
+            $(MPFR_LIBPATHFLAGS) $(MPFR_LDFLAGS)
 
 # The shared_lib case is still buggy:
-# - Currently MPFR is linked with it (through GMP_LDFLAGS), although it is
-#   not needed, but anyway next Core release will need it...
 # - When GMP or MPFR is a static library on Darwin, it fails because -fno-common is required...
 
 #---------------------------------------------------------------------#
