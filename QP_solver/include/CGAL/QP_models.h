@@ -1139,7 +1139,7 @@ public: // methods:
   // Returns the number of variables in the QP.
   //
   // Precondition: is_valid()
-  unsigned int n() const
+  int n() const
   {
     CGAL_qpe_assertion(is_valid());
     return var_names.size();
@@ -1148,7 +1148,7 @@ public: // methods:
   // Returns the number of constraints in the QP.
   //
   // Precondition: is_valid()
-  unsigned int m() const
+  int m() const
   {
     CGAL_qpe_assertion(is_valid());
     return b_.size(); // row_names doesn't work as RANGES may duplicate rows
@@ -1165,7 +1165,7 @@ public: // methods:
 
   // Returns the name (as present in the MPS-file) of the i-th variable.
   // Note: this routine has linear complexity.
-  const std::string& name_of_variable(unsigned int i)
+  const std::string& name_of_variable(int i)
   {
     CGAL_qpe_assertion(0<=i && i<n());
     return var_by_index[i];

@@ -89,7 +89,7 @@ int main(const int argNr,const char **args) {
     cout << "Variable values:" << endl;
     Solution::Variable_value_iterator it 
       = s.variable_values_begin() ;
-    for (unsigned int i=0; i < qp.n(); ++it, ++i)
+    for (int i=0; i < qp.n(); ++it, ++i)
       cout << "  " << qp.name_of_variable(i) << " = "
 	   << CGAL::to_double(*it) << endl;
     return 0;

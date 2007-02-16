@@ -1764,6 +1764,7 @@ QP_solver/doc_tex/QP_solver/first_qp.eps -text svneol=unset#application/postscri
 QP_solver/doc_tex/QP_solver/first_qp.fig -text svneol=unset#application/octet-stream
 QP_solver/doc_tex/QP_solver/first_qp.gif -text svneol=unset#image/gif
 QP_solver/doc_tex/QP_solver/first_qp.pdf -text svneol=unset#application/pdf
+QP_solver/examples/QP_solver/debug_bug.cpp -text
 QP_solver/examples/QP_solver/double_qp_solver.cin -text
 QP_solver/examples/QP_solver/double_qp_solver.data -text
 QP_solver/examples/QP_solver/integer_qp_solver.cin -text

@@ -44,5 +44,5 @@ solve_convex_hull_containment_lp (const Point_d& p,
 	      p.dimension()+1,  // number of constraints
 	      A_it (begin), B_it (p.homogeneous_begin()), 
 	      R_it (CGAL::EQUAL), C_it (0));
-  return CGAL::solve_nonnegative_linear_program (lp, ET(0));
+  return CGAL::solve_nonnegative_linear_program (lp, dummy);
 }

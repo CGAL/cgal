@@ -151,7 +151,6 @@ template<typename IT,   // input number type
                         // has_equalities_only_and_full_rank())
 void create_shifted_instance(CGAL::QP_from_mps
 			     <IT, Is_linear, Sparse_D, Sparse_A>& qp,
-			     const char *path,
 			     const char *file,   // Note: "Bernd3" and
 					         // not "Bernd3.mps".
 			     const char *dir)
@@ -252,7 +251,6 @@ template<typename IT,   // input number type
                         // has_equalities_only_and_full_rank())
 void create_free_instance(CGAL::QP_from_mps<IT, Is_linear,
 			  Sparse_D, Sparse_A>& qp_,
-			  const char *path,
 			  const char *file,   // Note: "Bernd3" and
 			                      // not "Bernd3.mps".
 			  const char *dir)
@@ -381,8 +379,8 @@ bool create_derivatives(const char *path,
     cerr << "    No derivatives made.\n";
   else {
     // derivates:
-    create_shifted_instance<IT, ET>(qp, path, file, dir);
-    create_free_instance<IT, ET>(qp, path, file, dir);
+    create_shifted_instance<IT, ET>(qp, file, dir);
+    create_free_instance<IT, ET>(qp, file, dir);
     // Note: insert additional derivative routines here! Your routine may use
     // create_output_file() to create the output file.
   }
