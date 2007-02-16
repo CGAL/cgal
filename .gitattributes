@@ -1603,6 +1603,7 @@ PDB/src/CGAL/PDB_align.cpp -text
 PDB/src/CGAL/PDB_distance.cpp -text
 PDB/src/CGAL/PDB_pdb_utils.cpp -text
 PDB/src/CGAL/PDB_transforms.cpp -text
+PDB/src/CGAL/makefile -text
 PDB/test/PDB/check_bonds.cpp -text
 PDB/test/PDB/check_hetatom.cpp -text
 PDB/test/PDB/check_pdb.cpp -text
