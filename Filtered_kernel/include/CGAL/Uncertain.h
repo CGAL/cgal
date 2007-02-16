@@ -161,7 +161,7 @@ Uncertain<T>::indeterminate()
 
 template < typename T >
 inline
-bool is_indeterminate(T const& a)
+bool is_indeterminate(T const&)
 {
   return false;
 }
