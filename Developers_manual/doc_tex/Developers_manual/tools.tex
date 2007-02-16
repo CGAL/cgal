@@ -195,6 +195,11 @@ The generated file contains a header that lists the requirements a
 Section~\ref{sec:test_subdirectory} with the description of the
 {\tt cgal\_test} script.
 
+Files which are considered by {{\tt create\_cgal\_test}} are those with
+{\tt .C} or {\tt .cpp} extension, and which content match the word {\tt main}.
+This way, no attempt is made at linking programs which are made of several
+object files.
+
 %\begin{itemize}
 %\item For every target two one-line messages are written to the file
 %      {\tt error.txt}\in
