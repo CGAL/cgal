@@ -202,34 +202,34 @@ Sign sign_1(const Rational_polynomial_1 &p1,const Algebraic_1 &a,
 
 // new function (implement evaluation using Horner's rule)
 Sign signat(const Rational_polynomial_1 &p,mpfr_srcptr xcoord){
-	// we have numbers Hi=hi*2^ei and X=x*2^ex
-	mpz_t h0,x;
+	// we have numbers H0=h0*2^e0 and X=x*2^ex
+	mpz_t h0,x,temp;
 	mp_exp_t e0,ex;
 	// we convert the evaluation point (mpfr) to fit our needs
+	mpz_init(x);
 	ex=mpfr_get_z_exp(x,xcoord);
 	// data from the polynomial
 	mpz_t *c=p.get_coefs();
 	int d=p.get_degree();
-	// we start the algorithm by setting H0
-	mpz_set(h0,c[d]);
+	// we start the algorithm by setting H0=c[d]*2^0
+	mpz_init_set(h0,c[d]);
 	e0=0;
-	// the iteration is H1=H0*x+c[i]
+	// the iteration is H0=H0*X+c[d-i]
+	mpz_init(temp);
 	for(int i=1;i<d+1;++i){
 		mpz_mul(h0,h0,x);
 		e0+=ex;	// at this point, we did H0*=X
-		// now, we have to add c[d-i]
-		if(e0<ex){
-			// c[d-i]*=2^(ex-e0)
-			mpz_mul_2exp(c[d-i],c[d-i],ex-e0);
-			mpz_add(h0,h0,c[d-i]);	// h0+=c[d-i]
-			// e0 is already what we want
-		} else {
-			if(ex<e0){
-				// h0*=2^(e0-ex)
-				mpz_mul_2exp(h0,h0,e0-ex);
-				mpz_add(h0,h0,c[d-i]);	// h0+=x
-				e0=ex;
-			} else	// good luck, e0=ex
+		// now, we have to add H0+c[d-i]
+		if(e0>0){	// shift h0 and add
+			mpz_mul_2exp(h0,h0,e0);
+			mpz_add(h0,h0,c[d-i]);
+			e0=0;
+		}else{
+			if(e0<0){	// shift c[d-i] and add
+				mpz_mul_2exp(temp,c[d-i],-e0);
+				mpz_add(h0,h0,temp);
+				e0=0;
+			}else	// we are lucky, e0=0
 				mpz_add(h0,h0,c[d-i]);
 		}
 		// at this point, H0 is the evaluation of the polynomial
@@ -237,6 +237,7 @@ Sign signat(const Rational_polynomial_1 &p,mpfr_srcptr xcoord){
 	int s=mpz_sgn(h0);
 	mpz_clear(h0);
 	mpz_clear(x);
+	mpz_clear(temp);
 	switch(s){
 		case 1:return POSITIVE;
 		case -1:return NEGATIVE;
