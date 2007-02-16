@@ -3300,6 +3300,6 @@ get_l() const
 
 CGAL_END_NAMESPACE
 
-#include <CGAL/QP_solver/Validity.C>
+#include <CGAL/QP_solver/QP_solver_validity_impl.h>
 
 // ===== EOF ==================================================================

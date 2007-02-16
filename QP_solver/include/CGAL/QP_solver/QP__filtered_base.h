@@ -289,7 +289,7 @@ set_q(int c, int b, Tag_false)
 
 CGAL_END_NAMESPACE
 
-#include <CGAL/QP_solver/QP__filtered_base.C>
+#include <CGAL/QP_solver/QP__filtered_base_impl.h>
 
 #endif // CGAL_QP__FILTERED_BASE_H
 

@@ -2092,8 +2092,8 @@ namespace QP_solver_impl {
 CGAL_END_NAMESPACE
 
 #include <CGAL/QP_solver/Unbounded_direction.h>
-#include <CGAL/QP_solver/NonstandardForm.C>
-#include <CGAL/QP_solver/Bounds.C>
+#include <CGAL/QP_solver/QP_solver_nonstandardform_impl.h>
+#include <CGAL/QP_solver/QP_solver_bounds_impl.h>
 #include <CGAL/QP_solver/QP_solver_impl.h>
 
 #endif // CGAL_QP_SOLVER_H
