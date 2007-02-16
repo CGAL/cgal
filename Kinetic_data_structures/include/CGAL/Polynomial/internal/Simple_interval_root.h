@@ -282,7 +282,7 @@ public:
       while (This(ret) >= o) {
 	ret -= step;
       }
-      step= step/2.0;
+      step= step/NT(2.0);
       /*std::cout << ret << "  (" << step << ")" 
 		<< o.ii_.first - ii_.second 
 		<< " " << o.ii_.second- ii_.first << std::endl;*/
