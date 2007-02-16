@@ -19,11 +19,11 @@
 #define CGAL_LAPACK_H
 
 extern "C" {
-int dgelss(int *m, int *n, int *nrhs,
+  int dgelss(int *m, int *n, int *nrhs,
                     double *a, int *lda, double *b, int *ldb, double *
                     s, double *rcond, int *rank, double *work, int *lwork,
                     int *info);
-int dgelss_(int *m, int *n, int *nrhs,
+  int dgelss_(int *m, int *n, int *nrhs,
                     double *a, int *lda, double *b, int *ldb, double *
                     s, double *rcond, int *rank, double *work, int *lwork,
                     int *info);
@@ -38,9 +38,9 @@ int dgelss(int *m, int *n, int *nrhs,
        int *info)
 {
 #ifdef CGAL_USE_F2C
-  return dgelss_(m, n, nrhs, a, lda, b, ldb, s, rcond, rank, work, lwork, info);
+  return ::dgelss_(m, n, nrhs, a, lda, b, ldb, s, rcond, rank, work, lwork, info);
 #else
-  return dgelss(m, n, nrhs, a, lda, b, ldb, s, rcond, rank, work, lwork, info);
+  return ::dgelss(m, n, nrhs, a, lda, b, ldb, s, rcond, rank, work, lwork, info);
 #endif
 }
 
