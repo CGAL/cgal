@@ -626,6 +626,6 @@ namespace CGAL {
 
 }
 
-#include <CGAL/Approximate_min_ellipsoid_d/Khachiyan_approximation.C>
+#include <CGAL/Approximate_min_ellipsoid_d/Khachiyan_approximation_impl.h>
 
 #endif // CGAL_KHACHIYAN_APPROXIMATION_H

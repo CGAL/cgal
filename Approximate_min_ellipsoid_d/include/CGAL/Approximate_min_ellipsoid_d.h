@@ -457,6 +457,6 @@ namespace CGAL {
   
 }
 
-#include <CGAL/Approximate_min_ellipsoid_d/Approximate_min_ellipsoid_d.C>
+#include <CGAL/Approximate_min_ellipsoid_d/Approximate_min_ellipsoid_d_impl.h>
 
 #endif // CGAL_CGAL_APPROX_MIN_ELL_D_H
