@@ -49,9 +49,7 @@ $(CGAL_KDS_OBJECTS)
 SOVERSION=2.0.0
 SOMAJOR=2
 
-SHARED_LIB_CREATE = $(CGAL_QT_SHARED_LIB_CREATE)
-SHARED_LIB        = $(CGAL_QT_SHARED_LIB)
-STATIC_LIB        = $(CGAL_QT_LIB)
+LIB_NAME_BASE = CGALQt
 
 #---------------------------------------------------------------------#
 #                    common rules for all libraries

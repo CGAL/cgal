@@ -23,7 +23,7 @@
 # $Id$
 # $Date$
 #
-# Author(s): Michael Hoffmann
+# Author(s): various
 
 
 # ---------------------------------------------------------------------
@@ -784,22 +784,17 @@ set_compiler_flags()
     LONG_NAME_PROBLEM_LDFLAGS=""
     CGAL_LIB_CXXFLAGS=""
     CGAL_LIB_LDFLAGS=""
-    CGAL_LIB_CREATE="ar cr ''"
+    CGAL_STATIC_LIB_CREATE="ar cr ''"
     CGAL_OBJ_PREFIX=""
+    CGAL_STATIC_LIBNAME="lib\$(LIB_NAME_BASE).a"
+    CGAL_SHARED_LIBNAME="lib\$(LIB_NAME_BASE).so"
     CGAL_SHARED_LIB_CXXFLAGS="-fpic"
     CGAL_SHARED_LIB_LDFLAGS=
     CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
     CGAL_SHARED_LIB_INSTALL_NAME=""
     CGAL_SHARED_LIB_SONAME=""
-    CGAL_SHARED_LIB_WITH_SOVERSION="\$(SHARED_LIB)"
-    CGAL_SHARED_LIB_WITH_SOMAJOR="\$(SHARED_LIB)"
-    CGAL_QT_SHARED_LIB_INSTALL_NAME=""
-    CGAL_BENCHMARK_SHARED_LIB_INSTALL_NAME=""
-    CGAL_IMAGEIO_SHARED_LIB_INSTALL_NAME=""
-    CGAL_CORE_SHARED_LIB_INSTALL_NAME=""
-    CGAL_WINLIB_CXXFLAGS=""
-    CGAL_QT_CXXFLAGS=""
-    WINDOW_INCLUDE=""
+    CGAL_SHARED_LIBNAME_WITH_SOVERSION="\$(CGAL_SHARED_LIBNAME)"
+    CGAL_SHARED_LIBNAME_WITH_SOMAJOR="\$(CGAL_SHARED_LIBNAME)"
     RUNTIME_LINKER_FLAG=''
     PRINT_STACKTRACE_PROGRAM="gdb"
     WINDOWS_COMPILER=""
@@ -816,12 +811,6 @@ set_compiler_flags()
     EXE_OPT="-o "
     SAVE_THE_BLANK="\$(SAVESTHEBLANK)"
     EXE_EXT=""
-    CGAL_LIBNAME="libCGAL.a"
-    CGAL_QT_LIBNAME="libCGALQt.a"
-    CGAL_BENCHMARK_LIBNAME="libCGALBenchmark.a"
-    CGAL_IMAGEIO_LIBNAME="libCGALimageIO.a"
-    CORE_LIBNAME="libcore++.a"
-    CGAL_WIN_EXTRA_DIR=x11
     MATH_LIB="m"
     SEPARATE_LIBPATH=""
     START_LD_OPT=""
@@ -833,7 +822,7 @@ set_compiler_flags()
 	    #### settings Borland C++ compiler
 	    ADDITIONAL_CXXFLAGS="-P -vi- -w-inl"
 	    CGAL_LIB_CXXFLAGS="-P"
-	    CGAL_LIB_CREATE="tlib /C /P512 ''"
+	    CGAL_STATIC_LIB_CREATE="tlib /C /P512 ''"
 	    CGAL_OBJ_PREFIX="+"
 	    WINDOWS_COMPILER="y"
 	    CYGWIN_COMPILER="y"
@@ -846,12 +835,7 @@ set_compiler_flags()
 	    EXE_OPT="-e"
 	    SAVE_THE_BLANK=""
 	    EXE_EXT=".exe"
-	    CGAL_LIBNAME="CGAL.lib"
-	    CGAL_QT_LIBNAME="CGALQt.lib"
-            CGAL_BENCHMARK_LIBNAME="CGALBenchmark.lib"
-	    CGAL_IMAGEIO_LIBNAME="CGALimageIO.lib"
-	    CORE_LIBNAME="libcore++.lib"
-	    CGAL_WIN_EXTRA_DIR=mswin
+	    CGAL_STATIC_LIBNAME="\$(LIB_NAME_BASE).lib"
 	    MATH_LIB=""
 	    SEPARATE_LIBPATH="y"
 	    ;;
@@ -862,8 +846,7 @@ set_compiler_flags()
 	    ADDITIONAL_CXXFLAGS="-Op -TP -GR -EHsc -Zm900 -nologo -Zc:wchar_t -Zc:forScope -MD"
 	    ADDITIONAL_LDFLAGS="-nologo"
 #	    CGAL_LIB_CXXFLAGS="-TP"
-#	    CGAL_QT_CXXFLAGS="-DQT_DLL -DQT_THREAD_SUPPORT"
-	    CGAL_LIB_CREATE="LIB /OUT:"
+	    CGAL_STATIC_LIB_CREATE="LIB /OUT:"
 	    CGAL_SHARED_LIB_CXXFLAGS=
 	    CGAL_SHARED_LIB_CREATE=
 	    SUFFIX_LIST=".obj .exe"
@@ -876,12 +859,7 @@ set_compiler_flags()
 	    EXE_OPT="-Fe"
 	    SAVE_THE_BLANK=""
 	    EXE_EXT=".exe"
-	    CGAL_LIBNAME="CGAL.lib"
-	    CGAL_QT_LIBNAME="CGALQt.lib"
-            CGAL_BENCHMARK_LIBNAME="CGALBenchmark.lib"
-	    CGAL_IMAGEIO_LIBNAME="CGALimageIO.lib"
-	    CORE_LIBNAME="core++.lib"
-	    CGAL_WIN_EXTRA_DIR=mswin
+	    CGAL_STATIC_LIBNAME="\$(LIB_NAME_BASE).lib"
 	    MATH_LIB=
 	    START_LD_OPT="-link "
 	    ;;
@@ -892,8 +870,7 @@ set_compiler_flags()
 	    ADDITIONAL_CXXFLAGS="-TP -GR -EHsc -Zm900 -nologo -MD"
 	    ADDITIONAL_LDFLAGS="-nologo"
 #	    CGAL_LIB_CXXFLAGS="-TP"
-#	    CGAL_QT_CXXFLAGS="-DQT_DLL -DQT_THREAD_SUPPORT"
-	    CGAL_LIB_CREATE="LIB /OUT:"
+	    CGAL_STATIC_LIB_CREATE="LIB /OUT:"
 	    CGAL_SHARED_LIB_CXXFLAGS=
 	    CGAL_SHARED_LIB_CREATE=
 	    SUFFIX_LIST=".obj .exe"
@@ -906,12 +883,7 @@ set_compiler_flags()
 	    EXE_OPT="-Fe"
 	    SAVE_THE_BLANK=""
 	    EXE_EXT=".exe"
-	    CGAL_LIBNAME="CGAL.lib"
-	    CGAL_QT_LIBNAME="CGALQt.lib"
-            CGAL_BENCHMARK_LIBNAME="CGALBenchmark.lib"
-	    CGAL_IMAGEIO_LIBNAME="CGALimageIO.lib"
-	    CORE_LIBNAME="core++.lib"
-	    CGAL_WIN_EXTRA_DIR=mswin
+	    CGAL_STATIC_LIBNAME="\$(LIB_NAME_BASE).lib"
 	    MATH_LIB=
 	    START_LD_OPT="-link "
 	    ;;
@@ -926,14 +898,14 @@ set_compiler_flags()
 	    #### settings for sgi mipspro compiler V7.3 on irix6
 	    ADDITIONAL_CXXFLAGS="-LANG:std"
 	    ADDITIONAL_LDFLAGS="-LANG:std"
-	    CGAL_LIB_CREATE="\$(CGAL_CXX) -ar -o''"
+	    CGAL_STATIC_LIB_CREATE="\$(CGAL_CXX) -ar -o''"
 	    CGAL_SHARED_LIB_CXXFLAGS=
 	    RUNTIME_LINKER_FLAG="-rpath "
 	    PRINT_STACKTRACE_PROGRAM="dbx"
 	    ;;
 	*IRIX*6.*CC*)
 	    #### settings for sgi mipspro compiler on irix6
-	    CGAL_LIB_CREATE="\$(CGAL_CXX) -ar -o''"
+	    CGAL_STATIC_LIB_CREATE="\$(CGAL_CXX) -ar -o''"
 	    CGAL_SHARED_LIB_CXXFLAGS=
 	    RUNTIME_LINKER_FLAG="-rpath "
 	    PRINT_STACKTRACE_PROGRAM="dbx"
@@ -944,22 +916,21 @@ set_compiler_flags()
 	    LONG_NAME_PROBLEM_LDFLAGS="-U -s"
 	    CGAL_SHARED_LIB_LDFLAGS="-lm"
 	    RUNTIME_LINKER_FLAG="-Xlinker -rpath -Xlinker "
-	    CGAL_SHARED_LIB_SONAME="-Wl,-soname,\$(SHARED_LIB).\$(SOMAJOR)"
-	    CGAL_SHARED_LIB_WITH_SOVERSION="\$(SHARED_LIB).\$(SOVERSION)"
-	    CGAL_SHARED_LIB_WITH_SOMAJOR="\$(SHARED_LIB).\$(SOMAJOR)"
+	    CGAL_SHARED_LIB_SONAME="-Wl,-soname,\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
+	    CGAL_SHARED_LIBNAME_WITH_SOVERSION="\$(CGAL_SHARED_LIBNAME).\$(SOVERSION)"
+	    CGAL_SHARED_LIBNAME_WITH_SOMAJOR="\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
 	    ;;
 	*SunOS*5.*CC*)
 	    #### settings for sunpro compiler on solaris
 	    ADDITIONAL_CXXFLAGS="-features=extensions -D_RWSTD_ALLOCATOR"
-	    CGAL_LIB_CREATE="\$(CGAL_CXX) -xar -o ''"
+	    CGAL_STATIC_LIB_CREATE="\$(CGAL_CXX) -xar -o ''"
 	    CGAL_SHARED_LIB_CXXFLAGS="-pic"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
-	    WINDOW_INCLUDE="/usr/openwin/include"
 	    RUNTIME_LINKER_FLAG="-R "
 	    PRINT_STACKTRACE_PROGRAM="dbx"
-	    CGAL_SHARED_LIB_SONAME="-Qoption ld -h\$(SHARED_LIB).\$(SOMAJOR)"
-	    CGAL_SHARED_LIB_WITH_SOVERSION="\$(SHARED_LIB).\$(SOVERSION)"
-	    CGAL_SHARED_LIB_WITH_SOMAJOR="\$(SHARED_LIB).\$(SOMAJOR)"
+	    CGAL_SHARED_LIB_SONAME="-Qoption ld -h\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
+	    CGAL_SHARED_LIBNAME_WITH_SOVERSION="\$(CGAL_SHARED_LIBNAME).\$(SOVERSION)"
+	    CGAL_SHARED_LIBNAME_WITH_SOMAJOR="\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
 
 	    ;;
 	*SunOS*5.*g++*)
@@ -967,12 +938,10 @@ set_compiler_flags()
 	    LONG_NAME_PROBLEM_CXXFLAGS="-g"
 	    LONG_NAME_PROBLEM_LDFLAGS="-z nodefs -s"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
-	    CGAL_WINLIB_CXXFLAGS="-fpermissive"
-	    WINDOW_INCLUDE="/usr/openwin/include"
 	    RUNTIME_LINKER_FLAG="-R "
-	    CGAL_SHARED_LIB_SONAME="-h \$(SHARED_LIB).\$(SOMAJOR)"
-	    CGAL_SHARED_LIB_WITH_SOVERSION="\$(SHARED_LIB).\$(SOVERSION)"
-	    CGAL_SHARED_LIB_WITH_SOMAJOR="\$(SHARED_LIB).\$(SOMAJOR)"
+	    CGAL_SHARED_LIB_SONAME="-h \$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
+	    CGAL_SHARED_LIBNAME_WITH_SOVERSION="\$(CGAL_SHARED_LIBNAME).\$(SOVERSION)"
+	    CGAL_SHARED_LIBNAME_WITH_SOMAJOR="\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
 	    ;;
         *alpha*Linux*g++*)
             #### settings for g++ on alpha-linux (special FPU handling)
@@ -984,9 +953,9 @@ set_compiler_flags()
 	    #### settings for gcc on linux
 	    ADDITIONAL_CXXFLAGS="-Wall"
 	    RUNTIME_LINKER_FLAG='-Wl,-R'
-	    CGAL_SHARED_LIB_SONAME="-Wl,-soname,\$(SHARED_LIB).\$(SOMAJOR)"
-	    CGAL_SHARED_LIB_WITH_SOVERSION="\$(SHARED_LIB).\$(SOVERSION)"
-	    CGAL_SHARED_LIB_WITH_SOMAJOR="\$(SHARED_LIB).\$(SOMAJOR)"
+	    CGAL_SHARED_LIB_SONAME="-Wl,-soname,\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
+	    CGAL_SHARED_LIBNAME_WITH_SOVERSION="\$(CGAL_SHARED_LIBNAME).\$(SOVERSION)"
+	    CGAL_SHARED_LIBNAME_WITH_SOMAJOR="\$(CGAL_SHARED_LIBNAME).\$(SOMAJOR)"
 	    ;;
 	*Linux*icc*|*Linux*icpc*)
 	    #### settings for icc on linux
@@ -1011,11 +980,7 @@ set_compiler_flags()
 	    ADDITIONAL_CXXFLAGS="-Wall"
 	    CGAL_SHARED_LIB_CXXFLAGS="-fno-common"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -dynamiclib"
-	    CGAL_SHARED_LIB_INSTALL_NAME="-install_name \$(CGAL_LIB_DESTINATION)/\$(CGAL_SHARED_LIB)"
-	    CGAL_QT_SHARED_LIB_INSTALL_NAME="-install_name \$(CGAL_LIB_DESTINATION)/\$(CGAL_QT_SHARED_LIB)"
-	    CGAL_BENCHMARK_SHARED_LIB_INSTALL_NAME="-install_name \$(CGAL_LIB_DESTINATION)/\$(CGAL_BENCHMARK_SHARED_LIB)"
-	    CGAL_IMAGEIO_SHARED_LIB_INSTALL_NAME="-install_name \$(CGAL_LIB_DESTINATION)/\$(CGAL_IMAGEIO_SHARED_LIB)"
-	    CGAL_CORE_SHARED_LIB_INSTALL_NAME="-install_name \$(CGAL_LIB_DESTINATION)/\$(CGAL_CORE_SHARED_LIB)"
+	    CGAL_SHARED_LIB_INSTALL_NAME="-install_name \$(CGAL_LIB_DESTINATION)/\$(CGAL_SHARED_LIBNAME)"
 	    SHARED_LIB_EXT=".dylib"
 	    RANLIB="ranlib"
 	    ;;
@@ -1023,7 +988,7 @@ set_compiler_flags()
 	    #### settings Metroworks C++ compiler
 	    ADDITIONAL_CXXFLAGS="-gccincludes -lang c++ -msgstyle gcc "
 	    CGAL_LIB_CXXFLAGS=""
-	    CGAL_LIB_CREATE="mwld -library -o "
+	    CGAL_STATIC_LIB_CREATE="mwld -library -o "
 	    CYGWIN_COMPILER="y"
 	    SUFFIX_LIST=".obj .exe"
 	    OBJ_EXT=".obj"
@@ -1031,7 +996,6 @@ set_compiler_flags()
 	    DEBUG_OPT=""
 	    EXE_OPT="-o "
 	    EXE_EXT=".exe"
-	    CGAL_WIN_EXTRA_DIR=mswin
 	    MATH_LIB=""
 	    SEPARATE_LIBPATH="y"
 	    ;;
@@ -3043,11 +3007,15 @@ print_os_setting()
 set_lib_compiled_flag()
 {
     # does there exist a lib for this os/compiler?
-    if [ -r "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/${CGAL_LIBNAME}" ]; then
+    if [ -r "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libCGAL.a" ]; then
 	LIB_COMPILED='ok'
-    else
+    else if [ -r "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libCGAL.so" ]; then
+	LIB_COMPILED='ok'
+    else if [ -r "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/CGAL.lib" ]; then
+        LIB_COMPILED='ok'
+    else 
 	LIB_COMPILED=''
-    fi
+    fi; fi; fi
 }
 
 # ---------------------------------------------------------------------
@@ -3790,14 +3758,6 @@ write_compiler_flags()
   #
   ${_printf} "%s\\\\\n" "CGAL_WINLIB_CXXFLAGS = " >> ${FILE}
   ${_printf} "\t%s\n\n" "\$(CGAL_LIB_CXXFLAGS)"  >> ${FILE}
-  #if [ -n "${WINDOW_INCLUDE}" ]; then
-  #  ${_printf} "\t%s\n\n" \
-  #    "\$(CGAL_LIB_CXXFLAGS) ${CGAL_WINLIB_CXXFLAGS} -I${WINDOW_INCLUDE}" \
-  #    >> ${FILE}
-  #else
-  #  ${_printf} "\t%s\n\n" \
-  #    "\$(CGAL_LIB_CXXFLAGS) ${CGAL_WINLIB_CXXFLAGS}" >> ${FILE}
-  #fi
 }
 
 # write linker flags for a CGAL include makefile
@@ -4071,13 +4031,8 @@ create_include_makefile()
   #
   # CGAL_(*)LIB
   #
-  ${_printf} "%s\n" "CGAL_LIB = ${CGAL_LIBNAME}" >> ${FILE}
-  ${_printf} "%s\n" "CGAL_WIN_EXTRA_DIR = ${CGAL_WIN_EXTRA_DIR}" >> ${FILE}
-  ${_printf} "%s\n" "CGAL_QT_LIB = ${CGAL_QT_LIBNAME}" >> ${FILE}
-  ${_printf} "%s\n" "CGAL_BENCHMARK_LIB = ${CGAL_BENCHMARK_LIBNAME}" >> ${FILE}
-  ${_printf} "%s\n" "CGAL_IMAGEIO_LIB = ${CGAL_IMAGEIO_LIBNAME}" >> ${FILE}
-
-  ${_printf} "%s\n" "CGAL_CORE_LIB = ${CORE_LIBNAME}" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_STATIC_LIBNAME = ${CGAL_STATIC_LIBNAME}" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_SHARED_LIBNAME = ${CGAL_SHARED_LIBNAME}" >> ${FILE}
 
   #
   # CGAL_LIB_CXXFLAGS
@@ -4092,20 +4047,11 @@ create_include_makefile()
   ${_printf} "%s\n\n" "CGAL_LIB_LDFLAGS = ${CGAL_LIB_LDFLAGS}" >> ${FILE}
 
   #
-  # CGAL_LIB_CREATE
+  # CGAL_STATIC_LIB_CREATE
   #
-  ${_printf} "%s\n" "CGAL_LIB_CREATE = ${CGAL_LIB_CREATE}" >> ${FILE}
+  ${_printf} "%s\n" "CGAL_STATIC_LIB_CREATE = ${CGAL_STATIC_LIB_CREATE}" >> ${FILE}
   ${_printf} "%s\n" "CGAL_OBJ_PREFIX = ${CGAL_OBJ_PREFIX}" >> ${FILE}
   ${_printf} "%s\n" "CGAL_LIB_DESTINATION = '\$(CGAL_LIB_DIR)/\$(CGAL_OS_COMPILER)'" >> ${FILE}
-
-  #
-  # CGAL_SHARED_LIB
-  #
-  ${_printf} "%s\n" "CGAL_SHARED_LIB = libCGAL${SHARED_LIB_EXT}" >> ${FILE}
-  ${_printf} "%s\n" "CGAL_CORE_SHARED_LIB = libcore++${SHARED_LIB_EXT}" >> ${FILE}
-  ${_printf} "%s\n" "CGAL_QT_SHARED_LIB = libCGALQt${SHARED_LIB_EXT}" >> ${FILE}
-  ${_printf} "%s\n" "CGAL_BENCHMARK_SHARED_LIB = libCGALBenchmark${SHARED_LIB_EXT}" >> ${FILE}
-  ${_printf} "%s\n" "CGAL_IMAGEIO_SHARED_LIB = libCGALimageIO${SHARED_LIB_EXT}" >> ${FILE}
 
   #
   # CGAL_SHARED_LIB_CXXFLAGS
@@ -4121,14 +4067,6 @@ create_include_makefile()
        "CGAL_SHARED_LIB_LDFLAGS = ${CGAL_SHARED_LIB_LDFLAGS}" >> ${FILE}
   ${_printf} "%s\n" >> ${FILE}
 
-
-  ## CGAL_SHARED_LIB_CREATE, CGAL_QT_SHARED_LIB_CREATE, 
-  ## CGAL_BENCHMARK_SHARED_LIB_CREATE, and CGAL_IMAGEIO_SHARED_LIB_CREATE
-  ## are makefile variables used only in the makefiles in src/*/.
-  ## 
-  ## This is a temporary hack, I hope, until we use another build system.
-  ## -- Laurent Rineau, 2007/02/02.
-
   #
   # CGAL_SHARED_LIB_CREATE
   #
@@ -4137,42 +4075,14 @@ create_include_makefile()
     >> ${FILE}
 
   #
-  # CGAL_QT_SHARED_LIB_CREATE
-  #
-  ${_printf} "%s\n\n" \
-    "CGAL_QT_SHARED_LIB_CREATE = ${CGAL_SHARED_LIB_CREATE} ${CGAL_QT_SHARED_LIB_INSTALL_NAME} -o ''" \
-    >> ${FILE}
-
-  #
-  # CGAL_BENCHMARK_SHARED_LIB_CREATE
-  #
-  ${_printf} "%s\n\n" \
-    "CGAL_BENCHMARK_SHARED_LIB_CREATE = ${CGAL_SHARED_LIB_CREATE} ${CGAL_BENCHMARK_SHARED_LIB_INSTALL_NAME} -o ''" \
-    >> ${FILE}
-
-  #
-  # CGAL_IMAGEIO_SHARED_LIB_CREATE
-  #
-  ${_printf} "%s\n\n" \
-    "CGAL_IMAGEIO_SHARED_LIB_CREATE = ${CGAL_SHARED_LIB_CREATE} ${CGAL_IMAGEIO_SHARED_LIB_INSTALL_NAME} -o ''" \
-    >> ${FILE}
-
-  #
-  # CGAL_CORE_SHARED_LIB_CREATE
-  #
-  ${_printf} "%s\n\n" \
-    "CGAL_CORE_SHARED_LIB_CREATE = ${CGAL_SHARED_LIB_CREATE} ${CGAL_CORE_SHARED_LIB_INSTALL_NAME} -o ''" \
-    >> ${FILE}
-
-  #
-  # CGAL_SHARED_LIB_WITH_SOVERSION, CGAL_SHARED_LIB_WITH_SOMAJOR, and CGAL_SHARED_LIB_SONAME
+  # CGAL_SHARED_LIBNAME_WITH_SOVERSION, CGAL_SHARED_LIBNAME_WITH_SOMAJOR, and CGAL_SHARED_LIB_SONAME
   #
   ${_printf} "\n%s\n" \
        "CGAL_SHARED_LIB_SONAME = ${CGAL_SHARED_LIB_SONAME}" >> ${FILE}
   ${_printf} "%s\n\n" \
-       "CGAL_SHARED_LIB_WITH_SOMAJOR = ${CGAL_SHARED_LIB_WITH_SOMAJOR}" >> ${FILE}
+       "CGAL_SHARED_LIBNAME_WITH_SOMAJOR = ${CGAL_SHARED_LIBNAME_WITH_SOMAJOR}" >> ${FILE}
   ${_printf} "%s\n\n" \
-       "CGAL_SHARED_LIB_WITH_SOVERSION = ${CGAL_SHARED_LIB_WITH_SOVERSION}" >> ${FILE}
+       "CGAL_SHARED_LIBNAME_WITH_SOVERSION = ${CGAL_SHARED_LIBNAME_WITH_SOVERSION}" >> ${FILE}
 
   #
   # PRINT_STACKTRACE_PROGRAM

@@ -56,9 +56,7 @@ Turkowski_numeric_solver$(OBJ_EXT)
 SOVERSION=2.0.0
 SOMAJOR=2
 
-SHARED_LIB_CREATE = $(CGAL_SHARED_LIB_CREATE)
-SHARED_LIB        = $(CGAL_SHARED_LIB)
-STATIC_LIB        = $(CGAL_LIB)
+LIB_NAME_BASE = CGAL
 
 #---------------------------------------------------------------------#
 #                    common rules for all libraries
