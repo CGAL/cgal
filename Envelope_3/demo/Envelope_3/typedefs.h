@@ -50,7 +50,11 @@
 #endif
 
 typedef CGAL::Lazy_exact_nt<Base_nt>                    Coord_type;
-typedef CGAL::Cartesian<Coord_type>                     Kernel;
+// instead of
+//typedef CGAL::Cartesian<Coord_type>                     Kernel;
+// workaround for VC++ 
+struct Kernel : public CGAL::Cartesian<Coord_type> {};
+
 typedef Kernel::Segment_2                               Segment_2;
 
 typedef Kernel::Point_2                                 Point_2;
@@ -80,8 +84,13 @@ typedef Rat_kernel::Point_3                             Rat_point_3;
 typedef CGAL::Cartesian<Algebraic>                      Alg_kernel;
 typedef Alg_kernel::Point_2                             Sphere_point_2;
 
-typedef CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
-                                                        Conic_traits_2;
+// instead of
+//typedef CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
+//                                                        Conic_traits_2;
+// workaround for VC++ 
+struct Conic_traits_2 : public CGAL::Arr_conic_traits_2<Rat_kernel, 
+			                                Alg_kernel, 
+                                                        Nt_traits> {} ;
 
 typedef CGAL::Env_sphere_traits_3<Conic_traits_2>       Base_sphere_traits_3;
 typedef Base_sphere_traits_3::Surface_3                 Base_sphere_3;
