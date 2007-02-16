@@ -30,7 +30,7 @@ include $(CGAL_MAKEFILE)
 #                    compiler flags
 #---------------------------------------------------------------------#
 
-# CXXFLAGS needs to be passed as command line argument
+# CXXFLAGS can be passed as command line argument
 CXXFLAGS = $(CGAL_SHARED_LIB_CXXFLAGS)
 
 
