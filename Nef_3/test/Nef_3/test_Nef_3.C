@@ -1264,7 +1264,7 @@ int main() {
   CGAL::Timer t;
 
   //  test<C_kernel, CGAL::SNC_indexed_items>  test_C;
-  test<SC_kernel, CGAL::SNC_indexed_items> test_SC;
+  //  test<SC_kernel, CGAL::SNC_indexed_items> test_SC;
   test<LC_kernel, CGAL::SNC_indexed_items> test_LC;
   //  test<EC_kernel, CGAL::SNC_items> test_EC;
   test<H_kernel, CGAL::SNC_indexed_items>  test_H;
@@ -1279,13 +1279,14 @@ int main() {
             << " seconds " << std::endl;
   t.reset();
 */
-
+/*
   t.start();
   test_SC.run_test();
   t.stop();
   std::cout << "Simple_cartesian kernel successful in: " << t.time() 
             << " seconds " << std::endl;
   t.reset();
+*/
 
   t.start();
   test_LC.run_test();
