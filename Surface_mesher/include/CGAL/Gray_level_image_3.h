@@ -22,15 +22,17 @@
 
 #include <CGAL/basic.h>
 
+/* Copy-paste from <imageio/ImageIO.h> */
+extern "C" {
 struct _image;
 
-/* Copy-paste from <imageio/ImageIO.h> */
 _image* _readImage(const char *name);
-void convertImageTypeToFloat(_image* image);
-float triLinInterp(_image* image,float posx, float posy, float posz);
 bool _get_image_bounding_box(_image*,
 			     float*, float*, float*,
 			     float*, float*, float*); 
+void convertImageTypeToFloat(_image* image);
+float triLinInterp(_image* image,float posx, float posy, float posz);
+}
 /* End of copy-paste from <imageio/ImageIO.h> */
 
 namespace CGAL {
@@ -54,7 +56,7 @@ public:
       max_x(0.f),
       max_y(0.f),
       max_z(0.f),
-      is_valid(false);
+      is_valid(false)
   {
     image = ::_readImage(file);
     if( image != 0 )
@@ -70,7 +72,7 @@ public:
 
   bool inside(float X, float Y, float Z) const
   {
-    return ( X>=min_x. && Y>=min_y && Z>=min_z && 
+    return ( X>=min_x && Y>=min_y && Z>=min_z && 
              X<=max_x && Y<=max_y && Z<=max_z );
   }
 
