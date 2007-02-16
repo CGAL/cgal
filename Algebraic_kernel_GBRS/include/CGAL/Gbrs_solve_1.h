@@ -61,9 +61,13 @@ int init_solver ();
 int solve_1(mpfi_ptr*,Rational_polynomial_1&,unsigned int=CGAL_RS_DEF_PREC);
 
 // evaluate a polynomial at a given algebraic number
+// (this two functions will disappear)
 void eval_1(const Rational_polynomial_1&,const Algebraic_1&,mpfi_ptr);
 Sign sign_1(const Rational_polynomial_1&,const Algebraic_1&,
 		unsigned int=CGAL_RS_MIN_PREC);
+
+// compute the sign of the polynomial at a given mpfr
+Sign signat(const Rational_polynomial_1&,mpfr_srcptr);
 
 // compare two algebraic numbers
 Comparison_result compare_1 (Algebraic_1 &, Algebraic_1 &);

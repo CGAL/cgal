@@ -154,6 +154,7 @@ int solve_1(mpfi_ptr *x,Rational_polynomial_1 &p1,unsigned int prec){
 
 // y=p1(a)
 void eval_1(const Rational_polynomial_1 &p1,const Algebraic_1 &a,mpfi_ptr y){
+#if 0
 	CGAL_assertion((a.is_consistent())/*&&(a.nr()>=0)*/);
 	mpz_t **constr;
 	int *degs;
@@ -169,8 +170,11 @@ void eval_1(const Rational_polynomial_1 &p1,const Algebraic_1 &a,mpfi_ptr y){
 	set_rs_verbose(CGAL_RS_VERB);
 	rs_run_algo("UISOLES");
 	affiche_sols_constr(a.nr(),y);
+#endif
+	p1.eval_mpfi(y,a.mpfi());
 }
 
+// old function
 Sign sign_1(const Rational_polynomial_1 &p1,const Algebraic_1 &a,
 		unsigned int prec){
 	CGAL_assertion(a.is_consistent());
@@ -194,6 +198,50 @@ Sign sign_1(const Rational_polynomial_1 &p1,const Algebraic_1 &a,
 	//std::cout<<"sign of "<<p1<<" in the root of "<<a.pol()<<" = "<<s<<std::endl;
 	return s;
 	//return affiche_signs_constr (a);
+}
+
+// new function (implement evaluation using Horner's rule)
+Sign signat(const Rational_polynomial_1 &p,mpfr_srcptr xcoord){
+	// we have numbers Hi=hi*2^ei and X=x*2^ex
+	mpz_t h0,x;
+	mp_exp_t e0,ex;
+	// we convert the evaluation point (mpfr) to fit our needs
+	ex=mpfr_get_z_exp(x,xcoord);
+	// data from the polynomial
+	mpz_t *c=p.get_coefs();
+	int d=p.get_degree();
+	// we start the algorithm by setting H0
+	mpz_set(h0,c[d]);
+	e0=0;
+	// the iteration is H1=H0*x+c[i]
+	for(int i=1;i<d+1;++i){
+		mpz_mul(h0,h0,x);
+		e0+=ex;	// at this point, we did H0*=X
+		// now, we have to add c[d-i]
+		if(e0<ex){
+			// c[d-i]*=2^(ex-e0)
+			mpz_mul_2exp(c[d-i],c[d-i],ex-e0);
+			mpz_add(h0,h0,c[d-i]);	// h0+=c[d-i]
+			// e0 is already what we want
+		} else {
+			if(ex<e0){
+				// h0*=2^(e0-ex)
+				mpz_mul_2exp(h0,h0,e0-ex);
+				mpz_add(h0,h0,c[d-i]);	// h0+=x
+				e0=ex;
+			} else	// good luck, e0=ex
+				mpz_add(h0,h0,c[d-i]);
+		}
+		// at this point, H0 is the evaluation of the polynomial
+	}
+	int s=mpz_sgn(h0);
+	mpz_clear(h0);
+	mpz_clear(x);
+	switch(s){
+		case 1:return POSITIVE;
+		case -1:return NEGATIVE;
+		default:return ZERO;
+	}
 }
 
 int get_root (mpfi_ptr x, int n) {

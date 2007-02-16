@@ -170,6 +170,7 @@ void Rational_polynomial_1::eval_mpfr
 };
 
 // I think RS should do this
+// NO!
 void Rational_polynomial_1::eval_mpfi(mpfi_ptr result,mpfi_srcptr x)const{
 	mpfi_set_z(result,coef[0]);
 	if(degree&&((!mpfr_zero_p(&(x->left)))||(!mpfr_zero_p(&(x->right))))){
