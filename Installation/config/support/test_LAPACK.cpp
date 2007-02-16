@@ -42,9 +42,9 @@ int dgelss(int *m, int *n, int *nrhs,
        int *info)
 {
 #ifdef CGAL_USE_F2C
-  return dgelss_(m, n, nrhs, a, lda, b, ldb, s, rcond, rank, work, lwork, info);
+  return ::dgelss_(m, n, nrhs, a, lda, b, ldb, s, rcond, rank, work, lwork, info);
 #else
-  return dgelss(m, n, nrhs, a, lda, b, ldb, s, rcond, rank, work, lwork, info);
+  return ::dgelss(m, n, nrhs, a, lda, b, ldb, s, rcond, rank, work, lwork, info);
 #endif
 }
 
