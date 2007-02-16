@@ -788,7 +788,7 @@ set_compiler_flags()
     CGAL_OBJ_PREFIX=""
     CGAL_STATIC_LIBNAME="lib\$(LIB_NAME_BASE).a"
     CGAL_SHARED_LIBNAME="lib\$(LIB_NAME_BASE).so"
-    CGAL_SHARED_LIB_CXXFLAGS="-fpic"
+    CGAL_SHARED_LIB_CXXFLAGS="-fPIC"
     CGAL_SHARED_LIB_LDFLAGS=
     CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
     CGAL_SHARED_LIB_INSTALL_NAME=""
@@ -924,7 +924,7 @@ set_compiler_flags()
 	    #### settings for sunpro compiler on solaris
 	    ADDITIONAL_CXXFLAGS="-features=extensions -D_RWSTD_ALLOCATOR"
 	    CGAL_STATIC_LIB_CREATE="\$(CGAL_CXX) -xar -o ''"
-	    CGAL_SHARED_LIB_CXXFLAGS="-pic"
+	    CGAL_SHARED_LIB_CXXFLAGS="-PIC"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -G"
 	    RUNTIME_LINKER_FLAG="-R "
 	    PRINT_STACKTRACE_PROGRAM="dbx"
