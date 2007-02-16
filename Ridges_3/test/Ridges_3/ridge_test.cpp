@@ -57,7 +57,7 @@ Vertex2Vector_property_map vertex2d1_pm(vertex2d1_map), vertex2d2_pm(vertex2d2_m
   unsigned int d_monge = 4;
   unsigned int nb_rings = 0;//seek min # of rings to get the required #pts
   unsigned int nb_points_to_use = 0;//
-  Ridge_approximation::Tag_order tag_order = Ridge_approximation::Tag_3;
+  CGAL::Ridge_order tag_order = CGAL::Ridge_order_3;
   double umb_size = 1;
   bool verbose = false;
   unsigned int min_nb_points = (d_fitting + 1) * (d_fitting + 2) / 2;
@@ -201,7 +201,7 @@ int main()
   ridge_approximation_tag_3.compute_crest_ridges(ii, tag_order);  
  
   std::cout << "Compute ridges with tag_4" << std::endl;
-  tag_order = Ridge_approximation::Tag_4;
+  tag_order =  CGAL::Ridge_order_4;
    //Find MAX_RIDGE, RED_RIDGE, CREST or all ridges
   Ridge_approximation ridge_approximation(P, 
 					  vertex2k1_pm, vertex2k2_pm,

@@ -32,13 +32,13 @@ enum Umbilic_type { NON_GENERIC_UMBILIC = 0, ELLIPTIC_UMBILIC, HYPERBOLIC_UMBILI
 //Umbilic : stores umbilic data, its location given by a vertex, its
 //type and a circle of edges bording a disk containing the vertex
 //------------------------------------------------------------------
-template < class TriangularPolyhedralSurface >
+template < class TriangulatedSurfaceMesh >
 class Umbilic
 {
  public:
-  typedef typename TriangularPolyhedralSurface::Vertex_const_handle    Vertex_const_handle;
-  typedef typename TriangularPolyhedralSurface::Halfedge_const_handle  Halfedge_const_handle;
-  typedef typename TriangularPolyhedralSurface::Traits::Vector_3 Vector_3;
+  typedef typename TriangulatedSurfaceMesh::Vertex_const_handle    Vertex_const_handle;
+  typedef typename TriangulatedSurfaceMesh::Halfedge_const_handle  Halfedge_const_handle;
+  typedef typename TriangulatedSurfaceMesh::Traits::Vector_3 Vector_3;
   
   //contructor
   Umbilic(const Vertex_const_handle v_init,
@@ -56,16 +56,16 @@ class Umbilic
 };
 
 //constructor
-template <class TriangularPolyhedralSurface>
-Umbilic<TriangularPolyhedralSurface>::
+template <class TriangulatedSurfaceMesh>
+Umbilic<TriangulatedSurfaceMesh>::
 Umbilic(const Vertex_const_handle v_init,
 	const std::list<Halfedge_const_handle> contour_init) 
   : v(v_init), contour(contour_init) {} 
 
 
-template <class TriangularPolyhedralSurface>
+template <class TriangulatedSurfaceMesh>
 std::ostream& 
-operator<<(std::ostream& out_stream, const Umbilic<TriangularPolyhedralSurface>& umbilic)
+operator<<(std::ostream& out_stream, const Umbilic<TriangulatedSurfaceMesh>& umbilic)
 {
   out_stream << "Umbilic at location (" << umbilic.vertex()->point() << ") of type ";
   switch (umbilic.umbilic_type())
@@ -79,32 +79,32 @@ operator<<(std::ostream& out_stream, const Umbilic<TriangularPolyhedralSurface>&
 }
 //---------------------------------------------------------------------------
 //Umbilic_approximation : enable computation of umbilics of a
-//TriangularPolyhedralSurface. It uses the class
+//TriangulatedSurfaceMesh. It uses the class
 //T_PolyhedralSurf_neighbors to compute topological disk patches
 //around vertices
 //--------------------------------------------------------------------------
-template < class TriangularPolyhedralSurface,  
+template < class TriangulatedSurfaceMesh,  
   class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
   class Umbilic_approximation
 {
  public:
-  typedef typename TriangularPolyhedralSurface::Traits::FT       FT;
-  typedef typename TriangularPolyhedralSurface::Traits::Vector_3 Vector_3;
-  typedef typename TriangularPolyhedralSurface::Vertex_const_handle    Vertex_const_handle;
-  typedef typename TriangularPolyhedralSurface::Halfedge_const_handle  Halfedge_const_handle;
-  typedef typename TriangularPolyhedralSurface::Facet_const_iterator   Facet_const_iterator;
-  typedef typename TriangularPolyhedralSurface::Vertex_const_iterator  Vertex_const_iterator;
+  typedef typename TriangulatedSurfaceMesh::Traits::FT       FT;
+  typedef typename TriangulatedSurfaceMesh::Traits::Vector_3 Vector_3;
+  typedef typename TriangulatedSurfaceMesh::Vertex_const_handle    Vertex_const_handle;
+  typedef typename TriangulatedSurfaceMesh::Halfedge_const_handle  Halfedge_const_handle;
+  typedef typename TriangulatedSurfaceMesh::Facet_const_iterator   Facet_const_iterator;
+  typedef typename TriangulatedSurfaceMesh::Vertex_const_iterator  Vertex_const_iterator;
 
-  //requirements for the templates TriangularPolyhedralSurface and Vertex2FTPropertyMap or Vertex2VectorPropertyMap
+  //requirements for the templates TriangulatedSurfaceMesh and Vertex2FTPropertyMap or Vertex2VectorPropertyMap
   BOOST_STATIC_ASSERT((boost::is_same<Vertex_const_handle, typename Vertex2FTPropertyMap::key_type>::value));
   BOOST_STATIC_ASSERT((boost::is_same<Vertex_const_handle, typename Vertex2VectorPropertyMap::key_type>::value));
   BOOST_STATIC_ASSERT((boost::is_same<FT, typename Vertex2FTPropertyMap::value_type>::value));
   BOOST_STATIC_ASSERT((boost::is_same<Vector_3, typename Vertex2VectorPropertyMap::value_type>::value));
 
-  typedef Umbilic<TriangularPolyhedralSurface> Umbilic;
+  typedef Umbilic<TriangulatedSurfaceMesh> Umbilic;
 
   //constructor : sets propertymaps and the poly_neighbors
-  Umbilic_approximation(const TriangularPolyhedralSurface& P, 
+  Umbilic_approximation(const TriangulatedSurfaceMesh& P, 
 			const Vertex2FTPropertyMap& vertex2k1_pm, 
 			const Vertex2FTPropertyMap& vertex2k2_pm,
 			const Vertex2VectorPropertyMap& vertex2d1_pm, 
@@ -116,9 +116,9 @@ template < class TriangularPolyhedralSurface,
   OutputIterator compute(OutputIterator it, FT size);
 
  protected:
-  const TriangularPolyhedralSurface& P;
+  const TriangulatedSurfaceMesh& P;
   
-  typedef T_PolyhedralSurf_neighbors<TriangularPolyhedralSurface> Poly_neighbors;
+  typedef T_PolyhedralSurf_neighbors<TriangulatedSurfaceMesh> Poly_neighbors;
   Poly_neighbors* poly_neighbors;
 
   CGAL::Abs<FT> cgal_abs;
@@ -138,9 +138,9 @@ template < class TriangularPolyhedralSurface,
   int compute_type(Umbilic& umb);
 };
 
-template < class TriangularPolyhedralSurface,  class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
-  Umbilic_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap, Vertex2VectorPropertyMap >::
-Umbilic_approximation(const TriangularPolyhedralSurface& P, 
+template < class TriangulatedSurfaceMesh,  class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
+  Umbilic_approximation< TriangulatedSurfaceMesh, Vertex2FTPropertyMap, Vertex2VectorPropertyMap >::
+Umbilic_approximation(const TriangulatedSurfaceMesh& P, 
 		      const Vertex2FTPropertyMap& vertex2k1_pm, 
 		      const Vertex2FTPropertyMap& vertex2k2_pm,
 		      const Vertex2VectorPropertyMap& vertex2d1_pm, 
@@ -155,9 +155,9 @@ Umbilic_approximation(const TriangularPolyhedralSurface& P,
   poly_neighbors = new Poly_neighbors(P);
 }
 
-template < class TriangularPolyhedralSurface,  class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
+template < class TriangulatedSurfaceMesh,  class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
   template <class OutputIterator>
-  OutputIterator Umbilic_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap, Vertex2VectorPropertyMap >::
+  OutputIterator Umbilic_approximation< TriangulatedSurfaceMesh, Vertex2FTPropertyMap, Vertex2VectorPropertyMap >::
   compute(OutputIterator umbilics_it, FT size)
 {
   CGAL_precondition( size >= 1 );
@@ -210,8 +210,8 @@ template < class TriangularPolyhedralSurface,  class Vertex2FTPropertyMap, class
   return umbilics_it;
 }
 
-template < class TriangularPolyhedralSurface,  class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
-  int Umbilic_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap, Vertex2VectorPropertyMap >::
+template < class TriangulatedSurfaceMesh,  class Vertex2FTPropertyMap, class Vertex2VectorPropertyMap >
+  int Umbilic_approximation< TriangulatedSurfaceMesh, Vertex2FTPropertyMap, Vertex2VectorPropertyMap >::
   compute_type(Umbilic& umb)
 {
   Vector_3 dir, dirnext, normal;
@@ -258,6 +258,32 @@ template < class TriangularPolyhedralSurface,  class Vertex2FTPropertyMap, class
   else umb.umbilic_type() = NON_GENERIC_UMBILIC;
   return 1;
 }
+
+//Global function
+
+template < class TriangulatedSurfaceMesh,  
+  class Vertex2FTPropertyMap,
+  class Vertex2VectorPropertyMap,
+  class OutputIterator>
+  OutputIterator compute_umbilics(const TriangulatedSurfaceMesh &P,
+				  const Vertex2FTPropertyMap& vertex2k1_pm, 
+				  const Vertex2FTPropertyMap& vertex2k2_pm,
+				  const Vertex2VectorPropertyMap& vertex2d1_pm, 
+				  const Vertex2VectorPropertyMap& vertex2d2_pm,
+				  OutputIterator it, 
+				  double size)
+{
+  typedef Umbilic_approximation < TriangulatedSurfaceMesh, 
+    Vertex2FTPropertyMap, Vertex2VectorPropertyMap > Umbilic_approximation;
+  
+  Umbilic_approximation umbilic_approximation(P, 
+					      vertex2k1_pm, vertex2k2_pm,
+					      vertex2d1_pm, vertex2d2_pm);
+  return umbilic_approximation.compute(it, size);  
+}
+
+
+
 
 CGAL_END_NAMESPACE
 

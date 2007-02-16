@@ -44,6 +44,8 @@ these algorithms; such quantities may be computed by the package {\em
 Estimation of Local Differential Properties of Sampled Surfaces via
 Polynomial Fitting}.
 
+Note that this package needs the third party libraries
+\ccThirdPartyLapack\ and \ccThirdPartyBlas\ installed to compile the example code.
 
 \subsection{Overview}
 %%%%%%%%%%%%%%%%%%%%%%
@@ -401,8 +403,8 @@ more details.
 \label{soft}
 
 All classes of this package are templated by the parameter
-\ccc{TriangularPolyhedralSurface} which inherits from \ccc{Polyhedron_3}
-and defines the mesh on which the approximation algorithms are applied.
+\ccc{TriangulatedSurfaceMesh} defines the mesh on which the
+approximation algorithms are applied.
 
 The differential quantities are provided at vertices of this mesh via
 property maps, a concept commonly used in the Boost library. Scalar
@@ -428,7 +430,7 @@ classes, which we now further describe.
 
 
 The main class is
-\ccc{Ridge_approximation<TriangularPolyhedralSurface,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>}.
+\ccc{Ridge_approximation<TriangulatedSurfaceMesh,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>}.
 Its construction requires the mesh and the property maps defining the
 differential quantities for principal curvatures $k_1$ and $k_2$, the
 third order extremalities $b_0$ and $b_3$, the principal directions of
@@ -437,7 +439,8 @@ $P_2$ if the tagging of ridges as elliptic or hyperbolic is done using
 the polynomials $P_1$ and $P_2$.
 
 
-Three functions enable the computation of different types of ridges~:
+Three functions enable the computation of different types of ridges
+(these functions are provided as members and also as global functions)~:
 \begin{itemize}
 \item \ccc{compute_max_ridges} (resp. \ccc{compute_min_ridges})
   outputs ridges of types \ccc{MAX_ELLIPTIC_RIDGE} and
@@ -470,12 +473,12 @@ defined.
 \subsection{Umbilic Approximation}
 %%%%%%%%%%%%%%%%%%%%%
 The main class is
-\ccc{Umbilic_approximation<TriangularPolyhedralSurface,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>}.
+\ccc{Umbilic_approximation<TriangulatedSurfaceMesh,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>}.
 Its construction requires the mesh and the property maps defining the
 differential quantities for principal curvatures $k_1$ and $k_2$, and
-the principal directions of curvature $d_1$ and $d_2$.  The function
-\ccc{compute} has a parameter to define the size of the neighborhood
-of the umbilic.
+the principal directions of curvature $d_1$ and $d_2$.  The member
+function \ccc{compute} (or the global function \ccc{compute_umbilics})
+has a parameter to define the size of the neighborhood of the umbilic.
 
 Umbilics are stored in \ccc{Umbilic} objects, they come with their
 type, the vertex of the mesh they are associated to and the list of
@@ -485,7 +488,7 @@ half-edges representing the contour of the neighborhood.
 \subsection{Models for the Property Map Concepts}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The class
-\ccc{Vertex2Data_Property_Map_with_std_map<TriangularPolyhedralSurface>}
+\ccc{Vertex2Data_Property_Map_with_std_map<TriangulatedSurfaceMesh>}
 enables the definition of models for the concepts
 \ccc{Vertex2FTPropertyMap}
 \ccc{Vertex2VectorPropertyMap} 
@@ -517,7 +520,7 @@ approximation possible. a may be an integer greater than 1, the value
 collected to make the approximation possible. (Alternativelly option p
 enable to ask for a constant number of neighbors);
 \item
-t, the \ccc{Tag_order} for the distinction between elliptic and
+t, the \ccc{CGAL::Ridge_order} for the distinction between elliptic and
 hyperbolic ridges, t is 3 (default) or 4;
 \item
 u, the parameter for umbilic patch size, $u \geq 1$ (default is 1).

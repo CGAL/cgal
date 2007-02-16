@@ -59,7 +59,7 @@ unsigned int d_fitting = 3;
 unsigned int d_monge = 3;
 unsigned int nb_rings = 0;//seek min # of rings to get the required #pts
 unsigned int nb_points_to_use = 0;//
-Ridge_approximation::Tag_order tag_order = Ridge_approximation::Tag_3;
+CGAL::Ridge_order tag_order = CGAL::Ridge_order_3;
 double umb_size = 2;
 bool verbose = false;
 unsigned int min_nb_points = (d_fitting + 1) * (d_fitting + 2) / 2;
@@ -181,7 +181,7 @@ int main(int argc, char *argv[])
        "number of rings to collect neighbors. 0 means collect enough rings to make appro possible a>=1 fixes the nb of rings to be collected")
       ("nb-points,p", po::value<unsigned int>(&nb_points_to_use)->default_value(0),
        "number of neighbors to use.  0 means this option is not considered, this is the default p>=1 fixes the nb of points to be used")
-      ("tag_order,t", po::value<unsigned int>(&int_tag)->default_value(3),
+      ("ridge_order,t", po::value<unsigned int>(&int_tag)->default_value(3),
        "Order of differential quantities used, must be 3 or 4")
       ("umbilic-patch-size,u", po::value<double>(&umb_size)->default_value(2),
        "size of umbilic patches (as multiple of 1ring size)")
@@ -198,11 +198,11 @@ int main(int argc, char *argv[])
       return 1;
     }
 
-    if (vm.count("tag_order")){
-      if ( int_tag == 3 ) tag_order = Ridge_approximation::Tag_3;
-      if ( int_tag == 4 ) tag_order = Ridge_approximation::Tag_4;
+    if (vm.count("ridge_order")){
+      if ( int_tag == 3 ) tag_order = CGAL::Ridge_order_3;
+      if ( int_tag == 4 ) tag_order = CGAL::Ridge_order_4;
       if ( int_tag != 3 && int_tag != 4 ) 
-	{cerr << "tag_order must be 3 or 4";
+	{cerr << "ridge_order must be CGAL::Ridge_order_3 or CGAL::Ridge_order_4";
 	  return 1;}
     }
   }
@@ -285,11 +285,19 @@ int main(int argc, char *argv[])
   std::vector<Ridge_line*> ridge_lines;
   back_insert_iterator<std::vector<Ridge_line*> > ii(ridge_lines);
   
-  //Find MAX_RIDGE, MIN_RIDGE, CREST or all ridges
+  //Find MAX_RIDGE, MIN_RIDGE, CREST_RIDGES
   //   ridge_approximation.compute_max_ridges(ii, tag_order);  
   //   ridge_approximation.compute_min_ridges(ii, tag_order);  
   ridge_approximation.compute_crest_ridges(ii, tag_order);  
  
+  // or with the global function
+  CGAL::compute_max_ridges(P, 
+			   vertex2k1_pm, vertex2k2_pm,
+			   vertex2b0_pm, vertex2b3_pm,
+			   vertex2d1_pm, vertex2d2_pm,
+			   vertex2P1_pm, vertex2P2_pm,
+			   ii, tag_order);
+
   std::vector<Ridge_line*>::iterator iter_lines = ridge_lines.begin(), 
     iter_end = ridge_lines.end();
   //OpenGL output
@@ -304,12 +312,19 @@ int main(int argc, char *argv[])
   // UMBILICS
   //--------------------------------------------------------------------------
   std::cout << "Compute umbilics..." << std::endl;
-  Umbilic_approximation umbilic_approximation(P, 
-					      vertex2k1_pm, vertex2k2_pm,
-					      vertex2d1_pm, vertex2d2_pm);
   std::vector<Umbilic*> umbilics;
   back_insert_iterator<std::vector<Umbilic*> > umb_it(umbilics);
-  umbilic_approximation.compute(umb_it, umb_size);
+ 
+  //explicit construction of the class
+ //  Umbilic_approximation umbilic_approximation(P, 
+// 					      vertex2k1_pm, vertex2k2_pm,
+// 					      vertex2d1_pm, vertex2d2_pm);
+//   umbilic_approximation.compute(umb_it, umb_size);
+  //or global function call
+  CGAL::compute_umbilics(P, 
+			 vertex2k1_pm, vertex2k2_pm,
+			 vertex2d1_pm, vertex2d2_pm,
+			 umb_it, umb_size);
 
   std::vector<Umbilic*>::iterator iter_umb = umbilics.begin(), 
     iter_umb_end = umbilics.end();

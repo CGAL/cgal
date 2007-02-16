@@ -37,23 +37,30 @@ enum Ridge_interrogation_type {MAX_RIDGE, MIN_RIDGE, CREST_RIDGE};
 enum Ridge_type {NO_RIDGE=0, 
 		 MAX_ELLIPTIC_RIDGE, MAX_HYPERBOLIC_RIDGE, MAX_CREST_RIDGE, 
 		 MIN_ELLIPTIC_RIDGE, MIN_HYPERBOLIC_RIDGE, MIN_CREST_RIDGE};
-
+ 
+//are ridges tagged as elliptic or hyperbolic using 3rd or 4th order
+//differential quantitities?
+//with Ridge_order_3 P1 and P2 are not used and the sharpness is not defined.
+enum Ridge_order {Ridge_order_3 = 3, Ridge_order_4 = 4};
+  
 //---------------------------------------------------------------------------
 //Ridge_line : a connected sequence of edges of a
 //TriangularPolyhedralSurface crossed by a
 //ridge (with a barycentric coordinate to compute the crossing point),
 //with a Ridge_type and weigths : strength and sharpness. Note
-//sharpness is only available (more precisely only meaningful : for
-//Tag_3 it keeps its initial value 0) is the Ridge_approximation has
-//been computed with the Tag_order Tag_4.
+//sharpness is only available (more precisely only meaningful)
+//if the Ridge_approximation has
+//been computed with the Ridge_order Ridge_order_4.
+//(else, if it is computed with Ridge_order_3 it keeps its initial
+//value 0)
 //--------------------------------------------------------------------------
-template < class TriangularPolyhedralSurface > class Ridge_line
+template < class TriangulatedSurfaceMesh > class Ridge_line
 {
 public:
-  typedef typename TriangularPolyhedralSurface::Traits::FT         FT;
-  typedef typename TriangularPolyhedralSurface::Traits::Vector_3   Vector_3;
-  typedef typename TriangularPolyhedralSurface::Traits::Point_3    Point_3;
-  typedef typename TriangularPolyhedralSurface::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename TriangulatedSurfaceMesh::Traits::FT         FT;
+  typedef typename TriangulatedSurfaceMesh::Traits::Vector_3   Vector_3;
+  typedef typename TriangulatedSurfaceMesh::Traits::Point_3    Point_3;
+  typedef typename TriangulatedSurfaceMesh::Halfedge_const_handle Halfedge_const_handle;
   typedef std::pair< Halfedge_const_handle, FT> ridge_halfhedge; 
 
   const Ridge_type line_type() const {return m_line_type;}
@@ -95,13 +102,13 @@ protected:
 //--------------------------------------------------------------------------
 
  //constructor
-template < class TriangularPolyhedralSurface >
-Ridge_line<TriangularPolyhedralSurface>::
+template < class TriangulatedSurfaceMesh >
+Ridge_line<TriangulatedSurfaceMesh>::
 Ridge_line() : m_strength(0.), m_sharpness(0.)  {}
    
 
-template < class TriangularPolyhedralSurface >
-void Ridge_line<TriangularPolyhedralSurface>::
+template < class TriangulatedSurfaceMesh >
+void Ridge_line<TriangulatedSurfaceMesh>::
 dump_4ogl(std::ostream& out_stream) const
 {
   out_stream << line_type() << " "
@@ -123,8 +130,8 @@ dump_4ogl(std::ostream& out_stream) const
 }
 
 //verbose output
-template < class TriangularPolyhedralSurface >
-void Ridge_line<TriangularPolyhedralSurface>::
+template < class TriangulatedSurfaceMesh >
+void Ridge_line<TriangulatedSurfaceMesh>::
 dump_verbose(std::ostream& out_stream) const
 {
   out_stream << "Line type is : " << line_type() << std::endl
@@ -145,9 +152,9 @@ dump_verbose(std::ostream& out_stream) const
   }
 }
 
-template <class TriangularPolyhedralSurface>
+template <class TriangulatedSurfaceMesh>
 std::ostream& 
-operator<<(std::ostream& out_stream, const Ridge_line<TriangularPolyhedralSurface>& ridge_line)
+operator<<(std::ostream& out_stream, const Ridge_line<TriangulatedSurfaceMesh>& ridge_line)
 {
   ridge_line.dump_verbose(out_stream);
   return out_stream;
@@ -157,13 +164,13 @@ operator<<(std::ostream& out_stream, const Ridge_line<TriangularPolyhedralSurfac
 //Vertex2Data_Property_Map_with_std_map
 // defines models for Vertex2FTPropertyMap and Vertex2VectorPropertyMap
 //--------------------------------------------------------------------------
-template < class TriangularPolyhedralSurface >
+template < class TriangulatedSurfaceMesh >
 class Vertex2Data_Property_Map_with_std_map 
 {
  public:
-  typedef typename TriangularPolyhedralSurface::Traits::FT        FT;
-  typedef typename TriangularPolyhedralSurface::Traits::Vector_3  Vector_3;
-  typedef typename TriangularPolyhedralSurface::Vertex_const_handle Vertex_const_handle;
+  typedef typename TriangulatedSurfaceMesh::Traits::FT        FT;
+  typedef typename TriangulatedSurfaceMesh::Traits::Vector_3  Vector_3;
+  typedef typename TriangulatedSurfaceMesh::Vertex_const_handle Vertex_const_handle;
 
   struct Vertex_cmp{
     bool operator()(Vertex_const_handle a,  Vertex_const_handle b) const{
@@ -182,34 +189,29 @@ class Vertex2Data_Property_Map_with_std_map
 //---------------------------------------------------------------------------
 //Ridge_approximation
 //--------------------------------------------------------------------------
-template < class TriangularPolyhedralSurface,  
+template < class TriangulatedSurfaceMesh,  
            class Vertex2FTPropertyMap,
            class Vertex2VectorPropertyMap > 
 class Ridge_approximation
 {
  public:  
-  typedef typename TriangularPolyhedralSurface::Traits::FT        FT;
-  typedef typename TriangularPolyhedralSurface::Traits::Vector_3  Vector_3;
-  typedef typename TriangularPolyhedralSurface::Vertex_const_handle     Vertex_const_handle;
-  typedef typename TriangularPolyhedralSurface::Halfedge_const_handle   Halfedge_const_handle;
-  typedef typename TriangularPolyhedralSurface::Facet_const_handle      Facet_const_handle;
-  typedef typename TriangularPolyhedralSurface::Facet_const_iterator    Facet_const_iterator;
+  typedef typename TriangulatedSurfaceMesh::Traits::FT        FT;
+  typedef typename TriangulatedSurfaceMesh::Traits::Vector_3  Vector_3;
+  typedef typename TriangulatedSurfaceMesh::Vertex_const_handle     Vertex_const_handle;
+  typedef typename TriangulatedSurfaceMesh::Halfedge_const_handle   Halfedge_const_handle;
+  typedef typename TriangulatedSurfaceMesh::Facet_const_handle      Facet_const_handle;
+  typedef typename TriangulatedSurfaceMesh::Facet_const_iterator    Facet_const_iterator;
 
-  //requirements for the templates TriangularPolyhedralSurface and Vertex2FTPropertyMap or Vertex2VectorPropertyMap
+  //requirements for the templates TriangulatedSurfaceMesh and Vertex2FTPropertyMap or Vertex2VectorPropertyMap
   BOOST_STATIC_ASSERT((boost::is_same<Vertex_const_handle, typename Vertex2FTPropertyMap::key_type>::value));
   BOOST_STATIC_ASSERT((boost::is_same<Vertex_const_handle, typename Vertex2VectorPropertyMap::key_type>::value));
   BOOST_STATIC_ASSERT((boost::is_same<FT, typename Vertex2FTPropertyMap::value_type>::value));
   BOOST_STATIC_ASSERT((boost::is_same<Vector_3, typename Vertex2VectorPropertyMap::value_type>::value));
 
   typedef std::pair< Halfedge_const_handle, FT>    Ridge_halfhedge;
-  typedef Ridge_line<TriangularPolyhedralSurface>  Ridge_line;
+  typedef Ridge_line<TriangulatedSurfaceMesh>  Ridge_line;
 
-  //are ridges tagged as elliptic or hyperbolic using 3rd or 4th order
-  //differential quantitities?
-  //with tag_3 P1 and P2 are not used and the sharpness is not defined.
-  enum Tag_order {Tag_3 = 3, Tag_4 = 4};
-  
-  Ridge_approximation(const TriangularPolyhedralSurface &P,
+  Ridge_approximation(const TriangulatedSurfaceMesh &P,
 		      const Vertex2FTPropertyMap& vertex2k1_pm, 
 		      const Vertex2FTPropertyMap& vertex2k2_pm,
 		      const Vertex2FTPropertyMap& vertex2b0_pm, 
@@ -220,28 +222,28 @@ class Ridge_approximation
 		      const Vertex2FTPropertyMap& vertex2P2_pm);
  
   template <class OutputIterator>
-  OutputIterator compute_max_ridges(OutputIterator it, Tag_order ord = Tag_3);
+  OutputIterator compute_max_ridges(OutputIterator it, Ridge_order ord = Ridge_order_3);
   template <class OutputIterator>
-  OutputIterator compute_min_ridges(OutputIterator it, Tag_order ord = Tag_3);
+  OutputIterator compute_min_ridges(OutputIterator it, Ridge_order ord = Ridge_order_3);
   template <class OutputIterator>
-  OutputIterator compute_crest_ridges(OutputIterator it, Tag_order ord = Tag_3);
+  OutputIterator compute_crest_ridges(OutputIterator it, Ridge_order ord = Ridge_order_3);
   
   //Find MAX_RIDGE, MIN_RIDGE or CREST_RIDGE ridges iterate on P facets,
   //find a non-visited, regular (i.e. if there is a coherent
   //orientation of ppal dir at the facet vertices), 2Xing triangle,
   //follow non-visited, regular, 2Xing triangles in both sens to
   //create a Ridge line.  Each time an edge is added the strength and
-  //sharpness(if Tag_4) are updated.
+  //sharpness(if Ridge_order_4) are updated.
   template <class OutputIterator>
   OutputIterator compute_ridges(Ridge_interrogation_type r_type, 
 			  OutputIterator ridge_lines_it,
-			  Tag_order ord = Tag_3);
+			  Ridge_order ord = Ridge_order_3);
 
  protected:
-  const TriangularPolyhedralSurface& P;
-  FT squared_model_size;//squared radius of the smallest enclosing sphere of the TriangularPolyhedralSurface
+  const TriangulatedSurfaceMesh& P;
+  FT squared_model_size;//squared radius of the smallest enclosing sphere of the TriangulatedSurfaceMesh
 		//used to make the sharpness scale independant and iso indep
-  Tag_order tag_order;
+  Ridge_order tag_order;
 
   //tag to visit faces
   struct Facet_cmp{ //comparison is wrt facet addresses
@@ -331,11 +333,11 @@ class Ridge_approximation
 // IMPLEMENTATION OF Ridge_approximation members
 /////////////////////////////////////////////////////////////////////////////
  //contructor
-template < class TriangularPolyhedralSurface,  
+template < class TriangulatedSurfaceMesh,  
   class Vertex2FTPropertyMap,
   class Vertex2VectorPropertyMap > 
-  Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2VectorPropertyMap >::
-  Ridge_approximation(const TriangularPolyhedralSurface &P,
+  Ridge_approximation< TriangulatedSurfaceMesh, Vertex2FTPropertyMap , Vertex2VectorPropertyMap >::
+  Ridge_approximation(const TriangulatedSurfaceMesh &P,
 		      const Vertex2FTPropertyMap& vertex2k1_pm, 
 		      const Vertex2FTPropertyMap& vertex2k2_pm,
 		      const Vertex2FTPropertyMap& vertex2b0_pm, 
@@ -354,51 +356,51 @@ template < class TriangularPolyhedralSurface,
     CGAL_precondition( itb->is_triangle() );
   }
 
-  CGAL::Min_sphere_d<CGAL::Optimisation_d_traits_3<typename TriangularPolyhedralSurface::Traits> > 
+  CGAL::Min_sphere_d<CGAL::Optimisation_d_traits_3<typename TriangulatedSurfaceMesh::Traits> > 
     min_sphere(P.points_begin(), P.points_end());
   squared_model_size = min_sphere.squared_radius();
   //maybe better to use CGAL::Min_sphere_of_spheres_d ?? but need to create spheres?
 
-  tag_order = Tag_3;
+  tag_order = Ridge_order_3;
 }
 
-template < class TriangularPolyhedralSurface,  
+template < class TriangulatedSurfaceMesh,  
            class Vertex2FTPropertyMap,
            class Vertex2VectorPropertyMap > 
   template <class OutputIterator>
-  OutputIterator Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
-  compute_max_ridges(OutputIterator it, Tag_order ord)
+  OutputIterator Ridge_approximation< TriangulatedSurfaceMesh, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
+  compute_max_ridges(OutputIterator it, Ridge_order ord)
 {
   compute_ridges(MAX_RIDGE, it, ord);
   return it;
 }
-template < class TriangularPolyhedralSurface,  
+template < class TriangulatedSurfaceMesh,  
            class Vertex2FTPropertyMap,
            class Vertex2VectorPropertyMap > 
   template <class OutputIterator>
-  OutputIterator Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
-  compute_min_ridges(OutputIterator it, Tag_order ord)
+  OutputIterator Ridge_approximation< TriangulatedSurfaceMesh, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
+  compute_min_ridges(OutputIterator it, Ridge_order ord)
 {
   compute_ridges(MIN_RIDGE, it, ord);
   return it;
 }
-template < class TriangularPolyhedralSurface,  
+template < class TriangulatedSurfaceMesh,  
            class Vertex2FTPropertyMap,
            class Vertex2VectorPropertyMap > 
   template <class OutputIterator>
-  OutputIterator Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
-  compute_crest_ridges(OutputIterator it, Tag_order ord)
+  OutputIterator Ridge_approximation< TriangulatedSurfaceMesh, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
+  compute_crest_ridges(OutputIterator it, Ridge_order ord)
 {
   compute_ridges(CREST_RIDGE, it, ord);
   return it;
 }
 
-template < class TriangularPolyhedralSurface,  
+template < class TriangulatedSurfaceMesh,  
            class Vertex2FTPropertyMap,
            class Vertex2VectorPropertyMap > 
   template <class OutputIterator>
-  OutputIterator Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
-  compute_ridges(Ridge_interrogation_type r_type, OutputIterator ridge_lines_it, Tag_order ord)
+  OutputIterator Ridge_approximation< TriangulatedSurfaceMesh, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
+  compute_ridges(Ridge_interrogation_type r_type, OutputIterator ridge_lines_it, Ridge_order ord)
 {
   tag_order = ord;
 
@@ -472,10 +474,10 @@ template < class TriangularPolyhedralSurface,
   return ridge_lines_it;
 }
 
-template < class TriangularPolyhedralSurface,  
+template < class TriangulatedSurfaceMesh,  
            class Vertex2FTPropertyMap,
            class Vertex2VectorPropertyMap > 
-Ridge_type Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
+Ridge_type Ridge_approximation< TriangulatedSurfaceMesh, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
 facet_ridge_type(const Facet_const_handle f, Halfedge_const_handle& he1, Halfedge_const_handle&
 		 he2, Ridge_interrogation_type r_type)
 {
@@ -564,10 +566,10 @@ facet_ridge_type(const Facet_const_handle f, Halfedge_const_handle& he1, Halfedg
   return NO_RIDGE;
 }
 
-template < class TriangularPolyhedralSurface,  
+template < class TriangulatedSurfaceMesh,  
            class Vertex2FTPropertyMap,
            class Vertex2VectorPropertyMap > 
-void Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
+void Ridge_approximation< TriangulatedSurfaceMesh, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
 xing_on_edge(const Halfedge_const_handle he, bool& is_crossed, Ridge_interrogation_type color)
 {
   is_crossed = false;
@@ -590,10 +592,10 @@ xing_on_edge(const Halfedge_const_handle he, bool& is_crossed, Ridge_interrogati
   if ( sign < 0 ) is_crossed = true;
 }
 
-template < class TriangularPolyhedralSurface,  
+template < class TriangulatedSurfaceMesh,  
            class Vertex2FTPropertyMap,
            class Vertex2VectorPropertyMap > 
-bool Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
+bool Ridge_approximation< TriangulatedSurfaceMesh, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
   tag_as_elliptic_hyperbolic(const Ridge_interrogation_type color,
 			     const Halfedge_const_handle he1, 
 			     const Halfedge_const_handle he2)
@@ -613,7 +615,7 @@ bool Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Ve
       coord2 = CGAL::abs(b3[v_q2]) / ( CGAL::abs(b3[v_p2]) + CGAL::abs(b3[v_q2]) ); 
     }
 
-  if ( tag_order == Tag_3 ) {
+  if ( tag_order == Ridge_order_3 ) {
     Vector_3 r1 = (v_p1->point()-ORIGIN)*coord1 +
       (v_q1->point()-ORIGIN)*(1-coord1), 
       r2 = (v_p2->point()-ORIGIN)*coord2 +
@@ -631,7 +633,7 @@ bool Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Ve
     else if (b_sign == -1) return true; 
       else return false;
   }
-  else {//tag_order == Tag_4, check the sign of the meanvalue of the signs
+  else {//tag_order == Ridge_order_4, check the sign of the meanvalue of the signs
     //      of Pi at the two crossing points
     FT sign_P;
     if (color == MAX_RIDGE) 
@@ -644,10 +646,10 @@ bool Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Ve
   }
 }
 
-template < class TriangularPolyhedralSurface,  
+template < class TriangulatedSurfaceMesh,  
            class Vertex2FTPropertyMap,
            class Vertex2VectorPropertyMap > 
-int Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
+int Ridge_approximation< TriangulatedSurfaceMesh, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
   b_sign_pointing_to_ridge(const Vertex_const_handle v1, 
 			       const Vertex_const_handle v2,
 			       const Vertex_const_handle v3,
@@ -686,10 +688,10 @@ int Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Ver
   if (compt > 0) return 1; else return -1;
 }
 
-template < class TriangularPolyhedralSurface,  
+template < class TriangulatedSurfaceMesh,  
            class Vertex2FTPropertyMap,
            class Vertex2VectorPropertyMap > 
-void Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
+void Ridge_approximation< TriangulatedSurfaceMesh, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
 init_ridge_line(Ridge_line* ridge_line, 
 		const Halfedge_const_handle h1, 
 		const Halfedge_const_handle h2, 
@@ -700,10 +702,10 @@ init_ridge_line(Ridge_line* ridge_line,
   addback(ridge_line, h2, r_type);
 }
 
-template < class TriangularPolyhedralSurface,  
+template < class TriangulatedSurfaceMesh,  
            class Vertex2FTPropertyMap,
            class Vertex2VectorPropertyMap > 
-void Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
+void Ridge_approximation< TriangulatedSurfaceMesh, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
 addback(Ridge_line* ridge_line, const Halfedge_const_handle he,
 	const Ridge_type r_type)
 {
@@ -725,7 +727,7 @@ addback(Ridge_line* ridge_line, const Halfedge_const_handle he,
        || (ridge_line->line_type() == MAX_HYPERBOLIC_RIDGE) 
        || (ridge_line->line_type() == MAX_CREST_RIDGE) ) {
     ridge_line->strength() += k1x * CGAL::sqrt(segment * segment); 
-    if (tag_order == Tag_4) { 
+    if (tag_order == Ridge_order_4) { 
       if (k1x != k2x) 
 	k_second =CGAL::abs(( CGAL::abs(P1[v_p]) * coord + CGAL::abs(P1[v_q]) * (1-coord) )/(k1x-k2x));
       ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * squared_model_size; }
@@ -734,7 +736,7 @@ addback(Ridge_line* ridge_line, const Halfedge_const_handle he,
        || (ridge_line->line_type() == MIN_HYPERBOLIC_RIDGE) 
        || (ridge_line->line_type() == MIN_CREST_RIDGE) ) {
    ridge_line->strength() += k2x * CGAL::sqrt(segment * segment); 
-   if (tag_order == Tag_4) {
+   if (tag_order == Ridge_order_4) {
      if (k1x != k2x) 
        k_second =CGAL::abs(( CGAL::abs(P2[v_p]) * coord + CGAL::abs(P2[v_q]) * (1-coord) )/(k1x-k2x));
      ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * squared_model_size; }
@@ -742,10 +744,10 @@ addback(Ridge_line* ridge_line, const Halfedge_const_handle he,
   ridge_line->line()->push_back( Ridge_halfhedge(he, coord));
 }
 
-template < class TriangularPolyhedralSurface,  
+template < class TriangulatedSurfaceMesh,  
            class Vertex2FTPropertyMap,
            class Vertex2VectorPropertyMap > 
-void Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
+void Ridge_approximation< TriangulatedSurfaceMesh, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
 addfront(Ridge_line* ridge_line, 
 	 const Halfedge_const_handle he, 
 	 const Ridge_type r_type)
@@ -768,7 +770,7 @@ addfront(Ridge_line* ridge_line,
        || (ridge_line->line_type() == MAX_HYPERBOLIC_RIDGE) 
        || (ridge_line->line_type() == MAX_CREST_RIDGE) ) {
     ridge_line->strength() += k1x * CGAL::sqrt(segment * segment); 
-   if (tag_order == Tag_4) {
+   if (tag_order == Ridge_order_4) {
      if (k1x != k2x) 
        k_second =CGAL::abs(( CGAL::abs(P1[v_p]) * coord + CGAL::abs(P1[v_q]) * (1-coord) )/(k1x-k2x));
      ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * squared_model_size; }
@@ -777,7 +779,7 @@ addfront(Ridge_line* ridge_line,
        || (ridge_line->line_type() == MIN_HYPERBOLIC_RIDGE) 
        || (ridge_line->line_type() == MIN_CREST_RIDGE) ) {
    ridge_line->strength() += k2x * CGAL::sqrt(segment * segment); 
-   if (tag_order == Tag_4) {
+   if (tag_order == Ridge_order_4) {
      if (k1x != k2x) 
        k_second =CGAL::abs(( CGAL::abs(P2[v_p]) * coord + CGAL::abs(P2[v_q]) * (1-coord) )/(k1x-k2x));
      ridge_line->sharpness() += k_second * CGAL::sqrt(segment * segment) * squared_model_size; }
@@ -785,11 +787,11 @@ addfront(Ridge_line* ridge_line,
   ridge_line->line()->push_front( Ridge_halfhedge(he, coord));
 }
 
-template < class TriangularPolyhedralSurface,  
+template < class TriangulatedSurfaceMesh,  
            class Vertex2FTPropertyMap,
            class Vertex2VectorPropertyMap > 
-typename TriangularPolyhedralSurface::Traits::FT 
-Ridge_approximation< TriangularPolyhedralSurface, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
+typename TriangulatedSurfaceMesh::Traits::FT 
+Ridge_approximation< TriangulatedSurfaceMesh, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
 bary_coord(const Halfedge_const_handle he, const Ridge_type r_type)
 {
   FT b_p, b_q; // extremalities at p and q for he: p->q
@@ -809,6 +811,91 @@ bary_coord(const Halfedge_const_handle he, const Ridge_type r_type)
   return CGAL::abs(b_q) / ( CGAL::abs(b_q) + CGAL::abs(b_p) );
 }
   
+
+//---------------------------------------------------------------------------
+//Global functions
+//--------------------------------------------------------------------------
+template < class TriangulatedSurfaceMesh,  
+  class Vertex2FTPropertyMap,
+  class Vertex2VectorPropertyMap,
+  class OutputIterator>
+  OutputIterator compute_max_ridges(const TriangulatedSurfaceMesh &P,
+				    const Vertex2FTPropertyMap& vertex2k1_pm, 
+				    const Vertex2FTPropertyMap& vertex2k2_pm,
+				    const Vertex2FTPropertyMap& vertex2b0_pm, 
+				    const Vertex2FTPropertyMap& vertex2b3_pm,
+				    const Vertex2VectorPropertyMap& vertex2d1_pm, 
+				    const Vertex2VectorPropertyMap& vertex2d2_pm,
+				    const Vertex2FTPropertyMap& vertex2P1_pm, 
+				    const Vertex2FTPropertyMap& vertex2P2_pm,
+				    OutputIterator it, 
+				    Ridge_order order = Ridge_order_3)
+{
+  typedef Ridge_approximation < TriangulatedSurfaceMesh, 
+    Vertex2FTPropertyMap, Vertex2VectorPropertyMap > Ridge_approximation;
+  
+  Ridge_approximation ridge_approximation(P, 
+					  vertex2k1_pm, vertex2k2_pm,
+					  vertex2b0_pm, vertex2b3_pm,
+					  vertex2d1_pm, vertex2d2_pm,
+					  vertex2P1_pm, vertex2P2_pm );
+  return ridge_approximation.compute_max_ridges(it, order);  
+}
+
+template < class TriangulatedSurfaceMesh,  
+  class Vertex2FTPropertyMap,
+  class Vertex2VectorPropertyMap,
+  class OutputIterator>
+  OutputIterator compute_min_ridges(const TriangulatedSurfaceMesh &P,
+				    const Vertex2FTPropertyMap& vertex2k1_pm, 
+				    const Vertex2FTPropertyMap& vertex2k2_pm,
+				    const Vertex2FTPropertyMap& vertex2b0_pm, 
+				    const Vertex2FTPropertyMap& vertex2b3_pm,
+				    const Vertex2VectorPropertyMap& vertex2d1_pm, 
+				    const Vertex2VectorPropertyMap& vertex2d2_pm,
+				    const Vertex2FTPropertyMap& vertex2P1_pm, 
+				    const Vertex2FTPropertyMap& vertex2P2_pm,
+				    OutputIterator it, 
+				    Ridge_order order = Ridge_order_3)
+{
+  typedef Ridge_approximation < TriangulatedSurfaceMesh, 
+    Vertex2FTPropertyMap, Vertex2VectorPropertyMap > Ridge_approximation;
+  
+  Ridge_approximation ridge_approximation(P, 
+					  vertex2k1_pm, vertex2k2_pm,
+					  vertex2b0_pm, vertex2b3_pm,
+					  vertex2d1_pm, vertex2d2_pm,
+					  vertex2P1_pm, vertex2P2_pm );
+  return ridge_approximation.compute_min_ridges(it, order);  
+}
+
+template < class TriangulatedSurfaceMesh,  
+  class Vertex2FTPropertyMap,
+  class Vertex2VectorPropertyMap,
+  class OutputIterator>
+  OutputIterator compute_crest_ridges(const TriangulatedSurfaceMesh &P,
+				    const Vertex2FTPropertyMap& vertex2k1_pm, 
+				    const Vertex2FTPropertyMap& vertex2k2_pm,
+				    const Vertex2FTPropertyMap& vertex2b0_pm, 
+				    const Vertex2FTPropertyMap& vertex2b3_pm,
+				    const Vertex2VectorPropertyMap& vertex2d1_pm, 
+				    const Vertex2VectorPropertyMap& vertex2d2_pm,
+				    const Vertex2FTPropertyMap& vertex2P1_pm, 
+				    const Vertex2FTPropertyMap& vertex2P2_pm,
+				    OutputIterator it, 
+				    Ridge_order order = Ridge_order_3)
+{
+  typedef Ridge_approximation < TriangulatedSurfaceMesh, 
+    Vertex2FTPropertyMap, Vertex2VectorPropertyMap > Ridge_approximation;
+  
+  Ridge_approximation ridge_approximation(P, 
+					  vertex2k1_pm, vertex2k2_pm,
+					  vertex2b0_pm, vertex2b3_pm,
+					  vertex2d1_pm, vertex2d2_pm,
+					  vertex2P1_pm, vertex2P2_pm );
+  return ridge_approximation.compute_crest_ridges(it, order);  
+}
+
 
 CGAL_END_NAMESPACE
 
