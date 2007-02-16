@@ -886,17 +886,17 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
     #ifndef _MSC_VER
           if (sdistx(bottom_i.second, bottom) <= FT(2) * d.r &&
               (!d.is_x_greater_y() ||
-               (shl == share.end() ||
-                sdistx(share.back(), bottom) <= FT(2) * d.r) &&
-               (shf == share.begin() ||
-                sdistx(*(shf - 1), bottom) <= FT(2) * d.r)))
+               ((shl == share.end() ||
+                 sdistx(share.back(), bottom) <= FT(2) * d.r) &&
+                (shf == share.begin() ||
+                 sdistx(*(shf - 1), bottom) <= FT(2) * d.r))))
     #else
           if (sdistx(bottom_i.second, bottom) <= FT(2) * d.r &&
-              (!d.is_x_greater_y() ||
+              ((!d.is_x_greater_y() ||
                (shl == Citerator(share.end()) ||
                 sdistx(share.back(), bottom) <= FT(2) * d.r) &&
                (shf == Citerator(share.begin()) ||
-                sdistx(*(shf - 1), bottom) <= FT(2) * d.r)))
+                sdistx(*(shf - 1), bottom) <= FT(2) * d.r))))
     #endif
             {
               // compute position of right square
@@ -950,17 +950,17 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
     #ifndef _MSC_VER
               if (sdisty(right_i.second, right) <= FT(2) * d.r &&
                   (d.is_x_greater_y() ||
-                   (shl == share.end() ||
-                    sdisty(share.back(), right) <= FT(2) * d.r) &&
-                   (shf == share.begin() ||
-                    sdisty(*(shf - 1), right) <= FT(2) * d.r)))
+                   ((shl == share.end() ||
+                     sdisty(share.back(), right) <= FT(2) * d.r) &&
+                    (shf == share.begin() ||
+                     sdisty(*(shf - 1), right) <= FT(2) * d.r))))
     #else
               if (sdisty(right_i.second, right) <= FT(2) * d.r &&
                   (d.is_x_greater_y() ||
-                   (shl == Citerator(share.end()) ||
-                    sdisty(share.back(), right) <= FT(2) * d.r) &&
-                   (shf == Citerator(share.begin()) ||
-                    sdisty(*(shf - 1), right) <= FT(2) * d.r)))
+                   ((shl == Citerator(share.end()) ||
+                     sdisty(share.back(), right) <= FT(2) * d.r) &&
+                    (shf == Citerator(share.begin()) ||
+                     sdisty(*(shf - 1), right) <= FT(2) * d.r))))
     #endif
                 {
                   // compute right bound for top square
