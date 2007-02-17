@@ -664,6 +664,7 @@ Installation/config/support/S83-QT3MSST -text
 Installation/config/support/S84-LAPACKGCCMKL -text
 Installation/config/support/S85-LAPACKIRIXCC32 -text
 Installation/config/support/S86-LAPACKIRIXCC64 -text
+Installation/config/support/S87-LAPACKGCCATLASDYNAMIC -text
 Installation/config/support/S89-TAUCSSOLARISCC -text
 Installation/config/support/S90-TAUCSWINMKL -text
 Installation/config/support/S91-TAUCSWINATLAS -text
