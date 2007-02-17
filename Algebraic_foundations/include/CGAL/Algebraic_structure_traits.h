@@ -13,6 +13,7 @@
 #define CGAL_ALGEBRAIC_STRUCTURE_TRAITS_H
 
 #include <CGAL/number_type_basic.h>
+#include <CGAL/type_traits.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -524,14 +525,6 @@ namespace INTERN_AST {
 
 namespace CGALi{
 
-#define CGAL_IS_SAME_OR_BASE_OF(BASE,T)                         \
-    (                                                           \
-            ::boost::is_base_and_derived< BASE , T >::value ||  \
-            ::boost::is_same< BASE , T >::value                 \
-    )                                                           \
-        
-
-
 
 template<class AS>
 class Is_integral_domain_without_division {
@@ -539,7 +532,7 @@ class Is_integral_domain_without_division {
     typedef typename AST::Algebraic_category Tag;
 public :
     static const bool value 
-    = CGAL_IS_SAME_OR_BASE_OF(Integral_domain_without_division_tag,Tag);  
+    = ::CGAL::is_same_or_derived<Integral_domain_without_division_tag,Tag>::value;
 };
 
 template<class AS>
@@ -548,7 +541,7 @@ class Is_integral_domain {
     typedef typename AST::Algebraic_category Tag;
 public :
     static const bool value 
-    = CGAL_IS_SAME_OR_BASE_OF(Integral_domain_tag,Tag);  
+    = ::CGAL::is_same_or_derived<Integral_domain_tag,Tag>::value;
 };
 
 
@@ -558,7 +551,7 @@ class Is_unique_factorization_domain {
     typedef typename AST::Algebraic_category Tag;
 public :
     static const bool value 
-    = CGAL_IS_SAME_OR_BASE_OF(Unique_factorization_domain_tag,Tag);  
+    = ::CGAL::is_same_or_derived<Unique_factorization_domain_tag,Tag>::value;
 };
 
 template<class AS>
@@ -567,7 +560,7 @@ class Is_euclidean_ring {
     typedef typename AST::Algebraic_category Tag;
 public :
     static const bool value 
-    = CGAL_IS_SAME_OR_BASE_OF(Euclidean_ring_tag,Tag);  
+    = ::CGAL::is_same_or_derived<Euclidean_ring_tag,Tag>::value;
 };
 
 
@@ -577,7 +570,7 @@ class Is_field {
     typedef typename AST::Algebraic_category Tag;
 public :
     static const bool value 
-    = CGAL_IS_SAME_OR_BASE_OF(Field_tag,Tag);  
+    = ::CGAL::is_same_or_derived<Field_tag,Tag>::value;
 };
 
 
@@ -587,7 +580,7 @@ class Is_field_with_sqrt {
     typedef typename AST::Algebraic_category Tag;
 public :
     static const bool value 
-    = CGAL_IS_SAME_OR_BASE_OF(Field_with_sqrt_tag,Tag);  
+    = ::CGAL::is_same_or_derived<Field_with_sqrt_tag,Tag>::value;
 };
 
 template<class AS>
@@ -596,8 +589,22 @@ class Is_field_with_root_of {
     typedef typename AST::Algebraic_category Tag;
 public :
     static const bool value 
-    = CGAL_IS_SAME_OR_BASE_OF(Field_with_root_of_tag,Tag);  
+    = ::CGAL::is_same_or_derived<Field_with_root_of_tag,Tag>::value;
 };
+
+// FIXME: @Michael: what about this? feel free to remove it if it 
+//                  does not make sense
+
+/*
+template< class AS, class CategoryTag >
+class Algebraic_structure_has_category {
+    typedef Algebraic_structure_traits<AS> AST;
+    typedef typename AST::Algebraic_category Tag;
+public :
+    static const bool value 
+    = ::CGAL::is_same_or_derived<CategoryTag,Tag>::value;
+};
+*/
 
 } // namespace CGALi
 

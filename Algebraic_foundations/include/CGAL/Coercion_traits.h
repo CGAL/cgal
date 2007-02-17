@@ -29,8 +29,7 @@
 #include <iterator>
 
 #include <boost/iterator/transform_iterator.hpp>
-#include <boost/type_traits/is_base_and_derived.hpp>
-#include <boost/mpl/if.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 // Makro to define an additional operator for binary functors which takes
 // two number types as parameters that are interoperable with the

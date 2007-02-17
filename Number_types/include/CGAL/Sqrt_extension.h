@@ -29,14 +29,15 @@
 #define CGAL_SQRT_EXTENSION_H
 
 #include <CGAL/number_type_basic.h>
+#include <CGAL/type_traits.h>
 
-#include <numeric> // fro std::accumulate
+#include <numeric> // for std::accumulate
+#include <boost/type_traits/is_same.hpp>
 #include <boost/numeric/interval.hpp> // Needed by To_interval
 
+// FIXME: isnt boost::transform called below?
 //#include <boost/iterator/transform_iterator.hpp>
-//#include <boost/mpl/if.hpp>
-
-//#include <CGAL/CGAL/number_type_basic.h>
+#include <boost/mpl/if.hpp>
 
 // We have to define the macros befor including Polynomials, 
 // since they cause a doxygen error otherwise.. (version 1.2.4)
@@ -1500,14 +1501,9 @@ template <class A, class B> class CT_ext_not_to_fwsqrt;
 //<EXT,ANY>
 template <class Coeff, class Root, class B>
 struct Coercion_traits_for_level<Sqrt_extension<Coeff, Root>, B , CTL_SQRT_EXT> 
-:public ::boost::mpl::if_c< 
+:public ::boost::mpl::if_< 
              // if B is fwsqrt
-              ::boost::is_base_and_derived< 
-                  Field_with_sqrt_tag, 
-typename Algebraic_structure_traits<B>::Algebraic_category >::value || 
-              ::boost::is_same< 
-                  Field_with_sqrt_tag, 
-typename Algebraic_structure_traits<B>::Algebraic_category >::value
+            ::CGAL::is_same_or_derived< Field_with_sqrt_tag, typename Algebraic_structure_traits<B>::Algebraic_category > 
             ,
             //then take Intern::Coercion_traits for fwsqrt
             INTERN_CT::CT_ext_to_fwsqrt<Sqrt_extension<Coeff,Root>, B>

@@ -41,8 +41,8 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/memory.h>
+#include <CGAL/type_traits.h>
 
-#include <boost/type_traits.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/mpl/if.hpp>
 
@@ -54,10 +54,6 @@
 
 //#define  LiS_HANDLE_OLD_ALLOCATION
 
-// LiS2CGAL: there are several: 
-// Handle Handle_for Handle_for_virtual Ref_counted
-// boost has shared_ptr
-// LiS2CGAL: add it as Handle_with_policy?
 // LiS2CGAL: check whether CGAL::Handle is a subset and replacing it
 // LiS2CGAL: Start: Copy and use it 
 // LiS2CGAL: Handle Package?
@@ -405,8 +401,7 @@ namespace Intern {
             typedef ::CGAL::Reference_counted_hierarchy_with_union<Alloc> 
                 Reference_counted_hierarchy_with_union;
             BOOST_STATIC_ASSERT((
-              ::boost::is_base_and_derived< Reference_counted_hierarchy_with_union, T >::value ||
-              ::boost::is_same            < Reference_counted_hierarchy_with_union, T >::value  ));
+              ::CGAL::is_same_or_derived< Reference_counted_hierarchy_with_union, T >::value ));
         }
         typedef T Rep;
     };
@@ -774,8 +769,7 @@ public:
     typedef Allocator_                  Allocator;
 
     enum { is_class_hierarchy  = 
-        ::boost::is_base_and_derived< Reference_counted_hierarchy_base, T>::value ||
-        ::boost::is_same            < Reference_counted_hierarchy_base, T>::value };
+        ::CGAL::is_same_or_derived< Reference_counted_hierarchy_base, T>::value };
     typedef typename Handle_policy::template Rep_bind< T, is_class_hierarchy > Bind;
     // instantiate Rep_bind to activate compile time check in there
     static Bind bind;
@@ -812,8 +806,7 @@ private:
 #ifdef LiS_HANDLE_OLD_ALLOCATION
     static Rep* new_rep( const Rep& rep) {
         BOOST_STATIC_ASSERT( !(
-           ::boost::is_base_and_derived< Reference_counted_hierarchy_base, T >::value ||
-           ::boost::is_same            < Reference_counted_hierarchy_base, T >::value  ));
+           ::CGAL::is_same_or_derived< Reference_counted_hierarchy_base, T >::value ));
         
         return new Rep(rep);
     }
@@ -823,8 +816,7 @@ private:
 
     static Rep* new_rep( const Rep& rep) { 
         BOOST_STATIC_ASSERT( !(
-           ::boost::is_base_and_derived< Reference_counted_hierarchy_base, T >::value ||
-           ::boost::is_same            < Reference_counted_hierarchy_base, T >::value  ));
+           ::CGAL::is_same_or_derived< Reference_counted_hierarchy_base, T >::value ));
         Rep* p = allocator.allocate(1);
         allocator.construct(p, rep);
         return p;
@@ -919,8 +911,7 @@ protected:
     //! constructor will work for class hierarchies of representations.
     Handle_with_policy( Rep* p) : ptr_( p) {
         BOOST_STATIC_ASSERT((
-           ::boost::is_base_and_derived< Reference_counted_hierarchy_base, T >::value ||
-           ::boost::is_same            < Reference_counted_hierarchy_base, T >::value  ));
+           ::CGAL::is_same_or_derived< Reference_counted_hierarchy_base, T >::value ));
         Bind bind; // trigger compile-time check
         (void)bind;
     }
@@ -933,8 +924,7 @@ protected:
     //! the template version with one argument.
     void initialize_with( Rep* p) {
         BOOST_STATIC_ASSERT((
-           ::boost::is_base_and_derived< Reference_counted_hierarchy_base, T >::value ||
-           ::boost::is_same            < Reference_counted_hierarchy_base, T >::value  ));
+           ::CGAL::is_same_or_derived< Reference_counted_hierarchy_base, T >::value ));
         Bind bind; // trigger compile-time check
         (void)bind;
         CGAL_precondition_msg( ptr_ == 0, "Handle_with_policy::initialize_with(): the "
