@@ -653,10 +653,10 @@ check_for_utils()
 
     # Verify that GNU Make exists:
     WGM=`which gmake`
-    if [[ "$WGM" = "" ]]; then
+    if [ "$WGM" = "" ]; then
         MAKE=make
         CGNU=`make -v | grep GNU`
-        if [[ "$CGNU" = "" ]]; then
+        if [ "$CGNU" = "" ]; then
             exit_on_error "GNU Make not found - please install GNU Make"
         fi
     else
