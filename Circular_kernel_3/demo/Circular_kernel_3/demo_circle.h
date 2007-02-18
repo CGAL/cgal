@@ -125,7 +125,7 @@ class MyGLDrawer : public QGLWidget {
 			//On cree une liste dans laquelle on met l'objet 3ds 
 			glNewList(this->list_cercle, GL_COMPILE);
 			for (std::size_t i = 0; i < this->cercles.size(); i++) {
-				dessiner_spherical_circle<SK>(this->cercles[i].first, this->cercles[i].second);
+			  CGAL::dessiner_spherical_circle<SK>(this->cercles[i].first, this->cercles[i].second);
 			}
 			glEndList();
 
