@@ -7,9 +7,9 @@ Arr_circular_arc_traits_checker.h
 Arr_circular_arc_traits_tracer.h  
 Lazy_circular_kernel_2.h
 Lazy_circular_kernel_constructions.h
-example_Lazy_Circular_kernel_arrangement.cpp
-example_Lazy_Circular_kernel_arrangement_Line_arc.cpp
-example_Lazy_Circular_kernel_arrangement_Line_Circular.cpp
+Lazy_Circular_kernel_arrangement.cpp
+Lazy_Circular_kernel_arrangement_Line_arc.cpp
+Lazy_Circular_kernel_arrangement_Line_Circular.cpp
 old_lazy/
 test_Lazy_circular_kernel.C
 test_Lazy_Line_arc.C
