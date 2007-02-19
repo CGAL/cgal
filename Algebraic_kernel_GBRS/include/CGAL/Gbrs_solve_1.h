@@ -69,6 +69,9 @@ Sign sign_1(const Rational_polynomial_1&,const Algebraic_1&,
 // compute the sign of the polynomial at a given mpfr
 Sign signat(const Rational_polynomial_1&,mpfr_srcptr);
 
+// refine the algebraic number, a given number of times
+int refine(Algebraic_1&,unsigned=1);
+
 // compare two algebraic numbers
 Comparison_result compare_1 (Algebraic_1 &, Algebraic_1 &);
 
