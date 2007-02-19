@@ -3897,6 +3897,9 @@ write_linker_flags()
   if [ -d "${CGAL_SRC_DIR}/CGALimageIO" ]; then
       makefile_print_continuationline "`lib_option \"CGALimageIO\"`" >> ${FILE}
   fi
+  if [ -d "${CGAL_SRC_DIR}/CGALPDB" ]; then
+      makefile_print_continuationline "`lib_option \"CGALPDB\"`" >> ${FILE}
+  fi
   for i in ${R_SUPPORT_PKGS}; do
       if [ -n "`value_of \"${i}_SUPPORT\"`" ]; then
 	  makefile_print_continuationline "\$(${i}_PKG_LDFLAGS)" >> ${FILE}
@@ -4299,6 +4302,11 @@ build_cgal()
 	    cd "${CGAL_SRC_DIR}/CGALimageIO"
 	    _do_compile libCGALimageIO static
 	    _do_compile libCGALimageIO shared 
+	fi
+        if [ -d "${CGAL_SRC_DIR}/CGALPDB" ]; then
+	    cd "${CGAL_SRC_DIR}/CGALPDB"
+	    _do_compile CGALPDB static
+	    _do_compile CGALPDB shared 
 	fi
 	if [ -d "${CGAL_SRC_DIR}/Core" -a "${PROVIDE_PKG_CORE}" = "CGALCORE" ]; then
 	    cd "${CGAL_SRC_DIR}/Core"
