@@ -39,7 +39,7 @@ on these primitives tend to be slow in practice. A common (heuristic)
 optimization approximates the geometric primitives with their
 axis-aligned bounding boxes, runs a suitable modification of the
 algorithm on the boxes, and whenever a pair of boxes has an
-interesting interaction, only then the exact answer is computed on the
+interesting interaction\footnote{Boxes represent volumes or point-sets. So, \textit{intersection} means intersection of the point-set enclosed by the box and not only intersection of the boundary, of course.}, only then the exact answer is computed on the
 complicated geometric primitives contained in the boxes.
 
 \begin{ccHtmlOnly}
