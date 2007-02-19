@@ -35,12 +35,14 @@ int main(int, char *[]) {
     typedef Traits::Kinetic_kernel::Point_2 Point;
     Traits tr(0, end_time);
     DS ds(tr);
-    for (int i=0; i< nump/1.5; ++i){
-      tr.active_points_2_table_handle()->insert(Point(rp<F>(r, r.get_int(0,5)),
-						      rp<F>(r, r.get_int(0,5))));
-    }
     std::cout << "Points are:\n";
-    std::cout << *tr.active_points_2_table_handle() << std::endl;
+
+    for (int i=0; i< nump/1.5; ++i){
+      Point pt(rp<F>(r, r.get_int(0,5)),
+	       rp<F>(r, r.get_int(0,5)));
+      std::cout << pt << std::endl;
+      tr.active_points_2_table_handle()->insert(pt);
+    }
     ds.set_has_certificates(true);
     ds.audit();
     tr.simulator_handle()->set_current_time(tr.simulator_handle()->end_time());
@@ -55,10 +57,12 @@ int main(int, char *[]) {
     typedef Traits::Kinetic_kernel::Point_1 Point;
     Traits tr(0, end_time);
     DS ds(tr);
-    for (int i=0; i< nump; ++i){
-      tr.active_points_1_table_handle()->insert(Point(rp<F>(r, r.get_int(0,5))));
-    }
     std::cout << "Points are:\n";
+    for (int i=0; i< nump; ++i){
+      Point pt(rp<F>(r, r.get_int(0,5)));
+      std::cout << pt << std::endl;
+      tr.active_points_1_table_handle()->insert(pt);
+    }
     std::cout << *tr.active_points_1_table_handle() << std::endl;
     ds.audit();
     //ds.set_has_certificates(true);
@@ -74,12 +78,14 @@ int main(int, char *[]) {
     typedef Traits::Kinetic_kernel::Point_3 Point;
     Traits tr(0, end_time);
     DS ds(tr);
-    for (int i=0; i< nump/2; ++i){
-      tr.active_points_3_table_handle()->insert(Point(rp<F>(r, r.get_int(0,5)),
-						      rp<F>(r, r.get_int(0,5)),
-						      rp<F>(r, r.get_int(0,5))));
-    }
     std::cout << "Points are:\n";
+    for (int i=0; i< nump/2; ++i){
+      Point pt(rp<F>(r, r.get_int(0,5)),
+	       rp<F>(r, r.get_int(0,5)),
+	       rp<F>(r, r.get_int(0,5)));
+      std::cout << pt << std::endl;
+      tr.active_points_3_table_handle()->insert(pt);
+    }
     std::cout << *tr.active_points_3_table_handle() << std::endl;
     ds.set_has_certificates(true);
     ds.audit();
@@ -96,13 +102,15 @@ int main(int, char *[]) {
     typedef Traits::Kinetic_kernel::Weighted_point_3 Point;
     Traits tr(0, end_time);
     DS ds(tr);
-    for (int i=0; i< nump/2.5; ++i){
-      tr.active_points_3_table_handle()->insert(Point(Bare_point(rp<F>(r, r.get_int(0,5)),
-								 rp<F>(r, r.get_int(0,5)),
-								 rp<F>(r, r.get_int(0,5))),
-						      rp<F>(r, r.get_int(0,5))));
-    }
     std::cout << "Points are:\n";
+    for (int i=0; i< nump/2.5; ++i){
+      Point pt(Bare_point(rp<F>(r, r.get_int(0,5)),
+			  rp<F>(r, r.get_int(0,5)),
+			  rp<F>(r, r.get_int(0,5))),
+	       rp<F>(r, r.get_int(0,5)));
+      std::cout << pt << std::endl;
+      tr.active_points_3_table_handle()->insert(pt);
+    }
     std::cout << *tr.active_points_3_table_handle() << std::endl;
     ds.set_has_certificates(true);
     ds.audit();
