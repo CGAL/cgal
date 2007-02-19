@@ -1391,22 +1391,22 @@ private:
       }
       else
       {
-        // phi = PI.
-        sin_phi = _zero;
-        cos_phi = -_one;
+        // phi = PI/2.
+        sin_phi = _one;
+        cos_phi = _zero;
       }
     }
     else if (sign_t == POSITIVE)
     {
       // sin(2*phi) > 0 so 0 < phi < PI/2.
-      sin_phi = nt_traits.sqrt((_one + cos_2phi) / _two);
-      cos_phi = nt_traits.sqrt((_one - cos_2phi) / _two);
+      sin_phi = nt_traits.sqrt((_one - cos_2phi) / _two);
+      cos_phi = nt_traits.sqrt((_one + cos_2phi) / _two);
     }
     else
     {
       // sin(2*phi) < 0 so PI/2 < phi < PI.
-      sin_phi = nt_traits.sqrt((_one + cos_2phi) / _two);
-      cos_phi = -nt_traits.sqrt((_one - cos_2phi) / _two);
+      sin_phi = nt_traits.sqrt((_one - cos_2phi) / _two);
+      cos_phi = -nt_traits.sqrt((_one + cos_2phi) / _two);
     }
            
     // Calculate the center (x0, y0) of the conic, given by the formulae:
