@@ -39,6 +39,9 @@
 #include <qpixmap.h>
 #include <qprinter.h>
 
+#define CGAL_LIB_NAME CGALQt
+#include "CGAL/auto_link.h"
+
 namespace CGAL {
 
 class Qt_widget_layer;

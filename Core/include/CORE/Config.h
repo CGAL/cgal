@@ -13,4 +13,9 @@
 // debug reference counting
 //#define CORE_RC_DEBUG 1
 
+#ifdef _MSC_VER
+#  define CGAL_LIB_NAME core++
+#  include "CGAL/auto_link.h"
+#endif
+
 #endif // _CORE_CONFIG_H_

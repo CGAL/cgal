@@ -1,5 +1,5 @@
 $CGAL/INSTALL.win32
-----------------------------------------------------------------------
+======================================================================
 
 This file describes how to install CGAL on MS Windows for
 Developer Studio .Net 2003 (VC 7.1) and 2005 (VC 8.0) 
@@ -15,11 +15,15 @@ For more information about CGAL, see the URL http://www.cgal.org/.
 
 
 Installation
+------------
+
 Download the Windows installer from the CGAL Download section. Run it and make
 sure you carefully read the instructions from each installation step.
 
 
 Boost
+-----
+
 CGAL needs some parts of Boost. You can download it from http://www.boost.org.
 It is enough to unzip the file. Currently only some demo programs
 in the Kinetic_data_structures directory need the compiled Boost
@@ -28,30 +32,31 @@ Alternatively you can use the Installer for Boost provided
 by Boost Consulting: http://www.boostconsulting/download.html.
 It allows you to select precompiled libraries. 
 
-
 GMP and MPFR
+------------
 
 Some examples and demos need GMP. The CGAL Installer installs
 precompiled versions of GMP 4.1.4 and MPFR 2.1.0. in the directory
-CGAL-3.2/auxiliary/gmp. 
-We compiled GMP and MPFR with the /MD option, in release mode, and we 
-didn't use processor specific assembler.
-
-
+CGAL-3.3/auxiliary/gmp. 
+We compiled GMP and MPFR, using VC7.1, with the /MD option, 
+in release mode, and we didn't use processor specific assembler.
+ 
 Qt
+--
 
 Most demos use Qt 3. You can download it from http://www.trolltech.no.
 You must build the multi-threaded version (/MD).
 
 
 TAUCS
+-----
 
 Only examples in the Surface_mesh_parameterization directory need TAUCS.
 
 The CGAL Installer installs a precompiled version of TAUCS in the
-directory CGAL-3.2/auxiliary/taucs. We compiled TAUCS with the /MD option and 
+directory CGAL-3.2/auxiliary/taucs. We compiled TAUCS using VC7.1 with the /MD option and 
 linked with the ATLAS library.
-The ATLAS library provides BLAS . It is precompiled with the /MD option 
+The ATLAS library provides BLAS . It is precompiled using VC7.1 with the /MD option 
 and optimized for a Pentium 4 processor with SSE2 instructions. 
 If ATLAS is slow or crashes on your machine, please recompile it. Source code 
 can be downloaded from the official site http://math-atlas.sourceforge.net 
@@ -70,16 +75,84 @@ with the /MD option and the appropriate Blas library.
 
 
 Zlib
+----
 
 Currently only demo programs in the Surface_mesher directory need Zlib.
-The CGAL Installer comes with Zlib precompiled.
+The CGAL Installer comes with Zlib precompiled for VC7.1.
 
+
+Building the Library
+--------------------
+
+We currently support both Visual Studio 2003 (VC71) and Visual Studio 2005 (VC80).
+There are two variants of all project files, named with _71 and _80 suffixes.
+For example, for building the CGAL library, there is cgal_70.vcproj and cgal_80.vcproj
+(instead of just cgal.vcproj as in version 3.2.1 and before).
+The _80.vcproj is specific to VC80 (or higher) and cannot be used with VS 2003 (VC7.1).
+
+Furthermore, an auto-link feature, quite similar to that used in the boost libraries,
+exists now for Visual Studio users.
+
+This feature allows you to simply include a header from CGAL and let the compiler
+automatically decide which CGAL library to link against, based on the current
+compiler version (such as VC7.1 or VC8.0) and configuration (multi-threaded, debug, etc).
+
+For that feature to work, the names of the CGAL libraries must follow a convention
+that reflects the compiler and configuration variants.
+
+Thus, while in previous versions of CGAL you could build "CGAL.lib" and link against it,
+starting from this version you build different variants with names like 
+"cgal-vc71-mt-sgd.lib" and such.
+
+Each project file contains one configuration for each supported variant.
+Each configuration specifies an output name which encodes the properties of the variant
+as follows:
+
+BASENAME-COMPIER(-MT)(-CRT).lib
+
+where
+
+BASENAME is one of 'cgal','cgalqt' or 'core++'
+
+COMPILER is 'vc71' or 'vc80'
+
+(-MT) is '-mt' if the library was built with multi-threading support, empty otherwise.
+  (In VC80, the only choice is MT enabled, so all libs have -mt in the name)
+
+(-CRT) encodes the runtime library (CRT) used, as follows:
+   '-s'   : a static version of the CRT is used.
+   '-sgd' : a static and debug version of the CRT is used. Also, the lib is built with debug information enabled.
+   '-gd'  : a dynamic and debug version of the CRT is used (a DLL). Also, the lib is built with debug information enabled.
+   '' (empty) : a dynamic version of the CRT is used (a DLL). There is no debug information (neither in the lib nor the CRT used).
+   
+There isn't any configuration mixing a debug CRT with a release library or viceversa.
+
+If you want to rebuild the CGAL library you should go into the CGALROOT/src/CGAL directory
+and open cgallib_71.vcproj or cgallib_80.vcproj using the appropriate version of Developer Studio.
+Select the desired configuration, go to the "Build" menubar and press on "Rebuild Solution".
+The CGAL library will be created in CGALROOT/lib/ with a name corresponding to the
+configuration selected (as explained above).
+If you want to build all variants at once, go to BatchBuild, select all, and click on Rebuild.
+
+NOTE: In previous versions, CGAL.lib was created in CGALROOT/lib/msvc7/, while in this
+version all variants are created in CGALROOT/lib/
 
 Paths for Header Files and Libraries
+------------------------------------
 
-The individual project files do not specify where the header
-files from Boost, GMP/MPFR, Qt, TAUCS, Zlib etc. are located.  You must add
-these paths for Developer Studio in Tools->Options->Projects->VC++Directories
+The individual project files (for the libraries, demos and examples) 
+containe the following in the include path:
+
+$(BOOSTROOT);$(GMP_INC_VC71);$(MPFR_INC_VC71)
+
+( or _VC80 depending on the variation of .vcproj)
+
+Demos that depend on Qt have $(QTDIR)/include.
+
+You must set those enviroment variables appropriately.
+
+For other third party libraries, such as TAUCS, Zlib etc you must add
+the corresponding paths for Developer Studio in Tools->Options->Projects->VC++Directories
 in the tab "Show Directories" for "Include Files" and "Library Files".
 The CGAL Installer tries to write the paths in a .net 2003 (VC 7.1) configuration 
 file.  If it does not succeed it shows a warning that you have to add it.
@@ -87,36 +160,28 @@ file.  If it does not succeed it shows a warning that you have to add it.
 If you intend to use VC++ from a MS-DOS Prompt Shell, add the same paths
 to the %INCLUDE% and %LIB% environment variables.
 
-
-Building the Library
-
-The CGAL.lib is already precompiled for .net 2003 (VC 7.1) and located in
-CGALROOT/lib/msvc7/CGAL.lib.  It is built using the /MD compiler
-option. If you want to rebuild CGAL.lib you should go into the
-CGALROOT/src/CGAL directory and open cgallib.vcproj using Developer
-Studio. Go to the "Build" menubar and press on "Rebuild Solution".
-The CGAL library will be created in CGALROOT/lib/msvc7/ as CGAL.lib.
-
-
 Building the Demos
+------------------
 
 The demos come in CGALROOT/demo directory. Each demo directory contains the
 VC++ .NET project files. To build one demo you should open one of those files.
 The demos need Qt installed. The projects are configured for commercial users.
 The libraries that are used are qt-mt.lib and qtmain.lib, and you should change
 manually those settings if you have a different version of Qt or you have
-built Qt with single thread support. All the demos use also the CGALQt.lib that
-represents the Qt_widget library also developed in the CGAL project.
+built Qt with single thread support. All the demos use also the cgalqt-***.lib
+that represents the Qt_widget library also developed in the CGAL project.
+(where *** depends on the configuration as explained above).
 
 
 Running the Examples and Demos
+------------------------------
 
 The corresponding executable(s) then can be run as usual, from the
 command prompt, or via Explorer.
 
+Building user projects that use CGAL
+------------------------------------
 
-NOTE for VC 2005 Users
+The simplest way to create a project that uses CGAL is to take some demo .vcproj (for VC7.1 or VC80)
+and start from there. Alternatively, you can create the project file from scratch.
 
-This product can convert the project files of .net 2003 (VC 7.1). CGAL provides only
-project files for .net 2003 (VC 7.1) because you should convert them without problems
-using the new product. The other way around is not possible.

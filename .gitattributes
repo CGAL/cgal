@@ -450,8 +450,8 @@ Convex_hull_2/doc_tex/Convex_hull_2/saarhull.eps -text svneol=unset#application/
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.gif -text svneol=unset#image/gif
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.pdf -text svneol=unset#application/pdf
 Convex_hull_2/examples/Convex_hull_2/ch_example_timing.cmd eol=lf
-Core/src/Core/Core.sln eol=crlf
-Core/src/Core/Core.vcproj eol=crlf
+Core/src/Core/Core_71.vcproj -text
+Core/src/Core/Core_80.vcproj -text
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_ipoint.gif -text svneol=unset#image/gif
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_orientation.gif -text svneol=unset#image/gif
 Developers_manual/doc_tex/Developers_manual/fig/Object.eps -text svneol=unset#application/postscript
@@ -1786,8 +1786,8 @@ Qt_widget/doc_tex/Qt_widget/standard_toolbar.png -text svneol=unset#image/png
 Qt_widget/doc_tex/Qt_widget/triangulation.eps -text svneol=unset#application/postscript
 Qt_widget/doc_tex/Qt_widget/triangulation.gif -text svneol=unset#image/gif
 Qt_widget/doc_tex/Qt_widget/triangulation.pdf -text svneol=unset#application/pdf
-Qt_widget/src/CGALQt/CGALQt.sln eol=crlf
-Qt_widget/src/CGALQt/CGALQt.vcproj eol=crlf
+Qt_widget/src/CGALQt/CGALQt_71.vcproj -text
+Qt_widget/src/CGALQt/CGALQt_80.vcproj -text
 Ridges_3/doc_tex/Ridges_3/david_crest.eps -text svneol=unset#application/postscript
 Ridges_3/doc_tex/Ridges_3/david_crest.png -text svneol=unset#image/png
 Ridges_3/doc_tex/Ridges_3/david_crest_small.png -text svneol=unset#image/png
@@ -2556,10 +2556,15 @@ iostream/test/iostream/data/io.cin -text
 window/test/WindowStream/manual_example_ps.cmd eol=lf
 window/test/WindowStream/test_window_stream_xy_3.cmd eol=lf
 wininst/cgal_config.bat eol=crlf
-wininst/developer_scripts/examples/master.dsp eol=crlf
-wininst/developer_scripts/examples/master.dsw eol=crlf
-wininst/developer_scripts/examples/master.vcproj eol=crlf
-wininst/src/CGAL/cgallib.vcproj eol=crlf
+wininst/developer_scripts/examples/master_71.vcproj -text
+wininst/developer_scripts/examples/master_80.vcproj -text
+wininst/include/CGAL/config/msvc/CGAL/auto_link.h -text
+wininst/include/CGAL/config/msvc/CGAL/cl_1310.h -text
+wininst/include/CGAL/config/msvc/CGAL/cl_1400.h -text
+wininst/include/CGAL/config/msvc/CGAL/compiler_config.h -text
+wininst/include/CGAL/config/msvc/CGAL/icl_8_1.h -text
+wininst/src/CGAL/cgallib_71.vcproj -text
+wininst/src/CGAL/cgallib_80.vcproj -text
 wininst/winutils/make/bcc/leda/demo.bat eol=crlf
 wininst/winutils/make/bcc/leda/ex.bat eol=crlf
 wininst/winutils/make/bcc/noleda/demo.bat eol=crlf

@@ -1,3 +1,26 @@
+15 February 2006 Fernando Cacciola
+- The following .vcproj files have been replaced by *_71.vcproj and *_VC80.vcproj:
+    master.vcproj, cgalib.vcproj, CORE.vcproj and CGALQt.vcproj
+  (the old project files were removed).
+- When built via the new VC project files, CGAL.lib, core++.lib and CGALQt.lib
+  are now generated with names indicating the compiler version and configuration,
+  in the same way boost libraries are named (for example, cgal-mt-s.lib)
+- Folder "wininst/include/CGAL/config/msvc7/CGAL" renamed as "wininst/include/CGAL/config/msvc/CGAL"
+- New file cl_1400.h (for VC8.0) added into "config/msvc/CGAL". 
+- New file auto_link.h added into "config/msvc/CGAL". 
+- File compiler_config.h edited to include cl_1400.h in case of VC8, and to
+  include auto_link.h to enable the new auto link feature (which automatically
+  intructs the compiler to link to the correct library based on the current
+  compiler and configuration)  
+- C2vcproj edited to produced the new _70.vcproj and _80.vcproj versions.
+- C2vcproj fixed to add files named "xyz.cpp" as "xyz.cpp" instead of "xyz.C"
+  (note: mpfr.lib is no longer in master.vcproj eevn though the change log for
+   29 sep 2004 says it was added)
+- File CORE/Config.h edited to include auto_link.h and enable auto-linking
+  for the core++ library variants.
+- File IO/Qt_widget.h edited to include auto_link.h and enable auto-linking
+  for the cgalqt library variants.  
+   
 13 March 2006 andreas Fabri
 - Removed directory lib/msvc7
 
