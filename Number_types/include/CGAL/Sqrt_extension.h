@@ -35,8 +35,7 @@
 #include <boost/type_traits/is_same.hpp>
 #include <boost/numeric/interval.hpp> // Needed by To_interval
 
-// FIXME: isnt boost::transform called below?
-//#include <boost/iterator/transform_iterator.hpp>
+#include <boost/iterator/transform_iterator.hpp>
 #include <boost/mpl/if.hpp>
 
 // We have to define the macros befor including Polynomials, 
