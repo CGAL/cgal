@@ -145,7 +145,7 @@ containe the following in the include path:
 
 $(BOOSTROOT);$(GMP_INC_VC71);$(MPFR_INC_VC71)
 
-( or _VC80 depending on the variation of .vcproj)
+( or _VC80 depending on the version of .vcproj used)
 
 Demos that depend on Qt have $(QTDIR)/include.
 
@@ -182,6 +182,14 @@ command prompt, or via Explorer.
 Building user projects that use CGAL
 ------------------------------------
 
-The simplest way to create a project that uses CGAL is to take some demo .vcproj (for VC7.1 or VC80)
-and start from there. Alternatively, you can create the project file from scratch.
+The simplest way to create a project that uses CGAL is to take some demo .vcproj
+(for VC7.1 or VC80) and start from there. Alternatively, you can create 
+the project file from scratch. Make sure to add "<CGALROOT>/include/CGAL/config/msvc" 
+in the include path BEFORE "<CGALROOT>/include" to make sure the proper compiler
+settings are loaded.
+Since auto-linking is used, there is no need to specify any library, just add 
+"<CGALROOT>/lib" to the linker path.
+
+NOTE: Before version 3.3, the include path had "msvc7" instead of "msvc" as the leaf
+folder. Likewise, the libraries where located at "/lib/msvc7" instead of just "/lib".
 

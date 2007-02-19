@@ -27,12 +27,12 @@
 #    error Unsupported version of VC++
 #  else
 #    ifdef __ICL
-#      include "icl_8_1.h"
+#      include "CGAL/icl_8_1.h"
 #    else 
 #      if _MSC_VER == 1310
-#        include "cl_1310.h"
+#        include "CGAL/cl_1310.h"
 #      else
-#        include "cl_1400.h"
+#        include "CGAL/cl_1400.h"
 #      endif
 #    endif
 #  endif
