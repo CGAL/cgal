@@ -575,7 +575,7 @@ public:
     Point_key k= vh->point();
     vh->info()= Event_key();
     typename Triangulation::Cell_handle h= kdel_.pop_vertex(vh);
-
+    CGAL_precondition(redundant_points_[k]==Event_key());
     handle_redundant(k, h, rs);
     /*if (!success) {
       std::cerr << "dropped a vertex when popped.\n";
@@ -606,6 +606,7 @@ public:
       //insert(k, neighbor);
       push(k, h, rs);
     } else {
+      CGAL_precondition(redundant_points_[k]==Event_key());
       handle_redundant(k, neighbor);
     }
     kdel_.visitor().post_move(k,neighbor);
@@ -633,6 +634,7 @@ public:
       typename Triangulation::Cell_handle h= get_cell_handle(k);
       kdel_.simulator()->delete_event(redundant_points_[k]);
       redundant_points_.erase(k);
+      CGAL_precondition(redundant_points_[k]==Event_key());
       handle_redundant(k, h);
     }
   }
@@ -650,6 +652,7 @@ public:
       if (h==Cell_handle()) {
 	h= triangulation().locate(k);
       }
+      CGAL_precondition(redundant_points_[k]==Event_key());
       handle_redundant(k,h);
     } else if (kdel_.has_certificates() && kdel_.is_degree_4(vh)){
       handle_vertex(vh); 
@@ -691,6 +694,7 @@ public:
 	for (typename RCMap::iterator it= redundant_cells_.begin(); it != redundant_cells_.end(); ++it) {
 	  CGAL_KINETIC_LOG(LOG_LOTS, "On init " << it->second << " is redundant" << std::endl);
 	  typename Triangulation::Cell_handle h= it->first;
+	  CGAL_precondition(redundant_points_[it->second]==Event_key());
 	  handle_redundant(it->second, it->first);
 	}
       } else {
@@ -912,6 +916,7 @@ protected:
     CGAL_KINETIC_LOG_WRITE(LOG_LOTS, internal::write_cell( h, LOG_STREAM));
     CGAL_KINETIC_LOG(LOG_LOTS, std::endl);
     if (orientation(k,h) != CGAL::NEGATIVE) {
+      CGAL_precondition(redundant_points_[k]==Event_key());
       handle_redundant(k,h);
       return true;
     } else {
