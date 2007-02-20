@@ -1,0 +1,56 @@
+#!/usr/bin/ruby
+
+doxy_xml_filename=ARGV[0];
+tex_xml_filename=ARGV[1];
+
+require 'xml/libxml'
+doxy_doc = XML::Document.file(doxy_xml_filename)
+tex_doc  = XML::Document.file(tex_xml_filename)
+
+def get_xpath_content( node, xpath )
+  return node.find( xpath ).to_a.first.to_s
+end
+
+def list_members( compound, kind )
+  puts "members of kind #{kind}:"
+  compound.find("sectiondef[@kind=\'#{kind}\']/memberdef").each do |memberdef|
+    membertype=get_xpath_content(memberdef,'type')
+    membername=get_xpath_content(memberdef,'name')
+    location=memberdef.find('location').to_a.first
+    lineno=location["line"]
+    filename=location["file"]
+    puts "  member: #{membername} \ttype: #{membertype} \tline: #{lineno}" # file: #{filename}"
+  end
+end
+
+def list_all_compounds( doxy )
+  doxy.find('/doxygen/compounddef[@kind=\'class\' or @kind=\'struct\']').each do |compound|
+    compoundname=get_xpath_content(compound,'compoundname')
+    location=compound.find('location').to_a.first
+    lineno=location["line"]
+    filename=location["file"]
+    puts "compound idfier: #{compoundname} kind: #{compound['kind']}" # line: #{lineno} file: #{filename}"
+    list_members(compound, 'public-type')
+    list_members(compound, 'public-func')
+  end
+end
+
+def list_all_refpages( tex )
+  tex.find('/manual_tools_output/package').each do |package|
+    puts "package: #{package['id']}"
+    package.find('refpage').each do |refpage|
+      scope=get_xpath_content(refpage,'globalscope')
+      puts "  refpage id: #{refpage['id']} scope: #{scope}"
+      refpage.find('item').each do |item|
+        name=get_xpath_content(item,'name')
+        comment=get_xpath_content(item,'comment')
+        puts "    item name: #{name}"
+        puts "    item comment: #{comment}"
+      end
+    end
+  end
+end
+
+#list_all_compounds( doxy_doc )
+
+list_all_refpages( tex_doc )
