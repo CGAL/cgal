@@ -97,8 +97,8 @@ public:
 	Algebraic_1 (long int);
 	Algebraic_1 (unsigned long int);
 	Algebraic_1 (double);
-	Algebraic_1 (const mpz_t &);
-	Algebraic_1 (const mpq_t &);
+	Algebraic_1(mpz_srcptr);
+	Algebraic_1(mpq_srcptr);
 	Algebraic_1 (const CGAL::Gmpq &);
 	Algebraic_1 (const CGAL::Gmpz &);
 
@@ -108,19 +108,19 @@ public:
 	Algebraic_1 (long int, long int);
 	Algebraic_1 (unsigned long int, unsigned long int);
 	Algebraic_1 (double, double);
-	Algebraic_1 (const mpz_t &, const mpz_t &);
-	Algebraic_1 (const mpq_t &, const mpq_t &);
+	Algebraic_1(mpz_srcptr,mpz_srcptr);
+	Algebraic_1(mpq_srcptr,mpq_srcptr);
 	Algebraic_1 (const CGAL::Gmpq &, const CGAL::Gmpq &);
 	Algebraic_1 (const CGAL::Gmpz &, const CGAL::Gmpz &);
 	Algebraic_1 (mpfi_srcptr);
 
 	// the only interesting constructor
-	Algebraic_1(const mpfi_ptr&,Rational_polynomial_1&,
+	Algebraic_1(mpfi_srcptr,Rational_polynomial_1&,
 			const int, const int, const int);
 
 	Algebraic_1& operator= (const long int);
-	Algebraic_1& operator= (const mpz_t &);
-	Algebraic_1& operator= (const mpq_t &);
+	Algebraic_1& operator=(mpz_srcptr);
+	Algebraic_1& operator=(mpq_srcptr);
 	Algebraic_1& operator= (const CGAL::Gmpz &);
 	Algebraic_1& operator= (const CGAL::Gmpq &);
 
@@ -146,16 +146,16 @@ public:
 	void set_rsprec (const int);
 	void set_prec (mp_prec_t);
 	mp_prec_t get_prec()const;
-	void get_left (mpfr_t &) const;
-	void get_right (mpfr_t &) const;
-	void get_endpoints (mpfr_t &, mpfr_t &) const;
+	void get_left(mpfr_ptr)const;
+	void get_right(mpfr_ptr)const;
+	void get_endpoints(mpfr_ptr,mpfr_ptr)const;
 	bool is_consistent () const;
 	bool is_point () const;	// are endpoints equal?
 	bool overlaps(const Algebraic_1&)const;
 	bool contains (const int n) const;
-	bool contains (const mpfr_t &n) const;
-	bool contains (const mpz_t &n) const;
-	bool contains (const mpq_t &n) const;
+	bool contains(mpfr_srcptr)const;
+	bool contains(mpz_srcptr) const;
+	bool contains(mpq_srcptr) const;
 	bool contains (const Gmpz &n) const;
 	bool contains (const Gmpq &n) const;
 
@@ -249,45 +249,45 @@ public:
 	// 10
 	// (the other comparison cases for mp[zq]_t should be covered by the
 	// template functions)
-	bool operator< (const mpz_t &) const;
-	bool operator> (const mpz_t &) const;
-	bool operator< (const mpq_t &) const;
-	bool operator> (const mpq_t &) const;
+	bool operator<(mpz_srcptr)const;
+	bool operator>(mpz_srcptr)const;
+	bool operator<(mpq_srcptr)const;
+	bool operator>(mpq_srcptr)const;
 	//--------------------------------------------------
-	// Algebraic_1 operator+ (const mpz_t &) const;
-	// Algebraic_1 operator- (const mpz_t &) const;
-	// Algebraic_1 operator* (const mpz_t &) const;
+	// Algebraic_1 operator+(mpz_srcptr)const;
+	// Algebraic_1 operator-(mpz_srcptr)const;
+	// Algebraic_1 operator*(mpz_srcptr)const;
 	//-------------------------------------------------- 
-	Algebraic_1& operator+= (const mpz_t &);
-	Algebraic_1& operator-= (const mpz_t &);
-	Algebraic_1& operator*= (const mpz_t &);
+	Algebraic_1& operator+=(mpz_srcptr);
+	Algebraic_1& operator-=(mpz_srcptr);
+	Algebraic_1& operator*=(mpz_srcptr);
 	//--------------------------------------------------
-	// Algebraic_1 operator+ (const mpq_t &) const;
-	// Algebraic_1 operator- (const mpq_t &) const;
-	// Algebraic_1 operator* (const mpq_t &) const;
+	// Algebraic_1 operator+(mpq_srcptr)const;
+	// Algebraic_1 operator-(mpq_srcptr)const;
+	// Algebraic_1 operator*(mpq_srcptr)const;
 	//-------------------------------------------------- 
-	Algebraic_1& operator+= (const mpq_t &);
-	Algebraic_1& operator-= (const mpq_t &);
-	Algebraic_1& operator*= (const mpq_t &);
+	Algebraic_1& operator+=(mpq_srcptr);
+	Algebraic_1& operator-=(mpq_srcptr);
+	Algebraic_1& operator*=(mpq_srcptr);
 
 	// 11
-	Algebraic_1 (const mpfr_t &);	// constructor I
-	Algebraic_1 (const mpfr_t &, const mpfr_t &);	// constructor II
-	Algebraic_1& operator= (const mpfr_t &);	// assigning
+	Algebraic_1(mpfr_srcptr);	// constructor I
+	Algebraic_1(mpfr_srcptr,mpfr_srcptr);	// constructor II
+	Algebraic_1& operator=(mpfr_srcptr);	// assigning
 	// comparison (previous template definitions should work with mpfr_t)
-	bool operator< (const mpfr_t &) const;
-	bool operator> (const mpfr_t &) const;
+	bool operator<(mpfr_srcptr)const;
+	bool operator>(mpfr_srcptr)const;
 	// arithmetics
 	//--------------------------------------------------
-	// Algebraic_1 operator+ (const mpfr_t &) const;
-	// Algebraic_1 operator- (const mpfr_t &) const;
-	// Algebraic_1 operator* (const mpfr_t &) const;
-	// Algebraic_1 operator/ (const mpfr_t &) const;
+	// Algebraic_1 operator+(mpfr_t &)const;
+	// Algebraic_1 operator-(mpfr_t &)const;
+	// Algebraic_1 operator*(mpfr_t &)const;
+	// Algebraic_1 operator/(mpfr_t &)const;
 	//-------------------------------------------------- 
-	Algebraic_1& operator+= (const mpfr_t &);
-	Algebraic_1& operator-= (const mpfr_t &);
-	Algebraic_1& operator*= (const mpfr_t &);
-	Algebraic_1& operator/= (const mpfr_t &);
+	Algebraic_1& operator+=(mpfr_srcptr);
+	Algebraic_1& operator-=(mpfr_srcptr);
+	Algebraic_1& operator*=(mpfr_srcptr);
+	Algebraic_1& operator/=(mpfr_srcptr);
 };
 
 // //////////////////////////
@@ -317,8 +317,8 @@ inline void Algebraic_1::set_mult(const int m){ptr()->mult=m;};
 inline void Algebraic_1::set_rsprec(const int p){ptr()->rsprec=p;};
 inline void Algebraic_1::set_prec(mp_prec_t p){mpfi_round_prec(mpfi(),p);};
 inline mp_prec_t Algebraic_1::get_prec()const{return mpfi_get_prec(mpfi());};
-inline void Algebraic_1::get_left(mpfr_t &f)const{mpfi_get_left(f,mpfi());};
-inline void Algebraic_1::get_right(mpfr_t &f)const{mpfi_get_right(f,mpfi());};
+inline void Algebraic_1::get_left(mpfr_ptr f)const{mpfi_get_left(f,mpfi());};
+inline void Algebraic_1::get_right(mpfr_ptr f)const{mpfi_get_right(f,mpfi());};
 inline bool Algebraic_1::is_consistent()const{
 	return(&pol()==NULL?false:true);};
 inline bool Algebraic_1::is_point()const{
@@ -326,13 +326,13 @@ inline bool Algebraic_1::is_point()const{
 inline bool Algebraic_1::contains(const int n)const{
 	return((mpfr_cmp_si(&(mpfi()->left),n)<=0)&&
 			(mpfr_cmp_si(&(mpfi()->right),n)>=0));};
-inline bool Algebraic_1::contains(const mpfr_t &n)const{
+inline bool Algebraic_1::contains(mpfr_srcptr n)const{
 	return((mpfr_lessequal_p(&(mpfi()->left),n))&&
 			(mpfr_greaterequal_p(&(mpfi()->right),n)));};
-inline bool Algebraic_1::contains(const mpz_t &n)const{
+inline bool Algebraic_1::contains(mpz_srcptr n)const{
 	return((mpfr_cmp_z(&(mpfi()->left),n)<=0)&&
 			(mpfr_cmp_z(&(mpfi()->right),n)>=0));};
-inline bool Algebraic_1::contains(const mpq_t &n)const{
+inline bool Algebraic_1::contains(mpq_srcptr n)const{
 	return((mpfr_cmp_q(&(mpfi()->left),n)<=0)&&
 			(mpfr_cmp_q(&(mpfi()->right),n)>=0));};
 inline bool Algebraic_1::contains(const Gmpz &n)const{

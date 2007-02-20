@@ -255,7 +255,7 @@ int refine(Algebraic_1 &a,unsigned n){
 	mpfr_init2(center,MPFR_PREC_MIN);
 	pl=mpfr_get_prec(&(a.mpfi()->left));
 	pr=mpfr_get_prec(&(a.mpfi()->right));
-	for(int i=0;i<n;++i){
+	for(unsigned i=0;i<n;++i){
 		pc=pl<pr?pr+1:pl+1;
 		mpfr_set_prec(center,pc);
 		mpfr_add(center,&(a.mpfi()->left),&(a.mpfi()->right),GMP_RNDN);

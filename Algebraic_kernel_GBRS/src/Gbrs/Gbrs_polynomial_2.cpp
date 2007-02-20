@@ -241,8 +241,8 @@ Rational_polynomial_2::operator+(const Rational_polynomial_2 &s)const{
 
 // multiplies the polynomial by scale * x^shift_x * y^shift_y
 // (preconditions: shift_[xy] >= 0)
-/*Rational_polynomial_2& Rational_polynomial_2::scale_and_shift(mpz_t &scale,
-		int shift_x,int shift_y){
+/*Rational_polynomial_2& Rational_polynomial_2::scale_and_shift
+(mpz_srcptr scale, int shift_x,int shift_y){
 	int i,j;
 	degree_x+=shift_x;
 	degree_y+=shift_y;
@@ -409,7 +409,7 @@ Rational_polynomial_2& Rational_polynomial_2::operator*=
 	return (*this=aux*f);
 };
 
-Rational_polynomial_2& Rational_polynomial_2::operator*=(const mpz_t &s){
+Rational_polynomial_2& Rational_polynomial_2::operator*=(mpz_srcptr s){
 	for(int i=0;i<degree_x+1;++i)
 		for(int j=0;j<degree_y+1;++j)
 			mpz_mul(coef[i][j],coef[i][j],s);

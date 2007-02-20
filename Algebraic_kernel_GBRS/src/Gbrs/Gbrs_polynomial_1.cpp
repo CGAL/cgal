@@ -82,7 +82,7 @@ Rational_polynomial_1::Rational_polynomial_1(int d):solved(false){
 };
 
 // construct a polynomial whose root is the given rational
-Rational_polynomial_1::Rational_polynomial_1(const mpq_t &r){
+Rational_polynomial_1::Rational_polynomial_1(mpq_srcptr r){
 	degree=1;
 	coef=(mpz_t*)malloc(sizeof(mpz_t)*2);
 	mpz_init(coef[0]);
@@ -154,7 +154,7 @@ CGAL::Gmpz Rational_polynomial_1::eval(const CGAL::Gmpz &x)const{
 };
 
 void Rational_polynomial_1::eval_mpfr
-(mpfr_t &result,const mpfr_t &x,mp_prec_t prec)const{
+(mpfr_ptr result,mpfr_srcptr x,mp_prec_t prec)const{
 	mpfr_t x_pow,temp;
 	mp_prec_t prec_r=mpfr_get_prec(result);
 	mpfr_inits2(prec<prec_r?prec_r:prec,x_pow,temp,NULL);
@@ -269,7 +269,7 @@ Rational_polynomial_1 Rational_polynomial_1::operator+ (const Rational_polynomia
 	mpz_init (temp2);
 
 	for (int i=0; i<=minord; ++i) {
-		s.get_coef (i, &temp1);
+		s.get_coef(i,temp1);
 		mpz_add(temp2,temp1,coef[i]);
 		sum.set_coef (i, temp2);
 	}
@@ -281,7 +281,7 @@ Rational_polynomial_1 Rational_polynomial_1::operator+ (const Rational_polynomia
 			sum.set_coef(i,coef[i]);
 	else
 		for (int i=minord+1; i<=majord; ++i) {
-			s.get_coef (i, &temp2);
+			s.get_coef(i,temp2);
 			sum.set_coef (i, temp2);
 		}
 
@@ -325,7 +325,7 @@ Rational_polynomial_1& Rational_polynomial_1::operator-= (const Rational_polynom
 };
 
 // multiplies the polynomial by c*x^shiftn
-/*Rational_polynomial_1& Rational_polynomial_1::scale_and_shift(const mpz_t &s,int shiftn){
+/*Rational_polynomial_1& Rational_polynomial_1::scale_and_shift(mpz_srcptr s,int shiftn){
 	mpz_t *new_coef=(mpz_t*)malloc(sizeof(mpz_t)*(degree+shiftn+1));
 	for (int i=0;i<degree+1;++i){
 		mpz_mul(coef[i],coef[i],s);
@@ -375,7 +375,7 @@ Rational_polynomial_1& Rational_polynomial_1::operator*= (const Rational_polynom
 	return *this;
 };
 
-Rational_polynomial_1& Rational_polynomial_1::operator*=(const mpz_t &s){
+Rational_polynomial_1& Rational_polynomial_1::operator*=(mpz_srcptr s){
 	for(int i=0;i<=degree;++i)
 		mpz_mul(coef[i],coef[i],s);
 	return *this;

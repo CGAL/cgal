@@ -63,8 +63,8 @@ class Rational_polynomial_2 {
 		int get_degree_x () const;
 		int get_degree_y () const;
 		mpz_t** get_coefs()const;
-		void get_coef(int,int,mpz_t*)const;
-		void set_coef (int, int, const mpz_t &);
+		void get_coef(int,int,mpz_ptr)const;
+		void set_coef(int,int,mpz_srcptr);
 		void set_coef (int, int, const CGAL::Gmpz &);
 		void set_coef (int, int, int);
 		void set_coef (int, int, unsigned int);
@@ -79,11 +79,11 @@ class Rational_polynomial_2 {
 			(const Rational_polynomial_2&)const;
 		Rational_polynomial_2& operator-=
 			(const Rational_polynomial_2&);
-		/*Rational_polynomial_2& scale_and_shift(mpz_t&,int,int);*/
+		/*Rational_polynomial_2& scale_and_shift(mpz_srcptr,int,int);*/
 		Rational_polynomial_2
 			operator*(const Rational_polynomial_2&)const;
 		Rational_polynomial_2& operator*=(const Rational_polynomial_2&);
-		Rational_polynomial_2& operator*=(const mpz_t&);
+		Rational_polynomial_2& operator*=(mpz_srcptr);
 		Rational_polynomial_2& operator*=(const CGAL::Gmpz&);
 		template<class T>Rational_polynomial_2& operator*=(const T&);
 		template<class T>Rational_polynomial_2 operator*(const T&)const;
@@ -102,9 +102,9 @@ Rational_polynomial_2 operator*(const T&,const Rational_polynomial_2&);
 inline int Rational_polynomial_2::get_degree_x()const{return degree_x;};
 inline int Rational_polynomial_2::get_degree_y()const{return degree_y;};
 inline mpz_t** Rational_polynomial_2::get_coefs()const{return coef;};
-inline void Rational_polynomial_2::get_coef(int pow_x,int pow_y,mpz_t *c)const{
-	mpz_set(*c,coef[pow_x][pow_y]);};
-inline void Rational_polynomial_2::set_coef(int pow_x,int pow_y,const mpz_t &z){
+inline void Rational_polynomial_2::get_coef(int pow_x,int pow_y,mpz_ptr c)const{
+	mpz_set(c,coef[pow_x][pow_y]);};
+inline void Rational_polynomial_2::set_coef(int pow_x,int pow_y,mpz_srcptr z){
 	mpz_set(coef[pow_x][pow_y],z);};
 inline void Rational_polynomial_2::set_coef(int pow_x,int pow_y,
 		const CGAL::Gmpz &z){mpz_set(coef[pow_x][pow_y],z.mpz());};

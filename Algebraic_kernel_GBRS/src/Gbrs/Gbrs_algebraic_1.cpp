@@ -157,7 +157,7 @@ Algebraic_1::Algebraic_1(double d){
 	set_nr(0);
 };
 
-Algebraic_1::Algebraic_1(const mpz_t &z){
+Algebraic_1::Algebraic_1(mpz_srcptr z){
 	mpq_t temp;
 	mpfi_set_z(mpfi(),z);
 	mpq_init(temp);
@@ -168,7 +168,7 @@ Algebraic_1::Algebraic_1(const mpz_t &z){
 	set_nr(0);
 };
 
-Algebraic_1::Algebraic_1(const mpq_t &q){
+Algebraic_1::Algebraic_1(mpq_srcptr q){
 	mpfi_set_q(mpfi(),q);
 	Rational_polynomial_1 *p=new Rational_polynomial_1(q);
 	set_pol(*p);
@@ -214,11 +214,11 @@ Algebraic_1::Algebraic_1 (double l, double r) {
 	mpfi_interv_d (mpfi (), l, r);
 };
 
-Algebraic_1::Algebraic_1 (const mpz_t &l, const mpz_t &r) {
+Algebraic_1::Algebraic_1(mpz_srcptr l,mpz_srcptr r){
 	mpfi_interv_z (mpfi (), l, r);
 };
 
-Algebraic_1::Algebraic_1 (const mpq_t &l, const mpq_t &r) {
+Algebraic_1::Algebraic_1(mpq_srcptr l,mpq_srcptr r){
 	mpfi_interv_q (mpfi (), l, r);
 };
 
@@ -233,7 +233,7 @@ Algebraic_1::Algebraic_1 (const CGAL::Gmpq &l, const CGAL::Gmpq &r) {
 inline Algebraic_1::Algebraic_1 (mpfi_srcptr i) {set_mpfi(i);};
 
 // interesting constructor
-Algebraic_1::Algebraic_1(const mpfi_ptr &i,Rational_polynomial_1 &p,
+Algebraic_1::Algebraic_1(mpfi_srcptr i,Rational_polynomial_1 &p,
 		const int n,const int m,const int rsp){
 	set_mpfi_ptr(i);
 	set_pol(p);
@@ -248,7 +248,7 @@ Algebraic_1::Algebraic_1(const mpfi_ptr &i,Rational_polynomial_1 &p,
 Algebraic_1::~Algebraic_1 () {};
 */
 
-void Algebraic_1::get_endpoints(mpfr_t &l,mpfr_t &r)const{
+void Algebraic_1::get_endpoints(mpfr_ptr l,mpfr_ptr r)const{
 	mpfi_get_left(l,mpfi());
 	mpfi_get_right(r,mpfi());
 };
@@ -272,7 +272,7 @@ Algebraic_1& Algebraic_1::operator=(const long int i){
 	return *this;
 };
 
-Algebraic_1& Algebraic_1::operator=(const mpz_t &z){
+Algebraic_1& Algebraic_1::operator=(mpz_srcptr z){
 	mpq_t temp;
 	mpfi_set_z(mpfi(),z);
 	mpq_init(temp);
@@ -283,7 +283,7 @@ Algebraic_1& Algebraic_1::operator=(const mpz_t &z){
 	return *this;
 };
 
-Algebraic_1& Algebraic_1::operator=(const mpq_t &q){
+Algebraic_1& Algebraic_1::operator=(mpq_srcptr q){
 	mpfi_set_q(mpfi(),q);
 	Rational_polynomial_1 *p=new Rational_polynomial_1(q);
 	set_pol(*p);
@@ -637,7 +637,7 @@ std::ostream& Algebraic_1::show(std::ostream &o,int digits)const{
 };
 
 // 10
-bool Algebraic_1::operator< (const mpz_t &n2) const {
+bool Algebraic_1::operator<(mpz_srcptr n2)const{
 	if (contains (n2))
 		if (is_point ())
 			return false;
@@ -648,7 +648,7 @@ bool Algebraic_1::operator< (const mpz_t &n2) const {
 	return false;
 };
 
-bool Algebraic_1::operator> (const mpz_t &n2) const {
+bool Algebraic_1::operator>(mpz_srcptr n2)const{
 	if (contains (n2))
 		overlap ();
 	if(mpfr_cmp_z(&(mpfi()->left),n2)>0)
@@ -656,7 +656,7 @@ bool Algebraic_1::operator> (const mpz_t &n2) const {
 	return false;
 };
 
-bool Algebraic_1::operator< (const mpq_t &n2) const {
+bool Algebraic_1::operator<(mpq_srcptr n2)const{
 	if (contains (n2))
 		if (is_point ())
 			return false;
@@ -667,7 +667,7 @@ bool Algebraic_1::operator< (const mpq_t &n2) const {
 	return false;
 };
 
-bool Algebraic_1::operator> (const mpq_t &n2) const {
+bool Algebraic_1::operator>(mpq_srcptr n2)const{
 	if (contains (n2))
 		overlap ();
 	mpfr_t end;
@@ -680,22 +680,22 @@ bool Algebraic_1::operator> (const mpq_t &n2) const {
 
 //--------------------------------------------------
 // BOOST:
-// Algebraic_1 Algebraic_1::operator+ (const mpz_t &n2) const
-// Algebraic_1 Algebraic_1::operator- (const mpz_t &n2) const
-// Algebraic_1 Algebraic_1::operator* (const mpz_t &n2) const
+// Algebraic_1 Algebraic_1::operator+(mpz_srcptr n2)const
+// Algebraic_1 Algebraic_1::operator-(mpz_srcptr n2)const
+// Algebraic_1 Algebraic_1::operator*(mpz_srcptr n2)const
 //-------------------------------------------------- 
 
-Algebraic_1& Algebraic_1::operator+= (const mpz_t &n2) {
+Algebraic_1& Algebraic_1::operator+=(mpz_srcptr n2){
 	mpfi_add_z (mpfi (), mpfi (), n2);
 	return *this;
 };
 
-Algebraic_1& Algebraic_1::operator-= (const mpz_t &n2) {
+Algebraic_1& Algebraic_1::operator-=(mpz_srcptr n2){
 	mpfi_sub_z (mpfi (), mpfi (), n2);
 	return *this;
 };
 
-Algebraic_1& Algebraic_1::operator*=(const mpz_t &n2){
+Algebraic_1& Algebraic_1::operator*=(mpz_srcptr n2){
 	mpfi_mul_z(mpfi(),mpfi(),n2);
 	return *this;
 };
@@ -703,22 +703,22 @@ Algebraic_1& Algebraic_1::operator*=(const mpz_t &n2){
 // this (op) mpq_t
 //--------------------------------------------------
 // BOOST:
-// Algebraic_1 Algebraic_1::operator+ (const mpq_t &n2) const
-// Algebraic_1 Algebraic_1::operator- (const mpq_t &n2) const
-// Algebraic_1 Algebraic_1::operator* (const mpq_t &n2) const
+// Algebraic_1 Algebraic_1::operator+(mpq_srcptr n2)const
+// Algebraic_1 Algebraic_1::operator-(mpq_srcptr n2)const
+// Algebraic_1 Algebraic_1::operator*(mpq_srcptr n2)const
 //-------------------------------------------------- 
 
-Algebraic_1& Algebraic_1::operator+= (const mpq_t &n2) {
+Algebraic_1& Algebraic_1::operator+=(mpq_srcptr n2){
 	mpfi_add_q (mpfi (), mpfi (), n2);
 	return *this;
 };
 
-Algebraic_1& Algebraic_1::operator-= (const mpq_t &n2) {
+Algebraic_1& Algebraic_1::operator-=(mpq_srcptr n2){
 	mpfi_sub_q (mpfi (), mpfi (), n2);
 	return *this;
 };
 
-Algebraic_1& Algebraic_1::operator*= (const mpq_t &n2) {
+Algebraic_1& Algebraic_1::operator*=(mpq_srcptr n2){
 	mpfi_mul_q (mpfi (), mpfi (), n2);
 	return *this;
 };
@@ -728,18 +728,18 @@ Algebraic_1& Algebraic_1::operator*= (const mpq_t &n2) {
 // constructor I
 // we can't convert an mpfr_t to a rational easily, so calling this
 // constructor isn't a good idea
-Algebraic_1::Algebraic_1 (const mpfr_t &r) {
+Algebraic_1::Algebraic_1(mpfr_srcptr r){
 	mpfi_set_fr (mpfi (), r);
 };
 
 // constructor II
-Algebraic_1::Algebraic_1 (const mpfr_t &l, const mpfr_t &r) {
+Algebraic_1::Algebraic_1(mpfr_srcptr l,mpfr_srcptr r){
 	mpfi_interv_fr (mpfi (), l, r);
 };
 
 // assigning: mpfi = mpfr
 // big problem: the same that the constructor I above
-Algebraic_1& Algebraic_1::operator= (const mpfr_t &r) {
+Algebraic_1& Algebraic_1::operator=(mpfr_srcptr r){
 	mpfi_set_fr (mpfi (), r);
 	return *this;
 };
@@ -747,7 +747,7 @@ Algebraic_1& Algebraic_1::operator= (const mpfr_t &r) {
 // comparison: mpfi (op) mpfr
 //	NOTE: the previous template definitions of operators =, !=, >= and <=
 //	should work with mpfr_t
-bool Algebraic_1::operator< (const mpfr_t &n2) const {
+bool Algebraic_1::operator<(mpfr_srcptr n2)const{
 	if (contains (n2))
 		if (is_point ())
 			return false;
@@ -756,7 +756,7 @@ bool Algebraic_1::operator< (const mpfr_t &n2) const {
 	return(mpfr_less_p(&(mpfi()->right),n2));
 };
 
-bool Algebraic_1::operator> (const mpfr_t &n2) const {
+bool Algebraic_1::operator>(mpfr_srcptr n2)const{
 	if (contains (n2))
 		overlap ();
 	mpfr_t end;
@@ -768,28 +768,28 @@ bool Algebraic_1::operator> (const mpfr_t &n2) const {
 // arithmetics: mpfi (op) mpfr
 //--------------------------------------------------
 // BOOST:
-// Algebraic_1 Algebraic_1::operator+ (const mpfr_t &f) const
-// Algebraic_1 Algebraic_1::operator- (const mpfr_t &f) const
-// Algebraic_1 Algebraic_1::operator* (const mpfr_t &f) const
-// Algebraic_1 Algebraic_1::operator/ (const mpfr_t &f) const
+// Algebraic_1 Algebraic_1::operator+(mpfr_srcptr f)const
+// Algebraic_1 Algebraic_1::operator-(mpfr_srcptr f)const
+// Algebraic_1 Algebraic_1::operator*(mpfr_srcptr f)const
+// Algebraic_1 Algebraic_1::operator/(mpfr_srcptr f)const
 //-------------------------------------------------- 
 
-Algebraic_1& Algebraic_1::operator+= (const mpfr_t &f) {
+Algebraic_1& Algebraic_1::operator+=(mpfr_srcptr f){
 	mpfi_add_fr (mpfi (), mpfi (), f);
 	return *this;
 };
 
-Algebraic_1& Algebraic_1::operator-= (const mpfr_t &f) {
+Algebraic_1& Algebraic_1::operator-=(mpfr_srcptr f){
 	mpfi_sub_fr (mpfi (), mpfi (), f);
 	return *this;
 };
 
-Algebraic_1& Algebraic_1::operator*= (const mpfr_t &f) {
+Algebraic_1& Algebraic_1::operator*=(mpfr_srcptr f){
 	mpfi_mul_fr (mpfi (), mpfi (), f);
 	return *this;
 };
 
-Algebraic_1& Algebraic_1::operator/= (const mpfr_t &f) {
+Algebraic_1& Algebraic_1::operator/=(mpfr_srcptr f){
 	mpfi_div_fr (mpfi (), mpfi (), f);
 	return *this;
 };

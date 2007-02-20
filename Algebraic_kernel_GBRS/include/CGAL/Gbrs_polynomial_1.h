@@ -49,11 +49,11 @@ class Rational_polynomial_1 {
 		Rational_polynomial_1 ();
 		Rational_polynomial_1 (unsigned int);
 		Rational_polynomial_1 (int);
-		Rational_polynomial_1(const mpq_t&);
+		Rational_polynomial_1(mpq_srcptr);
 		~Rational_polynomial_1 ();
 		// member functions
 		void set_degree (int);
-		void set_coef (int, const mpz_t &);
+		void set_coef(int,mpz_srcptr);
 		void set_coef (int, const CGAL::Gmpz &);
 		void set_coef (int, int);
 		void set_coef (int, unsigned int);
@@ -62,7 +62,7 @@ class Rational_polynomial_1 {
 		int get_degree () const;
 		int get_number_of_monomials () const;
 		mpz_t* get_coefs () const;
-		void get_coef (int, mpz_t *) const;
+		void get_coef(int,mpz_ptr)const;
 		void set_solved();
 		void clear_solved();
 		bool get_solved()const;
@@ -70,7 +70,7 @@ class Rational_polynomial_1 {
 		void set_root(const Algebraic_1&);*/
 		//CGAL::Algebraic_1 eval_alg(const CGAL::Algebraic_1&)const;
 		CGAL::Gmpz eval (const CGAL::Gmpz &) const;
-		void eval_mpfr(mpfr_t&,const mpfr_t&,mp_prec_t)const;
+		void eval_mpfr(mpfr_ptr,mpfr_srcptr,mp_prec_t)const;
 		void eval_mpfi(mpfi_ptr,mpfi_srcptr)const;
 		Rational_polynomial_1 derive () const;
 		std::ostream& show (std::ostream &) const;
@@ -79,11 +79,11 @@ class Rational_polynomial_1 {
 		Rational_polynomial_1& operator+= (const Rational_polynomial_1 &);
 		Rational_polynomial_1 operator- (const Rational_polynomial_1 &) const;
 		Rational_polynomial_1& operator-= (const Rational_polynomial_1 &);
-		/*Rational_polynomial_1& scale_and_shift(const mpz_t&,int);*/
+		/*Rational_polynomial_1& scale_and_shift(mpz_srcptr,int);*/
 		Rational_polynomial_1 operator* (const Rational_polynomial_1 &) const;
 		template <class T> Rational_polynomial_1 operator* (const T &) const;
 		Rational_polynomial_1& operator*=(const Rational_polynomial_1 &);
-		Rational_polynomial_1& operator*=(const mpz_t &);
+		Rational_polynomial_1& operator*=(mpz_srcptr);
 		Rational_polynomial_1& operator*=(const CGAL::Gmpz &);
 		template<class T>Rational_polynomial_1& operator*=(const T&);
 		bool operator== (const Rational_polynomial_1 &) const;
@@ -93,7 +93,7 @@ std::ostream& operator<< (std::ostream &, const Rational_polynomial_1 &);
 
 // /////////////////
 // inline functions
-inline void Rational_polynomial_1::set_coef(int pow_x,const mpz_t &z){
+inline void Rational_polynomial_1::set_coef(int pow_x,mpz_srcptr z){
 	mpz_set(coef[pow_x],z);};
 inline void Rational_polynomial_1::set_coef(int pow_x,const CGAL::Gmpz &z){
 	mpz_set(coef[pow_x],z.mpz());};
@@ -109,8 +109,8 @@ inline int Rational_polynomial_1::get_degree()const{return(int)degree;};
 inline int Rational_polynomial_1::get_number_of_monomials()const{
 	return(degree+1);};
 inline mpz_t* Rational_polynomial_1::get_coefs()const{return coef;};
-inline void Rational_polynomial_1::get_coef(int pow_x,mpz_t *c)const{
-	mpz_set(*c,coef[pow_x]);};
+inline void Rational_polynomial_1::get_coef(int pow_x,mpz_ptr c)const{
+	mpz_set(c,coef[pow_x]);};
 inline bool Rational_polynomial_1::get_solved()const{return solved;};
 /*inline rootvector Rational_polynomial_1::get_roots()const{return roots;};
 inline void Rational_polynomial_1::set_root(const Algebraic_1 &r){
