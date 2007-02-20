@@ -12,7 +12,7 @@ For univariate polynomials this norm is the degree.}
 In particular, $r$ is chosen to be $0$ if possible.
 Moreover, we require $q$ to be minimized with respect to the proper integer norm.  
 
-\ignore{
+\ccIgnore{
 For types representing \Z, this is round $q$ towards zero.
 For univariat polynomials this has no effect at all.
 MP_Float Z[1/2] is not clear yet.
@@ -28,7 +28,7 @@ But this conflicts with nearly all current implementation
 of integer types. From there, we decided to stay conform with common 
 implementations and require $q$ to be computed as $x/y$ rounded towards zero. 
 
-\ignore{
+\ccIgnore{
 Note that in general the above definition does not force a unique computation 
 of the pair $(q,r)$. This could be solved by requiring $|r|$ to be minimal, 
 in particular a {\em mod} operation would return the unique representative of 
