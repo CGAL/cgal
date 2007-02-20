@@ -325,6 +325,12 @@
   \lcHtml{
     \newcommand{\ccPartDescription}{\ccPartDescriptionImpl}
     \newcommand{\entry}[1]{\lcTocCompleteRow ##1}
+    \newcommand{\lciStartNewPackage}[1]{%
+      \lciPushOutput{comments}
+\lcRawHtml{<package id="##C1">}
+\lciPopOutput
+}
+
     \lciIfTwoColumnToc{
       \newcommand{\entryleft}[1]{\lcTocLeft ##1 \lcTocRight \lcTocToggleOdd}%
       \newcommand{\entryright}[1]{\lcTocLeft \lcTocRight ##1 \lcTocToggleOdd}%
@@ -332,7 +338,11 @@
         \lcTocSync\lcTocLeft ##1\lcTocRight ##2\lcTocSync\lcTocToggleOdd}%
       \newcommand{\packageleft}[1]{%
         \lcTocSync%
+        \lciStartNewPackage{##1}%
         \lcTocLeft\cgalreinit\include{##1/main}%
+        \lciPushOutput{comments}
+\lcRawHtml{</package>}
+\lciPopOutput%
         \lcTocRight%
         \lcTocSync%
         \lcTocToggleOdd%
@@ -341,16 +351,25 @@
       \newcommand{\packageright}[1]{%
         \lcTocSync%
         \lcTocLeft%
+        \lciStartNewPackage{##1}%
         \lcTocRight\cgalreinit\include{##1/main}%
+        \lciPushOutput{comments}
+\lcRawHtml{</package>}
+\lciPopOutput%
         \lcTocSync%
         \lcTocToggleOdd%
       }%
 
       \newcommand{\packageleftright}[2]{%
         \lcTocSync%
+        % assume that leftright is used for user/ref manual of the same package
+        \lciStartNewPackage{##1}%
         \lcTocLeft\cgalreinit\include{##1/main}%
         \edef\lciUsermanualOutputFilename{\lciOutputFilename}%
         \lcTocRight\cgalreinit\include{##2/main}%
+        \lciPushOutput{comments}
+\lcRawHtml{</package>}
+\lciPopOutput%
         \lciFlushPkgDescription{\lciUsermanualOutputFilename}{\lciOutputFilename}%
         \lcTocSync%
         \lcTocToggleOdd%
