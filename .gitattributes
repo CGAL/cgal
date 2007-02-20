@@ -2514,6 +2514,8 @@ Triangulation_3/doc_tex/Triangulation_3/design.eps -text svneol=unset#applicatio
 Triangulation_3/doc_tex/Triangulation_3/design.fig -text svneol=unset#application/octet-stream
 Triangulation_3/doc_tex/Triangulation_3/design.gif -text svneol=unset#image/gif
 Triangulation_3/doc_tex/Triangulation_3/design.pdf -text svneol=unset#application/pdf
+Triangulation_3/doc_tex/Triangulation_3/fig/Delaunay_3.png -text
+Triangulation_3/doc_tex/Triangulation_3/fig/twotets.png -text
 Triangulation_3/doc_tex/Triangulation_3/insert_outside_affine_hull.eps -text svneol=unset#application/postscript
 Triangulation_3/doc_tex/Triangulation_3/insert_outside_affine_hull.gif -text svneol=unset#image/gif
 Triangulation_3/doc_tex/Triangulation_3/insert_outside_affine_hull.pdf -text svneol=unset#application/pdf
