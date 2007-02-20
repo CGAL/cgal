@@ -2160,6 +2160,8 @@ Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/conformal.ep
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/conformal.png -text svneol=unset#image/png
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/cut.eps -text svneol=unset#application/postscript
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/cut.png -text svneol=unset#image/png
+Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/fig/bimba.png -text
+Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/fig/bimbaDetail.png -text
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/floater.eps -text svneol=unset#application/postscript
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/floater.png -text svneol=unset#image/png
 Surface_mesh_parameterization/doc_tex/Surface_mesh_parameterization/introduction.eps -text svneol=unset#application/postscript
