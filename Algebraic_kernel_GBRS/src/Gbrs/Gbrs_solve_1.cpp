@@ -246,16 +246,20 @@ Sign signat(const Rational_polynomial_1 &p,mpfr_srcptr xcoord){
 }
 
 // TODO: rewrite this function without using mpfr
+// this function returns the number of refinements made
 int refine(Algebraic_1 &a,unsigned n){
 	Sign sl,sr,sc;
 	mp_prec_t pl,pr,pc;
 	mpfr_t center;
+	unsigned i;
 	sl=signat(a.pol(),&(a.mpfi()->left));
 	sr=signat(a.pol(),&(a.mpfi()->right));
+	if(sl==ZERO||sr==ZERO)
+		return 0;
 	mpfr_init2(center,MPFR_PREC_MIN);
 	pl=mpfr_get_prec(&(a.mpfi()->left));
 	pr=mpfr_get_prec(&(a.mpfi()->right));
-	for(unsigned i=0;i<n;++i){
+	for(i=0;i<n;++i){
 		pc=pl<pr?pr+1:pl+1;
 		mpfr_set_prec(center,pc);
 		mpfr_add(center,&(a.mpfi()->left),&(a.mpfi()->right),GMP_RNDN);
@@ -268,7 +272,6 @@ int refine(Algebraic_1 &a,unsigned n){
 			if(sc==sr)
 				mpfr_swap(&(a.mpfi()->right),center);
 			else{	// sc=ZERO, we have a root
-				// but we do worry with mpfr_set
 				mpfr_set_prec(&(a.mpfi()->left),pc);
 				mpfr_set(&(a.mpfi()->left),center,GMP_RNDN);
 				mpfr_swap(&(a.mpfi()->right),center);
@@ -277,7 +280,7 @@ int refine(Algebraic_1 &a,unsigned n){
 		}
 	}
 	mpfr_clear(center);
-	return 0;
+	return i;
 }
 
 int get_root (mpfi_ptr x, int n) {
