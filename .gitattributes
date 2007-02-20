@@ -790,6 +790,7 @@ Kinetic_data_structures/doc_tex/Kinetic_framework/sort_usage_pct.gif -text svneo
 Kinetic_data_structures/doc_tex/Kinetic_framework_ref/#Time.tex# -text
 Kinetic_data_structures/examples/Kinetic_framework/data/points_2 -text
 Kinetic_data_structures/examples/Kinetic_framework/data/points_with_color_2 -text
+Kinetic_data_structures/examples/Kinetic_framework/defining_a_simulation_traits.cpp -text
 Kinetic_data_structures/include/CGAL/Kinetic/Exact_simulation_traits.h -text
 Kinetic_data_structures/include/CGAL/Kinetic/Inexact_simulation_traits.h -text
 Kinetic_data_structures/include/CGAL/Kinetic/Regular_triangulation_CORE_exact_simulation_traits.h -text
