@@ -1,17 +1,27 @@
 \begin{ccRefConcept}{AlgebraicKernel_d_1::MakeCoprime_1}
 
-\ccCreationVariable{fo}
+\ccDefinition
 
-A model \ccVar\ of this type must provide:
+\ccc{AdaptableFunction} that computes for a given pair of univariat polynomials 
+$p_1$, $p_2$ their common part $g$ and coprime parts $q_1$, $q_2$ respectively.
 
+ 
+
+
+\ccCreationVariable{make_coprime}
+
+\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
 \ccMethod{template < class OutputIterator >
     void
     operator()(const AlgebraicKernel_d_1::Polynomial_1 & p1, 
                const AlgebraicKernel_d_1::Polynomial_1 & p2, 
-               AlgebraicKernel_d_1::Polynomial_1 & common, 
-               OutputIterator oi1
-               OutputIterator oi2);}
-{}
+               AlgebraicKernel_d_1::Polynomial_1 & g,  
+               AlgebraicKernel_d_1::Polynomial_1 & q1,     
+               AlgebraicKernel_d_1::Polynomial_1 & q2);}
+{
+\ccPostcond $q_1$ and $q_2$ are coprime. 
+\ccPostcond $c_1 \cdot p_1 =  g \cdot q_1$ for some constant $c_1$.
+\ccPostcond $c_2 \cdot p_2 =  g \cdot q_2$ for some constant $c_2$.}
 
 \ccSeeAlso
 

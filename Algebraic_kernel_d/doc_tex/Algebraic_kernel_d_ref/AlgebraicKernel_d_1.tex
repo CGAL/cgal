@@ -6,30 +6,25 @@ The \ccc{AlgebraicKernel_d_1} concept is meant to provide the
 algebraic functionalities on univariate polynomials of general degree
 $d$ necessary as a basis for the curved kernel.
 
+A model of \ccc{AlgebraicKernel_d_1} is supposed to provide:
+
 \ccTypes
 
-A model of \ccc{AlgebraicKernel_d_1} is supposed to provide
-
-\ccNestedType{Coefficient}{A model of \ccc{IntegralDomain}. }
-
-\ccNestedType{Polynomial_1}{A model of \ccc{Polynomial_1}, for
-univariate polynomials when the \ccc{Coefficient} type is an 
-\ccc{IntegralDomain}.} 
-
-\ccNestedType{Algebraic_real_1}{A model of \ccc{AlgebraicReal_1}, for
-real algebraic numbers.}
-
-\ccNestedType{Construct_polynomial_1}{
-Must provide:\\
-\ccc{template <class InputIterator>}\\
-\ccc{Polynomial_1 operator()(InputIterator first, InputIterator last)}\\
-that constructs a polynomial from a range of coefficients of type
-\ccc{Coefficient}, given in the increasing order of monomial degrees,\\
-and\\
-\ccc{template <class InputIterator1, InputIterator2>}\\
-\ccc{Polynomial_1 operator()(InputIterator1 first_coeff, InputIterator1 last_coeff, InputIt2 deg)}\\
-that takes as input a range of coefficients of type \ccc{Coefficient}, and an iterator on corresponding degrees of type \ccc{unsigned int}.
+\ccNestedType{Coefficient}{
+A model of \ccc{IntegralDomain} and \ccc{RealEmbeddable} 
 }
+
+\ccNestedType{Polynomial_1}{
+A model of \ccc{Polynomial_1}, 
+where \ccc{CGAL::Polynomial_traits_d<Polynomial_1>::Innermost_coefficient}
+is \ccc{Coefficient} 
+} 
+
+\ccNestedType{Algebraic_real_1}{
+A model of \ccc{AlgebraicKernel_d_1::AlgebraicReal_1}
+}
+
+\ccHeading{Functors}
 
 \ccNestedType{Solve_1}{A model of the concept
 \ccc{AlgebraicKernel_d_1::Solve_1}.} 
@@ -37,34 +32,32 @@ that takes as input a range of coefficients of type \ccc{Coefficient}, and an it
 \ccNestedType{Sign_at_1}{A model of the concept
 \ccc{AlgebraicKernel_d_1::SignAt_1}.}
 
-\ccNestedType{Derivative_1}{A model of the concept
-\ccc{AlgebraicKernel_d_1::Derivative}.} 
-
-\ccNestedType{Compare_1}{A model of the concept 
-\ccc{AlgebraicKernel_d_1::Compare_1}.}
-
-TODO: The following might be redundant due to the signatures of \ccc{Solve_1}. 
-Should be checked. They are introduced here to to symmetry 
-\ccc{AlgebraicKernel_d_2}.
-
-\ccNestedType{IsCoprime_1}{A model of the concept 
-\ccc{AlgebraicKernel_d_1::IsCoprime_1}.}
-\ccGlue
-\ccNestedType{IsSquareFree_1}{A model of the concept 
+\ccNestedType{Is_square_free_1}{A model of the concept 
 \ccc{AlgebraicKernel_d_1::IsSquareFree_1}.}
+\ccGlue
 
-\ccNestedType{MakeSquareFree_1}{A model of the concept 
+\ccNestedType{Make_square_free_1}{A model of the concept 
 \ccc{AlgebraicKernel_d_1::MakeSquareFree_1}.}
 \ccGlue
-\ccNestedType{MakeCoprime_1}{A model of the concept 
-\ccc{AlgebraicKernel_d_1::MakeCoprime_1}.}
+
+\ccNestedType{Are_coprime_1}{A model of the concept 
+\ccc{AlgebraicKernel_d_1::AreCoprime_1}.}
 \ccGlue
-\ccNestedType{SquareFreeFactorization_1}{A model of the concept 
-\ccc{AlgebraicKernel_d_1::SquareFreeFactorization_1}.}
 
-\ccHasModels
+\ccNestedType{Make_coprime_1}{A model of the concept 
+\ccc{AlgebraicKernel_d_1::MakeCoprime_1}.}
 
-\ccSeeAlso
+% do we keep this for due to \ccc{AK_2::Compare_2}?
+%\ccNestedType{Compare_1}{A model of the concept 
+%\ccc{AlgebraicKernel_d_1::Compare_1}.}
+
+%\ccGlue
+%\ccNestedType{Square_free_factorization_1}{A model of the concept 
+%\ccc{AlgebraicKernel_d_1::SquareFreeFactorization_1}.}
+
+%\ccHasModels
+
+%\ccSeeAlso
 
 
 \end{ccRefConcept}

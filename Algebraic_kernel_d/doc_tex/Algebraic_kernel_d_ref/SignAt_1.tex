@@ -1,22 +1,31 @@
 \begin{ccRefConcept}{AlgebraicKernel_d_1::SignAt_1}
 
 \ccDefinition
+\ccc{AdaptableBinaryFunction} that computes the sign of a univariat polynomial 
+\ccc{AlgebraicKernel_d_1::Polynomial_1} at a real value of type 
+\ccc{AlgebraicKernel_d_1::Algebraic_real_1}. 
 
-\ccCreationVariable{fo}
+\ccTypes
+\ccNestedType{result_type} 
+        { Type convertible to \ccc{CGAL::Sign}.}
 
-A model \ccVar\ of this type must provide:
+\ccGlue
+\ccNestedType{first_argument_type}
+        { Is \ccc{AlgebraicKernel_d_1::Polynomial_1}.}\ccGlue
+\ccNestedType{second_argument_type}
+        { Is \ccc{AlgebraicKernel_d_1::Algebraic_real_1}.}\ccGlue
 
-\ccMethod{result_type
-    operator()(const AlgebraicKernel_d_1::Polynomial_1 & p,
-	     const AlgebraicKernel_d_1::Algebraic_real_1 & r);}
-{Computes the sign of polynomial \ccc{p} evaluated at an algebraic number.
-\ccc{result_type} must be convertible into \ccc{CGAL::Sign}.} 
-\footnote{We want to allow \ccc{UNDECIDED} as \ccc{result_type}}
+\ccCreationVariable{sign_at_1}
 
-\ccMethod{result_type
-    operator()(const AlgebraicKernel_d_1::Polynomial_1 & p,
-	     const AlgebraicKernel_d_1::Coefficient & r);}
-{}
+\ccMethod{
+result_type
+operator()(const  first_argument_type & p,
+           const second_argument_type & r);}{
+Computes sign of $p$ at $r$.
+} 
+
+\ccRefines 
+
+\ccc{AdaptableBinaryFunction} 
 
 \end{ccRefConcept}
-

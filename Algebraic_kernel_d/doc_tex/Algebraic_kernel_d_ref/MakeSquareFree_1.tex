@@ -1,15 +1,27 @@
 \begin{ccRefConcept}{AlgebraicKernel_d_1::MakeSquareFree_1}
 
-\ccCreationVariable{fo}
+\ccDefinition
 
-A model \ccVar\ of this type must provide:
+\ccc{AdaptableUnaryFunction} returns a square free part of a univariat polynomial.  
+ 
+\ccRefines 
 
-\ccMethod{template < class OutputIterator >
-    void
-    operator()(const AlgebraicKernel_d_1::Polynomial_1 & p, 
-               OutputIterator oi);}
-{}
+\ccc{AdaptableUnaryFunction}  
 
-\ccSeeAlso
+\ccTypes
+\ccNestedType{result_type} 
+        { Is \ccc{AlgebraicKernel_d_1::Polynomial_1}.} 
+\ccGlue
+\ccNestedType{argument_type}
+        { Is \ccc{AlgebraicKernel_d_1::Polynomial_1}.}
+
+\ccOperations
+\ccCreationVariable{make_square_free}
+\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+
+\ccMethod{result_type operator()(argument_type p);}{}
+
+%\ccHasModels
+%\ccSeeAlso
 
 \end{ccRefConcept}
