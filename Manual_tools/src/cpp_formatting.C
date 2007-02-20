@@ -1083,6 +1083,20 @@ void format_function( bool method, const char* signature,
                     is_empty_comment || (exp_size * stretch_factor >
                         table_width * table_second_col / 100.0)
                 );
+            // --- another copy & paste from below.
+            double dd_width = table_width * ( 1.0 - table_first_col / 100.0);
+            dd_width /= stretch_factor;
+            if ( exp_size > dd_width && parameter_list) {
+                *current_ostream << store_remember_font();
+                *current_ostream << "<TABLE BORDER=0 CELLSPACING=0 "
+                  "CELLPADDING=0><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP";
+                if ( macroIsTrue( "\\ccLongParamLayout") ||
+                     ! macroIsTrue( "\\ccAlternateThreeColumn"))
+                    *current_ostream << " COLSPAN=2";
+                *current_ostream << "><I>" << get_remember_font()
+                                 << ind_newline;
+            }
+            // ---- end of copy&paste
             print_ascii_to_html_spc( *current_ostream, praefix);
             *current_ostream << " ";
             char* p = parameter_list;
@@ -1101,14 +1115,38 @@ void format_function( bool method, const char* signature,
             print_ascii_to_html_spc( *current_ostream, infix);
             *current_ostream << " ";
             if ( ! ignore_params && n) {
+                // ---- copy & paste from below
+                if ( exp_size > dd_width) {
+                    *current_ostream << store_remember_font();
+                    *current_ostream << "</I></TD>";
+                    if ( macroIsTrue( "\\ccLongParamLayout") ||
+                         ! macroIsTrue( "\\ccAlternateThreeColumn"))
+                        *current_ostream << "</TR><TR><TD ALIGN=LEFT WIDTH="
+                                        << table_long_param_indent
+                                        << " NOWRAP></TD>";
+                    *current_ostream << "<TD ALIGN=LEFT VALIGN=TOP "
+                      "NOWRAP><I>";
+                    *current_ostream << get_remember_font() << ind_newline;
+                }
+
+                // ---  end-of copy&paste
                 while ( n--) {
                     print_ascii_to_html_spc(*current_ostream, p);
                     p += strlen( p) + 1;  // skip to next parameter
-                    if ( n)
+                    if ( n) {
                         *current_ostream << ", ";
+                        if ( exp_size > dd_width)
+                            *current_ostream << "<BR>" << ind_newline;
+                    }
+
                 }
             }
             print_ascii_to_html_spc( *current_ostream, postfix);
+            if ( exp_size > dd_width) {
+                    *current_ostream << store_remember_font();
+                    *current_ostream << "</I></TD></TR></TABLE>" <<ind_newline;
+            }
+
        }
 
       // ---------

@@ -45,8 +45,8 @@ CXXFLAGS = -g -O2
 # CC = gcc
 
 # C Preprocessor Flags: (e.g. -g or -O or STL include path)
-# CPPFLAGS = -g
-CPPFLAGS = -g
+# CPPFLAGS = 
+CPPFLAGS = 
 
 
 # Linker Flags:

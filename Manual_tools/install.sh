@@ -10,7 +10,7 @@ make || exit 1
 make install
 cd ..
 
-cp scripts/index_fix scripts/cc_make_ref_pages scripts/cc_ref_wizard $LATEX_CONV_BIN
+cp scripts/index_fix scripts/cc_make_ref_pages scripts/cc_ref_wizard scripts/tex2doxy $LATEX_CONV_BIN
 cp sty/*.sty $STYLE_FILES
 cp sty/eps_tabs/*.pdf sty/eps_tabs/*.eps $STYLE_FILES/eps_tabs
 cp  sty/eps_tabs_grey/*.eps $STYLE_FILES/eps_tabs_grey # sty/eps_tabs_grey/*.pdf
