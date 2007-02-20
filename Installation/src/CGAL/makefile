@@ -61,5 +61,5 @@ LIB_NAME_BASE = CGAL
 #---------------------------------------------------------------------#
 #                    common rules for all libraries
 #---------------------------------------------------------------------#
-include common.mk
+include ../CGAL/common.mk
 
