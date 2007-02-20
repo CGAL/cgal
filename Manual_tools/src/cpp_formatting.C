@@ -41,13 +41,13 @@ int  HREF_counter; // important for option -extended
 
 /* table size and font size constants */
 /* ================================== */
-const int table_width             = 650; // absolute
+const int table_width             = 850; // absolute
 const int table_long_param_indent = 50;  // absolute
 const int table_first_col         = 25;  // in percent
 const int table_second_col        = 25;  // in percent
 const int table_third_col         = 50;  // in percent
-const int table_2c_first_col      = 30;  // in percent
-const int table_2c_second_col     = 70;  // in percent
+const int table_2c_first_col      = 50;  // in percent (also check cc_manual.sty)
+const int table_2c_second_col     = 50;  // in percent (also check cc_manual.sty)
 
 const double width_per_character  = 5.5;
 
