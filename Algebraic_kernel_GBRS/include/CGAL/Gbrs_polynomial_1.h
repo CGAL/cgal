@@ -70,7 +70,7 @@ class Rational_polynomial_1 {
 		void set_root(const Algebraic_1&);*/
 		//CGAL::Algebraic_1 eval_alg(const CGAL::Algebraic_1&)const;
 		CGAL::Gmpz eval (const CGAL::Gmpz &) const;
-		void eval_mpfr(mpfr_ptr,mpfr_srcptr,mp_prec_t)const;
+		void eval_mpfr(mpfr_ptr,mpfr_srcptr)const;
 		void eval_mpfi(mpfi_ptr,mpfi_srcptr)const;
 		Rational_polynomial_1 derive () const;
 		std::ostream& show (std::ostream &) const;

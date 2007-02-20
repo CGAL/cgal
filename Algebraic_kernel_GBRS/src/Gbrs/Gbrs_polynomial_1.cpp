@@ -153,20 +153,49 @@ CGAL::Gmpz Rational_polynomial_1::eval(const CGAL::Gmpz &x)const{
 	return ret;
 };
 
-void Rational_polynomial_1::eval_mpfr
-(mpfr_ptr result,mpfr_srcptr x,mp_prec_t prec)const{
-	mpfr_t x_pow,temp;
-	mp_prec_t prec_r=mpfr_get_prec(result);
-	mpfr_inits2(prec<prec_r?prec_r:prec,x_pow,temp,NULL);
-	mpfr_set_ui(x_pow,1,GMP_RNDN);
-	mpfr_set_ui(result,0,GMP_RNDN);
-	for(int i=0;i<=degree;++i){ // mpfr_fma?
-		mpfr_mul_z(temp,x_pow,coef[i],GMP_RNDN);
-		mpfr_add(result,temp,result,GMP_RNDN);
-		mpfr_mul(x_pow,x_pow,x,GMP_RNDN);
+// This implementation uses the Horner's method. The precision paramenter
+// is not used anymore because calculations are exact (this function was
+// based on the signat in solve_1 but results are after calculations
+// converted to mpfr).
+void Rational_polynomial_1::eval_mpfr(mpfr_ptr result,mpfr_srcptr xcoord)const{
+	// we have numbers H0=h0*2^e0 and X=x*2^ex
+	mpz_t h0,x,temp;
+	mp_exp_t e0,ex;
+	// we convert the evaluation point (mpfr) to fit our needs
+	mpz_init(x);
+	ex=mpfr_get_z_exp(x,xcoord);
+	// data from the polynomial
+	mpz_t *c=get_coefs();
+	int d=get_degree();
+	// we start the algorithm by setting H0=c[d]*2^0
+	mpz_init_set(h0,c[d]);
+	e0=0;
+	// the iteration is H0=H0*X+c[d-i]
+	mpz_init(temp);
+	for(int i=1;i<d+1;++i){
+		mpz_mul(h0,h0,x);
+		e0+=ex;	// at this point, we did H0*=X
+		// now, we have to add H0+c[d-i]
+		if(e0>0){	// shift h0 and add
+			mpz_mul_2exp(h0,h0,e0);
+			mpz_add(h0,h0,c[d-i]);
+			e0=0;
+		}else{
+			if(e0<0){	// shift c[d-i] and add
+				mpz_mul_2exp(temp,c[d-i],-e0);
+				mpz_add(h0,h0,temp);
+				e0=0;
+			}else	// we are lucky, e0=0
+				mpz_add(h0,h0,c[d-i]);
+		}
+		// at this point, H0 is the evaluation of the polynomial
 	}
-	mpfr_clears(x_pow,temp,NULL);
-	return;
+	mpfr_set_prec(result,mpz_sizeinbase(h0,2));
+	mpfr_set_z(result,h0,GMP_RNDN);
+	mpfr_mul_2si(result,result,e0,GMP_RNDN);
+	mpz_clear(h0);
+	mpz_clear(x);
+	mpz_clear(temp);
 };
 
 // I think RS should do this

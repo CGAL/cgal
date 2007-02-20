@@ -299,140 +299,15 @@ int get_root (mpfi_ptr x, int n) {
 	return 0;	// false: we couldn't copy the root
 }
 
-int refine_1_rs(Algebraic_1 &a){
-	rs_reset_all ();
-	create_rs_upoly (a.pol().get_coefs (), a.pol().get_degree (),
-			rs_get_default_up ());
-	int newprec = a.rsprec() * CGAL_RS_PREC_FACTOR;
-	a.set_rsprec (newprec);
-	set_rs_precisol (newprec);
-	set_rs_verbose (CGAL_RS_VERB);
-	rs_run_algo ("UISOLE");
-	return get_root (a.mpfi(), a.nr());
-}
-
-// TODO: rewrite this awful function
-// TODO: test cases where RS is called
 Comparison_result refine_and_compare_1(Algebraic_1 &r1,Algebraic_1 &r2){
-	mpfr_t left1,right1,center1,evall1,evalc1,evalr1,
-	       left2,right2,center2,evall2,evalc2,evalr2;
-	mp_prec_t prec1,prec2,prec;
-	if((prec1=r1.rsprec())<(prec2=r2.rsprec()))
-		prec=(prec2*=2);
-	else
-		prec=(prec1*=2);
-	mp_prec_t local_prec=prec;
-	mpfr_inits2(local_prec,left1,right1,center1,evall1,evalc1,evalr1,
-			left2,right2,center2,evall2,evalc2,evalr2,NULL);
-	bool flag1,flag2;
-	int res1,res2;
-	int prec_changes=1;
 	do{
-		// refine r1
-		flag1=true;
-		r1.get_endpoints(left1,right1);
-		mpfi_get_fr(center1,r1.mpfi());
-		r1.pol().eval_mpfr(evall1,left1,prec);
-		r1.pol().eval_mpfr(evalc1,center1,prec);
-		r1.pol().eval_mpfr(evalr1,right1,prec);
-		int sl1=mpfr_sgn(evall1);
-		int sr1=mpfr_sgn(evalr1);
-		// if the following assertion fails, it means that the
-		// precision of the mpfr's was not correctly calculated
-		//std::cout<<"sl1="<<sl1<<", sr1="<<sr1<<std::endl;
-		CGAL_assertion(sl1&&sr1&&(sl1!=sr1));
-		int sc1=mpfr_sgn(evalc1);
-		while(r1.rsprec()<(int)prec){
-			if(!sc1){
-				refine_1_rs(r1);
-				r1.get_endpoints(left1,right1);
-				flag1=false;
-				break;
-			}else{
-				if(sl1==sc1){
-					mpfr_set(left1,center1,GMP_RNDN);
-					mpfr_set(evall1,evalc1,GMP_RNDN);
-					sl1=sc1;
-				}else{
-					mpfr_set(right1,center1,GMP_RNDN);
-					mpfr_set(evalr1,evalc1,GMP_RNDN);
-					sr1=sc1;
-				}
-				mpfr_add(center1,left1,right1,GMP_RNDN);
-				mpfr_div_ui(center1,center1,2,GMP_RNDN);
-				r1.pol().eval_mpfr(evalc1,center1,prec);
-				sc1=mpfr_sgn(evalc1);
-				r1.set_rsprec(r1.rsprec()+1);
-			}
-		}
-		// refine r2
-		flag2=true;
-		r2.get_endpoints(left2,right2);
-		mpfi_get_fr(center2,r2.mpfi());
-		r2.pol().eval_mpfr(evall2,left2,prec);
-		r2.pol().eval_mpfr(evalc2,center2,prec);
-		r2.pol().eval_mpfr(evalr2,right2,prec);
-		int sl2=mpfr_sgn(evall2);
-		int sr2=mpfr_sgn(evalr2);
-		CGAL_assertion(sl2&&sr2&&(sl2!=sr2));
-		int sc2=mpfr_sgn(evalc2);
-		while(r2.rsprec()<(int)prec){
-			if(!sc2){
-				refine_1_rs(r2);
-				r2.get_endpoints(left2,right2);
-				flag2=false;
-				break;
-			}else{
-				if(sl2==sc2){
-					mpfr_set(left2,center2,GMP_RNDN);
-					mpfr_set(evall2,evalc2,GMP_RNDN);
-					sl2=sc2;
-				}else{
-					mpfr_set(right2,center2,GMP_RNDN);
-					mpfr_set(evalr2,evalc2,GMP_RNDN);
-					sr2=sc2;
-				}
-				mpfr_add(center2,left2,right2,GMP_RNDN);
-				mpfr_div_ui(center2,center2,2,GMP_RNDN);
-				r2.pol().eval_mpfr(evalc2,center2,prec);
-				sc2=mpfr_sgn(evalc2);
-				r2.set_rsprec(r2.rsprec()+1);
-			}
-		}
-		res1=mpfr_less_p(right1,left2);
-		res2=mpfr_less_p(right2,left1);
-		if((prec*=2)>local_prec){
-			++prec_changes;
-			local_prec*=(prec_changes*prec_changes);
-			// change al the precisions
-			mpfr_set_prec(left1,local_prec);
-			mpfr_set_prec(center1,local_prec);
-			mpfr_set_prec(right1,local_prec);
-			mpfr_set_prec(evall1,local_prec);
-			mpfr_set_prec(evalc1,local_prec);
-			mpfr_set_prec(evalr1,local_prec);
-			mpfr_set_prec(left2,local_prec);
-			mpfr_set_prec(center2,local_prec);
-			mpfr_set_prec(right2,local_prec);
-			mpfr_set_prec(evall2,local_prec);
-			mpfr_set_prec(evalc2,local_prec);
-			mpfr_set_prec(evalr2,local_prec);
-		}
-	}while(!res1&&!res2);
-	if(flag1)
-		mpfi_interv_fr(r1.mpfi(),left1,right1);
-	if(flag2)
-		mpfi_interv_fr(r2.mpfi(),left2,right2);
-	mpfr_clears(left1,right1,center1,evall1,evalc1,evalr1,
-			left2,right2,center2,evall2,evalc2,evalr2,NULL);
-	if(res1)
-		return SMALLER;
-	if(res2)
-		return LARGER;
-	CGAL_assertion_msg(false,"this point should never be reached");
-	return EQUAL;
+		refine(r1,5);
+		refine(r2,5);
+	}while(r1.overlaps(r2));
+	return(r1<r2?SMALLER:LARGER);
 }
 
+// TODO: rewrite using gcd
 Comparison_result compare_1(Algebraic_1 &r1,Algebraic_1 &r2){
 	// there is a strange RS result where (r1<r2)&&(r2<r1)&&(r1!=r2)
 	try{
