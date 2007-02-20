@@ -18,15 +18,12 @@ exceptional structures as {\em skew fields}.
  %.ps(PS) .png(PDF)
 \end{center}
 \end{ccTexOnly}
-
-
 \begin{ccHtmlOnly}
 <CENTER>
 <IMG BORDER=0 SRC="fig/AlgebraicConceptHierarchy.gif" 
  ALIGN=middle ALT="Concept Hierarchy of Algebraic Structures">
 </CENTER>
 \end{ccHtmlOnly}
-
 \caption{Concept Hierarchy of Algebraic Structures
 \label{fig::ConceptHierarchyOfAlgebraicStructures}}
 \end{figure}
@@ -70,7 +67,7 @@ All other unary (e.g., sqrt) and binary functions
 \ccc{AdaptableUnaryFunction} or \ccc{AdaptableBinaryFunction}
 concept and local to the traits class 
 (e.g., \ccc{Algebraic_structure_traits<AS>::Sqrt()(x)}). 
-This design allows us to profit maximally from all parts in the 
+This design allows us to profit from all parts in the 
 \stl\ and its programming style and avoids the name-lookup and 
 two-pass template compilation problems experienced with the old design 
 using overloaded functions. However, for ease of use and backward 
@@ -81,32 +78,38 @@ the according functor of the traits class. For an overview see
 Section~\ref{caf_ref::classified_refernce_pages} in the reference manual.
 
 %Dispatching
+
 For dispatching \ccc{Algebraic_structure_traits} provides the tags:  
 \ccc{Algebraic_category}, \ccc{Is_exact} and \ccc{Is_numerical_sensitive}. \\ 
-\ccc{Algebraic_category} is the most important tag and indicates the most refined 
-algebraic concept a type fulfills and is one of 
-\ccc{Integral_domain_without_division_tag}, \ccc{Integral_domain_tag}, \ccc{Field_tag},
-\ccc{Field_with_sqrt_tag}, \ccc{Field_with_kth_root_tag}, \ccc{Field_with_root_of_tag},
-\ccc{Unique_factorization_domain_tag}, \ccc{Euclidean_ring_tag} or even \ccc{Null_tag} 
-in case the type is not a model of an algebraic structure concept. The tags are derived 
+\ccc{Algebraic_category} is the most important tag and indicates the most 
+refined algebraic concept a type fulfills and is one of 
+\ccc{Integral_domain_without_division_tag}, \ccc{Integral_domain_tag}, 
+\ccc{Field_tag}, \ccc{Field_with_sqrt_tag}, \ccc{Field_with_kth_root_tag}, 
+\ccc{Field_with_root_of_tag}, \ccc{Unique_factorization_domain_tag}, 
+\ccc{Euclidean_ring_tag} or even \ccc{Null_tag} 
+in case the type is not a model of an algebraic structure concept. 
+The tags are derived 
 from each other such that they reflect the hierarchy of the algebraic 
-structure concept,  e.g., \ccc{Field_with_sqrt_tag} is derived from \ccc{Field_tag}. \\
-
-\ccc{Is_exact} and \ccc{Is_numerical_sensitive} are both either \ccc{Tag_true} or \ccc{Tag_false}.
+structure concept,  e.g., \ccc{Field_with_sqrt_tag} is derived from 
+\ccc{Field_tag}. \\
+\ccc{Is_exact} and \ccc{Is_numerical_sensitive} are both either \ccc{Tag_true} 
+or \ccc{Tag_false}.
 An algebraic structure is considered exact,
 if all operations required by its concept are computed such that a comparison 
 of two algebraic expressions is always correct.
 An algebraic structure is  considered as numerically sensitive,
-if the performance of the type is sensitive to the condition number of an algorithm.
+if the performance of the type is sensitive to the condition number of an 
+algorithm.
 %performance includes both rounding errors or runtime. 
 Note that there is really a difference among these two notions, e.g., the fundamental type \ccc{int} 
 is not numerical sensitive but considered inexact due to overflow. 
 Conversely, types as \ccc{leda_real} or \ccc{CORE::Expr} are exact but sensitive 
-to numerical issues due to the internal use of multi precision floating point arithmetic.
-We expect that \ccc{Is_numerical_sensitive} is used for dispatching of algorithms, 
-while \ccc{Is_exact} is useful to enable assertions that can be check for exact types only.
+to numerical issues due to the internal use of multi precision floating point 
+arithmetic. We expect that \ccc{Is_numerical_sensitive} is used for dispatching
+ of algorithms, while \ccc{Is_exact} is useful to enable assertions that can be 
+check for exact types only.
 
-\ignore{
+\ccIgnore{
 \begin{tabular}{|l|l|}
 Algebraic Structure Concept & provided functions \\
 \hline
@@ -136,7 +139,7 @@ Algebraic Structure Concept & provided functions \\
 }                
 
 
-\ignore {
+\ccIgnore {
 \subsection{Algebraic Structure Concepts}
 
 The algebraic structure concepts form an concept hierarchy, as it is shown in 
