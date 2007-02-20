@@ -1,0 +1,42 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Ridge_order.tex
+% +------------------------------------------------------------------------+
+% | 15.09.2006   Marc Pouget and Frédéric Cazals
+% | Package: Ridges_3
+% | 
+\RCSdef{\RCSRidgeorderRev}{$Id$}
+\RCSdefDate{\RCSRidgeorderDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefEnum}{Ridge_order}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[enum]{} %% add further index entries
+
+\ccDefinition
+  
+The enum \ccRefName\ describes the order of differential quantities
+used to distinguish elliptic and hyperbolic ridges. Third or fourth
+order quantities may be used as explained in section \ref{ridge-mesh}
+of the user manual.
+
+\ccInclude{CGAL/Ridges.h}
+
+\ccGlobalEnum{enum Ridge_order { 
+		Ridge_order_3 = 3, Ridge_order_4};}
+
+
+\ccSeeAlso
+
+\ccc{Ridge_approximation}
+
+\end{ccRefEnum}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

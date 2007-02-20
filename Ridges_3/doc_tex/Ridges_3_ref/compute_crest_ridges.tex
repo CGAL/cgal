@@ -1,0 +1,64 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: compute_crest_ridges.tex
+% +------------------------------------------------------------------------+
+% | 15.09.2006   Marc Pouget and Frédéric Cazals
+% | Package: Ridges_3
+% | 
+\RCSdef{\RCScomputecrestridgesRev}{$Id$}
+\RCSdefDate{\RCScomputecrestridgesDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{compute_crest_ridges} 
+%% add templatearg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The function \ccRefName\ is a short cut to the method of the same name
+of the class \ccc{Ridge_approximation}.
+
+\ccInclude{CGAL/Ridges.h}
+
+%\ccNestedType{TYPE}{some nested types}
+% \ccEnum{ enum Tag_order {Tag_3, Tag_4};} {Order of differential
+%   quantities used to distinguish elliptic and hyperbolic ridges. Third
+%   (\ccc{Tag_3}) or fourth (\ccc{Tag_4}) order quantities may be used as
+%   explained in section \ref{ridge-mesh} of the user manual.}
+
+
+
+\ccFunction{template < class TriangulatedSurfaceMesh,  
+  class Vertex2FTPropertyMap,
+  class Vertex2VectorPropertyMap,
+  class OutputIterator>
+  OutputIterator compute_crest_ridges(const TriangulatedSurfaceMesh &P,
+		      const Vertex2FTPropertyMap& vertex2k1_pm, const
+		      Vertex2FTPropertyMap& vertex2k2_pm, const
+		      Vertex2FTPropertyMap& vertex2b0_pm, const
+		      Vertex2FTPropertyMap& vertex2b3_pm, const
+		      Vertex2VectorPropertyMap& vertex2d1_pm, const
+		      Vertex2VectorPropertyMap& vertex2d2_pm, const
+		      Vertex2FTPropertyMap& vertex2P1_pm, const
+		      Vertex2FTPropertyMap& vertex2P2_pm,
+                      OutputIterator it, 
+                      CGAL::Ridge_order order = CGAL::Ridge_order_3);}
+		      {}
+
+%\ccOperations
+
+\ccSeeAlso
+
+\ccc{Ridge_approximation}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
