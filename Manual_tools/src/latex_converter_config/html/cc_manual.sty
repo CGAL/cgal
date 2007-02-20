@@ -259,9 +259,11 @@
 }
 
 \newcommand{\ccReferToExampleCode}[1]{%
+\begin{alltt}%
 \lcRawHtml{<a href="}\lciOutputUppath\lcRawHtml{../../}\input{#1.filename}\lcRawHtml{">}%
 \input{#1.filename}%
 \lcRawHtml{</a>}%
+\end{alltt}%
 }
 
 
@@ -575,7 +577,7 @@
                    \gdef{\lciIfHtmlClassIndex}{\lcTrue}%
                    \gdef{\lciIfHtmlRefLinks}{\lcTrue}%
                    \gdef{\lciIfHtmlRefIndex}{\lcTrue}%
-                   \lciPushOutput{comments}\lcRawHtml{\end
+                   \lciPushOutput{comments}\lcRawHtml{</refpage>
 
 }
 \lciPopOutput
@@ -606,18 +608,21 @@
     \lciRefDeclDefFilenameX{\ccPureRefScope}{#1}{\ccRefCategory}%
       {\ccRefPureGlobalScope}{\lciCCParameter}}
 
+
+\newcommand{\lciPrintToComments}[2]{%
+\lcRawHtml{<}#1\lcRawHtml{>}\lcAsciiToHtml{#2}\lcRawHtml{</}#1\lcRawHtml{>}%
+}
 % #1 = local scope (may be empty)
 % #2 = classname (functioname etc.) without template parameters
 % #3 = Ref category
 % #4 = global scope (may be empty)
 \newcommand{\lciRefDeclDefFilenameX}[5]{%
     \lciPushOutput{comments}%
-\lcRawHtml{\localscope@#XC1@}
-\lcRawHtml{\id@#XC2@}
-\lcRawHtml{\refcat@#XC3@}
-\lcRawHtml{\globalscope@#XC4@}
-\lcRawHtml{\other@#XC5@
-}
+  \lcRawHtml{<refpage id="#XC2">}
+  \lciPrintToComments{localscope}{#XC1}
+  \lciPrintToComments{refcat}{#XC3}
+  \lciPrintToComments{globalscope}{#XC4}
+  \lciPrintToComments{other}{#XC5}
 \lciPopOutput
 
     \newcommand{\ccPureClassName}{#XC1#C2}%
@@ -640,6 +645,7 @@
     \gdef{\lciIfHtmlRefLinks}{\lcFalse}%
     \gdef{\lciIfHtmlRefIndex}{\lcFalse}%
     \lciParseUntilDelimiter{\lciSkipOneParameter}@}% skip remaining part
+
 \newcommand{\lciRefDeclOpenFilenameX}[3]{\begin{ccReferenceFile}{#1#GXC2}{#3}}
 
 %% Args: ccCategory, ccRefName
@@ -865,8 +871,8 @@
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
     \gdef{\lciIfHtmlIndex}{\lcTrue}%
     \lciPushOutput{comments}%
-\lcRawHtml{\comment@#C2@
-}
+\lcRawHtml{    }\lciPrintToComments{comment}{#C2}
+  \lcRawHtml{</item>}
 \lciPopOutput
 }
 
@@ -908,8 +914,8 @@
     \gdef{\lciIfHtmlIndex}{\lcTrue}%
     \gdef\ccIsFunctionTemplate{\ccFalse}%
     \lciPushOutput{comments}%
-\lcRawHtml{\comment@#C2@
-}
+\lcRawHtml{    }\lciPrintToComments{comment}{#C2}
+  \lcRawHtml{</item>}
 \lciPopOutput
 }
 

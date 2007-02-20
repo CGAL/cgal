@@ -256,9 +256,10 @@ td.TocChapter          { font-weight: normal; }
     \lcRawHtml{<H1>Package Overview</H1>}
     \lcRawHtml{<table cellpadding="2" cellspacing="0">}
     \lciPopOutput%
+    \lciPushOutput{comments}%
+\lcRawHtml{<manual_tools_output>}
+\lciPopOutput%
 }{%
-    % print remaining footnotes at the end of the conversion
-    \lciPrintFootnotes\lciResetFootnotes
     % close all parts, chapters, and sections at the end of the conversion
     \lciEndPart
     % finish table of contents
@@ -274,6 +275,9 @@ td.TocChapter          { font-weight: normal; }
     \lciHtmlNavigationBottom
     \lciHtmlFileFooter%
     \lciPopOutput%
+    \lciPushOutput{comments}%
+\lcRawHtml{</manual_tools_output>}
+\lciPopOutput%
 }
 
 % Args: tmp-path, main-rootname: reads *.auxtmp file created by latex_to_html
@@ -1133,12 +1137,7 @@ td.TocChapter          { font-weight: normal; }
     \gdef{\lciIfHtmlIndex}{\lcTrue}%
     \lciHtmlPartHeader{}{#1}}
 
-\newcommand{\lciEndPart}{%
-  \lciEndChapter
-  \lciIfDefined{\lciTheFirstPartHasAlreadyBeenProcessedFlag}{ % check for first part
-    \lciPrintFootnotes\lciResetFootnotes
-  }{\newcommand{\lciTheFirstPartHasAlreadyBeenProcessedFlag}{}}%
-}
+\newcommand{\lciEndPart}{\lciEndChapter}
 
 \gdef\lciReplaceWithCurrentPathToken{REPLACE_WITH_CURRENT_PATH}%
 
@@ -1204,8 +1203,7 @@ td.TocChapter          { font-weight: normal; }
     \lciPopFootnotes
     % navigation footer
     \addtocounter{createdfiles}{1}%
-    \lcRawHtml{[internal:Next_#GC1_link_}\value{part}\_\value{createdfiles}\lcRawHtml{]
-}
+    \lcRawHtml{[internal:Next_#GC1_link_}\value{part}\_\value{createdfiles}\lcRawHtml{]}
     \lciHtmlNavigationBottom
     \lciHtmlFileFooter
     \lciPopOutput
@@ -1231,8 +1229,7 @@ td.TocChapter          { font-weight: normal; }
     \lcRawHtml{	<div class="NavNext"><hr> Next: <a href="}%
     \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
     \lcRawHtmlExpanded{\lciOutputBasename}%
-    \lcRawHtml{">}\lciRemoveNewlines{#1}\lcRawHtml{</a></div>
-}%
+    \lcRawHtml{">}\lciRemoveNewlines{#1}\lcRawHtml{</a></div>}
     \lcRawHtml{i Up_chapter_link_}\value{part}\_\value{createdfiles}%
     \lcRawHtml{	<a href="}%
     \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%

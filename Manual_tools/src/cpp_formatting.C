@@ -1883,63 +1883,77 @@ void format_constructor( const char* signature) {
 void handle_two_column_layout( char key, const char* decl) {
     if ( current_ostream) {
         *current_ostream << "[cccbegin]";
+        (*comments_stream) << "  <item>" << std::endl
+                           << "    <kind>";
         decl = handle_template_layout( *current_ostream, decl, false);
         switch ( key) {
         case 'A':
             format_class_declaration( decl);
-            (*comments_stream) << "\\class@";
+            (*comments_stream) << "class";
             break;
         case 'B':
             format_struct( decl);
-            (*comments_stream) << "\\struct@";
+            (*comments_stream) << "struct";
             break;
         case 'C':
             format_nested_type( decl);
-            (*comments_stream) << "\\nested_type@";
+            (*comments_stream) << "nested_type>";
             break;
         case 'D':
             format_enum( decl);
-            (*comments_stream) << "\\enum@";
+            (*comments_stream) << "enum>";
             break;
         case 'E':
             format_constructor( decl);
-            (*comments_stream) << "\\constructor@";
+            (*comments_stream) << "constructor>";
             break;
         default:
             printErrorMessage( UnknownKeyError);
         }
         *current_ostream << "[cccend]";
     }
-    (*comments_stream) << decl << "@" << std::endl;
+    string my_decl = decl;
+    crop_string( my_decl );
+    (*comments_stream) << "</kind>" << std::endl
+                       << "    <name>";
+    print_ascii_to_html( *comments_stream, my_decl.c_str() );
+    (*comments_stream) << "</name>" << std::endl;
 }
 
 void handle_three_column_layout( char key, const char* decl, bool empty) {
     if ( current_ostream) {
         *current_ostream << "[cccbegin]";
+        (*comments_stream) << "  <item>" << std::endl
+                           << "    <kind>";
         decl = handle_template_layout( *current_ostream, decl, true);
         switch ( key) {
         case 'L':  // member function
             format_function( true, decl, empty);
-            (*comments_stream) << "\\memberfunction@";
+            (*comments_stream) << "memberfunction";
             break;
         case 'M':  // function
             format_function( false, decl, empty);
-            (*comments_stream) << "\\function@";
+            (*comments_stream) << "function";
             break;
         case 'N':
             format_variable( decl, empty);
-            (*comments_stream) << "\\variable@";
+            (*comments_stream) << "variable>";
             break;
         case 'O': // typedef
             format_variable( decl, empty, true);
-            (*comments_stream) << "\\typedef@";
+            (*comments_stream) << "typedef";
             break;
         default:
             printErrorMessage( UnknownKeyError);
         }
         *current_ostream << "[cccend]";
     }
-    (*comments_stream) << decl << "@" << std::endl;
+    string my_decl = decl;
+    crop_string( my_decl );
+    (*comments_stream) << "</kind>" << std::endl
+                       << "    <name>";
+    print_ascii_to_html( *comments_stream, my_decl.c_str() );
+    (*comments_stream) << "</name>" << std::endl;
 }
 
 

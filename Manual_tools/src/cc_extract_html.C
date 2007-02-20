@@ -417,7 +417,7 @@ main( int argc, char **argv) {
 					   macroX( "\\lciContentsFilename"));
     short_contents_stream = open_file_for_write( tmp_path +
 					   macroX( "\\lciShortContentsFilename"));
-    comments_stream = open_file_for_write( tmp_path + "comments.txt" );
+    comments_stream = open_file_for_write( tmp_path + "comments.xml" );
 
     package_overview_stream = open_file_for_write( tmp_path +
                                               macroX( "\\lciPkgOverviewFilename") );
@@ -564,7 +564,7 @@ main( int argc, char **argv) {
     assert_file_write( *HREF_stream, macroX( "\\lciHREFFilename"));
     delete HREF_stream;
 
-    assert_file_write( *comments_stream, "comments.txt" );
+    assert_file_write( *comments_stream, "comments.xml" );
     delete comments_stream;
 
 

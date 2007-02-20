@@ -602,7 +602,7 @@ convert() {
 
     cp -r ${ConfigHtml}/Biblio ${OutDir}
 
-    cp ${TmpDir}/comments.txt ${OutDir}
+    cp ${TmpDir}/comments.xml ${OutDir}
 
     # finish, write timing to logfile and close it
     # -------------------------------------------------------
