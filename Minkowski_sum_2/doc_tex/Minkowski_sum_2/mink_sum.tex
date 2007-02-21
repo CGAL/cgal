@@ -5,7 +5,7 @@
  
 Given two sets $A,B \in \mathbb{R}^d$, their \emph{Minkowski sum},
 denoted by $A \oplus B$, is the set $\left\{ a + b ~|~ a \in
-A, b \in B \right\}$. Minkowski sum are used in many applications,
+A, b \in B \right\}$. Minkowski sums are used in many applications,
 such as motion planning and computer-aided design and
 manufacturing. This package contains functions for computing planar
 Minkowski sums of two polygons (namely $A$ and $B$ are two closed
@@ -117,12 +117,12 @@ and $Q$, represented using the \ccc{Polygon_2<Kernel,Container>}
 class-template and uses the convolution method in order to compute and
 return their Minkowski sum $S = P \oplus Q$.
 
-As the input polygons may not be convex,their Minkowski sum may not be
+As the input polygons may not be convex, their Minkowski sum may not be
 simply connected and contain polygonal holes; see for example
 Figure~\ref{mink_fig:onecyc}. $S$ is therefore an instance of the
 \ccc{Polygon_with_holes_2<Kernel,Container>} class-template, defined in the
 Boolean Set-Operations package: The outer boundary of $S$ is a polygon that
-can be accessed using \ccc{S.outer_boundary()}, and its polygonal holes can
+can be accessed using \ccc{S.outer_boundary()}, and its polygonal holes 
 are given by the range \ccc{[S.holes_begin(), S.holes_end())} (where $S$
 contains \ccc{S.number_of_holes()} holes in its interior).
 
@@ -186,7 +186,7 @@ In order to compute Minkowski sums using the decomposition method, it is
 possible to call the function \ccc{minkowski_sum_2 (P, Q, decomp)}, where
 \ccc{decomp} is an instance of a class that models the concept
 \ccc{PolygonConvexDecomposition_2}, namely it should provide a method named
-\ccc{decompose()} that receives a planar polygons and returns a range
+\ccc{decompose()} that receives a planar polygon and returns a range
 of convex polygons that represents its convex decomposition.
 
 The Minkowski-sum package includes four models of the concept
@@ -325,7 +325,7 @@ $P = \left( p_0, \ldots, p_{n-1} \right)$, whose vertices all have rational
 coordinates (i.e., for each vertex $p_i = (x_i, y_i)$ we have
 $x_i, y_i \in {\mathbb Q}$, and we wish to compute its Minkowski sum with a
 disc of radius $r$, where $r$ is also a rational number. The boundary of this
-sum is comprised of line segments an circular arcs, where:
+sum is comprised of line segments and circular arcs, where:
 \begin{itemize}
 \item
 Each circular arc is supported by a circle of radius $r$ centered at one
@@ -413,7 +413,7 @@ application of set operations on such polygons. The function returns an
 object of the nested type
 \ccc{Gps_circle_segment_traits_2<Kernel>::Polygon_with_holes_2} representing
 the approximated offset polygon (recall that if $P$ is not convex, its
-offset may not be simple an contain holes, whose boundary is also comprised
+offset may not be simple and may contain holes, whose boundary is also comprised
 of line segments and circular arcs).
 
 \begin{figure}[t]
