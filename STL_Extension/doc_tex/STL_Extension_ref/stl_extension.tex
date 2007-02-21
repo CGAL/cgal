@@ -385,7 +385,10 @@
   Note: Boost also provides the same functionality via the
   \ccc{boost::filter_iterator} class.  Unfortunately, the semantics
   chosen for accepting or rejecting elements based on the predicate's
-  result are opposite as the semantic chosen here.
+  result are opposite as the semantic chosen here. What is more, the
+  argument of the predicate is different: the predicate used with
+  \ccc{boost::filter_iterator} must take the value type of the iterator, as
+  argument, and not the iterator itself.
 
   \ccInclude{CGAL/iterator.h}
   
@@ -407,6 +410,12 @@
     Initializes by taking the first valid iterator (according to \ccc{p}),
     starting at \ccc{c}, and stopping at \ccc{e} if none is found.}
 
+  There is also a global function to help the use of \ccClassTemplateName{}:
+
+  \ccFunction{template < class Iterator, class Predicate >
+    inline Filter_iterator< Iterator, Predicate >
+    filter_iterator(Iterator e, const Predicate& p, Iterator c = e);}
+  { Constructs \ccc{Filter_iterator<Iterator, Predicate>(e, p, c)}. }
 \end{ccRefClass}
 
 %% +---------------------------------------------+
