@@ -4322,7 +4322,7 @@ lib_menu()
         make_lib_dir
         make_makefiles
         build_cgal
-	create_include_makefile
+        create_include_makefile
     else
        	log_print "The setup tests failed."
         log_print "Therefore, no CGAL library is compiled."
