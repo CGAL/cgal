@@ -1531,7 +1531,7 @@ math_ldflags()
 compiler_test_cxxflags()
 {
     ${_printf} "%s" \
-	"${CUSTOM_CXXFLAGS} ${ADDITIONAL_CXXFLAGS} `include_dir_option ${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}` "
+	"${ADDITIONAL_CXXFLAGS} `include_dir_option ${CGAL_INCL_CONF_DIR}/${CGAL_OS_COMPILER}` ${CUSTOM_CXXFLAGS}"
 }
 
 compiler_test_libpathflags()
@@ -3749,9 +3749,9 @@ write_compiler_flags()
   #
   ${_printf} "%s" "CGAL_CXXFLAGS = " >> ${FILE}
   makefile_print_continuationline "${ADDITIONAL_CXXFLAGS}" >> ${FILE}
-  makefile_print_continuationline "\$(CUSTOM_CXXFLAGS)" >> ${FILE}
   makefile_print_continuationline "'-I\$(CGAL_INCL_CONF_DIR)'" >> ${FILE}
   makefile_print_continuationline "'-I\$(CGAL_INCL_DIR)'" >> ${FILE}
+  makefile_print_continuationline "\$(CUSTOM_CXXFLAGS)" >> ${FILE}
   for i in ${SUPPORT_FEATURES}; do
       if [ -n "`value_of \"PROVIDE_PKG_${i}\"`" ]; then
 	  makefile_print_continuationline "\$(${i}_CXXFLAGS)" >> ${FILE}
