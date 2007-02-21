@@ -8,24 +8,21 @@ some power of a variable.
 \ccc{AdaptableFunctor}
 
 \ccTypes
-
+\ccCreationVariable{shift}
 \ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
-\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}\ccGlue
-\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   first_argument_type;}{}\ccGlue
-\ccTypedef{typedef int                                second_argument_type;}{}\ccGlue
-\ccTypedef{typedef int                                third_argument_type;}{}
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}
 
 \ccOperations
-\ccMethod{result_type operator()(first_argument_type  p,
-                                 second_argument_type e);}
-         { return $p * x_d^e$
+\ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d  p,
+                                 int e);}
+         { return $p * x_{d-1}^e$
           \ccPrecond $0 \leq e$     }
-\ccMethod{result_type operator()(first_argument_type  p,
-                                 second_argument_type e,
-                                 third_argument_type  i);}
+\ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d  p,
+                                 int e,
+                                 int i);}
          { return $p * x_i^e$
           \ccPrecond $0 \leq e$   
-          \ccPrecond $0 < i \leq d$
+          \ccPrecond $0 \leq i < d$
          }
 
 %\ccHasModels

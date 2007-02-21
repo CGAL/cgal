@@ -9,10 +9,12 @@ type \ccc{PolynomialTraits_d::Polynomial_d} with respect a certain variable.
 
 \ccTypes
 \ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
-\ccTypedef{typedef PolynomialTraits_d::Coefficient   result_type;}{}\ccGlue
-\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   first_argument_type;}{}\ccGlue
-\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   second_argument_type;}{}\ccGlue
-\ccTypedef{typedef int                                third_argument_type;}{}
+\ccCreationVariable{resultant}
+\ccTypedef{typedef PolynomialTraits_d::Coefficient   result_type;}{}
+\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   first_argument_type;}{}
+\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   second_argument_type;}{}
 
 \ccOperations
 \ccMethod{result_type operator()(first_argument_type   f,
@@ -22,10 +24,10 @@ type \ccc{PolynomialTraits_d::Polynomial_d} with respect a certain variable.
 
 \ccMethod{result_type operator()(first_argument_type  f,
                                  second_argument_type g,
-                                 third_argument_type  i);}
+                                 int  i);}
          { computes the resultant of $f$ and $g$,
            with respect to variable $x_i$. 
-           \ccPrecond $0<i \leq d$ 
+           \ccPrecond $0 \leq i  < d$ 
          }
 
 %\ccHasModels

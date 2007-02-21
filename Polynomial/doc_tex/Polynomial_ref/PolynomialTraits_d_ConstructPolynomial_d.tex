@@ -9,10 +9,10 @@ to construct objects of type \ccc{PolynomialTraits_d::Polynomial_d}.
 
 \ccTypes
 
-\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxx}{xxxxxxxxxxx}{}
 \ccTypedef{typedef PolynomialTraits_d::Polynomial_d result_type;}{}
 
-\ccCreationVariable{poly}
+\ccCreationVariable{construct_polynomial}
 \ccOperations
 \ccMethod{result_type operator()();}
          {Construct the zero polynomial.}
@@ -26,8 +26,8 @@ to construct objects of type \ccc{PolynomialTraits_d::Polynomial_d}.
         \ccc{PolynomialTraits_d::Coefficient}. \\
         
         The operator constructs the a polynomial from the iterator range, 
-        with respect to the outermost variable, $x_d$. \\
-        The range starts with the coefficient for $x_d^0$. \\
+        with respect to the outermost variable, $x_{d-1}$. \\
+        The range starts with the coefficient for $x_{d-1}^0$. \\
         In case the range is empty, the zero polynomial is constructed. 
         }
 

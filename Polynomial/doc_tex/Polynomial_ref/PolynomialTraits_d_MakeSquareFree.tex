@@ -18,11 +18,13 @@ This functor computes  $g_1  \cdot  ...  \cdot  g_n$ {\em up to a constant facto
 \ccTypes
 
 \ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
-\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}\ccGlue
-\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   first_argument_type;}{}
+\ccCreationVariable{make_square_free}
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}
+\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   argument_type;}{}
 
 \ccOperations
-\ccMethod{result_type operator()(first_argument_type  p);}
+\ccMethod{result_type operator()(argument_type  p);}
          { return the square-free part of $p$ {\em up to a constant factor.} }
 
 

@@ -2,22 +2,20 @@
 
 \ccDefinition
 A model of \ccc{PolynomialTraits_d} is associated to an type 
-\ccc{Polynomial_d}, representing a multivariate polynomial. 
-The number of variables is denoted as the dimension of the polynomial,
+\ccc{Polynomial_d}, representing a multivariate polynomial
+\footnote{Univariate polynomials are not excluded by this concept.}. 
+The number of variables is denoted as the dimension $d$ of the polynomial,
 it is arbitrary but fixed for a certain model of this concept.  
-
-Note: That this concept does not exclude univariate polynomial. 
-
 
 \ccc{PolynomialTraits_d} provides two different views on the 
 multivariate polynomial. 
 
 \begin{itemize}
 \item A recursive view, that sees the polynomial as an element of 
-$R[x_1,\dots,x_{d-1}][x_d]$. In this view, the polynomial is handled as
-an univariate polynomial over the ring $R[x_1,\dots,x_{d-1}]$. 
+$R[x_0,\dots,x_{d-2}][x_{d-1}]$. In this view, the polynomial is handled as
+an univariate polynomial over the ring $R[x_0,\dots,x_{d-2}]$. 
 \item A symmetric view, which is symmetric with respect to all variables,
-seeing the polynomials as element of $R[x_1,\dots,x_d]$.
+seeing the polynomials as element of $R[x_0,\dots,x_{d-1}]$.
 \end{itemize}
 
 
@@ -33,8 +31,8 @@ with respect to this view.
 
 \ccTypes
 
-\ccNestedType{Polynomial_d}{ Type representing $R[x_1,\dots,x_{d}]$.}\ccGlue
-\ccNestedType{Coefficient }{ Type representing $R[x_1,\dots,x_{d-1}]$.}\ccGlue
+\ccNestedType{Polynomial_d}{ Type representing $R[x_0,\dots,x_{d-1}]$.}\ccGlue
+\ccNestedType{Coefficient }{ Type representing $R[x_0,\dots,x_{d-2}]$.}\ccGlue
 \ccNestedType{Innermost_coefficient}{ Type representing the base ring $R$.}
 
 \ccHeading{Functors}
@@ -46,6 +44,10 @@ with respect to this view.
 \ccNestedType{Degree}{ A model of \ccc{PolynomialTraits_d::Degree}}
 \ccNestedType{Total_degree}{ A model of \ccc{PolynomialTraits_d::TotalDegree}}
 \ccNestedType{Leading_coefficient}{ A model of \ccc{PolynomialTraits_d::LeadingCoefficient}}
+
+
+\ccNestedType{Swap}{ A model of \ccc{PolynomialTraits_d::Swap}}
+\ccNestedType{Move}{ A model of \ccc{PolynomialTraits_d::Move}}
 
 \ccNestedType{Univariate_content}{ 
         In case \ccc{PolynomialTraits_d::Coefficient} is {\bf not} a model of 
@@ -102,10 +104,13 @@ with respect to this view.
 
 %resultant
 \ccNestedType{Resultant}{ A model of \ccc{PolynomialTraits_d::Resultant}}
-\ccNestedType{Swap}{ A model of \ccc{PolynomialTraits_d::Swap}}
-\ccNestedType{Compare}{ A model of \ccc{PolynomialTraits_d::Compare}. 
+
+\ccNestedType{Compare}{ 
+        A model of \ccc{PolynomialTraits_d::Compare}. 
         In case \ccc{Innermost_coefficient} is not \ccc{LessThanComparable} this 
-        is \ccc{CGAL::Null_functor}. }
+        is \ccc{CGAL::Null_functor}.}
+
+
 \ccNestedType{Canonicalize}{ A model of \ccc{PolynomialTraits_d::Canonicalize}}
 
 

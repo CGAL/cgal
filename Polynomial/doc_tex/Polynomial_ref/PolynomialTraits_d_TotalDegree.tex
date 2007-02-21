@@ -13,10 +13,11 @@ of a \ccc{PolynomialTraits_d::Polynomial_d}.
 
 \ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
 \ccTypedef{typedef int result_type;}{}\ccGlue
-\ccTypedef{typedef PolynomialTraits_d::Polynomial_d first_argument_type;}{}
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d argument_type;}{}
 
 \ccOperations
-\ccMethod{result_type operator()(first_argument_type p);}
+\ccCreationVariable{total_degree}
+\ccMethod{result_type operator()(argument_type p);}
          {Computes the total degree of $p$.}
 
 

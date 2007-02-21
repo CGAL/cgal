@@ -2,8 +2,6 @@
 
 \ccDefinition
 
-
-
 \ccRefines 
 
 \ccc{AdaptableFunctor}
@@ -18,8 +16,8 @@
 \ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d,
                                  int i, int j);}
                 { return polynomial with interchanged variables $x_i$,$x_j$. 
-                  \ccPrecond 0 < i <= d   
-                  \ccPrecond 0 < j <= d                       
+                  \ccPrecond $0 \leq i  < d$   
+                  \ccPrecond $0 \leq j  < d$                       
                 }       
 
 

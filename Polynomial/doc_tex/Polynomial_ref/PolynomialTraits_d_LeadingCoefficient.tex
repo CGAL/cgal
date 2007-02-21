@@ -10,17 +10,17 @@ of a \ccc{PolynomialTraits_d::Polynomial_d}.
 
 
 \ccTypes
+\ccCreationVariable{leading_coefficient}
 \ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
 \ccTypedef{typedef PolynomialTraits_d::Coefficient    result_type;}{}\ccGlue
-\ccTypedef{typedef PolynomialTraits_d::Polynomial_d first_argument_type;}{}\ccGlue
-\ccTypedef{typedef int                              second_argument_type;}{}
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   argument_type;}{}\ccGlue
 
 \ccOperations
-\ccMethod{result_type operator()(first_argument_type p);}
-         {Computes the leading coefficient of $p$ with respect to the outermost variable $x_d$. }
-\ccMethod{result_type operator()(first_argument_type p, int i);}
+\ccMethod{result_type operator()(argument_type p);}
+         {Computes the leading coefficient of $p$ with respect to the outermost variable $x_{d-1}$. }
+\ccMethod{result_type operator()(argument_type p, int i);}
          {Computes the leading coefficient of $p$ with respect to variable $x_i$.
-         \ccPrecond $0<i \leq d$        
+         \ccPrecond $0 \leq i  < d$        
          }
 
 %\ccHasModels

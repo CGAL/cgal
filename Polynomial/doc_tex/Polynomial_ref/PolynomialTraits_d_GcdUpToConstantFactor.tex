@@ -8,13 +8,13 @@ This \ccc{AdaptableBinaryFunction} computes the $gcd$
 
 In case the base ring $R$, \ccc{PolynomialTraits_d::Innermost_coefficient}, 
 is not a \ccc{UFDomain} or not a \ccc{Field} the polynomial ring 
-$R[x_1,\dots,x_d]$ ,\ccc{PolynomialTraits_d::Polynomial_d}, may not 
+$R[x_0,\dots,x_{d-1}]$ ,\ccc{PolynomialTraits_d::Polynomial_d}, may not 
 possess greatest common divisor. However, since the $R$ is an integral 
 domain one can consider its quotient field $Q(R)$ for which gcds of 
 polynomials exist. A $gcd\_up_to_constant_factor(f,g)$ is a denominator-free 
-constant multiple of $gcd(f,g)$ in $Q(R)[x_1,\dots,x_d]$. 
+constant multiple of $gcd(f,g)$ in $Q(R)[x_0,\dots,x_{d-1}]$. 
 
-{\bf Note:} It may not be a divisor of $f$ and $g$ in $R[x_1,\dots,x_d]$.
+{\bf Note:} It may not be a divisor of $f$ and $g$ in $R[x_0,\dots,x_{d-1}]$.
 
 \ccRefines 
 
@@ -24,6 +24,7 @@ constant multiple of $gcd(f,g)$ in $Q(R)[x_1,\dots,x_d]$.
 
 
 \ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccCreationVariable{gcd_utcf}
 \ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}\ccGlue
 \ccTypedef{typedef PolynomialTraits_d::Polynomial_d   first_argument_type;}{}\ccGlue
 \ccTypedef{typedef PolynomialTraits_d::Polynomial_d   second_argument_type;}{}

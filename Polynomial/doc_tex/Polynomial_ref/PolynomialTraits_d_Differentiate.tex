@@ -10,17 +10,18 @@ This \ccc{AdaptableFunctor} differentiates a
 \ccTypes
 
 \ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
-\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}\ccGlue
-\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   first_argument_type;}{}\ccGlue
-\ccTypedef{typedef int                                second_argument_type;}{}
+\ccCreationVariable{differentiate}
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}
+\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   argument_type;}{}
 
 \ccOperations
-\ccMethod{result_type operator()(first_argument_type  p);}
+\ccMethod{result_type operator()(argument_type  p);}
          { return $p'$, with respect to the outermost variable. }
-\ccMethod{result_type operator()(first_argument_type  p,
-                                 second_argument_type i);}
+\ccMethod{result_type operator()(argument_type  p,
+                                 int i);}
          { return $p'$, with respect to variable $x_i$. 
-           \ccPrecond $0<i \leq d$ 
+           \ccPrecond $0 \leq i  < d$ 
          }
 
 %\ccHasModels

@@ -7,7 +7,7 @@ of two polynomials of type \ccc{PolynomialTraits_d::Polynomial_d}
 {\em up to a constant factor (utcf)} . 
 
 
-\ccPrecond $g$ divides $f$ in $Q(R)[x_1,\dots,x_d]$, where $Q(R)$ is the quotient
+\ccPrecond $g$ divides $f$ in $Q(R)[x_0,\dots,x_{d-1}]$, where $Q(R)$ is the quotient
 field of the base ring $R$, \ccc{PolynomialTraits_d::Innermost_coefficient}.
 
 \ccRefines 
@@ -18,6 +18,7 @@ field of the base ring $R$, \ccc{PolynomialTraits_d::Innermost_coefficient}.
 
 
 \ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccCreationVariable{integral_division_utcf}
 \ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}\ccGlue
 \ccTypedef{typedef PolynomialTraits_d::Polynomial_d   first_argument_type;}{}\ccGlue
 \ccTypedef{typedef PolynomialTraits_d::Polynomial_d   second_argument_type;}{}

@@ -34,7 +34,7 @@ where $ D = leading\_coefficient(g)^{max(0, degree(f)-degree(g)+1)}$
                                  third_argument_type  q,
                                  fourth_argument_type r,
                                  fifth_argument_type  D);}{ Computes 
-        the pseudo division with respect to the outermost variable $x_d$.}
+        the pseudo division with respect to the outermost variable $x_{d-1}$.}
 
 \begin{ccAdvanced}
 \ccMethod{result_type operator()(first_argument_type  f,
@@ -44,7 +44,7 @@ where $ D = leading\_coefficient(g)^{max(0, degree(f)-degree(g)+1)}$
                                  fifth_argument_type  D,
                                  int i);}{ Computes 
            the pseudo division with respect to variable $x_i$.
-           \ccPrecond $0<i \leq d$ }
+           \ccPrecond $0 \leq i  < d$ }
 \end{ccAdvanced}
 
 %\ccHasModels

@@ -11,13 +11,15 @@ In particular it computes the gcd of all innermost coefficients.
 
 \ccTypes
 
+\ccCreationVariable{multivariate_content}
 \ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxx}{xxx}{}
-\ccTypedef{typedef PolynomialTraits_d::Innermost_coefficient   result_type;}{}\ccGlue
-\ccTypedef{typedef PolynomialTraits_d::Polynomial_d          first_argument_type;}{}
+\ccTypedef{typedef PolynomialTraits_d::Innermost_coefficient   result_type;}{}
+\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d          argument_type;}{}
 
 \ccOperations
 
-\ccMethod{result_type operator()(first_argument_type p);}
+\ccMethod{result_type operator()(argument_type p);}
          {Computes the $gcd$ of all innermost coefficients of $p$. }
 
 %\ccHasModels

@@ -28,14 +28,14 @@ where $ D = leading\_coefficient(g)^{max(0, degree(f)-degree(g)+1)}$
 
 \ccMethod{result_type operator()(first_argument_type  f,
                                  second_argument_type g);}{ Returns the remainder $r$
-        of the pseudo division of $f$ and $g$ with respect to the outermost variable $x_d$.}
+        of the pseudo division of $f$ and $g$ with respect to the outermost variable $x_{d-1}$.}
 
 \begin{ccAdvanced}
 \ccMethod{result_type operator()(first_argument_type  f,
                                  second_argument_type g,
                                  int i);}{ Returns the remainder $r$
         of the pseudo division of $f$ and $g$ with respect to variable $x_i$.
-        \ccPrecond $0<i \leq d$}
+        \ccPrecond $0 \leq i  < d$}
 \end{ccAdvanced}
 
 %\ccHasModels

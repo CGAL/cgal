@@ -10,10 +10,12 @@ This \ccc{AdaptableFunctor} translate a
 \ccTypes
 
 \ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
-\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}\ccGlue
-\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   first_argument_type;}{}\ccGlue
-\ccTypedef{typedef PolynomialTraits_d::Coefficient    second_argument_type;}{}\ccGlue
-\ccTypedef{typedef int                                third_argument_type;}{}
+\ccCreationVariable{translate}
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}
+\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   first_argument_type;}{}
+\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Coefficient    second_argument_type;}{}
 
 \ccOperations
 \ccMethod{result_type operator()(first_argument_type  p,
@@ -21,9 +23,9 @@ This \ccc{AdaptableFunctor} translate a
          { return $p(x+c)$, with respect to the outermost variable. }
 \ccMethod{result_type operator()(first_argument_type  p,
                                  second_argument_type c,
-                                 third_argument_type i);}
+                                 int i);}
          { return $p(x+c)$, with respect to variable $x_i$. 
-           \ccPrecond $0<i \leq d$
+           \ccPrecond $0 \leq i  < d$
          }
 
 %\ccHasModels
