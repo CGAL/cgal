@@ -299,31 +299,18 @@ int get_root (mpfi_ptr x, int n) {
 	return 0;	// false: we couldn't copy the root
 }
 
-Comparison_result refine_and_compare_1(Algebraic_1 &r1,Algebraic_1 &r2){
-	do{
-		refine(r1,5);
-		refine(r2,5);
-	}while(r1.overlaps(r2));
-	return(r1<r2?SMALLER:LARGER);
-}
-
 // TODO: rewrite using gcd
 Comparison_result compare_1(Algebraic_1 &r1,Algebraic_1 &r2){
-	// there is a strange RS result where (r1<r2)&&(r2<r1)&&(r1!=r2)
-	try{
-		if((r1==r2)/*||((r1<r2)&&(r2<r1))*/)
-			return EQUAL;
-	}
-	catch(CGAL::comparison_overlap_exn &o){
+	if(r1.overlaps(r2)){
 		if((r1.pol()==r2.pol())||(sign_1(r2.pol(),r1)==ZERO))
 			return EQUAL;
+		else{
+			do{
+				refine(r1,5);
+				refine(r2,5);
+			}while(r1.overlaps(r2));
+		}
 	}
-	if(r1.overlaps(r2))
-		if((r1.pol()==r2.pol())||(sign_1(r2.pol(),r1)==ZERO))
-			return EQUAL;
-		else
-			return refine_and_compare_1(r1,r2);
-	// at this point, we know the intervals aren't equal
 	return(r1<r2?SMALLER:LARGER);
 }
 
