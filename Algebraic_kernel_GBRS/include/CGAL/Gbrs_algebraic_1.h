@@ -130,7 +130,7 @@ public:
 	*/
 
 	// functions related to the member data
-	const mpfi_t & mpfi () const;
+	mpfi_srcptr mpfi()const;
 	mpfi_ptr mpfi();
 	const Rational_polynomial_1 & pol () const;
 	//Rational_polynomial_1 & pol ();
@@ -148,6 +148,8 @@ public:
 	mp_prec_t get_prec()const;
 	void get_left(mpfr_ptr)const;
 	void get_right(mpfr_ptr)const;
+	mpfr_srcptr left()const;
+	mpfr_srcptr right()const;
 	void get_endpoints(mpfr_ptr,mpfr_ptr)const;
 	bool is_consistent () const;
 	bool is_point () const;	// are endpoints equal?
@@ -279,10 +281,10 @@ public:
 	bool operator>(mpfr_srcptr)const;
 	// arithmetics
 	//--------------------------------------------------
-	// Algebraic_1 operator+(mpfr_t &)const;
-	// Algebraic_1 operator-(mpfr_t &)const;
-	// Algebraic_1 operator*(mpfr_t &)const;
-	// Algebraic_1 operator/(mpfr_t &)const;
+	// Algebraic_1 operator+(mpfr_srcptr)const;
+	// Algebraic_1 operator-(mpfr_srcptr)const;
+	// Algebraic_1 operator*(mpfr_srcptr)const;
+	// Algebraic_1 operator/(mpfr_srcptr)const;
 	//-------------------------------------------------- 
 	Algebraic_1& operator+=(mpfr_srcptr);
 	Algebraic_1& operator-=(mpfr_srcptr);
@@ -292,7 +294,7 @@ public:
 
 // //////////////////////////
 // inline functions of the class
-inline const mpfi_t& Algebraic_1::mpfi()const{return Ptr()->mpfI;};
+inline mpfi_srcptr Algebraic_1::mpfi()const{return Ptr()->mpfI;};
 inline mpfi_ptr Algebraic_1::mpfi(){return ptr()->mpfI;};
 inline const Rational_polynomial_1 & Algebraic_1::pol() const{
 	return *(Ptr()->poly);};
@@ -319,6 +321,8 @@ inline void Algebraic_1::set_prec(mp_prec_t p){mpfi_round_prec(mpfi(),p);};
 inline mp_prec_t Algebraic_1::get_prec()const{return mpfi_get_prec(mpfi());};
 inline void Algebraic_1::get_left(mpfr_ptr f)const{mpfi_get_left(f,mpfi());};
 inline void Algebraic_1::get_right(mpfr_ptr f)const{mpfi_get_right(f,mpfi());};
+inline mpfr_srcptr Algebraic_1::left()const{return &(mpfi()->left);};
+inline mpfr_srcptr Algebraic_1::right()const{return &(mpfi()->right);};
 inline bool Algebraic_1::is_consistent()const{
 	return(&pol()==NULL?false:true);};
 inline bool Algebraic_1::is_point()const{

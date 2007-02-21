@@ -254,10 +254,10 @@ void Algebraic_1::get_endpoints(mpfr_ptr l,mpfr_ptr r)const{
 };
 
 bool Algebraic_1::overlaps(const Algebraic_1&a)const{
-	return (((mpfr_lessequal_p(&(mpfi()->left),&(a.mpfi()->left)))&&
-		  (mpfr_lessequal_p(&(a.mpfi()->left),&(mpfi()->right))))||
-		 ((mpfr_lessequal_p(&(a.mpfi()->left),&(mpfi()->left)))&&
-		  (mpfr_lessequal_p(&(mpfi()->left),&(a.mpfi()->right)))));
+	if(mpfr_lessequal_p(left(),a.left()))
+		return mpfr_lessequal_p(a.left(),right());
+	else
+		return mpfr_lessequal_p(left(),a.right());
 };
 
 // assignment
@@ -326,37 +326,17 @@ bool Algebraic_1::operator!= (const int n2) const {
 
 bool Algebraic_1::operator< (const int n2) const {
 	if (contains (n2))
-		if (is_point ())
-			return false;
-		else
-			overlap ();
-	mpfr_t end;
-	mpfr_init (end);
-	get_right (end);	// end is the right endpoint
-	int comp1 = mpfr_cmp_si (end, n2);
-	if (comp1 < 0) {
-		mpfr_clear (end);
+		overlap();
+	if(mpfr_cmp_si(right(),n2)<0)
 		return true;
-	}
-	mpfr_clear (end);
 	return false;
 };
 
 bool Algebraic_1::operator> (const int n2) const {
 	if (contains (n2))
-		if (is_point ())
-			return false;
-		else
-			overlap ();
-	mpfr_t end;
-	mpfr_init (end);
-	get_left (end);	// end is the left endpoint
-	int comp1 = mpfr_cmp_si (end, n2);
-	if (comp1 > 0) {
-		mpfr_clear (end);
+		overlap();
+	if(mpfr_cmp_si(left(),n2)>0)
 		return true;
-	}
-	mpfr_clear (end);
 	return false;
 };
 
@@ -371,67 +351,33 @@ bool Algebraic_1::operator>= (const int n2) const {
 // comparisons with Gmpz and Gmpq
 bool Algebraic_1::operator< (const CGAL::Gmpz &n2) const {
 	if (contains (n2))
-		if (is_point ())
-			return false;
-		else
-			overlap ();
-	mpfr_t end;
-	mpfr_init (end);
-	get_right (end);	// end is the right endpoint
-	int comp1 = mpfr_cmp_z (end, n2.mpz());
-	if (comp1 < 0) {
-		mpfr_clear (end);
+		overlap();
+	if(mpfr_cmp_z(right(),n2.mpz())<0)
 		return true;
-	}
-	mpfr_clear (end);
 	return false;
 };
 
 bool Algebraic_1::operator< (const CGAL::Gmpq &n2) const {
 	if (contains (n2))
-		if (is_point ())
-			return false;
-		else
-			overlap ();
-	mpfr_t end;
-	mpfr_init (end);
-	get_right (end);	// end is the right endpoint
-	int comp1 = mpfr_cmp_q (end, n2.mpq());
-	if (comp1 < 0) {
-		mpfr_clear (end);
+		overlap();
+	if(mpfr_cmp_q(right(),n2.mpq())<0)
 		return true;
-	}
-	mpfr_clear (end);
 	return false;
 };
 
 bool Algebraic_1::operator> (const CGAL::Gmpz &n2) const {
 	if (contains (n2))
-		overlap ();
-	mpfr_t end;
-	mpfr_init (end);
-	get_left (end);	// end is the left endpoint
-	int comp1 = mpfr_cmp_z (end, n2.mpz());
-	if (comp1 > 0) {
-		mpfr_clear (end);
+		overlap();
+	if(mpfr_cmp_z(left(),n2.mpz())>0)
 		return true;
-	}
-	mpfr_clear (end);
 	return false;
 };
 
 bool Algebraic_1::operator> (const CGAL::Gmpq &n2) const {
 	if (contains (n2))
-		overlap ();
-	mpfr_t end;
-	mpfr_init (end);
-	get_left (end);	// end is the left endpoint
-	int comp1 = mpfr_cmp_q (end, n2.mpq());
-	if (comp1 > 0) {
-		mpfr_clear (end);
+		overlap();
+	if(mpfr_cmp_q(left(),n2.mpq())>0)
 		return true;
-	}
-	mpfr_clear (end);
 	return false;
 };
 
@@ -552,15 +498,9 @@ Algebraic_1& Algebraic_1::operator*= (const CGAL::Gmpq &n2) {
 
 // 6
 std::pair <double, double> Algebraic_1::to_interval () const {
-	mpfr_t temp;
-	double left, right;
-	mpfr_init (temp);
-	mpfi_get_left (temp, mpfi ());
-	left = mpfr_get_d (temp, GMP_RNDN);
-	mpfi_get_left (temp, mpfi ());
-	right = mpfr_get_d (temp, GMP_RNDN);
-	mpfr_clear (temp);
-	return std::make_pair (left, right);
+	return std::make_pair(
+			mpfr_get_d(&(mpfi()->left),GMP_RNDN),
+			mpfr_get_d(&(mpfi()->right),GMP_RNDN));
 };
 
 // 7
@@ -601,8 +541,8 @@ Algebraic_1 Algebraic_1::sqrt () const {
 std::ostream& Algebraic_1::show(std::ostream &o,int digits)const{
 	if(is_point())
 		return(o<<mpfi_get_d(mpfi()));
-	return(o<<"["<<mpfr_get_d(&(mpfi()->left),GMP_RNDN)<<","<<
-		mpfr_get_d(&(mpfi()->right),GMP_RNDN)<<"]");
+	return(o<<"["<<mpfr_get_d(left(),GMP_RNDN)<<","<<
+			mpfr_get_d(right(),GMP_RNDN)<<"]");
 
 	// this is to exactly display the interval
 	/*char *str1, *str2;
@@ -639,41 +579,32 @@ std::ostream& Algebraic_1::show(std::ostream &o,int digits)const{
 // 10
 bool Algebraic_1::operator<(mpz_srcptr n2)const{
 	if (contains (n2))
-		if (is_point ())
-			return false;
-		else
-			overlap ();
-	if(mpfr_cmp_z(&(mpfi()->right),n2)<0)
+		overlap();
+	if(mpfr_cmp_z(right(),n2)<0)
 		return true;
 	return false;
 };
 
 bool Algebraic_1::operator>(mpz_srcptr n2)const{
 	if (contains (n2))
-		overlap ();
-	if(mpfr_cmp_z(&(mpfi()->left),n2)>0)
+		overlap();
+	if(mpfr_cmp_z(left(),n2)>0)
 		return true;
 	return false;
 };
 
 bool Algebraic_1::operator<(mpq_srcptr n2)const{
 	if (contains (n2))
-		if (is_point ())
-			return false;
-		else
-			overlap ();
-	if(mpfr_cmp_q (&(mpfi()->right),n2)<0)
+		overlap();
+	if(mpfr_cmp_q(right(),n2)<0)
 		return true;
 	return false;
 };
 
 bool Algebraic_1::operator>(mpq_srcptr n2)const{
 	if (contains (n2))
-		overlap ();
-	mpfr_t end;
-	mpfr_init (end);
-	get_left (end);	// end is the left endpoint
-	if(mpfr_cmp_q(&(mpfi()->left),n2)>0)
+		overlap();
+	if(mpfr_cmp_q(left(),n2)>0)
 		return true;
 	return false;
 };
@@ -749,20 +680,14 @@ Algebraic_1& Algebraic_1::operator=(mpfr_srcptr r){
 //	should work with mpfr_t
 bool Algebraic_1::operator<(mpfr_srcptr n2)const{
 	if (contains (n2))
-		if (is_point ())
-			return false;
-		else
-			overlap ();
-	return(mpfr_less_p(&(mpfi()->right),n2));
+		overlap();
+	return(mpfr_less_p(right(),n2));
 };
 
 bool Algebraic_1::operator>(mpfr_srcptr n2)const{
 	if (contains (n2))
-		overlap ();
-	mpfr_t end;
-	mpfr_init (end);
-	get_left (end);	// end is the left endpoint
-	return(mpfr_greater_p(&(mpfi()->left),n2));
+		overlap();
+	return(mpfr_greater_p(left(),n2));
 };
 
 // arithmetics: mpfi (op) mpfr
@@ -808,25 +733,25 @@ Algebraic_1& Algebraic_1::operator/=(mpfr_srcptr f){
 // 1.5
 bool operator== (const Algebraic_1 &n1, const Algebraic_1 &n2) {
 	if(n1.is_point()&&n2.is_point()&&
-			(!mpfr_cmp(&(n1.mpfi()->left),&(n2.mpfi()->left))))
+			(!mpfr_cmp(n1.left(),n2.left())))
 		return true;
-	if((mpfr_less_p(&(n1.mpfi()->right),&(n2.mpfi()->left)))
-			||(mpfr_less_p(&(n2.mpfi()->right),&(n1.mpfi()->left))))
+	if((mpfr_less_p(n1.right(),n2.left()))
+			||(mpfr_less_p(n2.right(),n1.left())))
 		return false;
 	// if intervals are not points and they have the same bounds, they are
 	// not necessarily equal
 	overlap();
 	return false;	// never reached
-}
+};
 
 bool operator<(const Algebraic_1 &n1,const Algebraic_1 &n2){
-	if(mpfr_less_p(&(n1.mpfi()->right),&(n2.mpfi()->left)))
+	if(mpfr_less_p(n1.right(),n2.left()))
 		return true;
-	if(mpfr_less_p(&(n2.mpfi()->right),&(n1.mpfi()->left)))
+	if(mpfr_less_p(n2.right(),n1.left()))
 		return false;
 	overlap();
 	return false;	// this never occurs
-}
+};
 
 // 2.5
 // comparison between int|mpfr_t|mp[zq]_t|Gmp[zq] and intervals
@@ -856,7 +781,7 @@ bool operator<(const Algebraic_1 &n1,const Algebraic_1 &n2){
 // Algebraic_1 operator- (const T &n1, const Algebraic_1 &n2)
 // template <class T>
 // Algebraic_1 operator* (const T &n1, const Algebraic_1 &n2)
-// Algebraic_1 operator/ (const mpfr_t &n1, const Algebraic_1 &n2)
+// Algebraic_1 operator/ (mpfr_srcptr n1, const Algebraic_1 &n2)
 //-------------------------------------------------- 
 
 // not implemented: mpfr (op=) mpfi (because they must not return an interval)
