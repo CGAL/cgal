@@ -12,5 +12,6 @@ STDINCLDIRS = /usr/include/qt3:${QTDIR}/include
 INCLTHING = qglobal.h
 STDLIBDIRS = ${QTDIR}/lib64:${QTDIR}/lib
 LIBTHING = libqt.\*
+COMPILETESTFLAGS = 
 
 # EOF

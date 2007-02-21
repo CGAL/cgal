@@ -61,6 +61,9 @@ When adding a new file here:
    - LIBTHING: a directory or file which has to be in the package lib
      dir (may contain wildcards, if backslash-escaped). This is used
      to identify candidate dirs only.
+
+   - COMPILETESTFLAGS: compiler flags that need to be used only during
+     the tests
      
 * Each feature should have a test program called test_name.C, where
 name is the name of the feature. There are no test programs for

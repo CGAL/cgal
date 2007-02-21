@@ -12,5 +12,6 @@ STDINCLDIRS = ${QTDIR}/include
 INCLTHING = qglobal.h
 STDLIBDIRS = ${QTDIR}/lib
 LIBTHING = qt.lib
+COMPILETESTFLAGS = 
 
 # EOF

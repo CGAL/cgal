@@ -11,5 +11,6 @@ STDINCLDIRS = /usr/include/\*
 INCLTHING = boost/program_options.hpp
 STDLIBDIRS = /usr/lib/
 LIBTHING = libboost_program_options.\* 
+COMPILETESTFLAGS = 
 
 # EOF
