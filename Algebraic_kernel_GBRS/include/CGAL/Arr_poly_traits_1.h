@@ -290,7 +290,8 @@ template<class Kernel_>class Point{
       set_pol(c_.pol());
       if(x_.is_consistent()){
         x=new Algebraic(x_);
-        y=pol().eval_d(x);
+        // we evaluate y in the center of the interval x
+        y=pol().eval_d(mpfi_get_d(x->mpfi()));
       }else
         y=0;
     };
