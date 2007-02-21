@@ -4305,8 +4305,8 @@ build_cgal()
 	fi
         if [ -d "${CGAL_SRC_DIR}/CGALPDB" ]; then
 	    cd "${CGAL_SRC_DIR}/CGALPDB"
-	    _do_compile CGALPDB static
-	    _do_compile CGALPDB shared 
+	    _do_compile libCGALPDB static
+	    _do_compile libCGALPDB shared 
 	fi
 	if [ -d "${CGAL_SRC_DIR}/Core" -a "${PROVIDE_PKG_CORE}" = "CGALCORE" ]; then
 	    cd "${CGAL_SRC_DIR}/Core"
