@@ -3881,23 +3881,19 @@ write_linker_flags()
   #
   ${_printf} "%s" "CGAL_LDFLAGS =" >> ${FILE}
   makefile_print_continuationline "\$(CGAL_CGAL_LDFLAGS)" >> ${FILE}
-  # FIXME: this special treatment is not so nice...
-  if [ -d "${CGAL_SRC_DIR}/Core" -a "${PROVIDE_PKG_CORE}" = "CGALCORE" ]; then
+  if [ -n "${libCore_COMPILED}" ]; then
       makefile_print_continuationline "`lib_option \"core++\"`" >> ${FILE}
   fi
-  # FIXME: this special treatment is not so nice...
-  if [ -d "${CGAL_SRC_DIR}/CGALQt" -a -n "${PROVIDE_PKG_QT}" ]; then
+  if [ -n "${libCGALQt_COMPILED}" ]; then
       makefile_print_continuationline "`lib_option \"CGALQt\"`" >> ${FILE}
   fi
-  # FIXME: this special treatment is not so nice...
-#  if [ -d "${CGAL_SRC_DIR}/Benchmark" -a -n "${PROVIDE_PKG_CGALBENCHMARK}" ]; then
-  if [ -d "${CGAL_SRC_DIR}/Benchmark" ]; then
+  if [ -n "${libCGALBenchmark_COMPILED}" ]; then
       makefile_print_continuationline "`lib_option \"CGALBenchmark\"`" >> ${FILE}
   fi
-  if [ -d "${CGAL_SRC_DIR}/CGALimageIO" ]; then
+  if [ -n "${libCGALimageIO_COMPILED}" ]; then
       makefile_print_continuationline "`lib_option \"CGALimageIO\"`" >> ${FILE}
   fi
-  if [ -d "${CGAL_SRC_DIR}/CGALPDB" ]; then
+  if [ -n "${libCGALPDB_COMPILED}" ]; then
       makefile_print_continuationline "`lib_option \"CGALPDB\"`" >> ${FILE}
   fi
   for i in ${R_SUPPORT_PKGS}; do
@@ -4211,6 +4207,8 @@ _do_compile()
 	log_print "^^^^^^^^^^^^ build ${_buildlog_marker} above ^^^^^^^^^^^^"
 	${_printf} "%s\n" " done."
 	ANY_LIB_COMPILED='y'
+	eval "${1}_COMPILED='y'"
+	eval "${1}_${2}_COMPILED='y'"
 	return 0
     else
 	log_print "Compilation of $1 $2 ${_libname} failed."
@@ -4284,15 +4282,12 @@ build_cgal()
 	"----------------------------------------------------------" \
 	    >> "${INSTALL_RIS_LOGFILE}"
 	_do_compile libCGAL shared
-	# FIXME: Should this be hardcoded here?
-	# Move CGALQt into libCGAL?
 	if [ -d "${CGAL_SRC_DIR}/CGALQt" -a -n "${PROVIDE_PKG_QT}" ]; then
 	    cd "${CGAL_SRC_DIR}/CGALQt"
 	    _do_compile libCGALQt static
 	    _do_compile libCGALQt shared
 	fi
 	# Move CGALBenchmark into libCGAL?
-#	if [ -d "${CGAL_SRC_DIR}/Benchmark" -a -n "${PROVIDE_PKG_CGALBENCHMARK}" ]; then
 	if [ -d "${CGAL_SRC_DIR}/Benchmark" ]; then
 	    cd "${CGAL_SRC_DIR}/Benchmark"
 	    _do_compile libCGALBenchmark static
