@@ -1884,12 +1884,14 @@ Segment_Delaunay_graph_2/test/Segment_Delaunay_graph_2/data/sitesxx.Gmpq.cin -te
 Segment_Delaunay_graph_2/test/Segment_Delaunay_graph_2/data/sitesxx.cin -text
 Skin_surface_3/doc_tex/Skin_surface_3/convexTwoPoints.eps -text svneol=unset#application/postscript
 Skin_surface_3/doc_tex/Skin_surface_3/convexTwoPoints.png -text svneol=unset#image/png
+Skin_surface_3/doc_tex/Skin_surface_3/large.png -text
 Skin_surface_3/doc_tex/Skin_surface_3/marching.eps -text svneol=unset#application/postscript
 Skin_surface_3/doc_tex/Skin_surface_3/marching.png -text svneol=unset#image/png
 Skin_surface_3/doc_tex/Skin_surface_3/molecule.eps -text svneol=unset#application/postscript
 Skin_surface_3/doc_tex/Skin_surface_3/molecule.png -text svneol=unset#image/png
 Skin_surface_3/doc_tex/Skin_surface_3/skinTwoPoints.eps -text svneol=unset#application/postscript
 Skin_surface_3/doc_tex/Skin_surface_3/skinTwoPoints.png -text svneol=unset#image/png
+Skin_surface_3/doc_tex/Skin_surface_3/small.png -text
 Skin_surface_3/examples/Skin_surface_3/data/1IYE.pdb -text
 Skin_surface_3/examples/Skin_surface_3/data/1mvm.pdb -text
 Skin_surface_3/examples/Skin_surface_3/data/molecule_tunnel.cin -text
