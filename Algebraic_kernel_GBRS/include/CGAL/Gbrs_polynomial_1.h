@@ -72,6 +72,7 @@ class Rational_polynomial_1 {
 		CGAL::Gmpz eval (const CGAL::Gmpz &) const;
 		void eval_mpfr(mpfr_ptr,mpfr_srcptr)const;
 		void eval_mpfi(mpfi_ptr,mpfi_srcptr)const;
+		double eval_d(double)const;
 		Rational_polynomial_1 derive () const;
 		std::ostream& show (std::ostream &) const;
 		Rational_polynomial_1 operator- () const;

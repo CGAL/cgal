@@ -281,31 +281,28 @@ template<class Kernel_>class Point{
     typedef Curve<K>                      Curve_2;
     typedef typename K::Algebraic_real_1  Algebraic;
     typedef typename K::Polynomial_1      Polynomial;
-    Algebraic *x,*y;
+    Algebraic *x;
+    double y;
     Polynomial *p;
   public:
-    Point():x(NULL),y(NULL),p(NULL){};
+    Point():x(NULL),y(0),p(NULL){};
     Point(const Algebraic& x_,const Curve_2& c_){
       set_pol(c_.pol());
       if(x_.is_consistent()){
         x=new Algebraic(x_);
-        // we don't need the y coordinate
-        //y=new Algebraic;
-        //eval_1(c_.pol(),x_,y->mpfi());
-        y=new Algebraic(0);
+        y=pol().eval_d(x);
       }else
-        y=NULL;
+        y=0;
     };
-    Point(const Algebraic& x_,const Algebraic& y_):x(&x_),y(&y_),p(NULL){};
+    Point(const Algebraic& x_,double y_):x(&x_),y(y_),p(NULL){};
     ~Point(){};
     inline const Algebraic& get_x()const{return *x;};
-    inline const Algebraic& get_y()const{return *y;};
+    inline double get_y()const{return y;};
     inline void set_pol(const Polynomial &poly){
       p=const_cast<Polynomial*>(&poly);};
     inline const Polynomial& pol()const{return *p;};
     inline std::ostream& show(std::ostream &o)const{
-      //return(o<<"("<<get_x()<<","<<get_y()<<")");
-      return(o<<"(x="<<get_x()<<",y="<<pol()<<")");}
+      return(o<<"("<<get_x()<<","<<get_y()<<")");}
 };
 
 template<class K>

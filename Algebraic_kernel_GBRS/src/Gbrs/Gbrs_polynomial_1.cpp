@@ -221,6 +221,18 @@ void Rational_polynomial_1::eval_mpfi(mpfi_ptr result,mpfi_srcptr x)const{
 	return;
 };
 
+// doing calculations with doubles is faster (but less accurate) than doing
+// them with mpzs and converting the result
+double Rational_polynomial_1::eval_d(double x)const{
+	double result;
+	mpz_t *c=get_coefs();
+	int d=get_degree();
+	result=mpz_get_d(c[d]);
+	for(int i=1;i<d+1;++i)
+		result=x*result+mpz_get_d(c[d-i]);
+	return result;
+};
+
 Rational_polynomial_1 Rational_polynomial_1::derive()const{
 	Rational_polynomial_1 derivative (degree-1);
 	mpz_t *coef_d=derivative.get_coefs();
