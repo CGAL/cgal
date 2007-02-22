@@ -330,7 +330,7 @@ cccend          "[cccend]"
   string my_yytext( yytext );
   // so that "long  long       int" is properly crosslinked
   compress_spaces_in_string( my_yytext );
-  std::cout << "[" << my_yytext << "]" << std::endl;
+  //std::cout << "[" << my_yytext << "]" << std::endl;
 
   match_cc_idfier( my_yytext, &output_file );
 }
