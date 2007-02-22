@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (c) 1999,2000,2002,2003,2004,2005,2006
+# Copyright (c) 1999,2000,2002-2007
 # Utrecht University (The Netherlands),
 # ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 # INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
@@ -23,8 +23,8 @@
 #
 # Author(s)     : various
 
-# This script creates a CGAL makefile with entries for all .C and .cpp files in the
-# current directory.
+# This script creates a CGAL makefile with entries for all .C and .cpp
+# files in the current directory.
 #
 # Usage: cgal_create_makefile [-options] [outputfile]
 #
@@ -46,63 +46,31 @@ header()
 }
 
 
-create_makefile_entry_cpp()
+create_makefile_entry()
 {
 #  local CFILE MOC_FROM MOCFILE
-  CFILE=$1.cpp
-  MOCFILE=""
-  if [ -n "$QT" ]; then
-    if MOC_FROM=`awk 'BEGIN{ FS=":"; COUNT=0 } \
-            /\/\/ *moc_source_file *:/ {print $2; COUNT++} \
-            END{ exit COUNT==0 }' $CFILE`; then
-      MOCFILE=$1.moc
-      echo "$MOCFILE: $MOC_FROM"
-      echo "	\$(QT_MOC) -o $MOCFILE $MOC_FROM"
-      echo
-      echo "$1\$(OBJ_EXT): $MOCFILE"
-      echo
-    fi
-  fi
-
-  # Print target for $1 object file
-  echo "$1\$(OBJ_EXT): $1.cpp"
-  echo "	\$(CGAL_CXX) \$(CXXFLAGS) \$(OBJ_OPT) $1.cpp"
-  echo
-
-  # Print target for $1 executable if $CFILE contains a function "main()"
-  egrep '\bmain[ \t]*\(' $CFILE >/dev/null 2>&1
-  if [ $? -eq 0 ]; then
-    echo "$1\$(EXE_EXT): $1\$(OBJ_EXT)"
-    echo "	\$(CGAL_CXX) \$(LIBPATH) \$(EXE_OPT)$1 $1\$(OBJ_EXT) \$(LDFLAGS)"
-    echo
-  fi;
-}
-
-create_makefile_entry_C()
-{
-#  local CFILE MOC_FROM MOCFILE
-  CFILE=$1.C
+  BASE=`basename $1 .C`
+  BASE=`basename $BASE .cpp`
+  CFILE=$1
   MOCFILE=""
   if [ -n "$QT" ]; then
     if MOC_FROM=`awk 'BEGIN{ FS=":"; COUNT=0 } \
             /\/\/ *moc_source_file *:/ {print $2; COUNT++} \
             END{ if (COUNT==0) exit 1; else exit 0 }' $CFILE`; then
-      MOCFILE=$1.moc
+      MOCFILE=${BASE}.moc
       echo "$MOCFILE: $MOC_FROM"
-      echo "	\$(QT_MOC) -o $MOCFILE $MOC_FROM"
+      printf "\t\$(QT_MOC) -o $MOCFILE $MOC_FROM\n"
       echo
-      echo "$1\$(OBJ_EXT): $MOCFILE"
+      echo "$BASE\$(OBJ_EXT): $MOCFILE"
       echo
     fi
   fi
 
-  # Target for $1 object file is global
-
   # Print target for $1 executable if $CFILE contains a function "main()"
   egrep '\bmain[ \t]*\(' $CFILE >/dev/null 2>&1
   if [ $? -eq 0 ]; then
-    echo "$1\$(EXE_EXT): $1\$(OBJ_EXT)"
-    echo "	\$(CGAL_CXX) \$(LIBPATH) \$(EXE_OPT)$1 $1\$(OBJ_EXT) \$(LDFLAGS)"
+    echo "$BASE\$(EXE_EXT): $BASE\$(OBJ_EXT)"
+    printf "\t\$(CGAL_CXX) \$(LIBPATH) \$(EXE_OPT)$BASE $BASE\$(OBJ_EXT) \$(LDFLAGS)\n"
     echo
   fi;
 }
@@ -192,12 +160,10 @@ create_makefile()
   # print rules for each .C and .cpp file
   echo
   for file in `ls *.C 2>/dev/null | sort` ; do
-    base=`basename $file .C`
-    create_makefile_entry_C $base
+    create_makefile_entry $file
   done
   for file in `ls *.cpp 2>/dev/null | sort` ; do
-    base=`basename $file .cpp`
-    create_makefile_entry_cpp $base
+    create_makefile_entry $file
   done
 
   # print 'clean' target
@@ -214,11 +180,11 @@ create_makefile()
   header "suffix rules"
   echo
   echo    ".C\$(OBJ_EXT):"
-  echo    "	\$(CGAL_CXX) \$(CXXFLAGS) \$(OBJ_OPT) \$<"
+  printf    "\t\$(CGAL_CXX) \$(CXXFLAGS) \$(OBJ_OPT) \$<\n"
   echo
   echo
   echo    ".cpp\$(OBJ_EXT):"
-  echo    "	\$(CGAL_CXX) \$(CXXFLAGS) \$(OBJ_OPT) \$<"
+  printf    "\t\$(CGAL_CXX) \$(CXXFLAGS) \$(OBJ_OPT) \$<\n"
   echo
 
 }
