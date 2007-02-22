@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2002-2004,2007  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -77,7 +77,7 @@ private:	//members
   CGAL::Qt_widget_standard_toolbar *std_toolbar;
 };
 
-// moc_source_file: standard_toolbar.C
+// moc_source_file: standard_toolbar.cpp
 #include "standard_toolbar.moc"
 
 int main( int argc, char **argv )

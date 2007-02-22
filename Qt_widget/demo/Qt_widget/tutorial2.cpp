@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2004  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2002-2004,2007  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -71,7 +71,7 @@ private: // private data member
   CGAL::Qt_widget* widget;
 };
 
-//moc_source_file : tutorial2.C
+//moc_source_file : tutorial2.cpp
 #include "tutorial2.moc"
 
 int main( int argc, char **argv )
