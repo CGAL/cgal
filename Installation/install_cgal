@@ -481,6 +481,7 @@ parse_support_options()
         R_SUPPORT_PKGS="${_tmp} ${R_SUPPORT_PKGS}"
         log_print "${_tmp}"
 	${_printf} "%s" "${_tmp}, "
+	PROVIDES=''
         try_to_get_var_from_file PROVIDES "${i}"
 	if [ -z "${PROVIDES}" ]; then continue; fi
 	eval "${_tmp}_PROVIDES=\"${PROVIDES}\""
@@ -502,6 +503,7 @@ parse_support_options()
 	for j in DESCRIPTION CXXFLAGS LDFLAGS LIBS REQUIRES INCOMPATIBLE \
 	    STDINCLDIRS INCLTHING STDLIBDIRS LIBTHING COMPILETESTFLAGS
 	do
+	  eval "${j}=''"
 	  try_to_get_var_from_file "${j}" "${i}"
 	  eval ${_tmp}_${j}=\"`value_of ${j}`\"
 	done
@@ -2744,7 +2746,7 @@ try_to_get_var_from_config_file()
 	log_print "WARNING: cannot find file ${2}."
     fi
     # delete previous value of ${1}
-    eval ${1}=''
+    #eval ${1}=''
     return 0
 }
 
@@ -2768,7 +2770,7 @@ try_to_get_var_from_file()
 	log_print "WARNING: cannot find file ${2}."
     fi
     # delete previous value of ${1}
-    eval ${1}=''
+    #eval ${1}=''
     return 0
 }
 
@@ -3072,11 +3074,11 @@ retrieve_compiler_settings()
     done
 
     if try_to_get_var_from_config_file CUSTOM_CXXFLAGS "${_file}"; then
-	CUSTOM_CXXFLAGS=''
+	#CUSTOM_CXXFLAGS=''
 	SETUP_COMPLETE=''
     fi
     if try_to_get_var_from_config_file CUSTOM_LDFLAGS "${_file}"; then
-	CUSTOM_LDFLAGS=''
+	#CUSTOM_LDFLAGS=''
 	SETUP_COMPLETE=''
     fi
     if try_to_get_var_from_config_file LONG_NAME_PROBLEM "${_file}"; then
@@ -5021,17 +5023,23 @@ if [ -z "${_WHAT_TO_DO}" ]; then
     # process environment variables
     #
 
-    if [ -z "${CUSTOM_CXXFLAGS}" -a -n "${CXXFLAGS}" ]; then
-	CUSTOM_CXXFLAGS="${CXXFLAGS}"
-	write_buffer "${_LEFTSPACE}Set CUSTOM_CXXFLAGS from \$CXXFLAGS.\n"
+   if [ -z "${CUSTOM_CXXFLAGS}" ]; then
+	if [ -n "$CXXFLAGS" ]; then
+	     CUSTOM_CXXFLAGS="${CXXFLAGS}"
+	     write_buffer "${_LEFTSPACE}Setting CUSTOM_CXXFLAGS from \$CXXFLAGS.\n"
+        fi
+        if [ -n "${CPPFLAGS}" ]; then
+	     CUSTOM_CXXFLAGS="${CUSTOM_CXXFLAGS} ${CPPFLAGS}"
+	     write_buffer "${_LEFTSPACE}Setting CUSTOM_CXXFLAGS from \$CPPFLAGS.\n"
+        fi
     fi
     if [ -z "${CUSTOM_LDFLAGS}" -a -n "${LDFLAGS}" ]; then
 	CUSTOM_LDFLAGS="${LDFLAGS}"
-	write_buffer "${_LEFTSPACE}Set CUSTOM_LDFLAGS from \$LDFLAGS.\n"
+	write_buffer "${_LEFTSPACE}Setting CUSTOM_LDFLAGS from \$LDFLAGS.\n"
     fi
     if [ -z "${COMPILER}" -a -n "${CXX}" ]; then
 	COMPILER="${CXX}"
-	write_buffer "${_LEFTSPACE}Set COMPILER from \$CXX.\n"
+	write_buffer "${_LEFTSPACE}Setting COMPILER from \$CXX.\n"
     fi
     ${_printf} "${_BUF}" >> "${INSTALL_LOGFILE}"
 
