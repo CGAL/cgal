@@ -1020,13 +1020,18 @@
 \gdef\ccValueofPkgName{}
 %\gdef\lciPkgDescriptionIsOddEntry{\lcTrue}
 
+% without this definition, pictures are aligned with heading
+\gdef\lciPkgDescriptionAlignPicWithText{xxx}
+
 \newcommand{\ccPartSummary}[1]{#1}
 \newcommand{\ccPkgAuthor}[1]{\gdef\ccValueOfPkgAuthor{#1\lcRawHtml{<br>}}}
 \newcommand{\ccPkgSummary}[1]{\gdef\ccValueofPkgSummary{#1}}
 \newcommand{\ccPkgIllustration}[2]{%
   \gdef\ccValueofPkgIllustration{%
     \lcRawHtml{<a href="#C2"><img src="}\lciOutputUppath\lcRawHtml{#C1" alt="}%
-    \ccValueofPkgNameWithoutLabel\lcRawHtml{ Illustration" width="120" height="120" border="0" vspace="22"></a>}}%
+    \ccValueofPkgNameWithoutLabel\lcRawHtml{ Illustration" width="120" height="120" border="0"}%
+     \lciIfDefined{\lciPkgDescriptionAlignPicWithText}{}{\lcRawHtml{vspace="22"}}%
+     \lcRawHtml{></a>}}%
 }
 \newcommand{\ccPkgIntroducedInCGAL}[1]{\gdef\ccValueofPkgIntroducedInCGAL{\lcRawHtml{<b>Introduced in: </b>}\cgal\ #1\lcRawHtml{<br>}}}
 \newcommand{\ccPkgMaturity}[1]{\gdef\ccValueofPkgMaturity{\lcRawHtml{<b>Maturity: </b>}#1\lcRawHtml{<br>}}}
@@ -1041,7 +1046,7 @@
   \lciCheckForLabelInsideHeading{#1}{\ccValueofPkgNameWithoutLabel}{\myownlocaldummyvariable}%
   % author is reset in latex.sty:\chapter
   \gdef\ccValueofPkgSummary{}%
-  \gdef\ccValueofPkgIllustration{}%
+  \gdef\ccValueofPkgIllustration{\lcRawHtml{&nbsp;}}%
   \gdef\ccValueofPkgIntroducedInCGAL{}%
   \gdef\ccValueofPkgMaturity{}%
   \gdef\ccValueofPkgDependsOn{}%
@@ -1066,23 +1071,25 @@
       \gdef\lciCurrentPartName{}%
     }%
     \lciPushOutput{packages}%
-    \lcRawHtml{<tr><td valign="top" width="140" rowspan="2" class="TocGroupEvenLeft">}
-    %\lcRawHtml{<tr><td valign="top" width="140" rowspan="2" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}
-    %\lcRawHtml{<h3>&nbsp;</h3>}
-    \ccValueofPkgIllustration
+    
+    \lcRawHtml{<tr><td valign="top" width="140" class="TocGroupEvenLeft"}
+    \lciIfDefined{\lciPkgDescriptionAlignPicWithText}%
+      {\lcRawHtml{>&nbsp;}}%
+      {\lcRawHtml{ rowspan="2" >}
+       \ccValueofPkgIllustration
+      }%
     \lcRawHtml{</td><td colspan="3" class="TocGroupEvenLeft">}
-    %\lcRawHtml{</td><td colspan="3" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}
     \lciCheckForLabelInsideHeadingX{\ccValueofPkgName}{\lciCurrentPackageName}%
     \lcRawHtml{<h3>}\lciCurrentPackageName\lcRawHtml{</h3>}%
     \ccValueOfPkgAuthor%
     \lcRawHtml{</td></tr>}%
     \lcRawHtml{<tr valign="top">}
-    %\lcRawHtml{<td class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}%
     \lcRawHtml{<td class="TocGroupEvenLeft">}%
+    \lciIfDefined{\lciPkgDescriptionAlignPicWithText}%
+      {\ccValueofPkgIllustration\lcRawHtml{</td><td class="TocGroupEvenLeft">}}%
+      {}
     \ccValueofPkgSummary
-    %\lcRawHtml{<p></td><td width="2\%" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}
     \lcRawHtml{<p></td><td width="2\%" class="TocGroupEvenLeft">}
-    %\lcRawHtml{</td><td width="23\%" class="TocGroup}\lciPkgDescOdd\lcRawHtml{Left">}
     \lcRawHtml{</td><td width="23\%" class="TocGroupEvenLeft">}
     \ccValueofPkgIntroducedInCGAL%
     \ccValueofPkgMaturity%
@@ -1091,7 +1098,6 @@
     \ccValueofPkgHowToCiteCgal%
     \lcRawHtml{<a href="#C1">User Manual</a> &nbsp; <a href="#C2">Reference Manual</a>}
     \lcRawHtml{</td></td>}
-    %\lcPkgDescToggleOdd
     \lciPopOutput%
     \gdef\ccValueofPkgName{}%
   }%
