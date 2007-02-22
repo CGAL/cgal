@@ -49,8 +49,8 @@ shared_lib: shared_lib_no_install
 
 shared_lib_no_install: $(OBJECTS)
 	$(CGAL_SHARED_LIB_CREATE)$(CGAL_SHARED_LIBNAME_WITH_SOVERSION) $(CGAL_SHARED_LIB_SONAME) \
-	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
-		$(CGAL_SHARED_LIB_LDFLAGS) $(SHARED_LIB_ADDITIONNAL_LDFLAGS)
+	  $(OBJECTS:%=$(CGAL_OBJ_PREFIX)%) \
+	  $(CGAL_SHARED_LIB_LDFLAGS) $(SHARED_LIB_ADDITIONNAL_LDFLAGS)
 	rm $(OBJECTS)
 
 static_lib: static_lib_no_install
@@ -58,8 +58,8 @@ static_lib: static_lib_no_install
 
 static_lib_no_install: $(OBJECTS)
 	$(CGAL_STATIC_LIB_CREATE)$(CGAL_STATIC_LIBNAME) \
-	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
-		$(CGAL_LIB_LDFLAGS) $(STATIC_LIB_ADDITIONNAL_LDFLAGS)
+	  $(OBJECTS:%=$(CGAL_OBJ_PREFIX)%) \
+	  $(CGAL_LIB_LDFLAGS) $(STATIC_LIB_ADDITIONNAL_LDFLAGS)
 	$(RANLIB) $(CGAL_STATIC_LIBNAME)
 	rm $(OBJECTS)
 
