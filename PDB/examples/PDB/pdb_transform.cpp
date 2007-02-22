@@ -24,7 +24,7 @@
 #include <fstream>
 
 #include <CGAL/PDB/Transform.h>
-#include <CGAL/PDB/transform.h>
+#include <CGAL/PDB/transforms.h>
 #include <CGAL/PDB/align.h>
 
 #include <boost/program_options.hpp>
