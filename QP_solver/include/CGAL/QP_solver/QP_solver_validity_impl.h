@@ -125,8 +125,8 @@ bool QP_solver<Q, ET, Tags>::is_solution_feasible_for_auxiliary_problem() const
        ++i_it, ++v_it) {
     CGAL_qpe_assertion(B_O[in_B[*i_it]] == *i_it);
     if (*i_it < qp_n) {                 // original variable?
-      if (has_finite_lower_bound(*i_it) && (*v_it < lower_bound(*i_it) * d) ||
-	  has_finite_upper_bound(*i_it) && (*v_it > upper_bound(*i_it) * d))
+      if ((has_finite_lower_bound(*i_it) && (*v_it < lower_bound(*i_it) * d))||
+	  (has_finite_upper_bound(*i_it) && (*v_it > upper_bound(*i_it) * d)))
         return false;
     } else                              // artificial variable?
       if (*v_it < et0)
@@ -413,9 +413,9 @@ bool QP_solver<Q, ET, Tags>::is_solution_optimal_for_auxiliary_problem() const
 						    // nonzero aritificial?
       const Bnd l_bnd = lower_bnd(col) * d;
       const Bnd u_bnd = upper_bnd(col) * d;
-      if (l_bnd == x_aux[col] && l_bnd < u_bnd && tau_aux[col] < et0 ||
-	  l_bnd  < x_aux[col] && u_bnd > x_aux[col] && tau_aux[col] != et0 ||
-	  u_bnd == x_aux[col] && l_bnd < u_bnd && tau_aux[col] > et0)
+      if ((l_bnd == x_aux[col] && l_bnd < u_bnd && tau_aux[col] < et0) ||
+	  (l_bnd  < x_aux[col] && u_bnd > x_aux[col] && tau_aux[col] != et0) ||
+	  (u_bnd == x_aux[col] && l_bnd < u_bnd && tau_aux[col] > et0))
 	return false;
     }
   }
@@ -438,8 +438,8 @@ bool QP_solver<Q, ET, Tags>::is_solution_feasible() const
       nonbasic_original_variable_value(i) * d;
     if (var != *it)
       return false; // original_variables_numerator_begin() inconsistent
-    if (has_finite_lower_bound(i) && var < lower_bound(i) * d ||
-	has_finite_upper_bound(i) && var > upper_bound(i) * d)
+    if ((has_finite_lower_bound(i) && var < lower_bound(i) * d) ||
+	(has_finite_upper_bound(i) && var > upper_bound(i) * d))
       return false;
 
     // compute A x times d:
@@ -450,9 +450,9 @@ bool QP_solver<Q, ET, Tags>::is_solution_feasible() const
   // check A x = b (where in the code both sides are multiplied by d):
   for (int row = 0; row < qp_m; ++row) {
     const ET rhs = ET(qp_b[row])*d;
-    if (qp_r[row] == CGAL::EQUAL         && lhs_col[row] != rhs ||
-	qp_r[row] == CGAL::SMALLER    && lhs_col[row] >  rhs ||
-	qp_r[row] == CGAL::LARGER && lhs_col[row] <  rhs)
+    if ((qp_r[row] == CGAL::EQUAL         && lhs_col[row] != rhs) ||
+	(qp_r[row] == CGAL::SMALLER    && lhs_col[row] >  rhs) ||
+	(qp_r[row] == CGAL::LARGER && lhs_col[row] <  rhs))
       return false;
   }
   
@@ -546,11 +546,11 @@ is_solution_optimal() const
       const bool is_active = (lhs_col[row] == (ET(qp_b[row]) * d));
       if (qp_r[row] == CGAL::SMALLER) {
 	if (lambda_prime[row] < et0 ||
-	    (lambda_prime[row] > et0) && !is_active)
+	    ((lambda_prime[row] > et0) && !is_active))
 	  return false;
       } else {           // GREATER_EQUAL?
 	if (lambda_prime[row] > et0 ||
-	    (lambda_prime[row] < et0) && !is_active)
+	    ((lambda_prime[row] < et0) && !is_active))
 	  return false;
       }
     }
@@ -642,15 +642,15 @@ bool QP_solver<Q, ET, Tags>::is_solution_unbounded() const
 
   // check feasibility (C8):
   for (int row=0; row<qp_m; ++row)
-    if (qp_r[row] == CGAL::LARGER && aw[row]  > et0 ||
-	qp_r[row] == CGAL::EQUAL         && aw[row] != et0 ||
-	qp_r[row] == CGAL::SMALLER    && aw[row]  < et0) 
+    if ((qp_r[row] == CGAL::LARGER && aw[row]  > et0) ||
+	(qp_r[row] == CGAL::EQUAL         && aw[row] != et0) ||
+	(qp_r[row] == CGAL::SMALLER    && aw[row]  < et0)) 
       return false;
 
   // check feasibility (C9) and (C10):
   for (int i=0; i<qp_n; ++i)
-    if (has_finite_lower_bound(i) && w[i] > et0 ||
-	has_finite_upper_bound(i) && w[i] < et0)
+    if ((has_finite_lower_bound(i) && w[i] > et0) ||
+	(has_finite_upper_bound(i) && w[i] < et0))
       return false;
 
   // check unboundedness 2 Dw=0 (C11):

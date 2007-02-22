@@ -609,7 +609,7 @@ ratio_test_1( )
 
 template < typename Q, typename ET, typename Tags >                         // Standard form
 void  QP_solver<Q, ET, Tags>::
-ratio_test_1__t_min_j(Tag_true is_in_standard_form)
+ratio_test_1__t_min_j(Tag_true /*is_in_standard_form*/)
 {
 }
 
@@ -618,7 +618,7 @@ ratio_test_1__t_min_j(Tag_true is_in_standard_form)
 // direction == -1 => x_O_v_i[j] == (UPPER v ZERO) 
 template < typename Q, typename ET, typename Tags >                         // Upper bounded
 void  QP_solver<Q, ET, Tags>::
-ratio_test_1__t_min_j(Tag_false is_in_standard_form)
+ratio_test_1__t_min_j(Tag_false /*is_in_standard_form*/)
 {
     if (j < qp_n) {                                 // original variable
         if (direction == 1) {
@@ -674,7 +674,7 @@ ratio_test_1__t_min_j(Tag_false is_in_standard_form)
 
 template < typename Q, typename ET, typename Tags >
 void  QP_solver<Q, ET, Tags>::
-ratio_test_1__t_min_B(Tag_true  has_equalities_only_and_full_rank)
+ratio_test_1__t_min_B(Tag_true  /*has_equalities_only_and_full_rank*/)
 {
     ratio_test_1_B_O__t_i(B_O.begin(), B_O.end(), x_B_O.begin(),
                         q_x_O.begin(), Is_in_standard_form());
@@ -682,7 +682,7 @@ ratio_test_1__t_min_B(Tag_true  has_equalities_only_and_full_rank)
 
 template < typename Q, typename ET, typename Tags >
 void  QP_solver<Q, ET, Tags>::
-ratio_test_1__t_min_B(Tag_false has_equalities_only_and_full_rank)
+ratio_test_1__t_min_B(Tag_false /*has_equalities_only_and_full_rank*/)
 {
     ratio_test_1_B_O__t_i(B_O.begin(), B_O.end(), x_B_O.begin(),
                         q_x_O.begin(), Is_in_standard_form());
@@ -695,7 +695,7 @@ template < typename Q, typename ET, typename Tags >                         // S
 void  QP_solver<Q, ET, Tags>::
 ratio_test_1_B_O__t_i(Index_iterator i_it, Index_iterator end_it,
                     Value_iterator x_it, Value_iterator q_it,
-                    Tag_true  is_in_standard_form)
+                    Tag_true  /*is_in_standard_form*/)
 {    
     for ( ; i_it != end_it; ++i_it, ++x_it, ++q_it ) {
         test_implicit_bounds_dir_pos(*i_it, *x_it, *q_it, i, x_i, q_i);
@@ -707,7 +707,7 @@ template < typename Q, typename ET, typename Tags >                         // U
 void  QP_solver<Q, ET, Tags>::
 ratio_test_1_B_O__t_i(Index_iterator i_it, Index_iterator end_it,
                     Value_iterator x_it, Value_iterator q_it,
-                    Tag_false is_in_standard_form)
+                    Tag_false /*is_in_standard_form*/)
 {
     if (is_phaseI) {
         if (direction == 1) {
@@ -737,7 +737,7 @@ template < typename Q, typename ET, typename Tags >                         // S
 void  QP_solver<Q, ET, Tags>::
 ratio_test_1_B_S__t_i(Index_iterator i_it, Index_iterator end_it,
                 Value_iterator x_it, Value_iterator q_it,
-                Tag_true  is_in_standard_form)
+                Tag_true  /*is_in_standard_form*/)
 {
     for ( ; i_it != end_it; ++i_it, ++x_it, ++q_it ) {
         test_implicit_bounds_dir_pos(*i_it, *x_it, *q_it, i, x_i, q_i);
@@ -749,7 +749,7 @@ template < typename Q, typename ET, typename Tags >                         // U
 void  QP_solver<Q, ET, Tags>::
 ratio_test_1_B_S__t_i(Index_iterator i_it, Index_iterator end_it,
                 Value_iterator x_it, Value_iterator q_it,
-                Tag_false is_in_standard_form)
+                Tag_false /*is_in_standard_form*/)
 {
     if (direction == 1) {
         for ( ; i_it != end_it; ++i_it, ++x_it, ++q_it ) {

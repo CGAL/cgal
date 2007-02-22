@@ -52,11 +52,12 @@ ET QP_solver<Q, ET, Tags>::variable_numerator_value(int i) const
 {
   // Returns the current value of an *original* variable.
   CGAL_qpe_assertion( 0 <= i && i < qp_n );
-  if (check_tag(Is_in_standard_form()))
+  if (check_tag(Is_in_standard_form())) {
     if (in_B[i] < 0) 
       return et0;
     else 
       return x_B_O[in_B[i]];
+  }
 
   // now we have nonstandard form
   typedef QP_solver<Q, ET, Tags> QP;

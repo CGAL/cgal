@@ -92,7 +92,7 @@ pricing (int& direction)
 
 template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >
 int  QP_full_filtered_pricing<Q,ET,Tags,NT_,ET2NT_>::
-pricing_helper(int& direction, Tag_true ) // standard form
+pricing_helper(int& /*direction*/, Tag_true ) // standard form
 {
     // get properties of quadratic program
     int  w = this->solver().number_of_working_variables();

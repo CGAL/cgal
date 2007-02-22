@@ -66,9 +66,9 @@ class QP_pricing_strategy {
     void  init( int dummy);
 
     // operations
-    virtual  int   pricing(int& direction ) = 0;
+    virtual  int   pricing(int& /*direction*/ ) = 0;
 
-    virtual  void  leaving_basis( int i) { }
+    virtual  void  leaving_basis( int /*i*/) { }
     virtual  void  transition( ) { }
     
   protected:
@@ -187,7 +187,7 @@ is_improving (int j, const NT& mu, const NT& nt0 ) const
       {
 	const int where =
 	  this->solver().state_of_zero_nonbasic_variable(j);
-	return (where >= 0 && mu > nt0 || where <= 0 && mu < nt0);
+	return ((where >= 0 && mu > nt0) || (where <= 0 && mu < nt0));
       }
     case QP_solver::FIXED:
       return false;

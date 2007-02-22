@@ -62,7 +62,7 @@ QP_solver(const Q& qp, Pricing_strategy* strategy, int verbosity)
 
 template < typename Q, typename ET, typename Tags >
 void QP_solver<Q, ET, Tags>::
-set_D(const Q& qp, Tag_true is_linear)
+set_D(const Q& /*qp*/, Tag_true /*is_linear*/)
 {
   // dummy value, never used
   qp_D = 0;
@@ -70,7 +70,7 @@ set_D(const Q& qp, Tag_true is_linear)
 
 template < typename Q, typename ET, typename Tags >
 void QP_solver<Q, ET, Tags>::
-set_D(const Q& qp, Tag_false is_linear)
+set_D(const Q& qp, Tag_false /*is_linear*/)
 {
   qp_D = qp.d();
 }
@@ -164,7 +164,7 @@ set_explicit_bounds(const Q& qp)
 
 template < typename Q, typename ET, typename Tags >
 void QP_solver<Q, ET, Tags>::
-set_explicit_bounds(const Q& qp, Tag_true) {
+set_explicit_bounds(const Q& /*qp*/, Tag_true) {
   // dummy values, never used
   qp_fl = 0;
   qp_l = 0;

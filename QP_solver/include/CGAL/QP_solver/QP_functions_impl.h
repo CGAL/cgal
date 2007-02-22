@@ -80,7 +80,7 @@ bool has_linearly_independent_equations
 template <typename Fllfuu>
 void print_fllfuu_bounds 
 (std::ostream& out, const Fllfuu& fllfuu,
- CGAL::Tag_true is_in_standard_form)
+ CGAL::Tag_true /*is_in_standard_form*/)
 {
   // nop (default bounds are nonnegative)
 }
@@ -89,7 +89,7 @@ void print_fllfuu_bounds
 template <typename Fllfuu>
 void print_fllfuu_bounds 
 (std::ostream& out, const Fllfuu& fllfuu, 
- CGAL::Tag_false is_in_standard_form)
+ CGAL::Tag_false /*is_in_standard_form*/)
 {
   typename Fllfuu::FL_iterator fl = fllfuu.fl();
   typename Fllfuu::FU_iterator fu = fllfuu.fu();
@@ -98,11 +98,12 @@ void print_fllfuu_bounds
   int n = fllfuu.n();
   out << "BOUNDS\n"; 
   for (int j=0; j<n; ++j, ++fl, ++l, ++fu, ++u) {
-    if (!*fl || !CGAL::is_zero(*l)) 
+    if (!*fl || !CGAL::is_zero(*l)) {
       if (*fl)
 	out << "  LO  BND  x" << j << "  " << *l << "\n";
       else
 	out << "  MI  BND  x" << j << "\n";
+    }
     if (*fu)
       out << "  UP  BND  x" << j << "  " << *u << "\n";
   } 
@@ -111,7 +112,7 @@ void print_fllfuu_bounds
 // helper for MPS output: QMATRIX
 template <typename D>
 void print_d_qmatrix 
-(std::ostream& out, const D& d, CGAL::Tag_true is_linear)
+(std::ostream& out, const D& d, CGAL::Tag_true /*is_linear*/)
 {
   // nop
 }
@@ -119,7 +120,7 @@ void print_d_qmatrix
 // helper for MPS output: QMATRIX
 template <typename D>
 void print_d_qmatrix 
-(std::ostream& out, const D& d, CGAL::Tag_false is_linear)
+(std::ostream& out, const D& d, CGAL::Tag_false /*is_linear*/)
 {
   typename D::D_iterator it = d.d();
   int n = d.n();

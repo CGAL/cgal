@@ -76,8 +76,8 @@ class QP_partial_filtered_pricing
     ~QP_partial_filtered_pricing() {};
 
   private:
-    int pricing_helper(int& direction, Tag_true  is_in_standard_form);
-    int pricing_helper(int& direction, Tag_false is_in_standard_form);
+  int pricing_helper(int& direction, Tag_true  /*is_in_standard_form*/);
+  int pricing_helper(int& direction, Tag_false /*is_in_standard_form*/);
 };
 
 // ----------------------------------------------------------------------------
@@ -122,7 +122,7 @@ pricing(int& direction )
 
 template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >
 int  QP_partial_filtered_pricing<Q,ET,Tags,NT_,ET2NT_>::
-pricing_helper(int& direction, Tag_true is_in_standard_form )
+pricing_helper(int& /*direction*/, Tag_true /*is_in_standard_form*/ )
 {
     // initialize filtered computation
     this->init_NT();
@@ -259,7 +259,7 @@ pricing_helper(int& direction, Tag_true is_in_standard_form )
 }
 template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >
 int  QP_partial_filtered_pricing<Q,ET,Tags,NT_,ET2NT_>::
-pricing_helper(int& direction, Tag_false is_in_standard_form )
+pricing_helper(int& direction, Tag_false /*is_in_standard_form*/ )
 {
     // initialize filtered computation
     this->init_NT();

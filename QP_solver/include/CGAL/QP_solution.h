@@ -194,6 +194,9 @@ public:
   typedef typename QP_solver_base<ET>::Variable_value_iterator
   Variable_value_iterator;
 
+  typedef typename QP_solver_base<ET>::Variable_numerator_iterator
+  Variable_numerator_iterator;
+
   typedef typename QP_solver_base<ET>::Index_const_iterator
   Index_iterator;
 
@@ -233,6 +236,30 @@ public:
   {
     CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
     return (*(this->Ptr()))->original_variable_values_end();
+  }
+
+  Variable_numerator_iterator variable_numerators_begin() const
+  {
+   CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
+   return (*(this->Ptr()))->original_variables_numerator_begin();
+  }
+
+  Variable_numerator_iterator variable_numerators_end() const
+  {
+    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
+    return (*(this->Ptr()))->original_variables_numerator_end();
+  }
+
+  ET variable_numerator_value (int i) const 
+  {
+    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
+    return (*(this->Ptr()))->variable_numerator_value(i);
+  }
+
+  const ET& variables_common_denominator() const
+  {
+    CGAL_qpe_precondition_msg(*(this->ptr()) != 0, "Solution not initialized");
+    return (*(this->Ptr()))->variables_common_denominator();
   }
 
   Unbounded_direction_iterator unbounded_direction_begin() const
@@ -304,19 +331,19 @@ namespace QP_solution_detail {
   public:
     typedef CGAL::Quotient<ET> result_type;
     typedef CGAL::Arity_tag<1> Arity;
-    //typedef typename ET::Has_gcd Has_gcd; 
+    
     typedef 
     CGAL::Boolean_tag<CGALi::Is_unique_factorization_domain<ET>::value> 
     Has_gcd;
-    //typedef typename ET::Has_exact_division Has_exact_division;
+    
     typedef 
     CGAL::Boolean_tag<CGALi::Is_integral_domain<ET>::value> 
     Has_exact_division;
 
     CGAL::Quotient<ET> normalize 
     (const CGAL::Quotient<ET>& q, 
-     Tag_true has_gcd,
-     Tag_true has_exact_division) const
+     Tag_true /*has_gcd*/,
+     Tag_true /*has_exact_division*/) const
     {
       ET gcd = CGAL::gcd (q.numerator(), q.denominator());
       return CGAL::Quotient<ET> 
@@ -326,24 +353,24 @@ namespace QP_solution_detail {
 
     CGAL::Quotient<ET> normalize 
     (const CGAL::Quotient<ET>& q, 
-     Tag_true has_gcd,
-     Tag_false has_exact_division) const
+     Tag_true /*has_gcd*/,
+     Tag_false /*has_exact_division*/) const
     {
       return q;
     }
   
     CGAL::Quotient<ET> normalize 
     (const CGAL::Quotient<ET>& q, 
-     Tag_false has_gcd,
-     Tag_true has_exact_division) const
+     Tag_false /*has_gcd*/,
+     Tag_true /*has_exact_division*/) const
     {
       return q;
     }
 
     CGAL::Quotient<ET> normalize 
     (const CGAL::Quotient<ET>& q, 
-     Tag_false has_gcd,
-     Tag_false has_exact_division) const
+     Tag_false /*has_gcd*/,
+     Tag_false /*has_exact_division*/) const
     {
       return q;
     }

@@ -520,8 +520,8 @@ private:
 	         
   // set-up of explicit bounds
   void set_explicit_bounds(const Q& qp); 
-  void set_explicit_bounds(const Q& qp, Tag_true is_in_standard_form); 
-  void set_explicit_bounds(const Q& qp, Tag_false is_in_standard_form);
+  void set_explicit_bounds(const Q& qp, Tag_true /*is_in_standard_form*/); 
+  void set_explicit_bounds(const Q& qp, Tag_false /*is_in_standard_form*/);
 
   // initialization (of phase I)
   void  init( );
@@ -886,10 +886,10 @@ private:
   }
 
   void  init_x_O_v_i();
-  void  init_r_C(Tag_true  is_in_standard_form);
-  void  init_r_C(Tag_false is_in_standard_form);
-  void  init_r_S_B(Tag_true  is_in_standard_form);
-  void  init_r_S_B(Tag_false is_in_standard_form);
+  void  init_r_C(Tag_true  /*is_in_standard_form*/);
+  void  init_r_C(Tag_false /*is_in_standard_form*/);
+  void  init_r_S_B(Tag_true  /*is_in_standard_form*/);
+  void  init_r_S_B(Tag_false /*is_in_standard_form*/);
 
   void  init_r_B_O();
   void  init_w();
@@ -1022,8 +1022,8 @@ private:
       ratio_test_1__q_x_S (Tag_false());
   }
 
-  void  ratio_test_1__t_min_j(Tag_true  is_in_standard_form);  
-  void  ratio_test_1__t_min_j(Tag_false is_in_standard_form);
+  void  ratio_test_1__t_min_j(Tag_true  /*is_in_standard_form*/);  
+  void  ratio_test_1__t_min_j(Tag_false /*is_in_standard_form*/);
     
   void  ratio_test_1__t_i( Index_iterator i_it, Index_iterator end_it,
 			   Value_iterator x_it, Value_iterator   q_it,
@@ -1044,16 +1044,16 @@ private:
    
   void  ratio_test_1_B_O__t_i(Index_iterator i_it, Index_iterator end_it,
 			      Value_iterator x_it, Value_iterator q_it,
-			      Tag_true  is_in_standard_form);
+			      Tag_true  /*is_in_standard_form*/);
   void  ratio_test_1_B_O__t_i(Index_iterator i_it, Index_iterator end_it,
 			      Value_iterator x_it, Value_iterator q_it,
-			      Tag_false is_in_standard_form);
+			      Tag_false /*is_in_standard_form*/);
   void  ratio_test_1_B_S__t_i(Index_iterator i_it, Index_iterator end_it,
 			      Value_iterator x_it, Value_iterator q_it,
-			      Tag_true  is_in_standard_form);
+			      Tag_true  /*is_in_standard_form*/);
   void  ratio_test_1_B_S__t_i(Index_iterator i_it, Index_iterator end_it,
 			      Value_iterator x_it, Value_iterator q_it,
-			      Tag_false is_in_standard_form);
+			      Tag_false /*is_in_standard_form*/);
 			     
   void  test_implicit_bounds_dir_pos(int k, const ET& x_k, const ET& q_k, 
 				     int& i_min, ET& d_min, ET& q_min);
@@ -1103,31 +1103,31 @@ private:
   void  replace_variable_original_original( );
   // update of the vector r
   void  replace_variable_original_original_upd_r(Tag_true
-						 is_in_standard_form);
+						 /*is_in_standard_form*/);
   void  replace_variable_original_original_upd_r(Tag_false
-						 is_in_standard_form);
+						 /*is_in_standard_form*/);
 
   void  replace_variable_original_slack( );
   // update of the vector r
-  void  replace_variable_original_slack_upd_r(Tag_true is_in_standard_form);
-  void  replace_variable_original_slack_upd_r(Tag_false is_in_standard_form);
+  void  replace_variable_original_slack_upd_r(Tag_true /*is_in_standard_form*/);
+  void  replace_variable_original_slack_upd_r(Tag_false /*is_in_standard_form*/);
 
   void  replace_variable_slack_original( );
   // update of the vector r
-  void  replace_variable_slack_original_upd_r(Tag_true is_in_standard_form);
-  void  replace_variable_slack_original_upd_r(Tag_false is_in_standard_form);
+  void  replace_variable_slack_original_upd_r(Tag_true /*is_in_standard_form*/);
+  void  replace_variable_slack_original_upd_r(Tag_false /*is_in_standard_form*/);
     
   void  replace_variable_slack_slack( );
   // update of the vector r
-  void  replace_variable_slack_slack_upd_r(Tag_true is_in_standard_form);
-  void  replace_variable_slack_slack_upd_r(Tag_false is_in_standard_form);
+  void  replace_variable_slack_slack_upd_r(Tag_true /*is_in_standard_form*/);
+  void  replace_variable_slack_slack_upd_r(Tag_false /*is_in_standard_form*/);
     
   void  remove_artificial_variable_and_constraint( );
   // update of the vector r
   void  remove_artificial_variable_and_constraint_upd_r(Tag_true
-							is_in_standard_form);
+							/*is_in_standard_form*/);
   void  remove_artificial_variable_and_constraint_upd_r(Tag_false
-							is_in_standard_form);    
+							/*is_in_standard_form*/);    
     
   void  expel_artificial_variables_from_basis( );
     
@@ -1136,17 +1136,17 @@ private:
 
   void  enter_variable( );
   // update of the vectors w and r
-  void  enter_variable_original_upd_w_r(Tag_true is_in_standard_form);
-  void  enter_variable_original_upd_w_r(Tag_false is_in_standard_form);
-  void  enter_variable_slack_upd_w_r(Tag_true is_in_standard_form);
-  void  enter_variable_slack_upd_w_r(Tag_false is_in_standard_form);
+  void  enter_variable_original_upd_w_r(Tag_true /*is_in_standard_form*/);
+  void  enter_variable_original_upd_w_r(Tag_false /*is_in_standard_form*/);
+  void  enter_variable_slack_upd_w_r(Tag_true /*is_in_standard_form*/);
+  void  enter_variable_slack_upd_w_r(Tag_false /*is_in_standard_form*/);
     
   void  leave_variable( );
   // update of the vectors w and r
-  void  leave_variable_original_upd_w_r(Tag_true is_in_standard_form);    
-  void  leave_variable_original_upd_w_r(Tag_false is_in_standard_form);
-  void  leave_variable_slack_upd_w_r(Tag_true is_in_standard_form);
-  void  leave_variable_slack_upd_w_r(Tag_false is_in_standard_form);
+  void  leave_variable_original_upd_w_r(Tag_true /*is_in_standard_form*/);    
+  void  leave_variable_original_upd_w_r(Tag_false /*is_in_standard_form*/);
+  void  leave_variable_slack_upd_w_r(Tag_true /*is_in_standard_form*/);
+  void  leave_variable_slack_upd_w_r(Tag_false /*is_in_standard_form*/);
     
   void  z_replace_variable( );
   void  z_replace_variable( Tag_true has_no_inequalities);
@@ -1161,30 +1161,30 @@ private:
   void  z_replace_variable_original_by_original( );
   // update of the vectors w and r
   void  z_replace_variable_original_by_original_upd_w_r(Tag_true 
-							is_in_standard_form);
+							/*is_in_standard_form*/);
   void  z_replace_variable_original_by_original_upd_w_r(Tag_false 
-							is_in_standard_form);
+							/*is_in_standard_form*/);
     
   void  z_replace_variable_original_by_slack( );
   // update of the vectors w and r    
   void  z_replace_variable_original_by_slack_upd_w_r(Tag_true 
-						     is_in_standard_form);
+						     /*is_in_standard_form*/);
   void  z_replace_variable_original_by_slack_upd_w_r(Tag_false
-						     is_in_standard_form);
+						     /*is_in_standard_form*/);
     
   void  z_replace_variable_slack_by_original( );
   // update of the vectors w and r
   void  z_replace_variable_slack_by_original_upd_w_r(Tag_true
-						     is_in_standard_form);
+						     /*is_in_standard_form*/);
   void  z_replace_variable_slack_by_original_upd_w_r(Tag_false
-						     is_in_standard_form);
+						     /*is_in_standard_form*/);
     
   void  z_replace_variable_slack_by_slack( );
   // update of the vectors w and r
   void  z_replace_variable_slack_by_slack_upd_w_r(Tag_true
-						  is_in_standard_form);
+						  /*is_in_standard_form*/);
   void  z_replace_variable_slack_by_slack_upd_w_r(Tag_false
-						  is_in_standard_form);
+						  /*is_in_standard_form*/);
     
   // update of the parts r_C and r_S_B
   void  update_r_C_r_S_B__j(ET& x_j);
@@ -1200,17 +1200,17 @@ private:
   bool  basis_matrix_stays_regular( );
 
   // current solution
-  void  compute_solution(Tag_true  is_in_standard_form);
-  void  compute_solution(Tag_false is_in_standard_form);
+  void  compute_solution(Tag_true  /*is_in_standard_form*/);
+  void  compute_solution(Tag_false /*is_in_standard_form*/);
 
   void  compute__x_B_S( Tag_false  has_no_inequalities,
-			Tag_false is_in_standard_form);
+			Tag_false /*is_in_standard_form*/);
   void  compute__x_B_S( Tag_false  has_no_inequalities,
-			Tag_true  is_in_standard_form);
+			Tag_true  /*is_in_standard_form*/);
   void  compute__x_B_S( Tag_true  has_no_inequalities,
-			Tag_false is_in_standard_form);
+			Tag_false /*is_in_standard_form*/);
   void  compute__x_B_S( Tag_true  has_no_inequalities,
-			Tag_true  is_in_standard_form);
+			Tag_true  /*is_in_standard_form*/);
   void  compute__x_B_S( bool  has_no_inequalities,
 			Tag_true  is_in_standard_form) {
     if (has_no_inequalities)
@@ -1231,20 +1231,20 @@ private:
     
   ET    multiply__A_ixO(int row) const;
   void  multiply__A_CxN_O(Value_iterator out) const;
-  bool  check_r_C(Tag_true  is_in_standard_form) const;
-  bool  check_r_C(Tag_false is_in_standard_form) const;
+  bool  check_r_C(Tag_true  /*is_in_standard_form*/) const;
+  bool  check_r_C(Tag_false /*is_in_standard_form*/) const;
     
   void  multiply__A_S_BxN_O(Value_iterator out) const;
-  bool  check_r_S_B(Tag_true  is_in_standard_form) const;
-  bool  check_r_S_B(Tag_false is_in_standard_form) const;
+  bool  check_r_S_B(Tag_true  /*is_in_standard_form*/) const;
+  bool  check_r_S_B(Tag_false /*is_in_standard_form*/) const;
     
   void  multiply__2D_B_OxN_O(Value_iterator out) const;
-  bool  check_r_B_O(Tag_true  is_in_standard_form) const;
-  bool  check_r_B_O(Tag_false is_instandard_form) const;
+  bool  check_r_B_O(Tag_true  /*is_in_standard_form*/) const;
+  bool  check_r_B_O(Tag_false /*is_in_standard_form*/) const;
         
   void  multiply__2D_OxN_O(Value_iterator out) const;
-  bool  check_w(Tag_true  is_in_standard_form) const;
-  bool  check_w(Tag_false is_in_standard_form) const;
+  bool  check_w(Tag_true  /*is_in_standard_form*/) const;
+  bool  check_w(Tag_false /*is_in_standard_form*/) const;
     
   // utility routines for QP's in nonstandard form:
   ET original_variable_value_under_bounds(int i) const;
@@ -1479,7 +1479,7 @@ private:
     
   template < class NT, class It > inline          // LP case, upper bounded
   void
-  mu_j__quadratic_part( NT&, int, It, const NT& w_j, const NT& dd,
+  mu_j__quadratic_part( NT&, int, It, const NT& /*w_j*/, const NT& /*dd*/,
 			Tag_true) const
   {
     // nop
@@ -1997,16 +1997,16 @@ basis_matrix_stays_regular()
 // ----------------
 template < typename Q, typename ET, typename Tags >  inline             // no inequalities, upper bounded
 void  QP_solver<Q, ET, Tags>::
-compute__x_B_S( Tag_true  has_equalities_only_and_full_rank,
-                Tag_false is_in_standard_form)
+compute__x_B_S( Tag_true  /*has_equalities_only_and_full_rank*/,
+                Tag_false /*is_in_standard_form*/)
 {
   // nop
 }
 
 template < typename Q, typename ET, typename Tags >  inline             // no inequalities, standard form
 void  QP_solver<Q, ET, Tags>::
-compute__x_B_S( Tag_true has_equalities_only_and_full_rank,
-                Tag_true is_in_standard_form)
+compute__x_B_S( Tag_true /*has_equalities_only_and_full_rank*/,
+                Tag_true /*is_in_standard_form*/)
 {
   // nop
 }
@@ -2014,8 +2014,8 @@ compute__x_B_S( Tag_true has_equalities_only_and_full_rank,
 
 template < typename Q, typename ET, typename Tags >  inline             // has inequalities, upper bounded
 void  QP_solver<Q, ET, Tags>::
-compute__x_B_S( Tag_false has_equalities_only_and_full_rank,
-                Tag_false is_in_standard_form)
+compute__x_B_S( Tag_false /*has_equalities_only_and_full_rank*/,
+                Tag_false /*is_in_standard_form*/)
 {
   // A_S_BxB_O * x_B_O
   multiply__A_S_BxB_O( x_B_O.begin(), x_B_S.begin());
@@ -2051,8 +2051,8 @@ compute__x_B_S( Tag_false has_equalities_only_and_full_rank,
 
 template < typename Q, typename ET, typename Tags >  inline             // has inequalities, standard form
 void  QP_solver<Q, ET, Tags>::
-compute__x_B_S( Tag_false has_equalities_only_and_full_rank,
-                Tag_true  is_in_standard_form)
+compute__x_B_S( Tag_false /*has_equalities_only_and_full_rank*/,
+                Tag_true  /*is_in_standard_form*/)
 {
   // A_S_BxB_O * x_B_O
   multiply__A_S_BxB_O( x_B_O.begin(), x_B_S.begin());

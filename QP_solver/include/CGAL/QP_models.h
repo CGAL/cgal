@@ -874,26 +874,26 @@ public:
   }
 private: // helpers to deal with sparse/dense representation:
 
-  void add_column (const Tag_true sparse_A) 
+  void add_column (const Tag_true /*sparse_A*/) 
   {  
     // append a new column to A_ (it's empty by default)
     A_.push_back(A_col());
   }
 
-  void add_column (const Tag_false sparse_A) 
+  void add_column (const Tag_false /*sparse_A*/) 
   {
     // append a new empty column to A_
     A_.push_back(A_col(row_names.size(), IT(0)));
   }
 
-  void initialize_D(unsigned int dimension, const Tag_true sparse_D ) 
+  void initialize_D(unsigned int dimension, const Tag_true /*sparse_D*/ ) 
   {
     // generate dimension many rows (empty by default)
     for (unsigned int i=0; i<dimension; ++i) 
     D_.push_back(D_row()); 
   }
   
-  void initialize_D(unsigned int dimension, const Tag_false sparse_D)
+  void initialize_D(unsigned int dimension, const Tag_false /*sparse_D*/)
   {
     // generate dimension many empty rows; this can be very costly
     // if dimension is large
@@ -902,28 +902,28 @@ private: // helpers to deal with sparse/dense representation:
   }
 
   void set_entry_in_A(unsigned int j,unsigned int i,const IT& val,
-		      const Tag_true sparse_A)      
+		      const Tag_true /*sparse_A*/)      
   {
     // set element i in column j to val
     if (val != it0) A_[j][i] = val;
   }
 
   void set_entry_in_A(unsigned int j,unsigned int i,const IT& val,
-		      const Tag_false sparse_A) 
+		      const Tag_false /*sparse_A*/) 
   {
     // set element i in column j to val
     A_[j][i] = val;
   }  
   
   void add_entry_in_A(unsigned int j, unsigned int i, const IT& val,
-		      const Tag_true sparse_A)
+		      const Tag_true /*sparse_A*/)
   {
     // append value to column j; new element has index i
     set_entry_in_A (j, i, val, Tag_true()); 
   }
 
   void add_entry_in_A(unsigned int j, unsigned int i, const IT& val,
-		      const Tag_false sparse_A)
+		      const Tag_false /*sparse_A*/)
   {
     // append value to column j; new element has index i
     CGAL_qpe_precondition (i == A_[j].size());
@@ -931,7 +931,7 @@ private: // helpers to deal with sparse/dense representation:
   }
 
   const IT& get_entry_in_A(unsigned int j,unsigned int i,
-		      const Tag_true sparse_A)
+		      const Tag_true /*sparse_A*/)
   {
     typename Map::const_iterator it = A_[j].find(i);
     if (it != A_[j].end())
@@ -941,25 +941,25 @@ private: // helpers to deal with sparse/dense representation:
   }
 
   const IT&  get_entry_in_A(unsigned int j,unsigned int i,
-		      const Tag_false sparse_A)
+		      const Tag_false /*sparse_A*/)
   {
     return A_[j][i];
   }
 
   void set_entry_in_D(unsigned int i, unsigned int j, const IT& val,
-		      const Tag_true sparse_D) 
+		      const Tag_true /*sparse_D*/) 
   {
     if (val != it0) D_[i][j] = val;
   }
 
   void set_entry_in_D(unsigned int i, unsigned int j, const IT& val,
-		      const Tag_false sparse_D)
+		      const Tag_false /*sparse_D*/)
   {
     D_[i][j] = val;
   }
 
   const IT& get_entry_in_D(unsigned int i,unsigned int j,
-		      const Tag_true sparse_D)
+		      const Tag_true /*sparse_D*/)
   {
     typename Map::const_iterator it = D_[i].find(j);
     if (it != D_[i].end())
@@ -969,7 +969,7 @@ private: // helpers to deal with sparse/dense representation:
   }
 
   const IT&  get_entry_in_D(unsigned int i,unsigned int j,
-		      const Tag_false sparse_D)
+		      const Tag_false /*sparse_D*/)
   {
     return D_[i][j];
   }
@@ -1246,11 +1246,11 @@ public: // methods:
   }
 
 private:
-  D_iterator d (Tag_true is_linear) const {
+  D_iterator d (Tag_true /*is_linear*/) const {
     return D_iterator(it0); 
   }
 
-  D_iterator d(Tag_false is_linear) const {
+  D_iterator d(Tag_false /*is_linear*/) const {
     CGAL_qpe_assertion(is_valid());
     return D_iterator(D_.begin(), D_Beginner());
   }

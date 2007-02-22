@@ -124,7 +124,7 @@ template<typename IT_, typename Is_linear_,
 	 typename Sparse_D_,
 	 typename Sparse_A_>
 bool QP_from_mps<IT_, Is_linear_, Sparse_D_, Sparse_A_>
-::is_symmetric(Tag_false sparse_D, unsigned int&i, unsigned int&j) const
+::is_symmetric(Tag_false /*sparse_D*/, unsigned int&i, unsigned int&j) const
 {
   // only called if we have a qp, i.e. if D is initialized
   const unsigned int var_nr = var_names.size();
@@ -139,7 +139,7 @@ template<typename IT_, typename Is_linear_,
 	 typename Sparse_D_,
 	 typename Sparse_A_>
 bool QP_from_mps<IT_, Is_linear_, Sparse_D_, Sparse_A_>
-::is_symmetric(Tag_true sparse_D, unsigned int&i, unsigned int&j) const
+::is_symmetric(Tag_true /*sparse_D*/, unsigned int&i, unsigned int&j) const
 {
   // only called if we have a qp, i.e. if D is initialized
   const unsigned int var_nr = var_names.size();

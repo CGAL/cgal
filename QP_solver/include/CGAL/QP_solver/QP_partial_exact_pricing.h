@@ -63,8 +63,8 @@ class QP_partial_exact_pricing : public QP__partial_base<Q,ET,Tags> {
     ~QP_partial_exact_pricing(){ };
 
   private:
-    int pricing_helper(int& direction, Tag_true  is_in_standard_form);
-    int pricing_helper(int& direction, Tag_false is_in_standard_form);
+    int pricing_helper(int& direction, Tag_true  /*is_in_standard_form*/);
+    int pricing_helper(int& direction, Tag_false /*is_in_standard_form*/);
 };
 
 // ----------------------------------------------------------------------------
@@ -91,7 +91,7 @@ pricing(int& direction )
 
 template < typename Q, typename ET, typename Tags >
 int  QP_partial_exact_pricing<Q,ET,Tags>::
-pricing_helper(int& direction, Tag_true is_in_standard_form)
+pricing_helper(int& /*direction*/, Tag_true /*is_in_standard_form*/)
 {
     Index_const_iterator  it, min_it;
     ET mu, min_mu = this->et0;
@@ -165,7 +165,7 @@ pricing_helper(int& direction, Tag_true is_in_standard_form)
 }
 template < typename Q, typename ET, typename Tags >
 int  QP_partial_exact_pricing<Q,ET,Tags>::
-pricing_helper(int& direction, Tag_false is_in_standard_form)
+pricing_helper(int& direction, Tag_false /*is_in_standard_form*/)
 {
     Index_const_iterator  it, min_it;
     int                   min_j = -1;

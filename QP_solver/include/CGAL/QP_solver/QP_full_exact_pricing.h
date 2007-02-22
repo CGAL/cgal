@@ -60,8 +60,8 @@ class QP_full_exact_pricing : public QP_pricing_strategy<Q,ET,Tags> {
   ~QP_full_exact_pricing() { };
     
  private:
-  int pricing_helper(int& direction, Tag_true  is_in_standard_form);
-  int pricing_helper(int& direction, Tag_false is_in_standard_form);
+  int pricing_helper(int& direction, Tag_true  /*is_in_standard_form*/);
+  int pricing_helper(int& direction, Tag_false /*is_in_standard_form*/);
 };
 
 // ----------------------------------------------------------------------------
@@ -87,7 +87,7 @@ pricing(int& direction )
 
 template < typename Q, typename ET, typename Tags >
 int  QP_full_exact_pricing<Q,ET,Tags>::
-pricing_helper(int& direction, Tag_true is_in_standard_form)
+pricing_helper(int& /*direction*/, Tag_true /*is_in_standard_form*/)
 {
   // get properties of quadratic program:
   int  w = this->solver().number_of_working_variables();
@@ -129,7 +129,7 @@ pricing_helper(int& direction, Tag_true is_in_standard_form)
 
 template < typename Q, typename ET, typename Tags >
 int  QP_full_exact_pricing<Q,ET,Tags>::
-pricing_helper(int& direction, Tag_false is_in_standard_form)
+pricing_helper(int& direction, Tag_false /*is_in_standard_form*/)
 {
     
   // get properties of quadratic program:
