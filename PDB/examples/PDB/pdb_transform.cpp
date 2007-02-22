@@ -78,7 +78,7 @@ int main(int argc, char *argv[]){
 	      << " translational components.\n";
     std::cout << "usage: " << argv[0] << " input-pdb output-pdb\n\n";
     std::cout << o << "\n";
-    return EXIT_FAILURE;
+    return EXIT_SUCCESS;
   }
 
   // std::cout << input_file << " " << output_template << " " << split_domain << " " << split_chains << std::endl;

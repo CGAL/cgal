@@ -86,7 +86,7 @@ int main(int argc, char *argv[]){
 	      << " [-c] input-pdb template%d[%c].pdb\n" << std::endl;
     std::cout << "The second argument is an sprintf style string that will be used to generate the names for the output files.\n\n";
     std::cout << o << "\n";
-    return EXIT_FAILURE;
+    return EXIT_SUCCESS;
   }
 
 

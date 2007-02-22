@@ -62,7 +62,7 @@ int main(int argc, char *argv[]){
     std::cout << "This program produces a pdb identical to the input but with no sidechains.\n";
     std::cout << "usage: " << argv[0] << " input-pdb output-pdb\n\n";
     std::cout << o << "\n";
-    return EXIT_FAILURE;
+    return EXIT_SUCCESS;
   }
 
 

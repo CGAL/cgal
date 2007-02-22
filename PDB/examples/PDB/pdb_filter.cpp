@@ -73,7 +73,7 @@ int main(int argc, char *argv[]){
     std::cout << "useage: " << argv[0] 
 	      << " [-c] input-pdb output.pdb\n" << std::endl;
     std::cout << o << "\n";
-    return EXIT_FAILURE;
+    return EXIT_SUCCESS;
   }
 
   // std::cout << input_file << " " << output_template << " " << split_domain << " " << split_chains << std::endl;

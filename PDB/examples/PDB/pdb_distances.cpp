@@ -51,7 +51,7 @@ int main(int argc, char *argv[]){
       std::cout << "This program computes the distances between a collection of pdb files.\n";
       std::cout << "usage: " << argv[0] << " file1.pdb file%03d.pdb ...\n\n";
       std::cout << o << "\n";
-      return EXIT_FAILURE;
+      return EXIT_SUCCESS;
     }
   }
 

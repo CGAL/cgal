@@ -62,7 +62,7 @@ int main(int argc, char *argv[]){
       std::cout << "Read a PDB file and write spheres:\n# num_spheres \nx y z r\n...\nto the output file.\n";
       std::cout << "usage: " << argv[0] << " input.pdb output.spheres\n";
       std::cout << o << "\n";
-      return EXIT_FAILURE;
+      return EXIT_SUCCESS;
     }
 
   }

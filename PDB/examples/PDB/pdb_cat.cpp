@@ -60,7 +60,7 @@ int main(int argc, char *argv[]){
       std::cout << "Concatenate a bunch of pdb files into one pdb file with many models.\n";
       std::cout << "usage: " << argv[0] << " input-pdb-0 input-pdb-1 ... output-pdb\n";
       std::cout << o << "\n";
-      return EXIT_FAILURE;
+      return EXIT_SUCCESS;
     }
 
     output_file=input_files.back();

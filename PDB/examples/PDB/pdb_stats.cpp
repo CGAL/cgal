@@ -56,7 +56,7 @@ int main(int argc, char *argv[]){
       std::cout << "Print some statistics of a pdb file.\n";
       std::cout << "usage: " << argv[0] << " pdb_file.pdb\n";
       std::cout << o << "\n";
-      return EXIT_FAILURE;
+      return EXIT_SUCCESS;
     }
   }
 

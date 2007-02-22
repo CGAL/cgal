@@ -81,7 +81,7 @@ int main(int argc, char *argv[]){
       std::cout << "Only one of -b or -a may be used.\n";
       std::cout << "usage: " << argv[0] << " input-pdb\n\n";
       std::cout << o << "\n";
-      return EXIT_FAILURE;
+      return EXIT_SUCCESS;
     }
   }
 

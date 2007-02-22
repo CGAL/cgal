@@ -63,7 +63,7 @@ int main(int argc, char *argv[]){
       std::cout << "This program aligns two proteins and can compute distances between them.\n";
       std::cout << "usage: " << argv[0] << " base-pdb input-pdb\n\n";
       std::cout << o << "\n";
-      return EXIT_FAILURE;
+      return EXIT_SUCCESS;
     }
   }
 

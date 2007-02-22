@@ -145,7 +145,7 @@ int main(int argc, char *argv[]){
 	" can compute distances between them.\n";
       std::cout << "usage: " << argv[0] << " base-points input-pdb\n\n";
       std::cout << o << "\n";
-      return EXIT_FAILURE;
+      return EXIT_SUCCESS;
     }
   }
 
