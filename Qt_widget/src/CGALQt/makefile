@@ -17,6 +17,8 @@
 #
 # Author(s)     : Laurent Rineau
 
+default-qtwidget: $(CGAL_SHARED_LIBNAME)
+
 #---------------------------------------------------------------------#
 #                    KDS sub-makefile
 #---------------------------------------------------------------------#
@@ -51,7 +53,7 @@ SOMAJOR=2
 
 LIB_NAME_BASE = CGALQt
 
-ADDITIONNAL_CXXFLAGS = $(ALL_QT_CXXFLAGS) $(ALL_OPENGL_CXXFLAGS)
+ADDITIONNAL_CXXFLAGS = $(ALL_QT_CXXFLAGS) $(ALL_OPENGL_CXXFLAGS) -I.
 SHARED_LIB_ADDITIONNAL_LDFLAGS = $(QT_LIBPATHFLAGS) $(QT_LDFLAGS) \
             $(OPENGL_LIBPATHFLAGS) $(OPENGL_LDFLAGS)
 
@@ -68,6 +70,12 @@ include ../CGAL/common.mk
 	$(QT_MOC) $< -o $@
 
 vpath %.h ../../include/CGAL/IO
+vpath %.h ../../../Nef_S2/include/CGAL/IO/
+vpath Kinetic_% ../../../Kinetic_data_structures/src/CGALQt
+vpath Qt_widget_OpenGL.cpp ../../../Nef_S2/src/CGALQt/
+
+clean_temp_files::
+	rm -f *.moc
 
 #---------------------------------------------------------------------#
 #                    moc rules

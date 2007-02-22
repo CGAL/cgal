@@ -38,35 +38,75 @@ CXXFLAGS = $(CGAL_SHARED_LIB_CXXFLAGS)
 #                    target entries
 #---------------------------------------------------------------------#
 
+.PHONY: default
+
+default: $(CGAL_SHARED_LIBNAME)
+
+.PHONY: shared_lib_no_install shared_lib
+
+ifneq "$(SOVERSION)" ""
+###### If SOVERSION is empty.
+shared_lib_no_install: $(CGAL_SHARED_LIBNAME_WITH_SOVERSION)
+	$(MAKE) clean_temp_files
+
 shared_lib: shared_lib_no_install
 	mv $(CGAL_SHARED_LIBNAME_WITH_SOVERSION) $(CGAL_LIB_DESTINATION)
 	for symlink in "$(CGAL_SHARED_LIBNAME)" "$(CGAL_SHARED_LIBNAME_WITH_SOMAJOR)"; do \
 	  if [ "$(CGAL_SHARED_LIBNAME_WITH_SOVERSION)" != "$$symlink" ]; then \
-	    rm -f $(CGAL_LIB_DESTINATION)/"$$symlink"; \
-	    ln -s "$(CGAL_SHARED_LIBNAME_WITH_SOVERSION)" $(CGAL_LIB_DESTINATION)/"$$symlink"; \
+	    mv "$$symlink" $(CGAL_LIB_DESTINATION); \
 	  fi; \
 	done
 
-shared_lib_no_install: $(OBJECTS)
+$(CGAL_SHARED_LIBNAME_WITH_SOVERSION) $(CGAL_SHARED_LIBNAME) $(CGAL_SHARED_LIBNAME_WITH_SOMAJOR): $(OBJECTS)
 	$(CGAL_SHARED_LIB_CREATE)$(CGAL_SHARED_LIBNAME_WITH_SOVERSION) $(CGAL_SHARED_LIB_SONAME) \
 	  $(OBJECTS:%=$(CGAL_OBJ_PREFIX)%) \
 	  $(CGAL_SHARED_LIB_LDFLAGS) $(SHARED_LIB_ADDITIONNAL_LDFLAGS)
-	rm $(OBJECTS)
+	for symlink in "$(CGAL_SHARED_LIBNAME)" "$(CGAL_SHARED_LIBNAME_WITH_SOMAJOR)"; do \
+	  if [ "$(CGAL_SHARED_LIBNAME_WITH_SOVERSION)" != "$$symlink" ]; then \
+	    rm -f "$$symlink"; \
+	    ln -s "$(CGAL_SHARED_LIBNAME_WITH_SOVERSION)" "$$symlink"; \
+	  fi; \
+	done
+else
+###### If SOVERSION is not empty.
+shared_lib_no_install: $(CGAL_SHARED_LIBNAME)
+	$(MAKE) clean_temp_files
+
+shared_lib: shared_lib_no_install
+	mv $(CGAL_SHARED_LIBNAME) $(CGAL_LIB_DESTINATION)
+
+$(CGAL_SHARED_LIBNAME): $(OBJECTS)
+	$(CGAL_SHARED_LIB_CREATE)$(CGAL_SHARED_LIBNAME) \
+	  $(OBJECTS:%=$(CGAL_OBJ_PREFIX)%) \
+	  $(CGAL_SHARED_LIB_LDFLAGS) $(SHARED_LIB_ADDITIONNAL_LDFLAGS)
+endif
+
+.PHONY: static_lib_no_install static_lib
+
+static_lib_no_install: $(CGAL_STATIC_LIBNAME)
+	$(MAKE) clean_temp_files
 
 static_lib: static_lib_no_install
 	mv $(CGAL_STATIC_LIBNAME) $(CGAL_LIB_DESTINATION)
 
-static_lib_no_install: $(OBJECTS)
+$(CGAL_STATIC_LIBNAME): $(OBJECTS)
 	$(CGAL_STATIC_LIB_CREATE)$(CGAL_STATIC_LIBNAME) \
 	  $(OBJECTS:%=$(CGAL_OBJ_PREFIX)%) \
 	  $(CGAL_LIB_LDFLAGS) $(STATIC_LIB_ADDITIONNAL_LDFLAGS)
 	$(RANLIB) $(CGAL_STATIC_LIBNAME)
-	rm $(OBJECTS)
 
-.PHONY: clean shared_lib shared_lib_no_install status_lib static_lib_no_install
+clean_temp_files::
+	rm -f $(OBJECTS)
 
-clean:
-	rm -f $(CGAL_STATIC_LIBNAME) $(CGAL_SHARED_LIBNAME_WITH_SOVERSION) $(OBJECTS)
+clean:: clean_temp_files
+	rm -f $(CGAL_STATIC_LIBNAME)
+	rm -f $(CGAL_SHARED_LIBNAME)
+
+ifneq "$(SOVERSION)" ""
+clean::
+	rm -f $(CGAL_SHARED_LIBNAME_WITH_SOMAJOR)
+	rm -f $(CGAL_SHARED_LIBNAME_WITH_SOVERSION)
+endif
 
 #---------------------------------------------------------------------#
 #                    suffix rules
@@ -81,19 +121,11 @@ BISON ?=bison
 %.cpp: %.l
 	$(FLEX) -8 -o$@ $<
 
-# Apparently, old versions of bison (e.g., 1.28) name the generated definion
-# header file <base>.cpp.h. The file must be renamed to <base>.hpp
-BISON_EXISTS_CMD =which $(BISON)
-BISON_EXISTS =$(shell $(BISON_EXISTS_CMD))
-ifneq ($(strip $(BISON_EXISTS)),)
-  BISON_VERSION_CMD =expr match "`$(BISON) --version`" '.*\([1-9]\.[0-9]*\)'
-  BISON_VERSION =$(shell $(BISON_VERSION_CMD))
-  OLD_BISON_VERSION_CMD =expr "$(BISON_VERSION)" \<= 1.28
-  OLD_BISON_VERSION =$(shell $(OLD_BISON_VERSION_CMD))
-endif
-
 %.cpp %.hpp: %.y
 	$(BISON) -d $< -o $*.cpp
-ifeq ($(OLD_BISON_VERSION), 1)
-	mv $*.cpp.h $*.hpp
-endif
+# Apparently, old versions of bison (e.g., 1.28) name the generated definion
+# header file <base>.cpp.h. The file must be renamed to <base>.hpp
+	@if [ ! -e $*.hpp -a -e $*.cpp.h ]; then \
+	  echo Moving $*.hpp to $*.cpp.h \
+	  mv $*.cpp.h $*.hpp; \
+	fi

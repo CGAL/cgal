@@ -253,5 +253,5 @@ void Qt_widget_OpenGL::slotPerspective() {
 }
 
 } // namespace CGAL
-#include "Qt_widget_OpenGL.moc"
+#include <Qt_widget_OpenGL.moc>
 #endif

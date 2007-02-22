@@ -39,13 +39,18 @@ Option_parser$(OBJ_EXT)
 
 SOVERSION=
 SOMAJOR=
-
-SHARED_LIB_CREATE = $(CGAL_BENCHMARK_SHARED_LIB_CREATE)
-SHARED_LIB        = $(CGAL_BENCHMARK_SHARED_LIB)
-STATIC_LIB        = $(CGAL_BENCHMARK_LIB)
+LIB_NAME_BASE = CGALBenchmark
 
 #---------------------------------------------------------------------#
 #                    common rules for all libraries
 #---------------------------------------------------------------------#
 include ../CGAL/common.mk
 
+#---------------------------------------------------------------------#
+#                    additional rules
+#---------------------------------------------------------------------#
+
+clean_temp_files::
+	rm -f benchmark_parser.hpp benchmark_lexer.cpp benchmark_parser.cpp
+
+benchmark_lexer$(OBJ_EXT): benchmark_parser.hpp
