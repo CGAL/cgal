@@ -39,7 +39,8 @@ CGAL_PDB_BEGIN_NAMESPACE
     
     //! Construct a quaternion for a rotation by angle around the axis
     Quaternion(const Vector &axis, double angle) {
-      double f= angle/(2*M_PI);
+      const double mypi= 3.14159265358979323846264338327950288;
+      double f= angle/(2*mypi);
       double sf= std::sqrt(f);
       double n2= axis[0]*axis[0] + axis[1]*axis[1] + axis[2]*axis[2];
       double n= std::sqrt(n2);
