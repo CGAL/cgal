@@ -1,0 +1,52 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: compute_umbilics.tex
+% +------------------------------------------------------------------------+
+% | 15.09.2006   Marc Pouget and Frédéric Cazals
+% | Package: Ridges_3
+% | 
+\RCSdef{\RCScomputeumbilicsRev}{$Id$}
+\RCSdefDate{\RCScomputeumbilicsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{compute_umbilics} 
+%% add templatearg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The function \ccRefName\ is a short cut to the method \ccc{compute} of
+the class \ccc{Umbilic_approximation}.
+
+\ccInclude{CGAL/Umbilics.h}
+
+\ccFunction{template < class TriangulatedSurfaceMesh,  
+  class Vertex2FTPropertyMap,
+  class Vertex2VectorPropertyMap,
+  class OutputIterator>
+  OutputIterator compute_umbilics(const TriangulatedSurfaceMesh &P,
+				  const Vertex2FTPropertyMap& vertex2k1_pm, 
+				  const Vertex2FTPropertyMap& vertex2k2_pm,
+				  const Vertex2VectorPropertyMap& vertex2d1_pm, 
+				  const Vertex2VectorPropertyMap& vertex2d2_pm,
+				  OutputIterator it, 
+				  double size);}
+		      {}
+
+%\ccOperations
+
+\ccSeeAlso
+
+\ccc{Umbilic_approximation}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
