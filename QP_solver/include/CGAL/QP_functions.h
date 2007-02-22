@@ -35,7 +35,7 @@ bool is_in_equational_form (const R& r);
 
 template <typename Ar, class ET>
 bool has_linearly_independent_equations 
-(const Ar& r, const ET& dummy);
+(const Ar& r, const ET& );
 // test whether the row vectors of A that correpsond to equations 
 // are linearly independent; this is done using type ET. The value
 // type of LinearInequalitySystem must be convertible to ET
@@ -96,7 +96,7 @@ void print_nonnegative_linear_program
 
 template <typename QuadraticProgram, typename ET>
 Quadratic_program_solution<ET> solve_quadratic_program 
-(const QuadraticProgram &qp, const ET& dummy)
+(const QuadraticProgram &qp, const ET& )
 {
   typedef QP_solver<
     QuadraticProgram, ET, 
@@ -108,7 +108,7 @@ Quadratic_program_solution<ET> solve_quadratic_program
 
 template <typename QuadraticProgram, typename ET>
 Quadratic_program_solution<ET> solve_nonnegative_quadratic_program 
-(const QuadraticProgram &qp, const ET& dummy)
+(const QuadraticProgram &qp, const ET& )
 {
   typedef QP_solver<
     QuadraticProgram, ET, 
@@ -120,7 +120,7 @@ Quadratic_program_solution<ET> solve_nonnegative_quadratic_program
 
 template <typename QuadraticProgram, typename ET>
 Quadratic_program_solution<ET> solve_linear_program 
-(const QuadraticProgram &qp, const ET& dummy)
+(const QuadraticProgram &qp, const ET& )
 {
   typedef QP_solver<
     QuadraticProgram, ET, 
@@ -132,7 +132,7 @@ Quadratic_program_solution<ET> solve_linear_program
 
 template <typename QuadraticProgram, typename ET>
 Quadratic_program_solution<ET> solve_nonnegative_linear_program 
-(const QuadraticProgram &qp, const ET& dummy)
+(const QuadraticProgram &qp, const ET& )
 {
   typedef QP_solver<
     QuadraticProgram, ET, 
