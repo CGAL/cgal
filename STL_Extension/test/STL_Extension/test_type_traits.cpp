@@ -1,3 +1,15 @@
+// ============================================================================
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+// $URL: $
+// $Id: $
+// author(s)     : Andreas Meyer <ameyer@mpi-inf.mpg.de>
+
+
 #include <CGAL/Testsuite/assert.h>
 #include <CGAL/type_traits.h>
 
