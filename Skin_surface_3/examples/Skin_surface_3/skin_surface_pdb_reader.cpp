@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
   double                    shrinkfactor = 0.5;
 
   // Retrieve input balls:
-  extract_balls_from_pdb(filename, K(), std::back_inserter(l));
+  extract_balls_from_pdb(filename, Traits(), std::back_inserter(l));
 
   // Construct skin surface:
   Skin_surface_3 skin_surface(l.begin(), l.end(), shrinkfactor);

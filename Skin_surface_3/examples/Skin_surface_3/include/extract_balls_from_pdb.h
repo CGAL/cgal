@@ -8,19 +8,8 @@
 #ifndef EXTRACT_BALLS_FROM_PDB_H
 #define EXTRACT_BALLS_FROM_PDB_H
 
-// include the source files, since the generated makefile 
-// cannot link multiple object files
-#include "dsrpdb/lib/pdb_utils.cc"
-#include "dsrpdb/lib/Residue.cc"
-#include "dsrpdb/lib/Protein.cc"
-#include "dsrpdb/lib/Error_logger.cc"
-#include "dsrpdb/lib/Protein_pdb.cc"
-#include "dsrpdb/lib/Model.cc"
-#include "dsrpdb/lib/PDB.cc"
-#include "dsrpdb/lib/Residue_data.cc"
-    
-#include "dsrpdb/PDB.h"
-#include "dsrpdb/geometry.h"
+#include <CGAL/PDB/PDB.h>
+#include <CGAL/PDB/cgal.h>
 #include <fstream>
 
 template <class Traits, class OutputIterator>
@@ -34,8 +23,8 @@ void extract_balls_from_pdb(char *filename,
     std::cerr << "Error opening input file " << filename << std::endl;
   }
 
-  dsrpdb::PDB pdb(in, true);
-  dsrpdb::all_weighted_points(pdb, t, weighted_points); 
+  CGAL::PDB::PDB pdb(in, true);
+  CGAL::PDB::all_weighted_points(pdb.model(0), t, weighted_points); 
 }
 			    
 
