@@ -42,7 +42,7 @@ LIB_NAME_BASE = core++
 
 ADDITIONNAL_CXXFLAGS = $(ALL_GMP_CXXFLAGS) $(ALL_MPFR_CXXFLAGS)
 SHARED_LIB_ADDITIONNAL_LDFLAGS = $(GMP_LIBPATHFLAGS) $(GMP_LDFLAGS) \
-            $(MPFR_LIBPATHFLAGS) $(MPFR_LDFLAGS)
+            $(MPFR_LIBPATHFLAGS) $(MPFR_LDFLAGS) $(CUSTOM_LDFLAGS)
 
 # The shared_lib case is still buggy:
 # - When GMP or MPFR is a static library on Darwin, it fails because -fno-common is required...
