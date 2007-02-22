@@ -1,6 +1,6 @@
 #ifndef CGAL_USE_QT
   #include <iostream>
-  int main(int, char*)
+  int main(int, char**)
   {
     std::cout << "This platform does not have QT installed.";
     std::cout << std::endl;
