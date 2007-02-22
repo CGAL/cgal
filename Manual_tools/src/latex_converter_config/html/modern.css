@@ -55,7 +55,7 @@ td.TocTitle,
 td.TocContents,
 td.TocIndex,
 td.TocBibliography,
-td.TocChapter          { font-weight: bold; }
+ *.TocChapter          { font-weight: bold; }
 td.TocSection          {  }
 td.TocSubsection       {  }
 td.TocSubsubsection    {  }

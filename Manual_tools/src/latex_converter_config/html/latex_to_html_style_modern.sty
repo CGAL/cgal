@@ -491,16 +491,14 @@
       \lcRawHtml{<a name="Chapter_}#C1\lcRawHtml{"></a>}}}
   \lciIfLessExpanded{\lciCountertocdepth}{0}{}{%
     \edef\lciOut{\lciOutputFilename}%
-    \lciMirroredTocEntry{
-    \lciTocOpenInner
+    \lciMirroredTocEntry{%
     % \lcRawHtml{##Chapter_}#C1 % omit anchor, we start at the page top
-    \lcRawHtml{      <tr><td class="TocChapter" colspan="7">
-        <!-- =================================================== -->
-        <a class="TocLinkChapter" href="}\lcRawHtmlExpanded{\lciOut}% \lciLocalVariableChapterName
-      \lcRawHtml{"
-            >}#C2\lcRawHtml{</a>
-      </td></tr>
-}%
+    \lcRawHtml{<span class="TocChapter">
+      <a class="TocLinkChapter" href="}\lcRawHtmlExpanded{\lciOut}% \lciLocalVariableChapterName
+      \lcRawHtml{">}
+          #C2
+      \lcRawHtml{</a></span>}%
+    \lcTocRight\lcTocLeft\lciTocOpenInner%
     }
 }}
 
@@ -510,12 +508,7 @@
     \lciMirroredTocEntry{\lciTocOpenInner}
     \lciPushOutput{toc}%
     \lcRawHtml{      <tr>}
-    \lciIfEqualExpanded{\lciTocOuterState}{Left}{\lciTocIndentWidth}{
-      \lciIfEqualExpanded{\lciTocOuterState}{Right}{%
-        \lcRawHtml{      <tr><td class="TocChapter" colspan="7">&nbsp;</td></tr>}
-      }{}
-    }
-
+    \lciIfEqualExpanded{\lciTocOuterState}{Left}{\lciTocIndentWidth}{}
     \lcRawHtml{        <td class="TocSection" width="35">&nbsp;</td><td class="TocSection" colspan="5">
           <a class="TocLinkSection" href="}\lcRawHtmlExpanded{\lciOut}%
     \lcRawHtml{"><i>}#1\lcRawHtml{</i></a>
