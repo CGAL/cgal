@@ -166,7 +166,7 @@ int main(int argc, char *argv[]){
       double max= 0;
       CGAL_PDB_NS::Squared_distance sd;
       for (unsigned int j=0; j< coords.size(); ++j){
-	max=std::max(std::sqrt(sd(coords[j], base_coords[j])), max);
+	max=std::max BOOST_PREVENT_MACRO_SUBSTITUTION(std::sqrt(sd(coords[j], base_coords[j])), max);
       }
       std::cout << "Model " << i << " is " << max << std::endl;
     }
