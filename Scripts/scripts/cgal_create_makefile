@@ -139,40 +139,30 @@ create_makefile()
   # print 'all' target
   echo
   printf "all:            "
-  for file in `ls *.C 2>/dev/null | sort` ; do
+  for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
     # Add $file's executable to "all" target
     # if $file contains a function "main()"
+    BASE=`basename $file .C`
+    BASE=`basename $BASE .cpp`
     egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
     if [ $? -eq 0 ]; then
-      printf "\\\\\n                `basename $file .C`\$(EXE_EXT) "
-    fi
-  done
-  for file in `ls *.cpp 2>/dev/null | sort` ; do
-    # Add $file's executable to "all" target
-    # if $file contains a function "main()"
-    egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
-    if [ $? -eq 0 ]; then
-      printf "\\\\\n                `basename $file .cpp`\$(EXE_EXT) "
+      printf "\\\\\n                $BASE\$(EXE_EXT) "
     fi
   done
   echo
 
   # print rules for each .C and .cpp file
   echo
-  for file in `ls *.C 2>/dev/null | sort` ; do
-    create_makefile_entry $file
-  done
-  for file in `ls *.cpp 2>/dev/null | sort` ; do
+  for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
     create_makefile_entry $file
   done
 
   # print 'clean' target
   printf "clean: "
-  for file in `ls *.C 2>/dev/null | sort` ; do
-      printf "\\\\\n                   `basename $file .C`.clean "
-  done
-  for file in `ls *.cpp 2>/dev/null | sort` ; do
-      printf "\\\\\n                   `basename $file .cpp`.clean "
+  for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
+      BASE=`basename $file .C`
+      BASE=`basename $BASE .cpp`
+      printf "\\\\\n                   ${BASE}.clean "
   done
   printf    "\n\n"
 
