@@ -52,7 +52,7 @@ int main(int argc, char *argv[]){
     boost::program_options::notify(vm);
 
     
-    if (print_help) {
+    if (print_help || input_file.empty()) {
       std::cout << "Print some statistics of a pdb file.\n";
       std::cout << "usage: " << argv[0] << " pdb_file.pdb\n";
       std::cout << o << "\n";
