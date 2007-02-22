@@ -55,7 +55,8 @@ LIB_NAME_BASE = CGALQt
 
 ADDITIONNAL_CXXFLAGS = $(ALL_QT_CXXFLAGS) $(ALL_OPENGL_CXXFLAGS) -I.
 SHARED_LIB_ADDITIONNAL_LDFLAGS = $(QT_LIBPATHFLAGS) $(QT_LDFLAGS) \
-            $(OPENGL_LIBPATHFLAGS) $(OPENGL_LDFLAGS)
+            $(OPENGL_LIBPATHFLAGS) $(OPENGL_LDFLAGS) $(CUSTOM_LDFLAGS)\
+			$(X11_LIBPATHFLAGS) -lCGAL 
 
 #---------------------------------------------------------------------#
 #                    common rules for all libraries
