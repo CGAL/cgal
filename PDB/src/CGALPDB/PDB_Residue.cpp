@@ -120,7 +120,7 @@ void Residue::set_atom(Residue::Atom_label ial, const Atom &a) {
   // This is a bit evil, I haven't figured out a better way though.
   atoms_[al].set_type(element(al));
   if (min_atom_index_ != Atom::Index()) {
-    min_atom_index_= std::min(min_atom_index_, a.index());
+    min_atom_index_= std::min BOOST_PREVENT_MACRO_SUBSTITUTION(min_atom_index_, a.index());
   } else {
     min_atom_index_= a.index();
   }
