@@ -1,3 +1,15 @@
+17 February 2007 Andreas Meyer
+- added a mpl struct is_same_or_derived<A,B> similar to
+  boost::is_same / boost::is_base_and_derived
+
+26 October 2006 Andreas Meyer
+- added parts of the former EXACUS support library:
+  * (recursive) Flattening_iterator
+  * Handle_with_policy
+  * lexicographical_compare_three_valued
+    (not part of the standard STL, only SGI has something similar )
+  * other minor things like Cache, output_range ...
+
 8 August 2005 Sylvain Pion
 - Compact_container : use boost::mpl::if_ instead of own Select
   meta-programming stuff.
