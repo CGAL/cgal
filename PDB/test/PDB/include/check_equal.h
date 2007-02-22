@@ -35,3 +35,4 @@ void check_equal(std::istream &a, std::istream &b) {
 		}
 	} while (true);
 }
+
