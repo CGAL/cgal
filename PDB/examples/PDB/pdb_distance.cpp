@@ -216,9 +216,9 @@ int main(int argc, char *argv[]){
       double maxr=0;
       for (int j=0; j< base_matrix.dim1(); ++j){
 	for (int k=0; k< j; ++k){
-	  max=std::max(std::abs(base_matrix[j][k]-input_matrix[j][k]), mmax);
-	  maxr=std::max(std::abs(base_matrix[j][k]-input_matrix[j][k])
-			/std::max(base_matrix[j][k],input_matrix[j][k]), maxr);
+	  mmax=std::max BOOST_PREVENT_MACRO_SUBSTITUTION(std::abs(base_matrix[j][k]-input_matrix[j][k]), mmax);
+	  maxr=std::max BOOST_PREVENT_MACRO_SUBSTITUTION(std::abs(base_matrix[j][k]-input_matrix[j][k])
+			/std::max BOOST_PREVENT_MACRO_SUBSTITUTION(base_matrix[j][k],input_matrix[j][k]), maxr);
 	}
       }
       std::cout << "Model " << i << " is " << mmax << " with ratio " << maxr << std::endl;
