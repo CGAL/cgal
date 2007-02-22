@@ -1856,6 +1856,8 @@ SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.gif -text svneol=unset
 SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.pdf -text svneol=unset#application/pdf
 Segment_Delaunay_graph_2/demo/Segment_Delaunay_graph_2/polygon_delaunay_graph_2.vcproj eol=crlf
 Segment_Delaunay_graph_2/demo/Segment_Delaunay_graph_2/segment_delaunay_graph_2.vcproj eol=crlf
+Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/fig/norway.png -text
+Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/fig/svd.png -text
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/sdg-rep.eps -text svneol=unset#application/postscript
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/sdg-rep.fig -text svneol=unset#application/octet-stream
 Segment_Delaunay_graph_2/doc_tex/Segment_Delaunay_graph_2/sdg-rep.gif -text svneol=unset#image/gif
