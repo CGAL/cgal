@@ -52,8 +52,8 @@ class Array2D
 	       Array2D(int m, int n,  T *a);
 	       Array2D(int m, int n, const T &a);
     inline Array2D(const Array2D &A);
-	inline operator T**();
-	inline operator const T**();
+	inline T** raw();
+	inline const T** raw() const;
 	inline Array2D & operator=(const T &a);
 	inline Array2D & operator=(const Array2D &A);
 	inline Array2D & ref(const Array2D &A);
@@ -238,12 +238,12 @@ Array2D<T>::~Array2D() {}
 
 
 template <class T>
-inline Array2D<T>::operator T**()
+inline T** Array2D<T>::raw()
 {
 	return &(v_[0]);
 }
 template <class T>
-inline Array2D<T>::operator const T**()
+inline const T** Array2D<T>::raw() const
 {
 	return &(v_[0]);
 }
