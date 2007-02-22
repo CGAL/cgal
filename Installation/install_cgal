@@ -788,8 +788,6 @@ set_compiler_flags()
     CGAL_LIB_LDFLAGS=""
     CGAL_STATIC_LIB_CREATE="ar cr ''"
     CGAL_OBJ_PREFIX=""
-    CGAL_STATIC_LIBNAME="lib\$(LIB_NAME_BASE).a"
-    CGAL_SHARED_LIBNAME="lib\$(LIB_NAME_BASE).so"
     CGAL_SHARED_LIB_CXXFLAGS="-fPIC"
     CGAL_SHARED_LIB_LDFLAGS=
     CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -shared"
@@ -805,6 +803,8 @@ set_compiler_flags()
     OBJ_EXT=".o"
     OBJ_OPT="-c"
     LIB_SUFFIX=""
+    CGAL_STATIC_LIBNAME="lib\$(LIB_NAME_BASE).a"
+    CGAL_SHARED_LIBNAME="lib\$(LIB_NAME_BASE)\$(SHARED_LIB_EXT)"
     SHARED_LIB_EXT=".so"
     REMOVE_EXT_LIST=".o"
     LIB_OPT=" -l"
@@ -1012,6 +1012,9 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_CREATE="`compiler_bin` -G"
 	    ;;
     esac
+
+    #log_print "CGAL name is " ${CGAL_SHARED_LIBNAME}
+
     # Remove *.moc files too, on all platforms
     REMOVE_EXT_LIST="${REMOVE_EXT_LIST} .moc"
     # version specific adjustments for gcc
@@ -3012,9 +3015,9 @@ set_lib_compiled_flag()
     if [ -r "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libCGAL.a" ]; then
 	LIB_COMPILED='ok'
         CGAL_LIBNAME=libCGAL.a
-    else if [ -r "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libCGAL.so" ]; then
+    else if [ -r "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libCGAL${SHARED_LIB_EXT}" ]; then
 	LIB_COMPILED='ok'
-        CGAL_LIBNAME=libCGAL.so
+        CGAL_LIBNAME=libCGAL${SHARED_LIB_EXT}
     else if [ -r "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/CGAL.lib" ]; then
         LIB_COMPILED='ok'
         CGAL_LIBNAME=CGAL.lib
@@ -3144,6 +3147,7 @@ store_compiler_settings()
     _store_install_config_variable LONG_NAME_PROBLEM >>${_file}
     _store_install_config_variable ENABLE_SHARED >>${_file}
     _store_install_config_variable ENABLE_STATIC >>${_file}
+  
     ${_printf} "\n%s\n" "/* EOF */" >>${_file}
     log_print "Settings stored in ${_file}."
 }
@@ -3703,6 +3707,7 @@ write_compiler_flags()
     "*** Fill in any additional compiler flags you need ***" \
     >> ${FILE}
   ${_printf} "%s\n\n" "CUSTOM_CXXFLAGS = ${CUSTOM_CXXFLAGS}" >> ${FILE}
+  ${_printf} "%s\n\n" "SHARED_LIB_EXT = ${SHARED_LIB_EXT}" >> ${FILE}
 
   #
   # THIRD PARTY CXXFLAGS
