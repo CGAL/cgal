@@ -163,12 +163,12 @@ int main(int argc, char *argv[]){
 	std::cerr<< "Proteins being compared must have the same number of atoms.\n";
 	return EXIT_FAILURE;
       }
-      double max= 0;
+      double mmax= 0;
       CGAL_PDB_NS::Squared_distance sd;
       for (unsigned int j=0; j< coords.size(); ++j){
-	max=std::max BOOST_PREVENT_MACRO_SUBSTITUTION(std::sqrt(sd(coords[j], base_coords[j])), max);
+	mmax=std::max BOOST_PREVENT_MACRO_SUBSTITUTION(std::sqrt(sd(coords[j], base_coords[j])), mmax);
       }
-      std::cout << "Model " << i << " is " << max << std::endl;
+      std::cout << "Model " << i << " is " << mmax << std::endl;
     }
   }
 
@@ -212,16 +212,16 @@ int main(int argc, char *argv[]){
 		  << " atoms." << std::endl;
 	return EXIT_FAILURE;
       }
-      double max= 0;
+      double mmax= 0;
       double maxr=0;
       for (int j=0; j< base_matrix.dim1(); ++j){
 	for (int k=0; k< j; ++k){
-	  max=std::max(std::abs(base_matrix[j][k]-input_matrix[j][k]), max);
+	  max=std::max(std::abs(base_matrix[j][k]-input_matrix[j][k]), mmax);
 	  maxr=std::max(std::abs(base_matrix[j][k]-input_matrix[j][k])
 			/std::max(base_matrix[j][k],input_matrix[j][k]), maxr);
 	}
       }
-      std::cout << "Model " << i << " is " << max << " with ratio " << maxr << std::endl;
+      std::cout << "Model " << i << " is " << mmax << " with ratio " << maxr << std::endl;
     }
   }
 
