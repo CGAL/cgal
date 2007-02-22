@@ -30,7 +30,7 @@ MA 02111-1307, USA. */
 int main(int argc, char *argv[]){
   //dsr::Residue res= dsr::Residue(dsr::Residue::VAL);
   //res.write(std::cout);
-  assert(argc==3);
+  //assert(argc==3);
   std::ifstream in(argv[1]);
   CGAL_PDB_NS::PDB p(in);
   //p.write(std::cout);

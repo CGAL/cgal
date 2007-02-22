@@ -30,7 +30,7 @@ int main(int argc, char *argv[]){
   using namespace CGAL_PDB_NS;
   //dsr::Residue res= dsr::Residue(dsr::Residue::VAL);
   //res.write(std::cout);
-  assert(argc==2);
+  //assert(argc==2);
   std::ifstream in(argv[1]);
   CGAL_PDB_NS::PDB p(in);
   
