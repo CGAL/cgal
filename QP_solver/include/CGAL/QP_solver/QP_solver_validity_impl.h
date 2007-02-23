@@ -561,9 +561,9 @@ is_solution_optimal() const
       ET(lower_bound(col) * d) == x[col];
     const bool upper_tight = has_finite_upper_bound(col) &&
       ET(upper_bound(col) * d) == x[col];
-    if ( lower_tight && !upper_tight && tau[col] <et0 ||
-	!lower_tight && !upper_tight && tau[col]!=et0 ||
-        !lower_tight &&  upper_tight && tau[col] >et0) 
+    if ( (lower_tight && !upper_tight && tau[col] <et0) ||
+	(!lower_tight && !upper_tight && tau[col]!=et0) ||
+	 (!lower_tight &&  upper_tight && tau[col] >et0)) 
 	return false;
   }
 

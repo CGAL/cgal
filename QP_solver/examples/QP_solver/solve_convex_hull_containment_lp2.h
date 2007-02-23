@@ -34,6 +34,6 @@ solve_convex_hull_containment_lp (const Point_d& p,
       B_it (p.homogeneous_begin()),                                      // b
       CGAL::Const_oneset_iterator<CGAL::Comparison_result>(CGAL::EQUAL), // ~
       CGAL::Const_oneset_iterator
-      <typename CGAL::Kernel_traits<Point_d>::Kernel::RT> (0)), ET(0));  // c
+      <typename CGAL::Kernel_traits<Point_d>::Kernel::RT> (0)), dummy);  // c
 }
 

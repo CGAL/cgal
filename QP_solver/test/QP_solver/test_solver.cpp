@@ -367,7 +367,7 @@ bool process(const std::string& filename,
     type = Double_type;
     number_type = "double";
   }
-  if ((type==Double_type && (is_int(IT())) || is_rational(IT())) ||
+  if ((type==Double_type && (is_int(IT()) || is_rational(IT()))) ||
       (type==Int_type && is_rational(IT())) ||
       (type==Rational_type && (is_double(IT()) || is_int(IT()))))
     return true;
