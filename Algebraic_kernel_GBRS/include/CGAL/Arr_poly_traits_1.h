@@ -24,6 +24,7 @@
 #include <CGAL/Gbrs_algebraic_kernel.h>
 #include <vector>
 #include <iterator>
+#include <string>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -176,8 +177,8 @@ class Arr_poly_traits_1:public Kernel_{
       public:
         void operator()(const X_monotone_curve_2 &c,const Point_2 &p,
             X_monotone_curve_2 &c1,X_monotone_curve_2 &c2)const{
-          c1=X_monotone_curve_2(c.pol(),c.left(),p.get_x());
-          c2=X_monotone_curve_2(c.pol(),p.get_x(),c.right());
+          c1=X_monotone_curve_2(c.pol(),c.left(),p.get_x(),c.name());
+          c2=X_monotone_curve_2(c.pol(),p.get_x(),c.right(),c.name());
         };
     };
 
@@ -214,7 +215,7 @@ class Arr_poly_traits_1:public Kernel_{
               right_endpoint=cv2.right();
             // when polynomials are the same, it's easy
             if(cv1.pol()==cv2.pol()){
-              X_monotone_curve_2 curve(cv1.pol(),left_endpoint,right_endpoint);
+              X_monotone_curve_2 curve(cv1.pol(),left_endpoint,right_endpoint,cv1.name());
               Object obj=make_object(curve);
               return(*oi++=obj);
             }
@@ -316,36 +317,38 @@ template<class Kernel_>class Curve{
     typedef typename K::Coefficient       Coefficient;
     typedef typename K::Algebraic_real_1  Algebraic;
     typedef Point<K>                      Point;
+    std::string ident;
     Polynomial *p;
     Algebraic *l,*r;
     bool has_l,has_r;
   public:
-    Curve():p(NULL),l(NULL),r(NULL){};
-    Curve(const Polynomial &poly):has_l(false),has_r(false){
-      set_pol(poly);};
-    Curve(const Polynomial &poly,const Algebraic &left,const Algebraic &right){
+    Curve():ident(""),p(NULL),l(NULL),r(NULL){};
+    Curve(const Polynomial &poly,std::string n=""):has_l(false),has_r(false){
+      ident.assign(n);
       set_pol(poly);
-      l=new Algebraic(left);
-      r=new Algebraic(right);
-      has_l=has_r=true;
     };
     const Curve& operator=(const Curve &c){
+      ident.assign(c.name());
       set_pol(c.pol());
       l=new Algebraic(c.left());
       r=new Algebraic(c.right());
-      has_l=has_r=true;
+      has_l=c.has_l;
+      has_r=c.has_r;
       return *this;
     };
     template<typename T>
-    Curve(const Polynomial &poly,T left,T right){
+    Curve(const Polynomial &poly,T left,T right,std::string n=""){
+      ident.assign(n);
       set_pol(poly);
       l=new Algebraic(left);
       r=new Algebraic(right);
       has_l=has_r=true;
     };
     ~Curve(){};
+    inline void set_name(std::string &n){ident.assign(n);};
     inline void set_pol(const Polynomial &poly){
       p=const_cast<Polynomial*>(&poly);};
+    inline std::string name()const{return ident;};
     inline const Polynomial& pol()const{return *p;};
     inline const Algebraic& left()const{return *l;};
     inline const Algebraic& right()const{return *r;};
@@ -355,11 +358,9 @@ template<class Kernel_>class Curve{
       return *(new Point(right(),Curve(pol())));};
     inline bool is_consistent()const{return (p?true:false);};
     std::ostream& show(std::ostream &o)const{
-      o<<"("<<pol()<<",";
-      if(has_l)o<<left()<<",";
-      else o<<"-inf,";
-      if(has_r)o<<right()<<")";
-      else o<<"+inf)";
+      ident.empty()?o<<"(y="<<pol():o<<"("<<ident;
+      has_l?o<<","<<left()<<",":o<<",-inf,";
+      has_r?o<<right()<<")":o<<"+inf)";
       return o;
     };
 };
