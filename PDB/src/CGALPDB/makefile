@@ -47,7 +47,7 @@ SOMAJOR=2
 
 LIB_NAME_BASE = CGALPDB
 
-SHARED_LIB_ADDITIONNAL_LDFLAGS =  $(CGAL_LIBPATHFLAGS)  $(CGAL_CGAL_LDFLAGS)  
+SHARED_LIB_ADDITIONAL_LDFLAGS =  $(CGAL_LIBPATHFLAGS)  $(CGAL_CGAL_LDFLAGS)  
 
 #---------------------------------------------------------------------#
 #                    common rules for all libraries

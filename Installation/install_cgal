@@ -3878,8 +3878,6 @@ write_linker_flags()
   #
   print_as_shell_comment "*** linker flags for CGAL ***" >> ${FILE}
   ${_printf} "%s" "CGAL_CGAL_LDFLAGS =" >> ${FILE}
-  makefile_print_continuationline "${START_LD_OPT}\$(CGAL_LD_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
-  makefile_print_continuationline "\$(CUSTOM_LDFLAGS)" >> ${FILE}
   makefile_print_continuationline "`lib_option \"CGAL\"`" >> ${FILE}
   ${_printf} "\n\n" >> ${FILE}
 
@@ -3887,6 +3885,8 @@ write_linker_flags()
   # CGAL_LDFLAGS
   #
   ${_printf} "%s" "CGAL_LDFLAGS =" >> ${FILE}
+  makefile_print_continuationline "${START_LD_OPT}\$(CGAL_LD_LIBPATH) ${ADDITIONAL_LDFLAGS}" >> ${FILE}
+  makefile_print_continuationline "\$(CUSTOM_LDFLAGS)" >> ${FILE}
   makefile_print_continuationline "\$(CGAL_CGAL_LDFLAGS)" >> ${FILE}
   if [ -n "${libCore_COMPILED}" ]; then
       makefile_print_continuationline "`lib_option \"core++\"`" >> ${FILE}
@@ -4088,8 +4088,8 @@ create_include_makefile()
   #
   # CGAL_SHARED_LIB_LDFLAGS
   #
-  ${_printf} "%s\n" \
-       "CGAL_SHARED_LIB_LDFLAGS = ${CGAL_SHARED_LIB_LDFLAGS}" >> ${FILE}
+  ${_printf} "CGAL_SHARED_LIB_LDFLAGS = \$(CGAL_LIBPATHFLAGS) \$(CUSTOM_LDFLAGS) %s" \
+       "${CGAL_SHARED_LIB_LDFLAGS}" >> ${FILE}
   ${_printf} "%s\n" >> ${FILE}
 
   #
