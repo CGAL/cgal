@@ -107,9 +107,9 @@ int main(int, char *[]){
   }
 
   {
-    std::ifstream sheetstream("check_bonds.pdb");
+    std::ifstream sheetstream("data/check_bonds.pdb");
     CGAL_PDB_NS::Protein sheet(sheetstream);
-    std::ifstream modelstream("check_refine_alignment_0.pdb");
+    std::ifstream modelstream("data/check_refine_alignment_0.pdb");
     CGAL_PDB_NS::Protein model(modelstream);
 
     std::vector<CGAL_PDB_NS::Point> sheet_points, model_points;
@@ -154,9 +154,9 @@ int main(int, char *[]){
 
   {
 
-    std::ifstream t1("check_refine_alignment_1.pdb");
+    std::ifstream t1("data/check_refine_alignment_1.pdb");
     CGAL_PDB_NS::Protein pt1(t1);
-    std::ifstream t2("check_refine_alignment_2.pdb");
+    std::ifstream t2("data/check_refine_alignment_2.pdb");
     CGAL_PDB_NS::Protein pt2(t2);
     
 
