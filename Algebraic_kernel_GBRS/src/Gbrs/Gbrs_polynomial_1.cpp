@@ -244,7 +244,7 @@ Rational_polynomial_1 Rational_polynomial_1::derive()const{
 std::ostream& Rational_polynomial_1::show (std::ostream &s) const {
 	bool printed = false;
 	if(!degree)
-		return(s<<coef[0]);
+		return(s<<Gmpz(coef[0]));
 	for (int i=degree; i>=0; --i) {
 		if(mpz_sgn(coef[i])){
 			if (printed && (mpz_sgn (coef[i]) == 1))
@@ -256,7 +256,7 @@ std::ostream& Rational_polynomial_1::show (std::ostream &s) const {
 			else
 				if((mpz_cmp_ui(coef[i],1))||(!i)){
 					flag = true;
-					s << coef[i];
+					s<<Gmpz(coef[i]);
 				}
 			if(i){
 				if (flag)
@@ -273,7 +273,7 @@ std::ostream& Rational_polynomial_1::show (std::ostream &s) const {
 	s<<" [ d="<<degree<<" ";
 	s<<"[ ";
 	for (int i=0; i<degree+1; ++i)
-		s<<coef[i]<<" ";
+		s<<Gmpz(coef[i])<<" ";
 	s<<"] ]";
 #endif
 	return s;

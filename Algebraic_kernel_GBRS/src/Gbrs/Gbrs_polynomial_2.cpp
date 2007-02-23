@@ -366,7 +366,7 @@ std::ostream& Rational_polynomial_2::show (std::ostream &s) const {
 				if((sgn==1)&&printed)
 					s<<"+";
 				if (mpz_cmp_ui(coef[i][j],1)) {
-					s << coef[i][j];
+					s<<Gmpz(coef[i][j]);
 					if (i)
 						s<<"*";
 				}
@@ -393,7 +393,7 @@ std::ostream& Rational_polynomial_2::show (std::ostream &s) const {
 	for (i=0; i<degree_x+1; ++i) {
 		s<<"[ ";
 		for (j=0; j<degree_y+1; ++j)
-			s<<coef[i][j]<<" ";
+			s<<Gmpz(coef[i][j])<<" ";
 		s<<"] ";
 	}
 	s<<"]";
