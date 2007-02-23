@@ -1,11 +1,11 @@
 # TAUCS, a Library of Sparse Linear Solvers (http://www.tau.ac.il/~stoledo/taucs/)
 
-DESCRIPTION = TAUCS for Linux Intel cc/MUMPS
+DESCRIPTION = Unix
 PROVIDES = TAUCS
 CXXFLAGS =
 LDFLAGS =
-LIBS = taucs lapack dmumps pord mpiseq f77blas cblas atlas g2c metis CEPCF90 IEPCF90 intrins F90 imf pthread
-REQUIRES =
+LIBS = taucs metis
+REQUIRES = BLAS
 INCOMPATIBLE = DOLLAR_WINDOWS_COMPILER
 STDINCLDIRS =
 INCLTHING =

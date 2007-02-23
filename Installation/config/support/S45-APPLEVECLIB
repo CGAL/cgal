@@ -1,0 +1,18 @@
+# BLAS (Basic Linear Algebra Subprograms)
+# The vecLib framework provides BLAS and LAPACK on MacOSX
+# This configuration has been tested on MacOSX PPC and x86
+
+DESCRIPTION = vecLib on MacOSX
+PROVIDES = BLAS LAPACK
+CXXFLAGS = -DCGAL_USE_F2C
+LDFLAGS =  -framework vecLib
+LIBS = f2c
+REQUIRES =
+INCOMPATIBLE = DOLLAR_WINDOWS_COMPILER
+STDINCLDIRS =
+INCLTHING =
+STDLIBDIRS =
+LIBTHING =
+COMPILETESTFLAGS = 
+
+# EOF

@@ -1,0 +1,18 @@
+# BLAS (Basic Linear Algebra Subprograms).
+# Sun Performance Library provides BLAS and LAPACK.
+# This configuration has been tested with g++. It should probably work with CC.
+
+DESCRIPTION = Sun Performance Library
+PROVIDES = BLAS LAPACK
+CXXFLAGS = -DCGAL_USE_F2C
+LDFLAGS =
+LIBS = sunperf sunmath fsu F77 M77 sunmath c malloc
+REQUIRES =
+INCOMPATIBLE = DOLLAR_WINDOWS_COMPILER
+STDINCLDIRS =
+INCLTHING =
+STDLIBDIRS = /opt/SUNWspro/lib
+LIBTHING = libsunperf.\*
+COMPILETESTFLAGS = 
+
+# EOF

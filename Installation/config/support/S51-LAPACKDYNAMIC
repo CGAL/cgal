@@ -1,0 +1,21 @@
+# LAPACK is a linear algebra library.
+# We search for a dynamic Lapack library that includes Blas.
+# This configuration has been tested:
+# - on Fedora with the "lapack" RPM (g++ and icpc),
+# - on Fedora with the "atlas-devel" RPM (g++).
+# Note: the "atlas-devel" RPM installs an hybrid LAPACK/Atlas library in /usr/lib*/atlas.
+
+DESCRIPTION = Blas + Lapack RPM
+PROVIDES = BLAS LAPACK
+CXXFLAGS = -DCGAL_USE_F2C
+LDFLAGS =
+LIBS = lapack
+REQUIRES =
+INCOMPATIBLE = DOLLAR_WINDOWS_COMPILER
+STDINCLDIRS =
+INCLTHING =
+STDLIBDIRS = /usr/lib\*/atlas
+LIBTHING = liblapack.\*
+COMPILETESTFLAGS = 
+
+# EOF

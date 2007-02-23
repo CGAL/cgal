@@ -1,0 +1,19 @@
+# Intel MKL provides BLAS and LAPACK:
+# - BLAS (Basic Linear Algebra Subprograms)
+# - LAPACK is a linear algebra library
+# This configuration has been tested with g++ and icpc.
+
+DESCRIPTION = Intel MKL for Linux 32 bits
+PROVIDES = BLAS LAPACK
+CXXFLAGS = -DCGAL_USE_F2C
+LDFLAGS =
+LIBS = mkl_lapack mkl_ia32 guide pthread
+REQUIRES =
+INCOMPATIBLE = DOLLAR_WINDOWS_COMPILER
+STDINCLDIRS =
+INCLTHING =
+STDLIBDIRS =
+LIBTHING =
+COMPILETESTFLAGS = 
+
+# EOF

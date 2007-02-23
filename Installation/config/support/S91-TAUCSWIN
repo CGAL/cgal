@@ -1,16 +1,16 @@
 # TAUCS, a Library of Sparse Linear Solvers (http://www.tau.ac.il/~stoledo/taucs/)
 
-DESCRIPTION = TAUCS for Visual C++/Intel MKL
+DESCRIPTION = VisualC++
 PROVIDES = TAUCS
 CXXFLAGS =
 LDFLAGS =
-LIBS = libtaucs mkl_c libguide40 libmetis vcf2c
-REQUIRES = DOLLAR_WINDOWS_COMPILER
+LIBS = libtaucs libmetis
+REQUIRES = BLAS DOLLAR_WINDOWS_COMPILER
 INCOMPATIBLE =
 STDINCLDIRS =
 INCLTHING =
 STDLIBDIRS =
 LIBTHING =
-COMPILETESTFLAGS = 
+COMPILETESTFLAGS =
 
 # EOF

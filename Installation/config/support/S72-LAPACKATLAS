@@ -2,13 +2,13 @@
 # We search for an hybrid LAPACK/Atlas library. This is the solution recommended
 # by ATLAS. See http://math-atlas.sourceforge.net/errata.html#completelp.
 
-DESCRIPTION = Hybrid LAPACK/Atlas for VisualC++
+DESCRIPTION = Hybrid LAPACK/Atlas on Unix
 PROVIDES = LAPACK
 CXXFLAGS = -DCGAL_USE_F2C
 LDFLAGS =
-LIBS = liblapack
-REQUIRES = BLAS DOLLAR_WINDOWS_COMPILER
-INCOMPATIBLE =
+LIBS = lapack
+REQUIRES = BLAS
+INCOMPATIBLE = DOLLAR_WINDOWS_COMPILER
 STDINCLDIRS =
 INCLTHING =
 STDLIBDIRS =
