@@ -7,7 +7,7 @@ int main(int, char *[]){
   //std::cout << q << std::endl;
   CGAL::PDB::Transform t(CGAL::PDB::Vector(0,0,1), q);
   //std::cout << t << std::endl;
-  CGAL:PDB::Quaternion qt=t.quaternion();
+  CGAL::PDB::Quaternion qt=t.quaternion();
   //std::cout << qt << std::endl;
 
   double diff=0;
