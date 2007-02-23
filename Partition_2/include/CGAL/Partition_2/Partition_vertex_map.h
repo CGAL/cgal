@@ -142,6 +142,7 @@ private:
 
 
 
+namespace Partition_2 {
 
 template <class Traits_>
 class Edge_list 
@@ -315,6 +316,7 @@ private :
   List m_list ;
 };
 
+} // namespace Partition_2
 
 #ifdef CGAL_CFG_RWSTD_NO_MEMBER_TEMPLATES
 template <class Traits>
@@ -323,6 +325,7 @@ Edge_list<Traits>::cw_indirect_edge_info_compare;
 #endif
 
 
+namespace Partition_2 {
 
 template <class Traits>
 std::ostream& operator<<(std::ostream& os, const Edge_list<Traits>& edges) 
@@ -339,6 +342,8 @@ std::ostream& operator<<(std::ostream& os, const Edge_list<Traits>& edges)
    return os;
 }
 
+} // namesapce Partition_2
+
 template <class Traits_>
 class Partition_vertex_map  
 {
@@ -347,7 +352,7 @@ public:
    typedef Traits_             Traits ;
    typedef Vertex_info<Traits> Vertex_info ;
    typedef Edge_info  <Traits> Edge_info ;
-   typedef Edge_list  <Traits> Edge_list ;  
+   typedef Partition_2::Edge_list  <Traits> Edge_list ;  
 
    typedef Partition_vertex_map<Traits> Self;
 
