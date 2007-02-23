@@ -1,56 +1,181 @@
 #!/usr/bin/ruby
 
-doxy_xml_filename=ARGV[0];
-tex_xml_filename=ARGV[1];
-
 require 'xml/libxml'
-doxy_doc = XML::Document.file(doxy_xml_filename)
-tex_doc  = XML::Document.file(tex_xml_filename)
 
-def get_xpath_content( node, xpath )
-  return node.find( xpath ).to_a.first.to_s
-end
-
-def list_members( compound, kind )
-  puts "members of kind #{kind}:"
-  compound.find("sectiondef[@kind=\'#{kind}\']/memberdef").each do |memberdef|
-    membertype=get_xpath_content(memberdef,'type')
-    membername=get_xpath_content(memberdef,'name')
-    location=memberdef.find('location').to_a.first
-    lineno=location["line"]
-    filename=location["file"]
-    puts "  member: #{membername} \ttype: #{membertype} \tline: #{lineno}" # file: #{filename}"
+class Declaration
+  def initialize( name )
+    @name = name
   end
-end
 
-def list_all_compounds( doxy )
-  doxy.find('/doxygen/compounddef[@kind=\'class\' or @kind=\'struct\']').each do |compound|
-    compoundname=get_xpath_content(compound,'compoundname')
-    location=compound.find('location').to_a.first
-    lineno=location["line"]
-    filename=location["file"]
-    puts "compound idfier: #{compoundname} kind: #{compound['kind']}" # line: #{lineno} file: #{filename}"
-    list_members(compound, 'public-type')
-    list_members(compound, 'public-func')
+  def match( regex_string )
+    regex = Regexp.new( regex_string )
+    if @name =~ regex then
+      @name = @name.sub( regex, "" )
+      puts "matched [#{regex_string}] remaining #{@name}"
+      return true
+    end
+    return false
   end
+
 end
 
-def list_all_refpages( tex )
-  tex.find('/manual_tools_output/package').each do |package|
-    puts "package: #{package['id']}"
-    package.find('refpage').each do |refpage|
-      scope=get_xpath_content(refpage,'globalscope')
-      puts "  refpage id: #{refpage['id']} scope: #{scope}"
-      refpage.find('item').each do |item|
-        name=get_xpath_content(item,'name')
-        comment=get_xpath_content(item,'comment')
-        puts "    item name: #{name}"
-        puts "    item comment: #{comment}"
-      end
+class Doxygen
+  def initialize( filename )
+    @doxy_xml=XML::Document.file(filename)
+    @items = {}
+  end
+
+  def collect_items
+    collect_compounds
+    collect_global_items
+  end
+
+  def collect_compounds
+    @doxy_xml.find( '/doxygen/compounddef[@kind=\'struct\' or @kind=\'class\']' ).each do |compound|
+      compoundname=get_xpath_content(compound,'compoundname')
+      location=compound.find('location').to_a.first
+      lineno=location["line"]
+      filename=location["file"]
+      puts "compound idfier: #{compoundname} kind: #{compound['kind']}" # line: #{lineno} file: #{filename}"
+      collect_members( compound, 'typedef' )
+      collect_members( compound, 'function' )
     end
   end
+
+  def collect_members( compound, kind )
+    puts "members of kind #{kind}:"
+    compound.find("sectiondef/memberdef[@kind=\'#{kind}\']").each do |memberdef|
+      type=get_xpath_content(memberdef,'type')
+      name=get_xpath_content(memberdef,'name')
+      definition=get_xpath_content(memberdef,'definition')
+      argsstring=get_xpath_content(memberdef,'argsstring')
+      name="#{definition}#{argsstring}"
+      location=memberdef.find('location').to_a.first
+      lineno=location["line"]
+      filename=location["file"]
+      puts "  member: #{name} \ttype: #{type} \tline: #{lineno}" # file: #{filename}"
+    end
+  end
+
+  def collect_global_items
+      ;
+  end
+
+  def find_member( compoundname, memberkind, texname )
+    #texname=normalize_declaration( texname )
+    puts "- find_member"
+    puts "-- compoundname: #{compoundname}"
+    puts "-- memberkind: #{memberkind}"
+    puts "-- texname: #{texname}"
+    xpath_ckind='(@kind=\'struct\' or @kind=\'class\')'
+    xpath_cname="(compoundname=\'#{compoundname}\')"
+    xpath_mkind="(@kind=\'#{memberkind}\')"
+    #xpath_mname="(name=\'#{membername}\')"
+    xpath_compound="/doxygen/compounddef[#{xpath_ckind} and #{xpath_cname}]"
+    xpath_member="/sectiondef/memberdef[#{xpath_mkind}]" # and #{xpath_mname}
+    xpath_query="#{xpath_compound}#{xpath_member}"
+    #puts "xpath query: #{xpath_query}"
+    @doxy_xml.find( xpath_query ).each do |memberdef|
+      is_const=""
+      if memberdef['const'] == 'yes' then
+        is_const = "const"
+      end
+      definition=get_xpath_content(memberdef,'definition')
+      puts "--- checking against doxygen member: #{definition}"
+      declaration=Declaration.new( texname )
+
+      # match type
+      type=get_xpath_content(memberdef,'type')
+      next if type == "" || !declaration.match( "^#{type}\\s+" )
+
+      # match name
+      name=get_xpath_content(memberdef,'name')
+      next if !declaration.match( "^#{name}\\s*\\(" )
+
+      args_did_match = true
+      first_arg = true
+      memberdef.find( "param" ).each do |param|
+        puts "---- testing param"
+        if !first_arg then
+          raise if !declaration.match( "^\\s*,\\s*" )
+        end
+        first_arg = false
+        arg_type = get_xpath_content(param,'type').sub( /\s*&$/, "&" ).gsub( /\s+/, " ")
+        if declaration.match( "^#{arg_type}" )
+          declaration.match( "^\\s*\\w+" )
+        else
+          args_did_match = false
+          break
+        end
+      end
+      if args_did_match && declaration.match( "^\\s*\\)\\s*#{is_const};" ) then
+        puts "### member match! ###"
+        return memberdef
+      end
+    end
+    puts "!!!!!!!!!!!!!! did not find anything for texname [#{texname}] !!!!!!"
+  end
 end
 
-#list_all_compounds( doxy_doc )
+class Tex
+  def initialize( filename, doxy )
+    @tex_xml  = XML::Document.file( filename )
+    @doxy = doxy
+  end
 
-list_all_refpages( tex_doc )
+  def list_all_refpages()
+    @tex_xml.find('/manual_tools_output/package').each do |package|
+      puts "package: #{package['id']}"
+      package.find('refpage[refcat!=\'Concept\']').each do |refpage|
+        scope=get_xpath_content(refpage,'globalscope')
+        refcat=get_xpath_content(refpage,'refcat')
+
+        puts "  refpage id: #{refpage['id']} scope: #{scope}"
+        refpage.find('item').each do |item|
+          name=get_xpath_content(item,'name')
+          kind=get_xpath_content(item,'kind')
+          comment=get_xpath_content(item,'comment')
+          #puts "    item name: #{name}"
+          #puts "    item kind: #{kind}"
+          #puts "    item comment: #{comment}"
+
+          if kind == "function" then
+            #puts "    item name: #{name}"
+            #puts "    item comment: #{comment}"
+          elsif kind == "memberfunction" then
+            query_name=name.strip
+            puts "    query name: #{query_name}"
+            memberdef=@doxy.find_member( "#{scope}#{refpage['id']}" , "function", query_name )
+            definition=get_xpath_content(memberdef,'definition')
+            puts "memberdef: #{definition}"
+          end
+
+        end # each item
+      end # each refpage
+    end # each package
+  end # def list_all_refpages
+
+end
+
+def get_xpath_content( node, xpath )
+  s=node.find( xpath ).to_a.first.to_s
+  if s == nil then
+    return ""
+  else
+    return s.strip
+  end
+end
+
+doxy = Doxygen.new( ARGV[0] )
+tex = Tex.new( ARGV[1], doxy )
+
+#doxy.list_all_compounds
+#doxy.collect_items
+
+tex.list_all_refpages
+
+#find_global_function( doxy_doc, "CGAL::", "bbox_2" )
+
+#doxy.find_member( "CGAL::Polygon_2", "function", "insert" )
+
+decl = Declaration.new( "void bla()" )
