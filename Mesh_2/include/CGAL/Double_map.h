@@ -113,7 +113,12 @@ public :
         rit != reverse_func.end();
         ++rit)
     {
-      direct_func[rit->second] = rit;
+      // Fix an error with -D_GLIBCXX_DEBUG -D_GLIBCPP_CONCEPT_CHECKS
+      // The following (commented) line triggered the error:
+      //     direct_func[rit->second] = rit;
+      // The new following line fixes the bug. Actually, it is even more
+      // efficient.
+      direct_func.insert(std::make_pair(rit->second, rit));
     }
   }
 
