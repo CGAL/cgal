@@ -988,7 +988,7 @@ set_compiler_flags()
 	    RANLIB="ranlib"
 	    ;;
 	*mwcc.exe*|*MWCC*)
-	    #### settings Metroworks C++ compiler
+	    #### settings Metrowerks C++ compiler
 	    ADDITIONAL_CXXFLAGS="-gccincludes -lang c++ -msgstyle gcc "
 	    CGAL_LIB_CXXFLAGS=""
 	    CGAL_STATIC_LIB_CREATE="mwld -library -o "
@@ -1628,7 +1628,7 @@ disable_support()
 #   by the test program; if necessary, the variables ${4}_INCL/LIB_DIR are modified
 #   to take into account the standard directory where the package was found.
 # Return 1, if test succeeds; otherwise, return 0.
-# USES: ii _ok kk _ii _kk
+# USES: ii _ok kk _ii _kk _no_include_location _print_link_result
 _test_support()
 {
     if [ ! -r "${3}" ]; then
@@ -1660,6 +1660,7 @@ _test_support()
         #  what a great invention!)
 	log_print "  Looking for ${DESCRIPTION} in standard locations..."
 	_ok=''
+	_no_include_location=y # assume STDINCLDIRS or INCLTHING is empty
 	for ii in `echo \`value_of ${1}_STDINCLDIRS\` | \
             ${_sed} 's/ //g' | ${_awk} 'BEGIN {RS=":"}{print $0}'`
 	do
@@ -1671,6 +1672,7 @@ _test_support()
 	    ii="`multi_escape_special \"${ii}\"`/`value_of ${1}_INCLTHING`"
 	    for kk in `eval eval ${_lsone} -d "${ii}" 2>/dev/null | ${_sed} 's/ //g'`
 	    do
+        	_no_include_location='' # note that STDINCLDIRS and INCLTHING aren't empty
 		kk="`echo ${kk} | ${_sed} 's// /g'`"
 		kk="`${_dirname} \"${kk}\"`"
 		if [ ! -r "${kk}" ]; then continue; fi
@@ -1735,6 +1737,57 @@ _test_support()
 	    if [ -n "${_ok}" ]; then break; fi
 	done
 	if [ -n "${_ok}" ]; then break; fi
+	cleanup_after_compile_leave_source
+	# c) try standard *library* locations specifically specified
+	#    if no include location is specified.
+	_ok=''
+	if [ -n "${_no_include_location}" \
+	  -a -n "`value_of ${1}_STDLIBDIRS`" -a -n "`value_of ${1}_LIBTHING`" ]
+	then
+            if _compile_test "${DESCRIPTION}" "${tmp_cxxflags} ${tmp_compiletestflags}" "${2}"
+            then
+                ${_printf} "%s\n" " ok."
+                _print_link_result=y # assume that we have to print the link result
+                for _ii in `echo \`value_of ${1}_STDLIBDIRS\` | \
+                    ${_sed} 's/ //g' | ${_awk} 'BEGIN {RS=":"}{print $0}'`
+                do
+                    _ii="`echo ${_ii} | ${_sed} 's// /g'`"
+                    log_print "  --- Looking for libs in ${_ii} ..."
+                    _ii="`multi_escape_special \"${_ii}\"`/`value_of ${1}_LIBTHING`"
+                    for _kk in `eval eval ${_lsone} -d "${_ii}" 2>/dev/null | ${_sed} 's/ //g'`
+                    do
+                        _kk="`echo ${_kk} | ${_sed} 's// /g'`"
+                        _kk="`${_dirname} \"${_kk}\"`"
+                        if [ ! -r "${_kk}" ]; then continue; fi
+                        log_print "  ---- Trying ${_kk}."
+                        runtimepath="${tmp_runtimepath}"
+                        _append_to runtimepath "`os_path \"${_kk}\"`" ":"
+                        _print_link_result='' # we are about to print the link result
+                        ${_printf} "%s" "${_LEFTSPACE}Linking $1 with ${_kk} ..."
+                        if _link_run_test \
+                            "${DESCRIPTION}" \
+                            "${tmp_libpathflags} `libpath_option \"${_kk}\"` `rpath_directive \"${runtimepath}\"`" \
+                            "${tmp_ldflags} " \
+                            "${2}" \
+                            "no." \
+                            "${4}_VERSION"
+                        then
+                            log_print "  Found ${DESCRIPTION} LIB_DIR ${_kk}."
+                            _append_to "${4}_LIB_DIR" "${_kk}" ":"
+                            _ok=y
+                            break
+                        fi
+                    done
+                    if [ -n "${_ok}" ]; then break; fi
+                done
+                # print the link result if not yet done
+                if [ -n "${_print_link_result}" ]
+                then
+                    ${_printf} "%s\n" "${_LEFTSPACE}Linking $1 ... no."
+                fi
+            fi
+    	fi
+    	if [ -n "${_ok}" ]; then break; fi
 	log_print "Failed: ${4} test program."
 	cleanup_after_compile
 	return 0
@@ -3022,7 +3075,7 @@ set_lib_compiled_flag()
     else if [ -r "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/CGAL.lib" ]; then
         LIB_COMPILED='ok'
         CGAL_LIBNAME=CGAL.lib
-    else 
+    else
 	LIB_COMPILED=''
     fi; fi; fi
 }
@@ -3533,7 +3586,7 @@ compiler_menu()
 	print_multi_line "${CUSTOM_LDFLAGS:-<none>}"
 	print_line "${_bold_on}<S>${_bold_off}  Toggle shared/static libraries building"
         if [ -n "${ENABLE_SHARED}" ]; then
-	    if [ -n "${ENABLE_STATIC}" ]; then 
+	    if [ -n "${ENABLE_STATIC}" ]; then
 		print_multi_line "<shared+static>"
 	    else
 		print_multi_line "<shared>"
@@ -3571,7 +3624,7 @@ compiler_menu()
 		;;
             s|S)
 		if [ -n "${ENABLE_SHARED}" ]; then
-		    if [ -n "${ENABLE_STATIC}" ]; then 
+		    if [ -n "${ENABLE_STATIC}" ]; then
 			ENABLE_SHARED=''
 		    else
 			ENABLE_STATIC='y'
