@@ -5,7 +5,7 @@
 #include <cassert>
 
 int main(int, char *[]){
-  std::ifstream input("check_bonds.pdb");
+  std::ifstream input("data/check_bonds.pdb");
   CGAL_PDB_NS::Protein helix(input);
   //helix.dump(std::cout);
   std::vector<CGAL_PDB_NS::Point> points;
