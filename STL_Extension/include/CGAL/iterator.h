@@ -176,8 +176,8 @@ public:
   // random access operations
   // ------------------------
   // access
-  Ref               operator [] ( Diff i)       { return value;}
-  const value_type& operator [] ( Diff i) const { return value;}
+  Ref               operator [] ( Diff )       { return value;}
+  const value_type& operator [] ( Diff ) const { return value;}
   
   // less operator
   bool       operator <  ( const Self& x) const { return ( index < x.index);}
