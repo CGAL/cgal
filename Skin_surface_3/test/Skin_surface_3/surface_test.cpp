@@ -7,6 +7,7 @@
 #include <CGAL/triangulate_mixed_complex_3.h>
 
 #include <list>
+#include <string>
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Inexact_K;
@@ -39,10 +40,10 @@ class Test_file {
 public:
   Test_file(double shrink) : s(shrink) {
   }
-  void operator()(char * filename) {
+  void operator()(std::string & filename) {
     std::cout << s << " " << filename << std::endl;
     
-    std::ifstream in(filename);
+    std::ifstream in(filename.c_str());
     
     std::list<Weighted_point> l;
     double x,y,z,w;
@@ -87,7 +88,7 @@ private:
 };
 
 int main(int argc, char *argv[]) {
-  std::vector<char *> filenames;
+  std::vector<std::string> filenames;
   filenames.push_back("data/test1.cin");
   filenames.push_back("data/test2.cin");
   filenames.push_back("data/test3.cin");

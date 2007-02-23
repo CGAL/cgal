@@ -5,6 +5,7 @@
 #include <CGAL/mesh_skin_surface_3.h>
 
 #include <list>
+#include <string>
 #include <fstream>
 #include <algorithm>
 
@@ -20,11 +21,11 @@ class Test_file {
 public:
   Test_file(double shrink) : s(shrink) {
   }
-  void operator()(char * filename) {
+  void operator()(std::string filename) {
     std::cout << filename << std::endl;
 
     std::list<Weighted_point> l;
-    std::ifstream in(filename);
+    std::ifstream in(filename.c_str());
     CGAL_assertion(in.is_open());
     Weighted_point wp;
     while (in >> wp) l.push_front(wp);
@@ -43,7 +44,7 @@ private:
 
 int main(int argc, char *argv[]) {
 
-  std::vector<char *> filenames;
+  std::vector<std::string> filenames;
   filenames.push_back("data/caffeine.cin");
   filenames.push_back("data/ball.cin");
   filenames.push_back("data/degenerate.cin");
