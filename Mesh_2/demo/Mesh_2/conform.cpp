@@ -88,7 +88,7 @@ int main(int argc, char** argv)
       return 1;
     }
 
-  while(argv[arg_count][0] == '-' && argv[arg_count] != "--")
+  while(argv[arg_count][0] == '-' && std::string(argv[arg_count]) != "--")
     {
       if(std::string(argv[arg_count]) == "-Q")
 	terminal_output = false;
@@ -104,7 +104,7 @@ int main(int argc, char** argv)
 	}
       ++arg_count;
     }
-  if(argv[arg_count] == "--")
+  if(std::string(argv[arg_count]) == "--")
     ++arg_count;
 
   if(argc < arg_count+1 || argc > arg_count+2)
