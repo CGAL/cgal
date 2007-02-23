@@ -76,7 +76,7 @@ run_local_cgal_test()
     exit_value=$?
     if [ $exit_value -ne 0 ]
     then
-         echo $exit_value > test_failure
+         printf "%s\n" "$exit_value" > test_failure
     fi
 }
 
