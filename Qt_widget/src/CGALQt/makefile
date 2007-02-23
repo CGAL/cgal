@@ -58,7 +58,7 @@ SHARED_LIB_ADDITIONAL_LDFLAGS = \
             $(QT_LIBPATHFLAGS) $(QT_LDFLAGS) \
             $(OPENGL_LIBPATHFLAGS) $(OPENGL_LDFLAGS) \
             $(X11_LIBPATHFLAGS) $(X11_LDFLAFS) \
-            $(CGAL_CGAL_LDFLAGS)
+            $(CGAL_LIBPATHFLAGS) $(CGAL_CGAL_LDFLAGS)
 
 #---------------------------------------------------------------------#
 #                    common rules for all libraries
