@@ -163,9 +163,16 @@ namespace Residue_data {
   Clean_atom_fallbacks clean_atom_fallbacks_;
 
 #define BEGIN_RES(name) case name:{
-#define DEFINE_ATOMS(...) static Residue::Atom_label cl[]={__VA_ARGS__}; dat.atms_=cl;
+#define BEGIN_ATOMS static Residue::Atom_label cl[]=
+#define END_ATOMS ; dat.atms_=cl;
+#define BEGIN_BONDS static Residue::Atom_label cbl[]=
+#define END_BONDS ; for (int i=0; cbl[i] != Residue::AL_INVALID; ++i) { bool found=false; for (int j=0; cl[j] != Residue::AL_INVALID; ++j) if (cl[j]==cbl[i]) found=true; assert(found || cbl[i]== Residue::AL_CA || cbl[i]== Residue::AL_N);}; dat.bnds_=cbl;
+#define BEGIN_EXTREMES static Residue::Atom_label ext[]=
+#define END_EXTREMES ; for (int i=0; ext[i] != Residue::AL_INVALID; ++i) { bool found=false; for (int j=0; cl[j] != Residue::AL_INVALID; ++j) if (cl[j]==ext[i]) found=true; assert(found);} dat.extr_=ext; 
+ 
+  /*#define DEFINE_ATOMS(...) static Residue::Atom_label cl[]={__VA_ARGS__}; dat.atms_=cl;
 #define DEFINE_BONDS(...) static Residue::Atom_label cbl[]={__VA_ARGS__}; for (int i=0; cbl[i] != Residue::AL_INVALID; ++i) { bool found=false; for (int j=0; cl[j] != Residue::AL_INVALID; ++j) if (cl[j]==cbl[i]) found=true; assert(found || cbl[i]== Residue::AL_CA || cbl[i]== Residue::AL_N);}; dat.bnds_=cbl; 
-#define DEFINE_EXTREMES(...) static Residue::Atom_label ext[]={__VA_ARGS__}; for (int i=0; ext[i] != Residue::AL_INVALID; ++i) { bool found=false; for (int j=0; cl[j] != Residue::AL_INVALID; ++j) if (cl[j]==ext[i]) found=true; assert(found);} dat.extr_=ext; 
+#define DEFINE_EXTREMES(...) static Residue::Atom_label ext[]={__VA_ARGS__}; for (int i=0; ext[i] != Residue::AL_INVALID; ++i) { bool found=false; for (int j=0; cl[j] != Residue::AL_INVALID; ++j) if (cl[j]==ext[i]) found=true; assert(found);} dat.extr_=ext; */
 #define END_RES break;}
 
 
@@ -183,10 +190,10 @@ namespace Residue_data {
     switch(rl){
 
       BEGIN_RES(Residue::VAL);
-      DEFINE_ATOMS(Residue::AL_CB, Residue::AL_HB, Residue::AL_CG1,  Residue::AL_CG2, 
+      BEGIN_ATOMS{Residue::AL_CB, Residue::AL_HB, Residue::AL_CG1,  Residue::AL_CG2, 
 		   Residue::AL_1HG1, Residue::AL_2HG1, Residue::AL_3HG1, Residue::AL_1HG2,
-		   Residue::AL_2HG2, Residue::AL_3HG2, Residue::AL_INVALID );
-      DEFINE_BONDS(Residue::AL_CB, Residue::AL_CA,
+	  Residue::AL_2HG2, Residue::AL_3HG2, Residue::AL_INVALID }END_ATOMS;
+      BEGIN_BONDS{Residue::AL_CB, Residue::AL_CA,
 		   Residue::AL_HB, Residue::AL_CB, 
 		   Residue::AL_CG1, Residue::AL_CB,
 		   Residue::AL_CG2, Residue::AL_CB, 
@@ -196,14 +203,14 @@ namespace Residue_data {
 		   Residue::AL_1HG2, Residue::AL_CG2, 
 		   Residue::AL_2HG2, Residue::AL_CG2,
 		   Residue::AL_3HG2, Residue::AL_CG2,
-		   Residue::AL_INVALID);
-      DEFINE_EXTREMES(Residue::AL_CG1, Residue::AL_CG2, Residue::AL_INVALID); 
+	  Residue::AL_INVALID}END_BONDS;
+      BEGIN_EXTREMES{Residue::AL_CG1, Residue::AL_CG2, Residue::AL_INVALID}END_EXTREMES; 
       END_RES;
 
       BEGIN_RES(Residue::TYR);// was HD1, HD2, HE1, HE2
-      DEFINE_ATOMS( Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_CG, Residue::AL_CD1, Residue::AL_CD2, Residue::AL_1HD, Residue::AL_2HD, Residue::AL_CE1,
-		    Residue::AL_CE2, Residue::AL_1HE, Residue::AL_2HE, Residue::AL_CZ, Residue::AL_OH, Residue::AL_HH, Residue::AL_INVALID );
-      DEFINE_BONDS(Residue::AL_CB, Residue::AL_CA, 
+      BEGIN_ATOMS{ Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_CG, Residue::AL_CD1, Residue::AL_CD2, Residue::AL_1HD, Residue::AL_2HD, Residue::AL_CE1,
+	  Residue::AL_CE2, Residue::AL_1HE, Residue::AL_2HE, Residue::AL_CZ, Residue::AL_OH, Residue::AL_HH, Residue::AL_INVALID } END_ATOMS;
+      BEGIN_BONDS{Residue::AL_CB, Residue::AL_CA, 
 		   Residue::AL_1HB, Residue::AL_CB, 
 		   Residue::AL_2HB, Residue::AL_CB,
 		   Residue::AL_CG, Residue::AL_CB, 
@@ -221,16 +228,16 @@ namespace Residue_data {
 		   Residue::AL_CZ, Residue::AL_CE2,
 		   Residue::AL_OH, Residue::AL_CZ, 
 		   Residue::AL_HH, Residue::AL_OH, 
-		   Residue::AL_INVALID);
-      DEFINE_EXTREMES(Residue::AL_CZ, Residue::AL_INVALID); // or Residue::AL_OH
+		   Residue::AL_INVALID}END_BONDS;
+      BEGIN_EXTREMES{Residue::AL_CZ, Residue::AL_INVALID}END_EXTREMES; // or Residue::AL_OH
       END_RES;
 
       BEGIN_RES(Residue::TRP);
       // was HD1, HE1, HE3, HZ2, HZ3
-      DEFINE_ATOMS( Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_CG, Residue::AL_CD1, Residue::AL_CD2, Residue::AL_HD, Residue::AL_NE1, Residue::AL_CE2,
+      BEGIN_ATOMS{ Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_CG, Residue::AL_CD1, Residue::AL_CD2, Residue::AL_HD, Residue::AL_NE1, Residue::AL_CE2,
 		    Residue::AL_CE3, Residue::AL_1HE, Residue::AL_3HE, Residue::AL_CZ2, Residue::AL_CZ3, Residue::AL_2HZ, Residue::AL_3HZ, Residue::AL_CH2,
-		    Residue::AL_HH2,Residue::AL_INVALID);
-      DEFINE_BONDS(Residue::AL_CB, Residue::AL_CA,
+	  Residue::AL_HH2,Residue::AL_INVALID}END_ATOMS;
+      BEGIN_BONDS{Residue::AL_CB, Residue::AL_CA,
 		   Residue::AL_1HB, Residue::AL_CB, 
 		   Residue::AL_2HB, Residue::AL_CB,
 		   Residue::AL_CG, Residue::AL_CB, 
@@ -252,16 +259,16 @@ namespace Residue_data {
 		   Residue::AL_CH2, Residue::AL_CZ2,
 		   Residue::AL_CH2, Residue::AL_CZ3, 
 		   Residue::AL_HH2, Residue::AL_CH2,
-		   Residue::AL_INVALID);
-      DEFINE_EXTREMES(Residue::AL_CH2, Residue::AL_INVALID);
+	  Residue::AL_INVALID}END_BONDS;
+      BEGIN_EXTREMES{Residue::AL_CH2, Residue::AL_INVALID}END_EXTREMES;
       END_RES;
 
 
       BEGIN_RES(Residue::THR);
       // was HG1
-      DEFINE_ATOMS(Residue::AL_CB, Residue::AL_HB, Residue::AL_CG2, Residue::AL_OG1, Residue::AL_1HG2, Residue::AL_2HG2, Residue::AL_3HG2,
-		   Residue::AL_1HG,Residue::AL_INVALID);
-      DEFINE_BONDS(Residue::AL_CB, Residue::AL_CA, 
+      BEGIN_ATOMS{Residue::AL_CB, Residue::AL_HB, Residue::AL_CG2, Residue::AL_OG1, Residue::AL_1HG2, Residue::AL_2HG2, Residue::AL_3HG2,
+	  Residue::AL_1HG,Residue::AL_INVALID}END_ATOMS;
+      BEGIN_BONDS{Residue::AL_CB, Residue::AL_CA, 
 		   Residue::AL_HB, Residue::AL_CB, 
 		   Residue::AL_CG2, Residue::AL_CB,
 		   Residue::AL_OG1, Residue::AL_CB,
@@ -270,24 +277,24 @@ namespace Residue_data {
 		   Residue::AL_3HG2, Residue::AL_CG2,
 		   // was HG1
 		   Residue::AL_1HG, Residue::AL_OG1,
-		   Residue::AL_INVALID);
-      DEFINE_EXTREMES(Residue::AL_CG2, Residue::AL_OG1, Residue::AL_INVALID); 
+	  Residue::AL_INVALID}END_BONDS;
+      BEGIN_EXTREMES{Residue::AL_CG2, Residue::AL_OG1, Residue::AL_INVALID}END_EXTREMES; 
       END_RES;
 
       BEGIN_RES(Residue::SER);
-      DEFINE_ATOMS( Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_OG, Residue::AL_HG,Residue::AL_INVALID);
-      DEFINE_BONDS(Residue::AL_CB, Residue::AL_CA, 
+      BEGIN_ATOMS{ Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_OG, Residue::AL_HG,Residue::AL_INVALID}END_ATOMS;
+      BEGIN_BONDS{Residue::AL_CB, Residue::AL_CA, 
 		   Residue::AL_1HB, Residue::AL_CB, 
 		   Residue::AL_2HB, Residue::AL_CB,
 		   Residue::AL_OG, Residue::AL_CB,
 		   Residue::AL_HG, Residue::AL_OG,
-		   Residue::AL_INVALID);
-      DEFINE_EXTREMES(Residue::AL_OG, Residue::AL_INVALID); 
+	  Residue::AL_INVALID}END_BONDS;
+      BEGIN_EXTREMES{Residue::AL_OG, Residue::AL_INVALID}END_EXTREMES; 
       END_RES;
 
       BEGIN_RES(Residue::PRO);
-      DEFINE_ATOMS( Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_CG, Residue::AL_1HG, Residue::AL_2HG, Residue::AL_CD, Residue::AL_1HD, Residue::AL_2HD,Residue::AL_INVALID);
-      DEFINE_BONDS(Residue::AL_CB, Residue::AL_CA,
+      BEGIN_ATOMS{ Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_CG, Residue::AL_1HG, Residue::AL_2HG, Residue::AL_CD, Residue::AL_1HD, Residue::AL_2HD,Residue::AL_INVALID}END_ATOMS;
+      BEGIN_BONDS{Residue::AL_CB, Residue::AL_CA,
 		   Residue::AL_1HB, Residue::AL_CB, 
 		   Residue::AL_2HB, Residue::AL_CB,
 		   Residue::AL_CG, Residue::AL_CB,
@@ -297,15 +304,15 @@ namespace Residue_data {
 		   Residue::AL_1HD, Residue::AL_CD,
 		   Residue::AL_2HD, Residue::AL_CD,
 		   Residue::AL_CD, Residue::AL_N,
-		   Residue::AL_INVALID);
-      DEFINE_EXTREMES(Residue::AL_CG, Residue::AL_INVALID); // maybe Residue::AL_CG
+	  Residue::AL_INVALID}END_BONDS;
+      BEGIN_EXTREMES{Residue::AL_CG, Residue::AL_INVALID}END_EXTREMES; // maybe Residue::AL_CG
       END_RES;
 	
       BEGIN_RES(Residue::PHE);
       // was HD1, HD2, HE1,2
-      DEFINE_ATOMS( Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_CG, Residue::AL_CD1, Residue::AL_CD2, Residue::AL_1HD, Residue::AL_2HD, Residue::AL_CE1,
-		    Residue::AL_CE2, Residue::AL_1HE, Residue::AL_2HE, Residue::AL_CZ, Residue::AL_HZ,Residue::AL_INVALID);
-      DEFINE_BONDS(Residue::AL_CB, Residue::AL_CA, 
+      BEGIN_ATOMS{ Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_CG, Residue::AL_CD1, Residue::AL_CD2, Residue::AL_1HD, Residue::AL_2HD, Residue::AL_CE1,
+	  Residue::AL_CE2, Residue::AL_1HE, Residue::AL_2HE, Residue::AL_CZ, Residue::AL_HZ,Residue::AL_INVALID}END_ATOMS;
+      BEGIN_BONDS{Residue::AL_CB, Residue::AL_CA, 
 		   Residue::AL_1HB, Residue::AL_CB, 
 		   Residue::AL_2HB, Residue::AL_CB,
 		   Residue::AL_CG, Residue::AL_CB, 
@@ -321,22 +328,22 @@ namespace Residue_data {
 		   Residue::AL_2HE, Residue::AL_CE2,
 		   Residue::AL_CZ, Residue::AL_CE1, 
 		   Residue::AL_CZ, Residue::AL_CE2, Residue::AL_HZ,
-		   Residue::AL_CZ,Residue::AL_INVALID);
-      DEFINE_EXTREMES(Residue::AL_CZ, Residue::AL_INVALID); //
+	  Residue::AL_CZ,Residue::AL_INVALID}END_BONDS;
+      BEGIN_EXTREMES{Residue::AL_CZ, Residue::AL_INVALID}END_EXTREMES; //
       END_RES;
 	
       BEGIN_RES(Residue::NH2);
-      DEFINE_ATOMS(Residue::AL_N, Residue::AL_1H, Residue::AL_2H,Residue::AL_INVALID);
-      DEFINE_BONDS( Residue::AL_1H, Residue::AL_N, 
+      BEGIN_ATOMS{Residue::AL_N, Residue::AL_1H, Residue::AL_2H,Residue::AL_INVALID}END_ATOMS;
+      BEGIN_BONDS{ Residue::AL_1H, Residue::AL_N, 
 		    Residue::AL_2H, Residue::AL_N,
-		    Residue::AL_INVALID);
+	  Residue::AL_INVALID}END_BONDS;
       END_RES;
 	
       BEGIN_RES(Residue::MET);
-      DEFINE_ATOMS(Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_CG, Residue::AL_1HG, Residue::AL_2HG, 
+      BEGIN_ATOMS{Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_CG, Residue::AL_1HG, Residue::AL_2HG, 
 		   Residue::AL_SD, Residue::AL_CE, Residue::AL_1HE,
-		   Residue::AL_2HE, Residue::AL_3HE,Residue::AL_INVALID);
-      DEFINE_BONDS(Residue::AL_CB, Residue::AL_CA,
+		   Residue::AL_2HE, Residue::AL_3HE,Residue::AL_INVALID} END_ATOMS;
+      BEGIN_BONDS{Residue::AL_CB, Residue::AL_CA,
 		   Residue::AL_1HB, Residue::AL_CB, 
 		   Residue::AL_2HB, Residue::AL_CB,
 		   Residue::AL_CG, Residue::AL_CB, 
@@ -347,14 +354,14 @@ namespace Residue_data {
 		   Residue::AL_1HE, Residue::AL_CE,
 		   Residue::AL_2HE, Residue::AL_CE, 
 		   Residue::AL_3HE, Residue::AL_CE,
-		   Residue::AL_INVALID);
-      DEFINE_EXTREMES(Residue::AL_CE, Residue::AL_INVALID); 
+	  Residue::AL_INVALID}END_BONDS;
+      BEGIN_EXTREMES{Residue::AL_CE, Residue::AL_INVALID}END_EXTREMES; 
       END_RES;
 
       BEGIN_RES(Residue::LYS);
-      DEFINE_ATOMS(Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_CG, Residue::AL_1HG, Residue::AL_2HG, Residue::AL_CD, Residue::AL_1HD, Residue::AL_2HD,
-		   Residue::AL_CE, Residue::AL_1HE, Residue::AL_2HE, Residue::AL_NZ, Residue::AL_1HZ, Residue::AL_2HZ, Residue::AL_3HZ,Residue::AL_INVALID);
-      DEFINE_BONDS(Residue::AL_CB, Residue::AL_CA,
+      BEGIN_ATOMS{Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_CG, Residue::AL_1HG, Residue::AL_2HG, Residue::AL_CD, Residue::AL_1HD, Residue::AL_2HD,
+		   Residue::AL_CE, Residue::AL_1HE, Residue::AL_2HE, Residue::AL_NZ, Residue::AL_1HZ, Residue::AL_2HZ, Residue::AL_3HZ,Residue::AL_INVALID} END_ATOMS;
+      BEGIN_BONDS{Residue::AL_CB, Residue::AL_CA,
 		   Residue::AL_1HB, Residue::AL_CB, 
 		   Residue::AL_2HB, Residue::AL_CB,
 		   Residue::AL_CG, Residue::AL_CB,
@@ -370,14 +377,14 @@ namespace Residue_data {
 		   Residue::AL_1HZ, Residue::AL_NZ, 
 		   Residue::AL_2HZ, Residue::AL_NZ,
 		   Residue::AL_3HZ, Residue::AL_NZ,
-		   Residue::AL_INVALID);
-      DEFINE_EXTREMES(Residue::AL_NZ, Residue::AL_INVALID);
+	  Residue::AL_INVALID}END_BONDS;
+      BEGIN_EXTREMES{Residue::AL_NZ, Residue::AL_INVALID}END_EXTREMES;
       END_RES;
 	
       BEGIN_RES(Residue::LEU);
-      DEFINE_ATOMS( Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_CG, Residue::AL_HG, Residue::AL_CD1, Residue::AL_CD2, Residue::AL_1HD1, Residue::AL_2HD1,
-		    Residue::AL_3HD1, Residue::AL_1HD2, Residue::AL_2HD2, Residue::AL_3HD2,Residue::AL_INVALID);
-      DEFINE_BONDS( Residue::AL_CB, Residue::AL_CA,
+      BEGIN_ATOMS{ Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_CG, Residue::AL_HG, Residue::AL_CD1, Residue::AL_CD2, Residue::AL_1HD1, Residue::AL_2HD1,
+		    Residue::AL_3HD1, Residue::AL_1HD2, Residue::AL_2HD2, Residue::AL_3HD2,Residue::AL_INVALID} END_ATOMS;
+      BEGIN_BONDS{ Residue::AL_CB, Residue::AL_CA,
 		    Residue::AL_1HB, Residue::AL_CB,
 		    Residue::AL_2HB, Residue::AL_CB,
 		    Residue::AL_CG, Residue::AL_CB, 
@@ -390,15 +397,15 @@ namespace Residue_data {
 		    Residue::AL_1HD2, Residue::AL_CD2,
 		    Residue::AL_2HD2, Residue::AL_CD2,
 		    Residue::AL_3HD2, Residue::AL_CD2,
-		    Residue::AL_INVALID);
-      DEFINE_EXTREMES(Residue::AL_CD1, Residue::AL_CD2, Residue::AL_INVALID);
+	  Residue::AL_INVALID}END_BONDS;
+      BEGIN_EXTREMES{Residue::AL_CD1, Residue::AL_CD2, Residue::AL_INVALID}END_EXTREMES;
       END_RES;
 
       BEGIN_RES(Residue::ILE);
       // was 1HD
-      DEFINE_ATOMS(Residue::AL_CB, Residue::AL_HB, Residue::AL_CG1, Residue::AL_CG2, Residue::AL_1HG1, Residue::AL_2HG1, Residue::AL_CD, Residue::AL_1HD, Residue::AL_2HD,
-		   Residue::AL_3HD, Residue::AL_1HG2, Residue::AL_2HG2, Residue::AL_3HG2,Residue::AL_INVALID);
-      DEFINE_BONDS(Residue::AL_CB, Residue::AL_CA, 
+      BEGIN_ATOMS{Residue::AL_CB, Residue::AL_HB, Residue::AL_CG1, Residue::AL_CG2, Residue::AL_1HG1, Residue::AL_2HG1, Residue::AL_CD, Residue::AL_1HD, Residue::AL_2HD,
+		   Residue::AL_3HD, Residue::AL_1HG2, Residue::AL_2HG2, Residue::AL_3HG2,Residue::AL_INVALID} END_ATOMS;
+      BEGIN_BONDS{Residue::AL_CB, Residue::AL_CA, 
 		   Residue::AL_HB, Residue::AL_CB,
 		   Residue::AL_CG1, Residue::AL_CB,
 		   Residue::AL_CG2, Residue::AL_CB,
@@ -411,15 +418,15 @@ namespace Residue_data {
 		   Residue::AL_1HG2, Residue::AL_CG2,
 		   Residue::AL_2HG2, Residue::AL_CG2,
 		   Residue::AL_3HG2, Residue::AL_CG2,
-		   Residue::AL_INVALID);
-      DEFINE_EXTREMES(Residue::AL_CD, Residue::AL_INVALID); // maybe add CG2
+	  Residue::AL_INVALID}END_BONDS;
+      BEGIN_EXTREMES{Residue::AL_CD, Residue::AL_INVALID}END_EXTREMES; // maybe add CG2
       END_RES;
 	
       BEGIN_RES(Residue::HIS);
       // was HD1, HD2 HE1
-      DEFINE_ATOMS(Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_CG, Residue::AL_ND1, Residue::AL_CD2, Residue::AL_1HD, Residue::AL_2HD, Residue::AL_CE1,
-		   Residue::AL_NE2, Residue::AL_1HE,Residue::AL_INVALID);
-      DEFINE_BONDS(Residue::AL_CB, Residue::AL_CA, 
+      BEGIN_ATOMS{Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_CG, Residue::AL_ND1, Residue::AL_CD2, Residue::AL_1HD, Residue::AL_2HD, Residue::AL_CE1,
+		   Residue::AL_NE2, Residue::AL_1HE,Residue::AL_INVALID} END_ATOMS;
+      BEGIN_BONDS{Residue::AL_CB, Residue::AL_CA, 
 		   Residue::AL_1HB, Residue::AL_CB, 
 		   Residue::AL_2HB, Residue::AL_CB,
 		   Residue::AL_CG, Residue::AL_CB, 
@@ -431,20 +438,20 @@ namespace Residue_data {
 		   Residue::AL_CE1, Residue::AL_NE2, 
 		   Residue::AL_1HE, Residue::AL_CE1, 
 		   Residue::AL_NE2, Residue::AL_CD2,
-		   Residue::AL_INVALID);
-      DEFINE_EXTREMES(Residue::AL_CE1, Residue::AL_INVALID);
+		   Residue::AL_INVALID} END_BONDS;
+      BEGIN_EXTREMES{Residue::AL_CE1, Residue::AL_INVALID}END_EXTREMES;
       END_RES;
 	
 	
       BEGIN_RES(Residue::GLY);
-      DEFINE_ATOMS(Residue::AL_2HA,Residue::AL_INVALID);
-      DEFINE_BONDS(Residue::AL_2HA, Residue::AL_CA,Residue::AL_INVALID);
-      DEFINE_EXTREMES(Residue::AL_INVALID);
+      BEGIN_ATOMS{Residue::AL_2HA,Residue::AL_INVALID} END_ATOMS;
+      BEGIN_BONDS{Residue::AL_2HA, Residue::AL_CA,Residue::AL_INVALID}END_BONDS;
+      BEGIN_EXTREMES{Residue::AL_INVALID}END_EXTREMES;
       END_RES;	
 	
       BEGIN_RES(Residue::GLU);
-      DEFINE_ATOMS(Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_CG, Residue::AL_1HG, Residue::AL_2HG, Residue::AL_CD, Residue::AL_OE1, Residue::AL_OE2,Residue::AL_INVALID);
-      DEFINE_BONDS(Residue::AL_CB, Residue::AL_CA,
+      BEGIN_ATOMS{Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_CG, Residue::AL_1HG, Residue::AL_2HG, Residue::AL_CD, Residue::AL_OE1, Residue::AL_OE2,Residue::AL_INVALID}END_ATOMS;
+      BEGIN_BONDS{Residue::AL_CB, Residue::AL_CA,
 		   Residue::AL_1HB, Residue::AL_CB, 
 		   Residue::AL_2HB, Residue::AL_CB,
 		   Residue::AL_CG, Residue::AL_CB,
@@ -453,14 +460,14 @@ namespace Residue_data {
 		   Residue::AL_CD, Residue::AL_CG, 
 		   Residue::AL_OE1, Residue::AL_CD, 
 		   Residue::AL_OE2, Residue::AL_CD,
-		   Residue::AL_INVALID);
-      DEFINE_EXTREMES(Residue::AL_CD, Residue::AL_INVALID); // maybe should be Residue::AL_OE[12]
+		   Residue::AL_INVALID} END_BONDS;
+      BEGIN_EXTREMES{Residue::AL_CD, Residue::AL_INVALID}END_EXTREMES; // maybe should be Residue::AL_OE[12]
       END_RES;	
 	
       BEGIN_RES(Residue::GLN);
-      DEFINE_ATOMS(Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_CG, Residue::AL_1HG, Residue::AL_2HG, Residue::AL_CD, Residue::AL_OE1, Residue::AL_NE2,
-		   Residue::AL_1HE2, Residue::AL_2HE2,Residue::AL_INVALID);
-      DEFINE_BONDS(Residue::AL_CB, Residue::AL_CA, 
+      BEGIN_ATOMS{Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_CG, Residue::AL_1HG, Residue::AL_2HG, Residue::AL_CD, Residue::AL_OE1, Residue::AL_NE2,
+	  Residue::AL_1HE2, Residue::AL_2HE2,Residue::AL_INVALID}END_ATOMS;
+      BEGIN_BONDS{Residue::AL_CB, Residue::AL_CA, 
 		   Residue::AL_1HB, Residue::AL_CB, 
 		   Residue::AL_2HB, Residue::AL_CB,
 		   Residue::AL_CG, Residue::AL_CB, 
@@ -471,36 +478,36 @@ namespace Residue_data {
 		   Residue::AL_NE2, Residue::AL_CD,
 		   Residue::AL_1HE2, Residue::AL_NE2, 
 		   Residue::AL_2HE2, Residue::AL_NE2,
-		   Residue::AL_INVALID);
-      DEFINE_EXTREMES(Residue::AL_CD, Residue::AL_INVALID); // or Residue::AL_NE2, Residue::AL_OE1
+		   Residue::AL_INVALID} END_BONDS;
+      BEGIN_EXTREMES{Residue::AL_CD, Residue::AL_INVALID}END_EXTREMES; // or Residue::AL_NE2, Residue::AL_OE1
       END_RES;	
 	
       BEGIN_RES(Residue::CYS);
-      DEFINE_ATOMS(Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_SG, Residue::AL_HG,Residue::AL_INVALID);
-      DEFINE_BONDS(Residue::AL_CB, Residue::AL_CA, 
+      BEGIN_ATOMS{Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_SG, Residue::AL_HG,Residue::AL_INVALID}END_ATOMS;
+      BEGIN_BONDS{Residue::AL_CB, Residue::AL_CA, 
 		   Residue::AL_1HB, Residue::AL_CB, 
 		   Residue::AL_2HB, Residue::AL_CB,
 		   Residue::AL_SG, Residue::AL_CB, 
 		   Residue::AL_HG, Residue::AL_SG,
-		   Residue::AL_INVALID);
-      DEFINE_EXTREMES(Residue::AL_SG, Residue::AL_INVALID);
+		   Residue::AL_INVALID} END_BONDS;
+      BEGIN_EXTREMES{Residue::AL_SG, Residue::AL_INVALID}END_EXTREMES;
       END_RES;	
 	
       BEGIN_RES(Residue::ASP);
-      DEFINE_ATOMS(Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_CG, Residue::AL_OD1, Residue::AL_OD2,Residue::AL_INVALID);
-      DEFINE_BONDS(Residue::AL_CB, Residue::AL_CA,
+      BEGIN_ATOMS{Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_CG, Residue::AL_OD1, Residue::AL_OD2,Residue::AL_INVALID}END_ATOMS;
+      BEGIN_BONDS{Residue::AL_CB, Residue::AL_CA,
 		   Residue::AL_1HB, Residue::AL_CB, 
 		   Residue::AL_2HB, Residue::AL_CB,
 		   Residue::AL_CG, Residue::AL_CB, 
 		   Residue::AL_OD1, Residue::AL_CG, 
 		   Residue::AL_OD2, Residue::AL_CG,
-		   Residue::AL_INVALID);
-      DEFINE_EXTREMES(Residue::AL_CG, Residue::AL_INVALID); // or Residue::AL_OD[12]
+		   Residue::AL_INVALID} END_BONDS;
+      BEGIN_EXTREMES{Residue::AL_CG, Residue::AL_INVALID}END_EXTREMES; // or Residue::AL_OD[12]
       END_RES;	
 	
       BEGIN_RES(Residue::ASN);
-      DEFINE_ATOMS( Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_CG, Residue::AL_OD1, Residue::AL_ND2, Residue::AL_1HD2, Residue::AL_2HD2,Residue::AL_INVALID);
-      DEFINE_BONDS( Residue::AL_CB, Residue::AL_CA,
+      BEGIN_ATOMS{ Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_CG, Residue::AL_OD1, Residue::AL_ND2, Residue::AL_1HD2, Residue::AL_2HD2,Residue::AL_INVALID} END_ATOMS;
+      BEGIN_BONDS{ Residue::AL_CB, Residue::AL_CA,
 		    Residue::AL_1HB, Residue::AL_CB, 
 		    Residue::AL_2HB, Residue::AL_CB,
 		    Residue::AL_CG, Residue::AL_CB,
@@ -508,15 +515,15 @@ namespace Residue_data {
 		    Residue::AL_ND2, Residue::AL_CG,
 		    Residue::AL_1HD2, Residue::AL_ND2, 
 		    Residue::AL_2HD2, Residue::AL_ND2 ,
-		    Residue::AL_INVALID);
-      DEFINE_EXTREMES(Residue::AL_CG, Residue::AL_INVALID); // or Residue::AL_OD1, Residue::AL_ND1
+		    Residue::AL_INVALID} END_BONDS;
+      BEGIN_EXTREMES{Residue::AL_CG, Residue::AL_INVALID}END_EXTREMES; // or Residue::AL_OD1, Residue::AL_ND1
       END_RES;	
 	
       BEGIN_RES(Residue::ARG);
-      DEFINE_ATOMS(Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_CG, Residue::AL_1HG, Residue::AL_2HG, Residue::AL_CD, Residue::AL_1HD, Residue::AL_2HD,
+      BEGIN_ATOMS{Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_CG, Residue::AL_1HG, Residue::AL_2HG, Residue::AL_CD, Residue::AL_1HD, Residue::AL_2HD,
 		   Residue::AL_NE, Residue::AL_HE, Residue::AL_CZ, Residue::AL_NH1, Residue::AL_NH2, Residue::AL_1HH1, Residue::AL_2HH1, Residue::AL_1HH2,
-		   Residue::AL_2HH2,Residue::AL_INVALID);
-      DEFINE_BONDS(Residue::AL_CB, Residue::AL_CA, 
+	  Residue::AL_2HH2,Residue::AL_INVALID}END_ATOMS;
+      BEGIN_BONDS{Residue::AL_CB, Residue::AL_CA, 
 		   Residue::AL_1HB, Residue::AL_CB, 
 		   Residue::AL_2HB, Residue::AL_CB,
 		   Residue::AL_CG, Residue::AL_CB, 
@@ -534,29 +541,29 @@ namespace Residue_data {
 		   Residue::AL_2HH1, Residue::AL_NH1, 
 		   Residue::AL_1HH2, Residue::AL_NH2, 
 		   Residue::AL_2HH2, Residue::AL_NH2,
-		   Residue::AL_INVALID);
-      DEFINE_EXTREMES(Residue::AL_CZ, Residue::AL_INVALID); // maybe Residue::AL_NH2m Residue::AL_NH1
+		   Residue::AL_INVALID} END_BONDS;
+      BEGIN_EXTREMES{Residue::AL_CZ, Residue::AL_INVALID}END_EXTREMES; // maybe Residue::AL_NH2m Residue::AL_NH1
       END_RES;	
 	
       BEGIN_RES(Residue::ALA);
-      DEFINE_ATOMS(Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_3HB,Residue::AL_INVALID);
-      DEFINE_BONDS( Residue::AL_CB, Residue::AL_CA,
+      BEGIN_ATOMS{Residue::AL_CB, Residue::AL_1HB, Residue::AL_2HB, Residue::AL_3HB,Residue::AL_INVALID} END_ATOMS;
+      BEGIN_BONDS{ Residue::AL_CB, Residue::AL_CA,
 		    Residue::AL_1HB, Residue::AL_CB, 
 		    Residue::AL_2HB, Residue::AL_CB,
 		    Residue::AL_3HB, Residue::AL_CB,
-		    Residue::AL_INVALID);
-      DEFINE_EXTREMES(Residue::AL_CB, Residue::AL_INVALID);
+		    Residue::AL_INVALID} END_BONDS;
+      BEGIN_EXTREMES{Residue::AL_CB, Residue::AL_INVALID}END_EXTREMES;
       END_RES;	
 	
       BEGIN_RES(Residue::ACE);
-      DEFINE_ATOMS(Residue::AL_CH3, Residue::AL_C, Residue::AL_O, Residue::AL_1HH3, Residue::AL_2HH3, Residue::AL_3HH3,Residue::AL_INVALID);
-      DEFINE_BONDS(Residue::AL_CH3, Residue::AL_C, 
+      BEGIN_ATOMS{Residue::AL_CH3, Residue::AL_C, Residue::AL_O, Residue::AL_1HH3, Residue::AL_2HH3, Residue::AL_3HH3,Residue::AL_INVALID}END_ATOMS;
+      BEGIN_BONDS{Residue::AL_CH3, Residue::AL_C, 
 		   Residue::AL_O, Residue::AL_C,
 		   Residue::AL_C, Residue::AL_1HH3,
 		   Residue::AL_C, Residue::AL_2HH3, 
 		   Residue::AL_C, Residue::AL_3HH3,
-		   Residue::AL_INVALID);
-      DEFINE_EXTREMES(Residue::AL_INVALID);
+		   Residue::AL_INVALID} END_BONDS;
+      BEGIN_EXTREMES{Residue::AL_INVALID}END_EXTREMES;
       END_RES;	
     default:
       ;
