@@ -568,7 +568,7 @@ template <class MixedComplexTraits_3>
 template< class Traits >
 Skin_surface_quadratic_surface_3<Traits> 
 Skin_surface_base_3<MixedComplexTraits_3>::
-construct_surface(const Simplex &sim, const Traits &traits) const {
+construct_surface(const Simplex &sim, const Traits &) const {
   typedef Skin_surface_quadratic_surface_3<Traits>      Quadratic_surface;
   typedef Weighted_converter_3<Cartesian_converter<
     typename Geometric_traits::Bare_point::R, Traits> > Converter;

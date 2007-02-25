@@ -41,13 +41,13 @@ public:
   }
 
   void after_vertex_insertion(
-    T_Cell_iterator ch,  int i, int j,
-    Polyhedron_vertex_handle vh) {
+    T_Cell_iterator,  int, int,
+    Polyhedron_vertex_handle) {
   }
   
   void after_facet_insertion(
-    T_Cell_iterator ch,
-    Polyhedron_facet_handle fh) {
+    T_Cell_iterator,
+    Polyhedron_facet_handle) {
   }
 
 };
