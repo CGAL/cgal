@@ -74,21 +74,26 @@ private:
   typedef typename MapTriple::iterator   MapTripleIt;
 	
   Vtriple facet(Vertex_handle vh1, Vertex_handle vh2, Vertex_handle vh3) {
-    if (vh1 < vh2)
-      if (vh2 < vh3)
-	return Vtriple(vh1,vh2,vh3);
-      else
-	if (vh1 < vh3)
-	  return Vtriple(vh1,vh3,vh2);
-	else
-	  return Vtriple(vh3,vh1,vh2);
-    if (vh1 < vh3)
+    if (vh1 < vh2) {
+      if (vh2 < vh3) {
+        return Vtriple(vh1,vh2,vh3);
+      } else {
+        if (vh1 < vh3) {
+          return Vtriple(vh1,vh3,vh2);
+        } else {
+          return Vtriple(vh3,vh1,vh2);
+        }
+      }
+    }
+    if (vh1 < vh3) {
       return Vtriple(vh2,vh1,vh3);
-    else
-      if (vh2 < vh3)
-	return Vtriple(vh2,vh3,vh1);
-      else
-	return Vtriple(vh3,vh2,vh1);
+    } else {
+      if (vh2 < vh3) {
+        return Vtriple(vh2,vh3,vh1);
+      } else {
+        return Vtriple(vh3,vh2,vh1);
+      }
+    }
   }
 	
   MapTriple facets;
