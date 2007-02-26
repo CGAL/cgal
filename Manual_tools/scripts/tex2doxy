@@ -2,16 +2,114 @@
 
 require 'xml/libxml'
 
+
+
+def internal_test
+  s=normalize_function_declaration( "template<class XX, typename YY=bla<blubb> >void bla(XX a, XX b, YY c)" )
+  fail unless s=="void bla($0,$0,$1)"
+  s=normalize_function_declaration( "template<class XX, typename YY=bla<blubb> > void bla(XX a, XX b, xYYz c)" )
+  fail unless s=="void bla($0,$0,xYYz)"
+  
+  s=normalize_function_declaration( "template< class ForwardIterator1, class ForwardIterator2, class Callback > void box_intersection_all_pairs_d( ForwardIterator1 begin1, ForwardIterator1 end1, ForwardIterator2 begin2, ForwardIterator2 end2, Callback callback, Box_intersection_d::Topology topology = Box_intersection_d<bla<blubb>::blubber>::CLOSED);" )
+  fail unless s=="void box_intersection_all_pairs_d($0,$0,$1,$1,$2,Box_intersection_d::Topology);"
+end
+
+# input: "template<class XX>void bla(XX t)"
+# result: void bla($1 t)
+def normalize_template_parameters( decl )
+  typemap=Hash.new
+  if decl =~ /^template\s*/ then
+    decl=$'
+    outer, inner, rest = split_nesting_levels( '<', '>', decl )
+    #puts "outer: #{outer} inner: #{inner} rest: #{rest}"
+    decl=rest.sub( /^\s*>/, "" )
+    counter = 0
+    protected_split( '<', '>', ',', inner ).each do |x|
+      x=x.gsub( /(class|typename)/, "" )
+      x=x.gsub( /=.*$/, "" ).strip
+      #puts "typemap[#{x}]=$#{counter}"
+      typemap[x]="$#{counter}"
+      counter+=1
+    end
+  end
+  return decl, typemap
+end
+
 def normalize_declaration( decl )
   decl = decl.gsub( /\s+/, ' ' );
   decl = decl.gsub( /(\w) ([&()=:;,<>])/, '\1\2' );
   decl = decl.gsub( /([()=:;,<>]) (\w)/, '\1\2' );
   decl = decl.gsub( /([()=:;,<>]) ([&();,])/, '\1\2' );
   decl = decl.gsub( /([();,]) ([()=:;,<>])/, '\1\2' );
+  return decl.strip
+end
+
+
+def normalize_function_declaration( decl )
+  decl = normalize_declaration( decl )
+  decl,typemap = normalize_template_parameters( decl )
   if decl =~ /([^(]+[(])/ then
-    decl=$1+remove_argnames($')
+    decl=$1+remove_argnames($',typemap)
   end
-  return decl
+end
+
+# input: s="xxxx<<dskd>dsad>dssd<x>"
+# returns: outer="xxxx<>dssd<>" inner="<dskd>dsad",x
+def split_nesting_levels( openchar, closechar, s, nesting_level = 0 )
+  inner = ""
+  outer = ""
+  rest = ""
+  closed = false
+  s.each_byte do |c|
+    if closed then
+      rest << c
+      next
+    end
+    char = ""
+    char << c
+    if char == closechar then 
+      nesting_level -= 1 
+      closed = true
+    end
+    if nesting_level <= 0 then
+      outer << char
+    else
+      inner << char
+    end
+    if char == openchar then nesting_level += 1 end
+  end
+  return outer, inner, rest
+end
+
+# input s="a, b=c<d>::e<f<g> >, h,y"
+# returns:
+#    part: a
+#    part:  b=c<d>::e<f<g> >
+#    part:  h
+#    part: y
+def protected_split( openchar, closechar, splitchar, s, nesting_level = 0 )
+  result_array = Array.new
+  part = ""
+  char = ""
+  s.each_byte do |c|
+    char = ""
+    char << c
+    if char == closechar then nesting_level -= 1 end
+    if char == openchar then nesting_level += 1 end
+    if char == splitchar then
+      if nesting_level == 0 then
+        #puts "new part: #{part}"
+        result_array << part
+        part = ""
+      end
+    else
+      part << char
+    end
+  end
+  if char != splitchar then
+    result_array << part
+  end
+  return result_array
 end
 
 
@@ -37,7 +135,7 @@ def split_typename( decl )
   return result, ""
 end
 
-def remove_argnames( decl )
+def remove_argnames( decl, typemap )
   result = ""
   until decl =~ /^[)]/ || decl == "" do
     type_with_default, decl = split_typename( decl )
@@ -48,11 +146,14 @@ def remove_argnames( decl )
     else
       type = type_with_default
     end
-    # remove argname (possibly moving a trailing [] part 
+    # remove argname (preserving declarators like * and [])
     if type =~ /\s*(\*+)?\s*\w+(\[\w+\])?$/ then
       type = $`
       type += $1 if $1 != nil
       type += $2 if $2 != nil
+    end
+    if typemap.has_key?( type ) then
+      type = typemap[type]
     end
     result << type
     if( decl =~ /,/ ) then
@@ -70,7 +171,7 @@ def match_and_consume( s, regex_string )
   regex = Regexp.new( regex_string )
   if s =~ regex then
     s = s.sub( regex, "" )
-    puts " ok! remaining #{s}"
+    #puts "ok! remaining #{s}"
     return true
   end
   puts " no match."
@@ -96,39 +197,7 @@ class Doxygen
     @items = {}
   end
 
-  def collect_items
-    collect_compounds
-    collect_global_items
-  end
-
-  def collect_compounds
-    @doxy_xml.find( '/doxygen/compounddef[@kind=\'struct\' or @kind=\'class\']' ).each do |compound|
-      compoundname=get_xpath_content(compound,'compoundname')
-      location=compound.find('location').to_a.first
-      lineno=location["line"]
-      filename=location["file"]
-      puts "compound idfier: #{compoundname} kind: #{compound['kind']}" # line: #{lineno} file: #{filename}"
-      collect_members( compound, 'typedef' )
-      collect_members( compound, 'function' )
-    end
-  end
-
-  def collect_members( compound, kind )
-    puts "members of kind #{kind}:"
-    compound.find("sectiondef/memberdef[@kind=\'#{kind}\']").each do |memberdef|
-      type=get_xpath_content(memberdef,'type')
-      name=get_xpath_content(memberdef,'name')
-      definition=get_xpath_content(memberdef,'definition')
-      argsstring=get_xpath_content(memberdef,'argsstring')
-      name="#{definition}#{argsstring}"
-      location=memberdef.find('location').to_a.first
-      lineno=location["line"]
-      filename=location["file"]
-      puts "  member: #{name} \ttype: #{type} \tline: #{lineno}" # file: #{filename}"
-    end
-  end
-
-  def member_matches_texname( memberdef, texname, strip_const_from_return_types )
+  def member_matches_texname?( memberdef, texname, strip_const_from_return_types )
     is_const=""
     if memberdef['const'] == 'yes' then
       is_const = "const"
@@ -139,20 +208,29 @@ class Doxygen
       type=type.gsub( /_const_/, "_" )
     end
     name=get_xpath_content(memberdef,'name')
-    doxyname="#{type} #{name}#{argsstring};"
-    #puts "--- raw decl: #{doxyname}"
-    doxyname=normalize_declaration( doxyname )
-    #puts "--- doxyname: #{doxyname}"
+    templateparamlist=""
+    memberdef.find( 'templateparamlist/param' ).each do |param|
+      declname=get_xpath_content(param,'declname')
+      templateparamlist += declname+","
+    end
+    if templateparamlist != "" then
+      templateparamlist.gsub!( /,$/, "" )
+      templateparamlist = "template<#{templateparamlist}>"
+    end
+    doxyname=templateparamlist+"#{type} #{name}#{argsstring};"
+    doxyname=normalize_function_declaration( doxyname )
+    puts "    doxyname: #{doxyname}"
     return doxyname == texname
   end
 
   def find_member( compoundname, memberkind, texname )
-    texname=normalize_declaration( texname )
+    puts "-- raw texname: "+texname
+    texname=normalize_function_declaration( texname )
     puts "- find_member"
     puts "-- compoundname: #{compoundname}"
     puts "-- memberkind: #{memberkind}"
     puts "-- texname: #{texname}"
-    xpath_ckind='(@kind=\'struct\' or @kind=\'class\')'
+    xpath_ckind='(@kind=\'struct\' or @kind=\'class\' or @kind=\'namespace\')'
     xpath_cname="(compoundname=\'#{compoundname}\')"
     xpath_mkind="(@kind=\'#{memberkind}\')"
     #xpath_mname="(name=\'#{membername}\')"
@@ -163,7 +241,7 @@ class Doxygen
 
     for strip_const_from_return_type in [false,true]
       @doxy_xml.find( xpath_query ).each do |memberdef|
-        if member_matches_texname( memberdef, texname, strip_const_from_return_type )
+        if member_matches_texname?( memberdef, texname, strip_const_from_return_type )
           return memberdef
         end
       end
@@ -181,11 +259,15 @@ class Tex
   def list_all_refpages()
     @tex_xml.find('/manual_tools_output/package').each do |package|
       puts "package: #{package['id']}"
-      package.find('refpage[refcat=\'Concept\']').each do |refpage|
+      package.find('refpage[refcat!=\'Concept\']').each do |refpage|
         scope=get_xpath_content(refpage,'globalscope')
         refcat=get_xpath_content(refpage,'refcat')
+        compoundname = "#{scope}#{refpage['id']}" # if applicable
+        case refcat
+          when /Function/ then compoundname=scope.gsub( /::$/, '' )
+        end
 
-        puts "  refpage id: #{refpage['id']} \tscope: #{scope}"
+        puts "  refpage id: #{refpage['id']} \tscope: #{scope} \trefcat: #{refcat}"
         refpage.find('item').each do |item|
           name=get_xpath_content(item,'name')
           kind=get_xpath_content(item,'kind')
@@ -194,19 +276,21 @@ class Tex
           #puts "    item kind: #{kind}"
           #puts "    item comment: #{comment}"
 
-          if kind == "function" then
-            #puts "    item name: #{name}"
-            #puts "    item comment: #{comment}"
-          elsif kind == "memberfunction" then
-            memberdef=@doxy.find_member( "#{scope}#{refpage['id']}" , "function", name )
-            if memberdef == nil then
-              puts "!! did not find doxygen equivalent for \"#{name}\" in \"#{scope}#{refpage['id']}\""
-            else
-              definition=get_xpath_content(memberdef,'definition')
-              puts "+++ OK! found memberdef: #{definition}"
-            end
+          puts "compoundname: #{compoundname}"
+
+          if kind == "memberfunction" || kind == "constructor" then
+            kind="function"
+          elsif kind == "nested_type" then
+            kind="typedef"
           end
 
+          memberdef=@doxy.find_member( compoundname , kind, name )
+          if memberdef == nil then
+            puts "!! did not find doxygen equivalent for \"#{name}\" in \"#{compoundname}\""
+          else
+            definition=get_xpath_content(memberdef,'definition')
+            puts "+++ OK! found memberdef: #{definition}"
+          end
         end # each item
       end # each refpage
     end # each package
@@ -226,11 +310,14 @@ end
 doxy = Doxygen.new( ARGV[0] )
 tex = Tex.new( ARGV[1], doxy )
 
+internal_test
+
 tex.list_all_refpages
-
-
 
 #s = remove_argnames( "long int bla=CGAL::my_default_value<xxx<yyy>::bla>,bool blubb)" )
 #s = remove_argnames( "void bla(type<param> bla,bool blubb,float x)const;" )
 #s = normalize_declaration( "void bla(NT values[D],int *bla = default);" )
 #puts "result: #{s}"
+
+#puts normalize_function_declaration( "template<class XX, typename YY=bla<blubb> >void bla(XX a, XX b, YY c)" #)
+
