@@ -51,62 +51,72 @@ int main () {
 
 	// we have to intersect them
 	Traits t;
-	std::vector<std::pair<Point,Mult> > points;
+	std::vector<CGAL::Object> intersections;
 	Curve cv1(p,-4,5);
 	Curve cv2(q,-5,4);
-	std::cout<<"Curves are:\n"<<cv1<<"\n"<<cv2<<std::endl;
-	t.intersect_2_object()(cv1,cv2,std::back_inserter(points));
+	std::cout<<"Curves are:\n"<<cv1<<"\n"<<cv2;
+	t.intersect_2_object()(cv1,cv2,std::back_inserter(intersections));
 
-	std::cout<<"\ncv1 is ";
+	std::cout<<"\n\ncv1 is ";
 	if(!t.is_vertical_2_object()(cv1))
 		std::cout<<"not ";
-	std::cout<<"vertical"<<std::endl;
+	std::cout<<"vertical";
 	Point cv1_left(t.construct_min_vertex_2_object()(cv1));
-	std::cout<<"left point of cv1:"<<cv1_left<<std::endl;
-	std::cout<<"right point of cv1:"<<
-		t.construct_max_vertex_2_object()(cv1)<<std::endl;
+	std::cout<<"\nleft point of cv1:"<<cv1_left<<
+		"\nright point of cv1:"<<
+		t.construct_max_vertex_2_object()(cv1);
 
-	std::cout<<"\nintersection points:\n";
-	for(std::vector<std::pair<Point,Mult> >::iterator itv=points.begin();
-			itv!=points.end();++itv)
-		itv->first.show(std::cout)<<" mult "<<itv->second<<std::endl;
+	std::cout<<"\nintersections:";
+	std::pair<Point,Mult> pt0,pt1;
+	Curve c0;
+	for(std::vector<CGAL::Object>::iterator itv=intersections.begin();
+			itv!=intersections.end();++itv)
+		if(assign(pt0,*itv))
+			pt0.first.show(std::cout<<"\npoint ")<<
+				" mult "<<pt0.second;
+		else
+			if(assign(c0,*itv))
+				std::cout<<"\ncurve "<<c0;
+			else
+				std::cout<<"\nERROR";
 
-	std::cout<<"\ncomparison of the intersection points:"<<
-		t.compare_xy_2_object()(points[0].first,points[1].first)<<
-		std::endl;
+	assign(pt0,intersections[0]);
+	assign(pt1,intersections[1]);
+	std::cout<<"\n\ncomparison of the intersection points:"<<
+		t.compare_xy_2_object()(pt0.first,pt1.first);
 
-	std::cout<<"\ncv1's left endpoint is ";
+	std::cout<<"\n\ncv1's left endpoint is ";
 	switch(t.compare_y_at_x_2_object()(cv1_left,cv2)){
 		case CGAL::EQUAL:std::cout<<"in";break;
 		case CGAL::LARGER:std::cout<<"over";break;
 		default:std::cout<<"below";break;
 	}
-	std::cout<<" cv2"<<std::endl;
+	std::cout<<" cv2";
 
-	std::cout<<"\ncompare_y_at_left_2(cv1,cv2,p[0])="<<
-		t.compare_y_at_x_left_2_object()(cv1,cv2,points[0].first)<<
-		std::endl;
+	std::cout<<"\n\ncompare_y_at_left_2(cv1,cv2,p[0])="<<
+		t.compare_y_at_x_left_2_object()(cv1,cv2,pt0.first);
 
-	std::cout<<"compare_y_at_right_2(cv1,cv2,p[0])="<<
-		t.compare_y_at_x_right_2_object()(cv1,cv2,points[0].first)<<
-		std::endl;
+	std::cout<<"\ncompare_y_at_right_2(cv1,cv2,p[0])="<<
+		t.compare_y_at_x_right_2_object()(cv1,cv2,pt0.first);
 
-	std::cout<<"\np[0]==p[1]? "<<t.equal_2_object()(points[0].first,points[1].first)<<std::endl;
-	std::cout<<"p[1]==p[0]? "<<t.equal_2_object()(points[1].first,points[0].first)<<std::endl;
-	std::cout<<"p[0]==p[0]? "<<t.equal_2_object()(points[0].first,points[0].first)<<std::endl;
-	std::cout<<"attention: EQUAL is "<<CGAL::EQUAL<<std::endl;
+	std::cout<<"\n\np[0]==p[1]? "<<t.equal_2_object()(pt0.first,pt1.first);
+	std::cout<<"\np[1]==p[0]? "<<t.equal_2_object()(pt1.first,pt0.first);
+	std::cout<<"\np[0]==p[0]? "<<t.equal_2_object()(pt0.first,pt0.first);
+	std::cout<<"\nattention: EQUAL is "<<CGAL::EQUAL;
 
 	Curve split1,split2;
-	t.split_2_object()(cv1,points[0].first,split1,split2);
-	std::cout<<"\nsplitting cv1 in the first point gives:\n"<<split1<<
-		"\nand "<<split2<<std::endl;
+	t.split_2_object()(cv1,pt0.first,split1,split2);
+	std::cout<<"\n\nsplitting cv1 in the first point gives:\n"<<split1<<
+		"\nand "<<split2;
 
-	std::vector<Curve> monotones;
+	std::vector<CGAL::Object> monotones;
 	t.make_x_monotone_2_object()(cv1,std::back_inserter(monotones));
-	std::cout<<"splitting cv1 in monotone pieces gives:"<<std::endl;
-	for(std::vector<Curve>::iterator it=monotones.begin();
-			it!=monotones.end();++it)
-		std::cout<<*it<<std::endl;
+	std::cout<<"\n\nsplitting cv1 in monotone pieces gives:"<<std::endl;
+	for(std::vector<CGAL::Object>::iterator it=monotones.begin();
+			it!=monotones.end();++it){
+		assign(c0,*it);
+		std::cout<<c0<<"\n";
+	}
 
 	return 0;
 }
