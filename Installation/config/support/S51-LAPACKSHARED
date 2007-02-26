@@ -5,7 +5,7 @@
 # - on Fedora with the "atlas-devel" RPM (g++).
 # Note: the "atlas-devel" RPM installs an hybrid LAPACK/Atlas library in /usr/lib*/atlas.
 
-DESCRIPTION = Blas + Lapack RPM
+DESCRIPTION = Lapack shared library
 PROVIDES = BLAS LAPACK
 CXXFLAGS = -DCGAL_USE_F2C
 LDFLAGS =
@@ -16,6 +16,6 @@ STDINCLDIRS =
 INCLTHING =
 STDLIBDIRS = /usr/lib\*/atlas
 LIBTHING = liblapack.\*
-COMPILETESTFLAGS = 
+COMPILETESTFLAGS =
 
 # EOF

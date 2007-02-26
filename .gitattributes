@@ -650,7 +650,7 @@ Installation/config/support/S47-SGICOMPLIB -text
 Installation/config/support/S48-MKL64 -text
 Installation/config/support/S49-MKL32 -text
 Installation/config/support/S50-MKLWIN -text
-Installation/config/support/S51-LAPACKDYNAMIC -text
+Installation/config/support/S51-LAPACKSHARED -text
 Installation/config/support/S52-BLASIFORTATLAS -text
 Installation/config/support/S53-BLASGCCATLAS -text
 Installation/config/support/S54-BLASWINATLAS -text
