@@ -1,16 +1,16 @@
 // Usage: ./maple_example > maple.text
 // Then enter in Maple 'read "maple.text";'.
 
-#include <vector>
-#include <iostream>
-#include <iomanip>
-
-#include <CGAL/basic.h>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Approximate_min_ellipsoid_d.h>
 #include <CGAL/Approximate_min_ellipsoid_d_traits_d.h>
+
+#include <vector>
+#include <iostream>
+#include <iomanip>
+
 
 typedef CGAL::Cartesian_d<double>                              Kernel;
 typedef CGAL::MP_Float                                         ET;
