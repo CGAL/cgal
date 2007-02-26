@@ -24,7 +24,7 @@ my @platforms_to_do;
 my @known_platforms;
 my %platform_short_names;
 my @available_platforms;
-my %test_directories;
+my %test_directories = ();
 my @testresults;
 my $testresult_dir=cwd()."/TESTRESULTS";
 
@@ -68,7 +68,6 @@ sub list_packages($)
 # Return false if that platform does not have a list of packages.
 {
     my ($platform) = @_;
-    %test_directories = ();
     my $test_result="results_${platform}.txt";
     open(TESTRESULT, $test_result) or return 0;
     while (<TESTRESULT>) {
