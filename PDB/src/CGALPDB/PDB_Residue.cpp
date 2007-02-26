@@ -149,7 +149,10 @@ void Residue::dump(std::ostream &out) const {
     Residue::Atom_label al= valid_atoms[i];
     out << Residue::atom_label_string(al); //Residue::write_atom_label(al, out);
     if (has_atom(al)){
-      out << " (" << atom(al).cartesian_coords() << ") " << atom(al).index() << std::endl;
+      out << " (" << atom(al).cartesian_coords().x() << ", " 
+	  << atom(al).cartesian_coords().y() << ", "
+	  << atom(al).cartesian_coords().z() << ") " 
+	  << atom(al).index() << std::endl;
     } else {
       out << " X" << std::endl;
     }
