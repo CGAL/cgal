@@ -1,15 +1,6 @@
 %note on pictures
 %david pict for old algo, don't know parameters, todo... and get better pict
 
-%\newcommand{\makeremark}[2]{{
-%  \newcommand{#1}[1]
-%    {$\longrightarrow$\textsc{#2: ##1}$\leftarrow$\\}}}
-%\makeremark{\FC}{Fr\'ed\'eric says}
-
-\newcommand{\FC}[1]{\protect{===FC SAYS: {#1}}}
-
-
-
 \newtheorem{definition}{Definition.}
 \newcommand{\hot}{h.o.t}%[0]
 
@@ -48,8 +39,6 @@ Polynomial Fitting}.
 
 Notice this package needs the third party libraries
 \ccThirdPartyLapack\ and \ccThirdPartyBlas\ for linear algebra operations.
-
-%%xfc-removed: installed to compile the example code.
 
 \subsection{Overview}
 %%%%%%%%%%%%%%%%%%%%%%
@@ -114,8 +103,6 @@ salient curves on a surface.
 Hence we provide two additional ridge types :
 \ccc{MAX_CREST_RIDGE} and \ccc{MIN_CREST_RIDGE}, see figure \ref{david-crest}.
 
-%%xfc-proposal: next to fig 1.2, put the crest of the ellipsoid?
-
 \begin{figure}[!ht]
 \begin{ccTexOnly}
 \centerline{
@@ -126,10 +113,12 @@ Hence we provide two additional ridge types :
 <CENTER> <img border=0 src="./ellipsoid_ridges.png" width=400>
 </CENTER>
 \end{ccHtmlOnly}
-\caption{Ridges on the ellipsoid, normals pointing outward.
- Color coding~: \ccc{MAX_ELLIPTIC_RIDGE} are blue,
-\ccc{MAX_HYPERBOLIC_RIDGE} are green, \ccc{MIN_ELLIPTIC_RIDGE} are red and 
-\ccc{MIN_HYPERBOLIC_RIDGE} are yellow.}
+\caption{Ridges on the ellipsoid, normals pointing outward.  Color
+  coding~: \ccc{MAX_ELLIPTIC_RIDGE} are blue,
+  \ccc{MAX_HYPERBOLIC_RIDGE} are green, \ccc{MIN_ELLIPTIC_RIDGE} are
+  red and \ccc{MIN_HYPERBOLIC_RIDGE} are yellow. The red line is also
+  the \ccc{MIN_CREST_RIDGE} and this is the only crest ridge of the
+  ellipsoid.}
 \label{ellipsoid-ridges}
 \end{figure}
 
@@ -391,12 +380,9 @@ $\delta \in ]\pi/2,3\pi/2[$, then the umbilic is called elliptic,
 \item
 $\delta \in ]-3\pi/2,-\pi/2[$, then the umbilic is called a hyperbolic,
 \item
-$\delta \geq 3\pi/2$ or $\delta \leq -3\pi/2$ then the umbilic is called non-generic.
+otherwise the umbilic is called non-generic.
 \end{itemize}
 \end{itemize}
-
-%%xfc-problem: how come the 3rd condition is not 'otherwise'. it would
-%%be easier to grasp
 
 \paragraph{Finding patches around vertices.}
 Given a vertex $v$ and a parameter $t$, we aim at defining a
@@ -458,7 +444,8 @@ $P_2$ if the tagging of ridges as elliptic or hyperbolic is to be done using
 the polynomials $P_1$ and $P_2$.
 
 
-Three functions enable the computation of different types of ridges~:
+Three functions (provided as members and also as global functions)
+enable the computation of different types of ridges~:
 \begin{itemize}
 \item \ccc{compute_max_ridges} (resp. \ccc{compute_min_ridges})
   outputs ridges of types \ccc{MAX_ELLIPTIC_RIDGE} and
@@ -468,13 +455,6 @@ Three functions enable the computation of different types of ridges~:
   \ccc{MAX_CREST_RIDGE} and \ccc{MIN_CREST_RIDGE}.
 \end{itemize}
 
-
-%%xfc:for umbilics, I liked the fact that both functions (class
-%%member, external) are
-%%mentioned. I think we should get the same here.
-
-These functions are provided as members and also as global functions.
-%%
 These functions allows the user to specify how the elliptic/hyperbolic
 tagging is carried out.
 %%
@@ -506,10 +486,10 @@ function \ccc{compute} (or the global function \ccc{compute_umbilics})
 has a parameter to define the size of the neighborhood of the umbilic.
 
 Umbilics are stored in \ccc{Umbilic} objects, they come with their
-type (ENUMERATE), the vertex of the mesh they are associated to and the list of
-half-edges representing the contour of the neighborhood.
-
-%%xfc-prev-sentence: replace ENUMERATE by ellip, hyper, unknown !??
+type : \ccc{ELLIPTIC_UMBILIC}, \ccc{HYPERBOLIC_UMBILIC} or
+\ccc{NON_GENERIC_UMBILIC}; the vertex of the mesh they are associated
+to and the list of half-edges representing the contour of the
+neighborhood.
 
 \subsection{Models for the Property Map Concepts}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -525,11 +505,6 @@ using \ccc{std::maps} and \ccc{boost::associative_property_map}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{examples}
 
-%%xfc: $a$ and not a !!!
-
-%%%xfc  when giving command line example, -m 4 instead of -m4 ... even if
-%%%both work!
-
 \paragraph{Example program.}
 The following program computes ridges and umbilics from an off
 file. It uses the Jet fitting package to estimate the differential
@@ -542,12 +517,12 @@ must be greater or equal to 3 which is the default value;
 \item
 $m$, the degree of the Monge representation for the
 \ccc{Monge_via_jet_fitting} class, $m$ must be 3 (the default value) or
-4 and smaller than d;
+4 and smaller than $d$;
 \item
 $a$, the number of rings of neighbors collected for the
 \ccc{Monge_via_jet_fitting} class, in addition the number of vertices
 collected must be greater than $Nd:=(d+1)(d+2)/2$ to make the
-approximation possible. a may be an integer greater than 1, the value
+approximation possible. $a$ may be an integer greater than 1, the value
 0 (which is the default) means that the minimum number of rings is
 collected to make the approximation possible. (Alternatively option $p$
 allows the specification of a constant number of neighbors);
@@ -555,7 +530,7 @@ allows the specification of a constant number of neighbors);
 $t$, the \ccc{CGAL::Ridge_order} for the distinction between elliptic and
 hyperbolic ridges, $t$ is 3 (default) or 4;
 \item
-u, the parameter for umbilic patch size, $u \geq 1$ (default is 1).
+$u$, the parameter for umbilic patch size, $u \geq 1$ (default is 1).
 \end{itemize}
 
 \begin{ccExampleCode} 
@@ -641,7 +616,7 @@ int main(int argc, char *argv[])
 For that figure, the data have been computed as follows
 %%
 \begin{ccExampleCode}
-./blind -f data/ellipsoid_u_0.02.off -d4 -m4 -a3 -t3
+./blind -f data/ellipsoid_u_0.02.off -d 4 -m 4 -a 3 -t 3
 \end{ccExampleCode}
 and the visualization with 
 \begin{ccExampleCode}
@@ -679,7 +654,7 @@ This Fig. illustrates the filtering of crest ridges on a mechanical
 model, and has been computed as follows:
 %%
 \begin{ccExampleCode}
-./blind -f data/mecanic.off -d4 -m4 -a4 -t4
+./blind -f data/mecanic.off -d 4 -m 4 -a 4 -t 4
 \end{ccExampleCode}
 The last parameters of the visualization program of the demo are
 threshold for the strength and the sharpness. This enables the three
