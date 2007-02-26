@@ -804,8 +804,8 @@ set_compiler_flags()
     OBJ_OPT="-c"
     LIB_SUFFIX=""
     CGAL_STATIC_LIBNAME="lib\$(LIB_NAME_BASE).a"
-    CGAL_SHARED_LIBNAME="lib\$(LIB_NAME_BASE)\$(SHARED_LIB_EXT)"
-    SHARED_LIB_EXT=".so"
+    CGAL_SHARED_LIBNAME="lib\$(LIB_NAME_BASE)\$(CGAL_SHARED_LIB_EXT)"
+    CGAL_SHARED_LIB_EXT=".so"
     REMOVE_EXT_LIST=".o"
     LIB_OPT=" -l"
     LIBPATH_OPT="-L"
@@ -983,7 +983,7 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_CXXFLAGS="-fno-common"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -dynamiclib"
 	    CGAL_SHARED_LIB_INSTALL_NAME="-install_name \$(CGAL_LIB_DESTINATION)/\$(CGAL_SHARED_LIBNAME)"
-	    SHARED_LIB_EXT=".so"
+	    CGAL_SHARED_LIB_EXT=".so"
 # was ".dylib"
 	    RANLIB="ranlib"
 	    ;;
@@ -3008,7 +3008,7 @@ _link_run_test()
 	    else
 		${_printf} "%s\n\n" " linking or execution failed."
 		${_cat} "${TMP_LOGFILE}"
-		printf "%s\n\n" \
+		${_printf} "%s\n\n" \
 		    "--------------------------------------------------------"
 	    fi
 	else
@@ -3069,9 +3069,9 @@ set_lib_compiled_flag()
     if [ -r "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libCGAL.a" ]; then
 	LIB_COMPILED='ok'
         CGAL_LIBNAME=libCGAL.a
-    else if [ -r "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libCGAL${SHARED_LIB_EXT}" ]; then
+    else if [ -r "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libCGAL${CGAL_SHARED_LIB_EXT}" ]; then
 	LIB_COMPILED='ok'
-        CGAL_LIBNAME=libCGAL${SHARED_LIB_EXT}
+        CGAL_LIBNAME=libCGAL${CGAL_SHARED_LIB_EXT}
     else if [ -r "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/CGAL.lib" ]; then
         LIB_COMPILED='ok'
         CGAL_LIBNAME=CGAL.lib
@@ -3761,7 +3761,7 @@ write_compiler_flags()
     "*** Fill in any additional compiler flags you need ***" \
     >> ${FILE}
   ${_printf} "%s\n\n" "CUSTOM_CXXFLAGS = ${CUSTOM_CXXFLAGS}" >> ${FILE}
-  ${_printf} "%s\n\n" "SHARED_LIB_EXT = ${SHARED_LIB_EXT}" >> ${FILE}
+  ${_printf} "%s\n\n" "CGAL_SHARED_LIB_EXT = ${CGAL_SHARED_LIB_EXT}" >> ${FILE}
 
   #
   # THIRD PARTY CXXFLAGS
@@ -4261,6 +4261,7 @@ _do_compile()
     # variable _buildlog_marker.
     _buildlog_marker="log for $1 $2 shown"
 
+    ${_printf} "%s %s\n" "${MAKE}" "${MAKE_OPTION}" > "${COMPILE_LOGFILE}"
     if ${MAKE} ${MAKE_OPTION} >"${COMPILE_LOGFILE}" 2>&1; then
 	log_print "Compilation of $1 $2 ${_libname} succeeded."
 	log_print "vvvvvvvvvvvv build ${_buildlog_marker} below vvvvvvvvvvvv"
@@ -4457,7 +4458,7 @@ installation()
     # On Darwin, the path is encoded into the shared library
     case ${CGAL_OS_COMPILER} in
 	*Darwin*)
-	    for i in "${_CGAL_IDIR}"/*${SHARED_LIB_EXT}; do
+	    for i in "${_CGAL_IDIR}"/*${CGAL_SHARED_LIB_EXT}; do
 		${_install_name_tool} -id "${i}" "${i}"
 	    done;;
     esac
