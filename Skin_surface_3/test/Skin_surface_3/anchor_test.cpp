@@ -136,7 +136,7 @@ void test_anchor_del() {
 
 }
 
-int main(int, char *) {
+int main(int, char **) {
 
   test_anchor_del();
 

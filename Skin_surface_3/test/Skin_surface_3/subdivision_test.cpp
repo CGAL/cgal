@@ -64,7 +64,7 @@ private:
   double s;
 };
 
-int main(int, char *) {
+int main(int, char **) {
 
   std::vector<std::string> filenames;
   filenames.push_back("data/caffeine.cin");

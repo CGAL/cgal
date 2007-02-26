@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
   if (argc == 2) {
     filename = argv[1];
   } else {
-    filename = "data/1mvm.pdb";
+    filename = "data/1t7i.pdb";
   }
 
   std::list<Weighted_point> l;
