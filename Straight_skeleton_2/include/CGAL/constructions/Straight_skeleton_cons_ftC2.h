@@ -79,9 +79,8 @@ optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2<K> const& e )
       c = e.source().y();
     }
 
-    CGAL_STSKEL_TRAITS_TRACE("Line coefficients for HORIZONTAL line:\npx=" << e.source().x() << "\npy=" << e.source().y()
-                            << "\nqx=" << e.target().x() << "\nqy=" << e.target().y()
-                            << "\na="<< a << "\nb=" << b << "\nc=" << c
+    CGAL_STSKEL_TRAITS_TRACE("Line coefficients for HORIZONTAL line:\n" 
+                            << s2str(e) << " a="<< n2str(a) << ", b=" << n2str(b) << ", c=" << n2str(c)
                            ) ;
   }
   else if(e.target().x() == e.source().x())
@@ -103,9 +102,8 @@ optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2<K> const& e )
       c = -e.source().x();
     }
 
-    CGAL_STSKEL_TRAITS_TRACE("Line coefficients for VERTICAL line:\npx=" << e.source().x() << "\npy=" << e.source().y()
-                            << "\nqx=" << e.target().x() << "\nqy=" << e.target().y()
-                            << "\na="<< a << "\nb=" << b << "\nc=" << c
+    CGAL_STSKEL_TRAITS_TRACE("Line coefficients for VERTICAL line:\n"
+                            << s2str(e) << " a="<< n2str(a) << ", b=" << n2str(b) << ", c=" << n2str(c)
                            ) ;
   }
   else
@@ -125,9 +123,8 @@ optional< Line_2<K> > compute_normalized_line_ceoffC2( Segment_2<K> const& e )
     }
     else finite = false ;
     
-    CGAL_STSKEL_TRAITS_TRACE("Line coefficients for line:\npx=" << e.source().x() << "\npy=" << e.source().y() << "\nqx="
-                            << e.target().x() << "\nqy=" << e.target().y()
-                            << "\na="<< a << "\nb=" << b << "\nc=" << c << "\nl2:" << l2
+    CGAL_STSKEL_TRAITS_TRACE("Line coefficients for line:\n"
+                            << s2str(e) << " a="<< n2str(a) << ", b=" << n2str(b) << ", c=" << n2str(c)
                            ) ;
   }
   
@@ -221,7 +218,7 @@ optional< Rational< typename K::FT> > compute_normal_offset_lines_isec_timeC2 ( 
   
   typedef optional<Line_2> Optional_line_2 ;
   
-  CGAL_STSKEL_TRAITS_TRACE("Computing normal offset lines isec time") ;
+  CGAL_STSKEL_TRAITS_TRACE("Computing normal offset lines isec time for: " << st ) ;
   
   FT num(0.0), den(0.0) ;
   
@@ -265,7 +262,7 @@ optional< Rational< typename K::FT> > compute_normal_offset_lines_isec_timeC2 ( 
     ok = CGAL_NTS is_finite(num) && CGAL_NTS is_finite(den);     
   }
   
-  CGAL_STSKEL_TRAITS_TRACE("Normal Event:\nn=" << num << "\nd=" << den  )
+  CGAL_STSKEL_TRAITS_TRACE("Event time (normal): n=" << num << " d=" << den << " n/d=" << Rational<FT>(num,den)  )
 
   return cgal_make_optional(ok,Rational<FT>(num,den)) ;
 }
@@ -295,11 +292,9 @@ optional< Point_2<K> > compute_oriented_midpoint ( Segment_2<K> const& e0, Segme
     else mp = CGAL::midpoint(e1.target(),e0.source());
     
     CGAL_STSKEL_TRAITS_TRACE("Computing oriented midpoint between:"
-                            << "\n  e0.sx=" << e0.source().x() << " e0.sy=" << e0.source().y()
-                            << "\n  e0.tx=" << e0.target().x() << " e0.ty=" << e0.target().y()
-                            << "\n  e1.sx=" << e1.source().x() << " e1.sy=" << e0.source().y()
-                            << "\n  e1.tx=" << e1.target().x() << " e1.ty=" << e0.target().y()
-                            << "\n mp.x=" << mp.x() << " mp.y=" << mp.y()
+                             << "\ne0: " << s2str(e0)
+                             << "\ne1: " << s2str(e1)
+                             << "\nmp=" << p2str(mp)
                             );
                             
     ok = CGAL_NTS is_finite(mp.x()) && CGAL_NTS is_finite(mp.y());
@@ -347,13 +342,13 @@ optional< Point_2<K> > compute_seed_pointC2 ( Seeded_trisegment_2<K> const& st, 
   {
     case Trisegment_2::LEFT :
          
-       p = st.lseed().is_null() ? cgal_make_optional(st.event().e0().target())
+       p = st.lseed().is_null() ? compute_oriented_midpoint(st.event().e0(),st.event().e1())
                                 : construct_offset_lines_isecC2(construct_seeded_trisegment(st.lseed())) ;
        break ;                     
              
     case Trisegment_2::RIGHT : 
     
-      p = st.rseed().is_null() ? cgal_make_optional(st.event().e1().target())
+      p = st.rseed().is_null() ? compute_oriented_midpoint(st.event().e1(),st.event().e2())
                                : construct_offset_lines_isecC2(construct_seeded_trisegment(st.rseed())) ;
       break ;        
              
@@ -398,7 +393,7 @@ optional< Rational< typename K::FT> > compute_degenerate_offset_lines_isec_timeC
   typedef optional<Point_2> Optional_point_2 ;
   typedef optional<Line_2>  Optional_line_2 ;
   
-  CGAL_STSKEL_TRAITS_TRACE("Computing degenerate offset lines isec time") ;
+  CGAL_STSKEL_TRAITS_TRACE("Computing degenerate offset lines isec time for: " << st ) ;
   
   // DETAILS:
   //
@@ -449,21 +444,21 @@ optional< Rational< typename K::FT> > compute_degenerate_offset_lines_isec_timeC
     FT px, py ;
     line_project_pointC2(l0->a(),l0->b(),l0->c(),q->x(),q->y(),px,py); 
     
-    CGAL_STSKEL_TRAITS_TRACE("Seed point: (" << q->x() << "," << q->y() << "). Projected seed point: (" << px << "," << py << ")" ) ;
+    CGAL_STSKEL_TRAITS_TRACE("Seed point: " << p2str(*q) << ".\nProjected seed point: (" << n2str(px) << "," << n2str(py) << ")" ) ;
     
     if ( ! CGAL_NTS is_zero(l0->b()) ) // Non-vertical
     {
       num = (l2->a() * l0->b() - l0->a() * l2->b() ) * px + l0->b() * l2->c() - l2->b() * l0->c() ;
       den = (l0->a() * l0->a() - 1) * l2->b() + ( 1 - l2->a() * l0->a() ) * l0->b() ;
       
-      CGAL_STSKEL_TRAITS_TRACE("Non-vertical Degenerate Event:\nn=" << num << "\nd=" << den  )
+      CGAL_STSKEL_TRAITS_TRACE("Event time (degenerate, non-vertical) n=" << n2str(num) << " d=" << n2str(den) << " n/d=" << Rational<FT>(num,den) )
     }
     else
     {
       num = (l2->a() * l0->b() - l0->a() * l2->b() ) * py - l0->a() * l2->c() + l2->a() * l0->c() ;
       den = l0->a() * l0->b() * l2->b() - l0->b() * l0->b() * l2->a() + l2->a() - l0->a() ;
       
-      CGAL_STSKEL_TRAITS_TRACE("Vertical Degenerate Event:\nn=" << num << "\nd=" << den  )
+      CGAL_STSKEL_TRAITS_TRACE("Event time (degenerate, vertical) n=" << n2str(num) << " d=" << n2str(den) << " n/d=" << Rational<FT>(num,den) )
     }
     
     ok = CGAL_NTS is_finite(num) && CGAL_NTS is_finite(den);     
@@ -507,7 +502,7 @@ optional< Point_2<K> > construct_normal_offset_lines_isecC2 ( Seeded_trisegment_
   
   typedef optional<Line_2>  Optional_line_2 ;
   
-  CGAL_STSKEL_TRAITS_TRACE("Computing normal offset lines isec point") ;
+  CGAL_STSKEL_TRAITS_TRACE("Computing normal offset lines isec point for: " << st ) ;
   
   FT x(0.0),y(0.0) ;
   
@@ -521,7 +516,7 @@ optional< Point_2<K> > construct_normal_offset_lines_isecC2 ( Seeded_trisegment_
   {
     FT den = l0->a()*l2->b() - l0->a()*l1->b() - l1->a()*l2->b() + l2->a()*l1->b() + l0->b()*l1->a() - l0->b()*l2->a();
   
-    CGAL_STSKEL_TRAITS_TRACE("Event Point:\n  d=" << den  )
+    CGAL_STSKEL_TRAITS_TRACE("Event Point: d=" << n2str(den) )
   
     if ( ! CGAL_NTS certified_is_zero(den) ) 
     {
@@ -539,7 +534,7 @@ optional< Point_2<K> > construct_normal_offset_lines_isecC2 ( Seeded_trisegment_
     }
   }
     
-  CGAL_STSKEL_TRAITS_TRACE("\nNormal event point: x=" << x << "\n  y=" << y )
+  CGAL_STSKEL_TRAITS_TRACE("\nNormal event point: x=" << n2str(x) << " y=" << n2str(y) )
     
   return cgal_make_optional(ok,K().construct_point_2_object()(x,y)) ;
 }
@@ -566,7 +561,7 @@ optional< Point_2<K> > construct_degenerate_offset_lines_isecC2 ( Seeded_trisegm
   typedef optional<Point_2> Optional_point_2 ;
   typedef optional<Line_2>  Optional_line_2 ;
   
-  CGAL_STSKEL_TRAITS_TRACE("Computing degenerate offset lines isec point") ;
+  CGAL_STSKEL_TRAITS_TRACE("Computing degenerate offset lines isec point for: " << st )  ;
   
   FT x(0.0),y(0.0) ;
 
@@ -584,7 +579,7 @@ optional< Point_2<K> > construct_degenerate_offset_lines_isecC2 ( Seeded_trisegm
     FT px, py ;
     line_project_pointC2(l0->a(),l0->b(),l0->c(),q->x(),q->y(),px,py); 
     
-    CGAL_STSKEL_TRAITS_TRACE("Seed point: (" << q->x() << "," << q->y() << "). Projected seed point: (" << px << "," << py << ")" ) ;
+    CGAL_STSKEL_TRAITS_TRACE("Seed point: " << p2str(*q) << ". Projected seed point: (" << n2str(px) << "," << n2str(py) << ")" ) ;
     
     if ( ! CGAL_NTS is_zero(l0->b()) ) // Non-vertical
     {
@@ -607,7 +602,7 @@ optional< Point_2<K> > construct_degenerate_offset_lines_isecC2 ( Seeded_trisegm
   }
   
 
-  CGAL_STSKEL_TRAITS_TRACE("\nDegenerate " << (CGAL_NTS is_zero(l0->b()) ? "(vertical)" : "") << " event point:  x=" << x << "\n  y=" << y )
+  CGAL_STSKEL_TRAITS_TRACE("\nDegenerate " << (CGAL_NTS is_zero(l0->b()) ? "(vertical)" : "") << " event point:  x=" << n2str(x) << " y=" << n2str(y) )
 
   return cgal_make_optional(ok,K().construct_point_2_object()(x,y)) ;
 }

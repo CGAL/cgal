@@ -114,13 +114,13 @@ void dump_eps( SlsPtr sls, std::string eps )
 
   std::ofstream dump(eps.c_str());
 	 dump << "%!PS-Adobe-2.0 EPSF-2.0\n%%BoundingBox:" 
-       << scale* bbox.xmin()-1 
+       << static_cast<int>(std::floor(scale* bbox.xmin()-1)) 
        << " " 
-       << scale* bbox.ymin()-1 
+       << static_cast<int>(std::floor(scale* bbox.ymin()-1)) 
        << " "
-       << scale*bbox.xmax()+1 
+       << static_cast<int>(std::ceil(scale*bbox.xmax()+1)) 
        << " " 
-       << scale*bbox.ymax()+1
+       << static_cast<int>(std::ceil(scale*bbox.ymax()+1))
        << std::endl;
 
 	 dump << "%%EndComments\n"

@@ -160,33 +160,76 @@ inline void intrusive_ptr_release( CGAL::Ref_counted_base const* p ) { p->Releas
 // The rest of this header contains tracing, debugging and profiling stuff.
 
 #if defined(CGAL_STRAIGHT_SKELETON_ENABLE_TRACE) || defined(CGAL_POLYGON_OFFSET_ENABLE_TRACE)
-#define CGAL_STSKEL_ENABLE_TRACE
-#endif
-
-#ifdef CGAL_STSKEL_ENABLE_TRACE
 #  include<string>
 #  include<iostream>
 #  include<sstream>
 #  define CGAL_STSKEL_TRACE(m) \
      { \
        std::ostringstream ss ; \
-       ss << std::setprecision(19) << m << std::ends ; \
+       ss << m ; \
        std::string s = ss.str(); \
        Straight_skeleton_external_trace(s); \
      }
 
-#  define CGAL_STSKEL_DEBUG_CODE(code) code
-#else
-#  define CGAL_STSKEL_DEBUG_CODE(code) 
+template<class N>
+inline std::string n2str( N const& n )
+{
+  std::ostringstream ss ; 
+  ss << CGAL_NTS to_double(n) ;
+  return ss.str();
+}
+template<class P>
+inline std::string p2str( P const& p )
+{
+  std::ostringstream ss ; 
+  ss << "(" << n2str(p.x()) << "," << n2str(p.y()) << ")" ;
+  return ss.str();
+}
+template<class V>
+inline std::string v2str( V const& v )
+{
+  std::ostringstream ss ; 
+  ss << "V" << v.id() << " " << p2str(v.point());
+  return ss.str();
+}
+template<class P>
+inline std::string s2str( P const& s, P const& t )
+{
+  std::ostringstream ss ; 
+  ss << "{" << p2str(s) << "-" << p2str(t) << "}" ;
+  return ss.str();
+}
+template<class S>
+inline std::string s2str( S const& seg ) { return s2str(seg.source(),seg.target()); }
+
+template<class E>
+inline std::string e2str( E const& e )
+{
+  std::ostringstream ss ; 
+  if ( e.is_bisector() )
+  {
+    ss << "B" << e.id()
+       << "[E" << e.defining_contour_edge()->id() 
+       << ",E" << e.opposite()->defining_contour_edge()->id() << "]";
+  }
+  else
+  {
+    ss << "E" << e.id() ;
+  }
+  ss << " " << s2str(e.vertex()->point(),e.opposite()->vertex()->point()) ;
+  return ss.str();
+}
 #endif
 
-#ifdef CGAL_STSKEL_ENABLE_TRACE
+#ifdef CGAL_STRAIGHT_SKELETON_ENABLE_TRACE
+#  define CGAL_STSKEL_DEBUG_CODE(code) code
 #  define CGAL_STSKEL_BUILDER_TRACE(l,m) if ( l <= CGAL_STRAIGHT_SKELETON_ENABLE_TRACE ) CGAL_STSKEL_TRACE(m)
 #else
 #  define CGAL_STSKEL_BUILDER_TRACE(l,m)
+#  define CGAL_STSKEL_DEBUG_CODE(code) 
 #endif
 
-#ifdef CGAL_STSKEL_ENABLE_SHOW
+#ifdef CGAL_STRAIGHT_SKELETON_ENABLE_SHOW
 #  define CGAL_STSKEL_BUILDER_SHOW(code) { code }
 #else
 #  define CGAL_STSKEL_BUILDER_SHOW(code)

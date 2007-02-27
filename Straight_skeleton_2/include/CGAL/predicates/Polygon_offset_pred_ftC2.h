@@ -44,7 +44,6 @@ Uncertain<Comparison_result> compare_offset_against_isec_timeC2 ( typename K::FT
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 
   Optional_rational et_ = compute_offset_lines_isec_timeC2(st);
-  
   if ( et_ )
   {
     Quotient et = et_->to_quotient();

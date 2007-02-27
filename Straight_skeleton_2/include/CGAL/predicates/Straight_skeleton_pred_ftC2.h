@@ -183,7 +183,7 @@ Uncertain<bool> exist_offset_lines_isec2 ( Seeded_trisegment_2<K> const& st )
         if ( !d_is_zero )
         {
           rResult = CGAL_NTS certified_is_positive(t->to_quotient()) ;
-          CGAL_STSKEL_TRAITS_TRACE("\nEvent time: " << (t->n()/t->d()) << ". Event " << ( rResult ? "exist." : "doesn't exist." ) ) ;
+          CGAL_STSKEL_TRAITS_TRACE("\nEvent time: " << *t << ". Event " << ( rResult ? "exist." : "doesn't exist." ) ) ;
         }
         else
         {
@@ -416,7 +416,7 @@ Uncertain<bool> is_offset_lines_isec_inside_offset_zoneC2 ( Seeded_trisegment_2<
     // sdc : scaled (signed) distance from (x,y) to 'zc'
     FT sdc = zc->a() * i->x() + zc->b() * i->y() + zc->c() ;
 
-    CGAL_STSKEL_TRAITS_TRACE("\nsdc=" << sdc ) ;
+    CGAL_STSKEL_TRAITS_TRACE("\nsdc=" << n2str(sdc) ) ;
 
     // NOTE:
     //   if "i" is not on the positive side of 'zc' it isn't on it's offset zone.
@@ -444,7 +444,7 @@ Uncertain<bool> is_offset_lines_isec_inside_offset_zoneC2 ( Seeded_trisegment_2<
             
             if ( CGAL_NTS is_finite(sdl) )
             {
-              CGAL_STSKEL_TRAITS_TRACE("\nsdl=" << sdl ) ;
+              CGAL_STSKEL_TRAITS_TRACE("\nsdl=" << n2str(sdl) ) ;
               
               Uncertain<bool> lc_reflex = CGAL_NTS certified_is_smaller(zl->a()*zc->b(),zc->a()*zl->b());
               
@@ -509,7 +509,7 @@ Uncertain<bool> is_offset_lines_isec_inside_offset_zoneC2 ( Seeded_trisegment_2<
             
             if ( CGAL_NTS is_finite(sdr) )
             {
-              CGAL_STSKEL_TRAITS_TRACE("\nsdr=" << sdr ) ;
+              CGAL_STSKEL_TRAITS_TRACE("\nsdr=" << n2str(sdr) ) ;
               
               Uncertain<bool> cr_reflex = CGAL_NTS certified_is_smaller(zc->a()*zr->b(),zr->a()*zc->b());
               

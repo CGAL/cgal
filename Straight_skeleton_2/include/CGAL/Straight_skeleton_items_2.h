@@ -19,9 +19,7 @@
 #define CGAL_STRAIGHT_SKELETON_ITEMS_2_H 1
 
 #include <CGAL/Straight_skeleton_vertex_base_2.h>
-
 #include <CGAL/Straight_skeleton_halfedge_base_2.h>
-
 #include <CGAL/HalfedgeDS_face_base.h>
 
 CGAL_BEGIN_NAMESPACE

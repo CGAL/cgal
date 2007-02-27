@@ -110,6 +110,8 @@ private:
 
     Triedge rTriedge(lE[0],lE[1],lE[2]);
     
+    CGAL_POLYOFFSET_TRACE(3,"Triedge for " << v2str(*aSeed) << ": (E" << lE[0]->id() << ", E" << lE[1]->id() << ", E" << lE[2]->id() << ")" ) ;
+
     CGAL_postcondition(rTriedge.is_valid());
     
     return rTriedge ;
@@ -173,6 +175,8 @@ private:
     Vertex_const_handle lLSeed = aBisector->opposite()->vertex();
     Vertex_const_handle lRSeed = aBisector->vertex();
     
+    CGAL_POLYOFFSET_TRACE(3,"Comparing offset " << aT << " against event [(E" << lBorderA->id() << ",E" << lBorderB->id() << ",E" << lBorderC->id() << ")(LS=" << v2str(*lLSeed) << ",RS=" << v2str(*lRSeed) << ")]");
+
     return Compare_offset_against_event_time_2(mTraits)(aT,CreateSeededTrisegment(lBorderA,lBorderB,lBorderC,lLSeed,lRSeed));
   }
 

@@ -61,7 +61,10 @@ Polygon_offset_builder_2<Ss,Gt,Cont>::LocateHook( FT aTime, Halfedge_const_handl
 
     if ( !IsVisited(aBisector) )
     {
-      CGAL_POLYOFFSET_TRACE(3,"Testing hook on B" << aBisector->id() << " (Next: B" << lNext->id() << " Prev: B" << lPrev->id() << ")" ) ;
+      CGAL_POLYOFFSET_TRACE(3,"Testing hook on " << e2str(*aBisector) 
+                           << "\n  Next: " << e2str(*lNext) 
+                           << "\n  Prev: " << e2str(*lPrev) 
+                           ) ;
       
       Comparison_result lCNext = lNext->is_bisector() ? Compare_offset_against_event_time(aTime,aBisector,lNext)
                                                       : SMALLER ;
@@ -95,10 +98,10 @@ Polygon_offset_builder_2<Ss,Gt,Cont>::LocateSeed( FT aTime )
        ; ++ f
       )
   {
-    CGAL_POLYOFFSET_TRACE(3,"Locating hook for face E" << (*f)->id() ) ;
+    CGAL_POLYOFFSET_TRACE(3,"Locating hook for face E" << e2str(**f) ) ;
     rSeed = LocateHook(aTime,(*f)->next());
   }
-  CGAL_POLYOFFSET_TRACE(3,"Seed found on B" << ( handle_assigned(rSeed) ? rSeed->id() : -1 ) ) ;
+  CGAL_POLYOFFSET_TRACE(3,"Seed found on B" << ( handle_assigned(rSeed) ? e2str(*rSeed) : "<none>" ) ) ;
   return rSeed;
 }
 
@@ -112,7 +115,7 @@ void Polygon_offset_builder_2<Ss,Gt,Cont>::AddOffsetVertex( FT aTime, Halfedge_c
   if ( !lP )
     throw std::range_error("CGAL_POLYGON_OFFSET: Overflow during construction of offset vertex" ) ; // Caught by the main loop
     
-  CGAL_POLYOFFSET_TRACE(3,"Constructing offset point along B" << aHook->id() ) ;
+  CGAL_POLYOFFSET_TRACE(1,"Constructing offset point along B" << e2str(*aHook) ) ;
 
   aPoly->push_back(*lP);
 }
@@ -135,7 +138,8 @@ OutputIterator Polygon_offset_builder_2<Ss,Gt,Cont>::TraceOffsetPolygon( FT aTim
 
     if ( handle_assigned(lHook) )
     {
-      AddOffsetVertex(aTime,lHook,lPoly);
+      if ( lHook != aSeed )
+        AddOffsetVertex(aTime,lHook,lPoly);
 
       Halfedge_const_handle lNextBisector = lHook->opposite();
 
@@ -152,6 +156,10 @@ OutputIterator Polygon_offset_builder_2<Ss,Gt,Cont>::TraceOffsetPolygon( FT aTim
   {
     CGAL_POLYOFFSET_TRACE(1,"Offset polygon of " << lPoly->size() << " vertices traced." ) ;
     *aOut++ = lPoly ;
+  }
+  else
+  {
+    CGAL_POLYOFFSET_TRACE(1,"Invalid offset polygon (less than 3 vertices) traced." ) ;
   }
 
   return aOut ;

@@ -46,7 +46,7 @@ bool sEnableTraitsTrace = false ;
      if ( sEnableTraitsTrace ) \
      { \
        std::ostringstream ss ; \
-       ss << std::setprecision(19) << m << std::ends ; \
+       ss << m ; \
        std::string s = ss.str(); \
        Straight_skeleton_traits_external_trace(s); \
      }
@@ -225,6 +225,13 @@ class Rational
 
     CGAL::Quotient<NT> to_quotient() const { return CGAL::Quotient<NT>(mN,mD) ; }
 
+    friend std::ostream& operator << ( std::ostream& os, Rational<NT> const& rat )
+    {
+      if ( ! CGAL_NTS is_zero(rat.d()) )
+           return os << n2str(rat.n()/rat.d());
+      else return os << "INF_RATIONAL" ;
+    }
+
   private:
 
     NT mN, mD ;
@@ -312,20 +319,11 @@ class Trisegment_2
       }  
       else
       {
-        return os << "{[(" 
-                  << aTrisegment.e0().source().x() << "," << aTrisegment.e0().source().y() 
-                  << ")->(" 
-                  << aTrisegment.e0().target().x() << "," << aTrisegment.e0().target().y()
-                  << ")] [(" 
-                  << aTrisegment.e1().source().x() << "," << aTrisegment.e1().source().y() 
-                  << ")->(" 
-                  << aTrisegment.e1().target().x() << "," << aTrisegment.e1().target().y()
-                  << ")] [(" 
-                  << aTrisegment.e2().source().x() << "," << aTrisegment.e2().source().y() 
-                  << ")->(" 
-                  << aTrisegment.e2().target().x() << "," << aTrisegment.e2().target().y()
-                  << ")]} " 
-                  << trisegment_collinearity_to_string(aTrisegment.collinearity()) ;
+        return os << "[" << s2str(aTrisegment.e0())
+                  << " " << s2str(aTrisegment.e1())
+                  << " " << s2str(aTrisegment.e2())
+                  << " " << trisegment_collinearity_to_string(aTrisegment.collinearity()) 
+                  << "]";
       }
     }
 
@@ -414,7 +412,7 @@ class Seeded_trisegment_2
   
     friend std::ostream& operator << ( std::ostream& os, Seeded_trisegment_2<K> const& st )
     {
-      return os << st.event()
+      return os << "Event=" << st.event()
                 << "\n  LSeed=" << st.lseed()
                 << "\n  RSeed=" << st.rseed() ;
                 

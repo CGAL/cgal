@@ -1,4 +1,4 @@
-./data
+./data/
 degenerate2.poly
 degenerate0.poly
 consecutive_coincident_vertices_0.poly
@@ -109,3 +109,7 @@ degenerate21.poly
 sample_298.poly
 sample_85.poly
 sample_102.poly
+four_squares.poly
+anchor.poly
+complex_6.poly
+
