@@ -554,13 +554,13 @@ facet_ridge_type(const Facet_const_handle f, Halfedge_const_handle& he1, Halfedg
   else is_elliptic = tag_as_elliptic_hyperbolic(MIN_RIDGE, he1, he2);
   
   if (r_type == MAX_RIDGE) 
-    if (is_elliptic) return MAX_ELLIPTIC_RIDGE;
-    else return MAX_HYPERBOLIC_RIDGE; 
+    {if (is_elliptic) return MAX_ELLIPTIC_RIDGE;
+    else return MAX_HYPERBOLIC_RIDGE; }
   if (crest_color == MAX_CREST_RIDGE && is_elliptic) return MAX_CREST_RIDGE;
 
   if (r_type == MIN_RIDGE) 
-    if (is_elliptic) return MIN_ELLIPTIC_RIDGE;
-    else return MIN_HYPERBOLIC_RIDGE; 
+    {if (is_elliptic) return MIN_ELLIPTIC_RIDGE;
+    else return MIN_HYPERBOLIC_RIDGE; }
   if (crest_color == MIN_CREST_RIDGE && is_elliptic) return MIN_CREST_RIDGE;
   
   return NO_RIDGE;
@@ -573,7 +573,7 @@ void Ridge_approximation< TriangulatedSurfaceMesh, Vertex2FTPropertyMap , Vertex
 xing_on_edge(const Halfedge_const_handle he, bool& is_crossed, Ridge_interrogation_type color)
 {
   is_crossed = false;
-  FT sign;
+  FT sign = 0;
   FT b_p, b_q; // extremalities at p and q for he: p->q
   Vector_3  d_p = d1[he->opposite()->vertex()],
     d_q = d1[he->vertex()]; //ppal dir
@@ -761,7 +761,7 @@ addfront(Ridge_line* ridge_line,
     ((v_p_cur->point()-ORIGIN)*coord_cur + (v_q_cur->point()-ORIGIN)*(1-coord_cur));
 
   FT k1x, k2x; //abs value of the ppal curvatures at the Xing point on he.
-  FT k_second; // abs value of the second derivative of the curvature
+  FT k_second = 0.; // abs value of the second derivative of the curvature
                // along the line of curvature
   k1x = CGAL::abs(k1[v_p]) * coord + CGAL::abs(k1[v_q]) * (1-coord) ;   
   k2x = CGAL::abs(k2[v_p]) * coord + CGAL::abs(k2[v_q]) * (1-coord) ;   
@@ -794,7 +794,7 @@ typename TriangulatedSurfaceMesh::Traits::FT
 Ridge_approximation< TriangulatedSurfaceMesh, Vertex2FTPropertyMap , Vertex2VectorPropertyMap  >::
 bary_coord(const Halfedge_const_handle he, const Ridge_type r_type)
 {
-  FT b_p, b_q; // extremalities at p and q for he: p->q
+  FT b_p = 0., b_q = 0.; // extremalities at p and q for he: p->q
   if ( (r_type == MAX_ELLIPTIC_RIDGE) 
        || (r_type == MAX_HYPERBOLIC_RIDGE) 
        || (r_type == MAX_CREST_RIDGE) ) {
