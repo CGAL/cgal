@@ -5,153 +5,141 @@
 
 \ccDefinition
 
-An instance of this class represents an extension of the type \ccc{NT} by a 
-square root of the type \ccc{ROOT}. 
-In case \ccc{NT} and \ccc{ROOT} do not coincide, 
-\ccc{NT} must be constructible from \ccc{ROOT}. 
-The type \ccc{NT} must be at least a model of the concept 
-\ccc{IntegralDomainWithoutDivision}. 
-In case \ccc{NT} is a model of \ccc{RealEmbeddable} the instance is also 
-\ccc{RealEmbeddable}.
+An instance of this class represents an extension of the type \ccc{NT} by
+\textbf{one} square root of the type \ccc{ROOT}. \\ 
+\ccc{NT} is required to be constructible from \ccc{ROOT}. \\
+\ccc{NT} is required to be an \ccc{IntegralDomainWithoutDivision}. \\
+\ccRefName\ is \ccc{RealEmbeddable} if NT is  \ccc{RealEmbeddable}.
 
-For example let \ccc{Integer} be some type representing $\Z$, then 
-\ccc{Sqrt_extension<Integer,Integer>} is able to represent $\Z[\sqrt{discr}]$
-for some arbitrary value $discr$. The value of $discr$ is set at 
-construction time, or left open if $discr$ is not specified.
-Unfortunately, it is not possible
-to interoperate two values from two different extensions $\Z[\sqrt{a}]$ and 
-$\Z[\sqrt{b}]$,
-since the result is in $\Z[\sqrt{a},\sqrt{b}]$, which is not representable by 
-\ccc{Sqrt_extension<Integer,Integer>}. 
-However, both \ccc{NT} and \ccc{ROOT} can themselves be an instance of
-\ccc{Sqrt_extension}, yielding a nested extension,
-e.g. \ccc{Sqrt_extension<Sqrt_extension<Integer,Integer>,Integer>} is able to represent 
-$\Z[\sqrt{a}][\sqrt{b}]$ form some integers $a$ and $b$. 
+For example: Let \ccc{Integer} be some type representing $\Z$, then 
+\ccc{Sqrt_extension<Integer,Integer>} is able to represent $\Z[\sqrt{root}]$
+for some arbitrary value $root$. The value of $root$ is set at 
+construction time, or left open if $root$ is not specified.
+
+\textbf {It is not possible to interoperate two values from two different 
+extensions $\Z[\sqrt{a}]$ and $\Z[\sqrt{b}]$, since the result is in 
+$\Z[\sqrt{a},\sqrt{b}]$, which is not representable by 
+\ccc{Sqrt_extension<Integer,Integer>}. }
+
+%However, both \ccc{NT} and \ccc{ROOT} can themselves be an instance of
+%\ccc{Sqrt_extension}, yielding a nested extension, e.g.,
+%\ccc{Sqrt_extension<Sqrt_extension<Integer,Integer>,Integer>} is able to represent 
+%$\Z[\sqrt{a}][\sqrt{b}]$ for some integers $a$ and $b$. 
 
 
-We recommend to use this type for lengthy computations over one (or a few) quadratic 
-extension, e.g. it can be used as coefficient type for polynomials, 
-vectors or matrices. In particular it is preferable to use 
-\ccc{Sqrt_extension} in place of \ccc{leda_real} or \ccc{CORE::Expr}, 
-since it does not suffer from growing expression trees.
+\begin{ccAdvanced}
+ Since elements of \ccRefName\ that lie in different extensions 
+are not interoperable with respect to any arithmetic operations, the full
+ value range of \ccRefName\ does not represent an algebraic structure.
+ However, each subset of the value range that represents the extension of
+ NT by a particular square root is a valid algebraic structure, since 
+this subset is closed under all provided arithmetic  operations.
 
+From there, \ccRefName\ can be used as if it were a model of an algebraic structure concept, with the following correspondence:
 
-%motivate the type , with respect to leda:real 
-%\ccc{Sqrt_extension} is motivated due to the fact that
-%number types such as \ccc{leda_real} or \ccc{CORE::Expr} 
-%\footnote{ For a details discussion on these types see 
-%\cite{mn-lpcgc-00, klpy-clp-99}} 
-%being a model of the superior concept \ccc{FieldWithSqrt} should 
-%avoid to many arithmetic operations. As a consequence they should
-%not be use as the coefficient type of polynomials, since e.g. an polynomial gcd 
-%operation would cause large and thus slow expression trees.  
-%On the other hand, an object of \ccc{Sqrt_extension} represents an extension 
-%by one square root only.  
-%The type \ccc{Sqrt_extension} is thus predestinated to be used as the 
-%coefficient type of polynomials defined over a particular algebraic extension 
-%of degree 2 or nested forms,  
-%optional remark 
-%in particular it is possible to use it as the coefficient type of an 
-%\ccc{NiX::Algebraic\_real}.
+\begin{tabular}{ll}
+ NT & \ccRefName\  \\
+\hline \\
+\ccc{IntegralDomainWithoutDivision} & \ccc{IntegralDomainWithoutDivision}\\
+\ccc{IntegralDomain}                & \ccc{IntegralDomain}\\
+\ccc{UniqueFactorizationDomain}     & \ccc{IntegralDomain}\\
+\ccc{EuclideanRing}                 & \ccc{IntegralDomain}\\
+\ccc{Field}                         & \ccc{Field}\\
+\hline 
+\end{tabular}
 
-The table below shows the resulting algebraic category
-with respect to the algebraic category of \ccc{NT}.
+The extension of an \ccc{UniqueFactorizationDomain} or 
+\ccc{EuclideanRing} is just an \ccc{IntegralDomain}, since the extension in general destroys the unique factorization property, e.g., 
+\[10 = \sqrt{10} \cdot \sqrt{10} = 2 \cdot 5 \mbox{ over} \Z[\sqrt{10}]\]
 
-  \label{sqrt_extension:tabular_1}       
-  \begin{tabular}{|l|l|}
-        \hline
-        \ccc{NT} is model of:  &  \ccc{Sqrt_extension<NT,ROOT>} is model of:\\
-        \hline
-          \ccc{CGAL::IntegralDomainWithoutDivision} 
-                & \ccc{IntegralDomainWithoutDivision}\\     
-          \ccc{CGAL::IntegralDomain}    & \ccc{IntegralDomain}\\     
-          \ccc{CGAL::UniqueFactorizationDomain} 
-                & \ccc{IntegralDomain}\\     
-          \ccc{CGAL::EuclideanRing}     & \ccc{IntegralDomain}\\     
-          \ccc{CGAL::Field}             & \ccc{Field}\\     
-          \ccc{CGAL::FieldWithSqrt}     & \ccc{Field} (not recommended)\\
-          \ccc{CGAL::FieldWithKthRoot}  & \ccc{Field} (not recommended)\\
-          \ccc{CGAL::FieldWithRootOf}   & \ccc{Field} (not recommended)\\
-        \hline
-        \end{tabular}
-
-Note that the extension of an \ccc{UniqueFactorizationDomain} or 
-\ccc{EuclideanRing} is just an 
-\ccc{IntegralDomain}, since the extension in general destroys the unique 
-factorization property. \\
-For example take $\Z[\sqrt{10}]$:  
+%For example take $\Z[\sqrt{10}]$:  \\
 %as indicated by \cite{e-eacfcc-03} referring to \cite{hardy-wright,hasse}:
-For the fact that $2$, $5$, and $\sqrt{10}$ are irreducible elements 
-of $\Z[\sqrt{10}]$. It follows immediately that $\Z[\sqrt{10}]$ is not a 
-\ccc{UniqueFactorizationDomain}, 
-because \[10 = \sqrt{10} \cdot \sqrt{10} = 2 \cdot 5\] factors in two essentially
-different ways. \\
+%For the fact that $2$, $5$, and $\sqrt{10}$ are irreducible elements 
+%of $\Z[\sqrt{10}]$. It follows immediately that $\Z[\sqrt{10}]$ is not a 
+%\ccc{UniqueFactorizationDomain}, 
+%because \[10 = \sqrt{10} \cdot \sqrt{10} = 2 \cdot 5\]$ factors in two essentially
+%different ways. \\
 
+\textbf{ Note that the user is responsible for checking that the elements of 
+\ccRefName\ that are manipulated are actually in a same extension field. 
+If different extension fields are mixed together, 
+the code may crash at runtime!} \\
 
+%However, \ccRefName\ is useful for lengthy computations 
+%over one quadratic extension, e.g. it can be used as coefficient type for 
+%polynomials, vectors or matrices. In particular it may be preferable to use 
+%\ccc{Sqrt_extension} in place of \ccc{leda_real} or \ccc{CORE::Expr}, 
+%since it does not suffer from growing expression trees.
+
+\end{ccAdvanced}
+
+\ccIsModel 
+\begin{tabular}{ll}
+\ccc{Assignable}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+\ccc{FromIntConstructible}\\ 
+\ccc{EqualityComparable}\\
+\ccc{RealEmbeddable}    & if NT is \ccc{RealEmbeddable}\\
+\ccc{Fraction}          & if NT is a \ccc{Fraction}\\
+\end{tabular}
 %\begin{ccAdvanced}
 %\ccc{Sqrt_extension} is \ccc{Modularizable} in case \ccc{NT} is 
 %\ccc{Modularizable}.
 %\end{ccAdvanced}
 
-\ccIsModel
-\begin{tabular}{ll}
-\ccc{IntegralDomainWithoutDivision}& if \ccc{NT} is an
-        \ccc{IntegralDomainWithoutDivision}\\
-\ccc{IntegralDomain} &if \ccc{NT} is an \ccc{IntegralDomain}\\
-\ccc{Field} &if \ccc{NT} is a \ccc{Field}\\
-\ccc{RealEmbeddable} &if \ccc{NT} is \ccc{RealEmbeddable}\\
-\ccc{Fraction} &if \ccc{NT} is a \ccc{Fraction}\\
-\end{tabular}
-
 \ccCreation
-\ccCreationVariable{ext}
-\ccConstructor{Sqrt_extension ();}
+
+\ccCreationVariable{sqrt_extension}
+\ccConstructor{Sqrt_extension ();} 
         {Introduces an variable initialized with 0.}
+\ccConstructor{Sqrt_extension (const Sqrt_extension& x);}
+ 	{copy constructor.}
 \ccConstructor{Sqrt_extension (const int &i);}
-        {Explicit constructor from int.}
+        {Constructor from int.}
 \ccConstructor{Sqrt_extension (const NT &x);}
-        {Explicit constructor from type NT.}
+        {Constructor from type NT.}
 \ccConstructor{Sqrt_extension (int a0, int a1, int r);}
  	{Constructor from int: \ccVar $= a0 +a1 \cdot sqrt(r)$.}
 \ccConstructor{Sqrt_extension (NT a0, NT a1, ROOT r);}
  	{General constructor: \ccVar $= a0 + a1 \cdot sqrt(r)$.}
-\ccConstructor{Sqrt_extension (const Sqrt_extension& x);}
- 	{copy constructor.}
 
-\begin{ccAdvanced}
-\ccConstructor{
+\ccIgnore{
+        \begin{ccAdvanced}
+        \ccConstructor{
         template<class NTX> 
         Sqrt_extension (const NTX &x);}
         {Explicit constructor of \ccc{Sqrt_extension}, from any type NTX.\\
          \ccc{NT} must be constructible from \ccc{NTX}.}
-\ccConstructor{
+        \ccConstructor{
         template<class NTX,class ROOTX> 
         Sqrt_extension (const Sqrt_extension< NTX, ROOTX > &x);}
-        {Explicit constructor of \ccc{Sqrt_extension}, from \ccc{Sqrt_extension}<NTX,ROOTX>.\\
+        {Explicit constructor of \ccc{Sqrt_extension}, 
+        from \ccc{Sqrt_extension}<NTX,ROOTX>.\\
            \ccc{NT} must be constructible from \ccc{NTX}.\\
            \ccc{ROOT} must be constructible from \ccc{ROOTX}.}
-\ccConstructor{
+        \ccConstructor{
         template<class NTX,class ROOTX> 
         Sqrt_extension (NTX a0, NTX a1, ROOTX r);}
         {General constructor: \ccVar $= a0 + a1 \cdot sqrt(r)$.\\
          \ccc{NT} must be constructible from \ccc{NTX}.\\
          \ccc{ROOT} must be constructible from \ccc{ROOTX}.}
-\end{ccAdvanced}
+        \end{ccAdvanced}
+}
 
 \ccOperations
 
-An object of type \ccc{Sqrt_extension} is considered to be 
-represented by the following expression: $a0 + a1 * sqrt(root)$. 
-The following methods give access to these values:
+An object of type \ccc{Sqrt_extension} represent an expression of the form: 
+$a0 + a1 * sqrt(root)$. 
 
-\ccMethod{const NT & a0 () const ;    }{Access operator for a0, const.} \ccGlue
+\ccMethod{const NT & a0 () const ;    }{Const access operator for a0} \ccGlue
 %\ccMethod{NT & 	a0 ()    ;    }{Access operator for a0.}\ccGlue
-\ccMethod{const NT & a1 () const ;    }{Access operator for a1, const.}\ccGlue
+\ccMethod{const NT & a1 () const ;    }{Const access operator for a1}\ccGlue
 %\ccMethod{NT & 	a1 ()    ;    }{Access operator for a1.}\ccGlue
-\ccMethod{const ROOT & 	root () const;}{Access operator for root, const.}\ccGlue
+\ccMethod{const ROOT & 	root () const;}{Const access operator for root}\ccGlue
 %\ccMethod{ROOT & 	root ()  ;    }{Access operator for root.}
 
-Member functions:\\
+%Member functions:\\
 \ccMethod{bool is_extended () const;}
  	{Returns true in case root of \ccVar\ is not zero.  \\
          Note that $a1 == 0 $ does not imply $root == 0$. }   
