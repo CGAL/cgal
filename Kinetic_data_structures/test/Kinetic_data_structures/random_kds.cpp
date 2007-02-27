@@ -42,6 +42,12 @@ int main(int, char *[]) {
 	       rp<F>(r, r.get_int(0,5)));
       std::cout << pt << std::endl;
       tr.active_points_2_table_handle()->insert(pt);
+       if (i == 10) {
+	ds.set_has_certificates(true);
+	ds.audit();
+	ds.set_has_certificates(false);
+	tr.simulator_handle()->audit_events();
+      }
     }
     ds.set_has_certificates(true);
     ds.audit();
@@ -62,6 +68,12 @@ int main(int, char *[]) {
       Point pt(rp<F>(r, r.get_int(0,5)));
       std::cout << pt << std::endl;
       tr.active_points_1_table_handle()->insert(pt);
+      if (i == 10) {
+	//ds.set_has_certificates(true);
+	ds.audit();
+	//ds.set_has_certificates(false);
+	tr.simulator_handle()->audit_events();
+      }
     }
     std::cout << *tr.active_points_1_table_handle() << std::endl;
     ds.audit();
@@ -85,6 +97,12 @@ int main(int, char *[]) {
 	       rp<F>(r, r.get_int(0,5)));
       std::cout << pt << std::endl;
       tr.active_points_3_table_handle()->insert(pt);
+      if (i == 10) {
+	ds.set_has_certificates(true);
+	ds.audit();
+	ds.set_has_certificates(false);
+	tr.simulator_handle()->audit_events();
+      }
     }
     std::cout << *tr.active_points_3_table_handle() << std::endl;
     ds.set_has_certificates(true);
@@ -110,6 +128,13 @@ int main(int, char *[]) {
 	       rp<F>(r, r.get_int(0,5)));
       std::cout << pt << std::endl;
       tr.active_points_3_table_handle()->insert(pt);
+      ds.audit();
+      if (i == 10) {
+	ds.set_has_certificates(true);
+	ds.audit();
+	ds.set_has_certificates(false);
+	tr.simulator_handle()->audit_events();
+      }
     }
     std::cout << *tr.active_points_3_table_handle() << std::endl;
     ds.set_has_certificates(true);

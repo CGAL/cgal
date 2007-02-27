@@ -55,7 +55,8 @@ public:
     return id_ >=0;
   }
   unsigned int to_index() const {
-    CGAL_precondition(is_valid());
+    //CGAL_precondition(is_valid());
+    assert(is_valid()); // change to remove PDB dependency on libCGAL
     return id_;
   }
 

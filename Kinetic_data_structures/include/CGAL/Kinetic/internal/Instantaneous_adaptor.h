@@ -53,11 +53,13 @@ public:
   {
     result_type ret;
     //bool check;
-    if (rep_->time_is_nt()) {
+
+    if (rep_->time_is_nt() && !rep_->time_after()) {
       ret= pred_(rep_->static_object(arg0));
       //check= kpred_(rep_->kinetic_object(arg0), rep_->time());
     } else {
-      ret= static_cast<result_type>(kpred_(rep_->kinetic_object(arg0), rep_->time()));
+      ret= static_cast<result_type>(kpred_(rep_->kinetic_object(arg0), rep_->time(),
+					     rep_->time_after()));
     }
     return ret;
   }
@@ -65,7 +67,7 @@ public:
   result_type operator()(const first_argument_type &arg0,
 			 const second_argument_type &arg1) const
   {
-    if (rep_->time_is_nt()) {
+    if (rep_->time_is_nt() && !rep_->time_after()) {
       //std::cout << "Comparing " << arg0 << " and " << arg1 << " at time " << rep_->time() << std::endl;
       result_type ret= pred_(rep_->static_object(arg0), rep_->static_object(arg1));
       //std::cout << "Got " << ret << std::endl;
@@ -73,7 +75,8 @@ public:
       //CGAL_assertion(ret==check || ret== CGAL::ZERO);
       return ret;
     } else {
-      return static_cast<result_type>(kpred_(rep_->kinetic_object(arg0), rep_->kinetic_object(arg1), rep_->time()));
+      return static_cast<result_type>(kpred_(rep_->kinetic_object(arg0), rep_->kinetic_object(arg1), rep_->time()),
+					     rep_->time_after());
     }
   }
 
@@ -81,12 +84,13 @@ public:
 			 const second_argument_type &arg1,
 			 const third_argument_type &arg2) const
   {
-  if (rep_->time_is_nt()) {
+  if (rep_->time_is_nt() && !rep_->time_after()) {
     return pred_(rep_->static_object(arg0), rep_->static_object(arg1),
 		 rep_->static_object(arg2));
   } else {
       return static_cast<result_type>(kpred_(rep_->kinetic_object(arg0), rep_->kinetic_object(arg1),
-					     rep_->kinetic_object(arg2), rep_->time()));
+					     rep_->kinetic_object(arg2), rep_->time(),
+					     rep_->time_after()));
     }
   }
 
@@ -95,12 +99,13 @@ public:
 			 const third_argument_type &arg2,
 			 const fourth_argument_type &arg3) const
   {
-    if (rep_->time_is_nt()) {
+    if (rep_->time_is_nt() && !rep_->time_after()) {
       return pred_(rep_->static_object(arg0), rep_->static_object(arg1),
 		   rep_->static_object(arg2), rep_->static_object(arg3));
     } else {
       return static_cast<result_type>(kpred_(rep_->kinetic_object(arg0),rep_->kinetic_object(arg1),
-				rep_->kinetic_object(arg2), rep_->kinetic_object(arg3), rep_->time()));
+					     rep_->kinetic_object(arg2), rep_->kinetic_object(arg3), rep_->time(),
+					     rep_->time_after()));
     }
   }
 
@@ -110,14 +115,15 @@ public:
 			 const fourth_argument_type &arg3,
 			 const fifth_argument_type &arg4) const
   {
-    if (rep_->time_is_nt()) {
+    if (rep_->time_is_nt() && !rep_->time_after()) {
       return pred_(rep_->static_object(arg0), rep_->static_object(arg1),
 		   rep_->static_object(arg2), rep_->static_object(arg3),
 		   rep_->static_object(arg4));
     } else {
       return static_cast<result_type>(kpred_(rep_->kinetic_object(arg0),rep_->kinetic_object(arg1),
 					     rep_->kinetic_object(arg2), rep_->kinetic_object(arg3),
-					     rep_->kinetic_object(arg4), rep_->time()));
+					     rep_->kinetic_object(arg4), rep_->time(),
+					     rep_->time_after()));
     }
   }
 

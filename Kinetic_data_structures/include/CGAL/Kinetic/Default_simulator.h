@@ -156,7 +156,7 @@ public:
     // make it less than the current time.
     //std::pair<double, double> ival= to_interval(cur_time_);
     //audit_time_=NT(ival.first-10.0);
-    audit_time_= CGAL::to_interval(start_time).second+10;
+    audit_time_= CGAL::to_interval(start_time).second;
 #endif
   };
 
@@ -361,6 +361,7 @@ public:
     if (CGAL::compare(Time(audit_time_), t) != CGAL::SMALLER && has_audit_time() ) {
       compute_audit_time(current_time());
     }
+    //if (key != null_event()) audit_event(key);
 #endif
 
     return key;
@@ -535,6 +536,10 @@ public:
     queue_.clear();
   }
 
+  void audit_events() const {
+    queue_.audit_events();
+  }
+
   void audit_event(Event_key k) const {
     if (k!= null_event()) {
       CGAL_assertion(k != Event_key());
@@ -544,6 +549,7 @@ public:
       }
 #endif
       CGAL_assertion(queue_.contains(k));
+      queue_.audit_event(k);
     }
   }
 

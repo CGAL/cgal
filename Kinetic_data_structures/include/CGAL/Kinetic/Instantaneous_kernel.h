@@ -64,7 +64,7 @@ public:
   }
   
   template <class T>
-  void set_time(const T &t) {
+  void set_time(const T &t, bool limit) {
     if (!initialized_) {
       time_is_nt_=false;
       time_=t;
@@ -78,9 +78,10 @@ public:
       }
     }
     initialized_=true;
+    after_=limit;
   }
 
- void set_time(const NT &t)
+  void set_time(const NT &t, bool limit)
   {
     if (!initialized_) {
       time_is_nt_=true;
@@ -97,9 +98,16 @@ public:
       }
     }
     initialized_=true;
+    after_=limit;
   }
 
+  bool time_after() const {
+    return after_;
+  }
 
+  bool initialized() const {
+    return initialized_;
+  }
   bool time_is_nt() const {
     return time_is_nt_;
   }
@@ -224,6 +232,7 @@ protected:
     typename Static_kernel::Weighted_point_3> cache_w3_;*/
   NT time_nt_;
   Time time_;
+  bool after_;
 };
 
 
@@ -245,12 +254,23 @@ public:
   template <class N>
   void set_time(const N &cur_time) const
   {
-    rep_->set_time(cur_time);
+    rep_->set_time(cur_time, false);
   }
 
   void set_time(const Time &cur_time) const
   {
-    rep_->set_time(cur_time);
+    rep_->set_time(cur_time, false);
+  }
+
+  template <class N>
+  void set_time_to_after(const N &cur_time) const
+  {
+    rep_->set_time(cur_time, true);
+  }
+
+  void set_time_to_after(const Time &cur_time) const
+  {
+    rep_->set_time(cur_time, true);
   }
  
   bool time_is_nt() const {
@@ -264,7 +284,13 @@ public:
   
   const Time & time() const
   {
+   
     return rep_->time();
+   
+  }
+
+  bool has_time() const {
+    return rep_->initialized();
   }
 
   typedef typename Static_kernel::RT RT;

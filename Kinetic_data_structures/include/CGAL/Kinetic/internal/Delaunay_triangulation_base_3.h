@@ -207,6 +207,7 @@ public:
   typedef typename TraitsT::Simulator Simulator;
   typedef typename TraitsT::Active_points_3_table Moving_object_table;
   typedef typename TraitsT::Kinetic_kernel Kinetic_kernel;
+  typedef typename TraitsT::Instantaneous_kernel Instantaneous_kernel;
   //typedef typename Simulator::Time Time;
   typedef typename Moving_object_table::Key Point_key;
   typedef typename Moving_object_table::Data Point;
@@ -414,9 +415,22 @@ public:
     /* NT nt= simulator()->next_time_representable_as_nt();
     simulator()->set_current_time(nt);
     triangulation_.geom_traits().set_time(nt);*/
-    typename Simulator::NT nt= simulator()->next_time_representable_as_nt();
-    simulator()->set_current_time(nt);
+    set_instantaneous_time();
+    //typename Simulator::NT nt= simulator()->next_time_representable_as_nt();
+    //simulator()->set_current_time(nt);
+    std::cout << "Locating at time " << triangulation_.geom_traits().time() << std::endl;
     Cell_handle h= triangulation_.locate(k);
+    if (h != Cell_handle() && h->vertex(0) != Vertex_handle()
+	       && h->vertex(1) != Vertex_handle()
+	       && h->vertex(2) != Vertex_handle()
+	       && h->vertex(3) != Vertex_handle()) {
+      std::cout << "Kinetic located in " << h->vertex(0)->point() << " "
+		<< h->vertex(1)->point() << " "
+		<< h->vertex(2)->point() << " "
+		<< h->vertex(3)->point() << std::endl;
+    } else {
+      std::cout << "Kinetic located outside hull" << std::endl;
+      }
     return insert(k,h);
   }
 
@@ -440,17 +454,21 @@ public:
     //typename Simulator::NT nt= simulator()->next_time_representable_as_nt();
     //CGAL_precondition(simulator()->current_time() == nt);
     //triangulation_.geom_traits().set_time(nt);
-    typename Simulator::NT nt= simulator()->next_time_representable_as_nt();
-    if (simulator()->current_time() == nt) {
-      triangulation_.geom_traits().set_time(nt);
-    } else {
-      CGAL_KINETIC_LOG(LOG_SOME, "Warning, insertion of points at non-rationl times is slow.\n");
-      triangulation_.geom_traits().set_time(simulator()->current_time());
-    }
+    set_instantaneous_time();
     CGAL_precondition(triangulation_.geom_traits().time() == simulator()->current_time());
     Vertex_handle vh;
     v_.pre_insert_vertex(k, h);
     if (triangulation_.dimension() == 3) {
+      typename Instantaneous_kernel::Current_coordinates cco= triangulation_.geom_traits().current_coordinates_object();
+      for (unsigned int i=0; i<4; ++i) {
+	if (h->vertex(i)->point() != Point_key() && cco(h->vertex(i)->point()).point() 
+	    == cco(k).point()) {
+	  CGAL_KINETIC_LOG(LOG_SOME, "Point " << k << " is on point " 
+		       << h->vertex(i)->point() << "\n");
+	  return h->vertex(i);
+	}
+      }
+
       triangulation_.find_conflicts(k, h, back_inserter(bfacets), 
 				    back_inserter(cells),back_inserter(ifacets));
       if (has_certificates_) {
@@ -462,7 +480,8 @@ public:
    
       //! \todo replace by insert_in_hole
 
-      CGAL_KINETIC_LOG(LOG_LOTS, "Inserting.\n");
+      CGAL_KINETIC_LOG(LOG_LOTS, "Inserting " << k << " at time " 
+		       << triangulation_.geom_traits().time() << "\n");
       vh=triangulation_.insert_in_hole(k, cells.begin(), cells.end(), 
 						     bfacets.front().first, bfacets.front().second);
     } else {
@@ -481,6 +500,27 @@ public:
   bool has_certificates() const
   {
     return has_certificates_;
+  }
+
+  void set_instantaneous_time(bool after=false) const {
+    if (!triangulation_.geom_traits().has_time() || triangulation_.geom_traits().time() != simulator()->current_time()) {
+      typename Simulator::NT nt= simulator()->next_time_representable_as_nt();
+      
+      if (simulator()->current_time() == nt) {
+	if (after) {
+	  triangulation_.geom_traits().set_time_to_after(nt);
+	} else {
+	  triangulation_.geom_traits().set_time(nt);
+	}
+      } else {
+	CGAL_KINETIC_LOG(LOG_SOME, "Warning, insertion of points at non-rational times is slow.\n");
+	if (after) {
+	  triangulation_.geom_traits().set_time_to_after(simulator()->current_time());
+	} else {
+	  triangulation_.geom_traits().set_time(simulator()->current_time());
+	}
+      }
+    }
   }
 
   void set_has_certificates(bool b) {
@@ -730,7 +770,7 @@ public:
   void audit() const
   {
     CGAL_KINETIC_LOG(LOG_SOME, "Verifying at time " << simulator()->audit_time() << ".\n");
-    triangulation_.geom_traits().set_time(simulator()->audit_time());
+    set_instantaneous_time();
     //CGAL_precondition(triangulation_.geom_traits().time()== simulator()->audit_time());
     //triangulation_.geom_traits().set_time(simulator().rational_current_time());
     audit_structure();
@@ -874,6 +914,7 @@ public:
     Certificate s= root_stack(e, st);
     if (s.will_fail()) {
       typename Simulator::Time t= s.failure_time();
+      CGAL_KINETIC_LOG(LOG_LOTS, "Failure time is " << t << std::endl);
       s.pop_failure_time();
       if (s.will_fail()) {
 	CGAL_KINETIC_LOG(LOG_LOTS, "Next root of this cert is " << s.failure_time() << std::endl);
@@ -975,9 +1016,15 @@ private:
       }
     } while(++fc != fe);
   }
-
-
-
+public:
+  Point_key replace_vertex(Vertex_handle vh, Point_key k) {
+    Point_key ok= vh->point();
+    vh->point()=k;
+    vhs_[ok.to_index()]= Vertex_handle();
+    vhs_[k.to_index()]= vh;
+    return ok;
+  }
+protected:
   bool has_event(const Edge &e) const
   {
     return triangulation_.label(e) != Event_key();

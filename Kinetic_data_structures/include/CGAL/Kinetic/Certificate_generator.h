@@ -54,24 +54,44 @@ struct Certificate_generator {
 
 
   template <class A, class B, class C, class D, class E>
-  CGAL::Sign operator()(const A &a, const B &b, const C &c, const D &d, const E &e, const Time &begin) const {
-    return sign_after(gen_(a, b, c, d, e), begin);
+  CGAL::Sign operator()(const A &a, const B &b, const C &c, const D &d, const E &e, const Time &begin, bool after=false) const {
+    if (after) {
+      return sign_after(gen_(a, b, c, d, e), begin);
+    } else {
+      return sign_at(gen_(a,b,c,d,e), begin);
+    }
   }
   template <class A, class B, class C, class D>
-  CGAL::Sign operator()(const A &a, const B &b, const C &c, const D &d, const Time &begin) const {
-    return sign_after(gen_(a, b, c, d), begin);
+  CGAL::Sign operator()(const A &a, const B &b, const C &c, const D &d, const Time &begin, bool after=false) const {
+    if (after) {
+      return sign_after(gen_(a, b, c, d), begin);
+    } else {
+      return sign_at(gen_(a,b,c,d), begin);
+    }
   }
   template <class A, class B, class C>
-  CGAL::Sign operator()(const A &a, const B &b, const C &c, const Time &begin) const {
-    return sign_after(gen_(a, b, c), begin);
+  CGAL::Sign operator()(const A &a, const B &b, const C &c, const Time &begin, bool after=false) const {
+    if (after) {
+      return sign_after(gen_(a, b, c), begin);
+    } else {
+      return sign_at(gen_(a,b,c), begin);
+    }
   }
   template <class A, class B>
-  CGAL::Sign operator()(const A &a, const B &b, const Time &begin) const {
-    return sign_after(gen_(a, b), begin);
+  CGAL::Sign operator()(const A &a, const B &b, const Time &begin, bool after=false) const {
+    if (after) {
+      return sign_after(gen_(a, b), begin);
+    } else {
+      return sign_at(gen_(a, b), begin);
+    }
   }
   template <class A>
-  CGAL::Sign operator()(const A &a, const Time &begin) const {
-    return sign_after(gen_(a), begin);
+  CGAL::Sign operator()(const A &a, const Time &begin, bool after=false) const {
+    if (after) {
+      return sign_after(gen_(a), begin);
+    } else {
+      return sign_at(gen_(a), begin);
+    }
   }
 
 protected:
@@ -79,7 +99,10 @@ protected:
 			const Time &t) const {
     return fk_.sign_after_object()(f,t);
   }
-
+  CGAL::Sign sign_at(const typename KK_t::Function_kernel::Function &f,
+			const Time &t) const {
+    return fk_.sign_at_object()(f,t);
+  }
   
   Generator gen_;
   typename KK_t::Function_kernel fk_;

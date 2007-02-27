@@ -601,6 +601,10 @@ public:
     }
   }
 
+  void audit_event(Key k) const {
+    k->audit(k);
+  }
+
   void clear() {
     front_.clear();
     back_.clear();
@@ -787,7 +791,8 @@ protected:
       //ub_=end_split();
       }*/
 
-    unsigned int num= select(cand, front_/*, all_in_front_*/);
+    CGAL_assertion_code(unsigned int num=)
+      select(cand, front_/*, all_in_front_*/);
     CGAL_assertion(front_.size() >= num);
     /*if (all_in_front_) {
       make_inf(cand, cand.begin(), cand.end());

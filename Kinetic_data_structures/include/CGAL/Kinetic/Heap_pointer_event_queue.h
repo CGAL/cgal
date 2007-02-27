@@ -267,6 +267,10 @@ public:
     }
   }
 
+  void audit_event(Key k) const {
+    k->audit(k);
+  }
+
   //! insert value_type into the queue and return a reference to it
   /*!
     The reference can be used to update or erase it.
