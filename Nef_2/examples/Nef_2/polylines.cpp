@@ -22,7 +22,7 @@ typedef Explorer::Vertex_const_handle Vertex_const_handle;
 int main() 
 {
   Point r1[3] = { Point(20,15), Point(25,5), Point(30,15) };
-  Point s1[3] = { Point(40,15), Point(40,5) };
+  //Point s1[3] = { Point(40,15), Point(40,5) };
   Point t1[3] = { Point(20,10), Point(30,10), Point(25, 15) };
 
   std::list<std::pair<Point*,Point*> > polylines;
