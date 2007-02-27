@@ -983,8 +983,7 @@ set_compiler_flags()
 	    CGAL_SHARED_LIB_CXXFLAGS="-fno-common"
 	    CGAL_SHARED_LIB_CREATE="\$(CGAL_CXX) -dynamiclib"
 	    CGAL_SHARED_LIB_INSTALL_NAME="-install_name \$(CGAL_LIB_DESTINATION)/\$(CGAL_SHARED_LIBNAME)"
-	    CGAL_SHARED_LIB_EXT=".so"
-# was ".dylib"
+	    CGAL_SHARED_LIB_EXT=".dylib"
 	    RANLIB="ranlib"
 	    ;;
 	*mwcc.exe*|*MWCC*)
