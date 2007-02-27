@@ -587,7 +587,7 @@ namespace Residue_data {
 
     unsigned int max_atoms=0;
     for (unsigned int i=0;atom_fallback_data_[i].l != Residue::AL_INVALID; ++i){
-      max_atoms= std::max(max_atoms, static_cast<unsigned int>(atom_fallback_data_[i].l));
+      max_atoms= (std::max)(max_atoms, static_cast<unsigned int>(atom_fallback_data_[i].l));
     }
     clean_atom_fallbacks_.resize(max_atoms+1);
 

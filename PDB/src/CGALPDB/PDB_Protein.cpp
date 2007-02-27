@@ -119,8 +119,8 @@ Protein::Graph Protein::graph() const {
     for (Residue::Bonds_iterator bit= r.bonds_begin(); bit != r.bonds_end(); ++bit){
       edges.push_back(std::pair<int,int>(bit->first,
 					 bit->second));
-      max_index= std::max(max_index, bit->first);
-      max_index= std::max(max_index, bit->second);
+      max_index= (std::max)(max_index, bit->first);
+      max_index= (std::max)(max_index, bit->second);
     }
     if (i!= 0){
       edges.push_back(std::pair<int,int>(r.atom(Residue::AL_N).index(),

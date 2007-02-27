@@ -193,7 +193,7 @@ Atom::Index Residue::last_atom_index() const {
   Atom::Index max= atoms_.begin()->second.index();
   for ( Const_atoms_iterator it= atoms_.begin(); it != atoms_.end();
 	++it) {
-    max= std::max(max, it->second.index());
+    max= (std::max)(max, it->second.index());
   }
     
   return max;
