@@ -39,7 +39,7 @@ The following example constructs the arrangement depicted in
 Figure~\ref{arr_fig:ex_5} and writes it to an output file. It also
 demonstrates how to re-read the arrangement from a file:
 
-\ccIncludeExampleCode{Arrangement_2/ex_io.cpp}
+\ccIncludeExampleCode{Arrangement_2/io.cpp}
 
 \begin{ccAdvanced}
 \subsection{Arrangements with Auxiliary Data\label{arr_ssec:arr_io_aux_data}}
@@ -84,12 +84,12 @@ and faces, provided that the \ccc{VertexData}, \ccc{HalfedgeData} and
 \end{itemize}
 
 The following example constructs the same arrangement as the
-example \ccc{ex_dcel_extension} does
+example \ccc{dcel_extension} does
 (see Section~\ref{arr_ssec:ex_dcel_all}), depicted in
 Figure~\ref{arr_fig:ex_20}, and writes it to an output file. It also
 demonstrates how to re-read the arrangement from a file:
 
-\ccIncludeExampleCode{Arrangement_2/ex_dcel_extension_io.cpp}
+\ccIncludeExampleCode{Arrangement_2/dcel_extension_io.cpp}
 
 You may develop your own own formatter classes --- models of the
 \ccc{ArrangementInputFormatter} and \ccc{ArrangementOutputFormatter}
@@ -118,12 +118,12 @@ class --- as well as the \ccc{Point_2} type and the \ccc{X_monotone_curve_2}
 types --- support the \ccc{<<} and\ccc{>>} operators.
 
 The following example constructs the same arrangement as example
-\ccc{ex_curve_history} does
+\ccc{curve_history} does
 (see Section~\ref{arr_ssec:arr_hist_ex}), depicted in 
 Figure~\ref{arr_fig:ex_24}, and writes it to an output file. It also
 demonstrates how to re-read the arrangement-with-history from a file:
 
-\ccIncludeExampleCode{Arrangement_2/ex_io_curve_history.cpp}
+\ccIncludeExampleCode{Arrangement_2/io_curve_history.cpp}
 
 \begin{ccAdvanced}
 The arrangement package also includes the free functions

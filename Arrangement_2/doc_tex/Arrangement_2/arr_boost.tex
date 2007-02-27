@@ -89,7 +89,7 @@ is modified in between these calls.
   </center>
 \end{ccHtmlOnly}
 \caption{An arrangement of 7 line segments, as constructed by
-\ccc{ex_bgl_primal_adapter.cpp} and \ccc{ex_bgl_dual_adapter.cpp}.
+\ccc{bgl_primal_adapter.cpp} and \ccc{bgl_dual_adapter.cpp}.
 The breadth-first visit times for the arrangement faces, starting
 from the unbounded face $f_0$, are shown is brackets.}
 \label{arr_fig:ex_bgl}
@@ -103,7 +103,7 @@ arrangement $v_0$. Note the usage of the \ccc{Arr_vertex_index_map} and
 the \ccc{Arr_vertex_property_map} classes. The latter one, instantiated by
 the type \ccc{double} is used to map vertices to their distances from $v_0$.
 
-\ccIncludeExampleCode{Arrangement_2/ex_bgl_primal_adapter.cpp}
+\ccIncludeExampleCode{Arrangement_2/bgl_primal_adapter.cpp}
 
 \subsection{The Dual Arrangement Representation\label{arr_ssec:bgl_dual}}
 %-----------------------------------------------
@@ -134,11 +134,11 @@ efficient mapping of face handles to indices. We also provide the template
 data with the arrangement faces.
 
 In the following example we construct the same arrangement as in
-example \ccc{ex_bgl_primal_adapter.cpp} (see Figure~\ref{arr_fig:ex_bgl}),
+example \ccc{bgl_primal_adapter.cpp} (see Figure~\ref{arr_fig:ex_bgl}),
 and perform breadth-first search on the graph faces, starting from the
 unbounded face. We extend the \dcel\ faces
 with an unsigned integer, marking the discover time of the face and use a
 breadth-first-search visitor to obtain these times and update the faces
 accordingly:
 
-\ccIncludeExampleCode{Arrangement_2/ex_bgl_dual_adapter.cpp}
+\ccIncludeExampleCode{Arrangement_2/bgl_dual_adapter.cpp}

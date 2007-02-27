@@ -57,11 +57,11 @@ modified and sets its data field accordingly.
   </center>
 \end{ccHtmlOnly}
 \caption{An arrangement of six line segments, as constructed in
-\ccc{ex_face_extension.cpp} and \ccc{ex_dcel_extension.cpp}
-(in \ccc{ex_dcel_extension.cpp} we treat
+\ccc{face_extension.cpp} and \ccc{dcel_extension.cpp}
+(in \ccc{dcel_extension.cpp} we treat
 the segments as directed, so they are drawn as arrows directed from the
 source to the target). The indices associated with the halfedges in
-\ccc{ex_face_extension.cpp} are shown in brackets.\label{arr_fig:ex_20}}
+\ccc{face_extension.cpp} are shown in brackets.\label{arr_fig:ex_20}}
 \end{figure}
 
 The next example constructs an arrangement that contains seven bounded 
@@ -75,7 +75,7 @@ attached to an empty arrangement. It is not difficult however to modify
 the program to handle the general case of attaching a similar observer
 to a non-empty arrangement.}
 
-\ccIncludeExampleCode{Arrangement_2/ex_face_extension.cpp}
+\ccIncludeExampleCode{Arrangement_2/face_extension.cpp}
 
 \subsection{Extending All \dcel\ Records\label{arr_ssec:ex_dcel_all}}
 %----------------------------------------
@@ -106,7 +106,7 @@ Note that all auxiliary data fields are set during the construction phase.
 Also note that the data fields are properly maintained when the arrangement
 is copied to another arrangement instance:
  
-\ccIncludeExampleCode{Arrangement_2/ex_dcel_extension.cpp}
+\ccIncludeExampleCode{Arrangement_2/dcel_extension.cpp}
 
 \begin{ccAdvanced}
 The various \dcel\ classes presented in this section are perfectly

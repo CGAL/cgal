@@ -511,7 +511,7 @@ from $v_1$ to $v_2$.
   </center>
 \end{ccHtmlOnly}
 \caption{The arrangement of the line segments $s_1, \ldots, s_5$
-constructed in \ccc{ex_edge_insertion.cpp}. The arrows mark the direction of
+constructed in \ccc{edge_insertion.cpp}. The arrows mark the direction of
 the halfedges returned from the various insertion
 functions.\label{arr_fig:ex_1}}
 \end{figure}
@@ -531,7 +531,7 @@ many others in this chapter, uses some print-utility functions from
 the file \ccc{print_arr.h}; these functions are also listed in
 Section~\ref{arr_ssec:traverse}.
 
-\ccIncludeExampleCode{Arrangement_2/ex_edge_insertion.cpp}
+\ccIncludeExampleCode{Arrangement_2/edge_insertion.cpp}
 
 Observe that the first line segment is inserted in the interior of
 the unbounded face. The other line segments are inserted
@@ -571,7 +571,7 @@ an isolated vertex and removes it from the arrangement.
   </center>
 \end{ccHtmlOnly}
 \caption{An arrangement of line segments containing three isolated
-vertices, as constructed in \ccc{ex_isolated_vertices.cpp}. The vertices $u_2$
+vertices, as constructed in \ccc{isolated_vertices.cpp}. The vertices $u_2$
 and $u_3$ are eventually removed from the arrangement.\label{arr_fig:ex_2}}
 \end{figure}
 
@@ -584,7 +584,7 @@ illustration). Finally, it traverses the vertices and removes those
 isolated vertices that are still contained in the unbounded face
 ($u_2$ and $u_3$ in this case):
 
-\ccIncludeExampleCode{Arrangement_2/ex_isolated_vertices.cpp}
+\ccIncludeExampleCode{Arrangement_2/isolated_vertices.cpp}
 
 \subsubsection{Manipulating Halfedges\label{arr_sssec:mf_halfedges}}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -645,7 +645,7 @@ are to be removed should they become isolated.
   </center>
 \end{ccHtmlOnly}
 \caption{An arrangement of line segments as constructed
-in \ccc{ex_edge_manipulation.cpp}. Note that the edges $e_7$ and $e_8$ and the
+in \ccc{edge_manipulation.cpp}. Note that the edges $e_7$ and $e_8$ and the
 vertices $w_1$ and $w_2$, introduced in step~(b) are eventually
 removed in step~(c).\label{arr_fig:ex_3}}
 \end{figure}
@@ -672,7 +672,7 @@ kernel of \cgal\ as our kernel. This is recommended when the
 kernel is instantiated with a more complex number type, as we
 demonstrate in other examples in this chapter.
 
-\ccIncludeExampleCode{Arrangement_2/ex_edge_manipulation.cpp}
+\ccIncludeExampleCode{Arrangement_2/edge_manipulation.cpp}
 
 Note how we use the halfedge handles returned from
 \ccc{split_edge()} and \ccc{merge_edge()}. Also note the insertion
@@ -771,7 +771,7 @@ vertex.
   </center>
 \end{ccHtmlOnly}
 \caption{An arrangement of line segments, as constructed in
-\ccc{ex_special_edge_insertion.cpp}. Note that $p_0$ is initially inserted
+\ccc{special_edge_insertion.cpp}. Note that $p_0$ is initially inserted
 as an isolated point and later on connected to the other four
 vertices.\label{arr_fig:ex_4}}
 \end{figure}
@@ -780,7 +780,7 @@ The following program shows how to construct the arrangement
 depicted in Figure~\ref{arr_fig:ex_4} using the specialized
 insertion functions that accept predecessor halfedges:
 
-\ccIncludeExampleCode{Arrangement_2/ex_special_edge_insertion.cpp}
+\ccIncludeExampleCode{Arrangement_2/special_edge_insertion.cpp}
 
 It is possible to perform even more refined operations on an
 \ccc{Arrangement_2} instance given specific topological information.

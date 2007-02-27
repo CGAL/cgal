@@ -202,8 +202,8 @@ selected point-location strategy.
   </center>
 \end{ccHtmlOnly}
 \caption{The arrangement of line segments, as constructed in
-\ccc{ex_point_location.cpp}, \ccc{ex_vertical_ray_shooting.cpp}, and
-\ccc{ex_batched_point_location.cpp}. The
+\ccc{point_location.cpp}, \ccc{vertical_ray_shooting.cpp}, and
+\ccc{batched_point_location.cpp}. The
 arrangement vertices are drawn as small discs, while the query
 points $q_1, \ldots, q_6$ are marked with crosses.\label{arr_fig:ex_5}}
 \end{figure}
@@ -217,7 +217,7 @@ can be found in \ccc{point_location_utils.h}).
 It then employs the \naive\ and the landmark strategies to issue
 several point-location queries on this arrangement:
 
-\ccIncludeExampleCode{Arrangement_2/ex_point_location.cpp}
+\ccIncludeExampleCode{Arrangement_2/point_location.cpp}
 
 Note that the program uses the auxiliary
 \ccc{point_location_query()} function template to nicely print the
@@ -297,9 +297,9 @@ void vertical_ray_shooting_query
 The following program uses the auxiliary function listed above to
 perform vertical ray-shooting queries on an arrangement.
 The arrangement and the query points are exactly the same as in
-\ccc{ex_point_location.cpp} (see Figure~\ref{arr_fig:ex_5}):
+\ccc{point_location.cpp} (see Figure~\ref{arr_fig:ex_5}):
 
-\ccIncludeExampleCode{Arrangement_2/ex_vertical_ray_shooting.cpp}
+\ccIncludeExampleCode{Arrangement_2/vertical_ray_shooting.cpp}
 
 The number type we use in this example is \cgal's built-in
 \ccc{MP_Float} type which is a floating-point number with an
@@ -341,6 +341,6 @@ additional data structures.
 
 The following program issues a batched point-location query, which
 is essentially equivalent to the six separate queries performed in
-\ccc{ex_point_location.cpp} (see Section~\ref{arr_ssec:pl}):
+\ccc{point_location.cpp} (see Section~\ref{arr_ssec:pl}):
 
-\ccIncludeExampleCode{Arrangement_2/ex_batched_point_location.cpp}
+\ccIncludeExampleCode{Arrangement_2/batched_point_location.cpp}
