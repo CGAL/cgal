@@ -69,6 +69,10 @@ struct CORE_polynomial {
     return true;
   }
   
+  void contract()  {
+    p_.contract();
+  }
+
   bool operator!=(const CORE_polynomial&o ) const {
     return !operator==(o);
   }

@@ -124,6 +124,7 @@ protected:
       return;
     } else {
       //std::cout <<"solving " << f_ << std::endl;
+      f_.contract();
       //std::cout << f_.core_polynomial() << std::endl;
       sturm_= CORE_Sturm(f_.core_polynomial()/*, false*/); //BigInt to BigRat
       
