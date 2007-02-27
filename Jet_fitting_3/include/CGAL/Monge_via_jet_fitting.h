@@ -85,10 +85,10 @@ public:
     CGAL_precondition( (i == 0 || i == 1) && coefficients().size() >=2 );
     return coefficients()[i]; }
   const FT third_order_coefficients(size_t i) const {
-    CGAL_precondition( i >= 0 && i <= 3 && coefficients().size() >=6 );
+    CGAL_precondition( i <= 3 && coefficients().size() >=6 );
     return coefficients()[i+2]; }
   const FT fourth_order_coefficients(size_t i) const {
-    CGAL_precondition( i >= 0 && i <= 4 && coefficients().size() >=11 );
+    CGAL_precondition( i <= 4 && coefficients().size() >=11 );
     return coefficients()[i+6]; }
  
   //if d>=2, number of coeffs = (d+1)(d+2)/2 -4. 

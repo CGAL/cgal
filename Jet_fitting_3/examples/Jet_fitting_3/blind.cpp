@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
   const char *if_name = NULL; //input file name
   char *w_if_name = NULL;  //as above, but / replaced by _
   char* res4openGL_fname;
-  char* verbose_fname;
+  char* verbose_fname = NULL;
   std::ofstream *out_4ogl = NULL, *out_verbose = NULL;
 
   try {
