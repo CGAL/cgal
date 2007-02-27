@@ -336,7 +336,6 @@ BGL/doc_tex/BGL/fig/ex_bgl.gif -text svneol=unset#image/gif
 BGL/doc_tex/BGL/fig/ex_bgl.pdf -text svneol=unset#application/pdf
 BGL/doc_tex/BGL/fig/ex_bgl.pstex -text svneol=unset#application/postscript
 BGL/doc_tex/BGL/fig/ex_bgl.pstex_t -text svneol=unset#application/postscript
-BGL/examples/BGL_polyhedron_3/kruskal_min_spanning_tree.hpp -text
 BGL/test/BGL/cgal_test eol=lf
 BGL/test/BGL/data/7_faces_traingle.off -text svneol=unset#application/octet-stream
 BGL/test/BGL/data/genus3.off -text svneol=unset#application/octet-stream
@@ -677,7 +676,6 @@ Installation/config/support/S91-TAUCSWIN -text
 Installation/config/support/S92-TAUCS1 -text
 Installation/config/support/S93-TAUCS2 -text
 Installation/config/support/S96-TAUCS3 -text
-Installation/include/CGAL/auto_link.h -text
 Interpolation/doc_tex/Interpolation/nn_coords.eps -text svneol=unset#application/postscript
 Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#image/gif
 Interpolation/doc_tex/Interpolation/nn_coords.ipe -text svneol=unset#application/postscript
@@ -1819,7 +1817,6 @@ Ridges_3/examples/Ridges_3/data/poly2x^2+y^2-0.062500.off -text svneol=unset#app
 Ridges_3/test/Ridges_3/data/ellipsoid.off -text svneol=unset#application/octet-stream
 Robustness/demo/Robustness/help/index.html svneol=native#text/html
 Robustness/demo/Robustness/robustness.vcproj eol=crlf
-STL_Extension/include/CGAL/Iterator_transform.h -text
 STL_Extension/include/CGAL/type_traits.h -text
 STL_Extension/test/STL_Extension/test_type_traits.cpp -text
 Scripts/developer_scripts/create_assertions.sh eol=lf
@@ -2575,11 +2572,6 @@ window/test/WindowStream/test_window_stream_xy_3.cmd eol=lf
 wininst/cgal_config.bat eol=crlf
 wininst/developer_scripts/examples/master_71.vcproj -text
 wininst/developer_scripts/examples/master_80.vcproj -text
-wininst/include/CGAL/config/msvc/CGAL/auto_link.h -text
-wininst/include/CGAL/config/msvc/CGAL/cl_1310.h -text
-wininst/include/CGAL/config/msvc/CGAL/cl_1400.h -text
-wininst/include/CGAL/config/msvc/CGAL/compiler_config.h -text
-wininst/include/CGAL/config/msvc/CGAL/icl_8_1.h -text
 wininst/src/CGAL/cgallib_71.vcproj -text
 wininst/src/CGAL/cgallib_80.vcproj -text
 wininst/winutils/make/bcc/leda/demo.bat eol=crlf

@@ -15,8 +15,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://CGAL/svn/cgal/trunk/wininst/include/CGAL/config/msvc7/CGAL/compiler_config.h $
-// $Id: compiler_config.h 31170 2006-05-18 10:01:03Z afabri $
+// $URL$
+// $Id$
 // 
 //
 // Author(s)     : Radu Ursu
