@@ -528,6 +528,48 @@ namespace CGAL {
 
       // If the dual is a ray
       else if(assign(ray, dual)) {
+
+        // If a facet is on the convex hull, and if its finite incident
+        // cell has a very bid Delaunay ball, then the dual of the facet is
+        // a ray constructed with a point with very big coordinates, and a
+        // vector with small coordinates. Its can happen than the
+        // constructed ray is degenerate (the point(1) of the ray is
+        // point(0) plus a vector whose coordinates are espilon).
+        typename GT::Is_degenerate_3 is_degenerate;
+        if(is_degenerate(ray)) return false;
+
+//         std::cerr << "ray: " << ray << "\n";
+//         if( squared_distance(ray.point(0), Point(ORIGIN)) > 1e12 ||
+//             squared_distance(ray.point(1), Point(ORIGIN)) > 1e12 )
+//         {
+//           const Cell_handle& c = f.first;
+//           const int& index = f.second;
+//           std::cerr << "problem:\n"
+//                     << "facet=" 
+//                     << c->vertex((index+1)&3)->point() << ","
+//                     << c->vertex((index+2)&3)->point() << ","
+//                     << c->vertex((index+3)&3)->point() << "\n";
+
+//           std::cerr << "vertex1: ";
+//           if(tr.is_infinite(c->vertex(index)))
+//             std::cerr << "infinite";
+//           else
+//             std::cerr << c->vertex(index)->point();
+//           std::cerr << "\n";
+
+
+//           std::cerr << "vertex2: ";
+//           if(tr.is_infinite(tr.mirror_vertex(c, index)))
+//             std::cerr << "infinite";
+//           else
+//             std::cerr << tr.mirror_vertex(c, index)->point();
+//           std::cerr << "\n";
+
+//           if(!tr.is_infinite(c))
+//             std::cerr << "volume1=" << tr.tetrahedron(c).volume() << "\n";
+//           if(!tr.is_infinite(c->neighbor(index)))
+//             std::cerr << "volume2=" << tr.tetrahedron(c->neighbor(index)).volume() << "\n";
+//         }
 	Object intersection = intersect(surf, ray);
 	//std::cerr << "intersection: " << std::endl;
 	if (assign(center,intersection))
@@ -597,6 +639,10 @@ namespace CGAL {
       return s.str();
     }
 
+    static std::string debug_info_header()
+    {
+      return "number of facets";
+    }
   };  // end Surface_mesher_base
 
     namespace details {
@@ -689,6 +735,9 @@ namespace CGAL {
       else {
 	std::cerr << "Refining...\n";
 	int nbsteps = 0;
+        std::cerr << "Legende of the following line: "
+                  << "(number of steps," << this->debug_info_header()
+                  << ")\n";
 	std::cerr << "(" << nbsteps << ","
 		  << this->facets_to_refine.size() << ")";
 	while (!is_algorithm_done()) {

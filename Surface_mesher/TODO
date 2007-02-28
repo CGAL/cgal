@@ -1,3 +1,6 @@
+Laurent Rineau, 2006/09/14
+- use Kernel::Assign_3 instead of CGAL::assign
+
 Laurent Rineau, 2006/08/10
 - try to ease the maintainance of Surface_mesher and Mesh_3 demos:
    - demo/Surface_mesher/implicit_surface_mesher.cpp
