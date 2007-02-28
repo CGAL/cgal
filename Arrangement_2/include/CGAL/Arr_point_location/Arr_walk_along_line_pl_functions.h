@@ -650,8 +650,9 @@ _is_in_connected_component (const Point_2& p,
           closest_in_ccb = true;
           closest_to_target = (target_res == EQUAL);
         }
-        else
+        else if (! (closest_he->twin() == curr))
         {
+          // The current curve is not the twin of the closest curve.
           // Compare with the vertically closest curve so far and detemine the
           // curve closest to p. We first check the case that the two curves
           // have a common endpoint (note that the two curves do not intersect
