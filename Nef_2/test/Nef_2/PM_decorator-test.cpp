@@ -25,7 +25,7 @@ typedef PM_dec::Face_handle     f_handle;
 typedef PM_dec::Vertex_base     Vertex_base;
 typedef PM_dec::Point_const_iterator Point_const_iterator;
 
-//int main()
+//int Main() // the capital M is only to prevent create_cgal_test from matching.
 {
   CGAL_NEF_SETDTHREAD(13);
   HDS  H;
