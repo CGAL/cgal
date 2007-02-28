@@ -16,6 +16,7 @@
 #define CGAL_POLYNOMIAL_TRAITS_D_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Polynomial/polynomial_utils.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -960,7 +961,7 @@ public:
         : public Unary_function<Polynomial_d, Polynomial_d>{
         Polynomial_d
         operator()( const Polynomial_d& p ) const {
-            return CGAL::canonicalize_polynomial(p);
+            return CGAL::INTERN_POLYNOMIAL::canonicalize_polynomial(p);
         }  
      };
 };
