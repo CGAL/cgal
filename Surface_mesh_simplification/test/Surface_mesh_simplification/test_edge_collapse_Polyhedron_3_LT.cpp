@@ -3,3 +3,8 @@
 #define STRATEGY_POLICIES "LT_strategy.cpp"
 
 #include "aux_edge_collapse_test_Polyhedron_3.cpp"
+
+int main(int argc, char **argv)
+{
+  return aux_main(argc, argv);
+}

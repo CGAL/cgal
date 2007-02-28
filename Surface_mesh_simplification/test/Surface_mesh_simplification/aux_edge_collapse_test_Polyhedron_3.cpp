@@ -196,7 +196,7 @@ bool Test ( string aName )
   return rSucceeded ;
 }
 
-int main( int argc, char** argv ) 
+int aux_main( int argc, char** argv ) 
 {
   set_error_handler  (error_handler);
   set_warning_handler(error_handler);
