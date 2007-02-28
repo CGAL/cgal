@@ -399,7 +399,6 @@ Surface_mesher/doc_tex/Surface_mesher_ref/*.pdflg
 Surface_mesher/doxygen
 Surface_mesher/examples/Surface_mesher/*.exe
 Surface_mesher/examples/Surface_mesher/.*.deps
-Surface_mesher/examples/Surface_mesher/ImageIO/libImageIO.*
 Surface_mesher/examples/Surface_mesher/ProgramOutput.mesh_a_3d_gray_image.*
 Surface_mesher/examples/Surface_mesher/mesh_a_3d_gray_image
 Surface_mesher/examples/Surface_mesher/mesh_an_implicit_function
