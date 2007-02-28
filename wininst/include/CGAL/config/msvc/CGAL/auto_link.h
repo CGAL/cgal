@@ -1,8 +1,9 @@
 // This header file is a copy of "boost/config/auto_link.hpp" 
+// from boost version 1.33.1
 // but slightly modified to accomodate CGAL libraries.
 //
 // Modified for CGAL by: 
-// Fernando Cacciola
+// Fernando Cacciola (fernando.cacciola@geometryfactory.com)
 // February 2007
 //
 //-------------------------------------------------------------------------------------- 
@@ -65,6 +66,8 @@ CGAL_LIB_RT_OPT:     A suffix that indicates the runtime library used,
 
 
 ***************************************************************************/
+
+#ifndef CGAL_NO_AUTOLINK
 
 #ifdef __cplusplus
 #  ifndef BOOST_CONFIG_HPP
@@ -279,11 +282,9 @@ CGAL_LIB_RT_OPT:     A suffix that indicates the runtime library used,
 #  define CGAL_LIB_FULL_NAME BOOST_STRINGIZE(CGAL_LIB_NAME) ".lib"
 #endif
 
-#ifndef CGAL_AUTO_LINK_NOMANGLE
-#  pragma comment(lib, CGAL_LIB_FULL_NAME )
-#  ifdef CGAL_LIB_DIAGNOSTIC
-#     pragma message ("Linking to lib file: " CGAL_LIB_FULL_NAME )
-#  endif
+#pragma comment(lib, CGAL_LIB_FULL_NAME )
+#ifdef CGAL_LIB_DIAGNOSTIC
+#   pragma message ("Linking to lib file: " CGAL_LIB_FULL_NAME )
 #endif
 
 #else
@@ -320,6 +321,7 @@ CGAL_LIB_RT_OPT:     A suffix that indicates the runtime library used,
 #  undef CGAL_LIB_FULL_NAME
 #endif
 
+#endif // CGAL_NO_AUTOLINK
 
 
 
