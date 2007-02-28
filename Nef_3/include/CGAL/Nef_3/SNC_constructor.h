@@ -133,7 +133,6 @@ public:
   typedef typename Kernel::RT                                RT;
   typedef typename Infi_box::NT                              NT;
   typedef CGAL::SNC_constructor<Items, SNC_structure>        Self;
-  typedef CGAL::SNC_decorator<SNC_structure>                 Base;
   typedef CGAL::SNC_decorator<SNC_structure>                 SNC_decorator;
   typedef typename CGAL::SNC_const_decorator<SNC_structure>  SNC_const_decorator;
   typedef CGAL::SNC_intersection<SNC_structure>              SNC_intersection;
@@ -200,7 +199,7 @@ public:
   
   enum{NORMAL, CORNER, DEGENERATE};
 
-  SNC_constructor( SNC_structure& W) : Base(W) {}
+  SNC_constructor( SNC_structure& W) : SNC_decorator(W) {}
   /*{\Mcreate makes |\Mvar| a decorator of |W|.}*/
 
   Vertex_handle create_extended_box_corner(NT x, NT y, NT z,
