@@ -1,17 +1,30 @@
 // This header file is a copy of "boost/config/auto_link.hpp" 
 // from boost version 1.33.1
 // but slightly modified to accomodate CGAL libraries.
-//
-// Modified for CGAL by: 
-// Fernando Cacciola (fernando.cacciola@geometryfactory.com)
-// February 2007
-//
 //-------------------------------------------------------------------------------------- 
 //
 //  (C) Copyright John Maddock 2003.
 //  Use, modification and distribution are subject to the
 //  Boost Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//-------------------------------------------------------------------------------------- 
+// Copyright (C) 2007 GeometryFactory (France)
+//
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// 
+// Author(s)     : Fernando Cacciola (fernando.cacciola@geometryfactory.com)
 /*************************************************************************
 
 USAGE:
