@@ -6,7 +6,6 @@ Complex_2_in_triangulation_3
 Complex_2_in_triangulation_3_ref
 surface_mesher.cpp
 surfaces_union.cpp
-inputs
 NOTICE
 internal-test-surface-mesher.cpp
 makefile.dependencies

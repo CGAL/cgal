@@ -275,7 +275,7 @@ int main(int argc, char **argv) {
   make_surface_mesh(c2t3,
                     surface,
                     criteria,
-                    CGAL::Non_manifold_tag(),
+                    CGAL::Manifold_with_boundary_tag(),
                     0);
   timer.stop();
   std::cerr << "\nFinal number of points: " << tr.number_of_vertices() 

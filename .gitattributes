@@ -2312,6 +2312,10 @@ Surface_mesh_simplification/test/Surface_mesh_simplification/data/triangle_open_
 Surface_mesh_simplification/test/Surface_mesh_simplification/data/triangle_open_with_hole_MP.audit -text
 Surface_mesh_simplification/test/Surface_mesh_simplification/test_edge_collapse_Polyhedron_3_LT.cmd eol=lf
 Surface_mesh_simplification/test/Surface_mesh_simplification/test_edge_collapse_Polyhedron_3_MP.cmd eol=lf
+Surface_mesher/demo/Surface_mesher/inputs/ALSTOM_TEST4.off -text svneol=unset#application/octet-stream
+Surface_mesher/demo/Surface_mesher/inputs/boeing.off -text svneol=unset#application/octet-stream
+Surface_mesher/demo/Surface_mesher/inputs/geosphere.off -text svneol=unset#application/octet-stream
+Surface_mesher/demo/Surface_mesher/inputs/triceratops.off -text svneol=unset#application/octet-stream
 Surface_mesher/demo/Surface_mesher/windows/Mesh.sln eol=crlf
 Surface_mesher/demo/Surface_mesher/windows/Mesh.suo -text
 Surface_mesher/demo/Surface_mesher/windows/Mesh.vcproj eol=crlf
@@ -2333,10 +2337,6 @@ Surface_mesher/doc_tex/Surface_mesher/skull-surface.png -text svneol=unset#image
 Surface_mesher/doc_tex/Surface_mesher/sphere-surface.eps -text svneol=unset#application/postscript
 Surface_mesher/doc_tex/Surface_mesher/sphere-surface.png -text svneol=unset#image/png
 Surface_mesher/examples/Surface_mesher/data/skull_2.9.inr -text
-Surface_mesher/examples/Surface_mesher/inputs/ALSTOM_TEST4.off -text svneol=unset#application/octet-stream
-Surface_mesher/examples/Surface_mesher/inputs/boeing.off -text svneol=unset#application/octet-stream
-Surface_mesher/examples/Surface_mesher/inputs/geosphere.off -text svneol=unset#application/octet-stream
-Surface_mesher/examples/Surface_mesher/inputs/triceratops.off -text svneol=unset#application/octet-stream
 Surface_mesher/examples/Surface_mesher/mesh_a_3d_gray_image.vcproj eol=crlf
 Surface_mesher/find_debug_macros -text
 Surface_mesher/find_non_debug_macros -text
