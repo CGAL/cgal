@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2002  Utrecht University (The Netherlands),
+// Copyright (c) 2007  Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 // INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
 // (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
@@ -19,21 +19,13 @@
 // $Id$
 // 
 //
-// Author(s)     : Radu Ursu
+// Author(s)     : Fernando Cacciola (fernando.cacciola@geometryfactry.com)
 
+#ifndef CGAL_AUTO_LINK_MPFR_H
+#define CGAL_AUTO_LINK_MPFR_H
 
-#ifdef _MSC_VER
-#  if _MSC_VER < 1310
-#    error Unsupported version of VC++
-#  else
-#    ifdef __ICL
-#      include "CGAL/icl_8_1.h"
-#    else 
-#      if _MSC_VER == 1310
-#        include "CGAL/cl_1310.h"
-#      else
-#        include "CGAL/cl_1400.h"
-#      endif
-#    endif
-#  endif
-#endif
+#define CGAL_AUTO_LINK_NOMANGLE
+#define CGAL_LIB_NAME mpfr
+#include <CGAL/auto_link.h>
+
+#endif // CGAL_AUTO_LINK_MPFR_H
