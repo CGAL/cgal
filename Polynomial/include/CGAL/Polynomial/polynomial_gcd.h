@@ -22,8 +22,11 @@
 #include <CGAL/Algebraic_structure_traits.h>
 #include <CGAL/Fraction_traits.h>
 
-#ifndef CGAL_POLYNOMIAL_GCD_H
-#define CGAL_POLYNOMIAL_GCD_H
+#include <CGAL/Polynomial/ipower.h>
+#include <CGAL/Polynomial/hgdelta_update.h>
+
+#ifndef CGAL_POLYNOMIAL_POLYNOMIAL_GCD_H
+#define CGAL_POLYNOMIAL_POLYNOMIAL_GCD_H
 
 #ifndef CGAL_POLYNOMIAL_GCD_AVOID_CANONICALIZE
 #define CGAL_POLYNOMIAL_GCD_AVOID_CANONICALIZE 1
@@ -134,7 +137,7 @@ Polynomial<NT> gcd_(
         if (r.degree() == 0) { return Polynomial<NT>(gcdcont); }
         int delta = p1.degree() - p2.degree();
         p1 = p2;
-        p2 = r / (g * ipower(h, delta));
+        p2 = r / (g * INTERN_POLYNOMIAL::ipower(h, delta));
         g = p1.lcoeff();
         // h = h^(1-delta) * g^delta
         INTERN_POLYNOMIAL::hgdelta_update(h, g, delta);
@@ -379,7 +382,7 @@ Polynomial<NT> gcd_utcf_(
         if (r.degree() == 0) { return Polynomial<NT>(gcdcont); }
         int delta = p1.degree() - p2.degree();
         p1 = p2;
-        p2 = r / (g * ipower(h, delta));
+        p2 = r / (g * INTERN_POLYNOMIAL::ipower(h, delta));
         g = p1.lcoeff();
         // h = h^(1-delta) * g^delta
         Intern::hgdelta_update(h, g, delta);
@@ -665,9 +668,9 @@ Polynomial<NT> pseudo_gcdex(
     for (;;) {
         int delta = u.degree() - v.degree();
         POLY::pseudo_division(u, v, q, r, d);
-        CGAL_assertion(d == ipower(v.lcoeff(), delta+1));
+        CGAL_assertion(d == INTERN_POLYNOMIAL::ipower(v.lcoeff(), delta+1));
         if (r.is_zero()) break;
-        rho = g * ipower(h, delta);
+        rho = g * INTERN_POLYNOMIAL::ipower(h, delta);
         u = v; v = r / rho;
         m21old = m21; m21 = (d*m11 - q*m21) / rho; m11 = m21old;
         /* The transition from (u, v) to (v, r/rho) corresponds
@@ -1134,6 +1137,6 @@ int filtered_square_free_factorization_utcf( const Polynomial<NT>& p,
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_POLYNOMIAL_GCD_H
+#endif // CGAL_POLYNOMIAL_POLYNOMIAL_GCD_H
 
 // EOF
