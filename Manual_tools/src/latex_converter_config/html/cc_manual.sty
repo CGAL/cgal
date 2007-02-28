@@ -259,11 +259,10 @@
 }
 
 \newcommand{\ccReferToExampleCode}[1]{%
-\begin{alltt}%
-\lcRawHtml{<a href="}\lciOutputUppath\lcRawHtml{../../}\input{#1.filename}\lcRawHtml{">}%
-\input{#1.filename}%
-\lcRawHtml{</a>}%
-\end{alltt}%
+\lciBeginAlltt%
+\lcRawHtml{<a href="}\lciOutputUppath\lcRawHtml{../../}\input{#1.filename}\lcRawHtml{">}
+\lcRawHtml{<tt>}#1\lcRawHtml{</tt></a>}%
+\lciEndAlltt%
 }
 
 

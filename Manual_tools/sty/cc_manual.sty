@@ -697,7 +697,9 @@ Reference~Manual}%
 \textbf{File: }\input{#1.filename}
 \end{alltt}
 }
-\newcommand{\ccReferToExampleCode}[1]{\begin{alltt}\input{#1.filename}\end{alltt}}
+% unfortunately, alltt does not work in figure captions:
+\newcommand{\ccReferToExampleCode}[1]{%\begin{alltt}\input{#1.filename}\end{alltt}
+\ccc{#1}}
 
 % +--------------------------------------------------------------------------
 % | A handy macro to define macros for RCS entries in a TeX file
