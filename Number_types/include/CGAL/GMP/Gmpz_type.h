@@ -476,10 +476,8 @@ operator>>(std::istream& is, Gmpz &z)
   return gmpz_new_read(is, z);
 }
 
-#if ! defined( CGAL_DONT_USE_LINK_PRAGMA) && defined( _MSC_VER )
-    #pragma comment(lib, "gmp.lib")
-    #pragma comment(lib, "mpfr.lib")
-#endif 
+#include <CGAL/auto_link/GMP.h>
+#include <CGAL/auto_link/MPFR.h>
 
 CGAL_END_NAMESPACE
 
