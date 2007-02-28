@@ -31,7 +31,9 @@ typedef CGAL::Homogeneous<testnt> TestR;
 
 #if TESTR == 5
 
-typedef double testnt;
+#include <CGAL/MP_Float.h>
+//typedef double testnt; // some tests trigger a degenerate case
+typedef CGAL::MP_Float testnt;
 typedef CGAL::Homogeneous<testnt> TestR;
 
 #endif
