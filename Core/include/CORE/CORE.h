@@ -67,27 +67,6 @@ typedef long machine_long;
 #   include <CORE/Expr.h>
 #endif
 
-// automaticall link necessary static library under visual c++
-#ifdef CGAL_LINK_AUTOMATICALLY
-#ifdef _MSC_VER
-  #ifdef _DEBUG
-    #pragma comment(lib, "core++Debug.lib")
-    #pragma comment(lib, "gmpDebug.lib")
-  #else
-    #pragma comment(lib, "core++.lib")
-    #pragma comment(lib, "gmp.lib")
-  #endif
-#endif
-#endif
-
-// This seems redundant with the previous block, but 
-// we don't want to break backward compatibility 
-#if ! defined( CGAL_DONT_USE_LINK_PRAGMA) && defined( _MSC_VER )
-   #pragma comment(lib, "core++.lib")
-    #pragma comment(lib, "gmp.lib")
-    #pragma comment(lib, "mpfr.lib")
-#endif 
-
 #ifndef CORE_NO_AUTOMATIC_NAMESPACE
 using namespace CORE;
 #endif
