@@ -16,6 +16,9 @@ For example: Let \ccc{Integer} be some type representing $\Z$, then
 for some arbitrary value $root$. The value of $root$ is set at 
 construction time, or left open if $root$ is not specified.
 
+Note that the given $root$ is stored as it is given to the constructor. In particular, and extension by a square root of a square is considered as an extension.  
+
+
 \textbf {It is not possible to interoperate two values from two different 
 extensions $\Z[\sqrt{a}]$ and $\Z[\sqrt{b}]$, since the result is in 
 $\Z[\sqrt{a},\sqrt{b}]$, which is not representable by 
@@ -71,6 +74,7 @@ the code may crash at runtime!} \\
 %\ccc{Sqrt_extension} in place of \ccc{leda_real} or \ccc{CORE::Expr}, 
 %since it does not suffer from growing expression trees.
 
+In the same way \ccc{Sqrt_extension} can be used as if it were a model of \ccc{RealEmbeddable} if \ccc{NT} is model of \ccc{RealEmbeddable}. \textbf{Comparisons of two values from different extension is not allowed.}
 \end{ccAdvanced}
 
 \ccIsModel 
@@ -80,7 +84,6 @@ the code may crash at runtime!} \\
 \ccc{DefaultConstructible}\\
 \ccc{FromIntConstructible}\\ 
 \ccc{EqualityComparable}\\
-\ccc{RealEmbeddable}    & if NT is \ccc{RealEmbeddable}\\
 \ccc{Fraction}          & if NT is a \ccc{Fraction}\\
 \end{tabular}
 %\begin{ccAdvanced}
@@ -132,6 +135,10 @@ the code may crash at runtime!} \\
 An object of type \ccc{Sqrt_extension} represent an expression of the form: 
 $a0 + a1 * sqrt(root)$. 
 
+\ccMethod{bool is_extended () const;}
+ 	{Returns true in case root of \ccVar\ is not zero.  \\
+         Note that $a1 == 0 $ does not imply $root == 0$. }   
+
 \ccMethod{const NT & a0 () const ;    }{Const access operator for a0} \ccGlue
 %\ccMethod{NT & 	a0 ()    ;    }{Access operator for a0.}\ccGlue
 \ccMethod{const NT & a1 () const ;    }{Const access operator for a1}\ccGlue
@@ -140,9 +147,6 @@ $a0 + a1 * sqrt(root)$.
 %\ccMethod{ROOT & 	root ()  ;    }{Access operator for root.}
 
 %Member functions:\\
-\ccMethod{bool is_extended () const;}
- 	{Returns true in case root of \ccVar\ is not zero.  \\
-         Note that $a1 == 0 $ does not imply $root == 0$. }   
 \ccMethod{void 	simplify ();}
         { Propagates the simplify command to members of \ccVar. \\
           see also: \ccc{AlgebraicStructureTraits::Simplify}.}
@@ -156,33 +160,66 @@ $a0 + a1 * sqrt(root)$.
  	{returns the absolute value of \ccVar. 
         \ccPrecond\\ \ccc{Sqrt_extension} is \ccc{RealEmbeddable}.}
 
-Mixed operations: 
+\ccFunction{Sqrt_extension operator+(const Sqrt_extension&a,const Sqrt_extension& b);}
+{\ccPrecond{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
+\ccFunction{Sqrt_extension operator-(const Sqrt_extension&a,const Sqrt_extension& b);}
+{\ccPrecond{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
+\ccFunction{Sqrt_extension operator*(const Sqrt_extension&a,const Sqrt_extension& b);}
+{\ccPrecond{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
 
 \ccFunction{Sqrt_extension operator+(const Sqrt_extension&a, const NT &b);}{}\ccGlue
 \ccFunction{Sqrt_extension operator-(const Sqrt_extension&a, const NT &b);}{}\ccGlue
 \ccFunction{Sqrt_extension operator*(const Sqrt_extension&a, const NT &b);}{}\ccGlue
 
-
 \ccFunction{Sqrt_extension operator+(const NT&a, const Sqrt_extension &b);}{}\ccGlue
 \ccFunction{Sqrt_extension operator-(const NT&a, const Sqrt_extension &b);}{}\ccGlue
 \ccFunction{Sqrt_extension operator*(const NT&a, const Sqrt_extension &b);}{}\ccGlue
 
+\ccMethod{Sqrt_extension & operator+=(const Sqrt_extension& a);}
+{\ccPrecond{(this->root()==0 || a.root()==0 || this->root() == a.root())} }\ccGlue
+
+\ccMethod{Sqrt_extension & operator-=(const Sqrt_extension& a);}
+{\ccPrecond{(this->root()==0 || a.root()==0 || this->root() == a.root())} }\ccGlue
+
+\ccMethod{Sqrt_extension & operator*=(const Sqrt_extension& a);}
+{\ccPrecond{(this->root()==0 || a.root()==0 || this->root() == a.root())} }\ccGlue
 
 \ccMethod{Sqrt_extension & 	operator += (const NT &a);}{}\ccGlue
 \ccMethod{Sqrt_extension & 	operator -= (const NT &a);}{}\ccGlue
 \ccMethod{Sqrt_extension & 	operator *= (const NT &a);}{}\ccGlue
 
-In case  \ccc{Sqrt_extension} is a \ccc{Field}:
+In case \ccc{NT} is an \ccc{IntegralDomain} operator/ implements integral division. 
+%In case \ccc{NT} is a \ccc{Field} operator/ implements the field division.    
+
+\ccFunction{Sqrt_extension operator/(const Sqrt_extension&a,const Sqrt_extension& b);}
+{\ccPrecond{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
 \ccFunction{Sqrt_extension operator/(const Sqrt_extension&a, const NT &b);}{}\ccGlue
 \ccFunction{Sqrt_extension operator/(const NT&a, const Sqrt_extension &b);}{}\ccGlue
+\ccMethod{Sqrt_extension & operator/=(const Sqrt_extension& a);}
+{\ccPrecond{(this->root()==0 || a.root()==0 || this->root() == a.root())} }\ccGlue
 \ccMethod{Sqrt_extension & 	operator /= (const NT &a);}{}
 
+
+\ccFunction{bool operator==(const Sqrt_extension&a,const Sqrt_extension& b);}
+{\ccPrecond{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
+\ccFunction{bool operator!=(const Sqrt_extension&a,const Sqrt_extension& b);}
+{\ccPrecond{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
 \ccFunction{bool operator==(const NT&a, const Sqrt_extension &b);}{}\ccGlue
 \ccFunction{bool operator!=(const NT&a, const Sqrt_extension &b);}{}\ccGlue
 \ccFunction{bool operator==(const Sqrt_extension&a, const NT &b);}{}\ccGlue
 \ccFunction{bool operator!=(const Sqrt_extension&a, const NT &b);}{}
 
 In case  \ccc{Sqrt_extension} is \ccc{RealEmbeddable}:
+
+\ccFunction{bool operator< (const Sqrt_extension&a,const Sqrt_extension& b);}
+{\ccPrecond{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
+\ccFunction{bool operator<=(const Sqrt_extension&a,const Sqrt_extension& b);}
+{\ccPrecond{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
+\ccFunction{bool operator> (const Sqrt_extension&a,const Sqrt_extension& b);}
+{\ccPrecond{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
+\ccFunction{bool operator>=(const Sqrt_extension&a,const Sqrt_extension& b);}
+{\ccPrecond{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
+
 \ccFunction{bool operator< (const NT&a, const Sqrt_extension &b);}{}\ccGlue
 \ccFunction{bool operator<=(const NT&a, const Sqrt_extension &b);}{}\ccGlue
 \ccFunction{bool operator> (const NT&a, const Sqrt_extension &b);}{}\ccGlue
