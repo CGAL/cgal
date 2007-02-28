@@ -1,4 +1,4 @@
-// file : examples/Filtered_kernel/filtered_predicate.cpp
+// file : examples/Filtered_kernel/Filtered_predicate.cpp
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_predicate.h>
