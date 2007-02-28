@@ -217,13 +217,13 @@ int ImageIO_seek( const _image *im, long offset, int whence ) {
  */
 int ImageIO_error( const _image *im )
 {
-  static int errnum;
   switch(im->openMode) {
   case OM_CLOSE :
   default :
     return 0;
 #ifdef CGAL_USE_ZLIB
   case OM_GZ :
+    static int errnum;
     (void)gzerror(im->fd, &errnum);
     return( (errnum != Z_OK) || gzeof(im->fd) );
 #endif
