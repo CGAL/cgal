@@ -42,8 +42,6 @@ namespace CGAL{
 
 using CGAL::CircularFunctors::advanced_make_xy_monotone;
 
-//#define FILEWRITE
-
 CGAL::Polygon_2 < CGAL::Simple_cartesian< double > >
   construct_polygon_from_bbox(const CGAL::Bbox_2& bb )
   {
