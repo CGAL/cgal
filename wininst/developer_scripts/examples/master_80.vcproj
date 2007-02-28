@@ -46,7 +46,7 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_SECURE_SCL=0;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="0"
-				RuntimeLibrary="2"
+				RuntimeLibrary="3"
 				RuntimeTypeInfo="true"
 				WarningLevel="2"
 				DebugInformationFormat="3"
@@ -65,7 +65,7 @@
 				AdditionalDependencies=""
 				OutputFile="$(OutDir)/test_msvc80.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;..\..\lib&quot;"
+				AdditionalLibraryDirectories="&quot;..\..\lib&quot;;$(GMP_LIB_VC80);$(MPFR_LIB_VC80)"
 				GenerateDebugInformation="true"
 			/>
 			<Tool
@@ -143,7 +143,7 @@
 				AdditionalDependencies=""
 				OutputFile="$(OutDir)/test_msvc80.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;..\..\lib&quot;"
+				AdditionalLibraryDirectories="&quot;..\..\lib&quot;;$(GMP_LIB_VC80);$(MPFR_LIB_VC80)"
 				GenerateDebugInformation="true"
 			/>
 			<Tool
