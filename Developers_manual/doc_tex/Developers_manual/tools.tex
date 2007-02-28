@@ -362,6 +362,9 @@ which is {\tt \$CGAL}.  This directory can be local to the testing machine.
 {\tt USE\_CURL} specifies if {\tt curl} should be used as a replacement for
 {\tt wget} and {\tt ftp}.  Set it to {\tt ''y''} to use {\tt curl}.
 
+{\tt FTP\_OPTS} specifies the options for {\tt ftp}   On Linux systems 
+it should be {\tt ''-p -v -n''}, on cygwin it should be {\tt ''-v -n''}.
+
 {\tt NICE\_OPTIONS} specifies the command line options to pass to the
 {\tt nice} command, which is used to prevent the test-suite from keeping
 all CPU time for itself.  The default value is {\tt ''-19''}.
