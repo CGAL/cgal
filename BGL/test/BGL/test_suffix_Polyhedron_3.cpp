@@ -42,7 +42,7 @@ void error_handler ( char const* what, char const* expr, char const* file, int l
   throw runtime_error(msg);     
 }
 
-int main( int argc, char const* argv[] )
+int aux_main( int argc, char const* argv[] )
 {
   cout << "Testing " << TEST_NAME << endl ;
   

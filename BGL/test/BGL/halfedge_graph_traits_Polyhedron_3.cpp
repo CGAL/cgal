@@ -206,3 +206,7 @@ bool test ( Polyhedron& aG )
 
 #include "test_suffix_Polyhedron_3.cpp"
 
+int main( int argc, char const* argv[] )
+{
+  return aux_main(argc, argv);
+}
