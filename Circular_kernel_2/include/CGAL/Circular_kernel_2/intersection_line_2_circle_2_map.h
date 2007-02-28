@@ -11,8 +11,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion, Pedro Machado
 
@@ -22,8 +22,8 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 
-#ifndef INTERSECTION_LINE_2_CIRCLE_2_MAP_H
-#define INTERSECTION_LINE_2_CIRCLE_2_MAP_H
+#ifndef CGAL_INTERSECTION_LINE_2_CIRCLE_2_MAP_H
+#define CGAL_INTERSECTION_LINE_2_CIRCLE_2_MAP_H
 
 #include <map>
 #include <vector>
@@ -76,4 +76,5 @@ public:
 
 } // endof internal cgal namespace
 } //endof cgal namespace
-#endif // INTERSECTION_LINE_2_CIRCLE_2_MAP_H
+
+#endif // CGAL_INTERSECTION_LINE_2_CIRCLE_2_MAP_H
