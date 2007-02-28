@@ -230,7 +230,7 @@ inline
 bool
 same_direction_tag(const typename CGAL_WRAP(K)::Vector_3 &u,
 		   const typename CGAL_WRAP(K)::Vector_3 &v,
-		   const K& k,
+		   const K&,
 		   const Cartesian_tag&)
 { 
   typedef typename K::FT FT;
@@ -258,7 +258,7 @@ inline
 bool
 same_direction_tag(const typename CGAL_WRAP(K)::Vector_3 &u,
 		   const typename CGAL_WRAP(K)::Vector_3 &v,
-		   const K& k,
+		   const K&,
 		   const Homogeneous_tag&)
 {   
   typedef typename K::RT RT;
