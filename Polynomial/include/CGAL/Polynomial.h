@@ -909,8 +909,8 @@ void hgdelta_update(NT& h, const NT& g, int delta) {
 // } // namespace NiX
 CGAL_END_NAMESPACE
 
-#include <CGAL/polynomial_gcd.h> // used above for NT_traits<Poly...>::Gcd
-#include <CGAL/prs_resultant.h>  // for compatibility
+#include <CGAL/Polynomial/polynomial_gcd.h> // used above for NT_traits<Poly...>::Gcd
+#include <CGAL/Polynomial/prs_resultant.h>  // for compatibility
 
 CGAL_BEGIN_NAMESPACE
 
@@ -1039,7 +1039,7 @@ class Coercion_traits_for_level<B,Polynomial<A>,CTL_POLYNOMIAL  >
 CGAL_END_NAMESPACE
 
 #include <CGAL/Polynomial_traits_d.h>
-#include <CGAL/polynomial_utils.h>
+#include <CGAL/Polynomial/polynomial_utils.h>
 
 //
 // trailing documentation
