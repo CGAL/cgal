@@ -25,6 +25,8 @@
 #ifndef CGAL_POLYNOMIAL_POLYNOMIAL_TYPE_H
 #define CGAL_POLYNOMIAL_POLYNOMIAL_TYPE_H
 
+#include <CGAL/Polynomial/ipower.h>
+
 CGAL_BEGIN_NAMESPACE
 
 template <class NT> class Polynomial;
@@ -465,7 +467,7 @@ public:
         Type monom;
         Type y(0);
         for(int i = 0; i <= hom_degree; i++){
-            monom = ipower(v,hom_degree-i)*ipower(u,i);
+            monom = INTERN_POLYNOMIAL::ipower(v,hom_degree-i)*INTERN_POLYNOMIAL::ipower(u,i);
             if(i <= degree())
                 y += monom * cast(this->ptr()->coeff[i]);  
         }
@@ -930,6 +932,548 @@ public:
         reduce();
     }
 }; // class Polynomial<NT_>
+
+// Arithmetic Operators, Part III:
+// implementation of unary operators and three-address arithmetic
+// by friend functions
+//
+
+template <class NT> inline
+Polynomial<NT> operator + (const Polynomial<NT>& p) {
+    CGAL_precondition(p.degree() >= 0);
+    return p;
+}
+
+template <class NT> inline
+Polynomial<NT> operator - (const Polynomial<NT>& p) {
+    CGAL_precondition(p.degree()>=0);
+    Polynomial<NT> res(p.coeffs().begin(),p.coeffs().end());
+    typename Polynomial<NT>::iterator it, ite=res.coeffs().end();
+    for(it=res.coeffs().begin(); it!=ite; ++it) *it = -*it;
+    return res;
+}
+
+template <class NT> inline
+Polynomial<NT> operator + (const Polynomial<NT>& p1, 
+                           const Polynomial<NT>& p2)
+{ 
+    typedef typename Polynomial<NT>::size_type size_type;
+    CGAL_precondition(p1.degree()>=0 && p2.degree()>=0);
+    bool p1d_smaller_p2d = p1.degree() < p2.degree();
+    int min,max,i;
+    if (p1d_smaller_p2d) { min = p1.degree(); max = p2.degree(); }
+    else                 { max = p1.degree(); min = p2.degree(); }
+    INTERN_POLYNOMIAL::Creation_tag TAG;
+    Polynomial<NT> p(TAG, size_type(max + 1));
+    for (i = 0; i <= min; ++i ) p.coeff(i) = p1[i]+p2[i];
+    if (p1d_smaller_p2d)  for (; i <= max; ++i ) p.coeff(i)=p2[i];
+    else /* p1d >= p2d */ for (; i <= max; ++i ) p.coeff(i)=p1[i];
+    p.reduce();
+    return p;
+}
+
+template <class NT> inline
+Polynomial<NT> operator - (const Polynomial<NT>& p1, 
+                           const Polynomial<NT>& p2)
+{ 
+    typedef typename Polynomial<NT>::size_type size_type;
+    CGAL_precondition(p1.degree()>=0 && p2.degree()>=0);
+    bool p1d_smaller_p2d = p1.degree() < p2.degree();
+    int min,max,i;
+    if (p1d_smaller_p2d) { min = p1.degree(); max = p2.degree(); }
+    else                 { max = p1.degree(); min = p2.degree(); }
+    INTERN_POLYNOMIAL::Creation_tag TAG;
+    Polynomial<NT> p(TAG, size_type(max + 1));
+    for (i = 0; i <= min; ++i ) p.coeff(i)=p1[i]-p2[i];
+    if (p1d_smaller_p2d)  for (; i <= max; ++i ) p.coeff(i)= -p2[i];
+    else /* p1d >= p2d */ for (; i <= max; ++i ) p.coeff(i)=  p1[i];
+    p.reduce();
+    return p;
+}
+
+template <class NT> inline
+Polynomial<NT> operator * (const Polynomial<NT>& p1, 
+                           const Polynomial<NT>& p2)
+{
+    typedef typename Polynomial<NT>::size_type size_type;
+    CGAL_precondition(p1.degree()>=0 && p2.degree()>=0);
+    INTERN_POLYNOMIAL::Creation_tag TAG;
+    Polynomial<NT>  p(TAG, size_type(p1.degree()+p2.degree()+1) ); 
+    // initialized with zeros
+    for (int i=0; i <= p1.degree(); ++i)
+        for (int j=0; j <= p2.degree(); ++j)
+            p.coeff(i+j) += (p1[i]*p2[j]); 
+    p.reduce();
+    return p;
+}
+
+#ifndef NiX_POLY_USE_SLOW_DIVISION
+
+template <class NT> inline
+Polynomial<NT> operator / (const Polynomial<NT>& p1, 
+                           const Polynomial<NT>& p2)
+{
+    typedef Algebraic_structure_traits< Polynomial<NT> > AST; 
+    // Precondition: q with p1 == p2 * q must exist within NT[x].
+    // If this holds, we can perform Euclidean division even over a ring NT
+    // Proof: The quotients of each division that occurs are precisely
+    //   the terms of q and hence in NT.
+    CGAL_precondition(!p2.is_zero());
+    if (p1.is_zero()) return p1;
+    Polynomial<NT> q, r;
+    Polynomial<NT>::euclidean_division(p1, p2, q, r);
+    // TODO: Replace by correct Makro
+    CGAL_postcondition( !AST::Is_exact::value || p2 * q == p1);
+    
+    return q;
+}
+
+#else
+
+template <class NT> inline
+Polynomial<NT> operator / (const Polynomial<NT>& p1, 
+                           const Polynomial<NT>& p2)
+{
+    typedef typename Algebraic_structure_traits<NT>::Algebric_structure_tag Algebra_type;
+    return division(p1, p2, Algebra_type());
+}
+
+template <class NT> inline
+Polynomial<NT> division(const Polynomial<NT>& p1, 
+                        const Polynomial<NT>& p2,
+                        Field_tag)
+{
+    typedef Algebraic_structure_traits<NT> AST;
+    CGAL_precondition(!p2.is_zero());
+    if (p1.is_zero()) return p1;
+    Polynomial<NT> q,r;
+    Polynomial<NT>::euclidean_division(p1,p2,q,r);
+
+    CGAL_postcondition( !AST::Is_exact::value  || p2 * q == p1);
+    return q;
+}
+
+#endif // NiX_POLY_USE_SLOW_DIVISION
+
+//
+// Arithmetic Operators, Part IV:
+// Mixed-mode three-address arithmetic on top of two-address operators
+//
+
+// lefthand side
+template <class NT> inline
+Polynomial<NT> operator + (const NT& num, Polynomial<NT> p2)
+{ p2 += num; return p2; }
+template <class NT> inline
+Polynomial<NT> operator - (const NT& num, Polynomial<NT> p2)
+{ p2 -= num; return -p2; }
+template <class NT> inline
+Polynomial<NT> operator * (const NT& num, Polynomial<NT> p2)
+{ p2 *= num; return p2; }
+template <class NT> inline
+Polynomial<NT> operator / (const NT& num, const Polynomial<NT>& p2) {
+    CGAL_precondition(p2.degree() == 0);
+    CGAL_precondition(p2[0] != NT(0));
+    typename Algebraic_structure_traits<NT>::Integral_division idiv;
+    return Polynomial<NT>(idiv(num, p2[0]));
+}
+
+// righthand side
+template <class NT> inline
+Polynomial<NT> operator + (Polynomial<NT> p1, const NT& num)
+{ p1 += num; return p1; }
+template <class NT> inline
+Polynomial<NT> operator - (Polynomial<NT> p1, const NT& num)
+{ p1 -= num; return p1; }
+template <class NT> inline
+Polynomial<NT> operator * (Polynomial<NT> p1, const NT& num)
+{ p1 *= num; return p1; }
+template <class NT> inline
+Polynomial<NT> operator / (Polynomial<NT> p1, const NT& num)
+{ p1 /= num; return p1; }
+
+
+//
+// Comparison Operators
+//
+
+// polynomials only
+template <class NT> inline
+bool operator == (const Polynomial<NT>& p1, const Polynomial<NT>& p2) {
+    CGAL_precondition(p1.degree() >= 0);
+    CGAL_precondition(p2.degree() >= 0);
+    if (p1.is_identical(p2)) return true;
+    if (p1.degree() != p2.degree()) return false;
+    for (int i = p1.degree(); i >= 0; i--) if (p1[i] != p2[i]) return false;
+    return true;
+}
+template <class NT> inline
+bool operator != (const Polynomial<NT>& p1, const Polynomial<NT>& p2)
+{ return !(p1 == p2); }    
+template <class NT> inline
+bool operator < (const Polynomial<NT>& p1, const Polynomial<NT>& p2)
+{ return ( p1.compare(p2) < 0 ); }    
+template <class NT> inline
+bool operator <= (const Polynomial<NT>& p1, const Polynomial<NT>& p2)
+{ return ( p1.compare(p2) <= 0 ); }    
+template <class NT> inline
+bool operator > (const Polynomial<NT>& p1, const Polynomial<NT>& p2)
+{ return ( p1.compare(p2) > 0 ); }    
+template <class NT> inline
+bool operator >= (const Polynomial<NT>& p1, const Polynomial<NT>& p2)
+{ return ( p1.compare(p2) >= 0 ); }    
+
+// mixed-mode, lefthand side
+template <class NT> inline
+bool operator == (const NT& num, const Polynomial<NT>& p)  {
+    CGAL_precondition(p.degree() >= 0);
+    return p.degree() == 0 && p[0] == num;
+}
+template <class NT> inline
+bool operator != (const NT& num, const Polynomial<NT>& p) 
+{ return !(num == p);}
+template <class NT> inline
+bool operator < (const NT& num, const Polynomial<NT>& p) 
+{ return ( p.compare(num) > 0 );}
+template <class NT> inline
+bool operator <=  (const NT& num, const Polynomial<NT>& p) 
+{ return ( p.compare(num) >= 0 );}
+template <class NT> inline
+bool operator > (const NT& num, const Polynomial<NT>& p) 
+{ return ( p.compare(num) < 0 );}
+template <class NT> inline
+bool operator >= (const NT& num, const Polynomial<NT>& p) 
+{ return ( p.compare(num) <= 0 );}
+
+// mixed-mode, righthand side
+template <class NT> inline
+bool operator == (const Polynomial<NT>& p, const NT& num) 
+{ return num == p; }
+template <class NT> inline
+bool operator != (const Polynomial<NT>& p, const NT& num) 
+{ return !(num == p); }
+template <class NT> inline
+bool operator < (const Polynomial<NT>& p, const NT& num) 
+{ return ( p.compare(num) < 0 );}
+template <class NT> inline
+bool operator <= (const Polynomial<NT>& p, const NT& num) 
+{ return ( p.compare(num) <= 0 );}
+template <class NT> inline
+bool operator > (const Polynomial<NT>& p, const NT& num) 
+{ return ( p.compare(num) > 0 );}
+template <class NT> inline
+bool operator >= (const Polynomial<NT>& p, const NT& num) 
+{ return ( p.compare(num) >= 0 );}
+
+//
+// Algebraically non-trivial operations
+//
+
+// 1) Euclidean and pseudo-division of polynomials
+// (implementation of static member functions)
+
+template <class NT>
+void Polynomial<NT>::euclidean_division(
+    const Polynomial<NT>& f, const Polynomial<NT>& g,
+    Polynomial<NT>& q, Polynomial<NT>& r)
+{
+    typedef Algebraic_structure_traits<NT> AST;
+    typename AST::Integral_division idiv;
+    int fd = f.degree(), gd = g.degree();
+    if ( fd < gd ) {
+        q = Polynomial<NT>(NT(0)); r = f;
+
+        CGAL_postcondition( !AST::Is_exact::value || f == q*g + r); 
+        return;
+    }
+    // now we know fd >= gd 
+    int qd = fd-gd, delta = qd+1, rd = fd;
+
+    INTERN_POLYNOMIAL::Creation_tag TAG;    
+    q = Polynomial<NT>(TAG, delta ); 
+    r = f; r.copy_on_write();
+    while ( qd >= 0 ) {
+        NT Q = idiv(r[rd], g[gd]);
+        q.coeff(qd) += Q;
+        r.minus_offsetmult(g,Q,qd);
+        r.simplify_coefficients();
+        if (r.is_zero()) break;
+        rd = r.degree();
+        qd = rd - gd;
+    }
+    q.simplify_coefficients();
+
+    CGAL_postcondition( !AST::Is_exact::value || f == q*g + r);
+}
+
+#ifndef NiX_POLY_USE_OLD_PSEUDODIV
+
+template <class NT>
+void Polynomial<NT>::pseudo_division(
+    const Polynomial<NT>& A, const Polynomial<NT>& B,
+    Polynomial<NT>& Q, Polynomial<NT>& R, NT& D)
+{
+    typedef Algebraic_structure_traits<NT> AST;
+    // pseudo-division with incremental multiplication by lcoeff(B)
+    // see [Cohen, 1993], algorithm 3.1.2
+
+    CGAL_precondition(!B.is_zero());
+    int delta = A.degree() - B.degree();
+
+    if (delta < 0 || A.is_zero()) {
+        Q = Polynomial<NT>(NT(0)); R = A; D = NT(1);
+       
+        CGAL_postcondition( !AST::Is_exact::value || Polynomial<NT>(D)*A == Q*B + R);
+        return;
+    }
+    const NT d = B.lcoeff();
+    int e = delta + 1;
+    D = INTERN_POLYNOMIAL::ipower(d, e);
+    INTERN_POLYNOMIAL::Creation_tag TAG;
+    Q = Polynomial<NT>(TAG, e);
+    R = A; R.copy_on_write(); R.simplify_coefficients();
+
+    // invariant: d^(deg(A)-deg(B)+1 - e) * A == Q*B + R
+    do { // here we have delta == R.degree() - B.degree() >= 0 && R != 0
+        NT lR = R.lcoeff();
+        for (int i = delta+1; i <= Q.degree(); i++) Q.coeff(i) *= d;
+        Q.coeff(delta) = lR;              // Q = d*Q + lR * X^delta
+        for (int i = 0; i <= R.degree(); i++) R.coeff(i) *= d;
+        R.minus_offsetmult(B, lR, delta); // R = d*R - lR * X^delta * B
+        R.simplify_coefficients();
+        e--;
+        delta = R.degree() - B.degree();
+    } while (delta > 0 || delta == 0 && !R.is_zero());
+    // funny termination condition because deg(0) = 0, not -\infty
+
+    NT q = INTERN_POLYNOMIAL::ipower(d, e);
+    Q *= q; Q.simplify_coefficients();
+    R *= q; R.simplify_coefficients();
+
+    CGAL_postcondition( !AST::Is_exact::value || Polynomial<NT>(D)*A == Q*B + R);
+}
+
+#else
+
+template <class NT>
+void Polynomial<NT>::pseudo_division(
+    const Polynomial<NT>& f, const Polynomial<NT>& g, 
+    Polynomial<NT>& q, Polynomial<NT>& r, NT& D)
+{
+    typedef Algebraic_structure_traits<NT> AST;
+    // pseudo-division with one big multiplication with lcoeff(g)^{...}
+    typename Algebraic_structure_traits<NT>::Integral_division idiv;
+
+    int fd=f.degree(), gd=g.degree();
+    if ( fd < gd ) {
+        q = Polynomial<NT>(NT(0)); r = f; D = NT(1); 
+
+        CGAL_postcondition( !AST::Is_exact::value  || Polynomial<NT>(D)*f==q*g+r);
+        return;
+    }
+    // now we know rd >= gd 
+    int qd = fd-gd, delta = qd+1, rd = fd;
+    INTERN_POLYNOMIAL::Creation_tag TAG;
+    q = Polynomial<NT>(TAG, delta );
+    NT G = g[gd]; // highest order coeff of g
+    D = INTERN_POLYNOMIAL::ipower(G, delta);
+    Polynomial<NT> res = D*f;
+    res.simplify_coefficients();
+    while ( qd >= 0 ) {
+        NT F = res[rd];    // highest order coeff of res
+        NT t = idiv(F, G); // sure to be integral by multiplication of D
+        q.coeff(qd) = t;   // store q coeff
+        res.minus_offsetmult(g,t,qd); 
+        res.simplify_coefficients();
+        if (res.is_zero()) break;
+        rd = res.degree();
+        qd = rd - gd;
+    }
+    r = res; // already simplified
+    q.simplify_coefficients();
+
+    CGAL_postcondition( !AST::Is_exact::value  || Polynomial<NT>(D)*f==q*g+r);
+}
+
+template <class NT> inline
+Polynomial<NT> division(const Polynomial<NT>& p1, 
+                        const Polynomial<NT>& p2,
+                        Integral_domain_tag)
+{
+    typedef Algebraic_structure_traits<NT> AST;
+    CGAL_precondition(!p2.is_zero());
+    if ( p1.is_zero() ) return p1;
+    Polynomial<NT> q,r; NT D;
+    Polynomial<NT>::pseudo_division(p1,p2,q,r,D);
+    q/=D;
+
+    CGAL_postcondition( !AST::Is_exact::value || p2 * q == p1);
+    return q;
+}
+
+#endif // NiX_POLY_USE_OLD_PSEUDODIV
+
+//
+// I/O Operations
+//
+
+/*! \ingroup NiX_Polynomial
+ *  \relates NiX::Polynomial
+ *  \brief output \c p to \c os
+ *
+ *  Output \c p in a format as specified by
+ *  \c LiS::get_mode(os), see \link LiS_io LiS I/O Support \endlink.
+ *  Currently, the output for \c LiS::IO::BINARY happens to be
+ *  identical to \c LiS::IO::ASCII.
+ */
+template <class NT>
+std::ostream& operator << (std::ostream& os, const Polynomial<NT>& p) {
+    switch(CGAL::get_mode(os)) {
+    case CGAL::IO::PRETTY:
+        p.output_maple(os); break;
+    default:
+        p.output_ascii(os); break;
+    }
+    return os;
+}
+
+/*! \ingroup NiX_Polynomial
+ *  \relates NiX::Polynomial
+ *  \brief try to read a polynomial from \c is into \c p
+ *
+ *  \c is must be in a mode that supports input of polynomials
+ *  (\c LiS::IO::ASCII or \c LiS::IO::BINARY) and the input from
+ *  \c is must have the format of output to a stream of the same mode.
+ */
+template <class NT>
+std::istream& operator >> (std::istream& is, Polynomial<NT>& p) {
+    CGAL_precondition(!CGAL::is_pretty(is));
+    p = Polynomial<NT>::input_ascii(is);
+    return is;
+}
+
+
+template <class NT> inline
+void print_maple_monomial(std::ostream& os, const NT& coeff,
+                          const char *var, int expn)
+{
+    if (expn == 0 || coeff != NT(1)) {
+        os << CGAL::oformat(coeff, Parens_as_product_tag());
+        if (expn >= 1) os << "*";
+    }
+    if (expn >= 1) {
+        os << var;
+        if (expn > 1) os << "^" << CGAL::oformat(expn);
+    }
+}
+
+// fwd declaration of Polynomial_traits_d
+template <typename Polynomial_d> class Polynomial_traits_d;
+
+template <class NT>
+void Polynomial<NT>::output_maple(std::ostream& os) const {
+    const Polynomial<NT>& p = *this;
+    const char *varname;
+    char vnbuf[42];
+    
+    // use variable names x, y, z, w1, w2, w3, ...
+    if (Polynomial_traits_d<NT>::d < 3) {
+        static const char *varnames[] = { "x", "y", "z" };
+        varname = varnames[Polynomial_traits_d<NT>::d];
+    } else {
+        sprintf(vnbuf, "w%d", Polynomial_traits_d<NT>::d - 2);
+        varname = vnbuf;
+    }
+    
+    int i = p.degree();
+    print_maple_monomial(os, p[i], varname, i);
+    while (--i >= 0) {
+        if (p[i] != NT(0)) {
+            os << " + ";
+            print_maple_monomial(os, p[i], varname, i);
+        }
+    }
+}
+
+template <class NT>
+void Polynomial<NT>::output_ascii(std::ostream &os) const {
+    const Polynomial<NT> &p = *this;
+    if (p.is_zero()) { os << "P[0 (0," << oformat(NT(0)) << ")]"; return; }
+
+    os << "P[" << oformat(p.degree());
+    for (int i = 0; i <= p.degree(); i++) {
+        if (p[i] != NT(0)) os << "(" << CGAL::oformat(i) << ","
+                              << CGAL::oformat(p[i]) << ")";
+    }
+    os << "]";
+}
+
+template <class NT>
+void Polynomial<NT>::output_benchmark(std::ostream &os) const {
+    const Polynomial<NT> &p = *this;
+    if (p.is_zero()) { 
+        os << "Polynomial_1(0)"; 
+        return; 
+    }
+    os << "Polynomial_1(";
+    for (int i = 0; i <= p.degree(); i++) {
+        os << CGAL::oformat(p[i]);
+        if (i != p.degree()) {
+            os << ",";
+        }
+    }
+    os << ")";
+}
+
+// Moved to internal namespace because of name clashes
+// TODO: Is this OK?
+namespace INTERN_POLYNOMIAL {
+
+  inline static void swallow(std::istream &is, char d) {
+      char c;
+      do c = is.get(); while (isspace(c));
+      if (c != d) CGAL_assertion_msg( false, "input error: unexpected character in polynomial");
+  }
+} // namespace INTERN_POLYNOMIAL
+
+template <class NT>
+Polynomial<NT> Polynomial<NT>::input_ascii(std::istream &is) {
+    char c;
+    int degr = -1, i;
+
+    INTERN_POLYNOMIAL::swallow(is, 'P');
+    INTERN_POLYNOMIAL::swallow(is, '[');
+    is >> CGAL::iformat(degr);
+    if (degr < 0) {
+        CGAL_assertion_msg( false, "input error: negative degree of polynomial specified");
+    }
+    INTERN_POLYNOMIAL::Creation_tag TAG;
+    Polynomial<NT> p(TAG, degr+1);
+
+    do c = is.get(); while (isspace(c));
+    do {
+        if (c != '(') CGAL_assertion_msg( false, "input error: ( expected");
+        is >> CGAL::iformat(i);
+        if (!(i >= 0 && i <= degr && p[i] == NT(0))) {
+            CGAL_assertion_msg( false, "input error: invalid exponent in polynomial");
+        };
+        INTERN_POLYNOMIAL::swallow(is, ',');
+        is >> CGAL::iformat(p.coeff(i));
+        INTERN_POLYNOMIAL::swallow(is, ')');
+        do c = is.get(); while (isspace(c));
+    } while (c != ']');
+
+    p.reduce();
+    p.simplify_coefficients();
+    return p;
+}
+
+template <class COEFF>
+struct Needs_parens_as_product<Polynomial<COEFF> >{
+    typedef Polynomial<COEFF> Poly;
+    bool operator()(const Poly& x){ return (x.degree() > 0); }
+};
+
 
 
 CGAL_END_NAMESPACE
