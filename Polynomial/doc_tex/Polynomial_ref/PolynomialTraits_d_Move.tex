@@ -1,0 +1,33 @@
+\begin{ccRefConcept}{PolynomialTraits_d::Move}
+
+\ccDefinition
+
+\ccRefines 
+
+\ccc{AdaptableFunctor}
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}\ccGlue
+
+\ccOperations
+
+\ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d,
+                                 int i, int j);}{ 
+This function moves the variable $x_i$ to its new position $j$ and returns 
+the new polynomial. The order of the other variables is preserved.  
+                  \ccPrecond $0 \leq i  < d$   
+                  \ccPrecond $0 \leq j  < d$                       
+                }       
+
+
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+
+\end{ccRefConcept}
