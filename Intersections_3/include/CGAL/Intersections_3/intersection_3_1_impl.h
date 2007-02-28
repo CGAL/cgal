@@ -526,7 +526,7 @@ intersection(const typename CGAL_WRAP(K)::Ray_3 &ray,
     typedef typename K::RT RT;
     typedef typename K::FT FT;
     bool all_values = true;
-    FT _min = 0, _max;
+    FT _min = 0, _max = 0; // initialization to prevent compiler warning
     Point_3 const & _ref_point=ray.source();
     Vector_3 const & _dir=ray.direction().vector();
     Point_3 const & _iso_min=(box.min)();
