@@ -1,0 +1,33 @@
+\begin{ccRefConcept}{PolynomialTraits_d::GetCoefficient}
+
+\ccDefinition
+
+This \ccc{Functor} provides returns a coefficient of a
+\ccc{PolynomialTraits_d::Polynomial_d}.
+
+\ccRefines 
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxx}{xxxxxxxxxxx}{}
+\ccTypedef{typedef PolynomialTraits_d::Coefficient  result_type;}{}
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d first_argument_type ;}{}
+\ccTypedef{typedef int                              second_argument_type;}{}
+
+\ccCreationVariable{construct_polynomial}
+\ccOperations
+
+\ccMethod{result_type operator()( first_argument_type p, 
+                                  second_argument_type i);}{ 
+Returns coefficient of $x^i$ by value, 
+where $x$ is the outermost variable.}
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+\ccRefIdfierPage{PolynomialTraits_d::TotalDegree}
+
+\end{ccRefConcept}
