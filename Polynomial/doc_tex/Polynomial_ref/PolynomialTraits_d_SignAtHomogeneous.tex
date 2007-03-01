@@ -1,0 +1,35 @@
+\begin{ccRefConcept}{PolynomialTraits_d::SignAtHomogeneous}
+\ccDefinition
+
+This \ccc{AdaptableFunctor} returns the sign of a
+\ccc{PolynomialTraits_d::Polynomial_d} $p$ at a given homogeneous point 
+represented by an iterator range.
+
+\ccRefines 
+\ccc{AdaptableFunctor}
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccCreationVariable{sign_at_homogeneous}
+\ccTypedef{typedef CGAL::Sign                        result_type;}{}\ccGlue
+
+\ccOperations
+template <class InputIterator>
+\ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d  p,
+                                 InputIterator                     begin,
+                                 InputIterator                     end );}{ 
+Returns the sign of $p$ at the given homogeneous point, where $begin$ is 
+refering to the innermost variable.
+\ccPrecond{\ccc{std::iterator_traits< InputIterator >::value_type} is  
+  \ccc{PolynomialTraits_d::Innermost_coefficient}.}
+\ccPrecond (end-begin == \ccc{PolynomialTraits_d::d} + 1)  
+}
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+
+\end{ccRefConcept}

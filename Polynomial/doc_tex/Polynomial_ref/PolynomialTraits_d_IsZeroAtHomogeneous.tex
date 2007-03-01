@@ -1,0 +1,35 @@
+\begin{ccRefConcept}{PolynomialTraits_d::IsZeroAtHomogeneous}
+\ccDefinition
+
+This \ccc{AdaptableFunctor} returns whether a
+\ccc{PolynomialTraits_d::Polynomial_d} $p$ is zero at a given homogeneous point 
+, which is represented by an iterator range.
+
+\ccRefines 
+\ccc{AdaptableFunctor}
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccCreationVariable{is_zero_at_homogeneous}
+\ccTypedef{typedef bool                        result_type;}{}\ccGlue
+
+\ccOperations
+template <class InputIterator>
+\ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d  p,
+                                 InputIterator                     begin,
+                                 InputIterator                     end );}{ 
+Computes whether $p$ is zero at the given homogeneous point, 
+where $begin$ is refering to the innermost variable.
+\ccPrecond{\ccc{std::iterator_traits< InputIterator >::value_type} is  
+  \ccc{PolynomialTraits_d::Innermost_coefficient}.}
+\ccPrecond (end-begin == \ccc{PolynomialTraits_d::d} + 1)  
+}
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+
+\end{ccRefConcept}

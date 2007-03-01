@@ -1,0 +1,34 @@
+\begin{ccRefConcept}{PolynomialTraits_d::SignAt}
+\ccDefinition
+
+This \ccc{AdaptableFunctor} returns the sign of a
+\ccc{PolynomialTraits_d::Polynomial_d} $p$ at given cartesian point represented 
+as an iterator range.
+
+\ccRefines 
+\ccc{AdaptableFunctor}
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccCreationVariable{sign_at}
+\ccTypedef{typedef CGAL::Sign                        result_type;}{}\ccGlue
+
+\ccOperations
+\ccMethod{
+template <class InputIterator>
+result_type operator()(PolynomialTraits_d::Polynomial_d  p,
+                       InputIterator                     begin,
+                       InputIterator                     end );}{ 
+Returns the sign of $p$ at the given cartesian point, where $begin$ is refering 
+to the innermost variable.
+\ccPrecond (end-begin == \ccc{PolynomialTraits_d::d})  
+}
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+
+\end{ccRefConcept}
