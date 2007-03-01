@@ -47,7 +47,7 @@ class Access_coordinates_begin_d {
 
     // types
     typedef  typename R::Point_d        Point;
-    typedef  const typename R::RT *     Coordinate_iterator;
+    typedef  typename Point::Homogeneous_const_iterator Coordinate_iterator;
 
     // unary function class types
     typedef  Coordinate_iterator        result_type;
@@ -70,13 +70,7 @@ private:
 public:
     Coordinate_iterator
     operator() ( const Point& p) const { 
-      typename R::Rep_tag tag;
-#if defined(__sun) && defined(__SUNPRO_CC)
-    // to avoid a warning "tag has not yet been assigned a value"
-    typedef typename R::Rep_tag Rep_tag;
-    tag = Rep_tag();
-#endif // SUNPRO
-      return access(p, tag);
+      return p.homogeneous_begin();
     }
 };
 

@@ -94,7 +94,7 @@ class Point_3_coordinate_iterator {
     bool   operator >= ( const Self& it) const { return ( i >= it.i); }
 
 private:
-    const Point&  p;
+    Point         p;
     int           i;
 };
 
