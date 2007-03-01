@@ -24,7 +24,6 @@
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Root_of_2.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/certified_numeric_predicates.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -155,8 +154,7 @@ struct Root_of_traits<Interval_nt<B> >{
     // just a copy, not sure about the semantic of smaller 
     Interval_nt<B> operator()(const Interval_nt<B>& a, const Interval_nt<B>& b, const Interval_nt<B>& c, bool smaller){
         // former make_root_of_2_sqrt()
-        //~ //if (CGAL::possibly(a==0))
-        if (CGAL::certified_is_zero(a))
+        if (CGAL::possibly(a==0))
           return Interval_nt<B>::largest();
         Interval_nt<B> discriminant = CGAL_NTS square(b) - a*c*4;
         Interval_nt<B> d = CGAL_NTS sqrt(discriminant);
