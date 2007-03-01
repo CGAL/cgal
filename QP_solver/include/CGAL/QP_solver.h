@@ -212,7 +212,7 @@ private:
   typedef typename Base::Quotient_maker Quotient_maker;
     
   // access values by basic index functor:
-  typedef  Value_by_basic_index<Value_const_iterator>
+  typedef  CGAL::Value_by_basic_index<Value_const_iterator>
   Value_by_basic_index;
 
   // access values by original index
