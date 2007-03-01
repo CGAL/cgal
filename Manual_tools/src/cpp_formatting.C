@@ -54,7 +54,7 @@ const double width_per_character  = 5.5;
 // This factor is multiplied to the actual width of an C++ declaration
 // right before the test for multiple lines formatting occurs.
 // A greater value forces declarations to be printed in multiple lines.
-double stretch_factor = 1.1;
+double stretch_factor = 1.3;
 
 
 string

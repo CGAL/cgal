@@ -74,8 +74,6 @@ int set_old_state = 0;
 char   stop_character;
 string stop_envir;
 
-unsigned long int char_counter = 0;
-
 void count_newlines( const char* s);
 
 #define skipspaces() if ( skipspaces_eof()) yyterminate()
@@ -342,16 +340,6 @@ number          {digit}+
 			++i;
 	            yylval.text = newstr( yytext+i);
                     return DEFWITHUNKNOWNARGS;
-}
-
-<INITIAL,AllttMode>[\\]lciResetCharCounter    { char_counter=0; break; }
-<INITIAL,AllttMode>[\\]lciCharCounter    {
-                    if( char_counter > 0 ) {
-                      std::cout << "char_counter:" << char_counter << std::endl;
-                      yylval.text = "<BR>";
-                    } else
-                      yylval.text = "";
-                    return STRING;
 }
 
  /* Macro Parameter Parsing   */
@@ -783,7 +771,6 @@ number          {digit}+
 			    if ( (*(s++) = yyinput()) == '\n')
 				inc_line();
 			*s = '\0';
-            ++char_counter;
 		        return RAWOUTPUTN;
                     }
 		    break;
@@ -802,7 +789,6 @@ number          {digit}+
 			*s = '\0';
 			yylval.text = convert_ascii_to_html( p);
 			delete[] p;
-            ++char_counter;
 		        return RAWOUTPUTN;
                     }
 		    break;
@@ -854,13 +840,11 @@ number          {digit}+
 
 "---"           {
 		    yylval.text = " - ";
-            ++char_counter;
 		    return STRING;
                 }
 
 "--"            {
 		    yylval.text = "-";
-            ++char_counter;
 		    return STRING;
                 }
 
@@ -881,7 +865,6 @@ number          {digit}+
  /* --------------------------------------------------------- */
 <INITIAL,AllttMode>[\\][\{\}%]   {
 		    yylval.character = yytext[1];
-            ++char_counter;
 		    return CHAR;
                 }
 <INITIAL,AllttMode>[\\]{space}   {
@@ -908,7 +891,6 @@ number          {digit}+
 <INITIAL,AllttMode>{texmacro}       {
                    yyleng = removespaces( yytext);
                    if ( ! expand_macro()) {
-                      ++char_counter;
                       return STRING;
                    }
                    break;
@@ -921,7 +903,6 @@ number          {digit}+
 <INITIAL>"$$"       {
                     yyleng = removespaces( yytext);
 		    if ( ! expand_macro())
-            ++char_counter;
 			return STRING;
 		    break;
                 }
@@ -944,7 +925,6 @@ number          {digit}+
   /* Speed up for the usual case of plain text, numbers and spaces */
 
 <INITIAL,AllttMode>[a-zA-Z0-9 \t]+ {
-            ++char_counter;
 		    if ( small_caps_mode) {
 			yy_string = convert_to_small_caps( yytext);
 			yylval.text = yy_string.c_str();
@@ -956,7 +936,6 @@ number          {digit}+
 
 <INITIAL,AllttMode>[\{\}]    |
 .	                     {
-            ++char_counter;
                     if ( is_active_char( yytext[0])) {
 			if ( ! expand_macro())
 			    return STRING;
@@ -970,12 +949,10 @@ number          {digit}+
 			}
 			return CHAR;
 		    }
-            --char_counter;
 		    break;
 		}
 
 <AllttMode>.	{
-            ++char_counter;
 		    yylval.character = yytext[0];
 		    if ( is_html_multi_character( yylval.character)) {
 			yylval.text = html_multi_character( yylval.character);

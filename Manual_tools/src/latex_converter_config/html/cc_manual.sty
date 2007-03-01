@@ -351,8 +351,9 @@
 
 \newcommand{\ccHeading}[1]{\lcRawHtml{<H3>}#1\lcRawHtml{</H3>}}
 \newcommand{\ccCommentHeading}[1]{%
-  \lciCharCounter%
-  \lcRawHtml{<EM>}#1: \lcRawHtml{</EM>}%
+\lciCloseCommentHeadingTable%
+\lcRawHtml{<table border="0" cellspacing="0" cellpadding="0"><tr valign="top"><td><em>}#1: \lcRawHtml{</em></td><td>}%
+\gdef\lciCloseCommentHeadingTable{\lcRawHtml{</td></tr></table>}}%
 }
 
 \newcommand{\ccDefinition     }{\ccHeading{Definition}}
@@ -912,7 +913,10 @@
 \newcommand{\lciThreeColumnX}[2]{\lciGluePostProcessing\lciIfEmpty{#C2}
     {\lciThreeColumnLayout{#1}{1}\lciThreeColsEndEmpty}
     {\lciThreeColumnLayout{#1}{0}%
-    \lciResetCharCounter#C2\lciThreeColsEnd}%
+    \gdef\lciCloseCommentHeadingTable{}%
+    #C2%
+    \lciCloseCommentHeadingTable%
+    \lciThreeColsEnd}%
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
     \gdef{\lciIfHtmlIndex}{\lcTrue}%
     \gdef\ccIsFunctionTemplate{\ccFalse}%
