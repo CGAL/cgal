@@ -42,7 +42,7 @@ class Polynomial_traits_d_base {
         int operator()(const ICoeff& c) const { return 0; }
     };
     
-    typedef Null_functor  Construct_polynomial_d;
+    typedef Null_functor  Construct_polynomial;
     typedef Null_functor  Degree;
     typedef Null_functor  Total_degree;
     typedef Null_functor  Leading_coefficient;
@@ -131,7 +131,7 @@ private:
     typedef std::vector< Exponents_coeff_pair > Monom_rep; 
 public:
 
-    struct Construct_polynomial_d {
+    struct Construct_polynomial {
         
         typedef Polynomial_d  result_type;
         
@@ -266,7 +266,7 @@ public:
                 //std::cout << " ------\n "  << std::endl;
                 
                 typedef Polynomial_traits_d<Coefficient> PT;
-                typename PT::Construct_polynomial_d construct;
+                typename PT::Construct_polynomial construct;
                 
                 BOOST_STATIC_ASSERT(PT::d != 0); // Coefficient is a Polynomial
                 std::vector<Coefficient> coefficients;
@@ -390,19 +390,19 @@ public:
         
         Polynomial_d operator()(const Polynomial_d& p, int i, int j ) const {
             //std::cout << i <<" " << j << " : " ; 
-            CGAL_precondition(0 < i && i <= d);
-            CGAL_precondition(0 < j && j <= d);
+            CGAL_precondition(0 <= i && i < d);
+            CGAL_precondition(0 <= j && j < d);
             typedef std::pair< Exponent_vector, Innermost_coefficient >
                 Exponents_coeff_pair;
             typedef std::vector< Exponents_coeff_pair > Monom_rep; 
             Get_monom_representation gmr;
-            Construct_polynomial_d construct;
+            Construct_polynomial construct;
             Monom_rep mon_rep;
             gmr( p, std::back_inserter( mon_rep ) );
             for( typename Monom_rep::iterator it = mon_rep.begin(); 
                  it != mon_rep.end();
                  ++it ) {
-                std::swap(it->first[i-1],it->first[j-1]);
+                std::swap(it->first[i],it->first[j]);
                 // it->first.swap( i, j );
             }
             std::sort( mon_rep.begin(), mon_rep.end() );
@@ -420,15 +420,15 @@ public:
         typedef int                 third_argument_type;
         typedef Arity_tag< 3 >         Arity;
         
-        Polynomial_d operator()(const Polynomial_d& p, int i, int j = d ) const {
+        Polynomial_d operator()(const Polynomial_d& p, int i, int j = (d-1) ) const {
             //std::cout << x <<" " << y << " : " ; 
-            CGAL_precondition(0 < i && i <= d);
-            CGAL_precondition(0 < j && j <= d);
+            CGAL_precondition(0 <= i && i < d);
+            CGAL_precondition(0 <= j && j < d);
             typedef std::pair< Exponent_vector, Innermost_coefficient >
                 Exponents_coeff_pair;
             typedef std::vector< Exponents_coeff_pair > Monom_rep; 
             Get_monom_representation gmr;
-            Construct_polynomial_d construct;
+            Construct_polynomial construct;
             Monom_rep mon_rep;
             gmr( p, std::back_inserter( mon_rep ) );
             for( typename Monom_rep::iterator it = mon_rep.begin(); 
@@ -436,10 +436,10 @@ public:
                  ++it ) {
                 // this is as good as std::rotate since it uses swap also
                 if (i < j) 
-                    for( int k = i-1; k < j-1; k++ )
+                    for( int k = i; k < j; k++ )
                         std::swap(it->first[k],it->first[k+1]);
                 else
-                    for( int k = i-1; k > j-1; k-- )
+                    for( int k = i; k > j; k-- )
                         std::swap(it->first[k],it->first[k-1]);
                 
             }
@@ -449,9 +449,9 @@ public:
     };
     
     struct Degree : public Unary_function< Polynomial_d , int  >{
-        int operator()(const Polynomial_d& p, int i = d) const {      
-            if (i == d) return p.degree();                           
-            else return Swap()(p,i,d).degree();
+        int operator()(const Polynomial_d& p, int i = (d-1)) const {      
+            if (i == (d-1)) return p.degree();                           
+            else return Swap()(p,i,d-1).degree();
         }     
     };
 
@@ -478,7 +478,7 @@ public:
             return p.lcoeff();
         }
         Coefficient operator()(Polynomial_d p, int i) const {
-            return Swap()(p,i,PT::d).lcoeff();
+            return Swap()(p,i,PT::d-1).lcoeff();
         }
     };
     struct Innermost_leading_coefficient 
@@ -515,7 +515,7 @@ public:
             return p.content();
         }
         Coefficient operator()(Polynomial_d p, int i) const {
-            return Swap()(p,i,PT::d).content();
+            return Swap()(p,i,PT::d-1).content();
         }
     };
 //       Multivariate_content;
@@ -539,7 +539,7 @@ public:
         : public Unary_function< Polynomial_d, Polynomial_d >{
         Polynomial_d 
         operator()(const Polynomial_d& p, int e, int i = PT::d) const {
-            Construct_polynomial_d construct; 
+            Construct_polynomial construct; 
             Get_monom_representation gmr; 
             Monom_rep monom_rep;
             gmr(p,std::back_inserter(monom_rep));
@@ -555,15 +555,15 @@ public:
     struct Negate
         : public Unary_function< Polynomial_d, Polynomial_d >{
         
-        Polynomial_d operator()(const Polynomial_d& p, int i = d) const {
-            Construct_polynomial_d construct; 
+        Polynomial_d operator()(const Polynomial_d& p, int i = (d-1)) const {
+            Construct_polynomial construct; 
             Get_monom_representation gmr; 
             Monom_rep monom_rep;
             gmr(p,std::back_inserter(monom_rep));
             for(typename Monom_rep::iterator it = monom_rep.begin(); 
                 it != monom_rep.end();
                 it++){
-                if (it->first[i-1] % 2 != 0) 
+                if (it->first[i] % 2 != 0) 
                     it->second = - it->second; 
             }
             return construct(monom_rep.begin(), monom_rep.end());
@@ -572,13 +572,13 @@ public:
 //       Invert;
     struct Invert
         : public Unary_function< Polynomial_d , Polynomial_d >{
-        Polynomial_d operator()(Polynomial_d p, int i = PT::d) const {
-            if (i == d){
+        Polynomial_d operator()(Polynomial_d p, int i = (PT::d-1)) const {
+            if (i == (d-1)){
                 p.reversal(); 
             }else{
-                p =  Swap()(p,i,PT::d);
+                p =  Swap()(p,i,PT::d-1);
                 p.reversal();
-                p = Swap()(p,i,PT::d);   
+                p = Swap()(p,i,PT::d-1);   
             }
             return p ;
         }
@@ -591,15 +591,15 @@ public:
         operator()(
                 Polynomial_d p, 
                 const Innermost_coefficient& c, 
-                int i = d) 
+                int i = (d-1)) 
             const {
-            if (i == d ){
+            if (i == (d-1) ){
                 p.translate(Coefficient(c)); 
             }else{
                 Swap swap;
-                p = swap(p,i,d);
+                p = swap(p,i,d-1);
                 p.translate(Coefficient(c));
-                p = swap(p,i,d); 
+                p = swap(p,i,d-1); 
             }
             return p;
         }
@@ -616,14 +616,14 @@ public:
         operator()(Polynomial_d p, 
                 const Innermost_coefficient& a, 
                 const Innermost_coefficient& b,
-                int i = d ) const {
-            if (i == d ){
+                int i = (d-1) ) const {
+            if (i == (d-1) ){
                 p.translate(Coefficient(a), Coefficient(b) );  
             }else{
                 Swap swap;
-                p = swap(p,i,d);
+                p = swap(p,i,d-1);
                 p.translate(Coefficient(a), Coefficient(b));
-                p = swap(p,i,d);
+                p = swap(p,i,d-1);
             }
             return p;
          }
@@ -641,10 +641,10 @@ public:
                 Polynomial_d p, 
                 const Innermost_coefficient& a, 
                 const Innermost_coefficient& b,
-                int i = d ) const {
+                int i = (d-1) ) const {
             CGAL_precondition( ! CGAL::is_zero(b) );
             
-            if (i == d ) p = Swap()(p,i,d);
+            if (i == (d-1) ) p = Swap()(p,i,d-1);
           
             if(CGAL::is_one(b)) 
                 p.scale_up(Coefficient(a));
@@ -654,7 +654,7 @@ public:
                 else 
                     p.scale(Coefficient(a), Coefficient(b) );  
           
-            if (i == d ) p = Swap()(p,i,d);
+            if (i == (d-1) ) p = Swap()(p,i,d-1);
           
             return p;
          }
@@ -664,14 +664,14 @@ public:
      struct Differentiate 
          : public Unary_function<Polynomial_d, Polynomial_d>{
         Polynomial_d
-        operator()(Polynomial_d p, int i = d) const {
-            if (i == d ){
+        operator()(Polynomial_d p, int i = (d-1)) const {
+            if (i == (d-1) ){
                 p.diff();
             }else{
                 Swap swap;
-                p = swap(p,i,d);
+                p = swap(p,i,d-1);
                 p.diff();
-                p = swap(p,i,d);
+                p = swap(p,i,d-1);
             }
             return p;
          }
@@ -809,7 +809,7 @@ public:
         operator()(const Polynomial_d& p, const Polynomial_d& q) const {
             typedef Innermost_coefficient IC;
 
-            typename PT::Construct_polynomial_d construct;
+            typename PT::Construct_polynomial construct;
             typename PT::Innermost_leading_coefficient ilcoeff;
             typename PT::Innermost_coefficient_begin begin;
             typename PT::Innermost_coefficient_end end;
@@ -902,9 +902,9 @@ public:
     struct Evaluate
         :public Binary_function<Polynomial_d,Innermost_coefficient,Coefficient>{
         Coefficient
-        operator()(const Polynomial_d& p, Innermost_coefficient x, int i = d) 
+        operator()(const Polynomial_d& p, Innermost_coefficient x, int i = (d-1)) 
             const {
-            if(i == d )
+            if(i == (d-1) )
                 return p.evaluate(x);
             else{
                 return Move()(p,i).evaluate(x);
@@ -932,11 +932,11 @@ public:
                 Innermost_coefficient a, 
                 Innermost_coefficient b,
                 int hdegree ,
-                int i = PT::d ) const {
-            if (i == d )
+                int i = (PT::d-1) ) const {
+            if (i == (d-1) )
                 return p.evaluate_homogeneous(a,b,hdegree);
             else
-                return Move()(p,i,PT::d).evaluate_homogeneous(a,b,hdegree);
+                return Move()(p,i,PT::d-1).evaluate_homogeneous(a,b,hdegree);
         }         
     };
     
@@ -948,8 +948,8 @@ public:
         operator()(
                 const Polynomial_d& p, 
                 const Polynomial_d& q,
-                int i = d ) const {
-            if(i == d )
+                int i = (d-1) ) const {
+            if(i == (d-1) )
                 return prs_resultant(p,q);
             else
                 return prs_resultant(Move()(p,i),Move()(q,i));
