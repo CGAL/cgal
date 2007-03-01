@@ -11,7 +11,7 @@ this is needed because it is not guaranteed that \ccc{FractionTraits::Denominato
 
 \ccRefines 
 
-\ccc{AdaptableUnaryFunction} 
+\ccc{AdaptableBinaryFunction} 
 
 \ccTypes
 %SetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxxxxxxxxxxxxxxxxxxxxxx}{}
@@ -22,7 +22,7 @@ this is needed because it is not guaranteed that \ccc{FractionTraits::Denominato
 
 \ccOperations
 %SetThreeColumns{xxxxxxxxxx}{xxxxx}{}
-\ccCreationVariable{operator()}
+\ccCreationVariable{common_factor}
 \ccMethod{result_type operator()(first_argument_type d1, second_argument_type d2);}
         {return a great common factor of $d1$ and $d2$.\\
          Note: {\tt operator()(0,0) = 0} }

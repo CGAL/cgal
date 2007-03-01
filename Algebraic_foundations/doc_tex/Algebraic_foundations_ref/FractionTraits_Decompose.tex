@@ -2,26 +2,16 @@
 
 \ccDefinition
 
-\ccc{AdaptableFunctor}, decomposing the first argument into its numerator and denominator.   
-
-\ccRefines 
-
-\ccc{AdaptableFunctor} 
+Functor decomposing a \ccc{Fraction} into its numerator and denominator.   
 
 \ccTypes
-%SetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxxxxxxxxxxxxxxxxxxxxxx}{}
-
-\ccTypedef{typedef void result_type;}{}\ccGlue
-\ccTypedef{typedef FractionTraits::Type first_argument_type;}{}
-\ccTypedef{typedef FractionTraits::Numerator_type& second_argument_type;}{}
-\ccTypedef{typedef FractionTraits::Denominator_type& third_argument_type;}{}
 
 \ccOperations
 %SetThreeColumns{xxxxxxxxxx}{xxxxx}{}
-\ccCreationVariable{operator()}
-\ccMethod{result_type operator()( first_argument_type  f,
-                                  second_argument_type n,
-                                  third_argument_type  d);}
+\ccCreationVariable{decompose}
+\ccMethod{result_type operator()( FractionTraits::Type               f,
+                                  FractionTraits::Numerator_type   & n,
+                                  FractionTraits::Denominator_type & d);}
         {decompose $f$ into numerator $n$ and denominator $d$. }
 
 %\ccHasModels
