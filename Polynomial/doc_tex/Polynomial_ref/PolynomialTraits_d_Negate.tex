@@ -1,11 +1,12 @@
 \begin{ccRefConcept}{PolynomialTraits_d::Negate}
 \ccDefinition
 
-This \ccc{AdaptableFunctor} negates a \ccc{PolynomialTraits_d::Polynomial_d} with  
+This \ccc{AdaptableUnaryFunction} negates a \ccc{PolynomialTraits_d::Polynomial_d} with  
 respect to one variable. 
 
 \ccRefines 
-\ccc{AdaptableFunctor}
+\ccc{AdaptableUnaryFunction}
+
 \ccTypes
 \ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
 \ccCreationVariable{negate}
@@ -15,6 +16,7 @@ respect to one variable.
 \ccOperations
 \ccMethod{result_type operator()(argument_type  p);}
          { return $p(-x)$, with respect to the outermost variable. }
+
 \ccMethod{result_type operator()(argument_type  p,
                                  int i);}
          { return $p(-x)$, with respect to variable $x_i$. 

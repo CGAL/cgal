@@ -2,10 +2,11 @@
 
 \ccDefinition
 
-This \ccc{Functor} provides returns a coefficient of a
+This \ccc{AdaptableBinaryFunction} provides access to coefficients of a
 \ccc{PolynomialTraits_d::Polynomial_d}.
 
 \ccRefines 
+\ccc{AdaptableBinaryFunction}
 
 \ccTypes
 
@@ -14,7 +15,7 @@ This \ccc{Functor} provides returns a coefficient of a
 \ccTypedef{typedef PolynomialTraits_d::Polynomial_d first_argument_type ;}{}
 \ccTypedef{typedef int                              second_argument_type;}{}
 
-\ccCreationVariable{construct_polynomial}
+\ccCreationVariable{get_coefficient}
 \ccOperations
 
 \ccMethod{result_type operator()( first_argument_type p, 

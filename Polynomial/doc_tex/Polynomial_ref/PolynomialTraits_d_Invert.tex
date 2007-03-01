@@ -1,11 +1,11 @@
 \begin{ccRefConcept}{PolynomialTraits_d::Invert}
 \ccDefinition
 
-This \ccc{AdaptableFunctor} inverts (reverse) a 
+This \ccc{AdaptableUnaryFunction} inverts (reverse) a 
 \ccc{PolynomialTraits_d::Polynomial_d} with respect to one variable. 
 
 \ccRefines 
-\ccc{AdaptableFunctor}
+\ccc{AdaptableUnaryFunction}
 
 \ccTypes
 
@@ -15,13 +15,13 @@ This \ccc{AdaptableFunctor} inverts (reverse) a
 \ccTypedef{typedef PolynomialTraits_d::Polynomial_d   argument_type;}{}
 
 \ccOperations
-\ccMethod{result_type operator()(argument_type  p);}
-         { return $x^{degree}\cdot p(1/x)$, with respect to the outermost variable. }
+\ccMethod{result_type operator()(argument_type  p);}{ 
+        return $x^{degree}\cdot p(1/x)$, with respect to the outermost variable.}
+
 \ccMethod{result_type operator()(argument_type  p,
-                                 int i);}
-         { return $x^{degree}\cdot p(1/x)$, with respect to variable $x_i$.
-           \ccPrecond $0 \leq i  < d$
-         }
+                                 int i);}{ 
+        return $x^{degree}\cdot p(1/x)$, with respect to variable $x_i$.
+        \ccPrecond $0 \leq i  < d$ }
 
 %\ccHasModels
 
