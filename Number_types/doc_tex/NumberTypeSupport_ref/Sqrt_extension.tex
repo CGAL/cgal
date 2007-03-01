@@ -156,17 +156,17 @@ $a0 + a1 * sqrt(root)$.
 
 \ccMethod{CGAL::Sign sign () const;}
         {Determines sign of \ccVar\ by (repeated) squaring.
-        \ccPrecond\\ \ccc{Sqrt_extension} is \ccc{RealEmbeddable}.}
+        \ccPrecond \ccc{Sqrt_extension} is \ccc{RealEmbeddable}.}
 \ccMethod{Sqrt_extension abs () const;}
  	{returns the absolute value of \ccVar. 
-        \ccPrecond\\ \ccc{Sqrt_extension} is \ccc{RealEmbeddable}.}
+        \ccPrecond \ccc{Sqrt_extension} is \ccc{RealEmbeddable}.}
 
 \ccFunction{Sqrt_extension operator+(const Sqrt_extension&a,const Sqrt_extension& b);}
-{\ccPrecond{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
+{\ccPrecond \ccc{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
 \ccFunction{Sqrt_extension operator-(const Sqrt_extension&a,const Sqrt_extension& b);}
-{\ccPrecond{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
+{\ccPrecond \ccc{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
 \ccFunction{Sqrt_extension operator*(const Sqrt_extension&a,const Sqrt_extension& b);}
-{\ccPrecond{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
+{\ccPrecond \ccc{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
 
 \ccFunction{Sqrt_extension operator+(const Sqrt_extension&a, const NT &b);}{}\ccGlue
 \ccFunction{Sqrt_extension operator-(const Sqrt_extension&a, const NT &b);}{}\ccGlue
@@ -177,13 +177,13 @@ $a0 + a1 * sqrt(root)$.
 \ccFunction{Sqrt_extension operator*(const NT&a, const Sqrt_extension &b);}{}\ccGlue
 
 \ccMethod{Sqrt_extension & operator+=(const Sqrt_extension& a);}
-{\ccPrecond{(this->root()==0 || a.root()==0 || this->root() == a.root())} }\ccGlue
+{\ccPrecond \ccc{(this->root()==0 || a.root()==0 || this->root() == a.root())} }\ccGlue
 
 \ccMethod{Sqrt_extension & operator-=(const Sqrt_extension& a);}
-{\ccPrecond{(this->root()==0 || a.root()==0 || this->root() == a.root())} }\ccGlue
+{\ccPrecond \ccc{(this->root()==0 || a.root()==0 || this->root() == a.root())} }\ccGlue
 
 \ccMethod{Sqrt_extension & operator*=(const Sqrt_extension& a);}
-{\ccPrecond{(this->root()==0 || a.root()==0 || this->root() == a.root())} }\ccGlue
+{\ccPrecond \ccc{(this->root()==0 || a.root()==0 || this->root() == a.root())} }\ccGlue
 
 \ccMethod{Sqrt_extension & 	operator += (const NT &a);}{}\ccGlue
 \ccMethod{Sqrt_extension & 	operator -= (const NT &a);}{}\ccGlue
@@ -193,18 +193,18 @@ In case \ccc{NT} is an \ccc{IntegralDomain} operator/ implements integral divisi
 %In case \ccc{NT} is a \ccc{Field} operator/ implements the field division.    
 
 \ccFunction{Sqrt_extension operator/(const Sqrt_extension&a,const Sqrt_extension& b);}
-{\ccPrecond{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
+{\ccPrecond \ccc{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
 \ccFunction{Sqrt_extension operator/(const Sqrt_extension&a, const NT &b);}{}\ccGlue
 \ccFunction{Sqrt_extension operator/(const NT&a, const Sqrt_extension &b);}{}\ccGlue
 \ccMethod{Sqrt_extension & operator/=(const Sqrt_extension& a);}
-{\ccPrecond{(this->root()==0 || a.root()==0 || this->root() == a.root())} }\ccGlue
+{\ccPrecond \ccc{(this->root()==0 || a.root()==0 || this->root() == a.root())} }\ccGlue
 \ccMethod{Sqrt_extension & 	operator /= (const NT &a);}{}
 
 
 \ccFunction{bool operator==(const Sqrt_extension&a,const Sqrt_extension& b);}
-{\ccPrecond{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
+{\ccPrecond \ccc{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
 \ccFunction{bool operator!=(const Sqrt_extension&a,const Sqrt_extension& b);}
-{\ccPrecond{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
+{\ccPrecond \ccc{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
 \ccFunction{bool operator==(const NT&a, const Sqrt_extension &b);}{}\ccGlue
 \ccFunction{bool operator!=(const NT&a, const Sqrt_extension &b);}{}\ccGlue
 \ccFunction{bool operator==(const Sqrt_extension&a, const NT &b);}{}\ccGlue
@@ -213,13 +213,13 @@ In case \ccc{NT} is an \ccc{IntegralDomain} operator/ implements integral divisi
 In case  \ccc{Sqrt_extension} is \ccc{RealEmbeddable}:
 
 \ccFunction{bool operator< (const Sqrt_extension&a,const Sqrt_extension& b);}
-{\ccPrecond{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
+{\ccPrecond \ccc{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
 \ccFunction{bool operator<=(const Sqrt_extension&a,const Sqrt_extension& b);}
-{\ccPrecond{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
+{\ccPrecond \ccc{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
 \ccFunction{bool operator> (const Sqrt_extension&a,const Sqrt_extension& b);}
-{\ccPrecond{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
+{\ccPrecond \ccc{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
 \ccFunction{bool operator>=(const Sqrt_extension&a,const Sqrt_extension& b);}
-{\ccPrecond{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
+{\ccPrecond \ccc{(a.root()==0 || b.root()==0 || a.root() == b.root())} }\ccGlue
 
 \ccFunction{bool operator< (const NT&a, const Sqrt_extension &b);}{}\ccGlue
 \ccFunction{bool operator<=(const NT&a, const Sqrt_extension &b);}{}\ccGlue
