@@ -21,6 +21,8 @@ licenses:
   the QPL (see LICENSE.QPL).
 - ImageIO, in the directory "src/CGALimageIO/", is licensed under the LGPL
   (see LICENSE.LGPL).
+- CGALPDB, in the directory "src/CGALPDB/" and "include/CGALPDB" is licensed
+  under the LGPL (see LICENSE.LGPL).
 - OpenNL, in the directory "include/OpenNL", is licensed under the LGPL
   (see include/OpenNL/LICENSE.OPENNL).
 
