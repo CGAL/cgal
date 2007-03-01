@@ -21,3 +21,10 @@
 // This file is for non-windows compilers running in non-windows platforms (such as cl.exe via cygwin)
 // The real file (for MSVC) is in /CGAL/config/msvc/CGAL/auto_link.h
 //
+#if defined(CGAL_LIB_NAME)
+#  undef CGAL_LIB_NAME
+#endif
+
+#if defined(CGAL_AUTO_LINK_NOMANGLE)
+#  undef CGAL_AUTO_LINK_NOMANGLE
+#endif
