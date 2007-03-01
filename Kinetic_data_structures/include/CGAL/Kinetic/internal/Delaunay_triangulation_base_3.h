@@ -420,7 +420,7 @@ public:
     //simulator()->set_current_time(nt);
     std::cout << "Locating at time " << triangulation_.geom_traits().time() << std::endl;
     Cell_handle h= triangulation_.locate(k);
-    if (h != Cell_handle() && h->vertex(0) != Vertex_handle()
+    /*if (h != Cell_handle() && h->vertex(0) != Vertex_handle()
 	       && h->vertex(1) != Vertex_handle()
 	       && h->vertex(2) != Vertex_handle()
 	       && h->vertex(3) != Vertex_handle()) {
@@ -430,7 +430,7 @@ public:
 		<< h->vertex(3)->point() << std::endl;
     } else {
       std::cout << "Kinetic located outside hull" << std::endl;
-      }
+      }*/
     return insert(k,h);
   }
 
@@ -459,16 +459,6 @@ public:
     Vertex_handle vh;
     v_.pre_insert_vertex(k, h);
     if (triangulation_.dimension() == 3) {
-      typename Instantaneous_kernel::Current_coordinates cco= triangulation_.geom_traits().current_coordinates_object();
-      for (unsigned int i=0; i<4; ++i) {
-	if (h->vertex(i)->point() != Point_key() && cco(h->vertex(i)->point()).point() 
-	    == cco(k).point()) {
-	  CGAL_KINETIC_LOG(LOG_SOME, "Point " << k << " is on point " 
-		       << h->vertex(i)->point() << "\n");
-	  return h->vertex(i);
-	}
-      }
-
       triangulation_.find_conflicts(k, h, back_inserter(bfacets), 
 				    back_inserter(cells),back_inserter(ifacets));
       if (has_certificates_) {

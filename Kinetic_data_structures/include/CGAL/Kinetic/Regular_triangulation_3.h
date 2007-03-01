@@ -676,9 +676,21 @@ public:
     // almost the same as push
     // if insertion fails, then handle redundant
     CGAL_KINETIC_LOG(LOG_LOTS, "Inserth " << k << std::endl);
-
-    
-    typename Triangulation::Vertex_handle vh=kdel_.insert(k, h);
+    kdel_.set_instantaneous_time();
+    typename Instantaneous_kernel::Current_coordinates cco= triangulation().geom_traits().current_coordinates_object();
+    typename Triangulation::Vertex_handle vh;
+    for (unsigned int i=0; i<4; ++i) {
+      if (h->vertex(i)->point() != Point_key() 
+	  && cco(h->vertex(i)->point()).point() == cco(k).point()) {
+	CGAL_KINETIC_LOG(LOG_SOME, "Point " << k << " is on point " 
+			 << h->vertex(i)->point() << "\n");
+	vh= h->vertex(i);
+	break;
+      }
+    }
+    if (vh== Vertex_handle()) {
+      vh=kdel_.insert(k, h);
+    } 
     
     post_insert(k,vh, h);
   }
@@ -688,10 +700,10 @@ public:
     // if insertion fails, then handle redundant
     CGAL_KINETIC_LOG(LOG_LOTS, "Insert " << k << std::endl);
 
-    
-    typename Triangulation::Vertex_handle vh = kdel_.insert(k);
-    
-    post_insert(k,vh, Cell_handle());
+    kdel_.set_instantaneous_time();
+    Cell_handle h= triangulation().locate(k);
+
+    return insert(k, h);
   }
 
   void post_insert(Point_key k, Vertex_handle vh, Cell_handle h) {
