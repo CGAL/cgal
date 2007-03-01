@@ -5280,9 +5280,9 @@ if [ -z "${_WHAT_TO_DO}" ]; then
     done
     # --- end of parsing commandline options ---
 fi
-#if [ -z "${_WHAT_TO_DO}" ]; then 
-#    _WHAT_TO_DO='auto'; 
-#fi
+if [ -z "${_WHAT_TO_DO}" ]; then 
+    _WHAT_TO_DO='auto'; 
+fi
 
 # ---------------------------------------------------------------------
 # postprocess commandline settings
