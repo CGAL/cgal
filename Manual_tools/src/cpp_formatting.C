@@ -41,7 +41,7 @@ int  HREF_counter; // important for option -extended
 
 /* table size and font size constants */
 /* ================================== */
-const int table_width             = 850; // absolute
+const int table_width             = 950; // absolute
 const int table_long_param_indent = 50;  // absolute
 const int table_first_col         = 25;  // in percent
 const int table_second_col        = 25;  // in percent
@@ -54,7 +54,7 @@ const double width_per_character  = 5.5;
 // This factor is multiplied to the actual width of an C++ declaration
 // right before the test for multiple lines formatting occurs.
 // A greater value forces declarations to be printed in multiple lines.
-double stretch_factor = 1.6;
+double stretch_factor = 1.1;
 
 
 string

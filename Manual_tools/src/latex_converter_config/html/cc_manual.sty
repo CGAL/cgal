@@ -350,7 +350,10 @@
 
 
 \newcommand{\ccHeading}[1]{\lcRawHtml{<H3>}#1\lcRawHtml{</H3>}}
-\newcommand{\ccCommentHeading}[1]{\lcRawHtml{<BR><EM>}#1: \lcRawHtml{</EM>}}
+\newcommand{\ccCommentHeading}[1]{%
+  \lciCharCounter%
+  \lcRawHtml{<EM>}#1: \lcRawHtml{</EM>}%
+}
 
 \newcommand{\ccDefinition     }{\ccHeading{Definition}}
 \newcommand{\ccIsModel        }{\ccHeading{Is Model for the Concepts}}
@@ -908,7 +911,8 @@
     {\lciThreeColumnX{#1}}}
 \newcommand{\lciThreeColumnX}[2]{\lciGluePostProcessing\lciIfEmpty{#C2}
     {\lciThreeColumnLayout{#1}{1}\lciThreeColsEndEmpty}
-    {\lciThreeColumnLayout{#1}{0}#C2\lciThreeColsEnd}%
+    {\lciThreeColumnLayout{#1}{0}%
+    \lciResetCharCounter#C2\lciThreeColsEnd}%
     \gdef{\lciIfHtmlLinks}{\lcTrue}%
     \gdef{\lciIfHtmlIndex}{\lcTrue}%
     \gdef\ccIsFunctionTemplate{\ccFalse}%
