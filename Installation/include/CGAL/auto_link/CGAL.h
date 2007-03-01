@@ -1,8 +1,4 @@
-// Copyright (c) 2007  Utrecht University (The Netherlands),
-// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
-// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
-// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// Copyright (c) 2007 GeometryFactory (France). All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -25,6 +21,6 @@
 #define CGAL_AUTO_LINK_CGAL_H
 
 #define CGAL_LIB_NAME CGAL
-#include <CGAL/auto_link.h>
+#include <CGAL/auto_link/auto_link.h>
 
 #endif // CGAL_AUTO_LINK_CGAL_H

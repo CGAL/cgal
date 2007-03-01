@@ -21,6 +21,6 @@
 #define CGAL_AUTO_LINK_CORE_H
 
 #define CGAL_LIB_NAME core++
-#include <CGAL/auto_link.h>
+#include <CGAL/auto_link/auto_link.h>
 
 #endif // CGAL_AUTO_LINK_CORE_H

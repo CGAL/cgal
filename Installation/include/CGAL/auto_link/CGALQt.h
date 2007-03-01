@@ -1,4 +1,4 @@
-// Copyright (c) 2007 GeometryFactory (France).  All rights reserved.
+// Copyright (c) 2007 GeometryFactory (France). All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -21,6 +21,6 @@
 #define CGAL_AUTO_LINK_CGALQT_H
 
 #define CGAL_LIB_NAME CGALQt
-#include <CGAL/auto_link.h>
+#include <CGAL/auto_link/auto_link.h>
 
 #endif // CGAL_AUTO_LINK_CGALQT_H

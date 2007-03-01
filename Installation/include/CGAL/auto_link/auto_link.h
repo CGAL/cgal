@@ -307,6 +307,8 @@ CGAL_LIB_RT_OPT:     A suffix that indicates the runtime library used,
 
 #endif // _MSC_VER || __BORLANDC__
 
+#endif // CGAL_NO_AUTOLINK
+
 //
 // finally undef any macros we may have set:
 //
@@ -334,7 +336,6 @@ CGAL_LIB_RT_OPT:     A suffix that indicates the runtime library used,
 #  undef CGAL_LIB_FULL_NAME
 #endif
 
-#endif // CGAL_NO_AUTOLINK
 
 
 

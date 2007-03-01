@@ -822,7 +822,7 @@ set_compiler_flags()
     case ${CGAL_OS_COMPILER} in
 	*bcc32.exe*|*BCC32*)
 	    #### settings Borland C++ compiler
-	    ADDITIONAL_CXXFLAGS="-P -vi- -w-inl"
+	    ADDITIONAL_CXXFLAGS="-P -vi- -w-inl -DCGAL_NO_AUTOLINK"
 	    CGAL_LIB_CXXFLAGS="-P"
 	    CGAL_STATIC_LIB_CREATE="tlib /C /P512 ''"
 	    CGAL_OBJ_PREFIX="+"
@@ -845,7 +845,7 @@ set_compiler_flags()
 	    #### settings Intel C++ compiler
 	    WINDOWS_COMPILER="y"
 	    CYGWIN_COMPILER="y"
-	    ADDITIONAL_CXXFLAGS="-Op -TP -GR -EHsc -Zm900 -nologo -Zc:wchar_t -Zc:forScope -MD"
+	    ADDITIONAL_CXXFLAGS="-Op -TP -GR -EHsc -Zm900 -nologo -Zc:wchar_t -Zc:forScope -MD -DCGAL_NO_AUTOLINK"
 	    ADDITIONAL_LDFLAGS="-nologo"
 #	    CGAL_LIB_CXXFLAGS="-TP"
 	    CGAL_STATIC_LIB_CREATE="LIB /OUT:"
@@ -869,7 +869,7 @@ set_compiler_flags()
 	    #### settings Microsoft Visual C++ compiler
 	    WINDOWS_COMPILER="y"
 	    CYGWIN_COMPILER="y"
-	    ADDITIONAL_CXXFLAGS="-TP -GR -EHsc -Zm900 -nologo -MD"
+	    ADDITIONAL_CXXFLAGS="-TP -GR -EHsc -Zm900 -nologo -MD -DCGAL_NO_AUTOLINK"
 	    ADDITIONAL_LDFLAGS="-nologo"
 #	    CGAL_LIB_CXXFLAGS="-TP"
 	    CGAL_STATIC_LIB_CREATE="LIB /OUT:"
