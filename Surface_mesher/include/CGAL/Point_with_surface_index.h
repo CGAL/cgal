@@ -29,7 +29,7 @@ namespace CGAL {
 template <class Point>
 class Point_with_surface_index : public Point
 {
-  typedef Point_traits<Point> Point_traits;
+  typedef CGAL::Point_traits<Point> Point_traits;
   typedef typename Point_traits::Bare_point Bare_point;
 
 public:
