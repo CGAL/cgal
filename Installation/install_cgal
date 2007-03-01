@@ -718,7 +718,7 @@ set_dirs_dependant_on_cgal_dir()
     CGAL_INCL_DIR="${CGAL_DIR}/include"
     CGAL_INCL_CONF_DIR="${CGAL_INCL_DIR}/CGAL/config"
     CGAL_LIB_DIR="${CGAL_DIR}/lib"
-    CGAL_MAKE_DIR="${CGAL_DIR}/make"
+    CGAL_MAKE_DIR="${CGAL_DIR}/make/"
     CGAL_SRC_DIR="${CGAL_DIR}/src"
     CGAL_TEST_DIR="${CGAL_DIR}/test"
     CGAL_CONF_DIR="${CGAL_DIR}/config"
@@ -4445,11 +4445,12 @@ installation()
     _CGAL_IDIR="${CGAL_INSTALL_DIR}/include"
     _check_dir_exists_create "${_CGAL_IDIR}"
     _do_command \
-      "cd \"${CGAL_INCL_DIR}\"; ${_tar} cf - . | (cd \"${_CGAL_IDIR}\"; ${_tar} xf -)" \
+      "cd \"${CGAL_INCL_DIR}\"; cp CGAL/config/${CGAL_OS_COMPILER}/CGAL/compiler_config.h CGAL/; ${_tar} cf - . | (cd \"${_CGAL_IDIR}\"; ${_tar} xf -)" \
       "Install CGAL headers"
 
     # install libraries
-    _CGAL_IDIR="${CGAL_INSTALL_DIR}/lib/${CGAL_OS_COMPILER}"
+    # remove ${CGAL_OS_COMPILER}
+    _CGAL_IDIR="${CGAL_INSTALL_DIR}/lib"
     _check_dir_exists_create "${_CGAL_IDIR}"
     _do_command \
       "cd \"${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}\"; ${_tar} cf - . | (cd \"${_CGAL_IDIR}\"; ${_tar} xf -)" \
@@ -4457,8 +4458,11 @@ installation()
     # On Darwin, the path is encoded into the shared library
     case ${CGAL_OS_COMPILER} in
 	*Darwin*)
-	    for i in "${_CGAL_IDIR}"/*${CGAL_SHARED_LIB_EXT}; do
-		${_install_name_tool} -id "${i}" "${i}"
+	    #for i in "${_CGAL_IDIR}"/*${CGAL_SHARED_LIB_EXT}; do
+	    for i in `cd "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}"; ls *${CGAL_SHARED_LIB_EXT}`; do
+		log_print "Fixing lib paths in" "${i}"
+		${_install_name_tool} -id "${_CGAL_IDIR}/${i}" "${_CGAL_IDIR}/${i}"
+		${_install_name_tool} -change "${CGAL_LIB_DIR}/${CGAL_OS_COMPILER}/libCGAL.dylib" "${_CGAL_IDIR}/libCGAL.dylib" "${_CGAL_IDIR}/${i}"
 	    done;;
     esac
 
@@ -4470,13 +4474,14 @@ installation()
       "Install CGAL programs"
 
     # install makefile
-    _CGAL_IDIR="${CGAL_INSTALL_DIR}/make"
+    _CGAL_IDIR="${CGAL_INSTALL_DIR}/make/CGAL"
     _check_dir_exists_create "${_CGAL_IDIR}"
     CGAL_INSTALL_MAKEFILE="${_CGAL_IDIR}/`${_basename} \"${CGAL_MAKEFILE}\"`"
     OS_CGAL_DIR=`os_path "${CGAL_DIR}"`
     OS_CGAL_INSTALL_DIR=`os_path "${CGAL_INSTALL_DIR}"`
+    log_print "(${_sed} \"s${OS_CGAL_DIR}${OS_CGAL_INSTALL_DIR}g\" \"${CGAL_MAKEFILE}\" | ${_sed} \"\"s-I\$\(CGAL_INCL_CONF_DIR\)\"\" | ${_sed} \"\"s-L\$\(CGAL_LIB_DIR\)/\$\(CGAL_OS_COMPILER\)-L\$\(CGAL_LIB_DIR\)\"\" >\"${CGAL_INSTALL_MAKEFILE}\")"
     _do_command \
-      "(${_sed} \"s${OS_CGAL_DIR}${OS_CGAL_INSTALL_DIR}g\" \"${CGAL_MAKEFILE}\" >\"${CGAL_INSTALL_MAKEFILE}\")" \
+      "(${_sed} \"s${OS_CGAL_DIR}${OS_CGAL_INSTALL_DIR}g\" \"${CGAL_MAKEFILE}\" | ${_sed} \"\"s-I\$\(CGAL_INCL_CONF_DIR\)\"\" | ${_sed} \"\"s-L\$\(CGAL_LIB_DIR\)/\$\(CGAL_OS_COMPILER\)-L\$\(CGAL_LIB_DIR\)\"\" >\"${CGAL_INSTALL_MAKEFILE}\")" \
       "Install CGAL Makefile"
 
     write_buffer "\n"
@@ -5075,6 +5080,7 @@ case ${*} in
 	;;
 esac
 
+
 if [ -z "${_WHAT_TO_DO}" ]; then
     initial_check
 
@@ -5159,6 +5165,7 @@ if [ -z "${_WHAT_TO_DO}" ]; then
 	    if [ -n "${MATCH}" ]; then break; fi
 	done
         if [ -n "${MATCH}" ]; then shift; continue; fi
+	# added default action of build it
 	case ${_arg} in
 	    -QT_DIR*)
 		warn_deprecated ${1}
@@ -5263,12 +5270,19 @@ if [ -z "${_WHAT_TO_DO}" ]; then
 	    -ENABLE-SHARED*) ;; # Already the default.
 	    -DISABLE-STATIC*) ENABLE_STATIC='';;
 	    -ENABLE-STATIC*) ;; # Already the default.
-	    *) _WHAT_TO_DO='help';;
+	    *) 
+		_WHAT_TO_DO='help'
+		;;
 	esac
+        
+
 	shift
     done
     # --- end of parsing commandline options ---
 fi
+#if [ -z "${_WHAT_TO_DO}" ]; then 
+#    _WHAT_TO_DO='auto'; 
+#fi
 
 # ---------------------------------------------------------------------
 # postprocess commandline settings
@@ -5371,6 +5385,28 @@ case ${_WHAT_TO_DO} in
         get_cgal_version
 	cgal_install_header
 	print_usage_information
+	;;
+    *auto*)
+	${_printf} "Automatically installing CGAL"
+	get_cgal_version
+	cgal_install_header
+	# start interactive part
+	${_printf} "%s" "starting interactive mode -"
+	INSTALL_INTERACTIVE='y'
+	startup
+	if [ -z "${COMPILER}" ]; then
+	    search_for_compilers
+	    if [ ${_COMPILER_NUMBER} -gt 2 ]; then
+		compiler_choose_menu 'Main Menu'
+	    fi
+	else
+	    _COMPILER_NUMBER=1
+	    set_compiler_from_command_line
+	    _register_compiler "${COMPILER}"
+	    _set_support
+	fi
+	lib_menu
+	installation
 	;;
     *)
         get_cgal_version
