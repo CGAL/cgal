@@ -152,7 +152,7 @@ public:
   enum Mode {GENERAL, REGULARIZED};
 
 
-  typedef Alpha_status< NT >                Alpha_status;
+  typedef CGAL::Alpha_status< NT >          Alpha_status;
   typedef Compact_container<Alpha_status>   Alpha_status_container;
   typedef typename Alpha_status_container::const_iterator 
                                             Alpha_status_const_iterator;
