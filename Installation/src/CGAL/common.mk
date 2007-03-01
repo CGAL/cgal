@@ -44,31 +44,38 @@ default: $(CGAL_SHARED_LIBNAME)
 
 .PHONY: shared_lib_no_install shared_lib
 
-ifneq "$(SOVERSION)" ""
-###### If SOVERSION is empty.
+LIBRARIES_EXTRA_NAMES :=
+ifneq "$(CGAL_SHARED_LIBNAME_WITH_SOVERSION)" "$(CGAL_SHARED_LIBNAME)"
+  LIBRARIES_EXTRA_NAMES += $(CGAL_SHARED_LIBNAME)
+endif
+ifneq "$(CGAL_SHARED_LIBNAME_WITH_SOMAJOR)" "$(CGAL_SHARED_LIBNAME)"
+  ifneq "$(CGAL_SHARED_LIBNAME_WITH_SOMAJOR)" "$(CGAL_SHARED_LIBNAME_WITH_SOVERSION)"
+    LIBRARIES_EXTRA_NAMES += $(CGAL_SHARED_LIBNAME_WITH_SOMAJOR)
+  endif
+endif
+
+ifneq "$(LIBRARIES_EXTRA_NAMES)" ""
+###### If CGAL_SHARED_LIBNAME_WITH_SOMAJOR is different from CGAL_SHARED_LIBNAME.
+
 shared_lib_no_install: $(CGAL_SHARED_LIBNAME_WITH_SOVERSION)
 	$(MAKE) clean_temp_files
 
 shared_lib: shared_lib_no_install
 	mv $(CGAL_SHARED_LIBNAME_WITH_SOVERSION) $(CGAL_LIB_DESTINATION)
-	for symlink in "$(CGAL_SHARED_LIBNAME)" "$(CGAL_SHARED_LIBNAME_WITH_SOMAJOR)"; do \
-	  if [ "$(CGAL_SHARED_LIBNAME_WITH_SOVERSION)" != "$$symlink" ]; then \
-	    mv "$$symlink" $(CGAL_LIB_DESTINATION); \
-	  fi; \
+	for symlink in $(LIBRARIES_EXTRA_NAMES); do \
+	  mv "$$symlink" $(CGAL_LIB_DESTINATION); \
 	done
 
-$(CGAL_SHARED_LIBNAME_WITH_SOVERSION) $(CGAL_SHARED_LIBNAME) $(CGAL_SHARED_LIBNAME_WITH_SOMAJOR): $(OBJECTS)
+$(CGAL_SHARED_LIBNAME_WITH_SOVERSION) $(LIBRARIES_EXTRA_NAMES): $(OBJECTS)
 	$(CGAL_SHARED_LIB_CREATE)$(CGAL_SHARED_LIBNAME_WITH_SOVERSION) $(CGAL_SHARED_LIB_SONAME) \
 	  $(OBJECTS:%=$(CGAL_OBJ_PREFIX)%) \
 	  $(CGAL_SHARED_LIB_LDFLAGS) $(SHARED_LIB_ADDITIONAL_LDFLAGS)
-	for symlink in "$(CGAL_SHARED_LIBNAME)" "$(CGAL_SHARED_LIBNAME_WITH_SOMAJOR)"; do \
-	  if [ "$(CGAL_SHARED_LIBNAME_WITH_SOVERSION)" != "$$symlink" ]; then \
-	    rm -f "$$symlink"; \
-	    ln -s "$(CGAL_SHARED_LIBNAME_WITH_SOVERSION)" "$$symlink"; \
-	  fi; \
+	for symlink in $(LIBRARIES_EXTRA_NAMES); do \
+	  rm -f "$$symlink"; \
+	  ln -s "$(CGAL_SHARED_LIBNAME_WITH_SOVERSION)" "$$symlink"; \
 	done
 else
-###### If SOVERSION is not empty.
+###### If CGAL_SHARED_LIBNAME_WITH_SOVERSION is the same as CGAL_SHARED_LIBNAME.
 shared_lib_no_install: $(CGAL_SHARED_LIBNAME)
 	$(MAKE) clean_temp_files
 
@@ -100,13 +107,7 @@ clean_temp_files::
 
 clean:: clean_temp_files
 	rm -f $(CGAL_STATIC_LIBNAME)
-	rm -f $(CGAL_SHARED_LIBNAME)
-
-ifneq "$(SOVERSION)" ""
-clean::
-	rm -f $(CGAL_SHARED_LIBNAME_WITH_SOMAJOR)
-	rm -f $(CGAL_SHARED_LIBNAME_WITH_SOVERSION)
-endif
+	rm -f $(CGAL_SHARED_LIBNAME) $(LIBRARIES_EXTRA_NAMES)
 
 #---------------------------------------------------------------------#
 #                    suffix rules
