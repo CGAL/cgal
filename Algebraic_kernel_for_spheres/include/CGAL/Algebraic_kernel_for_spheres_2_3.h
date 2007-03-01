@@ -17,8 +17,8 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 //
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
 //
 // Author(s) : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //             Sylvain Pion     <Sylvain.Pion@sophia.inria.fr>
@@ -50,13 +50,13 @@ CGAL_BEGIN_NAMESPACE
     typedef RT_                                        RT;
     typedef typename Root_of_traits< RT >::RootOf_1    FT;
             
-    typedef Polynomials_for_line_3<FT>             Polynomials_for_line_3;
-    typedef Polynomial_for_spheres_2_3<FT>         Polynomial_for_spheres_2_3;
-    typedef Polynomial_1_3<FT>                     Polynomial_1_3;
+    typedef CGAL::Polynomials_for_line_3<FT>           Polynomials_for_line_3;
+    typedef CGAL::Polynomial_for_spheres_2_3<FT>       Polynomial_for_spheres_2_3;
+    typedef CGAL::Polynomial_1_3<FT>                   Polynomial_1_3;
     // problem RT / FT ?
 
-    typedef typename Root_of_traits< RT >::RootOf_2  Root_of_2;
-    typedef Root_for_spheres_2_3< RT >               Root_for_spheres_2_3;
+    typedef typename Root_of_traits< RT >::RootOf_2    Root_of_2;
+    typedef CGAL::Root_for_spheres_2_3< RT >           Root_for_spheres_2_3;
 
     typedef AlgebraicSphereFunctors::Construct_polynomial_for_spheres_2_3<Self>
                                          Construct_polynomial_for_spheres_2_3;

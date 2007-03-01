@@ -42,9 +42,9 @@ class Root_for_spheres_2_3 {
   typedef RT_                                        RT;
   typedef typename Root_of_traits< RT >::RootOf_2    Root_of_2;
   typedef typename Root_of_traits< RT >::RootOf_1    FT;
-  typedef Polynomial_1_3< FT > Polynomial_1_3;
-  typedef Polynomial_for_spheres_2_3< FT > Polynomial_for_spheres_2_3;
-  typedef Polynomials_for_line_3< FT > Polynomials_for_line_3;
+  typedef CGAL::Polynomial_1_3< FT >                 Polynomial_1_3;
+  typedef CGAL::Polynomial_for_spheres_2_3< FT >     Polynomial_for_spheres_2_3;
+  typedef CGAL::Polynomials_for_line_3< FT >         Polynomials_for_line_3;
 
   private:
     Root_of_2 x_;
