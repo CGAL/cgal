@@ -24,6 +24,7 @@
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Root_of_2.h>
 #include <CGAL/Quotient.h>
+#include <CGAL/certified_numeric_predicates.h>
 
 CGAL_BEGIN_NAMESPACE
 
@@ -132,6 +133,7 @@ struct Root_of_traits_helper < NT, Field_with_root_of_tag >
 } // namespace CGALi
 
 
+
 // Default Traits class for NT types
 template < typename NT >
 struct Root_of_traits
@@ -141,6 +143,32 @@ struct Root_of_traits
       typename Algebraic_structure_traits<NT>::Algebraic_category> Base;
     typedef typename Base::Root_of_1 RootOf_1;
     typedef typename Base::Root_of_2 RootOf_2;    
+};
+
+template<>
+template <bool B>
+struct Root_of_traits<Interval_nt<B> >{
+  typedef Interval_nt<B> Root_of_1;
+  typedef Interval_nt<B> Root_of_2;    
+  struct Make_root_of_2{
+    typedef Interval_nt<B> result_type;
+    // just a copy, not sure about the semantic of smaller 
+    Interval_nt<B> operator()(const Interval_nt<B>& a, const Interval_nt<B>& b, const Interval_nt<B>& c, bool smaller){
+        // former make_root_of_2_sqrt()
+        //~ //if (CGAL::possibly(a==0))
+        if (CGAL::certified_is_zero(a))
+          return Interval_nt<B>::largest();
+        Interval_nt<B> discriminant = CGAL_NTS square(b) - a*c*4;
+        Interval_nt<B> d = CGAL_NTS sqrt(discriminant);
+        if ((smaller && a>0) || (!smaller && a<0))
+            d = -d;
+        return (d-b)/(a*2);
+    }
+    // it's so easy 
+    Interval_nt<B> operator()(const Interval_nt<B>& a, const Interval_nt<B>& b, const Interval_nt<B>& c){
+        return a + b * CGAL_NTS sqrt(c) ;
+    }
+  };
 };
 
 template < class NT >
