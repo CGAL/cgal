@@ -25,16 +25,6 @@
 
 CGAL_BEGIN_NAMESPACE
 
-inline bool certainly( bool c ) { return c ; }
-
-inline
-bool certainly( Uncertain<bool> const& c )
-{
-  if ( CGAL_NTS is_indeterminate(c) )
-       return false ;
-  else return static_cast<bool>(c) ;  
-}
-
 inline Uncertain<bool> logical_or ( Uncertain<bool> a, Uncertain<bool> b ) { return a | b ; }
 inline Uncertain<bool> logical_and( Uncertain<bool> a, Uncertain<bool> b ) { return a & b ; }
 

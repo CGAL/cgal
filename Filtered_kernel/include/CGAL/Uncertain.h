@@ -327,6 +327,28 @@ Uncertain<T> enum_cast(const Uncertain<U>& u)
 
 #endif
 
+
+// Additional goodies
+
+inline bool certainly(bool b) { return b; }
+inline bool possibly(bool b) { return b; }
+
+inline
+bool certainly(Uncertain<bool> const& c)
+{
+  if (is_indeterminate(c))
+       return false;
+  else return static_cast<bool>(c);
+}
+
+inline
+bool possibly(Uncertain<bool> const& c)
+{
+  if (is_indeterminate(c))
+       return true;
+  else return static_cast<bool>(c);
+}
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_UNCERTAIN_H
