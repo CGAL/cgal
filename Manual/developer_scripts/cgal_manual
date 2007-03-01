@@ -207,7 +207,7 @@ ProgName=${0##*/}
 
 # We keep some statistics for the protocol
 TotalStartTime=$SECONDS
-Date="`date '+%d %b %Y'`"
+Date="`LC_TIME="POSIX" date '+%d %b %Y'`"
 Time="`date '+%T %Z'`"
 
 # Try to determine the CGAL version (works only for internal/external releases)
@@ -221,7 +221,7 @@ else
     CgalVersion=`echo ${Date} | sed 's/ /_/g'`
     CgalInternalVersion=$CgalVersion
     CgalVersionHtml="Separate Build"
-    CgalVersionDate="`date '+%e %B %Y'`"
+    CgalVersionDate="`LC_TIME="POSIX" date '+%e %B %Y'`"
 fi
 
 # Selects no console output except error messages
