@@ -96,7 +96,7 @@ private:
    typedef typename Traits::Construct_ray_2   Construct_ray_2; 
    typedef typename Traits::Intersect_2       Intersect_2; 
    typedef typename Traits::Assign_2          Assign_2; 
-   typedef Segment_less_yx_2<Traits>          Segment_less_yx_2;
+   typedef CGAL::Segment_less_yx_2<Traits>    Segment_less_yx_2;
 
    typedef Rotation_tree_2<Traits>            Tree;
    typedef typename Tree::iterator            Tree_iterator;

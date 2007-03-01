@@ -73,8 +73,8 @@ class Edge_info
 {
 public:
 
- typedef Traits_             Traits;
- typedef Vertex_info<Traits> Vertex_info ;
+ typedef Traits_                    Traits;
+ typedef CGAL::Vertex_info<Traits>  Vertex_info;
 
 public:
 
@@ -156,8 +156,8 @@ public:
   typedef typename Traits::Polygon_2                    Polygon_2 ; 
   typedef typename Traits::Polygon_2::Vertex_iterator   Vertex_iterator;
 
-  typedef Vertex_info<Traits> Vertex_info;
-  typedef Edge_info<Traits>   Edge_info;
+  typedef CGAL::Vertex_info<Traits> Vertex_info;
+  typedef CGAL::Edge_info<Traits>   Edge_info;
 
   typedef std::list<Edge_info> List ;
 
@@ -349,10 +349,10 @@ class Partition_vertex_map
 {
 public:
 
-   typedef Traits_             Traits ;
-   typedef Vertex_info<Traits> Vertex_info ;
-   typedef Edge_info  <Traits> Edge_info ;
-   typedef Partition_2::Edge_list  <Traits> Edge_list ;  
+   typedef Traits_                         Traits;
+   typedef CGAL::Vertex_info<Traits>       Vertex_info;
+   typedef CGAL::Edge_info<Traits>         Edge_info;
+   typedef Partition_2::Edge_list<Traits>  Edge_list;  
 
    typedef Partition_vertex_map<Traits> Self;
 
