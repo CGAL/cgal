@@ -83,7 +83,7 @@ void test_const_flattening() {
     CGAL_test_assert(fi32 == fi32_beyond);
 }
 
-int main(int argc, char** argv) {
+int main() {
     test_const_flattening();
     return 0;
 }
