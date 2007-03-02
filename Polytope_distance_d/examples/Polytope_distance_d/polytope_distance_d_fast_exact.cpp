@@ -1,22 +1,29 @@
-// file: examples/Polytope_distance_d/polytope_distance_fast_exact.C
+// file: examples/Polytope_distance_d/polytope_distance.C
 
 // computes the distance between two cubes in R^3 using double
-// as input type and CGAL::Double as exact internal type; this
-// is guaranteed to have no roundoff errors. Note: CGAL::Double
-// is based on GMP but not yet an official CGAL number type; in 
-// this respect, the example represents experimental code
+// as input type and some internal EXACT floating point type;
+// the fast type double is also safely used for many of the 
+// internal computations
 #include <iostream>
-#include <CGAL/QP_solver/gmp_double.h> // will become CGAL number type
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/QP_solver/Double.h>     // will become CGAL number type
 #include <CGAL/Polytope_distance_d.h>
 #include <CGAL/Optimisation_d_traits_3.h>
 
-typedef CGAL::Simple_cartesian<double>    K;  
-typedef K::Point_3                        Point;
-typedef CGAL::Optimisation_d_traits_3<K, CGAL::Double, double>  
-                                          Traits;
+#ifdef CGAL_USE_GMP
+#include <CGAL/Gmpzf.h>
+typedef CGAL::Gmpzf ET;
+#else
+#include <CGAL/MP_Float.h>
+typedef CGAL::MP_Float ET;
+#endif
+
+// use an inexact kernel...
+typedef CGAL::Simple_cartesian<double>     K;  
+typedef K::Point_3                         Point;
+// ... and the EXACT traits class based on the inexcat kernel
+typedef CGAL::Optimisation_d_traits_3<K, ET, double>  Traits;
 typedef CGAL::Polytope_distance_d<Traits> Polytope_distance;
+
 
 int main()
 {
@@ -31,9 +38,9 @@ int main()
   Polytope_distance pd(P, P+8, Q, Q+8); 
 
   // get squared distance (2,2,2)-(1,1,1))^2 = 3
-  std::cout << "Squared Distance: " <<
-    CGAL::to_double(pd.squared_distance_numerator()) /
-    CGAL::to_double(pd.squared_distance_denominator()) << std::endl;
+  std::cout << "Squared distance: " <<
+    CGAL::to_double (pd.squared_distance_numerator()) /
+    CGAL::to_double (pd.squared_distance_denominator()) << std::endl;
 
   // get points that realize the distance
   Polytope_distance::Coordinate_iterator  coord_it;
@@ -42,16 +49,16 @@ int main()
   for (coord_it = pd.realizing_point_p_coordinates_begin();
        coord_it != pd.realizing_point_p_coordinates_end();
        ++coord_it)
-    std::cout << " " <<  CGAL::to_double(*coord_it);
+    std::cout << " " << *coord_it;
   std::cout << std::endl;
 
   std::cout << "q:"; // homogeneous point from second cube, (2,2,2,1)
   for (coord_it = pd.realizing_point_q_coordinates_begin();
        coord_it != pd.realizing_point_q_coordinates_end();
        ++coord_it)
-    std::cout << " " <<  CGAL::to_double(*coord_it);
+    std::cout << " " << *coord_it;
   std::cout << std::endl;
 
   return 0;
-}
-  
+
+} 

@@ -1,14 +1,24 @@
 // file: examples/Polytope_distance_d/polytope_distance.C
 
 // computes the distance between two cubes in R^3 using double
-// as input type and internal type (prone to roundoff errors)
+// as input type and some internal EXACT floating point type 
 #include <iostream>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polytope_distance_d.h>
 #include <CGAL/Optimisation_d_traits_3.h>
 
-typedef CGAL::Simple_cartesian<double>    K;  
+#ifdef CGAL_USE_GMP
+#include <CGAL/Gmpzf.h>
+typedef CGAL::Gmpzf ET;
+#else
+#include <CGAL/MP_Float.h>
+typedef CGAL::MP_Float ET;
+#endif
+
+// use an EXACT kernel...
+typedef CGAL::Simple_cartesian<ET>        K;  
 typedef K::Point_3                        Point;
+// ...and the traits class based on the exact kernel 
 typedef CGAL::Optimisation_d_traits_3<K>  Traits;
 typedef CGAL::Polytope_distance_d<Traits> Polytope_distance;
 
@@ -27,8 +37,8 @@ int main()
 
   // get squared distance (2,2,2)-(1,1,1))^2 = 3
   std::cout << "Squared distance: " <<
-    pd.squared_distance_numerator() /
-    pd.squared_distance_denominator() << std::endl;
+    CGAL::to_double (pd.squared_distance_numerator()) /
+    CGAL::to_double (pd.squared_distance_denominator()) << std::endl;
 
   // get points that realize the distance
   Polytope_distance::Coordinate_iterator  coord_it;
