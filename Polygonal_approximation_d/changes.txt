@@ -1,6 +1,0 @@
-5 December 2006 Andreas Fabri
-- Version submitted for review
-
-1 March 2005: Ovidiu Grigore
-
-- initial the package
