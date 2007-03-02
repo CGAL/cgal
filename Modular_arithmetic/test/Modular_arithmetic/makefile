@@ -17,6 +17,7 @@ CXXFLAGS = \
            -I. \
 	   -I../../include \
 	   -I../../../Polynomial/include \
+	   -I../../../Number_types/test/Number_types/include/ \
            $(CGAL_CXXFLAGS) \
            $(LONG_NAME_PROBLEM_CXXFLAGS)
 

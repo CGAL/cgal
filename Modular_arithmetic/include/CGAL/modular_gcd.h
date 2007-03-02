@@ -9,7 +9,6 @@
 #define CGAL_MODULAR_GCD_H 1
 
 #include <CGAL/basic.h>
-#include <CGAL/Modular_type.h>
 #include <CGAL/Modular_traits.h>
 #include <CGAL/Polynomial.h>
 #include <CGAL/Polynomial_traits_d.h>
