@@ -144,7 +144,6 @@ struct Root_of_traits
     typedef typename Base::Root_of_2 RootOf_2;    
 };
 
-template<>
 template <bool B>
 struct Root_of_traits<Interval_nt<B> >{
   typedef Interval_nt<B> Root_of_1;
