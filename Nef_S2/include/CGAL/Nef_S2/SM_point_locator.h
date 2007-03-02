@@ -450,7 +450,7 @@ public:
       Sphere_segment se = segment(ei);
       CGAL_NEF_TRACEN("ray_shoot " << s_init);
       if(s_init)
-	CGAL_NEF_TRACEN("  " << s.source() << "->" << s.target() << " | " << s.sphere_circle());
+	CGAL_NEF_TRACEN("  " << s.source() << "->" << s.target() << " | " << s.sphere_circle() << " is long " << s.is_long());
       CGAL_NEF_TRACEN("  " << se.source() << "->" << se.target() << " | " << se.sphere_circle() << " is long " << se.is_long());
 
       // TODO: start-end point of s on se or c
@@ -463,8 +463,7 @@ public:
 	    Sphere_segment first_half(p,p.antipode(),c);
 	    Sphere_segment second_part(p.antipode(), s.target(), c);
 	    if(!do_intersect_internally(ei->circle(), first_half, p_res)) {
-	      bool b = do_intersect_internally(ei->circle(), second_part, p_res);
-	      CGAL_assertion(b);
+	      do_intersect_internally(ei->circle(), second_part, p_res);
 	    }
 	  } else {
 	    if(!do_intersect_internally(ei->circle(), s, p_res)) continue;
@@ -473,28 +472,36 @@ public:
 	  Sphere_segment first_half(p,p.antipode(),c);
 	  Sphere_segment second_part(p.antipode(),p,c);
 	  if(!do_intersect_internally(ei->circle(), first_half, p_res)) {
-	    bool b = do_intersect_internally(ei->circle(), second_part, p_res);
-	    CGAL_assertion(b);	    
+	    do_intersect_internally(ei->circle(), second_part, p_res);
 	  }
 	}
 
       } else {
-	if(s_init) {
+	if(s_init) {	  
 	  if(s.is_long() && se.is_long()) {
 	    Sphere_segment first_half(p,p.antipode(),c);
 	    Sphere_segment second_part(p.antipode(), s.target(), c);
 	    if(!do_intersect_internally(se, first_half, p_res) &&
-	       !do_intersect_internally(se, second_part, p_res)) continue;	    
+	       !do_intersect_internally(se, second_part, p_res)) {
+	      if(se.has_on(p.antipode()))
+		p_res = p.antipode();
+	      else
+		continue;
+	    }	    
 	  } else {
 	    if(!do_intersect_internally(se, s, p_res)) continue;
 	  }  
 	} else {
 	  if(se.is_long()) {
-	    Sphere_segment first_half(p,p.antipode(),c); 
+	    Sphere_segment first_half(p,p.antipode(),c);
 	    Sphere_segment second_half(p.antipode(),p,c); 
 	    if(!do_intersect_internally(se, first_half, p_res)) {
-	      bool b = do_intersect_internally(se, second_half, p_res);
-	      CGAL_assertion(b);
+	      if(!do_intersect_internally(se, second_half, p_res)) {
+		if(start_inclusive)
+		  p_res = p;
+		else
+		  p_res = p.antipode();
+	      }
 	    }
 	  } else {
 	    if(!do_intersect_internally(c, se, p_res)) continue;

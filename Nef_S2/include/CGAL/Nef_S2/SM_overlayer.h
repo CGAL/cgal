@@ -374,8 +374,8 @@ public:
   typedef typename SM_decorator::Map            Map;
   typedef SM_decorator                          Base;
   typedef SM_overlayer<SM_decorator_>           Self;
-  typedef CGAL::SM_const_decorator<Map>         SM_const_decorator;
-  typedef SM_point_locator<SM_const_decorator>  SM_point_locator;
+  typedef CGAL::SM_const_decorator<Map>               SM_const_decorator;
+  typedef CGAL::SM_point_locator<SM_const_decorator>  SM_point_locator;
 
   //  typedef typename SM_const_decorator::Constructor_parameter 
   //                                       Constructor_const_parameter;
