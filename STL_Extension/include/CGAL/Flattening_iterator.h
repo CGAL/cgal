@@ -90,7 +90,7 @@ public:
         typedef Input_iterator argument_type;
 
         Recursive_flattening_iterator
-        operator () (Input_iterator end, Input_iterator it) {
+        operator () (Input_iterator /*end*/, Input_iterator it) {
             return it;
         }
     };
