@@ -111,7 +111,7 @@ void operator()() {
     std::cout << "-------------------------" << std::endl;
     std::cout << "DIM = " << DIM << std::endl;
     std::cout << "-------------------------" << std::endl;
-    for( unsigned int n = 4; n < 100000; n = (int)(n * 6)) {
+    for( unsigned int n = 4; n < 20000; n *= 6) {
         std::cout << "bipartite case: " << std::endl;
         test_n( n, CGAL::Box_intersection_d::BIPARTITE );
         std::cout << "complete case: " << std::endl;
