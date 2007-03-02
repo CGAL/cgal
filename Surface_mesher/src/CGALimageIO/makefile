@@ -34,7 +34,6 @@ OBJECTS = \
   gis$(OBJ_EXT) \
   inr$(OBJ_EXT) \
   iris$(OBJ_EXT) \
-  mincio$(OBJ_EXT) \
   pnm$(OBJ_EXT) \
   recbuffer$(OBJ_EXT) \
   recline$(OBJ_EXT) \
