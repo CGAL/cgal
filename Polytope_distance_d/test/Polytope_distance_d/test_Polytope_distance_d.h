@@ -185,7 +185,7 @@ test_Polytope_distance_d( ForwardIterator p_first, ForwardIterator p_last,
     )
 
     COVER( "I/O",
-        verr1 << poly_dist;
+        verrX << poly_dist;
     )
 }
 

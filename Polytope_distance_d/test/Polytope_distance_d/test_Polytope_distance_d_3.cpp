@@ -25,130 +25,76 @@
 // implementation: test program for polytope distance (3D traits class)
 // ============================================================================
 
-// includes and typedefs
-// ---------------------
-#include <CGAL/QP_solver/gmp_double.h> // temporarily, can be removed
-                                       // once gmp_double is in CGAL
 #include <CGAL/Cartesian.h>
+#include <CGAL/Homogeneous.h>
 #include <CGAL/Polytope_distance_d.h>
 #include <CGAL/Optimisation_d_traits_3.h>
-
-// test variant 1 (needs LEDA)
-#ifdef CGAL_USE_LEDA
-# include <CGAL/leda_integer.h>
-  typedef  CGAL::Cartesian<leda_integer>       K_1;
-  typedef  CGAL::Optimisation_d_traits_3<K_1>  Traits_1;
-# define TEST_VARIANT_1 \
-    "Optimisation_d_traits_3< Cartesian<leda_integer> >"
-#endif
-
-// test variant 2 (needs GMP)
 #ifdef CGAL_USE_GMP
-# include <CGAL/QP_solver/Double.h>
-  typedef  CGAL::Cartesian< int >                                 K_2;
-  typedef  CGAL::Optimisation_d_traits_3<K_2,CGAL::Double,double>  Traits_2;
-# define TEST_VARIANT_2 \
-    "Optimisation_d_traits_3< Cartesian<int>, CGAL::Double, double >"
+#include <CGAL/Gmpzf.h>
+typedef CGAL::Gmpzf RT;
+#else
+#include <CGAL/MP_Float.h>
+#include <CGAL/Quotient.h>
+typedef CGAL::MP_Float RT;
 #endif
+#include <vector>
+#include <string>
+#include <iostream>
+#include <sstream>
+#include <fstream>
+
+// fast and exact
+typedef  CGAL::Cartesian< double >                      CK1;
+typedef  CGAL::Optimisation_d_traits_3<CK1, RT, double> CTraits1;
+typedef  CGAL::Homogeneous< double >                    HK1;
+typedef  CGAL::Optimisation_d_traits_3<HK1, RT, double> HTraits1;
 
 #include <CGAL/Random.h>
 #include <vector>
 
 #include "test_Polytope_distance_d.h"
 
-
+template <class K, class Traits>
+void process () 
+{
+  // generate point set
+  std::vector<typename K::Point_3>  p_points, q_points;
+  p_points.reserve( 50);
+  q_points.reserve( 50);
+  {
+    int  i;
+    double hom = 1.0;
+    for ( i = 0; i < 50; ++i) {
+      p_points.push_back
+	(typename K::Point_3(
+			     CGAL::default_random( 0x100000),
+			     CGAL::default_random( 0x100000), 
+			     CGAL::default_random( 0x100000), 
+			     hom++));
+    }
+    for ( i = 0; i < 50; ++i) {
+      q_points.push_back
+	(typename K::Point_3(
+			     -CGAL::default_random( 0x100000),
+			     -CGAL::default_random( 0x100000),
+			     -CGAL::default_random( 0x100000),
+			     hom++));
+    }
+  }
+    
+  // call test function
+  CGAL::test_Polytope_distance_d( p_points.begin(), p_points.end(),
+				  q_points.begin(), q_points.end(),
+				  Traits(), 1);
+}
+    
 // main
 // ----
 int
-main( int argc, char* argv[])
+main()
 {
-    using namespace std;
-    
-    int verbose = -1;
-    if ( argc > 1) verbose = atoi( argv[ 1]);
-    CGAL::Verbose_ostream  verr ( verbose >= 0); verr  << "";
-    
-    // test variant 1
-    // --------------
-    #ifdef TEST_VARIANT_1
-    
-        verr << endl
-             << "==================================="
-             << "===================================" << endl
-             << "Testing `Polytope_distance_d' with traits class model" <<endl
-             << "==> " << TEST_VARIANT_1 << endl
-             << "==================================="
-             << "===================================" << endl
-             << endl;
-    
-        // generate point set
-        std::vector<K_1::Point_3>  p_points_1, q_points_1;
-        p_points_1.reserve( 50);
-        q_points_1.reserve( 50);
-        {
-            int  i;
-            for ( i = 0; i < 50; ++i) {
-                p_points_1.push_back( K_1::Point_3(
-                    CGAL::default_random( 0x100000),
-                    CGAL::default_random( 0x100000),
-                    CGAL::default_random( 0x100000)));
-            }
-            for ( i = 0; i < 50; ++i) {
-                q_points_1.push_back( K_1::Point_3(
-                    -CGAL::default_random( 0x100000),
-                    -CGAL::default_random( 0x100000),
-                    -CGAL::default_random( 0x100000)));
-            }
-        }
-    
-        // call test function
-        CGAL::test_Polytope_distance_d( p_points_1.begin(), p_points_1.end(),
-                                        q_points_1.begin(), q_points_1.end(),
-                                        Traits_1(), verbose);
-    
-    #endif
-    
-    // test variant 2
-    // --------------
-    #ifdef TEST_VARIANT_2
-    
-        verr << endl
-             << "==================================="
-             << "===================================" << endl
-             << "Testing `Polytope_distance_d' with traits class model" <<endl
-             << "==> " << TEST_VARIANT_2 << endl
-             << "==================================="
-             << "===================================" << endl
-             << endl;
-    
-        // generate point set
-        std::vector<K_2::Point_3>  p_points_2, q_points_2;
-        p_points_2.reserve( 50);
-        q_points_2.reserve( 50);
-        {
-            int  i;
-            for ( i = 0; i < 50; ++i) {
-                p_points_2.push_back( K_2::Point_3(
-                    CGAL::default_random( 0x100000),
-                    CGAL::default_random( 0x100000),
-                    CGAL::default_random( 0x100000)));
-            }
-            for ( i = 0; i < 50; ++i) {
-                q_points_2.push_back( K_2::Point_3(
-                    -CGAL::default_random( 0x100000),
-                    -CGAL::default_random( 0x100000),
-                    -CGAL::default_random( 0x100000)));
-            }
-        }
-    
-        // call test function
-        CGAL::test_Polytope_distance_d( p_points_2.begin(), p_points_2.end(),
-                                        q_points_2.begin(), q_points_2.end(),
-                                        Traits_2(), verbose);
-    
-    #endif
-    
-    return 0;
+    process<CK1, CTraits1>();
+    process<HK1, HTraits1>();
 }
-
+ 
 // ===== EOF ==================================================================
