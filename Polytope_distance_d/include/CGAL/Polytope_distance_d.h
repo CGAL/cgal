@@ -26,137 +26,364 @@
 #include <CGAL/function_objects.h>
 
 #include <CGAL/QP_solver.h>
+#include <CGAL/QP_models.h>
+#include <CGAL/QP_solver/iterator.h>
 #include <CGAL/QP_solver/QP_partial_filtered_pricing.h>
 #include <CGAL/QP_solver/QP_partial_exact_pricing.h>
 
 CGAL_BEGIN_NAMESPACE
 
-// A functor whose operator(int i) provides access to the i-th element
-// of a random access iterator.
-template < typename RndAccIt, typename ArgType >
-class Access_by_index {
-public:
-  typedef  typename std::iterator_traits<RndAccIt>::value_type result_type;
+// To determine the polytope distance, we set up the following QP:
+// 
+// We let v-w be nonnegative vectors such that
+// v-w = p-q, where p and q are the points that realize the
+// optimal distance. That way, we obtain a nonnegative QP
+// 
+//
+//min (v-w)^T(w-v)
+//     v-w - \sum x_i p_i + \sum y_j q_j    = 0
+//           \sum x_i                       = 1
+//                           \sum y_j       = 1
+//     v, w, x, y >= 0
 
-  Access_by_index(RndAccIt it = RndAccIt()) : a(it) {}
+namespace PD_detail {
+  // The functors necessary to realize access to A
+  // 
+  // A has the form
+  //    I  -I    -P    Q
+  //    0   0     1    0
+  //    0   0     0    1
+  // where  I and -I are blocks of size d*d, and the 0's and 1's are
+  // rows vectors of 0's and 1's 
+  //
+  // we have one functor for a fixed column, and one functor for the
+  // whole matrix
 
-  result_type operator () (ArgType i) const { return a[i]; }
+  // functor for a fixed column of A
+  template <class NT, class Iterator>
+  class A_column : public std::unary_function <int, NT>
+  {
+  public:
+    typedef NT result_type;
+    A_column()
+    {}
+  
+    A_column (int j, int d, bool in_p, Iterator it)
+      : j_ (j), d_ (d), in_p_ (in_p), it_ (it), nt_0_ (0), nt_1_ (1)
+    {}
 
-private:
-  RndAccIt     a;
-};
+    result_type operator() (int i) const
+    {
+      if (j_ < d_) {
+	// column for v
+	return (i == j_ ? nt_1_ : nt_0_);
+      }
+      if (j_ < 2*d_) {
+	// column for w
+	return (i == j_-d_ ? -nt_1_ : nt_0_);
+      }
+      // point column
+      if (in_p_) {
+	// column for P
+	if (i < d_) return -(*(it_ + i));
+	if (i == d_) return *(it_ + d_); // homogenizing coordinate
+	return nt_0_;
+      } else {
+	// column for Q
+	if (i < d_) return (*(it_ + i));
+	if (i == d_+1) return *(it_ + d_); // homogenizing coordinate
+	return nt_0_;
+      }
+      CGAL_optimisation_assertion(false); // never get here
+      return nt_0_;
+    }
+    
+  private:
+    int j_;                  // column number
+    int d_;                  // dimension
+    bool in_p_;              // point in P ?
+    Iterator it_;            // the iterator through the column's point
+    NT nt_0_;
+    NT nt_1_; 
+  };
+  
+  // functor for matrix A
+  template <class NT, class Access_coordinate_begin_d,
+	    class Point_iterator >
+  class A_matrix : public std::unary_function
+  <int, CGAL::Transform_diff_const_iterator
+   <int, A_column
+    <NT, typename Access_coordinate_begin_d::Coordinate_iterator> > >
+  { 
+    typedef A_column
+    <NT, typename Access_coordinate_begin_d::Coordinate_iterator> A_column;
+  public:
+    typedef CGAL::Transform_diff_const_iterator
+    <int, A_column> result_type;
+    
+    A_matrix ()
+    {}
 
-// Class declarations
-// ==================
-template < class Traits_ >
-class Polytope_distance_d;
+    A_matrix (int d, 
+	      Access_coordinate_begin_d da_coord,
+	      Point_iterator P, 
+	      int r, 
+	      Point_iterator Q) 
+      : d_ (d), da_coord_ (da_coord), P_ (P), r_ (r), Q_ (Q)
+    {}
 
-template < class ET_, class NT_, class Point, class Point_iterator,
-           class Access_coord, class Access_dim >
-struct QP_rep_poly_dist_d;
+    result_type operator () (int j) const
+    { 
+      if (j < 2*d_) {
+	// column of v or w
+	return result_type
+	  (0, A_column (j, d_, false  /*dummy*/, 
+			da_coord_ (*P_) /*dummy*/));
+      }
+      if (j < 2*d_+r_) {
+	// column of P
+	return result_type
+	  (0, A_column (j , d_, true, da_coord_ (*(P_+j-2*d_))));
+      }
+      // column of Q
+      return result_type
+	(0, A_column (j, d_, false, da_coord_ (*(Q_+j-2*d_-r_)))); 
+    }
 
-template < class NT >
-struct QP_rep_row_of_a {
-    typedef  std::vector<NT>                         argument_type;
-    typedef  typename argument_type::const_iterator  result_type;
+  private:
+    int d_;                  // dimension
+    Access_coordinate_begin_d da_coord_; // data accessor
+    Point_iterator P_;       // point set P
+    int r_;                  // size of point set P
+    Point_iterator Q_;       // point set Q
+  };
 
-    result_type
-    operator ( ) ( const argument_type& v) const { return v.begin(); }
-};
+  // The functor necessary to realize access to b
+  // b has the form
+  // 0
+  // 0
+  // 1  (row d)
+  // 1  (row d+1)
 
-template < class Point, class Point_iterator >
-struct QP_rep_signed_point_iterator;
+  template <class NT>
+  class B_vector : public std::unary_function<int, NT>
+  {
+  public:
+    typedef NT result_type;
+    B_vector()
+    {}
 
-template < class NT, class ET, class Point,
-           class Access_coord, class Access_dim >
-class QP_rep_signed_inner_product;
+    B_vector (int d)
+      : d_ (d), nt_0_ (0), nt_1_ (1)
+    {}
 
-template < class NT, class ET, class Point, class Point_iterator,
-           class Access_coord, class Access_dim >
-struct QP_rep_row_of_d;
+    result_type operator() (int i) const
+    {
+      return ( (i == d_ || i == d_+1) ? nt_1_ : nt_0_);
+    }
 
+  private:
+    int d_;
+    NT nt_0_;
+    NT nt_1_;
+  };
+
+
+  // The functors necessary to realize access to D
+  // 
+  // D has the form
+  //   I  -I    0
+  //  -I   I    0
+  //   0   0    0
+  // where all I and -I are blocks of size d*d
+  //
+  // we have one functor for a fixed row, and one functor for the
+  // whole matrix
+
+  // functor for a fixed row of D 
+  template <class NT> 
+  class D_row : public std::unary_function <int, NT> 
+  {
+  public:
+    typedef NT result_type;
+    D_row () 
+    {}
+    D_row (int i, int d) 
+      : i_ (i), d_ (d), nt_0_ (0), nt_1_ (1)
+    {}
+    
+    result_type operator () (int j) const
+    {
+      if (j < d_) {
+	//  I ( 1 iff i = j)
+	// -I (-1 iff i = j + d)
+	//  0
+	if (i_ == j) return nt_1_;
+	if (i_ == j + d_) return -nt_1_;
+	return nt_0_;
+      }
+      if (j < 2*d_) {
+	// -I (-1 iff i = j - d)
+	//  I ( 1 iff i = j)
+	//  0
+	if (i_ == j - d_) return -nt_1_;
+	if (i_ == j) return nt_1_;
+	return nt_0_;
+      }
+      // 0
+      // 0
+      // 0
+      return nt_0_;
+    }
+  private:
+    int i_; // row number
+    int d_; // dimension
+    NT nt_0_;
+    NT nt_1_;
+  };
+
+  // functor for matrix D
+  template <class NT>
+  class D_matrix : public std::unary_function
+  <int, CGAL::Transform_diff_const_iterator<int, D_row<NT> > >
+  { 
+  public:
+    typedef CGAL::Transform_diff_const_iterator<int, D_row<NT> > result_type; 
+    D_matrix ()
+    {}
+    D_matrix (int d)
+      :  d_ (d)
+    {}
+
+    result_type operator()(int i) const 
+    {
+      return result_type (0, D_row<NT>(i, d_));
+    }
+
+  private:
+    int d_; // dimension
+  };
+
+  // A functor whose operator(int i) provides access to the i-th element
+  // of a random access iterator.
+  template < typename RndAccIt, typename ArgType >
+  class Access_by_index {
+  public:
+    typedef  typename std::iterator_traits<RndAccIt>::value_type result_type;
+
+    Access_by_index(RndAccIt it = RndAccIt()) : a(it) {}
+
+    result_type operator () (ArgType i) const { return a[i]; }
+
+  private:
+    RndAccIt     a;
+  };
+}
 
 // Class interfaces
 // ================
 template < class Traits_ >
 class Polytope_distance_d {
-  public:
-    // self
-    typedef  Traits_                    Traits;
-    typedef  Polytope_distance_d<Traits>
-                                        Self;
+public:
+  // self
+  typedef  Traits_                    Traits;
+  typedef  Polytope_distance_d<Traits>
+  Self;
 
-    // types from the traits class
-    typedef  typename Traits::Point_d   Point;
+  // types from the traits class
+  typedef  typename Traits::Point_d   Point;
 
-    typedef  typename Traits::Rep_tag   Rep_tag;
+  typedef  typename Traits::Rep_tag   Rep_tag;
 
-    typedef  typename Traits::RT        RT;
-    typedef  typename Traits::FT        FT;
+  typedef  typename Traits::RT        RT;
+  typedef  typename Traits::FT        FT;
 
-    typedef  typename Traits::Access_dimension_d
-                                        Access_dimension_d;
-    typedef  typename Traits::Access_coordinates_begin_d
-                                        Access_coordinates_begin_d;
+  typedef  typename Traits::Access_dimension_d
+  Access_dimension_d;
+  typedef  typename Traits::Access_coordinates_begin_d
+  Access_coordinates_begin_d;
 
-    typedef  typename Traits::Construct_point_d
-                                        Construct_point_d;
+  typedef  typename Traits::Construct_point_d
+  Construct_point_d;
 
-    typedef  typename Traits::ET        ET;
-    typedef  typename Traits::NT        NT;
+  typedef  typename Traits::ET        ET;
+  typedef  typename Traits::NT        NT; 
 
-  private:
-    // QP solver
-    typedef  CGAL::QP_rep_poly_dist_d<
-                 ET, NT, Point, typename std::vector<Point>::const_iterator,
-                 Access_coordinates_begin_d, Access_dimension_d >
-                                        QP_rep;
-    typedef  CGAL::QP_solver< QP_rep >  Solver;
-    typedef  typename Solver::Pricing_strategy
-                                        Pricing_strategy;
-    // private types
-    typedef  std::vector<Point>         Point_vector;
-    typedef  std::vector<ET>            ET_vector;
+private:
+  // private types
+  typedef  std::vector<Point>         Point_vector;
+  typedef  std::vector<ET>            ET_vector;
     
-    typedef  std::vector<int>           Index_vector;
+  typedef  PD_detail::Access_by_index
+  <typename std::vector<Point>::const_iterator, int> Point_by_index;
     
-    typedef  CGAL::Access_by_index<typename std::vector<Point>::const_iterator,
-				   int> Point_by_index;
+  typedef  std::vector<NT>            NT_vector;
+  typedef  std::vector<NT_vector>     NT_matrix;
+  
+  typedef  std::vector<int>           Index_vector;
+public:    
+  // public types
+  typedef  typename Point_vector::const_iterator
+  Point_iterator;
     
-    typedef  std::vector<NT>            NT_vector;
-    typedef  std::vector<NT_vector>     NT_matrix;
-    
+  typedef typename Index_vector::const_iterator IVCI;
+  typedef CGAL::Join_input_iterator_1< IVCI, Point_by_index >
+  Support_point_iterator;
 
-  public:
-    // public types
-    typedef  typename Point_vector::const_iterator
-                                        Point_iterator;
+  typedef typename Index_vector::const_iterator
+  Support_point_index_iterator;
     
-    typedef typename Index_vector::const_iterator IVCI;
-    typedef CGAL::Join_input_iterator_1< IVCI, Point_by_index >
-                                        Support_point_iterator;
+  typedef  typename ET_vector::const_iterator
+  Coordinate_iterator;
 
-    typedef typename Index_vector::const_iterator
-                                        Support_point_index_iterator;
-    
-    typedef  typename ET_vector::const_iterator
-                                        Coordinate_iterator;
-    
+private:
+  
+  // QP solver iterator types
+  typedef PD_detail::A_matrix <NT, Access_coordinates_begin_d,
+			       Point_iterator> A_matrix;
+  typedef CGAL::Transform_diff_const_iterator<int, A_matrix> A_iterator;
 
-    // creation
-    Polytope_distance_d( const Traits&  traits  = Traits())
-      : tco( traits), d( -1), solver(0), strategy(0) {}
+  typedef PD_detail::B_vector <NT> B_vector;
+  typedef CGAL::Transform_diff_const_iterator<int, B_vector> B_iterator;
+
+  typedef CGAL::Const_oneset_iterator<CGAL::Comparison_result> R_iterator;  
+  typedef CGAL::Const_oneset_iterator<NT> C_iterator; 
+
+  typedef PD_detail::D_matrix <NT> D_matrix;
+  typedef CGAL::Transform_diff_const_iterator<int, D_matrix> D_iterator;
+
+  // Program type
+  typedef CGAL::Nonnegative_quadratic_program_from_iterators
+      <A_iterator, B_iterator, R_iterator, D_iterator, C_iterator> QP;
+
+  // Tags
+  typedef QP_solver_impl::QP_tags <Tag_false, Tag_true> QP_tags;
+
+  // Solver types
+  typedef  CGAL::QP_solver <QP, ET, QP_tags > Solver;
+
+  typedef  typename Solver::Pricing_strategy Pricing_strategy;
+
+public:    
+
+  // creation
+  Polytope_distance_d( const Traits&  traits  = Traits())
+    : nt_0(0), nt_1(1),
+      tco( traits), da_coord (tco.access_coordinates_begin_d_object()),
+      d( -1), solver(0), strategy(0) {}
     
-    template < class InputIterator1, class InputIterator2 >
-    Polytope_distance_d( InputIterator1 p_first,
-                         InputIterator1 p_last,
-                         InputIterator2 q_first,
-                         InputIterator2 q_last,
-                         const Traits&  traits = Traits())
-      : tco( traits), solver(0), strategy(0)
-        {
-            set( p_first, p_last, q_first, q_last);
-        }
+  template < class InputIterator1, class InputIterator2 >
+  Polytope_distance_d( InputIterator1 p_first,
+		       InputIterator1 p_last,
+		       InputIterator2 q_first,
+		       InputIterator2 q_last,
+		       const Traits&  traits = Traits())
+    : nt_0(0), nt_1(1), 
+      tco( traits), da_coord (tco.access_coordinates_begin_d_object()),
+      solver(0), strategy(0)
+  {
+    set( p_first, p_last, q_first, q_last);
+  }
 
   ~Polytope_distance_d() {    
     if (solver)
@@ -165,534 +392,366 @@ class Polytope_distance_d {
       delete strategy;
   }
 
-    // access to point sets
-    int  ambient_dimension( ) const { return d; }
+  // access to point sets
+  int  ambient_dimension( ) const { return d; }
     
-    int  number_of_points( ) const { return p_points.size()+q_points.size();}
+  int  number_of_points( ) const { return p_points.size()+q_points.size();}
     
-    int  number_of_points_p( ) const { return p_points.size(); }
-    int  number_of_points_q( ) const { return q_points.size(); }
+  int  number_of_points_p( ) const { return p_points.size(); }
+  int  number_of_points_q( ) const { return q_points.size(); }
     
-    Point_iterator  points_p_begin( ) const { return p_points.begin(); }
-    Point_iterator  points_p_end  ( ) const { return p_points.end  (); }
+  Point_iterator  points_p_begin( ) const { return p_points.begin(); }
+  Point_iterator  points_p_end  ( ) const { return p_points.end  (); }
     
-    Point_iterator  points_q_begin( ) const { return q_points.begin(); }
-    Point_iterator  points_q_end  ( ) const { return q_points.end  (); }
+  Point_iterator  points_q_begin( ) const { return q_points.begin(); }
+  Point_iterator  points_q_end  ( ) const { return q_points.end  (); }
     
-    // access to support points
-    int
-    number_of_support_points( ) const
-        { return is_finite() ? solver->number_of_basic_variables() : 0; }
+  // access to support points
+  int
+  number_of_support_points( ) const
+  { return is_finite() ? 
+      p_support_indices.size()+q_support_indices.size() : 0; }
     
-    int  number_of_support_points_p() const { return p_support_indices.size();}
-    int  number_of_support_points_q() const { return q_support_indices.size();}
+  int  number_of_support_points_p() const { return p_support_indices.size();}
+  int  number_of_support_points_q() const { return q_support_indices.size();}
     
-    Support_point_iterator
-    support_points_p_begin() const
-        { return Support_point_iterator(
-                     p_support_indices.begin(),
-                     Point_by_index( p_points.begin())); }
+  Support_point_iterator
+  support_points_p_begin() const
+  { return Support_point_iterator(
+				  p_support_indices.begin(),
+				  Point_by_index( p_points.begin())); }
     
-    Support_point_iterator
-    support_points_p_end() const
-        { return Support_point_iterator(
-                     is_finite() ? p_support_indices.end()
-                                 : p_support_indices.begin(),
-                     Point_by_index( p_points.begin())); }
+  Support_point_iterator
+  support_points_p_end() const
+  { return Support_point_iterator(
+				  is_finite() ? p_support_indices.end()
+				  : p_support_indices.begin(),
+				  Point_by_index( p_points.begin())); }
     
-    Support_point_iterator
-    support_points_q_begin() const
-        { return Support_point_iterator(
-                     q_support_indices.begin(),
-                     Point_by_index( q_points.begin())); }
+  Support_point_iterator
+  support_points_q_begin() const
+  { return Support_point_iterator(
+				  q_support_indices.begin(),
+				  Point_by_index( q_points.begin())); }
     
-    Support_point_iterator
-    support_points_q_end() const
-        { return Support_point_iterator(
-                     is_finite() ? q_support_indices.end()
-                                 : q_support_indices.begin(),
-                     Point_by_index( q_points.begin())); }
+  Support_point_iterator
+  support_points_q_end() const
+  { return Support_point_iterator(
+				  is_finite() ? q_support_indices.end()
+				  : q_support_indices.begin(),
+				  Point_by_index( q_points.begin())); }
 
-    Support_point_index_iterator
-    support_points_p_indices_begin() const
-        { return p_support_indices.begin(); }
+  Support_point_index_iterator
+  support_points_p_indices_begin() const
+  { return p_support_indices.begin(); }
     
-    Support_point_index_iterator
-    support_points_p_indices_end() const
-        { return p_support_indices.end(); }
+  Support_point_index_iterator
+  support_points_p_indices_end() const
+  { return p_support_indices.end(); }
 
-    Support_point_index_iterator
-    support_points_q_indices_begin() const
-        { return q_support_indices.begin(); }
+  Support_point_index_iterator
+  support_points_q_indices_begin() const
+  { return q_support_indices.begin(); }
 
-    Support_point_index_iterator
-    support_points_q_indices_end() const
-        { return q_support_indices.end(); }
+  Support_point_index_iterator
+  support_points_q_indices_end() const
+  { return q_support_indices.end(); }
     
-    // access to realizing points (rational representation)
-    Coordinate_iterator
-    realizing_point_p_coordinates_begin( ) const { return p_coords.begin(); }
+  // access to realizing points (rational representation)
+  Coordinate_iterator
+  realizing_point_p_coordinates_begin( ) const { return p_coords.begin(); }
     
-    Coordinate_iterator
-    realizing_point_p_coordinates_end  ( ) const { return p_coords.end  (); }
+  Coordinate_iterator
+  realizing_point_p_coordinates_end  ( ) const { return p_coords.end  (); }
     
-    Coordinate_iterator
-    realizing_point_q_coordinates_begin( ) const { return q_coords.begin(); }
+  Coordinate_iterator
+  realizing_point_q_coordinates_begin( ) const { return q_coords.begin(); }
     
-    Coordinate_iterator
-    realizing_point_q_coordinates_end  ( ) const { return q_coords.end  (); }
+  Coordinate_iterator
+  realizing_point_q_coordinates_end  ( ) const { return q_coords.end  (); }
     
-    // access to squared distance (rational representation)
-    ET  squared_distance_numerator  ( ) const
-        { return solver->solution_numerator(); }
+  // access to squared distance (rational representation)
+  ET  squared_distance_numerator  ( ) const
+  { return solver->solution_numerator(); }
     
-    ET  squared_distance_denominator( ) const
-        { return solver->solution_denominator(); }
+  ET  squared_distance_denominator( ) const
+  { return solver->solution_denominator(); }
     
-    // access to realizing points and squared distance
-    // NOTE: an implicit conversion from ET to RT must be available!
-    Point
-    realizing_point_p( ) const
-        { CGAL_optimisation_precondition( is_finite());
-          return tco.construct_point_d_object()( ambient_dimension(),
-                     realizing_point_p_coordinates_begin(),
-                     realizing_point_p_coordinates_end  ()); }
+  // access to realizing points and squared distance
+  // NOTE: an implicit conversion from ET to RT must be available!
+  Point
+  realizing_point_p( ) const
+  { CGAL_optimisation_precondition( is_finite());
+  return tco.construct_point_d_object()
+    ( ambient_dimension(),
+      realizing_point_p_coordinates_begin(),
+      realizing_point_p_coordinates_end  ()); }
     
-    Point
-    realizing_point_q( ) const
-        { CGAL_optimisation_precondition( is_finite());
-          return tco.construct_point_d_object()( ambient_dimension(),
-                     realizing_point_q_coordinates_begin(),
-                     realizing_point_q_coordinates_end  ()); }
+  Point
+  realizing_point_q( ) const
+  { CGAL_optimisation_precondition( is_finite());
+  return tco.construct_point_d_object()
+    ( ambient_dimension(),
+      realizing_point_q_coordinates_begin(),
+      realizing_point_q_coordinates_end  ()); }
     
-    FT
-    squared_distance( ) const
-        { 
-          return FT( squared_distance_numerator  ()) /
-                 FT( squared_distance_denominator()); }
+  FT
+  squared_distance( ) const
+  { 
+    return FT( squared_distance_numerator  ()) /
+      FT( squared_distance_denominator()); }
     
-    bool  is_finite( ) const
-        { return ( number_of_points_p() > 0) && ( number_of_points_q() > 0); }
+  bool  is_finite( ) const
+  { return ( number_of_points_p() > 0) && ( number_of_points_q() > 0); }
     
-    bool  is_zero( ) const
-        { return CGAL_NTS is_zero( squared_distance_numerator()); }
+  bool  is_zero( ) const
+  { return CGAL_NTS is_zero( squared_distance_numerator()); }
     
-    bool  is_degenerate( ) const { return ( ! is_finite()); }
+  bool  is_degenerate( ) const { return ( ! is_finite()); }
     
-    // modifiers
-    template < class InputIterator1, class InputIterator2 >
-    void
-    set( InputIterator1 p_first, InputIterator1 p_last,
-         InputIterator2 q_first, InputIterator2 q_last)
-        { if ( p_points.size() > 0)
-              p_points.erase( p_points.begin(), p_points.end());
-          if ( q_points.size() > 0)
-              q_points.erase( q_points.begin(), q_points.end());
-          std::copy( p_first, p_last, std::back_inserter( p_points));
-          std::copy( q_first, q_last, std::back_inserter( q_points));
-          set_dimension();
-          CGAL_optimisation_precondition_msg(
-                 check_dimension( p_points.begin(), p_points.end())
-              && check_dimension( q_points.begin(), q_points.end()),
-              "Not all points have the same dimension.");
-          compute_distance(); }
+  // modifiers
+  template < class InputIterator1, class InputIterator2 >
+  void
+  set( InputIterator1 p_first, InputIterator1 p_last,
+       InputIterator2 q_first, InputIterator2 q_last)
+  { 
+    if ( p_points.size() > 0)
+      p_points.erase( p_points.begin(), p_points.end());
+    if ( q_points.size() > 0)
+      q_points.erase( q_points.begin(), q_points.end());
+    std::copy( p_first, p_last, std::back_inserter( p_points));
+    std::copy( q_first, q_last, std::back_inserter( q_points));
+    set_dimension();
+    CGAL_optimisation_precondition_msg
+      (check_dimension( p_points.begin(), p_points.end())
+       && check_dimension( q_points.begin(), q_points.end()),
+       "Not all points have the same dimension.");
+
+    compute_distance(); 
+  }
     
-    template < class InputIterator >
-    void
-    set_p( InputIterator p_first, InputIterator p_last)
-        { if ( p_points.size() > 0)
-              p_points.erase( p_points.begin(), p_points.end());
-          std::copy( p_first, p_last, std::back_inserter( p_points));
-          set_dimension();
-          CGAL_optimisation_precondition_msg(
-              check_dimension( p_points.begin(), p_points.end()),
-              "Not all points have the same dimension.");
-          compute_distance(); }
+  template < class InputIterator >
+  void
+  set_p( InputIterator p_first, InputIterator p_last)
+  { 
+    if ( p_points.size() > 0)
+      p_points.erase( p_points.begin(), p_points.end());
+    std::copy( p_first, p_last, std::back_inserter( p_points));
+    set_dimension();
+    CGAL_optimisation_precondition_msg
+      (check_dimension( p_points.begin(), p_points.end()),
+       "Not all points have the same dimension.");
+
+    compute_distance(); 
+  }
     
-    template < class InputIterator >
-    void
-    set_q( InputIterator q_first, InputIterator q_last)
-        { if ( q_points.size() > 0)
-              q_points.erase( q_points.begin(), q_points.end());
-          std::copy( q_first, q_last, std::back_inserter( q_points));
-          set_dimension();
-          CGAL_optimisation_precondition_msg(
-              check_dimension( q_points.begin(), q_points.end()),
-              "Not all points have the same dimension.");
-          compute_distance(); }
+  template < class InputIterator >
+  void
+  set_q( InputIterator q_first, InputIterator q_last)
+  {
+    if ( q_points.size() > 0)
+      q_points.erase( q_points.begin(), q_points.end());
+    std::copy( q_first, q_last, std::back_inserter( q_points));
+    set_dimension();
+    CGAL_optimisation_precondition_msg
+      (check_dimension( q_points.begin(), q_points.end()),
+       "Not all points have the same dimension.");
+  
+    compute_distance(); 
+  }
     
-    void
-    insert_p( const Point& p)
-        { CGAL_optimisation_precondition( ( ! is_finite()) ||
-              ( tco.access_dimension_d_object()( p) == d));
-          p_points.push_back( p);
-          compute_distance(); }
+  void
+  insert_p( const Point& p)
+  { 
+    CGAL_optimisation_precondition
+      ( ( ! is_finite()) ||
+	( tco.access_dimension_d_object()( p) == d));
+    p_points.push_back( p);
+    set_dimension(); // it might no longer be -1 
+    compute_distance(); 
+  }
     
-    void
-    insert_q( const Point& q)
-        { CGAL_optimisation_precondition( ( ! is_finite()) ||
-              ( tco.access_dimension_d_object()( q) == d));
-          q_points.push_back( q);
-          compute_distance(); }
+  void
+  insert_q( const Point& q)
+  { 
+    CGAL_optimisation_precondition
+      ( ( ! is_finite()) ||
+	( tco.access_dimension_d_object()( q) == d));
+    q_points.push_back( q); 
+    set_dimension(); // it might no longer be -1 
+    compute_distance(); 
+  }
     
-    template < class InputIterator1, class InputIterator2 >
-    void
-    insert( InputIterator1 p_first, InputIterator1 p_last,
-            InputIterator2 q_first, InputIterator2 q_last)
-        { CGAL_optimisation_precondition_code( int old_r = p_points.size());
-          CGAL_optimisation_precondition_code( int old_s = q_points.size());
-          p_points.insert( p_points.end(), p_first, p_last);
-          q_points.insert( q_points.end(), q_first, q_last);
-          set_dimension();
-          CGAL_optimisation_precondition_msg(
-                 check_dimension( p_points.begin()+old_r, p_points.end())
-              && check_dimension( q_points.begin()+old_s, q_points.end()),
-              "Not all points have the same dimension.");
-          compute_distance(); }
+  template < class InputIterator1, class InputIterator2 >
+  void
+  insert( InputIterator1 p_first, InputIterator1 p_last,
+	  InputIterator2 q_first, InputIterator2 q_last)
+  { 
+    int old_r = p_points.size();
+    int old_s = q_points.size();
+    p_points.insert( p_points.end(), p_first, p_last);
+    q_points.insert( q_points.end(), q_first, q_last);
+    set_dimension();
+    CGAL_optimisation_precondition_msg
+      (check_dimension( p_points.begin()+old_r, p_points.end())
+       && check_dimension( q_points.begin()+old_s, q_points.end()),
+       "Not all points have the same dimension.");
+    compute_distance(); 
+  }
     
-    template < class InputIterator >
-    void
-    insert_p( InputIterator p_first, InputIterator p_last)
-        { CGAL_optimisation_precondition_code( int old_r = p_points.size());
-          p_points.insert( p_points.end(), p_first, p_last);
-          set_dimension();
-          CGAL_optimisation_precondition_msg(
-              check_dimension( p_points.begin()+old_r, p_points.end()),
-              "Not all points have the same dimension.");
-          compute_distance(); }
+  template < class InputIterator >
+  void
+  insert_p( InputIterator p_first, InputIterator p_last)
+  { 
+    int old_r = p_points.size();
+    p_points.insert( p_points.end(), p_first, p_last);
+    set_dimension();
+    CGAL_optimisation_precondition_msg
+      (check_dimension( p_points.begin()+old_r, p_points.end()),
+       "Not all points have the same dimension.");
+    compute_distance(); 
+  }
     
-    template < class InputIterator >
-    void
-    insert_q( InputIterator q_first, InputIterator q_last)
-        { CGAL_optimisation_precondition_code( int old_s = q_points.size());
-          q_points.insert( q_points.end(), q_first, q_last);
-          set_dimension();
-          CGAL_optimisation_precondition_msg(
-              check_dimension( q_points.begin()+old_s, q_points.end()),
-              "Not all points have the same dimension.");
-          compute_distance(); }
+  template < class InputIterator >
+  void
+  insert_q( InputIterator q_first, InputIterator q_last)
+  { 
+    int old_s = q_points.size();
+    q_points.insert( q_points.end(), q_first, q_last);
+    set_dimension();
+    CGAL_optimisation_precondition_msg
+      (check_dimension( q_points.begin()+old_s, q_points.end()),
+       "Not all points have the same dimension.");
+    compute_distance(); 
+  }
     
-    void
-    clear( )
-        { p_points.erase( p_points.begin(), p_points.end());
-          q_points.erase( q_points.begin(), q_points.end());
-          compute_distance(); }
+  void
+  clear( )
+  { 
+    p_points.erase( p_points.begin(), p_points.end());
+    q_points.erase( q_points.begin(), q_points.end());
+    compute_distance(); 
+  }
     
-    // validity check
-    bool  is_valid( bool verbose = false, int level = 0) const;
+  // validity check
+  bool  is_valid( bool verbose = false, int level = 0) const;
     
-    // traits class access
-    const Traits&  traits( ) const { return tco; }
+  // traits class access
+  const Traits&  traits( ) const { return tco; }
     
 
 private:
-    Traits                   tco;       // traits class object
-    
-    Point_vector             p_points;  // points of P
-    Point_vector             q_points;  // points of Q
-    int                      d;         // dimension of input points
-    
-    ET_vector                p_coords;          // realizing point of P
-    ET_vector                q_coords;          // realizing point of Q
-    
-    Solver                   *solver;    // quadratic programming solver
-    Pricing_strategy         *strategy;  // ...and its pricing strategy
-    
-    Index_vector             p_support_indices;
-    Index_vector             q_support_indices;
-    
-    NT_matrix                a_matrix;  // matrix `A' of QP
-    
- private:    
-    // set dimension of input points
-    void
-    set_dimension( )
-        { d = ( p_points.size() > 0 ?
-                    tco.access_dimension_d_object()( p_points[ 0]) :
-                q_points.size() > 0 ?
-                    tco.access_dimension_d_object()( q_points[ 0]) :
-                -1); }
-    
-    // check dimension of input points
-    template < class InputIterator >
-    bool
-    check_dimension( InputIterator first, InputIterator last)
-        { return ( std::find_if( first, last,
-                                 CGAL::compose1_1( std::bind2nd(
-                                     std::not_equal_to<int>(), d),
-                                     tco.access_dimension_d_object()))
-                   == last); }
-    
-    // compute (squared) distance
-    void
-    compute_distance( )
-    {
-        // clear support points
-        p_support_indices.erase( p_support_indices.begin(),
-                                 p_support_indices.end());
-        q_support_indices.erase( q_support_indices.begin(),
-                                 q_support_indices.end());
-        if ( ( p_points.size() == 0) || ( q_points.size() == 0)) return;
-    
-        // set up and solve QP
-        int i, j;
-        NT  nt_0 = 0, nt_1 = 1;
-        
-        // matrix A
-        a_matrix.erase( a_matrix.begin(), a_matrix.end());
-        a_matrix.insert( a_matrix.end(),
-                         number_of_points(), NT_vector( 2, nt_0));
-        for ( j = 0; j < number_of_points_p(); ++j) a_matrix[ j][ 0] = nt_1;
-        for (      ; j < number_of_points  (); ++j) a_matrix[ j][ 1] = nt_1;
-        
-        // set-up
-        typedef  QP_rep_signed_point_iterator< Point, Point_iterator >
-                                            Signed_point_iterator;
-        Signed_point_iterator
-            signed_pts_it(p_points.begin(), p_points.size(), q_points.begin());
-        QP_rep_row_of_d< NT, ET, Point, Signed_point_iterator,
-                         Access_coordinates_begin_d, Access_dimension_d >
-            row_of_d( signed_pts_it,
-                      tco.access_coordinates_begin_d_object(),
-                      tco.access_dimension_d_object());
-        
-        typedef  typename QP_rep::A_iterator A_it;
-        typedef  typename QP_rep::B_iterator B_it;
-        typedef  typename QP_rep::C_iterator C_it;
-	typedef  typename C_it::value_type   C_entry;
-        typedef  typename QP_rep::D_iterator D_it; 
-	typedef  typename QP_rep::Row_type_iterator Row_it;
+  NT nt_0;
+  NT nt_1;
 
-	strategy = pricing_strategy(NT());
-	solver = new Solver(number_of_points(), 2,
-			    A_it( a_matrix.begin()), B_it( 1), C_it( 0),
-			    C_entry( 0), D_it( signed_pts_it, row_of_d),
-			    Row_it(QP_rep::EQUAL), strategy);
+  Traits                     tco;        // traits class object
+  Access_coordinates_begin_d da_coord;   // data accessor object
+    
+  Point_vector             p_points;  // points of P
+  Point_vector             q_points;  // points of Q
+  int                      d;         // dimension of input points
+    
+  ET_vector                p_coords;          // realizing point of P
+  ET_vector                q_coords;          // realizing point of Q
+    
+  Solver                   *solver;    // quadratic programming solver
+  Pricing_strategy         *strategy;  // ...and its pricing strategy
+    
+  Index_vector             p_support_indices;
+  Index_vector             q_support_indices;
+    
+private:    
+  // set dimension of input points
+  void
+  set_dimension( )
+  { 
+    d = ( p_points.size() > 0 ?
+	  tco.access_dimension_d_object()( p_points[ 0]) :
+	  q_points.size() > 0 ?
+	  tco.access_dimension_d_object()( q_points[ 0]) :
+	  -1); 
+  }
+    
+  // check dimension of input points
+  template < class InputIterator >
+  bool
+  check_dimension( InputIterator first, InputIterator last)
+  { return ( std::find_if
+	     ( first, last,
+	       CGAL::compose1_1
+	       ( std::bind2nd(std::not_equal_to<int>(), d),
+		 tco.access_dimension_d_object()))
+	     == last); }
+    
+  // compute (squared) distance
+  void
+  compute_distance( )
+  {
+    // clear support points
+    p_support_indices.erase( p_support_indices.begin(),
+			     p_support_indices.end());
+    q_support_indices.erase( q_support_indices.begin(),
+			     q_support_indices.end());
+    if ( ( p_points.size() == 0) || ( q_points.size() == 0)) return;
+        
+    // construct program
+    unsigned int n = 2 * d + p_points.size() + q_points.size();
+    unsigned int m = d + 2;
+    CGAL_optimisation_precondition (p_points.size() > 0);
+    QP qp (n, m, 
+	   A_iterator 
+	   (0, A_matrix (d, da_coord, p_points.begin(), p_points.size(), 
+			 q_points.begin())),
+	   B_iterator (0, B_vector (d)), 
+	   R_iterator (CGAL::EQUAL), 
+	   D_iterator (0, D_matrix (d)),
+	   C_iterator (nt_0));
 
-        // compute support and realizing points
-        ET  et_0 = 0;
-        int r    = number_of_points_p();
-        p_coords.resize( ambient_dimension()+1);
-        q_coords.resize( ambient_dimension()+1);
-        std::fill( p_coords.begin(), p_coords.end(), et_0);
-        std::fill( q_coords.begin(), q_coords.end(), et_0);
-        for ( i = 0; i < solver->number_of_basic_variables(); ++i) {
-            ET  value = solver->basic_original_variables_numerator_begin()[ i];
-            int index = solver->basic_original_variables_index_begin()[ i];
-            if ( index < r) {
-                for ( int j = 0; j < d; ++j) {
-                    p_coords[ j]
-                        += value * tco.access_coordinates_begin_d_object()(
-                                                       p_points[ index  ])[ j];
-                }
-                p_support_indices.push_back( index);
-            } else {
-                for ( int j = 0; j < d; ++j) {
-                    q_coords[ j]
-                        += value * tco.access_coordinates_begin_d_object()(
-                                                       q_points[ index-r])[ j];
-                }
-                q_support_indices.push_back( index-r);
-            }
-        }
-        p_coords[ d] = q_coords[ d] = solver->variables_common_denominator();
+    delete strategy;
+    strategy = pricing_strategy(NT());
+    delete solver;
+    solver = new Solver(qp, strategy);
+    CGAL_optimisation_assertion(solver->is_valid());
+    CGAL_optimisation_assertion(solver->status() == QP_OPTIMAL);
+    // compute support and realizing points
+    ET  et_0 = 0;
+    int r = p_points.size();
+    p_coords.resize( ambient_dimension()+1);
+    q_coords.resize( ambient_dimension()+1);
+    std::fill( p_coords.begin(), p_coords.end(), et_0);
+    std::fill( q_coords.begin(), q_coords.end(), et_0);
+    for (int i = 0; i < solver->number_of_basic_original_variables(); ++i) {
+      ET  value = solver->basic_original_variables_numerator_begin()[ i];
+      int index = solver->basic_original_variable_indices_begin()[ i];
+      if (index < 2*d) continue; // v or w variable
+      if (index < 2*d + r) {
+	// a point of p
+	for ( int j = 0; j < d; ++j) {
+	  p_coords[ j]
+	    += value * ET(da_coord (p_points[ index-2*d ])[ j]);
+	}
+	p_support_indices.push_back( index-2*d);
+      } else {
+	// a point of q
+	for ( int j = 0; j < d; ++j) {
+	  q_coords[ j]
+	    += value * ET(da_coord (q_points[ index-2*d-r])[ j]);
+	}
+	q_support_indices.push_back( index-2*d-r);
+      }
     }
+    p_coords[ d] = q_coords[ d] = solver->variables_common_denominator();
+  }
     
   template < class NT >
   Pricing_strategy *pricing_strategy( NT) {
-    return new QP_partial_filtered_pricing<QP_rep>;
+    return new QP_partial_filtered_pricing<QP, ET, QP_tags>;
   }
   
   Pricing_strategy *pricing_strategy( ET) {
-    return new QP_partial_exact_pricing<QP_rep>;
+    return new QP_partial_exact_pricing<QP, ET, QP_tags>;
   }
     
-};
-
-template < class Point, class PointIterator >
-struct QP_rep_signed_point_iterator {
-  public:
-    typedef  std::pair<Point,CGAL::Sign>      value_type;
-    typedef  std::ptrdiff_t                   difference_type;
-    typedef  value_type*                      pointer;
-    typedef  value_type&                      reference;
-    typedef  std::random_access_iterator_tag  iterator_category;
-
-    typedef  QP_rep_signed_point_iterator<Point,PointIterator>  Self;
-    typedef  value_type                                         Val;
-    typedef  difference_type                                    Dist;
-    typedef  pointer                                            Ptr;
-
-    // forward operations
-    QP_rep_signed_point_iterator() {}
-    QP_rep_signed_point_iterator(const PointIterator& it_p, Dist n_p,
-				 const PointIterator& it_q)
-        : p_it( it_p), q_it( it_q), n( n_p), curr( 0) { }
-
-    bool   operator == ( const Self& it) const { return (curr == it.curr);}
-    bool   operator != ( const Self& it) const { return (curr != it.curr);}
-
-    Val    operator *  ( ) const
-        { return ( curr < n) ? std::make_pair( *p_it, CGAL::POSITIVE)
-                             : std::make_pair( *q_it, CGAL::NEGATIVE); }
-
-    Self&  operator ++ (    )
-               { if ( ++curr <= n) ++p_it; else ++q_it; return *this; }
-    Self   operator ++ ( int)
-               { Self tmp = *this; operator++(); return tmp; }
-
-    // bidirectional operations
-    Self&  operator -- (    )
-               { if ( --curr <  n) --p_it; else --q_it; return *this; }
-    Self   operator -- ( int)
-               { Self tmp = *this; operator--(); return tmp; }
-
-    // random access operations
-    Self&  operator += ( Dist i)
-               {
-                   if ( curr+i <= n) {
-                       curr += i;
-                       p_it += i;
-                   } else {
-                       if ( curr < n) p_it += n-curr;
-                       curr += i;
-                       q_it += curr-n;
-                   }
-                   return *this;
-               }
-
-    Self&  operator -= ( Dist i)
-               {
-                   if ( curr-i < n) {
-                       if ( curr > n) q_it -= curr-n;
-                       curr -= i;
-                       p_it  -= n-curr;
-                   } else {
-                       curr -= i;
-                       q_it  -= i;
-                   }
-                   return *this;
-               }
-
-    Self   operator +  ( Dist i) const { Self tmp = *this; return tmp+=i; }
-    Self   operator -  ( Dist i) const { Self tmp = *this; return tmp-=i; }
-
-    Dist   operator -  ( const Self& it) const { return curr - it.curr; }
-
-    Val    operator [] ( int i) const
-        { return ( curr+i < n)
-              ? std::make_pair( p_it[ i  ], CGAL::POSITIVE)
-              : std::make_pair( q_it[ i-n], CGAL::NEGATIVE); }
-
-    bool   operator <  ( const Self& it) const { return ( curr <  it.curr); }
-    bool   operator >  ( const Self& it) const { return ( curr >  it.curr); }
-    bool   operator <= ( const Self& it) const { return ( curr <= it.curr); }
-    bool   operator >= ( const Self& it) const { return ( curr >= it.curr); }
-
-  private:
-    PointIterator  p_it;
-    PointIterator  q_it;
-    Dist           n;
-    Dist           curr;
-};
-
-// this class should compute the EXACT inner product, otherwise,
-// the matrix D passed to the QP_solver through D_iterator has
-// roundoffs and may in the worst case not be positive-definite
-// the problem is that if the D-values are exact and the A-values,
-// say, are inexact, then the QP-solver runs into formal troubles
-// --> a fix is not easy right now 
-template < class NT, class ET, class Point,
-           class Access_coord, class Access_dim >
-class QP_rep_signed_inner_product {
-    Point         p_i;
-    CGAL::Sign    s_i;
-    Access_coord  da_coord;
-    Access_dim    da_dim;
-  public:
-    typedef  std::pair<Point,CGAL::Sign>  argument_type;
-    typedef  NT                           result_type;
-
-    QP_rep_signed_inner_product( ) { }
-    QP_rep_signed_inner_product( const argument_type& p_signed,
-                                 const Access_coord&  ac,
-                                 const Access_dim&    ad)
-        : p_i( p_signed.first), s_i( p_signed.second),
-          da_coord( ac), da_dim( ad) { }
-
-    NT  operator( ) ( const argument_type& p_signed) const
-        { NT ip = std::inner_product( da_coord( p_i),
-                                      da_coord( p_i)+da_dim( p_i),
-                                      da_coord( p_signed.first), NT( 0),
-                                      std::plus<NT>(),
-                                      std::multiplies<NT>());
-          return ( s_i*p_signed.second == CGAL::POSITIVE) ? ip : -ip; }
-};
-
-template < class NT, class ET, class Point, class Signed_point_iterator,
-           class Access_coord, class Access_dim >
-class QP_rep_row_of_d {
-    Signed_point_iterator  signed_pts_it;
-    Access_coord           da_coord;
-    Access_dim             da_dim;
-public:
-    typedef  CGAL::QP_rep_signed_inner_product<
-                 NT, ET, Point, Access_coord, Access_dim >
-                                    Signed_inner_product;
-    typedef  CGAL::Join_input_iterator_1<
-                 Signed_point_iterator, Signed_inner_product >
-                                    Row_of_d;
-
-    typedef  std::pair<Point,CGAL::Sign>
-                                    argument_type;
-    typedef  Row_of_d               result_type;
-
-    QP_rep_row_of_d( ) { }
-    QP_rep_row_of_d( const Signed_point_iterator& it,
-                     const Access_coord&          ac,
-                     const Access_dim&            ad)
-        : signed_pts_it( it), da_coord( ac), da_dim( ad) { }
-
-    Row_of_d  operator( ) ( const argument_type& p_signed) const
-    { return Row_of_d( signed_pts_it,
-                       Signed_inner_product( p_signed, da_coord, da_dim));}
-};
-
-template < class ET_, class NT_, class Point, class Point_iterator,
-           class Access_coord, class Access_dim >
-struct QP_rep_poly_dist_d { 
-  // (possibly inexact) number type for the pricing:
-  typedef  NT_                    NT;
-  
-  // helper types:
-  typedef  std::vector< std::vector<NT> >              NT_matrix;
-  typedef  CGAL::QP_rep_signed_point_iterator< Point, Point_iterator>
-                                                       Signed_point_iterator;
-
-  // stuff required by concept QPSolverTraits:
-  typedef  ET_                                         ET;
-  typedef  CGAL::Join_input_iterator_1<
-    typename NT_matrix::const_iterator,
-    QP_rep_row_of_a<NT> >                              A_iterator;
-  typedef  CGAL::Const_oneset_iterator<NT>             B_iterator;
-  typedef  CGAL::Const_oneset_iterator<NT>             C_iterator;
-  typedef  CGAL::Join_input_iterator_1<
-    Signed_point_iterator,
-    QP_rep_row_of_d< NT, ET, Point, Signed_point_iterator,
-		     Access_coord, Access_dim > >      D_iterator;
-
-  typedef Const_oneset_iterator<bool> FU_iterator;
-  typedef Const_oneset_iterator<bool> FL_iterator;
-  typedef Const_oneset_iterator<NT>   U_iterator;
-  typedef Const_oneset_iterator<NT>   L_iterator;
-
-  enum Row_type { LESS_EQUAL = -1, EQUAL, GREATER_EQUAL};
-  typedef Const_oneset_iterator<Row_type>    Row_type_iterator;
-
-  typedef Tag_false                          Is_linear;
-  typedef Tag_true                           Is_symmetric;
-  typedef Tag_true                           Has_equalities_only_and_full_rank;
-  typedef Tag_true                           Is_in_standard_form;
 };
 
 // Function declarations
@@ -719,69 +778,82 @@ bool
 Polytope_distance_d<Traits_>::
 is_valid( bool verbose, int level) const
 {
-    using namespace std;
+  using namespace std;
 
-    CGAL::Verbose_ostream verr( verbose);
-    verr << "CGAL::Polytope_distance_d<Traits>::" << endl;
-    verr << "is_valid( true, " << level << "):" << endl;
-    verr << "  |P+Q| = " << number_of_points_p()
-         <<          '+' << number_of_points_q()
-         <<   ", |S| = " << number_of_support_points_p()
-         <<          '+' << number_of_support_points_q() << endl;
+  CGAL::Verbose_ostream verr( verbose);
+  verr << "CGAL::Polytope_distance_d<Traits>::" << endl;
+  verr << "is_valid( true, " << level << "):" << endl;
+  verr << "  |P+Q| = " << number_of_points_p()
+       <<          '+' << number_of_points_q()
+       <<   ", |S| = " << number_of_support_points_p()
+       <<          '+' << number_of_support_points_q() << endl;
 
-    if ( is_finite()) {
-       // check QP solver 
-       CGAL_optimisation_assertion(solver);
-       if (!solver->is_valid()) 
-	 return  CGAL::_optimisation_is_valid_fail( 
-	   verr,
-	   "underlying QP_solver is in invalid state");
+  if ( is_finite()) {
 
-       // compute normal vector
-        ET_vector  normal( d), diff( d);
-        ET  et_0 = 0, den = solver->variables_common_denominator();
-        int i, j;
-        for ( j = 0; j < d; ++j) normal[ j] = p_coords[ j] - q_coords[ j];
+    // compute normal vector
+    ET_vector  normal( d), diff( d);
+    ET  et_0 = 0, den = p_coords[d];
+    CGAL_optimisation_assertion (den > et_0);
+    CGAL_optimisation_assertion (den == q_coords[d]);
+    int i, j;
+    for ( j = 0; j < d; ++j) normal[ j] = p_coords[ j] - q_coords[ j];
 
-        // check P
-        // -------
-        verr << "  checking P..." << flush;
+    // check correctness of computed squared distance
+    verr << "  checking squared_distance..." << flush;
+    ET sqr_dist_num (0);
+    for ( j = 0; j < d; ++j)
+      sqr_dist_num += normal[ j] * normal[ j];
+    ET sqr_dist_den = 
+      p_coords[ d] * p_coords[ d];
+    if (sqr_dist_num * squared_distance_denominator() !=
+	sqr_dist_den * squared_distance_numerator())
+      return CGAL::_optimisation_is_valid_fail
+	( verr, "realizing points don't have correct squared distance");
+
+
+    // check P
+    // -------
+    verr << "  checking P..." << flush;
         
-        // check point set
-        for ( i = 0; i < number_of_points_p(); ++i) {
-            for ( j = 0; j < d; ++j) {
-                diff[ j] = p_coords[ j] - den
-                  * tco.access_coordinates_begin_d_object()( p_points[ i])[ j];
-            }
-            if ( std::inner_product( diff.begin(), diff.end(),
-                                     normal.begin(), et_0) > et_0)
-                return CGAL::_optimisation_is_valid_fail( verr,
-                           "polytope P is not separated by its hyperplane");
-        }
-        
-        verr << "passed." << endl;
-
-        // check Q
-        // -------
-        verr << "  checking Q..." << flush;
-        
-        // check point set
-        for ( i = 0; i < number_of_points_q(); ++i) {
-            for ( j = 0; j < d; ++j) {
-                diff[ j] = q_coords[ j] - den
-                  * tco.access_coordinates_begin_d_object()( q_points[ i])[ j];
-            }
-            if ( std::inner_product( diff.begin(), diff.end(),
-                                     normal.begin(), et_0) < et_0)
-                return CGAL::_optimisation_is_valid_fail( verr,
-                           "polytope Q is not separated by its hyperplane");
-        }
-        
-        verr << "passed." << endl;
+    // check point set
+    for ( i = 0; i < number_of_points_p(); ++i) {
+      for ( j = 0; j < d; ++j) {
+	// compute (a positive multiple of) p^* - p_i
+	diff[ j] = 
+	  ET(da_coord(p_points[ i])[d]) * p_coords[ j] - 
+	  den * ET(da_coord( p_points[ i])[ j]);
+      }
+      if ( std::inner_product( diff.begin(), diff.end(),
+			       normal.begin(), et_0) > et_0)
+	return CGAL::_optimisation_is_valid_fail
+	  ( verr, "polytope P is not separated by its hyperplane");
     }
+        
+    verr << "passed." << endl;
 
-    verr << "  object is valid!" << endl;
-    return( true);
+    // check Q
+    // -------
+    verr << "  checking Q..." << flush;
+        
+    // check point set
+    for ( i = 0; i < number_of_points_q(); ++i) {
+      for ( j = 0; j < d; ++j) {
+	// compute (a positive multiple of) q^* - q_i
+	diff[ j] = 
+	  ET(da_coord(q_points[ i])[d]) * q_coords[ j] - 
+	  den * ET(da_coord( q_points[ i])[ j]);
+      }
+      if ( std::inner_product( diff.begin(), diff.end(),
+			       normal.begin(), et_0) < et_0)
+	return CGAL::_optimisation_is_valid_fail
+	  ( verr, "polytope Q is not separated by its hyperplane");
+    }
+        
+    verr << "passed." << endl;
+  }
+
+  verr << "  object is valid!" << endl;
+  return( true);
 }
 
 // output operator
@@ -790,86 +862,86 @@ std::ostream&
 operator << ( std::ostream& os,
               const Polytope_distance_d<Traits_>& poly_dist)
 {
-    using namespace std;
+  using namespace std;
 
-    typedef  typename Polytope_distance_d<Traits_>::Point  Point;
-    typedef  ostream_iterator<Point>       Os_it;
-    typedef  typename Traits_::ET          ET;
-    typedef  ostream_iterator<ET>          Et_it;
+  typedef  typename Polytope_distance_d<Traits_>::Point  Point;
+  typedef  ostream_iterator<Point>       Os_it;
+  typedef  typename Traits_::ET          ET;
+  typedef  ostream_iterator<ET>          Et_it;
 
-    switch ( CGAL::get_mode( os)) {
+  switch ( CGAL::get_mode( os)) {
 
-      case CGAL::IO::PRETTY:
-        os << "CGAL::Polytope_distance_d( |P+Q| = "
-           << poly_dist.number_of_points_p() << '+'
-           << poly_dist.number_of_points_q() << ", |S| = "
-           << poly_dist.number_of_support_points_p() << '+'
-           << poly_dist.number_of_support_points_q() << endl;
-        os << "  P = {" << endl;
-        os << "    ";
-        copy( poly_dist.points_p_begin(), poly_dist.points_p_end(),
-              Os_it( os, ",\n    "));
-        os << "}" << endl;
-        os << "  Q = {" << endl;
-        os << "    ";
-        copy( poly_dist.points_q_begin(), poly_dist.points_q_end(),
-              Os_it( os, ",\n    "));
-        os << "}" << endl;
-        os << "  S_P = {" << endl;
-        os << "    ";
-        copy( poly_dist.support_points_p_begin(),
-              poly_dist.support_points_p_end(),
-              Os_it( os, ",\n    "));
-        os << "}" << endl;
-        os << "  S_Q = {" << endl;
-        os << "    ";
-        copy( poly_dist.support_points_q_begin(),
-              poly_dist.support_points_q_end(),
-              Os_it( os, ",\n    "));
-        os << "}" << endl;
-        os << "  p = ( ";
-        copy( poly_dist.realizing_point_p_coordinates_begin(),
-              poly_dist.realizing_point_p_coordinates_end(),
-              Et_it( os, " "));
-        os << ")" << endl;
-        os << "  q = ( ";
-        copy( poly_dist.realizing_point_q_coordinates_begin(),
-              poly_dist.realizing_point_q_coordinates_end(),
-              Et_it( os, " "));
-        os << ")" << endl;
-        os << "  squared distance = "
-           << poly_dist.squared_distance_numerator() << " / "
-           << poly_dist.squared_distance_denominator() << endl;
-        break;
+  case CGAL::IO::PRETTY:
+    os << "CGAL::Polytope_distance_d( |P+Q| = "
+       << poly_dist.number_of_points_p() << '+'
+       << poly_dist.number_of_points_q() << ", |S| = "
+       << poly_dist.number_of_support_points_p() << '+'
+       << poly_dist.number_of_support_points_q() << endl;
+    os << "  P = {" << endl;
+    os << "    ";
+    copy( poly_dist.points_p_begin(), poly_dist.points_p_end(),
+	  Os_it( os, ",\n    "));
+    os << "}" << endl;
+    os << "  Q = {" << endl;
+    os << "    ";
+    copy( poly_dist.points_q_begin(), poly_dist.points_q_end(),
+	  Os_it( os, ",\n    "));
+    os << "}" << endl;
+    os << "  S_P = {" << endl;
+    os << "    ";
+    copy( poly_dist.support_points_p_begin(),
+	  poly_dist.support_points_p_end(),
+	  Os_it( os, ",\n    "));
+    os << "}" << endl;
+    os << "  S_Q = {" << endl;
+    os << "    ";
+    copy( poly_dist.support_points_q_begin(),
+	  poly_dist.support_points_q_end(),
+	  Os_it( os, ",\n    "));
+    os << "}" << endl;
+    os << "  p = ( ";
+    copy( poly_dist.realizing_point_p_coordinates_begin(),
+	  poly_dist.realizing_point_p_coordinates_end(),
+	  Et_it( os, " "));
+    os << ")" << endl;
+    os << "  q = ( ";
+    copy( poly_dist.realizing_point_q_coordinates_begin(),
+	  poly_dist.realizing_point_q_coordinates_end(),
+	  Et_it( os, " "));
+    os << ")" << endl;
+    os << "  squared distance = "
+       << poly_dist.squared_distance_numerator() << " / "
+       << poly_dist.squared_distance_denominator() << endl;
+    break;
 
-      case CGAL::IO::ASCII:
-        os << poly_dist.number_of_points_p() << endl;
-        copy( poly_dist.points_p_begin(),
-              poly_dist.points_p_end(),
-              Os_it( os, "\n"));
-        os << poly_dist.number_of_points_q() << endl;
-        copy( poly_dist.points_q_begin(),
-              poly_dist.points_q_end(),
-              Os_it( os, "\n"));
-        break;
+  case CGAL::IO::ASCII:
+    os << poly_dist.number_of_points_p() << endl;
+    copy( poly_dist.points_p_begin(),
+	  poly_dist.points_p_end(),
+	  Os_it( os, "\n"));
+    os << poly_dist.number_of_points_q() << endl;
+    copy( poly_dist.points_q_begin(),
+	  poly_dist.points_q_end(),
+	  Os_it( os, "\n"));
+    break;
 
-      case CGAL::IO::BINARY:
-        os << poly_dist.number_of_points_p() << endl;
-        copy( poly_dist.points_p_begin(),
-              poly_dist.points_p_end(),
-              Os_it( os));
-        os << poly_dist.number_of_points_q() << endl;
-        copy( poly_dist.points_q_begin(),
-              poly_dist.points_q_end(),
-              Os_it( os));
-        break;
+  case CGAL::IO::BINARY:
+    os << poly_dist.number_of_points_p() << endl;
+    copy( poly_dist.points_p_begin(),
+	  poly_dist.points_p_end(),
+	  Os_it( os));
+    os << poly_dist.number_of_points_q() << endl;
+    copy( poly_dist.points_q_begin(),
+	  poly_dist.points_q_end(),
+	  Os_it( os));
+    break;
 
-      default:
-        CGAL_optimisation_assertion_msg( false,
-                                         "CGAL::get_mode( os) invalid!");
-        break; }
+  default:
+    CGAL_optimisation_assertion_msg( false,
+				     "CGAL::get_mode( os) invalid!");
+    break; }
 
-    return( os);
+  return( os);
 }
 
 // input operator
@@ -878,27 +950,27 @@ std::istream&
 operator >> ( std::istream& is,
               CGAL::Polytope_distance_d<Traits_>& poly_dist)
 {
-    using namespace std;
-    /*
+  using namespace std;
+  /*
     switch ( CGAL::get_mode( is)) {
 
-      case CGAL::IO::PRETTY:
-        cerr << endl;
-        cerr << "Stream must be in ascii or binary mode" << endl;
-        break;
+    case CGAL::IO::PRETTY:
+    cerr << endl;
+    cerr << "Stream must be in ascii or binary mode" << endl;
+    break;
 
-      case CGAL::IO::ASCII:
-      case CGAL::IO::BINARY:
-        typedef  CGAL::Polytope_distance_d<Traits_>::Point  Point;
-        typedef  istream_iterator<Point>             Is_it;
-        poly_dist.set( Is_it( is), Is_it());
-        break;
+    case CGAL::IO::ASCII:
+    case CGAL::IO::BINARY:
+    typedef  CGAL::Polytope_distance_d<Traits_>::Point  Point;
+    typedef  istream_iterator<Point>             Is_it;
+    poly_dist.set( Is_it( is), Is_it());
+    break;
 
-      default:
-        CGAL_optimisation_assertion_msg( false, "CGAL::IO::mode invalid!");
-        break; }
-    */
-    return( is);
+    default:
+    CGAL_optimisation_assertion_msg( false, "CGAL::IO::mode invalid!");
+    break; }
+  */
+  return( is);
 }
 
 CGAL_END_NAMESPACE
