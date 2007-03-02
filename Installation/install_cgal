@@ -2545,7 +2545,7 @@ write_buffer()
 remove_special_chars()
 {
     _read
-    echo "$KEY" | ${_tr} -d '\\!@#$%^&*()_|~";?<>{}\[\]\`/ ' | ${_tr} -d "'"
+    echo "$KEY" | ${_tr} -d '\\!@#$%^&*()_|~";?<>{}\[\]\`/ '"'"
 }
 
 _set_indent()
