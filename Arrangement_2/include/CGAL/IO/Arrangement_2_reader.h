@@ -61,7 +61,7 @@ protected:
   typedef typename Traits_2::X_monotone_curve_2           X_monotone_curve_2;
   typedef typename Traits_2::Point_2                      Point_2;
 
-  typedef Arr_accessor<Arrangement_2>                     Arr_accessor;
+  typedef CGAL::Arr_accessor<Arrangement_2>               Arr_accessor;
   typedef typename Arr_accessor::Dcel_vertex              DVertex;
   typedef typename Arr_accessor::Dcel_halfedge            DHalfedge;
   typedef typename Arr_accessor::Dcel_face                DFace;

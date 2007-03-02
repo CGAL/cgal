@@ -62,10 +62,10 @@ class Arr_non_x_construction
 
   
  
-  typedef Basic_sweep_line_2<Traits_2,
-                             Visitor,
-                             Subcurve,
-                             Event>                 Basic_sweep_line_2;
+  typedef CGAL::Basic_sweep_line_2<Traits_2,
+                                   Visitor,
+                                   Subcurve,
+                                   Event>           Basic_sweep_line_2;
  
 public:
 

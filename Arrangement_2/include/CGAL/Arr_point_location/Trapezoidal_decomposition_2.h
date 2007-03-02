@@ -84,10 +84,10 @@ class Trapezoidal_decomposition_2
   typedef class Base_trapezoid_iterator Base_trapezoid_circulator;
   // friend class Td_traits::X_trapezoid;
   
-  typedef Td_active_trapezoid<X_trapezoid> Td_active_trapezoid;
-  typedef Td_active_non_degenerate_trapezoid<X_trapezoid,Traits> 
+  typedef CGAL::Td_active_trapezoid<X_trapezoid> Td_active_trapezoid;
+  typedef CGAL::Td_active_non_degenerate_trapezoid<X_trapezoid,Traits> 
     Td_active_non_degenerate_trapezoid;
-  typedef Td_active_right_degenerate_curve_trapezoid<X_trapezoid,Traits> 
+  typedef CGAL::Td_active_right_degenerate_curve_trapezoid<X_trapezoid,Traits> 
     Td_active_right_degenerate_curve_trapezoid;
   typedef Td_dag< X_trapezoid> Data_structure;
   typedef std::map<int,Data_structure> map_nodes;

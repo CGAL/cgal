@@ -45,7 +45,7 @@ protected:
 
   typedef typename Arrangement_2::Size                    Size;
   
-  typedef Arr_accessor<Arrangement_2>                  Arr_accessor;
+  typedef CGAL::Arr_accessor<Arrangement_2>            Arr_accessor;
   typedef typename Arr_accessor::All_vertex_const_iterator
                                                        Vertex_const_iterator;
   typedef typename Arr_accessor::All_edge_const_iterator

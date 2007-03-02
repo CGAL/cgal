@@ -196,11 +196,11 @@ public:
   typedef typename Traits::Compare_x_2              Base_Compare_x_2;
   typedef typename Traits::Has_boundary_category    Base_has_boundary_category;
   
-  typedef Curve_info<Halfedge_handle_red,
-                     Halfedge_handle_blue>          Curve_info;
+  typedef CGAL::Curve_info<Halfedge_handle_red,
+                           Halfedge_handle_blue>    Curve_info;
 
-  typedef Point_info<Vertex_handle_red,
-                     Vertex_handle_blue>            Point_info;
+  typedef CGAL::Point_info<Vertex_handle_red,
+                           Vertex_handle_blue>      Point_info;
 
   typedef typename Curve_info::Color                Color;
 

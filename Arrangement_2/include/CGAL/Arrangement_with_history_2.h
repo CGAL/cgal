@@ -91,7 +91,7 @@ protected:
 
   // The arrangement with history is based on the representation of an
   // arrangement, templated by the data-traits class and the rebound DCEL.
-  typedef Arrangement_2<Data_traits_2, Data_dcel>       Base_arr_2;
+  typedef CGAL::Arrangement_2<Data_traits_2, Data_dcel> Base_arr_2;
   typedef Arr_traits_adaptor_2<Data_traits_2>           Traits_adaptor_2;
  
 public:
