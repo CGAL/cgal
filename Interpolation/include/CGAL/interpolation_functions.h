@@ -244,7 +244,7 @@ farin_c1_interpolation(RandomAccessIterator first,
 		       std::iterator_traits<RandomAccessIterator>::
 		       value_type::second_type& norm, const typename
 		       std::iterator_traits<RandomAccessIterator>::
-		       value_type::first_type& p,
+		       value_type::first_type& /*p*/,
 		       Functor function_value, GradFunctor
 		       function_gradient,
 		       const Traits& traits)
