@@ -35,7 +35,7 @@ public:
         : public Unary_function<Type,Type> {
     private:
         static Type 
-        normalization_factor(const Type& a,Integral_domain_without_division_tag){
+        normalization_factor(const Type&,Integral_domain_without_division_tag){
             return Type(1);
         }
         static Type 
