@@ -67,10 +67,10 @@ class Gps_polygon_simplifier
                                   Event,
                                   Subcurve>           Visitor;
 
-  typedef Sweep_line_2<Meta_traits,
-                       Visitor,
-                       Subcurve,
-                       Event>                         Sweep_line_2;
+  typedef CGAL::Sweep_line_2<Meta_traits,
+                             Visitor,
+                             Subcurve,
+                             Event>                   Sweep_line_2;
 
   typedef Unique_hash_map<Halfedge_handle, 
                           unsigned int>               Edges_hash;
