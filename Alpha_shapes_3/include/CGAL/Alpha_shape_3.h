@@ -396,7 +396,7 @@ private:
 
   // the dynamic version is not yet implemented
   // desactivate the tetrahedralization member functions
-  void insert(const Point& p) {}
+  void insert(const Point& /*p*/) {}
   // Inserts point `p' in the alpha shape and returns the
   // corresponding vertex of the underlying Delaunay tetrahedralization.
   // If point `p' coincides with an already existing vertex, this
@@ -404,7 +404,7 @@ private:
   // Otherwise, the vertex is inserted in the underlying Delaunay
   // tetrahedralization and the associated intervals are updated.
 
-  void remove(Vertex_handle v) {}
+  void remove(Vertex_handle /*v*/) {}
   // Removes the vertex from the underlying Delaunay tetrahedralization.
   // The created hole is retriangulated and the associated intervals
   // are updated.
@@ -756,8 +756,8 @@ private:
 
 private:
   // prevent default copy constructor and default assigment
-  Alpha_shape_3(const Alpha_shape_3& A)    {}
-  void operator=(const Alpha_shape_3& A)    {}
+  Alpha_shape_3(const Alpha_shape_3&);
+  void operator=(const Alpha_shape_3&);
 
   //---------------------------------------------------------------------
 public:  
@@ -962,7 +962,7 @@ public:
 
    template<class OutputIterator> 
    OutputIterator   
-   filtration_output( const NT& alpha,  
+   filtration_output( const NT& /*alpha*/,  
  		     Vertex_handle vh,  
  		     OutputIterator it,  
  		     Tag_false)     const 
