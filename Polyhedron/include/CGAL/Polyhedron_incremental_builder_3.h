@@ -152,7 +152,7 @@ protected:
     }
     void set_vertex_to_edge_map( size_type i, Halfedge_handle h, Tag_false) {
         // Use the self-managed array vertex_to_edge_map.
-        CGAL_assertion(i>=0 && i < vertex_to_edge_map.size());
+        CGAL_assertion(i < vertex_to_edge_map.size());
         vertex_to_edge_map[i] = h;
     }
     void set_vertex_to_edge_map( size_type i, Halfedge_handle h) {
