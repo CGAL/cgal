@@ -475,7 +475,7 @@ parse_support_options()
     _set_indent
     log_to_file
     for i in "${CGAL_SUPPORT_DIR}"/S*; do
-	_tmp="`echo $i | ${_awk} 'BEGIN {FS=\"-\"} {print $NF}' | remove_special_chars | ${_tr} '[:lower:]' '[:upper:]'`"
+	_tmp="`echo $i | ${_awk} 'BEGIN {FS=\"-\"} {print toupper($NF)}' | remove_special_chars 
 	if [ -z "${_tmp}" ]; then continue; fi
         SUPPORT_PKGS="${SUPPORT_PKGS} ${_tmp}"
         R_SUPPORT_PKGS="${_tmp} ${R_SUPPORT_PKGS}"
