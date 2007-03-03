@@ -66,7 +66,7 @@ public:
 
   Point_iterator hidden_points_begin() const { return hidden_points_end(); }
   Point_iterator hidden_points_end() const { return NULL; }
-  void hide_point (const Point &p) const { }
+  void hide_point (const Point &) const { }
 
   typename Geom_traits::Point_3
   circumcenter(const Geom_traits& gt = Geom_traits()) const
