@@ -813,8 +813,8 @@ BigFloat Polynomial<NT>::evalApprox(const BigFloat& f,
 // This BigInt version of evalApprox should never be called...
 template <>
 CORE_INLINE
-BigFloat Polynomial<BigInt>::evalApprox(const BigFloat& f,
-	const extLong& r, const extLong& a) const {	// evaluation
+BigFloat Polynomial<BigInt>::evalApprox(const BigFloat& /*f*/,
+	const extLong& /*r*/, const extLong& /*a*/) const {	// evaluation
   assert(0);
   return BigFloat(0);
 }

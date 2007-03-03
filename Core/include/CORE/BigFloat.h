@@ -64,9 +64,9 @@ public:
   //     This is a hack because in Sturm, we need to approximate any
   //     coefficient type NT to a BigFloat, and it would complain if we
   //     do not have this method explicitly:
-  BigFloat(int& i, const extLong& r, const extLong& a)
+  BigFloat(int& i, const extLong& /*r*/, const extLong& /*a*/)
       : RCBigFloat(new BigFloatRep(i)) {}
-  BigFloat(long& x, const extLong& r, const extLong& a)
+  BigFloat(long& x, const extLong& /*r*/, const extLong& /*a*/)
       : RCBigFloat(new BigFloatRep(x)) {}
   /// constructor from <tt>BigInt</tt>, error and exponent values
   BigFloat(const BigInt& I, unsigned long er, long ex)

@@ -936,8 +936,8 @@ void DivRep::computeExactFlags() {
 //
 //  approximation functions
 //
-void ConstDoubleRep::computeApproxValue(const extLong& relPrec,
-                                        const extLong& absPrec)
+void ConstDoubleRep::computeApproxValue(const extLong& /*relPrec*/,
+                                        const extLong& /*absPrec*/)
 // can ignore precision bounds since ffVal.getValue() returns exact value
 {
   appValue() = Real(ffVal.getValue());

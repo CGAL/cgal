@@ -489,7 +489,7 @@ inline Expr sqrt(const Expr& e) {
 
 //Following two have been added to make NT=Expr work for Polynomial<NT>
 /// gcd
-inline Expr gcd(const Expr& a, const Expr& b) {
+inline Expr gcd(const Expr& /*a*/, const Expr& /*b*/) {
   return Expr(1);
 }
 inline Expr div_exact(const Expr& x, const  Expr& y) {
