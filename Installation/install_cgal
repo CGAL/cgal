@@ -609,7 +609,7 @@ check_for_utils()
     _check_for_sysutil basename y
     _check_for_sysutil dirname y
     _check_for_sysutil uname y
-    _check_for_sysutil printf y
+#     _check_for_sysutil printf y
 
     _check_printf $INSTALL_VERBOSE
 
