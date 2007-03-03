@@ -2360,7 +2360,7 @@ template < class Conflict_tester, class Hidden_points_visitor >
 typename Triangulation_3<GT,Tds>::Vertex_handle
 Triangulation_3<GT,Tds>::
 insert_in_conflict(const Point & p, 
-		   Locate_type lt, Cell_handle c, int li, int lj,
+		   Locate_type lt, Cell_handle c, int li, int /*lj*/,
 		   const Conflict_tester &tester,
 		   Hidden_points_visitor &hider)
 {
