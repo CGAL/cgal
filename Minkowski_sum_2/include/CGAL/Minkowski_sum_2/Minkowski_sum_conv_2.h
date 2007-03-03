@@ -37,7 +37,7 @@ class Minkowski_sum_by_convolution_2
 public:
 
   typedef Kernel_                                        Kernel;
-  typedef Polygon_2<Kernel, Container_>                  Polygon_2;
+  typedef CGAL::Polygon_2<Kernel, Container_>            Polygon_2;
 
 private:
 

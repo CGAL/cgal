@@ -51,7 +51,7 @@ public:
   typedef Dcel_                                           Dcel;
   typedef typename Traits_2::Polygon_2                    Polygon_2;
   typedef typename Traits_2::Polygon_with_holes_2         Polygon_with_holes_2;
-  typedef Arrangement_2<Traits_2, Dcel>                   Arrangement_2;
+  typedef CGAL::Arrangement_2<Traits_2, Dcel>             Arrangement_2;
   typedef std::size_t                                     Size;
 
 private:

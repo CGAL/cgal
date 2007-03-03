@@ -44,7 +44,7 @@ protected:
 
   // Arrangement-related types:
   typedef Arr_face_extended_dcel<Traits_2, int>          Dcel;
-  typedef Arrangement_2<Traits_2, Dcel>                  Arrangement_2;
+  typedef CGAL::Arrangement_2<Traits_2, Dcel>            Arrangement_2;
   typedef typename Arrangement_2::Vertex_handle          Vertex_handle;
   typedef typename Arrangement_2::Halfedge_handle        Halfedge_handle;
   typedef typename Arrangement_2::Face_handle            Face_handle;

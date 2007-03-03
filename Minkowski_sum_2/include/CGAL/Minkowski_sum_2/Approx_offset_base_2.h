@@ -43,7 +43,7 @@ protected:
 
   typedef Kernel                                         Basic_kernel;
   typedef NT                                             Basic_NT;
-  typedef Polygon_2<Kernel, Container_>                  Polygon_2;
+  typedef CGAL::Polygon_2<Kernel, Container_>            Polygon_2;
 
 private:
   
