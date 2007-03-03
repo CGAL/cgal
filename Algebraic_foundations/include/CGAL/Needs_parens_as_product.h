@@ -29,7 +29,7 @@ class Parens_as_product_tag {};
  */
 template <class NT>
 struct Needs_parens_as_product{
-    bool operator()(const NT& x){ return true; }
+    bool operator()(const NT&){ return true; }
 };
 
 /*! \ingroup NiX_io_parens
