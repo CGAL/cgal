@@ -36,7 +36,7 @@ static double max_error_value=.00005;
 
 namespace {
 template <bool CLEAN, class NT>
-inline void compute_quadratic_roots_t(const NT *begin, const NT *end,  NT lb, NT ub,
+inline void compute_quadratic_roots_t(const NT *begin, const NT */*end*/,  NT lb, NT ub,
 std::vector<NT> &roots)
 {
   NT max_error=0;
