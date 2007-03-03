@@ -280,7 +280,7 @@ sibson_natural_neighbor_coordinates_3(const Dt& dt,
 }
   
 template <typename Dt, typename InputIterator> 
-bool is_correct_natural_neighborhood(const Dt& dt,
+bool is_correct_natural_neighborhood(const Dt& /*dt*/,
 				     const typename Dt::Geom_traits::Point_3 & Q, 
 				     InputIterator it_begin, InputIterator it_end,
 				     const typename Dt::Geom_traits::FT & norm_coeff)

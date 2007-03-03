@@ -38,7 +38,7 @@ surface_neighbor_coordinates_3(InputIterator
 			       const typename Kernel::Point_3& p,
 			       const typename Kernel::Vector_3& normal,
 			       OutputIterator out,
-			       const Kernel& K)
+			       const Kernel&)
 {
   typedef Voronoi_intersection_2_traits_3<Kernel> I_gt;
   return surface_neighbor_coordinates_3(first, beyond, p, out, I_gt(p,normal));
