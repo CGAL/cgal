@@ -481,8 +481,12 @@ parse_support_options()
         R_SUPPORT_PKGS="${_tmp} ${R_SUPPORT_PKGS}"
         log_print "${_tmp}"
 	${_printf} "%s" "${_tmp}, "
-	PROVIDES=''
-        try_to_get_var_from_file PROVIDES "${i}"
+	for j in PROVIDES DESCRIPTION CXXFLAGS LDFLAGS LIBS REQUIRES INCOMPATIBLE \
+	    STDINCLDIRS INCLTHING STDLIBDIRS LIBTHING COMPILETESTFLAGS
+	do
+	  eval "${j}=''"
+	done
+        try_to_get_var_from_file "PROVIDES|DESCRIPTION|CXXFLAGS|LDFLAGS|LIBS|REQUIRES|INCOMPATIBLE|STDINCLDIRS|INCLTHING|STDLIBDIRS|LIBTHING|COMPILETESTFLAGS" "${i}"
 	if [ -z "${PROVIDES}" ]; then continue; fi
 	eval "${_tmp}_PROVIDES=\"${PROVIDES}\""
         # is PROVIDES already among SUPPORT_FEATURES?
@@ -503,8 +507,6 @@ parse_support_options()
 	for j in DESCRIPTION CXXFLAGS LDFLAGS LIBS REQUIRES INCOMPATIBLE \
 	    STDINCLDIRS INCLTHING STDLIBDIRS LIBTHING COMPILETESTFLAGS
 	do
-	  eval "${j}=''"
-	  try_to_get_var_from_file "${j}" "${i}"
 	  eval ${_tmp}_${j}=\"`value_of ${j}`\"
 	done
 	eval "${_tmp}_SUPPORT=''"
@@ -2783,50 +2785,51 @@ set_terminal_variables()
 # return 0, iff something went wrong
 try_to_get_var_from_config_file()
 {
-    if [ -r "${2}" ]; then
-	_awkprg="/ ${1}/"'{print $0}'
-	_tmp2=`${_awk} "${_awkprg}" "${2}"`
-	if [ -n "${_tmp2}" ]; then
-	    _tmp2=`${_printf} "%s\n" "${_tmp2}" | \
-		${_awk} '{for (i=4; i<NF-1; ++i) printf "%s ",$(i); \
-		    printf "%s",$(NF-1)}'`
-	    log_print "got ${1} from config/`${_basename} \"${2}\"`."
-	    log_print "set to <\${_tmp2}>."
-	    eval $1="${_tmp2}"
-	    return 1
-	else
-	    log_print \
-		"WARNING: cannot find field ${1} in file `${_basename} \"${2}\"`."
-	fi
+    _awkprg="/ ${1}/"'{printf "%s=",$2; for (i=4; i<NF-1; ++i) printf "%s ",$(i); \
+		    printf "%s\n",$(NF-1)}'
+    if try_to_get_var_from_file_aux "${_awkprg}" "${2}"; then
+	log_print \
+	    "WARNING: cannot find field ${1} in file `${_basename} \"${2}\"`."
     else
-	log_print "WARNING: cannot find file ${2}."
+	log_print "got ${1} from config/`${_basename} \"${2}\"`."
+	log_print "set to \"`value_of ${1}`\"."
+	return 1
     fi
-    # delete previous value of ${1}
-    #eval ${1}=''
     return 0
 }
 
 # try to read variable $1 from file $2
+# $1 can be a list of variable names separated by | (example: "VAR1|VAR2|VAR3")
 # return 0, iff something went wrong
 try_to_get_var_from_file()
 {
+    _awkprg='BEGIN{ FS=" *= *" } /('"${1}"') *=/ {printf "%s=\"%s\"\n",$1,$2}'
+    if try_to_get_var_from_file_aux "${_awkprg}" "${2}"; then
+	log_print \
+	    "WARNING: cannot find field ${1} in file `${_basename} \"${2}\"`."
+    else
+      return 1
+    fi
+    return 0
+}
+
+# try to read variable $1 from file $2
+# $1 can be a list of variable names separated by | (example: "VAR1|VAR2|VAR3")
+# return 0, iff something went wrong
+try_to_get_var_from_file_aux()
+{
     if [ -r "${2}" ]; then
-	_awkprg="/${1}/"'{print $0}'
-	_tmp2=`${_awk} "${_awkprg}" "${2}"`
+	_tmp2=`${_awk} "${1}" "${2}"`
+	if [ -n "$CGAL_DEBUG_GET_VAR_FROM_FILE" ]; then
+	    ${_printf} "\nawk '%s' %s\n%s\n" "${1}" "${2}" "${_tmp2}" >&2
+	fi
 	if [ -n "${_tmp2}" ]; then
-            # leading spaces would spoil the assignment below...
-            _tmp2=`echo ${_tmp2} | ${_awk} 'BEGIN {FS="="} {print $2}' | \
-               ${_tr} -s " " | ${_sed} 's/^ //'`
-	    eval "${1}=\"${_tmp2}\""
+	    eval "${_tmp2}"
             return 1
-	else
-	    log_print "WARNING: cannot find field ${1} in file ${2}."
 	fi
     else
 	log_print "WARNING: cannot find file ${2}."
     fi
-    # delete previous value of ${1}
-    #eval ${1}=''
     return 0
 }
 
