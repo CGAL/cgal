@@ -1360,7 +1360,7 @@ template <class Interval>
   }
 
   template <class Interval>
-  void IntervalListElt<Interval>::print(std::ostream& os) const
+  void IntervalListElt<Interval>::print(std::ostream& /*os*/) const
   {
     /*
     if(I == 0) {
