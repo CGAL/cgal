@@ -40,9 +40,9 @@ CGAL_BEGIN_NAMESPACE
 
 struct Point_2_archetype {
   Point_2_archetype() {  }
-  Point_2_archetype(const Point_2_archetype& t) { }
+  Point_2_archetype(const Point_2_archetype&) { }
   
-  Point_2_archetype& operator=(const Point_2_archetype& t) { return *this; }
+  Point_2_archetype& operator=(const Point_2_archetype&) { return *this; }
   
 #if defined(CGAL_CONCEPT_ARCHETYPE_PROVIDE_CONSTRUCTORS)
   CGAL_concept_archetype_constructors(Point_2_archetype)
@@ -61,9 +61,9 @@ inline bool operator!=(const Point_2_archetype& obj1,
 
 struct Segment_2_archetype {
   Segment_2_archetype() {  }
-  Segment_2_archetype(const Segment_2_archetype& t) { }
+  Segment_2_archetype(const Segment_2_archetype&) { }
   
-  Segment_2_archetype& operator=(const Segment_2_archetype& t) { return *this;}
+  Segment_2_archetype& operator=(const Segment_2_archetype&) { return *this;}
   
 #if defined(CGAL_CONCEPT_ARCHETYPE_PROVIDE_CONSTRUCTORS)
   CGAL_concept_archetype_constructors(Segment_2_archetype)
@@ -82,9 +82,9 @@ operator!=(const Segment_2_archetype& obj1, const Segment_2_archetype& obj2)
 
 struct Line_2_archetype {
   Line_2_archetype() {  }
-  Line_2_archetype(const Line_2_archetype& t) { }
+  Line_2_archetype(const Line_2_archetype&) { }
   
-  Line_2_archetype& operator=(const Line_2_archetype& t) { return *this; }
+  Line_2_archetype& operator=(const Line_2_archetype&) { return *this; }
   
 #if defined(CGAL_CONCEPT_ARCHETYPE_PROVIDE_CONSTRUCTORS)
   CGAL_concept_archetype_constructors(Line_2_archetype)
@@ -103,9 +103,9 @@ operator!=(const Line_2_archetype& obj1, const Line_2_archetype& obj2)
 
 struct Ray_2_archetype {
   Ray_2_archetype() {  }
-  Ray_2_archetype(const Ray_2_archetype& t) { }
+  Ray_2_archetype(const Ray_2_archetype&) { }
   
-  Ray_2_archetype& operator=(const Ray_2_archetype& t) { return *this; }
+  Ray_2_archetype& operator=(const Ray_2_archetype&) { return *this; }
   
 #if defined(CGAL_CONCEPT_ARCHETYPE_PROVIDE_CONSTRUCTORS)
   CGAL_concept_archetype_constructors(Ray_2_archetype)
@@ -124,9 +124,9 @@ operator!=(const Ray_2_archetype& obj1, const Ray_2_archetype& obj2)
 
 struct Vector_2_archetype {
   Vector_2_archetype() {  }
-  Vector_2_archetype(const Vector_2_archetype& t) { }
+  Vector_2_archetype(const Vector_2_archetype&) { }
   
-  Vector_2_archetype& operator=(const Vector_2_archetype& t) { return *this; }
+  Vector_2_archetype& operator=(const Vector_2_archetype&) { return *this; }
   
 #if defined(CGAL_CONCEPT_ARCHETYPE_PROVIDE_CONSTRUCTORS)
   CGAL_concept_archetype_constructors(Vector_2_archetype)
@@ -145,9 +145,9 @@ operator!=(const Vector_2_archetype& obj1, const Vector_2_archetype& obj2)
 
 struct Direction_2_archetype {
   Direction_2_archetype() {  }
-  Direction_2_archetype(const Direction_2_archetype& t) { }
+  Direction_2_archetype(const Direction_2_archetype&) { }
   
-  Direction_2_archetype& operator=(const Direction_2_archetype& t)
+  Direction_2_archetype& operator=(const Direction_2_archetype&)
   { return *this; }
   
 #if defined(CGAL_CONCEPT_ARCHETYPE_PROVIDE_CONSTRUCTORS)
@@ -167,9 +167,9 @@ inline bool operator!=(const Direction_2_archetype& obj1,
 
 struct Triangle_2_archetype {
   Triangle_2_archetype() {  }
-  Triangle_2_archetype(const Triangle_2_archetype& t) { }
+  Triangle_2_archetype(const Triangle_2_archetype&) { }
   
-  Triangle_2_archetype& operator=(const Triangle_2_archetype& t)
+  Triangle_2_archetype& operator=(const Triangle_2_archetype&)
   { return *this; }
   
 #if defined(CGAL_CONCEPT_ARCHETYPE_PROVIDE_CONSTRUCTORS)
@@ -189,9 +189,9 @@ inline bool operator!=(const Triangle_2_archetype& obj1,
 
 struct Circle_2_archetype {
   Circle_2_archetype() {  }
-  Circle_2_archetype(const Circle_2_archetype& t) { }
+  Circle_2_archetype(const Circle_2_archetype&) { }
   
-  Circle_2_archetype& operator=(const Circle_2_archetype& t) { return *this; }
+  Circle_2_archetype& operator=(const Circle_2_archetype&) { return *this; }
   
 #if defined(CGAL_CONCEPT_ARCHETYPE_PROVIDE_CONSTRUCTORS)
   CGAL_concept_archetype_constructors(Circle_2_archetype)
@@ -210,9 +210,9 @@ operator!=(const Circle_2_archetype& obj1, const Circle_2_archetype& obj2)
 
 struct Iso_rectangle_2_archetype {
   Iso_rectangle_2_archetype() {  }
-  Iso_rectangle_2_archetype(const Iso_rectangle_2_archetype& t) { }
+  Iso_rectangle_2_archetype(const Iso_rectangle_2_archetype&) { }
   
-  Iso_rectangle_2_archetype& operator=(const Iso_rectangle_2_archetype& t) 
+  Iso_rectangle_2_archetype& operator=(const Iso_rectangle_2_archetype&) 
   { return *this; }
   
 #if defined(CGAL_CONCEPT_ARCHETYPE_PROVIDE_CONSTRUCTORS)
