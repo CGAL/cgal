@@ -46,7 +46,8 @@ public:
   BigIntRep() {
     mpz_init(mp);
   }
-  BigIntRep(const BigIntRep& z) {
+  // Note : should the copy-ctor be alloed at all ? [Sylvain Pion]
+  BigIntRep(const BigIntRep& z) : RCRepImpl<BigIntRep>() {
     mpz_init_set(mp, z.mp);
   }
   BigIntRep(signed char c) {

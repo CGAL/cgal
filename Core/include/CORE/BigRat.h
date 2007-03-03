@@ -43,7 +43,8 @@ public:
   BigRatRep() {
     mpq_init(mp);
   }
-  BigRatRep(const BigRatRep& z) {
+  // Note : should the copy-ctor be alloed at all ? [Sylvain Pion]
+  BigRatRep(const BigRatRep& z)  : RCRepImpl<BigRatRep>() {
     mpq_init(mp);
     mpq_set(mp, z.mp);
   }
