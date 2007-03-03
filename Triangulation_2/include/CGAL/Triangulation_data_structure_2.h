@@ -533,8 +533,7 @@ public:
   typedef Triangulation_default_data_structure_2<Gt,Vb,Fb> Tdds;
   typedef Gt                           Geom_traits; 
 
-  Triangulation_default_data_structure_2(const Geom_traits&
-					 gt=Geom_traits())
+  Triangulation_default_data_structure_2(const Geom_traits& = Geom_traits())
     : Tds() {}
  
   Triangulation_default_data_structure_2(const Tdds &tdds)
