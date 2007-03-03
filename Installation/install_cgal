@@ -2813,9 +2813,9 @@ try_to_get_var_from_file()
     return 0
 }
 
-# try to read variable $1 from file $2
-# $1 can be a list of variable names separated by | (example: "VAR1|VAR2|VAR3")
-# return 0, iff something went wrong
+# apply the awk script $1 on file $2
+# if the result is non empty, call the shell builtin eval on it and return 1
+# else return 0
 try_to_get_var_from_file_aux()
 {
     if [ -r "${2}" ]; then
