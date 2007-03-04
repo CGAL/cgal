@@ -53,7 +53,7 @@ class Arr_vertical_decomposition_visitor : public Empty_visitor<Traits_>
   typedef typename Arrangement_2::Halfedge_around_vertex_const_circulator
                                        Halfedge_around_vertex_const_circulator;
 
-  typedef Arr_accessor<Arrangement_2>                    Arr_accessor;
+  typedef CGAL::Arr_accessor<Arrangement_2>              Arr_accessor;
 
   typedef std::pair<CGAL::Object, CGAL::Object>          Vert_pair;
   typedef std::pair<Vertex_const_handle, Vert_pair>      Vert_entry;

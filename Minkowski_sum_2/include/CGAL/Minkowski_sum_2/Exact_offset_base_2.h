@@ -63,11 +63,11 @@ private:
   typedef typename Traits_2::Curve_2                     Curve_2;
   typedef typename Traits_2::X_monotone_curve_2          X_monotone_curve_2;
 
-  typedef Gps_traits_2<Traits_2>                         Gps_traits_2;
+  typedef CGAL::Gps_traits_2<Traits_2>                   Gps_traits_2;
  
 protected:
 
-  typedef Polygon_2<Rat_kernel, Container_>              Polygon_2;
+  typedef CGAL::Polygon_2<Rat_kernel, Container_>        Polygon_2;
   typedef typename Gps_traits_2::Polygon_2               Offset_polygon_2;
   
 private:

@@ -51,7 +51,7 @@ class Arr_batched_point_location_visitor : public Empty_visitor< Traits_ >
   typedef typename Arrangement::Halfedge_const_handle    Halfedge_const_handle;
   typedef typename Arrangement::Vertex_const_handle      Vertex_const_handle;
   typedef std::pair<Base_Point_2,Object>                 PL_Pair;
-  typedef Arr_accessor<Arrangement>                      Arr_accessor;
+  typedef CGAL::Arr_accessor<Arrangement>                Arr_accessor;
 
 
   public:
