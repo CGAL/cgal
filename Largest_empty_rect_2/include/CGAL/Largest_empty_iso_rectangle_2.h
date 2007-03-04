@@ -1190,8 +1190,8 @@ template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::phase_3()
 {
-  bool first_iter_is_right, second_iter_is_right, third_iter_is_right,
-    first_exist,second_exist,third_exist;
+  bool first_iter_is_right = true, second_iter_is_right = true; // init for compiler warning
+  bool third_iter_is_right, first_exist,second_exist,third_exist;
   typename Point_data_set_of_y::iterator iter, last_iter = y_sorted.end();
   typename Point_data_set_of_y::iterator iter1, iter2, iter3, 
                                 right_iter, left_iter, last = last_iter;
