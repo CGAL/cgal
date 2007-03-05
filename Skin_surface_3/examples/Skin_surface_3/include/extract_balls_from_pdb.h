@@ -13,7 +13,7 @@
 #include <fstream>
 
 template <class Traits, class OutputIterator>
-void extract_balls_from_pdb(char *filename, 
+void extract_balls_from_pdb(const char *filename, 
 			    Traits const &t,
 			    OutputIterator weighted_points) 
 {

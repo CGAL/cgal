@@ -32,7 +32,7 @@ public:
   typedef typename K::Point_3             Point;
   typedef typename K::Vector_3            Vector;
   typedef typename K::Segment_3           Segment;
-  typedef Weighted_point<Point,FT>        Weighted_point;
+  typedef CGAL::Weighted_point<Point,FT>  Weighted_point;
 
   Skin_surface_quadratic_surface_3()
     : dim(-1), p(0,0,0), c(0) 

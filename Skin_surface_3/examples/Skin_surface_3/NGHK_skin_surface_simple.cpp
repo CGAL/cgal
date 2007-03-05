@@ -24,7 +24,7 @@ typedef CGAL::Polyhedron_3<
   >   Polyhedron;
 
 int main(int argc, char *argv[]) {
-  char *filename;
+  const char *filename;
   if (argc < 2) {
     filename = "data/caffeine.cin";
   } else {

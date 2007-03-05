@@ -22,7 +22,7 @@ typedef CGAL::Polyhedron_3<K>                               Polyhedron;
 
 
 int main(int argc, char *argv[]) {
-  char *filename;
+  const char *filename;
   if (argc == 2) {
     filename = argv[1];
   } else {
