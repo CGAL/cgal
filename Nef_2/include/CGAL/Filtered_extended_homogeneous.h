@@ -1229,7 +1229,7 @@ void print_statistics() const
 {
   std::cout << "Statistics of filtered kernel:\n";
   std::cout << "total failed double filter stages = ";
-  std::cout << CGAL::Interval_nt_advanced::number_of_failures << std::endl;
+  std::cout << CGAL::Interval_nt_advanced::number_of_failures() << std::endl;
   PRINT_CHECK_ENABLED;
   PRINT_STATISTICS(or2);
   PRINT_STATISTICS(or1);
