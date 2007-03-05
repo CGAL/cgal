@@ -3,9 +3,18 @@
 #include <CGAL/Width_3.h>
 #include <iostream>
 #include <vector>
-#include <CGAL/leda_integer.h>
 
+#if defined(CGAL_USE_GMP)
+#include <CGAL/Gmpz.h>
+typedef CGAL::Gmpz                           RT;
+#elif defined (CGAL_USE_LEDA)
+#include <CGAL/leda_integer.h>
 typedef leda_integer                          RT;
+#else
+#include <CGAL/MP_Float.h>
+typedef CGAL::MP_Float                        RT;
+#endif
+
 typedef CGAL::Homogeneous<RT>                 Kernel;
 typedef Kernel::Point_3                       Point_3;
 typedef Kernel::Plane_3                       Plane_3;
