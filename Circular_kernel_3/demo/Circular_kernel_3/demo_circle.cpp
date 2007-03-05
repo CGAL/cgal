@@ -26,6 +26,9 @@
 //             Damien Leroy
 
 // moc_source_file: demo_circle.h
+
+#ifdef CGAL_USE_QT
+
 #include "demo_circle.moc"
 
 int main (int argc, char** argv) {
@@ -52,3 +55,15 @@ int main (int argc, char** argv) {
 	return app.exec();
 }
 
+#else // CGAL_USE_QT not defined:
+
+#include <iostream>
+
+int main(int, char*)
+{
+
+  std::cout << "Sorry, this demo needs QT ..." << std::endl;
+  return (0);
+}
+
+#endif // CGAL_USE_QT
