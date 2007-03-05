@@ -24,7 +24,6 @@
 #include <CGAL/eigen.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Lapack/Linear_algebra_lapack.h>
-#include <CGAL/jet_fitting_3_assertions.h>
 #include <math.h>
 #include <utility>
 
