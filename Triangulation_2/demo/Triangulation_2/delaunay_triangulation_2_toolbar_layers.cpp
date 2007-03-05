@@ -33,7 +33,7 @@
 #include <qiconset.h>
 
 /* XPM */
-static char *circum_circle_xpm[] = {
+static const char *circum_circle_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "32 32 5 1",
 "  c opaque",
@@ -77,7 +77,7 @@ static char *circum_circle_xpm[] = {
 };
 
 /* XPM */
-static char * circum_circle_small_xpm[] = {
+static const char * circum_circle_small_xpm[] = {
 "16 16 4 1",
 " 	c None",
 ".	c #35E8D9",
