@@ -673,9 +673,9 @@ Installation/config/support/S81-QT3ST -text
 Installation/config/support/S82-QT3MSMT -text
 Installation/config/support/S83-QT3MSST -text
 Installation/config/support/S91-TAUCSWIN -text
-Installation/config/support/S92-TAUCS1 -text
-Installation/config/support/S93-TAUCS2 -text
-Installation/config/support/S96-TAUCS3 -text
+Installation/config/support/S92-TAUCS -text
+Installation/config/support/S93-TAUCSFREEBSD -text
+Installation/config/support/S96-TAUCSDARWIN -text
 Installation/config/support/S98-TAUCSIRIXCC32 -text
 Installation/config/support/S99-TAUCSIRIXCC64 -text
 Interpolation/doc_tex/Interpolation/nn_coords.eps -text svneol=unset#application/postscript
