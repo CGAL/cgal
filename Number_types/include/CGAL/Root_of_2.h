@@ -78,7 +78,7 @@ namespace CGAL {
 //   polynomial class which performed this task (and others)...
 // - overloaded versions of make_root_of_2<>() for Lazy_exact_nt<> and others.
 
-template <class RT> class Root_of_traits; 
+template <class RT> struct Root_of_traits; 
 
 template < typename RT_ >
 class Root_of_2 {
