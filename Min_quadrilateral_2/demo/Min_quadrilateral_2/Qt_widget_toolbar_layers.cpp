@@ -31,7 +31,7 @@
 #include <qiconset.h>
 
 /* XPM */
-static char * lines_small_xpm[] = {
+static const char * lines_small_xpm[] = {
 "16 16 3 1",
 " 	c None",
 ".	c #35E8D9",
