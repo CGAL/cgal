@@ -37,6 +37,7 @@ Interval_skip_list
 Inventor
 iostream
 Jet_fitting_3
+kdtree
 Kernel_23
 Kernel_d
 Kinetic_data_structures
