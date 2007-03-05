@@ -44,8 +44,8 @@ class Umbilic
   Umbilic(const Vertex_const_handle v_init,
 	  const std::list<Halfedge_const_handle> contour_init); 
   //access fct
-  const Vertex_const_handle vertex() const { return v;}
-  const Umbilic_type umbilic_type() const { return umb_type;}
+  Vertex_const_handle vertex() const { return v;}
+  Umbilic_type umbilic_type() const { return umb_type;}
   Umbilic_type& umbilic_type() { return umb_type;}
   const std::list<Halfedge_const_handle>& contour_list() const { return contour;}
 

@@ -63,7 +63,7 @@ public:
   typedef typename TriangulatedSurfaceMesh::Halfedge_const_handle Halfedge_const_handle;
   typedef std::pair< Halfedge_const_handle, FT> ridge_halfhedge; 
 
-  const Ridge_type line_type() const {return m_line_type;}
+  Ridge_type line_type() const {return m_line_type;}
   Ridge_type& line_type() {return m_line_type;}
 
   const FT strength() const {return m_strength;}
