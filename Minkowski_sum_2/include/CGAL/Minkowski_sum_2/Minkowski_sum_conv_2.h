@@ -639,7 +639,10 @@ private:
       else
       {
         curr = next;
-        ++next;
+	if(next != cycle.end())
+	{
+	  ++next;
+	}
       }
     }
 
