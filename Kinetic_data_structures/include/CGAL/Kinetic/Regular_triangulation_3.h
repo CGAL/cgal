@@ -679,18 +679,24 @@ public:
     kdel_.set_instantaneous_time();
     typename Instantaneous_kernel::Current_coordinates cco= triangulation().geom_traits().current_coordinates_object();
     typename Triangulation::Vertex_handle vh;
-    for (unsigned int i=0; i<4; ++i) {
-      if (h->vertex(i)->point() != Point_key() 
-	  && cco(h->vertex(i)->point()).point() == cco(k).point()) {
-	CGAL_KINETIC_LOG(LOG_SOME, "Point " << k << " is on point " 
-			 << h->vertex(i)->point() << "\n");
-	vh= h->vertex(i);
-	break;
+    if (h!= Cell_handle()) {
+      for (unsigned int i=0; i<4; ++i) {
+	if (h->vertex(i) != Vertex_handle()
+	    && h->vertex(i)->point() != Point_key() 
+	    && cco(h->vertex(i)->point()).point() == cco(k).point()) {
+	  CGAL_KINETIC_LOG(LOG_SOME, "Point " << k << " is on point " 
+			   << h->vertex(i)->point() << "\n");
+	  vh= h->vertex(i);
+	  break;
+	}
       }
+      if (vh== Vertex_handle()) {
+	vh=kdel_.insert(k, h);
+      } 
+    } else {
+      vh= kdel_.insert(k);
     }
-    if (vh== Vertex_handle()) {
-      vh=kdel_.insert(k, h);
-    } 
+   
     
     post_insert(k,vh, h);
   }

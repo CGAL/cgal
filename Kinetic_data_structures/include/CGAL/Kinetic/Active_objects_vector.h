@@ -149,6 +149,10 @@ public:
     storage_[key.to_index()].first=key;
     storage_[key.to_index()].second=new_value;
     changed_objects_.push_back(key);
+    CGAL_expensive_assertion_code(for (unsigned int i=0; i< storage_.size(); ++i) ) {
+      CGAL_expensive_assertion_code(if (key.to_index() != i && storage_[i].second == storage_[key.to_index()].second) CGAL_KINETIC_LOG(LOG_SOME, "WARNING Objects " << Key(i) << " and " << key << " have equal trajectories.\n"));
+    }
+				  
     if (!editing_) finish_editing();
   }
 
@@ -161,6 +165,9 @@ public:
     storage_.push_back(Storage_item(Key(storage_.size()), ob));
     new_objects_.push_back(storage_.back().first);
 
+    CGAL_expensive_assertion_code(for (unsigned int i=0; i< storage_.size()-1; ++i) ) {
+      CGAL_expensive_assertion_code(if ( storage_[i].second == storage_.back().second) CGAL_KINETIC_LOG(LOG_SOME, "WARNING Objects " << Key(i) << " and " << storage_.back().first << " have equal trajectories.\n"));
+    }
     if (!editing_) finish_editing();
     return storage_.back().first;
   }
