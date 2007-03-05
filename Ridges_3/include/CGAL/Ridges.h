@@ -209,7 +209,7 @@ class Ridge_approximation
   BOOST_STATIC_ASSERT((boost::is_same<Vector_3, typename Vertex2VectorPropertyMap::value_type>::value));
 
   typedef std::pair< Halfedge_const_handle, FT>    Ridge_halfhedge;
-  typedef Ridge_line<TriangulatedSurfaceMesh>  Ridge_line;
+  typedef CGAL::Ridge_line<TriangulatedSurfaceMesh>  Ridge_line;
 
   Ridge_approximation(const TriangulatedSurfaceMesh &P,
 		      const Vertex2FTPropertyMap& vertex2k1_pm, 

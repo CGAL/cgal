@@ -101,7 +101,7 @@ template < class TriangulatedSurfaceMesh,
   BOOST_STATIC_ASSERT((boost::is_same<FT, typename Vertex2FTPropertyMap::value_type>::value));
   BOOST_STATIC_ASSERT((boost::is_same<Vector_3, typename Vertex2VectorPropertyMap::value_type>::value));
 
-  typedef Umbilic<TriangulatedSurfaceMesh> Umbilic;
+  typedef CGAL::Umbilic<TriangulatedSurfaceMesh> Umbilic;
 
   //constructor : sets propertymaps and the poly_neighbors
   Umbilic_approximation(const TriangulatedSurfaceMesh& P, 
@@ -122,7 +122,7 @@ template < class TriangulatedSurfaceMesh,
   Poly_neighbors* poly_neighbors;
 
   CGAL::Abs<FT> cgal_abs;
-  To_double<FT> To_double;
+  CGAL::To_double<FT> To_double;
 
   //Property maps
   const Vertex2FTPropertyMap &k1, &k2;
