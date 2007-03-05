@@ -222,6 +222,27 @@ class Value_by_basic_index : public std::unary_function<
     result_type  z;
 };
 
+// ----------------------------------------------------------------------------
+
+// --------------------
+// Access_by_index
+// --------------------
+// A functor whose operator(int i) provides access to the i-th element
+// of a random access iterator.
+template < typename RndAccIt, typename ArgType >
+class QP_access_by_index {
+public:
+  typedef  typename std::iterator_traits<RndAccIt>::value_type result_type;
+
+  QP_access_by_index(RndAccIt it = RndAccIt()) : a(it) {}
+
+  result_type operator () (ArgType i) const { return a[i]; }
+
+private:
+  RndAccIt     a;
+};
+
+
 CGAL_END_NAMESPACE
 
 #endif // CGAL_QP_SOLVER_FUNCTORS_H
