@@ -240,7 +240,7 @@ print_usage_information()
                Do not enable support for 3rd party libraries, unless
                specified explicitly.
   --with-PACKAGE
-               When using the --without-autofind, still consider configuring
+               When using --without-autofind, still consider configuring
                with PACKAGE.
   --PACKAGE_INCL_DIR <dir>
                Specify the include directory for PACKAGE.
