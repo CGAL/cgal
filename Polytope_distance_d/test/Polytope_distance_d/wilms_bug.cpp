@@ -300,7 +300,7 @@ int main()
 //     }    
 //   }
   
-Point Q[1] = Point(d, CGAL::ORIGIN);
+Point Q[1] = { Point(d, CGAL::ORIGIN) };
   
   Polytope_distance pd(P, P+n, Q, Q+1); 
 
