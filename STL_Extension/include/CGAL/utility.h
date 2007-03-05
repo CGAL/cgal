@@ -160,11 +160,10 @@ operator<(const Quadruple<T1, T2, T3, T4>& x,
              ( x.second < y.second ||
                ( !(y.second < x.second) &&
                  ( x.third < y.third ||
-                   !(y.third < x.third) && x.fourth < y.fourth) ) ) ) );
+                   (!(y.third < x.third) && x.fourth < y.fourth)) ) ) ) );
 }
 
 
 CGAL_END_NAMESPACE
 
-#endif // CGAL_UTILITY_H //
-// EOF //
+#endif // CGAL_UTILITY_H
