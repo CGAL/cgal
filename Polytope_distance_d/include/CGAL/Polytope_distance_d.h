@@ -28,6 +28,7 @@
 #include <CGAL/QP_solver.h>
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_solver/iterator.h>
+#include <CGAL/QP_solver/functors.h>
 #include <CGAL/QP_solver/QP_partial_filtered_pricing.h>
 #include <CGAL/QP_solver/QP_partial_exact_pricing.h>
 
@@ -115,7 +116,7 @@ namespace PD_detail {
    <int, A_column
     <NT, typename Access_coordinate_begin_d::Coordinate_iterator> > >
   { 
-    typedef A_column
+    typedef PD_detail::A_column
     <NT, typename Access_coordinate_begin_d::Coordinate_iterator> A_column;
   public:
     typedef CGAL::Transform_diff_const_iterator
@@ -143,11 +144,11 @@ namespace PD_detail {
       if (j < 2*d_+r_) {
 	// column of P
 	return result_type
-	  (0, A_column (j , d_, true, da_coord_ (*(P_+j-2*d_))));
+	  (0, A_column (j , d_, true, da_coord_ (*(P_+(j-2*d_)))));
       }
       // column of Q
       return result_type
-	(0, A_column (j, d_, false, da_coord_ (*(Q_+j-2*d_-r_)))); 
+	(0, A_column (j, d_, false, da_coord_ (*(Q_+(j-2*d_-r_))))); 
     }
 
   private:
@@ -263,21 +264,6 @@ namespace PD_detail {
   private:
     int d_; // dimension
   };
-
-  // A functor whose operator(int i) provides access to the i-th element
-  // of a random access iterator.
-  template < typename RndAccIt, typename ArgType >
-  class Access_by_index {
-  public:
-    typedef  typename std::iterator_traits<RndAccIt>::value_type result_type;
-
-    Access_by_index(RndAccIt it = RndAccIt()) : a(it) {}
-
-    result_type operator () (ArgType i) const { return a[i]; }
-
-  private:
-    RndAccIt     a;
-  };
 }
 
 // Class interfaces
@@ -314,7 +300,7 @@ private:
   typedef  std::vector<Point>         Point_vector;
   typedef  std::vector<ET>            ET_vector;
     
-  typedef  PD_detail::Access_by_index
+  typedef  QP_access_by_index
   <typename std::vector<Point>::const_iterator, int> Point_by_index;
     
   typedef  std::vector<NT>            NT_vector;

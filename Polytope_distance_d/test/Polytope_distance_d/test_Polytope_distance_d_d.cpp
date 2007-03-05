@@ -22,7 +22,7 @@
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
-// implementation: test program for polytope distance (3D traits class)
+// implementation: test program for polytope distance (dD traits class)
 // ============================================================================
 
 #include <CGAL/Cartesian_d.h>
