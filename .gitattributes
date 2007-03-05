@@ -676,6 +676,8 @@ Installation/config/support/S91-TAUCSWIN -text
 Installation/config/support/S92-TAUCS1 -text
 Installation/config/support/S93-TAUCS2 -text
 Installation/config/support/S96-TAUCS3 -text
+Installation/config/support/S98-TAUCSIRIXCC32 -text
+Installation/config/support/S99-TAUCSIRIXCC64 -text
 Interpolation/doc_tex/Interpolation/nn_coords.eps -text svneol=unset#application/postscript
 Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#image/gif
 Interpolation/doc_tex/Interpolation/nn_coords.ipe -text svneol=unset#application/postscript
