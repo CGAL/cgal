@@ -327,7 +327,7 @@ public:
   typedef typename std::list<Object_handle>::iterator 
     Object_list_iterator;
 
-  typedef Vertex_point<Point_3,Vertex_handle>  Vertex_point;
+  typedef CGAL::Vertex_point<Point_3,Vertex_handle>  Vertex_point;
   typedef std::pair<Vertex_point,Vertex_point> Vertex_segment;
   typedef std::list<Vertex_segment>            Segment_list;
   typedef typename Segment_list::iterator      Segment_iterator;

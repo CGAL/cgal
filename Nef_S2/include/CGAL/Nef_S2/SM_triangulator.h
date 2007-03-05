@@ -118,7 +118,7 @@ public:
   typedef SM_const_decorator                    Explorer;
   typedef Decorator_                            Decorator;
   typedef SM_triangulator<Decorator_>           Self;
-  typedef SM_point_locator<SM_const_decorator>  SM_point_locator;
+  typedef CGAL::SM_point_locator<SM_const_decorator>  SM_point_locator;
 
   typedef typename SM_const_decorator::SVertex_const_handle SVertex_const_handle;
   typedef typename SM_const_decorator::SHalfedge_const_handle SHalfedge_const_handle;
