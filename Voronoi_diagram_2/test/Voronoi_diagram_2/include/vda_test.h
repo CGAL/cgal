@@ -38,7 +38,7 @@ class VDA_Tester
   typedef typename VD::Delaunay_graph   DG;
 
   template<class OutputIt>
-  OutputIt read_from_file(char* fname, OutputIt it) const {
+  OutputIt read_from_file(const char* fname, OutputIt it) const {
     std::ifstream ifs(fname);
     assert( fname );
 
@@ -134,7 +134,7 @@ class VDA_Tester
     print_report(vd, project_, dp_project_, nos);
   }
 
-  void test_loc(char* fname, char* qfname, const CGAL::Tag_false&, bool) const
+  void test_loc(const char* /*fname*/, const char* /*qfname*/, const CGAL::Tag_false&, bool) const
   {
     static int i = 0;
     if ( i == 0 ) {
@@ -148,7 +148,7 @@ class VDA_Tester
 
   }
 
-  void test_loc(char* fname, char* qfname, const CGAL::Tag_true&,
+  void test_loc(const char* fname, const char* qfname, const CGAL::Tag_true&,
 		bool print_sites) const
   {
     std::cout << "*** Testing data file (for point location): "
@@ -188,7 +188,7 @@ class VDA_Tester
 	     const Dual_primal_projector& dp_project)
     : project_(project), dp_project_(dp_project) {}
 
-  void operator()(char* fname) const
+  void operator()(const char* fname) const
   {
     std::cout << "*** Testing data file: " << fname << std::endl
 	      << std::endl;
@@ -235,7 +235,7 @@ class VDA_Tester
     print_separators();
   }
 
-  void operator()(char* fname, char* qfname, bool print_sites = false) const
+  void operator()(const char* fname, const char* qfname, bool print_sites = false) const
   {
     typename VD::Adaptation_traits::Has_nearest_site_2 has_ns;
     test_loc(fname, qfname, has_ns, print_sites);
