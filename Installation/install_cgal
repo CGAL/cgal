@@ -239,6 +239,13 @@ print_usage_information()
   --without-autofind
                Do not enable support for 3rd party libraries, unless
                specified explicitly.
+  --with-PACKAGE
+               When using the --without-autofind, still consider configuring
+               with PACKAGE.
+  --PACKAGE_INCL_DIR <dir>
+               Specify the include directory for PACKAGE.
+  --PACKAGE_LIB_DIR <dir>
+               Specify the library directory for PACKAGE.
   --disable-shared
                Do not build shared libraries, only the static archives.
   --disable-static
