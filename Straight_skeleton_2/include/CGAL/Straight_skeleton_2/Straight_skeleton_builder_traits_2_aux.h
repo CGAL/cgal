@@ -385,7 +385,7 @@ class Seeded_trisegment_2
 {
   public :
   
-    typedef Trisegment_2<K> Trisegment_2 ;
+    typedef CGAL_SS_i::Trisegment_2<K> Trisegment_2 ;
 
     Seeded_trisegment_2() {}
       
@@ -432,8 +432,8 @@ struct Functor_base_2
   typedef typename K::Point_2   Point_2 ;
   typedef typename K::Segment_2 Segment_2 ;
   
-  typedef Trisegment_2       <K> Trisegment_2 ;
-  typedef Seeded_trisegment_2<K> Seeded_trisegment_2 ;
+  typedef CGAL_SS_i::Trisegment_2       <K> Trisegment_2 ;
+  typedef CGAL_SS_i::Seeded_trisegment_2<K> Seeded_trisegment_2 ;
 };
 
 template<class Converter>

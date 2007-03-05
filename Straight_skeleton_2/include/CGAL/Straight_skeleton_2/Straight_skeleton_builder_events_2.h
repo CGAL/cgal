@@ -46,7 +46,7 @@ public:
   typedef typename SSkel::Halfedge_handle Halfedge_handle ;
   typedef typename SSkel::Vertex_handle   Vertex_handle ;
 
-  typedef Triedge<Halfedge_handle> Triedge ;
+  typedef CGAL_SS_i::Triedge<Halfedge_handle> Triedge ;
   
   enum Type { cEdgeEvent, cSplitEvent, cPseudoSplitEvent } ;
 
