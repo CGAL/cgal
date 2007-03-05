@@ -643,7 +643,8 @@ Installation/config/support/S32-CGALCORE -text
 Installation/config/support/S40-ZLIB -text
 Installation/config/support/S41-ZLIBMS -text
 Installation/config/support/S45-APPLEVECLIB -text
-Installation/config/support/S46-SUNPERFORMANCE -text
+Installation/config/support/S46a-SUNPERFORMANCECC -text
+Installation/config/support/S46b-SUNPERFORMANCEGCC -text
 Installation/config/support/S47-SGICOMPLIB -text
 Installation/config/support/S48-MKL64 -text
 Installation/config/support/S49-MKL32 -text
