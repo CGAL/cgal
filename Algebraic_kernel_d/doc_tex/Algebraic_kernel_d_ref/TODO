@@ -1,21 +1,32 @@
+
+
 Tasks:
 ======
 
-- IsCoprime, IsSquareFree, MakeCoprime, MakeSquareFree,
-   SquareFreeFactorization - documentation needed as discussed in Inria
+- IsSquareFree, MakeCoprime, MakeSquareFree,
+   SquareFreeFactorization - What is the result_type, the type of
+   the referenced parameter?
 
-- Solve_2 - similar to Solve_1
+- Missing Doc for IsSquareFree_2, IsCoprime_2, MakeSquareFree_2,
+   MakeCoprime_2, SquareFreeFactorization_2, Solve_2
 
 - Polynomial - there are things to coordinate with PolynomialTraits
    and/or PolynomialToolBox, what about Construct_polynomial? 
    What about Derivative?
 
-- AlgebraicReal_1 - what about the functions upper_bound, lower_bound
-   etc. See .tex file!
-
+- AlgebraicReal_1 - refine: Absolute precision is useful, e.g., for
+   drawing, we could also add relative refinement. 
+   What about the "niceness" of lower/upper_bound/in_between?? Should
+   they have low "complexity", in terms of bitsize?
+   
+- AK_1::SignAt removal?
 
 Open questions:
 ===============
+
+- Does AK_1 provide an FT ?
+
+- IT ? and if is IT == Coefficient ?
 
 - Is Derivative and XCriticalPoints/YCriticalPoints redundant?
 
