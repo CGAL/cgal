@@ -1,7 +1,8 @@
 # BLAS (Basic Linear Algebra Subprograms)
 # Intel MKL provides BLAS and LAPACK
+# Note: this configuration has been tested with MKL 9.0 and VisualC++ 7.1.
 
-DESCRIPTION = Intel MKL for VisualC++
+DESCRIPTION = Intel MKL for MS Windows 32 bits
 PROVIDES = BLAS LAPACK
 CXXFLAGS = -DCGAL_USE_F2C
 LDFLAGS =

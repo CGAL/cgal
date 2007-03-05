@@ -1,0 +1,18 @@
+# BLAS (Basic Linear Algebra Subprograms)
+# Intel MKL provides BLAS and LAPACK
+# This configuration has *not* been tested.
+
+DESCRIPTION = Intel MKL for MS Windows 64 bits
+PROVIDES = BLAS LAPACK
+CXXFLAGS = -DCGAL_USE_F2C
+LDFLAGS =
+LIBS = mkl_dll libguide40 vcf2c
+REQUIRES = DOLLAR_WINDOWS_COMPILER
+INCOMPATIBLE =
+STDINCLDIRS =
+INCLTHING =
+STDLIBDIRS =
+LIBTHING =
+COMPILETESTFLAGS = 
+
+# EOF

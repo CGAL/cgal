@@ -1,9 +1,10 @@
 # LAPACK is a linear algebra library.
 # We search for the LAPACK reference implementation (http://www.netlib.org/lapack).
-# Note: should be the last try as this library is slower than an hybrid LAPACK/Atlas
-#       library. See http://math-atlas.sourceforge.net/errata.html#completelp.
+# This configuration *must* be the last try as it is notably slow. See 
+# http://math-atlas.sourceforge.net/errata.html#completelp.
+# Note: this configuration has been tested with VisualC++ 7.1.
 
-DESCRIPTION = Reference LAPACK for VisualC++
+DESCRIPTION = Reference LAPACK for MS Windows
 PROVIDES = LAPACK
 CXXFLAGS = -DCGAL_USE_F2C
 LDFLAGS =

@@ -1,8 +1,9 @@
 # BLAS (Basic Linear Algebra Subprograms)
 # We search for the BLAS reference implementation (http://www.netlib.org/blas).
 # This configuration *must* be the last try as this library is notably slow.
+# Note: this configuration has been tested with VisualC++ 7.1.
 
-DESCRIPTION = Reference BLAS for VisualC++
+DESCRIPTION = Reference BLAS for MS Windows
 PROVIDES = BLAS
 CXXFLAGS = -DCGAL_USE_F2C
 LDFLAGS =

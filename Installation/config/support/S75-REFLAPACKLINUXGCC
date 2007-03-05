@@ -1,7 +1,7 @@
 # LAPACK is a linear algebra library.
 # We search for the LAPACK reference implementation (http://www.netlib.org/lapack).
-# Note: should be the last try as this library is slower than an hybrid LAPACK/Atlas
-#       library. See http://math-atlas.sourceforge.net/errata.html#completelp.
+# This configuration *must* be the last try as this library is slower than an hybrid 
+# LAPACK/Atlas library. See http://math-atlas.sourceforge.net/errata.html#completelp.
 
 DESCRIPTION = Reference LAPACK for gcc/Linux
 PROVIDES = LAPACK

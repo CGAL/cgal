@@ -1,0 +1,20 @@
+# BLAS (Basic Linear Algebra Subprograms)
+# We search for the BLAS reference implementation (http://www.netlib.org/blas)
+# compiled by g77.
+# This configuration *must* be the last try as this library is notably slow.
+# Note: this configuration has been tested with Cygwin/gcc.
+
+DESCRIPTION = Reference BLAS for gcc/Cygwin
+PROVIDES = BLAS
+CXXFLAGS = -DCGAL_USE_F2C
+LDFLAGS =
+LIBS = blas g2c
+REQUIRES =
+INCOMPATIBLE = DOLLAR_WINDOWS_COMPILER
+STDINCLDIRS =
+INCLTHING =
+STDLIBDIRS =
+LIBTHING =
+COMPILETESTFLAGS =
+
+# EOF

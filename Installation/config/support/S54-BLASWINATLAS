@@ -1,6 +1,7 @@
 # BLAS (Basic Linear Algebra Subprograms)
+# Note: this configuration has been tested with VisualC++ 7.1.
 
-DESCRIPTION = ATLAS for VisualC++
+DESCRIPTION = ATLAS for MS Windows
 PROVIDES = BLAS
 CXXFLAGS = -DCGAL_USE_F2C
 LDFLAGS =

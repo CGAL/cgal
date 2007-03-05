@@ -1,0 +1,19 @@
+# LAPACK is a linear algebra library.
+# We search for a LAPACK library named "liblapack.a". It may be an hybrid LAPACK/Atlas library, 
+# which is the solution recommended by ATLAS. See http://math-atlas.sourceforge.net/errata.html#completelp.
+# Note: this configuration has been tested with gcc/Linux and gcc/Cygwin.
+
+DESCRIPTION = Unix default
+PROVIDES = LAPACK
+CXXFLAGS = -DCGAL_USE_F2C
+LDFLAGS =
+LIBS = lapack
+REQUIRES = BLAS
+INCOMPATIBLE = DOLLAR_WINDOWS_COMPILER
+STDINCLDIRS =
+INCLTHING =
+STDLIBDIRS =
+LIBTHING =
+COMPILETESTFLAGS = 
+
+# EOF

@@ -1,6 +1,7 @@
 # TAUCS, a Library of Sparse Linear Solvers (http://www.tau.ac.il/~stoledo/taucs/)
+# Note: this configuration has been tested with VisualC++ 7.1.
 
-DESCRIPTION = VisualC++
+DESCRIPTION = MS Windows
 PROVIDES = TAUCS
 CXXFLAGS =
 LDFLAGS =
