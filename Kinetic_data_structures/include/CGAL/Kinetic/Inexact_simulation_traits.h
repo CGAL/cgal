@@ -56,7 +56,7 @@ struct Inexact_simulation_traits {
   typedef Active_objects_vector<Kinetic_kernel::Point_3> Active_points_3_table;
   // typedef Active_objects_vector<Kinetic_kernel::Weighted_point_3> Active_weighted_points_3_table;
  
-  typedef Instantaneous_kernel<This> Instantaneous_kernel;
+  typedef CGAL::Kinetic::Instantaneous_kernel<This> Instantaneous_kernel;
 
   Active_points_1_table* active_points_1_table_handle() const { return ap1_.get();}
   Active_points_2_table* active_points_2_table_handle() const {return ap2_.get();}
