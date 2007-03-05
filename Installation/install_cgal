@@ -481,6 +481,7 @@ parse_support_options()
         R_SUPPORT_PKGS="${_tmp} ${R_SUPPORT_PKGS}"
         log_print "${_tmp}"
 	${_printf} "%s" "${_tmp}, "
+	# read specfile
 	for j in PROVIDES DESCRIPTION CXXFLAGS LDFLAGS LIBS REQUIRES INCOMPATIBLE \
 	    STDINCLDIRS INCLTHING STDLIBDIRS LIBTHING COMPILETESTFLAGS
 	do
@@ -503,7 +504,7 @@ parse_support_options()
 
 	# generate set of variables corresponding to $_tmp
 
-	# read those from the specfile
+	# store those from the specfile
 	for j in DESCRIPTION CXXFLAGS LDFLAGS LIBS REQUIRES INCOMPATIBLE \
 	    STDINCLDIRS INCLTHING STDLIBDIRS LIBTHING COMPILETESTFLAGS
 	do
@@ -2803,7 +2804,9 @@ try_to_get_var_from_config_file()
 # return 0, iff something went wrong
 try_to_get_var_from_file()
 {
-    _awkprg='BEGIN{ FS=" *= *" } /('"${1}"') *=/ {printf "%s=\"%s\"\n",$1,$2}'
+    # Change the line into the shell syntax.
+    # Note: the line may contain several '=' characters.
+    _awkprg='BEGIN{ FS=" *= *" } /('"${1}"') *=/ {printf "%s=\"",$1; for (i=2; i<NF; i++) printf "%s=",$(i); printf "%s\"\n",$(NF)}'
     if try_to_get_var_from_file_aux "${_awkprg}" "${2}"; then
 	log_print \
 	    "WARNING: cannot find field ${1} in file `${_basename} \"${2}\"`."
@@ -2820,6 +2823,7 @@ try_to_get_var_from_file_aux()
 {
     if [ -r "${2}" ]; then
 	_tmp2=`${_awk} "${1}" "${2}"`
+	# debug trace
 	if [ -n "$CGAL_DEBUG_GET_VAR_FROM_FILE" ]; then
 	    ${_printf} "\nawk '%s' %s\n%s\n" "${1}" "${2}" "${_tmp2}" >&2
 	fi
