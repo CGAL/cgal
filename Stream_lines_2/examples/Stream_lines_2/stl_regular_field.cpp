@@ -1,24 +1,23 @@
-#include <iostream>
-#include <fstream>
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/Filtered_kernel.h>
-
 #include <CGAL/Stream_lines_2.h>
 #include <CGAL/Runge_kutta_integrator_2.h>
 #include <CGAL/Regular_grid_2.h>
 #include <CGAL/Triangular_field_2.h>
+
+#include <iostream>
+#include <fstream>
 
 typedef double coord_type;
 typedef CGAL::Cartesian<coord_type> K1;
 typedef CGAL::Filtered_kernel<K1> K;
 typedef CGAL::Regular_grid_2<K> Field;
 typedef CGAL::Runge_kutta_integrator_2<Field> Runge_kutta_integrator;
-typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator> Stl;
-typedef Stl::Point_iterator_2 Point_iterator;
-typedef Stl::Stream_line_iterator_2 Stl_iterator;
-typedef Stl::Point_2 Point_2;
-typedef Stl::Vector_2 Vector_2;
+typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator> Strl;
+typedef Strl::Point_iterator_2 Point_iterator;
+typedef Strl::Stream_line_iterator_2 Strl_iterator;
+typedef Strl::Point_2 Point_2;
+typedef Strl::Vector_2 Vector_2;
 
 int main()
 {
@@ -47,13 +46,13 @@ int main()
   std::cout << "processing...\n";
   double dSep = 3.5;
   double dRat = 1.6;
-  Stl Stream_lines(regular_grid_2, runge_kutta_integrator,dSep,dRat);
+  Strl Stream_lines(regular_grid_2, runge_kutta_integrator,dSep,dRat);
   std::cout << "placement generated\n";
 
   /*writing streamlines to streamlines_on_regular_grid_1.stl */
   std::ofstream fw("streamlines_on_regular_grid_1.stl",std::ios::out);
   fw << Stream_lines.number_of_lines() << "\n";
-  for(Stl_iterator sit = Stream_lines.begin(); sit != Stream_lines.end(); sit++)
+  for(Strl_iterator sit = Stream_lines.begin(); sit != Stream_lines.end(); sit++)
     {
       fw << "\n";
       for(Point_iterator pit = sit->first; pit != sit->second; pit++){
