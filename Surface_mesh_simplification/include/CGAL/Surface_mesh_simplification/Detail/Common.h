@@ -78,7 +78,7 @@ bool handle_exists ( Iterator begin, Iterator end, Handle h )
 template<class XYZ>
 inline std::string xyz_to_string( XYZ const& xyz )
 {
-  return boost::str( boost::format("(%1%,%2%,%3%)") % xyz.x() % xyz.y() % xyz.z() ) ;   
+  return boost::str( boost::format("(%|5.19f|,%|5.19f|,%|5.19f|)") % xyz.x() % xyz.y() % xyz.z() ) ;   
 }
 
 template<class Matrix>
@@ -108,8 +108,9 @@ CGAL_END_NAMESPACE
 #  include<string>
 #  include<iostream>
 #  include<sstream>
+namespace CGALi { namespace  { bool cgal_enable_ecms_trace = false ; } }
 #  define CGAL_ECMS_TRACE_IMPL(m) \
-     { \
+     if ( ::CGALi::cgal_enable_ecms_trace ) { \
        std::ostringstream ss ; ss << m ; std::string s = ss.str(); \
        Surface_simplification_external_trace(s); \
      }

@@ -165,7 +165,14 @@ private :
                  ,a20,a21,a22
                  );
   }
-    
+
+  static FT big_value() { return static_cast<FT>((std::numeric_limits<double>::max)()) ; }
+  
+  // Returns 'n' if it is finite, CGALi::infinite otherwise.
+  static FT made_finite ( FT n ) { return CGAL_NTS is_finite(n) ? n : big_value() ; }
+  
+  static Vector made_finite ( Vector const& v ) { return Vector( made_finite(v.x()), made_finite(v.y()), made_finite(v.z()) ) ; }
+  
   ECM& surface() const { return mProfile.surface() ; }
   
 private:    
