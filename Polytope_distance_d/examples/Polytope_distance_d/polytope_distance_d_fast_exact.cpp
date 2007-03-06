@@ -1,10 +1,11 @@
-// file: examples/Polytope_distance_d/polytope_distance.C
+// file: examples/Polytope_distance_d/polytope_distance_d_fast_exact.cpp
 
 // computes the distance between two cubes in R^3 using double
 // as input type and some internal EXACT floating point type;
 // the fast type double is also safely used for many of the 
 // internal computations
 #include <iostream>
+#include <cassert>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polytope_distance_d.h>
 #include <CGAL/Optimisation_d_traits_3.h>
@@ -36,6 +37,7 @@ int main()
                  Point(3,2,2), Point(3,2,3), Point(3,3,2), Point(3,3,3)};
 
   Polytope_distance pd(P, P+8, Q, Q+8); 
+  assert (pd.is_valid());
 
   // get squared distance (2,2,2)-(1,1,1))^2 = 3
   std::cout << "Squared distance: " <<
