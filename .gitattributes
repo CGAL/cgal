@@ -650,12 +650,12 @@ Installation/config/support/S48-MKL64 -text
 Installation/config/support/S49-MKL32 -text
 Installation/config/support/S50a-MKLWIN64 -text
 Installation/config/support/S50b-MKLWIN32 -text
-Installation/config/support/S51-LAPACKSHARED -text
+Installation/config/support/S51-BLASSHAREDATLAS -text
 Installation/config/support/S52-BLASIFORTATLAS -text
 Installation/config/support/S53-BLASGCCATLAS -text
 Installation/config/support/S54-BLASWINATLAS -text
-Installation/config/support/S55a-REFBLASLINUXGCC -text
-Installation/config/support/S55b-REFBLASCYGWINGCC -text
+Installation/config/support/S55a-REFBLASGCC -text
+Installation/config/support/S55b-REFBLASLINUXGCC -text
 Installation/config/support/S56-REFBLASWIN -text
 Installation/config/support/S58-LIDIA -text
 Installation/config/support/S60-LEDA -text

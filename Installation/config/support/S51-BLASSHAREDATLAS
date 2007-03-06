@@ -1,0 +1,20 @@
+# BLAS (Basic Linear Algebra Subprograms).
+# ATLAS provides an optimized version of BLAS and a subset of LAPACK.
+# We search for a dynamic ATLAS library.
+# Note: the "atlas-devel" RPM installs an hybrid LAPACK/ATLAS library in /usr/lib*/atlas.
+# This configuration has been tested on Fedora with the "atlas-devel" RPM (g++).
+
+DESCRIPTION = ATLAS shared library
+PROVIDES = BLAS
+CXXFLAGS = -DCGAL_USE_F2C
+LDFLAGS =
+LIBS = f77blas
+REQUIRES =
+INCOMPATIBLE = DOLLAR_WINDOWS_COMPILER
+STDINCLDIRS =
+INCLTHING =
+STDLIBDIRS = /usr/lib\*/atlas
+LIBTHING = libf77blas.\*
+COMPILETESTFLAGS =
+
+# EOF
