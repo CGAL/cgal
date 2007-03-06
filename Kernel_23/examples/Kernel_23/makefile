@@ -54,6 +54,3 @@ test_polyhedron_prog_incr_builder.clean
 .cpp$(OBJ_EXT):
 	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
 
-.cpp$(OBJ_EXT):
-	$(CGAL_CXX) $(CXXFLAGS) $(OBJ_OPT) $<
-
