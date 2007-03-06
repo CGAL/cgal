@@ -1291,7 +1291,7 @@ int main() {
   t.start();
   test_LC.run_test();
   t.stop();
-  std::cout << "Lazy Simple_cartesain kernel successful in: " << t.time() 
+  std::cout << "Lazy Simple_cartesian kernel successful in: " << t.time() 
             << " seconds " << std::endl;
   t.reset();
 
