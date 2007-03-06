@@ -48,48 +48,48 @@ struct Dummy_straight_skeleton_builder_2_visitor
   typedef typename SSkel::Halfedge_const_handle Halfedge_const_handle ;
   typedef typename SSkel::Vertex_const_handle   Vertex_const_handle ;
 
-  void on_contour_edge_entered ( Halfedge_const_handle const& he ) const {}
+  void on_contour_edge_entered ( Halfedge_const_handle const&  ) const {}
                                
   void on_initialization_started( std::size_t size_of_vertices ) const {}
   
-  void on_initial_events_collected( Vertex_const_handle const& v, bool is_reflex, bool is_degenerate )  const  {}
+  void on_initial_events_collected( Vertex_const_handle const& , bool /* is_reflex */, bool /*is_degenerate*/ )  const  {}
   
-  void on_edge_event_created( Vertex_const_handle const& lnode
-                            , Vertex_const_handle const& rnode
+  void on_edge_event_created( Vertex_const_handle const& /* lnode */
+			    , Vertex_const_handle const& /* rnode */
                             )  const {}
 
   void on_split_event_created( Vertex_const_handle const& node )  const {}
 
-  void on_pseudo_split_event_created( Vertex_const_handle const& lnode
-                                    , Vertex_const_handle const& rnode
+  void on_pseudo_split_event_created( Vertex_const_handle const& /* lnode */
+                                    , Vertex_const_handle const& /* rnode */
                                     )  const {}
                                     
   void on_initialization_finished() const {}
   
   void on_propagation_started() const {}
   
-  void on_anihiliation_event_processed ( Vertex_const_handle const& node0
-                                       , Vertex_const_handle const& node1
+  void on_anihiliation_event_processed ( Vertex_const_handle const& /* node0 */
+                                       , Vertex_const_handle const& /* node1 */
                                        )  const  {}
 
 
-  void on_edge_event_processed( Vertex_const_handle const& lseed
-                              , Vertex_const_handle const& rseed
-                              , Vertex_const_handle const& node
+  void on_edge_event_processed( Vertex_const_handle const& /* lseed */
+                              , Vertex_const_handle const& /* rseed */
+                              , Vertex_const_handle const& /* node */
                               )  const {} 
 
-  void on_split_event_processed( Vertex_const_handle const& seed
-                               , Vertex_const_handle const& node0
-                               , Vertex_const_handle const& node1
+  void on_split_event_processed( Vertex_const_handle const& /* seed */
+                               , Vertex_const_handle const& /* node0 */
+                               , Vertex_const_handle const& /* node1 */
                                )  const {}
 
-  void on_pseudo_split_event_processed( Vertex_const_handle const& lseed
-                                      , Vertex_const_handle const& rseed
-                                      , Vertex_const_handle const& node0
-                                      , Vertex_const_handle const& node1
+  void on_pseudo_split_event_processed( Vertex_const_handle const& /* lseed */
+                                      , Vertex_const_handle const& /* rseed */
+                                      , Vertex_const_handle const& /* node0 */
+                                      , Vertex_const_handle const& /* node1 */
                                       )  const {}
 
-  void on_vertex_processed( Vertex_const_handle const& node )  const {}
+  void on_vertex_processed( Vertex_const_handle const& )  const {}
   
   void on_propagation_finished() const {}
   
@@ -97,7 +97,7 @@ struct Dummy_straight_skeleton_builder_2_visitor
   
   void on_cleanup_finished() const {}
   
-  void on_algorithm_finished ( bool finished_ok ) const {}
+  void on_algorithm_finished ( bool /* finished_ok */ ) const {}
   
   void on_error( char const* ) const {}
 } ;
