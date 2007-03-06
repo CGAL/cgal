@@ -146,7 +146,7 @@ struct Plane_RT_lt {
 // ----------------------------------------------------------------------------
 
 template <typename Items_, typename SNC_structure_>
-class SNC_external_structure : public SNC_decorator<SNC_structure_>
+class SNC_external_structure_base : public SNC_decorator<SNC_structure_>
 { 
 public:
   typedef SNC_structure_ SNC_structure;
@@ -258,7 +258,7 @@ public:
     }
   };
 
-  SNC_external_structure( SNC_structure& W, SNC_point_locator* spl = NULL) 
+  SNC_external_structure_base( SNC_structure& W, SNC_point_locator* spl = NULL) 
     : SNC_decorator(W), pl(spl) {}
   /*{\Mcreate makes |\Mvar| a decorator of |W|.}*/
 
@@ -998,13 +998,30 @@ public:
   }
 }; 
 
+
+
+template <typename Items_, typename SNC_structure_>
+class SNC_external_structure : public SNC_external_structure_base<Items_, SNC_structure_>
+{ 
+  typedef CGAL::SNC_decorator<SNC_structure_>                 SNC_decorator;
+  typedef CGAL::SNC_point_locator<SNC_decorator>             SNC_point_locator;
+public:
+
+  SNC_external_structure( SNC_structure_& W, SNC_point_locator* spl = NULL) 
+    : SNC_external_structure_base<Items_, SNC_structure_>(W, spl) 
+  {}
+};
+
+
+
+
 template <typename SNC_structure_>
 class SNC_external_structure<SNC_indexed_items, SNC_structure_> 
-  : public SNC_external_structure<int, SNC_structure_> {
+  : public SNC_external_structure_base<int, SNC_structure_> {
  
 public:
   typedef SNC_structure_                                SNC_structure;
-  typedef SNC_external_structure<int, SNC_structure>    Base;
+  typedef SNC_external_structure_base<int, SNC_structure>    Base;
 
   typedef CGAL::SNC_decorator<SNC_structure>                 SNC_decorator;
   typedef CGAL::SNC_point_locator<SNC_decorator>             SNC_point_locator;

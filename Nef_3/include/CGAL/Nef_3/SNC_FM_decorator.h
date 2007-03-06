@@ -221,8 +221,8 @@ template<class K1, class K2, typename SHalfedge_handle> class SmallerXYZ {
   }
 };
 
-template<class K2, typename SHalfedge_handle> 
-class SmallerXYZ<CGAL::Lazy_kernel<typename K2::EK>, K2, SHalfedge_handle> {
+template<class K2, typename EK, typename SHalfedge_handle> 
+class SmallerXYZ<CGAL::Lazy_kernel<EK>, K2, SHalfedge_handle> {
 
   typedef typename K2::Point_3  Point_3;
  public:
@@ -247,8 +247,8 @@ class SmallerXYZ<CGAL::Lazy_kernel<typename K2::EK>, K2, SHalfedge_handle> {
 };
 
 /*
-template<class K2, typename SHalfedge_handle> 
-class SmallerXYZ<CGAL::Lazy_kernel<typename K2::EK>, K2, SHalfedge_handle> {
+template<class K2, typename EK, typename SHalfedge_handle> 
+class SmallerXYZ<CGAL::Lazy_kernel<EK>, K2, SHalfedge_handle> {
 
   typedef typename K2::Point_3  Point_3;
  public:

@@ -59,8 +59,8 @@ private:
 };
 
 
-template <typename K2, typename Coordinate>
-class ComparePoints<CGAL::Lazy_kernel<typename K2::EK>, K2, Coordinate> {
+template <typename K2, typename EK, typename Coordinate>
+class ComparePoints<CGAL::Lazy_kernel<EK>, K2, Coordinate> {
 
   typedef typename K2::Point_3  Point_3;
  public:

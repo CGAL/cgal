@@ -122,8 +122,8 @@ private:
 };
 
 
-template <typename K2, typename Object, typename Vertex, typename Coordinate>
-  class Smaller_than<CGAL::Lazy_kernel<typename K2::EK>, K2, Object, Vertex, Coordinate>
+template <typename K2, typename EK, typename Object, typename Vertex, typename Coordinate>
+  class Smaller_than<CGAL::Lazy_kernel<EK>, K2, Object, Vertex, Coordinate>
 {
 public:
   Smaller_than(Coordinate c) : coord(c) {

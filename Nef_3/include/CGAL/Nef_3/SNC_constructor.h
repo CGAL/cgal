@@ -121,7 +121,7 @@ struct circle_lt {
 /*{\Manpage{SNC_constructor}{SNC}{overlay functionality}{O}}*/
 
 template <typename Items, typename SNC_structure_>
-class SNC_constructor : public SNC_decorator<SNC_structure_>
+class SNC_constructor_base : public SNC_decorator<SNC_structure_>
 { 
 public:
   typedef SNC_structure_ SNC_structure;
@@ -132,7 +132,7 @@ public:
   typedef typename SNC_structure_::Kernel                    Kernel;
   typedef typename Kernel::RT                                RT;
   typedef typename Infi_box::NT                              NT;
-  typedef CGAL::SNC_constructor<Items, SNC_structure>        Self;
+  typedef CGAL::SNC_constructor_base<Items, SNC_structure>        Self;
   typedef CGAL::SNC_decorator<SNC_structure>                 SNC_decorator;
   typedef typename CGAL::SNC_const_decorator<SNC_structure>  SNC_const_decorator;
   typedef CGAL::SNC_intersection<SNC_structure>              SNC_intersection;
@@ -199,7 +199,7 @@ public:
   
   enum{NORMAL, CORNER, DEGENERATE};
 
-  SNC_constructor( SNC_structure& W) : SNC_decorator(W) {}
+  SNC_constructor_base( SNC_structure& W) : SNC_decorator(W) {}
   /*{\Mcreate makes |\Mvar| a decorator of |W|.}*/
 
   Vertex_handle create_extended_box_corner(NT x, NT y, NT z,
@@ -1553,15 +1553,26 @@ public:
 
   void assign_indices() {}
 
-}; // SNC_constructor<SNC>
+}; // SNC_constructor_base<SNC>
 
+template <typename Items, typename SNC_structure_>
+class SNC_constructor : public SNC_constructor_base<Items, SNC_structure_>
+{
+public:
+  SNC_constructor( SNC_structure& W)
+    : SNC_constructor_base<Items, SNC_structure_>(W)
+  {}
+
+};
+
+  
 
 template<typename SNC_structure_>
 class SNC_constructor<SNC_indexed_items, SNC_structure_>
-  : public SNC_constructor<int, SNC_structure_> {
+  : public SNC_constructor_base<int, SNC_structure_> {
 
     typedef SNC_structure_                               SNC_structure;
-  typedef SNC_constructor<int, SNC_structure>            Base;
+  typedef SNC_constructor_base<int, SNC_structure>       Base;
   typedef typename SNC_structure::Sphere_map             Sphere_map;
   typedef CGAL::SM_const_decorator<Sphere_map>           SM_const_decorator;
   typedef CGAL::SM_decorator<Sphere_map>                 SM_decorator;
