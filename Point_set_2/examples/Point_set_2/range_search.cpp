@@ -1,4 +1,4 @@
-// file: examples/Point_set_2/rs_example.C
+// file: examples/Point_set_2/range_search.cpp
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Point_set_2.h>
