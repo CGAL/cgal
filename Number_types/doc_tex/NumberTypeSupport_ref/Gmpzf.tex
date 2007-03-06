@@ -31,7 +31,12 @@ very similar to \ccc{MP_Float} but is generally faster.
               initialized with
              \ccStyle{i}.}
 
-\ccConstructor{Gmpzf(Gmpzf i);}
+\ccConstructor{Gmpzf(long int l);}
+            {creates a multiple-precision floating-point number 
+              initialized with
+             \ccStyle{l}.}
+
+\ccConstructor{Gmpzf(const Gmpz& i);}
             {creates a multiple-precision floating-point number 
               initialized with
              \ccStyle{i}.}
@@ -44,7 +49,7 @@ very similar to \ccc{MP_Float} but is generally faster.
 \ccFunction{std::ostream& operator<<(std::ostream& out, const Gmpzf& f);}
 {writes a double approximation of \ccc{f} to the ostream \ccc{out}.}
 
-\ccFunction{std::ostream& print (std::ostream& out, const Gmpzf& a);}
+\ccFunction{std::ostream& print (std::ostream& out, const Gmpzf& f);}
 {writes an exact representation of \ccc{f} to the ostream \ccc{out}.}
 
 \ccFunction{std::istream& operator>>(std::istream& in, Gmpzf& f);}
