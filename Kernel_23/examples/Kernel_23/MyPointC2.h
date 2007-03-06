@@ -22,7 +22,7 @@ public:
   }
 
   
-  MyPointC2(const double x, const double y, int c)
+  MyPointC2(const double x, const double y, int c = 0)
     : col(c)
   {
     *vec = x;
@@ -83,10 +83,26 @@ public:
   {
     typedef typename K::RT         RT;
     typedef typename K::Point_2    Point_2;
-    typedef typename K::Line_2    Line_2;
+    typedef typename K::Line_2     Line_2;
+    typedef typename Point_2::Rep  Rep;
   public:
-    typedef Point_2          result_type;
+    typedef Point_2                result_type;
     typedef CGAL::Arity_tag< 1 >   Arity;
+
+    // Note : the CGAL::Return_base_tag is really internal CGAL stuff.
+    // Unfortunately it is needed for optimizing away copy-constructions,
+    // due to current lack of delegating constructors in the C++ standard.
+    Rep // Point_2
+    operator()(CGAL::Return_base_tag, CGAL::Origin o) const
+    { return Rep(o); }
+
+    Rep // Point_2
+    operator()(CGAL::Return_base_tag, const RT& x, const RT& y) const
+    { return Rep(x, y); }
+
+    Rep // Point_2
+    operator()(CGAL::Return_base_tag, const RT& x, const RT& y, const RT& w) const
+    { return Rep(x, y, w); }
 
     Point_2
     operator()(CGAL::Origin o) const

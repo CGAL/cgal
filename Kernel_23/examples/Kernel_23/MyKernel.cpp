@@ -25,7 +25,7 @@ const int BLACK=2;
 
 int main()
 {
-  Point a(0,0), b(1,0, BLACK), c(1,1), d(0,1);
+  Point a(0,0), b(1,0), c(1,1), d(0,1);
   a.color()=RED;
   b.color()=BLACK;
   d.color()=RED;
