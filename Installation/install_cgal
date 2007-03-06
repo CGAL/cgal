@@ -362,15 +362,15 @@ log_print()
 }
 
 # checks for existency of program $1
-# and set variable _$3 to its full path
-# ($3 defaults to $1 if not specified)
+# and set variable $3 to its full path
+# ($3 defaults to _$1 if not specified)
 # (if $2 is 'y', exit if it is not existent,
 # otherwise return 0, iff it exists)
 _check_for_util()
 {
     _tmp="`${_which} $1`"
     if [ -x "${_tmp}" ]; then
-	eval "_${3:-$1}=\"${_tmp}\""
+	eval "${3:-_$1}=\"${_tmp}\""
     elif [ "$2" = "y" ]; then
 	exit_on_error "Couldn't find \"${1}\""
     else
@@ -385,13 +385,15 @@ _check_for_util()
 }
 
 # same as _check_for_util above except that it searches
-# in /bin and /usr/bin first
+# in /bin, /usr/bin, and /opt/sfw/bin (Solaris) first
 _check_for_sysutil()
 {
     if [ -x "/bin/$1" ]; then
-	eval "_$1=\"/bin/$1\""
+	eval "${3:-_$1}=\"/bin/$1\""
     elif [ -x "/usr/bin/$1" ]; then
-	eval "_$1=\"/usr/bin/$1\""
+	eval "${3:-_$1}=\"/usr/bin/$1\""
+    elif [ -x "/opt/sfw/bin/$1" ]; then
+	eval "${3:-_$1}=\"/opt/sfw/bin/$1\""
     else
 	_check_for_util "${*}"
 	return $?
@@ -664,15 +666,16 @@ check_for_utils()
     fi
 
     # Verify that GNU Make exists:
-    WGM=`which gmake`
-    if [ -z "$WGM" ]; then
-        MAKE=make
+    # Search gmake in PATH
+    if _check_for_util gmake n MAKE; then
+    # Search gmake in standard directories
+    elif _check_for_sysutil gmake n MAKE; then
+    # Search make in PATH, or fail.
     else
-        MAKE=gmake
-        log_print "make is ${WGM}."
+        _check_for_util make y MAKE; then
     fi
-    CGNU=`$MAKE -v | grep GNU`
-    if [ "$CGNU" = "" ]; then
+    # Check if ${MAKE} is a GNU make.
+    if [ "`$MAKE -v | grep GNU`" = "" ]; then
         exit_on_error "GNU Make not found - please install GNU Make"
     fi
 }
