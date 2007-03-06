@@ -1737,9 +1737,6 @@ Polytope_distance_d/test/Polytope_distance_d/test_PD_data/two_cubes_nested.data 
 Polytope_distance_d/test/Polytope_distance_d/test_PD_data/two_cubes_shifted.data -text
 Polytope_distance_d/test/Polytope_distance_d/test_PD_data/two_numbers.data -text
 Polytope_distance_d/test/Polytope_distance_d/test_PD_data/two_squares.data -text
-Polytope_distance_d/test/Polytope_distance_d/test_Polytope_distance_d_2.cmd eol=lf
-Polytope_distance_d/test/Polytope_distance_d/test_Polytope_distance_d_3.cmd eol=lf
-Polytope_distance_d/test/Polytope_distance_d/test_Polytope_distance_d_d.cmd eol=lf
 Polytope_distance_d/test/Polytope_distance_d/wilms_bug.cpp -text
 Polytope_distance_d/test/Polytope_distance_d/zwick_bug.cpp -text
 Principal_component_analysis/demo/Principal_component_analysis/help/index.html svneol=native#text/html
