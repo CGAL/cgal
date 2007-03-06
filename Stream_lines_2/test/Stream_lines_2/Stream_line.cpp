@@ -1,15 +1,13 @@
-#include <iostream>
-#include <fstream>
-#include <cstdio>
-
 #include <CGAL/Cartesian.h>
 #include <CGAL/Filtered_kernel.h>
-
 #include <CGAL/Stream_lines_2.h>
 #include <CGAL/Euler_integrator_2.h>
 #include <CGAL/Runge_kutta_integrator_2.h>
 #include <CGAL/Regular_grid_2.h>
 #include <CGAL/Triangular_field_2.h>
+
+#include <fstream>
+#include <sstream>
 
 typedef double coord_type;
 typedef CGAL::Cartesian<coord_type> CK;
@@ -38,9 +36,11 @@ int main()
 {
   for (int i=1;i<=23;i++)
   {
-    char file_name[80];
-    std::sprintf(file_name, "data/%d.vec.cin", i);
-    std::ifstream infile(file_name, std::ios::in);
+    std::ostringstream os;
+    os << "data/" << i << ".vec.cin";
+    std::string file_name = os.str();
+
+    std::ifstream infile(file_name.c_str(), std::ios::in);
     double iXSize, iYSize;
     unsigned int x_samples, y_samples;
     iXSize = iYSize = 512;
