@@ -39,8 +39,8 @@ typedef double coord_type;
 typedef CGAL::Cartesian<coord_type> K;
 typedef CGAL::Regular_grid_2<K> Field;
 typedef CGAL::Runge_kutta_integrator_2<Field> Runge_kutta_integrator;
-typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator> Stl;
-typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator>::Stream_line_iterator_2 Stl_iterator;
+typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator> Strl;
+typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator>::Stream_line_iterator_2 Strl_iterator;
 typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator>::Point_iterator_2 Pt_iterator;
 typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator>::Point_2 Point_2;
 typedef CGAL::Stream_lines_2<Field, Runge_kutta_integrator>::Vector_2 Vector;
@@ -86,19 +86,19 @@ class Placement : public QObject
     double integrating_;
     int sampling_;
     int number_of_lines_;
-    Stl * Stream_lines;
+    Strl * Stream_lines;
     Runge_kutta_integrator * runge_kutta_integrator;
     Field * regular_grid;
-    Stl_iterator begin_iterator;
-    Stl_iterator end_iterator;
+    Strl_iterator begin_iterator;
+    Strl_iterator end_iterator;
     Placement() : 
         completed(false), density_(12.0), ratio_(1.6), integrating_(1.0), sampling_(1), number_of_lines_(0),
     Stream_lines(NULL), runge_kutta_integrator(NULL), regular_grid(NULL), begin_iterator(){}
-    Stl_iterator begin() const
+    Strl_iterator begin() const
     {
       return begin_iterator;
     }
-    Stl_iterator end() const
+    Strl_iterator end() const
     {
       return end_iterator;   
     }
@@ -161,7 +161,7 @@ class Placement : public QObject
     void generate()
     {
       std::cout << "processing...\n";
-      Stream_lines = new Stl(*regular_grid, *runge_kutta_integrator, density_, ratio_, sampling_);
+      Stream_lines = new Strl(*regular_grid, *runge_kutta_integrator, density_, ratio_, sampling_);
       number_of_lines_ = Stream_lines->number_of_lines();
       std::cout << "success\n";
       completed = true;
@@ -178,7 +178,7 @@ class Placement : public QObject
     void generateFirst()
     {
       if (!completed)
-        Stream_lines = new Stl(*regular_grid, *runge_kutta_integrator, density_, ratio_, sampling_, true);
+        Stream_lines = new Strl(*regular_grid, *runge_kutta_integrator, density_, ratio_, sampling_, true);
       number_of_lines_ = Stream_lines->number_of_lines();
       d_stl = true;
       d_pq = false;
@@ -437,7 +437,7 @@ class MyWidget : public QGLWidget
         glColor3f(0.0, 0.0, 0.0);
         glLineWidth(1.5f);
         if (!p.is_empty())
-          for (Stl_iterator sit = p.begin(); sit != p.end(); sit++)
+          for (Strl_iterator sit = p.begin(); sit != p.end(); sit++)
         {
           glBegin(GL_LINE_STRIP);
           for (Pt_iterator pit = (*sit).first; pit != (*sit).second; pit++)
