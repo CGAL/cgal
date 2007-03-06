@@ -1,29 +1,29 @@
 // file: examples/Point_set_2/rs_example.C
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <list>
 #include <CGAL/Point_set_2.h>
+#include <list>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  K;
 
 typedef CGAL::Point_set_2<K>::Vertex_handle  Vertex_handle;
-typedef CGAL::Point_2<K>                         Point;
+typedef K::Point_2                           Point_2;
 
 int main()
 {
   CGAL::Point_set_2<K> PSet;
-  std::list<Point> Lr;
+  std::list<Point_2> Lr;
   
-  Point p1(12,14);
-  Point p2(-12,14);  
-  Point p3(2,11);
-  Point p4(5,6);
-  Point p5(6.7,3.8);
-  Point p6(11,20);
-  Point p7(-5,6);  
-  Point p8(12,0);
-  Point p9(4,31);
-  Point p10(-10,-10); 
+  Point_2 p1(12,14);
+  Point_2 p2(-12,14);  
+  Point_2 p3(2,11);
+  Point_2 p4(5,6);
+  Point_2 p5(6.7,3.8);
+  Point_2 p6(11,20);
+  Point_2 p7(-5,6);  
+  Point_2 p8(12,0);
+  Point_2 p9(4,31);
+  Point_2 p10(-10,-10); 
  
   Lr.push_back(p1); Lr.push_back(p2); Lr.push_back(p3);
   Lr.push_back(p4); Lr.push_back(p5); Lr.push_back(p6);
@@ -51,10 +51,10 @@ int main()
   LV.clear();
  
   std::cout << "isorectangular range search !\n";
-  Point pt1=p10; 
-  Point pt3=p3; 
-  Point pt2 = Point(pt3.x(),pt1.y());
-  Point pt4 = Point(pt1.x(),pt3.y());
+  Point_2 pt1=p10; 
+  Point_2 pt3=p3; 
+  Point_2 pt2 = Point_2(pt3.x(),pt1.y());
+  Point_2 pt4 = Point_2(pt1.x(),pt3.y());
   
   PSet.range_search(pt1,pt2,pt3,pt4, std::back_inserter(LV));
   for (it=LV.begin();it != LV.end(); it++)
