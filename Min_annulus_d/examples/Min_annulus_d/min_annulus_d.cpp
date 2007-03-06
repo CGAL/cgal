@@ -1,18 +1,28 @@
-// file: examples/Min_annulus_d/min_annulus_d.C
+// file: examples/Min_annulus_d/min_annulus_d.cpp
 
 // computes the smallest enclosing annulus of two point
-// sets on nested squares in R^2, using double as input
-// type and internal type (prone to roundoff errors)
-
+// sets on nested squares in R^2, using double
+// as input type and some internal EXACT floating point type 
+#include <iostream>
+#include <cassert>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Min_annulus_d.h>
 #include <CGAL/Optimisation_d_traits_2.h>
 
-typedef CGAL::Simple_cartesian<double>    K;  
+#ifdef CGAL_USE_GMP
+#include <CGAL/Gmpzf.h>
+typedef CGAL::Gmpzf ET;
+#else
+#include <CGAL/MP_Float.h>
+typedef CGAL::MP_Float ET;
+#endif
+
+// use an EXACT kernel...
+typedef CGAL::Simple_cartesian<ET>        K;  
 typedef K::Point_2                        Point;
+// ...and the traits class based on the exact kernel 
 typedef CGAL::Optimisation_d_traits_2<K>  Traits;
 typedef CGAL::Min_annulus_d<Traits>       Min_annulus;
-
 
 int main()
 {
@@ -21,6 +31,7 @@ int main()
                  Point(-2,-2), Point(-2,2), Point(2,-2), Point(2,2)};
 
   Min_annulus ma(P, P+8); 
+  assert (ma.is_valid());
 
   // get center of annulus
   Min_annulus::Coordinate_iterator coord_it;
@@ -34,13 +45,13 @@ int main()
 
   // get inner squared radius, 1^2+1^2 = 2
   std::cout << "Inner squared radius: " <<
-    ma.squared_inner_radius_numerator() /
-    ma.squared_radii_denominator() << std::endl;
+    CGAL::to_double(ma.squared_inner_radius_numerator()) /
+    CGAL::to_double(ma.squared_radii_denominator()) << std::endl;
 
   // get outer squared radius, 2^2+2^2 = 8
   std::cout << "Outer squared radius: " <<
-    ma.squared_outer_radius_numerator() /
-    ma.squared_radii_denominator() << std::endl;
+    CGAL::to_double(ma.squared_outer_radius_numerator()) /
+    CGAL::to_double(ma.squared_radii_denominator()) << std::endl;
 
   return 0;
 

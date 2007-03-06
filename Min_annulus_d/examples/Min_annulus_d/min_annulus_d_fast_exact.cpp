@@ -1,22 +1,31 @@
-// file: examples/Min_annulus_d/min_annulus_d_fast_exact.C
+// file: examples/Min_annulus_d/min_annulus_d_fast_exact.cpp
 
 // computes the smallest enclosing annulus of two point
-// sets on nested squares in R^2, using double as input
-// type and CGAL::Double as exact internal type; this
-// is guaranteed to have no roundoff errors. Note: CGAL::Double
-// is based on GMP but not yet an official CGAL number type; in 
-// this respect, the example represents experimental code 
-#include <CGAL/QP_solver/gmp_double.h>
+// sets on nested squares in R^2,  using double
+// as input type and some internal EXACT floating point type;
+// the fast type double is also safely used for many of the 
+// internal computations
+#include <iostream>
+#include <cassert>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/QP_solver/Double.h>
 #include <CGAL/Min_annulus_d.h>
 #include <CGAL/Optimisation_d_traits_2.h>
 
-typedef CGAL::Simple_cartesian<double>    K;  
-typedef K::Point_2                        Point;
-typedef CGAL::Optimisation_d_traits_2<K, CGAL::Double, double>  
-                                          Traits;
-typedef CGAL::Min_annulus_d<Traits>       Min_annulus;
+#ifdef CGAL_USE_GMP
+#include <CGAL/Gmpzf.h>
+typedef CGAL::Gmpzf ET;
+#else
+#include <CGAL/MP_Float.h>
+typedef CGAL::MP_Float ET;
+#endif
+
+// use an inexact kernel...
+typedef CGAL::Simple_cartesian<double>     K;  
+typedef K::Point_2                         Point;
+// ... and the EXACT traits class based on the inexcat kernel
+typedef CGAL::Optimisation_d_traits_2<K, ET, double>  Traits;
+typedef CGAL::Min_annulus_d<Traits>        Min_annulus;
+
 
 
 int main()
@@ -26,6 +35,7 @@ int main()
                  Point(-2,-2), Point(-2,2), Point(2,-2), Point(2,2)};
 
   Min_annulus ma(P, P+8); 
+  assert (ma.is_valid());
 
   // get center of annulus
   Min_annulus::Coordinate_iterator coord_it;

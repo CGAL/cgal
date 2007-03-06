@@ -11,132 +11,92 @@
 // release       : $CGAL_Revision: CGAL-I $
 // release_date  : $CGAL_Date$
 //
-// file          : test/Min_annulus_d/test_Min_annulus_d_d.C
+// file          : test/Min_annulus_d/test_Min_annulus_d_d.cpp
 // package       : $CGAL_Package: Min_annulus_d $
 // chapter       : Geometric Optimisation
 //
-// source        : web/Min_annulus_d.aw
 // revision      : $Id$
 // revision_date : $Date$
 //
 // author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 // coordinator   : ETH Zürich (Bernd Gärtner <gaertner@inf.ethz.ch>)
 //
-// implementation: test program for smallest enclosing annulus (dD traits class
+// implementation: test program for Min_annulus (dD traits class)
 // ============================================================================
 
-// includes and typedefs
-// ---------------------
-#include <CGAL/QP_solver/gmp_double.h> // temporarily, can be removed
-                                       // once gmp_double is in CGAL
 #include <CGAL/Cartesian_d.h>
+#include <CGAL/Homogeneous_d.h>
 #include <CGAL/Min_annulus_d.h>
 #include <CGAL/Optimisation_d_traits_d.h>
-
-// test variant 1 (needs LEDA)
-#ifdef CGAL_USE_LEDA
-# include <CGAL/leda_integer.h>
-  typedef  CGAL::Cartesian_d<leda_integer>       K_1;
-  typedef  CGAL::Optimisation_d_traits_d<K_1>  Traits_1;
-# define TEST_VARIANT_1 \
-    "Optimisation_d_traits_d< Cartesian_d<leda_integer> >"
-#endif
-
-// test variant 2 (needs GMP)
 #ifdef CGAL_USE_GMP
-# include <CGAL/QP_solver/Double.h>
-  typedef  CGAL::Cartesian_d< int >                                 K_2;
-  typedef  CGAL::Optimisation_d_traits_d<K_2,CGAL::Double,double>  Traits_2;
-# define TEST_VARIANT_2 \
-    "Optimisation_d_traits_d< Cartesian_d<int>, CGAL::Double, double >"
+#include <CGAL/Gmpzf.h>
+#include <CGAL/Gmpq.h>
+typedef CGAL::Gmpzf RT;
+typedef CGAL::Gmpq FT;
+#else
+#include <CGAL/MP_Float.h>
+#include <CGAL/Quotient.h>
+typedef CGAL::MP_Float RT;
+typedef CGAL::Quotient<CGAL::MP_Float> FT;
 #endif
+#include <vector>
+#include <string>
+#include <iostream>
+#include <sstream>
+#include <fstream>
+
+// exact kernels
+typedef  CGAL::Cartesian_d<FT>                     CK1;
+typedef  CGAL::Optimisation_d_traits_d<CK1>        CTraits1;
+typedef  CGAL::Homogeneous_d<RT>                   HK1;
+typedef  CGAL::Optimisation_d_traits_d<HK1>        HTraits1;
+
+// inexact kernels
+typedef  CGAL::Cartesian_d<double>                      CK2;
+typedef  CGAL::Optimisation_d_traits_d<CK2, RT, double> CTraits2;
+typedef  CGAL::Homogeneous_d<double>                    HK2;
+typedef  CGAL::Optimisation_d_traits_d<HK2, RT, double> HTraits2;
 
 #include <CGAL/Random.h>
 #include <vector>
 
 #include "test_Min_annulus_d.h"
 
-
+template <class K, class Traits>
+void process () 
+{
+  // generate point set
+  std::vector<typename K::Point_d>  points;
+  points.reserve( 100);
+  {
+    int d = 10;
+    std::vector<double>  coords( d+1);
+    int  i, j;
+    double hom = 1.0;
+    for ( i = 0; i < 100; ++i) {
+      for (j=0; j<d; ++j) 
+	coords[ j] = CGAL::default_random( 0x100000);
+      coords[d] = hom++;
+      points.push_back
+	(typename K::Point_d(d, coords.begin(), coords.end()));
+    }
+    
+  // call test function
+  CGAL::test_Min_annulus_d(points.begin(), points.end(), Traits(), 0);
+  }
+}
+    
 // main
 // ----
-int
-main( int argc, char* argv[])
+int main()
 {
-    using namespace std;
-    
-    int verbose = -1;
-    if ( argc > 1) verbose = atoi( argv[ 1]);
-    CGAL::Verbose_ostream  verr ( verbose >= 0); verr  << "";
-    
-    // test variant 1
-    // --------------
-    #ifdef TEST_VARIANT_1
-    
-        verr << endl
-             << "==================================="
-             << "===================================" << endl
-             << "Testing `Min_annulus_d' with traits class model" << endl
-             << "==> " << TEST_VARIANT_1 << endl
-             << "==================================="
-             << "===================================" << endl
-             << endl;
-    
-        // generate point set
-        std::vector<K_1::Point_d>  points_1;
-        points_1.reserve( 100);
-        {
-            int d = 5*1;
-            std::vector<int>  coords( d);
-            int  i, j;
-            for ( i = 0; i < 100; ++i) {
-                for ( j = 0; j < d; ++j)
-                    coords[ j] = CGAL::default_random( 0x100000);
-                points_1.push_back( K_1::Point_d( d, coords.begin(),
-                                                       coords.end()));
-            }
-        }
-    
-        // call test function
-        CGAL::test_Min_annulus_d( points_1.begin(), points_1.end(),
-                                  Traits_1(), verbose);
-    
-    #endif
-    
-    // test variant 2
-    // --------------
-    #ifdef TEST_VARIANT_2
-    
-        verr << endl
-             << "==================================="
-             << "===================================" << endl
-             << "Testing `Min_annulus_d' with traits class model" << endl
-             << "==> " << TEST_VARIANT_2 << endl
-             << "==================================="
-             << "===================================" << endl
-             << endl;
-    
-        // generate point set
-        std::vector<K_2::Point_d>  points_2;
-        points_2.reserve( 100);
-        {
-            int d = 5*2;
-            std::vector<int>  coords( d);
-            int  i, j;
-            for ( i = 0; i < 100; ++i) {
-                for ( j = 0; j < d; ++j)
-                    coords[ j] = CGAL::default_random( 0x100000);
-                points_2.push_back( K_2::Point_d( d, coords.begin(),
-                                                       coords.end()));
-            }
-        }
-    
-        // call test function
-        CGAL::test_Min_annulus_d( points_2.begin(), points_2.end(),
-                                  Traits_2(), verbose);
-    
-    #endif
-    
-    return 0;
+  // the following takes forever under Quotient<MP_Float>
+#ifdef CGAL_USE_GMP 
+    process<CK1, CTraits1>();
+#endif
+    process<HK1, HTraits1>(); 
+    process<CK2, CTraits2>();
+    process<HK2, HTraits2>();
 }
-
+ 
 // ===== EOF ==================================================================
