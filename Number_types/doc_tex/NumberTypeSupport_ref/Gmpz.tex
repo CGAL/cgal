@@ -30,6 +30,12 @@ based on the {\sc Gnu} Multiple Precision Arithmetic Library.
             {creates a multiple-precision integer initialized with
              the integral part of \ccStyle{d}.}
 
+\ccOperations
+\ccFunction{std::ostream& operator<<(std::ostream& out, const Gmpz& z);}
+{writes \ccc{z} to the ostream \ccc{out}.}
+
+\ccFunction{std::istream& operator>>(std::istream& in, Gmpz& z);}
+{reads an integer from \ccc{in}, then converts it to a \ccc{Gmpz}.}
 
 \ccImplementation
 \ccc{Gmpz}s are reference counted.

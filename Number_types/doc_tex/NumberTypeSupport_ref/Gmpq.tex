@@ -66,6 +66,13 @@ number based on the {\sc Gnu} Multiple Precision Arithmetic Library.
 %SetThreeColumns{std::ostream& }{}{\hspace*{8cm}}
 
 \ccOperations
+\ccFunction{std::ostream& operator<<(std::ostream& out, const Gmpq& q);}
+{writes \ccc{q} to the ostream \ccc{out}, in the form $n/d$.}
+
+\ccFunction{std::istream& operator>>(std::istream& in, Gmpq& q);}
+{reads a number from \ccc{in}, then converts it to a \ccc{Gmpq}. The 
+number may be an integer, a rational number in the form $n/d$, or a
+floating-point number.}
 
 There are two access functions, namely to the
 numerator and the denominator of a rational.
@@ -76,7 +83,6 @@ It is guaranteed that \ccStyle{q.numerator()} and
 if  \ccStyle{q.numerator()} and \ccStyle{q.denominator()} are called
 consecutively wrt. \ccStyle{q}, i.e.~\ccStyle{q} is not involved in 
 any other operation between these calls.
-
 
 \ccMethod{Gmpz numerator() const;}
        {returns the numerator of \ccStyle{q}.}
