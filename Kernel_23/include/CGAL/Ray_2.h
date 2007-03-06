@@ -152,9 +152,9 @@ public:
   has_on(const Point_2 &p) const
   {
     typename R::Construct_vector_2  construct_vector;
-    return p == source()
-      || R().collinear_2_object()(source(), p, second_point())
-      && Direction_2(construct_vector( source(), p)) == direction();
+    return p == source() ||
+         ( R().collinear_2_object()(source(), p, second_point()) &&
+           Direction_2(construct_vector( source(), p)) == direction() );
   }
 
 
