@@ -377,7 +377,7 @@ _check_for_util()
 	log_print "WARNING: Couldn't find $1."
 	return 1
     fi
-    _tmp="echo $\_`echo ${3:-$1}`"
+    _tmp="echo $`echo ${3:-_$1}`"
     _tmp=`eval "${_tmp}"`
     _tmp=`eval "echo ${_tmp}"`
     log_print "$1 is ${_tmp}."
@@ -385,20 +385,22 @@ _check_for_util()
 }
 
 # same as _check_for_util above except that it searches
-# in /bin, /usr/bin, and /opt/sfw/bin (Solaris) first
+# in several directories first.
 _check_for_sysutil()
 {
-    if [ -x "/bin/$1" ]; then
-	eval "${3:-_$1}=\"/bin/$1\""
-    elif [ -x "/usr/bin/$1" ]; then
-	eval "${3:-_$1}=\"/usr/bin/$1\""
-    elif [ -x "/opt/sfw/bin/$1" ]; then
-	eval "${3:-_$1}=\"/opt/sfw/bin/$1\""
-    else
+    _tmp2=''
+    for _path in /bin /usr/bin /opt/sfw/bin /usr/sfw/bin /usr/gnu/bin; do
+        if [ -x "${_path}/$1" ]; then
+	    eval "${3:-_$1}=\"${_path}/$1\""
+	    _tmp2=${_path}
+	    break
+        fi
+    done
+    if [ -z "${_tmp2}" ]; then
 	_check_for_util "${*}"
 	return $?
     fi
-    _tmp="echo $\_`echo ${3:-$1}`"
+    _tmp="echo $`echo ${3:-_$1}`"
     _tmp=`eval "${_tmp}"`
     _tmp=`eval "echo ${_tmp}"`
     log_print "$1 is ${_tmp}."
@@ -538,7 +540,7 @@ get_cgal_version()
     # without final carriage return
     FILE="${CGAL_DIR}/VERSION"
     _check_read "${FILE}"
-    CGAL_VERSION="`cat "${FILE}"`"
+    CGAL_VERSION="`${_cat} "${FILE}"`"
     log_print "CGAL version is ${CGAL_VERSION}."
 }
 
@@ -624,6 +626,7 @@ check_for_utils()
     _check_printf $INSTALL_VERBOSE
 
     _check_for_sysutil cat y
+    _check_for_sysutil touch y
     _check_for_sysutil cp y
     _check_for_sysutil mv y
     _check_for_sysutil rm y
@@ -638,6 +641,7 @@ check_for_utils()
     _check_for_sysutil chmod y
     _check_for_sysutil mkdir y
     _check_for_sysutil sed y
+    _check_for_sysutil grep y
     _check_for_sysutil tr y
     _check_for_sysutil awk y
     _check_for_sysutil tee y
@@ -666,18 +670,31 @@ check_for_utils()
     fi
 
     # Verify that GNU Make exists:
+    # Check the content of the current ${MAKE} variable.
+    if [ -n "${MAKE}" -a -x "${MAKE}" ] && test_gmake "${MAKE}"; then 
+        log_print 'GNU Make found in the environment variable \${MAKE}.'
     # Search gmake in PATH
-    if _check_for_util gmake n MAKE; then
+    elif _check_for_util gmake n MAKE && test_gmake "${MAKE}"; then
+	log_print 'GNU Make found in \${PATH}.';
     # Search gmake in standard directories
-    elif _check_for_sysutil gmake n MAKE; then
+    elif _check_for_sysutil gmake n MAKE && test_gmake "${MAKE}"; then
+	log_print "GNU Make found in standard directories.";
     # Search make in PATH, or fail.
+    elif _check_for_util make y MAKE && test_gmake "${MAKE}"; then
+        log_print 'make found in \$PATH is GNU Make.';
     else
-        _check_for_util make y MAKE; then
-    fi
-    # Check if ${MAKE} is a GNU make.
-    if [ "`$MAKE -v | grep GNU`" = "" ]; then
         exit_on_error "GNU Make not found - please install GNU Make"
     fi
+}
+
+# tests if $1 is a path to an executable GNU/make.
+# teturn 1 if not.
+test_gmake()
+{
+    if [ -z "`$MAKE -v | ${_grep} GNU`" ]; then 
+	return 1;
+    fi
+    return 0;
 }
 
 # guess operating system, write logs via $1
@@ -830,7 +847,7 @@ set_compiler_flags()
     SEPARATE_LIBPATH=""
     START_LD_OPT=""
     CGAL_CXX="`compiler_bin`"
-    RANLIB="cat >/dev/null"
+    RANLIB="${_cat} >/dev/null"
 
     case ${CGAL_OS_COMPILER} in
 	*bcc32.exe*|*BCC32*)
@@ -1115,7 +1132,7 @@ create_replacement_header()
 	${_printf} "%s\n" "#include <$header_name>" > ${tmp_code_file}
 	${_printf} "%s\n" "int main() {return 0;}" >> ${tmp_code_file}
 
-	if eval "`quote \`compiler_bin\`` ${ADDITIONAL_CXXFLAGS} ${tmp_code_file} >/dev/null 2>&1"; then
+	if eval "`quote \`compiler_bin\`` ${ADDITIONAL_CXXFLAGS} ${CUSTOM_CXXFLAGS} ${tmp_code_file} >/dev/null 2>&1"; then
 	    ${_printf} "%s\n" " ok."
 	    return;
 	fi
@@ -1126,12 +1143,12 @@ create_replacement_header()
 # If some of the replacement headers exist, they are included in a
 # newly created replacement header.
 #
-    rm -f ${replacement_header}
-    touch ${replacement_header}
+    ${_rm} -f ${replacement_header}
+    ${_touch} ${replacement_header}
     for arg in $* ; do
         ${_printf} "%s\n" "#include <$arg>" > ${tmp_code_file}
 	${_printf} "%s\n" "int main() {return 0;}" >> ${tmp_code_file}
-	if eval "`quote \`compiler_bin\`` ${ADDITIONAL_CXXFLAGS} ${tmp_code_file} >/dev/null 2>&1"; then
+	if eval "`quote \`compiler_bin\`` ${ADDITIONAL_CXXFLAGS} ${CUSTOM_CXXFLAGS} ${tmp_code_file} >/dev/null 2>&1"; then
 	    ${_cat} <<EOF3 >>${replacement_header}
 $LGPL_LICENSE_HEADER
 //
@@ -1261,7 +1278,7 @@ create_standard_header_replacements()
 #include <set>
 int main() { return 0; }
 EOF6
-    if eval "`quote \`compiler_bin\`` ${ADDITIONAL_CXXFLAGS} ${TMP_CXX_FILE}.cpp >/dev/null 2>&1"; then
+    if eval "`quote \`compiler_bin\`` ${ADDITIONAL_CXXFLAGS} ${CUSTOM_CXXFLAGS} ${TMP_CXX_FILE}.cpp >/dev/null 2>&1"; then
         ${_printf} "%s\n" "  All headers at once : ok."
         return;
     fi
@@ -1274,7 +1291,7 @@ EOF6
     ${_printf} "%s\n" "#include <${tmp_header_file}>" > ${tmp_code_file}
     ${_printf} "%s\n" \
 	"int main() { CGAL_nt result = 0; return result;}" >> ${tmp_code_file}
-    if eval "`quote \`compiler_bin\`` ${ADDITIONAL_CXXFLAGS} -I. ${tmp_code_file} >/dev/null 2>&1"; then
+    if eval "`quote \`compiler_bin\`` ${ADDITIONAL_CXXFLAGS} -I. ${CUSTOM_CXXFLAGS} ${tmp_code_file} >/dev/null 2>&1"; then
 	header_suffix=""
     else
 	header_suffix=".h"
@@ -2151,7 +2168,7 @@ EOF4
 	*ICL*|*icl*)            EXE_OPT="-TP -GR  -nologo -Fe";;
 	*CL*|*cl*)              EXE_OPT="-TP -GR  -nologo -Fe";;
         *mwcc.exe*|*MWCC*) EXE_OPT="-gccincludes -lang c++ -msgstyle gcc -o ";;
-        *pgCC*) PGCC_VERSION=`$1 -V | grep pgCC | cut -d' ' -f2`
+        *pgCC*) PGCC_VERSION=`$1 -V | ${_grep} pgCC | cut -d' ' -f2`
                 EXE_OPT="-DCGAL_PGCC_VERSION='\"$PGCC_VERSION\"' -o ";;
     esac
     _flags="${CUSTOM_CXXFLAGS} ${CUSTOM_LDFLAGS} ${EXE_OPT}${TMP_CXX_FILE} ${TMP_CXX_FILE}.cpp"
@@ -5067,6 +5084,7 @@ set_variable_from_command_line()
 
 _WHAT_TO_DO=''
 _CONFLICT=''
+_cat=cat
 _awk=awk
 _tee=tee
 _sed=sed
