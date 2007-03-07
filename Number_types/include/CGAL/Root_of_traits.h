@@ -147,7 +147,9 @@ struct Root_of_traits
 template <bool B>
 struct Root_of_traits<Interval_nt<B> >{
   typedef Interval_nt<B> Root_of_1;
-  typedef Interval_nt<B> Root_of_2;    
+  typedef Interval_nt<B> Root_of_2;
+  typedef Root_of_1 RootOf_1;
+  typedef Root_of_2 RootOf_2;
   struct Make_root_of_2{
     typedef Interval_nt<B> result_type;
     // just a copy, not sure about the semantic of smaller 
