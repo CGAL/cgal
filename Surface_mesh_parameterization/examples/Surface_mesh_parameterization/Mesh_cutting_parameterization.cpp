@@ -8,8 +8,6 @@
 #include <CGAL/Parameterization_mesh_patch_3.h>
 
 #include <iostream>
-#include <stdlib.h>
-#include <stdio.h>
 #include <fstream>
 
 

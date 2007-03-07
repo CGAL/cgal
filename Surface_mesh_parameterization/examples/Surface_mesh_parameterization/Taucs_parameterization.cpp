@@ -14,8 +14,6 @@
 #include <CGAL/Taucs_solver_traits.h>
 
 #include <iostream>
-#include <stdlib.h>
-#include <stdio.h>
 #include <fstream>
 
 

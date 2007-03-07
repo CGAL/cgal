@@ -8,8 +8,6 @@
 #include <CGAL/Square_border_parameterizer_3.h>
 
 #include <iostream>
-#include <stdlib.h>
-#include <stdio.h>
 #include <fstream>
 
 
