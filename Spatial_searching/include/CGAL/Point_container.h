@@ -217,7 +217,7 @@ public:
   inline bool 
   empty() const
   {
-    return !m_b;
+    return !m_b || !m_e || (*m_b == *m_e ) ;
   }
 
   // building the container from a sequence of Point_d*
