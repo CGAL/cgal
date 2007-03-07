@@ -393,20 +393,24 @@ Polynomial<NT> gcd_utcf_(
     // (for univariat polynomials with Sqrt_extension coeffs )
     NT dummy;
     for (;;) { 
+
         Polynomial<NT>::pseudo_division(p1, p2, q, r, dummy);    
+
         if (r.is_zero()) { break; }
         if (r.degree() == 0) { return Polynomial<NT>(gcdcont); }
         p1 = p2;
         p2 = r ;
+        
         p2=canonicalize_polynomial(p2);   
     }
 #endif
 
-    p2 = div_utcf(p2, content_utcf_(p2), true);
+    Polynomial<NT> cutcf = content_utcf_(p2);
+    p2 = div_utcf(p2, cutcf, true);
 
     // combine both parts to proper gcd
     p2 *= gcdcont;
-
+    
 #if NiX_POLYNOMIAL_GCD_AVOID_CANONICALIZE
     return p2;
 #else
